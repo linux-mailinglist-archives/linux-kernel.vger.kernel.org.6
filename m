@@ -1,83 +1,87 @@
-Return-Path: <linux-kernel+bounces-523246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5097FA3D430
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 10:09:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF3F6A3D431
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 10:09:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4AFAA189A7D7
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 09:09:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9E64189A8FB
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 09:09:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B66801EC009;
-	Thu, 20 Feb 2025 09:09:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A71A1EDA11;
+	Thu, 20 Feb 2025 09:09:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XoFveXKR"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JKwwN7Yd"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A7EA8BF8
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 09:09:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 471821E9B30
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 09:09:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740042578; cv=none; b=gnaKG0dAu4j4CvcR0h1isC2Z5RP25LtVr98Jg3qhV30Tvd0zKIL/pVg2z3zbRKvybPBKrDHONm1JZ3myQqY13pi/6nk1pT270dQsh0yKmJIx8QQzRZ7s39s3FKLakYoATcikDcx/XDBKjITi4xWvojl9AimyE2NCcBBvJSyCp7o=
+	t=1740042580; cv=none; b=E/0kXI5Q2Y5NwFkCZxQrqwFmjn/aRC/vXQgsNjXGnvdkBT7z+MtM8dm+rnDrfiUH8I/keh1/R2Ligzmo3Hwda6nJh89KoPuWHglw7JcH9ihPRmUIVktX3PaRlxn0YCUfMsZvZqfQi7nvcPx8H+WMVPORj7IQB2864OnOdUydwlM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740042578; c=relaxed/simple;
-	bh=qPNGAP0EGWFzIQJaELkU+JOE8qkX/bdEQjsxBifA0ec=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pW+SNrCQvpHak8DpYh0wWJ7ridZX7SrZsp450Yo1y13gcwACkBtvigDoFAJ1mS60bYKHSy7IPK9thZ+2S7zvrxbVhjKKxJPPhkeXc/53H0PbLi330iEvDya0uaR4CbNgZMllokZY9II1/SqfCUBKfY29NlrsKlJsUKhg1b02C2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XoFveXKR; arc=none smtp.client-ip=209.85.221.49
+	s=arc-20240116; t=1740042580; c=relaxed/simple;
+	bh=3mw368AGXqTIch42iSje3cBo5seDZ2HRoDXj8WZN6Lg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=B3qSw3gvjUyALhlCt2/kIlaB9iHsPf1BeXkfoI4A94yxwQfmmBySIgSx6OXfrYbNRhsF7f83LaoachqstLu6l2mhmJwl8UPYhNmowD8oPnEu5is2sqM/eFEJ+hcpSx9RnY9XR1sm/4xUST2Itun+ZeV+iPoM5T+YTDLeotfCRHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JKwwN7Yd; arc=none smtp.client-ip=209.85.128.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-38de1a5f039so505186f8f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 01:09:36 -0800 (PST)
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43690d4605dso3822425e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 01:09:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740042574; x=1740647374; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=tHGbytHaJxhAL8vZGdMUoXMQugX3XgdQVbuudxET0Z4=;
-        b=XoFveXKRqJ5Y9WFmXEjF0/Oizoh46YhmDW36xOIRgShTaOPBklcDGPno4j9SZYB4MH
-         9ddKRAdygIqR5/X62RPBI5UwNsUQKI1/q4duws3Ud3GFg0Psi5J/msnXqHtAj+NcU7fQ
-         xKVJ0qm6SOgS/4eza/9nlE6D9/bPAYKoV8Ad7jt6tGC4GcVtJXSrISL8nZiJBebL5Mpx
-         Kll7TZbxQnmTLdFtCm0zOLxeCbGFLUnVqMAB2S+baX06LRd5wgGWDh0qaw0+7+Ze1uXt
-         nDPkzhDTbhvcYldxGm3EPK7xWqTem8fObrej5pZHsZRqik8DN02jfH3Q65TB8ZIPscQG
-         WaAQ==
+        d=gmail.com; s=20230601; t=1740042576; x=1740647376; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bZEonrFTWZC0/wzk+mguJHa9QjuXrPOV/acUCVXwfDA=;
+        b=JKwwN7YdAWloFJEVSYm9ak0ry2YzUE4+l+blfDk+2k7ARqSCQIBfX8zF6hTZPqFi3C
+         5rh1ZKPAPxaUmyBE/CFy6KZ3QY4B6IPmo+uLMte8S7AYGFoPGVKL1D9y1IoaJpPVCgWa
+         8xg9VJQ7TtRBBP19Q0jPDAa7w++tjd1W3s54YfurbKkvSQFyNFozxzZL9bJCdmEs6Fp5
+         a7rdUIdNLveB4ThvusghF1lcHXcArpA5dXT55pdgpZsJmOjs0Way/Pc0vkMdp6TXXbP5
+         NuQnMewd2Zfs/vePhd+o+nCpstET2MmZ6uqJTnjy6c1B6kt0bGMnDCoeREtlCVyU1LNy
+         V3ZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740042574; x=1740647374;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tHGbytHaJxhAL8vZGdMUoXMQugX3XgdQVbuudxET0Z4=;
-        b=sIVb+/JdOPQoTPbkAmZ8/d95ApEykpWGayxS4zrNkKvIaDcMmVDtA8AEiqMKtB935a
-         L/dZ3SGwC+vtYDoLFxxdcwcPdCKu/sfEO7zx7weYmzb7cp2/BFqRao5lc5qU77nd2ecm
-         kMUi5fg+7+H4esbMG1Vr3+cGV+ng5q55rDALjDWfRfgtIBbpliM4yXA0+091D5jOzSh9
-         k8e/Nykac5CR0aL+9sH9yFsoBh/l7oYUM9mPohH7+XDA+Db9bLe6vwEbFxYc+lcIlV9d
-         Bi18JVQCr5Ll/RoeiwS6b0BFaQal3iNYLvPQ0LOkfGPJhy/LdORVTyM3Awsd33pnEcw4
-         TPrg==
-X-Forwarded-Encrypted: i=1; AJvYcCX4n3x2jA8slshbXk7ZEcY67tx5lMg9r/jhx6EF4O+9MiXxQAzIaZAgzxkLz1N4oEcqd3A47/nVHHaMJoA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQhes3H9nV5DS88e3IqcAr359NlnKeOyjQFh/j11FKqGxWYnRb
-	Bz/f1GGvKhYJrnjnzo8/lTv/1sAsXT+brxucPyfaAZpWiabS6K9o
-X-Gm-Gg: ASbGnctbxIwnEdzfxz03nTk51/eE5MXgL4FgBXBRFi2l5uCYHzm86v9EWKJM0VGqhph
-	zFZkTxDVjLqTZewwQ/v/U5dkFnUr5ZNACPewN5/fRKFXmsVQsjYyGP0pNIHTdKL11wKq0eaDhhs
-	AFfGEJotDE+Z1eB4ALLsKgxgRHZz9/90aeBd7vUyPZn29YYzKQwiEBPEGxgfVfpi22tA5KhmMbP
-	Vw1unDXBdgz4OzWkvn+n9GxmK4+2ShcmEAxkENLZq/tFprha5oqiT8t94dW+0AxqjmWyKQSpRoU
-	QHux9KKrQl2EYVx6RsiacppBXEGBEKFiJZuzFXLAUisJ7bDAydg=
-X-Google-Smtp-Source: AGHT+IFIi6hyOZqSwaeMPedIg7rSy5wMd4IocEWzhh9oOtBkcIlHtqBu+NvxNIAZMYy1VJMLdh4IvQ==
-X-Received: by 2002:a05:6000:18a9:b0:38d:d9e4:9ba6 with SMTP id ffacd0b85a97d-38f33f1233fmr21552131f8f.3.1740042574381;
-        Thu, 20 Feb 2025 01:09:34 -0800 (PST)
+        d=1e100.net; s=20230601; t=1740042576; x=1740647376;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bZEonrFTWZC0/wzk+mguJHa9QjuXrPOV/acUCVXwfDA=;
+        b=ERcW89Vr3HsQ2axnQnnntm8jQyyUHAO2DLbzcawvqjcuEO0+WXNuoPCnAk0rYpFEJS
+         F5AESTcOxTq2go3Su+BZs7XqDfvWhPz3iPgGeMAbMoFkq7+T17t6UIIOgx4xx/HHFjfD
+         vZpfrgsl/GEiG1PxmYnhM2TLZAZDJTATYoKHPINS2mlMujpi6rZHS9zT/s00NhKmVEFO
+         xWZa5mMOexLbJzWgr2nVD3bXrj4/n9O8vcRG9mXUObnh0tjGeB2tSw0v/ixAwC/PakXy
+         7QMFG71lCUN8FzdUNwxQrknWvosEk1er9q2q7rIGEhwZ4MY9AwkmQuXmimKL9XkSgew1
+         h1jw==
+X-Forwarded-Encrypted: i=1; AJvYcCXEDBe5iyEl22BHgkfuXJjr9JjHm3mpe7lP/9vYOalgPXAXCaIw9ScIKGRWZaBUagVRxU5rqrN+MrdzHwE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxvnA7TmJTrtegwjUStAayQ8axUKjGTboPBBFQMvRyMYVvr/yg8
+	C0Vs+L+BJYtZvW9R+P1UfRG/H9N2lYgWCD417QgV7+7X2uirOz4p
+X-Gm-Gg: ASbGncs5+jwZbYc2uZRrVJSRsNlOoeBGXOQJN/BuK7rENTMxCBYcMI0qB/CogYP+rqO
+	jqBeVgS0xUCBF7c1y1F5biBVgkw7GLuQE+7Wrj6BikVs2Qed3C5vdmmjR2g9gdbJDlrwFnEg5Fz
+	6jSfFj5xDyVKSY9/Y4pNf6hIQmxfvs1nBJ5kfpS+1r4cuu+uQa4qxKhBlnEF+6wgj+IFwqv8oZJ
+	3TRyPZDViwnprMEWb75T4ghNCaBefvz2edpt+AkUh9PSE2YFSug92T1ffOpNWbJxzph3Ar0YPFF
+	m+k63I2qoDd86KFGEUTC9IznApQBI9cGqajVZMZv+6MV4tPQZTs=
+X-Google-Smtp-Source: AGHT+IFemaY6KW5kqAH8qxsDWz7jPHuK4AaSqRKmljLKaqd+DR0sOPh+xFT4T8/hkx8EZ+o+Zb2nSA==
+X-Received: by 2002:a5d:5885:0:b0:38d:d99d:d221 with SMTP id ffacd0b85a97d-38f33f3750fmr18352374f8f.1.1740042576341;
+        Thu, 20 Feb 2025 01:09:36 -0800 (PST)
 Received: from localhost.localdomain (82-64-73-52.subs.proxad.net. [82.64.73.52])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f25a0fa2dsm19807960f8f.101.2025.02.20.01.09.33
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f25a0fa2dsm19807960f8f.101.2025.02.20.01.09.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Feb 2025 01:09:33 -0800 (PST)
+        Thu, 20 Feb 2025 01:09:35 -0800 (PST)
 From: Dave Penkler <dpenkler@gmail.com>
 To: gregkh@linuxfoundation.org,
 	linux-staging@lists.linux.dev,
 	linux-kernel@vger.kernel.org
 Cc: Dave Penkler <dpenkler@gmail.com>
-Subject: [PATCH 3/17 V2] staging: gpib: cb7210 console messaging cleanup
-Date: Thu, 20 Feb 2025 10:09:18 +0100
-Message-ID: <20250220090920.32497-1-dpenkler@gmail.com>
+Subject: [PATCH 11/17 V2] staging: gpib: ines console messaging cleanup
+Date: Thu, 20 Feb 2025 10:09:19 +0100
+Message-ID: <20250220090920.32497-2-dpenkler@gmail.com>
 X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250220090920.32497-1-dpenkler@gmail.com>
+References: <20250220090920.32497-1-dpenkler@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,26 +92,22 @@ Content-Transfer-Encoding: 8bit
 
 Enable module name to be printed in pr_xxx and dev_xxx
 Use DRV_NAME defined as KBUILD_MODNAME instead of hard coded
-string "cb7210" everywhere.
+string "ines_gpib" in pci_request_regions, request_irq and
+request_region.
 
-Remove "cb7210:" string prefix in messages since module name
-printing is enabled.
+Remove "ines:" and "ines_gpib:" string prefixes in messages
+since module name printing is enabled.
 
 Change pr_err to dev_err where possible.
 
 Remove interrupt warnings.
 
-Return consistent error codes with error messages:
-  -EBUSY when resources are busy
-  -ENODEV when device is not present
-  -EIO for others.
-
-Return -ENOMEM for failed kmalloc (no message in driver)
-
 Remove PCMCIA debug comments, PCMCIA_DEBUG conditional compilation
 symbol, the DEBUG macro definition and its uses.
 
-Change pr_warn to dev_warn and pr_err to dev_err where possible.
+Change pr_debug to dev_dbg.
+
+Remove pr_info
 
 Remove commented printk.
 
@@ -116,425 +116,344 @@ Signed-off-by: Dave Penkler <dpenkler@gmail.com>
 V1->V2 Rebase to staging-testing
 commit bedc7002f797 ("staging: gpib: ines: remove unused variable")
 
- drivers/staging/gpib/cb7210/cb7210.c | 133 +++++++++++----------------
- 1 file changed, 52 insertions(+), 81 deletions(-)
+ drivers/staging/gpib/ines/ines_gpib.c | 101 +++++++++++---------------
+ 1 file changed, 42 insertions(+), 59 deletions(-)
 
-diff --git a/drivers/staging/gpib/cb7210/cb7210.c b/drivers/staging/gpib/cb7210/cb7210.c
-index eff1872aa9ed..19dfd8b4a8e7 100644
---- a/drivers/staging/gpib/cb7210/cb7210.c
-+++ b/drivers/staging/gpib/cb7210/cb7210.c
+diff --git a/drivers/staging/gpib/ines/ines_gpib.c b/drivers/staging/gpib/ines/ines_gpib.c
+index b9abb2dfa4f3..56da6cd91188 100644
+--- a/drivers/staging/gpib/ines/ines_gpib.c
++++ b/drivers/staging/gpib/ines/ines_gpib.c
 @@ -5,6 +5,10 @@
-  *    copyright            : (C) 2001, 2002 by Frank Mori Hess
+  *			    (C) 2002 by Frank Mori Hess
   ***************************************************************************/
  
 +#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 +#define dev_fmt pr_fmt
 +#define DRV_NAME KBUILD_MODNAME
 +
- #include "cb7210.h"
- #include <linux/ioport.h>
- #include <linux/sched.h>
-@@ -83,12 +87,12 @@ static int fifo_read(gpib_board_t *board, struct cb7210_priv *cb_priv, uint8_t *
+ #include "ines.h"
  
- 	*bytes_read = 0;
- 	if (cb_priv->fifo_iobase == 0)	{
--		pr_err("cb7210: fifo iobase is zero!\n");
-+		dev_err(board->gpib_dev, "fifo iobase is zero!\n");
- 		return -EIO;
+ #include <linux/pci.h>
+@@ -54,7 +58,7 @@ int ines_line_status(const gpib_board_t *board)
+ void ines_set_xfer_counter(struct ines_priv *priv, unsigned int count)
+ {
+ 	if (count > 0xffff) {
+-		pr_err("ines: bug! tried to set xfer counter > 0xffff\n");
++		pr_err("bug! tried to set xfer counter > 0xffff\n");
+ 		return;
  	}
- 	*end = 0;
- 	if (length <= cb7210_fifo_size)	{
--		pr_err("cb7210: bug! %s with length < fifo size\n", __func__);
-+		dev_err(board->gpib_dev, " bug! fifo read length < fifo size\n");
- 		return -EINVAL;
- 	}
- 
-@@ -103,7 +107,6 @@ static int fifo_read(gpib_board_t *board, struct cb7210_priv *cb_priv, uint8_t *
+ 	ines_outb(priv, (count >> 8) & 0xff, XFER_COUNT_UPPER);
+@@ -104,21 +108,18 @@ static ssize_t pio_read(gpib_board_t *board, struct ines_priv *ines_priv, uint8_
+ 					     num_in_fifo_bytes(ines_priv) ||
  					     test_bit(RECEIVED_END_BN, &nec_priv->state) ||
  					     test_bit(DEV_CLEAR_BN, &nec_priv->state) ||
- 					     test_bit(TIMO_NUM, &board->status))) {
--			pr_warn("cb7210: fifo half full wait interrupted\n");
- 			retval = -ERESTARTSYS;
- 			nec7210_set_reg_bits(nec_priv, IMR2, HR_DMAI, 0);
- 			break;
-@@ -153,7 +156,6 @@ static int fifo_read(gpib_board_t *board, struct cb7210_priv *cb_priv, uint8_t *
- 				     test_bit(RECEIVED_END_BN, &nec_priv->state) ||
- 				     test_bit(DEV_CLEAR_BN, &nec_priv->state) ||
- 				     test_bit(TIMO_NUM, &board->status))) {
--		pr_warn("cb7210: fifo half full wait interrupted\n");
- 		retval = -ERESTARTSYS;
- 	}
- 	if (test_bit(TIMO_NUM, &board->status))
-@@ -188,7 +190,6 @@ static int cb7210_accel_read(gpib_board_t *board, uint8_t *buffer,
- 				     test_bit(READ_READY_BN, &nec_priv->state) ||
- 				     test_bit(DEV_CLEAR_BN, &nec_priv->state) ||
- 				     test_bit(TIMO_NUM, &board->status))) {
--		pr_warn("cb7210: read ready wait interrupted\n");
- 		return -ERESTARTSYS;
- 	}
- 	if (test_bit(TIMO_NUM, &board->status))
-@@ -274,7 +275,7 @@ static int fifo_write(gpib_board_t *board, uint8_t *buffer, size_t length, size_
+-					     test_bit(TIMO_NUM, &board->status))) {
+-			pr_warn("gpib: pio read wait interrupted\n");
++					     test_bit(TIMO_NUM, &board->status)))
+ 			return -ERESTARTSYS;
+-		}
++
+ 		if (test_bit(TIMO_NUM, &board->status))
+ 			return -ETIMEDOUT;
+ 		if (test_bit(DEV_CLEAR_BN, &nec_priv->state))
+ 			return -EINTR;
  
- 	*bytes_written = 0;
- 	if (cb_priv->fifo_iobase == 0) {
--		pr_err("cb7210: fifo iobase is zero!\n");
-+		dev_err(board->gpib_dev, "fifo iobase is zero!\n");
- 		return -EINVAL;
- 	}
- 	if (length == 0)
-@@ -293,7 +294,6 @@ static int fifo_write(gpib_board_t *board, uint8_t *buffer, size_t length, size_
- 					     test_bit(DEV_CLEAR_BN, &nec_priv->state) ||
- 					     test_bit(BUS_ERROR_BN, &nec_priv->state) ||
- 					     test_bit(TIMO_NUM, &board->status))) {
--			pr_warn("cb7210: fifo wait interrupted\n");
- 			retval = -ERESTARTSYS;
- 			break;
- 		}
-@@ -309,7 +309,7 @@ static int fifo_write(gpib_board_t *board, uint8_t *buffer, size_t length, size_
- 		if (num_bytes + count > length)
- 			num_bytes = length - count;
- 		if (num_bytes % cb7210_fifo_width) {
--			pr_err("cb7210: bug! %s with odd number of bytes\n", __func__);
-+			dev_err(board->gpib_dev, " bug! fifo write with odd number of bytes\n");
- 			retval = -EINVAL;
- 			break;
- 		}
-@@ -334,7 +334,6 @@ static int fifo_write(gpib_board_t *board, uint8_t *buffer, size_t length, size_
- 				     test_bit(DEV_CLEAR_BN, &nec_priv->state) ||
+ 		num_fifo_bytes = num_in_fifo_bytes(ines_priv);
+-		if (num_fifo_bytes + *nbytes > length)	{
+-			pr_warn("ines: counter allowed %li extra byte(s)\n",
+-				(long)(num_fifo_bytes - (length - *nbytes)));
++		if (num_fifo_bytes + *nbytes > length)
+ 			num_fifo_bytes = length - *nbytes;
+-		}
++
+ 		for (i = 0; i < num_fifo_bytes; i++)
+ 			buffer[(*nbytes)++] = read_byte(nec_priv, DIR);
+ 		if (test_bit(RECEIVED_END_BN, &nec_priv->state) &&
+@@ -199,10 +200,9 @@ static int ines_write_wait(gpib_board_t *board, struct ines_priv *ines_priv,
+ 				     num_out_fifo_bytes(ines_priv) < fifo_threshold ||
  				     test_bit(BUS_ERROR_BN, &nec_priv->state) ||
- 				     test_bit(TIMO_NUM, &board->status))) {
--		pr_err("cb7210: wait for last byte interrupted\n");
- 		retval = -ERESTARTSYS;
+ 				     test_bit(DEV_CLEAR_BN, &nec_priv->state) ||
+-				     test_bit(TIMO_NUM, &board->status))) {
+-		dev_dbg(board->gpib_dev, "gpib write interrupted\n");
++				     test_bit(TIMO_NUM, &board->status)))
+ 		return -ERESTARTSYS;
+-	}
++
+ 	if (test_bit(BUS_ERROR_BN, &nec_priv->state))
+ 		return -EIO;
+ 	if (test_bit(DEV_CLEAR_BN, &nec_priv->state))
+@@ -299,7 +299,7 @@ irqreturn_t ines_interrupt(gpib_board_t *board)
+ 		wake++;
  	}
- 	if (test_bit(TIMO_NUM, &board->status))
-@@ -480,7 +479,7 @@ static irqreturn_t cb7210_internal_interrupt(gpib_board_t *board)
- 	status2 = read_byte(nec_priv, ISR2);
- 	nec7210_interrupt_have_status(board, nec_priv, status1, status2);
+ 	if (isr3_bits & FIFO_ERROR_BIT)
+-		pr_err("ines gpib: fifo error\n");
++		dev_err(board->gpib_dev, "fifo error\n");
+ 	if (isr3_bits & XFER_COUNT_BIT)
+ 		wake++;
  
--	dev_dbg(board->gpib_dev, "cb7210: status 0x%x, mode 0x%x\n", hs_status, priv->hs_mode_bits);
-+	dev_dbg(board->gpib_dev, "status 0x%x, mode 0x%x\n", hs_status, priv->hs_mode_bits);
- 
- 	clear_bits = 0;
- 
-@@ -858,7 +857,7 @@ static int cb7210_allocate_private(gpib_board_t *board)
- 
- 	board->private_data = kmalloc(sizeof(struct cb7210_priv), GFP_KERNEL);
- 	if (!board->private_data)
--		return -1;
-+		return -ENOMEM;
- 	priv = board->private_data;
- 	memset(priv, 0, sizeof(struct cb7210_priv));
- 	init_nec7210_private(&priv->nec7210_priv);
-@@ -920,7 +919,7 @@ static int cb7210_init(struct cb7210_priv *cb_priv, gpib_board_t *board)
- 
- 	/* poll so we can detect assertion of ATN */
- 	if (gpib_request_pseudo_irq(board, cb_pci_interrupt)) {
--		pr_err("pc2_gpib: failed to allocate pseudo_irq\n");
-+		pr_err("failed to allocate pseudo_irq\n");
+@@ -767,16 +767,16 @@ static int ines_common_pci_attach(gpib_board_t *board, const gpib_board_config_t
+ 		} while (1);
+ 	}
+ 	if (!ines_priv->pci_device) {
+-		pr_err("gpib: could not find ines PCI board\n");
++		dev_err(board->gpib_dev, "could not find ines PCI board\n");
  		return -1;
  	}
- 	return 0;
-@@ -960,17 +959,17 @@ static int cb_pci_attach(gpib_board_t *board, const gpib_board_config_t *config)
- 		}
- 	}
- 	if (!cb_priv->pci_device) {
--		pr_warn("cb7210: no supported boards found.\n");
--		return -1;
-+		dev_err(board->gpib_dev, "no supported boards found.\n");
-+		return -ENODEV;
- 	}
  
- 	if (pci_enable_device(cb_priv->pci_device)) {
--		pr_err("cb7210: error enabling pci device\n");
--		return -1;
+ 	if (pci_enable_device(ines_priv->pci_device)) {
+-		pr_err("error enabling pci device\n");
 +		dev_err(board->gpib_dev, "error enabling pci device\n");
-+		return -EIO;
+ 		return -1;
  	}
  
--	if (pci_request_regions(cb_priv->pci_device, "cb7210"))
--		return -1;
-+	if (pci_request_regions(cb_priv->pci_device, DRV_NAME))
-+		return -EBUSY;
- 	switch (cb_priv->pci_chip) {
- 	case PCI_CHIP_AMCC_S5933:
- 		cb_priv->amcc_iobase = pci_resource_start(cb_priv->pci_device, 0);
-@@ -982,13 +981,14 @@ static int cb_pci_attach(gpib_board_t *board, const gpib_board_config_t *config)
- 		cb_priv->fifo_iobase = nec_priv->iobase;
+-	if (pci_request_regions(ines_priv->pci_device, "ines-gpib"))
++	if (pci_request_regions(ines_priv->pci_device, DRV_NAME))
+ 		return -1;
+ 	nec_priv->iobase = pci_resource_start(ines_priv->pci_device,
+ 					      found_id.gpib_region);
+@@ -795,7 +795,7 @@ static int ines_common_pci_attach(gpib_board_t *board, const gpib_board_config_t
+ 	case PCI_CHIP_QUICKLOGIC5030:
  		break;
  	default:
--		pr_err("cb7210: bug! unhandled pci_chip=%i\n", cb_priv->pci_chip);
-+		dev_err(board->gpib_dev, "bug! unhandled pci_chip=%i\n", cb_priv->pci_chip);
- 		return -EIO;
- 	}
+-		pr_err("gpib: unspecified chip type? (bug)\n");
++		dev_err(board->gpib_dev, "unspecified chip type? (bug)\n");
+ 		nec_priv->iobase = 0;
+ 		pci_release_regions(ines_priv->pci_device);
+ 		return -1;
+@@ -811,8 +811,8 @@ static int ines_common_pci_attach(gpib_board_t *board, const gpib_board_config_t
+ #endif
  	isr_flags |= IRQF_SHARED;
--	if (request_irq(cb_priv->pci_device->irq, cb_pci_interrupt, isr_flags, "cb7210", board)) {
--		pr_err("cb7210: can't request IRQ %d\n", cb_priv->pci_device->irq);
--		return -1;
-+	if (request_irq(cb_priv->pci_device->irq, cb_pci_interrupt, isr_flags, DRV_NAME, board)) {
-+		dev_err(board->gpib_dev, "can't request IRQ %d\n",
-+			cb_priv->pci_device->irq);
-+		return -EBUSY;
+ 	if (request_irq(ines_priv->pci_device->irq, ines_pci_interrupt, isr_flags,
+-			"pci-gpib", board)) {
+-		pr_err("gpib: can't request IRQ %d\n", ines_priv->pci_device->irq);
++			DRV_NAME, board)) {
++		dev_err(board->gpib_dev, "can't request IRQ %d\n", ines_priv->pci_device->irq);
+ 		return -1;
  	}
- 	cb_priv->irq = cb_priv->pci_device->irq;
+ 	ines_priv->irq = ines_priv->pci_device->irq;
+@@ -844,7 +844,7 @@ static int ines_common_pci_attach(gpib_board_t *board, const gpib_board_config_t
+ 	case PCI_CHIP_QUICKLOGIC5030:
+ 		break;
+ 	default:
+-		pr_err("gpib: unspecified chip type? (bug)\n");
++		dev_err(board->gpib_dev, "unspecified chip type? (bug)\n");
+ 		return -1;
+ 	}
  
-@@ -1043,20 +1043,22 @@ static int cb_isa_attach(gpib_board_t *board, const gpib_board_config_t *config)
- 		return retval;
- 	cb_priv = board->private_data;
- 	nec_priv = &cb_priv->nec7210_priv;
--	if (!request_region(config->ibbase, cb7210_iosize, "cb7210")) {
--		pr_err("gpib: ioports starting at 0x%x are already in use\n", config->ibbase);
--		return -EIO;
-+	if (!request_region(config->ibbase, cb7210_iosize, DRV_NAME)) {
-+		dev_err(board->gpib_dev, "ioports starting at 0x%x are already in use\n",
+@@ -897,15 +897,16 @@ int ines_isa_attach(gpib_board_t *board, const gpib_board_config_t *config)
+ 	ines_priv = board->private_data;
+ 	nec_priv = &ines_priv->nec7210_priv;
+ 
+-	if (!request_region(config->ibbase, ines_isa_iosize, "ines_gpib")) {
+-		pr_err("ines_gpib: ioports at 0x%x already in use\n", config->ibbase);
+-		return -1;
++	if (!request_region(config->ibbase, ines_isa_iosize, DRV_NAME)) {
++		dev_err(board->gpib_dev, "ioports at 0x%x already in use\n",
 +			config->ibbase);
 +		return -EBUSY;
  	}
  	nec_priv->iobase = config->ibbase;
- 	cb_priv->fifo_iobase = nec7210_iobase(cb_priv);
- 
- 	bits = irq_bits(config->ibirq);
- 	if (bits == 0)
--		pr_err("board incapable of using irq %i, try 2-5, 7, 10, or 11\n", config->ibirq);
-+		dev_err(board->gpib_dev, "board incapable of using irq %i, try 2-5, 7, 10, or 11\n",
-+			config->ibirq);
- 
- 	// install interrupt handler
--	if (request_irq(config->ibirq, cb7210_interrupt, isr_flags, "cb7210", board)) {
--		pr_err("gpib: can't request IRQ %d\n", config->ibirq);
-+	if (request_irq(config->ibirq, cb7210_interrupt, isr_flags, DRV_NAME, board)) {
-+		dev_err(board->gpib_dev, "failed to obtain IRQ %d\n", config->ibirq);
- 		return -EBUSY;
+ 	nec_priv->offset = 1;
+ 	nec7210_board_reset(nec_priv, board);
+-	if (request_irq(config->ibirq, ines_pci_interrupt, isr_flags, "ines_gpib", board)) {
+-		pr_err("ines_gpib: failed to allocate IRQ %d\n", config->ibirq);
++	if (request_irq(config->ibirq, ines_pci_interrupt, isr_flags, DRV_NAME, board)) {
++		dev_err(board->gpib_dev, "failed to allocate IRQ %d\n", config->ibirq);
+ 		return -1;
  	}
- 	cb_priv->irq = config->ibirq;
-@@ -1096,7 +1098,7 @@ static const struct pci_device_id cb7210_pci_table[] = {
- MODULE_DEVICE_TABLE(pci, cb7210_pci_table);
- 
- static struct pci_driver cb7210_pci_driver = {
--	.name = "cb7210",
-+	.name = DRV_NAME,
- 	.id_table = cb7210_pci_table,
- 	.probe = &cb7210_pci_probe
- };
-@@ -1119,23 +1121,6 @@ static struct pci_driver cb7210_pci_driver = {
- #include <pcmcia/cistpl.h>
+ 	ines_priv->irq = config->ibirq;
+@@ -986,13 +987,6 @@ static struct pci_driver ines_pci_driver = {
  #include <pcmcia/ds.h>
+ #include <pcmcia/cisreg.h>
  
--/*
-- * All the PCMCIA modules use PCMCIA_DEBUG to control debugging.  If
-- * you do not define PCMCIA_DEBUG at all, all the debug code will be
-- * left out.  If you compile with PCMCIA_DEBUG=0, the debug code will
-- * be present but disabled -- but it can then be enabled for specific
-- * modules at load time with a 'pc_debug=#' option to insmod.
-- */
--
--#define PCMCIA_DEBUG 1
--
 -#ifdef PCMCIA_DEBUG
 -static int pc_debug = PCMCIA_DEBUG;
--#define DEBUG(n, args...) do {if (pc_debug > (n)) pr_debug(args); } while (0)
+-#define DEBUG(n, args...) do {if (pc_debug > (n)) pr_debug(args)} while (0)
 -#else
 -#define DEBUG(args...)
 -#endif
 -
- /*
-  * The event() function is this driver's Card Services event handler.
-  * It will be called by Card Services when an appropriate card status
-@@ -1200,8 +1185,6 @@ static int cb_gpib_probe(struct pcmcia_device *link)
+ static const int ines_pcmcia_iosize = 0x20;
+ 
+ /*    The event() function is this driver's Card Services event handler.
+@@ -1061,8 +1055,6 @@ static int ines_gpib_probe(struct pcmcia_device *link)
  
  //	int ret, i;
  
--	DEBUG(0, "%s(0x%p)\n", __func__, link);
+-	DEBUG(0, "%s(0x%p)\n", __func__ link);
 -
  	/* Allocate space for private device-specific data */
  	info = kzalloc(sizeof(*info), GFP_KERNEL);
  	if (!info)
-@@ -1241,8 +1224,6 @@ static void cb_gpib_remove(struct pcmcia_device *link)
+@@ -1096,8 +1088,6 @@ static void ines_gpib_remove(struct pcmcia_device *link)
  	struct local_info *info = link->priv;
  	//struct gpib_board_t *dev = info->dev;
  
 -	DEBUG(0, "%s(0x%p)\n", __func__, link);
 -
  	if (info->dev)
- 		cb_pcmcia_detach(info->dev);
- 	cb_gpib_release(link);
-@@ -1270,7 +1251,6 @@ static int cb_gpib_config(struct pcmcia_device  *link)
+ 		ines_pcmcia_detach(info->dev);
+ 	ines_gpib_release(link);
+@@ -1123,7 +1113,6 @@ static int ines_gpib_config(struct pcmcia_device *link)
+ 	void __iomem *virt;
  
- 	handle = link;
  	dev = link->priv;
 -	DEBUG(0, "%s(0x%p)\n", __func__, link);
  
- 	retval = pcmcia_loop_config(link, &cb_gpib_config_iteration, NULL);
+ 	retval = pcmcia_loop_config(link, &ines_gpib_config_iteration, NULL);
  	if (retval) {
-@@ -1279,8 +1259,6 @@ static int cb_gpib_config(struct pcmcia_device  *link)
+@@ -1132,8 +1121,8 @@ static int ines_gpib_config(struct pcmcia_device *link)
  		return -ENODEV;
  	}
  
--	DEBUG(0, "gpib_cs: manufacturer: 0x%x card: 0x%x\n", link->manf_id, link->card_id);
--
- 	/*
- 	 *  This actually configures the PCMCIA socket -- setting up
- 	 *  the I/O windows and the interrupt mapping.
-@@ -1292,7 +1270,6 @@ static int cb_gpib_config(struct pcmcia_device  *link)
+-	pr_debug("ines_cs: manufacturer: 0x%x card: 0x%x\n",
+-		 link->manf_id, link->card_id);
++	dev_dbg(&link->dev, "ines_cs: manufacturer: 0x%x card: 0x%x\n",
++		link->manf_id, link->card_id);
+ 
+ 	/*  for the ines card we have to setup the configuration registers in
+ 	 *	attribute memory here
+@@ -1165,7 +1154,6 @@ static int ines_gpib_config(struct pcmcia_device *link)
+ 		ines_gpib_release(link);
  		return -ENODEV;
  	}
- 
--	pr_info("gpib device loaded\n");
+-	pr_info("ines gpib device loaded\n");
  	return 0;
  } /* gpib_config */
  
-@@ -1304,7 +1281,6 @@ static int cb_gpib_config(struct pcmcia_device  *link)
+@@ -1177,7 +1165,6 @@ static int ines_gpib_config(struct pcmcia_device *link)
  
- static void cb_gpib_release(struct pcmcia_device *link)
+ static void ines_gpib_release(struct pcmcia_device *link)
  {
 -	DEBUG(0, "%s(0x%p)\n", __func__, link);
  	pcmcia_disable_device(link);
- }
+ } /* gpib_release */
  
-@@ -1312,10 +1288,9 @@ static int cb_gpib_suspend(struct pcmcia_device *link)
+@@ -1185,10 +1172,9 @@ static int ines_gpib_suspend(struct pcmcia_device *link)
  {
  	//struct local_info *info = link->priv;
  	//struct gpib_board_t *dev = info->dev;
 -	DEBUG(0, "%s(0x%p)\n", __func__, link);
  
  	if (link->open)
--		pr_warn("Device still open ???\n");
-+		dev_warn(&link->dev, "Device still open\n");
+-		pr_err("Device still open ???\n");
++		dev_err(&link->dev, "Device still open\n");
  	//netif_device_detach(dev);
  
  	return 0;
-@@ -1325,11 +1300,9 @@ static int cb_gpib_resume(struct pcmcia_device *link)
+@@ -1198,11 +1184,9 @@ static int ines_gpib_resume(struct pcmcia_device *link)
  {
- 	//struct local_info *info = link->priv;
+ 	//struct local_info_t *info = link->priv;
  	//struct gpib_board_t *dev = info->dev;
 -	DEBUG(0, "%s(0x%p)\n", __func__, link);
  
  	/*if (link->open) {
  	 *	ni_gpib_probe(dev);	/ really?
--	 *	printk("Gpib resumed ???\n");
+-	 *		printk("Gpib resumed ???\n");
  	 *	//netif_device_attach(dev);
- 	 *
+ 	 *}
  	 */
-@@ -1356,7 +1329,6 @@ static struct pcmcia_driver cb_gpib_cs_driver = {
+@@ -1227,7 +1211,6 @@ static struct pcmcia_driver ines_gpib_cs_driver = {
  
- static void cb_pcmcia_cleanup_module(void)
+ void ines_pcmcia_cleanup_module(void)
  {
--	DEBUG(0, "cb_gpib_cs: unloading\n");
- 	pcmcia_unregister_driver(&cb_gpib_cs_driver);
+-	DEBUG(0, "ines_cs: unloading\n");
+ 	pcmcia_unregister_driver(&ines_gpib_cs_driver);
  }
  
-@@ -1451,8 +1423,8 @@ static int cb_pcmcia_attach(gpib_board_t *board, const gpib_board_config_t *conf
+@@ -1329,7 +1312,7 @@ int ines_common_pcmcia_attach(gpib_board_t *board)
  	int retval;
  
  	if (!curr_dev) {
--		pr_err("no cb pcmcia cards found\n");
--		return -1;
-+		dev_err(board->gpib_dev, "no cb pcmcia cards found\n");
-+		return -ENODEV;
+-		pr_err("no ines pcmcia cards found\n");
++		dev_err(board->gpib_dev, "no ines pcmcia cards found\n");
+ 		return -1;
  	}
  
- 	retval = cb7210_generic_attach(board);
-@@ -1463,18 +1435,17 @@ static int cb_pcmcia_attach(gpib_board_t *board, const gpib_board_config_t *conf
- 	nec_priv = &cb_priv->nec7210_priv;
+@@ -1341,9 +1324,9 @@ int ines_common_pcmcia_attach(gpib_board_t *board)
+ 	nec_priv = &ines_priv->nec7210_priv;
  
- 	if (!request_region(curr_dev->resource[0]->start, resource_size(curr_dev->resource[0]),
--			    "cb7210"))	{
--		pr_err("gpib: ioports starting at 0x%lx are already in use\n",
--		       (unsigned long)curr_dev->resource[0]->start);
--		return -EIO;
-+			    DRV_NAME))	{
-+		dev_err(board->gpib_dev, "ioports starting at 0x%lx are already in use\n",
-+			(unsigned long)curr_dev->resource[0]->start);
-+		return -EBUSY;
+ 	if (!request_region(curr_dev->resource[0]->start,
+-			    resource_size(curr_dev->resource[0]), "ines_gpib")) {
+-		pr_err("ines_gpib: ioports at 0x%lx already in use\n",
+-		       (unsigned long)(curr_dev->resource[0]->start));
++			    resource_size(curr_dev->resource[0]), DRV_NAME)) {
++		dev_err(board->gpib_dev, "ioports at 0x%lx already in use\n",
++			(unsigned long)(curr_dev->resource[0]->start));
+ 		return -1;
  	}
- 	nec_priv->iobase = curr_dev->resource[0]->start;
- 	cb_priv->fifo_iobase = curr_dev->resource[0]->start;
  
--	if (request_irq(curr_dev->irq, cb7210_interrupt, IRQF_SHARED,
--			"cb7210", board)) {
--		pr_err("cb7210: failed to request IRQ %d\n", curr_dev->irq);
--		return -1;
-+	if (request_irq(curr_dev->irq, cb7210_interrupt, IRQF_SHARED, DRV_NAME, board)) {
-+		dev_err(board->gpib_dev, "failed to request IRQ %d\n", curr_dev->irq);
-+		return -EBUSY;
+@@ -1353,7 +1336,7 @@ int ines_common_pcmcia_attach(gpib_board_t *board)
+ 
+ 	if (request_irq(curr_dev->irq, ines_pcmcia_interrupt, IRQF_SHARED,
+ 			"pcmcia-gpib", board))	{
+-		pr_err("gpib: can't request IRQ %d\n", curr_dev->irq);
++		dev_err(board->gpib_dev, "can't request IRQ %d\n", curr_dev->irq);
+ 		return -1;
  	}
- 	cb_priv->irq = curr_dev->irq;
+ 	ines_priv->irq = curr_dev->irq;
+@@ -1416,56 +1399,56 @@ static int __init ines_init_module(void)
  
-@@ -1507,68 +1478,68 @@ static int __init cb7210_init_module(void)
- 
- 	ret = pci_register_driver(&cb7210_pci_driver);
+ 	ret = pci_register_driver(&ines_pci_driver);
  	if (ret) {
--		pr_err("cb7210: pci_register_driver failed: error = %d\n", ret);
+-		pr_err("ines_gpib: pci_register_driver failed: error = %d\n", ret);
 +		pr_err("pci_register_driver failed: error = %d\n", ret);
  		return ret;
  	}
  
- 	ret = gpib_register_driver(&cb_pci_interface, THIS_MODULE);
+ 	ret = gpib_register_driver(&ines_pci_interface, THIS_MODULE);
  	if (ret) {
--		pr_err("cb7210: gpib_register_driver failed: error = %d\n", ret);
+-		pr_err("ines_gpib: gpib_register_driver failed: error = %d\n", ret);
 +		pr_err("gpib_register_driver failed: error = %d\n", ret);
  		goto err_pci;
  	}
  
- 	ret = gpib_register_driver(&cb_isa_interface, THIS_MODULE);
+ 	ret = gpib_register_driver(&ines_pci_unaccel_interface, THIS_MODULE);
  	if (ret) {
--		pr_err("cb7210: gpib_register_driver failed: error = %d\n", ret);
-+		pr_err("gpib_register_driver failed: error = %d\n", ret);
- 		goto err_isa;
- 	}
- 
- 	ret = gpib_register_driver(&cb_pci_accel_interface, THIS_MODULE);
- 	if (ret) {
--		pr_err("cb7210: gpib_register_driver failed: error = %d\n", ret);
-+		pr_err("gpib_register_driver failed: error = %d\n", ret);
- 		goto err_pci_accel;
- 	}
- 
- 	ret = gpib_register_driver(&cb_pci_unaccel_interface, THIS_MODULE);
- 	if (ret) {
--		pr_err("cb7210: gpib_register_driver failed: error = %d\n", ret);
+-		pr_err("ines_gpib: gpib_register_driver failed: error = %d\n", ret);
 +		pr_err("gpib_register_driver failed: error = %d\n", ret);
  		goto err_pci_unaccel;
  	}
  
- 	ret = gpib_register_driver(&cb_isa_accel_interface, THIS_MODULE);
+ 	ret = gpib_register_driver(&ines_pci_accel_interface, THIS_MODULE);
  	if (ret) {
--		pr_err("cb7210: gpib_register_driver failed: error = %d\n", ret);
+-		pr_err("ines_gpib: gpib_register_driver failed: error = %d\n", ret);
 +		pr_err("gpib_register_driver failed: error = %d\n", ret);
- 		goto err_isa_accel;
+ 		goto err_pci_accel;
  	}
  
- 	ret = gpib_register_driver(&cb_isa_unaccel_interface, THIS_MODULE);
+ 	ret = gpib_register_driver(&ines_isa_interface, THIS_MODULE);
  	if (ret) {
--		pr_err("cb7210: gpib_register_driver failed: error = %d\n", ret);
+-		pr_err("ines_gpib: gpib_register_driver failed: error = %d\n", ret);
 +		pr_err("gpib_register_driver failed: error = %d\n", ret);
- 		goto err_isa_unaccel;
+ 		goto err_isa;
  	}
  
  #ifdef CONFIG_GPIB_PCMCIA
- 	ret = gpib_register_driver(&cb_pcmcia_interface, THIS_MODULE);
+ 	ret = gpib_register_driver(&ines_pcmcia_interface, THIS_MODULE);
  	if (ret) {
--		pr_err("cb7210: gpib_register_driver failed: error = %d\n", ret);
+-		pr_err("ines_gpib: gpib_register_driver failed: error = %d\n", ret);
 +		pr_err("gpib_register_driver failed: error = %d\n", ret);
  		goto err_pcmcia;
  	}
  
- 	ret = gpib_register_driver(&cb_pcmcia_accel_interface, THIS_MODULE);
+ 	ret = gpib_register_driver(&ines_pcmcia_unaccel_interface, THIS_MODULE);
  	if (ret) {
--		pr_err("cb7210: gpib_register_driver failed: error = %d\n", ret);
-+		pr_err("gpib_register_driver failed: error = %d\n", ret);
- 		goto err_pcmcia_accel;
- 	}
- 
- 	ret = gpib_register_driver(&cb_pcmcia_unaccel_interface, THIS_MODULE);
- 	if (ret) {
--		pr_err("cb7210: gpib_register_driver failed: error = %d\n", ret);
+-		pr_err("ines_gpib: gpib_register_driver failed: error = %d\n", ret);
 +		pr_err("gpib_register_driver failed: error = %d\n", ret);
  		goto err_pcmcia_unaccel;
  	}
  
- 	ret = pcmcia_register_driver(&cb_gpib_cs_driver);
+ 	ret = gpib_register_driver(&ines_pcmcia_accel_interface, THIS_MODULE);
  	if (ret) {
--		pr_err("cb7210: pcmcia_register_driver failed: error = %d\n", ret);
+-		pr_err("ines_gpib: gpib_register_driver failed: error = %d\n", ret);
++		pr_err("gpib_register_driver failed: error = %d\n", ret);
+ 		goto err_pcmcia_accel;
+ 	}
+ 
+ 	ret = pcmcia_register_driver(&ines_gpib_cs_driver);
+ 	if (ret) {
+-		pr_err("ines_gpib: pcmcia_register_driver failed: error = %d\n", ret);
 +		pr_err("pcmcia_register_driver failed: error = %d\n", ret);
  		goto err_pcmcia_driver;
  	}
