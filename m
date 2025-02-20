@@ -1,95 +1,79 @@
-Return-Path: <linux-kernel+bounces-524507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B4B4A3E3E3
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 19:31:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DC8D5A3E3ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 19:32:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C44243AD561
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 18:31:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 251C73AF71C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 18:32:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92592214A9B;
-	Thu, 20 Feb 2025 18:31:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10F642144C3;
+	Thu, 20 Feb 2025 18:32:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gb70yxo3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PNDGmZCS"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D988920CCC3;
-	Thu, 20 Feb 2025 18:31:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C5ED1B4259;
+	Thu, 20 Feb 2025 18:32:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740076284; cv=none; b=URu0XOLdHS64xLI3EAN+lncr7wCrD3ia26ePtDuEbs7CvxkQmIz3f0/SzRxrw+uL8sfJ5ltgkc5MMpqPTWMp8K24PUtoP6xIgPoyNYyD2w1efJlg4BAy6xq7ZA2kbRv6zsF1ZZMo9xHxe1HPMQ8xHns44BiCeCj9uxR5O6LQg8o=
+	t=1740076344; cv=none; b=Q8+0dW8PemTByourJ+L7JqUFYHqzIORiOcSzc0EitF5N1SWxE9ARggORzP4LToFYURPELGzaR+K51l1XM9f2zTxUn61/A7XGSJJJ1ZlHWlUFyJlUyhb+QoMDJ4AwhxXh8zYvgyN2Ys0+xhiwum6sZ1fUYa+tpp/GeBlcihesAMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740076284; c=relaxed/simple;
-	bh=SNAAWQ33HpVVduE2oRVRlawGqqSdycOEpSVND6/hyV8=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=m8/legu0LkOFfEc/dDvPbZj1ZlIurEJKUIWteJd1m4ovPzjY7NY+hZVT2qj1Gc44sYqilZ3c96CoJLhOMpl/1DpjGxtf3o+fa1rG/2U4YE4GWx7asFwFla/wCe6jI81ckkwJEr922hkQb40axJLx1roXhQeUe9R+PZYcVD2H9i4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gb70yxo3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3CEEBC4CED1;
-	Thu, 20 Feb 2025 18:31:23 +0000 (UTC)
+	s=arc-20240116; t=1740076344; c=relaxed/simple;
+	bh=KlJOptjrK26qqI7fYyBqDOrSDWsN94m39++SbP5EdBs=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Y4WCasYppwd1Hj4wNC8PzkOiEL39v3LmrSL7bhrwytTp/iNyW+cNfZh0YLVXkVDauJBephVDp9Mk3jASgpqHAZd5+6RDV7VbiQOGnl9N12t+YrC0A+s6K6bYAvp9BDBDV+G2rjVNpn8rFVXxzTWSU2sm6HJngfhGKflvk0uZfNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PNDGmZCS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF936C4CED1;
+	Thu, 20 Feb 2025 18:32:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740076283;
-	bh=SNAAWQ33HpVVduE2oRVRlawGqqSdycOEpSVND6/hyV8=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=gb70yxo3D9wzQFqM+oIz4IPWXd/QJIqtMUb8XTPUStiIMP8ctxt5Uup2GZDloVX4I
-	 DYf0W1Fezhs3B37UtFMNkutVePIN1U4qLrO5geX86rSFlz2ncp3FpDOm7hyxlUxDQS
-	 SC1GoAaIzEQLSdsIAJuuiZBbkE7ittigUMh92p/VXnPwc4w1nsJM3p4vU7ZzibQQ25
-	 qFiNcHzG76Co2ilxX+BohbaBOM2gOzneo1rJQqr/fURJYszcYjhAqKs4N18j5c/bp4
-	 BmQ/90AMtNS6JNSX3TRu6rnxknQ4Jvy/++T1dVy+LOld2Am8zktohkD2/MDeiIlqNy
-	 L5UpN9iT8EWJg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 3402F380CEE2;
-	Thu, 20 Feb 2025 18:31:55 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1740076344;
+	bh=KlJOptjrK26qqI7fYyBqDOrSDWsN94m39++SbP5EdBs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=PNDGmZCS7So9OWKTTcvxLUv1MQPsJ9soDwDDyqQPPlfi2KfQ94I6m2iDZcDf6xknC
+	 GTY2pE0PKZ1+vmBwuH/cCl3XnOvXqkoODU2cKozeRDW7EnFt5J7GelBwkXHN18R9k/
+	 FZFKVLuVrLPGq8vZeEro04GSGUIAnxDpT56jmkqKUbV/clgx9UzSwtWmUbpNLsjlTv
+	 OQOGhfgIskf8IZcINd0GZw6ElAH8KZCjYy2APIFmkkReJsEmhl4NyOgYyo0GcKYLSV
+	 euFU5u10F+RV5t76PxFLjEATo0ywO3U4kg2TBxs4n28Nc5W0BIMiqnGKnfZ612FBMz
+	 f8Blyxl6EO1iw==
+Date: Thu, 20 Feb 2025 10:32:23 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Sean Anderson <sean.anderson@linux.dev>
+Cc: patchwork-bot+netdevbpf@kernel.org, nicolas.ferre@microchip.com,
+ claudiu.beznea@tuxon.dev, netdev@vger.kernel.org, davem@davemloft.net,
+ edumazet@google.com, andrew+netdev@lunn.ch, pabeni@redhat.com,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 0/2] net: cadence: macb: Modernize statistics
+ reporting
+Message-ID: <20250220103223.5f2c0c58@kernel.org>
+In-Reply-To: <1510cd3c-b986-4da2-aaa3-0214e4f43fe6@linux.dev>
+References: <20250214212703.2618652-1-sean.anderson@linux.dev>
+	<173993104298.103969.17353080742885832903.git-patchwork-notify@kernel.org>
+	<12896f89-e99c-4bbc-94c1-fac89883bd92@linux.dev>
+	<20250220085945.14961e28@kernel.org>
+	<561bc925-d9ad-4fe3-8a4e-18489261e531@linux.dev>
+	<20250220101823.20516a77@kernel.org>
+	<1510cd3c-b986-4da2-aaa3-0214e4f43fe6@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] hid: intel-thc: fix CONFIG_HID dependency
-From: patchwork-bot+bluetooth@kernel.org
-Message-Id: 
- <174007631401.1417233.14540583372854918839.git-patchwork-notify@kernel.org>
-Date: Thu, 20 Feb 2025 18:31:54 +0000
-References: <20250123134908.805346-1-arnd@kernel.org>
-In-Reply-To: <20250123134908.805346-1-arnd@kernel.org>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: jikos@kernel.org, bentiss@kernel.org, srinivas.pandruvada@linux.intel.com,
- mpearson-lenovo@squebb.ca, arnd@arndb.de, basavaraj.natikar@amd.com,
- even.xu@intel.com, xinpeng.sun@intel.com, luzmaximilian@gmail.com,
- marcel@holtmann.org, johan.hedberg@gmail.com, luiz.dentz@gmail.com,
- dmitry.torokhov@gmail.com, linux-input@vger.kernel.org,
- linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
- linux-usb@vger.kernel.org, linux-bluetooth@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello:
-
-This patch was applied to bluetooth/bluetooth-next.git (master)
-by Jiri Kosina <jkosina@suse.com>:
-
-On Thu, 23 Jan 2025 14:48:12 +0100 you wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
+On Thu, 20 Feb 2025 13:22:29 -0500 Sean Anderson wrote:
+> > If no - will the code in net still work (just lacking lock protection)?
+> > 
+> > If there is a conflict you can share a resolution with me and I'll slap
+> > it on as part of the merge.  
 > 
-> In drivers/hid/, most drivers depend on CONFIG_HID, while a couple of the
-> drivers in subdirectories instead depend on CONFIG_HID_SUPPORT and use
-> 'select HID'. With the newly added INTEL_THC_HID, this causes a build
-> warning for a circular dependency:
-> 
-> [...]
+> OK, what's the best way to create that? git rerere?
 
-Here is the summary with links:
-  - hid: intel-thc: fix CONFIG_HID dependency
-    https://git.kernel.org/bluetooth/bluetooth-next/c/a5a056c8d2ba
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+rerere image or a three way diff will work
 
