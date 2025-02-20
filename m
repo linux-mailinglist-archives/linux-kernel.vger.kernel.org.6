@@ -1,70 +1,65 @@
-Return-Path: <linux-kernel+bounces-523852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57DFCA3DC08
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:05:36 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F484A3DC18
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:07:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02AC23BD447
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:04:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 51FEE16C425
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:06:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D4BE1B85CC;
-	Thu, 20 Feb 2025 14:05:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 346B81C1F07;
+	Thu, 20 Feb 2025 14:06:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3Gw7b11A";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pfLMZvzL"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="btmol7l+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A20E233985
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 14:05:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47E3E1A8F94;
+	Thu, 20 Feb 2025 14:06:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740060303; cv=none; b=oTQOKGOAAU0PvvkIJys2UumwT6pU3cQOv13w2XxOb1XHX+NHwOJ8nBX7kol+MsmqI7ioNgYQcao6cE1nlWa+1YRtkhY+C5rGHzwu1ctKDthU3hsVqgwE41oB3Smf+7HFRtXHSNoy8noAT6Q+JB13iRAIL8BSlQxsaBjrcSHv3cc=
+	t=1740060392; cv=none; b=unMqydj/LulESYOddfqj63/ooyal//Nmo7UbUcp30faAJgTgP/vmpIyfr54vCvgLi1CEmBIxOKOmxjnCDkdDcyVgmLUGMW8Z+mb90/2D8wGaXjZ6fivEjAMOas1s1UeHV00HxGfM7Jq8nxIHoO9r3dcW97Trg2MPIPZXyxMtvLo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740060303; c=relaxed/simple;
-	bh=XIPdRxF0jRCkVl8AX6evKiKXtPkJXWbZ/BVPmKmEdNE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ReUL4b43Gt7sSBuxj87Tu1SJoz1vg5LamLGeVGFwF8XIQ/uwNqHYEqbFNu6mkYRHzU3552Y36mJu0x4VhNShapspbbXYYWf2IUkBq1IzNVPbuWtJbp2IvsLRO9fwNNWghSyXVAwOgkB3vPLFdDWwYH0lccfbrPE5TaU/DQn6B/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3Gw7b11A; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pfLMZvzL; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1740060294;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mJmBnGypEHoshKrGLRN5jC34a8kVfNK01sMA/Czi5OI=;
-	b=3Gw7b11APOMge83I18WLFgvE9Artj5/oY5HZ2engrvTDAQl39ZEvjXprWcql/prERL57D9
-	2F3yawaFpk7dRTuHiVsQeDjXCozxs0FjRTUljsAcedN34WYCkcUK4tOreU2cs2JFohHr1h
-	/uT/h7APK8FuKJo2+YQ1KsTFPbqDoonPjPmjzVaIisJAc9pJF5XQQD1BC7vLM+3joIG7jr
-	OAdGdwj7Mx1x7RfLeHIQIxxzMjA95s/GptOI7KMbJvftSb09zqzEya9sVlf4by8LKDQijZ
-	B1bRserO2yeQc93qDq4sPSDrg2WOe8HHV1qCvZq6Hz8LRRTxt/HbtyTIN6LdCA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1740060294;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mJmBnGypEHoshKrGLRN5jC34a8kVfNK01sMA/Czi5OI=;
-	b=pfLMZvzLiuE6o/kcwx/IgArD4nN3xIyKSYXUNheLoREopF7/Yw2PmGop/D8Gezf8JH2qtt
-	O7rMBInUiUMU7GDA==
-To: Eric Dumazet <edumazet@google.com>
-Cc: Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker
- <frederic@kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>,
- Benjamin Segall <bsegall@google.com>, Eric Dumazet
- <eric.dumazet@gmail.com>
-Subject: Re: [PATCH V2 1/4] posix-timers: Make next_posix_timer_id an atomic_t
-In-Reply-To: <CANn89i+LJFHhA=VF2T5v_kN0=sFLeropuRERnhWdadj5w6kiyw@mail.gmail.com>
-References: <20250219125522.2535263-1-edumazet@google.com>
- <20250219125522.2535263-2-edumazet@google.com> <87wmdlhwa8.ffs@tglx>
- <CANn89i+LJFHhA=VF2T5v_kN0=sFLeropuRERnhWdadj5w6kiyw@mail.gmail.com>
-Date: Thu, 20 Feb 2025 15:04:53 +0100
-Message-ID: <87h64oiuey.ffs@tglx>
+	s=arc-20240116; t=1740060392; c=relaxed/simple;
+	bh=4oo5bwiM+XhKfUR8UYyGQVQWQ/6Ov6wGIKczUKT0zuU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EAm3ZB5L12/umHboqDi2IKSuOUVC02hExqFtx4T7Kyce992jW+qF8iqE7reJW6+XimuD8NyDSYByePL0Bkla2uZ5q5+6Yket4rZ3c2G60mXaNLsXzY9Ta8aUBpPuT8PIK6aXS6Jop0zHl/cFQXgNc9PMbxUmn6qeEiCzT0EOXDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=btmol7l+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B85BC4CEDD;
+	Thu, 20 Feb 2025 14:06:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1740060391;
+	bh=4oo5bwiM+XhKfUR8UYyGQVQWQ/6Ov6wGIKczUKT0zuU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=btmol7l+E9F0Dq7CHFxzj9ptIoP+WuCKdQeF+u8NmZcIuPkyJT5yDE84M3+w0mGE/
+	 p/2qSrormQ0zOOprtPL8ucuyM3VHc7dHH7VBp0EWNDJDfNSbLCDVQSzYiq5Orhkqic
+	 7RCgsE2BhKYMI1t2f75vNDYQLIB6HMfqUkhwybrk=
+Date: Thu, 20 Feb 2025 15:06:28 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: =?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>, Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Grant Likely <grant.likely@secretlab.ca>,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>, Binbin Zhou <zhoubinbin@loongson.cn>,
+	linux-sound@vger.kernel.org,
+	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
+	=?iso-8859-1?Q?Gr=E9gory?= Clement <gregory.clement@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Tawfik Bayouk <tawfik.bayouk@mobileye.com>, stable@vger.kernel.org
+Subject: Re: [PATCH 0/2] driver core: platform: avoid use-after-free on
+ device name
+Message-ID: <2025022004-scheming-expend-b9b3@gregkh>
+References: <20250218-pdev-uaf-v1-0-5ea1a0d3aba0@bootlin.com>
+ <2025022005-affluent-hardcore-c595@gregkh>
+ <D7XB6MXRYVLY.3RM4EJEWD1IQM@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,34 +67,73 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <D7XB6MXRYVLY.3RM4EJEWD1IQM@bootlin.com>
 
-On Thu, Feb 20 2025 at 09:49, Eric Dumazet wrote:
-> On Thu, Feb 20, 2025 at 9:09=E2=80=AFAM Thomas Gleixner <tglx@linutronix.=
-de> wrote:
->> > This allows the following patch to use RCU.
->>
->> Your patch ordering is slightly off by two :)
->>
->> And it fails to explain for what RCU can be used....
->
-> This is explained in the following patches.
+On Thu, Feb 20, 2025 at 02:31:29PM +0100, Théo Lebrun wrote:
+> Hello Greg,
+> 
+> On Thu Feb 20, 2025 at 1:41 PM CET, Greg Kroah-Hartman wrote:
+> > On Tue, Feb 18, 2025 at 12:00:11PM +0100, Théo Lebrun wrote:
+> >> The use-after-free bug appears when:
+> >>  - A platform device is created from OF, by of_device_add();
+> >>  - The same device's name is changed afterwards using dev_set_name(),
+> >>    by its probe for example.
+> >> 
+> >> Out of the 37 drivers that deal with platform devices and do a
+> >> dev_set_name() call, only one might be affected. That driver is
+> >> loongson-i2s-plat [0]. All other dev_set_name() calls are on children
+> >> devices created on the spot. The issue was found on downstream kernels
+> >> and we don't have what it takes to test loongson-i2s-plat.
+> >> 
+> >> Note: loongson-i2s-plat maintainers are CCed.
+> >> 
+> >>    ⟩ # Finding potential trouble-makers:
+> >>    ⟩ git grep -l 'struct platform_device' | xargs grep -l dev_set_name
+> >> 
+> >> The solution proposed is to add a flag to platform_device that tells if
+> >> it is responsible for freeing its name. We can then duplicate the
+> >> device name inside of_device_add() instead of copying the pointer.
+> >
+> > Ick.
+> >
+> >> What is done elsewhere?
+> >>  - Platform bus code does a copy of the argument name that is stored
+> >>    alongside the struct platform_device; see platform_device_alloc()[1].
+> >>  - Other busses duplicate the device name; either through a dynamic
+> >>    allocation [2] or through an array embedded inside devices [3].
+> >>  - Some busses don't have a separate name; when they want a name they
+> >>    take it from the device [4].
+> >
+> > Really ick.
+> >
+> > Let's do the right thing here and just get rid of the name pointer
+> > entirely in struct platform_device please.  Isn't that the correct
+> > thing that way the driver core logic will work properly for all of this.
+> 
+> I would agree, if it wasn't for this consideration that is found in the
+> commit message [0]:
 
-The changelog of a patch has to be self contained. The 'following patch'
-has no meaning when the patch is merged.
+What, that the of code is broken?  Then it should be fixed, why does it
+need a pointer to a name at all anyway?  It shouldn't be needed there
+either.
 
-> If I add nothing in the changelog, you complain the changelog is not
-> explaining anything.
->
-> I suggest you write the patches. because I feel a huge resistance,
-> which I do not understand.
+> > It is important to duplicate! pdev->name must not change to make sure
+> > the platform_match() return value is stable over time. If we updated
+> > pdev->name alongside dev->name, once a device probes and changes its
+> > name then the platform_match() return value would change.
+> 
+> I'd be fine sending a V2 that removes the field *and the fallback* [1],
+> but I don't have the full scope in mind to know what would become broken.
+> 
+> [0]: https://lore.kernel.org/lkml/20250218-pdev-uaf-v1-2-5ea1a0d3aba0@bootlin.com/
+> [1]: https://elixir.bootlin.com/linux/v6.13.3/source/drivers/base/platform.c#L1357
 
-I'm just asking that I get properly written change logs which adhere to
-the documented change log requirements.
+The fallback will not need to be removed, properly point to the name of
+the device and it should work correctly.
 
-How does that qualify as resistance?
+thanks,
 
-Thanks,
-
-        tglx
+greg k-h
 
