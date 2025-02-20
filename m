@@ -1,113 +1,117 @@
-Return-Path: <linux-kernel+bounces-523067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E58BAA3D19A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 07:59:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 293D7A3D1A4
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 08:01:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F15A171845
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 06:59:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C89B17B280
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 07:01:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDDAB1E47A9;
-	Thu, 20 Feb 2025 06:59:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 854A91E4929;
+	Thu, 20 Feb 2025 07:01:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YKZouwLo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="N3ej72+O"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40A8F1DEFF7;
-	Thu, 20 Feb 2025 06:59:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73370157A6B;
+	Thu, 20 Feb 2025 07:01:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740034788; cv=none; b=Yaw0R9qbG/8h7jLV8c7tfdqOdKWotJF3V/X4/3BRxJ9/nLvl/YOb3nQH3H377T04+SiUiGmFmaovzZ+PUh1sxTepYSdgcSLcO2WKQRmTV3ynR8NoHtch0h+z62rxxK+IJcFlx3BEZmhI6V9fdb4UekJU4AwKAVA6degQKlag1LA=
+	t=1740034883; cv=none; b=AU83OdxN6FpIE2gLPjLIXhcJrjBscnQo0ZDbjsadqCHpKYiKHLxhx3saaLfhgTZEsjehC3mFr41n00iouRs+R3WsmfjquxHpVdps7dLPhmKF8pNbde5RD/EleP6FKDGYKucu4Cm/HNpPiUK4mhQp37EX4/yTs3eH1dPoSJ3GcR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740034788; c=relaxed/simple;
-	bh=H/yMB8RtQkvn72FexcC+tGE6YCZ9EmaqgGYEZeoF8eg=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=IYJPULXoffW4cY611YbeUSxlZ8UAI44ZWcfE0vD+incRX41h9Fhzr99dm+8PDVXzKu6KUYT/1FjeOw/xVVLlvAl6T8zUn921UOz2GdRslXLIbwB1tWSbH7J3jhA8uhPoQaqRr3j3mlCK6AbCvKwgYdOZWxwcrrXqEKE4d0kKoO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YKZouwLo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21B2AC4CED1;
-	Thu, 20 Feb 2025 06:59:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740034787;
-	bh=H/yMB8RtQkvn72FexcC+tGE6YCZ9EmaqgGYEZeoF8eg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=YKZouwLolbtiGDjWlDK9GDbyGZfTAcUxh9VwCfUDnSXmQ565GHrqrndpZOrucjH1Z
-	 jUpoLx/4YMc0EIuabtmSj3pMqLnLplIWF/+lM2Yuu1t+19J1AYxAS1w7rM+Z8ilhoc
-	 Vo2pHSFWFNYmbTbCdQvNrsLDsQpGTqno1BFQuamPa0wtH/wdP5khXWvoF2wR20g4Sy
-	 mHR2BzF6jR2m44YKUbJI8NDOvSjalPfkfDLHXO2DIgRWwgJSV4WhBowoQtkAjeMGqR
-	 sVS3LQYwUrOrfOqvOWecaH1Bj3OTRU2+h0fh8GjfX64IPMhEuGv7JVSdFXfLL2wbLg
-	 hV1f1Nhik//nA==
-Date: Thu, 20 Feb 2025 15:59:44 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Masami
- Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Morton
- <akpm@linux-foundation.org>, Heiko Carstens <hca@linux.ibm.com>, Sven
- Schnelle <svens@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
- Alexander Gordeev <agordeev@linux.ibm.com>, stable@vger.kernel.org
-Subject: Re: [PATCH v2 2/5] ftrace: Do not add duplicate entries in subops
- manager ops
-Message-Id: <20250220155944.821ccc0cd98594b924c2752e@kernel.org>
-In-Reply-To: <20250219220511.054985490@goodmis.org>
-References: <20250219220436.498041541@goodmis.org>
-	<20250219220511.054985490@goodmis.org>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1740034883; c=relaxed/simple;
+	bh=26eFTRZNda2g/l0fm5nsuNjO8hSgHFfk2fxuVdVq0Tw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=qQEwoQk6Uui8i17EJqpoTAXAC4cjywtsm+Pn3NhIyV4NywUnb09rBXKqdP6dowptIXQjOaXNKPRq5o2cXFoU8rLNRvfBWwrNp1MBnrlKE/avUtDrQEzHOJQ4R2Ycm6F0QhZ6zRs0uHWeNOMfnRFN/axFhGT8cS2opSi26I7q0UA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=N3ej72+O; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 7b282760ef5811ef8eb9c36241bbb6fb-20250220
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=DkG/UtvUD1vBAFGouo8/8ihRmf6ROZf+6eSQ45AQQnA=;
+	b=N3ej72+OLCobJlZYGvkdnZZowyFJwoNEd6q2T6DmNgL/IO6cA2Sim7eW8IXN/H/Y0qQW+P9HU9oHjOsFssyfOBNURGkU2TBOGBSJEyQmfGwY8JNTsaylcnJda+aIswH2QF//LN41YdFTBAq0bpekhNZAWz24d6pgAlIj2q8Zgfk=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.46,REQID:ca8ba0b9-548a-4f0d-af05-c64bb62d9203,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:60aa074,CLOUDID:cda55bb5-a2a1-4ef3-9ef9-e116773da0a7,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:-3,IP:ni
+	l,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
+	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 7b282760ef5811ef8eb9c36241bbb6fb-20250220
+Received: from mtkmbs09n2.mediatek.inc [(172.21.101.94)] by mailgw02.mediatek.com
+	(envelope-from <bo.kong@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1151868900; Thu, 20 Feb 2025 15:01:17 +0800
+Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
+ mtkmbs13n2.mediatek.inc (172.21.101.108) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.28; Thu, 20 Feb 2025 15:01:16 +0800
+Received: from mszsdhlt06.gcn.mediatek.inc (10.16.6.206) by
+ mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1258.28 via Frontend Transport; Thu, 20 Feb 2025 15:01:15 +0800
+From: bo.kong <bo.kong@mediatek.com>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Conor
+ Dooley <conor+dt@kernel.org>, mtk29348 <Bo.Kong@mediatek.com>,
+	<linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-mediatek@lists.infradead.org>
+CC: <Project_Global_Chrome_Upstream_Group@mediatek.com>,
+	<zhaoyuan.chen@mediatek.com>, <teddy.chen@mediatek.com>
+Subject: [PATCH v4 0/4] Add MTK AIE Driver For MT8188
+Date: Thu, 20 Feb 2025 14:59:49 +0800
+Message-ID: <20250220070114.15015-1-bo.kong@mediatek.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On Wed, 19 Feb 2025 17:04:38 -0500
-Steven Rostedt <rostedt@goodmis.org> wrote:
+From: Bo Kong <Bo.Kong@mediatek.com>
 
-> From: Steven Rostedt <rostedt@goodmis.org>
-> 
-> Check if a function is already in the manager ops of a subops. A manager
-> ops contains multiple subops, and if two or more subops are tracing the
-> same function, the manager ops only needs a single entry in its hash.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 4f554e955614f ("ftrace: Add ftrace_set_filter_ips function")
-> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+AIE(AI Engine) is one of the units in mt8188 ISP which
+provides hardware accelerated face detection function,
+it can detect different sizes of faces in a raw image.
 
-Looks good to me.
+Bo Kong (4):
+  media: dt-bindings: add MT8188 AIE
+  arm64: dts: mt8188: add aie node
+  uapi: linux: add MT8188 AIE
+  media: mediatek: add MT8188 AIE driver
 
-Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-
-Thank you,
-
-> ---
->  kernel/trace/ftrace.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-> index 03b35a05808c..189eb0a12f4b 100644
-> --- a/kernel/trace/ftrace.c
-> +++ b/kernel/trace/ftrace.c
-> @@ -5717,6 +5717,9 @@ __ftrace_match_addr(struct ftrace_hash *hash, unsigned long ip, int remove)
->  			return -ENOENT;
->  		free_hash_entry(hash, entry);
->  		return 0;
-> +	} else if (__ftrace_lookup_ip(hash, ip) != NULL) {
-> +		/* Already exists */
-> +		return 0;
->  	}
->  
->  	entry = add_hash_entry(hash, ip);
-> -- 
-> 2.47.2
-> 
-> 
-
+ .../bindings/media/mediatek,mt8188-aie.yaml   |   90 +
+ arch/arm64/boot/dts/mediatek/mt8188.dtsi      |   33 +
+ drivers/media/platform/mediatek/Kconfig       |    1 +
+ drivers/media/platform/mediatek/Makefile      |    1 +
+ drivers/media/platform/mediatek/aie/Kconfig   |   12 +
+ drivers/media/platform/mediatek/aie/Makefile  |    5 +
+ drivers/media/platform/mediatek/aie/mtk_aie.h | 1181 +++++++++
+ .../media/platform/mediatek/aie/mtk_aie_53.c  | 1300 ++++++++++
+ .../media/platform/mediatek/aie/mtk_aie_drv.c | 2309 +++++++++++++++++
+ drivers/media/v4l2-core/v4l2-ioctl.c          |    3 +
+ include/uapi/linux/mtk_aie_v4l2_controls.h    |  134 +
+ include/uapi/linux/videodev2.h                |    6 +
+ 12 files changed, 5075 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/mediatek,mt8188-aie.yaml
+ create mode 100644 drivers/media/platform/mediatek/aie/Kconfig
+ create mode 100644 drivers/media/platform/mediatek/aie/Makefile
+ create mode 100644 drivers/media/platform/mediatek/aie/mtk_aie.h
+ create mode 100644 drivers/media/platform/mediatek/aie/mtk_aie_53.c
+ create mode 100644 drivers/media/platform/mediatek/aie/mtk_aie_drv.c
+ create mode 100644 include/uapi/linux/mtk_aie_v4l2_controls.h
 
 -- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+2.45.2
+
 
