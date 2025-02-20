@@ -1,253 +1,223 @@
-Return-Path: <linux-kernel+bounces-524309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A328EA3E199
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:58:28 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 109E1A3E19C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:58:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D770B423021
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:57:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B802B7A26D2
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:56:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31BD1212D8B;
-	Thu, 20 Feb 2025 16:56:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E5D020D4E2;
+	Thu, 20 Feb 2025 16:57:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="TGpBSv7s"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2071.outbound.protection.outlook.com [40.107.93.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="WRAG8TLS";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="3qcjb+yB";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="WRAG8TLS";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="3qcjb+yB"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 830AE17A2F0;
-	Thu, 20 Feb 2025 16:56:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.71
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740070579; cv=fail; b=Ypyf81Bdxql1YDWbXxmOJwFU9+RVhvCvRo5KWwOs64ZlBr0tdVzhlCaiK1uMsZK8s265/s0V7BFFbY9BuPJBaMjDyDaYK6GEuHv6pgfk7fT+mkh0lAFsNwec12DEycvsWWUKfM0QnA7h7TCU9S2uofYEq/299tl4jsTh5BiCpGo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740070579; c=relaxed/simple;
-	bh=5rxotAFbPU1Mz3TiSaoWHEeE672X5vboVRmknwcMT6U=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=J88kNE2Rsv8jsMzlTQWqek9YalCEagki2kORc7NoL6yZZrnAvf0WgZt5CW8izNdVdAKvulfvpxtWbrWAqG+IoGGl1waPDyqXqBD9qJl19MNMnWXjOqMGQgvOlnnr1suQVgmWC0q1rpJy1qWZ+bvmP5HFaVhesCE00qDpo+nlg60=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=TGpBSv7s; arc=fail smtp.client-ip=40.107.93.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=UW+EwnSGJloXf3WusifbY/0thLHe72rOcvTV9W9UtJDbv8rS00BMV1vNi78zunztd4taEhVK6GqvV6szVgA6j2D0SON+f/uG+hVVDel5Jqq0LGdAP4IU2GxU2CUtaFY9ddG63fRtW/vMb70DuuTPtjPAn0QERtufHPZCGabg4pRRT3Iru9SINTzKb8TtFNLj5o/5o6qPv9LzW7aPyYsaDuHe8hWBkK1x85febnQY9keVAVFRYRpnrbkKC99mDW0iX5Ne239bCri64Xysb3qH0NqTt4iSW2kGBC7+q3XUclCnxw9vPlrdIx8DGhldQVb4cQ/IMFpURIf8vrhMHxv8xQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5HxxE/A/zfWy/8taLKaULkgtUVrVfZA9XI89oehlev8=;
- b=l7evWMqndVIRtgR6tlIt2alWQywTreENfm9r6U/8f/vFMjl2xU8O+edjYgjyZDzP7+V+gFfJFxBfx049iWdKsv0yLUb3t1fzyeQt2CW34MqABMUzabSMdXFBVOBbupfAifHzn9XepNxX9EqPag8cvcf+8Kfm0xJcg9eyWamynJ3OOxT59AJgPWUpia311amEcHVP08n5BwLVVhFBanIJEe3Gf/XzrZPyO34igonvJ1Zg5Iku3K7nN8i+HmmfN9PPGyeCMyssQOB8E7cnhXLO4YTIa61xuVNL95NAiNux+/jEQ1rp7+h6sXBFos3quOYHIBgsZp7KPCg6vo1AU7bP5w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5HxxE/A/zfWy/8taLKaULkgtUVrVfZA9XI89oehlev8=;
- b=TGpBSv7sGxZa1vwGIiIra0YOkFDbsiPv3/ViywaYPDTgZZnNAh58p4hQqUgYy0YwLjTsL1bNMElE2Il5XBZSJxBsdhi522eUbMx7mcRa4aWH6FlCPoWURYPR8mq90EO8bnTEFzgjgpXzZMg4mVI66YHX2x3c2MO0PyHJAZgjGRc=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from MW6PR12MB7087.namprd12.prod.outlook.com (2603:10b6:303:238::14)
- by MN6PR12MB8491.namprd12.prod.outlook.com (2603:10b6:208:46f::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.16; Thu, 20 Feb
- 2025 16:56:15 +0000
-Received: from MW6PR12MB7087.namprd12.prod.outlook.com
- ([fe80::41ae:52ce:aaf4:eda]) by MW6PR12MB7087.namprd12.prod.outlook.com
- ([fe80::41ae:52ce:aaf4:eda%6]) with mapi id 15.20.8466.015; Thu, 20 Feb 2025
- 16:56:14 +0000
-Message-ID: <a0b3ca3d-4f16-4f2b-95b9-cb7df51b2f09@amd.com>
-Date: Thu, 20 Feb 2025 10:56:11 -0600
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 6/9] KVM: selftests: Add library support for
- interacting with SNP
-To: Sean Christopherson <seanjc@google.com>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org, kvm@vger.kernel.org,
- linux-crypto@vger.kernel.org, linux-kselftest@vger.kernel.org,
- pbonzini@redhat.com, thomas.lendacky@amd.com, tglx@linutronix.de,
- mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
- shuah@kernel.org, pgonda@google.com, ashish.kalra@amd.com, nikunj@amd.com,
- pankaj.gupta@amd.com, michael.roth@amd.com, sraithal@amd.com
-References: <20250203223205.36121-1-prsampat@amd.com>
- <20250203223205.36121-7-prsampat@amd.com> <Z6wDiOGjSElatLBd@google.com>
- <ecaee27e-c121-4831-9764-043d2e6230cf@amd.com> <Z7YM-hu-xfVGbAad@google.com>
-Content-Language: en-US
-From: Pratik Rajesh Sampat <prsampat@amd.com>
-In-Reply-To: <Z7YM-hu-xfVGbAad@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SA1PR05CA0020.namprd05.prod.outlook.com
- (2603:10b6:806:2d2::22) To MW6PR12MB7087.namprd12.prod.outlook.com
- (2603:10b6:303:238::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 322641D5CDD
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 16:57:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740070659; cv=none; b=pVyLb/qYUZ/mt4Regoe3jI2I9CmNJ+tE+pb/9k8dddzMNYIdMoSrexQ23EL2DLetYY2MF17F/ywJnTeaZWFXziEgatoETW4rHkO0SDFUkx1E7brcsURt6ZMu96gNyxCtS6UxZut1hwtkiXSLW5EJbeJg9FcYEiuuqV6w84Jvuz4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740070659; c=relaxed/simple;
+	bh=XKX4Aucp/sBQshrMZR2LOMDydJSQWtIZFAAPJdcspIo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HmR4ZFUU7UffkAR7X+m27f9PJpr+ec/5SgphOkkc7mx0vy2JX8uehkaVNkis9fcdDIAgRIrjYr//BMCCR9jmPVTwCpmeVfTIZNz7bCsJxGMBFANw5aPT55B3O2ySTiANXsXY+RhNIONfURwOyzPL7vLGLBI1Or/bnExYThgY6wA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=WRAG8TLS; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=3qcjb+yB; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=WRAG8TLS; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=3qcjb+yB; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from localhost (unknown [10.100.12.32])
+	by smtp-out1.suse.de (Postfix) with ESMTP id 45FF721174;
+	Thu, 20 Feb 2025 16:57:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1740070656; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=AAje/oszgqXSx3kWAldq5HwVj5OdtILzxGPWJh8nXcM=;
+	b=WRAG8TLSypGQ5C466jsiybvF2rx1BbQ4YXGiULc5T1WjBBMQMMS52pS4+K2TNj/zsPM2sn
+	JuR6P5Qp3ib3PiWZf+v9N2AknxrG6LY+d9zj+cYuUNA8nul5lVGymKdByh3HwYuZtqhCwQ
+	mRPI/hNfy6iyTcAa49pm0LCISTL8XAQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1740070656;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=AAje/oszgqXSx3kWAldq5HwVj5OdtILzxGPWJh8nXcM=;
+	b=3qcjb+yB67/aGGYDFCnH2i57/Z4h7UfX8KLx9GCpinpge687TQPf0+n8Khrc12fdlN1TK7
+	tO/2SgvjOlBWMcBg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1740070656; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=AAje/oszgqXSx3kWAldq5HwVj5OdtILzxGPWJh8nXcM=;
+	b=WRAG8TLSypGQ5C466jsiybvF2rx1BbQ4YXGiULc5T1WjBBMQMMS52pS4+K2TNj/zsPM2sn
+	JuR6P5Qp3ib3PiWZf+v9N2AknxrG6LY+d9zj+cYuUNA8nul5lVGymKdByh3HwYuZtqhCwQ
+	mRPI/hNfy6iyTcAa49pm0LCISTL8XAQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1740070656;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=AAje/oszgqXSx3kWAldq5HwVj5OdtILzxGPWJh8nXcM=;
+	b=3qcjb+yB67/aGGYDFCnH2i57/Z4h7UfX8KLx9GCpinpge687TQPf0+n8Khrc12fdlN1TK7
+	tO/2SgvjOlBWMcBg==
+Date: Thu, 20 Feb 2025 17:57:36 +0100
+From: Jiri Bohac <jbohac@suse.cz>
+To: Baoquan He <bhe@redhat.com>, Vivek Goyal <vgoyal@redhat.com>,
+	Dave Young <dyoung@redhat.com>, kexec@lists.infradead.org
+Cc: Philipp Rudo <prudo@redhat.com>, Donald Dutile <ddutile@redhat.com>,
+	Pingfan Liu <piliu@redhat.com>, Tao Liu <ltao@redhat.com>,
+	linux-kernel@vger.kernel.org,
+	David Hildenbrand <dhildenb@redhat.com>,
+	Michal Hocko <mhocko@suse.cz>
+Subject: [PATCH v2 5/5] x86: implement crashkernel cma reservation
+Message-ID: <Z7dfAFIP2Ne0QFOy@dwarf.suse.cz>
+References: <Z7dc9Cd8KX3b_brB@dwarf.suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MW6PR12MB7087:EE_|MN6PR12MB8491:EE_
-X-MS-Office365-Filtering-Correlation-Id: dd4af7ef-1883-456c-e369-08dd51cf7c93
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?bXcyRzBDaGNuSlVRUjk2UjB3ME9WK0FaNnNnbldLaG1BakNYOS9FZVJOdTVv?=
- =?utf-8?B?bmZTWG1nT1FoYUU0WFVZdHpkc2Fvc1JKMDRIbXpJMFBiUysyZ2tnL0R6dml2?=
- =?utf-8?B?aWlVQjFYd0pIaGdNOWR3bnRqSVArMXdNRTYrVTc0ek5Ra3pkQzhrc281VEZk?=
- =?utf-8?B?RGhXUHlWT3lRV2NuUWJvR1lNU1pYTUpxTFJ5V1g3V3ZWVjF3Y1ZIWHlRZURU?=
- =?utf-8?B?Zm50S2Q3SnBSRjFCNVlEMVQvVDBTQ2dweVBjWElaZ1RJcTVjb0p5dmNSdXQr?=
- =?utf-8?B?dHAyNW1CVWdvNGtaeXI2VUkxSkNtOVozaU81Vi9YbXlMN21iRml6dXBCd0Rv?=
- =?utf-8?B?L2dBT2ZCTVExMFNBS1c1RG5teTJObTZPRTdCRHFBUWpIaU9yWjBXTnpDQ2hX?=
- =?utf-8?B?MytZd0VKdWtZUHYrWWFoUjRVU0x1S0lYZE9jVEJCUnBnbjVRdUd6MDM4RHhQ?=
- =?utf-8?B?YW9zeHNFaWpwV1g5RmQ3T2xSc1JZQUg1ZjdNUnh3cnZ3WmNqZlkrYzAyZGR2?=
- =?utf-8?B?QVBQMWpqT3h0NVBnL3pLVGlCdHZIcGpBQTlCd3hBdzJ4VnlWWURiUzBBQW1F?=
- =?utf-8?B?NDVZb2ZmQWtPendhdGFzRmFRd09GU3JQVk9yVmptK0dOSFJralM2bkdNa1ZH?=
- =?utf-8?B?N3U5NE02QXhUcENxSXFhemJHamdLV1cwSmo1UVV2YVI0aHltS3cyYU1jOVUz?=
- =?utf-8?B?eFkzbkZXZm5rSWZja3NDUE9STTVLbnJtNDNpOWJUc1JIVDhyVHJMdExHTHlL?=
- =?utf-8?B?b3M1aHE1OUZKd20wUFJlUW0yRTZZU1dZaUY3akNob1dWT1QzcDNIL0JVd2FC?=
- =?utf-8?B?YWJ2a2YrMnV3eUppWHUxZGpaUmw3WUJtZHJ3Qktqd3E3RnIvOWpIUS9NMHVh?=
- =?utf-8?B?QmkzQU5naWJ5eXczalU4N2FjdFFJN1Q2bjhZNEQ0RXdMS0xQcHQzaXVSYi9y?=
- =?utf-8?B?UGM1YndCWmZKZkI1NzZCay9VeWF6S3VPQVRTaHM1RnVUTzgxanVFb0h3eldo?=
- =?utf-8?B?U003cXRIWTlob0NwNVRSRENrQ2lwekhNVkdiRjJscHlLQkFNS2JEVWhzSzJu?=
- =?utf-8?B?MjZjSEJsQ2tXUHB1UXdaVkJnM1FDR1kzMldYei9uOXdTeGJ3RUtpNWlXNFEy?=
- =?utf-8?B?dUViKzZkNmhYdHVKMXBwckc0elprbzdmSVNYNkdNcEtUbzV0eVBVTVlQdS9x?=
- =?utf-8?B?QWRFem5jcVlianFHT2VGSmEwME1IRmFuajBSVTI4Ty9GcVp3Njd6c012K0Rs?=
- =?utf-8?B?RWkxQUpMOERHVWZ6Wnd1K1JsQTgzeEJTVmhjcDNWaHZiVVZTN09hRStUbjV6?=
- =?utf-8?B?VFBSRjMzc0tLOWY3b3VVeWdWeHVIaC8reEdTaWlsY09lUWc5S2xjRzNFdlhI?=
- =?utf-8?B?YXpNbGlQL2tCckFMWk1yRzE2R1dnZEI0YnhmVVk4WTB2WmtmZVN1SkVvS2hO?=
- =?utf-8?B?VkhLNXpTVTN3MjBiWjYzSlFHTGZEbUVtV3hoUTEwdS94cTRMSmt4VVdJUG9E?=
- =?utf-8?B?bisycUg5NEg1UTFSKzVQT004OUF5Q1ZTbllwZFRyM1E5eldSR2lMa1RzTHJ3?=
- =?utf-8?B?ZW5MR3EzSE95VllOZUN2YW0zMlJwbW1sS3VzUWlvN1A1U0ZScFJTZmFzTHpT?=
- =?utf-8?B?cDFrSUJURGtnMnIydnpPQkgydW8vVXE5ZCtHM3hkcGtKM2czTXNQRmd1Z0Jm?=
- =?utf-8?B?MzU1QjNkeDdoRjlyZ1htNEdZZmlramY5bU5TR1FsMnZFekxrWnM0QVpMT08v?=
- =?utf-8?B?SGlqY1pxd255ZmZLZHpYS2psVXhtdmFueHE5Y1ZjeVpRWHAyTTlvZ01Xa2lT?=
- =?utf-8?B?QVZUUzdOTXl6R0hvOWs0Q1N1YzFRR1J5c3Uzdk9uWmwxZEh6dHo2QVZtc0Fp?=
- =?utf-8?Q?GwIBBcstlkZxs?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW6PR12MB7087.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?a0pCOSt0ZS9JM1hnSDg3aTIzQjZUNlhqL0ZZRVJHVWZwRVRMZThFT3NHMDVR?=
- =?utf-8?B?OXhENDV6Z1lEVlgwUmxsaldQbjVmWWZiRFlGMjE2dUlrZFE5MjR4SlAzUlRj?=
- =?utf-8?B?VFVORUpaVEI3UHE1V1V4NmVEMDg4SDcvL3d0SjB1WEZkOVU4d1hHMVhDUy84?=
- =?utf-8?B?a3VpdEtBKy9DYnZLZ0Fta3llT1BURm1samhSdW9zUVA5YkhtTVRNR3VUVTVo?=
- =?utf-8?B?ZzlLMTBxQmZvKy9mSHcwc1MxNkJxWXNZWnV0V3NDWW1sVHdHYlE1VGd2RnRQ?=
- =?utf-8?B?cjlnbnVkRU9xRnI1dXV1QTAwMkpXZTNpdDFnUGRCNVpzZzhQNy91TUdRc3Js?=
- =?utf-8?B?TWp2R0JDb2FPT3RXNlFzQjNwOWh3cWlkUE45V05UcllYekRZYnNWUUh2QzJz?=
- =?utf-8?B?L0NhNjFuM2Fkb3h3bnpTZTN1SXhJd3ZmSzhsdENtM2ZxZXJuVFFUR29LTGhL?=
- =?utf-8?B?bDNKT3VZU0hpR3BndW8rMm10L1JKY3ZxTkFBQ2JEZXowUk9TV2tLRHM5RUZ2?=
- =?utf-8?B?cWFlb2p0M3d5YkNReGNtWXo5UHhWbFd4Z2lYYzhNS0FWb0cwcmtLdlhyTFlq?=
- =?utf-8?B?RlhsRjZ6RWpYU2Jkb0JpNk1FbWN4Z0VSYVpkNzRnMk9QN290QWtzNW5za1h1?=
- =?utf-8?B?cjRTMSsrclRPZE12NjYvMTQ0anFETjJFRlRVdGhyRGRDYkxkL0g3dW5FcU5I?=
- =?utf-8?B?VEJ1NWdvY0pCekRnK1hRNUxNU0prZFNQMnR4TlZlQytYM0JkZFAxcWhYd1o3?=
- =?utf-8?B?ME82d0djVFRVWEZsRlllR0NwMXRXMVlDOVJMZkJsK1dLZm14MlJWVnYxdWp4?=
- =?utf-8?B?S0Jod0RnMlBGUWhjbUZWN0NQYkdJMjNWeU83Vko1aXRGZlZzK1RXSGpwZ0k2?=
- =?utf-8?B?RTNPdkxyZHZEZXgwVmVQTU1uSm51UmErcnJXYVVqMmFVNUFJWERML1dwa1d6?=
- =?utf-8?B?WFNsWHZQRXlDUW5nM2NMOTBYMkxJNGhWWktublA2Uk5pNEdLWm8rVjFpZkNa?=
- =?utf-8?B?L1ZUY2RtSklJY1dNR0syNnR0a3ZPR2lHTWtJVlEyby83SHVCbHAzVUFWdG56?=
- =?utf-8?B?QThZbjJqZEcvb2NqUGllZTRQRWlxb2VtUXdDejZoTExLZGkzNnpBSkJlSlJ1?=
- =?utf-8?B?VkxPT1NFdUllZVp6RzhwUlBZZHhmWTJzSUF5VllWS2VPQjRwankwRkJOai9w?=
- =?utf-8?B?dzNtYmhtRFV0T0NoZVUxY0ZvbUJiS3JWb2N3OWZpU1J0YkV1NTNTNm9qRVNP?=
- =?utf-8?B?RE9NbWdVRTZNaktBQXFFYWpwUmtvaEFtN3JuT2trdlJJYlFXWUEyS3hYVy91?=
- =?utf-8?B?S01qZHJYcGJ6TTdxY3J0YUhNYU10ZkFNNlNmRDFuQlNqREFrUitSY0RBbnZs?=
- =?utf-8?B?VUQwMU1ldllRUUpVNlYxWHI4aEZHUWlwRTZmd1p4VWV6TDFCT0pXTmI5MStu?=
- =?utf-8?B?V1VIanlEM0FCTlREcUdTbUFOai9la2tGU0JrdW5hYmdrVkVWdTJpMmJQWUtE?=
- =?utf-8?B?RUNBQjRLaVlyWktOTVBmVVp1LzFLZGZ1YXN0N01ObzhnakR2SmxiRWFiakE0?=
- =?utf-8?B?K0hOMHp3bHZoT08rL3NQbU5YTnhNZnlMTTNobFdhUEhVSml4VERGaTR4YUdh?=
- =?utf-8?B?MTFaQktnSmQvaHYzdXFrQk83WTNUOG5mYitjWEt4a21qa3FzZURNVmh3ZnJW?=
- =?utf-8?B?K1JPWkxqU3hkS1NBdWxRNnl6WFZDZzF6S0h1b2lkcG5pMDdCREZmOEhBZWJY?=
- =?utf-8?B?NHZrd3lRNWVZWEFnMElReE93SXF6TlphWjJrZzlsRUVDVUxLVlIwUE05bGRI?=
- =?utf-8?B?Y1FDbERuQWJkbmdVajN3dVBpRmEvdVlFa0pNZzhEWlV0NzRPa1IvMGl0UDdy?=
- =?utf-8?B?UnVLMmFSSlBvS1UrNkNFai9OYjlsRkc4b3d2a2ZjRllveVVCby9GcE9YSVFG?=
- =?utf-8?B?SEszQ2lnSW5YeUI1MlZRUVV0aGtaVENPMUNsRGJaOGRDZ0d6ejN1MW1DVGd2?=
- =?utf-8?B?cFVtZlpZdnAxQTIrRGVscXY4L3pqazJueVVpY1JvdjBIVjdUeitGbjQyZDJs?=
- =?utf-8?B?MUlhTzBTc1VQNjBwQ1NKY0k3aWxJSytVb2ZEN3lmMXZXMlA3dTVQMnpkRE55?=
- =?utf-8?Q?qjHcBOwrUDkQUWUXqGjnxmMAh?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: dd4af7ef-1883-456c-e369-08dd51cf7c93
-X-MS-Exchange-CrossTenant-AuthSource: MW6PR12MB7087.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Feb 2025 16:56:14.8842
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: FLPqQrh4XMuxhtzp+crzYAkR5z2ehMrkR6disoa8zVUz3ddsdIVJgMPrtd9Nmitb7LUm5TICX5GPJnQLVkKdYA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN6PR12MB8491
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z7dc9Cd8KX3b_brB@dwarf.suse.cz>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.26 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.16)[-0.782];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_ZERO(0.00)[0];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	MID_RHS_MATCH_FROMTLD(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,localhost:helo,dwarf.suse.cz:mid]
+X-Spam-Score: -4.26
+X-Spam-Flag: NO
 
+Implement the crashkernel CMA reservation for x86:
+- enable parsing of the cma suffix by parse_crashkernel()
+- reserve memory with reserve_crashkernel_cma()
+- add the CMA-reserved ranges to the e820 map for the crash kernel
+- exclude the CMA-reserved ranges from vmcore
 
+Signed-off-by: Jiri Bohac <jbohac@suse.cz>
+---
+ arch/x86/kernel/crash.c | 26 ++++++++++++++++++++++----
+ arch/x86/kernel/setup.c |  5 +++--
+ 2 files changed, 25 insertions(+), 6 deletions(-)
 
-On 2/19/25 10:55 AM, Sean Christopherson wrote:
-> On Fri, Feb 14, 2025, Pratik Rajesh Sampat wrote:
->> On 2/11/25 8:12 PM, Sean Christopherson wrote:
->>> On Mon, Feb 03, 2025, Pratik R. Sampat wrote:
->>>> Extend the SEV library to include support for SNP ioctl() wrappers,
->>>> which aid in launching and interacting with a SEV-SNP guest.
->>>>
->>>> Tested-by: Srikanth Aithal <sraithal@amd.com>
->>>> Signed-off-by: Pratik R. Sampat <prsampat@amd.com>
->>
->> [..snip..]
->>
->>>> +/*
->>>> + * A SEV-SNP VM requires the policy reserved bit to always be set.
->>>> + * The SMT policy bit is also required to be set based on SMT being
->>>> + * available and active on the system.
->>>> + */
->>>> +static inline u64 snp_default_policy(void)
->>>> +{
->>>> +	bool smt_active = false;
->>>> +	FILE *f;
->>>> +
->>>> +	f = fopen("/sys/devices/system/cpu/smt/active", "r");
->>>
->>> Please add a helper to query if SMT is enabled.  I doubt there will ever be many
->>> users of this, but it doesn't seem like something that should buried in SNP code.
->>>
->>> Ha!  smt_possible() in tools/testing/selftests/kvm/x86/hyperv_cpuid.c is already
->>> guilty of burying a related helper, and it looks like it's a more robust version.
->>>
->>
->> You're right, a more general helper is in order here.
->>
->> Since the hyperv_cpuid selftest only seems to care about whether SMT is
->> possible (i.e., it may or may not be enabled) and we care about it being
->> enabled as well, for the flag to be set. I should make a more generic
->> variant(s) that can be accessible to both. Maybe I can implement it
->> within testing/selftests/kvm/include/x86_processor.h?
-> 
-> It should go in kvm_util.h, /sys/devices/system/cpu/smt/active is a generic interface
-> provided by kernel/cpu.c.
-> 
+diff --git a/arch/x86/kernel/crash.c b/arch/x86/kernel/crash.c
+index 340af8155658..70823fa9abea 100644
+--- a/arch/x86/kernel/crash.c
++++ b/arch/x86/kernel/crash.c
+@@ -163,10 +163,10 @@ static struct crash_mem *fill_up_crash_elf_data(void)
+ 		return NULL;
+ 
+ 	/*
+-	 * Exclusion of crash region and/or crashk_low_res may cause
+-	 * another range split. So add extra two slots here.
++	 * Exclusion of crash region, crashk_low_res and/or crashk_cma_ranges
++	 * may cause range splits. So add extra slots here.
+ 	 */
+-	nr_ranges += 2;
++	nr_ranges += 2 + crashk_cma_cnt;
+ 	cmem = vzalloc(struct_size(cmem, ranges, nr_ranges));
+ 	if (!cmem)
+ 		return NULL;
+@@ -184,6 +184,7 @@ static struct crash_mem *fill_up_crash_elf_data(void)
+ static int elf_header_exclude_ranges(struct crash_mem *cmem)
+ {
+ 	int ret = 0;
++	int i;
+ 
+ 	/* Exclude the low 1M because it is always reserved */
+ 	ret = crash_exclude_mem_range(cmem, 0, SZ_1M - 1);
+@@ -198,8 +199,17 @@ static int elf_header_exclude_ranges(struct crash_mem *cmem)
+ 	if (crashk_low_res.end)
+ 		ret = crash_exclude_mem_range(cmem, crashk_low_res.start,
+ 					      crashk_low_res.end);
++	if (ret)
++		return ret;
+ 
+-	return ret;
++	for (i = 0; i < crashk_cma_cnt; ++i) {
++		ret = crash_exclude_mem_range(cmem, crashk_cma_ranges[i].start,
++					      crashk_cma_ranges[i].end);
++		if (ret)
++			return ret;
++	}
++
++	return 0;
+ }
+ 
+ static int prepare_elf64_ram_headers_callback(struct resource *res, void *arg)
+@@ -352,6 +362,14 @@ int crash_setup_memmap_entries(struct kimage *image, struct boot_params *params)
+ 		add_e820_entry(params, &ei);
+ 	}
+ 
++	for (i = 0; i < crashk_cma_cnt; ++i) {
++		ei.addr = crashk_cma_ranges[i].start;
++		ei.size = crashk_cma_ranges[i].end -
++			  crashk_cma_ranges[i].start + 1;
++		ei.type = E820_TYPE_RAM;
++		add_e820_entry(params, &ei);
++	}
++
+ out:
+ 	vfree(cmem);
+ 	return ret;
+diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
+index 853afde761a7..90e10a18f0c9 100644
+--- a/arch/x86/kernel/setup.c
++++ b/arch/x86/kernel/setup.c
+@@ -471,7 +471,7 @@ static void __init memblock_x86_reserve_range_setup_data(void)
+ 
+ static void __init arch_reserve_crashkernel(void)
+ {
+-	unsigned long long crash_base, crash_size, low_size = 0;
++	unsigned long long crash_base, crash_size, low_size = 0, cma_size = 0;
+ 	char *cmdline = boot_command_line;
+ 	bool high = false;
+ 	int ret;
+@@ -481,7 +481,7 @@ static void __init arch_reserve_crashkernel(void)
+ 
+ 	ret = parse_crashkernel(cmdline, memblock_phys_mem_size(),
+ 				&crash_size, &crash_base,
+-				&low_size, NULL, &high);
++				&low_size, &cma_size, &high);
+ 	if (ret)
+ 		return;
+ 
+@@ -492,6 +492,7 @@ static void __init arch_reserve_crashkernel(void)
+ 
+ 	reserve_crashkernel_generic(cmdline, crash_size, crash_base,
+ 				    low_size, high);
++	reserve_crashkernel_cma(cma_size);
+ }
+ 
+ static struct resource standard_io_resources[] = {
 
-Sure, I will move it to the kvm_util header.
-
->>>> @@ -93,7 +124,7 @@ void sev_vm_launch(struct kvm_vm *vm, uint32_t policy)
->>>>  	TEST_ASSERT_EQ(status.state, SEV_GUEST_STATE_LAUNCH_UPDATE);
->>>>  
->>>>  	hash_for_each(vm->regions.slot_hash, ctr, region, slot_node)
->>>> -		encrypt_region(vm, region);
->>>> +		encrypt_region(vm, region, 0);
->>>
->>> Please add an enum/macro instead of open coding a literal '0'.  I gotta assume
->>> there's an appropriate name for page type '0'.
->>>
->>
->> For SNP, we supply this parameter to determine the page type for SNP
->> launch update defined as KVM_SEV_SNP_PAGE_TYPE_*. For SEV/SEV-ES,
->> however, the page type doesn't really get factored in and falls through
->> unaccounted in that case, so I had passed a zero to it.
->>
->> Having said that, having a literal here is quite unclean. Maybe I can
->> pass one of the existing page types to it or, better yet, define a new
->> KVM_SEV_PAGE_TYPE_[RESERVED|UNUSED] type instead for our selftest
->> header?
-> 
-> Ya, define something new and arbitrary.  I vote for either KVM_SEV_PAGE_TYPE_NONE
-> or KVM_SEV_PAGE_TYPE_INVALID.  RESERVED suggests the page is "valid" but reserved
-> for some entity.  Ditto for UNUSED; valid, but not yet claimed.
-
-Got it.
-Thank you!
+-- 
+Jiri Bohac <jbohac@suse.cz>
+SUSE Labs, Prague, Czechia
 
 
