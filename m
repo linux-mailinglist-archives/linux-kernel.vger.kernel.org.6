@@ -1,150 +1,158 @@
-Return-Path: <linux-kernel+bounces-522836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 974CCA3CEF2
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 02:53:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 062E9A3CEF1
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 02:53:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 555AA16625D
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 01:53:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06BC3189C1B8
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 01:53:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B79331C4A24;
-	Thu, 20 Feb 2025 01:53:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A6A21CD1E0;
+	Thu, 20 Feb 2025 01:53:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TkjzE/qa"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="G1QVR7lv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 564471C5D79
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 01:53:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9759C1CAA89;
+	Thu, 20 Feb 2025 01:53:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740016389; cv=none; b=qbg1ZjkAfFQqf5QxdgreFNzHJNyk6EfxtW8OjNUhL7KGAad9fnukqvejX4xr3x0NMKBNRtkcRLCAM1WHND56C7QmiSrNzJDHju3zQjUmQg/lb0yp/DBNsgtAbYb0kDMWaslhPPiqB+Gg3dXPr/jRvs470rRhm8fqwGtZWd0Qi2M=
+	t=1740016392; cv=none; b=aiA2gdR9RAF2Ve63U/AdjWsq9VK5pOvBHOYH13gsFuFOY90kcgRZpK/I8x/elPYFXC876MmRZdZnBOEp8twODnaFG77flVAS40GCZwSsF+DlPNTqa1BriTh+ffs8jyrGFwD4ryHeJxJaeUZgKgGC68pPiCk79T9q6Tr8CRqf4XM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740016389; c=relaxed/simple;
-	bh=VsWYuOocFG8H9OvoYBsSenQTRN91GcfiNLb0Cptd6h0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=H2SP5oHcm2rLOS7ng0GEZK352aJqS81uEz8I9a+Qmt60YYoQY/mhUw0pT90reuzUOBNf8Mcp8PzcGV9zTdQ4shLsz+P6B37pFvkDfhEPi2Soq73UZgH2jUW49/vPmhuVMfbO6VQ6niKrBS7hhNaxOG5yRJUV6x/9P9DETZtBJxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TkjzE/qa; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5dedae49c63so766546a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 17:53:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740016385; x=1740621185; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VsWYuOocFG8H9OvoYBsSenQTRN91GcfiNLb0Cptd6h0=;
-        b=TkjzE/qaArzkBjtk6nf58sqaeFaxMjsUrZonh9t/3nZFzPQQVNJ6/DY6bYsLjejNFd
-         cmenkq19R63mjYWPEmf+dVfTyCffcxLZIaapCIsk8jAMNLas6f0RnDQ/K5WSWvxSvsaz
-         pgpDUxH6aP0qvypDkE8zKLHEjlGpMp1QUAJLisUaDn+gt4ZFPGsJxfp3W8IOVXjT0Ero
-         zNwmf74u0x808sFk238W5+hHwIABtduhW8KU04ClLLbAsDEasrsRcZT6K6ZlmJ0b9UPX
-         s48guJ0ctN+8itJ7jIUDKNHUgl4a746Rnl6eZ7nBdECBCpNW5dSeoJ7v4q835qkupuQE
-         D76w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740016385; x=1740621185;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VsWYuOocFG8H9OvoYBsSenQTRN91GcfiNLb0Cptd6h0=;
-        b=YXY17yblyZYn5TKDbCEUlG8QLrkgJyp3HNd/3lb1IG0aPc7soglEswUuectBZiIJce
-         DuLgF0yVnokpq0v15KNZ+NEOP+qreafb9uAuiyhUsBcRWLgOJlO6oNwU1ns3KzZ32hPr
-         FJLIb9uqTBQ7Bi90kUpyreTCW4JwT8NQQPye5PykArBb1ovqaspogQQU6xpE9xz+rdle
-         FFxAfy/1hY5ioZnGwl1t7E8vycznJO/R6l/S/pvAQV7baNHuniLVq6puSUbVXGZMgMyV
-         Nd/6WR7ZmhuwbawACsbWtVp1RI1w891J/3hM7wH5GMcEE4KJ4UcR/5UdofAL+SLxamtD
-         7cuw==
-X-Forwarded-Encrypted: i=1; AJvYcCUdc7daSHHwar+o3oTLpCKMnC7ITEVgsnb3KRMWImWfpJMfbkoQm6qmVuUSbes6EGCPhZbz+8aKrQlPRyk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkYcQu7YbsnvHz/wKiul+RBLeX3lNZVGADmOHB6E/6luF56Ef/
-	9YR/mfDCz2LMSGgOwAV7rYOcyVcwnwLtyqSSa88WLLYSrmSdHf4sfM91bEu3gU71B7eaXs9Rcxd
-	qVOF9TWU2eNjOYamctkcKrxPVaKI=
-X-Gm-Gg: ASbGncsx2kkAKB60jVGvqMuQDSlR/UOMwINc2WF+pzPpLxHEdaWm1DwOaeH/DdNCLAr
-	akrYaJxLtQFjUxoIJRc5Hylc5vOOSC78Y5vgDaa9UkeBbZtANn9335HhmEdgmbDJVjQVGsMpUcN
-	g=
-X-Google-Smtp-Source: AGHT+IFhzt2J0AqeR+vIAI7bZz8MxZFOD0m8T0wn4hNryhSisAcfEXygPVO/cJgQ5GIN8SMpY2LtadfxFH0d+fL5HyA=
-X-Received: by 2002:a05:6402:1ec5:b0:5df:35ff:dc47 with SMTP id
- 4fb4d7f45d1cf-5e0361c0cd7mr19614345a12.26.1740016385488; Wed, 19 Feb 2025
- 17:53:05 -0800 (PST)
+	s=arc-20240116; t=1740016392; c=relaxed/simple;
+	bh=UTuww2EikEdSjoMQ2T/aSQurNuOKitapWdKE5z0My2M=;
+	h=Date:From:To:Cc:Subject:Message-Id:Mime-Version:Content-Type; b=tdYDqDcsFL/UGriBMahr93/EILD5b6nlj+24oKqaiSP49hA+ezKYJIePacSoafiwAlXGOx1BTSccerBNfPpQh0WpfNhdWCja7Kzjeym4AqGrvg2g10HXbB+nkx6ex9fFdpgSKFPbdTvv74LVYY61BqvkaJAWH/bb0Q7BVtD7AAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=G1QVR7lv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FDA9C4AF0C;
+	Thu, 20 Feb 2025 01:53:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1740016392;
+	bh=UTuww2EikEdSjoMQ2T/aSQurNuOKitapWdKE5z0My2M=;
+	h=Date:From:To:Cc:Subject:From;
+	b=G1QVR7lvDQD8Wtmi4Elsm1T8qIcTOXfKNIIPm5f8TQde8TcbDiQqmJwuBCE8H5jf6
+	 0b3unfiZK3Ds6ZmJo8V9S4ufrvSIt+hHCZBRwwN32O58jOq7Tem+rDFl951keVffkH
+	 DskLDHVP/ROGvJFKDHTwbE5wFIxWbFS9kMb0dSJY=
+Date: Wed, 19 Feb 2025 17:53:11 -0800
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-mm@kvack.org, mm-commits@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: [GIT PULL] hotfixes for 6.14-rc4
+Message-Id: <20250219175311.7a5b47084de5ad0258526be2@linux-foundation.org>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <173997003868.2137198.9462617208992136056.stgit@mhiramat.tok.corp.google.com>
- <173997004932.2137198.7959507113210521328.stgit@mhiramat.tok.corp.google.com>
- <20250219112308.5d905680@gandalf.local.home> <0fa9dd8e-2d83-487e-bfb1-1f5d20cd9fe6@redhat.com>
- <20250219152435.35077ac3@gandalf.local.home> <db4ee5e9-56bb-408c-85e7-f93e2c3226dc@redhat.com>
- <20250220075639.298616eb494248d390417977@kernel.org> <20250219185531.1140c3c4@gandalf.local.home>
-In-Reply-To: <20250219185531.1140c3c4@gandalf.local.home>
-From: Lance Yang <ioworker0@gmail.com>
-Date: Thu, 20 Feb 2025 09:52:29 +0800
-X-Gm-Features: AWEUYZkkvsksjNhmabBQW4GXcXWCnpHKpxhhJ7xinS7Xw-NdASDGtQ3beXYnghQ
-Message-ID: <CAK1f24kngiS4=mz09xAT31E7waHU8dPWrvWmv0SrJhnH9cjsxg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] hung_task: Show the blocker task if the task is hung
- on mutex
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>, Waiman Long <llong@redhat.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Boqun Feng <boqun.feng@gmail.com>, 
-	Joel Granados <joel.granados@kernel.org>, Anna Schumaker <anna.schumaker@oracle.com>, 
-	Kent Overstreet <kent.overstreet@linux.dev>, Yongliang Gao <leonylgao@tencent.com>, 
-	Tomasz Figa <tfiga@chromium.org>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
-	linux-kernel@vger.kernel.org, 
-	Linux Memory Management List <linux-mm@kvack.org>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Feb 20, 2025 at 7:55=E2=80=AFAM Steven Rostedt <rostedt@goodmis.org=
-> wrote:
->
-> On Thu, 20 Feb 2025 07:56:39 +0900
-> Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
->
-> > > >> this field, we don't need to take lock, though taking the wait_loc=
-k may
-> > > >> still be needed to examine other information inside the mutex.
-> >
-> > Do we need to take it just for accessing owner, which is in an atomic?
->
-> Updating the task_struct would be in the same location as the blocked_on =
-is
-> anyway. I would make it into a wrapper function that is a nop when disabl=
-ed.
->
-> >
-> > > > But perhaps if we add a new config option for this feature, we coul=
-d just
-> > > > add the lock that a task is blocked on before it goes to sleep and
-> > > > reference that instead. That would be easier than trying to play ga=
-mes
-> > > > getting the lock owner from the blocked_on field.
-> > >
-> > > Yes, it could be a new config option. This will be a useful feature t=
-hat
-> > > I believe most distros will turn it on. Or we may just include that i=
-n
-> > > the core code without any option.
-> >
-> > Do we need another option? or just extend DETECT_HUNG_TASK?
->
-> DETECT_HUNG_TASK is just that, for detecting hung tasks. This adds more
-> information to that, which increases the size of the task_struct not to
-> mention adds code in the mutex/rwsem handlers.
->
-> I would definitely make it a separate config that may depend on
-> DETECT_HUNG_TASK.
 
-Agreed. Making it a separate config option that depends on DETECT_HUNG_TASK
-sounds like a reasonable approach. It could help us to identify the
-root cause, but it
-also adds a bit of extra overhead.
+Linus, please merge this batch of hotfixes, thanks.
 
-Thanks,
-Lance
 
->
-> -- Steve
+The following changes since commit 0ad2507d5d93f39619fc42372c347d6006b64319:
+
+  Linux 6.14-rc3 (2025-02-16 14:02:44 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm tags/mm-hotfixes-st=
+able-2025-02-19-17-49
+
+for you to fetch changes up to 8344017aaf32a7532cff293eb3df7fd2265ebafd:
+
+  test_xarray: fix failure in check_pause when CONFIG_XARRAY_MULTI is not d=
+efined (2025-02-17 22:40:04 -0800)
+
+----------------------------------------------------------------
+18 hotfixes.  5 are cc:stable and the remainder address post-6.13 issues
+or aren't considered necessary for -stable kernels.
+
+10 are for MM and 8 are for non-MM.  All are singletons, please see the
+changelogs for details.
+
+----------------------------------------------------------------
+Bart Van Assche (1):
+      procfs: fix a locking bug in a vmcore_add_device_dump() error path
+
+Chen Ridong (1):
+      memcg: avoid dead loop when setting memory.max
+
+David Hildenbrand (1):
+      mm/migrate_device: don't add folio to be freed to LRU in migrate_devi=
+ce_finalize()
+
+Feng Tang (1):
+      mailmap: add entry for Feng Tang
+
+Florian Fainelli (1):
+      tools/mm: fix build warnings with musl-libc
+
+Hyeonggon Yoo (1):
+      mm/zswap: fix inconsistency when zswap_store_page() fails
+
+Jeff Johnson (1):
+      .mailmap: add entries for Jeff Johnson
+
+Kemeng Shi (1):
+      test_xarray: fix failure in check_pause when CONFIG_XARRAY_MULTI is n=
+ot defined
+
+Luiz Capitulino (1):
+      mm: hugetlb: avoid fallback for specific node allocation of 1G pages
+
+Mark Brown (1):
+      selftests/mm: fix check for running THP tests
+
+Nick Desaulniers (2):
+      mailmap: update Nick's entry
+      MAINTAINERS: update Nick's contact info
+
+Pavel Begunkov (1):
+      lib/iov_iter: fix import_iovec_ubuf iovec management
+
+Qi Zheng (1):
+      mm: pgtable: fix incorrect reclaim of non-empty PTE pages
+
+Ricardo Ca=F1uelo Navarro (1):
+      mm,madvise,hugetlb: check for 0-length range after end address adjust=
+ment
+
+Waiman Long (1):
+      kasan: don't call find_vm_area() in a PREEMPT_RT kernel
+
+Wang Yaxin (2):
+      getdelays: fix error format characters
+      taskstats: modify taskstats version
+
+ .mailmap                                           |  4 +++
+ .../process/embargoed-hardware-issues.rst          |  2 +-
+ .../sp_SP/process/embargoed-hardware-issues.rst    |  2 +-
+ MAINTAINERS                                        |  2 +-
+ fs/proc/vmcore.c                                   |  5 +++-
+ include/uapi/linux/taskstats.h                     |  2 +-
+ lib/iov_iter.c                                     |  3 +-
+ lib/test_xarray.c                                  | 15 +++++-----
+ mm/hugetlb.c                                       |  2 +-
+ mm/kasan/report.c                                  | 34 ++++++++++++++++++=
+++-
+ mm/madvise.c                                       | 11 ++++++-
+ mm/memcontrol.c                                    |  1 +
+ mm/memory.c                                        | 17 +++++++++--
+ mm/migrate_device.c                                | 13 +++-----
+ mm/zswap.c                                         | 35 ++++++++++--------=
+----
+ tools/accounting/getdelays.c                       | 32 ++++++++++--------=
+--
+ tools/mm/page-types.c                              |  4 +--
+ tools/testing/selftests/mm/run_vmtests.sh          |  2 +-
+ 18 files changed, 120 insertions(+), 66 deletions(-)
+
 
