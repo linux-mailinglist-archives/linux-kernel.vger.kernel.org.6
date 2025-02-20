@@ -1,426 +1,165 @@
-Return-Path: <linux-kernel+bounces-523780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F670A3DB2C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:20:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6895CA3DB34
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:22:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72371179331
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:20:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1EF303A989B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:20:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32B611F9AB1;
-	Thu, 20 Feb 2025 13:19:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBA691F8BAA;
+	Thu, 20 Feb 2025 13:20:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UQmY8fqA"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="2KU9Q+mF"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DDB51E766E;
-	Thu, 20 Feb 2025 13:19:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 810531F7910
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 13:20:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740057595; cv=none; b=WctJ7yYZSspv2UBgalvlb0ZRmqzljvswwzt25dPBO57o1UvBtr2cpD0T/OCUOlivid6tfkIM4IEabWd/yOqpWwqprTss8EmUwqdwEPXaftJRfG/YpxomUuzOdN5tsQdv9C4OPDAOJt/qiA+OWB1UINbWkG4ykvQLDlDtcxRmzcc=
+	t=1740057650; cv=none; b=JOuBQ+JuklxPw5pvN+rTNX2xE9DiFfOoZtBwTXThMqYp21JhjJ9DapGem0mwIMkI+BeDbQWGntFgmzX8V/pHKSMl4dwkPZXddGcKCUsApcyNrZJnFzNdbezBQllAKa6QhWz1iLWED51UBtxqFxhbiz0Te5TVfEopXEmGze4OAg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740057595; c=relaxed/simple;
-	bh=APbqXh88xg3nJ04q86baKMgK+Abnc2gYjbREC8lsUVg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ap1O7Vn+2QO0kXS9hSgzxJLQq49KLZ0gw5H1dSbbB0fuqSGTGJYtKe9S3D5K3+UEZU4ImVGDgdVHG6iahhg2bq6ZRFEoIwgKO6qZOXVqGuBAgh1WmO2OwtGPRwCQdxAOzeRNDCZUkihqieZnA3vkl0Z8DEHOgAxhFgWuCVKxSVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UQmY8fqA; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740057593; x=1771593593;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=APbqXh88xg3nJ04q86baKMgK+Abnc2gYjbREC8lsUVg=;
-  b=UQmY8fqAzQaqGCbvcnO2xTXt5J7fjMm3vlzf3+Wrqk9tSWBJ3jGMDCIg
-   74GAEpn7zp+OlVCmj1H+S0spAEUgG8Sgzl/BZ1dss9650rwnIgA+kzwt4
-   4lsRHB7YtdDL8L4zeCPf+ZjhsQ/yLmjXQUkzMwyjfQBumDbMiaLlOIaWt
-   jyyPscMsFoaZqB/87ACDopmsXXS63NqemWPH0eS+HGzGK1MX0BiSA11B2
-   RL/wxeSNlB64U3Ov5l627vVxV8HAnupeUAVPsyQVj4bMKU/A4JWTQK7A3
-   mqz9m607wUp8GnDg/05jJmNcoZaOXLTIQKDN9vjVMGcqaMxR47B/jnZAH
-   Q==;
-X-CSE-ConnectionGUID: 5NDcW4O8RBqrS+66E8XSWg==
-X-CSE-MsgGUID: QubNOprOTNylDos94auaDw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11351"; a="40756665"
-X-IronPort-AV: E=Sophos;i="6.13,301,1732608000"; 
-   d="scan'208";a="40756665"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Feb 2025 05:19:53 -0800
-X-CSE-ConnectionGUID: bfgHlItuQcabMG+IUuOhZQ==
-X-CSE-MsgGUID: PnXraADXQ4quK8KNT4xacw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,301,1732608000"; 
-   d="scan'208";a="145892227"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Feb 2025 05:19:51 -0800
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id E89A911F7F2;
-	Thu, 20 Feb 2025 15:19:47 +0200 (EET)
-Date: Thu, 20 Feb 2025 13:19:47 +0000
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: shravan kumar <shravan.chippa@microchip.com>
-Cc: mchehab@kernel.org, kieran.bingham@ideasonboard.com,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	conor.dooley@microchip.com, valentina.fernandezalanis@microchip.com,
-	praveen.kumar@microchip.com
-Subject: Re: [PATCH V4] media: i2c: imx334: Add support for 1280x720 &
- 640x480 resolutions
-Message-ID: <Z7cr8x6i8NZbdjIQ@kekkonen.localdomain>
-References: <20250218093356.3608409-1-shravan.chippa@microchip.com>
+	s=arc-20240116; t=1740057650; c=relaxed/simple;
+	bh=6fZMCA9aOaCmUGfLC6ePf8dOM/mlXjQAuIm701fRQSg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Zeg7WQ8TMgDK9CCcvYa6YeuEr/e9ggYhbx0EdyecaoPgTJ07jSC6hT7MHxcP25dij4gDGHoYZ9YpFrdLuTvFzcqyRiWVrwYOfnB479grKmG4wngMtoFEMiRhwEcTeFPV8DMzh7KOn6uzzjCUUTkuTjjXpiqzSxzJaNUI/9ncq0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=2KU9Q+mF; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-30762598511so8624731fa.0
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 05:20:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1740057646; x=1740662446; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=v9gfnrwEcsc3B+OhnBf4llWg9LYJEF0Gi8abOqkWDME=;
+        b=2KU9Q+mF1u5RxBFqhiSbJYJ3QlHD1k+liZRL6YfodEgvwjern98SoFPsM2yJ2og6co
+         g2OBKbWSRbMxNmLdZy90PAeHboQhy7SMl1M62ODaWNhTDiLY817K+fPbMTpxkizyGnGC
+         tDq/+6H4PuWwJHHguyKnnswr9obJaJMG4ufHA0vD+LcmJeKq4UxHuIzHm5yAMGTPGnwe
+         tiUVyUJKLq6KqrKpwRlYOCWclOZWU2ykAY3Hw4R55irV48ojM4jOHdSbuOfT00NWsXld
+         bZBQisapwnKXJh2o1NcOIDjX8sTxl2fDea1NwX/zqxqFPrgwphXPY3LS1Wbi5NWJI3lI
+         COmw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740057646; x=1740662446;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=v9gfnrwEcsc3B+OhnBf4llWg9LYJEF0Gi8abOqkWDME=;
+        b=Is54VyG1tMiq8b77ArcQFm5CFRC+YPpTDgM8S5W9LTORqqmw33ZfIYmXBnPELyvU+L
+         wRZAdyCu97BB6fx5hJi3KZhahssJIscNmld+28SXDCwtr0NKEUWyPZDkHcCeklXp1Rgk
+         OrW2VpDQ64P+Ai6g+I7J/wjeZRM0aOadITbBBZ95H1TrURvEExq/Rvd+Tz/q7qEeixfs
+         wsTo4TD7zInafgDq9qjvC3oRh9ujYQQAd0tCajuZeSnIMUBZzS7VNcS57E/KOQ/LJX9v
+         eGW7AK1RovbpZi9yYfFqpjAopnDNIwTxNfetr2bglYpmU6OvQwq/WE+Nnla+loVfScAv
+         hpzg==
+X-Forwarded-Encrypted: i=1; AJvYcCVMyspsoYZ/fLKAHWxLhaK1lMrhC49pbze7CNsdibNt9N2i5BhOSdNR9RznCK5CcejVW2o2M7unkwlZrq4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxawWxcJD/yn28CfxjCSLx7O4gwWsCZAcqcw7DMXkL844zWghXT
+	VKIp7XveDYt4sd14YGB5m6/thlKLdumsPQKJ/IpSP6tCSgXEyi0B2qjQRTh826o4wg2WrvFGAMe
+	/J2mQLHK9Z3AMLrvAQTkglSIqoidXPq0Nu66gDw==
+X-Gm-Gg: ASbGncv2VnJErhBxe5BYGL9gFhy1jWC9mPFYsmPEEqee723M5ZpCXTVat0iYRaVz4np
+	BZREhn+IJzVCoM0HYVxhC8mpmL8/EZeG/J0TFv1UF/YO6QOQKhl7WpIR5LiYVtQkL7I8frPn+fI
+	yDinhwvEpav3Jx5vThU8ITp7nht48=
+X-Google-Smtp-Source: AGHT+IFEIS4/ME3oDsWsGwJajDs1xfmNXc6nXNg/IrJF+sMVx4BssM06X90VPnH8MB49gtSoFXwuJyNa398yQTqZ8o8=
+X-Received: by 2002:a2e:380f:0:b0:302:497a:9e5b with SMTP id
+ 38308e7fff4ca-30927a2cd94mr59656331fa.2.1740057646496; Thu, 20 Feb 2025
+ 05:20:46 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250218093356.3608409-1-shravan.chippa@microchip.com>
+References: <20250220-pca976x-reset-driver-v1-0-6abbf043050e@cherry.de> <20250220-pca976x-reset-driver-v1-2-6abbf043050e@cherry.de>
+In-Reply-To: <20250220-pca976x-reset-driver-v1-2-6abbf043050e@cherry.de>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Thu, 20 Feb 2025 14:20:35 +0100
+X-Gm-Features: AWEUYZlymfSucIw4j_zdhgZRq8kn25SIdhxYsprdKjRx2D6NlUzPc8TKOmwgyrM
+Message-ID: <CAMRc=MfvbxbUv9PhxttB6LxkpRT=YEo10wfv2j_2rCeaNCJfrg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] gpio: pcf857x: add support for reset-gpios on (most) PCA967x
+To: Quentin Schulz <foss+kernel@0leil.net>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
+	Heiko Stuebner <heiko@sntech.de>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Quentin Schulz <quentin.schulz@cherry.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Shravan,
-
-On Tue, Feb 18, 2025 at 03:03:56PM +0530, shravan kumar wrote:
-> From: Shravan Chippa <shravan.chippa@microchip.com>
-> 
-> Added support for 1280x720@30 and 640x480@30 resolutions and
-> optimized the resolution arrays by incorporating a common
-> register array.
-> 
-> Updated the register array values for 1920x1080@30 and 3840x2160@30
-> resolutions in accordance with the common register array values.
-> 
-> Signed-off-by: Shravan Chippa <shravan.chippa@microchip.com>
-> 
+On Thu, Feb 20, 2025 at 10:57=E2=80=AFAM Quentin Schulz <foss+kernel@0leil.=
+net> wrote:
+>
+> From: Quentin Schulz <quentin.schulz@cherry.de>
+>
+> The PCA9670, PCA9671, PCA9672 and PCA9673 all have a RESETN input pin
+> that is used to reset the I2C GPIO expander.
+>
+> One needs to hold this pin low for at least 4us and the reset should be
+> finished after about 100us according to the datasheet[1]. Once the reset
+> is done, the "registers and I2C-bus state machine will be held in their
+> default state until the RESET input is once again HIGH.".
+>
+> Because the logic is reset, the latch values eventually provided in the
+> Device Tree via lines-initial-states property are inapplicable so they
+> are simply ignored if a reset GPIO is provided.
+>
+> [1] https://www.nxp.com/docs/en/data-sheet/PCA9670.pdf 8.5 and fig 22.
+> Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
 > ---
-> changelog:
-> v3 -> v4
-> In response to the review request, the dependency of the common register value
-> array on the 445M link frequency has been eliminated.
-> 
-> Although I do not have a test setup for 4k resolution at an 819M link frequency, 
-> I have made adjustments based on the IMX334 data sheet, the latest 4k resolution,
-> and the common register value array. 
-> 
-> Additionally, the 4k resolution has been switched to master mode to ensure
-> consistency with other resolutions that also use master mode.
-> 
-> changelog:
-> v2 -> v3
-> removied blank lines reported by media CI robot 
-> 
-> v1 -> v2
-> Optimized the resolution arrays by added common register
-> array
-> ---
-> 
->  drivers/media/i2c/imx334.c | 214 +++++++++++++++++++------------------
->  1 file changed, 109 insertions(+), 105 deletions(-)
-> 
-> diff --git a/drivers/media/i2c/imx334.c b/drivers/media/i2c/imx334.c
-> index a544fc3df39c..0172406780df 100644
-> --- a/drivers/media/i2c/imx334.c
-> +++ b/drivers/media/i2c/imx334.c
-> @@ -167,8 +167,8 @@ static const s64 link_freq[] = {
->  	IMX334_LINK_FREQ_445M,
->  };
->  
-> -/* Sensor mode registers for 1920x1080@30fps */
-> -static const struct imx334_reg mode_1920x1080_regs[] = {
-> +/* Sensor common mode registers values */
-> +static const struct imx334_reg common_mode_regs[] = {
->  	{0x3000, 0x01},
->  	{0x3018, 0x04},
->  	{0x3030, 0xca},
-> @@ -176,26 +176,10 @@ static const struct imx334_reg mode_1920x1080_regs[] = {
->  	{0x3032, 0x00},
->  	{0x3034, 0x4c},
->  	{0x3035, 0x04},
-> -	{0x302c, 0xf0},
-> -	{0x302d, 0x03},
-> -	{0x302e, 0x80},
-> -	{0x302f, 0x07},
-> -	{0x3074, 0xcc},
-> -	{0x3075, 0x02},
-> -	{0x308e, 0xcd},
-> -	{0x308f, 0x02},
-> -	{0x3076, 0x38},
-> -	{0x3077, 0x04},
-> -	{0x3090, 0x38},
-> -	{0x3091, 0x04},
-> -	{0x3308, 0x38},
-> -	{0x3309, 0x04},
-> -	{0x30C6, 0x00},
-> +	{0x30c6, 0x00},
->  	{0x30c7, 0x00},
->  	{0x30ce, 0x00},
->  	{0x30cf, 0x00},
-> -	{0x30d8, 0x18},
-> -	{0x30d9, 0x0a},
->  	{0x304c, 0x00},
->  	{0x304e, 0x00},
->  	{0x304f, 0x00},
-> @@ -210,7 +194,7 @@ static const struct imx334_reg mode_1920x1080_regs[] = {
->  	{0x300d, 0x29},
->  	{0x314c, 0x29},
->  	{0x314d, 0x01},
-> -	{0x315a, 0x06},
-> +	{0x315a, 0x0a},
-
-What's the effect of this change and why is it done?
-
->  	{0x3168, 0xa0},
->  	{0x316a, 0x7e},
->  	{0x319e, 0x02},
-> @@ -330,116 +314,103 @@ static const struct imx334_reg mode_1920x1080_regs[] = {
->  	{0x3002, 0x00},
->  };
->  
-> +/* Sensor mode registers for 640x480@30fps */
-> +static const struct imx334_reg mode_640x480_regs[] = {
-> +	{0x302c, 0x70},
-> +	{0x302d, 0x06},
-> +	{0x302e, 0x80},
-> +	{0x302f, 0x02},
-> +	{0x3074, 0x48},
-> +	{0x3075, 0x07},
-> +	{0x308e, 0x49},
-> +	{0x308f, 0x07},
-> +	{0x3076, 0xe0},
-> +	{0x3077, 0x01},
-> +	{0x3090, 0xe0},
-> +	{0x3091, 0x01},
-> +	{0x3308, 0xe0},
-> +	{0x3309, 0x01},
-> +	{0x30d8, 0x30},
-> +	{0x30d9, 0x0b},
-> +};
+>  drivers/gpio/gpio-pcf857x.c | 29 ++++++++++++++++++++++++++---
+>  1 file changed, 26 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/gpio/gpio-pcf857x.c b/drivers/gpio/gpio-pcf857x.c
+> index 7c57eaeb0afeba8953d998d8eec60a65b40efb6d..94077208e24ae99a1e8762e78=
+3f0eabc580fa520 100644
+> --- a/drivers/gpio/gpio-pcf857x.c
+> +++ b/drivers/gpio/gpio-pcf857x.c
+> @@ -5,6 +5,7 @@
+>   * Copyright (C) 2007 David Brownell
+>   */
+>
+> +#include <linux/delay.h>
+>  #include <linux/gpio/driver.h>
+>  #include <linux/i2c.h>
+>  #include <linux/interrupt.h>
+> @@ -272,12 +273,11 @@ static const struct irq_chip pcf857x_irq_chip =3D {
+>
+>  static int pcf857x_probe(struct i2c_client *client)
+>  {
+> +       struct gpio_desc *rstn_gpio;
+>         struct pcf857x *gpio;
+> -       unsigned int n_latch =3D 0;
+> +       unsigned int n_latch;
+>         int status;
+>
+> -       device_property_read_u32(&client->dev, "lines-initial-states", &n=
+_latch);
+> -
+>         /* Allocate, initialize, and register this gpio_chip. */
+>         gpio =3D devm_kzalloc(&client->dev, sizeof(*gpio), GFP_KERNEL);
+>         if (!gpio)
+> @@ -297,6 +297,29 @@ static int pcf857x_probe(struct i2c_client *client)
+>         gpio->chip.direction_output     =3D pcf857x_output;
+>         gpio->chip.ngpio                =3D (uintptr_t)i2c_get_match_data=
+(client);
+>
+> +       rstn_gpio =3D devm_gpiod_get_optional(&client->dev, "reset", GPIO=
+D_OUT_HIGH);
+> +       if (IS_ERR(rstn_gpio)) {
+> +               return dev_err_probe(&client->dev, PTR_ERR(rstn_gpio),
+> +                                    "failed to get reset GPIO\n");
+> +       }
 > +
-> +/* Sensor mode registers for 1280x720@30fps */
-> +static const struct imx334_reg mode_1280x720_regs[] = {
-> +	{0x302c, 0x30},
-> +	{0x302d, 0x05},
-> +	{0x302e, 0x00},
-> +	{0x302f, 0x05},
-> +	{0x3074, 0x84},
-> +	{0x3075, 0x03},
-> +	{0x308e, 0x85},
-> +	{0x308f, 0x03},
-> +	{0x3076, 0xd0},
-> +	{0x3077, 0x02},
-> +	{0x3090, 0xd0},
-> +	{0x3091, 0x02},
-> +	{0x3308, 0xd0},
-> +	{0x3309, 0x02},
-> +	{0x30d8, 0x30},
-> +	{0x30d9, 0x0b},
-> +};
-> +
-> +/* Sensor mode registers for 1920x1080@30fps */
-> +static const struct imx334_reg mode_1920x1080_regs[] = {
-> +	{0x302c, 0xf0},
-> +	{0x302d, 0x03},
-> +	{0x302e, 0x80},
-> +	{0x302f, 0x07},
-> +	{0x3074, 0xcc},
-> +	{0x3075, 0x02},
-> +	{0x308e, 0xcd},
-> +	{0x308f, 0x02},
-> +	{0x3076, 0x38},
-> +	{0x3077, 0x04},
-> +	{0x3090, 0x38},
-> +	{0x3091, 0x04},
-> +	{0x3308, 0x38},
-> +	{0x3309, 0x04},
-> +	{0x30d8, 0x18},
-> +	{0x30d9, 0x0a},
-> +};
-> +
->  /* Sensor mode registers for 3840x2160@30fps */
->  static const struct imx334_reg mode_3840x2160_regs[] = {
-> -	{0x3000, 0x01},
-> -	{0x3002, 0x00},
-> -	{0x3018, 0x04},
-> -	{0x37b0, 0x36},
-> -	{0x304c, 0x00},
-> -	{0x300c, 0x3b},
+> +       if (rstn_gpio) {
+> +               /* Reset already held with devm_gpiod_get_optional with G=
+PIOD_OUT_HIGH */
+> +               usleep_range(4, 8); /* tw(rst) > 4us */
+> +               gpiod_set_value(rstn_gpio, 0);
 
-This was the only location this register was written to.
+Should probably be gpiod_set_value_cansleep().
 
-Please split this into two to make it more reviewable: splitting register
-lists into two and then to adding new modes.
-
-> -	{0x300d, 0x2a},
-> -	{0x3034, 0x26},
-> -	{0x3035, 0x02},
-> -	{0x314c, 0x29},
-> -	{0x314d, 0x01},
-> -	{0x315a, 0x02},
-> -	{0x3168, 0xa0},
-> -	{0x316a, 0x7e},
-> -	{0x3288, 0x21},
-> -	{0x328a, 0x02},
->  	{0x302c, 0x3c},
->  	{0x302d, 0x00},
->  	{0x302e, 0x00},
->  	{0x302f, 0x0f},
-> +	{0x3074, 0xb0},
-> +	{0x3075, 0x00},
-> +	{0x308e, 0xb1},
-> +	{0x308f, 0x00},
->  	{0x3076, 0x70},
->  	{0x3077, 0x08},
->  	{0x3090, 0x70},
->  	{0x3091, 0x08},
-> -	{0x30d8, 0x20},
-> -	{0x30d9, 0x12},
->  	{0x3308, 0x70},
->  	{0x3309, 0x08},
-> -	{0x3414, 0x05},
-> -	{0x3416, 0x18},
-> -	{0x35ac, 0x0e},
-> -	{0x3648, 0x01},
-> -	{0x364a, 0x04},
-> -	{0x364c, 0x04},
-> -	{0x3678, 0x01},
-> -	{0x367c, 0x31},
-> -	{0x367e, 0x31},
-> -	{0x3708, 0x02},
-> -	{0x3714, 0x01},
-> -	{0x3715, 0x02},
-> -	{0x3716, 0x02},
-> -	{0x3717, 0x02},
-> -	{0x371c, 0x3d},
-> -	{0x371d, 0x3f},
-> -	{0x372c, 0x00},
-> -	{0x372d, 0x00},
-> -	{0x372e, 0x46},
-> -	{0x372f, 0x00},
-> -	{0x3730, 0x89},
-> -	{0x3731, 0x00},
-> -	{0x3732, 0x08},
-> -	{0x3733, 0x01},
-> -	{0x3734, 0xfe},
-> -	{0x3735, 0x05},
-> -	{0x375d, 0x00},
-> -	{0x375e, 0x00},
-> -	{0x375f, 0x61},
-> -	{0x3760, 0x06},
-> -	{0x3768, 0x1b},
-> -	{0x3769, 0x1b},
-> -	{0x376a, 0x1a},
-> -	{0x376b, 0x19},
-> -	{0x376c, 0x18},
-> -	{0x376d, 0x14},
-> -	{0x376e, 0x0f},
-> -	{0x3776, 0x00},
-> -	{0x3777, 0x00},
-> -	{0x3778, 0x46},
-> -	{0x3779, 0x00},
-> -	{0x377a, 0x08},
-> -	{0x377b, 0x01},
-> -	{0x377c, 0x45},
-> -	{0x377d, 0x01},
-> -	{0x377e, 0x23},
-> -	{0x377f, 0x02},
-> -	{0x3780, 0xd9},
-> -	{0x3781, 0x03},
-> -	{0x3782, 0xf5},
-> -	{0x3783, 0x06},
-> -	{0x3784, 0xa5},
-> -	{0x3788, 0x0f},
-> -	{0x378a, 0xd9},
-> -	{0x378b, 0x03},
-> -	{0x378c, 0xeb},
-> -	{0x378d, 0x05},
-> -	{0x378e, 0x87},
-> -	{0x378f, 0x06},
-> -	{0x3790, 0xf5},
-> -	{0x3792, 0x43},
-> -	{0x3794, 0x7a},
-> -	{0x3796, 0xa1},
-> -	{0x3e04, 0x0e},
-> +	{0x30d8, 0x20},
-> +	{0x30d9, 0x12},
->  	{0x319e, 0x00},
->  	{0x3a00, 0x01},
->  	{0x3a18, 0xbf},
-> -	{0x3a19, 0x00},
->  	{0x3a1a, 0x67},
-> -	{0x3a1b, 0x00},
->  	{0x3a1c, 0x6f},
-> -	{0x3a1d, 0x00},
->  	{0x3a1e, 0xd7},
->  	{0x3a1f, 0x01},
-> +	{0x300d, 0x2a},
-> +	{0x3034, 0x26},
-> +	{0x3035, 0x02},
-> +	{0x315a, 0x02},
->  	{0x3a20, 0x6f},
->  	{0x3a21, 0x00},
->  	{0x3a22, 0xcf},
->  	{0x3a23, 0x00},
->  	{0x3a24, 0x6f},
->  	{0x3a25, 0x00},
-> +	{0x3a24, 0x6f},
-> +	{0x3a25, 0x00},
->  	{0x3a26, 0xb7},
->  	{0x3a27, 0x00},
->  	{0x3a28, 0x5f},
-> @@ -505,6 +476,32 @@ static const struct imx334_mode supported_modes[] = {
->  			.num_of_regs = ARRAY_SIZE(mode_1920x1080_regs),
->  			.regs = mode_1920x1080_regs,
->  		},
-> +	}, {
-> +		.width = 1280,
-> +		.height = 720,
-> +		.hblank = 2480,
-> +		.vblank = 1170,
-> +		.vblank_min = 45,
-> +		.vblank_max = 132840,
-> +		.pclk = 297000000,
-> +		.link_freq_idx = 1,
-> +		.reg_list = {
-> +			.num_of_regs = ARRAY_SIZE(mode_1280x720_regs),
-> +			.regs = mode_1280x720_regs,
-> +		},
-> +	}, {
-> +		.width = 640,
-> +		.height = 480,
-> +		.hblank = 2480,
-> +		.vblank = 1170,
-> +		.vblank_min = 45,
-> +		.vblank_max = 132840,
-> +		.pclk = 297000000,
-> +		.link_freq_idx = 1,
-> +		.reg_list = {
-> +			.num_of_regs = ARRAY_SIZE(mode_640x480_regs),
-> +			.regs = mode_640x480_regs,
-> +		},
->  	},
->  };
->  
-> @@ -989,6 +986,13 @@ static int imx334_start_streaming(struct imx334 *imx334)
->  	const struct imx334_reg_list *reg_list;
->  	int ret;
->  
-> +	ret = imx334_write_regs(imx334, common_mode_regs,
-> +				ARRAY_SIZE(common_mode_regs));
-> +	if (ret) {
-> +		dev_err(imx334->dev, "fail to write common registers");
-> +		return ret;
-> +	}
-> +
->  	/* Write sensor mode registers */
->  	reg_list = &imx334->cur_mode->reg_list;
->  	ret = imx334_write_regs(imx334, reg_list->regs,
-
--- 
-Kind regards,
-
-Sakari Ailus
+Bartosz
 
