@@ -1,130 +1,205 @@
-Return-Path: <linux-kernel+bounces-523483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FAC6A3D76B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 11:54:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BB5C8A3D770
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 11:55:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2ABFB179549
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 10:53:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D52917A781
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 10:54:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AF4E1F0E34;
-	Thu, 20 Feb 2025 10:53:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A71CF1F0E2E;
+	Thu, 20 Feb 2025 10:53:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SC+E7NOm"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="m69fhajh"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE67D1C6FE9
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 10:53:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F1891EE032;
+	Thu, 20 Feb 2025 10:53:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740048817; cv=none; b=MB1x8vQglsENmURQ+OCFTKPh/03Fatq1eLxbLhPggj3RNCY07a2cgHfK3t3boz5WXSiQcYWoNZTJ5LXUgdGSCUThT3MWFRmEz7lw/zod8DukhXiyDGt2DgT27szCiK4eAOz388p5cxD33OWgZ8EBcU72PURklIK8HPvdlOzej1I=
+	t=1740048836; cv=none; b=Y6tlNZuS2Kb64VrCKluQYCdaqv4gpvXgAHYVop+p7A2YpZFWPzV9c+ydrwlO6yYIrXrVVbHG3o+FtxNxDoRdwqFQjBosiRZ28/LjmQY9sgzRaqE7x6quwMetRlmWXUW+Sa1MuZAD+pzo7kIcma5Dz8bErgATMkGUg2INGs+1iuE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740048817; c=relaxed/simple;
-	bh=YaF6r2FXlfQ0DsVDdfJuMoslOCpKrnWhv6zdNCgK1mo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mR4uKmZxtjPHmjJAxYCafjxp0g8lZe8OoQBaC4uiuwd9QkmbEDtkkmbEpfegNUl1rTDes70dnSc4iw6xSUJFsmkqf7LBL7G3A+m2+xyngSXa+5FeRZD01kXsXsUPs7/mG02zvARENAD8tGIGcIz3V6DiHLiY5kF5pfSx3NAB/uE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SC+E7NOm; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-30615661f98so7461171fa.2
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 02:53:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740048814; x=1740653614; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=i4cNa1KAWhPy2izhnLaEb+31HFajh22g8Y95z+oCBBY=;
-        b=SC+E7NOmaP59JSoDUIFpLZAuGfW6GsHXFdvGfoDhRyYFKNXhILzRPDBmFQp+yMlXj0
-         j/Qz+HQX2dQB1aXVZprXY/uYx5XLmrk+OGdEdoirDBQhY7fTf/Ithp65gqdXJYP5ckWJ
-         BW8ML1kQUwRTQmCv6NwiCJyr76aRA/8a59rEF2qgST803vGXBuhyC5K3/Hcg4dtb12es
-         mgUwVkLVqr5cvqVIW6TwMXRlrdfwB/sopKPE8aprQFduVI787XWQy7q+SwxBcy0N6ToI
-         besAbc3Wpw6XdJSHYtamxQ8Z66x7zOjv9EEixyhQRk/felQUSJcoAIf2w0S4qMJ92qHJ
-         8Zqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740048814; x=1740653614;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=i4cNa1KAWhPy2izhnLaEb+31HFajh22g8Y95z+oCBBY=;
-        b=P3BghnsHRQXiAbpcbXBEVMH5x40AX7kEC1ZNqgVtod8ykDJbZC2aH7HYRPfaFHTwhd
-         priNh5UxsygigmEkVY7V+oqsinb3oDVBFb8birsaRUXCeQmVCCLhlFfzaLykDaw8RUxM
-         TqooAo4CO0flqhmFHOBWtmSr3AvuOyxz8zdBMttuMXRvymt7ymZiVAKq1LlalS+i2VQs
-         FA62Ip2Y2t5SPqGfOm8u0kiOi1mMPYgbdUJWacRisTiN8Y5DeZju7b+jIODo5gD3N4bI
-         c51Zea58IrSVIVxK1ugwqmfOV77fvO8dhPWanKm4YuYZXjyJemtRDabDaSbzTP6v3AZT
-         ucmA==
-X-Forwarded-Encrypted: i=1; AJvYcCVxYaDhALVmXE5oZpv6MrxtoLaF6VhPHSkFdjpdr3u0s+Rmx0JZVMveTtzfdp8qsmIP5+6M5K3/LsnZwJo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkJ3Kz+9YcTdKUB5BYgO7pLmjkWxgHHl6NJVehTZN5dmhaXxno
-	qdFG3wzpfxJAW0hrOW3NjuE5Yq1uK5ZkEXXu4T5RzKc204BaBaOxMIakDZ8oYWA=
-X-Gm-Gg: ASbGnctLYvIenOXm9DpeeyE/w/htIju58pOqbC90CG1Gh+7Y5VOLB0M0FsFeEVfvA2q
-	TVyJDFJsb0d0Zbi2YDoso1k64wdPfYD/8MjdaW3EZqo7Qp7ROhv0Oce+cJHWdrb9HGbAXkenbI3
-	SNaFdR1fk5Z79dROylA5l+4NdOo4iBdjgJpcmDaskTYEfeXNWKKVkRm9uXLTFKLbN3spfTwnf3g
-	XYI4Ai0uOLZMS+QDcczn9ykR1oRktLJ1EjTUpyQjvz9HY9sbWdbYYs+p9TWrehaorCbQ1C7+pE+
-	7hAyil4V1l2PcMiZlYqUBW3ZbLzKckKKX5ZuAx1fTD18xU5QAfYSvuHyuJZ60mjVFTFCugc=
-X-Google-Smtp-Source: AGHT+IGUa93DzQBNfWAgZCCcEoZ80+sJq5+WQjklkO36XME+Wd2aJ2kzORb+MvS9U9E5VlLr6XgUwQ==
-X-Received: by 2002:a19:5e58:0:b0:546:2ff9:1539 with SMTP id 2adb3069b0e04-5462ff91883mr1947710e87.52.1740048813729;
-        Thu, 20 Feb 2025 02:53:33 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54530a91179sm1748351e87.33.2025.02.20.02.53.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Feb 2025 02:53:32 -0800 (PST)
-Date: Thu, 20 Feb 2025 12:53:30 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Maxim Schwalm <maxim.schwalm@gmail.com>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 2/3] dt-bindigs: display: extend the simple bridge
- with MStar TSUMU88ADT3-LF-1
-Message-ID: <fqnaxziho63smog2adn27ypwoqrknbgbpe4xtgmj6xdbcavp3u@djbitfumfc6d>
-References: <20250220094456.32818-1-clamor95@gmail.com>
- <20250220094456.32818-3-clamor95@gmail.com>
+	s=arc-20240116; t=1740048836; c=relaxed/simple;
+	bh=cvrlDKUc47oNUgrf8xmRGG7QI779wNiuR9EGngfmYWg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lAt7G5YWeWbQ3oeTV+kl+CWL84gr9nmrs9sMmToV/ei3OnIDcETLroHqx6ZuZlBsGxlHwQrlF9zaFzF+fMwLP6aufh1G2GQzYEzX6p8Q2G+qqUKX64Pk1pfjpMokiqJtwuRX9daUKgVbgwiYYgtwOZlJSgJsfPd8qsTDdzqj7zM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=m69fhajh; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51K9PK2f007835;
+	Thu, 20 Feb 2025 10:53:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=uF7znE
+	Z9GRSVtKX2LQujf9rIx7K6OZ00qsFQj5nY6so=; b=m69fhajhgtvaLdcfPvJwpW
+	1Oaq7Oy9VbSgPt0RqeHuAGAGe1usX3REWLNaQ7pzSyJM89eqiSQD9HAD7HdFpRsZ
+	dVj5RG94W7RecF+r2JD0iBe6b3jQdyD1UJLdGI/gZbHMUf6QlJoaGPdEJN4MaCVv
+	/yumea6LxU9qTRQF0wr49ieNsYFzpImJRxAPkFnpCjIIjn9KdCecqUMZBqUyapJw
+	pdRz7jR1eji/krbOG6IbLcVa45Wy0s0BDk9hHCMeFuuvMlS/pIzx7CqsR6q8c0Ef
+	Amqe2QseNXDTCfTT96vDZi1/WVlhmuHlp4qA5yw3+fDOPC4MMZh3vjvyphFZSh3Q
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44x1qy8cdk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Feb 2025 10:53:36 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 51KAUl1l019570;
+	Thu, 20 Feb 2025 10:53:35 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44x1qy8cdh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Feb 2025 10:53:35 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51K7jjCq030118;
+	Thu, 20 Feb 2025 10:53:34 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 44w01x9jjc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Feb 2025 10:53:34 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51KArWSB35914356
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 20 Feb 2025 10:53:32 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9C9B320040;
+	Thu, 20 Feb 2025 10:53:32 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 012B420043;
+	Thu, 20 Feb 2025 10:53:32 +0000 (GMT)
+Received: from [9.171.63.18] (unknown [9.171.63.18])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Thu, 20 Feb 2025 10:53:31 +0000 (GMT)
+Message-ID: <e2495b3a-81c5-4238-b766-2ab6e892b6bf@linux.ibm.com>
+Date: Thu, 20 Feb 2025 11:53:32 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250220094456.32818-3-clamor95@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v2 1/3] sched/fair: introduce new scheduler group type
+ group_parked
+To: Shrikanth Hegde <sshegde@linux.ibm.com>
+Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
+        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+        vschneid@redhat.com, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250217113252.21796-1-huschle@linux.ibm.com>
+ <20250217113252.21796-2-huschle@linux.ibm.com>
+ <ee74de65-1b9d-4c40-aa57-52682801260a@linux.ibm.com>
+From: Tobias Huschle <huschle@linux.ibm.com>
+In-Reply-To: <ee74de65-1b9d-4c40-aa57-52682801260a@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: LJQ2-XyjMYZZTqZ72jSpZrkSTDecBFC_
+X-Proofpoint-ORIG-GUID: 0MCLTxFzE9ZA4l4lQXYPWz0Vb7wyIHTB
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-20_04,2025-02-20_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1015
+ phishscore=0 impostorscore=0 bulkscore=0 mlxlogscore=823 adultscore=0
+ suspectscore=0 lowpriorityscore=0 priorityscore=1501 malwarescore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2502200078
 
-On Thu, Feb 20, 2025 at 11:44:55AM +0200, Svyatoslav Ryhel wrote:
-> A simple bridge used in ASUS Transformer AiO P1801-T.
+
+
+On 18/02/2025 06:44, Shrikanth Hegde wrote:
+[...]
+>> @@ -1352,6 +1352,9 @@ bool sched_can_stop_tick(struct rq *rq)
+>>       if (rq->cfs.h_nr_queued > 1)
+>>           return false;
+>> +    if (rq->cfs.nr_running > 0 && arch_cpu_parked(cpu_of(rq)))
+>> +        return false;
+>> +
 > 
-> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> ---
->  .../devicetree/bindings/display/bridge/simple-bridge.yaml        | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/display/bridge/simple-bridge.yaml b/Documentation/devicetree/bindings/display/bridge/simple-bridge.yaml
-> index 43cf4df9811a..8308e833938d 100644
-> --- a/Documentation/devicetree/bindings/display/bridge/simple-bridge.yaml
-> +++ b/Documentation/devicetree/bindings/display/bridge/simple-bridge.yaml
-> @@ -31,6 +31,7 @@ properties:
->            - ti,opa362
->            - ti,ths8134
->            - ti,ths8135
-> +          - mstar,tsumu88adt3-lf-1
-
-Please keep the list sorted.
-
->  
->    ports:
->      $ref: /schemas/graph.yaml#/properties/ports
-> -- 
-> 2.43.0
+> you mean rq->cfs.h_nr_queued or rq->nr_running ?
 > 
 
--- 
-With best wishes
-Dmitry
+cfs.h_nr_queued is probably more sensible, will use that.
+
+[...]
+>> @@ -11259,6 +11293,8 @@ static inline void calculate_imbalance(struct 
+>> lb_env *env, struct sd_lb_stats *s
+>>    * avg_load : Only if imbalance is significant enough.
+>>    * nr_idle :  dst_cpu is not busy and the number of idle CPUs is quite
+>>    *            different in groups.
+>> + * nr_task :  balancing can go either way depending on the number of 
+>> running tasks
+>> + *            per group
+>>    */
+> 
+> This comment on nr_task can be removed as it is not present in the list.
+> 
+
+Consider it gone.
+
+[...]
+>> @@ -11766,7 +11822,7 @@ static int sched_balance_rq(int this_cpu, 
+>> struct rq *this_rq,
+>>       ld_moved = 0;
+>>       /* Clear this flag as soon as we find a pullable task */
+>>       env.flags |= LBF_ALL_PINNED;
+>> -    if (busiest->nr_running > 1) {
+>> +    if (busiest->nr_running > 1 || arch_cpu_parked(busiest->cpu)) {
+> 
+> Since there is reliance on active balance if there is single task, it 
+> think above isn't needed. Is there any usecase for it?
+>
+
+Seems to work without that check. I have no particular use case in mind.
+
+>>           /*
+>>            * Attempt to move tasks. If sched_balance_find_src_group 
+>> has found
+>>            * an imbalance but busiest->nr_running <= 1, the group is
+>> @@ -12356,6 +12412,11 @@ static void nohz_balancer_kick(struct rq *rq)
+>>       if (time_before(now, nohz.next_balance))
+>>           goto out;
+>> +    if (!idle_cpu(rq->cpu)) {
+>> +        flags = NOHZ_STATS_KICK | NOHZ_BALANCE_KICK;
+>> +        goto out;
+>> +    }
+>> +
+> 
+> This could be agrressive. Note when the code comes here, it is not idle. 
+> It would bail out early if it is idle.
+> 
+
+It seems like we can do without this one as well.
+
+>>       if (rq->nr_running >= 2) {
+>>           flags = NOHZ_STATS_KICK | NOHZ_BALANCE_KICK;
+>>           goto out;
+>> @@ -12767,6 +12828,9 @@ static int sched_balance_newidle(struct rq 
+>> *this_rq, struct rq_flags *rf)
+>>       update_misfit_status(NULL, this_rq);
+>> +    if (arch_cpu_parked(this_cpu))
+>> +        return 0;
+>> +
+>>       /*
+>>        * There is a task waiting to run. No need to search for one.
+>>        * Return 0; the task will be enqueued when switching to idle.
+>> diff --git a/kernel/sched/syscalls.c b/kernel/sched/syscalls.c
+>> index 456d339be98f..7efd76a30be7 100644
+>> --- a/kernel/sched/syscalls.c
+>> +++ b/kernel/sched/syscalls.c
+>> @@ -214,6 +214,9 @@ int idle_cpu(int cpu)
+>>           return 0;
+>>   #endif
+>> +    if (arch_cpu_parked(cpu))
+>> +        return 0;
+>> +
+>>       return 1;
+>>   }
+> 
+
 
