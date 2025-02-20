@@ -1,94 +1,121 @@
-Return-Path: <linux-kernel+bounces-524875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BB31A3E848
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 00:21:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7848AA3E845
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 00:20:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7BB3A16731C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 23:21:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26B193BBC2D
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 23:20:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E415266192;
-	Thu, 20 Feb 2025 23:21:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="DaDqapGV"
-Received: from out-187.mta0.migadu.com (out-187.mta0.migadu.com [91.218.175.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A3732673AB;
+	Thu, 20 Feb 2025 23:20:49 +0000 (UTC)
+Received: from relay04.th.seeweb.it (relay04.th.seeweb.it [5.144.164.165])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A2361D5CDD
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 23:21:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B511D1E5701;
+	Thu, 20 Feb 2025 23:20:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.144.164.165
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740093697; cv=none; b=oPrTZFn2nmB6h6WbaX+uBgtdflV2mfmh3h64FJUDwxHvh2pxqgKhAHPmaOlhiEVQm9cRK+5q+fXBsS5EBC5udY+OKpFDOivOXNJESBcM1+aj2qZye7QO9OS+JKq+pgNXOflU/KcNe2WMz/rJDw9Z7s5ZlG1LCX51e+in4teaBlQ=
+	t=1740093649; cv=none; b=tRBX6I6Oa9dAQCO8eoqlsBU1WX7fR+k/ApPxaHbxuGKa9+sUSPi4jAF5wDQgueEvrhQVjaEA/nBh9iPj/VBpKkVb39PTD14SdZ6notBkV+5Q6SnQjTBKXETCCQ6zbg2Zrpwdc3Bqb4HRArl43Ux79GItUN9iBMaPQER+YaqOobA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740093697; c=relaxed/simple;
-	bh=g6ve7xNlVgVdQFgPLeNGusPRvCr3J4hbfDhtJ9gFxqs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=M7JHu+ebdkcHRQbbb/r5+yUZAScBGoWZ6NV9EKdhkNeG4lGq+NtZbDS14vD9VJj28vPx5b+glmq4KLMRuioVPrvC7oRPG0ykvTAj5iBSI1SbEblTcg5swdtH1Axz8iQxdLn1XVznKS7s/lSmzKWCLdFsKpAO1+J2g4OhTi3J3Dg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=DaDqapGV; arc=none smtp.client-ip=91.218.175.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1740093693;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=Zm+fIkprFMzXqFqejHYGRIWeMskyoEAHZq3W3dz6AW8=;
-	b=DaDqapGVqZFoote3oBKSCfSKz8yS3GCvcGZZqbYcYUwKdoqKz0rQJKvHfDRiZCcemyw4t+
-	NZhSovbH+/jvLHTC1QmuLClo52pUGEZ9FmtOEQxjvaiCFVc4gViczGxcNs07W4Ni8k+5Pm
-	+Ns0G4E0mXgF15jk5D4WaRNg2Oc3hTc=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Naveen N Rao <naveen@kernel.org>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	linuxppc-dev@lists.ozlabs.org,
-	kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] KVM: powerpc: Enable commented out BUILD_BUG_ON() assertion
-Date: Fri, 21 Feb 2025 00:20:19 +0100
-Message-ID: <20250220232019.196380-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1740093649; c=relaxed/simple;
+	bh=vVytazyt0sbs8TsO2gk8s3MlvJH9kebbxFYc6H9Tv7o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FeRr0bDkq+7SkbsogeTu2nyfFQDzgefPl5Vg6B+PBEhfPMqk8oYN7C2V60Vm25FH6G5FTO8T/W9XiWSr/RzPG2GUr1vxuyrAj9/mGAR2DIdkSPWLnsIXCqJc+SCGlqwJrrVsnIicodQACE3NS1IiHOJW2vAOOVAaj9r/vuM4TQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=somainline.org; spf=pass smtp.mailfrom=somainline.org; arc=none smtp.client-ip=5.144.164.165
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=somainline.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=somainline.org
+Received: from SoMainline.org (94-211-6-86.cable.dynamic.v4.ziggo.nl [94.211.6.86])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by m-r1.th.seeweb.it (Postfix) with ESMTPSA id 477612012A;
+	Fri, 21 Feb 2025 00:20:43 +0100 (CET)
+Date: Fri, 21 Feb 2025 00:20:41 +0100
+From: Marijn Suijten <marijn.suijten@somainline.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Rob Clark <robdclark@gmail.com>, 
+	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/7] drm/msm/dpu: program master INTF value
+Message-ID: <btkhximqopd3wmp7hxape6hsx53kzdfyl5ciyu5fe472nphzra@lbq3ybphm4h3>
+References: <20250220-dpu-active-ctl-v1-0-71ca67a564f8@linaro.org>
+ <20250220-dpu-active-ctl-v1-2-71ca67a564f8@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250220-dpu-active-ctl-v1-2-71ca67a564f8@linaro.org>
 
-The BUILD_BUG_ON() assertion was commented out in commit 38634e676992
-("powerpc/kvm: Remove problematic BUILD_BUG_ON statement") and fixed in
-commit c0a187e12d48 ("KVM: powerpc: Fix BUILD_BUG_ON condition"), but
-not enabled. Enable it now that this no longer breaks and remove the
-comment.
+On 2025-02-20 12:26:19, Dmitry Baryshkov wrote:
+> If several interfaces are being handled through a single CTL, a main
+> ('master') INTF needs to be programmed into a separate register. Write
+> corresponding value into that register.
+> 
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.c | 3 +++
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.h | 2 ++
+>  2 files changed, 5 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.c
+> index 321a89e6400d2824ebda2c08be5e6943cb0f6b11..db36bfa98fc310c1bf35c4817d601ae6cf88d151 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.c
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.c
+> @@ -582,6 +582,9 @@ static void dpu_hw_ctl_intf_cfg_v1(struct dpu_hw_ctl *ctx,
+>  	DPU_REG_WRITE(c, CTL_WB_ACTIVE, wb_active);
+>  	DPU_REG_WRITE(c, CTL_DSC_ACTIVE, dsc_active);
+>  
+> +	if (cfg->intf_master)
+> +		DPU_REG_WRITE(c, CTL_INTF_MASTER, BIT(cfg->intf_master - INTF_0));
+> +
 
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- arch/powerpc/kvm/timing.h | 4 ----
- 1 file changed, 4 deletions(-)
+We should not forget to unset the master mode when this INTF is "removed"
+from the CTL.  When I modified and prepared your patches for sending, I did
+it like this to only clear it in reset_intf_v1 if the current intf is equal to
+the mater interface, similar to how it's removing the current intf _bit_ from
+CTL_INTF_ACTIVE without touching the rest:
 
-diff --git a/arch/powerpc/kvm/timing.h b/arch/powerpc/kvm/timing.h
-index 45817ab82bb4..14b0e23f601f 100644
---- a/arch/powerpc/kvm/timing.h
-+++ b/arch/powerpc/kvm/timing.h
-@@ -38,11 +38,7 @@ static inline void kvmppc_set_exit_type(struct kvm_vcpu *vcpu, int type) {}
- static inline void kvmppc_account_exit_stat(struct kvm_vcpu *vcpu, int type)
- {
- 	/* type has to be known at build time for optimization */
--
--	/* The BUILD_BUG_ON below breaks in funny ways, commented out
--	 * for now ... -BenH
- 	BUILD_BUG_ON(!__builtin_constant_p(type));
--	*/
- 	switch (type) {
- 	case EXT_INTR_EXITS:
- 		vcpu->stat.ext_intr_exits++;
--- 
-2.48.1
+https://github.com/SoMainline/linux/commit/f5a0789c3b9fcba08f6e8fb67637d16dc553cb9b#diff-e9e5209e670102755be2a30d223e79da644dfb8c28ac2ef61e5c49bb46457bb9R667-R673
 
+>  	if (cfg->merge_3d)
+>  		DPU_REG_WRITE(c, CTL_MERGE_3D_ACTIVE, merge_3d_active);
+>  
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.h
+> index 85c6c835cc8780e6cb66f3a262d9897c91962935..e95989a2fdda6344d0cb9d3036e6ed22a0458675 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.h
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.h
+> @@ -36,6 +36,7 @@ struct dpu_hw_stage_cfg {
+>  /**
+>   * struct dpu_hw_intf_cfg :Describes how the DPU writes data to output interface
+>   * @intf :                 Interface id
+> + * @intf_master:           Master interface id in the dual pipe topology
+
+Will this apply to quad topology etc as well?  Maybe needs to be generalized.
+
+- Marijn
+
+>   * @mode_3d:               3d mux configuration
+>   * @merge_3d:              3d merge block used
+>   * @intf_mode_sel:         Interface mode, cmd / vid
+> @@ -45,6 +46,7 @@ struct dpu_hw_stage_cfg {
+>   */
+>  struct dpu_hw_intf_cfg {
+>  	enum dpu_intf intf;
+> +	enum dpu_intf intf_master;
+>  	enum dpu_wb wb;
+>  	enum dpu_3d_blend_mode mode_3d;
+>  	enum dpu_merge_3d merge_3d;
+> 
+> -- 
+> 2.39.5
+> 
 
