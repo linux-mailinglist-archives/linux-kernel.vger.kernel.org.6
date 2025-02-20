@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-524385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92088A3E274
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 18:29:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2C2EA3E2A1
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 18:37:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90F26188A092
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:28:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B6B43A3603
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:28:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DAA320CCE6;
-	Thu, 20 Feb 2025 17:27:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF8BF212D69;
+	Thu, 20 Feb 2025 17:28:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="a3PnPuqK"
-Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="Py/2apbW"
+Received: from mail-oa1-f43.google.com (mail-oa1-f43.google.com [209.85.160.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 112C920F09D
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 17:27:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5174204877
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 17:28:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740072471; cv=none; b=spnn6tk8Pd1ZiYQ2vLzYyy0+Re1vpw8QHC98+X7Qqb7FzfbFe2fMyEQC0nTrxKsjF1QV/L7Q+3g5Qr3tQLh9thKO8PLjvNVnAoIzsa7DGUsFh2p/lF0RISDCMyGhcU2EUqr8VoKJfHrA7BPAEbPQLQY54ik1gAiulzhQ6i8/woA=
+	t=1740072515; cv=none; b=GVxGeTAGsjlNRya4AXW5r5XYMwLpvuRO4FJfHc0sp5czP1oPMXyY2v/VrW0sWTpkzT48wYAB7JOYy1LOsALf+kYxcz3Lf8GLhap00AwMWdIPgKd0TCIRDMw5VNdJyBoptSvXGByiL6Ndz9llDjrleTVltQFIjE0BkiHKEjuuw4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740072471; c=relaxed/simple;
-	bh=kzUcMPp4dBCS1FLhx6ZGyYMvLWLu3JJebAI2k+Ouqug=;
+	s=arc-20240116; t=1740072515; c=relaxed/simple;
+	bh=pSF+3Q0yOxZTxTMkcKGl8KlJQbXl8XaWL05HvaA1CXc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TeOEbNPle6RbOV3aWBA4fELBmcPft5wUJa5zVycNrza9+Ja+KmvZrTYoZ03zhrckZpwt++TIPfhAGZU8l/uXhUOKQfmSEPuCevQB/3mOERmpSAktY+P4TKTu3AhW0tOs7ebwHzaJpqkhx1LeRRarw3dnejSyYDuuBCeTDbtLTU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=a3PnPuqK; arc=none smtp.client-ip=209.85.160.50
+	 In-Reply-To:Content-Type; b=uZVaMkU84fYaWnSIwZy9IWLXdAJAOKVhSdkN/1m+8604peMpRrA5TNtfcqFnJRZkTJGtPC2Evvhg/P2+RpgspecmQRiCNkSWEpwCg7xe5KMh4iCjgzwKbOpgL0EdiPe7a1BVlQTS625p7o0EUv/2VUlZGsg760eJMbL9/tTmIf0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=Py/2apbW; arc=none smtp.client-ip=209.85.160.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-2bc659753d0so605935fac.3
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 09:27:49 -0800 (PST)
+Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-2bcceee7b40so692351fac.3
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 09:28:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1740072469; x=1740677269; darn=vger.kernel.org;
+        d=broadcom.com; s=google; t=1740072512; x=1740677312; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=/u13R5KOWq3pv04QD3KJlgVCEhSKv3/X70G4FsiRMMU=;
-        b=a3PnPuqKouoepVKUsTNvt7IiOmNyRjTnS3vGcaizYIXVCvRj7l/Ait2ALFf56iMhWv
-         kHG+haDrNs+yqIBi5CgJrbafTHHabU8UOk8tWCt3qynID2XvzZ8TJO1Gdob7+l+/F4lW
-         z2ovXPH5P+ojAgQ+qVrMY2Pj6L2YBJ8AY6k9E=
+        bh=Se84fI0QvJHv7tBsVCkvI8sK3nuKMRhf8fQQM5TGP/Y=;
+        b=Py/2apbW5Sig4tCc/Q/GOYHcInyc4S6K141BMWRdD0WM+Y5hovOsN6tyxUCCopSuqx
+         oNsJDC/pF4RVUGrE7IIXALvFYOML8Z2rgEfDaljG2FiZh9uEqTYJ9X5yEEk28mFgU1WA
+         jehuLRqVVaWLgDLEOdFx8gKv7q0xKpNOojz5A=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740072469; x=1740677269;
+        d=1e100.net; s=20230601; t=1740072512; x=1740677312;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=/u13R5KOWq3pv04QD3KJlgVCEhSKv3/X70G4FsiRMMU=;
-        b=JX80U44XUUnhXPviWFvuvzEnyns/sfHoeE81rONZleDn6AnxhxUeoHO5YRONHGnRMS
-         3kF7Fp8A7xeWtOoXH7mwaA33ApiI22oIs1f6NWJgUjHQhNVqXOl0z/y3XFLQd1IlE6Ie
-         lXB8CKd5SoqXCr1TldYDDYWtE+bUz5ndfGzgGQHKj20aYz9whyVto9G/iHR61zquJlXS
-         baDUmq6n7wOq5JB2G3RwPERrApj90sBZWBmNXroTF0idrrq4JMnfmbpYVZIgNurnO+BZ
-         1Rw40JwPubvEemJq4UfNYsWy8z6lUwiOFuINdzQYpHG19eM9S5ML7AVF0rAq2eaDm94W
-         CwYg==
-X-Forwarded-Encrypted: i=1; AJvYcCV4AZPADaXCPiedUw1kXgd45l1rahCRi6Y5rQDPBL+5p5jzSzFPfM/EOnq6mve+qaNSmKbZmYt8kFG0JCI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzhya67Z0baYJnlD3fXSRFqWGO+99A0konu16WljUppHdlGRcCL
-	INrGztcImlly3ASkOsxVBOiBw6jVxpk7PIUqVetkIymZA617W1ZYRjXNgf9yWw==
-X-Gm-Gg: ASbGncvu4SPJyF+Mr810R8ATr7FE9dyyPlcNBYhq1YCry9eBOTmEt4EsQQPnS5ThOtD
-	oqAMCOTmukXWkfVVc1qDVj0sDp6eXf+omM2eYtiPycz6Oll2hTOHSOBqV8PxBolpJvUa0je1H+9
-	vQxN9suKAA1hfjicU0z4/QqRet1SbuLRRLbALm0C+jBbx/C8d17lIp4Dte13nXKSneBtHp0TPWj
-	wYRgn/3Y+/hU0bpGt0BPGtqg2hGwdvBfNmcXpDwa7xvsWXnAc5WPovr0ymKxmWl4MPcLxuQiIdN
-	u/xATK6ajwGQUXkrkPGy2j7pDfQA/VfeZeXwK+na3dN84cik0/sfJv3p8FIcUjWcYLCXr1Fmzyu
-	4OZZS
-X-Google-Smtp-Source: AGHT+IFpe+7WNEMHf/e1K6RN6XXnxM2f+u9ir5hEJr+L2Qg9sOoP7MoRY9KKhkttJDVKbKrszFf5hA==
-X-Received: by 2002:a05:6870:6129:b0:296:9c08:51a3 with SMTP id 586e51a60fabf-2bd1052586fmr6219961fac.39.1740072469073;
-        Thu, 20 Feb 2025 09:27:49 -0800 (PST)
+        bh=Se84fI0QvJHv7tBsVCkvI8sK3nuKMRhf8fQQM5TGP/Y=;
+        b=wu/HP1EP4FR15AjL0Lq/LEPGKKB94/c5f+mqNalLxzjGc2Ke4BugFYr9RnMsZ5NVkU
+         NDb5+XI/YAFujuzCiHEg0Jod9uGkTHek3XOiIN41/VoGn4mMxZ/v3wvD0LSzs5JjW1sF
+         pC6s/s388eYvEVZI7HIQ/SjTXFY24L6twhON51NdSEUUymc1jfZABV4VdULuwHpolHb1
+         R4j8BuuJt5h4WM0TbO5M4W9S7kC39Q6jZiatnwRHbb8DXmjzIg6AuKrW5B5fJTIVE2Dw
+         jMtEZ7aLCgf/kx2dDCB3bYv6jPIDsK56iPUvvHN4v+43NAk7RvwazGcK6RbixASYcXLi
+         g6hQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX1bobRCspnNplCo150LlWLOW5J18ZZBqQIBfY5VfF+2dXNo8LzVx4ucF9+k4H42GK1poJQAWWYCwb/mfc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6TtPiit/T8c7h/f4xeAqZgEviiJrU6chPAYgSK6la2N7SRWse
+	BrE7gnoa+FlI8rwtfF5NQnQWf9re4+a8jc4b/ULVxPh7F3sf/4i8ls+MUL3jRw==
+X-Gm-Gg: ASbGncsi95I0X1PXeUz+/rPXud+RuX66br5vfrWtg650LLF7iyRQujO1Ztxkqd/4DBz
+	epGwyN4nKP9vVcBKt18eCzTD/uu5HdzdsPAvRevMK4QFViZeYHUoR3eTdFrWUyRxBmCAzC33X9Y
+	T/1dp69onKOU6zU0D7iRKLHOKOEgHMPNdBvvghwxpC71BBS6ThGxiIIvkX7K2ZrDV2ldMuPcufe
+	03NmfcgSvBUWd5YEb36cFeIRoaR7ilm95C8NkQT+cdyzQVBWReLktJEdDc//eUnp3jT0k8BDNx6
+	KsAKnIbvar+m+6+sAkxaMnVo3UyIdAPlHAsHJo70pasl+H8/g09SbocEHJVnPyeJYEdBvOZdemx
+	tE56g
+X-Google-Smtp-Source: AGHT+IHx2vbvGJAHIaFv9cg0KxSVcmogH7AF0Pu9XJIHUk15LcaEcO3igriQn9XHQKeAmlP5LjbZFg==
+X-Received: by 2002:a05:6870:5688:b0:2bc:7c3d:1918 with SMTP id 586e51a60fabf-2bd1029003emr6698012fac.21.1740072512624;
+        Thu, 20 Feb 2025 09:28:32 -0800 (PST)
 Received: from [10.171.122.29] (wsip-98-189-219-228.oc.oc.cox.net. [98.189.219.228])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2b9548b8b8asm6393725fac.21.2025.02.20.09.27.44
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2b95486cf40sm6433631fac.16.2025.02.20.09.28.29
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Feb 2025 09:27:48 -0800 (PST)
-Message-ID: <3e2eef77-2aaa-4140-9e91-59173445c929@broadcom.com>
-Date: Thu, 20 Feb 2025 09:27:43 -0800
+        Thu, 20 Feb 2025 09:28:32 -0800 (PST)
+Message-ID: <110d6471-d7a5-43bb-b768-dcbfb0f029eb@broadcom.com>
+Date: Thu, 20 Feb 2025 09:28:29 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,8 +79,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/8] PCI: brcmstb: Set gen limitation before link, not
- after
+Subject: Re: [PATCH v2 2/8] PCI: brcmstb: Write to internal register to change
+ link cap
 To: Jim Quinlan <james.quinlan@broadcom.com>, linux-pci@vger.kernel.org,
  Nicolas Saenz Julienne <nsaenz@kernel.org>,
  Bjorn Helgaas <bhelgaas@google.com>,
@@ -98,7 +98,7 @@ Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
  <linux-arm-kernel@lists.infradead.org>,
  open list <linux-kernel@vger.kernel.org>
 References: <20250214173944.47506-1-james.quinlan@broadcom.com>
- <20250214173944.47506-2-james.quinlan@broadcom.com>
+ <20250214173944.47506-3-james.quinlan@broadcom.com>
 Content-Language: en-US
 From: Florian Fainelli <florian.fainelli@broadcom.com>
 Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
@@ -133,19 +133,20 @@ Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
  MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
  7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
  95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <20250214173944.47506-2-james.quinlan@broadcom.com>
+In-Reply-To: <20250214173944.47506-3-james.quinlan@broadcom.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 
 
 On 2/14/2025 9:39 AM, Jim Quinlan wrote:
-> When the user elects to limit the PCIe generation via the appropriate DT
-> property, apply the settings before the PCIe link-up, not after.
+> The driver was mistakenly writing to a RO config-space register
+> (PCI_EXP_LNKCAP).  Although harmless in this case, the proper destination
+> is an internal RW register that is reflected by PCI_EXP_LNKCAP.
 > 
 > Fixes: c0452137034bda8f686dd9a2e167949bfffd6776 ("PCI: brcmstb: Add Broadcom STB PCIe host controller driver")
 
-Looks like this commit ID should be shortened to 12 digits. Other than that:
+Likewise this needs to be shortened to 12 digits, with that fixed:
 
 Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
 -- 
