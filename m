@@ -1,123 +1,124 @@
-Return-Path: <linux-kernel+bounces-523716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33E71A3DA50
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:45:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7FC2A3DA48
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:43:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE3D23BAF07
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:44:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 27D2A160425
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:43:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 432A81F5849;
-	Thu, 20 Feb 2025 12:45:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F34E11F4628;
+	Thu, 20 Feb 2025 12:42:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kUyKqhBL"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W/5Iyl2A"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8FE31F463E;
-	Thu, 20 Feb 2025 12:45:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DEA1286298;
+	Thu, 20 Feb 2025 12:42:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740055503; cv=none; b=hjDd0XUpMCjwhO4GrttH6VZ7wqcBAI++763usjVC6nNiIbUg3sNpNTGSyKwd2jWZh4WFty8BsGNunQEYyoPoK5621wJuPbI1lcrg+dypDe2yuS96FTTuGQ4UC2fSDXSbnySojjmcmptDs8M4wmbsikhYtbnvFfXZDMw6QjWGJZ4=
+	t=1740055375; cv=none; b=uBtK8YHHCZKAYAHMx70vod/fYUplRQzPKh1Sp9N+8hb4f6D9y4Qy4s/hmoBtV+Ejfs6FGlDiucx8/OHUY/SESx+B/+icm5ywYaZ1p5QXSyxFOIc4H0pop2iEvLR4mC5diAmFUU0a0QANGNkN2TEgsHG0puI8G1dCXYEOgC7ChZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740055503; c=relaxed/simple;
-	bh=oG12uGM2GY0G64yPYTsTHhOODq5EGA/zAcrs+d7VjLA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=i8R80YZPmkdPa4ot3sN6DHhqiSqIA4gnMsSiLN3jv5yUWlRtynYX9dDyX3NPDqGfdDO9aVmhno1VtArUYiv/6iLtlVR+TRxjXet1HeSpj9L9Ph6eWdFCLAlW/zqbe6l7G4KvjKYlbGd6v5C2BbPhaK0WMn1pLI+MBRo61nbB6cA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kUyKqhBL; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740055502; x=1771591502;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=oG12uGM2GY0G64yPYTsTHhOODq5EGA/zAcrs+d7VjLA=;
-  b=kUyKqhBLO3PPfT9SA97UTRrAhKctJ76oHZqOX+5Bcv+YeA4cZLNQzNpb
-   3QrVFaELgQ93zhfbVk2HKjzpj6U6chSNDBmT6CBknZdoreOkmJKx6fnXf
-   saa0beVt7qP9SnAMU/TK7CuOyaRSmzLontpQ/SLeDVflHODbITfgdxrlg
-   8b/glO22IeTWefolCII7jXsPEWchXmBcjLrSs4AiDRUg1cwSkLEi7VHYK
-   h1L7bL5igOIiVAS5WpB5oG4Tobd02GZod8qxAREa9WjXNSCivLYCsYqla
-   NK3CL73Db1ggHLRX/Iy54MaVlRhk0BamN3Luv/CLVaMjmct3nXLAg4Z0e
-   Q==;
-X-CSE-ConnectionGUID: ahle3U6YSGKV+kDAhUK3OQ==
-X-CSE-MsgGUID: 0PWUIABBR9u7qpnNxsEvGg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11351"; a="40020774"
-X-IronPort-AV: E=Sophos;i="6.13,301,1732608000"; 
-   d="scan'208";a="40020774"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Feb 2025 04:45:01 -0800
-X-CSE-ConnectionGUID: PVgQ+gq5SXim0/VjzRT96w==
-X-CSE-MsgGUID: x7sJihb4SLal0DNwW8R+3w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,301,1732608000"; 
-   d="scan'208";a="115564786"
-Received: from pg15swiplab1181.png.altera.com ([10.244.232.167])
-  by fmviesa010.fm.intel.com with ESMTP; 20 Feb 2025 04:44:59 -0800
-From: niravkumar.l.rabara@intel.com
-To: Vinod Koul <vkoul@kernel.org>,
-	Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-Cc: Niravkumar L Rabara <niravkumar.l.rabara@intel.com>,
-	nirav.rabara@altera.com,
-	dmaengine@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jisheng Zhang <jszhang@kernel.org>
-Subject: [PATCH v5] dma: dw-axi-dmac: remove unnecessary axi_dma_enable() calling
-Date: Thu, 20 Feb 2025 20:41:22 +0800
-Message-Id: <20250220124122.3807306-1-niravkumar.l.rabara@intel.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1740055375; c=relaxed/simple;
+	bh=RVZ/swUs318iSPWUVj9+byY1sTALGlfS4yGzHO5zGEY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XFRBLrx1z/q8OizLY/eG6eGBmrAlfywliUzcGdwQ9jEIZkTMkdRaMHQWUnkcRvAvmZEsyEXvR1KkdUqYqDmP153s5M1fDxuk21b3hQ8Qo7RYlMtlHWZvZMTHcNfT4hRECXeAXWA6SPTGkHqw2gsRab2rmTfs23hiv8jZMHWrNk8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W/5Iyl2A; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67A97C4CED6;
+	Thu, 20 Feb 2025 12:42:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740055374;
+	bh=RVZ/swUs318iSPWUVj9+byY1sTALGlfS4yGzHO5zGEY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=W/5Iyl2A8LrY2JUM0IzIQPtoJ4yKX40TTq/3WN9psph4YCrW5Q3J8Eam2+D7L7MwZ
+	 PnXhOanXHE2SEmQ/auErLnmPpXIJH1Gnl01cVp2IOSUdrioRNlb26J56L2VHQy8zVJ
+	 xsWy6p6hh9tqBqRNOc7sGl7BESkIIn+T8U8NGC4kGmXoZP7T8c/aZWmQ2wAngH7tsq
+	 TfQNZC5abXf3hI45pxg3Yvuk5cJ2Bv4KXTFwAqWNj15zt3agjKqxWXkGV20GIXw1gK
+	 Ta3Hjp1PFsa6OITZ6+ZcL7rvi/Lw3oQbRFYQgFWMSfI+MIhMcClUGKzZKGu3XRTNPf
+	 Wdga0gXIWjfTA==
+Date: Thu, 20 Feb 2025 13:42:51 +0100
+From: Niklas Cassel <cassel@kernel.org>
+To: Zhiyuan Dai <daizhiyuan@phytium.com.cn>
+Cc: helgaas@kernel.org, bhelgaas@google.com, christian.koenig@amd.com,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+Subject: Re: [PATCH v3] PCI: Update Resizable BAR Capability Register fields
+Message-ID: <Z7cjS7iuX655O7b3@ryzen>
+References: <20250219183424.GA226683@bhelgaas>
+ <20250220013034.318848-1-daizhiyuan@phytium.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250220013034.318848-1-daizhiyuan@phytium.com.cn>
 
-From: Niravkumar L Rabara <niravkumar.l.rabara@intel.com>
+On Thu, Feb 20, 2025 at 09:30:34AM +0800, Zhiyuan Dai wrote:
+> PCI Express Base Spec r6.0 defines BAR size up to 8 EB (2^63 bytes),
+> but supporting anything bigger than 128TB requires changes to pci_rebar_get_possible_sizes()
+> to read the additional Capability bits from the Control register.
+> 
+> If 8EB support is required, callers will need to be updated to handle u64 instead of u32.
+> For now, support is limited to 128TB, and support for sizes greater than 128TB can be
+> deferred to a later time.
 
-DMA is always enabled before calling axi_chan_block_xfer_start(),
-so it does not need to be enabled again here.
+Did you run ./scripts/checkpatch.pl on this?
 
-Re-enabling DMA causes random failures in the dmatest test when running
-multiple iterations.
-e.g.
-[   29.600722] dmatest: dma0chan2-copy0: summary 100 tests, 1 failures 160.26 iops 1299 KB/s (0)
+I'm guessing that you will see:
+Prefer a maximum 75 chars per line (possible unwrapped commit description?)
 
-Fixes: 1fe20f1b8454 ("dmaengine: Introduce DW AXI DMAC driver")
-Tested-by: Niravkumar L Rabara <niravkumar.l.rabara@intel.com>
-Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
-Signed-off-by: Niravkumar L Rabara <niravkumar.l.rabara@intel.com>
----
-Changes in v5:
-  * Fixed the Tested-by format.
+With that fixed:
+Reviewed-by: Niklas Cassel <cassel@kernel.org>
 
-Changes in v4:
-  * Add fixes tag
-  * Rebase to v6.14-rc1 
-
-link to v3:
- - https://lore.kernel.org/all/20230521101216.4084-4-jszhang@kernel.org/
-
- drivers/dma/dw-axi-dmac/dw-axi-dmac-platform.c | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/drivers/dma/dw-axi-dmac/dw-axi-dmac-platform.c b/drivers/dma/dw-axi-dmac/dw-axi-dmac-platform.c
-index b23536645ff7..43d30c7b8f03 100644
---- a/drivers/dma/dw-axi-dmac/dw-axi-dmac-platform.c
-+++ b/drivers/dma/dw-axi-dmac/dw-axi-dmac-platform.c
-@@ -435,8 +435,6 @@ static void axi_chan_block_xfer_start(struct axi_dma_chan *chan,
- 		return;
- 	}
- 
--	axi_dma_enable(chan->chip);
--
- 	config.dst_multblk_type = DWAXIDMAC_MBLK_TYPE_LL;
- 	config.src_multblk_type = DWAXIDMAC_MBLK_TYPE_LL;
- 	config.tt_fc = DWAXIDMAC_TT_FC_MEM_TO_MEM_DMAC;
--- 
-2.25.1
-
+> 
+> Signed-off-by: Zhiyuan Dai <daizhiyuan@phytium.com.cn>
+> ---
+>  drivers/pci/pci.c             | 4 ++--
+>  include/uapi/linux/pci_regs.h | 2 +-
+>  2 files changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> index 661f98c6c63a..77b9ceefb4e1 100644
+> --- a/drivers/pci/pci.c
+> +++ b/drivers/pci/pci.c
+> @@ -3752,7 +3752,7 @@ static int pci_rebar_find_pos(struct pci_dev *pdev, int bar)
+>   * @bar: BAR to query
+>   *
+>   * Get the possible sizes of a resizable BAR as bitmask defined in the spec
+> - * (bit 0=1MB, bit 19=512GB). Returns 0 if BAR isn't resizable.
+> + * (bit 0=1MB, bit 31=128TB). Returns 0 if BAR isn't resizable.
+>   */
+>  u32 pci_rebar_get_possible_sizes(struct pci_dev *pdev, int bar)
+>  {
+> @@ -3800,7 +3800,7 @@ int pci_rebar_get_current_size(struct pci_dev *pdev, int bar)
+>   * pci_rebar_set_size - set a new size for a BAR
+>   * @pdev: PCI device
+>   * @bar: BAR to set size to
+> - * @size: new size as defined in the spec (0=1MB, 19=512GB)
+> + * @size: new size as defined in the spec (0=1MB, 31=128TB)
+>   *
+>   * Set the new size of a BAR as defined in the spec.
+>   * Returns zero if resizing was successful, error code otherwise.
+> diff --git a/include/uapi/linux/pci_regs.h b/include/uapi/linux/pci_regs.h
+> index 1601c7ed5fab..ce99d4f34ce5 100644
+> --- a/include/uapi/linux/pci_regs.h
+> +++ b/include/uapi/linux/pci_regs.h
+> @@ -1013,7 +1013,7 @@
+>  
+>  /* Resizable BARs */
+>  #define PCI_REBAR_CAP		4	/* capability register */
+> -#define  PCI_REBAR_CAP_SIZES		0x00FFFFF0  /* supported BAR sizes */
+> +#define  PCI_REBAR_CAP_SIZES		0xFFFFFFF0  /* supported BAR sizes */
+>  #define PCI_REBAR_CTRL		8	/* control register */
+>  #define  PCI_REBAR_CTRL_BAR_IDX		0x00000007  /* BAR index */
+>  #define  PCI_REBAR_CTRL_NBAR_MASK	0x000000E0  /* # of resizable BARs */
+> -- 
+> 2.43.0
+> 
 
