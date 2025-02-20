@@ -1,74 +1,157 @@
-Return-Path: <linux-kernel+bounces-523881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8211EA3DC83
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:21:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id ABD22A3DC8B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:22:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC6F370061E
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:18:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6038A7024AE
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:18:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CB8F1FFC43;
-	Thu, 20 Feb 2025 14:17:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D84541FE46E;
+	Thu, 20 Feb 2025 14:17:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="h610QMXl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hJzdN4qF"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFF721FECA6;
-	Thu, 20 Feb 2025 14:17:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D3AC1FBEB4;
+	Thu, 20 Feb 2025 14:17:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740061028; cv=none; b=U3eGXqq+NohcqArAXqOevlXNV1uIgmKvH7n6om6Q7Zw1oSX6JviBRrWe9EF0qndt4fpHXIZreqIDqTTUnmmvJJe6Obn5dJ8FQ1MLcYjSVoj5vz63ZD6TZC2LKZmv6EF7ZAERk+a0enucyhCWB/wrQlAtP8RY8+kC8K3IhvTpa7M=
+	t=1740061069; cv=none; b=m6Q/u9ZelJDBTr6Mw1hQhX5pDhvXdvNyHToE7DeYF0xTiQbEP4D39cCbjbNN3okWBMYTdk4eIU3BnR7oYmbeCBrYH5rCug7iLFNBhY9W9YJY7UmkG0/YFbMDPU9uS391G4ZgwLR4Z/UZhGh0DCtHOPWLfkIrERoOQAvoFCU7JwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740061028; c=relaxed/simple;
-	bh=7GCxEoOqZGDJcRtZ3exZiIuelMlMHgN4diFE3dEprsI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nZoKzjxzXkakOKkxyGvYA+Hp52ruA4qb0Uzak59U6MLzsyOxLEm2J+09HevpB4RdU9lNs0Z48t0RSc0cG70X/faQg9lMSc12veihHNyKeUxqISO15l1Kh10ZkTnXRtXsjk9DK8Bka6nx94n2cTScw0BLwfZyLy8Ti5zQauXAwZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=h610QMXl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10A5CC4CEE6;
-	Thu, 20 Feb 2025 14:17:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1740061027;
-	bh=7GCxEoOqZGDJcRtZ3exZiIuelMlMHgN4diFE3dEprsI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=h610QMXlxM6aMq5YPOuT86uqfzZ6Glh7svzviC2mmPAephwWpEQMzc/T4f35tA+l4
-	 OO0QSYtEe4h60ARlMWzsWjHgD/1KnPhds1mV9VbeZXkzcieXLpeEpxta7xLREcURnq
-	 j95k0D8KlrCbktzO7nmh33642KD6T6SCPXyHHTaA=
-Date: Thu, 20 Feb 2025 15:17:04 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Max Kellermann <max.kellermann@ionos.com>
-Cc: David Howells <dhowells@redhat.com>, netfs@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org
-Subject: Re: [PATCH] fs/netfs/read_collect: add to next->prev_donated
-Message-ID: <2025022051-rockband-hydroxide-7471@gregkh>
-References: <CAKPOu+_4mUwYgQtRTbXCmi+-k3PGvLysnPadkmHOyB7Gz0iSMA@mail.gmail.com>
- <20250210191118.3444416-1-max.kellermann@ionos.com>
- <3978045.1739537266@warthog.procyon.org.uk>
- <CAKPOu+8cD=HkoNYYknivDJnb6Pfxv+KF28SBUDEqha4NE5sxhg@mail.gmail.com>
+	s=arc-20240116; t=1740061069; c=relaxed/simple;
+	bh=LUMgRUpWvuZjoguWpdCmke5vgOR7WB4z9bLKqjwwGy0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=U5+6i5BEWkV1vCMPeL2WeM1R10+Q9MLBg+SJFt8/I0ZMFRoI20+G6mpOWk3ErYvRtVMEa6zk+vckUpu217sSyIasEzaWq6l75DGfTYe2niRPOrqQzIR033Cbg/tRfnsTrQIa4OVjzgIOMO90LGkpJDO+PrhfXz64IxgxE8HGs6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hJzdN4qF; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5e0939c6456so1649079a12.3;
+        Thu, 20 Feb 2025 06:17:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740061065; x=1740665865; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=j5NAA4XF+E1i12VZp9/nJoaJNV9QI4nVe2Rlxr+bSvU=;
+        b=hJzdN4qFf+Cy1k27abaa4bUNZAAiXpvLC/1b5TL8dIm7IpzhUmP4pp83R/+X3vhUD4
+         HJWfyQFHuVnErhy0G8q++Hc9zitIuxT2XF7u1UFiUwfi7z5jnBxlHPzoqgv348rCl+Nh
+         avfHI4shiu+Xo7744j8u5Vmarc4vSEWSX52ioiwexu6QFK/qD0oF113s2UlE0fs0jVrb
+         xVqexBe1XaIhpX1t62u2g2AANpTMiKi3fVVLNRVEFWgGKfJR+tyANr00dCREJtWZeHef
+         r0LGVDN53RDxZcyaLrb8lVV6FyMyJHeB6VGQTKqDWjnJsPZINJhnPVnG5+iSV08+78FZ
+         4NuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740061065; x=1740665865;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=j5NAA4XF+E1i12VZp9/nJoaJNV9QI4nVe2Rlxr+bSvU=;
+        b=SPqkHFVT6ggpM/GrwNoyeobjGxcfKojDd6ZDUVCfanv/eV16rUQ+bThQV6YE+qow22
+         gXogFyN9UU16lRmhHlqR80JB0r5FDLVVKUVqdm2wpyTRmqOX3EX4uzcQpus3H/Owlg7f
+         GUkQ0Np94OdcsuiizWEIdeUaiRUbGCAdHFlfI1+rqXvQ9+qKM/3AxRGn84buIN2/1EBC
+         LKn7jFQHlUHL7SOBAiQpInWgEI5LnFpzMlQhu/zBffFr0YirkEDDi3/48G/tw05XffHd
+         dZANd6QWeHhrbT6LOzPfalU1n7mU5MGHFCToRR3DQXay4W4snlCgkPHmHUiXijzwmu+g
+         brXg==
+X-Forwarded-Encrypted: i=1; AJvYcCUQTIU9/8dIDk94ADrP5BW1Cnv9Ipv3OIwN9w2ugI1AJaiOXgq8T8vPfV/fKBmzswX+d6Io8ZWc2/eJjPE=@vger.kernel.org, AJvYcCUhEcM8HWhCTJNGQlbmmB5Ts5bpXq07JDwz+LFfPL5xTyqAGxfJxvIyydNdOQ6fX11+syTzmZUZ0z/e@vger.kernel.org, AJvYcCWiS5KVvtqh5HrsWcpIo1LcuGb5pprqEHJAgZq+/TZ3xUmIu7Nvr+uJ5l+w99Vwl/SNFgr+6rHW3jounyiY@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHUQnDxJaowvoY7xQ7neBALR/a/WQDYDJ6IYwMolUj7U0hQjV+
+	TmLHzeZViB+LGFVZxUK0E4uE/vGWd7HyjeLXLOjL0CIebrpZMIky
+X-Gm-Gg: ASbGncu49AYtM//XAHmQw5hAjlckditQhtfVH6r/5/98ly9+zTYCM5f67RKmPiZ1AKL
+	OgmzRqd/JERsT4IXj9fECh5HP4mD2eNW19yAhbHcvGmlg/yrWaYFMA8rFqwJ+h+zqVSC5FtgJZp
+	kCjwivBQc5lP/oDxRYSwuZjpszqcK/wK29kSUWMbf8nonLBzXLh1JApkNJL/Ii/+KHzSI4ZIwmY
+	ISyKZXRNrch/4xI6FgCOrbNaLHG49qTvuybaGzGe4qAahsPuRMu3aB/P+pRz5qlgnXC/6P/Ksld
+	O1m1JTUxlxzP7BNzjsq3v6isUxvS
+X-Google-Smtp-Source: AGHT+IHwF/iEm5a3EKb+wf6y31mYTImtmkfKgViMWXtti2k6qyught+ricxhgsnrzaDiZKQpJ1Np8w==
+X-Received: by 2002:a05:6402:348b:b0:5e0:8064:b42e with SMTP id 4fb4d7f45d1cf-5e08064b595mr8838593a12.25.1740061065289;
+        Thu, 20 Feb 2025 06:17:45 -0800 (PST)
+Received: from demon-pc.localdomain ([188.27.130.21])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5dece1b4f59sm12124224a12.6.2025.02.20.06.17.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Feb 2025 06:17:44 -0800 (PST)
+From: Cosmin Tanislav <demonsingur@gmail.com>
+To: 
+Cc: Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	linux-media@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Cosmin Tanislav <demonsingur@gmail.com>
+Subject: [PATCH 0/6] media: v4l: add support for Virtual Channel IDs
+Date: Thu, 20 Feb 2025 16:17:22 +0200
+Message-ID: <20250220141739.228714-1-demonsingur@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAKPOu+8cD=HkoNYYknivDJnb6Pfxv+KF28SBUDEqha4NE5sxhg@mail.gmail.com>
 
-On Thu, Feb 20, 2025 at 02:09:17PM +0100, Max Kellermann wrote:
-> On Fri, Feb 14, 2025 at 1:47 PM David Howells <dhowells@redhat.com> wrote:
-> > Signed-off-by: David Howells <dhowells@redhat.com>
-> 
-> Greg, you merged my other two netfs fixes into 6.13.3, but omitted
-> this one. Did you miss it, or was there another reason?
+Multi-camera systems often have issues with receiving video streams
+from multiple cameras at the same time because the cameras use the same
+Virtual Channel IDs.
 
-It wasn't sent to me or to the stable list, so how could have I seen it?
+CSI bridges might not support remapping the Virtual Channel IDs, making
+it impossible to receive the separate video streams at the same
+time, while the CSI receiver is able to de-mux streams based on VC IDs.
 
-confused,
+Cameras sometimes have support for changing the VC IDs they output
+themselves.
 
-greg k-h
+For a practical example, GMSL2 deserializer chips do not support VC ID
+remapping in tunnel mode, and neither do the serializers. Allowing the
+cameras to have their VC IDs configured would allow multi-camera setups
+to use tunnel mode.
+
+Add support for specifying these Virtual Channel IDs in Video Interface
+Endpoints.
+
+Add support for parsing VC IDs in v4l2_fwnode_endpoint_parse().
+This allows us to retrieve the specified VC IDs in camera drivers and
+configure the hardware to use them.
+
+The supported values are 0 to 3, with a maximum of 4 values.
+Although the CSI-2 specification allows for up to 32 virtual channels,
+most hardware doesn't support more than 4. This can be extended later
+if need be.
+
+The driver must validate the number of VC IDs and the VC IDs
+themselves.
+
+Add an example implementation for IMX219.
+
+Cosmin Tanislav (5):
+  dt-bindings: media: video-interfaces: add support for Virtual Channel
+    IDs
+  media: v4l: fwnode: parse Virtual Channel IDs for CSI2 buses
+  dt-bindings: media: imx219: add support for Virtual Channel IDs
+  media: i2c: imx219: pass format's code to imx219_get_format_bpp()
+  media: i2c: imx219: implement configurable VC ID
+
+Laurent Pinchart (1):
+  media: i2c: imx219: Report streams using frame descriptors
+
+ .../devicetree/bindings/media/i2c/imx219.yaml |  2 +
+ .../bindings/media/video-interfaces.yaml      | 11 ++++
+ drivers/media/i2c/imx219.c                    | 54 +++++++++++++++++--
+ drivers/media/v4l2-core/v4l2-fwnode.c         | 15 ++++++
+ include/media/v4l2-mediabus.h                 |  5 ++
+ 5 files changed, 84 insertions(+), 3 deletions(-)
+
+-- 
+2.48.1
+
 
