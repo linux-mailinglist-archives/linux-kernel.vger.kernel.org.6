@@ -1,153 +1,125 @@
-Return-Path: <linux-kernel+bounces-523244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BD33A3D42C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 10:07:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 505DAA3D42E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 10:08:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D036A16B2B9
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 09:07:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 704D4189A4A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 09:08:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A5981EBA19;
-	Thu, 20 Feb 2025 09:07:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="XCkyIo8h"
-Received: from out30-97.freemail.mail.aliyun.com (out30-97.freemail.mail.aliyun.com [115.124.30.97])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD1BF1EB9F9;
+	Thu, 20 Feb 2025 09:08:10 +0000 (UTC)
+Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com [209.85.222.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17A4E1E3DEF;
-	Thu, 20 Feb 2025 09:07:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.97
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B8AC1C5D67
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 09:08:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740042468; cv=none; b=Hjghv3C5y1g9udyPgoRARiutJPl4gjg87ZhPgtHpRN2pRAqiWXndrsogvBRKG0x4j1KmXdQm/sRaLS9O1SfLFU9gEMhZy119wRSfjk+TQ3rKVSAlfhyHhUcrBcXb+bQC6iQr0/gEIe6zllrre8AQKrSl5b+8CAkI1aiWT+XRkRU=
+	t=1740042490; cv=none; b=Ck7WJ8m8LzfQuHg3256TTNYJTHDs4Lf6x2MJzLFc/KRlHp5sJXv4Hbqb8EfS1pz33txA7FN9yKDRaEPzEH4EHH1/OBvK1zwpKyFXjirLmH27eoyrN8k6lfFVafNgLrsAuNWkMbebY1G6nyJzWu6UMEF4ZCl2vTsKFeuVHMcCX70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740042468; c=relaxed/simple;
-	bh=5BYgWG2FhaoCjrderVpMcYG/+/QrJce+ova9fsTR9l4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=T9B5z3j97IIGngwWeb1a+bWuKRjGyImhinHtdyzE7V4PW8DW/IQgRoVmGpeE15/UF67EDrrOf9YqoLQiTE8FNdHVAnvt3T4b4t8nYPX8gDWAO3L0T0aQJeGgqFgS//QLi3/aJcIsnUn2S52e6n5ihSVr+6A/9b2beiWko6Cpw6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=XCkyIo8h; arc=none smtp.client-ip=115.124.30.97
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1740042456; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=gpT1/jCfOF+xlpyUls6HFqnFvhxzqevHqyGAov1yiaI=;
-	b=XCkyIo8hvoXJdfBo7FP6yNP3OSxDGL1hrzuXzBfbcwkCN+xOtTHNFi69US65/QGfP9Uk46f9dhG1v8nFmdCg5qmTnCl2dZVRMWiCM65SxphTuj9Rg+LG7YL/4EUB5Phiv8aFZHriN6mSLfR9HI+LGTOx6L+8FNrtCydkE8GFc4E=
-Received: from 30.74.144.124(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WPsDYRp_1740042454 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Thu, 20 Feb 2025 17:07:35 +0800
-Message-ID: <47d189c7-3143-4b59-a3af-477d4c46a8a0@linux.alibaba.com>
-Date: Thu, 20 Feb 2025 17:07:34 +0800
+	s=arc-20240116; t=1740042490; c=relaxed/simple;
+	bh=7vx15IQxYZRa3T4lslXZAPYRFL8CcEnox/jZd//eeqg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Q76b7eeQWNVzQ4IOL0MVh29DAeWI+ulX5RNUIDqIku5kTCebv8r4F+cSr/o2uKJ/m+SI2R4qLle17NpfWXR1FKR/qzFiJu+BTRSPti2ZP8FTMjkTdQ8OlFzGOWa2NGHKJt80vQReb7Qj1+iS5NjWrx5trpLxfAvgiNqiphKaklw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f50.google.com with SMTP id a1e0cc1a2514c-868ec803d83so170014241.3
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 01:08:08 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740042486; x=1740647286;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vGBCTmEQKro/QQYdud7kw8Q+pzJM3E9asTpsvZ+X8EM=;
+        b=ZuuhYzcH/Y9MmNv8/95lvsmYYGZXfprm9/jx4jaH2PgxiVYRyIG5dyP+zeXpqoGr/2
+         KPNMTRIMovkpI9L4MO2bvf0ENPqZNqWDdvmpXLDfWVvKXgNyb+YlJy2Ni8/sy4aeaPi5
+         C+DugbxkBhBNoaUypTUH9hHqpjiaFNpeEO34nWCpEeuQgS989LMyX6bPJdZljDB37nR0
+         5vYT9qnwk+In0BWn9zkCzN8AiZCnGg29im4SVqy4ufJ/YVu/G9tRA24lTN7n7b6W8fiO
+         oW8ps0sBuU0bPteOCIugb9NtFgb6Vy6HqwWOCWLHvebFfV5h22S6DTm3UPeB+n2n+TP1
+         PQRg==
+X-Forwarded-Encrypted: i=1; AJvYcCW3GHTRsg5f3hd3xBsiUSE7q36Jm/b+2Y6OHCfYSa/z+B+MGyE+dh9cG2LwULZAcXvyF4MKHLCLA80SOKc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBAVVX0qBwmzj74hINiHUCjas0/mtjgsm5UtnLPaAKg1r71HNn
+	n8bbBR5ZL0KFRP+utqZClejN5vLvSjQkmOw2jpmDDUr0a4jqV3qkLE8zeZqy
+X-Gm-Gg: ASbGncv4mM2KphHVDW854bhTguHWqyTByiATwgtQC7tHzceytYid6dz49ucedTusmcU
+	+xi5PsjXZ8XaYDyiN6Kyc7KvrJm56gDxHGJZWCRd0O5GYapre6urOxLnkkh/4EAh0LZtNAnaQFD
+	IwN69sLdPA42tFTkuRtmPODUFL2JWBBXgRcoFUXNiLnRSHiaqtMy3nx37uz9NhyQF/IAbDp4Xie
+	zWbqmhqZZID9Inqyhfb7FitowuCpFbP98VOUgKrQ+AakY3aWiXxiWo/MYMFnWrr//usZOadHhxs
+	0/9dRoU7n/75Yn2k0DJCE4gT1NjToiOfMiun7iVm2n+rpVjfcXvS6A==
+X-Google-Smtp-Source: AGHT+IFQs3q7uZ8jIVXS65nXIa1a1prkn+MzyAOgRkEvrPeyowa20KmINOaFFNxzKmZrrgiH9i8RsA==
+X-Received: by 2002:a05:6102:4187:b0:4bb:cbbc:42 with SMTP id ada2fe7eead31-4be85b54fe8mr3722999137.5.1740042486571;
+        Thu, 20 Feb 2025 01:08:06 -0800 (PST)
+Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com. [209.85.222.47])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4be58249f76sm2104290137.3.2025.02.20.01.08.05
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 20 Feb 2025 01:08:06 -0800 (PST)
+Received: by mail-ua1-f47.google.com with SMTP id a1e0cc1a2514c-8671441a730so181646241.0
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 01:08:05 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVH/4qfgzWxFaU2twGbpVGzzy4ycwgbnn3QiqjabngH25uq3pAl/y9ewYBf1N6Ut+V0S3Sl+EYn7BM+L2o=@vger.kernel.org
+X-Received: by 2002:a05:6102:8024:b0:4bb:d45c:7f4b with SMTP id
+ ada2fe7eead31-4be85bf9778mr4909500137.11.1740042485608; Thu, 20 Feb 2025
+ 01:08:05 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] mm/shmem: use xas_try_split() in
- shmem_split_large_entry()
-To: Zi Yan <ziy@nvidia.com>
-Cc: Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
- linux-fsdevel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
- Hugh Dickins <hughd@google.com>, Kairui Song <kasong@tencent.com>,
- Miaohe Lin <linmiaohe@huawei.com>, linux-kernel@vger.kernel.org
-References: <20250218235444.1543173-1-ziy@nvidia.com>
- <20250218235444.1543173-3-ziy@nvidia.com>
- <f899d6b3-e607-480b-9acc-d64dfbc755b5@linux.alibaba.com>
- <AD348832-5A6A-48F1-9735-924F144330F7@nvidia.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <AD348832-5A6A-48F1-9735-924F144330F7@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <11603b392e2899b44fce61bbc8626a1aaa32b8f0.1740037706.git.geert@linux-m68k.org>
+ <CAHp75VcMweeEa=oAsVOLefuUKx96YJVg4ifdqT-uySPLXWeAeg@mail.gmail.com>
+In-Reply-To: <CAHp75VcMweeEa=oAsVOLefuUKx96YJVg4ifdqT-uySPLXWeAeg@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 20 Feb 2025 10:07:52 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdXxu_H52JJPwwU-GSNA=J0qQ8oJtU53+gEidukTaFhseg@mail.gmail.com>
+X-Gm-Features: AWEUYZnSi6YR9zYxT3gcuKH7swpfjTeD4n4sFC5i0xqksvPaaVEdT0XQXTf3TBg
+Message-ID: <CAMuHMdXxu_H52JJPwwU-GSNA=J0qQ8oJtU53+gEidukTaFhseg@mail.gmail.com>
+Subject: Re: [PATCH v2] auxdisplay: MAX6959 should select BITREVERSE
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Andy Shevchenko <andy@kernel.org>, linux-kernel@vger.kernel.org, 
+	kernel test robot <lkp@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi Andy,
 
+On Thu, 20 Feb 2025 at 09:21, Andy Shevchenko <andy.shevchenko@gmail.com> w=
+rote:
+> On Thu, Feb 20, 2025 at 9:48=E2=80=AFAM Geert Uytterhoeven <geert@linux-m=
+68k.org> wrote:
+> >
+> > If CONFIG_BITREVERSE is not enabled:
+> >
+> >     max6959.c:(.text+0x92): undefined reference to `byte_rev_table'
+>
+> LGTM now, thanks.
+> Do you think we are in an emergency to send it for v6.14?
 
-On 2025/2/20 00:10, Zi Yan wrote:
-> On 19 Feb 2025, at 5:04, Baolin Wang wrote:
-> 
->> Hi Zi,
->>
->> Sorry for the late reply due to being busy with other things:)
-> 
-> Thank you for taking a look at the patches. :)
-> 
->>
->> On 2025/2/19 07:54, Zi Yan wrote:
->>> During shmem_split_large_entry(), large swap entries are covering n slots
->>> and an order-0 folio needs to be inserted.
->>>
->>> Instead of splitting all n slots, only the 1 slot covered by the folio
->>> need to be split and the remaining n-1 shadow entries can be retained with
->>> orders ranging from 0 to n-1.  This method only requires
->>> (n/XA_CHUNK_SHIFT) new xa_nodes instead of (n % XA_CHUNK_SHIFT) *
->>> (n/XA_CHUNK_SHIFT) new xa_nodes, compared to the original
->>> xas_split_alloc() + xas_split() one.
->>>
->>> For example, to split an order-9 large swap entry (assuming XA_CHUNK_SHIFT
->>> is 6), 1 xa_node is needed instead of 8.
->>>
->>> xas_try_split_min_order() is used to reduce the number of calls to
->>> xas_try_split() during split.
->>
->> For shmem swapin, if we cannot swap in the whole large folio by skipping the swap cache, we will split the large swap entry stored in the shmem mapping into order-0 swap entries, rather than splitting it into other orders of swap entries. This is because the next time we swap in a shmem folio through shmem_swapin_cluster(), it will still be an order 0 folio.
-> 
-> Right. But the swapin is one folio at a time, right? shmem_split_large_entry()
+No.
 
-Yes, now we always swapin an order-0 folio from the async swap device at 
-a time. However, for sync swap device, we will skip the swapcache and 
-swapin the whole large folio by commit 1dd44c0af4fa, so it will not call 
-shmem_split_large_entry() in this case.
+> If possible, I would prefer to send this in PR for v6.15 as the
+> problem was from day 1 and only bitbot found the configuration so far
+> that fails to build.
 
-> should split the large swap entry and give you a slot to store the order-0 folio.
-> For example, with an order-9 large swap entry, to swap in first order-0 folio,
-> the large swap entry will become order-0, order-0, order-1, order-2,… order-8,
-> after the split. Then the first order-0 swap entry can be used.
-> Then, when a second order-0 is swapped in, the second order-0 can be used.
-> When the last order-0 is swapped in, the order-8 would be split to
-> order-7,order-6,…,order-1,order-0, order-0, and the last order-0 will be used.
+I had to go through lots of loops to disable BITREVERSE and reproduce
+the build issue (e.g. CRC32 selects BITREVERSE), so I doubt anyone
+will ever encounter it with a real config.
 
-Yes, understood. However, for the sequential swapin scenarios, where 
-originally only one split operation is needed. However, your approach 
-increases the number of split operations. Of course, I understand that 
-in non-sequential swapin scenarios, your patch will save some xarray 
-memory. It might be necessary to evaluate whether the increased split 
-operations will have a significant impact on the performance of 
-sequential swapin?
+Gr{oetje,eeting}s,
 
-> Maybe the swapin assumes after shmem_split_large_entry(), all swap entries
-> are order-0, which can lead to issues. There should be some check like
-> if the swap entry order > folio_order, shmem_split_large_entry() should
-> be used.
->>
->> Moreover I did a quick test with swapping in order 6 shmem folios, however, my test hung, and the console was continuously filled with the following information. It seems there are some issues with shmem swapin handling. Anyway, I need more time to debug and test.
-> To swap in order-6 folios, shmem_split_large_entry() does not allocate
-> any new xa_node, since XA_CHUNK_SHIFT is 6. It is weird to see OOM
-> error below. Let me know if there is anything I can help.
+                        Geert
 
-I encountered some issues while testing order 4 and order 6 swapin with 
-your patches. And I roughly reviewed the patch, and it seems that the 
-new swap entry stored in the shmem mapping was not correctly updated 
-after the split.
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-The following logic is to reset the swap entry after split, and I assume 
-that the large swap entry is always split to order 0 before. As your 
-patch suggests, if a non-uniform split is used, then the logic for 
-resetting the swap entry needs to be changed? Please correct me if I 
-missed something.
-
-/*
-  * Re-set the swap entry after splitting, and the swap
-  * offset of the original large entry must be continuous.
-  */
-for (i = 0; i < 1 << order; i++) {
-	pgoff_t aligned_index = round_down(index, 1 << order);
-	swp_entry_t tmp;
-
-	tmp = swp_entry(swp_type(swap), swp_offset(swap) + i);
-	__xa_store(&mapping->i_pages, aligned_index + i,
-		   swp_to_radix_entry(tmp), 0);
-}
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
