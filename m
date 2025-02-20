@@ -1,44 +1,44 @@
-Return-Path: <linux-kernel+bounces-523202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EADDAA3D379
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 09:42:47 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00312A3D347
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 09:33:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50BB9189E9F8
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 08:42:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF50E17B249
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 08:33:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5EBA1EDA0A;
-	Thu, 20 Feb 2025 08:41:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C3E61E9B36;
+	Thu, 20 Feb 2025 08:33:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b="vObxMYH8"
+	dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b="Vjr+Jc8H"
 Received: from mx.swemel.ru (mx.swemel.ru [95.143.211.150])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C87C1EA7EA;
-	Thu, 20 Feb 2025 08:41:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F68D5223;
+	Thu, 20 Feb 2025 08:33:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.143.211.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740040882; cv=none; b=ifoEElAYp9FHgJoUf/TLzK3kqYpsc74pd5320bcEsHzZHvhvMkqLuCtJ+aYDYE2n6OqShbeTUbcxBlKJP2TCwWbmJNAr4G5Djj9m6/PlnoMpvXTht6R76UL1HRmyzQiND7drh4eYXwueks8bclov8rLV5M+WrImkE2lRzu3nzf8=
+	t=1740040390; cv=none; b=lsc3RdXVar9GvKDudTlgjlooHFJnx1IR/N+rOScnktqhN1jgrYoPct7KJORapICciDra8NMN+kcQGhv6yLELRJ+Ugxc/oBZpq+pdAd9ZYFeDp5KA0K4wyb3WiYkL1IbLERCelaY6OALTsnzlf8qPouxnG/ZKnCpN5dp2CWJqunk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740040882; c=relaxed/simple;
-	bh=+P/f3Pco0SV3HiLvIs4PGt/+Zb6gJaq5XpDW/83iFvc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RH+CSa3gYXNgy8zgPb2PLQJ8kPy08ygDcocu/56r8Fud9V4Rg9TGe4f4k2oIIAy0FsqK++8le6G+fSzcKQvDa0h227e9hcbwVxh9TxBmCvaNJGwcD/j1XCGaaahAXtlwTBbVBSObH1hnY2vpfI1lC+87sMsuYvnS5kZNL9EiU/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru; spf=pass smtp.mailfrom=swemel.ru; dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b=vObxMYH8; arc=none smtp.client-ip=95.143.211.150
+	s=arc-20240116; t=1740040390; c=relaxed/simple;
+	bh=Pbxl9ev2V8D6+28rNwhYaza4db40jGZMu3hliNIg+fc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kqEj3Q7pg5f/pwyzb6YnVnLxK4W5fsU+qlIl00e62CKq1Y6caZiUPCfB8w+1bGwHX7MI1S5A1vX/roCXe+8f6LLstlgkKPywGDhrhNv8hZQOQ9+2QCSBC0tzYeBlDcYXeAcfW6nmsDGaTWtBVDRsYqKU2kHTQ0ZQNCKi4ZNlJKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru; spf=pass smtp.mailfrom=swemel.ru; dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b=Vjr+Jc8H; arc=none smtp.client-ip=95.143.211.150
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=swemel.ru
 From: Denis Arefev <arefev@swemel.ru>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=swemel.ru; s=mail;
-	t=1740040368;
+	t=1740040382;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding;
-	bh=e8y4xFmSdR7Yn+mCHwZfTZJE3tGNbtGvx49bSepz6m8=;
-	b=vObxMYH8RhMNuj+KEcQVwBJRXX5K7yY9OPbJdvgVeVIWQ2OqH++iGHToYJ3fXvWb5xhx+C
-	FR5txUKKEH7/2A2Lc2FgE2BNdGcsyyfebAFf/xNotZh65hydnfCvYTEQ+NvLqkaJevMmDW
-	9L/mBWcmcUi4E0BZR3g0m00L7CL0XRA=
+	bh=wv18Jol842R9T3SS69TEywGruu7oG3ejKG6BBb5YsZM=;
+	b=Vjr+Jc8HelsS7C1LhZ31LJSFIMd6XxRKWgKY0fARhrUO++tbpFJcQShWls4eyY8Oh/hSeO
+	bKgt2oTvN2JXKQ/uI5Cp+pOEejuq9R1aNoSZlnetrX8sK5InRFke8Unh7TkmQpQHWH169l
+	013wo5vMRmzs4VtBnizCnSPYM7Remj8=
 To: stable@vger.kernel.org,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>,
@@ -46,9 +46,9 @@ Cc: Jaegeuk Kim <jaegeuk@kernel.org>,
 	linux-f2fs-devel@lists.sourceforge.net,
 	linux-kernel@vger.kernel.org,
 	lvc-project@linuxtesting.org
-Subject: [PATCH 6.1] f2fs: fix shift-out-of-bounds in parse_options()
-Date: Thu, 20 Feb 2025 11:32:45 +0300
-Message-ID: <20250220083248.5887-1-arefev@swemel.ru>
+Subject: [PATCH 5.15] f2fs: fix shift-out-of-bounds in parse_options()
+Date: Thu, 20 Feb 2025 11:33:01 +0300
+Message-ID: <20250220083302.5902-1-arefev@swemel.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,7 +59,7 @@ Content-Transfer-Encoding: 8bit
 
 No upstream commit exists for this commit.
 
-Using an arbitrary value that does not fall into the required range as an 
+Using an arbitrary value that does not fall into the required range as an
 argument of the shift operator when outputting an error is wrong in itself.
 
 Call Trace:
@@ -80,7 +80,7 @@ Call Trace:
  do_syscall_64+0x3b/0xb0 arch/x86/entry/common.c:81
  entry_SYSCALL_64_after_hwframe+0x68/0xd2
 
-There is a commit 87161a2b0aed ("f2fs: deprecate io_bits") that completely 
+There is a commit 87161a2b0aed ("f2fs: deprecate io_bits") that completely
 removes these strings, but it's not practical to backport it.
 
 Found by Linux Verification Center (linuxtesting.org) with Syzkaller.
@@ -94,17 +94,17 @@ Signed-off-by: Denis Arefev <arefev@swemel.ru>
  1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 72160b906f4b..7d7766761fe4 100644
+index f8aaff9b1784..c0fa7d785f3c 100644
 --- a/fs/f2fs/super.c
 +++ b/fs/f2fs/super.c
-@@ -916,8 +916,8 @@ static int parse_options(struct super_block *sb, char *options, bool is_remount)
+@@ -891,8 +891,8 @@ static int parse_options(struct super_block *sb, char *options, bool is_remount)
  			if (args->from && match_int(args, &arg))
  				return -EINVAL;
  			if (arg <= 0 || arg > __ilog2_u32(BIO_MAX_VECS)) {
--				f2fs_warn(sbi, "Not support %ld, larger than %d",
--					BIT(arg), BIO_MAX_VECS);
+-				f2fs_warn(sbi, "Not support %d, larger than %d",
+-					  1 << arg, BIO_MAX_VECS);
 +				f2fs_warn(sbi, "Not support 2^%d, invalid argument %d",
-+					arg, BIO_MAX_VECS);
++					  arg, BIO_MAX_VECS);
  				return -EINVAL;
  			}
  			F2FS_OPTION(sbi).write_io_size_bits = arg;
