@@ -1,259 +1,109 @@
-Return-Path: <linux-kernel+bounces-524822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CA69A3E786
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 23:31:55 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38811A3E78C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 23:33:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABBC119C43AD
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 22:32:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19849420DD3
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 22:33:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2441C264634;
-	Thu, 20 Feb 2025 22:31:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59BB12641D2;
+	Thu, 20 Feb 2025 22:33:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aBJScumt"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LT40j2HT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AF851DDC3B;
-	Thu, 20 Feb 2025 22:31:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B978B1DDC3B;
+	Thu, 20 Feb 2025 22:33:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740090710; cv=none; b=uW9rIRg1ZND9kX0UE//rh4RZTAiwnR/gMIybtSDBbWaSa9TwN/dWs+JCOwJUvevFX5zCJ9b426au6MNQrEfNdU2TuxDdSl8/ul2CLJihj8kNuNwZ3R0og8bCF3972AYImSXOtrUtR6KfLBje+oPMR+vTWBqicojm3lDJ4CgCxbw=
+	t=1740090822; cv=none; b=jTlYe1rUZRgq9EmIuEG9Z5vGIPjC3HwvokoAiFNgate+NVcsMbRUhPs78cOORwowkwcruVvxl773TlRWWmqQIIynUl6fNj/umM0go+S21nwba11ZGq0AHTwQOY2Ya0oSpLhwYwLPxOUAzjCvkJ3a9aQRe9pT90C1EkHEN7x7PK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740090710; c=relaxed/simple;
-	bh=bnu32KFWSbzIpYFNBPpRwx09bQ94pNBjbh/u5zmj8cw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PzYSikJ4cCaeXS9p6KmItjYuB6Zs5a2G+Wj+HFjxkr2WB6dk2SmhTIdPaXSOorufqDZFQz/Yb5VSLaW8gbNWuzws7QSoNVVBrDxUt5Ub8DjwqEON+HczmXFACg0Y/t5TByXj8Q0XET2Mjr2cthgJJq1NJee6h0vdItFJVlnL1Eg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aBJScumt; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740090708; x=1771626708;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=bnu32KFWSbzIpYFNBPpRwx09bQ94pNBjbh/u5zmj8cw=;
-  b=aBJScumtlW/6KG4YWEiaEwslJXV5UuLj/Sq7QM76uQwa6b25EfNEzfQD
-   uazOTiRYpB9DXJRQAdyuuhST/7w4I0Mse0ti1jNfUw80ukYwl6Rox9CDj
-   0fR+jspIGya/Sl5UVnXQTv9pINFQqGMYq5c/Qy6FwukOfdCYDV+4s9W7Y
-   BfR9tLL/ekPDF6OycP7DlCRLFSbuSy6STxPNMMNGy/y3xZHGBz3GbSYAL
-   O3k2F+GztDM2OwwmvcpLGPwCoz+UEkvTByun16bVIgqqWVwpVltqmimL1
-   AyVz6O8LN33sgunLdlpAwQ3RXSqKBvNAjzd7ay/4ukv2jPJIcVx3AHzK0
-   g==;
-X-CSE-ConnectionGUID: tOpf6WK3TaSxPAgUMSJZeA==
-X-CSE-MsgGUID: mDejy9U7RDCCujqwi8fH2g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11351"; a="40081306"
-X-IronPort-AV: E=Sophos;i="6.13,302,1732608000"; 
-   d="scan'208";a="40081306"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Feb 2025 14:31:48 -0800
-X-CSE-ConnectionGUID: PQstr39QS7iYLsUPQGtGKg==
-X-CSE-MsgGUID: KwgjvCsURCi3JrMheAC1Lg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,302,1732608000"; 
-   d="scan'208";a="114903799"
-Received: from puneetse-mobl.amr.corp.intel.com (HELO [10.125.110.112]) ([10.125.110.112])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Feb 2025 14:31:47 -0800
-Message-ID: <af32c954-76a4-4328-a016-62248dd68815@intel.com>
-Date: Thu, 20 Feb 2025 15:31:45 -0700
+	s=arc-20240116; t=1740090822; c=relaxed/simple;
+	bh=GZP0hAL8CZE2pxOWI9s57ubBFMFVoeEqc+ujzonTdOQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PeRS8FbrAeoOzkl46mpTUo58Qlay4mr+5NG/5itAHioeRQSAC/pglTyoNJvbbeOd6/tQRDKvloF3naaHx99ZG9xQE1xS6S2qcLDHIG4K7MWJwVLhZ0Ytmh6j/EoZBpBl7beJYpz6ZiWWTNoK41zXihFaGg53iQIKZwTQwi5iRMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LT40j2HT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3710CC4CED1;
+	Thu, 20 Feb 2025 22:33:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740090822;
+	bh=GZP0hAL8CZE2pxOWI9s57ubBFMFVoeEqc+ujzonTdOQ=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=LT40j2HT9ptC2x5elOWRf26buC8aAGhDm1Wjn1UPHC3tSXv+WbBhcz3yacbyg+mCi
+	 9TgUC71R8/bFMnmNOQ73os1UJVdT90f4e81TP569DeRxLZ2JRwLhG7L9syKqAksO97
+	 kEJcbpCWBWFemUdjrXzDda7ZmgPk2jovDZJ3RKRXuv/uH5C2pVf9Z8wVhfT4Z/I0JS
+	 XwXi/YdbwpGtjR5yC/5vkyL24dtiRsYUSmKqYmKCqNV7UpA9fgtjspChpFnUac+jxi
+	 ITrLxFtpeEf+WROqz01llQ8BAZlqJrSoAVRCVSnHoHdldG1vTqQNuNMd5sSItSZ7Jx
+	 TPMwQjjnQhIHw==
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-54622e97753so1395506e87.0;
+        Thu, 20 Feb 2025 14:33:42 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWhHQT6FmMrhhmWdcEEvwM6rdwTx8tQ7eQmMt/bUJhvFJLJSSEYExDmT5yxoO7uhQXdbiqUEMsuCoQVYeo=@vger.kernel.org, AJvYcCXdQJ42oMLlbNprle9ZY7hsCZm7/VOZBYLJMEUwev77YIMIu9haL2CuNF368BNo0n5LrW5Gd14Z@vger.kernel.org
+X-Gm-Message-State: AOJu0YyquBFe6R/Al+ZA8vC+KUBwuNfuYUUXdyx8WArCbf/rTNBo8HLu
+	dhqomv9WqgA091Nu1RpXMVazFwvMOywmz5aBsNTc8ruWsFI5TWoYsdU2uRAsMddSH+jIbGylFKa
+	TtwDUK9CET509IXmqHMgulXjWoQA=
+X-Google-Smtp-Source: AGHT+IHtzINxTb0cHtYeV0gMkaKzC0ALxl+9shqA+p1/eaWGCFQfD3jrxzRDozzTo0nKp7aqRn0lAJfdDhl3vwNr4DA=
+X-Received: by 2002:a05:6512:3d8b:b0:545:81b:1516 with SMTP id
+ 2adb3069b0e04-54838c73e38mr274842e87.15.1740090820585; Thu, 20 Feb 2025
+ 14:33:40 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 05/15] cxl/region: Calculate and store the SPA range of
- an endpoint
-To: Robert Richter <rrichter@amd.com>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- Dan Williams <dan.j.williams@intel.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Davidlohr Bueso <dave@stgolabs.net>
-Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
- Gregory Price <gourry@gourry.net>,
- "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
- Terry Bowman <terry.bowman@amd.com>
-References: <20250218132356.1809075-1-rrichter@amd.com>
- <20250218132356.1809075-6-rrichter@amd.com>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <20250218132356.1809075-6-rrichter@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250219105542.2418786-4-ardb+git@google.com> <20250219105542.2418786-5-ardb+git@google.com>
+ <20250220205536.ty7mpvhqmi43zgll@jpoimboe>
+In-Reply-To: <20250220205536.ty7mpvhqmi43zgll@jpoimboe>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Thu, 20 Feb 2025 23:33:28 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXH3RoAGQSG8KL1mkmiGbqi68CYFAuJSwBPdbt2b=7RUfA@mail.gmail.com>
+X-Gm-Features: AWEUYZlESxK12Tah6Nlx6Nw98OAhhB7vd6vh4FDSJgG4-_vnG5ZIRapYh59JRyA
+Message-ID: <CAMj1kXH3RoAGQSG8KL1mkmiGbqi68CYFAuJSwBPdbt2b=7RUfA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] asm-generic/vmlinux.lds: Move .data.rel.ro input
+ into .rodata segment
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: Ard Biesheuvel <ardb+git@google.com>, linux-kernel@vger.kernel.org, x86@kernel.org, 
+	Huacai Chen <chenhuacai@kernel.org>, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+On Thu, 20 Feb 2025 at 21:55, Josh Poimboeuf <jpoimboe@kernel.org> wrote:
+>
+> On Wed, Feb 19, 2025 at 11:55:44AM +0100, Ard Biesheuvel wrote:
+> > From: Ard Biesheuvel <ardb@kernel.org>
+>
+> BTW, I was copied on the cover letter but not the individual patches.
+>
+> > When using -fPIE codegen, the compiler will emit const global objects
+> > (which are useless unless statically initialized) into .data.rel.ro
+> > rather than .rodata if the object contains fields that carry absolute
+> > addresses of other code or data objects. This permits the linker to
+> > annotate such regions as requiring read-write access only at load time,
+> > but not at execution time (in user space).
+>
+> Hm, this sounds more like __ro_after_init, are we sure the kernel
+> doesn't need to write it early?
+>
 
+It does need to write to it early, for KASLR relocation. So
+conceptually, it is the same as .rodata. __ro_after_init conceptually
+remains writable for longer.
 
-On 2/18/25 6:23 AM, Robert Richter wrote:
-> To find the correct region and root port of an endpoint of a system
-> needing address translation, the endpoint's HPA range must be
-> translated to each of the parent port address ranges up to the root
-> decoder.
-> 
-> Calculate the SPA range using the newly introduced callback function
-> port->to_hpa() that translates the decoder's HPA range to its parent
-> port's HPA range of the next outer memory domain. Introduce the helper
-> function cxl_port_calc_hpa() for this to calculate address ranges
-> using the low-level port->to_hpa() callbacks. Determine the root port
-> SPA range by iterating all the ports up to the root. Store the
-> endpoint's SPA range for later use.
-> 
-> Signed-off-by: Robert Richter <rrichter@amd.com>
-> ---
->  drivers/cxl/core/region.c | 81 ++++++++++++++++++++++++++++++++-------
->  drivers/cxl/cxl.h         |  1 +
->  2 files changed, 68 insertions(+), 14 deletions(-)
-> 
-> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
-> index 6f106bfa115f..d898c9f51113 100644
-> --- a/drivers/cxl/core/region.c
-> +++ b/drivers/cxl/core/region.c
-> @@ -832,6 +832,44 @@ static int match_free_decoder(struct device *dev, const void *data)
->  	return 1;
->  }
->  
-> +static int cxl_port_calc_hpa(struct cxl_port *port, struct cxl_decoder *cxld,
-> +			     struct range *hpa_range)
-> +{
-> +	struct range hpa = *hpa_range;
-> +	u64 len = range_len(&hpa);
-> +
-> +	if (!port->to_hpa)
-> +		return 0;
-> +
-> +	/* Translate HPA to the next upper domain. */
-> +	hpa.start = port->to_hpa(cxld, hpa.start);
-> +	hpa.end = port->to_hpa(cxld, hpa.end);
-> +
-> +	if (hpa.start == ULLONG_MAX || hpa.end == ULLONG_MAX) {
-> +		dev_warn(&port->dev,
-> +			"CXL address translation: HPA range invalid: %#llx-%#llx:%#llx-%#llx(%s)\n",
-> +			hpa.start, hpa.end, hpa_range->start,
-> +			hpa_range->end, dev_name(&cxld->dev));
-> +		return -ENXIO;
-> +	}
-> +
-> +	if (range_len(&hpa) != len * cxld->interleave_ways) {
-> +		dev_warn(&port->dev,
-> +			"CXL address translation: HPA range not contiguous: %#llx-%#llx:%#llx-%#llx(%s)\n",
-> +			hpa.start, hpa.end, hpa_range->start,
-> +			hpa_range->end, dev_name(&cxld->dev));
-> +		return -ENXIO;
-> +	}
-> +
-> +	if (hpa.start == hpa_range->start && hpa.end == hpa_range->end)
-> +		return 0;
-> +
-> +	*hpa_range = hpa;
-> +
-> +	/* Return 1 if modified. */
-> +	return 1;
-> +}
-> +
->  static int match_auto_decoder(struct device *dev, const void *data)
->  {
->  	const struct cxl_region_params *p = data;
-> @@ -1882,6 +1920,11 @@ static int cxl_calc_interleave_pos(struct cxl_endpoint_decoder *cxled)
->  		.hpa_range = &cxled->cxld.hpa_range,
->  	};
->  
-> +	/*
-> +	 * Address translation is only supported for auto-discovery of
-> +	 * decoders. There is no need to support address translation
-> +	 * here. That is, do not recalculate ctx.hpa_range here.
-> +	 */
+In practice, they are all treated the same so it doesn't really matter.
 
-Should this go with patch 3?
+> > This distinction does not matter for the kernel, but it does imply that
+> > const data will end up in writable memory if the .data.rel.ro sections
+> > are not treated in a special way.
+> >
+> > So emit .data.rel.ro into the .rodata segment.
+>
+> This is a bug fix, right?  Since the RO data wasn't actually RO?  That's
+> not clear in the title.
+>
 
->  	for (iter = cxled_to_port(cxled); pos >= 0 && iter;
->  	     iter = parent_port_of(iter))
->  		pos = cxl_port_calc_interleave(iter, &ctx);
-> @@ -3262,7 +3305,8 @@ static int cxl_endpoint_decoder_initialize(struct cxl_endpoint_decoder *cxled)
->  {
->  	struct cxl_memdev *cxlmd = cxled_to_memdev(cxled);
->  	struct cxl_port *iter = cxled_to_port(cxled);
-> -	struct cxl_decoder *root, *cxld = &cxled->cxld;
-> +	struct cxl_port *parent = parent_port_of(iter);
-> +	struct cxl_decoder *cxld = &cxled->cxld;
->  	struct range hpa = cxld->hpa_range;
->  	struct cxl_interleave_context ctx;
->  	int rc;
-> @@ -3271,25 +3315,33 @@ static int cxl_endpoint_decoder_initialize(struct cxl_endpoint_decoder *cxled)
->  		.hpa_range = &hpa,
->  	};
->  
-> -	while (iter && !is_cxl_root(iter)) {
-> +	if (!iter || !parent)
-
-While parent_port_of() will check NULL and return NULL, it just seems icky checking the pointer after use.
-
-DJ
-
-> +		return -ENXIO;
-> +
-> +	while (iter && parent) {
-> +		/* Translate HPA to the next upper memory domain. */
-> +		rc = cxl_port_calc_hpa(parent, cxld, &hpa);
-> +		if (rc < 0)
-> +			return rc;
-> +
->  		/* Convert interleave settings to next port upstream. */
->  		rc = cxl_port_calc_interleave(iter, &ctx);
->  		if (rc < 0)
->  			return rc;
->  
-> -		iter = parent_port_of(iter);
-> -	}
-> +		iter = parent;
-> +		parent = parent_port_of(iter);
->  
-> -	if (!iter)
-> -		return -ENXIO;
-> +		if (!parent || parent->to_hpa)
-> +			cxld = cxl_port_find_switch_decoder(iter, &hpa);
->  
-> -	root = cxl_port_find_switch_decoder(iter, hpa);
-> -	if (!root) {
-> -		dev_err(cxlmd->dev.parent,
-> -			"%s:%s no CXL window for range %#llx:%#llx\n",
-> -			dev_name(&cxlmd->dev), dev_name(&cxld->dev),
-> -			cxld->hpa_range.start, cxld->hpa_range.end);
-> -		return -ENXIO;
-> +		if (!cxld) {
-> +			dev_err(cxlmd->dev.parent,
-> +				"%s:%s no CXL window for range %#llx:%#llx\n",
-> +				dev_name(&cxlmd->dev), dev_name(&cxled->cxld.dev),
-> +				hpa.start, hpa.end);
-> +			return -ENXIO;
-> +		}
->  	}
->  
->  	dev_dbg(cxld->dev.parent,
-> @@ -3297,7 +3349,8 @@ static int cxl_endpoint_decoder_initialize(struct cxl_endpoint_decoder *cxled)
->  		dev_name(&cxled->cxld.dev), dev_name(&cxld->dev),
->  		hpa.start, hpa.end, ctx.pos);
->  
-> -	cxled->cxlrd = to_cxl_root_decoder(&root->dev);
-> +	cxled->cxlrd = to_cxl_root_decoder(&cxld->dev);
-> +	cxled->spa_range = hpa;
->  	cxled->pos = ctx.pos;
->  
->  	return 0;
-> diff --git a/drivers/cxl/cxl.h b/drivers/cxl/cxl.h
-> index 17496784f021..7303aec1c31c 100644
-> --- a/drivers/cxl/cxl.h
-> +++ b/drivers/cxl/cxl.h
-> @@ -394,6 +394,7 @@ struct cxl_endpoint_decoder {
->  	struct cxl_decoder cxld;
->  	struct cxl_root_decoder *cxlrd;
->  	struct resource *dpa_res;
-> +	struct range spa_range;
->  	resource_size_t skip;
->  	enum cxl_decoder_state state;
->  	int part;
-
+Yes, it is. I'll clarify that.
 
