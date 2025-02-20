@@ -1,115 +1,142 @@
-Return-Path: <linux-kernel+bounces-523745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33B86A3DAA7
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:02:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 831F1A3DAA9
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:02:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 45B0A16B1B3
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:01:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4A6016F206
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:01:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D6F4224F6;
-	Thu, 20 Feb 2025 13:01:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D036C1F584A;
+	Thu, 20 Feb 2025 13:01:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="ujs3U6IB"
-Received: from mout.web.de (mout.web.de [212.227.15.3])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="OWzlsZx2"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B25B1F75A9;
-	Thu, 20 Feb 2025 13:00:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A33CB79C8;
+	Thu, 20 Feb 2025 13:01:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740056461; cv=none; b=ajC5CQ4+IJdZ/pYlNax5in6H/rdRPQbXdO1VQ8AfQtvmtU+CXJyhjBiXmte/UN7f9X2bR17uPZ3PTx8/0lAOkEY3zPX/EjZ9fE2ts8RkFs0Ens7pUHW5ECYmtqiNAcO/Qw24CUi4A9IE9xu3HYYuRe6d4QdfBL2/1X6dI3ddnyA=
+	t=1740056471; cv=none; b=ZOxieHCnPgtR4NZWr+v9tAHF3SPi0AWK1YdCMHzbUjb6KcTaY8FX3ZGmy/M9fQQLs/Plje4RRioTExbyCk7FcG1w93MoJuT8WmVJ3sMdpoAsVTz8vNQQVOZ1QZw5bAoi6lx6CYyVNawQpi08+Odl7iM0F02kapFPDxf+XFecwO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740056461; c=relaxed/simple;
-	bh=fuvn66M109ZbTS0QVk1ciXMHAEuZmkRerTLUmqldP00=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=KG/tkAKxc5A2LHOJx6Wz5QaS56kaKvYxW0UDn4h9m7edjKl+17wNZ1HD6aUBuzoIoiF8hAwZFIUid/e2xog+IzZqb9Z2hz08ey6sJ9NH9nBnn73gc0P+YhoccISETB1VWVLtlqnFeBtuDa1lvyvMo8UVKwCQAkjZ88AUHzcdUyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=ujs3U6IB; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1740056451; x=1740661251; i=markus.elfring@web.de;
-	bh=sU1XHE9KFAlc92izSS4V5NV97DtDuepbnguI4jYS71U=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=ujs3U6IBH3U1iEkzFEXb2IrHDrjTO7bnnlsuDC8FoO/cs328dJ0VRBwIlFQVI/v+
-	 p94gX6JIhKbfBKlaoodtQQLOaICkdkBQpZAA0nDSJBg9WdDGMzw/bAyRqMXd93l5z
-	 1keGIui/Z5Vgs51bQAvsMReB9Ov07lW0LvSNNf53zLiMEdmYK+VbZDuHsUp5nNv0r
-	 ig7xCrvLA/J8haNcUbm+dX8F91wJWWWajYbkbBeVXq+pNm5IMgt5uD0jOhIxy3DOv
-	 KQlhOqGnzK612Cii3y7tgnSj4EPRYvQj16p0ZzsCNYezWROs0UroxpzPvO2ptDcxS
-	 HVm93ZNRhq3IEWdZiA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.93.25]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MuVKI-1tT9Zx21mk-013Cx5; Thu, 20
- Feb 2025 14:00:51 +0100
-Message-ID: <731c6ba8-f165-4ee5-80be-514fc32c8475@web.de>
-Date: Thu, 20 Feb 2025 14:00:49 +0100
+	s=arc-20240116; t=1740056471; c=relaxed/simple;
+	bh=l1w0+lyiZ65S3cAJQpzDmBFyQVQl7D7mEE+bo97iMPc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YoRKxLR+TvIU7Bn1ZaLyGMoVRDnIfSeuG9Z01TWHVNp1s4HPYYuu4nGnr0wdJrmfWbsiRKs2Nk/fOuOYlQiV7G1x2ZGYVDS+zjdtPOoGGPKq+6gLBtH9xgLClHNIz0SBy198hEC/eGeegIerYULme4LZ2Qm6V+TYOl9Vge75FBQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=OWzlsZx2; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51KAKXbC012889;
+	Thu, 20 Feb 2025 13:01:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=uxa5PCd5TtVPSlEW7mce6b3lLsV62hgbts+mgfZ3s
+	TY=; b=OWzlsZx2b1s9mX72yy3/O0FYnqM/oxZfHkWPzt6t0iL9zJq7TmWww2euw
+	iaJdm/rsv/0uHNPLpVFhr9PkRGMoYjB5bVXLdm47pB/vMp1jKEqVEwktikSHZeiz
+	vAqM4liEs4k8wqezWTm8c4udW1HfLESUx0DjJJB4+s/rQ47ijUpPgyJ0vC2bk0dd
+	4qsJlptZDsOanGCK1RUQqUx0EWjv5WCZx7EOMhuUrQm3shlq+duA4SIFmwx6vec4
+	CgxtrBP09VivpgaWY3bbSCoXR4ozzad4UNA0OaMbSTG5Soj+oHWbiPrcLv4/Pz+/
+	6+n7lgXYqIDWF08kiK23CZtZrmrxA==
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44wreabdr9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Feb 2025 13:01:05 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51KBQS2K027098;
+	Thu, 20 Feb 2025 13:01:05 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 44w025a1y9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Feb 2025 13:01:04 +0000
+Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51KD13Vn30867968
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 20 Feb 2025 13:01:03 GMT
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3A5702004B;
+	Thu, 20 Feb 2025 13:01:03 +0000 (GMT)
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 173B120043;
+	Thu, 20 Feb 2025 13:01:03 +0000 (GMT)
+Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
+	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 20 Feb 2025 13:01:03 +0000 (GMT)
+From: Heiko Carstens <hca@linux.ibm.com>
+To: Masami Hiramatsu <mhiramat@kernel.org>, Shuah Khan <shuah@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org
+Subject: [PATCH] selftests/ftrace: Use readelf to find entry point in uprobe test
+Date: Thu, 20 Feb 2025 14:01:02 +0100
+Message-ID: <20250220130102.2079179-1-hca@linux.ibm.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: vulab@iscas.ac.cn, amd-gfx@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org
-Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- Alex Deucher <alexander.deucher@amd.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Xinhui Pan <Xinhui.Pan@amd.com>
-References: <20250220064244.733-1-vulab@iscas.ac.cn>
-Subject: Re: [PATCH v2?] drm/radeon: Add error handlings for r420 CP errata
- initialization
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250220064244.733-1-vulab@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:DTCVMAzRcbXDsDaWrsjoQpRHRWy8WC4va94OF+pvpJwvN9EipS4
- Kk0u6da2VtyehCQrLHfr6nKqncDZIugJ3xjTfi+UDfX4pDx4k9eoZboZjwCGr+nsuRjJ4mO
- pZxXHWP7HjQRkFB5Ta3ENRVuNBR0fU2tFxZCHE/CyRYfp93ueRUbcFTSZLINKp/ykhS1kjI
- foI1RQ6pJPjszMXSJuc+A==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:Ss8rG+UxAxc=;w0c9oGegRzOmROzOzwreyUWufmH
- LmCUCyxqoXi8BCTW/sAkHwGNtkI8VKYlDdcXioRp7//EHBVeNSZcKoEUpf1A0I5ALX3cCm51Z
- BWq1/pBge7CoynZeMG+uFkwm2GOW9vCmJg9cH4Oak2w8wizqkWCdWnJBnlKyGWzm6kAyrOeew
- fc7tFQyJ1kU7PVzzSu4eQ/hOpGUkl+JwGMr+gXxiSsUGQrvDVWaYvNjGb8i1tyF+A9OK6viYK
- JspDd0j97jvP8GcM0WN2dQdwp2m7Sev8DK5ZM2XKjebR3JyQ9orkvuRXI7PZS18rCIg8h0BZD
- EEZhuKq9r1leRcddliuouVhJUb6J8mcw1R56hUumYXA9VxAIXU/2OJP6H+UsXRva3AeSKa5gv
- PlT5Whm8OfLQrbg7fQ7WLDncu4xZzRa2LTHsXEaDgUOmCWyadSjtDhvgMMXj9m8wDX1GDUdDn
- 7kpg7bhM7hkvsoWSeVrAbdkl0IxtXVDel9LBUJootAS6jCPiekbqQyO6ACh2zTXNG4is/SXg+
- Wu5kMvBUI+MrfNU9q37NTwGtIQm8Ckn2fxc2DxKOIdQ2t9Ogiez+iudY79jgLkN/BluVTt4wq
- a+0xwPIKMXiH4vY73oJhzZ/KtPUFgzb/OnZAs0BNTGT7t70uanvoCYSTmobqXppYb3Ps3f4J0
- Yx+6Xp326eeWvNdq1pE5X7aRQYiJhlfzFEOhyvEj+iYZvYXf9jfGLCOs0jwwn8/vzIiYRluxM
- jwM1vOz20G7t3OwMlExP0nt6QkqZuyz4W+iGKuaidGvdO/KR8KRGDE4e0TSlaPQeI35jcDkPc
- qTXnwvaPr0ngyxk8R4yWI416ER/A56eBoCEZYfC4ED4RSk1UklNsbhtQus5oUivB7AioJhzcy
- uTxhL4N8eD+Oym72Fcm2B6rY5uObACqHQA8rlWrdT8oDftk2Fs8ItWQR2zJ1ljR45cunjWhdz
- ceB7/5DpuB5Pi5RbTKYTGOjg6kc6DhywAdGZN7rwd1vJKtHHTKdN6FkAvpAz/16wkBkblQvBL
- EhngzdueEnxbpmwEnRG3WgBhthnDELuZas/M7HrXhNOWOQSMnt/uZs0MW/F2jk/GAR47cpqPw
- /WK3RrCmDY0+lct9cj/1aDk9D/Zk+ewsOgabkz27qtJjkK7yG05gI6gFM4+8RmKKGek2vxW8h
- M5ivuY3883rcvS45emSAmz84aHFS6VZGoG4MmBgZeh4ZUz1Q4RHD5DQdW8sz3wza4t4L2ecAU
- 2ZMPe6z7hgJE22c8uHMNDvn7v/uHhYX4cTtnsxRvtYITVTebGBwG9oA1UIsuG6/9s35tEtiSD
- 3XwPTy1gmsOaql2U4/LXuPCGFJYR3UgUJaXl1CSanihubV3pYpzA+oeXMdNSs7aMG07osD/zF
- Xnd6Mga5rUs4Lb+ZKGvsBTA73pODd5GcUe4mtVfhFZCY3IyxTJhG6smTNnl/bwvKc3/46GEQ2
- 8Fip25jyYkR9vO0V785oqVBvFjgg=
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: S7TRqR8J_A56GPHqP5O-6KoE4Jq5iXs_
+X-Proofpoint-GUID: S7TRqR8J_A56GPHqP5O-6KoE4Jq5iXs_
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-20_05,2025-02-20_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ priorityscore=1501 suspectscore=0 bulkscore=0 mlxscore=0 adultscore=0
+ spamscore=0 impostorscore=0 phishscore=0 clxscore=1015 lowpriorityscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2502200094
 
-=E2=80=A6
-> ---
->  drivers/gpu/drm/radeon/r420.c | 15 +++++++++++----
-=E2=80=A6
+The uprobe events test fails on s390, but also on x86 (Fedora 41). The
+problem appears to be that there is an assumption that adding a uprobe to
+the beginning of the executable mapping of /bin/sh is sufficient to trigger
+a uprobe event when /bin/sh is executed.
 
-How do you think about to improve your version management?
-https://lore.kernel.org/all/?q=3D%22This+looks+like+a+new+version+of+a+pre=
-viously+submitted+patch%22
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.14-rc3#n780
+This assumption is not necessarily true. Therefore use "readelf -h" to find
+the entry point address of /bin/sh and use this address when adding the
+uprobe event.
 
-Regards,
-Markus
+This adds a dependency to readelf which is not always installed. Therefore
+add a check and exit with exit_unresolved if it is not installed.
+
+Signed-off-by: Heiko Carstens <hca@linux.ibm.com>
+---
+ .../ftrace/test.d/dynevent/add_remove_uprobe.tc        | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
+
+diff --git a/tools/testing/selftests/ftrace/test.d/dynevent/add_remove_uprobe.tc b/tools/testing/selftests/ftrace/test.d/dynevent/add_remove_uprobe.tc
+index 86c76679c56e..f2048c244526 100644
+--- a/tools/testing/selftests/ftrace/test.d/dynevent/add_remove_uprobe.tc
++++ b/tools/testing/selftests/ftrace/test.d/dynevent/add_remove_uprobe.tc
+@@ -3,14 +3,18 @@
+ # description: Generic dynamic event - add/remove/test uprobe events
+ # requires: uprobe_events
+ 
++if ! which readelf > /dev/null 2>&1 ; then
++  echo "No readelf found. skipped."
++  exit_unresolved
++fi
++
+ echo 0 > events/enable
+ echo > dynamic_events
+ 
+ REALBIN=`readlink -f /bin/sh`
++ENTRYPOINT=`readelf -h ${REALBIN} | grep Entry | sed -e 's/[^0]*//'`
+ 
+-echo 'cat /proc/$$/maps' | /bin/sh | \
+-	grep "r-xp .*${REALBIN}$" | \
+-	awk '{printf "p:myevent %s:0x%s\n", $6,$3 }' >> uprobe_events
++echo "p:myevent ${REALBIN}:${ENTRYPOINT}" >> uprobe_events
+ 
+ grep -q myevent uprobe_events
+ test -d events/uprobes/myevent
+-- 
+2.45.2
+
 
