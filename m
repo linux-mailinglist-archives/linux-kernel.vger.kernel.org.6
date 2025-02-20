@@ -1,159 +1,110 @@
-Return-Path: <linux-kernel+bounces-523894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F5AFA3DCA4
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:26:06 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 484EEA3DC7D
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:21:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA12F86222E
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:21:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 89BB57ABDC1
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:20:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AC5A1FBCA1;
-	Thu, 20 Feb 2025 14:20:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 215AF1FBEB0;
+	Thu, 20 Feb 2025 14:21:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sandisk.com header.i=@sandisk.com header.b="0owBZmig"
-Received: from esa5.hgst.iphmx.com (esa5.hgst.iphmx.com [216.71.153.144])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3oufnGd7";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="D9Knt0/Y"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0E251BC4E;
-	Thu, 20 Feb 2025 14:20:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.71.153.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AC641DE4DB
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 14:21:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740061256; cv=none; b=r6eo33J+cuIEl/4XNPLQvyZ6PZenM780LyGUWlsu4HcTixM/9GIzluyBTzn9iZH8DOlUlNS88Hbqq1QrZGLZIusgWvFtDRuFgFeVm9Ac+auKC4H0eMUGhj10FlSSHOWdLNirNSs3Ut51DizIWzwbEh9oB3SAJPFJg4DnGsnpxmM=
+	t=1740061282; cv=none; b=MQ/df5JaK5RY/6xzWncaysQEG8U0NkxsvhiQsmGRU/oqrfO4/U3Krc+R0Yf0uN2U/81Omx0lSnFP+w7FqLfj5XdMfahJGYDy1B8okavxynFjK3x8wevoDmWHiacKepDCf9Ytxj6bCXXSvnCpTeRxi1L/Av9ywzd2tfgjPkdH4gs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740061256; c=relaxed/simple;
-	bh=hlB4UciSi11RpeFBPHRSOm6Mu8yyv0oaYnrGMZP85jQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FnQUlCkC8HPAoMSmPiGlOKPff5hG4yAtrHqr+CGNDrViaCu26SdjzcDTb38S0SLRx/nY/vNQOdEJs2AxBbZTkkYshaf4vIk0oaJ0YZnNQ+GuXlI7y6C66TKaw256ZDthHER7lwO8SHgHY3ldlIs6G3C+9++XbQiWcCGitQGS7Bg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=sandisk.com; spf=pass smtp.mailfrom=sandisk.com; dkim=pass (2048-bit key) header.d=sandisk.com header.i=@sandisk.com header.b=0owBZmig; arc=none smtp.client-ip=216.71.153.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=sandisk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sandisk.com
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=sandisk.com; i=@sandisk.com; q=dns/txt;
-  s=dkim.sandisk.com; t=1740061254; x=1771597254;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=hlB4UciSi11RpeFBPHRSOm6Mu8yyv0oaYnrGMZP85jQ=;
-  b=0owBZmigGO/JhIuETDgkSYZp4mqP0GFQxl3c/S/ydgMNBXcWAbF3SnYX
-   RjY0A2TxAZiM22ogozdemIIH+N+sRkMZqxBAZgC2wJCyYnICvRsrq7F6Y
-   xf64+nEGtyB0Iwh1nxgpTDc+Eg+tD8SxYwqT2F9eHLThOCW1STKDEnJwW
-   xpUpUFsZtHnk651dijsQxaQFGvj9lcMhYZrHZAx4yGJ/o28b5ScRG439M
-   EJOUutkjupTNZHpwM8w4IqNdgqfvK9p/blE4rGZ69Ty1TTWMi8kf8Rp+t
-   h9urVIdsB2YyUfZR6cQ2MYdRv1xvyDGRDCsXFxLv7QdTIQ4JSZbKrwv0V
-   A==;
-X-CSE-ConnectionGUID: 2yfWHHVVSXm9SrPNGCP2nw==
-X-CSE-MsgGUID: 55rAeVaETIGlaPzBIcCF3g==
-X-IronPort-AV: E=Sophos;i="6.13,301,1732550400"; 
-   d="scan'208";a="40005309"
-Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 20 Feb 2025 22:20:46 +0800
-IronPort-SDR: 67b72c82_rHksVnBmRq+0NWKSdBXEerblw71mXeDn6jT7I8mRbVFZ57+
- mb1ilfU9ZRUdOlERIsMlVfv8USS02m1bzUkoocg==
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 20 Feb 2025 05:22:11 -0800
-WDCIronportException: Internal
-Received: from unknown (HELO WDAP-ez2C89klLd.wdc.com) ([10.137.186.126])
-  by uls-op-cesaip02.wdc.com with ESMTP; 20 Feb 2025 06:20:44 -0800
-From: Arthur Simchaev <arthur.simchaev@sandisk.com>
-To: martin.petersen@oracle.com
-Cc: avri.altman@sandisk.com,
-	Avi.Shchislowski@sandisk.com,
-	beanhuo@micron.com,
-	linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	bvanassche@acm.org,
-	Arthur Simchaev <arthur.simchaev@sandisk.com>,
-	stable@vger.kernel.org
-Subject: [PATCH v3] ufs: core: bsg: Fix memory crash in case arpmb command failed
-Date: Thu, 20 Feb 2025 16:20:39 +0200
-Message-Id: <20250220142039.250992-1-arthur.simchaev@sandisk.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1740061282; c=relaxed/simple;
+	bh=lJ1fuL6wK8CkBl8tMlUZAzn0eYU+XWFjZX7mmgbguCc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=JNRvUYYnYoNXAWsjkNJ24zAgPtkMlC4gnfIeTirHSCHIIEgvRFQQNXTUSou0KDHcE6lvEoyAqYGynLgxTbiWlZGPnGlfBqZAFGIJYnvwDUveM0c06t1U7te8F/s8m6mk7nKEJ8iR+7LMrmpn7cH9215yz2w1cVpgwOcDL3hEgGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3oufnGd7; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=D9Knt0/Y; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1740061279;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=G/BmtFl2k81SUm/1VjrdU/jVgNub5nHsJ466sJIBSwU=;
+	b=3oufnGd79cXN4jTTMDZ7Z6srl8Ucj1sL35GTITM5ip/hhNfLdNEYBcfYEMW975QF6921cA
+	cciHlQX7+abbQrJT0TieGU8ctAA7wGO0cqj2/piqAaIcbrDv5L/4HeIGVwShaFC3Bq48YH
+	suiMDHR3vg34aEAzMe+BV0KSW9VSPNgdjwW63lvegZgL1TQ5UiPythFZ5KnPHQRHxJG2Xj
+	giFg2lDq21Vm2EoS1vuwvtqlttU4FdQYnquG8StF/7Qc2U1dMZXYRZ0FtVE75DzBMrzz/P
+	N3504pfJR4o/GLBBGIeWk5v9l0bJsYmm0QupTJ+nNCCVRtaoXf+P0gSK0HcClw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1740061279;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=G/BmtFl2k81SUm/1VjrdU/jVgNub5nHsJ466sJIBSwU=;
+	b=D9Knt0/YpIddKDTVG7BDrv4vvrba0CkVNAk6jPl1IKKFJVU+mQyOoOkRYYlV8EljvtiK2B
+	sr28C0ab+/lVqCAQ==
+To: Mark Brown <broonie@kernel.org>, Anup Patel <apatel@ventanamicro.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave
+ Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, hpa@zytor.com, Marc
+ Zyngier <maz@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
+ <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Andrew Lunn <andrew@lunn.ch>, Gregory Clement
+ <gregory.clement@bootlin.com>, Sebastian Hesselbarth
+ <sebastian.hesselbarth@gmail.com>, Palmer Dabbelt <palmer@dabbelt.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Atish Patra
+ <atishp@atishpatra.org>, Andrew Jones <ajones@ventanamicro.com>, Sunil V L
+ <sunilvl@ventanamicro.com>, Anup Patel <anup@brainfault.org>,
+ linux-riscv@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, imx@lists.linux.dev
+Subject: Re: [PATCH v6 02/10] irqchip/irq-msi-lib: Optionally set default
+ irq_eoi/irq_ack
+In-Reply-To: <87jz9kiuvu.ffs@tglx>
+References: <20250217085657.789309-1-apatel@ventanamicro.com>
+ <20250217085657.789309-3-apatel@ventanamicro.com>
+ <Z7Xto0WZ-Crxunik@finisterre.sirena.org.uk> <87jz9kiuvu.ffs@tglx>
+Date: Thu, 20 Feb 2025 15:21:18 +0100
+Message-ID: <878qq0itnl.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-In case the device doesn't support arpmb, the kernel get memory crash
-due to copy user data in bsg_transport_sg_io_fn level. So in case
-ufs_bsg_exec_advanced_rpmb_req returned error, do not set the job's
-reply_len.
+On Thu, Feb 20 2025 at 14:54, Thomas Gleixner wrote:
+> On Wed, Feb 19 2025 at 14:41, Mark Brown wrote:
+>> On Mon, Feb 17, 2025 at 02:26:48PM +0530, Anup Patel wrote:
+>> I'm seeing boot regressions with qemu on arm64 in -next which bisect
+>> down to this patch.  We hit a NULL pointer dereference:
+>>
+>> <6>[    0.898900] virtio_blk virtio1: 1/0/0 default/read/poll queues
+>> <5>[    0.910197] virtio_blk virtio1: [vda] 3906250 512-byte logical blocks (2.00 GB/1.86 GiB)
+>> <1>[    0.924459] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000000
+>> <1>[    0.924508] Mem abort info:
+>> <1>[    0.924521]   ESR = 0x000000008600002b
+>> <1>[    0.924559]   EC = 0x21: IABT (current EL), IL = 32 bits
+>> <1>[    0.924580]   SET = 0, FnV = 0
+>> <1>[    0.924597]   EA = 0, S1PTW = 0
+>> <1>[    0.924616]   FSC = 0x2b: level -1 translation fault
+>> <1>[    0.924667] [0000000000000000] user address but active_mm is swapper
+>> <0>[    0.924833] Internal error: Oops: 000000008600002b [#1] PREEMPT
+>> SMP
+>
+> Uuurg. I wish I had double checked that the final submitted patch covers
+> _ALL_ incarnations of this. The below delta patch should address it.
 
-Memory crash backtrace:
-3,1290,531166405,-;ufshcd 0000:00:12.5: ARPMB OP failed: error code -22
+I'll redo the branch accordingly.
 
-4,1308,531166555,-;Call Trace:
+Thanks,
 
-4,1309,531166559,-; <TASK>
-
-4,1310,531166565,-; ? show_regs+0x6d/0x80
-
-4,1311,531166575,-; ? die+0x37/0xa0
-
-4,1312,531166583,-; ? do_trap+0xd4/0xf0
-
-4,1313,531166593,-; ? do_error_trap+0x71/0xb0
-
-4,1314,531166601,-; ? usercopy_abort+0x6c/0x80
-
-4,1315,531166610,-; ? exc_invalid_op+0x52/0x80
-
-4,1316,531166622,-; ? usercopy_abort+0x6c/0x80
-
-4,1317,531166630,-; ? asm_exc_invalid_op+0x1b/0x20
-
-4,1318,531166643,-; ? usercopy_abort+0x6c/0x80
-
-4,1319,531166652,-; __check_heap_object+0xe3/0x120
-
-4,1320,531166661,-; check_heap_object+0x185/0x1d0
-
-4,1321,531166670,-; __check_object_size.part.0+0x72/0x150
-
-4,1322,531166679,-; __check_object_size+0x23/0x30
-
-4,1323,531166688,-; bsg_transport_sg_io_fn+0x314/0x3b0
-
-Fixes: 6ff265fc5ef6 ("scsi: ufs: core: bsg: Add advanced RPMB support in ufs_bsg")
-Cc: stable@vger.kernel.org
-Reviewed-by: Bean Huo <beanhuo@micron.com>
-Signed-off-by: Arthur Simchaev <arthur.simchaev@sandisk.com>
-
----
-Changes in v3:
-  - changing !rpmb into rpmb and by swapping the two sizeof() expressions
-
----
-Changes in v2:
-  - Add Fixes tag
-  - Elaborate commit log
----
- drivers/ufs/core/ufs_bsg.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/ufs/core/ufs_bsg.c b/drivers/ufs/core/ufs_bsg.c
-index 8d4ad0a3f2cf..252186124669 100644
---- a/drivers/ufs/core/ufs_bsg.c
-+++ b/drivers/ufs/core/ufs_bsg.c
-@@ -194,10 +194,12 @@ static int ufs_bsg_request(struct bsg_job *job)
- 	ufshcd_rpm_put_sync(hba);
- 	kfree(buff);
- 	bsg_reply->result = ret;
--	job->reply_len = !rpmb ? sizeof(struct ufs_bsg_reply) : sizeof(struct ufs_rpmb_reply);
- 	/* complete the job here only if no error */
--	if (ret == 0)
-+	if (ret == 0) {
-+		job->reply_len = rpmb ? sizeof(struct ufs_rpmb_reply) :
-+					sizeof(struct ufs_bsg_reply);
- 		bsg_job_done(job, ret, bsg_reply->reply_payload_rcv_len);
-+	}
- 
- 	return ret;
- }
--- 
-2.34.1
-
+         tglx
 
