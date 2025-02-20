@@ -1,95 +1,91 @@
-Return-Path: <linux-kernel+bounces-524025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2635A3DE20
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:18:44 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A85C5A3DE58
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:24:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 01C3E17E6EA
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:17:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 046BD7A45F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:16:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 030A11FCF45;
-	Thu, 20 Feb 2025 15:16:43 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F5671FDA94;
+	Thu, 20 Feb 2025 15:17:13 +0000 (UTC)
+Received: from a3.inai.de (a3.inai.de [144.76.212.145])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 913F11CCEF0;
-	Thu, 20 Feb 2025 15:16:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06ECE1FCCFF;
+	Thu, 20 Feb 2025 15:17:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.76.212.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740064602; cv=none; b=DByZkoPVy5H1XFxpjsMZQGEjUBqRkeBja03TvVk8MaijzVDxtmZ+gqEpea/CupaYibV0PheLi+AAOMtdZE//7QdbC3zj9CXkB1rd9rRLN07MRHBz3AMGBdiprBo9i6fZ2cYyfuGBmwJFDkCWNSuioHU0bXlwYZ5dUMrFw/QKY8Y=
+	t=1740064632; cv=none; b=VlwmPmwuM5EQB/WSma4ZwML2mdVTEdCLFDQqRFNMvLZZt/KX5ENged0vXeWofTPwOUROfpkzDHqq4LpwmPxpnlBIAw0VqiPGVEC9Anir/0hCnbFHa5oiBtb+MUXwBO9vH9Ww/iatm9eYP34Fu/b2OZ+LDXEAlWkTfoiLgh2Yd/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740064602; c=relaxed/simple;
-	bh=TIg8CqN5hO+RqL67o6DLnyrSFUhVBiw7Xn0qzxP77JU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=atom41IGghwiQ2AzLO8DqSRphQO2K0HZbBu1lo0mKpWyAduRjg4NfuRfAYobFRDxzKkfmD6wwfypI5Ij264utb18rGnSXbG68oqt07RqZxLZ9g/iTDC2ruvVIR/eaAn9cAwhToWyahO6TJkQDbChFENqLJw1BazU4jkls4CxBUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9198C4CED1;
-	Thu, 20 Feb 2025 15:16:39 +0000 (UTC)
-Message-ID: <41e9f6a8-1f72-465e-b6c4-0bebdc462d31@xs4all.nl>
-Date: Thu, 20 Feb 2025 16:16:38 +0100
+	s=arc-20240116; t=1740064632; c=relaxed/simple;
+	bh=v+zkuUk8OESiitfztpae1TwbIUwd5PHIth0crqqdQ1w=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=K6ZEPuKaLpNzVM58nIl5sup02Bj/4BaeFddhU+BCwcX2vjjpKLjMG+we5q9PIXPV8BcSMOdv7NboNCV6j2yHmaQybNWvXa4JdMqs1vt6mErIIN+W2JXQcrtHLjZPUlxnanMAPTH4SZi0sfEGbckWAKiJ2mHDhNgc9e/uFjuqhNM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inai.de; spf=fail smtp.mailfrom=inai.de; arc=none smtp.client-ip=144.76.212.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inai.de
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=inai.de
+Received: by a3.inai.de (Postfix, from userid 25121)
+	id D096B1003C0D53; Thu, 20 Feb 2025 16:17:07 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+	by a3.inai.de (Postfix) with ESMTP id CEBC61100B0CC0;
+	Thu, 20 Feb 2025 16:17:07 +0100 (CET)
+Date: Thu, 20 Feb 2025 16:17:07 +0100 (CET)
+From: Jan Engelhardt <ej@inai.de>
+To: "H. Peter Anvin" <hpa@zytor.com>
+cc: Greg KH <gregkh@linuxfoundation.org>, Boqun Feng <boqun.feng@gmail.com>, 
+    Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, 
+    Christoph Hellwig <hch@infradead.org>, 
+    rust-for-linux <rust-for-linux@vger.kernel.org>, 
+    Linus Torvalds <torvalds@linux-foundation.org>, 
+    David Airlie <airlied@gmail.com>, linux-kernel@vger.kernel.org, 
+    ksummit@lists.linux.dev
+Subject: Re: C aggregate passing (Rust kernel policy)
+In-Reply-To: <9B01858A-7EBD-4570-AC51-3F66B2B1E868@zytor.com>
+Message-ID: <n05p910s-r5o3-0n36-5s44-qr769prp69r5@vanv.qr>
+References: <CANiq72m-R0tOakf=j7BZ78jDHdy=9-fvZbAT8j91Je2Bxy0sFg@mail.gmail.com> <Z7SwcnUzjZYfuJ4-@infradead.org> <CANiq72myjaA3Yyw_yyJ+uvUrZQcSLY_jNp65iKH8Y5xGY5tXPQ@mail.gmail.com> <326CC09B-8565-4443-ACC5-045092260677@zytor.com>
+ <CANiq72m+r1BZVdVHn2k8XeU37ZeY6VT2S9KswMuFA=ZO3e4uvQ@mail.gmail.com> <a7c5973a-497c-4f31-a7be-b3123bddb6dd@zytor.com> <Z7VKW3eul-kGaIT2@Mac.home> <2025021954-flaccid-pucker-f7d9@gregkh> <2nn05osp-9538-11n6-5650-p87s31pnnqn0@vanv.qr> <2025022052-ferment-vice-a30b@gregkh>
+ <9B01858A-7EBD-4570-AC51-3F66B2B1E868@zytor.com>
+User-Agent: Alpine 2.26 (LSU 649 2022-06-02)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/4] media: venus: hfi_parser: add check to avoid out
- of bound access
-Content-Language: en-US
-To: Vikash Garodia <quic_vgarodia@quicinc.com>,
- Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Tomasz Figa
- <tfiga@chromium.org>, Hans Verkuil <hans.verkuil@cisco.com>
-Cc: Stanimir Varbanov <stanimir.varbanov@linaro.org>,
- Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, linux-media@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20250207-venus_oob_2-v4-0-522da0b68b22@quicinc.com>
- <20250207-venus_oob_2-v4-1-522da0b68b22@quicinc.com>
-From: Hans Verkuil <hverkuil@xs4all.nl>
-In-Reply-To: <20250207-venus_oob_2-v4-1-522da0b68b22@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
 
-On 2/7/25 09:24, Vikash Garodia wrote:
-> There is a possibility that init_codecs is invoked multiple times during
-> manipulated payload from video firmware. In such case, if codecs_count
-> can get incremented to value more than MAX_CODEC_NUM, there can be OOB
-> access. Reset the count so that it always starts from beginning.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 1a73374a04e5 ("media: venus: hfi_parser: add common capability parser")
-> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-> Signed-off-by: Vikash Garodia <quic_vgarodia@quicinc.com>
-> ---
->  drivers/media/platform/qcom/venus/hfi_parser.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/media/platform/qcom/venus/hfi_parser.c b/drivers/media/platform/qcom/venus/hfi_parser.c
-> index 3df241dc3a118bcdeb2c28a6ffdb907b644d5653..1cc17f3dc8948160ea6c3015d2c03e475b8aa29e 100644
-> --- a/drivers/media/platform/qcom/venus/hfi_parser.c
-> +++ b/drivers/media/platform/qcom/venus/hfi_parser.c
-> @@ -17,6 +17,7 @@ typedef void (*func)(struct hfi_plat_caps *cap, const void *data,
->  static void init_codecs(struct venus_core *core)
->  {
->  	struct hfi_plat_caps *caps = core->caps, *cap;
-> +	core->codecs_count = 0;
 
-This really should be moved down to before the 'if'. There is no reason to mix the assignment
-with variable declarations.
+On Thursday 2025-02-20 14:23, H. Peter Anvin wrote:
+>
+>People writing C seem to have a real aversion for using structures
+>as values (arguments, return values or assignments) even though that
+>has been valid since at least C90 and can genuinely produce better
+>code in some cases.
 
->  	unsigned long bit;
->  
->  	if (hweight_long(core->dec_codecs) + hweight_long(core->enc_codecs) > MAX_CODEC_NUM)
-> 
+The aversion stems from compilers producing "worse" ASM to this
+date, as in this case for example:
 
-Regards,
+```c
+#include <sys/stat.h>
+extern struct stat fff();
+struct stat __attribute__((noinline)) fff()
+{
+        struct stat sb = {};
+        stat(".", &sb);
+        return sb;
+}
+```
 
-	Hans
+Build as C++ and C and compare.
+
+$ g++-15 -std=c++23 -O2 -x c++ -c x.c && objdump -Mintel -d x.o
+$ gcc-15 -std=c23 -O2 -c x.c && objdump -Mintel -d x.o
+
+Returning aggregates in C++ is often implemented with a secret extra
+pointer argument passed to the function. The C backend does not
+perform that kind of transformation automatically. I surmise ABI reasons.
 
