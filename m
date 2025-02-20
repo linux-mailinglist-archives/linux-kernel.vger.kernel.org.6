@@ -1,148 +1,312 @@
-Return-Path: <linux-kernel+bounces-523850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D087CA3DC11
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:07:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65105A3DC13
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:07:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66CE217E7CD
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:04:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5783417ED33
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:04:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D462C1ADC9B;
-	Thu, 20 Feb 2025 14:04:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A47E1B85C5;
+	Thu, 20 Feb 2025 14:04:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="B0l8SLY6"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kl90/mwn"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E4F01BC4E
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 14:04:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 464751C3C07;
+	Thu, 20 Feb 2025 14:04:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740060278; cv=none; b=F4yVFiGfTMsWFpyQH8RvrjnTkttaMjIEq3CchkdAE+QfNB3FzVcF0yBH2aaUsIPAAi6h81AF7H9CiKpAy6usGxChxRz6gAqqCWR2efX2AdE+i+PAab0rOjY/nKN9HKNKx5ykxgciQHObkgXGs1dEoWMDZfaXqv1bK104doTaBCs=
+	t=1740060285; cv=none; b=m7qEryuj5r1isLhRIGAB85hCPXYMNwxzkmKP91A91j2FCiwtV4sJ/lvyCd4UL3vJTjB0fsHYdvIHTr4TV0In6cY89U/SCxMmmYpk2IYR0tPzdRZIE741UB1V6sbRM4ebIztu/rKfYd/fMPhvY+j1KT+hxrhv4UAjUqvh4sPC3Fk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740060278; c=relaxed/simple;
-	bh=tTUF0DuUbP1pVYp7uJb9H/AIJkbO9/EfJCsgtNuuF6s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=N10OBsOLdqGZrc7Q0ZMTNbyALd/R5D9PYp4Fuj9h1r8Qg/VQZMfZnfY288TPaftdUYR1l9cQ48a5KWWG564gQwDcOYxmpuLW4HeWBLYa1Cs8ejx13fJ19U/ZgTGACuOBnXM6Sbmcy9TyV4O/X8P7JL+JR11AH182xxYJX1o9rlI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=B0l8SLY6; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-543e47e93a3so1180257e87.2
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 06:04:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740060274; x=1740665074; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sY+NBIYy2gT0zvxaoVTjE3mqscsqAzDhfABvZ+XFdRg=;
-        b=B0l8SLY6HOhWRiZb4FwHwOVJm5qBtIJTDgJv75dU0+EXVnRKf1iBly2tWJEq6I3Jtc
-         HFiotpUgDamcymFp5Qg0eQJ4NKbBaVOa5JVG0FieyEUs2ICqP1U5mFKVGIxPNl2Ek7Z5
-         DgkiX5TbkyLf6odK0mkW/zW46hK0Qoai7m2zvXs4QA0CMlTNUgfgmPgwfgMaMsgqR9J3
-         wrmBemuhfOiqG6FTB+NBpiZCVB5maWzAtE28OGBkvqvWDRYLqU5y/olvYgINwwshj5Uq
-         TpmLA5g5d/onUbTnHQMmsvs200iN04ceD1UgI53z1eC1EkIw6S5AGL+YX66lYPMNIJJg
-         7cug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740060274; x=1740665074;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sY+NBIYy2gT0zvxaoVTjE3mqscsqAzDhfABvZ+XFdRg=;
-        b=GuD/ds8FYKWDfiDPWpl9XkGyfn9EbaxwvAtXaa6Dn4ZMYGV6FwA5pqTl540WlDynOT
-         F8kCZfl3zBxzt+8VdRjhUFaldReMb/eRMZVEqwzfiwyssVgkYAGqcXkkOQ/v5qokLTqV
-         NdCiKEPoTN8Dj+VOiXcbyuqEpRltJKTNwlxhSYI5SriU4wnLLG7q2Lez0WoTG2FlDBFG
-         8BGUauhnWlcQatiD07LqMjNYyWNOe6yfw2Q4c/ObQmq+Pmez7ugqi1FXCEBq5P77nlk3
-         Xme1NIRhXF28I9ubWDkatUvxBPiBCmpmjf6Mq0exD/IxV/4wSivKVi9K4M6JKSohJLkz
-         fI0w==
-X-Forwarded-Encrypted: i=1; AJvYcCXVNdd+Fw3jeNI1K0tTzxZuU/bT1eBvST2URYghwl8PVFODl0lXfMNsk/FL9M+iR1ZC2KxddOVaEOSR+iY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzbKbBJ+BKmvJ35/X2rC8yb7h/yDpqzmBylAJZwsx/hZFcUYSjN
-	AMPAw19XowBFb9TrVUW8ahcSUZb1JXppXwxPPG/lcPGcv0VxkrdyEotpVC0mMunEiZq0J36NxSf
-	yqDPqctz88xRFwoeo764xHElVw06TODsGM+ELfw==
-X-Gm-Gg: ASbGncvuhD+SOrHafB2k+XewHbKEPWSNmouGeLu47TK0EMUNCM6I9THOXTgWNRw6q8z
-	FcL3HmFUPXK8AZIVxkeBarUBG0cw6UK0xK76SpPojjxABhxAftO7oB3u/yAZmrZ7lSqdsZQ+T
-X-Google-Smtp-Source: AGHT+IGJwZJ+HnwUiO5AZPnqLuBn5q7vQJN93vatOpb00wYq/6/uLggOK7k4mc6rL8mIKuVW88nuIEu1nK2DEGYr7YE=
-X-Received: by 2002:a05:6512:688:b0:545:6f1:9494 with SMTP id
- 2adb3069b0e04-5452fe6fbe0mr7094057e87.35.1740060273484; Thu, 20 Feb 2025
- 06:04:33 -0800 (PST)
+	s=arc-20240116; t=1740060285; c=relaxed/simple;
+	bh=DWSYAHUTargpU400f9NK3gvtZ8FTGTCpxJjIS2y1L/s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QO0EvQnRTkEGNfcv07kheC4QdypHJNeEtHhsnSPCSMeDB2caW8/nYaCeNOL7Hiw9wM4zR36I4h1VNacNuHmUIuM8GMt9WNZ+oshB5cuG/xRpAFOgVc7B1Eb8QN+RXnv4zZD6IR0UNNWERc9lttkZ04Ve2TQX/tljNuzmDBR/w1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kl90/mwn; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740060283; x=1771596283;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=DWSYAHUTargpU400f9NK3gvtZ8FTGTCpxJjIS2y1L/s=;
+  b=kl90/mwnoi01V90U5bziIzlKuiRbOOu/hjkkQ49YBSIG07yrtwHRNram
+   OGbUpPKL+avKUYmoMUiS7p7iGUhMrWKoLg/W3KgT07Fc0XRPPaXUuZAOa
+   JAuICpky2txJue2tq85HIGJhxxv59zTBp+O2DOVUieTPpqaDYkRMG7rj9
+   0PBOfV6qnpK/RzN5QYFK4sid5ZUNyZJSayBQUm1fVUdlglUb/u03lYiTO
+   3z2/A6qVyEHw/DHpwMb02TD3iQS2sMdc2zmjkQvlWtL2KKWfQM5vp8+v/
+   gUHiOfca3vTkAsEU2YnX60c3xOBboAwkBdPDnmaUoLl9ISIf0iVUsGfUY
+   w==;
+X-CSE-ConnectionGUID: QoQqtPzmSba509bjNqHOQA==
+X-CSE-MsgGUID: +ZD6xKFxRv6etvGDH81pyQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11351"; a="40707053"
+X-IronPort-AV: E=Sophos;i="6.13,301,1732608000"; 
+   d="scan'208";a="40707053"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Feb 2025 06:04:42 -0800
+X-CSE-ConnectionGUID: apojjs4AR7mOwWcYYd5TxA==
+X-CSE-MsgGUID: fYV6tpzvSFOT2RzZ5HweAw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="152242291"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Feb 2025 06:04:37 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tl7AG-0000000DLyt-3fDh;
+	Thu, 20 Feb 2025 16:04:32 +0200
+Date: Thu, 20 Feb 2025 16:04:32 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Hugo Villeneuve <hvilleneuve@dimonoff.com>,
+	Nuno Sa <nuno.sa@analog.com>, David Lechner <dlechner@baylibre.com>,
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev
+Subject: Re: [PATCH v3 2/9] iio: adc: add helpers for parsing ADC nodes
+Message-ID: <Z7c2cBQpjoc9-Vyu@smile.fi.intel.com>
+References: <cover.1739967040.git.mazziesaccount@gmail.com>
+ <6c5b678526e227488592d004c315a967b9809701.1739967040.git.mazziesaccount@gmail.com>
+ <Z7ZB7RQhyI5Dohrq@smile.fi.intel.com>
+ <b1c1ed68-2f4d-447c-9957-5a1bbc63ef6e@gmail.com>
+ <Z7ci7tUlRQqZEZSN@smile.fi.intel.com>
+ <ec76334b-bb13-4076-811d-9174170dd677@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250212-arm-generic-entry-v4-0-a457ff0a61d6@linaro.org>
- <20250214010325.GA12626@strace.io> <CACRpkdZJYFUhmPg3EWJeU42fzJMzWm7Sgn3XfELB2-PSCf6Ssw@mail.gmail.com>
- <20250214110508.GA19194@strace.io>
-In-Reply-To: <20250214110508.GA19194@strace.io>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 20 Feb 2025 15:04:22 +0100
-X-Gm-Features: AWEUYZmkc4EjePowUwFakXU4c6G7RgBFrQLnwon4iEz2BqS1QCkM5_sbNQssIk8
-Message-ID: <CACRpkdbmOiapucnzyd9-x4WJsRBs2pRdcgZ2-AoN3bdkNJaW_A@mail.gmail.com>
-Subject: Re: [PATCH v4 00/31] ARM: Switch to generic entry
-To: "Dmitry V. Levin" <ldv@strace.io>
-Cc: Dmitry Vyukov <dvyukov@google.com>, Oleg Nesterov <oleg@redhat.com>, 
-	Eugene Syromyatnikov <evgsyr@gmail.com>, Russell King <linux@armlinux.org.uk>, Kees Cook <kees@kernel.org>, 
-	Andy Lutomirski <luto@amacapital.net>, Will Drewry <wad@chromium.org>, 
-	Frederic Weisbecker <frederic@kernel.org>, "Paul E. McKenney" <paulmck@kernel.org>, 
-	Jinjie Ruan <ruanjinjie@huawei.com>, Arnd Bergmann <arnd@arndb.de>, Ard Biesheuvel <ardb@kernel.org>, 
-	Al Viro <viro@zeniv.linux.org.uk>, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ec76334b-bb13-4076-811d-9174170dd677@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Fri, Feb 14, 2025 at 12:05=E2=80=AFPM Dmitry V. Levin <ldv@strace.io> wr=
-ote:
+On Thu, Feb 20, 2025 at 03:40:30PM +0200, Matti Vaittinen wrote:
+> On 20/02/2025 14:41, Andy Shevchenko wrote:
+> > On Thu, Feb 20, 2025 at 09:13:00AM +0200, Matti Vaittinen wrote:
+> > > On 19/02/2025 22:41, Andy Shevchenko wrote:
+> > > > On Wed, Feb 19, 2025 at 02:30:27PM +0200, Matti Vaittinen wrote:
 
-> > Sure, where can I find this test suite?
->
-> It's a part of strace, you can find it e.g. at
-> https://github.com/strace/strace
->
-> To build and run it one can roughly do
-> ./bootstrap && ./configure && make -j`nproc` && make -j`nproc check
+...
 
-make check produces some test failures on v6.14-rc1 on ARM
-even before I apply the generic entry:
+> > > > > +EXPORT_SYMBOL_GPL(iio_adc_device_num_channels);
+> > > > 
+> > > > No namespace?
+> > > 
+> > > I was considering also this. The IIO core functions don't belong into a
+> > > namespace - so I followed the convention to keep these similar to other IIO
+> > > core stuff.
+> > 
+> > But it's historically. We have already started using namespaces
+> > in the parts of IIO, haven't we?
+> 
+> Yes. But as I wrote, I don't think adding new namespaces for every helper
+> file with a function or two exported will scale. We either need something
+> common for IIO (or IIO "subsystems" like "adc", "accel", "light", ... ), or
+> then we just keep these small helpers same as most of the IIO core.
 
-FAIL: filtering_syscall-syntax.test
-FAIL: qual_fault-syscall.test
-FAIL: qual_fault.test
-FAIL: strace--tips-full.test
-FAIL: strace-r.test
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D
-Testsuite summary for strace 6.13.0.27.bbda4
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D
-# TOTAL: 1409
-# PASS:  1106
-# SKIP:  298
-# XFAIL: 0
-# FAIL:  5
-# XPASS: 0
-# ERROR: 0
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D
+It can be still pushed to IIO_CORE namespace. Do you see an issue with that?
 
-But I create more fails after my patch set ...
-Some have to do with fast syscall restart (I need to look into this).
+Or a new opaque namespace for the mentioned cases, something like IIO_HELPERS.
 
-Then there is the fact that I had to add the  PTRACE_SYSEMU and
-PTRACE_SYSEMU_SINGLESTEP as stubs returning -EIO
-(modeled after UM) to use generic entry. Do you think this affects
-the results?
+> > > (Sometimes I have a feeling that the trend today is to try make things
+> > > intentionally difficult in the name of the safety. Like, "more difficult I
+> > > make this, more experience points I gain in the name of the safety".)
+> > > 
+> > > Well, I suppose I could add a namespace for these functions - if this
+> > > approach stays - but I'd really prefer having all IIO core stuff in some
+> > > global IIO namespace and not to have dozens of fine-grained namespaces for
+> > > an IIO driver to use...
 
-Is there a way to run a single test? I tried to check the docs but
-nothing obvious to me ... I guess I'm not used to this unit-tester.
+...
 
-Yours,
-Linus Walleij
+> > > > > +	if (!allowed_types || allowed_types & (~IIO_ADC_CHAN_PROP_TYPE_ALL)) {
+> > > > 
+> > > > Unneeded parentheses around negated value.
+> > > > 
+> > > > > +	if (found_types & (~allowed_types)) {
+> > > > 
+> > > > Ditto.
+> > > > 
+> > > > > +		long unknown_types = found_types & (~allowed_types);
+> > > > 
+> > > > Ditto and so on...
+> > > > 
+> > > > Where did you get this style from? I think I see it first time in your
+> > > > contributions. Is it a new preferences? Why?
+> > > 
+> > > Last autumn I found out my house was damaged by water. I had to empty half
+> > > of the rooms and finally move out for 2.5 months.
+> > 
+> > Sad to hear that... Hope that your house had been recovered (to some extent?).
+> 
+> Thanks. I finalized rebuilding last weekend. Just moved back and now I'm
+> trying to carry things back to right places... :rolleyes:
+> 
+> > > Now I'm finally back, but
+> > > during the moves I lost my printed list of operator precedences which I used
+> > > to have on my desk. I've been writing C for 25 years or so, and I still
+> > > don't remember the precedence rules for all bitwise operations - and I am
+> > > fairly convinced I am not the only one.
+> > 
+> > ~ (a.k.a. negation) is higher priority in bitops and it's idiomatic
+> > (at least in LK project).
+> 
+> I know there are well established, accurate rules. Problem is that I never
+> remember these without looking.
+
+There are very obvious cases like below.
+
+> > > What I understood is that I don't really have to have a printed list at
+> > > home, or go googling when away from home. I can just make it very, very
+> > > obvious :) Helps me a lot.
+> > 
+> > Makes code harder to read, especially in the undoubtful cases like
+> > 
+> > 	foo &= (~...);
+> 
+> This is not undoubtful case for me :) And believe me, reading and
+> deciphering the
+> 
+> foo &= (~bar);
+> 
+> is _much_ faster than seeing:
+
+Strongly disagree. One need to parse an additional pair of parentheses,
+and especially when it's a big statement inside with nested ones along
+with understanding what the heck is going on that you need them in the
+first place.
+
+On top of that, we have a common practices in the LK project and
+with our history of communication it seems you are trying to do differently
+from time to time. Sounds like a rebellion to me :-)
+
+> foo &= ~bar;
+> 
+> and having to google the priorities.
+
+Again, this is something a (regular) kernel developer keeps refreshed.
+Or even wider, C-language developer.
+
+> > > > > +		int type;
+> > > > > +
+> > > > > +		for_each_set_bit(type, &unknown_types,
+> > > > > +				 IIO_ADC_CHAN_NUM_PROP_TYPES - 1) {
+> > > > > +			dev_err(dev, "Unsupported channel property %s\n",
+> > > > > +				iio_adc_type2prop(type));
+> > > > > +		}
+> > > > > +
+> > > > > +		return -EINVAL;
+> > > > > +	}
+
+...
+
+> > > > > +		tmp.required &= (~BIT(IIO_ADC_CHAN_PROP_COMMON));
+> > > > 
+> > > > Redundant outer parentheses. What's the point, please?
+> > > 
+> > > Zero need to think of precedence.
+> > 
+> > Huh? See above.
+> > Everything with equal sign is less precedence than normal ops.
+> 
+> Sure. It's obvious if you remember that "Everything with equal sign is less
+> precedence than normal ops". But as I said, I truly have hard time
+> remembering these rules. When I try "going by memory" I end up having odd
+> errors and suggestions to add parenthesis from the compiler...
+
+The hardest to remember probably the
+
+	foo && bar | baz
+
+case and alike. These are the only ones that I totally agree on with you.
+But negation.
+
+> By the way, do you know why anyone has bothered to add these
+> warnings/suggestions about adding the parenthesis to the compiler? My guess
+> is that I am not only one who needs the precedence charts ;)
+
+Maybe someone programmed too much in LISP?.. (it's a rhetorical one)
+
+...
+
+> > > > > +		ret = fwnode_property_read_u32(child, "common-mode-channel",
+> > > > > +					       &common);
+> > > > 
+> > > > I believe this is okay to have on a single line,
+> > > 
+> > > I try to keep things under 80 chars. It really truly helps me as I'd like to
+> > > have 3 parallel terminals open when writing code. Furthermore, I hate to
+> > > admit it but during the last two years my near vision has deteriorated... :/
+> > > 40 is getting more distant and 50 is approaching ;)
+> > 
+> > It's only 86 altogether with better readability.
+> > We are in the second quarter of 21st century,
+> > the 80 should be left in 80s...
+> > 
+> > (and yes, I deliberately put the above too short).
+> 
+> I didn't even notice you had squeezed the lines :)
+> 
+> But yeah, I truly have problems fitting even 3 80 column terminals on screen
+> with my current monitor. And when working on laptop screen it becomes
+> impossible. Hence I strongly prefer keeping the 80 chars limit.
+
+Maybe you need a bigger monitor after all? (lurking now :-)
+
+...
+
+> > > > > +#include <linux/iio/iio.h>
+> > > > 
+> > > > I'm failing to see how this is being used in this header.
+> > > 
+> > > I suppose it was the struct iio_chan_spec. Yep, forward declaration could
+> > > do, but I guess there would be no benefit because anyone using this header
+> > > is more than likely to use the iio.h as well.
+> > 
+> > Still, it will be a beast to motivate people not thinking about what they are
+> > doing. I strongly prefer avoiding the use of the "proxy" or dangling headers.
+> 
+> Ehh. There will be no IIO user who does not include the iio.h.
+
+It's not your concern. That's the idea of making C units as much independent
+and modular as possible (with common sense in mind). And in this case I see
+no point of including this header. Again, the main problem is this will call
+people to use the new header as a "proxy" and that's what I fully against to.
+
+> And, I need the iio_chan_spec here.
+
+Do you really need it or is it just a pointer?
+
+...
+
+> And as I said, I suggest saving some of the energy for reviewing the next
+> version. I doubt the "property type" -flags and bitwise operations stay, and
+> it may be all of this will be just meld in the bd79124 code - depending on
+> what Jonathan & others think of it.
+
+Whenever this code will be trying to land, the review comments still apply.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
