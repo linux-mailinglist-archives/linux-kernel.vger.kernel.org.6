@@ -1,142 +1,107 @@
-Return-Path: <linux-kernel+bounces-523064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3B23A3D191
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 07:52:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17437A3D193
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 07:53:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC011189CC15
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 06:52:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 918283ABD87
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 06:53:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 807F51E3DF2;
-	Thu, 20 Feb 2025 06:52:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B8161E4110;
+	Thu, 20 Feb 2025 06:53:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fybWmLum"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="05aYelCM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5191D1ADC6F;
-	Thu, 20 Feb 2025 06:52:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D35D1ADC6F;
+	Thu, 20 Feb 2025 06:53:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740034358; cv=none; b=bY90uQuuSiuFnuSrcPaGkbYHl5yb3BFAGQtteDPHHrbcDzvaWABmMWE0SBh62HrYhO6xkE5KUr9LNUIcefFIkaWq6es3i/i1OEFrzzWE9vTK3MpOx5sU3wtI+9MiNL595Cdo4I+3WNWV4/d6vMm/P6gWb+gH4KMlGcGBY+JINyk=
+	t=1740034411; cv=none; b=kpGUfCFTk/hO3aMMnaNIFT5EN2bTO/Bbn8XfrzVRPiy+q77V3kHiguv5+jIgvLDmV4BwMnu65imhjJrVoqA0L1CcEvDwJ4HfTTOg/Y/44/+oP7Cr1r0Q85ai0+UghVSKaSACeSowJ495dw2xbJhF2Jg9R2IREv0wS38v9cAqM/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740034358; c=relaxed/simple;
-	bh=CLw6zBsSsTnmlCQj0sWMWplnJ0ZrcCL2Ml/zvFulIgw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YMLTcu0HcSGEx0ZXzejXCwYncEZZA0mqDUni8iW7lrvKSfha1j1is4rP/XeG4YEf21GeqSKfPslFwvHLjwrhyuqME8q9DTBoZTpPCfM0i9or2EPsQjeGXL0bQFx77d8G4ctTGY01q092z2mMqKXpV5RCuLdt1l9rOhcfomKTarY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fybWmLum; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-abb7f539c35so130746466b.1;
-        Wed, 19 Feb 2025 22:52:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740034354; x=1740639154; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rZwJmuqge8q05o7ZYGvV/C+Qh4HzV3tp+xzKODDMrq4=;
-        b=fybWmLumfe9e8bF8wobIyznZA/Y1i/P4N/C2yH1mUvDp6e8YI+yfGd3UGxwZdcTMZb
-         +6wX5blMbDCS+JxYvxurL2jtbJc2mkkJg+N83sDYE56/RUXsUtijzuMEpyZwGou2p+en
-         4waXAB3i34aY6aHOg4ySv5IUPW8MUi7JnCwQiHXKaxPUl4XYiUL63MoVu9tw6b2DV2hi
-         EBSjEKbAnDucKpAAv+SybktN5fzEjL9t1i+uUJn7fyy1vDrVi6o3tMfzMakht6+EXk35
-         lU5I8CExh8vXEl7d1r9KuR/Tl//u8zz3LwLXskANXbvvHABEFc0Xc00WNlV54z2wsszC
-         WWgw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740034354; x=1740639154;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rZwJmuqge8q05o7ZYGvV/C+Qh4HzV3tp+xzKODDMrq4=;
-        b=AM9+fBjYR139aNzHbyu2ihHC0t1a8bPcrq7CGvR9Kz8xpbd/sG2xdmWk3PuK1KjQPc
-         HqRbhitigSpQQY7M7q9sP2X3ZlLlbeim6Yaza8yZptz3zk0o8Mx5QyV+qLuU6m2K+JS4
-         XOn7+MOCNoGjmYh0+3XdP7LJ67Gibg4epV+psJ4aJB+sH5gL2rdHYrblb7PIAFAUrzLG
-         fM3Jgu6WQPOihhK25CLwoYrvtuYMeV7sIn+7zzqE00kxzO+BdGBDKoQAX45qiPzHVDEO
-         xhCiETwh+czTnowbNySb5pfjHf6qRa7K1H44DXRJDDhR18Qz635rivuwSchblb/DfW3w
-         fK2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU7fGWleCDaMl/TkWjElFtZfvWJ/UaVX7B/NZ0+LAtKPbaftS1Mx7qPJeflqCMEy1+gJ61DWW2VZd3C/WA=@vger.kernel.org, AJvYcCXLkOioxAHoUsKN5ZpjjjazY2+pUo0LlVlK7+npOYB64jJ3qGcwVDqvyny/j7sZmukFr8KttOoo@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/kIikn+jeaA7hKvR7O7i57SWOAUoYv4OSrxTSETxOCeov+G9S
-	tnPbUxKrTp6cD8RFr+t4J5de12JCTBN6r0LcIEtBC1y6hTgbH8HG1cfcv3/eZt73Y8Mei5eFoWk
-	1VK/ZGaL5mWmLqwzZpqc3S4eR+pY=
-X-Gm-Gg: ASbGncuQvlT67c1GfYVXm3IRie/sUri5w3lvSbOlFpVz0o61n/ceCdKxIPZ8/JCidG+
-	e14QoLUghDsAoqLs7HciiLA+mAwQI7GNj2NGwPNrhnTmYFA7dU2hRTM+a6kj34xQ4CBavly+DQA
-	==
-X-Google-Smtp-Source: AGHT+IE9NhBPo/KgScXg5dw2GxEMSOt/KhtyUuf5u5RRA747mzK+lscMf3gNz3OsIbmq9pavaAsFw7HsqmLj/dNMSyY=
-X-Received: by 2002:a17:907:9907:b0:abb:b0c0:5b6b with SMTP id
- a640c23a62f3a-abbb0c05e77mr1094505466b.7.1740034354063; Wed, 19 Feb 2025
- 22:52:34 -0800 (PST)
+	s=arc-20240116; t=1740034411; c=relaxed/simple;
+	bh=badsXN3RHOvj6FkdGc1vKzVV9GzrktXmBd5wfthDY/I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sXgT1UHQFs7uQR8xOfbufY8Kgw9vZLwRG2oSdlfs06Im5mCx0FS5JXkrTVLy+SHoSqJNo6PcfhxPjoNO83jTTvuES2smnSqs5z8dqx59v7zwUn6PsSbUDz913X1lMTq3B7G88E+Rc3pJPLptUkkk07+nTPYTVAcIfUe8HnJv39g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=05aYelCM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 901C5C4CED1;
+	Thu, 20 Feb 2025 06:53:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1740034411;
+	bh=badsXN3RHOvj6FkdGc1vKzVV9GzrktXmBd5wfthDY/I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=05aYelCMcL48DSd3AQUBa6wggT7XkmDL0sfT71U9XxRREiLFUQpaCMeSgVsJJ/LiC
+	 i66uz5S9A99wQNsW+hfGEjPKrHPBKkQwTtF3sj8kldVnhcP0WJthXNK9TdPbVnHDuC
+	 QF2Tv19axlVLywFjGOolinei4YmHBHj+Ojl3TtbU=
+Date: Thu, 20 Feb 2025 07:53:28 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Alexey Dobriyan <adobriyan@gmail.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>, Kees Cook <kees@kernel.org>,
+	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+	Christoph Hellwig <hch@infradead.org>,
+	rust-for-linux <rust-for-linux@vger.kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	David Airlie <airlied@gmail.com>, linux-kernel@vger.kernel.org,
+	ksummit@lists.linux.dev
+Subject: Re: Rust kernel policy
+Message-ID: <2025022007-angelfish-smite-a69d@gregkh>
+References: <CANiq72m-R0tOakf=j7BZ78jDHdy=9-fvZbAT8j91Je2Bxy0sFg@mail.gmail.com>
+ <Z7SwcnUzjZYfuJ4-@infradead.org>
+ <CANiq72myjaA3Yyw_yyJ+uvUrZQcSLY_jNp65iKH8Y5xGY5tXPQ@mail.gmail.com>
+ <202502191026.8B6FD47A1@keescook>
+ <785A9F60-F687-41DE-A116-34E37F5B407A@zytor.com>
+ <f77d549c-b776-4182-b170-571d1e5bb288@p183>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250219032251.2592699-1-haoxiang_li2024@163.com>
-In-Reply-To: <20250219032251.2592699-1-haoxiang_li2024@163.com>
-From: Binbin Zhou <zhoubb.aaron@gmail.com>
-Date: Thu, 20 Feb 2025 14:52:21 +0800
-X-Gm-Features: AWEUYZnMB3F8S_mLX4zU1TuBvbYqy__x9km_wAN_Md86gzNwXF_7GfgipeOyrLg
-Message-ID: <CAMpQs4K5Xw4_M1TXTkc_zGaeuD2K_R6pO1PKyhOOJG_XvQuF9A@mail.gmail.com>
-Subject: Re: [PATCH] drivers: loongson: Add check for devm_kstrdup()
-To: Haoxiang Li <haoxiang_li2024@163.com>
-Cc: zhuyinbo@loongson.cn, arnd@arndb.de, loongarch@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
-	Binbin Zhou <zhoubinbin@loongson.cn>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <f77d549c-b776-4182-b170-571d1e5bb288@p183>
 
-Hi Haoxiang:
+On Thu, Feb 20, 2025 at 09:32:15AM +0300, Alexey Dobriyan wrote:
+> On Wed, Feb 19, 2025 at 11:33:56AM -0800, H. Peter Anvin wrote:
+> > b. Can we use existing mature tools, such as C++, to *immediately* improve the quality (not just memory safety!) of our 37-year-old, 35-million line code base and allow for further centralized improvements without the major lag required for compiler extensions to be requested and implemented in gcc (and clang) *and* dealing with the maturity issue?
+> 
+> We can't and for technical reasons:
+> 
+> * g++ requires C99 initializers to be in declaration order,
+>   even in cases where there is no reason to do so.
+> 
+> * g++ doesn't support __seg_gs at all:
+> 
+> 	$ echo -n -e 'int __seg_gs gs;' | g++ -xc++ - -S -o /dev/null
+> 	<stdin>:1:14: error: expected initializer before ‘gs’
+> 
+>   x86 added this to improve codegen quality so this would be step backwards.
+> 
 
-Please rewrite the patch title as "soc: loongson: loongson2_guts: Add
-check for devm_kstrdup()",  and cc soc@kernel.org, because that is the
-most appropriate list for this patch.
+And then there's my special addition to the kernel "struct class" :)
 
-On Wed, Feb 19, 2025 at 11:23=E2=80=AFAM Haoxiang Li <haoxiang_li2024@163.c=
-om> wrote:
->
-> Add check for the return value of devm_kstrdup() in
-> loongson2_guts_probe() to catch potential exception.
->
-> Fixes: b82621ac8450 ("soc: loongson: add GUTS driver for loongson-2 platf=
-orms")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Haoxiang Li <haoxiang_li2024@163.com>
-> ---
->  drivers/soc/loongson/loongson2_guts.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/drivers/soc/loongson/loongson2_guts.c b/drivers/soc/loongson=
-/loongson2_guts.c
-> index ae42e3a9127f..26212cfcf6b0 100644
-> --- a/drivers/soc/loongson/loongson2_guts.c
-> +++ b/drivers/soc/loongson/loongson2_guts.c
-> @@ -117,6 +117,8 @@ static int loongson2_guts_probe(struct platform_devic=
-e *pdev)
->         if (machine)
->                 soc_dev_attr.machine =3D devm_kstrdup(dev, machine, GFP_K=
-ERNEL);
->
-> +       if (!soc_dev_attr.machine)
-> +               return -ENOMEM;
+Anyway, no sane project should switch to C++ now, ESPECIALLY as many are
+starting to move away from it due to the known issues with complexity
+and safety in it's use.  Again, see all of the recent issues around the
+C++ standard committee recently AND the proposal from Google about
+Carbon, a way to evolve a C++ codebase into something else that is
+maintainable and better overall.  I recommend reading at least the
+introduction here:
+	https://docs.carbon-lang.dev/
+for details, and there are many other summaries like this one that go
+into more:
+	https://herecomesthemoon.net/2025/02/carbon-is-not-a-language/
 
-I think this exception check should follow directly after devm_kstrdup().
-Otherwise the whole driver exits here when the =E2=80=9Cmachine" is empty,
-which is not what we expect.
+In short, switching to C++ at this stage would be ignoring the lessons
+that many others have already learned already, and are working to
+resolve.  It would be a step backwards.
 
-You can refer to:
-https://elixir.bootlin.com/linux/v6.14-rc3/source/drivers/soc/fsl/guts.c#L2=
-24
+thanks,
 
->         svr =3D loongson2_guts_get_svr();
->         soc_die =3D loongson2_soc_die_match(svr, loongson2_soc_die);
->         if (soc_die) {
-> --
-> 2.25.1
->
->
---
-Thanks.
-Binbin
+greg k-h
 
