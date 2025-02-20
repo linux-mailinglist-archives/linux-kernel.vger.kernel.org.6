@@ -1,175 +1,257 @@
-Return-Path: <linux-kernel+bounces-523270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 685A6A3D48D
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 10:22:52 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50C01A3D492
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 10:23:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A0C787A3B91
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 09:21:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B77337A8FD2
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 09:22:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D021A1EDA1F;
-	Thu, 20 Feb 2025 09:22:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85D6F1EE7DF;
+	Thu, 20 Feb 2025 09:22:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="DZku1WR4"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="iXk3bBHp"
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2046.outbound.protection.outlook.com [40.107.100.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CE691EE7A1
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 09:21:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740043320; cv=none; b=n+2KIT66sqV+rXS5yCJEVzb+4ngMKX8RwvK9DQaE3ycOhT3qkYPglj4m52Y+XxMAQNfv6TmiBGw7pt1MQnHMiv9i3H562EkohnCsqJXe9e/v92BpPbtgVwVHsbs6jW0179isXdWu9+/YehlVUTVntHIgomtkFmEVx0DgkaDIOPU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740043320; c=relaxed/simple;
-	bh=gdVv0S4Jr0XUx2WgV77fCRKeiGKsRzP9xXdA8AtPhJQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RsvKPUj2Qedw9hZLYvJpx9pRErFQ7fFS77eKBE9xR9b8TX/QdMq21pjJS0UONhI0H/3Pfr29HzLyMtk6539BrLy+HJHRMk47E/XBAAUkD4BZBy27qcVQKZu5UC2nvnddZHsnVwpRaWT+oy8Q7TKB6rGbExfh/tbfOAAhkc9Mn1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=DZku1WR4; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51K190BZ003228;
-	Thu, 20 Feb 2025 09:21:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=YUiKeOIJfkqR7L1A5Wr5JL2A04+Juu
-	dfcgaiPv0ln8M=; b=DZku1WR4eYQx4TgDy0eDUeVTx48zKT8rbdG/yDhAdL6dQq
-	xUyt06/8WHfQe53GZ9yJJGDNu5GF6oZ1xCWqfXKyo1++6RjgLwqAYkPvHRUZp/8d
-	NE6HvBZSee/8eT+j9+pesdlRsAfFm6Xym4PcbP1yDvuMOK2JjoOtArP1HqiiifBo
-	yOzhnvokJpK/1nAMwPTNkd/Gm8W/XeCdRYfsVzMl+gk00CwTj5RYgUgRbzdy+VL2
-	ktRfIEq8R6Its1kpCVi02peeNksk69yNtWA0PhHLqEDFaXqy6PrbTv2Wpk+T65NB
-	9l9MXIAHQUXRcwLQaccRd825nl5joYHLu2oyAWow==
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44wtfa1vx2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 20 Feb 2025 09:21:52 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51K7u9QT009772;
-	Thu, 20 Feb 2025 09:21:51 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 44w03y95q7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 20 Feb 2025 09:21:51 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51K9LnwJ20250994
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 20 Feb 2025 09:21:49 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D1E5420043;
-	Thu, 20 Feb 2025 09:21:49 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C588A20040;
-	Thu, 20 Feb 2025 09:21:47 +0000 (GMT)
-Received: from linux.ibm.com (unknown [9.124.208.191])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Thu, 20 Feb 2025 09:21:47 +0000 (GMT)
-Date: Thu, 20 Feb 2025 14:51:44 +0530
-From: Vishal Chourasia <vishalc@linux.ibm.com>
-To: Phil Auld <pauld@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Waiman Long <longman@redhat.com>,
-        Vineeth Reddy <vineethr@linux.ibm.com>
-Subject: Re: [PATCH v2] sched/isolation: Make use of more than one
- housekeeping cpu
-Message-ID: <Z7b0KPqtwGX4ffY7@linux.ibm.com>
-References: <20250218184618.1331715-1-pauld@redhat.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF3D91EDA1F
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 09:22:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.46
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740043364; cv=fail; b=Q+jQ8Cf+oXvNRK7gbH9tW5QT2bxthq1RIuentwD19nzws77/W1uLzpQTbixIPAEl2plOXdEBU4/k1YXac8gO/T5Y2oWnyYyvDGLtKl2b6fMqWUzXL4RWk0ZmLCMxoV8o9TpdHqITiT1KaVdzPM+NwWtPSjq9Jwda3fYeVi6aXos=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740043364; c=relaxed/simple;
+	bh=UN1zIushQm8LHVHrmEL0mcOBbXOJ1mODB7pB9RszVzA=;
+	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=UV7mnivEVjaQI+P5tqk6xEIyADO91gPCpcWPdMCcVmn1AGtQUvasPYglBTRh+dx8TES8rkg2uZCUcTpc+phD9UT4n0t6vMvPl8CAWlPVPGnwCELtIfpKEGgT07ir8xeNqr1dy0ZCMZ1kZ3Tj+xR7QLbhcn5tckDgTlKalWYj3Ys=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=iXk3bBHp; arc=fail smtp.client-ip=40.107.100.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=lscwgFOmzMI7EsCvjr1GIlGuc5/mhGuG85ailn9RwK5f5j2Jox1Twi0fc3o28BtMyZwAIRCM/9Fr3PIiwyZn7a5FPZ+ptJDsy+YxOhZkARupi8hLZvtwUdvtB+PqRqoYwMUtePi/v8c93tkleslde6VoW8ObEiMwoNPfaTnK67Ph9Qa9LVJbR8LdLxupMXWvL7w7g23bXt0YPe65vcVRlpnFKLFBwWeynhQ1Km5cl6fC4KscZ1TgJmD28+SqXqmJbJC5At5eKROYBq4asUz76jIsCjTwzhSCwUhFm3+RjT+VIntMtKqULwA+QIRcWTgKlfvceMSY37pcvX8QFoIRhg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=f3+BNuIHT3/MRMJMLS0lTsy5I/wQpWc1p3bKrrCcm1U=;
+ b=UrEtka8lP3HtyizdV8FGGZRqPw+Vz7PiH+umRld74zB/jt5D+FBnnGurP2NuQrZOeafWGZVuM5sejXl9egx2o6uwmxuHkTP0DbRfdjxPHZ3tacsbLuFF3Ls/T2dnMJNf2WV6ubh+AJCg4Y0Fe4oT4AuyR/QWLQcf0cSVQsg76sll8+NPZjbIQr/lv0iwstKosoGniWba+DsWLDduAT/eMMxw7LkWOTOKH5N7vq//nwzrpnP2t/j38MBsnZLVwqzdsOMbpOnUeNWzxA3+djCWmMAkIuGXSveBIzLXAN6133ewSfDm6jGePJiAroUh3ZvNBOLy/adyY6MFxerwjhZigA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=f3+BNuIHT3/MRMJMLS0lTsy5I/wQpWc1p3bKrrCcm1U=;
+ b=iXk3bBHpwVuyP1oUvbG2WlWq89jeWCfvQV1HiWcKvH2aJ/HtDIP2zRSA2R7ZO/0jm9kXRXI0AUODOg1dsXtO6Jur6+AZqoe2wi/0b0mh7TCM9icRbFVEDZ3X03lXYCnYQnWDJp5rwZr0UBSWucmwQNYkWP/OZEEuk8XwO9PSyLM=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
+ by SJ1PR12MB6290.namprd12.prod.outlook.com (2603:10b6:a03:457::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.14; Thu, 20 Feb
+ 2025 09:22:33 +0000
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5%5]) with mapi id 15.20.8445.017; Thu, 20 Feb 2025
+ 09:22:33 +0000
+Message-ID: <9b0a4a13-9d60-49a5-9166-6bb714f4dbfd@amd.com>
+Date: Thu, 20 Feb 2025 10:22:27 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] drm/amdgpu: Trigger a wedged event for every type of
+ reset
+To: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>,
+ Alex Deucher <alexander.deucher@amd.com>, Xinhui Pan <Xinhui.Pan@amd.com>,
+ amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, kernel-dev@igalia.com, siqueira@igalia.com
+References: <20250219213517.281556-1-andrealmeid@igalia.com>
+ <20250219213517.281556-4-andrealmeid@igalia.com>
+Content-Language: en-US
+From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+In-Reply-To: <20250219213517.281556-4-andrealmeid@igalia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: FR4P281CA0407.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:d0::16) To PH7PR12MB5685.namprd12.prod.outlook.com
+ (2603:10b6:510:13c::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250218184618.1331715-1-pauld@redhat.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: NBiBl4b6etUpEseDvm0PklRgQQwxpnQv
-X-Proofpoint-GUID: NBiBl4b6etUpEseDvm0PklRgQQwxpnQv
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-20_03,2025-02-20_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 suspectscore=0
- impostorscore=0 lowpriorityscore=0 priorityscore=1501 mlxlogscore=704
- bulkscore=0 phishscore=0 malwarescore=0 mlxscore=0 adultscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2502200065
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|SJ1PR12MB6290:EE_
+X-MS-Office365-Filtering-Correlation-Id: 197528e9-221c-4d07-ae51-08dd51901b5f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?aHc3TnVTRGVLUDErT1RmK2NEYzVHczl1c002SVkwblV3Y3UwSDRNWDYweVlo?=
+ =?utf-8?B?QVNFK0V5VUhSaGpqdTc5WnFzMk5zWVdMMjg2ZzZPa3B0bGgyeDQ2cnZmK043?=
+ =?utf-8?B?ZjZjODc3dVU4VFpoUjkwVzBRc1ZKaW8wOFNycjRIYmxUeUhMcC84aWhuTGNt?=
+ =?utf-8?B?NHByQVlSSUY2ZEMyQ1dEeVZLMXY4b3d3c0RNeW4xSThoUHk4cHUweSt1dWV1?=
+ =?utf-8?B?MnB5NGxVcC9RL3pZbkxoUkJncEFETjN5eWpIbjhBT3lrSjc1REZURDdKZC9r?=
+ =?utf-8?B?SnhPd2lMY3h4SU00SWxyUlI5NmZNMGZacjNwUWxNbEFZYjhTTXFzUVJxN1NQ?=
+ =?utf-8?B?TFVQKzF6Z1RjbitOdEVFWWJZenJjR2k2M3ZESzNhakdtN005b00vRUp5MFJE?=
+ =?utf-8?B?R0EvRC9QaXFDZkR5Mm56MHVGMnh0Rlc5NHcxcmJwd3I0WWhzdyt3ZUFiZ3ZK?=
+ =?utf-8?B?NGxESWs0SkhXa2VZQ3ZkRzRyWS9iaXlKeVBQUkpZRGVKeU5qQ21CY04xeGg0?=
+ =?utf-8?B?ZjVqTzAzUjBvL2pMSmJJM2p4akFRRHBmT1BHZW9qbnZNd1pGZ1UyTTNUWWho?=
+ =?utf-8?B?ais5RlBGV1Z0a3NudWhJV0F5eCtUNUhoM0hIeEZ2bnNNNmxSc1JZQ0lTQWRm?=
+ =?utf-8?B?TWgrMkczKzVwMlJQWTdvcWUrT3hzTDRxc1JHZW03QWhQTXRqMkNHY2dNUkNu?=
+ =?utf-8?B?elk3Z3BFdCtTeWd4M3JOR0xIV0t5bE5QOEw4VHBWQWdiUThXVVVtdDRDcmU3?=
+ =?utf-8?B?aVdJU1JWbzN6Q05PSUFYd0hEdlUxWkZzcEgzYUlkK1UxTTBTc2U4Rk9pUHh1?=
+ =?utf-8?B?RHUzSzlzR3lncHU1SnRqMC9lemJCQjVUNUZkQjg1dHUyMjlEWXloRS9nK090?=
+ =?utf-8?B?NFplbHc5TUhIcjFTNHQvR3lvRVhLdndIWFhjS09icS90WE9qaVhHK1JieTlT?=
+ =?utf-8?B?QlBaMEYzNkRTSTVwdDNSZXkySUprcGJvbnZOSXJua1htNGJMT2NLYkFEalFG?=
+ =?utf-8?B?R1U1RUQzeWMrOVI1cHBrTkprYkMwd2lET3VBMW9zYSttb2RHMGJTV0kyRkRw?=
+ =?utf-8?B?dkVhK29HdnllUlYzYnp6L09TdWdSeGdaVXVYMk9FZTFOOFNCQTNjMHlBVXRO?=
+ =?utf-8?B?S01Ba2ZLTkxLazVSRVRRaEdpLzYwOXJmVzNHSWNxSm8vbGxLQytBNjR4MFFQ?=
+ =?utf-8?B?ZVdDc0gxMEtzVVVQSzRTbDR1OWNJekFEaHdDUDY3R3piRk5SRDBkVTR5SGdj?=
+ =?utf-8?B?VjcxYzNVQjE0eXk2RkpHbnhLZFJGQTdxdDlJb3c2dlU1Zk54eGZjRTZubHp4?=
+ =?utf-8?B?MENMdGd5N2lhR0ZBWlJKOFRDa2Z3S2JiZUNPTTJKdExIaW10L0F0L1VTbTA2?=
+ =?utf-8?B?alV5aWVObEhTQ1REc1NNQ1JHaHIvUFMzSWJ2V0N1NVIxaWJIZ3J6NDV5OElk?=
+ =?utf-8?B?bUZSci9nK2VFeG0xWkoxemM1blJQems1YmMvUzhBZlN0MXp3dDlsaVFnY3J2?=
+ =?utf-8?B?Ump4dXB4dVc4eTRyd1pxSTVEcnc4SUZNRXN4ZjRNRHVWUEwrZ3NMVjcvTXBr?=
+ =?utf-8?B?YW51ZVB6c1VVSGFXbVpvNHhYb2ZuaUJpQm1CRHp4YzFhd0J4RkZPaHhialZR?=
+ =?utf-8?B?YzFFU0QzTVpHaE11YlBiSFJxNWtQbjJERGE1cVg4bE5QQkRwSWUvK1c5VTdV?=
+ =?utf-8?B?cE8vOGJwa2RidWtVUWZVZVlJN1J5R2J0dUh3bVFaWSsyMjVLdk9xQVlNSnpq?=
+ =?utf-8?B?MHpZaHVwVmhFL3ZsK1JLcWpHTEpQMTZ6MC92MSt1SWZwVEtsYk44RW5meDJr?=
+ =?utf-8?B?U3QwV2xFd0hNcHQ2bUVTT1lqNWdnR1NrS09wMzVwZmRDYnVqRG84RU1ZNHYy?=
+ =?utf-8?Q?HRbf81bykLHPM?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?UnN2eE5LVVBhU2tJMkZRSVB6N3d3OTJ6TUVsSStCQlA5WFhRSm9PQkV0eVFO?=
+ =?utf-8?B?Uk51VW9CUGhTbnJkaVMrMGoweC8wZjR4ZTBGRGN5K2ptU0V0eTdrZGtQWGJN?=
+ =?utf-8?B?RnRBSjJaNGMyZXhXdk8wUlo3cENJSHZ5SytmS3N2NEszYUpqZkNiTldyYmlW?=
+ =?utf-8?B?bEVQaWI5Zyt0MUhiK0VuSldNUERETU9LUERXTjZuVnZPUytCZnBwVTRKRnJx?=
+ =?utf-8?B?cFdNODJtZ1VXeUQwQytiOTU2VmpZdFhCbzViL3htL0Q3L3A0anNnTGhkRHRD?=
+ =?utf-8?B?Qkttc1ZpRnI2Z2tJbGZES1VKakRLUk1YaCtBRXdHTWlaSE5yT0lnZWxkbTRa?=
+ =?utf-8?B?S0FXSXMxVjkrMWZQWDBncFVJVTY4dDEreDRuMjNmUGFXTldaRno5TmFuaW0x?=
+ =?utf-8?B?QWl0c2dRL1JaU1RHOFlCc3lPUFgwNXFTMENSRXgwTnN4Yk1UK2JadUdvUDdB?=
+ =?utf-8?B?eWQ3dWkzeVFlMTR3YmpHdWp2eFlnbjVlNW9ISllLTjRaMVNDTGdwb2ZFcXFl?=
+ =?utf-8?B?Y1phVTlrRFZveUdXRkh5MElIS2pENXRnSU5FeElXY0VDOGJhVzFRT0k2dmVP?=
+ =?utf-8?B?VU9TVGljdTJXdzBaU0hTTkZMcGpITXBvMTJnaXY5MS90c3BFK1NGTnA4QVli?=
+ =?utf-8?B?QUdwYmlqWEgvYml3MFQ5U0FMZ2R1bFc3WVhoZW0zS0xsUjVFN0VYVVpMTDUy?=
+ =?utf-8?B?RldFSHhQeVFuZWpLSE4vWlFxRjh3N2N4VmtVQ3VKNFVWckRCQjQ1aDlIQW1C?=
+ =?utf-8?B?cVVYN2VILzZVRkp5dENiNzVVTjQ1VXVJaHR5MEJkYmlHeG9ncG9XNTBTWWpi?=
+ =?utf-8?B?WjI1cUt5SDIxc3JwcWhNYVZDenh4WUVkVVJ4ZmY2WmQ4cGFkeW8xd3c0WFMy?=
+ =?utf-8?B?Zjk1ZEF0b0VtNFUxYzNRVytIUGc5SG9weFR6MUtPSG1keFhSc1hLbHJZcmhJ?=
+ =?utf-8?B?emlzb1FwMnI4QU1Na1JJODZPYzVuY2VKeCswK08yamFqd1ltSW5yWDBkRUlH?=
+ =?utf-8?B?clB6RWdiSGNkNllGWkUyVFpkVGdVTWpVWW9UK1ZESGhuaWZPeVhZT0hPWmQ2?=
+ =?utf-8?B?TWwxZGt6VmM2MUJVSVg2Y25IalpiT3RvK3hPWDJOcXBQbmhjNDgwcWlBQ2VZ?=
+ =?utf-8?B?WW9mSVQ5bVNiQ2hudjZ3MTRZdDdtSFBtTFZmeVgzQTUrRXp4YkFBQ0lUWEx1?=
+ =?utf-8?B?RC9BWk1MWnRieTNwNjZCaFNBbkwyWUN1NjBCWlhVMVhrMmQwSWNxU0VKY0hW?=
+ =?utf-8?B?eE5zNTF1TDVkTUpDNlRUYnd5aW52VmhoSHZnM1hULzZHODY4eE5WNW1FNWtJ?=
+ =?utf-8?B?MndrMjVrUEFNSko1TnViczJTaHZYN1BvaDVCcUdsUW5NRy9FK2VNMm4zR2sz?=
+ =?utf-8?B?b095RXlLZnhRdnV3Qi9QWmNFL2xQQkFjSXN6YjhpSGwyK1A2WWdrTWo1b0Zr?=
+ =?utf-8?B?N0pROTFoUlU4d0lzcWNaWHduWWtBOHRoTlYyNk9vOFh2UUg3R3dxU2pHVzdL?=
+ =?utf-8?B?ZVYwbDE3UkRJTTlDWjl4dllwZ21kazVBajloQmZrcXBZOHBQcUw1cHJWZTB3?=
+ =?utf-8?B?em5CWnhlMXkrMy9Yb1JzT21ML29CQXdaUTh5Y2ErbnlGQm9WbFI2NmVXUzZD?=
+ =?utf-8?B?emo1THZJcHBZbldMOFRsUDllOFYwMERBZkZ0Q0VjOU1PejA1cXNqOXRYelBL?=
+ =?utf-8?B?TFJoandhOHh5VGgrbHNBSTRtcHZ1dUxqZDBIMzdWR2o3YUUxLzRDYXA4UVVp?=
+ =?utf-8?B?SHlWZzRBYkluVkJYYlFncWZKRHpOZ3JvaFBqS3kvekFPaTVzMWxKNWhrd1M5?=
+ =?utf-8?B?aytNMjY1Q2l6VysvUzRpNUxSNFFwUTZQbDB3WXRZU3luYzZzVnlXR21WL01u?=
+ =?utf-8?B?ZmxuRE94d1dIdS9EZ25wejNhOFQzeEdVMlpQWXkydDV4SWdkNGkrS2FUQURM?=
+ =?utf-8?B?S1ZKeG0rL1hIbDdnblJoa0x3WnVicjZaVHdDTWIvZ0RFTW1VMGJIK1E3Y2Z2?=
+ =?utf-8?B?QkVEZEhlbG9pNUFYcnR3TXREbUtDTUEzRjB1U2plY3ZYWHMrQ2RTYXgvUTY2?=
+ =?utf-8?B?cElJNzZrTUZHREI1WENnRWJxRGdiSTBONHpFcEg4SWI1WCtvaE9zdHNrMzhD?=
+ =?utf-8?Q?f8SZj70MjfnZJgM6V5c8LQYA7?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 197528e9-221c-4d07-ae51-08dd51901b5f
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Feb 2025 09:22:33.4075
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: aHUKwagsYuwTnnbYmqc2L6M//94Of01B8ibf9vo/k0QCjylkeGEqZo+iU2eoa/ZP
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ1PR12MB6290
 
-On Tue, Feb 18, 2025 at 06:46:18PM +0000, Phil Auld wrote:
-> The exising code uses housekeeping_any_cpu() to select a cpu for
-> a given housekeeping task. However, this often ends up calling
-> cpumask_any_and() which is defined as cpumask_first_and() which has
-> the effect of alyways using the first cpu among those available.
-> 
-> The same applies when multiple NUMA nodes are involved. In that
-> case the first cpu in the local node is chosen which does provide
-> a bit of spreading but with multiple HK cpus per node the same
-> issues arise.
-> 
-> We have numerous cases where a single HK cpu just cannot keep up
-> and the remote_tick warning fires. It also can lead to the other
-> things (orchastration sw, HA keepalives etc) on the HK cpus getting
-> starved which leads to other issues.  In these cases we recommend
-> increasing the number of HK cpus.  But... that only helps the
-> userspace tasks somewhat. It does not help the actual housekeeping
-> part.
-> 
-> Spread the HK work out by having housekeeping_any_cpu() and
-> sched_numa_find_closest() use cpumask_any_and_distribute()
-> instead of cpumask_any_and().
-> 
-LGTM.
-
-Reviewed-by: Vishal Chourasia <vishalc@linux.ibm.com>
-
-> Signed-off-by: Phil Auld <pauld@redhat.com>
-> Reviewed-by: Waiman Long <longman@redhat.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Juri Lelli <juri.lelli@redhat.com>
-> Cc: Frederic Weisbecker <frederic@kernel.org>
-> Cc: Waiman Long <longman@redhat.com>
-> Cc: linux-kernel@vger.kernel.org
-> Link: https://lore.kernel.org/lkml/20250211141437.GA349314@pauld.westford.csb/
-> 
+Am 19.02.25 um 22:35 schrieb André Almeida:
+> Instead of only triggering a wedged event for complete GPU resets,
+> trigger for all types, like soft resets and ring resets. Regardless of
+> the reset, it's useful for userspace to know that it happened because
+> the kernel will reject further submissions from that app.
+>
+> Signed-off-by: André Almeida <andrealmeid@igalia.com>
 > ---
-> 
-> v2: Fix subject line. Update commit message. No code change. 
-> 
->  kernel/sched/isolation.c | 2 +-
->  kernel/sched/topology.c  | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/kernel/sched/isolation.c b/kernel/sched/isolation.c
-> index 81bc8b329ef1..93b038d48900 100644
-> --- a/kernel/sched/isolation.c
-> +++ b/kernel/sched/isolation.c
-> @@ -40,7 +40,7 @@ int housekeeping_any_cpu(enum hk_type type)
->  			if (cpu < nr_cpu_ids)
->  				return cpu;
+>  drivers/gpu/drm/amd/amdgpu/amdgpu_device.c |  3 ---
+>  drivers/gpu/drm/amd/amdgpu/amdgpu_job.c    | 16 +++++++++-------
+>  2 files changed, 9 insertions(+), 10 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
+> index 24ba52d76045..36738c1a5b59 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
+> @@ -6123,9 +6123,6 @@ int amdgpu_device_gpu_recover(struct amdgpu_device *adev,
 >  
-> -			cpu = cpumask_any_and(housekeeping.cpumasks[type], cpu_online_mask);
-> +			cpu = cpumask_any_and_distribute(housekeeping.cpumasks[type], cpu_online_mask);
->  			if (likely(cpu < nr_cpu_ids))
->  				return cpu;
->  			/*
-> diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-> index c49aea8c1025..94133f843485 100644
-> --- a/kernel/sched/topology.c
-> +++ b/kernel/sched/topology.c
-> @@ -2101,7 +2101,7 @@ int sched_numa_find_closest(const struct cpumask *cpus, int cpu)
->  	for (i = 0; i < sched_domains_numa_levels; i++) {
->  		if (!masks[i][j])
->  			break;
-> -		cpu = cpumask_any_and(cpus, masks[i][j]);
-> +		cpu = cpumask_any_and_distribute(cpus, masks[i][j]);
->  		if (cpu < nr_cpu_ids) {
->  			found = cpu;
->  			break;
-> -- 
-> 2.47.1
-> 
+>  	atomic_set(&adev->reset_domain->reset_res, r);
+>  
+> -	if (!r)
+> -		drm_dev_wedged_event(adev_to_drm(adev), DRM_WEDGE_RECOVERY_NONE);
+> -
+
+Feel free to add my rb to patch #1 and #2, but this here is a bad idea.
+
+We have resets which are not triggered by a submission timeout, but rather because of RAS (for example) and those would now not be raised any more.
+
+Regards,
+Christian.
+
+>  	return r;
+>  }
+>  
+> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_job.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_job.c
+> index 698e5799e542..1082b957e7b1 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_job.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_job.c
+> @@ -91,8 +91,7 @@ static enum drm_gpu_sched_stat amdgpu_job_timedout(struct drm_sched_job *s_job)
+>  	struct amdgpu_job *job = to_amdgpu_job(s_job);
+>  	struct amdgpu_task_info *ti;
+>  	struct amdgpu_device *adev = ring->adev;
+> -	int idx;
+> -	int r;
+> +	int idx, ret = 0;
+>  
+>  	if (!drm_dev_enter(adev_to_drm(adev), &idx)) {
+>  		dev_info(adev->dev, "%s - device unplugged skipping recovery on scheduler:%s",
+> @@ -141,8 +140,8 @@ static enum drm_gpu_sched_stat amdgpu_job_timedout(struct drm_sched_job *s_job)
+>  		 * we'll fall back to full GPU reset.
+>  		 */
+>  		drm_sched_wqueue_stop(&ring->sched);
+> -		r = amdgpu_ring_reset(ring, job->vmid);
+> -		if (!r) {
+> +		ret = amdgpu_ring_reset(ring, job->vmid);
+> +		if (!ret) {
+>  			if (amdgpu_ring_sched_ready(ring))
+>  				drm_sched_stop(&ring->sched, s_job);
+>  			atomic_inc(&ring->adev->gpu_reset_counter);
+> @@ -170,9 +169,9 @@ static enum drm_gpu_sched_stat amdgpu_job_timedout(struct drm_sched_job *s_job)
+>  		 */
+>  		set_bit(AMDGPU_SKIP_COREDUMP, &reset_context.flags);
+>  
+> -		r = amdgpu_device_gpu_recover(ring->adev, job, &reset_context);
+> -		if (r)
+> -			dev_err(adev->dev, "GPU Recovery Failed: %d\n", r);
+> +		ret = amdgpu_device_gpu_recover(ring->adev, job, &reset_context);
+> +		if (ret)
+> +			dev_err(adev->dev, "GPU Recovery Failed: %d\n", ret);
+>  	} else {
+>  		drm_sched_suspend_timeout(&ring->sched);
+>  		if (amdgpu_sriov_vf(adev))
+> @@ -180,6 +179,9 @@ static enum drm_gpu_sched_stat amdgpu_job_timedout(struct drm_sched_job *s_job)
+>  	}
+>  
+>  exit:
+> +	if (!ret)
+> +		drm_dev_wedged_event(adev_to_drm(adev), DRM_WEDGE_RECOVERY_NONE);
+> +
+>  	drm_dev_exit(idx);
+>  	return DRM_GPU_SCHED_STAT_NOMINAL;
+>  }
+
 
