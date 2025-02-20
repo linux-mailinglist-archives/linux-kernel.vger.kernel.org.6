@@ -1,135 +1,152 @@
-Return-Path: <linux-kernel+bounces-523133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6400A3D285
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 08:44:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 835E9A3D295
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 08:47:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B36343B1DA1
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 07:44:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCAB8189F259
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 07:46:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E34B1E9B3C;
-	Thu, 20 Feb 2025 07:44:37 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ED131E379B;
+	Thu, 20 Feb 2025 07:45:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="g2odZFGl"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D82D1E98FF
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 07:44:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 691F822F11;
+	Thu, 20 Feb 2025 07:45:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740037477; cv=none; b=oGY71lgQMq8E95Dvm/pGAY/GIT6uGmBmpTo2Sh2RH+n6N0d5JWhPyBiAiP4u/lz+tcu7WsHFiqteCZVZ2DRWcOvqfGvI2aYTrfB4RXCXG8sYQM7t0gThm2G1aUJoXFM2/0A7HemQf2+1ZZejEP9H3gMNrWN1cyM4rd2lklE3gjA=
+	t=1740037557; cv=none; b=Z44OQBpuHbYomAlS7Nkz4C1jgShvFTl+6SsXiZpSivElDiZlSCw7fB0OTNLOy5rUd/dodn76mdc2bh1bYTR0c8RaIA/ZUkWthHqLqnFvn51umXNcO1lfg90cb2NqLSgFnMGvoUxGsNP7sh9x47XUfrRUuhldV3MRWASRSgqD/Gc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740037477; c=relaxed/simple;
-	bh=G5incWbHtDEe7N+cSOTb3Owqxt38o2con0kl3Rz0mSA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=PzRJxNbfaKQ2v5entrjJIIp+pzPkP7StPNK8qnXQZEZ38JDiCwWM3ewKPzOYwC11LXO+dIsWVzT08rrcjhBbJ5FzKbbm2d+U8zYJLt488BbHI6LGHe/yGWuAxlf6MOX8aKqTb+HjWAzvVZv26PTP+XRKE8cwIPNAaCSK3iohYUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1tl1EV-0004TU-1C; Thu, 20 Feb 2025 08:44:31 +0100
-Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1tl1EU-001tqX-2F;
-	Thu, 20 Feb 2025 08:44:30 +0100
-Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1tl1EU-00CC2j-21;
-	Thu, 20 Feb 2025 08:44:30 +0100
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
-	kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org,
-	linux-mmc@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Mark Brown <broonie@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	=?UTF-8?q?S=C3=B8ren=20Andersen?= <san@skov.dk>,
-	Christian Loehle <christian.loehle@arm.com>
-Subject: [PATCH v2 6/6] mmc: sdhci: prevent command execution after undervoltage shutdown
-Date: Thu, 20 Feb 2025 08:44:29 +0100
-Message-Id: <20250220074429.2906141-7-o.rempel@pengutronix.de>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250220074429.2906141-1-o.rempel@pengutronix.de>
-References: <20250220074429.2906141-1-o.rempel@pengutronix.de>
+	s=arc-20240116; t=1740037557; c=relaxed/simple;
+	bh=y5g3F1Le/41CmpzEWqBi9nMV6VrPaIqZ7vVUOTU807o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jo2lo9REGqg3crNBKQYDJiDqJzw8/1sga2EeghFSHSF7bYRWNXcSFftef3xc41QaGAA/EiQBDvJ9hlrxS46InRWiADqtdVRcWB00x04QzjXOoT7SMpL4bGKe6V9HQc7azNsbPnN7/XVXvgvNhPcx3f1SHWb0Je/mvY9giRX5gBM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=g2odZFGl; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51K1Act6006165;
+	Thu, 20 Feb 2025 07:45:50 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=THnapr
+	/xdmKpYJVnyumG675qIuSfCpRNBda0PrI90mo=; b=g2odZFGlIJAZ2ifLKOfL4A
+	YxqfrSNn9NZCRqbrv14O5NPZuj2Mp+lYDIwRk3BJWNppu+jygb+eMidJ9PgleUOQ
+	z4LTu144RHzjWZA+1++7ixQdJ+G/Iup2N9HrDFmKfpcuwjbt1ShSMPG8ZzeRBOSh
+	yHT/+pFp857OLwd5VQaLh5RaEYIKt6DqlTmYJcmXvedMo4QpXnBHFs9bA16Ro7bN
+	5EFCnTxw0hdpwyg3xIQIwlMWKbekfS906/NhGxo6104q6FIGES688YOoC+G2IToH
+	oNQdrcJrJOsZecQmXrc7KAMSgChecto1QaPw2+/G+z6G2sFoOwiRTOra3ZmbJs2A
+	==
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44wtfa1f55-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Feb 2025 07:45:49 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51K4MTWK029293;
+	Thu, 20 Feb 2025 07:45:48 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 44w024grna-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Feb 2025 07:45:46 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51K7jija48300310
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 20 Feb 2025 07:45:44 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 68A7E2004E;
+	Thu, 20 Feb 2025 07:45:44 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1DD7E20040;
+	Thu, 20 Feb 2025 07:45:43 +0000 (GMT)
+Received: from [9.39.30.67] (unknown [9.39.30.67])
+	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 20 Feb 2025 07:45:42 +0000 (GMT)
+Message-ID: <74dddd26-4a0e-4bb6-958a-229cca3c24d1@linux.ibm.com>
+Date: Thu, 20 Feb 2025 13:15:42 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] selftests: sched: add sched as a default selftest target
+To: Sinadin Shan <sinadin.shan@oracle.com>, chris.hyser@oracle.com
+Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        shuah@kernel.org
+References: <20250219064658.449069-1-sinadin.shan@oracle.com>
+From: Shrikanth Hegde <sshegde@linux.ibm.com>
+Content-Language: en-US
+In-Reply-To: <20250219064658.449069-1-sinadin.shan@oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: NFnzcOZmzNNjnEcUzq55RgR1_srdLVU2
+X-Proofpoint-GUID: NFnzcOZmzNNjnEcUzq55RgR1_srdLVU2
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-20_03,2025-02-20_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 suspectscore=0
+ impostorscore=0 lowpriorityscore=0 priorityscore=1501 mlxlogscore=999
+ bulkscore=0 phishscore=0 malwarescore=0 mlxscore=0 adultscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2502200052
 
-Introduce an emergency_stop flag in struct mmc_host to block further
-MMC/SD commands after an undervoltage shutdown. If emergency_stop is
-set, sdhci_send_command() will reject new requests with -EBUSY and log a
-warning. This helps diagnose and identify code paths that may still
-attempt writes after the undervoltage shutdown sequence has completed.
 
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
----
- drivers/mmc/core/mmc.c   | 1 +
- drivers/mmc/host/sdhci.c | 9 +++++++++
- include/linux/mmc/host.h | 1 +
- 3 files changed, 11 insertions(+)
 
-diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
-index e626213e7a52..8aa5881293d8 100644
---- a/drivers/mmc/core/mmc.c
-+++ b/drivers/mmc/core/mmc.c
-@@ -2326,6 +2326,7 @@ static int _mmc_handle_undervoltage(struct mmc_host *host)
- 		pr_err("%s: Undervoltage emergency stop failed\n",
- 			mmc_hostname(host));
- 
-+	host->emergency_stop = 1;
- 	mmc_card_set_removed(host->card);
- 
- out:
-diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-index f4a7733a8ad2..8d67f27e7d9e 100644
---- a/drivers/mmc/host/sdhci.c
-+++ b/drivers/mmc/host/sdhci.c
-@@ -1658,6 +1658,15 @@ static bool sdhci_send_command(struct sdhci_host *host, struct mmc_command *cmd)
- 
- 	WARN_ON(host->cmd);
- 
-+	if (host->mmc->emergency_stop) {
-+		pr_warn("%s: Ignoring normal request, emergency stop is active\n",
-+			mmc_hostname(host->mmc));
-+		WARN_ON_ONCE(1);
-+
-+		cmd->error = -EBUSY;
-+		return true;
-+	}
-+
- 	/* Initially, a command has no error */
- 	cmd->error = 0;
- 
-diff --git a/include/linux/mmc/host.h b/include/linux/mmc/host.h
-index 4e147ad82804..5dfe2cdde59f 100644
---- a/include/linux/mmc/host.h
-+++ b/include/linux/mmc/host.h
-@@ -501,6 +501,7 @@ struct mmc_host {
- 	unsigned int		can_dma_map_merge:1; /* merging can be used */
- 	unsigned int		vqmmc_enabled:1; /* vqmmc regulator is enabled */
- 	unsigned int		undervoltage:1;	 /* Undervoltage state */
-+	unsigned int		emergency_stop:1; /* Emergency stop. No transfers are allowed. */
- 
- 	int			rescan_disable;	/* disable card detection */
- 	int			rescan_entered;	/* used with nonremovable devices */
--- 
-2.39.5
+On 2/19/25 12:16, Sinadin Shan wrote:
+> The sched tests are missing a target entry and hence out-of-tree build
+> support.
+> 
+> For instance:
+> make -C tools/testing/selftests install INSTALL_LOCATION=/foo/bar
+> 
+> is expected to build the sched tests and place them at /foo/bar.
+> But this is not observed since a TARGET entry is not present for sched.
+> 
+> This was suggested by Shuah in this conversation
+> Link: https://lore.kernel.org/linux-kselftest/60dd0240-8e45-4958-acf2-7eeee917785b@linuxfoundation.org/
+> 
+> Add support for sched selftests by adding sched as a default TARGET
+> 
+> Signed-off-by: Sinadin Shan <sinadin.shan@oracle.com>
+> ---
+>   tools/testing/selftests/Makefile | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
+> index 8daac70c2f9d2..e2d0d389ad912 100644
+> --- a/tools/testing/selftests/Makefile
+> +++ b/tools/testing/selftests/Makefile
+> @@ -91,6 +91,7 @@ TARGETS += rlimits
+>   TARGETS += rseq
+>   TARGETS += rtc
+>   TARGETS += rust
+> +TARGETS += sched
+>   TARGETS += sched_ext
+>   TARGETS += seccomp
+>   TARGETS += sgx
 
+There is only one test currently in sched: i.e cs_prctl_test.c. to see 
+the cookies validation when core scheduling is in effect.
+
+If CONFIG_SCHED_CORE=n, the test fails. So you might end up seeing 
+default selftests failing on such systems? or this is only compiling?
+
+Likely the selftests/sched needs to modified for CONFIG_SCHED_CORE=n
+
+When CONFIG_SCHED_CORE=n
+./cs_prctl_test
+
+## Create a thread/process/process group hierarchy
+Not a core sched system
+...
+Not a core sched system
+(283) FAILED: get_cs_cookie(0) == 0
 
