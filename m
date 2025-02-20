@@ -1,156 +1,299 @@
-Return-Path: <linux-kernel+bounces-523122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13025A3D25F
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 08:33:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF5A3A3D268
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 08:36:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0FC9172E20
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 07:33:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8F3C189291A
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 07:36:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 947CA1E98FF;
-	Thu, 20 Feb 2025 07:33:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 760581E9B00;
+	Thu, 20 Feb 2025 07:36:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="WahCwp+u"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=chipsnmedia.com header.i=@chipsnmedia.com header.b="X6A49+C6"
+Received: from SLXP216CU001.outbound.protection.outlook.com (mail-koreacentralazon11021141.outbound.protection.outlook.com [40.107.42.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67A071B4236;
-	Thu, 20 Feb 2025 07:33:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740036810; cv=none; b=dKO86NZh+SOmDN5IzzXlRSdt6jAQ0OsQOhbAGfMCnENcdqy4q/k7h3sxIp7MTLFf3+un4T339C/I2by7eGj3S+5M0kBpmTZeN6NkcCcrgMDG60tpCTmh8AXnev97l/S3Ip5LK2QgPCf8BqJnlTmn9YZs+sg6bWZWced6aV7OTI8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740036810; c=relaxed/simple;
-	bh=qfktQxsrR0jCrrG973vqi6wovqwwDhVqkQOQ5Cv8kK0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ZxuHa6Hp/xpZcCj4b5VDAeovyIIzFja4SjhCAFmPZe7qyV06xpDwJ0hKjLOaKRk062bOl/AQU8zaLSauM1QgFQlH5X/1K+7kTwzbbbp2H5Ja+5nvEHH1A5tNiPCSNCFz6BOwVhJifmb8Pr9d2ifAUGT350VICw/3tDZlodlpdSI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=WahCwp+u; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51K6imo6016231;
-	Thu, 20 Feb 2025 07:33:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Kswv/0KcplL4nDKeu7ghMCJBi6VuEULInLAZ3cUQB08=; b=WahCwp+uwAlxoZ3b
-	f8VoezZ+OHNculTJ3BdZQO31N90x+w1yVx3V1uFVP9dbwI/xoZDAEASe0nXB4PEe
-	3NRJwP5vJBfBbEkpZq+e9RByF06JWYqpUS27KPVxAw+n0Cgw8e5+u5Oz8ooaS5bt
-	IkCLWUsRn+fh97GPite1duc4vXc1FuExiYAc4M61vJ58ad71f6VFXpd13hCg07n9
-	yo9Xmm0f3j3qVHwfhUKSR/yCQVPzrRf6dnvp6lLzf9PpdiEg5wVS4R7TO0iI+vRg
-	LTt5o1DFzcCsAdfRkIk7Y20zkTpIcbuk+K9pONChiGbm8XgkqRZ2gYf0UjAip1l1
-	EExcsg==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44vyy4db0r-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 20 Feb 2025 07:33:13 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51K7XCAP017270
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 20 Feb 2025 07:33:12 GMT
-Received: from [10.64.68.119] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 19 Feb
- 2025 23:33:06 -0800
-Message-ID: <1b22b005-4ad3-4ba9-9f6c-b540ed45dfc7@quicinc.com>
-Date: Thu, 20 Feb 2025 15:33:04 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E3BD1E5734;
+	Thu, 20 Feb 2025 07:36:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.42.141
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740036965; cv=fail; b=Ay0kqbmiC9+KC3NsRC4UCdt6OfCZLMLwimDVk3G4XTMWk3ApqVQT4LJXgyNsdNxn0rozmMHQRzKKFc/uQkWmT4O1A/trKwbbAG8jhSCveUL8DUtdp3EH6iyr1FPQacUMCEO1E7Ku8jOxUEpUvFai3qV1QWQG8pz9nrVwH/WHpyQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740036965; c=relaxed/simple;
+	bh=nmuk+g6NgQg1xTLi3aTl8XkUrwiqqil5KdlkqAdRiZ4=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=PSDkjtjf7f14tlmqn3ykizhnKLjaY8t6LWHLzP1aZNrtE1Gur754Nyqt2o1pfBWp3DnhskV4o903LljCNbW2W4+ePsJUT7zTmsMv6BL1EjedXO3o9vLSlussAAyTF/cj7WvG2fBrjsVfEZgtjpcJ4MQ8TM3XM9wFAXYebwdX2dw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chipsnmedia.com; spf=fail smtp.mailfrom=chipsnmedia.com; dkim=pass (1024-bit key) header.d=chipsnmedia.com header.i=@chipsnmedia.com header.b=X6A49+C6; arc=fail smtp.client-ip=40.107.42.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chipsnmedia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=chipsnmedia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=xPnvXqOyBXXNL2EIxZ9WGCUNsl776ulmrEYadFGhz+W8Ywp5VF0NMNI23CFILb0gOeKD4V9e+MOMJgbyyL3UuSz/AE5L9p5LqHKzQXYr1Y4uvuLLQ7LsC/0W2s+l47yupgLBZtZhaCQAUr4L7geBJS2hUPZB+sJ2gSRt/jW7tIXrj5dcjLsas3TMrFyFmejNy62WOeahSM8xtpVgTwYyDDKSBxykpgE504WRctWtAz4O4idzCfg13PeMdsCBLPW+BDVMJk2G+zRGlRpjGPt+2XZBAa8UmfELkM56ucF0Evw7tgso+5Rb1yYheASE1RDzgSkYzvweX8WbwGXzZZHTXw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=9YwoeggpXno0S6vEOJ9ogNsxenm6Lc9FkkwLmTTFGOo=;
+ b=nJuP5xMU36yCw8s9FEaUxvMTjTJpOsQC6dJvv1Xa0KXfJWrUJn7DXcPEN7b/ibBRnLb2uIYFvrqBvDBfiAmCyImS4+1US0DPlSkhqmqaj+UL7gAf2uWrlqX64r8CbLUiEXz0S5yzME7ka790vQBG6twCdiROCgBh1EnG7tE1CecfY75uD7MLv1LN8dJaNRynhGTOiMOI6p0lJSXMHzyM6Yzsdl00BlsbVxrheRn9dd76foH6YZEgp8nJI2XyOYG1TJiwPwhlj+T6DPAAUt8ychMwoClbno1C5PBn9vln2RFRsp5R7VtfGBLhSLenfNWwhroVPJ4CZIuCr0w3pnxedQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=chipsnmedia.com; dmarc=pass action=none
+ header.from=chipsnmedia.com; dkim=pass header.d=chipsnmedia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=chipsnmedia.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9YwoeggpXno0S6vEOJ9ogNsxenm6Lc9FkkwLmTTFGOo=;
+ b=X6A49+C6wLYZheMznH2xNjRhg5SmQusvQWKQH1bgPkDT36Oj5+hLUAtyxp8p5oarwb0FrGG8zxYqJpFEqsfE2F6J/SnCii5XCzGKe41N7Ff8p4dgwpdCbvru8N8VmxOSUAhHLg2h+8LWPOpvvCUwwBxHgPWnugVj6VZfX4wPHik=
+Received: from SL2P216MB1246.KORP216.PROD.OUTLOOK.COM (2603:1096:101:a::9) by
+ PUYP216MB2780.KORP216.PROD.OUTLOOK.COM (2603:1096:301:150::11) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8466.16; Thu, 20 Feb 2025 07:35:58 +0000
+Received: from SL2P216MB1246.KORP216.PROD.OUTLOOK.COM
+ ([fe80::9e3d:ee20:8cc7:3c07]) by SL2P216MB1246.KORP216.PROD.OUTLOOK.COM
+ ([fe80::9e3d:ee20:8cc7:3c07%5]) with mapi id 15.20.8466.015; Thu, 20 Feb 2025
+ 07:35:58 +0000
+From: Nas Chung <nas.chung@chipsnmedia.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: "mchehab@kernel.org" <mchehab@kernel.org>, "hverkuil@xs4all.nl"
+	<hverkuil@xs4all.nl>, "sebastian.fricke@collabora.com"
+	<sebastian.fricke@collabora.com>, "robh@kernel.org" <robh@kernel.org>,
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "conor+dt@kernel.org"
+	<conor+dt@kernel.org>, "linux-media@vger.kernel.org"
+	<linux-media@vger.kernel.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-imx@nxp.com" <linux-imx@nxp.com>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, jackson.lee
+	<jackson.lee@chipsnmedia.com>, lafley.kim <lafley.kim@chipsnmedia.com>
+Subject: RE: [PATCH 3/8] dt-bindings: media: nxp: Add Wave6 video codec device
+Thread-Topic: [PATCH 3/8] dt-bindings: media: nxp: Add Wave6 video codec
+ device
+Thread-Index:
+ AQHbe5s5kWTieORPDUe+7mHQ8+wHLrNAy9aAgAPWD6CAAE9gAIABLNMwgAh/LgCAAS48QA==
+Date: Thu, 20 Feb 2025 07:35:58 +0000
+Message-ID:
+ <SL2P216MB1246F270DDE8CC8E21EA1DDCFBC42@SL2P216MB1246.KORP216.PROD.OUTLOOK.COM>
+References: <20250210090725.4580-1-nas.chung@chipsnmedia.com>
+ <20250210090725.4580-4-nas.chung@chipsnmedia.com>
+ <cb7937f5-2045-4903-825c-71ed70097efb@kernel.org>
+ <SL2P216MB12460EDF6265459D11E2A5A9FBFF2@SL2P216MB1246.KORP216.PROD.OUTLOOK.COM>
+ <20250213-imaginary-shrimp-of-merriment-6ccb6f@krzk-bin>
+ <SE1P216MB1242EBEEAA36BE73AD466FB6FBFA2@SE1P216MB1242.KORP216.PROD.OUTLOOK.COM>
+ <ec58d467-baa3-4630-bfb0-f09d366a9be9@kernel.org>
+In-Reply-To: <ec58d467-baa3-4630-bfb0-f09d366a9be9@kernel.org>
+Accept-Language: ko-KR, en-US
+Content-Language: ko-KR
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=chipsnmedia.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SL2P216MB1246:EE_|PUYP216MB2780:EE_
+x-ms-office365-filtering-correlation-id: f8b39722-e5a5-47c1-fe13-08dd518137bd
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|7416014|376014|366016|1800799024|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?unvJW/BBBpOGN5W6F4TMMMe0S23hVW8XFmGFdD4ny2eBUFZoLazYbQWnPg3o?=
+ =?us-ascii?Q?Rj2CeT4WKkYUg+rvIZvAHiVsA3TiPQ3VcBO9YY8520iD8VthUxh+yTKlgBQR?=
+ =?us-ascii?Q?gYkTpybw5ysWQSqLEkC9GZPbPoeQWiSUWGi2smc/qtSS/i1759zpDys7OUY4?=
+ =?us-ascii?Q?wo4pJbtM6gm1b7wiOrWbdIfob7MhNzvr6TWbLBjgieKbOuIuw6H0hC1CiUEv?=
+ =?us-ascii?Q?Py1FCy1DA8XBKMOXofW6Nqd+EvdzgUnZP/+mJbtSw5jQ5CjxT7GnRmd+TPKn?=
+ =?us-ascii?Q?J14alJNQALDxDOb9Le2sXv+Yb0uUVl37XBSsMY53j+tfAzVu7xC03jYjAEVF?=
+ =?us-ascii?Q?+zdy6qXHP4PT15vgJLeEURP3d44sL04FlZo2u2rOTWdMJjsSKRtOj1GXZd6K?=
+ =?us-ascii?Q?Y7qmJqqdEL+1jDi+65lWJiDnP3Uepjqf5MAfaqYbbrPz/6ZylCiel+ERy9Bc?=
+ =?us-ascii?Q?Fe6gFZddTFlOanC0j4SNM0JRGVSMFP8tWnTZrxsJvxV6obRR1QRB/4BoQcog?=
+ =?us-ascii?Q?jDUBVxQdlnFVoD/5vDrV8fEbReq176C4adst/dIgEPtAjBa/LEX7fUREWCzK?=
+ =?us-ascii?Q?skmI1ax5+gTBTrMWsDuHhkyHMGvqejhFfNwZZqrv286gv2hQ6WFFTYcppJXr?=
+ =?us-ascii?Q?tejXQy1ZXmRNH88EFgPp/fO2KzKsga/VC9tiZ2l05dhru/Lq1WZO7zDfCx7J?=
+ =?us-ascii?Q?3O3gBJQUaVUaIdGVDLJN0u0ev3qOJw4dFe10jJKEtXT5gfR5d7DgyrMJuKKA?=
+ =?us-ascii?Q?elM0xEwnDgd5Fmofl5ifmy+l5l2CIy7dEvQyaj9rhI862ejIOxSeJPfQ8QAn?=
+ =?us-ascii?Q?jT9Xmjds4y5qNEss2LO3OxCsHgbW5PoA/509RbedP0+aoy5n3kY4Q3eZdaV/?=
+ =?us-ascii?Q?yhaf4XdBl7OZpjl42kzQYyO/86SNW5yWDFY1obr2/K//ygoSEYkI9SdI9KnE?=
+ =?us-ascii?Q?XTsG9baZ4ghz/Sp5No9FbG+yfLOCyKYejYgYJGOirNruY+34BdPwUxYdI+2w?=
+ =?us-ascii?Q?zzj/PA4oJ4E5A90K+LZzdOjN+r4phiiGzWl+1e+OU6LHYaKbCR8tZ1cMDpAJ?=
+ =?us-ascii?Q?J0mN+Bj08YKiK7zPtymBUp0VHJoplNwQUG9Z1aHB4l/dFw+RC5zn/5PIVXQK?=
+ =?us-ascii?Q?54OwggGvRmfwfHpEaLABPVTsnwqqrOKzbqU3Sa1ctEiBMU3ETM2ieQL/yDPp?=
+ =?us-ascii?Q?c//WILn9iMk8qzP1V41zBJpLIC9K/w8T9ncLE1j6cLs+UIUTZbZgPsefVeUs?=
+ =?us-ascii?Q?lzoEfRRwlT6764VyxgnBdGT7ztsCMweutS9trSw69X4156NHL/6Sn0DH0d+Y?=
+ =?us-ascii?Q?juA/M3xK4//OJfZZUkyugNyHp4E+fl7yhF0gs6W50RgzRfMl1K0WRpzygz5A?=
+ =?us-ascii?Q?UCRTQmvOoJbXyamKWufxiQ2j+z5dbTDFPtpatGC9gUSvz47CUTqIDuztF2Sb?=
+ =?us-ascii?Q?Rr2JdYuOGoe1D+msea+9velMw2aO+AgC?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SL2P216MB1246.KORP216.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?ghik4Nn6+0W6OjGx4pebhNam09+aygjflun60qRFHnaVgK+NwUNvwYOWFPcO?=
+ =?us-ascii?Q?9fDd/Sg2r6hgLS1n7s2r3fSYcZoRABWsGvfI/K/zbx0hVJTcoAGFYcjCA/X0?=
+ =?us-ascii?Q?21BVhnZcI0Of9ekEm/Xy0AH+AF5qu4VnYkNSiMQ33nw9X9MCSZvEz53gfFIQ?=
+ =?us-ascii?Q?brBWdfTS4Hqb0Pp4yUF2dCf7DEbyFI+DpDPym65szlzP5k8lSPoEeJgbQIv+?=
+ =?us-ascii?Q?Kz7pp4Dy3IIYmwjMQrjDkKHW04Dj7P0datz9gG/2TEQUpRMloj6g18jutunF?=
+ =?us-ascii?Q?r1P9P0VRanXYwQZ8MRxYiVDF60hF3ckledopQ0W+L5AISR9vH1NoACspoOrM?=
+ =?us-ascii?Q?WkHUmTWTv+LSagz1qMsksd4GDRWvZjApPWt5aEyPOvVYoxKDp+F77WxdPDco?=
+ =?us-ascii?Q?Sozn04/U7F5mx8WNNP+Z2spGfnIQp2ld9vSXWVhS/h7YSnCjuskbNDpymRLs?=
+ =?us-ascii?Q?+GCEr8+3bY4xzwqfLcx97/z/7GS1aA8jT7TBf1/8qTB/Djva6ne5qwkeURBU?=
+ =?us-ascii?Q?pYCKm1PIey9XqAeUgr+D0SGBiG+a9qXBiZZoOOC2siaC+m/3WgbniHKODubS?=
+ =?us-ascii?Q?0QCuHXB1478A3YQ2KLNENBGIxxrlBx5/Gh2PUpsaoWp8ipg08uSKAN+jmYpQ?=
+ =?us-ascii?Q?YazjLtAtP59/8up2f6opcwlfiOz3exZwrY92UGWS+efs7wBUnRDSxaqBdq6i?=
+ =?us-ascii?Q?ntWpcSL+qUt3ohnYfdc/3VBwd1yzEG7GN7a4H7dsrKAthnfn9nnd2a7Q/jAL?=
+ =?us-ascii?Q?W4SzL7gmIvmTbThVa9fbFDj+MLc2Siuc0o6SeBBxtvy+n8Q9i6CjHjSlXSaU?=
+ =?us-ascii?Q?zarneHCqOLl7PZUy9XGlI4DNCJ4qWLO2aOEbWK0l82dR4OTR5oLIoeuXPGCo?=
+ =?us-ascii?Q?JU262xHY8i6h83iJHj6EMREZAPm/tuBv1dZriF9wofkVnWHKq6pAHWKYwie3?=
+ =?us-ascii?Q?EdsRstr7CaKgxXnyo6OW97vSl9f0U6aT76UierIAsMUG7adeYbWao+8XfXkn?=
+ =?us-ascii?Q?QKqEWaeV9WWpam0wT85/nSI7GPtjy01zevNRCEmeHHpvFD/pkS+tIyag0aFB?=
+ =?us-ascii?Q?9zk7Xf7VdoShbTDZEgnzev8Yk0c7pwON9pfKstRjtuP7tZjZFTH3offx+IlL?=
+ =?us-ascii?Q?vtyN42VCcNFnT5r24tCMo+y9+UN05roH3IPiBdnJN0WjBcfe7/GuYrcnq0JL?=
+ =?us-ascii?Q?j1BMWz8pldY4YaIuYbX8TjiyeIOLSFGrQsNa0IeLCpY7KroGgvx9GO9AcoQt?=
+ =?us-ascii?Q?gmht4pBYpBW4d6K74/m7Ce6XRh/53Ya1OMcZ5y9Z+KiJniOnVNwo2EHhAptK?=
+ =?us-ascii?Q?jOzPWyr2EHRnKeak/dsF78WCZ+n5tk5LN7TNqD1FDOK9wOtz+tja2mpTFgwY?=
+ =?us-ascii?Q?/mek+ZAdsuHvi70btu2TsPldU33FyRS04J5DhI3MBC9iDvW8i5MrH24hvGPU?=
+ =?us-ascii?Q?pjmyNkktKC0cH7fIRrpMvoFn3ZCQ3C9a4gpZngb3qNCwLwOQ+Eu793bvQ1Yk?=
+ =?us-ascii?Q?1TPpyw0lH5yVQTarTAD+rcpTOmOU3gr/DgpKgEC8RngjlKgppvuiCDHAMkfa?=
+ =?us-ascii?Q?VFnTMr5drkdazgvFFe3bpp2liHahX42yvUzPf7Eq?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/4] Add MST support for qcs8300 platform
-To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Clark <robdclark@gmail.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@linaro.org>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten
-	<marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, "Simona
- Vetter" <simona@ffwll.ch>,
-        Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Kuogee Hsieh <quic_khsieh@quicinc.com>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20250212-mst_qcs8300-v1-0-38a8aa08394b@quicinc.com>
- <87058b73-8854-4dbd-9f27-1da2a8240c16@kernel.org>
- <2ede97c5-a4f2-42fb-b3cd-68f26297150b@quicinc.com>
- <ffa5b482-2404-4497-a041-38f970cc9086@kernel.org>
-Content-Language: en-US
-From: Yongxing Mou <quic_yongmou@quicinc.com>
-In-Reply-To: <ffa5b482-2404-4497-a041-38f970cc9086@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: PjhgIJL9HvYOkZxFWN795Lzo-iwKEXdo
-X-Proofpoint-ORIG-GUID: PjhgIJL9HvYOkZxFWN795Lzo-iwKEXdo
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-20_03,2025-02-20_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- priorityscore=1501 malwarescore=0 bulkscore=0 suspectscore=0 clxscore=1015
- lowpriorityscore=0 mlxlogscore=999 spamscore=0 adultscore=0 phishscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2502200053
+X-OriginatorOrg: chipsnmedia.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SL2P216MB1246.KORP216.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-Network-Message-Id: f8b39722-e5a5-47c1-fe13-08dd518137bd
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Feb 2025 07:35:58.3958
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 4d70c8e9-142b-4389-b7f2-fa8a3c68c467
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: jZLN21sUQiDSjsRbL2VMizAXy6bFv4ZkQaPCI2lAIyijb9mtKDmCWPsG7/E8JPRoxy4t/sd76pR7OoJF2IqrCEKBbDms9ja39DHvdOtcjWs=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PUYP216MB2780
 
+Hi, Krzysztof.
 
-
-On 2025/2/19 20:07, Krzysztof Kozlowski wrote:
-> On 19/02/2025 11:02, Yongxing Mou wrote:
+>-----Original Message-----
+>From: Krzysztof Kozlowski <krzk@kernel.org>
+>Sent: Wednesday, February 19, 2025 9:32 PM
+>To: Nas Chung <nas.chung@chipsnmedia.com>
+>Cc: mchehab@kernel.org; hverkuil@xs4all.nl; sebastian.fricke@collabora.com=
+;
+>robh@kernel.org; krzk+dt@kernel.org; conor+dt@kernel.org; linux-
+>media@vger.kernel.org; devicetree@vger.kernel.org; linux-
+>kernel@vger.kernel.org; linux-imx@nxp.com; linux-arm-
+>kernel@lists.infradead.org; jackson.lee <jackson.lee@chipsnmedia.com>;
+>lafley.kim <lafley.kim@chipsnmedia.com>
+>Subject: Re: [PATCH 3/8] dt-bindings: media: nxp: Add Wave6 video codec
+>device
+>
+>On 18/02/2025 10:21, Nas Chung wrote:
+>> For example:
+>> vpu: video-codec@4c480000 {
+>>         compatible =3D "nxp,imx95-vpu";
+>>         reg =3D <0x0 0x4c480000 0x0 0x50000>;
+>> 	ranges =3D <0x0 0x0 0x4c480000 0x50000>;
 >>
+>>         vpuctrl: vpu-ctrl@40000 {
+>>           compatible =3D "nxp,imx95-vpu-ctrl";
+>> 	  reg =3D <0x40000 0x10000>;
+>>         };
 >>
->> On 2025/2/12 17:06, Krzysztof Kozlowski wrote:
->>> On 12/02/2025 08:12, Yongxing Mou wrote:
->>>> This series of patches introduces how to enable MST functionality on
->>>> the qcs8300 platform. The qcs8300 platform uses dpu_8_4 hardware, which
->>>> is the same as the sa8775p, but it only has one DPU. So it only has one
->>>> DP0 controller, supporting 4-stream MST. This patch only enables
->>>> 2-stream MST, using intf0 and intf3. The first and second patches are
->>>> modifications to the correspond dt-bindings, third patch is the dp
->>>> controller driver after not reuse sm8650, fourth patch is the qcs8300
->>>> dts modification which add the clk support for stream 1.
->>>>
->>>> Signed-off-by: Yongxing Mou <quic_yongmou@quicinc.com>
->>>> ---
->>>> This patch depends on following series:
->>>> https://lore.kernel.org/all/20250120-mdssdt_qcs8300-v4-0-1687e7842125@quicinc.com/
->>>> https://lore.kernel.org/all/20250114-dts_qcs8300-v3-0-d114cc5e4af9@quicinc.com/
->>>> https://lore.kernel.org/all/20241202-dp_mst_bindings-v1-0-9a9a43b0624a@quicinc.com
->>>> https://lore.kernel.org/all/20241205-dp_mst-v1-0-f8618d42a99a@quicinc.com/
->>>
->>> Buggy patch cannot be the dependency. You need to fix the original patch
->>> instead. You are not supposed to wait till knowingly incorrect patches
->>> get merged so you can send a fix. You must respond to that patch
->>> stopping its merging process.
->>>
->>> Best regards,
->>> Krzysztof
->> Thanks for the reminder. I hadn't noticed that before. We will wait for
->> our dependencies to be ready before sending the new patchset.
-> 
-> So this means you intend the knowingly incorrect patch to be applied? If
-> so, all this should be just NAKed.
-> 
-> Best regards,
-> Krzysztof
-Hi, that is not my intention. I will correct the patch after i know it 
-is incorrect. Thanks.
+>>         vpucore0: vpu-core@00000 {
+>>           compatible =3D "nxp,imx95-vpu-core";
+>>           reg =3D <0x00000 0x10000>;
+>>         };
+>>
+>>         vpucore1: vpu-core@10000 {
+>>           compatible =3D "nxp,imx95-vpu-core";
+>>           reg =3D <0x10000 0x10000>;
+>>         };
+>>
+>>         vpucore2: vpu-core@20000 {
+>>           compatible =3D "nxp,imx95-vpu-core";
+>>           reg =3D <0x20000 0x10000>;
+>>         };
+>>
+>>         vpucore3: vpu-core@30000 {
+>>           compatible =3D "nxp,imx95-vpu-core";
+>
+>Why do you need compatible here? Could it be anything else?
+
+I will update the driver based on the final DT.
+
+>
+>>           reg =3D <0x30000 0x10000>;
+>
+>Where is the rest of resources? You created children only for one
+>resource - address space?
+
+Sorry for the confusion.
+I believe the final example looks like the one below.
+
+vpu: video-codec@4c480000 {
+        compatible =3D "nxp,imx95-vpu";
+        reg =3D <0x0 0x4c480000 0x0 0x50000>;
+        ranges =3D <0x0 0x0 0x4c480000 0x50000>;
+
+        vpuctrl: vpu-ctrl@40000 {
+          compatible =3D "nxp,imx95-vpu-ctrl";
+          reg =3D <0x40000 0x10000>;
+          clocks =3D <&scmi_clk 115>,
+                  <&vpu_blk_ctrl IMX95_CLK_VPUBLK_WAVE>;
+          clock-names =3D "vpu", "vpublk_wave";
+          power-domains =3D <&scmi_devpd 21>, <&scmi_perf 10>;
+          power-domain-names =3D "vpumix", "vpuperf";
+          memory-region =3D <&vpu_boot>;
+          #cooling-cells =3D <2>;
+          sram =3D <&sram1>;
+        };
+
+        vpucore0: vpu-core@00000 {
+          compatible =3D "nxp,imx95-vpu-core";
+          reg =3D <0x00000 0x10000>;
+          interrupts =3D <GIC_SPI 299 IRQ_TYPE_LEVEL_HIGH>;
+          clocks =3D <&scmi_clk 115>,
+                  <&vpu_blk_ctrl IMX95_CLK_VPUBLK_WAVE>;
+          clock-names =3D "vpu", "vpublk_wave";
+          power-domains =3D <&scmi_devpd 21>;
+        };
+
+        vpucore1: vpu-core@10000 {
+          compatible =3D "nxp,imx95-vpu-core";
+          reg =3D <0x10000 0x10000>;
+          interrupts =3D <GIC_SPI 299 IRQ_TYPE_LEVEL_HIGH>;
+          clocks =3D <&scmi_clk 115>,
+                  <&vpu_blk_ctrl IMX95_CLK_VPUBLK_WAVE>;
+          clock-names =3D "vpu", "vpublk_wave";
+          power-domains =3D <&scmi_devpd 21>;
+        };
+
+        vpucore2: vpu-core@20000 {
+          compatible =3D "nxp,imx95-vpu-core";
+          reg =3D <0x20000 0x10000>;
+          interrupts =3D <GIC_SPI 299 IRQ_TYPE_LEVEL_HIGH>;
+          clocks =3D <&scmi_clk 115>,
+                  <&vpu_blk_ctrl IMX95_CLK_VPUBLK_WAVE>;
+          clock-names =3D "vpu", "vpublk_wave";
+          power-domains =3D <&scmi_devpd 21>;
+        };
+
+        vpucore3: vpu-core@30000 {
+          compatible =3D "nxp,imx95-vpu-core";
+          reg =3D <0x30000 0x10000>;
+          interrupts =3D <GIC_SPI 299 IRQ_TYPE_LEVEL_HIGH>;
+          clocks =3D <&scmi_clk 115>,
+                  <&vpu_blk_ctrl IMX95_CLK_VPUBLK_WAVE>;
+          clock-names =3D "vpu", "vpublk_wave";
+          power-domains =3D <&scmi_devpd 21>;
+        };
+      };
+
+Thanks.
+Nas.
+
+>
+>Best regards,
+>Krzysztof
 
