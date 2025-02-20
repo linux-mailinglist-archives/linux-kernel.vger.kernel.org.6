@@ -1,122 +1,171 @@
-Return-Path: <linux-kernel+bounces-524083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D77EDA3DEF1
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:42:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58771A3DEEE
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:42:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4303B17937B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:41:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A643189FF9C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:41:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07EFB1FDA83;
-	Thu, 20 Feb 2025 15:40:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D6821FE46F;
+	Thu, 20 Feb 2025 15:40:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SAPNtAex"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="R5+9UdzV"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5D0B61FCE;
-	Thu, 20 Feb 2025 15:40:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDBA61F3FE5
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 15:40:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740066032; cv=none; b=oEfKoDhV3E66/ZVz4Vj+hwQMfYEp4G4VB2qKEHapZd+TkkfkrTIwvW+A+yIM1MgRUbfVdlACgL0sp+BumsPM0y6yWHldxEu8PY092/hiS4odc+0pMNAy3OsPhTBijBxNjaNBwK9nm8NJ7AXxY+E8syGqbW0xGW+Asv/OP0jQdnU=
+	t=1740066057; cv=none; b=M0+9GHz7FlEea18snlY9SJx7FZ4iUs74z/UiUslaFR3ym+3KMNuHZxrys3f0qt2zuHi/rKpF+AscoU+AyCpLGa5z8383jpjgkacFgxGcjKDpcV819HE1YdYRp10Ij5KkiXssOzUraX5GiXnsr9wocdxrnG5zSoZcnoZ+a4Aznqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740066032; c=relaxed/simple;
-	bh=wSlx3nbyl+QUhdwR4/dmvY6S2qkZTDIv+jJEZGSpKk0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pNZdq37G130Y+JcAR/6AavEfD7ZzGb7hOBE7F9kWXnCjrCjBJhaMmAGMN5Bi1ml7/Sjua08V23PSE1rn9Xk4ueWDtor9q43RYlMBVjjvI4feBQGzcR5kaoqu946mQUqMGFzt7GVJmqOwf/egyKCukdLC6QiowPD6lzJeuLSJoeY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SAPNtAex; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740066031; x=1771602031;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=wSlx3nbyl+QUhdwR4/dmvY6S2qkZTDIv+jJEZGSpKk0=;
-  b=SAPNtAexPi2wVdauxOlRLuWFZIIsVPdOHHU3SFmHzLazX6T60oiRg/h8
-   bUiNXtttS8I7QFcTt9btLaLEuKjNKkI52XPXOf+OJnC74bI+nHfWOhM76
-   mg7/qpOLpufDt1fWl6c+qcJSijxE/con6OPNMkBe48NP3q8WdrFYaERTl
-   oWKzvLN1W9Ok/jge5RHwoo/qcsGn1SakF+T84K4esb1l+r474M8uOBdP7
-   6c7OuCjXmKTOIQMx5+x8/txjyw6S7QjwKabzoUXFBzZtODTKXfc13GCR4
-   YTLE9v/3sKPa7RJCTddINbApN/UdxAiSvH59RyUjLfEWIiRTZMi+gIhQM
-   g==;
-X-CSE-ConnectionGUID: rFAsKZE4QLujr+2wT7b9vQ==
-X-CSE-MsgGUID: cdZrk7F2SJiNqEqwZ2mD6Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11314"; a="52282085"
-X-IronPort-AV: E=Sophos;i="6.12,310,1728975600"; 
-   d="scan'208";a="52282085"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Feb 2025 07:40:30 -0800
-X-CSE-ConnectionGUID: VJ7ovDxMTBGNCdoNTzEQVA==
-X-CSE-MsgGUID: OAYTIX8DQ/6sqsVgwcAaCQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="115563011"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Feb 2025 07:40:27 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tl8f2-0000000DNU9-1vyN;
-	Thu, 20 Feb 2025 17:40:24 +0200
-Date: Thu, 20 Feb 2025 17:40:24 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Raag Jadav <raag.jadav@intel.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Zijun Hu <quic_zijuhu@quicinc.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: Re: [PATCH v1 3/4] devres: Add devm_remove_action_optional() helper
-Message-ID: <Z7dM6B-SFQ5Q77zy@smile.fi.intel.com>
-References: <20250220141645.2694039-1-andriy.shevchenko@linux.intel.com>
- <20250220141645.2694039-4-andriy.shevchenko@linux.intel.com>
- <Z7dKfwOrAuhuZvQt@black.fi.intel.com>
+	s=arc-20240116; t=1740066057; c=relaxed/simple;
+	bh=XHNz2LwepouDOIXy+bmb3D7UCDqdWRymySARZERzu0A=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=M5/3fN4nc7XfZf/JGOvB8bnQzxmaHP13Q0bDP9Rpk5qGZN24L5c0uelMQW+oquPn/ZT64O27IQkPtxrDf2EMH8Uy1qRhTwq2bRRhZKxfzSeoKHNVjZ2muBjZvQ1Y/dHV2a+S7pzIYMuMOhIvT+I8cRUTe69S+aN+lejjszv45dM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=R5+9UdzV; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740066054;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XHNz2LwepouDOIXy+bmb3D7UCDqdWRymySARZERzu0A=;
+	b=R5+9UdzVmbSUUec56oNraTzlvBjKlPnekFXCVdnCXrnKPlVkmqQvYaw8+G1MooNq1Z9Xly
+	vUsn+6tJU05THAxYSlVGI6XPqG5i+eoDDFX5zyD5ybQoS+nM6ioTyvLmbpfTrZgyXQcouR
+	i2m4xAv/3smj/rHV7QeCAtqK6/XQpMU=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-688-WUyEYPMMOG2tVSm8pF6ehg-1; Thu, 20 Feb 2025 10:40:53 -0500
+X-MC-Unique: WUyEYPMMOG2tVSm8pF6ehg-1
+X-Mimecast-MFC-AGG-ID: WUyEYPMMOG2tVSm8pF6ehg_1740066051
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-38f45a86efdso593302f8f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 07:40:52 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740066051; x=1740670851;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XHNz2LwepouDOIXy+bmb3D7UCDqdWRymySARZERzu0A=;
+        b=wK5swNLzTTbhp73LCgchosV9iCfXjohxQuQqbvQpQD3rtccLtFuYFge0+2qyjKkTYU
+         L+qPwu427GQK3721KFwLcS9TeAGCysbt4wE4hvsI40cuD1KHLKHXkgTvyTPBQWX702WF
+         gS8Nr029w89pP88iJNJnENUep+POJuWqkMfr+zX9ZYRsZRjR+d0HyH6Hjt6eHVeinfEI
+         L8FfZF9qMBpMoeGllz27o9ObZ/4Ow9/8eCi6C6C/qCtBqSWJf8p13mawRqtTDf6hqhW8
+         OQcRke49xDjju4foOd8iAlYHSxdK+lUrxlNcAK57gI+2Uu/ywypyBPtsEb9yUpcEJMUC
+         hDcg==
+X-Forwarded-Encrypted: i=1; AJvYcCXDTcbJgZNvPBpAI1IP/V4qb9SipeHhzVHC1v357TCB0rkwZ2FEjmBjNBgM61CCOvk9ftRVFsnGQeY3XlE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0J8T3sAhlZuaQeZI5b4T/rnTfwVl1ALZVlHjRUSaX7dV0NYhq
+	lC2jPHvNBVi/nregmRu2anxyp1ICtVbiaAYlnoMxXwOb3SdC78VltzYPEUh4g03n7/4uubRo4Oz
+	zsi1Hxg1iQNXchNKmWitZOs2mi81kZLJ0IoJHUK19chXfe2Ax/b09bqYd0JZMVw==
+X-Gm-Gg: ASbGnctOmfsWxbCNwMjQmuiDNNe1bhK1vO/jSaUp06rbUAnAcZ4ahNg9w77YbPG9hLs
+	nNJN+x+2O752z4CXsogIi2FINaElPkM3BuyYZPjEjVS5eTa28UvZoS+312K9ljt/xZh+OjcebBP
+	y82rzAtKLLcNxgKzK4Uk8AlJf6D8Xdz7CHCHafAAekklxMcx+U01swtlidais2qmgQrqc8fax4n
+	FDqpk2D8616OwfoQDQaeM65H9p2s4iVQ3g9Bjb1HYHnH0sWJlHzD0JMJ82GBSX3W1jIhvqTOHPb
+	r6zOJs6+xw9LiR8hqqXHXzNyHpF8Ow44SXeIhAHsfgbnz3bGpAmGd0lByUUXluSvPg==
+X-Received: by 2002:a05:6000:b07:b0:38f:2a5e:f169 with SMTP id ffacd0b85a97d-38f651405d3mr2086329f8f.37.1740066051318;
+        Thu, 20 Feb 2025 07:40:51 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGJepg3rIyVKWrj3xeOEkClHlAOZYXoumzKiusFghxTUIBGvYNcurpQRKe8xP1WWM4kXUgn8g==
+X-Received: by 2002:a05:6000:b07:b0:38f:2a5e:f169 with SMTP id ffacd0b85a97d-38f651405d3mr2086316f8f.37.1740066050924;
+        Thu, 20 Feb 2025 07:40:50 -0800 (PST)
+Received: from vschneid-thinkpadt14sgen2i.remote.csb (213-44-141-166.abo.bbox.fr. [213.44.141.166])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f258f5fb6sm20683058f8f.44.2025.02.20.07.40.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Feb 2025 07:40:50 -0800 (PST)
+From: Valentin Schneider <vschneid@redhat.com>
+To: Peter Zijlstra <peterz@infradead.org>, K Prateek Nayak
+ <kprateek.nayak@amd.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>, Ben Segall
+ <bsegall@google.com>, Thomas Gleixner <tglx@linutronix.de>, Andy
+ Lutomirski <luto@kernel.org>, linux-kernel@vger.kernel.org, Dietmar
+ Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>,
+ Mel Gorman <mgorman@suse.de>, Sebastian Andrzej Siewior
+ <bigeasy@linutronix.de>, Clark Williams <clrkwllms@kernel.org>,
+ linux-rt-devel@lists.linux.dev, Tejun Heo <tj@kernel.org>, Frederic
+ Weisbecker <frederic@kernel.org>, Barret Rhoden <brho@google.com>, Petr
+ Mladek <pmladek@suse.com>, Josh Don <joshdon@google.com>, Qais Yousef
+ <qyousef@layalina.io>, "Paul E. McKenney" <paulmck@kernel.org>, David
+ Vernet <dvernet@meta.com>, "Gautham R. Shenoy" <gautham.shenoy@amd.com>,
+ Swapnil Sapkal <swapnil.sapkal@amd.com>
+Subject: Re: [RFC PATCH 00/22] sched/fair: Defer CFS throttling to exit to
+ user mode
+In-Reply-To: <20250220113227.GL34567@noisy.programming.kicks-ass.net>
+References: <20250220093257.9380-1-kprateek.nayak@amd.com>
+ <20250220105558.GJ34567@noisy.programming.kicks-ass.net>
+ <b2386349-2879-4dce-afb0-f6486c24c117@amd.com>
+ <20250220113227.GL34567@noisy.programming.kicks-ass.net>
+Date: Thu, 20 Feb 2025 16:40:48 +0100
+Message-ID: <xhsmhikp44oan.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z7dKfwOrAuhuZvQt@black.fi.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain
 
-On Thu, Feb 20, 2025 at 05:30:07PM +0200, Raag Jadav wrote:
-> On Thu, Feb 20, 2025 at 03:44:59PM +0200, Andy Shevchenko wrote:
+On 20/02/25 12:32, Peter Zijlstra wrote:
+> On Thu, Feb 20, 2025 at 04:48:58PM +0530, K Prateek Nayak wrote:
+>
+>> The rationale there was with growing number of tasks on cfs_rq, the
+>> throttle path has to perform a lot of dequeues and the unthrottle at
+>> distribution has to enqueue all the dequeued threads back.
+>>
+>> This is one way to keep all the tasks queued but allow pick to only
+>> select among those that are preempted in kernel mode.
+>>
+>> Since per-task throttling needs to tag, dequeue, and re-enqueue each
+>> task, I'm putting this out as an alternate approach that does not
+>> increase the complexities of tg_tree walks which Ben had noted on
+>> Valentin's series [1]. Instead we retain the per cfs_rq throttling
+>> at the cost of some stats tracking at enqueue and dequeue
+>> boundaries.
+>>
+>> If you have a strong feelings against any specific part, or the entirety
+>> of this approach, please do let me know, and I'll do my best to see if
+>> a tweaked approach or an alternate implementation can scale well with
+>> growing thread counts (or at least try to defend the bits in question if
+>> they hold merit still).
+>>
+>> Any and all feedback is appreciated :)
+>
+> Pfff.. I hate it all :-)
+>
+> So the dequeue approach puts the pain on the people actually using the
+> bandwidth crud, while this 'some extra accounting' crap has *everybody*
+> pay for this nonsense, right?
+>
+> I'm not sure how bad this extra accounting is, but I do fear death by a
+> thousand cuts.
 
-...
+FWIW that was my main worry with the dual tree approach and why I gave up
+on it in favor of the per-task dequeue faff. Having the overhead mainly
+contained in throttle/unthrottle is a lot more attractive than adding
+(arguably small) overhead to the enqueue/dequeue paths. There was also the
+headache of figuring out what to do with the .*nr_running fields and what
+is reflected to load balance, which isn't an issue with the per-task thing.
 
-> > +/* Same as devm_remove_action(), but doesn't WARN() if action wasn't added before */
-> > +static inline
-> > +void devm_remove_action_optional(struct device *dev, void (*action)(void *), void *data)
-> > +{
-> > +	int ret;
-> > +
-> > +	ret = devm_remove_action_nowarn(dev, action, data);
-> > +	if (ret == -ENOENT)
-> > +		return;
-> > +
-> > +	WARN_ON(ret);
-> > +}
-> 
-> Trying to wrap my head around this one, can't the user simply do
-> 
-> 	if (devm_is_action_added())
-> 		devm_remove_action/_nowarn();
+As pointed by Ben in [1], the issue with the per-task approach is the
+scalability of the unthrottle. You have the rq lock held and you
+potentially end up unthrottling a deep cgroup hierarchy, putting each
+individual task back on its cfs_rq.
 
-Hmm... Actually it sounds like a good point. I will check
-(and I like the idea of dropping this patch).
+I can't find my notes on that in a hurry, but my idea with that for a next
+version was to periodically release the rq lock as we go up the cgroup
+hierarchy during unthrottle - the idea being that we can mess with part of
+hierarchy, and as long as that part isn't connected to the rest (i.e. it's
+not enqueued, like we currently do for CFS throttling), "it should be
+safe".
 
--- 
-With Best Regards,
-Andy Shevchenko
+FYI I haven't given up on this, it's just that repeatedly context switching
+between IPI deferral and this didn't really work for me so I'm sticking to
+one 'till it gets somewhere.
 
+[1]: https://lore.kernel.org/lkml/xm26y15yz0q8.fsf@google.com/
 
 
