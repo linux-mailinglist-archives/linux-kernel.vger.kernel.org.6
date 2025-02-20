@@ -1,340 +1,180 @@
-Return-Path: <linux-kernel+bounces-523717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F33D9A3DA54
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:45:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7856DA3DA55
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:46:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4E7E3BA409
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:45:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D02D03BA560
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:46:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC7D01F4621;
-	Thu, 20 Feb 2025 12:45:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 685061F4169;
+	Thu, 20 Feb 2025 12:46:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Pm7qXcpH"
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	dkim=pass (1024-bit key) header.d=kloenk.dev header.i=@kloenk.dev header.b="rDfOqb7B"
+Received: from gimli.kloenk.de (gimli.kloenk.de [49.12.72.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AB7D1F152D;
-	Thu, 20 Feb 2025 12:45:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 773B579CD;
+	Thu, 20 Feb 2025 12:46:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=49.12.72.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740055523; cv=none; b=rO9Z/febPRN5YyoXc9wqCBwvZBKca8ZdFbbbO/CQMZED6dC0qYEvw31zhMtBQ/JQ/ZDyrGoehcwp8ETa3hCvECooG2ih2p39ebPGdFusP8fdci7OwjlqFDXatExsoWkKASLm2J+M0JNBDqzP1O0OpaOz9Gy/ZDcf7BI2Ahk2fvY=
+	t=1740055592; cv=none; b=cMr1eXjTs6huR460rqLwbwCt+hXi/A2jm3xvrN5dSJiZJqxJ8qfy3dWnwitwyDLGD9zlzcQsl0/kGVnzVEhlYEnptn9+zPln/mRJ/cduftDmwlt6jHgQGM1Av7pRdb1ielgc6nEnR27iwKjdmNYqGo64Jcs8LyGEI/Q27apqf0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740055523; c=relaxed/simple;
-	bh=2BhS87iHlrYQ3lNEKede+O092p9OFGnWmgjfUNIIPho=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hBV4liIUm8NiBZjssKJ39j3wkvRr4L1uE+7cdPEwKDMKPgPQTIZjHw1WEH3sgoUl3GQQsb9xlEJgGAwMEF203exZi2GxsMUcTMHZczQUxunTp0LBnAXL9obcQM0lC5QEV/+78P257lqYlB0+I7ZQB8W8m0aXuDAkMEvST9VvkNU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Pm7qXcpH; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 4714C44217;
-	Thu, 20 Feb 2025 12:45:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1740055513;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=r4s0JlhPWxmp2VGXGngLBFkziKozV4HjR8VGZcGVQS0=;
-	b=Pm7qXcpH+shqvmrKR+DMw0MBaDFQL8QsvuX1rzfdiYtuvo8Qg3gByTUMg2WBis1d1DlzOI
-	jMJLst4fjS3aJPSxBXGn4wlk/rfGqrD645tYsg5Qi7s0qJ3oRvHessFYzlA4JKYuiBWeeC
-	x0GL2asz7JAJk1NB9zto1HZ8VHkf9XA6Fl1fYOaiDnDqhcup1cZbFIJb6OhULGsJobvOhX
-	cGXW/jWpBuM4hMmMdefSSFD9rQM3zzSVK5nK6G4KFYQoyYYNK39su7wpTRzqKm9HVkxeB1
-	zQ2T2DRItM31Wzein/ma4Ai9t0pm+RHoNSEdU/M0++GGQ77O6B3RAktW/TPJSQ==
-Date: Thu, 20 Feb 2025 13:45:10 +0100
-From: Herve Codina <herve.codina@bootlin.com>
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong
- <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, Laurent
- Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
- <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann
- <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Marek Vasut
- <marex@denx.de>, dri-devel@lists.freedesktop.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Louis Chauvet
- <louis.chauvet@bootlin.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v3 3/3] drm: bridge: ti-sn65dsi83: Add error recovery
- mechanism
-Message-ID: <20250220134510.392b9997@bootlin.com>
-In-Reply-To: <20250219-tall-turkey-of-dew-d9ba9e@houat>
-References: <20250108101907.410456-1-herve.codina@bootlin.com>
-	<20250108101907.410456-4-herve.codina@bootlin.com>
-	<20250114-juicy-authentic-mushroom-cfcdfb@houat>
-	<20250114135456.5366eb2a@bootlin.com>
-	<20250116-archetypal-bulldog-of-expression-fcc937@houat>
-	<20250117091213.647bf0e6@bootlin.com>
-	<20250204-chocolate-lionfish-of-luck-10ebb8@houat>
-	<20250204163404.0a6b6526@bootlin.com>
-	<20250204-crouching-alligator-of-success-ab52f8@houat>
-	<20250204195240.005603b7@bootlin.com>
-	<20250219-tall-turkey-of-dew-d9ba9e@houat>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1740055592; c=relaxed/simple;
+	bh=22lsmoPowc52Hi4mQD+2kdYb1bae2R5reXgDwM5IHNM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=oP+Ncx+mbB3wvK1E8F5R4LOTtmt6AsC3j5XsxPDHv6FH6TnzYK55ctjR9BxAJFjOJ+J6joswzfcgzcaBODRvkry0ApF9DylnC3KNeh8Tp65q+/N17HWDGJcibH2Qf2tGlHKYCoePe5dsI69rc7G1x3NlbfR42MPrmFUcdfo1nvE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kloenk.dev; spf=pass smtp.mailfrom=kloenk.dev; dkim=pass (1024-bit key) header.d=kloenk.dev header.i=@kloenk.dev header.b=rDfOqb7B; arc=none smtp.client-ip=49.12.72.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kloenk.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kloenk.dev
+From: Fiona Behrens <me@kloenk.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kloenk.dev; s=mail;
+	t=1740055586; bh=+5Hriei/4orgcIc6p+422qMKgtVSC7Hm3HwgFOrINsU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date;
+	b=rDfOqb7BB3I3aZoorFjkDqlP0pzNufijzwS6Dzg8HbRyG1oPJrwR/lMnqBuRuFg/0
+	 i5AVA93ztX8WmU5OcoxPslQDr6+kkgagGj7A1jDr2GbHG+NazD/orT6WKuCFlXLbdi
+	 Bw8tkN2wrxOn4bmBVBhLqs/f60s/KVTjcI1cpe3U=
+To: Gary Guo <gary@garyguo.net>
+Cc: Miguel Ojeda <ojeda@kernel.org>,  Alex Gaynor <alex.gaynor@gmail.com>,
+  Boqun Feng <boqun.feng@gmail.com>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>,  Benno Lossin <benno.lossin@proton.me>,
+  Andreas Hindborg <a.hindborg@kernel.org>,  Alice Ryhl
+ <aliceryhl@google.com>,  Trevor Gross <tmgross@umich.edu>,  Danilo
+ Krummrich <dakr@kernel.org>,  Will Deacon <will@kernel.org>,  Peter
+ Zijlstra <peterz@infradead.org>,  Mark Rutland <mark.rutland@arm.com>,
+  Tamir Duberstein <tamird@gmail.com>,  Lyude Paul <lyude@redhat.com>,
+  Wedson Almeida Filho <wedsonaf@gmail.com>,
+  rust-for-linux@vger.kernel.org,  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/4] rust: implement `kernel::sync::Refcount`
+In-Reply-To: <20250219201602.1898383-2-gary@garyguo.net> (Gary Guo's message
+	of "Wed, 19 Feb 2025 20:15:30 +0000")
+References: <20250219201602.1898383-1-gary@garyguo.net>
+	<20250219201602.1898383-2-gary@garyguo.net>
+Date: Thu, 20 Feb 2025 13:46:26 +0100
+Message-ID: <87h64o6axp.fsf@kloenk.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeijedujecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthekredtredtjeenucfhrhhomhepjfgvrhhvvgcuvehoughinhgruceohhgvrhhvvgdrtghoughinhgrsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeefhffhvdfftdfhjeeftdfftefgleefveeifeduteefveejhfeifeetjeffkeffvdenucffohhmrghinheptghrthgtrdihohhupdhkvghrnhgvlhdrohhrghdpsghoohhtlhhinhdrtghomhenucfkphepvdgrtddumegvtdgrmedvgeeimeejjeeltdemvdeitgegmegvvddvmeeitdefugemheekrgenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemvgdtrgemvdegieemjeejledtmedviegtgeemvgdvvdemiedtfegumeehkegrpdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpehhvghrvhgvrdgtohguihhnrgessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepvddupdhrtghpthhtohepmhhrihhprghrugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghnughriigvjhdrhhgrjhgurgesihhnthgvlhdrtghomhdprhgtphhtthhopehnvghil
- hdrrghrmhhsthhrohhngheslhhinhgrrhhordhorhhgpdhrtghpthhtoheprhhfohhssheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepnfgruhhrvghnthdrphhinhgthhgrrhhtsehiuggvrghsohhnsghorghrugdrtghomhdprhgtphhtthhopehjohhnrghssehkfihisghoohdrshgvpdhrtghpthhtohepjhgvrhhnvghjrdhskhhrrggsvggtsehgmhgrihhlrdgtohhmpdhrtghpthhtoheprghirhhlihgvugesghhmrghilhdrtghomh
-X-GND-Sasl: herve.codina@bootlin.com
+Content-Type: text/plain
 
-Hi Maxime,
+Gary Guo <gary@garyguo.net> writes:
 
-On Wed, 19 Feb 2025 10:07:39 +0100
-Maxime Ripard <mripard@kernel.org> wrote:
+> This is a wrapping layer of `include/linux/refcount.h`. Currently the
+> kernel refcount has already been used in `Arc`, however it calls into
+> FFI directly.
+>
+> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+> Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
+> Signed-off-by: Gary Guo <gary@garyguo.net>
 
-> Hi,
-> 
-> On Tue, Feb 04, 2025 at 07:52:40PM +0100, Herve Codina wrote:
-> > On Tue, 4 Feb 2025 18:11:01 +0100
-> > Maxime Ripard <mripard@kernel.org> wrote:
-> > 
-> > > On Tue, Feb 04, 2025 at 04:34:04PM +0100, Herve Codina wrote:
-> > > > On Tue, 4 Feb 2025 16:17:10 +0100
-> > > > Maxime Ripard <mripard@kernel.org> wrote:
-> > > >   
-> > > > > Hi,
-> > > > > 
-> > > > > On Fri, Jan 17, 2025 at 09:12:13AM +0100, Herve Codina wrote:  
-> > > > > > Hi Maxime,
-> > > > > > 
-> > > > > > On Thu, 16 Jan 2025 09:38:45 +0100
-> > > > > > Maxime Ripard <mripard@kernel.org> wrote:
-> > > > > >     
-> > > > > > > On Tue, Jan 14, 2025 at 01:54:56PM +0100, Herve Codina wrote:    
-> > > > > > > > Hi Maxime,
-> > > > > > > > 
-> > > > > > > > On Tue, 14 Jan 2025 08:40:51 +0100
-> > > > > > > > Maxime Ripard <mripard@kernel.org> wrote:
-> > > > > > > > 
-> > > > > > > > ...
-> > > > > > > >       
-> > > > > > > > > >  
-> > > > > > > > > > +static int sn65dsi83_reset_pipe(struct sn65dsi83 *sn65dsi83)
-> > > > > > > > > > +{
-> > > > > > > > > > +	struct drm_atomic_state *state = ERR_PTR(-EINVAL);
-> > > > > > > > > > +	struct drm_device *dev = sn65dsi83->bridge.dev;
-> > > > > > > > > > +	struct drm_connector_state *connector_state;
-> > > > > > > > > > +	struct drm_modeset_acquire_ctx ctx;
-> > > > > > > > > > +	struct drm_connector *connector;
-> > > > > > > > > > +	int err;
-> > > > > > > > > > +
-> > > > > > > > > > +	/*
-> > > > > > > > > > +	 * Reset active outputs of the related CRTC.
-> > > > > > > > > > +	 *
-> > > > > > > > > > +	 * This way, drm core will reconfigure each components in the CRTC
-> > > > > > > > > > +	 * outputs path. In our case, this will force the previous component to
-> > > > > > > > > > +	 * go back in LP11 mode and so allow the reconfiguration of SN64DSI83
-> > > > > > > > > > +	 * bridge.
-> > > > > > > > > > +	 *
-> > > > > > > > > > +	 * Keep the lock during the whole operation to be atomic.
-> > > > > > > > > > +	 */
-> > > > > > > > > > +
-> > > > > > > > > > +	DRM_MODESET_LOCK_ALL_BEGIN(dev, ctx, 0, err);
-> > > > > > > > > > +
-> > > > > > > > > > +	state = drm_atomic_helper_duplicate_state(dev, &ctx);
-> > > > > > > > > > +	if (IS_ERR(state)) {
-> > > > > > > > > > +		err = PTR_ERR(state);
-> > > > > > > > > > +		goto unlock;
-> > > > > > > > > > +	}        
-> > > > > > > > > 
-> > > > > > > > > No, you must not allocate a new state for this, you need to reuse the
-> > > > > > > > > existing state. You'll find it in bridge->base.state->state.      
-> > > > > > > > 
-> > > > > > > > Thanks for pointing that. I didn't know about bridge->base.state->state.
-> > > > > > > > 
-> > > > > > > > I will use that if using the state is still relevant (see next comment).
-> > > > > > > >       
-> > > > > > > > >       
-> > > > > > > > > > +	state->acquire_ctx = &ctx;
-> > > > > > > > > > +
-> > > > > > > > > > +	connector = drm_atomic_get_old_connector_for_encoder(state,
-> > > > > > > > > > +							     sn65dsi83->bridge.encoder);
-> > > > > > > > > > +	if (!connector) {
-> > > > > > > > > > +		err = -EINVAL;
-> > > > > > > > > > +		goto unlock;
-> > > > > > > > > > +	}
-> > > > > > > > > > +
-> > > > > > > > > > +	connector_state = drm_atomic_get_connector_state(state, connector);
-> > > > > > > > > > +	if (IS_ERR(connector_state)) {
-> > > > > > > > > > +		err = PTR_ERR(connector_state);
-> > > > > > > > > > +		goto unlock;
-> > > > > > > > > > +	}
-> > > > > > > > > > +
-> > > > > > > > > > +	err = drm_atomic_helper_reset_pipe(connector_state->crtc, &ctx);
-> > > > > > > > > > +	if (err < 0)
-> > > > > > > > > > +		goto unlock;        
-> > > > > > > > > 
-> > > > > > > > > And you'll find the crtc in bridge->encoder->crtc.      
-> > > > > > > > 
-> > > > > > > > I am a bit confused. I looked at the drm_encoder structure [1] and the crtc
-> > > > > > > > field available in this structure should not be used by atomic drivers. They
-> > > > > > > > should rely on &drm_connector_state.crtc.      
-> > > > > > > 
-> > > > > > > You're right, it's deprecated but used by most bridges anyway.
-> > > > > > > 
-> > > > > > > I made a series of changes after reviewing your series to address some
-> > > > > > > issues with the current bridge API, most notably
-> > > > > > > 
-> > > > > > > https://lore.kernel.org/dri-devel/20250115-bridge-connector-v1-25-9a2fecd886a6@kernel.org/    
-> > > > > > 
-> > > > > > Thanks for pointing that, indeed, it clarify many things!
-> > > > > >     
-> > > > > > >     
-> > > > > > > > In my case, I have the feeling that I should get the ctrc from the current
-> > > > > > > > state (i.e. bridge->base.state->state) using the sequence provided in this
-> > > > > > > > current patch:
-> > > > > > > >   Retrieve the connector with drm_atomic_get_old_connector_for_encoder()      
-> > > > > > > 
-> > > > > > > Retrieving the old connector makes no sense though. It's the connector
-> > > > > > > that was formerly associated with your encoder. It might work, it might
-> > > > > > > not, it's not what you're looking for.
-> > > > > > >     
-> > > > > > > >   Retrieve the connector state with drm_atomic_get_connector_state()      
-> > > > > > > 
-> > > > > > > drm_atomic_get_connector_state will allocate and pull the connector
-> > > > > > > state into the drm_atomic_state, even if it wasn't part of it before, so
-> > > > > > > it's not great. And you don't need it in the first place, you only need
-> > > > > > > the current active CRTC.    
-> > > > > > 
-> > > > > > Yes, I agree with that, I only need the active CRTC.
-> > > > > > 
-> > > > > > I tried to get the current atomic_state from:
-> > > > > >   1) bridge->base.state->state
-> > > > > >   2) drm_bridge_state->base.state
-> > > > > > 
-> > > > > > In both cases, it is NULL. Looking at Sima's reply in your series
-> > > > > > explained that:
-> > > > > >   https://lore.kernel.org/dri-devel/Z4juJy7kKPbI2BDb@phenom.ffwll.local/
-> > > > > > 
-> > > > > > If I understood correctly those pointers are explicitly cleared.
-> > > > > > 
-> > > > > > So, with all of that, either:
-> > > > > >   a) I wait for your series to be applied in order to use your the crtc field from
-> > > > > >      drm_bridge_state added by:
-> > > > > >        https://lore.kernel.org/dri-devel/20250115-bridge-connector-v1-25-9a2fecd886a6@kernel.org/#t
-> > > > > >   b) I use the old school bridge->encoder->crtc for the moment
-> > > > > > 
-> > > > > > Do you mind if I use the bridge->encoder->crtc way for the next iteration of
-> > > > > > my series?    
-> > > > > 
-> > > > > Yeah, it makes sense.  
-> > > > 
-> > > > I already send a wrong v4 (sorry) and a correct v5 with modifications in
-> > > > this way :)
-> > > >   
-> > > > > 
-> > > > > Still, it would be great if you could test my series on your setup and see if it helps :)  
-> > > > 
-> > > > Of course, I can test updated version of your series.
-> > > > 
-> > > > I already try to get the current atomic_state exactly the same way as you do
-> > > > in your series and the pointer is NULL in my case.  
-> > > 
-> > > I sent a second version today, let me know if it works.
-> > > 
-> > 
-> > Tried your v2 series and...:
-> >    # modetest -s 39:1920x1080
-> >    trying to open device 'i915'...failed
-> >    ...
-> >    trying to open device 'imx-lcdif'...done
-> >    [   28.310476] ------------[ cut here ]------------
-> >    [   28.310494] WARNING: CPU: 3 PID: 449 at drivers/gpu/drm/drm_bridge.c:943 drm_atomic_bridge_chain_check+0x24c/0x310 [drm]
-> > setting mode 1920x1080-60.00Hz on[   28.326058] Modules linked in: fsl_ldb imx8mp_interconnect imx_interconnect imx_cpufreq_dt imx8mm_thermal lm75 tmp103 rtc_snvs leds_pca963x snvs_pwrkey rtc_rs5c372 pwm_imx27 st_pressure_spi st_sensors_spi regmap_spi gpio_charger st_pressure_i2c st_pressure st_sensors_i2c industrialio_triggered_buffer kfifo_buf st_sensors led_bl panel_simple opt3001 iio_hwmon governor_userspace imx_bus imx8mp_hdmi_tx dw_hdmi dwmac_imx stmmac_platform stmmac pcs_xpcs phylink samsung_dsim imx_sdma imx_lcdif drm_dma_helper imx8mp_hdmi_pvi fsl_imx8_ddr_perf exc3000 caam ti_sn65dsi83 error hotplug_bridge pwm_bl drm_display_helper drm_kms_helper drm drm_panel_orientation_quirks backlight gehc_sunh_connector ltc2497 ltc2497_core
-> >    [   28.391264] CPU: 3 UID: 0 PID: 449 Comm: modetest Not tainted 6.14.0-rc1+ #18
-> >    [   28.398404] Hardware name: Xxxxxxxxxx
-> >    [   28.404933] pstate: 60000005 (nZCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> >    [   28.411896] pc : drm_atomic_bridge_chain_check+0x24c/0x310 [drm]
-> >    [   28.417940] lr : drm_atomic_bridge_chain_check+0x134/0x310 [drm]
-> >    [   28.423983] sp : ffff8000823eb860
-> >    [   28.427299] x29: ffff8000823eb860 x28: ffff000000ac1e00 x27: ffff00007b27ea18
-> >    [   28.434445] x26: ffff00007b27ea90 x25: ffff00007b106170 x24: ffff00007a5d6ed8
-> >    [   28.441587] x23: ffff00007bb4b8a0 x22: ffff00007b27e800 x21: ffff00007b27ea00
-> >    [   28.448732] x20: 0000000000000000 x19: ffff00007b106008 x18: 0000000000000000
-> >    [   28.455876] x17: 0000000000000000 x16: 0000000000000000 x15: 0000000000000000
-> >    [   28.463021] x14: 0000000000000000 x13: ffff00007a7c4ec0 x12: ffff000006dcb440
-> >    [   28.470165] x11: ffff00007a7c4ec0 x10: ffff000079ee5200 x9 : ffff8000798e1aec
-> >    [   28.477311] x8 : ffff00007a63f190 x7 : 0000000000000000 x6 : ffff800079954110
-> >    [   28.484455] x5 : 0000000000000000 x4 : 0000000000000020 x3 : ffff000079a12d80
-> >    [   28.491601] x2 : ffff00007b107000 x1 : ffff00007b106008 x0 : 0000000000000000
-> >    [   28.498747] Call trace:
-> >    [   28.501195]  drm_atomic_bridge_chain_check+0x24c/0x310 [drm] (P)
-> >    [   28.507241]  drm_atomic_helper_check_modeset+0xa1c/0xca0 [drm_kms_helper]
-> >    [   28.514046]  drm_atomic_helper_check+0x28/0xb8 [drm_kms_helper]
-> >    [   28.519980]  drm_atomic_check_only+0x4bc/0x990 [drm]
-> >    [   28.524982]  drm_atomic_commit+0x50/0xd8 [drm]
-> >    [   28.529463]  drm_atomic_helper_set_config+0xe4/0x128 [drm_kms_helper]
-> >    [   28.535919]  drm_mode_setcrtc+0x1cc/0x7b0 [drm]
-> >    [   28.540486]  drm_ioctl_kernel+0xc0/0x140 [drm]
-> >    [   28.544965]  drm_ioctl+0x210/0x4e8 [drm]
-> >    [   28.548926]  __arm64_sys_ioctl+0xa4/0xe8
-> >    [   28.552860]  invoke_syscall+0x50/0x120
-> >    [   28.556619]  el0_svc_common.constprop.0+0x48/0xf8
-> >    [   28.561330]  do_el0_svc+0x28/0x40
-> >    [   28.564653]  el0_svc+0x30/0xd0
-> >    [   28.567713]  el0t_64_sync_handler+0x144/0x168
-> >    [   28.572075]  el0t_64_sync+0x198/0x1a0
-> >    [   28.575746] ---[ end trace 0000000000000000 ]---
-> >     connectors 39, crtc 36
-> >    failed to set mode: Function not implemented
-> > 
-> > 
-> > Without your series applied, modetest -s works correctly.
-> > 
-> > Due to the failure, I couldn't test your drm_bridge_get_current_state() to
-> > see if I can retrieve the drm_bridge_state from my sn65dsi83_reset_pipe()
-> > function.
-> > 
-> > Also, I have some local commits related to Luca's work about DRM bridge
-> > hot-pluggin stuff on my test branch.
-> > 
-> > It will not be easy for me to test your series without them as my TI
-> > sn65dsi83 bridge is behind a connector and I need some Luca's modification
-> > to have a functional system. Sorry about that.
-> >
-> > Hope that the kernel WARN log provided here will ring you a bell.
-> 
-> Not really. I can't figure out where in drm_atomic_bridge_chain_check we
-> have that warning.
-> 
-> Does $CROSS_COMPILE-addr2line -e vmlinux
-> drm_atomic_bridge_chain_check+0x24c/0x310 report anything?
-> 
+With the doc link fixed below
 
-addr2line doesn't give any information but the WARN() triggered is the
-following (code available in your series):
-   --- 8< ---
-   static int drm_atomic_bridge_check(struct drm_bridge *bridge,
-   				   struct drm_crtc_state *crtc_state,
-   				   struct drm_connector_state *conn_state)
-   {
-   	struct drm_bridge_state *bridge_state;
-   	int ret;
-   
-   	bridge_state = drm_atomic_get_new_bridge_state(crtc_state->state,
-   						       bridge);
-   	if (WARN_ON(!bridge_state))
-   		return -EINVAL;
-   --- 8< ---
+Reviewed-by: Fiona Behrens <me@kloenk.dev>
 
-Best regards,
-Hervé
+> ---
+[snip]
+> diff --git a/rust/kernel/sync/refcount.rs b/rust/kernel/sync/refcount.rs
+> new file mode 100644
+> index 000000000000..a6a683f5d7b8
+> --- /dev/null
+> +++ b/rust/kernel/sync/refcount.rs
+> @@ -0,0 +1,86 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +//! Atomic reference counting.
+> +//!
+> +//! C header: [`include/linux/refcount.h`](srctree/include/linux/refcount.h)
+> +
+> +use crate::types::Opaque;
+> +
+> +/// Atomic reference counter.
+> +///
+> +/// This type is conceptually an atomic integer, but provides saturation semantics compared to
+> +/// normal atomic integers. Values in the negative range when viewed as a signed integer are
+> +/// saturation (bad) values. For details about the saturation semantics, please refer to top of
+> +/// [`include/linux/refcount.h`](srctree/include/refcount.h).
 
--- 
-Hervé Codina, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Link is not pointing to the linux directory as in the text of the link.
+
+Thanks,
+Fiona
+
+> +///
+> +/// Wraps the kernel's C `refcount_t`.
+> +#[repr(transparent)]
+> +pub struct Refcount(Opaque<bindings::refcount_t>);
+> +
+> +impl Refcount {
+> +    /// Construct a new [`Refcount`] from an initial value.
+> +    #[inline]
+> +    pub fn new(value: i32) -> Self {
+> +        // SAFETY: There are no safety requirements for this FFI call.
+> +        Self(Opaque::new(unsafe { bindings::REFCOUNT_INIT(value) }))
+> +    }
+> +
+> +    #[inline]
+> +    fn as_ptr(&self) -> *mut bindings::refcount_t {
+> +        self.0.get()
+> +    }
+> +
+> +    /// Set a refcount's value.
+> +    #[inline]
+> +    pub fn set(&self, value: i32) {
+> +        // SAFETY: `self.as_ptr()` is valid.
+> +        unsafe { bindings::refcount_set(self.as_ptr(), value) }
+> +    }
+> +
+> +    /// Increment a refcount.
+> +    ///
+> +    /// It will saturate if overflows and `WARN`. It will also `WARN` if the refcount is 0, as this
+> +    /// represents a possible use-after-free condition.
+> +    ///
+> +    /// Provides no memory ordering, it is assumed that caller already has a reference on the
+> +    /// object.
+> +    #[inline]
+> +    pub fn inc(&self) {
+> +        // SAFETY: self is valid.
+> +        unsafe { bindings::refcount_inc(self.as_ptr()) }
+> +    }
+> +
+> +    /// Decrement a refcount.
+> +    ///
+> +    /// It will `WARN` on underflow and fail to decrement when saturated.
+> +    ///
+> +    /// Provides release memory ordering, such that prior loads and stores are done
+> +    /// before.
+> +    #[inline]
+> +    pub fn dec(&self) {
+> +        // SAFETY: `self.as_ptr()` is valid.
+> +        unsafe { bindings::refcount_dec(self.as_ptr()) }
+> +    }
+> +
+> +    /// Decrement a refcount and test if it is 0.
+> +    ///
+> +    /// It will `WARN` on underflow and fail to decrement when saturated.
+> +    ///
+> +    /// Provides release memory ordering, such that prior loads and stores are done
+> +    /// before, and provides an acquire ordering on success such that memory deallocation
+> +    /// must come after.
+> +    ///
+> +    /// Returns true if the resulting refcount is 0, false otherwise.
+> +    #[inline]
+> +    #[must_use = "use `dec` instead you do not need to test if it is 0"]
+> +    pub fn dec_and_test(&self) -> bool {
+> +        // SAFETY: `self.as_ptr()` is valid.
+> +        unsafe { bindings::refcount_dec_and_test(self.as_ptr()) }
+> +    }
+> +}
+> +
+> +// SAFETY: `refcount_t` is thread-safe.
+> +unsafe impl Send for Refcount {}
+> +
+> +// SAFETY: `refcount_t` is thread-safe.
+> +unsafe impl Sync for Refcount {}
 
