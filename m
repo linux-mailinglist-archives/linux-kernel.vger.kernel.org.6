@@ -1,147 +1,101 @@
-Return-Path: <linux-kernel+bounces-523926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFDEEA3DCEA
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:34:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E0CFA3DCE5
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:33:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 195B17A7BB3
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:33:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C63DA16C765
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:32:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 043BC1F1531;
-	Thu, 20 Feb 2025 14:33:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB8401F1531;
+	Thu, 20 Feb 2025 14:32:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="EHJJAMrn"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="YmJ1XQLT";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0/1TACzH"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24B1D1D5AD4
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 14:33:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE32028EA
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 14:32:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740062034; cv=none; b=IBe9KEruU+oG3mbsr5LOHGmdxGZ7WdxhrFnk6jvm763PaajjmDdtWcmiMNgxVd2jg4S0+093QEobta0OxVl5feekCiSaidCUdOY3QcA8Skvwi+/Q4jc8tafK4kIMeA5GIdYzMGQ7DbOzDRtzuMScTyvs8Z+6vZh34/eOfWTLNUg=
+	t=1740061929; cv=none; b=Tb6tXNIs/1x/Ey1tPTLeDpZHXOf8pqfa0IG7okvl/gTlD4G1Cg2xhuwmtYRQotxIhMWRJ3UvqkoZPW3ySZSrLDtScopdrsj3bavX5yu85qkh45eZ8JkK3Cikod7t5O0ANpxisyX0kNnqEZz0UH85FaWml1ijkYjyNHXCDtZftIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740062034; c=relaxed/simple;
-	bh=eTRXOyYuqjmG3yKs/7WGPhoCMWejYfNznEcj29Z1f58=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=hYC+9kDtUceZ4fhE8quVX4uaQq4VQRhJ5fe9U6Yu090bE7uJ2Xi/S9PTkxjCcHYMug29ooRN8TudjTZ2kzqzYvzRkHYE+9hlCSc4t3aCIB6S9yDazzk7l1e/geQI1VgwkVlhkyb7WUhk5vV3X03kNOxqBx3o7PhzQDKQM09pC6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=EHJJAMrn; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-438a3216fc2so9895815e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 06:33:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1740062029; x=1740666829; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=0fLRneimGmzwm0JI2oa5ZakvVZkjPjyCGSlHEGhhfCo=;
-        b=EHJJAMrn58gUhmaqYC9dtxb7k/YeKpEnITI+xWFxwEhrMzfD+64c77WZAZCubm8PeC
-         q/c5v15JWnUhQIBYmt2kvida3gqX4loJGBrdIpV7yF9EfrpZVnJ5an6npVZIzAx83QQj
-         Ip/er16C7Q8sYjT+jsjtCyzV3pgHJhSAW8ztmyZfvjLDY38btIDLbWySNoRM9aoYSaev
-         wi90otYCPUriN7+/t460EPZxCmJUjIoGMQ8DHK9tTVw8lh2Rrb9+Y3QKJitvsQtxWfhZ
-         Snu1gbFgxHLHzYVYMQu9oubPXWvARnlgNUS+nBmbWo/W7x800AVHCwtlPUHv7Aymg0XE
-         +1ew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740062029; x=1740666829;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0fLRneimGmzwm0JI2oa5ZakvVZkjPjyCGSlHEGhhfCo=;
-        b=sST/JbpI/NSIClWjwecoNmNjsiFSnhGEx39QN5aSSNfnN8MV/hIkJgUhGrh9i8d4k0
-         ECmyNDy7c2wVmCi3oIhy39o0TmDxY1F1RDcmSim8VAF/TE27zMKhqW6k+kt3vS+Ny9NU
-         ANzTix+x/KbffXB5FeMDTlFsu1g91MgsnFQv8EINDj5LxHx/dhGNq2QOcsFNvfxN6Idu
-         Jctx+ZquLzJm4XPiteRnIqADMKfbeFu7PdB69BUAs8hA5HFRqsXVa90yXJ2UaQqODoaj
-         JcwWaUdCTwed0mINDQLNSEjH9/zrkHUqQ3eN3u/L+SLA1OBQ4r9b5B4xTj8e9kk1czBd
-         +9ww==
-X-Forwarded-Encrypted: i=1; AJvYcCV97S6NxctGouS2vgJhR9yzBoZlyCQsyPdCapAgJ8SbmhyuRl2Q7rgVs00SwQgZvvyaJtEVo1ZoXx7oeDA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxgZCMdM11pa66Rgodhz78V1lcvSjxMUgP0sDNVVTfXln5Jc3lQ
-	FcSmxAHIetET3B9Jt+o2AGsZe7PAL91Bl8Fm59o4hQWgwP1wfG/Z4RxX9f2qk74=
-X-Gm-Gg: ASbGnctenMFp/D8tYD2K7bzQALumn1q5jiqFawx7Lmzrb1F5kynPHjTxu/lt5fyJcm5
-	fSDDeiupsEyGBFMv7rFr3Vd8nIWUqjLZqdkUJVE1NCRWOa5apyNv52UrEvVuPA9OsXYwhClW7W1
-	vjdQ9BQY97pTudOcS0YaICmO36hD45VnaXH1H/1Ona8iT/eVl6Ke3EqpRXj8srKdDuDSfc+6QjT
-	84uytndTpfiMQn4ChMe7Wd7miDo7dEnDygr/W22H0M9Hhj51PWJDX2duRuLQWuE9mf+9CaRftx0
-	Q8P9xto8BjLrYyBRwS4=
-X-Google-Smtp-Source: AGHT+IGdl0++UlqTXUNR7gACpqCzd7MyieY3ey31m1e1WuRTW8wkYR95TKzvB0Cs2B7FjnJEVDg5eQ==
-X-Received: by 2002:a05:600c:1e11:b0:439:86fb:7326 with SMTP id 5b1f17b1804b1-43986fb7498mr136680405e9.22.1740062029245;
-        Thu, 20 Feb 2025 06:33:49 -0800 (PST)
-Received: from [127.0.1.1] ([2a01:e0a:e50:3860:4c32:9600:f4cc:3400])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f258dcc50sm21194136f8f.34.2025.02.20.06.33.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Feb 2025 06:33:48 -0800 (PST)
-From: Guillaume La Roque <glaroque@baylibre.com>
-Date: Thu, 20 Feb 2025 15:31:55 +0100
-Subject: [PATCH] clocksource/drivers/timer-ti-dm: add module build support
+	s=arc-20240116; t=1740061929; c=relaxed/simple;
+	bh=CzV9bxd149p9CWYR37KvE/72WikwSMD+HRF/P+rIC1g=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Tfa93B74z5rtbDFFJCosCYwBGNCbrpJquEQkNyev+T/GroizzL6IjVf/qA5s6Wi89KEH4mbVgGNV0CQEEqAV+AAeoyJrH35528O2O2Nx1W4Ci3wlCCEoEx9W18oThuj3s0EPd6yagW/744rP08+h7Q3UU2g2HR0ePrV4Pw1B+9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=YmJ1XQLT; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0/1TACzH; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1740061926;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1Egw6G4ZiL9DKYfKWl69qMwUYm0iJLmehOs6BqDDJDU=;
+	b=YmJ1XQLTsqaym8YoHOcJpFK11R7Z5IKFYJHB8wl4I+VwIoQkavmxAO6IZlYKZ0IPY6sJHe
+	Qm034pTEawWB2Ua/u22sF0kxQX7KrokFxjT2+np/SBUqw46P+HuwszktbPNaaAhAeEcvQQ
+	PmxqqVwM2CzBhzDKik9zq/hc5qtunR4FuoiYL5yOkeXTi1wY/Qz5pvg+sWg8qTppoEZRpr
+	MncL4jym29W24mHlmBYbsFVK7gwn5TPO+PgwhGRLWgA0L1ip2+tNJPg3DgysSIRMZwAlsU
+	MnDZMap5XXsa3Wn3Id4sQU+bHqIkKWWD+ohNp2hx+wMziunXudKfbOITR26HWg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1740061926;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1Egw6G4ZiL9DKYfKWl69qMwUYm0iJLmehOs6BqDDJDU=;
+	b=0/1TACzHVdWsCK/pbUNKLkLkppM0yhrm8leecBpvcyK4jKkj88p1OQiMVLBRhA0Ir3PLd4
+	fqlEXVM8aFAaltAA==
+To: Eric Dumazet <edumazet@google.com>
+Cc: Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker
+ <frederic@kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>,
+ Benjamin Segall <bsegall@google.com>, Eric Dumazet
+ <eric.dumazet@gmail.com>
+Subject: Re: [PATCH V2 1/4] posix-timers: Make next_posix_timer_id an atomic_t
+In-Reply-To: <87h64oiuey.ffs@tglx>
+References: <20250219125522.2535263-1-edumazet@google.com>
+ <20250219125522.2535263-2-edumazet@google.com> <87wmdlhwa8.ffs@tglx>
+ <CANn89i+LJFHhA=VF2T5v_kN0=sFLeropuRERnhWdadj5w6kiyw@mail.gmail.com>
+ <87h64oiuey.ffs@tglx>
+Date: Thu, 20 Feb 2025 15:32:05 +0100
+Message-ID: <8734g8it5m.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250220-timer-dm-v1-1-64b6dab5f4a5@baylibre.com>
-X-B4-Tracking: v=1; b=H4sIANo8t2cC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDIyMD3ZLM3NQi3ZRcXctUc8NEyyTTxKQUcyWg8oKi1LTMCrBR0bG1tQA
- Yb24NWgAAAA==
-To: Daniel Lezcano <daniel.lezcano@linaro.org>, 
- Thomas Gleixner <tglx@linutronix.de>
-Cc: Nishanth Menon <nm@ti.com>, Andrew Davis <afd@ti.com>, 
- mkorpershoek@baylibre.com, linux-kernel@vger.kernel.org, 
- Guillaume La Roque <glaroque@baylibre.com>
-X-Mailer: b4 0.14.1
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Add missing MODULE_LICENSE variable and convert bool to tristate in
-Kconfig to be able to build driver in module.
+On Thu, Feb 20 2025 at 15:04, Thomas Gleixner wrote:
+> On Thu, Feb 20 2025 at 09:49, Eric Dumazet wrote:
+>> On Thu, Feb 20, 2025 at 9:09=E2=80=AFAM Thomas Gleixner <tglx@linutronix=
+.de> wrote:
+>>> > This allows the following patch to use RCU.
+>>>
+>>> Your patch ordering is slightly off by two :)
+>>>
+>>> And it fails to explain for what RCU can be used....
+>>
+>> This is explained in the following patches.
+>
+> The changelog of a patch has to be self contained. The 'following patch'
+> has no meaning when the patch is merged.
 
-By default this driver was set at y when ARCH_K3=y.
+That said, please just fold this into the patch which actually does this RCU
+lookup upfront. The change is trivial enough that it does not really
+require to be seperate. If the lockless increment would cause issues,
+then the subsequent RCU lookup is the least of the worries :)
 
-Signed-off-by: Guillaume La Roque <glaroque@baylibre.com>
----
-Enable possibility to build in module timer-ti-dm driver needed in
-Android context and Android Generic Kernel Image support.
+Thanks,
 
-I know any other clicksource driver support module build but i do test on AM62X and
-AM62P EVM board and i able to use this driver and test it with PWM.
-
-By default this driver will be always enable in bultin when ARCH_K3=y so
-no impact for other TI SoC.
----
- drivers/clocksource/Kconfig       | 4 ++--
- drivers/clocksource/timer-ti-dm.c | 1 +
- 2 files changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
-index 487c85259967..6ba4b2c48a76 100644
---- a/drivers/clocksource/Kconfig
-+++ b/drivers/clocksource/Kconfig
-@@ -57,8 +57,8 @@ config DIGICOLOR_TIMER
- 	  Enables the support for the digicolor timer driver.
- 
- config OMAP_DM_TIMER
--	bool "OMAP dual-mode timer driver" if ARCH_K3 || COMPILE_TEST
--	default y if ARCH_K3
-+	tristate "OMAP dual-mode timer driver" if ARCH_K3 || COMPILE_TEST
-+	default ARCH_K3
- 	select TIMER_OF
- 	help
- 	  Enables the support for the TI dual-mode timer driver.
-diff --git a/drivers/clocksource/timer-ti-dm.c b/drivers/clocksource/timer-ti-dm.c
-index e9e32df6b566..c6183e1fdb5c 100644
---- a/drivers/clocksource/timer-ti-dm.c
-+++ b/drivers/clocksource/timer-ti-dm.c
-@@ -1307,3 +1307,4 @@ module_platform_driver(omap_dm_timer_driver);
- 
- MODULE_DESCRIPTION("OMAP Dual-Mode Timer Driver");
- MODULE_AUTHOR("Texas Instruments Inc");
-+MODULE_LICENSE("GPL");
-
----
-base-commit: 87a132e73910e8689902aed7f2fc229d6908383b
-change-id: 20250220-timer-dm-9e71a9b5abd7
-
-Best regards,
--- 
-Guillaume La Roque <glaroque@baylibre.com>
-
+	tglx
 
