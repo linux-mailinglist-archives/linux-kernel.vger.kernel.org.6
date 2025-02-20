@@ -1,321 +1,105 @@
-Return-Path: <linux-kernel+bounces-523159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F2A2A3D2E8
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 09:15:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C92EA3D2EB
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 09:15:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 532A93BC6D5
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 08:14:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DC823B3F46
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 08:14:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEEC11E9B3E;
-	Thu, 20 Feb 2025 08:13:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27D2C1EB1A7;
+	Thu, 20 Feb 2025 08:14:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hX+C8qN+"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UiyLPBMK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB4981E9B2F;
-	Thu, 20 Feb 2025 08:13:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B54A1E9B2F;
+	Thu, 20 Feb 2025 08:14:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740039238; cv=none; b=UJcSFO8JtHqLnFpJdu9cixXj3avA6VoomND/Jx+EYVDzP1Q0AzFzVQNh7vrOPWGpvmsqi47Ig86pxMKTZ2j4kZkOW1uMQVzOidRQ6JIl25wQF5mSEKAiknMHdT030sa2lSTDOThFwf8RcyMEG/zAMPs1elwCKOJWaiAaWkscuEo=
+	t=1740039246; cv=none; b=B7lFfQRX9eFOSFokDlkmXf/+RT1ZJVI7OT6CMh3/9pmmx26hh8xX2rPRkBjqO0aJK4hKONOSP4dNG+vU/D92kmJGhgXDwrQ49CPPH6h0tpIEY1+9QDHpJNj/hrISXfFU47hBCn6hGRzMCjkscN+eUTZ0epa2Fc/KXnytSZtNJcY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740039238; c=relaxed/simple;
-	bh=Ts5ro0Nma2w9Fs7gmMtDJIx8s8uZEBSsGN6VGxOwjW0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JZ3EK7sAgMzF+1D4yKnFfXhbmULBAHNxXqH8Dc0D0MPYBmOqrt6/Q3uBfp89DM8YTmZk2ZfHVr3mj1z+KLTBC5hksye8zU8FLl1kfUKxpsuHC8DXQlkUom5PJBsMP+hTWpoRW8mfxAHjwgQuAjzZ7HiTTmpPpDBnzgob2DXmFK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hX+C8qN+; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-abb892fe379so114842266b.0;
-        Thu, 20 Feb 2025 00:13:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740039235; x=1740644035; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=00ltXR+zojYOd5CStCmbVrQEHhnEDcFy/ALKAk/csH0=;
-        b=hX+C8qN+NS5rV8xAm6hUMPS7yUnFJWqlvpkbmP5lfAwB38AtqzMVFjLCJL/pBJPNLN
-         WHhltRdahsFCO3nGgjDHQ9RNP8P2LqYFe/NQEM2A1kPg4PA1ZCLHktvXoFD3v91UFL77
-         mxeQ76FYAIXC3SwRSdm3CkIdGy39pV7O9RRQU1xWufDEkAvrqbA+7dqbNsZUIJe+ZI1h
-         p3Bv9TpWnJ09PYveLCSXSMPG4CRunSIBdtEpH/O9GhK/589Pv85tkR9cXmsP9G2IG375
-         I95drYeQ+UcjO8ep5V4MsysSrVuM7JR26TsF7LE0jATVoDi2rpFFJIlEPXbqwB+C2N2s
-         yE2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740039235; x=1740644035;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=00ltXR+zojYOd5CStCmbVrQEHhnEDcFy/ALKAk/csH0=;
-        b=kJSNBO3RQqoX68chk6X2zDBqzdpOjjI+/mt8oHJvaAmvFllhfEBxQBJ1WXU/h9g8PU
-         1jvC9fQA3m3VIrh37BEbhtsWDpI6piyX8F0fid9Xf9MnG2NoO0L17carN+nAldE0Gk4n
-         uxXcbV5uIMKlLiFthdJRwRh7geTJIy+0oSTlKauB2/7AlgCqVAOGLQqA5J1W+qX3e52o
-         92i+TKHQysbg7QA3L4IFcBlhpxwPF2Iu/D9FnVGndaALjJD13ULLFSXd3hLNm114rovz
-         J9BpGZ2s8abWe1AZMUnR5d77FG/QTKlTy09+UerDKBWTO977HSr4YMD1/4uq/2xOJFLV
-         ci3A==
-X-Forwarded-Encrypted: i=1; AJvYcCVLsJjd0mKACTfn+fJejPBSd/OmXOynELz09wgQjdAk2eY/5Hhv4OgcH/VFUBQgwCOj9E1fj0sS68HxxDM=@vger.kernel.org, AJvYcCWx7+dGgf6nRv9o3UFEhww3QoM+cARvVbzvV5J35ZMexyHc/lHIaKMT8t4qrg9YQ4nWkoHOX4W7Oc6z@vger.kernel.org
-X-Gm-Message-State: AOJu0YyE/qxhGszxkF34rRc704UyFhjN1yUxzXD8QvSsQGF5FRfHWhoc
-	JJfR9o9CXOlGeNQpGN8b/Xd2cld64Ad6NlShNY7BGJKX587ouS9HyVmCfnpFkYVFGHkzvkPnuRn
-	hlnbQnNUYn+8LIZFiwWAyxvw02HY=
-X-Gm-Gg: ASbGncvKTp5Ik8mHDrxAE1YfEovNFaTfvPy362bDFia3ZCx2Tr/su/Fxz8N7LqJ0LNb
-	aej9QL+y0lsnR64ngiB9D7Rx0yIzQIIfO3g9oAM23hBWgmqOMJqzHMfCU2+79HZ2QYk2/+oHf
-X-Google-Smtp-Source: AGHT+IED8wK1KPR1PBGlA4EiCndsxJGYfRg9UK16KQYpuUuvmqvVtNWG6Opo105NHbDs/ILshsW1q1Jll/IOTxZ0gqc=
-X-Received: by 2002:a05:6402:350d:b0:5e0:2d53:b2a with SMTP id
- 4fb4d7f45d1cf-5e035ff9ca1mr56747410a12.3.1740039234751; Thu, 20 Feb 2025
- 00:13:54 -0800 (PST)
+	s=arc-20240116; t=1740039246; c=relaxed/simple;
+	bh=Eqe/Uvw96JVKBRs26wtSbq8i3q48ATm99ekOa48MCF4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=eP3OkaXgxYG8ygSomrls2qBeXT/kORggtbhLN3sh1PGsZ7sEOz3xXXMKOyGKZL7TVFjWW3VG+6HJth0yzRq7nm8GeFoHBZZNokYPyHL7hTmmz5oTubiOU+VQsikp7t/IGtOMTXUq7jBI025XkfZkbSM/kdmAk1q5+1kS0Lcs8tI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UiyLPBMK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EACDC4CED1;
+	Thu, 20 Feb 2025 08:14:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740039245;
+	bh=Eqe/Uvw96JVKBRs26wtSbq8i3q48ATm99ekOa48MCF4=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=UiyLPBMK4DnvdP0CZYEB+uBf6zae+8832jznC2KIn4/Vyo808acimOhvbf0Csn/Tu
+	 9rSitKXL6dKPqOpg4A0nKBDsZw3AGks1zBJjuzlwQo2N7txG318eOJ1SfZEmLv1Jwk
+	 xOvC8s/tU8wk9cc3wXS8Px3MeNCzhDXo8Bl81ST2sBm759YCgKYyRfwIpfV4mKFQf5
+	 JDr86yQH3BlXxolHKlWhomjQt5L4kfXE0xWp+fQhHuyr0gOnM2oaPAekmbw+1QlUXt
+	 wvTcsw1PZeT9/opFi4Ey62CRIQsAOl4TTnXXLRa6yb+ev575ZMXUeShUNSTI/z0wkx
+	 7R4+fwRttbdpg==
+Message-ID: <89f2547edcaaba53d9965cab9133d809607330ac.camel@kernel.org>
+Subject: Re: Rust kernel policy
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Bart Van Assche <bvanassche@acm.org>, Steven Rostedt
+ <rostedt@goodmis.org>,  Jason Gunthorpe	 <jgg@nvidia.com>
+Cc: Kees Cook <kees@kernel.org>, Miguel Ojeda
+ <miguel.ojeda.sandonis@gmail.com>,  Christoph Hellwig	 <hch@infradead.org>,
+ rust-for-linux <rust-for-linux@vger.kernel.org>, Linus Torvalds
+ <torvalds@linux-foundation.org>, Greg KH <gregkh@linuxfoundation.org>,
+ David Airlie	 <airlied@gmail.com>, linux-kernel@vger.kernel.org,
+ ksummit@lists.linux.dev
+Date: Thu, 20 Feb 2025 10:13:52 +0200
+In-Reply-To: <97841173-1de8-4221-8bf3-3470a5ac98a7@acm.org>
+References: 
+	<CANiq72m-R0tOakf=j7BZ78jDHdy=9-fvZbAT8j91Je2Bxy0sFg@mail.gmail.com>
+	 <Z7SwcnUzjZYfuJ4-@infradead.org>
+	 <CANiq72myjaA3Yyw_yyJ+uvUrZQcSLY_jNp65iKH8Y5xGY5tXPQ@mail.gmail.com>
+	 <202502191026.8B6FD47A1@keescook>
+	 <20250219140821.27fa1e8a@gandalf.local.home>
+	 <202502191117.8E1BCD4615@keescook> <20250219202751.GA42073@nvidia.com>
+	 <20250219154610.30dc6223@gandalf.local.home>
+	 <97841173-1de8-4221-8bf3-3470a5ac98a7@acm.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250208140110.2389-1-linux.amoon@gmail.com> <20250210174400.b63bhmtkuqhktb57@thinkpad>
- <CANAwSgQ20ANRh9wJ3E-T9yNi=g1g129mXq3cZYvPnK1bMx+w7g@mail.gmail.com> <20250214060935.cgnc436upawnfzn6@thinkpad>
-In-Reply-To: <20250214060935.cgnc436upawnfzn6@thinkpad>
-From: Anand Moon <linux.amoon@gmail.com>
-Date: Thu, 20 Feb 2025 13:43:37 +0530
-X-Gm-Features: AWEUYZk-6uTOYBKC1UrD7Huuzq3kPXLOxJDngC64OXeczWriHg3dyKBlisMrB44
-Message-ID: <CANAwSgTWa9gwpPhVCYzJM5BL5wUkpB4eyDtX+Vs3SX3a9541wA@mail.gmail.com>
-Subject: Re: [PATCH v1] PCI: starfive: Fix kmemleak in StarFive PCIe driver's
- IRQ handling
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Kevin Xie <kevin.xie@starfivetech.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Conor Dooley <conor.dooley@microchip.com>, Minda Chen <minda.chen@starfivetech.com>, 
-	"open list:PCIE DRIVER FOR STARFIVE JH71x0" <linux-pci@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Manivannan
+On Wed, 2025-02-19 at 12:52 -0800, Bart Van Assche wrote:
+> On 2/19/25 12:46 PM, Steven Rostedt wrote:
+> > I do feel that new drivers written in Rust would help with the
+> > vulnerabilities that new drivers usually add to the kernel.
+>=20
+> For driver developers it is easier to learn C than to learn Rust. I'm
+> not sure that all driver developers, especially the "drive by"
+> developers, have the skills to learn Rust.
 
-On Fri, 14 Feb 2025 at 11:39, Manivannan Sadhasivam
-<manivannan.sadhasivam@linaro.org> wrote:
->
-> On Tue, Feb 11, 2025 at 01:09:04AM +0530, Anand Moon wrote:
-> > Hi Manivannan
-> >
-> > On Mon, 10 Feb 2025 at 23:14, Manivannan Sadhasivam
-> > <manivannan.sadhasivam@linaro.org> wrote:
-> > >
-> > > On Sat, Feb 08, 2025 at 07:31:08PM +0530, Anand Moon wrote:
-> > > > kmemleak reported following debug log
-> > > >
-> > > > $ sudo cat /sys/kernel/debug/kmemleak
-> > > > unreferenced object 0xffffffd6c47c2600 (size 128):
-> > > >   comm "kworker/u16:2", pid 38, jiffies 4294942263
-> > > >   hex dump (first 32 bytes):
-> > > >     cc 7c 5a 8d ff ff ff ff 40 b0 47 c8 d6 ff ff ff  .|Z.....@.G...=
-..
-> > > >     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ..............=
-..
-> > > >   backtrace (crc 4f07ff07):
-> > > >     __create_object+0x2a/0xfc
-> > > >     kmemleak_alloc+0x38/0x98
-> > > >     __kmalloc_cache_noprof+0x296/0x444
-> > > >     request_threaded_irq+0x168/0x284
-> > > >     devm_request_threaded_irq+0xa8/0x13c
-> > > >     plda_init_interrupts+0x46e/0x858
-> > > >     plda_pcie_host_init+0x356/0x468
-> > > >     starfive_pcie_probe+0x2f6/0x398
-> > > >     platform_probe+0x106/0x150
-> > > >     really_probe+0x30e/0x746
-> > > >     __driver_probe_device+0x11c/0x2c2
-> > > >     driver_probe_device+0x5e/0x316
-> > > >     __device_attach_driver+0x296/0x3a4
-> > > >     bus_for_each_drv+0x1d0/0x260
-> > > >     __device_attach+0x1fa/0x2d6
-> > > >     device_initial_probe+0x14/0x28
-> > > > unreferenced object 0xffffffd6c47c2900 (size 128):
-> > > >   comm "kworker/u16:2", pid 38, jiffies 4294942281
-> > > >
-> > > > This patch addresses a kmemleak reported during StarFive PCIe drive=
-r
-> > > > initialization. The leak was observed with kmemleak reporting
-> > > > unreferenced objects related to IRQ handling. The backtrace pointed
-> > > > to the `request_threaded_irq` and related functions within the
-> > > > `plda_init_interrupts` path, indicating that some allocated memory
-> > > > related to IRQs was not being properly freed.
-> > > >
-> > > > The issue was that while the driver requested IRQs, it wasn't
-> > > > correctly handling the lifecycle of the associated resources.
-> > >
-> > > What resources?
-> > >
-> > The Microchip PCIe host driver [1] handles  PCI, SEC, DEBUG, and LOCAL
-> > hardware events
-> > through a dedicated framework [2]. This framework allows the core drive=
-r [3]
-> > to monitor and wait for these specific events.
-> >
->
-> Microchip driver also has its own 'event_ops' and 'event_irq_chip', so de=
-fining
-> 'request_event_irq()' callback makes sense to me.
->
-> > [1]: https://github.com/torvalds/linux/blob/master/drivers/pci/controll=
-er/plda/pcie-microchip-host.c#L90-L292
-> > [2]: https://github.com/torvalds/linux/blob/master/drivers/pci/controll=
-er/plda/pcie-microchip-host.c#L374-L499
-> > [3]: https://github.com/torvalds/linux/blob/master/drivers/pci/controll=
-er/plda/pcie-plda-host.c#L448-L466
-> >
-> > StarFive PCIe driver currently lacks the necessary `request_event_irq`
-> > implementation
-> > to integrate with this event-handling mechanism, which prevents the cor=
-e driver
-> > from properly responding to these events on StarFive platforms.
-> >
-> > static const struct plda_event mc_event =3D {
-> > .  request_event_irq =3D mc_request_event_irq,
-> >   .intx_event        =3D EVENT_LOCAL_PM_MSI_INT_INTX,
-> >   .msi_event         =3D EVENT_LOCAL_PM_MSI_INT_MSI,
-> > };
-> >
-> > This patch implements dummy `request_event_irq` for the StarFive PCIe d=
-river,
-> > Since the core [3] driver is monitoring for these events
-> >
->
-> This still doesn't make sense to me. Under what condition you observed th=
-e
-> kmemleak? Since it points to devm_request_irq(), I can understand that th=
-e
-> memory allocated for the IRQ is not freed. But when does it happen?
->
-The PCIe host driver is responsible for monitoring the PLDA PCIe EVENT irq.
-However, I have been unable to locate the register map necessary to
-implement the
-required code updates,
+IMHO, Rust is not that difficult to learn but it is difficult to
+run.
 
-alarm@archriscv:/media/nvme0/mainline/linux-riscv-6.y-devel$ cat
-/proc/interrupts
-           CPU0       CPU1       CPU2       CPU3
- 10:     101145      76126      79040      80218 RISC-V INTC   5 Edge
-    riscv-timer
- 12:          3          0          0          0 SiFive PLIC 111 Edge
-    17030000.power-controller
- 13:         20          0          0          0 SiFive PLIC  30 Edge
-    1600c000.rng
- 14:          0          0          0          0 SiFive PLIC   1 Edge
-    ccache_ecc
- 15:          0          0          0          0 SiFive PLIC   3 Edge
-    ccache_ecc
- 16:          0          0          0          0 SiFive PLIC   4 Edge
-    ccache_ecc
- 17:          0          0          0          0 SiFive PLIC   2 Edge
-    ccache_ecc
- 20:          0          0          0          0 SiFive PLIC  73 Edge
-    dw_axi_dmac_platform
- 21:       1694          0          0          0 SiFive PLIC  32 Edge      =
-ttyS0
- 22:          0          0          0          0 SiFive PLIC  35 Edge
-    10030000.i2c
- 23:          0          0          0          0 SiFive PLIC  75 Edge
-    dw-mci
- 24:          0          0          0          0 SiFive PLIC  37 Edge
-    10050000.i2c
- 25:        171          0          0          0 SiFive PLIC  50 Edge
-    12050000.i2c
- 26:          0          0          0          0 SiFive PLIC  51 Edge
-    12060000.i2c
- 27:      10419          0          0          0 SiFive PLIC  74 Edge
-    dw-mci
- 28:          6          0          0          0 SiFive PLIC  25 Edge
-    13010000.spi
- 29:          0          0          0          0 SiFive PLIC  38 Edge      =
-pl022
- 31:          0          0          0          0 PLDA PCIe EVENT  16
-Edge      940000000.pcie
- 32:          0          0          0          0 PLDA PCIe EVENT  17
-Edge      940000000.pcie
- 33:          0          0          0          0 PLDA PCIe EVENT  18
-Edge      940000000.pcie
- 34:          0          0          0          0 PLDA PCIe EVENT  20
-Edge      940000000.pcie
- 35:          0          0          0          0 PLDA PCIe EVENT  21
-Edge      940000000.pcie
- 36:          0          0          0          0 PLDA PCIe EVENT  22
-Edge      940000000.pcie
- 39:          0          0          0          0 PLDA PCIe EVENT  26
-Edge      940000000.pcie
- 40:          0          0          0          0 PLDA PCIe EVENT  27
-Edge      940000000.pcie
- 41:          0          0          0          0 17020000.pinctrl  41
-Edge      16020000.mmc cd
- 42:          0          0          0          0 PLDA PCIe EVENT  28
-Edge      940000000.pcie
- 44:          0          0          0          0 PLDA PCIe MSI   0
-Edge      PCIe PME, aerdrv, PCIe bwctrl
- 46:          0          0          0          0 PLDA PCIe EVENT  16
-Edge      9c0000000.pcie
- 47:          0          0          0          0 PLDA PCIe EVENT  17
-Edge      9c0000000.pcie
- 48:          0          0          0          0 PLDA PCIe EVENT  18
-Edge      9c0000000.pcie
- 49:          0          0          0          0 PLDA PCIe EVENT  20
-Edge      9c0000000.pcie
- 50:          0          0          0          0 PLDA PCIe EVENT  21
-Edge      9c0000000.pcie
- 51:          0          0          0          0 PLDA PCIe EVENT  22
-Edge      9c0000000.pcie
- 54:          0          0          0          0 PLDA PCIe EVENT  26
-Edge      9c0000000.pcie
- 55:          0          0          0          0 PLDA PCIe EVENT  27
-Edge      9c0000000.pcie
- 56:          0          0          0          0 PLDA PCIe EVENT  28
-Edge      9c0000000.pcie
- 58:          0          0          0          0 PLDA PCIe MSI
-134217728 Edge      PCIe PME, aerdrv, PCIe bwctrl
+One point of difficulty for me still is the QA part, not really the
+code. QuickStart discusses on how to install all the shenanigans
+with distribution package managers.
 
-Yep, Thanks for your review comment.
+The reality of actual kernel development is that you almost never
+compile/run host-to-host, rendering that part of the documentation
+in the battlefield next to useless.
 
-The following changes fix the kernel memory leak warning at my end.
+Instead it should have instructions for BuildRoot, Yocto and
+perhaps NixOS (via podman). It should really explain this instead
+of dnf/apt-get etc.
 
-$ git diff
-diff --git a/drivers/pci/controller/plda/pcie-plda-host.c
-b/drivers/pci/controller/plda/pcie-plda-host.c
-index 4153214ca410..d4e7c1b49607 100644
---- a/drivers/pci/controller/plda/pcie-plda-host.c
-+++ b/drivers/pci/controller/plda/pcie-plda-host.c
-@@ -461,6 +461,7 @@ int plda_init_interrupts(struct platform_device *pdev,
+>=20
+> Bart.
+>=20
 
-                if (ret) {
-                        dev_err(dev, "failed to request IRQ %d\n", event_ir=
-q);
-+                       irq_dispose_mapping(event_irq);
-                        return ret;
-                }
-        }
-> > > > This patch introduces an event IRQ handler and the necessary
-> > > > infrastructure to manage these IRQs, preventing the memory leak.
-> > > >
-> > >
-> > > These handles appear pointless to me. What purpose are they serving?
-> > >
-> > Yes, you are correct, the core event monitoring framework [3] triggered=
- a
-> > kernel memory leak. This patch adds a dummy IRQ callback as a
-> > placeholder for proper event handling, which can be implemented in a
-> > future patch.
-> >
->
-> The dummy request_event_irq() callback is not supposed to be needed in th=
-e first
-> place. So clearly, this patch is not fixing the actual memory leak but tr=
-ying to
-> cover it up.
-You are correct.
->
-> - Mani
->
-Thanks
--Anand
-> --
-> =E0=AE=AE=E0=AE=A3=E0=AE=BF=E0=AE=B5=E0=AE=A3=E0=AF=8D=E0=AE=A3=E0=AE=A9=
-=E0=AF=8D =E0=AE=9A=E0=AE=A4=E0=AE=BE=E0=AE=9A=E0=AE=BF=E0=AE=B5=E0=AE=AE=
-=E0=AF=8D
+BR, Jarkko
+
 
