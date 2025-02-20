@@ -1,157 +1,146 @@
-Return-Path: <linux-kernel+bounces-523827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 363DDA3DBC9
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:55:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9860BA3DBF6
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:01:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27E62188BDAF
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:56:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 924863BFF73
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:59:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 068631FA167;
-	Thu, 20 Feb 2025 13:55:49 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 351AE1F63F5;
+	Thu, 20 Feb 2025 13:57:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="a+RIB3Cx"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C1B21F63F5;
-	Thu, 20 Feb 2025 13:55:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 013F61F9ED2
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 13:57:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740059748; cv=none; b=gDMXwXIjLOtqqKn7ovj3R2fhSVAEeiVkyfG4MH/95LR4sz05gUrADIHlE0x6STgwMMBhfC4t3s7aeYpy1QV/BWHbdqfBjJ6Fs04ucucLyPXIwluGsCjms8wm6FbLJFmNHkAVhRPVZ6JDcw073KteUeN9OrP7F0TECb7EFvzIjgw=
+	t=1740059866; cv=none; b=cnkJqNjWTDFvFkmfHktoAJV0ycBJRdEUv6+Cxb3B/BqVIxTBPbFGyzQlHbSgngpba+Vs9TsW1tTq2HkBoDwVSCW4eb5Q3xkuGf77a60yuu4XieirWXGVXw0UWQ7X9BHNh2Y/n/lqSjlr6si1HloqJxKZZVCijZfdcN7gab+YWY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740059748; c=relaxed/simple;
-	bh=kAq/HYLtL9V56JsyiHkrDyP7zD0/m2fHT0iIr6/MOpg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MN+CCFaRy5DosAGZo/IUX/i0JoG9VYl8nInAA/WHuofEXlY+Pcs8i9dCi0FM70CzaFnyUWuS0tQC16Wnc9p1RscmaoMCsTRP/jGCmd7kYvQslQWjJsMqOtcP0+gyf9NWchRyWvWfLGjB7t5IiYhIS5DIZ+EJC1E5d2sWTVL5CEA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D95B3C4CED1;
-	Thu, 20 Feb 2025 13:55:43 +0000 (UTC)
-Message-ID: <c896221c-5ff2-4a2b-b431-7c7f805b4f68@xs4all.nl>
-Date: Thu, 20 Feb 2025 14:55:42 +0100
+	s=arc-20240116; t=1740059866; c=relaxed/simple;
+	bh=zAaw7TSBKPS4D23Z/LaUwA9UKB+rY+vBnDdyES3CAN0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oHcAVAa0Ii4EYCILqckeDCUBJcTUXvoEQOI8OWDBMGocxG3HGFoOfMYwUlGDN1TxSYenZu+sDBdA74aO9+dm6xXVGPU57MxAsm1yWUjPLUks8C/5jfwuVji0qU9Z3psyscXdm3lg072OzWpfxEgGTvMtrIxj/5JP942bqbHdJMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=a+RIB3Cx; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740059863;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3GbsNh5jLWiTAFgo/FZTl4eCODFMMC/utoFBLfGp7ZI=;
+	b=a+RIB3CxoEbYcgplokOdpHfQgGRCqM2RsqNAK7Ucc2y0JwicMp0euhrVJm3g+jxVAYPtPK
+	jidcDsjzWu3ui4J+Zmj8CurjwtU7Ess9dqc4ssXX2fPMglNDhkcUOikFvo+/qS5NOO3ROy
+	OuhaDKtS01lYZ/iVa8A6jEwmnptFkG0=
+Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com
+ [209.85.208.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-311-ARc7UkQrNwKCod8wo0PEZw-1; Thu, 20 Feb 2025 08:57:42 -0500
+X-MC-Unique: ARc7UkQrNwKCod8wo0PEZw-1
+X-Mimecast-MFC-AGG-ID: ARc7UkQrNwKCod8wo0PEZw_1740059861
+Received: by mail-ed1-f70.google.com with SMTP id 4fb4d7f45d1cf-5d9fcb4a122so1038304a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 05:57:42 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740059860; x=1740664660;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3GbsNh5jLWiTAFgo/FZTl4eCODFMMC/utoFBLfGp7ZI=;
+        b=nhe423gZoFveKd6jJCE1YjiQAZPDO/9tsdaqGWPG8ZCfowkxePDM2vtCCDsa+znAmf
+         xmOOilTGva6dHaIYVDaeMK3WQAEiSRc1mph9mM5jr4C9BVKEOyFqy/x7D+gfJa8v+Sok
+         B2Zfh/QmWecpkNRH26rMrgv96099YFqFyCyHo2G0IuMoVwuAsqGNAvLrkJ6J+ScIMWEh
+         h0aNyrxPbQB3Ze7w1Lg4Q+lQKxyB+MRtdcc4NVlgMOgyUw+F73RHBVD2FnkQW0+G+npf
+         cvSbgZyA71GY75YrUSMSlcegtmRy3Gh2OGBfajSTKs2Ef2TGVM52+EI7t7UMWvEWPTLS
+         EGrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVrTu2Jkyf+Vg4CYYKugPglYpW2H+HSedXE/wHBdODjIfDnSmzMaH+aNKFZwNIWfBtFzYbloDo0vtGFO3c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx34zClFtQYlXMUUPxZ/9GewUAMSOqOh2tnkbH2cPlA9j6jAsdq
+	gzlBJUMjoBqwo9CaeFpRFOfVPlZS8xWT0x7ZnzZbCK+KZQC3jz8puoBxUv+xZ2nsArkQFkdgD3J
+	V4xHy/HaWV+7dTBvG3lo7mI8aZnn9tLVlrnq0w7yFrCUJUPVRP3u6ZvIs3ds9PNKmkbeHm4H+yI
+	9SlloCLFfMUrwTugWCVhhMth4+/0p1A1F2zAiF7vhc23Z2daI9XQ==
+X-Gm-Gg: ASbGncuYopvvaVHyaFrS88pxy6ySK5YsyUC/0g8FcUhaUZELAi3zwO7NFycZH7nZpm7
+	8NDZ6Pc4V9Nnqo0GVVR68wiK2OTmFkx4Dhh9dK8QLzpBk5oGIXu3uRyOID92HqxmLbygbhY0axb
+	acgXoAgukOGURI8Qv+YHVV
+X-Received: by 2002:a05:6402:460a:b0:5e0:9f31:a27a with SMTP id 4fb4d7f45d1cf-5e09f31a801mr3841250a12.5.1740059860685;
+        Thu, 20 Feb 2025 05:57:40 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEJ+HSoxaX4rgKgD2byWHvvYbCPJjojznGobqymjwiQmeynvrU3zlKQt2bAZTWEv659d9UlR7HukDtxZzIxLws=
+X-Received: by 2002:a05:6402:460a:b0:5e0:9f31:a27a with SMTP id
+ 4fb4d7f45d1cf-5e09f31a801mr3841226a12.5.1740059860356; Thu, 20 Feb 2025
+ 05:57:40 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] media: cx231xx: Convert enum into a define
-Content-Language: en-US
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
- Ricardo Ribalda <ribalda@chromium.org>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
- Nathan Chancellor <nathan@kernel.org>,
- Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling
- <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
- Hans de Goede <hdegoede@redhat.com>,
- Sakari Ailus <sakari.ailus@linux.intel.com>,
- Andy Shevchenko <andy@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Tiffany Lin <tiffany.lin@mediatek.com>,
- Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
- Yunfei Dong <yunfei.dong@mediatek.com>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- llvm@lists.linux.dev, linux-staging@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-References: <20241202-fix-llvm9-v1-0-2a50f5acfd0b@chromium.org>
- <20241202-fix-llvm9-v1-1-2a50f5acfd0b@chromium.org>
- <20241203093114.0ca49c01@foz.lan>
-From: Hans Verkuil <hverkuil@xs4all.nl>
-In-Reply-To: <20241203093114.0ca49c01@foz.lan>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250113190911.800623-1-costa.shul@redhat.com> <Z5EmtNh_lryVj0S3@localhost.localdomain>
+In-Reply-To: <Z5EmtNh_lryVj0S3@localhost.localdomain>
+From: Costa Shulyupin <costa.shul@redhat.com>
+Date: Thu, 20 Feb 2025 15:57:04 +0200
+X-Gm-Features: AWEUYZmgTIAbbHosP3KBusFPXm12J57Mr1T2iuZFofHgH8azDvEd3DyReff4XjM
+Message-ID: <CADDUTFyoc5ecrYd-DAoMOndy_TMGy+D_UiH5M8UR6F6pjZcA2g@mail.gmail.com>
+Subject: Re: [RFC PATCH v1] Add kthreads_update_affinity()
+To: Frederic Weisbecker <frederic@kernel.org>
+Cc: Waiman Long <longman@redhat.com>, Tejun Heo <tj@kernel.org>, 
+	Johannes Weiner <hannes@cmpxchg.org>, =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>, 
+	Dan Carpenter <dan.carpenter@linaro.org>, Vlastimil Babka <vbabka@suse.cz>, 
+	Andrew Morton <akpm@linux-foundation.org>, Chen Yu <yu.c.chen@intel.com>, 
+	Kees Cook <kees@kernel.org>, Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org, 
+	cgroups@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 12/3/24 09:31, Mauro Carvalho Chehab wrote:
-> Em Mon, 02 Dec 2024 15:47:15 +0000
-> Ricardo Ribalda <ribalda@chromium.org> escreveu:
-> 
->> The code is running arithmentics with the enum, which when not done with
->> care makes the compiler a bit nervous.
->>
->> Because those enums are only used as defines (no argument or variable
->> from that enumeration type), convert it into a define and move on.
->>
->> It is required to build with llvm 9 without these warnings:
->> drivers/media/usb/cx231xx/cx231xx-pcb-cfg.c:673:17: warning: bitwise operation between different enumeration types ('enum TS_PORT' and 'enum POWE_TYPE') [-Wenum-enum-conversion]
->> drivers/media/usb/cx231xx/cx231xx-pcb-cfg.c:680:21: warning: bitwise operation between different enumeration types ('enum AVDEC_STATUS' and 'enum POWE_TYPE') [-Wenum-enum-conversion]
->> drivers/media/usb/cx231xx/cx231xx-pcb-cfg.c:687:21: warning: bitwise operation between different enumeration types ('enum AVDEC_STATUS' and 'enum POWE_TYPE') [-Wenum-enum-conversion]
->> drivers/media/usb/cx231xx/cx231xx-pcb-cfg.c:702:17: warning: bitwise operation between different enumeration types ('enum TS_PORT' and 'enum POWE_TYPE') [-Wenum-enum-conversion]
->> drivers/media/usb/cx231xx/cx231xx-pcb-cfg.c:709:21: warning: bitwise operation between different enumeration types ('enum TS_PORT' and 'enum POWE_TYPE') [-Wenum-enum-conversion]
->> drivers/media/usb/cx231xx/cx231xx-pcb-cfg.c:718:21: warning: bitwise operation between different enumeration types ('enum AVDEC_STATUS' and 'enum POWE_TYPE') [-Wenum-enum-conversion]
->> drivers/media/usb/cx231xx/cx231xx-pcb-cfg.c:727:21: warning: bitwise operation between different enumeration types ('enum AVDEC_STATUS' and 'enum TS_PORT') [-Wenum-enum-conversion]
->> drivers/media/usb/cx231xx/cx231xx-pcb-cfg.c:737:21: warning: bitwise operation between different enumeration types ('enum AVDEC_STATUS' and 'enum TS_PORT') [-Wenum-enum-conversion]
->> drivers/media/usb/cx231xx/cx231xx-pcb-cfg.c:749:21: warning: bitwise operation between different enumeration types ('enum AVDEC_STATUS' and 'enum TS_PORT') [-Wenum-enum-conversion]
->>
->> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
->> ---
->>  drivers/media/usb/cx231xx/cx231xx-pcb-cfg.h | 18 +++++++-----------
->>  1 file changed, 7 insertions(+), 11 deletions(-)
->>
->> diff --git a/drivers/media/usb/cx231xx/cx231xx-pcb-cfg.h b/drivers/media/usb/cx231xx/cx231xx-pcb-cfg.h
->> index 5bc44f194d0a..62ffa16bb82c 100644
->> --- a/drivers/media/usb/cx231xx/cx231xx-pcb-cfg.h
->> +++ b/drivers/media/usb/cx231xx/cx231xx-pcb-cfg.h
->> @@ -57,19 +57,17 @@ enum USB_SPEED{
->>  };
->>  
->>  #define TS_MASK         0x6
->> -enum TS_PORT{
->> -	NO_TS_PORT = 0x0,	/* 2'b00: Neither port used. PCB not a Hybrid,
->> +#define NO_TS_PORT	0x0	/* 2'b00: Neither port used. PCB not a Hybrid,
->>  				   only offers Analog TV or Video */
->> -	TS1_PORT = 0x4,		/* 2'b10: TS1 Input (Hybrid mode :
->> +#define TS1_PORT	0x4	/* 2'b10: TS1 Input (Hybrid mode :
->>  				Digital or External Analog/Compressed source) */
->> -	TS1_TS2_PORT = 0x6,	/* 2'b11: TS1 & TS2 Inputs
->> +#define TS1_TS2_PORT	0x6	/* 2'b11: TS1 & TS2 Inputs
->>  				(Dual inputs from Digital and/or
->>  				External Analog/Compressed sources) */
->> -	TS1_EXT_CLOCK = 0x6,	/* 2'b11: TS1 & TS2 as selector
->> +#define TS1_EXT_CLOCK	0x6	/* 2'b11: TS1 & TS2 as selector
->>  						to external clock */
->> -	TS1VIP_TS2_PORT = 0x2	/* 2'b01: TS1 used as 656/VIP Output,
->> +#define TS1VIP_TS2_PORT 0x2	/* 2'b01: TS1 used as 656/VIP Output,
->>  				   TS2 Input (from Compressor) */
->> -};
->>  
->>  #define EAVP_MASK       0x8
->>  enum EAV_PRESENT{
->> @@ -89,10 +87,8 @@ enum AT_MODE{
->>  };
->>  
->>  #define PWR_SEL_MASK    0x40
->> -enum POWE_TYPE{
->> -	SELF_POWER = 0x0,	/* 0: self power */
->> -	BUS_POWER = 0x40	/* 1: bus power */
->> -};
->> +#define SELF_POWER	0x0	/* 0: self power */
->> +#define BUS_POWER	0x40	/* 1: bus power */
->>  
->>  enum USB_POWE_TYPE{
->>  	USB_SELF_POWER = 0,
->>
-> 
-> IMO keeping them into enums are a lot better than defines.
-> 
-> Perhaps the right thing would be to join both enums here.
+Hi Frederic,
 
-ORing enums is really not a good idea: you would normally never do that, and the
-compiler warning is IMHO appropriate.
+On Wed, 22 Jan 2025 at 19:11, Frederic Weisbecker <frederic@kernel.org> wro=
+te:
+> > @@ -1355,6 +1355,7 @@ static void update_isolation_cpumasks(bool isolcp=
+us_updated)
+...
+> > +     kthreads_update_affinity();
+>
+> A few things to consider:
+>
+> 1) update_isolation_cpumasks() will be called with cpus_read_lock()
+>   (cf: sched_partition_write() and cpuset_write_resmask()), therefore
+>   kthreads_online_cpu() can't run concurrently.
 
-I think this is a good change and I plan to take this.
+Sorry, but I don't understand what you mean by =E2=80=9Ckthreads_online_cpu=
+()
+can't run concurrently.=E2=80=9D Could you clarify please?
 
-Regards,
+> 2) The constraint to turn on/off a CPU as nohz_full will be that the
+>    target CPU is offline.
 
-	Hans
+The final goal of CPU isolation is to isolate real-time applications from
+disturbances and ensure low latency. However, CPU hotplug disrupts
+real-time tasks including the oslat test, which measures latency using RDTS=
+C.
+While performing a full CPU offline-online cycle at runtime can help avoid
+long reboots and reduce downtime, it does not achieve the goal of
+maintaining consistently low latency for real-time applications.
 
-> 
-> 
-> Thanks,
-> Mauro
-> 
+> * scheduler (see the housekeeping_mask() references, especially the ilb w=
+hich is
+>   my biggest worry, get_nohz_timer_target() shouldn't be an issue)
+
+Are you referring to find_new_ilb()? What are your concerns?
+
+> * posix cpu timers (make tick_dep unconditional ?)
+Do you refer to the arm_timer()?
+Could you please clarify which condition you are referring to?
+
+> But we are getting closer!
+Thank you very much for the detailed review!
+
+Thanks,
+Costa
 
 
