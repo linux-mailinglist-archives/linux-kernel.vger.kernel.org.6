@@ -1,109 +1,161 @@
-Return-Path: <linux-kernel+bounces-523342-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED32EA3D541
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 10:48:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16840A3D566
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 10:52:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 33B287A49D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 09:47:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE6573BBADD
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 09:48:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0C141F03D6;
-	Thu, 20 Feb 2025 09:47:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4A8C1F0E5A;
+	Thu, 20 Feb 2025 09:47:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IoS8UXrk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="T3FUE++P"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D7E91DF72C
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 09:47:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 197C41F0E39
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 09:47:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740044869; cv=none; b=mwgR7T4HrJ0HCfa1F35ujQiNfp+pdJLn9RtEkO4kHkXi/qI6HfkKH1P0szZiKRy9IA7Ll9xTDR/hsl17z9HYHFXN8fUMjqJM7T8Yd1O+ywBpOS/De9vKO7Oyo/7Awx0Icbo/fHSruoooBX3vB3Rh70yHnO4WpoVGHCY2H7ZL1OQ=
+	t=1740044879; cv=none; b=d2cwq3RgV7Pr1Bbi/BerHochIc1HTiyIeD5u8Uw4d8fsdbs5/sr8RuIT9UCfFdcDs1ABd27TCNuV+ZoecEAcQZuvAA0O7dblaBCh7c3MocKfRi0Og0mgXuab/2+kdcq34y1iv8qhrqP5DLdLD+FR3fxfyIJEZBSBGkIo3wqPqCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740044869; c=relaxed/simple;
-	bh=La+sxiVQ7AWcdVq9kE+VkWAJmsPFAHXzrxjh2HY8auc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rR3d99FnWvO1dwwChVJbkk/k8Erz041ynp/XDAT2E2NPiwIwUEgVBBSbvO2N0YGJTJSSTAMpYLBjNBMh3tN5YJpQ3YfB1JDpc/ADpWJZ1h+RoWV6Idf9OiNf6MQU06cayrvh3oI3voqh3XpqUNaGTGqttKRaN+vBocIC82OaVWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IoS8UXrk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9271C4CEF0
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 09:47:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740044868;
-	bh=La+sxiVQ7AWcdVq9kE+VkWAJmsPFAHXzrxjh2HY8auc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=IoS8UXrkbtnnXof8REZkmHcLgC/gAUPDqsvLUzwJAX9c25C7PbE29py6GStdHv+MM
-	 9yNQ6AeU9eAuGrT4QNyN3HwzJQm+3yWHodCiPdC9eLcyb+4xo8jTZKCMpy4UjAqzu3
-	 76iAYQ6v62HqDrnHkGVTLSCszJUY/g1k6F8eJANLjGzmX0FGcZCWzrw3SkurdCoRZI
-	 rMm9JVAIWj2PAlPF34Xxesi45Eul4B+zfAhYslYzC6/LJk0FJiKlciG+7ka+r1sEdS
-	 cXNI0BkQiYmWxHykgmPZe2sFFy5GY5mhdgiCtBsUdZWhUXgQ56Dkm0iPgdajyYNVXF
-	 zSVJEDS1SP8EQ==
-Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e5ddd781316so635992276.2
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 01:47:48 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWGRbUShGCWe/kyxFaUyyBOUMcgSKZ98mRblSZzzV+4lL16wq6RtYcXJxAktONYZRESqkoek5DScbcgEGg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzy/6NSq1xfHL9u/b3ZKlb2Zh+1+6K6ntEUpBkSpz9m4fSw+hCt
-	HmEF5wzZQ8g5z9vNUWWONk0z/ruJEh2s7Dvoo9xNxbUPujdnmFAre3d/hv1IfjOVHscc5qJbnTq
-	7Q3SJRXiGD3HDBngPFatGVu9VW54CtzXc+vrdFw==
-X-Google-Smtp-Source: AGHT+IHIa6JFxmshc6YyvYZzzJ5a3QNr0lJKaEbO7W6d5prUyZMBmpbGtD5ipRmOSKb6VA36xGLD4sBdhsm+2e5NeV0=
-X-Received: by 2002:a05:6902:2a8b:b0:e5b:2a51:deb6 with SMTP id
- 3f1490d57ef6-e5dc9082a7emr18061275276.25.1740044867684; Thu, 20 Feb 2025
- 01:47:47 -0800 (PST)
+	s=arc-20240116; t=1740044879; c=relaxed/simple;
+	bh=IWsg9d6lbEashhnUPHSkRjmEXhpeKPSMS9vOhHCIlfY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mb4YFA6kx0CYshfc0qddU4qW+5SBSKniGuruVWzphkJqVDxwLBnOF2pdi911SKTOHiALLt9hYAD/lq2GgMX6LsRkik2FrLA+Ti2qHnHA0eODu1LE6JcIoT88dyyQGZawch31JJgCLrMI0OmDkBiVc9e7j3Ch5/0mn4yZJRE7dyw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=T3FUE++P; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-38f1e8efe82so827670f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 01:47:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740044875; x=1740649675; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=3C+kognpjmHLZgIVXwXKpXpKvfpiYLWcBqUjAjWp7Tc=;
+        b=T3FUE++PN0U3+a3SEBSaJHD8QqhO+UgkgQYM8dZRMXZTGqpAYZyJgQT0Q1+6jGr07H
+         H/iUU00igxlY5xiwrjsc19xEVFpDgGInfAqueY4x3/u4hGxRg3JATpGpYuMbtOAnuilk
+         MXfFw17oXJIEnn2s+1bTZOg920iciE+LRztDeurB7uIsV1j3UQQFZ3O4+0jWkcyvf1ca
+         82mvTdeOWU62CIiq8nCmKCtRc/Hsg/Q+wuS7wV2OIJiyuee0tC0WsLCdj1zUQgiTbC4u
+         qHmGahno5mqJsr+fY/iMRbFD/Vl1pJ8HWZfCVueAYZw1spkCPghqbvnjm3snlyEnP747
+         b1kg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740044875; x=1740649675;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3C+kognpjmHLZgIVXwXKpXpKvfpiYLWcBqUjAjWp7Tc=;
+        b=WUe9R4HsKQOHZE3R4MfNXt5egFfAl4lJsr/voJxpz9vTg/HME1+5WKyKxfua+gC9gG
+         Z+8rQF8G0CHyZNSvKfHXnVk5yTjlYsipT9A0LSsj0vL2igJsnZOC3lbxu7JCf6l39jQU
+         ThMQvUkIrhu31Q8f/rmk1vsf8j3nOCK0VKShpFuPYAg9bU3yekn0QLGcONlv+aWu7rB9
+         r+1AhhZZswAbN8Gs7bb5RhTTLsf3Q2J7fJ1iB9Q/oXHFfaOo57/7vTbVxJNoJye/N0xY
+         UxlHeyMW0TKCrdWDmoK+km08LyVRmPIxLXpxPYfB2B8OvUVpFWiuUcK112qC/BZE2Uzb
+         ps+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWZxA/qQH25YDhV2GAfcjrWltO+lT80eh9zxaprhYOey4qZ9Nx3XonS3jEGIG7VGNFO6JP/48JMg7TfZ2k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzsn4946LaRh/RKveGflGKsU0kM8VHihWyj08noasBc+Dsarn75
+	FyuPf5eYuXrIPZJzEo/YaN/4LpASBAug/5aiYTP7CJrDRDVagC3XhnwB6x5VgG8=
+X-Gm-Gg: ASbGnctjh1DVLF3SSzNtFGKqfHst6FOVcUq32xXzsFBUUYNVylNXNIMASMQ4Su22diF
+	lCBpUAEDKxlGBirMKcmWRW44G/jJaSWc927vmYz/FLDnzopphidJFJ1N+cWsqyo+G371E5DDjFe
+	nhfMEB0KhgI/fuYs3/MoUo6EcOq9A6BlJNRFzab+19hImbOjI+Oj25Jtp5kt1EO4yoTouEFnOe+
+	kPeeJjHO0qg9MrV6V3C8kMlToj5IqzvfslaiG38uMbskVsTGm9nUqrdUh0BSP4wEmjGmJ82L3l8
+	/USJbqdhvQ69ykXZNENGPa9X8No=
+X-Google-Smtp-Source: AGHT+IEsCez3GPLSZunwwFDyUVqq7Wkm5lBgpW3JvRE36iu83J5JlqvN9UXFhpA6HMjqTat9XWSXuQ==
+X-Received: by 2002:adf:f08c:0:b0:38f:30c7:eae4 with SMTP id ffacd0b85a97d-38f33f56507mr18120522f8f.52.1740044875163;
+        Thu, 20 Feb 2025 01:47:55 -0800 (PST)
+Received: from linaro.org ([2a02:2454:ff21:ef30:b30c:3d94:4d4a:a6eb])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f561bee3esm5514525f8f.21.2025.02.20.01.47.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Feb 2025 01:47:54 -0800 (PST)
+Date: Thu, 20 Feb 2025 10:47:49 +0100
+From: Stephan Gerhold <stephan.gerhold@linaro.org>
+To: Andi Shyti <andi.shyti@kernel.org>
+Cc: Wolfram Sang <wsa@kernel.org>, Andy Gross <agross@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Konrad Dybcio <konradybcio@kernel.org>
+Subject: Re: [PATCH 3/3] i2c: qup: Vote for interconnect bandwidth to DRAM
+Message-ID: <Z7b6ReQdDtAUn5GP@linaro.org>
+References: <20231128-i2c-qup-dvfs-v1-0-59a0e3039111@kernkonzept.com>
+ <20231128-i2c-qup-dvfs-v1-3-59a0e3039111@kernkonzept.com>
+ <5dr5ps4vb57xj2mfelgsxgoyrr3gg4ggwqggqchff6pda3ffsn@thxpg4h6kgel>
+ <Z7W1EJ7uGsaTZMRh@linaro.org>
+ <sc54ro4pwg5j2lqelsryx7cdw6ipcdp4gfk3ce5sxsvk3s7wzp@wup2pgdzmxtl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250220094456.32818-1-clamor95@gmail.com> <20250220094456.32818-3-clamor95@gmail.com>
-In-Reply-To: <20250220094456.32818-3-clamor95@gmail.com>
-From: Robert Foss <rfoss@kernel.org>
-Date: Thu, 20 Feb 2025 10:47:36 +0100
-X-Gmail-Original-Message-ID: <CAN6tsi4QZM_=wLyDtvS4BNu=HVt-z8vQFi8cYSYz+JfEWZTLrA@mail.gmail.com>
-X-Gm-Features: AWEUYZm2ZrgMrQ1lqXfTXo8N61qlQPJPfTxrhTlmDHmEkkrmyL7gWUf2VCo02F8
-Message-ID: <CAN6tsi4QZM_=wLyDtvS4BNu=HVt-z8vQFi8cYSYz+JfEWZTLrA@mail.gmail.com>
-Subject: Re: [PATCH v1 2/3] dt-bindigs: display: extend the simple bridge with
- MStar TSUMU88ADT3-LF-1
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Maxim Schwalm <maxim.schwalm@gmail.com>, dri-devel@lists.freedesktop.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <sc54ro4pwg5j2lqelsryx7cdw6ipcdp4gfk3ce5sxsvk3s7wzp@wup2pgdzmxtl>
 
-On Thu, Feb 20, 2025 at 10:45=E2=80=AFAM Svyatoslav Ryhel <clamor95@gmail.c=
-om> wrote:
->
-> A simple bridge used in ASUS Transformer AiO P1801-T.
->
-> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> ---
->  .../devicetree/bindings/display/bridge/simple-bridge.yaml        | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/Documentation/devicetree/bindings/display/bridge/simple-brid=
-ge.yaml b/Documentation/devicetree/bindings/display/bridge/simple-bridge.ya=
-ml
-> index 43cf4df9811a..8308e833938d 100644
-> --- a/Documentation/devicetree/bindings/display/bridge/simple-bridge.yaml
-> +++ b/Documentation/devicetree/bindings/display/bridge/simple-bridge.yaml
-> @@ -31,6 +31,7 @@ properties:
->            - ti,opa362
->            - ti,ths8134
->            - ti,ths8135
-> +          - mstar,tsumu88adt3-lf-1
->
->    ports:
->      $ref: /schemas/graph.yaml#/properties/ports
-> --
-> 2.43.0
->
+On Wed, Feb 19, 2025 at 08:30:35PM +0100, Andi Shyti wrote:
+> On Wed, Feb 19, 2025 at 11:40:16AM +0100, Stephan Gerhold wrote:
+> > On Wed, Feb 19, 2025 at 12:02:06AM +0100, Andi Shyti wrote:
+> > > 
+> > > sorry for the very late reply here. Just one question.
+> > > 
+> > 
+> > Thanks for bringing the patch back up after such a long time. I've been
+> > meaning to resend it, but never found the time to do so... :-)
+> 
+> We have a long list of forgotten patches that belong to the far
+> past. I'm trying to revive them.
+> 
 
-Reviewed-by: Robert Foss <rfoss@kernel.org>
+Thanks, this is much appreciated!
+
+> [...]
+> > > > @@ -1745,6 +1775,11 @@ static int qup_i2c_probe(struct platform_device *pdev)
+> > > >  			goto fail_dma;
+> > > >  		}
+> > > >  		qup->is_dma = true;
+> > > > +
+> > > > +		qup->icc_path = devm_of_icc_get(&pdev->dev, NULL);
+> > > > +		if (IS_ERR(qup->icc_path))
+> > > > +			return dev_err_probe(&pdev->dev, PTR_ERR(qup->icc_path),
+> > > > +					     "failed to get interconnect path\n");
+> > > 
+> > > Can we live without it if it fails?
+> > > 
+> > 
+> > of_icc_get() returns NULL if the interconnect API is disabled, or if
+> > "interconnects" is not defined in the device tree, so this is already
+> > handled. If "interconnects" is enabled and defined, I think we shouldn't
+> > ignore errors. Therefore, this should work as intended.
+> 
+> yes, because qup_i2c_vote_bw() checks inside for NULL values.
+> 
+> My idea was that:
+> 
+> 	if (IS_ERR(...)) {
+> 		dev_warn(...)
+> 		qup->icc_path = NULL;
+> 	}
+> 
+> and let things work. Anyway, if you want to keep it this way,
+> fine with me, I don't have a strong opinion, rather than a
+> preference to keep going.
+
+I would prefer to keep it the way it is. It's okay to omit the
+"interconnects" in the DT (either for old device trees, or because you
+don't define the "dmas" either). But if they are defined, we should not
+be ignoring errors. -EPROBE_DEFER definitely needs to be handled, but
+even for -EINVAL or similar it would be better to make it obvious in my
+opinion.
+
+None of the existing users should be affected, since no one defines
+"interconnects" at the moment.
+
+Thanks,
+Stephan
 
