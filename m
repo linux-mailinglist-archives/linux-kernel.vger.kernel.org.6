@@ -1,60 +1,82 @@
-Return-Path: <linux-kernel+bounces-523065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17437A3D193
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 07:53:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3052EA3D19D
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 08:00:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 918283ABD87
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 06:53:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70D921890562
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 07:00:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B8161E4110;
-	Thu, 20 Feb 2025 06:53:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E51E41E3DFE;
+	Thu, 20 Feb 2025 07:00:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="05aYelCM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="e9HjhRzX"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D35D1ADC6F;
-	Thu, 20 Feb 2025 06:53:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 837D2442C;
+	Thu, 20 Feb 2025 07:00:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740034411; cv=none; b=kpGUfCFTk/hO3aMMnaNIFT5EN2bTO/Bbn8XfrzVRPiy+q77V3kHiguv5+jIgvLDmV4BwMnu65imhjJrVoqA0L1CcEvDwJ4HfTTOg/Y/44/+oP7Cr1r0Q85ai0+UghVSKaSACeSowJ495dw2xbJhF2Jg9R2IREv0wS38v9cAqM/U=
+	t=1740034833; cv=none; b=JV26oK1R68my2mKGP9QPTpEZkaR+PY+b3OsH7uunm4IfQf2GcI7JLK03/aictX5SqbDI7plE5dWoujvlxkL8xJEj0kYFfkDNdSQBqbDbN/yfPUE6yWlytc1D29UuTwcjsvn4JpCpekR2mRIzvUU+yitAdI2U/3a7asD/qggEAYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740034411; c=relaxed/simple;
-	bh=badsXN3RHOvj6FkdGc1vKzVV9GzrktXmBd5wfthDY/I=;
+	s=arc-20240116; t=1740034833; c=relaxed/simple;
+	bh=AjVnpHD2v2Yt6Kmq2yAOC5tiCK3gGmXJmt/gK2edgdI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sXgT1UHQFs7uQR8xOfbufY8Kgw9vZLwRG2oSdlfs06Im5mCx0FS5JXkrTVLy+SHoSqJNo6PcfhxPjoNO83jTTvuES2smnSqs5z8dqx59v7zwUn6PsSbUDz913X1lMTq3B7G88E+Rc3pJPLptUkkk07+nTPYTVAcIfUe8HnJv39g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=05aYelCM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 901C5C4CED1;
-	Thu, 20 Feb 2025 06:53:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1740034411;
-	bh=badsXN3RHOvj6FkdGc1vKzVV9GzrktXmBd5wfthDY/I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=05aYelCMcL48DSd3AQUBa6wggT7XkmDL0sfT71U9XxRREiLFUQpaCMeSgVsJJ/LiC
-	 i66uz5S9A99wQNsW+hfGEjPKrHPBKkQwTtF3sj8kldVnhcP0WJthXNK9TdPbVnHDuC
-	 QF2Tv19axlVLywFjGOolinei4YmHBHj+Ojl3TtbU=
-Date: Thu, 20 Feb 2025 07:53:28 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Alexey Dobriyan <adobriyan@gmail.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>, Kees Cook <kees@kernel.org>,
-	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-	Christoph Hellwig <hch@infradead.org>,
-	rust-for-linux <rust-for-linux@vger.kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	David Airlie <airlied@gmail.com>, linux-kernel@vger.kernel.org,
-	ksummit@lists.linux.dev
-Subject: Re: Rust kernel policy
-Message-ID: <2025022007-angelfish-smite-a69d@gregkh>
-References: <CANiq72m-R0tOakf=j7BZ78jDHdy=9-fvZbAT8j91Je2Bxy0sFg@mail.gmail.com>
- <Z7SwcnUzjZYfuJ4-@infradead.org>
- <CANiq72myjaA3Yyw_yyJ+uvUrZQcSLY_jNp65iKH8Y5xGY5tXPQ@mail.gmail.com>
- <202502191026.8B6FD47A1@keescook>
- <785A9F60-F687-41DE-A116-34E37F5B407A@zytor.com>
- <f77d549c-b776-4182-b170-571d1e5bb288@p183>
+	 Content-Type:Content-Disposition:In-Reply-To; b=FTMmYCTfNtpAnZOUWzGBwz7HWgDsi5bxTiR1EaYJHuHnMpaZjYdHqFykrsouCdWQevGb5XqHxCUadD8e3eRe1OV2IO+uF+AQYHN7gPOjKz80jSjDrzXCX1BQAxQdWuVPip22EfYk/V2X4T/PHmILMVQk6+Plw/qi55B/pCZARCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=e9HjhRzX; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740034830; x=1771570830;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=AjVnpHD2v2Yt6Kmq2yAOC5tiCK3gGmXJmt/gK2edgdI=;
+  b=e9HjhRzXlNtRMU0U5PwDvr6ID3LeGov+tncWP0nUqksfwDTiMz3xOZCc
+   0HhgG2SLboVkHr3xhks/boPyaqsRcYfKPEKcF9fdLVv/DKQanXAqwRcEM
+   nossX5Y2ZLBBWaAVqdzi79tVBQBrtelsYbAAFPjtyDync/K4lmK6oIkdp
+   2e+28aLOGtED+T8bxZ4pU8IUjTclXaEvZCHHix8wXaEabZN4xhS6/TYqJ
+   MStmot4GjPxoLbfnpvKA+v3bJBpoz+3RxliYEbST30qHaYshJZZmtEOaA
+   +VSISszjcvz/c1d6dXXdlE27g1v5GuzOEpWGIn9uPzruMii9NxsF/GzD8
+   Q==;
+X-CSE-ConnectionGUID: kuhrqjW0RDSqXf2/NJ5vFg==
+X-CSE-MsgGUID: m8icS4HwTviuY28+LyDmAQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11350"; a="44450184"
+X-IronPort-AV: E=Sophos;i="6.13,301,1732608000"; 
+   d="scan'208";a="44450184"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Feb 2025 23:00:29 -0800
+X-CSE-ConnectionGUID: kc2+8xHwQka5NTUIeHSFww==
+X-CSE-MsgGUID: vC2LJc8pRmePBXEk75jnrQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="119041836"
+Received: from mev-dev.igk.intel.com ([10.237.112.144])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Feb 2025 23:00:27 -0800
+Date: Thu, 20 Feb 2025 07:56:46 +0100
+From: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
+To: Nick Hu <nick.hu@sifive.com>
+Cc: Jacob Keller <jacob.e.keller@intel.com>,
+	Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Michal Simek <michal.simek@amd.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Francesco Dolcini <francesco.dolcini@toradex.com>,
+	Praneeth Bajjuri <praneeth@ti.com>, Andrew Lunn <andrew@lunn.ch>,
+	netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: axienet: Set mac_managed_pm
+Message-ID: <Z7bSLq1vkYJUzvGM@mev-dev.igk.intel.com>
+References: <20250217055843.19799-1-nick.hu@sifive.com>
+ <889918c4-51ae-4216-9374-510e4cbdc3f1@intel.com>
+ <CAKddAkBZWZqY+-TERah+Q+WUfkqzcpFMA=ySSuTxxBjfP7tKZg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,44 +86,69 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <f77d549c-b776-4182-b170-571d1e5bb288@p183>
+In-Reply-To: <CAKddAkBZWZqY+-TERah+Q+WUfkqzcpFMA=ySSuTxxBjfP7tKZg@mail.gmail.com>
 
-On Thu, Feb 20, 2025 at 09:32:15AM +0300, Alexey Dobriyan wrote:
-> On Wed, Feb 19, 2025 at 11:33:56AM -0800, H. Peter Anvin wrote:
-> > b. Can we use existing mature tools, such as C++, to *immediately* improve the quality (not just memory safety!) of our 37-year-old, 35-million line code base and allow for further centralized improvements without the major lag required for compiler extensions to be requested and implemented in gcc (and clang) *and* dealing with the maturity issue?
+On Thu, Feb 20, 2025 at 10:47:40AM +0800, Nick Hu wrote:
+> Hi Jacob
 > 
-> We can't and for technical reasons:
-> 
-> * g++ requires C99 initializers to be in declaration order,
->   even in cases where there is no reason to do so.
-> 
-> * g++ doesn't support __seg_gs at all:
-> 
-> 	$ echo -n -e 'int __seg_gs gs;' | g++ -xc++ - -S -o /dev/null
-> 	<stdin>:1:14: error: expected initializer before ‘gs’
-> 
->   x86 added this to improve codegen quality so this would be step backwards.
+> On Thu, Feb 20, 2025 at 7:29 AM Jacob Keller <jacob.e.keller@intel.com> wrote:
+> >
+> >
+> >
+> > On 2/16/2025 9:58 PM, Nick Hu wrote:
+> > Nit: subject should include the "net" prefix since this is clearly a bug
+> > fix.
+> >
+> I've added the 'net' prefix to the subject 'net: axienet: Set
+> mac_managed_pm'. Is there something I'm missing?
 > 
 
-And then there's my special addition to the kernel "struct class" :)
+It should be [PATCH net] net: axienet: Set mac_managed_pm
+Like here for example [1]. You can look at netdev FAQ [2]. It is
+described there how to specify the subject.
 
-Anyway, no sane project should switch to C++ now, ESPECIALLY as many are
-starting to move away from it due to the known issues with complexity
-and safety in it's use.  Again, see all of the recent issues around the
-C++ standard committee recently AND the proposal from Google about
-Carbon, a way to evolve a C++ codebase into something else that is
-maintainable and better overall.  I recommend reading at least the
-introduction here:
-	https://docs.carbon-lang.dev/
-for details, and there are many other summaries like this one that go
-into more:
-	https://herecomesthemoon.net/2025/02/carbon-is-not-a-language/
+Probably you don't need to resend it only because of that.
 
-In short, switching to C++ at this stage would be ignoring the lessons
-that many others have already learned already, and are working to
-resolve.  It would be a step backwards.
+[1] https://lore.kernel.org/netdev/CAL+tcoC3TuZPTwnHTDvXC+JPoJbgW2UywZ2=xv=E=utokb3pCQ@mail.gmail.com/T/#m2b5603fbf355216ab035aa0f69c10c5f4ba98772
+[2] https://www.kernel.org/doc/Documentation/networking/netdev-FAQ.txt
 
-thanks,
+Thanks,
+Michal
 
-greg k-h
+> > > The external PHY will undergo a soft reset twice during the resume process
+> > > when it wake up from suspend. The first reset occurs when the axienet
+> > > driver calls phylink_of_phy_connect(), and the second occurs when
+> > > mdio_bus_phy_resume() invokes phy_init_hw(). The second soft reset of the
+> > > external PHY does not reinitialize the internal PHY, which causes issues
+> > > with the internal PHY, resulting in the PHY link being down. To prevent
+> > > this, setting the mac_managed_pm flag skips the mdio_bus_phy_resume()
+> > > function.
+> > >
+> > > Fixes: a129b41fe0a8 ("Revert "net: phy: dp83867: perform soft reset and retain established link"")
+> > > Signed-off-by: Nick Hu <nick.hu@sifive.com>
+> > > ---
+> >
+> > Otherwise, the fix seems correct to me.
+> >
+> > Reviewed-by: Jacob Keller <jacob.e.keller@intel.com>
+> >
+> > >  drivers/net/ethernet/xilinx/xilinx_axienet_main.c | 1 +
+> > >  1 file changed, 1 insertion(+)
+> > >
+> > > diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
+> > > index 2ffaad0b0477..2deeb982bf6b 100644
+> > > --- a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
+> > > +++ b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
+> > > @@ -3078,6 +3078,7 @@ static int axienet_probe(struct platform_device *pdev)
+> > >
+> > >       lp->phylink_config.dev = &ndev->dev;
+> > >       lp->phylink_config.type = PHYLINK_NETDEV;
+> > > +     lp->phylink_config.mac_managed_pm = true;
+> > >       lp->phylink_config.mac_capabilities = MAC_SYM_PAUSE | MAC_ASYM_PAUSE |
+> > >               MAC_10FD | MAC_100FD | MAC_1000FD;
+> > >
+> >
+> 
+> Regards,
+> Nick
 
