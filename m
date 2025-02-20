@@ -1,144 +1,130 @@
-Return-Path: <linux-kernel+bounces-523751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFF0CA3DAB2
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68CBEA3DAB1
 	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:04:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C8D816F67B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:03:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ACD4D7A8F4D
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:03:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F49C1F150F;
-	Thu, 20 Feb 2025 13:03:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="iub5bwes"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 465CB1F7586;
+	Thu, 20 Feb 2025 13:04:12 +0000 (UTC)
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2AFB1F1508
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 13:03:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E11F91D63E8;
+	Thu, 20 Feb 2025 13:04:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740056598; cv=none; b=nt35r9ZGQwp8poXulNPrSNuhWJDYIzi85ZQ0rQUMSFsg0rGRpCdevO7tB5SaWWeGW/olm5qem0rr60MqCwms5WXo1V/Oal550eqx48ze2jDCVmMGUPgLnp8PR3svGqTiet9p1RqNYg82aLNC1XsE1oejIPxFW7ocToccikWjrCI=
+	t=1740056651; cv=none; b=cwpI1rLJIQFrHZFYToBzXxNU4i9tFa+8O4xVtJ95UKF4Drn4RtJM3cY57E2oG1KbkiehA1vRmY/DZJX4VksBcQV1tRp9h/6WTXvIJ+LROH3uzjKsGb4/KwdxCTz+FGSumxrsXkPuSGxFcYTOJhhkJq2S+OwiaGUT38YE5MBxOUU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740056598; c=relaxed/simple;
-	bh=YDHwi4ZX5NpJ4uSkg1+T6EW70u8iGD5w+2zjSD2xUS0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YwyTB0tMRbw7NFrv9PIdOc7QDL8XBBchSKjNq5+SV3SFR/FKXoxpBFez/9OYTL7ZW5U99XLuSjx1S1Bg/+glYCZVvpXliD2TPZjajYaA1GkSFH6pNNnsMCX8DUze9bRH8wVx5PwLT8nVMdB7pAn05hoS/zkXC8avGVdWua5rq2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=iub5bwes; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-38f265c6cb0so460025f8f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 05:03:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1740056593; x=1740661393; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=PYNHFwLBPMiuE6a0KUHaSz0Gjwcyu1dBkTLSZJgvMTY=;
-        b=iub5bwesx4FCETIe3OW6PcioSXL7eq+8khnswL+YH0xCodZ4X5D9jltrRpgDKzBEFw
-         3NZ3GV/s+kR0U01pktpcyzLrEWkAY75RdAm6V9wZXFW54D0Sn6tZePdSHwEEonah658B
-         1ioeNbGw4/4paNwXmbQ+z6c7jYIumgkPxU2uxIOmxHSJfxagACjtARaOwssLfQHNd02w
-         74f4orE1c1cy3XzI8kXYa6H1CBNROjcK9/seLJXfvO5cYiupUWuAWU9ciXCvBzx2J5Au
-         1Vb4oPaXUxiy1pkUyFcIrBpnzEHJW9a/0rXp36RDbGJ+pEbitZUQ4s0OvecL9VY+QGU7
-         nW2g==
+	s=arc-20240116; t=1740056651; c=relaxed/simple;
+	bh=Mha/8UrxRleFZQYMkP6GQUQk8CTzZhBFY96OkKnYSjU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=m6/JMjq7Pa9L7OU8aOcXl7iAWgyuQV3owcZxDOXkdN9/yGB2hn+ZuhcDnuZJHbOCtc4PRmLg/rlbwBq3cX19Nek+cNG/ZQPggTuxkqEfLUOjSC6eikJO21pKtl5Xd8fOVd0NO9ZDNrCV8gjaMzlnaAMCjzMHjGONQSk3yudedvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.160.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-46fcbb96ba9so10330321cf.0;
+        Thu, 20 Feb 2025 05:04:09 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740056593; x=1740661393;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PYNHFwLBPMiuE6a0KUHaSz0Gjwcyu1dBkTLSZJgvMTY=;
-        b=V/WWAX2sGKcLCDPGLdMLrRRGW0GXK69Z0q58OUQVEGT7KMAu+cjp2CtTO3kPtr/6dw
-         p4jPHvsi9J5xhSu8hWuGZml8iuI4DsLrSzhlIbZmMuyn4Zm8srekELdZvxNYZEW/9pPG
-         9wQ4vc9modJT4vmASpkzISpgMLG/jzv41P5AaWRbEArxXnAshRKPnnf7FQhoxDbG8o3R
-         hPVGUw6TDKdzK5V7nkwXfs5X4XCIDOtR83uMK9yjOk0r1uESLU3EVks3LMowF4j4tiF4
-         RC60kLWHju3lpJNaBc0HdXvDlqN5x2Si3HcL2no2j8iv2RhSJwW/S3SDRlyHuVsEZq2H
-         MHqA==
-X-Forwarded-Encrypted: i=1; AJvYcCXb9vy47JhugoAP/KCPTUEYYwItdOl1oZ8oQWrMPthkzlKjB09i4R5GdcEUpgUdaf2pt0Y5qPNsI1eu3MU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyzycpYCgyw+aRgH8CPuVKxuiLU/iqfe2S7TFDcXwONsG0RcrOg
-	wN6uS0Ab9EwYdHX02be3cktFbStEnHOJWPB3wzCtwyCavGDXr+yKMs8r0J6ORbI=
-X-Gm-Gg: ASbGnctFK8VsLc4U4wTL0B8k2cIVnymIM9XxkP2Vq0UU55ixWdkZZO+qGiIQSHCbJjR
-	KLm3v3Bb8rEb4XMKJva33buLyx/1CCpA7v3+FZz9wmPT5AIfiNEJUKbTzDbZjHfLI+TqYNfNjql
-	JzLVbKPsMMPJTvhi7EbiWzmgTDyqq5Vnxh02K09atttTiy1vU17HSVBtc8GrIVjojAFkz5FcXcS
-	ifMDN9okLX1xOPl99sLOStqVAqY9t0twRuM3+IaVXU+fgfA9U/Y884LBnu5MFuQVuJa7qdEOjSF
-	pVwmN1keyor1FhBexntmPs6KQ6XvBE7WFrgCRTu1S2KHKnwbOfzeLonlD3gieYg=
-X-Google-Smtp-Source: AGHT+IE+oBz+Bsv3JgfnD0JtZwzb1aLQt0+zm+GoaoUPVnk9517cD6yzlHLB/acLlXqZ8+4BcP2iaw==
-X-Received: by 2002:a05:6000:1f87:b0:38f:3073:708 with SMTP id ffacd0b85a97d-38f33f11888mr20574908f8f.3.1740056592485;
-        Thu, 20 Feb 2025 05:03:12 -0800 (PST)
-Received: from ?IPV6:2a01:e0a:e50:3860:b630:86ab:c45b:5c2f? ([2a01:e0a:e50:3860:b630:86ab:c45b:5c2f])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f561bee3esm5976564f8f.21.2025.02.20.05.03.11
+        d=1e100.net; s=20230601; t=1740056648; x=1740661448;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=V6W8Q39R68WnbcobKnCWwlaQPZp7/owzyTSa6NkVd/0=;
+        b=BlT76OjD/cc9E6zeDoo0zSN26nhWQ31MUdBn6NqGGkpKd2DAt177AMK59yp5mj9J6C
+         HCbPblS6pjPWoUktqgr/hMO+MSZnaC8lserT4D0Q1M3X2GET9KpsPPh2MuiZJqwBya82
+         Aa/PD2qn5tA/0sLbgBscqIsObuCP8MT+VhxyGKuxRrmBFPLwVL9GeeI2B8HKcmu/Px0w
+         cTavfSaj+Bv/aAQg9bzYf8rDLnIzbOmKAK9NVUGCE/7jbhE40pKl0ZqdikRWVtZduIVt
+         vjs+PlC5Wtr57tWLOC6Jvi36z+w8Brgw6rPyvuImV+Codpu3zSEXCKKGU4sVUl/eEgm5
+         ZdSA==
+X-Forwarded-Encrypted: i=1; AJvYcCUN8ERr+FocLlsfeO7sOSVGvN/ojv6ShViOftcoIUma7smRl01/O4PATLvubo7qWDUyAOqju3oKbg2L7KLl@vger.kernel.org, AJvYcCVXXA2JgFnATcaSbsOZZaS/YznKn9b+w6Ietqcixt48MuMyIzbMzccaQ49lJHYQNNT+PeODdZRp1cYW@vger.kernel.org, AJvYcCWwl+LRAtaRnSO1m3p0av3qJMrP8bBKCyokckuSIor1iI8K4/b1KuZBMPo5JwuvvK6QcsP6tS8qmWe23sONm4BuY1k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5Qx28cpuHmiFaJb4MY1xuYfvNB0upV1ctQmlpRwPNdoBjnvpf
+	BAwyLzq2NhHiVSre8VLll17kvdusLkrmjMopN6BWBECOZqZuidZQtJnFa/SQ
+X-Gm-Gg: ASbGncvk4XDmkr1rhvWuo92oGpU2RygJXwDm6oucz8o9VcGzdfjlKS+BIL7FvGasNK/
+	VKQNntGPy62Dk6Xw+yG50x7IDBrfoM/drJaw9E7TMTgMLfV1wxE0VMf4balJmaJgkUa6Ssmc57V
+	KB1dw+R6VpesOBoe1HnMAN1SZ1DB0FLZeV5MEsA4Oh6M7E3Fv1yJeIZxYGmd91fTVMgcdZxzNi7
+	Bx7fGkUQJ8IrUOcmBMWOI5vTuz9Zaj1r1F2dEjKxYep3/LPSKbW2b7WaqR1tJ9eTA7M606bksZP
+	KFmxOoPsWf/cLqDgKURsNSgHQRfPtjOds/xqWI9URtqTya5242JH2A==
+X-Google-Smtp-Source: AGHT+IGE2RuroQyGy1aaRRm1atUok6TisnAW63CFyKY/2LW9ya3J7mRQNvGGJcOaMRoGA7v/HGbS3Q==
+X-Received: by 2002:a05:622a:1649:b0:472:a26:744c with SMTP id d75a77b69052e-4720a267587mr77432021cf.12.1740056648283;
+        Thu, 20 Feb 2025 05:04:08 -0800 (PST)
+Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com. [209.85.219.47])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-47206db8041sm23133581cf.39.2025.02.20.05.04.07
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Feb 2025 05:03:11 -0800 (PST)
-Message-ID: <c77e60ea-0a5d-4e27-bdca-e5b4f5904781@baylibre.com>
-Date: Thu, 20 Feb 2025 14:03:11 +0100
+        Thu, 20 Feb 2025 05:04:07 -0800 (PST)
+Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-6dd01781b56so10799886d6.0;
+        Thu, 20 Feb 2025 05:04:07 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVkRRRDRkMhKKLjsT+3dFnTxXBHUMBHzhr3uebWZqr8TQ9C430hKbzFht6fySjl0jCdWCxb9exwewcUzPXV@vger.kernel.org, AJvYcCWblsNfupDfG7m5PXc+eU34p685lMQmJ71WgbAha8uaXWMDIWRaSYlYr87k5nnGEF+JEH82NHKa4QwbRGgbT9Ghig4=@vger.kernel.org, AJvYcCXkWoVp6oWYfJ5CY7PlPOyuXWqQ0dZGvNPytLMpCsL89aUydsukY9aV7g1wuuzk69Y9JnnQr3NyWIHV@vger.kernel.org
+X-Received: by 2002:a05:6214:2244:b0:6e6:591b:fa61 with SMTP id
+ 6a1803df08f44-6e66cc892ccmr359413246d6.7.1740056647522; Thu, 20 Feb 2025
+ 05:04:07 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] firmware: config: ti-sci: Default set to ARCH_K3 for the
- ti sci driver
-To: Nishanth Menon <nm@ti.com>
-Cc: Tero Kristo <kristo@kernel.org>, Andrew Davis <afd@ti.com>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250218-ti-firmware-v1-1-7a23aacfb9d3@baylibre.com>
- <20250218140537.wfagt3spwkcmc3uv@cushy>
-Content-Language: en-US
-From: Guillaume La Roque <glaroque@baylibre.com>
-In-Reply-To: <20250218140537.wfagt3spwkcmc3uv@cushy>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250217105354.551788-1-thierry.bultel.yh@bp.renesas.com> <20250217105354.551788-13-thierry.bultel.yh@bp.renesas.com>
+In-Reply-To: <20250217105354.551788-13-thierry.bultel.yh@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 20 Feb 2025 14:03:54 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdUE0OZrSXDhEDyVgis8wTQiAB6P_RrZYGSNMgGfTnbqwA@mail.gmail.com>
+X-Gm-Features: AWEUYZlffVkFKENb1UN5sgmQVBw_zHj8WBpcHEQxtdBCTKHWSHN3FWEQrj0J-tU
+Message-ID: <CAMuHMdUE0OZrSXDhEDyVgis8wTQiAB6P_RrZYGSNMgGfTnbqwA@mail.gmail.com>
+Subject: Re: [PATCH v2 12/13] arm64: dts: renesas: Add initial support for
+ renesas RZ/T2H eval board
+To: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
+Cc: thierry.bultel@linatsea.fr, Magnus Damm <magnus.damm@gmail.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Le 18/02/2025 à 15:05, Nishanth Menon a écrit :
-> On 13:57-20250218, Guillaume La Roque wrote:
->> Defaulting the build to ARCH_K3 for the TI SCI driver.
->>
->> Signed-off-by: Guillaume La Roque <glaroque@baylibre.com>
->> ---
->> Link to comment done on last serie [1] we come back on first version of
->> series[2] to not use imply but set deps on ARCH_K3 in driver directly.
->> An other patch will be sent to update Kconfig.platform when this patch
->> is merged.
-> It would be good to expand the commit message providing the rationale
-> for this.
+Hi Thierry,
 
-
-i will do , thanks for review
-
-
-Guillaume
-
+On Mon, 17 Feb 2025 at 11:55, Thierry Bultel
+<thierry.bultel.yh@bp.renesas.com> wrote:
+> Add the initial device tree for the RZ/T2H evaluation board.
 >
->> [1] https://lore.kernel.org/all/20250123-timodulemailboxsci-v4-1-b1a31b56f162@baylibre.com/
->> [2] https://lore.kernel.org/all/20221122202245.449198-4-nfrayer@baylibre.com/
->> ---
->>   drivers/firmware/Kconfig | 1 +
->>   1 file changed, 1 insertion(+)
->>
->> diff --git a/drivers/firmware/Kconfig b/drivers/firmware/Kconfig
->> index 9f35f69e0f9e..109abe063093 100644
->> --- a/drivers/firmware/Kconfig
->> +++ b/drivers/firmware/Kconfig
->> @@ -215,6 +215,7 @@ config SYSFB_SIMPLEFB
->>   config TI_SCI_PROTOCOL
->>   	tristate "TI System Control Interface (TISCI) Message Protocol"
->>   	depends on TI_MESSAGE_MANAGER
->> +	default ARCH_K3
->>   	help
->>   	  TI System Control Interface (TISCI) Message Protocol is used to manage
->>   	  compute systems such as ARM, DSP etc with the system controller in
->>
->> ---
->> base-commit: 2408a807bfc3f738850ef5ad5e3fd59d66168996
->> change-id: 20250218-ti-firmware-1b7c7f485e5a
->>
->> Best regards,
->> -- 
->> Guillaume La Roque <glaroque@baylibre.com>
->>
+> Signed-off-by: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
 
+Thanks for your patch!
+
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/renesas/r9a09g077m44-rzt2h-evk.dts
+> @@ -0,0 +1,35 @@
+> +// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +/*
+> + * Device Tree Source for the RZ/T2H Development EVK board
+> + *
+> + * Copyright (C) 2025 Renesas Electronics Corp.
+> + */
+> +
+> +/dts-v1/;
+> +
+> +#include "r9a09g077m44.dtsi"
+> +
+> +/ {
+> +       model = "Renesas Development EVK based on r9a09g077m44";
+> +       compatible = "renesas,r9a9g077m44-rzt2h-evk", "renesas,r9a9g077m44", "renesas,r9a9g077";
+
+s/r9a9g077/r9a09g077/
+
+"make dtbs_check" would have told you...
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
