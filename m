@@ -1,306 +1,184 @@
-Return-Path: <linux-kernel+bounces-523076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A936EA3D1B3
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 08:04:20 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC302A3D226
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 08:25:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A71BD16086E
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 07:04:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 848CB7A7D90
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 07:23:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A19141E493C;
-	Thu, 20 Feb 2025 07:04:04 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 722D81E7C08;
+	Thu, 20 Feb 2025 07:24:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="POnHLO5W"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A52A442C;
-	Thu, 20 Feb 2025 07:04:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 005BD1E379B
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 07:24:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740035044; cv=none; b=SS7kn2oxh3VFHC69rpczjJBNQE7EuKqNNEETK/s0qC/4K/nbISmMyOP1YOJ1TpyC0ezKsURUuGCUdnUg+9pFu38pYRt26PRk/8ObpLKeM9hTIKxAkQMEwjyvSpqgjEu0VEooKjomVCkkMQvMoJZ8qDhf3PRfPTFXFwS+HKj1w0Y=
+	t=1740036244; cv=none; b=F0zs1g91j+w/7fW/aQqGMehzweSbCgFOXc5vh65Nx8kAoOG/Eg3X5QEyFj1SvMTvKY3Mo6SGPjSG7iVfyvegeo0HW8P2hgmmMWJW/GLV8EiRenaNQQz5zl45bfJLJlcz20tFM7CA/1GJvzxERzoHpD1aEkqfC3kbLsTHAdhLhBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740035044; c=relaxed/simple;
-	bh=LOXR1dQimFYAdifZKByrUphuyfouU89hn63KL/R7M0s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=m9fnIpbpaNqAOv1rpJY6hOPsOUAzgiVyntVEM/DlnCjsc57qFRzWHXRTFhLLa4I954zZQkQLUBgfJofmxAsoEV8CilUkGafbbsshJYaCZgSdlCrA7XeenvSSfey6QIhLQ6dVGpkfffJcFYK51ZmcIO4PYc54x6FqWd4xIMb2oDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3F2FC4CED1;
-	Thu, 20 Feb 2025 07:03:59 +0000 (UTC)
-Message-ID: <f188dd6f-c98e-4a70-a1f0-3d205b924b78@xs4all.nl>
-Date: Thu, 20 Feb 2025 08:03:58 +0100
+	s=arc-20240116; t=1740036244; c=relaxed/simple;
+	bh=arzMLH0YZHuvvmCnkAprpxxZ1/9TwbSU+B8oTED0vfU=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:References; b=T6RMMXpLaPzUNMUrSjFi+5Uss5e5iyMuBrA1x6PVWU0ml/nbuBYNP45VFfw9zeWXUjaRCtW4s8wEaB44Y3QO/9LqSYCyLlFt0LKpM2v27F1MXYqRLJOVCyTEjUzh8zmZX1iRgB6hdiM8RWWluLJV12Z1PiwGlNltp7is7sGG0oU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=POnHLO5W; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250220072401epoutp037318d9ebe33e47d81e9a365a92ddeb99~l2b4Gpik10636106361epoutp03Q
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 07:24:01 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250220072401epoutp037318d9ebe33e47d81e9a365a92ddeb99~l2b4Gpik10636106361epoutp03Q
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1740036241;
+	bh=gzDZdnsCspvTZeSgVAXe6lE4XfFNW/yTAr5n04ZTuIU=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=POnHLO5WgHkpI7qD9I4z/8UdlGtVUc1Ep84rIiGQ3qW2YPwWY6s0N7ZG9VQXW64a+
+	 Z48AgTee3mgSgOv75trEe1Xd8MB/CzLGmhceecZUNehFUUKo4P6cWwI5fJ2TGBa+s8
+	 CTLvMNXux5uHDHLftn4y74PMhmB4KfwbpC5mLUj8=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
+	20250220072400epcas5p4e25dba29d9d99c5f3e15deb142702f77~l2b3dXuXz0862408624epcas5p4D;
+	Thu, 20 Feb 2025 07:24:00 +0000 (GMT)
+Received: from epsmgec5p1-new.samsung.com (unknown [182.195.38.179]) by
+	epsnrtp1.localdomain (Postfix) with ESMTP id 4Yz4WK18n8z4x9Q8; Thu, 20 Feb
+	2025 07:23:57 +0000 (GMT)
+Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
+	epsmgec5p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	3D.C8.29212.B88D6B76; Thu, 20 Feb 2025 16:23:55 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250220044123epcas5p1eb9f906067a6e2585f9e4598653857fd~l0N4iKwtB0786207862epcas5p10;
+	Thu, 20 Feb 2025 04:41:23 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20250220044123epsmtrp2866a5d8ce254ede85ffe37d9571754c6~l0N4gyFPY0490204902epsmtrp2I;
+	Thu, 20 Feb 2025 04:41:23 +0000 (GMT)
+X-AuditID: b6c32a50-801fa7000000721c-a0-67b6d88b6690
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	1A.ED.18949.372B6B76; Thu, 20 Feb 2025 13:41:23 +0900 (KST)
+Received: from cheetah.samsungds.net (unknown [107.109.115.53]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250220044120epsmtip1b0ee07b1118b6ede1390ae3fe28da517~l0N1vbGDN1683716837epsmtip1i;
+	Thu, 20 Feb 2025 04:41:20 +0000 (GMT)
+From: Swathi K S <swathi.ks@samsung.com>
+To: krzk+dt@kernel.org, andrew+netdev@lunn.ch, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, robh@kernel.org,
+	conor+dt@kernel.org, richardcochran@gmail.com, mcoquelin.stm32@gmail.com,
+	alexandre.torgue@foss.st.com
+Cc: rmk+kernel@armlinux.org.uk, swathi.ks@samsung.com,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	pankaj.dubey@samsung.com, ravi.patel@samsung.com, gost.dev@samsung.com
+Subject: [PATCH v7 0/2] net: stmmac: dwc-qos: Add FSD EQoS support
+Date: Thu, 20 Feb 2025 10:07:10 +0530
+Message-Id: <20250220043712.31966-1-swathi.ks@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA0VTe0xTVxjPubcv2GpuUPTYTdZc4wJk1NaVciC8ZM5cnDoWXZYQl9rAXXmU
+	29oWRZaJbgwdU6SKzgEiURgK41VLeQwIDwdEFkUoReJ0wHiIIu8RQAlradn++32/7/d9v+98
+	5xwe7vYbR8CLZfS0llGoSI4ry9zq5e3z42OzUtx3jkBL41cBKhqoYaNfGx5gKPdhKgvduPeA
+	jUbahriov6kWQ+PZzzioy5zBRsa/rWzUU5fLQenWYTbKWyllo7b8zWihcwKgm1XzXDQ4Xc9F
+	9/54jqPuiwYMrdbXcNF8ZT831J3qsT7CKdOdfowauVjFpWqzn3KpfGMiZSz+gUPdLUihamvm
+	MGqqsZdDZZiKAdXcKKHmjB4Rb0fGB8bQimhaK6SZKHV0LKMMIj85JP9I7isTS3wk/siPFDKK
+	BDqI3LM/wmdvrMp2VlJ4XKFKtFERCp2O3BkcqFUn6mlhjFqnDyJpTbRKI9WIdIoEXSKjFDG0
+	PkAiFu/ytQmPxsc0/Hwe17RuSBodN+KnwZu30oELDxJS2Le6yLFjN6IewNFv3dOBqw3PAmgZ
+	TAOOYAHAuZUqznrFtawRriPRAOBr8xLbEcwD2F2dCewqDuEJ+25Xr6k2EcsATl/qxO0BThRh
+	sHPAgttVG4kweDa3ALNjFrEDNppLWXbMJwLg8OQMy+H3HiypaForhkQHD76pyAGOxB74avV3
+	tgNvhC/aTVwHFsC5yQbnsHJYktHrbBQDny4bnHwIbLLk2niebSIvWF6300Fvg1ful63NgxMb
+	4IXXw5iD58OavHW8Ha68tDpbboXmwimnLQX/6ijlOjb5Jcy5XczJBNuy/3fIB6AYCGiNLkFJ
+	R/lqJD4MfeK/u4pSJxjB2iv2jqgBJRUrohaA8UALgDyc3MRPSzEp3fjRipPJtFYt1yaqaF0L
+	8LUtzYAL3KPUtm/A6OUSqb9YKpPJpP4fyiTkFv53talKN0Kp0NPxNK2htet1GM9FcBpDYJ/1
+	T4+4GTidNnHglKiZPLJ0uWX6QE/Pk6G22Mqzo188z/q4iB+X3nt30JB6deL9X6qZ6e6qr8w9
+	V0Ld3j2cXVc3mm6+5Rn09ZZXhR9MbT24W/Z4aOz6O7MXQPvYcMPsbraXKvbO0WdlLskDXmHC
+	yZlrpoFTxvO5gSk/CS0Vh1wjLbt6T9YvZKZ03MqS+ondm3ldYSEPRwvpyM3lOX0Gl/4X1d6+
+	90WW+uh/ysMJzwC/sW/mzw18XxSexAQ/kofksF7u7zpmelKwT97sn/xpfn7RsdXPyy7HtfpV
+	thAnmo+Hfda316NuomPHYX64380y9eKiV6hJcGY5qX02eOLI9bwzlwwkSxejkHjjWp3iX8JM
+	AaJOBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrGLMWRmVeSWpSXmKPExsWy7bCSnG7xpm3pBtMuilj8fDmN0WL5gx2s
+	Fmv2nmOymHO+hcVi/pFzrBZPjz1it7h5YCeTxctZ99gsLmzrY7XY9Pgaq8XlXXPYLLquPWG1
+	mPd3LavFsQViFt9Ov2G0WLT1C7vFww972C2OnHnBbHGpfyKTxf89O9gtvmy8ye4g6nH52kVm
+	jy0rbzJ5PO3fyu6xc9Zddo8Fm0o9Nq3qZPPYvKTeY+eOz0we7/ddZfPo27KK0ePgPkOPz5vk
+	AniiuGxSUnMyy1KL9O0SuDL2zuxhLjjMV/Hs5SbmBsY/3F2MnBwSAiYSM6Y8Ze9i5OIQEtjN
+	KPHp8U5GiISkxKfmqawQtrDEyn/PoYo+MUqsPDQXrIhNQEPi+ortYAkRgQ4miT1TTzKDOMwC
+	G5kkjl3azA5SJSzgJNE+ZwkTiM0ioCqxb9taFhCbV8BK4sm7jywQK+QlVm84wDyBkWcBI8Mq
+	RsnUguLc9NxiwwKjvNRyveLE3OLSvHS95PzcTYzgqNDS2sG4Z9UHvUOMTByMhxglOJiVRHjb
+	6rekC/GmJFZWpRblxxeV5qQWH2KU5mBREuf99ro3RUggPbEkNTs1tSC1CCbLxMEp1cCU93rV
+	qQMWM47VnvY4dHvPxBK+K69O2F9/rOt1Rq1ipn1h71qLi0tnXT07yXvzioMdAnFmt4wy6/n0
+	U5dHb95WcIllk4RXrMjrDbO4Gp96aR6brtujq3/fp7FZ8xKT+vGy9lmzMr2y1qkZdFxK/zNj
+	uajV/qsCv+d4li3MW10ToZL68UXTznd5u7Xud4RqZSX3r1zYXBw/ce7iOM2CiaYd9gabI7dZ
+	rMhadbpYWENrVd45b34rrxs9R3d0lrjFlM0NVQsWXCL9aO0fTpG05eunZt84wVL28MHXE3OO
+	zJ52OGC+zGXtg1q/UvQrWF4cn3HQZvaO7fLLZH5EBu779GOe+aeTplkuzxo3L1owy3vHZSWW
+	4oxEQy3mouJEAD8KrUj5AgAA
+X-CMS-MailID: 20250220044123epcas5p1eb9f906067a6e2585f9e4598653857fd
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250220044123epcas5p1eb9f906067a6e2585f9e4598653857fd
+References: <CGME20250220044123epcas5p1eb9f906067a6e2585f9e4598653857fd@epcas5p1.samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 4/6] media: platform: synopsys: Add support for HDMI
- input driver
-To: Dmitry Osipenko <dmitry.osipenko@collabora.com>,
- Shreeya Patel <shreeya.patel@collabora.com>, Heiko Stuebner
- <heiko@sntech.de>, Mauro Carvalho Chehab <mchehab@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, jose.abreu@synopsys.com,
- nelson.costa@synopsys.com, shawn.wen@rock-chips.com,
- nicolas.dufresne@collabora.com,
- Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc: kernel@collabora.com, linux-media@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-rockchip@lists.infradead.org, Tim Surber <me@timsurber.de>
-References: <20250218184439.28648-1-dmitry.osipenko@collabora.com>
- <20250218184439.28648-5-dmitry.osipenko@collabora.com>
- <f32a0011-1653-48dd-9061-047f9009310b@xs4all.nl>
- <3fcdbd35-9ff2-4159-8076-98eefd6ed8c7@collabora.com>
-Content-Language: en-US, nl
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Autocrypt: addr=hverkuil@xs4all.nl; keydata=
- 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
-In-Reply-To: <3fcdbd35-9ff2-4159-8076-98eefd6ed8c7@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-Hi Dmitry,
+FSD platform has two instances of EQoS IP, one is in FSYS0 block and
+another one is in PERIC block. This patch series add required DT binding
+and platform driver specific changes for the same.
 
-On 19/02/2025 19:35, Dmitry Osipenko wrote:
-> Hi Hans,
-> 
-> Thank you very much for the review!
-> 
-> On 2/19/25 12:11, Hans Verkuil wrote:
->> Hi Dmitry,
->>
->> More review comments. Some are trivial, but the real problem is that the 5V/HPD
->> handling is really confusing and, from what I can tell, incorrect in places.
->>
->> I suspect that there are some misunderstandings on how this is supposed to
->> work. I've tried to explain it in my comments, but feel free to contact me if
->> anything is still unclear.
->>
-> ...
->>> +#define EDID_NUM_BLOCKS_MAX				2
->>
->> Is this indeed the maximum number of supported EDID blocks?
->> These days 4 EDID blocks is typically the maximum. If the hardware
->> supports it, then I recommend implementing support for 4 EDID blocks.
->>
->> If it really only supports 2 blocks, then add a comment stating that
->> this is a HW limitation.
-> 
-> Good catch. Hardware supports 4 EDID blocks, will change in v8.
+Changes since v1:
+1. Updated dwc_eqos_setup_rxclock() function as per the review comments
+given by Andrew.
 
-Ah, good. Make sure you test this, both writing 4 blocks to it and read it
-from a transmitter. With v4l2-ctl --set-edid type=displayport-with-cta861
-sets 3 blocks, and type=hdmi-4k-600mhz-with-displayid sets 4 blocks. So test
-with both variants.
+Changes since v2:
+1. Addressed all the review comments suggested by Krzysztof with respect to
+DT binding file.
+2. Added SOB Swathi.
 
-> 
-> ...
->>> +static int hdmirx_subscribe_event(struct v4l2_fh *fh,
->>> +				  const struct v4l2_event_subscription *sub)
->>> +{
->>> +	switch (sub->type) {
->>> +	case V4L2_EVENT_SOURCE_CHANGE:
->>> +		if (fh->vdev->vfl_dir == VFL_DIR_RX)
->>
->> This is weird, the direction is always RX, so can't you just drop this test?
-> 
-> Suppose this code was copied from another driver, will drop.
-> 
-> ...
->>> +static int hdmirx_set_edid(struct file *file, void *fh, struct v4l2_edid *edid)
->>> +{
->>> +	struct hdmirx_stream *stream = video_drvdata(file);
->>> +	struct snps_hdmirx_dev *hdmirx_dev = stream->hdmirx_dev;
->>> +	u16 phys_addr;
->>> +	int ret = 0;
->>> +
->>> +	if (edid->pad)
->>> +		return -EINVAL;
->>> +
->>> +	if (edid->start_block)
->>> +		return -EINVAL;
->>> +
->>> +	if (edid->blocks > EDID_NUM_BLOCKS_MAX) {
->>> +		edid->blocks = EDID_NUM_BLOCKS_MAX;
->>> +		return -E2BIG;
->>> +	}
->>> +
->>> +	hdmirx_disable_irq(hdmirx_dev->dev);
->>> +
->>> +	if (!edid->blocks) {
->>> +		cec_phys_addr_invalidate(hdmirx_dev->cec->adap);
->>> +		hdmirx_dev->edid_blocks_written = 0;
->>> +
->>> +		hdmirx_dev->hpd_pull_low = true;
->>> +
->>> +		if (tx_5v_power_present(hdmirx_dev))
->>> +			hdmirx_plugout(hdmirx_dev);
->>> +		else
->>> +			hdmirx_hpd_ctrl(hdmirx_dev, false);
->>> +	} else {
->>> +		phys_addr = cec_get_edid_phys_addr(edid->edid,
->>> +						   edid->blocks * 128, NULL);
->>> +		ret = v4l2_phys_addr_validate(phys_addr, &phys_addr, NULL);
->>> +		if (ret)
->>> +			goto out;
->>> +
->>> +		if (tx_5v_power_present(hdmirx_dev))
->>> +			hdmirx_plugout(hdmirx_dev);
->>> +
->>> +		hdmirx_dev->hpd_pull_low = false;
->>> +		hdmirx_hpd_ctrl(hdmirx_dev, false);
->>> +		hdmirx_write_edid(hdmirx_dev, edid);
->>> +	}
->>> +out:
->>> +	hdmirx_enable_irq(hdmirx_dev->dev);
->>
->> The way the HPD is handled is really confusing in the code. I had to dig through
->> the driver code to discover that the HPD is enabled via hdmirx_enable_irq(). But
->> normally interrupts have nothing to do with the HPD.
->>
->> The HPD is really only controlled by whether there is an EDID or not, and optionally
->> whether 5V is high or not. The only reason for pulling the HPD low if 5V is low is
->> to save a bit of power: if nothing is connected, then there is no need to pull the HPD
->> high, after all, nobody is listening to it.
->>
->> But this is typically entirely separate from interrupts.
->>
->> The 5V decides whether there is a video source or not, so if it goes low, then you
->> stop streaming. The HPD tells the video source if there is an EDID or not. But that
->> is independent of video streaming. Updating the EDID while the source is sending
->> video shouldn't interrupt video capture. Most likely the source will detect an EDID
->> change, parse the new EDID and then it might decide to stop streaming and reconfigure,
->> or just continue streaming.
->>
->> The code feels like you are trying to be smart, when it is really just a fairly
->> dumb mechanism.
->>
->> I think this should be rewritten, unless there are some odd hardware constraints.
->> In which case that should be documented.
-> 
-> Thanks a lot for the clarification! The HPD logic was borrowed from the downstream driver, will try to change it for v8. I'm not aware about hardware constraints and TRM suggests that driving HPD seprately from 5v should work fine, will see how it will work in practice.
-> 
-> ...
->>> +static int hdmirx_g_parm(struct file *file, void *priv,
->>> +			 struct v4l2_streamparm *parm)
->>> +{
->>> +	struct hdmirx_stream *stream = video_drvdata(file);
->>> +	struct snps_hdmirx_dev *hdmirx_dev = stream->hdmirx_dev;
->>> +	struct v4l2_fract fps;
->>> +
->>> +	if (parm->type != V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE)
->>> +		return -EINVAL;
->>> +
->>> +	fps = v4l2_calc_timeperframe(&hdmirx_dev->timings);
->>> +	parm->parm.capture.timeperframe.numerator = fps.numerator;
->>> +	parm->parm.capture.timeperframe.denominator = fps.denominator;
->>
->> You can just write:
->>
->> 	parm->parm.capture.timeperframe = v4l2_calc_timeperframe(&hdmirx_dev->timings);
-> 
-> Ack
-> 
-> ...
->>> +static void hdmirx_plugin(struct snps_hdmirx_dev *hdmirx_dev)
->>> +{
->>> +	hdmirx_submodule_init(hdmirx_dev);
->>> +	hdmirx_update_bits(hdmirx_dev, SCDC_CONFIG, POWERPROVIDED,
->>> +			   POWERPROVIDED);
->>> +	hdmirx_hpd_ctrl(hdmirx_dev, true);
->>
->> Just because the 5V appeared, it doesn't mean that the HPD should
->> go high. That depends on whether there is an EDID or not.
->>
->> As I said above, the whole 5V/HPD handling seems confused in this driver.
-> 
-> In v6 I added 'hpd_pull_low' variable that force-disables HPD if there is no EDID. Hence, this hdmirx_hpd_ctrl() call doesn't enable HPD without EDID. I'll remove this call in v8 if driving HPD independently from 5v status will work fine.
-> 
-> static void hdmirx_hpd_ctrl(struct snps_hdmirx_dev *hdmirx_dev, bool en)
-> {
-> ...
-> 	if (hdmirx_dev->hpd_pull_low && en)
-> 		return;
->         ^^^^
-> 
-> ...
->>> +static void hdmirx_delayed_work_res_change(struct work_struct *work)
->>> +{
->>> +	struct snps_hdmirx_dev *hdmirx_dev;
->>> +	bool plugin;
->>> +
->>> +	hdmirx_dev = container_of(work, struct snps_hdmirx_dev,
->>> +				  delayed_work_res_change.work);
->>> +
->>> +	mutex_lock(&hdmirx_dev->work_lock);
->>> +	plugin = tx_5v_power_present(hdmirx_dev);
->>> +	v4l2_dbg(1, debug, &hdmirx_dev->v4l2_dev, "%s: plugin:%d\n",
->>> +		 __func__, plugin);
->>> +	if (plugin) {
->>> +		hdmirx_interrupts_setup(hdmirx_dev, false);
->>> +		hdmirx_submodule_init(hdmirx_dev);
->>> +		hdmirx_update_bits(hdmirx_dev, SCDC_CONFIG, POWERPROVIDED,
->>> +				   POWERPROVIDED);
->>> +		hdmirx_hpd_ctrl(hdmirx_dev, true);
->>> +		hdmirx_phy_config(hdmirx_dev);
->>> +
->>> +		if (hdmirx_wait_signal_lock(hdmirx_dev)) {
->>> +			hdmirx_plugout(hdmirx_dev);
->>
->> plugout() pulls the HPD low, but why? That has nothing to do with the signal lock.
->>
->> You need to take a good look at the 5V/HPD handling, this isn't right.
->>
->> Feel free to ask questions if you are not clear on how it should behave.
-> 
-> Again thanks a lot for the review, very appreciate! Will contact you if will become necessary.
-> 
+Changes since v3:
+1. Avoided using alias-id to configure the HW.
+2. Modified the clock implementation.
 
-Regards,
+Changes since v4:
+1. Avoided switching between internal and external clocks for every open/
+close.
+2. Addressed the review comments on DT bindings
 
-	Hans
+Changes since v5:
+1. Addressed the review comment on correcting the intendation.
+2. Corrected the compatible name in dt-binding file.
+3. Listed and described the clocks in dt-binding.
+4. Modified FSD probe as per the changes in the refactoring patch given
+below: https://lore.kernel.org/netdev/20250207121849.55815-1-swathi.ks@samsung.com/
+
+Changes since v6:
+1. Addressed review comments by Krzysztof on dt-binding file regarding
+clock-names property
+2. Corrected indentation issue in dt-binding
+3. Addressed Andrew's comment on listing phy-modes.
+
+Here is the link to v6 patches for reference:
+https://lore.kernel.org/netdev/20250213044624.37334-1-swathi.ks@samsung.com/
+
+Swathi K S (2):
+  dt-bindings: net: Add FSD EQoS device tree bindings
+  net: stmmac: dwc-qos: Add FSD EQoS support
+
+ .../devicetree/bindings/net/snps,dwmac.yaml   |   5 +-
+ .../bindings/net/tesla,fsd-ethqos.yaml        | 115 ++++++++++++++++++
+ .../stmicro/stmmac/dwmac-dwc-qos-eth.c        |  28 +++++
+ 3 files changed, 146 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/net/tesla,fsd-ethqos.yaml
+
+-- 
+2.17.1
+
 
