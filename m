@@ -1,139 +1,146 @@
-Return-Path: <linux-kernel+bounces-523793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E96E6A3DB53
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:31:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86459A3DB58
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:31:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC3AC17AC9A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:31:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81A5D19C139F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:31:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9895156C69;
-	Thu, 20 Feb 2025 13:31:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C71DD1F942D;
+	Thu, 20 Feb 2025 13:31:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="aBb4mWv+"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="bwOJo+lI"
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35E8E1EEE9
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 13:31:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 874CE288A2;
+	Thu, 20 Feb 2025 13:31:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740058285; cv=none; b=NBP2J4f3Xvl5p6AkVKYm0BYeWs1kr3BKS5OTw9Ir2Y3CRnexBHtwmoDI1+DKT5YV9kkAP0kP7vfO0C8E/QdzvTTRrkvwFoL0jwA0yTEMMDOCncFdt7l4haguojIHsS6b6XSp8N747bJYn1RAjybVOwLesC0RWaYLJcvarcp5WVw=
+	t=1740058297; cv=none; b=SVqaEylj6hs18AOlJnsNw9ESrXtiGNQFwJQM89K+kGbO343qBK3BOVJRYkreYCatBAJ3zAQMuK37IBY5iM7iYmtY6IntPCSVPhC8PcPEyiJemwTNXnPNQYlFNjtC8mfDayF4etWS7AXSkRIWMhVohdjG0OCiz3o7+Xnhqi3O/Xk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740058285; c=relaxed/simple;
-	bh=OsHb5G0+2rMCZGg2S0+42ZupXEzWYeN/txSWTxscXrI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Ecv3+ZRD+SO/HJg8NSlYB77tkjCI2J7Ng4Ked+joLl4Y2j2Gvmry0re2nbNOVDQswmetXsIGF1VBH6klPwkvFUAfOvD8/6qC07BLR7uULHhJS1sfPyjBqnTQoutl+SRLS4jpJuhpzGf7MEOkqoZfyEsMo9ytAfbaBy9JKQGuR0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=aBb4mWv+; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-439946a49e1so5898815e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 05:31:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1740058280; x=1740663080; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=wfFNcyRJeXHST09oQCOS8V/CvYNh9zyz+0qrUq7HqK0=;
-        b=aBb4mWv+cW6xOkk++Q/E81celon8VGvuLI2BQM6/22dPTcXz+f9AIisgyPreHRXJCZ
-         8YOXd4EHQXHCKnnhtRltQBGSilE5jFNavGoRDlDqb5tBP/QavBxJfKMb7dYpv2Sj3TLR
-         v+fm5iNEXyruSUrGwIaygvTvRE8/dBPo5qbwZSk5Z01reAkFvHiGnTD2b1SNy1I46lmw
-         6xMqOl4hoTO67BMA7OQNlIzPnBI4lUeTb+kDfLayvgitzr2JmfEB8Q60QxtbztEJ5w+u
-         RYcPAu77HIezbCetQkJjyQiPZuCqoFV5WQwAJHJz+RiLyhWwt6ZFJrBbvUATq2GNyi4a
-         wrwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740058280; x=1740663080;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wfFNcyRJeXHST09oQCOS8V/CvYNh9zyz+0qrUq7HqK0=;
-        b=KY2CyGQFc8llyLWHHs+Uznz+DLclNJWC5COiclyWYjQTvNtMkmZnTss8EH+9FiH7kh
-         0FtaRDgWFkwPiqpoy0NH03rHPQC5NbdbNoBbxBfwA4D7ceS372eJnb0CcyqpnO1FhiAX
-         ETxvSDR+Fav2SvsIqxm5dEfl2I0fZm5KS5lZImFH451ChOacRAMVik6uKf0S3oDb6iEN
-         QZ0tVR4fWzWLDqodgn16WS9jlVfVzurJioyu0cKf50Oi9zpNofB7o/pTEcMTMAC8Ezq/
-         +a67dB58cyBiOW4X00QJtU2zbnu0RM6wn153jLcYpIAXIoJw8rDR7Rop7/uE+d3y/DAE
-         TfSA==
-X-Forwarded-Encrypted: i=1; AJvYcCVlD+goO6BqJLcZf4UkP9MPN8bfxTpcUrcu8OajmJh/La2nxzQ3YmMHhWU1Rbzb7FnS2baPQ89XsFzkV+g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFMCTrCfB3QXcwFP+2goSc1fP3koycH2oSV9SBbfGPjQg0oD7g
-	tDxp/ev6FYjT31iTIxbNLk2Qn/uLrfKM1vZVPK1D9tUhyW62fX6w4vL3raD1Lr20egZD9k9UrM7
-	J
-X-Gm-Gg: ASbGncsEd1A9X434x0pNsJ+NazOB05QjTnZiOL4vTTkJqqoICoRR71q2QteJ1QZhsQw
-	dChW+JQs3gx8TPQYh38VfxolTKLOoWNFo81l1b/rLY0dqfU7VJSo6MAkL2BXANUEdLIuFpw0hNT
-	o1MmjlzFDoixnsaZ4sk+XbgeVcrRfsQGcr/g2X2Z36UzeH2uJ1FFKRtz1CrQQCebtx3f4wvSSeR
-	hIuyD757LY7aCL62+bmbfOMeRkFHpIxCMsxHBsOQZ0apzTJJ8zZRBL3E+lQo08ypDIXTS1kL4jh
-	ldXMdCRvBJFn9xZBG1A=
-X-Google-Smtp-Source: AGHT+IGIKJFwwjyzaNa7wDD90Jw72yRRqFrFSUBS40JKnJJhsaVDxE8tbUlYfhfiI5/ZtsFFu7lyEQ==
-X-Received: by 2002:a05:600c:19ce:b0:439:873a:111b with SMTP id 5b1f17b1804b1-43999da6f3emr77412745e9.12.1740058280223;
-        Thu, 20 Feb 2025 05:31:20 -0800 (PST)
-Received: from [127.0.1.1] ([2a01:e0a:e50:3860:4c32:9600:f4cc:3400])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4395a1aa7f3sm246757115e9.29.2025.02.20.05.31.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Feb 2025 05:31:19 -0800 (PST)
-From: Guillaume La Roque <glaroque@baylibre.com>
-Date: Thu, 20 Feb 2025 14:31:17 +0100
-Subject: [PATCH v2] firmware: config: ti-sci: Default set to ARCH_K3 for
- the ti sci driver
+	s=arc-20240116; t=1740058297; c=relaxed/simple;
+	bh=+BLHUOTGg4Xc2Cd4lVLcPAZ39MPOBrnJ+minoVo+LZE=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:From:Subject:Cc:
+	 References:In-Reply-To; b=rWrekwomzUAYgjCJtWLfmp+0K9uvAY8AHWEPdVUkVIGdbBw/7VBg2YXvtUyVrAfrrYfM/XbACMqzfZ/2+H3Q8nKCsF9WjiImDmMKczpmwxh3ge1L8NIRaf+6wyBENL4aLyaXhY+ECVFCTlr5ZdyIpW/Wq8BlOtA5B3U2otnA3jg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=bwOJo+lI; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 7AB664329B;
+	Thu, 20 Feb 2025 13:31:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1740058292;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CkUjsmd0pVsmitb0WeguhFZha5DdicaUilLQLg4YgVA=;
+	b=bwOJo+lIPQFFU574qPjJZ2V7C45r99lHmH2oSTCQ2yKnmcrL2Ei5+4CvHysZrdIs9saOar
+	0hDeIGSy//DHPp3fwPKI35rErylX5qWTujxuA9uujmRaSFHNB8I3iZ78v4ejX8abfDncsE
+	ND4CHpeaYnGqrihatO3n4LD18RCIAZ2VTdw7y0vTO+j8/y2izOyzFY06+zPUsiAvMJUgbh
+	tA+98IWix4u2J8Tag8BnLuU+B52JVvCIFQLfQ10CdgpV70C53w8MXvhnyCuVnVo7lS9g6N
+	OFPRKsw/H0UH9RiE2Kbz1K/omGs8BqSwljQnuT+Br0X2ODuDB+a5elIJK00C4A==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250220-ti-firmware-v2-1-ff26883c6ce9@baylibre.com>
-X-B4-Tracking: v=1; b=H4sIAKQut2cC/23Myw6CMBCF4Vchs7aGFpuiK9/DsJiWqUwil0wJS
- gjvbmXt8j/J+TZIJEwJbsUGQgsnHocc5lRA6HB4kuI2N5jS2NLoWs2sIkv/RiGlvQsuXmpLFiE
- /JqHIn0N7NLk7TvMo64Ev+rf+dxattHJoKsQQ/bWt7h7XF3uhcxh7aPZ9/wJ2lXe4qQAAAA==
-To: Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>
-Cc: Andrew Davis <afd@ti.com>, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, Guillaume La Roque <glaroque@baylibre.com>
-X-Mailer: b4 0.14.1
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 20 Feb 2025 14:31:29 +0100
+Message-Id: <D7XB6MXRYVLY.3RM4EJEWD1IQM@bootlin.com>
+To: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
+From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+Subject: Re: [PATCH 0/2] driver core: platform: avoid use-after-free on
+ device name
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, "Danilo Krummrich"
+ <dakr@kernel.org>, "Rob Herring" <robh@kernel.org>, "Saravana Kannan"
+ <saravanak@google.com>, "David S. Miller" <davem@davemloft.net>, "Grant
+ Likely" <grant.likely@secretlab.ca>, <linux-kernel@vger.kernel.org>,
+ <devicetree@vger.kernel.org>, "Liam Girdwood" <lgirdwood@gmail.com>, "Mark
+ Brown" <broonie@kernel.org>, "Jaroslav Kysela" <perex@perex.cz>, "Takashi
+ Iwai" <tiwai@suse.com>, "Binbin Zhou" <zhoubinbin@loongson.cn>,
+ <linux-sound@vger.kernel.org>, "Vladimir Kondratiev"
+ <vladimir.kondratiev@mobileye.com>, =?utf-8?q?Gr=C3=A9gory_Clement?=
+ <gregory.clement@bootlin.com>, "Thomas Petazzoni"
+ <thomas.petazzoni@bootlin.com>, "Tawfik Bayouk"
+ <tawfik.bayouk@mobileye.com>, <stable@vger.kernel.org>
+X-Mailer: aerc 0.20.1-0-g2ecb8770224a
+References: <20250218-pdev-uaf-v1-0-5ea1a0d3aba0@bootlin.com>
+ <2025022005-affluent-hardcore-c595@gregkh>
+In-Reply-To: <2025022005-affluent-hardcore-c595@gregkh>
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeijedviecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepggfgtgffkffvhffuvefofhgjsehtqhertdertdejnecuhfhrohhmpefvhhorohcunfgvsghruhhnuceothhhvghordhlvggsrhhunhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgedvffeftddukedvffffjeehvedtueeuteefffeijeeiteelgefgfeeihfduheeinecuffhomhgrihhnpehkvghrnhgvlhdrohhrghdpsghoohhtlhhinhdrtghomhenucfkphepvdgrtddumegtsgdugeemheehieemjegrtddtmeeiieegsgemfhdtfhhfmehfvgdutdemlegvfhgunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgdugeemheehieemjegrtddtmeeiieegsgemfhdtfhhfmehfvgdutdemlegvfhgupdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpehthhgvohdrlhgvsghruhhnsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvtddprhgtphhtthhopehgrhgvghhkhheslhhinhhugihfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehrrghfrggvlheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggrkhhrsehkvghrn
+ hgvlhdrohhrghdprhgtphhtthhopehrohgshheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshgrrhgrvhgrnhgrkhesghhoohhglhgvrdgtohhmpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopehgrhgrnhhtrdhlihhkvghlhiesshgvtghrvghtlhgrsgdrtggrpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-GND-Sasl: theo.lebrun@bootlin.com
 
-With ARCH_K3=y we cannot enable TI_SCI_PROTOCOL=m because
-ARCH_K3 selects TI_SCI_PROTOCOL.
+Hello Greg,
 
-Modify the logic to enable TI_SCI_PROTOCOL by default when ARCH_K3=y
-allowing us to submit a future patch to remove select on ARCH_K3 without
-breaking existing users.
+On Thu Feb 20, 2025 at 1:41 PM CET, Greg Kroah-Hartman wrote:
+> On Tue, Feb 18, 2025 at 12:00:11PM +0100, Th=C3=A9o Lebrun wrote:
+>> The use-after-free bug appears when:
+>>  - A platform device is created from OF, by of_device_add();
+>>  - The same device's name is changed afterwards using dev_set_name(),
+>>    by its probe for example.
+>>=20
+>> Out of the 37 drivers that deal with platform devices and do a
+>> dev_set_name() call, only one might be affected. That driver is
+>> loongson-i2s-plat [0]. All other dev_set_name() calls are on children
+>> devices created on the spot. The issue was found on downstream kernels
+>> and we don't have what it takes to test loongson-i2s-plat.
+>>=20
+>> Note: loongson-i2s-plat maintainers are CCed.
+>>=20
+>>    =E2=9F=A9 # Finding potential trouble-makers:
+>>    =E2=9F=A9 git grep -l 'struct platform_device' | xargs grep -l dev_se=
+t_name
+>>=20
+>> The solution proposed is to add a flag to platform_device that tells if
+>> it is responsible for freeing its name. We can then duplicate the
+>> device name inside of_device_add() instead of copying the pointer.
+>
+> Ick.
+>
+>> What is done elsewhere?
+>>  - Platform bus code does a copy of the argument name that is stored
+>>    alongside the struct platform_device; see platform_device_alloc()[1].
+>>  - Other busses duplicate the device name; either through a dynamic
+>>    allocation [2] or through an array embedded inside devices [3].
+>>  - Some busses don't have a separate name; when they want a name they
+>>    take it from the device [4].
+>
+> Really ick.
+>
+> Let's do the right thing here and just get rid of the name pointer
+> entirely in struct platform_device please.  Isn't that the correct
+> thing that way the driver core logic will work properly for all of this.
 
-Signed-off-by: Guillaume La Roque <glaroque@baylibre.com>
----
-Link to comment done on last serie [1] we come back on first version of
-series[2] to not use imply but set deps on ARCH_K3 in driver directly.
-An other patch will be sent to update Kconfig.platform when this patch
-is merged.
+I would agree, if it wasn't for this consideration that is found in the
+commit message [0]:
 
-[1] https://lore.kernel.org/all/20250123-timodulemailboxsci-v4-1-b1a31b56f162@baylibre.com/
-[2] https://lore.kernel.org/all/20221122202245.449198-4-nfrayer@baylibre.com/
----
-Changes in v2:
-- Update commit message.
-- Link to v1: https://lore.kernel.org/r/20250218-ti-firmware-v1-1-7a23aacfb9d3@baylibre.com
----
- drivers/firmware/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+> It is important to duplicate! pdev->name must not change to make sure
+> the platform_match() return value is stable over time. If we updated
+> pdev->name alongside dev->name, once a device probes and changes its
+> name then the platform_match() return value would change.
 
-diff --git a/drivers/firmware/Kconfig b/drivers/firmware/Kconfig
-index 9f35f69e0f9e..109abe063093 100644
---- a/drivers/firmware/Kconfig
-+++ b/drivers/firmware/Kconfig
-@@ -215,6 +215,7 @@ config SYSFB_SIMPLEFB
- config TI_SCI_PROTOCOL
- 	tristate "TI System Control Interface (TISCI) Message Protocol"
- 	depends on TI_MESSAGE_MANAGER
-+	default ARCH_K3
- 	help
- 	  TI System Control Interface (TISCI) Message Protocol is used to manage
- 	  compute systems such as ARM, DSP etc with the system controller in
+I'd be fine sending a V2 that removes the field *and the fallback* [1],
+but I don't have the full scope in mind to know what would become broken.
 
----
-base-commit: 2408a807bfc3f738850ef5ad5e3fd59d66168996
-change-id: 20250218-ti-firmware-1b7c7f485e5a
+[0]: https://lore.kernel.org/lkml/20250218-pdev-uaf-v1-2-5ea1a0d3aba0@bootl=
+in.com/
+[1]: https://elixir.bootlin.com/linux/v6.13.3/source/drivers/base/platform.=
+c#L1357
 
-Best regards,
--- 
-Guillaume La Roque <glaroque@baylibre.com>
+Regards,
 
+--
+Th=C3=A9o Lebrun, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
