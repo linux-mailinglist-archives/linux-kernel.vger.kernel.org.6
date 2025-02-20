@@ -1,99 +1,116 @@
-Return-Path: <linux-kernel+bounces-524043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4259CA3DE5B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:25:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07E89A3DE61
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:26:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1533516A418
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:23:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74816188B78C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:23:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8DD41FDA8E;
-	Thu, 20 Feb 2025 15:23:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="C+pbWdUp"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3006C1FECA3;
+	Thu, 20 Feb 2025 15:23:38 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 915521D5CFB;
-	Thu, 20 Feb 2025 15:23:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8D8F61FCE;
+	Thu, 20 Feb 2025 15:23:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740065010; cv=none; b=Ysnz+SrXwLQIDZ/7I2El8EXJ8gTE+KsIHvrXtzR+mH3KAFN3nFP8jCSYZPeMtB0i4D2NplDBGePgxKEmG8ph5HtDQFKRgZz6dCgtCi7MhcJj9dl4Xi01lGBVPtJF4JILvN58dZSQCqUultmCz2ckUpwrjYz/xnZSjQEI2DWreYs=
+	t=1740065017; cv=none; b=okxCgWUdYsdc6E5rottsKSQY8a7pMBNzWFyLbb/yu/V26FgczeTfZDrglWVNhpJQrPVFtkm0vLrDzEcv+9j9H0UVTajZdt0GcAlP5k+f6y4HM3p/NzluWwierUQWkT5LDewD42FEBYdd0tcRC5+gQpSnH1T4GC/mV8XjSJUg464=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740065010; c=relaxed/simple;
-	bh=857IyU52xW+51h1kUegUUYCv0nuT4T0ZRmSW+2m+clk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H/Em49y9roaULMoWqX/3gxophG5m2EY1Duyrrj1lQAnlinjrMKxcVBJlx0Rs8YjEesMV5fod6ntz8UICC7vBbwtqLv/j4JEp904BmvrBdTv524//X1Hkbz/GlUXEurRN0r3FZmq/ftQwBJg+B/trAp4JednQ5zkMp97OJh4t6s8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=C+pbWdUp; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=QHgJz38bfp6rGW5Vo/Ip3UFCsgToQN+AI1DehaCYgGw=; b=C+pbWdUpusHCcABHrf4mEFpvSl
-	Ct2Eo2ufrgz7aCjTc6iX/r9B/1CG2nwXezYc66eyQB+GOzsc+b3q6Sz9E6XyKRX/cJ3Rge6kYIpFx
-	ORFt+wE+Q6gzwREeHYpuWEY+sT9QexH1wioDE6+SJTuMZCoLlPrgc/xu0X8LpRDcMBUM=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tl8OY-00G0Dd-RG; Thu, 20 Feb 2025 16:23:22 +0100
-Date: Thu, 20 Feb 2025 16:23:22 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Lukasz Majewski <lukma@denx.de>
-Cc: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-clk@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH] arm: clk: Add ETH switch clock description for vf610 SoC
-Message-ID: <f68ebe15-69ee-428a-8079-8bb05d7aa21b@lunn.ch>
-References: <20250219114936.3546530-1-lukma@denx.de>
- <3cebe152-6326-454c-9da6-5cf5a64f71c9@lunn.ch>
- <20250219233802.20ec53e5@wsk>
- <5a9d9eef-f2ca-4168-aca4-4419dcfcacb6@lunn.ch>
- <20250220154826.3455b15e@wsk>
+	s=arc-20240116; t=1740065017; c=relaxed/simple;
+	bh=U68v7cOKxOImHE/lUvUVXUiZlzQLpKd7IKB/KFsKEj4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HC1mf08q5zsgGpDdx18R5j46QT9fmT/kuGFkCCO/sUcxrC0z1ypaY0xG8ntOuR8mq5X1edN+zPncrn6kRNPrkxDg1nYWBKZbZy8q8JDdnXvDq2LEG07O19onCdvJqyB3gk/0Rq9PHG19iVhhr3VDeFqdWEKlwpaTRDuwygKxgnc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2931C4CED1;
+	Thu, 20 Feb 2025 15:23:34 +0000 (UTC)
+Message-ID: <e794c047-ab0e-4589-a1d2-0f73b813eacc@xs4all.nl>
+Date: Thu, 20 Feb 2025 16:23:33 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250220154826.3455b15e@wsk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 4/4] media: venus: hfi: add a check to handle OOB in
+ sfr region
+Content-Language: en-US
+To: Vikash Garodia <quic_vgarodia@quicinc.com>,
+ Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Tomasz Figa
+ <tfiga@chromium.org>, Hans Verkuil <hans.verkuil@cisco.com>
+Cc: Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+ Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, linux-media@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+References: <20250207-venus_oob_2-v4-0-522da0b68b22@quicinc.com>
+ <20250207-venus_oob_2-v4-4-522da0b68b22@quicinc.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+In-Reply-To: <20250207-venus_oob_2-v4-4-522da0b68b22@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-> > Seems like a reasonable compromise. You would only load this driver if
-> > you intend to make use of the switch...
+On 2/7/25 09:24, Vikash Garodia wrote:
+> sfr->buf_size is in shared memory and can be modified by malicious user.
+> OOB write is possible when the size is made higher than actual sfr data
+> buffer. Cap the size to allocated size for such cases.
 > 
-> Yes, the main use case would be the switch (after bridge ... command
-> called).
+> Cc: stable@vger.kernel.org
+> Fixes: d96d3f30c0f2 ("[media] media: venus: hfi: add Venus HFI files")
+> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> Signed-off-by: Vikash Garodia <quic_vgarodia@quicinc.com>
+> ---
+>  drivers/media/platform/qcom/venus/hfi_venus.c | 9 +++++++--
+>  1 file changed, 7 insertions(+), 2 deletions(-)
 > 
-> However, until then we shall? have port separation.
+> diff --git a/drivers/media/platform/qcom/venus/hfi_venus.c b/drivers/media/platform/qcom/venus/hfi_venus.c
+> index 6b615270c5dae470c6fad408c9b5bc037883e56e..c3113420d266e61fcab44688580288d7408b50f4 100644
+> --- a/drivers/media/platform/qcom/venus/hfi_venus.c
+> +++ b/drivers/media/platform/qcom/venus/hfi_venus.c
+> @@ -1041,18 +1041,23 @@ static void venus_sfr_print(struct venus_hfi_device *hdev)
+>  {
+>  	struct device *dev = hdev->core->dev;
+>  	struct hfi_sfr *sfr = hdev->sfr.kva;
+> +	u32 size;
+>  	void *p;
+>  
+>  	if (!sfr)
+>  		return;
+>  
+> -	p = memchr(sfr->data, '\0', sfr->buf_size);
+> +	size = sfr->buf_size;
 
-Yes. The model Linux uses is that the ports are individual interfaces
-to start with. We should keep to that model.
+If this is ever 0...
 
-> > MoreThanIP is now part of Synopsys. I wounder if this IP now exists in
-> > other SoCs? The press release however suggests Synopsys was
-> > interesting in the high speed interfaces, not a two ports Fast
-> > Ethernet switch.
+> +	if (size > ALIGNED_SFR_SIZE)
+> +		size = ALIGNED_SFR_SIZE;
+> +
+> +	p = memchr(sfr->data, '\0', size);
+>  	/*
+>  	 * SFR isn't guaranteed to be NULL terminated since SYS_ERROR indicates
+>  	 * that Venus is in the process of crashing.
+>  	 */
+>  	if (!p)
+> -		sfr->data[sfr->buf_size - 1] = '\0';
+> +		sfr->data[size - 1] = '\0';
+
+...then this will overwrite memory. It probably can't be 0, but a check or perhaps
+just a comment might be good. It looks a bit scary.
+
+Regards,
+
+	Hans
+
+>  
+>  	dev_err_ratelimited(dev, "SFR message from FW: %s\n", sfr->data);
+>  }
 > 
-> I would need some detailed documentation....
 
-Which is probably not available. You might be able to get some clues
-from the Freescale datasheets, if they have kept the address spaces
-separated. I don't see it as a strong requirement, given how old this
-IP is, and the limited interest in supporting it over the years, My
-guess is, nobody else uses it.
-
-	Andrew
 
