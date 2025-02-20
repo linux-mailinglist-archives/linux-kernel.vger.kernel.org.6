@@ -1,145 +1,121 @@
-Return-Path: <linux-kernel+bounces-523625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 752F5A3D969
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:02:32 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 099CCA3D96C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:03:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFD0B3B7269
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:01:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D96117BAD7
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:02:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92D661F429C;
-	Thu, 20 Feb 2025 12:01:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="mQKQ80ab"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 668181F5833;
+	Thu, 20 Feb 2025 12:01:59 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBA9E1EA7FC;
-	Thu, 20 Feb 2025 12:01:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDC411F150B;
+	Thu, 20 Feb 2025 12:01:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740052900; cv=none; b=SlzVKoY1gruLm2IxG1lPTyhh7P9KeYhD7gyOqTCqFjLGl1XoEg2Pfk4mAbYQG1LzTnUkPxX/z7qjnqPQvp74An2On6BqYzvZZc4CRoCM/+j187skJYVwTlLI9rCaGIPSVe19nvNHX2Xovn90oVTAYfkZIRcdCEIx4ArAVvHqnA0=
+	t=1740052919; cv=none; b=TE+R2XyazMT+T+oYfCnJWhkhifiY3Km4vQIz99XZkIsU8BsowH+Omxj/t0eezKAEbVeohpCL/FhamJ6BqQ404rNbzEj5RM/95cHaxgM7666dkg0MZyAi0zWiv2ChP/ZNDxT76S2Bo95ZxoXamWPtJlfuX3BlSEdkRb13No4/NtM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740052900; c=relaxed/simple;
-	bh=hA50rkgyko0jeGAcJn8herB4h8Rxh9VgmCjMsRnEcfg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SDExc21tnYL8odLWGZ4QSK1RJlldgmpEpDjmZr9wWpijPlWWj8hRik+8Oi1loImtCOcz5aTVXzGms8grunCQ+3UoPoWChUW7rVM/dXORLEab7CMfpZHXWo3C3SjHG9ZDo+Uu3X3Ymt+ZKdcttz0olNmOW2OtnhLB2WxeiDLzWXU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=mQKQ80ab; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D11C0C4CED1;
-	Thu, 20 Feb 2025 12:01:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1740052899;
-	bh=hA50rkgyko0jeGAcJn8herB4h8Rxh9VgmCjMsRnEcfg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mQKQ80aby2XYC6vG3hHsxpZRr+wLx/p6u7xY2oEd5txsgxHEqliU9aFDn9UNCY5u8
-	 vHhLtn80CJq8QBLe0oefw7f9AAr5DxihqFYtmu5xqfPi2GMoWSMxC0ro7s4gA58yC8
-	 RVki+cplXwtew1E4iMRFyyArY3S1vFj8jjq3RQSo=
-Date: Thu, 20 Feb 2025 13:01:36 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Shyam Saini <shyamsaini@linux.microsoft.com>
-Cc: linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
-	code@tyhicks.com, linux@rasmusvillemoes.dk,
-	christophe.leroy@csgroup.eu, hch@infradead.org, mcgrof@kernel.org,
-	frkaya@linux.microsoft.com, vijayb@linux.microsoft.com,
-	petr.pavlu@suse.com, linux@weissschuh.net, samitolvanen@google.com,
-	da.gomez@samsung.com, rafael@kernel.org, dakr@kernel.org
-Subject: Re: [PATCH v3 4/4] drivers: base: handle module_kobject creation
-Message-ID: <2025022028-choice-basics-592b@gregkh>
-References: <20250211214842.1806521-1-shyamsaini@linux.microsoft.com>
- <20250211214842.1806521-5-shyamsaini@linux.microsoft.com>
+	s=arc-20240116; t=1740052919; c=relaxed/simple;
+	bh=xC4t5PNFRGnqdbnDdkkrRiU383ecZkkQlQNaoeaxAAo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=jNqj5JFPaPuuhVa6zTwqI3GwldQn5d5vdKHd9E4sI7PmeuWBwL7aDWNnFd6WFT5/vo9oa3Nf6hMtqRBGwZg0J+bSaBY/R/q4znjuC9ivfECyNc1Ph1ZBUQkB6CU/bL5J9u+Xcy7rs6GJUSFRTE0wvScmsuHg8GbQg3Emmz/hE/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4YzBcW1pQBz21mxG;
+	Thu, 20 Feb 2025 19:58:51 +0800 (CST)
+Received: from kwepemk500005.china.huawei.com (unknown [7.202.194.90])
+	by mail.maildlp.com (Postfix) with ESMTPS id BA519140360;
+	Thu, 20 Feb 2025 20:01:52 +0800 (CST)
+Received: from [10.174.179.234] (10.174.179.234) by
+ kwepemk500005.china.huawei.com (7.202.194.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 20 Feb 2025 20:01:51 +0800
+Message-ID: <85725388-180b-267c-e121-3af1f1b75f94@huawei.com>
+Date: Thu, 20 Feb 2025 20:01:50 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250211214842.1806521-5-shyamsaini@linux.microsoft.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.0
+Subject: Re: Add Morton,Peter and David for discussion//Re: [PATCH -next]
+ uprobes: fix two zero old_folio bugs in __replace_page()
+To: David Hildenbrand <david@redhat.com>, Oleg Nesterov <oleg@redhat.com>
+CC: Masami Hiramatsu <mhiramat@kernel.org>, Peter Zijlstra
+	<peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de
+ Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Mark Rutland
+	<mark.rutland@arm.com>, Alexander Shishkin
+	<alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, Ian
+ Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, "Liang,
+ Kan" <kan.liang@linux.intel.com>, Andrew Morton <akpm@linux-foundation.org>,
+	Peter Xu <peterx@redhat.com>, <linux-kernel@vger.kernel.org>,
+	<linux-trace-kernel@vger.kernel.org>, <linux-perf-users@vger.kernel.org>,
+	<bpf@vger.kernel.org>, <wangkefeng.wang@huawei.com>, linux-mm
+	<linux-mm@kvack.org>
+References: <20250217123826.88503-1-tongtiangen@huawei.com>
+ <c2924e9e-1a42-a4f6-5066-ea2e15477c11@huawei.com>
+ <3b893634-5453-42d0-b8dc-e9d07988e9e9@redhat.com>
+ <24a61833-f389-b074-0d9c-d5ad9efc2046@huawei.com>
+ <20250219152237.GB5948@redhat.com>
+ <34e18c47-e536-48e4-80ca-7c7bbc75ecce@redhat.com>
+ <2fe4c4d1-c480-c250-1ba2-1a82caf5d7fa@huawei.com>
+ <196fc7d8-30a8-439a-89bd-57353fd98df8@redhat.com>
+From: Tong Tiangen <tongtiangen@huawei.com>
+In-Reply-To: <196fc7d8-30a8-439a-89bd-57353fd98df8@redhat.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemk500005.china.huawei.com (7.202.194.90)
 
-On Tue, Feb 11, 2025 at 01:48:42PM -0800, Shyam Saini wrote:
-> module_add_driver() relies on module_kset list for
-> /sys/module/<built-in-module>/drivers directory creation.
+
+
+在 2025/2/20 16:38, David Hildenbrand 写道:
+> On 20.02.25 03:31, Tong Tiangen wrote:
+>>
+>>
+>> 在 2025/2/20 0:12, David Hildenbrand 写道:
+>>> On 19.02.25 16:22, Oleg Nesterov wrote:
+>>>> On 02/18, Tong Tiangen wrote:
+>>>>>
+>>>>> OK, Before your rewrite last merged, How about i change the 
+>>>>> solution to
+>>>>> just reject them immediately after get_user_page_vma_remote()？
+>>>>
+>>>> I agree, uprobe_write_opcode() should simply fail if
+>>>> is_zero_page(old_page).
+>>>
+>>> Yes. That's currently only syzkaller that triggers it, not some sane use
+>>> case.
+>>
+>> OK, change as follows:
+>>
+>> --- a/kernel/events/uprobes.c
+>> +++ b/kernel/events/uprobes.c
+>> @@ -506,6 +506,12 @@ int uprobe_write_opcode(struct arch_uprobe
+>> *auprobe, struct mm_struct *mm,
+>>           if (ret <= 0)
+>>                   goto put_old;
+>>
+>> +       if (WARN(is_zero_page(old_page),
 > 
-> Since,
-> commit 96a1a2412acba ("kernel/params.c: defer most of param_sysfs_init() to late_initcall time")
-> drivers which are initialized from subsys_initcall() or any other
-> higher precedence initcall couldn't find the related kobject entry
-> in the module_kset list because module_kset is not fully populated
-> by the time module_add_driver() refers it. As a consequence,
-> module_add_driver() returns early without calling make_driver_name().
-> Therefore, /sys/module/<built-in-module>/drivers is never created.
+> This can likely be triggered by user space, so do not use WARN.
+
+OK,thanks.
+
+Hi Oleg, is that all right?
+
+Thanks,
+Tong.
+
 > 
-> Fix this issue by letting module_add_driver() handle module_kobject
-> creation itself.
-> 
-> Fixes: 96a1a2412acb ("kernel/params.c: defer most of param_sysfs_init() to late_initcall time")
-> Suggested-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-> Signed-off-by: Shyam Saini <shyamsaini@linux.microsoft.com>
-> ---
->  drivers/base/module.c | 13 +++++--------
->  1 file changed, 5 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/base/module.c b/drivers/base/module.c
-> index 5bc71bea883a..218aaa096455 100644
-> --- a/drivers/base/module.c
-> +++ b/drivers/base/module.c
-> @@ -42,16 +42,13 @@ int module_add_driver(struct module *mod, const struct device_driver *drv)
->  	if (mod)
->  		mk = &mod->mkobj;
->  	else if (drv->mod_name) {
-> -		struct kobject *mkobj;
-> -
-> -		/* Lookup built-in module entry in /sys/modules */
-> -		mkobj = kset_find_obj(module_kset, drv->mod_name);
-> -		if (mkobj) {
-> -			mk = container_of(mkobj, struct module_kobject, kobj);
-> +		/* Lookup or create built-in module entry in /sys/modules */
-> +		mk = lookup_or_create_module_kobject(drv->mod_name);
-> +		if (mk) {
->  			/* remember our module structure */
->  			drv->p->mkobj = mk;
-> -			/* kset_find_obj took a reference */
-> -			kobject_put(mkobj);
-> +			/* lookup_or_create_module_kobject took a reference */
-> +			kobject_put(&mk->kobj);
->  		}
->  	}
->  
-> -- 
-> 2.34.1
-> 
-
-Hi,
-
-This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
-a patch that has triggered this response.  He used to manually respond
-to these common problems, but in order to save his sanity (he kept
-writing the same thing over and over, yet to different people), I was
-created.  Hopefully you will not take offence and will fix the problem
-in your patch and resubmit it so that it can be accepted into the Linux
-kernel tree.
-
-You are receiving this message because of the following common error(s)
-as indicated below:
-
-- You have marked a patch with a "Fixes:" tag for a commit that is in an
-  older released kernel, yet you do not have a cc: stable line in the
-  signed-off-by area at all, which means that the patch will not be
-  applied to any older kernel releases.  To properly fix this, please
-  follow the documented rules in the
-  Documentation/process/stable-kernel-rules.rst file for how to resolve
-  this.
-
-If you wish to discuss this problem further, or you have questions about
-how to resolve this issue, please feel free to respond to this email and
-Greg will reply once he has dug out from the pending patches received
-from other developers.
-
-thanks,
-
-greg k-h's patch email bot
 
