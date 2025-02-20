@@ -1,192 +1,269 @@
-Return-Path: <linux-kernel+bounces-524358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11C0AA3E218
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 18:18:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06E5DA3E21D
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 18:19:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78A48424561
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:15:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C39ED16D6C2
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:16:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18791212B02;
-	Thu, 20 Feb 2025 17:10:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 584E02139D2;
+	Thu, 20 Feb 2025 17:13:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DyQcz2mb"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="edQjQSr/"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D026212FAB
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 17:10:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE5A92135C0
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 17:12:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740071424; cv=none; b=umlk23M3hkPf3Qxo0Oe5Tu4OezmO5Pv+xUXWFpz2tJ9q1u9BJek8YEc15KGGLiTUgnGVnRIqQiARpIWb8NtpcatasTMux6OpYoW2NCfFxJsoc26uYcvRtDXEKwrCloiQ8UgjCBOHaT70AmoLCMXjDCMop0U2bvZ+lZk8TakEz1w=
+	t=1740071580; cv=none; b=s/Q+vdsluEWjFIS94BEx+Mgh2KBU4n8ARzkLPPYUIQ6NNdckxTzJZGAc/j8ePgiGiS2U/DZtZnI4kVkw+tcCG4nMm9j/oSj2fIW+JTn0RTGb7neRiZdaExcZmPFxrbKBmE91DzwFpLOsL4Yp+wlowTmD9uY3xQKMn386SN9ukDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740071424; c=relaxed/simple;
-	bh=kg7PYKt74NmqPx2oKNRGx3rLvGEcdQR61JIV5w6PyfE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Li55QK3cJe4MAbQaetR0qDag0fmmC5FRe2PwZQz457t5d20ApK8LmxKyoE8e9XTZeRLjuZybEx0GVPjjsbMYYVtTk6PvcWlEZRsDh6a4RjNFXi6xrm0uJ0u0wHOthQ7C2DfXfugWi4lHrAein3gR5X7y8QPC8JJraj5c9hwGeuo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DyQcz2mb; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740071421;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kg7PYKt74NmqPx2oKNRGx3rLvGEcdQR61JIV5w6PyfE=;
-	b=DyQcz2mbIhCd7Vxrkn9ulxHcds8PLMgVrhq7RAvI4CAjGnZKtycuvEDoQZ/RwFBdQ0o53e
-	m4tBMmeD9f9zV1QIBNVuOR7azrvNIXv/8/1R/Z2WyNrtg39K0udjEz6B10lsibO4dNj4T7
-	aWL3dBzgF4mFZyuwLfF+/AukCJ1uDEo=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-145-LF8HgQ8TNcG_JneM5lMrDA-1; Thu, 20 Feb 2025 12:10:20 -0500
-X-MC-Unique: LF8HgQ8TNcG_JneM5lMrDA-1
-X-Mimecast-MFC-AGG-ID: LF8HgQ8TNcG_JneM5lMrDA_1740071419
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-438e4e9a53fso8840425e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 09:10:19 -0800 (PST)
+	s=arc-20240116; t=1740071580; c=relaxed/simple;
+	bh=VjEUim42RSKuscI0z8MEmZMo+05s6Eo2c7LkAH8dkhA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EmcMETb16R54zlkt3JysGF6kdWXv3LIaEPEylG6R5upymVAJKx4kvuAilXqoENptBS9s7Sxzg1jedX6mn8tUkLVzu0goOO3Xanoj4LT0PsBHxOLpKs7lisP60p4DWhncEH6O5RVBoKHVddCiSIVMiIgEKpLC5ku7olz+uF6eJpY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=edQjQSr/; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-219f6ca9a81so165545ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 09:12:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1740071578; x=1740676378; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3KlGSfTFtzcO4Aa2rZfsye6/UvfCZdlGmKuoWZ/5IZs=;
+        b=edQjQSr/2QuSetj8LFn/jiq29CEC+88jyfaxrnzgmDUGtVZlFkhwlxomOi06CjtR7l
+         CupAhBkyqmIaWiJkLQ633knyPX9Xsyda7+UJsq+QslQm8GX0SwCcGx8/QRKztmUVG9Pq
+         9Pstest3rvki+J7MU2Cfr6+J+0n/FCIR4jlGVB1Q1W8BWm2DSj7zvKajDXOCFLj3QtR9
+         tvACjDftUF1Rd0RJ9aeyisj9tFgurTfZJYbsyp6ClJLIVR5+kIAQE8RYihMxYpJxNJuX
+         xkgJeKZgymhS8LLxH82PDr/YjrkiVlUOPNkJs0JiW8jZ3V3UW5N0ohEbcKu4N2KOwT+R
+         maEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740071419; x=1740676219;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kg7PYKt74NmqPx2oKNRGx3rLvGEcdQR61JIV5w6PyfE=;
-        b=rPsEppHYW9uPPFVFl+SlUrghx9KjHoa8bQ4NGpvsN/Z2XVyy2X7Ach0Bi+pE56Ivii
-         3LHLe8cifw4CleopTEqUjfVfR5ekAio80I48t4Sozn3MSUP717ITgxBoYGduJRNW+qou
-         /Dmc2+0VhuVb0eBOSWd076DW6aeXzCLslhfCvmi2Y+oXCs77S7aFrGRiOtlrJnss6s3e
-         Ggd5PZUJ8WLHxcQQxJmubDEdy5YvPb2m+cc42YiHYnkTvtnMXmge6BACYf15+bttBwVR
-         Bp/uT5JQC/N67vJSZHRLPGHxA0DBbHVYrjd3VWWx1vjw/86kkWDt78jDMX89d1ys+wQw
-         p8Ew==
-X-Gm-Message-State: AOJu0YyJFj6qba0YB3kcFV/nbZJK0OsMNgfhTbf/r1QD9oq/LTEQm/D2
-	8ZAKxXsJSLJyEIyqneled4hGzKZAqTH6JuDqYw3+Zl1mhC2f0Vxpz6pSwe2UxHJdX8r5frnX/3l
-	QVCJv/xMoNdZ8oeMK1xvdp774J0eNtKlQmitZXDx683g+qEFmezsWLpBIBU5Rtg==
-X-Gm-Gg: ASbGncuaHBn9/HuanOmrcbXEGEu1wi4IUtVSq1zO6Tg6gUtvx6qkCHBgLbYn0WVKcGA
-	xfiFTog/d6naXid/0SzMMB0Vqzt2WXtOenh0M7pCP8y5p4V6VDFTbrWcdg4XwPWoKHr66FLQNFG
-	ovmojfBVnkW77OiJhKx4P6krZ1KfR2OUoSoFfoRjCCQKxnRHiIye1PCRUdi7DBoxc9OMy+Mfq8V
-	Gye2UL1GYN1ce44NVCgajWb6JFToTwgfseDdcY+MQC7tTZgYYSG+GXXbF0etrHqh3T/Uk22JLEI
-	eyHM2EjE/riYz++UHmZ0JqMO18POpO6ziuE8VX+RxbWdQFT4VCBF7mBCfGyBLW+UGA==
-X-Received: by 2002:a05:600c:4fc2:b0:439:985b:17be with SMTP id 5b1f17b1804b1-439ae1eaa78mr176255e9.9.1740071418834;
-        Thu, 20 Feb 2025 09:10:18 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFqI8Joi794bN8Kdq45efIzQ+6oEZ5Dcj9tQjLghCqHxxqvkD27DzVgOIJ2kmb/SIiCpoKjvg==
-X-Received: by 2002:a05:600c:4fc2:b0:439:985b:17be with SMTP id 5b1f17b1804b1-439ae1eaa78mr175145e9.9.1740071418347;
-        Thu, 20 Feb 2025 09:10:18 -0800 (PST)
-Received: from vschneid-thinkpadt14sgen2i.remote.csb (213-44-141-166.abo.bbox.fr. [213.44.141.166])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4395a0558e2sm247191865e9.11.2025.02.20.09.10.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Feb 2025 09:10:17 -0800 (PST)
-From: Valentin Schneider <vschneid@redhat.com>
-To: Dave Hansen <dave.hansen@intel.com>, Jann Horn <jannh@google.com>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
- virtualization@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- loongarch@lists.linux.dev, linux-riscv@lists.infradead.org,
- linux-perf-users@vger.kernel.org, xen-devel@lists.xenproject.org,
- kvm@vger.kernel.org, linux-arch@vger.kernel.org, rcu@vger.kernel.org,
- linux-hardening@vger.kernel.org, linux-mm@kvack.org,
- linux-kselftest@vger.kernel.org, bpf@vger.kernel.org,
- bcm-kernel-feedback-list@broadcom.com, Juergen Gross <jgross@suse.com>,
- Ajay Kaher <ajay.kaher@broadcom.com>, Alexey Makhalov
- <alexey.amakhalov@broadcom.com>, Russell King <linux@armlinux.org.uk>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, Paul
- Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
- Albert Ou <aou@eecs.berkeley.edu>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave
- Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>,
- Peter Zijlstra <peterz@infradead.org>, Arnaldo Carvalho de Melo
- <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Mark Rutland
- <mark.rutland@arm.com>, Alexander Shishkin
- <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, Ian
- Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>,
- "Liang, Kan" <kan.liang@linux.intel.com>, Boris Ostrovsky
- <boris.ostrovsky@oracle.com>, Josh Poimboeuf <jpoimboe@kernel.org>, Pawan
- Gupta <pawan.kumar.gupta@linux.intel.com>, Sean Christopherson
- <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, Andy Lutomirski
- <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Frederic Weisbecker
- <frederic@kernel.org>, "Paul E. McKenney" <paulmck@kernel.org>, Jason
- Baron <jbaron@akamai.com>, Steven Rostedt <rostedt@goodmis.org>, Ard
- Biesheuvel <ardb@kernel.org>, Neeraj Upadhyay
- <neeraj.upadhyay@kernel.org>, Joel Fernandes <joel@joelfernandes.org>,
- Josh Triplett <josh@joshtriplett.org>, Boqun Feng <boqun.feng@gmail.com>,
- Uladzislau Rezki <urezki@gmail.com>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Lai Jiangshan <jiangshanlai@gmail.com>,
- Zqiang <qiang.zhang1211@gmail.com>, Juri Lelli <juri.lelli@redhat.com>,
- Clark Williams <williams@redhat.com>, Yair Podemsky <ypodemsk@redhat.com>,
- Tomas Glozar <tglozar@redhat.com>, Vincent Guittot
- <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, Kees Cook
- <kees@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Christoph
- Hellwig <hch@infradead.org>, Shuah Khan <shuah@kernel.org>, Sami Tolvanen
- <samitolvanen@google.com>, Miguel Ojeda <ojeda@kernel.org>, Alice Ryhl
- <aliceryhl@google.com>, "Mike Rapoport (Microsoft)" <rppt@kernel.org>,
- Samuel Holland <samuel.holland@sifive.com>, Rong Xu <xur@google.com>,
- Nicolas Saenz Julienne <nsaenzju@redhat.com>, Geert Uytterhoeven
- <geert@linux-m68k.org>, Yosry Ahmed <yosryahmed@google.com>, "Kirill A.
- Shutemov" <kirill.shutemov@linux.intel.com>, "Masami Hiramatsu (Google)"
- <mhiramat@kernel.org>, Jinghao Jia <jinghao7@illinois.edu>, Luis
- Chamberlain <mcgrof@kernel.org>, Randy Dunlap <rdunlap@infradead.org>,
- Tiezhu Yang <yangtiezhu@loongson.cn>
-Subject: Re: [PATCH v4 29/30] x86/mm, mm/vmalloc: Defer
- flush_tlb_kernel_range() targeting NOHZ_FULL CPUs
-In-Reply-To: <eef09bdc-7546-462b-9ac0-661a44d2ceae@intel.com>
-References: <20250114175143.81438-1-vschneid@redhat.com>
- <20250114175143.81438-30-vschneid@redhat.com>
- <CAG48ez1Mh+DOy0ysOo7Qioxh1W7xWQyK9CLGNU9TGOsLXbg=gQ@mail.gmail.com>
- <xhsmh34hhh37q.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <CAG48ez3H8OVP1GxBLdmFgusvT1gQhwu2SiXbgi8T9uuCYVK52w@mail.gmail.com>
- <xhsmh5xlhk5p2.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <CAG48ez1EAATYcX520Nnw=P8XtUDSr5pe+qGH1YVNk3xN2LE05g@mail.gmail.com>
- <xhsmh34gkk3ls.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <352317e3-c7dc-43b4-b4cb-9644489318d0@intel.com>
- <xhsmhjz9mj2qo.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <d0450bc8-6585-49ca-9cad-49e65934bd5c@intel.com>
- <xhsmhh64qhssj.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <eef09bdc-7546-462b-9ac0-661a44d2ceae@intel.com>
-Date: Thu, 20 Feb 2025 18:10:15 +0100
-Message-ID: <xhsmhfrk84k5k.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+        d=1e100.net; s=20230601; t=1740071578; x=1740676378;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3KlGSfTFtzcO4Aa2rZfsye6/UvfCZdlGmKuoWZ/5IZs=;
+        b=ksKTcmFpORZqVpgDCuRdYIf3BztLBDgBVCZkKtRxTw7XgKiDoB5Dn/aKvNJDeuKszn
+         I4TCkVyw0Ws+g1JjE5f0cE/FLo0e9R5dAv/e1kPsrv33KY1YpJMJg0AvkT3aI7aTIfy3
+         2SYGZqZhpcVB/3oCJdepNqt7QNKlSne42aYYZeOJT6L3ceDWi6vsxTZpRK1mxdsahPoW
+         HKzT7GX8EST9NRlzYT/VdfcCipARD+/84I4UaOwUixb091/jP1rULfqVQtUdzwgh+nE2
+         037OvDcqCsqqgXtcMGcTUS2PltUQvhGZcZb/xncifygrmXTK/ZjMvaR/bKW6KbdV/zB1
+         UoXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV8h6/QtSg8HkV260cLNYkEvrlkEBInMGtvhubAXXUbbjJWa03Z5pLlfqzx4fOJSYLQxq7kAIVp7SH8mg0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwN4BKv+kOyMGq6+SI/vIYTpjEwV/DQmnGH7xCpJbOSwKZVmQVo
+	9gqi57Zs1dUJYzk8JBoWIXhx7rEF0EmREqnvBcorNR4R3xgMhQAdKyfKt93BVyFtSJ1Htij9kTx
+	CGlAx5n7s8FaE8WUsQSCymhVQ4m1Od1kzRKqk
+X-Gm-Gg: ASbGncvLvuw4nBCRigaMMOZSShuXCjiYK7wnXf0E9hHMXjc1NtWzUJIx6VFvyQzwsDS
+	8YCAD8nCDLhUG5CbJt+2Ut/hwD//Lcyu1XpOQ42hwtlpt92ejb+NCI/Ohp/1m8VbTmQR6VBLn1j
+	f+J5O+PlZE4/YsJ9ppv6nNP/EV
+X-Google-Smtp-Source: AGHT+IEbnyT8CyvE4wQCUwedgMi5/VDT/ZLkqjRx5/WhkkqXWj9ClL8T5083//YuVsgDBobfYp7KJ6NE8jO2P0CMQUE=
+X-Received: by 2002:a17:902:e54b:b0:216:6dab:803b with SMTP id
+ d9443c01a7336-2218ddbe5admr3333875ad.18.1740071577879; Thu, 20 Feb 2025
+ 09:12:57 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <Z60NFEAf2C8cL8Xh@x1> <Z60Ndm8VVI4Ao31U@x1> <CAP-5=fXw09MM5XyozJMM3FjMANJei1aNVmBghSEQFiCKAtJmXw@mail.gmail.com>
+ <CAP-5=fUqcykMdApHVweETg9bp2EVPJhJOj_PR8cByOOA6OyQGw@mail.gmail.com>
+ <Z6_CL0RpUUvw0lR7@x1> <Z7TvZGjVix2asYWI@x1> <Z7T1LVSLo8EEMmkM@x1>
+ <Z7UDlZKnqXRqNqQa@google.com> <Z7XsltyqUWrdKma0@x1> <Z7XvEFEZtCRZKG7Y@x1> <Z7ZIqpwffQbibwL2@google.com>
+In-Reply-To: <Z7ZIqpwffQbibwL2@google.com>
+From: Ian Rogers <irogers@google.com>
+Date: Thu, 20 Feb 2025 09:12:46 -0800
+X-Gm-Features: AWEUYZlHGhRU4sD-1g0LIaOSDwZHHqpZNdXEVjobFcls9gKqATlprv-r84r9ah4
+Message-ID: <CAP-5=fWZXPjD3Ok5XmMwwaYt+9mL+V8t8fNSUdf-F5PPiEAvrg@mail.gmail.com>
+Subject: Re: [PATCH] perf report: Add 'tgid' sort key
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Kan Liang <kan.liang@linux.intel.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org, 
+	Stephane Eranian <eranian@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 19/02/25 12:25, Dave Hansen wrote:
-> On 2/19/25 07:13, Valentin Schneider wrote:
->>> Maybe I missed part of the discussion though. Is VMEMMAP your only
->>> concern? I would have guessed that the more generic vmalloc()
->>> functionality would be harder to pin down.
->> Urgh, that'll teach me to send emails that late - I did indeed mean the
->> vmalloc() range, not at all VMEMMAP. IIUC *neither* are present in the user
->> kPTI page table and AFAICT the page table swap is done before the actual vmap'd
->> stack (CONFIG_VMAP_STACK=y) gets used.
+On Wed, Feb 19, 2025 at 1:10=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> =
+wrote:
 >
-> OK, so rewriting your question... ;)
+> On Wed, Feb 19, 2025 at 03:47:44PM +0100, Arnaldo Carvalho de Melo wrote:
+> > On Wed, Feb 19, 2025 at 03:37:10PM +0100, Arnaldo Carvalho de Melo wrot=
+e:
+> > > On Tue, Feb 18, 2025 at 02:03:01PM -0800, Namhyung Kim wrote:
+> > > > On Tue, Feb 18, 2025 at 10:01:33PM +0100, Arnaldo Carvalho de Melo =
+wrote:
+> > > > > On Tue, Feb 18, 2025 at 09:36:52PM +0100, Arnaldo Carvalho de Mel=
+o wrote:
+> > > > > > So the call to maps_fixup_end() will set maps->end_broken to fa=
+lse,
+> > > > > > since it fixed up the map ends, etc, but then we insert more ma=
+ps with
+> > > > > > broken ends:
+> > > > >
+> > > > > > #6  0x0000000000633d52 in check_invariants (maps=3D0xf967c0) at=
+ util/maps.c:95
+> > > > > > 95                                            assert(map__end(p=
+rev) <=3D map__end(map));
+> > > > > > (gdb) p prev->dso->name
+> > > > > > $1 =3D 0xfc47ab "bpf_trampoline_6442522522"
+> > > > >
+> > > > > So the above map is created overlapping a previously existing map=
+:
+> > > > >
+> > > > > root@number:~# perf probe -l
+> > > > >   probe_perf:maps_fixup_end (on maps__fixup_end:1@util/maps.c in =
+/home/acme/bin/perf with maps)
+> > > > >   probe_perf:maps_insert (on maps__insert:1@util/maps.c in /home/=
+acme/bin/perf with maps name start end)
+> > > > > root@number:~#
+> > > > >
+> > > > > root@number:~# perf trace --lib -e probe_perf:maps* perf record s=
+leep
+> > > > > <SNIP>
+> > > > >    319.791 perf/1732173 probe_perf:maps_insert((634e5e) maps=3D0x=
+2d9715d0 name=3D"bpf_prog_6deef7357e7b4530_sd_fw_egress" start=3D0xffffffff=
+c0160788 end=3D0xffffffffc01607c8)
+> > > > >    319.810 perf/1732173 probe_perf:maps_insert((634e5e) maps=3D0x=
+2d9715d0 name=3D"bpf_prog_6deef7357e7b4530_sd_fw_ingress" start=3D0xfffffff=
+fc01647b8 end=3D0xffffffffc01647f8)
+> > > > >    319.822 perf/1732173 probe_perf:maps_insert((634e5e) maps=3D0x=
+2d9715d0 name=3D"bpf_prog_6deef7357e7b4530_sd_fw_egress" start=3D0xffffffff=
+c016482c end=3D0xffffffffc016486c)
+> > > > >    319.834 perf/1732173 probe_perf:maps_insert((634e5e) maps=3D0x=
+2d9715d0 name=3D"bpf_prog_6deef7357e7b4530_sd_fw_ingress" start=3D0xfffffff=
+fc01648ac end=3D0xffffffffc01648ec)
+> > > > >    319.845 perf/1732173 probe_perf:maps_insert((634e5e) maps=3D0x=
+2d9715d0 name=3D"bpf_prog_be31ae23198a0378_sd_devices" start=3D0xffffffffc0=
+186388 end=3D0xffffffffc01864b2)
+> > > > >    319.857 perf/1732173 probe_perf:maps_insert((634e5e) maps=3D0x=
+2d9715d0 name=3D"bpf_trampoline_6442522522" start=3D0xffffffffc0147640 end=
+=3D0xffffffffc0148640)
+> > > > > [ perf record: Captured and wrote 0.035 MB perf.data (7 samples) =
+]
+> > > > > perf: util/maps.c:95: check_invariants: Assertion `map__end(prev)=
+ <=3D map__end(map)' failed.
+> > > > > root@number:~#
+> > > > >
+> > > > > So a PERF_RECORD_KSYMBOL processing will add a map for
+> > > > > "bpf_trampoline_6442522522" that has its start after before the
+> > > > > "bpf_prog_40ddf486530245f5_sd_devices" start, ok, but ends after
+> > > > > "bpf_prog_40ddf486530245f5_sd_devices", overlapping it.
+> > > > >
+> > > > > machine__process_ksymbol_register() does:
+> > > > >
+> > > > > 713                     map__set_start(map, event->ksymbol.addr);
+> > > > > 714                     map__set_end(map, map__start(map) + event=
+->ksymbol.len);
+> > > > > 715                     err =3D maps__insert(machine__kernel_maps=
+(machine), map);
+> > > > >
+> > > > > And:
+> > > > >
+> > > > > (gdb) p /x event->ksymbol.addr
+> > > > > $2 =3D 0xffffffffc0147a2c
+> > > > > (gdb) p event->ksymbol.len
+> > > > > $3 =3D 306
+> > > >
+> > > > Hmm.. so I think the situation is like below.
+> > > >
+> > > >                    (bpf_trampoline_6442522522)
+> > > >             +---------------------------------------+
+> > > >       |                                       |
+> > > >       |       +------------------------+      |
+> > > >       |       | (bpf_prog_40ddf486...) | <----+----  adding this
+> > > >       |       |                        |      |
+> > > >       |       |                        |      |
+> > > >       |   c0147a2c                            |
+> > > >       |                                       |
+> > > >         c0147640                                 c0148640
+> > > >
+> > > > And it failed to add bpf_prog_40ddf486... in check_invariants() bec=
+ause
+> > > > the end address is smaller than the previous map.
+> > >
+> > > No, it didn't fail to add, it managed to do it which left the kernel
+> > > maps in a broken state, with overlappings while it had a cleared
+> > > ends_broken, then, later, when the checks_invariant is finally called=
+ at
+> > > perf record exit time:
+> >
+> > Nope, __maps__insert() should notice that the ends are broken and set
+> > it:
+> >
+> >         if (nr_maps =3D=3D 1) {
+> >                 /* If there's just 1 entry then maps are sorted. */
+> >                 maps__set_maps_by_address_sorted(maps, true);
+> >                 maps__set_maps_by_name_sorted(maps, maps_by_name !=3D N=
+ULL);
+> >         } else {
+> >                 /* Sorted if maps were already sorted and this map star=
+ts after the last one. */
+> >                 maps__set_maps_by_address_sorted(maps,
+> >                         maps__maps_by_address_sorted(maps) &&
+> >                         map__end(maps_by_address[nr_maps - 2]) <=3D map=
+__start(new));
+> >                 maps__set_maps_by_name_sorted(maps, false);
+> >         }
+> >         if (map__end(new) < map__start(new))
+> >                 RC_CHK_ACCESS(maps)->ends_broken =3D true;
+> >
+> >
+> > humm, RC_CHK_ACCESS(maps)->ends_broken should be set for the case we
+> > have and I think it isn't being... Then the bpf trampoline map that is
+> > the last entry to be added is before the last entry and thus
+> > maps_by_address_sorted is set to false, ends_broken continues false and
+> > at the end maps_by_address_sorted is set to true and the last
+> > check_invariants triggerrs the asserts...
 >
->> So what if the vmalloc() range *isn't* in the CR3 tree when a CPU is
->> executing in userspace?
->
-> The LDT and maybe the PEBS buffers are the only implicit supervisor
-> accesses to vmalloc()'d memory that I can think of. But those are both
-> handled specially and shouldn't ever get zapped while in use. The LDT
-> replacement has its own IPIs separate from TLB flushing.
->
-> But I'm actually not all that worried about accesses while actually
-> running userspace. It's that "danger zone" in the kernel between entry
-> and when the TLB might have dangerous garbage in it.
->
+> Right, probably it needs to set the ends_broken when the end address of
+> the new map is smaller than the previous (but the start address is
+> bigger) and fixup the end address when it sorts the maps by address.
 
-So say we have kPTI, thus no vmalloc() mapped in CR3 when running
-userspace, and do a full TLB flush right before switching to userspace -
-could the TLB still end up with vmalloc()-range-related entries when we're
-back in the kernel and going through the danger zone?
+Ugh, I get git blamed for ends_broken and I was wondering what the heck it =
+is:
+https://lore.kernel.org/all/20240210031746.4057262-2-irogers@google.com/
+My memory is that when the rb-tree was built the maps put in it could
+be broken and ends_broken was to capture we were in this state as the
+sorting would get broken, invariants be off, etc.. The rb-tree
+constructing code would then call maps__fixup_end. Having the caller
+call maps__fixup_end seems error prone, as does the whole
+"ends_broken" thing - remember I was in the code to fix memory leaks
+so modifying the maps API wasn't front of mind. I added ends_broken,
+the original rb-tree had no notion of it, because I was trying to get
+the invariants right for the testing I could do and ends_broken was
+the pragmatic thing to do for odd cases like kernel modules before
+maps__fixup_end is called.
 
-> BTW, I hope this whole thing is turned off on 32-bit. There, we can
-> actually take and handle faults on the vmalloc() area. If you get one of
-> those faults in your "danger zone", it'll start running page fault code
-> which will branch out to god-knows-where and certainly isn't noinstr.
+The maps API has evolved and we have a pretty robust, but possibly not
+fast, maps__fixup_overlap_and_insert:
+https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tr=
+ee/tools/perf/util/maps.h?h=3Dperf-tools-next#n69
+I think ideally we'd make maps__insert uphold the invariants and not
+have ends_broken. I'm worried that making ends_broken more load
+bearing isn't the right thing to do, we may even be able to not have
+the variable for the "ifndef NDEBUG" case, which making it load
+bearing would completely defeat.
 
-Sounds... Fun. Thanks for pointing out the landmines.
+So I think the fix here should be to understand the maps construction
+code for the modules, try to work out why maps__fixup_end wasn't
+called, perhaps migrate the code to maps__fixup_overlap_and_insert or
+add a missed maps__fixup_end call.
 
+Given the blame I kind of feel responsible for this, but the real
+issue is adding the invariant checks has caught a latent bug that the
+rb-tree code would have just ignored and possibly been broken as a
+consequence. I lack bandwidth and a reproduction so thank you for
+digging into this.
+
+Thanks,
+Ian
 
