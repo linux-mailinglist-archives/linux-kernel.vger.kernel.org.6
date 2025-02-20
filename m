@@ -1,199 +1,135 @@
-Return-Path: <linux-kernel+bounces-523697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C13F0A3DA18
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:32:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D1F52A3DA1A
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:32:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1B05700518
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:28:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15293700AC1
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:28:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64CD71F584A;
-	Thu, 20 Feb 2025 12:28:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6641E1F236E;
+	Thu, 20 Feb 2025 12:28:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="hAfWuxZH"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b96N/Iy9"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E06BA1F236E;
-	Thu, 20 Feb 2025 12:28:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6703A1F540C;
+	Thu, 20 Feb 2025 12:28:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740054511; cv=none; b=iwJz+EX1yRgdAJv5/qDbDGjfY3LNpu48rgHfGeo5PtoctPFOi31Uoy3L+ECLsEqY/ZZ0P8hHcLkZwqA6ZaAQGrzboct13mSFq5kCZ/wKMIzktNPUYrECM2RI30jyWQjCfv6Yt37okB6u/GfTgjqtsqYMVoOshRO7F/Ye40qO1rg=
+	t=1740054520; cv=none; b=l3J5emjfQ8XzI7SVg6UxsELG+I8GgsQeEWV/2U8Xb67ymDMEaAEG0f+4qfZXoiMEsvMVRQ2AlWrRe8/+Sv6xHchdsDX4xPwwWGwjajDXZ+RpRQp/D5t5sFUqKYKv4cAOnk/e1T+EYqB3++J3WgTGaGzRtv0RAeoYsRVdx7HS+sA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740054511; c=relaxed/simple;
-	bh=o1rmug3+zIYeul0bU23G6irri56m1LeHH0/3fCiMcqw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G1Hnnxq3X8Tc19agvMRgm9mlCwfgr3LPa3J2WK0NcfL/41uhX+4xdlam+uXc2fIOKY8d1x8v1RD9ELMaJ6RYvvn6c5SFLCyHG9bsupi7mr7kun4RmoYDpXb+ZyIdUh+MV7X23jhwz7h/vWOzGwHOZswiwXpA2sfzNah7pbnFw/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=hAfWuxZH; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 95144526;
-	Thu, 20 Feb 2025 13:27:04 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1740054424;
-	bh=o1rmug3+zIYeul0bU23G6irri56m1LeHH0/3fCiMcqw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hAfWuxZHKtz4+oTsk9SnZ/G5Oote2P/BKuUxWfEIWdoDdlWeSkaN/JWPzfZpZa2C4
-	 EwJEeraWjaiAIDo5hWmc1Tfo/g1LloT0D9ZOa5FaAUe/M7c7nKAc3KQkmuBJ6ps9bV
-	 aHpVzCZ3q+ARCc3byctOqyONOC9pEo7SUryKwMNI=
-Date: Thu, 20 Feb 2025 14:28:12 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Quentin Schulz <quentin.schulz@cherry.de>
-Cc: Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Quentin Schulz <foss+kernel@0leil.net>, linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] gpio: pcf857x: add support for reset-gpios on (most)
- PCA967x
-Message-ID: <20250220122812.GC20111@pendragon.ideasonboard.com>
-References: <20250220-pca976x-reset-driver-v1-0-6abbf043050e@cherry.de>
- <20250220-pca976x-reset-driver-v1-2-6abbf043050e@cherry.de>
- <6110750.alqRGMn8q6@diego>
- <5bebdc73-b2e0-483b-8c8e-3737cda34811@cherry.de>
+	s=arc-20240116; t=1740054520; c=relaxed/simple;
+	bh=NUNQOQMsRGG7DSg4mxzSVG74HEh1Ws9TkBICyqpDumw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FX2NlES1vKtXKDb79NsaW8yC2p3YHgmC2LmDPVbNrOaNS620SM7/7T8/saKPSnG4+j2bY5LOrZ9swcinqwsKVO/PB7huYRNbOvDBT5mi9RjunKJ0U9O8IkMClHdxS0yw3ypqcofSMw7uOiXs41jQdiojfh+oWwMv+5JOA4dbha4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b96N/Iy9; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-220e6028214so16768875ad.0;
+        Thu, 20 Feb 2025 04:28:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740054518; x=1740659318; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=XzJzI3MSa7XK9xTdL5743Fq2Xbu9IkkDNG1ETRkFDyE=;
+        b=b96N/Iy9EwHfexTHig7aubLanNbkebvaGWTCSXt/AM6ypfaqItHyMqNn0SY3tE0+Jn
+         Duv2VcoiwEXvDjatAwi5bh0MO/JkFGD2ozGBYcJVuSBbZl8YBvTRUqI0O2XE84wzSke8
+         Ol/Zc9r3Qaa7UJDm3P3aoWZ0ckVy/PmxShQo4h7YIZBqC7kv4nvlY0VywHTSspbHE6cA
+         AMU/bs3bHJYU8JkH9g1GKrvF1f7EdyFP0bdUQBkMc3uLdK7JjQ3VLt/2z1Jm77sqDUMM
+         /AxoIKW+b4eGVM+PNYRrFLyiZsBeCKCEqqYz/BKB8uh3Kcr5WX/ujePVusFU3Absld9D
+         8blA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740054518; x=1740659318;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XzJzI3MSa7XK9xTdL5743Fq2Xbu9IkkDNG1ETRkFDyE=;
+        b=UAjPuNAJsrcQfFObIbQWRi+whKfrD6kyHofST8AVg8yFQRZHoOLfxseaKD6tzosCim
+         7SIINkB5XsH5JPOURU5J+pVgNrmkXGNMycaQnez3BIIYAwoUzUKS8Sgc4vhwft2TTJM5
+         12IxU1QODef2gdYDxvK4+U/LOK04pr8iM08puSxwIVZSWshYwRjjsvVAaUwrz5Y0uEzM
+         BX8Sv++zLJkzDUR9J0lPUQK9UU4w8MzBMwW36HEAUHzws0t88rTtouQBYZGtnnnOHGqA
+         FqJ+gKSKNxGzmhReiVcz2mmJGUeN4p9T6kTifrOheHwrSGfBeECfIdZFfsW5AGiYM7kb
+         ROSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUYIcA5idEup6XxBqHF2qyiWH8/fJljsKUZuYyo9BjE3X9yeYjx9L/p89IXBiDfXbkYydErfuMMDpVU78A=@vger.kernel.org, AJvYcCWHwInUaQft4idXp/GYOJ4TnvxY/P5hSpaANbsQ+l1B9EWN4JDVsnJRPVP4llCvjIFZcLbMGOvDNnU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxvSsOolbOIrRonvBOrKWnZ4nq7syoqF2t9m7lFFG1cafqDHuvP
+	6pLz85WqxRn8n+WOdrGsIWqgdy6hNXAce6UhYCp7rKQ2+HJfnwWixslfpKOi
+X-Gm-Gg: ASbGncuZt7kI3wgA3fVIRss/Z1Np7koQphhKZgYAmHYjK5ECPICXNeMLmPmGmltyvrX
+	sAQj0LCkODBtXGOc6JzbiYz+rDhFxyLqY6fHNhFhjXpaM5SHJ2QU88tDp0YDTbNY0wuyTmYqmN8
+	NfOlM8t6pQBPepCMPKyirw91HL9sM8qaa3SqZ33y0m9wh8EmfjCkcYwHbQQ49kUXLvUFsA5obQX
+	YChITBiUwmJwQOdBpYU1lVQ79fo5BT5btLSEVp9f/zh50Wewm2rsHgsk7AbnU/z4R7AtFiWX24G
+	AYc9ibPXGO/TYAtjiWoMs+BQNFnhwOCFxrtxqU1TZIsstyxLs5h/RWg56Q7qOcwV0rX0
+X-Google-Smtp-Source: AGHT+IHQdYQPOf3ZTYz+ch9fvB9kyQd03DdROjbnNGl6h80jK1GVCLd0dSbcE1zb/Rzt8hV8CH1BMQ==
+X-Received: by 2002:a05:6a20:2d23:b0:1ee:e439:1929 with SMTP id adf61e73a8af0-1eee5d68e2amr4724131637.30.1740054518390;
+        Thu, 20 Feb 2025 04:28:38 -0800 (PST)
+Received: from [192.168.0.226] (220-137-0-183.dynamic-ip.hinet.net. [220.137.0.183])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-adcbe0311b6sm10815482a12.56.2025.02.20.04.28.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 20 Feb 2025 04:28:38 -0800 (PST)
+Message-ID: <1a3c0e5f-777f-4053-91d0-aeed77f4a3d6@gmail.com>
+Date: Thu, 20 Feb 2025 20:28:38 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] cpupower: monitor: Exit with error status if execvp()
+ fail
+To: Shuah Khan <skhan@linuxfoundation.org>, trenn@suse.com, shuah@kernel.org
+Cc: jwyatt@redhat.com, jkacur@redhat.com, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250211100530.5918-1-s921975628@gmail.com>
+ <88d440c0-6a84-4483-939e-9f69e1d7befe@linuxfoundation.org>
+Content-Language: en-US
+From: Yiwei Lin <s921975628@gmail.com>
+In-Reply-To: <88d440c0-6a84-4483-939e-9f69e1d7befe@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <5bebdc73-b2e0-483b-8c8e-3737cda34811@cherry.de>
 
-On Thu, Feb 20, 2025 at 01:13:06PM +0100, Quentin Schulz wrote:
-> On 2/20/25 11:52 AM, Heiko Stübner wrote:
-> > Am Donnerstag, 20. Februar 2025, 10:56:52 MEZ schrieb Quentin Schulz:
-> >> From: Quentin Schulz <quentin.schulz@cherry.de>
-> >>
-> >> The PCA9670, PCA9671, PCA9672 and PCA9673 all have a RESETN input pin
-> >> that is used to reset the I2C GPIO expander.
-> >>
-> >> One needs to hold this pin low for at least 4us and the reset should be
-> >> finished after about 100us according to the datasheet[1]. Once the reset
-> >> is done, the "registers and I2C-bus state machine will be held in their
-> >> default state until the RESET input is once again HIGH.".
-> >>
-> >> Because the logic is reset, the latch values eventually provided in the
-> >> Device Tree via lines-initial-states property are inapplicable so they
-> >> are simply ignored if a reset GPIO is provided.
-> >>
-> >> [1] https://www.nxp.com/docs/en/data-sheet/PCA9670.pdf 8.5 and fig 22.
-> >> Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
-> >> ---
-> >>   drivers/gpio/gpio-pcf857x.c | 29 ++++++++++++++++++++++++++---
-> >>   1 file changed, 26 insertions(+), 3 deletions(-)
-> >>
-> >> diff --git a/drivers/gpio/gpio-pcf857x.c b/drivers/gpio/gpio-pcf857x.c
-> >> index 7c57eaeb0afeba8953d998d8eec60a65b40efb6d..94077208e24ae99a1e8762e783f0eabc580fa520 100644
-> >> --- a/drivers/gpio/gpio-pcf857x.c
-> >> +++ b/drivers/gpio/gpio-pcf857x.c
-> >> @@ -5,6 +5,7 @@
-> >>    * Copyright (C) 2007 David Brownell
-> >>    */
-> >>   
-> >> +#include <linux/delay.h>
-> >>   #include <linux/gpio/driver.h>
-> >>   #include <linux/i2c.h>
-> >>   #include <linux/interrupt.h>
-> > 
-> > this is missing
-> > #include <linux/gpio/consumer.h>
-> > 
-> > because otherwise you end up with
-> > ../drivers/gpio/gpio-pcf857x.c: In function ‘pcf857x_probe’:
-> > ../drivers/gpio/gpio-pcf857x.c:300:21: error: implicit declaration of function ‘devm_gpiod_get_optional’; did you mean ‘devm_regulator_get_optional’? [-Wimplicit-function-declaration]
-> >    300 |         rstn_gpio = devm_gpiod_get_optional(&client->dev, "reset", GPIOD_OUT_HIGH);
-> >        |                     ^~~~~~~~~~~~~~~~~~~~~~~
-> >        |                     devm_regulator_get_optional
-> > ../drivers/gpio/gpio-pcf857x.c:300:68: error: ‘GPIOD_OUT_HIGH’ undeclared (first use in this function)
-> >    300 |         rstn_gpio = devm_gpiod_get_optional(&client->dev, "reset", GPIOD_OUT_HIGH);
-> >        |                                                                    ^~~~~~~~~~~~~~
-> > ../drivers/gpio/gpio-pcf857x.c:300:68: note: each undeclared identifier is reported only once for each function it appears in
-> > ../drivers/gpio/gpio-pcf857x.c:309:17: error: implicit declaration of function ‘gpiod_set_value’ [-Wimplicit-function-declaration]
-> >    309 |                 gpiod_set_value(rstn_gpio, 0);
-> >        |                 ^~~~~~~~~~~~~~~
-> > 
-> 
-> It compiles just fine on my end, this is all very suspicious.
-> 
-> GPIO_PCF857X symbol depends on GPIOLIB which builds this function.
-> 
-> Now, I have no clue how it finds the declaration for me without this 
-> include. Any clue?
 
-Possibly indirect includes that depend on your kernel config ? The above
-functions and macros are declared and defined in linux/gpio/consumer.h,
-so you should include it regardless.
-
-> >> @@ -272,12 +273,11 @@ static const struct irq_chip pcf857x_irq_chip = {
-> >>   
-> >>   static int pcf857x_probe(struct i2c_client *client)
-> >>   {
-> >> +	struct gpio_desc *rstn_gpio;
-
-I'd call it reset_gpio as in drivers we deal with logical signals. Up to
-you.
-
-> >>   	struct pcf857x *gpio;
-> >> -	unsigned int n_latch = 0;
-> >> +	unsigned int n_latch;
-> >>   	int status;
-> >>   
-> >> -	device_property_read_u32(&client->dev, "lines-initial-states", &n_latch);
-> >> -
-> >>   	/* Allocate, initialize, and register this gpio_chip. */
-> >>   	gpio = devm_kzalloc(&client->dev, sizeof(*gpio), GFP_KERNEL);
-> >>   	if (!gpio)
-> >> @@ -297,6 +297,29 @@ static int pcf857x_probe(struct i2c_client *client)
-> >>   	gpio->chip.direction_output	= pcf857x_output;
-> >>   	gpio->chip.ngpio		= (uintptr_t)i2c_get_match_data(client);
-> >>   
-> >> +	rstn_gpio = devm_gpiod_get_optional(&client->dev, "reset", GPIOD_OUT_HIGH);
-> >> +	if (IS_ERR(rstn_gpio)) {
-> >> +		return dev_err_probe(&client->dev, PTR_ERR(rstn_gpio),
-> >> +				     "failed to get reset GPIO\n");
-> >> +	}
-
-No need for curly braces.
-
-> >> +
-> >> +	if (rstn_gpio) {
-> >> +		/* Reset already held with devm_gpiod_get_optional with GPIOD_OUT_HIGH */
-> >> +		usleep_range(4, 8); /* tw(rst) > 4us */
-> >> +		gpiod_set_value(rstn_gpio, 0);
-> >> +		usleep_range(100, 200); /* trst > 100uS */
-
-Maybe use fsleep() for both ?
-
-> >> +
-> >> +		/*
-> >> +		 * Reset "will initialize to their default states of all I/Os to
-> >> +		 * inputs with weak current source to VDD", which is the same as
-> >> +		 * writing 1 for all I/Os which is 0 in n_latch.
-> >> +		 */
-> >> +		n_latch = 0;
-> >> +	} else {
-> >> +		device_property_read_u32(&client->dev, "lines-initial-states",
-> >> +					 &n_latch);
-> > 
-> > device_property_read_u32 will not fill n_latch if the property is missing.
-> > Before n_latch was always set to 0 at the declaration point above.
-> > I guess that should be kept, because we want 0, except if
-> > device_property_read_u32 provides a different value.
-> 
-> Yes, this was an oversight from me, will restore n_latch = 0 at the top 
-> of the function. Thanks for catching that.
-
--- 
-Regards,
-
-Laurent Pinchart
+On 2/20/2025 4:27 AM, Shuah Khan wrote:
+> On 2/11/25 03:05, Yiwei Lin wrote:
+>> In the case that we give a invalid command to idle_monitor for
+>> monitoring, the execvp() will fail and thus go to the next line.
+>> As a result, we'll see two differnt monitoring output. For
+>> example, running `cpupower monitor -i 5 invalidcmd` which `invalidcmd`
+>> is not executable.
+>>
+>> Signed-off-by: Yiwei Lin <s921975628@gmail.com>
+>> ---
+>>   tools/power/cpupower/utils/idle_monitor/cpupower-monitor.c | 2 ++
+>>   1 file changed, 2 insertions(+)
+>>
+>> diff --git 
+>> a/tools/power/cpupower/utils/idle_monitor/cpupower-monitor.c 
+>> b/tools/power/cpupower/utils/idle_monitor/cpupower-monitor.c
+>> index f746099b5dac..0fc0e229739d 100644
+>> --- a/tools/power/cpupower/utils/idle_monitor/cpupower-monitor.c
+>> +++ b/tools/power/cpupower/utils/idle_monitor/cpupower-monitor.c
+>> @@ -6,6 +6,7 @@
+>>    */
+>>     +#include <errno.h>
+>>   #include <stdio.h>
+>>   #include <unistd.h>
+>>   #include <stdlib.h>
+>> @@ -295,6 +296,7 @@ int fork_it(char **argv)
+>>       if (!child_pid) {
+>>           /* child */
+>>           execvp(argv[0], argv);
+>
+> Good find.
+>
+> Add a check for execvp() fail and print a message
+> to say that it is an invalid command and then exit.
+>
+Thank you! I'll send another patch according to the comment.
+> thanks,
+> -- Shuah
 
