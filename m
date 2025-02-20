@@ -1,122 +1,119 @@
-Return-Path: <linux-kernel+bounces-523394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 934C6A3D639
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 11:12:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAD91A3D63F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 11:15:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75D52171D10
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 10:12:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18263189814E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 10:15:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00ADE1F03EE;
-	Thu, 20 Feb 2025 10:12:26 +0000 (UTC)
-Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com [209.85.217.53])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C19811F03FA;
+	Thu, 20 Feb 2025 10:15:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="CPU7AKFS"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F4B31E9B35;
-	Thu, 20 Feb 2025 10:12:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 627881EE034
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 10:15:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740046345; cv=none; b=l+HT65fCcr6OgzFE6PxWS5YVckgVOjAMqi4xGzjyrkkaT2O0564CLYMYGoLz7J38AvNBNLgCkAv0aJ7rNcVnCz33k4qgmIsjogmrtyWRKTVLlA92o/mDohXKw1lQJB0dMFmxD+XIPGMJfay3+HboM9pOzd9F40PEjHnF6z7VLaU=
+	t=1740046540; cv=none; b=XCc1bQ3+vIVRoBPOkajMAIfhLo9bOHEkmvhRm7LRHvTAyyVl6WKl6lX9FLNjEhTmT9il7unYXkhlUwmztSjCe2icZNQQiqT/1wshJ7QDk2PPDdIp37riIgK+odMEPeGchiGOUujfY5hfQlg8bz+rA2Fj+0OdWo6oCZtTZ+KwTwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740046345; c=relaxed/simple;
-	bh=nIi99FHDxzLdX0vKOH+URmw24gaSbRYE2N63qsAdWec=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RHTMbiqaGykVsCurjrtviingIBn2blrSwxeewMRWpUnRfQKoVDY450jj9nLDYauIBYtXqG3KSfpI/pueGikfiZ8fPl6eSBTRGoZM52asgqcpo2GQihMlC07C1sDUq9PIlPv6TW6dXpf96+OxqUdDdRkPPMxPq6Ofx2Tey4PtuX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-4be66604050so258743137.3;
-        Thu, 20 Feb 2025 02:12:23 -0800 (PST)
+	s=arc-20240116; t=1740046540; c=relaxed/simple;
+	bh=AwGIoFXUjlmwWgvEOb+I3Dk1NKxMqMQORiC+Kje6l6g=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PLlJ1dAi7YKdGHGRAV6zsUZwlQUJg0nvz/RCQQU1dHpH3X2gEIP8nW9Oddiqfg8KBdOBHlT+gTerrNjxpjJWxzg3WIPs7DLTf8xEC9hsX3k6xR1TbCMhdfHqL7xm7gKczcOgpOELDPB49tdgY5AKMLoyYnfXqQzEetQK6ntbbx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=CPU7AKFS; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2fc0d44a876so1143171a91.3
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 02:15:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1740046537; x=1740651337; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=fi6x8ig5ZwKEmhmgwjg3TF1oaUzfpPBZi49wWEG256o=;
+        b=CPU7AKFS7lRvYok/OkJHSU+2gCOEHJsUPprKX2VVSAazOSgMwDJr6hzhymLXK02/oa
+         KQEiTjAkW9cHwG5SX3nIlVcnByKTsu2s2gjh6z7L01S3nfM0H1qa4SSdbizerCpbg9d8
+         bUNx3LSdm+AnWqQ9qI8P2XNNGCouOrD2/FlMED0vOlRMIwrh3SN6JHgd0tqKmScRNAYp
+         xhELua3O1/5OUTnAIUYNfwS8zRu2QS1TSLcUYepdzH+7kdyVjuLvbj7vTRcBWshv+33P
+         uqBdOgopOmpH9VZOrro4RubLzX/+W5CbSNJlUyT8xFFtz1EgqaprWMQINtuyGx/Pp7u6
+         LyUA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740046340; x=1740651140;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1740046537; x=1740651337;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=v6g+DX3MC+/86jx2uJn9E9iTV8rLmFW1Dd5ipEZ0c9k=;
-        b=WiyAZF8SXWEZx9TxlGP7S3YHQOexWC47npPa4Jj6hUeDLy44zmL+f90d5rZth2dSNY
-         EC77SbZKR5EIlxq26Ex/sETzy1REWu4+IgWD3xvoMLgPgJv/v2G0BFK2ha8Mkq4sH5kb
-         hC0qhDmvksRwXWKscLFERInIpqg37RyssVcrfLqoGRYxEubwyNr0MJVV7iaa1H/u/M+t
-         lUomYmIc9aIX7ER12F0pcvPBbWzgn8broyMGmvy94nh72F7Zd+B+EQbLY3MxYMdM3A9w
-         XFIzNCmzzLHLVLXuFS1QHp7NmX9djCiOvVnFeU63+KNW7MYCmpnfWzBmYUDZHxyvx6vu
-         cveQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUP9td4dlpsk/GpXQOzbffq6zugjneSiaIsxtr/Wkm/giI4RPPhpQ652KatoQU+ms7boNQZ4XvMf71I95FOBzOJZGo=@vger.kernel.org, AJvYcCUR4w9WtYKc0WeGw5TQkK3Yq+rUSikp3urwIxRXhzzdoOlTvmRZ0l9O7JEEq11NDrymfcEiJvYRZ9+8@vger.kernel.org, AJvYcCV3pnYr3TmXul8k1L5/bJqxDz59el1zE6/hUFhCVi14d8NdjI1VsZmeGKz9N/1sb5R8QE1rWOSEhUq4LeFI+5M=@vger.kernel.org, AJvYcCVJEsMv7JyoCWu/RcdO5HaWMFlB7Id8WT6lGBNXkOfn1XP086nX7N9p3f0TVmoIdiFLb/okrQjfpEc55zdS@vger.kernel.org, AJvYcCWD3wp0U+3GeGgmLO45FmnJOPi1D87P95pmhXszMlCSgdIT5enXXFgBzioEj9jnCCZdj3Bw7WTo02gQ@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9tRcZQNE10TXxLDlm4CRNqBWDe7npQ9/zXkuIOY7DvDBd84VG
-	RrsFf+v6sUa3qZTQPyde5rYOSsBzYHa1iHh8coQtORwXcp9NtjOVtaBeSBZ1
-X-Gm-Gg: ASbGncuBqr8HMHJSJ0TrTz8STpPTYfQg8ZgPgJKU2S8lGsVCSn7u0UU40gJXrp3ZPyT
-	OAn4eV5vQwd2AUv31HFTJOfrBCrRjSDuHSOPUrvfaWXW5o4UnINSWPSZfM9nwVJRrb3dOWuJH22
-	zTbp0ZMWt0FXYq11nhIkW29n/pVn1clySmp+F7rGncMLbXPp8gArQ5Bjhoa6kAEibCfC/Pi/S8s
-	notnFHKnckm1Ov0tW1l4ueQ6Z+/fIByiDiGd50+rR/0U5+XSOzCfZjQ3B9ZS433Aac4+FcjBdy9
-	j3J9o1ZpD3CUxAC4tRmKnt/Oa0WumjzPKvZMb2wPOLJkZerDQyuorg==
-X-Google-Smtp-Source: AGHT+IF2u6D62Vnl4M6IzxCv2Pe64IooAhgmygegDeTDAu6zr6P9EvaLevM8KSvRBx9Ih1qX2H0n4Q==
-X-Received: by 2002:a05:6102:150f:b0:4bb:d962:61f with SMTP id ada2fe7eead31-4bd3fe55f27mr14511726137.24.1740046340627;
-        Thu, 20 Feb 2025 02:12:20 -0800 (PST)
-Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com. [209.85.217.42])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4bc13d53651sm3166586137.17.2025.02.20.02.12.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Feb 2025 02:12:19 -0800 (PST)
-Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-4ba0eb3b0f9so259322137.0;
-        Thu, 20 Feb 2025 02:12:19 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVEgaPrUiRpLaAfJPcwu/vBYSpYLU07ARaxpr1lck7E/Tl0NsiAQcf44NywG+UhZ6Ut7UIZFb1oetF1@vger.kernel.org, AJvYcCX6nd+WMyUSpyylUazZWuEsae3BTsGIzjkvt0xdDXP3DH1SfPoY2W1ob9+feyuRF+nDm5udT+/B/OqJGmHt@vger.kernel.org, AJvYcCXO+rxtUuwyC466ArRn41WjagUuCyB+CXQWiiH38HWxYRUsHVn85CQJ4zhD48XvNxe2At3H0f9rxzP6@vger.kernel.org, AJvYcCXiVJ/9SwqMwT71mgRQcLzrjXUCTukNKN7JjiwPF0WN7hJCtNfVD7j5z463Yy3vYcyPEeH+ddqAX4rohXb4zu0W5bg=@vger.kernel.org, AJvYcCXnzDYPofC/BeoIsbJOLBp33qFt1qwv1y6hdg7ma85De8iZrqwVPQKBy+uBcnZPHbqp/xx0rfm443KlujXJDU8=@vger.kernel.org
-X-Received: by 2002:a05:6102:150f:b0:4ba:95f1:cc83 with SMTP id
- ada2fe7eead31-4bd3fe0463fmr11960631137.16.1740046339391; Thu, 20 Feb 2025
- 02:12:19 -0800 (PST)
+        bh=fi6x8ig5ZwKEmhmgwjg3TF1oaUzfpPBZi49wWEG256o=;
+        b=sHAMmp/NPKzG51k0bAYtHBmcp16Cpubk5R9MGIc0SF2ywgNQYJQg9Q3O5wpk6Cr8v3
+         uyM422cOZOP+e4g1SYlsiJJVjZRcxRnEIJdw7z4YKF5g4ZLOLHta8sg6X4NGhslXik7S
+         XjayUqOA7dN/AEdvRTXP/FB05VGp4PRmHsOODnymHcv16WssopEp5KK5wdm85gLVGy3o
+         j+FciKXX8S1cx0NomI2lGl0D7Yz6lpHTb0HZtCkrNCi5DcseZ/IS0gcp0kdCzhJEb6wV
+         /LaofXU3p7ZzS9X/+mUcMXVPnhLA2lYq7qAT2E26ZbG9cofCkht121cRgg/+fGQpwXB8
+         T8NA==
+X-Forwarded-Encrypted: i=1; AJvYcCXqFAo4SYx0Mmy3RVYI+Hnw2OEgMmA9YzU0CSgydJfhiJzeSzQSFm407fhOKvkG/R+U1rWSEyWnQe23Vgk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+mEKDZwgeMw6cuud9kLdqwvV/fR+ak4aTuqiWnlPvbsFSZKSM
+	YaD2C4Ko7NFm2jetX0Gn8g02YhR0EAA06vkh1mCgm2oII22hZ73GcBqV2iWy/zQ=
+X-Gm-Gg: ASbGncsmFkxZG546iZ5sAdZvNKp3nf5o9nJHoOpx4beaNR9zEcE7aCXY2TcxIigC4U7
+	m8bIJ9/YtnMDLdDTCtSKd0B3gIMS/IjpBrGh0dI9xE7WqC5iyYuKoJfYk9v/JCRIm66ZB/6r67x
+	wtVHTs3XgDrR4RTYQXCfjKr/eAvAd2Hy2ngI2mM0z43Ff+6jqfJ6wrmgzgVZjSvHSVrb1zFQkaf
+	qih40oPHJFX3PFdCW6ZPl2nNDEFaTKCVyuKSh9mLaqGWaQ/6BVfwHpevCGFyLlafZL3cVQrWYT7
+	Tj99M1RSlsC1jBSVb+3SHwUf6P7CP39E8aei6kRvAOMrrLy/tg==
+X-Google-Smtp-Source: AGHT+IGr555DXR3ZVGi1n2qebDlBxN4jaHy47hIUyefBd3dK1itx6GoA15111YZSfPrtvWchGl6xUw==
+X-Received: by 2002:a05:6a00:124f:b0:732:5935:c219 with SMTP id d2e1a72fcca58-7326177d652mr37845583b3a.3.1740046537505;
+        Thu, 20 Feb 2025 02:15:37 -0800 (PST)
+Received: from L6YN4KR4K9.bytedance.net ([139.177.225.232])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73271a02648sm8707518b3a.107.2025.02.20.02.15.34
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Thu, 20 Feb 2025 02:15:37 -0800 (PST)
+From: Yunhui Cui <cuiyunhui@bytedance.com>
+To: dwmw2@infradead.org,
+	baolu.lu@linux.intel.com,
+	joro@8bytes.org,
+	will@kernel.org,
+	robin.murphy@arm.com,
+	iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Cc: Yunhui Cui <cuiyunhui@bytedance.com>
+Subject: [PATCH] iommu/vt-d: fix system hang on reboot -f
+Date: Thu, 20 Feb 2025 18:15:11 +0800
+Message-Id: <20250220101511.37602-1-cuiyunhui@bytedance.com>
+X-Mailer: git-send-email 2.39.2 (Apple Git-143)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250210184910.161780-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20250210184910.161780-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 20 Feb 2025 11:12:07 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdUZTpcuhOsK-VQ=cQHACU_OK13GpKrW9zontqtUzWpB1g@mail.gmail.com>
-X-Gm-Features: AWEUYZl6-xC_bxNyu24YgYdf9ZH6bVOARQ4QLwAphkFO_eW2hGjwktxozR2jY1k
-Message-ID: <CAMuHMdUZTpcuhOsK-VQ=cQHACU_OK13GpKrW9zontqtUzWpB1g@mail.gmail.com>
-Subject: Re: [PATCH v4 0/9] Add support to configure CPG block for watchdog on
- RZ/V2H(P) and RZ/G3E SoCs
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck <linux@roeck-us.net>, 
-	Magnus Damm <magnus.damm@gmail.com>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-watchdog@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Prabhakar,
+When entering intel_iommu_shutdown, system interrupts are disabled,
+and the reboot process might be scheduled out by down_write(). If the
+scheduled process does not yield (e.g., while(1)), the system will hang.
 
-On Mon, 10 Feb 2025 at 19:49, Prabhakar <prabhakar.csengg@gmail.com> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> This patch series adds SYSCON support to configure and retrieve boot
-> status information from the CPG block for the RZ/V2H(P) and RZ/G3E SoCs.
-> Summary of Changes,
+Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
+---
+ drivers/iommu/intel/iommu.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Wasn't the plan to use a DT property under /chosen instead?
-(Yes, I go to great lengths to avoid reviewing and accepting patches
- adding syscon compatible values anywhere ;-)
-
-> v3->v4
-> - Added support to configure CPG_ERRORRST_SEL2 register
-
-Oh, I  guess that's the reason why you changed your mind.
-I will reply to that patch...
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
+index cc46098f875b..76a1d83b46bf 100644
+--- a/drivers/iommu/intel/iommu.c
++++ b/drivers/iommu/intel/iommu.c
+@@ -2871,7 +2871,8 @@ void intel_iommu_shutdown(void)
+ 	if (no_iommu || dmar_disabled)
+ 		return;
+ 
+-	down_write(&dmar_global_lock);
++	if (!down_write_trylock(&dmar_global_lock))
++		return;
+ 
+ 	/* Disable PMRs explicitly here. */
+ 	for_each_iommu(iommu, drhd)
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.39.2
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
 
