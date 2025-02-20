@@ -1,202 +1,172 @@
-Return-Path: <linux-kernel+bounces-523747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDD6BA3DAAB
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:02:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 58325A3DAAE
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:03:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D782171158
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:01:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C649B1733CF
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:01:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 850511F76A8;
-	Thu, 20 Feb 2025 13:01:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F096E1F6694;
+	Thu, 20 Feb 2025 13:01:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="FwtxARk9"
-Received: from EUR02-VI1-obe.outbound.protection.outlook.com (mail-vi1eur02on2077.outbound.protection.outlook.com [40.107.241.77])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mX9XHcyq"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63808224F6;
-	Thu, 20 Feb 2025 13:01:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.241.77
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740056490; cv=fail; b=l1RyOPmbNKHu5b8QNfQy3F+RFMBBkCeQDyypeTO0NnQAqFWqJ14Fr/jcl70s15a2uMLmNKxlbibjbKozG8lWgz1gcqVg5kufLu5mS8pkloo5/fvqROjm/b/QY4obXgGhX6koYzrXQaVyW21xXIPlDdg17OHS/BHRvRw4XI4PEs0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740056490; c=relaxed/simple;
-	bh=sx3joi43Z7ro/Uz++eNn0LYDnoy6dBqFMZpeypLxoIc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=qTN+dyk2qxvdalHiuxVehojdQbJkgf1VycscTmtHMsA9oKjOoeoR1IznHLZ+GbPqS18VlMoZSjztybNTkycDWB8OPF/gRPqSEB2I0/NSwrn2JVEgH9dGEfs5bbsg5dcNbLqzKFNyx/4R1FFFkOrRI+EiHFh5v179lw2HvDVWe/0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=FwtxARk9; arc=fail smtp.client-ip=40.107.241.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=pIjmb+Kk7XadSLz2ulo4+y4C9gwezgNSiNkS1rzDDI+ZyX//VsJ+we2KrX1PbzQXfchZI/4Gdw33vQyOZp84TCEvvFdJTrm5VoQ/JkUssM6g42oj0mNXGptLsqfrphycfIBnnEd/rzGmcyuJSR3iLugPsJW8JqB3828GGkJdmK0A4YzLTlEew5Uw/87DRoYf2qjrqqy3LOOXqhCx46Fb/Z7j7tCBcPY0fhI6ix1w/65OLe6m93j4QQQRRQHAb4d/jiw2IsDZAGQhOwrCH+1y1zzBDICMK8c6yquJRBlLZh/274O+XaJtCYT9QJlHG0pdP1FRhrOCQUYTyE1zb1glOg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+mOIpL+BTRMqaUMD0f8BNVLjUeRUjfXHJ46BlkYQLeU=;
- b=kJj+Fgd6eoMh8i2rFHVHGKzJoaPyDlaHl6VQvrE1HNLsg3ockvhPHRcHgu0Ur3GnB2/i1NQUMIlQgQ9d2kwPnh3wI1KimpqraGWg3ECuBjy3sLo60jJrZDcGMK/4lzRnkHvhVSiHKxn+SV4z6h6kNQK/EdWu3iKiz8ZCaD8nnVfQ1GopY4vUI5Z0l30NXEjPQVq+++X1cm7kXoW6ptJMAIU2Wu9zDc9aOvgT868AgG4zyF/VGxB7LQeaWrbRdsHyK6aA2xIEuzXYd5p6lTOHAT/viLnUykuALJseersg2J9bjeKbx+xcb+Q2NmrshiXPX2A+IRMTNH4+uFTMcqcOaA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+mOIpL+BTRMqaUMD0f8BNVLjUeRUjfXHJ46BlkYQLeU=;
- b=FwtxARk94PJQlu6LYHm8jhXtZNBgD8b3XWzQa878UsxCGDMqpuJut9csZC8DhnqHSJK+BF7Q1PoEgVKSVK8hPmKB6gaUbdf3T/l/iBylXN69Nq6IDcM1yIOHPYTyShGWCrhD6rM4lCqeroV5LEh4BQkqYbbbUcn89IlatV36Kl7QaWJpJw/mH+N6k81ViB9Q2FEd7zjn2dJjH1yxHi/t0Swc5/IqM10oZL3fKPkRBLS/kZAkKUF7Vlw4fGEMm8KLu+5hwU7CgX2hdI/eIzd7qdST3OL+L1uEnskUudFOt81BSYtSpYeLBEGbMdAQNVNeo7180msc7HcFBr1AD7/zRw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM8PR04MB7779.eurprd04.prod.outlook.com (2603:10a6:20b:24b::14)
- by AS8PR04MB8738.eurprd04.prod.outlook.com (2603:10a6:20b:42b::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.17; Thu, 20 Feb
- 2025 13:01:24 +0000
-Received: from AM8PR04MB7779.eurprd04.prod.outlook.com
- ([fe80::7417:d17f:8d97:44d2]) by AM8PR04MB7779.eurprd04.prod.outlook.com
- ([fe80::7417:d17f:8d97:44d2%6]) with mapi id 15.20.8466.015; Thu, 20 Feb 2025
- 13:01:24 +0000
-Date: Thu, 20 Feb 2025 15:01:21 +0200
-From: Vladimir Oltean <vladimir.oltean@nxp.com>
-To: Wei Fang <wei.fang@nxp.com>
-Cc: claudiu.manoil@nxp.com, xiaoning.wang@nxp.com, andrew+netdev@lunn.ch,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, ioana.ciornei@nxp.com, yangbo.lu@nxp.com,
-	michal.swiatkowski@linux.intel.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v2 net 1/9] net: enetc: fix the off-by-one issue in
- enetc_map_tx_buffs()
-Message-ID: <20250220130121.fq3irlaunowyvfc4@skbuf>
-References: <20250219054247.733243-1-wei.fang@nxp.com>
- <20250219054247.733243-2-wei.fang@nxp.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250219054247.733243-2-wei.fang@nxp.com>
-X-ClientProxiedBy: VI1P195CA0046.EURP195.PROD.OUTLOOK.COM
- (2603:10a6:802:5a::35) To AM8PR04MB7779.eurprd04.prod.outlook.com
- (2603:10a6:20b:24b::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 957DA433BE;
+	Thu, 20 Feb 2025 13:01:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740056509; cv=none; b=Rr6oTzqCB/8oNbPztD/+VEl+gho/EPvymH7UIWpd5s1AOn6OLexx25X7Z+i3g2+uaJEUaUQzcPyMozoGB6tkXAQuttdkhrEOWJZKuRbIbqM45LCYEbIUB3qzcdAaa1mkO5vub0yGkxQCwgHMJWh45vACeo8h1kBKUqjdjVWrwO4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740056509; c=relaxed/simple;
+	bh=q4k6pLg6gFyqRkfKqGoGGD96uz6bTIidMfX2e2HpSNY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Hu9/B43UXYWuOuONxuUJDGb6ZkFGyapRHt3dkWYjU7p3mYjtP7vIn8SgZNNyY3EEW56889sWFXs4e3v2WFjNEWAzOtt6sNxuabpGwsvXnIV00w6gWV4f6j9OSQq5MTAMXGnGg7bmyPdxUmxoPoA6iJnInMyEMxonRqixRHWl8ho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mX9XHcyq; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-abb75200275so150291866b.3;
+        Thu, 20 Feb 2025 05:01:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740056506; x=1740661306; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=vgmKYWvys2geNwIMlTB+AnD/uE/7UeYtcCFKBMM26oQ=;
+        b=mX9XHcyq37N0Y98Z0kKH/Uz803vQBu7PI1zrN4cj8sQYBNMFQuWilhH0PBhUF5R+xN
+         zP/BvsSDRMSwSJ/MGUYkI2HcWiNo+kF/PqIJ7xb427tl//mAsqq3m7j2t2/u8RQgOOn7
+         rrfBEc8x1m1BhLTeJbITA122QtynPTPNN2aInH+QEGWSgYPdIIpoQ4JsqQcT1EFpnMxI
+         z0kzs7l8Yzj92dQkd66lmp9ahJWGDDINcY9CNUfa2HUZNi3OD0FRSjiwP1ttXYVLL9pP
+         +GseImkhr6dMcXFItk0CDcVokaRrr0LuqJghI0OneOqxkjlHhdyokX3JMTw6M8z7G4tc
+         0B3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740056506; x=1740661306;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vgmKYWvys2geNwIMlTB+AnD/uE/7UeYtcCFKBMM26oQ=;
+        b=ifSh3umXSeMQobpLF1bSANlJW5YlSUMHrZacAOLILZmVsqBN23vhkrNFubGpbQjUX1
+         HLPhjmCrEWZdwC5PBOE6RIa5jQpkGIQjcUQ7RPZOU9zxjUtgYGov/7hP/aS/7qX8x7mP
+         YWr8GkvIJtRJaeR5fSht9Ws5ns4ZvOLgoImP3oxLl2WVTMRlhYMRTKaLWibvCYBCvheZ
+         EeUkDNCVXjxFVMRBydT9jfFdtsanhmQvGdKIc9KZdJIiT3RieJAlMMks649/aAgRlXJ+
+         BgDlrJyGXyq0BgUXDShw7rLexK2X5s3mK89p8zIktadMQgK6DIyuF2I88RdRTtg+YC16
+         24Sw==
+X-Forwarded-Encrypted: i=1; AJvYcCWejfE4e8a5vLe3o1JcApHi+8jReHGGM3uh+9WBq9Vw0dDvg5UW4M7fl0K3+4pHpUubRFCl/pgL2TJMPuw=@vger.kernel.org, AJvYcCXd8liwuKxG74uF6eMRvZrDGgxcT8x8CHYop+tHFYqnbyO9jrT7zEuce8VDlLgWDyYdohq3QTSh81Cbxts=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1Q40QasR2jxCeoUpu00vyRGfJAjVU0Cdv1XitJJHuhz0ktFC6
+	a1buXqjFiEwDJDPLvL2Sv9bKM3Rs70x42jn/Xe48Dcw+qR8I/v7LC3rNRw==
+X-Gm-Gg: ASbGnctCWJAfP4GGAO1Q0Yqy6tGiNFrSHHsdYVW0C7WVkNaWYjc/SDPMwZep2PZTBKB
+	453UAk6X/xinZtE4EqPHenKuSVsTaXgOIfLEkGDj9Est/rhxce9f3IjxhYzvA6iYVndo+IeG9fu
+	hXv97ONoA6x+8jcPJlZw8NWA58kVoynGcYnJI8VxcthLSDRu9XIg/UtLiQ6bl5IwE41DzzYNuzV
+	qC2JwxjaqYkgrlDxJVs5QTdetz2moth4jqi6qGz3X2vCzwyKrm/w9s8BuMsEGj7Gno16nGHmUkh
+	JfFPjsxtLQZgITr9cBzfpQ==
+X-Google-Smtp-Source: AGHT+IEZIyZ80nx+CwGk+O93D4se/mLmew3Yfg4IU+0c2JK2d+v3wVGF39JlO4RSiqfD8//4VL8XHg==
+X-Received: by 2002:a17:906:4fcc:b0:abb:de17:4a30 with SMTP id a640c23a62f3a-abbf384a4dcmr201647466b.19.1740056505371;
+        Thu, 20 Feb 2025 05:01:45 -0800 (PST)
+Received: from [192.168.0.100] ([188.27.130.21])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abbbde95957sm492331366b.138.2025.02.20.05.01.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 20 Feb 2025 05:01:44 -0800 (PST)
+Message-ID: <c94580f0-3ab0-4a19-a996-9bb37e23dd39@gmail.com>
+Date: Thu, 20 Feb 2025 15:01:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM8PR04MB7779:EE_|AS8PR04MB8738:EE_
-X-MS-Office365-Filtering-Correlation-Id: be2e1ff6-d294-4fe5-3dc9-08dd51aeadda
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?iepRGVURrwuQI4vybmve03urEGZg1aJx5Z22t6I8oOEzqZQ6TRstCjF7sc/1?=
- =?us-ascii?Q?9ezIF6+9T+fU5bMskghEnaD61sggeYeHyvvzYjGA1M0Jxxlr08Sf39kV7Qzn?=
- =?us-ascii?Q?8aRahLQGYirxs8UiW3FrWeA2A7+8n26z8z5+pkZGry3DsGuremgJpnwpp9q+?=
- =?us-ascii?Q?1pRd93LxUtB6Wiq6md36L0bnV0Sje4eIlHm6tWBuQGSkK8wKd0lA1AXqQ2Z2?=
- =?us-ascii?Q?kctc697UUJPGsYkqj9vY5KWZG3DlaxUDqdk2cvrRXYFUWd5PWA0MOW2NDB/h?=
- =?us-ascii?Q?qa0pLVuoC0nC4CzqB7gRVt94J1i7MGDDYu4+ymmXz0V8UijJlbuHdBlDSvgd?=
- =?us-ascii?Q?CjaidlY1BXMHNT8AqqMPAKvgg0RIQy6YBnBeGfsZiZ0D68PydE73fzrW0t6H?=
- =?us-ascii?Q?yh6FZgdhCNfJrTT/ys4Xm/2nDRYbjN16k93V8L0s134Ve/+tqP4I9wqBlYIJ?=
- =?us-ascii?Q?LQlS7QTFCpEX140X5E1TdkTCF3KmQzM7GXwROUcRSQgCxenhBTmtPR6bq177?=
- =?us-ascii?Q?ecEzj/8mEC7dOPnQkHjmg/fH+p/wiCuR5EM5ru8FGxmZHPAmumdbEgpoAbv9?=
- =?us-ascii?Q?B08CAtifh+C65RLypM6Gbz+5M1Swwp00q74BGM8TG23VwoazZXtosAFtcbvy?=
- =?us-ascii?Q?N857ikhkZYcosohdKO7YoxSuHC9MxVeuyoUQXHCJvB4mJ1bVsWqu4svXDaw+?=
- =?us-ascii?Q?NqH7tmlMFNRTkZTwX96MRmXUa0QtDHXyr/E/yjU2FU0xh/bSuC+GKdjQpNQr?=
- =?us-ascii?Q?z8pwsEEIsQbVOkMHA3h4v2IYhOaPuIoruI58zKgW2LxfZTTs0HdCXxDhTkmF?=
- =?us-ascii?Q?qw5gbqmmO/ekzoLq5MkzIgl66eghNWE/CyNcyFsLvn/AOX7g21VQ6P/wNEWT?=
- =?us-ascii?Q?sazwsvk6SldOB94ECFx7s6bkcCllQ08rZ+4X1iMlWzZ+YghzyA5B8sJjErAG?=
- =?us-ascii?Q?oj8O8SGwN6FLWll4Qw/fQDBRKjJRnIijJeg3mrf8NbCy/gXOWDBsG2oM2YLC?=
- =?us-ascii?Q?+yl5OaAV8jCM4Gki7+ndRNIcynkdzE/ZDWVHIzpaT5yCSDcB4YlmThGiNuWX?=
- =?us-ascii?Q?MC7ssDpek1Jtf9bVe4Q+Gv6f5iFRCu3MOGxDiOZ5518NhqW/5X+P/dUTwYIy?=
- =?us-ascii?Q?38TK6rKZxwJ2fyurVNTLn+WO2NxillXalwOP2XRBJF+KY4dWoJ1ZANx1jmW9?=
- =?us-ascii?Q?3Ev7oKfDEZZW/32DwZaFXGtyue6Bbds/BA2Rroyml9k2ZP52Gvwq6HYbU5a3?=
- =?us-ascii?Q?t0TsbGP92TDuMvb53sROTbCi/0UPWzx/UJdatEQsLSp3KlIVngl1Ln1jY+VF?=
- =?us-ascii?Q?q3Xp3bO28RARZheGl00sO64N3lWa265gacXVAYltelG3xYHQdvAVRWICy90G?=
- =?us-ascii?Q?fqhnabjcZkGJ5D6Pa7e0c/4qSp5o?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR04MB7779.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?K2Cd0ttZcc/s5CXZ5afQOSpQEy23UfCdaxcmhUwQ2KZURxdTRCOL7A6AhWcm?=
- =?us-ascii?Q?aZhXF61EJYqKkpi4BkE2GuKPnz+PxeSEM5pUqIOF6weinFWn0tzO4Rx9zYCd?=
- =?us-ascii?Q?MXrMSN3/0sQ51ebkcKTNQkyAWyag82w2ZN3UF+ZVcaToqyOVCrmJUR6KzbQb?=
- =?us-ascii?Q?X+9F5SQepon5iOaQ4e0Q+2ADQw87cQYC1oCRJZ7jAIgMFDiQA5GBquHNlG0f?=
- =?us-ascii?Q?QHz4//TT7irK03mGy2BB0Vce0VdWsiNkZWfF24Brs82y+jkvhEHR3zDENY98?=
- =?us-ascii?Q?s7+pgRkqX978YopAvZQfk2/ZVfx80lLS/rcoiVMv8+zPpE129F+bl3IPWonO?=
- =?us-ascii?Q?ru76Qm5iVgEmidsbfvlqmZ4Ai8SkxpXTakVUjFzbOGznIeQnqTzM64jxVdOm?=
- =?us-ascii?Q?nww6fCEOhmdWH+GdamHcH4Gt0t4R5TUVNnHlmMVug2YXqvVKm1tMeiMN5cHE?=
- =?us-ascii?Q?PKbGtoTertjBULTAO7uN0J7LdEf2TMNJB4mEdtBTp7XiBZ63bwlTnlE/ML3C?=
- =?us-ascii?Q?xrOAJPlIlj3oyCFxfb5hPSzlY2iBwy1i2NeAY++fs9c6IfN5damJF9WIvepu?=
- =?us-ascii?Q?Yx2Rtb+JjyO7kh4jQxVxUduY8NDWteW9MGvEHjNSFGV9NpF2o6TCtIqDCXox?=
- =?us-ascii?Q?lAMTtbhOI8mEtLT4yy2W7BLSYKE0LckRLhzBCZfyvSHQaVhQ0VaZ3R4/Hkv4?=
- =?us-ascii?Q?sH2R1znBaB0lv9pZMADPKPOSBDzscpC6qb9WJAj7GKXq9KqUz6iDDCaUjKel?=
- =?us-ascii?Q?VoPyZ1HD9bbDQ9BFqsTBkqFsnjyA8iFv4MnOCPggd/vONtErp5IaJr+ekjIi?=
- =?us-ascii?Q?qXX9Mqk4+hMP9dFHvDxMfPixSqv6NJkeaeZbc1mGjq+0EBsKCLkntV1FnFC4?=
- =?us-ascii?Q?uho5C8iKK98dSGLlDEw+xv/FhNteczaC9up3dw2q7ktSH2K/9QC0PRJk0nL8?=
- =?us-ascii?Q?TQbjiSqegRJtsQ8vTyNOqwsl+pH/vLnuDCzKmxZWO16x2fPnBZHmaAZYjkwd?=
- =?us-ascii?Q?OIdCPSum0b86oWT7Jmjrri9qPWRYS1DfEO2fH0GKCSkg43YKLQzYRxyCyRqp?=
- =?us-ascii?Q?j4rO4gEmyuwKX4UFihisbXRybsXhJxEUY73p3cbaJ+1a97HANWMbZYaQ5fo/?=
- =?us-ascii?Q?v7HaahkAwMhRRFaMFxWC26DgIPS+ekVjbIEDGv2Srs25QZfKd0JvFJZ3yPaY?=
- =?us-ascii?Q?UUacRq+9eaKNH2wGtJGyvkKE32vD4wsVXrgl3s7AoOrM8gSXt9cz5Wo3w/EH?=
- =?us-ascii?Q?VKbmhoQN8plHrBF9An+D1wQiiRtUTYS+NJzEq1X9O5a7RodMgeMVcJbN4kEs?=
- =?us-ascii?Q?Cx/szZsMm3RuABKly/RxIkYYhhZhZ2hyqa4TjDxZaH2x5L9HGJJGBGk9RUSv?=
- =?us-ascii?Q?/wfnCIy891qup+VIZSLx8hmyMPo0TOhLRwsqy0gSY2DB0JyZnuoeISbIHGoL?=
- =?us-ascii?Q?/ET48TQYdfg+n45LkRnC50QvOOVzl1rH9KUiHbDKoP02RuwvADCJf58hjAFo?=
- =?us-ascii?Q?b5X77fedmvimKBsWcdc+SFgTVUU/5hexYlPMpfRupVfa8m0Xn1/5PEGTQtaA?=
- =?us-ascii?Q?k5OQb57jAgscuutQoywSV0+/EW8blY9KBjCn/3pHfd03InoqLyy3o4u2yhmH?=
- =?us-ascii?Q?iA=3D=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: be2e1ff6-d294-4fe5-3dc9-08dd51aeadda
-X-MS-Exchange-CrossTenant-AuthSource: AM8PR04MB7779.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Feb 2025 13:01:24.1447
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: SVx0308eYbB1YJO3uR1Tc1xqP01MAthKdbQdevd3dnUVVPlzL8k0CI0UbseTwZozEitOIrb4N/4C1NWA80mJ2w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8738
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/3] media: add v4l2_subdev_state_xlate_streams()
+To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Julien Massot <julien.massot@collabora.com>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Bingbu Cao <bingbu.cao@intel.com>, Tianshu Qiu <tian.shu.qiu@intel.com>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Hans Verkuil <hverkuil@xs4all.nl>,
+ Umang Jain <umang.jain@ideasonboard.com>, =?UTF-8?Q?Pawe=C5=82_Anikiel?=
+ <panikiel@google.com>, linux-media@vger.kernel.org,
+ linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org
+References: <20250220092036.6757-1-demonsingur@gmail.com>
+ <tw6x663t5dmxsdarrxjtopza3mou3lnhwazu3dfv2k27fv47v2@bvftfepqqhss>
+From: Cosmin Tanislav <demonsingur@gmail.com>
+Content-Language: en-US
+In-Reply-To: <tw6x663t5dmxsdarrxjtopza3mou3lnhwazu3dfv2k27fv47v2@bvftfepqqhss>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Feb 19, 2025 at 01:42:39PM +0800, Wei Fang wrote:
-> When a DMA mapping error occurs while processing skb frags, it will free
-> one more tx_swbd than expected, so fix this off-by-one issue.
+
+
+On 2/20/25 1:38 PM, Jacopo Mondi wrote:
+> Hi Cosmin
 > 
-> Fixes: d4fd0404c1c9 ("enetc: Introduce basic PF and VF ENETC ethernet drivers")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Wei Fang <wei.fang@nxp.com>
-> ---
+> On Thu, Feb 20, 2025 at 11:20:32AM +0200, Cosmin Tanislav wrote:
+>> Currently, the v4l2_subdev_state_xlate_streams() function is used
+>> to translate streams from one pad to another.
+>> This function takes the entire subdev state as argument, but only makes
+>> use of the routing.
+> 
+> Correct, but is this a problem ?
+> 
 
-After running with some test data, I agree that the bug exists and that
-the fix is correct.
+No, it's not a problem.
 
-Reviewed-by: Vladimir Oltean <vladimir.oltean@nxp.com>
+> Is this the first step for a larger rework or is this a drive-by
+> beautification ?
+> 
 
-It's just that there's yet one more (correct) dma_err snippet in
-enetc_lso_hw_offload() which achieves the same thing, but expressed
-differently, added by you in December 2024.
+Mostly a drive-by beautification to avoid passing the whole state around
+where we only need the routing. I'm planning to submit drivers for more
+GMSL2/3 chips and we're using this just to not pass the whole state
+around. I think I can just use v4l2_subdev_state_xlate_streams(),
+but I had these patches in my tree and it would have been good to get
+them upstream, in preparations for submitting the GMSL2/3 drivers.
 
-For fixing a bug from 2019, I agree that you've made the right choice in
-not creating a dependency on that later code. But I like slightly less
-the fact that it leaves 2 slightly different, both non-obvious, code
-paths for unmapping DMA buffers. You could have at least copied the
-dma_err handling from enetc_lso_hw_offload(), to make it obvious that
-one is correct and the other is not, and not complicate things with yet
-a 3rd implementation.
+> I'm asking because (and I know it's hard to strike a balance) this
+> kind of changes tend to make back-porting a more painful, and if
+> only justified by "it looks better" I would be a bit hesitant in
+> taking them.
+> 
+> 
+>>
+>> Introduce a v4l2_subdev_routing_xlate_streams() function which can be
+>> used without the entire subdev state, to avoid passing the entire state
+>> around when not needed.
+>>
+>> Convert all usages of v4l2_subdev_state_xlate_streams() to
+>> v4l2_subdev_routing_xlate_streams().
+>>
+>> Remove v4l2_subdev_state_xlate_streams().
+>>
+>> V2:
+>>    * Fix description of parameters
+>>
+>> Cosmin Tanislav (3):
+>>    media: v4l: subdev: add v4l2_subdev_routing_xlate_streams()
+>>    media: use v4l2_subdev_routing_xlate_streams()
+>>    media: v4l: subdev: remove v4l2_subdev_state_xlate_streams()
+>>
+>>   drivers/media/i2c/ds90ub913.c                 | 14 ++++++-----
+>>   drivers/media/i2c/ds90ub953.c                 | 14 ++++++-----
+>>   drivers/media/i2c/max96714.c                  | 16 ++++++-------
+>>   drivers/media/i2c/max96717.c                  | 23 ++++++++++---------
+>>   drivers/media/pci/intel/ipu6/ipu6-isys-csi2.c | 14 ++++++-----
+>>   .../platform/nxp/imx8-isi/imx8-isi-crossbar.c |  2 +-
+>>   drivers/media/v4l2-core/v4l2-subdev.c         |  7 +++---
+>>   include/media/v4l2-subdev.h                   | 10 ++++----
+>>   8 files changed, 53 insertions(+), 47 deletions(-)
+>>
+>> --
+>> 2.48.1
+>>
+>>
 
-You don't need to change this unless there's some other reason to resend
-the patch set, but at least, once "net" merges back into "net-next",
-could you please make a mental note to consolidate the 2 code snippets
-into a single function?
-
-Also, the first dma_mapping_error() from enetc_map_tx_buffs() does not
-need to "goto dma_err". It would be dead code. Maybe you could simplify
-that as well. In general, the convention of naming error path labels is
-to name them after what they do, rather than after the function that
-failed when you jump to them. It's easier to manually verify correctness
-this way.
-
-Also, the dev_err(tx_ring->dev, "DMA map error"); message should be rate
-limited, since it's called from a fast path and can kill the console if
-the error is persistent.
-
-A lot of things to improve still, thanks for doing this :)
 
