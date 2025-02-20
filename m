@@ -1,202 +1,306 @@
-Return-Path: <linux-kernel+bounces-524690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C24C8A3E5D7
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 21:27:40 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D09E2A3E5DC
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 21:31:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9846F17E4E3
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 20:27:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DD4D57A4C54
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 20:30:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DBF92638A0;
-	Thu, 20 Feb 2025 20:27:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 597161E9B29;
+	Thu, 20 Feb 2025 20:31:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IoB8Fajw"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="jtvDgRad"
+Received: from sonic313-15.consmr.mail.ne1.yahoo.com (sonic313-15.consmr.mail.ne1.yahoo.com [66.163.185.38])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C9451E9B28
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 20:27:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A1191E493C
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 20:31:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.185.38
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740083253; cv=none; b=FiCaTTgZFl5gwxtYokUNw7kt4ujwlTj2WLHSc9hxYhQlDu9bqq0805fAm3fC7LgwUI5EUfoipxd7++9o8Q1WlvbTO3+8yiwN31Tpf+Hwhai4oqwzl6n5cz0AmkO2DXg86QnFMHpd3kdegX1zNvvW1zaKUb3E/gYSj1bj2DvTk+Q=
+	t=1740083492; cv=none; b=F0RbeSZEOCZcLDUuEefV5gozZZIhpWxZ+26jvhO2+QprSwj6A4d1LmuOQ/IgSX/64/0AvFRIE9iRviNgeN/6oDA2ZOHykb1O5j9s7qdbqiWVXs4RFiZflnTro9ziZWL7F0Q69fJanAO6XqSypLH8V4biXGj7P8jed/liL7DOrJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740083253; c=relaxed/simple;
-	bh=ZZYRX1szbwqrHQhPPSjkDoX0HCeTh2Z5cpehiI9E+hE=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ar+eS32BD4x3G0ySMAeyCw5bQ7HAoGu+R5AfsFy1N3IYgTGhdE/DDQ2tuWAzp7hi/Cj178+kQbo14cFugnwocYbnZ1QG0RpfUySpvqSHKTDIASHV5bLbPjvhvAev8jSjz1AcncyNVKu4CZ0hQGZ/7SvRjgqovONS7Wv6b8ZULDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IoB8Fajw; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43690d4605dso9110695e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 12:27:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740083249; x=1740688049; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=OtfmfrXV4Fenqpt6KK3zaAtg3JmCzHplb9SYG8vsTp0=;
-        b=IoB8FajwgOLgfc/ul73y8eDfrhCkP+NY/bPJQHfFt/nt+BK4WpEGPZ0VhOhrP8m40P
-         sIgXmVDJQkl7Dyjp4PYlSi0NqKJwXBEufjf/R8ZomhatpGHxubDGj0huHUgaG8HAXa5v
-         uQPdQZSHenE9LuACxAsgL7DpXTa82w6xWqW4bO+fXlhgpTFAN6qLotcqXH6ONL/0D0ly
-         0KFTUpNR3Z6hAnY0XCsZvfwz+mOkuYP64dFp8JoZBQfLds2eDpdvEyZ1q8uWPVJbLrAr
-         ifrdrD7widjH02StH9vXVwPo0k29RuhxLrB3c199msL4YSZarof7HHVv5uX70ngxeRH0
-         1F0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740083249; x=1740688049;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OtfmfrXV4Fenqpt6KK3zaAtg3JmCzHplb9SYG8vsTp0=;
-        b=NxW03+TrXBKhM5cv/AE94bcU/WDXGUdoq3oEjbcWo8LxnRjM0fgACY+mMY87En5GTR
-         xUJZ9vsiVN/e+c6Yy/DN32imEZjFuEd/mv2e818teVb1fANcfGemqcImePQ2gSyVC7TU
-         aWJetdA5REuSTbwhyVSJfb3F4GfeoRPM+LjE1BVegX3n0W5dvNgFCKJSZr+3dP6sXIPc
-         qxdVr6uC406cLoGGr7HsZ0R+HXUervSq9DLrO7gZixrCjbHYwlJ/ZJkF9jYntqfS3H0i
-         QUf0e6YRS8YrPjADTvVnX2dmYQdc+Uzlmecjo4zYJ9LYtxaRFuIzTh2nFf52TZbxcfhD
-         D5hA==
-X-Forwarded-Encrypted: i=1; AJvYcCVaIlX2QMcOoWQYEi/oBilXlcoggz+7SNJPs7VVaKMKo+EK5VaTwR9XFXpsDbuYU7Cu8mw1WPLV20totq8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzT5cGNuANtzKTJIl7YVLw+15Ge35i5AaWbvix7La9ydrB+hMjv
-	SxSHETXT2qxzgW4jn72ZoptQNltzPgsAC/YPG4txRZYblGCURt48
-X-Gm-Gg: ASbGncsu9LX2tlCaZIiVlL/fxu1zQloqdBtWf6kFfq05hRh7IGICM2lDOZxKO2aQyps
-	atLEogvVZZ+sm3klUXIfM37Xvgpa3wyAoRoJHVoJkmsKHt68Ib67P4iY6mM1WykqyCQeAanne1V
-	6ihwxMkRj3P+VNG+7C6q+sdJY9CLF6v7syZvGRte5T9uuHIRmoahZyOJPDbeIKZ/yWd5pTEE7xf
-	fQYGl7GzdPQDYTYSAEoP4eKCWiOxTnkyga2NPxAiDPYW85OHfqpFFAh5AYzofcKtLks3QyF6VkX
-	/PRnIvyNKp+ArmiCbvPBxMuLYZKIYTCIF1FVgx0X8BAUVObnanhD2sF9dApdp70qcco=
-X-Google-Smtp-Source: AGHT+IECii+tVv+IZA8Kwcb9HLreQ7WkQqdHkR9yh3R3Vri6Dsiv8yRmWFnRoRF5/CwPCmIDOfBbOQ==
-X-Received: by 2002:a05:600c:3b93:b0:439:96b2:e9b with SMTP id 5b1f17b1804b1-439ae1e6a3amr4585785e9.9.1740083249349;
-        Thu, 20 Feb 2025 12:27:29 -0800 (PST)
-Received: from jernej-laptop.localnet (86-58-6-171.dynamic.telemach.net. [86.58.6.171])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4395a1b824dsm250156575e9.34.2025.02.20.12.27.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Feb 2025 12:27:28 -0800 (PST)
-From: Jernej =?UTF-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
-To: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
- Chen-Yu Tsai <wens@csie.org>, Samuel Holland <samuel@sholland.org>,
- Philippe Simons <simons.philippe@gmail.com>,
- "open list:GENERIC PHY FRAMEWORK" <linux-phy@lists.infradead.org>,
- "moderated list:ARM/Allwinner sunXi SoC support"
- <linux-arm-kernel@lists.infradead.org>,
- "open list:ARM/Allwinner sunXi SoC support" <linux-sunxi@lists.linux.dev>,
- open list <linux-kernel@vger.kernel.org>,
- Philippe Simons <simons.philippe@gmail.com>
-Subject: Re: [RFC PATCH 1/3] phy: don't let controllers change vbus reg
-Date: Thu, 20 Feb 2025 21:27:27 +0100
-Message-ID: <2261426.ZfL8zNpBrT@jernej-laptop>
-In-Reply-To: <20250118102207.9339-1-simons.philippe@gmail.com>
-References: <20250118102207.9339-1-simons.philippe@gmail.com>
+	s=arc-20240116; t=1740083492; c=relaxed/simple;
+	bh=d/3FqiLdzWOdjz0PG6ytncZssG9QXCKrrKuPpYZ6bq0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uFu+5IrBDRgnXSRlbfRhG5Ihjmhs6gJ5qCRx119S6UGRfxI2MV04kE0xQ1YtqTOGhD11RtPW7z4va3fRfoB7SAoRYJMA9ZU0lt5vmzAkgh1AQJMQ4RAojNSv/wUpYXQgk6muKTYJZiUKqhm5mthcAQd1olqClklFtZxCGMOCVug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=jtvDgRad; arc=none smtp.client-ip=66.163.185.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1740083488; bh=fgTo2d6NtjHPueDo2KAAJhEa90dOTzWdqu55/iRf3EI=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=jtvDgRadKUDfRgcs4pNz+dt1ihp/Ew3RKG3obHes4a83qccafT/QD4F+P5kOYMeT1o/vyyKrrOC1/RXgpHZFRSbxXL4lDlpNcwSTTv+GMuIAu4ld4WATAvUCyxmKc8kCLX/jr7hxIZTvgeYGQTB0pbZcqaUJPhJuMQw114M7UYuD90I8+JFcN1y6BCbYQbaytnB60sujnmkwUw0MyuubUTB4bDr/rG5LccbLUp6eMxYk8X08/nAAyCtOSjUD/MiicnhrDkbgiL2I7aoeEMr2JZ9MqZByYbkSxZZ7x3H3EtCkRCffu4iOTa7XBtHruwJrllScryfPZ8XIvaWjU9Q17g==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1740083488; bh=ajikE1QVDupOcUWzirPptAv9RUFux8SGaezz9PwiwU+=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=UZmuUwONGYAvshX1F/n4DiRXUlwFjiBQJcJSsBOVN2o29wnG4ucWvipOqx9iqt4sJFgqJtF76CyvJhLp+YTZ11zcyYaq388HlulOgp3V1/wet+po87tOz/ui/ai+oM8350ex9wklhrYQRWl/v97iXVYn6cZPSeXE/gW9k0yQ482jJ9d7pOCP93K50YYRnIDvlmJsz/SPpJUFMStdCfzP/uhFd/GQm1Uf/IghbWExy9qXwzLulhXeaEQgbxPrn+7WnrUIGIInrRv4BKDXQveIhTCRjUdyeUTK80JiFAwL4U9nTkIdqT12fpXI9Qux5MIN1bw7f7Sb4iutSpx/I9rOTw==
+X-YMail-OSG: OtlB4bMVM1mMCjAqCweJUyTMrLIOKU54Qs4qj.Z7CBYqcIqJ9nDohZESaFUm5.w
+ JkqZRrs9Ekm8Of0cZ8nvI4NYQKflwsNYQC8hQb5BdckY70Efmifp4yEp1j61MqffaPEi85BpW9qS
+ k1mV5D3U2AARZ.wIFbtwIu1kWI7U0jDpRSevfruyCyy.A8VeTeoXtCYpayujJ_4WKkhKYypqi.y0
+ Niejb6YVKae2EVuOeIJIOLfsHU1KmZh1bNybKu6vIm5GgALZ9YevCgfOtCwdXRU5dqAcP2qrpmEG
+ iYNQ0tkheZIVCmFdQdrsSSuTo8.bZ_bFyJ6KTf6KfhXFLkowf0UlYleYOgfSIwF7yDu7XxzJEPx.
+ q6PCvU2NlGAeTapZP3gS3biFxd.V5JD283JKDKwbv1kJa9Cca2BhH06NBN97kZxDzri1tu6.1LN3
+ xljwpE0Bgy7SIKlx4ppVtSAG2owNVVNwyZnvDyLk.8tqM1_FG8fyNTGCIJYXhtpS778c7B0zryyd
+ O_9zjk5j7fh__lFaFZRZH.feTJipOQXiVksAIMbjRJEbyWxVsnOHxV0XsUx2_vjWx8K709Nbnuyy
+ iBHXgx.aC36TfyLDR8MnQQUDQ2UbpDQ8ryIRy.3WXbcTaRYIXcHiBDOJDdWBpi1gVzaz4zA62zIG
+ oMaWqsi7tt91pC8ue6cvnJqhOktgYRSVMr3s7mur94JwYmLMEvcPyma_9DIiTf8jS0yZhR1fy3rJ
+ X_vJp5xGc64fcEqzr0PjBlHOpi8gLQAZtpFGEVW2NTQeSu1Ojr7ogTDgbbB.Y0scq9ALHg4jIzk.
+ KhKzYJaaEYXgRVpEWlDbf5h5ucXeWt5yPY9SgwAO73HmRS6rqLr.R3RcAVZTogARhPEjzVm7zE6A
+ dCsj4Zq43fiH9EX.sUxksN4jG49t60vazOurAoGIWaszL5KlOXjDggtWS_JItc7OXROcFps2_xhC
+ vqNuADWx8ScYfy.cEE3mpxsRZMT_ya3Oag1eU_JbpBi9aTVE.fYBy1OfOG_SNkamgQKfsYHZpJzS
+ zwaCraZa8QXwG6ZzbdWLdaz.8DnIUPxqr1xCPiDeUnnEOM3osNPX2FPuOUpMeahdJmYf_SNMnwpv
+ ubimBsutCFOQ06iCVt5irK_uKjvMm2cw0HgpQlrlnsbcAfU7vXMXse955aRiVLkj0mEqTYc0MoV4
+ L.UMRP3gnanCSMwBBLSiEskFLvs9PXdAL1gg13c9D9pShEU4SjeE5ncE.gsg1hIpS.AQp8p.GHCO
+ Lt8mmuZzaxmP7ocgCoFEeUBa50gSwKHaI8H3OYYGE2bhrlzAFfzybhFpQ0jfzd_G1iT5z.iMtyKl
+ N3DQaNEmg_J5nDUHcE45LsYdr9Et1HpowvjulL1h.PcyENsg_ewiHzhSHw37O6qFYRXYwaCcdfMQ
+ q5GFOvrVr5zX4Ixgsr9nmZwecUIb6xvTGpreH9A3q9aGdkB5u5YCyZmHLU3YFKvNn5yb8GPGs.Eq
+ sbnR7auhBYtjOHhs_NoqlW9FikVsFuwhoZkhqyChHJaoLIah8Gaah1f_VvNwutnln1Ihh.1WS0Ld
+ oVF5uQ.fHBf_cUfDkY4QrSBwMGb3P.xxzNv2e2l1ociIYOxoaTp4A60zHKkRsMqMiWsU5bMZ2wd0
+ 0ZdntLjKaf2ltcl96EiShiitdvUClTe60S3KNNPRrd5m83gJzIAx4W7_UZBdoAZ.XLYEVzIrTo0V
+ LZzgme8Yt2zT7fvYvqecVKAxPqHqXDqjPn4c7OhmM.rYZs7tH06I0Z3XudIrtHcK8v6X_REz3llc
+ KetNKNZUHSOd.HlWFAWMeldnLJE6RjTDzW_E9lZDbBju8fp0Nu3uUGfG3SFOzfYcby_7NmX.poEQ
+ thBsJ4OruOzMdY9r1ZPtxXYmGQAZyvv1Llif9rpaFb9a5d2_pR.QjpTaldjn1Vv5NigVkcArzAaA
+ VQNLjNVjTQIeMXIV.GMwTHML1vQqZNll25O2I2HQtyX0JhTQ4QO74Xiab1rQBel_KfI5JJqW2hWg
+ 9OZOmsrYlQESHk4uE9iI9PLjlhbRGKPNtimOuZtJph3D5PRo2XJ5iD8El6QXr5HqD_LBJnVK6BQd
+ J0d2AUgVeEH6wxfFVRJ0LTLLPIgoMMRx5oxGqtGD5_kl0yizX2pR_KrrRIaU60jPZP2.x5GWTzka
+ f1PCOko9IAZtSBWjLcSX.vOlwr.7nDa5DPxsrsXpPiGillW7dHwU4TMYARKDJrUkSxIqjpmjrvPa
+ iVDPIhb2d.Nk7Jlime88iNP_chVzXJ09blebu1wLL3cfvcW6iRyW4.y4I3OhsfBWjqc6FbSykYhX
+ vfTVeJy6qBEV.ONdYohveZfejYQ--
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 1e0edb76-3636-4367-9793-a6623c898840
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic313.consmr.mail.ne1.yahoo.com with HTTP; Thu, 20 Feb 2025 20:31:28 +0000
+Received: by hermes--production-gq1-5dd4b47f46-dvwsq (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID d98218f19ea55084dbc7a9596a27abdb;
+          Thu, 20 Feb 2025 20:31:21 +0000 (UTC)
+Message-ID: <eba48af3-a8ef-4220-87a1-c86b96bcdad8@schaufler-ca.com>
+Date: Thu, 20 Feb 2025 12:31:19 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 4/5] LSM: lsm_context in security_dentry_init_security
+To: Stephen Smalley <stephen.smalley.work@gmail.com>
+Cc: Paul Moore <paul@paul-moore.com>, linux-security-module@vger.kernel.org,
+ jmorris@namei.org, serge@hallyn.com, keescook@chromium.org,
+ john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
+ linux-kernel@vger.kernel.org, selinux@vger.kernel.org, mic@digikod.net,
+ ceph-devel@vger.kernel.org, linux-nfs@vger.kernel.org,
+ Casey Schaufler <casey@schaufler-ca.com>
+References: <20241023212158.18718-1-casey@schaufler-ca.com>
+ <20241023212158.18718-5-casey@schaufler-ca.com>
+ <CAEjxPJ56H_Y-ObgNHrCggDK28NOARZ0CDmLDRvY5qgzu=YgE=A@mail.gmail.com>
+ <CAHC9VhSSpLx=ku7ZJ7qVxHHyOZZPQWs_hoxVRZpTfhOJ=T2X9w@mail.gmail.com>
+ <CAHC9VhQUUOqh3j9mK5eaVOc6H7JXsjH8vajgrDOoOGOBTszWQw@mail.gmail.com>
+ <CAEjxPJ6-jL=h-Djxp5MGRbTexQF1vRDPNcwpxCZwFM22Gja0dg@mail.gmail.com>
+ <CAEjxPJ5KTJ1DDaAJ89sSdxUetbP_5nHB5OZ0qL18m4b_5N10-w@mail.gmail.com>
+ <1b6af217-a84e-4445-a856-3c69222bf0ed@schaufler-ca.com>
+ <CAEjxPJ44NNZU7u7vLN_Oj4jeptZ=Mb9RkKvJtL=xGciXOWDmKA@mail.gmail.com>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <CAEjxPJ44NNZU7u7vLN_Oj4jeptZ=Mb9RkKvJtL=xGciXOWDmKA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Mailer: WebService/1.1.23369 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-Dne sobota, 18. januar 2025 ob 11:22:04 Srednjeevropski standardni =C4=8Das=
- je Philippe Simons napisal(a):
-> Allwinners SoCs share phy0 between the MUSB controller and HCI controller.
-> If we let these controllers independently power on the vbus on that phy,
-> peripheral mode is dangerous because HCI never power down the phy, result=
-ing
-> in 5v being applied against the host 5v.
->=20
-> Override power_on/off for phy0 in that case, and let regulator be enabled=
-/disabled
-> based on id_det only.
->=20
-> Signed-off-by: Philippe Simons <simons.philippe@gmail.com>
+On 2/20/2025 11:37 AM, Stephen Smalley wrote:
+> On Thu, Feb 20, 2025 at 2:33 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>> On 2/20/2025 10:16 AM, Stephen Smalley wrote:
+>>> On Thu, Feb 20, 2025 at 1:02 PM Stephen Smalley
+>>> <stephen.smalley.work@gmail.com> wrote:
+>>>> On Thu, Feb 20, 2025 at 12:54 PM Paul Moore <paul@paul-moore.com> wrote:
+>>>>> On Thu, Feb 20, 2025 at 12:40 PM Paul Moore <paul@paul-moore.com> wrote:
+>>>>>> On Thu, Feb 20, 2025 at 11:43 AM Stephen Smalley
+>>>>>> <stephen.smalley.work@gmail.com> wrote:
+>>>>>>> On Wed, Oct 23, 2024 at 5:23 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>>>>>>>> Replace the (secctx,seclen) pointer pair with a single lsm_context
+>>>>>>>> pointer to allow return of the LSM identifier along with the context
+>>>>>>>> and context length. This allows security_release_secctx() to know how
+>>>>>>>> to release the context. Callers have been modified to use or save the
+>>>>>>>> returned data from the new structure.
+>>>>>>>>
+>>>>>>>> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+>>>>>>>> Cc: ceph-devel@vger.kernel.org
+>>>>>>>> Cc: linux-nfs@vger.kernel.org
+>>>>>>>> ---
+>>>>>>>>  fs/ceph/super.h               |  3 +--
+>>>>>>>>  fs/ceph/xattr.c               | 16 ++++++----------
+>>>>>>>>  fs/fuse/dir.c                 | 35 ++++++++++++++++++-----------------
+>>>>>>>>  fs/nfs/nfs4proc.c             | 20 ++++++++++++--------
+>>>>>>>>  include/linux/lsm_hook_defs.h |  2 +-
+>>>>>>>>  include/linux/security.h      | 26 +++-----------------------
+>>>>>>>>  security/security.c           |  9 ++++-----
+>>>>>>>>  security/selinux/hooks.c      |  9 +++++----
+>>>>>>>>  8 files changed, 50 insertions(+), 70 deletions(-)
+>>>>>>>>
+>>>>>>>> diff --git a/fs/nfs/nfs4proc.c b/fs/nfs/nfs4proc.c
+>>>>>>>> index 76776d716744..0b116ef3a752 100644
+>>>>>>>> --- a/fs/nfs/nfs4proc.c
+>>>>>>>> +++ b/fs/nfs/nfs4proc.c
+>>>>>>>> @@ -114,6 +114,7 @@ static inline struct nfs4_label *
+>>>>>>>>  nfs4_label_init_security(struct inode *dir, struct dentry *dentry,
+>>>>>>>>         struct iattr *sattr, struct nfs4_label *label)
+>>>>>>>>  {
+>>>>>>>> +       struct lsm_context shim;
+>>>>>>>>         int err;
+>>>>>>>>
+>>>>>>>>         if (label == NULL)
+>>>>>>>> @@ -128,21 +129,24 @@ nfs4_label_init_security(struct inode *dir, struct dentry *dentry,
+>>>>>>>>         label->label = NULL;
+>>>>>>>>
+>>>>>>>>         err = security_dentry_init_security(dentry, sattr->ia_mode,
+>>>>>>>> -                               &dentry->d_name, NULL,
+>>>>>>>> -                               (void **)&label->label, &label->len);
+>>>>>>>> -       if (err == 0)
+>>>>>>>> -               return label;
+>>>>>>>> +                               &dentry->d_name, NULL, &shim);
+>>>>>>>> +       if (err)
+>>>>>>>> +               return NULL;
+>>>>>>>>
+>>>>>>>> -       return NULL;
+>>>>>>>> +       label->label = shim.context;
+>>>>>>>> +       label->len = shim.len;
+>>>>>>>> +       return label;
+>>>>>>>>  }
+>>>>>>>>  static inline void
+>>>>>>>>  nfs4_label_release_security(struct nfs4_label *label)
+>>>>>>>>  {
+>>>>>>>> -       struct lsm_context scaff; /* scaffolding */
+>>>>>>>> +       struct lsm_context shim;
+>>>>>>>>
+>>>>>>>>         if (label) {
+>>>>>>>> -               lsmcontext_init(&scaff, label->label, label->len, 0);
+>>>>>>>> -               security_release_secctx(&scaff);
+>>>>>>>> +               shim.context = label->label;
+>>>>>>>> +               shim.len = label->len;
+>>>>>>>> +               shim.id = LSM_ID_UNDEF;
+>>>>>>> Is there a patch that follows this one to fix this? Otherwise, setting
+>>>>>>> this to UNDEF causes SELinux to NOT free the context, which produces a
+>>>>>>> memory leak for every NFS inode security context. Reported by kmemleak
+>>>>>>> when running the selinux-testsuite NFS tests.
+>>>>>> I don't recall seeing anything related to this, but patches are
+>>>>>> definitely welcome.
+>>>>> Looking at this quickly, this is an interesting problem as I don't
+>>>>> believe we have enough context in nfs4_label_release_security() to
+>>>>> correctly set the shim.id value.  If there is a positive, it is that
+>>>>> lsm_context is really still just a string wrapped up with some
+>>>>> metadata, e.g. length/ID, so we kfree()'ing shim.context is going to
+>>>>> be okay-ish, at least for the foreseeable future.
+>>>>>
+>>>>> I can think of two ways to fix this, but I'd love to hear other ideas too.
+>>>>>
+>>>>> 1. Handle the LSM_ID_UNDEF case directly in security_release_secctx()
+>>>>> and skip any individual LSM processing.
+>>>>>
+>>>>> 2. Define a new LSM_ID_ANY value and update all of the LSMs to also
+>>>>> process the ANY case as well as their own.
+>>>>>
+>>>>> I'm not finding either option very exciting, but option #2 looks
+>>>>> particularly ugly, so I think I'd prefer to see someone draft a patch
+>>>>> for option #1 assuming nothing better is presented.
+>>>> We could perhaps add a u32 lsmid to struct nfs4_label, save it from
+>>>> the shim.id obtained in nfs4_label_init_security(), and use it in
+>>>> nfs4_label_release_security(). Not sure why that wasn't done in the
+>>>> first place.
+>>> Something like this (not tested yet). If this looks sane, will submit
+>>> separately.
+>>>
+>>> commit b530104f50e8 ("lsm: lsm_context in security_dentry_init_security")
+>>> did not preserve the lsm id for subsequent release calls, which results
+>>> in a memory leak. Fix it by saving the lsm id in the nfs4_label and
+>>> providing it on the subsequent release call.
+>>>
+>>> Fixes: b530104f50e8 ("lsm: lsm_context in security_dentry_init_security")
+>>> Signed-off-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+>> I'm not a fan of adding secids into other subsystems, especially in cases
+>> where they've tried to avoid them in the past.
+>>
+>> The better solution, which I'm tracking down the patch for now, is for
+>> the individual LSMs to always do their release, and for security_release_secctx()
+>> to check the lsm_id and call the appropriate LSM specific hook. Until there
+>> are multiple LSMs with contexts, LSM_ID_UNDEF is as good as a match.
+>>
+>> Please don't use this patch.
+> It doesn't add a secid; it just saves the LSM id obtained from
+> lsm_context populated by the security_dentry_init_security() hook call
+> and passes it back in the lsm_context to the security_release_secctx()
+> call.
 
-Is this fix for some observed issue? If so, Fixes tag would be appropriate.
+Right. Sorry. If you're going to do that, the nfs_label struct should
+just include a lsm_context instead. But that hit opposition when proposed
+initially.
 
-> ---
->  drivers/phy/allwinner/phy-sun4i-usb.c | 26 ++++++++++++++++++++++++++
->  1 file changed, 26 insertions(+)
->=20
-> diff --git a/drivers/phy/allwinner/phy-sun4i-usb.c b/drivers/phy/allwinne=
-r/phy-sun4i-usb.c
-> index b0f19e950..24fbabe7a 100644
-> --- a/drivers/phy/allwinner/phy-sun4i-usb.c
-> +++ b/drivers/phy/allwinner/phy-sun4i-usb.c
-> @@ -465,6 +465,10 @@ static int sun4i_usb_phy_power_on(struct phy *_phy)
->  	struct sun4i_usb_phy_data *data =3D to_sun4i_usb_phy_data(phy);
->  	int ret;
-> =20
-> +	/* phy0 power is controlled by sun4i_usb_phy0_reroute and id_det state =
-*/
-> +	if (phy->index =3D=3D 0 && data->cfg->phy0_dual_route)
-> +		return 0;
-> +
->  	if (!phy->vbus || phy->regulator_on)
->  		return 0;
-> =20
-> @@ -493,6 +497,10 @@ static int sun4i_usb_phy_power_off(struct phy *_phy)
->  	struct sun4i_usb_phy *phy =3D phy_get_drvdata(_phy);
->  	struct sun4i_usb_phy_data *data =3D to_sun4i_usb_phy_data(phy);
-> =20
-> +	/* phy0 power is controlled by sun4i_usb_phy0_reroute and id_det state =
-*/
-> +	if (phy->index =3D=3D 0 && data->cfg->phy0_dual_route)
-> +		return 0;
-> +
->  	if (!phy->vbus || !phy->regulator_on)
->  		return 0;
-> =20
-> @@ -573,9 +581,21 @@ static void sun4i_usb_phy0_reroute(struct sun4i_usb_=
-phy_data *data, int id_det)
->  	if (id_det =3D=3D 0) {
->  		/* Host mode. Route phy0 to EHCI/OHCI */
->  		regval &=3D ~OTGCTL_ROUTE_MUSB;
-> +
-> +		/* Enable VBUS reg */
-> +		if (phy->vbus && !phy->regulator_on) {
+The practical solution has to acknowledge that at this stage there can only
+be one LSM providing contexts, and each LSM can release the context if the
+LSM is matches the LSM or is LSM_ID_UNDEF. That will change before SELinux,
+AppArmor and Smack can co-exist, but that's not yet available. For now the
+check
 
-I don't see any "phy" variable in this function. Also, you should add same
-protection as it is implemented in sun4i_usb_phy_power_on(). Skip enabling
-regulator if:
+	if (cp->id == LSM_ID_SELINUX)
 
-sun4i_usb_phy0_have_vbus_det(data) && data->vbus_det
+can either be removed or changed to
 
-> +			regulator_enable(phy->vbus);
-> +			phy->regulator_on =3D true;
-> +		}
->  	} else {
->  		/* Peripheral mode. Route phy0 to MUSB */
->  		regval |=3D OTGCTL_ROUTE_MUSB;
-> +	=09
-> +		/* Disable VBUS reg */
-> +		if (phy->vbus && phy->regulator_on) {
-> +			regulator_disable(phy->vbus);
-> +			phy->regulator_on =3D false;
-> +		}
->  	}
->  	writel(regval, data->base + REG_PHY_OTGCTL);
->  }
-> @@ -603,6 +623,12 @@ static void sun4i_usb_phy0_id_vbus_det_scan(struct w=
-ork_struct *work)
->  		return;
->  	}
-> =20
-> +	/* Disable internal VBUS reg if there is an external VBUS */
-> +	if (vbus_det !=3D 0 && phy->vbus && phy->regulator_on) {
+	if (cp->id == LSM_ID_SELINUX || cp->id == LSM_ID_UNDEF)
 
-Ideally, this should never happen.
+In a system that respects LSM_FLAG_LEGACY_MAJOR the id isn't relevant
+with the context using LSMs all being thus identified.
 
-Best regards,
-Jernej
-
-> +		regulator_disable(phy->vbus);
-> +		phy->regulator_on =3D false;
-> +	}
-> +
->  	force_session_end =3D data->force_session_end;
->  	data->force_session_end =3D false;
-> =20
->=20
-
-
-
-
+>
+>>> ---
+>>>  fs/nfs/nfs4proc.c    | 7 ++++---
+>>>  include/linux/nfs4.h | 1 +
+>>>  2 files changed, 5 insertions(+), 3 deletions(-)
+>>>
+>>> diff --git a/fs/nfs/nfs4proc.c b/fs/nfs/nfs4proc.c
+>>> index df9669d4ded7..c0caaec7bd20 100644
+>>> --- a/fs/nfs/nfs4proc.c
+>>> +++ b/fs/nfs/nfs4proc.c
+>>> @@ -133,6 +133,7 @@ nfs4_label_init_security(struct inode *dir, struct
+>>> dentry *dentry,
+>>>   if (err)
+>>>   return NULL;
+>>>
+>>> + label->lsmid = shim.id;
+>>>   label->label = shim.context;
+>>>   label->len = shim.len;
+>>>   return label;
+>>> @@ -145,7 +146,7 @@ nfs4_label_release_security(struct nfs4_label *label)
+>>>   if (label) {
+>>>   shim.context = label->label;
+>>>   shim.len = label->len;
+>>> - shim.id = LSM_ID_UNDEF;
+>>> + shim.id = label->lsmid;
+>>>   security_release_secctx(&shim);
+>>>   }
+>>>  }
+>>> @@ -6269,7 +6270,7 @@ static int _nfs4_get_security_label(struct inode
+>>> *inode, void *buf,
+>>>   size_t buflen)
+>>>  {
+>>>   struct nfs_server *server = NFS_SERVER(inode);
+>>> - struct nfs4_label label = {0, 0, buflen, buf};
+>>> + struct nfs4_label label = {0, 0, 0, buflen, buf};
+>>>
+>>>   u32 bitmask[3] = { 0, 0, FATTR4_WORD2_SECURITY_LABEL };
+>>>   struct nfs_fattr fattr = {
+>>> @@ -6374,7 +6375,7 @@ static int nfs4_do_set_security_label(struct inode *inode,
+>>>  static int
+>>>  nfs4_set_security_label(struct inode *inode, const void *buf, size_t buflen)
+>>>  {
+>>> - struct nfs4_label ilabel = {0, 0, buflen, (char *)buf };
+>>> + struct nfs4_label ilabel = {0, 0, 0, buflen, (char *)buf };
+>>>   struct nfs_fattr *fattr;
+>>>   int status;
+>>>
+>>> diff --git a/include/linux/nfs4.h b/include/linux/nfs4.h
+>>> index 71fbebfa43c7..9ac83ca88326 100644
+>>> --- a/include/linux/nfs4.h
+>>> +++ b/include/linux/nfs4.h
+>>> @@ -47,6 +47,7 @@ struct nfs4_acl {
+>>>  struct nfs4_label {
+>>>   uint32_t lfs;
+>>>   uint32_t pi;
+>>> + u32 lsmid;
+>>>   u32 len;
+>>>   char *label;
+>>>  };
 
