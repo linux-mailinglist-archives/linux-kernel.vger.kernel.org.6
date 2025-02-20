@@ -1,212 +1,115 @@
-Return-Path: <linux-kernel+bounces-524068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEA3CA3DEC2
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:36:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 861F9A3DE7D
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:28:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A4D58601E0
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:31:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B08B11889A66
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:27:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D8961FF1A7;
-	Thu, 20 Feb 2025 15:30:36 +0000 (UTC)
-Received: from shelob.surriel.com (shelob.surriel.com [96.67.55.147])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C0F71FDE3B
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 15:30:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.67.55.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEB2E1FDE26;
+	Thu, 20 Feb 2025 15:27:41 +0000 (UTC)
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CFB61FCF6B;
+	Thu, 20 Feb 2025 15:27:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740065436; cv=none; b=R/zh5842r261qHOncuWp3wUoht8ksJ0w92KMqzmj4wlXrDwY7zu15rVkAfhETr0/K8Kwhem7HCBZpz8H/IdYL8XDb/DFJgXWOydF+hpi+A1GY9NEJYC932pEGuelr3TfNKL0OI7sbT5IJoEea0X/et1N3aZpefM90mGRnB2Rrw4=
+	t=1740065261; cv=none; b=ubIxvGoSJsqd90EJ0r85X3RrZu0k6KF6f3WwujUJFqDZtAw92cQJ1CIBJS50jfdgzRlSd6O9BqwZRT1ESXBS/wb9zB2jLphxbi5jqHbHF0AQVqwD4RXhIOJPJ531dxBNF/qfyiru0idBmfdvIzkIIIFQqTfWW/lP5Va/1fFLqlw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740065436; c=relaxed/simple;
-	bh=qm9WvDuYycYiuUHaVWaVaDQf7WgjRQcqpsklGSqFdck=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=q/9PHyVG1B7rtcf5rwdANDSMD4INrJ9hSYiPtQxb8ZEqg9jdZXFVTe/ZclbDN71rwU55NLVjm/Zng/SE9z3N8T/WZi9pd45579B11/IkSdq1CTa0xMRm9jSWfIO383Ws2Jz1s2XRlByPf0lRSALf9jbxBz8vrw4D5G2NC4wOtq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=shelob.surriel.com; arc=none smtp.client-ip=96.67.55.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shelob.surriel.com
-Received: from fangorn.home.surriel.com ([10.0.13.7])
-	by shelob.surriel.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.97.1)
-	(envelope-from <riel@shelob.surriel.com>)
-	id 1tl8Qv-000000002GQ-09SX;
-	Thu, 20 Feb 2025 10:25:49 -0500
-Message-ID: <2d1168630e5c25d0cd28f0de3104ada9ceda168f.camel@surriel.com>
-Subject: Re: [PATCH v11 09/12] x86/mm: enable broadcast TLB invalidation for
- multi-threaded processes
-From: Rik van Riel <riel@surriel.com>
-To: Dave Hansen <dave.hansen@intel.com>, x86@kernel.org
-Cc: linux-kernel@vger.kernel.org, bp@alien8.de, peterz@infradead.org, 
-	dave.hansen@linux.intel.com, zhengqi.arch@bytedance.com,
- nadav.amit@gmail.com, 	thomas.lendacky@amd.com, kernel-team@meta.com,
- linux-mm@kvack.org, 	akpm@linux-foundation.org, jackmanb@google.com,
- jannh@google.com, 	mhklinux@outlook.com, andrew.cooper3@citrix.com, Manali
- Shukla	 <Manali.Shukla@amd.com>
-Date: Thu, 20 Feb 2025 10:25:48 -0500
-In-Reply-To: <b067a9fc-ff5f-4baa-a1ff-3fa749ae4d44@intel.com>
-References: <20250213161423.449435-1-riel@surriel.com>
-	 <20250213161423.449435-10-riel@surriel.com>
-	 <b067a9fc-ff5f-4baa-a1ff-3fa749ae4d44@intel.com>
-Autocrypt: addr=riel@surriel.com; prefer-encrypt=mutual;
- keydata=mQENBFIt3aUBCADCK0LicyCYyMa0E1lodCDUBf6G+6C5UXKG1jEYwQu49cc/gUBTTk33A
- eo2hjn4JinVaPF3zfZprnKMEGGv4dHvEOCPWiNhlz5RtqH3SKJllq2dpeMS9RqbMvDA36rlJIIo47
- Z/nl6IA8MDhSqyqdnTY8z7LnQHqq16jAqwo7Ll9qALXz4yG1ZdSCmo80VPetBZZPw7WMjo+1hByv/
- lvdFnLfiQ52tayuuC1r9x2qZ/SYWd2M4p/f5CLmvG9UcnkbYFsKWz8bwOBWKg1PQcaYHLx06sHGdY
- dIDaeVvkIfMFwAprSo5EFU+aes2VB2ZjugOTbkkW2aPSWTRsBhPHhV6dABEBAAG0HlJpayB2YW4gU
- mllbCA8cmllbEByZWRoYXQuY29tPokBHwQwAQIACQUCW5LcVgIdIAAKCRDOed6ShMTeg05SB/986o
- gEgdq4byrtaBQKFg5LWfd8e+h+QzLOg/T8mSS3dJzFXe5JBOfvYg7Bj47xXi9I5sM+I9Lu9+1XVb/
- r2rGJrU1DwA09TnmyFtK76bgMF0sBEh1ECILYNQTEIemzNFwOWLZZlEhZFRJsZyX+mtEp/WQIygHV
- WjwuP69VJw+fPQvLOGn4j8W9QXuvhha7u1QJ7mYx4dLGHrZlHdwDsqpvWsW+3rsIqs1BBe5/Itz9o
- 6y9gLNtQzwmSDioV8KhF85VmYInslhv5tUtMEppfdTLyX4SUKh8ftNIVmH9mXyRCZclSoa6IMd635
- Jq1Pj2/Lp64tOzSvN5Y9zaiCc5FucXtB9SaWsgdmFuIFJpZWwgPHJpZWxAc3VycmllbC5jb20+iQE
- +BBMBAgAoBQJSLd2lAhsjBQkSzAMABgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRDOed6ShMTe
- g4PpB/0ZivKYFt0LaB22ssWUrBoeNWCP1NY/lkq2QbPhR3agLB7ZXI97PF2z/5QD9Fuy/FD/jddPx
- KRTvFCtHcEzTOcFjBmf52uqgt3U40H9GM++0IM0yHusd9EzlaWsbp09vsAV2DwdqS69x9RPbvE/Ne
- fO5subhocH76okcF/aQiQ+oj2j6LJZGBJBVigOHg+4zyzdDgKM+jp0bvDI51KQ4XfxV593OhvkS3z
- 3FPx0CE7l62WhWrieHyBblqvkTYgJ6dq4bsYpqxxGJOkQ47WpEUx6onH+rImWmPJbSYGhwBzTo0Mm
- G1Nb1qGPG+mTrSmJjDRxrwf1zjmYqQreWVSFEt26tBpSaWsgdmFuIFJpZWwgPHJpZWxAZmIuY29tP
- okBPgQTAQIAKAUCW5LbiAIbIwUJEswDAAYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQznneko
- TE3oOUEQgAsrGxjTC1bGtZyuvyQPcXclap11Ogib6rQywGYu6/Mnkbd6hbyY3wpdyQii/cas2S44N
- cQj8HkGv91JLVE24/Wt0gITPCH3rLVJJDGQxprHTVDs1t1RAbsbp0XTksZPCNWDGYIBo2aHDwErhI
- omYQ0Xluo1WBtH/UmHgirHvclsou1Ks9jyTxiPyUKRfae7GNOFiX99+ZlB27P3t8CjtSO831Ij0Ip
- QrfooZ21YVlUKw0Wy6Ll8EyefyrEYSh8KTm8dQj4O7xxvdg865TLeLpho5PwDRF+/mR3qi8CdGbkE
- c4pYZQO8UDXUN4S+pe0aTeTqlYw8rRHWF9TnvtpcNzZw==
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+	s=arc-20240116; t=1740065261; c=relaxed/simple;
+	bh=+oGoxw2St+KAb0RzXyAAChRY7fZPyFzJUmlMrZyCNWw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=p+u7eWtwrXvZ60Pg4fWZ12xdcNOkE/1HPB6gPwLNTHx/U5+CRxo8BJQxWeGnt4rhH77TLO3ZsBsxfIpPOvddJ/3iubJoKo2sr03yzd/UUyC/2wBPrO3lni1/8GBPHc8NHiXfZv/LgKukRVew/cVinV1VtyiBOfV4p+jpHvvxzUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+X-CSE-ConnectionGUID: xpjqCMLHR0ajY3bA2LXALw==
+X-CSE-MsgGUID: /L6eAmP/Ty+a+/dn3J48kw==
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 21 Feb 2025 00:27:37 +0900
+Received: from ubuntu.adwin.renesas.com (unknown [10.226.92.134])
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 7B31840436EB;
+	Fri, 21 Feb 2025 00:27:31 +0900 (JST)
+From: John Madieu <john.madieu.xa@bp.renesas.com>
+To: mturquette@baylibre.com,
+	magnus.damm@gmail.com,
+	krzk+dt@kernel.org,
+	rui.zhang@intel.com,
+	daniel.lezcano@linaro.org,
+	sboyd@kernel.org,
+	geert+renesas@glider.be,
+	lukasz.luba@arm.com,
+	rafael@kernel.org,
+	robh@kernel.org,
+	p.zabel@pengutronix.de
+Cc: biju.das.jz@bp.renesas.com,
+	claudiu.beznea.uj@bp.renesas.com,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	john.madieu@gmail.com,
+	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	John Madieu <john.madieu.xa@bp.renesas.com>
+Subject: [PATCH 0/7] thermal: renesas: Add support fot RZ/G3E
+Date: Thu, 20 Feb 2025 16:26:05 +0100
+Message-ID: <20250220152640.49010-1-john.madieu.xa@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Sender: riel@surriel.com
+Content-Transfer-Encoding: 8bit
 
-On Fri, 2025-02-14 at 11:53 -0800, Dave Hansen wrote:
-> On 2/13/25 08:14, Rik van Riel wrote:
->=20
->=20
+Hello,
 
-> > +#ifdef CONFIG_X86_BROADCAST_TLB_FLUSH
->=20
-> How cleanly could we throw this hunk in a new file? I always dislike
-> big
-> #ifdefs like this. They seem like magnets for causing weird compile
-> problems.
+This series adds support for the temperature sensor unit (TSU) found on the
+Renesas RZ/G3E SoC.
 
-It looks like if we compile the X86_FEATURE_INVLPGB
-out through arch/x86/include/asm/disabled-features.h,
-the compiler can be smart enough to elide the no
-longer necessary code ... but only if we have these
-functions in the same compilation unit as their
-callers.
+The series consists of 7 patches (some of which are not related to the thermal
+framework) that progressively add TSU support as follows:
+- patch 1/7:	adds syscon/regmap support for accessing system controller
+		registers, enabling access to TSU calibration values
+- patch 2/7:	adds clock and reset signals to the CPG driver
 
-That means we should be able to get rid of the ifdef,=C2=A0
-if we keep these functions in arch/x86/mm/tlb.c
+- patch 3/7:	adds dt-bindings
+- patch 4/7:	adds the actual TSU driver for the RZ/G3E
+- patch 5/6:	adds safety mechanism to make sure we we protect the chip in
+		case of consecutive read failures
+- patch 6-7/7:	add DT node and defconfig enablement
 
->=20
-> > +/*
-> > + * Logic for broadcast TLB invalidation.
-> > + */
-> > +static DEFINE_RAW_SPINLOCK(global_asid_lock);
->=20
-> The global lock definitely needs some discussion in the changelog.
->=20
-> > +static u16 last_global_asid =3D MAX_ASID_AVAILABLE;
-> > +static DECLARE_BITMAP(global_asid_used, MAX_ASID_AVAILABLE) =3D { 0
-> > };
-> > +static DECLARE_BITMAP(global_asid_freed, MAX_ASID_AVAILABLE) =3D { 0
-> > };
->=20
-> Isn't the initialization to all 0's superfluous for a global
-> variable?
->=20
-I'll remove that, and will add documentation for
-the spinlock.
+Regards,
 
+John Madieu (7):
+  soc: renesas: rz-sysc: add syscon/regmap support
+  clk: renesas: r9a09g047: Add clock and reset signals for the TSU IP
+  dt-bindings: thermal: r9a09g047-tsu: Document the TSU unit
+  thermal: renesas: rzg3e: Add thermal driver for the Renesas RZ/G3E SoC
+  thermal: renesas: rzg3e: Add safety check when reading temperature
+  arm64: dts: renesas: r9a09g047: Add TSU node
+  arm64: defconfig: Enable RZ/G3E thermal
 
-> > +static int global_asid_available =3D MAX_ASID_AVAILABLE -
-> > TLB_NR_DYN_ASIDS - 1;
-> > +
-> > +static void reset_global_asid_space(void)
-> > +{
-> > +	lockdep_assert_held(&global_asid_lock);
-> > +
-> > +	/*
-> > +	 * A global TLB flush guarantees that any stale entries
-> > from
-> > +	 * previously freed global ASIDs get flushed from the TLB
-> > +	 * everywhere, making these global ASIDs safe to reuse.
-> > +	 */
-> > +	invlpgb_flush_all_nonglobals();
->=20
-> Ugh, my suggestion to use the term "global ASID" really doesn't work
-> here, does it?
->=20
-> Also, isn't a invlpgb_flush_all_nonglobals() _relatively_ slow? It
-> has
-> to go out and talk over the fabric to every CPU, right? This is also
-> holding a global lock.
->=20
-> That's seems worrisome.
+ .../thermal/renesas,r9a09g047-tsu.yaml        | 123 +++++
+ MAINTAINERS                                   |   7 +
+ arch/arm64/boot/dts/renesas/r9a09g047.dtsi    |  49 ++
+ arch/arm64/configs/defconfig                  |   1 +
+ drivers/clk/renesas/r9a09g047-cpg.c           |   3 +
+ drivers/soc/renesas/Kconfig                   |   1 +
+ drivers/soc/renesas/r9a09g047-sys.c           |   1 +
+ drivers/soc/renesas/rz-sysc.c                 |  30 +-
+ drivers/soc/renesas/rz-sysc.h                 |   2 +
+ drivers/thermal/renesas/Kconfig               |   7 +
+ drivers/thermal/renesas/Makefile              |   1 +
+ drivers/thermal/renesas/rzg3e_thermal.c       | 479 ++++++++++++++++++
+ 12 files changed, 703 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/thermal/renesas,r9a09g047-tsu.yaml
+ create mode 100644 drivers/thermal/renesas/rzg3e_thermal.c
 
-This only happens on ASID rollover, when we have
-reached the end of global ASID space, and are
-about to restart the search from the beginning.
+-- 
+2.25.1
 
-We do not do a flush at every allocation, but
-only once every few thousand global ASID allocations.
-
->=20
-> > +static bool needs_global_asid_reload(struct mm_struct *next, u16
-> > prev_asid)
-> > +{
-> > +	u16 global_asid =3D mm_global_asid(next);
-> > +
-> > +	/* Process is transitioning to a global ASID */
-> > +	if (global_asid && prev_asid !=3D global_asid)
-> > +		return true;
-> > +
-> > +	/* Transition from global->local ASID does not currently
-> > happen. */
-> > +	if (!global_asid && is_global_asid(prev_asid))
-> > +		return true;
-> > +
-> > +	return false;
-> > +}
-> I'm going to throw in the towel at this point. This patch needs to
-> get
-> broken up. It's more at once than my poor little brain can handle.
->=20
-> The _least_ it can do is introduce the stub functions and injection
-> into
-> existing code changes, first. Then, in a second patch, introduce the
-> real implementation.
->=20
-> I also suspect that a big chunk of the ASID allocator could be broken
-> out and introduced separately.
->=20
-> Another example is broadcast_tlb_flush(). To reduce complexity in
-> _this_
-> patch, it could do something suboptimal like always do a
-> invlpgb_flush_all_nonglobals() regardless of the kind of flush it
-> gets.
-> Then, in a later patch, you could optimize it.
->=20
-With the config option and ifdefs (mostly) gone, I
-think the split would probably have to be in two
-patches:
-1) Modify existing code to call non-functional
-   stub functions.
-2) Modify the stub functions to then do something.
-
-I'm not sure quite how much this will help with review,
-since to review the second patch you'll have to go back
-to the first patch, but I might as well try...
-
---=20
-All Rights Reversed.
 
