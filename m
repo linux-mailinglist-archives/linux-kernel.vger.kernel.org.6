@@ -1,91 +1,147 @@
-Return-Path: <linux-kernel+bounces-524017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27470A3DE0E
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:16:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7120A3DE10
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:16:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A481E16939D
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:13:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BB02188997F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:14:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 113851FCF6D;
-	Thu, 20 Feb 2025 15:13:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B061B1FA14B;
+	Thu, 20 Feb 2025 15:14:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="QPUTR3x3"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m4Eu4rpH"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADAE01CA84;
-	Thu, 20 Feb 2025 15:12:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A692F1FAC30
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 15:14:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740064379; cv=none; b=qTAKll70YeDHff7SAq0brQtD61vYttbrtmIp7miC6C0PBlJGRY7h72vBKbTQNqupTMC4eiOiGuCuyQ5c3J8UrTP7HwcKiGs4Mi5ciQ0n3cCO2in0kgjvDPnaVBdPp7soETkcQf+e8ri7uYZ1mvhZKaOZCHsZE1PnO/0CmSPawEM=
+	t=1740064461; cv=none; b=reHdnOvOaGSfc3ZkC4LQfCjrfNGn126XJVJg7qBIg3PWap9mIc8mqOtHRqmLcKgDn44WFNFI9rWpvcGzzMD8ueVJjqPK0J7CEgX9fd4iIM0jkMVmEi/bZyClel1gya4A7K8c4NvOrI0lWsCpap25JZ1Yd3h1AaJC118F4f0kQR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740064379; c=relaxed/simple;
-	bh=L3ZAFtJopOmv/JiMgxJtyYZ5ZuSirVnb/9abSSZF/1Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bHEzBoa6CXJDq49MKjNkWcSDQthIGlXQQqAtgmi2C3PPHWMbukZXg9R0ZeUSus18C47H6LtEoxACS0YGA+CWyKpRkU0VnEuQEsGHUS+XAVcZAC679m4Qfm0UadXS4KRpd6WawvWBiDnOK3IEjNtY+nFcHIajIu99BKrhoBph+dI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=QPUTR3x3; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=2W3SBq7jsU0PL6xM+MxseF1qgZIPA0cYwMttD5g9Jl4=; b=QPUTR3x3mzWpBgVDlxZ7X9k0wf
-	1AV1lEVJJ+Mn4A8diCb4wdnO+sP24RxwwX3ixEFKrjTGBPF/DQZ8XEHdcVTVyH8YVSUJie8ptrrI5
-	B2LNRicG3KRVv3ehFObzSDAYncjN9bYqrtJ/rWVGNXyTwR18/IMDZhu4b+mEhuPT5lwE=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tl8EL-00G03T-Ee; Thu, 20 Feb 2025 16:12:49 +0100
-Date: Thu, 20 Feb 2025 16:12:49 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Jie Luo <quic_luoj@quicinc.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Lei Wei <quic_leiwei@quicinc.com>,
-	Suruchi Agarwal <quic_suruchia@quicinc.com>,
-	Pavithra R <quic_pavir@quicinc.com>,
-	Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Kees Cook <kees@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	linux-arm-msm@vger.kernel.org, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-hardening@vger.kernel.org,
-	quic_kkumarcs@quicinc.com, quic_linchen@quicinc.com,
-	srinivas.kandagatla@linaro.org, bartosz.golaszewski@linaro.org,
-	john@phrozen.org
-Subject: Re: [PATCH net-next v3 06/14] net: ethernet: qualcomm: Initialize
- the PPE scheduler settings
-Message-ID: <d0cf941b-db9b-451c-904f-468ffb11e2f7@lunn.ch>
-References: <20250209-qcom_ipq_ppe-v3-0-453ea18d3271@quicinc.com>
- <20250209-qcom_ipq_ppe-v3-6-453ea18d3271@quicinc.com>
- <f8d30195-1ee9-42f2-be82-819c7f7bd219@lunn.ch>
- <877b3796-3afc-4f3e-a0f5-ec1a6174a921@quicinc.com>
+	s=arc-20240116; t=1740064461; c=relaxed/simple;
+	bh=9eaCaq5y9D1r80+Z5+qGqUat+koJb6OIj9wcd+uQEiw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=lj+Flnu8znBnDfoRNWeajjlR/Tj9ETAlvRQ7sqEHBuz+mvI+bby5PTGuJy5HqRQ3g7hEu4kFJmpBaPW/du31E2CDuiyLkUEB8A6uDAyTDEtCNEhHN44uh52LyqL5GHzhobyUhbhdMg/yw/KFcTegGjJ4k+PSAdAM0haCv1sH+F0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m4Eu4rpH; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-220d39a5627so16712245ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 07:14:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740064459; x=1740669259; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sqQpBY4aFk+b5TA2ZFF7XiX758vlnpBYffrh3Zwz7wU=;
+        b=m4Eu4rpHIU3sBybfKgfO30YkRDpuRsDF2BeERg4d8JL3oNBo+XAtwpNiL+U7oy0Sqo
+         BTeswGC8T/GFzOmTZ7NCWaVIlvEppVwzajfq8+iCkmxUJhQHnI3GMjhlxBGCq1O4AvYG
+         zgz6gyow6/IePWUznE9QAKrC+lZYOrTM1Id+px9FOMZdNlxRlZ7g4UPcAzTLm3NHxsyL
+         +MwtAatL+yAWh8gnLVGc6awKwUZkqJivEDhMZtMvRPobOgjyM3KWVMVY6/NJyef0UCVC
+         2F6OXoLs0iI6OzD8pazH+RVlen0Z23SJsZK2e7/Q7aiVxuWnbR5IV/ZRA+JRNzLF3Ojw
+         pHqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740064459; x=1740669259;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sqQpBY4aFk+b5TA2ZFF7XiX758vlnpBYffrh3Zwz7wU=;
+        b=J5FCBRUrCX8NqXm5faAH7dBmaRdSbL1+bBi4QnN37ypKsDjmlXEqhPn/R7j96a2Syf
+         iJA1glhU/3oDNv/LbjTDhZHhcqLAZWHjpPQUqg9p5dfG4b7ny/ehXd6lR6sK7x2ocSbh
+         9bQ+kvZLXQUiM5RKKtAqcCOVp97lM0M6Wy5uW+fKDninFYGyTtaV6GWgAJk2FMvmSect
+         q+8tpHGBAa/wSXx5i+gb5u7GI/vR8N0tJpEVtOWdvtPyHm2pQLXW/4lowfmreGD4labM
+         6zUpp0Wif9CwLeahcQmmx+IcVhNwzMBr+PlJnTIPZ1usKc1fL6iAN+UzyOhaHeQ2ZVBF
+         vSDQ==
+X-Gm-Message-State: AOJu0YwZB6HJPxFn70yvCkkJ1dXVg7gYWOOqRHU32z9UF2gev8UUWrQs
+	CiC4jj9p7Vtid0Oww2mqA8O6wjbnYmD/1L68f1rk/yFag0cqh6e5
+X-Gm-Gg: ASbGncsD5cFqumZ8s2VxRZq+3d98FDAfRiFE5kS7oNAKuMz3Z037trKUlZ9yukxsPGr
+	5pO+/AancoEk7m+RmcmlRs253wdLoJez6qFSWMQfKw2p2yNuy24r29V/FPcHCUKiiecVdEZMu4E
+	sz99eroSp12ZUT9f26usoanQvrv2m+T1WhphVgeKdiSzILFyxoAaYI8beQWG7nAgm+hUEXRUCWI
+	twMG1/SxtCO9p54oGOsVRJ/5pFuc7mYSeIFplVJJHnHOtFjxLRFlxxFD7+0lml+OmqJ+6pXUX+1
+	IS9pcgBOimkqE9CBz5rg7L+qfQptyixwVcWfh/g=
+X-Google-Smtp-Source: AGHT+IEBhHNkErGPHvUIGRDjQRfvuODqABxRCX5C2SR4N1tK6tuSLh2jC3rHExY/Aml3jqmJl8PUuw==
+X-Received: by 2002:a17:903:2f8e:b0:221:2f4:5446 with SMTP id d9443c01a7336-22190639e7cmr44995675ad.25.1740064458775;
+        Thu, 20 Feb 2025 07:14:18 -0800 (PST)
+Received: from ritvikos.localdomain ([49.36.192.37])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d5349389sm123310255ad.42.2025.02.20.07.14.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Feb 2025 07:14:18 -0800 (PST)
+Received: by ritvikos.localdomain (Postfix, from userid 1000)
+	id 1D910E7C4B5; Thu, 20 Feb 2025 20:44:15 +0530 (IST)
+From: ritvikfoss@gmail.com
+To: linux-kernel@vger.kernel.org,
+	ricardo@marliere.net
+Cc: skhan@linuxfoundation.org,
+	linux-kernel-mentees@lists.linuxfoundation.org
+Subject: [PATCH v2] scripts/checksyscalls.sh: Add usage message, fix -Wno-error
+Date: Thu, 20 Feb 2025 20:44:14 +0530
+Message-ID: <20250220151414.8003-1-ritvikfoss@gmail.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250220105940.5241-1-ritvikfoss@gmail.com>
+References: <20250220105940.5241-1-ritvikfoss@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <877b3796-3afc-4f3e-a0f5-ec1a6174a921@quicinc.com>
+Content-Transfer-Encoding: 8bit
 
-> As a general rule, we have tried to keep the data structure definition
-> accurately mirror the hardware table design, for easier understanding
-> and debug ability of the code.
+From: Ritvik Gupta <ritvikfoss@gmail.com>
 
-Could you point me at the datasheet which describes the table?
+Currently 'scripts/checksyscalls.sh' does not
+provide guidance when executed without specifying
+a compiler, instead it attempts to execute
+'-Wno-error' parameter as a command,
+resulting in 'Wno-error: Command not found' error.
 
-	Andrew
+This patch adds a usage message that is displayed
+when no compiler is provided as parameter to
+improve clarity.
+
+Signed-off-by: Ritvik Gupta <ritvikfoss@gmail.com>
+---
+Changes in v2:
+    - Make the script posix compliant
+    - Fixed formatting
+
+Thanks for reviewing!
+
+ scripts/checksyscalls.sh | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
+
+diff --git a/scripts/checksyscalls.sh b/scripts/checksyscalls.sh
+index 1e5d2eeb726d..96cba9f79249 100755
+--- a/scripts/checksyscalls.sh
++++ b/scripts/checksyscalls.sh
+@@ -10,6 +10,22 @@
+ # checksyscalls.sh gcc gcc-options
+ #
+ 
++usage() {
++cat << EOF
++Usage: $0 <compiler> [compiler-options]
++
++Example:
++  $0 gcc
++EOF
++
++exit 1
++}
++
++if [ $# -eq 0 ]; then
++	echo "Error: No compiler provided."
++	usage
++fi
++
+ ignore_list() {
+ cat << EOF
+ #include <asm/types.h>
+-- 
+2.48.1
+
 
