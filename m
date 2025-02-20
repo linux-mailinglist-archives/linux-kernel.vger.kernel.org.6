@@ -1,115 +1,161 @@
-Return-Path: <linux-kernel+bounces-524367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C682DA3E241
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 18:22:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0383A3E268
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 18:28:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6121118846F4
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:19:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDC7D3B3BF2
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:20:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BD0D212B0B;
-	Thu, 20 Feb 2025 17:19:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B99F212FAD;
+	Thu, 20 Feb 2025 17:20:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BuVhM3hZ"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="OwCsdhMd"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E8081FF1A7;
-	Thu, 20 Feb 2025 17:19:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E1EF211A0B;
+	Thu, 20 Feb 2025 17:20:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740071951; cv=none; b=Xg5xGQ2R/I0+WkE+1JiorcimddgIQ0lhOhf3aTwFDDVuS9JmkEbqCwESOa+Az/sY0aFZuBjftEIzP8RU9TYgl6iy2oCh6q5sM5j67RRHfxFk2BG76f7igN0/pYX2wt2roNmyn96//lFBA2c7wAN7WbPCpikt4rUJi0XDm0294G4=
+	t=1740072048; cv=none; b=X/a7frZMHfUBdHJ0Ngp/Q4vTEaoJ8rTfbkO507LhVY8TAziasY6371qz6i+n0WpplJ9iGFP5O4JLlES8p8v8qnFpk/IaJrHuSvQ5LsaKIIFur1Z5sVpjlVIUnpc48biu6mH8RH6YlbCYzS75SO+W6tNSemQAfhtS6YpfWVcyyi4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740071951; c=relaxed/simple;
-	bh=lbxp0U7nS6050w/dyFPx4V8itxpoYCb27lxROY6sU+E=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OG1cOq7aLnU2Lc2ekFlfFk2CaJc2ngzU5zN5rdZdIwDpQmfIQmPqy3zxc6SyGT8EPkAedO0nYyfjTDPq0U+cNLJKoWXCwhMwkcuVl9rhFz285xilVRXR8oLvHJXIDQ3fi4JSaUygpgfNbKDTCYAaQRFwGeNvN716eM8RbIQIoRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BuVhM3hZ; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-220e6028214so26670675ad.0;
-        Thu, 20 Feb 2025 09:19:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740071949; x=1740676749; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=nomDZP7UgjJM6LiqPmJ9pxSMIsyz19CUu75QblVwQ2E=;
-        b=BuVhM3hZaD3sINTjebnYeoM/4q3FrbyZGQCFZhxvVBwfpNzyrB0i9oCxzZ/mtJglCB
-         cRilem43V2Lz6t+CXN7os2E5GTLlybdWwYLZShaZuQWK6Bi7nMJKD8XyC15ckFd/X2z+
-         E83Cips3kTeTnPnoQILhVk96A6rdqtwQJy6MMzedvTA3UHTz0B0ftKBdrxlb2r9MLl6k
-         mBnNhwjoUg+GskFW0PefJYuoJoCieUZKElcWhwXkGlfU9cK4TOfzU+AZnw5R+jmvpCfX
-         N+G7jHv8GdXd5VGdQeacozL9pPdupwIkF+spyp3givbOoj3To3yCqwofKqI3QIVmEXcd
-         8YKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740071949; x=1740676749;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nomDZP7UgjJM6LiqPmJ9pxSMIsyz19CUu75QblVwQ2E=;
-        b=nvAzVf7WrQ2DO89jDW/Y62nNiezHmBiFfPbDr4FXpwtd+BeGEA+92nYXOq2QoODgcL
-         hL+IZgVu8G8vnQDETjZx1ls4rYR6J60e6+OxV6loFqAk438dS6QMWaWBZI8o6RhvXufr
-         BEZ7x/Zp4CkTFJAmCCCRAOQB8v5bp+4FlDhYBzhtiLyvqoJ7iwN5ZLJjPpZygFL729Nl
-         W+r85CTVSKvbqYrfbLXZVlQiZA7BPpL8zC6XyJr+ILtDYh/E2LkXlDcaTuK9mopdFiP1
-         +UrM6KMUaqz3EFolUSvTrnwoiIJdEd6oU9vzwamzdE6v4pAP+bbhdo5K8ezZ+Fe07rqb
-         nAOg==
-X-Forwarded-Encrypted: i=1; AJvYcCUddVhOuDYJr6PFyII1UgK0GzUjeXplZWAtFdeEoTSFE3EFmaF0YhKhAG6sBMLF1F28w02ALr1gSzU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHbWFCTpaZkodcmeWtfH0FbhlbJR5O5I1Yiht8mbN4tWfSuY4o
-	JfZbT2K4JIWze7Yw8STB+WTRbZxtcU0K6oF+pgRWKC91Yj+JHhEKkkGKpO7FgPs=
-X-Gm-Gg: ASbGnctJDcLKNQJLg2Ce+VFHdEJ3JHWV+l6ARhq5r2kh1YlzzX0B6nKHpLwO9tPAfGK
-	SdQPyY4qLgSA99JEFL908NCB3z75WEZ91jWR9ALqcwpyrbwrSIx2M+gg1wPqAF4NkWoX2jK6QtK
-	yiEssa86RObWVXEbSB5fQ+orZ2QZQ4Y4E2f2PNasR+tWfRYfo6Cnib0ZDrSQBcuOtetavV867C4
-	HhRJo/DGEbFMMIdwZSykMniolOc6S8cywNuGWgN4anu+u2Tws6Jp39nHj7iW9phU26LycP/dDvB
-	8Rq99B+IgOnCLKyCz16ulohI
-X-Google-Smtp-Source: AGHT+IGeGn7sAE0oh/LEmZ0Q9vohZZx4LORYi7li2Q40VP3JZ4WbLcXqVZcaR3HNoxG0ukBcPdb44w==
-X-Received: by 2002:a05:6a00:2e16:b0:730:927c:d451 with SMTP id d2e1a72fcca58-73417382ba1mr4907029b3a.20.1740071949258;
-        Thu, 20 Feb 2025 09:19:09 -0800 (PST)
-Received: from archlinux.nitk.ac.in ([2400:4f20:11:c00::101:920a])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7324273e324sm14101963b3a.88.2025.02.20.09.19.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Feb 2025 09:19:08 -0800 (PST)
-From: Suchit Karunakaran <suchitkarunakaran@gmail.com>
-To: corbet@lwn.net,
-	linux-doc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org,
-	linux-kernel-mentees@lists.linux.dev,
-	Suchit Karunakaran <suchitkarunakaran@gmail.com>
-Subject: [PATCH] docs: debugfs: fix spelling of "failure"
-Date: Thu, 20 Feb 2025 22:49:03 +0530
-Message-ID: <20250220171903.11321-1-suchitkarunakaran@gmail.com>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1740072048; c=relaxed/simple;
+	bh=tNl3JYwXD9ShFZNzOjInS1Tn8LUzlGf9ITtlvxPDJTk=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=IeH5wdh7rf6aYdRXlPFfSDB5BV15WaTi6G4KtOza6uYEB00Fdrb7UwLnqbQjJUoilgwOf/L+VXOXTx9q5SsPzBo8cW2lSJZM3otW44akM9aF5/VJgxKvhaj0W46fRvHnwMCEi3bOVYqm1LfryfE0sgbDhXKGnjyzFuG/T2CFrGQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=OwCsdhMd; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51KH8Yh6020440;
+	Thu, 20 Feb 2025 17:20:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=J0Ppn/rWoGswZL2H79mmA0
+	DqGgrqXSVdijtNbly8JdQ=; b=OwCsdhMdHBd2eOKtSJ7s2NeUCptzjVu+KvUezH
+	MB2Fv2vwu6abD8c0je1fguQghGuoMg4Y0s5dJuPvlgqcVZGc14TkqhNAR03Xjg21
+	k0j/O0RJmC6G8iAnpJ8Osc5VXT7Srhy+ODa776Qy2af6TNABYoa+G4RVrFVDoQN7
+	uTb2APpnEitmXhe1NPgkylrrlwIy0YAHPlUNV1/weaNkrGVACTPBW0JWyq4lvbDp
+	3UnTe5NY9mqNpclCcH4Ny1g16zShJjKDNq+eTCWp1H2snQ1gr8w2KFjb2LFvvadO
+	O6KqphjfrX1j851bmsQfYZoxAqoY9eo+LE3flsLnH624tlpw==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44x06t1jsj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Feb 2025 17:20:40 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51KHKdAv016719
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Feb 2025 17:20:39 GMT
+Received: from hu-vgarodia-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 20 Feb 2025 09:20:35 -0800
+From: Vikash Garodia <quic_vgarodia@quicinc.com>
+Subject: [PATCH v5 0/4] Venus driver fixes to avoid possible OOB accesses
+Date: Thu, 20 Feb 2025 22:50:07 +0530
+Message-ID: <20250220-venus_oob_2-v5-0-4d29347c669a@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEdkt2cC/23M0QrCIBiG4VsJjzP0n27WUfcRMZz7ax6kpU2Ks
+ XvPjSJGHX4fPO9AIgaLkexWAwmYbLTe5SHXK2I67c5IbZs3AQaCcy5pQtfH2vumBgq8YgqKLa9
+ KTbK4BjzZx1w7HPPubLz78JzjCab33QG16CSgjApVaGRalKJR+1tvjXVmY/yFTKVUfLRkP7rIm
+ nEh0CCWqv2jxVcDq5ZaZC0BWs2aUjUASz2O4wsGQLXiJAEAAA==
+X-Change-ID: 20241115-venus_oob_2-21708239176a
+To: Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
+        Bryan O'Donoghue
+	<bryan.odonoghue@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Hans Verkuil <hans.verkuil@cisco.com>
+CC: Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Mauro Carvalho Chehab
+	<mchehab+samsung@kernel.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Vikash Garodia <quic_vgarodia@quicinc.com>, <stable@vger.kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1740072035; l=2048;
+ i=quic_vgarodia@quicinc.com; s=20241104; h=from:subject:message-id;
+ bh=tNl3JYwXD9ShFZNzOjInS1Tn8LUzlGf9ITtlvxPDJTk=;
+ b=hx2dHPjXT3EZ/V56Bjj9ECWdOyaHswgglo2ht4VG/0O5U76M0m7vpGtvzs3mzsOuob2WIxhKh
+ F3kqIQzNuTWAni9NAueNx+7DFDFD9xZwDMQdiJEb8oD3KlqtQgd2neJ
+X-Developer-Key: i=quic_vgarodia@quicinc.com; a=ed25519;
+ pk=LY9Eqp4KiHWxzGNKGHbwRFEJOfRCSzG/rxQNmvZvaKE=
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: o-55cWh7AbqRMzgZFtJT3tYLvz9009iZ
+X-Proofpoint-GUID: o-55cWh7AbqRMzgZFtJT3tYLvz9009iZ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-20_07,2025-02-20_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 adultscore=0
+ clxscore=1015 spamscore=0 malwarescore=0 priorityscore=1501 bulkscore=0
+ impostorscore=0 mlxlogscore=999 phishscore=0 suspectscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2502200121
 
-Fix a typo in debugfs documentation where "failure" was misspelled 
-as "failuer".
+This series primarily adds check at relevant places in venus driver 
+where there are possible OOB accesses due to unexpected payload from 
+venus firmware. The patches describes the specific OOB possibility.
 
-Signed-off-by: Suchit Karunakaran <suchitkarunakaran@gmail.com>
+Please review and share your feedback.
+
+Validated on sc7180(v4), rb5(v6) and db410c(v1).
+
+Changes in v5
+- Add few checks as per comments from Hans 
+- Link to v4: https://lore.kernel.org/r/20250207-venus_oob_2-v4-0-522da0b68b22@quicinc.com
+
+Changes in v4:
+- fix an uninitialize variable(media ci)
+- Link to v3: https://lore.kernel.org/r/20250128-venus_oob_2-v3-0-0144ecee68d8@quicinc.com
+
+Changes in v3:
+- update the packet parsing logic in hfi_parser. The utility parsing api 
+  now returns the size of data parsed, accordingly the parser adjust the 
+  remaining bytes, taking care of OOB scenario as well (Bryan)
+- Link to v2: 
+  https://lore.kernel.org/r/20241128-venus_oob_2-v2-0-483ae0a464b8@quicinc.com
+
+Changes in v2:
+- init_codec to always update with latest payload from firmware
+  (Dmitry/Bryan)
+- Rewrite the logic of packet parsing to consider payload size for
+  different packet type (Bryan)
+- Consider reading sfr data till available space (Dmitry)
+- Add reviewed-by tags
+- Link to v1: 
+  https://lore.kernel.org/all/20241105-venus_oob-v1-0-8d4feedfe2bb@quicinc.com/
+
+Signed-off-by: Vikash Garodia <quic_vgarodia@quicinc.com>
 ---
- Documentation/filesystems/debugfs.rst | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Vikash Garodia (4):
+      media: venus: hfi_parser: add check to avoid out of bound access
+      media: venus: hfi_parser: refactor hfi packet parsing logic
+      media: venus: hfi: add check to handle incorrect queue size
+      media: venus: hfi: add a check to handle OOB in sfr region
 
-diff --git a/Documentation/filesystems/debugfs.rst b/Documentation/filesystems/debugfs.rst
-index f7f977ffbf8d..610f718ef8b5 100644
---- a/Documentation/filesystems/debugfs.rst
-+++ b/Documentation/filesystems/debugfs.rst
-@@ -220,7 +220,7 @@ There are a couple of other directory-oriented helper functions::
- 
- A call to debugfs_change_name() will give a new name to an existing debugfs
- file, always in the same directory.  The new_name must not exist prior
--to the call; the return value is 0 on success and -E... on failuer.
-+to the call; the return value is 0 on success and -E... on failure.
- Symbolic links can be created with debugfs_create_symlink().
- 
- There is one important thing that all debugfs users must take into account:
+ drivers/media/platform/qcom/venus/hfi_parser.c | 100 ++++++++++++++++++-------
+ drivers/media/platform/qcom/venus/hfi_venus.c  |  18 ++++-
+ 2 files changed, 90 insertions(+), 28 deletions(-)
+---
+base-commit: c7ccf3683ac9746b263b0502255f5ce47f64fe0a
+change-id: 20241115-venus_oob_2-21708239176a
+
+Best regards,
 -- 
-2.48.1
+Vikash Garodia <quic_vgarodia@quicinc.com>
 
 
