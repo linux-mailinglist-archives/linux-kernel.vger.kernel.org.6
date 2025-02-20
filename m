@@ -1,93 +1,59 @@
-Return-Path: <linux-kernel+bounces-524228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB957A3E0C7
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:30:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA613A3E0D6
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:33:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0B5437A8BFB
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:29:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D8F319C541D
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:31:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E977213221;
-	Thu, 20 Feb 2025 16:29:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2508D212D8B;
+	Thu, 20 Feb 2025 16:30:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zE1N0M+m"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="lcR7nfbp"
+Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59FA8212FBF
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 16:29:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CECD5212B0B;
+	Thu, 20 Feb 2025 16:30:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740068972; cv=none; b=pyUc/dE+RHDbI1VxXAVyH8C8iIvBOaqnJS2PENvvMBFX8V/bBsXLDK41D6lmCJmrpM2TeAYMvR5vsuVkudzcnFgad0Yb2hzHsjM/rA/FQDlC0avEVFFTPv6AV236XYYuFGQoqp6cWakUnWpeoxNPIJLgO3777+F85sCm+KjJ+zw=
+	t=1740069013; cv=none; b=i4ChbWRThMvwQO+7tktOAjI/YMMorIZHjHRGJuDRk667zXI0sZ0XFK5p4duHmXK26nNc3yfsZN3oUgflp5wWtFtuCE25CCvSv27D0jcv72xCtjwdWWEUW79LuJV3KsusZ6NsfSXCnj44Hf6aJSgTuYDywbgaZBtZKgu0rPeRSS0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740068972; c=relaxed/simple;
-	bh=G44mzomd17zjRW176IaSow82CVHdPVhJq52qbX/krTc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=F38bwPUnr5KczahMsiDwx2AfhRJCeluAEpld0NVbAOfVbZE+aox2WqgkE+kU4hPqMK2EA/mAFSwQ/jT7w7x1EMPbCfb+VwpeIgOWUsukcTXIodWXILAinL6adGQZIhAPmr9KTsvyWqwRWT1Um1PqFDFkatgDTrM6ndlqzq+pprs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zE1N0M+m; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-38f504f087eso1050825f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 08:29:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740068969; x=1740673769; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7m/CTzgrh0AA9xzhVYZwH6Z/AB9cMb21X+WgCPYE0r0=;
-        b=zE1N0M+mcG6yeCVrShQIusxoURBJlTD5R/+EL5iJJCd42rO9aXh8QlISKn09oAZlS8
-         cfuZOZ46FL/dKy0jV2g1yq01U1RDQD/zt4t843n0+SdmkNtrT08e0aHKh7zGTPJtXwLX
-         L1wJYAhc5cHI+csGZirsREJBWUDOSoGIhB/90u0PnS+w6Lubjz0TZ28u/3YncEB+r1aI
-         ay9GT5GmWW5hhn6loUsx9pvBRrEyUzrA943X9GWhdrLgK3N6tGOQSaCT4lYNFY0XvCAR
-         OaX98jS8UX0PYG0L/nvQLWfi0bU7lj//ommHFy9MpbMyjLJjCG85ifjpu0Ujr9UAgcEV
-         wz8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740068969; x=1740673769;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7m/CTzgrh0AA9xzhVYZwH6Z/AB9cMb21X+WgCPYE0r0=;
-        b=Q0NUhKE1/QeEqGwlT6T8W//uGvuCuEIS7TEHNC/uNVrzRgmlkTBHLR8xxufn0NuBtn
-         qF+I8JQXQQuPaylr2ajklVNbi6OsB84yueD3UhQ0pmBzQXjpHtWgZDHJfvEiULh6HQeh
-         v5ndiZ1lcEIH5p7aRG1MsL2Li5xHJr6gOsETbeYu9IMy3734uL5j3sr0DJoVaIinSzX1
-         F4jkdEdC/UnIHyBHnBeL5fNFN+nZ2epAaLwUztgwpizEwn50dZGzkzixaDExdfOtbU0I
-         8GbAzNalJLuv8LdPU2Qt9DnMkO6R1XO/CD3lMu/F3sB8xdVcM1iJHtjcjfskfLYKt7Ha
-         k2iw==
-X-Forwarded-Encrypted: i=1; AJvYcCVuhxZXZ05BWgh3LkHu64RxVshRGSFj4FA4ENw5hK/5ZnHL0oH6jFY/74QTUnQZb4t5GLWdWssIemfoasc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYMNjPw1TOcFN8IlcS0EOmWfz11J6rp4CfyY4f37qkFZAgbWT8
-	Zyu9GOAqN4ikakpOqQjeH6D2e10NvOwHTjzGL64PU3NfJFY1SvQ1pqGe7f2m8Pk=
-X-Gm-Gg: ASbGncu6I7/sM+i4G4Mxf13vb4xKkvmZM3htKDhHKkBddWyatzZ7rF1cwamKZ63rdH2
-	TCyyxF5xmIt9ntiQXbZhgrgbP+gGADUhRwDMkvYrwpnr3G5Lg992x1+9QIF9XzdtazB1d1kTXNW
-	Nwt6mCFsTtDgwRzst/MOJ62pFkJROgVHPKKStDpxgh2skxJn+IsVUFcsTmTcMyPaVM06il1kM3m
-	yRLJZO0kUA69cEIIisJr2TvHWlXmh5/2pWH/2PImm6pQJSOPQn2yG/xYLUzbEqaFexSBfv46NQx
-	nsbrtiNzOaPqQb1qV/cmNbv1gKgcrq8RRWkAvPao
-X-Google-Smtp-Source: AGHT+IErNAEoXnEuPGcHDzaI4u+qesPWr2oJ8v0KPpx1eLR4SBNS7L5XLR9zDyZbvaRrA+qYm3ZYUA==
-X-Received: by 2002:adf:fa86:0:b0:38d:dffc:c144 with SMTP id ffacd0b85a97d-38f587e73a2mr5603019f8f.55.1740068968673;
-        Thu, 20 Feb 2025 08:29:28 -0800 (PST)
-Received: from localhost.localdomain ([5.133.47.210])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f258f5fabsm20813753f8f.45.2025.02.20.08.29.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Feb 2025 08:29:27 -0800 (PST)
-From: srinivas.kandagatla@linaro.org
-To: broonie@kernel.org
-Cc: perex@perex.cz,
-	tiwai@suse.com,
-	krzysztof.kozlowski@linaro.org,
-	linux-sound@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
+	s=arc-20240116; t=1740069013; c=relaxed/simple;
+	bh=bUFRh/z0JE+Kbj6gH5vsY77Jp0K4hGvEKNQgkEbUZ5c=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=D5i0aCNh5XbrzNNvAueXJ/oIJ/8OYwpbRilCuPsDPGKdibyWURp+Bsx8xaPNxoX6GTIc78cM0fJBZvlirY7xEnDHuLcz4f/8geLKlq24/eVDq84vK6/PW4uozYLraYe0NbY0ALwJC++ejzEEA+hZqANqTutmfTb3/rXms4uBy04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=lcR7nfbp; arc=none smtp.client-ip=91.218.175.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1740069008;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=AhgezydcIAuiz95/Z6Dv2Ddbkghm0SNItVxer/dvUWA=;
+	b=lcR7nfbprjyIAW+4P7/+W7hc+kcMTO6iZ5E4gT5VGBjDYckOTPQfdqxfY16IOg1gAkRaxT
+	Poqp8Q8QOFOlbFaCSEUATRqnhjXX0oVx8Qxm1vtviBKzsNDQhTwZJ5Hwsc6M2gtWmpGjv5
+	SR6NMOjzggF1f3S4boIO02OM3fnIMu4=
+From: Sean Anderson <sean.anderson@linux.dev>
+To: Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	netdev@vger.kernel.org
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
 	linux-kernel@vger.kernel.org,
-	dmitry.baryshkov@linaro.org,
-	johan+linaro@kernel.org,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH v2 5/5] ASoC: q6apm-dai: remove redundant hw_constraints setup
-Date: Thu, 20 Feb 2025 16:28:47 +0000
-Message-Id: <20250220162847.11994-6-srinivas.kandagatla@linaro.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250220162847.11994-1-srinivas.kandagatla@linaro.org>
-References: <20250220162847.11994-1-srinivas.kandagatla@linaro.org>
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	Sean Anderson <sean.anderson@linux.dev>
+Subject: [PATCH net v2] net: cadence: macb: Synchronize stats calculations
+Date: Thu, 20 Feb 2025 11:29:50 -0500
+Message-Id: <20250220162950.95941-1-sean.anderson@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -95,59 +61,114 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Stats calculations involve a RMW to add the stat update to the existing
+value. This is currently not protected by any synchronization mechanism,
+so data races are possible. Add a spinlock to protect the update. The
+reader side could be protected using u64_stats, but we would still need
+a spinlock for the update side anyway. And we always do an update
+immediately before reading the stats anyway.
 
-pcm core already does setup the hw_constraints from struct snd_pcm_hardware
-values, setting this in q6apm-dai is redundant.
-
-Remove the code that sets this.
-
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Fixes: 89e5785fc8a6 ("[PATCH] Atmel MACB ethernet driver")
+Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
 ---
- sound/soc/qcom/qdsp6/q6apm-dai.c | 28 ----------------------------
- 1 file changed, 28 deletions(-)
 
-diff --git a/sound/soc/qcom/qdsp6/q6apm-dai.c b/sound/soc/qcom/qdsp6/q6apm-dai.c
-index 049b91fd7a23..b644ce7d394b 100644
---- a/sound/soc/qcom/qdsp6/q6apm-dai.c
-+++ b/sound/soc/qcom/qdsp6/q6apm-dai.c
-@@ -374,34 +374,6 @@ static int q6apm_dai_open(struct snd_soc_component *component,
- 	else if (substream->stream == SNDRV_PCM_STREAM_CAPTURE)
- 		runtime->hw = q6apm_dai_hardware_capture;
+Changes in v2:
+- Use spin_lock_irq when not in IRQ context since we take this lock in
+  macb_interrupt
+
+ drivers/net/ethernet/cadence/macb.h      |  2 ++
+ drivers/net/ethernet/cadence/macb_main.c | 12 ++++++++++--
+ 2 files changed, 12 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/ethernet/cadence/macb.h b/drivers/net/ethernet/cadence/macb.h
+index 5740c98d8c9f..2847278d9cd4 100644
+--- a/drivers/net/ethernet/cadence/macb.h
++++ b/drivers/net/ethernet/cadence/macb.h
+@@ -1279,6 +1279,8 @@ struct macb {
+ 	struct clk		*rx_clk;
+ 	struct clk		*tsu_clk;
+ 	struct net_device	*dev;
++	/* Protects hw_stats and ethtool_stats */
++	spinlock_t		stats_lock;
+ 	union {
+ 		struct macb_stats	macb;
+ 		struct gem_stats	gem;
+diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
+index 48496209fb16..c1f57d96e63f 100644
+--- a/drivers/net/ethernet/cadence/macb_main.c
++++ b/drivers/net/ethernet/cadence/macb_main.c
+@@ -1978,10 +1978,12 @@ static irqreturn_t macb_interrupt(int irq, void *dev_id)
  
--	/* Ensure that buffer size is a multiple of period size */
--	ret = snd_pcm_hw_constraint_integer(runtime, SNDRV_PCM_HW_PARAM_PERIODS);
--	if (ret < 0) {
--		dev_err(dev, "snd_pcm_hw_constraint_integer failed\n");
--		goto err;
--	}
--
--	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
--		ret = snd_pcm_hw_constraint_minmax(runtime, SNDRV_PCM_HW_PARAM_BUFFER_BYTES,
--						   BUFFER_BYTES_MIN, BUFFER_BYTES_MAX);
--		if (ret < 0) {
--			dev_err(dev, "constraint for buffer bytes min max ret = %d\n", ret);
--			goto err;
--		}
--	}
--
--	ret = snd_pcm_hw_constraint_step(runtime, 0, SNDRV_PCM_HW_PARAM_PERIOD_BYTES, 32);
--	if (ret < 0) {
--		dev_err(dev, "constraint for period bytes step ret = %d\n", ret);
--		goto err;
--	}
--
--	ret = snd_pcm_hw_constraint_step(runtime, 0, SNDRV_PCM_HW_PARAM_BUFFER_BYTES, 32);
--	if (ret < 0) {
--		dev_err(dev, "constraint for buffer bytes step ret = %d\n", ret);
--		goto err;
--	}
--
- 	runtime->private_data = prtd;
- 	runtime->dma_bytes = BUFFER_BYTES_MAX;
- 	if (pdata->sid < 0)
+ 		if (status & MACB_BIT(ISR_ROVR)) {
+ 			/* We missed at least one packet */
++			spin_lock(&bp->stats_lock);
+ 			if (macb_is_gem(bp))
+ 				bp->hw_stats.gem.rx_overruns++;
+ 			else
+ 				bp->hw_stats.macb.rx_overruns++;
++			spin_unlock(&bp->stats_lock);
+ 
+ 			if (bp->caps & MACB_CAPS_ISR_CLEAR_ON_WRITE)
+ 				queue_writel(queue, ISR, MACB_BIT(ISR_ROVR));
+@@ -3102,6 +3104,7 @@ static struct net_device_stats *gem_get_stats(struct macb *bp)
+ 	if (!netif_running(bp->dev))
+ 		return nstat;
+ 
++	spin_lock_irq(&bp->stats_lock);
+ 	gem_update_stats(bp);
+ 
+ 	nstat->rx_errors = (hwstat->rx_frame_check_sequence_errors +
+@@ -3131,6 +3134,7 @@ static struct net_device_stats *gem_get_stats(struct macb *bp)
+ 	nstat->tx_aborted_errors = hwstat->tx_excessive_collisions;
+ 	nstat->tx_carrier_errors = hwstat->tx_carrier_sense_errors;
+ 	nstat->tx_fifo_errors = hwstat->tx_underrun;
++	spin_unlock_irq(&bp->stats_lock);
+ 
+ 	return nstat;
+ }
+@@ -3138,12 +3142,13 @@ static struct net_device_stats *gem_get_stats(struct macb *bp)
+ static void gem_get_ethtool_stats(struct net_device *dev,
+ 				  struct ethtool_stats *stats, u64 *data)
+ {
+-	struct macb *bp;
++	struct macb *bp = netdev_priv(dev);
+ 
+-	bp = netdev_priv(dev);
++	spin_lock_irq(&bp->stats_lock);
+ 	gem_update_stats(bp);
+ 	memcpy(data, &bp->ethtool_stats, sizeof(u64)
+ 			* (GEM_STATS_LEN + QUEUE_STATS_LEN * MACB_MAX_QUEUES));
++	spin_unlock_irq(&bp->stats_lock);
+ }
+ 
+ static int gem_get_sset_count(struct net_device *dev, int sset)
+@@ -3193,6 +3198,7 @@ static struct net_device_stats *macb_get_stats(struct net_device *dev)
+ 		return gem_get_stats(bp);
+ 
+ 	/* read stats from hardware */
++	spin_lock_irq(&bp->stats_lock);
+ 	macb_update_stats(bp);
+ 
+ 	/* Convert HW stats into netdevice stats */
+@@ -3226,6 +3232,7 @@ static struct net_device_stats *macb_get_stats(struct net_device *dev)
+ 	nstat->tx_carrier_errors = hwstat->tx_carrier_errors;
+ 	nstat->tx_fifo_errors = hwstat->tx_underruns;
+ 	/* Don't know about heartbeat or window errors... */
++	spin_unlock_irq(&bp->stats_lock);
+ 
+ 	return nstat;
+ }
+@@ -5097,6 +5104,7 @@ static int macb_probe(struct platform_device *pdev)
+ 		}
+ 	}
+ 	spin_lock_init(&bp->lock);
++	spin_lock_init(&bp->stats_lock);
+ 
+ 	/* setup capabilities */
+ 	macb_configure_caps(bp, macb_config);
 -- 
-2.39.5
+2.35.1.1320.gc452695387.dirty
 
 
