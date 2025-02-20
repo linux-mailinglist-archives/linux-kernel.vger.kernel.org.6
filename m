@@ -1,180 +1,147 @@
-Return-Path: <linux-kernel+bounces-523048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B031A3D162
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 07:26:42 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EDF2A3D164
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 07:27:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48EF83B9CBB
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 06:26:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 816DE178F1E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 06:27:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3D4D1E2611;
-	Thu, 20 Feb 2025 06:26:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD3D21E3780;
+	Thu, 20 Feb 2025 06:27:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="XsKVkrEV"
-Received: from smtpbgau2.qq.com (smtpbgau2.qq.com [54.206.34.216])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QHzWGsBF"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC6041DFE32;
-	Thu, 20 Feb 2025 06:26:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.34.216
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A1FF1E04B5;
+	Thu, 20 Feb 2025 06:27:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740032795; cv=none; b=jWxTydeMIYEPD0rHTRiDi46SfpoeJlaunzrzqIf/hJVjjwm67bsP4m2Co+eJZYF58Kg7oWt0qnqyK51x9/3tpeYh6l6womFi6DZvSDTFnihQAUwB9sosIpCc6WJzahcmHa7gIiAF/U42pNU9JzH44RpSlwAdjlnogqLR8bqwAKA=
+	t=1740032823; cv=none; b=pwmuzIX9ZdYi6zgMDaf0wIgbETLgT8UTjCpI7bluHI6Y4xuvswh+j4tRdvno6Bu4qX0r3V5S/PG4R9pf2Iiy6D41iR2BLpw/rg8mwDeBK6tD9rizAJXUt0ea3cQ6KHILWiSnbLbUvHfIMzrA+48kZwzCrh278J/bk9wjSqc6R3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740032795; c=relaxed/simple;
-	bh=IlmwQnZ9eJ6+YruXTK4RZVqHu2Zggr5FCcSosA+gYC4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ej/Z2wbCzj4pRT0j5iZkse+z9VzGQip5tg4Q6aot1PyXRSEFGCv7o1bbH1bCBpdvVL0hChuVkjjsL8hKUiCctR/8gZ9KUofbN5QxmXVzt7Rd3OuWN3W+aluKIWKtj+jHRXJPbu0CFkPAjchkgFNxUUvBCkqIbDDqi09NC4Yfvtk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=XsKVkrEV; arc=none smtp.client-ip=54.206.34.216
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1740032749;
-	bh=IlmwQnZ9eJ6+YruXTK4RZVqHu2Zggr5FCcSosA+gYC4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=XsKVkrEVmnIUB9K5RPoPwBUQxwbCdt7Xh8WH5YMsNyCbFqlyw/yB6XKxRE9m3w6iQ
-	 QTsU76hKsYnM8GKt5Ioo4k7HfGHpUWCtGsw4MGRsLSDf0hmHYN45pF0s14ylJTcw6h
-	 i1fanXXSN/xlfO/2zSF8NrDs3a7WYvaYjDwGqWrE=
-X-QQ-mid: bizesmtpip2t1740032736tufnqrx
-X-QQ-Originating-IP: q5kOyWnSAVN2XSxq8Dr39ImKWXv99DR1JJSXtBsmihw=
-Received: from [IPV6:240e:668:120a::212:156] ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Thu, 20 Feb 2025 14:25:34 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 16861979310175025258
-Message-ID: <13526D98D27F6E36+705ff063-e7f6-49ff-a29a-0f5e5101c000@uniontech.com>
-Date: Thu, 20 Feb 2025 14:25:33 +0800
+	s=arc-20240116; t=1740032823; c=relaxed/simple;
+	bh=LZBQBhfaFXyeS3pAaaQlyQR+S89x9I9NaFXrRW7TWSo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E8NQrBqrZM+FpPpzd3VqBhalqPnrI7/B1qaH+R8yMUf+2LMg+13WQniOU+uK1BR8jFfFKYf+ucS5Mz3clzhTdfa5enHQVZHrS2ZXk12V6rzIK02BEaoAgXiTcj32xb4jwgWisfmRmrHRUXWbptvA7/1KRQSDx4L1iAry52knwi8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QHzWGsBF; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-ab771575040so303318166b.1;
+        Wed, 19 Feb 2025 22:27:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740032820; x=1740637620; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=YmcS0wBHh82dG0N8AQzS/9OeO7GQPx1RnTtB6k5ffs8=;
+        b=QHzWGsBFO3JwWVOjsu7P6ZXwq/IfNoeVm6gr/SyswHVbiOLKyGCL3o1mvhJYsVJPXQ
+         5UKFn6TK1+XfFjevaa5+NrBQD4iX1rpn9PURZK+Hkcwo6gqlAhRaW4XKvAisMB5gdLHc
+         iOxDW1nJ2u0VjvmQPfa0aX88JbTDz0YB5HcQJ6krHWQHptKAUiUYNa27+FUkFMYlUdHi
+         z5kieB2jXOUFX5PSbTOk5NZZL3BvWQ6EcNO8MOE7s5LF06C/aaxlodhPssrtGxR16Z4u
+         0NadUduVmfRwlWL7oTKYKmem+tmDVeAZl+ubPsghglqKwJwPxshbolC1GFDm/plweRvg
+         ysMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740032820; x=1740637620;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YmcS0wBHh82dG0N8AQzS/9OeO7GQPx1RnTtB6k5ffs8=;
+        b=CcmxIwMtbak521/EBK152vSE0yfuVAA9xU55tt9DOqXNgOnANUAqIRN5VB6h8m/t2v
+         2B3Oc3lq23O3i3kArd+cICKIosrthlfobdMeJ7fC0xYWQi6bA2d+7D9MWFY0lpFfabLi
+         WHVFpULaxpRDE5gMVKQfPf8NY2ChJ17CNdOaXtjSM6qmUVDq1g3RdUO8OGcVxdX5R1C+
+         4FnfqkdmmGLoS/UoD7ZIbtomY8jC6kaGMMyF/V6a9JOmbvGB3VNr7b04+1KCf23wzL+T
+         XiVFx3VAixlWwjOstYu1LnpYbPyKfvc9oNwVakpIKpTHcQqmBTq2jBj5DMSyfNwdtN5M
+         4QqA==
+X-Forwarded-Encrypted: i=1; AJvYcCUV0MLWeSGxGpc9/Ic+8UJEFfYFBj2aPVleGVhIF29ZWz0I+b0WfIN6QnXTnJLdQr8uevOfdq178rJQcZ9YBj0=@vger.kernel.org, AJvYcCXMpzwBnymWF+bt6TZagTRKtvVQ8/WEK3NTN9Z1dvN8IhO0uCl4vlzGwoN+7uN0G6FE/O7DETTh/dAOKHw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwjSL8jt+ggcOysaMn5D2sg0fWG3NYHSjGCJQG1RCgq+XE742u1
+	CZaRZy86ndUpU9piRI+AgT94kbykaZ9iXDQivNjUXCB94/B/KQk=
+X-Gm-Gg: ASbGnctfelg00PXKrIUIzkyyNznHYe67PJCPyufzb/wlK1JPIiHVbXjx5VxmYsO1Wsj
+	v8vT5AJi7IzXsM0wm9iipb/p2Pd+VItQYMx7Uo1gwbPT0Ro7lzNfQsPDELcR4S/IvAhNNQBH2EH
+	O0QO9tUYqVuCQIXye0wU/MpYCI+uWOw5zwtuFpygqrducFaeMoqe7TFe2pa2S+0A8KWAGVIb0eq
+	qHaMsxUXMU+KergfhFD+++hCQObGjjmJf5EPYVdbQ063RVAJjXG1lL+J7j81NBFAO9VpGfr2peH
+	ybpRUg==
+X-Google-Smtp-Source: AGHT+IEgkvW+ydWvcTheEuJsWN+EVna+K8YgnTZFPPR1Xvg4Tgt8IQlkkiAl20b6uqtCJDO6ElNGTA==
+X-Received: by 2002:a17:907:8b96:b0:abb:ebf8:72d9 with SMTP id a640c23a62f3a-abbeddc91a6mr200014966b.15.1740032819413;
+        Wed, 19 Feb 2025 22:26:59 -0800 (PST)
+Received: from p183 ([178.172.146.173])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abbb0fb63ecsm529364466b.115.2025.02.19.22.26.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Feb 2025 22:26:58 -0800 (PST)
+Date: Thu, 20 Feb 2025 09:26:55 +0300
+From: Alexey Dobriyan <adobriyan@gmail.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Willy Tarreau <w@1wt.eu>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Christoph Hellwig <hch@infradead.org>,
+	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+	rust-for-linux <rust-for-linux@vger.kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Greg KH <gregkh@linuxfoundation.org>,
+	David Airlie <airlied@gmail.com>, linux-kernel@vger.kernel.org,
+	ksummit@lists.linux.dev
+Subject: Re: Rust kernel policy
+Message-ID: <f4a0d359-456d-4b90-bc0f-995d26837623@p183>
+References: <b7a3958e-7a0a-482e-823a-9d6efcb4b577@stanley.mountain>
+ <2bcf7cb500403cb26ad04934e664f34b0beafd18.camel@HansenPartnership.com>
+ <yq1mseim24a.fsf@ca-mkp.ca.oracle.com>
+ <c1693d15d0a9c8b7d194535f88cbc5b07b5740e5.camel@HansenPartnership.com>
+ <20250219153350.GG19203@1wt.eu>
+ <e42e8e79a539849419e475ef8041e87b3bccbbfe.camel@HansenPartnership.com>
+ <20250219155617.GH19203@1wt.eu>
+ <20250219160723.GB11480@pendragon.ideasonboard.com>
+ <20250219161543.GI19203@1wt.eu>
+ <20250219113331.17f014f4@gandalf.local.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ACPI: NUMA: Move get_numa_distances_cnt() helper to
- needed location
-To: Mike Rapoport <rppt@kernel.org>
-Cc: chenhuacai@kernel.org, kernel@xen0n.name, rafael@kernel.org,
- lenb@kernel.org, maobibo@loongson.cn, guanwentao@uniontech.com,
- loongarch@lists.linux.dev, linux-kernel@vger.kernel.org,
- Jonathan.Cameron@huawei.com, dan.j.williams@intel.com,
- alison.schofield@intel.com, rrichter@amd.com, bfaccini@nvidia.com,
- dave.jiang@intel.com, haibo1.xu@intel.com, linux-acpi@vger.kernel.org,
- zhanjun@uniontech.com, niecheng1@uniontech.com, chenlinxuan@uniontech.com
-References: <D87315C93AF20D4E+20250220042037.942802-1-wangyuli@uniontech.com>
- <Z7bHPVUH4lAezk0E@kernel.org>
-Content-Language: en-US
-From: WangYuli <wangyuli@uniontech.com>
-Autocrypt: addr=wangyuli@uniontech.com; keydata=
- xjMEZoEsiBYJKwYBBAHaRw8BAQdAyDPzcbPnchbIhweThfNK1tg1imM+5kgDBJSKP+nX39DN
- IVdhbmdZdWxpIDx3YW5neXVsaUB1bmlvbnRlY2guY29tPsKJBBMWCAAxFiEEa1GMzYeuKPkg
- qDuvxdofMEb0C+4FAmaBLIgCGwMECwkIBwUVCAkKCwUWAgMBAAAKCRDF2h8wRvQL7g0UAQCH
- 3mrGM0HzOaARhBeA/Q3AIVfhS010a0MZmPTRGVfPbwD/SrncJwwPAL4GiLPEC4XssV6FPUAY
- 0rA68eNNI9cJLArOOARmgSyJEgorBgEEAZdVAQUBAQdA88W4CTLDD9fKwW9PB5yurCNdWNS7
- VTL0dvPDofBTjFYDAQgHwngEGBYIACAWIQRrUYzNh64o+SCoO6/F2h8wRvQL7gUCZoEsiQIb
- DAAKCRDF2h8wRvQL7sKvAP4mBvm7Zn1OUjFViwkma8IGRGosXAvMUFyOHVcl1RTgFQEAuJkU
- o9ERi7qS/hbUdUgtitI89efbY0TVetgDsyeQiwU=
-In-Reply-To: <Z7bHPVUH4lAezk0E@kernel.org>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------4Xf1bFP4e7EOaVC4MwmhhiXF"
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: Of/FyW07GPBTIGvQgbxpV03kkw25lnI4+WhcYZeqBlBRrF0iafPV43wJ
-	qRoIewfLFVGMW9zti25ZhnPtEFeqSgyYMz0jGItiAmqyd0hbDPSS4xV+brpuGEaHrjxVM9h
-	keJTcQeGCOxEL6aWGFNlbiHqHFZWdaCv6dEkfqCZwqEExxF0MXFVD0BQXQmEUe8cMBc++0w
-	n3Hx6T0fQOH94JMKNZ7Bp2CW9vsVRavWwOjVeZKqa0ueS5u3hJGqj66sVuVHL9c4Yu2KTNe
-	1iVmT7HfrG8KpPztCke1sgWOLsV2TKZuDhhpPFh94nHuPWdi2kXr8pVshyuDSuJbgleoN73
-	ADTm+K3ey4CVOigZEs8P3vLC6zCASWm64PGPLl6PUeDPdTCanJg3NkXvOBy1TZjWReoGI7M
-	Aw53ldWStoI/7iURKDMVy8ibFi3eMddHZ1X3wT2QFZ9AHTcEHYfra+OjWr2qr8uAKdZ1FyI
-	r9CaQikAdcyq8kD6tITeFA1VJdSWqSCZ2f84ReHdbR0BjFOnazar+WQ6o3kMZGCBTTHphZz
-	a8j8LUB8/mSOpPlsOuKR0aw346ODwQuHlZptOVM5cc96LpE5TebSgpAzz9CGFLdW0f6Twqi
-	FHCpWf6M2JFFXV76vejJxVY588Iar6aN44Ynef2Ipn5YSIy2z457NYNCzDPmgQJCVEH6bdL
-	SweCuwTssAvSaTuVbi7Ns4L78iz52apuht3RZgNnrCSygonkG1rKLOXgC4mHp7GQU14sLXD
-	GBWNSOpds9m9yjwt+ySsixLP+huBnNt9CU/R7S4uVCDwYm4+jFPWYAMzv9I7jO83gVLjdVg
-	s5UelftN7A4LCGWfeGSquSKgvnbvboElKZ+TDSWmOaJoSqjfAnXBFU2BW3qKL1OrGsPeM+v
-	g4cEuWRkBO6EXI7ZGC9R9FQ2jrjmGduqchhOVelutlS6XCSzsgt0JPR1csTDwXWqcWZudZQ
-	wLZ43p736r8OQSzCjGqHN6gjiYlyyQb1ki1MfojKUz9DI6YaeNVY9EnBE1e6g5scCXPLpWY
-	aukFcs2DqWfLGeWSk4tjiAYkNOrbt+B5GGFitxKKeH9Ov8fqeuMVc/zTXga3a3EhaWm3pTf
-	q1/XtUpQCV7
-X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
-X-QQ-RECHKSPAM: 0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250219113331.17f014f4@gandalf.local.home>
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------4Xf1bFP4e7EOaVC4MwmhhiXF
-Content-Type: multipart/mixed; boundary="------------xNIKrkDhRc6nFHBYmEtPaU4Y";
- protected-headers="v1"
-From: WangYuli <wangyuli@uniontech.com>
-To: Mike Rapoport <rppt@kernel.org>
-Cc: chenhuacai@kernel.org, kernel@xen0n.name, rafael@kernel.org,
- lenb@kernel.org, maobibo@loongson.cn, guanwentao@uniontech.com,
- loongarch@lists.linux.dev, linux-kernel@vger.kernel.org,
- Jonathan.Cameron@huawei.com, dan.j.williams@intel.com,
- alison.schofield@intel.com, rrichter@amd.com, bfaccini@nvidia.com,
- dave.jiang@intel.com, haibo1.xu@intel.com, linux-acpi@vger.kernel.org,
- zhanjun@uniontech.com, niecheng1@uniontech.com, chenlinxuan@uniontech.com
-Message-ID: <705ff063-e7f6-49ff-a29a-0f5e5101c000@uniontech.com>
-Subject: Re: [PATCH] ACPI: NUMA: Move get_numa_distances_cnt() helper to
- needed location
-References: <D87315C93AF20D4E+20250220042037.942802-1-wangyuli@uniontech.com>
- <Z7bHPVUH4lAezk0E@kernel.org>
-In-Reply-To: <Z7bHPVUH4lAezk0E@kernel.org>
+On Wed, Feb 19, 2025 at 11:33:31AM -0500, Steven Rostedt wrote:
+> On Wed, 19 Feb 2025 17:15:43 +0100
+> Willy Tarreau <w@1wt.eu> wrote:
+> 
+> > Yeah absolutely. However I remember having faced code in the past where
+> > developers had abused this "unlock on return" concept resulting in locks
+> > lazily being kept way too long after an operation. I don't think this
+> > will happen in the kernel thanks to reviews, but typically all the stuff
+> > that's done after a locked retrieval was done normally is down outside
+> > of the lock, while here for the sake of not dealing with unlocks, quite
+> > a few lines were still covered by the lock for no purpose. Anyway
+> > there's no perfect solution.
+> 
+> This was one of my concerns, and it does creep up slightly (even in my own
+> use cases where I implemented them!).
+> 
+> But we should be encouraging the use of:
+> 
+> 	scoped_guard(mutex)(&my_mutex) {
+> 		/* Do the work needed for for my_mutex */
+> 	}
 
---------------xNIKrkDhRc6nFHBYmEtPaU4Y
-Content-Type: multipart/mixed; boundary="------------WQssjZ2nzYFwkYfyO8RDeWq6"
+Meh...
 
---------------WQssjZ2nzYFwkYfyO8RDeWq6
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
+	with_rcu() {
+	}
 
-SGkgTWlrZSwNCg0KT24gMjAyNS8yLzIwIDE0OjEwLCBNaWtlIFJhcG9wb3J0IHdyb3RlOg0K
-PiBUaGVyZSdzIG5vIG5lZWQgZm9yIHJlbG9jYXRpb24sIGp1c3QgZHJvcCB0aGUgdW51c2Vk
-IGZ1bmN0aW9uLg0KDQpPa2F5Lg0KDQpCdXTCoCBwbGVhc2UgdGFrZSBhIGxvb2sgYXQgbGlu
-ZSAyOTUgb2YgdGhlIG9yaWdpbmFsIHNyYXQuYy4gU2hvdWxkIHRoZSANCnR5cGUgb2YgdmFy
-aWFibGUgJ2QnIHRoZXJlIGJlIGNoYW5nZWQgdG8gdTY0LCBhcyBtZW50aW9uZWQgaW4gdGhl
-IGNvbW1pdCANCm1lc3NhZ2U/DQoNCklmIHllcywgSSBjYW4gcXVpY2tseSBwdXQgdXAgYW5v
-dGhlciBjb21taXQganVzdCB0byB0d2VhayB0aGlzIG9uZSBwbGFjZS4NCg0KVGhhbmtzLA0K
-DQotLSANCldhbmdZdWxpDQo=
---------------WQssjZ2nzYFwkYfyO8RDeWq6
-Content-Type: application/pgp-keys; name="OpenPGP_0xC5DA1F3046F40BEE.asc"
-Content-Disposition: attachment; filename="OpenPGP_0xC5DA1F3046F40BEE.asc"
-Content-Description: OpenPGP public key
-Content-Transfer-Encoding: quoted-printable
+	with_mutex(g_mutex) {
+	}
 
------BEGIN PGP PUBLIC KEY BLOCK-----
+	with_spin_lock(g_lock) {
+	}
 
-xjMEZoEsiBYJKwYBBAHaRw8BAQdAyDPzcbPnchbIhweThfNK1tg1imM+5kgDBJSK
-P+nX39DNIVdhbmdZdWxpIDx3YW5neXVsaUB1bmlvbnRlY2guY29tPsKJBBMWCAAx
-FiEEa1GMzYeuKPkgqDuvxdofMEb0C+4FAmaBLIgCGwMECwkIBwUVCAkKCwUWAgMB
-AAAKCRDF2h8wRvQL7g0UAQCH3mrGM0HzOaARhBeA/Q3AIVfhS010a0MZmPTRGVfP
-bwD/SrncJwwPAL4GiLPEC4XssV6FPUAY0rA68eNNI9cJLArOOARmgSyJEgorBgEE
-AZdVAQUBAQdA88W4CTLDD9fKwW9PB5yurCNdWNS7VTL0dvPDofBTjFYDAQgHwngE
-GBYIACAWIQRrUYzNh64o+SCoO6/F2h8wRvQL7gUCZoEsiQIbDAAKCRDF2h8wRvQL
-7sKvAP4mBvm7Zn1OUjFViwkma8IGRGosXAvMUFyOHVcl1RTgFQEAuJkUo9ERi7qS
-/hbUdUgtitI89efbY0TVetgDsyeQiwU=3D
-=3DBlkq
------END PGP PUBLIC KEY BLOCK-----
+> Which does work out very well. And the fact that the code guarded by the
+> mutex is now also indented, it makes it easier to review.
 
---------------WQssjZ2nzYFwkYfyO8RDeWq6--
-
---------------xNIKrkDhRc6nFHBYmEtPaU4Y--
-
---------------4Xf1bFP4e7EOaVC4MwmhhiXF
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-wnsEABYIACMWIQRrUYzNh64o+SCoO6/F2h8wRvQL7gUCZ7bK3QUDAAAAAAAKCRDF2h8wRvQL7jZf
-AQCFIqI4kZJxF0oUMvbXmVizZXKBnNcdw+kRxdO3KtiuWQD8DRbWry4c0K4Fd9QOvvSQr1tSEFXS
-KNZVM5Weo3GxDgs=
-=TlKM
------END PGP SIGNATURE-----
-
---------------4Xf1bFP4e7EOaVC4MwmhhiXF--
-
+It only works only for ~1-2 indents then the code flow away :-(
 
