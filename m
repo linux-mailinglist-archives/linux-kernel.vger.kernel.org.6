@@ -1,98 +1,81 @@
-Return-Path: <linux-kernel+bounces-524863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFB2DA3E816
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 00:10:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55CE2A3E81F
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 00:11:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3B193BF526
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 23:10:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86CF44222B4
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 23:11:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52ACD265CAC;
-	Thu, 20 Feb 2025 23:10:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C578265629;
+	Thu, 20 Feb 2025 23:11:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lR+8eBm2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V2dpPz8r"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86F16264616;
-	Thu, 20 Feb 2025 23:10:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 681051DFE32;
+	Thu, 20 Feb 2025 23:11:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740093014; cv=none; b=E/6z7E8Ildjp5y1sIMn4ak2q2iIyVl1ph65dSQMlpcVCrcDdHPbteBCiJ8VeNKBrdxO9g2/O249RdfRzAMGQejolXhGwP9OtfqGln1ZUQfZhFyJRvPgz8kVZV8JGWKcZJ+oEGPuAR7O8Lky2VuWNb7HJAGJyn1z5B1k8y52y7hY=
+	t=1740093098; cv=none; b=HeyYnRURze4cpCNrccZIZXlbc+JwnQkEu1M8Gjo4YdWWFEmTaiPJgXusr+/ZVzPj0UGI4uAYM06ykAPW7ObcLaAwl0uuDzbHuNfwMZej+KwrXzLwQU64xAXZguorRY6SyCB9oJC30l69JdUmAqIU4xKtPre2p+cJGnXkWwEWQj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740093014; c=relaxed/simple;
-	bh=SCGVRp6GOl4cx1eigu66mZ6vlzczca2P/5/u8Zt6Saw=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=OTX4reBusjVwontsQLbBcnZYEi0Aqu///xANSY54Qtujg4KINIOUN64hZfVpGraMPKHPJWlCYGJ4a1O4rrnFAvfekqbq8wzkPXqZ8rtTAAceDIDSz00Qa6rY8crtXIg/qFYlI8PWXhs3a8iZonRNdcPlAoNNPhOjMgRe4Cw8K4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lR+8eBm2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08B4CC4CED1;
-	Thu, 20 Feb 2025 23:10:14 +0000 (UTC)
+	s=arc-20240116; t=1740093098; c=relaxed/simple;
+	bh=fesaolpwMKxzwkA2whJtKMvco8gQp07uWXyXJETthrg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dOVZFD3p79bj2Qzkd2n8weDXCFc9k+8eg38slxaCGSAfN0Za9JwU8pksTfITZ53oVjdR12EKeGNwUqzLVA00pHHJUBItHzoZnX+vS/7e2tIpwTgClfo+wnvRWqIR65CbcUmor6qLt1QHWbqWsBC6pM0wKPBiPZMmT3Kt81XbraU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V2dpPz8r; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECBBEC4CEE3;
+	Thu, 20 Feb 2025 23:11:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740093014;
-	bh=SCGVRp6GOl4cx1eigu66mZ6vlzczca2P/5/u8Zt6Saw=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=lR+8eBm29pOim34f7Oc1islIwbMTNcL/VK6wvCInGDpyHebUAvrUtNaW0CxdWlySv
-	 GH0NNEGbTa3RsyZiUpBJQ4wMbhe+5TwQI0Jbbu4O8dlZKPnolzwzw/tbGDyhkxMgQY
-	 TSrdjKlWFwY7aXVPOqheBkDwpVlVIX2qdyz5FN4TpDofGyCV4vbqdWn1cZ+q9l/Qj2
-	 kNS6PjfhOdXuPmeu5TxiwDiVScKvyV6/mQneRZ5inM845N7EqnRGcbtRP4nQ0/Uf0h
-	 RXtz97nL83s5c5rGn0y7Qev3tlI/59E/ivxS5L+wztP1QZUEx6btWuIQ/FCvzRfTFa
-	 goKzHBvrlrgXw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EE54B380CEE2;
-	Thu, 20 Feb 2025 23:10:45 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1740093097;
+	bh=fesaolpwMKxzwkA2whJtKMvco8gQp07uWXyXJETthrg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=V2dpPz8r+fKDYI8NnK34SxBBjsasLzt0oksL4+fV/BTHk5GckVktSYuvNYk0QwZVw
+	 13mh6q69Nb3j3OSJw19pgIyo3sHREdVv/yqNVMCqf+nJF+qlhVHGkclWqsQoZOUV7m
+	 2uBL4QBSkF5Hj0N+cee9vISCQMMKcF1WTodGv0utrYFGMtgrjSPpDXeuDqzABcl8is
+	 O/KnSGcem9PHcmiiLqiM1KnyyHjGKaGXrqUqCJ+VVOhPF4J+sHzr/4frZ84TPRCrUH
+	 SoxIyKAyPk7ciinCttop9ojiDR3w2NRi0kIDLvzbVPcADWFcPtl7KU/JYn9I3+2KQN
+	 EK3GYDbAl0Zwg==
+Date: Thu, 20 Feb 2025 15:11:36 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Jijie Shao <shaojijie@huawei.com>
+Cc: <davem@davemloft.net>, <edumazet@google.com>, <pabeni@redhat.com>,
+ <andrew+netdev@lunn.ch>, <horms@kernel.org>, <shenjian15@huawei.com>,
+ <wangpeiyang1@huawei.com>, <liuyonglong@huawei.com>,
+ <chenhao418@huawei.com>, <sudongming1@huawei.com>, <xujunsheng@huawei.com>,
+ <shiyongbang@huawei.com>, <libaihan@huawei.com>,
+ <jonathan.cameron@huawei.com>, <shameerali.kolothum.thodi@huawei.com>,
+ <salil.mehta@huawei.com>, <netdev@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 net-next 2/6] net: hibmcge: Add rx checksum offload
+ supported in this module
+Message-ID: <20250220151136.2cb46929@kernel.org>
+In-Reply-To: <20250218085829.3172126-3-shaojijie@huawei.com>
+References: <20250218085829.3172126-1-shaojijie@huawei.com>
+	<20250218085829.3172126-3-shaojijie@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v2] tun: Pad virtio headers
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <174009304478.1506397.8001698369516362752.git-patchwork-notify@kernel.org>
-Date: Thu, 20 Feb 2025 23:10:44 +0000
-References: <20250215-buffers-v2-1-1fbc6aaf8ad6@daynix.com>
-In-Reply-To: <20250215-buffers-v2-1-1fbc6aaf8ad6@daynix.com>
-To: Akihiko Odaki <akihiko.odaki@daynix.com>
-Cc: corbet@lwn.net, willemdebruijn.kernel@gmail.com, jasowang@redhat.com,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- mst@redhat.com, xuanzhuo@linux.alibaba.com, shuah@kernel.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, kvm@vger.kernel.org,
- virtualization@lists.linux-foundation.org, linux-kselftest@vger.kernel.org,
- yuri.benditovich@daynix.com, andrew@daynix.com, stephen@networkplumber.org,
- gur.stavi@huawei.com, devel@daynix.com
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello:
+On Tue, 18 Feb 2025 16:58:25 +0800 Jijie Shao wrote:
+> +static netdev_features_t hbg_net_fix_features(struct net_device *netdev,
+> +					      netdev_features_t features)
+> +{
+> +	return features & HBG_SUPPORT_FEATURES;
+> +}
 
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Sat, 15 Feb 2025 15:04:50 +0900 you wrote:
-> tun simply advances iov_iter when it needs to pad virtio header,
-> which leaves the garbage in the buffer as is. This will become
-> especially problematic when tun starts to allow enabling the hash
-> reporting feature; even if the feature is enabled, the packet may lack a
-> hash value and may contain a hole in the virtio header because the
-> packet arrived before the feature gets enabled or does not contain the
-> header fields to be hashed. If the hole is not filled with zero, it is
-> impossible to tell if the packet lacks a hash value.
-> 
-> [...]
-
-Here is the summary with links:
-  - [net-next,v2] tun: Pad virtio headers
-    https://git.kernel.org/netdev/net-next/c/4adf74971018
-
-You are awesome, thank you!
+Do you need this? Why would the stack try to set features you don't
+support/advertize? Also you may clear SW features unnecessarily this
+way.
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+pw-bot: cr
 
