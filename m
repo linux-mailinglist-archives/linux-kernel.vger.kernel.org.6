@@ -1,134 +1,124 @@
-Return-Path: <linux-kernel+bounces-522978-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC684A3D0CF
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 06:34:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05C2AA3D0D1
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 06:35:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D84C3BA956
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 05:34:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DAF4D17A13F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 05:35:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51EE01E25F4;
-	Thu, 20 Feb 2025 05:34:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AB121E2613;
+	Thu, 20 Feb 2025 05:35:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TpqOWeyt"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="gcQcFc6k"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DA27524F;
-	Thu, 20 Feb 2025 05:34:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC53E524F;
+	Thu, 20 Feb 2025 05:35:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740029671; cv=none; b=PHLMkAOIsYyg+roNh3Uxu8pDmupmXdr4eBktyDuGWpY1wKILTuB8w3f0RFbtCKu7lf2dKbqzqy9GBix9jd9XFuUHhXxzO1lfOf8njPWHquwfmwK3HjnZrxaJNLfyC3StCgOpB4ZnfYKRYZ4tQECf4DuAsXjfH8oLpTA0PVgKGT0=
+	t=1740029722; cv=none; b=MPau/kqzhYjmt2BlpYp1AU3IFbvIXNaEIR59S3e0maUUAAFKYhkullJgzBnhWVbA3tWPUkqeIGDESsoE5gaqC9JBsScHxXVh7rcrxPCuBS7grNROPbHnBVBthsUt2lRNtDSs4kpxSb7gKNnAc/TPzBUcoBAGgvejUGXQPS/6DIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740029671; c=relaxed/simple;
-	bh=vO9VhWBceqZUbWpTaPCfh9EXzP9g8r5m1pPySwRzzxY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rAXsvH6uV+KNySqc0jQRru8BCki5w5e7AoV4dWvvwp9Jytibx/bXiccc5PwBYp82U6qM9/LMcpPr/sf6XCp6nx5L+GgN031Cm0uF1vRF9U36iAEL1DKRJFjEat3al9o22jjuOkbpodutgj+/RfIcZUk6KRCvrcex3hErfTaYxUg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TpqOWeyt; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-54298ec925bso994462e87.3;
-        Wed, 19 Feb 2025 21:34:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740029668; x=1740634468; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nxHO5xks8df2tnW/6a5XWxo3H0le3C1ZTdsmsLIpQ+c=;
-        b=TpqOWeytQgI5TQ0Z3ZPlnh7CZNrQQhvGM66dTyOLneT6QPJgN1sgLE8HmMRGmNVBzB
-         CpvbN38NgeezEJOF/OJ+QxFDNy4Be6pBR2gWJtDgWeCIuxkC1g8w/zLLZ3t4Gce/mC/l
-         t2K+IvQXYNLxkGVxbGPR+I+sikcN67rlHHMwCf2it9Z03StVUbhFU4lo/utBJfvETCwi
-         XIx5RBRsFjdqM1pSg1jZDHyvDcwF3O22XKyTZ4EJmhMkEHs9yKzsONZEV2sklBOsKkoq
-         bzTrpoaWlUVZ0qCZA67zBju7wdvlwH0GYhFNn6k2uBV9NOtNUo9s3LVh20cjH3tshQ9W
-         aFnw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740029668; x=1740634468;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nxHO5xks8df2tnW/6a5XWxo3H0le3C1ZTdsmsLIpQ+c=;
-        b=CLVL6rFTTC8K+u+eqb99NLlwY9VuHgJ8G5KQBNwJSF5/7BoMalvR8VZtdeN5KUfZJI
-         4wy+Puh3CudPyAtIIihcUhLYj/2WljbYGHUbXQ8VhBHGKSvi14lR55LiWQdt5BVWAcRl
-         KtHT3Z8h8Ov1aVcBeXSb5lXr5BJYHdCX7GQA5tvPewNwhCvheoEbpyxShe6kMzlu5e6I
-         xQwK/ahIiX77gr1Gg7+SsgPIkhn+TzmwLPr/9/Wk2WgVMsUKd5HUGrOuAQ64Otf+113O
-         ZDgwThEWxoOxGnaEh9fqN1FXg9J0xBfGbzARmqXZysOH5o4YqEOL9g147UPD6JL5HdUA
-         MRSg==
-X-Forwarded-Encrypted: i=1; AJvYcCUaXEzqoaGQF2UupHpvtRtQK1hUkEw6nj0xTsph6y9e0X0OyABVayY2bW/E1YK/dDL0iouc6VhU@vger.kernel.org, AJvYcCUuEOciXBngMM/y7IZMsJ/cJpJhJE2WOXhSZzl/6hx60O83MB+omhX9RoA5sfmcIO0G0WNVSKsoAL3l@vger.kernel.org, AJvYcCW3OkVqQUtaUCxCa95AsMehSJbGjc9z6fXQyJ0110rGEtLnZOV15pKHuoCkGtJuADXVIeoeGCC5JRGVbmCi@vger.kernel.org
-X-Gm-Message-State: AOJu0YySB/mjwQFqpp+jp6wPjhcBorRi9nCX86lKbIOS2m0BMi1psTZh
-	ZFROkVCu3CB1inSz8+85sSd7jyWYEFweTHJ69rKytPyD0XCiiP2J9kFvyJtlb/wWNpeGLtdVIT3
-	+3z63Are3+NYi9bkK1LhVcPMheDI=
-X-Gm-Gg: ASbGncutE8F/Xke/uALo/ymFa0xRQ1sN6WUZOune5DF2tCvOZYsz3CyT3kXBHX6+vVh
-	neZb/RrgyDMejjLAtS+i9Gtwg0hg+5HvxlCEJSNPoYhWKrkvP1fuyBQQNV+TIcsJEOQ/3EQ==
-X-Google-Smtp-Source: AGHT+IGcwv22gm4Mb8LSCO0ab7eCHF5tc0t/ohjExzT5CdWz31S37WwgbeeCiWbF1KwTW1ILNSfNLynudHkKGUbUWr0=
-X-Received: by 2002:a05:6512:2353:b0:544:ead:e1d6 with SMTP id
- 2adb3069b0e04-5462ef1989fmr2398730e87.38.1740029667698; Wed, 19 Feb 2025
- 21:34:27 -0800 (PST)
+	s=arc-20240116; t=1740029722; c=relaxed/simple;
+	bh=XQ508VSSFA97njrwo7AFNEChjQJ70/G58Y0criKE2Yo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=d5t8mwOZNU3PGji8ObUiEFAGCS4iISVlyoWduL7PYqtP9ZGZ9wi845nuY2326WfZOmya3wYhnw4GcwlCgz3vzuNZFtW/z2GyxrxxqUYZyEokPSD9GQz1iECHZsjYm+XR/cvTnYODH7HWMIsYGO+Q90bM4rzVMhYg3i6YDxvLPR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=gcQcFc6k; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9285C4CED1;
+	Thu, 20 Feb 2025 05:35:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1740029722;
+	bh=XQ508VSSFA97njrwo7AFNEChjQJ70/G58Y0criKE2Yo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gcQcFc6k7bwz5ZFusHhNK9TWljz9mmJJqPobwzpDeLGDURG4YxXgfG4ujqmex0bRy
+	 WHxrkmAdzen0xyZtgd5ONLjZYq+brEQDsY8ygCZOhcZq1gCtXWVfToaeEHOjHmoFUw
+	 uB4W9uU0dXDutW16dAO53aFk5cUuLtkY5S2Os5TI=
+Date: Thu, 20 Feb 2025 06:35:19 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Sumya Hoque <sumyahoque2012@gmail.com>
+Cc: skhan@linuxfoundation.org, linux-kernel@vger.kernel.org,
+	shuah@kernel.org, linux-fsdevel@vger.kernel.org, kees@kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel-mentees@lists.linuxfoundation.org
+Subject: Re: [PATCH v2] selftests:sysctl:Fix minor typos in sysctl test
+Message-ID: <2025022055-cubicle-kebab-b9b6@gregkh>
+References: <202502190912.CA03B56796@keescook>
+ <20250219193301.46563-1-sumyahoque2012@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250217072038.2311858-1-haoxiang_li2024@163.com>
-In-Reply-To: <20250217072038.2311858-1-haoxiang_li2024@163.com>
-From: Steve French <smfrench@gmail.com>
-Date: Wed, 19 Feb 2025 23:34:13 -0600
-X-Gm-Features: AWEUYZkFuWr5xR08Vj1lDihLjqWdTIC-eMaZC12VdwrjG3APe4AqM6C5ntJ07xE
-Message-ID: <CAH2r5mt=oHJRjB6Mo_fE46yB-bkXgc2J-cq-eWv1OKPo3z5z3g@mail.gmail.com>
-Subject: Re: [PATCH] smb: client: Add check for next_buffer in receive_encrypted_standard()
-To: Haoxiang Li <haoxiang_li2024@163.com>
-Cc: sfrench@samba.org, pc@manguebit.com, ronniesahlberg@gmail.com, 
-	sprasad@microsoft.com, tom@talpey.com, bharathsm@microsoft.com, 
-	linux-cifs@vger.kernel.org, samba-technical@lists.samba.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250219193301.46563-1-sumyahoque2012@gmail.com>
 
-merged into cifs-2.6.git for-next pending additional review and testing
-
-On Mon, Feb 17, 2025 at 1:22=E2=80=AFAM Haoxiang Li <haoxiang_li2024@163.co=
-m> wrote:
->
-> Add check for the return value of cifs_buf_get() and cifs_small_buf_get()
-> in receive_encrypted_standard() to prevent null pointer dereference.
->
-> Fixes: eec04ea11969 ("smb: client: fix OOB in receive_encrypted_standard(=
-)")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Haoxiang Li <haoxiang_li2024@163.com>
+On Wed, Feb 19, 2025 at 07:33:01PM +0000, Sumya Hoque wrote:
+> 
+> Signed-off-by: Sumya Hoque <sumyahoque2012@gmail.com>
 > ---
->  fs/smb/client/smb2ops.c | 4 ++++
->  1 file changed, 4 insertions(+)
->
-> diff --git a/fs/smb/client/smb2ops.c b/fs/smb/client/smb2ops.c
-> index ec36bed54b0b..2ca8fe196051 100644
-> --- a/fs/smb/client/smb2ops.c
-> +++ b/fs/smb/client/smb2ops.c
-> @@ -4964,6 +4964,10 @@ receive_encrypted_standard(struct TCP_Server_Info =
-*server,
->                         next_buffer =3D (char *)cifs_buf_get();
->                 else
->                         next_buffer =3D (char *)cifs_small_buf_get();
-> +               if (!next_buffer) {
-> +                       cifs_server_dbg(VFS, "No memory for (large) SMB r=
-esponse\n");
-> +                       return -1;
-> +               }
->                 memcpy(next_buffer, buf + next_cmd, pdu_length - next_cmd=
-);
->         }
->
-> --
-> 2.25.1
->
->
+>  tools/testing/selftests/sysctl/sysctl.sh | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/sysctl/sysctl.sh b/tools/testing/selftests/sysctl/sysctl.sh
+> index 84472b436c07..323468653327 100755
+> --- a/tools/testing/selftests/sysctl/sysctl.sh
+> +++ b/tools/testing/selftests/sysctl/sysctl.sh
+> @@ -891,11 +891,11 @@ usage()
+>  	echo "    -l      List all test ID list"
+>  	echo " -h|--help  Help"
+>  	echo
+> -	echo "If an error every occurs execution will immediately terminate."
+> +	echo "If an error ever occurs execution will immediately terminate."
+>  	echo "If you are adding a new test try using -w <test-ID> first to"
+>  	echo "make sure the test passes a series of tests."
+>  	echo
+> -	echo Example uses:
+> +	echo Example usage:
+>  	echo
+>  	echo "$TEST_NAME.sh            -- executes all tests"
+>  	echo "$TEST_NAME.sh -t 0002    -- Executes test ID 0002 number of times is recomended"
+> -- 
+> 2.34.1
+> 
+> 
 
+Hi,
 
---=20
-Thanks,
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
 
-Steve
+You are receiving this message because of the following common error(s)
+as indicated below:
+
+- You did not specify a description of why the patch is needed, or
+  possibly, any description at all, in the email body.  Please read the
+  section entitled "The canonical patch format" in the kernel file,
+  Documentation/process/submitting-patches.rst for what is needed in
+  order to properly describe the change.
+
+- This looks like a new version of a previously submitted patch, but you
+  did not list below the --- line any changes from the previous version.
+  Please read the section entitled "The canonical patch format" in the
+  kernel file, Documentation/process/submitting-patches.rst for what
+  needs to be done here to properly describe this.
+
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
+
+thanks,
+
+greg k-h's patch email bot
 
