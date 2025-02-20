@@ -1,322 +1,182 @@
-Return-Path: <linux-kernel+bounces-523958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1691BA3DD5C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:53:49 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE7C3A3DD61
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:54:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0A9AC7A3B1B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:52:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE9557A1A56
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:53:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71E2A1D5160;
-	Thu, 20 Feb 2025 14:53:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4D821FBEB0;
+	Thu, 20 Feb 2025 14:53:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gvGcF7eD"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="BA25XDsT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 595391CB332
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 14:53:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFC691CEADB;
+	Thu, 20 Feb 2025 14:53:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740063218; cv=none; b=R3rbJInIHvxU+Tn0mOFWALb9/eSG6O+g5YApnN/xOHnrZ9eprhQB5kVO7lzknir/idtGYWhSQauJLCBjG9ZYUtBsbJ/Ab2fKcrWeQrq5odvAWna/1U6fXWrzOwwAv+DVzgTUZFcOZanGklVBSJ2+tqmp16HAAXkomr0PXBmf71Q=
+	t=1740063234; cv=none; b=nZIiKmJgfwOSxhtQMRCRGMPlP9q1csU9Y1qAbm/fyrCE5RCnljbHguCVwvVMrn8WTaW3FakqlhKBL8ODJle+0MdRdH75tqcorAmB6C65RdZDW2YFQeYQ6KnXl323XeIVlpRUw2Jzn1sDCKs0qQYToK+GBbDGC+nSvHVvY6ZVNEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740063218; c=relaxed/simple;
-	bh=JFI7xFdohebGfh/rUi8AR902SaVz+AzRKDL3kXyHuSo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iibVFnSw++LhQStKIX0KNWUjKprdg8lnRWsxwSt+3ha82BlHoGj6uagT9P83lFxjm5wZheQzrWJkcgdnw8XZO49IJxt/9eiUH0vXb30SXSd4yrP0VcKxQUrA2fhnuoPcspQvGROUEhp1HZ5u5HcQOW8o2VxlJ6vEfW/HgXzTeFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gvGcF7eD; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-abbb12bea54so207867366b.0
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 06:53:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740063215; x=1740668015; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LTRL4gxmlLi+NJrsXoSrS05iurRAAfx6bVkFP/yRfmE=;
-        b=gvGcF7eDGoTd0H0RjKUTPL1MQD5ku5+jowS6HPHiuOtwv5ERqSkjGVRt4YsUdP2yaN
-         lsKVNAIgHrnBEv3BtrcdRxAsYqUOyaQBPA9i2+JoPFLh1zGV6Kczgiwt6xV9HcTwv3hv
-         /L0RpYeTF9chGUQtm+y/mMmf/XVIRnyeCKGO+iDZgpPji2hwgLhPMu9X52kgMyZvGR5f
-         uTG7rM6CCFYKjbX3ABdTGev9Cks7IGvzQC3wh4chyVQpy0vqdJk+Z2MoaGkwv03Vn94I
-         ktRV2Ysc8HaWSEFJ6y9JICHO/mjLp1vz19jdh8JNVPgA11zALK4uGxmI5kLr9T8aQayv
-         L8wg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740063215; x=1740668015;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LTRL4gxmlLi+NJrsXoSrS05iurRAAfx6bVkFP/yRfmE=;
-        b=sY1TgplzP7K5a9HurnfV1xOHs2nurftsp99ekwmQvekJx9KlOTXHNNLt0MoNpGYXUS
-         eZYtdOM8vu7RqDNh+GzieWvSb/H0D8vV8goT4t3wbfxLpoOQZ5M6lHCBTje3Lo6Vp/wN
-         XFztC3g0VTwgzXHbApO6+JnewPI7pBpkPYJPPWC6AQbBCHZc/yuvDZnS220Ywm8Yyr+8
-         UsSQ/ZmqJ6CVKOWHbugYPgiIGoNLsIn7/gCjnXbzd73cgoMYaSevBLFsYf5DvI4htmey
-         EGEP1/xYoQR/xbhrPQBE63+Dp3yBANxaSHALlgFojhNhLl0MVQol4OSrGm+TGlBhmx8o
-         Ogyw==
-X-Forwarded-Encrypted: i=1; AJvYcCVfmW5LGPu7Q8M79yqZv133t8z8X4QFeVvCjGCunDw3hkB+iRjTz55rAscOFZ1l7zb1GdIOT+cNT7V8/QA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxgE0D5HLDI9b9OrbAQMyl9VJultbgDiuBSSzHIycr/OaBpGOVq
-	ew8jI6j0tNVvZnwaa/KCc1U2cSrqnswLpXyO543ZEU5T6erkUCTCCDxMKYqbf5OBOo4WFCUYBWJ
-	RAFt/wuMFlsD6KAwdQv6sdwDedZgqqRM+wdOk
-X-Gm-Gg: ASbGncsG4d8N6g5R2tHZI0ioy94cxYN2aKfVVWG2FBeAg3WuLVI2rA1U87nws6Efww5
-	U8kw3nKLBKgN20N+iCB6AGDC5V/kD9pokEa4p0jW/rzq9741YTQAuY6S2oTWKr18jdz3VsD0u1X
-	lnotMe4b4Hb/Jw9JUWDApgWQ9w2g==
-X-Google-Smtp-Source: AGHT+IE9eF0BwDQ5dmqLQP076H2O10DsrgDf87/nNNoMu31F54aBrrtN1gjpRMRYd2K3btjjJHxGBOi/ydQB/Ps4oFU=
-X-Received: by 2002:a17:907:97d2:b0:aba:7a3a:e267 with SMTP id
- a640c23a62f3a-abb70dd8f5bmr2515811966b.45.1740063214362; Thu, 20 Feb 2025
- 06:53:34 -0800 (PST)
+	s=arc-20240116; t=1740063234; c=relaxed/simple;
+	bh=Sh1gnYO1v4bmBmmM8gmqJJQ9lElifSTky1LxF8q7DSI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bvQIPFXcI0N6zDGSG69dFKBhfcBj/9Cc0VTUjWVsBV+RrKhn6C6ggbMpA9jTfb4dmhWKOMR7xvztMl0x5VMQ7DZ4CmIMOvrcibxk8DZ+rxiHB5mr9DnhxUEwjrj+4QkjpRMkOablqR9UQD1V/eXoEeTrdhHnDHMuewKlJmBBAms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=BA25XDsT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C40A4C4CEE2;
+	Thu, 20 Feb 2025 14:53:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1740063233;
+	bh=Sh1gnYO1v4bmBmmM8gmqJJQ9lElifSTky1LxF8q7DSI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BA25XDsTHuzE8WV26EB6hHzVvzvnh0My5vPGh0vwnZ43dfZoAO6vm6mV+mftFWKg6
+	 zpi4orU+FK1lnsa4Gf3ASXKEHJyO9RD3Pf3kPLQh3/qcGtcJwilLABz6UbS5WgGosW
+	 bZ24nZuq857KsCyn19jP3zfU5cRKIdYgEgU7xrNY=
+Date: Thu, 20 Feb 2025 15:53:50 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Martin Uecker <uecker@tugraz.at>
+Cc: Boqun Feng <boqun.feng@gmail.com>, "H. Peter Anvin" <hpa@zytor.com>,
+	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+	Christoph Hellwig <hch@infradead.org>,
+	rust-for-linux <rust-for-linux@vger.kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	David Airlie <airlied@gmail.com>, linux-kernel@vger.kernel.org,
+	ksummit@lists.linux.dev
+Subject: Re: Rust kernel policy
+Message-ID: <2025022042-jot-favored-e755@gregkh>
+References: <Z7SwcnUzjZYfuJ4-@infradead.org>
+ <CANiq72myjaA3Yyw_yyJ+uvUrZQcSLY_jNp65iKH8Y5xGY5tXPQ@mail.gmail.com>
+ <326CC09B-8565-4443-ACC5-045092260677@zytor.com>
+ <CANiq72m+r1BZVdVHn2k8XeU37ZeY6VT2S9KswMuFA=ZO3e4uvQ@mail.gmail.com>
+ <a7c5973a-497c-4f31-a7be-b3123bddb6dd@zytor.com>
+ <Z7VKW3eul-kGaIT2@Mac.home>
+ <2025021954-flaccid-pucker-f7d9@gregkh>
+ <4e316b01634642cf4fbb087ec8809d93c4b7822c.camel@tugraz.at>
+ <2025022024-blooper-rippling-2667@gregkh>
+ <1d43700546b82cf035e24d192e1f301c930432a3.camel@tugraz.at>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1737577229.git.babu.moger@amd.com> <Z6zeXby8ajh0ax6i@e133380.arm.com>
- <9e849476-7c4b-478b-bd2a-185024def3a3@intel.com> <Z64tw2NbJXbKpLrH@e133380.arm.com>
- <76b02daf-1b45-473e-9d75-5988a11c6887@intel.com> <8ef51f28-e01a-4a7d-ba86-059437edb60b@amd.com>
- <a07fca4c-c8fa-41a6-b126-59815b9a58f9@intel.com> <CALPaoCh7WpohzpXhSAbumjSZBv1_+1bXON7_V1pwG4bdEBr52Q@mail.gmail.com>
- <ccd9c5d7-0266-4054-879e-e084b6972ad5@intel.com> <CALPaoCj1TH+GN6+dFnt5xuN406u=tB-8mj+UuMRSm5KWPJW2wg@mail.gmail.com>
- <2b5a11e3-ee19-47ba-b47e-b7de2818f237@intel.com>
-In-Reply-To: <2b5a11e3-ee19-47ba-b47e-b7de2818f237@intel.com>
-From: Peter Newman <peternewman@google.com>
-Date: Thu, 20 Feb 2025 15:53:23 +0100
-X-Gm-Features: AWEUYZlcORC_iRuGdaEQvDQJxBjdF0n3FDwBzBL64e44VXcnjAXQo_uJfn-OBgE
-Message-ID: <CALPaoChXvLNMg240C7RyBvg0SxXfGf_ozKC6X7Qe4OxyEcL2tw@mail.gmail.com>
-Subject: Re: [PATCH v11 00/23] x86/resctrl : Support AMD Assignable Bandwidth
- Monitoring Counters (ABMC)
-To: Reinette Chatre <reinette.chatre@intel.com>
-Cc: "Moger, Babu" <bmoger@amd.com>, Dave Martin <Dave.Martin@arm.com>, Babu Moger <babu.moger@amd.com>, 
-	corbet@lwn.net, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
-	dave.hansen@linux.intel.com, tony.luck@intel.com, x86@kernel.org, 
-	hpa@zytor.com, paulmck@kernel.org, akpm@linux-foundation.org, 
-	thuth@redhat.com, rostedt@goodmis.org, xiongwei.song@windriver.com, 
-	pawan.kumar.gupta@linux.intel.com, daniel.sneddon@linux.intel.com, 
-	jpoimboe@kernel.org, perry.yuan@amd.com, sandipan.das@amd.com, 
-	kai.huang@intel.com, xiaoyao.li@intel.com, seanjc@google.com, 
-	xin3.li@intel.com, andrew.cooper3@citrix.com, ebiggers@google.com, 
-	mario.limonciello@amd.com, james.morse@arm.com, tan.shaopeng@fujitsu.com, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	maciej.wieczor-retman@intel.com, eranian@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1d43700546b82cf035e24d192e1f301c930432a3.camel@tugraz.at>
 
-Hi Reinette,
+On Thu, Feb 20, 2025 at 09:57:29AM +0100, Martin Uecker wrote:
+> Am Donnerstag, dem 20.02.2025 um 08:10 +0100 schrieb Greg KH:
+> > On Thu, Feb 20, 2025 at 08:03:02AM +0100, Martin Uecker wrote:
+> > > Am Mittwoch, dem 19.02.2025 um 06:39 +0100 schrieb Greg KH:
+> > > > On Tue, Feb 18, 2025 at 07:04:59PM -0800, Boqun Feng wrote:
+> > > > > On Tue, Feb 18, 2025 at 04:58:27PM -0800, H. Peter Anvin wrote:
+> > > > > [...]
+> > > > > > > > 
+> > > ...
+> > > > 
+> > > > 
+> > > > I'm all for moving our C codebase toward making these types of problems
+> > > > impossible to hit, the work that Kees and Gustavo and others are doing
+> > > > here is wonderful and totally needed, we have 30 million lines of C code
+> > > > that isn't going anywhere any year soon.  That's a worthy effort and is
+> > > > not going to stop and should not stop no matter what.
+> > > 
+> > > It seems to me that these efforts do not see nearly as much attention
+> > > as they deserve.
+> > 
+> > What more do you think needs to be done here?  The LF, and other
+> > companies, fund developers explicitly to work on this effort.  Should we
+> > be doing more, and if so, what can we do better?
+> 
+> Kees communicates with the GCC side and sometimes this leads to
+> improvements, e.g. counted_by (I was peripherily involved in the
+> GCC implementation). But I think much much more could be done,
+> if there was a collaboration between compilers, the ISO C working
+> group, and the kernel community to design and implement such
+> extensions and to standardize them in ISO C.
 
-On Wed, Feb 19, 2025 at 7:21=E2=80=AFPM Reinette Chatre
-<reinette.chatre@intel.com> wrote:
->
-> Hi Peter,
->
-> On 2/19/25 3:28 AM, Peter Newman wrote:
-> > Hi Reinette,
-> >
-> > On Tue, Feb 18, 2025 at 6:50=E2=80=AFPM Reinette Chatre
-> > <reinette.chatre@intel.com> wrote:
-> >>
-> >> Hi Peter,
-> >>
-> >> On 2/17/25 2:26 AM, Peter Newman wrote:
-> >>> Hi Reinette,
-> >>>
-> >>> On Fri, Feb 14, 2025 at 8:18=E2=80=AFPM Reinette Chatre
-> >>> <reinette.chatre@intel.com> wrote:
-> >>>>
-> >>>> Hi Babu,
-> >>>>
-> >>>> On 2/14/25 10:31 AM, Moger, Babu wrote:
-> >>>>> On 2/14/2025 12:26 AM, Reinette Chatre wrote:
-> >>>>>> On 2/13/25 9:37 AM, Dave Martin wrote:
-> >>>>>>> On Wed, Feb 12, 2025 at 03:33:31PM -0800, Reinette Chatre wrote:
-> >>>>>>>> On 2/12/25 9:46 AM, Dave Martin wrote:
-> >>>>>>>>> On Wed, Jan 22, 2025 at 02:20:08PM -0600, Babu Moger wrote:
-> >>>>
-> >>>> (quoting relevant parts with goal to focus discussion on new possibl=
-e syntax)
-> >>>>
-> >>>>>>>> I see the support for MPAM events distinct from the support of a=
-ssignable counters.
-> >>>>>>>> Once the MPAM events are sorted, I think that they can be assign=
-ed with existing interface.
-> >>>>>>>> Please help me understand if you see it differently.
-> >>>>>>>>
-> >>>>>>>> Doing so would need to come up with alphabetical letters for the=
-se events,
-> >>>>>>>> which seems to be needed for your proposal also? If we use possi=
-ble flags of:
-> >>>>>>>>
-> >>>>>>>> mbm_local_read_bytes a
-> >>>>>>>> mbm_local_write_bytes b
-> >>>>>>>>
-> >>>>>>>> Then mbm_assign_control can be used as:
-> >>>>>>>> # echo '//0=3Dab;1=3Db' >/sys/fs/resctrl/info/L3_MON/mbm_assign_=
-control
-> >>>>>>>> # cat /sys/fs/resctrl/mon_data/mon_L3_00/mbm_local_read_bytes
-> >>>>>>>> <value>
-> >>>>>>>> # cat /sys/fs/resctrl/mon_data/mon_L3_00/mbm_local_bytes
-> >>>>>>>> <sum of mbm_local_read_bytes and mbm_local_write_bytes>
-> >>>>>>>>
-> >>>>>>>> One issue would be when resctrl needs to support more than 26 ev=
-ents (no more flags available),
-> >>>>>>>> assuming that upper case would be used for "shared" counters (un=
-less this interface is defined
-> >>>>>>>> differently and only few uppercase letters used for it). Would t=
-his be too low of a limit?
-> >>>>
-> >>>> As mentioned above, one possible issue with existing interface is th=
-at
-> >>>> it is limited to 26 events (assuming only lower case letters are use=
-d). The limit
-> >>>> is low enough to be of concern.
-> >>>
-> >>> The events which can be monitored by a single counter on ABMC and MPA=
-M
-> >>> so far are combinable, so 26 counters per group today means it limits
-> >>> breaking down MBM traffic for each group 26 ways. If a user complaine=
-d
-> >>> that a 26-way breakdown of a group's MBM traffic was limiting their
-> >>> investigation, I would question whether they know what they're lookin=
-g
-> >>> for.
-> >>
-> >> The key here is "so far" as well as the focus on MBM only.
-> >>
-> >> It is impossible for me to predict what we will see in a couple of yea=
-rs
-> >> from Intel RDT, AMD PQoS, and Arm MPAM that now all rely on resctrl in=
-terface
-> >> to support their users. Just looking at the Intel RDT spec the event r=
-egister
-> >> has space for 32 events for each "CPU agent" resource. That does not t=
-ake into
-> >> account the "non-CPU agents" that are enumerated via ACPI. Tony alread=
-y mentioned
-> >> that he is working on patches [1] that will add new events and shared =
-the idea
-> >> that we may be trending to support "perf" like events associated with =
-RMID. I
-> >> expect AMD PQoS and Arm MPAM to provide related enhancements to suppor=
-t their
-> >> customers.
-> >> This all makes me think that resctrl should be ready to support more e=
-vents than 26.
-> >
-> > I was thinking of the letters as representing a reusable, user-defined
-> > event-set for applying to a single counter rather than as individual
-> > events, since MPAM and ABMC allow us to choose the set of events each
-> > one counts. Wherever we define the letters, we could use more symbolic
-> > event names.
->
-> Thank you for clarifying.
->
-> >
-> > In the letters as events model, choosing the events assigned to a
-> > group wouldn't be enough information, since we would want to control
-> > which events should share a counter and which should be counted by
-> > separate counters. I think the amount of information that would need
-> > to be encoded into mbm_assign_control to represent the level of
-> > configurability supported by hardware would quickly get out of hand.
-> >
-> > Maybe as an example, one counter for all reads, one counter for all
-> > writes in ABMC would look like...
-> >
-> > (L3_QOS_ABMC_CFG.BwType field names below)
-> >
-> > (per domain)
-> > group 0:
-> >  counter 0: LclFill,RmtFill,LclSlowFill,RmtSlowFill
-> >  counter 1: VictimBW,LclNTWr,RmtNTWr
-> > group 1:
-> >  counter 2: LclFill,RmtFill,LclSlowFill,RmtSlowFill
-> >  counter 3: VictimBW,LclNTWr,RmtNTWr
-> > ...
-> >
->
-> I think this may also be what Dave was heading towards in [2] but in that
-> example and above the counter configuration appears to be global. You do =
-mention
-> "configurability supported by hardware" so I wonder if per-domain counter
-> configuration is a requirement?
+Sorry, I was referring to the kernel work happening here by Kees and
+Gustavo and others.  Not ISO C stuff, I don't know of any company that
+wants to fund that :(
 
-If it's global and we want a particular group to be watched by more
-counters, I wouldn't want this to result in allocating more counters
-for that group in all domains, or allocating counters in domains where
-they're not needed. I want to encourage my users to avoid allocating
-monitoring resources in domains where a job is not allowed to run so
-there's less pressure on the counters.
+> > > I also would like to point out that there is not much investments
+> > > done on C compiler frontends (I started to fix bugs in my spare time
+> > > in GCC because nobody fixed the bugs I filed), and the kernel 
+> > > community also is not currently involved in ISO C standardization.
+> > 
+> > There are kernel developers involved in the C standard committee work,
+> > one of them emails a few of us short summaries of what is going on every
+> > few months.  Again, is there something there that you think needs to be
+> > done better, and if so, what can we do?
+> > 
+> > But note, ISO standards work is really rough work, I wouldn't recommend
+> > it for anyone :)
+> 
+> I am a member of the ISO C working group. Yes it it can be painful, but
+> it is also interesting and people a generally very nice.
+> 
+> There is currently no kernel developer actively involved, but this would
+> be very helpful.
+> 
+> (Paul McKenney is involved in C++ regarding atomics and Miguel is
+> also following what we do.)
 
-In Dave's proposal it looks like global configuration means
-globally-defined "named counter configurations", which works because
-it's really per-domain assignment of the configurations to however
-many counters the group needs in each domain.
+Yes, some of us get reports from them and a few others at times as to
+what's going on, but finding people, and companies, that want to do this
+work is hard.  I recommend it for people that want to do this, and
+applaud those that do, and am involved in other specification work at
+the moment so I know the issues around all of this.
 
->
-> Until now I viewed counter configuration separate from counter assignment=
-,
-> similar to how AMD's counters can be configured via mbm_total_bytes_confi=
-g and
-> mbm_local_bytes_config before they are assigned. That is still per-domain
-> counter configuration though, not per-counter.
->
-> > I assume packing all of this info for a group's desired counter
-> > configuration into a single line (with 32 domains per line on many
-> > dual-socket AMD configurations I see) would be difficult to look at,
-> > even if we could settle on a single letter to represent each
-> > universally.
-> >
-> >>
-> >> My goal is for resctrl to have a user interface that can as much as po=
-ssible
-> >> be ready for whatever may be required from it years down the line. Of =
-course,
-> >> I may be wrong and resctrl would never need to support more than 26 ev=
-ents per
-> >> resource (*). The risk is that resctrl *may* need to support more than=
- 26 events
-> >> and how could resctrl support that?
-> >>
-> >> What is the risk of supporting more than 26 events? As I highlighted e=
-arlier
-> >> the interface I used as demonstration may become unwieldy to parse on =
-a system
-> >> with many domains that supports many events. This is a concern for me.=
- Any suggestions
-> >> will be appreciated, especially from you since I know that you are ver=
-y familiar with
-> >> issues related to large scale use of resctrl interfaces.
-> >
-> > It's mainly just the unwieldiness of all the information in one file.
-> > It's already at the limit of what I can visually look through.
->
-> I agree.
->
-> >
-> > I believe that shared assignments will take care of all the
-> > high-frequency and performance-intensive batch configuration updates I
-> > was originally concerned about, so I no longer see much benefit in
-> > finding ways to textually encode all this information in a single file
-> > when it would be more manageable to distribute it around the
-> > filesystem hierarchy.
->
-> This is significant. The motivation for the single file was to support
-> the "high-frequency and performance-intensive" usage. Would "shared assig=
-nments"
-> not also depend on the same files that, if distributed, will require many
-> filesystem operations?
-> Having the files distributed will be significantly simpler while also
-> avoiding the file size issue that Dave Martin exposed.
+> > > I find this strange, because to me it is very obvious that a lot more
+> > > could be done towards making C a lot safer (with many low hanging fruits),
+> > > and also adding a memory safe subset seems possible.
+> > 
+> > Are there proposals to C that you feel we should be supporting more?
+> 
+> There are many things.
+> 
+> For example, there is an effort to remove cases of UB.  There are about
+> 87 cases of UB in the core language (exlcuding preprocessor and library)
+> as of C23, and we have removed 17 already for C2Y (accepted by WG14 into
+> the working draft) and we have concrete propsoals for 12 more.  This
+> currently focusses on low-hanging fruits, and I hope we get most of the
+> simple cases removed this year to be able to focus on the harder issues.
+> 
+> In particulary, I have a relatively concrete plan to have a memory safe
+> mode for C that can be toggled for some region of code and would make
+> sure there is no UB or memory safety issues left (I am experimenting with
+> this in the GCC FE).  So the idea is that one could start to activate this
+> for certain critical regions of code to make sure there is no signed
+> integer overflow or OOB access in it.   This is still in early stages, but
+> seems promising. Temporal memory safety is harder and it is less clear
+> how to do this ergonomically, but Rust shows that this can be done.
 
-The remaining filesystem operations will be assigning or removing
-shared counter assignments in the applicable domains, which would
-normally correspond to mkdir/rmdir of groups or changing their CPU
-affinity. The shared assignments are more "program and forget", while
-the exclusive assignment approach requires updates for every counter
-(in every domain) every few seconds to cover a large number of groups.
+What do you mean by "memory safe" when it comes to C?  Any pointers to
+that (pun intended)?
 
-When they want to pay extra attention to a particular group, I expect
-they'll ask for exclusive counters and leave them assigned for a while
-as they collect extra data.
+> I also have a proposal for a length-prefixed string type and for 
+> polymorhic types / genericity, but this may not be so relevant to the
+> kernel at this point.
 
--Peter
+We have a string type in the kernel much like this, it's just going to
+take some work in plumbing it up everywhere.  Christoph touched on that
+in one of his emails in this thread many messages ago.  Just grinding
+out those patches is "all" that is needed, no need for us to wait for
+any standard committee stuff.
+
+> Even more important than ISO C proposals would be compiler extensions
+> that can be tested before standardization.
+
+We support a few already for gcc, and I don't think we've refused
+patches to add more in the past, but I might have missed them.
+
+thanks,
+
+greg k-h
 
