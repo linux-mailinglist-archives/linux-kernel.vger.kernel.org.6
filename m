@@ -1,135 +1,166 @@
-Return-Path: <linux-kernel+bounces-524603-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CA47A3E50D
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 20:30:48 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7D0DA3E512
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 20:31:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A5023BF73E
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 19:30:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9300A7A7F7D
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 19:30:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 259D81DDC3F;
-	Thu, 20 Feb 2025 19:30:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 085682641CA;
+	Thu, 20 Feb 2025 19:31:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d0Qmm8Fi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IaHRufLS"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8263721480E;
-	Thu, 20 Feb 2025 19:30:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E012463A9
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 19:31:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740079827; cv=none; b=FbNwPF+525/U92H/grmt1cq8d9+tiB4/PKOHAKm/LhNYeXAY7151++DbSsxDFqbqh8dNUILV3NFek/UuzkMzOVU8xTPgf9bEvXHDRG0ImlqCgc2qBx22z4UqCMB1ZhFgbGQsOD0VO7o4wyd/1FQ8Y4jxZFaLLGzIHFAnijLblbA=
+	t=1740079896; cv=none; b=bhm3jL/z0WV5/56EsRETsgIVW+j9bCFOz29Fcpx52ZOvzVIn9Dyh46OPSo/cXdkvDW8LNVWjOarH0qWK+A56lojEWjArN0nl7NNjIG12Sk9PNVRBHKFDiLGE+7eqBHBjTeQTDc1K2q5P2Bk7GCkd6LYMYFpal+1uHH/QGBIQjBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740079827; c=relaxed/simple;
-	bh=JYsUnxNvX0J/idutygDTGbMdirhnhhDBwHyk/2PV7Tk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=B8XNgcQG3eBkvLZ0VowJgYW9svOpbypxhnsC+Zc0nlEDXzUA9m3bwHKeG0LmAFP2+aYLB8Wl8tTZFSFwSLa9biPCFLf8YINNTziqyjX51PfnrF0viDWO5DHjlSAgDPK0Tf3eZ5R843Jr22pNNuUluDr0QhYAPDSD17YxL/vVi74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d0Qmm8Fi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECFEFC4CED1;
-	Thu, 20 Feb 2025 19:30:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740079827;
-	bh=JYsUnxNvX0J/idutygDTGbMdirhnhhDBwHyk/2PV7Tk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=d0Qmm8Fi5jiSWBGYwytSxkDVtD917CXxUEojk1uICF+jOroAO+WnzinyU0l68E8qO
-	 TB+C2oskVjM5dxkS1C3fnJUETY4Grnm7TEyVF9pZlc94McmawB+QJpIjPmFewwXT1w
-	 RMPPurcHvLxxN/hitP9idtzxMtflAKgiPGfCicO5zfDa21T1LL0Kbn5huSnv5fa84p
-	 YX0udxMoxLumdi77BUwEoTdpjjsix6OZUNW3L+MUrvan2ersahixol5x0VbwoGJlEA
-	 4mvd+zAMyOXzoA3wFdINtjIqHF5VQ0h83rwDhYfOO1i6BhdHEkYN7cDKxPsiaPCDCF
-	 dhTT61/kbzP3A==
-Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-72720572addso855339a34.3;
-        Thu, 20 Feb 2025 11:30:26 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWFN+oO2A7w+eaJM3vMKJd25UC4Az3kkK70RlWUHyF0xxnVImzunJ3+rmIQi1uxANk7X83Jfa06+ghZVXg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyhhQXcr5GFgVxGtReRjdvauGuP6M3hwWMOQtA6+t7iuws1V1J+
-	HDx90ip+EpykbB5UccXwG86twjBD7SSkR5a3h8038RbS6EQVA9jevi6XlanFlLNgHWYkClRCblz
-	RLftFZS3xguizjUDJ4dN2NgEOoTk=
-X-Google-Smtp-Source: AGHT+IEHPirn8tICjP+bAchnhcqCiKD8mNewopnyyiVdDe4tdAH+w/JiH5sNyROKj33YZXAMT9eIFe86H6kCIvx1cdc=
-X-Received: by 2002:a05:6808:200c:b0:3f3:f89d:356d with SMTP id
- 5614622812f47-3f4246b93e9mr491536b6e.15.1740079826315; Thu, 20 Feb 2025
- 11:30:26 -0800 (PST)
+	s=arc-20240116; t=1740079896; c=relaxed/simple;
+	bh=MVq0rSd2W/rQ4EG/nAQY+fo+iAlMg/MrYiWZeK0fCbA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rFhkz1wqn0/NZOw+Lko0Bdv5O/nPxZc/fTBqAeBa8LLWWYs5M8NKfYrQNAc46sTm5OWtJR6hYVF7hDpQyh+z+mbrVJvpBM8oQ3Ljt+diMfpc/PxflF/8Sc2PzyE1woj1I6B/mTDtepcc7/yNz5qiDlOErEVfFDhPFlgsnZsUJYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IaHRufLS; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-220e83d65e5so26169275ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 11:31:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1740079894; x=1740684694; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=oNqMwP45iYYk0uj0DcAs+5VuYjHL2HKpybnKvS9Q0Q8=;
+        b=IaHRufLSvQZngqQVwGbV25xIjHyZZLiFvtUFLBLJadlw9vGU6dZydzT+myueiN4GJt
+         8woU0VnpwUs2vAQOM8QUB5XTC6Nahh1rbiWia12oKzDVG3jzeJ4N80pAL7kOgR4CA1dl
+         +3fJNxWtmpkPG/cMcguZCKfwATQNiqCJ9KueVF45xt9WyzTqeSxOBAz0ulKDAsl2tuKq
+         pfCW3N6X8B9lgWss4+buWuOT61r7j4I0XIwKPANQ5ylyJRq7iZtX50+5jfYUGj8LxkGI
+         HDV1e7ZPt8n1hEVXNiBJuQsXqs1uTbUQk+vryHy3zk5R6J2iAk1GSPbUYetNL7O5dfXy
+         boag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740079894; x=1740684694;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oNqMwP45iYYk0uj0DcAs+5VuYjHL2HKpybnKvS9Q0Q8=;
+        b=I+dJ1CwfQV7fqFq50u5QGc5C8f1nHU2MR9nAqAbWMMsgQHtzo1fvUYlQA/XF9SBb4f
+         vD5D+deTJxkhJODWRu+Xx4YYvVrFBJGAgzitNMAjm8fwc9+w1xyBoFAXuqa7djxeCNUV
+         vcVjgY9ExFZ+C9GrBbiGQM1yoZcG58MrOfKliz8BWBQOcua0zF9yjN1TOp3dh4GahuQF
+         e9vWTjoOzxqGeeeRfjvcnsz1ScQEFt4ndie+NsCj7gkHRPNSVI+VTf13GMZa5aPCFFuc
+         D4mvNrBkk43stE880nguPbRsTGveYoMNmthKVdtKIoj5TQTJe1BR3HUQNJ7ef1v6veuQ
+         VrSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUrNwhsiekgGRkKQnqsM1VkZIqjMtkGOYq59ur5Y7DRwFCnGd6ULI1yLFOh8wN8+e7BzitXoIYehbBPfso=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz62YVgizcRL8aV0WzqNtmxID742X38tx4DISWeGORDbE8b+EpI
+	tkpnHEuRrtjAM1iU0kRjQM0pYZywmhB/vOLG2+jgycbfYqeSfun4rHRxxea3WQ==
+X-Gm-Gg: ASbGncum0cjL0/qcdMstSN2iNjS1H4tuQQjNu/ou35MN51ilN5J6zDT0iXc6ZsDCq14
+	IfJGU/Hhvz5nEHByHnemQ59i2F8iaDwkjleekllJbmZwzho1beUYUmpqAfj7cmCSdy2wC/GK+e7
+	v2QwxeatvPcyF2+hK2z3J6UdEqWV62xcx5OU9zsl5qQ/H4SCNY9Ppkqp57MAqGByO2uxgf5kGOZ
+	3YuPrpxZP9sbVFRqZ08L3e09ab+OOGq8u7zZYZoWoQJrklS++fDnaeyDNzUJV+n1MXFhnhR5b1v
+	OkDC01Suo8JtdVmWEWpWwRlTT6wvH+vJJ4CShyHNFTKOAGKmV4G/aOLG
+X-Google-Smtp-Source: AGHT+IGm0mMkDx5+higAvQTvJgGM6Q5QWoVBcT94T2De4H3OUSImBFKF4r5go8AQeAfrxEm5a+S3bw==
+X-Received: by 2002:a17:903:230f:b0:216:4883:fb43 with SMTP id d9443c01a7336-2219ffd2718mr6024575ad.32.1740079892529;
+        Thu, 20 Feb 2025 11:31:32 -0800 (PST)
+Received: from google.com (139.11.82.34.bc.googleusercontent.com. [34.82.11.139])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fc13ba5f27sm14323197a91.43.2025.02.20.11.31.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Feb 2025 11:31:31 -0800 (PST)
+Date: Thu, 20 Feb 2025 11:31:27 -0800
+From: William McVicker <willmcvicker@google.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Prashanth K <prashanth.k@oss.qualcomm.com>,
+	Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
+	Peter Korsgaard <peter@korsgaard.com>,
+	Sabyrzhan Tasbolatov <snovitoll@gmail.com>,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org, andre.draszik@linaro.org,
+	kernel-team@android.com
+Subject: Re: [PATCH v2] usb: gadget: Set self-powered based on MaxPower and
+ bmAttributes
+Message-ID: <Z7eDD1PsBYVIYWMY@google.com>
+References: <20250217120328.2446639-1-prashanth.k@oss.qualcomm.com>
+ <Z7dv4rEILkC9yRwX@google.com>
+ <2025022032-cruelness-framing-2a10@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <2776745.mvXUDI8C0e@rjwysocki.net>
-In-Reply-To: <2776745.mvXUDI8C0e@rjwysocki.net>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 20 Feb 2025 20:30:15 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0jF_oLkzqEJuc9NX_j1+javyU8HF0JU8FiFgNaCks+RdA@mail.gmail.com>
-X-Gm-Features: AWEUYZl1xrv75cqQu9PrlQBhTHO6VXJAWN08ezgaoviHC_0bWUwhgCWsGVsJmS4
-Message-ID: <CAJZ5v0jF_oLkzqEJuc9NX_j1+javyU8HF0JU8FiFgNaCks+RdA@mail.gmail.com>
-Subject: Re: [PATCH v1] cpufreq: intel_pstate: Relocate platform preference check
-To: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Cc: Linux PM <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Zhang Rui <rui.zhang@intel.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2025022032-cruelness-framing-2a10@gregkh>
 
-On Fri, Feb 7, 2025 at 1:48=E2=80=AFPM Rafael J. Wysocki <rjw@rjwysocki.net=
-> wrote:
->
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->
-> Move the invocation of intel_pstate_platform_pwr_mgmt_exists() before
-> checking whether or not HWP is enabled because it does not depend on
-> any code running before it except for the vendor check and if CPU
-> performance scaling is going to be carried out by the platform, all of
-> the code that runs before that function (again, except for the vendor
-> check) is redundant.
->
-> This is not expected to alter any functionality except for the ordering
-> of messages printed by intel_pstate_init() when it is going to return an
-> error before attempting to register the driver.
->
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On 02/20/2025, Greg Kroah-Hartman wrote:
+> On Thu, Feb 20, 2025 at 10:09:38AM -0800, William McVicker wrote:
+> > Hi Prashanth,
+> > 
+> > On 02/17/2025, Prashanth K wrote:
+> > > Currently the USB gadget will be set as bus-powered based solely
+> > > on whether its bMaxPower is greater than 100mA, but this may miss
+> > > devices that may legitimately draw less than 100mA but still want
+> > > to report as bus-powered. Similarly during suspend & resume, USB
+> > > gadget is incorrectly marked as bus/self powered without checking
+> > > the bmAttributes field. Fix these by configuring the USB gadget
+> > > as self or bus powered based on bmAttributes, and explicitly set
+> > > it as bus-powered if it draws more than 100mA.
+> > > 
+> > > Cc: stable@vger.kernel.org
+> > > Fixes: 5e5caf4fa8d3 ("usb: gadget: composite: Inform controller driver of self-powered")
+> > > Signed-off-by: Prashanth K <prashanth.k@oss.qualcomm.com>
+> > > ---
+> > > Changes in v2:
+> > > - Didn't change anything from RFC.
+> > > - Link to RFC: https://lore.kernel.org/all/20250204105908.2255686-1-prashanth.k@oss.qualcomm.com/
+> > > 
+> > >  drivers/usb/gadget/composite.c | 16 +++++++++++-----
+> > >  1 file changed, 11 insertions(+), 5 deletions(-)
+> > > 
+> > > diff --git a/drivers/usb/gadget/composite.c b/drivers/usb/gadget/composite.c
+> > > index bdda8c74602d..1fb28bbf6c45 100644
+> > > --- a/drivers/usb/gadget/composite.c
+> > > +++ b/drivers/usb/gadget/composite.c
+> > > @@ -1050,10 +1050,11 @@ static int set_config(struct usb_composite_dev *cdev,
+> > >  	else
+> > >  		usb_gadget_set_remote_wakeup(gadget, 0);
+> > >  done:
+> > > -	if (power <= USB_SELF_POWER_VBUS_MAX_DRAW)
+> > > -		usb_gadget_set_selfpowered(gadget);
+> > > -	else
+> > > +	if (power > USB_SELF_POWER_VBUS_MAX_DRAW ||
+> > > +	    !(c->bmAttributes & USB_CONFIG_ATT_SELFPOWER))
+> > >  		usb_gadget_clear_selfpowered(gadget);
+> > > +	else
+> > > +		usb_gadget_set_selfpowered(gadget);
+> > >  
+> > >  	usb_gadget_vbus_draw(gadget, power);
+> > >  	if (result >= 0 && cdev->delayed_status)
+> > > @@ -2615,7 +2616,9 @@ void composite_suspend(struct usb_gadget *gadget)
+> > >  
+> > >  	cdev->suspended = 1;
+> > >  
+> > > -	usb_gadget_set_selfpowered(gadget);
+> > > +	if (cdev->config->bmAttributes & USB_CONFIG_ATT_SELFPOWER)
+> > > +		usb_gadget_set_selfpowered(gadget);
+> > 
+> > I'm hitting a null pointer derefence here on my Pixel 6 device on suspend.  I
+> > haven't dug deep into it how we get here, but in my case `cdev->config` is
+> > NULL. This happens immediate after booting my device. I verified that just
+> > adding a NULL check fixes the issue and dwc3 gadget can successfully suspend.
+> 
+> This was just fixed in my tree today with this commit:
+> 	https://lore.kernel.org/r/20250220120314.3614330-1-m.szyprowski@samsung.com
+> 
+> Hope this helps,
+> 
+> greg k-h
 
-Srinivas, I'm wondering if you have any concerns regarding this one?
+Yup, works for me. Thanks!
 
-> ---
->  drivers/cpufreq/intel_pstate.c |   18 +++++++++---------
->  1 file changed, 9 insertions(+), 9 deletions(-)
->
-> --- a/drivers/cpufreq/intel_pstate.c
-> +++ b/drivers/cpufreq/intel_pstate.c
-> @@ -3688,6 +3688,15 @@
->         if (boot_cpu_data.x86_vendor !=3D X86_VENDOR_INTEL)
->                 return -ENODEV;
->
-> +       /*
-> +        * The Intel pstate driver will be ignored if the platform
-> +        * firmware has its own power management modes.
-> +        */
-> +       if (intel_pstate_platform_pwr_mgmt_exists()) {
-> +               pr_info("P-states controlled by the platform\n");
-> +               return -ENODEV;
-> +       }
-> +
->         id =3D x86_match_cpu(hwp_support_ids);
->         if (id) {
->                 hwp_forced =3D intel_pstate_hwp_is_enabled();
-> @@ -3743,15 +3752,6 @@
->                 default_driver =3D &intel_cpufreq;
->
->  hwp_cpu_matched:
-> -       /*
-> -        * The Intel pstate driver will be ignored if the platform
-> -        * firmware has its own power management modes.
-> -        */
-> -       if (intel_pstate_platform_pwr_mgmt_exists()) {
-> -               pr_info("P-states controlled by the platform\n");
-> -               return -ENODEV;
-> -       }
-> -
->         if (!hwp_active && hwp_only)
->                 return -ENOTSUPP;
->
->
->
->
->
+--Will
 
