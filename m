@@ -1,35 +1,76 @@
-Return-Path: <linux-kernel+bounces-524036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EB2EA3DE75
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:28:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A224A3DE51
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:23:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4C58D7A2A85
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:19:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1517F18861E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:21:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E28C11FDA8E;
-	Thu, 20 Feb 2025 15:20:41 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 954611FCF45;
+	Thu, 20 Feb 2025 15:21:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=mandelbit.com header.i=@mandelbit.com header.b="FD+/nqgJ"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4498D288D6;
-	Thu, 20 Feb 2025 15:20:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13CF41D61A3
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 15:21:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740064841; cv=none; b=fq3k7BV7FQXVTC6r+S7jUMHQeKBVReUH43mMR3u3AxumLzJrDh123LgdtOloUbUsv8uX4v5Fkqk8oNZv7EQmuQjFgnl6JTmG/x+BfU+TRNK6lhVGe/qb5Q23ZFVYiw89ZmSj+d9iC6X5Hnp1RoV4Bmx4Y1ZAb2DTo94GGpgSMgA=
+	t=1740064882; cv=none; b=WlJ6uu+1zWPND8IWztZgxom7CzOM0CyZ0kx+pB3D7gPb8vefYHVJc3v7dv6FsQzDDtH1lIXc6tiNP/la3DfcZqj49HJaIaffAFRumKGfSmAOTBFjGw4S/Pt7hN1T+WhpcFzlXqZgbRAr9hId/Ppn5z8EjD65p6Mqd1KyFov1mw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740064841; c=relaxed/simple;
-	bh=BCStGYgeyWna1HJHV1Elo72D/ZSbWDYW75IW4/PGPZc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=csB5wDnt9NXu6Ejk74ELUsHkejMgTrELW/USArPIu30023Z+qvvj/E3/KxkT0mleyxekXh+jRGDbi4wWG0edJKu52MIptjT+EnOFL3oT1axgaXrVu0iRNk/tzN5bsiZvom8PVW7I/I2UL/TyVGzyYZPIrQjk7J1wlbz2ZNAHLqk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31B15C4CED1;
-	Thu, 20 Feb 2025 15:20:38 +0000 (UTC)
-Message-ID: <18a005e1-e235-4c2b-8d1a-b593868843a5@xs4all.nl>
-Date: Thu, 20 Feb 2025 16:20:36 +0100
+	s=arc-20240116; t=1740064882; c=relaxed/simple;
+	bh=lc33ASecIyHOG/Bouzl84JzYnOwb0Ap4Hk7ODwMwDpg=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=a6eyiGXlqaSRY7bbdHkXuwJnG7cPbbqQjj1tCKouWDVboewxK3wBQlPYzf1dnqskdDv3TMXIlubKMNUin01U2cxvnlV9RVWINMK5P82y+sdcfrngHLeWEFqFbduTuz7T/vmW17PcS3uAjPkLtYY3c9a753Q0xaRbOLOXNhWG+NQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mandelbit.com; spf=pass smtp.mailfrom=mandelbit.com; dkim=pass (2048-bit key) header.d=mandelbit.com header.i=@mandelbit.com header.b=FD+/nqgJ; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mandelbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mandelbit.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4394345e4d5so7376915e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 07:21:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=mandelbit.com; s=google; t=1740064878; x=1740669678; darn=vger.kernel.org;
+        h=content-transfer-encoding:organization:autocrypt:subject:from:cc:to
+         :content-language:user-agent:mime-version:date:message-id:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9c6akN4U6N1j5lHvxO5m+AhJP87KfyoW4nGzGcG9XVw=;
+        b=FD+/nqgJXe55oHJ5nBylF0J1vOTOInARFVgzM3BrRF9YJzd43K7An6kkAVhKSl+Txt
+         i+tjZ1eqDPHAOQG1Jkp3px6wxRfG4xjuOQYQNIPw8lWWaXjH8R+Dvox5qvEiUxEY+K3T
+         n0nOKKzrFItBDR+bT9Mj43Arc7aQbsEzQb0rxfcmY3GQqgUmv2QOKm1a19svbYmxRus2
+         0d2s5O84dL4Eo6ORwzCV1lDe5M/5CBF6mIoJofAHmuEOLu1QawD9cRFK8JKkH6RQKQpd
+         BFkPWJ4QyEfn+o/nSUrorB9cW/49CQWQoSkPN7DhtsIfd6verqSbtzdu+rSdWKNfGOQ+
+         Q+OA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740064878; x=1740669678;
+        h=content-transfer-encoding:organization:autocrypt:subject:from:cc:to
+         :content-language:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9c6akN4U6N1j5lHvxO5m+AhJP87KfyoW4nGzGcG9XVw=;
+        b=Dicv8ranGi49OH5ZQSEW5RdT05ZT8IsSnE1JSMTc55TOOjQ9FXvb1bU6VhfpoFOzOn
+         nOwMOvT1nLlNDos7dJV3/qponfjMrMfYjS1oYf6/aF6YGw0JgGdpPISH2Kaf0WCDczKO
+         qRP8ws0a/JfznHnBi97zSfZ4eaGZlvRBBqQi74YFMFNuL/2WgLY3rqEgudYhZpPfL59Z
+         SzBaTyMGdvV8NId8jH/g1tNktN1h+ifBtXSa/CgodQXfOiV/Ouml6i6WZ6emldiI7m5p
+         vyo97vVOvh2Zbhffa9Oq/OVECihWJG6St10+t79mV03K8T83yp7mtpoFKqJKKdYH7gN3
+         pc1A==
+X-Gm-Message-State: AOJu0Yx0ZiFy8eU5aF6PGcqk1erZJ+CARnGeIM1IxXW4dKUQUTl/y9HZ
+	KtBegIdWw/MfCfFVmHWlo9RNBnWakLH+wW85tVYKhWgEF/JQOv1rIS9cWNIlUlk=
+X-Gm-Gg: ASbGncu7TImOtnY+9WcjcVnP6VBuVlEetoGRXdcx4tvpxdNna5SE4dSmi/n9t7KDpIf
+	pAVyme4EGi39iHljAP/B2Msz0WUDH/AQbB+ubtwxI0Lyif4jk33vytdnyhpMlYjs0c7xlLZTFSm
+	QTQXH7b863Fr2RaCEUbSKf0fUYuKfMQDXyaXiyl9dDCGsJTqhOlHh/SMORmfmlgi5l+nhK6372O
+	z/e5CQGZ2uH0WAU9NPCPtcHJyrO0tHaHOl/bmcH4PGKz1IY3ih11AX9iflmjaS8qZ5+22tluTp8
+	W2faRTqnPEWx+3ACXuQKGC/L25HLI2fKkugdF1Ii267NQG8yGQHeNJdN
+X-Google-Smtp-Source: AGHT+IF72B8PeU55Z3sgL3tW6dfxk/MwISwqpinGcc+knKt0qvcvgeetMqZ5K54wjAsMBACSydwSkQ==
+X-Received: by 2002:a5d:47a3:0:b0:38f:37bd:1707 with SMTP id ffacd0b85a97d-38f37bd18f8mr18940578f8f.0.1740064878244;
+        Thu, 20 Feb 2025 07:21:18 -0800 (PST)
+Received: from ?IPV6:2001:67c:2fbc:1:7ff5:51b6:ef4f:eaf9? ([2001:67c:2fbc:1:7ff5:51b6:ef4f:eaf9])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4399c41022csm49752735e9.40.2025.02.20.07.21.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 20 Feb 2025 07:21:17 -0800 (PST)
+Message-ID: <85894bbd-05ef-4e40-acf9-98a079c9e2ee@mandelbit.com>
+Date: Thu, 20 Feb 2025 16:21:22 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -37,296 +78,84 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/4] media: venus: hfi_parser: refactor hfi packet
- parsing logic
 Content-Language: en-US
-To: Vikash Garodia <quic_vgarodia@quicinc.com>,
- Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Tomasz Figa
- <tfiga@chromium.org>, Hans Verkuil <hans.verkuil@cisco.com>
-Cc: Stanimir Varbanov <stanimir.varbanov@linaro.org>,
- Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, linux-media@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20250207-venus_oob_2-v4-0-522da0b68b22@quicinc.com>
- <20250207-venus_oob_2-v4-2-522da0b68b22@quicinc.com>
-From: Hans Verkuil <hverkuil@xs4all.nl>
-In-Reply-To: <20250207-venus_oob_2-v4-2-522da0b68b22@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
+To: Jan Kiszka <jan.kiszka@siemens.com>, Kieran Bingham <kbingham@kernel.org>
+Cc: open list <linux-kernel@vger.kernel.org>
+From: Antonio Quartulli <antonio@mandelbit.com>
+Subject: scripts_gdb: Python Exception <class 'gdb.error'>: There is no member
+ named nsections.
+Autocrypt: addr=antonio@mandelbit.com; keydata=
+ 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
+Organization: Mandelbit SRL
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 2/7/25 09:24, Vikash Garodia wrote:
-> words_count denotes the number of words in total payload, while data
-> points to payload of various property within it. When words_count
-> reaches last word, data can access memory beyond the total payload. This
-> can lead to OOB access. With this patch, the utility api for handling
-> individual properties now returns the size of data consumed. Accordingly
-> remaining bytes are calculated before parsing the payload, thereby
-> eliminates the OOB access possibilities.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 1a73374a04e5 ("media: venus: hfi_parser: add common capability parser")
-> Signed-off-by: Vikash Garodia <quic_vgarodia@quicinc.com>
-> ---
->  drivers/media/platform/qcom/venus/hfi_parser.c | 95 +++++++++++++++++++-------
->  1 file changed, 69 insertions(+), 26 deletions(-)
-> 
-> diff --git a/drivers/media/platform/qcom/venus/hfi_parser.c b/drivers/media/platform/qcom/venus/hfi_parser.c
-> index 1cc17f3dc8948160ea6c3015d2c03e475b8aa29e..404c527329c5fa89ee885a6ad15620c9c90a99e4 100644
-> --- a/drivers/media/platform/qcom/venus/hfi_parser.c
-> +++ b/drivers/media/platform/qcom/venus/hfi_parser.c
-> @@ -63,7 +63,7 @@ fill_buf_mode(struct hfi_plat_caps *cap, const void *data, unsigned int num)
->  		cap->cap_bufs_mode_dynamic = true;
->  }
->  
-> -static void
-> +static int
->  parse_alloc_mode(struct venus_core *core, u32 codecs, u32 domain, void *data)
->  {
->  	struct hfi_buffer_alloc_mode_supported *mode = data;
-> @@ -71,7 +71,7 @@ parse_alloc_mode(struct venus_core *core, u32 codecs, u32 domain, void *data)
->  	u32 *type;
->  
->  	if (num_entries > MAX_ALLOC_MODE_ENTRIES)
-> -		return;
-> +		return -EINVAL;
->  
->  	type = mode->data;
->  
-> @@ -83,6 +83,8 @@ parse_alloc_mode(struct venus_core *core, u32 codecs, u32 domain, void *data)
->  
->  		type++;
->  	}
-> +
-> +	return sizeof(*mode);
->  }
->  
->  static void fill_profile_level(struct hfi_plat_caps *cap, const void *data,
-> @@ -97,7 +99,7 @@ static void fill_profile_level(struct hfi_plat_caps *cap, const void *data,
->  	cap->num_pl += num;
->  }
->  
-> -static void
-> +static int
->  parse_profile_level(struct venus_core *core, u32 codecs, u32 domain, void *data)
->  {
->  	struct hfi_profile_level_supported *pl = data;
-> @@ -105,12 +107,14 @@ parse_profile_level(struct venus_core *core, u32 codecs, u32 domain, void *data)
->  	struct hfi_profile_level pl_arr[HFI_MAX_PROFILE_COUNT] = {};
->  
->  	if (pl->profile_count > HFI_MAX_PROFILE_COUNT)
-> -		return;
-> +		return -EINVAL;
->  
->  	memcpy(pl_arr, proflevel, pl->profile_count * sizeof(*proflevel));
->  
->  	for_each_codec(core->caps, ARRAY_SIZE(core->caps), codecs, domain,
->  		       fill_profile_level, pl_arr, pl->profile_count);
-> +
-> +	return pl->profile_count * sizeof(*proflevel) + sizeof(u32);
->  }
->  
->  static void
-> @@ -125,7 +129,7 @@ fill_caps(struct hfi_plat_caps *cap, const void *data, unsigned int num)
->  	cap->num_caps += num;
->  }
->  
-> -static void
-> +static int
->  parse_caps(struct venus_core *core, u32 codecs, u32 domain, void *data)
->  {
->  	struct hfi_capabilities *caps = data;
-> @@ -134,12 +138,14 @@ parse_caps(struct venus_core *core, u32 codecs, u32 domain, void *data)
->  	struct hfi_capability caps_arr[MAX_CAP_ENTRIES] = {};
->  
->  	if (num_caps > MAX_CAP_ENTRIES)
-> -		return;
-> +		return -EINVAL;
->  
->  	memcpy(caps_arr, cap, num_caps * sizeof(*cap));
->  
->  	for_each_codec(core->caps, ARRAY_SIZE(core->caps), codecs, domain,
->  		       fill_caps, caps_arr, num_caps);
-> +
-> +	return sizeof(*caps);
->  }
->  
->  static void fill_raw_fmts(struct hfi_plat_caps *cap, const void *fmts,
-> @@ -154,7 +160,7 @@ static void fill_raw_fmts(struct hfi_plat_caps *cap, const void *fmts,
->  	cap->num_fmts += num_fmts;
->  }
->  
-> -static void
-> +static int
->  parse_raw_formats(struct venus_core *core, u32 codecs, u32 domain, void *data)
->  {
->  	struct hfi_uncompressed_format_supported *fmt = data;
-> @@ -163,7 +169,8 @@ parse_raw_formats(struct venus_core *core, u32 codecs, u32 domain, void *data)
->  	struct raw_formats rawfmts[MAX_FMT_ENTRIES] = {};
->  	u32 entries = fmt->format_entries;
->  	unsigned int i = 0;
-> -	u32 num_planes;
-> +	u32 num_planes = 0;
-> +	u32 size;
->  
->  	while (entries) {
->  		num_planes = pinfo->num_planes;
-> @@ -173,7 +180,7 @@ parse_raw_formats(struct venus_core *core, u32 codecs, u32 domain, void *data)
->  		i++;
->  
->  		if (i >= MAX_FMT_ENTRIES)
-> -			return;
-> +			return -EINVAL;
->  
->  		if (pinfo->num_planes > MAX_PLANES)
->  			break;
-> @@ -185,9 +192,13 @@ parse_raw_formats(struct venus_core *core, u32 codecs, u32 domain, void *data)
->  
->  	for_each_codec(core->caps, ARRAY_SIZE(core->caps), codecs, domain,
->  		       fill_raw_fmts, rawfmts, i);
-> +	size = fmt->format_entries * (sizeof(*constr) * num_planes + 2 * sizeof(u32))
-> +		+ 2 * sizeof(u32);
-> +
-> +	return size;
->  }
->  
-> -static void parse_codecs(struct venus_core *core, void *data)
-> +static int parse_codecs(struct venus_core *core, void *data)
->  {
->  	struct hfi_codec_supported *codecs = data;
->  
-> @@ -199,21 +210,27 @@ static void parse_codecs(struct venus_core *core, void *data)
->  		core->dec_codecs &= ~HFI_VIDEO_CODEC_SPARK;
->  		core->enc_codecs &= ~HFI_VIDEO_CODEC_HEVC;
->  	}
-> +
-> +	return sizeof(*codecs);
->  }
->  
-> -static void parse_max_sessions(struct venus_core *core, const void *data)
-> +static int parse_max_sessions(struct venus_core *core, const void *data)
->  {
->  	const struct hfi_max_sessions_supported *sessions = data;
->  
->  	core->max_sessions_supported = sessions->max_sessions;
-> +
-> +	return sizeof(*sessions);
->  }
->  
-> -static void parse_codecs_mask(u32 *codecs, u32 *domain, void *data)
-> +static int parse_codecs_mask(u32 *codecs, u32 *domain, void *data)
->  {
->  	struct hfi_codec_mask_supported *mask = data;
->  
->  	*codecs = mask->codecs;
->  	*domain = mask->video_domains;
-> +
-> +	return sizeof(*mask);
->  }
->  
->  static void parser_init(struct venus_inst *inst, u32 *codecs, u32 *domain)
-> @@ -282,8 +299,9 @@ static int hfi_platform_parser(struct venus_core *core, struct venus_inst *inst)
->  u32 hfi_parser(struct venus_core *core, struct venus_inst *inst, void *buf,
->  	       u32 size)
->  {
-> -	unsigned int words_count = size >> 2;
-> -	u32 *word = buf, *data, codecs = 0, domain = 0;
-> +	u32 *words = buf, *payload, codecs = 0, domain = 0;
-> +	u32 *frame_size = buf + size;
-> +	u32 rem_bytes = size;
->  	int ret;
->  
->  	ret = hfi_platform_parser(core, inst);
-> @@ -300,38 +318,63 @@ u32 hfi_parser(struct venus_core *core, struct venus_inst *inst, void *buf,
->  		memset(core->caps, 0, sizeof(core->caps));
->  	}
->  
-> -	while (words_count) {
-> -		data = word + 1;
-> +	while (words < frame_size) {
-> +		payload = words + 1;
->  
-> -		switch (*word) {
-> +		switch (*words) {
->  		case HFI_PROPERTY_PARAM_CODEC_SUPPORTED:
-> -			parse_codecs(core, data);
-> +			if (rem_bytes <= sizeof(struct hfi_codec_supported))
-> +				return HFI_ERR_SYS_INSUFFICIENT_RESOURCES;
-> +
-> +			ret = parse_codecs(core, payload);
->  			init_codecs(core);
+Hi,
 
-Does it make sense to call init_codecs if parse_codecs returned an error?
-It certainly looks weird, so even if it is OK, perhaps a comment might be
-useful.
+I have been working on the new ovpn linux kernel module since a while 
+and your gdb kernel debugging helper scripts have been of great help.
 
->  			break;
->  		case HFI_PROPERTY_PARAM_MAX_SESSIONS_SUPPORTED:
-> -			parse_max_sessions(core, data);
-> +			if (rem_bytes <= sizeof(struct hfi_max_sessions_supported))
-> +				return HFI_ERR_SYS_INSUFFICIENT_RESOURCES;
-> +
-> +			ret = parse_max_sessions(core, payload);
->  			break;
->  		case HFI_PROPERTY_PARAM_CODEC_MASK_SUPPORTED:
-> -			parse_codecs_mask(&codecs, &domain, data);
-> +			if (rem_bytes <= sizeof(struct hfi_codec_mask_supported))
-> +				return HFI_ERR_SYS_INSUFFICIENT_RESOURCES;
-> +
-> +			ret = parse_codecs_mask(&codecs, &domain, payload);
->  			break;
->  		case HFI_PROPERTY_PARAM_UNCOMPRESSED_FORMAT_SUPPORTED:
-> -			parse_raw_formats(core, codecs, domain, data);
-> +			if (rem_bytes <= sizeof(struct hfi_uncompressed_format_supported))
-> +				return HFI_ERR_SYS_INSUFFICIENT_RESOURCES;
-> +
-> +			ret = parse_raw_formats(core, codecs, domain, payload);
->  			break;
->  		case HFI_PROPERTY_PARAM_CAPABILITY_SUPPORTED:
-> -			parse_caps(core, codecs, domain, data);
-> +			if (rem_bytes <= sizeof(struct hfi_capabilities))
-> +				return HFI_ERR_SYS_INSUFFICIENT_RESOURCES;
-> +
-> +			ret = parse_caps(core, codecs, domain, payload);
->  			break;
->  		case HFI_PROPERTY_PARAM_PROFILE_LEVEL_SUPPORTED:
-> -			parse_profile_level(core, codecs, domain, data);
-> +			if (rem_bytes <= sizeof(struct hfi_profile_level_supported))
-> +				return HFI_ERR_SYS_INSUFFICIENT_RESOURCES;
-> +
-> +			ret = parse_profile_level(core, codecs, domain, payload);
->  			break;
->  		case HFI_PROPERTY_PARAM_BUFFER_ALLOC_MODE_SUPPORTED:
-> -			parse_alloc_mode(core, codecs, domain, data);
-> +			if (rem_bytes <= sizeof(struct hfi_buffer_alloc_mode_supported))
-> +				return HFI_ERR_SYS_INSUFFICIENT_RESOURCES;
-> +
-> +			ret = parse_alloc_mode(core, codecs, domain, payload);
->  			break;
->  		default:
-> +			ret = sizeof(u32);
->  			break;
->  		}
->  
-> -		word++;
-> -		words_count--;
-> +		if (ret < 0)
-> +			return HFI_ERR_SYS_INSUFFICIENT_RESOURCES;
-> +
-> +		words += ret / sizeof(u32);
+However, recently I have started hitting an issue I could not explain.
+When my qemu instance loads the ovpn.ko module, I get the following 
+output in gdb:
 
-Would it make sense to check and warn if ret is not a multiple of sizeof(u32)?
-Up to you, just an idea.
+scanning for modules in /home/ordex/exp/openvpn_dev/linux-ovpn-dco
+loading @0xffffffffa0000000: 
+/home/ordex/exp/openvpn_dev/linux-ovpn-dco/drivers/net/ovpn/ovpn.ko
+Python Exception <class 'gdb.error'>: There is no member named nsections.
 
-> +		rem_bytes -= ret;
->  	}
->  
->  	if (!core->max_sessions_supported)
-> 
+and the load of the symbols fails.
 
-Regards,
+Does it ring any bell?
+Any help debugging further?
 
-	Hans
+I am running the latest net-next.
+
+Thanks a lot.
+Best Regards,
+
+-- 
+Antonio Quartulli
+
+CEO and Co-Founder
+Mandelbit Srl
+https://www.mandelbit.com
+
 
