@@ -1,84 +1,75 @@
-Return-Path: <linux-kernel+bounces-523939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73113A3DD2D
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:45:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E7F0A3DD1C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:41:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A802800321
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:39:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62276189E8FF
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:40:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90FFB1FCCE9;
-	Thu, 20 Feb 2025 14:39:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2971720485D;
+	Thu, 20 Feb 2025 14:39:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tcaf+zXt"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="X7438IKv"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1CE41FAC5E
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 14:39:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A32D1FC7F7;
+	Thu, 20 Feb 2025 14:39:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740062372; cv=none; b=TusJclk2l5d57QmcOzaEx3azgzUAEESGBdOo5SXwJNZN0K8SbqzvjN4Z8lLGw9GPGMkOOmxvHXXM7frBmb0938kHZ/pXw7O9Sn6g2vs59cG/npr35fEDPhAWCED14JzMsVBQLSxOd3SWxY1MPez0LIBVz8s+ygWt0Nu/FC+O6WM=
+	t=1740062383; cv=none; b=KVebsYfpesXwdsdujQq45zpRoDU7BGDBtcfEAkeQa/b7aaYczTxQ9jp5VixXxPM5jmW+IgUqkujW6xoXJsKwDDmRtLwocyjUMQJxD/bYDECY6Sh4z2G1Jbt7JiO9Enn7muiQ/J78n10GKXHD+4JnfQJRIMXdMeFkKhiRyh1UQXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740062372; c=relaxed/simple;
-	bh=vEyLaVHDdR1C24A3uylVTmInW2SohGDRZTXRBJjZQFA=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=kt6XGnChoOvDCKcTh3GsAutgzO84KKAXDK+LRO6KcBZkbuzWmbpghOT4lMYMReSnzxa8HvBNwXdfbvdlWLg8ZRA3hrs1tqMsWOwz4yB9/a7KAX3H9ZbXcKNgPwqH9jSgmTW5FA0GnbOIYh8LIyCPkEbSJviwf4pQy4WAPyAduUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tcaf+zXt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8B8AC4CED1;
-	Thu, 20 Feb 2025 14:39:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740062372;
-	bh=vEyLaVHDdR1C24A3uylVTmInW2SohGDRZTXRBJjZQFA=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=tcaf+zXtwZGffuDdqq5c8IDxSOmexCoiWboGzi2PppBSNBnxGSqwOr7StOOIaA6z/
-	 KVh1McReelBuZIn6KWIMzy/bgx+RLjdT2Ys1YjnKRe7YFwhkqpn6liQ9pqpCbtxtKR
-	 QnRTZrevlpdfcHpxVJObVO5XJ2oCm3Mowx3tYijMgrOnoAMB0mjQf52wnoHCrIGqWo
-	 BU8kmnnOdZHq28hK15RoGB1jPCZLoHylqYZ8vcjYZpjXXaNYa6wAY7pDL75YkkqY+5
-	 oqKMqasEcgxuzPekQK0e1nG9dfKsFj4irK8QnguZ5LOhuPFYGdueO1QAMVxzaUI5ZV
-	 MRxVbo0bRTMVA==
-From: Lee Jones <lee@kernel.org>
-To: Lee Jones <lee@kernel.org>, 
- =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-Cc: linux-kernel@vger.kernel.org
-In-Reply-To: <20250212170403.36619-2-u.kleine-koenig@baylibre.com>
-References: <20250212170403.36619-2-u.kleine-koenig@baylibre.com>
-Subject: Re: (subset) [PATCH] mfd: lp3943: Drop #include <linux/pwm.h> from
- header
-Message-Id: <174006237143.779236.13661749478683671069.b4-ty@kernel.org>
-Date: Thu, 20 Feb 2025 14:39:31 +0000
+	s=arc-20240116; t=1740062383; c=relaxed/simple;
+	bh=1LKdPwjEyhWLYIelpzALC3HYu2XbKwz8JQ2qvcNVomc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tEtD6DcUTMsHQuTcEXQHd8G8s8TL9i/ALAVBXtWc8dx3hfWBQgkNaS1dhHMRB16192yjQNbjvmFjcvy/Q8Iuqpsukrmi3X81C7Pk2uuzDUPSvmh95nGxXmr5JI8nK/ulp23VWP552h034AMNlblSH2hSTGCEPQDDdDOiZB62JnQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=X7438IKv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1FCAC4CED1;
+	Thu, 20 Feb 2025 14:39:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1740062383;
+	bh=1LKdPwjEyhWLYIelpzALC3HYu2XbKwz8JQ2qvcNVomc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=X7438IKvi0a1iUnPvD8iwTdIM4xZM8RWtZ7THG08xYI2/hZhZpMXAONXmFcykrL6V
+	 xshXF4u5A0+U8kUUf+OH5d/NYHbk/Xj2t46piXlnGVSSfb9O0TYuTbfsv4cUgfc7ly
+	 WnKdCWLZdq4nrbgGDsCRMlX4h3kZOdJsF50t7/w4=
+Date: Thu, 20 Feb 2025 15:39:40 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
+	linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Subject: Re: [PATCH 26/29] serial: 8250: use serial_in/out() helpers
+Message-ID: <2025022032-movie-citation-b267@gregkh>
+References: <20250220111606.138045-1-jirislaby@kernel.org>
+ <20250220111606.138045-27-jirislaby@kernel.org>
+ <Z7cfvXUCHXVXK_mp@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.15-dev-510f9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z7cfvXUCHXVXK_mp@smile.fi.intel.com>
 
-On Wed, 12 Feb 2025 18:04:03 +0100, Uwe Kleine-König wrote:
-> The header doesn't make use of any symbols declared in <linux/pwm.h>.
-> There are tree files that #include <mfd/lp3943.h>. Two of them
-> (i.e. drivers/gpio/gpio-lp3943.c and drivers/mfd/lp3943.c) also don't
-> use any and the third (drivers/pwm/pwm-lp3943.c) has an explicit include
-> of <linux/pwm.h> itself.
+On Thu, Feb 20, 2025 at 02:27:41PM +0200, Andy Shevchenko wrote:
+> On Thu, Feb 20, 2025 at 12:16:03PM +0100, Jiri Slaby (SUSE) wrote:
+> > There are serial_in/out() helpers to be used instead of direct
+> > p->serial_in/out(). Use them in various 8250 drivers.
 > 
-> So drop the unused include. The intended side effect is that
-> drivers/gpio/gpio-lp3943.c and drivers/mfd/lp3943.c stop importing the
-> "PWM" module namespace.
+> Is this just a mechanical (compile-only) conversion?
+> IIRC 8250 DW code is twisted in some cases and it might
+> be a possibility of dead loops, but I don't remember it
+> by heart and haven't checked myself before writing this
+> reply.
 > 
-> [...]
+> TL;DR: this needs a thorough review.
 
-Applied, thanks!
-
-[1/1] mfd: lp3943: Drop #include <linux/pwm.h> from header
-      commit: 5a917e808b56319d977b3062331293136ee1c34c
-
---
-Lee Jones [李琼斯]
-
+Wonderful, are you going to do it?  :)
 
