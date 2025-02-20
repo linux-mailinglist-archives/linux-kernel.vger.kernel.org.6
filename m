@@ -1,230 +1,128 @@
-Return-Path: <linux-kernel+bounces-523406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E695AA3D660
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 11:21:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 46B28A3D664
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 11:22:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 201863B2245
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 10:21:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F13F3B49A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 10:21:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CA3A1F0E58;
-	Thu, 20 Feb 2025 10:21:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81B5E1EF080;
+	Thu, 20 Feb 2025 10:21:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IqAiIecD"
-Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com [209.85.217.49])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="io+mADwx"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 362241A7264
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 10:21:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AF0E1F03FA
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 10:21:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740046864; cv=none; b=kTcLrUI9Aj0cD5UOib4QuRbeqWNv7DkEP01T96U8Yyfb5HbpdN0QCLa+OUNzPb9dzQr5cEWc4ZH4XvVU+qvaOhU7+Z/nnb2VVFd4PkpcnT90FopX5Elv9p/brCpNke6lCB+s2sTVIC+7aQVMy+xjuKl3jsrhg6/W53501BAuS+s=
+	t=1740046911; cv=none; b=ftkCtC4iVpIbkp9HkMxcHa1iqT60aGVAwaqSgweUSr0kZFfCIDbZjcTwKXYAIfW3/xfa6la/WNjjF+JA+qj42f0IKhPpaWi7fmR0g6fK9aW/v1v3t3y70vY/+b0j4xi7mb5RQfA0SkOi6PyS+hnvGwnPrglHAK7Okqly8wl0g4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740046864; c=relaxed/simple;
-	bh=6frE0vp6y3HVTmi9RgUvDBuegudvnfMUnz3iWcIW+d4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GMt0Oj6BhunXB3iLhhB8GkpopEL9LYLqFT6KrDEcZL60Nz9F4732S0YyAI8GsfF7wc0tS4934KaTxkh6NlAlRj/BMyQ34wRJwlnXsITrfRj3Rbnk59j0h6Lv4pQXHq8RrQkLFjxdx4LDzCBufwAirCxOYdSqrbwvdgOgE8GIq6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IqAiIecD; arc=none smtp.client-ip=209.85.217.49
+	s=arc-20240116; t=1740046911; c=relaxed/simple;
+	bh=XyjhOm+xipVatReiVlaqfkvcUF7Q4BsxkUSTUiAPmkI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=vGcufOQfefU+nRcBhAPaThU1e3nQHciahWVr0SDKmVGW6UQLpnPFssjy08GkPCWzwf9/RwRBzG01DchFsluWbL0SQlsIZIS2k5hPld13bgwYsmwUu2Sn1Xyn4X6g6tUAttV8DF/Nw93zAU1DQ28sWWj1QL3QY4Re9n0bsmccs/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=io+mADwx; arc=none smtp.client-ip=209.85.221.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-vs1-f49.google.com with SMTP id ada2fe7eead31-4be75b2bbceso303784137.1
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 02:21:01 -0800 (PST)
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-38f2b7ce2e5so395760f8f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 02:21:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740046861; x=1740651661; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1k8Xv75EqcSkSe3mhxEP34uuxE4pk6TaXrXbyxkMwWg=;
-        b=IqAiIecDh4Hducuw4a0rcWVhIO6dNGT/SBMbrAc3ogLyj3XypByfCznBzJ1xVd/aLc
-         TbJ5PYXR0EGs/iP4SX3c/m7+fPA0q56yxcdsG9a0TNZIUJncaRcpv9QKRSqF7fMDCXOa
-         rbCgeI2B1EcxeHvUbqtgxTD0av8u3+N+mPtbFfTJ7mw5WkgQLrRpkdbywqy6Uh5JLxrx
-         LtCZmrY0UO6TZ5j7vAJZmYSNAhZmIbkd1HU+PcP8rJb76n3q62oI6xVQADTQ2v5TI2lr
-         0tLyIdttZ0hUCwcag8PBe1Br7Ru0xlHYdzdXOfLdJ7XhZxz78qvxFVh6YISbnKXVIXA4
-         Juvw==
+        d=linaro.org; s=google; t=1740046908; x=1740651708; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=XyjhOm+xipVatReiVlaqfkvcUF7Q4BsxkUSTUiAPmkI=;
+        b=io+mADwxYj5mfgYstriE/1LDSuMmkolzx+kmoWkt9ThNdfP8y96nmzjWAlgS0YyR1U
+         pwlXMlI+H/bs/pIMXwF3UJKlXVsuNxKywKUX6DXYPQbFBDJK3me/p4Nw5poip2j+ng6h
+         UynduJhfKmWzuD2o0+FBY/In1JbYh84/cCBlFDA7tFy+D6nAayHlLax3PZYQMR/fxjf7
+         TWyQNQd6wW40lzDomg+UoZdIVT80IvY1wZ0smTNzOAAbBVekxnAP/Mxen7Z9BjY00Rbu
+         Oy21V0+WCdaSDiDaxPCdGSGdVw1hvr6WsVw5/jQYs9/h3QEQ70z/5DMTAAdvXCTuJR4J
+         pE7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740046861; x=1740651661;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1k8Xv75EqcSkSe3mhxEP34uuxE4pk6TaXrXbyxkMwWg=;
-        b=p6q09X7CXAoQoskP7jtUL6Ya9wCIbvtZMotEmoSad6B5pJCm2sSHzUFoAWQIq//hLQ
-         9VfuWJ64S2miS1qIJK9njShNu1FizZc0ySKZrxKz6LAGgFjrZcXjIpHV9FAscP93RBzi
-         eMotXTYSpIZl8Z6Jv0Z7S2U1Adg26WYxrpa4UWHLQl1cq8KxKM6qUdpDsaozvyVtpkwl
-         9KGXz/uRF5CZ9NQYTsRNwT/kk9bPzcAgkcH9Mnov6MzOm+oP939EAnx4SxdAnTaJdGtr
-         77/8tCD7wjSRBEVt38dgoADG+6JCONdEVBwPhB72Rai6ZSMVsLWawKBcXvq6YLQ1ADxD
-         TuRg==
-X-Forwarded-Encrypted: i=1; AJvYcCXb5sn/XIMWpdDmBvOTUrmWNTrQclmnnDFYrRGohDtha5EL0/gLdi8l7kTc5KNxY7mQiOsVnxzowT3v3OM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywnqhr+o43vEX3Qod7TlJEsllU59TfDY77tIyaq2grxgB3y2ish
-	sa/scxyiQV6WOl+1COJTKMjF8h319xmhONFijEt4RUMwuBgxX6L6sSdKitGDPZVTstl1iPPt6Ds
-	ApFqvCB6ucOm5U0RBRR1lXkK508UvBj+nG1f3NA==
-X-Gm-Gg: ASbGncvy4drBPJrJWOc+wRgiuV+XTkIChI1TDrBG4Pod0+x1NGZOFZlLsMos1hvGT8i
-	c6cPsWeQBRfcg63KdmCNye+eM2X9/FXFllOJaoyFBnSBM+GsbSZ2BJNPkSTkCx25oGl+rc3+rqa
-	3dYibmUS6/CeuO1uJAES9acB6g2SbB
-X-Google-Smtp-Source: AGHT+IFInYZHm7C4hUR/bAXuSMbJRq4zNw1A1MvJ3R7C2CSGTVYb7DE1aF7XXblhP3cvEX3tLRlDXUFwsSNxmjU/8iw=
-X-Received: by 2002:a05:6102:419e:b0:4bb:ba51:7d47 with SMTP id
- ada2fe7eead31-4bd3fc1736amr11244784137.4.1740046860944; Thu, 20 Feb 2025
- 02:21:00 -0800 (PST)
+        d=1e100.net; s=20230601; t=1740046908; x=1740651708;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XyjhOm+xipVatReiVlaqfkvcUF7Q4BsxkUSTUiAPmkI=;
+        b=TMDZ0tgZ1q2RCbJ7kbro+rFjVsgI9BvFaMeKLxkltJmGcZmKj4nQH0a8w9ETKw9Xut
+         J0U3wgZAdq9B3dFN2dkEQxV5WfFhPkv1mif8DPVHU1vtBuWjimTHNnT9nT+Rs78ChStt
+         uMZGDdlDUM3oYMJ1/YdJEhn4luFBSK8Sh95/RZN3uLnLXKMYSxacBKoubew/R6LkBxmO
+         y2KHTIwTXc/AFSTjR+WTCUoQ2eee+B8uLp5islzjqMuq63N9i09IGKJvMIM1tsvvy/Qz
+         lJgs7WugRHK9b/18J6s2cIyI60Gvp8WEbpeJN1f3PHBGoYdOXJ1MlhHsSetayl8l3Y4K
+         TbsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVYvcEQzkGK7331zOz593V91oSVmZ0dfT/ixGovpLW0ApHsUEtkcxcR3vHrqIr8eLpCaC9nC6N+lmrxNi8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6Q7xaQuahel4q8ggUOZM9cNWS+LvWKkej+vGaKYCQEVSQJqTt
+	7HDHqJDCY8Dfjnt7OZ8WUxzosbBpm8tWEehHhaaQQ7yEyfLcYIK/+URbdOWoToU=
+X-Gm-Gg: ASbGncsBhwER+0v/Ifovm8UnpFFTQxY/1gLydnBYlsTe7qqGhtyjVzapfX2yFh9W27d
+	QzXPL9sn9nhUIE2dTjwxKqSHgEaoxXa0WSYgEaeDJ88zJo1kzL9lf1UZAH2GD7HScNnCwmS7RoJ
+	eCJfdNtB3ml5YzOWgGXBn+0JFjVBgNYbekE2f1Nw498T4c9lcCzRxHYZr4igFR/fzWS6HNf3mYr
+	qf4OqiFFwnRNqFYrWw0a+mFJDZNTlBaIeMJ3/MMu/SqEiZX6hzcBTooveJOfq7IzcMVcNzyBmxd
+	opZZI37xBiQIc+9S/mc3AGrnsBnTJuFyd03xseyyUo8HqtDqHl8xg0/g
+X-Google-Smtp-Source: AGHT+IGafOD/Cz8KqZYx4HICrpiF57Ud5vJOpTpVhxH4dNw5EJOWaBQJT2VOVYJ5ILbnw6i7UI13wg==
+X-Received: by 2002:a05:6000:108d:b0:38a:418e:21c7 with SMTP id ffacd0b85a97d-38f34171577mr17647798f8f.53.1740046908464;
+        Thu, 20 Feb 2025 02:21:48 -0800 (PST)
+Received: from [192.168.0.35] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f259f7987sm19856657f8f.87.2025.02.20.02.21.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 20 Feb 2025 02:21:48 -0800 (PST)
+Message-ID: <5a86cb82-e313-4f50-a6ff-17181a2dd274@linaro.org>
+Date: Thu, 20 Feb 2025 10:21:47 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250219082601.683263930@linuxfoundation.org>
-In-Reply-To: <20250219082601.683263930@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Thu, 20 Feb 2025 15:50:48 +0530
-X-Gm-Features: AWEUYZnjEZHYrIoBpvhmpHthSyaTw2Gu2OpPu2qINvCA060fTS-WHY7Wc0-8vnE
-Message-ID: <CA+G9fYv+omVvudRAbqMpAv2zDQKUOkz8pxs2dPv8c8fmiXcJFg@mail.gmail.com>
-Subject: Re: [PATCH 6.12 000/230] 6.12.16-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
-	broonie@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/5] clk: qcom: videocc: Add support to attach multiple
+ power domains
+To: Jagadeesh Kona <quic_jkona@quicinc.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
+ Ajit Pandey <quic_ajipan@quicinc.com>,
+ Imran Shaik <quic_imrashai@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>,
+ Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250218-videocc-pll-multi-pd-voting-v1-0-cfe6289ea29b@quicinc.com>
+ <20250218-videocc-pll-multi-pd-voting-v1-4-cfe6289ea29b@quicinc.com>
+ <eec2869a-fa8f-4aaf-9fc5-e7a8baf0f864@linaro.org>
+ <huluiiaqmunvmffoqadrhssd3kl2toutqtcw7rzamv3sqdglsf@7lz66x4sj3gv>
+ <d4c4ecf0-9094-4341-8711-78a48e5d1344@linaro.org>
+ <d444f1fb-42a0-48ef-83bc-d5aab9282b22@quicinc.com>
+ <gzjyyl2kzv52zsewn5zf6ei65fymyi4pspvsmsjaqj5sklfxvc@bkg46saulni5>
+ <fcc31cc7-67bd-4102-a53f-ebe66b4fd1a7@linaro.org>
+ <3da96df2-1127-49bf-8114-282cc488c194@quicinc.com>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <3da96df2-1127-49bf-8114-282cc488c194@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, 19 Feb 2025 at 14:16, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 6.12.16 release.
-> There are 230 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Fri, 21 Feb 2025 08:25:11 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
-6.12.16-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-6.12.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+On 20/02/2025 07:15, Jagadeesh Kona wrote:
+>> Yes, its logically the same just done in core code.
+>>
+> Yes, this code attaches domains before configuring the PLLs, but it attaches PDs after get_sync()
+> is called on device. As I mentioned in other patch earlier, if we attach PDS after get_sync() is
+> already called on device, then power domains are not getting enabled during the probe, leading to
+> the same improper PLL configuration issue. But the current patch series posted will fix this issue
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+That's not what I see.
 
-Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+The PLLs start and the GDSCs which depend also start.
 
-## Build
-* kernel: 6.12.16-rc1
-* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
-rc.git
-* git commit: cf505a9aecb7b64f05ea37f7304aab81f6f5aef2
-* git describe: v6.12.15-231-gcf505a9aecb7
-* test details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.12.y/build/v6.12=
-.15-231-gcf505a9aecb7
+Perhaps you could give the code a try and comment ?
 
-## Test Regressions (compared to v6.12.13-419-gaa95ced31609)
-
-## Metric Regressions (compared to v6.12.13-419-gaa95ced31609)
-
-## Test Fixes (compared to v6.12.13-419-gaa95ced31609)
-
-## Metric Fixes (compared to v6.12.13-419-gaa95ced31609)
-
-## Test result summary
-total: 61807, pass: 49873, fail: 1962, skip: 9939, xfail: 33
-
-## Build Summary
-* arc: 5 total, 5 passed, 0 failed
-* arm: 137 total, 137 passed, 0 failed
-* arm64: 49 total, 49 passed, 0 failed
-* i386: 17 total, 17 passed, 0 failed
-* mips: 32 total, 32 passed, 0 failed
-* parisc: 3 total, 3 passed, 0 failed
-* powerpc: 38 total, 38 passed, 0 failed
-* riscv: 22 total, 22 passed, 0 failed
-* s390: 24 total, 20 passed, 4 failed
-* sh: 6 total, 5 passed, 1 failed
-* sparc: 3 total, 3 passed, 0 failed
-* x86_64: 44 total, 44 passed, 0 failed
-
-## Test suites summary
-* boot
-* commands
-* kselftest-arm64
-* kselftest-breakpoints
-* kselftest-capabilities
-* kselftest-clone3
-* kselftest-core
-* kselftest-cpu-hotplug
-* kselftest-exec
-* kselftest-fpu
-* kselftest-ftrace
-* kselftest-futex
-* kselftest-gpio
-* kselftest-intel_pstate
-* kselftest-ipc
-* kselftest-kcmp
-* kselftest-kvm
-* kselftest-membarrier
-* kselftest-memfd
-* kselftest-mincore
-* kselftest-mqueue
-* kselftest-net
-* kselftest-net-mptcp
-* kselftest-openat2
-* kselftest-ptrace
-* kselftest-rseq
-* kselftest-rtc
-* kselftest-rust
-* kselftest-seccomp
-* kselftest-sigaltstack
-* kselftest-size
-* kselftest-tc-testing
-* kselftest-timers
-* kselftest-tmpfs
-* kselftest-tpm2
-* kselftest-user_events
-* kselftest-vDSO
-* kselftest-x86
-* kunit
-* kvm-unit-tests
-* libgpiod
-* libhugetlbfs
-* log-parser-boot
-* log-parser-build-clang
-* log-parser-build-gcc
-* log-parser-test
-* ltp-capability
-* ltp-commands
-* ltp-containers
-* ltp-controllers
-* ltp-crypto
-* ltp-cve
-* ltp-fcntl-locktests
-* ltp-fs
-* ltp-fs_bind
-* ltp-fs_perms_simple
-* ltp-hugetlb
-* ltp-ipc
-* ltp-math
-* ltp-mm
-* ltp-nptl
-* ltp-pty
-* ltp-sched
-* ltp-smoke
-* ltp-syscalls
-* ltp-tracing
-* perf
-* rcutorture
-
---
-Linaro LKFT
-https://lkft.linaro.org
+---
+bod
 
