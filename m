@@ -1,192 +1,144 @@
-Return-Path: <linux-kernel+bounces-523209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EAA1A3D38F
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 09:46:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0B3DA3D391
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 09:46:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FAFE1891DBD
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 08:44:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 315D73BE15E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 08:44:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C1A11EB9ED;
-	Thu, 20 Feb 2025 08:44:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4DD01EDA17;
+	Thu, 20 Feb 2025 08:44:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="JeZbldPB";
-	dkim=permerror (0-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="pKzWVbxx"
-Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [81.169.146.165])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CwDbV/fg"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBC571E9B36;
-	Thu, 20 Feb 2025 08:43:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=81.169.146.165
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740041043; cv=pass; b=N3XRXiSDu3IIIgGHYaXofF68+JQeVKKjrOel7K4ByFP8Rn6ExpzWQnbjGVc2wOIj5AIKpreRwIEVDOFq13yZmY14hOB2X4Nr3aU/rdnYapb4A5c35q+OcOuWohVuITNyMs86DYc6V9A7oB+Qt6lT1LzyOqcgfQhuFNSkMaZb28I=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740041043; c=relaxed/simple;
-	bh=zieZ0fjy2Z/FwxLjt+yC+FHgdeOXQn5pllZY6zkxF6I=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=brapnCB5Y9++p+ATqP/YpOM/dQFqa07V0pP8fyqNxftWRt07KooLZlpbuso/5svGqCWdt2UezBJRjmOibatRR2af7W7LCFhYoCqnHzGDM+LDhKBu6owb/N8dELdmuQe84yw/CKgFMF1WtNnHut4rn8n5l3CwwhQakHfv+ayOqOg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=goldelico.com; spf=pass smtp.mailfrom=goldelico.com; dkim=pass (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b=JeZbldPB; dkim=permerror (0-bit key) header.d=goldelico.com header.i=@goldelico.com header.b=pKzWVbxx; arc=pass smtp.client-ip=81.169.146.165
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=goldelico.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goldelico.com
-ARC-Seal: i=1; a=rsa-sha256; t=1740041022; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=NX4gri5O599Gk5hovWOCAimvx5nDDfF37HEcbwOc554NFCRxtS55or3CJTLhmmK2ji
-    W2AB7beSFIFpO6sxXG1/ynOs5+e9I9eVtaQcpyVhrDsIGo/iRSsM9j/5hcRdNQ5FL3SO
-    bpinrELHaCPiOMEFCoBdEmBdPCarjWk6HPCFkjLVcd3z0v+hj2fctkU4OkADBMXaYGPY
-    ub1H8XLApEzuqq4SarG5BQo2AV+cDcjCWYEOxyevoyxR0H2kTIfLE+O8egpcF9kbZtW8
-    L2/85vTR8Bi/TFrDFXAve+VCWdQLpIyiC7mEgw0eO46CwPIS+dWLBE1sg4ANswVPvZn3
-    Gl9Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1740041022;
-    s=strato-dkim-0002; d=strato.com;
-    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
-    From:Subject:Sender;
-    bh=zieZ0fjy2Z/FwxLjt+yC+FHgdeOXQn5pllZY6zkxF6I=;
-    b=kH+FUFDgnO/WU9FFnvIur3zF0GXGBYkzT8kRAhO5n7KeRdh01TUq3YVmibNfCOSVuk
-    QJltTvJ44uIU03D0OJ6FS4AonSJXEnmd9/nqI0QqqHHDwCYPUQ0fyfrqzU+f+i1vmECf
-    KQGCu/kwv4GCfTyH/f1QrANgXM/+AUuopcxtmDJjUEtdLl3bkcnPmaUQ3WISEEhB0aOi
-    5diVkx1LMTSXMOXDShLp4umfHcBtT9PLJZGSSuPXCZwW/F5ACy6+ipVM8ozc6+L+ur7i
-    TUfYKOA0ZB0IZZNyYmui/HW+eu+IRJ2Tm2ht6p3vtrLQWqQJ4ZpqU0lDC+Q0lvF4OZee
-    nvPg==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo01
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1740041022;
-    s=strato-dkim-0002; d=goldelico.com;
-    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
-    From:Subject:Sender;
-    bh=zieZ0fjy2Z/FwxLjt+yC+FHgdeOXQn5pllZY6zkxF6I=;
-    b=JeZbldPBQGvyw69RKgnqbD4c+ycP/WyEp4IfuFLDyO77ZvWXTKn60hz/0Qm3XpYG9w
-    w2pzdQfftUXURWlBEcpFbP+nMlugxVt2+/a6eWfxn4ByYWGq7eqjkRHZWKJph4OYUx0a
-    xEl1xb1hx6pogB35GNeiNOCqA3aFzv0s+nYA96KDlMoMI30WGZHFT2fQVKLDtEXrQ5HD
-    K3ZXHAziEcYLqvXKBzmyk471GX4LRdPcxXOoNWnJELtIYPZ+gj3qJJAAB/3fqIlqRjHq
-    QSYOtuouZrRT+iMCK5+tZXf3uLS9/K3ubT3EVRR+r3g6F9Xotc581noISZxrbCHNN1Y/
-    q5UA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1740041022;
-    s=strato-dkim-0003; d=goldelico.com;
-    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
-    From:Subject:Sender;
-    bh=zieZ0fjy2Z/FwxLjt+yC+FHgdeOXQn5pllZY6zkxF6I=;
-    b=pKzWVbxxrmVw+NsDoQlNO72yFL1u3g7dcWn02GUONkoU2x4O6L5UjlLvfgfzNzOUzz
-    HMJCcBZnn2yl4bUogbCQ==
-X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9qVpwcQVkPW4I1HrSj5oLyciNUndkHxYx0Ti5SZ9cNhe0mfWn0QeU"
-Received: from smtpclient.apple
-    by smtp.strato.de (RZmta 51.2.23 AUTH)
-    with ESMTPSA id Qe5b2211K8hfSbq
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
-	(Client did not present a certificate);
-    Thu, 20 Feb 2025 09:43:41 +0100 (CET)
-Content-Type: text/plain;
-	charset=us-ascii
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70CA91EC01B;
+	Thu, 20 Feb 2025 08:44:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740041082; cv=none; b=j9WRGGsRXZwpzJwVQ5jUf4YH5uUrV5o4qOrAJsp+olft1/Z40xA40hGaMMf1/j4O98fzFLx2S0aWG0YVTX9Bpsx58bJsRJ2/GKbQRvsIWZZMRQxoZvxsvYFSa4eSVmEPDQ1omsCUSEbq8A5dz0y34VMtpMJWvYTvh6h8tJ1A1jQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740041082; c=relaxed/simple;
+	bh=HJ1XECDgshy0YbD6yjuBXd5UXHQVou2y7AGLiVEqzXk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q1xYfZKgT0x35e7t4aDNkcefwFBFfLgII9VkrAhgWJBowQ0VlvbaLWnM/GQBGcLQev3lhUeXUO1jbxGN2vdBOgffRSJMMgoCyH98dNKZSyQKgKweDwMG2IwG/+MmfabKrtdx/03xWT3rMB8fXJoQFJO/auDQKC3ivshm8xKxqec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CwDbV/fg; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-ab7483b9bf7so105060966b.3;
+        Thu, 20 Feb 2025 00:44:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740041079; x=1740645879; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=1DLM9VCekfySYxigQbv6wSfMUfeFAysoJQtS7Tibb7c=;
+        b=CwDbV/fgPmNLlmPvRGiS/Lk4LgrwcbOTBjCiQlnT7ilMlktvAgU8MccJqta+5dy1qg
+         GWxpXvWP/8lOwzP5Jg/lNAbMv51sjZp/P9L40kgp0xhLXy84hxBNtFvdwTYPOWOGaY0Y
+         UlhaxWglSdDJdeBE+AbzWAFjy4QQxwYyGnQpYlWPQtqa7nWHi7dvf5uoPNVU5o92FkZ3
+         RrjUthX50vVEomPMF33t7ochgo3NCQciegZA8tfKIPJFbc+H/JgbVDHn+NMsi9GCJZVi
+         WRpTCBs3YmhfG+PUHrDSrq8G9h8qZGm6yMUoXWZTA31sfAueBe8jyyksw8vCCQAJZLxG
+         z6WA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740041079; x=1740645879;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1DLM9VCekfySYxigQbv6wSfMUfeFAysoJQtS7Tibb7c=;
+        b=YnL8vUnIU1IrrpVfWY5vK4mClRsHzLFouUer8wBoM2V/HBfYYjfUQOQU6gsiROLQjV
+         Zvkvtnvuq98CV5eaEs3QWhxBtsEUp2lbKGIVHN9EmgMC3vsHJU39vBsUvEdQVf8+a83+
+         0gkvg4BtLwK3b8LbXx+pv6xFXYTTptLimB3YaUJXeArYipWCMj+Rd0EHT1Lw+EYAtYee
+         v73sOKdqNnZGUxDdrU9fSV9fN3GYRDtY95fzo4yZdlnAap+MG5C86F3WJIfay2olawhk
+         9co8zFRAKYHXhwVdqZce8NpdN+aZBZ4e7tf2WAMcsu3Qojtp+3tnnuKlAyDI58173ZXI
+         hNig==
+X-Forwarded-Encrypted: i=1; AJvYcCWX9/p1SPUdPHNOLRhuZEteKiohSoQbTLN3p0Kp4RTmfhijJaRlBIm6HTYJo2xkUKuJxNv/vOPnfncn31ZPFKU=@vger.kernel.org, AJvYcCXei+UYgLrUQ80kru6TNhDjhqUOMCTnG1Y8ZRPyXsiTuRI6FwL31NJhSq79Ue1T0F2q/8nMxrmVV9vZggU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzG+LVbGpgQPzpib2oKifhnXnYG3NO069gAkCfqTM0u02SRNpWQ
+	RVzI77R7sntUxCkM5tJ6NiIymv8/3raQRoztJoQj8P07TYUuZao=
+X-Gm-Gg: ASbGnctVNAE4ZKuVIyQmqDnPrQFfWj0ebRqt76Zt6g0dxbl8zAnUY2wmlKFAlnxhYy/
+	BNwk15RFcN/mMEWFMukhJAVsKslePxvhT1CSKQ/GcNQlxNxdbpickxG0ux41lgnrQmSDN3T+fD5
+	BNL1s/b9BSrx+SOQgfZHHvlTOvYf1PNpI2HYcCyZmWvOkueXzKYTyJgmamuuaYJdDZgi+K5rGIt
+	g5olTyyArmrhkSq8grDXVMaUFWzzw6MPzv9MBrw79PXdpVoW57HQwuD26d53LBReB5GrQhxYIg2
+	6mPpeA==
+X-Google-Smtp-Source: AGHT+IHkGOjFEoRaJEgxmDz/0pEkyx2wuvk3PlN0KnRZZ7gxXlC16HVyEqS3RgGwpnpudH9gdVbcQA==
+X-Received: by 2002:a17:907:3f10:b0:ab7:d87f:6662 with SMTP id a640c23a62f3a-abbcd0b1265mr522929066b.52.1740041078195;
+        Thu, 20 Feb 2025 00:44:38 -0800 (PST)
+Received: from p183 ([178.172.146.173])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abb9553fbd0sm789621866b.84.2025.02.20.00.44.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Feb 2025 00:44:37 -0800 (PST)
+Date: Thu, 20 Feb 2025 11:44:35 +0300
+From: Alexey Dobriyan <adobriyan@gmail.com>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: "H. Peter Anvin" <hpa@zytor.com>, Kees Cook <kees@kernel.org>,
+	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+	Christoph Hellwig <hch@infradead.org>,
+	rust-for-linux <rust-for-linux@vger.kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	David Airlie <airlied@gmail.com>, linux-kernel@vger.kernel.org,
+	ksummit@lists.linux.dev
+Subject: Re: Rust kernel policy
+Message-ID: <ad27a7b8-f21d-47e5-8a3a-131cc2fb1398@p183>
+References: <CANiq72m-R0tOakf=j7BZ78jDHdy=9-fvZbAT8j91Je2Bxy0sFg@mail.gmail.com>
+ <Z7SwcnUzjZYfuJ4-@infradead.org>
+ <CANiq72myjaA3Yyw_yyJ+uvUrZQcSLY_jNp65iKH8Y5xGY5tXPQ@mail.gmail.com>
+ <202502191026.8B6FD47A1@keescook>
+ <785A9F60-F687-41DE-A116-34E37F5B407A@zytor.com>
+ <f77d549c-b776-4182-b170-571d1e5bb288@p183>
+ <2025022007-angelfish-smite-a69d@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51.11.1\))
-Subject: Re: [PATCH] i2c: omap: fix IRQ storms
-From: "H. Nikolaus Schaller" <hns@goldelico.com>
-In-Reply-To: <c3bcusjbn23z5yd2a3xtm7swnfizkl7rb6ufhicdhn52epnjvb@5uqm3g6jcony>
-Date: Thu, 20 Feb 2025 09:43:30 +0100
-Cc: Andreas Kemnade <andreas@kemnade.info>,
- "Raghavendra, Vignesh" <vigneshr@ti.com>,
- Aaro Koskinen <aaro.koskinen@iki.fi>,
- Kevin Hilman <khilman@baylibre.com>,
- Roger Quadros <rogerq@kernel.org>,
- Tony Lindgren <tony@atomide.com>,
- Janusz Krzysztofik <jmkrzyszt@gmail.com>,
- Reid Tonking <reidt@ti.com>,
- wsa@kernel.org,
- Linux-OMAP <linux-omap@vger.kernel.org>,
- linux-i2c@vger.kernel.org,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- stable@kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <115FEE67-85FB-4D79-B87E-8DEF08019958@goldelico.com>
-References: <20250207185435.751878-1-andreas@kemnade.info>
- <c3bcusjbn23z5yd2a3xtm7swnfizkl7rb6ufhicdhn52epnjvb@5uqm3g6jcony>
-To: Andi Shyti <andi.shyti@kernel.org>
-X-Mailer: Apple Mail (2.3776.700.51.11.1)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2025022007-angelfish-smite-a69d@gregkh>
 
-Hi,
+On Thu, Feb 20, 2025 at 07:53:28AM +0100, Greg KH wrote:
+> On Thu, Feb 20, 2025 at 09:32:15AM +0300, Alexey Dobriyan wrote:
+> > On Wed, Feb 19, 2025 at 11:33:56AM -0800, H. Peter Anvin wrote:
+> > > b. Can we use existing mature tools, such as C++, to *immediately* improve the quality (not just memory safety!) of our 37-year-old, 35-million line code base and allow for further centralized improvements without the major lag required for compiler extensions to be requested and implemented in gcc (and clang) *and* dealing with the maturity issue?
+> > 
+> > We can't and for technical reasons:
+> > 
+> > * g++ requires C99 initializers to be in declaration order,
+> >   even in cases where there is no reason to do so.
+> > 
+> > * g++ doesn't support __seg_gs at all:
+> > 
+> > 	$ echo -n -e 'int __seg_gs gs;' | g++ -xc++ - -S -o /dev/null
+> > 	<stdin>:1:14: error: expected initializer before ‘gs’
+> > 
+> >   x86 added this to improve codegen quality so this would be step backwards.
+> > 
+> 
+> And then there's my special addition to the kernel "struct class" :)
 
-> Am 19.02.2025 um 20:22 schrieb Andi Shyti <andi.shyti@kernel.org>:
->=20
-> Hi,
->=20
-> On Fri, Feb 07, 2025 at 07:54:35PM +0100, Andreas Kemnade wrote:
->> On the GTA04A5 writing a reset command to the gyroscope causes IRQ
->> storms because NACK IRQs are enabled and therefore triggered but not
->> acked.
->>=20
->> Sending a reset command to the gyroscope by
->> i2cset 1 0x69 0x14 0xb6
->> with an additional debug print in the ISR (not the thread) itself
->> causes
->>=20
->> [ 363.353515] i2c i2c-1: ioctl, cmd=3D0x720, arg=3D0xbe801b00
->> [ 363.359039] omap_i2c 48072000.i2c: addr: 0x0069, len: 2, flags: =
-0x0, stop: 1
->> [ 363.366180] omap_i2c 48072000.i2c: IRQ LL (ISR =3D 0x1110)
->> [ 363.371673] omap_i2c 48072000.i2c: IRQ (ISR =3D 0x0010)
->> [ 363.376892] omap_i2c 48072000.i2c: IRQ LL (ISR =3D 0x0102)
->> [ 363.382263] omap_i2c 48072000.i2c: IRQ LL (ISR =3D 0x0102)
->> [ 363.387664] omap_i2c 48072000.i2c: IRQ LL (ISR =3D 0x0102)
->> repeating till infinity
->> [...]
->> (0x2 =3D NACK, 0x100 =3D Bus free, which is not enabled)
->> Apparently no other IRQ bit gets set, so this stalls.
->>=20
->> Do not ignore enabled interrupts and make sure they are acked.
->> If the NACK IRQ is not needed, it should simply not enabled, but
->> according to the above log, caring about it is necessary unless
->> the Bus free IRQ is enabled and handled. The assumption that is
->> will always come with a ARDY IRQ, which was the idea behind
->> ignoring it, proves wrong.
->> It is true for simple reads from an unused address.
->>=20
->> So revert
->> commit c770657bd261 ("i2c: omap: Fix standard mode false ACK =
-readings").
->>=20
->> The offending commit was used to reduce the false detections in
->> i2cdetect. i2cdetect warns for confusing the I2C bus, so having some
->> rare false detections (I have never seen such on my systems) is the
->> lesser devil than having basically the system hanging completely.
->>=20
->> No more details came to light in the corresponding email thread since
->> several months:
->> =
-https://lore.kernel.org/linux-omap/20230426194956.689756-1-reidt@ti.com/
->> so no better fix to solve both problems can be developed right now.
->=20
-> I need someone from TI or someone who can test to ack here.
->=20
-> Can someone help?
+"struct class" is the trivialest of the problems.
 
-Well, I think since this is simply a full revert of
+> Anyway, no sane project should switch to C++ now, ESPECIALLY as many are
+> starting to move away from it due to the known issues with complexity
+> and safety in it's use.  Again, see all of the recent issues around the
+> C++ standard committee recently AND the proposal from Google about
+> Carbon, a way to evolve a C++ codebase into something else that is
+> maintainable and better overall.  I recommend reading at least the
+> introduction here:
+> 	https://docs.carbon-lang.dev/
+> for details, and there are many other summaries like this one that go
+> into more:
+> 	https://herecomesthemoon.net/2025/02/carbon-is-not-a-language/
+> 
+> In short, switching to C++ at this stage would be ignoring the lessons
+> that many others have already learned already, and are working to
+> resolve.  It would be a step backwards.
 
-commit c770657bd261 ("i2c: omap: Fix standard mode false ACK readings")
-
-to the status before. Therefore the status after revert was tested for =
-many years
-until c770657bd261 arrived to try to solve one issue but it apparently =
-introduced
-another one which is more severe and difficult to work around.
-
-For real world tests please see also:
-
-=
-https://lore.kernel.org/linux-omap/664241E0-8D6B-4783-997B-2D8510ADAEA3@go=
-ldelico.com/
-=
-https://lore.kernel.org/linux-omap/ad0fe7ca-fb6c-4c19-b4b3-0f29ddaa92c3@jm=
-0.eu/
-
-BR and thanks,
-Nikolaus
-
+If it is not source compatible with C then it is not an option,
+for the same reason Rust is not an option.
 
