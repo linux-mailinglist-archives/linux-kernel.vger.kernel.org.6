@@ -1,112 +1,333 @@
-Return-Path: <linux-kernel+bounces-523346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97ED1A3D55A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 10:51:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8447BA3D55E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 10:51:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 857651883327
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 09:49:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B5A6D189FA4A
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 09:49:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E79D1F0E4C;
-	Thu, 20 Feb 2025 09:48:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4468B1F1909;
+	Thu, 20 Feb 2025 09:48:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qAKcZ7wg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Hd0VHDU0"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D5FA1F0E3D
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DF6E1F03EB
 	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 09:48:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740044913; cv=none; b=tMFmZe3BezLitYJ0c/XTHijB62MUzSKo9l4XK2sf5HLYHKEda0xz1LEe9+Nibc7ZnADOyN+muAqdpoAOVx/DZBTil+B7T+djFTNpYAb7kwjL5oUIt7TzMup3pidkRx60zvzlW+pizXWMzHR7sYldsAGa+ZYtYF0BojlU0463j8o=
+	t=1740044915; cv=none; b=M04oanVFEA1N1q0U9Mb0wFnzlgwqid3EZeARC1Dv9BcEooUKeK8kiPH7O7DAj0wQwZkWNZKwudRuI8rph6AXJXrpfPRB9qbbxa/B5+xiEXEoHR6POUMDgY46V/gKkEpRd14B+Nvi16fGqNLVy7n0mMEVkVn93wTIatvIO+/SQXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740044913; c=relaxed/simple;
-	bh=TjkBgIVDkPykxXfTNJkQ2/RRYs8MAYcHrObSe1QzYi8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cAhgxAXpJb7r9PLLXaEE4A3IaKlA3BR/f2rjzgi9WNK8HDNVm+/5MZGRw/V4hwlfPZAbd8dTXtELNA3Sg7lGCJ8l4e2T/p/aDRJmIyeO/n5Zik4Fviy1Mvzj33nJNnWSo0VYadwpFyKCdPjWX83y1PMhH5UbgCe4STXTBL22eq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qAKcZ7wg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C2DEC4CED1
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 09:48:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740044913;
-	bh=TjkBgIVDkPykxXfTNJkQ2/RRYs8MAYcHrObSe1QzYi8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=qAKcZ7wgZuAYLUnbQT2K5Y+OaKIl2b0NIVilbOArOJb/bQ0wZdsBMW9onVK21z2Jj
-	 5VFP7KcCkAq9zVNWPUJyiz84NFNgk5rhD+0A3gnPGBfSyi5DseWdIqABWomU1C6WcF
-	 54jKiXmybEOmhD6L5sqrc+wDAefM4ycWC5+ptPODhyy63a31cLb06Z6WS2aDS4WR5e
-	 ivH+xzA/Lf3RuZw1TZwXB+KSmTmEY0eHAZ90samLCXG0zmbSP+Oh5qLy9BWfTMRpVf
-	 Dl/pY55A3BnmCqNkGO2eyF45f6sUmLhq5yqA4zZ8CEAQou9s4Yas3XgyXx+/j4Y1Wi
-	 ReKVWCmS7jVvA==
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-6f7031ea11cso6084737b3.2
+	s=arc-20240116; t=1740044915; c=relaxed/simple;
+	bh=wkIIVni6B5hqhOxCyIDWV70k/71CKF+whrBn28HHMzE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BhaUXIvlfTho3zBVPizbxe20jQ2s/5c02YPk7YyRhMcUWVbblpYG+SiORew0XtcijDtsFW58sJ943ApWqANyniDg0ouY/xlJLfvThUpRlKOWg/3tLh12EMhoS7rN8+G8qV7uv1Q49wHa3dnlCkyd0QqBNqJ3W+wlsibE3qgUIA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Hd0VHDU0; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-221057b6ac4so11460845ad.2
         for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 01:48:33 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUPcIhM+8mbxEmbXlfRBS9weYHiScwKvYhQGYWuhmDOSKFF4qYeoyZzHmFICCTiW/8NAmaKUytb0c6sdaU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNOfC2wY4OqTo6olp9nWgyU2NVrGmJH55KqI1GkpMXL9q8AI53
-	VPgxwcT8JHEZkjzDGtIX1wSjF1cGOHvbOMiaeSf7M2YhlDJ8X/QktPbH+vn+hTE2SKxj2tgSIbR
-	v/3sxRLrJ+nrWZryFZ12hqqzJ4v9938nzdox/hg==
-X-Google-Smtp-Source: AGHT+IHVyfnxjQQ5aEaDqqPnDXAHxGc+7AeDEznGEtYCeqwlDBOrCPISJFLJj/LtX4uF5vP7GOn1wFrzCA3FuOZVTpY=
-X-Received: by 2002:a05:6902:2384:b0:e5d:e52a:5383 with SMTP id
- 3f1490d57ef6-e5e0a0c72ccmr4853420276.25.1740044912333; Thu, 20 Feb 2025
- 01:48:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740044913; x=1740649713; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=2H1MlQwDqY4gHtZvtzxymuM1fxgAewM2EX9NkpggOfY=;
+        b=Hd0VHDU0I27yHRVgO4CC/ihbMPdTce+fGASFjFdv/oU93FgDWdJAYR9VrDClqYrhMA
+         0a2kvSZVlwfjRyr3OiTjJnj3UMVr5+WkquriDkWLYpAT5Q9wa8/lJP3h5zHmcXlYf80N
+         m8cQ1ugBxa3O+w0hGbbuYkPgitH11t1W6K2uCDi6fOtB92avaxpgpyTMZyTpyCRRhc7R
+         pRUUv/L3HHdMfsmkwaJqio1+AwT3+iPowntAfTOcim8IL2Gviu+fadEa0+wy1vMW7BdP
+         ClJh0TBTRjiL4dnG1JKAHuFJjZul5XptTmEWwyx7od3MJtsfct+wNCrWJvLAVfIXTQIi
+         WDYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740044913; x=1740649713;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2H1MlQwDqY4gHtZvtzxymuM1fxgAewM2EX9NkpggOfY=;
+        b=X9hhNV06HfakhCNuq3WD1VlC5NTpWvYkIETnTGULR0HT5eRgw6OXzwWokQBW/MqbCb
+         AzYdOr7K2zFv5MfabTAZP4+Ag3FN/9DrSe51SVRPTQnNWnE9RnIrOZ2+Se2GKRpy7ldw
+         A+aFEo8Pegyxr47lA3Uw9R7wiBi/5tqCSEfeo75Q7UpkBRUv2Rlxa7e7ltmeAHC4Z4oK
+         KlFSnkN88YT4w5QIkY0Kkzcb4MesvSL4Tx5lDyceLkxk0po2E/G48U/NnpWpF+UduTW9
+         hTqgshGoa4thqDrtLVtTz+ffs83Bh7YcCbxjIi+TKHrI0peIQxHcAVVq9R7hQ7d/ebQb
+         tYaw==
+X-Gm-Message-State: AOJu0YzHJuZSe7oXQHKY9iShh7vJ+xr+GcL4D+BZWl9H1lb6KF4Vhg8N
+	axTRVOaK265ITnlaNNXA2XzNcFcwchs+Fi0ao8swjTa7QXlLxBy4PET0fd/P/g==
+X-Gm-Gg: ASbGncuGWyVMBUFn+juWGX4u16gq0nwELJ5mAb3cOBWT9lwrz38g1BXuJdy2rwgQquH
+	/94IJLyY7woipNDKC1k4MLmFHtxe/MKbIIE1Dgqu4yBD1XrWUwjVQJ+5+hw1E6v3wtmG6ADYz8r
+	amWRQNjzi7hmKQFWycFbEEAi83UF4GHub60eVrsIWIVX1+S/daxNjASaN2mPxTCrl2FZvAonT9M
+	MfoYIjEoDRNGbn7ovueNQx2cUv/wHRPhMUteXFOyw1yb6gQMZ1HJR1LrLg5WSn08e39zOhIIUjn
+	SPcRskR7gwpyn1DSgI4FhbGPEA==
+X-Google-Smtp-Source: AGHT+IGDrYz4r/0p4Sw8EqLETFPMW3Qgrtc4FnstWsmQZ7/m7iB+t4YxN2YZIMjD8pXulTOwEq8J1A==
+X-Received: by 2002:a17:902:ea04:b0:21f:4c8b:c511 with SMTP id d9443c01a7336-221040bd73cmr334825575ad.33.1740044912672;
+        Thu, 20 Feb 2025 01:48:32 -0800 (PST)
+Received: from thinkpad ([120.60.70.244])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d537bd1asm117751755ad.102.2025.02.20.01.48.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Feb 2025 01:48:32 -0800 (PST)
+Date: Thu, 20 Feb 2025 15:18:25 +0530
+From: 'Manivannan Sadhasivam' <manivannan.sadhasivam@linaro.org>
+To: Shradha Todi <shradha.t@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
+	bhelgaas@google.com, jingoohan1@gmail.com,
+	Jonathan.Cameron@Huawei.com, fan.ni@samsung.com,
+	nifan.cxl@gmail.com, a.manzanares@samsung.com,
+	pankaj.dubey@samsung.com, cassel@kernel.org, 18255117159@163.com,
+	quic_nitegupt@quicinc.com, quic_krichai@quicinc.com,
+	gost.dev@samsung.com
+Subject: Re: [PATCH v6 2/4] Add debugfs based silicon debug support in DWC
+Message-ID: <20250220094825.2idjwpuo2yo5n6tc@thinkpad>
+References: <20250214105007.97582-1-shradha.t@samsung.com>
+ <CGME20250214105341epcas5p11ea07dba0a55700bc098077eb53e79b8@epcas5p1.samsung.com>
+ <20250214105007.97582-3-shradha.t@samsung.com>
+ <20250218150239.mnylvhyfnw6dtzag@thinkpad>
+ <02f501db8378$5fce2060$1f6a6120$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250220094456.32818-1-clamor95@gmail.com> <20250220094456.32818-2-clamor95@gmail.com>
-In-Reply-To: <20250220094456.32818-2-clamor95@gmail.com>
-From: Robert Foss <rfoss@kernel.org>
-Date: Thu, 20 Feb 2025 10:48:21 +0100
-X-Gmail-Original-Message-ID: <CAN6tsi7gxP9TiZYMGUgpHKbMU03tpJAYkpt0QQxM9QGS-p9f8A@mail.gmail.com>
-X-Gm-Features: AWEUYZl04SviqWXBbPQ4Tq2Q2RXXyF_nx7L186IU5dhzMZQzi8Vi4vOrBvQbNso
-Message-ID: <CAN6tsi7gxP9TiZYMGUgpHKbMU03tpJAYkpt0QQxM9QGS-p9f8A@mail.gmail.com>
-Subject: Re: [PATCH v1 1/3] dt-bindigs: display: extend the LVDS codec with
- Triple 10-BIT LVDS Transmitter
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Maxim Schwalm <maxim.schwalm@gmail.com>, dri-devel@lists.freedesktop.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <02f501db8378$5fce2060$1f6a6120$@samsung.com>
 
-On Thu, Feb 20, 2025 at 10:45=E2=80=AFAM Svyatoslav Ryhel <clamor95@gmail.c=
-om> wrote:
->
-> From: David Heidelberg <david@ixit.cz>
->
-> LVDS transmitter used in the Microsoft Surface RT.
->
-> Signed-off-by: David Heidelberg <david@ixit.cz>
-> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> ---
->  Documentation/devicetree/bindings/display/bridge/lvds-codec.yaml | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/Documentation/devicetree/bindings/display/bridge/lvds-codec.=
-yaml b/Documentation/devicetree/bindings/display/bridge/lvds-codec.yaml
-> index 6ceeed76e88e..24e89c1d0c76 100644
-> --- a/Documentation/devicetree/bindings/display/bridge/lvds-codec.yaml
-> +++ b/Documentation/devicetree/bindings/display/bridge/lvds-codec.yaml
-> @@ -33,6 +33,7 @@ properties:
->      oneOf:
->        - items:
->            - enum:
-> +              - idt,v103      # For the Triple 10-BIT LVDS Transmitter
->                - ti,ds90c185   # For the TI DS90C185 FPD-Link Serializer
->                - ti,ds90c187   # For the TI DS90C187 FPD-Link Serializer
->                - ti,sn75lvds83 # For the TI SN75LVDS83 FlatLink transmitt=
-er
-> --
-> 2.43.0
->
+On Thu, Feb 20, 2025 at 02:48:12PM +0530, Shradha Todi wrote:
+> 
+> 
+> > -----Original Message-----
+> > From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > Sent: 18 February 2025 20:33
+> > To: Shradha Todi <shradha.t@samsung.com>
+> > Cc: linux-kernel@vger.kernel.org; linux-pci@vger.kernel.org; lpieralisi@kernel.org; kw@linux.com; robh@kernel.org;
+> > bhelgaas@google.com; jingoohan1@gmail.com; Jonathan.Cameron@Huawei.com; fan.ni@samsung.com; nifan.cxl@gmail.com;
+> > a.manzanares@samsung.com; pankaj.dubey@samsung.com; cassel@kernel.org; 18255117159@163.com;
+> > quic_nitegupt@quicinc.com; quic_krichai@quicinc.com; gost.dev@samsung.com
+> > Subject: Re: [PATCH v6 2/4] Add debugfs based silicon debug support in DWC
+> > 
+> > On Fri, Feb 14, 2025 at 04:20:05PM +0530, Shradha Todi wrote:
+> > > Add support to provide silicon debug interface to userspace. This set
+> > > of debug registers are part of the RASDES feature present in
+> > > DesignWare PCIe controllers.
+> > >
+> > > Signed-off-by: Shradha Todi <shradha.t@samsung.com>
+> > > ---
+> > >  Documentation/ABI/testing/debugfs-dwc-pcie    |  13 ++
+> > >  drivers/pci/controller/dwc/Kconfig            |  10 +
+> > >  drivers/pci/controller/dwc/Makefile           |   1 +
+> > >  .../controller/dwc/pcie-designware-debugfs.c  | 207 ++++++++++++++++++
+> > >  .../pci/controller/dwc/pcie-designware-ep.c   |   5 +
+> > >  .../pci/controller/dwc/pcie-designware-host.c |   6 +
+> > >  drivers/pci/controller/dwc/pcie-designware.h  |  20 ++
+> > >  7 files changed, 262 insertions(+)
+> > >  create mode 100644 Documentation/ABI/testing/debugfs-dwc-pcie
+> > >  create mode 100644
+> > > drivers/pci/controller/dwc/pcie-designware-debugfs.c
+> > >
+> > > diff --git a/Documentation/ABI/testing/debugfs-dwc-pcie
+> > > b/Documentation/ABI/testing/debugfs-dwc-pcie
+> > > new file mode 100644
+> > > index 000000000000..e8ed34e988ef
+> > > --- /dev/null
+> > > +++ b/Documentation/ABI/testing/debugfs-dwc-pcie
+> > > @@ -0,0 +1,13 @@
+> > > +What:		/sys/kernel/debug/dwc_pcie_<dev>/rasdes_debug/lane_detect
+> > > +Date:		Feburary 2025
+> > 
+> > Please align these fields
+> 
+> The fields are already aligned in my patch (when I check in git), not sure why the mail misaligns it. Can you suggest how
+> should I fix this?
+> 
 
-Reviewed-by: Robert Foss <rfoss@kernel.org>
+You should consistently use tabs or space after colon throughout the file. Don't
+mix them.
+
+> > 
+> > > +Contact:	Shradha Todi <shradha.t@samsung.com>
+> > > +Description:	(RW) Write the lane number to be checked for detection.	Read
+> > > +		will return whether PHY indicates receiver detection on the
+> > > +		selected lane. The default selected lane is Lane0.
+> > > +
+> > > +What:		/sys/kernel/debug/dwc_pcie_<dev>/rasdes_debug/rx_valid
+> > > +Date:		Feburary 2025
+> > > +Contact:	Shradha Todi <shradha.t@samsung.com>
+> > > +Description:	(RW) Write the lane number to be checked as valid or invalid. Read
+> > > +		will return the status of PIPE RXVALID signal of the selected lane.
+> > > +		The default selected lane is Lane0.
+
+[...]
+
+> > > +static int dwc_pcie_rasdes_debugfs_init(struct dw_pcie *pci, struct
+> > > +dentry *dir) {
+> > > +	struct dentry *rasdes_debug;
+> > > +	struct dwc_pcie_rasdes_info *rasdes_info;
+> > > +	const struct dwc_pcie_vsec_id *vid;
+> > > +	struct device *dev = pci->dev;
+> > > +	int ras_cap;
+> > > +
+> > > +	for (vid = dwc_pcie_vsec_ids; vid->vendor_id; vid++) {
+> > > +		ras_cap = dw_pcie_find_vsec_capability(pci, vid->vendor_id,
+> > > +							vid->vsec_id);
+> > > +		if (ras_cap)
+> > > +			break;
+> > > +	}
+> > > +	if (!ras_cap) {
+> > > +		dev_dbg(dev, "no rasdes capability available\n");
+> > > +		return -ENODEV;
+> > > +	}
+> > 
+> > This will also go inside a new API, dw_pcie_find_rasdes_capability(pci).
+> > 
+> 
+> Okay, are we planning to make a function for each VSEC? Or should we just pass the rasdes_vids to the
+> dw_pcie_find_vsec_capability?
+> 
+
+dw_pcie_find_vsec_capability() is a static function in my series. We should
+add separate function for each VSEC.
+
+> > > +
+> > > +	rasdes_info = devm_kzalloc(dev, sizeof(*rasdes_info), GFP_KERNEL);
+> > > +	if (!rasdes_info)
+> > > +		return -ENOMEM;
+> > > +
+> > > +	/* Create subdirectories for Debug, Error injection, Statistics */
+> > > +	rasdes_debug = debugfs_create_dir("rasdes_debug", dir);
+> > 
+> > _debug prefix is not needed since the directory itself belongs to debugfs.
+> > 
+> 
+> It's not for the debug in debugfs. So the DES features are
+> Debug
+> Error Injection
+> Statistics.
+> The debug here is for the "D" in DES.
+> 
+
+Sorry, I missed it.
+
+> > > +
+> > > +	mutex_init(&rasdes_info->reg_lock);
+> > > +	rasdes_info->ras_cap_offset = ras_cap;
+> > > +	pci->debugfs->rasdes_info = rasdes_info;
+> > > +
+> > > +	/* Create debugfs files for Debug subdirectory */
+> > > +	dwc_debugfs_create(lane_detect);
+> > > +	dwc_debugfs_create(rx_valid);
+> > > +
+> > > +	return 0;
+> > > +}
+> > > +
+> > > +void dwc_pcie_debugfs_deinit(struct dw_pcie *pci) {
+> > > +	dwc_pcie_rasdes_debugfs_deinit(pci);
+> > > +	debugfs_remove_recursive(pci->debugfs->debug_dir);
+> > > +}
+> > > +
+> > > +int dwc_pcie_debugfs_init(struct dw_pcie *pci) {
+> > > +	char dirname[DWC_DEBUGFS_BUF_MAX];
+> > > +	struct device *dev = pci->dev;
+> > > +	struct debugfs_info *debugfs;
+> > > +	struct dentry *dir;
+> > > +	int ret;
+> > > +
+> > > +	/* Create main directory for each platform driver */
+> > > +	snprintf(dirname, DWC_DEBUGFS_BUF_MAX, "dwc_pcie_%s", dev_name(dev));
+> > > +	dir = debugfs_create_dir(dirname, NULL);
+> > > +	if (IS_ERR(dir))
+> > > +		return PTR_ERR(dir);
+> > 
+> > debugfs creation is not supposed to fail. So you should remove the error check.
+> > 
+> 
+> There was no error check until v3. Got a comment from Jonathan in v3:
+> 	"Check for errors in all these."
+> I think he wanted to add in all the debugfs creations but I just added in the topmost directory.
+> I checked that error will be returned in case someone turns off debugfs mounting as early param.
+> So, if the first directory gets made, there would be no issues in subsequent subdirectories.
+> 
+
+Please see the Kdoc comments for this API:
+
+ * NOTE: it's expected that most callers should _ignore_ the errors returned
+ * by this function. Other debugfs functions handle the fact that the "dentry"
+ * passed to them could be an error and they don't crash in that case.
+ * Drivers should generally work fine even if debugfs fails to init anyway.
+
+> > > +
+> > > +	debugfs = devm_kzalloc(dev, sizeof(*debugfs), GFP_KERNEL);
+> > > +	if (!debugfs)
+> > > +		return -ENOMEM;
+> > > +
+> > > +	debugfs->debug_dir = dir;
+> > > +	pci->debugfs = debugfs;
+> > > +	ret = dwc_pcie_rasdes_debugfs_init(pci, dir);
+> > > +	if (ret)
+> > > +		dev_dbg(dev, "rasdes debugfs init failed\n");
+> > 
+> > RASDES
+> > 
+> > > +
+> > > +	return 0;
+> > > +}
+> > > diff --git a/drivers/pci/controller/dwc/pcie-designware-ep.c
+> > > b/drivers/pci/controller/dwc/pcie-designware-ep.c
+> > > index f3ac7d46a855..a87a714bb472 100644
+> > > --- a/drivers/pci/controller/dwc/pcie-designware-ep.c
+> > > +++ b/drivers/pci/controller/dwc/pcie-designware-ep.c
+> > > @@ -642,6 +642,7 @@ void dw_pcie_ep_cleanup(struct dw_pcie_ep *ep)  {
+> > >  	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
+> > >
+> > > +	dwc_pcie_debugfs_deinit(pci);
+> > >  	dw_pcie_edma_remove(pci);
+> > >  }
+> > >  EXPORT_SYMBOL_GPL(dw_pcie_ep_cleanup);
+> > > @@ -813,6 +814,10 @@ int dw_pcie_ep_init_registers(struct dw_pcie_ep
+> > > *ep)
+> > >
+> > >  	dw_pcie_ep_init_non_sticky_registers(pci);
+> > >
+> > > +	ret = dwc_pcie_debugfs_init(pci);
+> > > +	if (ret)
+> > > +		goto err_remove_edma;
+> > > +
+> > >  	return 0;
+> > >
+> > >  err_remove_edma:
+> > > diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c
+> > > b/drivers/pci/controller/dwc/pcie-designware-host.c
+> > > index d2291c3ceb8b..6b03ef7fd014 100644
+> > > --- a/drivers/pci/controller/dwc/pcie-designware-host.c
+> > > +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
+> > > @@ -524,6 +524,10 @@ int dw_pcie_host_init(struct dw_pcie_rp *pp)
+> > >  	if (ret)
+> > >  		goto err_remove_edma;
+> > >
+> > > +	ret = dwc_pcie_debugfs_init(pci);
+> > > +	if (ret)
+> > > +		goto err_remove_edma;
+> > > +
+> > 
+> > Why can't you move it to the end of the function?
+> 
+> So the debugfs entries record certain debug values that might be useful to read
+> in case link does not come up. Therefore, I'm adding it before starting link up so that users can 
+> read it in case some failure occurs in further steps.
+> 
+
+I don't understand this. Even if you move it to the end of the function, users
+can still read the attributes and learn what happended with the link. We don't
+fail if the link doesn't come up.
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
