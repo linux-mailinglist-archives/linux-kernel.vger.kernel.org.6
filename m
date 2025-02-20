@@ -1,154 +1,177 @@
-Return-Path: <linux-kernel+bounces-524021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFAB6A3DE1C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:18:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABBEEA3DE1A
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:18:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0B1519C04AB
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:15:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A16817D76A
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:16:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11EC81FBC8A;
-	Thu, 20 Feb 2025 15:15:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73EAC1FDA7B;
+	Thu, 20 Feb 2025 15:15:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nlTK4BhA"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="EL7gZJKj"
+Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 161A740BF5
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 15:15:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F26221CCEF0
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 15:15:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740064546; cv=none; b=iZ8c7z3g+6CtwOsggrQIwwcF3L6eRa8FTeFJ0TYi4jpqKd65UDAe280Mau7LnmF9AoPkRd4PI/zIN4vdnDG2XbvexmWD2WQsSQFL6AS+vdoWaUFpSKpHTYgrdQ6Y6oa3X8mxhkORZ+ptMOXb/4o4pHJS/1+87gIOeVrIzYChypU=
+	t=1740064555; cv=none; b=rmRj6uV/57ZIQdid91nMxL5nGchJUXCCLomxUy/sORr1Ieo2r1WZIDcXKiF0K8RR74FMY3Azh7c9VIxTfct0mNBwTKL1bVOyrWzVFbI6U7WI+YmuVmNjWYEDQvJdCGjm3Ue8viFcMBBKG3W5mWEgPesh8q/jCspV96Mh79k3HoA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740064546; c=relaxed/simple;
-	bh=/zIRRIBVJC/QJXk5NPCwMMuTXA1Dr/FHTp70Ie4FZ4A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=geBXF/JED+n/328SUPD58pzQnhRAQmfaix/Y3GobQBpOOmXwiMO6/TSJWPeh+5UhlZEuFZKwgWNOedELYq0RiWC6iguif6AlOxZ3FJc9jAFIw5uhcGafvA9S1IIEq7s3AM5CwaksKvKYp8AspvO8A8GVXS8X5vKGkPM5ztr6OOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nlTK4BhA; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740064544; x=1771600544;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=/zIRRIBVJC/QJXk5NPCwMMuTXA1Dr/FHTp70Ie4FZ4A=;
-  b=nlTK4BhAwac3Qap8sOzAu8Nf/0DSfdA60WZw6umuRbKk1gyC22NqrNYH
-   syLV0cKwvUIU6QfsmrdkZfAbXnlJ7pFJY26XZgSgDHnemkanwftg7dKoz
-   ENyrIuxjkFCb8rtGOCaUYmJOrn7FnvGU9SnbiTbY7sMX05TyPXlLedWSp
-   7lPilds5Uj8cUpfigGNbD/cPkgcXv6reQKGLDVZLeeKolpT6A+f1NPxci
-   1nY2dWiuRy0iQObEP8tbuqXrtBXOT8PZHbBD2fidJ4rlEdOOMl1QCYdov
-   tuD+/1Tbr5iaPsv4SrOkOfGwAH9zYdwvMkldnc7Tu2Y/X1vFpO3XzedlC
-   w==;
-X-CSE-ConnectionGUID: vZ2med5DTOSZPYT82cQzkQ==
-X-CSE-MsgGUID: 4iKmb6qeQyW1ENZGf8EWfw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11351"; a="40967731"
-X-IronPort-AV: E=Sophos;i="6.13,302,1732608000"; 
-   d="scan'208";a="40967731"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Feb 2025 07:15:43 -0800
-X-CSE-ConnectionGUID: 5GWJ6pxcSgm4G4UxTQ2pnw==
-X-CSE-MsgGUID: 4c1Kr/dkRwKv0LpBRzfRJg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="152258810"
-Received: from puneetse-mobl.amr.corp.intel.com (HELO [10.125.110.82]) ([10.125.110.82])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Feb 2025 07:15:43 -0800
-Message-ID: <8accbd91-ca59-43f8-b190-7e1ac3df5e11@intel.com>
-Date: Thu, 20 Feb 2025 07:15:44 -0800
+	s=arc-20240116; t=1740064555; c=relaxed/simple;
+	bh=6sQJqtGxtWT9sjnEMH34o2BTX7/zF9LR/I05y8AF02I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bSfEURVJSboByfS58pFhSKfFE2rq/zaCtMOrpRqXt3j1/hEUbwqt0pcTLES/NJoYPVhA4eto4vnixqr8AFOCyBakgcw8wrZZnXZJQWf2OS0w5lvuo89DBqX2hAooRbPpP5bqpoKU0pwrGPAlbDfCNIzQjm6cmFN+BmN6bfx/6vs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=EL7gZJKj; arc=none smtp.client-ip=209.85.219.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
+Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-6e65be7d86fso19948116d6.1
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 07:15:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rowland.harvard.edu; s=google; t=1740064551; x=1740669351; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=DvqFq3zx/4+DAuES2CFEh+pSNqSinjMtQE5PNQIzM+Q=;
+        b=EL7gZJKj8uXPqTxl1gu0531BQyZOcL99Ps4myteKhKlEPRq5uHLb7/yiMqBMzB/B9V
+         2KbCRLXNrZGDPURTPxJMJ6eFgc8TWy+HSyxqEv7ezpI1bADUiAesxr4d541g4SqKIqOp
+         2GiVti6IOoS/Pv9t1uU11SI2+bdYebz8m373arOZHhN9PoRMUAg64ztFN7NBvUP+p/mQ
+         zlSUDnJ431HRtkCV0eq2IHvvtq/4irIC8WKVavxBtEXbgHx1XO0fzCWXT/fS05tgvCC3
+         Nr0CnxxE9M9ayoSbeHyRCquq9zQNi8yrKYSyb8yyvRPiOsJTJhe2TBwnjQiNgjsMwrqt
+         ntuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740064551; x=1740669351;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DvqFq3zx/4+DAuES2CFEh+pSNqSinjMtQE5PNQIzM+Q=;
+        b=WTCfPaKAj7xfLkrNfaxSEdMy8CrKA4tD4vrMBlX9sqD9UHPWT/Wk78i1PxBnd7uXy1
+         c7nK49ApTzdUYBvSI7O53LHibqt2HbT3DXd+47Vp0vlujb7MPvWJzeNfCqwBkFx5DI7T
+         zT37xuck8iwddaq7a69r0El4+4wAK09sJLzEvRLbN93aSQD/uxn9+Axdj/VYpY1mLgc/
+         oBXxMLvfy542l9bS6mGWr/QA5g30/eVFot0sSC5P1FR7uQTw2Q+v1jzuTu4znTwCzalq
+         O6uueJr0Whqml7J0nfKhd5NnswwjVw6OCs8y0M/Qa/99IMS5NKXSy4gWcf6vOkJmhynH
+         6+eA==
+X-Forwarded-Encrypted: i=1; AJvYcCUKu1OGCz6sJKR5I/evkWfTvWscX5HAq8l0O4Qa3u3RznEhBoI/kk5luseaZjjH2IrgSmSNPp5TABG08xQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx18/FQhGCaW+vZtkh7bute3XsElCwMWr+VGJz/1xbLLo36QgQ3
+	jf7iCLWN+quLHSmaUY6WfWyejR0LHubnnWU0PURjyKgTZJ7gwaz1OFbm8pRNCA==
+X-Gm-Gg: ASbGncucryVW7ILnTgTqSpOGGFePGiG4pd/YtbcsWLOYgE62foucQ9W3RSQaw2ZpCn/
+	y42fqLuf25SON8sOSL1VFLSOUQgYQiKarbO8itZLE3hOrQUmzuQOLPiA6G637UvBn5BwPeeoOim
+	LUEujYMhYO9e+6U+kgz3O8np0NX8EN8HJ4IHbRAYUb8cZ44Avg85gExWv/uHmYc/IglJGHmHMSs
+	2dnWFWN49L2eWIW2uT4AK6X2mYtbx7tiKC23bahGoHwNyD9UNkrTzC0bzH/hCq0Q3gEYnFamXQl
+	Ucj/hKSSvIGkqeD5Wx66lX7OfsD5NxS88g==
+X-Google-Smtp-Source: AGHT+IGzataFJehJ6PAd52xp9ykatInv/wr7HUaBcWDAFr+Lvw/Ge0lRdVHOsA5Cj+JsXo3B+tn96Q==
+X-Received: by 2002:a05:6214:d8a:b0:6e2:485d:fddd with SMTP id 6a1803df08f44-6e6a259ac8emr50329426d6.1.1740064550761;
+        Thu, 20 Feb 2025 07:15:50 -0800 (PST)
+Received: from rowland.harvard.edu ([140.247.181.15])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e65d785c09sm86690676d6.36.2025.02.20.07.15.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Feb 2025 07:15:50 -0800 (PST)
+Date: Thu, 20 Feb 2025 10:15:47 -0500
+From: Alan Stern <stern@rowland.harvard.edu>
+To: Prashanth K <prashanth.k@oss.qualcomm.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Simona Vetter <simona.vetter@ffwll.ch>,
+	Takashi Iwai <tiwai@suse.de>, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] usb: gadget: Increase the limit of USB_GADGET_VBUS_DRAW
+ to 900mA
+Message-ID: <628ea5a8-8ef0-452f-b2b5-4325f98b3bd3@rowland.harvard.edu>
+References: <20250120111702.3738161-1-prashanth.k@oss.qualcomm.com>
+ <894f42a7-50a5-401e-a705-a06eafd6161d@rowland.harvard.edu>
+ <1b1587e8-5c38-4138-a27a-1de71ff07ce3@oss.qualcomm.com>
+ <e36303c0-9d1f-4c66-bc40-891958507275@rowland.harvard.edu>
+ <d308300f-2559-4d13-8d15-5a2416ac00c9@oss.qualcomm.com>
+ <e823a961-a0a1-46c3-84a9-7da3cd718f4c@rowland.harvard.edu>
+ <158c9087-8252-432d-92a7-dad69add1133@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v12 00/26] LUF(Lazy Unmap Flush) reducing tlb numbers
- over 90%
-To: Byungchul Park <byungchul@sk.com>, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org
-Cc: kernel_team@skhynix.com, akpm@linux-foundation.org, ying.huang@intel.com,
- vernhao@tencent.com, mgorman@techsingularity.net, hughd@google.com,
- willy@infradead.org, david@redhat.com, peterz@infradead.org,
- luto@kernel.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com, rjgolo@gmail.com
-References: <20250220052027.58847-1-byungchul@sk.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20250220052027.58847-1-byungchul@sk.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <158c9087-8252-432d-92a7-dad69add1133@oss.qualcomm.com>
 
-On 2/19/25 21:20, Byungchul Park wrote:
-> I'm posting the latest version so that anyone can try luf mechanism if
-> wanted by any chance.  However, I tagged RFC again because there are
-> still issues that should be resolved to merge to mainline:
-
-I don't see anything fundamentally different here from the last 11
-versions. I think the entire approach is dangerous and basically makes
-things impossible to debug. It's not clear that some of the failure
-scenarios that I've brought up in the past have actually been fixed.
-
-What I've said here still stands:
-
-> https://lore.kernel.org/all/fab1dd64-c652-4160-93b4-7b483a8874da@intel.com/
-
-> I think tglx would call all of this "tinkering".  The approach to this
-> series is to "fix" narrow, specific cases that reviewers point out, make
-> it compile, then send it out again, hoping someone will apply it.
+On Thu, Feb 20, 2025 at 09:47:58AM +0530, Prashanth K wrote:
 > 
-> So, for me, until the approach to this series changes: NAK, for x86.
-> Andrew, please don't take this series.  Or, if you do, please drop the
-> patch enabling it on x86.
+> 
+> On 22-01-25 12:56 am, Alan Stern wrote:
+> > On Tue, Jan 21, 2025 at 10:19:08PM +0530, Prashanth K wrote:
+> >>
+> >>
+> >> On 21-01-25 08:36 pm, Alan Stern wrote:
+> >>> On Tue, Jan 21, 2025 at 09:50:08AM +0530, Prashanth K wrote:
+> >>>>
+> >>>>
+> >>>> On 20-01-25 08:17 pm, Alan Stern wrote:
+> >>>>> On Mon, Jan 20, 2025 at 04:47:02PM +0530, Prashanth K wrote:
+> >>>>>> Currently CONFIG_USB_GADGET_VBUS_DRAW limits the maximum current
+> >>>>>> drawn from Vbus to be up to 500mA. However USB gadget operating
+> >>>>>> in SuperSpeed or higher can draw up to 900mA. Also, MaxPower in
+> >>>>>> ConfigFS takes its default value from this config. Hence increase
+> >>>>>> the allowed range of CONFIG_USB_GADGET_VBUS_DRAW to 900mA.
+> >>>>>
+> >>>>> Is this the sort of thing that really needs to be a Kconfig option?  Why 
+> >>>>> not make the decision at runtime, based on the needs of the gadget or 
+> >>>>> function drivers and the connection speed?
+> >>>>>
+> >>>>> Alan Stern
+> >>>>>
+> >>>>
+> >>>> Right, set_config() in composite.c does this in runtime based on the
+> >>>> values of MaxPower (from configFS), VBUS_DRAW defconfig and speed.
+> >>>> If we don't set MaxPower from configFS, this config helps to set it
+> >>>> during compile time. In fact MaxPower in configFS takes its default
+> >>>> value from CONFIG_USB_GADGET_VBUS_DRAW . Sent this patch because Kconfig
+> >>>> has this limitation where it's only allowing values upto 500mA.
+> >>>
+> >>> Why does MaxPower need to be set at compile time?  Why not set it at 
+> >>> runtime instead?
+> >>>
+> >>> If MaxPower gets set at runtime then it can take its default value to be 
+> >>> 500 mA or 900 mA depending on the connection speed.  There will be no 
+> >>> need for CONFIG_USB_GAGDGET_VBUS_DRAW.
+> >>>
+> >>
+> >> Yes, agreed. Can we mark CONFIG_USB_GAGDGET_VBUS_DRAW as legacy and
+> >> maybe also avoid configfs/composite from using it?
+> > 
+> > Indeed, the whole idea is to avoid using CONFIG_USB_GADGET_VBUS_DRAW in 
+> > configfs and composite.
+> > 
+> > If nothing will still be using it, just remove it entirely.  No need to 
+> > mark it as legacy.
+> > 
+> > Alan Stern
+> 
+> Hi Alan, small doubt, I see that gadget/legacy/webcam.c is a super-speed
+> gadget which uses CONFIG_USB_GADGET_VBUS_DRAW. I'm quite not really sure
+> if anyone uses it now, but if someone uses it, then wouldn't my patch be
+> applicable there?
 
-I think I'd also like to stop being cc'd on this. If LUF is merged into
-mainline and proven to work on arm64 or riscv for a year, I'd be happy
-to take another look at enabling it on x86. I think that's just about
-the only thing that would make me reconsider.
+A quick search shows that the legacy/gmidi.c driver also uses it.
+
+Still, if these are the only drivers that uses 
+CONFIG_USB_GADGET_VBUS_DRAW, it means that parameter isn't really very 
+useful.
+
+The best solution I can think of is to make vbus_draw a module parameter 
+in for the two drivers, with the default set to 500.  That's more 
+flexible than relying on a Kconfig parameter anyway.  Of course, this 
+means the .MaxPower field in the webcam_config_driver and midi_config 
+structures will have to be set dynamically at runtime.
+
+Alan Stern
+
+> Noticed this while preparing a patch to remove dependency of VBUS_DRAW
+> config from configfs/composite layer. Its ready, will send that after
+> some testing.
+> 
+> Regards,
+> Prashanth K
 
