@@ -1,266 +1,170 @@
-Return-Path: <linux-kernel+bounces-523693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9633A3DA11
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:31:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C1ECA3DA06
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:30:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0886C423EF1
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:27:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49F3E189E4B2
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:27:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 456B71F584E;
-	Thu, 20 Feb 2025 12:26:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B7C81F4639;
+	Thu, 20 Feb 2025 12:27:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LpHAY1VV"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Xq4J8K6V"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2074.outbound.protection.outlook.com [40.107.243.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DA761F4639;
-	Thu, 20 Feb 2025 12:26:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740054398; cv=none; b=ZvcOvnxgK/UqQXKGp6iwFk3olyg5otGkRfRnYJvNfwNRtEPl2+Vq3C7CDtZdetTE53MwULP+HPyGefiO61R3C/5grqa08Wj1Qmi1AaXFkMtLIP3s2398E0tLiuxH32d2ReK9EEC0xpIWHJtgT16bkqTnjQOMPysQHrpVrSfVlVQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740054398; c=relaxed/simple;
-	bh=/ag2+pqBfNA1YnPg2qWQBfIKIJRPfPq2nVeOyjnOjME=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jMR6J6zcKGvdal2azB5n/FMKOHFo4c09r+Hj0EWdvKoVE5W1K69kXKvTsXT99nO6sz9b9ylRDZLtDvALUOv5Nr6mYlAju8DLL/sqx4wzHWszDqpsq2CFJn+o4X1skinU/KciOQdSJq/NqEYt/NUbFldXb1DfQTmLC8lo3jyLakI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LpHAY1VV; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-38f31f7732dso574682f8f.1;
-        Thu, 20 Feb 2025 04:26:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740054395; x=1740659195; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qH3DdgoKEAfwj4iaPXGOxAlwGgUTybVzhqeu1NMzPMo=;
-        b=LpHAY1VV4bnUVGNwzKdm6fhXfUwM8GfItSQ55kzxwwYth7I+KgqFaGrsHNiGzsyaQL
-         YdZaq5P3no0ByyE5e/x/VIEdZvgUNv1Ttp3svsN2XCwQ0lXOMDvGScugUPejXXs2F794
-         fpr1g/h08de7TjVTiyav2Omwy92PF7FkqadA+gsoieqpkRi4Y8U44kmksbrwtjb0wTxC
-         olwmsLUJXwuE5Ds97ib+x+cg2sdpljDI3mMUCRqmur9ZjWIchFCgSYp7EKZJhR1aIji6
-         8djfrlG1xG3a87GGjCEcUMgWHpwPJjN4frp8w2fiUcjpPZTD9J3X9loPDpukmnfVEeO1
-         NEAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740054395; x=1740659195;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qH3DdgoKEAfwj4iaPXGOxAlwGgUTybVzhqeu1NMzPMo=;
-        b=qDC4HRc/JvggJbTvaSo98Yn0/GaQEfuvdvaKyncZdmz7HCxgASeKNXx/CFuz13WLb1
-         2STliW+enfVp2iyhoONuGqCLQ4KZ1J1Mg7vzR52eBNjlgTEmEglGCvxijv+qPS94hjXz
-         nFFOPNccytJaKLz4TscfflG8XjAI3eA89guLmD5RUYEnyJjqBrK9MEGy9fBy7O75Tfko
-         QQGbyhYGQytq/5dl2omFyJg/vW4wDoxQ7ha9zBjROTVi01qZmXXUA7D8Evlj2Lvi5oDN
-         CyDns59s8fT2bEzd1Ykoo9LeqpOirS49iVXvi8sFnuEWZ7q9jz+FXUbBr6mwyMpwXxHe
-         /Y8g==
-X-Forwarded-Encrypted: i=1; AJvYcCVI9beKsgclcu3ghDef5ZGNXjCE0EEQOP+V3Wn7bRpjyU9F8yewUpRli7EQXAaNyV5BsjkChCU7Xj7L@vger.kernel.org, AJvYcCWmN1Jf4V20koCP+X2C4ne8fySZWmFQHlas/r7KSE9dulavXJ+49bZRQ0LHvCnspWp+Me4O+yVeGoOqSBbL@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBjAISb/zE03bBwLJ2HnShZoIbUeidGRusfGXIpwVEL4pTL7aa
-	7jssM2FemOeKotCact7tRmFwNvoUt4nmzXpwT1YRDYKr+pjb2So0Z2tqI1za6momxvlQhK9iC2L
-	k1YvvEsPYb3PVAKu4SeQEJE1NX+I=
-X-Gm-Gg: ASbGncudzaI081gEmvKZVZDTnLlNOBxujTKiZyUAmDTMoknG36lv890VkbH6mAS9vz2
-	pmObBzkf0Rt6rKqL7FSIqz7rqEKEmzj60CWs3AOVg0SZ+1haKJPTQQMMWGtFNkPHBiKKMS9unnQ
-	==
-X-Google-Smtp-Source: AGHT+IEJTUmZHt18x/a4EVaHGfsjiEvSDzeEMYQTsZEr7m09QmHa6Dk5Cu5cXVAh1apSpLSOdMYco8A9NnvUxoKYV4Q=
-X-Received: by 2002:a5d:58eb:0:b0:38d:b12f:60d1 with SMTP id
- ffacd0b85a97d-38f61609f19mr2169886f8f.26.1740054394477; Thu, 20 Feb 2025
- 04:26:34 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 314491F4632;
+	Thu, 20 Feb 2025 12:27:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.74
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740054464; cv=fail; b=cJ5fe/7iKvhPPjFHjXuivNUo59iGORPzzr+W5Eq959ILbPunBiuEMBY2xEnzU0mslJKxwS2VS8UAfISN5TDsSu2ZY2k9Dj5spBfl+LX235hOpQyrGEDXben0UFCiplwFXxakPoqmoz4CbA4ZIObok+L5ukhOZnTbsQKhzfHiL00=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740054464; c=relaxed/simple;
+	bh=sV//YLC0KFNJzc5zUtBTqkn5vGCzgzQVBIfoQpvC41k=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=aVONIsr8j2hVKGtYmDp9WlPZ5T54AWRZMCS8cmN2esvMx1q9+xPGzSSuayYel1IYoVBM5mjHk0Hg01xCELBK7UFQEZMRZgekvGLu7ryQGIgtgTFOsd1E5Icl+3MRek/GGp4rpwWY8SlSgDhMKxoJ/yRo2enYXu0fy2YKjdC4SZ4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Xq4J8K6V; arc=fail smtp.client-ip=40.107.243.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=lkA618zE+M1sAEnx/LJCx0xvD9CCEAEJKPVHdrlQKwwAEZGXeEW8/dBwu8mCsqsZtUXlkOZDfw96Lhdv+zr4JaY9ga3I2vVhQBB1h4RDI23QFFVv1AXkxDI3h6gL/8itvzjERJ+IpKLBOS0GHPw2+7y/JKW3FOGJD4hoMYdjJqGauxUL6AspaMO+48GnCiIGKvMi2WXDp7vck9FqAaZ1z9Q+UQ1h8EQn510oORlfyegggQj/a8SmZh8+YO0SWRHdgHwC3tvuptKOxXVRFKRBWZdjCCOtZMP7Bxq/xdKJFf94xFP4plp0KsMLFab+L3xrfPDPbpoL5zMhYZsQDL0rbA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=etB1G5mAzoQrK78l1YWY2LcFpuySs7wlwxKdhO/oWeI=;
+ b=RatTJh9OPZPwpocA6uauINW9vWKxXp+HXZ4sZ3jsc2yQCQkxQMks4AZ/Yot3ukqKLsX3FMJTbn9upwK5cbA4MhQOP9WLjfXI36o/sGUp2lmhEPvx1Oh5FmMjqnxhRm+uwJH0G4rTrcuAe8dDpRjw7ablcA2SpVR9lFgdEszKGdyvkOOOguLmqM1Cte+Viq1a8nw8kmzbEZcEN/woR0+LZcGr9Ove5DwJoHWQdaCtb0E5pse/BvnmnI4i5PdNkT2p8T+zfowfrLMkStIv01KJaF5X++ys87eQy4zL0RXJ1EbYvliw6PKjb/kNBH/hKkgGsVGmK3WVM68IfBEorzTniA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=lists.denx.de smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=etB1G5mAzoQrK78l1YWY2LcFpuySs7wlwxKdhO/oWeI=;
+ b=Xq4J8K6Vrn4MTgDr9ng69dExU4S84a8/pW52S3u6TADl30nk+YgAGaoCKrQJgBs3vwSGjsyK6ob2U0R/pglRm/VzGeyidwRoX09VuzT0cLlFI5YpiKiol6kWu7gRmP0cneNyNPvuOKEzB1WXbHfiWtaTpceia4Nv/ClMAGwAqXc=
+Received: from MW4P223CA0014.NAMP223.PROD.OUTLOOK.COM (2603:10b6:303:80::19)
+ by BL3PR12MB6595.namprd12.prod.outlook.com (2603:10b6:208:38e::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.18; Thu, 20 Feb
+ 2025 12:27:37 +0000
+Received: from SJ1PEPF00002319.namprd03.prod.outlook.com
+ (2603:10b6:303:80:cafe::ed) by MW4P223CA0014.outlook.office365.com
+ (2603:10b6:303:80::19) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8466.15 via Frontend Transport; Thu,
+ 20 Feb 2025 12:27:36 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ SJ1PEPF00002319.mail.protection.outlook.com (10.167.242.229) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8466.11 via Frontend Transport; Thu, 20 Feb 2025 12:27:35 +0000
+Received: from localhost (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 20 Feb
+ 2025 06:27:32 -0600
+From: Michal Simek <michal.simek@amd.com>
+To: <u-boot@lists.denx.de>, <git@xilinx.com>
+CC: Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
+	<krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, "open list:OPEN FIRMWARE
+ AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH] dt-bindings: trivial-devices: Add ti,tps53681
+Date: Thu, 20 Feb 2025 13:27:25 +0100
+Message-ID: <26aac15b8f0fdbcc2633d3843e216e6c8d30bb31.1740054443.git.michal.simek@amd.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250217140910.108175-1-clamor95@gmail.com> <20250217140910.108175-3-clamor95@gmail.com>
- <zmwn3dnnmwhms2qxqwb6ksshx27fcq2i4wujz5utuldaiqs6oz@idvy3dirrmuo>
- <CAPVz0n3bqLhuC0gxXD-=L0ETMmhOv1Ku0PrWUb_Yn09v3UNuOA@mail.gmail.com>
- <hemnpzzz3ddibdbqwkazwuoalmvuc2mekebqxfrnxiod6futni@sgdjgtrbcwza>
- <CAPVz0n24o5yar-0oO5dPb3vLzuK=Ln8+JKuaooSRwPfiaLQ9vA@mail.gmail.com>
- <jo7nnxrzwi43qqii7wtekdbc6vluakkvg4ndw266ajgkpe3y52@whd5nly34nju>
- <CAPVz0n3HsXJeyRJGP=_UMhs7d4OA-P_yXx5B9EQDU7vQCz8qoA@mail.gmail.com> <3lms6xzzu3hfhkncikcmvl6btzdcc2cwoh4kwhw53hdakecrij@yqoyl3bqmm5m>
-In-Reply-To: <3lms6xzzu3hfhkncikcmvl6btzdcc2cwoh4kwhw53hdakecrij@yqoyl3bqmm5m>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Thu, 20 Feb 2025 14:26:22 +0200
-X-Gm-Features: AWEUYZnht_Ew12HsnJseDT7TV_6lFwyWBz022uUOwakEZ6gmzeAR7-sBzh9_wRA
-Message-ID: <CAPVz0n3YZass3Bns1m0XrFxtAC0DKbEPiW6vXimQx97G243sXw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] drm: bridge: Add support for Solomon SSD2825
- RGB/DSI bridge
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1105; i=michal.simek@amd.com; h=from:subject:message-id; bh=sV//YLC0KFNJzc5zUtBTqkn5vGCzgzQVBIfoQpvC41k=; b=owGbwMvMwCR4yjP1tKYXjyLjabUkhvTt8utcboj88U4T3N8SY5i9t9N3fnDFmw6Dtp/7L109n Hspu0inI5aFQZCJQVZMkUXa5sqZvZUzpghfPCwHM4eVCWQIAxenAExE8D3Dgh7+/LmBXN639Bcc jZJSefPmVN3TKwzzy1hMUyu3efLYOu4Rt06wz3sg++wMAA==
+X-Developer-Key: i=michal.simek@amd.com; a=openpgp; fpr=67350C9BF5CCEE9B5364356A377C7F21FE3D1F91
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF00002319:EE_|BL3PR12MB6595:EE_
+X-MS-Office365-Filtering-Correlation-Id: 787a910e-fac9-4357-626c-08dd51a9f50f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|376014|82310400026|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?1z30hN4DqhFBpUsMMfLeVMaLQe1ufRpOVU9YwkHRR7mdSOlwikzkg+eUptSe?=
+ =?us-ascii?Q?GNZQ7dmGHXY8w35HCyrgx/N8Mnz/dIzX/F5N33+AOY49AaKgJ8Gt8vI2FyjB?=
+ =?us-ascii?Q?ocnW69mFyQk4qz6Mdj54NYKyd8/XR4KwvBZmRrQP1eiV47t7AlxtvBhuCnuv?=
+ =?us-ascii?Q?OlOxG9wZNmdO2JI9lk+ybvB/wADsA5WcTSHaqhl3KRkmWD5Ef5gTCKFSXBat?=
+ =?us-ascii?Q?oHMdHuGWo8zV9TJPRj5Zg4ZRS/xmXJ+BAAaL/xUbvLvn9v8C9EczQ891xMCY?=
+ =?us-ascii?Q?rijIkcEaocLO1DCPHCfzIzNKZw1yy2IXG/aSZTlImddC5Hm0IksXW4MGii50?=
+ =?us-ascii?Q?azO1eFTlW/a4yJ053qpY+Ke+C9Dgm+OBDzyyzNq1jFrmk6oD/R8AHiSyumYO?=
+ =?us-ascii?Q?pNJkxG92/Ob0cPgwGIa/q+8pODQYAfQVsBBGPDZRwlMwid0vSSVzxDXVqBMP?=
+ =?us-ascii?Q?HHeMUOS1JNMsWgUKVDHIBHuwPr+pVwe0yQ26Ekl0oVyVaZunpnE9hPXwoc1s?=
+ =?us-ascii?Q?69LEAt8KowgBvTeHyZ2bS3wHRJKmaCBDxVn8dOxjl+bGiIKxIX/vBBk+MgV3?=
+ =?us-ascii?Q?i2kLoqM4IwOk9Pxvky3A2gy8tiCYDG0tT01WGfMpaIGnL0A/QGzoYdynOGNC?=
+ =?us-ascii?Q?qxvf2Shd1wQObZIXf2T8+/ZLvtr9nOnVGUAr+oluWaYUCMHjlJtzDglGKHw8?=
+ =?us-ascii?Q?jkg+d8dYUjDXg2P2UtbYro20z+XfhouOqBQ9HG0WPKPgSCNYxsibr+lP8VE3?=
+ =?us-ascii?Q?uDZiO6hRMc2W+/5AmWU9xv4811muLqtAItgT9hJYWkM0lYLV/Hal12gLn8pm?=
+ =?us-ascii?Q?+8PAs3LNfmYUmDpod3mki9Xr3BT8JI1CZJw/NVNkYcDD0TcBUrvSnGdyda6o?=
+ =?us-ascii?Q?6RP8YsB8cRl0cuju8gaFEUNYkXNEIPXTmHSAvkXDs985QRxSYkCYTh9+G9BJ?=
+ =?us-ascii?Q?WKIkglsxNLlRTz7TtWdgnt0/jhUtHY0V7z6ADo8gz1axmBkSfSGu5Hy0U/j7?=
+ =?us-ascii?Q?sSoOZjvS+0zMhBDtSJtohMVY/IOdF0FhW9BLE2fn+Xz2AffnloCnSok0PKU4?=
+ =?us-ascii?Q?9mTGzwLaCz/MOcyzJH1/enzokgnaqWiO0gQw2M88qH0i+3OTWcVSmjALfwZq?=
+ =?us-ascii?Q?1pg8MlVuIgEugvdlZTReVvH/jumNXAoqz9WcuMeV9tPno7Qy05q3xf+Y2ULm?=
+ =?us-ascii?Q?hSI9bPQrB22Kl6lDY66SQJFnkP+RvxbXOTrplwkVjfGncAF8aOoV6GWpCzp5?=
+ =?us-ascii?Q?y1fKWNnSO4gDEt+8yDUbysqyQBscsDoNoWF215L6ClNJ02lV23F0AoqRSMq4?=
+ =?us-ascii?Q?qUkkuOdygw1edk4y2aQ3OzQ2fksQwbgnfSvKIv85lnnum4P8DiK1ni/Vef8N?=
+ =?us-ascii?Q?xBAWGpNKoOACe/Qu4DjDpLBseTVPgRB5j5EtZsZfWOvKliAU3OGrL4IqbbCc?=
+ =?us-ascii?Q?AVAwNP2EzwLymSPMQH9RRHlvai3vYuy7vuvpXWXRmCJx4uN8+Hzy/ciw0We5?=
+ =?us-ascii?Q?qVNyFmhxsPFCJH8=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(376014)(82310400026)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Feb 2025 12:27:35.7508
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 787a910e-fac9-4357-626c-08dd51a9f50f
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ1PEPF00002319.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR12MB6595
 
-=D1=82, 20 =D0=BB=D1=8E=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 13:35 Dmitry Bar=
-yshkov <dmitry.baryshkov@linaro.org> =D0=BF=D0=B8=D1=88=D0=B5:
->
-> On Thu, Feb 20, 2025 at 09:37:18AM +0200, Svyatoslav Ryhel wrote:
-> > =D1=81=D1=80, 19 =D0=BB=D1=8E=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 15:34 =
-Dmitry Baryshkov <dmitry.baryshkov@linaro.org> =D0=BF=D0=B8=D1=88=D0=B5:
-> > >
-> > > On Tue, Feb 18, 2025 at 04:36:17PM +0200, Svyatoslav Ryhel wrote:
-> > > > =D0=B2=D1=82, 18 =D0=BB=D1=8E=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 16=
-:20 Dmitry Baryshkov <dmitry.baryshkov@linaro.org> =D0=BF=D0=B8=D1=88=D0=B5=
-:
-> > > > >
-> > > > > On Tue, Feb 18, 2025 at 02:45:19PM +0200, Svyatoslav Ryhel wrote:
-> > > > > > =D0=B2=D1=82, 18 =D0=BB=D1=8E=D1=82. 2025=E2=80=AF=D1=80. =D0=
-=BE 14:31 Dmitry Baryshkov <dmitry.baryshkov@linaro.org> =D0=BF=D0=B8=D1=88=
-=D0=B5:
-> > > > > > >
-> > > > > > > On Mon, Feb 17, 2025 at 04:09:10PM +0200, Svyatoslav Ryhel wr=
-ote:
-> > > > > > > > SSD2825 is a cost-effective MIPI Bridge Chip solution targe=
-ting mainly
-> > > > > > > > smartphones. It can convert 24bit RGB interface into 4-lane=
- MIPI-DSI
-> > > > > > > > interface to drive display modules of up to 800 x 1366, whi=
-le supporting
-> > > > > > > > AMOLED, a-si LCD or LTPS panel technologies for smartphone =
-applications.
-> > > > > > > >
-> > > > > > > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > > > > > > > ---
-> > > > > > > >  drivers/gpu/drm/bridge/Kconfig   |  14 +
-> > > > > > > >  drivers/gpu/drm/bridge/Makefile  |   1 +
-> > > > > > > >  drivers/gpu/drm/bridge/ssd2825.c | 824 +++++++++++++++++++=
-++++++++++++
-> > > > > > > >  3 files changed, 839 insertions(+)
-> > > > > > > >  create mode 100644 drivers/gpu/drm/bridge/ssd2825.c
-> > > > > > > >
-...
-> > > > > > >
-> > > > > > > From v1:
-> > > > > > >
-> > > > > > > Most of these flags should be set depending on the
-> > > > > > > mipi_dsi_device.mode_flags.
-> > > > > > >
-> > > > > > > > +             ssd2825_write_reg(priv, SSD2825_PLL_CTRL_REG,=
- 0x0001);
-> > > > > > > > +             ssd2825_write_reg(priv, SSD2825_VC_CTRL_REG, =
-0x0000);
-> > > > > > >
-> > > > > > > Why? Why do you need this special handling for the
-> > > > > > > MIPI_DCS_SET_DISPLAY_ON? Why can't it just go to .atomic_enab=
-le()?
-> > > > > > >
-> > > > > >
-> > > > > > This has to be called after panel init dsi sequence completes, =
-is
-> > > > > > atomic_enable called after panel init dsi seq is completed? May=
-be you
-> > > > > > can suggest where to place it.
-> > > > >
-> > > > > That depends on a panel. Significant number of panel drivers call=
- all
-> > > > > DSI programming in .prepare because some DSI hosts can not transf=
-er
-> > > > > commands after starting DSI video stream.
-> > > > >
-> > > > > So these commands should go to your .enable().
-> > > > >
-> > > >
-> > > > This is weird and counter intuitive to send dsi commands in prepare=
-,
-> > > > there should be smth like enable_post. Oh well, fine, I will try to
-> > > > fit this somehow.
-> > > >
-> >
-> > Who had made this cursed framework?
-> >
-> > Functions are called in the next seq
-> >
-> > panel_prepare > bridge_pre_enable > bridge_enable > panel_enable
->
-> Use drm_bridge.pre_enable_prev_first or drm_panel.prepare_prev_first. I
-> think that fixes your order issues.
->
+Describe TI TPS5381 a dual-channel multiphase step-down controller
+supporting per-phase and per-channel output telemetry.
 
-This seems to have no effect. I have set panel.prepare_prev_first =3D
-true in the panel probe, which should result in
-bridge_atomic_pre_enable be called before panel prepare,
-and yet I still have this:
+Signed-off-by: Michal Simek <michal.simek@amd.com>
+---
 
-[   45.280653] renesas_r61307_prepare start
-[   45.300873] renesas_r61307_prepare end
-[   45.301070] ssd2825_bridge_atomic_pre_enable start
-[   45.317248] ssd2825_bridge_atomic_pre_enable end
-[   45.317287] ssd2825_bridge_atomic_enable start
-[   45.331650] ssd2825_bridge_atomic_enable end
-[   45.331677] renesas_r61307_enable start
-[   45.520959] renesas_r61307_enable end
+Linux kernel driver support has been added by commit 53030bcc87e4 ("hwmon:
+(pmbus/tps53679) Add support for TPS53681").
+---
+ Documentation/devicetree/bindings/trivial-devices.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
-With or without the flag it is same
+diff --git a/Documentation/devicetree/bindings/trivial-devices.yaml b/Documentation/devicetree/bindings/trivial-devices.yaml
+index fadbd3c041c8..fd6389aefc30 100644
+--- a/Documentation/devicetree/bindings/trivial-devices.yaml
++++ b/Documentation/devicetree/bindings/trivial-devices.yaml
+@@ -380,6 +380,8 @@ properties:
+           - ti,tps53676
+             # TI Dual channel DCAP+ multiphase controller TPS53679
+           - ti,tps53679
++            # TI Dual channel DCAP+ multiphase controller TPS53681
++          - ti,tps53681
+             # TI Dual channel DCAP+ multiphase controller TPS53688
+           - ti,tps53688
+             # TI DC-DC converters on PMBus
+-- 
+2.43.0
 
-> > There is no gap in between bridge_pre_enable and bridge enable, hence
-> > I cannot call dsi commands in panel_prepare since bridge is not even
-> > pre_enabled, and if I call then in panel_enable, I cannot complete
-> > bridge configuration since bridge enable is called before. like WTF!
-> >
-> > I enclose log with function call seq
-> >
-> > DSI commands in panel prepare
-> > [   75.149700] ssd2825_dsi_host_transfer start  << this is panel prepar=
-e
-> > [   75.149737] ssd2825 spi0.2: Bridge is not enabled
-> > [   75.149750] panel-renesas-r61307 spi0.2.1: Failed to exit sleep mode=
-: -19
-> > [   75.149779] ssd2825_bridge_atomic_pre_enable start
-> > [   75.178518] ssd2825_bridge_atomic_pre_enable end
-> > [   75.178552] ssd2825_bridge_atomic_enable start
-> > [   75.179026] ssd2825_bridge_atomic_enable end
-> >
-> > DSI commands in panel enable
-> >
-> > [  102.821580] ssd2825_bridge_atomic_pre_enable start
-> > [  102.852000] ssd2825_bridge_atomic_pre_enable end
-> > [  102.852057] ssd2825_bridge_atomic_enable start
-> > [  102.852840] ssd2825_bridge_atomic_enable end
-> > [  102.852866] ssd2825_dsi_host_transfer start  << panel enable
-> > [  102.853876] ssd2825_dsi_host_transfer end
-> > [  102.948420] ssd2825_dsi_host_transfer start
-> > [  102.949289] ssd2825_dsi_host_transfer end
-> > [  102.978389] ssd2825_dsi_host_transfer start
-> > [  102.979567] ssd2825_dsi_host_transfer end
-> > [  102.980117] ssd2825_dsi_host_transfer start
-> > [  102.981248] ssd2825_dsi_host_transfer end
-> > [  102.981809] ssd2825_dsi_host_transfer start
-> > [  102.982851] ssd2825_dsi_host_transfer end
-> > [  102.983537] ssd2825_dsi_host_transfer start
-> > [  102.984556] ssd2825_dsi_host_transfer end
-> > [  102.986743] ssd2825_dsi_host_transfer start
-> > [  102.988078] ssd2825_dsi_host_transfer end
-> > [  102.989445] ssd2825_dsi_host_transfer start
-> > [  102.990411] ssd2825_dsi_host_transfer end
-> > [  102.990912] ssd2825_dsi_host_transfer start
-> > [  102.992274] ssd2825_dsi_host_transfer end
-> >
-> > In both cases there is no gap in between bridge pre_enable and enable
-> >
-> > > > > But what is the case for these calls? Are you manually implementi=
-ng the
-> > > > > MIPI_DSI_MODE_LPM flag? What exactly do they do? What happens if =
-the
-> > > > > panel driver asks for the MIPI_DCS_SET_DISPLAY_ON command after y=
-ou've
-> > > > > programmed those registers? What happens if the panel asks for th=
-e
-> > > > > backlight control?
-> > > > >
-> > > >
-> > > > Backlight is externally controlled, at least on my device, so I can=
-not
-> > > > test other cases. If I configure those registers before dsi sequenc=
-e
-> > > > is completed panel stays black. If I simply remove those
-> > > > configuration, panel stays black.
-> > > >
 
