@@ -1,138 +1,216 @@
-Return-Path: <linux-kernel+bounces-524245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 484AFA3E119
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:43:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 034A8A3E104
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:40:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50BFD3B11C4
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:38:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96F8317E98C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:39:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FF9020B81B;
-	Thu, 20 Feb 2025 16:38:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 166FC20B81B;
+	Thu, 20 Feb 2025 16:39:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TUqVdRtN"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="F/JKprIb"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AADF1E32BD;
-	Thu, 20 Feb 2025 16:38:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3816A20D4E5;
+	Thu, 20 Feb 2025 16:39:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740069539; cv=none; b=NOZMms87hIAD7Do5faBYEIeb4SozzR7SnvX3RO03Hu8Brp/KJZyyMpg9jANw0xFl4jxIm/MWwR+vvfvBdwIBZOgmKgg1TFchoQSWmFb4cZn3LEjJ/cp8foEi5aaO52p4lXW27jT/DZNhCxRvAQbBEDFgav9R1SYsJsD/O8jBmzw=
+	t=1740069546; cv=none; b=f8MLMjCZycvMq7Z8i6cMDi6vQsmXxltlgroN9xisD1SWcOGd6mcS4U8osCb0ikOOI1BVHOumMBeksJoxO1YbbivnTv3evKk6VDjzb6xBjzGjOGdHSAkGq/beUmjENf0qBdJR+1uRa5Z3gk8SygWwpFdyrMFdul1VyDrH2Ow6u90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740069539; c=relaxed/simple;
-	bh=enw3vpdlwjuqr/D+m0WXDrtOqoqKbZbyUyAjN8kC5kY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mhnFgR//MqB6tnu6e+7IwZfTTEa2xMwovT36HWiAkRIeX4IpAc21YjfF3hvtAPcYTaYwI4cw7Izk1cQth/1GaP3IIdq+Rsc2XWnAGJhAwRfefGhdPxTH26b0qMm4I61hj5jy5K6Cf95g+au8jtuuYkUUZcb9h57Hm28aUh8PCfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TUqVdRtN; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2f9b9c0088fso2150223a91.0;
-        Thu, 20 Feb 2025 08:38:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740069537; x=1740674337; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=YabjOh7WpvJZVKAfwb1a4vLOh26YIuOrbHAk91VmU0g=;
-        b=TUqVdRtN9/yxf5DVkmSHnCtF1A1TkNHMsgze9Xl4F44YFzXuw26kP6n2qVvx4775JY
-         BSvhtzd64QQGFnJdLI/cSQNgjv244HOuTumKmfwLndR/xcqRE71tuMcPLrW1+ZWy7hXY
-         lUKBvD15nVaygEoE8Cyu/EOc1Zm/1E49APP/9eCnMGXzuPj6ONA7tdJiutykRUr2oaU/
-         3qmoGw3Z211W4aGaNuEiP73JDchX9aL7Y3jcuvEhH+BVPq3FHw2/Z3GNlbbByNnPh585
-         dAMlVvuwHSPkOIJkeBUoQGXSzOi+GHqzc12iyNgSi9vqAGTYYPe6+LE/8Ov0v3NEr4gh
-         kpPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740069537; x=1740674337;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YabjOh7WpvJZVKAfwb1a4vLOh26YIuOrbHAk91VmU0g=;
-        b=PRoKqgU432PdYIpboU6IocI5NjSGpceKpqRKAKjxfjITVvPO8Yh0vjEjk52JUcnCXN
-         Ma68dwajHXtNtqDdhL824qnvTE2WGvbHwWv4QLmfLRqjbbGFA7GdED8IHejrBrsUBUoK
-         cQYG7wY2W7jPz2Slwn4bY69M0+jBv97da4x4OetdRVIfudoHapCwDRzEo1kbiSDyizOm
-         K3VNOBJeRM7H9vvqKDNgAKqNljU6hlFvs4N9eihb3KOkxdcJBav7npmjolsV+riq0JDB
-         aR3bovHxlNy8oH1boU9seMx81jBbw9Y43jW69YSc5UdhXfmYBkf8blmX90q0ItUWoL1e
-         39zA==
-X-Forwarded-Encrypted: i=1; AJvYcCWw1bFsle1uaKvOl5CsqlNxCM4eGHjIEOVxEbL0eHJ3O34QyvWAqdxB0EWcZEx3oxRRcF99fXK08lOW9ME=@vger.kernel.org, AJvYcCXC3XqEsVsPfvUpH74e+xJQVsONd2HTSL/EGD3cbayc191lInryCPvazerO+2rktbfKjLYDPw+FhxA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywnqz7QGrIef+95QmUJWNCKwN8/W1Nh8pIaqhUWxxSrX2uZoB7F
-	qUrzsZD2ikmaA79n9f6brOIVJWFsn/UB4UTL546lPNxQM5q+vDgojhCZ6mXh
-X-Gm-Gg: ASbGnct0ZcsHEneMNExBu3KsmQwVxlI1k7RRAZjJoIhOtwJlxB1i7KTjL3mlDpqxGQE
-	KdgzD2+hdxKU6U+7LtI2gfEWDGJjRX7Ezyy18L60lOkgvTA7ucTlkK6FK+ThgHH6doNfsEFDvqM
-	CHfjjUAo4O3VzMUZhjywhq4w0MdNP5CbSf9SzKjxYr+kJZKKoLK/MuVsAeMw+D0TpUY0AyO3mdo
-	Z7rWhPE2ynBOSELmudXT+Tko/kTCTRPdC+xAejbh9S26KNpRXDsxG+cXAIX+LIrsGffozQLP9aK
-	csDnuRD9DbhkLLxIfmDwNKQkylb3RHzep/IMFNbDTYWe4u5hGo8E2GsYFKBD
-X-Google-Smtp-Source: AGHT+IHm7I3jyzH88/nJ/wlPRDt1bCVRKuuvraYNrio2tLf0ppW5sSdHzjaLFWilmSVDf6k5FnBX4Q==
-X-Received: by 2002:a17:90b:3805:b0:2ef:ad48:7175 with SMTP id 98e67ed59e1d1-2fcccb9cbeemr6782140a91.15.1740069536587;
-        Thu, 20 Feb 2025 08:38:56 -0800 (PST)
-Received: from localhost.localdomain (59-124-78-18.hinet-ip.hinet.net. [59.124.78.18])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fbf98cfd66sm16158267a91.12.2025.02.20.08.38.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Feb 2025 08:38:56 -0800 (PST)
-From: Yiwei Lin <s921975628@gmail.com>
-To: trenn@suse.com,
-	shuah@kernel.org
-Cc: jwyatt@redhat.com,
-	jkacur@redhat.com,
-	linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Yiwei Lin <s921975628@gmail.com>
-Subject: [PATCH v3] cpupower: monitor: Exit with error status if execvp() fail
-Date: Fri, 21 Feb 2025 00:38:46 +0800
-Message-Id: <20250220163846.2765-1-s921975628@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1740069546; c=relaxed/simple;
+	bh=6c3M3/H3d/rB8boAVdOTFz8yVLhF9V4baexn6AsQYTw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Obk9dJqEbxr1EQXLGavTd1jiLfgwiowXkhq3HJj4eQBHSDjncSeVksFCFzzBfohZuYjvBFMj3MyEIVqwhsASJgQgh0lAFBZ/l/tIadTY8DHSsxvLWbUsYqSf8UyxTigcfdmh4agCKLl0ZQwh5KXdC8DYt0eXvGnmuq+6pi6uUuA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=F/JKprIb; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740069544; x=1771605544;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=6c3M3/H3d/rB8boAVdOTFz8yVLhF9V4baexn6AsQYTw=;
+  b=F/JKprIbO0vGHiK6UH/+d/bus+hs8Sl/M6JdyzJRk6m8gFqrbgbWgN2F
+   WvLRy0pkLGmyZV8o9dKRBsnFNE3vPv9iPSdFC5VHJla5M/NIBW1vp5Zen
+   wO+PJWtybuxi3QucmZU2qqTyY+Qug8owIkDZq+9jJRjLt6a8pP8PlaigM
+   LgK2krnZQinQePfjmpbf8Le59jkAx8ImX8937mIL89UmoBCM7zoJfybDF
+   c96X97M+GQPjpMoE7r00fgdbvzXpiLntAN1M8jtK9sQlQB0X/KvVjdYHN
+   dmHcPqKg4XNSHYbtYO/eF87Bra72+9tt5AiQ8Gw4XbCHk915R2rGeOHDT
+   w==;
+X-CSE-ConnectionGUID: 87SbP4zaSfuiYFtsFRzOIQ==
+X-CSE-MsgGUID: T0KwY2GMQR2DrqBJhlPQFg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11351"; a="40092962"
+X-IronPort-AV: E=Sophos;i="6.13,302,1732608000"; 
+   d="scan'208";a="40092962"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Feb 2025 08:39:03 -0800
+X-CSE-ConnectionGUID: 2DMaJdWlSfChCTtu1Lllnw==
+X-CSE-MsgGUID: jIlDam7STi6ri8i2miXBLw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,302,1732608000"; 
+   d="scan'208";a="120035861"
+Received: from puneetse-mobl.amr.corp.intel.com (HELO [10.125.110.112]) ([10.125.110.112])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Feb 2025 08:39:02 -0800
+Message-ID: <d8056909-abd0-480a-862a-4ed472eab699@intel.com>
+Date: Thu, 20 Feb 2025 09:39:01 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 08/18] cxl/region: Move find_cxl_root() to
+ cxl_add_to_region()
+To: Robert Richter <rrichter@amd.com>,
+ Alison Schofield <alison.schofield@intel.com>,
+ Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+ Dan Williams <dan.j.williams@intel.com>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ Davidlohr Bueso <dave@stgolabs.net>
+Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Gregory Price <gourry@gourry.net>,
+ "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
+ Terry Bowman <terry.bowman@amd.com>
+References: <20250211095349.981096-1-rrichter@amd.com>
+ <20250211095349.981096-9-rrichter@amd.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20250211095349.981096-9-rrichter@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-In the case that we give a invalid command to idle_monitor for
-monitoring, the execvp() will fail and thus go to the next line.
-As a result, we'll see two differnt monitoring output. For
-example, running `cpupower monitor -i 5 invalidcmd` which `invalidcmd`
-is not executable.
 
----
-V3:
-- Modify output message content
 
-V2:
-- Check return value from execvp and print message for invalid command
----
+On 2/11/25 2:53 AM, Robert Richter wrote:
+> When adding an endpoint to a region, the root port is determined
+> first. Move this directly into cxl_add_to_region(). This is in
+> preparation of the initialization of endpoints that iterates the port
+> hierarchy from the endpoint up to the root port.
+> 
+> As a side-effect the root argument is removed from the argument lists
+> of cxl_add_to_region() and related functions. Now, the endpoint is the
+> only parameter to add a region. This simplifies the function
+> interface.
+> 
+> Signed-off-by: Robert Richter <rrichter@amd.com>
+> Reviewed-by: Gregory Price <gourry@gourry.net>
+> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Tested-by: Gregory Price <gourry@gourry.net>
 
-Signed-off-by: Yiwei Lin <s921975628@gmail.com>
----
- tools/power/cpupower/utils/idle_monitor/cpupower-monitor.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/tools/power/cpupower/utils/idle_monitor/cpupower-monitor.c b/tools/power/cpupower/utils/idle_monitor/cpupower-monitor.c
-index f746099b5dac..e123aa578881 100644
---- a/tools/power/cpupower/utils/idle_monitor/cpupower-monitor.c
-+++ b/tools/power/cpupower/utils/idle_monitor/cpupower-monitor.c
-@@ -6,6 +6,7 @@
-  */
- 
- 
-+#include <errno.h>
- #include <stdio.h>
- #include <unistd.h>
- #include <stdlib.h>
-@@ -294,7 +295,10 @@ int fork_it(char **argv)
- 
- 	if (!child_pid) {
- 		/* child */
--		execvp(argv[0], argv);
-+		if (execvp(argv[0], argv) == -1) {
-+			printf("Invalid monitor command %s\n", argv[0]);
-+			exit(errno);
-+		}
- 	} else {
- 		/* parent */
- 		if (child_pid == -1) {
--- 
-2.34.1
+Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+> ---
+>  drivers/cxl/core/region.c |  6 ++++--
+>  drivers/cxl/cxl.h         |  6 ++----
+>  drivers/cxl/port.c        | 15 +++------------
+>  3 files changed, 9 insertions(+), 18 deletions(-)
+> 
+> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
+> index b8201c2faa87..0e38bcb43be6 100644
+> --- a/drivers/cxl/core/region.c
+> +++ b/drivers/cxl/core/region.c
+> @@ -3312,9 +3312,11 @@ static struct cxl_region *construct_region(struct cxl_root_decoder *cxlrd,
+>  	return ERR_PTR(rc);
+>  }
+>  
+> -int cxl_add_to_region(struct cxl_port *root, struct cxl_endpoint_decoder *cxled)
+> +int cxl_add_to_region(struct cxl_endpoint_decoder *cxled)
+>  {
+>  	struct cxl_memdev *cxlmd = cxled_to_memdev(cxled);
+> +	struct cxl_port *port = cxled_to_port(cxled);
+> +	struct cxl_root *cxl_root __free(put_cxl_root) = find_cxl_root(port);
+>  	struct range *hpa = &cxled->cxld.hpa_range;
+>  	struct cxl_decoder *cxld = &cxled->cxld;
+>  	struct device *cxlrd_dev, *region_dev;
+> @@ -3324,7 +3326,7 @@ int cxl_add_to_region(struct cxl_port *root, struct cxl_endpoint_decoder *cxled)
+>  	bool attach = false;
+>  	int rc;
+>  
+> -	cxlrd_dev = device_find_child(&root->dev, &cxld->hpa_range,
+> +	cxlrd_dev = device_find_child(&cxl_root->port.dev, &cxld->hpa_range,
+>  				      match_root_decoder_by_range);
+>  	if (!cxlrd_dev) {
+>  		dev_err(cxlmd->dev.parent,
+> diff --git a/drivers/cxl/cxl.h b/drivers/cxl/cxl.h
+> index 0d7aff8b97b3..85dfc8df0a80 100644
+> --- a/drivers/cxl/cxl.h
+> +++ b/drivers/cxl/cxl.h
+> @@ -854,8 +854,7 @@ struct cxl_nvdimm_bridge *cxl_find_nvdimm_bridge(struct cxl_port *port);
+>  #ifdef CONFIG_CXL_REGION
+>  bool is_cxl_pmem_region(struct device *dev);
+>  struct cxl_pmem_region *to_cxl_pmem_region(struct device *dev);
+> -int cxl_add_to_region(struct cxl_port *root,
+> -		      struct cxl_endpoint_decoder *cxled);
+> +int cxl_add_to_region(struct cxl_endpoint_decoder *cxled);
+>  struct cxl_dax_region *to_cxl_dax_region(struct device *dev);
+>  #else
+>  static inline bool is_cxl_pmem_region(struct device *dev)
+> @@ -866,8 +865,7 @@ static inline struct cxl_pmem_region *to_cxl_pmem_region(struct device *dev)
+>  {
+>  	return NULL;
+>  }
+> -static inline int cxl_add_to_region(struct cxl_port *root,
+> -				    struct cxl_endpoint_decoder *cxled)
+> +static inline int cxl_add_to_region(struct cxl_endpoint_decoder *cxled)
+>  {
+>  	return 0;
+>  }
+> diff --git a/drivers/cxl/port.c b/drivers/cxl/port.c
+> index d2bfd1ff5492..74587a403e3d 100644
+> --- a/drivers/cxl/port.c
+> +++ b/drivers/cxl/port.c
+> @@ -30,7 +30,7 @@ static void schedule_detach(void *cxlmd)
+>  	schedule_cxl_memdev_detach(cxlmd);
+>  }
+>  
+> -static int discover_region(struct device *dev, void *root)
+> +static int discover_region(struct device *dev, void *unused)
+>  {
+>  	struct cxl_endpoint_decoder *cxled;
+>  	int rc;
+> @@ -49,7 +49,7 @@ static int discover_region(struct device *dev, void *root)
+>  	 * Region enumeration is opportunistic, if this add-event fails,
+>  	 * continue to the next endpoint decoder.
+>  	 */
+> -	rc = cxl_add_to_region(root, cxled);
+> +	rc = cxl_add_to_region(cxled);
+>  	if (rc)
+>  		dev_dbg(dev, "failed to add to region: %#llx-%#llx\n",
+>  			cxled->cxld.hpa_range.start, cxled->cxld.hpa_range.end);
+> @@ -95,7 +95,6 @@ static int cxl_endpoint_port_probe(struct cxl_port *port)
+>  	struct cxl_memdev *cxlmd = to_cxl_memdev(port->uport_dev);
+>  	struct cxl_dev_state *cxlds = cxlmd->cxlds;
+>  	struct cxl_hdm *cxlhdm;
+> -	struct cxl_port *root;
+>  	int rc;
+>  
+>  	rc = cxl_dvsec_rr_decode(cxlds, &info);
+> @@ -126,19 +125,11 @@ static int cxl_endpoint_port_probe(struct cxl_port *port)
+>  	if (rc)
+>  		return rc;
+>  
+> -	/*
+> -	 * This can't fail in practice as CXL root exit unregisters all
+> -	 * descendant ports and that in turn synchronizes with cxl_port_probe()
+> -	 */
+> -	struct cxl_root *cxl_root __free(put_cxl_root) = find_cxl_root(port);
+> -
+> -	root = &cxl_root->port;
+> -
+>  	/*
+>  	 * Now that all endpoint decoders are successfully enumerated, try to
+>  	 * assemble regions from committed decoders
+>  	 */
+> -	device_for_each_child(&port->dev, root, discover_region);
+> +	device_for_each_child(&port->dev, NULL, discover_region);
+>  
+>  	return 0;
+>  }
 
 
