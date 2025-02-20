@@ -1,228 +1,93 @@
-Return-Path: <linux-kernel+bounces-524302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524306-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C364EA3E1B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 18:03:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 391DEA3E1A7
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:59:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2CFB703F32
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:55:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0BA8119C5506
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:56:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F40A0214A7B;
-	Thu, 20 Feb 2025 16:52:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A401B212D86;
+	Thu, 20 Feb 2025 16:55:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="vR7l+TDF";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="7zjXn4G4";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="vR7l+TDF";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="7zjXn4G4"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="jrRUZpVS"
+Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A68A214A72
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 16:52:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2197B211A2B
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 16:55:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740070359; cv=none; b=uePjsQM6leyl93qye8uXPwO8/95EOurfuuuNMirKkei8cVZdevHZ4NOqHbAkT8SqpsRdE6r1mBCNc+DNhOxWkM3+4+Y24otBWUHqMyJUEFUYW1+y1z5LXx9tDxKUdMQm9jSEw1ECt1KRv5e5L1IUYlCTRvaqgIsHiX/UI12erWA=
+	t=1740070503; cv=none; b=cV3DE39okh7+Xtd7e3eZQPLmCvTD8aUIIjNDJk812mmtrXIG93z7dHVBnVl8DSxNBZOVqiK0ICPgbo/s/iWCFHHb6SXNgloBrMEU5wrQBdokRsqQdmg20loy1Zh7pwYLu+qM/Mri154ut1pn3bpeOS51tfQ5ZastVFWe4lZMSdw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740070359; c=relaxed/simple;
-	bh=6ZGEY1CUTUb9hIZs02aQ9APntILoEmml24syPbtm05w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K3bzZNix9TkSCZwGpW8KpZYHCPTg5+D9SN0CqqpdLZ17KLpDIhYIMNyuN47H+/w5UBrM8aJRQDKx/D1hru2a5c89h0P/DB+4mmkuaJCR6qWsSiUcjbEwI9YyOY2yBS7l9XFBp9yTPgOS90cRymg9NDmhW/dd3h+26upYosSmQ3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=vR7l+TDF; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=7zjXn4G4; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=vR7l+TDF; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=7zjXn4G4; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from localhost (unknown [10.100.12.32])
-	by smtp-out1.suse.de (Postfix) with ESMTP id B9A6221186;
-	Thu, 20 Feb 2025 16:52:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1740070355; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1740070503; c=relaxed/simple;
+	bh=aEruYy9Jupi+QeIVYrobX1arErkFRLvPPiRVFuahcLs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oVb39Ica4FxZW4Pltm9jaY1vEN3tLK8zHHR86sFUT3L2LQrVpMBl4ArlPv18c2h76M9EW6T9RWgnQis6hMANqmtAzihZH+EogXRbI2HEeDUInI7yAlquWe6qbKVJneYHxhzFu2Tf2OPsIi3sGmxdozeq4GDaYgrP1+nGYXdyvKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=jrRUZpVS; arc=none smtp.client-ip=91.218.175.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <0d729331-fab0-4b59-8d58-ce22e99b269a@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1740070500;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=hH9uSFhc8XNqgswkvUUEW9uh5z40NPrJwxzIGYRAvqU=;
-	b=vR7l+TDFHoQkJcuzxpxWN12po112UZHuh6/OAATx4v9jBC9K9qy6mIAmm+LWAuBAK82iFZ
-	SwDNsyO4jC7Rk/W89RhamlC+MXPERH2UtMnj23slI8py9ZKNqSDanS1JQYb68bY82WOuHp
-	dTaoB8ckoNaLpJYYbytYXiuFO+N8hpE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1740070355;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hH9uSFhc8XNqgswkvUUEW9uh5z40NPrJwxzIGYRAvqU=;
-	b=7zjXn4G4ZCuWjVS5/GJCXpVdrmZ3Aa1fUFf1swFrLtFv7JmkHLXPMd9XuUUBr1+M8LQeKn
-	DjLfbLTdD0epgKCA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1740070355; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hH9uSFhc8XNqgswkvUUEW9uh5z40NPrJwxzIGYRAvqU=;
-	b=vR7l+TDFHoQkJcuzxpxWN12po112UZHuh6/OAATx4v9jBC9K9qy6mIAmm+LWAuBAK82iFZ
-	SwDNsyO4jC7Rk/W89RhamlC+MXPERH2UtMnj23slI8py9ZKNqSDanS1JQYb68bY82WOuHp
-	dTaoB8ckoNaLpJYYbytYXiuFO+N8hpE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1740070355;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hH9uSFhc8XNqgswkvUUEW9uh5z40NPrJwxzIGYRAvqU=;
-	b=7zjXn4G4ZCuWjVS5/GJCXpVdrmZ3Aa1fUFf1swFrLtFv7JmkHLXPMd9XuUUBr1+M8LQeKn
-	DjLfbLTdD0epgKCA==
-Date: Thu, 20 Feb 2025 17:52:35 +0100
-From: Jiri Bohac <jbohac@suse.cz>
-To: Baoquan He <bhe@redhat.com>, Vivek Goyal <vgoyal@redhat.com>,
-	Dave Young <dyoung@redhat.com>, kexec@lists.infradead.org
-Cc: Philipp Rudo <prudo@redhat.com>, Donald Dutile <ddutile@redhat.com>,
-	Pingfan Liu <piliu@redhat.com>, Tao Liu <ltao@redhat.com>,
-	linux-kernel@vger.kernel.org,
-	David Hildenbrand <dhildenb@redhat.com>,
-	Michal Hocko <mhocko@suse.cz>
-Subject: [PATCH v2 2/5] kdump: implement reserve_crashkernel_cma
-Message-ID: <Z7dd0_XLzmb1tBUk@dwarf.suse.cz>
-References: <Z7dc9Cd8KX3b_brB@dwarf.suse.cz>
+	bh=rtG6ZjpAmeJKxNeyEoaFjSdFaIwdGa1v9iPU/FPE11Y=;
+	b=jrRUZpVSLWy/ItsZGz27gX9dI3AuXjsM0KbdNPZSAfF81twYEgs2mk43kO3PqZb8aNm+Qo
+	Ii0C2T4GKl/04TSRZW2ivhjG96n66eqmPWX+tge6PiwXVryAbsjn+f1Z4URT9G2+P15le7
+	t5G9+Eg4v2Yqjm1KCiNOClSuQy3QsaI=
+Date: Thu, 20 Feb 2025 11:53:23 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z7dc9Cd8KX3b_brB@dwarf.suse.cz>
-X-Spam-Score: -4.26
-X-Spamd-Result: default: False [-4.26 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.16)[-0.776];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_ZERO(0.00)[0];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	MID_RHS_MATCH_FROMTLD(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,localhost:helo]
-X-Spam-Flag: NO
-X-Spam-Level: 
+Subject: Re: [PATCH net-next] net: cadence: macb: Implement BQL
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Nicolas Ferre <nicolas.ferre@microchip.com>,
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>, netdev@vger.kernel.org,
+ "David S . Miller" <davem@davemloft.net>, Andrew Lunn
+ <andrew+netdev@lunn.ch>, linux-kernel@vger.kernel.org,
+ Paolo Abeni <pabeni@redhat.com>, Eric Dumazet <edumazet@google.com>
+References: <20250214211643.2617340-1-sean.anderson@linux.dev>
+ <20250218175700.4493dc49@kernel.org>
+ <10a50a6c-a6be-4723-80b3-62119f667977@linux.dev>
+ <20250220085137.62360239@kernel.org>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Sean Anderson <sean.anderson@linux.dev>
+In-Reply-To: <20250220085137.62360239@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-reserve_crashkernel_cma() reserves CMA ranges for the
-crash kernel. If allocating the requested size fails,
-try to reserve in smaller blocks.
+On 2/20/25 11:51, Jakub Kicinski wrote:
+> On Thu, 20 Feb 2025 10:55:45 -0500 Sean Anderson wrote:
+>> On 2/18/25 20:57, Jakub Kicinski wrote:
+>> > On Fri, 14 Feb 2025 16:16:43 -0500 Sean Anderson wrote:  
+>> >> diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
+>> >> index 48496209fb16..63c65b4bb348 100644
+>> >> --- a/drivers/net/ethernet/cadence/macb_main.c
+>> >> +++ b/drivers/net/ethernet/cadence/macb_main.c
+>> >> @@ -1081,6 +1081,9 @@ static void macb_tx_error_task(struct work_struct *work)
+>> >>  						      tx_error_task);
+>> >>  	bool			halt_timeout = false;
+>> >>  	struct macb		*bp = queue->bp;
+>> >> +	u32			queue_index = queue - bp->queues;  
+>> > 
+>> > nit: breaking reverse xmas tree here  
+>> 
+>> It has to happen here since bp isn't available earlier.
+> 
+> Move it from init to normal code?
 
-Store the reserved ranges in the crashk_cma_ranges array
-and the number of ranges in crashk_cma_cnt.
----
- include/linux/crash_reserve.h | 12 +++++++++
- kernel/crash_reserve.c        | 49 +++++++++++++++++++++++++++++++++++
- 2 files changed, 61 insertions(+)
+That's what I ended up doing.
 
-diff --git a/include/linux/crash_reserve.h b/include/linux/crash_reserve.h
-index a681f265a361..97964f2a583d 100644
---- a/include/linux/crash_reserve.h
-+++ b/include/linux/crash_reserve.h
-@@ -13,12 +13,24 @@
-  */
- extern struct resource crashk_res;
- extern struct resource crashk_low_res;
-+extern struct range crashk_cma_ranges[];
-+#if defined(CONFIG_CMA) && defined(CONFIG_ARCH_HAS_GENERIC_CRASHKERNEL_RESERVATION)
-+#define CRASHKERNEL_CMA
-+#define CRASHKERNEL_CMA_RANGES_MAX 4
-+extern int crashk_cma_cnt;
-+#else
-+#define crashk_cma_cnt 0
-+#define CRASHKERNEL_CMA_RANGES_MAX 0
-+#endif
-+
- 
- int __init parse_crashkernel(char *cmdline, unsigned long long system_ram,
- 		unsigned long long *crash_size, unsigned long long *crash_base,
- 		unsigned long long *low_size, unsigned long long *cma_size,
- 		bool *high);
- 
-+void __init reserve_crashkernel_cma(unsigned long long cma_size);
-+
- #ifdef CONFIG_ARCH_HAS_GENERIC_CRASHKERNEL_RESERVATION
- #ifndef DEFAULT_CRASH_KERNEL_LOW_SIZE
- #define DEFAULT_CRASH_KERNEL_LOW_SIZE	(128UL << 20)
-diff --git a/kernel/crash_reserve.c b/kernel/crash_reserve.c
-index e72a9c897694..d71aff19a28d 100644
---- a/kernel/crash_reserve.c
-+++ b/kernel/crash_reserve.c
-@@ -14,6 +14,8 @@
- #include <linux/cpuhotplug.h>
- #include <linux/memblock.h>
- #include <linux/kmemleak.h>
-+#include <linux/cma.h>
-+#include <linux/crash_reserve.h>
- 
- #include <asm/page.h>
- #include <asm/sections.h>
-@@ -470,6 +472,53 @@ void __init reserve_crashkernel_generic(char *cmdline,
- #endif
- }
- 
-+struct range crashk_cma_ranges[CRASHKERNEL_CMA_RANGES_MAX];
-+#ifdef CRASHKERNEL_CMA
-+int crashk_cma_cnt = 0;
-+void __init reserve_crashkernel_cma(unsigned long long cma_size)
-+{
-+	unsigned long long request_size = roundup(cma_size, PAGE_SIZE);
-+	unsigned long long reserved_size = 0;
-+
-+	while (cma_size > reserved_size &&
-+	       crashk_cma_cnt < CRASHKERNEL_CMA_RANGES_MAX) {
-+
-+		struct cma *res;
-+
-+		if (cma_declare_contiguous(0, request_size, 0, 0, 0, false,
-+				       "crashkernel", &res)) {
-+			/* reservation failed, try half-sized blocks */
-+			if (request_size <= PAGE_SIZE)
-+				break;
-+
-+			request_size = roundup(request_size / 2, PAGE_SIZE);
-+			continue;
-+		}
-+
-+		crashk_cma_ranges[crashk_cma_cnt].start = cma_get_base(res);
-+		crashk_cma_ranges[crashk_cma_cnt].end =
-+			crashk_cma_ranges[crashk_cma_cnt].start +
-+			cma_get_size(res) - 1;
-+		++crashk_cma_cnt;
-+		reserved_size += request_size;
-+	}
-+
-+	if (cma_size > reserved_size)
-+		pr_warn("crashkernel CMA reservation failed: %lld MB requested, %lld MB reserved in %d ranges\n",
-+			cma_size >> 20, reserved_size >> 20, crashk_cma_cnt);
-+	else
-+		pr_info("crashkernel CMA reserved: %lld MB in %d ranges\n",
-+			reserved_size >> 20, crashk_cma_cnt);
-+}
-+
-+#else /* CRASHKERNEL_CMA */
-+void __init reserve_crashkernel_cma(unsigned long long cma_size)
-+{
-+	if (cma_size)
-+		pr_warn("crashkernel CMA reservation not supported\n");
-+}
-+#endif
-+
- #ifndef HAVE_ARCH_ADD_CRASH_RES_TO_IOMEM_EARLY
- static __init int insert_crashkernel_resources(void)
- {
-
--- 
-Jiri Bohac <jbohac@suse.cz>
-SUSE Labs, Prague, Czechia
-
+--Sean
 
