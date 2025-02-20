@@ -1,40 +1,40 @@
-Return-Path: <linux-kernel+bounces-523740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D49A4A3DA97
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:58:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A00ACA3DA99
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:00:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10C3B188AF04
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:58:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 645343BF78B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:58:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FB241F6679;
-	Thu, 20 Feb 2025 12:58:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEA711F8670;
+	Thu, 20 Feb 2025 12:58:32 +0000 (UTC)
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53A3F1CAA86
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 539EE2862BD
 	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 12:58:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740056311; cv=none; b=cz3668yblpNuUifFN9NKMnVgUPJRX6C38BEiqqbTnzDAS5EJQpl5G2Ch5guoW7gFwt7z8wszwtXmtAdGZw/v0HiGXBXKp3lRz4x47skHJgHzJA2kfWL7XwoDgCudakB8hWsEup4VjrEZsH5S2iN71vPyRnwKehW/BDwcsEa+QXg=
+	t=1740056312; cv=none; b=jEecwCUlywrFSNcXba51kU1z74JuFr1xGNVo15qKHMDRJBcPDmLc4oE9eaW0qokOvCrlEtOs4tN4Bf5fkjjAZi2cTAygh2rw/VUwNs6kcEE+i1f4HpEbJKHrH7a1ZSqZHz66hDMWlBD16Gcp27V4T03RGk9ETvgeEyvpEruqV18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740056311; c=relaxed/simple;
-	bh=cdMsuvZNARNlr3OR3LT9KLhenut6xVoVJzsY4VsXHhE=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=naZ6Gw9pMLMUMy5AZNnNkEKi2TpU+pJNHKMaOQbLGa2JzPL4+TO77joOdkAuJ2pj2DzCuel7bgXLd8gl6YEQQis6NhEZ+6Q3SMG/viwoJ0un8w2qYhJnY7jKXU2pX3elTXy5MZY8QwIfDa4dQaMdp6pnJMbQHctFkBdS4Bs3P4E=
+	s=arc-20240116; t=1740056312; c=relaxed/simple;
+	bh=e1Tx75YpR/a9qarhgSskZSmW2Axl9rBq1IVbb5q0piw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=VA+Dp9YoOZFv+RJSqcySObeGNjD5xsBkb95LOIDHfdKvtPWo3Iwx73AyZ+vuM+h13CcCsAkiFhDn0AbxW4Jff/f9zMPgRVmTc781SW+gJCvD518YDte2C2E/OM3hTZv1Z1anKrkbgzE32EJpfqdBPtRBBLitbiAKbxKbj5qsCzM=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
 Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=ratatoskr.trumtrar.info)
 	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
 	(envelope-from <s.trumtrar@pengutronix.de>)
-	id 1tl68H-0004lJ-S7; Thu, 20 Feb 2025 13:58:25 +0100
+	id 1tl68I-0004lJ-Ct; Thu, 20 Feb 2025 13:58:26 +0100
 From: Steffen Trumtrar <s.trumtrar@pengutronix.de>
-Subject: [PATCH 0/2] LED: Add basic LP5860 LED matrix driver
-Date: Thu, 20 Feb 2025 13:57:55 +0100
-Message-Id: <20250220-v6-14-topic-ti-lp5860-v1-0-42874bdc7513@pengutronix.de>
+Date: Thu, 20 Feb 2025 13:57:56 +0100
+Subject: [PATCH 1/2] dt-bindings: leds: add lp5860 LED controller
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -43,10 +43,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIANMmt2cC/x3MTQqAIBBA4avErBvQIe3nKtGibKqBKNGIQLp70
- vJbvJcgchCO0BUJAt8S5TwydFmA28ZjZZQ5G0iRUaRbvC3qCq/Ti8NLcPemsQoXMmPVTJZc3UJ
- ufeBFnv/bD+/7AbzLmllnAAAA
-X-Change-ID: 20250219-v6-14-topic-ti-lp5860-f25a48b62c79
+Message-Id: <20250220-v6-14-topic-ti-lp5860-v1-1-42874bdc7513@pengutronix.de>
+References: <20250220-v6-14-topic-ti-lp5860-v1-0-42874bdc7513@pengutronix.de>
+In-Reply-To: <20250220-v6-14-topic-ti-lp5860-v1-0-42874bdc7513@pengutronix.de>
 To: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
  Conor Dooley <conor+dt@kernel.org>, 
@@ -60,34 +59,141 @@ X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expand
 X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
 The lp5860 is a LED matrix driver with 18 constant current sinks and 11
-scan switches which allows controlling up to 198 LED dots.
-
-This series adds just the basic support for the device on the SPI bus.
-It is also possible to use it on I2C. The interface can be
-switched/selected via an interface select pin.
-
-Next step for this driver will be adding open and short detection of the
-LEDs.
+scan switches for 198 LED dots:
+  * Supply range from 2.7 V to 5.5 V
+  * 0.1mA - 50mA per current sink
+  * 1MHz I2C and 12MHz SPI control interface
+  * 8-bit analog dimming
+  * 8/16-bit PWM dimming
+  * individual ON and OFF control for each LED dot
+  * globat 3-bit Maximum Current setting for all LED dots
+  * individual LED dot open/short detection
 
 Signed-off-by: Steffen Trumtrar <s.trumtrar@pengutronix.de>
 ---
-Steffen Trumtrar (2):
-      dt-bindings: leds: add lp5860 LED controller
-      leds: add support for TI LP5860 LED driver chip
+ .../devicetree/bindings/leds/leds-lp5860.yaml      | 112 +++++++++++++++++++++
+ 1 file changed, 112 insertions(+)
 
- .../devicetree/bindings/leds/leds-lp5860.yaml      | 112 ++++++++
- drivers/leds/Kconfig                               |  23 ++
- drivers/leds/Makefile                              |   2 +
- drivers/leds/leds-lp5860-core.c                    | 276 ++++++++++++++++++
- drivers/leds/leds-lp5860-spi.c                     | 100 +++++++
- drivers/leds/leds-lp5860.h                         | 315 +++++++++++++++++++++
- 6 files changed, 828 insertions(+)
----
-base-commit: 268400f2b82359d6aca2742a104c14b4acd9cdcd
-change-id: 20250219-v6-14-topic-ti-lp5860-f25a48b62c79
+diff --git a/Documentation/devicetree/bindings/leds/leds-lp5860.yaml b/Documentation/devicetree/bindings/leds/leds-lp5860.yaml
+new file mode 100644
+index 0000000000000000000000000000000000000000..a4e39fd843f3f260ee9c1103e2cb27dcb230608c
+--- /dev/null
++++ b/Documentation/devicetree/bindings/leds/leds-lp5860.yaml
+@@ -0,0 +1,112 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/leds/leds-lp5860.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: LED driver for LP5860 RGB LED from Texas Instruments.
++
++maintainers:
++  - Steffen Trumtrar <kernel@pengutronix.de>
++
++description: |
++  The LP5860 is multi-channel, I2C and SPI RGB LED Driver that can group RGB LEDs
++  into a LED group or control them individually.
++
++  For more product information please see the link below:
++  https://www.ti.com/lit/ds/symlink/lp5860.pdf
++
++properties:
++  compatible:
++    enum:
++      - ti,lp5860
++
++  reg:
++    maxItems: 1
++
++  spi-max-frequency:
++    maximum: 12000000
++
++  '#address-cells':
++    const: 1
++
++  '#size-cells':
++    const: 0
++
++patternProperties:
++  '^multi-led@[0-9a-f]$':
++    type: object
++    $ref: leds-class-multicolor.yaml#
++    unevaluatedProperties: false
++
++    properties:
++      reg:
++        minItems: 1
++        maxItems: 12
++        description:
++          This property denotes the LED module number(s) that is used
++          for the child node.
++
++      '#address-cells':
++        const: 1
++
++      '#size-cells':
++        const: 0
++
++    patternProperties:
++      "^led@[0-9a-f]+$":
++        type: object
++        $ref: common.yaml#
++        unevaluatedProperties: false
++
++        properties:
++          reg:
++            maxItems: 1
++
++        required:
++          - reg
++
++required:
++  - compatible
++  - reg
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/gpio/gpio.h>
++    #include <dt-bindings/leds/common.h>
++
++    spi {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        led-controller@0 {
++            compatible = "ti,lp5860";
++            reg = <0x0>;
++            #address-cells = <1>;
++            #size-cells = <0>;
++
++            multi-led@0 {
++                #address-cells = <1>;
++                #size-cells = <0>;
++                reg = <0x0>;
++                color = <LED_COLOR_ID_RGB>;
++
++                led@0 {
++                     reg = <0x0>;
++                     color = <LED_COLOR_ID_RED>;
++                };
++
++                led@1 {
++                     reg = <0x1>;
++                     color = <LED_COLOR_ID_GREEN>;
++                };
++
++                led@2 {
++                     reg = <0x2>;
++                     color = <LED_COLOR_ID_BLUE>;
++                };
++            };
++        };
++    };
 
-Best regards,
 -- 
-Steffen Trumtrar <s.trumtrar@pengutronix.de>
+2.47.1
 
 
