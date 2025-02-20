@@ -1,137 +1,94 @@
-Return-Path: <linux-kernel+bounces-523869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45BC6A3DC49
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:16:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B168A3DC62
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:17:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0E6A18911B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:16:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C2CE3A8198
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:16:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 137B51FAC5E;
-	Thu, 20 Feb 2025 14:15:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7A9E1FBE8D;
+	Thu, 20 Feb 2025 14:16:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iPORLJfC"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="oVUZZN+0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18BB21B86F7;
-	Thu, 20 Feb 2025 14:15:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07CF81F150A;
+	Thu, 20 Feb 2025 14:16:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740060956; cv=none; b=lEDm7PbUNBwm92sb+L8uZ1M55FaawBCmi/ooBUEjJ6uj+p4YDcFpNXYXGm9wLV8wMI63iz2jTgFy2eBSK0UGZ3EP2TAIF/eN5YW3jfL0VHDQ9gRgVWanNl5REsqKzQfZ1uroqMaiFtwa0AfhcyRinMB0zdUo/ykOKqM3qqKLO74=
+	t=1740060967; cv=none; b=Bdk2ld4zlIdMXcILZRMOmn1K/Z2E9YV7ylgOCkrIOzdMTL9GrNUHJG4ITOpanGMoa04LaP3noeR94cRa3RwNOqx6oJtFnGCWX7ID2++FOaP9KI0ST5qPhYDvnQpxaHrPxbNwW2WHLN7egRse4/cSX4vcUH35YZw70Ok0FazwIBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740060956; c=relaxed/simple;
-	bh=2xYS4XzhNZ5j0FAtMD8RD61LuPl76c6itGSWrcizWCQ=;
+	s=arc-20240116; t=1740060967; c=relaxed/simple;
+	bh=noxCc47/1cJ0ZKN1i7l306cRmB9nXFyLc/NIL4/Irdg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iz6Wr9gBuDszH2ewAlMN2tRescUhGPpuVni4h1akE7wm1gb7SiSGQ8h3hkC/OrZO8KTnbjVM10dn+wxvft6Ei0+g1Pzm3sg7zou13O5oDLkidMA2tJvIgK93H/Wd1FI3F+lhS4to1pBXb2+sxka+H+8B/KlSLf1gsDhisFiWX2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iPORLJfC; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740060955; x=1771596955;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=2xYS4XzhNZ5j0FAtMD8RD61LuPl76c6itGSWrcizWCQ=;
-  b=iPORLJfCb7Ap0hwTwjGhdjZT3TKO2lQeK84kIPnfw7ZubJ+rDl2n0Jh/
-   WPp+mscJfhcEMuSIQJzq2Gj1JuCMM+C3jyrDNz/AFsLDoOq/RSnVGMflY
-   PGQ6IAtw6lt/DinzzKh1I8nHhz4AhZisqcJoOsv7nCx0LLrUgtVDKyaAB
-   VfsWjFnzTl7tukrt5LqzhxhhqBPp6ZYsVTXa2S3L6qqSMCIeVkJ4HLzSc
-   +GuODLvwQ3i8ZIIXETuHz5jiOPIWzz9uJoGLhSZ8wFMsu5pbT0h3lggok
-   P2FGGlwAH3aMXffB8IvXrjPweSIvhj071nW2svykwrwkObIKXmxq9UZfY
-   w==;
-X-CSE-ConnectionGUID: Z0rRB80STwexU2h8gb9oDw==
-X-CSE-MsgGUID: ObsB8k0/Spm4R8uNekIU1g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11351"; a="40708890"
-X-IronPort-AV: E=Sophos;i="6.13,301,1732608000"; 
-   d="scan'208";a="40708890"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Feb 2025 06:15:54 -0800
-X-CSE-ConnectionGUID: r75ohwirQAipCGg/6lXUCA==
-X-CSE-MsgGUID: RZDQpvNlQQeV00ex0qlHtA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="152245691"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Feb 2025 06:15:52 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tl7LB-0000000DM9W-3g74;
-	Thu, 20 Feb 2025 16:15:49 +0200
-Date: Thu, 20 Feb 2025 16:15:49 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Michael Walle <mwalle@kernel.org>,
-	athieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-Subject: Re: [PATCH v1 0/5] gpio: regmap: Make use of 'ngpios' property
-Message-ID: <Z7c5FTpbivch15Ij@smile.fi.intel.com>
-References: <20250213195621.3133406-1-andriy.shevchenko@linux.intel.com>
- <CACRpkdao27pu+9qFH2LBYNwYkBbWq1B-hE9nZGfTTCnQxhTiAQ@mail.gmail.com>
- <Z7crrgl2iFn34gck@smile.fi.intel.com>
- <CAMRc=MfSn6xB4eNkFG7E2gQPiF+AmnaidO5=FbvPtvW0N4iDjQ@mail.gmail.com>
- <Z7cwv0gxRFFGBjR1@smile.fi.intel.com>
- <Z7cxGOmwMIkkTRLs@smile.fi.intel.com>
- <CAMRc=Mc0gaRxOBDFXf2WB2_mNxaQo+UjCc6oTM-azLzV=c3VgA@mail.gmail.com>
- <Z7c3IhC115rPbTMw@smile.fi.intel.com>
- <CAMRc=MeBCQrm14TiH99a-xLo5PMah9W05TO=8mzsxfXFXGjazQ@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=OVY6bNMO935lNF1nFrNKwyzdvA7p3NBpqPQli4ptj/lSxLm/A2SfeEkIipQk0/A2QQ3TYfdC3h3Mmkn+XHwTEZOiEhyGtmnSZ3/IXaF7unRlkKwl2+WJEt/pINMDPcAQRTRv+xiYzIXW+B0579WNZcSrcPXxMtyiLhijgnEV2VE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=oVUZZN+0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25E6BC4CED1;
+	Thu, 20 Feb 2025 14:16:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1740060966;
+	bh=noxCc47/1cJ0ZKN1i7l306cRmB9nXFyLc/NIL4/Irdg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oVUZZN+0Vfm3hEyng0ZrSAmkunAX0OMZ3m6+hpyMcb7S0J4XTVD6T/0gD6GaQ/Wp8
+	 HCYFWkCaM/648x58pHp0xa1yR8B7gxwzwAQPYee5jmoIIAju26lzK8fi6mnfjvE8vy
+	 4gR+NT2DOjwwq0nuLpBAaTzSzdVB30QA7yb209so=
+Date: Thu, 20 Feb 2025 15:16:03 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Wentao Liang <vulab@iscas.ac.cn>
+Cc: alexander.usyskin@intel.com, arnd@arndb.de,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] mei: Add error logging in IRQ handler to prevent silent
+ failures
+Message-ID: <2025022023-childlike-superjet-f096@gregkh>
+References: <20250220133435.1060-1-vulab@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMRc=MeBCQrm14TiH99a-xLo5PMah9W05TO=8mzsxfXFXGjazQ@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20250220133435.1060-1-vulab@iscas.ac.cn>
 
-On Thu, Feb 20, 2025 at 03:11:04PM +0100, Bartosz Golaszewski wrote:
-> On Thu, Feb 20, 2025 at 3:07 PM Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> wrote:
-> > On Thu, Feb 20, 2025 at 02:42:26PM +0100, Bartosz Golaszewski wrote:
-> > > On Thu, Feb 20, 2025 at 2:41 PM Andy Shevchenko
-> > > <andriy.shevchenko@linux.intel.com> wrote:
-> > > > On Thu, Feb 20, 2025 at 03:40:15PM +0200, Andy Shevchenko wrote:
-> > > > > On Thu, Feb 20, 2025 at 02:22:29PM +0100, Bartosz Golaszewski wrote:
-> > > > > > On Thu, Feb 20, 2025 at 2:18 PM Andy Shevchenko
-> > > > > > <andriy.shevchenko@linux.intel.com> wrote:
-> > > > > > > On Fri, Feb 14, 2025 at 11:50:53AM +0100, Linus Walleij wrote:
-
-...
-
-> > > > > > > Bart, do you think it can be applied?
-> > > > > >
-> > > > > > Andy,
-> > > > > >
-> > > > > > I really rarely lose track of patches. It's been just under a week
-> > > > > > since this was posted. Please don't ping me to pick things up unless
-> > > > > > I'm not reacting for at least two weeks. I typically leave patches on
-> > > > > > the list for some time to give bots some time to react.
-> > > > >
-> > > > > I see, I thought your cadence is one week, that's why I have pinged you.
-> > > > > Will try to keep this in mind for the future and sorry to interrupt!
-> > > >
-> > > > Btw, if it's easier to you, I can just combine this to my usual PR to you.
-> > >
-> > > No, that's fine, let's stick to ACPI-only PRs.
-> >
-> > Hmm... Is the Intel GPIO stuff should go directly to your tree? Seems I missed
-> > some changes in the flow...
+On Thu, Feb 20, 2025 at 09:34:35PM +0800, Wentao Liang wrote:
+> Log mei_irq_write_handler() errors to prevent silent IRQ handling failures.
 > 
-> Ah, no, sure, intel and ACPI and whatever you did up until this point.
+> Fixes: 962ff7bcec24 ("mei: replace callback structures used as list head by list_head")
+> Cc: stable@vger.kernel.org # 4.11+
+> Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
+> ---
+>  drivers/misc/mei/hw-me.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/misc/mei/hw-me.c b/drivers/misc/mei/hw-me.c
+> index d11a0740b47c..5df42a64b4db 100644
+> --- a/drivers/misc/mei/hw-me.c
+> +++ b/drivers/misc/mei/hw-me.c
+> @@ -1415,6 +1415,8 @@ irqreturn_t mei_me_irq_thread_handler(int irq, void *dev_id)
+>  	if (dev->pg_event != MEI_PG_EVENT_WAIT &&
+>  	    dev->pg_event != MEI_PG_EVENT_RECEIVED) {
+>  		rets = mei_irq_write_handler(dev, &cmpl_list);
+> +		if (rets)
+> +			dev_err(dev->dev, "mei_irq_write_handler ret = %d.\n", rets);
+>  		dev->hbuf_is_ready = mei_hbuf_is_ready(dev);
+>  	}
+>  
+> -- 
+> 2.42.0.windows.2
+> 
 
-Got it, thanks!
+How was this found and tested?
 
--- 
-With Best Regards,
-Andy Shevchenko
+And why print an error message in an irq handler, isn't that going to be
+messy?  What can the user do with this message?
 
+thanks,
 
+greg k-h
 
