@@ -1,126 +1,240 @@
-Return-Path: <linux-kernel+bounces-524410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93E18A3E2A6
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 18:38:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5655AA3E2F3
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 18:46:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9576818959A9
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:38:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79C15705E88
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:38:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAD64213248;
-	Thu, 20 Feb 2025 17:37:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9698321421A;
+	Thu, 20 Feb 2025 17:38:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="cP4N5vD2"
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gdWphGH9"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 833E520DD47
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 17:37:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49CBD214215
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 17:38:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740073073; cv=none; b=sA7VuItjpMMds9rSXV+wbm7uAKmf5n2Tjd3GRVh19vdEB25oRkSFmZzCZ+VB2WT7gujCuvHj9Hblq6P1rUEALWJRRUXkNO+BW/Gg4qU+rsA8C+jLpcclyak9mn6mSh5+7fRXup+yIhR9jA2jTq/s+nhcvUiClCTqVT8Mnj+Of9s=
+	t=1740073086; cv=none; b=fc24wnLccDo8I3FwIOSHzZeMDxA6WUEwRzTVpD+jx+WlPsSLCcDhn/mCV1mhRIFuhnpv8avwAOBTeliTHmbbv1flCtD4DOfYGLXGhk6QKBVbzwkvXzcWes53bQ7/wt2cbjoCr8AgBE45RLXgtANm468+6rpV+U8CKAgg6aOj5nk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740073073; c=relaxed/simple;
-	bh=Tqg+uCu9OY9/+2XU6+LurqVonaEeduchlfwApG8p0Sg=;
+	s=arc-20240116; t=1740073086; c=relaxed/simple;
+	bh=Z7Q6jLvBKPVoaN863zlBRG1AWyWlcDaw51zJcJY/YUI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oqv9+FhSX4Lsufh+r8Nw90V4fFJFHt1XIbfdZvbjPWbBBaHgU8SCVFhn9RBHyfsEK0biU5V2DXXq0pBw7Xil4yaS+7tq+QoizjAhYWgLvcGK+uIGFjJ0pNv0Thrh8z1aYSBuuaPhyBstS3wginZ9Cl46H0D9gp6/hCyZCjN1emQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=cP4N5vD2; arc=none smtp.client-ip=209.85.128.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-6f6ae4846c7so10526857b3.1
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 09:37:51 -0800 (PST)
+	 To:Cc:Content-Type; b=m9H4/24AKvZqI3uzijPVMt9IWAs5mhJUrmtS8QsbHBnlGPjprJHf/MUlbyf3OGy2ckRdxlXUhixD64VoyFvlTA0xquDIbdos6wq2ofnXpjTpIDw3etSzY9qF9qpDSQj8WfUzDhfCrpLpEQnq+5rcf/+k/HElivNGNmQSCumFb0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gdWphGH9; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-219f6ca9a81so170485ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 09:38:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1740073070; x=1740677870; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1740073084; x=1740677884; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=M6PVa1O8aVWNHWzO0xnoru6dOjPsSU9GhIPgYbJ4Bds=;
-        b=cP4N5vD289Fhm0Q+U99LTchmhfsQYZUzbKbb8FZWBOIWI5lyh4gUaKQp/b+6/+Bp6N
-         QbNQzs1KpiUEQJ6jKEbjNLKx7c7Kkh/lt6saMp48nkmNskguUZNPD/h6jl7eBZrbpip0
-         NWXyL0lbSpff7bjP9ZTkkqNA1kfpv0le9ZHL+F09Z3I0c9oG9h/zihxhnYc/kHAU0fuN
-         9Ys+ob93oE+EfKfhjmbX21bnYh0T9UpeTRiE3eaJ3cEbq4G79Bqs+s3/BWwbiyWc0jqE
-         /6NVKvlfBnvh8AvOzdRA7pkqaOIL55atowoaLPX1/hLhltm2IpAnEOUnFCo4Two6Qtqi
-         rj8w==
+        bh=9Zt8TbTFLCvdcJDQPNYalgDYvJB11g+s/hwDIBn89f0=;
+        b=gdWphGH9/1tkMQT0zEl84U2DGuSPwp1XSiTEbpOL2aWY/ulXpw6Xg52tfRFTEWvlHB
+         kTJ1etWEZjx5WqdAmXaDQcUbUyIECdsnr3esZZQ5Myjc7PzEDj0AzzKllfhVLyDAO53f
+         nGKWB06tOv4uCLrY0BEORshIPD3ZZyf2X9GIZbt3CgDbPsCIvlw5ZUb1EiumYP2TFzuL
+         VddRs67fuLi+CgSBNKUJn5EV2PrjFDmfRtnlDGP3wJcxGtZ2oFeK4cbfUUQ/t+vz8SKB
+         k6MyAlUxsf6ZpdSTLq9HiZ+EEE07jaBJMb9aCjGGlVrVotkr1cK6NOp/+H3daWFcy53R
+         /rZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740073070; x=1740677870;
+        d=1e100.net; s=20230601; t=1740073084; x=1740677884;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=M6PVa1O8aVWNHWzO0xnoru6dOjPsSU9GhIPgYbJ4Bds=;
-        b=hkc740wJ48CFDJJmSrHU1IXJWGeQc1nDHQqWjq+Qp3YyHYw5/iSxUduIPFxelGOd/V
-         ZVB1W3Y/ZZIGHcdz4M/9kvi/DVnLrc8B7FnuxliTNpTFVJOOSSw0j5plPH+ZdRb3JuVN
-         spmFDmlF+FeQzCCM7Hg3CJ8/aAAKXRv0r+zfqYET2ug5rnOc7BiOERqFBwhdFTww4sPg
-         ZuRdMIp379V+sDVlnpDIjoX/TYjc0G/wJBhs9YzFvEzeIOFFWutRycfRe8JuF6af7cmq
-         eGMaOOafpmlX9mQv5tlvyGgurzfd0EQvzNVz5HNKF7wsUjkGvRO0pKSEZhMrty0Lfao3
-         Ph0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWLt5mcqRc1x0juPWNUsfttsE1hfyz2MfgzU8xcc4ffLFTzEpWZPKu7vt7rnzj20o4tS/Aklr8gfX6v9mo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXiAXTc/Wo7bh9+DesPpzP2bG2iiAWP/GcNn/j3BTkSgNCDZDg
-	JhXpsczjOEnCVbzxvOkXrkz/IJstbJteaMTeN8lWS8XqrD/A7hvkYvclxFbI0wqO3NzJiE+c6xH
-	kPqWJ78RK9BqmyqhQTqqRNR6ea7c8Hrrxtlcb
-X-Gm-Gg: ASbGncuphQJTAyL27Y13ARLf282LXkxVwAq4eyYibd4lUOSYKQmtcTqLue8f1fInhrB
-	rKAzxe+l5XOAQyZf71RU/zcI9Wy1isv6Wqgb1ciqocBO6ZdPBAxRHkXv6YG+W8s8MghXPgOsZ
-X-Google-Smtp-Source: AGHT+IHFMkQrusRFEf4Tw4VekF+AIsgxYwXaxaEjAX9HRIIozJEdd2vqlItFLbnJ2Go/YAZl6HaJXWj7dhPJwzNW30k=
-X-Received: by 2002:a05:690c:19:b0:6f6:c937:2cf4 with SMTP id
- 00721157ae682-6fb5831bd8dmr192225577b3.23.1740073070461; Thu, 20 Feb 2025
- 09:37:50 -0800 (PST)
+        bh=9Zt8TbTFLCvdcJDQPNYalgDYvJB11g+s/hwDIBn89f0=;
+        b=w73vQwMng1lzSI9pVjpWDwKgykznXbTvH377IncPGsVZ+iVIXNmG+0P21dioN7YJqo
+         Uzd2IG9ZAO7+TOMD6REQe/9J6ZlQV6u7SWkLfCa6xFlyyrVT3cw39uR5E4UIkiR3eyuK
+         zTmY2YCJBI+jvgrNBoYkRO/MBsUgaJD5y8QsOKQrKQFv2+Yi8KhfwPsLZSzX9sFoz0t2
+         vuhQtM1nPManGf3QvQfjMR7FZYNQ446ZkahYU1672rKtPQK1BmHTbt5jQnvfbArKNwt8
+         qieNYRAWgKMgUG0kv1kJpc92zjTgI8p4JiwzcLlaabHSWVbSqVxafDvPOsBZHm/J7u2j
+         U92Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVMdn61b6A49PdjBDIxoodwJ5XpQMAhF0HJu/VJoBfQXjoy2HrapIZQ4L5QvO2STd33zYqICGTjFzDF2u0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy88oUPHIjw3C7NaI14GthOX0/PPDlVOORSEF6sEC7OZm0y4CGj
+	S3yKMtOByuaOB+NB1/6sfD6WlEiHwO8bHYL1ePcDvAnImVBj7mqvA7EPYv1imAhN4z8+epmlkui
+	B9/OvjZkZxWGBtqt/SeHiHl5J0ft+Ns7zXvtE
+X-Gm-Gg: ASbGncs0al90tqOD3IZtXVqA5O0DewTsdXsmdMWjuXmbGuYM5OiRcjvQysJM+5ifxFm
+	OxEVSFCVAcTIp0A20ygmeA/FWGWa62GRDDyxpzL1srTxdhNjreotY5J2hFtQTwNMNASgGnjK2WM
+	1mJwib7BaFGJZ2Pbz2z4hgmsYy
+X-Google-Smtp-Source: AGHT+IG5eD1d/34A/ma2l3agabxcu/jqWI6KO736c7ZnA0VLIWNC0HxJtPeN09ZtWyHb0S2Hmc+rMpeoUaXF+34Ar4c=
+X-Received: by 2002:a17:902:ce8b:b0:21f:3e29:9cd1 with SMTP id
+ d9443c01a7336-2218fe2de58mr2936735ad.1.1740073084261; Thu, 20 Feb 2025
+ 09:38:04 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250220140808.71674-1-linux@treblig.org> <aa6c6f4c-7d46-4e7e-bafc-f042436f47b6@schaufler-ca.com>
- <Z7dcxAYj_jsG9WL6@gallifrey> <91cc89cd-a9c0-4936-8449-1b9ac6273dfc@schaufler-ca.com>
-In-Reply-To: <91cc89cd-a9c0-4936-8449-1b9ac6273dfc@schaufler-ca.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 20 Feb 2025 12:37:39 -0500
-X-Gm-Features: AWEUYZmoO9GgVv8BQLTsASUy6ZDHMLvKtEDBfJgzz0FBmvpbeTk-VYGzCkfDJf8
-Message-ID: <CAHC9VhQzV9nY4AOZn=WnQcr5Q6a+ozfyLBNNoHU9oyk6MQUBZg@mail.gmail.com>
-Subject: Re: [PATCH net-next] netlabel: Remove unused cfg_calipso funcs
-To: Casey Schaufler <casey@schaufler-ca.com>
-Cc: "Dr. David Alan Gilbert" <linux@treblig.org>, davem@davemloft.net, edumazet@google.com, 
-	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, 
-	linux-security-module@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+References: <20250213220341.3215660-1-samuel.holland@sifive.com> <Z7ZLB-wZY9wTZSBZ@google.com>
+In-Reply-To: <Z7ZLB-wZY9wTZSBZ@google.com>
+From: Ian Rogers <irogers@google.com>
+Date: Thu, 20 Feb 2025 09:37:52 -0800
+X-Gm-Features: AWEUYZkM1J8XXujqhsMzCByDWam7Acafx_SwZqRr_AvhB1vHCga40P4J3rWis-E
+Message-ID: <CAP-5=fW0KdRQpmKddLfwbVcJeOkkZ7xzmX8uDvwkuUGVsJAqwg@mail.gmail.com>
+Subject: Re: [RESEND PATCH 0/7] perf vendor events riscv: Update SiFive CPU
+ PMU events
+To: Namhyung Kim <namhyung@kernel.org>, Atish Patra <atishp@rivosinc.com>, 
+	Beeman Strong <beeman@rivosinc.com>
+Cc: Samuel Holland <samuel.holland@sifive.com>, linux-riscv@lists.infradead.org, 
+	Arnaldo Carvalho de Melo <acme@redhat.com>, Palmer Dabbelt <palmer@dabbelt.com>, linux-perf-users@vger.kernel.org, 
+	Mark Rutland <mark.rutland@arm.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, linux-kernel@vger.kernel.org, 
+	Jiri Olsa <jolsa@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Feb 20, 2025 at 12:03=E2=80=AFPM Casey Schaufler <casey@schaufler-c=
-a.com> wrote:
-> On 2/20/2025 8:48 AM, Dr. David Alan Gilbert wrote:
-> > * Casey Schaufler (casey@schaufler-ca.com) wrote:
-> >> On 2/20/2025 6:08 AM, linux@treblig.org wrote:
-> >>> From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> >>>
-> >>> netlbl_cfg_calipso_map_add(), netlbl_cfg_calipso_add() and
-> >>> netlbl_cfg_calipso_del() were added in 2016 as part of
-> >>> commit 3f09354ac84c ("netlabel: Implement CALIPSO config functions fo=
-r
-> >>> SMACK.")
-> >>>
-> >>> Remove them.
-> >> Please don't. The Smack CALIPSO implementation has been delayed
-> >> for a number of reasons, some better than others, but is still on
-> >> the roadmap.
-> > Hmm OK.
-> > If it makes it to 10 years next year then perhaps it should hold
-> > a birthday party!
+On Wed, Feb 19, 2025 at 1:20=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> =
+wrote:
 >
-> The difference between network and security developers is that a
-> network developer thinks 10 microseconds is a long time, while a
-> security developer thinks 10 years is no time at all.
+> Hello,
+>
+> On Wed, Feb 12, 2025 at 05:21:33PM -0800, Samuel Holland wrote:
+> > This series updates the PMU event JSON files to add support for newer
+> > SiFive CPUs, including those used in the HiFive Premier P550 board.
+> > Since most changes are incremental, symbolic links are used when a set
+> > of events is unchanged from the previous CPU series.
+> >
+> > I originally sent this series about a year ago[1], but received no
+> > feedback. The P550 board is now available (and I have tested this serie=
+s
+> > on it), so it would be good to get perf support for it upstream.
+> >
+> > [1]: https://lore.kernel.org/linux-perf-users/20240509021531.680920-1-s=
+amuel.holland@sifive.com/
+> >
+> >
+> > Eric Lin (5):
+> >   perf vendor events riscv: Update SiFive Bullet events
+> >   perf vendor events riscv: Add SiFive Bullet version 0x07 events
+> >   perf vendor events riscv: Add SiFive Bullet version 0x0d events
+> >   perf vendor events riscv: Add SiFive P550 events
+> >   perf vendor events riscv: Add SiFive P650 events
+> >
+> > Samuel Holland (2):
+> >   perf vendor events riscv: Rename U74 to Bullet
+> >   perf vendor events riscv: Remove leading zeroes
+>
+> It'd be nice if anyone in the RISC-V community can review this.
 
- :)
+I can add a:
+Tested-by: Ian Rogers <irogers@google.com>
+tag, for testing with a build with JEVENTS_ARCH=3Dall on an x86.
 
-There are also far more devs interested in working on the network
-stack than there are those interested in working on access control
-mechanisms.  Sadly those of us playing in the access control space
-often have to make hard choice about what things to work on, and
-somethings get delayed far more than we would like.
+The changes use symlinks but generally we've not done this for Intel.
+I'm not sure this matters and didn't see mention in the style guide.
 
---=20
-paul-moore.com
+The model naming and events are all coming from SiFive so I trust
+they're happy with it, I didn't spot anything glaringly wrong.
+Reviewed-by: Ian Rogers <irogers@google.com>
+
+Thanks,
+Ian
+
+
+> Thanks,
+> Namhyung
+>
+> >
+> >  tools/perf/pmu-events/arch/riscv/mapfile.csv  |  6 +-
+> >  .../cycle-and-instruction-count.json          | 12 +++
+> >  .../arch/riscv/sifive/bullet-07/firmware.json |  1 +
+> >  .../riscv/sifive/bullet-07/instruction.json   |  1 +
+> >  .../arch/riscv/sifive/bullet-07/memory.json   |  1 +
+> >  .../riscv/sifive/bullet-07/microarch.json     | 62 +++++++++++++
+> >  .../riscv/sifive/bullet-07/watchpoint.json    | 42 +++++++++
+> >  .../cycle-and-instruction-count.json          |  1 +
+> >  .../arch/riscv/sifive/bullet-0d/firmware.json |  1 +
+> >  .../riscv/sifive/bullet-0d/instruction.json   |  1 +
+> >  .../arch/riscv/sifive/bullet-0d/memory.json   |  1 +
+> >  .../riscv/sifive/bullet-0d/microarch.json     | 72 +++++++++++++++
+> >  .../riscv/sifive/bullet-0d/watchpoint.json    |  1 +
+> >  .../sifive/{u74 =3D> bullet}/firmware.json      |  0
+> >  .../arch/riscv/sifive/bullet/instruction.json | 92 +++++++++++++++++++
+> >  .../arch/riscv/sifive/bullet/memory.json      | 32 +++++++
+> >  .../arch/riscv/sifive/bullet/microarch.json   | 57 ++++++++++++
+> >  .../arch/riscv/sifive/p550/firmware.json      |  1 +
+> >  .../arch/riscv/sifive/p550/instruction.json   |  1 +
+> >  .../arch/riscv/sifive/p550/memory.json        | 47 ++++++++++
+> >  .../arch/riscv/sifive/p550/microarch.json     |  1 +
+> >  .../p650/cycle-and-instruction-count.json     |  1 +
+> >  .../arch/riscv/sifive/p650/firmware.json      |  1 +
+> >  .../arch/riscv/sifive/p650/instruction.json   |  1 +
+> >  .../arch/riscv/sifive/p650/memory.json        | 57 ++++++++++++
+> >  .../arch/riscv/sifive/p650/microarch.json     | 62 +++++++++++++
+> >  .../arch/riscv/sifive/p650/watchpoint.json    |  1 +
+> >  .../arch/riscv/sifive/u74/instructions.json   | 92 -------------------
+> >  .../arch/riscv/sifive/u74/memory.json         | 32 -------
+> >  .../arch/riscv/sifive/u74/microarch.json      | 57 ------------
+> >  30 files changed, 555 insertions(+), 182 deletions(-)
+> >  create mode 100644 tools/perf/pmu-events/arch/riscv/sifive/bullet-07/c=
+ycle-and-instruction-count.json
+> >  create mode 120000 tools/perf/pmu-events/arch/riscv/sifive/bullet-07/f=
+irmware.json
+> >  create mode 120000 tools/perf/pmu-events/arch/riscv/sifive/bullet-07/i=
+nstruction.json
+> >  create mode 120000 tools/perf/pmu-events/arch/riscv/sifive/bullet-07/m=
+emory.json
+> >  create mode 100644 tools/perf/pmu-events/arch/riscv/sifive/bullet-07/m=
+icroarch.json
+> >  create mode 100644 tools/perf/pmu-events/arch/riscv/sifive/bullet-07/w=
+atchpoint.json
+> >  create mode 120000 tools/perf/pmu-events/arch/riscv/sifive/bullet-0d/c=
+ycle-and-instruction-count.json
+> >  create mode 120000 tools/perf/pmu-events/arch/riscv/sifive/bullet-0d/f=
+irmware.json
+> >  create mode 120000 tools/perf/pmu-events/arch/riscv/sifive/bullet-0d/i=
+nstruction.json
+> >  create mode 120000 tools/perf/pmu-events/arch/riscv/sifive/bullet-0d/m=
+emory.json
+> >  create mode 100644 tools/perf/pmu-events/arch/riscv/sifive/bullet-0d/m=
+icroarch.json
+> >  create mode 120000 tools/perf/pmu-events/arch/riscv/sifive/bullet-0d/w=
+atchpoint.json
+> >  rename tools/perf/pmu-events/arch/riscv/sifive/{u74 =3D> bullet}/firmw=
+are.json (100%)
+> >  create mode 100644 tools/perf/pmu-events/arch/riscv/sifive/bullet/inst=
+ruction.json
+> >  create mode 100644 tools/perf/pmu-events/arch/riscv/sifive/bullet/memo=
+ry.json
+> >  create mode 100644 tools/perf/pmu-events/arch/riscv/sifive/bullet/micr=
+oarch.json
+> >  create mode 120000 tools/perf/pmu-events/arch/riscv/sifive/p550/firmwa=
+re.json
+> >  create mode 120000 tools/perf/pmu-events/arch/riscv/sifive/p550/instru=
+ction.json
+> >  create mode 100644 tools/perf/pmu-events/arch/riscv/sifive/p550/memory=
+.json
+> >  create mode 120000 tools/perf/pmu-events/arch/riscv/sifive/p550/microa=
+rch.json
+> >  create mode 120000 tools/perf/pmu-events/arch/riscv/sifive/p650/cycle-=
+and-instruction-count.json
+> >  create mode 120000 tools/perf/pmu-events/arch/riscv/sifive/p650/firmwa=
+re.json
+> >  create mode 120000 tools/perf/pmu-events/arch/riscv/sifive/p650/instru=
+ction.json
+> >  create mode 100644 tools/perf/pmu-events/arch/riscv/sifive/p650/memory=
+.json
+> >  create mode 100644 tools/perf/pmu-events/arch/riscv/sifive/p650/microa=
+rch.json
+> >  create mode 120000 tools/perf/pmu-events/arch/riscv/sifive/p650/watchp=
+oint.json
+> >  delete mode 100644 tools/perf/pmu-events/arch/riscv/sifive/u74/instruc=
+tions.json
+> >  delete mode 100644 tools/perf/pmu-events/arch/riscv/sifive/u74/memory.=
+json
+> >  delete mode 100644 tools/perf/pmu-events/arch/riscv/sifive/u74/microar=
+ch.json
+> >
+> > --
+> > 2.47.0
+> >
 
