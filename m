@@ -1,149 +1,140 @@
-Return-Path: <linux-kernel+bounces-523179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05022A3D32D
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 09:29:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AD84A3D334
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 09:30:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C50B53A7CDA
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 08:29:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4BBA3AE72B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 08:30:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D48ED1EB1A8;
-	Thu, 20 Feb 2025 08:29:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A1961EC017;
+	Thu, 20 Feb 2025 08:30:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gl+bv8Gg"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m2iNwu1S"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CED7B1A7264;
-	Thu, 20 Feb 2025 08:29:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D0401EBA0B;
+	Thu, 20 Feb 2025 08:30:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740040164; cv=none; b=lOQ2yCMio3Ew2ve2UwkK1M0ljpdXGwupgn8DQLD4plG5c9aBdWApXvUssNrLqX8RqYllKota8i9q7knlWmZ5va0HC70WSnfsTs7lTGZw8rm0IbISBEAAN8ikmkggpizCKohqCKeVNglMOTmY31dnHI/IryUau6MsDLmVy6bsWek=
+	t=1740040201; cv=none; b=B8AI9NwoelnJbDXR8Lh1wO+LVOlbAlU5MsYJrp2fEg2hKmbaLELZAuLBK8cwqZB9IWHOKNpmDx81fNFnOYHQwgEpMFMrJ1s+aqDHgo5KWL8egNVWHXpTOC0OaXJC6ARpsgSUR1eDw4FOi144iSotAK8ftzKQWtfQddTmqQ+N5zg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740040164; c=relaxed/simple;
-	bh=80cf8zlzFwBqoh821Ay6AOl2kStY62G7PZJrZaBE1w8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g7Aizzo025AwUf+sjSP0KasWQph8KmD1WtBm+hPhqRYuktxAst4y8g9Sxc9OR1ryoedGlWs9hJSxt+sA32L4BwiIHkELc5ppVZ13/vGuGNb5r/YOirQjeq2S34wrOQT7+IOP0e/iPrOlG5iB1zXfCh2HCcb3AR6CrGzFm4uKH+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gl+bv8Gg; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-220c8f38febso11584885ad.2;
-        Thu, 20 Feb 2025 00:29:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740040162; x=1740644962; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=F56dqNOXtbjyXTzhGsxb0Jrv3YT4/cs1TT3uTV3uBp0=;
-        b=gl+bv8GgRzze0pcM0U4Tlfj9GkliBlC/cXt5H9PVx5jCcqKVvU3LO9GsL3sKRxTDSq
-         IOIMJ4aXZF1vG9B9eBYMVW29uMAi5HP5DokL19JcdcAg5nLYu1uaZlHwfmAg4jPOSMCR
-         Gmu86JAJZ42wsW8Tv2+vYiXjPUlHj89tCaD+6dCaalXr5a9gZo2VGtnc20CilRAeHDrE
-         UdOltKrl/T4SbeRMpR15/BKf296sfh4KW2DX849LuesYbY6oYlbv/GEurBPmIWsTLpQJ
-         3bJ6YjBRjUjNCxBFRGxACiKAAb2FFjnTgWTy0RkYnr5ONfDfELRyUPtgWQ0/61wQWZk3
-         ZkxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740040162; x=1740644962;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=F56dqNOXtbjyXTzhGsxb0Jrv3YT4/cs1TT3uTV3uBp0=;
-        b=PNdnbrLklP8rYBQE03E9GTBqMqQK5ru0qJ/a53Xm/IXSZ/PBnvIypTdL8wkb8aJBYu
-         ak+LANAlHi1IL8hcmW9QnosG4b9uoThfFLjD03veWcsmBGIY5MRltFdKMrhV+7uAKH/X
-         JfxJacyg1K2lLziSOGTF5mhg5AnXmX6vgFHWVL75ajQ/qmWKFMPAD4GtZvxQ3oXdrDm/
-         2WSEvNjv18gwEPUcPgkaqg57lBteaFeElX36SvqC/8/Flt2fVTV9BSxjKRVzvdC+0KM7
-         iTwD71lhiD393s5bV/uv/JieAakvNQUbp1zBIoRZgiROU4LkFJHjKhhyMuTZJKG43RHm
-         K+6g==
-X-Forwarded-Encrypted: i=1; AJvYcCVyqBI147iTC4C9cneBgqWhFYHDzlEsNWviL7AcUEWtoF0m2Srbb4rwtGNU6Xv4ZfHEIsI0cz5/prvSoO1M@vger.kernel.org, AJvYcCWdf6oiJKSzyLfdNwg5dWcSagBkzrCIN4ALTzmll8NzIq6vNjhAveygbarF5qJcEFtVGyS8K2mCLUKf@vger.kernel.org, AJvYcCWjalGba73DTVFwYu2VVKZGNV4vgipKTfTu+MvlWUXyT8k/NJ0aAbQw/T4ilpFDu8G+MMJa4pHGOtQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyCgnV0qOkGbWJ7u8xHof2AISi0wClwtSGXz3mg8seyWHEPdjhl
-	35/iFveIm9dc4yfMg7+K3ybojNdmdifp4Fds6V0IQnLNmBqU8znY
-X-Gm-Gg: ASbGncsu65TxpLfuRFI8rBBQYXNNjcfIciSYNbcQbCO831nlA0J35tcRbRpnZHB5ytJ
-	YZQyJj+nd7epVq9G8hM0waXnfvDi+vJ+N6CkU6nYZ+pwHjbqAaX5GXvJAxgXuxsofPmO0f6f+np
-	B+Uu/FMukipn9fs5OyyHq5RFgo8BeuDMhB5ddnBomzWnS+Jb25gPZ4N47uJdh3mVvsa0adsRgXM
-	gEVdVd0nyMjz1tn5YgyNl6INK40Jxw2vUzRPFRdBe+DacNSmCjqImdYMkqwkEOnT1EmlmogM2un
-	ws1LI4ZgYORQVe4=
-X-Google-Smtp-Source: AGHT+IEFoRMxUuPJ5Gn8TKY4GqpAz7yGpt5G5frKd4twOqJcw5bSWSYR4ZnKTlEykRD6+ahXb9c8GA==
-X-Received: by 2002:a05:6a00:190e:b0:730:79bf:c893 with SMTP id d2e1a72fcca58-73417248c3emr2609762b3a.4.1740040161695;
-        Thu, 20 Feb 2025 00:29:21 -0800 (PST)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-732532ce7f1sm11296452b3a.73.2025.02.20.00.29.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Feb 2025 00:29:20 -0800 (PST)
-Received: by archie.me (Postfix, from userid 1000)
-	id B98EA4208FB6; Thu, 20 Feb 2025 15:29:17 +0700 (WIB)
-Date: Thu, 20 Feb 2025 15:29:17 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Marcelo Schmitt <marcelo.schmitt@analog.com>, linux-iio@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: jic23@kernel.org, lars@metafoo.de, corbet@lwn.net,
-	dlechner@baylibre.com, marcelo.schmitt1@gmail.com
-Subject: Re: [PATCH v4 1/1] Documentation: iio: Add ADC documentation
-Message-ID: <Z7bn3TEC4faXbzEj@archie.me>
-References: <e6ac2a595f06ba2d5ff0eb86e5895479c9dd797f.1739998491.git.marcelo.schmitt@analog.com>
+	s=arc-20240116; t=1740040201; c=relaxed/simple;
+	bh=1vibqR3G+O71ULLP8sf+4kfTQYZY3krLEakrtCV5AKE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iufPwEJHgQJ7VOXkeaOWdJaYObD0yYCie5X/hQZjUA6+yWCWyg8ln+G/8zKBHFfnWviqmryGc6Geh4slFDsa2gfoRnQB8Y+DbJ5Dp+QvCsWkXVBKkpK+UIIDIXd8aSticI1FUyPR4nnVdm35A+7wmONTIHfSvBsIzzp3/Ix68D4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m2iNwu1S; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C52D3C4CEDD;
+	Thu, 20 Feb 2025 08:29:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740040201;
+	bh=1vibqR3G+O71ULLP8sf+4kfTQYZY3krLEakrtCV5AKE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=m2iNwu1SAzIX9cinXD2NyjbLtWzwprhwSSXFAXQrAeHuFQ/WBJBMjdnwxwb1oV9Pi
+	 xIDgDQIoONeBk14NolSe2mLG3Thj66aYZG6CMDiby71psdQHDaImCXqOPVpvnheAoE
+	 W8SsyoPWxa6SXMw7FKCkIZs+6iWyhEnhAjvsb4GDJ9tBsCR93slLIsdEPqTQSXmNmg
+	 EuoCKhHdArkwfP+Vd+IGngVYsd57xibAfH3/B/d3TALBQiAoc90MhcflGPbuMY/zVm
+	 Ou/DTeX9cY5k4bBHoapJl/+XdKnfyNjCPl0VVt8JVSUsGRGMUlFYbLguSDUfP7C1lM
+	 loFu3DylTB3AQ==
+Message-ID: <d7e788c5-0bec-4761-ad4a-1c4f642fe3e5@kernel.org>
+Date: Thu, 20 Feb 2025 09:29:55 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="fA1JDFFS27HEYYIl"
-Content-Disposition: inline
-In-Reply-To: <e6ac2a595f06ba2d5ff0eb86e5895479c9dd797f.1739998491.git.marcelo.schmitt@analog.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] dt-bindings: usb: samsung,exynos-dwc3: add
+ exynos7870 support
+To: Kaustabh Chakraborty <kauschluss@disroot.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+Cc: linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250219-exynos7870-usb-v2-0-1de41a89c9d4@disroot.org>
+ <20250219-exynos7870-usb-v2-1-1de41a89c9d4@disroot.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250219-exynos7870-usb-v2-1-1de41a89c9d4@disroot.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+On 18/02/2025 19:54, Kaustabh Chakraborty wrote:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: samsung,exynos7870-dwusb3
+> +    then:
+> +      properties:
+> +        clocks:
+> +          minItems: 3
+> +          maxItems: 3
+> +        clock-names:
+> +          items:
+> +            - const: bus_early
+> +            - const: ctrl
+> +            - const: ref
+
+Other device has order bus_early + ref, so use the same here, thus
+bus_early + ref + ctrl.
+
+Rest looks fine.
+
+> 
 
 
---fA1JDFFS27HEYYIl
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Feb 19, 2025 at 06:00:56PM -0300, Marcelo Schmitt wrote:
-> +For a **single-ended bipolar** channel, the analog voltage input can go =
-=66rom
-> +-VREF to +VREF (where -VREF is the voltage reference that has the lower
-> +electrical potential while +VREF is the reference with the higher one). =
-Some ADC
-> +chips derive the lower reference from +VREF, others get it from a separa=
-te
-                                                  "... obtain it ..."
-> +input. Often, +VREF and -VREF are symmetric but they don't need to be so=
-=2E When
-> +-VREF is lower than system ground, these inputs are also called single-e=
-nded
-> +true bipolar. Also, while there is a relevant difference between bipolar=
- and
-> +true bipolar from the electrical perspective, IIO makes no explicit dist=
-inction
-> +between them.
-> +
-> <snipped>...
-> +In the ADC driver, ``differential =3D 1`` is set into ``struct iio_chan_=
-spec`` for
-> +the channel. Even though, there are three general input types, ``differe=
-ntial``
-> +is only used to distinguish between differential and not differential (e=
-ither
-                                                   "... non-differential ..=
-=2E"
-> +single-ended or pseudo-differential) input types. See
-> +``include/linux/iio/iio.h`` for more information.
-
-Thanks.
-
---=20
-An old man doll... just what I always wanted! - Clara
-
---fA1JDFFS27HEYYIl
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZ7bn3QAKCRD2uYlJVVFO
-o8LZAQCJ0CV0EgB3xzpRqTrsSdpxkbgQtEVnJBOYnClg5YanjwD9EJheU0XodKN1
-1i648/jd8fjfBIgI+eEMegqo/YXBqA4=
-=fjkf
------END PGP SIGNATURE-----
-
---fA1JDFFS27HEYYIl--
+Best regards,
+Krzysztof
 
