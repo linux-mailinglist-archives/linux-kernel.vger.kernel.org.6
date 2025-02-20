@@ -1,346 +1,219 @@
-Return-Path: <linux-kernel+bounces-524911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD567A3E8A7
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 00:37:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C26E8A3E8AA
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 00:40:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE1DF189CCC2
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 23:38:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C625517EE82
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 23:39:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3652626463B;
-	Thu, 20 Feb 2025 23:37:48 +0000 (UTC)
-Received: from relay04.th.seeweb.it (relay04.th.seeweb.it [5.144.164.165])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74CA326771F;
+	Thu, 20 Feb 2025 23:39:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IdX+hPRU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 124CD2676CA;
-	Thu, 20 Feb 2025 23:37:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.144.164.165
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1B1F266EF8;
+	Thu, 20 Feb 2025 23:39:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740094667; cv=none; b=PtGI3UMdxHV/ehIp2YLsJgdsiR0l9O24XGpcOWsDtOy9baK0lD3q66m3aYc9Nc8Mds1xl8eVTgkvfIQaz+XWMJRaPZjaJyJZuwANEWg3DNt63eBYVQTu7sAO/rXpNzkAo4bL4OWZDASfyY9Ec68QbqinJ99XBFr3AT2VS0NcrdU=
+	t=1740094791; cv=none; b=uLnjzdKwXn9la7U1U5IgGJT+MmhI3BUpJ7aF8l9AiIHyGJHTAeiSkp2mGyXcOBN4WwQafKqVpy0LIE5645SOOdv/Ja+i8pvcYNAeo9GVbu5D+zcbM/zHNrPt4LQGc5lnV9eV6RKsgWvItU2WpgAXwYuqOzhDxX6VHYVzTqPbfUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740094667; c=relaxed/simple;
-	bh=TgaIkXf7hfN2T0N/mAqyrN4TIxHOV9mkadMuc3wJ5F8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L9FKoNNfSPRxm9H5g634i4rZn2UK3oLoCQVoxX1GUH+dy4SqrOQdQwluE3KImdG8qekUHrOYRYfN0iJUfesHMcK/Aq8XjaZb93I/SdDnn5CjwHEphOmrzNhRq2bukQlQaeHUdntfOnD7LUonTw6dua76diLMnB8uiy3cDcbNNXU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=somainline.org; spf=pass smtp.mailfrom=somainline.org; arc=none smtp.client-ip=5.144.164.165
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=somainline.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=somainline.org
-Received: from SoMainline.org (94-211-6-86.cable.dynamic.v4.ziggo.nl [94.211.6.86])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by m-r1.th.seeweb.it (Postfix) with ESMTPSA id E10301F8D8;
-	Fri, 21 Feb 2025 00:37:41 +0100 (CET)
-Date: Fri, 21 Feb 2025 00:37:40 +0100
-From: Marijn Suijten <marijn.suijten@somainline.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Rob Clark <robdclark@gmail.com>, 
-	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 7/7] drm/msm/dpu: remove DPU_CTL_SPLIT_DISPLAY from CTL
- blocks on DPU >= 5.0
-Message-ID: <45evxcbkcenkoiufh6vqpq5ngfz3mz62evvjxehmqgp5sd4lo3@a5swxugzf4fm>
-References: <20250220-dpu-active-ctl-v1-0-71ca67a564f8@linaro.org>
- <20250220-dpu-active-ctl-v1-7-71ca67a564f8@linaro.org>
+	s=arc-20240116; t=1740094791; c=relaxed/simple;
+	bh=a+ewDhWyQHdcj13JBzjWs2K8bIJieZ0GId/WQZ9C2s4=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=Dqiw3DxgsDOniRCpimFnLhcfWv6G6DlBCprcRW5gQi5b7Q0i3iioa4pK/62p/9wWl9XeMO3ieUEdUQ7+bAQn53e49f5alIIlFQn1xeA5BpRRqXtNWNwxwqG/q1SmFR0ZP2Un0xEYsdehPQpu+7C2JTCfihoCUrl7whFFWUvvYBc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IdX+hPRU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90BC4C4CED1;
+	Thu, 20 Feb 2025 23:39:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740094791;
+	bh=a+ewDhWyQHdcj13JBzjWs2K8bIJieZ0GId/WQZ9C2s4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=IdX+hPRUg8L6jGDvbir/xmIYvttvKycBjY5Tb6n6vh1si2XrPpfkHGSGNNL+iJbMd
+	 biu6St1nK/HpjapPIDNJ3+aw6reEvRcNnmiJhhdM8UTQBANrzds0jQFPRjiJkcLG3P
+	 rmdEn2otRaBMRxwa/6NgidHTXNdVNTm0KAYU622NaABSozmBISY1TmIyICdEmSetkB
+	 mu7aaS9hdtzoWo/yO+x4aUUHJhG51x7cc3Egopl2iqUFfPLgb83EEgQkSfza9Foszt
+	 s90O82eSCBNwNNtN41Balo1biyTuzl6hWqjSwTnEafQbpB73a+mh1T+//WsCxIMfuK
+	 VNKaH2c0wuf3g==
+Date: Fri, 21 Feb 2025 08:39:46 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Masami
+ Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Morton
+ <akpm@linux-foundation.org>, Heiko Carstens <hca@linux.ibm.com>, Sven
+ Schnelle <svens@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+ Alexander Gordeev <agordeev@linux.ibm.com>, stable@vger.kernel.org
+Subject: Re: [PATCH v3 1/5] ftrace: Fix accounting of adding subops to a
+ manager ops
+Message-Id: <20250221083946.ad92f6914b7bc6fe7bcf0423@kernel.org>
+In-Reply-To: <20250220202055.060300046@goodmis.org>
+References: <20250220202009.689253424@goodmis.org>
+	<20250220202055.060300046@goodmis.org>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250220-dpu-active-ctl-v1-7-71ca67a564f8@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On 2025-02-20 12:26:24, Dmitry Baryshkov wrote:
-> Since DPU 5.0 CTL blocks do not require DPU_CTL_SPLIT_DISPLAY, as single
-> CTL is used for both interfaces. As both RM and encoder now handle
-> active CTLs, drop that feature bit.
+On Thu, 20 Feb 2025 15:20:10 -0500
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-I was wondering if this bit only existed to ensure the right "pair" of CTLs
-exist: not on DPU 4.0, but on DPU 3.0 we see that CTL_0 and CTL_2 have this bit
-but not CTL_1.  Meaning that split display can only work when that specific pair
-of CTL_0 and CTL_2 is used in conjunction?
-
+> From: Steven Rostedt <rostedt@goodmis.org>
 > 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Function graph uses a subops and manager ops mechanism to attach to
+> ftrace.  The manager ops connects to ftrace and the functions it connects
+> to is defined by a list of subops that it manages.
+> 
+> The function hash that defines what the above ops attaches to limits the
+> functions to attach if the hash has any content. If the hash is empty, it
+> means to trace all functions.
+> 
+> The creation of the manager ops hash is done by iterating over all the
+> subops hashes. If any of the subops hashes is empty, it means that the
+> manager ops hash must trace all functions as well.
+> 
+> The issue is in the creation of the manager ops. When a second subops is
+> attached, a new hash is created by starting it as NULL and adding the
+> subops one at a time. But the NULL ops is mistaken as an empty hash, and
+> once an empty hash is found, it stops the loop of subops and just enables
+> all functions.
+> 
+>   # echo "f:myevent1 kernel_clone" >> /sys/kernel/tracing/dynamic_events
+>   # cat /sys/kernel/tracing/enabled_functions
+> kernel_clone (1)           	tramp: 0xffffffffc0309000 (ftrace_graph_func+0x0/0x60) ->ftrace_graph_func+0x0/0x60
+> 
+>   # echo "f:myevent2 schedule_timeout" >> /sys/kernel/tracing/dynamic_events
+>   # cat /sys/kernel/tracing/enabled_functions
+> trace_initcall_start_cb (1)             tramp: 0xffffffffc0309000 (ftrace_graph_func+0x0/0x60) ->ftrace_graph_func+0x0/0x60
+> run_init_process (1)            tramp: 0xffffffffc0309000 (ftrace_graph_func+0x0/0x60) ->ftrace_graph_func+0x0/0x60
+> try_to_run_init_process (1)             tramp: 0xffffffffc0309000 (ftrace_graph_func+0x0/0x60) ->ftrace_graph_func+0x0/0x60
+> x86_pmu_show_pmu_cap (1)                tramp: 0xffffffffc0309000 (ftrace_graph_func+0x0/0x60) ->ftrace_graph_func+0x0/0x60
+> cleanup_rapl_pmus (1)                   tramp: 0xffffffffc0309000 (ftrace_graph_func+0x0/0x60) ->ftrace_graph_func+0x0/0x60
+> uncore_free_pcibus_map (1)              tramp: 0xffffffffc0309000 (ftrace_graph_func+0x0/0x60) ->ftrace_graph_func+0x0/0x60
+> uncore_types_exit (1)                   tramp: 0xffffffffc0309000 (ftrace_graph_func+0x0/0x60) ->ftrace_graph_func+0x0/0x60
+> uncore_pci_exit.part.0 (1)              tramp: 0xffffffffc0309000 (ftrace_graph_func+0x0/0x60) ->ftrace_graph_func+0x0/0x60
+> kvm_shutdown (1)                tramp: 0xffffffffc0309000 (ftrace_graph_func+0x0/0x60) ->ftrace_graph_func+0x0/0x60
+> vmx_dump_msrs (1)               tramp: 0xffffffffc0309000 (ftrace_graph_func+0x0/0x60) ->ftrace_graph_func+0x0/0x60
+> vmx_cleanup_l1d_flush (1)               tramp: 0xffffffffc0309000 (ftrace_graph_func+0x0/0x60) ->ftrace_graph_func+0x0/0x60
+> [..]
+> 
+> Fix this by initializing the new hash to NULL and if the hash is NULL do
+> not treat it as an empty hash but instead allocate by copying the content
+> of the first sub ops. Then on subsequent iterations, the new hash will not
+> be NULL, but the content of the previous subops. If that first subops
+> attached to all functions, then new hash may assume that the manager ops
+> also needs to attach to all functions.
+> 
 
-Reviewed-by: Marijn Suijten <marijn.suijten@somainline.org>
+Looks good to me.
 
+Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+
+Thanks,
+
+> Cc: stable@vger.kernel.org
+> Fixes: 5fccc7552ccbc ("ftrace: Add subops logic to allow one ops to manage many")
+> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 > ---
->  drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_10_0_sm8650.h  | 5 ++---
->  drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_0_sm8150.h   | 5 ++---
->  drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_1_sc8180x.h  | 4 ++--
->  drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_2_sm7150.h   | 4 ++--
->  drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_6_0_sm8250.h   | 5 ++---
->  drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_7_0_sm8350.h   | 5 ++---
->  drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_8_0_sc8280xp.h | 5 ++---
->  drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_8_1_sm8450.h   | 5 ++---
->  drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_8_4_sa8775p.h  | 5 ++---
->  drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_9_0_sm8550.h   | 5 ++---
->  drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_9_2_x1e80100.h | 5 ++---
->  11 files changed, 22 insertions(+), 31 deletions(-)
+> Changes since v2: https://lore.kernel.org/20250219220510.888959028@goodmis.org
 > 
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_10_0_sm8650.h b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_10_0_sm8650.h
-> index bcb39807fe61e231d6e318d8729ed86f213fb06a..a705e3e761d9a578777cd03011e90df8002127a6 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_10_0_sm8650.h
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_10_0_sm8650.h
-> @@ -27,17 +27,16 @@ static const struct dpu_mdp_cfg sm8650_mdp = {
->  	},
->  };
->  
-> -/* FIXME: get rid of DPU_CTL_SPLIT_DISPLAY in favour of proper ACTIVE_CTL support */
->  static const struct dpu_ctl_cfg sm8650_ctl[] = {
->  	{
->  		.name = "ctl_0", .id = CTL_0,
->  		.base = 0x15000, .len = 0x1000,
-> -		.features = CTL_SM8550_MASK | BIT(DPU_CTL_SPLIT_DISPLAY),
-> +		.features = CTL_SM8550_MASK,
->  		.intr_start = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR2, 9),
->  	}, {
->  		.name = "ctl_1", .id = CTL_1,
->  		.base = 0x16000, .len = 0x1000,
-> -		.features = CTL_SM8550_MASK | BIT(DPU_CTL_SPLIT_DISPLAY),
-> +		.features = CTL_SM8550_MASK,
->  		.intr_start = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR2, 10),
->  	}, {
->  		.name = "ctl_2", .id = CTL_2,
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_0_sm8150.h b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_0_sm8150.h
-> index 421afacb7248039abd9fb66bcb73b756ae0d640a..bf4ff275bba4320e70acf516cb784b1bdd0cf966 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_0_sm8150.h
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_0_sm8150.h
-> @@ -37,17 +37,16 @@ static const struct dpu_mdp_cfg sm8150_mdp = {
->  	},
->  };
->  
-> -/* FIXME: get rid of DPU_CTL_SPLIT_DISPLAY in favour of proper ACTIVE_CTL support */
->  static const struct dpu_ctl_cfg sm8150_ctl[] = {
->  	{
->  		.name = "ctl_0", .id = CTL_0,
->  		.base = 0x1000, .len = 0x1e0,
-> -		.features = BIT(DPU_CTL_ACTIVE_CFG) | BIT(DPU_CTL_SPLIT_DISPLAY),
-> +		.features = BIT(DPU_CTL_ACTIVE_CFG),
->  		.intr_start = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR2, 9),
->  	}, {
->  		.name = "ctl_1", .id = CTL_1,
->  		.base = 0x1200, .len = 0x1e0,
-> -		.features = BIT(DPU_CTL_ACTIVE_CFG) | BIT(DPU_CTL_SPLIT_DISPLAY),
-> +		.features = BIT(DPU_CTL_ACTIVE_CFG),
->  		.intr_start = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR2, 10),
->  	}, {
->  		.name = "ctl_2", .id = CTL_2,
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_1_sc8180x.h b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_1_sc8180x.h
-> index 641023b102bf59352546f0782d9264986367de78..7ec4fd702fd2f37e2e6a5758154d14967ba11504 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_1_sc8180x.h
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_1_sc8180x.h
-> @@ -41,12 +41,12 @@ static const struct dpu_ctl_cfg sc8180x_ctl[] = {
->  	{
->  		.name = "ctl_0", .id = CTL_0,
->  		.base = 0x1000, .len = 0x1e0,
-> -		.features = BIT(DPU_CTL_ACTIVE_CFG) | BIT(DPU_CTL_SPLIT_DISPLAY),
-> +		.features = BIT(DPU_CTL_ACTIVE_CFG),
->  		.intr_start = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR2, 9),
->  	}, {
->  		.name = "ctl_1", .id = CTL_1,
->  		.base = 0x1200, .len = 0x1e0,
-> -		.features = BIT(DPU_CTL_ACTIVE_CFG) | BIT(DPU_CTL_SPLIT_DISPLAY),
-> +		.features = BIT(DPU_CTL_ACTIVE_CFG),
->  		.intr_start = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR2, 10),
->  	}, {
->  		.name = "ctl_2", .id = CTL_2,
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_2_sm7150.h b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_2_sm7150.h
-> index 2fe674d1e05988f39f66a01fedee96113437ea65..0d102888741a0c61ac547ec568e44c1e91350835 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_2_sm7150.h
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_2_sm7150.h
-> @@ -38,12 +38,12 @@ static const struct dpu_ctl_cfg sm7150_ctl[] = {
->  	{
->  		.name = "ctl_0", .id = CTL_0,
->  		.base = 0x1000, .len = 0x1e0,
-> -		.features = BIT(DPU_CTL_ACTIVE_CFG) | BIT(DPU_CTL_SPLIT_DISPLAY),
-> +		.features = BIT(DPU_CTL_ACTIVE_CFG),
->  		.intr_start = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR2, 9),
->  	}, {
->  		.name = "ctl_1", .id = CTL_1,
->  		.base = 0x1200, .len = 0x1e0,
-> -		.features = BIT(DPU_CTL_ACTIVE_CFG) | BIT(DPU_CTL_SPLIT_DISPLAY),
-> +		.features = BIT(DPU_CTL_ACTIVE_CFG),
->  		.intr_start = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR2, 10),
->  	}, {
->  		.name = "ctl_2", .id = CTL_2,
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_6_0_sm8250.h b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_6_0_sm8250.h
-> index e8916ae826a6daf30eb08de53521dae89c07636c..3da26970426f9672c34f213064cdb8eff8c18da5 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_6_0_sm8250.h
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_6_0_sm8250.h
-> @@ -35,17 +35,16 @@ static const struct dpu_mdp_cfg sm8250_mdp = {
->  	},
->  };
->  
-> -/* FIXME: get rid of DPU_CTL_SPLIT_DISPLAY in favour of proper ACTIVE_CTL support */
->  static const struct dpu_ctl_cfg sm8250_ctl[] = {
->  	{
->  		.name = "ctl_0", .id = CTL_0,
->  		.base = 0x1000, .len = 0x1e0,
-> -		.features = BIT(DPU_CTL_ACTIVE_CFG) | BIT(DPU_CTL_SPLIT_DISPLAY),
-> +		.features = BIT(DPU_CTL_ACTIVE_CFG),
->  		.intr_start = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR2, 9),
->  	}, {
->  		.name = "ctl_1", .id = CTL_1,
->  		.base = 0x1200, .len = 0x1e0,
-> -		.features = BIT(DPU_CTL_ACTIVE_CFG) | BIT(DPU_CTL_SPLIT_DISPLAY),
-> +		.features = BIT(DPU_CTL_ACTIVE_CFG),
->  		.intr_start = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR2, 10),
->  	}, {
->  		.name = "ctl_2", .id = CTL_2,
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_7_0_sm8350.h b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_7_0_sm8350.h
-> index f7c08e89c882038aa658955ca1202bda3d928e80..16fbfea01e3272229c817db480b86c1a715d5c4a 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_7_0_sm8350.h
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_7_0_sm8350.h
-> @@ -35,17 +35,16 @@ static const struct dpu_mdp_cfg sm8350_mdp = {
->  	},
->  };
->  
-> -/* FIXME: get rid of DPU_CTL_SPLIT_DISPLAY in favour of proper ACTIVE_CTL support */
->  static const struct dpu_ctl_cfg sm8350_ctl[] = {
->  	{
->  		.name = "ctl_0", .id = CTL_0,
->  		.base = 0x15000, .len = 0x1e8,
-> -		.features = BIT(DPU_CTL_SPLIT_DISPLAY) | CTL_SC7280_MASK,
-> +		.features = CTL_SC7280_MASK,
->  		.intr_start = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR2, 9),
->  	}, {
->  		.name = "ctl_1", .id = CTL_1,
->  		.base = 0x16000, .len = 0x1e8,
-> -		.features = BIT(DPU_CTL_SPLIT_DISPLAY) | CTL_SC7280_MASK,
-> +		.features = CTL_SC7280_MASK,
->  		.intr_start = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR2, 10),
->  	}, {
->  		.name = "ctl_2", .id = CTL_2,
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_8_0_sc8280xp.h b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_8_0_sc8280xp.h
-> index 0d143e390eca964b1c81f835d0904a2079b0b941..e6f2a8665ea2598ca5a813158ba1cdd9f491a41f 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_8_0_sc8280xp.h
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_8_0_sc8280xp.h
-> @@ -35,17 +35,16 @@ static const struct dpu_mdp_cfg sc8280xp_mdp = {
->  	},
->  };
->  
-> -/* FIXME: get rid of DPU_CTL_SPLIT_DISPLAY in favour of proper ACTIVE_CTL support */
->  static const struct dpu_ctl_cfg sc8280xp_ctl[] = {
->  	{
->  		.name = "ctl_0", .id = CTL_0,
->  		.base = 0x15000, .len = 0x204,
-> -		.features = BIT(DPU_CTL_SPLIT_DISPLAY) | CTL_SC7280_MASK,
-> +		.features = CTL_SC7280_MASK,
->  		.intr_start = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR2, 9),
->  	}, {
->  		.name = "ctl_1", .id = CTL_1,
->  		.base = 0x16000, .len = 0x204,
-> -		.features = BIT(DPU_CTL_SPLIT_DISPLAY) | CTL_SC7280_MASK,
-> +		.features = CTL_SC7280_MASK,
->  		.intr_start = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR2, 10),
->  	}, {
->  		.name = "ctl_2", .id = CTL_2,
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_8_1_sm8450.h b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_8_1_sm8450.h
-> index 08742472f9cc812fbaf8f842ff7bd78f597e2b8d..bac75783063fd5588bc1cc19cb79f11cb0431bb8 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_8_1_sm8450.h
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_8_1_sm8450.h
-> @@ -36,17 +36,16 @@ static const struct dpu_mdp_cfg sm8450_mdp = {
->  	},
->  };
->  
-> -/* FIXME: get rid of DPU_CTL_SPLIT_DISPLAY in favour of proper ACTIVE_CTL support */
->  static const struct dpu_ctl_cfg sm8450_ctl[] = {
->  	{
->  		.name = "ctl_0", .id = CTL_0,
->  		.base = 0x15000, .len = 0x204,
-> -		.features = BIT(DPU_CTL_SPLIT_DISPLAY) | CTL_SC7280_MASK,
-> +		.features = CTL_SC7280_MASK,
->  		.intr_start = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR2, 9),
->  	}, {
->  		.name = "ctl_1", .id = CTL_1,
->  		.base = 0x16000, .len = 0x204,
-> -		.features = BIT(DPU_CTL_SPLIT_DISPLAY) | CTL_SC7280_MASK,
-> +		.features = CTL_SC7280_MASK,
->  		.intr_start = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR2, 10),
->  	}, {
->  		.name = "ctl_2", .id = CTL_2,
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_8_4_sa8775p.h b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_8_4_sa8775p.h
-> index 76ec72a323781363d37b62fec752ea1232bbd75b..2b36c438bc8a22e2650f1d546d0259f8c6e747b4 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_8_4_sa8775p.h
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_8_4_sa8775p.h
-> @@ -35,17 +35,16 @@ static const struct dpu_mdp_cfg sa8775p_mdp = {
->  	},
->  };
->  
-> -/* FIXME: get rid of DPU_CTL_SPLIT_DISPLAY in favour of proper ACTIVE_CTL support */
->  static const struct dpu_ctl_cfg sa8775p_ctl[] = {
->  	{
->  		.name = "ctl_0", .id = CTL_0,
->  		.base = 0x15000, .len = 0x204,
-> -		.features = BIT(DPU_CTL_SPLIT_DISPLAY) | CTL_SC7280_MASK,
-> +		.features = CTL_SC7280_MASK,
->  		.intr_start = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR2, 9),
->  	}, {
->  		.name = "ctl_1", .id = CTL_1,
->  		.base = 0x16000, .len = 0x204,
-> -		.features = BIT(DPU_CTL_SPLIT_DISPLAY) | CTL_SC7280_MASK,
-> +		.features = CTL_SC7280_MASK,
->  		.intr_start = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR2, 10),
->  	}, {
->  		.name = "ctl_2", .id = CTL_2,
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_9_0_sm8550.h b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_9_0_sm8550.h
-> index 4d3787fceb72fb3641057a7ea04ae6503b671042..5e0d2e8aabbaa406e332024676c5eb8205fec177 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_9_0_sm8550.h
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_9_0_sm8550.h
-> @@ -27,17 +27,16 @@ static const struct dpu_mdp_cfg sm8550_mdp = {
->  	},
->  };
->  
-> -/* FIXME: get rid of DPU_CTL_SPLIT_DISPLAY in favour of proper ACTIVE_CTL support */
->  static const struct dpu_ctl_cfg sm8550_ctl[] = {
->  	{
->  		.name = "ctl_0", .id = CTL_0,
->  		.base = 0x15000, .len = 0x290,
-> -		.features = CTL_SM8550_MASK | BIT(DPU_CTL_SPLIT_DISPLAY),
-> +		.features = CTL_SM8550_MASK,
->  		.intr_start = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR2, 9),
->  	}, {
->  		.name = "ctl_1", .id = CTL_1,
->  		.base = 0x16000, .len = 0x290,
-> -		.features = CTL_SM8550_MASK | BIT(DPU_CTL_SPLIT_DISPLAY),
-> +		.features = CTL_SM8550_MASK,
->  		.intr_start = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR2, 10),
->  	}, {
->  		.name = "ctl_2", .id = CTL_2,
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_9_2_x1e80100.h b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_9_2_x1e80100.h
-> index 6b112e3d17da6a4423851525262b66aa6c8622e3..a500a38ce07b84c2c9ad51aaf5847ee0bbcc72a5 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_9_2_x1e80100.h
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_9_2_x1e80100.h
-> @@ -26,17 +26,16 @@ static const struct dpu_mdp_cfg x1e80100_mdp = {
->  	},
->  };
->  
-> -/* FIXME: get rid of DPU_CTL_SPLIT_DISPLAY in favour of proper ACTIVE_CTL support */
->  static const struct dpu_ctl_cfg x1e80100_ctl[] = {
->  	{
->  		.name = "ctl_0", .id = CTL_0,
->  		.base = 0x15000, .len = 0x290,
-> -		.features = CTL_SM8550_MASK | BIT(DPU_CTL_SPLIT_DISPLAY),
-> +		.features = CTL_SM8550_MASK,
->  		.intr_start = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR2, 9),
->  	}, {
->  		.name = "ctl_1", .id = CTL_1,
->  		.base = 0x16000, .len = 0x290,
-> -		.features = CTL_SM8550_MASK | BIT(DPU_CTL_SPLIT_DISPLAY),
-> +		.features = CTL_SM8550_MASK,
->  		.intr_start = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR2, 10),
->  	}, {
->  		.name = "ctl_2", .id = CTL_2,
+> - Have append_hashes() return EMPTY_HASH and not NULL if the resulting
+>   new hash is empty.
 > 
+>  kernel/trace/ftrace.c | 33 ++++++++++++++++++++++-----------
+>  1 file changed, 22 insertions(+), 11 deletions(-)
+> 
+> diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
+> index 728ecda6e8d4..bec54dc27204 100644
+> --- a/kernel/trace/ftrace.c
+> +++ b/kernel/trace/ftrace.c
+> @@ -3220,15 +3220,22 @@ static struct ftrace_hash *copy_hash(struct ftrace_hash *src)
+>   *  The filter_hash updates uses just the append_hash() function
+>   *  and the notrace_hash does not.
+>   */
+> -static int append_hash(struct ftrace_hash **hash, struct ftrace_hash *new_hash)
+> +static int append_hash(struct ftrace_hash **hash, struct ftrace_hash *new_hash,
+> +		       int size_bits)
+>  {
+>  	struct ftrace_func_entry *entry;
+>  	int size;
+>  	int i;
+>  
+> -	/* An empty hash does everything */
+> -	if (ftrace_hash_empty(*hash))
+> -		return 0;
+> +	if (*hash) {
+> +		/* An empty hash does everything */
+> +		if (ftrace_hash_empty(*hash))
+> +			return 0;
+> +	} else {
+> +		*hash = alloc_ftrace_hash(size_bits);
+> +		if (!*hash)
+> +			return -ENOMEM;
+> +	}
+>  
+>  	/* If new_hash has everything make hash have everything */
+>  	if (ftrace_hash_empty(new_hash)) {
+> @@ -3292,16 +3299,18 @@ static int intersect_hash(struct ftrace_hash **hash, struct ftrace_hash *new_has
+>  /* Return a new hash that has a union of all @ops->filter_hash entries */
+>  static struct ftrace_hash *append_hashes(struct ftrace_ops *ops)
+>  {
+> -	struct ftrace_hash *new_hash;
+> +	struct ftrace_hash *new_hash = NULL;
+>  	struct ftrace_ops *subops;
+> +	int size_bits;
+>  	int ret;
+>  
+> -	new_hash = alloc_ftrace_hash(ops->func_hash->filter_hash->size_bits);
+> -	if (!new_hash)
+> -		return NULL;
+> +	if (ops->func_hash->filter_hash)
+> +		size_bits = ops->func_hash->filter_hash->size_bits;
+> +	else
+> +		size_bits = FTRACE_HASH_DEFAULT_BITS;
+>  
+>  	list_for_each_entry(subops, &ops->subop_list, list) {
+> -		ret = append_hash(&new_hash, subops->func_hash->filter_hash);
+> +		ret = append_hash(&new_hash, subops->func_hash->filter_hash, size_bits);
+>  		if (ret < 0) {
+>  			free_ftrace_hash(new_hash);
+>  			return NULL;
+> @@ -3310,7 +3319,8 @@ static struct ftrace_hash *append_hashes(struct ftrace_ops *ops)
+>  		if (ftrace_hash_empty(new_hash))
+>  			break;
+>  	}
+> -	return new_hash;
+> +	/* Can't return NULL as that means this failed */
+> +	return new_hash ? : EMPTY_HASH;
+>  }
+>  
+>  /* Make @ops trace evenything except what all its subops do not trace */
+> @@ -3505,7 +3515,8 @@ int ftrace_startup_subops(struct ftrace_ops *ops, struct ftrace_ops *subops, int
+>  		filter_hash = alloc_and_copy_ftrace_hash(size_bits, ops->func_hash->filter_hash);
+>  		if (!filter_hash)
+>  			return -ENOMEM;
+> -		ret = append_hash(&filter_hash, subops->func_hash->filter_hash);
+> +		ret = append_hash(&filter_hash, subops->func_hash->filter_hash,
+> +				  size_bits);
+>  		if (ret < 0) {
+>  			free_ftrace_hash(filter_hash);
+>  			return ret;
 > -- 
-> 2.39.5
+> 2.47.2
 > 
+> 
+
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
