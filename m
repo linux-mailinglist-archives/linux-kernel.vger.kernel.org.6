@@ -1,143 +1,116 @@
-Return-Path: <linux-kernel+bounces-524442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4973CA3E331
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 18:59:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D7ADA3E332
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 19:00:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DF8717D739
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:59:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03C3819C00FE
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 18:00:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91C8E213E7F;
-	Thu, 20 Feb 2025 17:59:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 836CB213E81;
+	Thu, 20 Feb 2025 17:59:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RJy/Cpwo"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="G2+YX67I"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 569691FF1AC
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 17:59:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C3121FF1AC
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 17:59:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740074371; cv=none; b=CIHus0TnKJ6jbdvVq6wb7G/IFPxxfarZJa+nn8neSXad8GqBmTnpI+Ban7HN3FNawuPdzGHXxX7s9hIOvYVMFkDUyOEY9P6gVyeQhgOYSIf0FcFllmoWqMpIYQfO34XFE641vXtWN0TrDjWrLsXyGR9PUx2Fx1j9hPVSs8dQoOo=
+	t=1740074391; cv=none; b=OX1gaqAU6jo4q4/1UbGiXVyTUsILjbdFDLkJdTAHEkZP0bPO+dUFIu3fzLdQW2xgBwU1TIB8JqQuK4gbrQ9LqXMhqq78QkmJm/odvZzghC1fuNDGFYubJffhgB4qvPFSeyPKmcGh1MAgzVhqbRuhS3dUKB7oXp4kI0oCpBbTRz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740074371; c=relaxed/simple;
-	bh=LGcWROlFBLdeVan16+vOMHWLhfhEFSSmk96G5ovRHgM=;
+	s=arc-20240116; t=1740074391; c=relaxed/simple;
+	bh=tYZdg7sRmlVaf134nM3KeRlxvjXKLXuRmFN9yX0E2pg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Q0dAyJYfp9grvBt0YIlbZQpMJ6bAv4B4XMIwHkTbGuDGRo1lDxLoBzrzoxqC9M8Ew+TB1Ukks/qHGGQDgMKZ5aylFCbeCFrGkMTYXSvsMATFLkwk2AASOJK1HvW+rLtXURuScdj0GNqeyZIptwXYFwnipEji7zux0ZG8xJcCigQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RJy/Cpwo; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-30761be8fa8so12636961fa.2
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 09:59:28 -0800 (PST)
+	 To:Cc:Content-Type; b=KqtqF0higvRP/VIu8g+SxBp+5hnULufXvkGYcHOCYbAqvQh2KB1dC0InrI/zulVU5P9JElIsGedSkQJHZUJW3ge8Km1RL699Vct5Hz2oN1SCpOXJ/tQSsQ2OtVyUaU4yWBok8EAOkYnry0GPucMNCRWyQm40no0F4OpzSmXqBHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=G2+YX67I; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-aaf0f1adef8so259821666b.3
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 09:59:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740074367; x=1740679167; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eOjy6lwz4qvzyhozebZn6Ny8b2zY4s9PrNznDcqT9yg=;
-        b=RJy/CpwoKGDr3WTR6W3ieFgLfDGzl5TBMesPYrR2euBCWfW2xw2uI6l9m+KldzDsF8
-         8doEENXe0pjv2KwKfrf9Kea3zMKjxXLhR/3959HkYrMtk44sjFKb7qkNYdbPCRdK+uO/
-         e28/9AiccsZt0RH0upnyKcMv++TeCaDqeoPz+tBiyh2ATTzstAzkjoWm+e7C3GOlnAbU
-         g9joNkjeFnwBa/btiEqt2aPcq4lYHmHbGQ5oH1eYALx/cIkvdpemfM8Cw31u3WpwYeg2
-         wJaeRxqQhGV+ZJPxPdL1z1ZjNFBCVkPFsAUYA1t9bUJ4O0FoYQYPE8e34qGfBaLqLyOt
-         uSmQ==
+        d=linux-foundation.org; s=google; t=1740074388; x=1740679188; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=r9T6ah5nvaQ91ZU/lmF1ivJr9nZ+XvlNxAP3jut4I4g=;
+        b=G2+YX67I0cTUvXlWlu7cqILLGlnmvWgy7W1tXZTUna9lt5i4VWSKsgXyIVrWiYCdq5
+         CSnvzeI0zjG3NEs/6GFWybihPunZ1xrQqTRaDqyHjSwSpUVtmfVlWQd9Un+gJc+Zprm6
+         +E7ep91WeXmc+cf5dhcaLVnNqXoYLbhgwVz3k=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740074367; x=1740679167;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eOjy6lwz4qvzyhozebZn6Ny8b2zY4s9PrNznDcqT9yg=;
-        b=LWQyWOaClNYHXx7StnydhR08DVRrzwW1P/oIjOi9gJ9VDkFOuw5D9GArWYVSg1mu47
-         TB1Ggyt/I+VdgbOr8Q9sK+aIRzKd6B5+Mqx/eC+8+YRmUe9cD7C0ZYTijvwMWflQ8HvZ
-         ztinSTJ2QPSVI3wl+HfGHTrHkN7DQNbtDA1J+xbrgleeZ9F+aClagiEeIrQ+2pIrNBeC
-         iDKcUSvUfhl86xrXpeoSybzkat6Gkuqaeu7zDr1oLokoB3GReQE80YoM70gbLz0Qpm5B
-         3KvnXQmKnmh05EV/09iDUuFI8TKk7kOdCNPTXz0R/KRAk1MsGirW4QUCmU3jGszIYUjL
-         NBvA==
-X-Forwarded-Encrypted: i=1; AJvYcCWD49HaAU7UHK28D/XVXbCu9mE0TikT6Rku8lMgoK6k0XMGoiyGFUDeVWIfHk99kbcI6wAUFWa/MjnXRos=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4ssYwztkPkfT8trM/37n0Tfhd5FXrNGuB8ENpRS4QPIMl315w
-	fSp7aGbhnMkAL9DgG5HTrAD5gzbNbwwa9GtH7IvRl11T/NnbCKJbl/LIuJJNfLEelLTMEifzsmz
-	3/Ti8i5HqDEhdxF1v/dlIqtAICw==
-X-Gm-Gg: ASbGnctiD7IE2YiReC1bRkiJztYqAeGNzJM4gYfHptHatRnKqLyZLDjYh6I8b6HkEaD
-	Wrm6aLe5JZrHV4nfSQulv3TsJJm6LHhHVrC/q2fUr63t2pHUyDhjC3vKbQQI+pITXH/rZs1pckY
-	eLefJy+pmZ28Q=
-X-Google-Smtp-Source: AGHT+IGWnES0EL+tZSgMOsr+E9D4/sr+AH3VUqOafOn1oDRyW9eOBThS4NBAHguSqxiluPi6XyjnqJbWMGfwtbFKPJk=
-X-Received: by 2002:a05:6512:4020:b0:545:2fa9:8cf5 with SMTP id
- 2adb3069b0e04-5452fe93333mr9568223e87.49.1740074367202; Thu, 20 Feb 2025
- 09:59:27 -0800 (PST)
+        d=1e100.net; s=20230601; t=1740074388; x=1740679188;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=r9T6ah5nvaQ91ZU/lmF1ivJr9nZ+XvlNxAP3jut4I4g=;
+        b=SAzWqQugm0eLzAO7t6aMwVnIBoNAI934xRZ46iTrebvTYusdyZ2E7Nl/bJntarWgfs
+         85hzmm2krBisQrygePguhh1jpub25qD2L6rlMGLWxBqHdec+slQMBvo3rVyUr9RoviQG
+         GxPucxXS4mN8Dubny5x3ndsaX+y93eo9X8QsyDP35ilEPPn1xXlanuIivF+XvuLuAJSi
+         f32Q2WdVPVGFSP7XLx7N9mrpx1zMi8h0MspqwcTMglb14He9/Pe65xK1SxhIntMxp1ds
+         DtQBIrXM06ZtDb86Na91Wy/rJMxMYV3Hwh+EuTOldHuweZ8mzDtcLZJmuXi2I6wVpxmr
+         jE8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCX3LJVPIHt86jMCYrk6wKRPHf6iz3VpQNm4TEM/4MNgaizBBrwUEAf7IVJ9GeZsteeSvacW+t/Si8dqAYo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJ0KD3Uu44ASQ+qoQNRsJvG6GtVgpQZbZd0VUNf2Gi00RZHabd
+	Smvic13SKFxhPjiLT1a/9jzeRLUnH02wjGzzhXsKiyrAbK5NbcmnXw0EnBjGA93UeXPhJEH8GmF
+	9erU=
+X-Gm-Gg: ASbGncuf4LbeBINwPamyUg+z+lWcS9FFQHOv1EiT87Jo5+GK82TYPHsLDkLuIus3XC7
+	cgHQ1/Y6YHlxht9bCcoYFIpsDtbnDfNGWixWKUVSNcMsvTOdeMHEwHrM8L0FcGUpWtpPsKe+pDV
+	A48EwItb8LCgJHAWwUTY1Skok7pV/3ZRCic+DtSB3RtGsUD2jO12xvv4NDBBkVpPJ2hd8lB68Xi
+	6YxhXtEYOqpnobjMkpQlPKl/M66xw79dJUTfDOZQHRt4Vnuk2LGE+v3hMrj4zpwVnhIwxPaNKk2
+	pWjadb18ll6x3Jcrpd8vgLL01ST9b/tko8jD1ii49BU1fgN+ayvgq/GDoIAgTFRiOw==
+X-Google-Smtp-Source: AGHT+IFPuIXFmI4N7kxXJmm9/C9woQlI/cehj6xEkqZAPXZAzFceHCDyfaWB/QQIOW7YzJhKTElaeg==
+X-Received: by 2002:a17:906:4fc7:b0:ab6:dbd2:df78 with SMTP id a640c23a62f3a-abc09d31cd2mr25958366b.35.1740074387707;
+        Thu, 20 Feb 2025 09:59:47 -0800 (PST)
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com. [209.85.218.50])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abbbe74100asm543882766b.95.2025.02.20.09.59.46
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 20 Feb 2025 09:59:47 -0800 (PST)
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-aaf0f1adef8so259815966b.3
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 09:59:46 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVrCWEAcFdYXOGgkQRuwKOSvqZEIeTZ4XqF0JOnnZlbTIsbU0735EGOU3ZQknEBRKgCKBA+73Ozw9PmbNk=@vger.kernel.org
+X-Received: by 2002:a17:907:7fac:b0:ab7:eeae:b23e with SMTP id
+ a640c23a62f3a-abc09e53506mr27429066b.47.1740074386561; Thu, 20 Feb 2025
+ 09:59:46 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250123190747.745588-1-brgerst@gmail.com> <Z7RRZ0jdqsrADMm0@gmail.com>
- <CAFULd4Z_QoOLKCOawyeFtRe6V4+oaaGxfQxav9dS-Di-Ne7tfw@mail.gmail.com>
- <Z7XE0P6ZFHxtlYXw@gmail.com> <CAMzpN2gyhEnYsimxLhLNPc4HTpVdRGTiBfm9pXiFTL6_3-O=sg@mail.gmail.com>
- <CAFULd4ZQ8VoKvQ7aOgcfeLNROM4-rDYn=wHo=FYMO8ZkuQeSAQ@mail.gmail.com>
- <CAMj1kXFgfbLqVkcs2T8QHRKKJ0X7+mLd-bNjricfd_niY-dxRA@mail.gmail.com>
- <CAFULd4aYjnWzWaN8WA0LetN1Li7F8MY3qnxbhY8=tNFxqHCP1w@mail.gmail.com>
- <CAMj1kXGG4J76o17d=e4jv-5jjzcSGyZdKRcNNB17SkCqD6+8qQ@mail.gmail.com>
- <CAMzpN2h=Mc_7MNg5RiqxEvchV_BGAiThG4a5_Xt_HHB=0+vmEg@mail.gmail.com>
- <CAMj1kXHfg5gAnrnEMb-6dwN_PY3KycjY__JL=exgtWK9q3=XWA@mail.gmail.com> <CAMzpN2iK97iWVH7+c2YqB_66sfXdKnmcyQN7QxtBq-HgD5KJ=A@mail.gmail.com>
-In-Reply-To: <CAMzpN2iK97iWVH7+c2YqB_66sfXdKnmcyQN7QxtBq-HgD5KJ=A@mail.gmail.com>
-From: Brian Gerst <brgerst@gmail.com>
-Date: Thu, 20 Feb 2025 12:59:15 -0500
-X-Gm-Features: AWEUYZlUOHlFW8wVgnpXSkl2OvMOEAYZ96nPwOMs2QpNshrvn6PMy5wy-omKc8U
-Message-ID: <CAMzpN2gvzVq9ASD7UEooMyH9Er0TpJ8dgeggWnBvZEMdy_4UpQ@mail.gmail.com>
-Subject: Re: [PATCH v6 00/15] x86-64: Stack protector and percpu improvements
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: Uros Bizjak <ubizjak@gmail.com>, Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org, 
-	x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Borislav Petkov <bp@alien8.de>
+References: <alpine.DEB.2.21.2502181912230.65342@angie.orcam.me.uk> <45155869-1490-49ab-8df1-7ad13f79c09a@linaro.org>
+In-Reply-To: <45155869-1490-49ab-8df1-7ad13f79c09a@linaro.org>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 20 Feb 2025 09:59:29 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wj42Dks1vknzKKBbXUMCrs-iuLZHq=0z3P0AN9TrXNP+A@mail.gmail.com>
+X-Gm-Features: AWEUYZlm3vCnMDaMdXY1w_rtbniMJDt-7-eCVXlsPvvSJMGzSgi_1TpINhz0niM
+Message-ID: <CAHk-=wj42Dks1vknzKKBbXUMCrs-iuLZHq=0z3P0AN9TrXNP+A@mail.gmail.com>
+Subject: Re: [PATCH] Alpha: Emulate unaligned LDx_L/STx_C for data consistency
+To: Richard Henderson <richard.henderson@linaro.org>
+Cc: "Maciej W. Rozycki" <macro@orcam.me.uk>, Ivan Kokshaysky <ink@unseen.parts>, 
+	Matt Turner <mattst88@gmail.com>, Arnd Bergmann <arnd@arndb.de>, 
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, Magnus Lindholm <linmag7@gmail.com>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, 
+	linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Feb 20, 2025 at 12:47=E2=80=AFPM Brian Gerst <brgerst@gmail.com> wr=
-ote:
+On Thu, 20 Feb 2025 at 09:54, Richard Henderson
+<richard.henderson@linaro.org> wrote:
 >
-> On Thu, Feb 20, 2025 at 12:36=E2=80=AFPM Ard Biesheuvel <ardb@kernel.org>=
- wrote:
-> >
-> > On Thu, 20 Feb 2025 at 18:24, Brian Gerst <brgerst@gmail.com> wrote:
-> > >
-> > > On Thu, Feb 20, 2025 at 5:52=E2=80=AFAM Ard Biesheuvel <ardb@kernel.o=
-rg> wrote:
-> > > >
-> > > > On Thu, 20 Feb 2025 at 11:46, Uros Bizjak <ubizjak@gmail.com> wrote=
-:
-> > > > >
-> > > > > OTOH, we could simply do it your way and put stack canary at the
-> > > > > beginning of pcpu_hot structure, with
-> > > > >
-> > > > > static_assert(offsetof(struct pcpu_hot, stack_canary) =3D=3D 0));
-> > > > >
-> > > > > for good measure.
-> > > >
-> > > > I think this would be the most straight-forward if there are no oth=
-er
-> > > > locality concerns this might interfere with.
-> > >
-> > > I'd prefer it at the end of pcpu_hot, that way the disassembler
-> > > doesn't latch on to the __stack_chk_guard symbol when referencing the
-> > > other fields of pcpu_hot.
-> > >
-> >
-> > __stack_chk_guard would no longer exist, only __ref_stack_chk_guard,
-> > which would be equal to pcpu_hot.  We could just call that
-> > __ref_pcpu_hot instead if it might cause confusion otherwise. (We
-> > can't use pcpu_hot directly in -mstack-check-guard-symbol=3D for the
-> > same reasons I had to add the indirection via __ref_stack_chk_guard)
->
-> That works for me.
+> Crucially, when emulating non-aligned, you should not strive to make it atomic.  No other
+> architecture promises atomic non-aligned stores, so why should you do that here?
 
-Maybe not.  One quirk of how GCC implements this is that
--mstack-protector-guard=3Dglobal (used by !SMP builds) ignores the
--mstack-protector-guard-symbol option and always uses
-__stack_chk_guard.  That makes things more challenging.
+I'm not disagreeing with the "it doesn't necessarily have to be
+atomic", but I will point out that x86 does indeed promise atomic
+non-aligned accesses.
 
+It will actually lock both cachelines when straddling a cacheline.
 
-Brian Gerst
+It's slow, it's horrendous, and people are trying to get away from it
+(google "split lock"), but it is actually architecturally supported.
+
+                   Linus
 
