@@ -1,93 +1,84 @@
-Return-Path: <linux-kernel+bounces-524002-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95590A3DDDF
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:10:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EB3A5A3DDF0
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:12:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FD5916157B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:08:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B061A162AE0
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:08:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16DC41D61A3;
-	Thu, 20 Feb 2025 15:07:57 +0000 (UTC)
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EED101D6195;
+	Thu, 20 Feb 2025 15:08:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="E5q/3CbR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65EE11CA84;
-	Thu, 20 Feb 2025 15:07:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2104A1D5CF5
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 15:08:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740064076; cv=none; b=QkA+qPBcZ5MSngQkcSltAOADDTBB/08s4uJ4Io2SOX31seTHEj/s2mbDEGGOzn47rqAzPT0/9rLMq0dChJhl50ZThQbZ9DbBmBl2JPzTnlHN3ITaqz6k9qshfj8TxICU2YZkmiBhsBvvDIapQhC+S9AktriW/3Ipf1j0op7pDUk=
+	t=1740064115; cv=none; b=f6Bar170qvSTJmp/GvwdRL1Knb5ite14TUhJQ7pMhQuhTqsuC/1PjlhbaK3hFSq9TDmI0N/arfXGIfyUHIUt7GY10TdgucheyJz4e/HsK9OI0zg6JIa2/hA0MV18dctzY/DT4c59UoflIvSyjVGzw7XWQugO0JoO1kHL4tIEQaI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740064076; c=relaxed/simple;
-	bh=Q8WEkvwHHessGuvlowsdBEUzNKaTWW8d7YmlvtPhrtg=;
+	s=arc-20240116; t=1740064115; c=relaxed/simple;
+	bh=ykspeSP3YMGV74O9PQSXKi1VCrfSn5x3m5jaqoilSVQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ei7hKKchmIn8eV5uR5pXUEVtbqr1Ckv8fCqVb3koJ3xwbFjfGBz3NXpLWLisZiuXzMjfUft1C/9AukgPBAJx78THkCY2YEtg624TaDx0x0jSAJwx/vYCsg52Zekapdsuy6aK5qbR4RnlSd3j0mnCLw7MP/4CTKcB7aDiRy7N7rA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-220bfdfb3f4so22970825ad.2;
-        Thu, 20 Feb 2025 07:07:55 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740064074; x=1740668874;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/zaVPeUyMK9bsx44Th3FOFRswEjNKZoLf+EXZU2SqQY=;
-        b=VyefNNeTpsNmZcBbYpTSQqpuA2k5qMqCh7Nq28FbP/UONWH/2LdMMVZr7UE0libmPe
-         DxeTQjXwb3VQ9+hUm9PgnxZXnb0q/3kEq8c1tPldLTaiMEUWFHodd4d2YCGVWrtWhaam
-         TwFk3FB+JTpO+wEdhMM9VmQEG7rreCIi/cqIS57QK44wHyKlUkJxUizSCRUZJJ7TZsVU
-         7s+m5ohWMV+6eWuhgpTgCdn4DNx/bpbELGIDhtYW48dn9QhsJjY5nfNqrmUvza+61Clg
-         69UoLdywtcHhZwYyGIuJGbKfcveU2IvPohCTztJpMpS3KrPYuXL9bl13IQ+JmK7xqh44
-         b6UA==
-X-Forwarded-Encrypted: i=1; AJvYcCUIDiZnNLpP3H7jUa/pRIpUThGHs83jV932iikFCwx0fSoQlbEVkWos+8pq9+QDv8VhwqyJN0e4wLCDxcSP@vger.kernel.org, AJvYcCVov2uhc84XgMA5cJmL6CwAcHiJ5y6QfqSbeV5DOZm61HXO/1+ZIzli1jtIO849gCPj9BQAnhzFcN4A@vger.kernel.org, AJvYcCVvTfzX3+smEc/p5izCRBBGhH2m7cJ5wzqFyWvx8asSjUx+trOEbJL/GdDAWnN/t1Ztd0ZcVVy1iFIge0A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxyGxfcdibRD8z54d3IiNv8CkFstLZxknkN9ElDtWmVY/2wdSiQ
-	+0iq0fa1OgRv4qB5Zf6P4DdA+yyQzWDKPmtAwo7cm+9Ud+L8EgFf
-X-Gm-Gg: ASbGnct19Q3D9qPLjCo8fDLys/cFdc9kuXP3yYsZHSSV/jOxWJW72KoFZHsB/ZUesf6
-	wWw+pB4fHR6wiMCJEcxWckqUbtcTyFJ8SVzeF61OGjis6p3F9tiVw4GbO+56x/H6/FUO/EGAYEa
-	rufoew5AYO4g7QOJvrLvOAJRj0i/lm9/YYowQopS2OBl+MbAa0lZDhNzkGeIlBMoRV0OKNCXFJI
-	X9K/jxUBdg/j7CvdOvsmHOXt7D6U0TOPWPUSdHcn0CaxHyHhQd7iMIVeHOxZWbFjsQR7ZKOy0EV
-	AOxIMhPq0a3VGPmO0U1Z+J4KNoWvPhQ75iIclfhi/HlbJk9opQ==
-X-Google-Smtp-Source: AGHT+IFm2Ivs5vcULV4P1VfVqtTlrqG7JCOFqoTsqB+BfueO5ZgT/GH3+gtYQIP4/Fnf/Adpgok60g==
-X-Received: by 2002:a05:6a21:6191:b0:1ee:67ec:2279 with SMTP id adf61e73a8af0-1eed4fb2251mr13720501637.26.1740064074600;
-        Thu, 20 Feb 2025 07:07:54 -0800 (PST)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-7325f063782sm11326728b3a.148.2025.02.20.07.07.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Feb 2025 07:07:54 -0800 (PST)
-Date: Fri, 21 Feb 2025 00:07:52 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: Easwar Hariharan <eahariha@linux.microsoft.com>
-Cc: "K. Y. Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	linux-hyperv@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] PCI: hv: Correct a comment
-Message-ID: <20250220150510.GD1777078@rocinante>
-References: <20250207190716.89995-1-eahariha@linux.microsoft.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=BhjtGTfU10zWCv98/ExA+XFhxCcSDZwLCHIQe+NNtj15XNKsL+ImDyY9QLRERhA2G2vo4YRoG7+d76JgsFLdAvB+V51PhtNQuxI4IVKEgzbG5xn2+yZgIx1yF9DkmdWID8YQ5vU/nr0SVbP3r5ysf7KxALJ54FqyXiQJy//EK84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=E5q/3CbR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F394EC4CED1;
+	Thu, 20 Feb 2025 15:08:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1740064114;
+	bh=ykspeSP3YMGV74O9PQSXKi1VCrfSn5x3m5jaqoilSVQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=E5q/3CbRmXWaAiwhi7WCkxJG7JB0huxVb0JmY3Qd+iE6eEOdRGXUI0jmWaGmqJ9To
+	 egfNcsQgFoU29lUONSqljrlx4z038kiW+l/6ENbFn+n0tDOd0MRTgmtGgyCpdqZJPO
+	 M6tEiH05IHt62aV5it2gyVfIDn8fFcEoxpBT4OHk=
+Date: Thu, 20 Feb 2025 16:08:31 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: Current state of the 'const bin_attribute' constification
+Message-ID: <2025022018-aerobics-pug-4c0f@gregkh>
+References: <fae9a4c4-a497-4990-89e0-aceb05e58502@t-8ch.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20250207190716.89995-1-eahariha@linux.microsoft.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <fae9a4c4-a497-4990-89e0-aceb05e58502@t-8ch.de>
 
-Hello,
+On Fri, Feb 14, 2025 at 05:36:19PM +0100, Thomas Weißschuh wrote:
+> Hi Greg,
+> 
+> most of the patches for the 'const bin_attribute' work have gone in
+> through the maintainer trees. A few series have not been picked up:
+> 
+> https://lore.kernel.org/r/20250114-sysfs-const-bin_attr-cxl-v1-1-5afa23fe2a52@weissschuh.net
+> https://lore.kernel.org/r/20250125-sysfs-const-bin_attr-dmi-v2-0-ece1895936f4@weissschuh.net
+> https://lore.kernel.org/r/20241216-sysfs-const-bin_attr-drm-v1-0-210f2b36b9bf@weissschuh.net
+> https://lore.kernel.org/r/20241215-sysfs-const-bin_attr-fsi-v1-1-b717f76a0146@weissschuh.net
+> https://lore.kernel.org/r/20241216-sysfs-const-bin_attr-habanalabs-v1-1-b35463197efb@weissschuh.net
+> https://lore.kernel.org/r/20241222-sysfs-const-bin_attr-input-v1-1-1229dbe5ae71@weissschuh.net
+> https://lore.kernel.org/r/20241215-sysfs-const-bin_attr-mokvar-v1-1-d5a3d1fff8d1@weissschuh.net
+> https://lore.kernel.org/r/20241215-sysfs-const-bin_attr-pcmcia-v1-1-ebb82e47d834@weissschuh.net
+> https://lore.kernel.org/r/20241216-sysfs-const-bin_attr-powerpc-v1-0-bbed8906f476@weissschuh.net
+> https://lore.kernel.org/r/20250114-sysfs-const-bin_attr-qemu_fw_cfg-v1-1-76f525a3ee72@weissschuh.net
+> https://lore.kernel.org/r/20241216-sysfs-const-bin_attr-rapidio-v1-1-0f47f4719683@weissschuh.net
+> https://lore.kernel.org/r/20241122-sysfs-const-bin_attr-rci2-v1-1-3db1ec9aa203@weissschuh.net
+> 
+> Do you want to take these directly?
 
-> The VF driver controls an endpoint attached to the pci-hyperv
-> controller. An invalidation sent by the PF driver in the host would be
-> delivered *to* the endpoint driver by the controller driver.
+I've taken all of these now, please let me know if I've missed any.
 
-Applied to controller/hyperv, thank you!
+thanks,
 
-	Krzysztof
+greg k-h
 
