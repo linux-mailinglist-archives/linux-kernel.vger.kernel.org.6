@@ -1,258 +1,168 @@
-Return-Path: <linux-kernel+bounces-522832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37329A3CEE5
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 02:47:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 657D4A3CEEA
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 02:49:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16980189B1C4
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 01:47:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 45C69179C07
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 01:49:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFF6428F5;
-	Thu, 20 Feb 2025 01:46:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEEB51C5D79;
+	Thu, 20 Feb 2025 01:49:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZHvHWwyl"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Xl8stvCR"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED6C31BD4E4
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 01:46:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FCD81C3314
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 01:49:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740016014; cv=none; b=lUuaKvMZMtic6VrH1njjdSrYgT9zzgrBx2HmVYGXZGkGqnUiIRVQJwlLUzCqXqiDj7Oa6v44Zerp+fIN8ZeQKGYiDZDrzewUIM1p33x4MVm1nLdE8OL87Z57WMbSw7kYqc58kgCmy8gV+w2gP7234wvIJCTm5rkqYscb72xnXBw=
+	t=1740016184; cv=none; b=P11qyb6bQ+DGstFLCp+UqAXngzEAprIaCIHwfN2CoBJrh0d+vAM07lM4WSmJND/nCLe7S/RRYalcUn1ohILqllnbfQm92gjhYsX2xOKClIIp+E9Vc2OYAvSlfY2vP6J63WNCe+Y0q8bBnvPGYIEIW0MHm9hcDSm+sm7x9CexQlg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740016014; c=relaxed/simple;
-	bh=arHaMf1VlgzmwsFpfVOXP4yaHpMS0ZNgicYCaJisT68=;
+	s=arc-20240116; t=1740016184; c=relaxed/simple;
+	bh=rpqPVgwhI7yn4Z3nokBmbPB2uHcpMtBfXnhrCZiudJs=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fyH0n1h3NeMp7xIEE7WvnNbfmNRBim2ClMdZ9ig+cjpul7sIKF3cUXyqqzCRSvHtAttus8QVRzEorYtPuXpE6dGrlKhc/+HW8tpn6lCUKQeQdL1gVQ2ovD7ONzLVTo3lV916oZnBiooo0Awj4HJDH7fCaYE5ny2qW4gzUV59398=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZHvHWwyl; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2212222d4cdso73545ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 17:46:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740016010; x=1740620810; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=arHaMf1VlgzmwsFpfVOXP4yaHpMS0ZNgicYCaJisT68=;
-        b=ZHvHWwylli4v/kwyvblumZWi5uwyL7nVsf7ALukl/Rg1rEXCl+8VSd/u+0aXK1pVZj
-         sxqo8VEF3MrLM2h+xY8vzuZdbgt/1N6M/qODIzHqIYlzB29biHRT5jRRWRgoJNPhRnmY
-         3GJWi904l/R987K4DBzL01g1Ku/kTbrH8nNGBAsjdjsIRZ/n8rGWRRJ1OQKLLO1KY9cF
-         5Ak0gfM7R9HeTBpn7cNzvLISV2ujINdHHTAEMlVxQk9p99xnJXrCAThCovb4n/dJxckY
-         mEfqrVwgjHrqoSswuivNplzZFkOE+eN5HPDNOFMI6JRMA2s90pQzb9i6mTVDqOgs5HT0
-         qLIA==
+	 To:Cc:Content-Type; b=V9hkIMnRK80YIgrU5ptMmMkhiklhFjR4/yux4T32SFbv+rCx97nZMt+ImkR4EZAGiTXHhpuBwXQy4Pbvbn8PWclUUdZmlemOzNw3xuuEZVWpGRcB/IPJA/0IbXzm8SzUc/x3USlABAgMW9TJGgt4ASGVLtTSdtkZdlVyedDRMLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Xl8stvCR; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740016181;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mzKDKoVrBDUrsawz8VsqQN0RmxEUxc5SPjjl/Dgx0g8=;
+	b=Xl8stvCRHHs5T7+/2MYST64lxsakvEkgxgW+nAftL9xm2dEXQ4VWizBCWGGh5fk+aez6Ye
+	AtaqY7JFIGo+/EWRvXIkHce/9wdRBYqH1Tkd3TkZRY8iZZ9jgxmtipoI7JJkuJIkDfaJfr
+	xdnSfsKYemu3916QaL0Y9Xvuj2GEdyg=
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com
+ [209.85.166.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-616-wZE67dlDMfyG-LJhbeDbmg-1; Wed, 19 Feb 2025 20:49:39 -0500
+X-MC-Unique: wZE67dlDMfyG-LJhbeDbmg-1
+X-Mimecast-MFC-AGG-ID: wZE67dlDMfyG-LJhbeDbmg_1740016179
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3d2a60faa44so10101875ab.0
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 17:49:39 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740016010; x=1740620810;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=arHaMf1VlgzmwsFpfVOXP4yaHpMS0ZNgicYCaJisT68=;
-        b=OIfWQRG2ncEuvgRFeXfnniZhsufdJyZFwE5mvkOtQ5wm4VbgZ/gTCA4pDEZ0nYhRMa
-         0UaJLsg7G1++upPpCEK0WkKUK7FQa45Ari3nqXyaQC24I/u5VP5fLa2KdzTeL7ALhys9
-         GH0+7MC5L0DDUpwx6C3qzbV0JaN5qykoM5ZwoANEHGNF05IN/Xq7ytiFNIULkxVgAyBU
-         ViZaCTu+jtJGCkH0qZcj2GJS5mJoo7pcU2jgD3jkKjV4SwvStPwO/gQWPPgb30IBkY7n
-         ydx2gQBgdPnvXM5w/3L7I+hE5g69c300GM5N6it4IR2zaE9SVFp0kORhOGy54YHekfaU
-         YPew==
-X-Forwarded-Encrypted: i=1; AJvYcCWkJOBAWSdubWv51+gQW87MyEk6OovmwQS7DKb9ivzuZF8yMEExgp6pZLOo8Tj3QiXNAgO+GlKVVFH7OEQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxwg6V2YX7f4pRO+sHWw68wPaVWES6bRaE7/IEKou9rM3BHt8tD
-	4xdWItrToy3HOrMO9+xLB8yXM3KtuWdNCeiXSenHzJTYNEOGq+/cyx7+aFrPQ2UzkZb2GObyW0F
-	lF2X4nwAxIbq8tvXdMyaf5V6tocOc377+bL0D
-X-Gm-Gg: ASbGncsuJBzS5Nb6VDHAmbW7531V1C14dSQMFOvsbK3PPOIdBjFX4Hqudcsbe+2Gdff
-	spu9PvbUrUJxJyMSNI/WyNaF3lfmVBDibBs6jt2I0CYQ1t4teiFOvvd+H3w/Cod14zSGJpAlV
-X-Google-Smtp-Source: AGHT+IEz/wy+PbvayGyl/ZC2Oa91Z8b/neItdKm+4+1vyV76jCH3mzoPtf/GRrixk+9Ls+oK+3gmWERSJ245t2qC3RY=
-X-Received: by 2002:a17:903:19ef:b0:215:f0c6:4dbf with SMTP id
- d9443c01a7336-2218dd576f9mr1423265ad.14.1740016009988; Wed, 19 Feb 2025
- 17:46:49 -0800 (PST)
+        d=1e100.net; s=20230601; t=1740016179; x=1740620979;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mzKDKoVrBDUrsawz8VsqQN0RmxEUxc5SPjjl/Dgx0g8=;
+        b=uM6T8BE+AfUAkRp2Wcq6YIOPRnvtkok1f+C7x/0qoVgrs+lBPVjETBx8KEl0T0LcBg
+         in0rPm32YgGUxxjkpk8Tjpf4TxkBcKDfJsM3yGtN5QMH/VmQTYsXsJquK63+9lKKC5vP
+         VZ4qcRp2Rz7Kkd6vKyXd1KXNhvhTPhgLUnnTUQF30YRqceNx9vLCeXsXcaDXUcRwZFoA
+         qx2O0UdvLH6zoUW87FKG/ayuzs8NSbKjTYnjG3mOmpNam5hiZkxHnrfvhqB/nIR0Zy7x
+         syOqO0ui3vv9UshyWRyyBpT/qZ2+vWm2vsoOOjImzPDGzuG7brhzP9aSD6g9sXbhnU3f
+         GLPA==
+X-Forwarded-Encrypted: i=1; AJvYcCWoiNPQrcuDR2tQoFRqgqRZygGay0rMgP49DbPmAMfhKJkjgjw+7hCuJsS508ObhA/W3Hb2raQQ2GOtPOI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUpatpqR99YMe6Wop00LfVLHnBa8ibIsVwGC/RY8EiQ75/or5B
+	sta8nhwTMhzVNM+MQOKbPCYljT1TL4vuo7aBvWeex7MgCrGVRf7oIKISOxLzcTrsUbU+Eo6WRXB
+	KVXkbMz3/4AZ7PhuUPIPT618RaFoQXDGoNG8+qiOB9nCyj6hjXEVkZBApdb+t/8NmO5RplNUxc8
+	riWR1D8sXfxY+9LJX9IgrELoY85HxOD+1LLPPnJyPO0gk8XDgPJg==
+X-Gm-Gg: ASbGncvIfbczULyvWv1n4HKf6Gl0SKWvL9H70uw/oKH9zLqPukLUTkRNmLf/yOJBJ0Q
+	uFhUJR3RQmXTXY6dlfp7hLwubwpqBJ9jS2FN0AaMk7Rf1TkQFuKmOVezhGSmOF80=
+X-Received: by 2002:a92:cd8b:0:b0:3cf:ceac:37e1 with SMTP id e9e14a558f8ab-3d2807b90afmr166598585ab.11.1740016178795;
+        Wed, 19 Feb 2025 17:49:38 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHua4N3hMkedgyAywjDxkxVa1LR4pC25UZ/n6ciTidS6+LPrXCE4QkVj5KAidqXqI09qUbwPkqRyqNWoJszBts=
+X-Received: by 2002:a92:cd8b:0:b0:3cf:ceac:37e1 with SMTP id
+ e9e14a558f8ab-3d2807b90afmr166598175ab.11.1740016178479; Wed, 19 Feb 2025
+ 17:49:38 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250203223916.1064540-1-almasrymina@google.com>
- <20250203223916.1064540-6-almasrymina@google.com> <abc22620-d509-4b12-80ac-0c36b08b36d9@gmail.com>
- <CAHS8izNOqaFe_40gFh09vdBz6-deWdeGu9Aky-e7E+Wu2qtfdw@mail.gmail.com>
- <28343e83-6d93-4002-a691-f8273d4d24a8@gmail.com> <CAHS8izOE-JzMszieHEXtYBs7_6D-ngVx2kJyMwp8eCWLK-c0cQ@mail.gmail.com>
- <9210a12c-9adb-46ba-b92c-90fd07e1980f@gmail.com> <CAHS8izPHtk5x-W05_svxU53X-V4+++PiYErCgfr-3iDGgEaUig@mail.gmail.com>
- <4cdfaff8-0623-4d3a-9204-5165ccbb84db@gmail.com>
-In-Reply-To: <4cdfaff8-0623-4d3a-9204-5165ccbb84db@gmail.com>
-From: Mina Almasry <almasrymina@google.com>
-Date: Wed, 19 Feb 2025 17:46:37 -0800
-X-Gm-Features: AWEUYZkdYTArMvyspFK_MTvc6qB9T7tm4wBNfrCPa7PpZJsZ-6EA0AUf_amyQgU
-Message-ID: <CAHS8izNHT_VjztrDk6t-OJoX=zB3vV81w2CYZTKA1yGB06tY-Q@mail.gmail.com>
-Subject: Re: [PATCH net-next v3 5/6] net: devmem: Implement TX path
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, kvm@vger.kernel.org, 
-	virtualization@lists.linux.dev, linux-kselftest@vger.kernel.org, 
-	Donald Hunter <donald.hunter@gmail.com>, Jakub Kicinski <kuba@kernel.org>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
-	Andrew Lunn <andrew+netdev@lunn.ch>, Neal Cardwell <ncardwell@google.com>, 
-	David Ahern <dsahern@kernel.org>, "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
-	Stefan Hajnoczi <stefanha@redhat.com>, Stefano Garzarella <sgarzare@redhat.com>, Shuah Khan <shuah@kernel.org>, 
-	sdf@fomichev.me, dw@davidwei.uk, Jamal Hadi Salim <jhs@mojatatu.com>, 
-	Victor Nogueira <victor@mojatatu.com>, Pedro Tammela <pctammela@mojatatu.com>, 
-	Samiullah Khawaja <skhawaja@google.com>, Kaiyuan Zhang <kaiyuanz@google.com>
+References: <20250206132754.2596694-1-rppt@kernel.org> <CALu+AoRMQyRDFS_4L0KQkmrFT_S+yk=uZ-Mqt86JQYKKnj-5Ug@mail.gmail.com>
+ <Z7WJD6eBLuIRnLwk@kernel.org> <CALu+AoSaEthfed1NOYPiQgm_g-dhibVMRAp0+=_+9qTT4_x=tg@mail.gmail.com>
+ <d8c43707-65a2-4176-85e2-acdb4c9d16ad@amazon.com>
+In-Reply-To: <d8c43707-65a2-4176-85e2-acdb4c9d16ad@amazon.com>
+From: Dave Young <dyoung@redhat.com>
+Date: Thu, 20 Feb 2025 09:49:52 +0800
+X-Gm-Features: AWEUYZnow-BFw9b6Uwj9RQ5_fBga9ll51qxXSJUam_iT6jbFDfi-PA1-cJgL388
+Message-ID: <CALu+AoR0BbmbZeOkLU55OpD8kxGsVnFs+pXgEC9Y_MpB4=GMvQ@mail.gmail.com>
+Subject: Re: [PATCH v4 00/14] kexec: introduce Kexec HandOver (KHO)
+To: Alexander Graf <graf@amazon.com>
+Cc: Mike Rapoport <rppt@kernel.org>, linux-kernel@vger.kernel.org, 
+	Andrew Morton <akpm@linux-foundation.org>, Andy Lutomirski <luto@kernel.org>, 
+	Anthony Yznaga <anthony.yznaga@oracle.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Ashish Kalra <ashish.kalra@amd.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, 
+	Borislav Petkov <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, David Woodhouse <dwmw2@infradead.org>, 
+	Eric Biederman <ebiederm@xmission.com>, Ingo Molnar <mingo@redhat.com>, 
+	James Gowans <jgowans@amazon.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Pasha Tatashin <pasha.tatashin@soleen.com>, 
+	"H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Pratyush Yadav <ptyadav@amazon.de>, 
+	Rob Herring <robh+dt@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Saravana Kannan <saravanak@google.com>, 
+	Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Tom Lendacky <thomas.lendacky@amd.com>, 
+	Usama Arif <usama.arif@bytedance.com>, Will Deacon <will@kernel.org>, devicetree@vger.kernel.org, 
+	kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+	linux-doc@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org, 
+	Philipp Rudo <prudo@redhat.com>, Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
+	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Sven Schnelle <svens@linux.ibm.com>, linux-s390@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Feb 19, 2025 at 2:40=E2=80=AFPM Pavel Begunkov <asml.silence@gmail.=
-com> wrote:
+On Wed, 19 Feb 2025 at 21:55, Alexander Graf <graf@amazon.com> wrote:
 >
-> On 2/17/25 23:26, Mina Almasry wrote:
-> > On Thu, Feb 13, 2025 at 5:17=E2=80=AFAM Pavel Begunkov <asml.silence@gm=
-ail.com> wrote:
-> ...
-> >>>>> It's asserting that sizeof(ubuf_info_msgzc) <=3D sizeof(skb->cb), a=
-nd
-> >>>>> I'm guessing increasing skb->cb size is not really the way to go.
-> >>>>>
-> >>>>> What I may be able to do here is stash the binding somewhere in
-> >>>>> ubuf_info_msgzc via union with fields we don't need for devmem, and=
-/or
+>
+> On 19.02.25 13:49, Dave Young wrote:
+> > On Wed, 19 Feb 2025 at 15:32, Mike Rapoport <rppt@kernel.org> wrote:
+> >> On Mon, Feb 17, 2025 at 11:19:45AM +0800, RuiRui Yang wrote:
+> >>> On Thu, 6 Feb 2025 at 21:34, Mike Rapoport <rppt@kernel.org> wrote:
+> >>>> == Limitations ==
 > >>>>
-> >>>> It doesn't need to account the memory against the user, and you
-> >>>> actually don't want that because dmabuf should take care of that.
-> >>>> So, it should be fine to reuse ->mmp.
+> >>>> Currently KHO is only implemented for file based kexec. The kernel
+> >>>> interfaces in the patch set are already in place to support user space
+> >>>> kexec as well, but it is still not implemented it yet inside kexec tools.
 > >>>>
-> >>>> It's also not a real sk_buff, so maybe maintainers wouldn't mind
-> >>>> reusing some more space out of it, if that would even be needed.
-> >>>>
-> >>>
-> >>> netmem skb are real sk_buff, with the modification that frags are not
+> >>> What architecture exactly does this KHO work fine?   Device Tree
+> >>> should be ok on arm*, x86 and power*, but how about s390?
+> >> KHO does not use device tree as the boot protocol, it uses FDT as a data
+> >> structure and adds architecture specific bits to the boot structures to
+> >> point to that data, very similar to how IMA_KEXEC works.
 > >>
-> >> We were discussing ubuf_info allocation, take a look at
-> >> msg_zerocopy_alloc(), it has nothing to do with netmems and all that.
-> >>
-> >
-> > Yes. My response was regarding the suggestion that we can use space in
-> > devmem skbs however we want though.
+> >> Currently KHO is implemented on arm64 and x86, but there is no fundamental
+> >> reason why it wouldn't work on any architecture that supports kexec.
+> > Well,  the problem is whether there is a way to  add dtb in the early
+> > boot path,  for X86 it is added via setup_data,  if there is no such
+> > way I'm not sure if it is doable especially for passing some info for
+> > early boot use.  Then the KHO will be only for limited use cases.
 >
-> Well, at least I didn't suggest that, assuming "devmem skbs" are skbs
-> filled with devmem frags. I think the confusion here is thinking
-> that skb->cb you mentioned above is about "devmem skbs", while it's
-> special skbs without data used only to piggy back ubuf allocation.
+>
+> Every architecture has a platform specific way of passing data into the
+> kernel so it can find its command line and initrd. S390x for example has
+> struct parmarea. To enable s390x, you would remove some of its padding
+> and replace it with a KHO base addr + size, so that the new kernel can
+> find the KHO state tree.
 
-Ah, I see. I still don't see how we can just increase the size of
-skb->cb when it's shared between these special skbs and regular skbs.
+Ok, thanks for the info,  I cced s390 people maybe they can provide inputs.
 
-> Functionally speaking, it'd be perfectly fine to get rid of the
-> warning and allocate it with kmalloc().
->
+Other than the arch concern,   I'm not so excited about the KHO
+because for kexec reboot there is a fundamental problem which makes us
+(Red Hat kexec/kdump team) can not full support it in RHEL
+distribution, that is the stability due to drivers usually do not
+implement the  device shutdown method or not well tested.   From time
+to time we see weird bugs,  could be malfunctioned devices or memory
+corruption caused by ongoing DMA etc.   Also no way for the time being
+to make some graphic/drm drivers work ok after a kexec reboot, it
+might happen to work by luck but also not stable.
 
-More suggestions to refactor unrelated things to force through a
-msg->sg_from_iter approach.
+So I personally think that improving the above concern is more
+important than introducing more features to utilize kexec reboot.
 
-> ...
-> >>> But MSG_ZEROCOPY doesn't set msg->msg_ubuf. And not setting
-> >>> msg->msg_ubuf fails to trigger msg->sg_from_iter altogether.
-> >>>
-> >>> And also currently sg_from_iter isn't set up to take in a ubuf_info.
-> >>> We'd need that if we stash the binding in the ubuf_info.
-> >>
-> >> https://github.com/isilence/linux.git sg-iter-ops
-> >>
-> >> I have old patches for all of that, they even rebased cleanly. That
-> >> should do it for you, and I need to send then regardless of devmem.
-> >>
-> >>
-> >
-> > These patches help a bit, but do not make any meaningful dent in
-> > addressing the concern I have in the earlier emails.
-> >
-> > The concern is that we're piggybacking devmem TX on MSG_ZEROCOPY, and
-> > currently the MSG_ZEROCOPY code carefully avoids any code paths
-> > setting msg->[sg_from_iter|msg_ubuf].
 >
-> Fwiw, with that branch you don't need ->msg_ubuf at all, just pass
-> it as an argument from tcp_sendmsg_locked() as usual, and
-> ->sg_from_iter is gone from there as well.
 >
-> > If we want devmem to reuse both the MSG_ZEROCOPY mechanisms and the
-> > msg->[sg_from_iter|ubuf_info] mechanism, I have to dissect the
-> > MSG_ZEROCOPY code carefully so that it works with and without
-> > setting msg->[ubuf_info|msg->sg_from_iter]. Having gone through this
-> > rabbit hole so far I see that it complicates the implementation and
-> > adds more checks to the fast MSG_ZEROCOPY paths.
+> Alex
 >
-> If you've already done, maybe you can post it as a draft? At least
-> it'll be obvious why you say it's more complicated.
 >
 
-I don't have anything worth sharing. Just went down this rabbit hole
-and saw a bunch of MSG_ZEROCOPY checks (!msg->msg_ubuf checks around
-MSG_ZEROCOPY code) and restrictions (skb->cb size) need to be
-addressed and checks to be added. From this thread you seem to be
-suggesting more changes to force in a msg->sg_from_iter approach
-adding to the complications.
-
-> > The complication could be worth it if there was some upside, but I
-> > don't see one tbh. Passing the binding down to
-> > zerocopy_fill_skb_from_devmem seems like a better approach to my eye
-> > so far
->
-> The upside is that 1) you currently you add overhead to common
-> path (incl copy),
-
-You mean the unlikely() check for devmem before delegating to
-skb_zerocopy_fill_from_devmem? Should be minimal.
-
-> 2) passing it down through all the function also
-> have overhead to the zerocopy and MSG_ZEROCOPY path, which I'd
-> assume is comparable to those extra checks you have.
-
-Complicating/refactoring existing code for devmem TCP to force in a
-msg->sg_from_iter and save 1 arg passed down a couple of functions
-doesn't seem like a good tradeoff IMO.
-
-> 3) tcp would
-> need to know about devmem tcp and its bindings, while it all could
-> be in one spot under the MSG_ZEROCOPY check.
-
-I don't see why this is binding to tcp somehow. If anything it makes
-the devmem TX implementation follow closely MSG_ZEROCOPY, and existing
-MSG_ZEROCOPY code would be easily extended for devmem TX without
-having to also carry refactors to migrate to msg->sg_from_iter
-approach (just grab the binding and pass it to
-skb_zerocopy_iter_stream).
-
-> 4) When you'd want
-> another protocol to support that, instead of a simple
->
-> ubuf =3D get_devmem_ubuf();
->
-> You'd need to plumb binding passing through the stack there as
-> well.
->
-
-Similar to above, I think this approach will actually extend easier to
-any protocol already using MSG_ZEROCOPY, because we follow that
-closely instead of requiring refactors to force msg->sg_from_iter
-approach.
-
-
-> 5) And keeping it in one place makes it easier to keep around.
->
-> I just don't see why it'd be complicated, but maybe I miss
-> something, which is why a draft prototype would explain it
-> better than any words.
->
-> > I'm afraid I'm going to table this for now. If there is overwhelming
-> > consensus that msg->sg_from_iter is the right approach here I will
-> > revisit, but it seems to me to complicate code without a significant
-> > upside.
->
-> --
-> Pavel Begunkov
->
-
-
---
-Thanks,
-Mina
 
