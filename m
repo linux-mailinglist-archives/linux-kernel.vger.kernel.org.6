@@ -1,137 +1,170 @@
-Return-Path: <linux-kernel+bounces-524217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 465A8A3E0CB
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:31:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 484DBA3E0D4
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:33:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E28C93AAE7F
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:28:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C27470323E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:28:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 437F320485D;
-	Thu, 20 Feb 2025 16:28:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 914BC209F3F;
+	Thu, 20 Feb 2025 16:28:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="V39zgquT"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="vCUzGkuM"
+Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B72A51FECD0;
-	Thu, 20 Feb 2025 16:28:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28E1520487F
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 16:28:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740068883; cv=none; b=DzT3VuMSGK7Lfb+lAVAxJdRGXt6S6VimbZ8bRAIfvJEq5pl9ifLWo5N31oONZ0IWZjzBTyYqI3Ppx+vzG37Y07Dicu8Z0MDRVZdkzH2Uw020lXKZIxPSg0RpYZQds5nPA5HMbUOJ6/O37sdQnuyLmoQCgbBM36opHCvSo3OMtM4=
+	t=1740068925; cv=none; b=pJF7UUilLUA8cgFDM6N20OkYgKrR16+cjl83M/9IVOjcoC6+0GYA4hLJoO17ZTpGXcUiupzPnAbH6RSk6CW0MP/obD/6M0vny2e3CdRYNcC0hNEjUWYeEXSWq31bxTgo2+10++sFM8GlpHDfFW9GKl54lTo4XKdHc7zBcN4zrP4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740068883; c=relaxed/simple;
-	bh=y76SfM5hjwAMD5FHU1SOziO7WJOlstQd3+V3l5AykNw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iPHwq6gnX1XGcF7XBJPVJs9ZuY3tMI2ps5V9vAKo3fmkrSlhQfNytdMrchzw1sVftNfZLeFwoS2vKOfMl9nyqe9HzDITloT1IyPpNRvoH5tbaki5kY8+Aecq0an/siUpFJoAaaQo1Dmr1aGt/vSWhcLs5p3o0dmLAOPZqtNtbEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=V39zgquT; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740068882; x=1771604882;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=y76SfM5hjwAMD5FHU1SOziO7WJOlstQd3+V3l5AykNw=;
-  b=V39zgquTONHkRyCbPnqzMz401NZ0F+vtnlFEGaY+jW8wGmGfAjUAfvni
-   2Eq3ArGV2y1nNsxJzEp/jLqhJ1g2QT0+sevv6dZhg6ym9wfrphCFdcUek
-   vpRleTT2PZtFyJtFSkcffbi9ZfGmSwvtlMq4iyOxaGW/jfK72cQOwFC6R
-   d+KawtGRe1lostkvPZiRkiZi9DCu3lXgcdm6qdrOnfWQtaWlMDO9UOcBJ
-   kZiVzUxuTfdXWfm+9APK7mZOrm1rm37BPhBqGSX/6W29v52oMCQ/+R+pW
-   4KdFWwI2U6MQp+GgdGKbuRSEUeA5FU4aghSaiTb8v9BxSArbydQVkK2wL
-   A==;
-X-CSE-ConnectionGUID: M6r1P7bcT/q1OIM+8gWu7w==
-X-CSE-MsgGUID: JfpVoY/yTOKNRXhQGWWoFQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11351"; a="40724584"
-X-IronPort-AV: E=Sophos;i="6.13,302,1732608000"; 
-   d="scan'208";a="40724584"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Feb 2025 08:28:01 -0800
-X-CSE-ConnectionGUID: QPQ3ayuXRsWwW4MyBur1ag==
-X-CSE-MsgGUID: YdwgBcqmTUWIjGDGp1zMMg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,302,1732608000"; 
-   d="scan'208";a="120070989"
-Received: from puneetse-mobl.amr.corp.intel.com (HELO [10.125.110.82]) ([10.125.110.82])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Feb 2025 08:28:00 -0800
-Message-ID: <d25ef356-3614-4e69-8cc1-d74dbbd2585f@intel.com>
-Date: Thu, 20 Feb 2025 08:28:01 -0800
+	s=arc-20240116; t=1740068925; c=relaxed/simple;
+	bh=qtZvEjj3Lx7yqO+SKHcxEAF3FCWhyE/jBk/4XkhKUHE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tTvCMj327Ua1AXfs2Uu2zAtY6ynCm/Ds1+3zW6vKoGmhBrdrFd93iJBs0G8lpvD93gtniKYzybzsYY5d1yckfzfhZfxfOx2aTR45lnpXv30hQffxmHGTAH9/VA3qPa3EkJs5NkVCrsosR2KwF7smiUdQ6O83gGxLE9pRXnWbDUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=vCUzGkuM; arc=none smtp.client-ip=209.85.222.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
+Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-7c0b24cc566so92637085a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 08:28:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gourry.net; s=google; t=1740068923; x=1740673723; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=6zPKPwpgMpfH3brPd29df7mwe+JvN1VwGQmS25Yuk50=;
+        b=vCUzGkuMsP9JQS/QWcl3XWgfSJ3fY6m8qeLG0kmNyNkt39Na2wQxRQ2uIX3dar1PuO
+         gKQ6UZAjKXnqHN6wnZfnIjHIY5UMlWbHYh/QsJUtmxIA2SseglV5roC4S2pM5DJXS7cJ
+         mZzSqdyF29ATpTa6e7oOUcE81dFMJ4OKj94Lk2qbM+k1HjEtNfS8SS33cMhBDTKhxaVo
+         TRMPNOCGkbaUTFJbvalO7lREpk34EajTxSku493IsM7VUI7F+bJqdkNtjXlfAvmz7oLm
+         xIr5uRAafsGj5VPREpxoOx1uiIfFeqAwcynhnvDAJ0hEfL3HprjVicYMzQfH8kO3j4mb
+         vCmw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740068923; x=1740673723;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6zPKPwpgMpfH3brPd29df7mwe+JvN1VwGQmS25Yuk50=;
+        b=l8XH8I9F/E8fj9/e0PALsK3rMpW9qs7cflxrGoxziQTA8i3aPDmIIkWb83WnfxHnlr
+         FXwt1Mhfk9uWfCkQvSO9ui6xi3w+i+KuuTEoTRykzJqiLP6Dtg2aoY6TcVRTSx6PN3HZ
+         daS1+2CJfYMwuI1DGo1q0dvb8wmKkgv7DGf6jvvUPiNEuqDtNAlZE7V+H6tIRsnOgrKz
+         B1XHF10lS1diBG93+3EqqgIx7KHlamuGTvJUHFdd2uRW9QAE4Y86cK6Up7ucRjH7248D
+         SmLHpJhkzUUG6ZEZOXvNDtSVhzHeFvqcHCVzLbd3vfrsXakxWU0D1o03mwUWzMzkaRfc
+         0tNw==
+X-Forwarded-Encrypted: i=1; AJvYcCX0mFIRJWRvsjK4pO1v/KucTgZNLSDXj3Xd6yLhjsOcYpzNTILE8OfeE4aLd2KpHamkNgsb6lCCQdjPOgg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YykJkVmMO8nzD/FLpEHzgHedCFqyh1/TcGADdCTCmSirr8fkQhL
+	gSWdHjcx52ZGHA6303SoYBPoT/XKyti+ea/3qNx1GqP0boyCO/m08h2jyJ7pwms=
+X-Gm-Gg: ASbGncth2CtiHDm0Smtcz3gV8R9heKd7x/Eh8k7+bc51TafSO1Q5qwGZHyn81wzLuB2
+	Pa1atpl84PkxLtib88uqoIpUE7lNr1xVbrEF+HVsdWqY4U2oY9Tbsh3+Zt6XSOq85sjn6M9Og5A
+	ajj9nbfFs7nd70a9fCnZ4RxsdbREztMFoSBYNdkfutC9D164a3PZHh9TBnJgWdiEbQ7KVZ26864
+	hJ41jIVSkTghxTfl5WKka5WPs956W5XUTDzoyaVdT8+h6tu/lL1bEnLB5v7zg1UMeFOcJv6QHLc
+	EO6JZtXQj3viLE84adYS5n7VSmfgX+bNir9CgdQL+1vpk9EonMfP0KSn8TvuPhNTTqTbqG5zaA=
+	=
+X-Google-Smtp-Source: AGHT+IGeFR8D7nMbaUp/3ATL7D3M3qMty7rR8JIiXinKvzPnvyJ/Rj3ZuPHNQJnrNccn1sWN2TpbjQ==
+X-Received: by 2002:a05:620a:28d1:b0:7c0:b0b7:493e with SMTP id af79cd13be357-7c0b51cdf04mr1099093585a.7.1740068923018;
+        Thu, 20 Feb 2025 08:28:43 -0800 (PST)
+Received: from gourry-fedora-PF4VCD3F (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c0a62e9865sm409747885a.59.2025.02.20.08.28.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Feb 2025 08:28:42 -0800 (PST)
+Date: Thu, 20 Feb 2025 11:28:40 -0500
+From: Gregory Price <gourry@gourry.net>
+To: Robert Richter <rrichter@amd.com>
+Cc: Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Davidlohr Bueso <dave@stgolabs.net>, linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
+	Terry Bowman <terry.bowman@amd.com>
+Subject: Re: [PATCH v2 03/15] cxl/region: Factor out code for interleaving
+ calculations
+Message-ID: <Z7dYODuRrRv1bXpV@gourry-fedora-PF4VCD3F>
+References: <20250218132356.1809075-1-rrichter@amd.com>
+ <20250218132356.1809075-4-rrichter@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] perf/x86/rapl: Fix PP1 event for Intel Meteor/Lunar Lake
-To: Lucas De Marchi <lucas.demarchi@intel.com>,
- linux-perf-users@vger.kernel.org, x86@kernel.org,
- linux-kernel@vger.kernel.org
-Cc: dave.hansen@linux.intel.com, Zhang Rui <rui.zhang@intel.com>,
- Kan Liang <kan.liang@linux.intel.com>, Peter Zijlstra
- <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Ulisses Furquim <ulisses.furquim@intel.com>, intel-xe@lists.freedesktop.org,
- intel-gfx@lists.freedesktop.org
-References: <20250220153857.2593704-6-lucas.demarchi@intel.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20250220153857.2593704-6-lucas.demarchi@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250218132356.1809075-4-rrichter@amd.com>
 
-On 2/20/25 07:36, Lucas De Marchi wrote:
-> On some boots the read of MSR_PP1_ENERGY_STATUS msr returns 0, causing
-> perf_msr_probe() to make the power/events/energy-gpu event non-visible.
-> When that happens, the msr always read 0 until the graphics module (i915
-> for Meteor Lake, xe for Lunar Lake) is loaded. Then it starts returning
-> something different and re-loading the rapl module "fixes" it.
+On Tue, Feb 18, 2025 at 02:23:44PM +0100, Robert Richter wrote:
+> Function cxl_calc_interleave_pos() contains code to calculate the
+> interleaving parameters of a port. Factor out that code for later
+> reuse. Add function cxl_port_calc_interleave() for this and introduce
+> struct cxl_interleave_context to collect all interleaving data.
+> 
+> Signed-off-by: Robert Richter <rrichter@amd.com>
+> ---
+>  drivers/cxl/core/region.c | 63 ++++++++++++++++++++++++++-------------
+>  1 file changed, 43 insertions(+), 20 deletions(-)
+> 
+> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
+> index c118bda93e86..ad4a6ce37216 100644
+> --- a/drivers/cxl/core/region.c
+> +++ b/drivers/cxl/core/region.c
+> @@ -1800,27 +1800,34 @@ static int find_pos_and_ways(struct cxl_port *port, struct range *range,
+>  	return rc;
+>  }
+>  
+> +struct cxl_interleave_context {
+> +	struct range *hpa_range;
+> +	int pos;
+> +};
+> +
 
-What's the root cause here? Did the kernel do something funky? Or is
-this a hardware bug?
+I get that this will be used later to pass information back, but this
+patch by itself is a little confusing because ctx seems pointless since
+the function still returns the position and accesses the hpa_range directly
+
+Looked at in isolation, having the context structure change in this
+patch than just adding the hpa_range as an argument and adding the
+context later when it's actually relevant.
+
+static int cxl_port_calc_interleave(struct cxl_port *port,
+				    struct range *hpa_range);
+
+> +static int cxl_calc_interleave_pos(struct cxl_endpoint_decoder *cxled)
+> +{
+> +	struct cxl_port *iter, *port = cxled_to_port(cxled);
+> +	struct cxl_memdev *cxlmd = cxled_to_memdev(cxled);
+> +	struct cxl_interleave_context ctx;
+> +	int pos = 0;
+> +
+> +	ctx = (struct cxl_interleave_context) {
+> +		.hpa_range = &cxled->cxld.hpa_range,
+> +	};
+> +
+> +	for (iter = cxled_to_port(cxled); pos >= 0 && iter;
+> +	     iter = parent_port_of(iter))
+> +		pos = cxl_port_calc_interleave(iter, &ctx);
+>  
+>  	dev_dbg(&cxlmd->dev,
+>  		"decoder:%s parent:%s port:%s range:%#llx-%#llx pos:%d\n",
+>  		dev_name(&cxled->cxld.dev), dev_name(cxlmd->dev.parent),
+> -		dev_name(&port->dev), range->start, range->end, pos);
+> +		dev_name(&port->dev), ctx.hpa_range->start, ctx.hpa_range->end,
+> +		ctx.pos);
+> 
+
+	context just gets discarded here and hpa_range and pos are
+	otherwise still accessible if you just pass hpa_range as an
+	argument.  So I would push off adding the context argument to
+	the patch that actually needs it.
+
+>  	return pos;
+>  }
+
+~Gregory
 
