@@ -1,63 +1,78 @@
-Return-Path: <linux-kernel+bounces-523967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523968-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB3B1A3DD7B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:58:24 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85C70A3DD7C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:58:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13E763AF1DD
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:56:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8265F7A9FC5
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:56:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F39A01D54D6;
-	Thu, 20 Feb 2025 14:56:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A43641D5CCD;
+	Thu, 20 Feb 2025 14:57:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K+4m2CYp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lPpj60w6"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 428D61D5160;
-	Thu, 20 Feb 2025 14:56:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EFF91D54FE;
+	Thu, 20 Feb 2025 14:57:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740063407; cv=none; b=AGameXdXcMkGGR0ABzP91qmjgXfBeP95J1J9gWCYBySYsY7xymVl84FEofWFBtJYuJ9+/9e+92+qQ7OSxKJx+MQNimXjRyjfmCF9nAm78MYJdmNlL/RxaQc3gxxZVRPkmTk5wXjCfuyNFgTvr61ShhyjFxVUFdftMz4cAfBw4qQ=
+	t=1740063429; cv=none; b=DBBIIgycSeRLVYNsJRz+eFrU7runuZL/iy+f76IXyXMd61vpwXkrwPwPwe7fDShLwAE+JmU3Lcs3uz/uo9bgK3XCYOdcpDXYp1hMgw0JhnwZiQ0YuqEmKaow02gme1b5bdwYY28ZeSEY/X7yc+1IMy5krY+nAQwdH/L4INU769E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740063407; c=relaxed/simple;
-	bh=QiwnkF0UwAVnyULwhSlHoGTh1+lJb0Epz5yXz5sNWO0=;
+	s=arc-20240116; t=1740063429; c=relaxed/simple;
+	bh=LH20kw/qJxCzAmsecqE65RTaGen48dDN4X5aZDNUing=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jWsivbEEQV/nvUtPeYvu/WTEZLPVgrF4sEb7sy/2pl9GNz2COfKM92oK7vtS82SiZW7tHi98++14A+sWCQaan39w2C7hqbTyFTefkflXgMJs1lerN/31MWcSON4kHRYshCBpfNt41IaHn36Nno/N5r9jk+flUqZWz1S/v9zTsrk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K+4m2CYp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A59A0C4CED1;
-	Thu, 20 Feb 2025 14:56:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740063407;
-	bh=QiwnkF0UwAVnyULwhSlHoGTh1+lJb0Epz5yXz5sNWO0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=K+4m2CYpSkgijm+ur0lwT45RhojCSbFVS/e4S+PVccsAmjOE0DCvfiEWhqgKYLTlc
-	 LY/hEzRjK6a2UY1fyZwouKCHJLbGUxcUpv/szZgUW8k9sWUP+tr/acU320eBt/7zLh
-	 sEg5M3pzflsn0Gu99aZ/UcWR9A8Mjm/xroDvJhAO9Wp5bWtPgd8mbVxOJvy+59DtMy
-	 9EePASrsQ6iLZWq/ha3Gg2tQjmc60q81xaYEpazBpHR/86YqRDp/ZC0A03/WQtSlcC
-	 aRcvO7Fo5318UvaAX0rw4fVFOrouBm90EJCVDPHds30lEtCu/9iav7SzP56PUuBy21
-	 BT+2RvmPUII9g==
-Date: Thu, 20 Feb 2025 14:56:42 +0000
-From: Simon Horman <horms@kernel.org>
-To: Larysa Zaremba <larysa.zaremba@intel.com>
-Cc: Tony Nguyen <anthony.l.nguyen@intel.com>,
-	intel-wired-lan@lists.osuosl.org,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Michal Swiatkowski <michal.swiatkowski@linux.intel.com>,
-	Mateusz Pacuszka <mateuszx.pacuszka@intel.com>
-Subject: Re: [PATCH iwl-next v4 2/6] ice: do not add LLDP-specific filter if
- not necessary
-Message-ID: <20250220145642.GZ1615191@kernel.org>
-References: <20250214085215.2846063-1-larysa.zaremba@intel.com>
- <20250214085215.2846063-3-larysa.zaremba@intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=EJRF07AcyGTuSjNzSfq/mRz028sMCT3EzQGK3UA8NToAZu5v7FdopGGxZwBgfn2D1m1YZalWfKxgXHRkwxFBVUtLptcglUxB8b2qwN+/jK/wX3d0//0NK8x7NEfZWOCk83FQ/eK854+4aDma1cyGCZ/NY+WmriKG70a/a3TGUpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lPpj60w6; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740063428; x=1771599428;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=LH20kw/qJxCzAmsecqE65RTaGen48dDN4X5aZDNUing=;
+  b=lPpj60w6DsDXbC/5RUSwOp4m0fbHkCNXZoFTe/WNeOsyAV8vYIqtbEw8
+   aWDaHWtd0xhHa+s1RUFyR0/zI31fVKzdh+VLbKxaFzx5VcRFfLbYSoZDA
+   r+ggUF9M8yrO2FOFx1Lh8CpUcuWM16njxjhwxC1OboeQqDPSE3RZvXBob
+   QC/wjr+NPr9/zDekfHerU3C6lYE+VwG5YH/J64h+sHKZBBx2EmPbozcfn
+   Th5S/JThf0ARCG39S7IZiplY14bz2hBkqmtBHGjiYHCVhuYqfGWddhBmp
+   JDbZLy79V5iQXCtnVWuKBKIdqPhsIVPcZZi0SFwfw4JUODQbgK894Q2pd
+   Q==;
+X-CSE-ConnectionGUID: OAoups/yS0ajnFrPvPXlag==
+X-CSE-MsgGUID: s4dqTRELRYOg5oUDieSrzA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11314"; a="41052431"
+X-IronPort-AV: E=Sophos;i="6.12,310,1728975600"; 
+   d="scan'208";a="41052431"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Feb 2025 06:57:07 -0800
+X-CSE-ConnectionGUID: Exy/s7enRDGx97orsaGBFg==
+X-CSE-MsgGUID: 12RvgFC0Tt+hlqdfv+M4FQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,301,1732608000"; 
+   d="scan'208";a="115267418"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Feb 2025 06:57:05 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tl7z4-0000000DMqN-38sj;
+	Thu, 20 Feb 2025 16:57:02 +0200
+Date: Thu, 20 Feb 2025 16:57:02 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
+	linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Subject: Re: [PATCH 26/29] serial: 8250: use serial_in/out() helpers
+Message-ID: <Z7dCvmLLk6P9rbs7@smile.fi.intel.com>
+References: <20250220111606.138045-1-jirislaby@kernel.org>
+ <20250220111606.138045-27-jirislaby@kernel.org>
+ <Z7cfvXUCHXVXK_mp@smile.fi.intel.com>
+ <2025022032-movie-citation-b267@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,60 +81,30 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250214085215.2846063-3-larysa.zaremba@intel.com>
+In-Reply-To: <2025022032-movie-citation-b267@gregkh>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Fri, Feb 14, 2025 at 09:50:36AM +0100, Larysa Zaremba wrote:
-> Commit 34295a3696fb ("ice: implement new LLDP filter command")
-> introduced the ability to use LLDP-specific filter that directs all
-> LLDP traffic to a single VSI. However, current goal is for all trusted VFs
-> to be able to see LLDP neighbors, which is impossible to do with the
-> special filter.
+On Thu, Feb 20, 2025 at 03:39:40PM +0100, Greg KH wrote:
+> On Thu, Feb 20, 2025 at 02:27:41PM +0200, Andy Shevchenko wrote:
+> > On Thu, Feb 20, 2025 at 12:16:03PM +0100, Jiri Slaby (SUSE) wrote:
+> > > There are serial_in/out() helpers to be used instead of direct
+> > > p->serial_in/out(). Use them in various 8250 drivers.
+> > 
+> > Is this just a mechanical (compile-only) conversion?
+> > IIRC 8250 DW code is twisted in some cases and it might
+> > be a possibility of dead loops, but I don't remember it
+> > by heart and haven't checked myself before writing this
+> > reply.
+> > 
+> > TL;DR: this needs a thorough review.
 > 
-> Make using the generic filter the default choice and fall back to special
-> one only if a generic filter cannot be added. That way setups with "NVMs
-> where an already existent LLDP filter is blocking the creation of a filter
-> to allow LLDP packets" will still be able to configure software Rx LLDP on
-> PF only, while all other setups would be able to forward them to VFs too.
-> 
-> Reviewed-by: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
-> Signed-off-by: Larysa Zaremba <larysa.zaremba@intel.com>
+> Wonderful, are you going to do it?  :)
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+Why not. Just give me some time.
 
-...
+-- 
+With Best Regards,
+Andy Shevchenko
 
-> diff --git a/drivers/net/ethernet/intel/ice/ice_common.c b/drivers/net/ethernet/intel/ice/ice_common.c
-> index aaa592ffd2d8..f2e51bacecf8 100644
-> --- a/drivers/net/ethernet/intel/ice/ice_common.c
-> +++ b/drivers/net/ethernet/intel/ice/ice_common.c
-> @@ -6010,15 +6010,21 @@ bool ice_fw_supports_lldp_fltr_ctrl(struct ice_hw *hw)
->  /**
->   * ice_lldp_fltr_add_remove - add or remove a LLDP Rx switch filter
->   * @hw: pointer to HW struct
-> - * @vsi_num: absolute HW index for VSI
-> + * @vsi: VSI to add the filter to
->   * @add: boolean for if adding or removing a filter
-> + *
-> + * Return: 0 on success, -EOPNOTSUPP if the operation cannot be performed
-> + *	   with this HW or VSI, otherwise an error corresponding to
-> + *	   the AQ transaction result.
->   */
 
-Thanks for adding the Return section to the kernel doc.
-
-> -int
-> -ice_lldp_fltr_add_remove(struct ice_hw *hw, u16 vsi_num, bool add)
-> +int ice_lldp_fltr_add_remove(struct ice_hw *hw, struct ice_vsi *vsi, bool add)
->  {
->  	struct ice_aqc_lldp_filter_ctrl *cmd;
->  	struct ice_aq_desc desc;
->  
-> +	if (vsi->type != ICE_VSI_PF || !ice_fw_supports_lldp_fltr_ctrl(hw))
-> +		return -EOPNOTSUPP;
-> +
->  	cmd = &desc.params.lldp_filter_ctrl;
->  
->  	ice_fill_dflt_direct_cmd_desc(&desc, ice_aqc_opc_lldp_filter_ctrl);
-
-...
 
