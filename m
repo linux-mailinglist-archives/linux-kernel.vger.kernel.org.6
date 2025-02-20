@@ -1,58 +1,72 @@
-Return-Path: <linux-kernel+bounces-524885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2C82A3E861
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 00:25:55 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8FA6A3E865
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 00:26:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F4213BAC69
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 23:25:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1324917F25B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 23:25:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F25762673B9;
-	Thu, 20 Feb 2025 23:25:18 +0000 (UTC)
-Received: from mail115-63.sinamail.sina.com.cn (mail115-63.sinamail.sina.com.cn [218.30.115.63])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51329267AEE;
+	Thu, 20 Feb 2025 23:25:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="U6M0fEFV"
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10E19266192
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 23:25:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.63
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33B482673B9;
+	Thu, 20 Feb 2025 23:25:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.156.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740093918; cv=none; b=bRK5Z0PXOGNLNioG81eyKvwOzcvCPMo5RdTQWKiOqW9WRylSW1+To6opo3DF35Q/KXaqdMMGduTaABNSM+Xm4mZ7JNzwT/HQPeRZkT02DAdfpgFN6tT9/tLFt07NWdCnXK/J3dzTjt5kziL2Q9MYkRtI9LFS4nK08yHegyuyRPg=
+	t=1740093946; cv=none; b=Xtd5AzIuNojPLIDTdqVWjNwwx+TPDAJf+yG4WTp1ZNjZBvyzYUUjMOuh6rIseXRrkLhIuEaqgo+cJF9deh3U4Zul3DU6tf1HPaKKslBt9q/Oojj5AKLjCvhNnCWZLJd5ybJxwH80nhBY3SHhLs02yjWnYEy+fe7oPc9pQ2ZsG4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740093918; c=relaxed/simple;
-	bh=GiBI+Ueev+BEL901ge+BPypu7Z9ti8bTpC31MMcUOsM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Zcc+8MoJ73fyMOv8YU6kN3NLRpsnJS3+/NTMorC3+oCF6MTDfe6lTe4ZQMuaAqFrPGkkpBCeBjFnrfaFCL4B06WZIjV0WRBN+rMC/vxgnJcXnHlXd3cqPuxBFKPtpLUjOtTfZ20eIyH7oWtJgqDMTFRbZ4MOZUZV5SVvkz9cet0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.115.63
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([116.24.8.75])
-	by sina.com (10.185.250.22) with ESMTP
-	id 67B7B9D500004F15; Thu, 21 Feb 2025 07:25:11 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 4121737602527
-X-SMAIL-UIID: 44415CC9A20146AB8789489C42E1A855-20250221-072511-1
-From: Hillf Danton <hdanton@sina.com>
-To: Steven Rostedt <rostedt@goodmis.org>,
-	Matthew Wilcox <willy@infradead.org>
-Cc: Byungchul Park <byungchul@sk.com>,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	kernel_team@skhynix.com,
-	conduct@kernel.org
-Subject: Re: [RFC PATCH v12 00/26] LUF(Lazy Unmap Flush) reducing tlb numbers over 90%
-Date: Fri, 21 Feb 2025 07:25:02 +0800
-Message-ID: <20250220232503.2416-1-hdanton@sina.com>
-In-Reply-To: <Z7dFuTkdQ7PmP7sY@home.goodmis.org>
-References: <20250220052027.58847-1-byungchul@sk.com> <20250220103223.2360-1-hdanton@sina.com> <20250220114920.2383-1-hdanton@sina.com> <Z7c0BTteQoZKcSmJ@casper.infradead.org>
+	s=arc-20240116; t=1740093946; c=relaxed/simple;
+	bh=Spj/goPUDzFGqkrCbwbufCYDfMYOvILE3tPpjpiLtdY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=un6c7wNnX8OY6o26/QeDY4WsARQDLtDJtdCF+te9SagtL9Z9ZSjW/6jtBU0e+KXAf5D2SQbcC1bxmi8diqC19gNlFACSdSiykBXWirzRkdYBR/1PwHEshjnUcd583qbr+8iKshWl7N3tHYc2MwFfyOEUbM/6veN/d/9VtI0I5vM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=U6M0fEFV; arc=none smtp.client-ip=67.231.156.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
+	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51KL98lf029271;
+	Thu, 20 Feb 2025 15:25:31 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pfpt0220; bh=qHxXlJmqY7Qeoukk/Mug5bb
+	yhZku9Mld84zeeuVZBss=; b=U6M0fEFVS6NrWzJKPpEFRQM/dKtrZnJmQtiGvKM
+	6c3eB1fCvZZCBnhmPPL023tV7VO/ej7phAmFhmU+D2CEo641XQpqCrjkXyz94HzY
+	QP1VWpFDfFD0xBblYgERQiDGiMa8s0ofTkkzsn0KfWztB4jVFFagaHa/JTvnZz7I
+	3D+BnJg5pWUmKhxvQW4rn7CcsOlfHMdPF6rF4iXNzsMi51dbQbzA696zZdnJ2vY+
+	XWwxBWCAc8G1DLsMrw6MnQ+7DZyCrhrGHlmKJ4c1LtuGYpvSCNc7JQwdCwa2nl5d
+	t2TalQ1tIoVNmxXe4IhVtsNGOoS8zoCPfh1VQcpC0vTOFOQ==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 44xc24r915-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Feb 2025 15:25:31 -0800 (PST)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Thu, 20 Feb 2025 15:25:29 -0800
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Thu, 20 Feb 2025 15:25:29 -0800
+Received: from wd-ubuntu-24-04.marvell.com (wd-ubuntu-24-04.marvell.com [10.111.132.113])
+	by maili.marvell.com (Postfix) with ESMTP id A3C435B692D;
+	Thu, 20 Feb 2025 15:25:29 -0800 (PST)
+From: Wilson Ding <dingwei@marvell.com>
+To: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+CC: <andrew@lunn.ch>, <gregory.clement@bootlin.com>,
+        <sebastian.hesselbarth@gmail.com>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <p.zabel@pengutronix.de>,
+        <salee@marvell.com>, <gakula@marvell.com>,
+        Wilson Ding <dingwei@marvell.com>
+Subject: [PATCH v2 0/4] Add Armada8K reset controller support
+Date: Thu, 20 Feb 2025 15:25:23 -0800
+Message-ID: <20250220232527.882888-1-dingwei@marvell.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,25 +74,57 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-GUID: HWBi2PcT7VOYBMInwbzQhadaooHUw8wX
+X-Proofpoint-ORIG-GUID: HWBi2PcT7VOYBMInwbzQhadaooHUw8wX
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-20_09,2025-02-20_02,2024-11-22_01
 
-On Thu, 20 Feb 2025 10:09:45 -0500 Steven Rostedt <rostedt@goodmis.org>
-> On Thu, Feb 20, 2025 at 01:54:13PM +0000, Matthew Wilcox wrote:
-> > On Thu, Feb 20, 2025 at 07:49:19PM +0800, Hillf Danton wrote:
-> > > On Thu, 20 Feb 2025 20:09:35 +0900 Byungchul Park wrote:
-> > > > Just in case that I don't understand what you meant and for better
-> > > > understanding, can you provide a simple and problematic example from
-> > > > the u-a-f?
-> > > > 
-> > > Tell us if it is illegal to commit rape without pregnancy in your home town?
-> > 
-> > Hillf, this is unacceptable language.  You need to apologise.
-> 
-> Agreed. WTF Hillf?  Where did that come from? Is this how you talk to your
-> co-workers?
-> 
-> I'll tell you what would happen in my home town. If someone said
-> that to a co-worker, they would likely be terminated.
-> 
-Interesting, I want to know if the three words, rape, pregnancy and WTK,
-could be used before judge in your hometown court by anyone like your lawyer.
+Armada8K has one simple register for unit soft reset, which is part of
+the system controller register area. The simple reset code doesn't
+support register access via regmap for the syscon devices. This patch
+series created a new driver based on the simple reset code, and add
+Armada8K support then.
+
+Thanks,
+Wilson
+
+---
+
+Changes in v2:
+  - Created a new driver for SYSCON device instead of extending the
+    simple reset code.
+  - Allow to retreive the register offset from the 'reg' property as
+    an alternative to the 'offset' property.
+  - Allow to retrevie the register size from the 'reg' property to
+    calculate the number of reset lines.
+  - Added the new dt-binding files to document the device-tree scheme
+    and fix DT check issues.
+  - Updated the device-tree node name to 'reset-controller' to follow
+    the name conventions.
+
+Changes in v1:
+  - Init version.
+
+Wilson Ding (4):
+  dt-bindings: reset: Add Armada8K reset controller
+  dt-bindings: cp110: Document the reset controller
+  reset: Add support for Armada8K reset controller
+  arm64: dts: marvell: cp11x: Add reset controller node
+
+ .../arm/marvell/cp110-system-controller.txt   |  43 ++++
+ .../reset/marvell,armada8k-reset.yaml         |  45 ++++
+ arch/arm64/boot/dts/marvell/armada-cp11x.dtsi |   6 +
+ drivers/reset/Kconfig                         |  12 ++
+ drivers/reset/Makefile                        |   1 +
+ drivers/reset/reset-simple-syscon.c           | 195 ++++++++++++++++++
+ include/linux/reset/reset-simple.h            |   3 +
+ 7 files changed, 305 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/reset/marvell,armada8k-reset.yaml
+ create mode 100644 drivers/reset/reset-simple-syscon.c
+
+-- 
+2.43.0
+
 
