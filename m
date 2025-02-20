@@ -1,171 +1,179 @@
-Return-Path: <linux-kernel+bounces-524853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BC07A3E7E8
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 00:00:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 708E1A3E7F0
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 00:00:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F28F9422B97
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 23:00:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20A8F3BA312
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 23:00:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D97712661A9;
-	Thu, 20 Feb 2025 22:59:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54437264F9A;
+	Thu, 20 Feb 2025 23:00:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g2iTOlc8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="X4q/Ak/b"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2529B265635;
-	Thu, 20 Feb 2025 22:59:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D8DF179A7;
+	Thu, 20 Feb 2025 23:00:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740092391; cv=none; b=vF0WY+obiBFt8/jbk8JzU2ysDYuYCdUgP3kNLhVC7BRAXh2JWAPg0et/1uzib1KNRape8FJO3jRrU5Zd8QpPY2uw8v88RsK1QwKtOn1LRh1X7fMTcFICFfV2WIr40GTsjuErPrJzeZiNnOWIO4LUl59p1qDtTb4zTmJVELZbHbA=
+	t=1740092445; cv=none; b=hCpQmKZ417s3LKUxQlBqDRbF4980MpqFA1t7MRDAr1ZBvi/JCsSXIZrcQGca+iG3O9+TWxvHY8CJUMriLKbD2InMEsw/2mm3xSm8BTdScVZPbF+It1lRd279hL+y7kdG/w2DJiw76SXYOlyCRECiK5+tbrmeYSqlaOxnKVdn6+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740092391; c=relaxed/simple;
-	bh=3S+TCq9Fx8ACf/yVx79pjGFNRic4JKbeNZIjQEJfLqA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=KW/ffsdjhzX2+cZo993Tgwf/wR0R8wE8/xVg7vK0MLfyVSQ27qju5OtiqvgCddWAn5R++FD7ALhj2ERC9Wx12yngxGVIVsyRK0N0+yDZY1ufUFIVelg3r9ZvuIA3KdSpDVP6Mrvse5u7MMLKLDeqvhod/Nr0iCExaUxgNGc6ELc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g2iTOlc8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 732FAC4CED1;
-	Thu, 20 Feb 2025 22:59:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740092390;
-	bh=3S+TCq9Fx8ACf/yVx79pjGFNRic4JKbeNZIjQEJfLqA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=g2iTOlc8adtYCkf1+qhUD/uYV0fpGwPYOjAx3hyOYjjGrVwAPYZpWFgZzgS4Q3FSa
-	 dzIs3ecCv/1IA1mMkKHHWdabeEd1R5DX6SVwuccVrUthK0+g8ZPaIKlcKfNEp96dG4
-	 imUaah3p4TyAFFBVrXjcgw+PgzpeYJzxByDFj5WczTSIkNKqHu6qQt3ycYeMkz2gem
-	 whsD4yTnIEqCOs/I+n2QC0UqwH79Q38cerLhdjfWzHygvx66OYzBlwB2hi0fGTDGd2
-	 Pyq+uq6IWv7Qm/NJFlFswkyfKY7N8ImT90T6ackUhRZtVDKq9d2ZfMpbG8JOiHN5Gx
-	 RpHVIbfPVxS9g==
-Date: Thu, 20 Feb 2025 16:59:48 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: linux-pci@vger.kernel.org,
-	"Luis Claudio R. Goncalves" <lgoncalv@redhat.com>,
-	Ryo Takakura <ryotkkr98@gmail.com>, bhelgaas@google.com,
-	jonathan.derrick@linux.dev, kw@linux.com, lpieralisi@kernel.org,
-	manivannan.sadhasivam@linaro.org, nirmal.patel@linux.intel.com,
-	robh@kernel.org, rostedt@goodmis.org, kbusch@kernel.org,
-	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev
-Subject: Re: [PATCH v4] PCI: vmd: Make vmd_dev::cfg_lock a raw_spinlock_t.
-Message-ID: <20250220225948.GA318342@bhelgaas>
+	s=arc-20240116; t=1740092445; c=relaxed/simple;
+	bh=TOLmmrM+n+DIDbBKh5x0eyfWVSXmehGi7z9iNV/nTko=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ujhg3avMNP/UJUCul5jRmqAddVP9uzIW5oDtXqn/aaF0ed0ecOMqA+Vm+jKkPz4C8rQgfJKhoy71o32+DdXCJzzGmdSHDHH22bsHG7gi2d5qgubZhAueSRTea+j/4aFS+j/89TINTEzxlRyjPT9800NI066pZ1hHG3nMS+HaxNM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=X4q/Ak/b; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740092444; x=1771628444;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=TOLmmrM+n+DIDbBKh5x0eyfWVSXmehGi7z9iNV/nTko=;
+  b=X4q/Ak/b4xepV32zsRRkLOSiHjP603gvhzRfEK6bs8Nl8NBoaPdpjog0
+   mk0p+Wrpt4wWeZLjw/NTLl0E7t/S5dw/5dQU50oSMzg/nD1IsTx3QF/gH
+   +wT1R7AuHLIvoceVTGPM3TWZXrAu8SKXYUagFfDlGnu+6MnuP3jGpF8/e
+   SrGWVXG3Wrlmdf9ijWAwbkcqQHgpduhFWaX7+vWNKUcq6dAfjtzgz2YwE
+   O9kKUyueIsTpMqNP159oU1Hhww9adXnW4jJlAQbraCQn3G0GfWvIicW7W
+   0DXPjNR/Yjr7a+C0YplyucLtzPDXIUeN6KyLel+IE+NXd1w2xQ5ymZXOS
+   A==;
+X-CSE-ConnectionGUID: BYEZQxG3TyqneM/GmnHQNg==
+X-CSE-MsgGUID: K9gEIeXnT3C+stJUwRQmFw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11351"; a="44813766"
+X-IronPort-AV: E=Sophos;i="6.13,302,1732608000"; 
+   d="scan'208";a="44813766"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Feb 2025 15:00:43 -0800
+X-CSE-ConnectionGUID: 555xKCyBQcaqzopAHLdo/A==
+X-CSE-MsgGUID: 53EqsSUlSrqMna1u14ATsg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,302,1732608000"; 
+   d="scan'208";a="138402913"
+Received: from jdoman-mobl3.amr.corp.intel.com (HELO [10.125.110.142]) ([10.125.110.142])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Feb 2025 15:00:42 -0800
+Message-ID: <9053a4ef-2de6-47b4-a2f7-62d3ded24cfa@intel.com>
+Date: Thu, 20 Feb 2025 15:00:43 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250218080830.ufw3IgyX@linutronix.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V5 2/4] x86/tdx: Route safe halt execution via
+ tdx_safe_halt()
+To: Vishal Annapurve <vannapurve@google.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org, linux-coco@lists.linux.dev,
+ virtualization@lists.linux.dev
+Cc: pbonzini@redhat.com, seanjc@google.com, erdemaktas@google.com,
+ ackerleytng@google.com, jxgao@google.com, sagis@google.com,
+ oupton@google.com, pgonda@google.com, kirill@shutemov.name,
+ dave.hansen@linux.intel.com, chao.p.peng@linux.intel.com,
+ isaku.yamahata@gmail.com, sathyanarayanan.kuppuswamy@linux.intel.com,
+ jgross@suse.com, ajay.kaher@broadcom.com, alexey.amakhalov@broadcom.com,
+ stable@vger.kernel.org
+References: <20250220211628.1832258-1-vannapurve@google.com>
+ <20250220211628.1832258-3-vannapurve@google.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <20250220211628.1832258-3-vannapurve@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Feb 18, 2025 at 09:08:30AM +0100, Sebastian Andrzej Siewior wrote:
-> From: Ryo Takakura <ryotkkr98@gmail.com>
-> 
-> The access to the PCI config space via pci_ops::read and pci_ops::write
-> is a low-level hardware access. The functions can be accessed with
-> disabled interrupts even on PREEMPT_RT. The pci_lock has been made a
-> raw_spinlock_t for this purpose. A spinlock_t becomes a sleeping lock on
-> PREEMPT_RT can not be acquired with disabled interrupts.
+On 2/20/25 13:16, Vishal Annapurve wrote:
+> Direct HLT instruction execution causes #VEs for TDX VMs which is routed
+> to hypervisor via TDCALL. safe_halt() routines execute HLT in STI-shadow
+> so IRQs need to remain disabled until the TDCALL to ensure that pending
+> IRQs are correctly treated as wake events.
 
-I think this is missing a word or two and should say:
+This isn't quite true. There's only one paravirt safe_halt() and it
+doesn't do HLT or STI.
 
-  A spinlock_t becomes a sleeping lock on PREEMPT_RT, so it cannot be
-  acquired with disabled interrupts.
+I think it's more true to say that "safe" halts are entered with IRQs
+disabled. They logically do the halt operation and then enable
+interrupts before returning.
 
-pci_ops.read() is called while holding the non-sleepable
-raw_spinlock_t pci_lock, so pci_ops.read() must also be non-sleepable.
+> So "sti;hlt" sequence needs to be replaced for TDX VMs with "TDCALL;
+> *_irq_enable()" to keep interrupts disabled during TDCALL execution.
+But this isn't new. TDX already tried to avoid "sti;hlt". It just
+screwed up the implementation.
 
-It's not really relevant that "pci_ops.read() can be called with
-disabled interrupts even on PREEMPT_RT".  It can *always* be called
-with interrupts disabled.
+> Commit bfe6ed0c6727 ("x86/tdx: Add HLT support for TDX guests")
+> prevented the idle routines from using "sti;hlt". But it missed the
+> paravirt routine which can be reached like this as an example:
+>         acpi_safe_halt() =>
+>         raw_safe_halt()  =>
+>         arch_safe_halt() =>
+>         irq.safe_halt()  =>
+>         pv_native_safe_halt()
 
-> The vmd_dev::cfg_lock is accessed in the same context as the pci_lock.
-> 
-> Make vmd_dev::cfg_lock a raw_spinlock_t.
-> 
-> [bigeasy: Reword commit message.]
-> 
-> Signed-off-by: Ryo Takakura <ryotkkr98@gmail.com>
-> Tested-by: Luis Claudio R. Goncalves <lgoncalv@redhat.com>
-> Acked-by: Luis Claudio R. Goncalves <lgoncalv@redhat.com>
-> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> ---
-> Changes since v3 https://lore.kernel.org/all/20241219014549.24427-1-ryotkkr98@gmail.com/
-> - Repost with updated changelog.
-> 
-> Changes since v2 https://lore.kernel.org/lkml/20241218115951.83062-1-ryotkkr98@gmail.com/
-> - In case if CONFIG_PCI_LOCKLESS_CONFIG is set, vmd_pci_read/write()
->   still neeed cfg_lock for their serialization. So instead of removing
->   it, convert it to raw spinlock.
-> 
-> v1: https://lore.kernel.org/lkml/20241215141321.383144-1-ryotkkr98@gmail.com/
-> 
->  drivers/pci/controller/vmd.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/vmd.c b/drivers/pci/controller/vmd.c
-> index 9d9596947350f..94ceec50a2b94 100644
-> --- a/drivers/pci/controller/vmd.c
-> +++ b/drivers/pci/controller/vmd.c
-> @@ -125,7 +125,7 @@ struct vmd_irq_list {
->  struct vmd_dev {
->  	struct pci_dev		*dev;
->  
-> -	spinlock_t		cfg_lock;
-> +	raw_spinlock_t		cfg_lock;
->  	void __iomem		*cfgbar;
->  
->  	int msix_count;
-> @@ -391,7 +391,7 @@ static int vmd_pci_read(struct pci_bus *bus, unsigned int devfn, int reg,
->  	if (!addr)
->  		return -EFAULT;
->  
-> -	spin_lock_irqsave(&vmd->cfg_lock, flags);
-> +	raw_spin_lock_irqsave(&vmd->cfg_lock, flags);
->  	switch (len) {
->  	case 1:
->  		*value = readb(addr);
-> @@ -406,7 +406,7 @@ static int vmd_pci_read(struct pci_bus *bus, unsigned int devfn, int reg,
->  		ret = -EINVAL;
->  		break;
->  	}
-> -	spin_unlock_irqrestore(&vmd->cfg_lock, flags);
-> +	raw_spin_unlock_irqrestore(&vmd->cfg_lock, flags);
->  	return ret;
->  }
->  
-> @@ -426,7 +426,7 @@ static int vmd_pci_write(struct pci_bus *bus, unsigned int devfn, int reg,
->  	if (!addr)
->  		return -EFAULT;
->  
-> -	spin_lock_irqsave(&vmd->cfg_lock, flags);
-> +	raw_spin_lock_irqsave(&vmd->cfg_lock, flags);
->  	switch (len) {
->  	case 1:
->  		writeb(value, addr);
-> @@ -444,7 +444,7 @@ static int vmd_pci_write(struct pci_bus *bus, unsigned int devfn, int reg,
->  		ret = -EINVAL;
->  		break;
->  	}
-> -	spin_unlock_irqrestore(&vmd->cfg_lock, flags);
-> +	raw_spin_unlock_irqrestore(&vmd->cfg_lock, flags);
->  	return ret;
->  }
->  
-> @@ -1009,7 +1009,7 @@ static int vmd_probe(struct pci_dev *dev, const struct pci_device_id *id)
->  	if (features & VMD_FEAT_OFFSET_FIRST_VECTOR)
->  		vmd->first_vec = 1;
->  
-> -	spin_lock_init(&vmd->cfg_lock);
-> +	raw_spin_lock_init(&vmd->cfg_lock);
->  	pci_set_drvdata(dev, vmd);
->  	err = vmd_enable_domain(vmd, features);
->  	if (err)
-> -- 
-> 2.47.2
-> 
+This, on the other hand, *is* important.
+
+> Modify tdx_safe_halt() to implement the sequence "TDCALL;
+> raw_local_irq_enable()" and invoke tdx_halt() from idle routine which just
+> executes TDCALL without toggling interrupt state. Introduce dependency
+> on CONFIG_PARAVIRT and override paravirt halt()/safe_halt() routines for
+> TDX VMs.
+
+This changelog glosses over one of the key points: Why *MUST* TDX use
+paravirt? It further confuses the reasoning by alluding to the idea that
+"Direct HLT instruction execution ... is routed to hypervisor via TDCALL".
+
+It gives background and a solution, but it's not obvious what the
+problem is or how the solution _fixes_ the problem.
+
+What must TDX now depend on PARAVIRT?
+
+Why not just route the HLT to a TDXCALL via the #VE code?
+
+
 
