@@ -1,125 +1,130 @@
-Return-Path: <linux-kernel+bounces-524590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31F94A3E4EE
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 20:19:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AD6CA3E4F4
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 20:20:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E18C17F83A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 19:19:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9DDF420271
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 19:20:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B9A6263C91;
-	Thu, 20 Feb 2025 19:19:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1401B2641F5;
+	Thu, 20 Feb 2025 19:20:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Li1wYMRm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="VGkh7s/H"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F381B15A858;
-	Thu, 20 Feb 2025 19:19:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F06EA2641DB
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 19:20:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740079182; cv=none; b=abmYATMLJR0ejm1y/Ti7VQ7sDgtB6EoxwnECX4nF+fExxImOgRQD2pCLI4rd9rzCUvG31o5W06IOWURJJByKr71FwH1OifNTWuCgfYnGso27XVLgN/bAip8HVXWWooyu2pBUwQq1t6Y3xnYdxHMzbgEiVpbzT35yrPFLKwk4pO4=
+	t=1740079221; cv=none; b=sggwPeyayWgl9tJaWkkvZOkvB/YdMismCFbEkAR926ZnUCXlfOV4YrJrDW5LA2tUISQVnKstBp57a2VqES4nn6+VRyLO+0fVfQ8oqIDz1kYh1sPEQWNgBBth4lqT1wjmGaV4MmDViotxUmsL3Q1oBO6VB0Z6IyCD6gELVLv7nGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740079182; c=relaxed/simple;
-	bh=+0OClTSDtciyZQXNExzuhepJzGzEk7ZP1QX/R7XxbUs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MA02/4dV5lEHSyWn2tWq+neJddk6CiJTKLNQBXC4LVodM2RLVGWEJ7winc8W6kcfoNjQo6ONzXGO1khGS2vnSe1M0uzQlaRqBc5MD/I7HiNpJq+g1UPlU073cLKO24KqnhTlLkjFERo3TIxFkVmismkZjlSBKHVXyD8TGB1/rSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Li1wYMRm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5697CC4CED1;
-	Thu, 20 Feb 2025 19:19:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740079181;
-	bh=+0OClTSDtciyZQXNExzuhepJzGzEk7ZP1QX/R7XxbUs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Li1wYMRmL9KK6l4WaYL0PcSVJKqrcCa10Y6PHxcMEmTa6dtMdvVsK9SC3SnMWeIT7
-	 9PC+m6PbqUF0f2cSKFxu2XNJ9j4JN/0wfhzFnlSYwM2hMJTnzd4tfnI3u8ZuexbzLr
-	 h/5+jea8bk80FA7Sif/DJo+n5mb4iQFTc33VmwYqD4vk7Ex1KxBXvj5jvpXoUT6HZr
-	 ds3TV1OFRECgpfpbFNhSbCL7JcxmHFv8GZTq/NeiSyR4YHxXJWDb4lV3LO3LkqjTuZ
-	 lRVDG+fDGn4xH4rpa0fSsjMSlxhn4olEvUQX2gU5Vi76hsjkLwgmkP7O5x0y6sCEFz
-	 GLVhh/JbmCuIA==
-Date: Thu, 20 Feb 2025 19:19:39 +0000
-From: Eric Biggers <ebiggers@kernel.org>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: neil.armstrong@linaro.org, linux-crypto@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Thara Gopinath <thara.gopinath@gmail.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	Stanimir Varbanov <svarbanov@mm-sol.com>
-Subject: Re: [PATCH 9/9] crypto: qce - switch to using a mutex
-Message-ID: <20250220191939.GA2098877@google.com>
-References: <20241203-crypto-qce-refactor-v1-0-c5901d2dd45c@linaro.org>
- <20241203-crypto-qce-refactor-v1-9-c5901d2dd45c@linaro.org>
- <d6220576-eaf5-4415-b25f-b5984255ab78@linaro.org>
- <CAMRc=MevaM4tUNQUs_LjFYaUtDH=YqE-t2gBponGqtK5xE9Gpw@mail.gmail.com>
- <20250118080604.GA721573@sol.localdomain>
- <CAMRc=MeFMYzMY4pU9D6fEpg9bQuuzqg4rQhBU8=z_2eMU+Py-g@mail.gmail.com>
- <20250118175502.GA66612@sol.localdomain>
- <CAMRc=MdR-8AnwAsMzHn8zj2awZUumO32C_S1-CkjBEqbuKPdeg@mail.gmail.com>
- <CAMRc=MetohPUcxRLO0qS-LYyzZhiAMAHzLm0xqX8_TXdTgBnVA@mail.gmail.com>
+	s=arc-20240116; t=1740079221; c=relaxed/simple;
+	bh=BF/qm35P4uKsbrKBn/gLwoY0GozMrLl3uevc+2xL6YQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cr2/nuJWK7+eJiF1wCmB+EtBZWgecgRq6oa9bS+iS+g593RhsIHSnv/88/vp16T9OP6Ubfo3diJ/Q4C5yZKQPotRwVJ2S7TBqSGNlOnB1dyjmF9n2931bGOlDOfFiioEKiLTiawSpc6mD+xnGceoKxgKyzXh8NQTK3038wL+ayk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=VGkh7s/H; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2217875d103so2939065ad.3
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 11:20:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1740079219; x=1740684019; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RpS2FnqN2TDBERxg5I5MCZqVN24rvf9DEtZLCeAzcmo=;
+        b=VGkh7s/Hqx7a+052nW0gD2UVZ02YnIKSuosVjV4ZZs/Mu0+9eHlVQWAwtxxP5Rnffi
+         ve8F10WMwL5mQTFEefYFxjlhnAz5NpRyBImvji2j7E4e1Ou6GoZNPpzdbeRvsdhZFkJW
+         64Ou5UvdBCaNIs7KPhh70rXivjwfxNm40uW+Y=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740079219; x=1740684019;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RpS2FnqN2TDBERxg5I5MCZqVN24rvf9DEtZLCeAzcmo=;
+        b=mPPFNADTyFqo6sExJ9hZ3a/Wtvs4Bxj8Hvz1VZ+wjjoypfb0zHGtIqC/58hf3zHOOp
+         g2SmK4OkeT6w1Jdv8mHIaQjrLvY+ItIsZBJOy+/mQkNqk2WW5uQNWfqvxxetOazWVcgU
+         JCRHd4AuUQwPJfDPW/q/cQOWo6Q1nd83MoDE+XQ7tIUtE7nH/j9i5zbBa4vihVwRLOdk
+         wnnhepmz4LjDLTNeflXrFOf+zlhy8eCM/RbGN0QJUVWdmpcmhsQ1QpAq0hNkK5R7OUy3
+         thf3hlchmP/Hzb85LCvfd/bRgjT0Xsre0XK2pgztnjo3IdUfr9A8p1HZAQIi4aSBeAbN
+         Mc5A==
+X-Forwarded-Encrypted: i=1; AJvYcCWoOKIZR4QCDwBfawUpTzmDkxfJulHgfxNsolkxaGScK83yVFDEOUZM5PNiTJ6PcKEiFhWFzdNUpiVKFtk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8LN0icqKerBtiwMMvDH0Lh7wShJA5do2TQAq3hDN5jMlbSGMq
+	Q+5Y+a9hIang1Rr6CfeD1C5SOaDs8nK6l4JnKksQlXj6ERqvRClS12bgkZifBFo4RB535Ml5uZf
+	Dzg==
+X-Gm-Gg: ASbGncviejfRgXGbl0qlWS/BxNoq7ktjyvm8iMeBi7LN1XLvXXOQLpxOq9snpe63+K8
+	KKiwQBjKuRGBeG6gek2v8FJCI6qpzUbC5hbPrpP+NNOAyiJ6cIIWlSYW3P2HImY3IAAiwE0u2s/
+	rDBZIhuH30m4W5la0Mn03rQbsozH1ni0bAX+TMSsvYOatmIZ23TuJCYcYI+AI+Ga1cIvWmcnwQC
+	i799jWNbLE8grqJEEXZdQzPJ49NK42zkcVNtiLVujLGbmPM0Xs4POzB46mAG9LsHGXr1opYb5Sp
+	xYzygnV28PO6SvFzo/6kovxOMmE8/Mrug6k6dNYH7oSQ+hDuzTlGvbo=
+X-Google-Smtp-Source: AGHT+IG0Y0I5fPL9fPvLkpkMjjXiiYEpK2HEHGiBmLzrdPdiVZ6wQpOpotEJlIpKRFajhYScZYXDiQ==
+X-Received: by 2002:a17:902:cec6:b0:220:d71d:4666 with SMTP id d9443c01a7336-2219fff855emr1604355ad.13.1740079217625;
+        Thu, 20 Feb 2025 11:20:17 -0800 (PST)
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com. [209.85.216.51])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d556d473sm124614095ad.166.2025.02.20.11.20.15
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 20 Feb 2025 11:20:16 -0800 (PST)
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2fc0bd358ccso2720418a91.2
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 11:20:15 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCU7CcmTcC01t2l64eK0u7fR/WiLKQNGZJMXd6lBlWBZraNG+4xMgujRuWQOtpW6AakYiTlpVRYvnOAKcvM=@vger.kernel.org
+X-Received: by 2002:a17:90b:3946:b0:2f4:434d:c7ed with SMTP id
+ 98e67ed59e1d1-2fce78c7fd8mr609023a91.16.1740079215301; Thu, 20 Feb 2025
+ 11:20:15 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMRc=MetohPUcxRLO0qS-LYyzZhiAMAHzLm0xqX8_TXdTgBnVA@mail.gmail.com>
+References: <20250220-virtio-shm-page-size-v3-0-874fff6f3979@redhat.com> <20250220-virtio-shm-page-size-v3-2-874fff6f3979@redhat.com>
+In-Reply-To: <20250220-virtio-shm-page-size-v3-2-874fff6f3979@redhat.com>
+From: Daniel Verkamp <dverkamp@chromium.org>
+Date: Thu, 20 Feb 2025 11:19:47 -0800
+X-Gmail-Original-Message-ID: <CABVzXA=_S2in+OzfwK6vGQR3VK3YhGRu4B+tp5oCZKHt0Qz=gw@mail.gmail.com>
+X-Gm-Features: AWEUYZlJc2Ri_gGb-xTYNfHBI9nY3KXtKqjPGrNSl2kv5ni8-vqVm6Z_S9XKcC4
+Message-ID: <CABVzXA=_S2in+OzfwK6vGQR3VK3YhGRu4B+tp5oCZKHt0Qz=gw@mail.gmail.com>
+Subject: Re: [PATCH RFC v3 2/4] virtio-pci: extend virtio_pci_cap with page_shift
+To: Sergio Lopez <slp@redhat.com>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
+	David Airlie <airlied@redhat.com>, Gerd Hoffmann <kraxel@redhat.com>, 
+	Gurchetan Singh <gurchetansingh@chromium.org>, Chia-I Wu <olvaffe@gmail.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Simona Vetter <simona@ffwll.ch>, Rob Clark <robdclark@gmail.com>, 
+	Dmitry Osipenko <dmitry.osipenko@collabora.com>, fnkl.kernel@gmail.com, 
+	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Feb 20, 2025 at 10:14:20AM +0100, Bartosz Golaszewski wrote:
-> On Mon, Jan 20, 2025 at 2:46 PM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
-> >
-> > On Sat, Jan 18, 2025 at 6:55 PM Eric Biggers <ebiggers@kernel.org> wrote:
-> > >
-> > > On Sat, Jan 18, 2025 at 10:28:26AM +0100, Bartosz Golaszewski wrote:
-> > > > I was testing with kcapi-speed and cryptsetup benchmark. I've never
-> > > > seen any errors.
-> > > >
-> > > > Is this after my changes only or did it exist before? You're testing
-> > > > with the tcrypt module? How are you inserting it exactly? What params?
-> > >
-> > > Those are all benchmarks, not tests.  The tests run at registration time if you
-> > > just enable the kconfig options for them:
-> > >
-> > >     # CONFIG_CRYPTO_MANAGER_DISABLE_TESTS is not set
-> > >     CONFIG_CRYPTO_MANAGER_EXTRA_TESTS=y
-> > >
-> > > The test failures and KASAN error occur on mainline too, so yes they occur
-> > > before your patchset too.
-> > >
-> > > > >
-> > > > > I personally still struggle to understand how this driver could plausibly be
-> > > > > useful when the software crypto has no issues, is much faster, and is much
-> > > > > better tested.  What is motivating having this driver in the kernel?
-> > > >
-> > > > We want to use it in conjunction with the upcoming scminvoke (for
-> > > > loading TAs and invoking objects - used to program the keys into the
-> > > > QCE) to support the DRM use-case for decrypting streaming data inside
-> > > > secure buffers upstream.
-> > >
-> > > Notably lacking is any claim that any of the current features of the driver are
-> > > actually useful.
-> > >
-> >
-> > Noted. I'm still quite early into working on the upstream-bound code
-> > supporting the streaming use-case but I will consider a proposal to
-> > remove existing features that are better provided by ARM CE.
-> >
-> > Thanks,
-> > Bartosz
-> 
-> Just an FYI, I was informed by Qualcomm that upcoming platforms will
-> contain an upgrade to this IP and it will be up to 3x faster than ARM
-> CE.
+On Thu, Feb 20, 2025 at 6:30=E2=80=AFAM Sergio Lopez <slp@redhat.com> wrote=
+:
+[...]
+> @@ -829,6 +839,7 @@ static int virtio_pci_find_shm_cap(struct pci_dev *de=
+v, u8 required_id,
+>                 *bar =3D res_bar;
+>                 *offset =3D res_offset;
+>                 *len =3D res_length;
+> +               *page_size =3D 1 << (page_shift + 12);
 
-I suspect that is measured under some ideal condition that won't be reached in
-the real world, but we'll see.
+Maybe this should validate that page_shift is in range to avoid any
+funny business from the device; since page_size is u32, this needs
+page_shift + 12 < 32. (If it's out of range, I am not sure what this
+should do; maybe just warn and set it to the default 4096?)
 
-- Eric
+Also shifting into the sign bit is technically undefined (or
+implementation-defined? I don't recall) behavior, so perhaps make the
+constant unsigned, e.g. `1U << (page_shift + 12)`.
+
+Other than that, looks reasonable to me:
+Reviewed-by: Daniel Verkamp <dverkamp@chromium.org>
+
+Thanks,
+-- Daniel
 
