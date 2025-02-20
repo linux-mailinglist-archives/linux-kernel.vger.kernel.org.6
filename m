@@ -1,85 +1,185 @@
-Return-Path: <linux-kernel+bounces-524484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2460A3E3AC
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 19:18:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 08D67A3E3B0
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 19:21:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5E0642123B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 18:18:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB9B8421419
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 18:21:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C22A2213E99;
-	Thu, 20 Feb 2025 18:18:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eZyY7/W3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6773213E91;
+	Thu, 20 Feb 2025 18:21:24 +0000 (UTC)
+Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28E4D192B86;
-	Thu, 20 Feb 2025 18:18:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BFC620FAAB
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 18:21:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740075505; cv=none; b=ckegTTUWR/magr0kTYk2Fyr8s8hecv56ezzw7VEHqsjkx+rnRS6GibYrx/rQZ+Qw26yH0bWvV6VItwFRlZEBND/0OMvYJda8qAVL8XvWuDj3UuFtWE7dtgeqAN07Y2ZPPJ3iSxkewt4XkxaR0c8ITgWdSRXarz797H4wxhRaPf8=
+	t=1740075684; cv=none; b=Z1o6vC4bjN3njhifeYvw6Q1gl21LGRljAyCxV6GjEyOIX18ULTx+2eHSmTFYz6cDmd81abGmPTwecigDgkDN/68OOZwZ4X1DfKEju0HLpxJWRfadKSk2w5ZXvvDX4CRVV5L8aW634ygDMwBmEWKwTg6mglZHYSIcbI2xXQAMt3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740075505; c=relaxed/simple;
-	bh=UZJ9Fyydl3UipA8lDRj3C3aMHi3OtLR1wIV8b8u2+5s=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LAD4G5CnylWjh6Jc13+o7hWXkIsYZgXlykd7zV/plADehCW9ZywolTjgpWZLhOhU0gfXKnGrCFQv5WTkCsmHaEXANjSr0DvteuT1V3Xpy1P5RkwCSXI03VUg8TqM1Y0ZPogSyzu8ZyDjWAT8rJU0WSukoZOD5+yzhbd4bT2pr3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eZyY7/W3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C028C4CED1;
-	Thu, 20 Feb 2025 18:18:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740075504;
-	bh=UZJ9Fyydl3UipA8lDRj3C3aMHi3OtLR1wIV8b8u2+5s=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=eZyY7/W3ttlX3NgBk4VTizQWX/rJgFtt3Tlc780mRCCyW4+7Fg+9O7LUq0XSbfrIw
-	 LKWLhuPWD5Djai/6okjA5tMDtgPx5c+OHjknnLGdCv3Ptgz05tFMc1NZXu1yb4lY2b
-	 FdibA/xUOb8tjYI8i1a+uMiF2UF4hNJSbKbMp7OHbVD9FbTIJ6f93BTZpudcFJgC/k
-	 ZfEYgg7D4E6lAincpzQT1qvt729h9bYFCUfLYXJLxb8WHoZ1yPPJmhQ8431eCAGN4M
-	 fWbvOgnorxdHcX/qFae0EVZwQzBnzaJc7ekcFOpgl6msbfNyVzmzcwS+CD4LFl4SmM
-	 yAC0ZQ5bxZqCg==
-Date: Thu, 20 Feb 2025 10:18:23 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Sean Anderson <sean.anderson@linux.dev>
-Cc: patchwork-bot+netdevbpf@kernel.org, nicolas.ferre@microchip.com,
- claudiu.beznea@tuxon.dev, netdev@vger.kernel.org, davem@davemloft.net,
- edumazet@google.com, andrew+netdev@lunn.ch, pabeni@redhat.com,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 0/2] net: cadence: macb: Modernize statistics
- reporting
-Message-ID: <20250220101823.20516a77@kernel.org>
-In-Reply-To: <561bc925-d9ad-4fe3-8a4e-18489261e531@linux.dev>
-References: <20250214212703.2618652-1-sean.anderson@linux.dev>
-	<173993104298.103969.17353080742885832903.git-patchwork-notify@kernel.org>
-	<12896f89-e99c-4bbc-94c1-fac89883bd92@linux.dev>
-	<20250220085945.14961e28@kernel.org>
-	<561bc925-d9ad-4fe3-8a4e-18489261e531@linux.dev>
+	s=arc-20240116; t=1740075684; c=relaxed/simple;
+	bh=45y/imlWG8q2VcYF2DLQUplcU04j+EE270Hfxi8gPmQ=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=vCvkRYPSdvrLB0vnHysvbUjPtNZK6nUSXBBVjuKfKiouGYn7/FkA89hluKJyBHkR/2Mlb2YjavCLmD9rEH71Tr7y7Z9BYBor59h/Yeg6H0WhiyUsBauQoqoq42JinwEqnapJwivqB3MPw90ENHUNRVga2SDgPPLXL58f0SUIrMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3d1a365d10fso9667955ab.1
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 10:21:22 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740075681; x=1740680481;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=e+vS9a0JAby6AAWXnoFQKgnxA4tCQW6gHUk2YdFJ7pM=;
+        b=uSAVeYbHl5WjCg8fmkl1mRjalhDF1LeU/wM2akAlaMBOSSTLdXFNnc2mjJG74qtY9z
+         jJjpaMn64OKi1LpknoiJgbr3TKNzd7d6XZX/qO3x8AsNH3cfVvq4+9AYcRpzeVOlPkzn
+         m7Cv79TZ3MnTgxAwjzLJIoPi8WUHJ/RazLdgnkPpQkNuGpwAbX6W4DS6K4otDcCoT/+N
+         GdlAyj3mOg9KKeJl8LiLFuPloJu+H8UrUevoJs2V+obQFC940L0kH+OQj78qzxRpiIZQ
+         DbysLAGaCxaJRuuU8Zb6t5dqTIPh5lLfkL3kehIwGOkhadTX3dbSOD/0z9+Yg8hz8tuO
+         rAAg==
+X-Forwarded-Encrypted: i=1; AJvYcCXneI98lFuyqfB22vRgACp+f9TMIKZVwC5xN/1hLNHQ/2w4s4Wc/GXRzDwpzu93EfsHbVzxXlTsDsw/7so=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzlBgLlq+73PgGl4paSZHFXu8olvoN9c6+xc2/YzLpwyuZRf1AM
+	rM1c2V1ydQ/mIQc43KHd4iLEp3tP8Czk530S1b3wB2klpLhSSHIyAmZxGHy+xoO0/M2rFlMYIH2
+	kEP+krjuIwtcbg6KuHHLU5DIUm3NnvqQg5MJy43q9WJNthZP8/N/uUUA=
+X-Google-Smtp-Source: AGHT+IE0AcxIwkwv79ImBfEVfZxcJL/5DX1ileuUoT8df+BEJZXct1UrKwMkCtsWztGNecDDJWnfOP1zg4WCCHSVzVeQo9dA6MKu
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:3286:b0:3d1:5f67:f0e6 with SMTP id
+ e9e14a558f8ab-3d2cac94fb3mr2029115ab.1.1740075681745; Thu, 20 Feb 2025
+ 10:21:21 -0800 (PST)
+Date: Thu, 20 Feb 2025 10:21:21 -0800
+In-Reply-To: <6744873b.050a0220.1286eb.0000.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67b772a1.050a0220.14d86d.02f3.GAE@google.com>
+Subject: Re: [syzbot] [bcachefs?] KASAN: global-out-of-bounds Read in rcu_pending_exit
+From: syzbot <syzbot+e733ab672a1b6724c27f@syzkaller.appspotmail.com>
+To: bfoster@redhat.com, kent.overstreet@linux.dev, 
+	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 20 Feb 2025 12:25:09 -0500 Sean Anderson wrote:
-> >> I think this should be deferred until v2 of [1] is applied, to make
-> >> backporting the fix easier.  
-> > 
-> > ETOOLATE :) networking trees don't rebase  
-> 
-> Well, I was expecting a revert and then I would resend this series once
-> the linked patch was applied.
-> 
-> I guess I can send another patch adding locking?
+syzbot has found a reproducer for the following issue on:
 
-Assuming the fix is applied to net:
-Will the trees conflict?
-If no - will the code in net still work (just lacking lock protection)?
+HEAD commit:    87a132e73910 Merge tag 'mm-hotfixes-stable-2025-02-19-17-4..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=175775b0580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b7bde34acd8f53b1
+dashboard link: https://syzkaller.appspot.com/bug?extid=e733ab672a1b6724c27f
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16d8aba4580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11e1dae4580000
 
-If there is a conflict you can share a resolution with me and I'll slap
-it on as part of the merge.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/4a88f50cb21d/disk-87a132e7.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/d970e0210e8a/vmlinux-87a132e7.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/9b6329058ef7/bzImage-87a132e7.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/f06af6381842/mount_0.gz
+
+The issue was bisected to:
+
+commit d97de0d017cde0d442c3d144b4f969f43064cc0f
+Author: Kent Overstreet <kent.overstreet@linux.dev>
+Date:   Tue Aug 13 01:31:25 2024 +0000
+
+    bcachefs: Make bkey_fsck_err() a wrapper around fsck_err()
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=13432ef8580000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=10c32ef8580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=17432ef8580000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+e733ab672a1b6724c27f@syzkaller.appspotmail.com
+Fixes: d97de0d017cd ("bcachefs: Make bkey_fsck_err() a wrapper around fsck_err()")
+
+------------[ cut here ]------------
+==================================================================
+BUG: KASAN: global-out-of-bounds in string_nocheck lib/vsprintf.c:632 [inline]
+BUG: KASAN: global-out-of-bounds in string+0x229/0x2b0 lib/vsprintf.c:714
+Read of size 1 at addr ffffffff8c74c10a by task syz-executor504/5826
+
+CPU: 1 UID: 0 PID: 5826 Comm: syz-executor504 Not tainted 6.14.0-rc3-syzkaller-00079-g87a132e73910 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 12/27/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:408 [inline]
+ print_report+0x16e/0x5b0 mm/kasan/report.c:521
+ kasan_report+0x143/0x180 mm/kasan/report.c:634
+ string_nocheck lib/vsprintf.c:632 [inline]
+ string+0x229/0x2b0 lib/vsprintf.c:714
+ vsnprintf+0x8b4/0x1220 lib/vsprintf.c:2843
+ vprintk_store+0x482/0x1240 kernel/printk/printk.c:2279
+ vprintk_emit+0x271/0xa10 kernel/printk/printk.c:2408
+ __warn_printk+0x263/0x360 kernel/panic.c:797
+ look_up_lock_class+0xdb/0x170 kernel/locking/lockdep.c:938
+ register_lock_class+0x102/0x980 kernel/locking/lockdep.c:1292
+ __lock_acquire+0xf3/0x2100 kernel/locking/lockdep.c:5103
+ lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5851
+ __raw_spin_lock_irq include/linux/spinlock_api_smp.h:119 [inline]
+ _raw_spin_lock_irq+0xd3/0x120 kernel/locking/spinlock.c:170
+ spin_lock_irq include/linux/spinlock.h:376 [inline]
+ rcu_pending_has_pending_or_armed fs/bcachefs/rcu_pending.c:592 [inline]
+ rcu_pending_exit+0x13f/0x7a0 fs/bcachefs/rcu_pending.c:610
+ bch2_fs_btree_key_cache_exit+0x8d1/0x9f0 fs/bcachefs/btree_key_cache.c:778
+ __bch2_fs_free fs/bcachefs/super.c:569 [inline]
+ bch2_fs_release+0x206/0x7b0 fs/bcachefs/super.c:624
+ kobject_cleanup lib/kobject.c:689 [inline]
+ kobject_release lib/kobject.c:720 [inline]
+ kref_put include/linux/kref.h:65 [inline]
+ kobject_put+0x231/0x480 lib/kobject.c:737
+ deactivate_locked_super+0xc6/0x130 fs/super.c:473
+ cleanup_mnt+0x41f/0x4b0 fs/namespace.c:1413
+ task_work_run+0x251/0x310 kernel/task_work.c:227
+ resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+ exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:329 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0x13f/0x340 kernel/entry/common.c:218
+ do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f7e807c2577
+Code: 07 00 48 83 c4 08 5b 5d c3 66 2e 0f 1f 84 00 00 00 00 00 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 b8 a6 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 01 c3 48 c7 c2 b8 ff ff ff f7 d8 64 89 02 b8
+RSP: 002b:00007ffeee02cd28 EFLAGS: 00000206 ORIG_RAX: 00000000000000a6
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: 00007f7e807c2577
+RDX: 0000000000000000 RSI: 0000000000000009 RDI: 00007ffeee02cde0
+RBP: 00007ffeee02cde0 R08: 0000000000000000 R09: 0000000000000000
+R10: 00000000ffffffff R11: 0000000000000206 R12: 00007ffeee02de50
+R13: 000055557adeb6c0 R14: 431bde82d7b634db R15: 00007ffeee02de70
+ </TASK>
+
+The buggy address belongs to the variable:
+ .str+0xa/0x20
+
+The buggy address belongs to the physical page:
+page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0xc74c
+flags: 0xfff00000002000(reserved|node=0|zone=1|lastcpupid=0x7ff)
+raw: 00fff00000002000 ffffea000031d308 ffffea000031d308 0000000000000000
+raw: 0000000000000000 0000000000000000 00000001ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner info is not present (never set?)
+
+Memory state around the buggy address:
+ ffffffff8c74c000: 00 05 f9 f9 02 f9 f9 f9 06 f9 f9 f9 00 00 00 00
+ ffffffff8c74c080: f9 f9 f9 f9 00 00 00 00 00 00 00 00 00 00 00 00
+>ffffffff8c74c100: 00 01 f9 f9 00 00 00 04 f9 f9 f9 f9 00 00 00 00
+                      ^
+ ffffffff8c74c180: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ ffffffff8c74c200: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+==================================================================
+
+
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
