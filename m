@@ -1,78 +1,46 @@
-Return-Path: <linux-kernel+bounces-524255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B472FA3E138
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:47:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA090A3E110
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:42:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35E4F3A1523
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD9ED161AE0
 	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:42:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD88D212D68;
-	Thu, 20 Feb 2025 16:41:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 201702116E1;
+	Thu, 20 Feb 2025 16:41:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="Pvci0Of5"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2167520B211
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 16:41:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="RfNgWwSK"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3758A20B812;
+	Thu, 20 Feb 2025 16:41:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740069719; cv=none; b=Y9X09gjooNh/DfSUOAioYAUd70ZGfYSF/3UPso7hrBERtUKwkVzw6PJi+Fm25zh8z6LgE5KyqQ05NekgTwVIq1l7sx8xGokG97vlhGu9PspUKyczaNfGCBbByotQuaq0j3PZOZtH/PbGqieU25LP9+jZ6PVnROe0kvS/dByRscc=
+	t=1740069717; cv=none; b=e/ihQzpkQ3R0wdAVeXKJFKzz5kB3lBpJMyVllEWw09dQnQUAiIlGW1JZubumRht4B7y7UJGdTFkBhi0pZd/tWxBwSYCSwr3Zj9AO484JuOEXPPitZfeneeFNlP6b4rOEJLBs4vxW51A7/S7vSyOEmX48GGnFjsKqOUzSfRnwRfI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740069719; c=relaxed/simple;
-	bh=hd00ma4pTGcrV8uOUJcNNlxDYUowsX9K//uXWoKKs6E=;
+	s=arc-20240116; t=1740069717; c=relaxed/simple;
+	bh=TYfO4NMFHURGbPNs1cXbVVlPxLhwPSr2YHLvwtMjhy4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FcokcXWpu6E62eJCNiIsut5u11J5JzGyEOGaATo9zK7Utz4+VZztnYvVomwYS/Q+yCZUGZeFMwNVq6lHe4qFdOJ1799cETT8w/dLqsNOXhol/ZfKF/BqycK6vLgo2qFy3p/Zrl24eXgmwaGm5WCY7/rmjwFh825lOvUuR9R58Lw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=Pvci0Of5; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-38f2b7ce2e5so689591f8f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 08:41:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1740069714; x=1740674514; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=tdrq9JfSs7AdIS3P3Dy/vFSMWNEesz5Pa+4AW9E1gwY=;
-        b=Pvci0Of5ibypY8nHC5Xch7WuSuV+J0zlqvBAU0KLJAdQ9fNDCbtBLDTqViq2wPWPPN
-         hvTVog7QrLuqqQiX7C4PjnbE/e4w3f8LdCkYaGQlpv7RblSyOa/IeHb/k+MaPAWQzEyJ
-         PQIDXJZhVR9KaPKR7Z4kGgyQvFUnrx7PsTJoDS2J1qokqIyYen49LXxxPkfHYpoEtb1M
-         ShoT6ejPw4GDTQD+tFrV0Uuu+2Fu9SEOoxy3wb6ZvRHKmB6sArFrbAYL87o03ShcidQQ
-         E5Pdki+a/GVV7F3/BL8G1NNp/FItf5BNqFE/21ffcyM3DGsKQodgPYruA3qUYa9dch1M
-         xVTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740069714; x=1740674514;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tdrq9JfSs7AdIS3P3Dy/vFSMWNEesz5Pa+4AW9E1gwY=;
-        b=dixjC/msJqMlgcwjJAPVWVEiBtPYyKAe6BH1v7n6y9KTOqfh9+fir07JGCyX6agyqg
-         r8Pza3TPIsLVMJxVdPTdZXRKfLjdH0LtVceunX0kz+ZAS8Ls9MLDG1thq6dcAIyGp+J1
-         cTHQDMuXxy2+gu63y8PN9V7d66NxpNNRrD74jcof5GbKJ96k+3mlOR9JjAuC1SezFzmE
-         RAPDi1gHcdho5NxrlIYLyTnOrIDmDT/0UKO+Uug3L/Hg0m1NEsVvbpH6GU4lpvXl5qt2
-         h2Hc+maDoOF3M1ULPD4wThO1wii/d9Ms6bXEauinOujn5tEA8eF8BTSvwYXdKIDZ8EeZ
-         7xHg==
-X-Forwarded-Encrypted: i=1; AJvYcCWBixdPF+s6yzf9vs246fU0yrXViCU36MMiGVHjaODeruCfkljE772QPmv3wIZ2iwe+2aCz7XXpy/7cBYw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9PuuKmoQLCOGavieBExlh4E91VuLlBZDrTwTskyL24KYjOmev
-	h3A+dk/LG675/CvbhTBr/LZ+a7HYuEwPG0V4hYsf6Woh6wUs0+fjtqH2j6Q4+k8=
-X-Gm-Gg: ASbGncvqq/fn0wxuX0Y6od6dJdpbZ2ag0CTLyfORzAJCv+TfBNtJFH3KMiOYpwz8yYR
-	wk43yMyLglSlVpRhWjRFTL/lkffPP9THkNVU6vRKuPSjAuoAccKWNL6eLCZtPYSbuDsuBW/wjvB
-	DWzHHs1jsxRf3qIgkQ7anrs2AbpkUhPRygoF5NeO9n+TnIiYiB3uNWBb8zToTzuVoriNOCtsw26
-	sduK3VWaiKCJF/F9B/mKx+dqFDyXEueLtoPMmYfOWPiFALidOxvC/R5FO52zOKi+i4UhX9xgShu
-	8JfP1EgfY+AgD7GUn5n3MwUkpe6r7K0vsO/A6HIZ1OIsL0WB4iO9t8qKPoAZ9yRFgO7ihmw=
-X-Google-Smtp-Source: AGHT+IHHPbIgLzsY9HofrGkO4DPp/RmzIGelc/5vMOj27bC0JuqiZhNs4PGwRa5UJ9lkSCt0p2Ofow==
-X-Received: by 2002:a05:6000:156c:b0:38f:3009:61c1 with SMTP id ffacd0b85a97d-38f33f50a65mr17685085f8f.26.1740069714054;
-        Thu, 20 Feb 2025 08:41:54 -0800 (PST)
-Received: from ?IPV6:2a02:2f04:6203:2100:5146:3c6d:da37:b887? ([2a02:2f04:6203:2100:5146:3c6d:da37:b887])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f258b432asm20668988f8f.6.2025.02.20.08.41.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Feb 2025 08:41:53 -0800 (PST)
-Message-ID: <f979f814-cf9b-43b2-a928-5faa3996724c@tuxon.dev>
-Date: Thu, 20 Feb 2025 18:41:51 +0200
+	 In-Reply-To:Content-Type; b=BfVsm20NTzoP24EQd3M8UGi1T/JHVzvfvHBNCjhRHTUGcBaP313EMYYrk2mNfkEsTBtTqrQ2AZjMF6cnb/wUt8xqLsX6OYd/O0duZMpSkKmiuOenhibsghHmXV94b8vrtpLC7C3OaMMki56/A+8biweE1xROHuk3QibOSXLsziw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=RfNgWwSK; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [10.137.184.60] (unknown [131.107.160.188])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 7A0F8203D5E9;
+	Thu, 20 Feb 2025 08:41:55 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 7A0F8203D5E9
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1740069715;
+	bh=pNJT56BxP7UvWA0Xz758yN9Ks+B/eGQRDTpNl6/uydA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=RfNgWwSKvEiPibsl6QYn1+eHkT30Nn1lw5OPsw1d6PPbcISNOFjUL/xQSqvKSFf8o
+	 yoOIzOPYQSxDpQlLZwzRdyB7IKxJeSJ80SjCCl6Rmtksk16rj7gF1Vbsd9EZG8Perr
+	 ZiNK0h99Ko8rPXUvLfCrhbWuuKMw7GXCc7mIDVdc=
+Message-ID: <13059366-bf72-4e84-ab6c-032b735edaec@linux.microsoft.com>
+Date: Thu, 20 Feb 2025 08:41:55 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,52 +48,68 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] soc: renesas: rz-sysc: Suppress binding attributes
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: magnus.damm@gmail.com, john.madieu.xa@bp.renesas.com,
- linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20250215131843.228905-1-claudiu.beznea.uj@bp.renesas.com>
- <CAMuHMdW4sN6x5C7iQgiZD=Vmzg=BA1v+WjS7aapXmuM2_y8JvQ@mail.gmail.com>
+Subject: Re: [PATCH hyperv-next v4 6/6] PCI: hv: Get vPCI MSI IRQ domain from
+ DeviceTree
+To: Michael Kelley <mhklinux@outlook.com>, "arnd@arndb.de" <arnd@arndb.de>,
+ "bhelgaas@google.com" <bhelgaas@google.com>, "bp@alien8.de" <bp@alien8.de>,
+ "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+ "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+ "decui@microsoft.com" <decui@microsoft.com>,
+ "haiyangz@microsoft.com" <haiyangz@microsoft.com>,
+ "hpa@zytor.com" <hpa@zytor.com>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+ "kw@linux.com" <kw@linux.com>, "kys@microsoft.com" <kys@microsoft.com>,
+ "lpieralisi@kernel.org" <lpieralisi@kernel.org>,
+ "manivannan.sadhasivam@linaro.org" <manivannan.sadhasivam@linaro.org>,
+ "mingo@redhat.com" <mingo@redhat.com>, "robh@kernel.org" <robh@kernel.org>,
+ "ssengar@linux.microsoft.com" <ssengar@linux.microsoft.com>,
+ "tglx@linutronix.de" <tglx@linutronix.de>,
+ "wei.liu@kernel.org" <wei.liu@kernel.org>, "will@kernel.org"
+ <will@kernel.org>, "devicetree@vger.kernel.org"
+ <devicetree@vger.kernel.org>,
+ "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+ "x86@kernel.org" <x86@kernel.org>
+Cc: "benhill@microsoft.com" <benhill@microsoft.com>,
+ "bperkins@microsoft.com" <bperkins@microsoft.com>,
+ "sunilmut@microsoft.com" <sunilmut@microsoft.com>
+References: <20250212014321.1108840-1-romank@linux.microsoft.com>
+ <20250212014321.1108840-7-romank@linux.microsoft.com>
+ <SN6PR02MB4157911BEF8664EDE2B62835D4C52@SN6PR02MB4157.namprd02.prod.outlook.com>
 Content-Language: en-US
-From: "claudiu beznea (tuxon)" <claudiu.beznea@tuxon.dev>
-In-Reply-To: <CAMuHMdW4sN6x5C7iQgiZD=Vmzg=BA1v+WjS7aapXmuM2_y8JvQ@mail.gmail.com>
+From: Roman Kisel <romank@linux.microsoft.com>
+In-Reply-To: <SN6PR02MB4157911BEF8664EDE2B62835D4C52@SN6PR02MB4157.namprd02.prod.outlook.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Hi, Geert,
 
-On 2/20/25 18:00, Geert Uytterhoeven wrote:
-> On Sat, 15 Feb 2025 at 14:18, Claudiu <claudiu.beznea@tuxon.dev> wrote:
->> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>
->> The matching data for the rz-sysc driver is marked with __initconst, which
->> means it is discarded after initialization. Because of this, attempting to
->> unbind/bind the driver through sysfs after system boot can lead to "Unable
->> to handle kernel paging request at virtual address" errors due to accessing
->> freed memory.
->>
->> Since the System Controller (SYSC) is an essential block for Renesas SoCs,
->> suppress binding attributes to prevent them being exposed in sysfs,
->> avoiding potential issues.
->>
->> Fixes: 1660e5ea6a3e ("soc: renesas: Add SYSC driver for Renesas RZ family")
->> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> i.e. will queue in renesas-devel for v6.15.
->
->>   drivers/soc/renesas/rz-sysc.c | 1 +
-> Looks like there are more opportunities for similar changes?
 
-For the other Renesas drivers I wasn't sure if this is the desired way.
+On 2/19/2025 3:29 PM, Michael Kelley wrote:
+> From: Roman Kisel <romank@linux.microsoft.com> Sent: Tuesday, February 11, 2025 5:43 PM
 
+[...]
+
+>>   }
+> 
+> These changes to rename hv_dev to vmbus_root_device, along with the
+> introduction of hv_get_vmbus_root_device(), seem like a separate
+> patch from the vPCI changes. The rename is definitely needed because
+> "hv_dev" as a symbol is very overloaded. But the rename is "no functional
+> change", and it doesn't touch the pci-hyperv.c file. You don't have a
+> consumer for hv_get_vmbus_root_device() until the vPCI changes, but
+> that seems OK to me to be in the subsequent patch.
+> 
+
+Thanks, will split the NFC out! I've asked the ACPI maintainers if a
+small change in ACPI would be fine to make the functional part of this
+patch more palatable, too.
+
+-- 
 Thank you,
-Claudiu
-
->
-> Gr{oetje,eeting}s,
->
->                          Geert
->
+Roman
 
 
