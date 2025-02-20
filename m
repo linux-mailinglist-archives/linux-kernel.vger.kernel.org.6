@@ -1,85 +1,104 @@
-Return-Path: <linux-kernel+bounces-524563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B4C9A3E497
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 20:03:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8666A3E4A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 20:04:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EECB17014A8
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 19:03:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04BCB1890106
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 19:03:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5786E26388C;
-	Thu, 20 Feb 2025 19:02:53 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 527BB1DFE00;
-	Thu, 20 Feb 2025 19:02:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB2DD2641D2;
+	Thu, 20 Feb 2025 19:03:26 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA1A524BD1C
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 19:03:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740078173; cv=none; b=ureaLsfrjbO1EajHjwnxeLfemXUSxwcF4/HbxP5kdDHahK/ROStyrI0WQ5ockCrJREAFd9n2SQ9tVee02fLzz75fqnm7qJJJdVXEkutjNnWv/YXhfZZ71LmnhVnxks2ES1X/gOeoLbjYzmSmQYBqYxW5UF9+RrNqbu+NPRgUjTc=
+	t=1740078206; cv=none; b=jzI/bDXdJND6NuX85BBos91XJJOkrgSUvK+GQAAmFe6z0AC8/Nt8IcL9XAgHwUqb3xUnck0vmKO5sOomZaVF9874iZntgrcQnFlP4EBjEtTlAjsTErZ/Aj1kyqd/zcwv+etBd34/1H1mtJqpCzXOEezY61UWJex8kZqFCtEMYx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740078173; c=relaxed/simple;
-	bh=lvtylBYOZWiEhmpuEkcH3mPtglp1tR2ZOkMgeUz4Djk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VG/0W0y4TA/SWLczaZ+/+egyTQ1Y96rC2H1dfosIwoqjHYsouetJWN7jXBf1AVFZm6hj3Weq0eHcb+7is4j/n/oCCaGBSbtmbrWEiQMPjbZ8hCQc5+Tz5vH/+3r5R7J2GEEpUl8nUPPwQNLgmbsDqCM+qz/GNdsXTEXL/f/M7Ys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AA2271007;
-	Thu, 20 Feb 2025 11:03:08 -0800 (PST)
-Received: from [10.122.18.111] (unknown [10.122.18.111])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5C0183F59E;
-	Thu, 20 Feb 2025 11:02:50 -0800 (PST)
-Message-ID: <41d5f912-9288-4e13-b074-bd64aacc7a5e@arm.com>
-Date: Thu, 20 Feb 2025 13:02:49 -0600
+	s=arc-20240116; t=1740078206; c=relaxed/simple;
+	bh=d3l8CS1D4AR7C0awY6wO7jlChCwpNEUfxkadXODt4/0=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=E+ds7ddrlfoUtXu4bFtsE/sPbHsRfOzF3qWkMCxWVNeYolhHAm3dyr+rsZxrP6j6sCruxCwwZZ7IawMn6db9BNfbkvdJwdD27inKtOTi/co/rteGNrKGGv7NS3fc0Ui5wDTtOvK0jfay2I0Z4kSIGeAunqJYjqh4KoKoyExLytM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3ce81a40f5cso23820435ab.1
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 11:03:24 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740078204; x=1740683004;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=asha2d+gaWgF7tXpH4ijjuoW/rkiwLBPdgYVataGXuc=;
+        b=dya49XMqEkmay/uDbbV3FDP20B1CqlWxiK0aRcXNzJx6pnDk3hbxGvgAkHZ+jNht8m
+         22Y81Mzkm4mpVuj3gPoUPmuhJGj2jvZUN3VfRLmrpFa0vDAp28oXxkDJsdsufxKS6C4c
+         xJSttpvR+itAI0nVFdHFBoOExkigF3dZc+et29jDYgPZQKOk4Bi9vZ9VC50tGRfwNRNk
+         rzAk/VZ9IpyRARnLcBEHCewC+vQyx4dA7RQlZ2iqT/Anuun30HV9ouPd7RauRLMuNZt8
+         fIsovysBGU91isj5dWxoNsNg/eK2Q0c4F9v9Y7CsvQx2DOi0PRGhwk6/f5uXteOPfQeL
+         6KXw==
+X-Forwarded-Encrypted: i=1; AJvYcCUnnEj4bU0mQVTFqa0pfYNWgnBrkrxltcCiiRR1VdGPEe68FV/zHL6RteCE/gIenIHNGI3kYkcMdx2GO7I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFi+I0TlE6V7fwh6/KaqtvLMT7dbsdC5S2LjwTnVGXB1ne3nMm
+	mWKFoGETB5KHltBM2zJsJoeRpM2TBuJesuIRMRK8tH8Ao3ULZ2Pg1/7JEl3xTNlI79K2viuTuJT
+	l1Ymh9S55H+saqyufezau532SCVR8tw7oe/7I2D/R0n3jLP0r4MsRXlA=
+X-Google-Smtp-Source: AGHT+IG5NIfus11FtMwEICWdt6qwkZVAAbwAfbNMEzWrbpTfafx7LHufOVPGuIKDnYXQaTjWBBlBMbXHuh9AeHh51RZexJNBHEH3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/5] tpm_crb: implement driver compliant to CRB over
- FF-A
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: linux-integrity@vger.kernel.org, peterhuewe@gmx.de, jgg@ziepe.ca,
- sudeep.holla@arm.com, rafael@kernel.org, lenb@kernel.org,
- linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250219201014.174344-1-stuart.yoder@arm.com>
- <20250219201014.174344-2-stuart.yoder@arm.com> <Z7b11Kahh7JXDq9E@kernel.org>
-Content-Language: en-US
-From: Stuart Yoder <stuart.yoder@arm.com>
-In-Reply-To: <Z7b11Kahh7JXDq9E@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:1a67:b0:3d0:3851:c3cc with SMTP id
+ e9e14a558f8ab-3d2caf19e17mr2079135ab.16.1740078203833; Thu, 20 Feb 2025
+ 11:03:23 -0800 (PST)
+Date: Thu, 20 Feb 2025 11:03:23 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67b77c7b.050a0220.14d86d.02f7.GAE@google.com>
+Subject: [syzbot] Monthly xfs report (Feb 2025)
+From: syzbot <syzbot+list8dc11289063655991065@syzkaller.appspotmail.com>
+To: chandan.babu@oracle.com, linux-kernel@vger.kernel.org, 
+	linux-xfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
+Hello xfs maintainers/developers,
 
-On 2/20/25 3:28 AM, Jarkko Sakkinen wrote:
-> On Wed, Feb 19, 2025 at 02:10:10PM -0600, Stuart Yoder wrote:
->> The Arm specification TPM Service CRB over FF-A specification
->> defines the FF-A messages to interact with a CRB-based TPM
->> implemented as an FF-A secure partition.
->>
->> Spec URL:
->> https://developer.arm.com/documentation/den0138/latest/
->>
->> This driver is probed when a TPM Secure Partition is
->> discovered by the FF-A subsystem. It exposes APIs
->> used by the TPM CRB driver to send notifications to
->> the TPM.
->>
->> Acked-by: Sudeep Holla <sudeep.holla@arm.com>
->> Signed-off-by: Stuart Yoder <stuart.yoder@arm.com>
-> 
-> Cutting hairs now but as I cannot test this and this is 1/5:
-> can this patch be run without 2/5-4/5?
+This is a 31-day syzbot report for the xfs subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/xfs
 
-Yes. This 1/5 patch has no compile time or runtime dependency
-on 2/5-4/5.
+During the period, 1 new issues were detected and 0 were fixed.
+In total, 20 issues are still open and 26 have already been fixed.
 
-Thanks,
-Stuart
+Some of the still happening issues:
 
+Ref Crashes Repro Title
+<1> 160     Yes   possible deadlock in xfs_can_free_eofblocks (2)
+                  https://syzkaller.appspot.com/bug?extid=53d541c7b07d55a392ca
+<2> 125     Yes   BUG: Bad page state in iomap_write_begin
+                  https://syzkaller.appspot.com/bug?extid=c317c107c68f8bc257d9
+<3> 94      Yes   INFO: task hung in xfs_buf_item_unpin (2)
+                  https://syzkaller.appspot.com/bug?extid=837bcd54843dd6262f2f
+<4> 20      No    possible deadlock in xfs_fs_dirty_inode (2)
+                  https://syzkaller.appspot.com/bug?extid=1116a7b7b96b9c426a1a
+<5> 15      Yes   possible deadlock in xfs_buf_find_insert
+                  https://syzkaller.appspot.com/bug?extid=acb56162aef712929d3f
+<6> 9       No    BUG: unable to handle kernel paging request in xfs_destroy_mount_workqueues
+                  https://syzkaller.appspot.com/bug?extid=63340199267472536cf4
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
+
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
 
