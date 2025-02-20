@@ -1,303 +1,152 @@
-Return-Path: <linux-kernel+bounces-524736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDC11A3E67A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 22:19:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFABAA3E67B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 22:20:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA9AB189F3FC
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 21:19:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8AD1E423DC4
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 21:19:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 549B81EE001;
-	Thu, 20 Feb 2025 21:19:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A86491EDA2E;
+	Thu, 20 Feb 2025 21:19:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LuLc+8Wo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aQKzBLOX"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81FAE1D54D1;
-	Thu, 20 Feb 2025 21:19:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEA351D54D1;
+	Thu, 20 Feb 2025 21:19:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740086350; cv=none; b=LXJb7sQ6rfakMCfym+qn1IGFpLZBdj7Pv/mLF7r3YYCajABy6H8o63d439qLHig1s5r/8U4yPIqP+flYAzhPK6tqHRGnmlnMx7NQYuGFd2P3BPnq8YTUt/D9qeYj5wgIu0oK0l/MRpZoXIQt3aaqLWxGq8ERD/C7CIQDhO9Rl/s=
+	t=1740086371; cv=none; b=dGKGHJI0ios266waLZAyEEypw/DSRNU1uxm44p+xHUUTTz2RM/mWq3qeq0GU76MsHgbXlOpEZRd+glpse+40eVZRktLv6UF7Zc0okq3ECCwzUCg+59Exi3ulct1Yb4RIIe6rndlN9caxrAt9HcZgwg1IuUsHDGRk1f7H+Pb2vcY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740086350; c=relaxed/simple;
-	bh=uoOMnodQ4Ci7A6GqubZ3v3byPCrusiTbmbos5sLMOZc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Pws3dwJhZbO9P9XJBPxMsic4LRjSm1kABxQFpI8btHel9cx9NtiojmlkzxMFlKh4GDkkBQRewZ+KZVS4UW9ShBexx6+COONYgbSvfXDD4bhP7bMAmub71QS4wVzfBPVnbJsytuj6H4HOJNry+4zXuwTX+Wv/jfqGaBZt75vpMPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LuLc+8Wo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DB90C4CED1;
-	Thu, 20 Feb 2025 21:19:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740086350;
-	bh=uoOMnodQ4Ci7A6GqubZ3v3byPCrusiTbmbos5sLMOZc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=LuLc+8WozM5j7JeVycSXrkgTXL3eeLPquUfkOOFMk10cWdNpryahqiwDBzigrbP23
-	 o35hM60CJVHBhk7Q1/3xhB4lDrZbnIKDRhNMFZP2rt9kdiMSR7j16VNCaqYba58IM3
-	 oEjDB2tJ6sTM8jZWEG6ukGkthPisrTIKaN+vcv0EeVIlAoGlqL16orYdX9lX7afZ2W
-	 URaCsC8Lr08we/rBIHvENCojvb0EDoDCluExcOOR2FOm38ke+fN5pqN7aR9PHInl8v
-	 ZdaHxThiLRRrgfwrJvcqhftRnZWwhVuBB2QsUxmEQdnTe88hHZp2avzfl9DmuwvC+W
-	 L7uhxGDkFpnXQ==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Tamir Duberstein" <tamird@gmail.com>
-Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Anna-Maria Behnsen"
- <anna-maria@linutronix.de>,  "Frederic Weisbecker" <frederic@kernel.org>,
-  "Thomas Gleixner" <tglx@linutronix.de>,  "Danilo Krummrich"
- <dakr@kernel.org>,  "Alex Gaynor" <alex.gaynor@gmail.com>,  "Boqun Feng"
- <boqun.feng@gmail.com>,  "Gary Guo" <gary@garyguo.net>,  =?utf-8?Q?Bj?=
- =?utf-8?Q?=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,  "Benno Lossin" <benno.lossin@proton.me>,
-  "Alice Ryhl" <aliceryhl@google.com>,  "Trevor Gross" <tmgross@umich.edu>,
-  "Lyude Paul" <lyude@redhat.com>,  "Guangbo Cui" <2407018371@qq.com>,
-  "Dirk Behme" <dirk.behme@gmail.com>,  "Daniel Almeida"
- <daniel.almeida@collabora.com>,  <rust-for-linux@vger.kernel.org>,
-  <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v8 02/14] rust: hrtimer: introduce hrtimer support
-In-Reply-To: <CAJ-ks9ncOyGyQsDFOBxg-7wmXkrQYiZr6H6eEFWsFstk=p1uAA@mail.gmail.com>
- (Tamir
-	Duberstein's message of "Thu, 20 Feb 2025 12:04:29 -0500")
-References: <20250218-hrtimer-v3-v6-12-rc2-v8-0-48dedb015eb3@kernel.org>
-	<20250218-hrtimer-v3-v6-12-rc2-v8-2-48dedb015eb3@kernel.org>
-	<KDmrJnQA2_Ojf67mD8WA_UafgVCACRRleB9t-D_1yl_bua8e1VWdGQAUvmMGHscqRHu1gzPJCKe_BfotutZm5Q==@protonmail.internalid>
-	<CAJ-ks9ncOyGyQsDFOBxg-7wmXkrQYiZr6H6eEFWsFstk=p1uAA@mail.gmail.com>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Thu, 20 Feb 2025 22:18:59 +0100
-Message-ID: <87wmdkgvr0.fsf@kernel.org>
+	s=arc-20240116; t=1740086371; c=relaxed/simple;
+	bh=PKhRrbtz1qFJVXw6e0MbzGcKe/ppuQLXf39RmfDFxjg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tUhp6Q3NuUned6eEPwQU81Rc1Lx4qN+wFFt8UDCDSizjc/RSNjjdQmrz834lNIwtf9hu8LxIfTmKgXdCyQdHBEnTWSW5MyJNJTQnLgIYcXToTwZn3V2DKK/Oq0jM4KEwDkmVW9w5E9Q+q7EbxzCvTa5i2/ZetvR+9FvZDLg9akc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aQKzBLOX; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740086369; x=1771622369;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=PKhRrbtz1qFJVXw6e0MbzGcKe/ppuQLXf39RmfDFxjg=;
+  b=aQKzBLOXNbJQfNpWCN+iPnb8qrHfLamq5vMh/HVPMOdNEagcSKug5xpx
+   3zJxYogLlHOYt9LDeUSryh1qvIy9jldiOVToDaKbP46/abjheoWAVwlVY
+   BxvzxSxBV50o7wnPz+tP6gvGiXt6WZwkXlZYUta3kDkhjncbJSUxJyJhj
+   Icm39T0ZuL6qNtRCEEwdB50y24LHn8qe00JRXcd8+jR68eAxsEWAa59tO
+   lD7/HM6zWv+rMGucL2JnZSICv8Oo6bl5CnZAbbESZyzYFsWOO6F5u0Q3Q
+   dmJ1sAc7Q//gkA0eybQHsd6LeZM69hKMWlKiDG/MXMjmy8OMoTp93db/8
+   w==;
+X-CSE-ConnectionGUID: sdjQSXueQyitBjpJ6Ds4vA==
+X-CSE-MsgGUID: nZNkR7zPSga2c6ihNkp0jQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11351"; a="51509737"
+X-IronPort-AV: E=Sophos;i="6.13,302,1732608000"; 
+   d="scan'208";a="51509737"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Feb 2025 13:19:28 -0800
+X-CSE-ConnectionGUID: mqys3csGR7WKxyHX6ssCxw==
+X-CSE-MsgGUID: +6KhEhXLREKxO+KQ7a0Cjg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,302,1732608000"; 
+   d="scan'208";a="114887647"
+Received: from puneetse-mobl.amr.corp.intel.com (HELO [10.125.110.112]) ([10.125.110.112])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Feb 2025 13:19:27 -0800
+Message-ID: <fc5ab516-3b73-4c6f-8c21-4ad643ff3320@intel.com>
+Date: Thu, 20 Feb 2025 14:19:26 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-
-"Tamir Duberstein" <tamird@gmail.com> writes:
-
-> On Tue, Feb 18, 2025 at 8:29=E2=80=AFAM Andreas Hindborg <a.hindborg@kern=
-el.org> wrote:
->>
-
-[...]
-
->> +//! ## State Diagram
->> +//!
->> +//! ```text
->> +//!                  <-- Stop ----
->> +//!                  <-- Cancel --
->> +//!                  --- Start -->
->> +//!        +---------+        +---------+
->> +//!   O--->| Stopped |        | Running |---o
->> +//!        +---------+        +---------+   |
->> +//!                                  ^      |
->> +//!                  <- Expire --    |      |
->> +//!                                  o------o
->> +//!                                   Restart
->> +//! ```
->> +//!
->> +//! A timer is initialized in the **stopped** state. A stopped timer ca=
-n be
->> +//! **started** with an **expiry** time. After the timer is started, it=
- is
->> +//! **running**. When the timer **expires**, the timer handler is execu=
-ted.
->> +//! After the handler has executed, the timer may be **restarted** or
->> +//! **stopped**. A running timer can be **canceled** before it's handle=
-r is
->
-> "it's" =3D it is. This should be "its" (possessive).
-
-Thanks =F0=9F=91=8D
-
-> Just to be clear, after the handler has executed and before the timer
-> has been **restarted** or **stopped** the timer is still in the
-> **running** state?
-
-It depends on the return value of the handler. If the handler returns resta=
-rt,
-the timer the timer does not enter the stopped state. If the handler
-returns stop, the timer enters the stopped state.
-
-The timer is still considered to be in running state the handler is
-running.
-
-I can add this info to the section.
-
->
->
->> +//! executed. A timer that is cancelled enters the **stopped** state.
->> +//!
->> +
->> +use crate::{init::PinInit, prelude::*, time::Ktime, types::Opaque};
->> +use core::marker::PhantomData;
->> +
->> +/// A timer backed by a C `struct hrtimer`.
->> +///
->> +/// # Invariants
->> +///
->> +/// * `self.timer` is initialized by `bindings::hrtimer_setup`.
->> +#[pin_data]
->> +#[repr(C)]
->> +pub struct HrTimer<T> {
->> +    #[pin]
->> +    timer: Opaque<bindings::hrtimer>,
->> +    _t: PhantomData<T>,
->> +}
->> +
->> +// SAFETY: Ownership of an `HrTimer` can be moved to other threads and
->> +// used/dropped from there.
->> +unsafe impl<T> Send for HrTimer<T> {}
->> +
->> +// SAFETY: Timer operations are locked on C side, so it is safe to oper=
-ate on a
->> +// timer from multiple threads
->> +unsafe impl<T> Sync for HrTimer<T> {}
->> +
->> +impl<T> HrTimer<T> {
->> +    /// Return an initializer for a new timer instance.
->> +    pub fn new() -> impl PinInit<Self>
->> +    where
->> +        T: HrTimerCallback,
->> +    {
->> +        pin_init!(Self {
->> +            // INVARIANTS: We initialize `timer` with `hrtimer_setup` b=
-elow.
->> +            timer <- Opaque::ffi_init(move |place: *mut bindings::hrtim=
-er| {
->> +                // SAFETY: By design of `pin_init!`, `place` is a point=
-er to a
->> +                // live allocation. hrtimer_setup will initialize `plac=
-e` and
->> +                // does not require `place` to be initialized prior to =
-the call.
->> +                unsafe {
->> +                    bindings::hrtimer_setup(
->> +                        place,
->> +                        Some(T::CallbackTarget::run),
->> +                        bindings::CLOCK_MONOTONIC as i32,
->> +                        bindings::hrtimer_mode_HRTIMER_MODE_REL,
->> +                    );
->> +                }
->> +            }),
->> +            _t: PhantomData,
->> +        })
->> +    }
->> +
->> +    /// Get a pointer to the contained `bindings::hrtimer`.
->> +    ///
->> +    /// # Safety
->> +    ///
->> +    /// `ptr` must point to a live allocation of at least the size of `=
-Self`.
->> +    unsafe fn raw_get(ptr: *const Self) -> *mut bindings::hrtimer {
->> +        // SAFETY: The field projection to `timer` does not go out of b=
-ounds,
->> +        // because the caller of this function promises that `ptr` poin=
-ts to an
->> +        // allocation of at least the size of `Self`.
->> +        unsafe { Opaque::raw_get(core::ptr::addr_of!((*ptr).timer)) }
->> +    }
->
-> Can you help me understand why the various functions here operate on
-> *const Self? I understand the need to obtain a C pointer to interact
-> with bindings, but I don't understand why we're dealing in raw
-> pointers to the abstraction rather than references.
-
-We cannot reference the `bindings::hrtimer` without wrapping it in
-`Opaque`. This would be the primary reason. At other times, we cannot
-produce references because we might not be able to prove that we satisfy
-the safety requirements for turning a pointer into a reference. If we
-are just doing offset arithmetic anyway, we don't need a reference.
-
-
-> This extends to
-> HrTimerPointer, which is intended to be implemented by *pointers to*
-> structs that embed `HrTimer`; why isn't it implemented on by the
-> embedder itself?
-
-Not sure what you mean here. If you refer to for instance the
-implementation of `HrTimerPointer for Arc<T>`, I get why you might
-wonder, why does `HasHrTimer::start` not take a reference instead of a
-pointer? We could do that, but we would just immediately break it down
-again in the implementation of `HasHrTimer::start`. Might still be a
-good idea though.
-
->
-> I realize we discussed this on v6, sorry for not keeping up there.
-
-No worries, it is good that we discuss this.
-
-[...]
-
->> +
->> +/// A handle representing a potentially running timer.
->> +///
->> +/// More than one handle representing the same timer might exist.
->> +///
->> +/// # Safety
->> +///
->> +/// When dropped, the timer represented by this handle must be cancelle=
-d, if it
->> +/// is running. If the timer handler is running when the handle is drop=
-ped, the
->> +/// drop method must wait for the handler to finish before returning.
->
-> Between this comment and the comment on cancel we say "if it is
-> running" 3 times. Can we say it just once, on the method, and here say
-> that cancel must be called in Drop?
-
-Well, the comment on `cancel` is just a description of what the function
-does. This piece of text is a safety requirement.
-
-We could make the safety requirement for implementing the trait "Implement
-the methods according to their documentation". But that would not help with
-the drop requirement.
-
->
->> +pub unsafe trait HrTimerHandle {
->> +    /// Cancel the timer, if it is running. If the timer handler is run=
-ning, block
->> +    /// till the handler has finished.
->> +    fn cancel(&mut self) -> bool;
->> +}
->> +
->> +/// Implemented by structs that contain timer nodes.
->> +///
->> +/// Clients of the timer API would usually safely implement this trait =
-by using
->> +/// the [`crate::impl_has_hr_timer`] macro.
->> +///
->> +/// # Safety
->> +///
->> +/// Implementers of this trait must ensure that the implementer has a [=
-`HrTimer`]
->> +/// field at the offset specified by `OFFSET` and that all trait method=
-s are
->> +/// implemented according to their documentation.
->> +///
->> +/// [`impl_has_timer`]: crate::impl_has_timer
->> +pub unsafe trait HasHrTimer<T> {
->> +    /// Offset of the [`HrTimer`] field within `Self`
->> +    const OFFSET: usize;
->
-> Does this need to be part of the trait? As an alternative the provided
-> methods could be generated in the macro below and reduce the
-> opportunity to implement this trait incorrectly.
-
-There is no risk of implementing the trait wrong, because it is usually
-derived by a macro.
-
-We need at least one of the methods to be able to have the type system
-verify that the type for which we implement `HasHrTImer` actually has a
-field with the name we specify, and that this field has the right type.
-And to have that, we need the OFFSET.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 02/15] cxl: Introduce callback to translate an HPA
+ range from a port to its parent
+To: Robert Richter <rrichter@amd.com>,
+ Alison Schofield <alison.schofield@intel.com>,
+ Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+ Dan Williams <dan.j.williams@intel.com>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ Davidlohr Bueso <dave@stgolabs.net>
+Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Gregory Price <gourry@gourry.net>,
+ "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
+ Terry Bowman <terry.bowman@amd.com>
+References: <20250218132356.1809075-1-rrichter@amd.com>
+ <20250218132356.1809075-3-rrichter@amd.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20250218132356.1809075-3-rrichter@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
 
-Best regards,
-Andreas Hindborg
+On 2/18/25 6:23 AM, Robert Richter wrote:
+> To enable address translation, the endpoint's HPA range must be
+> translated to each of the parent port's address ranges up to the root
+> decoder. Traverse the decoder and port hierarchy from the endpoint up
+> to the root port and apply platform specific translation functions to
+> determine the next HPA range of the parent port where needed:
+> 
+>   if (cxl_port->to_hpa)
+>     hpa = cxl_port->to_hpa(cxl_decoder, hpa)
+> 
+> The root port's HPA range is equivalent to the system's SPA range.
+> 
+> Introduce a callback to translate an HPA range from a port to its
+> parent.
+> 
+> Signed-off-by: Robert Richter <rrichter@amd.com>
+> Reviewed-by: Gregory Price <gourry@gourry.net>
+> ---
+>  drivers/cxl/cxl.h | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
 
+With such a small change, I would fold this into the patch where you are using it. 
+
+> 
+> diff --git a/drivers/cxl/cxl.h b/drivers/cxl/cxl.h
+> index b19ba47242c6..17496784f021 100644
+> --- a/drivers/cxl/cxl.h
+> +++ b/drivers/cxl/cxl.h
+> @@ -418,6 +418,15 @@ struct cxl_switch_decoder {
+>  	struct cxl_dport *target[];
+>  };
+>  
+> +/**
+> + * cxl_to_hpa_fn - type of a callback function to translate an HPA
+> + * @cxld: cxl_decoder to translate from
+> + * @hpa: HPA of the @cxld decoder's address range
+> + *
+> + * The callback translates a decoder's HPA to the next upper domain
+> + * which is the address range of the decoder's parent port. The return
+> + * value is the translated HPA on success or ULLONG_MAX otherwise.
+> + */
+>  typedef u64 (*cxl_to_hpa_fn)(struct cxl_decoder *cxld, u64 hpa);
+>  
+>  /**
+> @@ -581,6 +590,7 @@ struct cxl_dax_region {
+>   * @parent_dport: dport that points to this port in the parent
+>   * @decoder_ida: allocator for decoder ids
+>   * @reg_map: component and ras register mapping parameters
+> + * @to_hpa: Callback to translate a child port's decoder address to the port's HPA address range
+>   * @nr_dports: number of entries in @dports
+>   * @hdm_end: track last allocated HDM decoder instance for allocation ordering
+>   * @commit_end: cursor to track highest committed decoder for commit ordering
+> @@ -602,6 +612,7 @@ struct cxl_port {
+>  	struct cxl_dport *parent_dport;
+>  	struct ida decoder_ida;
+>  	struct cxl_register_map reg_map;
+> +	cxl_to_hpa_fn to_hpa;
+>  	int nr_dports;
+>  	int hdm_end;
+>  	int commit_end;
 
 
