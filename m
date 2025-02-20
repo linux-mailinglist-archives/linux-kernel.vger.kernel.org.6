@@ -1,159 +1,204 @@
-Return-Path: <linux-kernel+bounces-524536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93D3AA3E443
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 19:54:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E8EBA3E441
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 19:54:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0C1E97A98CA
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 18:53:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2931B189EDAF
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 18:54:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3404626388E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE80F26389B;
 	Thu, 20 Feb 2025 18:54:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="cO/HoZGB"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ae1+uZyK"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FC432135D0;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF631257D;
 	Thu, 20 Feb 2025 18:53:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740077640; cv=none; b=FM5g67/a/JISV4trlHB+pYI5YMEzJrmuRc+QaUeIoD3OMvvNpWy6Bepo3pXFyedRKm/ONIdu0FqiPnS0SFYvuRpwPtxcvELlPNDIP02+7P94OI6e453Cfqr6CNZg+ia24zRpFCqT8dWT4LYW+EWZK4pYBpxitp5FoczgTfPFU2M=
+	t=1740077641; cv=none; b=LAa3mWqWcKNdn/AQ05T1jTfNa26LT3jcXFXLeatsKPlbqQJlU/P4CrgilKLnoSPOEE5xtWLessl76M8WDBuxVGfI+a1VxICZNew53/Jv945TfGrPsFX2qBBjOqbcuvXdvPhtVeWOUTYYJvJPYr7BFCRnu9kjd6ggknsQ7t/QufM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740077640; c=relaxed/simple;
-	bh=XNtukd/iR2xFzEJm4rMWbl1qhijVvclvodxQjnS4AR4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uLwtrv30TZTCXtumDCbESX+jGT7qjnnU3qy/3UdcZQrabONgWsYxRbUy+WA4NzDC6WnGOgBQdWUklzxJS7lMRJMxtQYOvaW8xccSXtpYYvYFs/Y2ZiaA7792SCOgsyqRFHlVIiH5jtxfaz/lZMrvuf+Ibordi0tPei6NGeVTb6w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=cO/HoZGB; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51KH1dWO013458;
-	Thu, 20 Feb 2025 18:53:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=/9sRpAZ9G3ZPyhkT4SYRP5eAvs3Bmr
-	FCqGMSaKHucN4=; b=cO/HoZGBBDgyQ3+wAOCIEngTbBbh+7fO13/1YamnWNXEil
-	u8zaNKFRabvG/FSoNrXbM3nmJitWZ4wTJD/5oHnICYWLfKWYQpfay+B+3UmNLi4a
-	wEEHnsfHIma02MGEG+7IkYImPzHjA9t3R1erwYdh5bW/EPDJf8ctDuhhwnl/IZVC
-	Q1xajmxr5hVEKaSmjFKS6IPrUO1NoFg0s2vDnNaxoBzRz+WMGEV/hL/MJA3zF38Q
-	yVAGP84ZxD8GAzVMcMCs+99x9vl1ngr0vduaVeXoDxxfWXDKhUhLn0RrqKcDupM6
-	TmIY7yfKHiKng16RNt3tfi400kkyxJ7FnoVXJGaA==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44wreadapw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 20 Feb 2025 18:53:12 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 51KIrBX4004848;
-	Thu, 20 Feb 2025 18:53:11 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44wreadapt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 20 Feb 2025 18:53:11 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51KI7x6h005826;
-	Thu, 20 Feb 2025 18:53:10 GMT
-Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 44w02xkn49-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 20 Feb 2025 18:53:10 +0000
-Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51KIr8gA39846268
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 20 Feb 2025 18:53:08 GMT
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 0D4CC20043;
-	Thu, 20 Feb 2025 18:53:08 +0000 (GMT)
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3CEE020040;
-	Thu, 20 Feb 2025 18:53:06 +0000 (GMT)
-Received: from osiris (unknown [9.171.52.26])
-	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Thu, 20 Feb 2025 18:53:06 +0000 (GMT)
-Date: Thu, 20 Feb 2025 19:53:04 +0100
-From: Heiko Carstens <hca@linux.ibm.com>
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: akpm@linux-foundation.org, peterz@infradead.org, willy@infradead.org,
-        liam.howlett@oracle.com, lorenzo.stoakes@oracle.com,
-        david.laight.linux@gmail.com, mhocko@suse.com, vbabka@suse.cz,
-        hannes@cmpxchg.org, mjguzik@gmail.com, oliver.sang@intel.com,
-        mgorman@techsingularity.net, david@redhat.com, peterx@redhat.com,
-        oleg@redhat.com, dave@stgolabs.net, paulmck@kernel.org,
-        brauner@kernel.org, dhowells@redhat.com, hdanton@sina.com,
-        hughd@google.com, lokeshgidra@google.com, minchan@google.com,
-        jannh@google.com, shakeel.butt@linux.dev, souravpanda@google.com,
-        pasha.tatashin@soleen.com, klarasmodin@gmail.com,
-        richard.weiyang@gmail.com, corbet@lwn.net, linux-doc@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        kernel-team@android.com
-Subject: Re: [PATCH v10 12/18] mm: replace vm_lock and detached flag with a
- reference count
-Message-ID: <20250220185304.8313A7d-hca@linux.ibm.com>
-References: <20250213224655.1680278-1-surenb@google.com>
- <20250213224655.1680278-13-surenb@google.com>
+	s=arc-20240116; t=1740077641; c=relaxed/simple;
+	bh=oQx9QhpZY+AGcsW9qTdURoOLa8KdhLWdTPUOCCaws9Q=;
+	h=Content-Type:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To; b=SpPzHkguit11msMutIqBmALXy97pniVW/gxKAxcYb2fEXPxsfJgc4se1XReexmdC/DP8XNcFea6vzGSHE56iurCrVIWyZatwKnC3Bqq4RHOcncszMM80uhrCFEeGYoS0ELGzpDr74hkCgyy8+zgtm5dSwOcYs0paULRh8VEVUl8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ae1+uZyK; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740077639; x=1771613639;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to;
+  bh=oQx9QhpZY+AGcsW9qTdURoOLa8KdhLWdTPUOCCaws9Q=;
+  b=Ae1+uZyKKf559ojPvCSSh1RomJ420XiuDdce7KrAjHtH+KNW1vgazQ6l
+   fkiKftYJ+g0j0BCeWXwQd/sSsjW1c704xTtFt0b7GJVji8RMAEcanaYv7
+   o5TIQSHScisJ+qqCuYjp20SRVagmI4FwvhBwRQmX0+bE4tQtdOgvNVbWF
+   X4iIORLSmZjHauSmK7Ga9s/mQHDD7CoGYUmtkzJvtKxum3YE/uTbdlt7U
+   lQ7a2Scc0qqZgg5OKtjMZElvPT7kgDY+Gi4BU777QsPsv//xIPjIfkliH
+   n4Ay0NSHHGuVEFi19OKo4mu2Bw1gTA3P0ZLLb3KfbbqCk5YFWy8hrGTB2
+   g==;
+X-CSE-ConnectionGUID: lDhF40kVQPOqYzMBGJGisQ==
+X-CSE-MsgGUID: tsq0tIFrRpCj9w/X3XmZjw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11351"; a="40886231"
+X-IronPort-AV: E=Sophos;i="6.13,302,1732608000"; 
+   d="scan'208";a="40886231"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Feb 2025 10:53:58 -0800
+X-CSE-ConnectionGUID: tOtVFR+ISsOKunc7l+Qh+w==
+X-CSE-MsgGUID: XrSqqQHuRQWv0eUVIw5XhA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="120366371"
+Received: from puneetse-mobl.amr.corp.intel.com (HELO [10.125.110.82]) ([10.125.110.82])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Feb 2025 10:53:58 -0800
+Content-Type: multipart/mixed; boundary="------------0kQnuKsAPFQNhFMA095Sb1SP"
+Message-ID: <a68fd15d-8c76-4410-a3ee-3912dc134fe4@intel.com>
+Date: Thu, 20 Feb 2025 10:53:59 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250213224655.1680278-13-surenb@google.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: M-vGldV3REsWVvBOwJDEiV9dEv7a8khD
-X-Proofpoint-GUID: LuM4Ib9qTs5DatP339mkaUEvtZKh3JTf
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-20_08,2025-02-20_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- priorityscore=1501 suspectscore=0 bulkscore=0 mlxscore=0 adultscore=0
- spamscore=0 impostorscore=0 phishscore=0 clxscore=1011 lowpriorityscore=0
- mlxlogscore=842 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2502200128
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] perf/x86/rapl: Fix PP1 event for Intel Meteor/Lunar Lake
+To: Lucas De Marchi <lucas.demarchi@intel.com>
+Cc: linux-perf-users@vger.kernel.org, x86@kernel.org,
+ linux-kernel@vger.kernel.org, dave.hansen@linux.intel.com,
+ Zhang Rui <rui.zhang@intel.com>, Kan Liang <kan.liang@linux.intel.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Ulisses Furquim <ulisses.furquim@intel.com>, intel-xe@lists.freedesktop.org,
+ intel-gfx@lists.freedesktop.org
+References: <20250220153857.2593704-6-lucas.demarchi@intel.com>
+ <d25ef356-3614-4e69-8cc1-d74dbbd2585f@intel.com>
+ <nf6gbtgn7lu4pvewuhrwca2efaxrkdhxazw3oktaixn5q5yg5r@7y74irve5udw>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
+ oAiUXvGAOxPDsB/P6UEOISPpLl5IuYsSwAeZGkdQ5g6m1xq7AlDJQZddhr/1DC/nMVa/2BoY
+ 2UnKuZuSBu7lgOE193+7Uks3416N2hTkyKUSNkduyoZ9F5twiBhxPJwPtn/wnch6n5RsoXsb
+ ygOEDxLEsSk/7eyFycjE+btUtAWZtx+HseyaGfqkZK0Z9bT1lsaHecmB203xShwCPT49Blxz
+ VOab8668QpaEOdLGhtvrVYVK7x4skyT3nGWcgDCl5/Vp3TWA4K+IofwvXzX2ON/Mj7aQwf5W
+ iC+3nWC7q0uxKwwsddJ0Nu+dpA/UORQWa1NiAftEoSpk5+nUUi0WE+5DRm0H+TXKBWMGNCFn
+ c6+EKg5zQaa8KqymHcOrSXNPmzJuXvDQ8uj2J8XuzCZfK4uy1+YdIr0yyEMI7mdh4KX50LO1
+ pmowEqDh7dLShTOif/7UtQYrzYq9cPnjU2ZW4qd5Qz2joSGTG9eCXLz5PRe5SqHxv6ljk8mb
+ ApNuY7bOXO/A7T2j5RwXIlcmssqIjBcxsRRoIbpCwWWGjkYjzYCjgsNFL6rt4OL11OUF37wL
+ QcTl7fbCGv53KfKPdYD5hcbguLKi/aCccJK18ZwNjFhqr4MliQARAQABzUVEYXZpZCBDaHJp
+ c3RvcGhlciBIYW5zZW4gKEludGVsIFdvcmsgQWRkcmVzcykgPGRhdmUuaGFuc2VuQGludGVs
+ LmNvbT7CwXgEEwECACIFAlQ+9J0CGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEGg1
+ lTBwyZKwLZUP/0dnbhDc229u2u6WtK1s1cSd9WsflGXGagkR6liJ4um3XCfYWDHvIdkHYC1t
+ MNcVHFBwmQkawxsYvgO8kXT3SaFZe4ISfB4K4CL2qp4JO+nJdlFUbZI7cz/Td9z8nHjMcWYF
+ IQuTsWOLs/LBMTs+ANumibtw6UkiGVD3dfHJAOPNApjVr+M0P/lVmTeP8w0uVcd2syiaU5jB
+ aht9CYATn+ytFGWZnBEEQFnqcibIaOrmoBLu2b3fKJEd8Jp7NHDSIdrvrMjYynmc6sZKUqH2
+ I1qOevaa8jUg7wlLJAWGfIqnu85kkqrVOkbNbk4TPub7VOqA6qG5GCNEIv6ZY7HLYd/vAkVY
+ E8Plzq/NwLAuOWxvGrOl7OPuwVeR4hBDfcrNb990MFPpjGgACzAZyjdmYoMu8j3/MAEW4P0z
+ F5+EYJAOZ+z212y1pchNNauehORXgjrNKsZwxwKpPY9qb84E3O9KYpwfATsqOoQ6tTgr+1BR
+ CCwP712H+E9U5HJ0iibN/CDZFVPL1bRerHziuwuQuvE0qWg0+0SChFe9oq0KAwEkVs6ZDMB2
+ P16MieEEQ6StQRlvy2YBv80L1TMl3T90Bo1UUn6ARXEpcbFE0/aORH/jEXcRteb+vuik5UGY
+ 5TsyLYdPur3TXm7XDBdmmyQVJjnJKYK9AQxj95KlXLVO38lczsFNBFRjzmoBEACyAxbvUEhd
+ GDGNg0JhDdezyTdN8C9BFsdxyTLnSH31NRiyp1QtuxvcqGZjb2trDVuCbIzRrgMZLVgo3upr
+ MIOx1CXEgmn23Zhh0EpdVHM8IKx9Z7V0r+rrpRWFE8/wQZngKYVi49PGoZj50ZEifEJ5qn/H
+ Nsp2+Y+bTUjDdgWMATg9DiFMyv8fvoqgNsNyrrZTnSgoLzdxr89FGHZCoSoAK8gfgFHuO54B
+ lI8QOfPDG9WDPJ66HCodjTlBEr/Cwq6GruxS5i2Y33YVqxvFvDa1tUtl+iJ2SWKS9kCai2DR
+ 3BwVONJEYSDQaven/EHMlY1q8Vln3lGPsS11vSUK3QcNJjmrgYxH5KsVsf6PNRj9mp8Z1kIG
+ qjRx08+nnyStWC0gZH6NrYyS9rpqH3j+hA2WcI7De51L4Rv9pFwzp161mvtc6eC/GxaiUGuH
+ BNAVP0PY0fqvIC68p3rLIAW3f97uv4ce2RSQ7LbsPsimOeCo/5vgS6YQsj83E+AipPr09Caj
+ 0hloj+hFoqiticNpmsxdWKoOsV0PftcQvBCCYuhKbZV9s5hjt9qn8CE86A5g5KqDf83Fxqm/
+ vXKgHNFHE5zgXGZnrmaf6resQzbvJHO0Fb0CcIohzrpPaL3YepcLDoCCgElGMGQjdCcSQ+Ci
+ FCRl0Bvyj1YZUql+ZkptgGjikQARAQABwsFfBBgBAgAJBQJUY85qAhsMAAoJEGg1lTBwyZKw
+ l4IQAIKHs/9po4spZDFyfDjunimEhVHqlUt7ggR1Hsl/tkvTSze8pI1P6dGp2XW6AnH1iayn
+ yRcoyT0ZJ+Zmm4xAH1zqKjWplzqdb/dO28qk0bPso8+1oPO8oDhLm1+tY+cOvufXkBTm+whm
+ +AyNTjaCRt6aSMnA/QHVGSJ8grrTJCoACVNhnXg/R0g90g8iV8Q+IBZyDkG0tBThaDdw1B2l
+ asInUTeb9EiVfL/Zjdg5VWiF9LL7iS+9hTeVdR09vThQ/DhVbCNxVk+DtyBHsjOKifrVsYep
+ WpRGBIAu3bK8eXtyvrw1igWTNs2wazJ71+0z2jMzbclKAyRHKU9JdN6Hkkgr2nPb561yjcB8
+ sIq1pFXKyO+nKy6SZYxOvHxCcjk2fkw6UmPU6/j/nQlj2lfOAgNVKuDLothIxzi8pndB8Jju
+ KktE5HJqUUMXePkAYIxEQ0mMc8Po7tuXdejgPMwgP7x65xtfEqI0RuzbUioFltsp1jUaRwQZ
+ MTsCeQDdjpgHsj+P2ZDeEKCbma4m6Ez/YWs4+zDm1X8uZDkZcfQlD9NldbKDJEXLIjYWo1PH
+ hYepSffIWPyvBMBTW2W5FRjJ4vLRrJSUoEfJuPQ3vW9Y73foyo/qFoURHO48AinGPZ7PC7TF
+ vUaNOTjKedrqHkaOcqB185ahG2had0xnFsDPlx5y
+In-Reply-To: <nf6gbtgn7lu4pvewuhrwca2efaxrkdhxazw3oktaixn5q5yg5r@7y74irve5udw>
 
-On Thu, Feb 13, 2025 at 02:46:49PM -0800, Suren Baghdasaryan wrote:
-...
-> While this vm_lock replacement does not yet result in a smaller
-> vm_area_struct (it stays at 256 bytes due to cacheline alignment), it
-> allows for further size optimization by structure member regrouping
-> to bring the size of vm_area_struct below 192 bytes.
+This is a multi-part message in MIME format.
+--------------0kQnuKsAPFQNhFMA095Sb1SP
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+On 2/20/25 10:27, Lucas De Marchi wrote:
+> On Thu, Feb 20, 2025 at 08:28:01AM -0800, Dave Hansen wrote:
+>> On 2/20/25 07:36, Lucas De Marchi wrote:
+>>> On some boots the read of MSR_PP1_ENERGY_STATUS msr returns 0, causing
+>>> perf_msr_probe() to make the power/events/energy-gpu event non-visible.
+>>> When that happens, the msr always read 0 until the graphics module (i915
+>>> for Meteor Lake, xe for Lunar Lake) is loaded. Then it starts returning
+>>> something different and re-loading the rapl module "fixes" it.
+>>
+>> What's the root cause here? Did the kernel do something funky? Or is
+>> this a hardware bug?
 > 
-> Suggested-by: Peter Zijlstra <peterz@infradead.org>
-> Suggested-by: Matthew Wilcox <willy@infradead.org>
-> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-> ---
-> Changes since v9 [1]:
-> - Use __refcount_inc_not_zero_limited_acquire() in vma_start_read(),
-> per Hillf Danton
-> - Refactor vma_assert_locked() to avoid vm_refcnt read when CONFIG_DEBUG_VM=n,
-> per Mateusz Guzik
-> - Update changelog, per Wei Yang
-> - Change vma_start_read() to return EAGAIN if vma got isolated and changed
-> lock_vma_under_rcu() back to detect this condition, per Wei Yang
-> - Change VM_BUG_ON_VMA() to WARN_ON_ONCE() when checking vma detached state,
-> per Lorenzo Stoakes
-> - Remove Vlastimil's Reviewed-by since code is changed
+> From what I can see, the kernel is reading the value and deciding that "if
+> it's 0, it doesn't really have that", which is not really true. For
+> these platforms sometimes it keeps returning 0 until the gpu is
+> later powered on, which only happens when xe / i915 probes.
+> 
+> But what I don't really understand is why the behavior changes from one
+> boot to another. I'm assuming it depends on some funky firmware
+> behavior.
 
-This causes crashes (NULL pointer deref) with linux-next when running
-the ltp test suite; mtest06 (mmap1) test case.
+Could we root cause this a _bit_ better, please?
 
-The bug seems to be quite obvious:
+Right now, it seems like you noted some weird behavior on one out of the
+22 "model_skl" CPUs. You then tested on at least 4 of those CPUs and
+found similar behavior. So, you copied, verbatim, the
+intel_rapl_skl_msrs and model_skl structures. Then, flipped the
+perf_msr->no_check bit for one of the 5 MSRs. There's no note on why the
+one bit got flipped or that it's a presumed CPU issue.
 
-> @@ -6424,15 +6492,18 @@ struct vm_area_struct *lock_vma_under_rcu(struct mm_struct *mm,
->  	if (!vma)
->  		goto inval;
->  
-> -	if (!vma_start_read(vma))
-> -		goto inval;
-> +	vma = vma_start_read(vma);
-> +	if (IS_ERR_OR_NULL(vma)) {
-            ^^^^^^^^^^^^^^^^^^^
-> +		/* Check if the VMA got isolated after we found it */
-> +		if (PTR_ERR(vma) == -EAGAIN) {
-> +			vma_end_read(vma);
-                        ^^^^^^^^^^^^^^^^
+To continue the trajectory that this patch sets us on, each CPU model
+that comes out needs to be tested. When a new CPU shows up, which one is
+it? "model_skl" with the (presumed) CPU bug fixed or "model_rpl"
+without? How would someone even know how to test it? It's certainly not
+documented in the code.
+
+I don't think that's a sustainable trajectory.
+
+We need to figure out whether the kernel is buggy or the hardware is buggy.
+
+If the hardware is buggy, we need to go ask the hardware guys to publish
+an erratum about the bug so there are *bounds* on where the issue shows
+up. Basically make the hardware guys document the nasty behavior instead
+of having us test every CPU.
+
+Or, if we simply can't trust MSR_PP1_ENERGY_STATUS, let's just do the
+attached patch. What's the downside on a non-buggy CPU of doing this?
+--------------0kQnuKsAPFQNhFMA095Sb1SP
+Content-Type: text/x-patch; charset=UTF-8; name="rapl.patch"
+Content-Disposition: attachment; filename="rapl.patch"
+Content-Transfer-Encoding: base64
+
+ZGlmZiAtLWdpdCBhL2FyY2gveDg2L2V2ZW50cy9yYXBsLmMgYi9hcmNoL3g4Ni9ldmVudHMv
+cmFwbC5jCmluZGV4IGQzYmIzODY1YzFiMWYuLjViZjdjNjg2OTZmMzMgMTAwNjQ0Ci0tLSBh
+L2FyY2gveDg2L2V2ZW50cy9yYXBsLmMKKysrIGIvYXJjaC94ODYvZXZlbnRzL3JhcGwuYwpA
+QCAtNTgwLDcgKzU4MCw3IEBAIHN0YXRpYyBzdHJ1Y3QgcGVyZl9tc3IgaW50ZWxfcmFwbF9t
+c3JzW10gPSB7CiAJW1BFUkZfUkFQTF9QUDBdICA9IHsgTVNSX1BQMF9FTkVSR1lfU1RBVFVT
+LCAgICAgICZyYXBsX2V2ZW50c19jb3Jlc19ncm91cCwgdGVzdF9tc3IsIGZhbHNlLCBSQVBM
+X01TUl9NQVNLIH0sCiAJW1BFUkZfUkFQTF9QS0ddICA9IHsgTVNSX1BLR19FTkVSR1lfU1RB
+VFVTLCAgICAgICZyYXBsX2V2ZW50c19wa2dfZ3JvdXAsICAgdGVzdF9tc3IsIGZhbHNlLCBS
+QVBMX01TUl9NQVNLIH0sCiAJW1BFUkZfUkFQTF9SQU1dICA9IHsgTVNSX0RSQU1fRU5FUkdZ
+X1NUQVRVUywgICAgICZyYXBsX2V2ZW50c19yYW1fZ3JvdXAsICAgdGVzdF9tc3IsIGZhbHNl
+LCBSQVBMX01TUl9NQVNLIH0sCi0JW1BFUkZfUkFQTF9QUDFdICA9IHsgTVNSX1BQMV9FTkVS
+R1lfU1RBVFVTLCAgICAgICZyYXBsX2V2ZW50c19ncHVfZ3JvdXAsICAgdGVzdF9tc3IsIGZh
+bHNlLCBSQVBMX01TUl9NQVNLIH0sCisJW1BFUkZfUkFQTF9QUDFdICA9IHsgTVNSX1BQMV9F
+TkVSR1lfU1RBVFVTLCAgICAgICZyYXBsX2V2ZW50c19ncHVfZ3JvdXAsICAgdGVzdF9tc3Is
+IHRydWUsICBSQVBMX01TUl9NQVNLIH0sCiAJW1BFUkZfUkFQTF9QU1lTXSA9IHsgTVNSX1BM
+QVRGT1JNX0VORVJHWV9TVEFUVVMsICZyYXBsX2V2ZW50c19wc3lzX2dyb3VwLCAgdGVzdF9t
+c3IsIGZhbHNlLCBSQVBMX01TUl9NQVNLIH0sCiB9OwogCg==
+
+--------------0kQnuKsAPFQNhFMA095Sb1SP--
 
