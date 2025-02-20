@@ -1,127 +1,151 @@
-Return-Path: <linux-kernel+bounces-524546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49A8EA3E464
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 19:59:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 19442A3E46B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 20:00:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72966189FE45
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 18:59:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3BCB19C3816
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 18:59:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86C512638A2;
-	Thu, 20 Feb 2025 18:57:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F12A263C6E;
+	Thu, 20 Feb 2025 18:57:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="xyXblza+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gvqFbohf"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D38701C6FE9;
-	Thu, 20 Feb 2025 18:57:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9EB82638AD;
+	Thu, 20 Feb 2025 18:57:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740077857; cv=none; b=NHTPen4iaBqVqI9dBx8cGjM3UM3vDN0jdzt5QJIStzCSXhNnZmU/zBAZu7p225hix10K6iIg2E8hQh1PyZiP2qRxWNWXPlx9K/lGzfISfJVV0l2cjkQjn7hXOzMGg+jc/Gt0gcINItNuV0+wyZ+0WGYLvMyhNJ+U6WI2nszwOVo=
+	t=1740077864; cv=none; b=OshWQ4TE9EO9FQlDtmPhTte6GHwiOoFy5RMi89CfHBJWtLWGE368Snx3rbgyUhkW+qxudqZMXsedV7C5t2q4yvjh0jL/QqAS33JXMv3RMKBDBa4hakiWAxXbjYnHeKTPPp5maKMKYBj/k9A4saHWoWOlEwLTAaeXQxzMGM73cZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740077857; c=relaxed/simple;
-	bh=f4Sy5aHgWXeP34/uoGdOVhtADDX1fanqW5hZIfwVGik=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P7e+IuVmDhkPKSRI11lyASpfF3r7saDejUq0a5xDvDrc+ZzwaMB08RpbzNUXV1ximLvHkX4Fdx1JDbnFAgG6TkUKJFJwjWiosd6bd9YNyqgBDRelt58hbSpOylG5lbge2nk/Rb2Gxcug3oZincFfGN4ZSanBCqyogiQDCZOt9x0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=xyXblza+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E62F5C4CED1;
-	Thu, 20 Feb 2025 18:57:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1740077856;
-	bh=f4Sy5aHgWXeP34/uoGdOVhtADDX1fanqW5hZIfwVGik=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=xyXblza+2mY8EC2GL0p+51GwRMyqOatohzm1fdbNL8UsFTqkfFCqQHyRdsd7zwXEL
-	 bht/sYAFTFZbun4oQsIVFvT9mDf1M4Ok+qPmA/MsCq5/Vg+PBVJhysMRX7PEEAZ6EO
-	 wN6WknCaE4gBA2pDtp/+gBQiJDXTbnfe5XH04WGY=
-Date: Thu, 20 Feb 2025 19:57:33 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: William McVicker <willmcvicker@google.com>
-Cc: Prashanth K <prashanth.k@oss.qualcomm.com>,
-	Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
-	Peter Korsgaard <peter@korsgaard.com>,
-	Sabyrzhan Tasbolatov <snovitoll@gmail.com>,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org, andre.draszik@linaro.org,
-	kernel-team@android.com
-Subject: Re: [PATCH v2] usb: gadget: Set self-powered based on MaxPower and
- bmAttributes
-Message-ID: <2025022032-cruelness-framing-2a10@gregkh>
-References: <20250217120328.2446639-1-prashanth.k@oss.qualcomm.com>
- <Z7dv4rEILkC9yRwX@google.com>
+	s=arc-20240116; t=1740077864; c=relaxed/simple;
+	bh=zSrG59aoaEow+aaKtErqEiXfB8XXK57u995KZveihkc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XFS2O0pjBPeFApgldqeBuV29pykShvtHWYCGnpCiLkWZgySIv08dcdrKd7c2wcLBM0AQPi6b+apWGEwVvbfjqYWLTsFROBeW/FhB4DrGlLPIYsw6RAdBHXkd91DnXzHl1pq5eFIFR21lKqPlSlMg49eAcWkgZrZW1eZuStPjh+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gvqFbohf; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740077863; x=1771613863;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=zSrG59aoaEow+aaKtErqEiXfB8XXK57u995KZveihkc=;
+  b=gvqFbohfu/WfF1WEIHovlSdX1hGWBtHdXMV7Xs131j9c03JEjUhAC4Sh
+   Qx/bJWvG6Ht/uOQGH7FM+fhUKDQuLfhPGFXzt7MyDUyuS1Qrr2essrT9D
+   ZeA5tk3ZdQcoci47XJqZnn05nyv8Bz5IBVMII+9BKc33Fg2DQLeHRZomd
+   FmwY37aZGIrqAA9wqcGnJJd8O8KG1Pn1RCr6q0w2SFrshJae8KOEcKze8
+   6nSMDAfS3DZjndoVmwAAdIn/Rdlj3J2VcgKm8NXq8GkTMWVqUibn/FVze
+   uE6M4Vk6rPWEGGtEgTWLGBn5do7ieQc4AhXaJiH1tFrFcKcs/lWgbjAJ1
+   w==;
+X-CSE-ConnectionGUID: mEHnw4t0TzK6l5GUaGEFqg==
+X-CSE-MsgGUID: KlmhYznqSCKZYOe3nO48sw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11351"; a="44658007"
+X-IronPort-AV: E=Sophos;i="6.13,302,1732608000"; 
+   d="scan'208";a="44658007"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Feb 2025 10:57:42 -0800
+X-CSE-ConnectionGUID: ZJ30zw5iSx28IyrfslwqYA==
+X-CSE-MsgGUID: QwPKbgULQnONMDh0TpEyWg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,302,1732608000"; 
+   d="scan'208";a="120110313"
+Received: from puneetse-mobl.amr.corp.intel.com (HELO [10.125.110.112]) ([10.125.110.112])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Feb 2025 10:57:41 -0800
+Message-ID: <7ab84fc9-2a1f-4737-a272-51adf4904d0a@intel.com>
+Date: Thu, 20 Feb 2025 11:57:40 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z7dv4rEILkC9yRwX@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 1/1] cxl/pmem: debug invalid serial number data
+To: Yuquan Wang <wangyuquan1236@phytium.com.cn>, dave@stgolabs.net,
+ jonathan.cameron@huawei.com, alison.schofield@intel.com,
+ vishal.l.verma@intel.com, ira.weiny@intel.com, dan.j.williams@intel.com
+Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
+ chenbaozi@phytium.com.cn
+References: <20250219040029.515451-1-wangyuquan1236@phytium.com.cn>
+ <20250219040029.515451-2-wangyuquan1236@phytium.com.cn>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20250219040029.515451-2-wangyuquan1236@phytium.com.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Feb 20, 2025 at 10:09:38AM -0800, William McVicker wrote:
-> Hi Prashanth,
+
+
+On 2/18/25 9:00 PM, Yuquan Wang wrote:
+> In a nvdimm interleave-set each device with an invalid or zero
+> serial number may cause pmem region initialization to fail, but in
+> cxl case such device could still set cookies of nd_interleave_set
+> and create a nvdimm pmem region.
 > 
-> On 02/17/2025, Prashanth K wrote:
-> > Currently the USB gadget will be set as bus-powered based solely
-> > on whether its bMaxPower is greater than 100mA, but this may miss
-> > devices that may legitimately draw less than 100mA but still want
-> > to report as bus-powered. Similarly during suspend & resume, USB
-> > gadget is incorrectly marked as bus/self powered without checking
-> > the bmAttributes field. Fix these by configuring the USB gadget
-> > as self or bus powered based on bmAttributes, and explicitly set
-> > it as bus-powered if it draws more than 100mA.
-> > 
-> > Cc: stable@vger.kernel.org
-> > Fixes: 5e5caf4fa8d3 ("usb: gadget: composite: Inform controller driver of self-powered")
-> > Signed-off-by: Prashanth K <prashanth.k@oss.qualcomm.com>
-> > ---
-> > Changes in v2:
-> > - Didn't change anything from RFC.
-> > - Link to RFC: https://lore.kernel.org/all/20250204105908.2255686-1-prashanth.k@oss.qualcomm.com/
-> > 
-> >  drivers/usb/gadget/composite.c | 16 +++++++++++-----
-> >  1 file changed, 11 insertions(+), 5 deletions(-)
-> > 
-> > diff --git a/drivers/usb/gadget/composite.c b/drivers/usb/gadget/composite.c
-> > index bdda8c74602d..1fb28bbf6c45 100644
-> > --- a/drivers/usb/gadget/composite.c
-> > +++ b/drivers/usb/gadget/composite.c
-> > @@ -1050,10 +1050,11 @@ static int set_config(struct usb_composite_dev *cdev,
-> >  	else
-> >  		usb_gadget_set_remote_wakeup(gadget, 0);
-> >  done:
-> > -	if (power <= USB_SELF_POWER_VBUS_MAX_DRAW)
-> > -		usb_gadget_set_selfpowered(gadget);
-> > -	else
-> > +	if (power > USB_SELF_POWER_VBUS_MAX_DRAW ||
-> > +	    !(c->bmAttributes & USB_CONFIG_ATT_SELFPOWER))
-> >  		usb_gadget_clear_selfpowered(gadget);
-> > +	else
-> > +		usb_gadget_set_selfpowered(gadget);
-> >  
-> >  	usb_gadget_vbus_draw(gadget, power);
-> >  	if (result >= 0 && cdev->delayed_status)
-> > @@ -2615,7 +2616,9 @@ void composite_suspend(struct usb_gadget *gadget)
-> >  
-> >  	cdev->suspended = 1;
-> >  
-> > -	usb_gadget_set_selfpowered(gadget);
-> > +	if (cdev->config->bmAttributes & USB_CONFIG_ATT_SELFPOWER)
-> > +		usb_gadget_set_selfpowered(gadget);
+> This adds the validation of serial number in cxl pmem region creation.
+> The event of no serial number would cause to fail to set the cookie
+> and pmem region.
 > 
-> I'm hitting a null pointer derefence here on my Pixel 6 device on suspend.  I
-> haven't dug deep into it how we get here, but in my case `cdev->config` is
-> NULL. This happens immediate after booting my device. I verified that just
-> adding a NULL check fixes the issue and dwc3 gadget can successfully suspend.
+> For cxl-test to work properly, always +1 on mock device's serial
+> number.
+> 
+> Signed-off-by: Yuquan Wang <wangyuquan1236@phytium.com.cn>
 
-This was just fixed in my tree today with this commit:
-	https://lore.kernel.org/r/20250220120314.3614330-1-m.szyprowski@samsung.com
+Applied to cxl/next
 
-Hope this helps,
+> ---
+>  drivers/cxl/pmem.c           | 12 ++++++++++--
+>  tools/testing/cxl/test/mem.c |  2 +-
+>  2 files changed, 11 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/cxl/pmem.c b/drivers/cxl/pmem.c
+> index f9c95996e937..11c5a65acacf 100644
+> --- a/drivers/cxl/pmem.c
+> +++ b/drivers/cxl/pmem.c
+> @@ -375,6 +375,16 @@ static int cxl_pmem_region_probe(struct device *dev)
+>  			goto out_nvd;
+>  		}
+>  
+> +		if (cxlds->serial == 0) {
+> +			/* include missing alongside invalid in this error message. */
+> +			dev_err(dev, "%s: invalid or missing serial number\n",
+> +				dev_name(&cxlmd->dev));
+> +			rc = -ENXIO;
+> +			goto out_nvd;
+> +		}
+> +		info[i].serial = cxlds->serial;
+> +		info[i].offset = m->start;
+> +
+>  		m->cxl_nvd = cxl_nvd;
+>  		mappings[i] = (struct nd_mapping_desc) {
+>  			.nvdimm = nvdimm,
+> @@ -382,8 +392,6 @@ static int cxl_pmem_region_probe(struct device *dev)
+>  			.size = m->size,
+>  			.position = i,
+>  		};
+> -		info[i].offset = m->start;
+> -		info[i].serial = cxlds->serial;
+>  	}
+>  	ndr_desc.num_mappings = cxlr_pmem->nr_mappings;
+>  	ndr_desc.mapping = mappings;
+> diff --git a/tools/testing/cxl/test/mem.c b/tools/testing/cxl/test/mem.c
+> index 8d731bd63988..9e098cf06603 100644
+> --- a/tools/testing/cxl/test/mem.c
+> +++ b/tools/testing/cxl/test/mem.c
+> @@ -1533,7 +1533,7 @@ static int cxl_mock_mem_probe(struct platform_device *pdev)
+>  	mds->event.buf = (struct cxl_get_event_payload *) mdata->event_buf;
+>  	INIT_DELAYED_WORK(&mds->security.poll_dwork, cxl_mockmem_sanitize_work);
+>  
+> -	cxlds->serial = pdev->id;
+> +	cxlds->serial = pdev->id + 1;
+>  	if (is_rcd(pdev))
+>  		cxlds->rcd = true;
+>  
 
-greg k-h
 
