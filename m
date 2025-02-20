@@ -1,123 +1,143 @@
-Return-Path: <linux-kernel+bounces-522772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27D66A3CE60
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 02:02:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B95FA3CE61
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 02:03:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07EAF176075
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 01:02:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C64C13A5F91
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 01:03:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ACE15D477;
-	Thu, 20 Feb 2025 01:02:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 320742E630;
+	Thu, 20 Feb 2025 01:03:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="gUGsPYoT"
-Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fVEmlWsR"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A232F17BB6
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 01:02:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14CBB28F5;
+	Thu, 20 Feb 2025 01:03:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740013374; cv=none; b=e9CIXfL+pjLV8GrPLSfc/x23K1wxxfpo6s+eT/5912I72WheuT7OcATUjusi0sRbqwAkiCgoq26LfMVOvLFLjE3b6m6cPNBU5kyJpC7gLaiLA6yxTgi10BlsKkFtS9YlAmYgl8aOTZbEnV1qgB0QpXsMr4GOV2Gf81cAeekKTqk=
+	t=1740013407; cv=none; b=unlVnryJPyrLh7IsOPciSISxomZPmDosvmV9rjdotkO6tAcFS3hMMJQbEGQSup3n28dvCeO6KwuciA1Rj01Jsheg4CkFSihFU6Mb7JELaJ81feu2IXl/owGPmf7rp3NRFvU0aU4xs6VbfUapzOHBX/sdAIKhR0TVGkQvwg2ZrHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740013374; c=relaxed/simple;
-	bh=ZhTrlgc+69pvUq4i22CA5jurxLSucq94AvJJuIwOxmo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lYeZUIb5g1lKjq5J+g8lI8GChAHiulIumUIwfp6k13uD+qhX8bgrANtCagu6IM4HenKWZEmOo2x7X4CqCQ2rbaF5GOdLsg+TN9KY5yF1/pemunk72alowBHK42kxbF2idsQB266ZWT24uCDOJiUPsC2gmL5tRYP9Lq/JmEXERLU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=gUGsPYoT; arc=none smtp.client-ip=209.85.219.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-6e66a7e2754so3160616d6.3
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 17:02:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1740013371; x=1740618171; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=CRs/JKSwsGTXcOODWipBNJ36S3MEcNOB+8tXv5oqvN0=;
-        b=gUGsPYoTBnXMdnc1j/wgiRf2SAmzNArH97FOmILfk+mhCjsuT96jf6npdJWFeae7tW
-         9TKdnH4/wx0et9nb9W6vTuYCGlmAvJQ3nEC2GDtZb834HI7XgiRkXoTnVJBO3wVHkxHd
-         FDYZEuHIm+qi13VEBMMmcDD+w8y97yQZ25g3rWmjfZUWfTriZqAPFDCcBEYWwJngjV7M
-         jJQXZ8EAVgM2aMeilK+Bq5ywzz2jDEh0RXI8fJ4xT0uE/3KInyjF0AMgiNvbrkiX/WDy
-         jCoheo+MCBwMrQoggsM3IIGCEPG2xVaMHVErZU9LR59cJt+FVKX3krpmSFsnIXljIOTH
-         Y0OA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740013371; x=1740618171;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CRs/JKSwsGTXcOODWipBNJ36S3MEcNOB+8tXv5oqvN0=;
-        b=BKwUH0VZYG4pfBXDF43h5ZbT1NpVN/s+K+u734NV4f0UxRIOmKBD/60urjZB6lpcIL
-         9vd/sFsB3iedSJYc6r+D6+AZDR4FrVOsEm6KC4yJOxUoHtBLprfNaDZ7pWLqi7wIiiFK
-         OJ8d9vpSGQM3vMv6Rx7duUl6D8XGblSFAzHRhHSs8byTT6r9vqbGdSnt5Rdh730Lv1OS
-         LpBBRhf9Qib5HkSj11fpffhP9lFrrNSMPU6Zv5EuQg4boGjPMNA2NIIXQ5TCfn/oxr+h
-         9AtMT7skwxnweItmruj4D5uBjo/1TAHiPT0eZpOyGRfFEPrjIGqbFzFuGYDPOLQiYs2t
-         5GTA==
-X-Forwarded-Encrypted: i=1; AJvYcCVqeg6SmwQfOhdGTZimFq5G/n34QBsnpThB4/Bv9lHcQNWyKpmhGNGZsQhyHg6YDXlGUoZG7l2gDPOtB84=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwIBoroaQDsW/eEMVjuVZibdgkCzD21+XZODeAlX8eekUGpMuVA
-	horxjtvrfeUTnEJ2o4Wbs+xeSNRz0os0bwjFFrSJTeVcLMSN0tGGgh8FQbaxWiCQaZsIe57b69c
-	2
-X-Gm-Gg: ASbGncsPI0wkWVx+kw7iNm1QY+K0W6dDd/3Md28FYhxpDxn+TRizaLBwk88k6DRIkHk
-	+pTQAPfQsZqtcKaj2cV1N30h3KQCo+SYDSZWi2mHtxeNqE/nQJdgw4D1VQUp8LCUV9bQVsRoNfk
-	eR3HHolkV2jfubBv4gQGVz4FpCqrBHohT1o7eS0lpHoc4XD2UwxzUhSz7JushQr9BLK+Up+v+EL
-	+Q21ivOtCkjoCORBH5Bl9H5ZTU0aHlXt6pDCYcup5cyLbhqg8f2JTUkuBquakO0fzXjSRUfu6ut
-	mqD7d1c/H6h+lbnNrNreR/cgVM9rL09IF8dp4tTXYSWyzlUZzJ3p5+ZXVhL1+D1m
-X-Google-Smtp-Source: AGHT+IELnZYcib0uVQ5YAM0A6QDyvBF/tj8DmFXHYAT7rDf1dWIAeZvN7kiG5K6bL1Spk0FG/2Rv+w==
-X-Received: by 2002:a05:6214:19e8:b0:6e6:6252:ad1d with SMTP id 6a1803df08f44-6e6a4b91dc7mr7604826d6.20.1740013371423;
-        Wed, 19 Feb 2025 17:02:51 -0800 (PST)
-Received: from ziepe.ca (hlfxns017vw-142-68-128-5.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.128.5])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e65d9f31fdsm80390616d6.69.2025.02.19.17.02.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Feb 2025 17:02:50 -0800 (PST)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1tkuxm-00000000D72-1DAT;
-	Wed, 19 Feb 2025 21:02:50 -0400
-Date: Wed, 19 Feb 2025 21:02:50 -0400
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Lu Baolu <baolu.lu@linux.intel.com>
-Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Fenghua Yu <fenghua.yu@intel.com>,
-	Dave Jiang <dave.jiang@intel.com>, Vinod Koul <vkoul@kernel.org>,
-	Zhangfei Gao <zhangfei.gao@linaro.org>,
-	Zhou Wang <wangzhou1@hisilicon.com>, iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 08/12] iommufd/selftest: Put iopf enablement in domain
- attach path
-Message-ID: <20250220010250.GQ3696814@ziepe.ca>
-References: <20250214061104.1959525-1-baolu.lu@linux.intel.com>
- <20250214061104.1959525-9-baolu.lu@linux.intel.com>
+	s=arc-20240116; t=1740013407; c=relaxed/simple;
+	bh=B0p1EXxnI6i4wyesOZtGNKWI3uZ3+W2ep12QIsrLF+0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=i6ywRWEpWeQMN7UqhoRMcfErmbkl6QZc+juwZVGR1LEkTMEf9DAm0vB7oouHh7vQemS9EODL36vVWZ4v6rqSld/us98a+8M3IjAtFExnokcJdlXCyaTGgXYoYLmV0SJ1kWig6LBeiV0oc97gVDyrIJ5J8r4iypcUWzoVG3wGF/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fVEmlWsR; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740013406; x=1771549406;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=B0p1EXxnI6i4wyesOZtGNKWI3uZ3+W2ep12QIsrLF+0=;
+  b=fVEmlWsR1ZsM3iMjZSHm7VDzUtVq21r+DZVOOS5YZzrFPEWPjsPaagXp
+   bQRhr2p33SIsLTU9FZZbM6RaLD1VOmD+7FahMOFTXtMT9hcAOJoowPqvC
+   nQ4u1aPszwkdbrnC6LafbgQ0VYR3T5DVY0374Cq1H6SsPTqiKWqHPSY4t
+   zvZVQ4s/OOl5/tKVvN4xRzhvAyH+SXEMgy3OZ4kw5i3YLClnE7CrfZWYc
+   5GQT25DS1VfDoL6HGxz8hQlrqJpJyq+nSmPoNghqxyCoy45pdz+P12Dn/
+   fepjqJ1klmQdDMLdTBf6+DGPIHpSGBguMDilAEaCxY8Y5i5cA7pW7uUsZ
+   A==;
+X-CSE-ConnectionGUID: RY+OWawZRD2i5bqcOWuB/A==
+X-CSE-MsgGUID: mqfNhe3XQF+jHuqKEK/RlA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11350"; a="40632064"
+X-IronPort-AV: E=Sophos;i="6.13,300,1732608000"; 
+   d="scan'208";a="40632064"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Feb 2025 17:03:26 -0800
+X-CSE-ConnectionGUID: cNZN/oXSTjaumHTBV4AOnw==
+X-CSE-MsgGUID: UdJxh4+ORleyQAR64tZPlQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="118984759"
+Received: from inaky-mobl1.amr.corp.intel.com (HELO [10.125.110.11]) ([10.125.110.11])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Feb 2025 17:03:24 -0800
+Message-ID: <a953bded-10b9-47c6-a595-062ac86e489e@intel.com>
+Date: Wed, 19 Feb 2025 18:03:22 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250214061104.1959525-9-baolu.lu@linux.intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 02/18] cxl/pci: Moving code in cxl_hdm_decode_init()
+To: Robert Richter <rrichter@amd.com>,
+ Alison Schofield <alison.schofield@intel.com>,
+ Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+ Dan Williams <dan.j.williams@intel.com>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ Davidlohr Bueso <dave@stgolabs.net>
+Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Gregory Price <gourry@gourry.net>,
+ "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
+ Terry Bowman <terry.bowman@amd.com>
+References: <20250211095349.981096-1-rrichter@amd.com>
+ <20250211095349.981096-3-rrichter@amd.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20250211095349.981096-3-rrichter@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Feb 14, 2025 at 02:11:00PM +0800, Lu Baolu wrote:
-> @@ -197,11 +201,19 @@ static int mock_domain_nop_attach(struct iommu_domain *domain,
->  	if (domain->dirty_ops && (mdev->flags & MOCK_FLAGS_DEVICE_NO_DIRTY))
->  		return -EINVAL;
+
+
+On 2/11/25 2:53 AM, Robert Richter wrote:
+> Commit 3f9e07531778 ("cxl/pci: simplify the check of mem_enabled in
+> cxl_hdm_decode_init()") changed the code flow in this function. The
+> root port is determined before a check to leave the function. Since
+> the root port is not used by the check it can be moved to run the
+> check first. This improves code readability and avoids unnesessary
+> code execution.
+> 
+> Signed-off-by: Robert Richter <rrichter@amd.com>
+> Reviewed-by: Gregory Price <gourry@gourry.net>
+> Reviewed-by: Davidlohr Bueso <dave@stgolabs.net>
+> Tested-by: Gregory Price <gourry@gourry.net>
+
+Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+> ---
+>  drivers/cxl/core/pci.c | 16 ++++++++--------
+>  1 file changed, 8 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/cxl/core/pci.c b/drivers/cxl/core/pci.c
+> index 2ec8c97ab160..f8e22bc278c3 100644
+> --- a/drivers/cxl/core/pci.c
+> +++ b/drivers/cxl/core/pci.c
+> @@ -419,14 +419,6 @@ int cxl_hdm_decode_init(struct cxl_dev_state *cxlds, struct cxl_hdm *cxlhdm,
+>  	if (!hdm)
+>  		return -ENODEV;
 >  
-> +	return mock_dev_enable_iopf(dev, domain);
-> +}
+> -	root = to_cxl_port(port->dev.parent);
+> -	while (!is_cxl_root(root) && is_cxl_port(root->dev.parent))
+> -		root = to_cxl_port(root->dev.parent);
+> -	if (!is_cxl_root(root)) {
+> -		dev_err(dev, "Failed to acquire root port for HDM enable\n");
+> -		return -ENODEV;
+> -	}
+> -
+>  	if (!info->mem_enabled) {
+>  		rc = devm_cxl_enable_hdm(&port->dev, cxlhdm);
+>  		if (rc)
+> @@ -435,6 +427,14 @@ int cxl_hdm_decode_init(struct cxl_dev_state *cxlds, struct cxl_hdm *cxlhdm,
+>  		return devm_cxl_enable_mem(&port->dev, cxlds);
+>  	}
+>  
+> +	root = to_cxl_port(port->dev.parent);
+> +	while (!is_cxl_root(root) && is_cxl_port(root->dev.parent))
+> +		root = to_cxl_port(root->dev.parent);
+> +	if (!is_cxl_root(root)) {
+> +		dev_err(dev, "Failed to acquire root port for HDM enable\n");
+> +		return -ENODEV;
+> +	}
+> +
+>  	for (i = 0, allowed = 0; i < info->ranges; i++) {
+>  		struct device *cxld_dev;
+>  
 
-This isn't going to work for a replace type operation? Maybe like:
-
-if (old_domain->iopf_handler && !domain->iopf_handler)
-	return mock_dev_disable_iopf(dev, domain);
-if (old_domain->iopf_handler && domain->iopf_handler)
-        return 0;
-return mock_dev_enable_iopf(dev, domain);
-
-?
-
-Jason
 
