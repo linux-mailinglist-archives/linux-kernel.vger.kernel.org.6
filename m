@@ -1,167 +1,238 @@
-Return-Path: <linux-kernel+bounces-523568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C38FA3D883
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:26:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DF2DA3D877
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:25:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 768F1189FABA
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 11:25:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3DB63A126D
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 11:25:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 956491F8BCD;
-	Thu, 20 Feb 2025 11:20:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA69F1F8EFA;
+	Thu, 20 Feb 2025 11:21:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xf5d4Z0f"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="G++pR92V"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C0471F540F;
-	Thu, 20 Feb 2025 11:20:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C5E11F2382
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 11:21:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740050423; cv=none; b=FjnFnFid0nKwQ75wHpd6Kp3Up81bGmK4RuO8n2hJnuvRQVBRElLaebYfzf8s+WKtK0OQ8h2zMwwbJYMPLn/Edy95XXcCllSfLqKJeu6tzkY/jobl0A4+gKjYkfoyFXdX8CQqm+N3+rGJ2inoDjHhuUzyCruaK3bpJqmyIfKHDA8=
+	t=1740050471; cv=none; b=qyjl/lyZ7ulKs0PxrykbbBRzUXA/X9u2jQNEFCHGrqdE97GiGDt+5Oa6zIgVDkxwI3C6UEy0IoDI48vk1UB6yz0MsAeOrjMvAufgDj+i3rFQOZflhOwzt7/5TRNncsAEsI+sVouer11VPWorBrxFRGuqciLAexAPpDZkccicmOs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740050423; c=relaxed/simple;
-	bh=aB9iYa4f7CgYHrJR8ObpqI3CttJJdJHba49AY45THM8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=B1xMlUokAId9ObZymT5AfqOiOR7uc/pi1tpFyj/7IrvoKdPNDHG8iAsgfbzpSI6iwJQIR+PgzcUMlWIVkGKfPRv5eIPL6RGC7ro+1jacan20W0A1NPaC+SVpsteRrbRzb8vX8Hwif+cny4DQVCtZ6lA+4BajZKv49IFwOS8Ht4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xf5d4Z0f; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2fc4418c0e1so3256932a91.1;
-        Thu, 20 Feb 2025 03:20:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740050422; x=1740655222; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=RDdAz+z00kXmgO7AxUttI27htMRIY711jJ3qwv4+HTs=;
-        b=Xf5d4Z0fl+4W8nQJZuogOPMiqEM0dra9OpcznQWZ6/OH0MY0rObny/XWK3NOynOM7N
-         I9MAIqoXAIUR33dlfFUyjKgMvDbzs9q1p+iUeZA4yDtKCRhEBdOiabVRrg0EVFGGKqyx
-         kdS/dUIO7/POOrPmTHORLFPovbg4mnIevXjfOcEisiCC61fQCc/SbxHI0yxF36jAGeJl
-         mVuRRJVohJSsuh3W1btXRELoiCCUi2WcIV/uf9/1SBWGEeFPIg4/nLjNPJyEHf/XwBWu
-         +pXMrVW9wg96ZVmGV/8YfbgHV4iV0Rnpj07eew0H+GUi5K5YMCLWKlQlxmVUOlKM9KSV
-         bHZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740050422; x=1740655222;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=RDdAz+z00kXmgO7AxUttI27htMRIY711jJ3qwv4+HTs=;
-        b=syuqwGWCNAyuqbQ1Ygn9MFrSHZRjaqcXxMf6afKo/0m+IvGmx/0gzuiQpIrEXnm48o
-         jcMT2886WhjpD3PBHFAIPPZeiDs4Fxwg4NLeKh2WfDKhpLr0ldX4OzF2MZa7bDKE29mZ
-         dd95NNZupvsWGyo9kXiVys0o0rl6iRw2jZq0iGS4ZXvhpuKCOAF39810eOPER1qCxCCo
-         2gvqruJ7TdUnCJV93o6TTZ9vrrMm5sd1GHzLlw1oE1E1Nl70WjT2X4OWNR7+QZQ3TIgq
-         I1JHyt5WC4iBJvzE9NPQlM5JFaA2B1wrjwPbBdwrp/oO48UYk7Tcd/44KAeeEhcpFwMd
-         ENKg==
-X-Forwarded-Encrypted: i=1; AJvYcCWE8NLxS+2cJG3q4KgjAlYFer4xRIw5FjTKT+pcfFgu+EaMYLvYuLOEta7X4JC2Uk3NQtqBz+gaXRq7j90=@vger.kernel.org, AJvYcCWI/7ladKX9FYDiXMI6lFJXuMWvS0Wmp/aoskwhxiZ7zogreSASwjyxdSOYhHw9KGlwyGqT4Z6gf27N@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKJXxJefc1jP34V8ZiqH65S3F4nqehixC6PCB4PmLSs47vO+kY
-	Ixr60UYWHHt2FRvya56ijrMo0ZnS+ZkDuTzZG91Z0yWgfzfGCi/S
-X-Gm-Gg: ASbGnctDZhEi/FMYrzSVkqU3Vg872R1qIGH2VE58Ohf2VEjF1YwB0i5eKvZy/tHcTdW
-	lE56VoobzE+IqYUX+qaDSdESM78DFDXO5BiIIBoK06qP+N0V1Vgi3DQUEA0bWaehpY4HBjNC4wH
-	AsUhx6358jSfDOI3mJl1uNXJbQ8KoaOJLgvRd2mcOeDhNTf8NsuP0zha3jHSlIGITWIst78uAwX
-	IZiAA/VJS5RtW1+3TBVCYcCwArAkrj3VMvf7Tjbsv7G5stYcHIO8OIPsprYZj080xfOqvfkorMd
-	+scoJZMItHbwTiGej7puLq0CuJMfLrM=
-X-Google-Smtp-Source: AGHT+IGV4jQprhKqJGmQUGNTjzYtK0gBBu6xHVZW9GbADGQiOwx9wMtZT6Y4K+Qo0qZ7VcdtJx1nEQ==
-X-Received: by 2002:a05:6a21:6b18:b0:1e1:b105:158f with SMTP id adf61e73a8af0-1eee2fda2dbmr4692334637.19.1740050421582;
-        Thu, 20 Feb 2025 03:20:21 -0800 (PST)
-Received: from localhost.localdomain ([119.28.17.178])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-adcbe0311b6sm10704374a12.56.2025.02.20.03.20.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Feb 2025 03:20:21 -0800 (PST)
-From: Jinliang Zheng <alexjlzheng@gmail.com>
-X-Google-Original-From: Jinliang Zheng <alexjlzheng@tencent.com>
-To: agk@redhat.com,
-	snitzer@kernel.org,
-	mpatocka@redhat.com
-Cc: dm-devel@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	linux-xfs@vger.kernel.org,
-	flyingpeng@tencent.com,
-	txpeng@tencent.com,
-	dchinner@redhat.com,
-	Jinliang Zheng <alexjlzheng@tencent.com>
-Subject: [PATCH] dm: fix unconditional IO throttle caused by REQ_PREFLUSH
-Date: Thu, 20 Feb 2025 19:20:14 +0800
-Message-ID: <20250220112014.3209940-1-alexjlzheng@tencent.com>
-X-Mailer: git-send-email 2.41.1
+	s=arc-20240116; t=1740050471; c=relaxed/simple;
+	bh=+jtaZ+T/3naFge+HHi8EHFMtDvXf03uXZVpRSJzTGSE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=clFMJVmANTXriJjMR+tL610dfpR3dZglRcxV4eCqDwSZ7JY6tYno3yo0MzlrERjMUvt3UbEcwjif0gbSrQF9ZkMWIu11X6oU9AKiboGMl5XVCqZXBrDR0xsCM62N/ZgXrUiJfKy/6ImC8kWbqfkyaq2bSp9xOv6tg2JOFd4s8AI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=G++pR92V; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740050468;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=QV1VmjWCfOEKaMpohPFJd5Sqcy247FJXoWH0SaVd8aY=;
+	b=G++pR92VZkkrVWJ8h+GLnJJOfeRXqu26aPHIIvJrK9Jm/3jfxmQx2H65nTbFdrdKeIM7MP
+	yE8ZA/ufeH8fyqfr1SK3pARvmubQMbxkcJxgyNGRz+TXLblLt/KhGYeu9tJWEB2cslAdtA
+	HMiFb8WJY4cRZRjSu29Czxzt/PNqPv0=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-549-7nPbkq3KNNOsHo2U2eUjPw-1; Thu,
+ 20 Feb 2025 06:21:04 -0500
+X-MC-Unique: 7nPbkq3KNNOsHo2U2eUjPw-1
+X-Mimecast-MFC-AGG-ID: 7nPbkq3KNNOsHo2U2eUjPw_1740050463
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 876981800878;
+	Thu, 20 Feb 2025 11:21:03 +0000 (UTC)
+Received: from gerbillo.redhat.com (unknown [10.45.224.216])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 71BE4300019F;
+	Thu, 20 Feb 2025 11:21:01 +0000 (UTC)
+From: Paolo Abeni <pabeni@redhat.com>
+To: torvalds@linux-foundation.org
+Cc: kuba@kernel.org,
+	davem@davemloft.net,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Networking for v6.14-rc4
+Date: Thu, 20 Feb 2025 12:20:33 +0100
+Message-ID: <20250220112033.26001-1-pabeni@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-When a bio with REQ_PREFLUSH is submitted to dm, __send_empty_flush()
-generates a flush_bio with REQ_OP_WRITE | REQ_PREFLUSH | REQ_SYNC,
-which causes the flush_bio to be throttled by wbt_wait().
+Hi Linus!
 
-An example from v5.4, similar problem also exists in upstream:
+The following changes since commit 348f968b89bfeec0bb53dd82dba58b94d97fbd34:
 
-    crash> bt 2091206
-    PID: 2091206  TASK: ffff2050df92a300  CPU: 109  COMMAND: "kworker/u260:0"
-     #0 [ffff800084a2f7f0] __switch_to at ffff80004008aeb8
-     #1 [ffff800084a2f820] __schedule at ffff800040bfa0c4
-     #2 [ffff800084a2f880] schedule at ffff800040bfa4b4
-     #3 [ffff800084a2f8a0] io_schedule at ffff800040bfa9c4
-     #4 [ffff800084a2f8c0] rq_qos_wait at ffff8000405925bc
-     #5 [ffff800084a2f940] wbt_wait at ffff8000405bb3a0
-     #6 [ffff800084a2f9a0] __rq_qos_throttle at ffff800040592254
-     #7 [ffff800084a2f9c0] blk_mq_make_request at ffff80004057cf38
-     #8 [ffff800084a2fa60] generic_make_request at ffff800040570138
-     #9 [ffff800084a2fae0] submit_bio at ffff8000405703b4
-    #10 [ffff800084a2fb50] xlog_write_iclog at ffff800001280834 [xfs]
-    #11 [ffff800084a2fbb0] xlog_sync at ffff800001280c3c [xfs]
-    #12 [ffff800084a2fbf0] xlog_state_release_iclog at ffff800001280df4 [xfs]
-    #13 [ffff800084a2fc10] xlog_write at ffff80000128203c [xfs]
-    #14 [ffff800084a2fcd0] xlog_cil_push at ffff8000012846dc [xfs]
-    #15 [ffff800084a2fda0] xlog_cil_push_work at ffff800001284a2c [xfs]
-    #16 [ffff800084a2fdb0] process_one_work at ffff800040111d08
-    #17 [ffff800084a2fe00] worker_thread at ffff8000401121cc
-    #18 [ffff800084a2fe70] kthread at ffff800040118de4
+  Merge tag 'net-6.14-rc3' of git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net (2025-02-13 12:17:04 -0800)
 
-After commit 2def2845cc33 ("xfs: don't allow log IO to be throttled"),
-the metadata submitted by xlog_write_iclog() should not be throttled.
-But due to the existence of the dm layer, throttling flush_bio indirectly
-causes the metadata bio to be throttled.
+are available in the Git repository at:
 
-Fix this by conditionally adding REQ_IDLE to flush_bio.bi_opf, which makes
-wbt_should_throttle() return false to avoid wbt_wait().
+  git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git net-6.14-rc4
 
-Signed-off-by: Jinliang Zheng <alexjlzheng@tencent.com>
-Reviewed-by: Tianxiang Peng <txpeng@tencent.com>
-Reviewed-by: Hao Peng <flyingpeng@tencent.com>
----
- drivers/md/dm.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+for you to fetch changes up to dd3188ddc4c49cb234b82439693121d2c1c69c38:
 
-diff --git a/drivers/md/dm.c b/drivers/md/dm.c
-index 4d1e42891d24..5ab7574c0c76 100644
---- a/drivers/md/dm.c
-+++ b/drivers/md/dm.c
-@@ -1540,14 +1540,18 @@ static void __send_empty_flush(struct clone_info *ci)
- {
- 	struct dm_table *t = ci->map;
- 	struct bio flush_bio;
-+	blk_opf_t opf = REQ_OP_WRITE | REQ_PREFLUSH | REQ_SYNC;
-+
-+	if ((ci->io->orig_bio->bi_opf & (REQ_IDLE | REQ_SYNC)) ==
-+	    (REQ_IDLE | REQ_SYNC))
-+		opf |= REQ_IDLE;
- 
- 	/*
- 	 * Use an on-stack bio for this, it's safe since we don't
- 	 * need to reference it after submit. It's just used as
- 	 * the basis for the clone(s).
- 	 */
--	bio_init(&flush_bio, ci->io->md->disk->part0, NULL, 0,
--		 REQ_OP_WRITE | REQ_PREFLUSH | REQ_SYNC);
-+	bio_init(&flush_bio, ci->io->md->disk->part0, NULL, 0, opf);
- 
- 	ci->bio = &flush_bio;
- 	ci->sector_count = 0;
--- 
-2.41.1
+  Merge branch 'net-remove-the-single-page-frag-cache-for-good' (2025-02-20 10:53:32 +0100)
+
+----------------------------------------------------------------
+Smaller than usual with no fixes from any subtree.
+
+Current release - regressions:
+
+  - core: fix race of rtnl_net_lock(dev_net(dev)).
+
+Previous releases - regressions:
+
+  - core: remove the single page frag cache for good
+
+  - flow_dissector: fix handling of mixed port and port-range keys
+
+  - sched: cls_api: fix error handling causing NULL dereference
+
+  - tcp:
+    - adjust rcvq_space after updating scaling ratio
+    - drop secpath at the same time as we currently drop dst
+
+  - eth: gtp: suppress list corruption splat in gtp_net_exit_batch_rtnl().
+
+Previous releases - always broken:
+
+  - vsock:
+    - fix variables initialization during resuming
+    - for connectible sockets allow only connected
+
+  - eth: geneve: fix use-after-free in geneve_find_dev().
+
+  - eth: ibmvnic: don't reference skb after sending to VIOS
+
+Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+
+----------------------------------------------------------------
+Breno Leitao (2):
+      net: Add non-RCU dev_getbyhwaddr() helper
+      arp: switch to dev_getbyhwaddr() in arp_req_set_public()
+
+Cong Wang (4):
+      flow_dissector: Fix handling of mixed port and port-range keys
+      selftests/net/forwarding: Add a test case for tc-flower of mixed port and port-range
+      flow_dissector: Fix port range key handling in BPF conversion
+      selftests/bpf: Add a specific dst port matching
+
+Gavrilov Ilia (1):
+      drop_monitor: fix incorrect initialization order
+
+Haoxiang Li (1):
+      nfp: bpf: Add check for nfp_app_ctrl_msg_alloc()
+
+Jakub Kicinski (7):
+      MAINTAINERS: create entry for ethtool MAC merge
+      tcp: adjust rcvq_space after updating scaling ratio
+      MAINTAINERS: trim the GVE entry
+      Merge branch 'net-fix-race-of-rtnl_net_lock-dev_net-dev'
+      Merge branch 'gtp-geneve-suppress-list_del-splat-during-exit_batch_rtnl'
+      Merge branch 'flow_dissector-fix-handling-of-mixed-port-and-port-range-keys'
+      Merge branch 'net-core-improvements-to-device-lookup-by-hardware-address'
+
+Jeroen de Borst (1):
+      gve: Update MAINTAINERS
+
+Joshua Washington (1):
+      gve: set xdp redirect target only when it is available
+
+Julian Ruess (1):
+      s390/ism: add release function for struct device
+
+Junnan Wu (1):
+      vsock/virtio: fix variables initialization during resuming
+
+Kory Maincent (1):
+      net: pse-pd: pd692x0: Fix power limit retrieval
+
+Kuniyuki Iwashima (6):
+      geneve: Fix use-after-free in geneve_find_dev().
+      net: Add net_passive_inc() and net_passive_dec().
+      net: Fix dev_net(dev) race in unregister_netdevice_notifier_dev_net().
+      dev: Use rtnl_net_dev_lock() in unregister_netdev().
+      gtp: Suppress list corruption splat in gtp_net_exit_batch_rtnl().
+      geneve: Suppress list corruption splat in geneve_destroy_tunnels().
+
+Michal Luczaj (4):
+      sockmap, vsock: For connectible sockets allow only connected
+      vsock/bpf: Warn on socket without transport
+      selftest/bpf: Adapt vsock_delete_on_close to sockmap rejecting unconnected
+      selftest/bpf: Add vsock test for sockmap rejecting unconnected
+
+Nick Child (1):
+      ibmvnic: Don't reference skb after sending to VIOS
+
+Nick Hu (1):
+      net: axienet: Set mac_managed_pm
+
+Paolo Abeni (4):
+      Merge branch 'sockmap-vsock-for-connectible-sockets-allow-only-connected'
+      net: allow small head cache usage with large MAX_SKB_FRAGS values
+      Revert "net: skb: introduce and use a single page frag cache"
+      Merge branch 'net-remove-the-single-page-frag-cache-for-good'
+
+Pierre Riteau (1):
+      net/sched: cls_api: fix error handling causing NULL dereference
+
+Sabrina Dubroca (1):
+      tcp: drop secpath at the same time as we currently drop dst
+
+Stephan Gerhold (1):
+      net: wwan: mhi_wwan_mbim: Silence sequence number glitch errors
+
+Yu-Chun Lin (1):
+      sctp: Fix undefined behavior in left shift operation
+
+ MAINTAINERS                                        |   9 +-
+ drivers/net/ethernet/google/gve/gve.h              |  10 ++
+ drivers/net/ethernet/google/gve/gve_main.c         |   6 +-
+ drivers/net/ethernet/ibm/ibmvnic.c                 |   4 +-
+ drivers/net/ethernet/netronome/nfp/bpf/cmsg.c      |   2 +
+ drivers/net/ethernet/xilinx/xilinx_axienet_main.c  |   1 +
+ drivers/net/geneve.c                               |  16 +--
+ drivers/net/gtp.c                                  |   5 -
+ drivers/net/pse-pd/pd692x0.c                       |   2 +-
+ drivers/net/wwan/mhi_wwan_mbim.c                   |   2 +-
+ drivers/s390/net/ism_drv.c                         |  14 ++-
+ include/linux/netdevice.h                          |   3 +-
+ include/net/gro.h                                  |   3 +
+ include/net/net_namespace.h                        |  11 +++
+ include/net/tcp.h                                  |  14 +++
+ net/core/dev.c                                     | 108 +++++++++++++++++---
+ net/core/drop_monitor.c                            |  29 +++---
+ net/core/flow_dissector.c                          |  49 +++++----
+ net/core/gro.c                                     |   3 -
+ net/core/net_namespace.c                           |   8 +-
+ net/core/skbuff.c                                  | 110 ++-------------------
+ net/core/sock_map.c                                |   3 +
+ net/ipv4/arp.c                                     |   2 +-
+ net/ipv4/tcp_fastopen.c                            |   4 +-
+ net/ipv4/tcp_input.c                               |  20 ++--
+ net/ipv4/tcp_ipv4.c                                |   2 +-
+ net/sched/cls_api.c                                |   2 +-
+ net/sctp/stream.c                                  |   2 +-
+ net/vmw_vsock/af_vsock.c                           |   3 +
+ net/vmw_vsock/virtio_transport.c                   |  10 +-
+ net/vmw_vsock/vsock_bpf.c                          |   2 +-
+ .../bpf/prog_tests/flow_dissector_classification.c |   7 +-
+ .../selftests/bpf/prog_tests/sockmap_basic.c       |  70 +++++++++----
+ .../net/forwarding/tc_flower_port_range.sh         |  46 +++++++++
+ 34 files changed, 365 insertions(+), 217 deletions(-)
 
 
