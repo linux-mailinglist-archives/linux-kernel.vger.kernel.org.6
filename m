@@ -1,136 +1,116 @@
-Return-Path: <linux-kernel+bounces-522886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1944EA3CFB0
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 03:58:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1950FA3CFB3
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 03:58:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54EB917DE90
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 02:57:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 360B817E541
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 02:57:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E9461E7C3F;
-	Thu, 20 Feb 2025 02:55:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12FA01DE885;
+	Thu, 20 Feb 2025 02:57:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Rl7KxLQ4"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CBDwQpZk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E8021DCB24;
-	Thu, 20 Feb 2025 02:55:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B8621D8DE4;
+	Thu, 20 Feb 2025 02:57:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740020121; cv=none; b=nB44N41QzPs/n8vN5Z4T1MxvaA/KHqVY784EaIQbWyZBGKTkXgWr/UHtjO1cB7f6LwfhoyufRjeWARfoYmHvWOCXv7Yt9HQHjE+b1aaQdu2JRdt6F5IlOV5mX9drIubiw6ZiXVPqUxgOOIzRVM6pTFTVsktzRf7MvvIze7RvM3k=
+	t=1740020224; cv=none; b=aCjZL/oG3NRnWLs9Ag0AQwtWO//mYd3gZyuSBpVBPzrI3KGdCZtxvPJFWC4DsQawR+AEKdZXvircARYUQvt2RXlCTqnnhc+YDetmMeej0czQhHwgF+hMgQWCzMDzEYkQnTz9iScP3oqHFa6aMkMNTLPAA/xRpFPZHXvuoNrFhdw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740020121; c=relaxed/simple;
-	bh=uDhO0buD+LbU4a/ZJlAIOO0MmLejKrvfWJSAZJp7WPs=;
-	h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=WxGIv40bYSQ4C/eCYlMociHA6mZRJKMQm0KR0DgayGO3NxiWIgTyAV3DahE84Kr5TN7nLSPSFa4Rpjz6zgly9DjjDdApDC0PTXzmS54xRj2AtmcxatRw1RHe6qN2WMRSpCO1CJsZ3sfOQbzWnqDn9T48fexX7IGbmTOUPLqbhIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Rl7KxLQ4; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740020120; x=1771556120;
-  h=from:to:subject:date:message-id:in-reply-to:references:
-   mime-version:content-transfer-encoding;
-  bh=uDhO0buD+LbU4a/ZJlAIOO0MmLejKrvfWJSAZJp7WPs=;
-  b=Rl7KxLQ4Eyuq3A8GhngQapAXY2yDAnzh3Dh5BCrsjjzCzV1Bj9+pTYzA
-   rgtxiJk9AlM0AXqT+gP9GS1MleYLbTT5Qd6orJ8UKRqJm1LPnULzEAD+M
-   F3gUyRRsE/5As3ML/fRjNObqYjDugnU1JGKQIJbF09MsNwsBWL6JT6MCY
-   GQP/pnOeYk4sUBiQuwzf5MG375chzeZI3HzGY8sGd7LfWTBtriGCpCE8J
-   o+CC7YjdT8IFpSjPU0RshTWa/m2nT2leFt9RtFgNDgYZnE34jqVZS5xyd
-   7bvetTnCwc0CHoS6loFjWXTgPkkRsabK9+52K56n7xUMUDcPbCnf6PI8Y
-   Q==;
-X-CSE-ConnectionGUID: Ex5ah0COQuqqbGd/2FNwfw==
-X-CSE-MsgGUID: aMf0aqnqSGOsjBE+aNL7FA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11350"; a="41042128"
-X-IronPort-AV: E=Sophos;i="6.13,300,1732608000"; 
-   d="scan'208";a="41042128"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Feb 2025 18:55:19 -0800
-X-CSE-ConnectionGUID: 2yocVogvQxyZNBE7JpuxSQ==
-X-CSE-MsgGUID: jS0ktRGYSOug/ZvAyXlb4A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,300,1732608000"; 
-   d="scan'208";a="115104566"
-Received: from mohdfai2-ilbpg12-1.png.intel.com ([10.88.227.73])
-  by fmviesa008.fm.intel.com with ESMTP; 19 Feb 2025 18:55:12 -0800
-From: Faizal Rahim <faizal.abdul.rahim@linux.intel.com>
-To: Tony Nguyen <anthony.l.nguyen@intel.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
+	s=arc-20240116; t=1740020224; c=relaxed/simple;
+	bh=zVgovuXVZ4q88QdyAkhcTS22Eyu+EFR2/CUYe3ib2Yo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ws7JnK2UWltmlimAuX4AawqdIQ/vQoRcxoTrhMOtpBhh1dynzsUFCnEfhRLouUYxReFGqlcqadoKs6x6kM5FHClTd5mQvKdtm1Xw16cYGV/iSu390YUMJB8ToLAaWNdNO4JDfthxJVBjF86RDd9upuCglqlhoQdGQ1cYl/rtQzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CBDwQpZk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD6A7C4CED1;
+	Thu, 20 Feb 2025 02:57:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740020223;
+	bh=zVgovuXVZ4q88QdyAkhcTS22Eyu+EFR2/CUYe3ib2Yo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CBDwQpZk0/WQCm0LwestZJXWcJ2/fpBma3zlL4bttI3M56xlVAwPKPCXcXzbGP1vS
+	 ldHiUHnri9YU+/oiAaGFOKK3AV96xuhL/Ym3pzn+2HmDWfe+/hYn2DLAc3u4Ojeson
+	 toK1B7bpX9WXxXhnEmBlw9r+kzhYKinHwb2ROKCwCnA9PS9iDeU/7TLHqtJ8iUC5xT
+	 qMLsfrGu2pCHhT0I/Uzq9noSus8SXV2sCiJ/0a/dNmabh3WjeeG8ZlDHV9pWDXrYBL
+	 gyEwU07tKH61Gj73V866rO5ga3l01bBbCb7/yZVJZ4R1NqMwHKUH0lEN4FFEaP6MXV
+	 /4x+iHXm3Kydg==
+Date: Wed, 19 Feb 2025 18:57:01 -0800
+From: Kees Cook <kees@kernel.org>
+To: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: Allison Henderson <allison.henderson@oracle.com>,
+	"David S. Miller" <davem@davemloft.net>,
 	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Simon Horman <horms@kernel.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Furong Xu <0x1207@gmail.com>,
-	Russell King <rmk+kernel@armlinux.org.uk>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>,
-	Serge Semin <fancer.lancer@gmail.com>,
-	Xiaolei Wang <xiaolei.wang@windriver.com>,
-	Suraj Jaiswal <quic_jsuraj@quicinc.com>,
-	Kory Maincent <kory.maincent@bootlin.com>,
-	Gal Pressman <gal@nvidia.com>,
-	Jesper Nilsson <jesper.nilsson@axis.com>,
-	Andrew Halaney <ahalaney@redhat.com>,
-	Choong Yong Liang <yong.liang.choong@linux.intel.com>,
-	Faizal Rahim <faizal.abdul.rahim@linux.intel.com>,
-	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-	Vinicius Costa Gomes <vinicius.gomes@intel.com>,
-	intel-wired-lan@lists.osuosl.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	bpf@vger.kernel.org
-Subject: [PATCH iwl-next v5 9/9] igc: Block setting preemptible traffic class in taprio
-Date: Wed, 19 Feb 2025 21:53:49 -0500
-Message-Id: <20250220025349.3007793-10-faizal.abdul.rahim@linux.intel.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250220025349.3007793-1-faizal.abdul.rahim@linux.intel.com>
-References: <20250220025349.3007793-1-faizal.abdul.rahim@linux.intel.com>
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>, linux-hardening@vger.kernel.org,
+	netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+	rds-devel@oss.oracle.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] net/rds: Replace deprecated strncpy() with
+ strscpy_pad()
+Message-ID: <202502191855.C9B9A7AA@keescook>
+References: <20250219224730.73093-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250219224730.73093-2-thorsten.blum@linux.dev>
 
-Since preemptible tc implementation is not ready yet, block it from being
-set in taprio. The existing code already blocks it in mqprio.
+On Wed, Feb 19, 2025 at 11:47:31PM +0100, Thorsten Blum wrote:
+> strncpy() is deprecated for NUL-terminated destination buffers. Use
+> strscpy_pad() instead and remove the manual NUL-termination.
 
-Signed-off-by: Faizal Rahim <faizal.abdul.rahim@linux.intel.com>
----
- drivers/net/ethernet/intel/igc/igc_main.c | 4 ++++
- 1 file changed, 4 insertions(+)
+When doing these conversions, please describe two aspects of
+conversions:
 
-diff --git a/drivers/net/ethernet/intel/igc/igc_main.c b/drivers/net/ethernet/intel/igc/igc_main.c
-index 5a6648a12a53..e6a398dbf09b 100644
---- a/drivers/net/ethernet/intel/igc/igc_main.c
-+++ b/drivers/net/ethernet/intel/igc/igc_main.c
-@@ -6408,6 +6408,10 @@ static int igc_save_qbv_schedule(struct igc_adapter *adapter,
- 	if (!validate_schedule(adapter, qopt))
- 		return -EINVAL;
- 
-+	/* preemptible isn't supported yet */
-+	if (qopt->mqprio.preemptible_tcs)
-+		return -EOPNOTSUPP;
-+
- 	igc_ptp_read(adapter, &now);
- 
- 	if (igc_tsn_is_taprio_activated_by_user(adapter) &&
+- Why is it safe to be NUL terminated
+- Why is it safe to be/not-be NUL-padded
+
+In this case, the latter needs examination. Looking at how ctr is used,
+it is memcpy()ed later, which means this string MUST be NUL padded or it
+will leak stack memory contents.
+
+So, please use strscpy_pad() here. :)
+
+-Kees
+
+> 
+> Compile-tested only.
+> 
+> Link: https://github.com/KSPP/linux/issues/90
+> Cc: linux-hardening@vger.kernel.org
+> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+> ---
+>  net/rds/stats.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/net/rds/stats.c b/net/rds/stats.c
+> index 9e87da43c004..cb2e3d2cdf73 100644
+> --- a/net/rds/stats.c
+> +++ b/net/rds/stats.c
+> @@ -89,8 +89,7 @@ void rds_stats_info_copy(struct rds_info_iterator *iter,
+>  
+>  	for (i = 0; i < nr; i++) {
+>  		BUG_ON(strlen(names[i]) >= sizeof(ctr.name));
+> -		strncpy(ctr.name, names[i], sizeof(ctr.name) - 1);
+> -		ctr.name[sizeof(ctr.name) - 1] = '\0';
+> +		strscpy_pad(ctr.name, names[i]);
+>  		ctr.value = values[i];
+>  
+>  		rds_info_copy(iter, &ctr, sizeof(ctr));
+> -- 
+> 2.48.1
+> 
+> 
+
 -- 
-2.34.1
-
+Kees Cook
 
