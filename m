@@ -1,292 +1,220 @@
-Return-Path: <linux-kernel+bounces-524844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77DB3A3E7BF
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 23:47:36 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC1DEA3E7C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 23:51:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 899C619C5061
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 22:47:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B90F3422D23
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 22:51:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F541264620;
-	Thu, 20 Feb 2025 22:47:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D323D264F8E;
+	Thu, 20 Feb 2025 22:51:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FQyiDzvp"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Igsmd4k1"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2042.outbound.protection.outlook.com [40.107.237.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0030286280;
-	Thu, 20 Feb 2025 22:47:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740091647; cv=none; b=u+P3baZwgV0+S/jg9EXstdZbNBFf3UGNXkzgaojcv49XSE6qa0L4ETN6VTZGneXzKijkKOjrBq7iwt+bzrOCsRCQp7HmGkaMYxR8RteHpnPLCVgcmUjQedmIbTj+ab9eju23zqWt62LJnacTQolaSbkdLeE+nxpdqGOVH4ASdgc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740091647; c=relaxed/simple;
-	bh=s/2C/idZxVr/sUnGevnEWDwOoLaTWT84lBSdQHf+vBI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IM0TizmWt7vNrJAlVXZFXLX9nkSazXQAro0QF9u3W1d7KqVBe8/Q1rLb6QIop04Btu8+tsTu5BY9UC4Bx3+Raoee6sR5t+2tVIRzZABSB6WYUghjGiCUemtrdvoU7MmS+FHvzZogXsMNkeM9d2jUQcXbcyHvyKUx2UUnFjwkYmk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FQyiDzvp; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-abb81285d33so303523866b.0;
-        Thu, 20 Feb 2025 14:47:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740091644; x=1740696444; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/gLpErkNQE0KsQqHzgUG/3dHmMGvVfVAYhb8vCOOc5s=;
-        b=FQyiDzvp93eBtA3fO1g8zWD367kuQY0/VdYS1BVCHRUMJhxm3r1aKpZ8c6C2OOXIHm
-         zB4nMLbi1SIzGYV+VZyxoewS+XDA1waTGy4QrwZk7vNFuTL6PvAYEyy1uynYuIiXTpQf
-         lrmGPn8kArIg0EAhmu00oRmNkcFYDIcdlUY8u3in5EwyNFE/HcA0X4hrqeZ1SMnzMQ6S
-         azQmLrxQD9UL8TP3lK35Sp22ZnrXjNxh6bRxxqtVeTx7RMFf6IoB0FMZypKsJH7wPPmg
-         mUEcWUaLJpTXvCmVXcPSRq03QJJF0uHxN2JjKSoCF5m4WJOGP+za1bP39y+wYomQ9GVm
-         8YEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740091644; x=1740696444;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/gLpErkNQE0KsQqHzgUG/3dHmMGvVfVAYhb8vCOOc5s=;
-        b=FmI0RqoNjcmjBi6eZj7/07+fQE+NZkqFajsHUR85ryq9qP0XheiMuWS2VKv3nkWwMJ
-         HFkwFCeWXO33QEI6cPvaVGrj6rCsAnWaALw49HGDK5ppI81h6qY1kovX2VKVfwPGOMJN
-         vhVatx9m0ltiJdbov6yyQTg6OmqDOJsVYOd1fCG7S5vIgOKZ+mZ7C4ZHQqVqyd5wGHH3
-         EbCR0Y0kQ0dt6nKT5fSFieOr5mhPs6F4M3QYwFOfh5Gf2tu7TZvkFsd1QQEeDecF+C9h
-         iIl9egSGDpiruh8SdTmdb6k2h9zlMnJEzah0FnoVQQN6qNHpHLvRBGGrw5Ljzyt04pIh
-         d7AA==
-X-Forwarded-Encrypted: i=1; AJvYcCUTau9wvCBnpWRc/UPU3TlXXufTqcnXZU331Ij0eg6DdDT9UhRDVFJhJxZa/CYrWNwK+lPO01Qp4J9OKiY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3e+UB+WiU35tvD7kCH5DTapvUmbCa2evIUnQxNFTis+x1WHE/
-	w/uVk0ZqVxmGb04oHDP5QiIXKydE4vsj9L+bGhmY/lSh16q5aeL8
-X-Gm-Gg: ASbGncsV4YV7kbM9PkksiNxCi8uiUn+eBLj7s5ByVhnoFefA87tD9g68dlCcuyAGExj
-	e2pPxtrg9iUVVUJ9fSZeyLDuMP41csmjfe12xRNtv26MBjDfGAl+GVBEGRSUO0xZtxfKjwVZdBy
-	JAaG5U6GKDgmwBObJwYKerbpMCCiU5suBfV0dZaTU6IA2AxgXK6e7xCPF/p96mD8tsQkzJwpiKN
-	UOmnLArXsM9IROewtLPUpxI53/f+RJwGfp1QATm2Txbwr5Mw5oFjUFnymq9ChHPjA4rnpcTfb9k
-	aWb0CCovRqV//0BtMl3RdHF0IRsef6qm
-X-Google-Smtp-Source: AGHT+IFemfasOHeY31ikiD97smK7HrcLw2GSDrHnrqEgYlwi1Y2P+HnM6DmqemXdYA6Fm88u1iCuhw==
-X-Received: by 2002:a17:907:7ba1:b0:aba:5f40:75e1 with SMTP id a640c23a62f3a-abc09e3cb0bmr137522566b.57.1740091643865;
-        Thu, 20 Feb 2025 14:47:23 -0800 (PST)
-Received: from foxbook (adtt173.neoplus.adsl.tpnet.pl. [79.185.231.173])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abb9b5218c6sm849035766b.125.2025.02.20.14.47.21
-        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
-        Thu, 20 Feb 2025 14:47:23 -0800 (PST)
-Date: Thu, 20 Feb 2025 23:47:19 +0100
-From: Michal Pecio <michal.pecio@gmail.com>
-To: Mathias Nyman <mathias.nyman@intel.com>, Greg Kroah-Hartman  
- <gregkh@linuxfoundation.org>
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] usb: xhci: Unify duplicate inc_enq() code
-Message-ID: <20250220234719.5dc47877@foxbook>
-In-Reply-To: <20250220234355.2386cb6d@foxbook>
-References: <20250220234355.2386cb6d@foxbook>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C935F1C5D67;
+	Thu, 20 Feb 2025 22:51:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.42
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740091870; cv=fail; b=sv2Q3ftluL1dqdeSXK9MLq6hsnugWGBsOQ1aY7nGzZuxu1RMiFLJ7dwoxRSG5BQ4hbaerBT+JZfbHA5k/Xrzm+gI9wRDiJYK5KZ1WfEN09BtMujx1ZbBCzrkuaULc7wH8vHbiWfs1t0oNql7zm54t3OE/gUqc+Q3H0nM6SiLYz4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740091870; c=relaxed/simple;
+	bh=aBMvUgn9hcbp+VnrPKGAxGg3iCPL+AG0nMYm8uHSyT4=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=LJ9iX5EI7q7EnTgQfEFxnZSWSgl1JHIjreqdM8g+NJ69pniO76Yrnm9sU1LMxr/Uh4/OoGHt6K8V/u/zPTn8cg1vFz/fJocV1zIAtOeIJquGgN9IHIxi8njivWgOC0NJ55MdFpDZ6JSWHqDcgOitXv7JLCJ7ad6FdD7pn1lVhqE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Igsmd4k1; arc=fail smtp.client-ip=40.107.237.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=V86eLQSUnQmE8j3AteJBuTqbUTFnNjaG/+yvARemAwhIT7qt5Fe6IN3zVmRbgpvNhyQP0jQqvLjACZ20U7rcfrUMQ2t3+n8197f6K7t+/Xw4XDkoBFyYZuSotm61GP2s+dsGlrbbrI7fEWPbTKzgNx6waQIb67a1+kYnKrdLwQ3JOHV81fBQdt4kSyrPDRQ9lVRAAmPHzjPGAoBB+ShSMxanFrFygfuElF7HqgL2R2ikOXUv7BoicXlUUnukhPQl3zBGO3C88k3GlcJYPB+bydIspsF6UZFMHD8lAbPF37xcDPQMEd017QfPSQqzVYlV+OIeQ7vQVoTWCUgNdtS5ew==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=xFWxDaJdVT8XVO/wVOHRfv8zuDXj4/yGMAxuKSRRFCE=;
+ b=rxUY4ZmWeeYGQ+oNqbNRSedY7heAATH4K7M3Y4j9SqUnvIUCGQe9tzB1etkk4j92ItgSPW+RYq6psiF4QZ3nOysNjvoN0eBxD+gkS89Xj3jiRu/x+MUBbvtYm7wUm7bQ9rew9Gqdipdat/EF0PI/hq1BhK79sWrVIEFVduG1BdbYsRTmyXsdvUZiiAeRpEvTNtXc+82V3KiKI2B96MntYhHR4vZAy2m2JRuqFfjl6q86OnPsOHWgRGqAyNaLMG7oFxq1SVOapOApizjulWBORHmmqpgh94leDmqy/ssA/LZ1Xnt9ZYI993JqFfRO+qHL6KLxfgPDs2V0lQAIfgcerQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=xFWxDaJdVT8XVO/wVOHRfv8zuDXj4/yGMAxuKSRRFCE=;
+ b=Igsmd4k1xluGGktP4IH6itMC5sSoM31cVW5a7Y2zYRC8XmOt7sHh4wlx6rF0ncpr5lFDMRQKg+6fHUEVfNH3m1QbwKGoOjyT6b+1pm6L5F8h35Jx7nvty9YwVwn56AELcRZhjGf8UlKT5iXvhz5Tvao0U320/1akukAJX0TiSIU=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DM4PR12MB5070.namprd12.prod.outlook.com (2603:10b6:5:389::22)
+ by MN0PR12MB5907.namprd12.prod.outlook.com (2603:10b6:208:37b::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.19; Thu, 20 Feb
+ 2025 22:51:04 +0000
+Received: from DM4PR12MB5070.namprd12.prod.outlook.com
+ ([fe80::20a9:919e:fd6b:5a6e]) by DM4PR12MB5070.namprd12.prod.outlook.com
+ ([fe80::20a9:919e:fd6b:5a6e%7]) with mapi id 15.20.8466.016; Thu, 20 Feb 2025
+ 22:51:03 +0000
+Message-ID: <a9d70abe-d229-81cb-4d9a-6106cef612a4@amd.com>
+Date: Thu, 20 Feb 2025 16:51:01 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH 00/10] KVM: SVM: Attempt to cleanup SEV_FEATURES
+Content-Language: en-US
+To: Sean Christopherson <seanjc@google.com>,
+ Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Naveen N Rao <naveen@kernel.org>, Kim Phillips <kim.phillips@amd.com>,
+ Alexey Kardashevskiy <aik@amd.com>
+References: <20250219012705.1495231-1-seanjc@google.com>
+From: Tom Lendacky <thomas.lendacky@amd.com>
+In-Reply-To: <20250219012705.1495231-1-seanjc@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SA9PR03CA0015.namprd03.prod.outlook.com
+ (2603:10b6:806:20::20) To DM4PR12MB5070.namprd12.prod.outlook.com
+ (2603:10b6:5:389::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR12MB5070:EE_|MN0PR12MB5907:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0fba0a7e-cef6-41f3-7a5f-08dd52010dc3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?VHRmRXFwV1F6OUdHbTlGdWU1NVU1MmRKbStiTWYyL2o5VENUS3ppMWJMWTgr?=
+ =?utf-8?B?ZGl3R0Zvb0M2cUM1OTlHQUhLUnR5c3FJaDhJckUvRmJJSGdadlR4WTJ6UFVM?=
+ =?utf-8?B?emJ1eWF4NnFNWERIeXl0bks5WENGdElXYyswSm5iNmdYVFpla2crcE1tSExB?=
+ =?utf-8?B?Qk8zVVZaaGR3OXNuK1RFS0QwVVVuenE3Y3YwandzNFFyd1A5Rk5XQlhSeWhn?=
+ =?utf-8?B?TnBzdDZaVmJIM1Y1NjBJUG1lNitkM3ZmR3FOMEN3WjV3Z0Fwb0N2WlpRMzdF?=
+ =?utf-8?B?RlZJcGdxNE8rbkIxbEdaVUtLejFmNjk5dHJQZlZ1cDJ1aFZkbDRDV0pPdWZK?=
+ =?utf-8?B?NnEvVFlSbHhzK1lIUE05aWdZd1BoeUFmcnY5MFNoRTdxUER6MjhuQkJPWFRC?=
+ =?utf-8?B?Y0R5cWxoZzRpRTNsMXBiMG56SlBJaXMxMTJJVWVOZGM1V0cwUVN5WDRURmgv?=
+ =?utf-8?B?OXRrbGd2NE4vbWUrcDdFZzA5V24yK2lWczNvb0dFbDhKVm9qT01YWmtLN1dm?=
+ =?utf-8?B?UkFRWHU0T3N1Z2RCTkNuWlNDN0RrQzFjUW52N1ZoSU1YTzljZzNVMFlxL0JL?=
+ =?utf-8?B?bDI1SUl3NXlhNGt3NWVoMVhaR05DR3lyVUJZWnBVZmdDanc2L1gxV2J5bk9t?=
+ =?utf-8?B?SXE5U0xlTUlId25kV3Axd3BPa2dTN2dPZTlMMHhhenVuYTh3TDYvNWY2U2dG?=
+ =?utf-8?B?NHMxMkZaeW81YW9CQVcxUVd5cGhVZ1FXZzAyQXhKK2gwMW1iWG96YnBub3BL?=
+ =?utf-8?B?anRKekdrb0tVd25JdFZuazErRGVDckpaWXR1UzlaSnhxQktONHBnWU52Z1o0?=
+ =?utf-8?B?cm5ONytYUHBVbGc4VXNLdDFFRnBnOXZCK3BrY1lnS0g5TkFYbEpSNXFlcDNa?=
+ =?utf-8?B?NDI5WnVXNUoxY0FXS3MvalJqdlVTK0pwSS9ldC9VTWRWYklWRkJyRlFLSERj?=
+ =?utf-8?B?Ty9xWTM0NzlNb0M3c2l5b1lmSDdhL082R0pzRlVaVjAzMFdQZThTYWkzNll0?=
+ =?utf-8?B?THV6dmsyZWN1SzN1Qmlac3JqZkNuTjdBSURTa21NenFjOGR4L2FyNi83Zkgw?=
+ =?utf-8?B?VXlieS9EQjY2U3haOUhYcVVuK1NoeDRIOFFVVzFqMUMwc1dnVS9Pd3BYektE?=
+ =?utf-8?B?ZEJVTDlsV3k4ZUJ3WExyNWpRQnBvM0NXeVFlUk5idXVEalZDT0xkYTZNMU5K?=
+ =?utf-8?B?MEM2Q2JuOWNoajdPcC9MeUtiMlZlaWxiWkYwUE9pWTE1Wkp6cXVMWkE3Mkd1?=
+ =?utf-8?B?cFA5bVZPVWhpdUhFbDBhQVMyYmU4Y25NSndoVzdhMkxHZm9iR21rUGk4bzNj?=
+ =?utf-8?B?bE5QcHJsQXdLM3N4MGltRWhIT1FqRVdPRkpsaEhWcFN3bTVQc2xpSnRFK0c2?=
+ =?utf-8?B?MW51Wnd4Y0JCRUcxSUM2UW1lTVpGbzdlS3phcnVlTkRoRTVuQWprUHU5ZHpi?=
+ =?utf-8?B?azlweFZuR2thcFlsOS85MHBNTVBhZ2V0dEF3ZE43dnEyaFZ1NkpQd1d2dkE3?=
+ =?utf-8?B?NXRWOXZDT2tiNi9KdlltZUxHZkExSDdoeFZic2crUjAvSG9VSlBRUld3UlVN?=
+ =?utf-8?B?VDd6eDZDRDhNNERSdWlNa1RzMXQ1Mk4vZVplcmIwaG1RM1RzcEQyUWFTcXI5?=
+ =?utf-8?B?NWR2ZDJsQlFCQ3BHbzZlWFdWUXRsdDdMbEMxMUZyK0RZZWprZjRXZ0Mrclll?=
+ =?utf-8?B?MVl3TjA5cjZTbDNEaWpoTVREcSs1OTFQN0diQm53eVhkY0EzTXpzM29jdjZD?=
+ =?utf-8?B?TC9OUnI3dFNmNHdFbjFldjNWT3Aza3BiZURSL3hjSEJyd3hSNDdYZHJKaHNa?=
+ =?utf-8?B?aXdPelhWYUoyMytRQndWcDdxL004RFZrNjlFSW9uTi83bi9qWEEyNVZCS1R6?=
+ =?utf-8?Q?C96Exiv2gDqIt?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB5070.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?dHNSTXlHYzZNWk5CSVZvdVJIa240eVNZS0gwbWo5dnZ0MjMyY2Q2WU1jK2x0?=
+ =?utf-8?B?c0FDL09wOU4xVEZ6RGhpRXRYVHR6UFZwdllTeHhqdWk2Uk43bzF0b1RXRlVH?=
+ =?utf-8?B?NTVNWnE5SXdBMEZoWjRZNnRXVFEycEZKSUZ4RXJkbEx2OEF5YTN2aDQ4OUNM?=
+ =?utf-8?B?MDVURURIQWYzc2p5bU1XeCtaRlRGMEU2aGxJSGpRdXd1THRSemNjbWZ4VTk1?=
+ =?utf-8?B?OWZMemtWOENETlIwOGZtVGpNR1BsN052OVhmaXZxYk5XdU10RmZTbU11ajVx?=
+ =?utf-8?B?OEdlMWNFL1BtazBZd0xNcm94NjZrRVVJMndObTRpTXIyZjR0VFlEcm93Zklx?=
+ =?utf-8?B?VUJPVnFObldJeWpsb3ZOVXBCdktsSFJ2R1FPaFdnR3Q3Q1VJeDUxbVlJR09l?=
+ =?utf-8?B?VmZGSmEvSHg1MEMzN2JvL1l1c2JvZVpEYWViNDFpc1FrdXpvNEYxM0lOQXFQ?=
+ =?utf-8?B?Qzd1Y1NUUmVSVDd5dmtON0p3WC8weitsTW1GbG12NlgrQzhhTVEweUdMQXpV?=
+ =?utf-8?B?ajBuOEc3R3JxMjd4NjZ2WEtwMXI1UjlJby85SnptNHNPLys1RVFDcHEwLzNJ?=
+ =?utf-8?B?OFVxc0xMWkExVWVNbzRHMUJ2dE93OWw5b1h5RC9rSi9Xa0lQbHdUMGxrNGMx?=
+ =?utf-8?B?UVBmcUpNU1JhbVpBZ1IvdU1WU1lyYTR2Um1zWGFwc1hWQmRHUW45THJTWUNP?=
+ =?utf-8?B?U3JyREZYcDBXZS9seFA2a01KdUpZYnVoWE9vVm0rdFZ4bXpJN0d2TU1tUTlI?=
+ =?utf-8?B?eW5heFQ5SDNXSDhldE4vVUNiS2VCOVBYT291bWExSFhQSGJ0ZVh2SmpmWlda?=
+ =?utf-8?B?TW5ONjFjOEMvYmZpNk93aGJtV3BoNjd1YnYyaGdwc1Mzc21pa3FmcjRQRndB?=
+ =?utf-8?B?RGZzYVdkaXJsNklub2tmSVp0UWRjYW80d2ZGb3NvSFJua2paQitDSjhEQ2Vl?=
+ =?utf-8?B?bk96algrUmF1bzhTZHNTNmFtdklCd1pTTit5eGZjTTJEOXg0QStTWlNPZnAr?=
+ =?utf-8?B?YnlLSDluVUNYU1RnSlN3eXVCd2NET2RXRlEyemVDaU9yNnJHTi91WnpMb1VE?=
+ =?utf-8?B?dDRTVWwvOWYvWndwWHBNa2djU1F0ektxK3NkLzR0Wm5YY25VOVIzeDkxYTJP?=
+ =?utf-8?B?V1crQVArcnJRMlhBcUZFK2dwQjJuVTBCM0xaZjJScW1YK01KMEtNaHBVUEhj?=
+ =?utf-8?B?cnV6a2hqTWVubTFuL1RHMnRXVFNUVEUrVU1zR3h0QUN0OWQwUHZFbzl2dVZk?=
+ =?utf-8?B?ZFlPZEZRNTBYNHlIQlRnZEFxNXh5cGR6elpKVVBnbk81NFkrRGlTbVZCTGZl?=
+ =?utf-8?B?WTRjcGc0WUhJSFZOVmd6bFhNNWlUb3d3VGVLQVU4ekRLK3djRCtjSS9zVy9D?=
+ =?utf-8?B?cFd3RGxsaFFmTVM4aEE2bVQzZmZUL3lkSVBYcGdod1ZzV1dxRmJsRlpqRS82?=
+ =?utf-8?B?RDNneUlLWkRKbFFGejY4K2gwTVBUamwwRnNhVDBMaFpYRG40bjhwQnd4UlJI?=
+ =?utf-8?B?QUJPdDBIVzFvR01HemZQQ3BHeEo3YmJHUVVTWmFmVDhuTFN3SGZjRVdFelAx?=
+ =?utf-8?B?Rk9qNEY1YnYwN0pFWVh6VXNlQnMzR1daUzBmQ0hkT0ZqdU1McVNXaUZhcm9B?=
+ =?utf-8?B?cG1TTVpsTTVxLzZLOGVBTTVja0EwRnM5ZEJkaDVqWmV5d3dZT3poM0R1K0FX?=
+ =?utf-8?B?a3I1Y1hhVkhwcjVJOUt1azBLYmR0amdWUWZENjVSOXo3clJCU0VlZ1d1ak9z?=
+ =?utf-8?B?ZWdKRG03a2pmVm9NSDRRUXlaYjB1UG9kTklGOVZYbmgvSjJVRkJiT0tpMVNI?=
+ =?utf-8?B?YXdBNW0yQTE3bGh2dUlpcmNHUHkwN2RyTHVMSFlNU0xsZnpXb1U1dFdhaGVz?=
+ =?utf-8?B?OGY3OFY1a2tOWEpGd0gwaWxuTzhCc2FjYWlHZGZRVHIwZHM1ZlU2cHZtVGlL?=
+ =?utf-8?B?SzdjdVFMRGxYYTBOQjBWWlBsNzBCMVUvYUJ5RXpaL3Q2THFOQmR4MUVEUVlR?=
+ =?utf-8?B?b2pESnNJdnRvQVR2Z0I5ZWtMcmZQUXdlV09hUS9oaGhxQlFuS0c2NnZmUkFP?=
+ =?utf-8?B?aUVnRVRMaTcrMmMvMndBQ2p3ZEZvSnczVEhWY1lZclZ6T0lLWDBBa2gxQWpo?=
+ =?utf-8?Q?HHf0MzLv0f+ROTEYFQkctDqAP?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0fba0a7e-cef6-41f3-7a5f-08dd52010dc3
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB5070.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Feb 2025 22:51:03.7701
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: jF1lodbbmey2jG1Pqh4G+3C2zOJFxzzqqjuLDAyAj69JFcACoXt07vqTuuWDfm0WPleJ1sb8+Z/4enqT65pplA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB5907
 
-Remove a block of code copied from inc_enq(). As often happens, the two
-copies have diverged somewhat - in this case, inc_enq() has a bug where
-it may leave the chain bit of a link TRB unset on a quirky HC. Fix this.
-Remove the pointless 'next' variable which only aliases ring->enqueue.
+On 2/18/25 19:26, Sean Christopherson wrote:
+> This is a hastily thrown together series, barely above RFC, to try and
+> address the worst of the issues that arise with guest controlled SEV
+> features (thanks AP creation)[1].
+> 
+> In addition to the initial flaws with DebugSwap, I came across a variety
+> of issues when trying to figure out how best to handle SEV features in
+> general.  E.g. AFAICT, KVM doesn't guard against userspace manually making
+> a vCPU RUNNABLE after it has been DESTROYED (or after a failed CREATE).
+> 
+> This is essentially compile-tested only, as I don't have easy access to a
+> system with SNP enabled.  I ran the SEV-ES selftests, but that's not much
+> in the way of test coverage.
+> 
+> AMD folks, I would greatly appreciate reviews, testing, and most importantly,
+> confirmation that all of this actually works the way I think it does.
 
-Note: I don't know if any 0.95 xHC ever reached series production, but
-"AMD 0.96 host" appears to be the "Llano" family APU. Example dmesg at
-https://linux-hardware.org/?probe=79d5cfd4fd&log=dmesg
+A quick test of a 64 vCPU SNP guest booted successfully, so that's a
+good start. I'll take a closer look at these patches over the next few days.
 
-pci 0000:00:10.0: [1022:7812] type 00 class 0x0c0330
-hcc params 0x014042c3 hci version 0x96 quirks 0x0000000000000608
+Thanks,
+Tom
 
-Signed-off-by: Michal Pecio <michal.pecio@gmail.com>
----
- drivers/usb/host/xhci-ring.c | 135 +++++++++++++++--------------------
- 1 file changed, 58 insertions(+), 77 deletions(-)
-
-diff --git a/drivers/usb/host/xhci-ring.c b/drivers/usb/host/xhci-ring.c
-index 46ca98066856..f400ba85ebc5 100644
---- a/drivers/usb/host/xhci-ring.c
-+++ b/drivers/usb/host/xhci-ring.c
-@@ -208,6 +208,52 @@ void inc_deq(struct xhci_hcd *xhci, struct xhci_ring *ring)
- 	return;
- }
- 
-+/*
-+ * If enqueue points at a link TRB, follow links until an ordinary TRB is reached.
-+ * Toggle the cycle bit of passed link TRBs and optionally chain them.
-+ */
-+static void inc_enq_past_link(struct xhci_hcd *xhci, struct xhci_ring *ring, u32 chain)
-+{
-+	unsigned int link_trb_count = 0;
-+
-+	while (trb_is_link(ring->enqueue)) {
-+
-+		/*
-+		 * Section 6.4.4.1 of the 0.95 spec says link TRBs cannot have the chain bit
-+		 * set, but other sections talk about dealing with the chain bit set. This was
-+		 * fixed in the 0.96 specification errata, but we have to assume that all 0.95
-+		 * xHCI hardware can't handle the chain bit being cleared on a link TRB.
-+		 *
-+		 * If we're dealing with 0.95 hardware or isoc rings on AMD 0.96 host, override
-+		 * the chain bit to always be set.
-+		 */
-+		if (!xhci_link_chain_quirk(xhci, ring->type)) {
-+			ring->enqueue->link.control &= cpu_to_le32(~TRB_CHAIN);
-+			ring->enqueue->link.control |= cpu_to_le32(chain);
-+		} else {
-+			ring->enqueue->link.control |= cpu_to_le32(TRB_CHAIN);
-+		}
-+
-+		/* Give this link TRB to the hardware */
-+		wmb();
-+		ring->enqueue->link.control ^= cpu_to_le32(TRB_CYCLE);
-+
-+		/* Toggle the cycle bit after the last ring segment. */
-+		if (link_trb_toggles_cycle(ring->enqueue))
-+			ring->cycle_state ^= 1;
-+
-+		ring->enq_seg = ring->enq_seg->next;
-+		ring->enqueue = ring->enq_seg->trbs;
-+
-+		trace_xhci_inc_enq(ring);
-+
-+		if (link_trb_count++ > ring->num_segs) {
-+			xhci_warn(xhci, "Link TRB loop at enqueue\n");
-+			break;
-+		}
-+	}
-+}
-+
- /*
-  * See Cycle bit rules. SW is the consumer for the event ring only.
-  *
-@@ -216,11 +262,6 @@ void inc_deq(struct xhci_hcd *xhci, struct xhci_ring *ring)
-  * If we've enqueued the last TRB in a TD, make sure the following link TRBs
-  * have their chain bit cleared (so that each Link TRB is a separate TD).
-  *
-- * Section 6.4.4.1 of the 0.95 spec says link TRBs cannot have the chain bit
-- * set, but other sections talk about dealing with the chain bit set.  This was
-- * fixed in the 0.96 specification errata, but we have to assume that all 0.95
-- * xHCI hardware can't handle the chain bit being cleared on a link TRB.
-- *
-  * @more_trbs_coming:	Will you enqueue more TRBs before calling
-  *			prepare_transfer()?
-  */
-@@ -228,8 +269,6 @@ static void inc_enq(struct xhci_hcd *xhci, struct xhci_ring *ring,
- 			bool more_trbs_coming)
- {
- 	u32 chain;
--	union xhci_trb *next;
--	unsigned int link_trb_count = 0;
- 
- 	chain = le32_to_cpu(ring->enqueue->generic.field[3]) & TRB_CHAIN;
- 
-@@ -238,48 +277,16 @@ static void inc_enq(struct xhci_hcd *xhci, struct xhci_ring *ring,
- 		return;
- 	}
- 
--	next = ++(ring->enqueue);
--
--	/* Update the dequeue pointer further if that was a link TRB */
--	while (trb_is_link(next)) {
--
--		/*
--		 * If the caller doesn't plan on enqueueing more TDs before
--		 * ringing the doorbell, then we don't want to give the link TRB
--		 * to the hardware just yet. We'll give the link TRB back in
--		 * prepare_ring() just before we enqueue the TD at the top of
--		 * the ring.
--		 */
--		if (!chain && !more_trbs_coming)
--			break;
--
--		/* If we're not dealing with 0.95 hardware or isoc rings on
--		 * AMD 0.96 host, carry over the chain bit of the previous TRB
--		 * (which may mean the chain bit is cleared).
--		 */
--		if (!xhci_link_chain_quirk(xhci, ring->type)) {
--			next->link.control &= cpu_to_le32(~TRB_CHAIN);
--			next->link.control |= cpu_to_le32(chain);
--		}
--		/* Give this link TRB to the hardware */
--		wmb();
--		next->link.control ^= cpu_to_le32(TRB_CYCLE);
--
--		/* Toggle the cycle bit after the last ring segment. */
--		if (link_trb_toggles_cycle(next))
--			ring->cycle_state ^= 1;
--
--		ring->enq_seg = ring->enq_seg->next;
--		ring->enqueue = ring->enq_seg->trbs;
--		next = ring->enqueue;
--
--		trace_xhci_inc_enq(ring);
--
--		if (link_trb_count++ > ring->num_segs) {
--			xhci_warn(xhci, "%s: Ring link TRB loop\n", __func__);
--			break;
--		}
--	}
-+	ring->enqueue++;
-+
-+	/*
-+	 * If we are in the middle of a TD or the caller plans to enqueue more
-+	 * TDs as one transfer (eg. control), traverse any link TRBs right now.
-+	 * Otherwise, enqueue can stay on a link until the next prepare_ring().
-+	 * This avoids enqueue entering deq_seg and simplifies ring expansion.
-+	 */
-+	if (chain || more_trbs_coming)
-+		inc_enq_past_link(xhci, ring, chain);
- }
- 
- /*
-@@ -3177,7 +3184,6 @@ static void queue_trb(struct xhci_hcd *xhci, struct xhci_ring *ring,
- static int prepare_ring(struct xhci_hcd *xhci, struct xhci_ring *ep_ring,
- 		u32 ep_state, unsigned int num_trbs, gfp_t mem_flags)
- {
--	unsigned int link_trb_count = 0;
- 	unsigned int new_segs = 0;
- 
- 	/* Make sure the endpoint has been added to xHC schedule */
-@@ -3225,33 +3231,8 @@ static int prepare_ring(struct xhci_hcd *xhci, struct xhci_ring *ep_ring,
- 		}
- 	}
- 
--	while (trb_is_link(ep_ring->enqueue)) {
--		/* If we're not dealing with 0.95 hardware or isoc rings
--		 * on AMD 0.96 host, clear the chain bit.
--		 */
--		if (!xhci_link_chain_quirk(xhci, ep_ring->type))
--			ep_ring->enqueue->link.control &=
--				cpu_to_le32(~TRB_CHAIN);
--		else
--			ep_ring->enqueue->link.control |=
--				cpu_to_le32(TRB_CHAIN);
--
--		wmb();
--		ep_ring->enqueue->link.control ^= cpu_to_le32(TRB_CYCLE);
--
--		/* Toggle the cycle bit after the last ring segment. */
--		if (link_trb_toggles_cycle(ep_ring->enqueue))
--			ep_ring->cycle_state ^= 1;
--
--		ep_ring->enq_seg = ep_ring->enq_seg->next;
--		ep_ring->enqueue = ep_ring->enq_seg->trbs;
--
--		/* prevent infinite loop if all first trbs are link trbs */
--		if (link_trb_count++ > ep_ring->num_segs) {
--			xhci_warn(xhci, "Ring is an endless link TRB loop\n");
--			return -EINVAL;
--		}
--	}
-+	/* Ensure that new TRBs won't overwrite a link */
-+	inc_enq_past_link(xhci, ep_ring, 0);
- 
- 	if (last_trb_on_seg(ep_ring->enq_seg, ep_ring->enqueue)) {
- 		xhci_warn(xhci, "Missing link TRB at end of ring segment\n");
--- 
-2.48.1
+> 
+> [1] https://lore.kernel.org/all/Z7TSef290IQxQhT2@google.com
+> 
+> Sean Christopherson (10):
+>   KVM: SVM: Save host DR masks but NOT DRs on CPUs with DebugSwap
+>   KVM: SVM: Don't rely on DebugSwap to restore host DR0..DR3
+>   KVM: SVM: Terminate the VM if a SEV-ES+ guest is run with an invalid
+>     VMSA
+>   KVM: SVM: Don't change target vCPU state on AP Creation VMGEXIT error
+>   KVM: SVM: Require AP's "requested" SEV_FEATURES to match KVM's view
+>   KVM: SVM: Simplify request+kick logic in SNP AP Creation handling
+>   KVM: SVM: Use guard(mutex) to simplify SNP AP Creation error handling
+>   KVM: SVM: Mark VMCB dirty before processing incoming snp_vmsa_gpa
+>   KVM: SVM: Use guard(mutex) to simplify SNP vCPU state updates
+>   KVM: SVM: Invalidate "next" SNP VMSA GPA even on failure
+> 
+>  arch/x86/kvm/svm/sev.c | 218 +++++++++++++++++++----------------------
+>  arch/x86/kvm/svm/svm.c |   7 +-
+>  arch/x86/kvm/svm/svm.h |   2 +-
+>  3 files changed, 106 insertions(+), 121 deletions(-)
+> 
+> 
+> base-commit: fed48e2967f402f561d80075a20c5c9e16866e53
 
