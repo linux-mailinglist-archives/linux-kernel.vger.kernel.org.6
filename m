@@ -1,195 +1,130 @@
-Return-Path: <linux-kernel+bounces-523606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85C49A3D91A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:45:03 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69A57A3D919
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:44:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E20A3A85A6
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 11:44:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 624497A82C5
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 11:43:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBE961F3D2C;
-	Thu, 20 Feb 2025 11:44:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 222CB1F3FC3;
+	Thu, 20 Feb 2025 11:44:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kdWxwYT4"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="xt5DFqDv"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B67C1F3D20
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 11:44:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEB6679CD;
+	Thu, 20 Feb 2025 11:44:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740051892; cv=none; b=uXK06/UJjWRXP9JWCHulCiH/D42XEkBi8KnY0Hdvi2Q0GqbdsYOb1ts/57/HErjBQ9ZX9Tr0fAtGj35sgXb329qgaSNVlKvk2LvoTxnrsOCpjnSaNCTvUkVfvpfE3UCYuqCls6vYB30hjdbMOHBJGU9qzOfifOtLbVEYuFrmbxY=
+	t=1740051881; cv=none; b=U+LVJkzYhIZcQhj9KWe0SCG3Wh1w8lHnAKskADmHzc93W3Gaw8UueGDTVwTovpqkgpMuu2Ege/Vw1itS8TMHmYao4tz03l1voXVOtdOIquU3CElmpLUwIuM16zw13L2tKJV6EhEbcTHQYPkVsURA4Lp4dhdvY5xb+SlVC/0oG70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740051892; c=relaxed/simple;
-	bh=j7oUgAr194ldPjOe7CnpcilB7J+0su/COvJrMzapXUE=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=Zw//uMWNCsNGBIUooO0MuVHnJnni0lHtCm2Fge8s8yMcNqN0FHqpFoP1LUhWxy1F78CBxEAwp3+JWUaBsqrALSoiKqoZqJMVPOk2TOvngDFFPsKb2wU7CM6bJ+cgRO1iefZ26OReW0vcABjrIoojjw74kBelfQvhZFu3fO92hCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kdWxwYT4; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740051891; x=1771587891;
-  h=date:from:to:cc:subject:message-id;
-  bh=j7oUgAr194ldPjOe7CnpcilB7J+0su/COvJrMzapXUE=;
-  b=kdWxwYT4T4XrmFYcEoxLwEt5hmZ0GNqfxQ1t5VScCVhrogcub8ec0LyV
-   X4EQVY5/65UCWi73axylxbXyTrODAkgVZZoIGrRW7Ho2AxqJkTMCKyxU+
-   LfqElEzSCX/1tKqO1B5Qqs+fndyDRmFLuZg6A2BE5qkNS4FX1ZfSEaLK+
-   WGLZx0VbUmFO6n0+KjXPn4wUiDTQWFBVGFxOwOkdkoPtUS8N5O85Mc4bP
-   YIB5Q0tyItDGt4G8raSOS1rCu3WYOR6wWrH3Mn2MCblbdCqzi6kBySnJ1
-   uO+Aq6YXTVlPunpBZ38THEUedvRmCiq2z6FCIL2e/Py6LTMoU+7PAI74C
-   Q==;
-X-CSE-ConnectionGUID: VbGS7jzRSn2Q57PM94Rulg==
-X-CSE-MsgGUID: VytfAg0WTD+GIE6uqHH+jA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11350"; a="58369473"
-X-IronPort-AV: E=Sophos;i="6.13,301,1732608000"; 
-   d="scan'208";a="58369473"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Feb 2025 03:44:50 -0800
-X-CSE-ConnectionGUID: MSHQE5bwSd+Rbl8Q3KXjnQ==
-X-CSE-MsgGUID: VCGSP9mmSrmtgI1fUURQsg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="152216294"
-Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
-  by orviesa001.jf.intel.com with ESMTP; 20 Feb 2025 03:44:48 -0800
-Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tl4yz-0004Eh-2H;
-	Thu, 20 Feb 2025 11:44:45 +0000
-Date: Thu, 20 Feb 2025 19:43:54 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-Subject: [gustavoars:testing/wfamnae-next20250210-2] BUILD SUCCESS
- 987bc66d587f719478850fce6270d713a37747d1
-Message-ID: <202502201949.Y0hBKoBt-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1740051881; c=relaxed/simple;
+	bh=dRD2Z+QEueUpm7pZtyoK8qbcEyBONj0ZELWYH9A92MA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lPEXLiALlHFHTN7V8SRKfDuyMHw+pHZJXpld1mJuSrOdnt03yFbHB2V1GvfodiWE6EH1JBEKWkhvXW/GpFGwC4B3TsfcSrIwgSTRB9SI3HTFJABlGDVxapSlz/HHawJv8E6Dk3dPRhM+9GsCpNMD8HOP/EaMAISwF65HoXcbKF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=xt5DFqDv; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=OMt4+h4M2hi9bh1j74Xva35n6PD/Vbe0tDN67Tdnx4w=; b=xt5DFqDvVS+9dt404mDOkGLP+E
+	1fyXCW3pqplrlhIIjhaQEICw6ArRyUhDDKMZd21/ALbjtqYBc1DvJQNHlIjHP4EiSUy8obeO4BviH
+	/h5rYxya6ZA0d0sJl3WgV32fccXeoV0Xo+2C+IH34+2DYD3tig4tX44Pk7yfPkaYEXG1Jz3SdpUse
+	9ghw7gaj3bvKMnwLV5qkZQFtr+2eE89jzJhJ16pUw374/yDw38JMMEjOWGn3w7OLSnbZMxnvIaV+L
+	2AM3Sz3//5OAL0/lES7735aRaZ3YsKDPgM9o0Pa/EQwZBE6cSFyFztT2qtR/XfIflhAbW67EFjW95
+	ylRToIDQ==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:46900)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1tl4yg-0000om-0U;
+	Thu, 20 Feb 2025 11:44:26 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1tl4yd-0000x2-1n;
+	Thu, 20 Feb 2025 11:44:23 +0000
+Date: Thu, 20 Feb 2025 11:44:23 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: "Gupta, Suraj" <Suraj.Gupta2@amd.com>
+Cc: Sean Anderson <sean.anderson@linux.dev>, Andrew Lunn <andrew@lunn.ch>,
+	"andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>,
+	"davem@davemloft.net" <davem@davemloft.net>,
+	"edumazet@google.com" <edumazet@google.com>,
+	"kuba@kernel.org" <kuba@kernel.org>,
+	"pabeni@redhat.com" <pabeni@redhat.com>,
+	"Simek, Michal" <michal.simek@amd.com>,
+	"Pandey, Radhey Shyam" <radhey.shyam.pandey@amd.com>,
+	"horms@kernel.org" <horms@kernel.org>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"git (AMD-Xilinx)" <git@amd.com>,
+	"Katakam, Harini" <harini.katakam@amd.com>
+Subject: Re: [PATCH net-next 2/2] net: axienet: Add support for AXI 2.5G MAC
+Message-ID: <Z7cVlwPDtJ2fdTbY@shell.armlinux.org.uk>
+References: <20241118081822.19383-1-suraj.gupta2@amd.com>
+ <20241118081822.19383-3-suraj.gupta2@amd.com>
+ <ZztjvkxbCiLER-PJ@shell.armlinux.org.uk>
+ <657764fd-68a1-4826-b832-3bda91a0c13b@linux.dev>
+ <9d26a588-d9ac-43c5-bedc-22cb1f0923dd@lunn.ch>
+ <72ded972-cd16-4124-84af-8d8ddad049f0@linux.dev>
+ <ZzyzhCVBgXtQ_Aop@shell.armlinux.org.uk>
+ <BL3PR12MB6571FE73FA8D5AAB9FB4BB3CC9C42@BL3PR12MB6571.namprd12.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <BL3PR12MB6571FE73FA8D5AAB9FB4BB3CC9C42@BL3PR12MB6571.namprd12.prod.outlook.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git testing/wfamnae-next20250210-2
-branch HEAD: 987bc66d587f719478850fce6270d713a37747d1  bcache: Avoid -Wflex-array-member-not-at-end warnings
+On Thu, Feb 20, 2025 at 11:30:52AM +0000, Gupta, Suraj wrote:
+> Sorry for picking up this thread after long time, we checked
+> internally with AMD IP and hardware experts and it is true that you
+> can use this MAC and PCS to operate at 1G and 2.5G both. It is also
+> possible to switch between these two speeds dynamically using
+> external GT and/or if an external RTL logic is implemented in the
+> FPGA. That will include some GPIO or register based selections to
+> change the clock and configurations to switch between the speeds.
+> Our current solution does not support this and is meant for a
+> static speed selection only.
 
-elapsed time: 1451m
+Thanks for getting back on this.
 
-configs tested: 103
-configs skipped: 2
+Okay, so it's a synthesis option, where that may be one of:
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+1. SGMII/1000base-X only
+2. 2500base-X only
+3. dynamically switching between (1) and (2).
 
-tested configs:
-alpha                             allnoconfig    gcc-14.2.0
-alpha                            allyesconfig    gcc-14.2.0
-arc                              allmodconfig    gcc-13.2.0
-arc                               allnoconfig    gcc-13.2.0
-arc                              allyesconfig    gcc-13.2.0
-arc                   randconfig-001-20250219    gcc-13.2.0
-arc                   randconfig-002-20250219    gcc-13.2.0
-arm                              allmodconfig    gcc-14.2.0
-arm                               allnoconfig    clang-17
-arm                              allyesconfig    gcc-14.2.0
-arm                   randconfig-001-20250219    gcc-14.2.0
-arm                   randconfig-002-20250219    clang-17
-arm                   randconfig-003-20250219    clang-15
-arm                   randconfig-004-20250219    gcc-14.2.0
-arm64                            allmodconfig    clang-18
-arm64                             allnoconfig    gcc-14.2.0
-arm64                 randconfig-001-20250219    clang-21
-arm64                 randconfig-002-20250219    gcc-14.2.0
-arm64                 randconfig-003-20250219    gcc-14.2.0
-arm64                 randconfig-004-20250219    gcc-14.2.0
-csky                              allnoconfig    gcc-14.2.0
-csky                  randconfig-001-20250219    gcc-14.2.0
-csky                  randconfig-002-20250219    gcc-14.2.0
-hexagon                          allmodconfig    clang-21
-hexagon                           allnoconfig    clang-21
-hexagon                          allyesconfig    clang-18
-hexagon               randconfig-001-20250219    clang-14
-hexagon               randconfig-002-20250219    clang-21
-i386                             allmodconfig    gcc-12
-i386                              allnoconfig    gcc-12
-i386                             allyesconfig    gcc-12
-i386        buildonly-randconfig-001-20250219    clang-19
-i386        buildonly-randconfig-002-20250219    clang-19
-i386        buildonly-randconfig-003-20250219    gcc-12
-i386        buildonly-randconfig-004-20250219    clang-19
-i386        buildonly-randconfig-005-20250219    clang-19
-i386        buildonly-randconfig-006-20250219    gcc-12
-i386                                defconfig    clang-19
-loongarch                        allmodconfig    gcc-14.2.0
-loongarch                         allnoconfig    gcc-14.2.0
-loongarch             randconfig-001-20250219    gcc-14.2.0
-loongarch             randconfig-002-20250219    gcc-14.2.0
-m68k                             allmodconfig    gcc-14.2.0
-m68k                              allnoconfig    gcc-14.2.0
-m68k                             allyesconfig    gcc-14.2.0
-microblaze                        allnoconfig    gcc-14.2.0
-mips                              allnoconfig    gcc-14.2.0
-nios2                             allnoconfig    gcc-14.2.0
-nios2                 randconfig-001-20250219    gcc-14.2.0
-nios2                 randconfig-002-20250219    gcc-14.2.0
-openrisc                          allnoconfig    gcc-14.2.0
-openrisc                         allyesconfig    gcc-14.2.0
-openrisc                            defconfig    gcc-14.2.0
-parisc                           allmodconfig    gcc-14.2.0
-parisc                            allnoconfig    gcc-14.2.0
-parisc                           allyesconfig    gcc-14.2.0
-parisc                              defconfig    gcc-14.2.0
-parisc                randconfig-001-20250219    gcc-14.2.0
-parisc                randconfig-002-20250219    gcc-14.2.0
-powerpc                          allmodconfig    gcc-14.2.0
-powerpc                           allnoconfig    gcc-14.2.0
-powerpc               randconfig-001-20250219    clang-15
-powerpc               randconfig-002-20250219    clang-17
-powerpc               randconfig-003-20250219    gcc-14.2.0
-powerpc64             randconfig-001-20250219    gcc-14.2.0
-powerpc64             randconfig-002-20250219    gcc-14.2.0
-powerpc64             randconfig-003-20250219    gcc-14.2.0
-riscv                             allnoconfig    gcc-14.2.0
-riscv                 randconfig-001-20250219    clang-21
-riscv                 randconfig-002-20250219    gcc-14.2.0
-s390                             allmodconfig    clang-19
-s390                              allnoconfig    clang-21
-s390                             allyesconfig    gcc-14.2.0
-s390                  randconfig-001-20250219    clang-18
-s390                  randconfig-002-20250219    clang-21
-sh                               allmodconfig    gcc-14.2.0
-sh                                allnoconfig    gcc-14.2.0
-sh                               allyesconfig    gcc-14.2.0
-sh                    randconfig-001-20250219    gcc-14.2.0
-sh                    randconfig-002-20250219    gcc-14.2.0
-sparc                            allmodconfig    gcc-14.2.0
-sparc                             allnoconfig    gcc-14.2.0
-sparc                 randconfig-001-20250219    gcc-14.2.0
-sparc                 randconfig-002-20250219    gcc-14.2.0
-sparc64               randconfig-001-20250219    gcc-14.2.0
-sparc64               randconfig-002-20250219    gcc-14.2.0
-um                               allmodconfig    clang-21
-um                                allnoconfig    clang-18
-um                               allyesconfig    gcc-12
-um                    randconfig-001-20250219    clang-21
-um                    randconfig-002-20250219    clang-21
-x86_64                            allnoconfig    clang-19
-x86_64                           allyesconfig    clang-19
-x86_64      buildonly-randconfig-001-20250219    gcc-12
-x86_64      buildonly-randconfig-002-20250219    clang-19
-x86_64      buildonly-randconfig-003-20250219    gcc-12
-x86_64      buildonly-randconfig-004-20250219    clang-19
-x86_64      buildonly-randconfig-005-20250219    gcc-12
-x86_64      buildonly-randconfig-006-20250219    clang-19
-x86_64                              defconfig    gcc-11
-xtensa                            allnoconfig    gcc-14.2.0
-xtensa                randconfig-001-20250219    gcc-14.2.0
-xtensa                randconfig-002-20250219    gcc-14.2.0
+> We'll use MAC ability register to detect if MAC is configured for
+> 2.5G. Will it be fine to advertise both 1G and 2.5G in that case?
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Please document in a comment that the above are synthesis options,
+and that dynamically changing between them is possible but not
+implemented by the driver. Note that should anyone use axienet for
+SFP modules, then (1) is essentially the base functionality, (2) is
+very limiting, and (3) would be best.
+
+Not only will one want to limit the MAC capabilities, but also the
+supported interface modes. As it's been so long since the patch was
+posted, I don't remember whether it did that or not.
+
+Thanks.
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
