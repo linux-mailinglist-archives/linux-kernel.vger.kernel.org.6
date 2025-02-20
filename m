@@ -1,103 +1,117 @@
-Return-Path: <linux-kernel+bounces-523815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA411A3DB91
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:43:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9BF6A3DC63
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:17:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9F7F178B7B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:43:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8676716F031
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:17:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 968531FA851;
-	Thu, 20 Feb 2025 13:43:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E5AC1FE45B;
+	Thu, 20 Feb 2025 14:16:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b="ZrNqmH+M"
-Received: from ewsoutbound.kpnmail.nl (ewsoutbound.kpnmail.nl [195.121.94.169])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Das1GRCt"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 329EC1F8BC5
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 13:43:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.121.94.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E41E71FCCE9;
+	Thu, 20 Feb 2025 14:16:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740059006; cv=none; b=cBUd1lIHymDdlJFe4XWSsqVExwqUH+kiQsRX0SqB0TkXT3HppMeTF9RN3h00r5r4IjWG3D96rTzns74jrxDv1M+pt6J9wuSPgbgEGknnEGMoyFXlgxMtOkSD+RU8ZAseA7SCHLuGNr73UdLqmWmUQB8drAzI7pu3CcPKRKadJj8=
+	t=1740061015; cv=none; b=VafdQyPl5PtaT0Yg7dCkHOb05tUdlI3jRXxcCA09VJc6mSh+xU0d/85YpqsP9/JdDHpkQxv2Z2RCoCHIoGGYt3IDM4NwMufjq4LmTVidjC+Ctrrc+ofbjA1ud8fkYXNC5jelfB4DTeKlNQq26P3B86ZGwHCiniUIdY85l3jUpqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740059006; c=relaxed/simple;
-	bh=Ygl3Io+G6KqutlPU+fN7rhX49BRWWSTxgCi4pToE2yo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OC5JHjA+vHbiXCItOdonbNnlzHWlE1Nrl+9zgVaxoEUdYSNgA4zy6kwbeq8VsVg1EtVLZePye+1Py6CC8UL6ogB4poOMFMRV0uWx1+tPIuXdDbFcDwMECdxqF/C5TWkqPQ41lbF/CBdsppLcv+uKaSQIvtfBLY12pYRGcyIE9no=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xs4all.nl; spf=pass smtp.mailfrom=xs4all.nl; dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b=ZrNqmH+M; arc=none smtp.client-ip=195.121.94.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xs4all.nl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xs4all.nl
-X-KPN-MessageId: a2b237e4-ef90-11ef-a82b-005056abad63
-Received: from smtp.kpnmail.nl (unknown [10.31.155.38])
-	by ewsoutbound.so.kpn.org (Halon) with ESMTPS
-	id a2b237e4-ef90-11ef-a82b-005056abad63;
-	Thu, 20 Feb 2025 14:43:15 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=xs4all.nl; s=xs4all01;
-	h=content-type:from:to:subject:mime-version:date:message-id;
-	bh=EKsMcRh8yu35s4bHPNkPdYgdQb79+wz6oYDyj9ZvfMg=;
-	b=ZrNqmH+MUFV9RSKjYXnZkzJNnuZp7NrE8+dj+cYujSjNmTMKovbKN4qo/uPEYXtk2ZSW4DL9mdCI2
-	 V5LrdfIGzke6K3iSeA556+w7YAjnCCBHWTE5UdtO4eaTZdjPSNGiKv54BmnFSa673Z3x8GhLdKqxse
-	 Oiudzw165p97wdUrPXARL0cGgifb2+jAePEZ0WXMsPQVMr7oth5KYsGmQhjZPGtBsAgaaAKCcAVhlI
-	 tZdiKhMaz+eo3CY6DHYSfXJD60fqveV4rWGxtkHu+BXFnr5dd+F/Ik92El2zfYdaUYdse7gmQqwfbU
-	 d18zGue3tJ2UjMWHYsuYK3e+zRIdLKw==
-X-KPN-MID: 33|Eaes4jiC4gq/6GSUBflgNK6jQjPkayQpNLwk1yC2Jg/ldz/sMueDSDnkCJYFleA
- ujuKRdtYYm0KpviVaqjc6ZuKficPf1ZztXjbHlAl0LDk=
-X-KPN-VerifiedSender: Yes
-X-CMASSUN: 33|XHi/ZriUdfwf0X3CR+WgT+xssa8CX/k3++rWXWzY8yfbLB5GJPl7lo158Z2otDZ
- rHizjhSnc4m7nXkrsplu/mg==
-Received: from [10.47.75.249] (unknown [173.38.220.43])
-	by smtp.xs4all.nl (Halon) with ESMTPSA
-	id a1d21ade-ef90-11ef-957d-005056abf0db;
-	Thu, 20 Feb 2025 14:43:14 +0100 (CET)
-Message-ID: <eaf46d30-71a4-4200-b1e1-6b657372f5ef@xs4all.nl>
-Date: Thu, 20 Feb 2025 14:43:13 +0100
+	s=arc-20240116; t=1740061015; c=relaxed/simple;
+	bh=s7VjF6617+n9tFAkxx2f2oZrFvw0Wa/Dbzzdv/P8Ge0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LyBHorMkHR7ofiXF7CiCUEQ8HxtnB9FrdGhcKnbpAyOdQAud1Qj5n6a/qcKN26im+sSqaCKLQRmQcqPECnacNzSVEEjYL0koHTDuaGMSVk8NHNdK9xC5fat7tN7kZNSgK4WR0x/XmHwdfzFx8NRB3YvfASpT62s4Znk+J2t0aqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Das1GRCt; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740061014; x=1771597014;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=s7VjF6617+n9tFAkxx2f2oZrFvw0Wa/Dbzzdv/P8Ge0=;
+  b=Das1GRCtrvtNsIa/GYteS3Fba70bu7wUuQkTAWAqK9rEG1PcehrEEWHk
+   kaKztNv0ItvFfIVSFDp/2vA+qwE0CwoC5UuUeXKnIBxHzFVx+H+R+Qn3j
+   smIwHj1yawv4ZHhkjC20qi01vZPNBLuMajcUv3BGeA/9efEACRmKeZ4uj
+   4b8wW1YkiG7a9D0e2vhO2ialxPMvkm8nOs7EhqFfnps/n5wSPXtEDJPsn
+   EHp66aAOwmX4TgPVWti/7KPAJVgonyTAFQF+XFczzKPjCfj+u9DYsVNpM
+   K1rksndvJztFexgS86S5+Y1w/GhaQtIoW01fS85p+mu7+kQjUcNAfcIh9
+   Q==;
+X-CSE-ConnectionGUID: iyLaTUXDRMOyJG1rRfSEHQ==
+X-CSE-MsgGUID: glgJjXzzSMqIr8DodpuLEw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11351"; a="51458104"
+X-IronPort-AV: E=Sophos;i="6.13,301,1732608000"; 
+   d="scan'208";a="51458104"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Feb 2025 06:16:50 -0800
+X-CSE-ConnectionGUID: /+3y9CpmRja/YG4G/knkgQ==
+X-CSE-MsgGUID: 0/difwcWTDS7v0vMzVxigQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,301,1732608000"; 
+   d="scan'208";a="114883167"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa006.fm.intel.com with ESMTP; 20 Feb 2025 06:16:47 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 3A9EA123; Thu, 20 Feb 2025 16:16:46 +0200 (EET)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Zijun Hu <quic_zijuhu@quicinc.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Raag Jadav <raag.jadav@intel.com>
+Subject: [PATCH v1 0/4] gpiolib: finish conversion to devm_*_action*() APIs
+Date: Thu, 20 Feb 2025 15:44:56 +0200
+Message-ID: <20250220141645.2694039-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.45.1.3035.g276e886db78b
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drivers/media/pci/sta2x11: replace legacy GPIO APIs
-Content-Language: en-US
-To: Arnd Bergmann <arnd@arndb.de>, Song Chen <chensong_2000@189.cn>,
- Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
-References: <20241203072742.191787-1-chensong_2000@189.cn>
- <9489561e-bc41-481d-b542-07fed1161a03@app.fastmail.com>
- <f552e0f5-6350-416f-89e5-e1a0e6aa2886@189.cn>
- <070175a7-1bea-4dbb-8b5b-9edee06fec79@app.fastmail.com>
-From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-In-Reply-To: <070175a7-1bea-4dbb-8b5b-9edee06fec79@app.fastmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi Arnd,
+GPIOLIB has some open coded stuff that can be folded to the devm_*_action*()
+calls. This mini-series is for that. The necessary prerequisites are here
+as well, namely:
+1) moving the respective APIs to the devres.h;
+2) adding a couple of simple helpers that GPIOLIB will rely on;
+3) finishing the GPIOLIB conversion to the device managed action APIs.
 
-On 12/3/24 08:52, Arnd Bergmann wrote:
-> On Tue, Dec 3, 2024, at 08:48, Song Chen wrote:
->> ok, then remove it.
->>
->> what about drivers/staging/media/atomisp/pci/atomisp_gmin_platform.c,
->> it has the same problem, are you going to remove it as well?
-> 
-> No, that one is likely to stay around for a while. I think it
-> was actually removed before and brought back because there are
-> users. That one is just the on-chip component on certain Atom
-> SoCs.
-> 
-> The sta2x11 platform was never that widely used and I think might
-> have not been completely upstreamed.
+The series is based on another series that's available via immutable tag
+devres-iio-input-pinctrl-v6.15 [1]. The idea is to route this via GPIOLIB
+tree (or Intel GPIO for the starter) with an immutable tag for the device
+core and others if needed. Please, review and acknowledge.
 
-So I can drop this patch, and in the near future I guess we'll receive
-a patch from you removing this driver? Is that correct?
+Link: https://lore.kernel.org/r/Z7cqCaME4LxTTBn6@black.fi.intel.com [1]
+Cc: Raag Jadav <raag.jadav@intel.com>
 
-Regards,
+Andy Shevchenko (4):
+  devres: Move devm_*_action*() APIs to devres.h
+  devres: Add devm_is_action_added() helper
+  devres: Add devm_remove_action_optional() helper
+  gpiolib: devres: Finish the conversion to use devm_add_action()
 
-	Hans
+ drivers/base/devres.c         | 11 ++++
+ drivers/gpio/gpiolib-devres.c | 94 ++++++++++-------------------------
+ include/linux/device.h        | 38 --------------
+ include/linux/device/devres.h | 54 ++++++++++++++++++++
+ 4 files changed, 90 insertions(+), 107 deletions(-)
+
+
+base-commit: 9deb15de8ca27cf9cba0d2bac53bbe37c836591b
+-- 
+2.45.1.3035.g276e886db78b
 
 
