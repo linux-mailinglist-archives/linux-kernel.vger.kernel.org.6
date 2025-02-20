@@ -1,118 +1,105 @@
-Return-Path: <linux-kernel+bounces-523855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3086BA3DC1D
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:08:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1ADC2A3DC21
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:08:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72A8F19C1425
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:07:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6840B1885A34
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:07:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D653E1FBC85;
-	Thu, 20 Feb 2025 14:06:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32D9D14BF89;
+	Thu, 20 Feb 2025 14:07:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GVjmBTqX"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Y3SZxUxb"
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96A5E1F1312;
-	Thu, 20 Feb 2025 14:06:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72E631A8F94;
+	Thu, 20 Feb 2025 14:07:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740060404; cv=none; b=BkhKEGCF3lHW31DR46U3IZd650KP3qWUPTnQVLJThyfwRiriZZ1WgkAP5Q0AXMZ5jrflIyVoZ0tdQHHuyCqRLLYPKFh1XOiDgOPjoVHriM+564/MXGlaLDJDpjX42yFgcZdgzgL+q4m1bsENMqW5+bNLI+IciKiaVeiBN9OKjLc=
+	t=1740060457; cv=none; b=LM1VpI8a+1AsqvdH6XH3WFRTMMMMZXI90GqFNAgClgNkLH0yt34sSHHK+mLSh/OumqVLdyB4/KmMm5ihJY75b5AwEng1jHuER4o4iZy+9kG3SmMP56zU7awR3EGMpboMpzDYy4mL4nGOhBCT8DHWqM0SQqQpP8e2mLF8ToYYJ10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740060404; c=relaxed/simple;
-	bh=Qh0CSO0P7f3dfwyP8ZX25Z4RxopX1i3rqk3kFVF405Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=A7FCZeFUqQUts6Otd7VZWrHr7ejc+7d6enYXQtxQSJLsnFT6dIue/RBTdvmfZEY4Mw5HA64rMgNOKEBWKygD2Hs0JtqDdAv8QjygrY4wNG5f6qwlme5AM2YhYf+1Uiec9bBvdp5Wdfko880As3lPzKrksHIGHQoZGrQ836u4/KU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GVjmBTqX; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-abbec6a0bfeso165642366b.2;
-        Thu, 20 Feb 2025 06:06:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740060401; x=1740665201; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=wqogniICWWslcB/lR7Kybwmnp4T1PxyorgaJfOCjRGw=;
-        b=GVjmBTqXiAeCrjNGNXg+K0Ud6Ixcr7cvZw0op1gB/L8VdJq+CsNnbtl4f92sJz+jwJ
-         HAMeMg+5h70UxMJmOL1SNId0d46R1brBag1ofuCcE9T/6AJgd7GaZLwJqTWoFukQgctx
-         WvDP5j+wi4YMHzwTQWmVM9rdfsP/ZSViIxv3eLa1wSzPiPy5ZeF168CLYY1Sa5+ijiQJ
-         WuqnWBk+ppNCOh7d15iLDDy1ocr/S6PXvlS+WGjir8T42hemHEvDE7X/52p/WEzLow6C
-         pk+Nxk2GgiT7A937Q1D27GeUO8nzNzEPT9SQ/9R43Ygvd4I1ZH8SKgRej5e5MIVc+Yv8
-         bgTA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740060401; x=1740665201;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wqogniICWWslcB/lR7Kybwmnp4T1PxyorgaJfOCjRGw=;
-        b=uklYJKzJQ6KlyjN2lAF438hvILjRzt5DmS8KBLAh4JPbl7aVPK4MuwIiWDmnFJaqwr
-         Ejw3GYZNpt2deg7e69jaW3r3F+JefxUYmqkzjOa+u/l1n6Oy6+H7SS0cUnb2fp8mXL+7
-         VEMn3tTMt/c+iw00nsQtJgEEdkpxxzoAtv4TuDO+0ZXbMwNYQ2/cAguRaC1aDF/QTHwl
-         mFTSqIxjCC8RGvaEgujyg/FLihWwN7ASUPM/M94XQsLB4qGpsmySMNQsgLDdUfzPfoib
-         6LWe2pXBL0N1l0r23e4pg96qER8WNvQwHatKBXMF+mlErNGUuHEgWS4Qxn1g6EZRv0U0
-         L0pw==
-X-Forwarded-Encrypted: i=1; AJvYcCU1u8fEh3Af8nZsQ0FYd4Kg55Z1oJQH2mY652vc37Dk4PaJ3iCSALFn0LPixwdSwYJJIsOp1sa4CKHGF7g=@vger.kernel.org, AJvYcCUjgjfaXtjAxdBI5aX4VHrztx/cU7HMsk7E7aSGrsZI2uBRXQohFJIK5FcOrDZyQkgTJ8iolYy/vrHDiFk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzncd7FGZ7521o9D8bVPJXTU9/egxUDT8mbsNRp6sICEqKLhcsk
-	1X/mTqFskfX2goRAkspbztdoe79GJTfLkCtx1rZfj36xvxL7FWKQ
-X-Gm-Gg: ASbGncvQ/+E37Mul4M7Gsu2nmwG0sne0biKN08BMAGInWKIfVZKfR12xzMZOJ8Fs8Ce
-	ImK36gQKsaL7MYxcM47IWFp744eBkyokkndkvY7xlirwzVU1fR40/u/EUeC5LAPgNhLOUb569pN
-	RVY/+LaPeOI+s8uALrFgoj3lMDZ6pvhpYZnsyt9DWMdy5V8LHHuMVUoC/QmPfIypZc0+qfofI8y
-	HVUL8Pon+5IeKouDn1FmFqJ5leO3nBa6mP4vjhkXgb6pppiNBAYA7/Rjf2G8Omlrg9AN2uHNDdv
-	bYmGGtmCpyszUAVqQ7x9/qIKrmhb
-X-Google-Smtp-Source: AGHT+IEes6EGQbeHDM25MJmZZZ1Rri2Qy7vA8nC8vM+sXYJeYgrNYx11MzK1Oz7LzcTP0xUaoruNmQ==
-X-Received: by 2002:a17:906:309a:b0:ab7:fbb2:b47c with SMTP id a640c23a62f3a-abbf3cb91dcmr242679666b.35.1740060400381;
-        Thu, 20 Feb 2025 06:06:40 -0800 (PST)
-Received: from demon-pc.localdomain ([188.27.130.21])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abb97dea08fsm827770266b.53.2025.02.20.06.06.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Feb 2025 06:06:39 -0800 (PST)
-From: Cosmin Tanislav <demonsingur@gmail.com>
-To: 
-Cc: Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Cosmin Tanislav <demonsingur@gmail.com>
-Subject: [PATCH] media: i2c: imx219: remove context around case
-Date: Thu, 20 Feb 2025 16:06:35 +0200
-Message-ID: <20250220140636.146506-1-demonsingur@gmail.com>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1740060457; c=relaxed/simple;
+	bh=1/v+aE7ujIrr88SlyYox0ZnwxUrB1O/7TGByz1MUVXk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qjYzyDtF1Miq0FONGGwGtBEfv8l0sY9f/d6PJbpSeeonIVnZifG3TflWleT7jo/i0agp/b18aU9IMWnHyQmR9dyFWXwG5eUV86pBilBH/JoRgLTvNSYQmhKv+IaWMD2acNwXd45xX8yOzuUiKkMCxCeIv78k9IMvOAMAAqK1Dmg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Y3SZxUxb; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 8EB1A442F6;
+	Thu, 20 Feb 2025 14:07:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1740060446;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xTtSd4tmydl/dct6URamw55L3a/uuGkjLvkhv6bX7i0=;
+	b=Y3SZxUxbDLph24OKEmLNOqxHDZ19kmaJMwfmgDBSErO2ayIrJDJLIwGmoYgsqwYbA1z0oq
+	GIiKKYU8PAiZb63Rle1ANdXZ8UR4OF8QVB3Jdq1jIpkIGQfdPQrIvxuDq9P8JUZCgqBLNh
+	t+bCE9gu8CjCEXrLPGFFfoVyGLfxQIdg4uVjH/JypPuT5P4avU1OsZ9q9OAOqHi1nOEjzU
+	4yFQxe1e4Dakv4SEv/p9W5wcwR/5hkN2MFrhEHUClCJLjsjNzX3tbf/mSmZW6hDWhFy/Kc
+	kDUlhfLDZOehWLsuBYMOfVss3prsIA2vPwd4jORrrVGgfGGm/ZSszVhsKxWu/Q==
+Date: Thu, 20 Feb 2025 15:07:23 +0100
+From: Herve Codina <herve.codina@bootlin.com>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Alexander Stein <alexander.stein@ew.tq-group.com>, Andrzej Hajda
+ <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>,
+ Robert Foss <rfoss@kernel.org>, Laurent Pinchart
+ <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>, David Airlie
+ <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann
+ <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Dave Stevenson
+ <dave.stevenson@raspberrypi.com>, =?UTF-8?B?TWHDrXJh?= Canal
+ <mcanal@igalia.com>, Raspberry Pi Kernel Maintenance
+ <kernel-list@raspberrypi.com>, Marek Vasut <marex@denx.de>,
+ dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Louis Chauvet <louis.chauvet@bootlin.com>,
+ Luca Ceresoli <luca.ceresoli@bootlin.com>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v4 2/4] drm/atomic-helper: Introduce
+ drm_atomic_helper_reset_crtc()
+Message-ID: <20250220150723.3cdf9d27@bootlin.com>
+In-Reply-To: <20250220-wooden-robin-of-discussion-6a36f1@houat>
+References: <20250203145824.155869-1-herve.codina@bootlin.com>
+	<20250203145824.155869-3-herve.codina@bootlin.com>
+	<Z7XfnPGDYspwG42y@phenom.ffwll.local>
+	<20250220-wooden-robin-of-discussion-6a36f1@houat>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeijeefvdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthekredtredtjeenucfhrhhomhepjfgvrhhvvgcuvehoughinhgruceohhgvrhhvvgdrtghoughinhgrsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpedvhfeljedtfedtjeevffegtddutdeghfettdduhfeuhfdttdffieeuiefgvdfhvdenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppedvrgdtudemvgdtrgemvdegieemjeejledtmedviegtgeemvgdvvdemiedtfegumeehkegrnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegvtdgrmedvgeeimeejjeeltdemvdeitgegmegvvddvmeeitdefugemheekrgdphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomhephhgvrhhvvgdrtghoughinhgrsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvhedprhgtphhtthhopehmrhhiphgrrhgusehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrlhgvgigrnhguvghrrdhsthgvihhnsegvfidrthhqqdhgrhhouhhprdgtohhmpdhrtghpthhtoheprghnughriigvjhdrhhgrjhgurgesihhnt
+ hgvlhdrtghomhdprhgtphhtthhopehnvghilhdrrghrmhhsthhrohhngheslhhinhgrrhhordhorhhgpdhrtghpthhtoheprhhfohhssheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepnfgruhhrvghnthdrphhinhgthhgrrhhtsehiuggvrghsohhnsghorghrugdrtghomhdprhgtphhtthhopehjohhnrghssehkfihisghoohdrshgvpdhrtghpthhtohepjhgvrhhnvghjrdhskhhrrggsvggtsehgmhgrihhlrdgtohhm
+X-GND-Sasl: herve.codina@bootlin.com
 
-There are no longer variable declarations here, the context is useless.
+Hi Maxime,
 
-Signed-off-by: Cosmin Tanislav <demonsingur@gmail.com>
----
- drivers/media/i2c/imx219.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+On Thu, 20 Feb 2025 11:44:37 +0100
+Maxime Ripard <mripard@kernel.org> wrote:
 
-diff --git a/drivers/media/i2c/imx219.c b/drivers/media/i2c/imx219.c
-index f662c9d755114..fcd98ee54768e 100644
---- a/drivers/media/i2c/imx219.c
-+++ b/drivers/media/i2c/imx219.c
-@@ -947,10 +947,9 @@ static int imx219_get_selection(struct v4l2_subdev *sd,
- 				struct v4l2_subdev_selection *sel)
- {
- 	switch (sel->target) {
--	case V4L2_SEL_TGT_CROP: {
-+	case V4L2_SEL_TGT_CROP:
- 		sel->r = *v4l2_subdev_state_get_crop(state, 0);
- 		return 0;
--	}
- 
- 	case V4L2_SEL_TGT_NATIVE_SIZE:
- 		sel->r.top = 0;
--- 
-2.48.1
+...
+> 
+> Given that the patch is already merged, Herve, could you send a
+> subsequent patch fixing up the doc at least?
 
+Did the patch:
+  https://lore.kernel.org/all/20250220140406.593314-1-herve.codina@bootlin.com/
+
+Best regards,
+Hervé
 
