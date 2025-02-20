@@ -1,89 +1,120 @@
-Return-Path: <linux-kernel+bounces-523865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B284DA3DC41
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:14:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18EA4A3DC3A
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:12:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8B0E3A3544
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:11:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61AA018896FF
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:12:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8000B1FBE8F;
-	Thu, 20 Feb 2025 14:11:29 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AD7E1F754A;
+	Thu, 20 Feb 2025 14:12:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cp82GZDt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D91E1FBE8D
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 14:11:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 655AE1B85CC;
+	Thu, 20 Feb 2025 14:12:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740060689; cv=none; b=cQbeZUb/QjpPblbWfk2UM5foe4DhM5traajvmohK8FD5GGXTuo3WCDpRpYMGzktZFu5QHklL8MpRuDf4AjtGHKS19wGACu0f15L5n2gxjzVySKj1k1yqP666tz9U7nRRn6c2YJwToRV9Ggx7lyiFNs6di5BBvOd8+MelNFu4vdc=
+	t=1740060764; cv=none; b=EGNWaADFUh976WPB5H4p2UaHC4P1o6DwOFKrzagrxXxPX0gTgBOugA2T3vOOqxUmqyDkCSxzvdkyTlJwyEBNZNtapS2c+edEtc5OFuSTvTuA6ns8mSybSnstrmfzc4aQszj82XvZUjblbU50dM3nuA7xmXScDWhDP0QegwaFrCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740060689; c=relaxed/simple;
-	bh=LI0Je3OsQZgBdDqnX2MsMKsQ8lnkBp+kiW/gf9oGHNY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=kDCvrhoevJ1i4tCEuR1fMQ7rRwcpST2s7SV1yDUXC/5dC/znCBYIL3GTA/cFEmstqtv+zIktQJgmxzaK5aTAXUdbqEQmXn+SGCcj/PVZbCwiPXlSOp9U2oDrY6IuudgMH56IBjmADmC/m0Eehw1xFXtd82AIw/I8KBqwC+fdJ8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=ratatoskr.pengutronix.de)
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <s.trumtrar@pengutronix.de>)
-	id 1tl7Gt-0001Vy-Sa; Thu, 20 Feb 2025 15:11:23 +0100
-From: Steffen Trumtrar <s.trumtrar@pengutronix.de>
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Lee Jones <lee@kernel.org>,  Rob Herring <robh@kernel.org>,  Krzysztof
- Kozlowski <krzk+dt@kernel.org>,  Conor Dooley <conor+dt@kernel.org>,
-  Steffen Trumtrar <kernel@pengutronix.de>,  linux-leds@vger.kernel.org,
-  devicetree@vger.kernel.org,  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] LED: Add basic LP5860 LED matrix driver
-In-Reply-To: <20250220-v6-14-topic-ti-lp5860-v1-0-42874bdc7513@pengutronix.de>
-	(Steffen Trumtrar's message of "Thu, 20 Feb 2025 13:57:55 +0100")
-References: <20250220-v6-14-topic-ti-lp5860-v1-0-42874bdc7513@pengutronix.de>
-User-Agent: mu4e 1.12.8; emacs 30.0.93
-Date: Thu, 20 Feb 2025 15:11:22 +0100
-Message-ID: <87zfigaeph.fsf@pengutronix.de>
+	s=arc-20240116; t=1740060764; c=relaxed/simple;
+	bh=CgMhOLPIqnUrQGVtHOebIzfzAW0Y/EgFH2JAI5ghWFw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hZHfdnoEQtQqOP0vpRPnv5OPUGfPzunKd3LmlgD5ahlXvKJabHLuOJYY5pTT9hKVOO74xwov7gS0EWskIjt5IZ1ewgZzQQRQ/5iIOWT8JXAGskVRijQGHxq64UVX8jkAFMHnZZhenfscYz6AAEvR4iZTTp1JANcc0j+30paByZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cp82GZDt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42C41C4CED1;
+	Thu, 20 Feb 2025 14:12:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740060763;
+	bh=CgMhOLPIqnUrQGVtHOebIzfzAW0Y/EgFH2JAI5ghWFw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Cp82GZDtwZjIWdJWnPhv6HXLzuBd4Sg/sAZInCNWHt3XxsRyEJICw3ScJkMeJMHsU
+	 qscALgBk3I+6fW1qIG1cyUH/fnMkeHssycGVm5Crk4KIpLpI9x/Pa1IhL/BZKbtVdK
+	 tNzZrVoDAG1kJ6lFUS+5FZM/dfz7iVqbjNbPvNNU3YCiI86u6zQXXAvVXOKO5vzciV
+	 UnPGI91eme0KXlHtyOvJ5IaZ+rWJGG/LvKNZieOBTkRK4WDVtbDGOrfcIxEj9I8iw1
+	 gbY2L2Pmyazs7t5vtMtodyrAhFwyJH/JndFzm3Bbyb/FbO212W3t/hEsIltaIaieIV
+	 VHPn8GlKtsNGA==
+Date: Thu, 20 Feb 2025 16:12:39 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Qunqin Zhao <zhaoqunqin@loongson.cn>
+Cc: lee@kernel.org, herbert@gondor.apana.org.au, davem@davemloft.net,
+	peterhuewe@gmx.de, linux-kernel@vger.kernel.org,
+	loongarch@lists.linux.dev, linux-crypto@vger.kernel.org,
+	jgg@ziepe.ca, linux-integrity@vger.kernel.org,
+	Yinggang Gu <guyinggang@loongson.cn>
+Subject: Re: [PATCH V3 5/6] tpm: Add a driver for Loongson TPM device
+Message-ID: <Z7c4V3vW5BV5XbdC@kernel.org>
+References: <20250219073350.16915-1-zhaoqunqin@loongson.cn>
+ <20250219073350.16915-2-zhaoqunqin@loongson.cn>
+ <Z7XgLNU1xXqgOBIL@kernel.org>
+ <4e0a3b40-07b8-06bf-8814-a121308ebf69@loongson.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; format=flowed
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
-X-SA-Exim-Mail-From: s.trumtrar@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <4e0a3b40-07b8-06bf-8814-a121308ebf69@loongson.cn>
 
+On Thu, Feb 20, 2025 at 07:23:42PM +0800, Qunqin Zhao wrote:
+> 
+> 在 2025/2/19 下午9:44, Jarkko Sakkinen 写道:
+> > > +
+> > > +static const struct tpm_class_ops lsse_tpm_ops = {
+> > > +	.flags = TPM_OPS_AUTO_STARTUP,
+> > > +	.recv = tpm_ls_recv,
+> > > +	.send = tpm_ls_send,
+> > > +};
+> > > +
+> > > +static int lsse_tpm_probe(struct platform_device *pdev)
+> > tpm_lsse_
+> OK.
+> > +
+> > +static struct platform_driver lsse_tpm_driver = {
+> > +	.probe   = lsse_tpm_probe,
+> > +	.driver  = {
+> > +		.name  = "ls6000se-tpm",
+> > +	},
+> > +};
+> > +module_platform_driver(lsse_tpm_driver);
+> > +
+> > +MODULE_ALIAS("platform:ls6000se-tpm");
+> > +MODULE_LICENSE("GPL");
+> > +MODULE_AUTHOR("Yinggang Gu <guyinggang@loongson.cn>");
+> > +MODULE_AUTHOR("Qunqin Zhao <zhaoqunqin@loongson.cn>");
+> > Remove MODULE_AUTHOR fields. Git encodes this already.
+> 
+> Do you mean that "modinfo" will still show the author after removing
+> MODULE_AUTHOR fields?
 
-Hi,
+What is the utility of showing that? Nobody ever updates those in real
+life, so you really can't trust them anyhow. We're better of not showing
+anything at all.
 
-On 2025-02-20 at 13:57 +01, Steffen Trumtrar <s.trumtrar@pengutronix.de> wrote:
+> 
+> > 
+> > > +MODULE_DESCRIPTION("Loongson TPM driver");
+> > > -- 
+> > > 2.43.0
+> > > 
+> > Prefix all with tpm_lsse instead of tpm
+> 
+> OK, thanks for your comments.
+> 
+> BR, Qunqin.
+> 
+> > 
+> > BR, Jarkko
+> 
 
-> The lp5860 is a LED matrix driver with 18 constant current sinks and 11
-> scan switches which allows controlling up to 198 LED dots.
->
-> This series adds just the basic support for the device on the SPI bus.
-> It is also possible to use it on I2C. The interface can be
-> switched/selected via an interface select pin.
->
-> Next step for this driver will be adding open and short detection of the
-> LEDs.
-
-for this next step I wonder what would be the best way to propagate the failure states of the LED to the userspace? As far as I can tell, there are already TI LED drivers (lp55xx) that check open and short failures. These drivers only emit failures via sysfs_emit.
-I need to be able to tell from userspace if an LED that is supposed to show some state info isn't broken in hardware.
-
-Any ideas welcome,
-
-Thanks,
-Steffen
-
---
-Pengutronix e.K.                | Dipl.-Inform. Steffen Trumtrar |
-Steuerwalder Str. 21            | https://www.pengutronix.de/    |
-31137 Hildesheim, Germany       | Phone: +49-5121-206917-0       |
-Amtsgericht Hildesheim, HRA 2686| Fax:   +49-5121-206917-5555    |
+BR, Jarkko
 
