@@ -1,131 +1,103 @@
-Return-Path: <linux-kernel+bounces-523232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E25EA3D3CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 09:56:27 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 012A0A3D3CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 09:55:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33A8A189FACE
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 08:55:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C55CD17C270
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 08:54:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D4381DF962;
-	Thu, 20 Feb 2025 08:55:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A28C1EDA32;
+	Thu, 20 Feb 2025 08:54:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="J5zTtCwA";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="DWEMX6AD"
-Received: from fout-a6-smtp.messagingengine.com (fout-a6-smtp.messagingengine.com [103.168.172.149])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AhusA3n6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17A1C1BE251
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 08:54:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A61FE1EBA1E;
+	Thu, 20 Feb 2025 08:54:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740041701; cv=none; b=lN4tB17IApDAqon+S432C4XSM3wsYP4zZanFu3RInKrI1d4dqdYHEarUpS02rNPV5desHx1/xmv5a5BUaApCvoZ7Qcjpgb3CebOBQ7Mo1JT+eSBgxvUaSCb6o7RTQZaEinjW4n4hQIKaDapQinAXV1vcAZ1qFmK0NSrwyOJNZ6w=
+	t=1740041683; cv=none; b=VIAH0V/Ag9q/7+eoMtPwgrXLR4UH/1S9KKngpxkzVJtoICiWXU1iAKgFsmeiEhAIETnbM1PxxJxGPNZliHsHy/dXqUtAFWJFyOKzyGtCPBuSAbH0BovBL7WAFXhg8l5COI7sHdmK1GWaZrZ9EfWUvgGCybQu/DBFz3C3bDYlGHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740041701; c=relaxed/simple;
-	bh=OEGWZVbsLWuvgh0co4wT1Nb31YSZICtLKNGQ+KuQhMs=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=WixhL3q1HzzZkc5lMkgK8HStXcqRSdC9LrEuElFPCt5HxPT3Z9g/zfyIob0KhxSTi3vy6CwSboqHJU73B7nzkF8EEmfT8KyRRRGrEjL6fPagkEry6iK+2nxFlHwqZnkpwDIZ8zwi1kS7p73Z401W4BUshBXTgYy/aW5WQXh1hUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=J5zTtCwA; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=DWEMX6AD; arc=none smtp.client-ip=103.168.172.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
-	by mailfout.phl.internal (Postfix) with ESMTP id C297F1380990;
-	Thu, 20 Feb 2025 03:54:57 -0500 (EST)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-11.internal (MEProxy); Thu, 20 Feb 2025 03:54:57 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1740041697;
-	 x=1740128097; bh=98fWG4BoRmHvBUIB75tbyVaOGVodq0S3xsdfrIhruNE=; b=
-	J5zTtCwAuk+pWPNCDB9y1J1gXbOsO6TBZK9ic8GZxeZaMQ9yU1wr4v8AWVXLv8rK
-	CSWYsRR+5YwLK0nlra97Gr1k6Nz1qbSZnxucy8EN48h59eFL3Ym3pZ1jOcQgV3pi
-	aZMZjq7GnkqINth2Y3d+tCoaeOOTk4iFIcaL/JppyGAO/6m1BqiPy7peOWfKcwq+
-	aYfafN2QvhaluVIZ26QBIv0DvpCbeNGt8dSkBLSPYAdHB5tvoCLESeB9qGWzKzvP
-	3gxELYwSX4h3UkfGgazjxXCu1Gg4YYk+kMuv1r8Yxf+JG9FjlqDOtI8UbCJ3QVp3
-	2GVnkJoOrBZlgQwhUIXbuw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1740041697; x=
-	1740128097; bh=98fWG4BoRmHvBUIB75tbyVaOGVodq0S3xsdfrIhruNE=; b=D
-	WEMX6ADtsBv1fVomxLfUbnD3rxmv6ql8NbZmJihNCDn/kA476hEXlqHz0hb4Xzs1
-	pRDZZcTKY5EBfJwfhfUQJVF41WcnHH8KCqHdpg3HOCarlK30PRFFqENR2vV3PWIY
-	cJmlyCC2FY0hyz5ZOkwZx7jd7IrdBisX8CP+yPHZsqmukvj0Psj7GyCKjFvaYHqU
-	V1htbUYNiPOESzUN3XoTiPqz4wrkBsNv/nv5P5YsrNlMoqy0kRYiudmrXX05JEHx
-	fNMkOc5pwzJG5SFQ7U2GLdBfS1Vi5+jNLadfcycS4PIcwZ/0OvQEVjYupRMqh3P0
-	g/LEBeOa+bzwUgpaaofig==
-X-ME-Sender: <xms:4e22Z8hBu0rBuEVt7olWVFsxtBSJVA5aGva2DqQxXQOc3I2J9yNPjA>
-    <xme:4e22Z1DOKmtozoRhhw4HRvZ0BQTZTgCynnF_xX2_hQr2Gz3fIb7elEsMUrvPcQD6K
-    epHBDabTHkGIywznKI>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeiieejfecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
-    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
-    druggvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteef
-    gffgvedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopeej
-    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegrlhgvgigrnhgurhgvrdgsvghllh
-    honhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtoheprghrnhgusehkvghrnhgvlhdr
-    ohhrghdprhgtphhtthhopegurghnihgvlhdrlhgviigtrghnoheslhhinhgrrhhordhorh
-    hgpdhrtghpthhtohepthhglhigsehlihhnuhhtrhhonhhigidruggvpdhrtghpthhtohep
-    nhhitgholhgrshdrfhgvrhhrvgesmhhitghrohgthhhiphdrtghomhdprhgtphhtthhope
-    gtlhgruhguihhurdgsvgiinhgvrgesthhugihonhdruggvvhdprhgtphhtthhopehlihhn
-    uhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:4e22Z0EQtp-TOBKdDOpCv0BSP5MlVsVQxIt6Ed-XgqA6TkRR-pJYbQ>
-    <xmx:4e22Z9S97jF3hHmmsf1E-XtmOAMpJdbKZFaVnZZtEnD3H0fuGnLhvQ>
-    <xmx:4e22Z5wP59TLWXNYyPUQDtgtHRKbZgmBYJUoXbO41rAA3r-WBqSG8A>
-    <xmx:4e22Z75pHmsSSDx2murSg8YXrx9ATtxBR_d5JStXIX-43BUlmYUClA>
-    <xmx:4e22ZwmpHOqYlgmgSeLZLO8dqcxFMpBDzgKOEf_meTN-L4wXJqg4RhZ8>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 524E12220072; Thu, 20 Feb 2025 03:54:57 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1740041683; c=relaxed/simple;
+	bh=dqQ0SKzivqhys/digMbmEeqWgEakp5WM9xDxA2nBruI=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=rDIsZ4x9nyFXJiKFfDb7ziyFbVw8GrSkW6jORDP19ET4ksDzOfsXfGm5zoFrGS/tSsOlbsOtzUHYxvmirB8NOZhs7ST2Nrewv7ernKmi8MRZS/bpxSNoIoShAsYGTqGlnAHXSRtfwlDSfpAaA9W75j3l6mXn8gyCpcZCInUbbhU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AhusA3n6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02976C4CED1;
+	Thu, 20 Feb 2025 08:54:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740041682;
+	bh=dqQ0SKzivqhys/digMbmEeqWgEakp5WM9xDxA2nBruI=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=AhusA3n6ogCPeJqwzTIc7zCEpBx9gtTPjhqFynV6rpziPNetpO3duWtTdc57/82Ef
+	 TSE22uU8nonEekQNXvox2yHOCF8mZQhsV4c6VFJ5FYXmM/g8jI3zLTF/F2+oqsOnYt
+	 RpD6joKq1boATFnQfokKRWrlephU5XQfJVx0ZaxZziOX+nEe5G4dTAPWjX2NCt8nfU
+	 xn4XZhIdOVKE05XnjP71qzQ7tlUXl6+42VaR+sXc3G+E1wiCOEt4jJMMenc7dRMffG
+	 Nj13tJzfMQpgVF4cpr675uj4brbSg+EZfM/Ca9+XTUBgcHqF1KgQKh+ue1VQN+5Bqk
+	 Zsn4tbSNIA3iA==
+Date: Thu, 20 Feb 2025 00:54:38 -0800
+From: Kees Cook <kees@kernel.org>
+To: Thorsten Blum <thorsten.blum@linux.dev>
+CC: Allison Henderson <allison.henderson@oracle.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Simon Horman <horms@kernel.org>, linux-hardening@vger.kernel.org,
+ netdev@vger.kernel.org, linux-rdma@vger.kernel.org, rds-devel@oss.oracle.com,
+ linux-kernel@vger.kernel.org
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_net-next=5D_net/rds=3A_Replace_?=
+ =?US-ASCII?Q?deprecated_strncpy=28=29_with_strscpy=5Fpad=28=29?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <08A0C3AE-A255-467F-A007-5584E8E44517@linux.dev>
+References: <20250219224730.73093-2-thorsten.blum@linux.dev> <202502191855.C9B9A7AA@keescook> <08A0C3AE-A255-467F-A007-5584E8E44517@linux.dev>
+Message-ID: <CCF15545-8AF8-40A8-917C-E44B6373D9AE@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Thu, 20 Feb 2025 09:54:36 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Arnd Bergmann" <arnd@kernel.org>,
- "Daniel Lezcano" <daniel.lezcano@linaro.org>,
- "Thomas Gleixner" <tglx@linutronix.de>
-Cc: "Nicolas Ferre" <nicolas.ferre@microchip.com>,
- "Alexandre Belloni" <alexandre.belloni@bootlin.com>,
- "Claudiu Beznea" <claudiu.beznea@tuxon.dev>, linux-kernel@vger.kernel.org
-Message-Id: <cdce709e-b54a-4f06-9c67-b1e1a2fc8dbe@app.fastmail.com>
-In-Reply-To: <20250220085231.1719249-1-arnd@kernel.org>
-References: <20250220085231.1719249-1-arnd@kernel.org>
-Subject: Re: [PATCH] clocksource: atmel_tcb: fix kconfig dependency
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Feb 20, 2025, at 09:52, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
->
-> Build-testing this driver on arm without CONFIG_OF produces a warning:
->
-> drivers/clocksource/timer-atmel-tcb.c:368:34: error: 
-> 'atmel_tcb_of_match' defined but not used 
-> [-Werror=unused-const-variable=]
->   368 | static const struct of_device_id atmel_tcb_of_match[] = {
->       |                                  ^~~~~~~~~~~~~~~~~~
->
-> Change the dependency to allow build-testing on all architectures but
-> instead require CONFIG_OF to be present.
->
 
-And the second I send this out, another failure pops up, please
-disregard this version as the CONFIG_ARM dependency is still needed
-for register_current_timer_delay().
 
-     Arnd
+On February 19, 2025 11:04:18 PM PST, Thorsten Blum <thorsten=2Eblum@linux=
+=2Edev> wrote:
+>On 20=2E Feb 2025, at 03:57, Kees Cook wrote:
+>> On Wed, Feb 19, 2025 at 11:47:31PM +0100, Thorsten Blum wrote:
+>>> strncpy() is deprecated for NUL-terminated destination buffers=2E Use
+>>> strscpy_pad() instead and remove the manual NUL-termination=2E
+>>=20
+>> When doing these conversions, please describe two aspects of
+>> conversions:
+>>=20
+>> - Why is it safe to be NUL terminated
+>> - Why is it safe to be/not-be NUL-padded
+>>=20
+>> In this case, the latter needs examination=2E Looking at how ctr is use=
+d,
+>> it is memcpy()ed later, which means this string MUST be NUL padded or i=
+t
+>> will leak stack memory contents=2E
+>>=20
+>> So, please use strscpy_pad() here=2E :)
+>
+>I am using strscpy_pad() here already because of the NUL-padding=2E
+>
+>Did you just miss that?
+
+Well that's embarrassing=2E Yes, I must need stronger glasses=2E *sigh* Ap=
+ologies for the noise!
+
+Reviewed-by: Kees Cook <kees@kernel=2Eorg>
+
+
+--=20
+Kees Cook
 
