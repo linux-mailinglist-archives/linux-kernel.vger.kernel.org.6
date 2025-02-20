@@ -1,120 +1,172 @@
-Return-Path: <linux-kernel+bounces-523029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EC22A3D124
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 07:09:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E90A0A3D127
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 07:10:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E77D43B3216
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 06:09:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C82EB188D6C3
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 06:10:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC89D1E0B86;
-	Thu, 20 Feb 2025 06:09:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58FD51E25FA;
+	Thu, 20 Feb 2025 06:10:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZaBJ7CD7"
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="blN9Cx43"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9CD91BE86E;
-	Thu, 20 Feb 2025 06:09:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A51C71BE86E;
+	Thu, 20 Feb 2025 06:10:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740031780; cv=none; b=EvEcpJgR05lHboFn1xQunDBd5Pmff5UN6PALU/g4bopbXyPsj65i6CMHtb7rB6woLLLYwpkCYTr/ua+lG4S3MsF7lK/67ZWBkhfXUjDVv/sw57++3+vVLNGL+oi0FO42YSTHJbXpxyHRzQpcaewrQ2nU78laLzApIpeAO9U7kZI=
+	t=1740031820; cv=none; b=a6c7cFyD2rzRVDOzjCTd6OXfBYDfJURuUbE7unr3BasCLDlK5Smh0NxKBijAb+LtZ81hV4Lgo0uAiINqsx00v+Ogsey2gP2ur+3crBzZvq3qw4IeaGab8CZ3A5VOor5jZhb63J4WpZ5iWZ+2WlkdAMFQrzwI5VgCePKZvEMWzXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740031780; c=relaxed/simple;
-	bh=b9VYrcbgqOGdxlSddTg6C5EhWY3CuqOrBQ5Nh78hX3o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nA2KXHYYWFCAsMtNnKEig9lSIPW/bGEjGb7zyhhtI0PgmCc/wk+E46VP+4qXrTwFw9R/594RxlV3viIoShcnsQ3Aii+8KHlpyh5hd8ZWGWY9QpGgjDVDfOjtGgroS2h0nSOlRvrhTpdh/KOqASj11CexAOvMTiXcN3QatthQn/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZaBJ7CD7; arc=none smtp.client-ip=209.85.128.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-6f6715734d9so4922357b3.3;
-        Wed, 19 Feb 2025 22:09:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740031777; x=1740636577; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YB+a5+t2K2SUKgQ/pKHmjYGw9OX5zZSaPIGBlRUmprQ=;
-        b=ZaBJ7CD75svkp2e3dr1fGYqQArF3N7/lrp9YKLoIprpFo2rzfUQT3H5jiiOMh06NrG
-         zMXwogYP2QfA7zqZ98CfRJ9yEq9oMUVzRDyqFUPLYset/SAbvPN/l1Z1kjiAHFUxIiLz
-         03eTPRBIwyI/UMxn6VOvaHEHyzq9xrHL8CGg1OPhZDNKtmUWR0fh7jpqAnsH/mCzeahY
-         Xi4y7/U+U6aOglFuvaLXvIQBaAanTCn8FekDynYLg9QW80gL9Err/BrEPFUJ1/gJmI3G
-         fY0OVjEAcqDWoIBjGZTuZXYBSi42ZOxUKdVhu3SoGcsTPHWzgIFaTd1KpfnYy5aG6Gmo
-         lBlA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740031777; x=1740636577;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YB+a5+t2K2SUKgQ/pKHmjYGw9OX5zZSaPIGBlRUmprQ=;
-        b=hBNIz21tPhGgvRVmTs0B5kP0urq9rYimLDUyajComTwb95lHkijBKe05q+0foyj5iW
-         X6OcAT0SIlGDFarspcdRiMHvCwEwTIOU9pwE2Nil2o5bzDKIuAn/3K/2q4zsAs5UtTmV
-         zVjXI/HwWBTCFe8IeYtJZRZhThjSEcGDNoYNu9bGu2E5UE++oDT2ta7rZSQHcDRMSTkF
-         SJbAWITxSBDUOtKs98v/DjnFeCsBVoZYxSvd65WJ/26ye7rQfwq6MUFdCASQ5xv2+3T2
-         DBJG9VwzKWekMhJ39G9trSTrVQFoHTLZ9jsbjF4mT6PCnIdApLwz8Y2lIrRpMzog/ZVF
-         rCjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV6kZ6Gof08u5Rm/dFZ7CnEWo4HjMZRvUfsUEzLyLjDMODbMNzAA97IYp2FuJBkHQ7yeKAPHmJDHEg=@vger.kernel.org, AJvYcCVTwD0Srf7ZjkNH+5zWguCIKCSwDW09IunR8Yk3cPpAkoGqy0GRVc8+sMZ+irzYKttviHJMBTsRiwxXS/vX@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7A1cjg4STDb6aYxHZ4Dl8BkLb0yBo5UmJcm5IOMmMmpSymT94
-	79niP9UWqWxKB84DGDdQtko94Zf4mIRt62QIOwyABtaRTnvs3Zq4MNsS7UdjMeLjKlXj4LoxmXD
-	FsFztjNUgh6d+kz9buIEw/sCwMdU4KLdtMFE=
-X-Gm-Gg: ASbGncvcpUtJlHeUgScDeKOt1d6LPgB+PjOow+ftBICn/ue4BWdgAkw6c9BQ1DYo+b2
-	b4Xttg2KQ/WR5BdvR+t0wU7QIiyk/HB8jXHghSn3uJ/HfTcH+tJM81mFEs6vyS+ofz+23N6h8Xg
-	==
-X-Google-Smtp-Source: AGHT+IGAElPuWbcNKI929Lc7rJthMUbISUeHmF4ulGnrR57bxWEQfnU1NRee+Js+2fQ0Mu97EdPqEhBqZsXJ3FHbtn4=
-X-Received: by 2002:a05:690c:d94:b0:6fb:1e5a:fcdd with SMTP id
- 00721157ae682-6fb582b87a1mr196021137b3.17.1740031777627; Wed, 19 Feb 2025
- 22:09:37 -0800 (PST)
+	s=arc-20240116; t=1740031820; c=relaxed/simple;
+	bh=RUi8a/oXJziJe7B0PMUjtOn3ES2ruWN1dSdhPuHmYmk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FwJzvQqQX9jnMk2uRVPqQTteOI2TCgFboPMGp3InVRUt7KnhKUkwiupfbF/lh/sbf3LzdZtDQn3VjC1MRfvlG/YoL2CmmjJHtXAN7gOa2eNHzaViMWwzkjPn5Ob/VhaIZNl6bqx/cIezmwhAwvHkf7poLsvRpeCq/aa1s0zIcqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=blN9Cx43; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 294A9C4CED1;
+	Thu, 20 Feb 2025 06:10:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740031819;
+	bh=RUi8a/oXJziJe7B0PMUjtOn3ES2ruWN1dSdhPuHmYmk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=blN9Cx43m6RLjI/m8V5yTRzgjIUnzbMEzWDa1GPMt+V3bZxUKZBsSCkheCSv4NMRX
+	 lmwQ3poZXVj47GDRh94jE9HTKTtdFYZBxKEe5VQM9HMkME6gdfSF66+UgErALbaHrX
+	 YP+elljPomxhLvvCJiMZa9a51vFonRnJUsPZvE1Kxl+3RjVPPdq0OEUUN2UGy9LlS3
+	 UpihzmKbOK5KscvtJJwDSRK6ygxHvzTdj3rtAluQpQ0l9dn4iyIK/l1adZB8PSBKAu
+	 JGRmskxNEbiIEm3fA38kBcwm7v0W8JWpegThiDY4pRpaHJefyvWcUkBgzgAd5tyqcZ
+	 /V0HrpSsOqYaA==
+Date: Thu, 20 Feb 2025 08:10:05 +0200
+From: Mike Rapoport <rppt@kernel.org>
+To: WangYuli <wangyuli@uniontech.com>
+Cc: chenhuacai@kernel.org, kernel@xen0n.name, rafael@kernel.org,
+	lenb@kernel.org, maobibo@loongson.cn, guanwentao@uniontech.com,
+	loongarch@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Jonathan.Cameron@huawei.com, dan.j.williams@intel.com,
+	alison.schofield@intel.com, rrichter@amd.com, bfaccini@nvidia.com,
+	dave.jiang@intel.com, haibo1.xu@intel.com,
+	linux-acpi@vger.kernel.org, zhanjun@uniontech.com,
+	niecheng1@uniontech.com, chenlinxuan@uniontech.com
+Subject: Re: [PATCH] ACPI: NUMA: Move get_numa_distances_cnt() helper to
+ needed location
+Message-ID: <Z7bHPVUH4lAezk0E@kernel.org>
+References: <D87315C93AF20D4E+20250220042037.942802-1-wangyuli@uniontech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250220040029.27596-1-kfting@nuvoton.com>
-In-Reply-To: <20250220040029.27596-1-kfting@nuvoton.com>
-From: Tali Perry <tali.perry1@gmail.com>
-Date: Thu, 20 Feb 2025 08:09:26 +0200
-X-Gm-Features: AWEUYZnYGHaHjbR_KZEvGNt2rnhpAOwHjPZjRosnVh2OXcXgXdeqwQTPA_jCG9Y
-Message-ID: <CAHb3i=t0sqAi3ufXf7KAhz0B_u9JpsXmKy8p19aV7qQ5z7G4LA@mail.gmail.com>
-Subject: Re: [PATCH v1 0/1] i2c: npcm: Bug fixes remaining interrupts
-To: Tyrone Ting <warp5tw@gmail.com>
-Cc: avifishman70@gmail.com, tmaimon77@gmail.com, venture@google.com, 
-	yuenn@google.com, benjaminfair@google.com, andi.shyti@kernel.org, 
-	wsa+renesas@sang-engineering.com, tali.perry@nuvoton.com, 
-	Avi.Fishman@nuvoton.com, tomer.maimon@nuvoton.com, KWLIU@nuvoton.com, 
-	JJLIU0@nuvoton.com, kfting@nuvoton.com, openbmc@lists.ozlabs.org, 
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <D87315C93AF20D4E+20250220042037.942802-1-wangyuli@uniontech.com>
 
-Thanks for the patch!
+Hi,
 
-Reviewed-by: Tali Perry <tali.perry1@gmail.com>
+On Thu, Feb 20, 2025 at 12:20:37PM +0800, WangYuli wrote:
+> In LoongArch, get_numa_distances_cnt() was not in use, resulting in
+> a compiler warning.
+> 
+> Serendipitously, drivers/acpi/numa/srat.c appears to be a more
+> relevant location for this helper function, hence its relocation.
 
+There's no need for relocation, just drop the unused function.
+ 
+> This commit not only resolves these immediate concerns but also sets
+> the groundwork for potential future integration of ACPI related logic
+> from other architectures into this driver module.
+> 
+> Separately, the locality_count member in struct acpi_table_slit is
+> typed as u64. Adapt the function type to eliminate potential code
+> risks.
+> 
+> Fix follow errors with clang-18 when W=1e:
+> 
+> arch/loongarch/kernel/acpi.c:259:28: error: unused function 'get_numa_distances_cnt' [-Werror,-Wunused-function]
+>   259 | static inline unsigned int get_numa_distances_cnt(struct acpi_table_slit *slit)
+>       |                            ^~~~~~~~~~~~~~~~~~~~~~
+> 1 error generated.
+> 
+> Signed-off-by: WangYuli <wangyuli@uniontech.com>
+> ---
+>  arch/loongarch/kernel/acpi.c |  5 -----
+>  drivers/acpi/numa/srat.c     | 13 +++++++++----
+>  2 files changed, 9 insertions(+), 9 deletions(-)
+> 
+> diff --git a/arch/loongarch/kernel/acpi.c b/arch/loongarch/kernel/acpi.c
+> index ee471a80763e..90cc9250f121 100644
+> --- a/arch/loongarch/kernel/acpi.c
+> +++ b/arch/loongarch/kernel/acpi.c
+> @@ -256,11 +256,6 @@ static __init int setup_node(int pxm)
+>   */
+>  unsigned int numa_distance_cnt;
+>  
+> -static inline unsigned int get_numa_distances_cnt(struct acpi_table_slit *slit)
+> -{
+> -	return slit->locality_count;
+> -}
+> -
+>  void __init numa_set_distance(int from, int to, int distance)
+>  {
+>  	if ((u8)distance != distance || (from == to && distance != LOCAL_DISTANCE)) {
+> diff --git a/drivers/acpi/numa/srat.c b/drivers/acpi/numa/srat.c
+> index 00ac0d7bb8c9..36053ae3dad6 100644
+> --- a/drivers/acpi/numa/srat.c
+> +++ b/drivers/acpi/numa/srat.c
+> @@ -283,6 +283,11 @@ acpi_table_print_srat_entry(struct acpi_subtable_header *header)
+>  	}
+>  }
+>  
+> +static inline u64 get_numa_distances_cnt(struct acpi_table_slit *slit)
+> +{
+> +	return slit->locality_count;
+> +}
+> +
+>  /*
+>   * A lot of BIOS fill in 10 (= no distance) everywhere. This messes
+>   * up the NUMA heuristics which wants the local node to have a smaller
+> @@ -292,7 +297,7 @@ acpi_table_print_srat_entry(struct acpi_subtable_header *header)
+>  static int __init slit_valid(struct acpi_table_slit *slit)
+>  {
+>  	int i, j;
+> -	int d = slit->locality_count;
+> +	u64 d = get_numa_distances_cnt(slit);
+>  	for (i = 0; i < d; i++) {
+>  		for (j = 0; j < d; j++) {
+>  			u8 val = slit->entry[d*i + j];
+> @@ -337,20 +342,20 @@ static int __init acpi_parse_slit(struct acpi_table_header *table)
+>  		return -EINVAL;
+>  	}
+>  
+> -	for (i = 0; i < slit->locality_count; i++) {
+> +	for (i = 0; i < get_numa_distances_cnt(slit); i++) {
+>  		const int from_node = pxm_to_node(i);
+>  
+>  		if (from_node == NUMA_NO_NODE)
+>  			continue;
+>  
+> -		for (j = 0; j < slit->locality_count; j++) {
+> +		for (j = 0; j < get_numa_distances_cnt(slit); j++) {
+>  			const int to_node = pxm_to_node(j);
+>  
+>  			if (to_node == NUMA_NO_NODE)
+>  				continue;
+>  
+>  			numa_set_distance(from_node, to_node,
+> -				slit->entry[slit->locality_count * i + j]);
+> +				slit->entry[get_numa_distances_cnt(slit) * i + j]);
+>  		}
+>  	}
+>  
+> -- 
+> 2.47.2
+> 
 
-On Thu, Feb 20, 2025 at 6:00=E2=80=AFAM Tyrone Ting <warp5tw@gmail.com> wro=
-te:
->
-> This patchset includes the following fix:
->
-> - Disable the interrupt enable bit to handle the asynchronous smbus/i2c
->   interrupt status after the machine reboots as the interrupts were not
->   handled in the smbus/i2c transfer session due to the reboot.
->
-> The NPCM I2C driver is tested on NPCM750 and NPCM845 evaluation boards.
->
-> Tyrone Ting (1):
->   i2c: npcm: disable interrupt enable bit before devm_request_irq
->
->  drivers/i2c/busses/i2c-npcm7xx.c | 7 +++++++
->  1 file changed, 7 insertions(+)
->
->
-> base-commit: 0ad2507d5d93f39619fc42372c347d6006b64319
-> --
-> 2.34.1
->
+-- 
+Sincerely yours,
+Mike.
 
