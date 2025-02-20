@@ -1,179 +1,122 @@
-Return-Path: <linux-kernel+bounces-523580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A9A6A3D8AA
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:31:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9864DA3D895
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:28:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DB133AA8BC
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 11:28:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FCFD1720E2
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 11:27:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D59581F3BBE;
-	Thu, 20 Feb 2025 11:28:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b="g+Az0dN4";
-	dkim=pass (2048-bit key) header.d=triplefau.lt header.i=@triplefau.lt header.b="OpdFy3BB"
-Received: from e3i103.smtp2go.com (e3i103.smtp2go.com [158.120.84.103])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 021751F236C
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 11:28:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=158.120.84.103
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BCFD1FE46E;
+	Thu, 20 Feb 2025 11:23:21 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAECC1F584D;
+	Thu, 20 Feb 2025 11:23:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740050908; cv=none; b=uxfGh/mGNZVnAEzTksEzehXx5bsB+Vauk996DhL4Wc7FxpipVk5wvcKeQ8giO/agjZV1EShDqUCCrPtN4Qj07R8mDL/7NQf4HiyNjBrHOhRkp1lxeSta/FVgCn1DreZ+LGxLhKJ0x9JJh9B/jIu9i890YbE3KI936kpHTH0GQHI=
+	t=1740050600; cv=none; b=oFGBTo32MWkemYUFh/+y0kFBigxyMKO615oDsg1VCjhXGTJpNALxH5kDgBrbGx45qxGMqSrFXj/7mPYL2qCIa2sEFIcIK3trbyvUXn8WdSpV1e6e9QcRXFGw95kZ/PPOmcyS2Pw26cxxjgZWZnYd+j4+TU/+YwPxQXqTqNadAGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740050908; c=relaxed/simple;
-	bh=YkiHPumBN8nAiPNaHtyQooOU01tx/EZ1O8QxZuFIQAw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=IY4AiVRRbLbiJEyvuIz9i0kir5sEZsADTh7LwB91IphxKxg770JpzjaIVfS4brenf3GajJ0aulf/JKRsJww3lAri2Jt/A5FdIsEWisyGzsAMtDbSycf8vCviAK4nUqAmzxw572NE571inBnKh8gXJJ1rwqI69sX394J8uQql2Og=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=triplefau.lt; spf=pass smtp.mailfrom=em510616.triplefau.lt; dkim=pass (2048-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b=g+Az0dN4; dkim=pass (2048-bit key) header.d=triplefau.lt header.i=@triplefau.lt header.b=OpdFy3BB; arc=none smtp.client-ip=158.120.84.103
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=triplefau.lt
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=em510616.triplefau.lt
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=smtpservice.net;
- i=@smtpservice.net; q=dns/txt; s=a1-4; t=1740050898; h=feedback-id :
- x-smtpcorp-track : date : message-id : to : subject : from : reply-to
- : sender : list-unsubscribe : list-unsubscribe-post;
- bh=M1W1nn58NLGVj+eWLt6EtKwldWjGNarRyKe0cNviRKI=;
- b=g+Az0dN4XhCXVz/4c4Ms1zjv28DcJNw34A1vpLjtoisd9PsUccqG06h9WCTR9Gla6ykRq
- q0aCDwdSCNeSUEhkqa6NlhERyE4X/meWxKX3rnoFiXGkKToj6LUIaclD0TlX72L9/zq7YqO
- SU532AbZL0i09hoQOmTwNbF5T0n9P2lYiniPaV5+6sS7Mb4tkjAyUhjvWoamMvjmFHE74tz
- waczQntZewOGhjBjNMSJ7HWDTnY/l5wBAgIL6EjBMCgz91AuKqWZrbjhRhFGvV2sJFlUMe9
- RtKxnBabG4YAockUhFaJAdTNqDpx/Hdo+73U506FIjz2t7ar0BLkZkwqMInA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=triplefau.lt;
- i=@triplefau.lt; q=dns/txt; s=s510616; t=1740050898; h=from : subject
- : to : message-id : date;
- bh=M1W1nn58NLGVj+eWLt6EtKwldWjGNarRyKe0cNviRKI=;
- b=OpdFy3BBaxZ8UI0awjqzV1J0+LICnF+4LcfH/6is6QFsrqXm5m9HvFkEPx2XQM3Skvc43
- YxbuQEswpDpyn2jqNCkjd0v+ufJsvXHrvPkZ/tIa/S53XY9qB6i/g6EelkQDwgoP+khWhMk
- PROl0qtsxNtocJyXytqpHcZT+TUxgK2o8CudgwyIX1l7nfO166835z1RPkuffnpqdRypyM4
- ZsQLykowZO96A99sbkSDLFlZQD/ZIWQbQPBHMMG30yTyfq1WJDyaV7TbbUWJUhjEia8zTqM
- D72mzfiRKDvqsksm+HL5sqyDor0e2vfKOharqal5mrgJAHBT/y7Oj7CggJEA==
-Received: from [10.12.239.196] (helo=localhost)
-	by smtpcorp.com with esmtpsa (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.97.1-S2G)
-	(envelope-from <repk@triplefau.lt>)
-	id 1tl4iv-4o5NDgrvJ0D-lp0j;
-	Thu, 20 Feb 2025 11:28:09 +0000
-From: Remi Pommarel <repk@triplefau.lt>
-To: linux-leds@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Lee Jones <lee@kernel.org>,
-	Pavel Machek <pavel@kernel.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-	Remi Pommarel <repk@triplefau.lt>
-Subject: [PATCH v2] leds: Fix LED_OFF brightness race
-Date: Thu, 20 Feb 2025 12:23:17 +0100
-Message-Id: <19c81177059dab7b656c42063958011a8e4d1a66.1740050412.git.repk@triplefau.lt>
-X-Mailer: git-send-email 2.40.0
+	s=arc-20240116; t=1740050600; c=relaxed/simple;
+	bh=XJ1rfVBdFtGgkqiX+cJQ7kfGCpepKbDiOO8u/69LAOc=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=ubTZIisig3Ta+jmu5X/7zScWgq86FYLqERGrXQaJWdqLXWn1wmLnJYntdO7gRspDwDEkXn+aauNbwHkKPKbGlyJu+BFdKeAiUgTe64z6u5XcVMXzOWC5FMaFinPXHoWSu2X8GsaUlR5e/GmLpnqERPaAV2JA19gMh1sBQ9RBTqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.20.42.164])
+	by gateway (Coremail) with SMTP id _____8AxGHGjELdnYDp8AA--.17810S3;
+	Thu, 20 Feb 2025 19:23:15 +0800 (CST)
+Received: from [10.20.42.164] (unknown [10.20.42.164])
+	by front1 (Coremail) with SMTP id qMiowMDxDcehELdnODQeAA--.8092S2;
+	Thu, 20 Feb 2025 19:23:15 +0800 (CST)
+Subject: Re: [PATCH V3 5/6] tpm: Add a driver for Loongson TPM device
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: lee@kernel.org, herbert@gondor.apana.org.au, davem@davemloft.net,
+ peterhuewe@gmx.de, linux-kernel@vger.kernel.org, loongarch@lists.linux.dev,
+ linux-crypto@vger.kernel.org, jgg@ziepe.ca, linux-integrity@vger.kernel.org,
+ Yinggang Gu <guyinggang@loongson.cn>
+References: <20250219073350.16915-1-zhaoqunqin@loongson.cn>
+ <20250219073350.16915-2-zhaoqunqin@loongson.cn> <Z7XgLNU1xXqgOBIL@kernel.org>
+From: Qunqin Zhao <zhaoqunqin@loongson.cn>
+Message-ID: <4e0a3b40-07b8-06bf-8814-a121308ebf69@loongson.cn>
+Date: Thu, 20 Feb 2025 19:23:42 +0800
+User-Agent: Mozilla/5.0 (X11; Linux mips64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <Z7XgLNU1xXqgOBIL@kernel.org>
+Content-Type: text/plain; charset=gbk; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Report-Abuse: Please forward a copy of this message, including all headers, to <abuse-report@smtp2go.com>
-Feedback-ID: 510616m:510616apGKSTK:510616sDHMaHdAgA
-X-smtpcorp-track: zcFvao-w_nmC.ipaOdkftC_MT.921AGQ20SmT
+Content-Language: en-US
+X-CM-TRANSID:qMiowMDxDcehELdnODQeAA--.8092S2
+X-CM-SenderInfo: 52kd01pxqtx0o6or00hjvr0hdfq/
+X-Coremail-Antispam: 1Uk129KBj9xXoW7Gw17Kw1ktw4UKrWxAr4fWFX_yoWDAFc_Aa
+	12yF1xJr18uFyvgw4ruw13C3W2qayqyFnxt3WjyF4v93srJ345Z3Z8urn3Jay7Zr1kAFn8
+	AFnxGryfua4j9osvyTuYvTs0mTUanT9S1TB71UUUUj7qnTZGkaVYY2UrUUUUj1kv1TuYvT
+	s0mT0YCTnIWjqI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUI
+	cSsGvfJTRUUUbDkYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20EY4v20x
+	vaj40_Wr0E3s1l1IIY67AEw4v_JrI_Jryl8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
+	w2x7M28EF7xvwVC0I7IYx2IY67AKxVW8JVW5JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
+	W8JVWxJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0
+	oVCq3wAaw2AFwI0_JF0_Jw1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa02
+	0Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jw0_Wryl
+	Yx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI
+	0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAKI48JMxC2
+	0s026xCaFVCjc4AY6r1j6r4UMxCIbckI1I0E14v26r126r1DMI8I3I0E5I8CrVAFwI0_Jr
+	0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0E
+	wIxGrwCI42IY6xIIjxv20xvE14v26r4j6ryUMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JV
+	WxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAI
+	cVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU8KNt3UUUUU==
 
-While commit fa15d8c69238 ("leds: Fix set_brightness_delayed() race")
-successfully forces led_set_brightness() to be called with LED_OFF at
-least once when switching from blinking to LED on state so that
-hw-blinking can be disabled, another race remains. Indeed in
-led_set_brightness(LED_OFF) followed by led_set_brightness(any)
-scenario the following CPU scheduling can happen:
 
-    CPU0                                     CPU1
-    ----                                     ----
- set_brightness_delayed() {
-   test_and_clear_bit(BRIGHTNESS_OFF)
-                                         led_set_brightness(LED_OFF) {
-                                           set_bit(BRIGHTNESS_OFF)
-					   queue_work()
-                                         }
-                                         led_set_brightness(any) {
-                                           set_bit(BRIGHTNESS)
-					   queue_work() //already queued
-                                         }
-   test_and_clear_bit(BRIGHTNESS)
-     /* LED set with brightness any */
- }
+ÔÚ 2025/2/19 ÏÂÎç9:44, Jarkko Sakkinen Ð´µÀ:
+>> +
+>> +static const struct tpm_class_ops lsse_tpm_ops = {
+>> +	.flags = TPM_OPS_AUTO_STARTUP,
+>> +	.recv = tpm_ls_recv,
+>> +	.send = tpm_ls_send,
+>> +};
+>> +
+>> +static int lsse_tpm_probe(struct platform_device *pdev)
+> tpm_lsse_
+OK.
+> +
+> +static struct platform_driver lsse_tpm_driver = {
+> +	.probe   = lsse_tpm_probe,
+> +	.driver  = {
+> +		.name  = "ls6000se-tpm",
+> +	},
+> +};
+> +module_platform_driver(lsse_tpm_driver);
+> +
+> +MODULE_ALIAS("platform:ls6000se-tpm");
+> +MODULE_LICENSE("GPL");
+> +MODULE_AUTHOR("Yinggang Gu <guyinggang@loongson.cn>");
+> +MODULE_AUTHOR("Qunqin Zhao <zhaoqunqin@loongson.cn>");
+> Remove MODULE_AUTHOR fields. Git encodes this already.
 
- /* From previous CPU1 queue_work() */
- set_brightness_delayed() {
-   test_and_clear_bit(BRIGHTNESS_OFF)
-     /* LED turned off */
-   test_and_clear_bit(BRIGHTNESS)
-     /* Clear from previous run, LED remains off */
+Do you mean that "modinfo" will still show the author after removing 
+MODULE_AUTHOR fields?
 
-In that case the led_set_brightness(LED_OFF)/led_set_brightness(any)
-sequence will be effectively executed in reverse order and LED will
-remain off.
+>
+>> +MODULE_DESCRIPTION("Loongson TPM driver");
+>> -- 
+>> 2.43.0
+>>
+> Prefix all with tpm_lsse instead of tpm
 
-With the introduction of commit 32360bf6a5d4 ("leds: Introduce ordered
-workqueue for LEDs events instead of system_wq") the race is easier to
-trigger as sysfs brightness configuration does not wait for
-set_brightness_delayed() work to finish (flush_work() removal).
+OK, thanks for your comments.
 
-Use delayed_set_value to optionnally re-configure brightness after a
-LED_OFF. That way a LED state could be configured more that once but
-final state will always be as expected. Ensure that delayed_set_value
-modification is seen before set_bit() using smp_mb__before_atomic().
+BR, Qunqin.
 
-Fixes: fa15d8c69238 ("leds: Fix set_brightness_delayed() race")
-Signed-off-by: Remi Pommarel <repk@triplefau.lt>
----
-Changes for v1 to v2:
-  - Use smp_mb__before_atomic().
----
- drivers/leds/led-core.c | 22 ++++++++++++++++++----
- 1 file changed, 18 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
-index f6c46d2e5276..e3d8ddcff567 100644
---- a/drivers/leds/led-core.c
-+++ b/drivers/leds/led-core.c
-@@ -159,8 +159,19 @@ static void set_brightness_delayed(struct work_struct *ws)
- 	 * before this work item runs once. To make sure this works properly
- 	 * handle LED_SET_BRIGHTNESS_OFF first.
- 	 */
--	if (test_and_clear_bit(LED_SET_BRIGHTNESS_OFF, &led_cdev->work_flags))
-+	if (test_and_clear_bit(LED_SET_BRIGHTNESS_OFF, &led_cdev->work_flags)) {
- 		set_brightness_delayed_set_brightness(led_cdev, LED_OFF);
-+		/*
-+		 * The consecutives led_set_brightness(LED_OFF),
-+		 * led_set_brightness(LED_FULL) could have been executed out of
-+		 * order (LED_FULL first), if the work_flags has been set
-+		 * between LED_SET_BRIGHTNESS_OFF and LED_SET_BRIGHTNESS of this
-+		 * work. To avoid ending with the LED turned off, turn the LED
-+		 * on again.
-+		 */
-+		if (led_cdev->delayed_set_value != LED_OFF)
-+			set_bit(LED_SET_BRIGHTNESS, &led_cdev->work_flags);
-+	}
- 
- 	if (test_and_clear_bit(LED_SET_BRIGHTNESS, &led_cdev->work_flags))
- 		set_brightness_delayed_set_brightness(led_cdev, led_cdev->delayed_set_value);
-@@ -331,10 +342,13 @@ void led_set_brightness_nopm(struct led_classdev *led_cdev, unsigned int value)
- 	 * change is done immediately afterwards (before the work runs),
- 	 * it uses a separate work_flag.
- 	 */
--	if (value) {
--		led_cdev->delayed_set_value = value;
-+	led_cdev->delayed_set_value = value;
-+	/* Ensure delayed_set_value is seen before work_flags modification */
-+	smp_mb__before_atomic();
-+
-+	if (value)
- 		set_bit(LED_SET_BRIGHTNESS, &led_cdev->work_flags);
--	} else {
-+	else {
- 		clear_bit(LED_SET_BRIGHTNESS, &led_cdev->work_flags);
- 		clear_bit(LED_SET_BLINK, &led_cdev->work_flags);
- 		set_bit(LED_SET_BRIGHTNESS_OFF, &led_cdev->work_flags);
--- 
-2.40.0
+>
+> BR, Jarkko
 
 
