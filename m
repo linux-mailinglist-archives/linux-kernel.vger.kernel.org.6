@@ -1,167 +1,150 @@
-Return-Path: <linux-kernel+bounces-524564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1A30A3E4AC
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 20:06:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94066A3E4A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 20:05:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75C56176419
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 19:03:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FBFB189D104
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 19:04:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 827F92638B8;
-	Thu, 20 Feb 2025 19:03:26 +0000 (UTC)
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9288526388E;
+	Thu, 20 Feb 2025 19:03:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xwTFnN/N"
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3031C1B0F33
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 19:03:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E7741ADC6F
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 19:03:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740078206; cv=none; b=dymqZlh1DWEnsBaV+Zk17I3adFKfCNQrCWJppn4kA+6M2pRVF05gDYD/FKp2q6V/qKl3gfgbgQ6oMqMfAFuWoQzy1TgwrssBbH2XgnDLYGJxRVWAXH6oNTvNZYxRFnytblUModm1K2YcVWbcqID3OrgzCn0h0kO0V6MWXOX2P88=
+	t=1740078229; cv=none; b=cOXSUC7UMfJVgRM8QdP9H5WSgZ/isy9HJXMBa/FMGPtH+8zo44nD3o7dNrVPRsyTwm9kCK6EelcRoD8BckisjYjcCE6kl7Sun6oHna9aNP9WlMdlnAWRl1xqPUK3Fr/gYl/f49o7gZOZRDt6ItmtFDL+6UfJBQU6Fh2yLIAKozM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740078206; c=relaxed/simple;
-	bh=pjaVZ7h2xHDHp+S+7Um3H5KF/jRsSnILJn9vFF6WfBc=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=F5CbTFzyGzcgEdwyke0sxlBxc7Y3YE/JgrSkmG3MetbsSa+FLFksX1T/uSGQV2VLuQKZpL/PnGlByTSfbHFOMrPbqghvJpynJbJm8DQkBm+LM5n/QX37cd0TzQxoPdVvgykyAMux/qDNU1Q9JgmLC3w/Z40XtasBQmygG4M9gCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3d18a1a0f0eso24134375ab.1
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 11:03:23 -0800 (PST)
+	s=arc-20240116; t=1740078229; c=relaxed/simple;
+	bh=CMYJVuqdWZQhUoTuE+0FXAVoJqmbZLoa6YqwNgt6M+U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PL5v3wYITBKnk+E32ytBYEqD5UprknO46X8OYeVVXurYIFIf+WXGf+DF9VLK+8HEPByLfrOrsoiNcl4up7zbmUvcD/2OcvIbxwTlH1MKbK3SoqpAvXJcgN0TnMTogyhwxvLT0WKS+/pPc1BN1cISLFEDzaQVEKCnJbtKOM7USMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xwTFnN/N; arc=none smtp.client-ip=209.85.160.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-471f1dd5b80so21901cf.1
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 11:03:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1740078227; x=1740683027; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VxiQ6wtOwdm+dkAsya9a3cEEzdO1LAZKevXVrkE5I78=;
+        b=xwTFnN/NQ9igU0lmBP9diC0CuX6yamRJ/+Ov+48btUHRN0FVRLgVBtcEqedBi1YV6g
+         hNRURjsRIZgZufevHV/Pbch4MgD2NjEHyuYToOYhh7TyxJKhGNG1hJIz4yP3FfniSijX
+         qrEVHTvnJUc1yQo9D4A5bLtmvZ2fg+RoPApQ6XRln13xULQMK4qAr22An19oiMtxvNAK
+         bH4Ahxzky+VM85tFflb04JBQ88Pgm3nmjWd4Q59e3aoHvZtc6+OEu7IKc5tvTUeyi+MT
+         qXn4+zRQjKwswuXvABA8uG7J5KUlQJvLLny+YiN4aKVU65uetnH8gGY8p8umxZY6yZOy
+         IuTg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740078203; x=1740683003;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=nBLPdUkUuOxJLmRb6Ixy1bEhg+CsgnET/X0DsxrXVEc=;
-        b=npB0f7pu6nn8lslff7gLfM8t28Yv45iTuOLwyoTgqYzKc0OeD/xvFtVQ12QlYGTqqi
-         j1SIUu/7FwTZosqOPCDv7B3QsRB1KagyrQ3gGuHlw/g0kbqDjHheXjSmXy0QFOLzlcu2
-         YAkMC9ccbKwYijgJwBzWRlV6tSgGJLue+OJbeJZAU8ZzPzO3FljqZ41t1IiEORrvPYe8
-         qRi4mS/cFb5OlweiKIHYkQ/POIrqLILwdcxov06jaeBXRtkT8aHuyKMh+uNl/7Hm+5g0
-         e6WP1q8PboV81HmZsCjdMiB+AVXLlmFBnH31miXRB/N1Ljh7JrX6DTglBBty3JfIYbHc
-         2ygA==
-X-Forwarded-Encrypted: i=1; AJvYcCWFffLPH82KmdaZHA8tPA0z+tk7W87mgmewxfSi5WaNFBCKZJb/9zwNoo6D/9TKr8RvPoQhr+FpY2T/Zms=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLE8QTHkJs9u4Iy7zw4iyly8QxTOeTLQSZiVZYXMH+5zXN2XYu
-	uFGbTKvECYjDq4EF7jQ90Jc78F1F91bC9l7Ve8Evvu4DvDlrM29Ok1yYgHSmVdqflFwZeZxdfMt
-	7286g2FRg2C3rNYLSJ0UupnmrkmSV5n6S01HGJoYUcE2ApKbrjkxZPHw=
-X-Google-Smtp-Source: AGHT+IGGHCpVZo36dWll5wbmWtcdubDw8cgF/FOwS4Ht+Kr8Yv5c0BNyJPK4JHJv+vkkuj4MwDhAugrx13LJ4m06n+aWDkWzIpW9
+        d=1e100.net; s=20230601; t=1740078227; x=1740683027;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VxiQ6wtOwdm+dkAsya9a3cEEzdO1LAZKevXVrkE5I78=;
+        b=woA0b+InY22mMu5WLf772s9w+EJ8IfnQV1coCaPnV54kbg18OOfDpOPz39idytJ90P
+         Qx/Nmkg5zHsYuUTyGfPhssFOiKFjMxriBqoWTXL3lCbru58Vri4lhawJJNHf2+QQI7ZE
+         Su8yZoXF3oeq4+BRFz2/EMXkGReNVgjcTJhwUxlebLZjXFqOj38AGYF1vrXHpPgi5qrZ
+         yV5oAIWyULlL/u0gRK02rogboyzmEgjFA3jZU2yKx04d6tTaBYaBg8I/2aDd4SWG4ww6
+         7kQ0xqlld7ghtkNYJoOMRj7DPJgq67a7GVlJtNHBCJPGFswbyKMXKdbb/YqZ93vf9jf4
+         tH+w==
+X-Forwarded-Encrypted: i=1; AJvYcCXFJP12HnDr/pR9QCvMeMi4tV9YPZmMpwu9hKU16bMgPWrlCb2deskNDdKdtkm5NoX7t69Bks1QO4CfxVA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywb5IOaAEI5Csu+oIFWonJtXfCPsvfjRVfYE2uMCI0dZA2J7F+S
+	mFSGaAk568WWQ6fEbP8nEOTeifU/0FnR/78woz4payBsz9OYqQflojHz1zTcDdbUiumVQaldmdN
+	FBuDkIv+cnWB92Z65JnXRt4gTJY3DojSePOhJ
+X-Gm-Gg: ASbGncsbIDCme5pUMaYjGASVWv/GcBWAH5XnW+33s7l5dFVJiSIWK3YTJOVhcs+feL3
+	iCxaW/zCDQy2VpGzZHL4lF7ZThOhAagEVtu3a5+Zv4tkoo2EpQJgiHk5zFdlutLsx7O2Zm18g
+X-Google-Smtp-Source: AGHT+IESP4lbni9JLo1iujP72rl0UncWhPZ3xqcQGvW9Vo/oQYynNgMZNvVxa6DNjIc9FvD6XgPJibfnmYh6QZ2GyiA=
+X-Received: by 2002:ac8:5fd4:0:b0:46c:7cf2:d7b2 with SMTP id
+ d75a77b69052e-472238fc66amr85181cf.18.1740078226855; Thu, 20 Feb 2025
+ 11:03:46 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3113:b0:3d2:b509:af44 with SMTP id
- e9e14a558f8ab-3d2cae6c9damr2785355ab.8.1740078203139; Thu, 20 Feb 2025
- 11:03:23 -0800 (PST)
-Date: Thu, 20 Feb 2025 11:03:23 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67b77c7b.050a0220.14d86d.02f5.GAE@google.com>
-Subject: [syzbot] [mm?] KCSAN: data-race in __unmap_hugepage_range / free_huge_folio
-From: syzbot <syzbot+4769dec94e62d3835199@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, muchun.song@linux.dev, syzkaller-bugs@googlegroups.com
+References: <20250213224655.1680278-1-surenb@google.com> <20250213224655.1680278-13-surenb@google.com>
+ <20250220185304.8313A7d-hca@linux.ibm.com>
+In-Reply-To: <20250220185304.8313A7d-hca@linux.ibm.com>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Thu, 20 Feb 2025 11:03:35 -0800
+X-Gm-Features: AWEUYZnhHZmA7CKIk6-rs2tkls49oh6ILCc24Xt36DF6I4s6NBc5M1Lba_eQz4M
+Message-ID: <CAJuCfpFPaVY1EHus1p0SY1=hpiGogdPCkgtft7fNZ4gPPj2TGA@mail.gmail.com>
+Subject: Re: [PATCH v10 12/18] mm: replace vm_lock and detached flag with a
+ reference count
+To: Heiko Carstens <hca@linux.ibm.com>
+Cc: akpm@linux-foundation.org, peterz@infradead.org, willy@infradead.org, 
+	liam.howlett@oracle.com, lorenzo.stoakes@oracle.com, 
+	david.laight.linux@gmail.com, mhocko@suse.com, vbabka@suse.cz, 
+	hannes@cmpxchg.org, mjguzik@gmail.com, oliver.sang@intel.com, 
+	mgorman@techsingularity.net, david@redhat.com, peterx@redhat.com, 
+	oleg@redhat.com, dave@stgolabs.net, paulmck@kernel.org, brauner@kernel.org, 
+	dhowells@redhat.com, hdanton@sina.com, hughd@google.com, 
+	lokeshgidra@google.com, minchan@google.com, jannh@google.com, 
+	shakeel.butt@linux.dev, souravpanda@google.com, pasha.tatashin@soleen.com, 
+	klarasmodin@gmail.com, richard.weiyang@gmail.com, corbet@lwn.net, 
+	linux-doc@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	kernel-team@android.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Thu, Feb 20, 2025 at 10:53=E2=80=AFAM Heiko Carstens <hca@linux.ibm.com>=
+ wrote:
+>
+> On Thu, Feb 13, 2025 at 02:46:49PM -0800, Suren Baghdasaryan wrote:
+> ...
+> > While this vm_lock replacement does not yet result in a smaller
+> > vm_area_struct (it stays at 256 bytes due to cacheline alignment), it
+> > allows for further size optimization by structure member regrouping
+> > to bring the size of vm_area_struct below 192 bytes.
+> >
+> > Suggested-by: Peter Zijlstra <peterz@infradead.org>
+> > Suggested-by: Matthew Wilcox <willy@infradead.org>
+> > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> > ---
+> > Changes since v9 [1]:
+> > - Use __refcount_inc_not_zero_limited_acquire() in vma_start_read(),
+> > per Hillf Danton
+> > - Refactor vma_assert_locked() to avoid vm_refcnt read when CONFIG_DEBU=
+G_VM=3Dn,
+> > per Mateusz Guzik
+> > - Update changelog, per Wei Yang
+> > - Change vma_start_read() to return EAGAIN if vma got isolated and chan=
+ged
+> > lock_vma_under_rcu() back to detect this condition, per Wei Yang
+> > - Change VM_BUG_ON_VMA() to WARN_ON_ONCE() when checking vma detached s=
+tate,
+> > per Lorenzo Stoakes
+> > - Remove Vlastimil's Reviewed-by since code is changed
+>
+> This causes crashes (NULL pointer deref) with linux-next when running
+> the ltp test suite; mtest06 (mmap1) test case.
+>
+> The bug seems to be quite obvious:
+>
+> > @@ -6424,15 +6492,18 @@ struct vm_area_struct *lock_vma_under_rcu(struc=
+t mm_struct *mm,
+> >       if (!vma)
+> >               goto inval;
+> >
+> > -     if (!vma_start_read(vma))
+> > -             goto inval;
+> > +     vma =3D vma_start_read(vma);
+> > +     if (IS_ERR_OR_NULL(vma)) {
+>             ^^^^^^^^^^^^^^^^^^^
+> > +             /* Check if the VMA got isolated after we found it */
+> > +             if (PTR_ERR(vma) =3D=3D -EAGAIN) {
+> > +                     vma_end_read(vma);
+>                         ^^^^^^^^^^^^^^^^
 
-syzbot found the following issue on:
-
-HEAD commit:    87a132e73910 Merge tag 'mm-hotfixes-stable-2025-02-19-17-4..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14f42ba4580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ce4e433ac2a58cc2
-dashboard link: https://syzkaller.appspot.com/bug?extid=4769dec94e62d3835199
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/9b9e85cfddf6/disk-87a132e7.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/6199597ac06c/vmlinux-87a132e7.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/80e28e7cab63/bzImage-87a132e7.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+4769dec94e62d3835199@syzkaller.appspotmail.com
-
-==================================================================
-BUG: KCSAN: data-race in __unmap_hugepage_range / free_huge_folio
-
-read-write to 0xffffffff88c2b1f8 of 8 bytes by task 8563 on cpu 0:
- remove_hugetlb_folio mm/hugetlb.c:1540 [inline]
- free_huge_folio+0x81a/0xae0 mm/hugetlb.c:1869
- folios_put_refs+0x1ce/0x2b0 mm/swap.c:975
- free_pages_and_swap_cache+0x3c7/0x400 mm/swap_state.c:334
- __tlb_batch_free_encoded_pages mm/mmu_gather.c:136 [inline]
- tlb_batch_pages_flush mm/mmu_gather.c:149 [inline]
- tlb_flush_mmu_free mm/mmu_gather.c:389 [inline]
- tlb_flush_mmu+0x2cf/0x440 mm/mmu_gather.c:396
- zap_pte_range mm/memory.c:1781 [inline]
- zap_pmd_range mm/memory.c:1834 [inline]
- zap_pud_range mm/memory.c:1863 [inline]
- zap_p4d_range mm/memory.c:1884 [inline]
- unmap_page_range+0x21db/0x2660 mm/memory.c:1905
- unmap_single_vma+0x142/0x1d0 mm/memory.c:1951
- unmap_vmas+0x18d/0x2b0 mm/memory.c:1995
- exit_mmap+0x1ae/0x6d0 mm/mmap.c:1284
- __mmput+0x28/0x1d0 kernel/fork.c:1356
- mmput+0x4c/0x60 kernel/fork.c:1378
- exit_mm+0xe4/0x190 kernel/exit.c:570
- do_exit+0x559/0x17f0 kernel/exit.c:925
- do_group_exit+0x142/0x150 kernel/exit.c:1087
- __do_sys_exit_group kernel/exit.c:1098 [inline]
- __se_sys_exit_group kernel/exit.c:1096 [inline]
- __x64_sys_exit_group+0x1f/0x20 kernel/exit.c:1096
- x64_sys_call+0x2db8/0x2dc0 arch/x86/include/generated/asm/syscalls_64.h:232
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xc9/0x1c0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-read to 0xffffffff88c2b1f8 of 8 bytes by task 8570 on cpu 1:
- __unmap_hugepage_range+0xbff/0x18c0 mm/hugetlb.c:5644
- unmap_single_vma+0x1c7/0x1d0 mm/memory.c:1947
- unmap_vmas+0x18d/0x2b0 mm/memory.c:1995
- exit_mmap+0x1ae/0x6d0 mm/mmap.c:1284
- __mmput+0x28/0x1d0 kernel/fork.c:1356
- mmput+0x4c/0x60 kernel/fork.c:1378
- exit_mm+0xe4/0x190 kernel/exit.c:570
- do_exit+0x559/0x17f0 kernel/exit.c:925
- do_group_exit+0x142/0x150 kernel/exit.c:1087
- __do_sys_exit_group kernel/exit.c:1098 [inline]
- __se_sys_exit_group kernel/exit.c:1096 [inline]
- __x64_sys_exit_group+0x1f/0x20 kernel/exit.c:1096
- x64_sys_call+0x2db8/0x2dc0 arch/x86/include/generated/asm/syscalls_64.h:232
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xc9/0x1c0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-value changed: 0x0000000000000003 -> 0x0000000000000000
-
-Reported by Kernel Concurrency Sanitizer on:
-CPU: 1 UID: 0 PID: 8570 Comm: syz.4.1159 Not tainted 6.14.0-rc3-syzkaller-00079-g87a132e73910 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 12/27/2024
-==================================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Doh! Thanks for reporting! I'll post a fix shortly.
 
