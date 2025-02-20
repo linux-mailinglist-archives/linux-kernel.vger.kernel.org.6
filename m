@@ -1,130 +1,119 @@
-Return-Path: <linux-kernel+bounces-523605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69A57A3D919
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:44:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3061A3D91C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:45:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 624497A82C5
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 11:43:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EEA2E16E65F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 11:45:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 222CB1F3FC3;
-	Thu, 20 Feb 2025 11:44:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="xt5DFqDv"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 317791F4189;
+	Thu, 20 Feb 2025 11:45:28 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEB6679CD;
-	Thu, 20 Feb 2025 11:44:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C6301EFFA4;
+	Thu, 20 Feb 2025 11:45:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740051881; cv=none; b=U+LVJkzYhIZcQhj9KWe0SCG3Wh1w8lHnAKskADmHzc93W3Gaw8UueGDTVwTovpqkgpMuu2Ege/Vw1itS8TMHmYao4tz03l1voXVOtdOIquU3CElmpLUwIuM16zw13L2tKJV6EhEbcTHQYPkVsURA4Lp4dhdvY5xb+SlVC/0oG70=
+	t=1740051927; cv=none; b=kHTd9iNRCmV0TZ4XlmPvrAAFtN/sYl9uoZnOwHWY73kLsX6kaong46Mhedlj8kXzQFqKE3vNjfXo5mbs8bG+HikKWWI9tFDzBIyX037+sr3AFQFi+RrEc28eX/70tWTeljBIZrFhfoOK9dQ203UH5FWgt6qpJB/ZpexPc5R5xuk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740051881; c=relaxed/simple;
-	bh=dRD2Z+QEueUpm7pZtyoK8qbcEyBONj0ZELWYH9A92MA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lPEXLiALlHFHTN7V8SRKfDuyMHw+pHZJXpld1mJuSrOdnt03yFbHB2V1GvfodiWE6EH1JBEKWkhvXW/GpFGwC4B3TsfcSrIwgSTRB9SI3HTFJABlGDVxapSlz/HHawJv8E6Dk3dPRhM+9GsCpNMD8HOP/EaMAISwF65HoXcbKF4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=xt5DFqDv; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=OMt4+h4M2hi9bh1j74Xva35n6PD/Vbe0tDN67Tdnx4w=; b=xt5DFqDvVS+9dt404mDOkGLP+E
-	1fyXCW3pqplrlhIIjhaQEICw6ArRyUhDDKMZd21/ALbjtqYBc1DvJQNHlIjHP4EiSUy8obeO4BviH
-	/h5rYxya6ZA0d0sJl3WgV32fccXeoV0Xo+2C+IH34+2DYD3tig4tX44Pk7yfPkaYEXG1Jz3SdpUse
-	9ghw7gaj3bvKMnwLV5qkZQFtr+2eE89jzJhJ16pUw374/yDw38JMMEjOWGn3w7OLSnbZMxnvIaV+L
-	2AM3Sz3//5OAL0/lES7735aRaZ3YsKDPgM9o0Pa/EQwZBE6cSFyFztT2qtR/XfIflhAbW67EFjW95
-	ylRToIDQ==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:46900)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1tl4yg-0000om-0U;
-	Thu, 20 Feb 2025 11:44:26 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1tl4yd-0000x2-1n;
-	Thu, 20 Feb 2025 11:44:23 +0000
-Date: Thu, 20 Feb 2025 11:44:23 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: "Gupta, Suraj" <Suraj.Gupta2@amd.com>
-Cc: Sean Anderson <sean.anderson@linux.dev>, Andrew Lunn <andrew@lunn.ch>,
-	"andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>,
-	"davem@davemloft.net" <davem@davemloft.net>,
-	"edumazet@google.com" <edumazet@google.com>,
-	"kuba@kernel.org" <kuba@kernel.org>,
-	"pabeni@redhat.com" <pabeni@redhat.com>,
-	"Simek, Michal" <michal.simek@amd.com>,
-	"Pandey, Radhey Shyam" <radhey.shyam.pandey@amd.com>,
-	"horms@kernel.org" <horms@kernel.org>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"git (AMD-Xilinx)" <git@amd.com>,
-	"Katakam, Harini" <harini.katakam@amd.com>
-Subject: Re: [PATCH net-next 2/2] net: axienet: Add support for AXI 2.5G MAC
-Message-ID: <Z7cVlwPDtJ2fdTbY@shell.armlinux.org.uk>
-References: <20241118081822.19383-1-suraj.gupta2@amd.com>
- <20241118081822.19383-3-suraj.gupta2@amd.com>
- <ZztjvkxbCiLER-PJ@shell.armlinux.org.uk>
- <657764fd-68a1-4826-b832-3bda91a0c13b@linux.dev>
- <9d26a588-d9ac-43c5-bedc-22cb1f0923dd@lunn.ch>
- <72ded972-cd16-4124-84af-8d8ddad049f0@linux.dev>
- <ZzyzhCVBgXtQ_Aop@shell.armlinux.org.uk>
- <BL3PR12MB6571FE73FA8D5AAB9FB4BB3CC9C42@BL3PR12MB6571.namprd12.prod.outlook.com>
+	s=arc-20240116; t=1740051927; c=relaxed/simple;
+	bh=2EEW45Yj8xi2tZwxxOWNkFYSQ4lVAi8o8LQZMo4zddc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lxUlMe8Ye5wAVtAGZHyIqSrr86S+YM761enrCokthufrS3aYQFdPGxX/hhcXLEvMJkNDQH4Dgz0lWyzkJgf6w0+7pxakiBYfPfNbbzVmQ7pw++ZYBdr4BHdlhxCb5AqvFnK12kYmgXoBHdQVcC8hvLjYU0EJU+56lbynfTB7gP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [192.168.0.2] (ip5f5af4d1.dynamic.kabel-deutschland.de [95.90.244.209])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 03CC261E6478A;
+	Thu, 20 Feb 2025 12:45:04 +0100 (CET)
+Message-ID: <184919f9-25bd-4f65-9ed9-dc452a6f4418@molgen.mpg.de>
+Date: Thu, 20 Feb 2025 12:45:03 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <BL3PR12MB6571FE73FA8D5AAB9FB4BB3CC9C42@BL3PR12MB6571.namprd12.prod.outlook.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 1/2] dt-bindings: net: bluetooth: nxp: Add support to
+ set BD address
+To: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
+Cc: marcel@holtmann.org, luiz.dentz@gmail.com, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, linux-bluetooth@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ amitkumar.karwar@nxp.com, sherry.sun@nxp.com, ziniu.wang_1@nxp.com,
+ johan.korsnes@remarkable.no, kristian.krohn@remarkable.no,
+ manjeet.gupta@nxp.com
+References: <20250220114157.232997-1-neeraj.sanjaykale@nxp.com>
+Content-Language: en-US
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+In-Reply-To: <20250220114157.232997-1-neeraj.sanjaykale@nxp.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Feb 20, 2025 at 11:30:52AM +0000, Gupta, Suraj wrote:
-> Sorry for picking up this thread after long time, we checked
-> internally with AMD IP and hardware experts and it is true that you
-> can use this MAC and PCS to operate at 1G and 2.5G both. It is also
-> possible to switch between these two speeds dynamically using
-> external GT and/or if an external RTL logic is implemented in the
-> FPGA. That will include some GPIO or register based selections to
-> change the clock and configurations to switch between the speeds.
-> Our current solution does not support this and is meant for a
-> static speed selection only.
+Dear Neeraj,
 
-Thanks for getting back on this.
 
-Okay, so it's a synthesis option, where that may be one of:
+Thank you for your patch.
 
-1. SGMII/1000base-X only
-2. 2500base-X only
-3. dynamically switching between (1) and (2).
 
-> We'll use MAC ability register to detect if MAC is configured for
-> 2.5G. Will it be fine to advertise both 1G and 2.5G in that case?
+Am 20.02.25 um 12:41 schrieb Neeraj Sanjay Kale:
+> Allow user to set custom BD address for NXP chipsets.
+> 
+> Signed-off-by: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+> v2: Add allOf and unevaluatedProperties: false (Krzysztof)
+> v3: Drop local-bd-address: true (Krzysztof)
+> ---
+>   .../devicetree/bindings/net/bluetooth/nxp,88w8987-bt.yaml   | 6 +++++-
+>   1 file changed, 5 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/net/bluetooth/nxp,88w8987-bt.yaml b/Documentation/devicetree/bindings/net/bluetooth/nxp,88w8987-bt.yaml
+> index 0a2d7baf5db3..a84c1c21b024 100644
+> --- a/Documentation/devicetree/bindings/net/bluetooth/nxp,88w8987-bt.yaml
+> +++ b/Documentation/devicetree/bindings/net/bluetooth/nxp,88w8987-bt.yaml
+> @@ -17,6 +17,9 @@ description:
+>   maintainers:
+>     - Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
+>   
+> +allOf:
+> +  - $ref: bluetooth-controller.yaml#
+> +
+>   properties:
+>     compatible:
+>       enum:
+> @@ -43,7 +46,7 @@ properties:
+>   required:
+>     - compatible
+>   
+> -additionalProperties: false
+> +unevaluatedProperties: false
 
-Please document in a comment that the above are synthesis options,
-and that dynamically changing between them is possible but not
-implemented by the driver. Note that should anyone use axienet for
-SFP modules, then (1) is essentially the base functionality, (2) is
-very limiting, and (3) would be best.
+How is this diff related to the change mentioned in the commit message?
 
-Not only will one want to limit the MAC capabilities, but also the
-supported interface modes. As it's been so long since the patch was
-posted, I don't remember whether it did that or not.
+>   
+>   examples:
+>     - |
+> @@ -54,5 +57,6 @@ examples:
+>               fw-init-baudrate = <3000000>;
+>               firmware-name = "uartuart8987_bt_v0.bin";
+>               device-wakeup-gpios = <&gpio 11 GPIO_ACTIVE_HIGH>;
+> +            local-bd-address = [66 55 44 33 22 11];
+>           };
+>       };
 
-Thanks.
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Kind regards,
+
+Paul
 
