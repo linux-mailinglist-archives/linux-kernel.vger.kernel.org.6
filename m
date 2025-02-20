@@ -1,269 +1,170 @@
-Return-Path: <linux-kernel+bounces-523761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9248AA3DAE6
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:09:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 86E9DA3DABE
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:05:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C3913AE44F
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:06:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1DBF3B9114
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:03:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C4141F8AC0;
-	Thu, 20 Feb 2025 13:06:55 +0000 (UTC)
-Received: from mail-gw01.astralinux.ru (mail-gw01.astralinux.ru [37.230.196.243])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10A671F63E8;
+	Thu, 20 Feb 2025 13:03:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=cixtech.com header.i=@cixtech.com header.b="FjYK8ioM"
+Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2120.outbound.protection.outlook.com [40.107.117.120])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DC771F584A;
-	Thu, 20 Feb 2025 13:06:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.230.196.243
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740056815; cv=none; b=Jg8v5lmp2DW1g4cnxbus5D51wNfWk43tBPhArGlmlsE14glsyaiIrL6cXOq8fsZjcWsq31kME4hmzzXKmiafgXvB0epd3cmil0YDKvs+B/UzRzuyuY9hjFIKPh7MggC21sK7nwwU6vu+TOZpMERBBS98A1Rq2lvvtkiBuU5Dd+o=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740056815; c=relaxed/simple;
-	bh=WCZJrQimBDJD6iuV+oyaGhnj6QAoxK0ucp+seR2Z6ZA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GEAHwdpAExUfwVuXY8tWcsON6nJLZ497AyScjJnhy1J+SUmLm6rhrAcsE8dw0Yn6QpQ5T98g+zEBZV2+MF6hN9dS1qzEu2M7dYxROQtEvqD2EqHqd5GpLqWDJofVzqPWANtdHzXw1ZbtRacJtXZpGTR2rbUAVVjFQ3gTrODvbQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=astralinux.ru; spf=pass smtp.mailfrom=astralinux.ru; arc=none smtp.client-ip=37.230.196.243
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=astralinux.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=astralinux.ru
-Received: from gca-sc-a-srv-ksmg01.astralinux.ru (localhost [127.0.0.1])
-	by mail-gw01.astralinux.ru (Postfix) with ESMTP id 60BA324BA2;
-	Thu, 20 Feb 2025 16:01:06 +0300 (MSK)
-Received: from new-mail.astralinux.ru (gca-yc-ruca-srv-mail03.astralinux.ru [10.177.185.108])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail-gw01.astralinux.ru (Postfix) with ESMTPS;
-	Thu, 20 Feb 2025 16:01:02 +0300 (MSK)
-Received: from localhost.localdomain (unknown [10.177.20.111])
-	by new-mail.astralinux.ru (Postfix) with ESMTPA id 4YzD0F3VTxz1h0Mx;
-	Thu, 20 Feb 2025 16:01:01 +0300 (MSK)
-From: Anastasia Belova <abelova@astralinux.ru>
-To: stable@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Anastasia Belova <abelova@astralinux.ru>,
-	linux-cifs@vger.kernel.org,
-	samba-technical@lists.samba.org,
-	linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org,
-	Enzo Matsumiya <ematsumiya@suse.de>,
-	Steve French <stfrench@microsoft.com>
-Subject: [PATCH 5.10/5.15] smb: client: fix UAF in async decryption
-Date: Thu, 20 Feb 2025 16:00:52 +0300
-Message-ID: <20250220130054.9478-1-abelova@astralinux.ru>
-X-Mailer: git-send-email 2.47.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE8E11F5845;
+	Thu, 20 Feb 2025 13:03:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.120
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740056629; cv=fail; b=m859WComPxhpNlRAa+2cu4acdjL927DrFrDhoptNlM1ocZ+Ck1TLxeQAb2g9dvjT58ZG4Fkw9iu+M5BB50nJfb+kA/h+pkExlzfp6gNzSJwWZAmd80V9ce0n35BKzaNkUzIp/6noLewUdH1CuJfG2WK+hmLWPs06sYXClyuDvT8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740056629; c=relaxed/simple;
+	bh=Qfo+EOtmzS34sT4ACPnELe1104OurewLoEawCxinmr8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rloJ51SKbQjR5wSWcr0RllqSOpCH8UAcvxDEWGfuEff260ynaVlFimHtebIjnSrvbWmE/6Uat/7ggQi8l1uA78SXJcrI+15MRzyJMVIS4F9637ICtZjyecl+oQEncm/L40PNxSY7ir26BFU6C3Jk22cPdCygBLFge/lUftVijkQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com; spf=pass smtp.mailfrom=cixtech.com; dkim=pass (2048-bit key) header.d=cixtech.com header.i=@cixtech.com header.b=FjYK8ioM; arc=fail smtp.client-ip=40.107.117.120
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cixtech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=n/aiOQEGDPpmrecCyM2DbJfn0CdFA/EsYXCXPdtoMQ+tsaSKOZJ7/ZULluw0i+OQnRaBZCEStnp+vjT/Tav3p3DHo7eb/4EZoJ8THUhEOq+Y147cPsyQ5P3SNNTBXwUc9Cnx2LkrdbgVA/sAe07fgWdz2+dja7GEjUZvPdjF6R4jeVwvqeKp68HR95kWebSaiwzzMv1llreNWsAP7Gb1h91FLlFFPwZhxram0dFNgjerFkGsz0vnFikZFBZjUr3Gv7FKZn8cGdVL41QQUqJlz0igZPOE2d14EYE0AUBQH/L122yiieqglrbFNxQjFUfPbymJ7Qs/jk11RbvYrIKv6A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=rXGj8fOL7mzFSgM5TT4hmy45kIm0wjY4xEE1lcpyIfk=;
+ b=ytdvXqYimgE4l8rFDcp0z5Hyn96QuiejH5fZn1I439gtdcvJadNa/XqHZdoQV4qQsoxNH1DNILgXyK5py4yLwef++S8htBhalHivscGaJjxFakJqbCFTPnLz6kMDfF/HCrE7+Fb4oAosMU7BfobFON1MqHiLzsEZCM5OOqIii1xPHlSnwJnoPmEqgW/9DcZ0evXEjXol5qU5dSHobWXligr4HNYVlk3kPV2XhJ/QmVC969Uu/w/PQi5SkqwWlfIG5/b58ajuEgrSlWvP7aKCSLrpOuykhkPb1Yx0SkqnnhUYY+zrFSpYfIL7qTH+i/Yjx4XzHkUv2Y/Xjw16xlSgnA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 222.71.101.198) smtp.rcpttodomain=arm.com smtp.mailfrom=cixtech.com;
+ dmarc=bestguesspass action=none header.from=cixtech.com; dkim=none (message
+ not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cixtech.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=rXGj8fOL7mzFSgM5TT4hmy45kIm0wjY4xEE1lcpyIfk=;
+ b=FjYK8ioMf8z8RzLSzywuj9f6lH5/MXH+OQGcp+LjGZDqzOXPgLDMxF/fJthhkBouvYRZpLrwdx/ig4uHJ8GNwUDyiqPwdpnD3gU4+avaKMtVG6yjkU69QwDhx5LaObX+VLerWHGzuelqqIbtt0UTYCQd0AJjDn/ncINOAD8lwdJMv2sPolPCQoisbxzba0qjMkw0ibMkF9IItEBntmGmNzFR81v9w0aWUZY99fpow44qdWtf69TUnWbGCzaGBdDuvg+T1A//3s4ZWNdRsrWMb+mqu5JxKMCZWL031zQezOtpJz7Nb13+161gqMfY0b8VNvwE/aBNi0fE84PXpDrUGg==
+Received: from SG2PR01CA0174.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:28::30) by KL1PR0601MB5512.apcprd06.prod.outlook.com
+ (2603:1096:820:bc::6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.14; Thu, 20 Feb
+ 2025 13:03:44 +0000
+Received: from SG2PEPF000B66CA.apcprd03.prod.outlook.com
+ (2603:1096:4:28:cafe::d6) by SG2PR01CA0174.outlook.office365.com
+ (2603:1096:4:28::30) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8158.24 via Frontend Transport; Thu,
+ 20 Feb 2025 13:03:44 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 222.71.101.198)
+ smtp.mailfrom=cixtech.com; dkim=none (message not signed)
+ header.d=none;dmarc=bestguesspass action=none header.from=cixtech.com;
+Received-SPF: Pass (protection.outlook.com: domain of cixtech.com designates
+ 222.71.101.198 as permitted sender) receiver=protection.outlook.com;
+ client-ip=222.71.101.198; helo=smtprelay.cixcomputing.com; pr=C
+Received: from smtprelay.cixcomputing.com (222.71.101.198) by
+ SG2PEPF000B66CA.mail.protection.outlook.com (10.167.240.22) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8466.11 via Frontend Transport; Thu, 20 Feb 2025 13:03:43 +0000
+Received: from nchen-desktop (unknown [172.16.64.25])
+	by smtprelay.cixcomputing.com (Postfix) with ESMTPSA id C2141512A743;
+	Thu, 20 Feb 2025 21:03:42 +0800 (CST)
+Date: Thu, 20 Feb 2025 21:03:41 +0800
+From: Peter Chen <peter.chen@cixtech.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, cix-kernel-upstream@cixtech.com,
+	Fugang Duan <fugang.duan@cixtech.com>
+Subject: Re: [PATCH 4/6] arm64: Kconfig: add ARCH_CIX for cix silicons
+Message-ID: <Z7coLVPh7TkQWYU_@nchen-desktop>
+References: <20250220084020.628704-1-peter.chen@cixtech.com>
+ <20250220084020.628704-5-peter.chen@cixtech.com>
+ <22142d49-b6ba-43d3-aefe-ae64fd867e8e@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-KSMG-AntiPhishing: NotDetected
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Envelope-From: abelova@astralinux.ru
-X-KSMG-AntiSpam-Info: LuaCore: 51 0.3.51 68896fb0083a027476849bf400a331a2d5d94398, {Tracking_from_domain_doesnt_match_to}, new-mail.astralinux.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;astralinux.ru:7.1.1;127.0.0.199:7.1.2, FromAlignment: s
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiSpam-Lua-Profiles: 191143 [Feb 20 2025]
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Version: 6.1.1.11
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.0.7854, bases: 2025/02/20 08:57:00 #27373308
-X-KSMG-AntiVirus-Status: NotDetected, skipped
-X-KSMG-LinksScanning: NotDetected
-X-KSMG-Message-Action: skipped
-X-KSMG-Rule-ID: 1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <22142d49-b6ba-43d3-aefe-ae64fd867e8e@kernel.org>
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SG2PEPF000B66CA:EE_|KL1PR0601MB5512:EE_
+X-MS-Office365-Filtering-Correlation-Id: 84baf534-e4bb-4c73-6dc0-08dd51af0125
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|82310400026|376014|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?C2HHjMM2nmel0Xs7H8nWTpJ0bW2uQTHtOdA05/o7ZXsfz6aWxc9VqgR4JBrY?=
+ =?us-ascii?Q?g7B0ixtHN7d1/MPl/07ZnBhYx/0cgkZgmA0MG/l9w0I/CN2fDKdkuyRGKDzW?=
+ =?us-ascii?Q?yvlCMWnmmogFgbvzRe6Kv1pzTUidRZ6XI64lPvGbYa4I34jOx0UcNGD6B1+e?=
+ =?us-ascii?Q?lQQQBMfBHMWZQBlc8Qr/VfFIJC0nwQ2T254GUI1JFmb4nFE0JNk1ZygQuW3p?=
+ =?us-ascii?Q?yQVVdpVPF3vUo2pJdtUtBqaLkFDoxkNh71sjVj95bk49k/02Vpl8i74qwx8N?=
+ =?us-ascii?Q?UMecCu0OB4Wx9CZm1wIlay3skf8L+YCGI3BYhGkdc5v+1Z35YZat/v1xXiFO?=
+ =?us-ascii?Q?maJ5B8uOFV3L2PhSRZdQP9msDfNOYy/o8d7UKf4Nkt3Xl3XIvH34ccpfKjTY?=
+ =?us-ascii?Q?9u4WRqFRGWA4OsjK8n1jhLtmHWXAL0RsrBQ4tnyWYljfVwSw2182rT9LOBbK?=
+ =?us-ascii?Q?JO53BYv94/MiAqi07fH0NxkB0u6/e61spoPoFHccISw7gSF50SvqXJjMIVBd?=
+ =?us-ascii?Q?sMd25c+9LFfp9veQe+BSWLIXO5VakKGUcHbqnFrJMjrPabKS7o2JJdf3Nm2f?=
+ =?us-ascii?Q?o6yynBecZsH/NmbZHnvxb94R8KMtKr+lfTP9BE92SJ4KNhrhWmfjQrW87rmx?=
+ =?us-ascii?Q?BH/fD+nznW68Ze5zAqJO1ckYl7Wc2gdg0HnTeKSP3fPyL/s2bmhANBEiZdx4?=
+ =?us-ascii?Q?pyf2eLc0VzJhV6VkFUxaBs3hB15rIyPrvrO7Z2LAQ8huSD2dLzz7J5/PqyrZ?=
+ =?us-ascii?Q?rl5t6G82bzw1u/ASFS0XSxEi4GdqLN1D2GHc1U+o1kqbEtXfMZqMtMhpytAF?=
+ =?us-ascii?Q?fhYk0Tz+VTHIotgMy6gwXybgPlfb+0HuC04RKfcqjuoNOUH/Q3ioq6SQn4pY?=
+ =?us-ascii?Q?yVkfO250N2YgmYI+hUbt5MAsOgzyhXrjc1eb5v1e2XR4FOGRFtQDGBhPnO/i?=
+ =?us-ascii?Q?UaI572l43xbV7NthL0o/fjKqEnlAI7i5PVg9IptpVDqXPMd85lLxRU/64nSg?=
+ =?us-ascii?Q?1GuPyBxCXcNt40pBUTv49I1MQ6ni2rlvLYHSVLYUhQua8yypmAKVetOUq2xq?=
+ =?us-ascii?Q?gcCdx2gfdYQ/4nA9MV2NM9SAaypXKAmoRHZT8FvsNOgKu+qOxz1/1tFBkKf1?=
+ =?us-ascii?Q?VA4pUMI048U+1J4mNhvatxnyroIlZsqW8LAhWJnV88iSRf0dHlN9F6N5XkoT?=
+ =?us-ascii?Q?BF8mE7fDFJDkfd4SWpw935Ue1csV22FB5U1z5ArC9L19zF3AxEGy8iV+V30S?=
+ =?us-ascii?Q?eB9ibpZQkpKtk6NTWwlPIXMxEXpdhCr6zJC7dZFtvtchKn09Gw2xXFNzhWVt?=
+ =?us-ascii?Q?Be8DacLuoBWXSMfiI9XdliKwWuV+EBJ63TfpwyFihKilTeKP10yjO/wev5ec?=
+ =?us-ascii?Q?Lpg3fuA/2CLstsPnBB/UbhR+4SelQP4+W5Xccz0Xl4+D5gtscuk5+ZEXoyd4?=
+ =?us-ascii?Q?nKHyMdU5+Ynx+nlNYRMng8COE2CK9kaD9DLTvvJ81OjiIIMm97/8GYJmOKrQ?=
+ =?us-ascii?Q?UmZNqniTJvTI/d0=3D?=
+X-Forefront-Antispam-Report:
+	CIP:222.71.101.198;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:smtprelay.cixcomputing.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(376014)(36860700013);DIR:OUT;SFP:1102;
+X-OriginatorOrg: cixtech.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Feb 2025 13:03:43.4960
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 84baf534-e4bb-4c73-6dc0-08dd51af0125
+X-MS-Exchange-CrossTenant-Id: 0409f77a-e53d-4d23-943e-ccade7cb4811
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0409f77a-e53d-4d23-943e-ccade7cb4811;Ip=[222.71.101.198];Helo=[smtprelay.cixcomputing.com]
+X-MS-Exchange-CrossTenant-AuthSource: SG2PEPF000B66CA.apcprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR0601MB5512
 
-From: Enzo Matsumiya <ematsumiya@suse.de>
+On 25-02-20 13:18:38, Krzysztof Kozlowski wrote:
+> On 20/02/2025 09:40, Peter Chen wrote:
+> > From: Fugang Duan <fugang.duan@cixtech.com>
+> >
+> > Add ARCH_CIX for CIX SoC series support.
+> >
+> > Signed-off-by: Fugang Duan <fugang.duan@cixtech.com>
+> > Signed-off-by: Peter Chen <peter.chen@cixtech.com>
+> > ---
+> >  arch/arm64/Kconfig.platforms | 6 ++++++
+> >  1 file changed, 6 insertions(+)
+> >
+> > diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+> > index 02f9248f7c84..977b61894cbc 100644
+> > --- a/arch/arm64/Kconfig.platforms
+> > +++ b/arch/arm64/Kconfig.platforms
+> > @@ -399,4 +399,10 @@ config ARCH_ZYNQMP
+> >       help
+> >         This enables support for Xilinx ZynqMP Family
+> >
+> > +config ARCH_CIX
+> C is not after Z... keep sane order.
+> 
 
-commit b0abcd65ec545701b8793e12bc27dc98042b151a upstream.
+Will change, thanks.
 
-Doing an async decryption (large read) crashes with a
-slab-use-after-free way down in the crypto API.
-
-Reproducer:
-    # mount.cifs -o ...,seal,esize=1 //srv/share /mnt
-    # dd if=/mnt/largefile of=/dev/null
-    ...
-    [  194.196391] ==================================================================
-    [  194.196844] BUG: KASAN: slab-use-after-free in gf128mul_4k_lle+0xc1/0x110
-    [  194.197269] Read of size 8 at addr ffff888112bd0448 by task kworker/u77:2/899
-    [  194.197707]
-    [  194.197818] CPU: 12 UID: 0 PID: 899 Comm: kworker/u77:2 Not tainted 6.11.0-lku-00028-gfca3ca14a17a-dirty #43
-    [  194.198400] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS rel-1.16.2-3-gd478f380-prebuilt.qemu.org 04/01/2014
-    [  194.199046] Workqueue: smb3decryptd smb2_decrypt_offload [cifs]
-    [  194.200032] Call Trace:
-    [  194.200191]  <TASK>
-    [  194.200327]  dump_stack_lvl+0x4e/0x70
-    [  194.200558]  ? gf128mul_4k_lle+0xc1/0x110
-    [  194.200809]  print_report+0x174/0x505
-    [  194.201040]  ? __pfx__raw_spin_lock_irqsave+0x10/0x10
-    [  194.201352]  ? srso_return_thunk+0x5/0x5f
-    [  194.201604]  ? __virt_addr_valid+0xdf/0x1c0
-    [  194.201868]  ? gf128mul_4k_lle+0xc1/0x110
-    [  194.202128]  kasan_report+0xc8/0x150
-    [  194.202361]  ? gf128mul_4k_lle+0xc1/0x110
-    [  194.202616]  gf128mul_4k_lle+0xc1/0x110
-    [  194.202863]  ghash_update+0x184/0x210
-    [  194.203103]  shash_ahash_update+0x184/0x2a0
-    [  194.203377]  ? __pfx_shash_ahash_update+0x10/0x10
-    [  194.203651]  ? srso_return_thunk+0x5/0x5f
-    [  194.203877]  ? crypto_gcm_init_common+0x1ba/0x340
-    [  194.204142]  gcm_hash_assoc_remain_continue+0x10a/0x140
-    [  194.204434]  crypt_message+0xec1/0x10a0 [cifs]
-    [  194.206489]  ? __pfx_crypt_message+0x10/0x10 [cifs]
-    [  194.208507]  ? srso_return_thunk+0x5/0x5f
-    [  194.209205]  ? srso_return_thunk+0x5/0x5f
-    [  194.209925]  ? srso_return_thunk+0x5/0x5f
-    [  194.210443]  ? srso_return_thunk+0x5/0x5f
-    [  194.211037]  decrypt_raw_data+0x15f/0x250 [cifs]
-    [  194.212906]  ? __pfx_decrypt_raw_data+0x10/0x10 [cifs]
-    [  194.214670]  ? srso_return_thunk+0x5/0x5f
-    [  194.215193]  smb2_decrypt_offload+0x12a/0x6c0 [cifs]
-
-This is because TFM is being used in parallel.
-
-Fix this by allocating a new AEAD TFM for async decryption, but keep
-the existing one for synchronous READ cases (similar to what is done
-in smb3_calc_signature()).
-
-Also remove the calls to aead_request_set_callback() and
-crypto_wait_req() since it's always going to be a synchronous operation.
-
-Signed-off-by: Enzo Matsumiya <ematsumiya@suse.de>
-Signed-off-by: Steve French <stfrench@microsoft.com>
-Signed-off-by: Anastasia Belova <abelova@astralinux.ru>
-[ Anastasia: ]
----
-Backport fix for CVE-2024-50047
- fs/cifs/smb2ops.c | 48 +++++++++++++++++++++++++++--------------------
- fs/cifs/smb2pdu.c |  6 ++++++
- 2 files changed, 34 insertions(+), 20 deletions(-)
-
-diff --git a/fs/cifs/smb2ops.c b/fs/cifs/smb2ops.c
-index 68f93de2b152..8cfce01cf699 100644
---- a/fs/cifs/smb2ops.c
-+++ b/fs/cifs/smb2ops.c
-@@ -4291,7 +4291,7 @@ smb2_get_enc_key(struct TCP_Server_Info *server, __u64 ses_id, int enc, u8 *key)
-  */
- static int
- crypt_message(struct TCP_Server_Info *server, int num_rqst,
--	      struct smb_rqst *rqst, int enc)
-+	      struct smb_rqst *rqst, int enc, struct crypto_aead *tfm)
- {
- 	struct smb2_transform_hdr *tr_hdr =
- 		(struct smb2_transform_hdr *)rqst[0].rq_iov[0].iov_base;
-@@ -4302,8 +4302,6 @@ crypt_message(struct TCP_Server_Info *server, int num_rqst,
- 	u8 key[SMB3_ENC_DEC_KEY_SIZE];
- 	struct aead_request *req;
- 	u8 *iv;
--	DECLARE_CRYPTO_WAIT(wait);
--	struct crypto_aead *tfm;
- 	unsigned int crypt_len = le32_to_cpu(tr_hdr->OriginalMessageSize);
- 	void *creq;
- 
-@@ -4314,15 +4312,6 @@ crypt_message(struct TCP_Server_Info *server, int num_rqst,
- 		return rc;
- 	}
- 
--	rc = smb3_crypto_aead_allocate(server);
--	if (rc) {
--		cifs_server_dbg(VFS, "%s: crypto alloc failed\n", __func__);
--		return rc;
--	}
--
--	tfm = enc ? server->secmech.ccmaesencrypt :
--						server->secmech.ccmaesdecrypt;
--
- 	if ((server->cipher_type == SMB2_ENCRYPTION_AES256_CCM) ||
- 		(server->cipher_type == SMB2_ENCRYPTION_AES256_GCM))
- 		rc = crypto_aead_setkey(tfm, key, SMB3_GCM256_CRYPTKEY_SIZE);
-@@ -4361,11 +4350,7 @@ crypt_message(struct TCP_Server_Info *server, int num_rqst,
- 	aead_request_set_crypt(req, sg, sg, crypt_len, iv);
- 	aead_request_set_ad(req, assoc_data_len);
- 
--	aead_request_set_callback(req, CRYPTO_TFM_REQ_MAY_BACKLOG,
--				  crypto_req_done, &wait);
--
--	rc = crypto_wait_req(enc ? crypto_aead_encrypt(req)
--				: crypto_aead_decrypt(req), &wait);
-+	rc = enc ? crypto_aead_encrypt(req) : crypto_aead_decrypt(req);
- 
- 	if (!rc && enc)
- 		memcpy(&tr_hdr->Signature, sign, SMB2_SIGNATURE_SIZE);
-@@ -4454,7 +4439,7 @@ smb3_init_transform_rq(struct TCP_Server_Info *server, int num_rqst,
- 	/* fill the 1st iov with a transform header */
- 	fill_transform_hdr(tr_hdr, orig_len, old_rq, server->cipher_type);
- 
--	rc = crypt_message(server, num_rqst, new_rq, 1);
-+	rc = crypt_message(server, num_rqst, new_rq, 1, server->secmech.ccmaesencrypt);
- 	cifs_dbg(FYI, "Encrypt message returned %d\n", rc);
- 	if (rc)
- 		goto err_free;
-@@ -4480,8 +4465,9 @@ decrypt_raw_data(struct TCP_Server_Info *server, char *buf,
- 		 unsigned int npages, unsigned int page_data_size,
- 		 bool is_offloaded)
- {
--	struct kvec iov[2];
-+	struct crypto_aead *tfm;
- 	struct smb_rqst rqst = {NULL};
-+	struct kvec iov[2];
- 	int rc;
- 
- 	iov[0].iov_base = buf;
-@@ -4496,9 +4482,31 @@ decrypt_raw_data(struct TCP_Server_Info *server, char *buf,
- 	rqst.rq_pagesz = PAGE_SIZE;
- 	rqst.rq_tailsz = (page_data_size % PAGE_SIZE) ? : PAGE_SIZE;
- 
--	rc = crypt_message(server, 1, &rqst, 0);
-+	if (is_offloaded) {
-+		if ((server->cipher_type == SMB2_ENCRYPTION_AES128_GCM) ||
-+		    (server->cipher_type == SMB2_ENCRYPTION_AES256_GCM))
-+			tfm = crypto_alloc_aead("gcm(aes)", 0, 0);
-+		else
-+			tfm = crypto_alloc_aead("ccm(aes)", 0, 0);
-+		if (IS_ERR(tfm)) {
-+			rc = PTR_ERR(tfm);
-+			cifs_server_dbg(VFS, "%s: Failed alloc decrypt TFM, rc=%d\n", __func__, rc);
-+
-+			return rc;
-+		}
-+	} else {
-+		if (unlikely(!server->secmech.ccmaesdecrypt))
-+			return -EIO;
-+
-+		tfm = server->secmech.ccmaesdecrypt;
-+	}
-+
-+	rc = crypt_message(server, 1, &rqst, 0, tfm);
- 	cifs_dbg(FYI, "Decrypt message returned %d\n", rc);
- 
-+	if (is_offloaded)
-+		crypto_free_aead(tfm);
-+
- 	if (rc)
- 		return rc;
- 
-diff --git a/fs/cifs/smb2pdu.c b/fs/cifs/smb2pdu.c
-index 03651cc6b7a5..245e2dd5a194 100644
---- a/fs/cifs/smb2pdu.c
-+++ b/fs/cifs/smb2pdu.c
-@@ -998,6 +998,12 @@ SMB2_negotiate(const unsigned int xid, struct cifs_ses *ses)
- 		else
- 			cifs_server_dbg(VFS, "Missing expected negotiate contexts\n");
- 	}
-+
-+	if (server->cipher_type && !rc) {
-+		rc = smb3_crypto_aead_allocate(server);
-+		if (rc)
-+			cifs_server_dbg(VFS, "%s: crypto alloc failed, rc=%d\n", __func__, rc);
-+	}
- neg_exit:
- 	free_rsp_buf(resp_buftype, rsp);
- 	return rc;
--- 
-2.43.0
-
+Regards,
+Peter
 
