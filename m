@@ -1,178 +1,133 @@
-Return-Path: <linux-kernel+bounces-524918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B68FA3E8B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 00:43:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07025A3E8B5
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 00:43:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ACE9F7A878B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 23:41:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FCBB19C35EE
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 23:43:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1FA026771C;
-	Thu, 20 Feb 2025 23:42:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBC0A26463B;
+	Thu, 20 Feb 2025 23:43:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gLKq6lv0"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OJXDutWf"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64D1C26463B
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 23:42:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01C042676EE;
+	Thu, 20 Feb 2025 23:42:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740094967; cv=none; b=qkyrLwKoR7B1LrzD+NzqA5PNuj9wVFOCWhloexw31/Yd2PWVyres4yz/+kATVFT/tWcpTkzG6JcZBJLmsacnZVyVMww/QHDjvgHNgLr5SpmVln5jb9HXrzyK756hRAfV9ZD3Rp0CkUpQvz9PtJKq9wo6F+dsRFkMOTYyFRJz7FA=
+	t=1740094981; cv=none; b=uiCm/B3PcWN5+PucVEAsgcpeMAe3LN/nMsO7BaafxypKankdXnKzTDdeAY+pIcJsP+BlF7beSY0b3jEvFrJci0bnWfBxtMCJHULaCGM4yswfD0aKgnJetlxZCJD8ESL9+DnDGY//8PSDpmgEahnnAFjrIQsyVYEqa+RNZc0wAuY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740094967; c=relaxed/simple;
-	bh=cUeKf4PCCVtFVO53wxl3QweJJfWATQQ7W81yy0YfVQQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=S8bI+IDEpz/nsX//2Km9/J7KFxmqdjVAbiEIRSvJ0/neRxk30hBVBuocokNg8RwCmuMBGPJrI+6R2jMkQ2A1IhtXnT2jcHY1HXGj6hyeWp9BICIDvHr+YJ4aPkReLLRxfWghPZP/V/qlfjtmTSpk8s5BA5p7JCff7vH30RijLQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gLKq6lv0; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740094964;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=64ZpdAsvcI+F+rxDlYFyucFy3wRloEAxpqLq+Ucj4cI=;
-	b=gLKq6lv0rjdqfS4tn1BQaLevv5gavFAPmI0+Zx1vHZLwzCq3eCG7YvFnb+SBvjZAmkUsbA
-	B7usJgLZcaBYqGdPtD6Cm4CJHgAtTpz6U7IMIfm+ncLAwdmGmjqq6CobY62q8yxxoE9W9D
-	aPDe6aXvisLTLf7bKGVhpqOU9L2rxFo=
-Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
- [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-481-WkgjWr35PWSIlwtfPwR61Q-1; Thu, 20 Feb 2025 18:42:43 -0500
-X-MC-Unique: WkgjWr35PWSIlwtfPwR61Q-1
-X-Mimecast-MFC-AGG-ID: WkgjWr35PWSIlwtfPwR61Q_1740094962
-Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-abbe5ac36a9so255809566b.2
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 15:42:42 -0800 (PST)
+	s=arc-20240116; t=1740094981; c=relaxed/simple;
+	bh=L9Kfv39OqMdK04JAvpnAP/aGdKTvCtAtW1r4CuukpX0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rLg34HRv29RjA8aAWn3CystrnD+tmZ78xTSMDtHE+Ha4PqmMc3/KOlTNdQwvcnSYfbd1eoGK/7GBhVwyV02ofT+4Ng8MRbYWrEMkLeE8/xEWjXsh79bGqYei4FTobFYuA9a8zGzs4Dw7KBxWWXwTkwqjqiTdInE93OXUDgnM2NI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OJXDutWf; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2fbf706c9cbso348035a91.3;
+        Thu, 20 Feb 2025 15:42:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740094979; x=1740699779; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=m5b1NzyX3+oox2Z612BXoXTkh4jjxT+fedPYrwEqKHs=;
+        b=OJXDutWfxkQQVg7AdIP4GMzwtJjuZjubn4pIPd+UkrFhP86l8a1vkC1uUq/1QR2gYi
+         Q2C1W/vmDOOE9qlyXepjibwBFvrDjwwKOzmjLFqsEjdQD3qrGZEWNErSFvrG4WPM0LMb
+         raYbbQEV65F1T42fRj4PWJaNdDl59AqSckgcwmx8j6gqM1YeZqYeWhSIuLyQEQJywFjo
+         g5qQZiITMcO6JTt8lrs4NWoWFHD5j7CpwyMUqiwLRm3k1NMZpnlIR36PdhNoXxxcO5/s
+         29Fk3QdsAkjiw8/NHW5Mbr5qFhEszwxfPGDDTv7RoVPYW1u278jROMK1KXOPYzNmxs0Y
+         dTKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740094961; x=1740699761;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=64ZpdAsvcI+F+rxDlYFyucFy3wRloEAxpqLq+Ucj4cI=;
-        b=swlTwNL+RbtlqalbpnKXrHOy29HX1M9qTIf60twnerAFvQf7wW69gOojzIlyfePqEm
-         YVO4099tlkw/qHEIRTl3af2iT5v1i4NuM5OdyBEtNvttb9Wgu1nDg01rgOt0AKvyRutl
-         GqVzTbnet3UZOwn9wqWMptOxPYnxvjQhRQH1lgDpzaynzmcJWDsoB8vcLAzv6myJy7M4
-         QkDMEb5FAqwL+mEKMHcDajdB9Nd/g1G8gJER+vZtek0bsdrUwYzxCeeN+zGcHFniCLoR
-         SwOghgtgOLpp+jZKbYRdiyeOMdku5HaYtoPZbI6H+KY9dnMh+oCCf2K28LHYgo6MVrLb
-         RmWw==
-X-Gm-Message-State: AOJu0Yz9a9y50XfHiTVmN7/qaczA7ctVp6wNWidFAydRgKHuawO8Z2Hx
-	qbDvk6Z+9QvlxpBmdK22uTmad7lUVo5Z+sFzdPFnBlsuMPjAkek7JXmhkghQUudzNyt3i7glY+g
-	ZnCCVvc1FKejuOeFlfRCQ3pUgnqeIUanD55Dlc6cBnPZ785XByYwpnPQxysE5T4OWZHdgjd6mes
-	78qlvHMylR02eMDOmaso6ZA2xfniLoCbsHABAKjwM=
-X-Gm-Gg: ASbGncuyxDamAg0EA8nqvHzxm8hUSEREOI0c3I6sGOiD2zFBJjhTf70Hsv+fcNwBo84
-	ZmCwMFs08L6oVc5Num6x1ndzyNjjVM+QX4RW+ExwAneLcSWEw6TlN1dY8wrv4sGWCSbVdtxk0ND
-	Iqon0zgQ7eWOw8+7hza/DmgmLDwMStKSZzyoKfTDnR32vAqiR/anzjRx0KoZLbuZyc639AsNOUa
-	J7+f4AO27ReJDWZMiK+7Ks6NKknyICI5YunclkU+GDaejIfS0eKcGP+NjcFa3x5FnpvvA==
-X-Received: by 2002:a17:907:7eaa:b0:ab7:c00c:680f with SMTP id a640c23a62f3a-abc0de4f6f8mr58469966b.53.1740094961022;
-        Thu, 20 Feb 2025 15:42:41 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHhhgQ2tD8HKuJBp4jMU5+KqRB/WeK8wqr6fsH8j2hzo2w7lM401/yo0RsV3QgWvZIqWnWv5g==
-X-Received: by 2002:a17:907:7eaa:b0:ab7:c00c:680f with SMTP id a640c23a62f3a-abc0de4f6f8mr58468066b.53.1740094960585;
-        Thu, 20 Feb 2025 15:42:40 -0800 (PST)
-Received: from redhat.com ([2.55.163.174])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abb945da4a1sm934223766b.132.2025.02.20.15.42.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Feb 2025 15:42:38 -0800 (PST)
-Date: Thu, 20 Feb 2025 18:42:35 -0500
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: linux-kernel@vger.kernel.org
-Cc: Eric Auger <eauger@redhat.com>,
-	Hongyu Ning <hongyu.ning@linux.intel.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Eugenio =?utf-8?B?UMOpcmV6?= <eperezma@redhat.com>,
-	virtualization@lists.linux.dev
-Subject: [PATCH] virtio: break and reset virtio devices on device_shutdown()
-Message-ID: <c1dbc7dbad9b445245d3348f19e6742b0be07347.1740094946.git.mst@redhat.com>
+        d=1e100.net; s=20230601; t=1740094979; x=1740699779;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=m5b1NzyX3+oox2Z612BXoXTkh4jjxT+fedPYrwEqKHs=;
+        b=kY13ERCSNCEuF8R0R5hUziAHNIZ2QTDa2417j1AEhDe9VhbDb/PlfFTmK2ldBMEsuu
+         Z/E+IhDwPC51oWebV7//aW9/pdnosoGyK7KlyZmPuQk0lA0QZcjpuDOW/jLAgog3Uy0Z
+         FZw4m/nyWvxapbYAgnkeaOtTwcjlzH8BD0KZm9KkFF9j6bTaXcLsCj8U/xSKpAHBlGEw
+         3TUNxiUza6ZsEfYKk0HIHnI4nKC8LKLzJtW3AlmhNz/od8NNT32NhBzD2GbqUIeAfKuy
+         61dF+/FjuOJUgXdaYs0ay59mcUXgmruO5BQvsDhc3BoR//acpWri7yqGFX9vTlYiew7C
+         USYg==
+X-Forwarded-Encrypted: i=1; AJvYcCU8cC4CdKbgvrc/JG1tUeqO8xQI1HdkmGCq0cQ1FjuBW0E7Q/iN1mD4TDoFmG74SxJ1LVD59xXDdT29tRoSp50=@vger.kernel.org, AJvYcCWDxBwClVTU+PY3qCnqMlTw5WjB9zUj69yQesG+tHvAWC+X+gZUD1Zw1E0XjqD4KAXE539t5UlKgmfYkuo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyv59KxBTgX+OvZapd6+FHGLTOe/oTs7ThwvesrlR/QaQvjzLKe
+	fD60CMCx2pfiB0Agpdqy/ZdATwKa3qHdfBOegt7oqBrfQAsC2ANVlXeVZNGP3bJMDfN0+OfScB3
+	qflLnlDeQMy4oe+3amcj/FFhVa2gbEw==
+X-Gm-Gg: ASbGncvMBldAYBzBTsOwJ89oE/+UCEeiIJraTDjhKGlp0dH2IGFMOAxxmiRv3cEEBSO
+	1WKVijFymFaPMLWuF35CfuRtIvQICO3BJdvb8wQ7cyLQNCW3bRLvBpd4G4pDyyCsT5I/BHDzK
+X-Google-Smtp-Source: AGHT+IEtCMpnIDRlzFsG9k/RqkGrAj4G+X5WTvM7CByob/VUnkpeDuMCZryW/Ycbbb+88dEP0P003NDE1Gqlq/IN4c0=
+X-Received: by 2002:a17:90b:350c:b0:2ee:e518:c1d4 with SMTP id
+ 98e67ed59e1d1-2fce77a63cfmr691014a91.1.1740094979099; Thu, 20 Feb 2025
+ 15:42:59 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email 2.27.0.106.g8ac3dc51b1
-X-Mutt-Fcc: =sent
+References: <CANiq72m-R0tOakf=j7BZ78jDHdy=9-fvZbAT8j91Je2Bxy0sFg@mail.gmail.com>
+ <Z7SwcnUzjZYfuJ4-@infradead.org> <CANiq72myjaA3Yyw_yyJ+uvUrZQcSLY_jNp65iKH8Y5xGY5tXPQ@mail.gmail.com>
+ <202502191026.8B6FD47A1@keescook> <785A9F60-F687-41DE-A116-34E37F5B407A@zytor.com>
+In-Reply-To: <785A9F60-F687-41DE-A116-34E37F5B407A@zytor.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Fri, 21 Feb 2025 00:42:46 +0100
+X-Gm-Features: AWEUYZlZLMmtDWCJImDa9xtbg37S_H3ahSaDF1pmiS0wc6kjTHtRiPI08i7w7u4
+Message-ID: <CANiq72nwouotAqJh_cm=9RG3Ns4wxX0LWXcVwp_bswE29kCrYA@mail.gmail.com>
+Subject: Re: Rust kernel policy
+To: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Kees Cook <kees@kernel.org>, Christoph Hellwig <hch@infradead.org>, 
+	rust-for-linux <rust-for-linux@vger.kernel.org>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Greg KH <gregkh@linuxfoundation.org>, 
+	David Airlie <airlied@gmail.com>, linux-kernel@vger.kernel.org, ksummit@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hongyu reported a hang on kexec in a VM. QEMU reported invalid memory
-accesses during the hang.
+On Wed, Feb 19, 2025 at 8:34=E2=80=AFPM H. Peter Anvin <hpa@zytor.com> wrot=
+e:
+>
+> a. The apparent vast gap in maturity required of Rust versus C. What is o=
+ur maturity policy going to be? Otherwise we are putting a lot of burden on=
+ C maintainers which is effectively wasted of the kernel configuration pull=
+s in even one line of Rust.
+>
+> This is particularly toxic given the "no parallel code" claimed in this p=
+olicy document (which really needs references if it is to be taken seriousl=
+y; as written, it looks like a specific opinion.)
 
-	Invalid read at addr 0x102877002, size 2, region '(null)', reason: rejected
-	Invalid write at addr 0x102877A44, size 2, region '(null)', reason: rejected
-	...
+There is no "no parallel code" in the document, and I would like a
+clarification on what you mean by "toxic" here.
 
-It was traced down to virtio-console. Kexec works fine if virtio-console
-is not in use.
+I tried really hard to avoid misrepresenting anything, and the
+document explicitly mentions at the top that this is our
+understanding, and that the policy could change depending on what key
+maintainers and the community discuss. (If it is put into the kernel
+tree, then that solves that.).
 
-The issue is that virtio-console continues to write to the MMIO even after
-underlying virtio-pci device is reset.
+Anyway, I can only guess you are referring to the "Are duplicated
+C/Rust drivers allowed?" point. If so, since you want references, here
+is one:
 
-Additionally, Eric noticed that IOMMUs are reset before devices, if
-devices are not reset on shutdown they continue to poke at guest memory
-and get errors from the IOMMU. Some devices get wedged then.
+    No, don't do that, it's horrid and we have been down that road in the
+    past and we don't want to do it again.  One driver per device please.
 
-The problem can be solved by breaking all virtio devices on virtio
-bus shutdown, then resetting them.
+    https://lore.kernel.org/rust-for-linux/2023091349-hazelnut-espionage-4f=
+2b@gregkh/
 
-Reported-by: Eric Auger <eauger@redhat.com>
-Reported-by: Hongyu Ning <hongyu.ning@linux.intel.com>
-Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
----
- drivers/virtio/virtio.c | 31 +++++++++++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
+Things evolved after those discussions, which is why I ended up
+writing the "Rust reference drivers" framework that got later used for
+PHY:
 
-diff --git a/drivers/virtio/virtio.c b/drivers/virtio/virtio.c
-index c1cc1157b380..e5b29520d3b2 100644
---- a/drivers/virtio/virtio.c
-+++ b/drivers/virtio/virtio.c
-@@ -377,6 +377,36 @@ static void virtio_dev_remove(struct device *_d)
- 	of_node_put(dev->dev.of_node);
- }
- 
-+static void virtio_dev_shutdown(struct device *_d)
-+{
-+	struct virtio_device *dev = dev_to_virtio(_d);
-+	struct virtio_driver *drv = drv_to_virtio(dev->dev.driver);
-+
-+	/*
-+	 * Stop accesses to or from the device.
-+	 * We only need to do it if there's a driver - no accesses otherwise.
-+	 */
-+	if (!drv)
-+		return;
-+
-+	/*
-+	 * Some devices get wedged if you kick them after they are
-+	 * reset. Mark all vqs as broken to make sure we don't.
-+	 */
-+	virtio_break_device(dev);
-+	/*
-+	 * The below virtio_synchronize_cbs() guarantees that any interrupt
-+	 * for this line arriving after virtio_synchronize_vqs() has completed
-+	 * is guaranteed to see vq->broken as true.
-+	 */
-+	virtio_synchronize_cbs(dev);
-+	/*
-+	 * As IOMMUs are reset on shutdown, this will block device access to memory.
-+	 * Some devices get wedged if this happens, so reset to make sure it does not.
-+	 */
-+	dev->config->reset(dev);
-+}
-+
- static const struct bus_type virtio_bus = {
- 	.name  = "virtio",
- 	.match = virtio_dev_match,
-@@ -384,6 +414,7 @@ static const struct bus_type virtio_bus = {
- 	.uevent = virtio_uevent,
- 	.probe = virtio_dev_probe,
- 	.remove = virtio_dev_remove,
-+	.shutdown = virtio_dev_shutdown,
- };
- 
- int __register_virtio_driver(struct virtio_driver *driver, struct module *owner)
--- 
-MST
+    https://rust-for-linux.com/rust-reference-drivers
 
+I hope that helps the document "to be taken seriously".
+
+Cheers,
+Miguel
 
