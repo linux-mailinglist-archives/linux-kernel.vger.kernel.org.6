@@ -1,476 +1,243 @@
-Return-Path: <linux-kernel+bounces-524264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 794B7A3E154
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:50:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7D3CA3E156
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:50:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAA963BA9B3
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:44:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE7EF3A3377
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:45:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7267A1DF75B;
-	Thu, 20 Feb 2025 16:44:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE8141FE45B;
+	Thu, 20 Feb 2025 16:46:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vQRxiUfY"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=diehl.com header.i=@diehl.com header.b="kvjJYLPs"
+Received: from enterprise02.smtp.diehl.com (enterprise02.smtp.diehl.com [193.201.238.220])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 145E5212B0B
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 16:44:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FA3D1CAA86
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 16:45:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.201.238.220
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740069886; cv=none; b=Azl1jyoaFqI+TwHbueo2VapDQ2LX3YXwE7U0NkJDNPwFUYIQkGrgp05lYnyUNaRftdXK3/yqu3KmMmq9S2xVE2/uPEG1o0oQsmbkxK4lOq91SNZHgoEHfKzpF4kR1eeqaZDK2gEDPk8kvf34Sktm+XS46l+5vCmuNshIt6iu/II=
+	t=1740069962; cv=none; b=uSNy4R60n2NQEaaC7eGOF92tvv5WSF9pe4PHPmxQxCvP1svzWQoKjmYix42Rk5XBLzZ4DwOK1wfNWVb5neUzlQUnGlegays7ebFVvDofeDZzt3RWf0BAAIepcZWCzmPDDesr6BDnCfPK6GFgPXfH2Vi8AddLmIMI+Rirxr7xZ+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740069886; c=relaxed/simple;
-	bh=9r0fYvX+zlp9IaR/Iw7NohIQaBQqp8BA2iLfsSq9B+o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kCF7rEcpbuEXgK71w61lUR8JDlZ/eAyGcqeNeNXeeD9MjTiF143tOWKCIPdoqN9SuvfqCv59qe0ZfQuwKbw98NL8CYzAksKL0NZkLyGspTkEM/yQleIxHTWuyl2zfYaRjnhdKuu48Xo2lGJJMvpO5FqiN2OMqHDu7QaZDaJh2wk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vQRxiUfY; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5e0452f859cso1796976a12.2
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 08:44:43 -0800 (PST)
+	s=arc-20240116; t=1740069962; c=relaxed/simple;
+	bh=z6dAeimBvxBVHVvMvowZryUjupj1ec3ZOb9n2rZvKZY=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=iKk3BBB8D2kldJt4km37bkCg0rhkOr9OS00yaLTmjokcpMdkiFFCUFeliSkefNi23C+xH4htwipqSjEiyirdXRjvc9G1gQs+M/T4/IwEw+ZaPyHcGjtkSFN8hYfdoEEFv0+ZCX0rHECWVaYK3V+2uORQ4UIV2bqNND7PwtzOaBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=diehl.com; spf=pass smtp.mailfrom=diehl.com; dkim=pass (2048-bit key) header.d=diehl.com header.i=@diehl.com header.b=kvjJYLPs; arc=none smtp.client-ip=193.201.238.220
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=diehl.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=diehl.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740069882; x=1740674682; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GtI+UqG4NWO8Dncx/I8qs5z9r1CXuicTbpGR8fFxBTU=;
-        b=vQRxiUfY4Dd0m4Oe7cqEMD8NOW+ybTCdc1rak9G4D9fIgl9gaPkyEjeduagwg/Z1lF
-         IqbfAMmSvUzGNndpUTZlgKN8y5I9jORQTa0ZG8EAK7ElnF3kfAuEqxHJwcPunkUkcsXw
-         Rb8mRUmhM7sRcTRi316EMtyZ+7YkIRJPHJ/al6hMkXMrJLhZUYTJGVl05fnGe61Y3CbD
-         ixbmKTGx39fOsNETfFZty+edrnyD4HjGssPQG/Czi3icOmooA9XCI32wrzFb6xgcKXUH
-         2XKUhGuue9BDZJjjOCq7B+Z1qhDp89P1n4kOzt1zTcUqnvhHeUpwrpC/4zsPbkLWyDh0
-         YzAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740069882; x=1740674682;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GtI+UqG4NWO8Dncx/I8qs5z9r1CXuicTbpGR8fFxBTU=;
-        b=S0U5xahNjREoBPSOA6257U5sGMoBUfpzQ2CABrjSKF827bZzqFWgvxNxWjC41uQJ94
-         r5GxGgoNcqxTPJKw2bHrM1V7LR5YltMh32RxU2K/vUnVzJmUBdMhI+AefpitpF2vrA+l
-         XN0tYGDIwkANJ6dcQ5/bQgnicktD2rlYTsdPxG+gEHsDe29aHDFM6crQElAREyTmFjAU
-         jtJ2D2bW9TZa8GblnUcopL7AP2k2e4WuDwYEm4vOd9s2gTTEJLqlc1BE1o/cTYILADV3
-         JqGlG2RRBr4uKJK5RF83hZTzFiu1WmogE2MuD38rhT3MQKJhfnKj8MH8os234rnRsDU/
-         OjJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXxxZtVFm1fhnoSU7jF2r3/jr6AYf6DBcvoyVvcGSKcArAZSqf3GZpXxbgOy7zDzDiU+FTSgGcbIAbJzJo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxawHemTzRbigL4zkEcDyhW+D3pwEg00DYdiYQ1TQClj/z1LeGg
-	ZWhjG3YAVKspHqkxFy+VYMbN3dU+tks4Gd3TAAn7Ws303nopvq+C2nHM9QUsHQ7pSTBm57R4ePs
-	VqupicVz3oLSxLwNKsIy28ZkGhLMV2HMdpt5Q
-X-Gm-Gg: ASbGncvlMmguU63fnrU+Dj3TSAb1lRWwJKczhxBDprDWC+Ux3U3t1AWfR1lH7u295t4
-	DXajY/SH66FJmRBwZQoyPid5ZdviqAl701znoD1qhMOON5h1WUaYCvzDAvqx8LsFwWaMgPoaI
-X-Google-Smtp-Source: AGHT+IG7AdiVY1G/TEK1pQrSvIh0n8nrZpdHC90LgKATvuCLj5ANZlaQ719DVlcDviDP0WAhINjce8I/k/BpFTR0Tcs=
-X-Received: by 2002:a17:906:f5a3:b0:ab7:eead:57f2 with SMTP id
- a640c23a62f3a-abbcd0bafefmr908617066b.48.1740069882149; Thu, 20 Feb 2025
- 08:44:42 -0800 (PST)
+  d=diehl.com; i=@diehl.com; q=dns/txt; s=default;
+  t=1740069959; x=1771605959;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=z6dAeimBvxBVHVvMvowZryUjupj1ec3ZOb9n2rZvKZY=;
+  b=kvjJYLPseb4dJKBrUZZ8BWKJubg8j5Y6ow1ATgcpZcmVlJHBaNazK04X
+   CxMjT7K3rUpOPSLkwT9h0OFqVPofpsOZ1/1Wl/DcO5ZHFDtNzs8pY9kkF
+   bJMHsnrp94luicL3se5O1JJdj93uf0ET8RfH8kT5UZpW54Jp1oqzevlGF
+   VFsnkUWfuJSeIYAxDbR9kFD+QwEH68bbXA2jgjhaXLy739RatRhnxKw6G
+   eepMo921UJTM6AKqUoihnM7ubBdn2L1Zz2h+3nmmvmgvfQLmSrAPOBCk+
+   h/bhYceXIQF96VtrZfarVy3rDzCZlqrMcLD7auqMMH14aSN4bf7vGjbeF
+   w==;
+X-CSE-ConnectionGUID: nO4+9QtjTbaHC2lvlW0DFw==
+X-CSE-MsgGUID: gMlnnf+SQiu4F6PjwIrDKg==
+X-ThreatScanner-Verdict: Negative
+IronPort-Data: A9a23:mNiOQ6OOI0zeDILvrR3OlsFynXyQoLVcMsEvi/4bfWQNrUp00WcPy
+ jceC2+HO/+DYGD0c9kkaY+1/BwHv5+DmIM1SwZtpSBmQkwRpJueD7x1DKtS0wC6c5efFhI3t
+ 63yTvGacajYm1eF/k/F3oDJ9Cc6jefQAOKhVIYoAwgpLSd8UiAtlBl/rOAwh49skLCRDhiE0
+ T/Ii5S31GSNhXgtaQr414rZ8Eky5K6o4GtE1rADTasjUGH2xiB94K03dfnZw0vQGuF8AuO8T
+ uDf+7C1lkux1wstEN6sjoHgeUQMRLPIVSDW4paBc/H/6vTqjnVaPpcTbJLwW28O49m6t4kZJ
+ OF2iHCFYVxB0psgOggqe0Iw/ylWZcWq8VJcSJS1mZT7I0buKxMAzxjyZa2f0EJxFutfWAlzG
+ fIkxD8laDffxLOP3LCHQOBMrZ4nMs3UZK8xpSQ1pd3ZJa5OrZHreY7mzpp99RYU3ZgIFvHEf
+ 4wVaDdvaFLLZBgn1lU/Ucp4xbrzwCK5KmYAwL6WjfNfD2z7wAF30aOrN8HJd8aOTMNZtkqZq
+ 2LCuW/+B3n2MfTGkWXYqyv03rCncSXTV6cWEru2tcVTgUDP6DIrCgI3T3eYrqzs4qK5c5cFQ
+ 6AOwQIhrK83+VC3T/HwWRu1rXiCs1gXXN84O+k77hydj6nZ+QCUAkAaQTNbLt8rrsk7QXotz
+ FDhoj/yLWU39uTIEjTGsO7P9VteJBQoEIPLXgdcJSNt3jUpiNhbYs7nJjq7LJOIsw==
+IronPort-HdrOrdr: A9a23:9qzG8Kz74aXIuu5ZBo5DKrPw1r1zdoMgy1knxilNoNJuA7alfq
+ GV7YkmPHrP4gr5N0tQ/uxoVJPwJU80sKQFhLX5Xo3SPzUO2lHYVb2KhLGKq1bd8m/Fh4xgPM
+ xbAtBD4bPLfCNHpPe/zw+iDd46zdWLtIyuj/zP1mpgQGhRB51I3kNWDkK1HkVqWBJLH/MCZf
+ yhz/sCiT7lV3p/VKqG77o+MNQrZeenqHsrW3877tcciDWzsQ==
+X-Talos-CUID: =?us-ascii?q?9a23=3AcYObV2v8auMn9Vp/1n3GRr346IsjVSGenU7MIXO?=
+ =?us-ascii?q?yAEZCErmLTWDI1I17xp8=3D?=
+X-Talos-MUID: 9a23:wrrIbgv3dtEkvWv+dM2nixRmMsFmoJ+XCV1Rv8s+udalLwBTNGLI
+X-IronPort-AV: E=Sophos;i="6.13,302,1732575600"; 
+   d="scan'208";a="107511007"
+From: Denis OSTERLAND-HEIM <denis.osterland@diehl.com>
+To: Rodolfo Giometti <giometti@enneenne.com>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: Re: [PATCH] pps: add epoll support
+Thread-Topic: Re: [PATCH] pps: add epoll support
+Thread-Index: AQHbg7blg/Xn0W8Pv0aHl6Wb05bp5Q==
+Date: Thu, 20 Feb 2025 16:45:49 +0000
+Message-ID: <456070491e3642e9a6017ff7d3bb982b@diehl.com>
+References: <8baae1732dfc47759687e7537cac57ad@diehl.com>
+ <09e91710-c1db-415f-b010-b27a3712fb13@enneenne.com>
+In-Reply-To: <09e91710-c1db-415f-b010-b27a3712fb13@enneenne.com>
+Accept-Language: de-DE, en-US
+Content-Language: de-DE
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-disclaimerprocessed: True
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1739997129.git.ashish.kalra@amd.com> <f1caff4423a46c50564e625fd98932fde2a9a3fc.1739997129.git.ashish.kalra@amd.com>
-In-Reply-To: <f1caff4423a46c50564e625fd98932fde2a9a3fc.1739997129.git.ashish.kalra@amd.com>
-From: Dionna Amalie Glaze <dionnaglaze@google.com>
-Date: Thu, 20 Feb 2025 08:44:30 -0800
-X-Gm-Features: AWEUYZm9TkBuiHGbmzSU9NGqTHcsQxo-1HeiZfqfYQzZqJyKatjDtVnyv2y94_U
-Message-ID: <CAAH4kHab8rvWCPX2x8cvv6Dm+uhZQxpJgwrrn2GAKzn8sqS9Kg@mail.gmail.com>
-Subject: Re: [PATCH v4 2/7] crypto: ccp: Ensure implicit SEV/SNP init and
- shutdown in ioctls
-To: Ashish Kalra <Ashish.Kalra@amd.com>
-Cc: seanjc@google.com, pbonzini@redhat.com, tglx@linutronix.de, 
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, 
-	hpa@zytor.com, thomas.lendacky@amd.com, john.allen@amd.com, 
-	herbert@gondor.apana.org.au, michael.roth@amd.com, nikunj@amd.com, 
-	ardb@kernel.org, kevinloughlin@google.com, Neeraj.Upadhyay@amd.com, 
-	aik@amd.com, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-crypto@vger.kernel.org, linux-coco@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-GBS-PROC: ygQ48MzXEw9pRTxtaiHdsYiZgvHdJdSGaNWCvnvBPdngsZMFCXBsYV5LALRr9Zy3o8pV8kjeNQzctxDJimLrGMmswjSc75jKhhQ3E3/MVu8=
+X-GBS-PROCJOB: GRNDRZ0khfYEnE5FI2ztCorqhatbPsdgsnAcmbvV3tKC08HKqIAGRaC7ZSM0wfMl
 
-On Wed, Feb 19, 2025 at 12:53=E2=80=AFPM Ashish Kalra <Ashish.Kalra@amd.com=
-> wrote:
->
-> From: Ashish Kalra <ashish.kalra@amd.com>
->
-> Modify the behavior of implicit SEV initialization in some of the
-> SEV ioctls to do both SEV initialization and shutdown and add
-> implicit SNP initialization and shutdown to some of the SNP ioctls
-> so that the change of SEV/SNP platform initialization not being
-> done during PSP driver probe time does not break userspace tools
-> such as sevtool, etc.
->
-> Prior to this patch, SEV has always been initialized before these
-> ioctls as SEV initialization is done as part of PSP module probe,
-> but now with SEV initialization being moved to KVM module load instead
-> of PSP driver probe, the implied SEV INIT actually makes sense and gets
-> used and additionally to maintain SEV platform state consistency
-> before and after the ioctl SEV shutdown needs to be done after the
-> firmware call.
->
-> It is important to do SEV Shutdown here with the SEV/SNP initialization
-> moving to KVM, an implicit SEV INIT here as part of the SEV ioctls not
-> followed with SEV Shutdown will cause SEV to remain in INIT state and
-> then a future SNP INIT in KVM module load will fail.
->
-> Similarly, prior to this patch, SNP has always been initialized before
-> these ioctls as SNP initialization is done as part of PSP module probe,
-> therefore, to keep a consistent behavior, SNP init needs to be done
-> here implicitly as part of these ioctls followed with SNP shutdown
-> before returning from the ioctl to maintain the consistent platform
-> state before and after the ioctl.
->
-> Signed-off-by: Ashish Kalra <ashish.kalra@amd.com>
-> ---
->  drivers/crypto/ccp/sev-dev.c | 117 ++++++++++++++++++++++++++++-------
->  1 file changed, 93 insertions(+), 24 deletions(-)
->
-> diff --git a/drivers/crypto/ccp/sev-dev.c b/drivers/crypto/ccp/sev-dev.c
-> index 8f5c474b9d1c..b06f43eb18f7 100644
-> --- a/drivers/crypto/ccp/sev-dev.c
-> +++ b/drivers/crypto/ccp/sev-dev.c
-> @@ -1461,7 +1461,8 @@ static int sev_ioctl_do_platform_status(struct sev_=
-issue_cmd *argp)
->  static int sev_ioctl_do_pek_pdh_gen(int cmd, struct sev_issue_cmd *argp,=
- bool writable)
->  {
->         struct sev_device *sev =3D psp_master->sev_data;
-> -       int rc;
-> +       bool shutdown_required =3D false;
-> +       int rc, error;
->
->         if (!writable)
->                 return -EPERM;
-> @@ -1470,19 +1471,26 @@ static int sev_ioctl_do_pek_pdh_gen(int cmd, stru=
-ct sev_issue_cmd *argp, bool wr
->                 rc =3D __sev_platform_init_locked(&argp->error);
->                 if (rc)
->                         return rc;
-> +               shutdown_required =3D true;
->         }
->
-> -       return __sev_do_cmd_locked(cmd, NULL, &argp->error);
-> +       rc =3D __sev_do_cmd_locked(cmd, NULL, &argp->error);
-> +
-> +       if (shutdown_required)
-> +               __sev_platform_shutdown_locked(&error);
-
-This error is discarded. Is that by design? If so, It'd be better to
-call this ignored_error.
-
-> +
-> +       return rc;
->  }
->
->  static int sev_ioctl_do_pek_csr(struct sev_issue_cmd *argp, bool writabl=
-e)
->  {
->         struct sev_device *sev =3D psp_master->sev_data;
->         struct sev_user_data_pek_csr input;
-> +       bool shutdown_required =3D false;
->         struct sev_data_pek_csr data;
->         void __user *input_address;
->         void *blob =3D NULL;
-> -       int ret;
-> +       int ret, error;
->
->         if (!writable)
->                 return -EPERM;
-> @@ -1513,6 +1521,7 @@ static int sev_ioctl_do_pek_csr(struct sev_issue_cm=
-d *argp, bool writable)
->                 ret =3D __sev_platform_init_locked(&argp->error);
->                 if (ret)
->                         goto e_free_blob;
-> +               shutdown_required =3D true;
->         }
->
->         ret =3D __sev_do_cmd_locked(SEV_CMD_PEK_CSR, &data, &argp->error)=
-;
-> @@ -1531,6 +1540,9 @@ static int sev_ioctl_do_pek_csr(struct sev_issue_cm=
-d *argp, bool writable)
->         }
->
->  e_free_blob:
-> +       if (shutdown_required)
-> +               __sev_platform_shutdown_locked(&error);
-
-Another discarded error. This function is called in different
-locations in sev-dev.c with and without checking the result, which
-seems problematic.
-
-> +
->         kfree(blob);
->         return ret;
->  }
-> @@ -1747,8 +1759,9 @@ static int sev_ioctl_do_pek_import(struct sev_issue=
-_cmd *argp, bool writable)
->         struct sev_device *sev =3D psp_master->sev_data;
->         struct sev_user_data_pek_cert_import input;
->         struct sev_data_pek_cert_import data;
-> +       bool shutdown_required =3D false;
->         void *pek_blob, *oca_blob;
-> -       int ret;
-> +       int ret, error;
->
->         if (!writable)
->                 return -EPERM;
-> @@ -1780,11 +1793,15 @@ static int sev_ioctl_do_pek_import(struct sev_iss=
-ue_cmd *argp, bool writable)
->                 ret =3D __sev_platform_init_locked(&argp->error);
->                 if (ret)
->                         goto e_free_oca;
-> +               shutdown_required =3D true;
->         }
->
->         ret =3D __sev_do_cmd_locked(SEV_CMD_PEK_CERT_IMPORT, &data, &argp=
-->error);
->
->  e_free_oca:
-> +       if (shutdown_required)
-> +               __sev_platform_shutdown_locked(&error);
-
-Again.
-
-> +
->         kfree(oca_blob);
->  e_free_pek:
->         kfree(pek_blob);
-> @@ -1901,17 +1918,8 @@ static int sev_ioctl_do_pdh_export(struct sev_issu=
-e_cmd *argp, bool writable)
->         struct sev_data_pdh_cert_export data;
->         void __user *input_cert_chain_address;
->         void __user *input_pdh_cert_address;
-> -       int ret;
-> -
-> -       /* If platform is not in INIT state then transition it to INIT. *=
-/
-> -       if (sev->state !=3D SEV_STATE_INIT) {
-> -               if (!writable)
-> -                       return -EPERM;
-> -
-> -               ret =3D __sev_platform_init_locked(&argp->error);
-> -               if (ret)
-> -                       return ret;
-> -       }
-> +       bool shutdown_required =3D false;
-> +       int ret, error;
->
->         if (copy_from_user(&input, (void __user *)argp->data, sizeof(inpu=
-t)))
->                 return -EFAULT;
-> @@ -1952,6 +1960,16 @@ static int sev_ioctl_do_pdh_export(struct sev_issu=
-e_cmd *argp, bool writable)
->         data.cert_chain_len =3D input.cert_chain_len;
->
->  cmd:
-> +       /* If platform is not in INIT state then transition it to INIT. *=
-/
-> +       if (sev->state !=3D SEV_STATE_INIT) {
-> +               if (!writable)
-> +                       goto e_free_cert;
-> +               ret =3D __sev_platform_init_locked(&argp->error);
-
-Using argp->error for init instead of the ioctl-requested command
-means that the user will have difficulty distinguishing which process
-is at fault, no?
-
-> +               if (ret)
-> +                       goto e_free_cert;
-> +               shutdown_required =3D true;
-> +       }
-> +
->         ret =3D __sev_do_cmd_locked(SEV_CMD_PDH_CERT_EXPORT, &data, &argp=
-->error);
->
->         /* If we query the length, FW responded with expected data. */
-> @@ -1978,6 +1996,9 @@ static int sev_ioctl_do_pdh_export(struct sev_issue=
-_cmd *argp, bool writable)
->         }
->
->  e_free_cert:
-> +       if (shutdown_required)
-> +               __sev_platform_shutdown_locked(&error);
-
-Again.
-
-> +
->         kfree(cert_blob);
->  e_free_pdh:
->         kfree(pdh_blob);
-> @@ -1987,12 +2008,13 @@ static int sev_ioctl_do_pdh_export(struct sev_iss=
-ue_cmd *argp, bool writable)
->  static int sev_ioctl_do_snp_platform_status(struct sev_issue_cmd *argp)
->  {
->         struct sev_device *sev =3D psp_master->sev_data;
-> +       bool shutdown_required =3D false;
->         struct sev_data_snp_addr buf;
->         struct page *status_page;
-> +       int ret, error;
->         void *data;
-> -       int ret;
->
-> -       if (!sev->snp_initialized || !argp->data)
-> +       if (!argp->data)
->                 return -EINVAL;
->
->         status_page =3D alloc_page(GFP_KERNEL_ACCOUNT);
-> @@ -2001,6 +2023,13 @@ static int sev_ioctl_do_snp_platform_status(struct=
- sev_issue_cmd *argp)
->
->         data =3D page_address(status_page);
->
-> +       if (!sev->snp_initialized) {
-> +               ret =3D __sev_snp_init_locked(&argp->error);
-
-Error provenance confusion.
-
-> +               if (ret)
-> +                       goto cleanup;
-> +               shutdown_required =3D true;
-> +       }
-> +
->         /*
->          * Firmware expects status page to be in firmware-owned state, ot=
-herwise
->          * it will report firmware error code INVALID_PAGE_STATE (0x1A).
-> @@ -2029,6 +2058,9 @@ static int sev_ioctl_do_snp_platform_status(struct =
-sev_issue_cmd *argp)
->                 ret =3D -EFAULT;
->
->  cleanup:
-> +       if (shutdown_required)
-> +               __sev_snp_shutdown_locked(&error, false);
-> +
->         __free_pages(status_page, 0);
->         return ret;
->  }
-> @@ -2037,21 +2069,34 @@ static int sev_ioctl_do_snp_commit(struct sev_iss=
-ue_cmd *argp)
->  {
->         struct sev_device *sev =3D psp_master->sev_data;
->         struct sev_data_snp_commit buf;
-> +       bool shutdown_required =3D false;
-> +       int ret, error;
->
-> -       if (!sev->snp_initialized)
-> -               return -EINVAL;
-> +       if (!sev->snp_initialized) {
-> +               ret =3D __sev_snp_init_locked(&argp->error);
-
-Error provenance confusion.
-
-> +               if (ret)
-> +                       return ret;
-> +               shutdown_required =3D true;
-> +       }
->
->         buf.len =3D sizeof(buf);
->
-> -       return __sev_do_cmd_locked(SEV_CMD_SNP_COMMIT, &buf, &argp->error=
-);
-> +       ret =3D __sev_do_cmd_locked(SEV_CMD_SNP_COMMIT, &buf, &argp->erro=
-r);
-> +
-> +       if (shutdown_required)
-> +               __sev_snp_shutdown_locked(&error, false);
-
-Again.
-
-> +
-> +       return ret;
->  }
->
->  static int sev_ioctl_do_snp_set_config(struct sev_issue_cmd *argp, bool =
-writable)
->  {
->         struct sev_device *sev =3D psp_master->sev_data;
->         struct sev_user_data_snp_config config;
-> +       bool shutdown_required =3D false;
-> +       int ret, error;
->
-> -       if (!sev->snp_initialized || !argp->data)
-> +       if (!argp->data)
->                 return -EINVAL;
->
->         if (!writable)
-> @@ -2060,17 +2105,30 @@ static int sev_ioctl_do_snp_set_config(struct sev=
-_issue_cmd *argp, bool writable
->         if (copy_from_user(&config, (void __user *)argp->data, sizeof(con=
-fig)))
->                 return -EFAULT;
->
-> -       return __sev_do_cmd_locked(SEV_CMD_SNP_CONFIG, &config, &argp->er=
-ror);
-> +       if (!sev->snp_initialized) {
-> +               ret =3D __sev_snp_init_locked(&argp->error);
-
-Error provenance problem again.
-
-> +               if (ret)
-> +                       return ret;
-> +               shutdown_required =3D true;
-> +       }
-> +
-> +       ret =3D __sev_do_cmd_locked(SEV_CMD_SNP_CONFIG, &config, &argp->e=
-rror);
-> +
-> +       if (shutdown_required)
-> +               __sev_snp_shutdown_locked(&error, false);
-> +
-> +       return ret;
->  }
->
->  static int sev_ioctl_do_snp_vlek_load(struct sev_issue_cmd *argp, bool w=
-ritable)
->  {
->         struct sev_device *sev =3D psp_master->sev_data;
->         struct sev_user_data_snp_vlek_load input;
-> +       bool shutdown_required =3D false;
-> +       int ret, error;
->         void *blob;
-> -       int ret;
->
-> -       if (!sev->snp_initialized || !argp->data)
-> +       if (!argp->data)
->                 return -EINVAL;
->
->         if (!writable)
-> @@ -2089,8 +2147,19 @@ static int sev_ioctl_do_snp_vlek_load(struct sev_i=
-ssue_cmd *argp, bool writable)
->
->         input.vlek_wrapped_address =3D __psp_pa(blob);
->
-> +       if (!sev->snp_initialized) {
-> +               ret =3D __sev_snp_init_locked(&argp->error);
-
-Error provenance confusion.
-
-> +               if (ret)
-> +                       goto cleanup;
-> +               shutdown_required =3D true;
-> +       }
-> +
->         ret =3D __sev_do_cmd_locked(SEV_CMD_SNP_VLEK_LOAD, &input, &argp-=
->error);
->
-> +       if (shutdown_required)
-> +               __sev_snp_shutdown_locked(&error, false);
-
-Again.
-
-> +
-> +cleanup:
->         kfree(blob);
->
->         return ret;
-> --
-> 2.34.1
->
-
-
---=20
--Dionna Glaze, PhD, CISSP, CCSP (she/her)
+SGksDQoNClRoYW5rcyBmb3IgdGhlIGZhc3QgYW5zd2VyLg0KDQotLS0tLU9yaWdpbmFsIE1lc3Nh
+Z2UtLS0tLQ0KRnJvbTogUm9kb2xmbyBHaW9tZXR0aSA8Z2lvbWV0dGlAZW5uZWVubmUuY29tPg0K
+U2VudDogVGh1cnNkYXksIEZlYnJ1YXJ5IDIwLCAyMDI1IDk6NTEgQU0NClRvOiBEZW5pcyBPU1RF
+UkxBTkQtSEVJTSA8ZGVuaXMub3N0ZXJsYW5kQGRpZWhsLmNvbT4NCkNjOiBsaW51eC1rZXJuZWxA
+dmdlci5rZXJuZWwub3JnDQpTdWJqZWN0OiBbRVhUXSBSZTogW1BBVENIXSBwcHM6IGFkZCBlcG9s
+bCBzdXBwb3J0DQoNCj4gQ2FuIHlvdSBleHBsYWluIGl0IGEgYml0IGJldHRlcj8NCkkgd2lsbCBk
+byBteSBiZXN0Lg0KDQpJbiBhbiBhcHBsaWNhdGlvbiwgdGhhdCBoYXMgbW9yZSB0byBkbyB0aGFu
+IGp1c3QgZGVhbGluZyB3aXRoIG9uZSBQUFMgZGV2aWNlLA0KdG8gdXNlIFBQU19GRVRDSCB3aXRo
+IGEgdGltZW91dCB1bnRpbCBuZXh0IGV2ZW50LCB5b3UgbmVlZCBhIHRocmVhZCB3aGljaCBjYW4g
+c2xlZXAuDQpJIHdvdWxkIHJlYWxseSBsaWtlIHRvIGF2b2lkIHRocmVhZHMgYW5kIHRoZSByZXN1
+bHRpbmcgc3luY2hyb25pemF0aW9uIGNvbXBsZXhpdHkuDQoNCkFsdGVybmF0aXZlIGlzIHRvIGZl
+dGNoIHRoZSBjdXJyZW50IGFzc2VydCB2YWx1ZSBpbiBhdCBsZWFzdCB0d2ljZSB0aGUgZXhwZWN0
+ZWQgZmVxdWVuY3kuDQpUaGlzIHdvdWxkIGRlZmluZXRseSB3b3JrLCBidXQgZXBvbGwgaXMgdGhl
+IG1vcmUgZWZmaWNlbnQgd2F5IHRvIGRvLg0KDQpXaXRob3V0IGVwb2xsIGluIG9uZSB0aHJlYWQ6
+DQpgYGBjDQojaW5jbHVkZSA8c3RkbGliLmg+DQojaW5jbHVkZSA8c3RkaW8uaD4NCiNpbmNsdWRl
+IDxzdHJpbmcuaD4NCiNpbmNsdWRlIDxmY250bC5oPg0KI2luY2x1ZGUgPHVuaXN0ZC5oPg0KI2lu
+Y2x1ZGUgPHN5cy9pb2N0bC5oPg0KI2luY2x1ZGUgPGxpbnV4L3Bwcy5oPg0KDQpzdHJ1Y3QgcGVy
+X3BwcyB7DQogICAgaW50IGRldl9mZDsNCiAgICBzdHJ1Y3QgcHBzX2ZkYXRhIGZkYXRhOw0KICAg
+IHVuc2lnbmVkIGludCBsYXN0X2Fzc2VydDsNCn07DQoNCmludCBtYWluKGludCBhcmdjLCBjb25z
+dCBjaGFyKiBhcmd2W10pIHsNCiAgICBpbnQgcmV0ID0gMDsNCiAgICBzdHJ1Y3QgcGVyX3BwcyBp
+bnN0YW5jZXNbXSA9IHsNCiAgICAgICAgeyAuZGV2X2ZkID0gb3BlbigoYXJnYyA+IDEpID8gYXJn
+dlsxXSA6ICIvZGV2L3BwczAiLCBPX1JET05MWSkgfSwNCiAgICAgICAgeyAuZGV2X2ZkID0gb3Bl
+bigoYXJnYyA+IDIpID8gYXJndlsyXSA6ICIvZGV2L3BwczEiLCBPX1JET05MWSkgfQ0KICAgIH07
+DQogICAgaWYgKGluc3RhbmNlc1swXS5kZXZfZmQgPCAwIHx8IGluc3RhbmNlc1sxXS5kZXZfZmQg
+PCAwKSB7DQogICAgICAgIHBlcnJvcigiZmFpbGVkIHRvIG9wZW4gZGV2Iik7DQogICAgICAgIHJl
+dCA9IDE7DQogICAgICAgIGdvdG8gb3V0Ow0KICAgIH0NCg0KICAgIGZvciAoaW50IGxvb3BzID0g
+MTA7IC0tbG9vcHM7KSB7DQogICAgICAgIGZvciAoaW50IGkgPSAwOyBpIDwgMjsgKytpKSB7DQog
+ICAgICAgICAgICBpZiAoaW9jdGwoaW5zdGFuY2VzW2ldLmRldl9mZCwgUFBTX0ZFVENILCAmaW5z
+dGFuY2VzW2ldLmZkYXRhKSA8IDApIHsNCiAgICAgICAgICAgICAgICBwZXJyb3IoImZhaWxlZCB0
+byBmZXRjaCBkYXRhIik7DQogICAgICAgICAgICAgICAgcmV0ID0gMTsNCiAgICAgICAgICAgICAg
+ICBnb3RvIG91dDsNCiAgICAgICAgICAgIH0NCg0KICAgICAgICAgICAgaWYgKGluc3RhbmNlc1tp
+XS5sYXN0X2Fzc2VydCAhPSBpbnN0YW5jZXNbaV0uZmRhdGEuaW5mby5hc3NlcnRfc2VxdWVuY2Up
+IHsNCiAgICAgICAgICAgICAgICBpbnN0YW5jZXNbaV0ubGFzdF9hc3NlcnQgPSBpbnN0YW5jZXNb
+aV0uZmRhdGEuaW5mby5hc3NlcnRfc2VxdWVuY2U7DQogICAgICAgICAgICAgICAgcHJpbnRmKA0K
+ICAgICAgICAgICAgICAgICAgICAiYXNzZXJ0OiAldVxudGltZTogJWxsZC4lMDlkXG4iLA0KICAg
+ICAgICAgICAgICAgICAgICBpbnN0YW5jZXNbaV0uZmRhdGEuaW5mby5hc3NlcnRfc2VxdWVuY2Us
+DQogICAgICAgICAgICAgICAgICAgIGluc3RhbmNlc1tpXS5mZGF0YS5pbmZvLmFzc2VydF90dS5z
+ZWMsDQogICAgICAgICAgICAgICAgICAgIGluc3RhbmNlc1tpXS5mZGF0YS5pbmZvLmFzc2VydF90
+dS5uc2VjDQogICAgICAgICAgICAgICAgKTsNCiAgICAgICAgICAgIH0NCg0KICAgICAgICB9DQog
+ICAgICAgIHVzbGVlcCgzMDAwMDApOw0KICAgIH0NCg0Kb3V0Og0KICAgIGlmIChpbnN0YW5jZXNb
+MF0uZGV2X2ZkID49IDApDQogICAgICAgIGNsb3NlKGluc3RhbmNlc1swXS5kZXZfZmQpOw0KICAg
+IGlmIChpbnN0YW5jZXNbMV0uZGV2X2ZkID49IDApDQogICAgICAgIGNsb3NlKGluc3RhbmNlc1sx
+XS5kZXZfZmQpOw0KICAgIHJldHVybiByZXQ7DQp9DQpgYGANCg0KU3lzY2FsbHMgYXJlIHByZXR0
+eSBleHBlbnNpdmUgYW5kIGVwb2xsIGFsbG93cyB1c2UgdG8gcmVkdWNlIHRoZW0uDQoNCmBgYGMN
+CiNpbmNsdWRlIDxzdGRpby5oPg0KI2luY2x1ZGUgPHN0cmluZy5oPg0KI2luY2x1ZGUgPGZjbnRs
+Lmg+DQojaW5jbHVkZSA8dW5pc3RkLmg+DQojaW5jbHVkZSA8c3lzL2lvY3RsLmg+DQojaW5jbHVk
+ZSA8bGludXgvcHBzLmg+DQojaW5jbHVkZSA8cG9sbC5oPg0KDQppbnQgbWFpbihpbnQgYXJnYywg
+Y29uc3QgY2hhciogYXJndltdKSB7DQogICAgaW50IHJldCA9IDA7DQogICAgc3RydWN0IHBvbGxm
+ZCBpbnN0YW5jZXNbXSA9IHsNCiAgICAgICAgeyAuZmQgPSBvcGVuKChhcmdjID4gMSkgPyBhcmd2
+WzFdIDogIi9kZXYvcHBzMCIsIE9fUkRPTkxZKSwgLmV2ZW50cyA9IFBPTExJTnxQT0xMRVJSICwg
+LnJldmVudHMgPSAwIH0sDQogICAgICAgIHsgLmZkID0gb3BlbigoYXJnYyA+IDIpID8gYXJndlsy
+XSA6ICIvZGV2L3BwczEiLCBPX1JET05MWSksIC5ldmVudHMgPSBQT0xMSU58UE9MTEVSUiAsIC5y
+ZXZlbnRzID0gMCB9DQogICAgfTsNCiAgICBpZiAoaW5zdGFuY2VzWzBdLmZkIDwgMCB8fCBpbnN0
+YW5jZXNbMV0uZmQgPCAwKSB7DQogICAgICAgIHBlcnJvcigiZmFpbGVkIHRvIG9wZW4gZGV2Iik7
+DQogICAgICAgIHJldCA9IDE7DQogICAgICAgIGdvdG8gb3V0Ow0KICAgIH0NCg0KICAgIGZvciAo
+aW50IGxvb3BzID0gNDsgLS1sb29wczspIHsNCiAgICAgICAgaWYocG9sbChpbnN0YW5jZXMsIDIs
+IDIwMDAvKm1zKi8pKSB7DQogICAgICAgICAgICBzdHJ1Y3QgcHBzX2ZkYXRhIGZkYXRhOw0KICAg
+ICAgICAgICAgZm9yIChpbnQgaSA9IDA7IGkgPCAyOyArK2kpIHsNCiAgICAgICAgICAgICAgICBp
+ZiAoKGluc3RhbmNlc1tpXS5yZXZlbnRzICYgUE9MTElOKSAhPSBQT0xMSU4pDQogICAgICAgICAg
+ICAgICAgICAgIGNvbnRpbnVlOw0KDQogICAgICAgICAgICAgICAgaWYgKGlvY3RsKGluc3RhbmNl
+c1tpXS5mZCwgUFBTX0ZFVENILCAmZmRhdGEpIDwgMCkgew0KICAgICAgICAgICAgICAgICAgICBw
+ZXJyb3IoImZhaWxlZCB0byBmZXRjaCBkYXRhIik7DQogICAgICAgICAgICAgICAgICAgIHJldCA9
+IDE7DQogICAgICAgICAgICAgICAgICAgIGdvdG8gb3V0Ow0KICAgICAgICAgICAgICAgIH0NCg0K
+ICAgICAgICAgICAgICAgIHByaW50ZigNCiAgICAgICAgICAgICAgICAgICAgImFzc2VydDogJXVc
+bnRpbWU6ICVsbGQuJTA5ZFxuIiwNCiAgICAgICAgICAgICAgICAgICAgZmRhdGEuaW5mby5hc3Nl
+cnRfc2VxdWVuY2UsDQogICAgICAgICAgICAgICAgICAgIGZkYXRhLmluZm8uYXNzZXJ0X3R1LnNl
+YywNCiAgICAgICAgICAgICAgICAgICAgZmRhdGEuaW5mby5hc3NlcnRfdHUubnNlYw0KICAgICAg
+ICAgICAgICAgICk7DQogICAgICAgICAgICB9DQogICAgICAgIH0gZWxzZSB7DQogICAgICAgICAg
+ICBwcmludGYoInRpbWUtb3V0XG4iKTsNCiAgICAgICAgfQ0KICAgIH0NCg0Kb3V0Og0KICAgIGlm
+IChpbnN0YW5jZXNbMF0uZmQgPj0gMCkNCiAgICAgICAgY2xvc2UoaW5zdGFuY2VzWzBdLmZkKTsN
+CiAgICBpZiAoaW5zdGFuY2VzWzFdLmZkID49IDApDQogICAgICAgIGNsb3NlKGluc3RhbmNlc1sx
+XS5mZCk7DQogICAgcmV0dXJuIHJldDsNCn0NCmBgYA0KDQo+IFJGQzI3ODMgc3RhdGVzIHRoYXQg
+dG8gYWNjZXNzIHRvIFBQUyB0aW1lc3RhbXBzIHdlIHNob3VsZCB1c2UgdGhlDQo+IHRpbWVfcHBz
+X2ZldGNoKCkgZnVuY3Rpb24sIHdoZXJlIHdlIG1heSByZWFkOg0KPg0KPiAzLjQuMyBOZXcgZnVu
+Y3Rpb25zOiBhY2Nlc3MgdG8gUFBTIHRpbWVzdGFtcHMNCj4NCj4gICAgVGhlIEFQSSBpbmNsdWRl
+cyBvbmUgZnVuY3Rpb24gdGhhdCBnaXZlcyBhcHBsaWNhdGlvbnMgYWNjZXNzIHRvIFBQUw0KPiAg
+ICB0aW1lc3RhbXBzLiAgQXMgYW4gaW1wbGVtZW50YXRpb24gb3B0aW9uLCB0aGUgYXBwbGljYXRp
+b24gbWF5IHJlcXVlc3QNCj4gICAgdGhlIEFQSSB0byBibG9jayB1bnRpbCB0aGUgbmV4dCB0aW1l
+c3RhbXAgaXMgY2FwdHVyZWQuICAoVGhlIEFQSSBkb2VzDQo+ICAgIG5vdCBkaXJlY3RseSBzdXBw
+b3J0IHRoZSB1c2Ugb2YgdGhlIHNlbGVjdCgpIG9yIHBvbGwoKSBzeXN0ZW0gY2FsbHMNCj4gICAg
+dG8gd2FpdCBmb3IgUFBTIGV2ZW50cy4pDQo+DQo+IEhvdyBkbyB5b3UgdGhpbmsgdG8gdXNlIHRo
+aXMgbmV3IHNlbGVjdCgpL3BvbGwoKSBzdXBwb3J0IHdpdGhvdXQgYnJlYWtpbmcgdGhlDQo+IFJG
+QzI3ODMgY29tcGxpYW5jZT8NClRvIG1lIFJGQyByZWFkcyBsaWtlIHRoZSBzcGNpZmljYXRpb24g
+b2YgcHBzLXRvb2xzL3RpbWVwcHMuaCBhbmQgbm90IHRoZSBvbmUgZm9yIHRoZSBjaGFyIGRldmlj
+ZS4NCg0KMy40LjEgTmV3IGZ1bmN0aW9uczogb2J0YWluaW5nIFBQUyBzb3VyY2VzDQouLi4NCiAg
+IFRoZSBkZWZpbml0aW9uIG9mIHdoYXQgc3BlY2lhbCBmaWxlcyBhcmUgYXBwcm9wcmlhdGUgZm9y
+IHVzZSB3aXRoIHRoZQ0KICAgUFBTIEFQSSBpcyBvdXRzaWRlIHRoZSBzY29wZSBvZiB0aGlzIHNw
+ZWNpZmljYXRpb24sIGFuZCBtYXkgdmFyeQ0KICAgYmFzZWQgb24gYm90aCBvcGVyYXRpbmcgc3lz
+dGVtIGltcGxlbWVudGF0aW9uLCBhbmQgbG9jYWwgc3lzdGVtDQogICBjb25maWd1cmF0aW9uLg0K
+DQpUbyBtZSAiVGhlIEFQSSBkb2VzIG5vdCBkaXJlY3RseSBzdXBwb3J0IHRoZSB1c2Ugb2YgdGhl
+IHNlbGVjdCgpIG9yIHBvbGwoKSBzeXN0ZW0gY2FsbHMiIHNpbXBseSBtZWFuczoNCiAgIHRoZXJl
+IGlzIG5vIHdyYXBwZXIgZnVuY3Rpb24gdGhhdCBjYWxscyBzZWxlY3QoKSBvciBwb2xsKCkgZm9y
+IHlvdQ0KDQpJIGRvIG5vdCBzZWUgd2h5IGFuIGFkZGl0aW9uYWwgZnVuY3Rpb24gb2YgdGhlIHVu
+ZGVybHlpbmcgY2hhcmFjdGVyIGRldmljZSB3b3VsZCBicmVhayB0aGUgQVBJLg0KWW91IG1heSBq
+dXN0IGRvIG5vdCB1c2UgaXQgYW5kIGV2ZXJ5dGhpbmcgd29ya3MgbGlrZSBiZWZvcmUuDQpCdXQg
+SSBzZWUgeW91ciBwb2ludC4NCklmIHRoZSBjaGFyIGRldiBpbnRlcmZhY2UgaXMgbWVudCB0byBi
+ZSB0aGUgUkZDIGludGVyZmFjZSBvbmx5LCB0aGVyZSBpcyBubyBuZWVkIHRvIHN1cHBvcnQgZXBv
+bGwuDQpNYXliZSBpdCB3b3VsZCBiZSBiZXR0ZXIgdG8gYWRkIGVwb2xsIHN1cHBvcnQgdG8gc3lz
+ZnMgYXNzZXJ0L2NsZWFyPw0KDQo+IEFsc28sIGlmIHdlIGRlY2lkZSB0byBhZGQgdGhpcyBzdXBw
+b3J0LCB3ZSBzaG91bGQgYWxzbyBjb25zaWRlciBhZGRpbmcgdGhlDQo+IFBQU19DQU5QT0xMIG1v
+ZGUgYml0IGRlZmluaXRpb24gKHNlZQ0KPiBodHRwczovL3d3dy5yZmMtZWRpdG9yLm9yZy9yZmMv
+cmZjMjc4My5odG1sI3NlY3Rpb24tMy4zKSwgYW5kIHByb3ZpbmcgcHJvcGVyDQo+IGNvZGUgaW4g
+b3JkZXIgdG8gc2hvdyBob3cgd2UgY2FuIHVzZSBvciBub3QgdGhpcyBuZXcgZnVuY3Rpb25hbGl0
+eS4NCg0KPiA+IEBAIC0zMDAsNyArMzEyLDEzIEBAIHN0YXRpYyBpbnQgcHBzX2NkZXZfb3Blbihz
+dHJ1Y3QgaW5vZGUgKmlub2RlLCBzdHJ1Y3QgZmlsZSAqZmlsZSkNCj4gPiAgIHsNCj4gPiAgIHN0
+cnVjdCBwcHNfZGV2aWNlICpwcHMgPSBjb250YWluZXJfb2YoaW5vZGUtPmlfY2RldiwNCj4gPiAg
+IHN0cnVjdCBwcHNfZGV2aWNlLCBjZGV2KTsNCj4gPiAtZmlsZS0+cHJpdmF0ZV9kYXRhID0gcHBz
+Ow0KPiA+ICtzdHJ1Y3QgcHBzX2NvbnRleHQgKmN0eCA9IGt6YWxsb2Moc2l6ZW9mKHN0cnVjdCBw
+cHNfY29udGV4dCksIEdGUF9LRVJORUwpOw0KPiA+ICsNCj4gPiAraWYgKHVubGlrZWx5KFpFUk9f
+T1JfTlVMTF9QVFIoY3R4KSkpDQo+ID4gK3JldHVybiAtRU5PTUVNOw0KPiA+ICtmaWxlLT5wcml2
+YXRlX2RhdGEgPSBjdHg7DQo+ID4gK2N0eC0+cHBzID0gcHBzOw0KPiA+ICtjdHgtPmV2ID0gcHBz
+LT5sYXN0X2V2Ow0KPg0KPiBEb2luZyBzbywgd2UgYWx3YXlzIG1pc3MgdGhlIGZpcnN0IGV2ZW50
+Li4uIG1heWJlIGNhbiB3ZSBkcm9wIHRoaXMgc2V0dGluZyBhbmQNCj4gbGVhdmluZyBjdHgtPmV2
+IHNldCB0byB6ZXJvPw0KV2VsbCwgSSBzZWUgdHdvIHVzZSBjYXNlczoNCjEuIG9wZW4oKSwgaW9j
+dGwoKSB0byBnZXQgY3VycmVudCB2YWx1ZSwgZXBvbGwoKSB0byB3YWl0IGZvciBuZXh0IGV2ZW50
+LCBpb2N0bCgpIHRvIGdldCB0aGUgbmV4dCB2YWx1ZQ0KMi4gb3BlbigpLCBlcG9sbCgpIHdhaXQg
+Zm9yIG5leHQgZXZlbnQgb3IgdGltZS1vdXQgdG8gc2VlIGlmIHBwcyBpcyAiYWxpdmUiDQpJIGRv
+IG5vdCBzZWUgdGhlIGNhc2UgdGhhdCB3ZSBjb21wbGV0ZWx5IG1pc3Mgb25lLg0KDQpSZWdhcmRz
+LCBEZW5pcw0KDQo+IENpYW8sDQo+DQo+IFJvZG9sZm8NCj4NCj4gLS0NCj4gR05VL0xpbnV4IFNv
+bHV0aW9ucyAgICAgICAgICAgICAgICAgIGUtbWFpbDogZ2lvbWV0dGlAZW5uZWVubmUuY29tDQo+
+IExpbnV4IERldmljZSBEcml2ZXIgICAgICAgICAgICAgICAgICAgICAgICAgIGdpb21ldHRpQGxp
+bnV4Lml0DQo+IEVtYmVkZGVkIFN5c3RlbXMgICAgICAgICAgICAgICAgICAgICBwaG9uZTogICsz
+OSAzNDkgMjQzMjEyNw0KPiBVTklYIHByb2dyYW1taW5nDQpEaWVobCBNZXRlcmluZyBHbWJILCBE
+b25hdXN0cmFzc2UgMTIwLCA5MDQ1MSBOdWVybmJlcmcNClNpdHogZGVyIEdlc2VsbHNjaGFmdDog
+QW5zYmFjaCwgUmVnaXN0ZXJnZXJpY2h0OiBBbnNiYWNoIEhSQiA2OQ0KR2VzY2hhZWZ0c2Z1ZWhy
+ZXI6IERyLiBDaHJpc3RvZiBCb3NiYWNoIChTcHJlY2hlciksIERpcGwuLURvbG0uIEFubmV0dGUg
+R2V1dGhlciwgRGlwbC4tS2ZtLiBSZWluZXIgRWRlbCwgSmVhbi1DbGF1ZGUgTHV0dHJpbmdlcg0K
+DQpCaXR0ZSBkZW5rZW4gU2llIGFuIGRpZSBVbXdlbHQsIGJldm9yIFNpZSBkaWVzZSBFLU1haWwg
+ZHJ1Y2tlbi4gRGllc2UgRS1NYWlsIGthbm4gdmVydHJhdWxpY2hlIEluZm9ybWF0aW9uZW4gZW50
+aGFsdGVuLiBTb2xsdGVuIGRpZSBpbiBkaWVzZXIgRS1NYWlsIGVudGhhbHRlbmVuIEluZm9ybWF0
+aW9uZW4gbmljaHQgZsO8ciBTaWUgYmVzdGltbXQgc2VpbiwgaW5mb3JtaWVyZW4gU2llIGJpdHRl
+IHVudmVyenVlZ2xpY2ggZGVuIEFic2VuZGVyIHBlciBFLU1haWwgdW5kIGxvZXNjaGVuIFNpZSBk
+aWVzZSBFLU1haWwgaW4gSWhyZW0gU3lzdGVtLiBKZWRlIHVuYmVyZWNodGlndGUgRm9ybSBkZXIg
+UmVwcm9kdWt0aW9uLCBCZWthbm50Z2FiZSwgQWVuZGVydW5nLCBWZXJ0ZWlsdW5nIHVuZC9vZGVy
+IFB1Ymxpa2F0aW9uIGRpZXNlciBFLU1haWwgaXN0IHN0cmVuZ3N0ZW5zIHVudGVyc2FndC4gSW5m
+b3JtYXRpb25lbiB6dW0gRGF0ZW5zY2h1dHogZmluZGVuIFNpZSBhdWYgdW5zZXJlciBIb21lcGFn
+ZTxodHRwczovL3d3dy5kaWVobC5jb20vbWV0ZXJpbmcvZGUvaW1wcmVzc3VtLXVuZC1yZWNodGxp
+Y2hlLWhpbndlaXNlLz4uDQoNCkJlZm9yZSBwcmludGluZywgdGhpbmsgYWJvdXQgZW52aXJvbm1l
+bnRhbCByZXNwb25zaWJpbGl0eS5UaGlzIG1lc3NhZ2UgbWF5IGNvbnRhaW4gY29uZmlkZW50aWFs
+IGluZm9ybWF0aW9uLiBJZiB5b3UgYXJlIG5vdCBhdXRob3JpemVkIHRvIHJlY2VpdmUgdGhpcyBp
+bmZvcm1hdGlvbiBwbGVhc2UgYWR2aXNlIHRoZSBzZW5kZXIgaW1tZWRpYXRlbHkgYnkgcmVwbHkg
+ZS1tYWlsIGFuZCBkZWxldGUgdGhpcyBtZXNzYWdlIHdpdGhvdXQgbWFraW5nIGFueSBjb3BpZXMu
+IEFueSBmb3JtIG9mIHVuYXV0aG9yaXplZCB1c2UsIHB1YmxpY2F0aW9uLCByZXByb2R1Y3Rpb24s
+IGNvcHlpbmcgb3IgZGlzY2xvc3VyZSBvZiB0aGUgZS1tYWlsIGlzIG5vdCBwZXJtaXR0ZWQuIElu
+Zm9ybWF0aW9uIGFib3V0IGRhdGEgcHJvdGVjdGlvbiBjYW4gYmUgZm91bmQgb24gb3VyIGhvbWVw
+YWdlPGh0dHBzOi8vd3d3LmRpZWhsLmNvbS9tZXRlcmluZy9lbi9kYXRhLXByb3RlY3Rpb24vPi4N
+Cg==
 
