@@ -1,86 +1,63 @@
-Return-Path: <linux-kernel+bounces-523331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3829BA3D52C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 10:47:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 74C83A3D542
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 10:48:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C52719C0B0F
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 09:45:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8EEC2189FEBA
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 09:47:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03FA71F3FC2;
-	Thu, 20 Feb 2025 09:43:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E4B31F130A;
+	Thu, 20 Feb 2025 09:44:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b3JrxH4l"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="LxQLSg+p"
+Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D7FD1F3B9D
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 09:43:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8C1B1B87EE;
+	Thu, 20 Feb 2025 09:44:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740044634; cv=none; b=JV2CCUlQYC+HpjQ2qLVrhgF5vIbORkcV3LXF19j0OMRFXGCsGR8LE7cm9aaiq3XM/WEQDimBZ/HghrfynSFJuojlUGQYZ+avSFcVV8lAmKINhlo2pRGKCaWUh3Flp0xkkSKgomT4jMuj71KjpSLev51Z2maoAIKT2/o6oFgedHI=
+	t=1740044689; cv=none; b=LNrGadGlqALuxeGHlCVUi9Q7+SBc7YoueEX+MjNvEDzWYEi32QQff0OlwbdZlKfiOKVnBOlvvVcHegxX+HzsACPgApdiJMqx2MWl2NQmXYo372HBPFInEuiaNgZQ/YLlCR34wqng+zPPvtUsBwwyeRZJrOYzyn/kIljnzUvGhsY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740044634; c=relaxed/simple;
-	bh=siQfZG6q7O2sigyc4bjU1Rsm1nhMkVlYV4r4rO8LUAI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=i7mDRLUKVOl4xie5uTW6bs5l2WroOT1mv9UGjHY2ir4AsGBm6FVpuhCvqRPAIMVST/XR28kMIkVtJ95w2YC5hJ9/DWr91BLdYgZdqdLZIUEvJipyQ2tPJ3mm/K6Zuo1YSomBGgQlPSAUorEitH9JBZLWjC+VRv0+fBGBLr2LSlo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b3JrxH4l; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-545fed4642aso820835e87.0
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 01:43:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740044630; x=1740649430; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=BJJaDhjE30elvjUE90iF7FHjBFvFQhwKbe1es1j+S7w=;
-        b=b3JrxH4lMECCpcIxQ1hydeOXdjkFicbzGMLaYGj8baKCcD8EBsnn8vZunt7eUALfwe
-         a5yjt5o79xQMEglGbJxckoG5ELKWZdjtOWlDQdit+80zmXkpSevXhwwt5AmVBkTkvjbL
-         qAGyAc9Ozycsl55nsd0ZxK3s4+a5M4R564u9hYmZqEnOqs4j52K82tghBrjpb+r0jV1l
-         hCaGCQoA7nUH1+WZfCsCd0PKL5D6xnEHuO2j/jHi+q1rNq/iDT8eJ/5Ka3UZyn8Qpttj
-         bM3Dms+YNqCOtJ6zqIybkls2NPHwrYDls+YZ3sii09Ru6wmtze4C+JnKNHHI2OhQiFZu
-         a+4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740044630; x=1740649430;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=BJJaDhjE30elvjUE90iF7FHjBFvFQhwKbe1es1j+S7w=;
-        b=E+xYT0502IILP+S1zMh/awPZfER5+CwDc74o6LZN8uw0/Vw+zxEKyL4rIFZR88akO7
-         b3/mZVHKXySl8g31EhAa04sO+/osRZYpawnrm0CvLk8wkN2y+ahtm8Mvz20/4YKcT1gq
-         gFqFUx82Xztr7XdMfygfgBEBRnrCmAftZ1wF0MLcetFZdxdjUzL01Ypznuo/pSRV6+3j
-         n2EwBdRrNO8N3Uh9PYdoJSQuD0CaXPcUqPwimNpoFM0RbJ/sgP9tXOrWtQYA3G74ilby
-         zvGkar38JsPxl+83ncSJe+xaYld+tTAE/lbUensgjUTUvpccncQ1fs7jmf3ncZotsvi8
-         esow==
-X-Forwarded-Encrypted: i=1; AJvYcCWoLtmZ6Ij2iASe79fx2dMSu7qrmAy/1QdZlE/TPBZAghGxy6jpSz+fZg7NTmgE5RK+Jj3bl1jB+T2bSZ0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAUDEKRi6H+lyQvVipqNpRRu5b/RRmxd3qt4wFHvd7lI2UdcrL
-	e0RhmB53kXEM2bib30wNH0b8qEzxxQoPOT1MdCUGLkv6bHlQeE3/
-X-Gm-Gg: ASbGnctpvgEsnIlvXtGOdUZNyj/1Uommlx6jflI9OBPMeTnZFY230e2UmsHFiMlSoPD
-	0QxpFJZJ7wS0ISnkzPlK6TEN6mWJC2K0vaXaYhL59cDPt2nAMSTeBaevPdHvHgkXtqiJgt3WPDW
-	qcRSkJojGB61LCPZZZb8plkTpuxQiEG5BLrquF3KiJqqKMDXhg8XtB6vnWymaY/n+2+JHHrB+mQ
-	G491sOKXUcQZKwWaZB7xmSMynJFPGJzapgQzqZ4z2LdSNIahQ2qmM0iK1o+H2lEDPqfawfSyPGR
-	TCneoE7E9OrV+mUcOZqem4FNZVPxQ+zDuGRHJ8Ox/lCfmm9Omv4TdCIS8g==
-X-Google-Smtp-Source: AGHT+IHbjmlrQKyZa9vOcI3zku2nA08D6JCeRqFIufLZ/yEvKNLBxeThOwDv51mb+aAJjfRscer+Dw==
-X-Received: by 2002:ac2:4c46:0:b0:545:bf4:4bc7 with SMTP id 2adb3069b0e04-547243c348amr811852e87.19.1740044630137;
-        Thu, 20 Feb 2025 01:43:50 -0800 (PST)
-Received: from rand-ubuntu-development.dl.local (mail.confident.ru. [85.114.29.218])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-546222619d3sm1158816e87.209.2025.02.20.01.43.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Feb 2025 01:43:49 -0800 (PST)
-From: Rand Deeb <rand.sec96@gmail.com>
-To: Dave Kleikamp <shaggy@kernel.org>,
-	jfs-discussion@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org
-Cc: deeb.rand@confident.ru,
+	s=arc-20240116; t=1740044689; c=relaxed/simple;
+	bh=O+NWxy4b1KytTcS0ZHrugC8vxmfgabRh5HNWwRO/Ks8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bANa6q0KlUg1P5WcJs9+Yy0pBuKHddboKBIAf/MR3fmfoJbor02dloK4z5OY9rpHmhYJ5UUZpblSvH3tniJBWSOwBDaLiEo5Rmp2cL+3BvJfqXMvY4b+X5VLMZSHSPy65U8LtFAQJRptRcLoyWvdMT04expkB/FWC5gX0692tGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=LxQLSg+p; arc=none smtp.client-ip=83.149.199.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
+Received: from fedora.intra.ispras.ru (unknown [10.10.165.14])
+	by mail.ispras.ru (Postfix) with ESMTPSA id 788AD407853D;
+	Thu, 20 Feb 2025 09:44:44 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 788AD407853D
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
+	s=default; t=1740044684;
+	bh=VSyXhzk/oou5dN2ui5up8lh68VSTsNSjPW0MQf8saxc=;
+	h=From:To:Cc:Subject:Date:From;
+	b=LxQLSg+pO5Zrb++WnEfFMOLfDZlylCRorRX+hy2M9oknFiuIyqIHGquos+7adQrwl
+	 GZI7LQHFDCnKBBhOjeyUStOZWPzlz6g14FBc5mv9BAY7C04Ly/sxONUGRozxwZKcvl
+	 1KKN5d5kdwuClDc0TQXyWy6rauU5cRtimHlKGk9c=
+From: Fedor Pchelkin <pchelkin@ispras.ru>
+To: Sathya Prakash Veerichetty <sathya.prakash@broadcom.com>,
+	Kashyap Desai <kashyap.desai@broadcom.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Ranjan Kumar <ranjan.kumar@broadcom.com>
+Cc: Fedor Pchelkin <pchelkin@ispras.ru>,
+	Sumit Saxena <sumit.saxena@broadcom.com>,
+	Sreekanth Reddy <sreekanth.reddy@broadcom.com>,
+	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+	mpi3mr-linuxdrv.pdl@broadcom.com,
+	linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
 	lvc-project@linuxtesting.org,
-	voskresenski.stanislav@confident.ru,
-	Rand Deeb <rand.sec96@gmail.com>
-Subject: [PATCH] fs/jfs: cast inactags to s64 to prevent potential overflow
-Date: Thu, 20 Feb 2025 12:43:49 +0300
-Message-Id: <20250220094349.1685195-1-rand.sec96@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	stable@vger.kernel.org
+Subject: [PATCH] scsi: mpi3mr: fix invalid 64-bit phy bitmask calculation
+Date: Thu, 20 Feb 2025 12:44:31 +0300
+Message-ID: <20250220094431.38185-1-pchelkin@ispras.ru>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,44 +66,106 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The expression "inactags << bmp->db_agl2size" in the function
-dbFinalizeBmap() is computed using int operands. Although the
-values (inactags and db_agl2size) are derived from filesystem
-parameters and are usually small, there is a theoretical risk that
-the shift could overflow a 32-bit int if extreme values occur.
+ffs() operates on arguments of type 'int', not generally considered to be
+64-bit values.
 
-According to the C standard, shifting a signed 32-bit int can lead
-to undefined behavior if the result exceeds its range. In our
-case, an overflow could miscalculate free blocks, potentially
-leading to erroneous filesystem accounting.
+Shifts like (1 << i) can also only be helpful for calculations that are
+expected to have a range equal to the width of type 'int'. When the left
+operand is of type 'int', valid values of the shift argument should not
+exceed the width of this type (almost always 32 bits), otherwise it is
+considered as undefined behavior.
 
-To ensure the arithmetic is performed in 64-bit space, we cast
-"inactags" to s64 before shifting. This defensive fix prevents any
-risk of overflow and complies with kernel coding best practices.
+Since there is a need for manipulating the phy mask bits higher than that,
+perform the calculations directly in 64 bits.
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
+Found by Linux Verification Center (linuxtesting.org).
 
-Signed-off-by: Rand Deeb <rand.sec96@gmail.com>
+Fixes: cb5b60894602 ("scsi: mpi3mr: Increase maximum number of PHYs to 64 from 32")
+Cc: stable@vger.kernel.org
+Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
 ---
- fs/jfs/jfs_dmap.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/scsi/mpi3mr/mpi3mr_transport.c | 22 +++++++++++++---------
+ 1 file changed, 13 insertions(+), 9 deletions(-)
 
-diff --git a/fs/jfs/jfs_dmap.c b/fs/jfs/jfs_dmap.c
-index f9009e4f9ffd..f89f07c9580e 100644
---- a/fs/jfs/jfs_dmap.c
-+++ b/fs/jfs/jfs_dmap.c
-@@ -3666,8 +3666,8 @@ void dbFinalizeBmap(struct inode *ipbmap)
- 	 * system size is not a multiple of the group size).
- 	 */
- 	inactfree = (inactags && ag_rem) ?
--	    ((inactags - 1) << bmp->db_agl2size) + ag_rem
--	    : inactags << bmp->db_agl2size;
-+	    (((s64)inactags - 1) << bmp->db_agl2size) + ag_rem
-+	    : ((s64)inactags << bmp->db_agl2size);
+diff --git a/drivers/scsi/mpi3mr/mpi3mr_transport.c b/drivers/scsi/mpi3mr/mpi3mr_transport.c
+index 0ba9e6a6a13c..f0da8c0dc55d 100644
+--- a/drivers/scsi/mpi3mr/mpi3mr_transport.c
++++ b/drivers/scsi/mpi3mr/mpi3mr_transport.c
+@@ -7,6 +7,7 @@
+  *
+  */
  
- 	/* determine how many free blocks are in the active
- 	 * allocation groups plus the average number of free blocks
++#include <linux/bits.h>
+ #include <linux/vmalloc.h>
+ 
+ #include "mpi3mr.h"
+@@ -608,10 +609,12 @@ static void mpi3mr_delete_sas_phy(struct mpi3mr_ioc *mrioc,
+ 	mr_sas_port->num_phys--;
+ 
+ 	if (host_node) {
+-		mr_sas_port->phy_mask &= ~(1 << mr_sas_phy->phy_id);
++		mr_sas_port->phy_mask &= ~BIT_ULL(mr_sas_phy->phy_id);
+ 
+-		if (mr_sas_port->lowest_phy == mr_sas_phy->phy_id)
+-			mr_sas_port->lowest_phy = ffs(mr_sas_port->phy_mask) - 1;
++		if (mr_sas_port->lowest_phy == mr_sas_phy->phy_id &&
++		    mr_sas_port->phy_mask)
++			mr_sas_port->lowest_phy =
++				__ffs64(mr_sas_port->phy_mask) - 1;
+ 	}
+ 	sas_port_delete_phy(mr_sas_port->port, mr_sas_phy->phy);
+ 	mr_sas_phy->phy_belongs_to_port = 0;
+@@ -639,10 +642,11 @@ static void mpi3mr_add_sas_phy(struct mpi3mr_ioc *mrioc,
+ 	list_add_tail(&mr_sas_phy->port_siblings, &mr_sas_port->phy_list);
+ 	mr_sas_port->num_phys++;
+ 	if (host_node) {
+-		mr_sas_port->phy_mask |= (1 << mr_sas_phy->phy_id);
++		mr_sas_port->phy_mask |= BIT_ULL(mr_sas_phy->phy_id);
+ 
+ 		if (mr_sas_phy->phy_id < mr_sas_port->lowest_phy)
+-			mr_sas_port->lowest_phy = ffs(mr_sas_port->phy_mask) - 1;
++			mr_sas_port->lowest_phy =
++				__ffs64(mr_sas_port->phy_mask) - 1;
+ 	}
+ 	sas_port_add_phy(mr_sas_port->port, mr_sas_phy->phy);
+ 	mr_sas_phy->phy_belongs_to_port = 1;
+@@ -1396,7 +1400,7 @@ static struct mpi3mr_sas_port *mpi3mr_sas_port_add(struct mpi3mr_ioc *mrioc,
+ 		    &mr_sas_port->phy_list);
+ 		mr_sas_port->num_phys++;
+ 		if (mr_sas_node->host_node)
+-			mr_sas_port->phy_mask |= (1 << i);
++			mr_sas_port->phy_mask |= BIT_ULL(i);
+ 	}
+ 
+ 	if (!mr_sas_port->num_phys) {
+@@ -1406,7 +1410,7 @@ static struct mpi3mr_sas_port *mpi3mr_sas_port_add(struct mpi3mr_ioc *mrioc,
+ 	}
+ 
+ 	if (mr_sas_node->host_node)
+-		mr_sas_port->lowest_phy = ffs(mr_sas_port->phy_mask) - 1;
++		mr_sas_port->lowest_phy = __ffs64(mr_sas_port->phy_mask) - 1;
+ 
+ 	if (mr_sas_port->remote_identify.device_type == SAS_END_DEVICE) {
+ 		tgtdev = mpi3mr_get_tgtdev_by_addr(mrioc,
+@@ -1738,7 +1742,7 @@ mpi3mr_refresh_sas_ports(struct mpi3mr_ioc *mrioc)
+ 		found = 0;
+ 		for (j = 0; j < host_port_count; j++) {
+ 			if (h_port[j].handle == attached_handle) {
+-				h_port[j].phy_mask |= (1 << i);
++				h_port[j].phy_mask |= BIT_ULL(i);
+ 				found = 1;
+ 				break;
+ 			}
+@@ -1765,7 +1769,7 @@ mpi3mr_refresh_sas_ports(struct mpi3mr_ioc *mrioc)
+ 		port_idx = host_port_count;
+ 		h_port[port_idx].sas_address = le64_to_cpu(sasinf->sas_address);
+ 		h_port[port_idx].handle = attached_handle;
+-		h_port[port_idx].phy_mask = (1 << i);
++		h_port[port_idx].phy_mask = BIT_ULL(i);
+ 		h_port[port_idx].iounit_port_id = sas_io_unit_pg0->phy_data[i].io_unit_port;
+ 		h_port[port_idx].lowest_phy = sasinf->phy_num;
+ 		h_port[port_idx].used = 0;
 -- 
-2.34.1
+2.48.1
 
 
