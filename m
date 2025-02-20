@@ -1,240 +1,440 @@
-Return-Path: <linux-kernel+bounces-523392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35E1DA3D629
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 11:10:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FCBEA3D632
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 11:12:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D857179B31
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 10:10:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98C16189629A
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 10:12:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C41E1F03E6;
-	Thu, 20 Feb 2025 10:09:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5139A1EE032;
+	Thu, 20 Feb 2025 10:12:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TbnxBlwP"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="NJTcaKaV"
+Received: from PNZPR01CU001.outbound.protection.outlook.com (mail-centralindiaazolkn19011025.outbound.protection.outlook.com [52.103.68.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E1781F03DE
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 10:09:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740046185; cv=none; b=A1XbdMJmZDKROwVAn/jlx0f7CMHiLxOneMUGkNGgW2wZ9cr9eq5S/yYOgvYybfxvpKoZmIzSiBdyHDqBkLyRiwOV2yRVqD+Af+cBDVJ1jec9t4A6fuzCbWIlKRRXqKqM2U39jEib/yh+ICQVNvx+tp8qTdMZPm19BH4EWxo95KU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740046185; c=relaxed/simple;
-	bh=Zoo9uQ8Drs94E3LT5wK9nBC48YVNSJ75dwbnTzaoVHw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RtXF3dPj/Or5VaAtk8PL2gixCn8n4n/VJR6H+nkPIoGuC1U+vgmkKhVb4ladRmDkZebUlGJ7DSt6zDU2JyUlULIpetkQbcdXImYYij0v0K8U+8ZKTAi30DZUotbnHPJpsZlg0x68UZu7JZ2077teywmJfsDLbXXzrBDc9l6358k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TbnxBlwP; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-38f3ee8a119so358176f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 02:09:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740046181; x=1740650981; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=VKAFazs0bK/4Q6jQNje2L8Expu/NOgNPeCn90wFFS4o=;
-        b=TbnxBlwPjjyp5w4jK7dHSTOLWZ2jty0K7BW6YS3sGDpseukWSP+NfndN8IXkZbspVn
-         y/2hRbyjkA7okR7Npwye0REGht+j8z4kKPj++qi+dFBcIwmBfBx11ZwI93N+aq7BWRY7
-         4MUHHO+fzvDRFoIqRGAsRaY4GmlMbuvHA/Yx8dxKTVQ744Y/oGu+NlhUmvY9jQOHx6GU
-         XWw5cnlAmw1B2bOx1iRckt9Zla4faaKXtB9VzVCZISstygkJR3MziNB2CaSZT8DsLrQD
-         DwYHFgSgJVm0l/J9lVq4/1wtcJS50Kie/9SNSysy8thpkUl4RigzHFMAVxMnz6xfuVx5
-         AK+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740046181; x=1740650981;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VKAFazs0bK/4Q6jQNje2L8Expu/NOgNPeCn90wFFS4o=;
-        b=YaCqkOdKPhk1uDqDosoolVrhudJwPM25KENfUJLTKr2trAmX5jBbB1riFDivzKGyl9
-         CF8nbYVQAQV43gr8Q8Hus1zl2Mj/uzSV6LEN3xuZ0huGRhzUL56rYoztZ7TEHbR4sJWW
-         QrGpxJt/VtxRP0atIBHPAAfOrxSAFoseUF+R3BifMPZF2kXD2DhH2mZ6tNXu6vHQIfU9
-         2TYnvV4yMDOIcDtPxZg1VlYspRrDRiTswiuxAbH9ympPwnaKTXu3B+glNO9j4Wl1Y8Ge
-         NO7Nwf2l7PYOhp4+09W1HYThc3Z1sOwVkY2wsZhZTI9olVgiF69/ch/5LVXELK27UyPs
-         atJw==
-X-Forwarded-Encrypted: i=1; AJvYcCVm3PCrL6PLCrh8Fg6Cvs2Q++FTiNSjUffqn7xZXISi+3jxuMnGfDHsQ2mFSaLe8tDKP5dDjdWmjZs4ZcM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwS5o699ESegOg6ywIfImcT43m3jEeLiIM56K7fyCNfbc5LawmN
-	KydZ7XL0JAusJJ1d5cRRudFrDzj9dhIphyLsMW7yVigzAbyEMtLye3+sFLayTuM=
-X-Gm-Gg: ASbGncsNYQQLa/xR6KM9xGq4hd8bxpAlDChTrloG7txuEIgekG6OFzKAWMTKVjvC8cV
-	09qyX95HnU7riCcqABI466HcwBWZfwoHkL1pLFG33p8GxWBHKC1NyyvC0aKFo4eKCyc7AIZpU16
-	WGsw3e99+22OH1pWj5fY1k7a0pzvP71qeyMCpHP9QP0WVe5A82I9DOZmrYZCqYDMM7/lli+tCIS
-	2yX6AxLQwYnvEbrHK81JZZicmwiKjZwg+EJawY4GnTUJ14j0Cv9sJGGbDT24YgHM/QDWjluJd7u
-	0RdxqiDo5ZINceJ5qiPvbu+weRA=
-X-Google-Smtp-Source: AGHT+IERc6hIPqaeWn2CPZBGtZZAAoxkqyWFInBWc9QDvWlSHwq2D21AKF4IMfL83X3LHVGKdeB0Yw==
-X-Received: by 2002:a5d:59a2:0:b0:38d:d9bd:18a6 with SMTP id ffacd0b85a97d-38f33f437fdmr19446268f8f.42.1740046181176;
-        Thu, 20 Feb 2025 02:09:41 -0800 (PST)
-Received: from linaro.org ([2a02:2454:ff21:ef30:b30c:3d94:4d4a:a6eb])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f258b4123sm20741585f8f.17.2025.02.20.02.09.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Feb 2025 02:09:40 -0800 (PST)
-Date: Thu, 20 Feb 2025 11:09:38 +0100
-From: Stephan Gerhold <stephan.gerhold@linaro.org>
-To: Rob Herring <robh@kernel.org>
-Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Andy Gross <agross@kernel.org>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Yuvaraj Ranganathan <quic_yrangana@quicinc.com>,
-	Anusha Rao <quic_anusha@quicinc.com>,
-	Md Sadre Alam <quic_mdalam@quicinc.com>,
-	linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Luca Weiss <luca.weiss@fairphone.com>
-Subject: Re: [PATCH 7/8] dt-bindings: dma: qcom: bam-dma: Add missing
- required properties
-Message-ID: <Z7b_YgzGJUT_un5z@linaro.org>
-References: <20250212-bam-dma-fixes-v1-0-f560889e65d8@linaro.org>
- <20250212-bam-dma-fixes-v1-7-f560889e65d8@linaro.org>
- <22ce4c8d-1f3b-42c9-b588-b7d74812f7b0@oss.qualcomm.com>
- <Z6231bBqNhA2M4Ap@linaro.org>
- <d674d626-e6a3-4683-8f45-81b09200849f@oss.qualcomm.com>
- <Z64OKcj9Ns1NkUea@linaro.org>
- <20250219222739.GA3078392-robh@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C4E21E9B35
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 10:12:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.68.25
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740046325; cv=fail; b=ZQD715Bs8VvsUM1LEdc0BkZIeVlHbIbxpg96iaww9/H0GECwZ4E2nletClnGzsCtHljQXoBBUsEcwgEK2qURt6cYbRiwuUS3BTC+zh5B0u+ZCesGyWIyQ19Gss9lLUorawu1aNNr7Gioyjp5oYiI4YnHbhO/5SEO3Di8B2lSvhw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740046325; c=relaxed/simple;
+	bh=LAAJ7RoasN1ZXlwsEbcAU3g8nhe8NZxbUpKu1Wfg0s4=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=GAvY2ZBCMLF+9P2K5eh/8JkrRSegWrZV0NKF7RijdyGIk33tLhTi4lUpRyIkhArWNQUBKt9PiHaINISUdXkGEcE4FYtJ6yiP8lBsP8FSzi/M+L1N4pScIHj0jA5+xukfD1bFuBPk4Fd3tWa57NxIIE59Z2B+TXaGEC7QAiwjSks=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=NJTcaKaV; arc=fail smtp.client-ip=52.103.68.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Z2VRC9ExvMlWjvSxPsUPPZ8vyoNP2/MxCHd/ut9e/FGRGByZRdJlqfx+ZKR4FIWl5nD6qcuO/EUCyDRZAMVzHrVDj5tHe32LMErgY16IQ8Kt4cIrW3ZqCQscspaoFvCwYI4u3SHNWccfgfWA4bzfbGXSnCXOs5PJMx473N4jA4cYPP3dD+4ZbxaQZ8wIVwgZTwicM5QzgFcMIJYehvprOrI3nWjvUxTOB/GRlbnemPo8fBne2p+Wtm0HxRGSlXzPlNCW7Vl/FYvuzYlFiI1LnD2Dc9K9unzoyFjL5f1bjEckoAH15xUASSp8egUx765lMyy6MYpx0mLw1kt+ADh1+g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Q68XQE22QP7v0Hg2FVSJr/XXSR66zBhyTOQVTWeMqn8=;
+ b=J/t4Dj3QscuQMoJCrxcvqSTsO8yf1+Ye1bZvkIuVlebrvzDPlk0PbMILbZc0tyM5yf3vjAxrvTbLFwr7UJ/F8B3MM/+ozhjXcaDisCAiMmeTQ1ubYkrjNaYy9ezpUwTER1gdyvrD8/GjaCkKdI4wuSa3/5JeP6j93FjLjPm7RKa9X8K3oToi8+JIxz/zQHxchjwOQ12S903gO8+Sb5isD5GQNx1kUuy6o0M58Ne0L64qxHErkNQPquq0EZFHjHnpRbSnifAhGUAlxsLKD6OD/FN9cuTr5KZQGGydpQLXfNJaWuH+UC7uxO+4tV2SfWpKrQQyqmOZwilI1UKmjbYJMQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Q68XQE22QP7v0Hg2FVSJr/XXSR66zBhyTOQVTWeMqn8=;
+ b=NJTcaKaVcLGDxk2Uk5iQjtwmRv+qN3WElVSzxNE/nEet8LCm4ijErXwM5xlOyfb/8cFWOxsxqkOf+chtin1gRC/+QVQdj+mU045Z8ns1FTq/YTtDY5e+nwG0ALvntFBZiTWTCErN70eUd5H87ub8AiXvsuTMKCbnz8h5+xgyvaI/25qd8g3GaIq++rsuOsiN3Q03p1X1C80x+Q5KxEVIHdviFN+iUsMhjkz+l6tWpAUkTO8toZ18n33+gZZ4U1VxjfB8y1S/ZFZVigNzNyVlslxouZV1V42ZJ6ZbPUovJEB1PSBqrPnQWIU9OFhi33ggv2G8r7hjXQJVbFSwgWWM6Q==
+Received: from PNZPR01MB4478.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c01:1d::9)
+ by PN0PR01MB9040.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c01:160::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.16; Thu, 20 Feb
+ 2025 10:11:58 +0000
+Received: from PNZPR01MB4478.INDPRD01.PROD.OUTLOOK.COM
+ ([fe80::27a3:3d7e:30be:e1d1]) by PNZPR01MB4478.INDPRD01.PROD.OUTLOOK.COM
+ ([fe80::27a3:3d7e:30be:e1d1%3]) with mapi id 15.20.8466.015; Thu, 20 Feb 2025
+ 10:11:58 +0000
+From: Aditya Garg <gargaditya08@live.com>
+To: Thomas Zimmermann <tzimmermann@suse.de>
+CC: "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
+	"mripard@kernel.org" <mripard@kernel.org>, "airlied@gmail.com"
+	<airlied@gmail.com>, "simona@ffwll.ch" <simona@ffwll.ch>, Kerem Karabay
+	<kekrby@gmail.com>, Atharva Tiwari <evepolonium@gmail.com>, Linux Kernel
+ Mailing List <linux-kernel@vger.kernel.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
+Subject: Re: [PATCH 2/2] drm/tiny: add driver for Apple Touch Bars in x86 Macs
+Thread-Topic: [PATCH 2/2] drm/tiny: add driver for Apple Touch Bars in x86
+ Macs
+Thread-Index: AQHbgW0jg2AkJlVClEWW91xnm1SunLNM14qAgAMlSAA=
+Date: Thu, 20 Feb 2025 10:11:58 +0000
+Message-ID: <B9CB6BD4-A013-41AD-8094-C0B45A8201BF@live.com>
+References: <4BAFD886-84E0-4C4C-94B3-90BF911ED0E7@live.com>
+ <F16BB9EB-632C-4BC4-A8BA-492BF32E43C1@live.com>
+ <d9304ed0-911b-4877-a15c-981b3335bbf9@suse.de>
+In-Reply-To: <d9304ed0-911b-4877-a15c-981b3335bbf9@suse.de>
+Accept-Language: en-IN, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PNZPR01MB4478:EE_|PN0PR01MB9040:EE_
+x-ms-office365-filtering-correlation-id: 7b4b8bb3-b029-4f89-1857-08dd519702d8
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|461199028|15080799006|7092599003|8060799006|8022599003|8062599003|19110799003|102099032|3412199025|440099028|41001999003;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?zwL0J2P9+hjv4bm5OsdSIcQn0SHXPI+joHAbp5CAr9yV3joLDkjbJ+v2SZJr?=
+ =?us-ascii?Q?smbMh8J4nDCCBV5mAiUZF4QFL2K8oo6Ps12Kdmls12NbWHZb6Om0VhNLAisM?=
+ =?us-ascii?Q?mEgBfWw2FNpxNVqRoWeCrJQQy/yim/YJjd4piqr90zaxD4AZ1JwhnKpQiikK?=
+ =?us-ascii?Q?JeYGyVxfY29GEg7UdRhWvwgMAWj7ySdlJuseitxI34xGQMyvzo6Na99LizCD?=
+ =?us-ascii?Q?0i3HvEBFwJbQhH+cpCBwrr+83Hq0L3Vuykt2dAG9cduK+sSsLNrSus3JgBeg?=
+ =?us-ascii?Q?rZ5ySxrWZMdYM58hFBsvYI+8haOhhhqB68CxjCJL9Wle1qrb+JSE9kXia2fw?=
+ =?us-ascii?Q?OSmgPrHsKvh4LnJTwLCaRvc1TiTVFquBPo9h59Oo+VWggjpo3j+TucFvlbz4?=
+ =?us-ascii?Q?tX4oAl/WQ/HW8nT8jn2WaS0ntvrm3EZu6jEIbfTjC0MbzwLjAjp27Bn+26sO?=
+ =?us-ascii?Q?2lz2rg3z5kPx+b9m+tXKv7oy+/He9wxODgRo15syN00PopMZIO0gsJ2liij2?=
+ =?us-ascii?Q?jECVtG72oNp48i5Mm/jz0vIXWpGFva+RKwEiqpFf4SoYSfWRcQD41EW/bLaM?=
+ =?us-ascii?Q?A8P9ulxHKbwUFlrlSa4OdErraJkf5S8jtpsgKM2ZqSziC5j97WK+zG0SM8Vc?=
+ =?us-ascii?Q?srCitestth9RacOwiB4K5lJ05hplBy5vbUCR+eJti9S1fGjDNaExHl8C2fKJ?=
+ =?us-ascii?Q?8Mah5eAKNLeCbpXNrYwWcAqG/yTG/6lWnjnhSSfNeokCNHgJYNKxOognPBuj?=
+ =?us-ascii?Q?UWRmB85p6f5ngCvLsjvcQFlhuNEvAOlLYT5LzqLM6mfsFrd30SxaR+oNFZ9y?=
+ =?us-ascii?Q?9YkkjpfCOsdRY8ryhBlNr18988p1WI8MdToYfRcAVCfcxl2iSjJx0V80wsuV?=
+ =?us-ascii?Q?onBKr2DyBaMlyh1hsrEzYy5h2i+y7n5/pswrWu/uJnOJ6CmiDDBY52aCYqtm?=
+ =?us-ascii?Q?C8d8G8tP6woP85KEZcqaC6fMjhyn6tw62r14MuVfUpTxRBPM+jHzY7VUbTKy?=
+ =?us-ascii?Q?xI/CWhCWNa9AMkTGW0Q1/LScpjFM38ThejWiGGYX2vqxCGmDNzvk+WbVNR8K?=
+ =?us-ascii?Q?68Mq9dk5rMP7PVYO4Ij/mmmTsTAtqfRmxSwmvEG9uNWWGsD7BsUGD2o96NkL?=
+ =?us-ascii?Q?BgIbflvFYnJJ+27lLEYhp/2O890cUpTE4Q=3D=3D?=
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?fC1AyNJMNhH8fKtKmPWJH7aYGzH9exQiQwd1HkFesdOaKTQPXm1ZOH7AJ5ud?=
+ =?us-ascii?Q?SjY9KEYyiWjvD/pstWfqL++aZ7rrKuDhWlgNRGXjhI0eCJ3A0DFWVSy+zckE?=
+ =?us-ascii?Q?gQvuR45BAPFeIG9eBAhI1AOpeNw3FltN7GS7hg7+tzp4oJIIAkQBP23MMra1?=
+ =?us-ascii?Q?rbxnswGqRkZaohoxA36dG7kxHOEKU05V62yx2TYOfbB5rPAPTBTlLVeq0zPn?=
+ =?us-ascii?Q?iJELD0Ukw74WFHPpv+mouLaXCDzQVv0bOcKz87/MkSz35FRJAJOclfvKSPaI?=
+ =?us-ascii?Q?uzuF5z56pGSX9xj13XxZ21aMPlrJ20MAf/RK7520gt5UjWF5OEXXYFPLMQFZ?=
+ =?us-ascii?Q?KxPuPzpRaTZy2ynu3D7IDNibnlcCkJqYAM8kah/sxzIzo5ZpNGADgOJtmsa0?=
+ =?us-ascii?Q?2QQqNoVBIcy7csdBqdL4WWcSoHWwCk+6dL9vvKjJRcSsg2iCJTdBB3A7cxdo?=
+ =?us-ascii?Q?W7jw/Hg1OEg8ReqfZhlqPn2AIB4Ourgc13jLsRTdAyKtmVwfBMTQXzPF94MR?=
+ =?us-ascii?Q?aQGz4C4HkH1cMsWkAZCvtl/umeJfNbZO0TITkRkfN9gGpee3ETO6GdD2tRTJ?=
+ =?us-ascii?Q?9ege2MctE/TszWvmgiaKqajJTvUZLwPydMrhDXZap2Hrr4j+81wVS0pmiJvU?=
+ =?us-ascii?Q?4cg0CHQxN0jUe5uTITar7eHdZCDayq91mSPngyb6+cI7DiJ5/QeHXZVsbC2a?=
+ =?us-ascii?Q?ETW/RnihTgUauY9eZ/5HXQ9ElUC3itxdftjhTFyOcrGVmbOAQBEKrFt0UECR?=
+ =?us-ascii?Q?Qweb8Ll5ejli0z673vhV0VCvjoZmT5HJpvbvwUGQC3fhDTqXSiK5xjGfjl3E?=
+ =?us-ascii?Q?wB1FVgkitgcXqK/OJe7MgJqOa7LfYjSP+dl9xmx8X7IEtv9slRhLd8DlKLYr?=
+ =?us-ascii?Q?h/asVhimNbWT/YyieT5VYxOmfNXvCiKVopXUJdxCkLRHM29kfDzPBbBhyCZC?=
+ =?us-ascii?Q?U4KiD9K/GCdu6K8soWE0aXVgOqtpl240c+YK8TLso5+dahZCGohiDrUI0BRC?=
+ =?us-ascii?Q?sDZLIUSc340BvRwe6tZ6eft9n+3MRfGn0kFnEhcXU2a8HL5B/qvQJib/Fv7f?=
+ =?us-ascii?Q?V371JoYQaFq0rw6pXH5avL+HbCxCxnnavVmV6kSUxdgVus4Rne5A36ZL4eO8?=
+ =?us-ascii?Q?9nMQezPyebXSQVnIwRS3qPpaCjnaWwBAoLmCWuFS4ukcmQSfa6XSUxo8ZOFP?=
+ =?us-ascii?Q?QoXlbYvvhigv50w5ArAE3XrS6ZJes1+EU29JqZLfCbLxrbzzb17WTjM/IPGL?=
+ =?us-ascii?Q?TeSqOGUAEmt/uMIQIIfKoQQGmeuyVm+LtOgiAT+FvabO8KfNsmqatujlSmcr?=
+ =?us-ascii?Q?jGMXLY0PSG+5Zb/qHcZQqk2q?=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <C5E9CF2CCF607B4F8BA13BC30D9E24A9@INDPRD01.PROD.OUTLOOK.COM>
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250219222739.GA3078392-robh@kernel.org>
+X-OriginatorOrg: sct-15-20-7719-20-msonline-outlook-ae5c4.templateTenant
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PNZPR01MB4478.INDPRD01.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7b4b8bb3-b029-4f89-1857-08dd519702d8
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Feb 2025 10:11:58.5666
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN0PR01MB9040
 
-On Wed, Feb 19, 2025 at 04:27:39PM -0600, Rob Herring wrote:
-> On Thu, Feb 13, 2025 at 04:22:17PM +0100, Stephan Gerhold wrote:
-> > On Thu, Feb 13, 2025 at 03:00:00PM +0100, Konrad Dybcio wrote:
-> > > On 13.02.2025 10:13 AM, Stephan Gerhold wrote:
-> > > > On Wed, Feb 12, 2025 at 10:01:59PM +0100, Konrad Dybcio wrote:
-> > > >> On 12.02.2025 6:03 PM, Stephan Gerhold wrote:
-> > > >>> num-channels and qcom,num-ees are required when there are no clocks
-> > > >>> specified in the device tree, because we have no reliable way to read them
-> > > >>> from the hardware registers if we cannot ensure the BAM hardware is up when
-> > > >>> the device is being probed.
-> > > >>>
-> > > >>> This has often been forgotten when adding new SoC device trees, so make
-> > > >>> this clear by describing this requirement in the schema.
-> > > >>>
-> > > >>> Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
-> > > >>> ---
-> > > >>>  Documentation/devicetree/bindings/dma/qcom,bam-dma.yaml | 4 ++++
-> > > >>>  1 file changed, 4 insertions(+)
-> > > >>>
-> > > >>> diff --git a/Documentation/devicetree/bindings/dma/qcom,bam-dma.yaml b/Documentation/devicetree/bindings/dma/qcom,bam-dma.yaml
-> > > >>> index 3ad0d9b1fbc5e4f83dd316d1ad79773c288748ba..5f7e7763615578717651014cfd52745ea2132115 100644
-> > > >>> --- a/Documentation/devicetree/bindings/dma/qcom,bam-dma.yaml
-> > > >>> +++ b/Documentation/devicetree/bindings/dma/qcom,bam-dma.yaml
-> > > >>> @@ -90,8 +90,12 @@ required:
-> > > >>>  anyOf:
-> > > >>>    - required:
-> > > >>>        - qcom,powered-remotely
-> > > >>> +      - num-channels
-> > > >>> +      - qcom,num-ees
-> > > >>>    - required:
-> > > >>>        - qcom,controlled-remotely
-> > > >>> +      - num-channels
-> > > >>> +      - qcom,num-ees
-> > > >>
-> > > >> I think I'd rather see these deprecated and add the clock everywhere..
-> > > >> Do we know which one we need to add on newer platforms? Or maybe it's
-> > > >> been transformed into an icc path?
-> > > > 
-> > > > This isn't feasible, there are too many different setups. Also often the
-> > > > BAM power management is tightly integrated into the consumer interface.
-> > > > To give a short excerpt (I'm sure there are even more obscure uses):
-> > > > 
-> > > >  - BLSP BAM (UART, I2C, SPI on older SoCs):
-> > > >     1. Enable GCC_BLSP_AHB_CLK
-> > > >     -> This is what the bam_dma driver supports currently.
-> > > > 
-> > > >  - Crypto BAM: Either
-> > > >     OR 1. Vote for single RPM clock
-> > > >     OR 1. Enable 3 separate clocks (CE, CE_AHB, CE_AXI)
-> > > >     OR 1. Vote dummy bandwidth for interconnect
-> > > > 
-> > > >  - BAM DMUX (WWAN on older SoCs):
-> > > >     1. Start modem firmware
-> > > >     2. Wait for BAM DMUX service to be up
-> > > >     3. Vote for power up via the BAM-DMUX-specific SMEM state
-> > > >     4. Hope the firmware agrees and brings up the BAM
-> > > > 
-> > > >  - SLIMbus BAM (audio on some SoCs):
-> > > >     1. Start ADSP firmware
-> > > >     2. Wait for QMI SLIMBUS service to be up via QRTR
-> > > >     3. Vote for power up via SLIMbus-specific QMI messages
-> > > >     4. Hope the firmware agrees and brings up the BAM
-> > > > 
-> > > > Especially for the last two, we can't implement support for those
-> > > > consumer-specific interfaces in the BAM driver. Implementing support for
-> > > > the 3 variants of the Crypto BAM would be possible, but it's honestly
-> > > > the least interesting use case of all these. It's not really clear why
-> > > > we are bothing with the crypto engine on newer SoCs at all, see e.g. [1].
-> > > > 
-> > > > [1]: https://lore.kernel.org/linux-arm-msm/20250118080604.GA721573@sol.localdomain/
-> > > > 
-> > > >> Reading back things from this piece of HW only to add it to DT to avoid
-> > > >> reading it later is a really messy solution.
-> > > > 
-> > > > In retrospect, it could have been cleaner to avoid describing the BAM as
-> > > > device node independent of the consumer. We wouldn't have this problem
-> > > > if the BAM driver would only probe when the consumer is already ready.
-> > > > 
-> > > > But I think specifying num-channels in the device tree is the cleanest
-> > > > way out of this mess. I have a second patch series ready that drops
-> > > > qcom,num-ees and validates the num-channels once it's safe reading from
-> > > > the BAM registers. That way, you just need one boot test to ensure the
-> > > > device tree description is really correct.
-> > > 
-> > > Thanks for the detailed explanation!
-> > > 
-> > > Do you think it could maybe make sense to expose a clock/power-domain
-> > > from the modem/adsp rproc and feed it to the DMUX / SLIM instances when
-> > > an appropriate ping arrives? This way we'd also defer probing the drivers
-> > > until the device is actually accessible.
-> > > 
-> > 
-> > Maybe, but that would result in a cyclic dependency between the DMA
-> > provider and consumer. E.g.
-> > 
-> > 	bam_dmux_dma: dma-controller@ {
-> > 		#dma-cells = <1>;
-> > 		power-domains = <&bam_dmux>;
-> > 	};
-> > 
-> > 	remoteproc@ {
-> > 		/* ... */
-> > 
-> > 		bam_dmux: bam-dmux {
-> > 			dmas = <&bam_dmux_dma 4>, <&bam_dmux_dma 5>;
-> > 			dma-names = "tx", "rx";
-> > 		};
-> > 	};
-> > 
-> > fw_devlink will likely get confused by that.
-> 
-> Why? We have a property to break cycles: post-init-providers
-> 
-> That doesn't work here?
-> 
+Hi
 
-Thanks, I was not aware of that property. This looks quite useful for
-fixing up some of the other cyclic dependencies we have!
 
-Nevertheless, for this specific case, I still think we should not make
-such large breaking changes at this point. As I pointed out further
-below in my quoted email, this is a legacy hardware block that will
-likely not get any major new users in the future. We're essentially
-discussing to rework several bindings and drivers just to drop a single
-straightforward "num-channels = <N>" property. A property that we will
-need to keep support for anyway, to support users with older DTBs. This
-effort (and risk) is really better spent elsewhere.
+>=20
+>=20
+>> + ret =3D drm_dev_register(drm, 0);
+>> + if (ret)
+>> + return dev_err_probe(dev, ret, "Failed to register DRM device\n");
+>=20
+> This call does not belong to the mode-setting pipeline and belongs into a=
+ppletbdrm_probe().
+>=20
+>> +
+>> + return 0;
+>> +}
+>> +
+>> +static int appletbdrm_probe(struct usb_interface *intf,
+>> +     const struct usb_device_id *id)
+>> +{
+>> + struct usb_endpoint_descriptor *bulk_in, *bulk_out;
+>> + struct device *dev =3D &intf->dev;
+>> + struct appletbdrm_device *adev;
+>> + int ret;
+>> +
+>> + ret =3D usb_find_common_endpoints(intf->cur_altsetting, &bulk_in, &bul=
+k_out, NULL, NULL);
+>> + if (ret)
+>> + return dev_err_probe(dev, ret, "Failed to find bulk endpoints\n");
+>> +
+>> + adev =3D devm_drm_dev_alloc(dev, &appletbdrm_drm_driver, struct applet=
+bdrm_device, drm);
+>> + if (IS_ERR(adev))
+>> + return PTR_ERR(adev);
+>> +
+>> + adev->dev =3D dev;
+>> + adev->in_ep =3D bulk_in->bEndpointAddress;
+>> + adev->out_ep =3D bulk_out->bEndpointAddress;
+>> +
+>> + usb_set_intfdata(intf, adev);
+>=20
+> Rather set the DRM device here and fetch it in the callbacks below. At so=
+me point, we might be able to share some of those helpers among drivers.
+>=20
 
-Thanks,
-Stephan
+FWIW
+
+Moving register drm device here results in these errors in journalctl:
+
+Feb 20 15:02:46 MacBook kernel: appletbdrm: loading out-of-tree module tain=
+ts kernel.
+Feb 20 15:02:46 MacBook kernel: appletbdrm: module verification failed: sig=
+nature and/or required key missing - tainting kernel
+Feb 20 15:02:46 MacBook kernel: BUG: kernel NULL pointer dereference, addre=
+ss: 0000000000000030
+Feb 20 15:02:46 MacBook kernel: #PF: supervisor read access in kernel mode
+Feb 20 15:02:46 MacBook kernel: #PF: error_code(0x0000) - not-present page
+Feb 20 15:02:46 MacBook kernel: PGD 0 P4D 0=20
+Feb 20 15:02:46 MacBook kernel: Oops: Oops: 0000 [#1] PREEMPT SMP PTI
+Feb 20 15:02:46 MacBook kernel: CPU: 10 UID: 0 PID: 3530 Comm: modprobe Tai=
+nted: G         C OE      6.13.3-1-t2-noble #1
+Feb 20 15:02:46 MacBook kernel: Tainted: [C]=3DCRAP, [O]=3DOOT_MODULE, [E]=
+=3DUNSIGNED_MODULE
+Feb 20 15:02:46 MacBook kernel: Hardware name: Apple Inc. MacBookPro16,1/Ma=
+c-E1008331FDC96864, BIOS 2069.80.3.0.0 (iBridge: 22.16.13051.0.0,0) 01/07/2=
+025
+Feb 20 15:02:46 MacBook kernel: RIP: 0010:drm_dev_register+0x1c/0x290
+Feb 20 15:02:46 MacBook kernel: Code: 90 90 90 90 90 90 90 90 90 90 90 90 9=
+0 90 0f 1f 44 00 00 55 48 89 e5 41 57 41 56 41 55 49 89 f5 41 54 53 48 89 f=
+b 48 83 ec 08 <4c> 8b 77 30 49 83 3e 00 0f 84 09 02 00 00 48 83 7b 20 00 0f=
+ 84 0e
+Feb 20 15:02:46 MacBook kernel: RSP: 0018:ffffbf4344cbb670 EFLAGS: 00010282
+Feb 20 15:02:46 MacBook kernel: RAX: 0000000000000000 RBX: 0000000000000000=
+ RCX: 0000000000000000
+Feb 20 15:02:46 MacBook kernel: RDX: 0000000000000000 RSI: 0000000000000000=
+ RDI: 0000000000000000
+Feb 20 15:02:46 MacBook kernel: RBP: ffffbf4344cbb6a0 R08: 0000000000000000=
+ R09: 0000000000000000
+Feb 20 15:02:46 MacBook kernel: R10: 0000000000000000 R11: 0000000000000000=
+ R12: ffff992a8f114020
+Feb 20 15:02:46 MacBook kernel: R13: 0000000000000000 R14: ffff992a8f115ad8=
+ R15: ffff992a8f114000
+Feb 20 15:02:46 MacBook kernel: FS:  000073572877c080(0000) GS:ffff992deed0=
+0000(0000) knlGS:0000000000000000
+Feb 20 15:02:46 MacBook kernel: CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080=
+050033
+Feb 20 15:02:46 MacBook kernel: CR2: 0000000000000030 CR3: 000000011dd12003=
+ CR4: 00000000003726f0
+Feb 20 15:02:46 MacBook kernel: Call Trace:
+Feb 20 15:02:46 MacBook kernel:  <TASK>
+Feb 20 15:02:46 MacBook kernel:  ? show_regs+0x6c/0x80
+Feb 20 15:02:46 MacBook kernel:  ? __die+0x24/0x80
+Feb 20 15:02:46 MacBook kernel:  ? page_fault_oops+0x175/0x5d0
+Feb 20 15:02:46 MacBook kernel:  ? do_user_addr_fault+0x4b2/0x870
+Feb 20 15:02:46 MacBook kernel:  ? exc_page_fault+0x85/0x1c0
+Feb 20 15:02:46 MacBook kernel:  ? asm_exc_page_fault+0x27/0x30
+Feb 20 15:02:46 MacBook kernel:  ? drm_dev_register+0x1c/0x290
+Feb 20 15:02:46 MacBook kernel:  appletbdrm_probe+0x4eb/0x5f0 [appletbdrm]
+Feb 20 15:02:46 MacBook kernel:  usb_probe_interface+0x168/0x3d0
+Feb 20 15:02:46 MacBook kernel:  really_probe+0xee/0x3c0
+Feb 20 15:02:46 MacBook kernel:  __driver_probe_device+0x8c/0x180
+Feb 20 15:02:46 MacBook kernel:  driver_probe_device+0x24/0xd0
+Feb 20 15:02:46 MacBook kernel:  __driver_attach+0x10b/0x210
+Feb 20 15:02:46 MacBook kernel:  ? __pfx___driver_attach+0x10/0x10
+Feb 20 15:02:46 MacBook kernel:  bus_for_each_dev+0x8a/0xf0
+Feb 20 15:02:46 MacBook kernel:  driver_attach+0x1e/0x30
+Feb 20 15:02:46 MacBook kernel:  bus_add_driver+0x14e/0x290
+Feb 20 15:02:46 MacBook kernel:  driver_register+0x5e/0x130
+Feb 20 15:02:46 MacBook kernel:  usb_register_driver+0x87/0x170
+Feb 20 15:02:46 MacBook kernel:  ? __pfx_appletbdrm_usb_driver_init+0x10/0x=
+10 [appletbdrm]
+Feb 20 15:02:46 MacBook kernel:  appletbdrm_usb_driver_init+0x23/0xff0 [app=
+letbdrm]
+Feb 20 15:02:46 MacBook kernel:  do_one_initcall+0x5b/0x340
+Feb 20 15:02:46 MacBook kernel:  do_init_module+0x97/0x2a0
+Feb 20 15:02:46 MacBook kernel:  load_module+0x2293/0x25c0
+Feb 20 15:02:46 MacBook kernel:  init_module_from_file+0x97/0xe0
+Feb 20 15:02:46 MacBook kernel:  ? init_module_from_file+0x97/0xe0
+Feb 20 15:02:46 MacBook kernel:  idempotent_init_module+0x110/0x300
+Feb 20 15:02:46 MacBook kernel:  __x64_sys_finit_module+0x77/0x100
+Feb 20 15:02:46 MacBook kernel:  x64_sys_call+0x1f37/0x2650
+Feb 20 15:02:46 MacBook kernel:  do_syscall_64+0x7e/0x170
+Feb 20 15:02:46 MacBook kernel:  ? ksys_read+0x72/0xf0
+Feb 20 15:02:46 MacBook kernel:  ? arch_exit_to_user_mode_prepare.isra.0+0x=
+22/0xd0
+Feb 20 15:02:46 MacBook kernel:  ? syscall_exit_to_user_mode+0x38/0x1d0
+Feb 20 15:02:46 MacBook kernel:  ? do_syscall_64+0x8a/0x170
+Feb 20 15:02:46 MacBook kernel:  ? __do_sys_newfstatat+0x44/0x90
+Feb 20 15:02:46 MacBook kernel:  ? ext4_llseek+0xc0/0x120
+Feb 20 15:02:46 MacBook kernel:  ? arch_exit_to_user_mode_prepare.isra.0+0x=
+22/0xd0
+Feb 20 15:02:46 MacBook kernel:  ? syscall_exit_to_user_mode+0x38/0x1d0
+Feb 20 15:02:46 MacBook kernel:  ? do_syscall_64+0x8a/0x170
+Feb 20 15:02:46 MacBook kernel:  ? do_syscall_64+0x8a/0x170
+Feb 20 15:02:46 MacBook kernel:  ? count_memcg_events.constprop.0+0x2a/0x50
+Feb 20 15:02:46 MacBook kernel:  ? handle_mm_fault+0xaf/0x2e0
+Feb 20 15:02:46 MacBook kernel:  ? do_user_addr_fault+0x5d5/0x870
+Feb 20 15:02:46 MacBook kernel:  ? arch_exit_to_user_mode_prepare.isra.0+0x=
+22/0xd0
+Feb 20 15:02:46 MacBook kernel:  ? irqentry_exit_to_user_mode+0x2d/0x1d0
+Feb 20 15:02:46 MacBook kernel:  ? irqentry_exit+0x43/0x50
+Feb 20 15:02:46 MacBook kernel:  ? exc_page_fault+0x96/0x1c0
+Feb 20 15:02:46 MacBook kernel:  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+Feb 20 15:02:46 MacBook kernel: RIP: 0033:0x735727f2725d
+Feb 20 15:02:46 MacBook kernel: Code: ff c3 66 2e 0f 1f 84 00 00 00 00 00 9=
+0 f3 0f 1e fa 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4=
+c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 8b bb 0d 00 f7 d8 64 89=
+ 01 48
+Feb 20 15:02:46 MacBook kernel: RSP: 002b:00007fffd9f88d18 EFLAGS: 00000246=
+ ORIG_RAX: 0000000000000139
+Feb 20 15:02:46 MacBook kernel: RAX: ffffffffffffffda RBX: 000062610c6eb8e0=
+ RCX: 0000735727f2725d
+Feb 20 15:02:46 MacBook kernel: RDX: 0000000000000000 RSI: 00006260e7b3be52=
+ RDI: 0000000000000003
+Feb 20 15:02:46 MacBook kernel: RBP: 00007fffd9f88dd0 R08: 0000000000000040=
+ R09: 00007fffd9f88e50
+Feb 20 15:02:46 MacBook kernel: R10: 0000735728003b20 R11: 0000000000000246=
+ R12: 00006260e7b3be52
+Feb 20 15:02:46 MacBook kernel: R13: 0000000000040000 R14: 000062610c6e4920=
+ R15: 0000000000000000
+Feb 20 15:02:46 MacBook kernel:  </TASK>
+
+The following change was done:
+
+@@ -13,6 +13,7 @@
+=20
+ #include <drm/drm_atomic.h>
+ #include <drm/drm_atomic_helper.h>
++#include <drm/drm_client_setup.h>
+ #include <drm/drm_crtc.h>
+ #include <drm/drm_damage_helper.h>
+ #include <drm/drm_drv.h>
+@@ -596,7 +597,6 @@ static int appletbdrm_setup_mode_config(struct appletbd=
+rm_device *adev)
+ 	 * as the height is actually the width of the framebuffer and vice
+ 	 * versa
+ 	 */
+-
+ 	drm->mode_config.min_width =3D 0;
+ 	drm->mode_config.min_height =3D 0;
+ 	drm->mode_config.max_width =3D max(adev->height, DRM_SHADOW_PLANE_MAX_WID=
+TH);
+@@ -635,10 +635,6 @@ static int appletbdrm_setup_mode_config(struct appletb=
+drm_device *adev)
+=20
+ 	drm_mode_config_reset(drm);
+=20
+-	ret =3D drm_dev_register(drm, 0);
+-	if (ret)
+-		return dev_err_probe(dev, ret, "Failed to register DRM device\n");
+-
+ 	return 0;
+ }
+=20
+@@ -648,6 +644,7 @@ static int appletbdrm_probe(struct usb_interface *intf,
+ 	struct usb_endpoint_descriptor *bulk_in, *bulk_out;
+ 	struct device *dev =3D &intf->dev;
+ 	struct appletbdrm_device *adev;
++	struct drm_device *drm;
+ 	int ret;
+=20
+ 	ret =3D usb_find_common_endpoints(intf->cur_altsetting, &bulk_in, &bulk_o=
+ut, NULL, NULL);
+@@ -676,7 +673,17 @@ static int appletbdrm_probe(struct usb_interface *intf=
+,
+ 	if (ret)
+ 		return dev_err_probe(dev, ret, "Failed to clear display\n");
+=20
+-	return appletbdrm_setup_mode_config(adev);
++	ret =3D appletbdrm_setup_mode_config(adev);
++	if (ret)
++		return ret;
++
++	ret =3D drm_dev_register(drm, 0);
++	if (ret)
++		return dev_err_probe(dev, ret, "Failed to register DRM device\n");
++
++	drm_client_setup(drm, NULL);
++
++	return 0;
+ }
+=20
+ static void appletbdrm_disconnect(struct usb_interface *intf)
+
+>> +
+>> + ret =3D appletbdrm_get_information(adev);
+>> + if (ret)
+>> + return dev_err_probe(dev, ret, "Failed to get display information\n");
+>> +
+>> + ret =3D appletbdrm_signal_readiness(adev);
+>> + if (ret)
+>> + return dev_err_probe(dev, ret, "Failed to signal readiness\n");
+>> +
+>=20
+>> + ret =3D appletbdrm_clear_display(adev);
+>> + if (ret)
+>> + return dev_err_probe(dev, ret, "Failed to clear display\n");
+>=20
+> Clearing the display is not something usually done in probe. But I guess =
+there's no better place. I'd do this as the final call in probe; after regi=
+stering the device.  That way, it acts a bit like an in-kernel DRM client.
+>=20
+> Best regards
+> Thomas
+>=20
+>> +
+>> + return appletbdrm_setup_mode_config(adev);
+>> +}
+>> +
+>> +static void appletbdrm_disconnect(struct usb_interface *intf)
+>> +{
+>> + struct appletbdrm_device *adev =3D usb_get_intfdata(intf);
+>> + struct drm_device *drm =3D &adev->drm;
+>> +
+>> + drm_dev_unplug(drm);
+>> + drm_atomic_helper_shutdown(drm);
+>> +}
+>> +
+>> +static void appletbdrm_shutdown(struct usb_interface *intf)
+>> +{
+>> + struct appletbdrm_device *adev =3D usb_get_intfdata(intf);
+>> +
+>> + /*
+>> +  * The framebuffer needs to be cleared on shutdown since its content
+>> +  * persists across boots
+>> +  */
+>> + drm_atomic_helper_shutdown(&adev->drm);
+>> +}
+>> +
+>> +static const struct usb_device_id appletbdrm_usb_id_table[] =3D {
+>> + { USB_DEVICE_INTERFACE_CLASS(0x05ac, 0x8302, USB_CLASS_AUDIO_VIDEO) },
+>> + {}
+>> +};
+>> +MODULE_DEVICE_TABLE(usb, appletbdrm_usb_id_table);
+>> +
+>> +static struct usb_driver appletbdrm_usb_driver =3D {
+>> + .name =3D "appletbdrm",
+>> + .probe =3D appletbdrm_probe,
+>> + .disconnect =3D appletbdrm_disconnect,
+>> + .shutdown =3D appletbdrm_shutdown,
+>> + .id_table =3D appletbdrm_usb_id_table,
+>> +};
+>> +module_usb_driver(appletbdrm_usb_driver);
+>> +
+>> +MODULE_AUTHOR("Kerem Karabay <kekrby@gmail.com>");
+>> +MODULE_DESCRIPTION("Apple Touch Bar DRM Driver");
+>> +MODULE_LICENSE("GPL");
+
+Regards
+Aditya
+
 
