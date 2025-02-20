@@ -1,74 +1,34 @@
-Return-Path: <linux-kernel+bounces-523138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 835E9A3D295
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 08:47:41 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D8D6A3D291
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 08:47:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCAB8189F259
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 07:46:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 618B017C055
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 07:46:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ED131E379B;
-	Thu, 20 Feb 2025 07:45:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="g2odZFGl"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 691F822F11;
-	Thu, 20 Feb 2025 07:45:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EF921E9B15;
+	Thu, 20 Feb 2025 07:46:06 +0000 (UTC)
+Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22DA31E9B2D;
+	Thu, 20 Feb 2025 07:45:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740037557; cv=none; b=Z44OQBpuHbYomAlS7Nkz4C1jgShvFTl+6SsXiZpSivElDiZlSCw7fB0OTNLOy5rUd/dodn76mdc2bh1bYTR0c8RaIA/ZUkWthHqLqnFvn51umXNcO1lfg90cb2NqLSgFnMGvoUxGsNP7sh9x47XUfrRUuhldV3MRWASRSgqD/Gc=
+	t=1740037565; cv=none; b=YGroIZ8VAPNczkM9RS8VMuf5V5/jwt+0umUj4Z45/6/UYf/wfwsQPqnQZnisVVPGP51E/YuduMNe7eX2pbkSVkhMty4YvK7UU8sxgBhqmc7fAvV6Uc/xr1GRMSgI+EQUY6gQsvWM2ypgY+tnG4FSi6yUBBtHs1sFjbQvvyWYktc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740037557; c=relaxed/simple;
-	bh=y5g3F1Le/41CmpzEWqBi9nMV6VrPaIqZ7vVUOTU807o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jo2lo9REGqg3crNBKQYDJiDqJzw8/1sga2EeghFSHSF7bYRWNXcSFftef3xc41QaGAA/EiQBDvJ9hlrxS46InRWiADqtdVRcWB00x04QzjXOoT7SMpL4bGKe6V9HQc7azNsbPnN7/XVXvgvNhPcx3f1SHWb0Je/mvY9giRX5gBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=g2odZFGl; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51K1Act6006165;
-	Thu, 20 Feb 2025 07:45:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=THnapr
-	/xdmKpYJVnyumG675qIuSfCpRNBda0PrI90mo=; b=g2odZFGlIJAZ2ifLKOfL4A
-	YxqfrSNn9NZCRqbrv14O5NPZuj2Mp+lYDIwRk3BJWNppu+jygb+eMidJ9PgleUOQ
-	z4LTu144RHzjWZA+1++7ixQdJ+G/Iup2N9HrDFmKfpcuwjbt1ShSMPG8ZzeRBOSh
-	yHT/+pFp857OLwd5VQaLh5RaEYIKt6DqlTmYJcmXvedMo4QpXnBHFs9bA16Ro7bN
-	5EFCnTxw0hdpwyg3xIQIwlMWKbekfS906/NhGxo6104q6FIGES688YOoC+G2IToH
-	oNQdrcJrJOsZecQmXrc7KAMSgChecto1QaPw2+/G+z6G2sFoOwiRTOra3ZmbJs2A
-	==
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44wtfa1f55-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 20 Feb 2025 07:45:49 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51K4MTWK029293;
-	Thu, 20 Feb 2025 07:45:48 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 44w024grna-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 20 Feb 2025 07:45:46 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51K7jija48300310
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 20 Feb 2025 07:45:44 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 68A7E2004E;
-	Thu, 20 Feb 2025 07:45:44 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1DD7E20040;
-	Thu, 20 Feb 2025 07:45:43 +0000 (GMT)
-Received: from [9.39.30.67] (unknown [9.39.30.67])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 20 Feb 2025 07:45:42 +0000 (GMT)
-Message-ID: <74dddd26-4a0e-4bb6-958a-229cca3c24d1@linux.ibm.com>
-Date: Thu, 20 Feb 2025 13:15:42 +0530
+	s=arc-20240116; t=1740037565; c=relaxed/simple;
+	bh=24E38aGTaxxEzPyzWRerQJnY8HDDXmt8Rkt7nsVgV3w=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=s6KKaK4ZhGufiV5xrmKqYveeu9F0bd+pusGw3fQMGaw1f3wBq5mVtQh+8FNoDzxSl9f5GQsif09O2wY7Qme/ztoLqQRg7GqmAlbhShQJMSlfw86qIBhO03mUhgTbaO5lZT+KbHff1ZKfiGiFyWk4GAzh0CNPV1Z0kHQix1S2PFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-3c9ff7000001d7ae-49-67b6ddb64ed6
+Message-ID: <93792bf7-9507-474f-a8b0-ccd4d59742dc@sk.com>
+Date: Thu, 20 Feb 2025 16:45:56 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,77 +36,84 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] selftests: sched: add sched as a default selftest target
-To: Sinadin Shan <sinadin.shan@oracle.com>, chris.hyser@oracle.com
-Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        shuah@kernel.org
-References: <20250219064658.449069-1-sinadin.shan@oracle.com>
-From: Shrikanth Hegde <sshegde@linux.ibm.com>
-Content-Language: en-US
-In-Reply-To: <20250219064658.449069-1-sinadin.shan@oracle.com>
+Cc: kernel_team@skhynix.com, Jonathan Corbet <corbet@lwn.net>,
+ damon@lists.linux.dev, kernel-team@meta.com, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH 0/2] mm/damon: introduce DAMOS filter type for unmapped
+ pages
+To: SeongJae Park <sj@kernel.org>, Andrew Morton <akpm@linux-foundation.org>
+References: <20250219220146.133650-1-sj@kernel.org>
+Content-Language: ko
+From: Honggyu Kim <honggyu.kim@sk.com>
+In-Reply-To: <20250219220146.133650-1-sj@kernel.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: NFnzcOZmzNNjnEcUzq55RgR1_srdLVU2
-X-Proofpoint-GUID: NFnzcOZmzNNjnEcUzq55RgR1_srdLVU2
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-20_03,2025-02-20_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 suspectscore=0
- impostorscore=0 lowpriorityscore=0 priorityscore=1501 mlxlogscore=999
- bulkscore=0 phishscore=0 malwarescore=0 mlxscore=0 adultscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2502200052
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrLLMWRmVeSWpSXmKPExsXC9ZZnke62u9vSDVZ+17GYs34Nm8WTA+2M
+	Fk/+/2a12HcRyF3YtoTF4vKuOWwW99b8Z7U4/PUNkwOHx6ZVnWwemz5NYvc4MeM3i8eLzTMZ
+	PRb3TWb1OHexwuPzJrkA9igum5TUnMyy1CJ9uwSujG/vN7AUvOWumHW8jbGBcS1nFyMnh4SA
+	icS398uYYey2h/dZQWxeAUuJ/X9fsoDYLAKqEvvPbGOEiAtKnJz5BCwuKiAvcf/WDHYQm1lg
+	N6PExFZdEFtYIFjiwYRWpi5GDg4RAR+JluWJIGEhAWOJm5d3MkKUi0jM7mwDW8smoCZx5eUk
+	JhCbE+iEHycXMEHUmEl0be2CqpeX2P52DlA9F9CZJ9gk3i3+ywZxs6TEwRU3WCYwCs5Cct4s
+	JDtmIZk1C8msBYwsqxiFMvPKchMzc0z0MirzMiv0kvNzNzECI2VZ7Z/oHYyfLgQfYhTgYFTi
+	4Z3Rui1diDWxrLgy9xCjBAezkghvW/2WdCHelMTKqtSi/Pii0pzU4kOM0hwsSuK8Rt/KU4QE
+	0hNLUrNTUwtSi2CyTBycUg2MrLlbSjQ0Ljjo7nFomXGYcyXPEeY5XvpHT37h3fTF1+P4jNDq
+	MxdWJRQydl5tuMt2/fVaua8Jj9+WNxX8TszPOL6tPkJd4NryXPm469qC2n9crFxmrldeaxK1
+	4MriT/0vzVjE5e585K8y2LN1BsPysjc1X1ZpJNrU/7uefvvBaxbThFL/PflOSizFGYmGWsxF
+	xYkAJwXW+pACAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrCLMWRmVeSWpSXmKPExsXCNUNLT3fb3W3pBi97ZSzmrF/DZvHkQDuj
+	xZP/v1kt9l0Ecg/PPclqsbBtCYvF5V1z2CzurfnPanH46xsmB06PTas62Tw2fZrE7nFixm8W
+	jxebZzJ6LO6bzOpx7mKFx+IXH5g8Pm+SC+CI4rJJSc3JLEst0rdL4Mr49n4DS8Fb7opZx9sY
+	GxjXcnYxcnJICJhItD28zwpi8wpYSuz/+5IFxGYRUJXYf2YbI0RcUOLkzCdgcVEBeYn7t2aw
+	g9jMArsZJSa26oLYwgLBEg8mtDJ1MXJwiAj4SLQsTwQJCwkYS9y8vJMRolxEYnZnGzOIzSag
+	JnHl5SQmEJsT6IQfJxcwQdSYSXRt7YKql5fY/nYO8wRGvllIrpiFZNQsJC2zkLQsYGRZxSiS
+	mVeWm5iZY6pXnJ1RmZdZoZecn7uJERj2y2r/TNzB+OWy+yFGAQ5GJR7eB4+3pguxJpYVV+Ye
+	YpTgYFYS4W2r35IuxJuSWFmVWpQfX1Sak1p8iFGag0VJnNcrPDVBSCA9sSQ1OzW1ILUIJsvE
+	wSnVwCh5knHnPTeHmQcX7jmkIy72c5WO3MH9vvFaF/a2dzT+m/H/1JRM5kpHY403+b6/Mj5+
+	sLiTWCJgWFk1xe5q6qdUf5n3PWat8y5eOvH10vZt2WniB+bl+G1U4/8izx3XfP97Utfus+H8
+	aSVS3griWqybHYMuvXxYvUGJnWcT1620rWaxkqoS1UosxRmJhlrMRcWJAEgNI9N3AgAA
+X-CFilter-Loop: Reflected
 
+Hi SeongJae,
 
+On 2/20/2025 7:01 AM, SeongJae Park wrote:
+> User decides whether their memory will be mapped or unmapped.  It
+> implies that the two types of memory can have different characteristics
+> and management requirements.  Provide the DAMON-observaibility
+> DAMOS-operation capability for the different types by introducing a new
+> DAMOS filter type for unmapped pages.
 
-On 2/19/25 12:16, Sinadin Shan wrote:
-> The sched tests are missing a target entry and hence out-of-tree build
-> support.
+I asked it before at https://github.com/damonitor/damo/issues/13 about
+monitoring unused paddr area but I see this patch series is related to
+applying DAMOS action.
+
+Regarding that, do you think we can skip those unused memory area using
+this filter before applying DAMOS action?
+
+I'm not sure if the current DAMOS tries pageout/migrate action for those
+unused area because they are detected as cold area although those will
+be imediately skiped inside action scheme.
+
+Thanks,
+Honggyu
+
 > 
-> For instance:
-> make -C tools/testing/selftests install INSTALL_LOCATION=/foo/bar
+> Changes from RFC
+> (https://lore.kernel.org/20241127205624.86986-1-sj@kernel.org)
+> - Rebase on latest mm-unstable
+> - Wordsmith commit message
+> - Add documentation
 > 
-> is expected to build the sched tests and place them at /foo/bar.
-> But this is not observed since a TARGET entry is not present for sched.
+> SeongJae Park (2):
+>    mm/damon: implement a new DAMOS filter type for unmapped pages
+>    Docs/mm/damon/design: document unmapped DAMOS filter type
 > 
-> This was suggested by Shuah in this conversation
-> Link: https://lore.kernel.org/linux-kselftest/60dd0240-8e45-4958-acf2-7eeee917785b@linuxfoundation.org/
+>   Documentation/mm/damon/design.rst | 2 ++
+>   include/linux/damon.h             | 2 ++
+>   mm/damon/paddr.c                  | 3 +++
+>   mm/damon/sysfs-schemes.c          | 1 +
+>   4 files changed, 8 insertions(+)
 > 
-> Add support for sched selftests by adding sched as a default TARGET
 > 
-> Signed-off-by: Sinadin Shan <sinadin.shan@oracle.com>
-> ---
->   tools/testing/selftests/Makefile | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
-> index 8daac70c2f9d2..e2d0d389ad912 100644
-> --- a/tools/testing/selftests/Makefile
-> +++ b/tools/testing/selftests/Makefile
-> @@ -91,6 +91,7 @@ TARGETS += rlimits
->   TARGETS += rseq
->   TARGETS += rtc
->   TARGETS += rust
-> +TARGETS += sched
->   TARGETS += sched_ext
->   TARGETS += seccomp
->   TARGETS += sgx
+> base-commit: a2130e89cbd08ddb6f023b0b10eb87ebbc67add1
 
-There is only one test currently in sched: i.e cs_prctl_test.c. to see 
-the cookies validation when core scheduling is in effect.
-
-If CONFIG_SCHED_CORE=n, the test fails. So you might end up seeing 
-default selftests failing on such systems? or this is only compiling?
-
-Likely the selftests/sched needs to modified for CONFIG_SCHED_CORE=n
-
-When CONFIG_SCHED_CORE=n
-./cs_prctl_test
-
-## Create a thread/process/process group hierarchy
-Not a core sched system
-...
-Not a core sched system
-(283) FAILED: get_cs_cookie(0) == 0
 
