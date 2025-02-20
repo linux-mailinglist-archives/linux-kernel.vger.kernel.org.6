@@ -1,99 +1,192 @@
-Return-Path: <linux-kernel+bounces-522907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22BD4A3CFF4
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 04:12:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 501FCA3CFFC
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 04:14:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5580E189940D
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 03:12:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20DC117C802
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 03:14:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B51B1DC991;
-	Thu, 20 Feb 2025 03:11:21 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBEEF1DE885;
+	Thu, 20 Feb 2025 03:14:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="Djt0ewfI"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A666D1D7E30
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 03:11:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740021080; cv=none; b=ieUPCo96ghsUIvoIa0GjpU5W19N2YKOh+j5CJuGoakKFAIgfIY62n/EJQb624k/foUzWzVemRIStI7AFK7Zp/S1SYvOTVRVduMuDtAPWoASBMKMPhqWV7c/JtK8DhuJdSyIXQYfP9Wkj2me4fOhhgFAJeWEgGDAiJszkJPcac40=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740021080; c=relaxed/simple;
-	bh=wUWP3fDsHHSizt/qcvRdRHUGTjHDHORenMJRrzhVPAk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XWKcgfr8dhgIAq/Awz6YgBciO12jZPe6TVdl5otu1CZYYDoEGGCqewOtWb4v6UQ57nqlePXnndqcsGWcXhuu4OTeOMYDmdBZGmRzi3+sZYxgR/HBxODVXKWRcsLwQbF7KF70YSMkW8k1bmDPC7Quq+1Cii5WHm/tZiCN+k8l4I4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72CEFC4CED1;
-	Thu, 20 Feb 2025 03:11:16 +0000 (UTC)
-Date: Wed, 19 Feb 2025 22:11:41 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-Cc: Waiman Long <llong@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, Andrew
- Morton <akpm@linux-foundation.org>, Boqun Feng <boqun.feng@gmail.com>, Joel
- Granados <joel.granados@kernel.org>, Anna Schumaker
- <anna.schumaker@oracle.com>, Lance Yang <ioworker0@gmail.com>, Kent
- Overstreet <kent.overstreet@linux.dev>, Yongliang Gao
- <leonylgao@tencent.com>, Tomasz Figa <tfiga@chromium.org>, Sergey
- Senozhatsky <senozhatsky@chromium.org>, linux-kernel@vger.kernel.org, Linux
- Memory Management List <linux-mm@kvack.org>
-Subject: Re: [PATCH 1/2] hung_task: Show the blocker task if the task is
- hung on mutex
-Message-ID: <20250219221141.09f9fe48@gandalf.local.home>
-In-Reply-To: <20250220114036.e22e388402a00f7809a81dee@kernel.org>
-References: <173997003868.2137198.9462617208992136056.stgit@mhiramat.tok.corp.google.com>
-	<173997004932.2137198.7959507113210521328.stgit@mhiramat.tok.corp.google.com>
-	<20250219112308.5d905680@gandalf.local.home>
-	<0fa9dd8e-2d83-487e-bfb1-1f5d20cd9fe6@redhat.com>
-	<20250219152435.35077ac3@gandalf.local.home>
-	<db4ee5e9-56bb-408c-85e7-f93e2c3226dc@redhat.com>
-	<20250220075639.298616eb494248d390417977@kernel.org>
-	<d8c01f69-34c0-45cf-a532-83544a3a3efd@redhat.com>
-	<20250219204153.65ed1f5e@gandalf.local.home>
-	<20250220114036.e22e388402a00f7809a81dee@kernel.org>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E54A1D8A14
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 03:14:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740021272; cv=pass; b=TaI+CQteBHPDEL4rLvbVWvZ4WagzDFufPazVIDqy8+y2+xgs3WD3NN6n4iS8RRTfDNBfyAfKgK72KbXYKI9NwQLl7TRr/OJfEWH4eXfDBzTW6OOHE3YvQYOEQbSRNXpEdC3tAh8Ah4StRIpkip793A2oVPbQNgK9KQVtaH8uJqY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740021272; c=relaxed/simple;
+	bh=hjkPo301IwvKXCK8z0NV/UMtyhfvY8CN9AsypI043cA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GQrS6f9v4Qf1WNUA1cctfeHAfxtq1zBzZbE+yUOtmaA+oDgnt6dv4ArRF8XlFn8yyKcoVuTnNQRWEEj2hz/jaDJJq8dvcBgYEHpFfv0Aynp+E5QtuuvKCKx2XuiwgGWFlxecnNcjaJ3uQUPVO/n9/fxbF+nqpMEiNZtIBAJ86iw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=Djt0ewfI; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1740021249; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=mOCCBW4P+vHFK6bmftOr8KOfGSv5YxMfDmboA/aIH8B6bibBXsrcoLo/+sni94tWvHpf7ZA1XvnH2NWcEqz1XH3inqnRlvJ0oZ044SfzU0JMkFzGBXrm2PVXWGtcgZKeMixDnkGO/HJrScriKC0AGywM5jV+t0wP+n57XZR+n7c=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1740021249; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=z7+n+N2D09r6sO17RNYIc1mmndOABNK1IA6PGR36WYY=; 
+	b=TJQDd6GDXM5JDkkR6ctmFuAA504oEbr8tKi6tAHpxCxMZOJG6GXqd5M9bPfP7U2IOzyJJfkGdgzBLKQvlr26ppN3P+zZfBuxnc5mBK2f8RhQ67QlSMUD2o6z1ALJ9gWVIVHvhhZpIwI8UmXuXzOpEzqsuvpjFro8nallliAIllk=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=dmitry.osipenko@collabora.com;
+	dmarc=pass header.from=<dmitry.osipenko@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1740021249;
+	s=zohomail; d=collabora.com; i=dmitry.osipenko@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=z7+n+N2D09r6sO17RNYIc1mmndOABNK1IA6PGR36WYY=;
+	b=Djt0ewfIgMHCKkVsBk7cZEFmHEXHZwpInEFhXO6tWf98ksRNCX8nVsj/Z7M8LToY
+	6d7+TpaLABsrHP61wxC0wGc94+Pvsq+XEBF8WDb1NaXm1frXURfvbEcAHGNSta5NeNG
+	HNrjP5CmPOAmD9YmU8zwt88PAvAO4CRel378nMp0=
+Received: by mx.zohomail.com with SMTPS id 1740021248065311.2995734910809;
+	Wed, 19 Feb 2025 19:14:08 -0800 (PST)
+Message-ID: <7f5a1552-f143-40c8-b796-20568d373d14@collabora.com>
+Date: Thu, 20 Feb 2025 06:14:02 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v2 3/5] virtio-pci: extend virtio_pci_cap with
+ page_shift
+To: Sergio Lopez <slp@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>,
+ Daniel Verkamp <dverkamp@chromium.org>, Jason Wang <jasowang@redhat.com>,
+ Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?=
+ <eperezma@redhat.com>, David Airlie <airlied@redhat.com>,
+ Gerd Hoffmann <kraxel@redhat.com>,
+ Gurchetan Singh <gurchetansingh@chromium.org>, Chia-I Wu
+ <olvaffe@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Simona Vetter <simona@ffwll.ch>, Rob Clark <robdclark@gmail.com>,
+ fnkl.kernel@gmail.com
+Cc: virtualization@lists.linux.dev, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org
+References: <20250214-virtio-shm-page-size-v2-0-aa1619e6908b@redhat.com>
+ <20250214-virtio-shm-page-size-v2-3-aa1619e6908b@redhat.com>
+From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20250214-virtio-shm-page-size-v2-3-aa1619e6908b@redhat.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-ZohoMailClient: External
 
-On Thu, 20 Feb 2025 11:40:36 +0900
-Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
-
-> Hmm, right.
-> Since the blocked_on must be NULL before setting flag, if we can ensure
-> the writing order so that blocked_flags is always updated before
-> blocked_on, may it be safe?
+On 2/14/25 18:16, Sergio Lopez wrote:
+> If VIRTIO_F_SHM_PAGE_SIZE has been negotiated and cfg_type is
+> VIRTIO_PCI_CAP_SHARED_MEMORY_CFG, the driver must read the page_shift
+> field, derive the supported page size from it, and honor it when
+> requesting the map of memory into the shared memory region to the
+> device.
 > 
-> Or, (this may introduce more memory overhead) don't use union but
-> use different blocked_on_mutex, blocked_on_rwsem, etc. 
+> Extend virtio_pci_cap to hold that field, and use it to feed
+> virtio_shm_region with the corresponding page size.
 > 
-> Another idea is to make the owner offset same, like introducing
+> Signed-off-by: Sergio Lopez <slp@redhat.com>
+> ---
+>  drivers/virtio/virtio_pci_modern.c | 22 +++++++++++++++++-----
+>  include/uapi/linux/virtio_pci.h    |  3 ++-
+>  2 files changed, 19 insertions(+), 6 deletions(-)
 > 
-> struct common_lock {
-> 	atomic_long_t owner;
-> };
+> diff --git a/drivers/virtio/virtio_pci_modern.c b/drivers/virtio/virtio_pci_modern.c
+> index ab0e1d9148057c431676bfacfe5f68cc97eebb12..562a8e1c2bfe6876cffabe26f02cd61ad7fea2cd 100644
+> --- a/drivers/virtio/virtio_pci_modern.c
+> +++ b/drivers/virtio/virtio_pci_modern.c
+> @@ -770,14 +770,15 @@ static void del_vq(struct virtio_pci_vq_info *info)
+>  	vring_del_virtqueue(vq);
+>  }
+>  
+> -static int virtio_pci_find_shm_cap(struct pci_dev *dev, u8 required_id,
+> -				   u8 *bar, u64 *offset, u64 *len)
+> +static int virtio_pci_find_shm_cap(struct virtio_device *vdev, struct pci_dev *dev,
+> +				   u8 required_id, u8 *bar, u64 *offset, u64 *len,
+> +				   u32 *page_size)
+>  {
+>  	int pos;
+>  
+>  	for (pos = pci_find_capability(dev, PCI_CAP_ID_VNDR); pos > 0;
+>  	     pos = pci_find_next_capability(dev, pos, PCI_CAP_ID_VNDR)) {
+> -		u8 type, cap_len, id, res_bar;
+> +		u8 type, cap_len, id, res_bar, page_shift = 0;
+>  		u32 tmp32;
+>  		u64 res_offset, res_length;
+>  
+> @@ -808,6 +809,15 @@ static int virtio_pci_find_shm_cap(struct pci_dev *dev, u8 required_id,
+>  		 * Looks good.
+>  		 */
+>  
+> +		/* Read the page shift if supported. The page_shift variable is
+> +		 * initialized to zero above, so if this feature isn't supported it
+> +		 * will result in a page_size of 4096, a default safe value.
+> +		 */
+> +		if (__virtio_test_bit(vdev, VIRTIO_F_SHM_PAGE_SIZE)) {
+> +			pci_read_config_byte(dev, pos + offsetof(struct virtio_pci_cap,
+> +								 page_shift), &page_shift);
+> +		}
+> +
+>  		/* Read the lower 32bit of length and offset */
+>  		pci_read_config_dword(dev, pos + offsetof(struct virtio_pci_cap,
+>  							  offset), &tmp32);
+> @@ -829,6 +839,7 @@ static int virtio_pci_find_shm_cap(struct pci_dev *dev, u8 required_id,
+>  		*bar = res_bar;
+>  		*offset = res_offset;
+>  		*len = res_length;
+> +		*page_size = 1 << (page_shift + 12);
+>  
+>  		return pos;
+>  	}
+> @@ -841,11 +852,12 @@ static bool vp_get_shm_region(struct virtio_device *vdev,
+>  	struct virtio_pci_device *vp_dev = to_vp_device(vdev);
+>  	struct pci_dev *pci_dev = vp_dev->pci_dev;
+>  	u8 bar;
+> +	u32 page_size;
+>  	u64 offset, len;
+>  	phys_addr_t phys_addr;
+>  	size_t bar_len;
+>  
+> -	if (!virtio_pci_find_shm_cap(pci_dev, id, &bar, &offset, &len))
+> +	if (!virtio_pci_find_shm_cap(vdev, pci_dev, id, &bar, &offset, &len, &page_size))
+>  		return false;
+>  
+>  	phys_addr = pci_resource_start(pci_dev, bar);
+> @@ -865,7 +877,7 @@ static bool vp_get_shm_region(struct virtio_device *vdev,
+>  
+>  	region->len = len;
+>  	region->addr = (u64) phys_addr + offset;
+> -	region->page_size = 4096;
+> +	region->page_size = page_size;
+>  
+>  	return true;
+>  }
+> diff --git a/include/uapi/linux/virtio_pci.h b/include/uapi/linux/virtio_pci.h
+> index 8549d4571257142ac6c9dad5c01369923791a85a..1a76df52b4eccf548df78a8ee7d3a04591f55522 100644
+> --- a/include/uapi/linux/virtio_pci.h
+> +++ b/include/uapi/linux/virtio_pci.h
+> @@ -127,7 +127,8 @@ struct virtio_pci_cap {
+>  	__u8 cfg_type;		/* Identifies the structure. */
+>  	__u8 bar;		/* Where to find it. */
+>  	__u8 id;		/* Multiple capabilities of the same type */
+> -	__u8 padding[2];	/* Pad to full dword. */
+> +	__u8 page_shift;	/* Page shift for VIRTIO_PCI_CAP_SHARED_MEMORY_CFG. */
+> +	__u8 padding[1];	/* Pad to full dword. */
+>  	__le32 offset;		/* Offset within bar. */
+>  	__le32 length;		/* Length of the structure, in bytes. */
+>  };
 > 
-> But the problem is that rt_mutex does not use atomic for storing
-> the owner. (we can make it atomic using wrapper)
 
-Either that, or add to the task_struct:
+Reviewed-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
 
-	struct mutex	*blocked_on_mutex;
-	struct rwsem	*blocked_on_rwsem;
-	struct rtlock	*blocked_on_rtlock;
-
-And just have each type assign to its own type. Then you only need to look
-at each one. But yeah, this adds even more bloat to task_struct.
-
-  :-/
-
--- Steve
+-- 
+Best regards,
+Dmitry
 
