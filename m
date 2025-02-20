@@ -1,78 +1,64 @@
-Return-Path: <linux-kernel+bounces-524362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD9ABA3E250
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 18:24:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD894A3E25B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 18:26:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86CE8701C96
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:16:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC3443A9679
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:17:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2570212D66;
-	Thu, 20 Feb 2025 17:16:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE05B20C00D;
+	Thu, 20 Feb 2025 17:17:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="0dHwAlgy"
-Received: from mail-oo1-f41.google.com (mail-oo1-f41.google.com [209.85.161.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WGINU7vc"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 264D920485D
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 17:16:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F7402F852;
+	Thu, 20 Feb 2025 17:17:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740071811; cv=none; b=DAPu+EQ3lSB9lo/OTEFsWjbDdM2BUZXKj9vv4A5Fy7sCFlP56UHp8YFh4LEl7Vl25ZBeYplYkCqTE1B5vfffrqxc4OoqqOfttHjcgiqMKgjeniKuv9m4tfk9JmHgukExhUqSHVNZi5UcgYwWcFOu6MlTpCdcamiDujP3ilkmd80=
+	t=1740071871; cv=none; b=RjsneJL6aDvtT4rHYssiwr3B/O2tStOPtSPtfjQZ/1KcClrs2cyKe4d9Z/WOSlX5saRCTggEh4BcbNfdEGHGr/7HbHqXBjlYRtAZalUco+dyg4aUXYwDH4AvIqjii+JB1MJyi1I0IUgs8Plo64jOtmspZWcNjb23FXVgWQm1mCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740071811; c=relaxed/simple;
-	bh=244XeKEKX+5A8ehxHdeeLmwJwhJA1rgjh3BsIfR/8tM=;
+	s=arc-20240116; t=1740071871; c=relaxed/simple;
+	bh=YT5Fa455xzJIgAAesy8Hd+w/8vUYTo87Psi7+utV9xc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mVn80J7Z0QHDrtc6eGiwZjxK4DMKNfhxza9TOHTj9vCLM52qnYtCr7j9DtmVqIDfS17Xng19vFy4EuA9bxqbEzYhot4TLyJKLg+8/4R9G0dm++w8NuvPH89wPo8xwJTjvFMF/0mqJCuvxjWDllRpreSdAR+j0cwY0NuQpDzaj78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=0dHwAlgy; arc=none smtp.client-ip=209.85.161.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-5fcd509468eso639209eaf.2
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 09:16:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1740071808; x=1740676608; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=QcApaWVKSxQSIvLEEHhnSoFMNHumzt0nl4dOj28dnl0=;
-        b=0dHwAlgykdXsqX1wYLYwXt2Ts6SA+KR2AVFl1WMrJgrYcqwb03g2FGq+gIlg79FlGl
-         HxGhNcYVONWq8D+2KmxIXUuurbEKtF5vSXt6rNUzHDenwAPnne5yVzPmYKFhRUestJUt
-         lnTuxe3XS4a+qI4UZdD/MqPZ/iSKemhkEga8k3sBjRsqEnrXSginVeTCQyBWYKjIrR1w
-         9m01GH1SD5LP5gObtGkv2JLIRP8g7Rttsrfda6eFuGk8j720J9T5rKunXb0SrEsRTrB5
-         PrpiTOkYk14eJuJrhMuJlOrg/UI8dDwO3e6bepwWbwqQZ92UqXDPipJ2wzSQTSeT1onq
-         5YJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740071808; x=1740676608;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QcApaWVKSxQSIvLEEHhnSoFMNHumzt0nl4dOj28dnl0=;
-        b=bpBqcc6qfqHWZ0yhVMdq5w64lpNUXVD5C+Bd6Dezy9zXYoN63dS1qZw9zWiiJl3Zkj
-         6BpDFcWjjKoxM3Gbe8X3oCU0ZFSll6qpey48/9UhXNxRUiIOnkYhLMsY3V5le8NBicRk
-         neItK6iSS0lzCYs8FL98RXDAKVqqIlLvRD4AY1Q4PxDFm5/BrdRYYGrj9aVSrfEtW8O+
-         ibKWnp/XJokPyFJkui5PV/w/0C5GE9hp7UTNycTQLTngDVS68SqQ2G5H8UuSKZefAIa8
-         I1Z9HQ0vmqmHuMiHnVdgogCiSJaDg2D8AO1VtsGIahphfW3AUg13NOs8aF0DEDbBrSM1
-         urRw==
-X-Forwarded-Encrypted: i=1; AJvYcCW3ZzDue6wendTCN1kEVvY3cGYEnhW9XOm5E1ayG3F/mL9jBdQscAlG/XHprJTw87nBoZZgwSxCGe4e3zI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJ2kJ/7wl7N8Ni23CKwpz7H5wMEMbmc3RI0Oxg1ZwbLwn5lAeE
-	+w1HGxFaMj1HhYq3lqZFIBzqVNnLpWH28mT1tQ3/G9D5piD/Y7f8uyUseeBdLvc=
-X-Gm-Gg: ASbGncuHEKPVufDrlkkpLIMOruCqRek1/MrtA2o00rmhZJbhAHFpRdkR4iDCYM+QAnR
-	G/uPFnzhhOTUns2pIR3FT7r2n2lgu4IFUb50UzjJso/GNm/MGhaZBUp2V3G+84iIJb8hebr/owG
-	zSLac0QCsGvvBaPuhgZA/Ceah5wIezpK/K7fYjUZfkn2C9mVwS35ieZbZqAcPBbxONk/DHxge+6
-	pBxnLWCVKVnaxSRJ6jTXa1CC0b3wXw+3obOcvUojv5euz1O56Zdn4kVtEYbLFvm7H9wKH9kewpR
-	aHmey8imijGhPPHLam31TGap4WCbc1NA4/LrAXBbW034gUSAGcn0
-X-Google-Smtp-Source: AGHT+IFQ4fpht1GK2L64Lff/K3FzPWt1QsXeXeofzfatOKhBNQXj463x1jUtS3u3WnZ5Fb1+N2LaOQ==
-X-Received: by 2002:a05:6808:3996:b0:3f4:205c:d9aa with SMTP id 5614622812f47-3f424701c1dmr163494b6e.21.1740071808115;
-        Thu, 20 Feb 2025 09:16:48 -0800 (PST)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3f3da962049sm5144033b6e.21.2025.02.20.09.16.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Feb 2025 09:16:46 -0800 (PST)
-Message-ID: <37dc5907-b04f-4879-8271-68e36a6a2924@baylibre.com>
-Date: Thu, 20 Feb 2025 11:16:44 -0600
+	 In-Reply-To:Content-Type; b=i7obDbURKBlEdcrpBt/AOyRYYLucQUazZyDhXtFiVeqJJPcz0zHQaPZrmdwYwgyaGcjN2hJFRhoI7Gd1yvXsGjG//xdOzNfROgV9fyMymEsABvxkebhFKhk0YjNxfJo2aQjADqmofePy2ZmkSoh9uKhyFFCv8RGXYK76Km8+erU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WGINU7vc; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740071869; x=1771607869;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=YT5Fa455xzJIgAAesy8Hd+w/8vUYTo87Psi7+utV9xc=;
+  b=WGINU7vcfuB3tijhk2Kt8ufjV7Krt1j5sciwr3TjZgEROfyk9adVqxJu
+   4nDMsuU2fjw8hUL2h/Alvk2evvLX7pJRIr0cFpFM6JrXcalXpPHOALD+c
+   1rsJhDWMw+J0T9bONNKHJaOW+V+mtYksqHRxjV5SebwrzCOR2U+OUW2e0
+   lmW3KiBi98cfHA2hjogfaFOftiYLTKR1WVPY0hl3BPTgNs9Cuzxng6DEE
+   TZ3gPmp8KUw8nGPHyzGk/2IGOzH1zmJPelviGI3plY3jgUGMv2qsyLd8k
+   mQGHogqppj2Lxk2myuVKtgDXoAGanO3TZkRi9C1UcctJXDFSggcsfSJPT
+   A==;
+X-CSE-ConnectionGUID: uWSZ/GRZRge7+E4AGXIucA==
+X-CSE-MsgGUID: 2h3FLJwzQh6t1eTkzDW+cA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11314"; a="41075198"
+X-IronPort-AV: E=Sophos;i="6.12,310,1728975600"; 
+   d="scan'208";a="41075198"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Feb 2025 09:17:49 -0800
+X-CSE-ConnectionGUID: o/DP0KRZROySbXhGQ31eSQ==
+X-CSE-MsgGUID: pZ2aYE6aR/ehYEYSyak37A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="114966004"
+Received: from puneetse-mobl.amr.corp.intel.com (HELO [10.125.110.112]) ([10.125.110.112])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Feb 2025 09:17:48 -0800
+Message-ID: <7b65a200-cddf-4503-9fe8-4004d67f856b@intel.com>
+Date: Thu, 20 Feb 2025 10:17:47 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,63 +66,79 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 05/15] bus: ts-nbus: use bitmap_get_value8()
-To: Andy Shevchenko <andy.shevchenko@gmail.com>,
- Simon Horman <horms@kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
- Bartosz Golaszewski <brgl@bgdev.pl>, Andy Shevchenko <andy@kernel.org>,
- Geert Uytterhoeven <geert@linux-m68k.org>,
- Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Jonathan Cameron <jic23@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
- Peter Rosin <peda@axentia.se>, Andrew Lunn <andrew@lunn.ch>,
- Heiner Kallweit <hkallweit1@gmail.com>, Russell King
- <linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Vinod Koul <vkoul@kernel.org>,
- Kishon Vijay Abraham I <kishon@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
- <nuno.sa@analog.com>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>, linux-gpio@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
- linux-mmc@vger.kernel.org, netdev@vger.kernel.org,
- linux-phy@lists.infradead.org, linux-sound@vger.kernel.org
-References: <20250210-gpio-set-array-helper-v3-0-d6a673674da8@baylibre.com>
- <20250210-gpio-set-array-helper-v3-5-d6a673674da8@baylibre.com>
- <20250220101742.GR1615191@kernel.org>
- <CAHp75Vch7QKyT8Fbya3u=YrPR8z-2-mbWXjHyOwZ-fqcBjjm0A@mail.gmail.com>
+Subject: Re: [PATCH v3 12/18] cxl/region: Use iterator to find the root port
+ in cxl_find_root_decoder()
+To: Robert Richter <rrichter@amd.com>,
+ Alison Schofield <alison.schofield@intel.com>,
+ Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+ Dan Williams <dan.j.williams@intel.com>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ Davidlohr Bueso <dave@stgolabs.net>
+Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Gregory Price <gourry@gourry.net>,
+ "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
+ Terry Bowman <terry.bowman@amd.com>
+References: <20250211095349.981096-1-rrichter@amd.com>
+ <20250211095349.981096-13-rrichter@amd.com>
 Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <CAHp75Vch7QKyT8Fbya3u=YrPR8z-2-mbWXjHyOwZ-fqcBjjm0A@mail.gmail.com>
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20250211095349.981096-13-rrichter@amd.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 2/20/25 6:06 AM, Andy Shevchenko wrote:
-> On Thu, Feb 20, 2025 at 12:17 PM Simon Horman <horms@kernel.org> wrote:
->> On Mon, Feb 10, 2025 at 04:33:31PM -0600, David Lechner wrote:
-> 
-> ...
-> 
->> But when compiling with GCC 14.2.0 I see warnings that values
->> is used uninitialised - bitmap_set_value8() appears to rely on
->> it being so.
-> 
->> In file included from drivers/bus/ts-nbus.c:13:
->> In function ‘bitmap_write’,
->>     inlined from ‘ts_nbus_reset_bus’ at drivers/bus/ts-nbus.c:111:2:
->> ./include/linux/bitmap.h:818:12: error: ‘values’ is used uninitialized [-Werror=uninitialized]
->>   818 |         map[index] &= (fit ? (~(mask << offset)) : ~BITMAP_FIRST_WORD_MASK(start));
->>       |         ~~~^~~~~~~
-> 
-> Heh, the compiler is dumb. Even if it's not initialised we do not care.
-> 
-> ...
-> 
-> Wondering if the bitmap_write() will work better...
-> 
 
-It is already using that:
 
-#define bitmap_set_value8(map, value, start)		\
-	bitmap_write(map, value, start, BITS_PER_BYTE)
+On 2/11/25 2:53 AM, Robert Richter wrote:
+> cxl_find_root_decoder() uses find_cxl_root() to find the root port.
+> In order to support address translation, an iterator must traverse all
+> ports from endpoint to root port and filter based on system physical
+> address. Replace the call to find_cxl_root() with the required logic.
+> 
+> Signed-off-by: Robert Richter <rrichter@amd.com>
+> Reviewed-by: Gregory Price <gourry@gourry.net>
+> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Tested-by: Gregory Price <gourry@gourry.net>
+
+Hi Robert,
+
+While some cleanup patches are good to send ahead, some like these would be good to go right before they get used to allow the reviewer to see how the new code is utilized. Otherwise the changes doesn't make a lot of sense stand alone.
+
+If it's not too much of a pain, I'd like to this series only have cleanups/refactorings that would make sense without the address translation needs. And move the other changes near the address translation changes for a smoother review.
+
+Thanks!   
+
+Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+
+
+> ---
+>  drivers/cxl/core/region.c | 11 ++++++++---
+>  1 file changed, 8 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
+> index fb43e154c7b9..cfcd235f311e 100644
+> --- a/drivers/cxl/core/region.c
+> +++ b/drivers/cxl/core/region.c
+> @@ -3207,13 +3207,18 @@ static struct cxl_root_decoder *
+>  cxl_find_root_decoder(struct cxl_endpoint_decoder *cxled)
+>  {
+>  	struct cxl_memdev *cxlmd = cxled_to_memdev(cxled);
+> -	struct cxl_port *port = cxled_to_port(cxled);
+> -	struct cxl_root *cxl_root __free(put_cxl_root) = find_cxl_root(port);
+> +	struct cxl_port *iter = cxled_to_port(cxled);
+>  	struct cxl_decoder *cxld = &cxled->cxld;
+>  	struct range *hpa = &cxld->hpa_range;
+>  	struct device *cxlrd_dev;
+>  
+> -	cxlrd_dev = device_find_child(&cxl_root->port.dev, hpa,
+> +	while (iter && !is_cxl_root(iter))
+> +		iter = to_cxl_port(iter->dev.parent);
+> +
+> +	if (!iter)
+> +		return NULL;
+> +
+> +	cxlrd_dev = device_find_child(&iter->dev, hpa,
+>  				      match_root_decoder_by_range);
+>  	if (!cxlrd_dev) {
+>  		dev_err(cxlmd->dev.parent,
+
 
