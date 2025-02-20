@@ -1,218 +1,316 @@
-Return-Path: <linux-kernel+bounces-524234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9501A3E0DC
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:34:54 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2807CA3E0D5
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:33:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46493189BEEB
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:32:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BB86B7AA2BF
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:31:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A6332066C1;
-	Thu, 20 Feb 2025 16:32:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4472E1FDA94;
+	Thu, 20 Feb 2025 16:32:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nAQUxoLE"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="nRBKXTyg"
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2077.outbound.protection.outlook.com [40.107.21.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD3EB1D63D8;
-	Thu, 20 Feb 2025 16:32:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740069148; cv=none; b=dzZRtXFZVqM/aQVvy7QSaFwOUqwYDaC5DAMy4INEWFnibMnko7R5DzJ1hLWbVLkw1JvMcfZXvIE3jMGLrUSvFD5saDbLlo3N01qdTuRrI33Lz5fT7prPH34+Y1lJ31bYKB/59kUVm+NJkdGei90BVsrwCCDcq7mtCaWZTROP5GM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740069148; c=relaxed/simple;
-	bh=/xxoPVQV9rAqO9i3BY7Z44Jp9+qGzPSNQzg74YT7fO8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=i/SwZK+Rd6dgCxTSouBEaRjAsb2tH7qZDG0kXgDHoXwk5JGTKTWRnocgDaqMHADM8u5+xk93B5E8Gp1YlxH5O71ixmqvb1BB+1rG29to1lTfOV0MAIxQ3RSqBO9e3L2afULWV8G08Nlcbzfl0V9MdGPGtah5bsFWqwCvxanonvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nAQUxoLE; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-38f2b7ce2f3so918963f8f.0;
-        Thu, 20 Feb 2025 08:32:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740069145; x=1740673945; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=djJ6cJLCBX31nVMQXMRyTslZq1heGpJZhHxgGn2SThg=;
-        b=nAQUxoLEBw8qICpACpJuwVc5lw/OJcJkGHVUsPMlR/FzUZGCsQOUCWZM17iMdalvNV
-         oPYIsPq9OrTEFQOgO2o6iRT9jmx83gRcpxyzy4XdrC3GbHL4v2pNaU6xfWA5s037Om7+
-         F/ldSWdWZg7BuwbJxR/hGiJB6gBNB+JGadtDp6ODRFk1DtnLkVLC7FcOAJ8yWE2Q9leG
-         bp0uIPWzBWUm6SyRcsTga+zkG5ynXc4mLoneDqN/jbgYiw/+J4PRwSZyHAOVw1vzs7Ig
-         hsC1D2pqJnSl2RHe9Q/u/8xIgneMd32i+hT5158mdps8B/750rkJx5Q5B8xfofy0pLQb
-         SLXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740069145; x=1740673945;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=djJ6cJLCBX31nVMQXMRyTslZq1heGpJZhHxgGn2SThg=;
-        b=GqsetzUCO1O1yK/98hg4jRq2QJUSUvPsPPZvMvuxen5OXG2IwLOj6DjF7X2R0RpH1g
-         MT+sa0YEs8qfsqzqYih7vzXAhoOQQyRJ8NhzrbvgA6rBQ2u3idKyGwGpwiBNF0M73aX4
-         km7+ShONdOIve9Dlxrdo5qk56WO0FfrPGnWz1o8VvuT+kab3BYNsMzj2Tj5rBcsB4414
-         TEZbdwAAzJ1quzUbC0PwX/gR6i+vKeNr5RIIVxc9/8r++3kkoZLNwYunTRi3b12RwkOX
-         oEn2VlM2gz43SOJ5MKvbHjtuLzwQQyeAbjwhUMzdEAdCSx5Ht9GOxY0bkNS912dLsn20
-         6mrA==
-X-Forwarded-Encrypted: i=1; AJvYcCU6KPFeIAh4PSLCzkGl9ItFrstW+44V7UabSRbvFG3CkpSOpm/F1knFAE0M1+nHoqQ9B4mzpILqZIpBQjXx@vger.kernel.org, AJvYcCWuHUCly7CEASHWNUbhZyCB6DCDXjqUOk+SovueDsUHfFxlnKkqeht7YETpb/5A2GONd+tjYC1TBRs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxAtBNqDjzweRIY6yjk12c9w6jW6iZ32g1mXxIZVVhyGyp4BTwR
-	vdv3gAUy77yJQGhIW890X1WPWBKRUt9yLYoJZbDc14mHNb7V/MMqX0vKWvV6pyVIPKvWMgLOi96
-	pUvXXwUYTnfySgNHd5Wj75cGdfk8=
-X-Gm-Gg: ASbGncsxzxum3zPJiMNMi0q0YbTtqOAVCWN4msq3jTjMlinhpMvPUmWaBueBBLAqS73
-	10mwwwpkGeSJrv2QCf5WuwY2ANpaHPzjP02QN4PqthhdyY9ty0vh05Z0ICx6QPtmTo8nOf5ojTS
-	Q=
-X-Google-Smtp-Source: AGHT+IE+fb/qSiQgDRutZeDBlmq5JYRBHFh6IjwYk9fKzL4B9g9ZxsaVzW96bSH5p8ymUhr7jbVsfdyuK+pmPd2y9mA=
-X-Received: by 2002:a05:6000:10c:b0:38f:2111:f5ac with SMTP id
- ffacd0b85a97d-38f33f51088mr18279347f8f.31.1740069144731; Thu, 20 Feb 2025
- 08:32:24 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 451F11D63D8;
+	Thu, 20 Feb 2025 16:32:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.77
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740069155; cv=fail; b=oQaumhoICq5AamizR2VGTWMJo1C8J9efdktvLXKgUpq/H3R7Cyi31xFgfBMHtrPeOYeaLGvVkMr0TuiKsT8WRfAyUUa93Rz37ZP5uiZyYA1gykrtbiKQI13UdJnZ2dN8CNlTBhMLp7unnXYbbTQRx/M2FGZff/x6LuVfA0j1q7Y=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740069155; c=relaxed/simple;
+	bh=FJqoSyCdP5biyzxdGoeldJgZaiuhZhucmWUkNpT4dfY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=WCWii5F+C64BqmFSSLWeCANh7tYsq5BroOl/dA0rTmyEkSe/B1/YPcrGwqGth7AHnH7whU55rIi8d7s/fN7yEQSJBKpgfSS0niC1PATzrXSWUIaLO4AhloXSbWqm431nLeCOg4cO19aJNeIMs/OSIbfUV775Ye20WS5PUD2D8HA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=nRBKXTyg; arc=fail smtp.client-ip=40.107.21.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=qx5dNwdcJG2pfIV2tUantqGSVRl1cg5mzbp9lichg+5cC1n3n1G2iiAkKo3OxvG+V3EEOJTgBdY//B1xVDrVH0XP5rvikVxWtYLPVOCaYMtdrXupp5PFdaNDCR9HAQVOPdf1qU2KvQX6pg071gtB07cxoENxIQ++jhB91dF3obmwqq7oIAPF8ZlejjqVwiv1d8xeL8Hbx2MxcXPlrAdwR6ejKDfa6k2nxeGgKeHBBo/ntN0YxzFoHxzlX/YSSyh69oEeRDi1HF+kxw5DuQPUpvp1G/3lzn8SoDOtj6O31qeBale2c6SMz+ToKd7b8Byhu5PKBsCeZZEstApZtJDhbw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=eWnLHvMVXEK+cz2QZ/pkFZC0hGOaFdtpRE0+6rlxhPE=;
+ b=TrBtPlW8nMe8gEsnSHXCe5Y5CYXwXXS5j+SKLnqd8rNt0L/sxHq4lkBnP/bdQHsv4Cc07lZ9ewKUdaFPui+xtFeff+1yoLsCvz1+0aQmx7OxxPLwJLVhSfv2xBm0fu7XxSmb2Rom9xXRSTo/EsEfP/DLchhOb8g1+aGXhKamoGB8ta4m+vsIVgrqASnCYTV5p+cG9bglE7n3eYDlWmv0+yOX9cKBQPz5/5v78lSqjLCmT6otbsrU1i6gLheCxsKL7IUmOI/pO3vHSRQGqdlUB2FzNkNW2un8pQPTAgVdudH8hb+19L08w6zyJlcqzLeGi/fPoMrqwPjmeGkUxAyxAA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=eWnLHvMVXEK+cz2QZ/pkFZC0hGOaFdtpRE0+6rlxhPE=;
+ b=nRBKXTygsG97eDbKbPQquv8wQj6a38tt4JtuuKXxhMJas76k3++cF9ccySB4nSUG3JdwOsXGuylQE7xoYprBUy726QXZ2ff327ZAmz0li16cFIyp1Pa86mhUtR1nVL37dvCHXWC8zMG9F2ImgpYV00WjVDXyR839kYgGc+ux1wUGvC6TzqCVZWt2r+SxRiUyzBwzbPjJWeh3wGLC/M3rBaO8JQnb5E6yIohtOH5mOSkkBz7LRitAaojz+r1y+Akm2neW0Kxm2nTgi/xAE4iNH1I+xIqY0NUQjJFw9VBdf8NZKyX61VDTtd9+1SoXdH67pkaCw3bCWapj69bS/HOg+Q==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PA4PR04MB7790.eurprd04.prod.outlook.com (2603:10a6:102:cc::8)
+ by GVXPR04MB10756.eurprd04.prod.outlook.com (2603:10a6:150:226::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.15; Thu, 20 Feb
+ 2025 16:32:30 +0000
+Received: from PA4PR04MB7790.eurprd04.prod.outlook.com
+ ([fe80::6861:40f7:98b3:c2bc]) by PA4PR04MB7790.eurprd04.prod.outlook.com
+ ([fe80::6861:40f7:98b3:c2bc%5]) with mapi id 15.20.8466.015; Thu, 20 Feb 2025
+ 16:32:29 +0000
+Date: Thu, 20 Feb 2025 18:32:26 +0200
+From: Vladimir Oltean <vladimir.oltean@nxp.com>
+To: Wei Fang <wei.fang@nxp.com>
+Cc: claudiu.manoil@nxp.com, xiaoning.wang@nxp.com, andrew+netdev@lunn.ch,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, ioana.ciornei@nxp.com, yangbo.lu@nxp.com,
+	michal.swiatkowski@linux.intel.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v2 net 9/9] net: enetc: fix the off-by-one issue in
+ enetc_map_tx_tso_buffs()
+Message-ID: <20250220163226.42wlaewgfueeezj3@skbuf>
+References: <20250219054247.733243-1-wei.fang@nxp.com>
+ <20250219054247.733243-1-wei.fang@nxp.com>
+ <20250219054247.733243-10-wei.fang@nxp.com>
+ <20250219054247.733243-10-wei.fang@nxp.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250219054247.733243-10-wei.fang@nxp.com>
+ <20250219054247.733243-10-wei.fang@nxp.com>
+X-ClientProxiedBy: BEXP281CA0018.DEUP281.PROD.OUTLOOK.COM (2603:10a6:b10::28)
+ To PA4PR04MB7790.eurprd04.prod.outlook.com (2603:10a6:102:cc::8)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1739866028.git.maciej.wieczor-retman@intel.com>
- <d266338a0eae1f673802e41d7230c4c92c3532b3.1739866028.git.maciej.wieczor-retman@intel.com>
- <CA+fCnZezPtE+xaZpsf3B5MwhpfdQV+5b4EgAa9PX0FR1+iawfA@mail.gmail.com>
-In-Reply-To: <CA+fCnZezPtE+xaZpsf3B5MwhpfdQV+5b4EgAa9PX0FR1+iawfA@mail.gmail.com>
-From: Andrey Konovalov <andreyknvl@gmail.com>
-Date: Thu, 20 Feb 2025 17:32:12 +0100
-X-Gm-Features: AWEUYZlJk8i1PGeryrJoWL6O3cLwlGsfEZG1iYKTI3r7jC586Nd1JaZw47VvF2U
-Message-ID: <CA+fCnZfHAEP08xwUM5TXAihtFzrVG_kJMVXBD1U2Z1BoqkM1gA@mail.gmail.com>
-Subject: Re: [PATCH v2 14/14] x86: Make software tag-based kasan available
-To: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
-Cc: kees@kernel.org, julian.stecklina@cyberus-technology.de, 
-	kevinloughlin@google.com, peterz@infradead.org, tglx@linutronix.de, 
-	justinstitt@google.com, catalin.marinas@arm.com, wangkefeng.wang@huawei.com, 
-	bhe@redhat.com, ryabinin.a.a@gmail.com, kirill.shutemov@linux.intel.com, 
-	will@kernel.org, ardb@kernel.org, jason.andryuk@amd.com, 
-	dave.hansen@linux.intel.com, pasha.tatashin@soleen.com, 
-	ndesaulniers@google.com, guoweikang.kernel@gmail.com, dwmw@amazon.co.uk, 
-	mark.rutland@arm.com, broonie@kernel.org, apopple@nvidia.com, bp@alien8.de, 
-	rppt@kernel.org, kaleshsingh@google.com, richard.weiyang@gmail.com, 
-	luto@kernel.org, glider@google.com, pankaj.gupta@amd.com, 
-	pawan.kumar.gupta@linux.intel.com, kuan-ying.lee@canonical.com, 
-	tony.luck@intel.com, tj@kernel.org, jgross@suse.com, dvyukov@google.com, 
-	baohua@kernel.org, samuel.holland@sifive.com, dennis@kernel.org, 
-	akpm@linux-foundation.org, thomas.weissschuh@linutronix.de, surenb@google.com, 
-	kbingham@kernel.org, ankita@nvidia.com, nathan@kernel.org, ziy@nvidia.com, 
-	xin@zytor.com, rafael.j.wysocki@intel.com, andriy.shevchenko@linux.intel.com, 
-	cl@linux.com, jhubbard@nvidia.com, hpa@zytor.com, 
-	scott@os.amperecomputing.com, david@redhat.com, jan.kiszka@siemens.com, 
-	vincenzo.frascino@arm.com, corbet@lwn.net, maz@kernel.org, mingo@redhat.com, 
-	arnd@arndb.de, ytcoode@gmail.com, xur@google.com, morbo@google.com, 
-	thiago.bauermann@linaro.org, linux-doc@vger.kernel.org, 
-	kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org, 
-	llvm@lists.linux.dev, linux-mm@kvack.org, 
-	linux-arm-kernel@lists.infradead.org, x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PA4PR04MB7790:EE_|GVXPR04MB10756:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1d58db83-79c7-4901-8d73-08dd51cc2ac5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?CtlPq3hf1C7S5aiOyG5VTKDtsfXXsfaAp8Qtg8E23AVBDW1KbXV/+DD4ew26?=
+ =?us-ascii?Q?XjAA71rriPBBh5JDwo6dgWgBW5Sh6EQ1vWjNB5Ywl/wYovmgyQg+x38irbht?=
+ =?us-ascii?Q?sdEeMOIvcjXDxiNB9WsTRPMvZEBOF96TACprvn3+UVvzjFsDApKYz/A5ospX?=
+ =?us-ascii?Q?9AofFPD5BKgXYKZQ50W2pEJYsh+IYp6pjCtPdvoFdSRlnAOxw9lLyt8Giq/d?=
+ =?us-ascii?Q?WkASENlzQJQ4reD/WqbcGc0IJ5hMcag6Vvhipxy/4W9sOOgXjoiQWFRm61mI?=
+ =?us-ascii?Q?qzVFELDSRiubi4G+sL8efHeEozgwo2gr5Y0WMWBxPp6ZeCc50GuGYpAVPIO1?=
+ =?us-ascii?Q?9v467rMFlpHht6GBD//aBHxTg11O/BV1Ry6x6Owfq9ogzFIOuyGfY4pln81d?=
+ =?us-ascii?Q?ln8qX/EcSl9b+B1tIOxgBWm8azssSn7yB0xeVfaocbCAsn99JeEjkf0/W07N?=
+ =?us-ascii?Q?eHfToUBA86wV1ZK5xS4H30AU/XJ+7MRo3Lam7HKJZcX+YEF9RJt1WA8rh3zx?=
+ =?us-ascii?Q?Pn+LuiF3ZlR8uHHaexFjARum31tU1yOppmY19J12puspSeCmPj/JC21BYRDE?=
+ =?us-ascii?Q?IrphjkgSM3SFlvYyc+vcWHI91n6nAnNR/SAa8fBOohN+ShxEqxoIO/eIiyqk?=
+ =?us-ascii?Q?clYO9ZU+1BVmgSRBqgeOGvgy0uqSdxPNntJAkcWl1x2r5i8Xv2rdHIVHjvG2?=
+ =?us-ascii?Q?SMFGAEN+O1cHQsqqQPZGFDfZQbFvfHpFy/bQxpzZzZZTIEu2JqHPtmcvEzun?=
+ =?us-ascii?Q?LG8+rzQ3t7wLLu/PlPUv7RiPVE7imA+xe0HDerRQUSBJFPkkv7PERcYbePTK?=
+ =?us-ascii?Q?YCzsPnB/a0jHFm4VPYdX7WtH3ECK7YOp1uL53sGdB68aqbAQICVjdBFB5LWE?=
+ =?us-ascii?Q?4E9rDI6XceJ/DUH1ZCcZfTGfWEvDAjQ0t2cNdm5bZGD6cU/2NEcBJ5RsVmcb?=
+ =?us-ascii?Q?dMnePPp1ZL5dHKt52HPQQwYlYuQHCcxttZPT/ZmHuM5eSuGIBj3dXy8g4Pn8?=
+ =?us-ascii?Q?WkG2WWXn6idyDgBqciyyT9elBwkB5E49ZEYPXJDnvWr1M+RCb2CDgSbX6C7a?=
+ =?us-ascii?Q?Q0r9P/FCLKq4j2Gzvu2/iMs89aZCkdtfJ9VNjl32sWm3k6n1TOqxXnLAAzWP?=
+ =?us-ascii?Q?rMfuIHQTaq/LvA6WZoTbY1LURvgni/AG5BtruixRTPFdfjKPulPvOAlTObYS?=
+ =?us-ascii?Q?vCpWnEhBHJ+bKev1ifk4xDxu55fL3/gB7wQ1H44lBMa5QzGTH6y/Opibv3pq?=
+ =?us-ascii?Q?ZIQVf4DBx+kyQx7K8+Ra3sCE4dya9eaSA+JGfWsysHTJV+7uLx7yZtxMAcQE?=
+ =?us-ascii?Q?4pW7u9TH9irMIt6AFKX3U+EdDuaSu+aj8RcJpqxwKlMsUKXSIviw30DOpCpR?=
+ =?us-ascii?Q?k8nj/z7F73InbmdTTMpKUOSNV+Nn?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PA4PR04MB7790.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?C6kmQAr1Sq4DPtoACzbElckiVE3dKXWZH3sCPS33smibm9LGWR63hQ0snnBw?=
+ =?us-ascii?Q?pZedVX5oyRKmxI/ZJens5UYxKcxcuhp9VmUDsZkG+p3JlgYI6MeH8PwdRZ/6?=
+ =?us-ascii?Q?MJluMjHdb6BnOSUHUNhGiZTBlN4OqgVDEN9bVbYDBdYCn+GW2rmUSR0KEcSp?=
+ =?us-ascii?Q?2KY0KMo+Icbgv8/Zb+LLIbraph2ofqLxDVTleKT5829ssMphBLOsjIfKB7AW?=
+ =?us-ascii?Q?UIEccPIs8DTPQ3RTyyqpm6OiiWfcr3rXKrEeX1JQhgu4oX9R4a0QEUaDLLv3?=
+ =?us-ascii?Q?Mwa8EIGHYEt1Lg7th2c1NnhkOZWG8ehGe8+n1tU4Vxk5hYjXzWwifm7a64U6?=
+ =?us-ascii?Q?/4bMDxbMxYSaRbSmhoDztAD5kGNMfaBuE4oVfTA87NVzJrRdZAYO0ZKTWvoa?=
+ =?us-ascii?Q?PfZKThvQyVDXhTju3RBUObNinQ9phl+5imxVQ1wmjBRT4AdH9BzhVwoFyvc2?=
+ =?us-ascii?Q?zALolHgRFTDZDHvjR72tgYXrWIDSxE8sipNBUs1uXnMQZkks3tyfyflCPnhO?=
+ =?us-ascii?Q?0VzigKYws5i8d+tBikhUMoa8qY7uB3DLXUk38j2SVqLFSQPIK33l8eh+iWy/?=
+ =?us-ascii?Q?GK2BDSmmPQlvQC1Dj06x55vJu3w9uoUMqHSAtFvPNZoplDUMENr9IUvZo5eS?=
+ =?us-ascii?Q?PWtV4PfOiU4MZLdgGp5BDeMBBEcT0JKG4aNsgK/bWVSbVQuSq2mdmXF1+w6M?=
+ =?us-ascii?Q?6ophmPUUjTSImeU+L4Nk3lUWRk3ruR89CrfI3NJyGJJ/g/ZK2goZU1/NNGZz?=
+ =?us-ascii?Q?CgAf4vYE1vFafcOdybfbqcYxrf/ZMvpwB7/cRfKyjw38gyakWmASSoemRGdY?=
+ =?us-ascii?Q?XeUB0dBMCmB/oLwWdvBGWSlngDt3YhYczYSezOG5yokjfGfq8g7QEOCG02s6?=
+ =?us-ascii?Q?mdVaauQWThmkbkUpsuujzOaW+6Uz2vZqCwB4bFL6X1UwHQXrgXXi3EpTo3dx?=
+ =?us-ascii?Q?wQUl526zmz0LYgmyLtBLGQZ2djiJLwwKw/sbG8JbQZ4erhwSPJjB1hcwdcKr?=
+ =?us-ascii?Q?xRAx+BgveprRNu4rhsiWQtX2kmtepZoUQ8Xl5bDAhCNxjfsmHNaHe7Yyy2Yg?=
+ =?us-ascii?Q?kdOsF/nxleYskCBCk+WEyAQ1Bv9q6sb3cUzb0aGaM14Zhb4YmKkb32YQ3XvX?=
+ =?us-ascii?Q?Y6ONJziG4LFmv4itWfXBVOYDS+mm1O87l0B9sOykSqSc6TQ8HI9YxNytviOC?=
+ =?us-ascii?Q?A//IrxsvWuY6v1gq1VfxgwUt1dq33UlDg7Uahd1M15YbbneiHPs2bWyEHjM/?=
+ =?us-ascii?Q?rSFZx7ZqkD7EP8BiuUblUrWwE7rWkyarhJKJ8UC/3KFHS0mCWCE+7FDDxmmN?=
+ =?us-ascii?Q?IMQHATyPJb5o11JdDosk6+34I5NvRwoDaX8SQeiWCFa6kh5duJ4GlFFNOAHP?=
+ =?us-ascii?Q?yVAgbicRHJa+My6TbU4DxXLeMZH0pTmuHuNDp4GAsgm/+YsiMgmL6D9dNLkl?=
+ =?us-ascii?Q?XkcYu6Kd39E6jRC/df70yQq1TxFbYlgFP7TpnuDK2MqgShqepGhzXlW8O2SV?=
+ =?us-ascii?Q?IsYpyxYz5KEGYBQqOQTye1tk1F57UnrNddS/vG1Q73G07n0AWNzJ28A/loFo?=
+ =?us-ascii?Q?NgHQVHxQd23pPbYw8J8l4YvQXEmJbSbkqyLvRS/qVassH9+41tU7amF5JUZU?=
+ =?us-ascii?Q?mg=3D=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1d58db83-79c7-4901-8d73-08dd51cc2ac5
+X-MS-Exchange-CrossTenant-AuthSource: PA4PR04MB7790.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Feb 2025 16:32:29.8506
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: YsT4BOTTycEipey5U+ttueUoPNuP72+Wi0GYTzFinolQXJp3KsOPrh4gX4H2VDXVnI1fOGeMiQYKbgf4yqlkqQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR04MB10756
 
-On Thu, Feb 20, 2025 at 12:31=E2=80=AFAM Andrey Konovalov <andreyknvl@gmail=
-.com> wrote:
->
-> On Tue, Feb 18, 2025 at 9:20=E2=80=AFAM Maciej Wieczor-Retman
-> <maciej.wieczor-retman@intel.com> wrote:
-> >
-> > Make CONFIG_KASAN_SW_TAGS available for x86 machines if they have
-> > ADDRESS_MASKING enabled (LAM) as that works similarly to Top-Byte Ignor=
-e
-> > (TBI) that allows the software tag-based mode on arm64 platform.
-> >
-> > Set scale macro based on KASAN mode: in software tag-based mode 32 byte=
-s
-> > of memory map to one shadow byte and 16 in generic mode.
->
-> These should be 16 and 8.
->
-> >
-> > Signed-off-by: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
-> > ---
-> > Changelog v2:
-> > - Remove KASAN dense code.
-> >
-> >  arch/x86/Kconfig                | 6 ++++++
-> >  arch/x86/boot/compressed/misc.h | 1 +
-> >  arch/x86/include/asm/kasan.h    | 2 +-
-> >  arch/x86/kernel/setup.c         | 2 ++
-> >  4 files changed, 10 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-> > index f4ef64bf824a..dc48eb5b664f 100644
-> > --- a/arch/x86/Kconfig
-> > +++ b/arch/x86/Kconfig
-> > @@ -195,6 +195,7 @@ config X86
-> >         select HAVE_ARCH_JUMP_LABEL_RELATIVE
-> >         select HAVE_ARCH_KASAN                  if X86_64
-> >         select HAVE_ARCH_KASAN_VMALLOC          if X86_64
-> > +       select HAVE_ARCH_KASAN_SW_TAGS          if ADDRESS_MASKING
-> >         select HAVE_ARCH_KFENCE
-> >         select HAVE_ARCH_KMSAN                  if X86_64
-> >         select HAVE_ARCH_KGDB
-> > @@ -402,6 +403,11 @@ config KASAN_SHADOW_OFFSET
-> >         hex
-> >         default 0xdffffc0000000000 if KASAN_GENERIC
-> >
-> > +config KASAN_SHADOW_SCALE_SHIFT
-> > +       int
-> > +       default 4 if KASAN_SW_TAGS
-> > +       default 3
->
-> What's the purpose of this config option? I think we can just change
-> the value of the KASAN_SHADOW_SCALE_SHIFT define when KASAN_SW_TAGS is
-> enabled.
->
->
-> > +
-> >  config HAVE_INTEL_TXT
-> >         def_bool y
-> >         depends on INTEL_IOMMU && ACPI
-> > diff --git a/arch/x86/boot/compressed/misc.h b/arch/x86/boot/compressed=
-/misc.h
-> > index dd8d1a85f671..f6a87e9ad200 100644
-> > --- a/arch/x86/boot/compressed/misc.h
-> > +++ b/arch/x86/boot/compressed/misc.h
-> > @@ -13,6 +13,7 @@
-> >  #undef CONFIG_PARAVIRT_SPINLOCKS
-> >  #undef CONFIG_KASAN
-> >  #undef CONFIG_KASAN_GENERIC
-> > +#undef CONFIG_KASAN_SW_TAGS
-> >
-> >  #define __NO_FORTIFY
-> >
-> > diff --git a/arch/x86/include/asm/kasan.h b/arch/x86/include/asm/kasan.=
-h
-> > index 4bfd3641af84..cfc31e4a2f70 100644
-> > --- a/arch/x86/include/asm/kasan.h
-> > +++ b/arch/x86/include/asm/kasan.h
-> > @@ -6,7 +6,7 @@
-> >  #include <linux/kasan-tags.h>
-> >  #include <linux/types.h>
-> >
-> > -#define KASAN_SHADOW_SCALE_SHIFT 3
-> > +#define KASAN_SHADOW_SCALE_SHIFT CONFIG_KASAN_SHADOW_SCALE_SHIFT
-> >
-> >  /*
-> >   * Compiler uses shadow offset assuming that addresses start
-> > diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-> > index cebee310e200..768990c573ea 100644
-> > --- a/arch/x86/kernel/setup.c
-> > +++ b/arch/x86/kernel/setup.c
-> > @@ -1124,6 +1124,8 @@ void __init setup_arch(char **cmdline_p)
-> >
-> >         kasan_init();
-> >
-> > +       kasan_init_sw_tags();
-> > +
-> >         /*
-> >          * Sync back kernel address range.
-> >          *
-> > --
-> > 2.47.1
-> >
+On Wed, Feb 19, 2025 at 01:42:47PM +0800, Wei Fang wrote:
+> There is an off-by-one issue for the err_chained_bd path, it will free
+> one more tx_swbd than expected. But there is no such issue for the
+> err_map_data path.
 
-Also please update the descriptions of all related options in lib/Kconfig.k=
-asan.
+It's clear that one of err_chained_bd or err_map_data is wrong, because
+they operate with a different "count" but same "i". But how did you
+determine which one is wrong? Is it based on static analysis? Because I
+think the other one is wrong, more below.
+
+> To fix this off-by-one issue and make the two error
+> handling consistent, the loop condition of error handling is modified
+> and the 'count++' operation is moved before enetc_map_tx_tso_data().
+> 
+> Fixes: fb8629e2cbfc ("net: enetc: add support for software TSO")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Wei Fang <wei.fang@nxp.com>
+> ---
+>  drivers/net/ethernet/freescale/enetc/enetc.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/freescale/enetc/enetc.c b/drivers/net/ethernet/freescale/enetc/enetc.c
+> index 9a24d1176479..fe3967268a19 100644
+> --- a/drivers/net/ethernet/freescale/enetc/enetc.c
+> +++ b/drivers/net/ethernet/freescale/enetc/enetc.c
+> @@ -832,6 +832,7 @@ static int enetc_map_tx_tso_buffs(struct enetc_bdr *tx_ring, struct sk_buff *skb
+>  			txbd = ENETC_TXBD(*tx_ring, i);
+>  			tx_swbd = &tx_ring->tx_swbd[i];
+>  			prefetchw(txbd);
+> +			count++;
+>  
+>  			/* Compute the checksum over this segment of data and
+>  			 * add it to the csum already computed (over the L4
+> @@ -848,7 +849,6 @@ static int enetc_map_tx_tso_buffs(struct enetc_bdr *tx_ring, struct sk_buff *skb
+>  				goto err_map_data;
+>  
+>  			data_len -= size;
+> -			count++;
+>  			bd_data_num++;
+>  			tso_build_data(skb, &tso, size);
+>  
+> @@ -874,13 +874,13 @@ static int enetc_map_tx_tso_buffs(struct enetc_bdr *tx_ring, struct sk_buff *skb
+>  	dev_err(tx_ring->dev, "DMA map error");
+>  
+>  err_chained_bd:
+> -	do {
+> +	while (count--) {
+>  		tx_swbd = &tx_ring->tx_swbd[i];
+>  		enetc_free_tx_frame(tx_ring, tx_swbd);
+>  		if (i == 0)
+>  			i = tx_ring->bd_count;
+>  		i--;
+> -	} while (count--);
+> +	}
+>  
+>  	return 0;
+>  }
+
+ah, there you go, here's the 3rd instance of TX DMA buffer unmapping :-/
+
+Forget what I said in reply to patch 1/9 about having common code later.
+After going through the whole set and now seeing this, I now think it's
+better that you create the helper now, and consolidate the 2 instances
+you touch anyway. Later you can make enetc_lso_hw_offload() reuse this
+helper in net-next.
+
+It should be something like this in the end (sorry, just 1 squashed diff):
+
+diff --git a/drivers/net/ethernet/freescale/enetc/enetc.c b/drivers/net/ethernet/freescale/enetc/enetc.c
+index 6178157611db..a70e92dcbe2c 100644
+--- a/drivers/net/ethernet/freescale/enetc/enetc.c
++++ b/drivers/net/ethernet/freescale/enetc/enetc.c
+@@ -106,6 +106,24 @@ static void enetc_free_tx_frame(struct enetc_bdr *tx_ring,
+ 	}
+ }
+ 
++/**
++ * enetc_unwind_tx_frame() - Unwind the DMA mappings of a multi-buffer TX frame
++ * @tx_ring: Pointer to the TX ring on which the buffer descriptors are located
++ * @count: Number of TX buffer descriptors which need to be unmapped
++ * @i: Index of the last successfully mapped TX buffer descriptor
++ */
++static void enetc_unwind_tx_frame(struct enetc_bdr *tx_ring, int count, int i)
++{
++	while (count--) {
++		struct enetc_tx_swbd *tx_swbd = &tx_ring->tx_swbd[i];
++
++		enetc_free_tx_frame(tx_ring, tx_swbd);
++		if (i == 0)
++			i = tx_ring->bd_count;
++		i--;
++	}
++}
++
+ /* Let H/W know BD ring has been updated */
+ static void enetc_update_tx_ring_tail(struct enetc_bdr *tx_ring)
+ {
+@@ -399,13 +417,7 @@ static int enetc_map_tx_buffs(struct enetc_bdr *tx_ring, struct sk_buff *skb)
+ dma_err:
+ 	dev_err(tx_ring->dev, "DMA map error");
+ 
+-	while (count--) {
+-		tx_swbd = &tx_ring->tx_swbd[i];
+-		enetc_free_tx_frame(tx_ring, tx_swbd);
+-		if (i == 0)
+-			i = tx_ring->bd_count;
+-		i--;
+-	}
++	enetc_unwind_tx_frame(tx_ring, count, i);
+ 
+ 	return 0;
+ }
+@@ -752,7 +764,6 @@ static int enetc_lso_map_data(struct enetc_bdr *tx_ring, struct sk_buff *skb,
+ 
+ static int enetc_lso_hw_offload(struct enetc_bdr *tx_ring, struct sk_buff *skb)
+ {
+-	struct enetc_tx_swbd *tx_swbd;
+ 	struct enetc_lso_t lso = {0};
+ 	int err, i, count = 0;
+ 
+@@ -776,13 +787,7 @@ static int enetc_lso_hw_offload(struct enetc_bdr *tx_ring, struct sk_buff *skb)
+ 	return count;
+ 
+ dma_err:
+-	do {
+-		tx_swbd = &tx_ring->tx_swbd[i];
+-		enetc_free_tx_frame(tx_ring, tx_swbd);
+-		if (i == 0)
+-			i = tx_ring->bd_count;
+-		i--;
+-	} while (--count);
++	enetc_unwind_tx_frame(tx_ring, count, i);
+ 
+ 	return 0;
+ }
+@@ -877,13 +882,7 @@ static int enetc_map_tx_tso_buffs(struct enetc_bdr *tx_ring, struct sk_buff *skb
+ 	dev_err(tx_ring->dev, "DMA map error");
+ 
+ err_chained_bd:
+-	while (count--) {
+-		tx_swbd = &tx_ring->tx_swbd[i];
+-		enetc_free_tx_frame(tx_ring, tx_swbd);
+-		if (i == 0)
+-			i = tx_ring->bd_count;
+-		i--;
+-	}
++	enetc_unwind_tx_frame(tx_ring, count, i);
+ 
+ 	return 0;
+ }
+
+With the definitions laid out explicitly in a kernel-doc, doesn't the
+rest of the patch look a bit wrong? Why would you increment "count"
+before enetc_map_tx_tso_data() succeeds? Why isn't the problem that "i"
+needs to be rolled back on enetc_map_tx_tso_data() failure instead?
 
