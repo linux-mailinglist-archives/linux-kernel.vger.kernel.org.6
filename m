@@ -1,160 +1,162 @@
-Return-Path: <linux-kernel+bounces-524473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4739A3E384
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 19:13:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED257A3E382
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 19:12:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09924189044C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 18:13:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3647179133
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 18:12:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2D54214213;
-	Thu, 20 Feb 2025 18:13:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BC77214213;
+	Thu, 20 Feb 2025 18:12:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jvrjRSc3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VabyIUYV"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 178EF20485D;
-	Thu, 20 Feb 2025 18:13:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00D8F1FAC30;
+	Thu, 20 Feb 2025 18:12:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740075185; cv=none; b=XK/uqf8xkkx5EuElAsqR5aMSxWAy/2/pmcxqVVfV+BsZhvK2JRLI0g52TXUGNwK0GWjWgejYVLjQ77uzoNluaFsjmEvgRmfBv+dqUUqWe5tLNarEn4KOqiqMH5H9CUN7cufHIgrabjknH58hCcUhTEAtBOhB4C2pJmQII/FTK1A=
+	t=1740075169; cv=none; b=ttUTWhWfUieiRePl/+1oQdXsXSjXnbpflkX6qHw//e+F7HH9l7UI6E1+5+1tUXBjpouLdUaJ5D/NK29bwLNjaOGCofeLb3UP2aaCcjO3wU8JEb6hq+J6S1YA/KsGb6GwakXVXkJ9VJy034lC77UeIa20BOX9JtawawezR+aNhDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740075185; c=relaxed/simple;
-	bh=iOwyubfEwlgonjCBmwXc8PikMqd0oQVwQdZ+60PJrV4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=S3HIwmrwFhpGp2duQ95batTKv4M2DGb5ypGuCyqiw0t+eHq/xhTVSsRN8VPBRmVVLIHKr08akoJRd/J2XG0cRB6fQiqvUI34djv4i7WT09z/OwfSHLUFpyzv+66S/cLmenxNPVIy0HB8it9IeJD1iIBZeHZlSEaIIx4KFU/rl5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jvrjRSc3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EF4DC4CEE3;
-	Thu, 20 Feb 2025 18:13:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740075184;
-	bh=iOwyubfEwlgonjCBmwXc8PikMqd0oQVwQdZ+60PJrV4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=jvrjRSc3Mewmsbw4uj7gV3Y8iVi71m28V6XJovvoioCzse6ZF3st6hPfADUdmKAnT
-	 k0TtCyEgKiJ1k3GXoEMHTBfJgaq4Kutz46lBH/oQYN8UPDpGle5uOAffGCBhrKKhcW
-	 CUr8dnIzy29JLZni+YQjvuiq0BhT7zL7fdrnPETV+bAXRsqg/eSmLAO5eTVr4xPcZa
-	 +060VNhj1pLVAnI5NLPHxN7HJV4dxaj48b6l6A+NOFhRxf7Sk7PlPcaiecHntIcjp0
-	 5oHl2VPJ58oHUz6bFKoVnOqb4Zj5a2EYeLO/++t7i/2JSeMk2cbpe/MKQmLkHVQR57
-	 5FlNFvwDK2q8A==
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-543d8badc30so1535357e87.0;
-        Thu, 20 Feb 2025 10:13:04 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWM7pimAuU8GC+YZJFbEgs9RijOtmAjhwyw2tSipSzypb/IenbZBNQvqjRMrYRWcZkHgNSw+dlX+FS0zlat@vger.kernel.org, AJvYcCXWgFFYp0dFZ7/hYSzimKrQIYmAZr+eUZlXInWftu/xk9+p8PJwW9uucCCaE26BiZHyiw7yGfglsqBm4Ng=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1BlGMG+eI6JX6YeFCI0BwqNCZ1VgUGKXKyQvjUtBn4xmNnSvQ
-	ehxxuwbTzoi6L7hIgzwwDdpgpJXmtRhIrU914ASD3/MreRgxmpQOq1XSWJ4W6aK3FL5M90E6RdC
-	DUOIh4PNIyisrLqNs8xutZXmC80A=
-X-Google-Smtp-Source: AGHT+IHHVUrcL5rkcVLI1kVwE0GL8V4V3P5DP0PzgyCNVcQrxnx7WthKcd//qPDaSMSnPoYzVrVrQvELsanbaCpbQZU=
-X-Received: by 2002:a05:6512:ba6:b0:545:e19:ba1c with SMTP id
- 2adb3069b0e04-54838ef208bmr5168e87.19.1740075183320; Thu, 20 Feb 2025
- 10:13:03 -0800 (PST)
+	s=arc-20240116; t=1740075169; c=relaxed/simple;
+	bh=RVJ0Ui+e4wiQwjjazPtlbUqFxh8TiHfnG0fw+upHVBE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YjOzCxot8W6bCl6UaqpZIuqlGIffwW2TAi8iaswnhWn74tOCn0tryAHjk2XLVrE/wpX60e+vFxP2HDhhP5Zq5UMoDGcP0BkVDLjAQILm/Hxye+VuahWQivN7NrfCcEtlERtFXraB0PiMrq+0r92Wu7K1x+wPDNbZ/rlyL+sO7/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VabyIUYV; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-38f286b5281so673262f8f.1;
+        Thu, 20 Feb 2025 10:12:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740075166; x=1740679966; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hf9BmegiktNtcY6HS4qZYakNRxia/v7+na1LdoL1VGI=;
+        b=VabyIUYV3sVDetbVm7sSECrrdTE8/kD4Tp77zlnSdgwp11QJ+Qs40xTCtC2TjWrdeK
+         /M+AfcrbRw8XB/mNrBjHaHB3S7TXMkGyABGt9ZOknh3MW06f3VQb6IYkqJEdxNvgOroz
+         0cmvEoC2UT1GfmU+89DMVUq5zcl0Va8k/DoqDTZD8s9sswXJAt26t0P9gTc9HsCHxqE7
+         aZ2VXaN10ccpKDCTiIqmiBD0tGOxanLhqYDoYiws4pqqmiTcZWlfXDkfO+7NwczVhuqx
+         3C+n3tIea7jh6DpVXaYAQbaWwHDkYNDbv85mrDueNBR1VzZCU/3/NuvR1uLCM4IZuZNm
+         ED0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740075166; x=1740679966;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hf9BmegiktNtcY6HS4qZYakNRxia/v7+na1LdoL1VGI=;
+        b=mbsgs33I0dNao/h5Vbl9CCN7U1GhyCwf1hKtXpYH9tN1by9m0z/QvXhh2s9o6qK/aw
+         l6PRN8oGxEPMv2giya9UmZj09oZBnUhXs/W7peFc9jd97H6ZTDwzXZJns2uRt4m0CXXW
+         yHtaGM2x5vsJhmiwd53qEgL4Vj1LsU5a6MkZt5YJXue2rFq+hJGljsvqxoKN7lfS2Aqv
+         mGxj//qtLS1DorWRKF2cBhM/3a6Ctn0qJnfvN3UorteNs+VwRH9WzCHLm8c1IRLIMGdr
+         x9iDj2zy1JoXl1hxR9y0GyNTzOSVoQJ/R6hxpPRVXuF7ugDg1zRGmK5KJ+QY5sewVf3e
+         u96A==
+X-Forwarded-Encrypted: i=1; AJvYcCVD7bligKGJArtFDKGAvwYfUOGFXMDS+3rBkkN6quuQZ/CJKMOJdN92s3sJ+5Q0PB6hl6757L8Rw3E=@vger.kernel.org, AJvYcCXYmUGJHiive6pwP8TVA21tz559i2xjpyBTQjusM1u2S24BttrQ/L/+qdzTWSZ6cT0qFvDAYzGDMXNST95s@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQLczEARdfIeSrJ+vH0q5E0CfO71G6rVqk8f8k5UTr3iSWEo4b
+	oloCv4cqoD4fBUTvI+CabqEVXSd/j4ZutMPyozDLzpFatTzT9mP1
+X-Gm-Gg: ASbGncudxbJS1bIiLK7DTc2lL1ZscNkB96Q4QKsf/SIZPuK5D3ET7AjTXUukVcSHOrB
+	im8vC9N1nErvQUkpo8Y2QpATzBlalA9wYnhn9smz7aYw7jlf0phJ5492y/tjoOjE4pqL3KvThR+
+	4SxPGYNhQ+l3vv5chf+Ux7DDeIhOkAthtVtRoDC615RdNNumKjvrW+VoUaRTQ5hx59Lb+XjLJdI
+	DbUcTW4mdwm24tnkjl6CYW4nUbnrGkOoiYVEQr/mGoKtXaxo90IPTrEnb5QuVc65dJqvndssKfh
+	qv8SSQJIE//YNWrFHCmHQDLJpfjfEqyArKpvFFtMQmkGaDcxII+0/0yHpzo73zjQOdE=
+X-Google-Smtp-Source: AGHT+IG8SxlEpGzhrbOAaMiZSLB6w/8BQXRpKpsCxpcNHWG6kyfbSzJtzHPfDd1frA7kH4B1Z2SqFw==
+X-Received: by 2002:a5d:6dd1:0:b0:38f:4f25:14a3 with SMTP id ffacd0b85a97d-38f6e979d1amr195111f8f.30.1740075166029;
+        Thu, 20 Feb 2025 10:12:46 -0800 (PST)
+Received: from jernej-laptop.localnet (86-58-6-171.dynamic.telemach.net. [86.58.6.171])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f258f5efdsm21016778f8f.43.2025.02.20.10.12.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Feb 2025 10:12:45 -0800 (PST)
+From: Jernej =?UTF-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
+To: Emilio =?UTF-8?B?TMOzcGV6?= <emilio@elopez.com.ar>,
+ David Laight <david.laight.linux@gmail.com>,
+ Anastasia Belova <abelova@astralinux.ru>
+Cc: Anastasia Belova <abelova@astralinux.ru>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+ Chen-Yu Tsai <wens@csie.org>, Samuel Holland <samuel@sholland.org>,
+ Maxime Ripard <mripard@kernel.org>, Hans de Goede <hdegoede@redhat.com>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
+ lvc-project@linuxtesting.org
+Subject: Re: [PATCH] clk: sunxi: clean up rate counting
+Date: Thu, 20 Feb 2025 19:12:43 +0100
+Message-ID: <2385242.n0HT0TaD9V@jernej-laptop>
+In-Reply-To: <20250203112930.650813-1-abelova@astralinux.ru>
+References: <20250203112930.650813-1-abelova@astralinux.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240727074526.1771247-1-masahiroy@kernel.org>
- <20240727074526.1771247-4-masahiroy@kernel.org> <b3a8816c-3846-83ab-9750-fd12041d9495@quicinc.com>
- <20250220-red-antelope-of-education-5417aa@l-nschier-nb> <0ee862ec-4c36-4c3e-ae90-627c6b0e527b@quicinc.com>
- <20250220-kickass-famous-kittiwake-c11f5b@l-nschier-nb> <80cf4e9a-5d49-4bc3-8160-1b23c31d4d36@quicinc.com>
- <2025022020-armband-clock-69af@gregkh> <13fac9ee-cad9-466b-9216-8c0516600b03@quicinc.com>
- <2025022057-reclusive-overreach-ac89@gregkh>
-In-Reply-To: <2025022057-reclusive-overreach-ac89@gregkh>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Fri, 21 Feb 2025 03:12:25 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARZon-tqr+oKfr0r+nSfK9R6iz1AZrY9pLoaAhOqWfL6w@mail.gmail.com>
-X-Gm-Features: AWEUYZlMlGicc1vOO01YGbQTwSZKn4jkM5kXZSNLg62qBjkuNlwITi8aKcn3HUU
-Message-ID: <CAK7LNARZon-tqr+oKfr0r+nSfK9R6iz1AZrY9pLoaAhOqWfL6w@mail.gmail.com>
-Subject: Re: [PATCH 3/4] kbuild: slim down package for building external modules
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Jeffrey Hugo <quic_jhugo@quicinc.com>, Nicolas Schier <n.schier@avm.de>, 
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Kees Cook <kees@kernel.org>, Nathan Chancellor <nathan@kernel.org>, Ben Hutchings <ben@decadent.org.uk>, 
-	regressions@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-On Fri, Feb 21, 2025 at 2:43=E2=80=AFAM Greg KH <gregkh@linuxfoundation.org=
-> wrote:
->
-> On Thu, Feb 20, 2025 at 10:24:32AM -0700, Jeffrey Hugo wrote:
-> > On 2/20/2025 9:49 AM, Greg KH wrote:
-> > > What do you need/want to parse the .config file in the first place?  =
-Why
-> > > not rely on the generated .h files instead as those can be parsed the
-> > > same way as before, right?
-> >
-> > Two usecases -
-> >
-> > First when secure boot is enabled, DKMS looks for CONFIG_MODULE_SIG_HAS=
-H to
-> > figure out signing the modules so that they can be loaded.  Removing .c=
-onfig
-> > causes an error in DKMS and the module signing process will fail.  The
-> > resulting modules (already compiled successfully) will fail to load.
-> > Whatever the user needed those modules for will no longer work.
->
-> Shouldn't the "normal" kbuild process properly sign the module if it
-> needs to be signed?  Or are you trying to do this "by hand"?
+Dne ponedeljek, 3. februar 2025 ob 12:29:28 Srednjeevropski standardni =C4=
+=8Das je Anastasia Belova napisal(a):
+> If n =3D 255, the result of multiplication of n and 24000000
+> may not fit int type. Swap division and shift with multiplication.
+>=20
+> Found by Linux Verification Center (linuxtesting.org) with SVACE.
+>=20
+> Fixes: 6424e0aeebc4 ("clk: sunxi: rewrite sun9i_a80_get_pll4_factors()")
+> Signed-off-by: Anastasia Belova <abelova@astralinux.ru>
 
-You can ignore this.
-This is not related to the upstream module signing.
+While this should work, should we try to remove (old) sunxi clock drivers
+instead? Drivers we converted 8 years ago, except A20 GMAC and A80 PRCM clo=
+cks.
+Even if we convert them now, we need some transition time for them.
 
-He is just explaining how DKMS greps CONFIG_MODULE_SIG_HASH.
+Best regards,
+Jernej
 
-See this line:
-https://github.com/dell/dkms/blob/v3.1.5/dkms.in#L1113
-
-The upstream kernel documentation said "do not grep .config" many years ago=
-.
-The latest DKMS has been fixed.
-
-
-
->
-> > If the user is on Ubuntu, and has built a kernel 6.12 or later, they ne=
-ed to
-> > build upstream DKMS and use it as none of the Canonical provided DKMS b=
-uilds
-> > have the fix.  This feels like a situation that would make the user afr=
-aid
-> > to upgrade their kernel (to your point above).
-> >
-> > This feels very much like an "at runtime" issue, assuming external modu=
-les
-> > are supported.  I may be wrong here.
->
-> external modules can be broken at any moment in time, you know that.
-> There's never a guarantee for that at all.
->
-> > Second, our usecase is that we look at the .config to tell if a particu=
-lar
-> > driver is included in the kernel build (config =3Dy or =3Dm). This driv=
-er
-> > provides diagnostic information which is useful to our product, but not
-> > required for operation.  It does not have headers that are exposed to t=
-he
-> > rest of the kernel, so checking the generated .h files does not work.  =
-If
-> > the driver is not built, we provide a backported version that is then b=
-uilt
-> > out of tree.
->
-> You can check the same .h files for those config options, no need to
-> manually parse a .config file.  What's wrong with including
-> include/generated/autoconf.h properly?  That's what the build system
-> uses, right?
-
-Upstream uses include/config/auto.conf
-External modules can do the same.
+> ---
+>  drivers/clk/sunxi/clk-sun9i-core.c | 14 +++++++++-----
+>  1 file changed, 9 insertions(+), 5 deletions(-)
+>=20
+> diff --git a/drivers/clk/sunxi/clk-sun9i-core.c b/drivers/clk/sunxi/clk-s=
+un9i-core.c
+> index d93c7a53c6c0..639c83ed63b8 100644
+> --- a/drivers/clk/sunxi/clk-sun9i-core.c
+> +++ b/drivers/clk/sunxi/clk-sun9i-core.c
+> @@ -25,12 +25,12 @@
+> =20
+>  static void sun9i_a80_get_pll4_factors(struct factors_request *req)
+>  {
+> -	int n;
+> -	int m =3D 1;
+> -	int p =3D 1;
+> +	unsigned int n;
+> +	unsigned int m =3D 1;
+> +	unsigned int p =3D 1;
+> =20
+>  	/* Normalize value to a 6 MHz multiple (24 MHz / 4) */
+> -	n =3D DIV_ROUND_UP(req->rate, 6000000);
+> +	n =3D DIV_ROUND_UP(req->rate, 6000000ul);
+> =20
+>  	/* If n is too large switch to steps of 12 MHz */
+>  	if (n > 255) {
+> @@ -50,7 +50,11 @@ static void sun9i_a80_get_pll4_factors(struct factors_=
+request *req)
+>  	else if (n < 12)
+>  		n =3D 12;
+> =20
+> -	req->rate =3D ((24000000 * n) >> p) / (m + 1);
+> +	/* Division and shift should be done before multiplication to
+> +	 * avoid overflow. The result will be correct because '>> p' and
+> +	 * '/ (m + 1)' are both just conditional 'divide by 2'
+> +	 */
+> +	req->rate =3D ((24000000ul >> p) / (m + 1)) * n;
+>  	req->n =3D n;
+>  	req->m =3D m;
+>  	req->p =3D p;
+>=20
 
 
 
 
---=20
-Best Regards
-Masahiro Yamada
 
