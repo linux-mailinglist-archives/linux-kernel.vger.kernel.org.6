@@ -1,80 +1,102 @@
-Return-Path: <linux-kernel+bounces-524804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3EACA3E74C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 23:14:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A827FA3E75A
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 23:17:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 751AA17F8BF
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 22:14:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E005B19C32E0
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 22:17:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C396F213E7C;
-	Thu, 20 Feb 2025 22:14:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2345D1FF7D3;
+	Thu, 20 Feb 2025 22:17:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LGW8xvOX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gsWDEYRA"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28453192B86;
-	Thu, 20 Feb 2025 22:14:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 662F81B4247;
+	Thu, 20 Feb 2025 22:17:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740089689; cv=none; b=gS0yB3W1+t0B7aZg7GqQBkWAhLNpp/OxsLn7eFbcNx0+qurCTQP9RTMx64HQNy5G716HQQ5m+dE+04KTkDph6Fg9iK0x9pfM/EdidVnWQW9EcrUBxNWRhY0Zhe0FlKaSYelnDO4uuSmEpZeGiYFIdOuU0dP3j/w3x56qj/fCAg8=
+	t=1740089843; cv=none; b=bOoAz4kl08vmS0bj2rgVuTHh32pPbgaxn9DMgT7wuDzvA7EDPQTLko4vFZ2l1kRGnbwcreHyOfrOQu/jzcaZ5HmTvnRORukM8jzBaX+d4CDtGs9gjaNAs6wB70I15ZYeanPiSnY8/4buSIdYrs560SOTDQ8NIXF66gmDqnjyg6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740089689; c=relaxed/simple;
-	bh=zhDIxuQ136+RGJi0J8GufU4CCYD/wr4uuq3P5v1FcPQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=uAm1wvbWfcIUwC9erTrNfcs0j82u47fvPOFq5PAtBOqFgel6/fkjzcqOhu1yrYzxUlxeKjxSyyMDCPrBAQR1yIri4RvfpDSK0DIijwu2bKrAjNe0SK1vbRVJauP3gC782Ps3stzOYLQBi6x/w7TqjlTNeODWaCbCgpkwR2DuTUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LGW8xvOX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67B81C4CED1;
-	Thu, 20 Feb 2025 22:14:48 +0000 (UTC)
+	s=arc-20240116; t=1740089843; c=relaxed/simple;
+	bh=fwRMLQoTvvslio/qHTjWfmSIblsDq9Yevo6OmjlR7Us=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Tsd2EiRA0iQ7RC9Z/w3Z3cxyrOqrHotwgMZwCegA8pf5vw4NDD6cH3rRU973TeVWEV9ERUD+QWVKB2kYS7cieKgBpldEwhWpgiUxOumIWHsgMIGCmkykJsXXrgYZP28DXJ9gcRqhNqh3rGVbxnF9Yb2YQTx3FKlmx65Vxr3Wwek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gsWDEYRA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CAD62C4CED1;
+	Thu, 20 Feb 2025 22:17:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740089688;
-	bh=zhDIxuQ136+RGJi0J8GufU4CCYD/wr4uuq3P5v1FcPQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=LGW8xvOXcqVhfz7iG4eAZNgSQ/5vq6S3cb8l7b6SmqF4M2upK495+ZCgxuXxxLF2t
-	 45S5+nigcK13R7A8rRwVz1uQCDT5i6usSuCYMzGvfqbV5y/N/H2TE9MZTL9lUMNXYc
-	 kcWR4t7TPjg5Er/nRWuz6+thQxkui51i3ZgxD/jj/gzHGc1/pKGIDs6GY2ZmCB+Rax
-	 LPMWDIOHMnZNFwU/01PMHOdoXG08lji7Ey2ZT/TUHJqYkyjSnjhXmifWvsIKLYibLT
-	 2p2O0NZldbYmB9xuUbTjG3QTXKohjU6ktHqTi5vMalRc+A9ytu303fdfqRjUA2oZ7K
-	 CVra70oPzqNOQ==
-From: SeongJae Park <sj@kernel.org>
-To: SeongJae Park <sj@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	damon@lists.linux.dev,
-	kernel-team@meta.com,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [PATCH 0/8] mm/damon: add sysfs dirs for managing DAMOS filters based on handling layers
-Date: Thu, 20 Feb 2025 14:14:45 -0800
-Message-Id: <20250220221445.39118-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250220194646.37726-1-sj@kernel.org>
-References: 
+	s=k20201202; t=1740089842;
+	bh=fwRMLQoTvvslio/qHTjWfmSIblsDq9Yevo6OmjlR7Us=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=gsWDEYRAyTvAs1kE0egmdOtU3gAB6eRj6jBN+O2VX+hwhO9GJDHJEXMI1Ib3ykatk
+	 Y94KbJctHpMvGeTaR5Bn4Lg06ml7c/7Tx3nicxgy1rzpyronflc4vaJ4nQPbxVUTb3
+	 34hxJ64z4fyxfFaO2/2NzLQruNO3ZRIyf4T2fnjwHFx2ne/mNBWeU1RH1DVtrfBCCm
+	 OHRuAMdxAO3dtt8n9vHkM3QSnARODfnsEvU/xgSfHq2Ps/XjkNgv2+z8tAgz/7zNwO
+	 3tNQwDzo2HJi2H115hXMhbWE0qzve7DLI2VyPgnmKO5mMSOJZNbyNksBWgpsHSKPta
+	 Avkq0n61gq+Pw==
+Date: Thu, 20 Feb 2025 14:17:19 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Song Yoong Siang <yoong.siang.song@intel.com>
+Cc: "David S . Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Simon Horman
+ <horms@kernel.org>, Willem de Bruijn <willemb@google.com>, Florian Bezdeka
+ <florian.bezdeka@siemens.com>, Donald Hunter <donald.hunter@gmail.com>,
+ Jonathan Corbet <corbet@lwn.net>, Bjorn Topel <bjorn@kernel.org>, Magnus
+ Karlsson <magnus.karlsson@intel.com>, Maciej Fijalkowski
+ <maciej.fijalkowski@intel.com>, Jonathan Lemon <jonathan.lemon@gmail.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>, Jesper Dangaard Brouer
+ <hawk@kernel.org>, John Fastabend <john.fastabend@gmail.com>, Joe Damato
+ <jdamato@fastly.com>, Stanislav Fomichev <sdf@fomichev.me>, Xuan Zhuo
+ <xuanzhuo@linux.alibaba.com>, Mina Almasry <almasrymina@google.com>, Daniel
+ Jurgens <danielj@nvidia.com>, Andrii Nakryiko <andrii@kernel.org>, Eduard
+ Zingerman <eddyz87@gmail.com>, Mykola Lysenko <mykolal@fb.com>, Martin
+ KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, Yonghong Song
+ <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, Hao Luo
+ <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, Shuah Khan
+ <shuah@kernel.org>, Alexandre Torgue <alexandre.torgue@foss.st.com>, Jose
+ Abreu <joabreu@synopsys.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Tony Nguyen <anthony.l.nguyen@intel.com>, Przemek Kitszel
+ <przemyslaw.kitszel@intel.com>, Faizal Rahim
+ <faizal.abdul.rahim@linux.intel.com>, Choong Yong Liang
+ <yong.liang.choong@linux.intel.com>, Bouska Zdenek
+ <zdenek.bouska@siemens.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, intel-wired-lan@lists.osuosl.org,
+ xdp-hints@xdp-project.net
+Subject: Re: [PATCH bpf-next v12 1/5] xsk: Add launch time hardware offload
+ support to XDP Tx metadata
+Message-ID: <20250220141719.524a8ac6@kernel.org>
+In-Reply-To: <20250216093430.957880-2-yoong.siang.song@intel.com>
+References: <20250216093430.957880-1-yoong.siang.song@intel.com>
+	<20250216093430.957880-2-yoong.siang.song@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-[...]
-> Also note that this patch series depend on filters default
-> behavior change patch series[1].
+On Sun, 16 Feb 2025 17:34:26 +0800 Song Yoong Siang wrote:
+> Extend the XDP Tx metadata framework so that user can requests launch time
+> hardware offload, where the Ethernet device will schedule the packet for
+> transmission at a pre-determined time called launch time. The value of
+> launch time is communicated from user space to Ethernet driver via
+> launch_time field of struct xsk_tx_metadata.
 > 
-> [1] https://lore.kernel.org/20250220193509.36379-1-sj@kernel.org
+> Suggested-by: Stanislav Fomichev <sdf@fomichev.me>
+> Acked-by: Stanislav Fomichev <sdf@fomichev.me>
+> Signed-off-by: Song Yoong Siang <yoong.siang.song@intel.com>
 
-This is an RFC that depends on another RFC patch series I listed above.  But I
-made yet another mistake on the subject.  Sorry if it made any confusion.
-
-
-Thanks,
-SJ
-
-[...]
+Acked-by: Jakub Kicinski <kuba@kernel.org>
 
