@@ -1,169 +1,167 @@
-Return-Path: <linux-kernel+bounces-523566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A126DA3D870
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:25:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6F65A3D880
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:26:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 649F73A7C3C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 11:25:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8091188FE11
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 11:25:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A6891F7075;
-	Thu, 20 Feb 2025 11:19:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="V63tGo/W"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1583E1F868F;
+	Thu, 20 Feb 2025 11:20:03 +0000 (UTC)
+Received: from exchange.fintech.ru (exchange.fintech.ru [195.54.195.159])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15D5E1F5420;
-	Thu, 20 Feb 2025 11:19:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 674A21F540C;
+	Thu, 20 Feb 2025 11:19:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.54.195.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740050374; cv=none; b=CvQLia7Zpbyuoylmr0HBkUCXg1XNbgsndgEZAVI/k4Bpq0x46OAzI0ZZ0OsjYGll4MaHaqtGrErICZVzajsTk3PhePq7JQmlde40v4syXXJefGuvjUNpIUpssyL1eGI7rlmAdoJdvmFAklzVwzpl169KSCUwt+zkfrLT01knDII=
+	t=1740050402; cv=none; b=Ct8HxbIh0lvVl1Ze3ZiLiw3VUCTSHrM8Q/ydFVPlaSIw3MWLmcMBpW6xM9n3uZlq1yN8k1UmP+Ug86EjuntDERWNu4Eljicup7pjMp28d9ToazLC3Um8lIUMs0wyu3y2eeb7gwncXeSi3FHgyPlaJdArEDmOgiEzC0KzJsKWAk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740050374; c=relaxed/simple;
-	bh=SKI57SFGIBpAzjwlBLSaZnpr4/XQhu5ZCNj+pgNqStM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EviaLE/2tL690MN0ge1DaGQDjzF+p/n93Nsis7TBtkwYJ6uO03OHAr9sxIJY+JU66DgACBsNfO4lUzgNPchgVM6svtjG5kIehx69DHCUNwaqceipOCEGp2EyZZMImQP1rK0c+ZRXndM7yiaU+l7ZVmnAM3hMrccc4HmDWHx37io=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=V63tGo/W; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 92A6140E0177;
-	Thu, 20 Feb 2025 11:19:29 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id bcZMN1EI5MuF; Thu, 20 Feb 2025 11:19:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1740050365; bh=oDN5WUS3A7D2IMAxJ5mGAyDsc5KuNgF5Rt5+F6hzIE0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=V63tGo/WIO8oyP5lcHu/Lr6YRBigqKI9sffiBGW0bu3QvI2bL9CuKwfK9fgrw2KFM
-	 UkPn/wU2v3PB6PJKkvQKn9dHJEHe0UIoCm0KMEa24mmHo1dcxhHb8ya5uIV43ZXqrQ
-	 +4nRPsNv09gYhuVExneeg+NmnvQfGKjZl9hqmFMPrWvuhh6HgCC4KWLHIEm0fuXjwH
-	 EadCpw46Kf775EQiPVhmndleG/Nxakr1idzT0EMHQfxxDmC9Lk+VXXjz9KD1S47fVi
-	 XuzDMCUGBzTgqzjHP4p66FvMuf13m1eX+3yXQppgBrqKw3Eg4+ZCgyx6ZZ0CpBPji3
-	 J3VTLhKK5yH4PRhxF0NimWrdO0RkIJYInb/OEue7bOlzuut0xbXxpps7JhzbmBLDdZ
-	 9197w7bq9ahTFRzc8D0BvlI0OQqS1f6UprZpnSd3Kss2iGdYZNv+KxI5/1tm4sxl+D
-	 p7T1mAnVwHqzXPk+m/7JddB2GIkmwhLN6amYTVj2EuSZqq0sBniaBIRE38hQ4en+wc
-	 aZB1LnQH9comphR3c+FSS/J1SK6ryXyl7PZ2amSQxI4W4diQTlP5VuPvjSBDJQEwAs
-	 pTSK8cpnY2ZJ57QmjHqtijK6p/NaZ23+c4VrtVtuCPYsSt40qoA8d4oMUCiXbxO/z3
-	 P6gviHsb06gI5JT7Tx9xI3Dc=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 6FA0640E01A1;
-	Thu, 20 Feb 2025 11:19:08 +0000 (UTC)
-Date: Thu, 20 Feb 2025 12:19:03 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: "Luck, Tony" <tony.luck@intel.com>
-Cc: Shuai Xue <xueshuai@linux.alibaba.com>,
-	"nao.horiguchi@gmail.com" <nao.horiguchi@gmail.com>,
-	"tglx@linutronix.de" <tglx@linutronix.de>,
-	"mingo@redhat.com" <mingo@redhat.com>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-	"x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
-	"linmiaohe@huawei.com" <linmiaohe@huawei.com>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	"peterz@infradead.org" <peterz@infradead.org>,
-	"jpoimboe@kernel.org" <jpoimboe@kernel.org>,
-	"linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"baolin.wang@linux.alibaba.com" <baolin.wang@linux.alibaba.com>,
-	"tianruidong@linux.alibaba.com" <tianruidong@linux.alibaba.com>
-Subject: Re: [PATCH v2 0/5] mm/hwpoison: Fix regressions in memory failure
- handling
-Message-ID: <20250220111903.GDZ7cPp1qVq3t9Jgs6@fat_crate.local>
-References: <20250217063335.22257-1-xueshuai@linux.alibaba.com>
- <20250218082727.GCZ7REb7OG6NTAY-V-@fat_crate.local>
- <7393bcfb-fe94-4967-b664-f32da19ae5f9@linux.alibaba.com>
- <20250218122417.GHZ7R78fPm32jKYUlx@fat_crate.local>
- <SJ1PR11MB60836781C4CE26C4B43AFF0BFCFA2@SJ1PR11MB6083.namprd11.prod.outlook.com>
- <20250219081037.GAZ7WR_YmRtRvN_LKA@fat_crate.local>
- <SJ1PR11MB6083F7AC9C5AED072141B8CAFCC52@SJ1PR11MB6083.namprd11.prod.outlook.com>
+	s=arc-20240116; t=1740050402; c=relaxed/simple;
+	bh=NDdWMhGsVv5SnCqjh/JMa7aBl97LCJ5tTwMBPTYOerU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=iY7c1a79cYYd5dvTL2sm5XUTZKhXpQf9xkHC1pupxQQArWTpsZziHkztVE3xnsFcbl+39g6XZDpK3DxnaRhShhxatAX7TrnGD8dJrPkBe3Q87BPKc9IBdOp/6FvnyDdtSVCqCIaTpp5EhbgxWG/FR9zlG35RtDDRCT4KmPOT1Ag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru; spf=pass smtp.mailfrom=fintech.ru; arc=none smtp.client-ip=195.54.195.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fintech.ru
+Received: from Ex16-01.fintech.ru (10.0.10.18) by exchange.fintech.ru
+ (195.54.195.169) with Microsoft SMTP Server (TLS) id 14.3.498.0; Thu, 20 Feb
+ 2025 14:19:50 +0300
+Received: from [192.168.211.132] (10.0.253.138) by Ex16-01.fintech.ru
+ (10.0.10.18) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2242.4; Thu, 20 Feb
+ 2025 14:19:49 +0300
+Message-ID: <16dba069-119f-4556-befa-0f3db626eada@fintech.ru>
+Date: Thu, 20 Feb 2025 14:19:46 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <SJ1PR11MB6083F7AC9C5AED072141B8CAFCC52@SJ1PR11MB6083.namprd11.prod.outlook.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] media: usb: hackrf: fix device unregister order in
+ hackrf_probe()
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil
+	<hverkuil@xs4all.nl>
+CC: <linux-media@vger.kernel.org>,
+	<syzbot+6b52c2b24e341804a58c@syzkaller.appspotmail.com>,
+	<syzkaller-bugs@googlegroups.com>, <linux-kernel@vger.kernel.org>,
+	<lvc-project@linuxtesting.org>
+References: <20250213182608.757954-1-n.zhandarovich@fintech.ru>
+From: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
+Content-Language: en-US
+In-Reply-To: <20250213182608.757954-1-n.zhandarovich@fintech.ru>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: Ex16-02.fintech.ru (10.0.10.19) To Ex16-01.fintech.ru
+ (10.0.10.18)
 
-On Wed, Feb 19, 2025 at 05:11:00PM +0000, Luck, Tony wrote:
-> We could, but I don't like it much. By taking the page offline from the relatively
-> kind environment of a regular interrupt, we often avoid taking a machine check
-> (which is an unfriendly environment for software).
+Hi, please disregard my patch for following reasons:
 
-Right.
+1) The issue at hand isn't addressed properly - looking back I haven't
+properly identified root cause and my fix is flawed.
+2) Even if the approach is correct, I messed up the move of the label
+err_v4l2_device_unregister. If video_register_device(&dev->rx_vdev,...)
+fails we skip necessary deregistering steps.
 
-> We could make the action in uc_decode_notifier() configurable. Default=off
-> but with a command line option to enable for systems that are stuck with
-> broadcast machine checks.
+I'll attempt to come up with a better solution, thank you for your
+patience.
 
-So we can figure that out during boot - no need for yet another cmdline
-option.
+Regards,
+Nikita
 
-It still doesn't fix the race and I'd like to fix that instead, in the optimal
-case.
+On 2/13/25 21:26, Nikita Zhandarovich wrote:
+> Syzkaller reports [1] a slab-use-after-free error identified by KASAN
+> sanitizer and most likely caused by the wrong order of device
+> unregister steps once a call to video_register_device() fails.
+> 
+> Fix aforementioned flaw by first freeing control and reference
+> handlers, only then dealing with dev->v4l2_dev() via
+> v4l2_device_unregister().
+> 
+> [1] Syzkaller (partial) report:
+> BUG: KASAN: slab-use-after-free in v4l2_release+0x3e2/0x460 drivers/media/v4l2-core/v4l2-dev.c:453
+> Read of size 8 at addr ffff8880502e80c8 by task v4l_id/7854
+> ...
+> Call Trace:
+>  <TASK>
+>  __dump_stack lib/dump_stack.c:94 [inline]
+>  dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
+>  print_address_description mm/kasan/report.c:377 [inline]
+>  print_report+0xc3/0x620 mm/kasan/report.c:488
+>  kasan_report+0xd9/0x110 mm/kasan/report.c:601
+>  v4l2_release+0x3e2/0x460 drivers/media/v4l2-core/v4l2-dev.c:453
+>  __fput+0x3f6/0xb60 fs/file_table.c:431
+>  __fput_sync+0x45/0x50 fs/file_table.c:516
+>  __do_sys_close fs/open.c:1567 [inline]
+>  __se_sys_close fs/open.c:1552 [inline]
+>  __x64_sys_close+0x86/0x100 fs/open.c:1552
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> ...
+> 
+> Allocated by task 6058:
+>  kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
+>  kasan_save_track+0x14/0x30 mm/kasan/common.c:68
+>  poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
+>  __kasan_kmalloc+0xaa/0xb0 mm/kasan/common.c:394
+>  kmalloc_noprof include/linux/slab.h:878 [inline]
+>  kzalloc_noprof include/linux/slab.h:1014 [inline]
+>  hackrf_probe+0xd1/0x1cf0 drivers/media/usb/hackrf/hackrf.c:1353
+>  usb_probe_interface+0x309/0x9d0 drivers/usb/core/driver.c:399
+> ...
+> 
+> Freed by task 6058:
+>  kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
+>  kasan_save_track+0x14/0x30 mm/kasan/common.c:68
+>  kasan_save_free_info+0x3b/0x60 mm/kasan/generic.c:579
+>  poison_slab_object mm/kasan/common.c:247 [inline]
+>  __kasan_slab_free+0x51/0x70 mm/kasan/common.c:264
+>  kasan_slab_free include/linux/kasan.h:230 [inline]
+>  slab_free_hook mm/slub.c:2342 [inline]
+>  slab_free mm/slub.c:4579 [inline]
+>  kfree+0x14f/0x4b0 mm/slub.c:4727
+>  hackrf_probe+0x4c9/0x1cf0 drivers/media/usb/hackrf/hackrf.c:1525
+>  usb_probe_interface+0x309/0x9d0 drivers/usb/core/driver.c:399
+> ...
+> 
+> Reported-by: syzbot+6b52c2b24e341804a58c@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=6b52c2b24e341804a58c
+> Fixes: 8bc4a9ed8504 ("[media] hackrf: add support for transmitter")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
+> ---
+> v1 -> v2: fix overlong lines in patch description to remove warnings
+> from checkpatch.
+> 
+>  drivers/media/usb/hackrf/hackrf.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/media/usb/hackrf/hackrf.c b/drivers/media/usb/hackrf/hackrf.c
+> index 0b50de8775a3..bc910b35f605 100644
+> --- a/drivers/media/usb/hackrf/hackrf.c
+> +++ b/drivers/media/usb/hackrf/hackrf.c
+> @@ -1513,12 +1513,12 @@ static int hackrf_probe(struct usb_interface *intf,
+>  	return 0;
+>  err_video_unregister_device_rx:
+>  	video_unregister_device(&dev->rx_vdev);
+> -err_v4l2_device_unregister:
+> -	v4l2_device_unregister(&dev->v4l2_dev);
+>  err_v4l2_ctrl_handler_free_tx:
+>  	v4l2_ctrl_handler_free(&dev->tx_ctrl_handler);
+>  err_v4l2_ctrl_handler_free_rx:
+>  	v4l2_ctrl_handler_free(&dev->rx_ctrl_handler);
+> +err_v4l2_device_unregister:
+> +	v4l2_device_unregister(&dev->v4l2_dev);
+>  err_kfree:
+>  	kfree(dev);
+>  err:
+> 
 
-But looking at Shuai's patch, I guess fixing the reporting is fine too - we
-need to fix the commit message to explain why this thing even happens.
-
-I.e., basically what you wrote and Shuai could use that explanation to write
-a commit message explaining what the situation is along with the background so
-that when we go back to this later, we will actually know what is going on.
-
-But looking at
-
-  046545a661af ("mm/hwpoison: fix error page recovered but reported "not recovered"")
-
-That thing was trying to fix the same reporting fail. Why didn't it do that?
-
-Ooooh, now I see what the issue is. He doesn't want to kill the process which
-gets the wrong SIGBUS. Maybe the commit title should've said that:
-
-  mm/hwpoison: Do not send SIGBUS to processes with recovered clean pages
-
-or so.
-
-But how/why is that ok?
-
-Are we confident that
-
-+        * ret = 0 when poison page is a clean page and it's dropped, no
-+        * SIGBUS is needed.
-
-can *always* and *only* happen when there's a CMCI *and* a #MC race and the
-CMCI has won the race?
-
-Can memory poison return 0 there too, for another reason and we end up *not
-killing* a process which we should have?
-
-Hmmm.
-
-> On Intel that would mean not registering the notifier at all. What about AMD?
-> Do you have similar races for MCE_DEFERRED_SEVERITY errors?
-
-Probably. Lemme ask around.
-
-> [1] Some OEMs still do not enable LMCE in their BIOS.
-
-Oh, ofc. Gotta love BIOS. They'll get the message when LMCE becomes obsolete,
-trust me.
-
-Are we force-enabling LMCE in this case when booting?
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
 
