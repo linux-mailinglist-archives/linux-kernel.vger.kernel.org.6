@@ -1,85 +1,173 @@
-Return-Path: <linux-kernel+bounces-523445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FD7AA3D6E3
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 11:38:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B300A3D6E1
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 11:37:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EFAA13A331A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 10:36:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DBFC1898346
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 10:37:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31D0A1F12E7;
-	Thu, 20 Feb 2025 10:36:54 +0000 (UTC)
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6113D1F1307;
+	Thu, 20 Feb 2025 10:37:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="QKYvkgFS";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="e4D0OjDS"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CCD51D6199
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 10:36:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE0871EE7A9;
+	Thu, 20 Feb 2025 10:37:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740047813; cv=none; b=Xlp+1vPrNdP+KDKu/jVxUsQjKxVGBipu66Yvb6bbjNHisN7fHJZY0bgNejgqB2GN+Baf1Bgew6Gcs/qN4a53TNU2Vfn0ZkTHaWqYKX39b9y31hF9i73CnE/jKZIvXdHomJVOdmmSYiDQYEIxettWFfr8z8Od6MCJY50JzxW6OY8=
+	t=1740047844; cv=none; b=LA/BS7U8eg8wouQBNdKFIi04s/EnhZTOvGYIXyZL+ekhtmpJUaI/MWSqrTa+rHdvvl+j8KMrgcToKm4LF3FQLXvEnCDBxpb/5rv8o/ceppRPRhqdjSNedjJcl0nRpcNXltbGRVRdMEZEvUE8wnhc2R4mCygJstTswaM2wuHNHBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740047813; c=relaxed/simple;
-	bh=nWpDQmZNg8zKVk12QskQ7NNS05C4fI/JmZBKLdKyu8Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=a9R3K0G7dY20ZwgNHz7Pl8yTlu9HJ3iqKG9jtwoecaPNzIU3zwekPArVcomJAwd1D1viV1FDMOqKnPe0APTy9WA+U33QIayk4hLAwsMwqSnFmBHOxaZk69eRta1YUiA5IGFC56Gq3c+lf6+Ayg5BLI93LDdBmydknveEkC/L+aA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-38f1e8efe84so233605f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 02:36:51 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740047810; x=1740652610;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nWpDQmZNg8zKVk12QskQ7NNS05C4fI/JmZBKLdKyu8Q=;
-        b=qa51TWI7WhFH/kfqeJ+JPFW+Ag0CWjUYGuKhCfNGYCX56L4Azw6+AJ/cbatBmRdL/I
-         7m437ENrsK9AUew23l87vCwAUiP7aN1Etgf15Nul97bNkm7cNFd/7Gm9EPvGxrJSb5Kj
-         1OYUzkzqe9oHcDuwSCeLjEQmCRiz3hILCib+mYGZmXCuMLpysT2019+thvMqaIEf4sTa
-         nDWdPmls7S4dUbTarr+nxra1qBeY5utRHgnoeAnmOoY9bSwsCLAusV8AwXya4BSUqoub
-         ndGfn+ek7S4krlHu1UAyXC/8l6yfGNdwXOof+2Zkqu18X0kn/olxQ0KI3heltsypai+a
-         LWIw==
-X-Forwarded-Encrypted: i=1; AJvYcCXkTN3R/QqHGg5ZQCfW6IpT8KFbdJ52v+p+msQFm93C4gzMmTiGbZ2XZ191bIhBNkN9Htac3zkrZosK5KU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPk6KPiVOSHUCc0C4nCxtL2wCXJ56len2RzrhsXrF58Zp8eE4K
-	PW60HVrHv2NpQIN77ZMYihGrtXOwbzZ+ZGlrbo7ZwkXhoi4EFCgWnZhlOg==
-X-Gm-Gg: ASbGnctZJva9/1ojyQM+ZXTNOFcp0+aWAigepgCJw8BkhB/4CLiwgFcVWkCZetYIWtt
-	J1ishGklD71pmDaru6PoaJMkEZ5rehiGaKSNF/1FkWBBdRm2YqccjHSyvtcZJVwuqDZnyo4rjx2
-	kvJZmFFyFwzb8LZxHNAksQ3n9KCGr2Px0XHRNhABN4T2pJiaAkLpyIL6dVExNfRCtBipOxME88S
-	XigkjgCSeBbS87qAN99dzW48wD5kquqbFvCRUhj/AwY4MskFv26Ekp3frjccec3R+ennK04SZ4g
-	dKmv5XAyuQR0ZjHhv3t3uVlajyRq/5grZ4qO6eBTuAGcMi6KHHU=
-X-Google-Smtp-Source: AGHT+IH+WsYkeZiU0mPcqvV8ektXE+C84F/4T4JseUt8pjcNjNbQ00MxZEwmZ04LscaLvifAlaWJBg==
-X-Received: by 2002:a05:6000:1948:b0:38f:218c:f672 with SMTP id ffacd0b85a97d-38f65145d52mr1367990f8f.41.1740047810058;
-        Thu, 20 Feb 2025 02:36:50 -0800 (PST)
-Received: from [10.100.102.74] (89-138-75-149.bb.netvision.net.il. [89.138.75.149])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f258b412esm19908811f8f.1.2025.02.20.02.36.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Feb 2025 02:36:49 -0800 (PST)
-Message-ID: <4881fc9f-4d99-4a5d-9182-c003c855b972@grimberg.me>
-Date: Thu, 20 Feb 2025 12:36:48 +0200
+	s=arc-20240116; t=1740047844; c=relaxed/simple;
+	bh=FMrqdU4X4ygtooumfzuVukHhKLau/VpgoB7YFmFsbys=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JJ1QTWj4KAEEmwktwRwv3uahC0J6Dvcg+741+ve1sd0CC+fUXQnB80gu3YZuaMGhmrksIBYQSD2WonB2of/c/JQyVJULLt3GatY8lkouMjGLJBcqJEwXN/jDw/fHY0uOjUPdjGy57bthwJEsPwBS0oomoTbQNNx9nj5uKm7VxV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=QKYvkgFS; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=e4D0OjDS reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1740047841; x=1771583841;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=wh9A1BD/RTEscUaPrQN3XaSi0R1/Qa7MqH53NBxklI0=;
+  b=QKYvkgFSi57lgeM1xkPBMaFRjFgxehkG0hrrHmfHlsn+wtbvQt147MiK
+   FYqr2qZ5z7OQdgROVPwDlg1B2Hg9hj34hfsrg6UkKeM9Uqnjzp1m9HAT7
+   l5AsZ9yv0M/oq4+RvhBrmAzu+WvP5Y90KtADwjCOraOWMd6zyQ7MxxzK4
+   68r+23NCKkUA3t1VJkWD5/C0GgeGpVcpE5YrxrBLsllO6NBJs0XPT5r+Q
+   wWj9dDfZek94J5VmLj63M522MhxTmWh8BSdn3EF7D/irZaarV9VkFPOlP
+   YcD618fMM/3D8igdc2FrZ4/H1WeYCKR+6EVRzMAFg0bFng3QaWwwdd2rA
+   A==;
+X-CSE-ConnectionGUID: CwnbI0K+RpSL3PTir3jFFQ==
+X-CSE-MsgGUID: e3NjdcT0R7yw1SDXUXlCFQ==
+X-IronPort-AV: E=Sophos;i="6.13,301,1732575600"; 
+   d="scan'208";a="41977185"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 20 Feb 2025 11:37:00 +0100
+X-CheckPoint: {67B705CB-2B-B8541F8F-E50F9B0E}
+X-MAIL-CPID: 1B5560109A7002A5CA5F1D2F139B739C_2
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id EC4D6165713;
+	Thu, 20 Feb 2025 11:36:53 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1740047815;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wh9A1BD/RTEscUaPrQN3XaSi0R1/Qa7MqH53NBxklI0=;
+	b=e4D0OjDSA2ZA2GlPxzsqw7tkGSZo29ZHbECBq+JdmCuxym+wVv2+TZDkqLfplc5tSpTR0e
+	WtTAKKvnO1SwFM+LEGSmcHVIgFzX2i69wX9Xer2DfxIy8r6H8FLj+WZ7diyyAnEBhd0bTG
+	e9jb0QInU+lPP7dXVF1lC1lhyF7uEN8pn4s9p0+eCPzU1S/cqit1zvMCiHMWGwgvZvXrSU
+	1QXU66t76OvYPgdFNUlps2CUj8/UhrhunsGGXfQSJ5P2ZPAMaxq29eaF1qINsLrsEi7i5x
+	95O1hVVCteRHOEbAhaRi9l/sghRsYJbDlGI1fNDe+sR4sWPgTQ1VN5Z/tBXn+g==
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: p.zabel@pengutronix.de, robh@kernel.org, shawnguo@kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Cc: krzk+dt@kernel.org, conor+dt@kernel.org, s.hauer@pengutronix.de,
+ kernel@pengutronix.de, festevam@gmail.com, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, mathieu.poirier@linaro.org,
+ shengjiu.wang@nxp.com, Frank.Li@nxp.com, peng.fan@nxp.com,
+ laurentiu.mihalcea@nxp.com, iuliana.prodan@nxp.com,
+ Daniel Baluta <daniel.baluta@nxp.com>, Daniel Baluta <daniel.baluta@nxp.com>
+Subject: Re: [PATCH v2 2/8] dt-bindings: dsp: fsl,dsp: Add resets property
+Date: Thu, 20 Feb 2025 11:36:53 +0100
+Message-ID: <12614210.O9o76ZdvQC@steina-w>
+Organization: TQ-Systems GmbH
+In-Reply-To: <20250219192102.423850-3-daniel.baluta@nxp.com>
+References:
+ <20250219192102.423850-1-daniel.baluta@nxp.com>
+ <20250219192102.423850-3-daniel.baluta@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] nvme-fc: rely on state transitions to handle
- connectivity loss
-To: Daniel Wagner <wagi@kernel.org>, Keith Busch <kbusch@kernel.org>,
- Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
- James Smart <james.smart@broadcom.com>, Hannes Reinecke <hare@suse.de>,
- Shinichiro Kawasaki <shinichiro.kawasaki@wdc.com>
-Cc: linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250214-nvme-fc-fixes-v1-0-7a05d557d5cc@kernel.org>
- <20250214-nvme-fc-fixes-v1-2-7a05d557d5cc@kernel.org>
-Content-Language: en-US
-From: Sagi Grimberg <sagi@grimberg.me>
-In-Reply-To: <20250214-nvme-fc-fixes-v1-2-7a05d557d5cc@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
+X-Last-TLS-Session-Version: TLSv1.3
 
-Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
+Hi,
+
+Am Mittwoch, 19. Februar 2025, 20:20:56 CET schrieb Daniel Baluta:
+> On i.MX8MP we introduced support for using a reset controller
+> to control DSP operation.
+>=20
+> This patch adds reset property which is required for i.MX8MP.
+>=20
+> Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
+> ---
+>  .../devicetree/bindings/dsp/fsl,dsp.yaml      | 19 ++++++++++++++++++-
+>  1 file changed, 18 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/dsp/fsl,dsp.yaml b/Documen=
+tation/devicetree/bindings/dsp/fsl,dsp.yaml
+> index ab93ffd3d2e5..923e7f079f1b 100644
+> --- a/Documentation/devicetree/bindings/dsp/fsl,dsp.yaml
+> +++ b/Documentation/devicetree/bindings/dsp/fsl,dsp.yaml
+> @@ -82,6 +82,13 @@ properties:
+>      description:
+>        Phandle to syscon block which provide access for processor enablem=
+ent
+> =20
+> +  resets:
+> +    description:
+> +      A pair consisting of phandle to audio-blk-control and an index ref=
+erencing
+> +      the DSP Run/Stall bit in audiomix registers.
+> +      See include/dt-bindings/reset/imx8mp-reset-audiomix.h for each ind=
+ex meaning.
+> +    maxItems: 1
+> +
+>  required:
+>    - compatible
+>    - reg
+> @@ -164,6 +171,16 @@ allOf:
+>              - const: txdb1
+>              - const: rxdb0
+>              - const: rxdb1
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - fsl,imx8mp-dsp
+> +              - fsl,imx8mp-hifi4
+> +    then:
+> +      required:
+> +        - "resets"
+> =20
+>  additionalProperties: false
+> =20
+> @@ -220,5 +237,5 @@ examples:
+>                 <&mu2 3 0>;
+>        memory-region =3D <&dsp_vdev0buffer>, <&dsp_vdev0vring0>,
+>                        <&dsp_vdev0vring1>, <&dsp_reserved>;
+> -      fsl,dsp-ctrl =3D <&audio_blk_ctrl>;
+> +      resets =3D <&audio_blk_ctrl IMX8MP_AUDIOMIX_DSP>;
+
+Am I missing something here? fsl,dsp-ctrl is used to get the regmap from sy=
+scon.
+
+Best regards,
+Alexander
+
+>      };
+>=20
+
+
+=2D-=20
+TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
+Amtsgericht M=FCnchen, HRB 105018
+Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
+http://www.tq-group.com/
+
+
 
