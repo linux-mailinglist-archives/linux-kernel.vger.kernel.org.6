@@ -1,91 +1,339 @@
-Return-Path: <linux-kernel+bounces-523291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53552A3D4D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 10:34:36 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1932FA3D4E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 10:36:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E09EF1894B55
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 09:34:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ABC9717BB84
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 09:36:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A3811F03C9;
-	Thu, 20 Feb 2025 09:34:03 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F2091EBFFD
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 09:34:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BA151EF0B4;
+	Thu, 20 Feb 2025 09:36:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KiWp0Jhe"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81D541EE032
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 09:36:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740044042; cv=none; b=rBwju+WyjDiWRCEoxbRpGDgkoJEzSTi2/HuIahbYR19gUKj0APxwFw7/ow74gh/ofhEEJUEwdqOLPlBvcS2TVmdLkkgtsOESz4Mfayq6l4HEQftexRrmLXPigCdcAiHhrP8f5SR5zlgsSmlshHsJnnb5sbsoH6zReJhWmlEFp/k=
+	t=1740044174; cv=none; b=qWrConZM12fHOHCJMOBHTkgzif2nFMjcspJYrvwP59taSCTaA+t7Ontfs23e7rZZXgjPt5iAUmKDZCjZATXJS+sqkoKHR4JxcAyG52NsqmntvtdqXTwlcOGuIYav3yCcWqdIGTGwfrdPn1KyF8qj2dQgt3iIufxwlLEeTcGuDDk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740044042; c=relaxed/simple;
-	bh=rVqOrcawk8w4I58kgaH5Oo80s8er9u+SBF8+GzGZrK4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b+IAU/3lCo3DaPGuvsPeZS5pyIHCU7LocBKWU5A1YyKgAGmH4undKtvIpGVntWTOOuhwdW2MfgDebvVfiWpGz61uBDtTr7OGtNdDU05cPpH9PaEBu4aP2QS6vSt58PXA4zY0AN14RcbaFhgKsrhCfPCZ54R8NrD/4I73Wkl5RK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A9EFC1BB0;
-	Thu, 20 Feb 2025 01:34:16 -0800 (PST)
-Received: from mazurka.cambridge.arm.com (mazurka.cambridge.arm.com [10.2.80.18])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 089D03F6A8;
-	Thu, 20 Feb 2025 01:33:54 -0800 (PST)
-Date: Thu, 20 Feb 2025 09:33:52 +0000
-From: =?utf-8?Q?Miko=C5=82aj?= Lenczewski <miko.lenczewski@arm.com>
-To: Robin Murphy <robin.murphy@arm.com>
-Cc: Ryan Roberts <ryan.roberts@arm.com>, yang@os.amperecomputing.com,
-	catalin.marinas@arm.com, will@kernel.org, joey.gouly@arm.com,
-	broonie@kernel.org, mark.rutland@arm.com, james.morse@arm.com,
-	yangyicong@hisilicon.com, anshuman.khandual@arm.com, maz@kernel.org,
-	liaochang1@huawei.com, akpm@linux-foundation.org, david@redhat.com,
-	baohua@kernel.org, ioworker0@gmail.com, oliver.upton@linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/3] arm64: Add BBM Level 2 cpu feature
-Message-ID: <20250220093352.GA11745@mazurka.cambridge.arm.com>
-References: <20250219143837.44277-3-miko.lenczewski@arm.com>
- <20250219143837.44277-5-miko.lenczewski@arm.com>
- <a6846db8-9efa-46f8-9939-7727c83d1601@arm.com>
- <cbc3f62b-8890-42ca-81ff-66f1e4ea1cf3@arm.com>
- <e0a6308f-5628-4698-95a7-ec1b918358b0@arm.com>
+	s=arc-20240116; t=1740044174; c=relaxed/simple;
+	bh=ZdBF763obzTVBhG64xwpizgbH9FpyxzV8Isbo0UTpNU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lsYsCFwK+0KFUWZLygL6TeNOvLltZJdGRZGeVE/u3aXxj6IWFTtG//FIXNsZbM+ETmNhUSRnrwwaZP/nefqRoWz1AlTCtNR3ck+eYHYgjizx8TSdiCAjpMOtoBK0B2Es9854BtGWHCwbXfUAHlsokXQViCmP8WdfBuRLfPND4xU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KiWp0Jhe; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740044171;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=vrYU4001NHaQhiJmOd3K1FtCOLIFErMLyFW/eFn+XB0=;
+	b=KiWp0JheT8Ed5cxrokIDbhV1dwtZkXy+FJcU8c68SqczMYekNHRBq4b0ELMZXxW1hV8X19
+	VhzEc+xBuweJS97QyzT7L2PpWnepUTYHkECy81NIpzhBfpH9iG3Ej3AenHoQhWBELr+Nsw
+	j3YxJ6sE1UCf/npJkRWt3c5TqalMaaw=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-152-qametMycP-6LZo9FpwieuA-1; Thu, 20 Feb 2025 04:36:09 -0500
+X-MC-Unique: qametMycP-6LZo9FpwieuA-1
+X-Mimecast-MFC-AGG-ID: qametMycP-6LZo9FpwieuA_1740044168
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-38f20b530dfso600723f8f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 01:36:09 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740044168; x=1740648968;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=vrYU4001NHaQhiJmOd3K1FtCOLIFErMLyFW/eFn+XB0=;
+        b=VwTg04TdBCJaDCD/0elozeXvW0XeJzNhNvUhT9nKkw7l2pHOzmBew6K0lm9iAqjb1m
+         y5etYTDl255u7VJ0gxZFPSCy2eIdOx9zeZIxcIg0GO+73MMefoH1GkFX8rWAWgkUKU9F
+         KYyCvp4Be1yZyTJN+PGrGFs9M8a6UkhsnqZ+pfnjYPZrMNv3IJwlqzc9wKoSmZT+s2yA
+         xqMrZq5muiKgUHSYFqvlaODtFPTetbGwq3kGlV+JokFLZXAQM/c2x4HlwBn3CzFzDOrM
+         ff99GfUqdFyxvUaEmLnDy7qcoWK+afCYNtgul6E3A1Ll3NcqChFscCar4cTXbKQLn5ro
+         CdDw==
+X-Forwarded-Encrypted: i=1; AJvYcCURWYpM6hJkcjfKZ9EjUVhuZznLam5qs+IP/I5DZ5Z2HnpisjbWhSp2iZgrRsy5LMzqDClAdwoFzSeSbQw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxM6PQnQcpecCRSnu/PSmj0mDmm8OqwBbapgVQOsGG6knV3Dmfm
+	OkjBWyOvMz0WxJf2FkW5E9PAwxvndycNdzezmCJgzUjfj2/YUBU0dcyca98cCJRaIymMOR1R4jM
+	etllr6IezQqul3ocEqvTgd8oyfXVp+GoUXR465O/QJVMGQebP0Y5YYTU+6b66Zg==
+X-Gm-Gg: ASbGnctFs2Vu5VHf7oRYQ5BH40mLfWVAMfjPKJnzjxQkX836QHQ9ukYym11gKxxoryA
+	IXj6rV+WWsPpHDzUjXhZfDK8VHFkPwWfIQO2gKBpE8M3+dJQTVb1EdQLwgAje++vMWBCJzdzu6x
+	+MASvD/mP1LAXZx/PqKNeH0+cjb+frNyepeSA6EHHgy0OlfrqI4Cg+ylHWP+Me273p0FzemGa0G
+	PVzEWPhab8ZtR7Ny/E2G72l5/WMp9ry8+nm+d2yE+bjrHDM/ERd9Jg1TJyyvc6WVcdMnWBFyP7o
+	IwKQjozjkVdgk4iGI+LCI4fnWpibVfS21pSUpckdxFlwphzf4IYA2dJtyR1i8yGfWR5x/Ox/Arg
+	ZwUj7Q6P9xizfzeB40jNR/HuKEDMgKA==
+X-Received: by 2002:a5d:47a7:0:b0:38f:4b15:32fc with SMTP id ffacd0b85a97d-38f4b153521mr11406766f8f.8.1740044167991;
+        Thu, 20 Feb 2025 01:36:07 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGGDI3PIijcqL6Npq5bzetxWMrfv6WDENSOSRWNWHnOiqmuOkxIT9qTk+3OzM7GLprjVFUdKg==
+X-Received: by 2002:a5d:47a7:0:b0:38f:4b15:32fc with SMTP id ffacd0b85a97d-38f4b153521mr11406725f8f.8.1740044167556;
+        Thu, 20 Feb 2025 01:36:07 -0800 (PST)
+Received: from ?IPV6:2003:cb:c706:2000:e44c:bc46:d8d3:be5? (p200300cbc7062000e44cbc46d8d30be5.dip0.t-ipconnect.de. [2003:cb:c706:2000:e44c:bc46:d8d3:be5])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4398e84efb9sm86595125e9.10.2025.02.20.01.36.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 20 Feb 2025 01:36:06 -0800 (PST)
+Message-ID: <d198e62d-4c3a-44ae-a93f-7964e4f05fc8@redhat.com>
+Date: Thu, 20 Feb 2025 10:36:05 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC] mm: Fix kernel BUG when userfaultfd_move encounters
+ swapcache
+To: Barry Song <21cnbao@gmail.com>
+Cc: Suren Baghdasaryan <surenb@google.com>,
+ Lokesh Gidra <lokeshgidra@google.com>, linux-mm@kvack.org,
+ akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+ zhengtangquan@oppo.com, Barry Song <v-songbaohua@oppo.com>,
+ Andrea Arcangeli <aarcange@redhat.com>, Al Viro <viro@zeniv.linux.org.uk>,
+ Axel Rasmussen <axelrasmussen@google.com>, Brian Geffon
+ <bgeffon@google.com>, Christian Brauner <brauner@kernel.org>,
+ Hugh Dickins <hughd@google.com>, Jann Horn <jannh@google.com>,
+ Kalesh Singh <kaleshsingh@google.com>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Matthew Wilcox <willy@infradead.org>, Michal Hocko <mhocko@suse.com>,
+ Mike Rapoport <rppt@kernel.org>, Nicolas Geoffray <ngeoffray@google.com>,
+ Peter Xu <peterx@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+ Shuah Khan <shuah@kernel.org>, ZhangPeng <zhangpeng362@huawei.com>,
+ Yu Zhao <yuzhao@google.com>
+References: <20250219112519.92853-1-21cnbao@gmail.com>
+ <CAJuCfpEWFz14R1vD4Rezy98WBk25HWWX+6DsGBekeYMugKTsfQ@mail.gmail.com>
+ <CAGsJ_4yx1=jaQmDG_9rMqHFFkoXqMJw941eYvtby28OqDq+S7g@mail.gmail.com>
+ <50566d42-7754-4017-b290-f29d92e69231@redhat.com>
+ <CAGsJ_4zNounCe-N=BpqSLsk27FOJBJ9=eRbOE8CzOKF=H7kE0Q@mail.gmail.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <CAGsJ_4zNounCe-N=BpqSLsk27FOJBJ9=eRbOE8CzOKF=H7kE0Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <e0a6308f-5628-4698-95a7-ec1b918358b0@arm.com>
 
-On Wed, Feb 19, 2025 at 04:25:56PM +0000, Robin Murphy wrote:
-> > On 19/02/2025 15:39, Robin Murphy wrote:
-> >> ...
-> >>
-> >> If this may be used for splitting/compacting userspace mappings, then similarly
-> >> to 6e192214c6c8 ("iommu/arm-smmu-v3: Document SVA interaction with new pagetable
-> >> features"), strictly we'll also want a check in arm_smmu_sva_supported() to make
-> >> sure that the SMMU is OK with BBML2 behaviour too, and disallow SVA if not. Note
-> >> that the corresponding SMMUv3.2-BBML2 feature is already strict about TLB
-> >> conflict aborts, so is comparatively nice and straightforward.
+On 20.02.25 10:31, Barry Song wrote:
+> On Thu, Feb 20, 2025 at 9:51 PM David Hildenbrand <david@redhat.com> wrote:
+>>
+>> On 19.02.25 21:37, Barry Song wrote:
+>>> On Thu, Feb 20, 2025 at 7:27 AM Suren Baghdasaryan <surenb@google.com> wrote:
+>>>>
+>>>> On Wed, Feb 19, 2025 at 3:25 AM Barry Song <21cnbao@gmail.com> wrote:
+>>>>>
+>>>>> From: Barry Song <v-songbaohua@oppo.com>
+>>>>>
+>>>>> userfaultfd_move() checks whether the PTE entry is present or a
+>>>>> swap entry.
+>>>>>
+>>>>> - If the PTE entry is present, move_present_pte() handles folio
+>>>>>     migration by setting:
+>>>>>
+>>>>>     src_folio->index = linear_page_index(dst_vma, dst_addr);
+>>>>>
+>>>>> - If the PTE entry is a swap entry, move_swap_pte() simply copies
+>>>>>     the PTE to the new dst_addr.
+>>>>>
+>>>>> This approach is incorrect because even if the PTE is a swap
+>>>>> entry, it can still reference a folio that remains in the swap
+>>>>> cache.
+>>>>>
+>>>>> If do_swap_page() is triggered, it may locate the folio in the
+>>>>> swap cache. However, during add_rmap operations, a kernel panic
+>>>>> can occur due to:
+>>>>>    page_pgoff(folio, page) != linear_page_index(vma, address)
+>>>>
+>>>> Thanks for the report and reproducer!
+>>>>
+>>>>>
+>>>>> $./a.out > /dev/null
+>>>>> [   13.336953] page: refcount:6 mapcount:1 mapping:00000000f43db19c index:0xffffaf150 pfn:0x4667c
+>>>>> [   13.337520] head: order:2 mapcount:1 entire_mapcount:0 nr_pages_mapped:1 pincount:0
+>>>>> [   13.337716] memcg:ffff00000405f000
+>>>>> [   13.337849] anon flags: 0x3fffc0000020459(locked|uptodate|dirty|owner_priv_1|head|swapbacked|node=0|zone=0|lastcpupid=0xffff)
+>>>>> [   13.338630] raw: 03fffc0000020459 ffff80008507b538 ffff80008507b538 ffff000006260361
+>>>>> [   13.338831] raw: 0000000ffffaf150 0000000000004000 0000000600000000 ffff00000405f000
+>>>>> [   13.339031] head: 03fffc0000020459 ffff80008507b538 ffff80008507b538 ffff000006260361
+>>>>> [   13.339204] head: 0000000ffffaf150 0000000000004000 0000000600000000 ffff00000405f000
+>>>>> [   13.339375] head: 03fffc0000000202 fffffdffc0199f01 ffffffff00000000 0000000000000001
+>>>>> [   13.339546] head: 0000000000000004 0000000000000000 00000000ffffffff 0000000000000000
+>>>>> [   13.339736] page dumped because: VM_BUG_ON_PAGE(page_pgoff(folio, page) != linear_page_index(vma, address))
+>>>>> [   13.340190] ------------[ cut here ]------------
+>>>>> [   13.340316] kernel BUG at mm/rmap.c:1380!
+>>>>> [   13.340683] Internal error: Oops - BUG: 00000000f2000800 [#1] PREEMPT SMP
+>>>>> [   13.340969] Modules linked in:
+>>>>> [   13.341257] CPU: 1 UID: 0 PID: 107 Comm: a.out Not tainted 6.14.0-rc3-gcf42737e247a-dirty #299
+>>>>> [   13.341470] Hardware name: linux,dummy-virt (DT)
+>>>>> [   13.341671] pstate: 60000005 (nZCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+>>>>> [   13.341815] pc : __page_check_anon_rmap+0xa0/0xb0
+>>>>> [   13.341920] lr : __page_check_anon_rmap+0xa0/0xb0
+>>>>> [   13.342018] sp : ffff80008752bb20
+>>>>> [   13.342093] x29: ffff80008752bb20 x28: fffffdffc0199f00 x27: 0000000000000001
+>>>>> [   13.342404] x26: 0000000000000000 x25: 0000000000000001 x24: 0000000000000001
+>>>>> [   13.342575] x23: 0000ffffaf0d0000 x22: 0000ffffaf0d0000 x21: fffffdffc0199f00
+>>>>> [   13.342731] x20: fffffdffc0199f00 x19: ffff000006210700 x18: 00000000ffffffff
+>>>>> [   13.342881] x17: 6c203d2120296567 x16: 6170202c6f696c6f x15: 662866666f67705f
+>>>>> [   13.343033] x14: 6567617028454741 x13: 2929737365726464 x12: ffff800083728ab0
+>>>>> [   13.343183] x11: ffff800082996bf8 x10: 0000000000000fd7 x9 : ffff80008011bc40
+>>>>> [   13.343351] x8 : 0000000000017fe8 x7 : 00000000fffff000 x6 : ffff8000829eebf8
+>>>>> [   13.343498] x5 : c0000000fffff000 x4 : 0000000000000000 x3 : 0000000000000000
+>>>>> [   13.343645] x2 : 0000000000000000 x1 : ffff0000062db980 x0 : 000000000000005f
+>>>>> [   13.343876] Call trace:
+>>>>> [   13.344045]  __page_check_anon_rmap+0xa0/0xb0 (P)
+>>>>> [   13.344234]  folio_add_anon_rmap_ptes+0x22c/0x320
+>>>>> [   13.344333]  do_swap_page+0x1060/0x1400
+>>>>> [   13.344417]  __handle_mm_fault+0x61c/0xbc8
+>>>>> [   13.344504]  handle_mm_fault+0xd8/0x2e8
+>>>>> [   13.344586]  do_page_fault+0x20c/0x770
+>>>>> [   13.344673]  do_translation_fault+0xb4/0xf0
+>>>>> [   13.344759]  do_mem_abort+0x48/0xa0
+>>>>> [   13.344842]  el0_da+0x58/0x130
+>>>>> [   13.344914]  el0t_64_sync_handler+0xc4/0x138
+>>>>> [   13.345002]  el0t_64_sync+0x1ac/0x1b0
+>>>>> [   13.345208] Code: aa1503e0 f000f801 910f6021 97ff5779 (d4210000)
+>>>>> [   13.345504] ---[ end trace 0000000000000000 ]---
+>>>>> [   13.345715] note: a.out[107] exited with irqs disabled
+>>>>> [   13.345954] note: a.out[107] exited with preempt_count 2
+>>>>>
+>>>>> Fully fixing it would be quite complex, requiring similar handling
+>>>>> of folios as done in move_present_pte.
+>>>>
+>>>> How complex would that be? Is it a matter of adding
+>>>> folio_maybe_dma_pinned() checks, doing folio_move_anon_rmap() and
+>>>> folio->index = linear_page_index like in move_present_pte() or
+>>>> something more?
+>>>
+>>> My main concern is still with large folios that require a split_folio()
+>>> during move_pages(), as the entire folio shares the same index and
+>>> anon_vma. However, userfaultfd_move() moves pages individually,
+>>> making a split necessary.
+>>>
+>>> However, in split_huge_page_to_list_to_order(), there is a:
+>>>
+>>>           if (folio_test_writeback(folio))
+>>>                   return -EBUSY;
+>>>
+>>> This is likely true for swapcache, right? However, even for move_present_pte(),
+>>> it simply returns -EBUSY:
+>>>
+>>> move_pages_pte()
+>>> {
+>>>                   /* at this point we have src_folio locked */
+>>>                   if (folio_test_large(src_folio)) {
+>>>                           /* split_folio() can block */
+>>>                           pte_unmap(&orig_src_pte);
+>>>                           pte_unmap(&orig_dst_pte);
+>>>                           src_pte = dst_pte = NULL;
+>>>                           err = split_folio(src_folio);
+>>>                           if (err)
+>>>                                   goto out;
+>>>
+>>>                           /* have to reacquire the folio after it got split */
+>>>                           folio_unlock(src_folio);
+>>>                           folio_put(src_folio);
+>>>                           src_folio = NULL;
+>>>                           goto retry;
+>>>                   }
+>>> }
+>>>
+>>> Do we need a folio_wait_writeback() before calling split_folio()?
+>>>
+>>> By the way, I have also reported that userfaultfd_move() has a fundamental
+>>> conflict with TAO (Cc'ed Yu Zhao), which has been part of the Android common
+>>> kernel. In this scenario, folios in the virtual zone won’t be split in
+>>> split_folio(). Instead, the large folio migrates into nr_pages small folios.
+>>   > > Thus, the best-case scenario would be:
+>>>
+>>> mTHP -> migrate to small folios in split_folio() -> move small folios to
+>>> dst_addr
+>>>
+>>> While this works, it negates the performance benefits of
+>>> userfaultfd_move(), as it introduces two PTE operations (migration in
+>>> split_folio() and move in userfaultfd_move() while retry), nr_pages memory
+>>> allocations, and still requires one memcpy(). This could end up
+>>> performing even worse than userfaultfd_copy(), I guess.
+>>   > > The worst-case scenario would be failing to allocate small folios in
+>>> split_folio(), then userfaultfd_move() might return -ENOMEM?
+>>
+>> Although that's an Android problem and not an upstream problem, I'll
+>> note that there are other reasons why the split / move might fail, and
+>> user space either must retry or fallback to a COPY.
+>>
+>> Regarding mTHP, we could move the whole folio if the user space-provided
+>> range allows for batching over multiple PTEs (nr_ptes), they are in a
+>> single VMA, and folio_mapcount() == nr_ptes.
+>>
+>> There are corner cases to handle, such as moving mTHPs such that they
+>> suddenly cross two page tables I assume, that are harder to handle when
+>> not moving individual PTEs where that cannot happen.
 > 
-> Yup, it's really more just a theoretical correctness concern - certainly 
-> Arm's implementations from MMU-700 onwards do support BBML2, while 
-> MMU-600 is now sufficiently old that nobody is likely to pair it with 
-> new BBML-capable CPUs anyway - so it's just to cover the gap that in 
-> principle there may be 3rd-party implementations which might get confused.
+> This is a useful suggestion. I’ve heard that Lokesh is also interested in
+> modifying ART to perform moves at the mTHP granularity, which would require
+> kernel modifications as well. It’s likely the direction we’ll take after
+> fixing the current urgent bugs. The current split_folio() really isn’t ideal.
 > 
-> Cheers,
-> Robin.
+> The corner cases you mentioned are definitely worth considering. However,
+> once we can perform batch UFFDIO_MOVE, I believe that in most cases,
+> the conflict between userfaultfd_move() and TAO will be resolved ?
 
-Hi Robin,
-
-Thank you for taking the time to review these patches. I will add the
-check in the next patch series.
+Well, as soon as you would have varying mTHP sizes, you'd still run into 
+the split with TAO. Maybe that doesn't apply with Android today, but I 
+can just guess that performing sub-mTHP moving would still be required 
+for GC at some point.
 
 -- 
-Kind regards,
-Mikołaj Lenczewski
+Cheers,
+
+David / dhildenb
+
 
