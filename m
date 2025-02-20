@@ -1,64 +1,75 @@
-Return-Path: <linux-kernel+bounces-524173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF325A3E00C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:12:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B26C9A3E02C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:15:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7C411899263
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:13:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78D393A422B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:13:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 050AB200B9F;
-	Thu, 20 Feb 2025 16:12:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 921EC200B9C;
+	Thu, 20 Feb 2025 16:13:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="a3kQG6rQ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="b0vAPQ2/"
+Received: from mail-io1-f47.google.com (mail-io1-f47.google.com [209.85.166.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6213A1FFC4D;
-	Thu, 20 Feb 2025 16:12:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F2771FCCFD
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 16:13:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740067949; cv=none; b=AhkT+bYw91H6GFXuexjPba0wFB0/o9Ye8VoMM/+2eX4JbRJRKu4F3+fp3ZUuOD6BaTeKYUuMRxCk1b8T8CgDvenwhyTAtXi6gLcl3qc8T1qdAgp1lK5qnRY1+TPmN3ZcaytYVHyL6Urqfow/IQeVqA0NKNBt/4opW2aIwlVogho=
+	t=1740067995; cv=none; b=YU16fQvplrNBUAaNovJH93WGIpN/6tnqo0grWdFIB1lwi4KXcQfnIoMr7fHUJZk49JcxTOyFF1f0oMKJOtvjzE71r7MnJCY9SE36NCLXRmU8AY/j+YZJtaHKUS+zGBElfn+b93Ym/7NIptTxuvbtoFOM13vOZSKMyJBmCNFOJt0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740067949; c=relaxed/simple;
-	bh=dY/sX52Upq9lX6eM6dG99/rTqYIMuNgkc4Xx0WWgCN4=;
+	s=arc-20240116; t=1740067995; c=relaxed/simple;
+	bh=ge8tDROtqPFb3OtBLB+xMWyNR3arwxc6s3la74fZId4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=apbbQZ+BjYteru/u6CQ7OcROjnWpOPJk0733evss9fTsDmmZg9LlDJkVPeK+ouUuFdBk/AJosVZDJKbxqW1SiSc0eAN/Vaq5JqOY7+rjwqdB2RK2vJsjWkPf/LhTBA0UWom0H59Kq3n4vBd7TVkDRpnn6sDzYrJRPVCcD+W4pGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=a3kQG6rQ; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740067948; x=1771603948;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=dY/sX52Upq9lX6eM6dG99/rTqYIMuNgkc4Xx0WWgCN4=;
-  b=a3kQG6rQSfO82B8KujhPkYXYnIUytJs73zx58QkAs6MWIi2vfe0/AIYq
-   tqUuM4lVaH60rNAzd0iEtO9AMlHkCFNWYWo/hF3ffyK3y0d4o9iN2esnN
-   mMYgQ9ErkwDHcPXoZMpLqP0A4dk4FAwvESqKSMahdZi6e2A0irCmpUCUD
-   /KG8/JiaS4McHqumDj8XQyklkVKP5Jdeky3h6T/ZjuwkD2VYk/TVE1ts/
-   cUA21mEoHxIUP4MqQewxpu4s59n7FuVrUCBFRus/6+PXtTKSpJa4EnaJt
-   Wtoz8iLdm/8tRaVZyHLIShW9u+OQZNV7jKGHivmLfNFAvwAze0KBgGtl/
-   g==;
-X-CSE-ConnectionGUID: IEW5f9eiTYGZoWuwz4B6vA==
-X-CSE-MsgGUID: M7MGFh2VSOODga3DPyLKlg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11351"; a="41112412"
-X-IronPort-AV: E=Sophos;i="6.13,302,1732608000"; 
-   d="scan'208";a="41112412"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Feb 2025 08:12:18 -0800
-X-CSE-ConnectionGUID: bLt9dm1/R/6/kHAQoUZtyQ==
-X-CSE-MsgGUID: ZSTlytT+SUG7T9ZgXP8VZw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,302,1732608000"; 
-   d="scan'208";a="145939942"
-Received: from puneetse-mobl.amr.corp.intel.com (HELO [10.125.110.112]) ([10.125.110.112])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Feb 2025 08:12:17 -0800
-Message-ID: <d5a62c06-9897-4967-8cac-8454b8f6b24b@intel.com>
-Date: Thu, 20 Feb 2025 09:12:15 -0700
+	 In-Reply-To:Content-Type; b=UYKwo6OJ0RL4+3Vl47FeRzJKYAinbBdsTmFuZ4dMD13loKnxOtGsMemuJXtE3su7WqEj6LUrKUhezwexT2EgwBjOlkqCOpvADc8wEPpUG4YsafOS0/jfBdL+FgzS5T3d2Y/kR3+jQlhQqw/QAjZ7iNnzfNKtNBcGLX0GdfMg6hU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=b0vAPQ2/; arc=none smtp.client-ip=209.85.166.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f47.google.com with SMTP id ca18e2360f4ac-855a7e3be0eso29896339f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 08:13:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1740067993; x=1740672793; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=o64MbyeNKxrYo9iiqLxo3YEJFFUOkSLGKF7YrDzWVuU=;
+        b=b0vAPQ2/RzxAogh3CjiBH2LkjKWzTD0GoENlrqJHXZ7HrRcxffR7fwOQ9V3czL3i7a
+         k9MBwkdgJNxaz8eiPCWXctZrWtAdf5cG+sjVbM4MU0KZNBt4vlVAAaup4mzGU5H18bjE
+         JoLjro84wN4xjg7W4wWzC2MtUST4VsIiVPvzM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740067993; x=1740672793;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=o64MbyeNKxrYo9iiqLxo3YEJFFUOkSLGKF7YrDzWVuU=;
+        b=dDdIPqNY3+9JWcFbbzLzvt3sMfCyGfrLB/TyJ1KyCTCSUlYw+bNUD/uXluBmtyWTZk
+         +NC5xAjR2Ja7KqRkFLeTnM20nhoVUuwmu79k84GCGCCZuJd9DdPKx91i2iELoLydAbmA
+         5cMl2cgJG+QXUMRlSqVdNFAS6+g6loQpONlWBS3eYCQnmrsy3XKHSWIOPFR1XWZOC+J4
+         I56elhHdpz2TMoAOLlWyu1yLeYbpzPR1m1idKurKfUcFSw0YCoHO/wRlmTRPuvxmlOUs
+         MPtkDJy6NSv8kcSO0Qh03OxqVRs1QMfeV0egnAggAD84xljfj5GRc82KD1J21efLYi4n
+         69CQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUYQsxHoo7EhkMje/KDkOL3MJ8tJBEuj7Oimrty0L1AVdGjgjdFDrRy/7oX2NJl+yrRb2Xg7mypo3y8xI4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5KN7lFal8NVpCU6JGgtJMxOdH327qLPxdQvcwWuK5rqRP1JZe
+	UyX4h2ObvGIaXkGrvFM522PVTwyLpDO+aGzpOFMWFXB/lOe/KRybWprInbJv+AM=
+X-Gm-Gg: ASbGncvcBNQdGUjSRdA1OwyfhO+3Jqui/ZuLA193l55kvDqo9lfxPiGZb7t70jyRDlc
+	FACC6yI61P7tjPmUCAp9bG3XSHJ7YgumqT/d99LR3HdkITZEobmWf7qZn7ILEHNhOJuzaudXx87
+	3xoVEf74LkBg4qVRb1w/yvcgEuI5StWh9VZPfo5HFFAXfprXSifsPBHZ5SGZSyAhUATAhelVFfP
+	rNBIF53bb2QoDCGuU+Zw3125He6ol4WYJk2JXeja9FKZmR2gsO39ldqVfMLtcXWvLhpsJZrUYnJ
+	UGLwrzicQUQoNpTDyW+XeZV5CQ==
+X-Google-Smtp-Source: AGHT+IFlFgsDehQjT4J7TYSzBZJFTYe25Dkt/CW5UyAf97Mbw/pAy0RXZVZebdzjiAytc48LSVF+oQ==
+X-Received: by 2002:a05:6602:1607:b0:855:d60d:1115 with SMTP id ca18e2360f4ac-855d60d1332mr118178739f.13.1740067993088;
+        Thu, 20 Feb 2025 08:13:13 -0800 (PST)
+Received: from [192.168.1.14] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-855921817b2sm180941739f.17.2025.02.20.08.13.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 20 Feb 2025 08:13:12 -0800 (PST)
+Message-ID: <ec8f098b-c157-4ac3-b109-2e7be64d8747@linuxfoundation.org>
+Date: Thu, 20 Feb 2025 09:13:11 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,121 +77,46 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 05/18] cxl: Introduce parent_port_of() helper
-To: Robert Richter <rrichter@amd.com>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- Dan Williams <dan.j.williams@intel.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Davidlohr Bueso <dave@stgolabs.net>
-Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
- Gregory Price <gourry@gourry.net>,
- "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
- Terry Bowman <terry.bowman@amd.com>
-References: <20250211095349.981096-1-rrichter@amd.com>
- <20250211095349.981096-6-rrichter@amd.com>
+Subject: Re: [PATCH 6.13 000/274] 6.13.4-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20250219082609.533585153@linuxfoundation.org>
 Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <20250211095349.981096-6-rrichter@amd.com>
-Content-Type: text/plain; charset=UTF-8
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20250219082609.533585153@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-
-
-On 2/11/25 2:53 AM, Robert Richter wrote:
-> Often a parent port must be determined. Introduce the parent_port_of()
-> helper function for this.
+On 2/19/25 01:24, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.13.4 release.
+> There are 274 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Signed-off-by: Robert Richter <rrichter@amd.com>
-> Reviewed-by: Gregory Price <gourry@gourry.net>
-> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> Tested-by: Gregory Price <gourry@gourry.net>
-
-Reviewed-by: Dave Jiang <dave.jiang@intel.com>
-> ---
->  drivers/cxl/core/port.c   | 15 +++++++++------
->  drivers/cxl/core/region.c | 11 ++---------
->  drivers/cxl/cxl.h         |  1 +
->  3 files changed, 12 insertions(+), 15 deletions(-)
+> Responses should be made by Fri, 21 Feb 2025 08:25:11 +0000.
+> Anything received after that time might be too late.
 > 
-> diff --git a/drivers/cxl/core/port.c b/drivers/cxl/core/port.c
-> index f9501a16b390..d19930c009ce 100644
-> --- a/drivers/cxl/core/port.c
-> +++ b/drivers/cxl/core/port.c
-> @@ -606,17 +606,20 @@ struct cxl_port *to_cxl_port(const struct device *dev)
->  }
->  EXPORT_SYMBOL_NS_GPL(to_cxl_port, "CXL");
->  
-> +struct cxl_port *parent_port_of(struct cxl_port *port)
-> +{
-> +	if (!port || !port->parent_dport)
-> +		return NULL;
-> +	return port->parent_dport->port;
-> +}
-> +EXPORT_SYMBOL_NS_GPL(parent_port_of, "CXL");
-> +
->  static void unregister_port(void *_port)
->  {
->  	struct cxl_port *port = _port;
-> -	struct cxl_port *parent;
-> +	struct cxl_port *parent = parent_port_of(port);
->  	struct device *lock_dev;
->  
-> -	if (is_cxl_root(port))
-> -		parent = NULL;
-> -	else
-> -		parent = to_cxl_port(port->dev.parent);
-> -
->  	/*
->  	 * CXL root port's and the first level of ports are unregistered
->  	 * under the platform firmware device lock, all other ports are
-> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
-> index 5d252dfae138..54afdb0fa61c 100644
-> --- a/drivers/cxl/core/region.c
-> +++ b/drivers/cxl/core/region.c
-> @@ -1734,13 +1734,6 @@ static int cmp_interleave_pos(const void *a, const void *b)
->  	return cxled_a->pos - cxled_b->pos;
->  }
->  
-> -static struct cxl_port *next_port(struct cxl_port *port)
-> -{
-> -	if (!port->parent_dport)
-> -		return NULL;
-> -	return port->parent_dport->port;
-> -}
-> -
->  static int match_switch_decoder_by_range(struct device *dev,
->  					 const void *data)
->  {
-> @@ -1767,7 +1760,7 @@ static int find_pos_and_ways(struct cxl_port *port, struct range *range,
->  	struct device *dev;
->  	int rc = -ENXIO;
->  
-> -	parent = next_port(port);
-> +	parent = parent_port_of(port);
->  	if (!parent)
->  		return rc;
->  
-> @@ -1847,7 +1840,7 @@ static int cxl_calc_interleave_pos(struct cxl_endpoint_decoder *cxled)
->  	 */
->  
->  	/* Iterate from endpoint to root_port refining the position */
-> -	for (iter = port; iter; iter = next_port(iter)) {
-> +	for (iter = port; iter; iter = parent_port_of(iter)) {
->  		if (is_cxl_root(iter))
->  			break;
->  
-> diff --git a/drivers/cxl/cxl.h b/drivers/cxl/cxl.h
-> index 6baec4ba9141..0d7aff8b97b3 100644
-> --- a/drivers/cxl/cxl.h
-> +++ b/drivers/cxl/cxl.h
-> @@ -721,6 +721,7 @@ static inline bool is_cxl_root(struct cxl_port *port)
->  int cxl_num_decoders_committed(struct cxl_port *port);
->  bool is_cxl_port(const struct device *dev);
->  struct cxl_port *to_cxl_port(const struct device *dev);
-> +struct cxl_port *parent_port_of(struct cxl_port *port);
->  void cxl_port_commit_reap(struct cxl_decoder *cxld);
->  struct pci_bus;
->  int devm_cxl_register_pci_bus(struct device *host, struct device *uport_dev,
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.13.4-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.13.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
+Compiled and booted on my test system. No dmesg regressions.
+
+Tested-by: Shuah Khan <skhan@linuxfoundation.org>
+
+thanks,
+-- Shuah
 
