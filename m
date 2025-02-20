@@ -1,255 +1,261 @@
-Return-Path: <linux-kernel+bounces-522866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23AAEA3CF66
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 03:34:14 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 919C1A3CF6A
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 03:35:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F1FA175077
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 02:33:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 89CE07A8DA9
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 02:34:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 609FA1D63E3;
-	Thu, 20 Feb 2025 02:32:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 037C51D63D9;
+	Thu, 20 Feb 2025 02:35:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wiwynn.com header.i=@wiwynn.com header.b="Ij5s/juf"
-Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2049.outbound.protection.outlook.com [40.107.255.49])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CjFDWIb1"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD5321C6FF0;
-	Thu, 20 Feb 2025 02:32:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.49
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740018778; cv=fail; b=JX4PkNCV/h9JjJFDM7gIhbhaRuAPLpfwYmguCg7FnEa246wOZf89kK1cfFqriFtnZlE4lqV52kyeyF9dcQhMK/jrERLhSf/JJM0DjveYBDnVjiTdoHCg2s9vky/Iygx/VfYC9C1mkilrP7zrOp5D8q72SmmIqWPBsQ+m6nBEQtY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740018778; c=relaxed/simple;
-	bh=bfDUlOXeVLYUHqpekZYCXV6CY34N1W2+PnStN6jces4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=X+sr/+AusnK49YdEmXiF1vgEUVJxn135SICC5nzjuiLO3rjJFAFN01ZE03I0BO6UMx7yCOXTHqaifgG40iD8DyeCmQxkTx2QI1V6Vh5QkvxsoR/+2JhzjbmaK7l+h2qS4pu81mCv5mUU7R+xfhZuo3MHud2rIr2XyWKZ1ChtuJQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wiwynn.com; spf=pass smtp.mailfrom=wiwynn.com; dkim=pass (2048-bit key) header.d=wiwynn.com header.i=@wiwynn.com header.b=Ij5s/juf; arc=fail smtp.client-ip=40.107.255.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wiwynn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wiwynn.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=d0lX4NEkim9MWqGDIFx5egKuwtu1yEfKg6UilYKRxWzXEioaNN79CUorvCM3EnI+2scAqnhd0dlMDg2YAfKj59p2Y07X88+9J+M5hjCI8PeGjNMDlURmIIswZe4KUis+kxYbJja2REncrf8FHUtbaBSXclcYjBXvN1y1jngWxvY7ch49sExySTndkty+2OiaR0yIL8Xk6ENRgVB2vuJf0h6dqNyo3RokTjDU2FeZT8ZK6q1MG37Csgx/7PZrU7WzEsVDKILa/ThMOACfrmYDmDYrGB6z7+HDvJuBQv69DGT8A+/FZ/s+fb7+06UmN2997dqNoCL1Gk3C0zYCRy62aA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/x787lNgNntEc47QXNfeY2l5Pt9oXXCzO9vFsY4d+S0=;
- b=YtzZCdywLlKHu0a9UI7pjbxvofPDHAJm5SFSUJD83ERhzqz5BGyMo3tAasERAjuOFdZGN3QXQjsgLdvmdjLulCxAo3rUaSgQXqGXPw7sbBfj7m7ZHPowx1iK/HXOtNQC7Gi8SoeQrm4RrgiPNi998OerA4PyofYs/mX/bqFzUt5BdKD3fD6BTC5qqr0Ovkf+isleiG3Uj+4VZ/4W3bKVZfi84sh+AmNGgMilpzNrE3gjGsj6YtHQDc9XNjqBjmk6oNk6M5NYU5KsOOb7cUT+8ipmjsDVtxw1oVtiypk42J9pNa+lzSvkBUi2me/1idEyPOrDYQ4GRULCxzjEYj7qLA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
- 211.20.1.79) smtp.rcpttodomain=stwcx.xyz smtp.mailfrom=wiwynn.com; dmarc=fail
- (p=quarantine sp=quarantine pct=100) action=quarantine
- header.from=wiwynn.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wiwynn.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/x787lNgNntEc47QXNfeY2l5Pt9oXXCzO9vFsY4d+S0=;
- b=Ij5s/jufpaApD2P6rc0ptkRaG6Tq0aJb3HuGAWNEsFSJ/Fp9n0VtRgdLZysQtcidRF8qY5XZA77uoH8+/UYhgWaCWYO2XLz0xmlbMoM4vsRttOTuHETRYDtHpAkj7+1lDv/g7pLAMaEj7W+Fam4De1nIGx9dz4hjzyYVQf8lHjFuqVQnGfIIeJw4JKhNPWphgdXTeyxktgNhqtFCXSXLOECGYv16GKsx/jBRP1NmlPss6R3lSdvn84VMMYM2RoQpvSmVD3k3Mh46aDDv9J2cwOrq/DFq4zQx/9udVI54UwT3sk7s5vUdqkK0tN0FWoEzx6M5VJ+DkKj8xIMeX40YCA==
-Received: from SG2PR02CA0011.apcprd02.prod.outlook.com (2603:1096:3:17::23) by
- SEYPR04MB7320.apcprd04.prod.outlook.com (2603:1096:101:170::5) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8466.16; Thu, 20 Feb 2025 02:32:50 +0000
-Received: from SG1PEPF000082E4.apcprd02.prod.outlook.com
- (2603:1096:3:17:cafe::4e) by SG2PR02CA0011.outlook.office365.com
- (2603:1096:3:17::23) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8466.16 via Frontend Transport; Thu,
- 20 Feb 2025 02:32:50 +0000
-X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 211.20.1.79)
- smtp.mailfrom=wiwynn.com; dkim=none (message not signed)
- header.d=none;dmarc=fail action=quarantine header.from=wiwynn.com;
-Received-SPF: Fail (protection.outlook.com: domain of wiwynn.com does not
- designate 211.20.1.79 as permitted sender) receiver=protection.outlook.com;
- client-ip=211.20.1.79; helo=localhost.localdomain;
-Received: from localhost.localdomain (211.20.1.79) by
- SG1PEPF000082E4.mail.protection.outlook.com (10.167.240.7) with Microsoft
- SMTP Server id 15.20.8466.11 via Frontend Transport; Thu, 20 Feb 2025
- 02:32:49 +0000
-From: Delphine CC Chiu <delphine_cc_chiu@wiwynn.com>
-To: patrick@stwcx.xyz,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Joel Stanley <joel@jms.id.au>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>
-Cc: MarshallZhan-wiwynn <marshall_zhan@wiwynn.com>,
-	Delphine CC Chiu <delphine_cc_chiu@wiwynn.com>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-aspeed@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v5] ARM: dts: aspeed: yosemite4: add I3C config in DTS
-Date: Thu, 20 Feb 2025 10:32:32 +0800
-Message-Id: <20250220023233.1686419-1-delphine_cc_chiu@wiwynn.com>
-X-Mailer: git-send-email 2.25.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D35FDF58
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 02:35:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740018946; cv=none; b=Nan2vftIGGH7J4OeAL6TjcRIM+5NxB/8JiVBLMQ2WoWRrCUPtBlEQAGJb5ZDOPyfmvxMPQFCRZki7SeG6vn2+pLagACU5yPReC9xjuBD2uweVKuLhHabEmo8JgRFSK8VxS0I5y8xC2YPC7T1Wi9Iibfd5rC7A8W4GuyCtqy9ICM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740018946; c=relaxed/simple;
+	bh=vcPpeVHP6n4EXASkdVc+Fa0vqVRkbtm3jERyNmChSc8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QPpZzkrzYsUI/1AebIHuC18KzzgiJJIxkARjeuxWtqljbuJHUEap+BsOqoVI6/+2gVEkWlRelYEMXD1ZbxI8wygnS0O4rcDjxBcjfcfwL9X6LzVmyUXKmUUDswwf+iGln2SGaxAy3H29TVEEbuPsszYr2Hoo5h5NMS5ofmDMaRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CjFDWIb1; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740018943;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Gpiugipe2lgzrq6vUBl+mCOTtBccv54DqPwRv7KROEw=;
+	b=CjFDWIb19y2hCbe2H5hIKMo4FT24Olju8v0ScbebOcrQk+uIKHWjOYcvYCBKD/JgRh2IGI
+	RxzXU4M8TIdDfJHmcKRVgOAAHtnfEcIWh0OrA3EW3uPXmkFxe+P+aERZ8ZKsGeSFocXJmH
+	P3cNE1+MGelb6u2qPMkKnX9JP8paTqs=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-624-avJlzw19OVubyt6HIQrtkA-1; Wed,
+ 19 Feb 2025 21:35:36 -0500
+X-MC-Unique: avJlzw19OVubyt6HIQrtkA-1
+X-Mimecast-MFC-AGG-ID: avJlzw19OVubyt6HIQrtkA_1740018934
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3B7CF18EB2C3;
+	Thu, 20 Feb 2025 02:35:34 +0000 (UTC)
+Received: from localhost (unknown [10.72.112.127])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 789171800352;
+	Thu, 20 Feb 2025 02:35:32 +0000 (UTC)
+Date: Thu, 20 Feb 2025 10:35:27 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Kairui Song <ryncsn@gmail.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+	Chris Li <chrisl@kernel.org>, Barry Song <v-songbaohua@oppo.com>,
+	Hugh Dickins <hughd@google.com>,
+	Yosry Ahmed <yosryahmed@google.com>,
+	"Huang, Ying" <ying.huang@linux.alibaba.com>,
+	Nhat Pham <nphamcs@gmail.com>, Johannes Weiner <hannes@cmpxchg.org>,
+	Kalesh Singh <kaleshsingh@google.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 5/7] mm, swap: use percpu cluster as allocation fast path
+Message-ID: <Z7aU7wEx9jKo3TaT@MiWiFi-R3L-srv>
+References: <20250214175709.76029-1-ryncsn@gmail.com>
+ <20250214175709.76029-6-ryncsn@gmail.com>
+ <Z7WOCvQq3xi9wxnt@MiWiFi-R3L-srv>
+ <CAMgjq7C0Yg164SHJcP6wDC0od-xRuBMxLsJJwB0oWavpgsr8tg@mail.gmail.com>
+ <Z7W4p0p/Qkke2LTp@MiWiFi-R3L-srv>
+ <CAMgjq7AixL=Jn_c5jQFWWJt5+gPz0O+1rxtTWhzOmo2ef3dWhQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SG1PEPF000082E4:EE_|SEYPR04MB7320:EE_
-Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 56b282eb-a00b-4b0a-0e46-08dd5156de73
-X-MS-Exchange-AtpMessageProperties: SA
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|7416014|376014|1800799024|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?t6YA5OyGpVgLGgnTDumtLiUep5upxsCzHruNTTYvBs+EJ2lWRQ+vqtTb3358?=
- =?us-ascii?Q?3m/1hTtWFAe3YArBZwoYNyrh+397qmlT4/B6Si7pssCAXmqSWJryVIQtQRia?=
- =?us-ascii?Q?bshSWTgTAYM073efDGQ+wSRAecpwtXi6AgeplfrD89CB6E4R9mo1TuFkEw3X?=
- =?us-ascii?Q?DO+lg74pG0J27D6MmbSoAl1XryfI2E7ovDxDxh6nDKHYjpHjYvjFpQVtcaVX?=
- =?us-ascii?Q?icXUm+f0jkWyb/0dACuUE8ErgiXB32RURXfk1JQMOhRcNhGihW16p4WAgoLt?=
- =?us-ascii?Q?O0iEn4+jjhOaCWZmdKvjfyhBHIcTkiipak9dbbztK90mxUpg6m5e7d0h72LI?=
- =?us-ascii?Q?ZtvlHS86YuwzDUhiaiTgmHqjVYVw2ZsurgzHhwlP1fL0diskB76ZwIedkOOD?=
- =?us-ascii?Q?ol2PiHWXxtg98DDB/uHVzJK0ES8+g+TwtJhH0q+xz6DwwaiF7YowhyQmSHF3?=
- =?us-ascii?Q?qqgsQZi5MiPXbteVJN2us8ORTmP0sf4keKgWJy3FoP7l7d6nA0bBlP9JqarA?=
- =?us-ascii?Q?l212JVtN4R5Es5tPO11/VagREDWurS+bm5nT/5Xja1LRWflR8olifRHoaY5R?=
- =?us-ascii?Q?hsgprsjJODx6lN38J9jXPZpVtEDXJeguIcSe5laJON3Ugag60qgnTILhHWLv?=
- =?us-ascii?Q?M2I55IhfhOZi25o6lJtAkBel5358nGS1iItOM7XvnsROjuVlZCgxvcmz7q/+?=
- =?us-ascii?Q?gUHFAOlo6cnzxxIYc+Howk4UNg+zOdbHWPx2+mFb4sC2AmcXxdOvuegJG5b8?=
- =?us-ascii?Q?7rWNlQucmlIH1GWTd6zuAoeWDO0IKr0W6y7vMiHtQXF+/6ybMbMsLPkallZs?=
- =?us-ascii?Q?O5gTpNcuggy0SG8zn6yCBQtU6YddPBNsC136mz6Z36zdrz8Q8TsLYX2Rk14/?=
- =?us-ascii?Q?zqRc+N73F/ZGV23PmnYMC6eWVL/Yl9PmMq2zK3Pob4zG/KckgQSC2fNPBINW?=
- =?us-ascii?Q?1VXSSmfYFIBV+AlGFf6VDucsPjcgBZRcR9QPgLJ55A8LDS99sKz5sp24Pipo?=
- =?us-ascii?Q?sz1yY4btapfoDGz7uP6HynPC9NIcbPa0KmEo3FKyyVoG/1X+CNhBit3K/DDf?=
- =?us-ascii?Q?qPxgCwJxMbZIGBMVfwla9wg3pMJt53MjVh+DLrzCkqbEaxy1ZRdUJlNbwPB/?=
- =?us-ascii?Q?DdmUdkZbT0slHo9N1gZ3S+UWR6hbx5bT41IBfVEq9jWf4JT69g2F5S7vht9P?=
- =?us-ascii?Q?60CtWA5VnUNB+OhXeMh4603fLnscZV80GX3auEO1Sh4ipQr+jXfggSm5Ybdt?=
- =?us-ascii?Q?/ypF+Tk1jElihTGdvMU//zp81maRG8Dv57EGTkYdEUHC/BMTjOqNaiiEb6FI?=
- =?us-ascii?Q?Crl+fMNaSITzyElEm2if08hC4Q96yNHyUqMW6lOoc1KUnShw5TF8Z0UtWzgN?=
- =?us-ascii?Q?fq+ISbP+OSfI+j9ERxEV3S8eursHm5GHo5ByldxabyC/+wKmlwJzyUcRef01?=
- =?us-ascii?Q?8/GuWHTQLGVFVvrGca4RJwl4XwaP88J/HgS1Ru/HO0ZF8t43lT5AjEfRLLmd?=
- =?us-ascii?Q?piVpCMu8NJgVo8M=3D?=
-X-Forefront-Antispam-Report:
-	CIP:211.20.1.79;CTRY:TW;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:localhost.localdomain;PTR:211-20-1-79.hinet-ip.hinet.net;CAT:NONE;SFS:(13230040)(82310400026)(7416014)(376014)(1800799024)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: wiwynn.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Feb 2025 02:32:49.1035
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 56b282eb-a00b-4b0a-0e46-08dd5156de73
-X-MS-Exchange-CrossTenant-Id: da6e0628-fc83-4caf-9dd2-73061cbab167
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=da6e0628-fc83-4caf-9dd2-73061cbab167;Ip=[211.20.1.79];Helo=[localhost.localdomain]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SG1PEPF000082E4.apcprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR04MB7320
+In-Reply-To: <CAMgjq7AixL=Jn_c5jQFWWJt5+gPz0O+1rxtTWhzOmo2ef3dWhQ@mail.gmail.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-From: MarshallZhan-wiwynn <marshall_zhan@wiwynn.com>
+On 02/19/25 at 07:12pm, Kairui Song wrote:
+> On Wed, Feb 19, 2025 at 6:55 PM Baoquan He <bhe@redhat.com> wrote:
+> >
+> > On 02/19/25 at 04:34pm, Kairui Song wrote:
+> > > On Wed, Feb 19, 2025 at 3:54 PM Baoquan He <bhe@redhat.com> wrote:
+> > >
+> > > Hi Baoquan,
+> > >
+> > > Thanks for the review!
+> > >
+> > > >
+> > > > On 02/15/25 at 01:57am, Kairui Song wrote:
+> > > > > From: Kairui Song <kasong@tencent.com>
+> > > > >
+> > > > > Current allocation workflow first traverses the plist with a global lock
+> > > > > held, after choosing a device, it uses the percpu cluster on that swap
+> > > > > device. This commit moves the percpu cluster variable out of being tied
+> > > > > to individual swap devices, making it a global percpu variable, and will
+> > > > > be used directly for allocation as a fast path.
+> > > > >
+> > > > > The global percpu cluster variable will never point to a HDD device, and
+> > > > > allocation on HDD devices is still globally serialized.
+> > > > >
+> > > > > This improves the allocator performance and prepares for removal of the
+> > > > > slot cache in later commits. There shouldn't be much observable behavior
+> > > > > change, except one thing: this changes how swap device allocation
+> > > > > rotation works.
+> > > > >
+> > > > > Currently, each allocation will rotate the plist, and because of the
+> > > > > existence of slot cache (64 entries), swap devices of the same priority
+> > > > > are rotated for every 64 entries consumed. And, high order allocations
+> > > > > are different, they will bypass the slot cache, and so swap device is
+> > > > > rotated for every 16K, 32K, or up to 2M allocation.
+> > > > >
+> > > > > The rotation rule was never clearly defined or documented, it was changed
+> > > > > several times without mentioning too.
+> > > > >
+> > > > > After this commit, once slot cache is gone in later commits, swap device
+> > > > > rotation will happen for every consumed cluster. Ideally non-HDD devices
+> > > > > will be rotated if 2M space has been consumed for each order, this seems
+> > > >
+> > > > This breaks the rule where the high priority swap device is always taken
+> > > > to allocate as long as there's free space in the device. After this patch,
+> > > > it will try the percpu cluster firstly which is lower priority even though
+> > > > the higher priority device has free space. However, this only happens when
+> > > > the higher priority device is exhausted, not a generic case. If this is
+> > > > expected, it may need be mentioned in log or doc somewhere at least.
+> > >
+> > > Hmm, actually this rule was already broken if you are very strict
+> > > about it. The current percpu slot cache does a pre-allocation, so the
+> > > high priority device will be removed from the plist while some CPU's
+> > > slot cache holding usable entries.
+> > >
+> > > If the high priority device is exhausted, some CPU's percpu cluster
+> > > will point to a low priority device indeed, and keep using it until
+> > > the percpu cluster is drained. I think this should be
+> > > OK. The high priority device is already full, so the amount of
+> > > swapouts falls back to low priority device is only a performance
+> > > issue, I think it's a tiny change for a rare case.
+> > >
+> > > >
+> > > > > reasonable. HDD devices is rotated for every allocation regardless of the
+> > > > > allocation order, which should be OK and trivial.
+> > > > >
+> > > > > Signed-off-by: Kairui Song <kasong@tencent.com>
+> > > > > ---
+> > > > >  include/linux/swap.h |  11 ++--
+> > > > >  mm/swapfile.c        | 120 +++++++++++++++++++++++++++----------------
+> > > > >  2 files changed, 79 insertions(+), 52 deletions(-)
+> > > > ......
+> > > > > diff --git a/mm/swapfile.c b/mm/swapfile.c
+> > > > > index ae3bd0a862fc..791cd7ed5bdf 100644
+> > > > > --- a/mm/swapfile.c
+> > > > > +++ b/mm/swapfile.c
+> > > > > @@ -116,6 +116,18 @@ static atomic_t proc_poll_event = ATOMIC_INIT(0);
+> > > > >
+> > > > ......snip....
+> > > > >  int get_swap_pages(int n_goal, swp_entry_t swp_entries[], int entry_order)
+> > > > >  {
+> > > > >       int order = swap_entry_order(entry_order);
+> > > > > @@ -1211,19 +1251,28 @@ int get_swap_pages(int n_goal, swp_entry_t swp_entries[], int entry_order)
+> > > > >       int n_ret = 0;
+> > > > >       int node;
+> > > > >
+> > > > > +     /* Fast path using percpu cluster */
+> > > > > +     local_lock(&percpu_swap_cluster.lock);
+> > > > > +     n_ret = swap_alloc_fast(swp_entries,
+> > > > > +                             SWAP_HAS_CACHE,
+> > > > > +                             order, n_goal);
+> > > > > +     if (n_ret == n_goal)
+> > > > > +             goto out;
+> > > > > +
+> > > > > +     n_goal = min_t(int, n_goal - n_ret, SWAP_BATCH);
+> > > >
+> > > > Here, the behaviour is changed too. In old allocation, partial
+> > > > allocation will jump out to return. In this patch, you try the percpu
+> > > > cluster firstly, then call scan_swap_map_slots() to try best and will
+> > > > jump out even though partial allocation succeed. But the allocation from
+> > > > scan_swap_map_slots() could happen on different si device, this looks
+> > > > bizarre. Do you think we need reconsider the design?
+> > >
+> > > Right, that's a behavior change, but only temporarily affects slot cache.
+> > > get_swap_pages will only be called with size > 1 when order == 0, and
+> > > only by slot cache. (Large order allocation always use size == 1,
+> > > other users only uses order == 0 && size == 1). So I didn't' notice
+> > > it, as this series is removing slot cache.
+> > >
+> > > The partial side effect would be "returned slots will be from
+> > > different devices" and "slot_cache may get drained faster as
+> > > get_swap_pages may return less slots when percpu cluster is drained".
+> > > Might be a performance issue but seems slight and trivial, slot cache
+> > > can still work. And the next commit will just remove the slot cache,
+> > > and the problem will be gone. I think I can add a comment about it
+> > > here?
+> >
+> > By the way, another thing I suddenly think of is the percpu cluster
+> > becoming glober over all devices. If one order on the stored si of
+> > percpu cluster is used up, then the whole percpu cluster is drained and
+> > rewritten. Won't this impact performance compared with the old embedding
+> > percpu cluster in each si? In log you said "Ideally non-HDD devices
+> > will be rotated if 2M space has been consumed for each order, this seems
+> > reasonable.", while in reality it may be very difficult to achieve the
+> > 'each 2M space has been consumed for each order', but more often happen
+> > when very few of order's space has been consumed, then rewrite percpu.
+> > Wonder what I have missed about this point.
+> 
+> Hi Baoquan,
+> 
+> > then the whole percpu cluster is drained and rewritten
+> 
+> Not sure what you mean, SWAP IO doesn't happen in units of clusters,
+> cluster is only a management unit for slots, so only allocated / freed
+> slot will be written. Discard is a different thing, and this should
+> have very little effect on that.
+> 
+> Or you mean the percpu struct array getting updated? It should be even
+> faster than before, updating a global percpu variable is easier to
+> calculate the offset at runtime, using GS.
 
-Set I3C config in yosemite4 DTS.
+Yes, I mean the global percpu array updating.
 
-Test plan:
-Tested PLDM GetTID successfully with the I3C hub driver.
+> 
+> > n reality it may be very difficult to achieve the 'each 2M space has been consumed for each order',
+> 
+> Very true, but notice for order >= 1, slot cache never worked before.
+> And for order == 0, it's very likely that a cluster will have more
+> than 64 slots usable. The test result I posted should be a good
+> example, and device is very full during the test, and performance is
+> basically identical to before. My only concern was about the device
 
-Signed-off-by: MarshallZhan-wiwynn <marshall_zhan@wiwynn.com>
-Signed-off-by: Delphine CC Chiu <delphine_cc_chiu@wiwynn.com>
----
- .../aspeed/aspeed-bmc-facebook-yosemite4.dts  | 86 +++++++++++++++++++
- 1 file changed, 86 insertions(+)
+My worry is the global percpu cluster may impact performance among
+multiple swap devices. Before, per si percpu cluster will cache the
+valid offset in one cluster for each order. For multiple swap devices,
+this consumes a little bit more percpu memory. While the new global
+percpu cluster could be updated to a different swap device easily only
+of one order is available, then the whole array is invalid. That looks a
+little drastic cmpared with before.
 
-diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts
-index 29f224bccd63..5dbfe073e536 100644
---- a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts
-+++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts
-@@ -1317,6 +1317,92 @@ eeprom@50 {
- 	};
- };
- 
-+&i3c0 {
-+	status = "okay";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_i3c1_default>;
-+	i3c-pp-scl-hi-period-ns = <40>;
-+	i3c-pp-scl-lo-period-ns = <40>;
-+	i3c-od-scl-hi-period-ns = <380>;
-+	i3c-od-scl-lo-period-ns = <620>;
-+	sda-tx-hold-ns = <10>;
-+
-+	mctp-controller;
-+	hub@0x70 {
-+		reg = <0x70 0x3c0 0x00700000>;
-+		cp0-ldo-en = "disabled";
-+		cp1-ldo-en = "disabled";
-+		cp0-ldo-volt = "1.2V";
-+		cp1-ldo-volt = "1.2V";
-+		tp0145-ldo-en = "disabled";
-+		tp2367-ldo-en = "disabled";
-+		tp0145-ldo-volt = "1.2V";
-+		tp2367-ldo-volt = "1.2V";
-+		tp0145-pullup = "2k";
-+		tp2367-pullup = "2k";
-+
-+		target-port@0 {
-+			mode = "i3c";
-+			pullup = "enabled";
-+		};
-+		target-port@1 {
-+			mode = "i3c";
-+			pullup = "enabled";
-+		};
-+		target-port@2 {
-+			mode = "i3c";
-+			pullup = "enabled";
-+		};
-+		target-port@3 {
-+			mode = "i3c";
-+			pullup = "enabled";
-+		};
-+	};
-+};
-+
-+&i3c1 {
-+	status = "okay";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_i3c2_default>;
-+	i3c-pp-scl-hi-period-ns = <40>;
-+	i3c-pp-scl-lo-period-ns = <40>;
-+	i3c-od-scl-hi-period-ns = <380>;
-+	i3c-od-scl-lo-period-ns = <620>;
-+	sda-tx-hold-ns = <10>;
-+
-+	mctp-controller;
-+	hub@0x70 {
-+		reg = <0x70 0x3c0 0x00700000>;
-+		cp0-ldo-en = "disabled";
-+		cp1-ldo-en = "disabled";
-+		cp0-ldo-volt = "1.2V";
-+		cp1-ldo-volt = "1.2V";
-+		tp0145-ldo-en = "disabled";
-+		tp2367-ldo-en = "disabled";
-+		tp0145-ldo-volt = "1.2V";
-+		tp2367-ldo-volt = "1.2V";
-+		tp0145-pullup = "2k";
-+		tp2367-pullup = "2k";
-+
-+		target-port@0 {
-+			mode = "i3c";
-+			pullup = "enabled";
-+		};
-+		target-port@1 {
-+			mode = "i3c";
-+			pullup = "enabled";
-+		};
-+		target-port@2 {
-+			mode = "i3c";
-+			pullup = "enabled";
-+		};
-+		target-port@3 {
-+			mode = "i3c";
-+			pullup = "enabled";
-+		};
-+	};
-+};
-+
- &adc0 {
- 	status = "okay";
- 	pinctrl-0 = <&pinctrl_adc0_default &pinctrl_adc1_default
--- 
-2.25.1
+Yeah, the example you shown looks good. Wonder how many swap devices are
+simulated in your example.
+
+> rotating, as slot cache never worked for order >= 1, so the device
+> rotates was very frequently. But still seems no one really cared about
+> it, mthp swapout is a new thing and the previous rotation rule seems
+> even more confusing than this new idea.
+
+I never contact a real product environment with multiple tier and
+many swap devices. In reality, with my shallow knowledge, usually only
+one swap device is deployed. If that's true in most of time, the old
+code or new code is fine, otherwise, seems we may need consider the
+impact.
 
 
