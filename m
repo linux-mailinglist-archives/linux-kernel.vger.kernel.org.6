@@ -1,99 +1,240 @@
-Return-Path: <linux-kernel+bounces-523384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5105DA3D5FD
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 11:08:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35E1DA3D629
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 11:10:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE4A116FB71
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 10:08:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D857179B31
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 10:10:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C9F01F03CA;
-	Thu, 20 Feb 2025 10:08:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C41E1F03E6;
+	Thu, 20 Feb 2025 10:09:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aojsDVdI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TbnxBlwP"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 605FA1E5B6F;
-	Thu, 20 Feb 2025 10:08:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E1781F03DE
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 10:09:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740046087; cv=none; b=uVIeYgarnZKTpGte3ICgois7740zrC4OKS6HNddYZ1uB84wh9rTH2vEweYXqyP45ySyukohp3WCQTM07xXxwBaR8NscHe+Jx7f2Xs0yhwfEhpXHZF2uGaWDrPDTpziFPwNR1zD6I9LxApPgSQ8PpGttjZ3UlmCwuknal0uA7fFA=
+	t=1740046185; cv=none; b=A1XbdMJmZDKROwVAn/jlx0f7CMHiLxOneMUGkNGgW2wZ9cr9eq5S/yYOgvYybfxvpKoZmIzSiBdyHDqBkLyRiwOV2yRVqD+Af+cBDVJ1jec9t4A6fuzCbWIlKRRXqKqM2U39jEib/yh+ICQVNvx+tp8qTdMZPm19BH4EWxo95KU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740046087; c=relaxed/simple;
-	bh=7aYxpeFx/zXSVlZs4Nwq5L05WYs1pKMPdutN6w1FjNo=;
-	h=Content-Type:Date:Message-Id:Subject:Cc:From:To:References:
-	 In-Reply-To; b=bGX+EdgW0zLF/OyfNKkWTzgDNE0ZKlw6SjPT0ntvTFgNErw9q3ynJ74uyh30aeJsE7YFUHwC6e/gs2vd+EFvb3hXvgBmuuXhAtTrXCklvZx82aH5xfzV/i3sZx4W3djyNHM9BComLFwPM50H/kFeVVPHNza5V8ow8B6NonGQ3xY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aojsDVdI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D4F8C4CED1;
-	Thu, 20 Feb 2025 10:08:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740046085;
-	bh=7aYxpeFx/zXSVlZs4Nwq5L05WYs1pKMPdutN6w1FjNo=;
-	h=Date:Subject:Cc:From:To:References:In-Reply-To:From;
-	b=aojsDVdILOygS2utXv123V9c8O9v4S1CvbTVJx8UiuNQs3d+fgyiy8plnewjGBMRZ
-	 4xjEnmqs7ZiMfShxTUE2fdJsKqxiNkOFSsS00WFfDEOqd/O6j6Q7+qEMfMzyVd1Fil
-	 SkuK0c0x2NrGbP7hzV4wcYL/mERo2j6sIy2BHsaofmFB4CaE13ooLox0Ow9coqsq+F
-	 Eeqj663nSg4jeSZKjcDCzmV+BBl7KYfuIVvqXceuZSkN8G/6O7lj9Z9JBoyI6XSVjK
-	 RmsvGJWvqMJGojCzWQMnfyvqrQlbuCagPCq2xXf3BUIDMou/1aq67evJbXd39lzsbC
-	 fThwKYsZj8Olw==
-Content-Type: multipart/signed;
- boundary=58feea78e480b05d4ea244c42e5a507b481f8c5676e1bb90d305279d625a;
- micalg=pgp-sha384; protocol="application/pgp-signature"
-Date: Thu, 20 Feb 2025 11:08:01 +0100
-Message-Id: <D7X6UUIR6FBY.2CAEK4V6YOHEM@kernel.org>
-Subject: Re: [PATCH v2 07/15] gpio: regmap: use value returning setters
-Cc: <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-pwm@vger.kernel.org>, "Bartosz Golaszewski"
- <bartosz.golaszewski@linaro.org>
-From: "Michael Walle" <mwalle@kernel.org>
-To: "Bartosz Golaszewski" <brgl@bgdev.pl>, "Linus Walleij"
- <linus.walleij@linaro.org>, "Bamvor Jian Zhang" <bamv2005@gmail.com>,
- "Geert Uytterhoeven" <geert+renesas@glider.be>, "Keerthy"
- <j-keerthy@ti.com>, =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-X-Mailer: aerc 0.16.0
-References: <20250220-gpio-set-retval-v2-0-bc4cfd38dae3@linaro.org>
- <20250220-gpio-set-retval-v2-7-bc4cfd38dae3@linaro.org>
-In-Reply-To: <20250220-gpio-set-retval-v2-7-bc4cfd38dae3@linaro.org>
+	s=arc-20240116; t=1740046185; c=relaxed/simple;
+	bh=Zoo9uQ8Drs94E3LT5wK9nBC48YVNSJ75dwbnTzaoVHw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RtXF3dPj/Or5VaAtk8PL2gixCn8n4n/VJR6H+nkPIoGuC1U+vgmkKhVb4ladRmDkZebUlGJ7DSt6zDU2JyUlULIpetkQbcdXImYYij0v0K8U+8ZKTAi30DZUotbnHPJpsZlg0x68UZu7JZ2077teywmJfsDLbXXzrBDc9l6358k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TbnxBlwP; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-38f3ee8a119so358176f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 02:09:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740046181; x=1740650981; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=VKAFazs0bK/4Q6jQNje2L8Expu/NOgNPeCn90wFFS4o=;
+        b=TbnxBlwPjjyp5w4jK7dHSTOLWZ2jty0K7BW6YS3sGDpseukWSP+NfndN8IXkZbspVn
+         y/2hRbyjkA7okR7Npwye0REGht+j8z4kKPj++qi+dFBcIwmBfBx11ZwI93N+aq7BWRY7
+         4MUHHO+fzvDRFoIqRGAsRaY4GmlMbuvHA/Yx8dxKTVQ744Y/oGu+NlhUmvY9jQOHx6GU
+         XWw5cnlAmw1B2bOx1iRckt9Zla4faaKXtB9VzVCZISstygkJR3MziNB2CaSZT8DsLrQD
+         DwYHFgSgJVm0l/J9lVq4/1wtcJS50Kie/9SNSysy8thpkUl4RigzHFMAVxMnz6xfuVx5
+         AK+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740046181; x=1740650981;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VKAFazs0bK/4Q6jQNje2L8Expu/NOgNPeCn90wFFS4o=;
+        b=YaCqkOdKPhk1uDqDosoolVrhudJwPM25KENfUJLTKr2trAmX5jBbB1riFDivzKGyl9
+         CF8nbYVQAQV43gr8Q8Hus1zl2Mj/uzSV6LEN3xuZ0huGRhzUL56rYoztZ7TEHbR4sJWW
+         QrGpxJt/VtxRP0atIBHPAAfOrxSAFoseUF+R3BifMPZF2kXD2DhH2mZ6tNXu6vHQIfU9
+         2TYnvV4yMDOIcDtPxZg1VlYspRrDRiTswiuxAbH9ympPwnaKTXu3B+glNO9j4Wl1Y8Ge
+         NO7Nwf2l7PYOhp4+09W1HYThc3Z1sOwVkY2wsZhZTI9olVgiF69/ch/5LVXELK27UyPs
+         atJw==
+X-Forwarded-Encrypted: i=1; AJvYcCVm3PCrL6PLCrh8Fg6Cvs2Q++FTiNSjUffqn7xZXISi+3jxuMnGfDHsQ2mFSaLe8tDKP5dDjdWmjZs4ZcM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwS5o699ESegOg6ywIfImcT43m3jEeLiIM56K7fyCNfbc5LawmN
+	KydZ7XL0JAusJJ1d5cRRudFrDzj9dhIphyLsMW7yVigzAbyEMtLye3+sFLayTuM=
+X-Gm-Gg: ASbGncsNYQQLa/xR6KM9xGq4hd8bxpAlDChTrloG7txuEIgekG6OFzKAWMTKVjvC8cV
+	09qyX95HnU7riCcqABI466HcwBWZfwoHkL1pLFG33p8GxWBHKC1NyyvC0aKFo4eKCyc7AIZpU16
+	WGsw3e99+22OH1pWj5fY1k7a0pzvP71qeyMCpHP9QP0WVe5A82I9DOZmrYZCqYDMM7/lli+tCIS
+	2yX6AxLQwYnvEbrHK81JZZicmwiKjZwg+EJawY4GnTUJ14j0Cv9sJGGbDT24YgHM/QDWjluJd7u
+	0RdxqiDo5ZINceJ5qiPvbu+weRA=
+X-Google-Smtp-Source: AGHT+IERc6hIPqaeWn2CPZBGtZZAAoxkqyWFInBWc9QDvWlSHwq2D21AKF4IMfL83X3LHVGKdeB0Yw==
+X-Received: by 2002:a5d:59a2:0:b0:38d:d9bd:18a6 with SMTP id ffacd0b85a97d-38f33f437fdmr19446268f8f.42.1740046181176;
+        Thu, 20 Feb 2025 02:09:41 -0800 (PST)
+Received: from linaro.org ([2a02:2454:ff21:ef30:b30c:3d94:4d4a:a6eb])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f258b4123sm20741585f8f.17.2025.02.20.02.09.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Feb 2025 02:09:40 -0800 (PST)
+Date: Thu, 20 Feb 2025 11:09:38 +0100
+From: Stephan Gerhold <stephan.gerhold@linaro.org>
+To: Rob Herring <robh@kernel.org>
+Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Andy Gross <agross@kernel.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Yuvaraj Ranganathan <quic_yrangana@quicinc.com>,
+	Anusha Rao <quic_anusha@quicinc.com>,
+	Md Sadre Alam <quic_mdalam@quicinc.com>,
+	linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Luca Weiss <luca.weiss@fairphone.com>
+Subject: Re: [PATCH 7/8] dt-bindings: dma: qcom: bam-dma: Add missing
+ required properties
+Message-ID: <Z7b_YgzGJUT_un5z@linaro.org>
+References: <20250212-bam-dma-fixes-v1-0-f560889e65d8@linaro.org>
+ <20250212-bam-dma-fixes-v1-7-f560889e65d8@linaro.org>
+ <22ce4c8d-1f3b-42c9-b588-b7d74812f7b0@oss.qualcomm.com>
+ <Z6231bBqNhA2M4Ap@linaro.org>
+ <d674d626-e6a3-4683-8f45-81b09200849f@oss.qualcomm.com>
+ <Z64OKcj9Ns1NkUea@linaro.org>
+ <20250219222739.GA3078392-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250219222739.GA3078392-robh@kernel.org>
 
---58feea78e480b05d4ea244c42e5a507b481f8c5676e1bb90d305279d625a
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+On Wed, Feb 19, 2025 at 04:27:39PM -0600, Rob Herring wrote:
+> On Thu, Feb 13, 2025 at 04:22:17PM +0100, Stephan Gerhold wrote:
+> > On Thu, Feb 13, 2025 at 03:00:00PM +0100, Konrad Dybcio wrote:
+> > > On 13.02.2025 10:13 AM, Stephan Gerhold wrote:
+> > > > On Wed, Feb 12, 2025 at 10:01:59PM +0100, Konrad Dybcio wrote:
+> > > >> On 12.02.2025 6:03 PM, Stephan Gerhold wrote:
+> > > >>> num-channels and qcom,num-ees are required when there are no clocks
+> > > >>> specified in the device tree, because we have no reliable way to read them
+> > > >>> from the hardware registers if we cannot ensure the BAM hardware is up when
+> > > >>> the device is being probed.
+> > > >>>
+> > > >>> This has often been forgotten when adding new SoC device trees, so make
+> > > >>> this clear by describing this requirement in the schema.
+> > > >>>
+> > > >>> Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
+> > > >>> ---
+> > > >>>  Documentation/devicetree/bindings/dma/qcom,bam-dma.yaml | 4 ++++
+> > > >>>  1 file changed, 4 insertions(+)
+> > > >>>
+> > > >>> diff --git a/Documentation/devicetree/bindings/dma/qcom,bam-dma.yaml b/Documentation/devicetree/bindings/dma/qcom,bam-dma.yaml
+> > > >>> index 3ad0d9b1fbc5e4f83dd316d1ad79773c288748ba..5f7e7763615578717651014cfd52745ea2132115 100644
+> > > >>> --- a/Documentation/devicetree/bindings/dma/qcom,bam-dma.yaml
+> > > >>> +++ b/Documentation/devicetree/bindings/dma/qcom,bam-dma.yaml
+> > > >>> @@ -90,8 +90,12 @@ required:
+> > > >>>  anyOf:
+> > > >>>    - required:
+> > > >>>        - qcom,powered-remotely
+> > > >>> +      - num-channels
+> > > >>> +      - qcom,num-ees
+> > > >>>    - required:
+> > > >>>        - qcom,controlled-remotely
+> > > >>> +      - num-channels
+> > > >>> +      - qcom,num-ees
+> > > >>
+> > > >> I think I'd rather see these deprecated and add the clock everywhere..
+> > > >> Do we know which one we need to add on newer platforms? Or maybe it's
+> > > >> been transformed into an icc path?
+> > > > 
+> > > > This isn't feasible, there are too many different setups. Also often the
+> > > > BAM power management is tightly integrated into the consumer interface.
+> > > > To give a short excerpt (I'm sure there are even more obscure uses):
+> > > > 
+> > > >  - BLSP BAM (UART, I2C, SPI on older SoCs):
+> > > >     1. Enable GCC_BLSP_AHB_CLK
+> > > >     -> This is what the bam_dma driver supports currently.
+> > > > 
+> > > >  - Crypto BAM: Either
+> > > >     OR 1. Vote for single RPM clock
+> > > >     OR 1. Enable 3 separate clocks (CE, CE_AHB, CE_AXI)
+> > > >     OR 1. Vote dummy bandwidth for interconnect
+> > > > 
+> > > >  - BAM DMUX (WWAN on older SoCs):
+> > > >     1. Start modem firmware
+> > > >     2. Wait for BAM DMUX service to be up
+> > > >     3. Vote for power up via the BAM-DMUX-specific SMEM state
+> > > >     4. Hope the firmware agrees and brings up the BAM
+> > > > 
+> > > >  - SLIMbus BAM (audio on some SoCs):
+> > > >     1. Start ADSP firmware
+> > > >     2. Wait for QMI SLIMBUS service to be up via QRTR
+> > > >     3. Vote for power up via SLIMbus-specific QMI messages
+> > > >     4. Hope the firmware agrees and brings up the BAM
+> > > > 
+> > > > Especially for the last two, we can't implement support for those
+> > > > consumer-specific interfaces in the BAM driver. Implementing support for
+> > > > the 3 variants of the Crypto BAM would be possible, but it's honestly
+> > > > the least interesting use case of all these. It's not really clear why
+> > > > we are bothing with the crypto engine on newer SoCs at all, see e.g. [1].
+> > > > 
+> > > > [1]: https://lore.kernel.org/linux-arm-msm/20250118080604.GA721573@sol.localdomain/
+> > > > 
+> > > >> Reading back things from this piece of HW only to add it to DT to avoid
+> > > >> reading it later is a really messy solution.
+> > > > 
+> > > > In retrospect, it could have been cleaner to avoid describing the BAM as
+> > > > device node independent of the consumer. We wouldn't have this problem
+> > > > if the BAM driver would only probe when the consumer is already ready.
+> > > > 
+> > > > But I think specifying num-channels in the device tree is the cleanest
+> > > > way out of this mess. I have a second patch series ready that drops
+> > > > qcom,num-ees and validates the num-channels once it's safe reading from
+> > > > the BAM registers. That way, you just need one boot test to ensure the
+> > > > device tree description is really correct.
+> > > 
+> > > Thanks for the detailed explanation!
+> > > 
+> > > Do you think it could maybe make sense to expose a clock/power-domain
+> > > from the modem/adsp rproc and feed it to the DMUX / SLIM instances when
+> > > an appropriate ping arrives? This way we'd also defer probing the drivers
+> > > until the device is actually accessible.
+> > > 
+> > 
+> > Maybe, but that would result in a cyclic dependency between the DMA
+> > provider and consumer. E.g.
+> > 
+> > 	bam_dmux_dma: dma-controller@ {
+> > 		#dma-cells = <1>;
+> > 		power-domains = <&bam_dmux>;
+> > 	};
+> > 
+> > 	remoteproc@ {
+> > 		/* ... */
+> > 
+> > 		bam_dmux: bam-dmux {
+> > 			dmas = <&bam_dmux_dma 4>, <&bam_dmux_dma 5>;
+> > 			dma-names = "tx", "rx";
+> > 		};
+> > 	};
+> > 
+> > fw_devlink will likely get confused by that.
+> 
+> Why? We have a property to break cycles: post-init-providers
+> 
+> That doesn't work here?
+> 
 
-On Thu Feb 20, 2025 at 10:57 AM CET, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->
-> struct gpio_chip now has additional variants of the set(_multiple)
-> driver callbacks that return an integer to indicate success or failure.
-> Convert the driver to using them.
->
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Thanks, I was not aware of that property. This looks quite useful for
+fixing up some of the other cyclic dependencies we have!
 
-Reviewed-by: Michael Walle <mwalle@kernel.org>
+Nevertheless, for this specific case, I still think we should not make
+such large breaking changes at this point. As I pointed out further
+below in my quoted email, this is a legacy hardware block that will
+likely not get any major new users in the future. We're essentially
+discussing to rework several bindings and drivers just to drop a single
+straightforward "num-channels = <N>" property. A property that we will
+need to keep support for anyway, to support users with older DTBs. This
+effort (and risk) is really better spent elsewhere.
 
--michael
-
---58feea78e480b05d4ea244c42e5a507b481f8c5676e1bb90d305279d625a
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iKgEABMJADAWIQTIVZIcOo5wfU/AngkSJzzuPgIf+AUCZ7b/AhIcbXdhbGxlQGtl
-cm5lbC5vcmcACgkQEic87j4CH/jUtgGAvgzFeiyP4H+lQUSX84x8HebLiOxDtgdR
-dIeEV/y68ek6vWJfv/6HrG6KgmBiW/FnAYDXKNY3A/excX0C+g4yyyrhAbGjMGAl
-2IGEAbcBVMciMJL3KUMCmvWuHiveGRVjYsU=
-=Qql6
------END PGP SIGNATURE-----
-
---58feea78e480b05d4ea244c42e5a507b481f8c5676e1bb90d305279d625a--
+Thanks,
+Stephan
 
