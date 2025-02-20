@@ -1,146 +1,248 @@
-Return-Path: <linux-kernel+bounces-524583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6340DA3E4CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 20:13:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D5D9A3E4D7
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 20:14:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0BE5A189EE26
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 19:13:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7B5619C07C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 19:14:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4381426388E;
-	Thu, 20 Feb 2025 19:13:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3330B2641C9;
+	Thu, 20 Feb 2025 19:13:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="YRe0ouD8"
-Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nKE0F6Ne"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32A7B24BCFE
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 19:13:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C19371FECA7;
+	Thu, 20 Feb 2025 19:13:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740078805; cv=none; b=lm/klCxmopALcmnjiWloUF0w6dWT79jWzS6gx+s7x5/7bbrFYD8cgFtcUZA7vqqKMpUMaLj9ZNVW9jiKzng2JBAtQlmCaigVK1TIt7wQnOkhyhQEV5Eiaa3uKycayKjTDUkNM7cq2COqXpUSMiVLs2t7QfYvk3jRqxnnSaz0sKM=
+	t=1740078833; cv=none; b=nfgAmBgJ2899WkI0ZOeUNtSQMyVdhgz5KBhaIST6EvbdQ9TUzvrzQAutrxnTvmK++lUcn1cbntQUdz5SlDZJUlbyoBPn1Yy36T0NlReXMvCeM9sLzlOmBcPJgp6YOT2KLsNQTeoliZ6wTWTztj3x3qK46c/zh86t819HxquIn84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740078805; c=relaxed/simple;
-	bh=3ju+Fge1vefH4rJ7oHab4mwdT63sJzOAo2WkeZe1IsE=;
+	s=arc-20240116; t=1740078833; c=relaxed/simple;
+	bh=bYvpIuR6+4V4p0e3j5E3/HYm2LJSdnNVx04OJcQ01F4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Gq6NDtKIJHcbEi2Oqt5PUirMpRAlqfpKzvSE8VKOsENDkmf2i8aFFd0VRSut6MqdJqIsTHtLXKkr2Rd8kEbQUcDO3saRKM0evtL3Ck1u05JcUiQ6nfrWyjBwEkS1CETwH+1w85uGs/KJpDuqUYLUrm1hI422pm4QJ0JP0UiA5wY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=YRe0ouD8; arc=none smtp.client-ip=209.85.222.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7be3f230436so116174485a.3
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 11:13:22 -0800 (PST)
+	 Content-Type:Content-Disposition:In-Reply-To; b=bVUySxgwvgAKlsrvbv3WZVqB6NKgsIZmnlsR7gUc5OkZq8y+6WN/eD93vQUkh/G415gbduFqlRaeCynZMLd8/K0yFkYw8JoXIuO6sAYz8wL9Cx8g2xHxlH5hYzzvrqcGLOwWPHR2k6WcoAzyWQT3BPM3nJDSmLCXXEzAz5Wd4as=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nKE0F6Ne; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2211cd4463cso27547715ad.2;
+        Thu, 20 Feb 2025 11:13:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1740078802; x=1740683602; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1740078831; x=1740683631; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=qNx9JrIVabkYve1PD6+5XRax/4bHll/Ja/FL4uUPxuM=;
-        b=YRe0ouD8vryCVVMEU/Wf9SG3jLxWgZZY3b0m+wZtLy+O9/srHa6sfPbXdlcsb1WeNw
-         Cip8lhHRudkVU9Vt8twQ+qYohTfpjQHdM9cnOmb79JwkldVVutTWr4XvmZczOYGBYdHr
-         ZIBPoAhFkVXqsPWtCK2+dBPNs1mrfJMReUtN6tht86ZejSN75yR+LTAC+At5x1w0zVUj
-         MkX2+A6bCOe+BjCoJz7xVsObj73R7WW2P8+wh16BK40dgEX9fqDJnSYbA3o41QxdGzeC
-         BkejS4Fnmfe1d1m7M7BPHaCHyFov2uk2iGdHIf5GQ1ka6MIIuY2QTH0EEBS4hvRWR7hJ
-         gIGA==
+        bh=JkQa+dhEgsqTxqH9wwhvXJ34Tn9uVSWrpA8SXTi2VJk=;
+        b=nKE0F6NeXynndNVd3hQr1eiP1FL2HrKiC06fMbYu8a71gCHXUlA+Gsjww+ZW09R9GK
+         W1AxVclq+3cq83pEnWHXk4dRy2z9gzZ9rDrjTKY9awm9vqBgV/6eZuFuTKtUrVLvMQ66
+         bzpwm7OeyhsDs4UhOx9h+n84+wLoSuTtVoLl/C2WWLwd9u3D9mrGukkeieiOixQDRqtY
+         kEOy0d4EAEM8cKYlb81/htheWAztmsaOtU7lLz7Z+Twr7ADfmULwmb34h+Q4hrv+0UiA
+         ythRo4G2nw79IpaQEB2jfWOnvcts3fw7/6DRYxGQFUMQtheTeDapXNjaCEv4MDs1LZXo
+         zhfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740078802; x=1740683602;
+        d=1e100.net; s=20230601; t=1740078831; x=1740683631;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=qNx9JrIVabkYve1PD6+5XRax/4bHll/Ja/FL4uUPxuM=;
-        b=u2/6UPvOXLlXdK/8tXkT3z+rVD8J+2NkKs9/o1RKqItQnjUwkwlseUw7UHKk0PsHPA
-         5byIwIyINrtZM6g5kiETfFAjxouw445zIXVuVDlswv7ivxA8yQ9vD4vn5dUKet4YXSzK
-         Lvg13futu2GAA8OX96dYgftPPCB+vXpylw+BW7JM7K8Ez9OEluKmwpbSt7JkNp2gvZ3a
-         pkVcA4BfzMHEQDax7xJ5AcLirxaSfZMd3NeRYTjCcp/Hg5ZETjrIklQGnSIPa3likwKI
-         uA9xaYmss+lfnbj0vD0tF4x7kmsA1XRzBGKuv5nUaRRjd9RfdcL6iAW+iEmN2jGb/k/J
-         4L5A==
-X-Forwarded-Encrypted: i=1; AJvYcCW2IbTZXVWmqUlOUI+9cheF7IKP5nPMObgxJrEEA0Tzsgd+L9NChmbCc/L/hWMJycDbN41f4FTiS0H4Kx4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvIF44PKHqQL7hwjmBZ6xTqZBM7Uv+eci/Up0iVgnDTOpM7mPQ
-	APkZseYuQTVm92Oo/r007QUxo/n+C1C3z7Drt+eDhbeEbETgNhu3/kyzplzrWXA=
-X-Gm-Gg: ASbGncszz7Puv6qd0CCKvcycRpb6xfrsrlf14XUa7cQxSzAiuAUDQx1QMZoebBBHuw5
-	kZiBoKZXr16yAPmrVh6OnfvHSimcLsTSly9Xc8hK954+SdUDBHVYYHIKCxlfsQ6I09BMU8YSoLh
-	/oHaujq6firJNtfXOEvag1y/wLAUAzUhBOWRDQrPcYl9guxLWr9galtbWAuTGcn9Xw0pnMj7nZU
-	tDMjsp2fFfNMKYfRx09YFzymmINU2oAajXS1O01QPb7f3K49lrSVLLzhzm+Do8bbGZgEMYy7byP
-	Q4GAb4mmWsG8uJ4k+xVgfHEUQJIaiCCyi4PPH3XZLkEmmYvuvqyQOJ5IffNDuyQZCiVasIiXiA=
-	=
-X-Google-Smtp-Source: AGHT+IFQN9nUHNkBphF2rvfCIhCVm6Hj1N0F070dzNmNKy/cVT7UuqEFg+GppUV0fFHN/1S/dwR13Q==
-X-Received: by 2002:a05:620a:191f:b0:7c0:bb63:5377 with SMTP id af79cd13be357-7c0cef66889mr51580985a.39.1740078800600;
-        Thu, 20 Feb 2025 11:13:20 -0800 (PST)
-Received: from gourry-fedora-PF4VCD3F (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c0b424d51bsm269027185a.77.2025.02.20.11.13.19
+        bh=JkQa+dhEgsqTxqH9wwhvXJ34Tn9uVSWrpA8SXTi2VJk=;
+        b=FryN6RK5Z75TFmYmjMDk1AstbuyVjKaIX71gPL+OfKOVJkQ+Y3PzEpKGpc9u5V+GAY
+         8DCikX7hME5WWyZIZWVksMXLObfvq+BGeROs5Y6+Mm1gCVL/3DoT/iGSHxPk8FVa1Tgc
+         BQzgncaajnUK/eIoUZ8jSsBjBYXEbMMKzqqdxB5xp9qNBlGtbHyb12fFAIpvuo0u6p/2
+         V1mZVs3wJ9b+EEM996VQoRF9dOmf9x8tmvaZUyXWxucK8fkqIy2CPV2HllJeJD3Cg+DS
+         XlFUUOp2eyCVPRgoA7HRFJ/GOvTEmVuJApHbAGpIamOPuJKRmWpUHvcJNUIsna/CfZXE
+         0BkA==
+X-Forwarded-Encrypted: i=1; AJvYcCUPjLLSvD61Y7JiDaPkjO7kb9KCngMoz9aBR8Ahsk2yZbJDWn6uCTG9jJulRvWNL9KELshGsbWMJcZrnga8ZGmr@vger.kernel.org, AJvYcCUymBoW7YfhwoKo9G2WH2UnaT8TXN5jrU17hIxE27XHke4puFoIdUBsbbUMVPiQUhDJuqM=@vger.kernel.org, AJvYcCW148DbidwNi3PMc+Wu/7WuypCa+2XJOMMPkzUVG9kaAgFBnWB0kH2Whgj0kniFgLVH/qjteRy+R9os@vger.kernel.org, AJvYcCX4pI0A1ZV0YNR5rt+77qsTJKu98JQp8OvWPXvPY4ZihGKvh6MIu/PsRfU5mpRIZTW01YWrfz0foLeWClQk@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFXMcfk9n4+DKVUnPB6JCWUdmxtm3JpLcNyzHFgq6CzndG1iss
+	XCU+/fQ/vAAixRt5i31Es7HsII8fpP55wW2fweMAXRs3Neah/7o=
+X-Gm-Gg: ASbGncuhJiPw1O09eEYLi8b/19Ofn3DGgVkn67tmbqXlbU2Eo4K4ui2SG7ava9jLudf
+	ieB9dy4XMikH2MCVAHcDx23Sy38tqWezd7CdWvpc5fWoEFbEIH+8IEmJITHpkIRDj0JY1v7Cpr0
+	eQ///LQ1LAy9U9hM6lSaULC1t4fgS1SNhcrpttZhFI3Gam502EGbeQ/psALdwKQjjIHKAcP4V23
+	Ca11iB9l23K4H264c+D9SzKEkCUQfBxRVNsjPc06oDJ/MMnXbbDiEtBwNrcTHcy+7MHJoHHxdQ4
+	RbU8F8Rje/A9GiM=
+X-Google-Smtp-Source: AGHT+IHIIuxiMZMBBkbPNcC5zirNHq1feMk9yHBECVzOv1p5m8kEN9+wL54cjusKTa4cy0GyMsGD0w==
+X-Received: by 2002:a05:6a21:7002:b0:1ee:cd18:d3f5 with SMTP id adf61e73a8af0-1eef3cb9b92mr517626637.23.1740078830809;
+        Thu, 20 Feb 2025 11:13:50 -0800 (PST)
+Received: from localhost ([2601:646:9e00:f56e:123b:cea3:439a:b3e3])
+        by smtp.gmail.com with UTF8SMTPSA id 41be03b00d2f7-add2e0ad0dfsm10759682a12.78.2025.02.20.11.13.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Feb 2025 11:13:20 -0800 (PST)
-Date: Thu, 20 Feb 2025 14:13:18 -0500
-From: Gregory Price <gourry@gourry.net>
-To: Robert Richter <rrichter@amd.com>
-Cc: Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Davidlohr Bueso <dave@stgolabs.net>, linux-cxl@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
-	Terry Bowman <terry.bowman@amd.com>
-Subject: Re: [PATCH v2 07/15] cxl/region: Use translated HPA ranges to find
- the port's decoder
-Message-ID: <Z7d-zqJBVD7KNR4_@gourry-fedora-PF4VCD3F>
-References: <20250218132356.1809075-1-rrichter@amd.com>
- <20250218132356.1809075-8-rrichter@amd.com>
+        Thu, 20 Feb 2025 11:13:50 -0800 (PST)
+Date: Thu, 20 Feb 2025 11:13:48 -0800
+From: Stanislav Fomichev <stfomichev@gmail.com>
+To: Mina Almasry <almasrymina@google.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, virtualization@lists.linux.dev,
+	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	Jeroen de Borst <jeroendb@google.com>,
+	Praveen Kaligineedi <pkaligineedi@google.com>,
+	Shailend Chand <shailend@google.com>,
+	Kuniyuki Iwashima <kuniyu@amazon.com>,
+	Willem de Bruijn <willemb@google.com>,
+	David Ahern <dsahern@kernel.org>,
+	Neal Cardwell <ncardwell@google.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Eugenio =?utf-8?B?UMOpcmV6?= <eperezma@redhat.com>,
+	Stefan Hajnoczi <stefanha@redhat.com>,
+	Stefano Garzarella <sgarzare@redhat.com>,
+	Shuah Khan <shuah@kernel.org>, sdf@fomichev.me,
+	asml.silence@gmail.com, dw@davidwei.uk,
+	Jamal Hadi Salim <jhs@mojatatu.com>,
+	Victor Nogueira <victor@mojatatu.com>,
+	Pedro Tammela <pctammela@mojatatu.com>,
+	Samiullah Khawaja <skhawaja@google.com>
+Subject: Re: [PATCH net-next v4 6/9] net: enable driver support for netmem TX
+Message-ID: <Z7d-7P8kPthyr3bG@mini-arch>
+References: <20250220020914.895431-1-almasrymina@google.com>
+ <20250220020914.895431-7-almasrymina@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250218132356.1809075-8-rrichter@amd.com>
+In-Reply-To: <20250220020914.895431-7-almasrymina@google.com>
 
-On Tue, Feb 18, 2025 at 02:23:48PM +0100, Robert Richter wrote:
-> This is the second step to find the port's decoder with address
-> translation enabled. The translated HPA range must be used to find a
-> decoder. The port's HPA range is determined by applying address
-> translation when crossing memory domains for the HPA range to each
-> port while traversing the topology from the endpoint up to the port.
+On 02/20, Mina Almasry wrote:
+> Drivers need to make sure not to pass netmem dma-addrs to the
+> dma-mapping API in order to support netmem TX.
 > 
-> Introduce a function cxl_find_auto_decoder() that calculates the
-> port's translated address range to determine the corresponding
-> decoder. Use the existing helper function cxl_port_calc_hpa() for HPA
-> range calculation.
+> Add helpers and netmem_dma_*() helpers that enables special handling of
+> netmem dma-addrs that drivers can use.
 > 
-> Signed-off-by: Robert Richter <rrichter@amd.com>
+> Document in netmem.rst what drivers need to do to support netmem TX.
+> 
+> Signed-off-by: Mina Almasry <almasrymina@google.com>
+> 
 > ---
->  drivers/cxl/core/region.c | 60 +++++++++++++++++++++++++++++++++++++--
->  1 file changed, 58 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
-> index 5048511f9de5..6d5ede5b4c43 100644
-> --- a/drivers/cxl/core/region.c
-> +++ b/drivers/cxl/core/region.c
-> @@ -887,6 +887,63 @@ static int match_auto_decoder(struct device *dev, const void *data)
->  	return 0;
->  }
->  
-> +static struct device *
-> +cxl_find_auto_decoder(struct cxl_port *port, struct cxl_endpoint_decoder *cxled,
-> +		      struct cxl_region *cxlr)
-> +{
-> +	struct cxl_port *parent, *iter = cxled_to_port(cxled);
-> +	struct cxl_decoder *cxld = &cxled->cxld;
-> +	struct range hpa = cxld->hpa_range;
-> +	struct cxl_region_ref *rr;
+> v4:
+> - New patch
+> ---
+>  .../networking/net_cachelines/net_device.rst  |  1 +
+>  Documentation/networking/netdev-features.rst  |  5 +++++
+>  Documentation/networking/netmem.rst           | 14 +++++++++++--
+>  include/linux/netdevice.h                     |  2 ++
+>  include/net/netmem.h                          | 20 +++++++++++++++++++
+>  5 files changed, 40 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/networking/net_cachelines/net_device.rst b/Documentation/networking/net_cachelines/net_device.rst
+> index 15e31ece675f..e3043b033647 100644
+> --- a/Documentation/networking/net_cachelines/net_device.rst
+> +++ b/Documentation/networking/net_cachelines/net_device.rst
+> @@ -10,6 +10,7 @@ Type                                Name                        fastpath_tx_acce
+>  =================================== =========================== =================== =================== ===================================================================================
+>  unsigned_long:32                    priv_flags                  read_mostly                             __dev_queue_xmit(tx)
+>  unsigned_long:1                     lltx                        read_mostly                             HARD_TX_LOCK,HARD_TX_TRYLOCK,HARD_TX_UNLOCK(tx)
+> +unsigned long:1			    netmem_tx:1;	        read_mostly
+>  char                                name[16]
+>  struct netdev_name_node*            name_node
+>  struct dev_ifalias*                 ifalias
+> diff --git a/Documentation/networking/netdev-features.rst b/Documentation/networking/netdev-features.rst
+> index 5014f7cc1398..02bd7536fc0c 100644
+> --- a/Documentation/networking/netdev-features.rst
+> +++ b/Documentation/networking/netdev-features.rst
+> @@ -188,3 +188,8 @@ Redundancy) frames from one port to another in hardware.
+>  This should be set for devices which duplicate outgoing HSR (High-availability
+>  Seamless Redundancy) or PRP (Parallel Redundancy Protocol) tags automatically
+>  frames in hardware.
 > +
-> +	while (iter != port) {
+> +* netmem-tx
+> +
+> +This should be set for devices which support netmem TX. See
+> +Documentation/networking/netmem.rst
+> diff --git a/Documentation/networking/netmem.rst b/Documentation/networking/netmem.rst
+> index 7de21ddb5412..43054d44c407 100644
+> --- a/Documentation/networking/netmem.rst
+> +++ b/Documentation/networking/netmem.rst
+> @@ -19,8 +19,8 @@ Benefits of Netmem :
+>  * Simplified Development: Drivers interact with a consistent API,
+>    regardless of the underlying memory implementation.
+>  
+> -Driver Requirements
+> -===================
+> +Driver RX Requirements
+> +======================
+>  
+>  1. The driver must support page_pool.
+>  
+> @@ -77,3 +77,13 @@ Driver Requirements
+>     that purpose, but be mindful that some netmem types might have longer
+>     circulation times, such as when userspace holds a reference in zerocopy
+>     scenarios.
+> +
+> +Driver TX Requirements
+> +======================
+> +
+> +1. Driver should use netmem_dma_unmap_page_attrs() in lieu of
+> +   dma_unmap_page[_attrs](), and netmem_dma_unmap_addr_set() in lieu of
+> +   dma_unmap_addr_set(). The netmem variants will handle netmems that should
+> +   not be dma-unmapped by the driver, such as dma-buf netmems.
 
-I understand this is used to map an endpoint to a region associated with
-the given port.  Is there a scenario where `port` is *not* a root decoder?
+Not all drivers use dma_unmap_addr_xxx APIs (looking at mlx5). Might
+be worth mentioning that for the drivers managing the mappings
+differently, care might be taken to not unmap netmems?
 
-Seems like port will (should) always be a root decoder here in practice.
+> +2. Driver should declare support by setting `netdev->netmem_tx = true`
+> diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
+> index fccc03cd2164..d8cfd5d69ddf 100644
+> --- a/include/linux/netdevice.h
+> +++ b/include/linux/netdevice.h
+> @@ -1753,6 +1753,7 @@ enum netdev_reg_state {
+>   *	@lltx:		device supports lockless Tx. Deprecated for real HW
+>   *			drivers. Mainly used by logical interfaces, such as
+>   *			bonding and tunnels
+> + *	@netmem_tx:	device support netmem_tx.
+>   *
+>   *	@name:	This is the first field of the "visible" part of this structure
+>   *		(i.e. as seen by users in the "Space.c" file).  It is the name
+> @@ -2061,6 +2062,7 @@ struct net_device {
+>  	struct_group(priv_flags_fast,
+>  		unsigned long		priv_flags:32;
+>  		unsigned long		lltx:1;
+> +		unsigned long		netmem_tx:1;
+>  	);
+>  	const struct net_device_ops *netdev_ops;
+>  	const struct header_ops *header_ops;
+> diff --git a/include/net/netmem.h b/include/net/netmem.h
+> index a2148ffb203d..1fb39ad63290 100644
+> --- a/include/net/netmem.h
+> +++ b/include/net/netmem.h
+> @@ -8,6 +8,7 @@
+>  #ifndef _NET_NETMEM_H
+>  #define _NET_NETMEM_H
+>  
+> +#include <linux/dma-mapping.h>
+>  #include <linux/mm.h>
+>  #include <net/net_debug.h>
+>  
+> @@ -267,4 +268,23 @@ static inline unsigned long netmem_get_dma_addr(netmem_ref netmem)
+>  void get_netmem(netmem_ref netmem);
+>  void put_netmem(netmem_ref netmem);
+>  
 
-May or may not be a useful check on input, either way:
+[..]
 
-Reviewed-by: Gregory Price <gourry@gourry.net>
+> +#define netmem_dma_unmap_addr_set(NETMEM, PTR, ADDR_NAME, VAL)   \
+> +	do {                                                     \
+> +		if (!netmem_is_net_iov(NETMEM))                  \
+> +			dma_unmap_addr_set(PTR, ADDR_NAME, VAL); \
+> +		else                                             \
+> +			dma_unmap_addr_set(PTR, ADDR_NAME, 0);   \
+> +	} while (0)
+
+Any reason not do to static inline instaed?
 
