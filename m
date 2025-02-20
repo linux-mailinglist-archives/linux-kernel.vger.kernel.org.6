@@ -1,128 +1,150 @@
-Return-Path: <linux-kernel+bounces-522871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D353A3CF72
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 03:45:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A6C0A3CF76
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 03:48:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9957D189259B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 02:45:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 630C9189B85B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 02:48:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A4031C5D77;
-	Thu, 20 Feb 2025 02:45:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48DE363A9;
+	Thu, 20 Feb 2025 02:47:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="UWvQV8jC"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="KEBBTN/Z"
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EDCB63A9
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 02:45:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05181288D6
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 02:47:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740019540; cv=none; b=gGlIGKKMCAflurLx0pvGUzDTVomIwYtY7NSctS1y9okVbuIX82JLxqhR88jW6JfbTMaQSnQLPwzzPvZlYSCx96VEss1N6oChoroDguYsJaSo2Ub7C1lN24kZqM8VnDNRLBEC4jIqGiDX04SZvCLgQ7pyW8U0vLKgFWN4EPWTUPo=
+	t=1740019676; cv=none; b=nl8zyGIGYiBRujp2FoXu96I4PxVxxKENeBul+XDyRnOQL6QPjYp/SELul+S32Tv2MtfaJ3utwdoRanQybHaP3/aaozUiCVkVEu2SjSyqoQAT5aTSJiEF0cxmNbuc9MxkHNZFSFsNdylA4DmAvUY1MjrJ3uw3F4MjI94LHVZf9JU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740019540; c=relaxed/simple;
-	bh=FwKCf7NcHbE+wwInEarHAeiSJNgDjsARI31fiu93V9s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O66H3oGqInPaSN2eXD/g2bZlP/2+AVxvBjVPiYQyBVIoz/eVCpnHG8jV8gNVs5PzBtXm05/XY+ONonxiS6hLrkL6s+0/2bFhER5IiCWcvhbtV/kiPCd7WgkIjB+UsO0zIin/87iu/9zsTfJrsR1F65rW86vfxslu08Ck8NfIr8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=UWvQV8jC; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-220d132f16dso6263935ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 18:45:39 -0800 (PST)
+	s=arc-20240116; t=1740019676; c=relaxed/simple;
+	bh=2VvfnmXlr34dHXG/P3XG6letow4wupZdh48hZ5+IiwM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Q+7RA62ajiJ1V/FwQhCx7/UhV2QSvoC2q30NZwnwv482/FaZWinbEOdp6HSPXO2GReteDoCMHX54q3uMD6P8SGhRkG1y7BX6XqRPIXD3jxMYZeGoeAhzTrRrtozk5mgdFvYMwvoAzMEULGhcEzwwtLF58Zcjl0QHqvoDjlfr6d8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=KEBBTN/Z; arc=none smtp.client-ip=209.85.128.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-6efe4324f96so3812227b3.1
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 18:47:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1740019538; x=1740624338; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=UI8er1QIo11ePodvaUDFPqSlfWIt+uqTGczwGI9wUfM=;
-        b=UWvQV8jCdv36FX2zNipfPBTErqMu1f1ALlGOALLnopxSgMkNt0wapRFyyxk6HWiQQJ
-         7SqjoUNxREnhQbWkW6zynsIYtzMXA25rWMyntfKhSdicfN7oAcV3uk1az/aykELM/kNP
-         FwzNpfhcTOK+yz15EDv4GKrvYTSZ1XkpP6z9g=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740019538; x=1740624338;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=sifive.com; s=google; t=1740019673; x=1740624473; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=UI8er1QIo11ePodvaUDFPqSlfWIt+uqTGczwGI9wUfM=;
-        b=UDtz3gR0cqEroLcDB1fOPfFQR61jqwzVDWnlY0oEVCQ/cO6+U4svU4t0pbVWr6J7ie
-         Ew5FPIUAxnYPzbK4lm+b8K2Vgmf+EEXjZwtevmd66g8LoU2liLNYIMYPg0gZ0hiebk9O
-         VKCCTFUO7n4AQzrSgTX64+JyhCGRhkN0k3Edi3jeF21mzMDrAtRqY9MAQVKxVQOotX0W
-         /FSsCf22fgzVU+ax5fIjBhNd/AGrP3T72QX/HiLj6pT+GdDxAlDGaDFOJZyvkDIsa1Gx
-         naIamUsbUgHnkKAAmfdTj50OqGHoc1IrHw81Kx3VATKG5rddGJtafqGuSELdbk6HK2h1
-         a3Hg==
-X-Forwarded-Encrypted: i=1; AJvYcCUO+QFjO1IDFOHDpL1hB3zi8G7Wy0ciMMqjfCWf1ttSXKAB9Dls0T6GHO7WAhmbiSHKsqyhU90mxKyuKRc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPMoMNrb+XxqSO8/h9W+Z+3b2r0djZTPpLbBxMQ4Xrq34foaUh
-	kDE+MWw0ENw2mmV0BcdAGatbPt6V/hhQaZjI7Ub3RPN1ahMCzgYc4glm8JyKDA==
-X-Gm-Gg: ASbGncu2/Pbj6O7FFqiZ8kH0vf7CY/069x/KqFuBWSUaU/pLL1LgUGxnFqqMR/CjUOy
-	zrRvYXrWN1u5JjvZ5gvGCJ5+2hAwHIsAgtMal952kn50xwWPuwvMc58NMfg4uPY40BzquIOkvuc
-	qS0sLWLRBYeB43voHRiaUuXF20s17h4a+F9oPbveyWvklRSIO+v5efdpmZOpX3WuuAjz8isnHLr
-	XlzNGFhLETlYqoAarQod0Zl40UZw1Agq3pOaBC0LU5wF4RwxZnITcWC7//NYgBmpX5ekIEdh0GL
-	yqrXm8RxU937V9fEZkc=
-X-Google-Smtp-Source: AGHT+IFDlx5KS4ERMHSoSvJOSTfsI+ROnGGUQ7neAcy4HyNLIs5qvkj/0mus3Vbm0DhOcw8QgKSbjQ==
-X-Received: by 2002:a05:6a20:3942:b0:1ee:69aa:b665 with SMTP id adf61e73a8af0-1eed4ff478amr10713321637.29.1740019538668;
-        Wed, 19 Feb 2025 18:45:38 -0800 (PST)
-Received: from google.com ([2401:fa00:8f:203:9c92:f424:750b:8e42])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-ade415b35c6sm8018927a12.18.2025.02.19.18.45.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Feb 2025 18:45:38 -0800 (PST)
-Date: Thu, 20 Feb 2025 11:45:30 +0900
-From: Sergey Senozhatsky <senozhatsky@chromium.org>
-To: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Waiman Long <llong@redhat.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Boqun Feng <boqun.feng@gmail.com>, 
-	Joel Granados <joel.granados@kernel.org>, Anna Schumaker <anna.schumaker@oracle.com>, 
-	Lance Yang <ioworker0@gmail.com>, Kent Overstreet <kent.overstreet@linux.dev>, 
-	Yongliang Gao <leonylgao@tencent.com>, Tomasz Figa <tfiga@chromium.org>, 
-	Sergey Senozhatsky <senozhatsky@chromium.org>, linux-kernel@vger.kernel.org, 
-	Linux Memory Management List <linux-mm@kvack.org>
-Subject: Re: [PATCH 1/2] hung_task: Show the blocker task if the task is hung
- on mutex
-Message-ID: <20250220-112040-neomutt-senozhatsky@chromium.org>
-References: <173997003868.2137198.9462617208992136056.stgit@mhiramat.tok.corp.google.com>
- <173997004932.2137198.7959507113210521328.stgit@mhiramat.tok.corp.google.com>
- <20250219112308.5d905680@gandalf.local.home>
- <0fa9dd8e-2d83-487e-bfb1-1f5d20cd9fe6@redhat.com>
- <20250219152435.35077ac3@gandalf.local.home>
- <20250220080908.fc1494f0f7c611b48fbe0f8b@kernel.org>
+        bh=Xvp9vC0eMH1pKGCb8lxYuIWBY9DYcdV7nU72B3skZ6Y=;
+        b=KEBBTN/ZusaqxikmKmtLJnqMTtn4ks+InMoAoMQoSXfjcWbUXEJWrU71azbGzZWIKt
+         XkxJGZxDgXnPNNwQP9/EuSU/snNUOLtpzB+9tCAkQ+4GFC225CyN6utG2wrGMV24iswW
+         XImPoWeHp6qpJiQREq151HSEkhFC14g783qHwlmmPgiMiU/EjvsGEsWodP1iOs0r7H6U
+         S/3wfzsHWRA3G+vaCMIk/RPDZnr0xNAd+tJslrX0DZZJdFDewokMsIhH5KeS4WEbJjbk
+         wncznDiIyLMq8wnBb2GlAdgEnz/vPoNIXlOF+aU7/aOCjiFteuvOXKW45a6794TkHWCF
+         /I5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740019673; x=1740624473;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Xvp9vC0eMH1pKGCb8lxYuIWBY9DYcdV7nU72B3skZ6Y=;
+        b=YHighuDIXP3xkG5oeObpd2d/onwOc7+TqUy6BhBVnN6jyscNW5DICQZHYB3MIQVvJG
+         6YD8qwAR9o77Yut77JURO09qIJTOkZsyYz4EodZbcJAfkI+BeoY9q+mkywUMuJW9EQpp
+         n5jBdy7H+7FVB9ZzZlqwkBoxWHWiF+n74xr6fhSBEv7a2siJb8Vg3Vum4l8uM2z4DFgn
+         Gy4PSUx4QukHszWOoLFC4zLdBifGg0/iQ2FwdrF7ck6WZbjmrVYJQoGeunJoQjXq9IA9
+         RRpiGWhGs2DTUCzdTFz5iJViQJvyW4dcO01ErtciGdtZ9kI/cBwDuIxK/zDmOH2Hm4MU
+         duKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX1jG8o9HTrpclMIQpEUsorzLbn+//5QlXaA70wsn1JDiG8KS7l83Xo9P97foAOV59hdbE9KR8kdb6muIA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyrnlkERIutG9eQrhETUlMB6CgBTncaOSkfBLKZimlS63gsaFdF
+	0BYoyChxa49BPsD+fPuQaSA7H1oRNwIJCgW6SFbjFSvjm6HYhh4nYcutRcKoc0tP1EhHlUCfgp/
+	CvEws3WvrxAji3hWTWTKIpdD8TQUzT4tiom6HUA==
+X-Gm-Gg: ASbGncuOO3i6ZPb8KcU5ASqpOsMvSrA3bD7jzkE0a4tuuVkFRZYdEli0k1sttwZ7znU
+	OiylDWP03vejh8hUjGKZe4mMuscRcXj8vyN8+zJX1SzeVnsDl6Z1rwDKWOR+ub+Fe9GOPJfrq9p
+	A=
+X-Google-Smtp-Source: AGHT+IHpbcrdwizdZDEB2LKzf3t7N+L1gh7l/lSw8IgK31mOcpbcfuefgyvG7Eg9yB90MSd4D8fYOSrYNFEZa4g738Y=
+X-Received: by 2002:a05:690c:64c8:b0:6f7:ac3f:d589 with SMTP id
+ 00721157ae682-6fbbb7eafa8mr5012217b3.36.1740019672877; Wed, 19 Feb 2025
+ 18:47:52 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250220080908.fc1494f0f7c611b48fbe0f8b@kernel.org>
+References: <20250217055843.19799-1-nick.hu@sifive.com> <889918c4-51ae-4216-9374-510e4cbdc3f1@intel.com>
+In-Reply-To: <889918c4-51ae-4216-9374-510e4cbdc3f1@intel.com>
+From: Nick Hu <nick.hu@sifive.com>
+Date: Thu, 20 Feb 2025 10:47:40 +0800
+X-Gm-Features: AWEUYZmjzhqzQbHmf9_A5Yil9YBABlCV2QtiQWGg09MoFGZlPCm-Nzx5MY3mUGU
+Message-ID: <CAKddAkBZWZqY+-TERah+Q+WUfkqzcpFMA=ySSuTxxBjfP7tKZg@mail.gmail.com>
+Subject: Re: [PATCH] net: axienet: Set mac_managed_pm
+To: Jacob Keller <jacob.e.keller@intel.com>
+Cc: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Michal Simek <michal.simek@amd.com>, 
+	Russell King <linux@armlinux.org.uk>, Francesco Dolcini <francesco.dolcini@toradex.com>, 
+	Praneeth Bajjuri <praneeth@ti.com>, Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On (25/02/20 08:09), Masami Hiramatsu wrote:
-> So something like this?
-> 
-> unsigned int	block_flags;
-> union {
-> 	struct mutex	*mutex;
-> 	struct rwsem	+rwsem;
-> 	struct rtmutex	*rtmutex;
-> } blocked_on;
-> 
-> enum {
-> 	BLOCKED_ON_MUTEX;
-> 	BLOCKED_ON_RWSEM;
-> 	BLOCKED_ON_RTMUTEX;
-> 	BLOCKED_ON_IO;
-> } block_reason;
+Hi Jacob
 
-I totally like this and always wanted to have something simlar,
-something for all "sleepable" synchronization primitives, lightweight
-enough (memory and CPU usage wise) to run on consumer devices.  I was
-thinking of a rhashtable where each entry represents "sleepable"
-primitive with a "owner" pointer and a list of "blocked on" tasks.
-But I'm sure you'll have a better idea.
+On Thu, Feb 20, 2025 at 7:29=E2=80=AFAM Jacob Keller <jacob.e.keller@intel.=
+com> wrote:
+>
+>
+>
+> On 2/16/2025 9:58 PM, Nick Hu wrote:
+> Nit: subject should include the "net" prefix since this is clearly a bug
+> fix.
+>
+I've added the 'net' prefix to the subject 'net: axienet: Set
+mac_managed_pm'. Is there something I'm missing?
 
-If I may add a couple of "wishes", can we also add:
-- completions (so that things like wait_for_completion and
-  synchronize srcu get covered)
-- wait on bit (so that things like lock_buffer and so on get covered)
+> > The external PHY will undergo a soft reset twice during the resume proc=
+ess
+> > when it wake up from suspend. The first reset occurs when the axienet
+> > driver calls phylink_of_phy_connect(), and the second occurs when
+> > mdio_bus_phy_resume() invokes phy_init_hw(). The second soft reset of t=
+he
+> > external PHY does not reinitialize the internal PHY, which causes issue=
+s
+> > with the internal PHY, resulting in the PHY link being down. To prevent
+> > this, setting the mac_managed_pm flag skips the mdio_bus_phy_resume()
+> > function.
+> >
+> > Fixes: a129b41fe0a8 ("Revert "net: phy: dp83867: perform soft reset and=
+ retain established link"")
+> > Signed-off-by: Nick Hu <nick.hu@sifive.com>
+> > ---
+>
+> Otherwise, the fix seems correct to me.
+>
+> Reviewed-by: Jacob Keller <jacob.e.keller@intel.com>
+>
+> >  drivers/net/ethernet/xilinx/xilinx_axienet_main.c | 1 +
+> >  1 file changed, 1 insertion(+)
+> >
+> > diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c b/driver=
+s/net/ethernet/xilinx/xilinx_axienet_main.c
+> > index 2ffaad0b0477..2deeb982bf6b 100644
+> > --- a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
+> > +++ b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
+> > @@ -3078,6 +3078,7 @@ static int axienet_probe(struct platform_device *=
+pdev)
+> >
+> >       lp->phylink_config.dev =3D &ndev->dev;
+> >       lp->phylink_config.type =3D PHYLINK_NETDEV;
+> > +     lp->phylink_config.mac_managed_pm =3D true;
+> >       lp->phylink_config.mac_capabilities =3D MAC_SYM_PAUSE | MAC_ASYM_=
+PAUSE |
+> >               MAC_10FD | MAC_100FD | MAC_1000FD;
+> >
+>
+
+Regards,
+Nick
 
