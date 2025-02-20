@@ -1,91 +1,118 @@
-Return-Path: <linux-kernel+bounces-523449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15444A3D6EF
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 11:39:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2110A3D6F4
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 11:41:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DA2F178262
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 10:39:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7D351899789
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 10:41:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99AB31F1313;
-	Thu, 20 Feb 2025 10:39:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 323F31F12E7;
+	Thu, 20 Feb 2025 10:41:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MZPyAXi5"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MX22FvAl"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47CCB1EFFB7
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 10:39:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C47371F03E5
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 10:40:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740047946; cv=none; b=QYPXpWF1CswfMsIz13Bx+HYULrvns8VUgTNYYyez8itbq3bS6KFCiZMVuiAqxCVk+qQxNOUB9cdHA1dEhSCBjh5xJqmijif7UlTmBP/JTxIxjzxlXlCJtmLZgqMHwnBM69so9cxd901eshBlYeMV/StZLM2C0ux46sqZPPFQPLc=
+	t=1740048062; cv=none; b=XMzRiWs2s5jXCRhUKVbCFyWkwdVtBrw6bWdAs6I2/OCw4auhhpMwDgL+3Vha+/Q4WFTFNQ6MSSaAw8y2jOXhLB7v0B4QAENQLbtK/rJJl+9LtvJ0H1iF0/y4lLbGmThT1YJFBouM1/n23t03ilBmjuyrZtUM1F7Jq35+EdO74Fs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740047946; c=relaxed/simple;
-	bh=NvB+Ln2F5OR2jkh6KL96l1YTtwUwfpj++8Osv8mwXsw=;
+	s=arc-20240116; t=1740048062; c=relaxed/simple;
+	bh=554yhaBP/3qxfNbZcQBh8gMdf5Fu/67iXhId/NAW/Y8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M/dVZTAW2Jk12cW/tdlzC6ogt0XnwrkjXD2z/3AEaTi3E79LuoH8EH5AWQ7xAjacug3XLjVYZV4KjgjX8wCOK5H8mlw+uIvli8tu+piV7cvqPuWCHft6DLdjBHinzOyN6TUmp7FDsYTuAztMxcQLtKXElZzjruXahFYbOquUbEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MZPyAXi5; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-30797730cbdso7422221fa.3
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 02:39:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740047942; x=1740652742; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=X92rb9D172xJ3m6jUr9iBc3AayfqZW/VTwWuWXoB8ck=;
-        b=MZPyAXi5fVG+K0sgJYH1zlkoW61Nu75jrpEDWJEa8FGf5c3uJ4OYSNV3bOiDtS0aM4
-         2ONd8AmfXQ8d6DHHDGpHl8Rg6F21286usSXbE7rGYXYjGNEAp/D6mQNUv4zSeq/bZGDn
-         g8CDXp7Se0XmcfrmNLH0DgckFHlqOaf/cN1qK/TRBZAtLrvqhlwmqVMHWK4LZDPrYcf1
-         tdqXepVRa8OBuWxCBVSgMSRIny3Ozlh41VZGReLZMZ9O0mBaHxib/Elr+DJ8oH5Z3vBJ
-         UQvGKEvHayKOwjMmaOP3X6AqiUivWAo0bWRkMQF2WH2LEvlXT7JQSevf9X8z1GvMf1iM
-         ObLw==
+	 Content-Type:Content-Disposition:In-Reply-To; b=IVnp+5l69j2qyyDvu9nLHK0PYXjMR+CMCjsReRO26yq0Kx33we25QBgJ1P804jnfBOWelETYaqgHjbOCcpZ7Qn5k2RNxtkcmX+CizDxD9WHHcqilQYiXLObQGolZNBjYj7dajF/lAo7yIEvJ4CRgKyochI908t2DxmbNDi8pdtU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MX22FvAl; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740048058;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kt3GhjiWRt65nJ5tPSuoAxO5Kw5ysLUhxQqBlrMrjnk=;
+	b=MX22FvAlcdZ0h2qtNABD6B4Zp79t8lLA7+ms5UBPeS3fWMk5rMchTs9biWFHfY8Ks5Ax3i
+	ZsiGn0vf81z7x3tfJ/E7IkRqVZ40oXxndRfa2Hp9IIu/T85ILrhGGfOvZ9TdUZZuwq3bbU
+	+slBMU2cDHR0/pcpvd0epXVER5sOX8U=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-391-WBFfmqUAOSu7guEO38SnHg-1; Thu, 20 Feb 2025 05:40:57 -0500
+X-MC-Unique: WBFfmqUAOSu7guEO38SnHg-1
+X-Mimecast-MFC-AGG-ID: WBFfmqUAOSu7guEO38SnHg_1740048056
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4398a60b61fso3794125e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 02:40:57 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740047942; x=1740652742;
+        d=1e100.net; s=20230601; t=1740048051; x=1740652851;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=X92rb9D172xJ3m6jUr9iBc3AayfqZW/VTwWuWXoB8ck=;
-        b=XTqraGBspouFTK4zXAkkdYQD3IgssHqFhW22QpRC8CWR51BZFa17chapiuf0RVnptm
-         dzOwPVFFASib8vkOqqKeqSEVkQlkR953lq7UJm+hO51vnm1G3k8AvaxExaU5h+e7HAux
-         +2s05ZtmCh7qyLQ8xvDiLIdBe7Oaci+HCgs4ezZzp9JggbBQpIuwNq1xq0BFMDnjB9BN
-         oFnEuOpbNPv4OxluP6pcNX6oVlXIjRdiRmZhpWiLtv9Um6ZvayKd4rP0IpHnCTdEKau1
-         dMX+tbKB0fdEFRcTfqC4guEnLyp5jVY9Cy904OOKpFzXiaFv/8ui4lfSuDEImsi2XTA3
-         zaXA==
-X-Forwarded-Encrypted: i=1; AJvYcCWbhCioc5YiIBZe674d7HX+2lndip2PUgImupkPmDAgOnOVI6MpTeLrT2D1TEycDowk4zWtjqiqrsp1g5U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTdtkfSBRoGHnvtSBPFNNANguMLqinWyiZjSTXW8+MyH5+n8ci
-	xhdze/zj1/QZkmxdkGXFulQFDwIEcxuNFWYuhS4ad7YiX0auElaxYWIhseN6F68=
-X-Gm-Gg: ASbGnct91coPcoh0TsbBdzkRSdUWGhqdBnzgNg9M0nfme+BJm9g1v1KfZoDjnPGLEmB
-	+CwQcepbOTPkhbPQKSRyWyEYBn3imNdO37f9P09+3F7gtIRLN83Cq13pBHfhM9H0+7MC6jSAAQJ
-	DaviI61FBh9jIV6aFOXDlAeFGzhw1xV7R5dlzhA7C1qGbFE4PUS7Wo9Bhe0CdS6xTJm2StM670K
-	S6PvwS/j3TlE3Stcufk0CEiTsM3VunvYf78PKLep897XNXYHj43lOTav9H5FN2M61W2kajNJ+4L
-	QwSFcFKrssflHajHNLNb+0O+yBVYRl16cU0TOhzjSFavWc0d8jTZ5aXOs4/jgW41xv1TznM=
-X-Google-Smtp-Source: AGHT+IFRg7UVjRZDmHQnfdnVthz0ufNG5oKmdvchj6JuDiK5kDggWLBI6i3+syJDqIuYb+0vPqagAQ==
-X-Received: by 2002:a05:651c:2222:b0:308:f4cc:951b with SMTP id 38308e7fff4ca-30a45035a2fmr29362691fa.23.1740047942092;
-        Thu, 20 Feb 2025 02:39:02 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3091f503f39sm22024551fa.28.2025.02.20.02.38.59
+        bh=kt3GhjiWRt65nJ5tPSuoAxO5Kw5ysLUhxQqBlrMrjnk=;
+        b=mTyDXUOrf51uQpIJ17HRENe6FQJyISu6sPPsM1XtY7jjIuQPRLvl+vt80FDH3YmQal
+         OwaQ3hNVZpRrN3xvUGxnD/9uTo/g319yv9g9IAY/A0xbaH1xAcYtsNECLGo79kP9nodl
+         tiVeHWWgK/aVoBdbrPPjePKPvl1Y+EFxbgAgzDOR5f2HPweq02E6M9hZ4leC5085sK0C
+         kfvG8Ux/gry1h6wg9uYQYmJJubVkvXdKXVH22Zzjj9V2hvrA6yBhj7VcWtL5UOk0Jt3Z
+         QlIepp8gTPN19GvtYgv6c8fvERgTIQBUZXJwXcrEgP0EEfIFhzXaxjKHSw/G88vkhujv
+         +tjA==
+X-Forwarded-Encrypted: i=1; AJvYcCXhQA4dAQKnqL93boZyD8PH2flV7Nj6M/c/qf9IX5Bve31YIkRqfdAQYUb+QmlfAR9NiAPxe2gMfXiVZv4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3/DRyrVTCGjzkqPgz3TLMd/vAyzzZAyVxuRAdX5BftzR2+N5P
+	2Xg5yJP176nOS+wc4QRSQ3i1+ekCaIFbHWeBCk2FoHMix+PegDemvGVMjfh2MzM0TN6eULwHBc7
+	gAoScEyOQNmqfscdE/mhYeKKXXlO3UaXv5h2rBFvvKT3L9Un/W27UTthCO84QjQ==
+X-Gm-Gg: ASbGnctZH/VDIOPTZ4wxRRqrCNFr4brF+ZblxG/gnCm64DJVn9c2pNe9WZoQfOmaE43
+	MYtiBN88TIvyRBJTp+PtQsvOOyBUt6nXCeOVHRuYWj13BxkEmc2uOH55BPjOIGo5EGAKQqSHZ0/
+	R5qDAgsygqxuyRRX5tyRYi5VyazcBC8YVxGQfY4YTOrE+6q2/OMAbDF84dLIvkZXwwtsjYezQGV
+	N22DgUahU5dNL1hoGcZZsgYLfUdM7FS3exNBeYzz6ONf/w6CAC8az7bGsOHYHmgWHH+EsoQQeK5
+	OGyN9CyKARbIX3sRP6C0MEfmc6BN3Wz2mw==
+X-Received: by 2002:a05:600c:314d:b0:439:9898:f18c with SMTP id 5b1f17b1804b1-4399898f441mr68419365e9.26.1740048050985;
+        Thu, 20 Feb 2025 02:40:50 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFX6B5S875r6pRDNl9Zm1M4sz26ytNSLf3feicsocEfDCIzKzuKvG3EWcYOJnRmZ81qqPm9kQ==
+X-Received: by 2002:a05:600c:314d:b0:439:9898:f18c with SMTP id 5b1f17b1804b1-4399898f441mr68419005e9.26.1740048050482;
+        Thu, 20 Feb 2025 02:40:50 -0800 (PST)
+Received: from jlelli-thinkpadt14gen4.remote.csb ([151.29.34.42])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43994f0c10csm71395725e9.26.2025.02.20.02.40.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Feb 2025 02:39:00 -0800 (PST)
-Date: Thu, 20 Feb 2025 12:38:58 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Jun Nie <jun.nie@linaro.org>
-Cc: Rob Clark <robdclark@gmail.com>, 
-	Abhinav Kumar <quic_abhinavk@quicinc.com>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
-	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Krishna Manikandan <quic_mkrishn@quicinc.com>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 5/5] drm/msm/dsi: Support DSC for dual panel case
-Message-ID: <iibq3orsb7uf44luz2he2auox43ki42m2z4nnderyqlhypvfgo@pwqpvua6vuyo>
-References: <20250220-dual-dsi-v2-0-6c0038d5a2ef@linaro.org>
- <20250220-dual-dsi-v2-5-6c0038d5a2ef@linaro.org>
+        Thu, 20 Feb 2025 02:40:49 -0800 (PST)
+Date: Thu, 20 Feb 2025 11:40:46 +0100
+From: Juri Lelli <juri.lelli@redhat.com>
+To: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Cc: Jon Hunter <jonathanh@nvidia.com>,
+	Christian Loehle <christian.loehle@arm.com>,
+	Thierry Reding <treding@nvidia.com>,
+	Waiman Long <longman@redhat.com>, Tejun Heo <tj@kernel.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Michal Koutny <mkoutny@suse.com>, Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Phil Auld <pauld@redhat.com>, Qais Yousef <qyousef@layalina.io>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	"Joel Fernandes (Google)" <joel@joelfernandes.org>,
+	Suleiman Souhlal <suleiman@google.com>,
+	Aashish Sharma <shraash@google.com>,
+	Shin Kawamura <kawasin@google.com>,
+	Vineeth Remanan Pillai <vineeth@bitbyteword.org>,
+	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH v2 3/2] sched/deadline: Check bandwidth overflow earlier
+ for hotplug
+Message-ID: <Z7cGrlXp97y_OOfY@jlelli-thinkpadt14gen4.remote.csb>
+References: <30a8cda5-0fd0-4e47-bafe-5deefc561f0c@nvidia.com>
+ <151884eb-ad6d-458e-a325-92cbe5b8b33f@nvidia.com>
+ <Z7Ne49MSXS2I06jW@jlelli-thinkpadt14gen4.remote.csb>
+ <Z7RZ4141H-FnoQPW@jlelli-thinkpadt14gen4.remote.csb>
+ <d7cc3a3c-155e-4872-a426-cbd239d79cac@arm.com>
+ <Z7SWvr86RXlBbJlw@jlelli-thinkpadt14gen4.remote.csb>
+ <a0f03e3e-bced-4be7-8589-1e65042b39aa@arm.com>
+ <Z7WsRvsVCWu_By1c@jlelli-thinkpadt14gen4.remote.csb>
+ <4c045707-6f5a-44fd-b2d1-3ad13c2b11ba@arm.com>
+ <537f2207-b46b-4a5e-884c-d6b42f56cb02@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,144 +121,324 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250220-dual-dsi-v2-5-6c0038d5a2ef@linaro.org>
+In-Reply-To: <537f2207-b46b-4a5e-884c-d6b42f56cb02@arm.com>
 
-On Thu, Feb 20, 2025 at 06:07:56PM +0800, Jun Nie wrote:
-> There is dual DSI case that every DSI link is connected to an independent
-> panel. In this dual panel case, the frame width for DSC on each link should
-> be halved to support the usage case.
-
-Isn't it the case for the DSI panel utilizing two DSI links?
-
+On 19/02/25 19:14, Dietmar Eggemann wrote:
+> On 19/02/2025 14:09, Dietmar Eggemann wrote:
+> > On 19/02/2025 11:02, Juri Lelli wrote:
+> >> On 19/02/25 10:29, Dietmar Eggemann wrote:
 > 
-> Signed-off-by: Jun Nie <jun.nie@linaro.org>
+> [...]
+> 
+> >> If you already had the patch ignoring sugovs bandwidth in your set, could
+> >> you please share the full dmesg?
+> > 
+> > Will do later today ... busy with other stuff right now ;-(
+> 
+> l B B l l l
+>       ^^^
+>       isolcpus=[3,4]
+> 
+> w/o sugov tasks:
+> 
+> The issue seems to be that we call partition_sched_domains() for CPU4
+> during suspend. Which does not issue a:
+> 
+>   build_sched_domains() -> cpu_attach_domain() -> rq_attach_root() ->   
+>   __dl_server_[de|at]tach_root()
+
+And unfortunately this is the path that I am not able to reproduce at my
+end. Looks like the boxes I have access to don't use this method when
+suspending (no hotplug).
+
+> [  171.006436] dl_bw_deactivate() called cpu=4
+> ...
+> [  171.006639] __dl_overflow() dl_b->bw=996147 cap=446 cap_scale(dl_b->bw, cap)=433868 dl_b->total_bw=104856 old_bw=52428 new_bw=0 type=DEF rd->span=3-5
+>                                                                                        ^^^^^^^^^^^^^^^^^^^^^(*)
+> [  171.006652] dl_bw_manage() cpu=4 cap=446 overflow=0 req=0 return=0 type=DEF
+> ...
+> [  171.007971] dl_bw_deactivate() called cpu=3
+> ...
+> [  171.007999] dl_bw_manage: cpu=3 cap=0 fair_server_bw=52428 total_bw=104856 dl_bw_cpus=1 type=DEF span=3-5
+>                                                               ^^^^^^^^^^^^^^^ (*) 
+> [  171.008010] dl_bw_cpus() cpu=3 rd->span=3-5 cpu_active_mask=0-3 cpus=1 type=DEF
+> [  171.008019] dl_bw_manage() cpu=3 cap=0 overflow=1 req=0 return=-16 type=DEF
+> [  171.008069] Error taking CPU3 down: -16
+> 
+> You can see how 'dl_b->total_bw' stays 104856 (2 x util = 51) even
+> though CPU4 is off (*).
+
+Right (well, not right :).
+
+> If total_bw would be 52428 for CPU3 going down we would still fail with
+> the current code (taking the else path):
+> 
+> 3604  if (dl_bw_cpus(cpu) - 1)
+> 3605    overflow = __dl_overflow(dl_b, cap, fair_server_bw, 0);
+> 3606  else
+> 3607    overflow = 1;
+> 
+> but if we would take the if path even when 'dl_bw_cpus(cpu) = 1'
+> _dl_overflow() would return false:
+> 
+> 280  return dl_b->bw != -1 &&
+> 281    cap_scale(dl_b->bw, cap) < dl_b->total_bw - old_bw + new_bw;
+> 
+>        '0 < 52428 - 52428 + 0' is false
+
+OK. The idea of the current logic is that we shouldn't even enter that
+branch, as, if total_bw accounting was correct, total_bw for DEF would
+be equal to fair_server_bw. So, no additional DEADLINE bandwidth present
+and we proceed with offlining.
+
+Let's have a look below.
+
 > ---
->  drivers/gpu/drm/msm/dsi/dsi.h         |  3 ++-
->  drivers/gpu/drm/msm/dsi/dsi_host.c    | 13 +++++++++----
->  drivers/gpu/drm/msm/dsi/dsi_manager.c | 10 ++++++++--
->  3 files changed, 19 insertions(+), 7 deletions(-)
 > 
-> diff --git a/drivers/gpu/drm/msm/dsi/dsi.h b/drivers/gpu/drm/msm/dsi/dsi.h
-> index 35b90c462f637111159b204269ce908614a21586..5a8978bed9f4ca897b418ced60194042d9dd8d05 100644
-> --- a/drivers/gpu/drm/msm/dsi/dsi.h
-> +++ b/drivers/gpu/drm/msm/dsi/dsi.h
-> @@ -74,7 +74,8 @@ void msm_dsi_host_enable_irq(struct mipi_dsi_host *host);
->  void msm_dsi_host_disable_irq(struct mipi_dsi_host *host);
->  int msm_dsi_host_power_on(struct mipi_dsi_host *host,
->  			struct msm_dsi_phy_shared_timings *phy_shared_timings,
-> -			bool is_bonded_dsi, struct msm_dsi_phy *phy);
-> +			bool is_bonded_dsi, bool is_dual_panel,
-> +			struct msm_dsi_phy *phy);
->  int msm_dsi_host_power_off(struct mipi_dsi_host *host);
->  int msm_dsi_host_set_display_mode(struct mipi_dsi_host *host,
->  				  const struct drm_display_mode *mode);
-> diff --git a/drivers/gpu/drm/msm/dsi/dsi_host.c b/drivers/gpu/drm/msm/dsi/dsi_host.c
-> index 976c5d82a2efa0fc51657b8534675890be7c33a6..752a97f7181c30dade0a7745492bf16649b3197b 100644
-> --- a/drivers/gpu/drm/msm/dsi/dsi_host.c
-> +++ b/drivers/gpu/drm/msm/dsi/dsi_host.c
-> @@ -902,7 +902,8 @@ static void dsi_update_dsc_timing(struct msm_dsi_host *msm_host, bool is_cmd_mod
->  	}
->  }
->  
-> -static void dsi_timing_setup(struct msm_dsi_host *msm_host, bool is_bonded_dsi)
-> +static void dsi_timing_setup(struct msm_dsi_host *msm_host, bool is_bonded_dsi,
-> +			     bool is_dual_panel)
->  {
->  	struct drm_display_mode *mode = msm_host->mode;
->  	u32 hs_start = 0, vs_start = 0; /* take sync start as 0 */
-> @@ -947,7 +948,10 @@ static void dsi_timing_setup(struct msm_dsi_host *msm_host, bool is_bonded_dsi)
->  			return;
->  		}
->  
-> -		dsc->pic_width = mode->hdisplay;
-> +		if (is_dual_panel)
-> +			dsc->pic_width = hdisplay;
-> +		else
-> +			dsc->pic_width = mode->hdisplay;
->  		dsc->pic_height = mode->vdisplay;
->  		DBG("Mode %dx%d\n", dsc->pic_width, dsc->pic_height);
->  
-> @@ -2369,7 +2373,8 @@ static void msm_dsi_sfpb_config(struct msm_dsi_host *msm_host, bool enable)
->  
->  int msm_dsi_host_power_on(struct mipi_dsi_host *host,
->  			struct msm_dsi_phy_shared_timings *phy_shared_timings,
-> -			bool is_bonded_dsi, struct msm_dsi_phy *phy)
-> +			bool is_bonded_dsi, bool is_dual_panel,
-> +			struct msm_dsi_phy *phy)
->  {
->  	struct msm_dsi_host *msm_host = to_msm_dsi_host(host);
->  	const struct msm_dsi_cfg_handler *cfg_hnd = msm_host->cfg_hnd;
-> @@ -2412,7 +2417,7 @@ int msm_dsi_host_power_on(struct mipi_dsi_host *host,
->  		goto fail_disable_clk;
->  	}
->  
-> -	dsi_timing_setup(msm_host, is_bonded_dsi);
-> +	dsi_timing_setup(msm_host, is_bonded_dsi, is_dual_panel);
->  	dsi_sw_reset(msm_host);
->  	dsi_ctrl_enable(msm_host, phy_shared_timings, phy);
->  
-> diff --git a/drivers/gpu/drm/msm/dsi/dsi_manager.c b/drivers/gpu/drm/msm/dsi/dsi_manager.c
-> index be13bf682a9601484c9c14e8419563f37c2281ee..158b6cc907cb39cc3b182d3088b793d322a3527c 100644
-> --- a/drivers/gpu/drm/msm/dsi/dsi_manager.c
-> +++ b/drivers/gpu/drm/msm/dsi/dsi_manager.c
-> @@ -24,6 +24,7 @@ struct msm_dsi_manager {
->  	struct msm_dsi *dsi[DSI_MAX];
->  
->  	bool is_bonded_dsi;
-> +	bool is_dual_panel;
->  	bool is_sync_needed;
->  	int master_dsi_link_id;
->  };
-> @@ -31,6 +32,7 @@ struct msm_dsi_manager {
->  static struct msm_dsi_manager msm_dsim_glb;
->  
->  #define IS_BONDED_DSI()		(msm_dsim_glb.is_bonded_dsi)
-> +#define IS_DUAL_PANEL()		(msm_dsim_glb.is_dual_panel)
->  #define IS_SYNC_NEEDED()	(msm_dsim_glb.is_sync_needed)
->  #define IS_MASTER_DSI_LINK(id)	(msm_dsim_glb.master_dsi_link_id == id)
->  
-> @@ -55,6 +57,7 @@ static int dsi_mgr_parse_of(struct device_node *np, int id)
->  		msm_dsim->is_bonded_dsi = of_property_read_bool(np, "qcom,dual-dsi-mode");
->  
->  	if (msm_dsim->is_bonded_dsi) {
-> +		msm_dsim->is_dual_panel = of_property_read_bool(np, "qcom,dual-panel");
->  		if (of_property_read_bool(np, "qcom,master-dsi"))
->  			msm_dsim->master_dsi_link_id = id;
->  		if (!msm_dsim->is_sync_needed)
-> @@ -214,6 +217,7 @@ static int dsi_mgr_bridge_power_on(struct drm_bridge *bridge)
->  	struct mipi_dsi_host *host = msm_dsi->host;
->  	struct msm_dsi_phy_shared_timings phy_shared_timings[DSI_MAX];
->  	bool is_bonded_dsi = IS_BONDED_DSI();
-> +	bool is_dual_panel = IS_DUAL_PANEL();
->  	int ret;
->  
->  	DBG("id=%d", id);
-> @@ -222,7 +226,8 @@ static int dsi_mgr_bridge_power_on(struct drm_bridge *bridge)
->  	if (ret)
->  		goto phy_en_fail;
->  
-> -	ret = msm_dsi_host_power_on(host, &phy_shared_timings[id], is_bonded_dsi, msm_dsi->phy);
-> +	ret = msm_dsi_host_power_on(host, &phy_shared_timings[id],
-> +				    is_bonded_dsi, is_dual_panel, msm_dsi->phy);
->  	if (ret) {
->  		pr_err("%s: power on host %d failed, %d\n", __func__, id, ret);
->  		goto host_on_fail;
-> @@ -230,7 +235,8 @@ static int dsi_mgr_bridge_power_on(struct drm_bridge *bridge)
->  
->  	if (is_bonded_dsi && msm_dsi1) {
->  		ret = msm_dsi_host_power_on(msm_dsi1->host,
-> -				&phy_shared_timings[DSI_1], is_bonded_dsi, msm_dsi1->phy);
-> +				&phy_shared_timings[DSI_1], is_bonded_dsi,
-> +				is_dual_panel, msm_dsi1->phy);
->  		if (ret) {
->  			pr_err("%s: power on host1 failed, %d\n",
->  							__func__, ret);
-> 
-> -- 
-> 2.34.1
-> 
+> [  170.847396] PM: suspend entry (deep)
+> [  170.852093] Filesystems sync: 0.000 seconds
+> [  170.859274] Freezing user space processes
+> [  170.864616] Freezing user space processes completed (elapsed 0.001 seconds)
+> [  170.871614] OOM killer disabled.
+> [  170.874861] Freezing remaining freezable tasks
+> [  170.880499] Freezing remaining freezable tasks completed (elapsed 0.001 seconds)
+> [  170.887936] printk: Suspending console(s) (use no_console_suspend to debug)
+> [  171.000031] arm-scmi arm-scmi.1.auto: timed out in resp(caller: do_xfer+0x114/0x494)
+> [  171.001421] Disabling non-boot CPUs ...
 
--- 
-With best wishes
-Dmitry
+CPU5 going offline.
+
+> [  171.001501] dl_bw_deactivate() called cpu=5
+> [  171.001518] __dl_bw_capacity() mask=0-2,5 cap=2940
+> [  171.001530] dl_bw_cpus() cpu=5 rd->span=0-2,5 cpu_active_mask=0-5 cpumask_weight(rd->span)=4 type=DYN
+> [  171.001541] dl_bw_manage: cpu=5 cap=2494 fair_server_bw=52428 total_bw=209712 dl_bw_cpus=4 type=DYN span=0-2,5
+> [  171.001553] dl_bw_cpus() cpu=5 rd->span=0-2,5 cpu_active_mask=0-5 cpumask_weight(rd->span)=4 type=DYN
+> [  171.001567] CPU: 5 UID: 0 PID: 41 Comm: cpuhp/5 Not tainted 6.13.0-09343-g9ce523149e08-dirty #172
+> [  171.001578] Hardware name: ARM Juno development board (r0) (DT)
+> [  171.001583] Call trace:
+> [  171.001587]  show_stack+0x18/0x24 (C)
+> [  171.001605]  dump_stack_lvl+0x74/0x8c
+> [  171.001621]  dump_stack+0x18/0x24
+> [  171.001634]  dl_bw_manage+0x3a0/0x500
+> [  171.001650]  dl_bw_deactivate+0x40/0x50
+> [  171.001661]  sched_cpu_deactivate+0x34/0x24c
+> [  171.001676]  cpuhp_invoke_callback+0x138/0x694
+> [  171.001689]  cpuhp_thread_fun+0xb0/0x198
+> [  171.001702]  smpboot_thread_fn+0x200/0x224
+> [  171.001715]  kthread+0x12c/0x204
+> [  171.001727]  ret_from_fork+0x10/0x20
+> [  171.001741] __dl_overflow() dl_b->bw=996147 cap=2494 cap_scale(dl_b->bw, cap)=2426162 dl_b->total_bw=209712 old_bw=52428 new_bw=0 type=DYN rd->span=0-2,5
+> [  171.001754] dl_bw_manage() cpu=5 cap=2494 overflow=0 req=0 return=0 type=DYN
+> [  171.001814] partition_sched_domains() called
+> [  171.001821] CPU: 5 UID: 0 PID: 41 Comm: cpuhp/5 Not tainted 6.13.0-09343-g9ce523149e08-dirty #172
+> [  171.001831] Hardware name: ARM Juno development board (r0) (DT)
+> [  171.001835] Call trace:
+> [  171.001838]  show_stack+0x18/0x24 (C)
+> [  171.001849]  dump_stack_lvl+0x74/0x8c
+> [  171.001862]  dump_stack+0x18/0x24
+> [  171.001875]  partition_sched_domains+0x48/0x7c
+> [  171.001886]  sched_cpu_deactivate+0x1a8/0x24c
+> [  171.001900]  cpuhp_invoke_callback+0x138/0x694
+> [  171.001913]  cpuhp_thread_fun+0xb0/0x198
+> [  171.001925]  smpboot_thread_fn+0x200/0x224
+> [  171.001937]  kthread+0x12c/0x204
+> [  171.001948]  ret_from_fork+0x10/0x20
+> [  171.001961] partition_sched_domains_locked() ndoms_new=1
+> [  171.002012] cpu_attach_domain() called cpu=0 type=DEF
+> [  171.002018] CPU0 attaching NULL sched-domain.
+> [  171.002022] span=3-4
+> [  171.002029] rq_attach_root() called cpu=0 type=DEF
+> [  171.002043] dl_bw_cpus() cpu=0 rd->span=0-2,5 cpu_active_mask=0-4 cpus=3 type=DYN
+> [  171.002053] __dl_server_detach_root() called cpu=0
+> [  171.002059] dl_bw_cpus() cpu=0 rd->span=0-2,5 cpu_active_mask=0-4 cpus=3 type=DYN
+> [  171.002068] __dl_sub() tsk_bw=52428 dl_b->total_bw=157284 type=DYN rd->span=0-2,5
+> [  171.002077] __dl_update() (3) cpu=0 rq->dl.extra_bw=603812
+> [  171.002083] __dl_update() (3) cpu=1 rq->dl.extra_bw=869446
+> [  171.002089] __dl_update() (3) cpu=2 rq->dl.extra_bw=1013623
+> [  171.002098] dl_bw_cpus() cpu=0 rd->span=0,3-4 cpu_active_mask=0-4 cpumask_weight(rd->span)=3 type=DEF
+> [  171.002109] __dl_server_attach_root() called cpu=0
+> [  171.002114] dl_bw_cpus() cpu=0 rd->span=0,3-4 cpu_active_mask=0-4 cpumask_weight(rd->span)=3 type=DEF
+> [  171.002124] __dl_add() tsk_bw=52428 dl_b->total_bw=157284 type=DEF rd->span=0,3-4
+> [  171.002133] __dl_update() (3) cpu=0 rq->dl.extra_bw=586336
+> [  171.002139] __dl_update() (3) cpu=3 rq->dl.extra_bw=1004885
+> [  171.002145] __dl_update() (3) cpu=4 rq->dl.extra_bw=1017992
+> [  171.002153] cpu_attach_domain() called cpu=1 type=DEF
+> [  171.002159] CPU1 attaching NULL sched-domain.
+> [  171.002163] span=0,3-4
+> [  171.002169] rq_attach_root() called cpu=1 type=DEF
+> [  171.002181] dl_bw_cpus() cpu=1 rd->span=1-2,5 cpu_active_mask=0-4 cpus=2 type=DYN
+> [  171.002191] __dl_server_detach_root() called cpu=1
+> [  171.002196] dl_bw_cpus() cpu=1 rd->span=1-2,5 cpu_active_mask=0-4 cpus=2 type=DYN
+> [  171.002206] __dl_sub() tsk_bw=52428 dl_b->total_bw=104856 type=DYN rd->span=1-2,5
+> [  171.002215] __dl_update() (3) cpu=1 rq->dl.extra_bw=895660
+> [  171.002221] __dl_update() (3) cpu=2 rq->dl.extra_bw=1039837
+> [  171.002228] dl_bw_cpus() cpu=1 rd->span=0-1,3-4 cpu_active_mask=0-4 cpumask_weight(rd->span)=4 type=DEF
+> [  171.002238] __dl_server_attach_root() called cpu=1
+> [  171.002243] dl_bw_cpus() cpu=1 rd->span=0-1,3-4 cpu_active_mask=0-4 cpumask_weight(rd->span)=4 type=DEF
+> [  171.002253] __dl_add() tsk_bw=52428 dl_b->total_bw=209712 type=DEF rd->span=0-1,3-4
+> [  171.002262] __dl_update() (3) cpu=0 rq->dl.extra_bw=573229
+> [  171.002267] __dl_update() (3) cpu=1 rq->dl.extra_bw=882553
+> [  171.002273] __dl_update() (3) cpu=3 rq->dl.extra_bw=991778
+> [  171.002279] __dl_update() (3) cpu=4 rq->dl.extra_bw=1004885
+> [  171.002286] cpu_attach_domain() called cpu=2 type=DEF
+> [  171.002291] CPU2 attaching NULL sched-domain.
+> [  171.002296] span=0-1,3-4
+> [  171.002301] rq_attach_root() called cpu=2 type=DEF
+> [  171.002314] dl_bw_cpus() cpu=2 rd->span=2,5 cpu_active_mask=0-4 cpus=1 type=DYN
+> [  171.002323] __dl_server_detach_root() called cpu=2
+> [  171.002329] dl_bw_cpus() cpu=2 rd->span=2,5 cpu_active_mask=0-4 cpus=1 type=DYN
+> [  171.002338] __dl_sub() tsk_bw=52428 dl_b->total_bw=52428 type=DYN rd->span=2,5
+> [  171.002346] __dl_update() (3) cpu=2 rq->dl.extra_bw=1092265
+> [  171.002353] dl_bw_cpus() cpu=2 rd->span=0-4 cpu_active_mask=0-4 cpumask_weight(rd->span)=5 type=DEF
+> [  171.002363] __dl_server_attach_root() called cpu=2
+> [  171.002368] dl_bw_cpus() cpu=2 rd->span=0-4 cpu_active_mask=0-4 cpumask_weight(rd->span)=5 type=DEF
+> [  171.002377] __dl_add() tsk_bw=52428 dl_b->total_bw=262140 type=DEF rd->span=0-4
+                                                         ^^^^
+OK. 5 still online CPUs dl servers temporarily added to DEF root domain.
+
+> [  171.002385] __dl_update() (3) cpu=0 rq->dl.extra_bw=562744
+> [  171.002391] __dl_update() (3) cpu=1 rq->dl.extra_bw=872068
+> [  171.002397] __dl_update() (3) cpu=2 rq->dl.extra_bw=1081780
+> [  171.002403] __dl_update() (3) cpu=3 rq->dl.extra_bw=981293
+> [  171.002409] __dl_update() (3) cpu=4 rq->dl.extra_bw=994400
+> [  171.002416] cpu_attach_domain() called cpu=5 type=DEF
+> [  171.002421] CPU5 attaching NULL sched-domain.
+> [  171.002425] span=0-4
+> [  171.002431] rq_attach_root() called cpu=5 type=DEF
+> [  171.002438] build_sched_domains() called cpu_map=0-2
+> [  171.002556] cpu_attach_domain() called cpu=0 type=DYN
+
+Adding CPU5 (going offline) to DEF doesn't add its dl server
+contribution (OK).
+
+> [  171.002565] CPU0 attaching sched-domain(s):
+> [  171.002571]  domain-0: span=0-2 level=PKG
+> [  171.002583]   groups: 0:{ span=0 cap=445 }, 1:{ span=1-2 cap=2045 }
+> [  171.002619] rq_attach_root() called cpu=0 type=DYN
+> [  171.002630] dl_bw_cpus() cpu=0 rd->span=0-5 cpu_active_mask=0-4 cpus=5 type=DEF
+> [  171.002639] __dl_server_detach_root() called cpu=0
+> [  171.002644] dl_bw_cpus() cpu=0 rd->span=0-5 cpu_active_mask=0-4 cpus=5 type=DEF
+> [  171.002653] __dl_sub() tsk_bw=52428 dl_b->total_bw=209712 type=DEF rd->span=0-5
+> [  171.002662] __dl_update() (3) cpu=0 rq->dl.extra_bw=573229
+> [  171.002668] __dl_update() (3) cpu=1 rq->dl.extra_bw=882553
+> [  171.002674] __dl_update() (3) cpu=2 rq->dl.extra_bw=1092265
+> [  171.002680] __dl_update() (3) cpu=3 rq->dl.extra_bw=991778
+> [  171.002686] __dl_update() (3) cpu=4 rq->dl.extra_bw=1004885
+> [  171.002693] dl_bw_cpus() cpu=0 rd->span=0 cpu_active_mask=0-4 cpumask_weight(rd->span)=1 type=DYN
+> [  171.002702] __dl_server_attach_root() called cpu=0
+> [  171.002707] dl_bw_cpus() cpu=0 rd->span=0 cpu_active_mask=0-4 cpumask_weight(rd->span)=1 type=DYN
+> [  171.002716] __dl_add() tsk_bw=52428 dl_b->total_bw=52428 type=DYN rd->span=0
+> [  171.002724] __dl_update() (3) cpu=0 rq->dl.extra_bw=520801
+> [  171.002731] cpu_attach_domain() called cpu=1 type=DYN
+> [  171.002738] CPU1 attaching sched-domain(s):
+> [  171.002743]  domain-0: span=1-2 level=MC
+> [  171.002753]   groups: 1:{ span=1 cap=1022 }, 2:{ span=2 cap=1023 }
+> [  171.002787]   domain-1: span=0-2 level=PKG
+> [  171.002798]    groups: 1:{ span=1-2 cap=2045 }, 0:{ span=0 cap=445 }
+> [  171.002831] rq_attach_root() called cpu=1 type=DYN
+> [  171.002841] dl_bw_cpus() cpu=1 rd->span=1-5 cpu_active_mask=0-4 cpus=4 type=DEF
+> [  171.002851] __dl_server_detach_root() called cpu=1
+> [  171.002856] dl_bw_cpus() cpu=1 rd->span=1-5 cpu_active_mask=0-4 cpus=4 type=DEF
+> [  171.002865] __dl_sub() tsk_bw=52428 dl_b->total_bw=157284 type=DEF rd->span=1-5
+> [  171.002873] __dl_update() (3) cpu=1 rq->dl.extra_bw=895660
+> [  171.002879] __dl_update() (3) cpu=2 rq->dl.extra_bw=1105372
+> [  171.002885] __dl_update() (3) cpu=3 rq->dl.extra_bw=1004885
+> [  171.002891] __dl_update() (3) cpu=4 rq->dl.extra_bw=1017992
+> [  171.002898] dl_bw_cpus() cpu=1 rd->span=0-1 cpu_active_mask=0-4 cpumask_weight(rd->span)=2 type=DYN
+> [  171.002907] __dl_server_attach_root() called cpu=1
+> [  171.002912] dl_bw_cpus() cpu=1 rd->span=0-1 cpu_active_mask=0-4 cpumask_weight(rd->span)=2 type=DYN
+> [  171.002922] __dl_add() tsk_bw=52428 dl_b->total_bw=104856 type=DYN rd->span=0-1
+> [  171.002930] __dl_update() (3) cpu=0 rq->dl.extra_bw=494587
+> [  171.002936] __dl_update() (3) cpu=1 rq->dl.extra_bw=869446
+> [  171.002943] cpu_attach_domain() called cpu=2 type=DYN
+> [  171.002950] CPU2 attaching sched-domain(s):
+> [  171.002954]  domain-0: span=1-2 level=MC
+> [  171.002965]   groups: 2:{ span=2 cap=1023 }, 1:{ span=1 cap=1022 }
+> [  171.002998]   domain-1: span=0-2 level=PKG
+> [  171.003009]    groups: 1:{ span=1-2 cap=2045 }, 0:{ span=0 cap=445 }
+> [  171.003043] rq_attach_root() called cpu=2 type=DYN
+> [  171.003053] dl_bw_cpus() cpu=2 rd->span=2-5 cpu_active_mask=0-4 cpus=3 type=DEF
+> [  171.003062] __dl_server_detach_root() called cpu=2
+> [  171.003067] dl_bw_cpus() cpu=2 rd->span=2-5 cpu_active_mask=0-4 cpus=3 type=DEF
+> [  171.003076] __dl_sub() tsk_bw=52428 dl_b->total_bw=104856 type=DEF rd->span=2-5
+                                                         ^^^^
+OK. CPU3 + CPU4 (CPU5 offline).
+
+> [  171.003085] __dl_update() (3) cpu=2 rq->dl.extra_bw=1122848
+> [  171.003091] __dl_update() (3) cpu=3 rq->dl.extra_bw=1022361
+> [  171.003096] __dl_update() (3) cpu=4 rq->dl.extra_bw=1035468
+> [  171.003103] dl_bw_cpus() cpu=2 rd->span=0-2 cpu_active_mask=0-4 cpumask_weight(rd->span)=3 type=DYN
+> [  171.003113] __dl_server_attach_root() called cpu=2
+> [  171.003118] dl_bw_cpus() cpu=2 rd->span=0-2 cpu_active_mask=0-4 cpumask_weight(rd->span)=3 type=DYN
+> [  171.003127] __dl_add() tsk_bw=52428 dl_b->total_bw=157284 type=DYN rd->span=0-2
+> [  171.003136] __dl_update() (3) cpu=0 rq->dl.extra_bw=477111
+> [  171.003141] __dl_update() (3) cpu=1 rq->dl.extra_bw=851970
+> [  171.003147] __dl_update() (3) cpu=2 rq->dl.extra_bw=1105372
+> [  171.003188] root domain span: 0-2
+> [  171.003194] default domain span: 3-5
+> [  171.003220] rd 0-2: Checking EAS, schedutil is mandatory
+> [  171.005840] psci: CPU5 killed (polled 0 ms)
+
+OK. DYN has (CPU0,1,2) 157284 and DEF (CPU3,4) 104856.
+
+CPU4 going offline (it's isolated on DEF).
+
+> [  171.006436] dl_bw_deactivate() called cpu=4
+> [  171.006446] __dl_bw_capacity() mask=3-5 cap=892
+> [  171.006454] dl_bw_cpus() cpu=4 rd->span=3-5 cpu_active_mask=0-4 cpus=2 type=DEF
+> [  171.006464] dl_bw_manage: cpu=4 cap=446 fair_server_bw=52428 total_bw=104856 dl_bw_cpus=2 type=DEF span=3-5
+> [  171.006475] dl_bw_cpus() cpu=4 rd->span=3-5 cpu_active_mask=0-4 cpus=2 type=DEF
+> [  171.006485] CPU: 4 UID: 0 PID: 36 Comm: cpuhp/4 Not tainted 6.13.0-09343-g9ce523149e08-dirty #172
+> [  171.006495] Hardware name: ARM Juno development board (r0) (DT)
+> [  171.006499] Call trace:
+> [  171.006502]  show_stack+0x18/0x24 (C)
+> [  171.006514]  dump_stack_lvl+0x74/0x8c
+> [  171.006528]  dump_stack+0x18/0x24
+> [  171.006541]  dl_bw_manage+0x3a0/0x500
+> [  171.006554]  dl_bw_deactivate+0x40/0x50
+> [  171.006564]  sched_cpu_deactivate+0x34/0x24c
+> [  171.006579]  cpuhp_invoke_callback+0x138/0x694
+> [  171.006591]  cpuhp_thread_fun+0xb0/0x198
+> [  171.006604]  smpboot_thread_fn+0x200/0x224
+> [  171.006616]  kthread+0x12c/0x204
+> [  171.006627]  ret_from_fork+0x10/0x20
+> [  171.006639] __dl_overflow() dl_b->bw=996147 cap=446 cap_scale(dl_b->bw, cap)=433868 dl_b->total_bw=104856 old_bw=52428 new_bw=0 type=DEF rd->span=3-5
+> [  171.006652] dl_bw_manage() cpu=4 cap=446 overflow=0 req=0 return=0 type=DEF
+> [  171.006706] partition_sched_domains() called
+> [  171.006713] CPU: 4 UID: 0 PID: 36 Comm: cpuhp/4 Not tainted 6.13.0-09343-g9ce523149e08-dirty #172
+> [  171.006722] Hardware name: ARM Juno development board (r0) (DT)
+> [  171.006727] Call trace:
+> [  171.006730]  show_stack+0x18/0x24 (C)
+> [  171.006740]  dump_stack_lvl+0x74/0x8c
+> [  171.006754]  dump_stack+0x18/0x24
+> [  171.006767]  partition_sched_domains+0x48/0x7c
+> [  171.006778]  sched_cpu_deactivate+0x1a8/0x24c
+> [  171.006792]  cpuhp_invoke_callback+0x138/0x694
+> [  171.006805]  cpuhp_thread_fun+0xb0/0x198
+> [  171.006817]  smpboot_thread_fn+0x200/0x224
+> [  171.006829]  kthread+0x12c/0x204
+> [  171.006840]  ret_from_fork+0x10/0x20
+> [  171.006852] partition_sched_domains_locked() ndoms_new=1
+> [  171.006861] partition_sched_domains_locked() goto match2
+> [  171.006867] rd 0-2: Checking EAS, schedutil is mandatory
+> [  171.007774] psci: CPU4 killed (polled 4 ms)
+
+As I guess you were saying above, CPU4 contribution is not removed from
+DEF.
+
+> [  171.007971] dl_bw_deactivate() called cpu=3
+> [  171.007981] __dl_bw_capacity() mask=3-5 cap=446
+> [  171.007989] dl_bw_cpus() cpu=3 rd->span=3-5 cpu_active_mask=0-3 cpus=1 type=DEF
+> [  171.007999] dl_bw_manage: cpu=3 cap=0 fair_server_bw=52428 total_bw=104856 dl_bw_cpus=1 type=DEF span=3-5
+                                                                          ^^^^
+And this is now wrong. :/
+
+> [  171.008010] dl_bw_cpus() cpu=3 rd->span=3-5 cpu_active_mask=0-3 cpus=1 type=DEF
+> [  171.008019] dl_bw_manage() cpu=3 cap=0 overflow=1 req=0 return=-16 type=DEF
+> [  171.008069] Error taking CPU3 down: -16
+> [  171.008076] Non-boot CPUs are not disabled
+> [  171.008080] Enabling non-boot CPUs ...
+
+Hummm.
+
 
