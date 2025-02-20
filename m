@@ -1,84 +1,153 @@
-Return-Path: <linux-kernel+bounces-523936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 770BAA3DD12
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:39:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2CE1A3DD2C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:45:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF072164477
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:38:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22E617028F4
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:39:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8A241FC7F1;
-	Thu, 20 Feb 2025 14:38:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 883691FCCFD;
+	Thu, 20 Feb 2025 14:39:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NhM6oLP6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="ix5yJ1MN"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14C8C1F8BAA
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 14:38:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4987A1F9A8B;
+	Thu, 20 Feb 2025 14:39:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740062309; cv=none; b=G+pXfgVeRNOJcBl97EdzloPbu32Qu8VjUQv8vUfJUOPyFFMCfzk+r3+9HDgZcxRyVNJUkk3fZGmVRS9xYbUY8WtUG11VUnyJxkZaWR06d1ZVLjeI/oXDgDu8yNMB8OrLkG+PyDmF2IouMrHiC4LBpymnYYvNc6oI8A0Vacg0CEI=
+	t=1740062362; cv=none; b=hBq+yi00Adkqtz90HXQPKDguMKP708BHw2auEL5PzjwPQYfcudj1gv1KefD+lweLJVz87vMhK1AL20/dU6dezKRuitwRJRercLCD1O4WwP5hKi4eMVrJ2/2qOaDJ9gYvhfCX4utkBzHiG06yGrk1mdk2O+JoyRTanPKqwptrj9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740062309; c=relaxed/simple;
-	bh=PWmPBLuDRgye1gNs6Wx8IS7+hGhGH+EAlo2QUipgP7k=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=QClhaKJTS2prB0ECuoEket6r+yT+WWuOvpwtCYZCl491z/JQmkMGWWMMVeByO2XOkHy2dyuQhoBFNfpV08GNDAQJilcTgcuV2yIUKp17cF+1yr4IeNCq5ZSVD05ybw3+8ZPhVIW+94TQSWTHs0z9ij/kMlN++Ir6ekVD+pZjHU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NhM6oLP6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF12DC4CEDD;
-	Thu, 20 Feb 2025 14:38:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740062308;
-	bh=PWmPBLuDRgye1gNs6Wx8IS7+hGhGH+EAlo2QUipgP7k=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=NhM6oLP6dHojmfS2MKVxw10ds1n09pnulGlH8FAaHF+n1D8Ze7ZPu5KV55mtTZpOi
-	 gNFexXEpm01CLGBA1eur1r3DvGsTr9sjD+Q6QPMegZepUF0mL6104oRkWbSOzijuK5
-	 AAYiR5ZnFO5hMHNdtkqpHPXssFdZ5AsnXHGS7RliEdwpXx5apSrRZgXPq3LI37Lj9E
-	 ofnbxWmXhL4yTJ8DYUb+RmATi4XlQSj+Wy3+EtS/a1PuGDyR9yRudWCRR7qBcmmLrT
-	 JRAppELBEvM5b2+g3Qe4oHxa9MEBldZKdW19ZiKeSTJERQflINItXWN4wm5l4JKe+T
-	 1efH9S0kaQ6xw==
-From: Lee Jones <lee@kernel.org>
-To: Lee Jones <lee@kernel.org>, 
- =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-Cc: linux-kernel@vger.kernel.org
-In-Reply-To: <20250212170403.36619-2-u.kleine-koenig@baylibre.com>
-References: <20250212170403.36619-2-u.kleine-koenig@baylibre.com>
-Subject: Re: (subset) [PATCH] mfd: lp3943: Drop #include <linux/pwm.h> from
- header
-Message-Id: <174006230763.778030.7610774481769488318.b4-ty@kernel.org>
-Date: Thu, 20 Feb 2025 14:38:27 +0000
+	s=arc-20240116; t=1740062362; c=relaxed/simple;
+	bh=iLN8B9ksN1GWWVoWVQYBbBJYJyiBr+s/2FAxSdsnkwI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ouHhBYhNV13Iw6gr3bc72kxoK5W4YyBNcCXn/ANfL5pUE3CCjcVSAk6afeHT4oNrugcbphLCQYSOnEnoJCF8M0caUOLkkT8SWV+3wP46FKbxtczJgsOM+z4finQV2j5EeUhR5UO3bSARs8+skZHAkeBPS07TUUtr1qeI9wP5V5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=ix5yJ1MN; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 716881193;
+	Thu, 20 Feb 2025 15:37:54 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1740062274;
+	bh=iLN8B9ksN1GWWVoWVQYBbBJYJyiBr+s/2FAxSdsnkwI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ix5yJ1MNLbToTzjhWXv1kPGV+NribVBMxOfjCISY3kBKoor1qeqmue2KOaVn9Elun
+	 yAZX8xvnBq34+BFHbklcx77G6lqUeyCL8CqExMt9c4jWKJkpp8weUbzT0+S/9pMA3+
+	 iAhC+RUnOTS7ms8NZiaJSnCW2R9nxIGz2uGKgKfY=
+Date: Thu, 20 Feb 2025 16:39:02 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Cosmin Tanislav <demonsingur@gmail.com>,
+	Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Julien Massot <julien.massot@collabora.com>,
+	Bingbu Cao <bingbu.cao@intel.com>,
+	Tianshu Qiu <tian.shu.qiu@intel.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Hans Verkuil <hverkuil@xs4all.nl>,
+	Umang Jain <umang.jain@ideasonboard.com>,
+	=?utf-8?B?UGF3ZcWC?= Anikiel <panikiel@google.com>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 0/3] media: add v4l2_subdev_state_xlate_streams()
+Message-ID: <20250220143902.GA17500@pendragon.ideasonboard.com>
+References: <20250220092036.6757-1-demonsingur@gmail.com>
+ <tw6x663t5dmxsdarrxjtopza3mou3lnhwazu3dfv2k27fv47v2@bvftfepqqhss>
+ <c94580f0-3ab0-4a19-a996-9bb37e23dd39@gmail.com>
+ <Z7c5U6u5rr0-X0aK@kekkonen.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.15-dev-510f9
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <Z7c5U6u5rr0-X0aK@kekkonen.localdomain>
 
-On Wed, 12 Feb 2025 18:04:03 +0100, Uwe Kleine-König wrote:
-> The header doesn't make use of any symbols declared in <linux/pwm.h>.
-> There are tree files that #include <mfd/lp3943.h>. Two of them
-> (i.e. drivers/gpio/gpio-lp3943.c and drivers/mfd/lp3943.c) also don't
-> use any and the third (drivers/pwm/pwm-lp3943.c) has an explicit include
-> of <linux/pwm.h> itself.
+On Thu, Feb 20, 2025 at 02:16:51PM +0000, Sakari Ailus wrote:
+> On Thu, Feb 20, 2025 at 03:01:41PM +0200, Cosmin Tanislav wrote:
+> > On 2/20/25 1:38 PM, Jacopo Mondi wrote:
+> > > On Thu, Feb 20, 2025 at 11:20:32AM +0200, Cosmin Tanislav wrote:
+> > > > Currently, the v4l2_subdev_state_xlate_streams() function is used
+> > > > to translate streams from one pad to another.
+> > > > This function takes the entire subdev state as argument, but only makes
+> > > > use of the routing.
+> > > 
+> > > Correct, but is this a problem ?
+> > > 
+> > 
+> > No, it's not a problem.
 > 
-> So drop the unused include. The intended side effect is that
-> drivers/gpio/gpio-lp3943.c and drivers/mfd/lp3943.c stop importing the
-> "PWM" module namespace.
+> I think I have a slight preference to keep the pattern of referring to the
+> state as other functions do.
 > 
-> [...]
+> I wonder what Laurent and Hans think, too.
 
-Applied, thanks!
+I agree, I think the state should be passed everywhere. This lowers the
+risk of subsystem-wide refactoring if a function that receives a pointer
+to part of a state (such as v4l2_subdev_routing_xlate_streams()) is
+later found to need more information from the state.
 
-[1/1] mfd: lp3943: Drop #include <linux/pwm.h> from header
-      commit: 3a7db8a6dee5a2c1858678ddf2d7d38128a9caf3
+The situation would be different if the states were not monolithic, for
+instance if the routing table could be locked separatly from other parts
+of the state, but that's not the case and I don't foresee moving to
+finer-grained objects.
 
---
-Lee Jones [李琼斯]
+> > > Is this the first step for a larger rework or is this a drive-by
+> > > beautification ?
+> > 
+> > Mostly a drive-by beautification to avoid passing the whole state around
+> > where we only need the routing. I'm planning to submit drivers for more
+> > GMSL2/3 chips and we're using this just to not pass the whole state
+> > around. I think I can just use v4l2_subdev_state_xlate_streams(),
+> > but I had these patches in my tree and it would have been good to get
+> > them upstream, in preparations for submitting the GMSL2/3 drivers.
+> > 
+> > > I'm asking because (and I know it's hard to strike a balance) this
+> > > kind of changes tend to make back-porting a more painful, and if
+> > > only justified by "it looks better" I would be a bit hesitant in
+> > > taking them.
+> > > 
+> > > > Introduce a v4l2_subdev_routing_xlate_streams() function which can be
+> > > > used without the entire subdev state, to avoid passing the entire state
+> > > > around when not needed.
+> > > > 
+> > > > Convert all usages of v4l2_subdev_state_xlate_streams() to
+> > > > v4l2_subdev_routing_xlate_streams().
+> > > > 
+> > > > Remove v4l2_subdev_state_xlate_streams().
+> > > > 
+> > > > V2:
+> > > >    * Fix description of parameters
+> > > > 
+> > > > Cosmin Tanislav (3):
+> > > >    media: v4l: subdev: add v4l2_subdev_routing_xlate_streams()
+> > > >    media: use v4l2_subdev_routing_xlate_streams()
+> > > >    media: v4l: subdev: remove v4l2_subdev_state_xlate_streams()
+> > > > 
+> > > >   drivers/media/i2c/ds90ub913.c                 | 14 ++++++-----
+> > > >   drivers/media/i2c/ds90ub953.c                 | 14 ++++++-----
+> > > >   drivers/media/i2c/max96714.c                  | 16 ++++++-------
+> > > >   drivers/media/i2c/max96717.c                  | 23 ++++++++++---------
+> > > >   drivers/media/pci/intel/ipu6/ipu6-isys-csi2.c | 14 ++++++-----
+> > > >   .../platform/nxp/imx8-isi/imx8-isi-crossbar.c |  2 +-
+> > > >   drivers/media/v4l2-core/v4l2-subdev.c         |  7 +++---
+> > > >   include/media/v4l2-subdev.h                   | 10 ++++----
+> > > >   8 files changed, 53 insertions(+), 47 deletions(-)
 
+-- 
+Regards,
+
+Laurent Pinchart
 
