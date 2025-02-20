@@ -1,93 +1,77 @@
-Return-Path: <linux-kernel+bounces-524041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 320A0A3DE57
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:23:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D5CCA3DE63
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:26:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DA8319C3F0F
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:22:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8D4B3B34DF
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:23:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B30E81FDA9D;
-	Thu, 20 Feb 2025 15:22:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BE8C1FCFDA;
+	Thu, 20 Feb 2025 15:23:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B1b/D0zg"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mAULNkvS"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E83461FCE;
-	Thu, 20 Feb 2025 15:22:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECB871FC0E4;
+	Thu, 20 Feb 2025 15:23:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740064941; cv=none; b=UUsOjO636JOxsYF04rwC56ghg12XM92Aa62QHPxyT8/N1jjk0N9Rn36XC8w8swJj7iuCQIDyVNFkwplwsStkD0ncSXXHV8my89laIlEw33jh6vlT36K4sQ974lW3vHqik7tvJaTgXRxggTa98BACmf3Fz6YWi0eUUYVXomqneI4=
+	t=1740064996; cv=none; b=VLMYgNufDP9a3kggT2RQZYWO7FGYoR+SnWzx+ZdnsUJAMsIwxXklSRio+od7cVDZWT8jOR++2B2w/d7CTvJYbQGA3J9CiA+r5dFEZwI4U8MlqC0gXoDEzPjfxnDliqErTdWxC2YqDLzGXyj18A8aKa+o5Q/rWK1kCuRbwA4PIvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740064941; c=relaxed/simple;
-	bh=kfHU9mcfyEWp4K4OecPGGsOrDBco/6BHCzY/iw7yXpQ=;
+	s=arc-20240116; t=1740064996; c=relaxed/simple;
+	bh=v2k4eAqAMd8KALBN1SihRNW/X62w2oAbjNKUgU2XIBI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VAAWdhnHyCep0wAFz9F0cLE8t4r3eLnfH/hWNolJn76HqdqTNYeQ/FTmFm40eJvIQg+2KdEiZqimooHaQu395yZbpmGocb1TVWnQAnQ3TtagXMwrCBMfMA0/cpqm6QDHvxOP8aqaNdhkKVfIpD28r8lqGOi0WBthjSo6fGFUofc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B1b/D0zg; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-abb7a6ee2deso174483166b.0;
-        Thu, 20 Feb 2025 07:22:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740064938; x=1740669738; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=kKMJRxcVrE9w/3DLSs5I+sMeKRaz1X1IP++J5YO4MRY=;
-        b=B1b/D0zggsRpKQj2PdFZCFBPe/P3XZG3cpKgABCyaYw0mKkx1b4JJXprisAubcMGP1
-         T4wQ4a/iLne6md7quOlS94Cml20E5fuA8eEkDilk9MBYsbWe/vRhIVm2jTlTByao6OgO
-         KCKDfKyhZ8xlRhnLgbAmdtwHUGhjl3kA2lpZASioo6nuI4/nutq7hWbFYecRljiuJAL7
-         aJQMEx7GZZq3I2Wrj0pN7Seh5kySHQltPUjtggbZeXM+6TwOZbg1iHzafF+0DCLrFXj8
-         396XhHbUzxY/XNW23XQKddu5Yes7ZAfmWxL+kMstG5zwtZ0i1cZNwJNk4f1qNPdiJVak
-         xmqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740064938; x=1740669738;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kKMJRxcVrE9w/3DLSs5I+sMeKRaz1X1IP++J5YO4MRY=;
-        b=wtuPGx4IkIZ4ua8QYoet+JlcGFymiwxMGdnRBYcNbG/N6C/XWW2U5cN8yOEK+44uHP
-         OnU51dJ9HN4VMJp/+2ZSNuzKrzKsOEbEEsseMxNfJk9CLTF1Acy1kcDBUv0zPOyGHMZX
-         MqoYNzMBa3WRvrLojk30dW6j3mFXkKHuGSpeWiXmtHq1JvQi8b69KuHoPSt7jDXbIobV
-         NQXOBscjrBwSM2Rp2BQ3JylabgC4jjoTSsXYn/EGHOLhRtVzwuwOi24teDk5u2BA7fwR
-         fCOLFyURtWjg3z/8UXh4EtHDf1mEZYRe1GwV0XEBfdw/hAL6BAIqQ5zmR6bas2VFq5fi
-         +wtg==
-X-Forwarded-Encrypted: i=1; AJvYcCW35g38iDqLVM4dhf1blDjqEgnt1621KBPfn2JeXFQ2kjdqd/W0scrN98rjk4bpr74DMHJeDNrBDcL+aac=@vger.kernel.org, AJvYcCXHL6b+BH/7t5yRlH2dnBmTRO91HAi1c7/SSwGgfMvHovrcElUrdk27WeuY1qKAYef1nlzBZ73M@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6VGdtDQwsu0hLi1f2tng0SomUr9qZZDa2OwBg/AfFOKOsO+Ow
-	zKabNgNwpfN+1W24LDwINavbhVz3aF8Eo/B0VZ4tpgHhog2rk5p4
-X-Gm-Gg: ASbGncu9/QmSEMdLv0O/D9IRZsK9TIkpV9ge2qyrDxnIe+qU+/AnMWlKZ+3BflFllNV
-	AatnFsmAnbjC7pWEjfSalu2Zn4BCREQxhxeVOaKQdIG4b/BAYidyIGKwf7D6IRQM48Yc9PvUuT9
-	2oIRXaL/uFicVZK83qzA0XnYjcNqfzTjoAlsdulog64Mj8LMkHRAPKdVEAwg4P8ZgoRZGB6OaES
-	+ERbCPiMm8t7F6T/xCgtRJNFnN1M+Nkmw+h970kICbqRBtSgLtJCt7XASePCbLyIy31ftqG3Oe0
-	coqMcpjPq3ck
-X-Google-Smtp-Source: AGHT+IH9sBChZn12otJIB5X5cXCBtVvi58fLoea3t1Q2O8pmJr78TCNQCBEuKRP+mmL2IHNzuTYK6A==
-X-Received: by 2002:a17:907:770c:b0:abb:9d27:290e with SMTP id a640c23a62f3a-abbcd059572mr781333566b.41.1740064937413;
-        Thu, 20 Feb 2025 07:22:17 -0800 (PST)
-Received: from debian ([2a00:79c0:604:ea00:45fb:7d1a:5e4d:9727])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abbbefd080asm518070466b.179.2025.02.20.07.22.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Feb 2025 07:22:16 -0800 (PST)
-Date: Thu, 20 Feb 2025 16:22:14 +0100
-From: Dimitri Fedrau <dima.fedrau@gmail.com>
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
-	Gregor Herburger <gregor.herburger@ew.tq-group.com>,
-	Stefan Eichenberger <eichest@gmail.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v2 2/2] net: phy: marvell-88q2xxx: Prevent hwmon
- access with asserted reset
-Message-ID: <20250220152214.GA40326@debian>
-References: <20250220-marvell-88q2xxx-hwmon-enable-at-probe-v2-0-78b2838a62da@gmail.com>
- <20250220-marvell-88q2xxx-hwmon-enable-at-probe-v2-2-78b2838a62da@gmail.com>
- <Z7b3sU0w2daShkBH@shell.armlinux.org.uk>
+	 Content-Type:Content-Disposition:In-Reply-To; b=V6I5Hl9FSIjeQN93e4x7tXVCZQh8M5PY/UvDV0W+p1X2c0dfXGTQXQG01G1n89izdSpK7Zuh47Dr9668K5N0+a7dvstMr9GcgCsEVAa7ycWD/hyr/KdqHNCgsu/Ui9XnhepF2XnIpLAqE0uz1YNO+4pyfCifT0o60+9ZTl5zv+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mAULNkvS; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740064995; x=1771600995;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=v2k4eAqAMd8KALBN1SihRNW/X62w2oAbjNKUgU2XIBI=;
+  b=mAULNkvSjKdJXufflpXHF/EIJlKXwjnmgsc8mhKt1hA10ko3kbEsz3G6
+   tevM3DhUW14Oiktx06FFkSmiinyRl/zZe41VXliRlgwkUsHgroKW0dcsT
+   YzdvOZLdIwtwlhwQIvYA9zLItHjMRUxaQ2pIbckO0LG2HNZRq2odxNyLE
+   x779XildyegZb8/rkohb/manWzwd5UBAuDLrVEUBdg4B2kgqW0y9jxCp6
+   d8zOrAXU1Mv0jWO6JeAfM+WqLeXccQAT8nm4cIQmCWjdbmJj3bg07UQTh
+   iLiIcxc7pKMM+npl0zJU1bAVObui1PEtR27KbYmLco3dQt8dYR0KY92oP
+   A==;
+X-CSE-ConnectionGUID: 57L7n4BJTVSAjA0veKaUOg==
+X-CSE-MsgGUID: u9AaWvTlQzijyS4dRKHMEA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11351"; a="51838277"
+X-IronPort-AV: E=Sophos;i="6.13,302,1732608000"; 
+   d="scan'208";a="51838277"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Feb 2025 07:23:14 -0800
+X-CSE-ConnectionGUID: wLkAALD7SGqsfxYsd6urjw==
+X-CSE-MsgGUID: z01v9Gf4TuupXNGbyEP7fA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="145963107"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Feb 2025 07:23:11 -0800
+Date: Thu, 20 Feb 2025 17:23:08 +0200
+From: Raag Jadav <raag.jadav@intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Zijun Hu <quic_zijuhu@quicinc.com>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: Re: [PATCH v1 1/4] devres: Move devm_*_action*() APIs to devres.h
+Message-ID: <Z7dI3IFbj_FjZGVW@black.fi.intel.com>
+References: <20250220141645.2694039-1-andriy.shevchenko@linux.intel.com>
+ <20250220141645.2694039-2-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,45 +80,14 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z7b3sU0w2daShkBH@shell.armlinux.org.uk>
+In-Reply-To: <20250220141645.2694039-2-andriy.shevchenko@linux.intel.com>
 
-Hi Russell,
+On Thu, Feb 20, 2025 at 03:44:57PM +0200, Andy Shevchenko wrote:
+> We have a newly created header linux/device/devres.h that gathers
+> device managed APIs, so users won't need to include entire device.h
+> for only these ones. Move devm_*_action*() APIs to devres.h as well.
+> 
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Am Thu, Feb 20, 2025 at 09:36:49AM +0000 schrieb Russell King (Oracle):
-> On Thu, Feb 20, 2025 at 09:11:12AM +0100, Dimitri Fedrau wrote:
-> > If the PHYs reset is asserted it returns 0xffff for any read operation.
-> > This might happen if the user admins down the interface and wants to read
-> > the temperature. Prevent reading the temperature in this case and return
-> > with an network is down error. Write operations are ignored by the device
-> > when reset is asserted, still return a network is down error in this
-> > case to make the user aware of the operation gone wrong.
-> 
-> If we look at where mdio_device_reset() is called from:
-> 
-> 1. mdio_device_register() -> mdiobus_register_device() asserts reset
->    before adding the device to the device layer (which will then
->    cause the driver to be searched for and bound.)
-> 
-> 2. mdio_probe(), deasserts the reset signal before calling the MDIO
->    driver's ->probe method, which will be phy_probe().
-> 
-> 3. after a probe failure to re-assert the reset signal.
-> 
-> 4. after ->remove has been called.
-> 
-
-There is also phy_device_reset that calls mdio_device_reset.
-
-> That is the sum total. So, while the driver is bound to the device,
-> phydev->mdio.reset_state is guaranteed to be zero.
-> 
-> Therefore, is this patch fixing a real observed problem with the
-> current driver?
->
-Yes, when I admin up and afterwards down the network device then the PHYs
-reset is asserted. In this case phy_detach is called which calls
-phy_device_reset(phydev, 1), ...
-
-Best regards,
-Dimitri Fedrau
+Reviewed-by: Raag Jadav <raag.jadav@intel.com>
 
