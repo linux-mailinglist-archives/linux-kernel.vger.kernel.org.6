@@ -1,120 +1,128 @@
-Return-Path: <linux-kernel+bounces-523652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A37DA3D9AC
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:19:35 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F079A3D9AF
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:19:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CD503BDD5D
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:18:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 24FC117EAD6
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:18:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD55F1F5435;
-	Thu, 20 Feb 2025 12:18:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 882171F63EA;
+	Thu, 20 Feb 2025 12:18:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="SF0fAFAs"
-Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XpOACJ58"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B17D31F3B93
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 12:18:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E09AA1F4E25;
+	Thu, 20 Feb 2025 12:18:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740053883; cv=none; b=lbBCIe7MXgeAVLjJdgZKesyi1ZpZ1U3TCdtIfr0tNbKMAdSU6PuIvmWdcInZXOvHpfwNGm2+2A7PDH0siz5L4KebCT+88cKBM1DDWjZVVgRoDADFs3VNwVDMGEbyRCIqxOvcGeT6C/Im1M0flvX0tkBoR6rIBtGTp+fFG8JXJ8k=
+	t=1740053895; cv=none; b=iOZvBcuKyAfS7cYha9fQwEogpDuCGIpNzmR3vewYg/X8VZk4WYDit++7PjVk3O5JQMDEr4F5v8+ZdR8FShB50B9+LU0m+s14vTKhYleVfMOCVHxSv6K2PDh3nDU/DKGAX/ATenXdxPiigE2NJ9oXF+5oJt+Vh1KELbACJTmIyv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740053883; c=relaxed/simple;
-	bh=6m3pn5teB6D33EiP9PjyRNzHejwBzfVH65xximy5EQU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=p3BFETxeyPfPldzs1jF12PK6XGuJw8PkTZdSyIOoOmpe8PBXZfTuZEym1A/Rv7PfbEFjNkUrsacAd6Hx8PVe9IMWQUzfyf5RIH0HBr4hatbnP1O4JkzM2p8+SPDLqPE7oSIYzg11jwrGXe0XQKex7DvAavIm6r2EuHXZLb0RVaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=SF0fAFAs; arc=none smtp.client-ip=209.85.166.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
-Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-3d193fc345aso2987735ab.2
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 04:18:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1740053881; x=1740658681; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rmI+w9rW7xuxQgzQY4zgyZiBf+VpYD43wlkF4w4/Fxk=;
-        b=SF0fAFAss56S5/kldJcO5bNJILxkssyS1ga/tzhkdUQFpBVB590jWwLiJ7+E/iAuQU
-         3JGWKPr81N7OzTonmnzjWbQqGsxt/mHQyDEBAG2Hr/+1aOON3SIX8PppB8LcXfoLqQwP
-         vKkT8Ald8KMtl9lkMRI2B0j/83OK6smXaFF8vr8SCA9fkSXNh8DpG5uOZJ813LUTNvnc
-         iC1BLBzzb+W0sa0z1wDPV2Yr7Y9ZC+9MutpF+5yUvTXEIJojFqC/QWA8ZivI0IlamuAi
-         xtf428dOypj71Ev8mcTG3ZvvDS4+h3CcwX5HyQuohPeE4NQlI/Y71jx1O7K6aJ77H9RY
-         EldQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740053881; x=1740658681;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rmI+w9rW7xuxQgzQY4zgyZiBf+VpYD43wlkF4w4/Fxk=;
-        b=k+cUVB/amDOGf4AlhFx76teA3k6sDLiTIvuRrvwdiJTF4O+NehmPorNcnfuGolDkNf
-         m7Q99GC/KIEVdQ6HHjuVdRKBAD/2fOs+5iOaU8+pmxyAIqpJFZPeM3U+OZSa1TqZlxDr
-         UxRQHppyMNh7Q2uXHkUaMUpSx0Ok0deQe/Mz3q4DFrFE5rxaWkR7Rv8RagaSrvVNFl4C
-         PvkoPIvP+WFIrAZJZhxbL+zn/TsD+wjXiDYbGdmLXvDkANdpuUZsFyMMIc8CmNmESGwD
-         EJ41S3yc8xPXkY1J/hIcLiimkhXwyfSZh3k/sEXzLWQ60oQOO48XxhzfPxMMQr+dZPHE
-         mJrw==
-X-Forwarded-Encrypted: i=1; AJvYcCV+xHpX3st3T/4xDN9KC/buPR75t2nrI3DKWSM4anesh+xeZjlkGj93mnlccCmXZ2Qp6GL9koF1DMjzWGU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxAfn0YIDsAJUIgBFMKpEDe5Qz8rYz6vyg/JAC1bVWnLMegHkGD
-	IMMNCTZSaJgoMggn03AgIDnXw8UNJkJ/9wgWBfUE/SU3iPS3V4qARut4valbhB4u44POmWzMdsT
-	DTeH1lE4MpTv1xnzZZxzSgI0t1rFuJunPnKVLXw==
-X-Gm-Gg: ASbGncsfUKw+50QbKJ+ADNcIGSsblhu2jndAOHeG8usqcNKvNjH3b340n1NUUEWLdYF
-	vOVN4X8ytoCLuF1g1ghExiibAI9LiWUHBA1EyO6JtWDX8YG4c5Hz99YidxJPcSPOVXAy42aSXGQ
-	==
-X-Google-Smtp-Source: AGHT+IHL3+9MtLF5+UaRybyEp8BV4Gc3bjSjy3kw4hdoypBWleJFfSGz7eyOLjRCOfAS7PzLJ2idDqWgGFTRfAm5dPo=
-X-Received: by 2002:a05:6e02:152d:b0:3d1:9236:ca52 with SMTP id
- e9e14a558f8ab-3d2b5131279mr59896385ab.0.1740053880695; Thu, 20 Feb 2025
- 04:18:00 -0800 (PST)
+	s=arc-20240116; t=1740053895; c=relaxed/simple;
+	bh=3ky5e9/hBYItOtNk1Ohc97k0Tb0nPrYkxWcANY0vaVo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=V99mu35bhZr6sDV0ABZttJvP5WIOnr+Tbo5LoBwglRwmRkQot8YOcmpx+CIi/aXd2G5H5a5Mr+W4zPCtoBrx4vfzMoBp2FBFJSa1GJS62SDD+v9hXiW0zLv0Ex0NBxQ4egC7sJjzJ6r8Fec9m4E4JLplSjQg9bacsEUdyQtz9vo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XpOACJ58; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1DAFC4CED6;
+	Thu, 20 Feb 2025 12:18:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740053894;
+	bh=3ky5e9/hBYItOtNk1Ohc97k0Tb0nPrYkxWcANY0vaVo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=XpOACJ58jPAVnzyesspHPG2mVzxfCZpYEJK5D3wNa+QSfOC4/UpiZh2OwSq3hDQUt
+	 u9uw65GKmfFbfbFj95TTzGsqxW5ZKBTL/x2BQZDwVEBpaIspuzOHIY3WiEBuibjcVC
+	 lBCq8bSslOCQMMQK/VVi0+iHb2bbx2dCMxHF5E3OoKQF+i16xGfbrqSi5YYeqgeJ2t
+	 soZM88wGbHyHKvW0NPWXjTHnCY+N7L3aTXCMHysySKH4e6wHhYW57OZ+icjxfP+c4J
+	 ElX3b88SAMoGpA6eFbUrYG8qFBk57XLDmaOcZrBCf/DUHKcSWQgLdQ0nc+dLTPFKuS
+	 Zfi1ATz8KYgtQ==
+Message-ID: <2955e9ad-f97a-44b0-be9c-d6bac90a8f9d@kernel.org>
+Date: Thu, 20 Feb 2025 13:18:07 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250217084506.18763-7-ajones@ventanamicro.com>
-In-Reply-To: <20250217084506.18763-7-ajones@ventanamicro.com>
-From: Anup Patel <anup@brainfault.org>
-Date: Thu, 20 Feb 2025 17:47:49 +0530
-X-Gm-Features: AWEUYZmV63eOiG44RnPBMnqx1Uo6sIZHLWWs9x29seXyEVn1h53Dh8XbVUUsj0U
-Message-ID: <CAAhSdy0cqoN5MehwDtQEtK7EYSTXPekwYEJWgPvAK+Y4uk=40Q@mail.gmail.com>
-Subject: Re: [PATCH 0/5] riscv: KVM: Fix a few SBI issues
-To: Andrew Jones <ajones@ventanamicro.com>
-Cc: kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	atishp@atishpatra.org, paul.walmsley@sifive.com, palmer@dabbelt.com, 
-	aou@eecs.berkeley.edu, cleger@rivosinc.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/6] dt-bindings: vendor-prefixes: Add CIX Technology
+ Group Co., Ltd.
+To: Peter Chen <peter.chen@cixtech.com>, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, cix-kernel-upstream@cixtech.com,
+ Fugang Duan <fugang.duan@cixtech.com>
+References: <20250220084020.628704-1-peter.chen@cixtech.com>
+ <20250220084020.628704-3-peter.chen@cixtech.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250220084020.628704-3-peter.chen@cixtech.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Feb 17, 2025 at 2:15=E2=80=AFPM Andrew Jones <ajones@ventanamicro.c=
-om> wrote:
->
-> Fix issues found with kvm-unit-tests[1], which is currently focused
-> on SBI.
->
-> [1] https://gitlab.com/jones-drew/kvm-unit-tests/-/commits/riscv/sbi
->
-> Andrew Jones (5):
->   riscv: KVM: Fix hart suspend status check
->   riscv: KVM: Fix hart suspend_type use
->   riscv: KVM: Fix SBI IPI error generation
->   riscv: KVM: Fix SBI TIME error generation
->   riscv: KVM: Fix SBI sleep_type use
+On 20/02/2025 09:40, Peter Chen wrote:
+> CIX Technology Group Co., Ltd. is a high performance Arm SoC design
+> company. Link: https://www.cixtech.com/.
+> 
+> Acked-by: Fugang Duan <fugang.duan@cixtech.com>
+> Signed-off-by: Peter Chen <peter.chen@cixtech.com>
+> ---
+>  Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
+>  1 file changed, 2 insertions(+)
 
-Queued these fixes for Linux-6.14-rcX.
 
-Regards,
-Anup
+Please re-order the patches, because your previous patch uses
+undocumented prefix.
 
->
->  arch/riscv/kvm/vcpu_sbi_hsm.c     | 11 ++++++-----
->  arch/riscv/kvm/vcpu_sbi_replace.c | 15 ++++++++++++---
->  arch/riscv/kvm/vcpu_sbi_system.c  |  3 ++-
->  3 files changed, 20 insertions(+), 9 deletions(-)
->
-> --
-> 2.48.1
->
+
+
+Best regards,
+Krzysztof
 
