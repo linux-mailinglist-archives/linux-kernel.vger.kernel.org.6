@@ -1,171 +1,232 @@
-Return-Path: <linux-kernel+bounces-523788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33172A3DB46
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:28:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F26BDA3DB47
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:28:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 310F6189387F
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:28:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC9343B52B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:28:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83B821F8BAF;
-	Thu, 20 Feb 2025 13:27:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 668731F8BA4;
+	Thu, 20 Feb 2025 13:28:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="nRZeRb63"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AX99E1yU"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E3B41F4735
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 13:27:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02F6E433BE
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 13:28:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740058075; cv=none; b=gahFyXj963f3en6RTCGdS9XLiAMS5wplqmzQjLnNK6xhDiCHMggy97Hk+hOegdepvaht84wKdTKCSY7Z+fsY4XsE/5SW5+Z/79qxOsGQHtu/tv0lk2CIZtCoOUYFRJ83TxNhCLtj+rhv4iLlCJdxUiyQyHpmfWvpXa25sHBmPls=
+	t=1740058117; cv=none; b=N+jmP/7Q0oy8i4Kp3nVHBlAoVABLCalKd5zPmeGzQOQn1Li626rKE4+AoCA8j9Sr1qp52JeNH7kSm8r4/kcwjkmaydnGeoTupHCzz8OqqT7uc+oP/Kc/7GH1j5d7o9eeLiudc66s+mTP/4dxfIeVjEWRBtPZaNZ1KqcSoaoZANs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740058075; c=relaxed/simple;
-	bh=6BkBI5Gd2bF1hdg12e0QkK7DeXVoF4QW5+2hQ/uruDs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=d6tLWSKJS9HkmjhN1YyKiK5OQ3rX62VKtDBIE6GWwOrlx2+h9dTEbxAVAwHKsiDEOcmf2u/YvjssVcZRaucIhMa/0puDZPJv9uBd8Gi1zpBRAzlvZr0ass4YlWYix4gAnl4l/aJjOgJ+QC3enqeGbOinvzelpYtHZfR+rG4ktDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=nRZeRb63; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-546210287c1so1072238e87.2
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 05:27:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1740058072; x=1740662872; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tPGM0Dy2UNo1ssIZ8BTfYzSP17FQ21N+lE91j18vuXw=;
-        b=nRZeRb63Uc4UKxcbuxnbHDuiNgJraaZS2tpWtvJb3HFYsiqAKLNTLD2QM9UoYTAvSH
-         TSxBfOkcsRqJtqhetdxLPAlxinKRxXD9Zu8fEctrxpAKogiMnSjyAloYu1QwZgXoeNjv
-         S98MHhQ6coZS7XocqMDJrM01Do2mQNRbmhDYAsFb3/rBEQDI948XeiFZ1JQ/d6CTIVzS
-         Slvo29yUfWeGbTMuzGlgzSoYx7jVyYgcvDq225M9QeU9hMhmfjq0ut/d6WIH3nxKim1N
-         QWWMsWKdSP8FgIBY7+nYk0Semh/GZtASpxoXy2m/y8rBlaz8B0k1NmaRJf7/I0JKhsr+
-         djiA==
+	s=arc-20240116; t=1740058117; c=relaxed/simple;
+	bh=6v7PJVxBLl1BToOa9hbm/qb/5k7mTQ1bH6QP2xbWj3o=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=V31aKwHz/h636xavmZAfH9ieCfWIDOPZq+9pXF5nCHFlK3rwRYldo+YlegZTwWrxz4I6tihTOG2azKKBaZtmN8Yluod84cQO66zdIr0Vk2bGBLNM11X67VSyVE3ug77bByXD5PhCUVDoBihTimCnPP661m1TvCH8nnHSuZUBlb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AX99E1yU; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740058114;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UEfE+oQZ6m0RLdfUPRWERlu8bLJ41aEcuNufBb3jHao=;
+	b=AX99E1yU+1/dZPbjmy+z4V7yKazk8GNPvVaou2KMJTYRt5WNjZ+Pb48AV5cZ7+Mv+PemDj
+	ZqL2e5HM8+c7mzB5y1rp27T6gGX6afOcEjaCA+2NaYc6ho1xtAEzmOWr/D5tAvaZPbIxsu
+	RALCWkwcFoOWC1rlnaAXB+mS8IOvbl8=
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
+ [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-343-XLUhUUm1PJKgZbShAq9Zng-1; Thu, 20 Feb 2025 08:28:33 -0500
+X-MC-Unique: XLUhUUm1PJKgZbShAq9Zng-1
+X-Mimecast-MFC-AGG-ID: XLUhUUm1PJKgZbShAq9Zng_1740058113
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6e65a5ee5f0so36259326d6.1
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 05:28:33 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740058072; x=1740662872;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tPGM0Dy2UNo1ssIZ8BTfYzSP17FQ21N+lE91j18vuXw=;
-        b=WLcrihHM1Ot0afv5acw5pqaV0kicCTWvpIXwEQhJXbeNMjElL9fwI1tR5f64yG4ocx
-         LoBO5GFW/m2cLJdjsAlxsUX+tnZVr4z/z4OnWpIklsOoSfH3bmbo7OyQfp9sZW5SWhDE
-         Yq2XYAZl1VbE1dej5JbziNz029UPTTr+ZIBFrLLlIgPKx4a5tkE/WMbOCVH6y00xzjPr
-         8WbF1VB45y4OxKDTFIcDPp2lPmsyJXhbwj29k+ncLn7BmsnFdaDwQs1g+Eqph2ZDAgnI
-         8tweyJR0W6j2h9Zi7XWoF2I39y7zs6mBrpLX+6NKRoJQrN/sbn0MGbn1EL7VFavLyo7I
-         WOMA==
-X-Forwarded-Encrypted: i=1; AJvYcCW9HwfxcxTDRxeD0fn1O5O9Z4yWTouzwqynrXU6CKXwXZFOsWOVBs95br/cbOi3TgdbqsCYrTu08Y1GzDY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzW/lvyYGtRKcrrjvWIGxdTlj59z4i/RFxJ9LQKGwH1u5bpgKfl
-	rfKRdY0O8N/r5F07FIaQyBQp61kFOIrac9A+IYS4Ytg33yguFS98gUhtTeqLTX8Pr5yWmjUk38v
-	b/WcbB2BO+g7UfDs7Et/Vitoa14KRgWucW59QtA==
-X-Gm-Gg: ASbGncsyG9+ywBqf0GO8JVvnRdDIWpRcrGb/S1bSz4BNk7RMa3JkZ9QnNmqXWMWS2Vs
-	/27hSaXKRnzeHcGR9zB0boLq4FUBGykGBnSv4sUOetrm+l9TNG908ynmT71ggEWDKOjT4bZYDMI
-	bgk/7ZpXgfLJ68sFnmVnjZp7GU2Cw=
-X-Google-Smtp-Source: AGHT+IGSZVfzxxbFXkY8BozGTpomSzvXO/Nkzfje3a6QIEJGJaDDJkb3Ug0/D7QG4zLAD6dqGwsP5Tj8aQGydHRLk+I=
-X-Received: by 2002:a05:6512:a8f:b0:545:576:cbca with SMTP id
- 2adb3069b0e04-5452fe2ef99mr7309914e87.8.1740058072195; Thu, 20 Feb 2025
- 05:27:52 -0800 (PST)
+        d=1e100.net; s=20230601; t=1740058113; x=1740662913;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UEfE+oQZ6m0RLdfUPRWERlu8bLJ41aEcuNufBb3jHao=;
+        b=thigMgy1n7EOrDFRLOlfK9FF5Xl9PXnR9VoEZEFYoi9xBi7ld/ip6k7F0vNlUlHHSY
+         jjUcueF5v8qu4KXvpLihDdnj+rku75wWa5Zy3CbsA209F452JwSaxIuTD41AMfNODi5+
+         PASrQ+NIpnukKKf6gg82vbL2gPX9ihE080nngdlol+DeJnqvn4aB43rjaEaQ9PluLioN
+         FNKvCruuybT9pm3ccLM/wACQ3Y3SwmET+5yrQrxoXJHfdHlnsAOgaOVDTn90y6E46dKt
+         irv10Q7xy18ZR4trhq2RflNjv+Fmo5DGbH2sMpZsxKI3B6T2sY0M/FFnHlI+8X2XAAxi
+         qs2g==
+X-Forwarded-Encrypted: i=1; AJvYcCV8x76FB3l44Zq3Vu7CyDWhuoTflRj92tBOllFVovwFnqtljE3IWN7YRtoyTSnEW3HYNnweRTJRtnd+36w=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzyem6gKBRAzXcthXdMmwL3YtQXCiVsl9tEuYPb729PqqFQOEXL
+	+1ajWQUfsnPYpB2+ZGvmsbKIMuAe9MDiGSKmAt49BPGCCEHnMaRQX/armi2Gi2FNCjH1LTV/IXB
+	meNyiaeFZkgcqxI5CE0BD4JvcZjykVy0ZuFRKwlVx/VW0D0AJ8PwzSM/BNnP9ew==
+X-Gm-Gg: ASbGnct4tynlq4lhiD6yogyQBvHVxsgmEvO8Jk7Leikjir6wJwI5H5jt9RS3KuvUHC4
+	e6KlD0KBAhsbFHj3VZLdYiFxLwowCs5bTCAs0/eDJuQP/IazWLbdc6oo8+UYy6FmE65gse/+Q+9
+	YQ+e7QlHNVY0q3iJMvAb6aXv1ILC+92GIvs/XTdhYhNq/MxODmwHy6M2X/IJVV5cQ0kWZAQC6JO
+	BR9fFL/gicr6HhGQSlgnrrhz3ND2rjWUZDz4PXGLf4D7Z5JI+1N7N2BJ/Yzu0MSY5VwU6kvqvDh
+	iadmyq//7arxvvYfSQsrBV4YnLLTaMholp+WgMQsp1FWMmcd
+X-Received: by 2002:ad4:5949:0:b0:6e4:5a38:dd0f with SMTP id 6a1803df08f44-6e6a257b2edmr51384786d6.4.1740058112723;
+        Thu, 20 Feb 2025 05:28:32 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IH6L/J150VyhZE8qpddA7Ggp+4U/MflpgbPfOEplCKpjVPjN9XqDo0bGw1rmUPzHRESSRb5Dg==
+X-Received: by 2002:ad4:5949:0:b0:6e4:5a38:dd0f with SMTP id 6a1803df08f44-6e6a257b2edmr51384266d6.4.1740058112355;
+        Thu, 20 Feb 2025 05:28:32 -0800 (PST)
+Received: from ?IPV6:2601:188:c100:5710:627d:9ff:fe85:9ade? ([2601:188:c100:5710:627d:9ff:fe85:9ade])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e6acb6d6b4sm637146d6.121.2025.02.20.05.28.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 20 Feb 2025 05:28:31 -0800 (PST)
+From: Waiman Long <llong@redhat.com>
+X-Google-Original-From: Waiman Long <longman@redhat.com>
+Message-ID: <5b91faa4-f346-4a61-a3a6-e47648af0fb5@redhat.com>
+Date: Thu, 20 Feb 2025 08:28:30 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250218160333.605829-1-koichiro.den@canonical.com>
- <20250218160333.605829-2-koichiro.den@canonical.com> <CAMRc=MfmG0okVjV1nH78Aw18dFcoOAZ-UwU-iFc1VKb-BVcTxQ@mail.gmail.com>
- <CAMuHMdULzDfdg-7HBk1f-Z+AZ5L2WGUEiPMqtvk+bNSkLb38BQ@mail.gmail.com>
-In-Reply-To: <CAMuHMdULzDfdg-7HBk1f-Z+AZ5L2WGUEiPMqtvk+bNSkLb38BQ@mail.gmail.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Thu, 20 Feb 2025 14:27:41 +0100
-X-Gm-Features: AWEUYZno3M-1ByREZhBH_WKPV6W6h7A0ywwN3um7MfD1bLyCpNDJS6PhbZWodPI
-Message-ID: <CAMRc=Mecp9se3dTLkS6AokP3N=GHJ6CRNCuYipMfjd3crYkNWQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] gpio: introduce utilities for synchronous fake
- device creation
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Koichiro Den <koichiro.den@canonical.com>, linux-gpio@vger.kernel.org, 
-	linus.walleij@linaro.org, maciej.borzecki@canonical.com, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] hung_task: Show the blocker task if the task is hung
+ on mutex
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
+ Waiman Long <llong@redhat.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Will Deacon <will@kernel.org>, Andrew Morton <akpm@linux-foundation.org>,
+ Boqun Feng <boqun.feng@gmail.com>, Joel Granados <joel.granados@kernel.org>,
+ Anna Schumaker <anna.schumaker@oracle.com>, Lance Yang
+ <ioworker0@gmail.com>, Kent Overstreet <kent.overstreet@linux.dev>,
+ Yongliang Gao <leonylgao@tencent.com>, Tomasz Figa <tfiga@chromium.org>,
+ Sergey Senozhatsky <senozhatsky@chromium.org>, linux-kernel@vger.kernel.org,
+ Linux Memory Management List <linux-mm@kvack.org>
+References: <173997003868.2137198.9462617208992136056.stgit@mhiramat.tok.corp.google.com>
+ <173997004932.2137198.7959507113210521328.stgit@mhiramat.tok.corp.google.com>
+ <20250219112308.5d905680@gandalf.local.home>
+ <0fa9dd8e-2d83-487e-bfb1-1f5d20cd9fe6@redhat.com>
+ <20250219152435.35077ac3@gandalf.local.home>
+ <db4ee5e9-56bb-408c-85e7-f93e2c3226dc@redhat.com>
+ <20250220075639.298616eb494248d390417977@kernel.org>
+ <d8c01f69-34c0-45cf-a532-83544a3a3efd@redhat.com>
+ <20250219204153.65ed1f5e@gandalf.local.home>
+ <9f9150b4-1cf5-4380-b431-419f70775a7d@redhat.com>
+ <20250220115904.051e0cc55a9cb88302582ef4@kernel.org>
+ <bb5886cc-a512-4a59-98c7-f21128ab6194@redhat.com>
+ <20250220182927.258e394c6ba5d76d4c57324b@kernel.org>
+Content-Language: en-US
+In-Reply-To: <20250220182927.258e394c6ba5d76d4c57324b@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, Feb 20, 2025 at 2:24=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
-k.org> wrote:
+On 2/20/25 4:29 AM, Masami Hiramatsu (Google) wrote:
+> On Wed, 19 Feb 2025 22:37:04 -0500
+> Waiman Long <llong@redhat.com> wrote:
 >
-> Hi Bartosz,
+>> On 2/19/25 9:59 PM, Masami Hiramatsu (Google) wrote:
+>>> On Wed, 19 Feb 2025 21:15:08 -0500
+>>> Waiman Long <llong@redhat.com> wrote:
+>>>
+>>>> On 2/19/25 8:41 PM, Steven Rostedt wrote:
+>>>>> On Wed, 19 Feb 2025 20:36:13 -0500
+>>>>> Waiman Long <llong@redhat.com> wrote:
+>>>>>
+>>>>>     
+>>>>>>>>>> this field, we don't need to take lock, though taking the wait_lock may
+>>>>>>>>>> still be needed to examine other information inside the mutex.
+>>>>>>> Do we need to take it just for accessing owner, which is in an atomic?
+>>>>>> Right. I forgot it is an atomic_long_t. In that case, no lock should be
+>>>>>> needed.
+>>>>> Now if we have a two fields to read:
+>>>>>
+>>>>> 	block_flags (for the type of lock) and blocked_on (for the lock)
+>>>>>
+>>>>> We need a way to synchronize the two. What happens if we read the type, and
+>>>>> the task wakes up and and then blocks on a different type of lock?
+>>>>>
+>>>>> Then the lock read from blocked_on could be a different type of lock than
+>>>>> what is expected.
+>>>> That is different from reading the owner. In this case, we need to use
+>>>> smp_rmb()/wmb() to sequence the read and write operations unless it is
+>>>> guaranteed that they are in the same cacheline. One possible way is as
+>>>> follows:
+>>>>
+>>>> Writer - setting them:
+>>>>
+>>>>        WRITE_ONCE(lock)
+>>>>        smp_wmb()
+>>>>        WRITE_ONCE(type)
+>>>>
+>>>> Clearing them:
+>>>>
+>>>>        WRITE_ONCE(type, 0)
+>>>>        smp_wmb()
+>>>>        WRITE_ONCE(lock, NULL)
+>>>>
+>>>> Reader:
+>>>>
+>>>>        READ_ONCE(type)
+>>>> again:
+>>>>        smp_rmb()
+>>>>        READ_ONCE(lock)
+>>>>        smp_rmb()
+>>>>        if (READ_ONCE(type) != type)
+>>>>            goto again
+>>> What about mutex-rwsem-mutex case?
+>>>
+>>> mutex_lock(&lock1);
+>>> down_read(&lock2);
+>>> mutex_lock(&lock3);
+>>>
+>>> The worst scenario is;
+>>>
+>>> WRITE_ONCE(lock, &lock1)
+>>> smp_wmb()
+>>> WRITE_ONCE(type, MUTEX)     READ_ONCE(type) -> MUTEX
+>>> WRITE_ONCE(type, 0)
+>>> smp_wmb()
+>>> WRITE_ONCE(lock, NULL)
+>>> WRITE_ONCE(lock, &lock2)    READ_ONCE(lock) -> &lock2
+>>> smp_wmb()
+>>> WRITE_ONCE(type, RWSEM)
+>>> WRITE_ONCE(type, 0)
+>>> smp_wmb()
+>>> WRITE_ONCE(lock, NULL)
+>>> WRITE_ONCE(lock, &lock3)
+>>> smp_wmb()
+>>> WRITE_ONCE(type, MUTEX)     READ_ONCE(type) -> MUTEX == MUTEX
+>>> WRITE_ONCE(type, 0)
+>>> smp_wmb()
+>>> WRITE_ONCE(lock, NULL)
+>>>
+>>>                               "OK, lock2 is a MUTEX!"
+>>>
+>>> So unless stopping the blocker task, we can not ensure this works.
+>>> But unless decode the lock, we don't know the blocker task.
+>> That could only happen if the reader can get interrupted/preempted for a
+>> long time. In that case, we may need to reread the lock again to be sure
+>> that they are stable.
+> Hm, actually read side should run under rcu read locked, so only interrupt
+> matters. So I think this rarely happens.
 >
-> On Thu, 20 Feb 2025 at 12:06, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
-> > On Tue, Feb 18, 2025 at 5:04=E2=80=AFPM Koichiro Den <koichiro.den@cano=
-nical.com> wrote:
-> > > Both gpio-sim and gpio-virtuser share a mechanism to instantiate a
-> > > platform device, wait for probe completion, and retrieve the probe
-> > > success or error status synchronously. With gpio-aggregator planned t=
-o
-> > > adopt this approach for its configfs interface, it's time to factor
-> > > out the common code.
-> > >
-> > > Add dev-sync-probe.[ch] to house helper functions used by all such
-> > > implementations.
-> > >
-> > > No functional change.
-> > >
-> > > Signed-off-by: Koichiro Den <koichiro.den@canonical.com>
+> BTW, we don't need the lock address itself, but we need to know who is the
+> owner. Maybe we can point the address of atomic_long_t?
 >
-> > > --- a/drivers/gpio/Kconfig
-> > > +++ b/drivers/gpio/Kconfig
-> > > @@ -1863,6 +1863,13 @@ config GPIO_MPSSE
-> > >
-> > >  endmenu
-> > >
-> > > +# This symbol is selected by drivers that need synchronous fake devi=
-ce creation
-> >
-> > This comment is unnecessary, please drop it.
-> >
-> > > +config DEV_SYNC_PROBE
-> > > +       tristate "Utilities for synchronous fake device creation"
-> >
-> > Please don't make this available for users to select, this should be a
-> > hidden symbol only to be selected by its users.
+> struct task_struct {
+> 	atomic_long_t *blocked_on_owner;
+> };
+Yes, we can use a pointer to the owner field. However, the way that 
+owner field is encoded varies depends on the lock type. So we still need 
+to know what lock it is. As mentioned in the other thread, we can encode 
+the lock type into the lowest 2 bits of the pointer.
 >
-> It is still useful to make it visible for compile-testing, i.e.
->
->     tristate "Utilities for synchronous fake device creation" if COMPILE_=
-TEST
->
+> The problem is that mutex and rwsem are OK, but rt_mutex uses task_struct *.
+> Maybe we can use atomic_long_t in rt_mutex too if the new Kconfig is enabled.
 
-I disagree, this will get plenty of coverage being used by three
-virtual drivers.
+It shouldn't be a problem to use atomic_long_t for the owner.
 
-> As it does not depend on GPIO at all, I think it should be moved
-> to the end of the file, outside the big "if GPIOLIB ... endif" block.
->
+Cheers,
+Longman
 
-Indeed. And eventually I'd like it moved to lib/ but that's for another tim=
-e.
-
-Bart
-
-> > > +       help
-> > > +         Common helper functions for drivers that need synchronous f=
-ake
-> > > +         device creation.
-> > > +
-> > >  menu "Virtual GPIO drivers"
->
-> Gr{oetje,eeting}s,
->
->                         Geert
->
->
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m6=
-8k.org
->
-> In personal conversations with technical people, I call myself a hacker. =
-But
-> when I'm talking to journalists I just say "programmer" or something like=
- that.
->                                 -- Linus Torvalds
 
