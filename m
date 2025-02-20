@@ -1,57 +1,64 @@
-Return-Path: <linux-kernel+bounces-522898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05964A3CFDA
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 04:09:42 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 589D4A3CFD8
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 04:09:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B752218920C1
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 03:09:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ADA3B7A31F0
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 03:08:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E77AD1DF99F;
-	Thu, 20 Feb 2025 03:09:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 992761DE3A6;
+	Thu, 20 Feb 2025 03:09:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="DIKFljpP"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WXFXm8vb"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AECE11DEFD9
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 03:09:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740020949; cv=pass; b=WJSHRsLUcUfe43CTzLotrCa7Pju7LO+9hqzMYcdmez8doM/CQ2cxQC2tErG2yXxYmdRJLYoZZwaXSD6KdR14UJVSqGHViNn2nYo6JYxBuAufJEZ+AnoRPQXbtgUN67AaJcpSMepv4JMTUA9aIBWmSZk4rrLfZLUm7aBKtdqyOxA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740020949; c=relaxed/simple;
-	bh=xfhIdynj1BOrr5J3UbPjAp/L+hhP6a12c2XXRdv+AUU=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6743A10FD;
+	Thu, 20 Feb 2025 03:09:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740020946; cv=none; b=b4M8NYXSaSPYmV88FlfPYEtbvPCc1wamaFc8HiW7S6SBNWmGEFhf8NWB4zAZDPMHcI3OUyeUqat9DswQxHAX4Y201sRTQwKfpzZY5tpA/hDj09SDpdzRGwb2nCe0wo/uTPdlPByld8JO1sahDYGNuZKUPhLPdVgslu1dM59zVKg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740020946; c=relaxed/simple;
+	bh=6Om/YQ9BDTJoSdcjeVlNE5mx2TxHgQH+HygQWJDZxTI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Rts3tLLpBoHcWWlq3R6QgBXE275d2dKDFgrmj4E5Wvew6wJ4aGroQeHMFfIBbhu2KfljVJjva/1U4GQ49c571Mx25Jc+WqC631aACDZLJ+BVyi4W5du7SEzH8FtFr1wRycPUqh7ONIx4JH1zAcNJcKwqC6kT/KsgFiGkfLUTd10=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=DIKFljpP; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1740020924; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=LD1ORXenoLaViYaG5cbMYZJqHL03jlVoOwTQn6FDNfe+WZ6WMEWL2Kdavt1JiWUU5nG7qA+AIONFtt/8atT/Xv+CkTi/8vOB5NJoPTfdG6XAPP7+5D5/1CArRVkvfit8y9YvOnppDhWH7AisyvZVT8hRF86WYTVKuQKzmqbG7ko=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1740020924; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=D+4Yg1sIOnwm4kyjhgsdw96gYTuVHcmlk5nuiTt5ijs=; 
-	b=Ic27AqaqFOnyNJ0XUs/UvxX8VK9i90+VKKpajV7l/sHfKhR+2HG3veuB093qbuG3yn2uB/BsvBF9khzvZk9JsE7CARQRvpuumP6uKeG5ZRHWGxFX10uTNSENHo1hQ7VhEaMGU0N3X5VanF37cM6hqSvw7U2mulRkKizfWXpW/JM=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=dmitry.osipenko@collabora.com;
-	dmarc=pass header.from=<dmitry.osipenko@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1740020924;
-	s=zohomail; d=collabora.com; i=dmitry.osipenko@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=D+4Yg1sIOnwm4kyjhgsdw96gYTuVHcmlk5nuiTt5ijs=;
-	b=DIKFljpPNFko5H4SBJLHHYwAUIHDreMamf8erb9gS1D63xYNj182PVBZOHsWEBYB
-	ZdWgQLs37qojungPuzgGh4KvH3PMmdgJR/5mlLWe4XDjd7P8mkTj/y+JpoaLy4GFutZ
-	rIGQ3I330OkrgJuc1n+jh0uWvFuQK91bLU2B5Sq8=
-Received: by mx.zohomail.com with SMTPS id 1740020921513211.06059206425857;
-	Wed, 19 Feb 2025 19:08:41 -0800 (PST)
-Message-ID: <ddafa68a-6043-4b65-a34c-62a34373ef46@collabora.com>
-Date: Thu, 20 Feb 2025 06:08:35 +0300
+	 In-Reply-To:Content-Type; b=Yn7m0ZVvwBcnYEEK5RxbkezoS4MmUTdjnETfVXCYvb81u7DRq22dr4BjPo05wIPgQz24adKU77iNIIMuCOBMkg00SmdSdXbJVM1IowH+P9CzPgbdUJ9/2V6eD0Z7XEdlAtRDTgZK4/8gDRBJabqo8R8xvgLP3kV3HIQNAEw0DlE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WXFXm8vb; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740020944; x=1771556944;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=6Om/YQ9BDTJoSdcjeVlNE5mx2TxHgQH+HygQWJDZxTI=;
+  b=WXFXm8vbeEQMlJ5dlpZo3xIcEZEntVRPy3q8yUwyKukTQv5EQX/9VjuQ
+   7gMFmQLwmeMbUaKEO64sPLUjHS3uT/0hx+A+48xCJpPh5k/9Idg8Nw/X5
+   W59N8FrzdbbwhofL4MSxwz270WiXYeIU7bt9w4TVlFdA2ALWSC0b9yk6V
+   b1ETkEOCNDTbFrJNy59soe4Dx9hkEvNfyVFeUDVJnKCslnsg/3TntdsCK
+   BZHijUhLxEe7yetixVOcozdwHC+jn/cZx6rtIamH92Ur8l8/aeaKrONuD
+   lU3+8jKX6boWH/KAg7nvwlygZFqKDfsEbFnOegs4WfsUXYZr61CEdzJU+
+   Q==;
+X-CSE-ConnectionGUID: PZlqgtoCSZS426YTQ3aStw==
+X-CSE-MsgGUID: YKqVST2OQguKSEEXHlKCgA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11350"; a="44433446"
+X-IronPort-AV: E=Sophos;i="6.13,300,1732608000"; 
+   d="scan'208";a="44433446"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Feb 2025 19:09:03 -0800
+X-CSE-ConnectionGUID: NtSLS7/pTki0JlkmiayN3A==
+X-CSE-MsgGUID: phFnrHBBQ4u+5LiD6T/d6g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,300,1732608000"; 
+   d="scan'208";a="114892383"
+Received: from mohdfai2-mobl.gar.corp.intel.com (HELO [10.247.77.104]) ([10.247.77.104])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Feb 2025 19:08:56 -0800
+Message-ID: <72c1a698-ba1e-44f6-a52f-ef03c7acba06@linux.intel.com>
+Date: Thu, 20 Feb 2025 11:08:53 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,94 +66,102 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v2 2/5] virtio: introduce VIRTIO_F_SHM_PAGE_SIZE
-To: Sergio Lopez <slp@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>,
- Daniel Verkamp <dverkamp@chromium.org>, Jason Wang <jasowang@redhat.com>,
- Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?=
- <eperezma@redhat.com>, David Airlie <airlied@redhat.com>,
- Gerd Hoffmann <kraxel@redhat.com>,
- Gurchetan Singh <gurchetansingh@chromium.org>, Chia-I Wu
- <olvaffe@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Simona Vetter <simona@ffwll.ch>, Rob Clark <robdclark@gmail.com>,
- fnkl.kernel@gmail.com
-Cc: virtualization@lists.linux.dev, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org
-References: <20250214-virtio-shm-page-size-v2-0-aa1619e6908b@redhat.com>
- <20250214-virtio-shm-page-size-v2-2-aa1619e6908b@redhat.com>
-From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+Subject: Re: [Intel-wired-lan] [PATCH iwl-next v4 0/9] igc: Add support for
+ Frame Preemption feature in IGC
+To: "Loktionov, Aleksandr" <aleksandr.loktionov@intel.com>,
+ Vladimir Oltean <vladimir.oltean@nxp.com>
+Cc: "Nguyen, Anthony L" <anthony.l.nguyen@intel.com>,
+ "Kitszel, Przemyslaw" <przemyslaw.kitszel@intel.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S . Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Simon Horman <horms@kernel.org>, Russell King <linux@armlinux.org.uk>,
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ Jesper Dangaard Brouer <hawk@kernel.org>,
+ John Fastabend <john.fastabend@gmail.com>, Furong Xu <0x1207@gmail.com>,
+ Russell King <rmk+kernel@armlinux.org.uk>,
+ Serge Semin <fancer.lancer@gmail.com>,
+ Xiaolei Wang <xiaolei.wang@windriver.com>,
+ Suraj Jaiswal <quic_jsuraj@quicinc.com>,
+ Kory Maincent <kory.maincent@bootlin.com>, Gal Pressman <gal@nvidia.com>,
+ Jesper Nilsson <jesper.nilsson@axis.com>,
+ Andrew Halaney <ahalaney@redhat.com>,
+ Choong Yong Liang <yong.liang.choong@linux.intel.com>,
+ Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+ "Gomes, Vinicius" <vinicius.gomes@intel.com>,
+ "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
+ "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-stm32@st-md-mailman.stormreply.com"
+ <linux-stm32@st-md-mailman.stormreply.com>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "bpf@vger.kernel.org" <bpf@vger.kernel.org>
+References: <20250210070207.2615418-1-faizal.abdul.rahim@linux.intel.com>
+ <20250210070207.2615418-1-faizal.abdul.rahim@linux.intel.com>
+ <20250212220121.ici3qll66pfoov62@skbuf>
+ <SJ0PR11MB586651473E7F571ECD54B13BE5FF2@SJ0PR11MB5866.namprd11.prod.outlook.com>
 Content-Language: en-US
-In-Reply-To: <20250214-virtio-shm-page-size-v2-2-aa1619e6908b@redhat.com>
-Content-Type: text/plain; charset=UTF-8
+From: "Abdul Rahim, Faizal" <faizal.abdul.rahim@linux.intel.com>
+In-Reply-To: <SJ0PR11MB586651473E7F571ECD54B13BE5FF2@SJ0PR11MB5866.namprd11.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
 
-On 2/14/25 18:16, Sergio Lopez wrote:
-> Introduce VIRTIO_F_SHM_PAGE_SIZE, a feature bit which indicates that the
-> transport provides the page size for SHM regions.
-> 
-> Signed-off-by: Sergio Lopez <slp@redhat.com>
-> ---
->  drivers/virtio/virtio_pci_modern.c | 3 +++
->  drivers/virtio/virtio_ring.c       | 2 ++
->  include/uapi/linux/virtio_config.h | 7 ++++++-
->  3 files changed, 11 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/virtio/virtio_pci_modern.c b/drivers/virtio/virtio_pci_modern.c
-> index d7aeb2e50a3c499dfb68d58cb89b829ea2e50454..ab0e1d9148057c431676bfacfe5f68cc97eebb12 100644
-> --- a/drivers/virtio/virtio_pci_modern.c
-> +++ b/drivers/virtio/virtio_pci_modern.c
-> @@ -367,6 +367,9 @@ static void vp_transport_features(struct virtio_device *vdev, u64 features)
->  
->  	if (features & BIT_ULL(VIRTIO_F_ADMIN_VQ))
->  		__virtio_set_bit(vdev, VIRTIO_F_ADMIN_VQ);
-> +
-> +	if (features & BIT_ULL(VIRTIO_F_SHM_PAGE_SIZE))
-> +		__virtio_set_bit(vdev, VIRTIO_F_SHM_PAGE_SIZE);
->  }
->  
->  static int __vp_check_common_size_one_feature(struct virtio_device *vdev, u32 fbit,
-> diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
-> index fdd2d2b07b5a2aca864bc917306536685afb66a6..d853d5cf7e553be8bbe0ff461dc7312b258c6e58 100644
-> --- a/drivers/virtio/virtio_ring.c
-> +++ b/drivers/virtio/virtio_ring.c
-> @@ -2983,6 +2983,8 @@ void vring_transport_features(struct virtio_device *vdev)
->  			break;
->  		case VIRTIO_F_NOTIFICATION_DATA:
->  			break;
-> +		case VIRTIO_F_SHM_PAGE_SIZE:
-> +			break;
->  		default:
->  			/* We don't understand this bit. */
->  			__virtio_clear_bit(vdev, i);
-> diff --git a/include/uapi/linux/virtio_config.h b/include/uapi/linux/virtio_config.h
-> index 2445f365bce74b4e926c6929322b269252ab6830..3171e3792263c2cd472ac09da18e593ab400751d 100644
-> --- a/include/uapi/linux/virtio_config.h
-> +++ b/include/uapi/linux/virtio_config.h
-> @@ -52,7 +52,7 @@
->   * rest are per-device feature bits.
->   */
->  #define VIRTIO_TRANSPORT_F_START	28
-> -#define VIRTIO_TRANSPORT_F_END		42
-> +#define VIRTIO_TRANSPORT_F_END		43
->  
->  #ifndef VIRTIO_CONFIG_NO_LEGACY
->  /* Do we get callbacks when the ring is completely used, even if we've
-> @@ -120,4 +120,9 @@
->   */
->  #define VIRTIO_F_ADMIN_VQ		41
->  
-> +/*
-> + * This feature indicates that the transport provides the SHM page size.
-> + */
-> +#define VIRTIO_F_SHM_PAGE_SIZE		42
-> +
->  #endif /* _UAPI_LINUX_VIRTIO_CONFIG_H */
-> 
 
-Reviewed-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
 
--- 
-Best regards,
-Dmitry
+On 13/2/2025 4:59 pm, Loktionov, Aleksandr wrote:
+> 
+> 
+>> -----Original Message-----
+>> From: Intel-wired-lan <intel-wired-lan-bounces@osuosl.org> On Behalf Of
+>> Vladimir Oltean
+>> Sent: Wednesday, February 12, 2025 11:01 PM
+>> To: Faizal Rahim <faizal.abdul.rahim@linux.intel.com>
+>> Cc: Nguyen, Anthony L <anthony.l.nguyen@intel.com>; Kitszel, Przemyslaw
+>> <przemyslaw.kitszel@intel.com>; Andrew Lunn <andrew+netdev@lunn.ch>;
+>> David S . Miller <davem@davemloft.net>; Eric Dumazet
+>> <edumazet@google.com>; Jakub Kicinski <kuba@kernel.org>; Paolo Abeni
+>> <pabeni@redhat.com>; Maxime Coquelin <mcoquelin.stm32@gmail.com>;
+>> Alexandre Torgue <alexandre.torgue@foss.st.com>; Simon Horman
+>> <horms@kernel.org>; Russell King <linux@armlinux.org.uk>; Alexei
+>> Starovoitov <ast@kernel.org>; Daniel Borkmann <daniel@iogearbox.net>;
+>> Jesper Dangaard Brouer <hawk@kernel.org>; John Fastabend
+>> <john.fastabend@gmail.com>; Furong Xu <0x1207@gmail.com>; Russell King
+>> <rmk+kernel@armlinux.org.uk>; Serge Semin <fancer.lancer@gmail.com>;
+>> Xiaolei Wang <xiaolei.wang@windriver.com>; Suraj Jaiswal
+>> <quic_jsuraj@quicinc.com>; Kory Maincent <kory.maincent@bootlin.com>;
+>> Gal Pressman <gal@nvidia.com>; Jesper Nilsson <jesper.nilsson@axis.com>;
+>> Andrew Halaney <ahalaney@redhat.com>; Choong Yong Liang
+>> <yong.liang.choong@linux.intel.com>; Kunihiko Hayashi
+>> <hayashi.kunihiko@socionext.com>; Gomes, Vinicius
+>> <vinicius.gomes@intel.com>; intel-wired-lan@lists.osuosl.org;
+>> netdev@vger.kernel.org; linux-kernel@vger.kernel.org; linux-stm32@st-md-
+>> mailman.stormreply.com; linux-arm-kernel@lists.infradead.org;
+>> bpf@vger.kernel.org
+>> Subject: Re: [Intel-wired-lan] [PATCH iwl-next v4 0/9] igc: Add support for
+>> Frame Preemption feature in IGC
+> 
+> Please start commit title from slam letters:
+> Igc: add ...
+
+Hi Aleksandr,
+
+I haven't updated this in v5 yet. Could you share any reference or 
+guideline for this?
+
+ From what I checked, the recently accepted patches in igc seem to follow a 
+similar commit title format as my patches:
+
+$ git log --oneline | grep igc
+b65969856d4f igc: Link queues to NAPI instances
+1a63399c13fe igc: Link IRQs to NAPI instances
+8b6237e1f4d4 igc: Fix passing 0 to ERR_PTR in igc_xdp_run_prog()
+484d3675f2aa igc: Allow hot-swapping XDP program
+c75889081366 igc: Remove unused igc_read/write_pcie_cap_reg
+121c3c6bc661 igc: Remove unused igc_read/write_pci_cfg wrappers
+b37dba891b17 igc: Remove unused igc_acquire/release_nvm
+
+
 
