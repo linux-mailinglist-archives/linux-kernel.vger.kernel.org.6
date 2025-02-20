@@ -1,63 +1,81 @@
-Return-Path: <linux-kernel+bounces-523810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3FB0A3DB85
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:41:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 89BA3A3DB87
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:41:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86A434206A8
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:41:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C15A17B1F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:41:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF41D1F91C8;
-	Thu, 20 Feb 2025 13:40:58 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1F521F8BCC;
-	Thu, 20 Feb 2025 13:40:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BF0A1F91C8;
+	Thu, 20 Feb 2025 13:41:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LmtXvGtK"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7053F1F4262;
+	Thu, 20 Feb 2025 13:41:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740058858; cv=none; b=q5NGkrj9IEYXWfaqyXiw5Y53myW3zuciR8q9ODMO2X5kX7Z3wOa01SALT1f2HAMc7kK/TaYmp/s7vcmVI+XTwaJVKuSiY9s/lIZ61dMBsPTPI2WV6zQKx6ZbzOTBgiJ92PuuXjL/8IJKEvdvx+A+HSz5p+FfM0JylE+1g1CFZmI=
+	t=1740058912; cv=none; b=sZBUadgVr2H0w3gGFbfs6Xoqm0zn+UwLa81xplgFgbKqYmPElcuK0NIo66G8J7R19WGl4b16bNFfvaW7xJcI9wpLI+7c2rKG+eKAhvVpCyh8od3f0oZLay6+V5kLCmQC0AONSrkdVH180lv//1CeWc9d6NymOFqvPiAoXMs/2OY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740058858; c=relaxed/simple;
-	bh=HfCNOkX/ICg8oeRV+sVzvq8QE4RgVzBR32UtK4AyFVM=;
+	s=arc-20240116; t=1740058912; c=relaxed/simple;
+	bh=tam+zzNSNkRi2geatV3GfIp4YodLGy4tyK06NdCYjcA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EFTguZaojybLKTHcC3EsfL9pGIQfiqwyB7wQ9BBg5M049J1Byc7II7lX9V//KvCA+kcp0b9xyOd3WsrWpGwJvZUtfE/zhPXEKS6u4GeL6D5GgMscwfwHGejP6IRw7BSouE7kmN1ekyn4wqxybgKoNqM0PEectqoTQIUnaDGiQzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 39D7516F3;
-	Thu, 20 Feb 2025 05:41:13 -0800 (PST)
-Received: from e133380.arm.com (e133380.arm.com [10.1.197.43])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CEA093F5A1;
-	Thu, 20 Feb 2025 05:40:50 -0800 (PST)
-Date: Thu, 20 Feb 2025 13:40:48 +0000
-From: Dave Martin <Dave.Martin@arm.com>
-To: Peter Newman <peternewman@google.com>
-Cc: Reinette Chatre <reinette.chatre@intel.com>,
-	Babu Moger <babu.moger@amd.com>, corbet@lwn.net, tglx@linutronix.de,
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
-	tony.luck@intel.com, fenghua.yu@intel.com, x86@kernel.org,
-	hpa@zytor.com, paulmck@kernel.org, akpm@linux-foundation.org,
-	thuth@redhat.com, rostedt@goodmis.org, xiongwei.song@windriver.com,
-	pawan.kumar.gupta@linux.intel.com, daniel.sneddon@linux.intel.com,
-	jpoimboe@kernel.org, perry.yuan@amd.com, sandipan.das@amd.com,
-	kai.huang@intel.com, xiaoyao.li@intel.com, seanjc@google.com,
-	xin3.li@intel.com, andrew.cooper3@citrix.com, ebiggers@google.com,
-	mario.limonciello@amd.com, james.morse@arm.com,
-	tan.shaopeng@fujitsu.com, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, maciej.wieczor-retman@intel.com,
-	eranian@google.com
-Subject: Re: [PATCH v11 17/23] x86/resctrl: Auto assign/unassign counters
- when mbm_cntr_assign is enabled
-Message-ID: <Z7cw4JTp3Hfx/4li@e133380.arm.com>
-References: <cover.1737577229.git.babu.moger@amd.com>
- <2119b76ef8be21b1d8b2deedfab23e8e33ba724c.1737577229.git.babu.moger@amd.com>
- <Z7XfcV05ZZkHm6bc@e133380.arm.com>
- <CALPaoCiPkjbTf2He2tXsguxHDtGF+YfVUZScL8dseVc6rvAfvA@mail.gmail.com>
- <ac6860d4-92b4-424e-af4f-d6e3d5722232@intel.com>
- <CALPaoCh8siZKjL_3yvOYGL4cF_n_38KpUFgHVGbQ86nD+Q2_SA@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ggWg+d1YnMKPibo5BfClVkCxtCEBWjO1MIvk07PY8M0YVfU5YzAmRN0ojYGuGpAVyWMN0y4vlKvcNj9RDfpA4iDOn332qvIw+CjpfuMv0m68SoJnC+RrmDRYydnFkj6e0BxxfE/2X3hl10/6X5dynvHPh8cawBvHDLOpCmnXW08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LmtXvGtK; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740058910; x=1771594910;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=tam+zzNSNkRi2geatV3GfIp4YodLGy4tyK06NdCYjcA=;
+  b=LmtXvGtKGyJWcgL20/+qDmH0ohD1pkFvkF6z13U6+wa2WBBg/yyXKfsq
+   eW7ZnUCqv9nkuG0c634ccysqkI2gk1loqs5/naIwb11ZzrB+94advpjIq
+   pgH9oD+sZoqXjhImrmktCIlPNB2cDh6mcf8D+GsnNs3xiCABD70Wr+J30
+   s76h/MRWSoG0v3CjoxMK3k/Wca+8DPkq1Rg7mQ+65Oz3ikfU8qvImvN7E
+   CQV+UdZV7hcdSN0ZRZ/9+oJXsLkBi8yIlXMqSb6t/mPYg4laM4IqcbugA
+   RGfv47Cf+Nm0RKayZusUNHP7jNRDoAwJhbnVQ7JdMXTng6vE971C0t76O
+   Q==;
+X-CSE-ConnectionGUID: Tl0TU7HATzOlvNk9Is6LzA==
+X-CSE-MsgGUID: CH5BoYqjQuqIFlLSrn9PrQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11351"; a="66196015"
+X-IronPort-AV: E=Sophos;i="6.13,301,1732608000"; 
+   d="scan'208";a="66196015"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Feb 2025 05:41:49 -0800
+X-CSE-ConnectionGUID: gQoRxpfcSJKsA+rG7BdvSw==
+X-CSE-MsgGUID: iptE7rVvQf2YXl2zJt2aQQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,301,1732608000"; 
+   d="scan'208";a="115243794"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Feb 2025 05:41:48 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tl6oD-0000000DLeA-0aG2;
+	Thu, 20 Feb 2025 15:41:45 +0200
+Date: Thu, 20 Feb 2025 15:41:44 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Michael Walle <mwalle@kernel.org>,
+	athieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+Subject: Re: [PATCH v1 0/5] gpio: regmap: Make use of 'ngpios' property
+Message-ID: <Z7cxGOmwMIkkTRLs@smile.fi.intel.com>
+References: <20250213195621.3133406-1-andriy.shevchenko@linux.intel.com>
+ <CACRpkdao27pu+9qFH2LBYNwYkBbWq1B-hE9nZGfTTCnQxhTiAQ@mail.gmail.com>
+ <Z7crrgl2iFn34gck@smile.fi.intel.com>
+ <CAMRc=MfSn6xB4eNkFG7E2gQPiF+AmnaidO5=FbvPtvW0N4iDjQ@mail.gmail.com>
+ <Z7cwv0gxRFFGBjR1@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,134 +85,34 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CALPaoCh8siZKjL_3yvOYGL4cF_n_38KpUFgHVGbQ86nD+Q2_SA@mail.gmail.com>
+In-Reply-To: <Z7cwv0gxRFFGBjR1@smile.fi.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Thu, Feb 20, 2025 at 11:35:56AM +0100, Peter Newman wrote:
-> Hi Reinette,
-> 
-> On Wed, Feb 19, 2025 at 6:55 PM Reinette Chatre
-> <reinette.chatre@intel.com> wrote:
-> >
-> > Hi Dave and Peter,
-> >
-> > On 2/19/25 6:09 AM, Peter Newman wrote:
-> > > Hi Dave,
-> > >
-> > > On Wed, Feb 19, 2025 at 2:41 PM Dave Martin <Dave.Martin@arm.com> wrote:
-> > >>
-> > >> Hi,
-> > >>
-> > >> On Wed, Jan 22, 2025 at 02:20:25PM -0600, Babu Moger wrote:
-> > >>> Assign/unassign counters on resctrl group creation/deletion. Two counters
-> > >>> are required per group, one for MBM total event and one for MBM local
-> > >>> event.
-> > >>>
-> > >>> There are a limited number of counters available for assignment. If these
-> > >>> counters are exhausted, the kernel will display the error message: "Out of
-> > >>> MBM assignable counters". However, it is not necessary to fail the
-> > >>> creation of a group due to assignment failures. Users have the flexibility
-> > >>> to modify the assignments at a later time.
-> > >>
-> > >> If we are doing this, should turning mbm_cntr_assign mode on also
-> > >> trigger auto-assingment for all extant monitoring groups?
-> > >>
-> > >> Either way though, this auto-assignment feels like a potential nuisance
-> > >> for userspace.
-> >
-> > hmmm ... this auto-assignment was created with the goal to help userspace.
-> > In mbm_cntr_assign mode the user will only see data when a counter is assigned
-> > to an event. mbm_cntr_assign mode is selected as default on a system that
-> > supports ABMC. Without auto assignment a user will thus see different
-> > behavior when reading the monitoring events when the user switches to a kernel with
-> > assignable counter support: Before assignable counter support events will have
-> > data, with assignable counter support the events will not have data.
-> >
-> > I understood that interfaces should not behave differently when user space
-> > switches kernels and that is what the auto assignment aims to solve.
-> >
-> > >>
-> > >> If the userspace use-case requires too many monitoring groups for the
-> > >> available counters, then the kernel will auto-assign counters to a
-> > >> random subset of groups which may or may not be the ones that userspace
-> > >> wanted to monitor; then userspace must manually look for the assigned
-> > >> counters and unassign some of them before they can be assigned where
-> > >> userspace actually wanted them.
-> > >>
-> > >> This is not impossible for userspace to cope with, but it feels
-> > >> awkward.
-> > >>
-> > >> Is there a way to inhibit auto-assignment?
-> > >>
-> > >> Or could automatic assignments be considered somehow "weak", so that
-> > >> new explicit assignments can steal automatically assigned counters
-> > >> without the need to unassign them explicitly?
-> > >
-> > > We had an incomplete discussion about this early on[1]. I guess I
-> > > didn't revisit it because I found it was trivial to add a flag that
-> > > inhibits the assignment behavior during mkdir and had moved on to
-> > > bigger issues.
-> >
-> > Could you please remind me how a user will set this flag?
-> 
-> Quoting my original suggestion[1]:
-> 
->  "info/L3_MON/mbm_assign_on_mkdir?
-> 
->   boolean (parsed with kstrtobool()), defaulting to true?"
-> 
-> After mount, any groups that got counters on creation would have to be
-> cleaned up, but at least that can be done with forward progress once
-> the flag is cleared.
-> 
-> I was able to live with that as long as there aren't users polling for
-> resctrl to be mounted and immediately creating groups. For us, a
-> single container manager service manages resctrl.
-> 
-> >
-> > >
-> > > If an agent creating directories isn't coordinated with the agent
-> > > managing counters, a series of creating and destroying a group could
-> > > prevent a monitor assignment from ever succeeding because it's not
-> > > possible to atomically discover the name of the new directory that
-> > > stole the previously-available counter and reassign it.
-> > >
-> > > However, if the counter-manager can get all the counters assigned once
-> > > and only move them with atomic reassignments, it will become
-> > > impossible to snatch them with a mkdir.
-> > >
-> >
-> > You have many points that makes auto-assignment not be ideal but I
-> > remain concerned that not doing something like this will break
-> > existing users who are not as familiar with resctrl internals.
-> 
-> I agree auto-assignment should be the default. I just want an official
-> way to turn it off.
-> 
-> Thanks!
-> -Peter
-> 
-> [1] https://lore.kernel.org/lkml/CALPaoCiJ9ELXkij-zsAhxC1hx8UUR+KMPJH6i8c8AT6_mtXs+Q@mail.gmail.com/
-> 
+On Thu, Feb 20, 2025 at 03:40:15PM +0200, Andy Shevchenko wrote:
+> On Thu, Feb 20, 2025 at 02:22:29PM +0100, Bartosz Golaszewski wrote:
+> > On Thu, Feb 20, 2025 at 2:18 PM Andy Shevchenko
+> > <andriy.shevchenko@linux.intel.com> wrote:
+> > > On Fri, Feb 14, 2025 at 11:50:53AM +0100, Linus Walleij wrote:
 
-+1
+...
 
-That's basically my position -- the auto-assignment feels like a
-_potential_ nuisance for ABMC-aware users, but it depends on what they
-are trying to do.  Migration of non-ABMC-aware users will be easier for
-basic use cases if auto-assignment occurs by default (as in this
-series).
+> > > Bart, do you think it can be applied?
+> > 
+> > Andy,
+> > 
+> > I really rarely lose track of patches. It's been just under a week
+> > since this was posted. Please don't ping me to pick things up unless
+> > I'm not reacting for at least two weeks. I typically leave patches on
+> > the list for some time to give bots some time to react.
+> 
+> I see, I thought your cadence is one week, that's why I have pinged you.
+> Will try to keep this in mind for the future and sorry to interrupt!
 
-Having an explicit way to turn this off seems perfectly reasonable
-(and could be added later on, if not provided in this series).
+Btw, if it's easier to you, I can just combine this to my usual PR to you.
+
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
-What about the question re whether turning mbm_cntr_assign mode on
-should trigger auto-assignment?
-
-Currently turning this mode off and then on again has the effect of
-removing all automatic assignments for extant groups.  This feels
-surprising and/or unintentional (?)
-
-Cheers
----Dave
 
