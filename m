@@ -1,167 +1,133 @@
-Return-Path: <linux-kernel+bounces-524723-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85EDDA3E653
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 22:06:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5387A3E654
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 22:06:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB80F420863
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 21:05:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8A7D3BF6C0
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 21:05:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E242264607;
-	Thu, 20 Feb 2025 21:05:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NU+mw5hw"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C67D61DF735;
-	Thu, 20 Feb 2025 21:05:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 097F6264603;
+	Thu, 20 Feb 2025 21:06:00 +0000 (UTC)
+Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C03FF1EDA1C;
+	Thu, 20 Feb 2025 21:05:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740085544; cv=none; b=nQ5lpPulUHU7/1ilGzfKR43xTDx+NrCKHmKdQmraH+aC1tgAX4EGRSOVFfN6yCchuiCgd52jbAf8QhpYXmL1HOjGj3FZZ2dqKSpFV5qH7PR6frL+rjr7hcnhxJUBO2l2LH2YRhFnvocBMwhuA6Bm6JfM5zeaAuTfvyRwU6dHYoE=
+	t=1740085559; cv=none; b=netj5JoiknB+9fhYydbElaHYrpfyN3ah7+55cV37i89o6yJxfHeww0Zq8QPTulLlHnW6tXQzjVkcSfuoiXyn5R92ISRXwmS3GOAhR6ejbyLfzm0eP4bOg2iZBLVIvCHKG0SjKC0wCj4SsrG+geT6dypS+gktz31z6G0il/y3Nis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740085544; c=relaxed/simple;
-	bh=qxUcrvbM/dFytLqxNyj4DOyCxFG8tMFm5cdMjTmoUU4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TQgrDHtoTSVG0Ef3U2kuIHdja8bCm8OeQFJUgihOEJ52HD76zgqbXFhURmFvADC/e4VhLTAc042jAhQXt1x4APs5cOg6bqBTiNID+ntbdlHmfzRnJQHwyLntwzbWzmN829PtFbf/9Z2aZWHzY3ZTcxyQwvygfhXiMod1Mrf0KBI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NU+mw5hw; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-aaeec07b705so223542266b.2;
-        Thu, 20 Feb 2025 13:05:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740085541; x=1740690341; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=xXLZcMFLzxHY6o5f90FwW1xMIIMedT3qYeWoorn0dt0=;
-        b=NU+mw5hw9TKg8Q1w4OMNtdQKwr9BiSWBwHqt+S7XWdjLCNA2Lc9r1h2MwgrtFKXjbl
-         yawcPXSpaMcCdIE2qHLLIlx/hLTPIKy13kjakJXot0LnuaQuncmueqZlEwsO87e3Cquc
-         oeHf5EBmf5iAYjix0CsrmwkqOSu8TEweEke66Op5feILSWqjk4O2/h6c9r58N8TUpRqR
-         wlHlULk+7uHKB1oisflN04clqQK0+qzGugMIkQgfmIzzyGTcg6AT9QLvBt0jAIWpNTtd
-         yCf+NffGTKQpdUBfWyj0cNegx5aE4MX+4KM2O6VPeO50azY1Pw6AhKcOrxSiCzR4P27b
-         Z34g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740085541; x=1740690341;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xXLZcMFLzxHY6o5f90FwW1xMIIMedT3qYeWoorn0dt0=;
-        b=CXdHhU1hOADff1Z52kO5ipZzVhG8NhGO8+0ajv4oGg2b9KFsmWksH6ZHAQXTs7wmFu
-         Zicz9iOF2/fk2hEz+vuBVTpDaXr9TDSZeCyJcDMZ52NzE6X9see5S65NyiRojGOZFinZ
-         xL0oZet4BT979Bjt7gLt5k+9Mo/szjTuIl9HxfDApzpMiWRH7xlIyDSmrC/pMvE8KZip
-         24dhD0fRsAqn3ATskb3Zt86hOYvQ36tfun++a6yp98UnkzQnMGYTUhEpCI86NLd9mrKM
-         tbLgCUhPByvgc/297JAvd4itZ0sxs1RAvNNP4Ap72/i5iCsV3DpO/QKUVXb5F7hZGX88
-         sHrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV28rarxmvvyRyk9Mk/Mhmfk5bOH2T8CHRJviAqm9X957fHUXweVAti96wnx8KdKyDk6mgLijZXXdE9K9A=@vger.kernel.org, AJvYcCXKbDz+xcugovZ1kXA9V7LmTrzFdVfeqdtU+rDHZcecaBqUbWpdB/ve0o/9NY4DUVAgedUH871K@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEqHSwNn9pWYINpu138ctt+7fnIWU1JSY/f7M6D73w4aQoG3zD
-	32jnSzsebdHw1g5Yu2n3i7ukpBu4i2Fcg0M4UMBn+IXOpxFTjh57
-X-Gm-Gg: ASbGnctaErVOvxCVEo/9NxRYm+Sh9Hn6UqkSk8oOUVOsWInbU5npalfWXnZZ73e2z5d
-	TmdKGgPKLCDueT0mp1BZg+my/OE+NG+5LeFf6pTQqz0FGmbJex0xGHkrBOIe+NMHXQ/711sX6tv
-	D1WjTNmIZbJCgz42pgc36LgIoYsMcx1fY/QUhtsP6OxudmmFXD0rYqKzVzr3k8DEmcKKdxjJpm2
-	Yh7woSceJwyNUh2CjjOhwrMKJNXAPdc+Fg3lETc4fa0qrmbSW3o8aNRejReBj6YWCC3qhekX/ya
-	TdVsn1ZXAp6G
-X-Google-Smtp-Source: AGHT+IFO56aTGAWz4FxSuopUBhKeANVgqvRNWyrSZYpRv5N8W0G8Cwf+1O//muv4eCM29hYiV3R2aA==
-X-Received: by 2002:a17:906:318b:b0:abb:b322:2b37 with SMTP id a640c23a62f3a-abc0d9888eemr23864466b.7.1740085540729;
-        Thu, 20 Feb 2025 13:05:40 -0800 (PST)
-Received: from debian ([2a00:79c0:604:ea00:45fb:7d1a:5e4d:9727])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aba532802a1sm1522398266b.76.2025.02.20.13.05.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Feb 2025 13:05:40 -0800 (PST)
-Date: Thu, 20 Feb 2025 22:05:37 +0100
-From: Dimitri Fedrau <dima.fedrau@gmail.com>
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
-	Gregor Herburger <gregor.herburger@ew.tq-group.com>,
-	Stefan Eichenberger <eichest@gmail.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v2 2/2] net: phy: marvell-88q2xxx: Prevent hwmon
- access with asserted reset
-Message-ID: <20250220210537.GA3469@debian>
-References: <20250220-marvell-88q2xxx-hwmon-enable-at-probe-v2-0-78b2838a62da@gmail.com>
- <20250220-marvell-88q2xxx-hwmon-enable-at-probe-v2-2-78b2838a62da@gmail.com>
- <Z7b3sU0w2daShkBH@shell.armlinux.org.uk>
- <20250220152214.GA40326@debian>
- <Z7dKRrXIUCaVeRfH@shell.armlinux.org.uk>
+	s=arc-20240116; t=1740085559; c=relaxed/simple;
+	bh=Z21VTHiZkTGyepyjiVPQ4h2mNI2Vsj2dBuWL5nHRIp4=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=d0kmZYJ9MBTl9cGqtTA7Cil+qIy7cble0MnmQmfSbhXzs4eTMZXakcw/4iHVihoeEW/CeKDtb/r8vK73IFnJj7Ez9BJt8d58M6PFt1jqGBz5y8buTuovcFWeHau1S/86nbgWAcESS6PY6JtuzYNDLOE51sL1dxVZnE2qvVRL7R8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
+Received: by angie.orcam.me.uk (Postfix, from userid 500)
+	id A62F392009C; Thu, 20 Feb 2025 22:05:54 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+	by angie.orcam.me.uk (Postfix) with ESMTP id 9FF6E92009B;
+	Thu, 20 Feb 2025 21:05:54 +0000 (GMT)
+Date: Thu, 20 Feb 2025 21:05:54 +0000 (GMT)
+From: "Maciej W. Rozycki" <macro@orcam.me.uk>
+To: Richard Henderson <richard.henderson@linaro.org>
+cc: Ivan Kokshaysky <ink@unseen.parts>, Matt Turner <mattst88@gmail.com>, 
+    Arnd Bergmann <arnd@arndb.de>, 
+    John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
+    Magnus Lindholm <linmag7@gmail.com>, 
+    "Paul E. McKenney" <paulmck@kernel.org>, 
+    Linus Torvalds <torvalds@linux-foundation.org>, 
+    Al Viro <viro@zeniv.linux.org.uk>, linux-alpha@vger.kernel.org, 
+    linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Alpha: Emulate unaligned LDx_L/STx_C for data
+ consistency
+In-Reply-To: <45155869-1490-49ab-8df1-7ad13f79c09a@linaro.org>
+Message-ID: <alpine.DEB.2.21.2502202009470.65342@angie.orcam.me.uk>
+References: <alpine.DEB.2.21.2502181912230.65342@angie.orcam.me.uk> <45155869-1490-49ab-8df1-7ad13f79c09a@linaro.org>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z7dKRrXIUCaVeRfH@shell.armlinux.org.uk>
+Content-Type: text/plain; charset=US-ASCII
 
-Am Thu, Feb 20, 2025 at 03:29:10PM +0000 schrieb Russell King (Oracle):
-> On Thu, Feb 20, 2025 at 04:22:14PM +0100, Dimitri Fedrau wrote:
-> > Hi Russell,
-> > 
-> > Am Thu, Feb 20, 2025 at 09:36:49AM +0000 schrieb Russell King (Oracle):
-> > > On Thu, Feb 20, 2025 at 09:11:12AM +0100, Dimitri Fedrau wrote:
-> > > > If the PHYs reset is asserted it returns 0xffff for any read operation.
-> > > > This might happen if the user admins down the interface and wants to read
-> > > > the temperature. Prevent reading the temperature in this case and return
-> > > > with an network is down error. Write operations are ignored by the device
-> > > > when reset is asserted, still return a network is down error in this
-> > > > case to make the user aware of the operation gone wrong.
-> > > 
-> > > If we look at where mdio_device_reset() is called from:
-> > > 
-> > > 1. mdio_device_register() -> mdiobus_register_device() asserts reset
-> > >    before adding the device to the device layer (which will then
-> > >    cause the driver to be searched for and bound.)
-> > > 
-> > > 2. mdio_probe(), deasserts the reset signal before calling the MDIO
-> > >    driver's ->probe method, which will be phy_probe().
-> > > 
-> > > 3. after a probe failure to re-assert the reset signal.
-> > > 
-> > > 4. after ->remove has been called.
-> > > 
-> > 
-> > There is also phy_device_reset that calls mdio_device_reset.
-> 
-> Ok, thanks for pointing that out.
-> 
-> > > That is the sum total. So, while the driver is bound to the device,
-> > > phydev->mdio.reset_state is guaranteed to be zero.
-> > > 
-> > > Therefore, is this patch fixing a real observed problem with the
-> > > current driver?
-> > >
-> > Yes, when I admin up and afterwards down the network device then the PHYs
-> > reset is asserted. In this case phy_detach is called which calls
-> > phy_device_reset(phydev, 1), ...
-> 
-> I'm still concerned that this solution is basically racy - the
-> netdev can come up/down while hwmon is accessing the device. I'm
-> also unconvinced that ENETDOWN is a good idea here.
->
-Yes it is racy. A solution would be to set a flag or whatever in
-mdio_device_reset right before changes to the reset line happens and
-clear the flag right after the changes have been done. Add a function
-that return the state of the flag.
-Better go back to EIO ? At first I thought it was a good idea because
-the user gets at least a hint what the cause of the error is...
+On Thu, 20 Feb 2025, Richard Henderson wrote:
 
-> While I get the "describe the hardware" is there a real benefit to
-> describing this?
+> > Complementing compiler support for the `-msafe-bwa' and `-msafe-partial'
+> > code generation options slated to land in GCC 15,
 > 
-I can't follow.
+> Pointer?  I can't find it on the gcc-patches list.
 
-> What I'm wondering is whether manipulating the reset signal in this
-> case provides more pain than gain.
->
-It seems so. I wasn't really aware of it :-)
+ Here: 
+<https://inbox.sourceware.org/gcc-patches/alpine.DEB.2.21.2501050246590.49841@angie.orcam.me.uk/>
+and hopefully in your inbox/archive somewhere as well.
 
-Best regards,
-Dimitri Fedrau
+> > 7. At this point both whole data quantities have been written, ensuring
+> >     that no third-party intervening write has changed them at the point
+> >     of the write from the values held at previous LDx_L.  Therefore 1 is
+> >     returned in the intended register as the result of the trapping STx_C
+> >     instruction.
+> 
+> I think general-purpose non-atomic emulation of STx_C is a really bad idea.
+> 
+> Without looking at your gcc patches, I can guess what you're after: you've
+> generated a ll/sc sequence for (aligned) short, and want to emulate if it
+> happens to be unaligned.
+
+ It's a corner case, yes, when the compiler was told the access would be 
+aligned, but it turns out not.  It's where you cast a (char *) pointer to 
+(short *) that wasn't suitably aligned for such a cast and dereference it 
+(and the quadword case is similarly for the ends of misaligned inline 
+`memcpy'/`memset').
+
+ Only two cases (plus a bug in GM2 frontend) hitting this throughout the 
+GCC testsuite show the rarity of this case.
+
+> Crucially, when emulating non-aligned, you should not strive to make it
+> atomic.  No other architecture promises atomic non-aligned stores, so why
+> should you do that here?
+
+ This code doesn't strive to be atomic, but to preserve data *outside* the 
+quantity accessed from being clobbered, and for this purpose an atomic 
+sequence is both inevitable and sufficient, for both partial quantities 
+around the unaligned quantity written.  The trapping code does not expect 
+atomicity for the unaligned quantity itself -- it is handled in pieces 
+just as say with MIPS SWL/SWR masked store instruction pairs -- and this 
+code, effectively an Alpha/Linux psABI extension, does not guarantee it 
+either.
+
+> I suggest some sort of magic code sequence,
+> 
+> 	bic	addr_in, 6, addr_al
+> loop:
+> 	ldq_l	t0, 0(addr_al)
+> 	magic-nop done - loop
+> 	inswl	data, addr_in, t1
+> 	mskwl	t0, addr_in, t0
+> 	bis	t0, t1, t0
+> 	stq_c	t0, 0(addr_al)
+> 	beq	t0, loop
+> done:
+> 
+> With the trap, match the magic-nop, pick out the input registers from the
+> following inswl, perform the two (atomic!) byte stores to accomplish the
+> emulation, adjust the pc forward to the done label.
+
+ It seems to make no sense to me to penalise all user code for the corner 
+case mentioned above while still having the emulation in the kernel, given 
+that 99.999...% of accesses will have been correctly aligned by GCC.  And 
+it gets even more complex when you have an awkward number of bytes to 
+mask, such as 3, 5, 6, 7, which will happen for example if inline `memcpy' 
+is expanded by GCC for a quadword-aligned block of 31-bytes, in which case 
+other instructions will be used for masking/insertion for the trailing 7 
+bytes, and the block turns out misaligned at run time.
+
+ I'm inconvinced, it seems a lot of hassle for little gain to me.
+
+  Maciej
 
