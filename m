@@ -1,108 +1,194 @@
-Return-Path: <linux-kernel+bounces-523207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2C42A3D37D
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 09:43:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3823AA3D387
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 09:45:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 076C07A9787
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 08:42:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3C413BE88D
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 08:43:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8C531EB1A9;
-	Thu, 20 Feb 2025 08:43:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23E6F1EB1BE;
+	Thu, 20 Feb 2025 08:43:30 +0000 (UTC)
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA8721EB1B8
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 08:43:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC1CA1E883A
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 08:43:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740040992; cv=none; b=qLd5ZPQZup7ZiAsb9dySlD8XHeYjuhFFWVumSaFWbgRIrsl+VOwWR7OueT5R6RSl2lEvfXXLT3xm559UNJybURe1T8A3SWolyu88xDW2Q19gCo9afOSZgJz/VQyq01a2umIF1YBqfvsipLazkQTMe+y4D/06TGxqYeyDLE/HK9k=
+	t=1740041009; cv=none; b=aX4Mox4XZn7FrOeDR97VVnU3vAGkoqXZZv4UbGfGFJrExsI5gJUc9xG6n/J1xVhrrzMrqGR82VyVjXvWkoMbO97d1xruz0P4rI6KtiFojIK0nD8YK1ALawHg+3E3lv0/CcXBsYu4nKniVw0nrRmRZRCQzLhyUUNnM+tqADiNZWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740040992; c=relaxed/simple;
-	bh=Hkw0dJOHNLo4uG1zeS+vveeIZfudqlrwwysZ+Gis3Z4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=I4vlo35K2LKG614ZVDBU2VB7k+N2U89JHZ4Mv9jaySGCUID4VYYGr7ZhLTh/vo+EnJggrGXivJoVBk8mTc5zEsi5zm9DJWvmiLwQvmHfmEMqBjselyy+DrxOX6Igti6loGPU0Y4sSJ8HsWlnkilLA70pCRhRgKgGaEART1Gws9c=
+	s=arc-20240116; t=1740041009; c=relaxed/simple;
+	bh=Gp0T4fnNUqwihNa8+Tjq8O23Jixx9trh7HX0d7F1Jno=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r0yejWej8Y5SOf6cYGhMKPX/MGQZQfm39T3Lj4ky/Gk1+pknE8xtCYMaQ/7LLQJl1OGstcViQ+LqPK6I8sgnTxJCFQnidS62yiVu2BdYUYvmqHNxaRLfeofPDQ7y8KzzzCg1N99N4Jtp9caIzwl+xtJCQJFy1VMHgdPF9LfP27o=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
 Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
 	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
 	(Exim 4.92)
-	(envelope-from <s.hauer@pengutronix.de>)
-	id 1tl29E-00045c-3F; Thu, 20 Feb 2025 09:43:08 +0100
-Received: from dude02.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::28])
+	(envelope-from <mkl@pengutronix.de>)
+	id 1tl29L-00046c-RC; Thu, 20 Feb 2025 09:43:15 +0100
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
 	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96)
-	(envelope-from <s.hauer@pengutronix.de>)
-	id 1tl29C-001uGv-2R;
-	Thu, 20 Feb 2025 09:43:06 +0100
-Received: from localhost ([::1] helo=dude02.red.stw.pengutronix.de)
-	by dude02.red.stw.pengutronix.de with esmtp (Exim 4.96)
-	(envelope-from <s.hauer@pengutronix.de>)
-	id 1tl29C-00Bd85-28;
-	Thu, 20 Feb 2025 09:43:06 +0100
-From: Sascha Hauer <s.hauer@pengutronix.de>
-Date: Thu, 20 Feb 2025 09:43:06 +0100
-Subject: [PATCH] net: ethernet: ti: am65-cpsw: select PAGE_POOL
+	(envelope-from <mkl@pengutronix.de>)
+	id 1tl29K-001uGz-2g;
+	Thu, 20 Feb 2025 09:43:14 +0100
+Received: from pengutronix.de (p5b164285.dip0.t-ipconnect.de [91.22.66.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 72CF03C7576;
+	Thu, 20 Feb 2025 08:43:14 +0000 (UTC)
+Date: Thu, 20 Feb 2025 09:43:13 +0100
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Dimitri Fedrau via B4 Relay <devnull+dimitri.fedrau.liebherr.com@kernel.org>
+Cc: Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, linux-can@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, Dimitri Fedrau <dimitri.fedrau@liebherr.com>, 
+	Dimitri Fedrau <dima.fedrau@gmail.com>
+Subject: Re: [PATCH v2 2/2] can: flexcan: add transceiver capabilities
+Message-ID: <20250220-rugged-solid-gopher-541299-mkl@pengutronix.de>
+References: <20250220-flexcan-add-transceiver-caps-v2-0-a81970f11846@liebherr.com>
+ <20250220-flexcan-add-transceiver-caps-v2-2-a81970f11846@liebherr.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250220-net-am654-nuss-kconfig-v1-1-acc813b769de@pengutronix.de>
-X-B4-Tracking: v=1; b=H4sIABnrtmcC/x3MQQqEMAxA0atI1gZqp4p4FXHRaqpBjNI4w4B4d
- 4vLt/j/AqXEpNAVFyT6sfIuGVVZwLh4mQl5ygZrbG2sNSh0ot+a2qF8VXEdd4k8ow8tuejoU7U
- Bcnwkivx/x/1w3w9pHZMBaAAAAA==
-To: Andrew Lunn <andrew+netdev@lunn.ch>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Sascha Hauer <s.hauer@pengutronix.de>
-X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1740040986; l=856;
- i=s.hauer@pengutronix.de; s=20230412; h=from:subject:message-id;
- bh=Hkw0dJOHNLo4uG1zeS+vveeIZfudqlrwwysZ+Gis3Z4=;
- b=nkfiD2uWiAR1+JfH8eMTAN23n0hol/3LLSYhN+TwwdZyg856EYpg0o8Xs3OKckE8L285KmLWV
- xQNw6IlZDWZB0RWdD4xHK5KFm8xkiIPAOFcepfGuD3jTHprhxDDZTWU
-X-Developer-Key: i=s.hauer@pengutronix.de; a=ed25519;
- pk=4kuc9ocmECiBJKWxYgqyhtZOHj5AWi7+d0n/UjhkwTg=
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="5wxzyxw3wi7nxkjj"
+Content-Disposition: inline
+In-Reply-To: <20250220-flexcan-add-transceiver-caps-v2-2-a81970f11846@liebherr.com>
 X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: s.hauer@pengutronix.de
+X-SA-Exim-Mail-From: mkl@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-am65-cpsw uses page_pool_dev_alloc_pages(), thus needs PAGE_POOL
-selected to avoid linker errors.
 
-Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
----
- drivers/net/ethernet/ti/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+--5wxzyxw3wi7nxkjj
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2 2/2] can: flexcan: add transceiver capabilities
+MIME-Version: 1.0
 
-diff --git a/drivers/net/ethernet/ti/Kconfig b/drivers/net/ethernet/ti/Kconfig
-index 0d5a862cd78a6..3a13d60a947a8 100644
---- a/drivers/net/ethernet/ti/Kconfig
-+++ b/drivers/net/ethernet/ti/Kconfig
-@@ -99,6 +99,7 @@ config TI_K3_AM65_CPSW_NUSS
- 	select NET_DEVLINK
- 	select TI_DAVINCI_MDIO
- 	select PHYLINK
-+	select PAGE_POOL
- 	select TI_K3_CPPI_DESC_POOL
- 	imply PHY_TI_GMII_SEL
- 	depends on TI_K3_AM65_CPTS || !TI_K3_AM65_CPTS
+On 20.02.2025 09:22:11, Dimitri Fedrau via B4 Relay wrote:
+> From: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+>=20
+> Currently the flexcan driver does only support adding PHYs by using the
+> "old" regulator bindings. Add support for CAN transceivers as a PHY. Add
+> the capability to ensure that the PHY is in operational state when the li=
+nk
+> is set to an "up" state.
+>=20
+> Signed-off-by: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+> ---
+>  drivers/net/can/flexcan/flexcan-core.c | 30 ++++++++++++++++++++++++----=
+--
+>  drivers/net/can/flexcan/flexcan.h      |  1 +
+>  2 files changed, 25 insertions(+), 6 deletions(-)
+>=20
+> diff --git a/drivers/net/can/flexcan/flexcan-core.c b/drivers/net/can/fle=
+xcan/flexcan-core.c
+> index b347a1c93536d54efaa5f7d3347bd47c20860b3e..45d9a6957d9a806ed80d810a6=
+a5f7eb99fcc702c 100644
+> --- a/drivers/net/can/flexcan/flexcan-core.c
+> +++ b/drivers/net/can/flexcan/flexcan-core.c
+> @@ -30,6 +30,7 @@
+>  #include <linux/property.h>
+>  #include <linux/regmap.h>
+>  #include <linux/regulator/consumer.h>
+> +#include <linux/phy/phy.h>
+> =20
+>  #include "flexcan.h"
+> =20
+> @@ -644,18 +645,22 @@ static void flexcan_clks_disable(const struct flexc=
+an_priv *priv)
+> =20
+>  static inline int flexcan_transceiver_enable(const struct flexcan_priv *=
+priv)
+>  {
+> -	if (!priv->reg_xceiver)
+> -		return 0;
+> +	if (priv->reg_xceiver)
+> +		return regulator_enable(priv->reg_xceiver);
+> +	else if (priv->transceiver)
+> +		return phy_power_on(priv->transceiver);
+> =20
+> -	return regulator_enable(priv->reg_xceiver);
+> +	return 0;
+>  }
+> =20
+>  static inline int flexcan_transceiver_disable(const struct flexcan_priv =
+*priv)
+>  {
+> -	if (!priv->reg_xceiver)
+> -		return 0;
+> +	if (priv->reg_xceiver)
+> +		return regulator_disable(priv->reg_xceiver);
+> +	else if (priv->transceiver)
+> +		return phy_power_off(priv->transceiver);
+> =20
+> -	return regulator_disable(priv->reg_xceiver);
+> +	return 0;
+>  }
+> =20
+>  static int flexcan_chip_enable(struct flexcan_priv *priv)
+> @@ -2086,6 +2091,7 @@ static int flexcan_probe(struct platform_device *pd=
+ev)
+>  	struct net_device *dev;
+>  	struct flexcan_priv *priv;
+>  	struct regulator *reg_xceiver;
+> +	struct phy *transceiver;
+>  	struct clk *clk_ipg =3D NULL, *clk_per =3D NULL;
+>  	struct flexcan_regs __iomem *regs;
+>  	struct flexcan_platform_data *pdata;
+> @@ -2101,6 +2107,14 @@ static int flexcan_probe(struct platform_device *p=
+dev)
+>  	else if (IS_ERR(reg_xceiver))
+>  		return PTR_ERR(reg_xceiver);
+> =20
+> +	transceiver =3D devm_phy_optional_get(&pdev->dev, NULL);
+> +	if (PTR_ERR(transceiver) =3D=3D -EPROBE_DEFER) {
+> +		return -EPROBE_DEFER;
+> +	} else if (IS_ERR(transceiver)) {
+> +		dev_err(&pdev->dev, "failed to get phy\n");
+> +		return PTR_ERR(transceiver);
+> +	}
 
----
-base-commit: 0ad2507d5d93f39619fc42372c347d6006b64319
-change-id: 20250220-net-am654-nuss-kconfig-ab8e4f4e318b
+Please use dev_err_probe(), it will be silent in case of EPROBE_DEFER.
 
-Best regards,
--- 
-Sascha Hauer <s.hauer@pengutronix.de>
+Marc
 
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--5wxzyxw3wi7nxkjj
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAme26x8ACgkQDHRl3/mQ
+kZxJ1wf/aytaPCGbQ/cDAiYhE6JJxMu3i9iCxPZTcnkjiacYKaCGTesf3DzoFD0o
+k3v+rAEubhZ4HbzR/JTM0u3NxDKlOVpI2QRdrjUQ6UpCcItnysdgZddRgIeIym1p
+I9mVOYkOIybEURT+Ym+g4tPhi6UpKrEfDAMRVBTum8NEmO8aikMAvjuu+74rDe0a
+zwfsLpKKqVgmQZTOJ9XNQQuzrvMCOv7V75BimdGosvKNiKO3PFZkkBL6mRz889VB
+mCZwLnowqCRxH6z4YGWwHr81uLFUv/03GJ5DsS88t+USqFMdKeIgCGefYpS2llGw
+67DsPbGmT2OMCOTktDJWYCiQntfVQg==
+=roda
+-----END PGP SIGNATURE-----
+
+--5wxzyxw3wi7nxkjj--
 
