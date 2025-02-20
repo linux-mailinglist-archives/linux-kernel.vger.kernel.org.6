@@ -1,91 +1,191 @@
-Return-Path: <linux-kernel+bounces-523099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39ED3A3D1F4
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 08:17:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDBC5A3D1F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 08:18:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 600B23ABD05
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 07:14:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32A40189E98F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 07:14:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 554BE1E9B20;
-	Thu, 20 Feb 2025 07:13:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6502A1E5B78;
+	Thu, 20 Feb 2025 07:13:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e0RDmPNm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="D1RO4W3s"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F0F81E5706;
-	Thu, 20 Feb 2025 07:13:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40FAD1E493C;
+	Thu, 20 Feb 2025 07:13:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740035612; cv=none; b=sH6U9kw4zFFNYZ1z6HqFCSGJMecAmJW8nX8Pn9pajq1/m66HfB/x4tpVhgropL64uEmhyw1xDnwsyffVI2c7K72111M1gt6GNwkiE42HfSeUt7NNidkC6Y5QrRB4FTuEJ0eba887fJZwkMgU+d+ctyW3eyp8vJkd4DuJcpEbkk8=
+	t=1740035636; cv=none; b=LcoEVIAp9LEJIwfPUAeEJT3xV99rqkY2LekjrNC9Nj47pgVOFFfo87L6CCyuH4mvsNzLeVsNcaXD19mlZTFmhJpZbwYZCOdiiob1zAb5zhqnU8mS9acMQDduhAmbJx/cdgD4lg8kC3H5lfj1zAY9MQgob7yHx5g95wSDZDpj5bc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740035612; c=relaxed/simple;
-	bh=NJfF3RldpU6EfpbkIgVaUKT+pv+bmT/fqh7Oz4BAW8Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DElQV0Bl1QH3vxA76WGPqLC857QPk/m3dWksHupH8Nr7CM4+V1ImfuMLsIVIVleDjddwt9d0m9kxsHnERg6vmYAYtMjDyUQsNwn4KfbelV20iJxKaRWjQDbQl3jmQpDUSz05mclJ1RG9CU3fKjriv1JBhG24q/04/rCfcpK6k4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e0RDmPNm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25D9DC4CED1;
-	Thu, 20 Feb 2025 07:13:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740035612;
-	bh=NJfF3RldpU6EfpbkIgVaUKT+pv+bmT/fqh7Oz4BAW8Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=e0RDmPNmOPtc6mzFwI6sIPnyZAjW39fdIXlhQR5D5zAzK2RCAIkCsqQW0cCqI9WxJ
-	 FRBzlRzIw54YFiDOy3sMwDQVQ9cR6VGIxtLUUjGnd2do5xN1UjW8smBNML+5BcjASw
-	 57/kDKD2w0cPHWOnFvUEHfl07A+AZL2TuoSqCCOCCEFb6dqrlgUeV0d69FIYiGxgjo
-	 BY+KlKAlWc0X6nBjiXrbQGuX8DEujGW+Cdf3unMsg7CftV3SO1YLoqX+42INIfLPSW
-	 R5UpQjImof94TTkYwb3xRO2dcY333ePcgajrniutKQsh5+i9Cx6rG51wO2A9jQzM8d
-	 RpLcYpfFYDdeQ==
-Date: Thu, 20 Feb 2025 09:13:27 +0200
-From: Leon Romanovsky <leon@kernel.org>
-To: Jacob Keller <jacob.e.keller@intel.com>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	Saeed Mahameed <saeedm@nvidia.com>,
-	Tariq Toukan <tariqt@nvidia.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Yevgeny Kliteynik <kliteyn@nvidia.com>,
-	Mark Bloch <mbloch@nvidia.com>, Itamar Gozlan <igozlan@nvidia.com>,
-	netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net/mlx5: Use secs_to_jiffies() instead of
- msecs_to_jiffies()
-Message-ID: <20250220071327.GL53094@unreal>
-References: <20250219205012.28249-2-thorsten.blum@linux.dev>
- <48456fc0-7832-4df1-8177-4346f74d3ccc@intel.com>
+	s=arc-20240116; t=1740035636; c=relaxed/simple;
+	bh=VG8lNcVj90O83C+WiumWzQYNp1FPPB9IfLlFvTOM4SQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Q4ZVi+2YWeFTJOSMtgneCV66mB++LUQtXHaKpr9DHZkRiGeBRrZlwPUWUQlOeY3pq9UPw3kO5zjV0K7lwtmvS3aKsrMoY3sTCuV+dX1FUtmcWOhPOpToDIjFq36beuK4pFT7cmRb8rvgSZIQL9ijlYWVR85+A5pDYUfuE49/Pqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=D1RO4W3s; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51K6wSDQ001819;
+	Thu, 20 Feb 2025 07:13:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	M9HrpZLNFgYRVRtP+OG3QpgkuY9QtTGEtyY7OzY9/oc=; b=D1RO4W3ssnnE/pZF
+	Pn0SebUocA33BRP8ei250YlzYYRmRpP4DA6KNQT0LH0E5+CQoIxkP3oRng/Dgqoi
+	Qe7ZKrffME2GkqknsitUykvOVZZQIC4lywz7dw5AG9X60/zXeHltFxbqqmx1/MBm
+	hkMkpbYIWNSWTvXHKE4j7E00Y9iI0IpH+ZYSYfhlOO7oT4tF22bXs5/AlIhaH7l4
+	+b0lPO0woTsVmIojFxTrcWUpDT1s5Il1l0Hv0Jl6oautmZRAl+qcY4/f+k+KMB99
+	VbawaNac9Jtv9KBkMc+oKPyI2oJ4ThI+sqFvWVYr8bP/7nmY6wN2WVxDMz3pZfYn
+	Qy4mCA==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44vyy2d7t2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Feb 2025 07:13:51 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51K7DoIs025634
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Feb 2025 07:13:50 GMT
+Received: from [10.217.216.47] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 19 Feb
+ 2025 23:13:45 -0800
+Message-ID: <bf217f30-967c-4ffb-a3ee-f47e8ee97ad4@quicinc.com>
+Date: Thu, 20 Feb 2025 12:43:42 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <48456fc0-7832-4df1-8177-4346f74d3ccc@intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/5] clk: qcom: common: Attach clock power domains
+ conditionally
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Ajit Pandey
+	<quic_ajipan@quicinc.com>,
+        Imran Shaik <quic_imrashai@quicinc.com>,
+        "Taniya
+ Das" <quic_tdas@quicinc.com>,
+        Satya Priya Kakitapalli
+	<quic_skakitap@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20250218-videocc-pll-multi-pd-voting-v1-0-cfe6289ea29b@quicinc.com>
+ <20250218-videocc-pll-multi-pd-voting-v1-3-cfe6289ea29b@quicinc.com>
+ <2c5rbbpe5muw53oemyq6vhsmhzpzcpn7on4ujl5v7i7s3fdlob@eh37gy5dpfnp>
+ <bb4cd14e-a9ea-4c13-9774-cca169dcb8d1@quicinc.com>
+ <fvcmc3ibqcwzokvqomntxn2vkgduvbdsx3gd5vkctzwrik7bis@iyjrejmqkpfp>
+Content-Language: en-US
+From: Jagadeesh Kona <quic_jkona@quicinc.com>
+In-Reply-To: <fvcmc3ibqcwzokvqomntxn2vkgduvbdsx3gd5vkctzwrik7bis@iyjrejmqkpfp>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: xppRhYgnNNvcvo5MHr3vU94_Bi28S5qd
+X-Proofpoint-GUID: xppRhYgnNNvcvo5MHr3vU94_Bi28S5qd
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-20_02,2025-02-20_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ lowpriorityscore=0 clxscore=1015 adultscore=0 phishscore=0 mlxlogscore=717
+ bulkscore=0 malwarescore=0 impostorscore=0 priorityscore=1501 mlxscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2502200050
 
-On Wed, Feb 19, 2025 at 03:45:02PM -0800, Jacob Keller wrote:
-> 
-> 
-> On 2/19/2025 12:49 PM, Thorsten Blum wrote:
-> > Use secs_to_jiffies() and simplify the code.
-> > 
-> > Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
-> 
-> nit: this is a cleanup which should have the net-next prefix applied,
-> since this doesn't fix any user visible behavior.
-> 
-> Otherwise, seems like an ok change.
 
-IMHO, completely useless change for old code. I can see a value in new
-secs_to_jiffies() function for new code, but not for old code. I want
-to believe that people who write kernel patches aware that 1000 msec
-equal to 1 sec.
 
-Thanks
+On 2/19/2025 5:27 PM, Dmitry Baryshkov wrote:
+> On Wed, Feb 19, 2025 at 05:06:11PM +0530, Jagadeesh Kona wrote:
+>>
+>>
+>> On 2/18/2025 10:48 PM, Dmitry Baryshkov wrote:
+>>> On Tue, Feb 18, 2025 at 07:56:48PM +0530, Jagadeesh Kona wrote:
+>>>> Attach clock power domains in qcom_cc_really_probe() only
+>>>> if the clock controller has not already attached to them.
+>>>
+>>> Squash this to the previous patch and call the new function. No need to
+>>> duplicate the code.
+>>>
+>>
+>> I tried calling the new function here instead of duplicating code, but that
+>> is leading to below warning since the desc passed to qcom_cc_really_probe()
+>> has a const qualifier and hence we cannot update desc->pd_list inside
+>> qcom_cc_really_probe().
+>>
+>> drivers/clk/qcom/common.c:305:33:   WARNING : passing argument 2 of ‘qcom_cc_attach_pds’ discards ‘const’ qualifier from pointer target type [-Wdiscarded-qualifiers]
+> 
+> It sounds like this can be fixed with a one-line patch.
+> 
+
+Removing const qualifier to qcom_cc_really_probe() will fix this, but that requires changes in
+many other drivers which are currently passing const descriptor to it.
+
+But I can squash this to my previous patch by updating my qcom_cc_attach_pds() function
+prototype as below and then calling that new function here
+
+-int qcom_cc_attach_pds(struct device *dev, struct qcom_cc_desc *desc)
++int qcom_cc_attach_pds(struct device *dev, struct dev_pm_domain_list *pd_list)
+
+-               ret = devm_pm_domain_attach_list(dev, NULL, &cc->pd_list);
+-               if (ret < 0 && ret != -EEXIST)
++               ret = qcom_cc_attach_pds(dev, cc->pd_list);
++               if (ret)
+
+Thanks,
+Jagadeesh
+
+>>
+>> Thanks,
+>> Jagadeesh
+>>
+>>>>
+>>>> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
+>>>> ---
+>>>>  drivers/clk/qcom/common.c | 9 ++++++---
+>>>>  1 file changed, 6 insertions(+), 3 deletions(-)
+>>>>
+>>>> diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
+>>>> index ec27f70b24bdec24edd2f6b3df0d766fc1cdcbf0..eb7e2a56d1d135f839fd9bd470ba6231ce775a8c 100644
+>>>> --- a/drivers/clk/qcom/common.c
+>>>> +++ b/drivers/clk/qcom/common.c
+>>>> @@ -300,9 +300,12 @@ int qcom_cc_really_probe(struct device *dev,
+>>>>  	if (!cc)
+>>>>  		return -ENOMEM;
+>>>>  
+>>>> -	ret = devm_pm_domain_attach_list(dev, NULL, &cc->pd_list);
+>>>> -	if (ret < 0 && ret != -EEXIST)
+>>>> -		return ret;
+>>>> +	cc->pd_list = desc->pd_list;
+>>>> +	if (!cc->pd_list) {
+>>>> +		ret = devm_pm_domain_attach_list(dev, NULL, &cc->pd_list);
+>>>> +		if (ret < 0 && ret != -EEXIST)
+>>>> +			return ret;
+>>>> +	}
+>>>>  
+>>>>  	reset = &cc->reset;
+>>>>  	reset->rcdev.of_node = dev->of_node;
+>>>>
+>>>> -- 
+>>>> 2.34.1
+>>>>
+>>>
+> 
 
