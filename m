@@ -1,142 +1,96 @@
-Return-Path: <linux-kernel+bounces-523721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF1CAA3DA61
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:49:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EDD2A3DA68
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:50:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05CD517EFB8
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:48:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A1F5189EFB2
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:49:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B11831F6679;
-	Thu, 20 Feb 2025 12:48:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F8871F584D;
+	Thu, 20 Feb 2025 12:48:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XhH3Rxw/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Rq714Wl1"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2BF32862BD;
-	Thu, 20 Feb 2025 12:48:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5577E2862BD;
+	Thu, 20 Feb 2025 12:48:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740055712; cv=none; b=gHk0N0/PJMM6Spb1pJwQ7y1LwGYRrKf//nAZdpZHfV4L5iELf5L7wd8lsUKOWnU4D6MmlkH54pxE7oFSBCye7t2kBjGrodl/oO1IwPBfKFIhaO7px2rMIX7bCm6r1Sx+sCVmxQwaX2+Yd/u7Tp9GSxmSca/b87PFOs0H8nPiTT0=
+	t=1740055737; cv=none; b=WILV++f2e03txe2K3Y0HFmkaxpBg+AhpZobA+4tq7SzRFKmyEH7k+cZibqVa23IUfPCHDqer34c0I6Pznv8FUCv46Ta9GASHvUL8ojxdgKFGfnjIgHfirNuI27CMZ+uQFmZLiSx1+xltG5+ACcXLWzP+K338BsbiGDjcBpeJasM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740055712; c=relaxed/simple;
-	bh=1Iv3ATubl6AG/lSG1TPOh5GEc+mnunYnUNognONLHrM=;
+	s=arc-20240116; t=1740055737; c=relaxed/simple;
+	bh=xxdINzZfAzaXSiuNRu1KvJTQ3AsFYk/KvwybfN97h2E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fDbvlA/Jhqg/b8gRMEoTrL3oTYbgsRjfMZE/YO3nb8CejGVbFWT4h8ifkPTH+/CJ1KaVQMEceDysCs09nXK6TgevjGpCh8SqgHjJcE0DWUTZJNaiDwzYrEjp3IVUh6t96GSc9Mgoglod+QzPOUyfWY8/63rebM00fN/e1Iyz8Zo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XhH3Rxw/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C882DC4CED1;
-	Thu, 20 Feb 2025 12:48:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740055711;
-	bh=1Iv3ATubl6AG/lSG1TPOh5GEc+mnunYnUNognONLHrM=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=jnM5OgKP++qufT3TmPqGI15TyQFzy6Qo2VtP2avxX8iVSx8U3xVLacRe60tTvEhD+llB3eo/KQOyv0LK20lqFNUOwScRx2NtY36LkHTp+vTM1kMP060LbEsGnqAMGhM9sP7U5lvPuP/UQagQpoG+DI/kNK/73wFBTJNr+AE48wA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Rq714Wl1; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 0C14040E01AD;
+	Thu, 20 Feb 2025 12:48:47 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id AvkhVWAj6kkI; Thu, 20 Feb 2025 12:48:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1740055723; bh=Q+yAMiezM9sEnhnd9V7j+SBAfK6VA0Gars4IHLAxi7A=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XhH3Rxw/fU4NMM8JUKPDYre9d9LQaru2HtlbuSSUNzkHB8eWhqMM23vtegnTWn+BS
-	 9+H0GOfdzn1LNx9IHcWfvcpB8EXNSp57Achx+q1U7ozbfXzho3FO9ENmdtK+fnEJTx
-	 1mX2B9KcxOTwRBNfDJoEWHPpCPDk48cyZC7xwNx3D4HZ/eDzhk1UYs1ByD6cWBCggg
-	 PbJi1s5B2/FkYeMMfisRgyehbN8fd3in3TvHNeTh17NIjIy8rndGPwyK8hEYOJ4woC
-	 z5Pq6b+6BoM66BA9VpnFOLzal49GAHK/nFhBZx9kerNsCt2/b4psBlXL8nvsynNOoP
-	 upH4tKmvy4K+A==
-Date: Thu, 20 Feb 2025 14:48:27 +0200
-From: Leon Romanovsky <leon@kernel.org>
-To: Christoph Hellwig <hch@lst.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-	Robin Murphy <robin.murphy@arm.com>
-Cc: Jens Axboe <axboe@kernel.dk>, Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>, Sagi Grimberg <sagi@grimberg.me>,
-	Keith Busch <kbusch@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Logan Gunthorpe <logang@deltatee.com>,
-	Yishai Hadas <yishaih@nvidia.com>,
-	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	=?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-	linux-rdma@vger.kernel.org, iommu@lists.linux.dev,
-	linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org,
-	kvm@vger.kernel.org, linux-mm@kvack.org,
-	Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [PATCH v7 00/17] Provide a new two step DMA mapping API
-Message-ID: <20250220124827.GR53094@unreal>
-References: <cover.1738765879.git.leonro@nvidia.com>
+	b=Rq714Wl1t+EfUdXDT35hcLlnYVMAMyz2urh7DpBvAxwrrMjBmxxlFN3Vz6sdOupeh
+	 d2kwodcwVP1OOMzW8iPvx8SMXsSzlkKylBMxOZJ0zUrQEgR4tehcHWhRs6qmdpG+Pt
+	 I97lY7b1MuEczrCB1y7b91A/WVLXeKJtBZFlhbhp+sfZoqCeY8sbJzBNJ/mYyeweKX
+	 /inMZ0pKyHArJ5X0wEy3eqQW5uIYt4NNmAAIFiGwFRnzfWnFj84BRNvv1vJ+MBEbc0
+	 BIt+0CC3zPL3nVjuyu/xq6lD+zyVKC1zDD6MpjjA0jO6y2N/CSDySKQiKAoa0k6DXk
+	 buHJelJf5tWZ+4oKrfVcCM/Mh+mDVpo9o/sO2xOfSF1tLaL5AeFdtcwszeqYpZKxMa
+	 6D3YaK/i95mOpMkRbCiI1EYUlYL2ttz/jUUCtVp/7UuOCotytIvIok5qgNkLWMMrDR
+	 2tHwH/kt1j1rohdCfuJGYsovCW63KSJ8RiAA2jNQ7GGCK9Cgg8jQJxscxdPP3nR9p+
+	 IWgwG9JF+pdXzeFeYeV4ktJyu57qHvTe3jv7W8HsjDI5Zs3UCN4P2jiLtw0hnHM9pO
+	 0qj0XpUkcEraY53aVa2fK3yyivXWxJOSkzeq9duI6rVjqcegTLnXQxCyR8ONcJb85L
+	 o8oS0kk7lVk0Ul0vOnQQ2cPA=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 48C3E40E01A1;
+	Thu, 20 Feb 2025 12:48:37 +0000 (UTC)
+Date: Thu, 20 Feb 2025 13:48:31 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: Ingo Molnar <mingo@kernel.org>, linux-efi@vger.kernel.org,
+	linux-kernel@vger.kernel.org, x86@kernel.org, hdegoede@redhat.com
+Subject: Re: [PATCH v2 0/7] x86/efi/mixed: Decouple from legacy decompressor
+Message-ID: <20250220124831.GFZ7cknypjWiZoZzK5@fat_crate.local>
+References: <20250210174941.3251435-9-ardb+git@google.com>
+ <CAMj1kXHOqMM5uGxLTYuEf9KrxY5WzYvwo847JzoB-Qa2SN67Sg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <cover.1738765879.git.leonro@nvidia.com>
+In-Reply-To: <CAMj1kXHOqMM5uGxLTYuEf9KrxY5WzYvwo847JzoB-Qa2SN67Sg@mail.gmail.com>
 
-On Wed, Feb 05, 2025 at 04:40:20PM +0200, Leon Romanovsky wrote:
-> From: Leon Romanovsky <leonro@nvidia.com>
+On Thu, Feb 20, 2025 at 12:29:30PM +0100, Ard Biesheuvel wrote:
+> Unless anyone minds, I'd like to queue this up in the EFI tree.
 > 
-> Changelog:
-> v7:
->  * Rebased to v6.14-rc1
+> Boris, Ingo?
 
-<...>
+FWIW, it looks like a nice cleanup to me and it boots in my 64-bit OVMF guest
+but that doesn't mean a whole lot.
 
-> Christoph Hellwig (6):
->   PCI/P2PDMA: Refactor the p2pdma mapping helpers
->   dma-mapping: move the PCI P2PDMA mapping helpers to pci-p2pdma.h
->   iommu: generalize the batched sync after map interface
->   iommu/dma: Factor out a iommu_dma_map_swiotlb helper
->   dma-mapping: add a dma_need_unmap helper
->   docs: core-api: document the IOVA-based API
-> 
-> Leon Romanovsky (11):
->   iommu: add kernel-doc for iommu_unmap and iommu_unmap_fast
->   dma-mapping: Provide an interface to allow allocate IOVA
->   dma-mapping: Implement link/unlink ranges API
->   mm/hmm: let users to tag specific PFN with DMA mapped bit
->   mm/hmm: provide generic DMA managing logic
->   RDMA/umem: Store ODP access mask information in PFN
->   RDMA/core: Convert UMEM ODP DMA mapping to caching IOVA and page
->     linkage
->   RDMA/umem: Separate implicit ODP initialization from explicit ODP
->   vfio/mlx5: Explicitly use number of pages instead of allocated length
->   vfio/mlx5: Rewrite create mkey flow to allow better code reuse
->   vfio/mlx5: Enable the DMA link API
-> 
->  Documentation/core-api/dma-api.rst   |  70 ++++
->  drivers/infiniband/core/umem_odp.c   | 250 +++++---------
->  drivers/infiniband/hw/mlx5/mlx5_ib.h |  12 +-
->  drivers/infiniband/hw/mlx5/odp.c     |  65 ++--
->  drivers/infiniband/hw/mlx5/umr.c     |  12 +-
->  drivers/iommu/dma-iommu.c            | 468 +++++++++++++++++++++++----
->  drivers/iommu/iommu.c                |  84 ++---
->  drivers/pci/p2pdma.c                 |  38 +--
->  drivers/vfio/pci/mlx5/cmd.c          | 375 +++++++++++----------
->  drivers/vfio/pci/mlx5/cmd.h          |  35 +-
->  drivers/vfio/pci/mlx5/main.c         |  87 +++--
->  include/linux/dma-map-ops.h          |  54 ----
->  include/linux/dma-mapping.h          |  85 +++++
->  include/linux/hmm-dma.h              |  33 ++
->  include/linux/hmm.h                  |  21 ++
->  include/linux/iommu.h                |   4 +
->  include/linux/pci-p2pdma.h           |  84 +++++
->  include/rdma/ib_umem_odp.h           |  25 +-
->  kernel/dma/direct.c                  |  44 +--
->  kernel/dma/mapping.c                 |  18 ++
->  mm/hmm.c                             | 264 +++++++++++++--
->  21 files changed, 1435 insertions(+), 693 deletions(-)
->  create mode 100644 include/linux/hmm-dma.h
+Thx.
 
-Kind reminder.
+-- 
+Regards/Gruss,
+    Boris.
 
-Thanks
-
-> 
-> -- 
-> 2.48.1
-> 
-> 
+https://people.kernel.org/tglx/notes-about-netiquette
 
