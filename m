@@ -1,46 +1,39 @@
-Return-Path: <linux-kernel+bounces-524562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C209A3E499
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 20:04:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B4C9A3E497
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 20:03:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 280A619C378B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 19:03:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EECB17014A8
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 19:03:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EC04264600;
-	Thu, 20 Feb 2025 19:02:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="TpP0wcMZ"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 857FB257D;
-	Thu, 20 Feb 2025 19:02:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5786E26388C;
+	Thu, 20 Feb 2025 19:02:53 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 527BB1DFE00;
+	Thu, 20 Feb 2025 19:02:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740078127; cv=none; b=QpS4irOagzZvfzVWW671nw1wB+pQOSddW6ToLMDA6Qp1PeGMPG35dwKxRRBGrceEBABEWWLpG/J5GnUb/UM+7Na/Pj2pl1IjTmCHg8boZeE1UcnFcXZkkfSiiWfMO/neUR1BcRSpn0d8pW9YFkLkxwBr4U0PTMuKjEelRgOb5hs=
+	t=1740078173; cv=none; b=ureaLsfrjbO1EajHjwnxeLfemXUSxwcF4/HbxP5kdDHahK/ROStyrI0WQ5ockCrJREAFd9n2SQ9tVee02fLzz75fqnm7qJJJdVXEkutjNnWv/YXhfZZ71LmnhVnxks2ES1X/gOeoLbjYzmSmQYBqYxW5UF9+RrNqbu+NPRgUjTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740078127; c=relaxed/simple;
-	bh=CFyn5eFkvEhiAg66OMPRKiFTTmzZl2xZuLvL7BXSNZs=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=knS2zojVzoogpN+NsCza36fz7a1Wfbv8Bo4x6w4dKG/kpAc9POqfRD86ZmmcAk/JnkmWLq6BRFUXR36Oun3qWvBgPPQoI0yRVNUK0jsKVfvrVAwTYeVSYlEJMKClvmYr+botnqnsSNDriEQ+XCkZszUNldRr2DdO6TIBdTDWOHo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=TpP0wcMZ; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [192.168.35.166] (c-24-22-154-137.hsd1.wa.comcast.net [24.22.154.137])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 6C1062059191;
-	Thu, 20 Feb 2025 11:02:05 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 6C1062059191
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1740078126;
-	bh=NeQEm7g/5Ed+D26MEHjj4MWfwDZexQdKcjr1nchYGZU=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=TpP0wcMZCTRtM+c3Z7qG3/PCJYlDhwyoZnyPaR09jH6dl45kzjHXtPjI24GQ/6xsL
-	 QQ6Z3LvqJurk+NGZ/iwfdFvK8c1VsWZKifGI+ToeeNOPjuc0+9o/gWeWO/jWYYOFbz
-	 AmUyVSHXWUn9EwXFquo8gNtmRCwIMvXkrdKz1JpU=
-Message-ID: <e85ddfef-2081-4c8a-96e6-e84a8410ff85@linux.microsoft.com>
-Date: Thu, 20 Feb 2025 11:02:06 -0800
+	s=arc-20240116; t=1740078173; c=relaxed/simple;
+	bh=lvtylBYOZWiEhmpuEkcH3mPtglp1tR2ZOkMgeUz4Djk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VG/0W0y4TA/SWLczaZ+/+egyTQ1Y96rC2H1dfosIwoqjHYsouetJWN7jXBf1AVFZm6hj3Weq0eHcb+7is4j/n/oCCaGBSbtmbrWEiQMPjbZ8hCQc5+Tz5vH/+3r5R7J2GEEpUl8nUPPwQNLgmbsDqCM+qz/GNdsXTEXL/f/M7Ys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AA2271007;
+	Thu, 20 Feb 2025 11:03:08 -0800 (PST)
+Received: from [10.122.18.111] (unknown [10.122.18.111])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5C0183F59E;
+	Thu, 20 Feb 2025 11:02:50 -0800 (PST)
+Message-ID: <41d5f912-9288-4e13-b074-bd64aacc7a5e@arm.com>
+Date: Thu, 20 Feb 2025 13:02:49 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -48,48 +41,45 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Cc: linux-hyperv@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
- iommu@lists.linux.dev, mhklinux@outlook.com, eahariha@linux.microsoft.com,
- kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
- decui@microsoft.com, catalin.marinas@arm.com, will@kernel.org,
- tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
- daniel.lezcano@linaro.org, joro@8bytes.org, robin.murphy@arm.com,
- arnd@arndb.de, jinankjain@linux.microsoft.com, muminulrussell@gmail.com,
- skinsburskii@linux.microsoft.com, mukeshrathor@microsoft.com
-Subject: Re: [PATCH v2 3/3] hyperv: Add CONFIG_MSHV_ROOT to gate root
- partition support
-To: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-References: <1740076396-15086-1-git-send-email-nunodasneves@linux.microsoft.com>
- <1740076396-15086-4-git-send-email-nunodasneves@linux.microsoft.com>
-From: Easwar Hariharan <eahariha@linux.microsoft.com>
+Subject: Re: [PATCH v5 1/5] tpm_crb: implement driver compliant to CRB over
+ FF-A
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: linux-integrity@vger.kernel.org, peterhuewe@gmx.de, jgg@ziepe.ca,
+ sudeep.holla@arm.com, rafael@kernel.org, lenb@kernel.org,
+ linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250219201014.174344-1-stuart.yoder@arm.com>
+ <20250219201014.174344-2-stuart.yoder@arm.com> <Z7b11Kahh7JXDq9E@kernel.org>
 Content-Language: en-US
-In-Reply-To: <1740076396-15086-4-git-send-email-nunodasneves@linux.microsoft.com>
-Content-Type: text/plain; charset=UTF-8
+From: Stuart Yoder <stuart.yoder@arm.com>
+In-Reply-To: <Z7b11Kahh7JXDq9E@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 2/20/2025 10:33 AM, Nuno Das Neves wrote:
-> CONFIG_MSHV_ROOT allows kernels built to run as a normal Hyper-V guest
-> to exclude the root partition code, which is expected to grow
-> significantly over time.
-> 
-> This option is a tristate so future driver code can be built as a
-> (m)odule, allowing faster development iteration cycles.
-> 
-> If CONFIG_MSHV_ROOT is disabled, don't compile hv_proc.c, and stub
-> hv_root_partition() to return false unconditionally. This allows the
-> compiler to optimize away root partition code blocks since they will
-> be disabled at compile time.
-> 
-> Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-> ---
->  drivers/hv/Kconfig             | 16 ++++++++++++++++
->  drivers/hv/Makefile            |  3 ++-
->  include/asm-generic/mshyperv.h | 24 ++++++++++++++++++++----
->  3 files changed, 38 insertions(+), 5 deletions(-)
 
-Looks good to me.
+On 2/20/25 3:28 AM, Jarkko Sakkinen wrote:
+> On Wed, Feb 19, 2025 at 02:10:10PM -0600, Stuart Yoder wrote:
+>> The Arm specification TPM Service CRB over FF-A specification
+>> defines the FF-A messages to interact with a CRB-based TPM
+>> implemented as an FF-A secure partition.
+>>
+>> Spec URL:
+>> https://developer.arm.com/documentation/den0138/latest/
+>>
+>> This driver is probed when a TPM Secure Partition is
+>> discovered by the FF-A subsystem. It exposes APIs
+>> used by the TPM CRB driver to send notifications to
+>> the TPM.
+>>
+>> Acked-by: Sudeep Holla <sudeep.holla@arm.com>
+>> Signed-off-by: Stuart Yoder <stuart.yoder@arm.com>
+> 
+> Cutting hairs now but as I cannot test this and this is 1/5:
+> can this patch be run without 2/5-4/5?
 
-Reviewed-by: Easwar Hariharan <eahariha@linux.microsoft.com>
+Yes. This 1/5 patch has no compile time or runtime dependency
+on 2/5-4/5.
+
+Thanks,
+Stuart
+
 
