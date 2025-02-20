@@ -1,192 +1,157 @@
-Return-Path: <linux-kernel+bounces-523638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5994BA3D986
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:09:19 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A322A3D98C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:10:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9101B3BC9CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:09:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC98917AB01
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:10:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E27041F4735;
-	Thu, 20 Feb 2025 12:09:13 +0000 (UTC)
-Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AE641F4E21;
+	Thu, 20 Feb 2025 12:09:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V+zerApZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAA421B4F17
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 12:09:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F27E91BD01F;
+	Thu, 20 Feb 2025 12:09:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740053353; cv=none; b=goFWHJTJgqPvqPWy7BQ2+RhvpvWfIaYr61L/z7cGAhyNcqqdPyn220mKnR5kBH6+mxgmuwoxE2eq0SK+Pesp3GbW3bewwJV96bfk4Mdny0ltiz2vLc5bqgFRIR8LT9x4T+jk399FXdZp5tlwpgHuci4HTHSGptsuiP9Kb5bwdvk=
+	t=1740053397; cv=none; b=Cgna1GmRKHh8s7ZJrHYaQQTqycJorDw1tCf5xx89I+b2yL4eZL3tjmfbX/rl/E6Lfs4y5EOHv9F/clgLUOpSxlW1JI1VxGyvTe8vEasFYm+6QJKb9B3D6q2uWPgKsinYJ7xm5VsXzDjkU9LlfGzLAhBWClmOCWeFMzCAJNz2c6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740053353; c=relaxed/simple;
-	bh=3WaN6Rf6bUzvVk6GUWUpN8upoTYAsoJ8rZjOeqU8pqA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=jWdk+IglrNNZMhoyvojJn++z9ZqwAw6KVpcCtOgqMx1cpRQwrNtMA/0df+RUgvRibPYm1wf+jZAyy3QsmB99loxtiQNAxWl66KoU75EBCZagcGUsFHtFl0vtJMqrLTyP5gx5zBmqSwVMXJ5Bp+jQKZ2ORxAWmXnDSWomR+DUnM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4YzBlq1lKBz1wn5Y;
-	Thu, 20 Feb 2025 20:05:11 +0800 (CST)
-Received: from kwepemd500013.china.huawei.com (unknown [7.221.188.12])
-	by mail.maildlp.com (Postfix) with ESMTPS id EAF7214038F;
-	Thu, 20 Feb 2025 20:09:07 +0800 (CST)
-Received: from [10.159.166.136] (10.159.166.136) by
- kwepemd500013.china.huawei.com (7.221.188.12) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Thu, 20 Feb 2025 20:09:06 +0800
-Message-ID: <2c3c7939-5967-4807-9dd5-dce16d469d93@huawei.com>
-Date: Thu, 20 Feb 2025 20:09:05 +0800
+	s=arc-20240116; t=1740053397; c=relaxed/simple;
+	bh=DHc2ZnDpd/ndTACySFf2mux2IOTN4Zj1k7w/Smad8/c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dDg/nw0wSuc2LS4sM/OMW5V4x6C6ArBWMUgJhk1WaVZiDQ9dUgyjY+VUqF7LGVpPJbdPubynNYfAaZM0rlfstBlz+qIDdT15eEN5czmzKtLD62H2P9owq3i5ldYXCcFpkf2r7Gho0yhUsao+gevtoMM+bJMaEREr8RYwmQtR1KM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V+zerApZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03F69C4CED1;
+	Thu, 20 Feb 2025 12:09:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740053396;
+	bh=DHc2ZnDpd/ndTACySFf2mux2IOTN4Zj1k7w/Smad8/c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=V+zerApZQ1+17V1NcaXibO4W4REKKZb9sW93j7dOI2AwGNYNfugtP+rh71FItJZ+T
+	 e5XjPfBo5IuqNdY/PTlpzRnbG9v449OW73PKg6KNaQa/f4z2+bl9gjpT5qXqM84Dm9
+	 DrnxVLyUe0SZAxLwIB29aepC+PrAMN8CjaTOKsR0mOUrb866HFVzgE4DEfm/K8RdvT
+	 9prvVAar2GXS5CVZxOEyhWSy3wAXSiqzmOAKjrlyJKcsaqxSAfNw4eFhzp29Pd1zoa
+	 jQL1fsVkDd5+lHiY08LET+sBpTkBj0sqWR8UGAR4iR4raZ19Wzyw585ktOO2aED9F/
+	 v4saGWvpTHNWg==
+Date: Thu, 20 Feb 2025 12:09:53 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Daniel Almeida <daniel.almeida@collabora.com>
+Cc: Alice Ryhl <aliceryhl@google.com>, lgirdwood@gmail.com,
+	sebastian.reichel@collabora.com, sjoerd.simons@collabora.co.uk,
+	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com,
+	gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@kernel.org,
+	benno.lossin@proton.me, tmgross@umich.edu, dakr@kernel.org,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] rust: regulator: add a bare minimum regulator abstraction
+Message-ID: <Z7cbkfvJqkWaSwKR@finisterre.sirena.org.uk>
+References: <20250219162517.278362-1-daniel.almeida@collabora.com>
+ <CAH5fLgiErvnziU-hSCV6djNq7Q56ZfX9gZudmX7+r06hWoX0Tw@mail.gmail.com>
+ <E24A1EA3-DC87-4A33-AD93-1E3B307942E8@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 drm-dp 6/7] drm/hisilicon/hibmc: Add drm debugfs
- functions
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: <xinliang.liu@linaro.org>, <tiantao6@hisilicon.com>,
-	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
-	<tzimmermann@suse.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
-	<kong.kongxinwei@hisilicon.com>, <liangjian010@huawei.com>,
-	<chenjianmin@huawei.com>, <lidongming5@huawei.com>, <libaihan@huawei.com>,
-	<shenjian15@huawei.com>, <shaojijie@huawei.com>,
-	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-	<shiyongbang@huawei.com>
-References: <20250210144959.100551-1-shiyongbang@huawei.com>
- <20250210144959.100551-7-shiyongbang@huawei.com>
- <afi5npgvnrp56oufhc7576auya26lbwgu377dprddode2kp3sb@u5ctx4o22w4v>
-From: Yongbang Shi <shiyongbang@huawei.com>
-In-Reply-To: <afi5npgvnrp56oufhc7576auya26lbwgu377dprddode2kp3sb@u5ctx4o22w4v>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemd500013.china.huawei.com (7.221.188.12)
-
-> On Mon, Feb 10, 2025 at 10:49:58PM +0800, Yongbang Shi wrote:
->> From: Baihan Li <libaihan@huawei.com>
->>
->> We use the previous two patches as our debug functions and
->> generate two files. "hibmc-dp" and "color-bar".
->> hibmc-dp: read only, print the dp link status and dpcd version
-> Please define a generic DP attribute for this, handle it in
-> drm_dp_helper.c. Other drivers then can reuse this debugfs file.
-> Also note drm_dp_downstream_debug(), it might also be helpful.
-> Also see msm_dp_debug_show() for inspiration
->
->> color-bar: read/write
->>             write: cfg color bar and enable/disable it by your input
->>             read: print your current cfg info of color-bar
-> This really should go into your color-bar patch.
->
->> Signed-off-by: Baihan Li <libaihan@huawei.com>
->> Signed-off-by: Yongbang Shi <shiyongbang@huawei.com>
->> ---
->> ChangeLog:
->> v1 -> v2:
->>    - deleting edid decoder and its debugfs, suggested by Dmitry Baryshkov.
->>    - using debugfs_init() callback, suggested by Dmitry Baryshkov.
->> ---
->>   drivers/gpu/drm/hisilicon/hibmc/Makefile      |   3 +-
->>   .../drm/hisilicon/hibmc/hibmc_drm_debugfs.c   | 124 ++++++++++++++++++
->>   .../gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c    |   1 +
->>   .../gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h   |   2 +
->>   4 files changed, 129 insertions(+), 1 deletion(-)
->>   create mode 100644 drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_debugfs.c
->>
->> diff --git a/drivers/gpu/drm/hisilicon/hibmc/Makefile b/drivers/gpu/drm/hisilicon/hibmc/Makefile
->> index 43de077d6769..1f65c683282f 100644
->> --- a/drivers/gpu/drm/hisilicon/hibmc/Makefile
->> +++ b/drivers/gpu/drm/hisilicon/hibmc/Makefile
->> @@ -1,5 +1,6 @@
->>   # SPDX-License-Identifier: GPL-2.0-only
->>   hibmc-drm-y := hibmc_drm_drv.o hibmc_drm_de.o hibmc_drm_vdac.o hibmc_drm_i2c.o \
->> -	       dp/dp_aux.o dp/dp_link.o dp/dp_hw.o dp/dp_serdes.o hibmc_drm_dp.o
->> +	       dp/dp_aux.o dp/dp_link.o dp/dp_hw.o dp/dp_serdes.o hibmc_drm_dp.o \
->> +	       hibmc_drm_debugfs.o
->>   
->>   obj-$(CONFIG_DRM_HISI_HIBMC) += hibmc-drm.o
->> diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_debugfs.c b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_debugfs.c
->> new file mode 100644
->> index 000000000000..af2efb70d6ea
->> --- /dev/null
->> +++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_debugfs.c
->> @@ -0,0 +1,124 @@
->> +// SPDX-License-Identifier: GPL-2.0-or-later
->> +// Copyright (c) 2024 Hisilicon Limited.
->> +
->> +#include <linux/debugfs.h>
->> +#include <linux/device.h>
->> +#include <linux/seq_file.h>
->> +#include <linux/pci.h>
->> +
->> +#include <drm/drm_drv.h>
->> +#include <drm/drm_file.h>
->> +#include <drm/drm_debugfs.h>
->> +#include <drm/drm_edid.h>
->> +
->> +#include "hibmc_drm_drv.h"
->> +
->> +static int hibmc_dp_show(struct seq_file *m, void *arg)
->> +{
->> +	struct drm_info_node *node = m->private;
->> +	struct drm_device *dev = node->minor->dev;
->> +	struct hibmc_drm_private *priv = to_hibmc_drm_private(dev);
->> +	int idx;
->> +
->> +	if (!drm_dev_enter(dev, &idx))
->> +		return -ENODEV;
->> +
->> +	seq_printf(m, "enable lanes: %u\n", hibmc_dp_get_lanes(&priv->dp));
->> +	seq_printf(m, "link rate: %d\n", hibmc_dp_get_link_rate(&priv->dp) * 27);
->> +	seq_printf(m, "dpcd version: 0x%x\n", hibmc_dp_get_dpcd(&priv->dp));
->> +
->> +	drm_dev_exit(idx);
->> +
->> +	return 0;
->> +}
->> +
->> +static ssize_t hibmc_control_write(struct file *file, const char __user *user_buf,
->> +				   size_t size, loff_t *ppos)
->> +{
->> +	struct hibmc_drm_private *priv = file_inode(file)->i_private;
->> +	struct hibmc_dp_cbar_cfg *cfg = &priv->dp.cfg;
->> +	u32 input = 0;
->> +	int ret, idx;
->> +	u8 val;
->> +
->> +	ret = kstrtou32_from_user(user_buf, size, 0, &input);
->> +	if (ret)
->> +		return ret;
->> +
->> +	val = FIELD_GET(GENMASK(13, 10), input);
->> +	if (val > 9)
->> +		return -EINVAL;
->> +	cfg->pattern = val;
->> +	cfg->enable = FIELD_GET(BIT(0), input);
->> +	cfg->self_timing = FIELD_GET(BIT(1), input);
->> +	cfg->dynamic_rate = FIELD_GET(GENMASK(9, 2), input);
-> Having a binary file format is really a sad idea. Can it be a text file
-> instead?
-
-Okay, I'll change it to 4 int numbers as parameters, like: echo "1 2 3 4" > file
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="g+TnyzgYxnjAXCAf"
+Content-Disposition: inline
+In-Reply-To: <E24A1EA3-DC87-4A33-AD93-1E3B307942E8@collabora.com>
+X-Cookie: Take your Senator to lunch this week.
 
 
->> +
->> +	ret = drm_dev_enter(&priv->dev, &idx);
->> +	if (!ret)
->> +		return -ENODEV;
->> +
->> +	hibmc_dp_set_cbar(&priv->dp, cfg);
->> +
->> +	drm_dev_exit(idx);
->> +
->> +	return size;
->> +}
->> +
+--g+TnyzgYxnjAXCAf
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Feb 19, 2025 at 02:10:24PM -0300, Daniel Almeida wrote:
+
+> This means that now, `EnabledRegulator` has to depend on `Regulator` some=
+how to ensure
+> a proper drop order. Otherwise you might have an enabled regulator for wh=
+ich you don=E2=80=99t own
+> the refcount. Furthermore, if Regulator drops while EnabledRegulator is a=
+live, you get a splat.
+
+Having an enabled regulator object depend on a regulator object seems
+like a goal rather than a problem, surely it's common to need such
+relationships and there's an idiomatic way to do it?  It seems to be how
+Rust does mutexes...=20
+
+> In a driver, you now have to store both Regulator - for the refcount - an=
+d EnabledRegulator
+> - as a way to tell the system you need that regulator to be active.
+
+That's true, unless you can make a type of enable that just fully takes
+ownership of the regulator (which TBH people want, people really want a
+devm_regulator_get_enable() C API which just gets and holds an enabled
+regulator for the simple case where you don't actually ever manage the
+power).  It's possible there's a need to split simple and complex
+consumer APIs in Rust?
+
+> If EnabledRegulator is a guard type, this doesn=E2=80=99t work, as it cre=
+ates a self-reference - on top
+> of being extremely clunky.
+>=20
+> You can then have EnabledRegulator consume Regulator, but this assumes th=
+at the regulator
+> will be on all the time, which is not true. A simple pattern of
+
+I don't understand the self reference thing?
+
+> ```
+> regulator_enable()
+> do_fancy_stuff()
+> regulator_disable()
+> ```
+
+> Becomes a pain when one type consumes the other:
+>=20
+> ```
+> self.my_regulator.enable() // error, moves out of `&self`
+> ```=20
+
+Your second block of code doesn't look obviously painful there?
+
+> I am sure we can find ways around that, but a simple `bool` here seems to=
+ fix this problem.
+
+> Now you only have to store `Regulator`. If you need another part of your =
+code to also keep
+> the regulator enabled, you store a `Regulator` there and enable that as w=
+ell. All calls to
+> enable and disable will be automatically balanced for all instances of `R=
+egulator` by
+> virtue of the `enabled` bool as well.
+
+What you're describing here with creating one Regulator object per
+enable sounds more like you want it to be an error to do multiple
+enables on a single regulator.  Instead of reference counting or
+silently ignoring duplicate enables it should error out on a duplicate
+enable.
+
+--g+TnyzgYxnjAXCAf
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAme3G5AACgkQJNaLcl1U
+h9BN9Qf+J7Y9KQpmRVSzK1x1M74LYSURyUvqicD7HFcGtdn/COrS/9goQ0SCkgLI
+XQeYmCvdEzKMQXF2w7fHQjLDyYg/ZuusoaGvSR0F7MrMA2qHwXI7LIRFHynBR4MG
+3jmys8vmyOH2DUhRpTb2fZmZ+sIFCZzSqncwJhdyuwRTJQKSZF/r58a4jrh8/gsH
+jTWKTOyhhDpBrcyRQqhKqf8adDSJC0zZQIxPEghNpSwTKDlvj+eIckZ7aXgfAJrX
+BeIOFCy1TnAzmXEhTZdi6bYGuZ2bT0Pb0swRPjSQQzs5U2f0dARPZFiBIYbs5U33
+8ltcH1Cn/kfAv+qah87sQufRUYMVhA==
+=1CFV
+-----END PGP SIGNATURE-----
+
+--g+TnyzgYxnjAXCAf--
 
