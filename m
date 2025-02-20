@@ -1,184 +1,78 @@
-Return-Path: <linux-kernel+bounces-524513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E37A2A3E3F8
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 19:34:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E8C2A3E3EF
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 19:33:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F1E6A7A12B3
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 18:33:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 552F7701B88
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 18:32:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3C6521506C;
-	Thu, 20 Feb 2025 18:33:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43AE9214804;
+	Thu, 20 Feb 2025 18:32:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="hYATQJd0"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 479292135B9;
-	Thu, 20 Feb 2025 18:33:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mE70Hejy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3AA41B4259;
+	Thu, 20 Feb 2025 18:32:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740076427; cv=none; b=sqkIbVwp5C1c1ymjo7yeTzMsAK3K6Rl+lvFV0Or58mD2QkFljmYITwjGXQ408V3tYXmcWVksX9QlPjFMr//9FmwVlWs0Ar+oXu0dzY72iF8OD7Je9K263dIJ3BR9UVZQr05JkAoYa3BvXEobZlz9/HQWRwqmLryDVgwJ4PikP4Y=
+	t=1740076368; cv=none; b=kcDy0wTbYdxNMnDGsK7anJF2GF9FEfOPx8rgGjQJ4alKd65d2/wySaARvaBYk9pQ4frN4JzuPmlopqFSbl2UayRQlWlUUBvGhAqnYuFqrRXuXEFh2Mz/nKqaTOVK9u79coyB/R4Qzxh11n9Jrg5c8z3LCHkRvnmqIIq8XSQPmLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740076427; c=relaxed/simple;
-	bh=tvVibzWFMT/Id704xOoV1gCY4q6/mA45h/Pg+6JUrQI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=mYyFi3bxv2SsCnuTfpxshFRzK6P6pvhTiWpdSOAdqhXitKW7DMEb/LVB6fbG74x43CnqFBiGxnuGMpD4UCUF1chFuxhuZbl9buLpfs3zOcAX9IlQpKZM2grdmH/XtQZ+ara+LgnIjOEYzSF+KGEpdRfvoKjutxCnraooyWc1zTc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=hYATQJd0; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net (linux.microsoft.com [13.77.154.182])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 232D22059197;
-	Thu, 20 Feb 2025 10:33:38 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 232D22059197
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1740076418;
-	bh=cM0W5qUd693Fr3OrdVtsWGhuROfGGe7HnF5gUiDq5aQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=hYATQJd042Mb9AA2hOEuQb9t0B829p6m3wx38QlmCxkMU+kJ0xwtX834q7kzRzZ8A
-	 uZVmHxLfDiD1AGB9IeRTLuD0LSb1nxl+76/RDFBUw6kVWQRhpINSjrtdamGqIcVYOZ
-	 T9zPcMzpFEiryHLygzSoAi1824np2JNH/a00mNLk=
-From: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-To: linux-hyperv@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-arch@vger.kernel.org,
-	iommu@lists.linux.dev,
-	mhklinux@outlook.com,
-	eahariha@linux.microsoft.com
-Cc: kys@microsoft.com,
-	haiyangz@microsoft.com,
-	wei.liu@kernel.org,
-	decui@microsoft.com,
-	catalin.marinas@arm.com,
-	will@kernel.org,
-	tglx@linutronix.de,
-	mingo@redhat.com,
-	bp@alien8.de,
-	dave.hansen@linux.intel.com,
-	x86@kernel.org,
-	hpa@zytor.com,
-	daniel.lezcano@linaro.org,
-	joro@8bytes.org,
-	robin.murphy@arm.com,
-	arnd@arndb.de,
-	jinankjain@linux.microsoft.com,
-	muminulrussell@gmail.com,
-	skinsburskii@linux.microsoft.com,
-	mukeshrathor@microsoft.com
-Subject: [PATCH v2 3/3] hyperv: Add CONFIG_MSHV_ROOT to gate root partition support
-Date: Thu, 20 Feb 2025 10:33:16 -0800
-Message-Id: <1740076396-15086-4-git-send-email-nunodasneves@linux.microsoft.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1740076396-15086-1-git-send-email-nunodasneves@linux.microsoft.com>
-References: <1740076396-15086-1-git-send-email-nunodasneves@linux.microsoft.com>
+	s=arc-20240116; t=1740076368; c=relaxed/simple;
+	bh=B4S/+9lzX6SHv9NS31A8A0/WdqnWoKEIeWmgKoBnjrg=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=Y0qK3Z2Fn0GlXeisMHMGQdtzgA9o81dZUqJv4WEA8aXmUgYvXhwvSKmXuchcFNGz1oDVFtruj19TSB8N54e+Ifo5Q+2KAIhzuJxDPPAIKFStbb7ZRa9K0FvYfN0E4miHWDKsRmlfvwmzXaabXY9zeW4ijfL3GelTDV6MC70lTKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mE70Hejy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C18EC4CED1;
+	Thu, 20 Feb 2025 18:32:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740076368;
+	bh=B4S/+9lzX6SHv9NS31A8A0/WdqnWoKEIeWmgKoBnjrg=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=mE70HejyHbrump5mRCSFHjFxrGKD3WR+4Ddt0ZdhGYBI7lvoSyueDqu1fcT0tW968
+	 mm4R4UfodeYetUABu3I5DIrlEY6ujtl1THtnWdNZnF0S1hdRPOppsp56X3sMyigc6R
+	 JBM9y7hnMO2syNMAXw+nDBKgd8AzSvJb+oC/BIA70LgOxwRdcHiXIVX+yYUjAu9aI/
+	 zCOEE/RHHDnroN74g+JS/wDjN7f5h3BFRoV7sZ5PULYjCEtI/AR++1eYfm5hLNl4n/
+	 vaTn6XXF/sd29unL7BeyN9x6e3/TpNoUu7zQX29jlPRD4EeEzwSuqkqGzrW26FFueB
+	 44C1US33eAnRQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 71098380CEE2;
+	Thu, 20 Feb 2025 18:33:20 +0000 (UTC)
+Subject: Re: [GIT PULL] Networking for v6.14-rc4
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20250220112033.26001-1-pabeni@redhat.com>
+References: <20250220112033.26001-1-pabeni@redhat.com>
+X-PR-Tracked-List-Id: <netdev.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20250220112033.26001-1-pabeni@redhat.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git net-6.14-rc4
+X-PR-Tracked-Commit-Id: dd3188ddc4c49cb234b82439693121d2c1c69c38
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 27eddbf3449026a73d6ed52d55b192bfcf526a03
+Message-Id: <174007639913.1419987.8628797914755252836.pr-tracker-bot@kernel.org>
+Date: Thu, 20 Feb 2025 18:33:19 +0000
+To: Paolo Abeni <pabeni@redhat.com>
+Cc: torvalds@linux-foundation.org, kuba@kernel.org, davem@davemloft.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-CONFIG_MSHV_ROOT allows kernels built to run as a normal Hyper-V guest
-to exclude the root partition code, which is expected to grow
-significantly over time.
+The pull request you sent on Thu, 20 Feb 2025 12:20:33 +0100:
 
-This option is a tristate so future driver code can be built as a
-(m)odule, allowing faster development iteration cycles.
+> git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git net-6.14-rc4
 
-If CONFIG_MSHV_ROOT is disabled, don't compile hv_proc.c, and stub
-hv_root_partition() to return false unconditionally. This allows the
-compiler to optimize away root partition code blocks since they will
-be disabled at compile time.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/27eddbf3449026a73d6ed52d55b192bfcf526a03
 
-Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
----
- drivers/hv/Kconfig             | 16 ++++++++++++++++
- drivers/hv/Makefile            |  3 ++-
- include/asm-generic/mshyperv.h | 24 ++++++++++++++++++++----
- 3 files changed, 38 insertions(+), 5 deletions(-)
+Thank you!
 
-diff --git a/drivers/hv/Kconfig b/drivers/hv/Kconfig
-index 862c47b191af..794e88e9dc6b 100644
---- a/drivers/hv/Kconfig
-+++ b/drivers/hv/Kconfig
-@@ -55,4 +55,20 @@ config HYPERV_BALLOON
- 	help
- 	  Select this option to enable Hyper-V Balloon driver.
- 
-+config MSHV_ROOT
-+	tristate "Microsoft Hyper-V root partition support"
-+	depends on HYPERV
-+	depends on !HYPERV_VTL_MODE
-+	# The hypervisor interface operates on 4k pages. Enforcing it here
-+	# simplifies many assumptions in the root partition code.
-+	# e.g. When withdrawing memory, the hypervisor gives back 4k pages in
-+	# no particular order, making it impossible to reassemble larger pages
-+	depends on PAGE_SIZE_4KB
-+	default n
-+	help
-+	  Select this option to enable support for booting and running as root
-+	  partition on Microsoft Hyper-V.
-+
-+	  If unsure, say N.
-+
- endmenu
-diff --git a/drivers/hv/Makefile b/drivers/hv/Makefile
-index 9afcabb3fbd2..2b8dc954b350 100644
---- a/drivers/hv/Makefile
-+++ b/drivers/hv/Makefile
-@@ -13,4 +13,5 @@ hv_vmbus-$(CONFIG_HYPERV_TESTING)	+= hv_debugfs.o
- hv_utils-y := hv_util.o hv_kvp.o hv_snapshot.o hv_utils_transport.o
- 
- # Code that must be built-in
--obj-$(subst m,y,$(CONFIG_HYPERV)) += hv_common.o hv_proc.o
-+obj-$(subst m,y,$(CONFIG_HYPERV)) += hv_common.o
-+obj-$(subst m,y,$(CONFIG_MSHV_ROOT)) += hv_proc.o
-diff --git a/include/asm-generic/mshyperv.h b/include/asm-generic/mshyperv.h
-index d2b1a8fc074c..b29357cff2f7 100644
---- a/include/asm-generic/mshyperv.h
-+++ b/include/asm-generic/mshyperv.h
-@@ -223,10 +223,6 @@ void *hv_alloc_hyperv_page(void);
- void *hv_alloc_hyperv_zeroed_page(void);
- void hv_free_hyperv_page(void *addr);
- 
--int hv_call_deposit_pages(int node, u64 partition_id, u32 num_pages);
--int hv_call_add_logical_proc(int node, u32 lp_index, u32 acpi_id);
--int hv_call_create_vp(int node, u64 partition_id, u32 vp_index, u32 flags);
--
- /**
-  * hv_cpu_number_to_vp_number() - Map CPU to VP.
-  * @cpu_number: CPU number in Linux terms
-@@ -327,9 +323,29 @@ static inline enum hv_isolation_type hv_get_isolation_type(void)
- }
- #endif /* CONFIG_HYPERV */
- 
-+#if IS_ENABLED(CONFIG_MSHV_ROOT)
- static inline bool hv_root_partition(void)
- {
- 	return hv_current_partition_type == HV_PARTITION_TYPE_ROOT;
- }
-+int hv_call_deposit_pages(int node, u64 partition_id, u32 num_pages);
-+int hv_call_add_logical_proc(int node, u32 lp_index, u32 acpi_id);
-+int hv_call_create_vp(int node, u64 partition_id, u32 vp_index, u32 flags);
-+
-+#else /* CONFIG_MSHV_ROOT */
-+static inline bool hv_root_partition(void) { return false; }
-+static inline int hv_call_deposit_pages(int node, u64 partition_id, u32 num_pages)
-+{
-+	return -EOPNOTSUPP;
-+}
-+static inline int hv_call_add_logical_proc(int node, u32 lp_index, u32 acpi_id)
-+{
-+	return -EOPNOTSUPP;
-+}
-+static inline int hv_call_create_vp(int node, u64 partition_id, u32 vp_index, u32 flags)
-+{
-+	return -EOPNOTSUPP;
-+}
-+#endif /* CONFIG_MSHV_ROOT */
- 
- #endif
 -- 
-2.34.1
-
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
