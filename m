@@ -1,177 +1,154 @@
-Return-Path: <linux-kernel+bounces-523431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DE67A3D6B4
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 11:31:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44D20A3D694
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 11:26:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1E321797F4
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 10:29:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE150189A9B8
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 10:26:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71F391F0E31;
-	Thu, 20 Feb 2025 10:27:33 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D9A51F151C;
-	Thu, 20 Feb 2025 10:27:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE0781F12E7;
+	Thu, 20 Feb 2025 10:26:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="b9l10Z+F"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FB331E5B6F
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 10:26:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740047253; cv=none; b=afXUTkUPKb1hdlx0ENut/3kXsHrqVUCaLzAJBdxnu1ujZ9cmB9xoNKb2mpsucsXL6EXUR7uNxxizeGm74Pui647I6gdux7lkKI9ba4OMaW/bhQBmWlvViq65Ap8GqaSUsBYn8VADjQ2Radkevf0PJTAZaeIOb4SGxmc2TlQXn/Q=
+	t=1740047185; cv=none; b=MLhPP+erkVwKasj9BCAIo2KTSIcvvPywn/49ZSLkoPkGfPWKwZ7FgJ0eb5JP9lWJoluE7ZWEt2yM/8+00j86Vyhkq3Lbj5DxZJc/IrGhUM7tSUcVJemffBbj8lCz2ocuEBIQDvemKCqQCqi5zKnf7bl+6Z5znjmLROocJq3OrJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740047253; c=relaxed/simple;
-	bh=bcwa917uSCDvAy+84TrBG0xWxaCDnkNMyh9OPj9kqng=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RYriYf6qUhKty6k3uW+ZpFOEj9UI7Mvy8UncFeLr6m7c86Q4DwsmwEdv/4rj5tygPo85sfmJrqSzJNWpp9I2mulaEqogVC3rO7jkZbEr8KhGkM9q839EYAw+m6+VriH8Dgwe/bxraL/ns2tIhjsXIxjyQ+XkjY+Er4OQ57ujd/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D0F741BB0;
-	Thu, 20 Feb 2025 02:27:48 -0800 (PST)
-Received: from minigeek.lan (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3F5183F59E;
-	Thu, 20 Feb 2025 02:27:29 -0800 (PST)
-Date: Thu, 20 Feb 2025 10:25:15 +0000
-From: Andre Przywara <andre.przywara@arm.com>
-To: Philippe Simons <simons.philippe@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec
- <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>,
- linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK),
- linux-arm-kernel@lists.infradead.org (moderated list:ARM/Allwinner sunXi
- SoC support), linux-sunxi@lists.linux.dev (open list:ARM/Allwinner sunXi
- SoC support), linux-kernel@vger.kernel.org (open list)
-Subject: Re: [PATCH v2] clk: sunxi-ng: h616: Reparent GPU clock during
- frequency changes
-Message-ID: <20250220102515.05991e9d@minigeek.lan>
-In-Reply-To: <20250212173640.396404-1-simons.philippe@gmail.com>
-References: <20250212173640.396404-1-simons.philippe@gmail.com>
-Organization: Arm Ltd.
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.31; x86_64-slackware-linux-gnu)
+	s=arc-20240116; t=1740047185; c=relaxed/simple;
+	bh=YyvVU2M7joMcm6kj5ecMLcRcuQdUfBOt7Mz2QmcKpMA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=RE8S3j++JU5uuGb7UxF6b2bot02++VFktr0ZDoxZhfLmRJI069gb5lNT85Vteltvxfh+FpqZR1ZJf3vVJQYACUBXvJxASF1qsc5jthz4sVOqq85iPQA7jxLjHzzOEMUQmidl4wHbmSosYNo/KQO5JHLYZqS5p1sOzDu6dcwfVv4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=b9l10Z+F; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-546210287c1so887678e87.2
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 02:26:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740047180; x=1740651980; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=O7kUm1v64pAlfTNgHXT9+jQTHsgrWw2Fb+swiiw/lqg=;
+        b=b9l10Z+FzTAAYlK15kbOfwBESMpkv+nNgfW9yJfAlu66ZyBnKNojNVrs6O40olSxWf
+         c2xS+J+yHH3JWLyWOQ9x8BBAWdLX/yjp8vA1Hf/Gmw9KKa23C+zpWaQ5VyicTQLklUik
+         EmORM9RjngWqNYafedwPayZF+PtRWyRsQZO+RSU52qfi+aBrN6wZMnxMZP/cRxAqUql5
+         yz89d/awrX27r9ZRAicswaRpEuysHaQUWxhU1NeTi24vD+pOzbGbKnxiCqvTnGgwpnCF
+         yqzEhXWCc9EnRbCbs/YsAFKOw93fkFAheXQgcdoLWc0GOAAyIsgEmRfp+XHte6/L/RhA
+         cpOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740047180; x=1740651980;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=O7kUm1v64pAlfTNgHXT9+jQTHsgrWw2Fb+swiiw/lqg=;
+        b=vKcaXtCbxFuMiHUd474+rM9bmfxagx2vqZ8kufz9SpoKze+pIpj4elp8J8+e+3zKbH
+         6nRR94PkqC9O0ZewWYgKiBTZzU99TxWK0+Xhm8flZyMBWRc2TPci1dEBtoL6lLcdYFMo
+         WH2/qfTxF7UDu2zzDwp2//QUph8ZNO05zRmqjZ9ht5bXogRF2DQtLc14AjB+MIyW9J6S
+         OhjMZMJX1UbWdrsuc4fz8SB6aTaXStlu4PHKTha/jjuI6ziY/LERWESzTFt10RLHouUt
+         wh21kPDHFSfjulGG+uvYlnEj4PwTFXs700ZjlBMSjeWvLCgDe4EWvlWSAFJ5/fw7F+Dh
+         KY4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUSBMyIhNh/O0F59JROXAY1xFkWo03xpBGo16qLNCB6heTQLNZFMxExaEo1OJ6CsFDNuYDa8ig2W7MifPU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzuZEvDv8xtZ6J2FXdvAJ+1q6zvVQFHkJ5hN/GF5Oc51FmaVrAd
+	9Nen3QWSA13/HkOz1msTOD/sUvmZF0LjHOe0aAWFnXqYOgRPImn5XAPm4RpupShLhZo5OQfplV9
+	t
+X-Gm-Gg: ASbGncujHD09UQluHXlZssxS7fbQPrB1nbg+A4fFdGn5u0GoUDrE6AKb6sQ7QZGoihW
+	h2HoxRM6RvqDWuO/IkRPGKrJMcuhaQ6PAMdHqUbAOX/cRQh2643tSfrbPLfG8hV4W3iHk6GUpje
+	aHLbZnY7gcvreglgbuROExFKj0CRmb5Vzhu5MWa8n6aHNRCUW5TqaMc3Z4OuKgrEelANOIZlUIx
+	B8FpQq/Jx8UCWnsReiT3QLQnE8lAQnDul4omtkuTxA/i1UEo/3yreAgs6iRf63H20Oxvshm2d+o
+	eGXPCXsr4XEGbh9bnJwYnp8=
+X-Google-Smtp-Source: AGHT+IGlXUzn3hUtO3qI4uZIYQwTOom4ZNCtperoIH7T9iwqU09YHCrm1fmNkZnNsMT0VEKdIAouHg==
+X-Received: by 2002:a05:6512:3d28:b0:545:f90:2753 with SMTP id 2adb3069b0e04-5452fe65418mr6812551e87.30.1740047180139;
+        Thu, 20 Feb 2025 02:26:20 -0800 (PST)
+Received: from umbar.lan ([192.130.178.90])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-545e939224esm1588052e87.135.2025.02.20.02.26.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Feb 2025 02:26:19 -0800 (PST)
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Subject: [PATCH 0/7] drm/msm/dpu: improve CTL handling on DPU >= 5.0
+ platforms
+Date: Thu, 20 Feb 2025 12:26:17 +0200
+Message-Id: <20250220-dpu-active-ctl-v1-0-71ca67a564f8@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEkDt2cC/x3MMQqAMAxA0atIZgOxKFSvIg41jRoQlVZFkN7d4
+ viG/1+IElQidMULQW6Num8ZVVkAL26bBdVngyHTkKEW/XGh41NvQT5XJMvsam9Hsg5ydASZ9Pm
+ H/ZDSB7a1VLJgAAAA
+X-Change-ID: 20250209-dpu-active-ctl-08cca4d8b08a
+To: Rob Clark <robdclark@gmail.com>, 
+ Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2280;
+ i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
+ bh=YyvVU2M7joMcm6kj5ecMLcRcuQdUfBOt7Mz2QmcKpMA=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBntwNKz077CpwnHsET093pRfGyj2RJD7zbmGJM9
+ MlqG+6ye5SJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZ7cDSgAKCRCLPIo+Aiko
+ 1XSmCACCpPXkFLHWeGP3ru9CD7CIQa+/GkF+9BR52tm4Fr7Um5rFL3qRex3TPMfI8cBBY/PO+oH
+ lk+HugPCgmD8QAwrqrQJjbyyLtTNhd46sBP50hhpLzQapJHQiUanAb8o6S7yqNXeuP/qSCvoku6
+ atL/fSRrZZ5vpPqZ4s3saodLzO12QfdpBIgOJnNHM1yR22wCA9yZR6K3dqnOfG5hfFsXdCP0P+O
+ 6DCM2YASFcARwe8IDUzeyKAHoKow9QSs71o7sayKDSshDtqUmxfDIxHRnbynaXsniBYLChvZ1+x
+ j1sdyqSsZpkGCqjmtMBbWcV6JiXesfFmNnLe5q2U+wcg+898
+X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
+ fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-On Wed, 12 Feb 2025 18:36:39 +0100
-Philippe Simons <simons.philippe@gmail.com> wrote:
+Since version 5.0 the DPU got an improved way of handling multi-output
+configurations. It is now possible to program all pending changes
+through a single CTL and flush everything at the same time.
 
-Hi,
+Implement corresponding changes in the DPU driver.
 
-> The H616 manual does not state that the GPU PLL supports
-> dynamic frequency configuration, so we must take extra care when changing
-> the frequency. Currently any attempt to do device DVFS on the GPU lead
-> to panfrost various ooops, and GPU hangs.
-> 
-> The manual describes the algorithm for changing the PLL
-> frequency, which the CPU PLL notifier code already support, so we reuse
-> that to reparent the GPU clock to GPU1 clock during frequency
-> changes.
-> 
-> Signed-off-by: Philippe Simons <simons.philippe@gmail.com>
-> ---
->  drivers/clk/sunxi-ng/ccu-sun50i-h616.c | 38 ++++++++++++++++++++++++--
->  1 file changed, 36 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h616.c b/drivers/clk/sunxi-ng/ccu-sun50i-h616.c
-> index 190816c35..884f9a6b5 100644
-> --- a/drivers/clk/sunxi-ng/ccu-sun50i-h616.c
-> +++ b/drivers/clk/sunxi-ng/ccu-sun50i-h616.c
-> @@ -328,10 +328,16 @@ static SUNXI_CCU_M_WITH_MUX_GATE(gpu0_clk, "gpu0", gpu0_parents, 0x670,
->  				       24, 1,	/* mux */
->  				       BIT(31),	/* gate */
->  				       CLK_SET_RATE_PARENT);
-> -static SUNXI_CCU_M_WITH_GATE(gpu1_clk, "gpu1", "pll-periph0-2x", 0x674,
-> +
-> +/*
-> + * This clk is needed as a temporary fall back during GPU PLL freq changes.
-> + * Set CLK_IS_CRITICAL flag to prevent from being disabled.
-> + */
-> + #define SUN50I_H616_GPU_CLK1_REG        0x674
-> + static SUNXI_CCU_M_WITH_GATE(gpu1_clk, "gpu1", "pll-periph0-2x", 0x674,
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+---
+Dmitry Baryshkov (7):
+      drm/msm/dpu: don't overwrite CTL_MERGE_3D_ACTIVE register
+      drm/msm/dpu: program master INTF value
+      drm/msm/dpu: pass master interface to CTL configuration
+      drm/msm/dpu: use single CTL if it is the only CTL returned by RM
+      drm/msm/dpu: don't select single flush for active CTL blocks
+      drm/msm/dpu: allocate single CTL for DPU >= 5.0
+      drm/msm/dpu: remove DPU_CTL_SPLIT_DISPLAY from CTL blocks on DPU >= 5.0
 
-There seems to be a stray space there at the beginning of those two
-lines.
+ drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_10_0_sm8650.h |  5 ++---
+ drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_0_sm8150.h  |  5 ++---
+ drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_1_sc8180x.h |  4 ++--
+ drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_2_sm7150.h  |  4 ++--
+ drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_6_0_sm8250.h  |  5 ++---
+ drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_7_0_sm8350.h  |  5 ++---
+ .../gpu/drm/msm/disp/dpu1/catalog/dpu_8_0_sc8280xp.h    |  5 ++---
+ drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_8_1_sm8450.h  |  5 ++---
+ drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_8_4_sa8775p.h |  5 ++---
+ drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_9_0_sm8550.h  |  5 ++---
+ .../gpu/drm/msm/disp/dpu1/catalog/dpu_9_2_x1e80100.h    |  5 ++---
+ drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c             |  6 +++++-
+ drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_cmd.c    |  2 ++
+ drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c    |  5 ++++-
+ drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.c              | 11 +++++++++--
+ drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.h              |  2 ++
+ drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c                  | 17 +++++++++++++----
+ drivers/gpu/drm/msm/disp/dpu1/dpu_rm.h                  |  2 ++
+ 18 files changed, 59 insertions(+), 39 deletions(-)
+---
+base-commit: ed58d103e6da15a442ff87567898768dc3a66987
+change-id: 20250209-dpu-active-ctl-08cca4d8b08a
 
->  					0, 2,	/* M */
->  					BIT(31),/* gate */
-> -					0);
-> +					CLK_IS_CRITICAL);
->  
->  static SUNXI_CCU_GATE(bus_gpu_clk, "bus-gpu", "psi-ahb1-ahb2",
->  		      0x67c, BIT(0), 0);
-> @@ -1120,6 +1126,19 @@ static struct ccu_pll_nb sun50i_h616_pll_cpu_nb = {
->  	.lock		= BIT(28),
->  };
->  
-> +static struct ccu_mux_nb sun50i_h616_gpu_nb = {
-> +	.common			= &gpu0_clk.common,
-> +	.cm				= &gpu0_clk.mux,
-> +	.delay_us		= 1, /* manual doesn't really say */
-
-Indentation is off here. Please align to the last line here below.
-
-> +	.bypass_index	= 1, /* GPU_CLK1@400MHz */
-> +};
-> +
-> +static struct ccu_pll_nb sun50i_h616_pll_gpu_nb = {
-> +	.common		= &pll_gpu_clk.common,
-> +	.enable		= BIT(29),	/* LOCK_ENABLE */
-> +	.lock		= BIT(28),
-> +};
-> +
->  static int sun50i_h616_ccu_probe(struct platform_device *pdev)
->  {
->  	void __iomem *reg;
-> @@ -1170,6 +1189,14 @@ static int sun50i_h616_ccu_probe(struct platform_device *pdev)
->  	val |= BIT(0);
->  	writel(val, reg + SUN50I_H616_PLL_AUDIO_REG);
->  
-> +	/*
-> +	 * Set the input-divider for the gpu1 clock to 3.
-
-Can you extend the comment, like:
- ... clock to 3, to reach a safe 400 MHz.
-
-> +	 */
-> +	val = readl(reg + SUN50I_H616_GPU_CLK1_REG);
-> +	val &= ~GENMASK(1, 0);
-> +	val |= BIT(1);
-
-Can you replace the BIT(1) with a "2" here? At the moment it looks like
-it's a single flag to be set, whereas we really just want to write the
-value 2 (3 - 1) into that field.
-
-The rest looks alright, so with those smaller things fixed:
-
-Reviewed-by: Andre Przywara <andre.przywara@arm.com>
-
-Cheers,
-Andre
-
-> +	writel(val, reg + SUN50I_H616_GPU_CLK1_REG);
-> +
->  	/*
->  	 * First clock parent (osc32K) is unusable for CEC. But since there
->  	 * is no good way to force parent switch (both run with same frequency),
-> @@ -1190,6 +1217,13 @@ static int sun50i_h616_ccu_probe(struct platform_device *pdev)
->  	/* Re-lock the CPU PLL after any rate changes */
->  	ccu_pll_notifier_register(&sun50i_h616_pll_cpu_nb);
->  
-> +	/* Reparent GPU during GPU PLL rate changes */
-> +	ccu_mux_notifier_register(pll_gpu_clk.common.hw.clk,
-> +				  &sun50i_h616_gpu_nb);
-> +
-> +	/* Re-lock the GPU PLL after any rate changes */
-> +	ccu_pll_notifier_register(&sun50i_h616_pll_gpu_nb);
-> +
->  	return 0;
->  }
->  
+Best regards,
+-- 
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
 
