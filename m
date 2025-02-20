@@ -1,116 +1,82 @@
-Return-Path: <linux-kernel+bounces-523996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 575D3A3DDE4
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:11:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A039EA3DDC4
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:07:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DA26B7A4AAA
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:04:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B45C17E075
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:04:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 920A31FE453;
-	Thu, 20 Feb 2025 15:03:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 370481D6188;
+	Thu, 20 Feb 2025 15:03:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KovFf0YR"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kulN/gCs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A07120C034
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 15:03:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FCBF1CA84;
+	Thu, 20 Feb 2025 15:03:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740063834; cv=none; b=jgWNZ78CYDTdhakAQX3shMTkW7P18vGd9WfXXmR3w2z/D3ps/m+cNXBq7f8QZUFpu0COBhqcNO0ndtK1fMCPDz6epRx6Y1qt2MLvTcKGWxC2F4NVRqcPeWoNd1P9EZ3Iev8x94hq5RITWk5nkoKwSkbFYzVtWkHTZwsZmWV1x7A=
+	t=1740063810; cv=none; b=biMGRqsRQPCMTGD/4cwFZZrAqAVUi5gQZkVkELJfcRPx/B9R+xTu6m0fpIovB7mSE4alrrGyZGFlw/2G6BV2bekY+ABTK0UbeXv2bP9S3/ja+E5cRCWZDArGdNlpnSa2Q0/NyTh7rLV7XskwXSxjIwMViDbmky+3ZPPRA02ziu4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740063834; c=relaxed/simple;
-	bh=W4mj1z3uEq947HIkExuSIBSOsvPwRxwjgNUnGwTjvA4=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=OY9L7Y3WEh+5cue//ok3JFQkKw62CcZeszU/7v8V2/0h2bo7q384NFDisRiuPa7K2YjB3u0Ma+NAYIpot0/2BVL02SRndef6+zikhEOHly6G8D/udSwLQbHY1vsl41nfmIl2DRcSr/m29w+vIYrjROix0OvhgLouMWt9+kuQYgk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KovFf0YR; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-4399c32efb4so8962485e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 07:03:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740063831; x=1740668631; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=xbBII2vXo7U0fvcYEVnofRQGig0kHut1fyAo0nfwDbE=;
-        b=KovFf0YRRr+aSy7IFePApN2u1PY8usv/WOA7D13UUU4bpr3YH34guHZzP27VltJJ7f
-         yfsxCyu5KZfu2gSWsTqyFkOAjrQjngVmkr64SwfWUze/Z02eabKZovhgD/5+9KKe1xeM
-         y4tmGAJQ9T02CWWw1LerY4Lp8Gr7MksvV/fBT6IN0Zw2rAsKlyXkaAkOQeE3pWL7nHRy
-         qMCBRDaEARV/wq96m8yKcTcI/XW3UotTA0ioSqFS1yE88wH0szgukNiE2IqFEwEXD8ni
-         WGW2Bjqdm7I01kMFFzBiIXRs+LmJY0xgrNiDahSSA83yQgybN8wwJ+qaw/EpgnC/ZoEn
-         pNMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740063831; x=1740668631;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xbBII2vXo7U0fvcYEVnofRQGig0kHut1fyAo0nfwDbE=;
-        b=ErAiU0okSpfmRX4T6FbJ1iQgkd/w2mQckYurDePhKc8ffmVzlNZJCzoOdRf380lmzK
-         huq+ly/ek419K2K+KVu1LWWvOy5ZDJhoyTmDsqmar2cL23HXZinbWunUnKdAQFRHa+Yi
-         szaVS4yYWEmaP4cVb5va0nveAlKZ9/+75EGxBBNzXLjlhOoXIjHEB3UojGQUchRdfyhp
-         SROk3RNd/476sc3WYcE0+saqyvn9ZLuWgiSJr5m4ETGiMHm6f7fQ9h6CMRtdIb1DBIlv
-         VkSkzdO76NaxW1y4aKkfJe9mQsZnyGVdoMSw9HuoIcsnZIqdRucDZncldMhC9APg29gR
-         dJkA==
-X-Forwarded-Encrypted: i=1; AJvYcCX0PwBe+/EGW98/WGYhYNguofgGhsrigKj2vv36HAHoGWv5mrwNLaXlJlNc5WUp6gvALeH7kl/qDclpo74=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEeJedfreHylubRUZnwM8Tblcfl6OT07aF/FJi+5FC71Ie9SIp
-	k8EGcHptSxNye+p2TaRDDHp1BPttp7HTetjPl1Lwxt/6VRVEGPcEYVZCN1tR4oYcu3oikSn5H0b
-	M81QlLJl07A==
-X-Google-Smtp-Source: AGHT+IE7Haql4kRMGhVIrFouZcnUmxPrPTorpBWL1U181AADTVynYOoCOjR/I6BHdrXJEH2hvn+bGdgYYdY0eQ==
-X-Received: from wmbay10.prod.google.com ([2002:a05:600c:1e0a:b0:439:8715:690e])
- (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6000:1f8f:b0:38d:b8fd:591f with SMTP id ffacd0b85a97d-38f614991e7mr3002810f8f.5.1740063830609;
- Thu, 20 Feb 2025 07:03:50 -0800 (PST)
-Date: Thu, 20 Feb 2025 15:03:18 +0000
-In-Reply-To: <20250220-mm-selftests-v1-0-9bbf57d64463@google.com>
+	s=arc-20240116; t=1740063810; c=relaxed/simple;
+	bh=MXppZVgS57LyPkie3W4jmuwlmfX7xCTlj0CpJckGO9U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NWk89Eylb8CGOvkGY3AV29iMINIzshXJKqmNMY2huIV7rxE8pRfKCyWq/jyO9LiXlhCKUGdF48ZQ8HL3tRsKUjmK15Ti7VEB8zIbDTm9QptsjWNU2s4pTesQzKZZ5SX+d1BUHYDvblepNTA7iswtDi1ihQkjbc0/CUzFc1eceSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kulN/gCs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB7CCC4CED1;
+	Thu, 20 Feb 2025 15:03:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740063809;
+	bh=MXppZVgS57LyPkie3W4jmuwlmfX7xCTlj0CpJckGO9U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kulN/gCsg5OYZAoHwdr4ADAXXkNUB1BDL5AS1Bj9+DWmSfE79BbOpRseTIMOaFg4B
+	 AZ8y6X2HXYXwxS4qhP9UbzZnyvCr+7aYbofQvck4Dd225ffRyJT2d6C0Ec8kzsL7hg
+	 sL2Uu7dnX2gUwZrMAWCRtdswpBoCJQUsrPqo5UAFQpE+4+1hlRly+5hPGogbr969Nk
+	 dZUyiAbg6OXsvNsUic2bQY7nv/etYOx9Lf8DriprSvDjE8vpfpsHjFhhqLYs4hNitS
+	 OnHL1T7SnyCQjRVymrZ8dZSP/Gzmhnlq965RstJ5i3CBpiQydkARb+XhW+PfDgFA9S
+	 Z/BDfpxhHKDCg==
+Date: Thu, 20 Feb 2025 15:03:25 +0000
+From: Lee Jones <lee@kernel.org>
+To: Manuel Fombuena <fombuena@outlook.com>
+Cc: pavel@ucw.cz, corbet@lwn.net, linux-leds@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RESEND 0/5] LED1202 / leds-st1202 fixes and improvements
+Message-ID: <20250220150325.GE778229@google.com>
+References: <CWLP123MB5473933B9B97137828ACC6A6C5EB2@CWLP123MB5473.GBRP123.PROD.OUTLOOK.COM>
+ <20250213104119.GD2756671@google.com>
+ <CWLP123MB5473AD120D1AA064D44B10C7C5FF2@CWLP123MB5473.GBRP123.PROD.OUTLOOK.COM>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250220-mm-selftests-v1-0-9bbf57d64463@google.com>
-X-Mailer: b4 0.15-dev
-Message-ID: <20250220-mm-selftests-v1-6-9bbf57d64463@google.com>
-Subject: [PATCH 6/6] selftests/mm: Don't fail uffd-stress if too many CPUs
-From: Brendan Jackman <jackmanb@google.com>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Shuah Khan <shuah@kernel.org>
-Cc: Mateusz Guzik <mjguzik@gmail.com>, linux-mm@kvack.org, linux-kselftest@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Brendan Jackman <jackmanb@google.com>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CWLP123MB5473AD120D1AA064D44B10C7C5FF2@CWLP123MB5473.GBRP123.PROD.OUTLOOK.COM>
 
-This calculation divides a fixed parameter by an environment-dependent
-parameter i.e. the number of CPUs.
+On Thu, 13 Feb 2025, Manuel Fombuena wrote:
 
-The simple way to avoid machine-specific failures here is to just put a
-cap on the max value of the latter.
+> On Thu, 13 Feb 2025, Lee Jones wrote:
+> 
+> > Stripping the separators from patch file names and pasting them
+> > culminates in a terrible summary.  In no way does this cover-letter
+> > describe what you're trying to achieve, why you're trying to achieve it
+> > and the consequences for not applying the set.  Nor does it communicate
+> > any merge intentions (which is required due to the assumptions made, as
+> > described in our previous conversation).
+> 
+> Do the messages in the diff section of the patches need similar 
+> improvements?
 
-Suggested-by: Mateusz Guzik <mjguzik@gmail.com>
-Signed-off-by: Brendan Jackman <jackmanb@google.com>
----
- tools/testing/selftests/mm/uffd-stress.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/tools/testing/selftests/mm/uffd-stress.c b/tools/testing/selftests/mm/uffd-stress.c
-index 1facfb79e09aa4113e344d7d90dec06a37264058..f306accbef255c79bc3eeba8b9e42161a88fc10e 100644
---- a/tools/testing/selftests/mm/uffd-stress.c
-+++ b/tools/testing/selftests/mm/uffd-stress.c
-@@ -453,6 +453,10 @@ int main(int argc, char **argv)
- 	}
- 
- 	nr_cpus = sysconf(_SC_NPROCESSORS_ONLN);
-+	if (nr_cpus > 32) {
-+		/* Don't let calculation below go to zero. */
-+		nr_cpus = 32;
-+	}
- 
- 	nr_pages_per_cpu = bytes / page_size / nr_cpus;
- 	if (!nr_pages_per_cpu) {
+You can use the patch-level diff sections to add per-patch changelogs.
 
 -- 
-2.48.1.601.g30ceb7b040-goog
-
+Lee Jones [李琼斯]
 
