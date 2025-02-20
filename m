@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-523162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 974B7A3D2F0
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 09:17:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA4C7A3D2F5
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 09:19:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 791C917A6E6
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 08:17:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD92C189BADD
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 08:19:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C98B1E8345;
-	Thu, 20 Feb 2025 08:17:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BA071E9B06;
+	Thu, 20 Feb 2025 08:19:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s8OITsWW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zsvlm7MF"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F0991BE86E
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 08:17:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C87491B87D1;
+	Thu, 20 Feb 2025 08:19:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740039472; cv=none; b=Ps51oQuVs8CcQ9ovJZdDs+TgG87U23HLhnyWW+lV1chsB9mCr7nSVgnQdX85bJPUdkip9i8cAHbz3m0XKNvIiQygIdShgdaYvmKUQPnCcRUkiFqm7C5k5G2hVdhGIKgkHEROPIDYhh5xhn9om8jE+kjjRwF7IzkOXO7WJ0etWlM=
+	t=1740039552; cv=none; b=VjVw4uRl219nBJUccO5pMc9YjWnTKZ8vgNH8dnwd7k0U9vwlcvQarPnufXwAUiYgCTsLNUTOrh6B5lNeaaIEH1mLgd8r9O3MQ5I2XU/pEQl0ji/Xb0fyKyiuX37atWYCPhmU1by0Z2wbGxvbEYRAiypQkWtswHueSTlYHKSOaPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740039472; c=relaxed/simple;
-	bh=s3gp0OrOSRtITmi/d/biKALWbzwkoZUuTw6CEsa9YtU=;
+	s=arc-20240116; t=1740039552; c=relaxed/simple;
+	bh=uu1ztxaLB5AdQ0G/FdbvOt1aH/qG3aQ6S8et3xLgKf8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CECd53winiehDqg+8zCjBQntoEfqNJPA6ovKGSZFaCZ1+eycmU5ZdHu3pOvXP1AhD/q/NXK5AqBaKOkv9Gbe1kyv+3bUp5CD+1tX/SY7RmzPamAYBdH5HkaHHmf+LbDVuhvVbm8CXpNzcHpN91cxRN2lk1bfA1tyjvXfUsz2c7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s8OITsWW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67B70C4CED1;
-	Thu, 20 Feb 2025 08:17:51 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=Wbd91ac4mZ9Hpl9k/v18LJyamXmDI73pX70MjiErwj6QPWOau7c13PlkiF17khu8rgxtW2252dYQvsuPvVVQ9LWuu+IgxJ4dYgZF73O5RC8dLTH2KJR7jBZqaB29PHdimlJs/e2/N7DgE7RK+jFEU4lYRr9OnyeJG6UxaNJStIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zsvlm7MF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C1CAC4CED1;
+	Thu, 20 Feb 2025 08:19:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740039472;
-	bh=s3gp0OrOSRtITmi/d/biKALWbzwkoZUuTw6CEsa9YtU=;
+	s=k20201202; t=1740039552;
+	bh=uu1ztxaLB5AdQ0G/FdbvOt1aH/qG3aQ6S8et3xLgKf8=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=s8OITsWWisG4iDWOojmcv5DdU3GPJi1JohRNV1A/QUL+2AJIOxr8txqRPTTAePe+u
-	 Kk28h6sHfdt3bki82DnTUYo+VRXFSchEzHCRiqwsuDvyBWwTwI735MVPUX+3F0pVOB
-	 u2JEx0gAQAPwUuf/uPvtmUzMrvqrETy7aGcedwfuneFk5M+IQSLnbBLfDb3iD/Xkmz
-	 mPenrR9hlL0sGLE3RaHjhkoDXkYjOC+kvK58mBuTDdtHz7VTJCSiDEPiN6Xzh9PB6l
-	 kmBzr7fxyj2CcBZm3+F1jsbAgLRFv6SsUk/J/4dOoDnXZDK+C+Dzs/CLc9k2wauq0n
-	 S8Xi/Z7ohT5kQ==
-Message-ID: <14544066-73b8-42a0-a29a-2d21ef0aa459@kernel.org>
-Date: Thu, 20 Feb 2025 09:17:49 +0100
+	b=Zsvlm7MFNh3d5QF7UF7P/Q+dhSneK+HR5bKqtPMgNO4d5UY8VHLUCMoDP9KQ+FVTl
+	 3TlCBsukROD+zxR1Rv94yq3tQ0wgFkzu1miSWvrvVit5Wb4PD6N+fbsAD3pt4ygEAu
+	 mwf1BTuPutDryzM9FOQN8cPq9/IvVM06NfE4lIoz18dPiEZLo5oOtBupcKM21fh2O5
+	 9mvbEA+FTtgaaDk78jJjg0IGFHqwYi4dxGjtV7VlLX7kTCopNsRBJCzSUjIPP3aCot
+	 kMn/XuWXv1FoDFLhGHGiJ3e5zm0fcRPqleNg9eLbDRj6zDu1eiAXls76qfR6MQXACv
+	 kFxJapt/oiQRw==
+Message-ID: <749d3e3c-8589-4fd8-a472-cf6b225193c8@kernel.org>
+Date: Thu, 20 Feb 2025 09:19:07 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,124 +49,112 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 09/18] irqdomain: Rename _add functions to _add_*_of_node
-To: tglx <tglx@linutronix.de>
-Cc: maz@kernel.org, linux-kernel@vger.kernel.org
-References: <20250115085409.1629787-1-jirislaby@kernel.org>
- <20250115085409.1629787-10-jirislaby@kernel.org> <87wme3m4a9.ffs@tglx>
+Subject: Re: [PATCH RESEND v2 1/4] dt-bindings: i3c: silvaco: Add npcm845
+ compatible string
+To: Stanley Chu <stanley.chuys@gmail.com>, frank.li@nxp.com,
+ miquel.raynal@bootlin.com, alexandre.belloni@bootlin.com,
+ linux-i3c@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ tomer.maimon@nuvoton.com, kwliu@nuvoton.com, yschu@nuvoton.com
+References: <20250220061107.1718239-1-yschu@nuvoton.com>
+ <20250220061107.1718239-2-yschu@nuvoton.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Jiri Slaby <jirislaby@kernel.org>
-Autocrypt: addr=jirislaby@kernel.org; keydata=
- xsFNBE6S54YBEACzzjLwDUbU5elY4GTg/NdotjA0jyyJtYI86wdKraekbNE0bC4zV+ryvH4j
- rrcDwGs6tFVrAHvdHeIdI07s1iIx5R/ndcHwt4fvI8CL5PzPmn5J+h0WERR5rFprRh6axhOk
- rSD5CwQl19fm4AJCS6A9GJtOoiLpWn2/IbogPc71jQVrupZYYx51rAaHZ0D2KYK/uhfc6neJ
- i0WqPlbtIlIrpvWxckucNu6ZwXjFY0f3qIRg3Vqh5QxPkojGsq9tXVFVLEkSVz6FoqCHrUTx
- wr+aw6qqQVgvT/McQtsI0S66uIkQjzPUrgAEtWUv76rM4ekqL9stHyvTGw0Fjsualwb0Gwdx
- ReTZzMgheAyoy/umIOKrSEpWouVoBt5FFSZUyjuDdlPPYyPav+hpI6ggmCTld3u2hyiHji2H
- cDpcLM2LMhlHBipu80s9anNeZhCANDhbC5E+NZmuwgzHBcan8WC7xsPXPaiZSIm7TKaVoOcL
- 9tE5aN3jQmIlrT7ZUX52Ff/hSdx/JKDP3YMNtt4B0cH6ejIjtqTd+Ge8sSttsnNM0CQUkXps
- w98jwz+Lxw/bKMr3NSnnFpUZaxwji3BC9vYyxKMAwNelBCHEgS/OAa3EJoTfuYOK6wT6nadm
- YqYjwYbZE5V/SwzMbpWu7Jwlvuwyfo5mh7w5iMfnZE+vHFwp/wARAQABzSFKaXJpIFNsYWJ5
- IDxqaXJpc2xhYnlAa2VybmVsLm9yZz7CwXcEEwEIACEFAlW3RUwCGwMFCwkIBwIGFQgJCgsC
- BBYCAwECHgECF4AACgkQvSWxBAa0cEnVTg//TQpdIAr8Tn0VAeUjdVIH9XCFw+cPSU+zMSCH
- eCZoA/N6gitEcnvHoFVVM7b3hK2HgoFUNbmYC0RdcSc80pOF5gCnACSP9XWHGWzeKCARRcQR
- 4s5YD8I4VV5hqXcKo2DFAtIOVbHDW+0okOzcecdasCakUTr7s2fXz97uuoc2gIBB7bmHUGAH
- XQXHvdnCLjDjR+eJN+zrtbqZKYSfj89s/ZHn5Slug6w8qOPT1sVNGG+eWPlc5s7XYhT9z66E
- l5C0rG35JE4PhC+tl7BaE5IwjJlBMHf/cMJxNHAYoQ1hWQCKOfMDQ6bsEr++kGUCbHkrEFwD
- UVA72iLnnnlZCMevwE4hc0zVhseWhPc/KMYObU1sDGqaCesRLkE3tiE7X2cikmj/qH0CoMWe
- gjnwnQ2qVJcaPSzJ4QITvchEQ+tbuVAyvn9H+9MkdT7b7b2OaqYsUP8rn/2k1Td5zknUz7iF
- oJ0Z9wPTl6tDfF8phaMIPISYrhceVOIoL+rWfaikhBulZTIT5ihieY9nQOw6vhOfWkYvv0Dl
- o4GRnb2ybPQpfEs7WtetOsUgiUbfljTgILFw3CsPW8JESOGQc0Pv8ieznIighqPPFz9g+zSu
- Ss/rpcsqag5n9rQp/H3WW5zKUpeYcKGaPDp/vSUovMcjp8USIhzBBrmI7UWAtuedG9prjqfO
- wU0ETpLnhgEQAM+cDWLL+Wvc9cLhA2OXZ/gMmu7NbYKjfth1UyOuBd5emIO+d4RfFM02XFTI
- t4MxwhAryhsKQQcA4iQNldkbyeviYrPKWjLTjRXT5cD2lpWzr+Jx7mX7InV5JOz1Qq+P+nJW
- YIBjUKhI03ux89p58CYil24Zpyn2F5cX7U+inY8lJIBwLPBnc9Z0An/DVnUOD+0wIcYVnZAK
- DiIXODkGqTg3fhZwbbi+KAhtHPFM2fGw2VTUf62IHzV+eBSnamzPOBc1XsJYKRo3FHNeLuS8
- f4wUe7bWb9O66PPFK/RkeqNX6akkFBf9VfrZ1rTEKAyJ2uqf1EI1olYnENk4+00IBa+BavGQ
- 8UW9dGW3nbPrfuOV5UUvbnsSQwj67pSdrBQqilr5N/5H9z7VCDQ0dhuJNtvDSlTf2iUFBqgk
- 3smln31PUYiVPrMP0V4ja0i9qtO/TB01rTfTyXTRtqz53qO5dGsYiliJO5aUmh8swVpotgK4
- /57h3zGsaXO9PGgnnAdqeKVITaFTLY1ISg+Ptb4KoliiOjrBMmQUSJVtkUXMrCMCeuPDGHo7
- 39Xc75lcHlGuM3yEB//htKjyprbLeLf1y4xPyTeeF5zg/0ztRZNKZicgEmxyUNBHHnBKHQxz
- 1j+mzH0HjZZtXjGu2KLJ18G07q0fpz2ZPk2D53Ww39VNI/J9ABEBAAHCwV8EGAECAAkFAk6S
- 54YCGwwACgkQvSWxBAa0cEk3tRAAgO+DFpbyIa4RlnfpcW17AfnpZi9VR5+zr496n2jH/1ld
- wRO/S+QNSA8qdABqMb9WI4BNaoANgcg0AS429Mq0taaWKkAjkkGAT7mD1Q5PiLr06Y/+Kzdr
- 90eUVneqM2TUQQbK+Kh7JwmGVrRGNqQrDk+gRNvKnGwFNeTkTKtJ0P8jYd7P1gZb9Fwj9YLx
- jhn/sVIhNmEBLBoI7PL+9fbILqJPHgAwW35rpnq4f/EYTykbk1sa13Tav6btJ+4QOgbcezWI
- wZ5w/JVfEJW9JXp3BFAVzRQ5nVrrLDAJZ8Y5ioWcm99JtSIIxXxt9FJaGc1Bgsi5K/+dyTKL
- wLMJgiBzbVx8G+fCJJ9YtlNOPWhbKPlrQ8+AY52Aagi9WNhe6XfJdh5g6ptiOILm330mkR4g
- W6nEgZVyIyTq3ekOuruftWL99qpP5zi+eNrMmLRQx9iecDNgFr342R9bTDlb1TLuRb+/tJ98
- f/bIWIr0cqQmqQ33FgRhrG1+Xml6UXyJ2jExmlO8JljuOGeXYh6ZkIEyzqzffzBLXZCujlYQ
- DFXpyMNVJ2ZwPmX2mWEoYuaBU0JN7wM+/zWgOf2zRwhEuD3A2cO2PxoiIfyUEfB9SSmffaK/
- S4xXoB6wvGENZ85Hg37C7WDNdaAt6Xh2uQIly5grkgvWppkNy4ZHxE+jeNsU7tg=
-In-Reply-To: <87wme3m4a9.ffs@tglx>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250220061107.1718239-2-yschu@nuvoton.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Thomas,
+On 20/02/2025 07:11, Stanley Chu wrote:
+> From: Stanley Chu <yschu@nuvoton.com>
+> 
+> Add a compatible string for Nuvoton BMC NPCM845 i3c controller.
 
-sorry for the delay, I drowned in tty.
 
-On 06. 02. 25, 17:22, tglx wrote:
-> On Wed, Jan 15 2025 at 09:53, Jiri Slaby (SUSE) wrote:
->> For readers, it is very confusing that:
->> * irq_domain_add_*() functions are dedicated to of_nodes,
->> * irq_domain_create_*() ones to fwnodes, and
->> * irq_domain_instantiate() to the universal struct irq_domain_info.
->>
->> Neither _create, nor _add designate any of those nodes. Despite the
->> naming, the functionality of them is the same: add an irq domain (by
->> generic irq_domain_instantiate()). So the source of the confusion is the
->> naming proper -- making the distinction based on _create, _add, and
->> _instantiate.
->>
->> Therefore, here an "_of_node" suffix is added to all "_add" functions
->> (of_node ones). In the next patch, "_create" (fwnode ones) are switched
->> to "_add_fwnode". And finally, "_instantiate" is renamed to "_add".
->>
->> So when all are applied, the interface is much easier to follow:
->> * dom = irq_domain_add_linear_of_node(of_node, ...)
->> * dom = irq_domain_add_linear_fwnode(fwnode, ...)
->> * dom = irq_domain_add(info)
->> * irq_domain_remove(dom)
-> 
-> I'm not convinced that this _of_node() _fwnode() churn is actually
-> valuable. I rather go and consolidate the code so that the core
-> functions take a fwnode argument, i.e.
-> 
->     - irq_domain_add_xxx(node, ...)
->     + irq_domain_add_xxx(of_fwnode_handle(node), ....)
-> 
-> It's not asked too much from the developer to use of_fwnode_handle() at
-> the call site and the resulting treewide churn is pretty much the same
-> as in any case all call sites need to be touched.
+This we see from the diff. Say something useful, is it compatible with
+other? Why is it in the same binding?
 
-OK, NP. I am only confused by your "I rather go". Does it mean you are 
-already on it? Or should I translate that as "I'd rather go", ie. /me 
-doing the work -- I expect this case and can indeed do the job. I just 
-don't want to duplicate the work.
+<form letter>
+Please use scripts/get_maintainers.pl to get a list of necessary people
+and lists to CC (and consider --no-git-fallback argument, so you will
+not CC people just because they made one commit years ago). It might
+happen, that command when run on an older kernel, gives you outdated
+entries. Therefore please be sure you base your patches on recent Linux
+kernel.
 
-> But that brings me to the question of logistics for this overhaul. As
-> this is a treewide change, there is quite some potential to create
-> conflicts all over the place.
-> 
-> So the obvious solution is to consolidate on the existing
-> irq_domain_create_*() API, which is not the worst naming once everything
-> is unified, i.e.
-> 
->     - irq_domain_add_xxx(node, ...)
->     + irq_domain_create_xxx(of_fwnode_handle(node), ....)
-> 
-> It allows to distribute these changes (except for the _nomap() oddity,
-> which is OF only) right now to the relevant subsystems and I can collect
-> the ignored changes in the irq tree. The final removal of the _add*()
-> interfaces can then be done towards the end of the merge window.
-> 
-> Thoughts?
+Tools like b4 or scripts/get_maintainer.pl provide you proper list of
+people, so fix your workflow. Tools might also fail if you work on some
+ancient tree (don't, instead use mainline) or work on fork of kernel
+(don't, instead use mainline). Just use b4 and everything should be
+fine, although remember about `b4 prep --auto-to-cc` if you added new
+patches to the patchset.
+</form letter>
 
-Sounds good to me.
+> 
+> Signed-off-by: Stanley Chu <yschu@nuvoton.com>
+> ---
+>  Documentation/devicetree/bindings/i3c/silvaco,i3c-master.yaml | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/i3c/silvaco,i3c-master.yaml b/Documentation/devicetree/bindings/i3c/silvaco,i3c-master.yaml
+> index c56ff77677f1..9be4bc4cc482 100644
+> --- a/Documentation/devicetree/bindings/i3c/silvaco,i3c-master.yaml
+> +++ b/Documentation/devicetree/bindings/i3c/silvaco,i3c-master.yaml
+> @@ -14,7 +14,9 @@ allOf:
+>  
+>  properties:
+>    compatible:
+> -    const: silvaco,i3c-master-v1
+> +    enum:
+> +      - silvaco,i3c-master-v1
+> +      - nuvoton,npcm845-i3c
 
-thanks,
--- 
-js
-suse labs
+Keep alphabetical order.
+
+
+
+Best regards,
+Krzysztof
 
