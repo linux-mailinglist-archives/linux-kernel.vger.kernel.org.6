@@ -1,167 +1,129 @@
-Return-Path: <linux-kernel+bounces-522897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 589D4A3CFD8
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 04:09:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2DD8A3CFDB
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 04:09:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ADA3B7A31F0
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 03:08:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7E061892A72
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 03:09:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 992761DE3A6;
-	Thu, 20 Feb 2025 03:09:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13B321DFD8B;
+	Thu, 20 Feb 2025 03:09:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WXFXm8vb"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g7cTiT7j"
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6743A10FD;
-	Thu, 20 Feb 2025 03:09:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DEAC1DEFF7;
+	Thu, 20 Feb 2025 03:09:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740020946; cv=none; b=b4M8NYXSaSPYmV88FlfPYEtbvPCc1wamaFc8HiW7S6SBNWmGEFhf8NWB4zAZDPMHcI3OUyeUqat9DswQxHAX4Y201sRTQwKfpzZY5tpA/hDj09SDpdzRGwb2nCe0wo/uTPdlPByld8JO1sahDYGNuZKUPhLPdVgslu1dM59zVKg=
+	t=1740020949; cv=none; b=Oapt4NoYNnot4V4jJOu9UKWnhIgnf9qMBTaefIyZsf6UzjzfxfZ8xMcKaQTaM9qlF0w+6PI+f/A06lRgea05QJdeQIj0SXS+HMVgiqAT73fMDJn+7oYIfvG/v5H4Ug+KKtjcKMvZI3pbjFATYRhUKRlf/9RViT3wLLn+1x+rsgk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740020946; c=relaxed/simple;
-	bh=6Om/YQ9BDTJoSdcjeVlNE5mx2TxHgQH+HygQWJDZxTI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Yn7m0ZVvwBcnYEEK5RxbkezoS4MmUTdjnETfVXCYvb81u7DRq22dr4BjPo05wIPgQz24adKU77iNIIMuCOBMkg00SmdSdXbJVM1IowH+P9CzPgbdUJ9/2V6eD0Z7XEdlAtRDTgZK4/8gDRBJabqo8R8xvgLP3kV3HIQNAEw0DlE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WXFXm8vb; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740020944; x=1771556944;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=6Om/YQ9BDTJoSdcjeVlNE5mx2TxHgQH+HygQWJDZxTI=;
-  b=WXFXm8vbeEQMlJ5dlpZo3xIcEZEntVRPy3q8yUwyKukTQv5EQX/9VjuQ
-   7gMFmQLwmeMbUaKEO64sPLUjHS3uT/0hx+A+48xCJpPh5k/9Idg8Nw/X5
-   W59N8FrzdbbwhofL4MSxwz270WiXYeIU7bt9w4TVlFdA2ALWSC0b9yk6V
-   b1ETkEOCNDTbFrJNy59soe4Dx9hkEvNfyVFeUDVJnKCslnsg/3TntdsCK
-   BZHijUhLxEe7yetixVOcozdwHC+jn/cZx6rtIamH92Ur8l8/aeaKrONuD
-   lU3+8jKX6boWH/KAg7nvwlygZFqKDfsEbFnOegs4WfsUXYZr61CEdzJU+
-   Q==;
-X-CSE-ConnectionGUID: PZlqgtoCSZS426YTQ3aStw==
-X-CSE-MsgGUID: YKqVST2OQguKSEEXHlKCgA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11350"; a="44433446"
-X-IronPort-AV: E=Sophos;i="6.13,300,1732608000"; 
-   d="scan'208";a="44433446"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Feb 2025 19:09:03 -0800
-X-CSE-ConnectionGUID: NtSLS7/pTki0JlkmiayN3A==
-X-CSE-MsgGUID: phFnrHBBQ4u+5LiD6T/d6g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,300,1732608000"; 
-   d="scan'208";a="114892383"
-Received: from mohdfai2-mobl.gar.corp.intel.com (HELO [10.247.77.104]) ([10.247.77.104])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Feb 2025 19:08:56 -0800
-Message-ID: <72c1a698-ba1e-44f6-a52f-ef03c7acba06@linux.intel.com>
-Date: Thu, 20 Feb 2025 11:08:53 +0800
+	s=arc-20240116; t=1740020949; c=relaxed/simple;
+	bh=SIIxMmbbjCnZ1H7d5BftVx4BljoiEjzP6fU+7MNNPY8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cTc3rori+49sKhia8dMEWyZ2IeEc08gE15e69XalYTgrTMJ3pTR/rJ6sSNNBhs0RzxdIWsibxAnP1hQAN6O0FsEECEq1eXthOZvp58YikEJ+m+SOQDToi0CLNtpKtOkmSbr7s7XhPjd7dSi4vkLymr6FVftFCIYiPTOTqDNO4wU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g7cTiT7j; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2fa8ac56891so709604a91.2;
+        Wed, 19 Feb 2025 19:09:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740020947; x=1740625747; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=SIIxMmbbjCnZ1H7d5BftVx4BljoiEjzP6fU+7MNNPY8=;
+        b=g7cTiT7jTLJsqEbH7gc9kSwgk9WKI0QAfOCY5JklBGRuj3GbrtOGeYDhn+uSfJBAWe
+         AbcdhlyK78+eB/j/YWxY97fbkr10g+UaIBunJCJN2ZocuuIGFV9NVjcVV3gGsdP6qARA
+         1wPWzS4Eh6QQU+5adYrf0R/NP5+Kmhm4Wjp9sh7ha89TCpVHUu20LhPLQZL4/0qINzdC
+         ApaYcNND2uXV28ViahzCe6CQ3Ry425T1orqmqj7v92lXl2vIDS3ZA2kYjbTOj5gZFVFI
+         tPazfjpO11L1/1hfyMRcYhgscjkbeWn5AK1hQdKxj36fiJbXwki1LlW6Muf8ey+8hMgB
+         Lylw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740020947; x=1740625747;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SIIxMmbbjCnZ1H7d5BftVx4BljoiEjzP6fU+7MNNPY8=;
+        b=bcSwDKHlkBVDdGTahynw7We9Zio/LYkVBmiZOh0S8O3KFpOsSOOusb9WXYEl6yAx/h
+         qfpSOT12WeZz41vgKpfhBWffAGAb60X4bVns4dbF3HqbKSsGFbecOB1V5UNC1YJjcwAL
+         i+HmhCJlhUBDpHeATZgwNJCAjUoXGfKUO1Qiw+8NlRwF9nOU7PXW++t3L7erO2CLDF9z
+         U7yFAeqOyY7okbOro/zn1KQXVHHZRKXNqCdKUreAxjqpti6UvTRbSmpQKaPHEUrxqaJk
+         Of9OQEd9iL+Y7aQiXF9SYzq+pXBqc6VOookRuxchDwiUWWhVFIRCuCl6rYyAGi3rpzvp
+         4TJA==
+X-Forwarded-Encrypted: i=1; AJvYcCWpVRpZVbN5ZDMJTGpvlM1xUSPOnW6U5GBvvQks1eif0gsu/QJr1eXWVC958vNbr3rKavQo841OeXODl/d8jCkCe0i3@vger.kernel.org, AJvYcCXSzK+XR9ckP0Uo8v/+Qfi1fhvVyTblzxO3GGevYE975qxY6h8+rrErYzzmCBfgvEThrZnyJXFpXKBQ8hsh@vger.kernel.org, AJvYcCXuIvMNz2Ty570XKeGEFhGknyrg7QFA0VgbqJPQvxUYFALVP8o/IUIVxqHHM1gLk2sduW0ORxYiBRI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUnmtAM6BaWL8qZPoJH/YUM7AY77VaThwOTzyms4eVg3+wynR8
+	pxakBeQKD1jege0CUPDhXJQoLJZB7FLE7OZqIXbVe7VbiLItAKKf
+X-Gm-Gg: ASbGncssfNPXT6RkUFe+35ghv8ei0OqwIq8Au5V0hfHsqlhIbyTwcN0nNKWpAk8/J+g
+	lUBeVgTci/XwO8c4xO8mbx22Wo+gqDt5j9Ig5HpcKAK97lVOG3SJjSHQIZ35xWlhb7DTz+Jo1kU
+	oszi4N3aDoXOLUZwm7oC9UW3xMLrmuAV0Ma74eIBic4Bdxi/dmcM6GCUibZJMkjvGXGxFLxql+q
+	m6DZ3qA6i/NSDqyATuX7X55n5u+biBudDAcu6rzUZ80XImclTxDNdzIO3Sc9zXR8dozc58nEVVs
+	3VgqnxeC2e659P4=
+X-Google-Smtp-Source: AGHT+IHY+jkVOxxqyb7oeuPNdMxN/x/S20vcx2nSe/tuB0SSxqUCO1KkygpT8VsNxFzmTEcR5XhbIg==
+X-Received: by 2002:a17:90b:4a49:b0:2ea:aa56:499 with SMTP id 98e67ed59e1d1-2fc40d13e61mr31473657a91.1.1740020947025;
+        Wed, 19 Feb 2025 19:09:07 -0800 (PST)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fbf98b3255sm14701558a91.8.2025.02.19.19.09.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Feb 2025 19:09:06 -0800 (PST)
+Received: by archie.me (Postfix, from userid 1000)
+	id 1F4794208FB6; Thu, 20 Feb 2025 10:09:02 +0700 (WIB)
+Date: Thu, 20 Feb 2025 10:09:02 +0700
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Purva Yeshi <purvayeshi550@gmail.com>, rostedt@goodmis.org,
+	mhiramat@kernel.org, mathieu.desnoyers@efficios.com, corbet@lwn.net
+Cc: skhan@linuxfoundation.org, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH] docs: tracing: Reduce maxdepth in index documentation
+Message-ID: <Z7aczkdNVgLy1NeP@archie.me>
+References: <20250217112109.7734-1-purvayeshi550@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Intel-wired-lan] [PATCH iwl-next v4 0/9] igc: Add support for
- Frame Preemption feature in IGC
-To: "Loktionov, Aleksandr" <aleksandr.loktionov@intel.com>,
- Vladimir Oltean <vladimir.oltean@nxp.com>
-Cc: "Nguyen, Anthony L" <anthony.l.nguyen@intel.com>,
- "Kitszel, Przemyslaw" <przemyslaw.kitszel@intel.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S . Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Simon Horman <horms@kernel.org>, Russell King <linux@armlinux.org.uk>,
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- Jesper Dangaard Brouer <hawk@kernel.org>,
- John Fastabend <john.fastabend@gmail.com>, Furong Xu <0x1207@gmail.com>,
- Russell King <rmk+kernel@armlinux.org.uk>,
- Serge Semin <fancer.lancer@gmail.com>,
- Xiaolei Wang <xiaolei.wang@windriver.com>,
- Suraj Jaiswal <quic_jsuraj@quicinc.com>,
- Kory Maincent <kory.maincent@bootlin.com>, Gal Pressman <gal@nvidia.com>,
- Jesper Nilsson <jesper.nilsson@axis.com>,
- Andrew Halaney <ahalaney@redhat.com>,
- Choong Yong Liang <yong.liang.choong@linux.intel.com>,
- Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
- "Gomes, Vinicius" <vinicius.gomes@intel.com>,
- "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
- "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-stm32@st-md-mailman.stormreply.com"
- <linux-stm32@st-md-mailman.stormreply.com>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "bpf@vger.kernel.org" <bpf@vger.kernel.org>
-References: <20250210070207.2615418-1-faizal.abdul.rahim@linux.intel.com>
- <20250210070207.2615418-1-faizal.abdul.rahim@linux.intel.com>
- <20250212220121.ici3qll66pfoov62@skbuf>
- <SJ0PR11MB586651473E7F571ECD54B13BE5FF2@SJ0PR11MB5866.namprd11.prod.outlook.com>
-Content-Language: en-US
-From: "Abdul Rahim, Faizal" <faizal.abdul.rahim@linux.intel.com>
-In-Reply-To: <SJ0PR11MB586651473E7F571ECD54B13BE5FF2@SJ0PR11MB5866.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="zfvOq29s0SxCOtX0"
+Content-Disposition: inline
+In-Reply-To: <20250217112109.7734-1-purvayeshi550@gmail.com>
 
 
+--zfvOq29s0SxCOtX0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 13/2/2025 4:59 pm, Loktionov, Aleksandr wrote:
-> 
-> 
->> -----Original Message-----
->> From: Intel-wired-lan <intel-wired-lan-bounces@osuosl.org> On Behalf Of
->> Vladimir Oltean
->> Sent: Wednesday, February 12, 2025 11:01 PM
->> To: Faizal Rahim <faizal.abdul.rahim@linux.intel.com>
->> Cc: Nguyen, Anthony L <anthony.l.nguyen@intel.com>; Kitszel, Przemyslaw
->> <przemyslaw.kitszel@intel.com>; Andrew Lunn <andrew+netdev@lunn.ch>;
->> David S . Miller <davem@davemloft.net>; Eric Dumazet
->> <edumazet@google.com>; Jakub Kicinski <kuba@kernel.org>; Paolo Abeni
->> <pabeni@redhat.com>; Maxime Coquelin <mcoquelin.stm32@gmail.com>;
->> Alexandre Torgue <alexandre.torgue@foss.st.com>; Simon Horman
->> <horms@kernel.org>; Russell King <linux@armlinux.org.uk>; Alexei
->> Starovoitov <ast@kernel.org>; Daniel Borkmann <daniel@iogearbox.net>;
->> Jesper Dangaard Brouer <hawk@kernel.org>; John Fastabend
->> <john.fastabend@gmail.com>; Furong Xu <0x1207@gmail.com>; Russell King
->> <rmk+kernel@armlinux.org.uk>; Serge Semin <fancer.lancer@gmail.com>;
->> Xiaolei Wang <xiaolei.wang@windriver.com>; Suraj Jaiswal
->> <quic_jsuraj@quicinc.com>; Kory Maincent <kory.maincent@bootlin.com>;
->> Gal Pressman <gal@nvidia.com>; Jesper Nilsson <jesper.nilsson@axis.com>;
->> Andrew Halaney <ahalaney@redhat.com>; Choong Yong Liang
->> <yong.liang.choong@linux.intel.com>; Kunihiko Hayashi
->> <hayashi.kunihiko@socionext.com>; Gomes, Vinicius
->> <vinicius.gomes@intel.com>; intel-wired-lan@lists.osuosl.org;
->> netdev@vger.kernel.org; linux-kernel@vger.kernel.org; linux-stm32@st-md-
->> mailman.stormreply.com; linux-arm-kernel@lists.infradead.org;
->> bpf@vger.kernel.org
->> Subject: Re: [Intel-wired-lan] [PATCH iwl-next v4 0/9] igc: Add support for
->> Frame Preemption feature in IGC
-> 
-> Please start commit title from slam letters:
-> Igc: add ...
+On Mon, Feb 17, 2025 at 04:51:09PM +0530, Purva Yeshi wrote:
+> Reduce :maxdepth: from 2 to 1 in index.rst to simplify the table of
+> contents, showing only top-level document titles for better readability.
+>=20
 
-Hi Aleksandr,
+Is this patch mean to be applied on top of/squashed into your toctree
+refactoring ([1])?
 
-I haven't updated this in v5 yet. Could you share any reference or 
-guideline for this?
+Confused...
 
- From what I checked, the recently accepted patches in igc seem to follow a 
-similar commit title format as my patches:
+[1]: https://lore.kernel.org/linux-doc/20250217110637.6640-1-purvayeshi550@=
+gmail.com/
 
-$ git log --oneline | grep igc
-b65969856d4f igc: Link queues to NAPI instances
-1a63399c13fe igc: Link IRQs to NAPI instances
-8b6237e1f4d4 igc: Fix passing 0 to ERR_PTR in igc_xdp_run_prog()
-484d3675f2aa igc: Allow hot-swapping XDP program
-c75889081366 igc: Remove unused igc_read/write_pcie_cap_reg
-121c3c6bc661 igc: Remove unused igc_read/write_pci_cfg wrappers
-b37dba891b17 igc: Remove unused igc_acquire/release_nvm
+--=20
+An old man doll... just what I always wanted! - Clara
 
+--zfvOq29s0SxCOtX0
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZ7acxgAKCRD2uYlJVVFO
+ozBWAQDOLzWpuGIWnJnyZ4TZ4GfFwpnG/SQ4r4S4B3NYiBRs/AEA48g0UAiGeSgh
+WGK0r3sF6uZ84Ahm7ecC/1WwaCUxGAw=
+=IEAJ
+-----END PGP SIGNATURE-----
+
+--zfvOq29s0SxCOtX0--
 
