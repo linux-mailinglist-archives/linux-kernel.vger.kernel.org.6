@@ -1,122 +1,149 @@
-Return-Path: <linux-kernel+bounces-524939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21123A3E8F0
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 00:54:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D258EA3E8EE
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 00:52:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F19E3BFEB3
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 23:52:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC9C919C41D6
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 23:52:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7346A265633;
-	Thu, 20 Feb 2025 23:52:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37C0D1F1934;
+	Thu, 20 Feb 2025 23:51:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="FTh6tavi"
-Received: from mail-pl1-f194.google.com (mail-pl1-f194.google.com [209.85.214.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="F9TzKXtt"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E59D41DED6F
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 23:52:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 097D11F152F
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 23:51:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740095567; cv=none; b=ZjsD0SUkXRyyfccUZJHdrKkMNl7Z+KdVbt/9e65bSIIgYGh6LrIh49F3fUmvDETx/myop8mRPptJcwz0FmjgWK3qtnZV6xOWkUZEEPp4pSaXMV8VH58hi9xsQmwcrNMwmmrvN0wypoUkrI9g3/gYf7z8Jc28Ko4OBhzYll/krKA=
+	t=1740095515; cv=none; b=CfQ9Xv3ly0V2T6zZKhKTsLBM0JKBQXa06HLhw3XNQF49fRGnaPhZOU3bdjawxmnRKjvyj+Q2P4BMDpi8jVXiBuxoKEo5QHoaGJkoq+3AsaGuFNuNvzfDFF1pU8ZbgzHVKZ8zH253n1AEngo7JfYLnvgn8tt/Wj1egzVw9aJm5DU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740095567; c=relaxed/simple;
-	bh=j4EnZGi2bMw5ig9ID3NQOLCzja5xfLZqwZzUYf0AlzA=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=OR+OxK6QDyM95H4RbF5umr/6f7rMAW59yuOBDSnEQy8QDF3SlTeFPuLv8/POHEwPERyAYmSHrK+99JGPvTAZL4BYlpBmA+Bip4Ua7l6kyPB5gqAjLg42bS2jCSh1a4fnKJfO3dFA872dAxiqtQzfaamSiaFrY55OFLvxN69xxhk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=FTh6tavi; arc=none smtp.client-ip=209.85.214.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pl1-f194.google.com with SMTP id d9443c01a7336-220e83d65e5so29631965ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 15:52:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1740095565; x=1740700365; darn=vger.kernel.org;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qb82QdOEL9q3mJpzUxuc0KVFE2hzgugePghKxy0L8JA=;
-        b=FTh6tavit4vL6s3entSLbj+NcZTcSpdIM4ytSJBt4GY9vzkhLqRzdjj1tUOgSoCDdL
-         ysENkr5mKmIvAgkXDWRP2msKcT4xkUsAIs+vwosRkgUEcueyckS7RXGr8KapW7/Kn2Hq
-         4eFfkO4zljvA15adgvjEfkN3rz9TY6K7y6pbMOZ2capRfsLJga2i/LsdmYN9uKRhkrdD
-         /fweYNuRGoD5j6sT2QxNF5haZJAU0XKbcv12SSf5CX9uCAtETf0fcUckl6W5hGDtpEox
-         hcvPTYqqb1R1jPhLT9tdVJPhB5vkc8l0pihdAyI1ExQIg/ZTfuRItIHDIj128Qf78M1u
-         m/hA==
+	s=arc-20240116; t=1740095515; c=relaxed/simple;
+	bh=vtOPXa8BnfbMCfX15af3q+cMPZ2p9MawIwGAHAHQBUk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Kcl/Yr4o0PrLISZOUDF8yfgfyYkSpbymeZwPuJ34NYuLAYeRjPa1gs07v/WqqjJYKm8YzHU/zmFkSerQb+avHle9MeCo/1g5LR7AcS28Kuw6gLHESXY2j1/6wdNCprPl9JpPpixxBnFyK1W8TBVD6uognKYwi4fUoMFtw67bslA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=F9TzKXtt; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51KN1WR3025931
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 23:51:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	K7rfm+etXdnbK/bhupbhOu+OTfhMZMjRNpbnrpPFumo=; b=F9TzKXttQBcvVdpA
+	4mqLXqt9q62BpW0D8bH/BkUCb06gQnnqs8r+FbdAUaSGPYZ10oFqdHoLlCp/aqqA
+	khIkbz13slmNuKyjzaU1yM4+YlddOBXv5MpZzZVDNhWjaJuh6T5ydC++gtNxkUVn
+	kTdQYlyRxEJ4KkL2WdOdno4LDiWx11+khimC9rxAQAMw1UEr7w3uSyxt8LCubts8
+	uI1hBMLMKidDWA+foCOHjmKTgo2jLo2l0ek1Mntee3ucb5HKIYjwhVK15K9uKYZP
+	ea5T1Kll2QOLXVC2gYFkfV92Sqr1+DeSSjjgCzE7MboIq/iixtlDOZ2RLLm/f09p
+	zwtHtw==
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com [209.85.216.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44x2r3t0f7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 23:51:52 +0000 (GMT)
+Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-2fc46431885so4648444a91.2
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 15:51:52 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740095565; x=1740700365;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qb82QdOEL9q3mJpzUxuc0KVFE2hzgugePghKxy0L8JA=;
-        b=AkL3xJcHc4G1PE6CmfW+059gbzah+CtbYKtzw+TfzauCKLuWlbmJ2hn5GZYBLmy+I5
-         j2nYDZMbVYVlYr4Ndl/wsGpW50N11k/yjIWkmfb0gH1zlOAPOEKL5CgRdBf6zC6wz0Yh
-         z9a9rcW8Tx5+xS+6O+v9pe4WY2SoE+nHH+YluQ0I6EbturlE73HJxkND4KbvhmS8JkjU
-         48Rbycu0Y6VN726cykiKkLvrSqfpzSP4vcQdTdZwqQgP18QvtBjgNWI9L2qTN63VBJir
-         yFTJI/I8iL3LVdmAnji5IxSXn1H7fpDT58A5gG7mHsmr5cg0Q/vtRRAl2JGeG7tSwX5e
-         hZ7A==
-X-Forwarded-Encrypted: i=1; AJvYcCUin1ACrbt77lUaRXNlbNK8XQfYQ4S02WE4jtOHmKD/6m4AEAoSzI2H6oCQmhoD1vdd0KAC2Vz1hFlLSNo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQOWBXv3KS5GFU0J3we24+JbY+yPBjZup95hiuftkcU6h64fRF
-	EQN3i3p3WPpSEVc9U2JKPw0cq6LBIsaVU9xKPgWZZmuRYNlp2i/lUc6nRrm4Vtg=
-X-Gm-Gg: ASbGncs4jC6LOo+nx+igKxqYCBm+KiLnUvOGmuLrbnIgqoCbtFjepy+8IcSwlupSMuY
-	qOPz+ocGTUZnULmWh/B2RYhmXMbVFsb6sKNnIW8bVprW0KYuvjYRKFZLDPbBBUa8H3Sf646VlX9
-	qzHTgwNpJqoAZ23Z7BQf5I6meSuxjVqQCYtlvdWFmFKO4VuItebISlKKG1yTkn9gHnHMdJzFdm9
-	5XNIq3BaoBEgijBCiICQe8+ERjHvBIdABzvE2rAAKS05P3ht9kNQ9rI+An9VWbCrOYIOBqVdQnu
-	xYaiCaNRv5qs+xciuXXXXsw7teDw25nSDdMkCg==
-X-Google-Smtp-Source: AGHT+IHPfERffkN1yiWBiHEUUXrcX2jWn6zdn8HouuINYaCsWF9tdVDrEmJti5NpNdDaRnhRRE2+Tg==
-X-Received: by 2002:a05:6a00:3e1a:b0:730:9768:ccdf with SMTP id d2e1a72fcca58-73426ced023mr1243720b3a.14.1740095564969;
-        Thu, 20 Feb 2025 15:52:44 -0800 (PST)
-Received: from dev-xizhang2.dev.purestorage.com ([2620:125:9007:640:ffff::c49c])
-        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-73249fe96b4sm13610720b3a.75.2025.02.20.15.52.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Feb 2025 15:52:44 -0800 (PST)
-From: Xinyu Zhang <xizhang@purestorage.com>
-To: linux-nvme@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: Keith Busch <kbusch@kernel.org>,
-	Jens Axboe <axboe@kernel.dk>,
-	Christoph Hellwig <hch@lst.de>,
-	Sagi Grimberg <sagi@grimberg.me>,
-	Caleb Sander Mateos <csander@purestorage.com>,
-	Xinyu Zhang <xizhang@purestorage.com>
-Subject: [PATCH] nvme: map uring_cmd data even if address is 0
-Date: Thu, 20 Feb 2025 16:51:01 -0700
-Message-Id: <20250220235101.119852-1-xizhang@purestorage.com>
-X-Mailer: git-send-email 2.17.1
+        d=1e100.net; s=20230601; t=1740095512; x=1740700312;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=K7rfm+etXdnbK/bhupbhOu+OTfhMZMjRNpbnrpPFumo=;
+        b=lm6vAoDjLd99WgnEQdG394Iot3iVpcoBz9xQ/SZJNUFkibAKLtIfOdqWMwL51JSa+N
+         d90AbjC+ufDsHoOMLylrUYw9wafnOQc7qnkQMZaDhju+UuNDuyiVtdPbiUvqWJncJocI
+         ONaMoNdG0PhLfmj9PNKZCpcDDI0L6T9FHJ6NtcQ0Ni/oD/6CGBSXHfJLToM+2I6QT5tx
+         HL4YJ3Lb+XablNnaNhwXWPGwdYhMWpoTi+eVs3kWttF1XVidfxLuGeB/fnhi2kbfbcAj
+         FdwasiSkRGwReMlBNCAt42qSJtbcyW2gMKph6FNcEbH/4nBeLWFK5UvJm3cyKXeZciDj
+         abNw==
+X-Forwarded-Encrypted: i=1; AJvYcCUbW1EBUM4iO5oqajzo8BJg8TZoJtZhtntYA+DIY+bzeGv6pOaMov+D+WXLV1TD8qIRl7V9Aez9Zun2yKk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxpTBlG6Kontk1jl34jAxQB9tOcy/TLpmdMYa/pwdlkxg5ImL3N
+	v5q70hqVvareUhd79L6LRtE2xpDvRYbOcXJzBVfgtC2Vswv0Ue9M6YHqbSne78FEKfxIBczFLn2
+	g3rEmyF+Fp3AKNUSv+dyjcLxPlikYEkNJ9w2BeXBO1MnuwxhWY3TIH8T6Yza0ADU=
+X-Gm-Gg: ASbGncsVKDjGm59KNXM5Mp6BjJ+0sRIB0IY9LFxZNlr+PSH2V2Y0Nq73yKcJP9R6tMv
+	QhqO6fxpfnnVPTyXnUuWuloER6obdzhIzu7aBOoMZIhzRz/o/xYA3lQmTwT5g6h7ef/VdTkJM5B
+	fHHvZIOtNS+B7mwGEr2FSk9726ZF2AMzlkWdFUpuXKM3BtMKktFaXZ/MaiSOQwABYn7Nhc0q9AC
+	myTMKoZ6hxURhnJeCAtyngTNZMShj6peU8pmxXogZ2zJnTPHZskGvnYbNl/iw6ssblphwx8ClhO
+	MGoDlzQxNfyiVoVJK/zhbAMCdMyP3ar1FkJqQr5IjeaxUebngmhnL+kku3B0yiuYClk4b0pVqg=
+	=
+X-Received: by 2002:a17:90b:2e44:b0:2ea:77d9:6345 with SMTP id 98e67ed59e1d1-2fce87244f6mr885577a91.22.1740095512003;
+        Thu, 20 Feb 2025 15:51:52 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHeRN2ESFgXnPd9OtGenw5lXipvYA29oO/tOIysMPDxjxWiyqAI15+Vg9TfM3kmmfB3zBrreQ==
+X-Received: by 2002:a17:90b:2e44:b0:2ea:77d9:6345 with SMTP id 98e67ed59e1d1-2fce87244f6mr885554a91.22.1740095511638;
+        Thu, 20 Feb 2025 15:51:51 -0800 (PST)
+Received: from [192.168.1.111] (c-73-202-227-126.hsd1.ca.comcast.net. [73.202.227.126])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fcb8571586sm2111645a91.0.2025.02.20.15.51.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 20 Feb 2025 15:51:51 -0800 (PST)
+Message-ID: <ea5341a5-a5c6-4214-96c3-32d668ce3f11@oss.qualcomm.com>
+Date: Thu, 20 Feb 2025 15:51:50 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH rcu 1/9] rcu: Add lockdep_assert_in_rcu_read_lock() and
+ friends
+To: paulmck@kernel.org
+Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com,
+        rostedt@goodmis.org, Jens Axboe <axboe@kernel.dk>,
+        ath12k@lists.infradead.org
+References: <657595c8-e86c-4594-a5b1-3c64a8275607@paulmck-laptop>
+ <20240604222355.2370768-1-paulmck@kernel.org>
+ <9130e3da-1cc5-43ea-9153-47117d57caca@oss.qualcomm.com>
+ <67063387-6ba9-47fe-b283-d6346da15d9a@paulmck-laptop>
+From: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+Content-Language: en-US
+In-Reply-To: <67063387-6ba9-47fe-b283-d6346da15d9a@paulmck-laptop>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: xMb7lW8RxZj7JMy8s7xg6C7djdxYtbiW
+X-Proofpoint-GUID: xMb7lW8RxZj7JMy8s7xg6C7djdxYtbiW
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-20_09,2025-02-20_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 clxscore=1015
+ bulkscore=0 phishscore=0 mlxlogscore=930 suspectscore=0 priorityscore=1501
+ mlxscore=0 spamscore=0 adultscore=0 malwarescore=0 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
+ definitions=main-2502200158
 
-When using kernel registered bvec fixed buffers, the "address" is
-actually the offset into the bvec rather than userspace address.
-Therefore it can be 0.
-We can skip checking whether the address is NULL before mapping
-uring_cmd data. Bad userspace address will be handled properly later when
-the user buffer is imported.
-With this patch, we will be able to use the kernel registered bvec fixed
-buffers in io_uring NVMe passthru with ublk zero-copy support in
-https://lore.kernel.org/io-uring/20250218224229.837848-1-kbusch@meta.com/T/#u.
+On 2/20/2025 2:04 PM, Paul E. McKenney wrote:
+> On Thu, Feb 20, 2025 at 11:38:14AM -0800, Jeff Johnson wrote:
+>> On 6/4/24 15:23, Paul E. McKenney wrote:
+>>> There is no direct RCU counterpart to lockdep_assert_irqs_disabled()
+>>> and friends.  Although it is possible to construct them, it would
+>>> be more convenient to have the following lockdep assertions:
+>>>
+>>> lockdep_assert_in_rcu_read_lock()
+>>> lockdep_assert_in_rcu_read_lock_bh()
+>>> lockdep_assert_in_rcu_read_lock_sched()
+>>> lockdep_assert_in_rcu_reader()
+>>>
+>>> This commit therefore creates them.
+>>
+>> I'm looking at some downstream code that is trying to become
+>> upstream compliant, and currently that code uses:
+>>
+>> 	RCU_LOCKDEP_WARN(!rcu_read_lock_held(), "some message");
+>>
+>> It seems like this would be a good use of one of these helper
+>> functions, but I'm shocked to see that no upstream code is using
+>> them yet.
+>>
+>> Is there a reason to not use these helpers?
+> 
+> In cases where there is no additional useful information that can be
+> placed in "some message", the new helpers should be just fine.
 
-Signed-off-by: Xinyu Zhang <xizhang@purestorage.com>
-Reviewed-by: Caleb Sander Mateos <csander@purestorage.com>
----
- drivers/nvme/host/ioctl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks for the confirmation, Paul!
 
-diff --git a/drivers/nvme/host/ioctl.c b/drivers/nvme/host/ioctl.c
-index 60383da86feda..724ab542b4c33 100644
---- a/drivers/nvme/host/ioctl.c
-+++ b/drivers/nvme/host/ioctl.c
-@@ -500,7 +500,7 @@ static int nvme_uring_cmd_io(struct nvme_ctrl *ctrl, struct nvme_ns *ns,
- 		return PTR_ERR(req);
- 	req->timeout = d.timeout_ms ? msecs_to_jiffies(d.timeout_ms) : 0;
- 
--	if (d.addr && d.data_len) {
-+	if (d.data_len) {
- 		ret = nvme_map_user_request(req, d.addr,
- 			d.data_len, nvme_to_user_ptr(d.metadata),
- 			d.metadata_len, 0, ioucmd, vec);
--- 
-2.17.1
-
+/jeff
 
