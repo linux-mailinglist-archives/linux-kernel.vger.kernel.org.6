@@ -1,107 +1,165 @@
-Return-Path: <linux-kernel+bounces-523093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96EEFA3D1D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 08:13:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61284A3D1C0
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 08:06:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D05A47A8072
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 07:11:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4B4A189D2B2
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 07:06:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B8EC1EC01B;
-	Thu, 20 Feb 2025 07:11:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 960021E5B63;
+	Thu, 20 Feb 2025 07:06:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tugraz.at header.i=@tugraz.at header.b="eGWYjnnD"
-Received: from mailrelay.tugraz.at (mailrelay.tugraz.at [129.27.2.202])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="c17sWWB9"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23C761E5B7B;
-	Thu, 20 Feb 2025 07:11:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.27.2.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75BEA1E5706
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 07:06:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740035475; cv=none; b=bHK+SMmgcYyrrrxWUJLAQ9y10F64Sdw+M/kpyZi+wyEQ9hEQxZ4O4fMTHUN8DUnpe2Q6XC+qq2u7oFJRWEpfMVrsgXAhgyakYpi37xOodR2kycksHZO8YnNXVYLe3WSR6V7I7K42s7fK1VCTtckQl6vftzmjKMv579cR8jdIVWI=
+	t=1740035191; cv=none; b=BoRrW9w9AhZCqv6baf2dbz6n7gLEFw9k5xEUkSWV8yVHng1xksuQRG5bL9XLf6XPjcVLckKiE5O/ZIi4zFD652BBCualAwNecbSQ+h4ucjrXUrFYipYJSpvjri2OTJjF62ioDyKvkGDrqYstIOu212meTTnNm+l+ZlnlY6s/xeA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740035475; c=relaxed/simple;
-	bh=J0B0YXdvQsUgkAZoGQd5DGyef4ealLirHSCqBDZV8BM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=gc+7njep0xt0JOjmc/CPz9SqCSwogNtsBliapH8fx+qF628XpoBe2p+MON1EI35/FslPFCkkYUgf2+JTjUhT3RgWFw6WroWyANIPjIQbgIxd3NcyaBaKDruPayUDKvmhulVhPjlxMLCgIgKi0acHUwJzHaR0nyaqu5yjpXsgim0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tugraz.at; spf=pass smtp.mailfrom=tugraz.at; dkim=pass (1024-bit key) header.d=tugraz.at header.i=@tugraz.at header.b=eGWYjnnD; arc=none smtp.client-ip=129.27.2.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tugraz.at
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tugraz.at
-Received: from vra-171-197.tugraz.at (vra-171-197.tugraz.at [129.27.171.197])
-	by mailrelay.tugraz.at (Postfix) with ESMTPSA id 4Yz43B6Twbz1JJCN;
-	Thu, 20 Feb 2025 08:03:02 +0100 (CET)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailrelay.tugraz.at 4Yz43B6Twbz1JJCN
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tugraz.at;
-	s=mailrelay; t=1740034984;
-	bh=79iOrJleI/iz7iPUnPOpIes+Agw9KU6s5TsUDIe2kI8=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=eGWYjnnDWcq2gSYJ3zhmIau23n3qUpPkDeNK3NIf2LI7sS6HcF1CpXmRrj8iS7ayS
-	 pa0aJJCHb5NzL4hJPb9NmNFtAsXdtbLtzKousOHESayZ28MvBFZL94LOQBjkFDtRRI
-	 1FRXeIeh5Yv2aH2YAsIhQkzn+qjgktzuGW26oFD4=
-Message-ID: <4e316b01634642cf4fbb087ec8809d93c4b7822c.camel@tugraz.at>
-Subject: Re: Rust kernel policy
-From: Martin Uecker <uecker@tugraz.at>
-To: Greg KH <gregkh@linuxfoundation.org>, Boqun Feng <boqun.feng@gmail.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>, Miguel Ojeda
- <miguel.ojeda.sandonis@gmail.com>, Christoph Hellwig <hch@infradead.org>, 
- rust-for-linux <rust-for-linux@vger.kernel.org>, Linus Torvalds
- <torvalds@linux-foundation.org>, David Airlie <airlied@gmail.com>,
- linux-kernel@vger.kernel.org, ksummit@lists.linux.dev
-Date: Thu, 20 Feb 2025 08:03:02 +0100
-In-Reply-To: <2025021954-flaccid-pucker-f7d9@gregkh>
-References: 
-	<CANiq72m-R0tOakf=j7BZ78jDHdy=9-fvZbAT8j91Je2Bxy0sFg@mail.gmail.com>
-	 <Z7SwcnUzjZYfuJ4-@infradead.org>
-	 <CANiq72myjaA3Yyw_yyJ+uvUrZQcSLY_jNp65iKH8Y5xGY5tXPQ@mail.gmail.com>
-	 <326CC09B-8565-4443-ACC5-045092260677@zytor.com>
-	 <CANiq72m+r1BZVdVHn2k8XeU37ZeY6VT2S9KswMuFA=ZO3e4uvQ@mail.gmail.com>
-	 <a7c5973a-497c-4f31-a7be-b3123bddb6dd@zytor.com>
-	 <Z7VKW3eul-kGaIT2@Mac.home> <2025021954-flaccid-pucker-f7d9@gregkh>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1740035191; c=relaxed/simple;
+	bh=lV3ebLrwRwVXrWSAsXtPmvNXTEbmZjhyBhFzYmyxgc8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ltNWOiAq/AyM2FGiX1mqcp8cHiBRDS7MX8X1exWmCQCM1cuPneUiwJ/VXdcWk84tBsIr5lFuA25M5lmhjACE403lLQpPfQ+LmS2mRChG2VWHxYPUvhPM68oh67Ibee31Ql7UfcO9d5TZhM2WDVMlT/JmZNL4H8E+LgZFXIaZ9x0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=c17sWWB9; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740035190; x=1771571190;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=lV3ebLrwRwVXrWSAsXtPmvNXTEbmZjhyBhFzYmyxgc8=;
+  b=c17sWWB9C03rqO4TWCz5RQwOI/9Gn2FCEGWuNJkqB9ewCCJXaR3/zDer
+   RsKCqEB+AsvU0A2O69aymS3zDiK885SktIZvQyls+0OC2F7iAzOVJY0ne
+   CYjkek+if8h8lnae44A5GbXo136heIgpOq/AGhXePPn+Lvqz2ojDBoQ0e
+   rfjVAwJokklf4U5Tz4daSgO0IZ6dqU16hUdB+PRA8lO9jYvPohpW9NFI0
+   jSrjOw0t2VZklg97yJvnxTTB2nw9hkFLDtQQeak6+gbVU8qKIPcfWUwgP
+   xVeVbhA+8CQoYJKAeRm0d3cyjaW6cB7OJwoM2spQYKxXVluOsIIBtErzD
+   g==;
+X-CSE-ConnectionGUID: RjElJjoDQMqSPWurNGoewA==
+X-CSE-MsgGUID: 7EKU4GkaTryQ709aBBy4yg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11350"; a="41057778"
+X-IronPort-AV: E=Sophos;i="6.13,301,1732608000"; 
+   d="scan'208";a="41057778"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Feb 2025 23:06:29 -0800
+X-CSE-ConnectionGUID: J7H2QhwgSd6TcTQcLppbUg==
+X-CSE-MsgGUID: 4VeUkJpMQdmmXPk2MYn51w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,301,1732608000"; 
+   d="scan'208";a="114937450"
+Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Feb 2025 23:06:26 -0800
+Message-ID: <d93c8cc9-77a5-4b78-85d2-6b4601f52266@linux.intel.com>
+Date: Thu, 20 Feb 2025 15:03:21 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TUG-Backscatter-control: G/VXY7/6zeyuAY/PU2/0qw
-X-Spam-Scanner: SpamAssassin 3.003001 
-X-Spam-Score-relay: 0.0
-X-Scanned-By: MIMEDefang 2.74 on 129.27.10.117
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 08/12] iommufd/selftest: Put iopf enablement in domain
+ attach path
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+ Robin Murphy <robin.murphy@arm.com>, Kevin Tian <kevin.tian@intel.com>,
+ Fenghua Yu <fenghua.yu@intel.com>, Dave Jiang <dave.jiang@intel.com>,
+ Vinod Koul <vkoul@kernel.org>, Zhangfei Gao <zhangfei.gao@linaro.org>,
+ Zhou Wang <wangzhou1@hisilicon.com>, iommu@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+References: <20250214061104.1959525-1-baolu.lu@linux.intel.com>
+ <20250214061104.1959525-9-baolu.lu@linux.intel.com>
+ <20250220010250.GQ3696814@ziepe.ca>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <20250220010250.GQ3696814@ziepe.ca>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Am Mittwoch, dem 19.02.2025 um 06:39 +0100 schrieb Greg KH:
-> On Tue, Feb 18, 2025 at 07:04:59PM -0800, Boqun Feng wrote:
-> > On Tue, Feb 18, 2025 at 04:58:27PM -0800, H. Peter Anvin wrote:
-> > [...]
-> > > > >=20
-...
->=20
->=20
-> I'm all for moving our C codebase toward making these types of problems
-> impossible to hit, the work that Kees and Gustavo and others are doing
-> here is wonderful and totally needed, we have 30 million lines of C code
-> that isn't going anywhere any year soon.  That's a worthy effort and is
-> not going to stop and should not stop no matter what.
+On 2/20/25 09:02, Jason Gunthorpe wrote:
+> On Fri, Feb 14, 2025 at 02:11:00PM +0800, Lu Baolu wrote:
+>> @@ -197,11 +201,19 @@ static int mock_domain_nop_attach(struct iommu_domain *domain,
+>>   	if (domain->dirty_ops && (mdev->flags & MOCK_FLAGS_DEVICE_NO_DIRTY))
+>>   		return -EINVAL;
+>>   
+>> +	return mock_dev_enable_iopf(dev, domain);
+>> +}
+> 
+> This isn't going to work for a replace type operation? Maybe like:
+> 
+> if (old_domain->iopf_handler && !domain->iopf_handler)
+> 	return mock_dev_disable_iopf(dev, domain);
+> if (old_domain->iopf_handler && domain->iopf_handler)
+>          return 0;
+> return mock_dev_enable_iopf(dev, domain);
+> 
+> ?
 
-It seems to me that these efforts do not see nearly as much attention
-as they deserve.
+The iommufd mock device driver appears not to support replacement. The
+replacement operation on this driver is likely handled as follows:
 
-I also would like to point out that there is not much investments
-done on C compiler frontends (I started to fix bugs in my spare time
-in GCC because nobody fixed the bugs I filed), and the kernel=C2=A0
-community also is not currently involved in ISO C standardization.
+- attach domain_a
+- attach blocking_domain
+- attach domain_b
 
-I find this strange, because to me it is very obvious that a lot more
-could be done towards making C a lot safer (with many low hanging fruits),
-and also adding a memory safe=C2=A0subset seems possible.
+The mock_dev_disable_iopf() is called in attach_dev of the blocking
+domain.
 
-Martin
+There seems to be a bug in this patch. The existing domain should be
+passed to mock_dev_disable_iopf().  It requires something similar to the
+following:
 
+diff --git a/drivers/iommu/iommufd/selftest.c 
+b/drivers/iommu/iommufd/selftest.c
+index a6b12cee7b00..54a6f0851758 100644
+--- a/drivers/iommu/iommufd/selftest.c
++++ b/drivers/iommu/iommufd/selftest.c
+@@ -168,6 +168,7 @@ struct mock_dev {
+         int id;
+         u32 cache[MOCK_DEV_CACHE_NUM];
+         unsigned int iopf_refcount;
++       struct iommu_domain *domain;
+  };
 
+  static inline struct mock_dev *to_mock_dev(struct device *dev)
+@@ -197,17 +198,24 @@ static int mock_domain_nop_attach(struct 
+iommu_domain *domain,
+                                   struct device *dev)
+  {
+         struct mock_dev *mdev = to_mock_dev(dev);
++       int ret;
 
+         if (domain->dirty_ops && (mdev->flags & 
+MOCK_FLAGS_DEVICE_NO_DIRTY))
+                 return -EINVAL;
+
+-       return mock_dev_enable_iopf(dev, domain);
++       ret = mock_dev_enable_iopf(dev, domain);
++       if (ret)
++               return ret;
++
++       mdev->domain = domain;
+  }
+
+  static int mock_domain_blocking_attach(struct iommu_domain *domain,
+                                        struct device *dev)
+  {
+-       mock_dev_disable_iopf(dev, domain);
++       struct mock_dev *mdev = to_mock_dev(dev);
++
++       mock_dev_disable_iopf(dev, mdev->domain);
+
+         return 0;
+  }
+
+Thanks,
+baolu
 
