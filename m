@@ -1,163 +1,143 @@
-Return-Path: <linux-kernel+bounces-524441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92A06A3E334
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 19:00:55 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4973CA3E331
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 18:59:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32AC13A86C5
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:59:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DF8717D739
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:59:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B7FA213E8C;
-	Thu, 20 Feb 2025 17:59:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91C8E213E7F;
+	Thu, 20 Feb 2025 17:59:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="anAmbA5z"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RJy/Cpwo"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92874213248;
-	Thu, 20 Feb 2025 17:59:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 569691FF1AC
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 17:59:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740074347; cv=none; b=X5lgk+T54L1eFyvczw8nkUb6lp6osXMEMEzdfXx5/woFaR6XBC+igp/KQC1xLjIxECPXQXJfnBtluEJqOcsyU81RH27Ef7akU9WWhe1ygWfAy7vcUizjKZvAoARnFJPL13QxRGgzCWtkBmg80+epBaSkPtP8L/w1gtU1Mq7Av4A=
+	t=1740074371; cv=none; b=CIHus0TnKJ6jbdvVq6wb7G/IFPxxfarZJa+nn8neSXad8GqBmTnpI+Ban7HN3FNawuPdzGHXxX7s9hIOvYVMFkDUyOEY9P6gVyeQhgOYSIf0FcFllmoWqMpIYQfO34XFE641vXtWN0TrDjWrLsXyGR9PUx2Fx1j9hPVSs8dQoOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740074347; c=relaxed/simple;
-	bh=uXDar+UGEQCszedTXVUTlEjmzkwnYg8QUUZ9jBJcaGA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SxAftUkz5tE0vCEzZbWO871WghYyf88DyqsTDJQO+UGFvr45aBXk+F4UVv5OUzvIdVReruTIwWBQpO41QCgj24IsD5TomMQ8Es1Y4UHZr0MHsj3x+tBWgwseekBhE2yJ9wmLekc+jsv+wh8XTpPOuPdYOZHUmd+9NIu/btad1ow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=anAmbA5z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86F5DC4CED1;
-	Thu, 20 Feb 2025 17:59:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740074347;
-	bh=uXDar+UGEQCszedTXVUTlEjmzkwnYg8QUUZ9jBJcaGA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=anAmbA5zA4rAstHu+RI+TzxQZp4PG7J3qAn7ygOfl0LH+J7s8kTX6g1pd/1j15ck9
-	 XgpGDw0zRxFc6b8Fd1uv0m8ycNPHqGfwXLoqfKwWHQXxx55pnemYv9QkiKxY+LvNOI
-	 KGriU73Z4cuUZfdIRK2leRX7Py9RWzpGBUIUsAGWTZcYVMWYgH0QZHcGg0jvH6KVct
-	 xEcJvnscvm/+Rc20Dahc6RCQk9uc/wgiKFkYzuxgAFPuge12Wp6Y6Qk7i1QIBtUNnh
-	 HmhcibkQq/uELuzmKtjnIUry/16mfVhXImTnkyfPDpPIy5mi6MYLN6DTvQd2zcEHnm
-	 8/j01coiAPrwg==
-Message-ID: <19de8e30-a872-49f6-bc34-a4bfb7eea10c@kernel.org>
-Date: Thu, 20 Feb 2025 18:59:00 +0100
+	s=arc-20240116; t=1740074371; c=relaxed/simple;
+	bh=LGcWROlFBLdeVan16+vOMHWLhfhEFSSmk96G5ovRHgM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Q0dAyJYfp9grvBt0YIlbZQpMJ6bAv4B4XMIwHkTbGuDGRo1lDxLoBzrzoxqC9M8Ew+TB1Ukks/qHGGQDgMKZ5aylFCbeCFrGkMTYXSvsMATFLkwk2AASOJK1HvW+rLtXURuScdj0GNqeyZIptwXYFwnipEji7zux0ZG8xJcCigQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RJy/Cpwo; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-30761be8fa8so12636961fa.2
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 09:59:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740074367; x=1740679167; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eOjy6lwz4qvzyhozebZn6Ny8b2zY4s9PrNznDcqT9yg=;
+        b=RJy/CpwoKGDr3WTR6W3ieFgLfDGzl5TBMesPYrR2euBCWfW2xw2uI6l9m+KldzDsF8
+         8doEENXe0pjv2KwKfrf9Kea3zMKjxXLhR/3959HkYrMtk44sjFKb7qkNYdbPCRdK+uO/
+         e28/9AiccsZt0RH0upnyKcMv++TeCaDqeoPz+tBiyh2ATTzstAzkjoWm+e7C3GOlnAbU
+         g9joNkjeFnwBa/btiEqt2aPcq4lYHmHbGQ5oH1eYALx/cIkvdpemfM8Cw31u3WpwYeg2
+         wJaeRxqQhGV+ZJPxPdL1z1ZjNFBCVkPFsAUYA1t9bUJ4O0FoYQYPE8e34qGfBaLqLyOt
+         uSmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740074367; x=1740679167;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eOjy6lwz4qvzyhozebZn6Ny8b2zY4s9PrNznDcqT9yg=;
+        b=LWQyWOaClNYHXx7StnydhR08DVRrzwW1P/oIjOi9gJ9VDkFOuw5D9GArWYVSg1mu47
+         TB1Ggyt/I+VdgbOr8Q9sK+aIRzKd6B5+Mqx/eC+8+YRmUe9cD7C0ZYTijvwMWflQ8HvZ
+         ztinSTJ2QPSVI3wl+HfGHTrHkN7DQNbtDA1J+xbrgleeZ9F+aClagiEeIrQ+2pIrNBeC
+         iDKcUSvUfhl86xrXpeoSybzkat6Gkuqaeu7zDr1oLokoB3GReQE80YoM70gbLz0Qpm5B
+         3KvnXQmKnmh05EV/09iDUuFI8TKk7kOdCNPTXz0R/KRAk1MsGirW4QUCmU3jGszIYUjL
+         NBvA==
+X-Forwarded-Encrypted: i=1; AJvYcCWD49HaAU7UHK28D/XVXbCu9mE0TikT6Rku8lMgoK6k0XMGoiyGFUDeVWIfHk99kbcI6wAUFWa/MjnXRos=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4ssYwztkPkfT8trM/37n0Tfhd5FXrNGuB8ENpRS4QPIMl315w
+	fSp7aGbhnMkAL9DgG5HTrAD5gzbNbwwa9GtH7IvRl11T/NnbCKJbl/LIuJJNfLEelLTMEifzsmz
+	3/Ti8i5HqDEhdxF1v/dlIqtAICw==
+X-Gm-Gg: ASbGnctiD7IE2YiReC1bRkiJztYqAeGNzJM4gYfHptHatRnKqLyZLDjYh6I8b6HkEaD
+	Wrm6aLe5JZrHV4nfSQulv3TsJJm6LHhHVrC/q2fUr63t2pHUyDhjC3vKbQQI+pITXH/rZs1pckY
+	eLefJy+pmZ28Q=
+X-Google-Smtp-Source: AGHT+IGWnES0EL+tZSgMOsr+E9D4/sr+AH3VUqOafOn1oDRyW9eOBThS4NBAHguSqxiluPi6XyjnqJbWMGfwtbFKPJk=
+X-Received: by 2002:a05:6512:4020:b0:545:2fa9:8cf5 with SMTP id
+ 2adb3069b0e04-5452fe93333mr9568223e87.49.1740074367202; Thu, 20 Feb 2025
+ 09:59:27 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/2] dt-bindings: net: bluetooth: nxp: Add support to
- set BD address
-To: Paul Menzel <pmenzel@molgen.mpg.de>,
- Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
-Cc: marcel@holtmann.org, luiz.dentz@gmail.com, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, linux-bluetooth@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- amitkumar.karwar@nxp.com, sherry.sun@nxp.com, ziniu.wang_1@nxp.com,
- johan.korsnes@remarkable.no, kristian.krohn@remarkable.no,
- manjeet.gupta@nxp.com
-References: <20250220114157.232997-1-neeraj.sanjaykale@nxp.com>
- <184919f9-25bd-4f65-9ed9-dc452a6f4418@molgen.mpg.de>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
- QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
- gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
- /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
- iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
- VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
- 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
- xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
- eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
- AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
- MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
- Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
- ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
- vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
- oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
- lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
- t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
- uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
- 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
- 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <184919f9-25bd-4f65-9ed9-dc452a6f4418@molgen.mpg.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250123190747.745588-1-brgerst@gmail.com> <Z7RRZ0jdqsrADMm0@gmail.com>
+ <CAFULd4Z_QoOLKCOawyeFtRe6V4+oaaGxfQxav9dS-Di-Ne7tfw@mail.gmail.com>
+ <Z7XE0P6ZFHxtlYXw@gmail.com> <CAMzpN2gyhEnYsimxLhLNPc4HTpVdRGTiBfm9pXiFTL6_3-O=sg@mail.gmail.com>
+ <CAFULd4ZQ8VoKvQ7aOgcfeLNROM4-rDYn=wHo=FYMO8ZkuQeSAQ@mail.gmail.com>
+ <CAMj1kXFgfbLqVkcs2T8QHRKKJ0X7+mLd-bNjricfd_niY-dxRA@mail.gmail.com>
+ <CAFULd4aYjnWzWaN8WA0LetN1Li7F8MY3qnxbhY8=tNFxqHCP1w@mail.gmail.com>
+ <CAMj1kXGG4J76o17d=e4jv-5jjzcSGyZdKRcNNB17SkCqD6+8qQ@mail.gmail.com>
+ <CAMzpN2h=Mc_7MNg5RiqxEvchV_BGAiThG4a5_Xt_HHB=0+vmEg@mail.gmail.com>
+ <CAMj1kXHfg5gAnrnEMb-6dwN_PY3KycjY__JL=exgtWK9q3=XWA@mail.gmail.com> <CAMzpN2iK97iWVH7+c2YqB_66sfXdKnmcyQN7QxtBq-HgD5KJ=A@mail.gmail.com>
+In-Reply-To: <CAMzpN2iK97iWVH7+c2YqB_66sfXdKnmcyQN7QxtBq-HgD5KJ=A@mail.gmail.com>
+From: Brian Gerst <brgerst@gmail.com>
+Date: Thu, 20 Feb 2025 12:59:15 -0500
+X-Gm-Features: AWEUYZlUOHlFW8wVgnpXSkl2OvMOEAYZ96nPwOMs2QpNshrvn6PMy5wy-omKc8U
+Message-ID: <CAMzpN2gvzVq9ASD7UEooMyH9Er0TpJ8dgeggWnBvZEMdy_4UpQ@mail.gmail.com>
+Subject: Re: [PATCH v6 00/15] x86-64: Stack protector and percpu improvements
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: Uros Bizjak <ubizjak@gmail.com>, Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org, 
+	x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Borislav Petkov <bp@alien8.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 20/02/2025 12:45, Paul Menzel wrote:
-> Dear Neeraj,
-> 
-> 
-> Thank you for your patch.
-> 
-> 
-> Am 20.02.25 um 12:41 schrieb Neeraj Sanjay Kale:
->> Allow user to set custom BD address for NXP chipsets.
->>
->> Signed-off-by: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
->> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->> ---
->> v2: Add allOf and unevaluatedProperties: false (Krzysztof)
->> v3: Drop local-bd-address: true (Krzysztof)
->> ---
->>   .../devicetree/bindings/net/bluetooth/nxp,88w8987-bt.yaml   | 6 +++++-
->>   1 file changed, 5 insertions(+), 1 deletion(-)
->>
->> diff --git a/Documentation/devicetree/bindings/net/bluetooth/nxp,88w8987-bt.yaml b/Documentation/devicetree/bindings/net/bluetooth/nxp,88w8987-bt.yaml
->> index 0a2d7baf5db3..a84c1c21b024 100644
->> --- a/Documentation/devicetree/bindings/net/bluetooth/nxp,88w8987-bt.yaml
->> +++ b/Documentation/devicetree/bindings/net/bluetooth/nxp,88w8987-bt.yaml
->> @@ -17,6 +17,9 @@ description:
->>   maintainers:
->>     - Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
->>   
->> +allOf:
->> +  - $ref: bluetooth-controller.yaml#
->> +
->>   properties:
->>     compatible:
->>       enum:
->> @@ -43,7 +46,7 @@ properties:
->>   required:
->>     - compatible
->>   
->> -additionalProperties: false
->> +unevaluatedProperties: false
-> 
-> How is this diff related to the change mentioned in the commit message?
+On Thu, Feb 20, 2025 at 12:47=E2=80=AFPM Brian Gerst <brgerst@gmail.com> wr=
+ote:
+>
+> On Thu, Feb 20, 2025 at 12:36=E2=80=AFPM Ard Biesheuvel <ardb@kernel.org>=
+ wrote:
+> >
+> > On Thu, 20 Feb 2025 at 18:24, Brian Gerst <brgerst@gmail.com> wrote:
+> > >
+> > > On Thu, Feb 20, 2025 at 5:52=E2=80=AFAM Ard Biesheuvel <ardb@kernel.o=
+rg> wrote:
+> > > >
+> > > > On Thu, 20 Feb 2025 at 11:46, Uros Bizjak <ubizjak@gmail.com> wrote=
+:
+> > > > >
+> > > > > OTOH, we could simply do it your way and put stack canary at the
+> > > > > beginning of pcpu_hot structure, with
+> > > > >
+> > > > > static_assert(offsetof(struct pcpu_hot, stack_canary) =3D=3D 0));
+> > > > >
+> > > > > for good measure.
+> > > >
+> > > > I think this would be the most straight-forward if there are no oth=
+er
+> > > > locality concerns this might interfere with.
+> > >
+> > > I'd prefer it at the end of pcpu_hot, that way the disassembler
+> > > doesn't latch on to the __stack_chk_guard symbol when referencing the
+> > > other fields of pcpu_hot.
+> > >
+> >
+> > __stack_chk_guard would no longer exist, only __ref_stack_chk_guard,
+> > which would be equal to pcpu_hot.  We could just call that
+> > __ref_pcpu_hot instead if it might cause confusion otherwise. (We
+> > can't use pcpu_hot directly in -mstack-check-guard-symbol=3D for the
+> > same reasons I had to add the indirection via __ref_stack_chk_guard)
+>
+> That works for me.
 
-It is exactly related, because otherwise custom BD address would not be
-allowed.
+Maybe not.  One quirk of how GCC implements this is that
+-mstack-protector-guard=3Dglobal (used by !SMP builds) ignores the
+-mstack-protector-guard-symbol option and always uses
+__stack_chk_guard.  That makes things more challenging.
 
-Read previous discussions and example schema before questioning, because
-otherwise this is nitpicking.
 
-Best regards,
-Krzysztof
+Brian Gerst
 
