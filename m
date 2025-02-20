@@ -1,124 +1,156 @@
-Return-Path: <linux-kernel+bounces-524868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6A44A3E836
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 00:17:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 37E7AA3E839
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 00:18:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7C79420AF0
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 23:17:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2EF8166444
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 23:18:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BF7A264631;
-	Thu, 20 Feb 2025 23:17:39 +0000 (UTC)
-Received: from relay04.th.seeweb.it (relay04.th.seeweb.it [5.144.164.165])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87238265CC7;
+	Thu, 20 Feb 2025 23:18:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="nDY90JqB"
+Received: from mail-10630.protonmail.ch (mail-10630.protonmail.ch [79.135.106.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF1621F4E3B;
-	Thu, 20 Feb 2025 23:17:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.144.164.165
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 151181E9B01
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 23:18:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740093458; cv=none; b=YDuuGnjxIBEdIladOP4E5x956fm8mN+KmeKW93wrKQvnEH1NiJu4JAcndSa4zBKQRSr22lttGRrxAXx16vszgnfBMg3isC9fQw6+GYRGZDF2VMGKQDQxIO2Z4GL+g0RIOfgxd4KSLwVf2rVn0CC57elFXzYM/jCaQQjvwtVHlQI=
+	t=1740093500; cv=none; b=B3MaNOsvYOqLmlCOvLMAIp7DpxCPTHAMxwiBBm8IO6nZ9O+wXRjgzW2PkW/0qGi0u8MTQHNV4CthM/dYfoex/i+bSfblPnXXMrwKnYmxLcXsnk2ApjfD04Ois0pPzLr7QxRkI+fn081JEc25+jC7gt7QseDtffLjhOAXkAU+Zfk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740093458; c=relaxed/simple;
-	bh=Ksv6rXwNT0Tae1pM/e3Atoeuf3TBrGkDeeU1xQQn5Vs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MsySTmx56yskrtg1G4wq0os4pjss4Unx0DvnYBOJ+gk3n9WXCwkka2BMFSXUUefZ/psPHmdjmGLuOV6E6GJVPxx2ubVS854JUVORWHWH7FlV340QLxc0aVoPNTMWD79BHEZyZiQiVppk4+E3xvcL47/T25Az+lQ8LVgKJwlLoaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=somainline.org; spf=pass smtp.mailfrom=somainline.org; arc=none smtp.client-ip=5.144.164.165
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=somainline.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=somainline.org
-Received: from SoMainline.org (94-211-6-86.cable.dynamic.v4.ziggo.nl [94.211.6.86])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by m-r1.th.seeweb.it (Postfix) with ESMTPSA id BA80C1F88B;
-	Fri, 21 Feb 2025 00:17:26 +0100 (CET)
-Date: Fri, 21 Feb 2025 00:17:25 +0100
-From: Marijn Suijten <marijn.suijten@somainline.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Rob Clark <robdclark@gmail.com>, 
-	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/7] drm/msm/dpu: don't overwrite CTL_MERGE_3D_ACTIVE
- register
-Message-ID: <ox5yirb5sxfn5e56khlm32we5rfspsnex3dbbtzkyicp5c6kpz@j5bjhujjntqs>
-References: <20250220-dpu-active-ctl-v1-0-71ca67a564f8@linaro.org>
- <20250220-dpu-active-ctl-v1-1-71ca67a564f8@linaro.org>
+	s=arc-20240116; t=1740093500; c=relaxed/simple;
+	bh=ST5U7QVnOkl5OWzRD8d4A0n1T3JArlpyXLEdYbY75DE=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Yps31ERnbFEIzK9kUziP/jT5bWPV6dC44ZT6o9jwIOLJGawW814iyz20/ZQhiENe8wA3qxm077ah0k1EG6mtLa3mfUciMPfTX4yx1w2IqcVN6k9fAhsvtHzLJNHRizLoKAa7gnEwyJeEcqAxRJ+JCh0YeGHv7w/zDafNjXF2Aes=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=nDY90JqB; arc=none smtp.client-ip=79.135.106.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=3ofknypmdref5pex6ox2hfphjy.protonmail; t=1740093493; x=1740352693;
+	bh=bQv18O6BE32RRp46j1r2K56INFBlD0xqJNVS8ByKQ78=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=nDY90JqBTJAvNz+i/JIHbcmdg3S/mqGCHLiqcw1PSx3BokN2gQuAVEut0b6r6w1KJ
+	 qRxBnGLowoEN+bsjwiDOTGSvcKpLthNUn+s4R7/NYO+nuWCA/AzRLoraCagBw50ZxI
+	 WWaN2hf70JdB5ycDpNEHeMWD3jggZRkwbuu996KRWHPr1vpG56P8kJSHfnGHfU9vel
+	 NX8H0OOqW5XBKAOnAJn35gG2+6TSe5+4crQ7+lqSOY5R6+0prEctj4sXQ2/ujhKunB
+	 Rs1cH1yDwcd9QV3FWTOlSL2jTP5VOGthCk98cYwbBOpyqj1WzlK+2Lsci0ewYgBcZq
+	 LeMeXNjM3ILgg==
+Date: Thu, 20 Feb 2025 23:18:07 +0000
+To: Andreas Hindborg <a.hindborg@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Danilo Krummrich <dakr@kernel.org>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Lyude Paul <lyude@redhat.com>, Guangbo Cui <2407018371@qq.com>, Dirk Behme <dirk.behme@gmail.com>, Daniel Almeida <daniel.almeida@collabora.com>, Tamir Duberstein <tamird@gmail.com>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 06/14] rust: hrtimer: add `UnsafeHrTimerPointer`
+Message-ID: <7c3c758d-658c-4cea-9533-9bbe7b3e285d@proton.me>
+In-Reply-To: <20250218-hrtimer-v3-v6-12-rc2-v8-6-48dedb015eb3@kernel.org>
+References: <20250218-hrtimer-v3-v6-12-rc2-v8-0-48dedb015eb3@kernel.org> <20250218-hrtimer-v3-v6-12-rc2-v8-6-48dedb015eb3@kernel.org>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: b48ae727e84febc5af3498e06639422415bbf860
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250220-dpu-active-ctl-v1-1-71ca67a564f8@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 2025-02-20 12:26:18, Dmitry Baryshkov wrote:
-> In case of complex pipelines (e.g. the forthcoming quad-pipe) the DPU
-> might use more that one MERGE_3D block for a single output.  Follow the
-> pattern and extend the CTL_MERGE_3D_ACTIVE active register instead of
-> simply writing new value there. Currently at most one MERGE_3D block is
-> being used, so this has no impact on existing targets.
-> 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+On 18.02.25 14:27, Andreas Hindborg wrote:
+> Add a trait to allow unsafely queuing stack allocated timers.
+>=20
+> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
+
+Reviewed-by: Benno Lossin <benno.lossin@proton.me>
+
 > ---
->  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.c
-> index 4893f10d6a5832521808c0f4d8b231c356dbdc41..321a89e6400d2824ebda2c08be5e6943cb0f6b11 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.c
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.c
-> @@ -548,6 +548,7 @@ static void dpu_hw_ctl_intf_cfg_v1(struct dpu_hw_ctl *ctx,
->  	u32 dsc_active = 0;
->  	u32 wb_active = 0;
->  	u32 mode_sel = 0;
-> +	u32 merge_3d_active = 0;
->  
->  	/* CTL_TOP[31:28] carries group_id to collate CTL paths
->  	 * per VM. Explicitly disable it until VM support is
-> @@ -562,6 +563,7 @@ static void dpu_hw_ctl_intf_cfg_v1(struct dpu_hw_ctl *ctx,
->  	intf_active = DPU_REG_READ(c, CTL_INTF_ACTIVE);
->  	wb_active = DPU_REG_READ(c, CTL_WB_ACTIVE);
->  	dsc_active = DPU_REG_READ(c, CTL_DSC_ACTIVE);
-> +	merge_3d_active = DPU_REG_READ(c, CTL_MERGE_3D_ACTIVE);
->  
->  	if (cfg->intf)
->  		intf_active |= BIT(cfg->intf - INTF_0);
-> @@ -572,14 +574,16 @@ static void dpu_hw_ctl_intf_cfg_v1(struct dpu_hw_ctl *ctx,
->  	if (cfg->dsc)
->  		dsc_active |= cfg->dsc;
->  
-> +	if (cfg->merge_3d)
-> +		merge_3d_active |= BIT(cfg->merge_3d - MERGE_3D_0);
+>  rust/kernel/time/hrtimer.rs | 31 +++++++++++++++++++++++++++++++
+>  1 file changed, 31 insertions(+)
+>=20
+> diff --git a/rust/kernel/time/hrtimer.rs b/rust/kernel/time/hrtimer.rs
+> index e342193f985eb..196794089f033 100644
+> --- a/rust/kernel/time/hrtimer.rs
+> +++ b/rust/kernel/time/hrtimer.rs
+> @@ -157,6 +157,37 @@ pub trait HrTimerPointer: Sync + Sized {
+>      fn start(self, expires: Ktime) -> Self::TimerHandle;
+>  }
+>=20
+> +/// Unsafe version of [`HrTimerPointer`] for situations where leaking th=
+e
+> +/// [`HrTimerHandle`] returned by `start` would be unsound. This is the =
+case for
+> +/// stack allocated timers.
+> +///
+> +/// Typical implementers are pinned references such as [`Pin<&T>`].
+> +///
+> +/// # Safety
+> +///
+> +/// Implementers of this trait must ensure that instances of types imple=
+menting
+> +/// [`UnsafeHrTimerPointer`] outlives any associated [`HrTimerPointer::T=
+imerHandle`]
+> +/// instances.
+> +pub unsafe trait UnsafeHrTimerPointer: Sync + Sized {
+> +    /// A handle representing a running timer.
+> +    ///
+> +    /// # Safety
+> +    ///
+> +    /// If the timer is running, or if the timer callback is executing w=
+hen the
+> +    /// handle is dropped, the drop method of [`Self::TimerHandle`] must=
+ not return
+> +    /// until the timer is stopped and the callback has completed.
+> +    type TimerHandle: HrTimerHandle;
 > +
->  	DPU_REG_WRITE(c, CTL_TOP, mode_sel);
->  	DPU_REG_WRITE(c, CTL_INTF_ACTIVE, intf_active);
->  	DPU_REG_WRITE(c, CTL_WB_ACTIVE, wb_active);
->  	DPU_REG_WRITE(c, CTL_DSC_ACTIVE, dsc_active);
->  
->  	if (cfg->merge_3d)
-> -		DPU_REG_WRITE(c, CTL_MERGE_3D_ACTIVE,
-> -			      BIT(cfg->merge_3d - MERGE_3D_0));
-> +		DPU_REG_WRITE(c, CTL_MERGE_3D_ACTIVE, merge_3d_active);
+> +    /// Start the timer after `expires` time units. If the timer was alr=
+eady
+> +    /// running, it is restarted at the new expiry time.
+> +    ///
+> +    /// # Safety
+> +    ///
+> +    /// Caller promises keep the timer structure alive until the timer i=
+s dead.
+> +    /// Caller can ensure this by not leaking the returned [`Self::Timer=
+Handle`].
+> +    unsafe fn start(self, expires: Ktime) -> Self::TimerHandle;
 
-No other writes (except the new CDM, strangely) are done conditionally, since
-the value does not change.  Let's keep it consistent with the other register
-writes and maybe clean this up in the future when this function gets a single
-view of all "connected" INTFs at once rather than doing many read-update-writes?
+I have an interesting idea to make this function safe, but I don't want
+to block this series.
 
-After that:
+How about we have the following signature:
 
-Reviewed-by: Marijn Suijten <marijn.suijten@somainline.org>
+    fn start(self, expires: Ktime) -> impl PinInit<Self::TimerHandle>;
 
->  
->  	if (cfg->cdm)
->  		DPU_REG_WRITE(c, CTL_CDM_ACTIVE, cfg->cdm);
-> 
-> -- 
-> 2.39.5
-> 
+And in the safety requirements of the trait we ask that `TimerHandle` be
+`!Unpin`. Then the TimerHandle cannot be forgotten because it is pinned
+and pinned values have the drop guarantee [1].
+
+You can then use `stack_pin_init!` to pin the value directly on the
+stack (dropping it by leaving its scope will then cancel the timer &
+possibly wait for the timer callback to finish running).
+
+[1]: https://doc.rust-lang.org/std/pin/index.html#drop-guarantee
+
+---
+Cheers,
+Benno
+
+> +}
+> +
+>  /// Implemented by [`HrTimerPointer`] implementers to give the C timer c=
+allback a
+>  /// function to call.
+>  // This is split from `HrTimerPointer` to make it easier to specify trai=
+t bounds.
+>=20
+> --
+> 2.47.0
+>=20
+>=20
+
 
