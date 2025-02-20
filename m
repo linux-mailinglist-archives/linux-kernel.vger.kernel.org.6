@@ -1,76 +1,42 @@
-Return-Path: <linux-kernel+bounces-523631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 867DEA3D972
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:05:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6E29A3D976
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:05:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A6133BB137
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:04:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21A9517BF3A
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:04:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A8681F460E;
-	Thu, 20 Feb 2025 12:04:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Y6YExqCH"
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2067.outbound.protection.outlook.com [40.107.100.67])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AB511F4706;
+	Thu, 20 Feb 2025 12:04:48 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16E161BCA0F
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 12:04:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.67
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740053061; cv=fail; b=kRTTF8wU0J21jz3II4vQYuZhD7jt7pkRzDOvJQyCKnMUioYPthd/D9CTIckGdsSmijUOPflWJEZnrXOH5t10JQLvma8plOKsn9vwlP3T1B1G6ExMg7Ax6B6sKy+TM/wQImoRvtr7PixvAlCR4mdBq+dDwivfpIN9c8IRunBdpyw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740053061; c=relaxed/simple;
-	bh=atOTa/1tUTY2G9Yp+btsNLqSQy6jar7AQggFYY5Zqmw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=eBFC+IyXSX38rvKuPOcfpOQA0prO1iO4vkqbdu5EDqgM3xF23s2DAGFgUWYbeKN9qhVzrKSFB39nRjnJ9sTJ5pAYQw+9wX6jrfYJVhZUyul4ildV4bqdg5dNTTvy4CcT2CgTbhKuXh0MycfyV2BWP1zGfvJ3nJ9RStsXQZWOdj8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Y6YExqCH; arc=fail smtp.client-ip=40.107.100.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=yhdDqPJ/BPbJ4DPAI/LYV/LKUKXweJy9EMmW/a+OxhxnrRVDy5FtxQucRVw4B7bZeUiT9zjortFxQvEeOqTgrkWLiyZBNh4/A6SGoZb7WXL/9/RS9aqWP4TizMZx+UP9vHYfXS71OJJgGWuaTbH7xa6IAJjnV906dnKUjzhFszXxNME8Kc0SbkpstAJ4C/19qPZ2qTGpxJ3oJa1/u8BmthEQsLkReKE/9zoeZm4zcsqyA1pqY9HSSi/0Oi+P7czQUz/3tCeOVXd4TUFYm9Zh54BtAI6teHl4geAvp+TC0a2D3V5s/+3X4KBoNtxIlkDOmlq1ca7ydgZ2VaJH1wuPRw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=LpwJVIexLW2S1EyzDvtcATpuzDmVYgazQNdN+Lpw5YI=;
- b=RkYNDSCNhM5dgTkmbfOhg/q7biUdYhomCIMGI7LIFfgAwCbBZTpLY7EKymESYK0E/CG5tBYweo/G7T4+gmkttdeNNC1hkT8QEjqLWmckUdRvcKAwklC6y7UZ9cLS2/CNl7g3AnXg2C3ARLH8b4QfMlx2Cm+AnGOIevZ/qXsezumBpn6rP2LG8RWgSu5rv9YSXGYNCJg1HZyqR29V13ljtC5YkCniWQoIi4Wb+Z0oLa19dKeks3JauQ7FgSTXlLnUTqnSg149V8/wAIEgyYhXBYZQLnojkt9Xx3qasT6Fp6jn/P3ChtBVz4KXXnt5KyTx6kl4aCthPbYYMVY+I1ZYkg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=infradead.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LpwJVIexLW2S1EyzDvtcATpuzDmVYgazQNdN+Lpw5YI=;
- b=Y6YExqCHPysIfVsxsEH+fedwaQx+0wpuAhM1bjYzo2eAjf0JY3a5HH3Mew6Li+Uh39mXx+43xr0/LzpeyaxDnm4uWzmEou6FPlwh564VMTv76zWLDjpdZrYG72GuERtnDRRKFolh9kHQPVDeIz8qpVWMwevfRzs7gKSvm5mn1Xc=
-Received: from BN9PR03CA0349.namprd03.prod.outlook.com (2603:10b6:408:f6::24)
- by IA1PR12MB6306.namprd12.prod.outlook.com (2603:10b6:208:3e6::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.16; Thu, 20 Feb
- 2025 12:04:16 +0000
-Received: from BN3PEPF0000B36E.namprd21.prod.outlook.com
- (2603:10b6:408:f6:cafe::78) by BN9PR03CA0349.outlook.office365.com
- (2603:10b6:408:f6::24) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8466.15 via Frontend Transport; Thu,
- 20 Feb 2025 12:04:15 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- BN3PEPF0000B36E.mail.protection.outlook.com (10.167.243.165) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8489.2 via Frontend Transport; Thu, 20 Feb 2025 12:04:15 +0000
-Received: from [10.252.205.52] (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 20 Feb
- 2025 06:04:07 -0600
-Message-ID: <59d46dd3-33da-4e95-8674-d93fc00d73f6@amd.com>
-Date: Thu, 20 Feb 2025 17:34:05 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D30D01BCA0F;
+	Thu, 20 Feb 2025 12:04:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740053088; cv=none; b=g5Kp+nYmQiVQ+wDsMyy0t7hu7vlPevqxXfLPJn0wYrbMc85xgXJ3ajuxrr37zUqPYumfTlCDhxMjsHYhzD5SsGNhHpMz+F0KC4hP4rtDsWJo4+2otHBntlyLKkjPYoouoCDEa47yfnAftLwKFBHJxSGZMGQditMHMuw3qjEnE+k=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740053088; c=relaxed/simple;
+	bh=P7l71zGGOCBiuGUiOWJslraeV8jPeviTVd3ghPcopaA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MKGJZ+Vfz0qvuEMUpHhVzCRjg+KUy40iVhSdbm9GiLi/veoZkM2mezfIN7Xr9lbcdxhMP63BoqTnvxlbc6WUXxtrVv9xvAFQlzGwfPkGvuzkefeafZQJ2TIA6AyZBeotmOQ5o4KqzgECIf6qG8CW1priT7IMcPqK8bdBPwMcZns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [192.168.0.2] (ip5f5af4d1.dynamic.kabel-deutschland.de [95.90.244.209])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id C8F6F61E6478A;
+	Thu, 20 Feb 2025 13:04:30 +0100 (CET)
+Message-ID: <9b67d408-3557-46d5-81ad-e3d6636a5e0d@molgen.mpg.de>
+Date: Thu, 20 Feb 2025 13:04:30 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,157 +44,146 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 00/22] sched/fair: Defer CFS throttling to exit to
- user mode
-To: Peter Zijlstra <peterz@infradead.org>, Ben Segall <bsegall@google.com>,
-	Josh Don <joshdon@google.com>
-CC: Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>, Valentin Schneider
-	<vschneid@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Andy Lutomirski
-	<luto@kernel.org>, <linux-kernel@vger.kernel.org>, Dietmar Eggemann
-	<dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, Mel Gorman
-	<mgorman@suse.de>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, "Clark
- Williams" <clrkwllms@kernel.org>, <linux-rt-devel@lists.linux.dev>, Tejun Heo
-	<tj@kernel.org>, Frederic Weisbecker <frederic@kernel.org>, Barret Rhoden
-	<brho@google.com>, Petr Mladek <pmladek@suse.com>, Qais Yousef
-	<qyousef@layalina.io>, "Paul E. McKenney" <paulmck@kernel.org>, David Vernet
-	<dvernet@meta.com>, "Gautham R. Shenoy" <gautham.shenoy@amd.com>, "Swapnil
- Sapkal" <swapnil.sapkal@amd.com>
-References: <20250220093257.9380-1-kprateek.nayak@amd.com>
- <20250220105558.GJ34567@noisy.programming.kicks-ass.net>
- <b2386349-2879-4dce-afb0-f6486c24c117@amd.com>
- <20250220113227.GL34567@noisy.programming.kicks-ass.net>
+Subject: Re: [PATCH v5 2/2] Bluetooth: btnxpuart: Add support for set BD
+ address
+To: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
+Cc: marcel@holtmann.org, luiz.dentz@gmail.com, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, linux-bluetooth@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ amitkumar.karwar@nxp.com, sherry.sun@nxp.com, ziniu.wang_1@nxp.com,
+ johan.korsnes@remarkable.no, kristian.krohn@remarkable.no,
+ manjeet.gupta@nxp.com
+References: <20250220114157.232997-1-neeraj.sanjaykale@nxp.com>
+ <20250220114157.232997-2-neeraj.sanjaykale@nxp.com>
 Content-Language: en-US
-From: K Prateek Nayak <kprateek.nayak@amd.com>
-In-Reply-To: <20250220113227.GL34567@noisy.programming.kicks-ass.net>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN3PEPF0000B36E:EE_|IA1PR12MB6306:EE_
-X-MS-Office365-Filtering-Correlation-Id: 88d0fcd5-ae09-44e8-546c-08dd51a6b272
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|82310400026|1800799024|7416014|376014|13003099007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?THUxZE9PMHl1L1VHQ1ZpaWZvTTlob0h4aENsK1Z4L2YxRmhIM3I4bUxORzBO?=
- =?utf-8?B?R0l0TExKVC8wV2xBbGFUZ04zeWRtWVVzR21admFPK2FlNlVzMzhDanJEeUla?=
- =?utf-8?B?a3huOWY5cXZETUk5MzhIOXZwL0UzNHRvbDNZNE1Ta3Evdmlob3pUcEN4NDJG?=
- =?utf-8?B?bU03TmUxVTJ3VTBKK0M4dFhtU0xHb0RwQ25ROXJwQ21RZlVFTXZrVjZPalVD?=
- =?utf-8?B?clJVT09Tekx3VkNZU3gvaXhGUHgwNkNIb1g5RCtjWGp4TGNUTlhNR1dGYjBt?=
- =?utf-8?B?ZHZHZ2VDaUs1SngxVUREcDRDUjBMdU82cDZ6Zmp6VG9aLzByVlRWeSt3S0E3?=
- =?utf-8?B?ZEdSYUtSVnh6cVBYdFZkT0FKMGtTQkorNlR0Tmx4dVRDMFliKzN5c1YrZzlq?=
- =?utf-8?B?QmQ0OVZNOUQ4SkpLYmF4eDZxekovaXExVEJFSWpObVNJY1pjYVI0VEhWdURx?=
- =?utf-8?B?NGx4MElLdzJhWXRlZE0zK2FkaldRTEVtUG5XVWtsK0h4c2tDNTFnVzJrQjVS?=
- =?utf-8?B?R3A4YjM4TVZYNERZMUptZGZ1WURsRGExN1ZNak9qcnR4azlkMVRJbVZ5a1c4?=
- =?utf-8?B?ZitWRm5PODA2bEhUMDYzNzBubW5qV09nNFArOWF4QTU1SVY3UGlKWVdzTnZ5?=
- =?utf-8?B?TWdkRytKMnFpcTRIbVBmdWZsL0JWK2RWNVZrOTQ4MGE1dDdRTDVsUVljUTVs?=
- =?utf-8?B?ZHJPN3lKVllvVTBBbVRqa3gwODI0VnJHc2lmcUp4TUVKaUJKbVdUNTlkRmpX?=
- =?utf-8?B?MTgxMzhPWHE5cFM0VkJmOFdtK0NtNElCSFdZTXc3UXQxU0l5bDBKc0RKZWtr?=
- =?utf-8?B?ZU1LYUIwK2ZJNjlXZlBMb3NENjlma0QxQ3RtM2s2djRRTEw1U2YxZ3gxcnpy?=
- =?utf-8?B?ZDJISUtYVEZKemttNTlKdDhOZG1nWk1MSkYyZjQ2V2xKRHJYejhHZHo5UVov?=
- =?utf-8?B?SVF2aGpzeUF3S0ZQRW1zVU03RU5TYWxLM1JhMVBxNmNPQmZRTlo1ZjdSRGtz?=
- =?utf-8?B?bmVpQnRvTGQ4WWRrRXhGSGZ2TUhmQ0o1a3F2K1VkTnNpODRrSjNKT2Z6SUhm?=
- =?utf-8?B?V0VObWl4bWo0dzRKSXJLN2Z3R2lkbjlHa0Q2dzA1VSsxZFl3bkVLMm8yUmw2?=
- =?utf-8?B?Q3NtUDlGblZSbUZGQ2hONFdQdmdOdmR3WnRSaE01bEpRYWY5ZXk5RXdjMnZx?=
- =?utf-8?B?ZnpFNkJaVk5rMWpBT3ViTEtzenp4M2l1TVoxMWpTL282WjRJdlJlOEh1ZXcx?=
- =?utf-8?B?YW1FMVBCYk5kdUo4eTBCWlZRUDJvVEZseGhjeTBUdCsrQnZQWjFtVWtINE13?=
- =?utf-8?B?MDFKSmxYUU1heGJENG1EaElPZGpGMkl5YXhCNXhVT2MwSzQrYmRtRVVUYnZJ?=
- =?utf-8?B?TDJYVm5oNnhSa1MwaERoeUorTndNdHNRSnhJcVNsZkY4N09GdHVoc25qeTNM?=
- =?utf-8?B?b2tpeFlURjBnOXl5L21Kdi9aUUk3OUtPdHpmZElUL2FmYzFKbnhud1RZVFgz?=
- =?utf-8?B?cmk1TEhUdFBwbE84L3pjcCs4OWhDc3pKN3h0bUFNS0NCTTlwSlRzSC9iNjBI?=
- =?utf-8?B?cDNnb3ZqVUdkSHQ2cnFIZTlvYnpiSDFaM2ZCOE1PTE5qdE5hamVlN0t6RlBt?=
- =?utf-8?B?S25oTzROdXFYajNGM3U5RkVBVTRlZ0R1dkhRS3laeWt2SDdhRTlFUHF4Y2Vl?=
- =?utf-8?B?Q25ya1FXNnMrQWpRU005QXgxZFRRcEFldmpJSmd2c3hkNDRCYVVrdEhZUUFo?=
- =?utf-8?B?TGV0c0RKbVo5bUxKYU9zNEozb21uaXFkMWtzcFlYcWpnVFdrMVVrR2xnN2k0?=
- =?utf-8?B?cmoyQjZXa1RZRkpNZElsY1NwSm40aUR1bDgwM2piYTFCNEZaVDNPQWNwYjAv?=
- =?utf-8?B?R2I5dGpQajRud1AzQWc3Q0UrdElzSy9yNmpRL3UxNmczQ0p5cVIrYzRvekFO?=
- =?utf-8?Q?oiyUCxSByBs=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(1800799024)(7416014)(376014)(13003099007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Feb 2025 12:04:15.6111
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 88d0fcd5-ae09-44e8-546c-08dd51a6b272
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN3PEPF0000B36E.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6306
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+In-Reply-To: <20250220114157.232997-2-neeraj.sanjaykale@nxp.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hello Peter,
+Dear Neeraj,
 
-On 2/20/2025 5:02 PM, Peter Zijlstra wrote:
-> On Thu, Feb 20, 2025 at 04:48:58PM +0530, K Prateek Nayak wrote:
+
+Thank you for your patch. In the summary/title you could use *to set* or 
+*for setting*.
+
+Am 20.02.25 um 12:41 schrieb Neeraj Sanjay Kale:
+> This adds support for setting BD address during hci registration. NXP
+> FW does not allow vendor commands unless it receives a reset command
+> after FW download and initialization done.
+
+I’d add a blank line between paragraphs.
+
+> As a workaround, the .set_bdaddr callback function will first send the
+> HCI reset command, followed by the actual vendor command to set BD
+> address.
+
+Where is the command 0xfc22 documented?
+
+How did you verify this? Maybe document the commands how to set the BD 
+address, and how to verify it.
+
+Does Linux log new messages with your patch?
+
+> Signed-off-by: Loic Poulain <loic.poulain@linaro.org>
+> Signed-off-by: Johan Korsnes <johan.korsnes@remarkable.no>
+> Signed-off-by: Kristian HusevÃ¥g Krohn <kristian.krohn@remarkable.no>
+
+The last name has some wrong character.
+
+> Tested-by: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
+> Signed-off-by: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
+> ---
+> v4: hci0 interface shows RAW mode if 'local-bd-address' not defined and
+>      HCI_QUIRK_USE_BDADDR_PROPERTY is set. Add Quirk only if device tree
+>      property 'local-bd-address' found. (Neeraj)
+> v5: Initialize local variable ba, update Copywrite year. (Kristian)
+> ---
+>   drivers/bluetooth/btnxpuart.c | 39 ++++++++++++++++++++++++++++++++++-
+>   1 file changed, 38 insertions(+), 1 deletion(-)
 > 
->> The rationale there was with growing number of tasks on cfs_rq, the
->> throttle path has to perform a lot of dequeues and the unthrottle at
->> distribution has to enqueue all the dequeued threads back.
->>
->> This is one way to keep all the tasks queued but allow pick to only
->> select among those that are preempted in kernel mode.
->>
->> Since per-task throttling needs to tag, dequeue, and re-enqueue each
->> task, I'm putting this out as an alternate approach that does not
->> increase the complexities of tg_tree walks which Ben had noted on
->> Valentin's series [1]. Instead we retain the per cfs_rq throttling
->> at the cost of some stats tracking at enqueue and dequeue
->> boundaries.
->>
->> If you have a strong feelings against any specific part, or the entirety
->> of this approach, please do let me know, and I'll do my best to see if
->> a tweaked approach or an alternate implementation can scale well with
->> growing thread counts (or at least try to defend the bits in question if
->> they hold merit still).
->>
->> Any and all feedback is appreciated :)
-> 
-> Pfff.. I hate it all :-)
-> 
-> So the dequeue approach puts the pain on the people actually using the
-> bandwidth crud,
+> diff --git a/drivers/bluetooth/btnxpuart.c b/drivers/bluetooth/btnxpuart.c
+> index 1230045d78a5..dd9161bfd52c 100644
+> --- a/drivers/bluetooth/btnxpuart.c
+> +++ b/drivers/bluetooth/btnxpuart.c
+> @@ -1,7 +1,7 @@
+>   // SPDX-License-Identifier: GPL-2.0-or-later
+>   /*
+>    *  NXP Bluetooth driver
+> - *  Copyright 2023 NXP
+> + *  Copyright 2023-2025 NXP
+>    */
+>   
+>   #include <linux/module.h>
+> @@ -1197,6 +1197,34 @@ static int nxp_set_ind_reset(struct hci_dev *hdev, void *data)
+>   	return hci_recv_frame(hdev, skb);
+>   }
+>   
+> +static int nxp_set_bdaddr(struct hci_dev *hdev, const bdaddr_t *bdaddr)
+> +{
+> +	u8 data[8] = { 0xfe, 0x06, 0, 0, 0, 0, 0, 0 };
+> +	struct sk_buff *skb;
+> +	int err;
+> +
+> +	memcpy(data + 2, bdaddr, 6);
+> +
 
-Back in Josh Don's presentation at the "Humongous Servers vs Kernel
-Scalability" BoF [1] at LPC'24, they mentioned one server handles
-around "O(250k) threads" (Slide 21)
+Add a comment about the firmware limitation/requirement?
 
-Assuming 256 logical CPUs from their first first couple of slides, that
-is about 1K potential tasks that can be throttled at one go on each
-CPU. Doing that within a single rq_lock critical section may take quite
-a bit of time.
+> +	skb = __hci_cmd_sync(hdev, HCI_OP_RESET, 0, NULL, HCI_INIT_TIMEOUT);
+> +	if (IS_ERR(skb)) {
+> +		err = PTR_ERR(skb);
+> +		bt_dev_err(hdev, "Reset before setting local-bd-addr failed (%ld)",
+> +			   PTR_ERR(skb));
+> +		return err;
+> +	}
+> +	kfree_skb(skb);
+> +
+> +	skb = __hci_cmd_sync(hdev, 0xfc22, sizeof(data), data, HCI_CMD_TIMEOUT);
+> +	if (IS_ERR(skb)) {
+> +		err = PTR_ERR(skb);
+> +		bt_dev_err(hdev, "Changing device address failed (%d)", err);
+> +		return err;
+> +	}
+> +	kfree_skb(skb);
+> +
+> +	return 0;
+> +}
+> +
+>   /* NXP protocol */
+>   static int nxp_setup(struct hci_dev *hdev)
+>   {
+> @@ -1500,6 +1528,7 @@ static int nxp_serdev_probe(struct serdev_device *serdev)
+>   {
+>   	struct hci_dev *hdev;
+>   	struct btnxpuart_dev *nxpdev;
+> +	bdaddr_t ba = {0};
+>   
+>   	nxpdev = devm_kzalloc(&serdev->dev, sizeof(*nxpdev), GFP_KERNEL);
+>   	if (!nxpdev)
+> @@ -1547,8 +1576,16 @@ static int nxp_serdev_probe(struct serdev_device *serdev)
+>   	hdev->send  = nxp_enqueue;
+>   	hdev->hw_error = nxp_hw_err;
+>   	hdev->shutdown = nxp_shutdown;
+> +	hdev->set_bdaddr = nxp_set_bdaddr;
+> +
+>   	SET_HCIDEV_DEV(hdev, &serdev->dev);
+>   
+> +	device_property_read_u8_array(&nxpdev->serdev->dev,
+> +				      "local-bd-address",
+> +				      (u8 *)&ba, sizeof(ba));
+> +	if (bacmp(&ba, BDADDR_ANY))
+> +		set_bit(HCI_QUIRK_USE_BDADDR_PROPERTY, &hdev->quirks);
 
-Is the expectation that these deployments have to be managed more
-smartly if we move to a per-task throttling model? Else it is just
-hard lockup by a thousand tasks.
+Please elaborate in the commit message, why the quirk is needed.
 
-If Ben or Josh can comment on any scalability issues they might have
-seen on their deployment and any learning they have drawn from them
-since LPC'24, it would be great. Any stats on number of tasks that
-get throttled at one go would also be helpful.
+> +
+>   	if (hci_register_dev(hdev) < 0) {
+>   		dev_err(&serdev->dev, "Can't register HCI device\n");
+>   		goto probe_fail;
 
-[1] https://lpc.events/event/18/contributions/1855/attachments/1436/3432/LPC%202024_%20Scalability%20BoF.pdf
 
-> while this 'some extra accounting' crap has *everybody*
-> pay for this nonsense, right?
+Kind regards,
 
-That is correct. Let me go and get some numbers to see if the overhead
-is visible but with deeper hierarchies there is a ton that goes on
-already which may hide these overheads. I'll try with different levels
-on a wakeup heavy task.
-
-> 
-> I'm not sure how bad this extra accounting is, but I do fear death by a
-> thousand cuts.
-
-We surely don't want that!
-
--- 
-Thanks and Regards,
-Prateek
-
+Paul
 
