@@ -1,111 +1,151 @@
-Return-Path: <linux-kernel+bounces-523433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D57CFA3D6B2
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 11:31:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D47EA3D6BA
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 11:32:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CF0ED7AAF07
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 10:29:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEC263A36D0
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 10:30:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 297A41F1300;
-	Thu, 20 Feb 2025 10:28:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D4B61F150D;
+	Thu, 20 Feb 2025 10:29:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="S5vEYE2i"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="GPUAQ44n"
+Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E81681F12E9
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 10:28:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E8BA1F12E9
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 10:29:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740047312; cv=none; b=AXojdqiQaoLfdq6ijxXfE1vFmFa+VUKVjHUg9udmvQYe/Q9heaYmWnoP54wKRz5b8+7Jn48IRuHkGi61ch4ZgRBuHQiLWXDUx0aFt3wYGqok3MBpRsMcKaUw3kaxp74uTXADSxk01U8sXZrhFSxQuezLT/k1ozQ23gIM8AogTbQ=
+	t=1740047361; cv=none; b=J8Zz52YTCNlgYDdAHaW6huopZgFlo56hbm0KiTOEEwpUoV0bNVlOdrTvOzu/NaXhB5p8vc1AoXUgDmivUJUnvvXfaeh/jsnQK9i8PI5kiTcM7UXSSDbL12k///KYVXNxMVlLh/rssJA9OyH/BU2hhe4ZhJqhsG+k5akysWwdQ8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740047312; c=relaxed/simple;
-	bh=pbqCbnn3949AQ4E9A+0vVRKzntefI3rHN0xAk0SFsaE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EFzoWr9M1ivKX3s1mlmE1v+BWshMiSs76N1nngL5cdxHbmdvjS3AMC3exWFSTa8Diwd8XcIrxP4Y0pXjODcxAvKWbnAP6270qqi5TUYgH2kFfm66tncdMTr7cp/R9CL1jNSwispXs3FYRvLwrSgEEDSO8FNqSJaHnurMlkwMRJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=S5vEYE2i; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5452e6f2999so806350e87.3
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 02:28:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1740047309; x=1740652109; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pbqCbnn3949AQ4E9A+0vVRKzntefI3rHN0xAk0SFsaE=;
-        b=S5vEYE2iZs7zfqUnuG/NbJghV3PMYbcdJvqxWlGnw4mRohayyeJA27K8d6x4Ol8c/y
-         SxlpdNnLKk7WTpzizGExJ0LS0EIvmdEa3hUiTQ6m2l5yvVEz4Cgs+V+uJvRR0PqOqiic
-         5Uu4zOLPGjUXl6/uFcaMIBGlVqaPXMffdfxhiYJmQ11NtHt9rJqYZMsBdm9gY4cSb7cS
-         1zHDYqYp/uV4rHU3acOrq2FptSB4ZjjM2v3UsjK4g9O59/M2IQ8dxHzcmySlT64K0nAz
-         44DiWWYG/g8rfciYj3s6dXs68hDZqHMB7YidEIt0xcPmoh/gmEk5Opol8l7gIycX9OOy
-         mKZw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740047309; x=1740652109;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pbqCbnn3949AQ4E9A+0vVRKzntefI3rHN0xAk0SFsaE=;
-        b=Sad+U4SIh+XVNAjnqSes6lvYqusR0tjN9+FOhpcW/DHSOSyEJDDi4/grQMCRWx3VVQ
-         k++sMoFC20s+//t9uM5cpart8/th6bJdwHKLCP5mPxJU/tMq2r45KaGxowNQoRLNBwDS
-         z4zsVA6P5xspjFTqr2Pf5dX7DuUccacs/v5/fUrijxVHY49HHVpt93WeBCw59csFUMRZ
-         XffwXKOHMUb4XwnYmxI+5a/MOO74Adx92slFOk4XCDtO3lO3elbpVMc3o/nltOhd06Ie
-         zuWVtX7yO2BxX78DzDTiSJEpRRx+Md6yj9Y0ZtbRVef94HBOcJXR0g6xbXA4/PBt5DO3
-         Ow6w==
-X-Forwarded-Encrypted: i=1; AJvYcCVXaadWNOS4xzxIYk+l4Pw5ArMFTAzTsHpAooaJWOXF8GjWOTK3bjtd0BhBPajkb++Z0GcpK7gH+6uOVpY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyasKu7BvaEU0c/Qw3oqug0rIqnauwO5ZCX53Ldk23Y9U5TGJJU
-	f26xteXFXDp+bERpwHdFVlr4euHfBEw4we5mYvwusQAC7FmNqwLQcjIKnHKoBHZnMbGxnKxDWHN
-	t3QWoBl66x7c5Gi/qLSQFchChLYC1jWj6FZT/LQ==
-X-Gm-Gg: ASbGncsqv7q6lcshS5BPSMp0TKqW5sL78VjFNdP8yUrX3uHwQBBmc0eA4MbMMhNi5kN
-	8akZXyTFIchabZBieACxbcedsFpo5KbpjwdOl8gOROWyxA25+Pp0IPpLaOnEhWnEzcwjica3Eel
-	ZU+0gnpMulIih3DrkfyQ8Lhryk2AY=
-X-Google-Smtp-Source: AGHT+IF0hQZ/o7X6oVYIqlG9AO4qIYWcUHjPU9+7r0G2SjwNswpvYumQDzBci9SP50JD992GaVeG7nqS05hEGDgUTbw=
-X-Received: by 2002:a05:6512:3d15:b0:545:ae6:d73f with SMTP id
- 2adb3069b0e04-5452fe71c09mr7419846e87.46.1740047308933; Thu, 20 Feb 2025
- 02:28:28 -0800 (PST)
+	s=arc-20240116; t=1740047361; c=relaxed/simple;
+	bh=ko9DcqyDLQkJPJKX4kJWpGbkYqXEe87j0rt841QCylk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=n5xTyIGE9n9LGmzAo0iVYNFWi/zBnkRUaI2EV+u7KuK+v83qfdOA+Or9n240JEi1C/dqph7O5E6Kv417SMrNEoKL7hhOD9Ai33Xad93WNEqGxRNRCQg9VwQMz6zQC8rnRlb/EQT1sM+IyEzaRwUuQnsgccglOX8xjsjyRASygUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=GPUAQ44n; arc=none smtp.client-ip=67.231.149.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51K7ufM1005899;
+	Thu, 20 Feb 2025 04:29:14 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	PODMain02222019; bh=irRZdacmPzsDHfrVqHEPOuyV7W0VcOSBMWVOS+0+11A=; b=
+	GPUAQ44ncAZOtKfUArqFJT1UrFypLst4fhbQRtQ0vHrGL/fw2/EIX/Q0B5moRTks
+	wp485Jk+t1UyP0th1PB6zAl2W74k9JddQuUMZcGdA6rO6KWNRh1TX9C8gKSp5mqy
+	CwKogxJtLRRwiBqmn75nhy5ktznNeN7nB2iZ0SHpl1ogX/dd6Kt3E8Cf3sENomYO
+	ixeYw0RrZu0YfSb8GpqiFyBOOVM/6N7H6T/kM2XkEHUKMHUa3qA49NSAAGFzoCfs
+	1A/CU1f4EN5aDaCJD0mjbTT6ojXqRKmTAcmWpaYkPHAl6gve6KUOmVvnH5aBaky4
+	uGOgnZduqlbdQ2B/OJIFGg==
+Received: from ediex02.ad.cirrus.com ([84.19.233.68])
+	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 44vyywv7kg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Feb 2025 04:29:13 -0600 (CST)
+Received: from ediex01.ad.cirrus.com (198.61.84.80) by ediex02.ad.cirrus.com
+ (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Thu, 20 Feb
+ 2025 10:29:11 +0000
+Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
+ anon-ediex01.ad.cirrus.com (198.61.84.80) with Microsoft SMTP Server id
+ 15.2.1544.14 via Frontend Transport; Thu, 20 Feb 2025 10:29:11 +0000
+Received: from [198.90.208.18] (ediswws06.ad.cirrus.com [198.90.208.18])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id B4FCF82025A;
+	Thu, 20 Feb 2025 10:29:11 +0000 (UTC)
+Message-ID: <89db7bf4-9297-4cfc-8b3d-f61315f6524e@opensource.cirrus.com>
+Date: Thu, 20 Feb 2025 10:29:11 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250217-x1e80100-pwrseq-qcp-v3-1-a0525cc01666@linaro.org>
-In-Reply-To: <20250217-x1e80100-pwrseq-qcp-v3-1-a0525cc01666@linaro.org>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Thu, 20 Feb 2025 11:28:17 +0100
-X-Gm-Features: AWEUYZnBe24sPzSNetob_Hp5SUYrijNXBw3LzypTXZXkpFm_3GC1U29Nl3T-Itc
-Message-ID: <CAMRc=MeAYTz-z6PK8U9XmEdaxXNT2zN_sc+wybdp6GzxTgksBw@mail.gmail.com>
-Subject: Re: [PATCH v3] arm64: dts: qcom: x1e80100-qcp: Add WiFi/BT pwrseq
-To: Stephan Gerhold <stephan.gerhold@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>, 
-	Johan Hovold <johan@kernel.org>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] firmware: cs_dsp: Remove usage of GFP_DMA
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+CC: Mark Brown <broonie@kernel.org>,
+        Simon Trimmer
+	<simont@opensource.cirrus.com>,
+        <patches@opensource.cirrus.com>, <linux-kernel@vger.kernel.org>,
+        Charles Keepax
+	<ckeepax@opensource.cirrus.com>
+References: <20250211-cs_dsp-gfp_dma-v1-0-afc346363832@linutronix.de>
+ <0e9c1cca-592f-4983-93f4-ab2f76a3c97e@opensource.cirrus.com>
+ <e93d1b72-43da-4e96-9523-e1bbf3853031@opensource.cirrus.com>
+ <1e251815-5d58-436b-9120-e88f75a7ecaa@sirena.org.uk>
+ <20250213161059-a4c53711-fdf6-480c-af49-f9f36227ba42@linutronix.de>
+ <8d15d138-658c-4083-885b-62495023bb9a@opensource.cirrus.com>
+ <Z7b7Ylk55D1LZ2WX@opensource.cirrus.com>
+Content-Language: en-GB
+From: Richard Fitzgerald <rf@opensource.cirrus.com>
+In-Reply-To: <Z7b7Ylk55D1LZ2WX@opensource.cirrus.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-GUID: OJbC5dq8J7tgCxx4__xTz4wLxHNbjEtJ
+X-Proofpoint-ORIG-GUID: OJbC5dq8J7tgCxx4__xTz4wLxHNbjEtJ
+X-Authority-Analysis: v=2.4 cv=WOSFXmsR c=1 sm=1 tr=0 ts=67b703f9 cx=c_pps a=uGhh+3tQvKmCLpEUO+DX4w==:117 a=uGhh+3tQvKmCLpEUO+DX4w==:17 a=IkcTkHD0fZMA:10 a=T2h4t0Lz3GQA:10 a=ag1SF4gXAAAA:8 a=97uyb57JnHhYy19IygcA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=eKcMXjr5xVyoCAHiqxsq:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+X-Proofpoint-Spam-Reason: safe
 
-On Mon, Feb 17, 2025 at 6:55=E2=80=AFPM Stephan Gerhold
-<stephan.gerhold@linaro.org> wrote:
->
-> Add the WiFi/BT nodes for QCP and describe the regulators for the WCN7850
-> combo chip using the new power sequencing bindings. All voltages are
-> derived from chained fixed regulators controlled using a single GPIO.
->
-> The same setup also works for CRD (and likely most of the other X1E80100
-> laptops). However, unlike the QCP they use soldered or removable M.2 card=
-s
-> supplied by a single 3.3V fixed regulator. The other necessary voltages a=
-re
-> then derived inside the M.2 card. Describing this properly requires
-> new bindings, so this commit only adds QCP for now.
->
-> Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
-> ---
+On 20/02/2025 9:52 am, Charles Keepax wrote:
+> On Wed, Feb 19, 2025 at 04:26:55PM +0000, Richard Fitzgerald wrote:
+>> On 13/02/2025 3:16 pm, Thomas Weißschuh wrote:
+>>> On Thu, Feb 13, 2025 at 03:06:59PM +0000, Mark Brown wrote:
+>>>> On Thu, Feb 13, 2025 at 02:28:06PM +0000, Richard Fitzgerald wrote:
+>>>>> On 11/02/2025 5:21 pm, Richard Fitzgerald wrote:
+>>>>
+>>>>>>> Not tested on real hardware.
+>>>>>>> This came up while porting kunit to mips64.
+>>>>>>> Apparently GFP_DMA does not work there, but IMO the usage of GFP_DMA by
+>>>>
+>>>>> I would say that is a bug in mips64 that should be fixed in mips64.
+>>>>> It is not reasonable to expect generic drivers to have special cases for
+>>>>> platforms that don't handle GFP_DMA.
+>>>
+>>> Indeed, I did that, too.
+>>>
+>>>> What specifically is the issue?  If it's a build time issue I'd
+>>>> definitely agree that we should just be able to assume that platforms at
+>>>> least build.  IIRC there is a Kconfig you can depend on for DMA but it
+>>>> seems more trouble than it's worth to fix all users.
+>>>
+>>> More details in [0], It's only a runtime issue.
+>>>
+>>> I'm still wondering how all the on-stack buffers used with regmap_raw_read()
+>>> and regmap_raw_write() by cs_dsp are satisfying the DMA requirements.
+>>>
+>> There are 3 suspicious regmap_raw_read(). The others are all integers,
+>> which are guaranteed not to cross a page boundary.
+>>
+>> However, it looks like it might be safe to remove the GFP_DMA flags
+>> now. regmap_raw_read() calls spi_write_then_read() which specifically
+>> says that the buffers do not need to be DMA-safe and internally uses a
+>> DMA-safe buffer. regmap_raw_write() uses either a temporary physically
+>> contiguous buffer or GFP_DMA buffer (the implementation is terrifyingly
+>> complex so it's difficult to determine exactly what it does).
+>>
+>> (Some older systems could only use certain special memory areas for DMA
+>> but we haven't seen any of those used with cs_dsp.)
+>>
+> 
+> We also need to consider what the I2C subsystem does, I have a
+> vague memory of thinking the SPI system will attempt to remap
+> buffers but I2C will just use them as is. cs_dsp will be used
+> with both, although SPI is slightly more common for obvious
+> reasons.
+> 
+> Thanks,
+> Charles
 
-Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+For information here is the presentation given by Wolfram Sang
+describing the DMA problem. This is the reason we used GFP_DMA buffers
+in the cs_dsp code.
+
+https://events19.linuxfoundation.org/wp-content/uploads/2017/12/20181023-Wolfram-Sang-ELCE18-safe_dma_buffers.pdf
+
 
