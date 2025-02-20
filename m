@@ -1,172 +1,115 @@
-Return-Path: <linux-kernel+bounces-522954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 270CFA3D085
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 05:44:09 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 830DEA3D08A
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 05:45:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B5C53B83D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 04:42:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E78177A73CC
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 04:44:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8E8E1E2007;
-	Thu, 20 Feb 2025 04:42:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 471E61E3774;
+	Thu, 20 Feb 2025 04:45:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kOnZUKAp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YqbB5WL3"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F45F3FD1;
-	Thu, 20 Feb 2025 04:42:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 093A63FD1
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 04:44:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740026578; cv=none; b=OQJ4whBY9J2U8j9EV8WeB8Lo3lOdwKi8CmXdKpsH1lohdrCAt5+nxc5tIVewAjqB+At87sADcqe0W8oNSKmENc45OzIG9LTtyk/n0JfkFtFySg28QD/CPt548cESmcyHBDCGf8fB3/1aWTAAeIgu/SjJyHDA3fqWA1/cuWnIAQs=
+	t=1740026701; cv=none; b=SvadE2pns8roiUftFyyF4AdXNE7Xwat/CIuW7Cco6TrgXhwMqcB4G9JFcms97SrHwIYDcj0Gz2DJ28+ZixPxIz19PK5XtjkMhQny6RhDW8Sqj1g/Gu11X9jiqdvsj56e4m0U/0qaXSLzwA2hdn8MFLsgljxuvgIrbRMhbF7cVA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740026578; c=relaxed/simple;
-	bh=3athwsnaPokOQlzvDMLGksr4cwXubq3IMFHwaP+zaaA=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=uT+gHsjFvyPAkLNj0wfshSymsIi06e59VJUiLTHZav8+LIx7eDIeF7vS0vJNURKd7DWC9xZHwGTCtgkYvDNcQwA/wOrvbDrsTuD0MxsBno4qqSWQiKVVZWnU0yyzHe6yf9PTeKympWpiR9+UEnGC0XM6Z59oTfKrllUyRwJ/wK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kOnZUKAp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36F66C4CED1;
-	Thu, 20 Feb 2025 04:42:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740026577;
-	bh=3athwsnaPokOQlzvDMLGksr4cwXubq3IMFHwaP+zaaA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=kOnZUKAp3747EExuK9rJJRU7RC1Rtj6ZTXJDVjSOGu3Ko7XnaN7IWILvxfoAeVqyk
-	 qnInbIVFfxKdABUDJNLr2wXy1CDzkgOiGpfDsyTWEAyvwyS5LFVpvFfHEfAnyUx1Vu
-	 FW7rTdGhrp28EOJRa0Oi0E7MA8DKbKUof8y+3kyhxhB3Gkeuo11jk7yrGiMMxKY/Vv
-	 snTpwhGmgxlCI8vdKAnJvcHRYKLc+pMB0BY9s5pdfjOYZRkCUzRS9098LEjmohfQEZ
-	 CduehJYc9n0SZa/pNB8Q7ByCXc+09EazYMVDn14dlNpE/2Ase+/AMnEShY+0sYWmia
-	 uADC4C5TPE3KA==
-Date: Thu, 20 Feb 2025 13:42:54 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Masami
- Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Morton
- <akpm@linux-foundation.org>, Heiko Carstens <hca@linux.ibm.com>, Sven
- Schnelle <svens@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
- Alexander Gordeev <agordeev@linux.ibm.com>, stable@vger.kernel.org
-Subject: Re: [PATCH v2 4/5] fprobe: Fix accounting of when to unregister
- from function graph
-Message-Id: <20250220134254.9b4edb4353e137bf1bbc5713@kernel.org>
-In-Reply-To: <20250219220511.392563510@goodmis.org>
-References: <20250219220436.498041541@goodmis.org>
-	<20250219220511.392563510@goodmis.org>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1740026701; c=relaxed/simple;
+	bh=d+iFZuxJO7eL6REewH1kUH0Ywtv4DV1Yvdltas+I7T4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WfZV/rJm8cY5jygMmBjy+YBhS7SMKhnn+mOtLtcASoLKeHCCHlD1B7Zps9JF915fl0AOpdIMaRfgyyZlIAmpV0xzJSndUmv5/k42UWLKHtQfUQVSUHWtIcM/TMw8ZHMOkB0RRTGIvTfD4H1POzU9ccIZEIHD8UHkhx4Rd2l0gv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YqbB5WL3; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-30797730cbdso4773901fa.3
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 20:44:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740026697; x=1740631497; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=LtYcQ+2FJMDcbUz4z18Px8ZZK4xLqjkYjz2BFlX/9kQ=;
+        b=YqbB5WL3sWglGXTy1l0wH01PYt3OzIX+4ZR7fvWbF8hG1O1YzAr3P9n4mIey4DQXX+
+         2znfuVY9QBIpCchD5aK5oE8QhjrE7KZu579u40ylM/v4qukhFSqxvCYsU/vD6nIsOy5L
+         oK/4tUAtfmZHB3G15A8WyiGL+UL2iLIEy+TP/CKrVgmNI03wC8tBBlI1ggmKYe03WKWU
+         ua/jsgDX7TtMLVd5/Np4ZDkUX0ywRWiHKfqQVqzBEU/LlIMeWTNE7SnigfoVjEclliNY
+         sCW1Gr4kyL/JjxnsqMEMmBDeYtXI0sV8XT0QGT56rpOGkkQU5LOyDQc0P6NV/SryQHyf
+         tjXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740026697; x=1740631497;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LtYcQ+2FJMDcbUz4z18Px8ZZK4xLqjkYjz2BFlX/9kQ=;
+        b=r2atsliHef4VO1oMBfRHXxWzX4HLnHSfQQ3oc8FzAL+BNahifV+0hnMeYv/CGT3gZM
+         FaGQUo6yPV8THPUCzYRHGoVeMKDsN3P2qozXcoZ/8t8t1BYrZYuExpOdNVdjpiwZjMaz
+         VuYGjPfFpN2RTWvjXfl+gEizsyJfxa4M2UycjXiHO8Hi+9coGLrezrZ4tH2kNmBeBxvR
+         YxQPzTlCL3ZlDcNa8BkKKllF569LBT5sjVc90jv+WysNYpIw6PfYPf4DmOngVy/Ub3Gb
+         qCqbjDcCYkxDsepqOVTLqEKTQwtF5+SGDgUEV2PaECpYTFkIn6HB/TAXh9n54MtHHvhk
+         1ePA==
+X-Forwarded-Encrypted: i=1; AJvYcCWwl3Q9acOaYd97zCx6L51LhLQHbWnWPjQMEYViHrLVkQki1gJDdSVmmqzCk4m1jXWxTljgYhbINwWheMI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMiZu0b9OoU8okDauRbZPGnq+tgjSo1Ljo4KI5MPStePb7qsGg
+	Um/9p9cqfLjkpFBn9QYhZFg37wip+mOM0TFtWtGgOOudWLSyeO//4nhtkjY4vtQ=
+X-Gm-Gg: ASbGncv3Fl+GeP5yaE5eOozGlFd0zCubtMANw7Jv3BbN3rMJZFEZc4rGUkzqO/qM/oF
+	8oCTjq8LC2Us1cCUBCcTh0oz4xnHtLRBByrU227PkZdarPN0rUpfodRZIW6yUnXvG27vrFkoz2l
+	0ErUGr052poSYwwyxPnvpm8hVQP/3fWzkjxcmCVf3960Dwzbv8DOz0tFRAwAMTx5rzuY2jUw+Av
+	E1wUIziAPMeeEqoBwgonBIs2LGDPPSnMrLmgG08JZ8kz/ONCEsHNc7WHK0j2J0vqepmw+YZBcOx
+	Jr28yFXi0+lntW0IKLOinU1lIyjLHRdOxymaE++oH3j1p8Pf86F8+3kZuxckW0FZ2K7Z03I=
+X-Google-Smtp-Source: AGHT+IEwZ0li2gmqCbbSb/xDJ0sR4BsPeqpGMzMpoUos8tWg+NSjnr7x/0yyIj4p3yB1OUI7BBnjQQ==
+X-Received: by 2002:a2e:965a:0:b0:308:fbd5:9d2d with SMTP id 38308e7fff4ca-30a45062d78mr19375761fa.37.1740026696916;
+        Wed, 19 Feb 2025 20:44:56 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-309a0b59bf1sm15738491fa.59.2025.02.19.20.44.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Feb 2025 20:44:56 -0800 (PST)
+Date: Thu, 20 Feb 2025 06:44:54 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Taniya Das <quic_tdas@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Ajit Pandey <quic_ajipan@quicinc.com>, 
+	Imran Shaik <quic_imrashai@quicinc.com>, Jagadeesh Kona <quic_jkona@quicinc.com>, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 3/4] arm64: dts: qcom: qcm6490-idp: Update the LPASS
+ audio node
+Message-ID: <kaswrgmgmrgt6uukevi3oon7mcrc4hlfyewx5r3os6j2oyhb7d@izgybktb4fst>
+References: <20250220-lpass_qcm6490_resets-v4-0-68dbed85c485@quicinc.com>
+ <20250220-lpass_qcm6490_resets-v4-3-68dbed85c485@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250220-lpass_qcm6490_resets-v4-3-68dbed85c485@quicinc.com>
 
-On Wed, 19 Feb 2025 17:04:40 -0500
-Steven Rostedt <rostedt@goodmis.org> wrote:
-
-> From: Steven Rostedt <rostedt@goodmis.org>
+On Thu, Feb 20, 2025 at 09:52:52AM +0530, Taniya Das wrote:
+> Update the lpassaudio node to support the new compatible as the
+> lpassaudio needs to support the reset functionality on the
+> QCM6490 IDP board and the rest of the Audio functionality would be
+> provided from the LPASS firmware.
 > 
-> When adding a new fprobe, it will update the function hash to the
-> functions the fprobe is attached to and register with function graph to
-> have it call the registered functions. The fprobe_graph_active variable
-> keeps track of the number of fprobes that are using function graph.
-> 
-> If two fprobes attach to the same function, it increments the
-> fprobe_graph_active for each of them. But when they are removed, the first
-> fprobe to be removed will see that the function it is attached to is also
-> used by another fprobe and it will not remove that function from
-> function_graph. The logic will skip decrementing the fprobe_graph_active
-> variable.
-> 
-> This causes the fprobe_graph_active variable to not go to zero when all
-> fprobes are removed, and in doing so it does not unregister from
-> function graph. As the fgraph ops hash will now be empty, and an empty
-> filter hash means all functions are enabled, this triggers function graph
-> to add a callback to the fprobe infrastructure for every function!
-> 
->  # echo "f:myevent1 kernel_clone" >> /sys/kernel/tracing/dynamic_events
->  # echo "f:myevent2 kernel_clone%return" >> /sys/kernel/tracing/dynamic_events
->  # cat /sys/kernel/tracing/enabled_functions
-> kernel_clone (1)           	tramp: 0xffffffffc0024000 (ftrace_graph_func+0x0/0x60) ->ftrace_graph_func+0x0/0x60
-> 
->  # > /sys/kernel/tracing/dynamic_events
->  # cat /sys/kernel/tracing/enabled_functions
-> trace_initcall_start_cb (1)             tramp: 0xffffffffc0026000 (function_trace_call+0x0/0x170) ->function_trace_call+0x0/0x170
-> run_init_process (1)            tramp: 0xffffffffc0026000 (function_trace_call+0x0/0x170) ->function_trace_call+0x0/0x170
-> try_to_run_init_process (1)             tramp: 0xffffffffc0026000 (function_trace_call+0x0/0x170) ->function_trace_call+0x0/0x170
-> x86_pmu_show_pmu_cap (1)                tramp: 0xffffffffc0026000 (function_trace_call+0x0/0x170) ->function_trace_call+0x0/0x170
-> cleanup_rapl_pmus (1)                   tramp: 0xffffffffc0026000 (function_trace_call+0x0/0x170) ->function_trace_call+0x0/0x170
-> uncore_free_pcibus_map (1)              tramp: 0xffffffffc0026000 (function_trace_call+0x0/0x170) ->function_trace_call+0x0/0x170
-> uncore_types_exit (1)                   tramp: 0xffffffffc0026000 (function_trace_call+0x0/0x170) ->function_trace_call+0x0/0x170
-> uncore_pci_exit.part.0 (1)              tramp: 0xffffffffc0026000 (function_trace_call+0x0/0x170) ->function_trace_call+0x0/0x170
-> kvm_shutdown (1)                tramp: 0xffffffffc0026000 (function_trace_call+0x0/0x170) ->function_trace_call+0x0/0x170
-> vmx_dump_msrs (1)               tramp: 0xffffffffc0026000 (function_trace_call+0x0/0x170) ->function_trace_call+0x0/0x170
-> [..]
-> 
->  # cat /sys/kernel/tracing/enabled_functions | wc -l
-> 54702
-> 
-> If a fprobe is being removed and all its functions are also traced by
-> other fprobes, still decrement the fprobe_graph_active counter.
-> 
-
-This looks good to me.
-
-Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-
-And please push this series via your branch because the selftest
-updates should cover the series.
-
-Thanks!
-
-> Cc: stable@vger.kernel.org
-> Fixes: 4346ba1604093 ("fprobe: Rewrite fprobe on function-graph tracer")
-> Closes: https://lore.kernel.org/all/20250217114918.10397-A-hca@linux.ibm.com/
-> Reported-by: Heiko Carstens <hca@linux.ibm.com>
-> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
 > ---
-> Changes since v1: https://lore.kernel.org/20250218193126.619197190@goodmis.org
-> 
-> - Move the check into fprobe_graph_remove_ips() to keep it matching
->   with fprobe_graph_add_ips() (Masami Hiramatsu)
-> 
->  kernel/trace/fprobe.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/kernel/trace/fprobe.c b/kernel/trace/fprobe.c
-> index 62e8f7d56602..33082c4e8154 100644
-> --- a/kernel/trace/fprobe.c
-> +++ b/kernel/trace/fprobe.c
-> @@ -407,7 +407,8 @@ static void fprobe_graph_remove_ips(unsigned long *addrs, int num)
->  	if (!fprobe_graph_active)
->  		unregister_ftrace_graph(&fprobe_graph_ops);
->  
-> -	ftrace_set_filter_ips(&fprobe_graph_ops.ops, addrs, num, 1, 0);
-> +	if (num)
-> +		ftrace_set_filter_ips(&fprobe_graph_ops.ops, addrs, num, 1, 0);
->  }
->  
->  static int symbols_cmp(const void *a, const void *b)
-> @@ -677,8 +678,7 @@ int unregister_fprobe(struct fprobe *fp)
->  	}
->  	del_fprobe_hash(fp);
->  
-> -	if (count)
-> -		fprobe_graph_remove_ips(addrs, count);
-> +	fprobe_graph_remove_ips(addrs, count);
->  
->  	kfree_rcu(hlist_array, rcu);
->  	fp->hlist_array = NULL;
-> -- 
-> 2.47.2
-> 
+>  arch/arm64/boot/dts/qcom/qcm6490-idp.dts | 5 +++++
+>  1 file changed, 5 insertions(+)
 > 
 
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
 -- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+With best wishes
+Dmitry
 
