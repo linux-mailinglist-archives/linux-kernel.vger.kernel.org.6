@@ -1,120 +1,160 @@
-Return-Path: <linux-kernel+bounces-524471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF0EDA3E380
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 19:12:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4739A3E384
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 19:13:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 977023B39E2
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 18:12:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09924189044C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 18:13:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C03D214213;
-	Thu, 20 Feb 2025 18:12:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2D54214213;
+	Thu, 20 Feb 2025 18:13:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gBxOHilS"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jvrjRSc3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BD2C20485B
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 18:12:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 178EF20485D;
+	Thu, 20 Feb 2025 18:13:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740075126; cv=none; b=mLPKbJ7DrmBMfPCRmRWNMuO+EAcZbmhTbTyfRy7ZFtO1wlk0bRC7T+sHwBpflMybQzR2Z2BTIROJUJCcZb52c/VxYGDpRxVZyzO6NisSql0uDcRxFlM7fBgIhpe0JY8nMDFn77sfnrsVVoIihaHB70t8aHOKpfzNdXIKkSpe5Tk=
+	t=1740075185; cv=none; b=XK/uqf8xkkx5EuElAsqR5aMSxWAy/2/pmcxqVVfV+BsZhvK2JRLI0g52TXUGNwK0GWjWgejYVLjQ77uzoNluaFsjmEvgRmfBv+dqUUqWe5tLNarEn4KOqiqMH5H9CUN7cufHIgrabjknH58hCcUhTEAtBOhB4C2pJmQII/FTK1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740075126; c=relaxed/simple;
-	bh=U7NEU5p+86CmS2ot4xSRm3tLGJInLZjdrsEntbaiLRA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ukLVbyD2rasYqMFoLguJfHnM4BRWL6wgdQ6UMVIvmiVjW2JNbzCg+EMnZWh5tJPOjJVkPJ+ZOl/w3yTL5d5MJfEU94HcPaby3vCQLTJ6cG9qJ6W69BEirxPm13dSHjx3LiktA3vROssMGMZZZ/Ik5u0wYpnBG++eVE9Gm33jTVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gBxOHilS; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-220e989edb6so34463215ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 10:12:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740075125; x=1740679925; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=JPYGV4/Ybq5Qlp+Qgl6PHP0uBHTPtS+cFplKODIBa0c=;
-        b=gBxOHilSHraDFl9BFQwNJSKLd67RETnveFaNS20138PAxx2tYixi7JSDodM9pNOSUJ
-         rMI+hrJ8k8WOV+nc2W0DzjE+Hv9rdV1hIYUuw8gWt7WKH1Y3BIUFfyYxMU046y4apTeN
-         NDpiMNJRvr/gW9SxxYhFxSuqmaGZsjjOu91SV/Kw5tofvvsr0GI4RNiMjvMhjnQZxu6J
-         tfUCd5gIexSDEU0EwXDrv+ZJ9hcEwAi/pvWd3qDWmknOghcahhrXpg/JmYeADxiFtxUo
-         1k/BuosOD4kb+mEHSX1wg4geCeu0/TaUKhLIxVLNlf+NS4Z8LwXaStIUDY7gEZDRn2Ia
-         nvwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740075125; x=1740679925;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JPYGV4/Ybq5Qlp+Qgl6PHP0uBHTPtS+cFplKODIBa0c=;
-        b=JjHOQRZSxSLKGJFsQR6t2C9CFMeE1pwPUj/11HlB77lNdS33vNDsdSXaHagxZMWKGH
-         HIznDaNQmpqwy8AC3ChCjrc0XtiTK1aGoyPi8THTek+DoTSZIFa32iZYszJ6ZjjB4lYh
-         ecCcxz5iQRnLKFm9P4+wndPd08Wm4idcmov6Ud/7DaqrZjhaBDkYUGmUILxoSI1qPczi
-         d2bDyoZCJ3WODZ3CMOf9Tu2GdyKBCUeRkBHJN3nVFy11GQakezaCHD+sL2ujTOeiJE8i
-         Wcxy5Nc4b2LCKRA1VxpHf4J7UzgncGW7SQRgbF5do6OCmpcqU0eE4zPohM0hjX7sAJ1k
-         MQPA==
-X-Forwarded-Encrypted: i=1; AJvYcCXnjcOj3Uw6D6vuTzSDCzzgstp/bvOGtaVSeAZxvEZ+pjSSoKWjPIkJA9HvT37ZHkCDO/Oy8oKVcGWmHc8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFxGlEDdZDmX42ixWC95XCc2qIT+KdVfegO4xFE4eryqpG9XR8
-	obvLEugFUt6mNqzLCFKr/qt0bgEHLJj4jmd+TboiUu0ib1jtK6JMlsV487xdC3o=
-X-Gm-Gg: ASbGncu6V6i3JiIoJeOiZqhMSTFVezS0wpmR1WsBd9vfP3HN8vSEh6MjKQGv9wpxt+g
-	mCw7Us/w9kRXlygLVVE/AbemSWJ4I8+k5EFnyzzqPsbYvADmjlCn14g8cJGhmnzkF43wju8jbYN
-	8ssQtKEpg5f9Ne3WSXPfnZJE2mufUJiSYoCPwBcHN/L3i1N/tAEJdS+5+w7I15xyqEgneHw0zs6
-	Eh5d2jGumsgwEob1GS+qNo2Z9p7XQT0/VbbGZn/kNW7HInv7mQ7o60TJN8s6jixUg8AxUy0HmXH
-	w5fNxsYSesS9kgHLBKiMQroyuC8TZxwBesWLUk7KxXjVgSFmPqo/41k=
-X-Google-Smtp-Source: AGHT+IEYJgTH2xijRGZv7IRxIjgPMGI3m3DAMNwwlL4W85cg6VLecg7jKjF0QGzCafBl8PC63PSroA==
-X-Received: by 2002:a05:6a21:7011:b0:1ee:d860:61eb with SMTP id adf61e73a8af0-1eef3deaa0amr134496637.39.1740075124654;
-        Thu, 20 Feb 2025 10:12:04 -0800 (PST)
-Received: from [192.168.0.4] (71-212-39-66.tukw.qwest.net. [71.212.39.66])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-adb58618700sm13027051a12.36.2025.02.20.10.12.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Feb 2025 10:12:04 -0800 (PST)
-Message-ID: <dfb14748-c5b8-4a50-990b-d61765a6a75c@linaro.org>
-Date: Thu, 20 Feb 2025 10:12:02 -0800
+	s=arc-20240116; t=1740075185; c=relaxed/simple;
+	bh=iOwyubfEwlgonjCBmwXc8PikMqd0oQVwQdZ+60PJrV4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=S3HIwmrwFhpGp2duQ95batTKv4M2DGb5ypGuCyqiw0t+eHq/xhTVSsRN8VPBRmVVLIHKr08akoJRd/J2XG0cRB6fQiqvUI34djv4i7WT09z/OwfSHLUFpyzv+66S/cLmenxNPVIy0HB8it9IeJD1iIBZeHZlSEaIIx4KFU/rl5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jvrjRSc3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EF4DC4CEE3;
+	Thu, 20 Feb 2025 18:13:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740075184;
+	bh=iOwyubfEwlgonjCBmwXc8PikMqd0oQVwQdZ+60PJrV4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=jvrjRSc3Mewmsbw4uj7gV3Y8iVi71m28V6XJovvoioCzse6ZF3st6hPfADUdmKAnT
+	 k0TtCyEgKiJ1k3GXoEMHTBfJgaq4Kutz46lBH/oQYN8UPDpGle5uOAffGCBhrKKhcW
+	 CUr8dnIzy29JLZni+YQjvuiq0BhT7zL7fdrnPETV+bAXRsqg/eSmLAO5eTVr4xPcZa
+	 +060VNhj1pLVAnI5NLPHxN7HJV4dxaj48b6l6A+NOFhRxf7Sk7PlPcaiecHntIcjp0
+	 5oHl2VPJ58oHUz6bFKoVnOqb4Zj5a2EYeLO/++t7i/2JSeMk2cbpe/MKQmLkHVQR57
+	 5FlNFvwDK2q8A==
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-543d8badc30so1535357e87.0;
+        Thu, 20 Feb 2025 10:13:04 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWM7pimAuU8GC+YZJFbEgs9RijOtmAjhwyw2tSipSzypb/IenbZBNQvqjRMrYRWcZkHgNSw+dlX+FS0zlat@vger.kernel.org, AJvYcCXWgFFYp0dFZ7/hYSzimKrQIYmAZr+eUZlXInWftu/xk9+p8PJwW9uucCCaE26BiZHyiw7yGfglsqBm4Ng=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1BlGMG+eI6JX6YeFCI0BwqNCZ1VgUGKXKyQvjUtBn4xmNnSvQ
+	ehxxuwbTzoi6L7hIgzwwDdpgpJXmtRhIrU914ASD3/MreRgxmpQOq1XSWJ4W6aK3FL5M90E6RdC
+	DUOIh4PNIyisrLqNs8xutZXmC80A=
+X-Google-Smtp-Source: AGHT+IHHVUrcL5rkcVLI1kVwE0GL8V4V3P5DP0PzgyCNVcQrxnx7WthKcd//qPDaSMSnPoYzVrVrQvELsanbaCpbQZU=
+X-Received: by 2002:a05:6512:ba6:b0:545:e19:ba1c with SMTP id
+ 2adb3069b0e04-54838ef208bmr5168e87.19.1740075183320; Thu, 20 Feb 2025
+ 10:13:03 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Alpha: Emulate unaligned LDx_L/STx_C for data consistency
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "Maciej W. Rozycki" <macro@orcam.me.uk>,
- Ivan Kokshaysky <ink@unseen.parts>, Matt Turner <mattst88@gmail.com>,
- Arnd Bergmann <arnd@arndb.de>,
- John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
- Magnus Lindholm <linmag7@gmail.com>, "Paul E. McKenney"
- <paulmck@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
- linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <alpine.DEB.2.21.2502181912230.65342@angie.orcam.me.uk>
- <45155869-1490-49ab-8df1-7ad13f79c09a@linaro.org>
- <CAHk-=wj42Dks1vknzKKBbXUMCrs-iuLZHq=0z3P0AN9TrXNP+A@mail.gmail.com>
-Content-Language: en-US
-From: Richard Henderson <richard.henderson@linaro.org>
-In-Reply-To: <CAHk-=wj42Dks1vknzKKBbXUMCrs-iuLZHq=0z3P0AN9TrXNP+A@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240727074526.1771247-1-masahiroy@kernel.org>
+ <20240727074526.1771247-4-masahiroy@kernel.org> <b3a8816c-3846-83ab-9750-fd12041d9495@quicinc.com>
+ <20250220-red-antelope-of-education-5417aa@l-nschier-nb> <0ee862ec-4c36-4c3e-ae90-627c6b0e527b@quicinc.com>
+ <20250220-kickass-famous-kittiwake-c11f5b@l-nschier-nb> <80cf4e9a-5d49-4bc3-8160-1b23c31d4d36@quicinc.com>
+ <2025022020-armband-clock-69af@gregkh> <13fac9ee-cad9-466b-9216-8c0516600b03@quicinc.com>
+ <2025022057-reclusive-overreach-ac89@gregkh>
+In-Reply-To: <2025022057-reclusive-overreach-ac89@gregkh>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Fri, 21 Feb 2025 03:12:25 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARZon-tqr+oKfr0r+nSfK9R6iz1AZrY9pLoaAhOqWfL6w@mail.gmail.com>
+X-Gm-Features: AWEUYZlMlGicc1vOO01YGbQTwSZKn4jkM5kXZSNLg62qBjkuNlwITi8aKcn3HUU
+Message-ID: <CAK7LNARZon-tqr+oKfr0r+nSfK9R6iz1AZrY9pLoaAhOqWfL6w@mail.gmail.com>
+Subject: Re: [PATCH 3/4] kbuild: slim down package for building external modules
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Jeffrey Hugo <quic_jhugo@quicinc.com>, Nicolas Schier <n.schier@avm.de>, 
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Kees Cook <kees@kernel.org>, Nathan Chancellor <nathan@kernel.org>, Ben Hutchings <ben@decadent.org.uk>, 
+	regressions@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2/20/25 09:59, Linus Torvalds wrote:
-> On Thu, 20 Feb 2025 at 09:54, Richard Henderson
-> <richard.henderson@linaro.org> wrote:
->>
->> Crucially, when emulating non-aligned, you should not strive to make it atomic.  No other
->> architecture promises atomic non-aligned stores, so why should you do that here?
-> 
-> I'm not disagreeing with the "it doesn't necessarily have to be
-> atomic", but I will point out that x86 does indeed promise atomic
-> non-aligned accesses.
+On Fri, Feb 21, 2025 at 2:43=E2=80=AFAM Greg KH <gregkh@linuxfoundation.org=
+> wrote:
+>
+> On Thu, Feb 20, 2025 at 10:24:32AM -0700, Jeffrey Hugo wrote:
+> > On 2/20/2025 9:49 AM, Greg KH wrote:
+> > > What do you need/want to parse the .config file in the first place?  =
+Why
+> > > not rely on the generated .h files instead as those can be parsed the
+> > > same way as before, right?
+> >
+> > Two usecases -
+> >
+> > First when secure boot is enabled, DKMS looks for CONFIG_MODULE_SIG_HAS=
+H to
+> > figure out signing the modules so that they can be loaded.  Removing .c=
+onfig
+> > causes an error in DKMS and the module signing process will fail.  The
+> > resulting modules (already compiled successfully) will fail to load.
+> > Whatever the user needed those modules for will no longer work.
+>
+> Shouldn't the "normal" kbuild process properly sign the module if it
+> needs to be signed?  Or are you trying to do this "by hand"?
 
-I should have been more expansive with that statement: I didn't mean "no unaligned 
-atomics" (e.g. lock orw), but "unaligned normal stores may be non-atomic" (e.g. movw 
-across a cacheline).
+You can ignore this.
+This is not related to the upstream module signing.
 
-My guess about the gcc patches is that it's the latter that wanted emulation here.
+He is just explaining how DKMS greps CONFIG_MODULE_SIG_HASH.
+
+See this line:
+https://github.com/dell/dkms/blob/v3.1.5/dkms.in#L1113
+
+The upstream kernel documentation said "do not grep .config" many years ago=
+.
+The latest DKMS has been fixed.
 
 
-r~
+
+>
+> > If the user is on Ubuntu, and has built a kernel 6.12 or later, they ne=
+ed to
+> > build upstream DKMS and use it as none of the Canonical provided DKMS b=
+uilds
+> > have the fix.  This feels like a situation that would make the user afr=
+aid
+> > to upgrade their kernel (to your point above).
+> >
+> > This feels very much like an "at runtime" issue, assuming external modu=
+les
+> > are supported.  I may be wrong here.
+>
+> external modules can be broken at any moment in time, you know that.
+> There's never a guarantee for that at all.
+>
+> > Second, our usecase is that we look at the .config to tell if a particu=
+lar
+> > driver is included in the kernel build (config =3Dy or =3Dm). This driv=
+er
+> > provides diagnostic information which is useful to our product, but not
+> > required for operation.  It does not have headers that are exposed to t=
+he
+> > rest of the kernel, so checking the generated .h files does not work.  =
+If
+> > the driver is not built, we provide a backported version that is then b=
+uilt
+> > out of tree.
+>
+> You can check the same .h files for those config options, no need to
+> manually parse a .config file.  What's wrong with including
+> include/generated/autoconf.h properly?  That's what the build system
+> uses, right?
+
+Upstream uses include/config/auto.conf
+External modules can do the same.
+
+
+
+
+--=20
+Best Regards
+Masahiro Yamada
 
