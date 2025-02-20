@@ -1,167 +1,167 @@
-Return-Path: <linux-kernel+bounces-523567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6F65A3D880
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:26:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C38FA3D883
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:26:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8091188FE11
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 11:25:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 768F1189FABA
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 11:25:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1583E1F868F;
-	Thu, 20 Feb 2025 11:20:03 +0000 (UTC)
-Received: from exchange.fintech.ru (exchange.fintech.ru [195.54.195.159])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 956491F8BCD;
+	Thu, 20 Feb 2025 11:20:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xf5d4Z0f"
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 674A21F540C;
-	Thu, 20 Feb 2025 11:19:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.54.195.159
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C0471F540F;
+	Thu, 20 Feb 2025 11:20:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740050402; cv=none; b=Ct8HxbIh0lvVl1Ze3ZiLiw3VUCTSHrM8Q/ydFVPlaSIw3MWLmcMBpW6xM9n3uZlq1yN8k1UmP+Ug86EjuntDERWNu4Eljicup7pjMp28d9ToazLC3Um8lIUMs0wyu3y2eeb7gwncXeSi3FHgyPlaJdArEDmOgiEzC0KzJsKWAk4=
+	t=1740050423; cv=none; b=FjnFnFid0nKwQ75wHpd6Kp3Up81bGmK4RuO8n2hJnuvRQVBRElLaebYfzf8s+WKtK0OQ8h2zMwwbJYMPLn/Edy95XXcCllSfLqKJeu6tzkY/jobl0A4+gKjYkfoyFXdX8CQqm+N3+rGJ2inoDjHhuUzyCruaK3bpJqmyIfKHDA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740050402; c=relaxed/simple;
-	bh=NDdWMhGsVv5SnCqjh/JMa7aBl97LCJ5tTwMBPTYOerU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=iY7c1a79cYYd5dvTL2sm5XUTZKhXpQf9xkHC1pupxQQArWTpsZziHkztVE3xnsFcbl+39g6XZDpK3DxnaRhShhxatAX7TrnGD8dJrPkBe3Q87BPKc9IBdOp/6FvnyDdtSVCqCIaTpp5EhbgxWG/FR9zlG35RtDDRCT4KmPOT1Ag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru; spf=pass smtp.mailfrom=fintech.ru; arc=none smtp.client-ip=195.54.195.159
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fintech.ru
-Received: from Ex16-01.fintech.ru (10.0.10.18) by exchange.fintech.ru
- (195.54.195.169) with Microsoft SMTP Server (TLS) id 14.3.498.0; Thu, 20 Feb
- 2025 14:19:50 +0300
-Received: from [192.168.211.132] (10.0.253.138) by Ex16-01.fintech.ru
- (10.0.10.18) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2242.4; Thu, 20 Feb
- 2025 14:19:49 +0300
-Message-ID: <16dba069-119f-4556-befa-0f3db626eada@fintech.ru>
-Date: Thu, 20 Feb 2025 14:19:46 +0300
+	s=arc-20240116; t=1740050423; c=relaxed/simple;
+	bh=aB9iYa4f7CgYHrJR8ObpqI3CttJJdJHba49AY45THM8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=B1xMlUokAId9ObZymT5AfqOiOR7uc/pi1tpFyj/7IrvoKdPNDHG8iAsgfbzpSI6iwJQIR+PgzcUMlWIVkGKfPRv5eIPL6RGC7ro+1jacan20W0A1NPaC+SVpsteRrbRzb8vX8Hwif+cny4DQVCtZ6lA+4BajZKv49IFwOS8Ht4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xf5d4Z0f; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2fc4418c0e1so3256932a91.1;
+        Thu, 20 Feb 2025 03:20:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740050422; x=1740655222; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=RDdAz+z00kXmgO7AxUttI27htMRIY711jJ3qwv4+HTs=;
+        b=Xf5d4Z0fl+4W8nQJZuogOPMiqEM0dra9OpcznQWZ6/OH0MY0rObny/XWK3NOynOM7N
+         I9MAIqoXAIUR33dlfFUyjKgMvDbzs9q1p+iUeZA4yDtKCRhEBdOiabVRrg0EVFGGKqyx
+         kdS/dUIO7/POOrPmTHORLFPovbg4mnIevXjfOcEisiCC61fQCc/SbxHI0yxF36jAGeJl
+         mVuRRJVohJSsuh3W1btXRELoiCCUi2WcIV/uf9/1SBWGEeFPIg4/nLjNPJyEHf/XwBWu
+         +pXMrVW9wg96ZVmGV/8YfbgHV4iV0Rnpj07eew0H+GUi5K5YMCLWKlQlxmVUOlKM9KSV
+         bHZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740050422; x=1740655222;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RDdAz+z00kXmgO7AxUttI27htMRIY711jJ3qwv4+HTs=;
+        b=syuqwGWCNAyuqbQ1Ygn9MFrSHZRjaqcXxMf6afKo/0m+IvGmx/0gzuiQpIrEXnm48o
+         jcMT2886WhjpD3PBHFAIPPZeiDs4Fxwg4NLeKh2WfDKhpLr0ldX4OzF2MZa7bDKE29mZ
+         dd95NNZupvsWGyo9kXiVys0o0rl6iRw2jZq0iGS4ZXvhpuKCOAF39810eOPER1qCxCCo
+         2gvqruJ7TdUnCJV93o6TTZ9vrrMm5sd1GHzLlw1oE1E1Nl70WjT2X4OWNR7+QZQ3TIgq
+         I1JHyt5WC4iBJvzE9NPQlM5JFaA2B1wrjwPbBdwrp/oO48UYk7Tcd/44KAeeEhcpFwMd
+         ENKg==
+X-Forwarded-Encrypted: i=1; AJvYcCWE8NLxS+2cJG3q4KgjAlYFer4xRIw5FjTKT+pcfFgu+EaMYLvYuLOEta7X4JC2Uk3NQtqBz+gaXRq7j90=@vger.kernel.org, AJvYcCWI/7ladKX9FYDiXMI6lFJXuMWvS0Wmp/aoskwhxiZ7zogreSASwjyxdSOYhHw9KGlwyGqT4Z6gf27N@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKJXxJefc1jP34V8ZiqH65S3F4nqehixC6PCB4PmLSs47vO+kY
+	Ixr60UYWHHt2FRvya56ijrMo0ZnS+ZkDuTzZG91Z0yWgfzfGCi/S
+X-Gm-Gg: ASbGnctDZhEi/FMYrzSVkqU3Vg872R1qIGH2VE58Ohf2VEjF1YwB0i5eKvZy/tHcTdW
+	lE56VoobzE+IqYUX+qaDSdESM78DFDXO5BiIIBoK06qP+N0V1Vgi3DQUEA0bWaehpY4HBjNC4wH
+	AsUhx6358jSfDOI3mJl1uNXJbQ8KoaOJLgvRd2mcOeDhNTf8NsuP0zha3jHSlIGITWIst78uAwX
+	IZiAA/VJS5RtW1+3TBVCYcCwArAkrj3VMvf7Tjbsv7G5stYcHIO8OIPsprYZj080xfOqvfkorMd
+	+scoJZMItHbwTiGej7puLq0CuJMfLrM=
+X-Google-Smtp-Source: AGHT+IGV4jQprhKqJGmQUGNTjzYtK0gBBu6xHVZW9GbADGQiOwx9wMtZT6Y4K+Qo0qZ7VcdtJx1nEQ==
+X-Received: by 2002:a05:6a21:6b18:b0:1e1:b105:158f with SMTP id adf61e73a8af0-1eee2fda2dbmr4692334637.19.1740050421582;
+        Thu, 20 Feb 2025 03:20:21 -0800 (PST)
+Received: from localhost.localdomain ([119.28.17.178])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-adcbe0311b6sm10704374a12.56.2025.02.20.03.20.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Feb 2025 03:20:21 -0800 (PST)
+From: Jinliang Zheng <alexjlzheng@gmail.com>
+X-Google-Original-From: Jinliang Zheng <alexjlzheng@tencent.com>
+To: agk@redhat.com,
+	snitzer@kernel.org,
+	mpatocka@redhat.com
+Cc: dm-devel@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-xfs@vger.kernel.org,
+	flyingpeng@tencent.com,
+	txpeng@tencent.com,
+	dchinner@redhat.com,
+	Jinliang Zheng <alexjlzheng@tencent.com>
+Subject: [PATCH] dm: fix unconditional IO throttle caused by REQ_PREFLUSH
+Date: Thu, 20 Feb 2025 19:20:14 +0800
+Message-ID: <20250220112014.3209940-1-alexjlzheng@tencent.com>
+X-Mailer: git-send-email 2.41.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] media: usb: hackrf: fix device unregister order in
- hackrf_probe()
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil
-	<hverkuil@xs4all.nl>
-CC: <linux-media@vger.kernel.org>,
-	<syzbot+6b52c2b24e341804a58c@syzkaller.appspotmail.com>,
-	<syzkaller-bugs@googlegroups.com>, <linux-kernel@vger.kernel.org>,
-	<lvc-project@linuxtesting.org>
-References: <20250213182608.757954-1-n.zhandarovich@fintech.ru>
-From: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
-Content-Language: en-US
-In-Reply-To: <20250213182608.757954-1-n.zhandarovich@fintech.ru>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: Ex16-02.fintech.ru (10.0.10.19) To Ex16-01.fintech.ru
- (10.0.10.18)
+Content-Transfer-Encoding: 8bit
 
-Hi, please disregard my patch for following reasons:
+When a bio with REQ_PREFLUSH is submitted to dm, __send_empty_flush()
+generates a flush_bio with REQ_OP_WRITE | REQ_PREFLUSH | REQ_SYNC,
+which causes the flush_bio to be throttled by wbt_wait().
 
-1) The issue at hand isn't addressed properly - looking back I haven't
-properly identified root cause and my fix is flawed.
-2) Even if the approach is correct, I messed up the move of the label
-err_v4l2_device_unregister. If video_register_device(&dev->rx_vdev,...)
-fails we skip necessary deregistering steps.
+An example from v5.4, similar problem also exists in upstream:
 
-I'll attempt to come up with a better solution, thank you for your
-patience.
+    crash> bt 2091206
+    PID: 2091206  TASK: ffff2050df92a300  CPU: 109  COMMAND: "kworker/u260:0"
+     #0 [ffff800084a2f7f0] __switch_to at ffff80004008aeb8
+     #1 [ffff800084a2f820] __schedule at ffff800040bfa0c4
+     #2 [ffff800084a2f880] schedule at ffff800040bfa4b4
+     #3 [ffff800084a2f8a0] io_schedule at ffff800040bfa9c4
+     #4 [ffff800084a2f8c0] rq_qos_wait at ffff8000405925bc
+     #5 [ffff800084a2f940] wbt_wait at ffff8000405bb3a0
+     #6 [ffff800084a2f9a0] __rq_qos_throttle at ffff800040592254
+     #7 [ffff800084a2f9c0] blk_mq_make_request at ffff80004057cf38
+     #8 [ffff800084a2fa60] generic_make_request at ffff800040570138
+     #9 [ffff800084a2fae0] submit_bio at ffff8000405703b4
+    #10 [ffff800084a2fb50] xlog_write_iclog at ffff800001280834 [xfs]
+    #11 [ffff800084a2fbb0] xlog_sync at ffff800001280c3c [xfs]
+    #12 [ffff800084a2fbf0] xlog_state_release_iclog at ffff800001280df4 [xfs]
+    #13 [ffff800084a2fc10] xlog_write at ffff80000128203c [xfs]
+    #14 [ffff800084a2fcd0] xlog_cil_push at ffff8000012846dc [xfs]
+    #15 [ffff800084a2fda0] xlog_cil_push_work at ffff800001284a2c [xfs]
+    #16 [ffff800084a2fdb0] process_one_work at ffff800040111d08
+    #17 [ffff800084a2fe00] worker_thread at ffff8000401121cc
+    #18 [ffff800084a2fe70] kthread at ffff800040118de4
 
-Regards,
-Nikita
+After commit 2def2845cc33 ("xfs: don't allow log IO to be throttled"),
+the metadata submitted by xlog_write_iclog() should not be throttled.
+But due to the existence of the dm layer, throttling flush_bio indirectly
+causes the metadata bio to be throttled.
 
-On 2/13/25 21:26, Nikita Zhandarovich wrote:
-> Syzkaller reports [1] a slab-use-after-free error identified by KASAN
-> sanitizer and most likely caused by the wrong order of device
-> unregister steps once a call to video_register_device() fails.
-> 
-> Fix aforementioned flaw by first freeing control and reference
-> handlers, only then dealing with dev->v4l2_dev() via
-> v4l2_device_unregister().
-> 
-> [1] Syzkaller (partial) report:
-> BUG: KASAN: slab-use-after-free in v4l2_release+0x3e2/0x460 drivers/media/v4l2-core/v4l2-dev.c:453
-> Read of size 8 at addr ffff8880502e80c8 by task v4l_id/7854
-> ...
-> Call Trace:
->  <TASK>
->  __dump_stack lib/dump_stack.c:94 [inline]
->  dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
->  print_address_description mm/kasan/report.c:377 [inline]
->  print_report+0xc3/0x620 mm/kasan/report.c:488
->  kasan_report+0xd9/0x110 mm/kasan/report.c:601
->  v4l2_release+0x3e2/0x460 drivers/media/v4l2-core/v4l2-dev.c:453
->  __fput+0x3f6/0xb60 fs/file_table.c:431
->  __fput_sync+0x45/0x50 fs/file_table.c:516
->  __do_sys_close fs/open.c:1567 [inline]
->  __se_sys_close fs/open.c:1552 [inline]
->  __x64_sys_close+0x86/0x100 fs/open.c:1552
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> ...
-> 
-> Allocated by task 6058:
->  kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
->  kasan_save_track+0x14/0x30 mm/kasan/common.c:68
->  poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
->  __kasan_kmalloc+0xaa/0xb0 mm/kasan/common.c:394
->  kmalloc_noprof include/linux/slab.h:878 [inline]
->  kzalloc_noprof include/linux/slab.h:1014 [inline]
->  hackrf_probe+0xd1/0x1cf0 drivers/media/usb/hackrf/hackrf.c:1353
->  usb_probe_interface+0x309/0x9d0 drivers/usb/core/driver.c:399
-> ...
-> 
-> Freed by task 6058:
->  kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
->  kasan_save_track+0x14/0x30 mm/kasan/common.c:68
->  kasan_save_free_info+0x3b/0x60 mm/kasan/generic.c:579
->  poison_slab_object mm/kasan/common.c:247 [inline]
->  __kasan_slab_free+0x51/0x70 mm/kasan/common.c:264
->  kasan_slab_free include/linux/kasan.h:230 [inline]
->  slab_free_hook mm/slub.c:2342 [inline]
->  slab_free mm/slub.c:4579 [inline]
->  kfree+0x14f/0x4b0 mm/slub.c:4727
->  hackrf_probe+0x4c9/0x1cf0 drivers/media/usb/hackrf/hackrf.c:1525
->  usb_probe_interface+0x309/0x9d0 drivers/usb/core/driver.c:399
-> ...
-> 
-> Reported-by: syzbot+6b52c2b24e341804a58c@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=6b52c2b24e341804a58c
-> Fixes: 8bc4a9ed8504 ("[media] hackrf: add support for transmitter")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
-> ---
-> v1 -> v2: fix overlong lines in patch description to remove warnings
-> from checkpatch.
-> 
->  drivers/media/usb/hackrf/hackrf.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/media/usb/hackrf/hackrf.c b/drivers/media/usb/hackrf/hackrf.c
-> index 0b50de8775a3..bc910b35f605 100644
-> --- a/drivers/media/usb/hackrf/hackrf.c
-> +++ b/drivers/media/usb/hackrf/hackrf.c
-> @@ -1513,12 +1513,12 @@ static int hackrf_probe(struct usb_interface *intf,
->  	return 0;
->  err_video_unregister_device_rx:
->  	video_unregister_device(&dev->rx_vdev);
-> -err_v4l2_device_unregister:
-> -	v4l2_device_unregister(&dev->v4l2_dev);
->  err_v4l2_ctrl_handler_free_tx:
->  	v4l2_ctrl_handler_free(&dev->tx_ctrl_handler);
->  err_v4l2_ctrl_handler_free_rx:
->  	v4l2_ctrl_handler_free(&dev->rx_ctrl_handler);
-> +err_v4l2_device_unregister:
-> +	v4l2_device_unregister(&dev->v4l2_dev);
->  err_kfree:
->  	kfree(dev);
->  err:
-> 
+Fix this by conditionally adding REQ_IDLE to flush_bio.bi_opf, which makes
+wbt_should_throttle() return false to avoid wbt_wait().
+
+Signed-off-by: Jinliang Zheng <alexjlzheng@tencent.com>
+Reviewed-by: Tianxiang Peng <txpeng@tencent.com>
+Reviewed-by: Hao Peng <flyingpeng@tencent.com>
+---
+ drivers/md/dm.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/md/dm.c b/drivers/md/dm.c
+index 4d1e42891d24..5ab7574c0c76 100644
+--- a/drivers/md/dm.c
++++ b/drivers/md/dm.c
+@@ -1540,14 +1540,18 @@ static void __send_empty_flush(struct clone_info *ci)
+ {
+ 	struct dm_table *t = ci->map;
+ 	struct bio flush_bio;
++	blk_opf_t opf = REQ_OP_WRITE | REQ_PREFLUSH | REQ_SYNC;
++
++	if ((ci->io->orig_bio->bi_opf & (REQ_IDLE | REQ_SYNC)) ==
++	    (REQ_IDLE | REQ_SYNC))
++		opf |= REQ_IDLE;
+ 
+ 	/*
+ 	 * Use an on-stack bio for this, it's safe since we don't
+ 	 * need to reference it after submit. It's just used as
+ 	 * the basis for the clone(s).
+ 	 */
+-	bio_init(&flush_bio, ci->io->md->disk->part0, NULL, 0,
+-		 REQ_OP_WRITE | REQ_PREFLUSH | REQ_SYNC);
++	bio_init(&flush_bio, ci->io->md->disk->part0, NULL, 0, opf);
+ 
+ 	ci->bio = &flush_bio;
+ 	ci->sector_count = 0;
+-- 
+2.41.1
 
 
