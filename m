@@ -1,168 +1,183 @@
-Return-Path: <linux-kernel+bounces-523490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAC68A3D781
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 11:56:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99D36A3D783
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 11:57:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E1E817A191
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 10:56:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 392EE19C1059
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 10:57:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62D151EA7FC;
-	Thu, 20 Feb 2025 10:56:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ix3QrfaD"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07DA21F2382;
+	Thu, 20 Feb 2025 10:56:18 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1C6E1E0B7F;
-	Thu, 20 Feb 2025 10:56:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF6B71F152A
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 10:56:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740048972; cv=none; b=LWNUr7xPrJ3r2Iv11hJjRpSJw2gIj8PBIsgwUDd0YOIQu1yoKZUzgAieowMzIkMKjcDtjmbcp65u/rShJtMslwalhTVuyNn0wrKvJgbzd4fYhSFrucQbOvjP2IWvUDUBcj9EQSPpQwk+nHajN1Y9fJYi7mIVXNIwTi1JW52Bka4=
+	t=1740048977; cv=none; b=UUEw2AfuoSeHFXlkZ+0KYsMSy3bY6AWrkSEdsMhilS/FuKo+wzxrXD+8zJgPHySNNzUfEs69nX9qE/y2EjZKG7bHRT6YR2IqR9O7zvX/3nTfG6tHxwZljkVjCEmHZ7Pmolx6Uxq+bqtloddNFOjkqMYGDJc+lKyPV7fvvEyM9WI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740048972; c=relaxed/simple;
-	bh=lPkMdd3qnMsSSfWgq+AdsUEb6rpVf2KxmeT9QHn1xy8=;
+	s=arc-20240116; t=1740048977; c=relaxed/simple;
+	bh=AZ8pByUgDxIB+wqTibIJ3mjIR1Kc+wjA2PZxVI5tpFY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Pfzayrv5QvdU3ZvGa0F9IOIEG/cmgNlNzpJ8z08pbGgUGqlaQamc0pPJ2LAi7UnL0qPGiNuXpNI0D76fv5pJ2VE+Y7VQY5O/GPLjC8qs3bECitv1ED4Q4WhiV9ec0TEJ0fdLL+MU0nROgy0w4QKNX/D0jTblzeg5Qd1BhgF7tAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ix3QrfaD; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=wMxjzD5AOVXLF2tcKGKIBkbHXfnF4c0ZwE+vKU4UHSA=; b=ix3QrfaDNukzRToNctPtQ2eo5R
-	x7mHnQpgZx91Di4/oU2/HAE0C0Bz3rMkmBYjsIhbYF4RqabjRF7Hzzq2JdRSPKi8LMDX8kCJsGfUo
-	00wHjZ/+FE7ZLzAg5t9I4Z0yOfldvka1GQAlHbywDCNYqlVbK9GUTNzSKRlcHtt9jFbqtTWuJzv4L
-	hEF/CvOvDSIcrdt2GcnbkaDFbWEJe4kECP55aVsQJSBVHPJKeH9DPaW9siaacSrsiDgwxNa4Y6kND
-	JBwaDnyCPy/HihiRcKW5ejyfitGnS5i9T8KajS/UtesXF9767JF7U+TENNq2ua9QluIiILYRAsYot
-	xrQJnJtA==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tl4Dn-00000002Pcn-3yZm;
-	Thu, 20 Feb 2025 10:56:00 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 0072E300756; Thu, 20 Feb 2025 11:55:58 +0100 (CET)
-Date: Thu, 20 Feb 2025 11:55:58 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: K Prateek Nayak <kprateek.nayak@amd.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Ben Segall <bsegall@google.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Andy Lutomirski <luto@kernel.org>, linux-kernel@vger.kernel.org,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>, Mel Gorman <mgorman@suse.de>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Clark Williams <clrkwllms@kernel.org>,
-	linux-rt-devel@lists.linux.dev, Tejun Heo <tj@kernel.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Barret Rhoden <brho@google.com>, Petr Mladek <pmladek@suse.com>,
-	Josh Don <joshdon@google.com>, Qais Yousef <qyousef@layalina.io>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	David Vernet <dvernet@meta.com>,
-	"Gautham R. Shenoy" <gautham.shenoy@amd.com>,
-	Swapnil Sapkal <swapnil.sapkal@amd.com>
-Subject: Re: [RFC PATCH 00/22] sched/fair: Defer CFS throttling to exit to
- user mode
-Message-ID: <20250220105558.GJ34567@noisy.programming.kicks-ass.net>
-References: <20250220093257.9380-1-kprateek.nayak@amd.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=CZJBhwUbQHpW372UWYbX+jou7qRdwGSRSFTXRXHT3yve9opXjxWYi69RH/sfke3eCU4BmUjs+qxTc01YsE5XWSg5bgiWzXEf6mCzHe7Kaf5bRWG2dC629QCqA+DQSkOhcYUVp37hYY+tyFdgWr9mgpQnpHhUFD4gZV7DhDUGaGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1tl4Dy-0001Kc-V5; Thu, 20 Feb 2025 11:56:10 +0100
+Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1tl4Dy-001vBZ-1a;
+	Thu, 20 Feb 2025 11:56:10 +0100
+Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1tl4Dy-0084Uc-1E;
+	Thu, 20 Feb 2025 11:56:10 +0100
+Date: Thu, 20 Feb 2025 11:56:10 +0100
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Christian Loehle <christian.loehle@arm.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Mark Brown <broonie@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	=?utf-8?B?U8O4cmVu?= Andersen <san@skov.dk>
+Subject: Re: [PATCH v2 4/6] mmc: core: add undervoltage handler for MMC/eMMC
+ devices
+Message-ID: <Z7cKSuKWOedGVZ5G@pengutronix.de>
+References: <20250220074429.2906141-1-o.rempel@pengutronix.de>
+ <20250220074429.2906141-5-o.rempel@pengutronix.de>
+ <be715535-8931-489f-a2be-50aa6ec423a1@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250220093257.9380-1-kprateek.nayak@amd.com>
+In-Reply-To: <be715535-8931-489f-a2be-50aa6ec423a1@arm.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Thu, Feb 20, 2025 at 09:32:35AM +0000, K Prateek Nayak wrote:
-> Proposed approach
-> =================
+On Thu, Feb 20, 2025 at 10:47:01AM +0000, Christian Loehle wrote:
+> On 2/20/25 07:44, Oleksij Rempel wrote:
+> > Introduce _mmc_handle_undervoltage() to handle undervoltage events for
+> > MMC/eMMC devices. This function interrupts ongoing operations using HPI
+> > and performs a controlled suspend. After completing the sequence, the card
+> > is marked as removed to prevent further interactions.
+> > 
+> > To support this, introduce __mmc_suspend() and __mmc_resume() as internal
+> > helpers that omit mmc_claim_host()/mmc_release_host(), allowing them to be
+> > called when the host is already claimed. Update mmc_shutdown() to skip the
+> > normal shutdown sequence if the host is flagged as undervoltage to avoid
+> > repeating of the shutdown procedure.
 > 
-> This approach builds on Ben Segall's proposal in [4] which marked the
-> task in schedule() when exiting to usermode by setting
-> "in_return_to_user" flag except this prototype takes it a step ahead and
-> marks a "kernel critical section" within the syscall boundary using a
-> per-task "kernel_cs_count".
+> "of" can be removed here.
 > 
-> The rationale behind this approach is that the task can only hold
-> kernel resources when running in kernel mode in preemptible context. In
-> this POC, the entire syscall boundary is marked as a kernel critical
-> section but in the future, the API can be used to mark fine grained
-> boundaries like between an up_read(), down_read() or up_write(),
-> down_write() pair.
-> 
-> Within a kernel critical section, throttling events are deferred until
-> the task's "kernel_cs_count" hits 0. Currently this count is an integer
-> to catch any cases where the count turns negative as a result of
-> oversights on my part but this could be changed to a preempt count like
-> mechanism to request a resched.
-> 
->             cfs_rq throttled               picked again
-> 		  v                              v
-> 
->     ----|*********| (preempted by tick / wakeup) |***********| (full throttle)
-> 
->         ^                                                    ^
-> critical section   cfs_rq is throttled partially     critical section
->       entry           since the task is still              exit
->                   runnable as it was preempted in
->                       kernel critical section
-> 
-> The EEVDF infrastructure is extended to tracks the avg_vruntime and the
-> avg_load of only those entities preempted in kernel mode. When a cfs_rq
-> is throttled, it uses these metrics to select among the kernel mode
-> preempted tasks and running them till they exit to user mode.
-> pick_eevdf() is made aware that it is operating on a throttled hierarchy
-> to only select among these tasks that were preempted in kernel mode (and
-> the sched entities of cfs_rq that lead to them). When a throttled
-> entity's "kernel_cs_count" hits 0, the entire hierarchy is frozen but
-> the hierarchy remains accessible for picking until that point.
-> 
->           root
->         /     \
->        A       B * (throttled)
->       ...    / | \
->             0  1* 2*
-> 
->     (*) Preempted in kernel mode
-> 
->   o avg_kcs_vruntime = entity_key(1) * load(1) + entity_key(2) * load(2)
->   o avg_kcs_load = load(1) + load(2)
-> 
->   o throttled_vruntime_eligible:
-> 
->       entity preempted in kernel mode &&
->       entity_key(<>) * avg_kcs_load <= avg_kcs_vruntime
-> 
->   o rbtree is augmented with a "min_kcs_vruntime" field in sched entity
->     that propagates the smallest vruntime of the all the entities in
->     the subtree that are preempted in kernel mode. If they were
->     executing in usermode when preempted, this will be set to LLONG_MAX.
-> 
->     This is used to construct a min-heap and select through the
->     entities. Consider rbtree of B to look like:
-> 
->          1*
->        /   \
->       2*    0
-> 
->       min_kcs_vruntime = (se_in_kernel()) ? se->vruntime : LLONG_MAX:
->       min_kcs_vruntime = min(se->min_kcs_vruntime,
->                              __node_2_se(rb_left)->min_kcs_vruntime,
->                              __node_2_se(rb_right)->min_kcs_vruntime);
-> 
->    pick_eevdf() uses the min_kcs_vruntime on the virtual deadline sorted
->    tree to first check the left subtree for eligibility, then the node
->    itself, and then the right subtree.
-> 
+> Given that this introduces large parts of the mmc handling IMO this commit
+> deserves a lot more explanation of what steps exactly do for which cards
+> and why.
 
-*groan*... why not actually dequeue the tasks and only retain those with
-non-zero cs_count? That avoids having to duplicate everything, no?
+ack
+
+> > 
+> > Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> > ---
+> >  drivers/mmc/core/mmc.c | 81 +++++++++++++++++++++++++++++++++++-------
+> >  1 file changed, 68 insertions(+), 13 deletions(-)
+> > 
+> > diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
+> > index 86b608843232..e626213e7a52 100644
+> > --- a/drivers/mmc/core/mmc.c
+> > +++ b/drivers/mmc/core/mmc.c
+> > @@ -2104,8 +2104,8 @@ static int _mmc_flush_cache(struct mmc_host *host)
+> >  	return err;
+> >  }
+> >  
+> > -static int _mmc_suspend(struct mmc_host *host, bool is_suspend,
+> > -			bool is_undervoltage)
+> > +static int __mmc_suspend(struct mmc_host *host, bool is_suspend,
+> > +			 bool is_undervoltage)
+> 
+> The is_undervoltage doesn't do anything? Did you forget something here?
+
+This was done in the previous patch "mmc: core: refactor _mmc_suspend()
+for undervoltage handling"
+
+> > @@ -2189,6 +2205,9 @@ static int mmc_shutdown(struct mmc_host *host)
+> >  {
+> >  	int err = 0;
+> >  
+> > +	if (host->undervoltage)
+> > +		return 0;
+> > +
+> 
+> Probably deserves a comment.
+
+ack
+
+> >  	/*
+> >  	 * In a specific case for poweroff notify, we need to resume the card
+> >  	 * before we can shutdown it properly.
+> > @@ -2280,6 +2299,41 @@ static int _mmc_hw_reset(struct mmc_host *host)
+> >  	return mmc_init_card(host, card->ocr, card);
+> >  }
+> >  
+> > +static int _mmc_handle_undervoltage(struct mmc_host *host)
+> > +{
+> > +	struct mmc_card *card = host->card;
+> > +	int err = 0;
+> > +
+> > +	mmc_claim_host(host);
+> > +
+> > +	if (!host->card)
+> > +		goto out;
+> > +
+> > +	if (mmc_can_poweroff_notify(host->card) &&
+> > +		!(host->caps2 & MMC_CAP2_FULL_PWR_CYCLE))
+> > +		err = __mmc_resume(host);
+> 
+> I'm not sure I follow this.
+> Why would we power-up a card that currently doesn't have power when we
+> know we are about to powerfail it?
+
+It is part of the mmc_shutdown, but it is not used on my HW. So, can be
+skip it.
+
+> > +
+> > +	if (!err) {
+> > +		err = mmc_interrupt_hpi(card);
+> > +		if (err)
+> > +			pr_err("%s: Interrupt HPI failed, error %d\n",
+> > +				mmc_hostname(host), err);
+> 
+> There's no point in calling this for SD but I don't see why it currently
+> wouldn't be called for SD.
+
+I tried to keep budget low, until we agree that it is the way to go.
+After this patch stack is accepted, i can try to request more time to
+add and test the SD handler.
+
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
