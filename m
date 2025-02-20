@@ -1,106 +1,97 @@
-Return-Path: <linux-kernel+bounces-524847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A11D0A3E7CF
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 23:53:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F7E1A3E7D2
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 23:54:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C737A19C4F51
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 22:53:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D52019C4DC1
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 22:54:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4995B264A6E;
-	Thu, 20 Feb 2025 22:53:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C274B264F86;
+	Thu, 20 Feb 2025 22:53:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="mYkAQnZZ"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 503021C5D67;
-	Thu, 20 Feb 2025 22:53:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="vo90Yjrx"
+Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81AA9286280
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 22:53:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740091996; cv=none; b=mrBV5qsjAPDUd22/ZCjIDXPC9XvCEleJIRD4B6m6CRzFeOhJU21yGzOeSNFRBYqv7EdQAGXQxr8XLm4GP0th2Bo/XaHqIyhDoKFaxzO73iWcrROEiOuG5f0VodhK0RyIISo3MkuytgE8wMIo1ZqIcamJHnOu82TfLAoUxaAIlL8=
+	t=1740092031; cv=none; b=D5LX5TfDwQ+4+3DR7yqcPkPwNwqFVFhPRGiOMIKh4gvvFkntjmfhNikO0ruXgh3TkQOoxOAGESr09r3K0pC2pvHU5GQLunINj9xd1E8jRs3iNjCm9fKL+pMU78bDVflTCoihmTJ7iz7AJtVa8rUofQGpDcKwUSiM3hxVTx3OOHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740091996; c=relaxed/simple;
-	bh=9hWIgKmuLTrHjMYIsySqi8UfGFFpNhE9057KHcZqlO4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rRs/p/ReCc/eblqs/BCHtycNaPi+QDbP/BG+SAdMjSt1Ywo3lTMhyELM3KobctxUGlzdwRh7Z343+flPfW5VT6UREj99JJfMRYXdxLtaUh6TqYxFOIkn3Mh1krzC2u1sg0qA3fyg2xzDIRYg/B8rdcT4u7ML82PQw9Wwll97E48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=mYkAQnZZ; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from hm-sls2.corp.microsoft.com (bras-base-toroon4332w-grc-32-142-114-216-132.dsl.bell.ca [142.114.216.132])
-	by linux.microsoft.com (Postfix) with ESMTPSA id C9B0D203EC1E;
-	Thu, 20 Feb 2025 14:53:13 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com C9B0D203EC1E
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1740091994;
-	bh=QPvpHWc6P2LYPk70og1QDBHr0W2xXNBlEljmWChKKV0=;
-	h=From:To:Cc:Subject:Date:From;
-	b=mYkAQnZZueh56EKC5CwZ+ERx0efV0WUIMLtyQd1N4MbzFrs3k5u8zJUoPpoWWRJL5
-	 5Ylh/1JT/7DqgdGRBd82QxWHPVwWpf9u6ZnxsEjcrEs6A2knVMObpk7QLb7ho4mBs4
-	 7KcSsEn2gvfNVn4X7PBdjlDjHJeDwMidZXv4atZI=
-From: Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>
-To: linux-kernel@vger.kernel.org
-Cc: Wei Liu <wei.liu@kernel.org>,
-	linux-hyperv@vger.kernel.org,
-	Dexuan Cui <decui@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>,
-	Petr Mladek <pmladek@suse.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jani Nikula <jani.nikula@intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	John Ogness <john.ogness@linutronix.de>,
-	Baoquan He <bhe@redhat.com>,
-	Joel Granados <joel.granados@kernel.org>,
-	Jocelyn Falempe <jfalempe@redhat.com>,
-	Ryo Takakura <takakura@valinux.co.jp>
-Subject: [PATCH RFC] panic: call panic handlers before panic_other_cpus_shutdown()
-Date: Thu, 20 Feb 2025 17:53:00 -0500
-Message-ID: <20250220225302.195282-1-hamzamahfooz@linux.microsoft.com>
-X-Mailer: git-send-email 2.47.1
+	s=arc-20240116; t=1740092031; c=relaxed/simple;
+	bh=/KQXQg+N2b6wfsOi16xs6IO2FNE6aSbUT4AczuOM32s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=se3EbIopz9nH6l01BFW8/o29SlaXSzp462EPYI8Ap3d678jR/xQfsiMOMw2f+rcz67CpWOsZQ8BanC3TcGNHUnMLgNKVaWCmDV6RE7hRo7EGwSUG2FR6uz5iyZx8UOCqNXs1xBy/N4PybPqukKzQoeo0YKQq5ZiMWoXOfq/WTTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=vo90Yjrx; arc=none smtp.client-ip=91.218.175.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 20 Feb 2025 17:53:41 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1740092025;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dYTlYwWRTSP04TlrbbWePbu9bqv4xVJsVyBcl0fpGrU=;
+	b=vo90YjrxgfoSKsGQYQffw+W5T5sQZqnSFmUv9wcUnaV3DATraojnqZhwPiwIyO+i0EBbMd
+	QPyRxywhvosny+rO/iNYwNFFQnAyPvK+fyUlSizRZ7nBi/rTMzciicfYoGlwQ1XSKyQHKq
+	JWATA4Ui/VDtX0wNADuTdJY5erICwwU=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Matthew Wilcox <willy@infradead.org>, Hillf Danton <hdanton@sina.com>, 
+	Byungchul Park <byungchul@sk.com>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	kernel_team@skhynix.com, conduct@kernel.org
+Subject: Re: [RFC PATCH v12 00/26] LUF(Lazy Unmap Flush) reducing tlb numbers
+ over 90%
+Message-ID: <ebna3dzn7aevgpzxjdb4vykmrheb7erqpdbos3ayl6tnimijpp@ibkvhcsa3pib>
+References: <20250220052027.58847-1-byungchul@sk.com>
+ <20250220103223.2360-1-hdanton@sina.com>
+ <20250220114920.2383-1-hdanton@sina.com>
+ <Z7c0BTteQoZKcSmJ@casper.infradead.org>
+ <Z7dFuTkdQ7PmP7sY@home.goodmis.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z7dFuTkdQ7PmP7sY@home.goodmis.org>
+X-Migadu-Flow: FLOW_OUT
 
-Since, the panic handlers may require certain cpus to be online to panic
-gracefully, we should call them before turning off SMP. Without this
-re-ordering, on Hyper-V hv_panic_vmbus_unload() times out, because the
-vmbus channel is bound to VMBUS_CONNECT_CPU and unless the crashing cpu
-is the same as VMBUS_CONNECT_CPU, VMBUS_CONNECT_CPU will be offlined by
-crash_smp_send_stop() before the vmbus channel can be deconstructed.
+On Thu, Feb 20, 2025 at 10:09:45AM -0500, Steven Rostedt wrote:
+> On Thu, Feb 20, 2025 at 01:54:13PM +0000, Matthew Wilcox wrote:
+> > On Thu, Feb 20, 2025 at 07:49:19PM +0800, Hillf Danton wrote:
+> > > On Thu, 20 Feb 2025 20:09:35 +0900 Byungchul Park wrote:
+> > > > Just in case that I don't understand what you meant and for better
+> > > > understanding, can you provide a simple and problematic example from
+> > > > the u-a-f?
+> > > > 
+> > > Tell us if it is illegal to commit rape without pregnancy in your home town?
+> > 
+> > Hillf, this is unacceptable language.  You need to apologise.
+> 
+> Agreed. WTF Hillf?  Where did that come from? Is this how you talk to your
+> co-workers?
+> 
+> I'll tell you what would happen in my home town. If someone said
+> that to a co-worker, they would likely be terminated.
 
-Signed-off-by: Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>
----
- kernel/panic.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+I can't agree with the "this is a firing offence" approach.
 
-diff --git a/kernel/panic.c b/kernel/panic.c
-index fbc59b3b64d0..9712a46dfe27 100644
---- a/kernel/panic.c
-+++ b/kernel/panic.c
-@@ -372,8 +372,6 @@ void panic(const char *fmt, ...)
- 	if (!_crash_kexec_post_notifiers)
- 		__crash_kexec(NULL);
- 
--	panic_other_cpus_shutdown(_crash_kexec_post_notifiers);
--
- 	printk_legacy_allow_panic_sync();
- 
- 	/*
-@@ -382,6 +380,8 @@ void panic(const char *fmt, ...)
- 	 */
- 	atomic_notifier_call_chain(&panic_notifier_list, 0, buf);
- 
-+	panic_other_cpus_shutdown(_crash_kexec_post_notifiers);
-+
- 	panic_print_sys_info(false);
- 
- 	kmsg_dump_desc(KMSG_DUMP_PANIC, buf);
--- 
-2.47.1
+We're a community, no one is employed by anyone else here; we work
+together because we have to and we have to figure out how to get along.
+We work via consensus, not appeals to authority.
 
+However - language like that can _and has_ driven away valuable and
+long standing members of our community, so people will feel strongly
+about this.
+
+Hillf, I'm going to share a story off list.
 
