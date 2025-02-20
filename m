@@ -1,219 +1,126 @@
-Return-Path: <linux-kernel+bounces-524912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C26E8A3E8AA
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 00:40:03 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70D0BA3E8AD
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 00:41:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C625517EE82
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 23:39:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1F5907A7A8F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 23:40:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74CA326771F;
-	Thu, 20 Feb 2025 23:39:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 229F3267AF0;
+	Thu, 20 Feb 2025 23:41:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IdX+hPRU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UxBspcVw"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1B1F266EF8;
-	Thu, 20 Feb 2025 23:39:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F26E026463B;
+	Thu, 20 Feb 2025 23:41:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740094791; cv=none; b=uLnjzdKwXn9la7U1U5IgGJT+MmhI3BUpJ7aF8l9AiIHyGJHTAeiSkp2mGyXcOBN4WwQafKqVpy0LIE5645SOOdv/Ja+i8pvcYNAeo9GVbu5D+zcbM/zHNrPt4LQGc5lnV9eV6RKsgWvItU2WpgAXwYuqOzhDxX6VHYVzTqPbfUw=
+	t=1740094872; cv=none; b=p2i99PR9zlFMzkFmIQ9rzlfU/v583CfHBpLi9aLtH9LXu2coVh2QlrgXp3wS11yfxelapBzcnt/+MNtQdLbIC2wqd8PLQvB+NCzvXR3gpvLuoJxKO9oKGc3Q6v0RAcgn2km7Q4dv6KMyp0PT78+Kexvdyq6c+ygLhgN1iM/iO9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740094791; c=relaxed/simple;
-	bh=a+ewDhWyQHdcj13JBzjWs2K8bIJieZ0GId/WQZ9C2s4=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=Dqiw3DxgsDOniRCpimFnLhcfWv6G6DlBCprcRW5gQi5b7Q0i3iioa4pK/62p/9wWl9XeMO3ieUEdUQ7+bAQn53e49f5alIIlFQn1xeA5BpRRqXtNWNwxwqG/q1SmFR0ZP2Un0xEYsdehPQpu+7C2JTCfihoCUrl7whFFWUvvYBc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IdX+hPRU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90BC4C4CED1;
-	Thu, 20 Feb 2025 23:39:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740094791;
-	bh=a+ewDhWyQHdcj13JBzjWs2K8bIJieZ0GId/WQZ9C2s4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=IdX+hPRUg8L6jGDvbir/xmIYvttvKycBjY5Tb6n6vh1si2XrPpfkHGSGNNL+iJbMd
-	 biu6St1nK/HpjapPIDNJ3+aw6reEvRcNnmiJhhdM8UTQBANrzds0jQFPRjiJkcLG3P
-	 rmdEn2otRaBMRxwa/6NgidHTXNdVNTm0KAYU622NaABSozmBISY1TmIyICdEmSetkB
-	 mu7aaS9hdtzoWo/yO+x4aUUHJhG51x7cc3Egopl2iqUFfPLgb83EEgQkSfza9Foszt
-	 s90O82eSCBNwNNtN41Balo1biyTuzl6hWqjSwTnEafQbpB73a+mh1T+//WsCxIMfuK
-	 VNKaH2c0wuf3g==
-Date: Fri, 21 Feb 2025 08:39:46 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Masami
- Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Morton
- <akpm@linux-foundation.org>, Heiko Carstens <hca@linux.ibm.com>, Sven
- Schnelle <svens@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
- Alexander Gordeev <agordeev@linux.ibm.com>, stable@vger.kernel.org
-Subject: Re: [PATCH v3 1/5] ftrace: Fix accounting of adding subops to a
- manager ops
-Message-Id: <20250221083946.ad92f6914b7bc6fe7bcf0423@kernel.org>
-In-Reply-To: <20250220202055.060300046@goodmis.org>
-References: <20250220202009.689253424@goodmis.org>
-	<20250220202055.060300046@goodmis.org>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1740094872; c=relaxed/simple;
+	bh=irbzh/oe51A79xVYF3jxZzKe+dVGiUXNJMFjUvq6beY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZF8QlyZfkzMOwdR5p26lotGLBxkFG9fl/BlYfaWUhfLhosbhEioASwcQ6cpLxpnPCAFDsYOUCujKeamjT6F/fMoZpGlRxPCRtFIMwZgWEjHofuY6eT7gAiAjz9E0CcIt00raAufFrcgnxaNY8FX1ihW4At22pzspu3lR6dwMUpo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UxBspcVw; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2f2f5e91393so368180a91.0;
+        Thu, 20 Feb 2025 15:41:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740094870; x=1740699670; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=irbzh/oe51A79xVYF3jxZzKe+dVGiUXNJMFjUvq6beY=;
+        b=UxBspcVw702KjLZ2SYc+H3HdVoZNipdIGC84Qviuy/FU1w5m2WLBdWIjIn2yFDLcOi
+         b5mOziwdkjqKBQsbSi/D+2mzpmalslm08ScWATcC84Iyo5FgVdr4RjVNeHZjN9+xJwlT
+         xcAykwv24GlhyvyH8tERbOGpvQN3jQNlQjT2YzSMMMXcrL9J/ZEoPiXtcp/FiEjD85iR
+         KWzwNVuA8+mFE5riTHvYCYvot3TFJucBm+0Qc9yPoB0MDyXJghemk3XmOlkMAbbqM1VI
+         yxivh5vjsfvO8z8YUq+aZxOXFGyDgdvn7p/SQCGC2N+7Rn5+vSldQnx5cMCNzOF2lxC4
+         GXgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740094870; x=1740699670;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=irbzh/oe51A79xVYF3jxZzKe+dVGiUXNJMFjUvq6beY=;
+        b=VXv7KyP64qsNxi75aErd0a6UQGTM4FktBfcJRZaXiw6ca3Jjovg8i2PX4dq7e+ND9K
+         acIdao/FCQJRhynB6s8l1oQXWT6rEtbDmULIdJg4qj37Ha0Zga61WksaUQJ5PCBLg7DI
+         vFd926y3F8u7MXSqQnPImxWsAQKp5xzdXgIzpxk6y/I/ZXPkaDS7+ysxFOHGT2JuFgFo
+         IkIa4delWVSCUC6falP48SrHTAKGd37rR/Bro3BeOCA7DR/LMcjNCxkU/yXoUPRVWCYB
+         uAaDyNnj5odj34FDzcBPk3tMb6+ia1SJNpsTPQRhUhLSz5w/ae7sqtzctmdBIdWYwAkx
+         GITQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWCuLIf6M+xxjwyOqXYdFDvjoAelGFIVI1yvCXWYYYd+Wk1vLRem3MNDdW/BgbGnjY9gGcpw5knvy4mdBc=@vger.kernel.org, AJvYcCXuxh3/Q00vSmgu7FMx8XCxpffxhZQ55zpeVfoZ1KmJUEOQ9HufnKmFh08AkDoXZEy0mQJl6MaqTn9mXzhNnrU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVJP5r0fBisYWtGHXeZOZEnoKevnXgrHULFOcEPH6Q15A5DX0U
+	T7NWNiUhdfHQnVDFrcAXhagrX8WBDw9CrifDNvNEDeW+Axx8ALvG7fLsFMa7+rF6d6j1Ip3nky/
+	EDxS6A9KSfnX7O/0r46LEULATVIc=
+X-Gm-Gg: ASbGnctuzOW6gFxvSmazkbsPgjRFc6Mg1/zv+C8VaLH1Xwh48Hgjyq5ZLiI32qjkxYy
+	bDa0tvFCYplP/wmQL1R5kBNu+Davhua1a4tXCN86LjvzfeI6N6RpNBNELssprAbbTAciKa523
+X-Google-Smtp-Source: AGHT+IE3tTMC50ciOK+8N/4de26wZ6Pg8vooUK40uWXc0KvimGcWwvs1xaU2vMuCSIhfeBeWHEofydflMa9Ma5wDnkg=
+X-Received: by 2002:a17:90b:1e05:b0:2fa:17d2:158 with SMTP id
+ 98e67ed59e1d1-2fce75dfdb1mr694090a91.0.1740094870138; Thu, 20 Feb 2025
+ 15:41:10 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+References: <Z7SwcnUzjZYfuJ4-@infradead.org> <b0a8ee53b767b7684de91eeb6924ecdf5929d31e.camel@HansenPartnership.com>
+ <CANiq72nnnOsGZDrPDm8iWxYn2FL=wJqx-P8aS63dFYez3_FEOg@mail.gmail.com>
+ <a627845f73f2f7bedc7a820cfdf476be9993e30f.camel@HansenPartnership.com>
+ <CANiq72m5KB-X1zck1E43yffXOTeD4xRmZgDx_oUiNwR941ce0w@mail.gmail.com> <20250219170623.GB1789203@mit.edu>
+In-Reply-To: <20250219170623.GB1789203@mit.edu>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Fri, 21 Feb 2025 00:40:57 +0100
+X-Gm-Features: AWEUYZmuZcjvGrCyDvmTbEKuMO6tYd_p5yChnLfIZmwrF8AsdfajLNX5ZuOK-5U
+Message-ID: <CANiq72=O+sz0mU-urYmviCm55GL0jWzsbjAJviJpT+3MLmQSCA@mail.gmail.com>
+Subject: Re: Rust kernel policy
+To: "Theodore Ts'o" <tytso@mit.edu>
+Cc: James Bottomley <James.Bottomley@hansenpartnership.com>, 
+	Christoph Hellwig <hch@infradead.org>, rust-for-linux <rust-for-linux@vger.kernel.org>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Greg KH <gregkh@linuxfoundation.org>, 
+	David Airlie <airlied@gmail.com>, linux-kernel@vger.kernel.org, ksummit@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 20 Feb 2025 15:20:10 -0500
-Steven Rostedt <rostedt@goodmis.org> wrote:
+On Wed, Feb 19, 2025 at 6:06=E2=80=AFPM Theodore Ts'o <tytso@mit.edu> wrote=
+:
+>
+> I do understand (now) what Wedson was trying to do, was to show off
+> how expressive and powerful Rust can be, even in the face of a fairly
+> complex interface.
 
-> From: Steven Rostedt <rostedt@goodmis.org>
-> 
-> Function graph uses a subops and manager ops mechanism to attach to
-> ftrace.  The manager ops connects to ftrace and the functions it connects
-> to is defined by a list of subops that it manages.
-> 
-> The function hash that defines what the above ops attaches to limits the
-> functions to attach if the hash has any content. If the hash is empty, it
-> means to trace all functions.
-> 
-> The creation of the manager ops hash is done by iterating over all the
-> subops hashes. If any of the subops hashes is empty, it means that the
-> manager ops hash must trace all functions as well.
-> 
-> The issue is in the creation of the manager ops. When a second subops is
-> attached, a new hash is created by starting it as NULL and adding the
-> subops one at a time. But the NULL ops is mistaken as an empty hash, and
-> once an empty hash is found, it stops the loop of subops and just enables
-> all functions.
-> 
->   # echo "f:myevent1 kernel_clone" >> /sys/kernel/tracing/dynamic_events
->   # cat /sys/kernel/tracing/enabled_functions
-> kernel_clone (1)           	tramp: 0xffffffffc0309000 (ftrace_graph_func+0x0/0x60) ->ftrace_graph_func+0x0/0x60
-> 
->   # echo "f:myevent2 schedule_timeout" >> /sys/kernel/tracing/dynamic_events
->   # cat /sys/kernel/tracing/enabled_functions
-> trace_initcall_start_cb (1)             tramp: 0xffffffffc0309000 (ftrace_graph_func+0x0/0x60) ->ftrace_graph_func+0x0/0x60
-> run_init_process (1)            tramp: 0xffffffffc0309000 (ftrace_graph_func+0x0/0x60) ->ftrace_graph_func+0x0/0x60
-> try_to_run_init_process (1)             tramp: 0xffffffffc0309000 (ftrace_graph_func+0x0/0x60) ->ftrace_graph_func+0x0/0x60
-> x86_pmu_show_pmu_cap (1)                tramp: 0xffffffffc0309000 (ftrace_graph_func+0x0/0x60) ->ftrace_graph_func+0x0/0x60
-> cleanup_rapl_pmus (1)                   tramp: 0xffffffffc0309000 (ftrace_graph_func+0x0/0x60) ->ftrace_graph_func+0x0/0x60
-> uncore_free_pcibus_map (1)              tramp: 0xffffffffc0309000 (ftrace_graph_func+0x0/0x60) ->ftrace_graph_func+0x0/0x60
-> uncore_types_exit (1)                   tramp: 0xffffffffc0309000 (ftrace_graph_func+0x0/0x60) ->ftrace_graph_func+0x0/0x60
-> uncore_pci_exit.part.0 (1)              tramp: 0xffffffffc0309000 (ftrace_graph_func+0x0/0x60) ->ftrace_graph_func+0x0/0x60
-> kvm_shutdown (1)                tramp: 0xffffffffc0309000 (ftrace_graph_func+0x0/0x60) ->ftrace_graph_func+0x0/0x60
-> vmx_dump_msrs (1)               tramp: 0xffffffffc0309000 (ftrace_graph_func+0x0/0x60) ->ftrace_graph_func+0x0/0x60
-> vmx_cleanup_l1d_flush (1)               tramp: 0xffffffffc0309000 (ftrace_graph_func+0x0/0x60) ->ftrace_graph_func+0x0/0x60
-> [..]
-> 
-> Fix this by initializing the new hash to NULL and if the hash is NULL do
-> not treat it as an empty hash but instead allocate by copying the content
-> of the first sub ops. Then on subsequent iterations, the new hash will not
-> be NULL, but the content of the previous subops. If that first subops
-> attached to all functions, then new hash may assume that the manager ops
-> also needs to attach to all functions.
-> 
+Thanks for saying that.
 
-Looks good to me.
+> It turns out there were some good reasons for why
+> the VFS handles inode creation, but in general, I'd encourage us to
+> consider whether there are ways to change the abstractions on the C
+> side so that:
 
-Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Definitely -- improving the C side (not just for Rust callers, but
+also for C ones) would be great, whether that is with extra
+annotations/extensions or redesigns.
 
-Thanks,
+In the beginning (pre-merge), we tried hard not to require changes on
+the C side, because we wanted to show that it is possible to use Rust
+(i.e. create safe abstractions for C APIs) even with minimal or no
+changes to C headers. We thought it was a useful property.
 
-> Cc: stable@vger.kernel.org
-> Fixes: 5fccc7552ccbc ("ftrace: Add subops logic to allow one ops to manage many")
-> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-> ---
-> Changes since v2: https://lore.kernel.org/20250219220510.888959028@goodmis.org
-> 
-> - Have append_hashes() return EMPTY_HASH and not NULL if the resulting
->   new hash is empty.
-> 
->  kernel/trace/ftrace.c | 33 ++++++++++++++++++++++-----------
->  1 file changed, 22 insertions(+), 11 deletions(-)
-> 
-> diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-> index 728ecda6e8d4..bec54dc27204 100644
-> --- a/kernel/trace/ftrace.c
-> +++ b/kernel/trace/ftrace.c
-> @@ -3220,15 +3220,22 @@ static struct ftrace_hash *copy_hash(struct ftrace_hash *src)
->   *  The filter_hash updates uses just the append_hash() function
->   *  and the notrace_hash does not.
->   */
-> -static int append_hash(struct ftrace_hash **hash, struct ftrace_hash *new_hash)
-> +static int append_hash(struct ftrace_hash **hash, struct ftrace_hash *new_hash,
-> +		       int size_bits)
->  {
->  	struct ftrace_func_entry *entry;
->  	int size;
->  	int i;
->  
-> -	/* An empty hash does everything */
-> -	if (ftrace_hash_empty(*hash))
-> -		return 0;
-> +	if (*hash) {
-> +		/* An empty hash does everything */
-> +		if (ftrace_hash_empty(*hash))
-> +			return 0;
-> +	} else {
-> +		*hash = alloc_ftrace_hash(size_bits);
-> +		if (!*hash)
-> +			return -ENOMEM;
-> +	}
->  
->  	/* If new_hash has everything make hash have everything */
->  	if (ftrace_hash_empty(new_hash)) {
-> @@ -3292,16 +3299,18 @@ static int intersect_hash(struct ftrace_hash **hash, struct ftrace_hash *new_has
->  /* Return a new hash that has a union of all @ops->filter_hash entries */
->  static struct ftrace_hash *append_hashes(struct ftrace_ops *ops)
->  {
-> -	struct ftrace_hash *new_hash;
-> +	struct ftrace_hash *new_hash = NULL;
->  	struct ftrace_ops *subops;
-> +	int size_bits;
->  	int ret;
->  
-> -	new_hash = alloc_ftrace_hash(ops->func_hash->filter_hash->size_bits);
-> -	if (!new_hash)
-> -		return NULL;
-> +	if (ops->func_hash->filter_hash)
-> +		size_bits = ops->func_hash->filter_hash->size_bits;
-> +	else
-> +		size_bits = FTRACE_HASH_DEFAULT_BITS;
->  
->  	list_for_each_entry(subops, &ops->subop_list, list) {
-> -		ret = append_hash(&new_hash, subops->func_hash->filter_hash);
-> +		ret = append_hash(&new_hash, subops->func_hash->filter_hash, size_bits);
->  		if (ret < 0) {
->  			free_ftrace_hash(new_hash);
->  			return NULL;
-> @@ -3310,7 +3319,8 @@ static struct ftrace_hash *append_hashes(struct ftrace_ops *ops)
->  		if (ftrace_hash_empty(new_hash))
->  			break;
->  	}
-> -	return new_hash;
-> +	/* Can't return NULL as that means this failed */
-> +	return new_hash ? : EMPTY_HASH;
->  }
->  
->  /* Make @ops trace evenything except what all its subops do not trace */
-> @@ -3505,7 +3515,8 @@ int ftrace_startup_subops(struct ftrace_ops *ops, struct ftrace_ops *subops, int
->  		filter_hash = alloc_and_copy_ftrace_hash(size_bits, ops->func_hash->filter_hash);
->  		if (!filter_hash)
->  			return -ENOMEM;
-> -		ret = append_hash(&filter_hash, subops->func_hash->filter_hash);
-> +		ret = append_hash(&filter_hash, subops->func_hash->filter_hash,
-> +				  size_bits);
->  		if (ret < 0) {
->  			free_ftrace_hash(filter_hash);
->  			return ret;
-> -- 
-> 2.47.2
-> 
-> 
+But then we got C maintainers that welcomed improvements that would
+benefit both sides, which was nice to see, and opens up some doors --
+as a simple example, Greg added made some APIs `const`-correct so that
+we got the right pointer type on the Rust bindings.
 
+So, yeah, anything in that direction (that either improves the C side
+and/or simplifies the Rust bindings/abstractions) would be great.
 
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Cheers,
+Miguel
 
