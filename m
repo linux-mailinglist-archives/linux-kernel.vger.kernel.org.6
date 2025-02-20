@@ -1,151 +1,201 @@
-Return-Path: <linux-kernel+bounces-524658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 946A8A3E585
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 21:03:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D16EAA3E586
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 21:03:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4523E3BFB1B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 20:02:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86B6118999EB
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 20:03:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4917B26388E;
-	Thu, 20 Feb 2025 20:02:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E856264617;
+	Thu, 20 Feb 2025 20:02:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BBFLVz83"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Edi3n9/F"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B4FC20B1F1;
-	Thu, 20 Feb 2025 20:02:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C93E264606;
+	Thu, 20 Feb 2025 20:02:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740081751; cv=none; b=m1LP1c+jo9jNuZcYoKyWjFlMMV+1uQ9aCBjK/qlkymja8AbHXFcceOMWPkUiF1R6E5qGE3x8RwdPTzweMKVgeg4UGFfbmP8K4Feq7AqOOxHTgLXAxNFCGPvwe9a5tnEXAJD+1N93tgV2x50GTnOTjLgVrzk1bVHT1ggtlMvs0qk=
+	t=1740081762; cv=none; b=TdDrJfJMU62q2IrClhOuct8GS6ErvKiPBsVv6M1oNqj0KQGvJFxv97LuMeIdsm5Zgnxw5zSZuBJNbaFt2aNq/PWxyCWyt29n6MFGTyipePQTpEHaBfFRmcT5yEcdkZFhY6EIP1sAk4w2rBogwuVY4rPA7V0/zBtgRN4RGiyZetI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740081751; c=relaxed/simple;
-	bh=/ZP+jJ0lOXjz0kmCIpgDpmDWqvL3ev3Cr0Ir4efdUh8=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=vDvkfjyl0AfIxZdwtpedmYi4zMUsYW2eN07nnmb9oxMrm1nKP5GsdAy476tCjdhkb/Ykutwx1gArQfBi0pCilUVe1mg4DQ0QNLcPiXk7GZnMvfCkIWDx4YYQOgMy7a0mAi+/Qz6Teaa26sb9zhT5PJ6xskiEea0F338TnuoZxaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BBFLVz83; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-38f3ac22948so731151f8f.0;
-        Thu, 20 Feb 2025 12:02:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740081748; x=1740686548; darn=vger.kernel.org;
-        h=in-reply-to:references:from:to:cc:subject:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=csgCb6u5Fodu0zC4/YRtvX7gHnFJEBoqe713JSwv3R8=;
-        b=BBFLVz83yM87Yafogl/sTPFteXkXfB4o9ltHTiyJ5qF8GkHRrdmhg5Se4c1oWdN9KU
-         MjoSYXz0vdHHfB0PWKcQcdGQ3PiYXiJgOXbG5oJ9uUMlBSabwa1pI9hj7+1h/8SiX9vm
-         bxXu3dFB2j450+1zRRLw1v1iQB9s3ePrbIdL5Grw2gzOegGgA19KaTy7KRK3A34tePx3
-         Oroe+qrKapnL6p8XC7DNQrE/YHkWdhsjCVhOS3kk0zldcY9MLAUGMjyHr2E7+s0ft1XT
-         aRqE3/PjKktGXgEbyXdDzlR5bj57uQhNR2ztmoPTKh6qroCrrXW1p/QMSnRG0aTz3cUg
-         OVSQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740081748; x=1740686548;
-        h=in-reply-to:references:from:to:cc:subject:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=csgCb6u5Fodu0zC4/YRtvX7gHnFJEBoqe713JSwv3R8=;
-        b=gkEnqxZpzT3AXtLcrB2bCW3PdOByCc/vR4sS4A9N44N00+nCmNruIqyF0l+J8K7RSJ
-         wNJIaVlTLelZgxRvNsS22C2uXlKHms2YJt6Ntbf5mbLziHFqOFf+XoUmv813iGyupnTK
-         jsVii8zNOnErH6W76W8Op/en/1nps/tUZH7QdMXwz9PBaSr+lEWBEqfQr/a846WXF8F5
-         E2z+94YBxq8jynRNvG+nMF0Opr6nGr+r0trzbfZjaJaJ1jI50Hi4/KLB0W4fyc6vk2qC
-         w1+b6CJ0l1KZZqV29Te45F/o/sgdbY+Mug8vBHP+leIpVkVXetdXJPtXnc/k3nM+5wER
-         pTAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV4Nvu0ZtKuFwIhoz3Ht8JwrGDF2CYMzfNSPFQATvQWNeVEq2NWOE22fkSe495QTppbWBhINaGwcHAfegw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzI/w/rEr/BEPLcJTyfCpITEWsVxU+1v92GAqQLNs8PJY9L2DEt
-	nIm5v4NjiZcT/ELCEYVdR0EQAtZ6iI/wZBWeSgk+Mziis3jsc+98
-X-Gm-Gg: ASbGnct/T5GaHiI2tuknJrTB2lRRoZyf2j+7/JumEZb3t4RXUscZkgQ/igAL06NjUl4
-	RktMMSwRHG6j1iPamfqv9iE90yc0B4Z7Qx1aRB5xmzm9UokXumjhZrJSxc0xW6AgMclTCi6DFUN
-	wyaflF2RZmAwcV0CxUJAl3rpEMA9/tcm496n6W2xMF6gcQeYUueK34D8J2oPulzbkDj+qchYuMj
-	C2Lun0gPj5ZWePryGeGckn198rbaf3HOkh0s7U8WRmu0fryXFYBAc+6DaidnxUiNw/NajExRUaC
-	wcAFWAPMVYYTqLWGHJRhQNaSAoSmQpnTfZV50VKeaCoiETnyEyBEyP/63MgRlAWiC4b9iM7ABW3
-	WNKJvUqAvhywVfph004OBD1qBGDAd3ZTeQ+Q=
-X-Google-Smtp-Source: AGHT+IEtlSicy7Lw8Qz5zNvhBSB31/jGaHs4MFDmY+NzMrbSpW2WeBmjQgXSsvZ2CvsEQjEhN3CFnw==
-X-Received: by 2002:a5d:598d:0:b0:38d:d9b3:5916 with SMTP id ffacd0b85a97d-38f6e7564dfmr448121f8f.1.1740081748088;
-        Thu, 20 Feb 2025 12:02:28 -0800 (PST)
-Received: from localhost (2a02-8389-41cf-e200-4eb5-194a-5112-4af4.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:4eb5:194a:5112:4af4])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f25a0fa1esm21259676f8f.100.2025.02.20.12.02.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Feb 2025 12:02:27 -0800 (PST)
+	s=arc-20240116; t=1740081762; c=relaxed/simple;
+	bh=MEtRL1Z7JIGfjc9N5PY4VR2QlXBUQPig7OqiInxSM14=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lfsLiWzV2PbfJbE2bm5pGDY95EiLTUfiSbgLGDMbA7MtZ9ij33TsS0eAP0V+/E89eyjlJXNUPQuL2bsYkQ6j/8wxy1H8D061WpTZpqyzsxeUi7V1lP+hVUDctHgEUHwAxQpbc5hVaaqy3fOOLPo6Ynf372RiUEOeWFt5TWayRmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Edi3n9/F; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7ABFC4CEE4;
+	Thu, 20 Feb 2025 20:02:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740081761;
+	bh=MEtRL1Z7JIGfjc9N5PY4VR2QlXBUQPig7OqiInxSM14=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Edi3n9/F5Sqmer9A9JH5DnvCNDuFrfmbH/avLGcrUT3bS/m2dGYhL2lokuu7tRX/9
+	 R5p/w/g4NujlW6gR9iYkNjB4dmSc66LFQ1kS8FAyZj2CasEr4pwlccRHWHy/uWBfQb
+	 d1PUN+bvOtDwZPbVMkBHUNT0evMAKDX1go7pJKZ+6M7uO1O0t31toSmoBRKlJVuJmS
+	 rlDWIPt2OysYsTClolKBTWuIFb6yNUm3Vx879ACNHLXb71oqD2wQ7oOcfbiPOZL4Db
+	 X28hOzgQ1Hd3+GmYBjxTTw5VE5oykgjruoXVOWROHtGaPU4yuZWxwoJ6fQNBeZNZk9
+	 jZUfAn8XaLnWA==
+Received: by mail-oi1-f169.google.com with SMTP id 5614622812f47-3f3edbef7d2so412837b6e.2;
+        Thu, 20 Feb 2025 12:02:41 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUgN5/tzukbfehzOlE8dVkYdX/Eu299HdgsZSpzyIKggeVxRpa4MJxyA3lgDIH7r+5qzhX9zsJYbn7y5hJ/@vger.kernel.org, AJvYcCXgzOIH6iQ6JH1Gos2xnyz2pi+H1E+AGr/9LA9qS0vPgIUJ6e9kzO32YXldm1uhC5tqlhWGzxe9aqk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWKJoDxKd0bjf+9Q2GJjl9JI/FkskbP9BMtzFKcQD7iL8wMeue
+	cyLYC0tiB7AzNaZB1haD9QpidmN1KjWLFgzAOyI+3ygZekaS1E4An7cih2GmOsWnRnp4zlKNbPz
+	ralSvjAfaQblYtFUf25lOb8b5atQ=
+X-Google-Smtp-Source: AGHT+IFd4ofgG10nIb4ge4yUIS0Xn3TLKVX9zmKZXE2NDkUTJnyKOJOVT28x87WH+SooSDrKqsftlDw5K0GunUHcBzg=
+X-Received: by 2002:a05:6808:229e:b0:3f3:ff78:e5e4 with SMTP id
+ 5614622812f47-3f4247c1ed5mr561834b6e.38.1740081761081; Thu, 20 Feb 2025
+ 12:02:41 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+References: <20250128141139.2033088-1-darcari@redhat.com> <20250220151120.1131122-1-darcari@redhat.com>
+In-Reply-To: <20250220151120.1131122-1-darcari@redhat.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 20 Feb 2025 21:02:28 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0jjoZq+cm=jHOJ4hPhXKK5iSRCrpCYh80-6FhdSjYPMUA@mail.gmail.com>
+X-Gm-Features: AWEUYZlnhgw-RkABbxhcGjKUkKJcNFucHCdfxJqeWCJjzmq85_pPtsemizOpRz4
+Message-ID: <CAJZ5v0jjoZq+cm=jHOJ4hPhXKK5iSRCrpCYh80-6FhdSjYPMUA@mail.gmail.com>
+Subject: Re: [PATCH v5] intel_idle: introduce 'no_native' module parameter
+To: David Arcari <darcari@redhat.com>
+Cc: linux-pm@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, 
+	Jacob Pan <jacob.jun.pan@linux.intel.com>, Len Brown <lenb@kernel.org>, 
+	Artem Bityutskiy <dedekind1@gmail.com>, Prarit Bhargava <prarit@redhat.com>, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 20 Feb 2025 21:02:26 +0100
-Message-Id: <D7XJHYJJYHGA.2829KPQWL3N8E@gmail.com>
-Subject: Re: [PATCH v3] iio: light: Add check for array bounds in
- veml6075_read_int_time_ms
-Cc: <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Shuah
- Khan" <skhan@linuxfoundation.org>
-To: "Javier Carrasco" <javier.carrasco.cruz@gmail.com>, "Karan Sanghavi"
- <karansanghvi98@gmail.com>, "Jonathan Cameron" <jic23@kernel.org>,
- "Lars-Peter Clausen" <lars@metafoo.de>
-From: "Javier Carrasco" <javier.carrasco.cruz@gmail.com>
-X-Mailer: aerc 0.18.2
-References: <Z7dnrEpKQdRZ2qFU@Emma> <D7XJGM6MAB6N.2FYSUN4OJELUA@gmail.com>
-In-Reply-To: <D7XJGM6MAB6N.2FYSUN4OJELUA@gmail.com>
 
-On Thu Feb 20, 2025 at 9:00 PM CET, Javier Carrasco wrote:
-> On Thu Feb 20, 2025 at 6:34 PM CET, Karan Sanghavi wrote:
-> > The array contains only 5 elements, but the index calculated by
-> > veml6075_read_int_time_index can range from 0 to 7,
-> > which could lead to out-of-bounds access. The check prevents this issue=
-.
-> >
-> > Coverity Issue
-> > CID 1574309: (#1 of 1): Out-of-bounds read (OVERRUN)
-> > overrun-local: Overrunning array veml6075_it_ms of 5 4-byte
-> > elements at element index 7 (byte offset 31) using
-> > index int_index (which evaluates to 7)
-> >
-> > Fixes: 3b82f43238ae ("iio: light: add VEML6075 UVA and UVB light sensor=
- driver")
-> > Signed-off-by: Karan Sanghavi <karansanghvi98@gmail.com>
-> > ---
-> >  drivers/iio/light/veml6075.c | 7 ++++++-
-> >  1 file changed, 6 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/iio/light/veml6075.c b/drivers/iio/light/veml6075.=
-c
-> > index 05d4c0e9015d..5dd951f6e989 100644
-> > --- a/drivers/iio/light/veml6075.c
-> > +++ b/drivers/iio/light/veml6075.c
-> > @@ -201,7 +201,12 @@ static int veml6075_read_int_time_index(struct vem=
-l6075_data *data)
-> >  	if (ret < 0)
-> >  		return ret;
-> >
-> > -	return FIELD_GET(VEML6075_CONF_IT, conf);
+On Thu, Feb 20, 2025 at 4:11=E2=80=AFPM David Arcari <darcari@redhat.com> w=
+rote:
 >
-> Please declare the variable at the beginning of the function (there are
-> some integers there already) and rename it to follow the driver
-> convention, it for integration time: it_index
+> Since commit 18734958e9bf ("intel_idle: Use ACPI _CST for processor model=
+s
+> without C-state tables") the intel_idle driver has had the ability to use
+> the ACPI _CST to populate C-states when the processor model is not
+> recognized. However, even when the processor model is recognized (native
+> mode) there are cases where it is useful to make the driver ignore the pe=
+r
+> cpu idle states in lieu of ACPI C-states (such as specific application
+> performance). Add the 'no_native' module parameter to provide this
+> functionality.
 >
-> > +	int int_index =3D FIELD_GET(VEML6075_CONF_IT, conf);
-> > +
-> > +	if (int_index >=3D ARRAY_SIZE(veml6075_it_ms))
-> > +		return -EINVAL;
-> > +
-> > +	return int_index;
-> >  }
-> >
-> >  static int veml6075_read_int_time_ms(struct veml6075_data *data, int *=
-val)
+> Cc: Jonathan Corbet <corbet@lwn.net>
+> Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
+> Cc: Len Brown <lenb@kernel.org>
+> Cc: David Arcari <darcari@redhat.com>
+> Cc: Artem Bityutskiy <dedekind1@gmail.com>
+> Cc: Prarit Bhargava <prarit@redhat.com>
+> Cc: linux-doc@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: David Arcari <darcari@redhat.com>
+> ---
+> v5: if statement simplication, also add missing '&' to ignore_native()
+> v4: fix !CONFIG_ACPI_PROCESSOR_CSTATE compilation issue
+> v3: more documentation cleanup
+> v2: renamed parameter, cleaned up documentation
 >
-> With that applied:
+>  Documentation/admin-guide/pm/intel_idle.rst | 18 +++++++++++++-----
+>  drivers/idle/intel_idle.c                   | 14 ++++++++++++++
+>  2 files changed, 27 insertions(+), 5 deletions(-)
 >
-> Reviewed-by: Javier Carrasco <javier.carrasco@gmail.com>
+> diff --git a/Documentation/admin-guide/pm/intel_idle.rst b/Documentation/=
+admin-guide/pm/intel_idle.rst
+> index 39bd6ecce7de..5940528146eb 100644
+> --- a/Documentation/admin-guide/pm/intel_idle.rst
+> +++ b/Documentation/admin-guide/pm/intel_idle.rst
+> @@ -192,11 +192,19 @@ even if they have been enumerated (see :ref:`cpu-pm=
+-qos` in
+>  Documentation/admin-guide/pm/cpuidle.rst).
+>  Setting ``max_cstate`` to 0 causes the ``intel_idle`` initialization to =
+fail.
+>
+> -The ``no_acpi`` and ``use_acpi`` module parameters (recognized by ``inte=
+l_idle``
+> -if the kernel has been configured with ACPI support) can be set to make =
+the
+> -driver ignore the system's ACPI tables entirely or use them for all of t=
+he
+> -recognized processor models, respectively (they both are unset by defaul=
+t and
+> -``use_acpi`` has no effect if ``no_acpi`` is set).
+> +The ``no_acpi``, ``use_acpi`` and ``no_native`` module parameters are
+> +recognized by ``intel_idle`` if the kernel has been configured with ACPI
+> +support.  In the case that ACPI is not configured these flags have no im=
+pact
+> +on functionality.
+> +
+> +``no_acpi`` - Do not use ACPI at all.  Only native mode is available, no
+> +ACPI mode.
+> +
+> +``use_acpi`` - No-op in ACPI mode, the driver will consult ACPI tables f=
+or
+> +C-states on/off status in native mode.
+> +
+> +``no_native`` - Work only in ACPI mode, no native mode available (ignore
+> +all custom tables).
+>
+>  The value of the ``states_off`` module parameter (0 by default) represen=
+ts a
+>  list of idle states to be disabled by default in the form of a bitmask.
+> diff --git a/drivers/idle/intel_idle.c b/drivers/idle/intel_idle.c
+> index 118fe1d37c22..d0b23ea03e6f 100644
+> --- a/drivers/idle/intel_idle.c
+> +++ b/drivers/idle/intel_idle.c
+> @@ -1695,6 +1695,10 @@ static bool force_use_acpi __read_mostly; /* No ef=
+fect if no_acpi is set. */
+>  module_param_named(use_acpi, force_use_acpi, bool, 0444);
+>  MODULE_PARM_DESC(use_acpi, "Use ACPI _CST for building the idle states l=
+ist");
+>
+> +static bool no_native __read_mostly; /* No effect if no_acpi is set. */
+> +module_param_named(no_native, no_native, bool, 0444);
+> +MODULE_PARM_DESC(no_native, "Ignore cpu specific (native) idle states in=
+ lieu of ACPI idle states");
+> +
+>  static struct acpi_processor_power acpi_state_table __initdata;
+>
+>  /**
+> @@ -1834,6 +1838,11 @@ static bool __init intel_idle_off_by_default(unsig=
+ned int flags, u32 mwait_hint)
+>         }
+>         return true;
+>  }
+> +
+> +static inline bool ignore_native(void)
+> +{
+> +       return no_native && !no_acpi;
+> +}
+>  #else /* !CONFIG_ACPI_PROCESSOR_CSTATE */
+>  #define force_use_acpi (false)
+>
+> @@ -1843,6 +1852,7 @@ static inline bool intel_idle_off_by_default(unsign=
+ed int flags, u32 mwait_hint)
+>  {
+>         return false;
+>  }
+> +static inline bool ignore_native(void) { return false; }
+>  #endif /* !CONFIG_ACPI_PROCESSOR_CSTATE */
+>
+>  /**
+> @@ -2328,6 +2338,10 @@ static int __init intel_idle_init(void)
+>         pr_debug("MWAIT substates: 0x%x\n", mwait_substates);
+>
+>         icpu =3D (const struct idle_cpu *)id->driver_data;
+> +       if (icpu && ignore_native()) {
+> +               pr_debug("ignoring native cpu idle states\n");
+> +               icpu =3D NULL;
+> +       }
+>         if (icpu) {
+>                 if (icpu->state_table)
+>                         cpuidle_state_table =3D icpu->state_table;
+> --
 
-Fix:
-
-Reviewed-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Applied as 6.15 material, thanks!
 
