@@ -1,110 +1,137 @@
-Return-Path: <linux-kernel+bounces-523637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1FC0A3D982
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:08:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 815B3A3D98B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:09:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4B6B179D8A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:08:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38E55189A029
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:09:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B96341F4E34;
-	Thu, 20 Feb 2025 12:08:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78F291F5615;
+	Thu, 20 Feb 2025 12:09:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MakxyYfT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="WNroNV/I"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 093611F150B;
-	Thu, 20 Feb 2025 12:08:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A7051F4701
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 12:09:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740053281; cv=none; b=pIpKYK1AbzchkF1ZXow+yeG1NarmEJGUCJIHSPWPJ4uj9EwXfCr7IxmWUH+k2Bs6QtdIsnQB1WBu7gAV3zmQsCQlBRdKvI2z/GxznqhobWEqSy3Zh1i/txGuBPsN2DL0/fqyCCBiJlwNFDlavaCOXqjgPncWqYc55LWHMRhbOhk=
+	t=1740053356; cv=none; b=ho6cHATugk08t+Mmt7CGDUGuYQBZ6Dm91Lh86Ap9cd6dwbkj918vlwVovuqsl/XbkTVReRaFbZJuUpFdBSsKEwLJxcgd4srR24+jK/AEJUn01TgJD16yNJ8rrrniKDyxjHsuO5Vuxpzrj0a0SGHG4AWwJYp/KkwTcuj8dJh8248=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740053281; c=relaxed/simple;
-	bh=9HcC0esz/V2Cjf8y6+3DBCrJDA/xx71PfPOHMhe2QY4=;
+	s=arc-20240116; t=1740053356; c=relaxed/simple;
+	bh=nEqX40Vz37NkqVIbEDIzHqGr0r4DVftlsWBRF0o0+UM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z0euuW9krex5Q8A89VgEBBDK/4KUAIDryOXrYNt8aNor8KLPfqvXVV3nx7TAaqJXxHVbp1A95q1RGRvuQ7DkkgTkn4OsBDR98ZeBiQd9IGSj0nmIrgntUEX4k2obZMao8dKIOKcLUHSarLncXrHz9YcTySPp7ZUDiFfETvPYXdE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MakxyYfT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9EAFC4CED1;
-	Thu, 20 Feb 2025 12:07:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740053280;
-	bh=9HcC0esz/V2Cjf8y6+3DBCrJDA/xx71PfPOHMhe2QY4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MakxyYfTR1Og50oDtWPfvUVbmUkr+jGFF0oPFn+rNmO3Mppx/rW0pTIWfIr2iz5gi
-	 ptNLfvzVXqDxJWeg0w0I6LqiGvu+HlEKu278leZcCHSuxm12heSNc9H4b/83E6l28m
-	 hYoCFB51DOR12Z6S0Yz0oYgmkZAU7psBmq3ucsE+I9rngZd0301sUCyDiuxLOav50Z
-	 GSOXNurrnnc7aScKnsHpFmqN+YWlxpltK13QJ+ySMPQ+FI2fjyxmMuAS6r0W3GwhC+
-	 IDIbizkX290MxMNOiJqEYGhIozAfSIrTXakKnOJoRYsiQjl4B9UrK/6vU16ejf4LL4
-	 +GVkgo1vsnwrw==
-Date: Thu, 20 Feb 2025 14:07:54 +0200
-From: Leon Romanovsky <leon@kernel.org>
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: Jacob Keller <jacob.e.keller@intel.com>,
-	Saeed Mahameed <saeedm@nvidia.com>,
-	Tariq Toukan <tariqt@nvidia.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Yevgeny Kliteynik <kliteyn@nvidia.com>,
-	Mark Bloch <mbloch@nvidia.com>, Itamar Gozlan <igozlan@nvidia.com>,
-	netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net/mlx5: Use secs_to_jiffies() instead of
- msecs_to_jiffies()
-Message-ID: <20250220120754.GQ53094@unreal>
-References: <20250219205012.28249-2-thorsten.blum@linux.dev>
- <48456fc0-7832-4df1-8177-4346f74d3ccc@intel.com>
- <20250220071327.GL53094@unreal>
- <9694B455-87B0-4A70-93C0-93FE77E3CD17@linux.dev>
+	 Content-Type:Content-Disposition:In-Reply-To; b=LmE5tq1UMNow7BiyyGUpfwb1Wshg8CJXX2SMa+88VHTlzdo7H8vBve7zDDoGW16ghgayWVppAAOVQzhdqcrd2gvDCyQAtJnqFKEv2AfqEUNnzmnEyjW1rP6lEAD9G4OiwmsZF9wzT6XXkJ2fy/rjdgzcW2eQrwVzSfdYcaNrxKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=WNroNV/I; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=KXV4
+	3S9mj4NgNoGj3IR9BRAKkRD0sIscVF1giSweZlE=; b=WNroNV/IqrF2zznyuPV/
+	8htDw93MO2tnXsQG52pOE8irAXu9D1vIUuEClRDkkofeLdzk6o837W0GMNnwpdGW
+	x7xwMygJ/8f8k7xt7mxlhnCpFdxAFYLHXugEkrZ2+sOm/1r61jfHnAFpeI8/0ojW
+	QdX5iEfhZUXl6gf0LRZWTSSXMTuO7dnlD1DV1qoGmAFqThPqpeHqWsJ0Bj1HLoMK
+	K8KLDT7PUQ4rIUBYXctYNKFJ9wGBQtvlHSp73vSJQB2w5sZ1ieIAx8SVt1bJPrdW
+	DmqJfc1OpfiYqib2cjGPt0GV3JmnFghGMSWDI4TpWnv4AHL031x0eXfxqUiPaNHF
+	SA==
+Received: (qmail 885305 invoked from network); 20 Feb 2025 13:09:04 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 20 Feb 2025 13:09:04 +0100
+X-UD-Smtp-Session: l3s3148p1@HhtzvZEuCpkujnvP
+Date: Thu, 20 Feb 2025 13:09:03 +0100
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Romain Gantois <romain.gantois@bootlin.com>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Kory Maincent <kory.maincent@bootlin.com>,
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-media@vger.kernel.org,
+	linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v7 9/9] misc: add FPC202 dual port controller driver
+Message-ID: <Z7cbX5jX3NL4C2GR@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Romain Gantois <romain.gantois@bootlin.com>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Kory Maincent <kory.maincent@bootlin.com>,
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-media@vger.kernel.org,
+	linux-gpio@vger.kernel.org
+References: <20250204-fpc202-v7-0-78b4b8a35cf1@bootlin.com>
+ <20250204-fpc202-v7-9-78b4b8a35cf1@bootlin.com>
+ <2025022038-hangnail-rehab-c145@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="fyCI02Nk4jU4SBoN"
+Content-Disposition: inline
+In-Reply-To: <2025022038-hangnail-rehab-c145@gregkh>
+
+
+--fyCI02Nk4jU4SBoN
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <9694B455-87B0-4A70-93C0-93FE77E3CD17@linux.dev>
 
-On Thu, Feb 20, 2025 at 12:08:07PM +0100, Thorsten Blum wrote:
-> On 20. Feb 2025, at 08:13, Leon Romanovsky wrote:
-> > On Wed, Feb 19, 2025 at 03:45:02PM -0800, Jacob Keller wrote:
-> >> On 2/19/2025 12:49 PM, Thorsten Blum wrote:
-> >>> Use secs_to_jiffies() and simplify the code.
-> >>> 
-> >>> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
-> >> 
-> >> nit: this is a cleanup which should have the net-next prefix applied,
-> >> since this doesn't fix any user visible behavior.
-> >> 
-> >> Otherwise, seems like an ok change.
-> > 
-> > IMHO, completely useless change for old code. I can see a value in new
-> > secs_to_jiffies() function for new code, but not for old code. I want
-> > to believe that people who write kernel patches aware that 1000 msec
-> > equal to 1 sec.
-> 
-> Using secs_to_jiffies() is shorter and requires less cognitive load to
-> read imo. Plus, it now fits within the preferred 80 columns limit.
 
-Unfortunately, I see this change as a churn and not an improvement.
+> as this is a i2c_driver, why isn't it in drivers/i2c/ somewhere?  Why
+> misc?
 
-> 
-> This "old code" was added in d74ee6e197a2c ("net/mlx5: HWS, set timeout
-> on polling for completion") in January 2025.
+Because drivers/i2c is only for I2C controllers and this is not a
+controller. Other address translators also reside in their respective
+subsystem, e.g. media for GMSL (de-)serializers. I don't know this chip,
+maybe it has no "respective" subsystem and, thus, misc?
 
-I got same conversion patches for RDMA.
-https://lore.kernel.org/all/20250219-rdma-secs-to-jiffies-v1-0-b506746561a9@linux.microsoft.com
 
-Thanks
+--fyCI02Nk4jU4SBoN
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> 
-> Thanks,
-> Thorsten
-> 
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAme3G1sACgkQFA3kzBSg
+KbaylA/+MuSvTASZf+COhcuEvu14/HP0b0PaA7uCLIgDKsCyDHxRS0dc2yfNfqUT
+Ta8cinV37PXFRMqPXGuIyjEBNbaSSJ3yV6xf8hIOq0ZmsLid6Mm9Inc4U4afJu/y
+vQpZuEp07nEXodwItnxfAuOlXrlDr9nKnK8TqlF75Nw3aBJKNMWjiEcOljA/JQ64
+h5ww7RW8OuYISAn+qezHJOFDUuV0dTR1AUJhBio5kRYZTVwE5nnQRldfr/sDhAeC
+zY2XVklnyowcioof7TdWh6H77y8G0mdhU9U7Eq1ARkuWRBIjCMOQUOu1JndE7Hnm
+ZbBgdefXxmoBr6yBJDk9CikSL3l4tQTJl1DVBTYx4fhbD/iv/S7fL2s5YDfO2Rzr
+nRP4q1H+CrwAHVFjasxu+ekRFTPaqfsSrfTv5pjdaAdNvA6FpMdHOTTjo8wKApI5
+CO7O/punA/Qjam+aYinEjDAM225nSiwp9grd6gfiPgUsOcVjxDq9qG4KwKW5I9hU
+OsgCDJ+HsMaKdKwvXuFOFG5kWb2jTEhzscZgG7gWzo2sWcaS1NM5yQJaUv1Zmf5U
+bD8wJhpl1C1H1tT4A+W+4GeHCdS/Ua8aj5ZS0kEHPiSgx9ez2v4N8MbNSbAlO/7v
+xcR7s6lXmPQzZGJa7v4Xtac0+acvXQSAXjovLitaWyWOWheIqLY=
+=ye8c
+-----END PGP SIGNATURE-----
+
+--fyCI02Nk4jU4SBoN--
 
