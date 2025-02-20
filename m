@@ -1,73 +1,176 @@
-Return-Path: <linux-kernel+bounces-523914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C286A3DCF4
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:35:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71535A3DCDA
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:31:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC76E70285C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:28:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B74A1711CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:29:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A57F1FE469;
-	Thu, 20 Feb 2025 14:27:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08E891FBCB6;
+	Thu, 20 Feb 2025 14:29:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VQyGA8zY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="S8WPxhs/"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F05B1FBE9E;
-	Thu, 20 Feb 2025 14:27:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA0241EEA3B
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 14:29:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740061671; cv=none; b=KsBEiWDTdMGY1wXHTpddHdmiaWVRcHjjlClbVfphEfdYEl3HNZ9ekk1x6AeZyppl1L2NxlFsixfunZtgwRy/tg0PewU91B+wmWG3clXfwIst/KIOVaFWUuEhARvkTWcwAytPDa7sAoQPka6MTqrQn+GsxVOsGXpHXt1kyLPIYnw=
+	t=1740061788; cv=none; b=TjWwz9eJhEUUR2uximLtHub3iQcBWfRb9dvWoVheJyexV5HuAUq1ceN2N+I0TDK5UIB7ZE8BQpmkOyv11hznBdm8StfLWxwhg+ztAzLRh2/ohmHqbydC7nQSUdvx81YsriBcfv6+Gktki+Sm6NGpAGSjcydfZrAUOgQ9aky7zJc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740061671; c=relaxed/simple;
-	bh=CcFZHkvhJVv8mFkonRELBCej1lKwq1t7fxKt3ZyygZY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lDmxbgZRJyv/4UjUhW4lJyOhbylNnNvFotnha6uNQg0jieRErko1xUBGAepqBelwM/T4gDLO7HVzrDxSs1+uno/Y7S6fDrj8yyNRzqqGWCmYleWur4bKUfqzyg/o9s6RtleYa9anixzbyYZF81dl//LQwsov3Ox0qk3CcvEWiLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VQyGA8zY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89643C4CED1;
-	Thu, 20 Feb 2025 14:27:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740061671;
-	bh=CcFZHkvhJVv8mFkonRELBCej1lKwq1t7fxKt3ZyygZY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=VQyGA8zYbGA3p7s6QXn/UeT3E/Zq1QxtjFKLl+atl+tpfZDOhSwpoeVChQSsOyhCY
-	 +TbkBgqoDami5W985cE0/ltOWYNe3YT5uAybs3z0PRSt+2MWH9LZwBxEeQr5lY4T5j
-	 E3eArfq4ltyLMx4SOH+rehuiU13lq2KQoybV4y2YsXKC+TZNYA3NIULU6UY14ei8tH
-	 wPqW9IvxeizgOj0ZCQfEO1IpVjrtpdctqHdl/vD7WnzsVUUnMUJAhmdPkjC4Ofri0c
-	 x7MJ8aZuVsrXfHDVGk9WXF7z4ZIiPVC2jWioWHupIJAmUAU81ahCuSbDHYc7MlPKnR
-	 wdjHdsQ0P0hpg==
-Date: Thu, 20 Feb 2025 06:27:49 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>
-Cc: gregkh@linuxfoundation.org, linux-serial@vger.kernel.org,
- linux-kernel@vger.kernel.org, Andrew Lunn <andrew+netdev@lunn.ch>, "David
- S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo
- Abeni <pabeni@redhat.com>, netdev@vger.kernel.org
-Subject: Re: [PATCH 03/29] tty: caif: do not use N_TTY_BUF_SIZE
-Message-ID: <20250220062749.4ce79a86@kernel.org>
-In-Reply-To: <20250220111606.138045-4-jirislaby@kernel.org>
-References: <20250220111606.138045-1-jirislaby@kernel.org>
-	<20250220111606.138045-4-jirislaby@kernel.org>
+	s=arc-20240116; t=1740061788; c=relaxed/simple;
+	bh=UEjXDAWuT1WK+CR+e8rDydDEIw+8ZqX6zIyfhUMCRok=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=tEJ4huxH3CdQIiSCnv4JDtZXYn+7MJN2gqjmCeZYviA+i0SRQP0xJsppN7tagQO0nt4ghX2E7ArT+tuDkfTlx9VsKhRriuoXbWaylkU65hTE8tTa2RNWw6VYVvlMHjE8TgDIaPZD+1T9zmSCK8buKRH18AXxdy4aFkHPtYDV7YQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=S8WPxhs/; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740061785;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=34Pwf2YzB9+5/yrq+BsahBOzUfkk/RYCd6NadSU6ifk=;
+	b=S8WPxhs/QQGkF3lagxtjIkjWLBCsKQruP33dpmgxHunYZaTfrnVQvHA7jNjfDK1fmf7tV9
+	x5icAP1HwE2Jmm74dHw4apxNOowbv1Q2gs35TLqaQnikWvxXU9SrBDgZqD0aV7Pc/zz78I
+	Um7z1HB/+/nodboKLBd4j4rovyE2H1s=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-689-Lm159x9TMkac0O8uw4CkmQ-1; Thu,
+ 20 Feb 2025 09:29:42 -0500
+X-MC-Unique: Lm159x9TMkac0O8uw4CkmQ-1
+X-Mimecast-MFC-AGG-ID: Lm159x9TMkac0O8uw4CkmQ_1740061780
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5091D1903085;
+	Thu, 20 Feb 2025 14:29:40 +0000 (UTC)
+Received: from [127.0.1.1] (unknown [10.45.225.137])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 051A1180034D;
+	Thu, 20 Feb 2025 14:29:32 +0000 (UTC)
+From: Sergio Lopez <slp@redhat.com>
+Subject: [RFC PATCH v3 0/4] virtio: obtain SHM page size from device
+Date: Thu, 20 Feb 2025 15:28:49 +0100
+Message-Id: <20250220-virtio-shm-page-size-v3-0-874fff6f3979@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIACE8t2cC/4XNOw7CMAyA4atUnjFK0gcNE/dADKFxiYeSKqkio
+ OrdSTvBgBh/W/48Q6TAFOFYzBAocWR/z1HuCuicud8I2eYGJVQtlCwxcZjYY3QDjiavI78IG9J
+ GtN3BkpWQT8dAPT829nzJ7ThOPjy3L0mu0z9gkiiwJpK91m1V1uIUyDoz7Ts/wCom9alUPxSVF
+ WNkIzU1WrTXL2VZljc4gw4j/wAAAA==
+X-Change-ID: 20250213-virtio-shm-page-size-6e9a08c7ded1
+To: "Michael S. Tsirkin" <mst@redhat.com>, 
+ Daniel Verkamp <dverkamp@chromium.org>, Jason Wang <jasowang@redhat.com>, 
+ Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+ =?utf-8?q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
+ David Airlie <airlied@redhat.com>, Gerd Hoffmann <kraxel@redhat.com>, 
+ Gurchetan Singh <gurchetansingh@chromium.org>, 
+ Chia-I Wu <olvaffe@gmail.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ Simona Vetter <simona@ffwll.ch>, Rob Clark <robdclark@gmail.com>, 
+ Dmitry Osipenko <dmitry.osipenko@collabora.com>, fnkl.kernel@gmail.com
+Cc: virtualization@lists.linux.dev, linux-kernel@vger.kernel.org, 
+ dri-devel@lists.freedesktop.org, Sergio Lopez <slp@redhat.com>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3259; i=slp@redhat.com;
+ h=from:subject:message-id; bh=UEjXDAWuT1WK+CR+e8rDydDEIw+8ZqX6zIyfhUMCRok=;
+ b=owEBbQKS/ZANAwAIAfRpJ40vDAI1AcsmYgBntzxHMlmRQMk1+Erj7LL3dGYB/TVpVnTnxfhzx
+ RCqrXQQTmSJAjMEAAEIAB0WIQS+1fz3US2GgJFC6KL0aSeNLwwCNQUCZ7c8RwAKCRD0aSeNLwwC
+ NQO9D/9+7bcx1mUz/ccUkbJ8scz/nshK3ECZjM1epseg8bST1T7cwWA5I8q/t2hr/ewhSUVHHDs
+ NUsgDcjmjDcrXHZkr5cVGSLyflxrY6r46VgteOwwYLDtiRqC6liXfKeo7sShi6assTK1DJo+6ge
+ IJ5VHrxNfD5hr/8bBkTOGrP9mnJsf2Du3xrdgx2tt4KiYaSTe9pfHDALhE/agE1zZhQHt2GjI6N
+ J3FNXhQ1FaNzZ5BbWZPyvU90c5eo5U8Co59swYDkhsmTEi22+gw/q8QzmCTPykK13/JMLL7OrYI
+ xufHR0rF96yjQg0mUr9wh9ivqJZkeIUzIbFzV2eaSBSw7ZE/cpHZHctw7tv+JYvKZ4bISWCmPgp
+ 9oJScG6X2+Ac8eMRMros1OJMBD/Dxkx8qb3KBRguXGEXQmYqulSUPq0FO/aMTABtQhepQEkqBfF
+ I5O7eAFjk/v8ZmxIDabqF7CFRvPqOYVYD5FmV/YBxkcfuJp1ptlxfCtP6RPTQ/MVkiDJH9ol+XA
+ O3M0NHoAbhHM3CkpgQqfaxHLEKtG97g2EtqSWmHNvFni9ysuP+ZvRjwBKFYA0ErKa56/uIBoU+5
+ hAclojCxkfeN+IyP171gus6FrdSMRDF4Aa1n2K95qlH5FkjzIAYo39T9mrYSrZ7hV3NhIcAQR5N
+ 0lZQpgUzI3ISmqA==
+X-Developer-Key: i=slp@redhat.com; a=openpgp;
+ fpr=BED5FCF7512D86809142E8A2F469278D2F0C0235
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On Thu, 20 Feb 2025 12:15:40 +0100 Jiri Slaby (SUSE) wrote:
-> N_TTY_BUF_SIZE -- as the name suggests -- is the N_TTY's buffer size.
-> There is no reason to couple that to caif's tty->receive_room. Use 4096
-> directly -- even though, it should be some sort of "SKB_MAX_ALLOC" or
-> alike. But definitely not N_TTY_BUF_SIZE.
-> 
-> N_TTY_BUF_SIZE is private and will be moved to n_tty.c later.
+There's an incresing number of machines supporting multiple page sizes
+and, on these machines, the host and a guest can be running with
+different pages sizes.
 
-Acked-by: Jakub Kicinski <kuba@kernel.org>
+In addition to this, there might be devices that have a required and/or
+preferred page size for mapping memory.
+
+In this series, we extend virtio_shm_region with a field to hold the
+page size. The PCI and MMIO transports are updated to read the page
+shift for each region and derive the page size accordingly. For the PCI
+transport we're borrowing 8 bits from the 16 bit padding, so the
+transition is seamless. But for MMIO we need to access a new register,
+which could potentially be interpreted by the VMM as an error. For this
+reason we're gating this behavior, for every transport, behind the
+VIRTIO_F_SHM_PAGE_SIZE feature bit.
+
+How the SHM page size information is used depends on each device. Some
+may silently round up allocations, some may expose this information to
+userspace. This series includes a patch that extends virtio-gpu to
+expose the information via the VIRTGPU_GETPARAM ioctl, as an example of
+the second approach.
+
+This patch series is an RFC because it requires changes to the VIRTIO
+specifications. This patch series will be used as a reference to
+propose such changes.
+
+Signed-off-by: Sergio Lopez <slp@redhat.com>
+---
+Changes in v3:
+- Merge patch 2 (virtio: introduce VIRTIO_F_SHM_PAGE_SIZE) into the
+  changes for virtio-pci (thanks Dmitry Osipenko).
+- In virtio_gpu_getparam_ioctl(), return ENOENT instead of EINVAL
+  if the device lacks a host visible region (thanks Dmitry Osipenko).
+- Link to v2: https://lore.kernel.org/r/20250214-virtio-shm-page-size-v2-0-aa1619e6908b@redhat.com
+
+Changes in v2:
+- Use "page_shift" instead of "page_size" in the transport-related
+  structures to clarify its contents (thanks Daniel Verkamp).
+- Update the command for "page_shift" in "virtio_pci_cap" to clarify
+  that it's only relevant for VIRTIO_PCI_CAP_SHARED_MEMORY_CFG regions.
+  (thanks Daniel Verkamp).
+- Instead of a derived value, store page size in virtio_shm_region.
+- Update the cover page to reflect that the functionality is gated
+  behind the VIRTIO_F_SHM_PAGE_SIZE feature bit.
+- Link to v1: https://lore.kernel.org/r/20250213-virtio-shm-page-size-v1-0-5ee1f9984350@redhat.com
+
+---
+Sergio Lopez (4):
+      virtio: introduce VIRTIO_F_SHM_PAGE_SIZE
+      virtio-pci: extend virtio_pci_cap with page_shift
+      virtio-mmio: read shm region page size
+      drm/virtio: add VIRTGPU_PARAM_HOST_SHM_PAGE_SIZE to params
+
+ drivers/gpu/drm/virtio/virtgpu_ioctl.c |  5 +++++
+ drivers/virtio/virtio_mmio.c           | 11 +++++++++++
+ drivers/virtio/virtio_pci_modern.c     | 24 ++++++++++++++++++++----
+ drivers/virtio/virtio_ring.c           |  2 ++
+ include/linux/virtio_config.h          |  1 +
+ include/uapi/drm/virtgpu_drm.h         |  1 +
+ include/uapi/linux/virtio_config.h     |  7 ++++++-
+ include/uapi/linux/virtio_mmio.h       |  3 +++
+ include/uapi/linux/virtio_pci.h        |  3 ++-
+ 9 files changed, 51 insertions(+), 6 deletions(-)
+---
+base-commit: 4dc1d1bec89864d8076e5ab314f86f46442bfb02
+change-id: 20250213-virtio-shm-page-size-6e9a08c7ded1
+
+Best regards,
+-- 
+Sergio Lopez <slp@redhat.com>
+
 
