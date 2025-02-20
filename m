@@ -1,248 +1,115 @@
-Return-Path: <linux-kernel+bounces-523353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EC0AA3D56E
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 10:53:12 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC585A3D580
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 10:55:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B44B1888D51
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 09:52:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26D6C16D02F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 09:53:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6426C1EE006;
-	Thu, 20 Feb 2025 09:52:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="S0PgP5/o"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F0091F0E23;
+	Thu, 20 Feb 2025 09:52:56 +0000 (UTC)
+Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A3AA1EBFF9
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 09:52:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AE621E9912;
+	Thu, 20 Feb 2025 09:52:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740045148; cv=none; b=EgRMw9zQxTxIVxG3ZuxrQPJKDKtZuthCNful65TjvPoYXWxZT0xlHeANe93RcvTigMADEiMRaLHwuGYtvq3udVEd6dv/gpiz/blWTsLGjN3t9V87Mc2pBDCWn/AFb1Beh+TqKRNku0jsSzIPB3or0KIiH5pVbEmCWWHiML+1w0k=
+	t=1740045176; cv=none; b=IvLB0hlrQ19ZD0a47EFzCgHDvv3+Ahx2fr1mPA/qHJzplfKaqtxn8PgfTONnnp5IsF/MboO7AA1SPgK7yGpNbYXfh6Q8o44iUY4V5ewNMlkmmrUWvhHUHIGTU8M9Ulba5JMCoA5OZ6Rwbm2n7oLhZuEE1kERM6d5Hor0OLkaIIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740045148; c=relaxed/simple;
-	bh=Avox+9aYAAKMeIOQ9gNoIDG7HYxbANJiD1j9EPevwQg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nJFau7oZ7e+ixd/DaO3xuZ0hPAKreNweShZ0b5hJ3hcKpnmdtETGIcP/b1WWlcgydtTFxgb8eyo0rcn4KSK8rekWwXJ7m4hbZvmXr/Kr5nApd9XHqwxvKrldn22FCSDAUDSyspx15VyFftg3BMAwAJDFtjdwoWMlofZsWEooA6Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=S0PgP5/o; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5461a485aa2so718507e87.2
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 01:52:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1740045144; x=1740649944; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kE4jG7N6H3Izke338DenNbafdjP4bLAo7XRV2ASpmTA=;
-        b=S0PgP5/otRmyRqofhofSHr5OiirVfK1jsyodoXEQ4hm/9axwqhP+kGYjV9252AeMzZ
-         BnmjSVqMl7grWK9B1YBAeQ111+76FvbytEFxi/XtQVMXH8tNK7Yjv+2MOBSKwl7YXVUy
-         ll4YHNCuEU9xFgjVm0om5S2bow18ihRFVCXBQFv0YbH/m9Fy05la7+E51ts6A75KmZYk
-         MflRDGMKcr19PfLh79SRWaUI9SJCJLgd84pD4nsCgCLY+4XD5Yo3mwOz53MSXQURn5gK
-         Lrr/en/A1OBjXN6wVA5nVT0la+kHhlSbbTKphS+lu6O2jSjVcuROBYORP7h6xoyCWIz1
-         CL0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740045144; x=1740649944;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kE4jG7N6H3Izke338DenNbafdjP4bLAo7XRV2ASpmTA=;
-        b=iAMFEmioR49U8L4CKzR7GCuWdFliZoZiv8MMoCjqO0D8rYxmTJoA//ANcJViojTtkw
-         aiatoX/ucYmNxNR67rUjXIp0CzWgA4VoR+s3kFIPIu1LtKWFG6OqxT67gsPzUL0MbIE9
-         r5dsqr2ww7CExtHRCGO9LlmwTMg6Edn/AOND+YpPgw5NXLgKYJY08snm8iIEM2wPXo49
-         pHDkp3Y1Xlf2iBlxGiUGcfEdPdIWvlr9a8j5nZ2lZUGxUNGhay+6aF3Cs7Shy4E9rIhd
-         2K6gAXLccNTQxxiWgFrQ63Chvp2W/m6oslVvw0rJpwHwGg0EbRDjaeauOFAJXP7Dn2sR
-         JK1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWPY10RvsdCAfJdfIwGY6pPheCT0n5JAK3pyta6FkxMalF/rRD0EOQ5/Dr8TuIbUaNL+PIpM3hqJZXYPv8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNB7W9rpCTGsNqy2vLHnlAmG04p6CLMLtBYCPre3l1yKzNHPQc
-	rnCtp2uXkUe9LwYgCjdrWTUB+T1ESJnPpvKnw8uA5P3dgUPiGndCsSpsflcGW5oQiusUp8QpDgi
-	X5E8F1FKrl+C56vNqoCsMeC2BgaJGoM7D8KTd9Q==
-X-Gm-Gg: ASbGncu0nt7YDjstpZ9gWODm9SUD/7oz4APBH95Y8vYPmT71CGdGLsHYmmOlgzjVsm4
-	TlsG1VDPq0A/jKB/ehn7V9ZKNlZVaLRxmOz2G78B58nzRgR5+6IapMDta1b8HjGODKfxPKWFySx
-	XUEeHy35Wog3TKTgMwMPuMhpK3G0tk7g==
-X-Google-Smtp-Source: AGHT+IGr8YvHEETsNyvTWOQRFut/UUXdenIoZDJncYUJi3iUiyBB5rGYcnt+ccguPMxQB11np4EyftCfzIKctruTiaQ=
-X-Received: by 2002:a05:6512:3052:b0:542:9757:d5df with SMTP id
- 2adb3069b0e04-5462eee68d1mr2494309e87.21.1740045144302; Thu, 20 Feb 2025
- 01:52:24 -0800 (PST)
+	s=arc-20240116; t=1740045176; c=relaxed/simple;
+	bh=p3jUliwfLRPcDyQ9R4QDPtRJjUXusVtL9hqIDKIUrGo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=r1HDN0Ksl4WzK5bIRsM9Q4ChzGptJPTm/5b+NtRz3yvTPWXu2buvBTDA/U8L82Dc4kGSFwHtbY5N1BFrehcnvXpLLznASLUWxZGLpwIqa9rf1judliIOgwhXqQxD41eRUQN9i/H6lMDfLWisKmozXLQRXHxzIGTfjFk62ytv4/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost.localdomain (unknown [124.16.141.245])
+	by APP-01 (Coremail) with SMTP id qwCowAD3n_pj+7Zn_87hDg--.4050S2;
+	Thu, 20 Feb 2025 17:52:40 +0800 (CST)
+From: Wentao Liang <vulab@iscas.ac.cn>
+To: gregkh@linuxfoundation.org
+Cc: stern@rowland.harvard.edu,
+	christophe.jaillet@wanadoo.fr,
+	mka@chromium.org,
+	make_ruc2021@163.com,
+	javier.carrasco@wolfvision.net,
+	linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Wentao Liang <vulab@iscas.ac.cn>,
+	stable@vger.kernel.org
+Subject: [PATCH] usb: core: Add error handling in usb_reset_device for autoresume failure
+Date: Thu, 20 Feb 2025 17:52:18 +0800
+Message-ID: <20250220095218.970-1-vulab@iscas.ac.cn>
+X-Mailer: git-send-email 2.42.0.windows.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250218090203.43137-1-marco.crivellari@suse.com>
- <20250218090203.43137-2-marco.crivellari@suse.com> <Z7R2GqWOufd8l6NZ@alpha.franken.de>
- <CAAhV-H7ygGqCYyQf_tvFrgEBR6uva35auGP9yhxQFqw4mpQBwA@mail.gmail.com>
- <Z7SQNhL0FYGkX0Ng@alpha.franken.de> <alpine.DEB.2.21.2502181447490.65342@angie.orcam.me.uk>
-In-Reply-To: <alpine.DEB.2.21.2502181447490.65342@angie.orcam.me.uk>
-From: Marco Crivellari <marco.crivellari@suse.com>
-Date: Thu, 20 Feb 2025 10:52:13 +0100
-X-Gm-Features: AWEUYZn22_LXgOCkEjqLvRN9aQTb8m1zBAPf5m_hMLKPPZMKxzotLtaTM-ZcKss
-Message-ID: <CAAofZF6VppnQZXMj59o=QDCMbw9GV=6sMRoNWnpWn+mBpE0egg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/1] MIPS: Fix idle VS timer enqueue
-To: "Maciej W. Rozycki" <macro@orcam.me.uk>
-Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Huacai Chen <chenhuacai@kernel.org>, 
-	linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Frederic Weisbecker <frederic@kernel.org>, Anna-Maria Behnsen <anna-maria@linutronix.de>, 
-	Thomas Gleixner <tglx@linutronix.de>, Peter Zijlstra <peterz@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qwCowAD3n_pj+7Zn_87hDg--.4050S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Zry8Wr48GrWxtFWxCrW5trb_yoW8GF1fpw
+	48Aayqkry8Gr1rCa1jy34kuFy5Zw4Sy3y3JF93Ww1Igr97A345JFyrAFy3ta4rArZ5tF9x
+	tFW3K3yF9Fy7AFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9E14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFylc2xSY4AK67AK6r4fMxAIw28IcxkI7VAKI4
+	8JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xv
+	wVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjx
+	v20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20E
+	Y4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267
+	AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUjAsqtUUUUU==
+X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiBwsTA2e22-l9yQAAsb
 
-Hi,
+In usb_reset_device(),  the function continues execution and
+calls usb_autosuspend_device() after usb_autosuspend_device fails.
 
-Sorry for the late reply.
+To fix this, add error handling for usb_autoresume_device()
+and return the error code immediately. This ensures that
+usb_autosuspend_device() is not called when usb_autoresume_device()
+fails, maintaining device state consistency.
 
-> Umm, there's the commit description to document justification for such
->changes made and it's not the reviewer's duty to chase every such detail
->that has been omitted from a submission.
->
- >FAOD this is a request to include this detail in v3.
+Fixes: 94fcda1f8ab5 ("usbcore: remove unused argument in autosuspend")
+Cc: stable@vger.kernel.org # 2.6.20+
+Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
+---
+ drivers/usb/core/hub.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-How does it sound integrate the v3 commit message with:
+diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
+index 21ac9b464696..f2efdbdd1533 100644
+--- a/drivers/usb/core/hub.c
++++ b/drivers/usb/core/hub.c
+@@ -6292,7 +6292,9 @@ int usb_reset_device(struct usb_device *udev)
+ 	noio_flag = memalloc_noio_save();
+ 
+ 	/* Prevent autosuspend during the reset */
+-	usb_autoresume_device(udev);
++	ret = usb_autoresume_device(udev);
++	if (ret < 0)
++		goto error_autoresume;
+ 
+ 	if (config) {
+ 		for (i = 0; i < config->desc.bNumInterfaces; ++i) {
+@@ -6341,6 +6343,7 @@ int usb_reset_device(struct usb_device *udev)
+ 	}
+ 
+ 	usb_autosuspend_device(udev);
++error_autoresume:
+ 	memalloc_noio_restore(noio_flag);
+ 	udev->reset_in_progress = 0;
+ 	return ret;
+-- 
+2.42.0.windows.2
 
-CONFIG_CPU_MICROMIPS has been removed along with the nop instructions.
-There, NOPs are 2 byte in size, so change the code with 3 _ssnop which are
-always 4 byte and remove the ifdef. Added ehb to make sure the hazard
-is always cleared.
-
-something more accurate to suggest?
-
-Thank you
-
-On Tue, Feb 18, 2025 at 4:23=E2=80=AFPM Maciej W. Rozycki <macro@orcam.me.u=
-k> wrote:
->
-> On Tue, 18 Feb 2025, Thomas Bogendoerfer wrote:
->
-> > > > > diff --git a/arch/mips/kernel/genex.S b/arch/mips/kernel/genex.S
-> > > > > index a572ce36a24f..9747b216648f 100644
-> > > > > --- a/arch/mips/kernel/genex.S
-> > > > > +++ b/arch/mips/kernel/genex.S
-> > > > > @@ -104,25 +104,27 @@ handle_vcei:
-> > > > >
-> > > > >       __FINIT
-> > > > >
-> > > > > -     .align  5       /* 32 byte rollback region */
-> > > > > +     .align  5
-> > > > >  LEAF(__r4k_wait)
-> > > > >       .set    push
-> > > > >       .set    noreorder
-> > > > > -     /* start of rollback region */
-> > > > > -     LONG_L  t0, TI_FLAGS($28)
-> > > > > -     nop
-> > > > > -     andi    t0, _TIF_NEED_RESCHED
-> > > > > -     bnez    t0, 1f
-> > > > > -      nop
-> > > > > -     nop
-> > > > > -     nop
-> > > > > -#ifdef CONFIG_CPU_MICROMIPS
-> > > > > -     nop
-> > > > > -     nop
-> > > > > -     nop
-> > > > > -     nop
-> > > > > -#endif
-> > > >
-> > > > My quick search didnn't find the reason for the extra NOPs on MICRO=
-MIPS, but
-> > > > they are here for a purpose. I might still need them...
-> > > The original code needs #ifdef CONFIG_CPU_MICROMIPS because nop in
-> > > MICROMIPS is 2 bytes, so need another four nop to align. But _ssnop i=
-s
-> > > always 4 bytes, so we can remove #ifdefs.
-> >
-> > ic
->
->  This was wrong anyway (and I had arguments about it with people back in
-> the time, but it was a hopeless battle).  Instead `.align ...' or an
-> equivalent pseudo-op (`.balign', etc.) should have been used, removing th=
-e
-> fragility of this piece or the need for CONFIG_CPU_MICROMIPS conditional.
-> Here and in other places.
->
-> > > > > +     _ssnop
-> > > > > +     _ssnop
-> > > > > +     _ssnop
-> > > >
-> > > > instead of handcoded hazard nops, use __irq_enable_hazard for that
-> > > No, I don't think so, this region should make sure be 32 bytes on eac=
-h
-> > > platform, but __irq_enable_hazard is not consistent, 3 _ssnop is the
-> > > fallback implementation but available for all MIPS.
-> >
-> > you are right for most cases, but there is one case
-> >
-> > #elif (defined(CONFIG_CPU_MIPSR1) && !defined(CONFIG_MIPS_ALCHEMY)) || =
-\
-> >         defined(CONFIG_CPU_BMIPS)
-> >
-> > which uses
-> >
-> > #define __irq_enable_hazard                                            =
- \
-> >         ___ssnop;                                                      =
- \
-> >         ___ssnop;                                                      =
- \
-> >         ___ssnop;                                                      =
- \
-> >         ___ehb
-> >
-> > if MIPSR1 || BMIPS needs "rollback" handler 3 ssnnop would be wrong as
-> > irq enable hazard.
->
->  Indeed, EHB must always be included, because for R2+ CPUs SSNOP doesn't
-> clear the hazard (it never clears, but with earlier CPUs it just stalls
-> the pipeline long enough for the hazard to eventually clear by itself).
->
-> > > > But I doubt this works, because the wait instruction is not aligned=
- to
-> > > > a 32 byte boundary, but the code assuemes this, IMHO.
-> > > Why? After this patch we only use 4 byte instructions.
-> >
-> > I've should have looked at the compiled output, sorry for the noise
->
->  Umm, there's the commit description to document justification for such
-> changes made and it's not the reviewer's duty to chase every such detail
-> that has been omitted from a submission.
->
->  FAOD this is a request to include this detail in v3.
->
-> > Still this construct feels rather fragile.
->
->  I think `.align', etc. can still be used to ensure enough space has been
-> consumed and if you want to make a code sequence's size check, then a
-> piece such as:
->
-> 0:
->         nop
->         nop
->         nop
->         nop
-> 1:
->         .ifne   1b - 0b - 32
->         .error  "code consistency verification failure"
->         .endif
->
-> should do even where alignment does not matter.  And you could possibly d=
-o
-> smarter stuff with `.rept' if (1b - 0b) turns out below rather than above
-> the threshold required, but I'm leaving it as an exercise for the reader.
->
->   Maciej
-
-
-
---=20
-
-Marco Crivellari
-
-L3 Support Engineer, Technology & Product
-
-
-
-
-marco.crivellari@suse.com
 
