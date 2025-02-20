@@ -1,31 +1,31 @@
-Return-Path: <linux-kernel+bounces-522992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C0FAA3D0E5
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 06:38:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88398A3D0E3
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 06:38:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE42A3A47EA
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 05:37:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1082817C2B4
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 05:37:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B90F1EB185;
-	Thu, 20 Feb 2025 05:36:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C6651E2613;
+	Thu, 20 Feb 2025 05:36:10 +0000 (UTC)
 Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B2BB1E411C
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BB571E47A9
 	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 05:36:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740029767; cv=none; b=e3Lg35TSzWnVEAYEmFhzqy8KI/sbkiNxfmUKQXWSfdLu1fDbBacnUWTsh/2KKHvsW+DSDrT2Uqd6eS3UbhsVEsXOtGPMbSYKzZ5zOcLk/+ZprtGcA2MM9HM/taEMaU9opQZb8/8jcjRnRIy3BcT8UhwJzdiYFhr5ii6lLczVb4g=
+	t=1740029768; cv=none; b=NFKC/iYTacEKZ150jhWX8xKPL45Dtk2Oww/twYoxfpE5pmwP0r5Pl2IIgLB0c2b6FugwQKKM53DEj/ptci4Nhwiq9Fl9bUlUYt24Bodz/v/aGqIycNoXhNtKv+SlH4vUdiS6JnyRowmog6cRUVue3Da1QVIA7E1WRMu9OHQDJzo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740029767; c=relaxed/simple;
-	bh=xsHN83I7sYhT0LId4D+/9zqGo2XyB2ZkUuHcLOADkN4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=BT2vXQfralWyjwvaopuNDPHt3p1IFJe8AM9uuGAoBYVv2OGwcNGNmfotld8XDIBwygXR5xldcfJ6vXx7IqAPqP0P07AS86IbymqCg758K8BrwV3YZF/b7d5lX1P+5E4Fz93LqoduNLL+lq9T11szf935xTNz6ObxcYyBW9K12jY=
+	s=arc-20240116; t=1740029768; c=relaxed/simple;
+	bh=KdT8AtGK+qYpDffSacrYcymV9M+2Gfbhm4h0ypoJVUU=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=KipQiXNiVObNvKKld8daUQuL28ytufRxzg4MzcEOK/snn9i6R2fdq6ro42FolO3VRNVH1vAr7f/4tgkK89u+SPTVY2xgvj5hZK3+RbDc45Qm5p+w6GdzHqUeYeupmNUT9KbFshk+eK2cpxbYfx+lVBaDhYz+ZB8EUSE6RqIY4B4=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-3c9ff7000001d7ae-e5-67b6bba63df4
+X-AuditID: a67dfc5b-3c9ff7000001d7ae-ea-67b6bba63180
 From: Byungchul Park <byungchul@sk.com>
 To: linux-kernel@vger.kernel.org,
 	linux-mm@kvack.org
@@ -44,36 +44,36 @@ Cc: kernel_team@skhynix.com,
 	bp@alien8.de,
 	dave.hansen@linux.intel.com,
 	rjgolo@gmail.com
-Subject: [RFC PATCH v12 11/26] mm: deliver luf_key to pcp or buddy on free after unmapping
-Date: Thu, 20 Feb 2025 14:20:12 +0900
-Message-Id: <20250220052027.58847-12-byungchul@sk.com>
+Subject: [RFC PATCH v12 12/26] mm: delimit critical sections to take off pages from pcp or buddy alloctor
+Date: Thu, 20 Feb 2025 14:20:13 +0900
+Message-Id: <20250220052027.58847-13-byungchul@sk.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20250220052027.58847-1-byungchul@sk.com>
 References: <20250220052027.58847-1-byungchul@sk.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrGLMWRmVeSWpSXmKPExsXC9ZZnoe6y3dvSDe5tMbCYs34Nm8XnDf/Y
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrGLMWRmVeSWpSXmKPExsXC9ZZnoe6y3dvSDR4sMrKYs34Nm8XnDf/Y
 	LF5saGe0+Lr+F7PF0099LBaXd81hs7i35j+rxflda1ktdizdx2Rx6cACJovjvQeYLObf+8xm
 	sXnTVGaL41OmMlr8/gFUfHLWZBYHAY/vrX0sHjtn3WX3WLCp1GPzCi2PxXteMnlsWtXJ5rHp
 	0yR2j3fnzrF7nJjxm8Vj3slAj/f7rrJ5bP1l59E49Rqbx+dNcgF8UVw2Kak5mWWpRfp2CVwZ
-	vd82shUsb2esmNrdwtbAuDS3i5GTQ0LARGLi79NMMPaKpmuMIDabgLrEjRs/mUFsEQEziYOt
-	f9hBbGaBu0wSB/rZQGxhgSiJZ18/sYDYLAKqElN+tQDVcHDwAtX3rMuAGCkvsXrDAbAxnEDh
-	HzN6wVqFBEwl3i24BLSWC6jmM5vElo19zBANkhIHV9xgmcDIu4CRYRWjUGZeWW5iZo6JXkZl
-	XmaFXnJ+7iZGYOgvq/0TvYPx04XgQ4wCHIxKPLwzWrelC7EmlhVX5h5ilOBgVhLhbavfki7E
-	m5JYWZValB9fVJqTWnyIUZqDRUmc1+hbeYqQQHpiSWp2ampBahFMlomDU6qBMXnmpRM6aZlm
-	j5xl2bZV/gtaMClEdGbDi4ePT3x6/qDtoNzhgzuvvNXVrvvxTCm6XbRea3LlrR8iQjc3/Fmb
-	UOr/bM3aiXUr8nJvz0+cuG/V/jOMz7Zs61nxbGvHlV0Lkp9L3LTOaXDNk7l06rqcW/7FXFPv
-	Z/v5VZc+y5i2WqS+ivdV2MHZdYpKLMUZiYZazEXFiQCY1sPSeQIAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrLLMWRmVeSWpSXmKPExsXC5WfdrLts97Z0g8ZLqhZz1q9hs/i84R+b
-	xYsN7YwWX9f/YrZ4+qmPxeLw3JOsFpd3zWGzuLfmP6vF+V1rWS12LN3HZHHpwAImi+O9B5gs
-	5t/7zGaxedNUZovjU6YyWvz+AVR8ctZkFgdBj++tfSweO2fdZfdYsKnUY/MKLY/Fe14yeWxa
-	1cnmsenTJHaPd+fOsXucmPGbxWPeyUCP9/uusnksfvGByWPrLzuPxqnX2Dw+b5IL4I/isklJ
-	zcksSy3St0vgyuj9tpGtYHk7Y8XU7ha2BsaluV2MnBwSAiYSK5quMYLYbALqEjdu/GQGsUUE
-	zCQOtv5hB7GZBe4ySRzoZwOxhQWiJJ59/cQCYrMIqEpM+dUCVMPBwQtU37MuA2KkvMTqDQfA
-	xnAChX/M6AVrFRIwlXi34BLTBEauBYwMqxhFMvPKchMzc0z1irMzKvMyK/SS83M3MQIDeVnt
-	n4k7GL9cdj/EKMDBqMTD++Dx1nQh1sSy4srcQ4wSHMxKIrxt9VvShXhTEiurUovy44tKc1KL
-	DzFKc7AoifN6hacmCAmkJ5akZqemFqQWwWSZODilGhjdRPmd/t9OuqkS7a9ccOAc09F/Hy4E
-	HvtpzrVyvfKdBJddIp63Qg/MnHJNm/H00bun4lduuX4yMu+7SkXb1v11M0o26tfc/3Jmj8e7
-	2uYsr6AD257sXsne+XR3SvfvsHf9Lh63eTaln1jzdf46CeuNjnK1KlUXfsSrtWRMj/ok2XaX
-	Me/aFq1SJZbijERDLeai4kQAPKqb5WACAAA=
+	x5f/YyrY2cxYsXzPO5YGxslZXYycHBICJhJ/eu+wwthfzixhB7HZBNQlbtz4yQxiiwiYSRxs
+	/QMWZxa4yyRxoJ8NxBYWyJTYtriHEcRmEVCVaD3xEqyeF6j+SEcHG8RMeYnVGw6AxTmB4j9m
+	9ILFhQRMJd4tuMQEUfOeTWLbzlAIW1Li4IobLBMYeRcwMqxiFMrMK8tNzMwx0cuozMus0EvO
+	z93ECAz9ZbV/oncwfroQfIhRgINRiYd3Ruu2dCHWxLLiytxDjBIczEoivG31W9KFeFMSK6tS
+	i/Lji0pzUosPMUpzsCiJ8xp9K08REkhPLEnNTk0tSC2CyTJxcEo1MDrdv2l+UXvJvPWyoksb
+	XniXPWXyC4rILqhYlH+G0+P/2vIp4txqi74X+f2yNWKdkN30+mzZ9y9HGvKaZp4zEOvuOV8Z
+	JL8vcFUX8/ZpTR8mW5648e+9ZCtH6YN/B613FbJHKn1lM/r+TF7vpPLUP0+NazZ2ddmy+tc1
+	GfgZsgevYltUJBD9R4mlOCPRUIu5qDgRABKViE55AgAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrHLMWRmVeSWpSXmKPExsXC5WfdrLts97Z0g4NbNSzmrF/DZvF5wz82
+	ixcb2hktvq7/xWzx9FMfi8XhuSdZLS7vmsNmcW/Nf1aL87vWslrsWLqPyeLSgQVMFsd7DzBZ
+	zL/3mc1i86apzBbHp0xltPj9A6j45KzJLA6CHt9b+1g8ds66y+6xYFOpx+YVWh6L97xk8ti0
+	qpPNY9OnSewe786dY/c4MeM3i8e8k4Ee7/ddZfNY/OIDk8fWX3YejVOvsXl83iQXwB/FZZOS
+	mpNZllqkb5fAlXF8+T+mgp3NjBXL97xjaWCcnNXFyMkhIWAi8eXMEnYQm01AXeLGjZ/MILaI
+	gJnEwdY/YHFmgbtMEgf62UBsYYFMiW2LexhBbBYBVYnWEy/B6nmB6o90dLBBzJSXWL3hAFic
+	Eyj+Y0YvWFxIwFTi3YJLTBMYuRYwMqxiFMnMK8tNzMwx1SvOzqjMy6zQS87P3cQIDOVltX8m
+	7mD8ctn9EKMAB6MSD++Dx1vThVgTy4orcw8xSnAwK4nwttVvSRfiTUmsrEotyo8vKs1JLT7E
+	KM3BoiTO6xWemiAkkJ5YkpqdmlqQWgSTZeLglGpgnHt7wvJP0y7922u/c6misKL3zsNL+HUC
+	PuXz19zbxBT/7IlNSuW05S33xPas1/n3Vj7QX65Qg2UhM+epsqDD7Eud3mjEqarOWTrrWLGZ
+	/zqR7UlqAoL9sw2aUkLUs3qkWdPqkt23/Pl6/8mkE8e/GCpcWvFj+kTLCzvn2S1R2P1E9xzb
+	HoGH0kosxRmJhlrMRcWJAIisZQVhAgAA
 X-CFilter-Loop: Reflected
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -81,505 +81,503 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-Functionally, no change.  This is a preparation for luf mechanism that
-needs to pass luf_key to pcp or buddy allocator on free after unmapping
-e.g. during page reclaim or page migration.
-
-The luf_key will be used to track need of tlb shootdown and which cpus
-need to perform tlb flush, per page residing in pcp or buddy, and should
-be handed over properly when pages travel between pcp and buddy.
+Now that luf mechanism has been introduced, tlb shootdown might be
+necessary when luf'd pages exit from pcp or buddy allocator.  Check if
+it's okay to take off pages and can perform for luf'd pages before use.
 
 Signed-off-by: Byungchul Park <byungchul@sk.com>
 ---
- mm/internal.h       |   4 +-
- mm/page_alloc.c     | 120 ++++++++++++++++++++++++++++++++------------
- mm/page_isolation.c |   6 +++
- mm/page_reporting.c |   6 +++
- mm/swap.c           |   4 +-
- mm/vmscan.c         |   8 +--
- 6 files changed, 109 insertions(+), 39 deletions(-)
+ mm/compaction.c     | 32 ++++++++++++++++--
+ mm/internal.h       |  2 +-
+ mm/page_alloc.c     | 79 +++++++++++++++++++++++++++++++++++++++++++--
+ mm/page_isolation.c |  4 ++-
+ mm/page_reporting.c | 20 +++++++++++-
+ 5 files changed, 129 insertions(+), 8 deletions(-)
 
-diff --git a/mm/internal.h b/mm/internal.h
-index 55bc8ca0d6118..2bb54bc04260b 100644
---- a/mm/internal.h
-+++ b/mm/internal.h
-@@ -741,8 +741,8 @@ extern bool free_pages_prepare(struct page *page, unsigned int order);
+diff --git a/mm/compaction.c b/mm/compaction.c
+index 6009f5d1021a6..90f5c34f333db 100644
+--- a/mm/compaction.c
++++ b/mm/compaction.c
+@@ -605,6 +605,7 @@ static unsigned long isolate_freepages_block(struct compact_control *cc,
  
- extern int user_min_free_kbytes;
+ 	page = pfn_to_page(blockpfn);
  
--void free_unref_page(struct page *page, unsigned int order);
--void free_unref_folios(struct folio_batch *fbatch);
-+void free_unref_page(struct page *page, unsigned int order, unsigned short luf_key);
-+void free_unref_folios(struct folio_batch *fbatch, unsigned short luf_key);
- 
- extern void zone_pcp_reset(struct zone *zone);
- extern void zone_pcp_disable(struct zone *zone);
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index cac2c95ca2430..05a1098f8c61f 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -212,7 +212,7 @@ unsigned int pageblock_order __read_mostly;
- #endif
- 
- static void __free_pages_ok(struct page *page, unsigned int order,
--			    fpi_t fpi_flags);
-+			    fpi_t fpi_flags, unsigned short luf_key);
- 
- /*
-  * results with 256, 32 in the lowmem_reserve sysctl:
-@@ -850,8 +850,13 @@ static inline void __del_page_from_free_list(struct page *page, struct zone *zon
- 
- 	list_del(&page->buddy_list);
- 	__ClearPageBuddy(page);
--	set_page_private(page, 0);
- 	zone->free_area[order].nr_free--;
-+
-+	/*
-+	 * Keep head page's private until post_alloc_hook().
-+	 *
-+	 * XXX: Tail pages' private doesn't get cleared.
-+	 */
- }
- 
- static inline void del_page_from_free_list(struct page *page, struct zone *zone,
-@@ -920,7 +925,7 @@ buddy_merge_likely(unsigned long pfn, unsigned long buddy_pfn,
- static inline void __free_one_page(struct page *page,
- 		unsigned long pfn,
- 		struct zone *zone, unsigned int order,
--		int migratetype, fpi_t fpi_flags)
-+		int migratetype, fpi_t fpi_flags, unsigned short luf_key)
- {
- 	struct capture_control *capc = task_capc(zone);
- 	unsigned long buddy_pfn = 0;
-@@ -937,10 +942,21 @@ static inline void __free_one_page(struct page *page,
- 
- 	account_freepages(zone, 1 << order, migratetype);
- 
-+	/*
-+	 * Use the page's luf_key unchanged if luf_key == 0.  Worth
-+	 * noting that page_luf_key() will be 0 in most cases since it's
-+	 * initialized at free_pages_prepare().
-+	 */
-+	if (luf_key)
-+		set_page_luf_key(page, luf_key);
-+	else
-+		luf_key = page_luf_key(page);
-+
- 	while (order < MAX_PAGE_ORDER) {
- 		int buddy_mt = migratetype;
-+		unsigned short buddy_luf_key;
- 
--		if (compaction_capture(capc, page, order, migratetype)) {
-+		if (!luf_key && compaction_capture(capc, page, order, migratetype)) {
- 			account_freepages(zone, -(1 << order), migratetype);
- 			return;
++	luf_takeoff_start();
+ 	/* Isolate free pages. */
+ 	for (; blockpfn < end_pfn; blockpfn += stride, page += stride) {
+ 		int isolated;
+@@ -652,9 +653,12 @@ static unsigned long isolate_freepages_block(struct compact_control *cc,
+ 				goto isolate_fail;
  		}
-@@ -973,6 +989,18 @@ static inline void __free_one_page(struct page *page,
- 		else
- 			__del_page_from_free_list(buddy, zone, order, buddy_mt);
  
-+		/*
-+		 * !buddy_luf_key && !luf_key : do nothing
-+		 *  buddy_luf_key && !luf_key : luf_key = buddy_luf_key
-+		 * !buddy_luf_key &&  luf_key : do nothing
-+		 *  buddy_luf_key &&  luf_key : merge two into luf_key
-+		 */
-+		buddy_luf_key = page_luf_key(buddy);
-+		if (buddy_luf_key && !luf_key)
-+			luf_key = buddy_luf_key;
-+		else if (buddy_luf_key && luf_key)
-+			fold_luf_batch(&luf_batch[luf_key], &luf_batch[buddy_luf_key]);
++		if (!luf_takeoff_check(page))
++			goto isolate_fail;
 +
- 		if (unlikely(buddy_mt != migratetype)) {
- 			/*
- 			 * Match buddy type. This ensures that an
-@@ -984,6 +1012,7 @@ static inline void __free_one_page(struct page *page,
- 
- 		combined_pfn = buddy_pfn & pfn;
- 		page = page + (combined_pfn - pfn);
-+		set_page_luf_key(page, luf_key);
- 		pfn = combined_pfn;
- 		order++;
- 	}
-@@ -1164,6 +1193,11 @@ __always_inline bool free_pages_prepare(struct page *page,
- 
- 	VM_BUG_ON_PAGE(PageTail(page), page);
- 
-+	/*
-+	 * Ensure private is zero before using it inside allocator.
-+	 */
-+	set_page_private(page, 0);
-+
- 	trace_mm_page_free(page, order);
- 	kmsan_free_page(page, order);
- 
-@@ -1329,7 +1363,8 @@ static void free_pcppages_bulk(struct zone *zone, int count,
- 			count -= nr_pages;
- 			pcp->count -= nr_pages;
- 
--			__free_one_page(page, pfn, zone, order, mt, FPI_NONE);
-+			__free_one_page(page, pfn, zone, order, mt, FPI_NONE, 0);
-+
- 			trace_mm_page_pcpu_drain(page, order, mt);
- 		} while (count > 0 && !list_empty(list));
- 	}
-@@ -1353,7 +1388,7 @@ static void split_large_buddy(struct zone *zone, struct page *page,
- 	while (pfn != end) {
- 		int mt = get_pfnblock_migratetype(page, pfn);
- 
--		__free_one_page(page, pfn, zone, order, mt, fpi);
-+		__free_one_page(page, pfn, zone, order, mt, fpi, 0);
- 		pfn += 1 << order;
- 		page = pfn_to_page(pfn);
- 	}
-@@ -1361,11 +1396,18 @@ static void split_large_buddy(struct zone *zone, struct page *page,
- 
- static void free_one_page(struct zone *zone, struct page *page,
- 			  unsigned long pfn, unsigned int order,
--			  fpi_t fpi_flags)
-+			  fpi_t fpi_flags, unsigned short luf_key)
- {
- 	unsigned long flags;
- 
- 	spin_lock_irqsave(&zone->lock, flags);
-+
-+	/*
-+	 * valid luf_key can be passed only if order == 0.
-+	 */
-+	VM_WARN_ON(luf_key && order);
-+	set_page_luf_key(page, luf_key);
-+
- 	split_large_buddy(zone, page, pfn, order, fpi_flags);
- 	spin_unlock_irqrestore(&zone->lock, flags);
- 
-@@ -1373,13 +1415,13 @@ static void free_one_page(struct zone *zone, struct page *page,
- }
- 
- static void __free_pages_ok(struct page *page, unsigned int order,
--			    fpi_t fpi_flags)
-+			    fpi_t fpi_flags, unsigned short luf_key)
- {
- 	unsigned long pfn = page_to_pfn(page);
- 	struct zone *zone = page_zone(page);
- 
- 	if (free_pages_prepare(page, order))
--		free_one_page(zone, page, pfn, order, fpi_flags);
-+		free_one_page(zone, page, pfn, order, fpi_flags, luf_key);
- }
- 
- void __meminit __free_pages_core(struct page *page, unsigned int order,
-@@ -1433,7 +1475,7 @@ void __meminit __free_pages_core(struct page *page, unsigned int order,
- 	 * Bypass PCP and place fresh pages right to the tail, primarily
- 	 * relevant for memory onlining.
- 	 */
--	__free_pages_ok(page, order, FPI_TO_TAIL);
-+	__free_pages_ok(page, order, FPI_TO_TAIL, 0);
- }
- 
- /*
-@@ -2459,6 +2501,10 @@ static int rmqueue_bulk(struct zone *zone, unsigned int order,
- 		if (unlikely(page == NULL))
+ 		/* Found a free page, will break it into order-0 pages */
+ 		order = buddy_order(page);
+-		isolated = __isolate_free_page(page, order);
++		isolated = __isolate_free_page(page, order, false);
+ 		if (!isolated)
  			break;
+ 		set_page_private(page, order);
+@@ -682,6 +686,11 @@ static unsigned long isolate_freepages_block(struct compact_control *cc,
+ 	if (locked)
+ 		spin_unlock_irqrestore(&cc->zone->lock, flags);
  
-+		/*
-+		 * Keep the page's luf_key.
-+		 */
-+
- 		/*
- 		 * Split buddy pages returned by expand() are received here in
- 		 * physical page order. The page is added to the tail of
-@@ -2740,12 +2786,14 @@ static int nr_pcp_high(struct per_cpu_pages *pcp, struct zone *zone,
- 
- static void free_unref_page_commit(struct zone *zone, struct per_cpu_pages *pcp,
- 				   struct page *page, int migratetype,
--				   unsigned int order)
-+				   unsigned int order, unsigned short luf_key)
- {
- 	int high, batch;
- 	int pindex;
- 	bool free_high = false;
- 
-+	set_page_luf_key(page, luf_key);
++	/*
++	 * Check and flush before using the pages taken off.
++	 */
++	luf_takeoff_end();
 +
  	/*
- 	 * On freeing, reduce the number of pages that are batch allocated.
- 	 * See nr_pcp_alloc() where alloc_factor is increased for subsequent
-@@ -2754,7 +2802,16 @@ static void free_unref_page_commit(struct zone *zone, struct per_cpu_pages *pcp,
- 	pcp->alloc_factor >>= 1;
- 	__count_vm_events(PGFREE, 1 << order);
- 	pindex = order_to_pindex(migratetype, order);
--	list_add(&page->pcp_list, &pcp->lists[pindex]);
-+
-+	/*
-+	 * Defer tlb shootdown as much as possible by putting luf'd
-+	 * pages to the tail.
-+	 */
-+	if (luf_key)
-+		list_add_tail(&page->pcp_list, &pcp->lists[pindex]);
-+	else
-+		list_add(&page->pcp_list, &pcp->lists[pindex]);
-+
- 	pcp->count += 1 << order;
+ 	 * Be careful to not go outside of the pageblock.
+ 	 */
+@@ -1589,6 +1598,7 @@ static void fast_isolate_freepages(struct compact_control *cc)
+ 		if (!area->nr_free)
+ 			continue;
  
- 	batch = READ_ONCE(pcp->batch);
-@@ -2789,7 +2846,8 @@ static void free_unref_page_commit(struct zone *zone, struct per_cpu_pages *pcp,
- /*
-  * Free a pcp page
-  */
--void free_unref_page(struct page *page, unsigned int order)
-+void free_unref_page(struct page *page, unsigned int order,
-+		     unsigned short luf_key)
++		luf_takeoff_start();
+ 		spin_lock_irqsave(&cc->zone->lock, flags);
+ 		freelist = &area->free_list[MIGRATE_MOVABLE];
+ 		list_for_each_entry_reverse(freepage, freelist, buddy_list) {
+@@ -1596,6 +1606,10 @@ static void fast_isolate_freepages(struct compact_control *cc)
+ 
+ 			order_scanned++;
+ 			nr_scanned++;
++
++			if (!luf_takeoff_check(freepage))
++				goto scan_next;
++
+ 			pfn = page_to_pfn(freepage);
+ 
+ 			if (pfn >= highest)
+@@ -1615,7 +1629,7 @@ static void fast_isolate_freepages(struct compact_control *cc)
+ 				/* Shorten the scan if a candidate is found */
+ 				limit >>= 1;
+ 			}
+-
++scan_next:
+ 			if (order_scanned >= limit)
+ 				break;
+ 		}
+@@ -1633,7 +1647,7 @@ static void fast_isolate_freepages(struct compact_control *cc)
+ 
+ 		/* Isolate the page if available */
+ 		if (page) {
+-			if (__isolate_free_page(page, order)) {
++			if (__isolate_free_page(page, order, false)) {
+ 				set_page_private(page, order);
+ 				nr_isolated = 1 << order;
+ 				nr_scanned += nr_isolated - 1;
+@@ -1650,6 +1664,11 @@ static void fast_isolate_freepages(struct compact_control *cc)
+ 
+ 		spin_unlock_irqrestore(&cc->zone->lock, flags);
+ 
++		/*
++		 * Check and flush before using the pages taken off.
++		 */
++		luf_takeoff_end();
++
+ 		/* Skip fast search if enough freepages isolated */
+ 		if (cc->nr_freepages >= cc->nr_migratepages)
+ 			break;
+@@ -2369,7 +2388,14 @@ static enum compact_result compact_finished(struct compact_control *cc)
  {
- 	unsigned long __maybe_unused UP_flags;
- 	struct per_cpu_pages *pcp;
-@@ -2798,7 +2856,7 @@ void free_unref_page(struct page *page, unsigned int order)
- 	int migratetype;
+ 	int ret;
  
- 	if (!pcp_allowed_order(order)) {
--		__free_pages_ok(page, order, FPI_NONE);
-+		__free_pages_ok(page, order, FPI_NONE, luf_key);
- 		return;
++	/*
++	 * luf_takeoff_{start,end}() is required to identify whether
++	 * this compaction context is tlb shootdownable for luf'd pages.
++	 */
++	luf_takeoff_start();
+ 	ret = __compact_finished(cc);
++	luf_takeoff_end();
++
+ 	trace_mm_compaction_finished(cc->zone, cc->order, ret);
+ 	if (ret == COMPACT_NO_SUITABLE_PAGE)
+ 		ret = COMPACT_CONTINUE;
+diff --git a/mm/internal.h b/mm/internal.h
+index 2bb54bc04260b..3a6da77d04ed3 100644
+--- a/mm/internal.h
++++ b/mm/internal.h
+@@ -662,7 +662,7 @@ static inline void clear_zone_contiguous(struct zone *zone)
+ 	zone->contiguous = false;
+ }
+ 
+-extern int __isolate_free_page(struct page *page, unsigned int order);
++extern int __isolate_free_page(struct page *page, unsigned int order, bool willputback);
+ extern void __putback_isolated_page(struct page *page, unsigned int order,
+ 				    int mt);
+ extern void memblock_free_pages(struct page *page, unsigned long pfn,
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 05a1098f8c61f..f2ea69596ff15 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -869,8 +869,13 @@ static inline void del_page_from_free_list(struct page *page, struct zone *zone,
+ static inline struct page *get_page_from_free_area(struct free_area *area,
+ 					    int migratetype)
+ {
+-	return list_first_entry_or_null(&area->free_list[migratetype],
++	struct page *page = list_first_entry_or_null(&area->free_list[migratetype],
+ 					struct page, buddy_list);
++
++	if (page && luf_takeoff_check(page))
++		return page;
++
++	return NULL;
+ }
+ 
+ /*
+@@ -1579,6 +1584,8 @@ static __always_inline void page_del_and_expand(struct zone *zone,
+ 	int nr_pages = 1 << high;
+ 
+ 	__del_page_from_free_list(page, zone, high, migratetype);
++	if (unlikely(!luf_takeoff_check_and_fold(page)))
++		VM_WARN_ON(1);
+ 	nr_pages -= expand(zone, page, low, high, migratetype);
+ 	account_freepages(zone, -nr_pages, migratetype);
+ }
+@@ -1950,6 +1957,13 @@ bool move_freepages_block_isolate(struct zone *zone, struct page *page,
+ 
+ 		del_page_from_free_list(buddy, zone, order,
+ 					get_pfnblock_migratetype(buddy, pfn));
++
++		/*
++		 * No need to luf_takeoff_check_and_fold() since it's
++		 * going back to buddy. luf_key will be handed over in
++		 * split_large_buddy().
++		 */
++
+ 		set_pageblock_migratetype(page, migratetype);
+ 		split_large_buddy(zone, buddy, pfn, order, FPI_NONE);
+ 		return true;
+@@ -1961,6 +1975,13 @@ bool move_freepages_block_isolate(struct zone *zone, struct page *page,
+ 
+ 		del_page_from_free_list(page, zone, order,
+ 					get_pfnblock_migratetype(page, pfn));
++
++		/*
++		 * No need to luf_takeoff_check_and_fold() since it's
++		 * going back to buddy. luf_key will be handed over in
++		 * split_large_buddy().
++		 */
++
+ 		set_pageblock_migratetype(page, migratetype);
+ 		split_large_buddy(zone, page, pfn, order, FPI_NONE);
+ 		return true;
+@@ -2085,6 +2106,8 @@ steal_suitable_fallback(struct zone *zone, struct page *page,
+ 		unsigned int nr_added;
+ 
+ 		del_page_from_free_list(page, zone, current_order, block_type);
++		if (unlikely(!luf_takeoff_check_and_fold(page)))
++			VM_WARN_ON(1);
+ 		change_pageblock_range(page, current_order, start_type);
+ 		nr_added = expand(zone, page, order, current_order, start_type);
+ 		account_freepages(zone, nr_added, start_type);
+@@ -2165,6 +2188,9 @@ int find_suitable_fallback(struct free_area *area, unsigned int order,
+ 		if (free_area_empty(area, fallback_mt))
+ 			continue;
+ 
++		if (luf_takeoff_no_shootdown())
++			continue;
++
+ 		if (can_steal_fallback(order, migratetype))
+ 			*can_steal = true;
+ 
+@@ -2256,6 +2282,11 @@ static bool unreserve_highatomic_pageblock(const struct alloc_context *ac,
+ 					pageblock_nr_pages)
+ 			continue;
+ 
++		/*
++		 * luf_takeoff_{start,end}() is required for
++		 * get_page_from_free_area() to use luf_takeoff_check().
++		 */
++		luf_takeoff_start();
+ 		spin_lock_irqsave(&zone->lock, flags);
+ 		for (order = 0; order < NR_PAGE_ORDERS; order++) {
+ 			struct free_area *area = &(zone->free_area[order]);
+@@ -2313,10 +2344,12 @@ static bool unreserve_highatomic_pageblock(const struct alloc_context *ac,
+ 			WARN_ON_ONCE(ret == -1);
+ 			if (ret > 0) {
+ 				spin_unlock_irqrestore(&zone->lock, flags);
++				luf_takeoff_end();
+ 				return ret;
+ 			}
+ 		}
+ 		spin_unlock_irqrestore(&zone->lock, flags);
++		luf_takeoff_end();
  	}
  
-@@ -2815,7 +2873,7 @@ void free_unref_page(struct page *page, unsigned int order)
- 	migratetype = get_pfnblock_migratetype(page, pfn);
- 	if (unlikely(migratetype >= MIGRATE_PCPTYPES)) {
- 		if (unlikely(is_migrate_isolate(migratetype))) {
--			free_one_page(page_zone(page), page, pfn, order, FPI_NONE);
-+			free_one_page(page_zone(page), page, pfn, order, FPI_NONE, luf_key);
- 			return;
+ 	return false;
+@@ -2494,6 +2527,7 @@ static int rmqueue_bulk(struct zone *zone, unsigned int order,
+ 	unsigned long flags;
+ 	int i;
+ 
++	luf_takeoff_start();
+ 	spin_lock_irqsave(&zone->lock, flags);
+ 	for (i = 0; i < count; ++i) {
+ 		struct page *page = __rmqueue(zone, order, migratetype,
+@@ -2518,6 +2552,10 @@ static int rmqueue_bulk(struct zone *zone, unsigned int order,
+ 		list_add_tail(&page->pcp_list, list);
+ 	}
+ 	spin_unlock_irqrestore(&zone->lock, flags);
++	/*
++	 * Check and flush before using the pages taken off.
++	 */
++	luf_takeoff_end();
+ 
+ 	return i;
+ }
+@@ -3012,7 +3050,7 @@ void split_page(struct page *page, unsigned int order)
+ }
+ EXPORT_SYMBOL_GPL(split_page);
+ 
+-int __isolate_free_page(struct page *page, unsigned int order)
++int __isolate_free_page(struct page *page, unsigned int order, bool willputback)
+ {
+ 	struct zone *zone = page_zone(page);
+ 	int mt = get_pageblock_migratetype(page);
+@@ -3031,6 +3069,8 @@ int __isolate_free_page(struct page *page, unsigned int order)
+ 	}
+ 
+ 	del_page_from_free_list(page, zone, order, mt);
++	if (unlikely(!willputback && !luf_takeoff_check_and_fold(page)))
++		VM_WARN_ON(1);
+ 
+ 	/*
+ 	 * Set the pageblock if the isolated page is at least half of a
+@@ -3110,6 +3150,7 @@ struct page *rmqueue_buddy(struct zone *preferred_zone, struct zone *zone,
+ 
+ 	do {
+ 		page = NULL;
++		luf_takeoff_start();
+ 		spin_lock_irqsave(&zone->lock, flags);
+ 		if (alloc_flags & ALLOC_HIGHATOMIC)
+ 			page = __rmqueue_smallest(zone, order, MIGRATE_HIGHATOMIC);
+@@ -3127,10 +3168,15 @@ struct page *rmqueue_buddy(struct zone *preferred_zone, struct zone *zone,
+ 
+ 			if (!page) {
+ 				spin_unlock_irqrestore(&zone->lock, flags);
++				luf_takeoff_end();
+ 				return NULL;
+ 			}
  		}
- 		migratetype = MIGRATE_MOVABLE;
-@@ -2825,10 +2883,10 @@ void free_unref_page(struct page *page, unsigned int order)
+ 		spin_unlock_irqrestore(&zone->lock, flags);
++		/*
++		 * Check and flush before using the pages taken off.
++		 */
++		luf_takeoff_end();
+ 	} while (check_new_pages(page, order));
+ 
+ 	__count_zid_vm_events(PGALLOC, page_zonenum(page), 1 << order);
+@@ -3214,6 +3260,8 @@ struct page *__rmqueue_pcplist(struct zone *zone, unsigned int order,
+ 		}
+ 
+ 		page = list_first_entry(list, struct page, pcp_list);
++		if (!luf_takeoff_check_and_fold(page))
++			return NULL;
+ 		list_del(&page->pcp_list);
+ 		pcp->count -= 1 << order;
+ 	} while (check_new_pages(page, order));
+@@ -3231,11 +3279,13 @@ static struct page *rmqueue_pcplist(struct zone *preferred_zone,
+ 	struct page *page;
+ 	unsigned long __maybe_unused UP_flags;
+ 
++	luf_takeoff_start();
+ 	/* spin_trylock may fail due to a parallel drain or IRQ reentrancy. */
  	pcp_trylock_prepare(UP_flags);
  	pcp = pcp_spin_trylock(zone->per_cpu_pageset);
- 	if (pcp) {
--		free_unref_page_commit(zone, pcp, page, migratetype, order);
-+		free_unref_page_commit(zone, pcp, page, migratetype, order, luf_key);
- 		pcp_spin_unlock(pcp);
- 	} else {
--		free_one_page(zone, page, pfn, order, FPI_NONE);
-+		free_one_page(zone, page, pfn, order, FPI_NONE, luf_key);
+ 	if (!pcp) {
+ 		pcp_trylock_finish(UP_flags);
++		luf_takeoff_end();
+ 		return NULL;
  	}
+ 
+@@ -3249,6 +3299,10 @@ static struct page *rmqueue_pcplist(struct zone *preferred_zone,
+ 	page = __rmqueue_pcplist(zone, order, migratetype, alloc_flags, pcp, list);
+ 	pcp_spin_unlock(pcp);
  	pcp_trylock_finish(UP_flags);
- }
-@@ -2836,7 +2894,7 @@ void free_unref_page(struct page *page, unsigned int order)
- /*
-  * Free a batch of folios
-  */
--void free_unref_folios(struct folio_batch *folios)
-+void free_unref_folios(struct folio_batch *folios, unsigned short luf_key)
- {
- 	unsigned long __maybe_unused UP_flags;
- 	struct per_cpu_pages *pcp = NULL;
-@@ -2857,7 +2915,7 @@ void free_unref_folios(struct folio_batch *folios)
- 		 */
- 		if (!pcp_allowed_order(order)) {
- 			free_one_page(folio_zone(folio), &folio->page,
--				      pfn, order, FPI_NONE);
-+				      pfn, order, FPI_NONE, luf_key);
- 			continue;
- 		}
- 		folio->private = (void *)(unsigned long)order;
-@@ -2893,7 +2951,7 @@ void free_unref_folios(struct folio_batch *folios)
- 			 */
- 			if (is_migrate_isolate(migratetype)) {
- 				free_one_page(zone, &folio->page, pfn,
--					      order, FPI_NONE);
-+					      order, FPI_NONE, luf_key);
- 				continue;
- 			}
++	/*
++	 * Check and flush before using the pages taken off.
++	 */
++	luf_takeoff_end();
+ 	if (page) {
+ 		__count_zid_vm_events(PGALLOC, page_zonenum(page), 1 << order);
+ 		zone_statistics(preferred_zone, zone, 1);
+@@ -4853,6 +4907,7 @@ unsigned long alloc_pages_bulk_noprof(gfp_t gfp, int preferred_nid,
+ 	if (unlikely(!zone))
+ 		goto failed;
  
-@@ -2906,7 +2964,7 @@ void free_unref_folios(struct folio_batch *folios)
- 			if (unlikely(!pcp)) {
- 				pcp_trylock_finish(UP_flags);
- 				free_one_page(zone, &folio->page, pfn,
--					      order, FPI_NONE);
-+					      order, FPI_NONE, luf_key);
- 				continue;
- 			}
- 			locked_zone = zone;
-@@ -2921,7 +2979,7 @@ void free_unref_folios(struct folio_batch *folios)
++	luf_takeoff_start();
+ 	/* spin_trylock may fail due to a parallel drain or IRQ reentrancy. */
+ 	pcp_trylock_prepare(UP_flags);
+ 	pcp = pcp_spin_trylock(zone->per_cpu_pageset);
+@@ -4891,6 +4946,10 @@ unsigned long alloc_pages_bulk_noprof(gfp_t gfp, int preferred_nid,
  
- 		trace_mm_page_free_batched(&folio->page);
- 		free_unref_page_commit(zone, pcp, &folio->page, migratetype,
--				order);
-+				order, luf_key);
+ 	pcp_spin_unlock(pcp);
+ 	pcp_trylock_finish(UP_flags);
++	/*
++	 * Check and flush before using the pages taken off.
++	 */
++	luf_takeoff_end();
+ 
+ 	__count_zid_vm_events(PGALLOC, zone_idx(zone), nr_account);
+ 	zone_statistics(zonelist_zone(ac.preferred_zoneref), zone, nr_account);
+@@ -4900,6 +4959,7 @@ unsigned long alloc_pages_bulk_noprof(gfp_t gfp, int preferred_nid,
+ 
+ failed_irq:
+ 	pcp_trylock_finish(UP_flags);
++	luf_takeoff_end();
+ 
+ failed:
+ 	page = __alloc_pages_noprof(gfp, 0, preferred_nid, nodemask);
+@@ -7036,6 +7096,7 @@ unsigned long __offline_isolated_pages(unsigned long start_pfn,
+ 
+ 	offline_mem_sections(pfn, end_pfn);
+ 	zone = page_zone(pfn_to_page(pfn));
++	luf_takeoff_start();
+ 	spin_lock_irqsave(&zone->lock, flags);
+ 	while (pfn < end_pfn) {
+ 		page = pfn_to_page(pfn);
+@@ -7064,9 +7125,15 @@ unsigned long __offline_isolated_pages(unsigned long start_pfn,
+ 		VM_WARN_ON(get_pageblock_migratetype(page) != MIGRATE_ISOLATE);
+ 		order = buddy_order(page);
+ 		del_page_from_free_list(page, zone, order, MIGRATE_ISOLATE);
++		if (unlikely(!luf_takeoff_check_and_fold(page)))
++			VM_WARN_ON(1);
+ 		pfn += (1 << order);
  	}
+ 	spin_unlock_irqrestore(&zone->lock, flags);
++	/*
++	 * Check and flush before using the pages taken off.
++	 */
++	luf_takeoff_end();
  
- 	if (pcp) {
-@@ -3013,7 +3071,7 @@ void __putback_isolated_page(struct page *page, unsigned int order, int mt)
- 
- 	/* Return isolated page to tail of freelist. */
- 	__free_one_page(page, page_to_pfn(page), zone, order, mt,
--			FPI_SKIP_REPORT_NOTIFY | FPI_TO_TAIL);
-+			FPI_SKIP_REPORT_NOTIFY | FPI_TO_TAIL, 0);
+ 	return end_pfn - start_pfn - already_offline;
  }
+@@ -7142,6 +7209,7 @@ bool take_page_off_buddy(struct page *page)
+ 	unsigned int order;
+ 	bool ret = false;
  
- /*
-@@ -4983,11 +5041,11 @@ void __free_pages(struct page *page, unsigned int order)
- 	struct alloc_tag *tag = pgalloc_tag_get(page);
++	luf_takeoff_start();
+ 	spin_lock_irqsave(&zone->lock, flags);
+ 	for (order = 0; order < NR_PAGE_ORDERS; order++) {
+ 		struct page *page_head = page - (pfn & ((1 << order) - 1));
+@@ -7154,6 +7222,8 @@ bool take_page_off_buddy(struct page *page)
  
- 	if (put_page_testzero(page))
--		free_unref_page(page, order);
-+		free_unref_page(page, order, 0);
- 	else if (!head) {
- 		pgalloc_tag_sub_pages(tag, (1 << order) - 1);
- 		while (order-- > 0)
--			free_unref_page(page + (1 << order), order);
-+			free_unref_page(page + (1 << order), order, 0);
+ 			del_page_from_free_list(page_head, zone, page_order,
+ 						migratetype);
++			if (unlikely(!luf_takeoff_check_and_fold(page_head)))
++				VM_WARN_ON(1);
+ 			break_down_buddy_pages(zone, page_head, page, 0,
+ 						page_order, migratetype);
+ 			SetPageHWPoisonTakenOff(page);
+@@ -7164,6 +7234,11 @@ bool take_page_off_buddy(struct page *page)
+ 			break;
  	}
+ 	spin_unlock_irqrestore(&zone->lock, flags);
++
++	/*
++	 * Check and flush before using the pages taken off.
++	 */
++	luf_takeoff_end();
+ 	return ret;
  }
- EXPORT_SYMBOL(__free_pages);
-@@ -5049,7 +5107,7 @@ void __page_frag_cache_drain(struct page *page, unsigned int count)
- 	VM_BUG_ON_PAGE(page_ref_count(page) == 0, page);
  
- 	if (page_ref_sub_and_test(page, count))
--		free_unref_page(page, compound_order(page));
-+		free_unref_page(page, compound_order(page), 0);
- }
- EXPORT_SYMBOL(__page_frag_cache_drain);
- 
-@@ -5090,7 +5148,7 @@ void *__page_frag_alloc_align(struct page_frag_cache *nc,
- 			goto refill;
- 
- 		if (unlikely(nc->pfmemalloc)) {
--			free_unref_page(page, compound_order(page));
-+			free_unref_page(page, compound_order(page), 0);
- 			goto refill;
- 		}
- 
-@@ -5134,7 +5192,7 @@ void page_frag_free(void *addr)
- 	struct page *page = virt_to_head_page(addr);
- 
- 	if (unlikely(put_page_testzero(page)))
--		free_unref_page(page, compound_order(page));
-+		free_unref_page(page, compound_order(page), 0);
- }
- EXPORT_SYMBOL(page_frag_free);
- 
-@@ -5154,7 +5212,7 @@ static void *make_alloc_exact(unsigned long addr, unsigned int order,
- 
- 		last = page + (1UL << order);
- 		for (page += nr; page < last; page++)
--			__free_pages_ok(page, 0, FPI_TO_TAIL);
-+			__free_pages_ok(page, 0, FPI_TO_TAIL, 0);
- 	}
- 	return (void *)addr;
- }
-@@ -7124,7 +7182,7 @@ bool put_page_back_buddy(struct page *page)
- 		int migratetype = get_pfnblock_migratetype(page, pfn);
- 
- 		ClearPageHWPoisonTakenOff(page);
--		__free_one_page(page, pfn, zone, 0, migratetype, FPI_NONE);
-+		__free_one_page(page, pfn, zone, 0, migratetype, FPI_NONE, 0);
- 		if (TestClearPageHWPoison(page)) {
- 			ret = true;
- 		}
-@@ -7193,7 +7251,7 @@ static void __accept_page(struct zone *zone, unsigned long *flags,
- 
- 	accept_memory(page_to_phys(page), PAGE_SIZE << MAX_PAGE_ORDER);
- 
--	__free_pages_ok(page, MAX_PAGE_ORDER, FPI_TO_TAIL);
-+	__free_pages_ok(page, MAX_PAGE_ORDER, FPI_TO_TAIL, 0);
- 
- 	if (last)
- 		static_branch_dec(&zones_with_unaccepted_pages);
 diff --git a/mm/page_isolation.c b/mm/page_isolation.c
-index 7e04047977cfe..8467838d4dbc8 100644
+index 8467838d4dbc8..eae33d188762b 100644
 --- a/mm/page_isolation.c
 +++ b/mm/page_isolation.c
-@@ -258,6 +258,12 @@ static void unset_migratetype_isolate(struct page *page, int migratetype)
- 		WARN_ON_ONCE(!move_freepages_block_isolate(zone, page, migratetype));
- 	} else {
- 		set_pageblock_migratetype(page, migratetype);
-+
-+		/*
-+		 * Do not clear the page's private to keep its luf_key
-+		 * unchanged.
-+		 */
-+
- 		__putback_isolated_page(page, order, migratetype);
- 	}
+@@ -211,6 +211,7 @@ static void unset_migratetype_isolate(struct page *page, int migratetype)
+ 	struct page *buddy;
+ 
+ 	zone = page_zone(page);
++	luf_takeoff_start();
+ 	spin_lock_irqsave(&zone->lock, flags);
+ 	if (!is_migrate_isolate_page(page))
+ 		goto out;
+@@ -229,7 +230,7 @@ static void unset_migratetype_isolate(struct page *page, int migratetype)
+ 			buddy = find_buddy_page_pfn(page, page_to_pfn(page),
+ 						    order, NULL);
+ 			if (buddy && !is_migrate_isolate_page(buddy)) {
+-				isolated_page = !!__isolate_free_page(page, order);
++				isolated_page = !!__isolate_free_page(page, order, true);
+ 				/*
+ 				 * Isolating a free page in an isolated pageblock
+ 				 * is expected to always work as watermarks don't
+@@ -269,6 +270,7 @@ static void unset_migratetype_isolate(struct page *page, int migratetype)
  	zone->nr_isolate_pageblock--;
+ out:
+ 	spin_unlock_irqrestore(&zone->lock, flags);
++	luf_takeoff_end(zone);
+ }
+ 
+ static inline struct page *
 diff --git a/mm/page_reporting.c b/mm/page_reporting.c
-index e4c428e61d8c1..c05afb7a395f1 100644
+index c05afb7a395f1..03a7f5f6dc073 100644
 --- a/mm/page_reporting.c
 +++ b/mm/page_reporting.c
-@@ -116,6 +116,12 @@ page_reporting_drain(struct page_reporting_dev_info *prdev,
- 		int mt = get_pageblock_migratetype(page);
- 		unsigned int order = get_order(sg->length);
+@@ -167,6 +167,7 @@ page_reporting_cycle(struct page_reporting_dev_info *prdev, struct zone *zone,
+ 	if (list_empty(list))
+ 		return err;
+ 
++	luf_takeoff_start();
+ 	spin_lock_irq(&zone->lock);
+ 
+ 	/*
+@@ -191,6 +192,11 @@ page_reporting_cycle(struct page_reporting_dev_info *prdev, struct zone *zone,
+ 		if (PageReported(page))
+ 			continue;
+ 
++		if (!luf_takeoff_check(page)) {
++			VM_WARN_ON(1);
++			continue;
++		}
++
+ 		/*
+ 		 * If we fully consumed our budget then update our
+ 		 * state to indicate that we are requesting additional
+@@ -204,7 +210,7 @@ page_reporting_cycle(struct page_reporting_dev_info *prdev, struct zone *zone,
+ 
+ 		/* Attempt to pull page from list and place in scatterlist */
+ 		if (*offset) {
+-			if (!__isolate_free_page(page, order)) {
++			if (!__isolate_free_page(page, order, false)) {
+ 				next = page;
+ 				break;
+ 			}
+@@ -227,6 +233,11 @@ page_reporting_cycle(struct page_reporting_dev_info *prdev, struct zone *zone,
+ 		/* release lock before waiting on report processing */
+ 		spin_unlock_irq(&zone->lock);
  
 +		/*
-+		 * Ensure private is zero before putting into the
-+		 * allocator.
++		 * Check and flush before using the pages taken off.
 +		 */
-+		set_page_private(page, 0);
++		luf_takeoff_end();
 +
- 		__putback_isolated_page(page, order, mt);
+ 		/* begin processing pages in local list */
+ 		err = prdev->report(prdev, sgl, PAGE_REPORTING_CAPACITY);
  
- 		/* If the pages were not reported due to error skip flagging */
-diff --git a/mm/swap.c b/mm/swap.c
-index 10decd9dffa17..54b0ba10dbb86 100644
---- a/mm/swap.c
-+++ b/mm/swap.c
-@@ -109,7 +109,7 @@ void __folio_put(struct folio *folio)
- 	page_cache_release(folio);
- 	folio_unqueue_deferred_split(folio);
- 	mem_cgroup_uncharge(folio);
--	free_unref_page(&folio->page, folio_order(folio));
-+	free_unref_page(&folio->page, folio_order(folio), 0);
+@@ -236,6 +247,8 @@ page_reporting_cycle(struct page_reporting_dev_info *prdev, struct zone *zone,
+ 		/* update budget to reflect call to report function */
+ 		budget--;
+ 
++		luf_takeoff_start();
++
+ 		/* reacquire zone lock and resume processing */
+ 		spin_lock_irq(&zone->lock);
+ 
+@@ -259,6 +272,11 @@ page_reporting_cycle(struct page_reporting_dev_info *prdev, struct zone *zone,
+ 
+ 	spin_unlock_irq(&zone->lock);
+ 
++	/*
++	 * Check and flush before using the pages taken off.
++	 */
++	luf_takeoff_end();
++
+ 	return err;
  }
- EXPORT_SYMBOL(__folio_put);
- 
-@@ -959,7 +959,7 @@ void folios_put_refs(struct folio_batch *folios, unsigned int *refs)
- 
- 	folios->nr = j;
- 	mem_cgroup_uncharge_folios(folios);
--	free_unref_folios(folios);
-+	free_unref_folios(folios, 0);
- }
- EXPORT_SYMBOL(folios_put_refs);
- 
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index 76378bc257e38..2970a8f35d3d3 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -1480,7 +1480,7 @@ static unsigned int shrink_folio_list(struct list_head *folio_list,
- 		if (folio_batch_add(&free_folios, folio) == 0) {
- 			mem_cgroup_uncharge_folios(&free_folios);
- 			try_to_unmap_flush();
--			free_unref_folios(&free_folios);
-+			free_unref_folios(&free_folios, 0);
- 		}
- 		continue;
- 
-@@ -1548,7 +1548,7 @@ static unsigned int shrink_folio_list(struct list_head *folio_list,
- 
- 	mem_cgroup_uncharge_folios(&free_folios);
- 	try_to_unmap_flush();
--	free_unref_folios(&free_folios);
-+	free_unref_folios(&free_folios, 0);
- 
- 	list_splice(&ret_folios, folio_list);
- 	count_vm_events(PGACTIVATE, pgactivate);
-@@ -1868,7 +1868,7 @@ static unsigned int move_folios_to_lru(struct lruvec *lruvec,
- 			if (folio_batch_add(&free_folios, folio) == 0) {
- 				spin_unlock_irq(&lruvec->lru_lock);
- 				mem_cgroup_uncharge_folios(&free_folios);
--				free_unref_folios(&free_folios);
-+				free_unref_folios(&free_folios, 0);
- 				spin_lock_irq(&lruvec->lru_lock);
- 			}
- 
-@@ -1890,7 +1890,7 @@ static unsigned int move_folios_to_lru(struct lruvec *lruvec,
- 	if (free_folios.nr) {
- 		spin_unlock_irq(&lruvec->lru_lock);
- 		mem_cgroup_uncharge_folios(&free_folios);
--		free_unref_folios(&free_folios);
-+		free_unref_folios(&free_folios, 0);
- 		spin_lock_irq(&lruvec->lru_lock);
- 	}
  
 -- 
 2.17.1
