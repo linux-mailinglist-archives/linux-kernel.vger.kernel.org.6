@@ -1,128 +1,131 @@
-Return-Path: <linux-kernel+bounces-524252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAB2AA3E12A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:45:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B472FA3E138
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:47:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06F778602C0
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:41:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35E4F3A1523
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:42:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B1A020C00D;
-	Thu, 20 Feb 2025 16:41:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD88D212D68;
+	Thu, 20 Feb 2025 16:41:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="Y2tqgT8P"
-Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="Pvci0Of5"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1307B20B81B
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 16:41:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2167520B211
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 16:41:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740069675; cv=none; b=dJJQN4uubn3Qg6B/vSIAIu1zFEo7+zcRo4NBnV0EQCprlL2BgCvKCXu/GLjmoo2fHzY05bXYha1Ddb8jYKEhkVeaXASQEmVSq25JgT9cexm4KmcW+l9+IwbbNBofhSSgQ2c+J6dmY/YmB7RIbw2v6sJivlcfDcNsJIxVhQqZ0zg=
+	t=1740069719; cv=none; b=Y9X09gjooNh/DfSUOAioYAUd70ZGfYSF/3UPso7hrBERtUKwkVzw6PJi+Fm25zh8z6LgE5KyqQ05NekgTwVIq1l7sx8xGokG97vlhGu9PspUKyczaNfGCBbByotQuaq0j3PZOZtH/PbGqieU25LP9+jZ6PVnROe0kvS/dByRscc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740069675; c=relaxed/simple;
-	bh=wtVm1OReLkO+WQiX2RY76tqiMRy5uIw9+ikeo3KDP0o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gNEfWYGhT6r/TN6xdgbCZbDHPGgt/Eb2ud7zUMjPcGURIpoqnypmis2gE4cjuVG7HOtjvhmtSAUN6htxBrEbIart0KvFpx+bbcnysVIMezkkE07i6BgQqn/hs86Rw5KFbZnYLIMWDCW27JlhGRhxf9FkKt0gFYLX6ImHOiipCgA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=Y2tqgT8P; arc=none smtp.client-ip=209.85.222.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7c08b14baa9so99860085a.3
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 08:41:12 -0800 (PST)
+	s=arc-20240116; t=1740069719; c=relaxed/simple;
+	bh=hd00ma4pTGcrV8uOUJcNNlxDYUowsX9K//uXWoKKs6E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FcokcXWpu6E62eJCNiIsut5u11J5JzGyEOGaATo9zK7Utz4+VZztnYvVomwYS/Q+yCZUGZeFMwNVq6lHe4qFdOJ1799cETT8w/dLqsNOXhol/ZfKF/BqycK6vLgo2qFy3p/Zrl24eXgmwaGm5WCY7/rmjwFh825lOvUuR9R58Lw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=Pvci0Of5; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-38f2b7ce2e5so689591f8f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 08:41:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1740069672; x=1740674472; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=wvT9hr4wyRdgqH4GD8vWiYOLKGLcsbZRX76Llb1LL6s=;
-        b=Y2tqgT8Pjo3g7ZZPfYB6vqKamFXy9a/mwd/St0nRqbx85XVIRfZYl5bcdr90Fyqo/E
-         jtX1mKjR4wsR+ZL0J7yvyvdHGjwAfaTknUc98dedqPDCynkrMMgNjj9M4n4kGbNmoKhw
-         yd0h8fHXDV4Hd1NxvXVhsN8fRUroy2ya9Qm5KbMgm1Hyh6mkhBhOMVxtSOOjcyWcucqi
-         AH5+o/8Tq4MICedCyzIXoA1JU6XLJTha/cawWTxeCVap4SniIR9rghA8JGy09To/LpQy
-         sg9n6E7gtlB1hA7El7K4u3o9ekh2L5YqSJlI49XPQKjdkB3isCMTzGERFyhgsfCSSTup
-         lENg==
+        d=tuxon.dev; s=google; t=1740069714; x=1740674514; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=tdrq9JfSs7AdIS3P3Dy/vFSMWNEesz5Pa+4AW9E1gwY=;
+        b=Pvci0Of5ibypY8nHC5Xch7WuSuV+J0zlqvBAU0KLJAdQ9fNDCbtBLDTqViq2wPWPPN
+         hvTVog7QrLuqqQiX7C4PjnbE/e4w3f8LdCkYaGQlpv7RblSyOa/IeHb/k+MaPAWQzEyJ
+         PQIDXJZhVR9KaPKR7Z4kGgyQvFUnrx7PsTJoDS2J1qokqIyYen49LXxxPkfHYpoEtb1M
+         ShoT6ejPw4GDTQD+tFrV0Uuu+2Fu9SEOoxy3wb6ZvRHKmB6sArFrbAYL87o03ShcidQQ
+         E5Pdki+a/GVV7F3/BL8G1NNp/FItf5BNqFE/21ffcyM3DGsKQodgPYruA3qUYa9dch1M
+         xVTg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740069672; x=1740674472;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wvT9hr4wyRdgqH4GD8vWiYOLKGLcsbZRX76Llb1LL6s=;
-        b=S3MXz03splaqfMazti9zEUy4vXcPGSSs6CPXujl/vND+D/PbFthkrklKER96uxnGWr
-         h24Ya2xm4zIDK7DxcOF5zVI+gcIOU46Y7m3dh0fyEqQpPPuNxoJu5/XJFcKosbFpxT+8
-         yt7HUHnyRYB57zEr3dFSlMmR9tCaErP7kquG1//6i2JiEUTCJ+OsVpoR7UL4UW3YupCc
-         wxe7TAEdg4Y4jcFD1SINWMbIjeeg7IjdMAJpE9/21MWs07eYdkOT9ScgXrVLMghp7N0A
-         rcr1y9ssLXcsDQ6uORv/k9ufBd6+1L+AtmgA2sLOW6PvETUTpl0rGFPhk3BgeIMPRbKk
-         nBig==
-X-Forwarded-Encrypted: i=1; AJvYcCXxLFZcPZdT71vkNMiXA1zN2ttf8xrF1dW1jv9+sJFGIVsTncT28PbZEcui6C0bzvm0RaZgILOg4tetH4M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0IXAQBy9F8W+Tua//wTdTURO4bGHoGnFL2kEJX14u6eGvcBod
-	fGBSMUpIpvnrwokLuX9NVh2ncuSw2hkxbP9/gdlrqrQUJXPsBYBSg3hJcpnuX0w=
-X-Gm-Gg: ASbGncurWyhTWu+p+wRoH4m5xAo3cB93d7NzqVRHh0i9/1GTy1mHcmsXbmCM2oULOY/
-	CDSoUcsqQX32FkN7nGKciZ9BYoYlNVequ+VOeiFS3pOsQQ6MxQKb8us2BtYfQe90mVqEmDfR8r0
-	PqqpAvYOzqfEVeUMiXHs9Nm4I8zzD8sXhdb/AvovpwSBK3O/Hftg9XlG6IsVTrG8fRzoLwZHMuW
-	LXavG8G/+NAfBSnvIA7o60BxlHXwHHNdktlEQQG4DpPXYjM0kYUD4TKkWAWa4AjpQpptl3IrSIr
-	Vlmiel8iuEqdhEAl/lSb5h6RZ+o+OCe+bczjyqo4nFUmeidT2jbtAHIg1uFLcqbzl1VpgB2ciQ=
-	=
-X-Google-Smtp-Source: AGHT+IGlH80zk+2PBNQ/ZB5qRD43YHH9jlASFS3zwf6R7lUXwObcQaUrgnHIjK3rfriVXd+k7XVBog==
-X-Received: by 2002:a05:620a:1927:b0:7c0:9df3:a0d7 with SMTP id af79cd13be357-7c09df3aa60mr2071684885a.41.1740069671990;
-        Thu, 20 Feb 2025 08:41:11 -0800 (PST)
-Received: from gourry-fedora-PF4VCD3F (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c0c6d41b5asm70688485a.73.2025.02.20.08.41.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Feb 2025 08:41:11 -0800 (PST)
-Date: Thu, 20 Feb 2025 11:41:09 -0500
-From: Gregory Price <gourry@gourry.net>
-To: Robert Richter <rrichter@amd.com>
-Cc: Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Davidlohr Bueso <dave@stgolabs.net>, linux-cxl@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
-	Terry Bowman <terry.bowman@amd.com>
-Subject: Re: [PATCH v2 03/15] cxl/region: Factor out code for interleaving
- calculations
-Message-ID: <Z7dbJfr-qVrXj6ek@gourry-fedora-PF4VCD3F>
-References: <20250218132356.1809075-1-rrichter@amd.com>
- <20250218132356.1809075-4-rrichter@amd.com>
- <Z7dYODuRrRv1bXpV@gourry-fedora-PF4VCD3F>
+        d=1e100.net; s=20230601; t=1740069714; x=1740674514;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tdrq9JfSs7AdIS3P3Dy/vFSMWNEesz5Pa+4AW9E1gwY=;
+        b=dixjC/msJqMlgcwjJAPVWVEiBtPYyKAe6BH1v7n6y9KTOqfh9+fir07JGCyX6agyqg
+         r8Pza3TPIsLVMJxVdPTdZXRKfLjdH0LtVceunX0kz+ZAS8Ls9MLDG1thq6dcAIyGp+J1
+         cTHQDMuXxy2+gu63y8PN9V7d66NxpNNRrD74jcof5GbKJ96k+3mlOR9JjAuC1SezFzmE
+         RAPDi1gHcdho5NxrlIYLyTnOrIDmDT/0UKO+Uug3L/Hg0m1NEsVvbpH6GU4lpvXl5qt2
+         h2Hc+maDoOF3M1ULPD4wThO1wii/d9Ms6bXEauinOujn5tEA8eF8BTSvwYXdKIDZ8EeZ
+         7xHg==
+X-Forwarded-Encrypted: i=1; AJvYcCWBixdPF+s6yzf9vs246fU0yrXViCU36MMiGVHjaODeruCfkljE772QPmv3wIZ2iwe+2aCz7XXpy/7cBYw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9PuuKmoQLCOGavieBExlh4E91VuLlBZDrTwTskyL24KYjOmev
+	h3A+dk/LG675/CvbhTBr/LZ+a7HYuEwPG0V4hYsf6Woh6wUs0+fjtqH2j6Q4+k8=
+X-Gm-Gg: ASbGncvqq/fn0wxuX0Y6od6dJdpbZ2ag0CTLyfORzAJCv+TfBNtJFH3KMiOYpwz8yYR
+	wk43yMyLglSlVpRhWjRFTL/lkffPP9THkNVU6vRKuPSjAuoAccKWNL6eLCZtPYSbuDsuBW/wjvB
+	DWzHHs1jsxRf3qIgkQ7anrs2AbpkUhPRygoF5NeO9n+TnIiYiB3uNWBb8zToTzuVoriNOCtsw26
+	sduK3VWaiKCJF/F9B/mKx+dqFDyXEueLtoPMmYfOWPiFALidOxvC/R5FO52zOKi+i4UhX9xgShu
+	8JfP1EgfY+AgD7GUn5n3MwUkpe6r7K0vsO/A6HIZ1OIsL0WB4iO9t8qKPoAZ9yRFgO7ihmw=
+X-Google-Smtp-Source: AGHT+IHHPbIgLzsY9HofrGkO4DPp/RmzIGelc/5vMOj27bC0JuqiZhNs4PGwRa5UJ9lkSCt0p2Ofow==
+X-Received: by 2002:a05:6000:156c:b0:38f:3009:61c1 with SMTP id ffacd0b85a97d-38f33f50a65mr17685085f8f.26.1740069714054;
+        Thu, 20 Feb 2025 08:41:54 -0800 (PST)
+Received: from ?IPV6:2a02:2f04:6203:2100:5146:3c6d:da37:b887? ([2a02:2f04:6203:2100:5146:3c6d:da37:b887])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f258b432asm20668988f8f.6.2025.02.20.08.41.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 20 Feb 2025 08:41:53 -0800 (PST)
+Message-ID: <f979f814-cf9b-43b2-a928-5faa3996724c@tuxon.dev>
+Date: Thu, 20 Feb 2025 18:41:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z7dYODuRrRv1bXpV@gourry-fedora-PF4VCD3F>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] soc: renesas: rz-sysc: Suppress binding attributes
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: magnus.damm@gmail.com, john.madieu.xa@bp.renesas.com,
+ linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20250215131843.228905-1-claudiu.beznea.uj@bp.renesas.com>
+ <CAMuHMdW4sN6x5C7iQgiZD=Vmzg=BA1v+WjS7aapXmuM2_y8JvQ@mail.gmail.com>
+Content-Language: en-US
+From: "claudiu beznea (tuxon)" <claudiu.beznea@tuxon.dev>
+In-Reply-To: <CAMuHMdW4sN6x5C7iQgiZD=Vmzg=BA1v+WjS7aapXmuM2_y8JvQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Feb 20, 2025 at 11:28:40AM -0500, Gregory Price wrote:
-> On Tue, Feb 18, 2025 at 02:23:44PM +0100, Robert Richter wrote:
-> I get that this will be used later to pass information back, but this
-> patch by itself is a little confusing because ctx seems pointless since
-> the function still returns the position and accesses the hpa_range directly
-> 
-> Looked at in isolation, having the context structure change in this
-> patch than just adding the hpa_range as an argument and adding the
-> context later when it's actually relevant.
-> 
-> static int cxl_port_calc_interleave(struct cxl_port *port,
-> 				    struct range *hpa_range);
+Hi, Geert,
+
+On 2/20/25 18:00, Geert Uytterhoeven wrote:
+> On Sat, 15 Feb 2025 at 14:18, Claudiu <claudiu.beznea@tuxon.dev> wrote:
+>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>
+>> The matching data for the rz-sysc driver is marked with __initconst, which
+>> means it is discarded after initialization. Because of this, attempting to
+>> unbind/bind the driver through sysfs after system boot can lead to "Unable
+>> to handle kernel paging request at virtual address" errors due to accessing
+>> freed memory.
+>>
+>> Since the System Controller (SYSC) is an essential block for Renesas SoCs,
+>> suppress binding attributes to prevent them being exposed in sysfs,
+>> avoiding potential issues.
+>>
+>> Fixes: 1660e5ea6a3e ("soc: renesas: Add SYSC driver for Renesas RZ family")
+>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> i.e. will queue in renesas-devel for v6.15.
+>
+>>   drivers/soc/renesas/rz-sysc.c | 1 +
+> Looks like there are more opportunities for similar changes?
+
+For the other Renesas drivers I wasn't sure if this is the desired way.
+
+Thank you,
+Claudiu
+
+>
+> Gr{oetje,eeting}s,
+>
+>                          Geert
 >
 
-Disregard my note here, I missed that pos has to be carried through.
-
-Didn't notice until I looked at patch 3 and 4 together.
-
-> +	ctx->pos = ctx->pos * parent_ways + parent_pos;
-> +
-> +	return ctx->pos;
-
-This looks fine
-
-Reviewed-by: Gregory Price <gourry@gourry.net>
 
