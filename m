@@ -1,92 +1,91 @@
-Return-Path: <linux-kernel+bounces-524016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 717AAA3DE05
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:14:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27470A3DE0E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:16:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A71FF3B3C14
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:12:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A481E16939D
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:13:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E7051E5B9F;
-	Thu, 20 Feb 2025 15:12:45 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 113851FCF6D;
+	Thu, 20 Feb 2025 15:13:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="QPUTR3x3"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8ED61CEACB;
-	Thu, 20 Feb 2025 15:12:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADAE01CA84;
+	Thu, 20 Feb 2025 15:12:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740064365; cv=none; b=nMQJwwprtJZ/FtcSJkaWmB7ApgWDsBhiKuSWKvb416qo8tpb1Glj/sM+b/WzQI9hi9ZHDC4Tg7PvsUn0MmPbVTE15kRN7rkr7fQllEFNsMy3g4dvQfF2so8a1strMp8EZm6qaIl+8fComQgsiQEvGPW9y6LhjoG+L9Xr1+vGsFo=
+	t=1740064379; cv=none; b=qTAKll70YeDHff7SAq0brQtD61vYttbrtmIp7miC6C0PBlJGRY7h72vBKbTQNqupTMC4eiOiGuCuyQ5c3J8UrTP7HwcKiGs4Mi5ciQ0n3cCO2in0kgjvDPnaVBdPp7soETkcQf+e8ri7uYZ1mvhZKaOZCHsZE1PnO/0CmSPawEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740064365; c=relaxed/simple;
-	bh=YPIkUGlQFnZXPZsqT++8YQKXFl3MC3rlg5EhJD5fdpU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=D67a0+LwYXrTLLySj8ayK9ZugNGe1szGIQBSaMGkCGBUw7vS4zLQ79SbiW5587/3HMyAOvXCWBINwifF//qDjtpbV8djKwvvW+teItbxeKLEzyC0YhwpppoVdG7Hf9buaelQcTRV9rwaZuAK8c9PjUeqTOXgO8s+1ZsqHOLi73E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D2AAC4CED1;
-	Thu, 20 Feb 2025 15:12:39 +0000 (UTC)
-Message-ID: <55389b80-9f0e-4423-8e92-c486de058720@xs4all.nl>
-Date: Thu, 20 Feb 2025 16:12:38 +0100
+	s=arc-20240116; t=1740064379; c=relaxed/simple;
+	bh=L3ZAFtJopOmv/JiMgxJtyYZ5ZuSirVnb/9abSSZF/1Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bHEzBoa6CXJDq49MKjNkWcSDQthIGlXQQqAtgmi2C3PPHWMbukZXg9R0ZeUSus18C47H6LtEoxACS0YGA+CWyKpRkU0VnEuQEsGHUS+XAVcZAC679m4Qfm0UadXS4KRpd6WawvWBiDnOK3IEjNtY+nFcHIajIu99BKrhoBph+dI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=QPUTR3x3; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=2W3SBq7jsU0PL6xM+MxseF1qgZIPA0cYwMttD5g9Jl4=; b=QPUTR3x3mzWpBgVDlxZ7X9k0wf
+	1AV1lEVJJ+Mn4A8diCb4wdnO+sP24RxwwX3ixEFKrjTGBPF/DQZ8XEHdcVTVyH8YVSUJie8ptrrI5
+	B2LNRicG3KRVv3ehFObzSDAYncjN9bYqrtJ/rWVGNXyTwR18/IMDZhu4b+mEhuPT5lwE=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tl8EL-00G03T-Ee; Thu, 20 Feb 2025 16:12:49 +0100
+Date: Thu, 20 Feb 2025 16:12:49 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Jie Luo <quic_luoj@quicinc.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Lei Wei <quic_leiwei@quicinc.com>,
+	Suruchi Agarwal <quic_suruchia@quicinc.com>,
+	Pavithra R <quic_pavir@quicinc.com>,
+	Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	Kees Cook <kees@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	linux-arm-msm@vger.kernel.org, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-hardening@vger.kernel.org,
+	quic_kkumarcs@quicinc.com, quic_linchen@quicinc.com,
+	srinivas.kandagatla@linaro.org, bartosz.golaszewski@linaro.org,
+	john@phrozen.org
+Subject: Re: [PATCH net-next v3 06/14] net: ethernet: qualcomm: Initialize
+ the PPE scheduler settings
+Message-ID: <d0cf941b-db9b-451c-904f-468ffb11e2f7@lunn.ch>
+References: <20250209-qcom_ipq_ppe-v3-0-453ea18d3271@quicinc.com>
+ <20250209-qcom_ipq_ppe-v3-6-453ea18d3271@quicinc.com>
+ <f8d30195-1ee9-42f2-be82-819c7f7bd219@lunn.ch>
+ <877b3796-3afc-4f3e-a0f5-ec1a6174a921@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] media: cx231xx: Convert enum into a define
-Content-Language: en-US
-To: Andy Shevchenko <andy@kernel.org>
-Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
- Ricardo Ribalda <ribalda@chromium.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Nathan Chancellor <nathan@kernel.org>,
- Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling
- <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
- Hans de Goede <hdegoede@redhat.com>,
- Sakari Ailus <sakari.ailus@linux.intel.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Tiffany Lin <tiffany.lin@mediatek.com>,
- Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
- Yunfei Dong <yunfei.dong@mediatek.com>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- llvm@lists.linux.dev, linux-staging@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-References: <20241202-fix-llvm9-v1-0-2a50f5acfd0b@chromium.org>
- <20241202-fix-llvm9-v1-1-2a50f5acfd0b@chromium.org>
- <20241203093114.0ca49c01@foz.lan>
- <c896221c-5ff2-4a2b-b431-7c7f805b4f68@xs4all.nl>
- <Z7c252IKhXdysjAi@smile.fi.intel.com>
-From: Hans Verkuil <hverkuil@xs4all.nl>
-In-Reply-To: <Z7c252IKhXdysjAi@smile.fi.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <877b3796-3afc-4f3e-a0f5-ec1a6174a921@quicinc.com>
 
-On 2/20/25 15:06, Andy Shevchenko wrote:
-> On Thu, Feb 20, 2025 at 02:55:42PM +0100, Hans Verkuil wrote:
->> On 12/3/24 09:31, Mauro Carvalho Chehab wrote:
-> 
-> ...
-> 
->> ORing enums is really not a good idea: you would normally never do that, and
-> 
-> I think you missed a keyword "different", so "ORing different enums ..."
-> which I totally agree on, but the same enum values are fine.
+> As a general rule, we have tried to keep the data structure definition
+> accurately mirror the hardware table design, for easier understanding
+> and debug ability of the code.
 
-While the compiler might be happy with that, I think ORing enums regardless
-is weird. It's not what enums are for.
+Could you point me at the datasheet which describes the table?
 
-Regards,
-
-	Hans
-
-> 
->> the compiler warning is IMHO appropriate.
-> 
-
+	Andrew
 
