@@ -1,128 +1,92 @@
-Return-Path: <linux-kernel+bounces-524015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF5BDA3DE00
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:14:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 717AAA3DE05
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:14:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65E523ADB2D
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:12:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A71FF3B3C14
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:12:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 765BA1FCCFD;
-	Thu, 20 Feb 2025 15:12:24 +0000 (UTC)
-Received: from michel.telenet-ops.be (michel.telenet-ops.be [195.130.137.88])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E7051E5B9F;
+	Thu, 20 Feb 2025 15:12:45 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95C7D1FBC9E
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 15:12:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.88
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8ED61CEACB;
+	Thu, 20 Feb 2025 15:12:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740064344; cv=none; b=s4julVrT35TKCOf+w0l0E2GUNOlBVFhFSrsual8B2n4yiAK2owJy1bhnXPrli0LsEVxob2yfb+StTL3D6DTNa2MGay1u6TEb72iKNX82RQwysXRB2sTWQ0ZFj5TuIKaIxyu/rEtjfL98i8Z2bJoxm/VL8PUoCmmYxMSsML5F1go=
+	t=1740064365; cv=none; b=nMQJwwprtJZ/FtcSJkaWmB7ApgWDsBhiKuSWKvb416qo8tpb1Glj/sM+b/WzQI9hi9ZHDC4Tg7PvsUn0MmPbVTE15kRN7rkr7fQllEFNsMy3g4dvQfF2so8a1strMp8EZm6qaIl+8fComQgsiQEvGPW9y6LhjoG+L9Xr1+vGsFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740064344; c=relaxed/simple;
-	bh=I2c9D+583DIn0oLjbjCxnIf4feeCVl6vepzjhZLcn1o=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=VObC+sn8i/3EZYIecjDUxamLX85NI2jn+Oq7qG9Gyi0RzQEUfa+h7K7TaEfaD+NgJv8ev5r6tsLhuD3pl7P65umscymqjWuiqW7L2wMhIIYqcn4DSasWXnQR+0vRNKsHxbAAbL2+DEH3ug2eAnZI3QPlwgxNnxCNpjFbPxArsZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.88
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:b586:2686:e976:446f])
-	by michel.telenet-ops.be with cmsmtp
-	id FrCD2E00C3dp1uk06rCDv9; Thu, 20 Feb 2025 16:12:14 +0100
-Received: from rox.of.borg ([192.168.97.57])
-	by ramsan.of.borg with esmtp (Exim 4.97)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1tl8DS-0000000BFaC-0dSe;
-	Thu, 20 Feb 2025 16:12:13 +0100
-Received: from geert by rox.of.borg with local (Exim 4.97)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1tl8Dl-0000000DLHq-2r2Z;
-	Thu, 20 Feb 2025 16:12:13 +0100
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Su Hui <suhui@nfschina.com>
-Cc: linux-i2c@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] i2c: core: Allocate temporary client dynamically
-Date: Thu, 20 Feb 2025 16:12:12 +0100
-Message-ID: <f9aa39362e918b62aec0567f899b37d8d3c44710.1740064176.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1740064365; c=relaxed/simple;
+	bh=YPIkUGlQFnZXPZsqT++8YQKXFl3MC3rlg5EhJD5fdpU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=D67a0+LwYXrTLLySj8ayK9ZugNGe1szGIQBSaMGkCGBUw7vS4zLQ79SbiW5587/3HMyAOvXCWBINwifF//qDjtpbV8djKwvvW+teItbxeKLEzyC0YhwpppoVdG7Hf9buaelQcTRV9rwaZuAK8c9PjUeqTOXgO8s+1ZsqHOLi73E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D2AAC4CED1;
+	Thu, 20 Feb 2025 15:12:39 +0000 (UTC)
+Message-ID: <55389b80-9f0e-4423-8e92-c486de058720@xs4all.nl>
+Date: Thu, 20 Feb 2025 16:12:38 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] media: cx231xx: Convert enum into a define
+Content-Language: en-US
+To: Andy Shevchenko <andy@kernel.org>
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+ Ricardo Ribalda <ribalda@chromium.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Nathan Chancellor <nathan@kernel.org>,
+ Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling
+ <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
+ Hans de Goede <hdegoede@redhat.com>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Tiffany Lin <tiffany.lin@mediatek.com>,
+ Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+ Yunfei Dong <yunfei.dong@mediatek.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+ llvm@lists.linux.dev, linux-staging@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+References: <20241202-fix-llvm9-v1-0-2a50f5acfd0b@chromium.org>
+ <20241202-fix-llvm9-v1-1-2a50f5acfd0b@chromium.org>
+ <20241203093114.0ca49c01@foz.lan>
+ <c896221c-5ff2-4a2b-b431-7c7f805b4f68@xs4all.nl>
+ <Z7c252IKhXdysjAi@smile.fi.intel.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+In-Reply-To: <Z7c252IKhXdysjAi@smile.fi.intel.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-drivers/i2c/i2c-core-base.c: In function ‘i2c_detect.isra’:
-drivers/i2c/i2c-core-base.c:2544:1: warning: the frame size of 1312 bytes is larger than 1024 bytes [-Wframe-larger-than=]
- 2544 | }
-      | ^
+On 2/20/25 15:06, Andy Shevchenko wrote:
+> On Thu, Feb 20, 2025 at 02:55:42PM +0100, Hans Verkuil wrote:
+>> On 12/3/24 09:31, Mauro Carvalho Chehab wrote:
+> 
+> ...
+> 
+>> ORing enums is really not a good idea: you would normally never do that, and
+> 
+> I think you missed a keyword "different", so "ORing different enums ..."
+> which I totally agree on, but the same enum values are fine.
 
-Fix this by allocating the temporary client structure dynamically, as it
-is a rather large structure (1216 bytes, depending on kernel config).
+While the compiler might be happy with that, I think ORing enums regardless
+is weird. It's not what enums are for.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Mostly compile-tested, as apparently I have no I2C devices for which
-driver->detect and driver->address_list are valid.
+Regards,
 
-Apparently an alternative solution was posted before, but that does not
-fully address the potential stack size issue:
-"[PATCH] i2c: core: mark i2c_detect_address noinline_for_stack".
-https://lore.kernel.org/20250210080217.2772467-1-suhui@nfschina.com
----
- drivers/i2c/i2c-core-base.c | 15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+	Hans
 
-diff --git a/drivers/i2c/i2c-core-base.c b/drivers/i2c/i2c-core-base.c
-index 35a221e2c11c1460..7ad1ad5c8c3f5694 100644
---- a/drivers/i2c/i2c-core-base.c
-+++ b/drivers/i2c/i2c-core-base.c
-@@ -2506,7 +2506,7 @@ static int i2c_detect_address(struct i2c_client *temp_client,
- static int i2c_detect(struct i2c_adapter *adapter, struct i2c_driver *driver)
- {
- 	const unsigned short *address_list;
--	struct i2c_client temp_client;
-+	struct i2c_client *temp_client;
- 	int i, err = 0;
- 
- 	address_list = driver->address_list;
-@@ -2527,19 +2527,24 @@ static int i2c_detect(struct i2c_adapter *adapter, struct i2c_driver *driver)
- 		return 0;
- 
- 	/* Set up a temporary client to help detect callback */
--	memset(&temp_client, 0, sizeof(temp_client));
--	temp_client.adapter = adapter;
-+	temp_client = kzalloc(sizeof(*temp_client), GFP_KERNEL);
-+	if (!temp_client)
-+		return -ENOMEM;
-+
-+	temp_client->adapter = adapter;
- 
- 	for (i = 0; address_list[i] != I2C_CLIENT_END; i += 1) {
- 		dev_dbg(&adapter->dev,
- 			"found normal entry for adapter %d, addr 0x%02x\n",
- 			i2c_adapter_id(adapter), address_list[i]);
--		temp_client.addr = address_list[i];
--		err = i2c_detect_address(&temp_client, driver);
-+		temp_client->addr = address_list[i];
-+		err = i2c_detect_address(temp_client, driver);
- 		if (unlikely(err))
- 			break;
- 	}
- 
-+	kfree(temp_client);
-+
- 	return err;
- }
- 
--- 
-2.43.0
+> 
+>> the compiler warning is IMHO appropriate.
+> 
 
 
