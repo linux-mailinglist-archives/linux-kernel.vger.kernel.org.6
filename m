@@ -1,142 +1,134 @@
-Return-Path: <linux-kernel+bounces-523803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0109BA3DB73
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:38:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A57FA3DB76
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:39:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 28C207A9595
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:37:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4D6D3AC731
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:39:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BCE4288A2;
-	Thu, 20 Feb 2025 13:38:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C92121F8AE5;
+	Thu, 20 Feb 2025 13:39:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RIBcqeio"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=morinfr.org header.i=@morinfr.org header.b="38DJmyHV"
+Received: from smtp2-g21.free.fr (smtp2-g21.free.fr [212.27.42.2])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 042561EEE9
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 13:38:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 234042BD11;
+	Thu, 20 Feb 2025 13:39:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.27.42.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740058688; cv=none; b=hjFTbrFL5PIIJ7kGyNR5HaFBEcqrgUJCTyJzmzunC+ochi8VZCP6dYwWJ6Ok3HGE/9ZQT+CPvxj9auZOfycWVCq6P7TuO0+4hIg3B4lbb4ZTzrZYaNEr1cGW2DK1quL5mn67PGupertkXvOtaGLs0pdeFFqcYeetTUvIUkVrNSM=
+	t=1740058757; cv=none; b=r0FNdm8BNPLK2EfHCYzHSYWJLNmjxwvsk/1zzOVKo+HtvvDl3UMWZlbTX3/rztAxxXvvqsPXg5eZem6vUAvxckZzyj5dmSun2fUNu3QRgp+UBH43xbW95xLYqkVgj0pwxPjqXHOBWfqTcP2EaCUIXJF+FcX+kJG0K5Qlfxc1964=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740058688; c=relaxed/simple;
-	bh=WNKbmhVzaLRevjnTrEfwgemOd0VZkuLBY85NCuL/Uvc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kVtUr/aYLqR2wlgQvqket7+u7mhR+ljKSy2AOI0lRDp8odJ1AgwB6XtfX+7XkBCUNysUWvGPHa1gvE9Rb14KYEJka+CBOR/r4jpgumo43NeG+BR9T4JpeSfAtlu/9rM0Q5g76HmLeXrzmsK8toWjq88CwPNXDCe7j9aHXj//mSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RIBcqeio; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740058686;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3Z6Y+QONZzHviDlS3Fl6zxksjOSMCbAcq5j75r4OI3s=;
-	b=RIBcqeioSP4DPrNXRMg9nyv6jGRGgso+6NljerK1gYllacndNQCfJ0wlAXjvxCoqyMMCVc
-	X6D8HTpqo5VQ0hKK+7s4jgkLCiUPDIzlZfS+WCrRy0E9HRracJYgBkQqTiQV8TJblZlpCr
-	Iw65zJAmzxTUURbqYSqzBgZSEVITwsU=
-Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
- [209.85.208.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-635-h7qtG1XaP4aN6m-2GHuvRg-1; Thu, 20 Feb 2025 08:38:04 -0500
-X-MC-Unique: h7qtG1XaP4aN6m-2GHuvRg-1
-X-Mimecast-MFC-AGG-ID: h7qtG1XaP4aN6m-2GHuvRg_1740058684
-Received: by mail-ed1-f72.google.com with SMTP id 4fb4d7f45d1cf-5e0573b9f60so1399865a12.3
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 05:38:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740058683; x=1740663483;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3Z6Y+QONZzHviDlS3Fl6zxksjOSMCbAcq5j75r4OI3s=;
-        b=EfPpwnA4Vky3wbFKWb/j2/fwGrwdrQlWz6wN7tffVOiJSq3WGZuaZjz/brkNS+DTyn
-         EEm+t84aqKSP7/jN60vUUARoC9rUmyYh1ZJSQmOT/+7vp7fg4MExqjtRIqF0jt7pfzG3
-         H2JvQGJ3f9kj4oNDmUfB8qvNsnmDSCILQ/Q9so0QS7DZRKCp6S1Cse4Ioud9vzHQj0AF
-         zNYyOjgWupXBA/+NkBGNzyqVxRB48+BNDHs/jZwVQqJdORsgaI/VMAMmk1RE4ODxV23A
-         UAknzR2vJmUnoUdhOcQ2On8g9cWRfpXfeHfMOdOywdvK7UzJ/qQX4Dl3vvjLz+dSxlDy
-         DBRA==
-X-Forwarded-Encrypted: i=1; AJvYcCVf+e7UBraztr2zJQDUIPEs9kmx7FlU5uPGbkVbfuCnvQrYoC/WEw6TJWWrkbW01z0t9z7LaaGxn8pRkzU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxr+yRZzY5m1eeulbYyHv4OGgLmw0teCQFt4Qsg7XpXYQmTR3vD
-	EpR6IMM2VpjiQHRU/q9sJ+T+d5PUwb108gVLSYqJFWyrNUW3pDexYU7GdyI8xInEIGGugC0lOKJ
-	0bTix+IikyMYv8u6gqO5cHqvqavrsNSb1KTUxveNTnfih9ho+4MIqaW8l0PO8+Q==
-X-Gm-Gg: ASbGncuItSu7hal86zgBEkge9sIAnutTutM86C9Io5pxyU3wk9Og5kzk/JUCpK5RfW4
-	7sP0lwFbxiTfT3h20UwKEOs1jxCoIrzJ4eGcI4C9VrWS7tNVXkMkB7gHbimNkyCNFgYGHnLTMbc
-	jfdY0w6xzqqzyLUhbMEYWGNQQbeEAwWgdep+4jt5UkPcCDVj716aEdLIE3L/Zj9Y4G9PNyjOVuu
-	AqUnkVI0kQZrsGnJALgrKhQnyXbRsCcsA85SRU+GWejm5tJwV1RELLCrnHC5uQpC1l66XpYdtSg
-	ZLaPQ5NNrbkWQuyRLdFOMi/7BtSzyajYB8FqfCp0UIHtRzCDeqszhBzJ4juqq9u29WrfQFFY/JM
-	r6MzH7KJXlqGg3jXXqFcfuuaQk2VUGDJN/nWeteTmmwZyeJVIN3Dz21I=
-X-Received: by 2002:a05:6402:13c8:b0:5e0:82a0:50e6 with SMTP id 4fb4d7f45d1cf-5e0a4bae5bfmr2165523a12.20.1740058683566;
-        Thu, 20 Feb 2025 05:38:03 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFKE4U1hhxsYM4lR+FS5y2jvGSFIPFR+2C4tFcThGLFAJbNRyPYrf/RJxsYafAikDdN33UGPw==
-X-Received: by 2002:a05:6402:13c8:b0:5e0:82a0:50e6 with SMTP id 4fb4d7f45d1cf-5e0a4bae5bfmr2165505a12.20.1740058683176;
-        Thu, 20 Feb 2025 05:38:03 -0800 (PST)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5dece1d3624sm12316054a12.40.2025.02.20.05.38.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Feb 2025 05:38:01 -0800 (PST)
-Message-ID: <2d4924d6-1ae3-4993-a6b0-aae6f00bab88@redhat.com>
-Date: Thu, 20 Feb 2025 14:38:01 +0100
+	s=arc-20240116; t=1740058757; c=relaxed/simple;
+	bh=YibU4l09oQ0cBy5bOULHM03Q9PG0lJqJ+yPiZD47Z1Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OTFITpxZwnpH2eht284/cd3gMzWJKHjj7T+KxAOfgs3nBxdA8on0OmYt3FfYx8ZH2P81PC1fnLoT4JkyM1elNxpnxhVicO9A8hoUP4iGwc3YXO2eprkPCTmpQSOnSQNASIcGMcZAgSEiTg/a6xsM71wAks8dMG9WHKDZS6TimzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=morinfr.org; spf=pass smtp.mailfrom=morinfr.org; dkim=pass (1024-bit key) header.d=morinfr.org header.i=@morinfr.org header.b=38DJmyHV; arc=none smtp.client-ip=212.27.42.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=morinfr.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=morinfr.org
+Received: from bender.morinfr.org (unknown [82.66.66.112])
+	by smtp2-g21.free.fr (Postfix) with ESMTPS id C65E72003D3;
+	Thu, 20 Feb 2025 14:39:07 +0100 (CET)
+Authentication-Results: smtp2-g21.free.fr;
+	dkim=pass (1024-bit key; unprotected) header.d=morinfr.org header.i=@morinfr.org header.a=rsa-sha256 header.s=20170427 header.b=38DJmyHV;
+	dkim-atps=neutral
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=morinfr.org
+	; s=20170427; h=In-Reply-To:Content-Transfer-Encoding:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=tP0xUA71E6t13/H71gor9nmgC4liU5He56BGwdR3E2k=; b=38DJmyHVst/MyirFhzuDsp+KHc
+	tqkroceK6gvoCgO3Uq0bMz2WiVATAG3MRVjFCEJ3RcZgXY3psS0JHV+FiRrsa3JXPxAIoEmMeF4t1
+	vth6vd2Sw+ARZ9LHpP/gUqj2EaPEHqMUIAG+t3TXsHumVF5dbM5Vd63+Ezt3Zm+dLSAY=;
+Received: from guillaum by bender.morinfr.org with local (Exim 4.96)
+	(envelope-from <guillaume@morinfr.org>)
+	id 1tl6lf-000VRF-0I;
+	Thu, 20 Feb 2025 14:39:07 +0100
+Date: Thu, 20 Feb 2025 14:39:07 +0100
+From: Guillaume Morin <guillaume@morinfr.org>
+To: Yu Kuai <yukuai1@huaweicloud.com>
+Cc: Guillaume Morin <guillaume@morinfr.org>, linux-raid@vger.kernel.org,
+	linux-kernel@vger.kernel.org, song@kernel.org,
+	"yukuai (C)" <yukuai3@huawei.com>
+Subject: Re: [BUG] possible race between md_free_disk and md_notify_reboot
+Message-ID: <Z7cwexr7tLRIOlNx@bender.morinfr.org>
+References: <ad286d5c-fd60-682f-bd89-710a79a710a0@huaweicloud.com>
+ <82BF5B2B-7508-47DB-9845-8A5F19E0D0E5@morinfr.org>
+ <53e93d6e-7b73-968b-c5f2-92d1b124ecd5@huawei.com>
+ <Z7alWBZfQLlP-EO7@bender.morinfr.org>
+ <1e288eb5-c67b-c9ca-c57e-2855b18785b1@huaweicloud.com>
+ <6748f138-ad52-b7c5-ac53-1c7fa6fab9b7@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/7] x86/efi/mixed: Decouple from legacy decompressor
-To: Ard Biesheuvel <ardb@kernel.org>, Borislav Petkov <bp@alien8.de>
-Cc: Ingo Molnar <mingo@kernel.org>, linux-efi@vger.kernel.org,
- linux-kernel@vger.kernel.org, x86@kernel.org
-References: <20250210174941.3251435-9-ardb+git@google.com>
- <CAMj1kXHOqMM5uGxLTYuEf9KrxY5WzYvwo847JzoB-Qa2SN67Sg@mail.gmail.com>
- <20250220124831.GFZ7cknypjWiZoZzK5@fat_crate.local>
- <CAMj1kXEkkShwDfbwJ5abc9Q+LaqbvTNh1O5rVXy3EW85DdYTuQ@mail.gmail.com>
-Content-Language: en-US, nl
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <CAMj1kXEkkShwDfbwJ5abc9Q+LaqbvTNh1O5rVXy3EW85DdYTuQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <6748f138-ad52-b7c5-ac53-1c7fa6fab9b7@huaweicloud.com>
 
-Hi Ard,
-
-On 20-Feb-25 1:54 PM, Ard Biesheuvel wrote:
-> On Thu, 20 Feb 2025 at 13:48, Borislav Petkov <bp@alien8.de> wrote:
->>
->> On Thu, Feb 20, 2025 at 12:29:30PM +0100, Ard Biesheuvel wrote:
->>> Unless anyone minds, I'd like to queue this up in the EFI tree.
->>>
->>> Boris, Ingo?
->>
->> FWIW, it looks like a nice cleanup to me and it boots in my 64-bit OVMF guest
->> but that doesn't mean a whole lot.
->>
+On 20 Feb 19:55, Yu Kuai wrote:
+>
+> > I just take a quick look, the problem looks obviously to me, see how
+> > md_seq_show() handle the iteration.
+> > 
+> > diff --git a/drivers/md/md.c b/drivers/md/md.c
+> > index 465ca2af1e6e..7c7a58f618c1 100644
+> > --- a/drivers/md/md.c
+> > +++ b/drivers/md/md.c
+> > @@ -9911,8 +9911,11 @@ static int md_notify_reboot(struct notifier_block
+> > *this,
+> >                          mddev_unlock(mddev);
+> >                  }
+> >                  need_delay = 1;
+> > -               mddev_put(mddev);
+> > -               spin_lock(&all_mddevs_lock);
+> > +
+> > +               spin_lock(&all_mddevs_lock)
+> > +               if (atomic_dec_and_test(&mddev->active))
+> > +                       __mddev_put(mddev);
+> > +
+> >          }
+> >          spin_unlock(&all_mddevs_lock);
 > 
-> Thanks. For the record, I tested this both on 32-bit OVMF and on a
-> mixed mode tablet (with 32-bit AMI firmware) that I keep for testing
-> purposes. Notably, 32-bit OVMF boots with paging (and PAE) enabled
-> whereas the AMI firmware doesn't.
+> While cooking the patch, this is not enough, list_for_each_entry_safe()
+> should be replaced with list_for_each_entry() as well.
+> 
+> Will send the patch soon, with:
+> 
+> Reported-by: Guillaume Morin <guillaume@morinfr.org>
 
-Ah good to know that you're still using the mixed-mode tablet
-for testing.
+Thank you! I just saw the patch and we are going to test it and let you
+know.
 
-I've just added this series to my personal kernel testing-tree which
-I regularly boot on various models of these kinda tablets. I'll let
-you know if I hit any problems.
+The issue with the next pointer seems to be fixed with your change.
+Though I am still unclear how the 2nd potential issue I mentioned -
+where the current item would be freed concurrently by mddev_free() - is
+prevented. I am not finding anything in the code that seems to prevent a
+concurrent call to mddev_free() for the current item in the
+list_for_each_entry() loop (and therefore accessing mddev after the
+kfree()).
 
-> Not sure how many users of mixed mode remain
+I understand that we are getting a reference through the active atomic
+in mddev_get() under the lock in md_notify_reboot() but how is that
+preventing mddev_free() from freeing the mddev as soon as we release the
+all_mddevs_lock in the loop?
 
-I think the 32 bit mixed-mode Intel Bay Trail tablets are still
-somewhat popular I still get occasional inquiries about when we will
-finally have the cameras working on them :)
+I am not not familiar with this code so I am most likely missing
+osmething but if you had the time to explain, that would be very
+helpful.
 
-Regards,
+TIA
 
-Hans
+Guillaume.
 
-
+-- 
+Guillaume Morin <guillaume@morinfr.org>
 
