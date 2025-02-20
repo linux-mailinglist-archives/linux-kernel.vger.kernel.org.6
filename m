@@ -1,159 +1,123 @@
-Return-Path: <linux-kernel+bounces-523513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 728D0A3D7DB
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:09:54 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D125A3D7DE
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:10:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B00653B3313
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 11:08:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 07E6C7A6864
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 11:08:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EA391F0E4B;
-	Thu, 20 Feb 2025 11:08:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="UL+0Jqbp"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 984541F0E3C
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 11:08:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50CBA1EE7B6;
+	Thu, 20 Feb 2025 11:09:49 +0000 (UTC)
+Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0AF41D79B6
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 11:09:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740049713; cv=none; b=JQM+Ze0L+dw/ZrDZAai+2gty7VvwHnuPrHNLTeLht23kBycLdnLqd0X5FmB+14p2x4bZ2ENLj27/+uLQBlZMMSJTDVQeiIMHW3x0HccUyD3OmOPdGqvt3yily+ZFEuQKZ38eTEwwINXtMQYMlQL5/40NklMu07xulh1QAXeq5to=
+	t=1740049789; cv=none; b=ZpIrXDZ0Wc9proScszVY3LtZMq+IFSykP5IERFNNQmAAaVONNjyTQylzWIEYfFGdHVEZG0oil88L3urQF7CpUP1p+qfcOCkOlW4KzZh0sF2pMUsZSYl2SGmUvPJxMiwp1cIYNE+3yARr027fWhRJqGBs7Z5KewMi9xbvjfBe3ok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740049713; c=relaxed/simple;
-	bh=wsklMZucUPkbHHT0MAAjFIJG2P6Hdi5divFOEI5Inq4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ba5o1fGI55hrRw49ds6ZvVcBRIZa1+EwDJf/8xv4Y4ePDrX19moDEgFOMVnkplAdzcFDlhYd+h8URFs4fDZne/PrOG552ZyOR9RIqNUVG+pNI4xt/FfaURbb0bEy0zJPEl86TjA8sVeONbUcR7rJbPYmZlG06WPzb1qDGF3Bt3c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=UL+0Jqbp; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-543cc81ddebso961757e87.1
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 03:08:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1740049709; x=1740654509; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2Wq8QeYYoAG6GqdK6ykrRH0bnFwzccAb5pciRQeLX7g=;
-        b=UL+0JqbpGKdX+6wAg8n25yk7LN3eWa9O8ksL1Qn3M4E7RKVgPDe4msk2cJXSZwHE12
-         viQHYXSj7d4sgdhZu9b6Q1jK4c04KMYPABr3h8y/bDRQIGHZGmBg4XolP69UTqh/G7hU
-         Jp5cORW0Ldk/pnfhVNxu3ChgU68I3k9L/E9R+rntVxsql9TEOTA+KCvW+h8crJga9miT
-         QtVjjnCEvU6bYvsZCkNKqbRJ76JJTQu+cBxJghktDNxuMILbjDvLm3wshhtBXV0XMkcT
-         tPckx9HQQeLSPrf9I2Wq9JjKwwYz3YwxZKaYNVtdoIGl1oOIMGHhnZ8iODOaGS1J687d
-         2FXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740049709; x=1740654509;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2Wq8QeYYoAG6GqdK6ykrRH0bnFwzccAb5pciRQeLX7g=;
-        b=KBgSyuGqsmP8QP1Bcs7mGfz78zPsbDcsCQU9XAe0TLPsfsBq9cHfD2GGSTG1nP+WVr
-         nWoPmd5n9gyA/wgf31x8/riBDJrtyaJPuHYRs/EiI053O1jKYpePR5f42ZGvSYuepbz8
-         xXOBjl7wO0/xqAoMcCfNCEq+Eb+x/BdGLsKaLBA5igovj+83yqfY/ZiNHXcEGvx4emMI
-         FNTNADcCM8M1CDRVnBFheOd+xnuXF49a4hLXEvk/Dgrt0p8nUMr75Avd2dcwI0CEteWj
-         9tXWVCBVsEJD3GJe0rW3L2bNtCMzHtGlWTATOc1rSdY8O2nNad4p4ESW1NgFxHpx6j4i
-         JJRg==
-X-Forwarded-Encrypted: i=1; AJvYcCXbkfFFH6wGK0rHZydEwAxFeJwKCMFPWOpr+V3ma4sOX7bRVk765ldTPgc0A+2Ni5MnY0HFYoe8KcoeH6M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxklxtWP3L+GPOHw84DLrucIG4RknKNoZZO2XVzzC4EQsyV55WM
-	9X5HcsbybJdPOsAk9ZuW4CwI2LqqsO6Rk10Wwxu51S1Khz5YwQzsHsWOX2zQf7fs+ER8/0/DK8d
-	FSmkw8zCisS2IKI+/LyYh8tamivm9dqs7Y9Nz6P2GsVZjWRInUwM=
-X-Gm-Gg: ASbGnctPiLd7hS9FNZULWbvrphbgBQUkDAaBh1p/hn+IAKF6+ZYXkY4vCiUhmqOgk47
-	s8paBKZQkF2EYuCG+lNXNuLZfwy3tKwUnNGEk29T+4VXwri00IQZwD6OPv/ruZuNPV3qYiO0jxt
-	2IdHwnVyhtJJvOSGs+78BpLJM7tGE=
-X-Google-Smtp-Source: AGHT+IGfnHxc0LwSbIsH3Kf0h9dCgr8wHOa++ItKwQprXHL288wbvCBlEUijw2k3KO0J+QRayqaZh9njys8ex67sVUI=
-X-Received: by 2002:a05:6512:318c:b0:545:2b20:5b21 with SMTP id
- 2adb3069b0e04-5452feaafc1mr7290527e87.50.1740049709567; Thu, 20 Feb 2025
- 03:08:29 -0800 (PST)
+	s=arc-20240116; t=1740049789; c=relaxed/simple;
+	bh=lT83+dbljiF/9iIwJ+SC1zlhoroyt91FCB95C8Nac68=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=W7Ix8oOIHp/CDTM6kSl7btrGSVFwVYxGh8mW8i2O+e62P232T8y5Ya/43rjdVXZHtDCEpPu68fKtJc5XRhBssJ5eMeyrQ+jCRQwL2x+1EIq23Rya1PU8ObzDyYauE05xxrMiYaewj8Ln4y8cS9v73VeShlBjmsq+jhfzOy5o63A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-3c9ff7000001d7ae-54-67b70d741b4e
+Date: Thu, 20 Feb 2025 20:09:35 +0900
+From: Byungchul Park <byungchul@sk.com>
+To: Hillf Danton <hdanton@sina.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	kernel_team@skhynix.com
+Subject: Re: [RFC PATCH v12 00/26] LUF(Lazy Unmap Flush) reducing tlb numbers
+ over 90%
+Message-ID: <20250220110935.GA64704@system.software.com>
+References: <20250220052027.58847-1-byungchul@sk.com>
+ <20250220103223.2360-1-hdanton@sina.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250218160333.605829-1-koichiro.den@canonical.com> <20250218160333.605829-3-koichiro.den@canonical.com>
-In-Reply-To: <20250218160333.605829-3-koichiro.den@canonical.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Thu, 20 Feb 2025 12:08:18 +0100
-X-Gm-Features: AWEUYZm27-QxV--npSm6sC1JkRv8xgNE48OfDabPsd9PEnwFWvOwLgvBjR1dAuo
-Message-ID: <CAMRc=Mc5XfcQPsw1K70ogT6Oyxhy=PJ8neHT9xA8wrZmk069eQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] gpio: sim: convert to use dev-sync-probe utilities
-To: Koichiro Den <koichiro.den@canonical.com>
-Cc: linux-gpio@vger.kernel.org, geert+renesas@glider.be, 
-	linus.walleij@linaro.org, maciej.borzecki@canonical.com, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250220103223.2360-1-hdanton@sina.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrOLMWRmVeSWpSXmKPExsXC9ZZnoW4J7/Z0g3df1CwO/HzOYnF51xw2
+	i3tr/rM6MHts+jSJ3WPSC3ePz5vkApijuGxSUnMyy1KL9O0SuDJe7DnOVPBCqGLH3Y/MDYz7
+	+LoYOTkkBEwk9u36xAhjf51xjQXEZhFQlXj3aj07iM0moC5x48ZPZhBbREBZovPCLFYQm1nA
+	X2LCrQ1g9cICERJPDp1gArF5BSwkfn1+AGYLCSRIvJ66nx0iLihxcuYTFoheLYkb/14C1XAA
+	2dISy/9xgIQ5BUwlGs8fBRsvCrTqwLbjQCVcQKf9ZJW4fGYLC8SdkhIHV9xgmcAoMAvJ2FlI
+	xs5CGLuAkXkVo1BmXlluYmaOiV5GZV5mhV5yfu4mRmBwLqv9E72D8dOF4EOMAhyMSjy8M1q3
+	pQuxJpYVV+YeYpTgYFYS4W2r35IuxJuSWFmVWpQfX1Sak1p8iFGag0VJnNfoW3mKkEB6Yklq
+	dmpqQWoRTJaJg1OqgbEoirPzpurcnXzR4eGf0myen5pjYakSquW3zCahR5L17YZPi/94z7EO
+	mLNlD9O97gkFPbErnUsDN4qzNewqLYo7+SbupsOS3WHOfCI8822OlD4+qsOrO9H9bdWkI/KN
+	3ftS42yvnTvyIyGUd/2cq27Nn3YdZXF8trK/MnZ+1I5VUnvXqjGUvFdiKc5INNRiLipOBAAQ
+	bMCoSgIAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprHLMWRmVeSWpSXmKPExsXC5WfdrFvCuz3d4HOXpMWBn89ZLA7PPclq
+	cXnXHDaLe2v+szqweGz6NIndY9ILd4/FLz4weXzeJBfAEsVlk5Kak1mWWqRvl8CV8WLPcaaC
+	F0IVO+5+ZG5g3MfXxcjJISFgIvF1xjUWEJtFQFXi3av17CA2m4C6xI0bP5lBbBEBZYnOC7NY
+	QWxmAX+JCbc2gNULC0RIPDl0ggnE5hWwkPj1+QGYLSSQIPF66n52iLigxMmZT1ggerUkbvx7
+	CVTDAWRLSyz/xwES5hQwlWg8fxRsvCjQqgPbjjNNYOSdhaR7FpLuWQjdCxiZVzGKZOaV5SZm
+	5pjqFWdnVOZlVugl5+duYgSG2rLaPxN3MH657H6IUYCDUYmH98HjrelCrIllxZW5hxglOJiV
+	RHjb6rekC/GmJFZWpRblxxeV5qQWH2KU5mBREuf1Ck9NEBJITyxJzU5NLUgtgskycXBKNTAG
+	f/D5+Ln72MWFbFsmPA9dIvVF2virVPP7zXJm7FEdnFtnZvp2bLkbzFuxdsOnP/ufMitz7rh9
+	NvKL3Yk959kt5/VsVZ9uuMPWVafHK5Tnr9kZBff6s8+Mt6ieWhNl/nieS8Vf2dUnFPe3e3iX
+	/MhY4vdt7sMQ5gZbpX9FJTuVG8U+rLTN852sxFKckWioxVxUnAgAN+jY2jECAAA=
+X-CFilter-Loop: Reflected
 
-On Tue, Feb 18, 2025 at 5:04=E2=80=AFPM Koichiro Den <koichiro.den@canonica=
-l.com> wrote:
->
-> Update gpio-sim to use the new dev-sync-probe helper functions for
-> synchronized platform device creation, reducing code duplication.
->
-> No functional change.
->
-> Signed-off-by: Koichiro Den <koichiro.den@canonical.com>
-> ---
->  drivers/gpio/Kconfig    |  2 +
->  drivers/gpio/gpio-sim.c | 84 ++++++-----------------------------------
->  2 files changed, 14 insertions(+), 72 deletions(-)
->
-> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-> index 2e4c5f0a94f7..ba06f052b9ea 100644
-> --- a/drivers/gpio/Kconfig
-> +++ b/drivers/gpio/Kconfig
-> @@ -1866,6 +1866,7 @@ endmenu
->  # This symbol is selected by drivers that need synchronous fake device c=
-reation
->  config DEV_SYNC_PROBE
->         tristate "Utilities for synchronous fake device creation"
-> +       depends on GPIO_SIM
+On Thu, Feb 20, 2025 at 06:32:22PM +0800, Hillf Danton wrote:
+> On Thu, 20 Feb 2025 14:20:01 +0900 Byungchul Park <byungchul@sk.com>
+> > To check luf's stability, I ran a heavy LLM inference workload consuming
+> > 210GiB over 7 days on a machine with 140GiB memory, and decided it's
+> > stable enough.
+> > 
+> > I'm posting the latest version so that anyone can try luf mechanism if
+> > wanted by any chance.  However, I tagged RFC again because there are
+> > still issues that should be resolved to merge to mainline:
+> > 
+> >    1. Even though system wide total cpu time for TLB shootdown is
+> >       reduced over 95%, page allocation paths should take additional cpu
+> >       time shifted from page reclaim to perform TLB shootdown.
+> > 
+> >    2. We need luf debug feature to detect when luf goes wrong by any
+> >       chance.  I implemented just a draft version that checks the sanity
+> >       on mkwrite(), kmap(), and so on.  I need to gather better ideas
+> >       to improve the debug feature.
+> > 
+> > ---
+> > 
+> > Hi everyone,
+> > 
+> > While I'm working with a tiered memory system e.g. CXL memory, I have
+> > been facing migration overhead esp. tlb shootdown on promotion or
+> > demotion between different tiers.  Yeah..  most tlb shootdowns on
+> > migration through hinting fault can be avoided thanks to Huang Ying's
+> > work, commit 4d4b6d66db ("mm,unmap: avoid flushing tlb in batch if PTE
+> > is inaccessible").
+> > 
+> > However, it's only for migration through hinting fault.  I thought it'd
+> > be much better if we have a general mechanism to reduce all the tlb
+> > numbers that we can apply to any unmap code, that we normally believe
+> > tlb flush should be followed.
+> > 
+> > I'm suggesting a new mechanism, LUF(Lazy Unmap Flush), that defers tlb
+> > flush until folios that have been unmapped and freed, eventually get
+> > allocated again.  It's safe for folios that had been mapped read-only
+> > and were unmapped, as long as the contents of the folios don't change
+> > while staying in pcp or buddy so we can still read the data through the
+> > stale tlb entries.
+> >
+> Given pcp or buddy, you are opening window for use after free which makes
+> no sense in 99% cases.
 
-No, it does not. Please drop this.
+Just in case that I don't understand what you meant and for better
+understanding, can you provide a simple and problematic example from
+the u-a-f?
 
->         help
->           Common helper functions for drivers that need synchronous fake
->           device creation.
-> @@ -1916,6 +1917,7 @@ config GPIO_SIM
->         tristate "GPIO Simulator Module"
->         select IRQ_SIM
->         select CONFIGFS_FS
-> +       select DEV_SYNC_PROBE
->         help
->           This enables the GPIO simulator - a configfs-based GPIO testing
->           driver.
-> diff --git a/drivers/gpio/gpio-sim.c b/drivers/gpio/gpio-sim.c
-> index a086087ada17..d1cdea450937 100644
-> --- a/drivers/gpio/gpio-sim.c
-> +++ b/drivers/gpio/gpio-sim.c
-> @@ -10,7 +10,6 @@
->  #include <linux/array_size.h>
->  #include <linux/bitmap.h>
->  #include <linux/cleanup.h>
-> -#include <linux/completion.h>
->  #include <linux/configfs.h>
->  #include <linux/device.h>
->  #include <linux/err.h>
-> @@ -37,6 +36,8 @@
->  #include <linux/sysfs.h>
->  #include <linux/types.h>
->
-> +#include "dev-sync-probe.h"
-> +
->  #define GPIO_SIM_NGPIO_MAX     1024
->  #define GPIO_SIM_PROP_MAX      4 /* Max 3 properties + sentinel. */
->  #define GPIO_SIM_NUM_ATTRS     3 /* value, pull and sentinel */
-> @@ -541,14 +542,9 @@ static struct platform_driver gpio_sim_driver =3D {
->  };
->
->  struct gpio_sim_device {
-> +       struct dev_sync_probe_data data;
-
-Maybe something more indicative of the purpose? probe_data? sync_probe_data=
-?
-
-Bart
+	Byungchul
 
