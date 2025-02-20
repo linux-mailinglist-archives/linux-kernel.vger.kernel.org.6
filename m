@@ -1,273 +1,428 @@
-Return-Path: <linux-kernel+bounces-523957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6784DA3DD5A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:53:27 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB115A3DD5D
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:53:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB3B4164166
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:53:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F98A16DE82
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:53:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC18E1D5CDB;
-	Thu, 20 Feb 2025 14:52:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B43B1D5CC1;
+	Thu, 20 Feb 2025 14:53:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="QcRNTUlX";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="mxb84fvH"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="HqfaYLYb"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FA351D5147;
-	Thu, 20 Feb 2025 14:52:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740063169; cv=fail; b=felSY7QB6LfRl7uDLHSEeaKPj8HuFw6cUn7S/3BP1U7/34C/IIk1F/1O4K61/7XZf6vBspJbs3/VMLObTWLC1SkbfxRQNo7sB+K0cWsK5f0rB1pzMbvbK1SUiF+IxNJgZwclLaXTj2VD53kVqfcj+Tq5fNPxruztDxySaoEy4TY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740063169; c=relaxed/simple;
-	bh=Sl8R+7iBUz9WaA+tsz9v4wF5ZTcMZgh7g4pgLLCzXT4=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=L9WLsM83qHbojptrUsgIB3x0cFzKlDIPrvSCaffmbf0+NXC7E1VMo1TjrMdqCv3ild54bsbzX0vgOZBiB3IXQWEyxpJjjvJuJdK5wPyzjYDj6jhemw01fRDB9/iGuuZTz3cQjDQorFZfKAz05vlWcVmKSITUKR964NyWBFwkBJ0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=QcRNTUlX; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=mxb84fvH; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51K9fb3S001626;
-	Thu, 20 Feb 2025 14:52:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88D3B1CEADB;
+	Thu, 20 Feb 2025 14:53:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740063219; cv=none; b=t2XXTMcFiYwZu/DPsMfw5BBSS8XdxkMBfR8S8c78eLl2nUlgGUqG1PpdRii/7trlauH2JbPTRC4aOQvXeXtVlv6Vsp3BaQ43vZCoNShTEUsYdAVyLGaRa2TcDcc2A0G1d7ZtxMXCGMW6OAZ6HOInFoYxDui3Zi9F24ECEVu9wdo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740063219; c=relaxed/simple;
+	bh=0FD/F3/U3JtxRzEWsoIttOjwcl1YpzXDxVHZBGkrh4g=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ly5ZDkUqMt7UX6GreY219AhDAufY+U3OKCwZCEeOMl1KSILb4TskqJz3Xv6Mgo9U36P15s2ycX8N90TaKzRDOI4CdomY4wEysFIjcSLf4gBGjGNlT1vEDGzAXe4LWGq0COh9ipQ0zEzQjKagHgZIsyvqt1y8yTNRt8DrMeCvlyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=HqfaYLYb; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51K5Nt98026987;
+	Thu, 20 Feb 2025 14:53:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
 	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2023-11-20; bh=HENq3bA54GGH7Yb38frZloVcPvTzbWu6E96quwCWgPc=; b=
-	QcRNTUlXYiKO8F5eLZQWwoVjyzaDIaNZjrysk9kWEtxKcj+e+e/5VTcGJb7MJhY1
-	HJXBegQUOEpxms838KhXtRfPeUWLh25wQjZuIe6b59BnXcv3hAR5TQ7sdG6WRckf
-	6LkO89n+06FWTFw0015Xt36V2TWGxzmrYLPVwVEVkx6RmYnssAcmvzIVshK66G2s
-	xJIbTzhF6QCz4rWi5on/gGE3c4H/tw3VHx9ZgZ9GB2lR4G3s/tCYE+yEs9E1X2UL
-	TRxUxGHp6+zTrukDgdv0+NirmxDbbEozHWZ195GriqtEBHb4ej3tmm375tO/KkGR
-	sLbId0w2xV744q/HYqFEOQ==
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 44w00mv9yn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 20 Feb 2025 14:52:43 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 51KEkFEi010490;
-	Thu, 20 Feb 2025 14:52:42 GMT
-Received: from nam11-dm6-obe.outbound.protection.outlook.com (mail-dm6nam11lp2174.outbound.protection.outlook.com [104.47.57.174])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 44w07f1qu4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 20 Feb 2025 14:52:42 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ILuDekFEM7YJ7PB3jGMiGD/xBhc9GEiOT2TE1hQv7aRagOXhohK3eBSeuWNzVe+s1zXmStMpCSi0oXY/kulI9XuPtTGRgFTZjD9p/LQxR3mNGzTQBuus/R8j1XVonm7yaiEpP3NLnOTGGzdgP3mpXoj57eRvd+QgbFbMqIHhY8AmIernesQWmNtD7gxGJ7Jkp1ziZEywdpwPLr+jCd3Wy5RwD6fXhSCTUfAQKrR/hOkpQ4/KXBSYXGDNdnQjFJn/SElfHgMq42ytzIfbQ9l4lZnz/iFCff13wQvSyuKVbSaVvU3odEfAbJhVPLFmmYQgbP1MFoDKM5yJhjw4uOfoLg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HENq3bA54GGH7Yb38frZloVcPvTzbWu6E96quwCWgPc=;
- b=uKR0qEmsU/eHy8LWMHNvj6zjQAa2IFz+p36aaMKL8YfYmXqx3Wu3MACR1UdyYOZIuB9AjyDhYRMdy8rzHQqmbJbsehYY4mHsq3IsV9JJwNV9+6x/ixAxF9faiiWwy3slBaSf3Hbx3hvwnnS0S/UTAoFxWvZWr+4nwdBQlUdR0sE7nxG8qX+/6XY2qAFqO0A6WkUvZBZAB170vSceuBJTSRtdykRklzwj8yXrzMbfGDJWjIhzRD9YTls/EeOaMKaNoT4XmRG+oUTrb/NK4fFZQaOzhMQl1l04ns3jNrtnoCDtO3TjktLYid9SJ8Agbx4uBVbX3MiSODmSorTOdqmT3Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HENq3bA54GGH7Yb38frZloVcPvTzbWu6E96quwCWgPc=;
- b=mxb84fvHpwvVNOyjCbfBYIMnlyB8f/epJtMkaAR+w7g5rJH+8f61LfE1OdNrTk6O90j2paFafLz1ByefXZGvJcBKPOYDV6piVNzKWwfFoaMp5hIZXvvCQ1POYr2T3sE11DgjIvsfmbG6Px6RPTtkZlGa+Wo/mGCJaDfajKKz9CQ=
-Received: from CH3PR10MB7211.namprd10.prod.outlook.com (2603:10b6:610:125::22)
- by DS7PR10MB5151.namprd10.prod.outlook.com (2603:10b6:5:3a4::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.15; Thu, 20 Feb
- 2025 14:52:40 +0000
-Received: from CH3PR10MB7211.namprd10.prod.outlook.com
- ([fe80::4c63:cc47:6a4:e38e]) by CH3PR10MB7211.namprd10.prod.outlook.com
- ([fe80::4c63:cc47:6a4:e38e%5]) with mapi id 15.20.8445.019; Thu, 20 Feb 2025
- 14:52:40 +0000
-Message-ID: <a3b5bbc0-f875-451f-8528-38a7eafc4949@oracle.com>
-Date: Thu, 20 Feb 2025 20:22:33 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] selftests: sched: add sched as a default selftest target
-To: Shrikanth Hegde <sshegde@linux.ibm.com>, chris.hyser@oracle.com
-Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        shuah@kernel.org
-References: <20250219064658.449069-1-sinadin.shan@oracle.com>
- <74dddd26-4a0e-4bb6-958a-229cca3c24d1@linux.ibm.com>
-Content-Language: en-US
-From: Shan <sinadin.shan@oracle.com>
-Organization: Oracle Corporation
-In-Reply-To: <74dddd26-4a0e-4bb6-958a-229cca3c24d1@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SGXP274CA0019.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b8::31)
- To CH3PR10MB7211.namprd10.prod.outlook.com (2603:10b6:610:125::22)
+	:message-id:mime-version:references:subject:to; s=pp1; bh=DxPrub
+	vpyMyHPwXulmc6NE8Ykno5YlYbrXFIxcV6o4s=; b=HqfaYLYbsw6dfJiMGJNPsk
+	bE9OTOs6OF8m1KiDqN71YyIBHpi+An2+QQalkdwJqTc+EyU1eJGkK6y9GUpVbSp3
+	K2eRf5vCbCtx1oZVrSXnTCJTjTSUymcwfuGtfUBqUgVDEnipGm6nBZ+vwLZAQeuq
+	Z9Y81zRW+3checmVuSz9FV/L94CmOUDQEPaZG/czY1dc+QaTHQYt22AJEEAc7dlo
+	gRhNqliif/BgB+iM3XlsfkZtOi5DyI3CP+v+Z+gRnRRFtSvxK9G2KLh5p974CMZz
+	gdcRV0vXCxo9HolSjztHb/LCH/1+7nH0L6Co+z49t7zzprZjLZgEZ/S1RlkTKyxg
+	==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44wx78jnp8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Feb 2025 14:53:11 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51KEU69L030262;
+	Thu, 20 Feb 2025 14:53:10 GMT
+Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 44w01xajrv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Feb 2025 14:53:10 +0000
+Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
+	by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51KEr9vl55247346
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 20 Feb 2025 14:53:10 GMT
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9134058043;
+	Thu, 20 Feb 2025 14:53:09 +0000 (GMT)
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 6563258055;
+	Thu, 20 Feb 2025 14:53:08 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.95.183])
+	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 20 Feb 2025 14:53:08 +0000 (GMT)
+Message-ID: <8023fa50a84817cc911a117db9bd3757c34fddfb.camel@linux.ibm.com>
+Subject: Re: [PATCH v8 1/7] ima: define and call ima_alloc_kexec_file_buf
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: steven chen <chenste@linux.microsoft.com>, stefanb@linux.ibm.com,
+        roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
+        eric.snowberg@oracle.com, ebiederm@xmission.com, paul@paul-moore.com,
+        code@tyhicks.com, bauermann@kolabnow.com,
+        linux-integrity@vger.kernel.org, kexec@lists.infradead.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
+        James.Bottomley@HansenPartnership.com, bhe@redhat.com,
+        vgoyal@redhat.com, dyoung@redhat.com
+Date: Thu, 20 Feb 2025 09:53:08 -0500
+In-Reply-To: <20250218225502.747963-2-chenste@linux.microsoft.com>
+References: <20250218225502.747963-1-chenste@linux.microsoft.com>
+	 <20250218225502.747963-2-chenste@linux.microsoft.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR10MB7211:EE_|DS7PR10MB5151:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9239612e-52df-42d6-ed2c-08dd51be3914
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?NW5OWVpDZlZXYXpqN0paRWZDdWptcDlVLzVLeWk4T2Z3NzNhZkUyaFhVM2xI?=
- =?utf-8?B?cEw4OGpMZ2x4MFNkTGR4cmcwUkgvUUZXbFk5UlQrWmZydEt3T3lRVWlZM3U0?=
- =?utf-8?B?aG9yQ2V0MXFvWjllMnhQOHhHblFxblVoRmhwcWV3NFpqVFVibzdJdXVhUm92?=
- =?utf-8?B?UTBLRndzYnZjb3hFUHFkUDY2WXM0UEFGd3NXVU5GQ0JvT3FpY1FrU0hNZEZW?=
- =?utf-8?B?N3Rnc3VyOFQzSUIvWVFqQ3JCYWdkMXN2TmRiSUlQbVBlZ1Y1aFIrc3lDMm9k?=
- =?utf-8?B?ajBVTEZMTEtMZ1h6dEhITXA2THYzalBYLy91V1c1anpWb3IvRWlydFRLcUZ4?=
- =?utf-8?B?clJtY0IxcE01WUxCR21Qak9uUkRUUzl3L0s3RWUxMThXbGZ0VmY4Y1lTcmpn?=
- =?utf-8?B?OGxIK2RPak5TMGtjSU9BQ1JnQWZjUEJ6QU00dHJ6V2JqOGU5Y2ZZZFJHMmcr?=
- =?utf-8?B?WlZFRkl5eHZqaUFpZ2ppT3d1eUg2YXIvRnEzanUxK1g4UDNyUEU4UFQxOURY?=
- =?utf-8?B?RVFaSnA2SFZsRzY5QThibnlQRnp1TWFFWk1xaVdlSm9FUzB0MGgvaHNWMVN2?=
- =?utf-8?B?VHFSNVZaYmptam82WlBkNndYUkgreCtFQk1UN3VHaXNEamhXYmxJN1NUZmVF?=
- =?utf-8?B?K0ptNDI2MjVLUElhejhwamlqc0QwL0JqZGVHMWFjV0l2aWxtdEdXbkkxOEhG?=
- =?utf-8?B?dmVVU3k1T0psSDZ0bnNNNmlKN1luTXRtZjFQZEd1c3F0V2JSQitBM0pPWi9B?=
- =?utf-8?B?a2UvdU9CM2xEcjZtT3dycGw4NU1EaFU4aHNZZjd2Y1o2UFZiRXovZ09IeG9I?=
- =?utf-8?B?OVRHWFBjK1YyQmhXUHltYk94RzBGTWVTY3M3enM3WmVmYWRiVXcyaFNOQnZE?=
- =?utf-8?B?UUJvZVAwcWp6bkxlN3U3WGR0azJNejhqSGtYRm1NenJPZ21aUTZrRk0zNnA1?=
- =?utf-8?B?NjIzY3VTSHpEd3Z2eDZJUmRDOTVkN2tVRkQzdjgxUmFteW1vK1ZIUXBPMWJi?=
- =?utf-8?B?aHNNVmQ0SFVLY2ZvQkFRQldaa2ozamRRaHZFaVorSXNRUVhLWGNqNEU0bDNh?=
- =?utf-8?B?SFRlTVNOeXNwVzEvTVQ3Vm9COFFKWDZoM2tEcWlscXhNM1UyTVBnYWZMWlZm?=
- =?utf-8?B?YnhObXc4ZTlXL2h5UHVMdVZVLytLZW9yNmpMRTR0dEhxa2ZGcjhES3BjK2Jl?=
- =?utf-8?B?Y3BPc01ZTkhPMDR1UXc1NWNkc2dGMlB1TVcxZVBpNmdFbjhtV1ZpRVdVQnRJ?=
- =?utf-8?B?QzdoemFUUzhvcW5HM0JNM2VrenhrWHc4UURSWTJZVWNma00rZU5OeDRTL0Jz?=
- =?utf-8?B?aUl3WmRVa0RndlVPOWhHT0loUmt5V216cWx5VGNkRjh2aVpCSWVVM2VHaVdj?=
- =?utf-8?B?ZVM4S0pxY0Uxb3dLTE41OXM4d1hHT2dZS3l6R3BEOUY4NmtoOGVyeDE5cHht?=
- =?utf-8?B?Mk9JMnNUR3ZzeUdkNGdYTGUzOERYR1BTUU1FSExLN1hwYXFKYjYzanc2Rjg3?=
- =?utf-8?B?SFdnY2gwU2YveE1IQ2hMQUNvbkZjYWxPSHFWVFEweXUwNDJiZlNPNDRla293?=
- =?utf-8?B?WFh6MzlTdkRiMXhSVHA5UW0wUUhhUlJDK1Rqdy9MeG9zamQ4OC9SOGVYblBj?=
- =?utf-8?B?a1FCRXJRRlJZY3ZYU1ZpNEh2WGdWUTJudHJYN0IrY1Y2ZEllbmNYZTREcjNV?=
- =?utf-8?B?ZGIxYllXZkUzNnQ4bUVHa1JrekQxODNYbWdwbnpsUXkwR0Q4aFM3bzRVU2l1?=
- =?utf-8?B?MFdSRmZTSzN2U093Q2lpUGk4SnFZbGRtSlhLUGVxMU1TVmpIdGttZEJ0azhw?=
- =?utf-8?B?K1l2bkhGYUg0MzZkamwzT3VQZjh2V0xNNDcxaU4vQW5MaVlaMm5Ra3RaaDhD?=
- =?utf-8?Q?2vCHH4C6L5U5b?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR10MB7211.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?eWJVSFArM0t6NitKRi81YzgrN0cra0wxSmM3ZnJ2V1NudzZyTlh5TGV4NUcz?=
- =?utf-8?B?cEtXM0prek5vZjVsaHdjOHlyUkNLU3grZ1FCbVFTMEhXdU8yOGR1OFFiRlJt?=
- =?utf-8?B?YzVFTk9pdHhuNUdqTVRmR0lTbXNhQzFIM0VXOU13Q1lJeFRYbFkwWXBuOXFI?=
- =?utf-8?B?d2l2UnVyWlZRZDV3OVlxTGxVR2lVMmtKckt1Mk1RM2l3OFBYUU1lcS9vOVY1?=
- =?utf-8?B?Q0N5ZEs2K2NEVnFneTNrTEM0SEdMVlRickZJRzlHcWQrQWord1lwZ0paWHBz?=
- =?utf-8?B?N1JmM0g4RFZnRnl6QUlYalRsOTFHY0dycWpzRlJYeG5Wc24zUW5oOUJKMUhj?=
- =?utf-8?B?OVY5ZHBVaDJjTk1NeTA4cGhLV1ZtTXEyQnhvcndST0pxaTVEUXdkSDg1SEJy?=
- =?utf-8?B?My9RU2k4ZDQ0c1luT2JESWxXazllcGdZQUwvZ09IZ09iejgvWUdZTmN3S1Jq?=
- =?utf-8?B?VDJtaWorN0xaOWhOZ1UrQ3JwZ2tuYTU4UDBzVU5kVXV2T0ZXRWwrZGprRTdl?=
- =?utf-8?B?WGFIajZvaU5DN1hYVitmelMzcHUvU0Y2c1VTNm95L1REYVJad3ZseE9ob21E?=
- =?utf-8?B?Vlo1RWZVZmxZek0zbTl6blhYSURZd1U2YlBORkdRT3pCaElvK1J6ckd6ODBP?=
- =?utf-8?B?U291L0M3YzJqTFZhWEtVbUxEYUE5TC9pT2tSaDZDakJXdGdML1lFTzN4WWRZ?=
- =?utf-8?B?MEwxUWpnVXR1QnZ1aGVxbldOdlB2SzNFck5VQUZLbk4zUGdIKy9GU1lQbWp5?=
- =?utf-8?B?L3NxczAvRjhjVVVZMVVEeWtvUGtYTG1MTXFLWm1sSVhjdmxxdWlVQTU1eE1R?=
- =?utf-8?B?bDBka2dFa016TU40TnpVUVI2bCtsNTNZVHNMSGk0a2dJNGk4NEtjZWZwNmd6?=
- =?utf-8?B?eG5MMlM3RWVNVExwN0htMkQ3VVRKQlgzcUx3dWRoWlIwVXdYUWwvaGJLODFo?=
- =?utf-8?B?QXdFWjNvaTB2ZGMxTEFuamJIcVVvc3NQdEZLTWVGOHhXZ21neVVacEEwUjlF?=
- =?utf-8?B?Y0s3RnlyMTIxRTFhdUNXWUhIdVlBTEF6aDBjbk9tUlZOVGdIUU5zNWg5MGpp?=
- =?utf-8?B?NU1wWlhTM1JIcVE5N0x5M21WQ2s4aHI3T0F2VnVvOCtDOGVCRGtKQm1nOUNH?=
- =?utf-8?B?NnRtcWdPT3pnbFUrRjR0dWMwS05zY3M4OFc1ZkpEVXB0eUZVQVFYS3hOS1Vj?=
- =?utf-8?B?MHN1ejhpQncxajNRRVFBUDZGWlRra1BZVXQrTDVJcFAyamtNRDhBaUNmSDdu?=
- =?utf-8?B?alRzYkZ3c2NjVGdvcm81c3VwVitWUHNITWV1UU10M0c0QTdycXQzNklUSmlm?=
- =?utf-8?B?YXJnbk95ODlBOFBobTQ0cStwdkpuelg3bDBpeitjdmpZWjloYkJpOERySTJV?=
- =?utf-8?B?RWtNSkVIc0J0cWg2cEJTd1pkNHN1eVoyWml2c3dENVlzb0NLM1IwazBsTE15?=
- =?utf-8?B?ak95bHRNdzZ1ZHgrdVFkNXVKZkk2SFMwdFl2VW01bFh4M0x5enJVc2lUTGh6?=
- =?utf-8?B?OW4xRS9jS2JFM211THV0NnF0QVFBVWtBa0ZKMVRhRTNoSWVrSXF3MWtaczBr?=
- =?utf-8?B?SmhFUjdpV01rQlNQcFduaUl2R2kvdlNDZ1FzOWZXRzQ3dVoySkk5QjRCQVZJ?=
- =?utf-8?B?aWRUN1R6aXVYTFFQY0V5dzVUYSt3NzNJNmxiOW40YkRvRmRtaVRsSlR3cjVU?=
- =?utf-8?B?c3laL3Q4UE5WVkFkVHE0SGtxUXJ1VlhLTXY3QjJjVEEyM2R6ZUU1QlF1c010?=
- =?utf-8?B?NFRWaDNhVHVqcjk1dTM5WnlZK3RzeXhINi9XQ0pVTUxYOEg2bjZXSkIyeUhZ?=
- =?utf-8?B?dTNDWmdzVUJ1U0taSDVvb2Raa0l5dTBDSmVzV1I0SWI2d0UzWnp4Vk02ajFE?=
- =?utf-8?B?RVBlVE1aeWlodnpWZSsrWVhWQzRDTXg1ZEwrS1FtOHgvdkJNZzRoS1cwMkEz?=
- =?utf-8?B?NEVlRk9HZy9DR21jT1hBdzY5TUJyUENmQmIzR3VpK003SnFRSm1EamxZTzEx?=
- =?utf-8?B?Z1JQMlNKNTdSckZNdStqNGh4SDBTeENrajh4cWZTbUI4cytIekRlL21MYks4?=
- =?utf-8?B?b1VDTU84MXRPQk5sUnZOL2ZJMUtwa1piTFZxRDFyOEJENUFUZ0IraFhvTHZ6?=
- =?utf-8?Q?DxFN9ZmpBBdp06jdbJQcK5UuW?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	HJKqkdo99TGFkCIYSoRlMwJGhySEXw3Un+/PiqJhTKmJR82K+Y+l33g7hrDawJxuVikiTAcwHUCoqgHAmpKTznc21xA1tckRT/uQmaIG65Ji2Rmskk5Pjt0cAhOJYenka0FkxLCkmI9Tee+VaUS220HDoQjtp7lD6Havf1NXWUYKm6aMvlLzoWguJVwguzk5vBpoF8wZbokyIDt3MpgyXbZX7zdFylKlt14iTMPqjdpxdSWLRYK037/vrncY6FIFuBuP7VmInxNFjWIz/PxWhwiVpZqYWQMtvdujUTWpd/fSBrgtm112Sq7zicCt0USSoutMd6zUc99HLGO349BLfNj60iWEnBegUVNn4fHsECqg8ZGiT97HYKmRLQUPIrJKSHo4XQMc7A/qBqsxesRIShZZFRd+weCkk22rXqkZwK0TXP8U5Ieq/BMXm64ANPWeMDPZixBxb7+IMhE98gQYDG9uG/GbDFob/lbtXCcKV4dDrAR7oGn3aw7LdlErdiVxCD4B1t4e+Vo7RgmYTNdLorbLfBD6zqgzq2YxTUxGMXNRwrOfgBzu5Mb5jtvr8Jy2j1wvDoyZmvUXDB9rZYdN5FJJnOTXD1mzbR4SUAiPwtQ=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9239612e-52df-42d6-ed2c-08dd51be3914
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR10MB7211.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Feb 2025 14:52:40.4064
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: iA10BBmSxyuTsIdSz3AG/pFn3iVDXWzaarIF2k2X+UFHVCYAmzQMw3cI0mxa0+B50caN6oAv9oH2jKxRkB8bVg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR10MB5151
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 0u5j1XQVbruFEpzDEASxZk_uqFo1o6kt
+X-Proofpoint-ORIG-GUID: 0u5j1XQVbruFEpzDEASxZk_uqFo1o6kt
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
  definitions=2025-02-20_06,2025-02-20_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 adultscore=0 bulkscore=0
- mlxlogscore=999 malwarescore=0 suspectscore=0 spamscore=0 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2502100000
- definitions=main-2502200106
-X-Proofpoint-ORIG-GUID: GDhRUBHOnsaFEi3qRgLp5xXVKMLq2DES
-X-Proofpoint-GUID: GDhRUBHOnsaFEi3qRgLp5xXVKMLq2DES
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ impostorscore=0 phishscore=0 malwarescore=0 mlxscore=0 clxscore=1015
+ spamscore=0 suspectscore=0 mlxlogscore=999 lowpriorityscore=0 bulkscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2502200104
 
-On 20-02-2025 01:15 pm, Shrikanth Hegde wrote:
-> 
-> 
-> On 2/19/25 12:16, Sinadin Shan wrote:
->> The sched tests are missing a target entry and hence out-of-tree build
->> support.
->>
->> For instance:
->> make -C tools/testing/selftests install INSTALL_LOCATION=/foo/bar
->>
->> is expected to build the sched tests and place them at /foo/bar.
->> But this is not observed since a TARGET entry is not present for sched.
->>
->> This was suggested by Shuah in this conversation
->> Link: https://lore.kernel.org/linux-kselftest/60dd0240-8e45-4958- 
->> acf2-7eeee917785b@linuxfoundation.org/
->>
->> Add support for sched selftests by adding sched as a default TARGET
->>
->> Signed-off-by: Sinadin Shan <sinadin.shan@oracle.com>
->> ---
->>   tools/testing/selftests/Makefile | 1 +
->>   1 file changed, 1 insertion(+)
->>
->> diff --git a/tools/testing/selftests/Makefile b/tools/testing/ 
->> selftests/Makefile
->> index 8daac70c2f9d2..e2d0d389ad912 100644
->> --- a/tools/testing/selftests/Makefile
->> +++ b/tools/testing/selftests/Makefile
->> @@ -91,6 +91,7 @@ TARGETS += rlimits
->>   TARGETS += rseq
->>   TARGETS += rtc
->>   TARGETS += rust
->> +TARGETS += sched
->>   TARGETS += sched_ext
->>   TARGETS += seccomp
->>   TARGETS += sgx
-> 
-> There is only one test currently in sched: i.e cs_prctl_test.c. to see 
-> the cookies validation when core scheduling is in effect.
-> 
-> If CONFIG_SCHED_CORE=n, the test fails. So you might end up seeing 
-> default selftests failing on such systems? or this is only compiling?>
+On Tue, 2025-02-18 at 14:54 -0800, steven chen wrote:
+> Carrying the IMA measurement list across kexec requires allocating a
+> buffer and copying the measurement records.=C2=A0 Separate allocating the
+> buffer and copying the measurement records into separate functions in
+> order to allocate the buffer at kexec 'load' and copy the measurements
+> at kexec 'execute'.
+>=20
+> This patch includes the following changes:
+> =C2=A0- Refactor ima_dump_measurement_list() to move the memory allocatio=
+n
+> =C2=A0=C2=A0 to a separate function ima_alloc_kexec_file_buf() which allo=
+cates
+> =C2=A0=C2=A0 buffer of size 'kexec_segment_size' at kexec 'load'.
+> =C2=A0- Make the local variable ima_kexec_file in ima_dump_measurement_li=
+st()
+> =C2=A0=C2=A0 a local static to the file, so that it can be accessed from=
+=20
+> =C2=A0=C2=A0 ima_alloc_kexec_file_buf(). Compare actual memory required t=
+o ensure=20
+> =C2=A0=C2=A0 there is enough memory for the entire measurement record.
+> =C2=A0- Copy as many measurement events as possible.
+> =C2=A0- Make necessary changes to the function ima_add_kexec_buffer() to =
+call
+> =C2=A0=C2=A0 the above two functions.
+> =C2=A0- Compared the memory size allocated with memory size of the entire=
+=20
+> =C2=A0=C2=A0 measurement record. If there is not enough memory, it will c=
+opy as many
+> =C2=A0=C2=A0 IMA measurement records as possible, and this situation will=
+ result
+> =C2=A0=C2=A0 in a failure of remote attestation.
+>=20
+> Author: Tushar Sugandhi <tusharsu@linux.microsoft.com>
 
-Yes, this patch would enable the test to be compiled and run by default.
+Steven, thank you again for picking up this patch set.
 
-> Likely the selftests/sched needs to modified for CONFIG_SCHED_CORE=n
+As previously explained, there is no tag named "Author" in
+https://www.kernel.org/doc/Documentation/process/submitting-patches.rst.  T=
+o give credit
+to the original author use "Co-developed-by".  The "Co-developed-by:" tag i=
+s immediately
+followed by the original author's "Signed-off-by:" tag.  Please refer to th=
+e document for
+an example.
 
-Agree. Chris, I suppose then a graceful skip would be a more right 
-option for kernels with core scheduling disabled?
+> Suggested-by: Mimi Zohar <zohar@linux.ibm.com>
 
-Regards,
-Shan
+<--- "Co-developed-by:" would go here.
+> Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+> Signed-off-by: steven chen <chenste@linux.microsoft.com>
+> ---
+> =C2=A0security/integrity/ima/ima.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=
+=C2=A0=C2=A0 1 +
+> =C2=A0security/integrity/ima/ima_kexec.c | 102 +++++++++++++++++++++-----=
+---
+> =C2=A0security/integrity/ima/ima_queue.c |=C2=A0=C2=A0 4 +-
+> =C2=A03 files changed, 77 insertions(+), 30 deletions(-)
+>=20
+> diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+> index 24d09ea91b87..4428fcf42167 100644
+> --- a/security/integrity/ima/ima.h
+> +++ b/security/integrity/ima/ima.h
+> @@ -274,6 +274,7 @@ bool ima_template_has_modsig(const struct ima_templat=
+e_desc
+> *ima_template);
+> =C2=A0int ima_restore_measurement_entry(struct ima_template_entry *entry)=
+;
+> =C2=A0int ima_restore_measurement_list(loff_t bufsize, void *buf);
+> =C2=A0int ima_measurements_show(struct seq_file *m, void *v);
+> +int ima_get_binary_runtime_entry_size(struct ima_template_entry *entry);
+> =C2=A0unsigned long ima_get_binary_runtime_size(void);
+> =C2=A0int ima_init_template(void);
+> =C2=A0void ima_init_template_list(void);
+> diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/=
+ima_kexec.c
+> index 9d45f4d26f73..89088f1fa989 100644
+> --- a/security/integrity/ima/ima_kexec.c
+> +++ b/security/integrity/ima/ima_kexec.c
+> @@ -15,63 +15,97 @@
+> =C2=A0#include "ima.h"
+> =C2=A0
+> =C2=A0#ifdef CONFIG_IMA_KEXEC
+> +static struct seq_file ima_kexec_file;
+> +
+> +static void ima_reset_kexec_file(struct seq_file *sf)
+> +{
+> +	sf->buf =3D NULL;
+> +	sf->size =3D 0;
+> +	sf->read_pos =3D 0;
+> +	sf->count =3D 0;
+> +}
+> +
+> +static void ima_free_kexec_file_buf(struct seq_file *sf)
+> +{
+> +	vfree(sf->buf);
+> +	ima_reset_kexec_file(sf);
+> +}
+> +
+> +static int ima_alloc_kexec_file_buf(size_t segment_size)
+> +{
+> +	/*
+> +	 * kexec 'load' may be called multiple times.
+> +	 * Free and realloc the buffer only if the segment_size is
+> +	 * changed from the previous kexec 'load' call.
+> +	 */
+> +	if (ima_kexec_file.buf && ima_kexec_file.size =3D=3D segment_size)
+> +		goto out;
+> +
+> +	ima_free_kexec_file_buf(&ima_kexec_file);
+> +
+> +	/* segment size can't change between kexec load and execute */
+> +	ima_kexec_file.buf =3D vmalloc(segment_size);
+> +	if (!ima_kexec_file.buf)
+> +		return -ENOMEM;
+> +
+> +	ima_kexec_file.size =3D segment_size;
+> +
+> +out:
+> +	ima_kexec_file.read_pos =3D 0;
+> +	ima_kexec_file.count =3D sizeof(struct ima_kexec_hdr);	/* reserved spac=
+e */
+> +
+> +	return 0;
+> +}
+> +
 
-> 
-> When CONFIG_SCHED_CORE=n
-> ./cs_prctl_test
-> 
-> ## Create a thread/process/process group hierarchy
-> Not a core sched system
-> ...
-> Not a core sched system
-> (283) FAILED: get_cs_cookie(0) == 0
+<--- ima_dump_measurement_list() function comment goes here.
 
+> =C2=A0static int ima_dump_measurement_list(unsigned long *buffer_size, vo=
+id **buffer,
+> =C2=A0				=C2=A0=C2=A0=C2=A0=C2=A0 unsigned long segment_size)
+> =C2=A0{
+> =C2=A0	struct ima_queue_entry *qe;
+> -	struct seq_file file;
+> =C2=A0	struct ima_kexec_hdr khdr;
+> =C2=A0	int ret =3D 0;
+> +	size_t entry_size =3D 0;
+> =C2=A0
+> -	/* segment size can't change between kexec load and execute */
+> -	file.buf =3D vmalloc(segment_size);
+> -	if (!file.buf) {
+> -		ret =3D -ENOMEM;
+> -		goto out;
+> +	if (!ima_kexec_file.buf) {
+> +		pr_err("Kexec file buf not allocated\n");
+> +		return -EINVAL;
+> =C2=A0	}
+> =C2=A0
+> -	file.file =3D NULL;
+> -	file.size =3D segment_size;
+> -	file.read_pos =3D 0;
+> -	file.count =3D sizeof(khdr);	/* reserved space */
+> -
+> =C2=A0	memset(&khdr, 0, sizeof(khdr));
+> =C2=A0	khdr.version =3D 1;
+> =C2=A0	/* This is an append-only list, no need to hold the RCU read lock =
+*/
+> +	/* Copy as many IMA measurements list records as possible */
 
+Having two consecutive comments like this looks weird.  Please refer to sec=
+tion "8)
+Commenting" of https://www.kernel.org/doc/Documentation/process/coding-styl=
+e.rst.=20
+
+The first comment is particular to list_for_each_entry_rcu() and should rem=
+ain here.  The
+latter comment is more generic and should be included as part of a function=
+ comment.
+
+> =C2=A0	list_for_each_entry_rcu(qe, &ima_measurements, later, true) {
+> -		if (file.count < file.size) {
+> +		entry_size +=3D ima_get_binary_runtime_entry_size(qe->entry);
+> +		if (entry_size <=3D segment_size) {
+
+As much as possible splitting a function shouldn't change the existing code=
+.  It makes it
+harder to review.  This sort of change should be a separate patch with the =
+Subject topic
+line something like "ima: copy only complete measurement records across kex=
+ec".  Making
+this change as the first patch in the patch set will also allow it to be ba=
+ckported.
+
+> =C2=A0			khdr.count++;
+> -			ima_measurements_show(&file, qe);
+> +			ima_measurements_show(&ima_kexec_file, qe);
+> =C2=A0		} else {
+> =C2=A0			ret =3D -EINVAL;
+> +			pr_err("IMA log file is too big for Kexec buf\n");
+> =C2=A0			break;
+
+We really DO want to "Copy as many IMA measurements list records as possibl=
+e" as possible.
+However, the code doesn't match the comment, since the caller of
+ima_dump_measurement_list() treats -EINVAL as an error and bails.
+
+> =C2=A0		}
+> =C2=A0	}
+> =C2=A0
+> -	if (ret < 0)
+> -		goto out;
+> -
+> =C2=A0	/*
+> =C2=A0	 * fill in reserved space with some buffer details
+> =C2=A0	 * (eg. version, buffer size, number of measurements)
+> =C2=A0	 */
+> -	khdr.buffer_size =3D file.count;
+> +	khdr.buffer_size =3D ima_kexec_file.count;
+> =C2=A0	if (ima_canonical_fmt) {
+> =C2=A0		khdr.version =3D cpu_to_le16(khdr.version);
+> =C2=A0		khdr.count =3D cpu_to_le64(khdr.count);
+> =C2=A0		khdr.buffer_size =3D cpu_to_le64(khdr.buffer_size);
+> =C2=A0	}
+> -	memcpy(file.buf, &khdr, sizeof(khdr));
+> +	memcpy(ima_kexec_file.buf, &khdr, sizeof(khdr));
+> =C2=A0
+> =C2=A0	print_hex_dump_debug("ima dump: ", DUMP_PREFIX_NONE, 16, 1,
+> -			=C2=A0=C2=A0=C2=A0=C2=A0 file.buf, file.count < 100 ? file.count : 10=
+0,
+> +			=C2=A0=C2=A0=C2=A0=C2=A0 ima_kexec_file.buf, ima_kexec_file.count < 1=
+00 ?
+> +			=C2=A0=C2=A0=C2=A0=C2=A0 ima_kexec_file.count : 100,
+> =C2=A0			=C2=A0=C2=A0=C2=A0=C2=A0 true);
+> =C2=A0
+> -	*buffer_size =3D file.count;
+> -	*buffer =3D file.buf;
+> -out:
+> -	if (ret =3D=3D -EINVAL)
+> -		vfree(file.buf);
+> +	*buffer_size =3D ima_kexec_file.count;
+> +	*buffer =3D ima_kexec_file.buf;
+> +
+> =C2=A0	return ret;
+> =C2=A0}
+> =C2=A0
+> @@ -90,7 +124,7 @@ void ima_add_kexec_buffer(struct kimage *image)
+> =C2=A0
+> =C2=A0	/* use more understandable variable names than defined in kbuf */
+> =C2=A0	void *kexec_buffer =3D NULL;
+> -	size_t kexec_buffer_size;
+> +	size_t kexec_buffer_size =3D 0;
+> =C2=A0	size_t kexec_segment_size;
+> =C2=A0	int ret;
+> =C2=A0
+> @@ -110,13 +144,19 @@ void ima_add_kexec_buffer(struct kimage *image)
+> =C2=A0		return;
+> =C2=A0	}
+> =C2=A0
+> -	ima_dump_measurement_list(&kexec_buffer_size, &kexec_buffer,
+> -				=C2=A0 kexec_segment_size);
+> -	if (!kexec_buffer) {
+> +	ret =3D ima_alloc_kexec_file_buf(kexec_segment_size);
+> +	if (ret < 0) {
+> =C2=A0		pr_err("Not enough memory for the kexec measurement buffer.\n");
+> =C2=A0		return;
+> =C2=A0	}
+> =C2=A0
+> +	ret =3D ima_dump_measurement_list(&kexec_buffer_size, &kexec_buffer,
+> +					kexec_segment_size);
+> +	if (ret < 0) {
+> +		pr_err("Failed to dump IMA measurements. Error:%d.\n", ret);
+> +		return;
+> +	}
+> +
+
+As mentioned above, we really do want to copy as many measurement records a=
+s possible
+across kexec.
+
+> =C2=A0	kbuf.buffer =3D kexec_buffer;
+> =C2=A0	kbuf.bufsz =3D kexec_buffer_size;
+> =C2=A0	kbuf.memsz =3D kexec_segment_size;
+> @@ -131,6 +171,12 @@ void ima_add_kexec_buffer(struct kimage *image)
+> =C2=A0	image->ima_buffer_size =3D kexec_segment_size;
+> =C2=A0	image->ima_buffer =3D kexec_buffer;
+> =C2=A0
+> +	/*
+> +	 * kexec owns kexec_buffer after kexec_add_buffer() is called
+> +	 * and it will vfree() that buffer.
+> +	 */
+> +	ima_reset_kexec_file(&ima_kexec_file);
+> +
+> =C2=A0	kexec_dprintk("kexec measurement buffer for the loaded kernel at 0=
+x%lx.\n",
+> =C2=A0		=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 kbuf.mem);
+> =C2=A0}
+> diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/ima/=
+ima_queue.c
+> index 83d53824aa98..3dfd178d4292 100644
+> --- a/security/integrity/ima/ima_queue.c
+> +++ b/security/integrity/ima/ima_queue.c
+> @@ -78,7 +78,7 @@ static struct ima_queue_entry *ima_lookup_digest_entry(=
+u8
+> *digest_value,
+> =C2=A0 * binary_runtime_measurement list entry, which contains a
+> =C2=A0 * couple of variable length fields (e.g template name and data).
+> =C2=A0 */
+> -static int get_binary_runtime_size(struct ima_template_entry *entry)
+> +int ima_get_binary_runtime_entry_size(struct ima_template_entry *entry)
+> =C2=A0{
+> =C2=A0	int size =3D 0;
+> =C2=A0
+> @@ -122,7 +122,7 @@ static int ima_add_digest_entry(struct ima_template_e=
+ntry *entry,
+> =C2=A0	if (binary_runtime_size !=3D ULONG_MAX) {
+> =C2=A0		int size;
+> =C2=A0
+> -		size =3D get_binary_runtime_size(entry);
+> +		size =3D ima_get_binary_runtime_entry_size(entry);
+> =C2=A0		binary_runtime_size =3D (binary_runtime_size < ULONG_MAX - size) =
+?
+> =C2=A0		=C2=A0=C2=A0=C2=A0=C2=A0 binary_runtime_size + size : ULONG_MAX;
+> =C2=A0	}
+
+This change would be included in the new first patch named something like "=
+ima: copy only
+complete measurement records across kexec".
+
+Thanks,
+
+Mimi
 
