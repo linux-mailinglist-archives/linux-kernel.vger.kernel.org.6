@@ -1,146 +1,157 @@
-Return-Path: <linux-kernel+bounces-523451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EA3EA3D709
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 11:42:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1202A3D759
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 11:52:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF2D53A960B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 10:42:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DC48188F128
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 10:51:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E16861F1302;
-	Thu, 20 Feb 2025 10:42:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BF621F0E4B;
+	Thu, 20 Feb 2025 10:51:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AfWIpzOr"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KVHEoTgg"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5FDF1CAA9C
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 10:42:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0606D1AF0C8;
+	Thu, 20 Feb 2025 10:51:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740048123; cv=none; b=CaJ2leqkGY4cuGRuQOcN6lLiq/CwSiUXoZ0CbLYJHeM/AWNrftokU2jh0JEPLw5HS62BWzLilTcFubr0xvI2eX4hNLPsv6vpGqF8+JSwzTHVJP4vd5s+c3rf2OWbVI8C3hq1VLVzNin/E2+s48RgiE3oz/usrZenR/qTHUKpSnw=
+	t=1740048694; cv=none; b=l8ynQSeamHmuRq/Bl2i+rTJ1aVIWekBbr2UwGiviVu/JVNmGgsjuOAvfyEFZFXMqNvAW/rqHlaWNruzwKd3fy57XXYMGL3EMyotTXR0VbFNeZq4r/KsE3udDgoIiBWKFYF3Vc419Vw5WepdxWp8nIb37Cf3cbxMRqrBTuUmssfM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740048123; c=relaxed/simple;
-	bh=QIh2IXQD2LEe4cEnbvUY6tPd5ieIy9Vn4hFzuKs9E4k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y8B7iXaNyZHwDp9U6XiBJzyHYWCfUZ5SveuKlrjC77HTIayFCwZErhDATj2ugtX+r+C3RDOIloIOUJH0KvaLLT9MQ4Vc7i5K2s+XQebW0NmzQOe8qT/09AAGmtWQcCJ7HoUHJDRWSuCv6VBnHe592kbEKl44p4UxSVfURex3i7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AfWIpzOr; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740048120;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zJLrvrZATxQwSHFwQqhKMeyeyoM6uX/LJNrP1uXVaNA=;
-	b=AfWIpzOrxWjzsDyKcHs2ltKRn1ffUhiX4Zn4ksP0AFAG66RnVIn+2kxTkWMGDIYnHbF7/B
-	ZTb/Ho4b9vjxDDKJHvr89nY1R1NNB9wKuSAmD6LTSlbMrA52ak0YbqFlRe0e1Io5pHfPUg
-	D1enhYpssBoofPiPRuatrGEtd2I6pN4=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-590-HHkdyKk-M7OVs5y2-Wr8jw-1; Thu,
- 20 Feb 2025 05:41:56 -0500
-X-MC-Unique: HHkdyKk-M7OVs5y2-Wr8jw-1
-X-Mimecast-MFC-AGG-ID: HHkdyKk-M7OVs5y2-Wr8jw_1740048114
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E6C2718EB2C3;
-	Thu, 20 Feb 2025 10:41:53 +0000 (UTC)
-Received: from localhost (unknown [10.72.112.127])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3353A300019F;
-	Thu, 20 Feb 2025 10:41:51 +0000 (UTC)
-Date: Thu, 20 Feb 2025 18:41:47 +0800
-From: Baoquan He <bhe@redhat.com>
-To: Kairui Song <kasong@tencent.com>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-	Chris Li <chrisl@kernel.org>, Barry Song <v-songbaohua@oppo.com>,
-	Hugh Dickins <hughd@google.com>,
-	Yosry Ahmed <yosryahmed@google.com>,
-	"Huang, Ying" <ying.huang@linux.alibaba.com>,
-	Nhat Pham <nphamcs@gmail.com>, Johannes Weiner <hannes@cmpxchg.org>,
-	Kalesh Singh <kaleshsingh@google.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 7/7] mm, swap: simplify folio swap allocation
-Message-ID: <Z7cG636IwnSnC65d@MiWiFi-R3L-srv>
-References: <20250214175709.76029-1-ryncsn@gmail.com>
- <20250214175709.76029-8-ryncsn@gmail.com>
+	s=arc-20240116; t=1740048694; c=relaxed/simple;
+	bh=kugZ4ICQ6eJujuYRRoD5lTeRhWACX+VCNrkorfJW3uk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=S+16FZ4PJaBifaQ4r7XHU7yLPfKcfeLZokN5MyM+xwxwMsFMAPmQ9OJOYH1UBImjuI1XV7m8miTxRHGGHhmw9DDSHEOCxxLGDxsnBsrcA43FCKDZvhFxI03Chhea217pKlHCHprPYuORzdPPNEtQNGAje61yGeXmTPEd4VAxCgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KVHEoTgg; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-abb9e81c408so13325666b.2;
+        Thu, 20 Feb 2025 02:51:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740048691; x=1740653491; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=IRd79G85Q0LlojAdRFjUNytWpgLl02au24VSRlRs2qk=;
+        b=KVHEoTggEtAy4mx5CbZ1I9Lr3OyqWGZDDupIZybcE1n7C8MPOVGOxcJsqhmyyNl913
+         SqX8fmb1gADcJ8FVVjRN1q/A5joyareaLX+XlSOVud5F+hCAq6o3omkSRFYo6ZAg1VOo
+         HWs3UPe/4JbxXm30INlbLTbqThzJ6ACUtkk0odp8TwPcEEpnU5UkPHEg0wsgN2HSYysw
+         qjJ7qoD7SWjyh40L5C1SN6WnGFV5TfuB0boYwjdcpNx5v7eMK8zZ5+Q6GlDa+/TZO6N7
+         oW9Pt9NqeVVEXAt+gH8Ec+Jc0tRFJ7HWz4qeuYMSjnnUE/JZkYK7rrPgl97pbO5BRr3v
+         Z0uQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740048691; x=1740653491;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IRd79G85Q0LlojAdRFjUNytWpgLl02au24VSRlRs2qk=;
+        b=r7VJFlkIQ+oyCJJzsv0cSL7Xg0GItdwJCD0YMxexCs9aXnw/ltzY72fEI0gTOLUePH
+         Ek90AZYPkbMF5PT0SeIfcpmC1azoxHzRj1VpWMW8ZsGlhyeD4+FtMZqb9r0b1Bi+jLIR
+         TPtZrWAnlU9gyMAnl/2WdRdXKqNre68WFi8zyBR4LWUNnfQte7e/VhVNJARaDgQX4Hfo
+         XGpeo40yIG2OJjwiZIdd12MFgscP18uMUF19wzJZBHCXQrLe/lIpDJdn8XAgLuEIkCQ3
+         /jng/AyU5NFRMd8qXFuNB8PAWRrUbzc2wQTqgl0lxEJrq6guqNBmV+bg6cxtioXniEzx
+         6qAg==
+X-Forwarded-Encrypted: i=1; AJvYcCWPWH4FqO58dthp5t8g8FOw9XTMjVEC9dG7I013hckSP3e8kr4ss+DpX3tVIymQDyTmuJlraAe1xY8IsIc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWusrpL1ut9LhehJTjOqyoKu7gPo5OoPLS5xYGt+lADT8Kjs50
+	cDMVriBub59bYf0B+E4iWLlu+S5jpiHEmfw9sy/Ojh3TNThyc/IlNM42XPYn
+X-Gm-Gg: ASbGncuEpgsL7Eb93cXXAAST38jh4PF+esY9jYVO/jRtmG9oN8b9xUR0MaczjGtouAA
+	r1KTr1ecgmVvJExPnXTvDTNr693HFGcS9OIkuvKiyfaohSq1ylvOvizVEPK0LHhLXe22rUuRpuU
+	oTwQXljQtw0GNJh8f3Pgqh8egS6gQvbvYfhW0Z2RR6OTBoj2rbhqgOB37V8K5pnl7dU649XR8EX
+	Dyl1pZcWe/AUYt4c0KYwt9pb26TtMqr+HEzOr/gDmmwVlCmYbP16NsRiLaFufDS0p4jCQQFfWuU
+	blVG5ngvg+UK/OJsL8nyxc2t1Qb0cr25lrOuv9+JXRTOAmux9SFRy7/WUUj3u6ue0orqxA==
+X-Google-Smtp-Source: AGHT+IE4hqobH8+b7LWMRSgrP9ZbrPbi2D5lsBSzNGgOgZ4XGJj2X49htf2Noo8lcu0wjPkadcjwWg==
+X-Received: by 2002:a17:906:dc8e:b0:ab6:ed8a:1593 with SMTP id a640c23a62f3a-abb70b49b86mr880405166b.7.1740048158395;
+        Thu, 20 Feb 2025 02:42:38 -0800 (PST)
+Received: from 0f997e1ceb21.v.cablecom.net (84-72-156-211.dclient.hispeed.ch. [84.72.156.211])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abbdfcaed55sm246474866b.137.2025.02.20.02.42.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Feb 2025 02:42:37 -0800 (PST)
+From: Lothar Rubusch <l.rubusch@gmail.com>
+To: lars@metafoo.de,
+	Michael.Hennerich@analog.com,
+	jic23@kernel.org
+Cc: linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	eraretuya@gmail.com,
+	l.rubusch@gmail.com
+Subject: [PATCH v3 00/15] iio: accel: adxl345: add interrupt based sensor events
+Date: Thu, 20 Feb 2025 10:42:19 +0000
+Message-Id: <20250220104234.40958-1-l.rubusch@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250214175709.76029-8-ryncsn@gmail.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+Content-Transfer-Encoding: 8bit
 
-On 02/15/25 at 01:57am, Kairui Song wrote:
-......snip..  
-> -swp_entry_t folio_alloc_swap(struct folio *folio)
-> +/* Rotate the device and switch to a new cluster */
-> +static bool swap_alloc_rotate(swp_entry_t *entry,
-> +			      unsigned char usage,
-> +			      int order)
+Add several interrupt based sensor detection events:
+- single tap
+- double tap
+- free fall
+- activity
+- inactivity
+- sample frequency
+- full frequency g range approach
+- documentation
 
-The function name is misleading which may make people thing it's a HDD
-swap allocation. I would call it swap_alloc_slow() relative to the
-swap_alloc_fast().
+All the needed parameters for each and methods of adjusting them, and
+forward a resulting IIO event for each to the IIO channel.
 
->  {
-> -	unsigned int order = folio_order(folio);
-> -	unsigned int size = 1 << order;
-> -	struct swap_info_struct *si, *next;
-> -	swp_entry_t entry = {};
-> -	unsigned long offset;
->  	int node;
-> +	unsigned long offset;
-> +	struct swap_info_struct *si, *next;
->  
-> -	if (order) {
-> -		/*
-> -		 * Should not even be attempting large allocations when huge
-> -		 * page swap is disabled. Warn and fail the allocation.
-> -		 */
-> -		if (!IS_ENABLED(CONFIG_THP_SWAP) || size > SWAPFILE_CLUSTER) {
-> -			VM_WARN_ON_ONCE(1);
-> -			return entry;
-> -		}
-> -	}
-> -
-> -	/* Fast path using percpu cluster */
-> -	local_lock(&percpu_swap_cluster.lock);
-> -	if (swap_alloc_fast(&entry, SWAP_HAS_CACHE, order))
-> -		goto out_alloced;
-> -
-> -	/* Rotate the device and switch to a new cluster */
-> +	node = numa_node_id();
->  	spin_lock(&swap_avail_lock);
->  start_over:
-> -	node = numa_node_id();
->  	plist_for_each_entry_safe(si, next, &swap_avail_heads[node], avail_lists[node]) {
-> +		/* Rotate the device and switch to a new cluster */
->  		plist_requeue(&si->avail_lists[node], &swap_avail_heads[node]);
->  		spin_unlock(&swap_avail_lock);
->  		if (get_swap_device_info(si)) {
->  			offset = cluster_alloc_swap_entry(si, order, SWAP_HAS_CACHE);
->  			put_swap_device(si);
->  			if (offset) {
-> -				entry = swp_entry(si->type, offset);
-> -				goto out_alloced;
-> +				*entry = swp_entry(si->type, offset);
-> +				return true;
->  			}
->  			if (order)
-> -				goto out_failed;
-> +				return false;
->  		}
->  
->  		spin_lock(&swap_avail_lock);
+Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
+---
+v2 -> v3:
+- generally introduction of regmap cache for all directly stored 8-bit
+  values, specification of volatile regs and cleanup
+- moving thresholds, unchanged values and flags to regmap cache, in
+  consequence removal of corresponding member values of the state
+  instance
+- removal of intio and int_map member fields due to regmap cache, thus
+  split of set_interrupts() patches in two parts
+- rework documentation
+- rework of ac-bit comment
+
+v1 -> v2:
+- implementation of all events (but tap2 suppress bit) by means IIO ABI
+- add sample frequency / ODR configuration
+- add g ranges configuration
+- add activity/inactivity using auto-sleep and powersave
+- add dynamic adjustment of default values for
+  activity/inactivity thresholds and time for inactivity based on ODR
+  and g range (can be overwritten)
+- add sensor documentation
+
+---
+Lothar Rubusch (15):
+  iio: accel: adxl345: reorganize measurement enable
+  iio: accel: adxl345: add debug register access
+  iio: accel: adxl345: reorganize irq handler
+  iio: accel: adxl345: use regmap cache for INT mapping
+  iio: accel: adxl345: move INT enable to regmap cache
+  iio: accel: adxl345: add single tap feature
+  iio: accel: adxl345: add double tap feature
+  iio: accel: adxl345: add double tap suppress bit
+  iio: accel: adxl345: add freefall feature
+  iio: accel: adxl345: extend sample frequency adjustments
+  iio: accel: adxl345: add g-range configuration
+  iio: accel: adxl345: add activity event feature
+  iio: accel: adxl345: add inactivity feature
+  iio: accel: adxl345: add coupling detection for activity/inactivity
+  docs: iio: add documentation for adxl345 driver
+
+ Documentation/iio/adxl345.rst    |  406 +++++++++
+ drivers/iio/accel/adxl345.h      |    7 +-
+ drivers/iio/accel/adxl345_core.c | 1449 +++++++++++++++++++++++++++---
+ drivers/iio/accel/adxl345_i2c.c  |    2 +
+ drivers/iio/accel/adxl345_spi.c  |    2 +
+ 5 files changed, 1762 insertions(+), 104 deletions(-)
+ create mode 100644 Documentation/iio/adxl345.rst
+
+-- 
+2.39.5
 
 
