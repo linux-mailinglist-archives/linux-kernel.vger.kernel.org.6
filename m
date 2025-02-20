@@ -1,117 +1,245 @@
-Return-Path: <linux-kernel+bounces-524720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A6DEA3E645
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 22:04:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87E0BA3E64B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 22:05:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D3353BF1EB
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 21:03:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 631FF422EDF
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 21:04:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C0E61EDA1C;
-	Thu, 20 Feb 2025 21:03:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61FC2264627;
+	Thu, 20 Feb 2025 21:04:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cV/p1Gqh"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZxTuacAB"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49ED222087;
-	Thu, 20 Feb 2025 21:03:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27BD11DF735;
+	Thu, 20 Feb 2025 21:04:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740085427; cv=none; b=lp+dWA+vwjO5NHyW7qE8z3MKltAmz8w0e0RBb9ioMR6PUc2Y8o0TDz36OGrso1z5Kv982wJhBzNtGHG4gT8kmIEIsoWlIFVdqUvk0gdXyHlojrDToPuAVNZeTrID94sa2iDmMOBoUuVywYUeNBxl9Kn5uHHcHgZ24wFuFPf9Tgk=
+	t=1740085444; cv=none; b=YHnUnUo7N873SAN6KRgHyc8bt8TF0gLsSM4o6tuQUdLrhxU95i2VU1FZrZbPA7DxyXKhq4Nq5cBJRBblt+POVkqN75877p8LF8zGzi4A45hyGLmaBiTx66yyCWqwbeozJiWAViNmYiDot+F+unotJn9jRbToW2OizyarLSr840I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740085427; c=relaxed/simple;
-	bh=rkSiACBg6yH6Wh57AsJ2Ha+dHnFxsBhGAna6YaneR7Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WEEFaiK3mxSNLm7EDc+ywaMVbg1STODpgbHfsOohqFW31Z7uv4IXvKVm8OgQVxuj5mYIQV8TX0NWpdIse6yPOBh70jg8GJx914EJLTApSTMeikqQuYN1WvZhR6zalMcT/bqq1v6tf5KDnLDm3Nw9SJO4nrqj34aMFuf5pOmvY8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cV/p1Gqh; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740085425; x=1771621425;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=rkSiACBg6yH6Wh57AsJ2Ha+dHnFxsBhGAna6YaneR7Y=;
-  b=cV/p1GqhDkiXxIAAWPe3etX77LiC/SYxgKoolh0rYCRQoCIFZ+8NFnta
-   CirH6Su3XUYOLA+Wcd87lNyA5NQxrB3lsq5D7nBwtvNhlf0eH8Ku/Hbef
-   BwoJdFhjwb31qLKU/64lIs4HXQ0/8yP50imian45GQ48fivhDMk36fcnM
-   7OyphbC9ibZvIIkeyW4oVEEDEUAMp2IolwH97DEK5uLJGBxmnFUp5VqV1
-   VFvsXZJLX6l6WYGCnDexHX63HtM9c1Q+TCmoEIuOlDyiVxZWGLyvv0ue0
-   +2H4+ThIdA2ZaTSNYoBs10ytMK0r5Z/T+ZTfEqRXpFQojeX4K6SZlzmpZ
-   w==;
-X-CSE-ConnectionGUID: VqtrV4z/QtiGG/xah4yd4w==
-X-CSE-MsgGUID: TcZCSIz/SF+biMl10Pub+w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11351"; a="41150841"
-X-IronPort-AV: E=Sophos;i="6.13,302,1732608000"; 
-   d="scan'208";a="41150841"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Feb 2025 13:03:45 -0800
-X-CSE-ConnectionGUID: iWasBvpKR1q5d8ehRJGJnw==
-X-CSE-MsgGUID: 1apVVLN1RjSTQH3UniS6ow==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="120401941"
-Received: from puneetse-mobl.amr.corp.intel.com (HELO [10.125.110.112]) ([10.125.110.112])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Feb 2025 13:03:44 -0800
-Message-ID: <6db41e2e-4a88-4b1b-9cd3-6cb74ea2e846@intel.com>
-Date: Thu, 20 Feb 2025 14:03:41 -0700
+	s=arc-20240116; t=1740085444; c=relaxed/simple;
+	bh=KH6yptrVoHjVdEEYO4fzP+SSTQw2pLGG01gPyKQOk7k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F/WyXQvuRrxTSLFa+ZaZLeFZgmSfEzaIAXxZXFhtthYbtuyFCE3wDFvXUnCLtlbnlqXOTlh5on7rV3a5vdIKXC5BMnGEhhNjmYJvlGzA27bkRuFUQCw7cgs47CZE14tV/abF9TB2YWqHok0w+6uGhj7XwPHjJIVBx1xU7OHAtdU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZxTuacAB; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-220ec47991aso19266175ad.1;
+        Thu, 20 Feb 2025 13:04:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740085442; x=1740690242; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=keV+C7HuG/BR9Xl+0GCyBf7ymrkmWeF1SazpD4+k360=;
+        b=ZxTuacABZ5YOwTBQvRN2rrGYtxkZfWVmiPRK2X4akQqyTauoFAcqwVFW9LVY9pxu4F
+         fxfWrvm5t4FVR3NlcpNy+QoiJujZHpUvkepdrTQAaJ+sOP1rkSrt5AOF4dbqZ72X3nDD
+         ue0b85vp9WQcF15YdLtNxFlvlIsxlyz05HEH0FwRH5CKZ+gxdcpeaRxbufLFrMJkxTko
+         jz6jLwz8DdxBfWHNs+BtJGvtDxOHr1gaE6sO7e6dc23eJ3c/A7SMeVCI+9Y7bNJ6nLTE
+         5i+wQTRUpXWckXid0swezSbF0mc1X53FCULB3S7ijLIkc0dC4VcQxEKujdoxf5x2ep81
+         RLbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740085442; x=1740690242;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=keV+C7HuG/BR9Xl+0GCyBf7ymrkmWeF1SazpD4+k360=;
+        b=Skf3SS1gxxLpWrQ/OahEcHDQjDuiZTg5uPpTP5/wr+c/uDQy4jUXhJkzvH655GO8uL
+         oWMSBBI0T4hVIU86FGTCqVdmXsmU7IOQGD6KuQ4zp4ccdJPbmNbebabQx+HtMdMaGWrr
+         FGMKtfqkaDTdzAJU1plJW377OrP0L5ykkVC3p/cnjENOg7nfckOkvz+Hp1MMCI1VwZtj
+         HR9sWMX0BhycGgAx2chO1x4++2yimHUSsCSMX5PLgMWcENoLPtl2l9ZkdP7GPO4nLDpV
+         RwGtzz21ceBDhHijTTK00wdetgiATXggp3hRPaLoHmHJLQ/Tl1oxkXnOx2FCy0quOC7K
+         /Ayg==
+X-Forwarded-Encrypted: i=1; AJvYcCUTCK3peQi7+AHFNgoOuycjD4M2xPMBFMZ0nTMMVVpY8fR4S+YFE50SxTySVrSH1ttkIbCsfcaVRedT@vger.kernel.org, AJvYcCWCGGSKF1J2c/9ULQC2rvUqNBzsDOOo20n+Q0rhJwYL5+DZiBLJ9DVCkJIGVrmasnr6DUM=@vger.kernel.org, AJvYcCWHNFAjVVHZqL3YhzCP/cV+hUTzJrTSTqY7l2fcKygFyhFfs6xHfwkBL5iv8AHwuSiORJk2LSWuP4YipWK+@vger.kernel.org, AJvYcCXeB49Ovm+B9kApFnif6TdcL2uU0OsX5u+KLgAsElOjcGOv61wQGOyUhupLfSkFuocFdIgqp71pHQ37hJp+FluH@vger.kernel.org
+X-Gm-Message-State: AOJu0YxeYB2ouSLYZhYUj/OA4+OUaDdG2fPgSAGHoasVU5CCpcXwLIkU
+	rX1VDoaAtn25XYZT2/uzY3rBaeNgW7WWj/uXBCJA70faEE/cXZw=
+X-Gm-Gg: ASbGnctYwGd1LqzxQ97Udlrw9joXKPD7RjqMYAzKqMFpX8gpZy4ayhbWbbSs1k/XCgN
+	7oGH3lkmTnQupvDvYL0HQd6Cwp5upOdG1r9o0/IHzQb10M27g3iKnhLtCGMNorzdS2sjfxXGrrr
+	5+LjkmqXkFNzi/VG2lI4ZUiPmb8wwrx8p7oyb28sT7TGe1VqJL+ALrMSzV5hpgL4/eLG/QqVdmc
+	QpWyaU7C77ckzX4gCgACcNqM3ytBKyUOWwOFgnPZGerTduyr1tk/N3VEYJsVZMVRx2F/t4xMVnb
+	XshYbtzlnxOJBK8=
+X-Google-Smtp-Source: AGHT+IFWQl3OYv6bwFItuWow2gk/r95ziBtMPww6Leolb64qsq+wq8UcmTTlx891rb3hnwG5aPaoFg==
+X-Received: by 2002:a17:902:ea06:b0:215:acb3:3786 with SMTP id d9443c01a7336-2219ff4eccbmr9785315ad.19.1740085442409;
+        Thu, 20 Feb 2025 13:04:02 -0800 (PST)
+Received: from localhost ([2601:646:9e00:f56e:123b:cea3:439a:b3e3])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-220d536439bsm125465845ad.81.2025.02.20.13.04.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Feb 2025 13:04:01 -0800 (PST)
+Date: Thu, 20 Feb 2025 13:04:01 -0800
+From: Stanislav Fomichev <stfomichev@gmail.com>
+To: Mina Almasry <almasrymina@google.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, virtualization@lists.linux.dev,
+	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	Jeroen de Borst <jeroendb@google.com>,
+	Praveen Kaligineedi <pkaligineedi@google.com>,
+	Shailend Chand <shailend@google.com>,
+	Kuniyuki Iwashima <kuniyu@amazon.com>,
+	Willem de Bruijn <willemb@google.com>,
+	David Ahern <dsahern@kernel.org>,
+	Neal Cardwell <ncardwell@google.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Eugenio =?utf-8?B?UMOpcmV6?= <eperezma@redhat.com>,
+	Stefan Hajnoczi <stefanha@redhat.com>,
+	Stefano Garzarella <sgarzare@redhat.com>,
+	Shuah Khan <shuah@kernel.org>, sdf@fomichev.me,
+	asml.silence@gmail.com, dw@davidwei.uk,
+	Jamal Hadi Salim <jhs@mojatatu.com>,
+	Victor Nogueira <victor@mojatatu.com>,
+	Pedro Tammela <pctammela@mojatatu.com>,
+	Samiullah Khawaja <skhawaja@google.com>
+Subject: Re: [PATCH net-next v4 5/9] net: add devmem TCP TX documentation
+Message-ID: <Z7eYwVrnTjgFV3XF@mini-arch>
+References: <20250220020914.895431-1-almasrymina@google.com>
+ <20250220020914.895431-6-almasrymina@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 01/15] cxl: Modify address translation callback for
- generic use
-To: Gregory Price <gourry@gourry.net>, Robert Richter <rrichter@amd.com>
-Cc: Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- Dan Williams <dan.j.williams@intel.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Davidlohr Bueso <dave@stgolabs.net>, linux-cxl@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
- Terry Bowman <terry.bowman@amd.com>
-References: <20250218132356.1809075-1-rrichter@amd.com>
- <20250218132356.1809075-2-rrichter@amd.com>
- <Z7dRrz9D22p3urfI@gourry-fedora-PF4VCD3F>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <Z7dRrz9D22p3urfI@gourry-fedora-PF4VCD3F>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250220020914.895431-6-almasrymina@google.com>
 
-
-
-On 2/20/25 9:00 AM, Gregory Price wrote:
-> On Tue, Feb 18, 2025 at 02:23:42PM +0100, Robert Richter wrote:
->> The root decoder address translation callback could be reused for
->> other decoders too. For generic use of the callback, change the
->> function interface to use a decoder argument instead of the root
->> decoder.
->>
->> Note that a root decoder's HPA is equal to its SPA, but else it may be
+On 02/20, Mina Almasry wrote:
+> Add documentation outlining the usage and details of the devmem TCP TX
+> API.
 > 
-> slighlty better wording:
-> "but it may different for non-root decoders"
+> Signed-off-by: Mina Almasry <almasrymina@google.com>
 
-This change helped me understand what that sentence was trying to say.
+With a few nits below:
+
+Acked-by: Stanislav Fomichev <sdf@fomichev.me>
 
 > 
->> different. Thus, change the name of the function type to
->> cxl_to_hpa_fn.
-
-I would also drop the "thus" so it's in imperative tone. 
-
->>
->> Signed-off-by: Robert Richter <rrichter@amd.com>
+> ---
 > 
-> Reviewed-by: Gregory Price <gourry@gourry.net>
+> v4:
+> - Mention SO_BINDTODEVICE is recommended (me/Pavel).
 > 
+> v2:
+> - Update documentation for iov_base is the dmabuf offset (Stan)
+> 
+> ---
+>  Documentation/networking/devmem.rst | 150 +++++++++++++++++++++++++++-
+>  1 file changed, 146 insertions(+), 4 deletions(-)
+> 
+> diff --git a/Documentation/networking/devmem.rst b/Documentation/networking/devmem.rst
+> index d95363645331..10928a5f912f 100644
+> --- a/Documentation/networking/devmem.rst
+> +++ b/Documentation/networking/devmem.rst
+> @@ -62,15 +62,15 @@ More Info
+>      https://lore.kernel.org/netdev/20240831004313.3713467-1-almasrymina@google.com/
+>  
+>  
+> -Interface
+> -=========
+> +RX Interface
+> +============
+>  
+>  
+>  Example
+>  -------
+>  
+> -tools/testing/selftests/net/ncdevmem.c:do_server shows an example of setting up
+> -the RX path of this API.
+> +./tools/testing/selftests/drivers/net/hw/ncdevmem:do_server shows an example of
+> +setting up the RX path of this API.
+>  
+>  
+>  NIC Setup
+> @@ -235,6 +235,148 @@ can be less than the tokens provided by the user in case of:
+>  (a) an internal kernel leak bug.
+>  (b) the user passed more than 1024 frags.
+>  
+> +TX Interface
+> +============
+> +
+> +
+> +Example
+> +-------
+> +
+> +./tools/testing/selftests/drivers/net/hw/ncdevmem:do_client shows an example of
+> +setting up the TX path of this API.
+> +
+> +
+> +NIC Setup
+> +---------
+> +
+> +The user must bind a TX dmabuf to a given NIC using the netlink API::
+> +
+> +        struct netdev_bind_tx_req *req = NULL;
+> +        struct netdev_bind_tx_rsp *rsp = NULL;
+> +        struct ynl_error yerr;
+> +
+> +        *ys = ynl_sock_create(&ynl_netdev_family, &yerr);
+> +
+> +        req = netdev_bind_tx_req_alloc();
+> +        netdev_bind_tx_req_set_ifindex(req, ifindex);
+> +        netdev_bind_tx_req_set_fd(req, dmabuf_fd);
+> +
+> +        rsp = netdev_bind_tx(*ys, req);
+> +
+> +        tx_dmabuf_id = rsp->id;
+> +
+> +
+> +The netlink API returns a dmabuf_id: a unique ID that refers to this dmabuf
+> +that has been bound.
+> +
+> +The user can unbind the dmabuf from the netdevice by closing the netlink socket
+> +that established the binding. We do this so that the binding is automatically
+> +unbound even if the userspace process crashes.
+> +
+> +Note that any reasonably well-behaved dmabuf from any exporter should work with
+> +devmem TCP, even if the dmabuf is not actually backed by devmem. An example of
+> +this is udmabuf, which wraps user memory (non-devmem) in a dmabuf.
+> +
+> +Socket Setup
+> +------------
+> +
+> +The user application must use MSG_ZEROCOPY flag when sending devmem TCP. Devmem
+> +cannot be copied by the kernel, so the semantics of the devmem TX are similar
+> +to the semantics of MSG_ZEROCOPY.
+> +
+> +	setsockopt(socket_fd, SOL_SOCKET, SO_ZEROCOPY, &opt, sizeof(opt));
+> +
+> +It is also recommended that the user binds the TX socket to the same interface
+> +the dma-buf has been bound to via SO_BINDTODEVICE.
+> +
+> +	setsockopt(socket_fd, SOL_SOCKET, SO_BINDTODEVICE, ifname, strlen(ifname) + 1);
+> +
+> +
+> +Sending data
+> +--------------
 
+               ^^ extra junk
+
+> +Devmem data is sent using the SCM_DEVMEM_DMABUF cmsg.
+> +
+> +The user should create a msghdr where,
+> +
+> +iov_base is set to the offset into the dmabuf to start sending from.
+> +iov_len is set to the number of bytes to be sent from the dmabuf.
+
+nit: maybe bullet point the above?
+
+The user should create a msghdr with the following set of msg_iov:
+
+* iov_base is set to the offset into the dmabuf to start sending from
+* iov_len is set to the number of bytes to be sent from the dmabuf
 
