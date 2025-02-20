@@ -1,137 +1,196 @@
-Return-Path: <linux-kernel+bounces-522941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 565BFA3D05E
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 05:20:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 43C3FA3D060
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 05:22:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F7A5188661F
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 04:20:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F61C189E9EA
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 04:22:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5ED71DFD98;
-	Thu, 20 Feb 2025 04:19:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22C171DFDAB;
+	Thu, 20 Feb 2025 04:22:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="GgYKJAJT"
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="H3K0DN2e"
+Received: from smtpbgjp3.qq.com (smtpbgjp3.qq.com [54.92.39.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2DF21DEFFC
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 04:19:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 807211DF97F;
+	Thu, 20 Feb 2025 04:22:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.92.39.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740025197; cv=none; b=IxeFVsZbgRcCCxUv2+MRlV7Eqrb4dPNPOmSR5PfFuvKPkqucAoS99ncY9TgAsOGZ/2JdErO2MtrIF3jTh1wAPKkIvTCukaUFt65gzDoTDpOWVAooz3KxPpThHh2p4W9RIqjmvMvOWECwCjTiRSuOjuxPAq3gcZSmmiVta9T1SE8=
+	t=1740025338; cv=none; b=KeAutpTf2oymMDZO/hwwB8DL4IfggPfhXCM2+NKrYvkYLiuLkbYPzDtQT4E+Mju1Ze+cSN58PufrVLqpSOGDUwB+J8mVgbI9XVtcdj5CE3DmpYa7WsB9aMF4U+J6laqlSV6U/TNY4GUbc88SHL0+rfp8L7TpSkWdnN3c31L8EoY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740025197; c=relaxed/simple;
-	bh=lPF33hTjr8gCKvWnHfEwO/a5Inh/srwa5zAEePCfwaY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kgExPfhmg4aKLYEyPi22sXeQK1DwI5GbRdEL4Gw+grr+7vbD43Xf2XHT85Q0itFF0DD1uQibA+b/IntcIQ/WQcnHb4LEPlkfXFC8074PpgHGHE9L/6NscljRxBn3BNL7j8rvQa3J5N6llRhLRA5LugrxKQJMFwOEIiuRFueeb8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=GgYKJAJT; arc=none smtp.client-ip=209.85.216.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2fc4418c0b9so774495a91.0
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 20:19:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1740025195; x=1740629995; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=1guhW82eeWquTt2CEyxnqbnegZGM8zsatvuN9vRWU6U=;
-        b=GgYKJAJTOX6ClvId8r36WccY+bB0Ke9m7PHDj2nMb8ieD2Ewl+zOqGd3bShqrTgHaA
-         86SmW6ImEITGcMIT1CjzT+HSPz4trOxYgN3d8yVy6UCvE+FW9kLl2N/B9lwpqvr9C8NU
-         eAbt1VmdJL6IOM8h3ky1h2HW5bRsqxlcYPczE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740025195; x=1740629995;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1guhW82eeWquTt2CEyxnqbnegZGM8zsatvuN9vRWU6U=;
-        b=ud+XgDHP61vvvz8ScW7lCf1RRWGbzRJj7VeApQ76NCoqWt/eNs4o5TvN4nLTXRUE4j
-         tAHdU5lSEnqRuzBBFKaJXuEyiEqSXTZeQgds/R5u7Kz3AErUxPHzBlBwLfbgHsTK5JGb
-         vbZvbhMBq60vH8UsaCjIfKKwAgUaHE9dR+FOdqqBg9rPEWk+DEx+EPxSk7UN0XGmbish
-         djqrcxnLRZ4e5MI/It07z4A20rg4aTeNob9/q1HdyuvIlbgEIQNLWjM8NEa5+HnDN0Bk
-         RqByv5KKHLWoVmbkPc2RUzNaeA/56Rk6S1anpFf9uGpmg22Lh3vQwDsQyHMbn62Y5YJu
-         iEFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVvNk5AH6qjb5D0Yq0f0r3whZTQMlqWHEZUWSjJtbR5NqII1awAJxx0O5cc0ygLlxu8mKQsPt25dGHHF4E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIa51wbnV09bufOWMw2n5hHb0bNntM0YnccDONL6igRdlmU/Kx
-	yKIkMMlxopYUjcxldTuZHpjE8ajDYZGxJRsbtJkSYqIkT/X38m06FvGkr/vHmQ==
-X-Gm-Gg: ASbGncvuGUAO6vIYjsNGaTx3PVCSIAsaWzSkG71a8tn4V/1diRUcmB33c8TJUMJHpkd
-	n1TBDWs7MjfyoyVSXYvKfq/xVnpKaxzZwyJJ4xdElwfXsSkm6gRiffR9RX6pviofxwJ2/lpH/5H
-	e9vxwOBczvVwbfs1YZBatKFznVwmvN3MJALX0UUdlclYabhIuiYHYykAJyup06jRCZ9jKPDYmiZ
-	v7IhlUYB819BVOp9pG74t7p5Tw9rWNk3WgozpROrf+Ugc+zJW2DISTg7NbKEI/sxqh0OEEx5xWs
-	l6jAq8y6aP9CdN/N/no=
-X-Google-Smtp-Source: AGHT+IEltPMfgtQhVZ0dQG0v1P099D7vde3veq/4xhclX8N/PJrWK6HsbG46xV8T8CL676zNThnv6A==
-X-Received: by 2002:a17:90b:3ec3:b0:2ea:3f34:f18f with SMTP id 98e67ed59e1d1-2fcb5a39326mr9355970a91.19.1740025194915;
-        Wed, 19 Feb 2025 20:19:54 -0800 (PST)
-Received: from google.com ([2401:fa00:8f:203:9c92:f424:750b:8e42])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fc13ab0fe7sm12801138a91.10.2025.02.19.20.19.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Feb 2025 20:19:54 -0800 (PST)
-Date: Thu, 20 Feb 2025 13:19:46 +0900
-From: Sergey Senozhatsky <senozhatsky@chromium.org>
-To: Waiman Long <llong@redhat.com>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Boqun Feng <boqun.feng@gmail.com>, 
-	Joel Granados <joel.granados@kernel.org>, Anna Schumaker <anna.schumaker@oracle.com>, 
-	Lance Yang <ioworker0@gmail.com>, Kent Overstreet <kent.overstreet@linux.dev>, 
-	Yongliang Gao <leonylgao@tencent.com>, Tomasz Figa <tfiga@chromium.org>, linux-kernel@vger.kernel.org, 
-	Linux Memory Management List <linux-mm@kvack.org>
-Subject: Re: [PATCH 1/2] hung_task: Show the blocker task if the task is hung
- on mutex
-Message-ID: <20250220-112040-neomutt-senozhatsky@chromium.org>
-References: <173997003868.2137198.9462617208992136056.stgit@mhiramat.tok.corp.google.com>
- <173997004932.2137198.7959507113210521328.stgit@mhiramat.tok.corp.google.com>
- <20250219112308.5d905680@gandalf.local.home>
- <0fa9dd8e-2d83-487e-bfb1-1f5d20cd9fe6@redhat.com>
- <20250219152435.35077ac3@gandalf.local.home>
- <20250220080908.fc1494f0f7c611b48fbe0f8b@kernel.org>
- <20250220-112040-neomutt-senozhatsky@chromium.org>
- <524bd2b9-5322-4012-b1d0-b76edb84ec4f@redhat.com>
+	s=arc-20240116; t=1740025338; c=relaxed/simple;
+	bh=ZpbQYYqPfBwqAi+EvQ56HTQ50vCGCqHqA9vlVu5HsHQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Uv2CV5ggE7i1q0KrbaQ6bFxg7ZYI7hAz6wYUZcYX+Vr3/NvJExf298We5JVcAK1bDHztg5yRmNDPLFmFs0Lfy5jJV/gpYdJ2kQSFfunAkaBERAaLzaVJcKME6dKG693XesH1G//4CHbmlgqTLoDA8n9sLay08RFoa58bNi0Mqd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=H3K0DN2e; arc=none smtp.client-ip=54.92.39.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1740025295;
+	bh=snU/JuNdQbqD/yBp3kwEH7MmPngVPYjJTzwEBOQ5weU=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=H3K0DN2eFiq6AzZB0meYM0lHVq37OeSD+fijuPmQFSHlwmNR9rZAEDwRxKcv8awSq
+	 7s7m1vcNYbeRqIBZwLZioV8BWeU3xt7FJIsCghQJZFLPQItFzmy5BC6bZH6g7jsNXl
+	 o6u/UljspLA0U+QT5mpDcrZ4CK4XgPjYGqVxV5w4=
+X-QQ-mid: bizesmtpip2t1740025242treh9xo
+X-QQ-Originating-IP: 3KC212wm0bcFBkDU6Pf1UmgXiopVepGDyXZaqzVIgWc=
+Received: from localhost.localdomain ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Thu, 20 Feb 2025 12:20:40 +0800 (CST)
+X-QQ-SSF: 0002000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 10374400301936631136
+From: WangYuli <wangyuli@uniontech.com>
+To: chenhuacai@kernel.org,
+	kernel@xen0n.name,
+	rafael@kernel.org,
+	lenb@kernel.org
+Cc: wangyuli@uniontech.com,
+	maobibo@loongson.cn,
+	guanwentao@uniontech.com,
+	loongarch@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Jonathan.Cameron@huawei.com,
+	dan.j.williams@intel.com,
+	alison.schofield@intel.com,
+	rrichter@amd.com,
+	bfaccini@nvidia.com,
+	dave.jiang@intel.com,
+	haibo1.xu@intel.com,
+	rppt@kernel.org,
+	linux-acpi@vger.kernel.org,
+	zhanjun@uniontech.com,
+	niecheng1@uniontech.com,
+	chenlinxuan@uniontech.com
+Subject: [PATCH] ACPI: NUMA: Move get_numa_distances_cnt() helper to needed location
+Date: Thu, 20 Feb 2025 12:20:37 +0800
+Message-ID: <D87315C93AF20D4E+20250220042037.942802-1-wangyuli@uniontech.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <524bd2b9-5322-4012-b1d0-b76edb84ec4f@redhat.com>
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: OM0exKGC/eNyJV+qTER9+vsTDDZeCB+mx1flhOzFE6pkbKc/gWYnDHN8
+	rQNsyOrlx7nAu3c+paJGIFBmTQhEb8a8ZkGKX2qmlgHReg6hmrKsVpjj6qCWLxZf4aPdT01
+	GGNS0oSkEskywGuX6I2Gg9AfTnOUGbzev/z+kgjlmOsYqOAhz2g94ny4kaSzJ51d9iFi05d
+	gk3otcF9FQnGQRMmXQ1mMCu2j5EDkUm5vaDhy/GdB5ypNE3UaS4G8T15X6goWKThUuE2hCR
+	D67FLqb7ILV+xI3FHURzxHlnXFrHuvXW2ZY9dVZmxjGqXG4o485VSSkbyKM4IemqHF9Pm4X
+	Ta0SVN+DLTMGfrE0jZD41WewWgYmplBe8sH8kzSVkBHIdK1RnvlY9d3VUg4Y72LOroQkbNr
+	yQ2rlzrQRNtGHAJPaHw49Ark3GQw62wSylrM5nicNaQZ28dZwHwbMY/sfuPiLYM85HrswlG
+	74lSguauGgfi+jjZSG7TUAbGVqaiztL0IEvqqBjtelJmoEbOu4lUlfU0gSvSuy9Y77lxCoi
+	JirOtEjcEbXSDuh7KyF0FYK0rzFNaYk2hGaRmvtd3UvAbW8Js368YvvN+kRXp12FKI0FVtz
+	Fb3Hjf0KmwhoqgRSc/AZn8FLU8CHbpOuie640208HD3yqrcjYpECqy9NiTl5qslFEwFGEd4
+	CYrS3z2jisj5hxw+lCq5rAYkNIsrClas6sMFnumtmp8fImfEhTHUvXcT1vy3GuGETXvyE0X
+	sEWYR7Djtp4gFV7+tA6soYtastl5fBCwPCKXqnq3p9uV7Aeey8IKJZkEocSEIuV2nOWOnMb
+	uaCv02sFYxtyVMqMjE/a92EuJ0HfrZByvzW6erEavSsLSRIZENQWdMksQRmEnrUyS+2x8e1
+	1QKeQTDixNNSrFxGM5ngFiDhgwj8A3tSTc/GQHUGBnvLf8ucTHgUYa5iIwL4/w3jplVfUwQ
+	Z2qex1hwKBDWkPKw6gOUVr7/Qy8fN/J0zXygI5YKctYh07OV4cg8lPWGh7AFetx+WWf8wka
+	I1ro0UEv8IdbRrysaP
+X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
+X-QQ-RECHKSPAM: 0
 
-On (25/02/19 22:49), Waiman Long wrote:
-> On 2/19/25 9:45 PM, Sergey Senozhatsky wrote:
-> > On (25/02/20 08:09), Masami Hiramatsu wrote:
-> > > So something like this?
-> > > 
-> > > unsigned int	block_flags;
-> > > union {
-> > > 	struct mutex	*mutex;
-> > > 	struct rwsem	+rwsem;
-> > > 	struct rtmutex	*rtmutex;
-> > > } blocked_on;
-> > > 
-> > > enum {
-> > > 	BLOCKED_ON_MUTEX;
-> > > 	BLOCKED_ON_RWSEM;
-> > > 	BLOCKED_ON_RTMUTEX;
-> > > 	BLOCKED_ON_IO;
-> > > } block_reason;
-> > I totally like this and always wanted to have something simlar,
-> > something for all "sleepable" synchronization primitives, lightweight
-> > enough (memory and CPU usage wise) to run on consumer devices.  I was
-> > thinking of a rhashtable where each entry represents "sleepable"
-> > primitive with a "owner" pointer and a list of "blocked on" tasks.
-> > But I'm sure you'll have a better idea.
-> > 
-> > If I may add a couple of "wishes", can we also add:
-> > - completions (so that things like wait_for_completion and
-> >    synchronize srcu get covered)
-> > - wait on bit (so that things like lock_buffer and so on get covered)
-> 
-> Bit lock doesn't have a owner field to track the owning task.
+In LoongArch, get_numa_distances_cnt() was not in use, resulting in
+a compiler warning.
 
-Right, so that's why I was thinking about keeping it outside in
-a hashtable.  A list of owners plus a list of blocked_on per "lock",
-be it a rwsem, or a mutex, or a bit.
+Serendipitously, drivers/acpi/numa/srat.c appears to be a more
+relevant location for this helper function, hence its relocation.
+
+This commit not only resolves these immediate concerns but also sets
+the groundwork for potential future integration of ACPI related logic
+from other architectures into this driver module.
+
+Separately, the locality_count member in struct acpi_table_slit is
+typed as u64. Adapt the function type to eliminate potential code
+risks.
+
+Fix follow errors with clang-18 when W=1e:
+
+arch/loongarch/kernel/acpi.c:259:28: error: unused function 'get_numa_distances_cnt' [-Werror,-Wunused-function]
+  259 | static inline unsigned int get_numa_distances_cnt(struct acpi_table_slit *slit)
+      |                            ^~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+
+Signed-off-by: WangYuli <wangyuli@uniontech.com>
+---
+ arch/loongarch/kernel/acpi.c |  5 -----
+ drivers/acpi/numa/srat.c     | 13 +++++++++----
+ 2 files changed, 9 insertions(+), 9 deletions(-)
+
+diff --git a/arch/loongarch/kernel/acpi.c b/arch/loongarch/kernel/acpi.c
+index ee471a80763e..90cc9250f121 100644
+--- a/arch/loongarch/kernel/acpi.c
++++ b/arch/loongarch/kernel/acpi.c
+@@ -256,11 +256,6 @@ static __init int setup_node(int pxm)
+  */
+ unsigned int numa_distance_cnt;
+ 
+-static inline unsigned int get_numa_distances_cnt(struct acpi_table_slit *slit)
+-{
+-	return slit->locality_count;
+-}
+-
+ void __init numa_set_distance(int from, int to, int distance)
+ {
+ 	if ((u8)distance != distance || (from == to && distance != LOCAL_DISTANCE)) {
+diff --git a/drivers/acpi/numa/srat.c b/drivers/acpi/numa/srat.c
+index 00ac0d7bb8c9..36053ae3dad6 100644
+--- a/drivers/acpi/numa/srat.c
++++ b/drivers/acpi/numa/srat.c
+@@ -283,6 +283,11 @@ acpi_table_print_srat_entry(struct acpi_subtable_header *header)
+ 	}
+ }
+ 
++static inline u64 get_numa_distances_cnt(struct acpi_table_slit *slit)
++{
++	return slit->locality_count;
++}
++
+ /*
+  * A lot of BIOS fill in 10 (= no distance) everywhere. This messes
+  * up the NUMA heuristics which wants the local node to have a smaller
+@@ -292,7 +297,7 @@ acpi_table_print_srat_entry(struct acpi_subtable_header *header)
+ static int __init slit_valid(struct acpi_table_slit *slit)
+ {
+ 	int i, j;
+-	int d = slit->locality_count;
++	u64 d = get_numa_distances_cnt(slit);
+ 	for (i = 0; i < d; i++) {
+ 		for (j = 0; j < d; j++) {
+ 			u8 val = slit->entry[d*i + j];
+@@ -337,20 +342,20 @@ static int __init acpi_parse_slit(struct acpi_table_header *table)
+ 		return -EINVAL;
+ 	}
+ 
+-	for (i = 0; i < slit->locality_count; i++) {
++	for (i = 0; i < get_numa_distances_cnt(slit); i++) {
+ 		const int from_node = pxm_to_node(i);
+ 
+ 		if (from_node == NUMA_NO_NODE)
+ 			continue;
+ 
+-		for (j = 0; j < slit->locality_count; j++) {
++		for (j = 0; j < get_numa_distances_cnt(slit); j++) {
+ 			const int to_node = pxm_to_node(j);
+ 
+ 			if (to_node == NUMA_NO_NODE)
+ 				continue;
+ 
+ 			numa_set_distance(from_node, to_node,
+-				slit->entry[slit->locality_count * i + j]);
++				slit->entry[get_numa_distances_cnt(slit) * i + j]);
+ 		}
+ 	}
+ 
+-- 
+2.47.2
+
 
