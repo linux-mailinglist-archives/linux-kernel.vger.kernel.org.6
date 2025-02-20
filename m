@@ -1,192 +1,118 @@
-Return-Path: <linux-kernel+bounces-523589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF2B1A3D8C5
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:34:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF120A3D8CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:35:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 53E431774CB
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 11:31:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDD123BEBFA
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 11:32:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4835A1F37BC;
-	Thu, 20 Feb 2025 11:31:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A2431F30A4;
+	Thu, 20 Feb 2025 11:32:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EZRVPLJt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="GOPexkO6"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98E2F1F150A;
-	Thu, 20 Feb 2025 11:31:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA8381D5CC6;
+	Thu, 20 Feb 2025 11:32:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740051095; cv=none; b=CLza0tIUgRs2dL3JJgw6Z7Dg5hOVeH7HRt3BxyAtosGDr43a9OpnUSczK0rJZ5khyelYbmxP0B1ObWowYVbXCYfB52ucOzjqHxNtZWoZpy48wYuKZzsFfI7NeslDHXUdhV6KgWU547G1uYjML2cwrj3hGKTcpJgaDkwVQEXjqvU=
+	t=1740051156; cv=none; b=EG0kYGw/ivymudgC7smKF9Q7cAs0r20Xc+goUJgcy6hn1heyHsnHZQPaDM2GqSeeO88pgRk3MCgNBFBuUK7Odctf3apRUXpYgb+rPwz4/E4K+PD9l4Uy/Mx04C93VVIKosOuSBJQjKt2JgEOVJcZrsYhBiVEQF9qbwQ7CDkNJDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740051095; c=relaxed/simple;
-	bh=+YgQGxrFni52QVQyqbITt31UYjErObaKrGzH0GffrDo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=WU0VhZDuyG8uTMykc8jZ702qQx/Wavs3Fc28yMbdXb0eeuPBRyu3rvolLTny4AylBYAXFHDEYgl0eJNPcRvy1bpRe1jPC5GWyTkxI6XeJZVdpVScQG3gwQ33JIZOUZCsK5FAyWNMR75TAtDR3nMZqWaH1CJyPHnSF2YIrJQAHwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EZRVPLJt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 0DEAEC4CED1;
-	Thu, 20 Feb 2025 11:31:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740051095;
-	bh=+YgQGxrFni52QVQyqbITt31UYjErObaKrGzH0GffrDo=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=EZRVPLJt89KCMZlV/Q7ROznbkUOrvVVBTWrH+qBdptgHGXAFZBLPAJto1YCGPi8mB
-	 UWyVm5nkfWIc3p6aCytgsgarzOOxhvmQc1hKPrAl/wIE7TatmkfBHBGeiykUAJY5EJ
-	 orJ1pKuWYi3XdMaka2rOWH2RH/xyrc+2MO3tRZx6JpnTEgSSH5xgG2rHFEwcThY3zA
-	 Jupl3d3fn13c4BSmLHsEzD6j5qZP0matBx6WdFtvNLalAltI1gsbZB6J55Owhb3tzX
-	 Grq6cyYQH0+Oizt3yycThUzNV/8vBOS3EI3ylmCq14wgitPz6eLs7b//kaff+HXWbh
-	 OyZjWdgZsUuww==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE01AC021B1;
-	Thu, 20 Feb 2025 11:31:34 +0000 (UTC)
-From: =?utf-8?q?J=2E_Neusch=C3=A4fer_via_B4_Relay?= <devnull+j.ne.posteo.net@kernel.org>
-Date: Thu, 20 Feb 2025 12:31:24 +0100
-Subject: [PATCH v3] dt-bindings: powerpc: Add Freescale/NXP MPC83xx SoCs
+	s=arc-20240116; t=1740051156; c=relaxed/simple;
+	bh=wzxlpv90u5xvYt4zcTq5GJZVHOFyXpboSAcPpUzatbo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lAM5pg5U8FybWdjSKnoaOvLUXl+dH+UfhJf0Xu9aDM6hES5724hF2kreUdI1vG1W1wBkfjS3x5o1EUy926ltnAi3EFaB1T9j/mNnJT0eilSKQLJR45Erhj8985d0+LBgnjFwu4+75uc2GJZhjM7DqgK89oLeeF5BvZ0BIeTmb84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=GOPexkO6; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=UvsjlNFZFcOavkEr/eA5yIqt8c8rmuut9onsJ6T1myg=; b=GOPexkO6l0wY2VzBt84xrK68QR
+	vjzvgvNLwkOAQf0CM4ganqHdnx0uoIOsqQKUdzRIZnn7xP0Gbg2xlaE16H7IQYrFbmRwUCVSYgBzV
+	9Ekza2ALzsguzXzvaE6WJUX3xcj+goEWPwMb2G1udTRsPjSEi7TSEWqookSUlwGlcW4XxyBy0ITnh
+	LKynVWyyIQ5H8GegPFM+He+eIxeNOcf5FwIrmoWovoYfV8BgPZz5yTT7W5TyovPInk/1XRoB6PJlI
+	rBSRYmtcrgi41MIt9vaOBWMDzodJCZYvZ92imslKCLxYECmcCAmxBdSDyJmX/nrcR8BNsEKy8p6vU
+	vmJO1SWg==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tl4n6-00000009QRN-0yNZ;
+	Thu, 20 Feb 2025 11:32:28 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id D6303300677; Thu, 20 Feb 2025 12:32:27 +0100 (CET)
+Date: Thu, 20 Feb 2025 12:32:27 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: K Prateek Nayak <kprateek.nayak@amd.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Ben Segall <bsegall@google.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Andy Lutomirski <luto@kernel.org>, linux-kernel@vger.kernel.org,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>, Mel Gorman <mgorman@suse.de>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Clark Williams <clrkwllms@kernel.org>,
+	linux-rt-devel@lists.linux.dev, Tejun Heo <tj@kernel.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Barret Rhoden <brho@google.com>, Petr Mladek <pmladek@suse.com>,
+	Josh Don <joshdon@google.com>, Qais Yousef <qyousef@layalina.io>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	David Vernet <dvernet@meta.com>,
+	"Gautham R. Shenoy" <gautham.shenoy@amd.com>,
+	Swapnil Sapkal <swapnil.sapkal@amd.com>
+Subject: Re: [RFC PATCH 00/22] sched/fair: Defer CFS throttling to exit to
+ user mode
+Message-ID: <20250220113227.GL34567@noisy.programming.kicks-ass.net>
+References: <20250220093257.9380-1-kprateek.nayak@amd.com>
+ <20250220105558.GJ34567@noisy.programming.kicks-ass.net>
+ <b2386349-2879-4dce-afb0-f6486c24c117@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250220-ppcyaml-soc-v3-1-b8c98a61bc1a@posteo.net>
-X-B4-Tracking: v=1; b=H4sIAIsSt2cC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyjHUUlJIzE
- vPSU3UzU4B8JSMDI1MDIyMD3YKC5MrE3Bzd4vxk3eTEVMM0Q5PkNGMLSyWgjoKi1LTMCrBp0bG
- 1tQDQw/PdXQAAAA==
-X-Change-ID: 20250220-ppcyaml-soc-cae1f14cf389
-To: Scott Wood <oss@buserror.net>, 
- Madhavan Srinivasan <maddy@linux.ibm.com>, 
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
- Christophe Leroy <christophe.leroy@csgroup.eu>, 
- Naveen N Rao <naveen@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linuxppc-dev@lists.ozlabs.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- =?utf-8?q?J=2E_Neusch=C3=A4fer?= <j.ne@posteo.net>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1740051094; l=3092;
- i=j.ne@posteo.net; s=20240329; h=from:subject:message-id;
- bh=NAj+Jqp8KPeLt4L556NresRK/7mtlfJD3BTkH6XEDfQ=;
- b=svr6EYY1rL3k+PY+Cs6q2u237DnQIj+3pXfKA5mT8jlrXmGEKRocbcBDlYHRe97Q4p7MfMFu1
- S0bDZ6K3hzaBbFzQJovWtbkKg34hQmOcP9jjL5yXQ+iLk3a+XHakeX/
-X-Developer-Key: i=j.ne@posteo.net; a=ed25519;
- pk=NIe0bK42wNaX/C4bi6ezm7NJK0IQE+8MKBm7igFMIS4=
-X-Endpoint-Received: by B4 Relay for j.ne@posteo.net/20240329 with
- auth_id=156
-X-Original-From: =?utf-8?q?J=2E_Neusch=C3=A4fer?= <j.ne@posteo.net>
-Reply-To: j.ne@posteo.net
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b2386349-2879-4dce-afb0-f6486c24c117@amd.com>
 
-From: "J. Neuschäfer" <j.ne@posteo.net>
+On Thu, Feb 20, 2025 at 04:48:58PM +0530, K Prateek Nayak wrote:
 
-Add a new binding for MPC83xx platforms, describing the board compatible
-strings used in currently existing device trees.
+> The rationale there was with growing number of tasks on cfs_rq, the
+> throttle path has to perform a lot of dequeues and the unthrottle at
+> distribution has to enqueue all the dequeued threads back.
+> 
+> This is one way to keep all the tasks queued but allow pick to only
+> select among those that are preempted in kernel mode.
+> 
+> Since per-task throttling needs to tag, dequeue, and re-enqueue each
+> task, I'm putting this out as an alternate approach that does not
+> increase the complexities of tg_tree walks which Ben had noted on
+> Valentin's series [1]. Instead we retain the per cfs_rq throttling
+> at the cost of some stats tracking at enqueue and dequeue
+> boundaries.
+> 
+> If you have a strong feelings against any specific part, or the entirety
+> of this approach, please do let me know, and I'll do my best to see if
+> a tweaked approach or an alternate implementation can scale well with
+> growing thread counts (or at least try to defend the bits in question if
+> they hold merit still).
+> 
+> Any and all feedback is appreciated :)
 
-Note that the SoC bus is called immr@... in many existing devicetrees,
-but this contradicts the simple-bus binding.
+Pfff.. I hate it all :-)
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-Signed-off-by: J. Neuschäfer <j.ne@posteo.net>
----
-V3:
-- split out as a single patch
-- otherwise no changes
+So the dequeue approach puts the pain on the people actually using the
+bandwidth crud, while this 'some extra accounting' crap has *everybody*
+pay for this nonsense, right?
 
-V2:
-- part of series [PATCH v2 00/12] YAML conversion of several Freescale/PowerPC DT bindings
-  Link: https://lore.kernel.org/lkml/20250207-ppcyaml-v2-1-8137b0c42526@posteo.net/
-- trim subject line
-- fix property order to comply with dts coding style
-- add Rob Herrings's R-b tag
----
- .../bindings/powerpc/fsl/fsl,mpc83xx.yaml          | 67 ++++++++++++++++++++++
- 1 file changed, 67 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/powerpc/fsl/fsl,mpc83xx.yaml b/Documentation/devicetree/bindings/powerpc/fsl/fsl,mpc83xx.yaml
-new file mode 100644
-index 0000000000000000000000000000000000000000..1d7ed67473ca447e0fd2e9b8f30d20e18c601ccf
---- /dev/null
-+++ b/Documentation/devicetree/bindings/powerpc/fsl/fsl,mpc83xx.yaml
-@@ -0,0 +1,67 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/powerpc/fsl/fsl,mpc83xx.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Freescale PowerQUICC II Pro (MPC83xx) platforms
-+
-+maintainers:
-+  - J. Neuschäfer <j.ne@posteo.net>
-+
-+properties:
-+  $nodename:
-+    const: '/'
-+  compatible:
-+    oneOf:
-+      - description: MPC83xx Reference Design Boards
-+        items:
-+          - enum:
-+              - fsl,mpc8308rdb
-+              - fsl,mpc8315erdb
-+              - fsl,mpc8360rdk
-+              - fsl,mpc8377rdb
-+              - fsl,mpc8377wlan
-+              - fsl,mpc8378rdb
-+              - fsl,mpc8379rdb
-+
-+patternProperties:
-+  "^soc@.*$":
-+    type: object
-+    properties:
-+      compatible:
-+        oneOf:
-+          - items:
-+              - enum:
-+                  - fsl,mpc8315-immr
-+                  - fsl,mpc8308-immr
-+              - const: simple-bus
-+          - items:
-+              - const: fsl,mpc8360-immr
-+              - const: fsl,immr
-+              - const: fsl,soc
-+              - const: simple-bus
-+          - const: simple-bus
-+
-+additionalProperties: true
-+
-+examples:
-+  - |
-+    / {
-+        compatible = "fsl,mpc8315erdb";
-+        model = "MPC8315E-RDB";
-+        #address-cells = <1>;
-+        #size-cells = <1>;
-+
-+        soc@e0000000 {
-+            compatible = "fsl,mpc8315-immr", "simple-bus";
-+            reg = <0xe0000000 0x00000200>;
-+            #address-cells = <1>;
-+            #size-cells = <1>;
-+            device_type = "soc";
-+            ranges = <0 0xe0000000 0x00100000>;
-+            bus-frequency = <0>;
-+        };
-+    };
-+
-+...
-
----
-base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
-change-id: 20250220-ppcyaml-soc-cae1f14cf389
-
-Best regards,
--- 
-J. Neuschäfer <j.ne@posteo.net>
-
-
+I'm not sure how bad this extra accounting is, but I do fear death by a
+thousand cuts.
 
