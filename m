@@ -1,85 +1,85 @@
-Return-Path: <linux-kernel+bounces-524695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5683A3E5ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 21:37:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BE35A3E5EF
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 21:37:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6927E3A2EA9
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 20:37:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CD1D188CD83
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 20:38:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AED220485B;
-	Thu, 20 Feb 2025 20:37:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33578214210;
+	Thu, 20 Feb 2025 20:37:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PmpSPMKK"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GEOiuSWk"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F2761DE896
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 20:37:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7BFA1E9B29
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 20:37:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740083823; cv=none; b=jggO7+CEwZFOFlkUTxTgbNcncVHA5HOgGQm9iu+Wpmb0BrMNtBuZm7SZPJ6OAbpmm3aB/gEshQ+fpinByv0Ha4voEOwK04fw+lxnsfDorsBthrpIXMeBqy5hDdDRHbtMeKUeXF0zyik2rhqYejx99S2L6QquU0gs77D3GYgBatY=
+	t=1740083868; cv=none; b=PEhTqqbZXPgugOoUtS5tpSJS7AqLmuEsuYHZRxXDdd01z4K6mfAgmY7IX7chAf/dHAM/DiQMUjONUCc8N/j5nei6RsYYkQT8yWZqL5gGAKE2wRCRij/KiEwHiYElGYVr89VninrC5XZ4blhxNpQI77RVQvSaB9KDKDLw/cMzqnk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740083823; c=relaxed/simple;
-	bh=dIKzHTrLcGdCFTzsH2Ihl0C8Yzic0mbstVpJ7SbAfP8=;
+	s=arc-20240116; t=1740083868; c=relaxed/simple;
+	bh=VeYwEj+Oulu/vT6AMdDBujciBinxjGVC4xu2APv1nNY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Un1oD4juxgq/HuOEmwJEjxa8ok8QlqXqC9jRw0VjdmwUZokb5Rt250SoxpEdAxjsdEJIyDk/jG9fkqoZABhp/ejfJF/K7APjUtfd3qifapIjBMGHGmyJmSQ6aaZ0eeppYn4asBcZBikPw0SlEJ6M5cJU1gTOfryUCzdZhzBBzTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PmpSPMKK; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:Content-Type; b=TZ2zV8F6mkCcqAfPd0SjhYwawApoWI8SFR0XI+XYXSUHFzaH1B1DGUyQLbJKFcKJx9KRXTHefMPRenwxpuiXnJ+N2oC71/t9VCs7Y3A/iD76dHSqd8VdNvOhCJcdDk2ZL+7GkxQcqx9nyBU86KYWY0GaR6H43Yzk6m+PKDxFzbc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GEOiuSWk; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740083819;
+	s=mimecast20190719; t=1740083865;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=IMhy9qiICvzONWp5u6SxcMcMKcO6AHzHEe89orkSRsM=;
-	b=PmpSPMKK1ynMxmTOKkIQ3FUZ2UydWo222UmalUQ0mQeOlHae0NCo/jzz9zExlzz5TvAUxB
-	bq8KfXEAQyH19nNZ8JnPjac5fGmMj7cHnrG0caQmpP3L7AVHCAS9/ACUwplvQpOd8qedkj
-	SoUy/8py+nGWgHHWsw22T0Z5n5zea98=
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
- [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=8t4gQ1JMFD1FIhHE3k4ie/A6wJVY2Cs3xyygQZCuQmk=;
+	b=GEOiuSWkoxMxPeuI+YOe42BOD2sl+wxr93os9xtL4YDN1dDM53XkDJSPeYbgOmHkJ64d70
+	YxnQZ/YHWtzAkNHGvt1KJ9Ifc7kqyrLvbJiBm/BaklNgRWkCgNsLbhOI4zkrbTki12C/mw
+	7dzw3BtvZkuzxq5cdUOgBCyIKVN/te8=
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
+ [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-54-GAQk1KrqMymTgUxL6BuDAg-1; Thu, 20 Feb 2025 15:36:58 -0500
-X-MC-Unique: GAQk1KrqMymTgUxL6BuDAg-1
-X-Mimecast-MFC-AGG-ID: GAQk1KrqMymTgUxL6BuDAg_1740083818
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7c0b7ee195bso248451285a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 12:36:58 -0800 (PST)
+ us-mta-502-S0c3qE5OOOqDeoO2_9mFHw-1; Thu, 20 Feb 2025 15:37:38 -0500
+X-MC-Unique: S0c3qE5OOOqDeoO2_9mFHw-1
+X-Mimecast-MFC-AGG-ID: S0c3qE5OOOqDeoO2_9mFHw_1740083858
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7c09b9c6991so201848885a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 12:37:38 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740083818; x=1740688618;
+        d=1e100.net; s=20230601; t=1740083858; x=1740688658;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IMhy9qiICvzONWp5u6SxcMcMKcO6AHzHEe89orkSRsM=;
-        b=karClU/cnhwx4CsuBC8bWpjeUdYn1hrQhG/OzXY2HVm1Jo6O0TVxWqm76K9uFoqHZO
-         EsCPhQ6GPBnDaWtj4Xbl4khg6Tw7cBwCobMBjMYrUsUalyLltS2+xBKwtJbLsbo5kRX7
-         mSH5BiGEyDMCw7u5mutFeAiD6eivPwI4fvdg/Ksq/2uAo/1h6tou9xm45ZJKzpIDIx9z
-         jmtgvPjQpFMCSWj4lQ//+hFvVzSD9FIIIM+AdyJnmMUi+Ym/rI6w2fpshg5YO/9rlXk/
-         3Ixk+AbBx7OItV6FjLXtYPdtXOvuCN+Cp8XGVzxOSTJPGv9tS2DOHBdypaOzGIGSX5y3
-         T4yA==
-X-Forwarded-Encrypted: i=1; AJvYcCVBKMlkeEJ7b49NcluG/sN7Y6x9U6DESZt8RoorNDIkegvctEnzZG2iTOpPtNuiEfsHaN/dr/bptsT0Sjg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxmwj2hljddGlbaw+2kxZB3W+KK/SCNVGtdLJ9IyCyx8AQ1jZKs
-	dGcbKLILSGyPBEEI88vZzsFl8ZwKkUu/v1A8sLgYj/isDVrpqjuhosQb/2eY7kIqLht7blWh+zD
-	EjNkPnkT7A1KBRf99U3ZUWcR8Wpj0MUFuS6v/dhl8xOrT7sqg0a9t+TlUTjV7MQ==
-X-Gm-Gg: ASbGncvJqE+Nm3CxnLer4wtd6azEt3etOUzeckGexidNb3C1XkMvsBenjlWmDBUIFkX
-	ZmLz504Ab+Bk8v0a2ll4RDuqXfZJkblF7OVGtyO03W52DpLPUXPpYEeGKryOToQdnt4ClProC2q
-	O2pcu0vlLCjhIZ40QBYB0ZXHurpagu4l7HOF5aKwP0aw/yZObo36mpeEPvQM275yN0ggBGDcqhG
-	0Kc32AfAmqjmPxiEVld5xkJO/rugdP6WQl7vY4rd9sBlVPELQ7+JE9GnPzdA4441gvW9wkgWN5J
-	y8qk
-X-Received: by 2002:a05:620a:269f:b0:7c0:c568:2ab9 with SMTP id af79cd13be357-7c0cf953f67mr30937685a.35.1740083818088;
-        Thu, 20 Feb 2025 12:36:58 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IF4OTd1+4Kk9zClIjp8SNBVcJyux52H4N1MVp9g47S8DyVsnoN7iPs0orNbXKfk0IPgzBwf+w==
-X-Received: by 2002:a05:620a:269f:b0:7c0:c568:2ab9 with SMTP id af79cd13be357-7c0cf953f67mr30933585a.35.1740083817755;
-        Thu, 20 Feb 2025 12:36:57 -0800 (PST)
+        bh=8t4gQ1JMFD1FIhHE3k4ie/A6wJVY2Cs3xyygQZCuQmk=;
+        b=SACMipd7oNNCNjhz+SHu4GSAiM3n/Lag3f93HMYZuZCEV70/VzkadR7nN+wkwiS+5Q
+         YQAUADzep8VcTEfDp8nJ/JYK0JiGDn5JsY4mKBZDMIwcLc+W5Dcj8wfVg1VRJi5pn4vp
+         TXx9NjyFMpiNtlLDsIlbmW1DEXm1yPCkqgM7sb4pZT+ZeOOm4dQT7wG1fsMBbe9iyB/D
+         7nQFnO/XsmlboAe+jlFeKdISR5EV2YlknIfOnKkrUcVW7a2ylqB49srxfQjhrxVvuF3O
+         l7Tst5pcUHoZx6zT6/ELQfiM3HYbFwuNXNlAiQDtZ20WxymDVGkNGaIKO36gSASkb7/I
+         rZIw==
+X-Forwarded-Encrypted: i=1; AJvYcCXfBuO3zc/Euq3QDXdGiZnWw8DXG5hnpTW85ILXeOYIpGEv5qdgLVg06voV1+mmbUFwRDUrjCekBf8cToU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwlgdUTMd+eA0Xgc/6KIkH6pDzyr2yrFEHI/cFTL5MYULbCOg32
+	xnfSlY4JoqMLoWwF23I5z6gJlVs3XMSFCSd+y8DKDmoUFicp6DxBW9zHtCLMfdJ9MSE/Y6M8brF
+	n1RhgyGMmbe5s2Vah7h1zz/yrkQz6kChwqVcz6Tf5J7zHjDqx17BXnKz8JEeDaw==
+X-Gm-Gg: ASbGncvl7GWyE9B5sPYOZTYTPXkYXy/IoQhZ/ktqYHq9Xw4lagJH8PUVhPI/pijQGXM
+	hA9fw32fQl9Pw7rl91vlqUelSPothZr+SEgTy770Mmb0PibEwBbSEyWPrJ+772on5EyF5HLH5Gj
+	l1F6SRnAolP/CGbl74A5Eq2cd+2uDp7b9qXUqugUxu/LJdBNfiw79QWRL57Mv1AM9kL5TAzu0YM
+	9OEVWCL8scNgSsmiY9G7yyc9JRmC/l36Pp9ndj1rsS+lIdSAln+EwcJRDyWIkf+uBOYU9VeBxbD
+	hglq
+X-Received: by 2002:a05:620a:1b94:b0:7c0:c7c7:5b08 with SMTP id af79cd13be357-7c0cf8aee9bmr41207685a.5.1740083858219;
+        Thu, 20 Feb 2025 12:37:38 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGQnPB9fIqgx7TSd4yBAmNnmM+SXL1P3mBIPVdAnB4Bp74kZ5q41R7E3sPDOBIl20xeYuY8gQ==
+X-Received: by 2002:a05:620a:1b94:b0:7c0:c7c7:5b08 with SMTP id af79cd13be357-7c0cf8aee9bmr41203985a.5.1740083857850;
+        Thu, 20 Feb 2025 12:37:37 -0800 (PST)
 Received: from [192.168.2.110] ([70.52.22.87])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c096e87af7sm561315085a.79.2025.02.20.12.36.57
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e65d9f3458sm89316446d6.92.2025.02.20.12.37.37
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Feb 2025 12:36:57 -0800 (PST)
-Message-ID: <0a8bd481-0b97-416d-935e-84828016445d@redhat.com>
-Date: Thu, 20 Feb 2025 15:36:46 -0500
+        Thu, 20 Feb 2025 12:37:37 -0800 (PST)
+Message-ID: <45f945af-d1f4-4509-841b-1199288d12c0@redhat.com>
+Date: Thu, 20 Feb 2025 15:37:26 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,203 +87,108 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] mm: page_ext: add an iteration API for page
- extensions
+Subject: Re: [PATCH 2/4] mm: page_table_check: use new iteration API
 To: David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org,
  linux-mm@kvack.org, yuzhao@google.com, pasha.tatashin@soleen.com
 Cc: akpm@linux-foundation.org, hannes@cmpxchg.org, muchun.song@linux.dev
 References: <cover.1739931468.git.luizcap@redhat.com>
- <3f0e058aef3951b39cf6bb4259c247352d4fe736.1739931468.git.luizcap@redhat.com>
- <4cb93166-29fd-4aea-965b-5dfb62d4dc8c@redhat.com>
+ <85f11743d259d5e4a1f47456fbcda82ff6db9ab3.1739931468.git.luizcap@redhat.com>
+ <fdef74f3-ada8-40c7-afea-9a0105f5c05f@redhat.com>
 Content-Language: en-US, en-CA
 From: Luiz Capitulino <luizcap@redhat.com>
-In-Reply-To: <4cb93166-29fd-4aea-965b-5dfb62d4dc8c@redhat.com>
+In-Reply-To: <fdef74f3-ada8-40c7-afea-9a0105f5c05f@redhat.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 2025-02-20 05:59, David Hildenbrand wrote:
+On 2025-02-20 06:05, David Hildenbrand wrote:
 > On 19.02.25 03:17, Luiz Capitulino wrote:
->> The page extension implementation assumes that all page extensions of
->> a given page order are stored in the same memory section. The function
->> page_ext_next() relies on this assumption by adding an offset to the
->> current object to return the next adjacent page extension.
+>> The page_ext_next() function assumes that page extension objects for a
+>> page order allocation always reside in the same memory section, which
+>> may not be true and could lead to crashes. Use the new page_ext
+>> iteration API instead.
 >>
->> This behavior works as expected for flatmem but fails for sparsemem when
->> using 1G pages. The commit cf54f310d0d3 ("mm/hugetlb: use __GFP_COMP for
->> gigantic folios") exposes this issue, making it possible for a crash when
->> using page_owner or page_table_check page extensions.
+>> Fixes: cf54f310d0d3 ("mm/hugetlb: use __GFP_COMP for gigantic folios")
+>> Signed-off-by: Luiz Capitulino <luizcap@redhat.com>
+>> ---
+>>   mm/page_table_check.c | 39 ++++++++++++---------------------------
+>>   1 file changed, 12 insertions(+), 27 deletions(-)
 >>
->> The problem is that for 1G pages, the page extensions may span memory
->> section boundaries and be stored in different memory sections. This issue
->> was not visible before commit cf54f310d0d3 ("mm/hugetlb: use __GFP_COMP
->> for gigantic folios") because alloc_contig_pages() never passed more than
->> MAX_PAGE_ORDER to post_alloc_hook(). However, the series introducing
->> mentioned commit changed this behavior allowing the full 1G page order
->> to be passed.
->>
->> Reproducer:
->>
->>   1. Build the kernel with CONFIG_SPARSEMEM=y and table extensions
->>      support
->>   2. Pass 'default_hugepagesz=1 page_owner=on' in the kernel command-line
->>   3. Reserve one 1G page at run-time, this should crash (backtrace below)
->>
->> To address this issue, this commit introduces a new API for iterating
->> through page extensions. The main iteration loops are for_each_page_ext()
->> and for_each_page_ext_order(). Both must be called with the RCU read
->> lock taken. Here's an usage example:
->>
->> """
->> struct page_ext_iter iter;
->> struct page_ext *page_ext;
->>
->> ...
->>
->> rcu_read_lock();
->> for_each_page_ext_order(page, order, page_ext, iter) {
->>     struct my_page_ext *obj = get_my_page_ext_obj(page_ext);
->>     ...
->> }
->> rcu_read_unlock();
->> """
->>
+>> diff --git a/mm/page_table_check.c b/mm/page_table_check.c
+>> index 509c6ef8de400..b52e04d31c809 100644
+>> --- a/mm/page_table_check.c
+>> +++ b/mm/page_table_check.c
+>> @@ -62,24 +62,20 @@ static struct page_table_check *get_page_table_check(struct page_ext *page_ext)
+>>    */
+>>   static void page_table_check_clear(unsigned long pfn, unsigned long pgcnt)
+>>   {
+>> +    struct page_ext_iter iter;
+>>       struct page_ext *page_ext;
+>>       struct page *page;
+>> -    unsigned long i;
+>>       bool anon;
+>>       if (!pfn_valid(pfn))
+>>           return;
+>>       page = pfn_to_page(pfn);
+>> -    page_ext = page_ext_get(page);
+>> -
+>> -    if (!page_ext)
+>> -        return;
+>> -
+>>       BUG_ON(PageSlab(page));
+>>       anon = PageAnon(page);
+>> -    for (i = 0; i < pgcnt; i++) {
+>> +    rcu_read_lock();
+>> +    for_each_page_ext(page, pgcnt, page_ext, iter) {
+>>           struct page_table_check *ptc = get_page_table_check(page_ext);
+>>           if (anon) {
+>> @@ -89,9 +85,8 @@ static void page_table_check_clear(unsigned long pfn, unsigned long pgcnt)
+>>               BUG_ON(atomic_read(&ptc->anon_map_count));
+>>               BUG_ON(atomic_dec_return(&ptc->file_map_count) < 0);
+>>           }
+>> -        page_ext = page_ext_next(page_ext);
+>>       }
+>> -    page_ext_put(page_ext);
+>> +    rcu_read_unlock();
+>>   }
 > 
 > [...]
 > 
->> +struct page_ext *page_ext_iter_begin(struct page_ext_iter *iter, struct page *page);
->> +struct page_ext *page_ext_iter_next(struct page_ext_iter *iter);
->> +
->> +/**
->> + * page_ext_iter_get() - Get current page extension
->> + * @iter: page extension iterator.
->> + *
->> + * Return: NULL if no page_ext exists for this iterator.
->> + */
->> +static inline struct page_ext *page_ext_iter_get(const struct page_ext_iter *iter)
->> +{
->> +    return iter->page_ext;
->> +}
->> +
->> +/**
->> + * for_each_page_ext(): iterate through page_ext objects.
->> + * @__page: the page we're interested in
->> + * @__pgcount: how many pages to iterate through
->> + * @__page_ext: struct page_ext pointer where the current page_ext
->> + *              object is returned
->> + * @__iter: struct page_ext_iter object (defined in the stack)
->> + *
->> + * IMPORTANT: must be called with RCU read lock taken.
->> + */
->> +#define for_each_page_ext(__page, __pgcount, __page_ext, __iter) \
->> +    __page_ext = page_ext_iter_begin(&__iter, __page);     \
+>>   /*
+>> @@ -140,24 +130,19 @@ static void page_table_check_set(unsigned long pfn, unsigned long pgcnt,
+>>    */
+>>   void __page_table_check_zero(struct page *page, unsigned int order)
+>>   {
+>> +    struct page_ext_iter iter;
+>>       struct page_ext *page_ext;
+>> -    unsigned long i;
+>>       BUG_ON(PageSlab(page));
+>> -    page_ext = page_ext_get(page);
+>> -
+>> -    if (!page_ext)
+>> -        return;
+>> -
+>> -    for (i = 0; i < (1ul << order); i++) {
+>> +    rcu_read_lock();
+>> +    for_each_page_ext_order(page, order, page_ext, iter) {
 > 
-> Doing stuff out of the loop is dangerous. Assume something does
-> 
-> if (xxx)
->      for_each_page_ext()
-> 
-> Just move that inside the for().
-> 
-> for (__page_ext = page_ext_iter_begin(&__iter, __page), __iter.index = 0)
+> I would avoid introducing for_each_page_ext_order() and just pass "1 << order" as the page count.
 
-Oh, good point. Will do the change.
+OK, I'll drop it.
 
->> +    for (__iter.index = 0;                                 \
->> +        __page_ext && __iter.index < __pgcount;        \
->> +        __page_ext = page_ext_iter_next(&__iter),      \
->> +        __iter.index++)
 > 
-> Hm, if we now have an index, why not turn iter.pfn -> iter.start_pfn, and only adjust the index in page_ext_iter_next?
-> 
-> Then you can set the index to 0 in page_ext_iter_begin() and have here
-> 
-> for (__page_ext = page_ext_iter_begin(&__iter, __page),
->       __page_ext && __iter.index < __pgcount,
->       __page_ext = page_ext_iter_next(&__iter);)
-
-I can do this if you feel strong about it, but I prefer explicitly over
-implicitly. I moved the index into the iter object just to avoid having
-to define it in the macro's body. Also, the way I did it allows for
-using page_ext_iter_begin()/page_ext_iter_next() own their if the need
-arises.
-
-> A page_ext_iter_reset() could then simply reset the index=0 and
-> lookup the page_ext(start_pfn + index) == page_ext(start_pfn)
-
-Just note we don't have page_ext_iter_reset() today (and I guess it's
-not needed).
-
->> +
->> +/**
->> + * for_each_page_ext_order(): iterate through page_ext objects
->> + *                            for a given page order
->> + * @__page: the page we're interested in
->> + * @__order: page order to iterate through
->> + * @__page_ext: struct page_ext pointer where the current page_ext
->> + *              object is returned
->> + * @__iter: struct page_ext_iter object (defined in the stack)
->> + *
->> + * IMPORTANT: must be called with RCU read lock taken.
->> + */
->> +#define for_each_page_ext_order(__page, __order, __page_ext, __iter) \
->> +    for_each_page_ext(__page, (1UL << __order), __page_ext, __iter)
->> +
->>   #else /* !CONFIG_PAGE_EXTENSION */
->>   struct page_ext;
->> diff --git a/mm/page_ext.c b/mm/page_ext.c
->> index 641d93f6af4c1..508deb04d5ead 100644
->> --- a/mm/page_ext.c
->> +++ b/mm/page_ext.c
->> @@ -549,3 +549,44 @@ void page_ext_put(struct page_ext *page_ext)
->>       rcu_read_unlock();
+>>           struct page_table_check *ptc = get_page_table_check(page_ext);
+>>           BUG_ON(atomic_read(&ptc->anon_map_count));
+>>           BUG_ON(atomic_read(&ptc->file_map_count));
+>> -        page_ext = page_ext_next(page_ext);
+>>       }
+>> -    page_ext_put(page_ext);
+>> +    rcu_read_unlock();
 >>   }
->> +
->> +/**
->> + * page_ext_iter_begin() - Prepare for iterating through page extensions.
->> + * @iter: page extension iterator.
->> + * @page: The page we're interested in.
->> + *
->> + * Must be called with RCU read lock taken.
->> + *
->> + * Return: NULL if no page_ext exists for this page.
->> + */
->> +struct page_ext *page_ext_iter_begin(struct page_ext_iter *iter, struct page *page)
->> +{
->> +    iter->pfn = page_to_pfn(page);
->> +    iter->page_ext = lookup_page_ext(page);
->> +
->> +    return iter->page_ext;
->> +}
->> +
->> +/**
->> + * page_ext_iter_next() - Get next page extension
->> + * @iter: page extension iterator.
->> + *
->> + * Must be called with RCU read lock taken.
->> + *
->> + * Return: NULL if no next page_ext exists.
->> + */
->> +struct page_ext *page_ext_iter_next(struct page_ext_iter *iter)
->> +{
->> +    if (WARN_ON_ONCE(!iter->page_ext))
->> +        return NULL;
->> +
->> +    iter->pfn++;
->  > +> +    if (page_ext_iter_next_fast_possible(iter->pfn)) {
->> +        iter->page_ext = page_ext_next(iter->page_ext);
->> +    } else {
->> +        iter->page_ext = lookup_page_ext(pfn_to_page(iter->pfn));
->> +    }
->> +
->> +    return iter->page_ext;
->> +}
+>>   void __page_table_check_pte_clear(struct mm_struct *mm, pte_t pte)
 > 
-> We now always have a function call when calling into page_ext_iter_next(). Could we move that to the header and rather expose lookup_page_ext() ?
-
-I personally don't like over-using inline functions, also I don't think this
-code needs optimization since the current clients make the affected code paths
-slow anyways (and this also applies to the likely/unlikely use in page_owner
-and page_table_check, I'd drop all of them if you ask me). But again, I can
-change if this would prevent you from giving your ACK :)
+> Apart from that, this looks very nice to me
+> 
+> Acked-by: David Hildenbrand <david@redhat.com>
+> 
 
 
