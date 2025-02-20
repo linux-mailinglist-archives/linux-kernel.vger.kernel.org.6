@@ -1,61 +1,61 @@
-Return-Path: <linux-kernel+bounces-524346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 426A4A3E23B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 18:22:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1315A3E1EC
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 18:12:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D19CC705F6D
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:12:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AFAF042082D
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:10:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DBAA222566;
-	Thu, 20 Feb 2025 17:06:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A68021ADBC;
+	Thu, 20 Feb 2025 17:06:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fAhwq8AJ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ri9Bl5Ry"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 984C021E0A4
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 17:06:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9754B218AAD
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 17:06:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740071209; cv=none; b=dYBi0tPcQhGBtXoNkXGjrm8dNnNaxY6XdwQgLu5m9tLcg+uJ+gCjDeXJl1W6eZ4S53UN5P84uNluSl90Yz9zHokx9VJ8q9WheonwrgWlmjJgdc/yTiWM9UXDBzBZRpKxfBgpms2NHgYQvebqC/RWPc9jD46dfQGc9P5xixanXvs=
+	t=1740071201; cv=none; b=DUWOO4QSC9dYn7siOFeA4FaUtL5G8faek8kEd2Z5zXiR/LBFObCyxbVwPg7JZCKtu4qOh6YE5i8s4lY13Y5Z7oKZ4EZiXraST3Pf77cmissWhMnB590jIhVuADnd8N1VHa9izpw0rCQ1NreiWYSEsEePEbzlFXi+RAcx1yNtyTI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740071209; c=relaxed/simple;
-	bh=3bbbPtfHcGDQsrY8sxyTOgmbyvMh9I+RviSMH3t2ZAo=;
+	s=arc-20240116; t=1740071201; c=relaxed/simple;
+	bh=HbWCV+mETAHWTKHHBWZkcZUlSZ1oSOoV/q0RgCTLReg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fcpuQNay9BTLfpzwZTjX+AFwQ6Qr46jl7JfVZU7v00ALDTrsMweEunH5To9zXDaSyABNDDXxrMmEVA9o9tL2msmQ9wNO0rMWGVPiwwPwo1rWd63Jay4CwQqGs0qUp5Ow1hyKes9PVgtial5GRBUh7WK1w/GmlaPdKH8ixvj6YCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fAhwq8AJ; arc=none smtp.client-ip=170.10.133.124
+	 MIME-Version:Content-Type; b=t/O4zTVQC+Rq1gZE/VbSLYFDumaZnzeAlC1POdCtmyI4pGn5H+OYqRS6eGVDrooyfQ8oc4jEY0D8hA1y1fR4l3JC25iAEzeayy/OT5Zna1NmGzGxVjiJzR3BIlGHm7mOj11pVGjj24S+dZuMbL6okcXzSOpdVBVfif4aPy2JryU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ri9Bl5Ry; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740071206;
+	s=mimecast20190719; t=1740071198;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=AeZoBHdL9jkJ4w73bjz9IXMkss9N9nVKm83Iytboi+M=;
-	b=fAhwq8AJkyzoYBxBOMhyl2Rz+/7A1zKWKELsBpDb68il9Y5sp+GT3UPC2EU6K4v6IiwPBh
-	Rh/F2dNnPGYg2UEX6v1ZOnBzOkxLV8crzROG9q4MzVHqgVtw7dLKeqa2FwTXOeJIFpQEE9
-	7Q4bXm0WQhCw7IlCeYKyPNDhISpkeew=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+	bh=hq1OkvKb2vekpPdZQfh7i/EWk4fkjhdAozs6dxCFkao=;
+	b=Ri9Bl5RynnNOKK+KFpDFlVy7bmFgHnA3pzHMCj/3Ro3xCqVddk0+uzcvAvhciNAXpgGzr5
+	Eo5WN9IVBY9mVSHyXJ30LCJQJcLYTP08CqscBPnX5RC3w5Qr5tvCKc2U6WQtW39ZwfMPDH
+	GgaB2shh+Pnt90Y3Asepx0E7BlJ3fVM=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-48-zkq8OD_XPyy2kF7vSkgrAg-1; Thu,
- 20 Feb 2025 12:06:35 -0500
-X-MC-Unique: zkq8OD_XPyy2kF7vSkgrAg-1
-X-Mimecast-MFC-AGG-ID: zkq8OD_XPyy2kF7vSkgrAg_1740071193
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-679-cjY7w19INPKFo5KBJuPaZQ-1; Thu,
+ 20 Feb 2025 12:06:36 -0500
+X-MC-Unique: cjY7w19INPKFo5KBJuPaZQ-1
+X-Mimecast-MFC-AGG-ID: cjY7w19INPKFo5KBJuPaZQ_1740071195
 Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A6CC7180087A;
-	Thu, 20 Feb 2025 17:06:33 +0000 (UTC)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3340B18EAB38;
+	Thu, 20 Feb 2025 17:06:35 +0000 (UTC)
 Received: from virtlab1023.lab.eng.rdu2.redhat.com (virtlab1023.lab.eng.rdu2.redhat.com [10.8.1.187])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 942691800359;
-	Thu, 20 Feb 2025 17:06:32 +0000 (UTC)
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id DB70B1800D9E;
+	Thu, 20 Feb 2025 17:06:33 +0000 (UTC)
 From: Paolo Bonzini <pbonzini@redhat.com>
 To: linux-kernel@vger.kernel.org,
 	kvm@vger.kernel.org
@@ -63,10 +63,12 @@ Cc: seanjc@google.com,
 	Yan Zhao <yan.y.zhao@intel.com>,
 	Rick Edgecombe <rick.p.edgecombe@intel.com>,
 	Isaku Yamahata <isaku.yamahata@intel.com>,
-	Tony Lindgren <tony.lindgren@linux.intel.com>
-Subject: [PATCH 18/30] KVM: TDX: Add place holder for TDX VM specific mem_enc_op ioctl
-Date: Thu, 20 Feb 2025 12:05:52 -0500
-Message-ID: <20250220170604.2279312-19-pbonzini@redhat.com>
+	Xiaoyao Li <xiaoyao.li@intel.com>,
+	Tony Lindgren <tony.lindgren@linux.intel.com>,
+	Binbin Wu <binbin.wu@linux.intel.com>
+Subject: [PATCH 19/30] KVM: TDX: Get system-wide info about TDX module on initialization
+Date: Thu, 20 Feb 2025 12:05:53 -0500
+Message-ID: <20250220170604.2279312-20-pbonzini@redhat.com>
 In-Reply-To: <20250220170604.2279312-1-pbonzini@redhat.com>
 References: <20250220170604.2279312-1-pbonzini@redhat.com>
 Precedence: bulk
@@ -81,188 +83,238 @@ X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
 From: Isaku Yamahata <isaku.yamahata@intel.com>
 
-KVM_MEMORY_ENCRYPT_OP was introduced for VM-scoped operations specific for
-guest state-protected VM.  It defined subcommands for technology-specific
-operations under KVM_MEMORY_ENCRYPT_OP.  Despite its name, the subcommands
-are not limited to memory encryption, but various technology-specific
-operations are defined.  It's natural to repurpose KVM_MEMORY_ENCRYPT_OP
-for TDX specific operations and define subcommands.
-
-Add a place holder function for TDX specific VM-scoped ioctl as mem_enc_op.
-TDX specific sub-commands will be added to retrieve/pass TDX specific
-parameters.  Make mem_enc_ioctl non-optional as it's always filled.
+TDX KVM needs system-wide information about the TDX module. Generate the
+data based on tdx_sysinfo td_conf CPUID data.
 
 Signed-off-by: Isaku Yamahata <isaku.yamahata@intel.com>
+Co-developed-by: Xiaoyao Li <xiaoyao.li@intel.com>
+Signed-off-by: Xiaoyao Li <xiaoyao.li@intel.com>
 Co-developed-by: Tony Lindgren <tony.lindgren@linux.intel.com>
 Signed-off-by: Tony Lindgren <tony.lindgren@linux.intel.com>
 Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
 ---
- - Drop the misleading "defined for consistency" line. It's a copy-paste
-   error introduced in the earlier patches. Earlier there was padding at
-   the end to match struct kvm_sev_cmd size. (Tony)
+ - Clarify comment about EAX[23:16] in td_init_cpuid_entry2() (Xiaoyao)
+ - Add comment for configurable CPUID bits (Xiaoyao)
 Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 ---
- arch/x86/include/asm/kvm-x86-ops.h |  2 +-
- arch/x86/include/uapi/asm/kvm.h    | 23 +++++++++++++++++++++
- arch/x86/kvm/vmx/main.c            | 10 ++++++++++
- arch/x86/kvm/vmx/tdx.c             | 32 ++++++++++++++++++++++++++++++
- arch/x86/kvm/vmx/x86_ops.h         |  6 ++++++
- arch/x86/kvm/x86.c                 |  4 ----
- 6 files changed, 72 insertions(+), 5 deletions(-)
+ arch/x86/include/uapi/asm/kvm.h |  11 +++
+ arch/x86/kvm/vmx/tdx.c          | 137 ++++++++++++++++++++++++++++++++
+ arch/x86/kvm/vmx/tdx_arch.h     |   2 +
+ 3 files changed, 150 insertions(+)
 
-diff --git a/arch/x86/include/asm/kvm-x86-ops.h b/arch/x86/include/asm/kvm-x86-ops.h
-index 823c0434bbad..1eca04087cf4 100644
---- a/arch/x86/include/asm/kvm-x86-ops.h
-+++ b/arch/x86/include/asm/kvm-x86-ops.h
-@@ -125,7 +125,7 @@ KVM_X86_OP(leave_smm)
- KVM_X86_OP(enable_smi_window)
- #endif
- KVM_X86_OP_OPTIONAL(dev_get_attr)
--KVM_X86_OP_OPTIONAL(mem_enc_ioctl)
-+KVM_X86_OP(mem_enc_ioctl)
- KVM_X86_OP_OPTIONAL(mem_enc_register_region)
- KVM_X86_OP_OPTIONAL(mem_enc_unregister_region)
- KVM_X86_OP_OPTIONAL(vm_copy_enc_context_from)
 diff --git a/arch/x86/include/uapi/asm/kvm.h b/arch/x86/include/uapi/asm/kvm.h
-index 9e75da97bce0..2b0317b47e47 100644
+index 2b0317b47e47..8a4633cdb247 100644
 --- a/arch/x86/include/uapi/asm/kvm.h
 +++ b/arch/x86/include/uapi/asm/kvm.h
-@@ -927,4 +927,27 @@ struct kvm_hyperv_eventfd {
- #define KVM_X86_SNP_VM		4
- #define KVM_X86_TDX_VM		5
+@@ -929,6 +929,8 @@ struct kvm_hyperv_eventfd {
  
-+/* Trust Domain eXtension sub-ioctl() commands. */
-+enum kvm_tdx_cmd_id {
-+	KVM_TDX_CMD_NR_MAX,
-+};
+ /* Trust Domain eXtension sub-ioctl() commands. */
+ enum kvm_tdx_cmd_id {
++	KVM_TDX_CAPABILITIES = 0,
 +
-+struct kvm_tdx_cmd {
-+	/* enum kvm_tdx_cmd_id */
-+	__u32 id;
-+	/* flags for sub-commend. If sub-command doesn't use this, set zero. */
-+	__u32 flags;
-+	/*
-+	 * data for each sub-command. An immediate or a pointer to the actual
-+	 * data in process virtual address.  If sub-command doesn't use it,
-+	 * set zero.
-+	 */
-+	__u64 data;
-+	/*
-+	 * Auxiliary error code.  The sub-command may return TDX SEAMCALL
-+	 * status code in addition to -Exxx.
-+	 */
-+	__u64 hw_error;
+ 	KVM_TDX_CMD_NR_MAX,
+ };
+ 
+@@ -950,4 +952,13 @@ struct kvm_tdx_cmd {
+ 	__u64 hw_error;
+ };
+ 
++struct kvm_tdx_capabilities {
++	__u64 supported_attrs;
++	__u64 supported_xfam;
++	__u64 reserved[254];
++
++	/* Configurable CPUID bits for userspace */
++	struct kvm_cpuid2 cpuid;
 +};
 +
  #endif /* _ASM_X86_KVM_H */
-diff --git a/arch/x86/kvm/vmx/main.c b/arch/x86/kvm/vmx/main.c
-index 5c1acc88feef..69c65085f81a 100644
---- a/arch/x86/kvm/vmx/main.c
-+++ b/arch/x86/kvm/vmx/main.c
-@@ -41,6 +41,14 @@ static __init int vt_hardware_setup(void)
- 	return 0;
- }
- 
-+static int vt_mem_enc_ioctl(struct kvm *kvm, void __user *argp)
-+{
-+	if (!is_td(kvm))
-+		return -ENOTTY;
-+
-+	return tdx_vm_ioctl(kvm, argp);
-+}
-+
- #define VMX_REQUIRED_APICV_INHIBITS				\
- 	(BIT(APICV_INHIBIT_REASON_DISABLED) |			\
- 	 BIT(APICV_INHIBIT_REASON_ABSENT) |			\
-@@ -193,6 +201,8 @@ struct kvm_x86_ops vt_x86_ops __initdata = {
- 	.vcpu_deliver_sipi_vector = kvm_vcpu_deliver_sipi_vector,
- 
- 	.get_untagged_addr = vmx_get_untagged_addr,
-+
-+	.mem_enc_ioctl = vt_mem_enc_ioctl,
- };
- 
- struct kvm_x86_init_ops vt_init_ops __initdata = {
 diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
-index 1f4875e5f7c9..08880ac9c77b 100644
+index 08880ac9c77b..630d19114429 100644
 --- a/arch/x86/kvm/vmx/tdx.c
 +++ b/arch/x86/kvm/vmx/tdx.c
-@@ -3,6 +3,7 @@
- #include <asm/cpufeature.h>
- #include <asm/tdx.h>
- #include "capabilities.h"
-+#include "x86_ops.h"
- #include "tdx.h"
+@@ -33,6 +33,8 @@ static enum cpuhp_state tdx_cpuhp_state;
  
- #pragma GCC poison to_vmx
-@@ -42,6 +43,37 @@ static __always_inline struct vcpu_tdx *to_tdx(struct kvm_vcpu *vcpu)
+ static const struct tdx_sys_info *tdx_sysinfo;
+ 
++#define KVM_SUPPORTED_TD_ATTRS (TDX_TD_ATTR_SEPT_VE_DISABLE)
++
+ static __always_inline struct kvm_tdx *to_kvm_tdx(struct kvm *kvm)
+ {
+ 	return container_of(kvm, struct kvm_tdx, kvm);
+@@ -43,6 +45,129 @@ static __always_inline struct vcpu_tdx *to_tdx(struct kvm_vcpu *vcpu)
  	return container_of(vcpu, struct vcpu_tdx, vcpu);
  }
  
-+int tdx_vm_ioctl(struct kvm *kvm, void __user *argp)
++static u64 tdx_get_supported_attrs(const struct tdx_sys_info_td_conf *td_conf)
 +{
-+	struct kvm_tdx_cmd tdx_cmd;
-+	int r;
++	u64 val = KVM_SUPPORTED_TD_ATTRS;
 +
-+	if (copy_from_user(&tdx_cmd, argp, sizeof(struct kvm_tdx_cmd)))
-+		return -EFAULT;
++	if ((val & td_conf->attributes_fixed1) != td_conf->attributes_fixed1)
++		return 0;
++
++	val &= td_conf->attributes_fixed0;
++
++	return val;
++}
++
++static u64 tdx_get_supported_xfam(const struct tdx_sys_info_td_conf *td_conf)
++{
++	u64 val = kvm_caps.supported_xcr0 | kvm_caps.supported_xss;
++
++	if ((val & td_conf->xfam_fixed1) != td_conf->xfam_fixed1)
++		return 0;
++
++	val &= td_conf->xfam_fixed0;
++
++	return val;
++}
++
++static u32 tdx_set_guest_phys_addr_bits(const u32 eax, int addr_bits)
++{
++	return (eax & ~GENMASK(23, 16)) | (addr_bits & 0xff) << 16;
++}
++
++#define KVM_TDX_CPUID_NO_SUBLEAF	((__u32)-1)
++
++static void td_init_cpuid_entry2(struct kvm_cpuid_entry2 *entry, unsigned char idx)
++{
++	const struct tdx_sys_info_td_conf *td_conf = &tdx_sysinfo->td_conf;
++
++	entry->function = (u32)td_conf->cpuid_config_leaves[idx];
++	entry->index = td_conf->cpuid_config_leaves[idx] >> 32;
++	entry->eax = (u32)td_conf->cpuid_config_values[idx][0];
++	entry->ebx = td_conf->cpuid_config_values[idx][0] >> 32;
++	entry->ecx = (u32)td_conf->cpuid_config_values[idx][1];
++	entry->edx = td_conf->cpuid_config_values[idx][1] >> 32;
++
++	if (entry->index == KVM_TDX_CPUID_NO_SUBLEAF)
++		entry->index = 0;
 +
 +	/*
-+	 * Userspace should never set hw_error. It is used to fill
-+	 * hardware-defined error by the kernel.
++	 * The TDX module doesn't allow configuring the guest phys addr bits
++	 * (EAX[23:16]).  However, KVM uses it as an interface to the userspace
++	 * to configure the GPAW.  Report these bits as configurable.
 +	 */
-+	if (tdx_cmd.hw_error)
++	if (entry->function == 0x80000008)
++		entry->eax = tdx_set_guest_phys_addr_bits(entry->eax, 0xff);
++}
++
++static int init_kvm_tdx_caps(const struct tdx_sys_info_td_conf *td_conf,
++			     struct kvm_tdx_capabilities *caps)
++{
++	int i;
++
++	caps->supported_attrs = tdx_get_supported_attrs(td_conf);
++	if (!caps->supported_attrs)
++		return -EIO;
++
++	caps->supported_xfam = tdx_get_supported_xfam(td_conf);
++	if (!caps->supported_xfam)
++		return -EIO;
++
++	caps->cpuid.nent = td_conf->num_cpuid_config;
++
++	for (i = 0; i < td_conf->num_cpuid_config; i++)
++		td_init_cpuid_entry2(&caps->cpuid.entries[i], i);
++
++	return 0;
++}
++
++static int tdx_get_capabilities(struct kvm_tdx_cmd *cmd)
++{
++	const struct tdx_sys_info_td_conf *td_conf = &tdx_sysinfo->td_conf;
++	struct kvm_tdx_capabilities __user *user_caps;
++	struct kvm_tdx_capabilities *caps = NULL;
++	int ret = 0;
++
++	/* flags is reserved for future use */
++	if (cmd->flags)
 +		return -EINVAL;
 +
-+	mutex_lock(&kvm->lock);
++	caps = kmalloc(sizeof(*caps) +
++		       sizeof(struct kvm_cpuid_entry2) * td_conf->num_cpuid_config,
++		       GFP_KERNEL);
++	if (!caps)
++		return -ENOMEM;
 +
-+	switch (tdx_cmd.id) {
-+	default:
-+		r = -EINVAL;
++	user_caps = u64_to_user_ptr(cmd->data);
++	if (copy_from_user(caps, user_caps, sizeof(*caps))) {
++		ret = -EFAULT;
 +		goto out;
 +	}
 +
-+	if (copy_to_user(argp, &tdx_cmd, sizeof(struct kvm_tdx_cmd)))
-+		r = -EFAULT;
++	if (caps->cpuid.nent < td_conf->num_cpuid_config) {
++		ret = -E2BIG;
++		goto out;
++	}
++
++	ret = init_kvm_tdx_caps(td_conf, caps);
++	if (ret)
++		goto out;
++
++	if (copy_to_user(user_caps, caps, sizeof(*caps))) {
++		ret = -EFAULT;
++		goto out;
++	}
++
++	if (copy_to_user(user_caps->cpuid.entries, caps->cpuid.entries,
++			 caps->cpuid.nent *
++			 sizeof(caps->cpuid.entries[0])))
++		ret = -EFAULT;
 +
 +out:
-+	mutex_unlock(&kvm->lock);
-+	return r;
++	/* kfree() accepts NULL. */
++	kfree(caps);
++	return ret;
 +}
 +
- static int tdx_online_cpu(unsigned int cpu)
+ int tdx_vm_ioctl(struct kvm *kvm, void __user *argp)
  {
- 	unsigned long flags;
-diff --git a/arch/x86/kvm/vmx/x86_ops.h b/arch/x86/kvm/vmx/x86_ops.h
-index 430773a5ef8e..2c87a8e7bddc 100644
---- a/arch/x86/kvm/vmx/x86_ops.h
-+++ b/arch/x86/kvm/vmx/x86_ops.h
-@@ -121,4 +121,10 @@ void vmx_cancel_hv_timer(struct kvm_vcpu *vcpu);
- #endif
- void vmx_setup_mce(struct kvm_vcpu *vcpu);
+ 	struct kvm_tdx_cmd tdx_cmd;
+@@ -61,6 +186,9 @@ int tdx_vm_ioctl(struct kvm *kvm, void __user *argp)
+ 	mutex_lock(&kvm->lock);
  
-+#ifdef CONFIG_INTEL_TDX_HOST
-+int tdx_vm_ioctl(struct kvm *kvm, void __user *argp);
-+#else
-+static inline int tdx_vm_ioctl(struct kvm *kvm, void __user *argp) { return -EOPNOTSUPP; }
-+#endif
-+
- #endif /* __KVM_X86_VMX_X86_OPS_H */
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 02159c967d29..374d89e6663f 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -7277,10 +7277,6 @@ int kvm_arch_vm_ioctl(struct file *filp, unsigned int ioctl, unsigned long arg)
+ 	switch (tdx_cmd.id) {
++	case KVM_TDX_CAPABILITIES:
++		r = tdx_get_capabilities(&tdx_cmd);
++		break;
+ 	default:
+ 		r = -EINVAL;
  		goto out;
+@@ -158,11 +286,20 @@ static int __init __tdx_bringup(void)
+ 		goto get_sysinfo_err;
  	}
- 	case KVM_MEMORY_ENCRYPT_OP: {
--		r = -ENOTTY;
--		if (!kvm_x86_ops.mem_enc_ioctl)
--			goto out;
--
- 		r = kvm_x86_call(mem_enc_ioctl)(kvm, argp);
- 		break;
- 	}
+ 
++	/* Check TDX module and KVM capabilities */
++	if (!tdx_get_supported_attrs(&tdx_sysinfo->td_conf) ||
++	    !tdx_get_supported_xfam(&tdx_sysinfo->td_conf))
++		goto get_sysinfo_err;
++
++	if (!(tdx_sysinfo->features.tdx_features0 & MD_FIELD_ID_FEATURES0_TOPOLOGY_ENUM))
++		goto get_sysinfo_err;
++
+ 	/*
+ 	 * Leave hardware virtualization enabled after TDX is enabled
+ 	 * successfully.  TDX CPU hotplug depends on this.
+ 	 */
+ 	return 0;
++
+ get_sysinfo_err:
+ 	__do_tdx_cleanup();
+ tdx_bringup_err:
+diff --git a/arch/x86/kvm/vmx/tdx_arch.h b/arch/x86/kvm/vmx/tdx_arch.h
+index fb7abe9fef8e..cb9a638fa398 100644
+--- a/arch/x86/kvm/vmx/tdx_arch.h
++++ b/arch/x86/kvm/vmx/tdx_arch.h
+@@ -120,4 +120,6 @@ struct td_params {
+ #define TDX_MIN_TSC_FREQUENCY_KHZ		(100 * 1000)
+ #define TDX_MAX_TSC_FREQUENCY_KHZ		(10 * 1000 * 1000)
+ 
++#define MD_FIELD_ID_FEATURES0_TOPOLOGY_ENUM	BIT_ULL(20)
++
+ #endif /* __KVM_X86_TDX_ARCH_H */
 -- 
 2.43.5
 
