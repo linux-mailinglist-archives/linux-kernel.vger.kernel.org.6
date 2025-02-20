@@ -1,109 +1,117 @@
-Return-Path: <linux-kernel+bounces-523891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89933A3DC8E
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:23:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7646BA3DC8C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:22:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4AF9422AD9
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:20:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9FEB422925
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:20:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E65241FF7B3;
-	Thu, 20 Feb 2025 14:18:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E534212FBF;
+	Thu, 20 Feb 2025 14:18:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rcT7EYFq"
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hfG7Hkzk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90EFD1FBEA7
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 14:18:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70AF91FBEA7;
+	Thu, 20 Feb 2025 14:18:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740061100; cv=none; b=d3ogoGynCSBE2b/W63555MaTXpSlHCkJRHZzLZWUgdCQQ1NOQ51N1MhyKRulQHa6BsQ2hld8ibIlj6NOPD668y0KVAcKIve41zj8CxPBcBxX3DufksUBfD0QHXb3aWkfx1KvkvZGGwQF3z7N+JxphUYkIL0gGE9qXmRgJagevxc=
+	t=1740061090; cv=none; b=k4PylWCXcqix2HGhLZF7P02dxeR3/dqT3APWBykhtJEeHC9aUxtzvCSt+4yoehh20CimUKgrFaCLkuSDF4e/xJINe0zetpDyhjNgKhS6/9FiNagFYDMyr2O4rHuC0oIYlaq0lkKVNaUHUY5Wsd9Y4vyqck1vVBGQb03QxDyoANg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740061100; c=relaxed/simple;
-	bh=grftvmDJeT4+GKUQiocyfXXL33guz2UdKXmdukb/6R8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=D+dwM1kYP+krV9tguJ/JQMv2wQAWAHunfe6XrmJ1/22kD6zAGPHpToXRMF0DV/0WDQjJgea0OVq9OsNvMSqxDyURfKQGM9GRm1/uo+XQBQaJclwvBFEZPxiI+MZRUYByJSmadMspGnZiF0XYCAPO6dhIXJ3uAO11F62JSasx7TU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rcT7EYFq; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-309311e7b39so9161561fa.2
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 06:18:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740061096; x=1740665896; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0W6q0MfsecQ/oZxWXdK7pjWIJ78Sycv90qisJxzpdi0=;
-        b=rcT7EYFqWXQTOg5H/+Qrkr2BvwFVE4C6baJ7LM0YbIjcBJoCBZG2aYKqr9n3I6N8YX
-         XdQz6Yd4az6boaqHtlTzMjmOQ1MAguxuOpGqaFGNpgIfc/OOQHB3KpYgdyJPypsFiRqM
-         xOF92QnmmgiFBdyadHXyG/ijKoBhxLiifDJRQAiKh1yHQ8lzYCJpDUc9oKsc80h071p+
-         MLqaXH+1KuEWB2bobYxHQuQkfIiHqAPYl0P2vfLLoBDrk1RcuhwhPr4Se0Vl6PhFq28c
-         Zzy6OCiyZDejVWVL//2OtrWFSMoMXDSJCJvc/oNYK8bdaqbb3skg8fEo+/bjOzIQQkse
-         gC4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740061096; x=1740665896;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0W6q0MfsecQ/oZxWXdK7pjWIJ78Sycv90qisJxzpdi0=;
-        b=tN4XwegDui1z2A0CpGTiZifihk9gRqXdHmRRNc8YNtegAFleq8T6ReTknqT6+hzpiT
-         f6AwHvzBGXRaixTJoZ24O5N7/rnGiweM2IeC4zekaKQY0DRQSLwEGJ9ClcYPcJHbpzQn
-         wBtmMKjH0Zv1UWCgcl0KXzDWfunV+FxC6jLRopKlW0X6pus2LmCt52dR+/b14xfqRCsw
-         sMe6zW+d/XYQLu8dY0Z11ZDFWzaQyv4p9rsqIjCVb/NNWSqkHdMr3+Rfm1dFrFkOv8dq
-         oNDgCl34bHOz1+V/ys5snGXhdGqzVG9px1tqvnbtoTTs2tq0z1GwpsAUHJ64GOVD+zVT
-         TWZg==
-X-Forwarded-Encrypted: i=1; AJvYcCXG8NYJ2Rk/HhjEw4TcdpWCuf0u4FIhQiwdGv6MRxOwcVDOGApJOePtqm10NKujkR2OxjwF9G7DiWnaP2U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx32GLFI/NqlcDbVOh3N1KELoTKyZlk1xmI4pOo51uDedILaS/F
-	Z/IrOfsqUea+3Xhjyi0tvfxnpRiyap+QGezvSgt3lZbcgehZDX9au4TKD6lAzXaIUV7THFCcA3B
-	FHx9MM8bRdI1moUFzzbT4eODXAwFhen/MUvnB2g==
-X-Gm-Gg: ASbGncssaRVRk5uLEu6+GjbG/nI9SxFeIdkLtIH08Cuy3urOdKPKNJuAyxT9pdySmxt
-	bsP+OWNnyAal0Jof+/LFU941kfDHSbCfqPQ2IjUYnW7hAwrjGoGVvmHosIcmOZzQ0TaGfO/2O
-X-Google-Smtp-Source: AGHT+IGvaL3ytQhRSizHSs5j4h7le8Pj+1Uowv4GhVkmMwx1FqxJP9kusc9px7K6w3SuVO6d4TkqiTGgCnF2ShOKQ00=
-X-Received: by 2002:a05:6512:230a:b0:542:2999:399c with SMTP id
- 2adb3069b0e04-5462ef20ef4mr2952842e87.46.1740061096527; Thu, 20 Feb 2025
- 06:18:16 -0800 (PST)
+	s=arc-20240116; t=1740061090; c=relaxed/simple;
+	bh=rxskcT7jKFiywspCy0YwO4Ukcf4MyTckgqpNNxukoSM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=loQuPxW6pZ4k0fQeWMJvKvafgpMGLXdZ8la0VlZ52gGUeHrtW2pDxk7NAeSNRFwC20kbUH6MNnHBnLeKGTB+/MpK1+5NvkMVQkViGLNSjHX98AtB7UmVQlCftO9v5L06VD7TDbHJR1pXleR05k4UYMXGREkEdLF0v+i0pdz/AK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hfG7Hkzk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78674C4CED1;
+	Thu, 20 Feb 2025 14:18:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740061090;
+	bh=rxskcT7jKFiywspCy0YwO4Ukcf4MyTckgqpNNxukoSM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hfG7HkzkvQvZwqnCu4SLgT/iGxXcUE4dX1OScn7QGjZjmgz0PGS6HOjFhYLbrADC5
+	 /FCLE+6iq8fkYDJ/zduNZvkR8pJYFVPyxPrXv3vtkyS/iONdoxYGi3rZ6AOZm0oI6I
+	 kh2QQX3+PPrN7WDVdE7gbsvWPhrea5G/QiMSoA7O0Esz5+Vl2QEo/uxBC25tmIAdPs
+	 m5jNOja2cMHyxVbhRgSsaCOZzPZc6alWzG5Ump/8wAg1qAq1OI+dsz7KufPgYN0PdL
+	 jSnIylpEPAoREHCv2DYJAyV1sVxfgCo8QqkXQ61hCo0EproJM6gg/EfvzOyFwc0/DB
+	 bUjmhQjt6jsXw==
+Date: Thu, 20 Feb 2025 14:18:06 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Akhil P Oommen <quic_akhilpo@quicinc.com>,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 2/5] nvmem: core: verify cell's raw_len
+Message-ID: <Z7c5niuwR3TVTQrj@finisterre.sirena.org.uk>
+References: <20250109-sar2130p-nvmem-v4-0-633739fe5f11@linaro.org>
+ <20250109-sar2130p-nvmem-v4-2-633739fe5f11@linaro.org>
+ <Z7Xv9lNc6ckJVtKc@finisterre.sirena.org.uk>
+ <CAA8EJpp-mE2w_c3K08+8AR3Mn1r8X58FRXvAUFALQ-u2ppoKgw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250217120428.3779197-1-jkeeping@inmusicbrands.com>
-In-Reply-To: <20250217120428.3779197-1-jkeeping@inmusicbrands.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 20 Feb 2025 15:18:05 +0100
-X-Gm-Features: AWEUYZktLgRRDDqqdpWTvRvqxLtf5I0A9ZWzKOQDA0dj-HnUxbhAd-KGVcT2F_o
-Message-ID: <CACRpkdaHodX8atqWL+BXnvZ5yDvruizkZd44wUTPwe0NNWFT5Q@mail.gmail.com>
-Subject: Re: [PATCH] drm/panel: ilitek-ili9882t: fix GPIO name in error message
-To: John Keeping <jkeeping@inmusicbrands.com>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Douglas Anderson <dianders@chromium.org>, 
-	Cong Yang <yangcong5@huaqin.corp-partner.google.com>, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="1dVZm3pFhaNe1viM"
+Content-Disposition: inline
+In-Reply-To: <CAA8EJpp-mE2w_c3K08+8AR3Mn1r8X58FRXvAUFALQ-u2ppoKgw@mail.gmail.com>
+X-Cookie: Editing is a rewording activity.
 
-On Mon, Feb 17, 2025 at 1:04=E2=80=AFPM John Keeping <jkeeping@inmusicbrand=
-s.com> wrote:
 
-> This driver uses the enable-gpios property and it is confusing that the
-> error message refers to reset-gpios.  Use the correct name when the
-> enable GPIO is not found.
->
-> Fixes: e2450d32e5fb5 ("drm/panel: ili9882t: Break out as separate driver"=
-)
-> Signed-off-by: John Keeping <jkeeping@inmusicbrands.com>
+--1dVZm3pFhaNe1viM
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Patch applied to next as a nonurgent fix.
+On Wed, Feb 19, 2025 at 05:14:43PM +0200, Dmitry Baryshkov wrote:
+> On Wed, 19 Feb 2025 at 16:51, Mark Brown <broonie@kernel.org> wrote:
+> > On Thu, Jan 09, 2025 at 06:35:46AM +0200, Dmitry Baryshkov wrote:
 
-Thanks!
+> > > Check that the NVMEM cell's raw_len is a aligned to word_size. Otherwise
+> > > Otherwise drivers might face incomplete read while accessing the last
+> > > part of the NVMEM cell.
 
-Yours,
-Linus Walleij
+> > I'm seeing a bunch of failures on i.MX platforms in -next which bisect
+> > to this patch.  For example on the i.MX6q based UDOOq various things
+> > including the ethernet fail to come up due to the efuse not appearing:
+
+> > [    1.735264] nvmem imx-ocotp0: cell mac-addr raw len 6 unaligned to nvmem word size 4
+> > [    1.735289] imx_ocotp 21bc000.efuse: probe with driver imx_ocotp failed with error -22
+
+> This looks like an error on the i.MX platforms. The raw_len must be
+> aligned to word size. I think the easiest fix is to implement the
+> .fixup_dt_cell_info() callback like I did for the qfprom driver.
+
+That sounds pluasible, but as things stand we've got a regression on
+these platforms - taking out ethernet breaks NFS boot apart from
+anything else.  I'd also be a bit concerned that there might be other
+users with issues, does this need an audit of users before trying to
+enforce this requirement?
+
+--1dVZm3pFhaNe1viM
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAme3OZ0ACgkQJNaLcl1U
+h9CR9Af+PKScD+QrhJJPzXmYa5zvi8OWNOsVRYQHd0O+qVTxLf+g/JGZiazQ3twk
+CRFIipyBWKEPjZ/61m9GKEi57ITYQPh5bG3EZRXL5XAU1v99u11+dFS13dULOhGf
+3QQsV+rdfPNaGtZIjZJNycLdCckClq3yJpDuPREeIMKAu+mPy6HOT+n/3LAd350O
+dPs4Ql07ZjRw23USloCsuK0sLfsbKD0OWGi12YcKBd+Ck/BuaH1PV5bROiPokMf2
+dl7wyawZ/FL7/Ob30h53I0eaMNeyYGSMgWSDmvGtPfluuJcDNyO64pqsRB+MB2Yg
+aYfgKPWyJ2ZGDxvbLKjqXL4ZBfWIIw==
+=dMez
+-----END PGP SIGNATURE-----
+
+--1dVZm3pFhaNe1viM--
 
