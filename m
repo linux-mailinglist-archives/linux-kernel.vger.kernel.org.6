@@ -1,89 +1,81 @@
-Return-Path: <linux-kernel+bounces-523970-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8559CA3DD7D
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:58:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 215EEA3DD84
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:59:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5ED7C1890E20
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:58:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB1E33AFD05
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:58:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EE471D5CC1;
-	Thu, 20 Feb 2025 14:58:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06B361D5160;
+	Thu, 20 Feb 2025 14:58:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RpZTZErM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CgtemQxb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9D2C5258;
-	Thu, 20 Feb 2025 14:58:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68ED9DF58
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 14:58:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740063488; cv=none; b=I1w/D30gP5V5v7gCePCZvQH+0HS4Gnf5Ne31S+Ttnv+Ma3n1y3/5tAbsx/Tugb29tGoCFJb+YI6kUk4yHYXl+7SlCSUYmPvhOSNBNG+zmnXihczZlw/fj8j9OPhav/g0Gm1F2QPuqiFNwaAwo3EN8qoc0n1RHiL8OlHw/bH0/JI=
+	t=1740063509; cv=none; b=GJEOaQL9E5oz5g41c7zMII8qfwzj+15wtPnoHLnu4VSpS6jUyl2iY3ve/g/tB70JC8klaz5aekxI0v5mtYEnYP7JPwgkE1hg1txIE8/ngY0HYs/e6sqQJ3kFaENCVkw09cde+p8dnAi/SdwXhuCjYMQ6dGDAMh3njaLuYi+PMIY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740063488; c=relaxed/simple;
-	bh=HosbIZJG11434mFm61nco4av3Gmcb9YQ2Or4wPIczj4=;
+	s=arc-20240116; t=1740063509; c=relaxed/simple;
+	bh=6MFzkfW9uvZannGiDDbpy+c9W2mbwebkRYX+ehbCh+g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GvEQrGvXUCfZUh9f/hlkWUPeik4cCQa38iM/rZmumXMctwDMpxoxlD20jyck8Q7cwj1FfOb98pelLmpC1zwTkBKm4noOoRrbobbLmtF2sPhIvIgYjo60hBxr0SGOn9dSXJYTMsbWyoepzd5zaoAL6ImICps2O98uk0+V98Ll7Js=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RpZTZErM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4B7EC4CED1;
-	Thu, 20 Feb 2025 14:58:05 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=LqseyfEzkqYG9gfO6a8IWZeWOegmjTcXhZVMdq37Ths+8myR3z82l1EWLyNOTiK4qgwOGswXHSSntU1BGuWoAKj/irx2eQ6pHuIxpJ7+QiBRgNvozjz3HBOhSNJ/znzW9y8OxhrPq+c9pxj0X+p8BybX44b84RNraWOSzi8TLfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CgtemQxb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9732C4CED1;
+	Thu, 20 Feb 2025 14:58:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740063488;
-	bh=HosbIZJG11434mFm61nco4av3Gmcb9YQ2Or4wPIczj4=;
+	s=k20201202; t=1740063508;
+	bh=6MFzkfW9uvZannGiDDbpy+c9W2mbwebkRYX+ehbCh+g=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RpZTZErMOwiWAt1X/W/AtusEfmQuTQCI6k4VstmWSOHGHJNu8D8yFtKhs6bIMGBiC
-	 JGnlkrBrRVADvXWOQZheOrMDTgL6CINCKaU3WHWj6nERCQdXzCvYDxtdnVrttuZnkF
-	 Kt1YvwQqBzLvIWeP2kAquxURR4oMq2Ubryq3FgzMJCuNNoO5NoDhT25ecbgYH9w2MF
-	 irbwQPft0muThuKsfzhJxFLPG02l8P494DXWGzaoEVfdqJV3IXt9vhJ+/EQ+KYPUVi
-	 e+TlRyEd9Po4QogWPp+TqIhRkl6MyLDflxweDp0WDAyvJwqGdLmNvjgLT2mHjx2Owa
-	 pKd48hd60Ivsg==
-Date: Thu, 20 Feb 2025 14:58:03 +0000
-From: Simon Horman <horms@kernel.org>
-To: Larysa Zaremba <larysa.zaremba@intel.com>
-Cc: Tony Nguyen <anthony.l.nguyen@intel.com>,
-	intel-wired-lan@lists.osuosl.org,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Michal Swiatkowski <michal.swiatkowski@linux.intel.com>,
-	Mateusz Pacuszka <mateuszx.pacuszka@intel.com>
-Subject: Re: [PATCH iwl-next v4 3/6] ice: receive LLDP on trusted VFs
-Message-ID: <20250220145803.GA1615191@kernel.org>
-References: <20250214085215.2846063-1-larysa.zaremba@intel.com>
- <20250214085215.2846063-4-larysa.zaremba@intel.com>
+	b=CgtemQxbX0vGSFf6F62Qs9d8tJ3l49vaIZ+FLlP8j4sSAQcaEuasFZEbSSAaytCHa
+	 EtOYrs2ZlDDZkdjbrb4YRB/r/n2f3PVuOVpIxO/TYflrkCfPwSj11tmQJQ9hFnGRf+
+	 pZn35pGsPDfmf24zOkBujRhvjFf/W0mx0lbULES0b3aScauoSYqRbx75Glhd++AJF8
+	 +O48buHGN1/ajCIMb6gmRyHnk3HyZWn5DpGKWKSCgfQctl3xIOEMtoMjGugCtdQVqI
+	 g2UWyPE5PgVjuBv8k5j1JUpFb835ZLk17uSsNBK43I942yulnoyHtJmsh/qJ/UTBjP
+	 cjFnBKqT8busw==
+Date: Thu, 20 Feb 2025 14:58:25 +0000
+From: Lee Jones <lee@kernel.org>
+To: Chenyuan Yang <chenyuan0y@gmail.com>
+Cc: lkundrak@v3.sk, linux-kernel@vger.kernel.org, zzjas@gmail.com
+Subject: Re: [PATCH v2] mfd: ene-kb3930: Fix potential NULL pointer
+ dereference
+Message-ID: <20250220145825.GB778229@google.com>
+References: <20250213022509.2154603-1-chenyuan0y@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250214085215.2846063-4-larysa.zaremba@intel.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250213022509.2154603-1-chenyuan0y@gmail.com>
 
-On Fri, Feb 14, 2025 at 09:50:37AM +0100, Larysa Zaremba wrote:
-> From: Mateusz Pacuszka <mateuszx.pacuszka@intel.com>
-> 
-> When a trusted VF tries to configure an LLDP multicast address, configure a
-> rule that would mirror the traffic to this VF, untrusted VFs are not
-> allowed to receive LLDP at all, so the request to add LLDP MAC address will
-> always fail for them.
-> 
-> Add a forwarding LLDP filter to a trusted VF when it tries to add an LLDP
-> multicast MAC address. The MAC address has to be added after enabling
-> trust (through restarting the LLDP service).
-> 
-> Signed-off-by: Mateusz Pacuszka <mateuszx.pacuszka@intel.com>
-> Co-developed-by: Larysa Zaremba <larysa.zaremba@intel.com>
-> Signed-off-by: Larysa Zaremba <larysa.zaremba@intel.com>
-> Reviewed-by: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
+On Wed, 12 Feb 2025, Chenyuan Yang wrote:
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+> The off_gpios could be NULL. Add missing check in the kb3930_probe().
+> This is similar to the issue fixed in commit b1ba8bcb2d1f
+> ("backlight: hx8357: Fix potential NULL pointer dereference").
+> 
+> Fixes: ede6b2d1dfc0 ("mfd: ene-kb3930: Add driver for ENE KB3930 Embedded Controller")
+> Signed-off-by: Chenyuan Yang <chenyuan0y@gmail.com>
+> Suggested-by: Lee Jones <lee@kernel.org>
+> ---
+>  drivers/mfd/ene-kb3930.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
+Please submit one more time with the following line above the tags:
+
+Cc: stable@vger.kernel.org
+
+-- 
+Lee Jones [李琼斯]
 
