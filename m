@@ -1,283 +1,143 @@
-Return-Path: <linux-kernel+bounces-524712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF04DA3E61E
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 21:52:27 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2103CA3E620
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 21:53:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4A774225A7
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 20:52:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F03E54226CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 20:53:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A036826461E;
-	Thu, 20 Feb 2025 20:52:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19516213E7C;
+	Thu, 20 Feb 2025 20:53:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oWAIn9Wj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PVJyqalt"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDA091EA7C1;
-	Thu, 20 Feb 2025 20:52:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDC8E1E4AB
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 20:53:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740084733; cv=none; b=YdHL+F5BsJxYV8eKiwTdDxCHSuatDnDciBobUV8xwOYXnnQrzPb+GLR5xStIxmZO65hpkTFk6IJ9uGFQG0rNH3mEq1vOPQSfXfXSc8EcMT2a3CK6bhsLN6MNGPl4wZjYc7q+KyxzPRvnMCS4Qu5lI9dy/a44hlP0t48DSsyvC4U=
+	t=1740084815; cv=none; b=PF+bKfifbB9JVnb9O0rSyU1+Vt8DMztU36vLn/i5jfyW6XYHg7VBJHr+9i85ZV6V7LNu7WOxPtLzpzbOb89xmS7RXanA6kgTvxUfhZuB2S+nK6Ecn5IRTtmxvAXSndB35s1GhlWg0smCwVhvc5E/4gmlcODBJgllS6KwG2Oigt8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740084733; c=relaxed/simple;
-	bh=k+515vh40KJXvXhm0qOCfbc8Q1g8Mv1d3EsNcsoWfDY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=M2CBPZe18euWNTYmPCrNYCOCKjRBPv0LIK+bBkR8E/qcaL5Sf1uGT7PmgwokB+KmbKFaFIepftmBSY9sWDTEiekyJEu/X2ueqKdL1pkkyuRiw6/hf9o5D73WYjk2tUD1c4glXMOSH8I2COLSYtsX8/6pJOYcoaDNI0+HYTJ0Hk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oWAIn9Wj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 4384FC4CEE6;
-	Thu, 20 Feb 2025 20:52:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740084733;
-	bh=k+515vh40KJXvXhm0qOCfbc8Q1g8Mv1d3EsNcsoWfDY=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=oWAIn9WjrzvoKt/RBuI5aFqc6j7gzgGkdez4A23dF4lQAnUCw4C0DO8Zbdz/8iYRf
-	 MZ3HJZZG3tKO1wi44VEs2XEGzEcEi5t5pbTO+E19E9QliF4/J+ObbGFVyimPyjyMLY
-	 SdzatZsozCJWwwHqpAOwJnXpdF/zTNkah157ZoDkXRI1RIXifdNT7WVzIKxkWRZ2DA
-	 xENe/j6V6JRXd06Db5RBksKIDflj57AopNiCiVsV6GhC3Y096lHhsVksVphDhE74vg
-	 CAnTDblJozXlEIECsfVQMTeY9mZqZFAT/UL7g3dJuFzmRMyi0ZEU1GbujE9yty6hAL
-	 U/tBdsw36+gAw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E6E1C021B5;
-	Thu, 20 Feb 2025 20:52:13 +0000 (UTC)
-From: Jean-Baptiste Maneyrol via B4 Relay <devnull+jean-baptiste.maneyrol.tdk.com@kernel.org>
-Date: Thu, 20 Feb 2025 21:52:07 +0100
-Subject: [PATCH 2/2] iio: imu: inv_icm42600: add wakeup functionality for
- Wake-on-Motion
+	s=arc-20240116; t=1740084815; c=relaxed/simple;
+	bh=F6Gz/kBZLmytmoJwQqYda4mAMUsdNXBQ4dAWhHiHVj8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=LDxpNL7+GNppB+2Xf88RhSJIjRzt1NotzeVe4FR6o+3wI1virG4ePs+v7CBd9fqFwuq8niQUNgCVRkF/LLUXMOZXTVi57i81o/dtrWeWqUg3YKrQMqNISs1jKkQNKQu88pvD5+rWpxh2PDWSKIM0+MRC1CFIcdQzdddcZho8xhU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PVJyqalt; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-30613802a04so14781661fa.2
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 12:53:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740084810; x=1740689610; darn=vger.kernel.org;
+        h=user-agent:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=pfjCFL2hZG5MHqFaq9ZdLMFWkHD6C9ALeS2JSC7WLYY=;
+        b=PVJyqaltCJA+tRuF3h1vJp1TNScd2hsAUfWipmzPkUhbJ+ifOL5N7SzwoS9EbVLqHc
+         M0V0QyhlzZaoQbA4jqPUXzM9IoJn0ep8J4YXiYryucABy8QFCVJjfGBLtx1kyt5oSx7N
+         1z/6U9LbzX1wqwAbGEJcNS3LZ7CGTo5Vze1jm1TOHu/+SYIYodsJ5GHLcOMP/ngGRyro
+         rtK5Hfl/YD67gxKyQF3Bs5pzz09wdX4YRxuH5oJ+cRGhurPLOdZ8EOaG6LXm/BlRPwjo
+         YuVPzws0e5OcjfGa4fkwZpyi+E5IXhx9ZzloGujxCfbSocZB2ga/dK99YKsxMB6Wc6ir
+         tw/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740084810; x=1740689610;
+        h=user-agent:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pfjCFL2hZG5MHqFaq9ZdLMFWkHD6C9ALeS2JSC7WLYY=;
+        b=LBee5Vod1ydaLRkaS9A8LGkL6gFfETXv+qVvEvYzBbKP+FBkdyKR3dVwQ0k6svTUcL
+         h46C9toQRnRqUnR6IGp71+OuEAvRhEmFom59LdRwBsViJUMmL2bmzd+WHAGrAzq298Dc
+         MIU5gDeq/ibKeChFgH2HjPLH8VC0XpjmA9Ni1ANFSpDvBf4VH/sW9m/VHir5oKoXg5Rd
+         9VFyXw8i+hH5PmwwpeC2+AsIqAqLaTwMMhO1UerDMvagbXNk6Wmf37W10fpckA4Ik3tz
+         vNzQOCuWfjpmONjxDlyjNSgGsNspaSArs7+msTkNRdp2aHSdkuJ5LBR5a6EuK9uX7sQR
+         Z89g==
+X-Gm-Message-State: AOJu0Yzd3XSxr5FO6+MvdE+UgElenwcQGEDzDe2Byxxhvtp7gt4tmgo/
+	YicwASV16qJghg8isuae6e/oaQQZaSZ3GmA3K0v9xwIb2xUK7v1XXkpu8GE7e5I=
+X-Gm-Gg: ASbGncvTJKohK16+oSEW/S11Ome6TlP7DjENMgrLaUe4IGsC2cIWUiPYUEzCT/Ckxwm
+	OensPm/6fSyfrBCEhDbMOmp+isam0C82IhAA+VPEb7HUAtS+yCItTTsdGd3Jt5QJ8kLoq/r+fDc
+	mz9Lp36jp3sw6A2ptuCm1ye7MwBcoiHQ5rpiSEk7T3PlofVDAcztyN2AYODYFHjVg24lU8aLlhV
+	Vw1CHbisYB3qgQAEZ8ywWLwqR0cp6JkpmXh9NLRe9qR2evUzZaFBt2wJ0jtmuqcUCxMqRGgEh1J
+	NOXoBzjFSgI/5ElH
+X-Google-Smtp-Source: AGHT+IH+laBghSOr3N9TleehDO6hUVwJSpDeK2KCNyD3iGIDvHRY3u30ZUHg2dA0puDdUrFYSeHJ1A==
+X-Received: by 2002:a05:6512:110d:b0:540:2da2:f282 with SMTP id 2adb3069b0e04-54839259822mr144479e87.42.1740084809481;
+        Thu, 20 Feb 2025 12:53:29 -0800 (PST)
+Received: from grain.localdomain ([5.18.255.97])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5461e202368sm1523113e87.61.2025.02.20.12.53.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Feb 2025 12:53:29 -0800 (PST)
+Received: by grain.localdomain (Postfix, from userid 1000)
+	id 7A76C5A011D; Thu, 20 Feb 2025 23:53:28 +0300 (MSK)
+Date: Thu, 20 Feb 2025 23:53:28 +0300
+From: Cyrill Gorcunov <gorcunov@gmail.com>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Jean Delvare <jdelvare@suse.com>
+Subject: [PATCH] firmware: dmi: Respect buffer size in get_modalias
+Message-ID: <Z7eWSCCqp_HP3iSh@grain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250220-losd-3-inv-icm42600-add-wom-support-v1-2-9b937f986954@tdk.com>
-References: <20250220-losd-3-inv-icm42600-add-wom-support-v1-0-9b937f986954@tdk.com>
-In-Reply-To: <20250220-losd-3-inv-icm42600-add-wom-support-v1-0-9b937f986954@tdk.com>
-To: Jonathan Cameron <jic23@kernel.org>, 
- Lars-Peter Clausen <lars@metafoo.de>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1740084731; l=6425;
- i=jean-baptiste.maneyrol@tdk.com; s=20240923; h=from:subject:message-id;
- bh=8Io0EZ7K8Wv02WRA2dEENs6nrBC8x2QlcG1u9PLvBfA=;
- b=opslEaIOiZYxTBdkrE9ZX8xumphDLqQK/S5q28KGiWwSiCKOmeyNFh7mrLX5WvGz6cMIxwtm9
- vqfww5O9bRzAA/0W3J1wG0/J/H+Ry5kTWK0IccG78C7Zi+0hpVtfNyQ
-X-Developer-Key: i=jean-baptiste.maneyrol@tdk.com; a=ed25519;
- pk=bRqF1WYk0hR3qrnAithOLXSD0LvSu8DUd+quKLxCicI=
-X-Endpoint-Received: by B4 Relay for
- jean-baptiste.maneyrol@tdk.com/20240923 with auth_id=218
-X-Original-From: Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>
-Reply-To: jean-baptiste.maneyrol@tdk.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/2.2.13 (2024-03-09)
 
-From: Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>
+When we collect data from DMI data the result is accumulated either
+in a page buffer from sysfs entry or from uevent environment buffer.
+Both are big enough (4K and 2K) and it is hard to imagine that we
+overflow 4K page with the data, still the situation is different for
+uevent buffer where buffer may be already filled with data and we
+possibly may overflow it.
 
-When Wake-on-Motion is on, enable system wakeup and keep chip on for
-waking up system with interrupt.
+Thus lets respect buffer size given by a caller and never write
+data unconditionally.
 
-Signed-off-by: Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>
+CC: Jean Delvare <jdelvare@suse.com>
+Signed-off-by: Cyrill Gorcunov <gorcunov@gmail.com>
 ---
- drivers/iio/imu/inv_icm42600/inv_icm42600.h       |  2 +
- drivers/iio/imu/inv_icm42600/inv_icm42600_accel.c |  3 +
- drivers/iio/imu/inv_icm42600/inv_icm42600_core.c  | 89 +++++++++++++++--------
- 3 files changed, 63 insertions(+), 31 deletions(-)
+ drivers/firmware/dmi-id.c |   12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/iio/imu/inv_icm42600/inv_icm42600.h b/drivers/iio/imu/inv_icm42600/inv_icm42600.h
-index 8dfbeaf1c768d7d25cb58ecf9804446f3cbbd465..baf1dcd714800e84ccd21dc1d1e486849c77a9ae 100644
---- a/drivers/iio/imu/inv_icm42600/inv_icm42600.h
-+++ b/drivers/iio/imu/inv_icm42600/inv_icm42600.h
-@@ -151,6 +151,7 @@ struct inv_icm42600_apex {
-  *  @map:		regmap pointer.
-  *  @vdd_supply:	VDD voltage regulator for the chip.
-  *  @vddio_supply:	I/O voltage regulator for the chip.
-+ *  @irq:		chip irq.
-  *  @orientation:	sensor chip orientation relative to main hardware.
-  *  @conf:		chip sensors configurations.
-  *  @suspended:		suspended sensors configuration.
-@@ -168,6 +169,7 @@ struct inv_icm42600_state {
- 	struct regmap *map;
- 	struct regulator *vdd_supply;
- 	struct regulator *vddio_supply;
-+	int irq;
- 	struct iio_mount_matrix orientation;
- 	struct inv_icm42600_conf conf;
- 	struct inv_icm42600_suspended suspended;
-diff --git a/drivers/iio/imu/inv_icm42600/inv_icm42600_accel.c b/drivers/iio/imu/inv_icm42600/inv_icm42600_accel.c
-index 8ce2276b3edc61cc1ea26810198dd0057054ec48..4240e8c576f4d07af5434e9a91dfda532f87ffb9 100644
---- a/drivers/iio/imu/inv_icm42600/inv_icm42600_accel.c
-+++ b/drivers/iio/imu/inv_icm42600/inv_icm42600_accel.c
-@@ -1149,6 +1149,9 @@ struct iio_dev *inv_icm42600_accel_init(struct inv_icm42600_state *st)
- 	if (ret)
- 		return ERR_PTR(ret);
+Index: linux-tip.git/drivers/firmware/dmi-id.c
+===================================================================
+--- linux-tip.git.orig/drivers/firmware/dmi-id.c
++++ linux-tip.git/drivers/firmware/dmi-id.c
+@@ -103,8 +103,12 @@ static ssize_t get_modalias(char *buffer
+ 	char *p;
+ 	const struct mafield *f;
  
-+	/* accel events are wakeup capable */
-+	device_set_wakeup_capable(&indio_dev->dev, true);
-+
- 	return indio_dev;
- }
- 
-diff --git a/drivers/iio/imu/inv_icm42600/inv_icm42600_core.c b/drivers/iio/imu/inv_icm42600/inv_icm42600_core.c
-index c0fd2770d66f02d1965fa07f819fd2db9a1d6bd2..f94bda5dc094d6cc85e3facbd480b830bfbaa3f9 100644
---- a/drivers/iio/imu/inv_icm42600/inv_icm42600_core.c
-+++ b/drivers/iio/imu/inv_icm42600/inv_icm42600_core.c
-@@ -751,6 +751,7 @@ int inv_icm42600_core_probe(struct regmap *regmap, int chip, int irq,
- 	mutex_init(&st->lock);
- 	st->chip = chip;
- 	st->map = regmap;
-+	st->irq = irq;
- 
- 	ret = iio_read_mount_matrix(dev, &st->orientation);
- 	if (ret) {
-@@ -829,44 +830,56 @@ EXPORT_SYMBOL_NS_GPL(inv_icm42600_core_probe, "IIO_ICM42600");
- static int inv_icm42600_suspend(struct device *dev)
- {
- 	struct inv_icm42600_state *st = dev_get_drvdata(dev);
-+	struct device *accel_dev;
-+	bool wakeup;
-+	int accel_conf;
- 	int ret;
- 
--	mutex_lock(&st->lock);
-+	guard(mutex)(&st->lock);
- 
- 	st->suspended.gyro = st->conf.gyro.mode;
- 	st->suspended.accel = st->conf.accel.mode;
- 	st->suspended.temp = st->conf.temp_en;
--	if (pm_runtime_suspended(dev)) {
--		ret = 0;
--		goto out_unlock;
--	}
-+	if (pm_runtime_suspended(dev))
+-	strcpy(buffer, "dmi");
+-	p = buffer + 3; left = buffer_size - 4;
++	l = strscpy(buffer, "dmi", buffer_size);
++	if (l < 0)
++		return 0;
++	p = buffer + l; left = buffer_size - l - 1;
++	if (left < 0)
 +		return 0;
  
- 	/* disable FIFO data streaming */
- 	if (st->fifo.on) {
- 		ret = regmap_write(st->map, INV_ICM42600_REG_FIFO_CONFIG,
- 				   INV_ICM42600_FIFO_CONFIG_BYPASS);
- 		if (ret)
--			goto out_unlock;
-+			return ret;
- 	}
- 
--	/* disable APEX features */
--	if (st->apex.wom.enable) {
--		ret = inv_icm42600_set_wom(st, false);
--		if (ret)
--			goto out_unlock;
-+	/* keep chip on and wake-up capable if APEX and wakeup on */
-+	accel_dev = &st->indio_accel->dev;
-+	wakeup = (st->apex.on && device_may_wakeup(accel_dev)) ? true : false;
-+
-+	if (!wakeup) {
-+		/* disable APEX features and accel if wakeup disabled */
-+		if (st->apex.wom.enable) {
-+			ret = inv_icm42600_set_wom(st, false);
-+			if (ret)
-+				return ret;
-+		}
-+		accel_conf = INV_ICM42600_SENSOR_MODE_OFF;
-+	} else {
-+		/* keep accel on and setup irq for wakeup */
-+		accel_conf = st->conf.accel.mode;
-+		enable_irq_wake(st->irq);
-+		disable_irq(st->irq);
- 	}
- 
- 	ret = inv_icm42600_set_pwr_mgmt0(st, INV_ICM42600_SENSOR_MODE_OFF,
--					 INV_ICM42600_SENSOR_MODE_OFF, false,
--					 NULL);
-+					 accel_conf, false, NULL);
- 	if (ret)
--		goto out_unlock;
-+		return ret;
- 
--	regulator_disable(st->vddio_supply);
-+	/* disable vddio regulator if chip is sleeping */
-+	if (!wakeup)
-+		regulator_disable(st->vddio_supply);
- 
--out_unlock:
--	mutex_unlock(&st->lock);
--	return ret;
-+	return 0;
- }
- 
- /*
-@@ -878,13 +891,25 @@ static int inv_icm42600_resume(struct device *dev)
- 	struct inv_icm42600_state *st = dev_get_drvdata(dev);
- 	struct inv_icm42600_sensor_state *gyro_st = iio_priv(st->indio_gyro);
- 	struct inv_icm42600_sensor_state *accel_st = iio_priv(st->indio_accel);
-+	struct device *accel_dev;
-+	bool wakeup;
- 	int ret;
- 
--	mutex_lock(&st->lock);
-+	guard(mutex)(&st->lock);
- 
--	ret = inv_icm42600_enable_regulator_vddio(st);
--	if (ret)
--		goto out_unlock;
-+	/* check wakeup capability */
-+	accel_dev = &st->indio_accel->dev;
-+	wakeup = (st->apex.on && device_may_wakeup(accel_dev)) ? true : false;
-+
-+	/* restore vddio if cut off or irq state */
-+	if (!wakeup) {
-+		ret = inv_icm42600_enable_regulator_vddio(st);
-+		if (ret)
-+			return ret;
-+	} else {
-+		enable_irq(st->irq);
-+		disable_irq_wake(st->irq);
-+	}
- 
- 	pm_runtime_disable(dev);
- 	pm_runtime_set_active(dev);
-@@ -895,13 +920,15 @@ static int inv_icm42600_resume(struct device *dev)
- 					 st->suspended.accel,
- 					 st->suspended.temp, NULL);
- 	if (ret)
--		goto out_unlock;
-+		return ret;
- 
--	/* restore APEX features */
--	if (st->apex.wom.enable) {
--		ret = inv_icm42600_set_wom(st, true);
--		if (ret)
--			goto out_unlock;
-+	/* restore APEX features if disabled */
-+	if (!wakeup) {
-+		if (st->apex.wom.enable) {
-+			ret = inv_icm42600_set_wom(st, true);
-+			if (ret)
-+				return ret;
-+		}
- 	}
- 
- 	/* restore FIFO data streaming */
-@@ -910,11 +937,11 @@ static int inv_icm42600_resume(struct device *dev)
- 		inv_sensors_timestamp_reset(&accel_st->ts);
- 		ret = regmap_write(st->map, INV_ICM42600_REG_FIFO_CONFIG,
- 				   INV_ICM42600_FIFO_CONFIG_STREAM);
-+		if (ret)
-+			return ret;
- 	}
- 
--out_unlock:
--	mutex_unlock(&st->lock);
--	return ret;
-+	return 0;
- }
- 
- /* Runtime suspend will turn off sensors that are enabled by iio devices. */
-
--- 
-2.48.1
-
-
+ 	for (f = fields; f->prefix && left > 0; f++) {
+ 		const char *c;
+@@ -135,7 +139,7 @@ static ssize_t sys_dmi_modalias_show(str
+ 				     struct device_attribute *attr, char *page)
+ {
+ 	ssize_t r;
+-	r = get_modalias(page, PAGE_SIZE-1);
++	r = get_modalias(page, PAGE_SIZE-2);
+ 	page[r] = '\n';
+ 	page[r+1] = 0;
+ 	return r+1;
+@@ -163,7 +167,7 @@ static int dmi_dev_uevent(const struct d
+ 		return -ENOMEM;
+ 	len = get_modalias(&env->buf[env->buflen - 1],
+ 			   sizeof(env->buf) - env->buflen);
+-	if (len >= (sizeof(env->buf) - env->buflen))
++	if (!len || len >= (sizeof(env->buf) - env->buflen))
+ 		return -ENOMEM;
+ 	env->buflen += len;
+ 	return 0;
 
