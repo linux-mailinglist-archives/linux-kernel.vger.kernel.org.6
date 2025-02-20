@@ -1,109 +1,114 @@
-Return-Path: <linux-kernel+bounces-524649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DFA3A3E56A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 20:59:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4FBDA3E571
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 21:00:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B1E07AB50B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 19:58:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3102119C5710
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 20:00:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0896D214814;
-	Thu, 20 Feb 2025 19:59:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB17821480E;
+	Thu, 20 Feb 2025 20:00:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GXsvJpQR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="FsjAwAeq"
+Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 641EC1DED7C;
-	Thu, 20 Feb 2025 19:59:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 434EC1E9B02
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 20:00:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740081584; cv=none; b=GM8J3Ubu39Vg1QikmcYJwdAWjtQy6CJYqdu1mDGsU0SGNavREo3kSSD8+gtVguQwz+1JGAxKvaDDyLUP52ZkBDadrgPiHDSHRGXX/GweJfetmgO91NiJ1SoHkHH5MX1ts/HEwUZgQvsV1xJS8mJN2qVTkOhubKkCO/mIH2adPKI=
+	t=1740081615; cv=none; b=BwyoqKxShvLREGd8PEL+ev1FuxudPf2kQRvICe5d6fBT1eHc0Qn08iLx/I9djJG+5Df5jlJx61rmElwcJo210wA3bcWcodRDtSgZ+WRCqgzI4lXWCB/Q9OC/EZgZsayuCnvAuPqcwTUkdeJiFAOO12qDckizF86PNaJ51qp6js8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740081584; c=relaxed/simple;
-	bh=vbTftWsandQc7OcCjdvC6lWo4bRP8tGg5iJy8RM0ZFw=;
+	s=arc-20240116; t=1740081615; c=relaxed/simple;
+	bh=X1dOvUBSb0amtyG00ac5tkbkLcroNDvwYGdeglQKxoE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WU+Fv1kYSJ8QFiNLqa4zGE9FdTGd3sGItJId6iBHWAuDtBSLThSd4Ab16+oapeyiBzZm95XeF6rKZ+0UeK07Z4zyXSz2WqbAf345bmpzzOyVX03n9Id4GwMb7Kwhu1hqgKILQBLw8PllJgaW2tuvAeWj0RVBN3ZMEhkAd1pCSHI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GXsvJpQR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8405DC4CED1;
-	Thu, 20 Feb 2025 19:59:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740081582;
-	bh=vbTftWsandQc7OcCjdvC6lWo4bRP8tGg5iJy8RM0ZFw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GXsvJpQRWYxUzYNPalhxtohdI0AQWCuZrKMRe+zMsiOQU1NqkxGyTjkAJg7dgfF0j
-	 H+NxkGor/y1JBg3WjGrp1BlXUk+j2axZX5spQg2SacrxeCOx6g7Sz90Trll76DUK83
-	 Azeuwk2Kljsz8E83cxHVQ2j6Hf6vwB2mOnD1bnwGd9/tuA5laaLroqHqgMJY73pqFi
-	 8mawiI6SMrl2dxX3DZ8eHPROef9AsHe3Ch9aOeT2/7dDdVTfZSzB12xjP6vTwKTxA+
-	 67aCzncwDRT2ts/DRekiofNn/2sEZp18FuRR8tHxR0fgFwWkk7RJH9fo9hY8IYKLts
-	 RrQBHHjtAc8Fg==
-Date: Thu, 20 Feb 2025 11:59:40 -0800
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Sathvika Vasireddy <sv@linux.ibm.com>
-Cc: peterz@infradead.org, christophe.leroy@csgroup.eu, npiggin@gmail.com,
-	maddy@linux.ibm.com, linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, llvm@lists.linux.dev
-Subject: Re: [RFC PATCH] objtool: Skip unannotated intra-function call
- warning for bl+mflr pattern
-Message-ID: <20250220195940.ely2l2fpsozd2tuv@jpoimboe>
-References: <20250219162014.10334-1-sv@linux.ibm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=hNn1/VpDQSyL9pjfz7fSm+VLzb3y72uhI3Mvuvu3LTYxofDeQ8q+Hq4tImQMCFl11A5oZiKwk+O4cfhGQPipYWSZw81QqXn+gAqexGpBdMvNwCI0jOz/0lIxvoHKn2lBNONawPQehQynE45oPxtVFY1V3LJuUgVzZ2nWN/VeGkk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=FsjAwAeq; arc=none smtp.client-ip=95.215.58.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 20 Feb 2025 19:59:54 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1740081601;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EJD8+e7EsZbN5YvJtfEPLBE/ojA0ViggvDiLD6CrdRg=;
+	b=FsjAwAeqBXGJ7xkCI3IgyzgIMYF7jDJ02tAFb77ff+7KUizr4fl1G/BxqVkhSPA0kYO01x
+	i9u3pOZrHfTBl++rH6qkLFIWAYR6su+vPxgVfYtifmyLGU3XAg+4TXsuddLDdXn2883S6N
+	aRc745LimdeiUcpqlUos1WLsCwZ74Xc=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yosry Ahmed <yosry.ahmed@linux.dev>
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: x86@kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Sean Christopherson <seanjc@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/6] IBPB cleanups and a fixup
+Message-ID: <Z7eJurYbxS2kAzvk@google.com>
+References: <20250219220826.2453186-1-yosry.ahmed@linux.dev>
+ <20250220190444.7ytrua37fszvuouy@jpoimboe>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250219162014.10334-1-sv@linux.ibm.com>
+In-Reply-To: <20250220190444.7ytrua37fszvuouy@jpoimboe>
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Feb 19, 2025 at 09:50:14PM +0530, Sathvika Vasireddy wrote:
-> Architectures like PowerPC use a pattern where the compiler generates a
-> branch-and-link (bl) instruction that targets the very next instruction,
-> followed by loading the link register (mflr) later. This pattern appears
-> in the code like:
+On Thu, Feb 20, 2025 at 11:04:44AM -0800, Josh Poimboeuf wrote:
+> On Wed, Feb 19, 2025 at 10:08:20PM +0000, Yosry Ahmed wrote:
+> > This series removes X86_FEATURE_USE_IBPB, and fixes a KVM nVMX bug in
+> > the process. The motivation is mostly the confusing name of
+> > X86_FEATURE_USE_IBPB, which sounds like it controls IBPBs in general,
+> > but it only controls IBPBs for spectre_v2_mitigation. A side effect of
+> > this confusion is the nVMX bug, where virtualizing IBRS correctly
+> > depends on the spectre_v2_user mitigation.
+> > 
+> > The feature bit is mostly redundant, except in controlling the IBPB in
+> > the vCPU load path. For that, a separate static branch is introduced,
+> > similar to switch_mm_*_ibpb.
 > 
->  bl .+4
->  li r5,0
->  mflr r30
-
-If I understand correctly, this is basically a fake call which is used
-to get the value of the program counter?
-
-> Objtool currently warns about this as an "unannotated intra-function
-> call" because find_call_destination() fails to find any symbol at the
-> target offset. Add a check to skip the warning when a branch targets
-> the immediate next instruction in the same function.
+> Thanks for doing this.  A few months ago I was working on patches to fix
+> the same thing but I got preempted multiple times over.
 > 
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202502180818.XnFdv8I8-lkp@intel.com/
-> Signed-off-by: Sathvika Vasireddy <sv@linux.ibm.com>
+> > I wanted to do more, but decided to stay conservative. I was mainly
+> > hoping to merge indirect_branch_prediction_barrier() with entry_ibpb()
+> > to have a single IBPB primitive that always stuffs the RSB if the IBPB
+> > doesn't, but this would add some overhead in paths that currently use
+> > indirect_branch_prediction_barrier(), and I was not sure if that's
+> > acceptable.
+> 
+> We always rely on IBPB clearing RSB, so yes, I'd say that's definitely
+> needed.  In fact I had a patch to do exactly that, with it ending up
+> like this:
 
-This should have a Fixes tag as well.
+I was mainly concerned about the overhead this adds, but if it's a
+requirement then yes we should do it.
 
->  static int add_call_destinations(struct objtool_file *file)
->  {
-> +	struct instruction *next_insn;
->  	struct instruction *insn;
->  	unsigned long dest_off;
->  	struct symbol *dest;
-> @@ -1625,6 +1626,11 @@ static int add_call_destinations(struct objtool_file *file)
->  		reloc = insn_reloc(file, insn);
->  		if (!reloc) {
->  			dest_off = arch_jump_destination(insn);
-> +
-> +			next_insn = next_insn_same_func(file, insn);
-> +			if (next_insn && dest_off == next_insn->offset)
-> +				continue;
-> +
+> 
+> static inline void indirect_branch_prediction_barrier(void)
+> {
+> 	asm volatile(ALTERNATIVE("", "call write_ibpb", X86_FEATURE_IBPB)
+> 		     : ASM_CALL_CONSTRAINT
+> 		     : : "rax", "rcx", "rdx", "memory");
+> }
+> 
+> I also renamed "entry_ibpb" -> "write_ibpb" since it's no longer just
+> for entry code.
 
-This won't work on x86, where an intra-function call is converted to a
-stack-modifying JUMP.  So this should probably be checked in an
-arch-specific function.
-
--- 
-Josh
+Do you want me to add this in this series or do you want to do it on top
+of it? If you have a patch lying around I can also include it as-is.
 
