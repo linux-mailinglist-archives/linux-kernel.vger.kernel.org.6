@@ -1,157 +1,112 @@
-Return-Path: <linux-kernel+bounces-524747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFA20A3E698
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 22:31:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDD0EA3E6A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 22:32:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34A64423C28
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 21:30:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AFD7119C535B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 21:31:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8048226461F;
-	Thu, 20 Feb 2025 21:29:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2FFB264620;
+	Thu, 20 Feb 2025 21:30:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WCETpwfu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="WL38YEcX"
+Received: from mail-oo1-f42.google.com (mail-oo1-f42.google.com [209.85.161.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF7E926658F;
-	Thu, 20 Feb 2025 21:29:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB25D26461F
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 21:30:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740086963; cv=none; b=ksNMLWyVxzFcKFEnVmLYjt489aup/6bjHgPayM/oqvjTbwkMDSEy505CDzktuZiy6zzBAnTNjW+2Syfu1RM9HtD75HKFjyY5RkGfUTw/wNYFpwKAxDcuHx9PX9p0HrzTeTwXXSRoy+tiZqUtIWv922pI1X3I5Yq3sBmB/HXG96A=
+	t=1740087043; cv=none; b=LLqlo0Dv7+xlxrx6x2TJKc7cRK1QGHsplsVFBn4ocHjd/lcPsLtOL1257sXmhzcvJUyFehcMa6mVnreKXIL11IQMuA+iRe/Lodi+rdmvgGoyCKwXz7m+iN6YNiUzIts4MFrU59VZ8pB00M9wipbYOOAnYPlDVc/f0EPVXS24MHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740086963; c=relaxed/simple;
-	bh=cPMXfJ5EEJSFIc6bQSSqwz/jzpiRbId88b5OIXw7akI=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=UEL9TIxlFd+zASMyjxmVPQ1UxjQGcKynX1JRasQmHkJo7Mqkil2KI06zGhEyXXodc9tjBTJxsLsGK+pg0fxFh8jWrpp4oNJ48ZXtHHwYyRzgImDDVdOjy27j4tlaFfllsrh4kWv6ZYJs7s+B3pBrGb2DweGuQmKCbhh94U0Bov8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WCETpwfu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D8E1C4CED1;
-	Thu, 20 Feb 2025 21:29:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740086963;
-	bh=cPMXfJ5EEJSFIc6bQSSqwz/jzpiRbId88b5OIXw7akI=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=WCETpwfuWJO0JWuzIGZRF7sywIRaqSi8e4WpC6+MQMO4xknZ5pLQgbxGDP9+o0I50
-	 0R1myaQWgX2sy4QgviPM15qOeoc8s/lRu4+LK+KZsrDJoQFOrp0Tr3Y5aP2DoIhxQW
-	 IOgax0/wXj9l4oYTD170yWmsniSod59ztndBZYgi1mrT/Wk0m07vx5Y10j9Kw4+WmI
-	 aajGDGqdE/I2TYy/8uRorPwWQHSw5Y3PhcfsV8GvRraFJaw476eCd7j6EL+reXmbJX
-	 4jXTaGQvwbwlqZlwak86fcxhfnVkZGK9PsZsHb1vy5gKnsB9pZyUnTzsOte6E8gqWm
-	 38VW7E2NpUOzw==
-Date: Thu, 20 Feb 2025 15:29:21 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1740087043; c=relaxed/simple;
+	bh=4IlTTn57fzjGT5neuC60L+1dIx72n+UtfQr5bV/D27w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ByeO4nHwAZMZhrPcZxWpOoMpMyecEThquG5h/kbvrhbNz2+9WUu7rc55tYApAzjLCvarWVXdvMwAI29aCqURYQIDSjGGeS2kQFRhBA0OFmi1QTFryGasfx3+vU9z02C+esKlc3QYidDtwJAByT9rWHAVKMbtgAK/sZP62uactrQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=WL38YEcX; arc=none smtp.client-ip=209.85.161.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oo1-f42.google.com with SMTP id 006d021491bc7-5fc0c06e1deso650199eaf.1
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 13:30:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1740087041; x=1740691841; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=uFd/eiSziPMZWtzl8X1O2OHBJVjEs/2F5XFS5d1bJIM=;
+        b=WL38YEcXKPC5A0lyLdMO7ESMN3vYT7V6skgjG2buZyS3+afeDPTUZht0CCtUF1YJOk
+         Oicd1U730PU7/dz7EA/HsDsY8nJGhqC0Tisr08+LNMhN3ijhaHe8A0vRudxfLW18SA2A
+         +Zr5LvEhyrVhT+AHZHYphBUq+VtTqNIymabTUHMmEjQuWT83mmF7P2J1UHXez1nFb74k
+         ZQnWV3bRZDXRKbBBjv5jQkkN3hcTyp/xH/sjVh+SAytNMSONraBoP1r7uwSlQafQTpZ4
+         caTqmQa/GdrZRZewMS0M2xcjm60HgBhcpKJ+1fwsU88+02wN1Yi4fW1poviJqUDYPPs3
+         8CUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740087041; x=1740691841;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uFd/eiSziPMZWtzl8X1O2OHBJVjEs/2F5XFS5d1bJIM=;
+        b=Jjg33KaxPU+5ZzdTawwKo7qRBbQDDgwctGEDfUm3C83nGAfJ4mS6+UF7qXScY1EhSr
+         mOkOn0eiiYmCZB+hp16KgiKIi0IgcLvg7cKGnxO1thZWkszpAEc/sl2/hMdNWxZEhju8
+         n31h0ibjsLaFL07WVIZ8QYkHnxEdWvp7Dw8mWLVAvh+7H30UbBcjnxU5TOUDXqwUTnnM
+         H0JaicAr+AL50EHbYOF62lvyZe+Nyv4BSNGclmhk/v8LFOVphR9fIIYvj3rgTsCdT4s6
+         Sak8LLV2WqyL5G7xtTBeTzT/k47qxRIiqMGDRkBzWSPJHovcMYcdXzPtK9Q45GjOMuZx
+         KnlA==
+X-Forwarded-Encrypted: i=1; AJvYcCV4dgCY/FXxVgbXb3E32x66VxTVrXR+X3yCGEG9zFTmsGbEeMeeuxD3o5rvqtBU5f2BbmSteePwPe1m/3I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxR1+89qc4a/LXMWxjirw11Gkm1Y1g/Bbjfic+EcJO4PfmAhFLf
+	9CqK2HBeX3MecsCLPcyTY0vfa713w+6JwZAmCq4ZR9ZFFqfbynf9eX2G+jRiZQA=
+X-Gm-Gg: ASbGncvCTQM3Tri++h29vNT1L4VWHZStgpEjfgWSsRlS3YxfTCg3bBCdzwgIpLVJdVR
+	LchNJbLbmqUdqnCHWeDoLWkW6HUJFpTBXKBOk/Dkzh3OK+AyTKh9gPC/2Oa19ibnHw3BsPJdjin
+	mkztWdVYqyBQ82s2O8GvodMpqY1AuGs2b8JaaUKwUQoiBBYHo4WR7mYFx+Nvc7Z/JMRODOxZK+J
+	bt2Yk/9QSY6gCbdTCR6jPVGrqPErRQdw0/oLd+/+kg7k6uMIRsJ+smyFdxWQ4aGB2UMy4LN+56U
+	HGLwkaPe23yZS2eqWMCgdJVBXGmlZbui1rHYFWMefOczXV1PtqBE
+X-Google-Smtp-Source: AGHT+IFqWxbZFRA1rz6PvPU2XODqbR9hz70tJhTG/+Dqectftq8EDR8raj5yvtCTiONyxW3BNF1Olg==
+X-Received: by 2002:a05:6820:1612:b0:5fd:50d:49e4 with SMTP id 006d021491bc7-5fd19648f16mr652519eaf.7.1740087040824;
+        Thu, 20 Feb 2025 13:30:40 -0800 (PST)
+Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5fced377d94sm1875193eaf.32.2025.02.20.13.30.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 20 Feb 2025 13:30:39 -0800 (PST)
+Message-ID: <63e98010-860c-4d66-9cac-4f37d5e08f5c@baylibre.com>
+Date: Thu, 20 Feb 2025 15:30:37 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Heiko Stuebner <heiko@sntech.de>, 
- Farouk Bouabid <farouk.bouabid@theobroma-systems.com>, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- linux-rockchip@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>, 
- Quentin Schulz <quentin.schulz@theobroma-systems.com>, 
- devicetree@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- stable@vger.kernel.org, Quentin Schulz <quentin.schulz@cherry.de>
-To: Quentin Schulz <foss+kernel@0leil.net>
-In-Reply-To: <20250220-ringneck-dtbos-v1-0-25c97f2385e6@cherry.de>
-References: <20250220-ringneck-dtbos-v1-0-25c97f2385e6@cherry.de>
-Message-Id: <174008661935.4046882.3221866764998287397.robh@kernel.org>
-Subject: Re: [PATCH 0/5] arm64: dts: rockchip: pinmux fixes and support for
- 2 adapters for Theobroma boards
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND v3 07/17] iio: adc: ad7768-1: remove unnecessary
+ locking
+To: Jonathan Santos <Jonathan.Santos@analog.com>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: lars@metafoo.de, Michael.Hennerich@analog.com,
+ marcelo.schmitt@analog.com, jic23@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, jonath4nns@gmail.com,
+ marcelo.schmitt1@gmail.com
+References: <cover.1739368121.git.Jonathan.Santos@analog.com>
+ <f866c5e181e9e77f4179c44a857cebd60dce32d2.1739368121.git.Jonathan.Santos@analog.com>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <f866c5e181e9e77f4179c44a857cebd60dce32d2.1739368121.git.Jonathan.Santos@analog.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-
-On Thu, 20 Feb 2025 13:20:09 +0100, Quentin Schulz wrote:
-> This is based on top of
-> https://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git/log/?h=v6.15-armsoc/dts64
-> 6ee0b9ad3995 ("arm64: dts: rockchip: Add rng node to RK3588") as it
-> depends on the (merged) series from
-> https://lore.kernel.org/all/20250211-pre-ict-jaguar-v6-0-4484b0f88cfc@cherry.de/
+On 2/12/25 12:17 PM, Jonathan Santos wrote:
+> The current locking is only preventing a triggered buffer Transfer and a
+> debugfs register access from happening at the same time. If a register
+> access happens during a buffered read, the action is doomed to fail anyway,
+> since we need to write a magic value to exit continuous read mode.
 > 
-> Patches for Haikou Video Demo adapter for PX30 Ringneck and RK3399 Puma
-> (patches 4 and 5) also depend on the following patch series:
-> https://lore.kernel.org/linux-devicetree/20250220-pca976x-reset-driver-v1-0-6abbf043050e@cherry.de/
+> Remove locking from the trigger handler and use
+> iio_device_claim_direct_mode() instead in the register access function.
 > 
-> This fixes incorrect pinmux on UART0 and UART5 for PX30 Ringneck on
-> Haikou.
-> 
-> This adds support for the HAIKOU-LVDS-9904379 adapter for PX30 Ringneck
-> fitted on a Haikou carrierboard.
-> 
-> Additionally, this adds support for Haikou Video Demo adapter on PX30
-> Ringneck and RK3399 Puma fitted on a Haikou carrierboard. Notably
-> missing from the overlay is the OV5675 camera module which expects
-> 19.2MHz which we cannot exactly feed right now. Modifications to the
-> OV5675 drivers will be made so it's more flexible and then support for
-> the camera module will be added. This adapter has a 720x1280 DSI display
-> with a GT911 touchscreen, a GPIO-controllable LED and an I2C GPIO
-> expander. Support for this adapter on RK3588 Tiger is being added in a
-> separate patch series[1].
-> 
-> Note that the DSI panel currently is glitchy on both PX30 Ringneck and
-> RK3399 Puma but this is being tackled in another series[2]. Since this
-> will not be fixed through DT properties for the panel, adding the DT
-> nodes for the DSI panel even if not perfect right now seems acceptable
-> to me.
-> 
-> [1] https://lore.kernel.org/linux-rockchip/20241127143719.660658-1-heiko@sntech.de/
-> [2] https://lore.kernel.org/r/20240626084722.832763-1-heiko@sntech.de
-> 
-> Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
+> Signed-off-by: Jonathan Santos <Jonathan.Santos@analog.com>
 > ---
-> Quentin Schulz (5):
->       arm64: dts: rockchip: fix pinmux of UART0 for PX30 Ringneck on Haikou
->       arm64: dts: rockchip: fix pinmux of UART5 for PX30 Ringneck on Haikou
->       arm64: dts: rockchip: add support for HAIKOU-LVDS-9904379 adapter for PX30 Ringneck
->       arm64: dts: rockchip: add overlay for PX30 Ringneck Haikou Video Demo adapter
->       arm64: dts: rockchip: add overlay for RK3399 Puma Haikou Video Demo adapter
-> 
->  arch/arm64/boot/dts/rockchip/Makefile              |  15 ++
->  .../px30-ringneck-haikou-lvds-9904379.dtso         | 130 ++++++++++++++
->  .../rockchip/px30-ringneck-haikou-video-demo.dtso  | 190 +++++++++++++++++++++
->  .../boot/dts/rockchip/px30-ringneck-haikou.dts     |  10 +-
->  .../rockchip/rk3399-puma-haikou-video-demo.dtso    | 166 ++++++++++++++++++
->  5 files changed, 510 insertions(+), 1 deletion(-)
-> ---
-> base-commit: 6ee0b9ad3995ee5fa229035c69013b7dd0d3634b
-> change-id: 20250128-ringneck-dtbos-98064839355e
-> prerequisite-change-id: 20250219-pca976x-reset-driver-c9aa95869426:v1
-> prerequisite-patch-id: 24af74693654b4a456aca0a1399ec8509e141c01
-> prerequisite-patch-id: df17910ec117317f2f456f679a77ed60e9168fa3
-> 
-> Best regards,
-> --
-> Quentin Schulz <quentin.schulz@cherry.de>
-> 
-> 
-> 
-
-
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
-
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
-
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
-
-  pip3 install dtschema --upgrade
-
-
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/rockchip/' for 20250220-ringneck-dtbos-v1-0-25c97f2385e6@cherry.de:
-
-arch/arm64/boot/dts/rockchip/px30-ringneck-haikou.dtb: uart: uart5-rts-gpio: {'rockchip,pins': [[0, 13, 0, 147]], 'phandle': 70} is not of type 'array'
-	from schema $id: http://devicetree.org/schemas/gpio/gpio-consumer.yaml#
-
-
-
-
+Reviewed-by: David Lechner <dlechner@baylibre.com>
 
 
