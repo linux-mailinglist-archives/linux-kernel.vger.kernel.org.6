@@ -1,121 +1,386 @@
-Return-Path: <linux-kernel+bounces-524833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55B6CA3E7A0
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 23:39:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B5DDA3E7A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 23:40:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCDD9189D62B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 22:40:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E03319C5105
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 22:40:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92D8B264634;
-	Thu, 20 Feb 2025 22:39:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C32A264FA5;
+	Thu, 20 Feb 2025 22:40:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ethancedwards.com header.i=@ethancedwards.com header.b="f//Vi9u/"
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KkTcK18a"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3FE91E9B35
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 22:39:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1451264F8A
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 22:40:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740091188; cv=none; b=awyrnhJcCXXDpZ5hdKUYIXHO319t8Z2wObxbSXzLteHaME+3GC4ZvB450JqoDJK8ue613rfG6qxTw5tLwyhjgLN3xwsaLGSIai6ig45tg4efmt3Gq9nSnJFgEzB0o6MwEGF6/iXbpYtufNG3VrpPNjF/Jh0i0GPxiWMhKCZQA4w=
+	t=1740091208; cv=none; b=s14NPjnCaMdr60bTWEmdiFLYIuPer1PxlR3vK6VvfFVGAKvp+bw5ZJVIaYLfVCoG/B0jcABRqugSO1uX+XPP6evpnWVexlfNQccr2pEjtGsyk8po+ttg4kY3dJVqn0nTr6ZDlIZkCZbkMaTyV3cXPg495D3W84kTnC5Qorsbwd0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740091188; c=relaxed/simple;
-	bh=J57RcTCyWAxFm2umO0g+4bB4ISjq2IYkSSr7ajlq/gA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=etcvexuwI/bjdktbbjjiE7sCpM5KT5RBJV6u7EqM3N7v53rRJdfxcY6+5qhqPzI+ZrHa7e7s54qNgz4Zg357HeQZn1A86mXtcnKmt61kX9B4+TqICiAR/pwMxjm5frZzn8UckWJH1sQa1AVKY/NXSH19OZDCHq1ZIxnoGqgSQWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ethancedwards.com; spf=pass smtp.mailfrom=ethancedwards.com; dkim=pass (2048-bit key) header.d=ethancedwards.com header.i=@ethancedwards.com header.b=f//Vi9u/; arc=none smtp.client-ip=80.241.56.161
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ethancedwards.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ethancedwards.com
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4YzSqz1hl1z9tDy;
-	Thu, 20 Feb 2025 23:39:43 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ethancedwards.com;
-	s=MBO0001; t=1740091183;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=DA3uhlCDI1A8BDotF0N5GRp5MWr0V4pEHmnZHzSGNPE=;
-	b=f//Vi9u/xq6akrnJWV4SMJm4ueQB4UZlcbQa3xbXHzlyKLZEGAQz5GOx0W1xoDwPY4Kk9y
-	Tph0I7lxGu6YAlY4Vky1I5k5LOBTMSgQ8U4TGn1al2n6TyvnEvfmKxgZSdxnb7RTsNDjzn
-	Ac0QP0q6IfRwjP7l1+QJ/v/aF1Le6BxR/b3NX587g4vCT4JOlImK7mozPKp4GzKiEOHS04
-	UqvPjGGcFFastPKxjSK7p437yw6nru/GBcOyd3sZIdAt2l8hO9cRtxHVVYX0f+/iE13K7G
-	97jNVI5sqImx72rfBRgG8HdI9BSGFUwJ54gU9x5gP2E7rqOgtUCL7AZXYkmeLQ==
-From: Ethan Carter Edwards <ethan@ethancedwards.com>
-Date: Thu, 20 Feb 2025 17:39:40 -0500
-Subject: [PATCH] um: use str_yes_no() to remove hardcoded "yes" and "no"
+	s=arc-20240116; t=1740091208; c=relaxed/simple;
+	bh=MA+xHDdqUq1yk2Ez9s2XXu1J75s7bgUJ74/iEEmrWOM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RHSQNXeAnB9cWcLQXFY98YO6LNoz56jkqQlRDgdKnR8rBSG0L4ZE1SQKv4NjQQYq0VvUJ2AX8+UzTRmo25Lk65BO865/w011KkCPRJtB+u1lo1a6fzX8vUJWMOWncaDMOVLmXFCOQqJdDPvswbIUFi20HvwkL1AiPzDFmqBLzHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KkTcK18a; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5e04861e7a6so2755202a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 14:40:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1740091204; x=1740696004; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/EvYv+aj8j+zTCkL7ssEiUCbMGAzEqKBKYb0x2hzdFs=;
+        b=KkTcK18aLdjPfPHwrO8RYr3X7+wR+jLEFyotyJTnwIsNaAxQ0YvSTe9JO/fJxvfAzb
+         AkRrpWoPk8oefTeMujZCpWzykCVjx2XwRjLN4koFTBoVTMNMqt0sx+OUvr7LzyTAa0Uo
+         6XiFvMZGRypRc/y4mzpWgJB4rNLL17B/BMDt6LmUY2goEPWmLcYufn8pvCjhcw6jbTGo
+         z7xQ48RJ0IxJ6iP8zM8ajZoDhvbKUIjK9yIns0gP2rn4exhtsdjTvTE4tu+nI2UDxP8v
+         t35UuPbG8rwbSX6o5+NI81YEKQI03YSQUSn5M7CzgE6hf3q0Wg4L19ZpI0JJr4syRckD
+         Lciw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740091204; x=1740696004;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/EvYv+aj8j+zTCkL7ssEiUCbMGAzEqKBKYb0x2hzdFs=;
+        b=YLriS9L+URwQo4YyRhllhEwL3lz9vp5QUqckfgN84QwuOrAn+eWiuytbNOPmdhfMhG
+         8DCpW3+P0+4WKT1qk7aWlt81KZFTgvW6kwxhz+ID1bOi/WPZCuBJBI89PxTufO/6Qwa/
+         Pl0PcQxF5vSJ/GzrlCsvBeISOFj7My8S6Emwq2Z2+uGcRzEss/GfHyNuMa/tRBA0p0bj
+         xYLGf6U2kuofL98YxSx9t8ryz8YQoJPb1YHaeaFZA/f7ZpxWTtl6xnyKxcoCa3KCTqX8
+         icg6EGpktFcm9ipov0aEuxLq/+aha7rW4wgIr2+Cx9nbPqfPVxNzkWZ+ZYjUbhrR+JVm
+         /mFw==
+X-Forwarded-Encrypted: i=1; AJvYcCXkphQinbQ624r8xb9hXkwv9KJzTTPbw+AuFWj9l4jWatkysXaie5lbr7hxYRzxxZfDSq1KOoBEsMZf0/E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywq/f6H+ekB8G2JPie9zOI/Nb7Elqq6I1bQISMkPv5obLJYD5Y3
+	hRV5J2p+zUD0Hzmk1eQLGDqz9CGBmct11X4N7YdholBctPqlN8fXyj7mtI+y7bwlW8LRCiPgTrD
+	V1jF9Iogydzg9vEh2glfHS3QQaj3t7mYSvuc/
+X-Gm-Gg: ASbGncud+w5sSO5qKejIC4sGGav7VTCy3cjfcIKrGDwcBHadoBnQmVHBN+ErzoPYcMT
+	It002L/ZzMTnv2bexqWtfryag9hfTQURPIhzxdymavoD0MlMzm18ibhe89Oy6fMuTndmEOAaXOn
+	Fe3d/PoluIu1czc52wtY1oeG31O8Q=
+X-Google-Smtp-Source: AGHT+IH4Qv0+6KZvpi+1uMXLZPhezmGXC7uR+1Xj4tehYbACfpkqO8/vS0CgMXXyCsoXJGBUSjhJxEbyphd2GOB9Mpc=
+X-Received: by 2002:a17:907:72c8:b0:ab7:e52a:1467 with SMTP id
+ a640c23a62f3a-abc09aff659mr125332966b.30.1740091203960; Thu, 20 Feb 2025
+ 14:40:03 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250220-um_yes_no-v1-1-2a355ed2d225@ethancedwards.com>
-X-B4-Tracking: v=1; b=H4sIACuvt2cC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDIyMD3dLc+MrU4vi8fF2T1DRDgyRTo1SzVAMloPqCotS0zAqwWdGxtbU
- ATLVp01sAAAA=
-X-Change-ID: 20250220-um_yes_no-4ef10b52e6e0
-To: Richard Weinberger <richard@nod.at>
-Cc: Anton Ivanov <anton.ivanov@cambridgegreys.com>, 
- Johannes Berg <johannes@sipsolutions.net>, linux-um@lists.infradead.org, 
- linux-kernel@vger.kernel.org, 
- Ethan Carter Edwards <ethan@ethancedwards.com>
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1418;
- i=ethan@ethancedwards.com; h=from:subject:message-id;
- bh=J57RcTCyWAxFm2umO0g+4bB4ISjq2IYkSSr7ajlq/gA=;
- b=LS0tLS1CRUdJTiBQR1AgTUVTU0FHRS0tLS0tCgpvd0o0bkp2QXk4ekFKWGJEOXFoNThlVGp6e
- GhQcXlVeHBHOWZyMk1TS3JEb0FVdjA4cTZkOVVlVU4ycFZjMisrCnVsUDExbzBzaGJ0ZTkvS2tH
- bWQybExJd2lIRXh5SW9wc3Z6UFVVNTdxRGxEWWVkZmx5YVlPYXhNSUVNWXVEZ0YKWUNLZlN4a1o
- zaWpXQ1p4amY5disvdmxXRGIxTmlSZFRxczRkL2ErWjl6V3ZVTXQrOWRVZGhnei9ETTkva1BmYg
- pOZjJVeDlhcG9WNXZ1TitGUFpqbXhiRHhpRm1tMXFUNVJSYXJXUUdwQ2s3Rwo9QTFqbAotLS0tL
- UVORCBQR1AgTUVTU0FHRS0tLS0tCg==
-X-Developer-Key: i=ethan@ethancedwards.com; a=openpgp;
- fpr=2E51F61839D1FA947A7300C234C04305D581DBFE
-X-Rspamd-Queue-Id: 4YzSqz1hl1z9tDy
+References: <cover.1739997129.git.ashish.kalra@amd.com> <f1caff4423a46c50564e625fd98932fde2a9a3fc.1739997129.git.ashish.kalra@amd.com>
+ <CAAH4kHab8rvWCPX2x8cvv6Dm+uhZQxpJgwrrn2GAKzn8sqS9Kg@mail.gmail.com>
+ <27d63f0a-f840-42df-a31c-28c8cb457222@amd.com> <CAAH4kHYXGNTFABo7hWCQvvebiv4VkXfT8HvV-FPneyQcrHA-9w@mail.gmail.com>
+ <f227fa9a-f609-41f3-a63b-1c37ded33134@amd.com>
+In-Reply-To: <f227fa9a-f609-41f3-a63b-1c37ded33134@amd.com>
+From: Dionna Amalie Glaze <dionnaglaze@google.com>
+Date: Thu, 20 Feb 2025 14:39:51 -0800
+X-Gm-Features: AWEUYZmXe-AfsDb9SasqOdujPJo2AOjKzPGzkt9ECuWbb2oibMH6xOtCbdo7MV8
+Message-ID: <CAAH4kHaM6BDD3Ry5KQJn0rVi7m+FCy2auQPnFNSxnMMeLziGhQ@mail.gmail.com>
+Subject: Re: [PATCH v4 2/7] crypto: ccp: Ensure implicit SEV/SNP init and
+ shutdown in ioctls
+To: "Kalra, Ashish" <ashish.kalra@amd.com>
+Cc: seanjc@google.com, pbonzini@redhat.com, tglx@linutronix.de, 
+	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, 
+	hpa@zytor.com, thomas.lendacky@amd.com, john.allen@amd.com, 
+	herbert@gondor.apana.org.au, michael.roth@amd.com, nikunj@amd.com, 
+	ardb@kernel.org, kevinloughlin@google.com, Neeraj.Upadhyay@amd.com, 
+	aik@amd.com, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-crypto@vger.kernel.org, linux-coco@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Remove hard-coded strings by using the str_yes_no() helper function
-provided by <linux/string_choices.h>.
-
-Signed-off-by: Ethan Carter Edwards <ethan@ethancedwards.com>
+On Thu, Feb 20, 2025 at 2:18=E2=80=AFPM Kalra, Ashish <ashish.kalra@amd.com=
+> wrote:
+>
+> On 2/20/2025 3:37 PM, Dionna Amalie Glaze wrote:
+> > On Thu, Feb 20, 2025 at 12:07=E2=80=AFPM Kalra, Ashish <ashish.kalra@am=
+d.com> wrote:
+> >>
+> >> Hello Dionna,
+> >>
+> >> On 2/20/2025 10:44 AM, Dionna Amalie Glaze wrote:
+> >>> On Wed, Feb 19, 2025 at 12:53=E2=80=AFPM Ashish Kalra <Ashish.Kalra@a=
+md.com> wrote:
+> >>>>
+> >>>> From: Ashish Kalra <ashish.kalra@amd.com>
+> >>>>
+> >>>> Modify the behavior of implicit SEV initialization in some of the
+> >>>> SEV ioctls to do both SEV initialization and shutdown and add
+> >>>> implicit SNP initialization and shutdown to some of the SNP ioctls
+> >>>> so that the change of SEV/SNP platform initialization not being
+> >>>> done during PSP driver probe time does not break userspace tools
+> >>>> such as sevtool, etc.
+> >>>>
+> >>>> Prior to this patch, SEV has always been initialized before these
+> >>>> ioctls as SEV initialization is done as part of PSP module probe,
+> >>>> but now with SEV initialization being moved to KVM module load inste=
+ad
+> >>>> of PSP driver probe, the implied SEV INIT actually makes sense and g=
+ets
+> >>>> used and additionally to maintain SEV platform state consistency
+> >>>> before and after the ioctl SEV shutdown needs to be done after the
+> >>>> firmware call.
+> >>>>
+> >>>> It is important to do SEV Shutdown here with the SEV/SNP initializat=
+ion
+> >>>> moving to KVM, an implicit SEV INIT here as part of the SEV ioctls n=
+ot
+> >>>> followed with SEV Shutdown will cause SEV to remain in INIT state an=
+d
+> >>>> then a future SNP INIT in KVM module load will fail.
+> >>>>
+> >>>> Similarly, prior to this patch, SNP has always been initialized befo=
+re
+> >>>> these ioctls as SNP initialization is done as part of PSP module pro=
+be,
+> >>>> therefore, to keep a consistent behavior, SNP init needs to be done
+> >>>> here implicitly as part of these ioctls followed with SNP shutdown
+> >>>> before returning from the ioctl to maintain the consistent platform
+> >>>> state before and after the ioctl.
+> >>>>
+> >>>> Signed-off-by: Ashish Kalra <ashish.kalra@amd.com>
+> >>>> ---
+> >>>>  drivers/crypto/ccp/sev-dev.c | 117 ++++++++++++++++++++++++++++----=
 ---
- arch/um/kernel/um_arch.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+> >>>>  1 file changed, 93 insertions(+), 24 deletions(-)
+> >>>>
+> >>>> diff --git a/drivers/crypto/ccp/sev-dev.c b/drivers/crypto/ccp/sev-d=
+ev.c
+> >>>> index 8f5c474b9d1c..b06f43eb18f7 100644
+> >>>> --- a/drivers/crypto/ccp/sev-dev.c
+> >>>> +++ b/drivers/crypto/ccp/sev-dev.c
+> >>>> @@ -1461,7 +1461,8 @@ static int sev_ioctl_do_platform_status(struct=
+ sev_issue_cmd *argp)
+> >>>>  static int sev_ioctl_do_pek_pdh_gen(int cmd, struct sev_issue_cmd *=
+argp, bool writable)
+> >>>>  {
+> >>>>         struct sev_device *sev =3D psp_master->sev_data;
+> >>>> -       int rc;
+> >>>> +       bool shutdown_required =3D false;
+> >>>> +       int rc, error;
+> >>>>
+> >>>>         if (!writable)
+> >>>>                 return -EPERM;
+> >>>> @@ -1470,19 +1471,26 @@ static int sev_ioctl_do_pek_pdh_gen(int cmd,=
+ struct sev_issue_cmd *argp, bool wr
+> >>>>                 rc =3D __sev_platform_init_locked(&argp->error);
+> >>>>                 if (rc)
+> >>>>                         return rc;
+> >>>> +               shutdown_required =3D true;
+> >>>>         }
+> >>>>
+> >>>> -       return __sev_do_cmd_locked(cmd, NULL, &argp->error);
+> >>>> +       rc =3D __sev_do_cmd_locked(cmd, NULL, &argp->error);
+> >>>> +
+> >>>> +       if (shutdown_required)
+> >>>> +               __sev_platform_shutdown_locked(&error);
+> >>>
+> >>> This error is discarded. Is that by design? If so, It'd be better to
+> >>> call this ignored_error.
+> >>>
+> >>
+> >> This is by design, we cannot overwrite the error for the original comm=
+and being issued
+> >> here which in this case is do_pek_pdh_gen, hence we use a local error =
+for the shutdown command.
+> >> And __sev_platform_shutdown_locked() has it's own error logging code, =
+so it will be printing
+> >> the error message for the shutdown command failure, so the shutdown er=
+ror is not eventually
+> >> being ignored, that error log will assist in any inconsistent SEV/SNP =
+platform state and
+> >> subsequent errors.
+> >>
+> >>>> +
+> >>>> +       return rc;
+> >>>>  }
+> >>>>
+> >>>>  static int sev_ioctl_do_pek_csr(struct sev_issue_cmd *argp, bool wr=
+itable)
+> >>>>  {
+> >>>>         struct sev_device *sev =3D psp_master->sev_data;
+> >>>>         struct sev_user_data_pek_csr input;
+> >>>> +       bool shutdown_required =3D false;
+> >>>>         struct sev_data_pek_csr data;
+> >>>>         void __user *input_address;
+> >>>>         void *blob =3D NULL;
+> >>>> -       int ret;
+> >>>> +       int ret, error;
+> >>>>
+> >>>>         if (!writable)
+> >>>>                 return -EPERM;
+> >>>> @@ -1513,6 +1521,7 @@ static int sev_ioctl_do_pek_csr(struct sev_iss=
+ue_cmd *argp, bool writable)
+> >>>>                 ret =3D __sev_platform_init_locked(&argp->error);
+> >>>>                 if (ret)
+> >>>>                         goto e_free_blob;
+> >>>> +               shutdown_required =3D true;
+> >>>>         }
+> >>>>
+> >>>>         ret =3D __sev_do_cmd_locked(SEV_CMD_PEK_CSR, &data, &argp->e=
+rror);
+> >>>> @@ -1531,6 +1540,9 @@ static int sev_ioctl_do_pek_csr(struct sev_iss=
+ue_cmd *argp, bool writable)
+> >>>>         }
+> >>>>
+> >>>>  e_free_blob:
+> >>>> +       if (shutdown_required)
+> >>>> +               __sev_platform_shutdown_locked(&error);
+> >>>
+> >>> Another discarded error. This function is called in different
+> >>> locations in sev-dev.c with and without checking the result, which
+> >>> seems problematic.
+> >>
+> >> Not really, if shutdown fails for any reason, the error is printed.
+> >> The return value here reflects the value of the original command/funct=
+ion.
+> >> The command/ioctl could have succeeded but the shutdown failed, hence,
+> >> shutdown error is printed, but the return value reflects that the ioct=
+l succeeded.
+> >>
+> >> Additionally, in case of INIT before the command is issued, the comman=
+d may
+> >> have failed without the SEV state being in INIT state, hence the error=
+ for the
+> >> INIT command failure is returned back from the ioctl.
+> >>
+> >>>
+> >>>> +
+> >>>>         kfree(blob);
+> >>>>         return ret;
+> >>>>  }
+> >>>> @@ -1747,8 +1759,9 @@ static int sev_ioctl_do_pek_import(struct sev_=
+issue_cmd *argp, bool writable)
+> >>>>         struct sev_device *sev =3D psp_master->sev_data;
+> >>>>         struct sev_user_data_pek_cert_import input;
+> >>>>         struct sev_data_pek_cert_import data;
+> >>>> +       bool shutdown_required =3D false;
+> >>>>         void *pek_blob, *oca_blob;
+> >>>> -       int ret;
+> >>>> +       int ret, error;
+> >>>>
+> >>>>         if (!writable)
+> >>>>                 return -EPERM;
+> >>>> @@ -1780,11 +1793,15 @@ static int sev_ioctl_do_pek_import(struct se=
+v_issue_cmd *argp, bool writable)
+> >>>>                 ret =3D __sev_platform_init_locked(&argp->error);
+> >>>>                 if (ret)
+> >>>>                         goto e_free_oca;
+> >>>> +               shutdown_required =3D true;
+> >>>>         }
+> >>>>
+> >>>>         ret =3D __sev_do_cmd_locked(SEV_CMD_PEK_CERT_IMPORT, &data, =
+&argp->error);
+> >>>>
+> >>>>  e_free_oca:
+> >>>> +       if (shutdown_required)
+> >>>> +               __sev_platform_shutdown_locked(&error);
+> >>>
+> >>> Again.
+> >>>
+> >>>> +
+> >>>>         kfree(oca_blob);
+> >>>>  e_free_pek:
+> >>>>         kfree(pek_blob);
+> >>>> @@ -1901,17 +1918,8 @@ static int sev_ioctl_do_pdh_export(struct sev=
+_issue_cmd *argp, bool writable)
+> >>>>         struct sev_data_pdh_cert_export data;
+> >>>>         void __user *input_cert_chain_address;
+> >>>>         void __user *input_pdh_cert_address;
+> >>>> -       int ret;
+> >>>> -
+> >>>> -       /* If platform is not in INIT state then transition it to IN=
+IT. */
+> >>>> -       if (sev->state !=3D SEV_STATE_INIT) {
+> >>>> -               if (!writable)
+> >>>> -                       return -EPERM;
+> >>>> -
+> >>>> -               ret =3D __sev_platform_init_locked(&argp->error);
+> >>>> -               if (ret)
+> >>>> -                       return ret;
+> >>>> -       }
+> >>>> +       bool shutdown_required =3D false;
+> >>>> +       int ret, error;
+> >>>>
+> >>>>         if (copy_from_user(&input, (void __user *)argp->data, sizeof=
+(input)))
+> >>>>                 return -EFAULT;
+> >>>> @@ -1952,6 +1960,16 @@ static int sev_ioctl_do_pdh_export(struct sev=
+_issue_cmd *argp, bool writable)
+> >>>>         data.cert_chain_len =3D input.cert_chain_len;
+> >>>>
+> >>>>  cmd:
+> >>>> +       /* If platform is not in INIT state then transition it to IN=
+IT. */
+> >>>> +       if (sev->state !=3D SEV_STATE_INIT) {
+> >>>> +               if (!writable)
+> >>>> +                       goto e_free_cert;
+> >>>> +               ret =3D __sev_platform_init_locked(&argp->error);
+> >>>
+> >>> Using argp->error for init instead of the ioctl-requested command
+> >>> means that the user will have difficulty distinguishing which process
+> >>> is at fault, no?
+> >>>
+> >>
+> >> Not really, in case the SEV command has still not been issued, argp->e=
+rror is still usable
+> >> and returned back to the caller (no need to use a local error here), w=
+e are not overwriting
+> >> the argp->error used for the original command/ioctl here.
+> >>
+> >
+> > I mean in the case that argp->error is set to a value shared by the
+> > command and init, it's hard to know what the problem was.
+> > I'd like to ensure that the documentation is updated to reflect that
+> > (in this case) if PDH_CERT_EXPORT returns INVALID_PLATFORM_STATE, then
+> > it's because the platform was not in PSTATE.UNINIT state.
+> > The new behavior of initializing when you need to now means that you
+> > should have ruled out INVALID_PLATFORM_STATE as a possible value from
+> > PDH_EXPORT_CERT. Same for SNP_CONFIG.
+> >
+> > There is not a 1-to-1 mapping between the ioctl commands and the SEV
+> > commands now, so I think you need extra documentation to clarify the
+> > new error space for at least pdh_export and set_config
+> >
+> > SNP_PLATFORM_STATUS, VLEK_LOAD, and SNP_COMMIT appear to not
+> > necessarily have a provenance confusion after looking closer.
+> >
+> >
+>
+> I am more of less trying to match the current behavior of sev_ioctl_do_pe=
+k_import()
+> or sev_ioctl_do_pdh_export().
+>
+> All this is implementation specific handling so we can't update SEV/SNP f=
+irmware
+> API specs documentation for this new error space, this is not a firmware =
+specific return code.
+>
 
-diff --git a/arch/um/kernel/um_arch.c b/arch/um/kernel/um_arch.c
-index 79ea97d4797ecc9c157ee948ae0505bcdef84da5..7f050783885a0faed0a4f334716d2532b982bb91 100644
---- a/arch/um/kernel/um_arch.c
-+++ b/arch/um/kernel/um_arch.c
-@@ -12,6 +12,7 @@
- #include <linux/panic_notifier.h>
- #include <linux/seq_file.h>
- #include <linux/string.h>
-+#include <linux/string_choices.h>
- #include <linux/utsname.h>
- #include <linux/sched.h>
- #include <linux/sched/task.h>
-@@ -78,7 +79,7 @@ static int show_cpuinfo(struct seq_file *m, void *v)
- 	seq_printf(m, "model name\t: UML\n");
- 	seq_printf(m, "mode\t\t: skas\n");
- 	seq_printf(m, "host\t\t: %s\n", host_info);
--	seq_printf(m, "fpu\t\t: %s\n", cpu_has(&boot_cpu_data, X86_FEATURE_FPU) ? "yes" : "no");
-+	seq_printf(m, "fpu\t\t: %s\n", str_yes_no(cpu_has(&boot_cpu_data, X86_FEATURE_FPU)));
- 	seq_printf(m, "flags\t\t:");
- 	for (i = 0; i < 32*NCAPINTS; i++)
- 		if (cpu_has(&boot_cpu_data, i) && (x86_cap_flags[i] != NULL))
+I was just talking about the uapi for the ioctls, not AMD reference
+documentation.
 
----
-base-commit: 27eddbf3449026a73d6ed52d55b192bfcf526a03
-change-id: 20250220-um_yes_no-4ef10b52e6e0
+> But to maintain 1-to-1 mapping between the ioctl commands and the SEV/SNP=
+ commands,
+> i think it will be better to handle this INIT in the same way as SHUTDOWN=
+, which
+> is to use a local error for INIT and in case of implicit INIT failures, l=
+et the
+> error logs from __sev_platform_init_locked() OR __sev_snp_init_locked() b=
+e printed
+> and always return INVALID_PLATFORM_STATE as error back to the caller.
+>
+> Thanks,
+> Ashish
+>
 
-Best regards,
--- 
-Ethan Carter Edwards <ethan@ethancedwards.com>
 
+--=20
+-Dionna Glaze, PhD, CISSP, CCSP (she/her)
 
