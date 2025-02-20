@@ -1,261 +1,212 @@
-Return-Path: <linux-kernel+bounces-524465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF4F2A3E36D
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 19:09:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65344A3E370
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 19:10:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A95A4188D284
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 18:09:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 942397011DB
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 18:09:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B573B21421A;
-	Thu, 20 Feb 2025 18:09:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F28E2144DA;
+	Thu, 20 Feb 2025 18:09:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N5Kh2fht"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="n4VMO2tE"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8760F1F892D;
-	Thu, 20 Feb 2025 18:09:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B2FA2144D7
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 18:09:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740074983; cv=none; b=oZPPlWGJkUtj3fmgause9xBQeWP1ib+63xSi7KgYX/lQ7itWMhF+fgyyi+UPbqaKDkpDKyxQuxF9/8hmg3zGLVswaLGpYQybywTpjqdYfJhxZGEFP6oA0fKKoqHkN1YISweI1FRAJq8hQfA0Govdkm6NLgsLCRVkJN7KKlP44GQ=
+	t=1740074986; cv=none; b=B0N3RTCIwLpzQwkzoGlL/1M/fEkj3ojJw6vIB7cK4lHR2VPbjo/Jvg/z8LTU/IZBkSgPZ57cVWH/bHBcK0hssr92lz+Hc0OmCwDc6R+vJYXBE6EkMia4my21hio4Uz0EnWRKnELlkgjCRfEg6luqTZu+nPhUTqQwMwpUf/wLDqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740074983; c=relaxed/simple;
-	bh=QdZaPnPcljDb39RTNsoSRKxH+E0E0t7xExf0D2l8dP4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dre4gDH8skBYwRwPW/8zfTFYY0ow9Om/mHIU63TVwa2h3eCXQREbhs0u53z4Ph3JaoyzJAYaaYvz/8Gr6IGsDLki/GfWdIH8cjLevToH7CCH1rOGQv0xvREy4AqOULb8T4p8kfKmmE9Bkmgm/vDIVYJ9+nBfRAaMZoJxbqQRSEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N5Kh2fht; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2fc20e0f0ceso1949462a91.3;
-        Thu, 20 Feb 2025 10:09:41 -0800 (PST)
+	s=arc-20240116; t=1740074986; c=relaxed/simple;
+	bh=aOsd90qPoQgE7IOydh8+Nrn+s+R9GK0bjIAwoTkEA0U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Albirkj3WlyTGOqdndG+FYvluBa9bl6R0PDoMhGeydXP5hz3oFRgQbk/aidt//h7FilWTA0Irh7dOQ8OYnznIXJWTRnquY68CKbaFZrEWJvTBCjkiD8zMgQR0JbThOgodL6RHTcaRJxWXHN/FUQcvx/4UN2CMfR7Fkyzblb8rp4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=n4VMO2tE; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-220ecbdb4c2so32866005ad.3
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 10:09:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740074981; x=1740679781; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3l/TICtPB6aLyvVlXVnWR5r6Cz7ToaP43/KHj82QXRU=;
-        b=N5Kh2fhtqrcGhs88zpMVpWSjLxkPOxNp8Q8bvckkHtNS/b1x7dntVEQ6rVAuru6Rd8
-         XS5vvMRftTZVWF0LC0pNPi4rkOIPlz09HqoljMXb64ttUnxPk3jMF7YymF06zAmPeiU8
-         Oyf6y20uRPiWK0+VKjJlk8YcBG+3vWedl8Io1VVfxLwDbclxaHL520VC/fVzqgTNiSWO
-         cT+vM2kXpu2nmXzrYfiur92J3aSVZ4L21o6r9QoOu5Z/fxsmFO3iMb2Acq1hyoFclQy3
-         RZhmJpr9yLcy7lQZ0cl+Ut/Tx0ATRWRic/yiaS8ybNy8nyQE5vpV/ggcg/k1+2ocal+i
-         3w+w==
+        d=google.com; s=20230601; t=1740074983; x=1740679783; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=UehZxvbwuBQb9qKRTrVZFnoSFSok+4Q0ALSzooCxF+w=;
+        b=n4VMO2tE10twSBCGJURv8WoGI2Q9jbulLNOwYbbAUp7MHthI2xpv+P7N9WCUlERJ6A
+         Vhm3O45j4+IKlYOcl4iGucytfN+FDTLKzG3lXyzYNdBJPJX+Q6Q3DpaVWi/FOagezqLo
+         JeJDxpC7g2bGWHsv+niDR4ZYHHM3gjbzxriqAksbSCyq/9qPIgqRJOMKO9Vgp3y8Pw9e
+         zn3ZuE0qTxnR6PoFZjIThI72InjGk4yARE1hr6oXnfo9aBkesMalXodu2Z2+vjITmKLV
+         wkcxmKmTz+muJibt2Q8PzUE3Lgo/xbb2Y8o0oF/mApHMIpb7eHO04Z/wbsIK9KpXJ8FO
+         zEYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740074981; x=1740679781;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=3l/TICtPB6aLyvVlXVnWR5r6Cz7ToaP43/KHj82QXRU=;
-        b=FhbpQOnX4rnqCeiF/8dkLepY8h6uxTJoIEMmI+ez7zVWMPCXnFFUg3xEBocxKw/+MA
-         hTaGu4pCN83KXEBesUzgMHV/gc38d0Lc/Fzw2oLrbZQZbx0l2Npfo7Sa2OlF92x8Sowt
-         JDEp2OKzb5KHCdlnGkcJBEhEoDezwJR87+UAiMPMdDE2VZWjNeU9dAOtPctAFhUgAFYv
-         bKz+wrFUjnAkFKFgXebt9F7uW5BU+hFhEUxlHG/JAhtDjfWTZOUUH/CK0jF1ubswrBnL
-         n3NvrFSxtxHHzTTlI0SSF2euCLpooOnXdR6bXn2hymEQIFLAcQUmAB7pAazR4N+4vdvo
-         mo/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUhx5h51a2to1Kur68v9ECbW4MA2sVPeaGdwI6JcA4s1q5sSPBRf6Z3GilvR++Yh1niOPDBPaRxJt36Y+0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmE2gh2NqaQFQcVj7ZbjCX/2zf84J9MagkQKuyBzNl6wv0YFm1
-	RI82ah3PgRQeTINdwB/ZhvfbC6TKKkhah2atuCqTelqVQOKV2XatHvQ/lg==
-X-Gm-Gg: ASbGnct8/2FNzN+gdf5H49cX055DTFyc6d8PfKA9L9wAR29ZEoNfuY2XyT0bSGvopdo
-	qNDTWEflTrJr93pfnoytdgnUbudNH/9qQeOYmqTluvfDjaPbg9dduQl6rA1mQV2KWGMckfjthn4
-	wwhrIDsrDU9SL3HA0LEiw0kfWVrllmNFdw0siqhGAI7NhSNShu51s+O0HWyPXtFfktINwBujd2F
-	urNzMHzotr8HBMxmhPvnJJjcajkbJqtQ0r3hDAU3dkDTxXeg4rt37TInSkTSo73nYxL62By5OxC
-	Eazo2+15/uWqxlhq08YptCvQAdpLwFSqBA==
-X-Google-Smtp-Source: AGHT+IFIiFKS1AS0Perub9V9/ASX6RDyGF1r5Cyup5Iyx3RkGjzyuclfJ7/ErYNUHDlLELKMZn7HJQ==
-X-Received: by 2002:a17:90b:2792:b0:2ee:bbe0:98c6 with SMTP id 98e67ed59e1d1-2fce78aa3e2mr181511a91.8.1740074980380;
-        Thu, 20 Feb 2025 10:09:40 -0800 (PST)
-Received: from [192.168.50.123] ([117.147.90.60])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fcbdd600b2sm3249443a91.20.2025.02.20.10.09.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Feb 2025 10:09:39 -0800 (PST)
-Message-ID: <0eee016f-2d37-4c80-98cf-fc134d3ad917@gmail.com>
-Date: Fri, 21 Feb 2025 02:09:33 +0800
+        d=1e100.net; s=20230601; t=1740074983; x=1740679783;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UehZxvbwuBQb9qKRTrVZFnoSFSok+4Q0ALSzooCxF+w=;
+        b=vnpuWHBTB6UsG0Eav48OIlHhUihaA0jN3A6dF8lkSu5PaKrzFUWIqjcHAX/l+jg0mR
+         eXJ5MsONNfQQSZylQqxESdSfSxis7n7tCfffTMxMRTCx+FH235E4Ftgc3LZ5PBtpasCv
+         UPMpT5fbMbzPyjMGwY+nIFXzFzQr5unWMx+euQax+vfXAP7zxKeuk6XMmtICs4pkUsjw
+         v6UJ/WaWiLaPFVU+qQJdOVzfRS7uBfK6C4xCqx7wHk0cfEYGiD1pIilcXNyDS95DVBCZ
+         p//a9/R8BdEwRF4mgofeLtyu9Lh4ZREDp5h1GJHmgqFr+46eqUVsKTgEqt++75P78BO1
+         tK4g==
+X-Forwarded-Encrypted: i=1; AJvYcCVGTf6f9iLAbEi7avQLq/TBDPEVW0R3LuTPrHZh/cTgtwMtQ9/ReGZqk/XgH+CTi4YfpuTxe8KnNrkcgm8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMpQ8E3PasLfHeeTxyIhCOlPTbil8BZXvUn4t9jj4Gl4PTieE+
+	bdyb09r6hHnV4SyvrhOduWYlCpuz3UtC+Fa6dVX5BsOFQf93IOZxywO60F/UIQ==
+X-Gm-Gg: ASbGncsOZoLioCxvrfxovVqdgjlbmOR6KeKDlUI0KYNpfb2iHjSeWL0k+ZCCOw20oD2
+	EU/GVrsS4WDaDL6DRvcC2Jv7vMmwpWJqX4XKAX3izbjdnF9vPHf9b1/s5Ao9/DPasJ0u3FQRWqH
+	vwNUU/7gTRMpTPeo5JiM7wULUkkMd9umEkDx9jvKewRc3tbAzAsZqg4Sl0Jyz/vaCsYVcPn7s+a
+	fhgzf9WXnsLbzRt2A+4GkfCtIsyrVwo0dHnhdFjb5BEN3/UBpd87ICGv9ORzmiQr+psBfOvgBsu
+	iAQNZhjRvTanW06i8TP9NGzkmLCY8cUDtqsX7jdL+X9mmJaH6BsuECeG
+X-Google-Smtp-Source: AGHT+IETDgl9Fde4f2iPllIyaLiXQFK4fhca7MgqL5XHTXjG6CRlGUfnstElUz1XbRBlXTpxKXIS9Q==
+X-Received: by 2002:a05:6a00:198c:b0:730:8a0a:9ef9 with SMTP id d2e1a72fcca58-7326190d9edmr35296420b3a.22.1740074983388;
+        Thu, 20 Feb 2025 10:09:43 -0800 (PST)
+Received: from google.com (139.11.82.34.bc.googleusercontent.com. [34.82.11.139])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-adb5a52aee0sm12880779a12.47.2025.02.20.10.09.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Feb 2025 10:09:42 -0800 (PST)
+Date: Thu, 20 Feb 2025 10:09:38 -0800
+From: William McVicker <willmcvicker@google.com>
+To: Prashanth K <prashanth.k@oss.qualcomm.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
+	Peter Korsgaard <peter@korsgaard.com>,
+	Sabyrzhan Tasbolatov <snovitoll@gmail.com>,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org, andre.draszik@linaro.org,
+	kernel-team@android.com
+Subject: Re: [PATCH v2] usb: gadget: Set self-powered based on MaxPower and
+ bmAttributes
+Message-ID: <Z7dv4rEILkC9yRwX@google.com>
+References: <20250217120328.2446639-1-prashanth.k@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND bpf-next v7 0/4] Add prog_kfunc feature probe
-To: Eduard Zingerman <eddyz87@gmail.com>, ast@kernel.org,
- daniel@iogearbox.net, andrii@kernel.org, haoluo@google.com,
- jolsa@kernel.org, qmo@kernel.org
-Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250212153912.24116-1-chen.dylane@gmail.com>
- <2b025df3-144b-4909-a2b4-66356540f71c@gmail.com>
- <598a7d089936b18472937679d4131286f102cb18.camel@gmail.com>
-From: Tao Chen <chen.dylane@gmail.com>
-In-Reply-To: <598a7d089936b18472937679d4131286f102cb18.camel@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250217120328.2446639-1-prashanth.k@oss.qualcomm.com>
 
-在 2025/2/19 06:51, Eduard Zingerman 写道:
-> On Mon, 2025-02-17 at 13:21 +0800, Tao Chen wrote:
->> 在 2025/2/12 23:39, Tao Chen 写道:
->>> More and more kfunc functions are being added to the kernel.
->>> Different prog types have different restrictions when using kfunc.
->>> Therefore, prog_kfunc probe is added to check whether it is supported,
->>> and the use of this api will be added to bpftool later.
->>>
->>> Change list:
->>> - v6 -> v7:
->>>     - wrap err with libbpf_err
->>>     - comments fix
->>>     - handle btf_fd < 0 as vmlinux
->>>     - patchset Reviewed-by: Jiri Olsa <jolsa@kernel.org>
->>> - v6
->>>     https://lore.kernel.org/bpf/20250211111859.6029-1-chen.dylane@gmail.com
->>>
->>> - v5 -> v6:
->>>     - remove fd_array_cnt
->>>     - test case clean code
->>> - v5
->>>     https://lore.kernel.org/bpf/20250210055945.27192-1-chen.dylane@gmail.com
->>>
->>> - v4 -> v5:
->>>     - use fd_array on stack
->>>     - declare the scope of use of btf_fd
->>> - v4
->>>     https://lore.kernel.org/bpf/20250206051557.27913-1-chen.dylane@gmail.com/
->>>
->>> - v3 -> v4:
->>>     - add fd_array init for kfunc in mod btf
->>>     - add test case for kfunc in mod btf
->>>     - refactor common part as prog load type check for
->>>       libbpf_probe_bpf_{helper,kfunc}
->>> - v3
->>>     https://lore.kernel.org/bpf/20250124144411.13468-1-chen.dylane@gmail.com
->>>
->>> - v2 -> v3:
->>>     - rename parameter off with btf_fd
->>>     - extract the common part for libbpf_probe_bpf_{helper,kfunc}
->>> - v2
->>>     https://lore.kernel.org/bpf/20250123170555.291896-1-chen.dylane@gmail.com
->>>
->>> - v1 -> v2:
->>>     - check unsupported prog type like probe_bpf_helper
->>>     - add off parameter for module btf
->>>     - check verifier info when kfunc id invalid
->>> - v1
->>>     https://lore.kernel.org/bpf/20250122171359.232791-1-chen.dylane@gmail.com
->>>
->>> Tao Chen (4):
->>>     libbpf: Extract prog load type check from libbpf_probe_bpf_helper
->>>     libbpf: Init fd_array when prog probe load
->>>     libbpf: Add libbpf_probe_bpf_kfunc API
->>>     selftests/bpf: Add libbpf_probe_bpf_kfunc API selftests
->>>
->>>    tools/lib/bpf/libbpf.h                        |  19 ++-
->>>    tools/lib/bpf/libbpf.map                      |   1 +
->>>    tools/lib/bpf/libbpf_probes.c                 |  86 +++++++++++---
->>>    .../selftests/bpf/prog_tests/libbpf_probes.c  | 111 ++++++++++++++++++
->>>    4 files changed, 201 insertions(+), 16 deletions(-)
->>>
->>
->> Ping...
->>
->> Hi Andrii, Eduard,
->>
->> I've revised the previous suggestions. Please review it again. Thanks.
->>
-> 
-> I tried the test enumerating all kfuncs in BTF and doing
-> libbpf_probe_bpf_kfunc for BPF_PROG_TYPE_{KPROBE,XDP}.
-> (Source code at the end of the email).
-> 
-> The set of kfuncs returned for XDP looks correct.
-> The set of kfuncs returned for KPROBE contains a few incorrect entries:
-> - bpf_xdp_metadata_rx_hash
-> - bpf_xdp_metadata_rx_timestamp
-> - bpf_xdp_metadata_rx_vlan_tag
-> 
-> This is because of a different string reported by verifier for these
-> three functions.
-> 
-> Ideally, I'd write some script looking for
-> register_btf_kfunc_id_set(BPF_PROG_TYPE_***, kfunc_set)
-> calls in the kernel source code and extracting the prog type /
-> functions in the set, and comparing results of this script with
-> output of the test below for all program types.
-> But up to you if you'd like to do such rigorous verification or not.
-> 
-> Otherwise patch-set looks good to me, for all patch-set:
-> 
-> Reviewed-by: Eduard Zingerman <eddyz87@gmail.com>
-> 
+Hi Prashanth,
 
-Hi Eduard,
-
-I try to run your test case, but it seems btf_is_decl_tag always return 
-false, Are there any special restrictions for the tag feature of btf？
-
-My compilation environment：
-
-pahole --version
-v1.29
-clang --version
-Ubuntu clang version 18.1.3 (1ubuntu1)
-
-> --- 8< -----------------------------------------------------
+On 02/17/2025, Prashanth K wrote:
+> Currently the USB gadget will be set as bus-powered based solely
+> on whether its bMaxPower is greater than 100mA, but this may miss
+> devices that may legitimately draw less than 100mA but still want
+> to report as bus-powered. Similarly during suspend & resume, USB
+> gadget is incorrectly marked as bus/self powered without checking
+> the bmAttributes field. Fix these by configuring the USB gadget
+> as self or bus powered based on bmAttributes, and explicitly set
+> it as bus-powered if it draws more than 100mA.
 > 
-> static const struct {
-> 	const char *name;
-> 	int code;
-> } program_types[] = {
-> #define _T(n) { #n, BPF_PROG_TYPE_ ## n }
-> 	_T(KPROBE),
-> 	_T(XDP),
-> #undef _T
-> };
+> Cc: stable@vger.kernel.org
+> Fixes: 5e5caf4fa8d3 ("usb: gadget: composite: Inform controller driver of self-powered")
+> Signed-off-by: Prashanth K <prashanth.k@oss.qualcomm.com>
+> ---
+> Changes in v2:
+> - Didn't change anything from RFC.
+> - Link to RFC: https://lore.kernel.org/all/20250204105908.2255686-1-prashanth.k@oss.qualcomm.com/
 > 
-> void test_libbpf_probe_kfuncs_many(void)
-> {
-> 	int i, kfunc_id, ret, id;
-> 	const struct btf_type *t;
-> 	struct btf *btf = NULL;
-> 	const char *kfunc;
-> 	const char *tag;
+>  drivers/usb/gadget/composite.c | 16 +++++++++++-----
+>  1 file changed, 11 insertions(+), 5 deletions(-)
 > 
-> 	btf = btf__parse("/sys/kernel/btf/vmlinux", NULL);
-> 	if (!ASSERT_OK_PTR(btf, "btf_parse"))
-> 		return;
-> 
-> 	for (id = 0; id < btf__type_cnt(btf); ++id) {
-> 		t = btf__type_by_id(btf, id);
-> 		if (!btf_is_decl_tag(t))
-> 			continue;
-> 		tag = btf__name_by_offset(btf, t->name_off);
-> 		if (strcmp(tag, "bpf_kfunc") != 0)
-> 			continue;
-> 		kfunc_id = t->type;
-> 		t = btf__type_by_id(btf, kfunc_id);
-> 		if (!btf_is_func(t))
-> 			continue;
-> 		kfunc = btf__name_by_offset(btf, t->name_off);
-> 		printf("[%-6d] %-42s ", kfunc_id, kfunc);
-> 		for (i = 0; i < ARRAY_SIZE(program_types); ++i) {
-> 			ret = libbpf_probe_bpf_kfunc(program_types[i].code, kfunc_id, -1, NULL);
-> 			if (ret < 0)
-> 				printf("%-8d  ", ret);
-> 			else if (ret == 0)
-> 				printf("%8s  ", "");
-> 			else
-> 				printf("%8s  ", program_types[i].name);
-> 		}
-> 		printf("\n");
-> 	}
-> 	btf__free(btf);
-> }
-> 
-> ----------------------------------------------------- >8 ---
-> 
+> diff --git a/drivers/usb/gadget/composite.c b/drivers/usb/gadget/composite.c
+> index bdda8c74602d..1fb28bbf6c45 100644
+> --- a/drivers/usb/gadget/composite.c
+> +++ b/drivers/usb/gadget/composite.c
+> @@ -1050,10 +1050,11 @@ static int set_config(struct usb_composite_dev *cdev,
+>  	else
+>  		usb_gadget_set_remote_wakeup(gadget, 0);
+>  done:
+> -	if (power <= USB_SELF_POWER_VBUS_MAX_DRAW)
+> -		usb_gadget_set_selfpowered(gadget);
+> -	else
+> +	if (power > USB_SELF_POWER_VBUS_MAX_DRAW ||
+> +	    !(c->bmAttributes & USB_CONFIG_ATT_SELFPOWER))
+>  		usb_gadget_clear_selfpowered(gadget);
+> +	else
+> +		usb_gadget_set_selfpowered(gadget);
+>  
+>  	usb_gadget_vbus_draw(gadget, power);
+>  	if (result >= 0 && cdev->delayed_status)
+> @@ -2615,7 +2616,9 @@ void composite_suspend(struct usb_gadget *gadget)
+>  
+>  	cdev->suspended = 1;
+>  
+> -	usb_gadget_set_selfpowered(gadget);
+> +	if (cdev->config->bmAttributes & USB_CONFIG_ATT_SELFPOWER)
+> +		usb_gadget_set_selfpowered(gadget);
 
+I'm hitting a null pointer derefence here on my Pixel 6 device on suspend.  I
+haven't dug deep into it how we get here, but in my case `cdev->config` is
+NULL. This happens immediate after booting my device. I verified that just
+adding a NULL check fixes the issue and dwc3 gadget can successfully suspend.
 
--- 
-Best Regards
-Tao Chen
+Here is the crash stack:
+
+  Unable to handle kernel NULL pointer dereference at virtual address 000000000000002a
+  <snip>
+  Modules linked in: tcpci_maxim(E) at24(E) phy_exynos_ufs(E)
+    phy_exynos5_usbdrd(E) dwc3_exynos(E) ufs_exynos(E) i2c_exynos5(E)
+    s3c2410_wdt(E) arm_dsu_pmu(E) simplefb(E)
+  CPU: 0 UID: 0 PID: 885 Comm: irq/118-dwc3 Tainted: G            E
+    6.14.0-rc3-next-20250220-4k-g50a0c754714a-dirty #1
+    02ae1fc192b79fc15e3493a7f5cb2e58e2817b0a
+  Tainted: [E]=UNSIGNED_MODULE
+  Hardware name: Raven (DT)
+  pstate: a04000c5 (NzCv daIF +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+  pc : composite_suspend+0x8c/0xe8
+  lr : configfs_composite_suspend+0x70/0x80
+  <snip>
+  Call trace:
+   composite_suspend+0x8c/0xe8 (P)
+   configfs_composite_suspend+0x70/0x80
+   dwc3_suspend_gadget+0x48/0x64
+   dwc3_thread_interrupt+0x568/0xbe8
+   irq_thread_fn+0x30/0xb0
+   irq_thread+0x174/0x284
+   kthread+0x130/0x21c
+   ret_from_fork+0x10/0x20
+
+And that decoded at base commit 50a0c754714a (from linux-next):
+
+  composite_suspend (drivers/usb/gadget/composite.c:2619) (P)
+  configfs_composite_suspend (drivers/usb/gadget/configfs.c:1939)
+  dwc3_suspend_gadget (include/linux/spinlock.h:351 drivers/usb/dwc3/gadget.c:3962 drivers/usb/dwc3/gadget.c:3957)
+  dwc3_thread_interrupt (drivers/usb/dwc3/gadget.c:4466 drivers/usb/dwc3/gadget.c:4494 drivers/usb/dwc3/gadget.c:4514 drivers/usb/dwc3/gadget.c:4535 drivers/usb/dwc3/gadget.c:4577)
+  irq_thread_fn (kernel/irq/manage.c:1191)
+  irq_thread (kernel/irq/manage.c:1318)
+  kthread (kernel/kthread.c:464)
+  ret_from_fork (arch/arm64/kernel/entry.S:863)
+
+Thanks,
+Will
+
+> +
+>  	usb_gadget_vbus_draw(gadget, 2);
+>  }
+>  
+> @@ -2649,8 +2652,11 @@ void composite_resume(struct usb_gadget *gadget)
+>  		else
+>  			maxpower = min(maxpower, 900U);
+>  
+> -		if (maxpower > USB_SELF_POWER_VBUS_MAX_DRAW)
+> +		if (maxpower > USB_SELF_POWER_VBUS_MAX_DRAW ||
+> +		    !(cdev->config->bmAttributes & USB_CONFIG_ATT_SELFPOWER))
+>  			usb_gadget_clear_selfpowered(gadget);
+> +		else
+> +			usb_gadget_set_selfpowered(gadget);
+>  
+>  		usb_gadget_vbus_draw(gadget, maxpower);
+>  	} else {
+> -- 
+> 2.25.1
+> 
 
