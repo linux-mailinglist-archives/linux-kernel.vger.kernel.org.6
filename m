@@ -1,137 +1,116 @@
-Return-Path: <linux-kernel+bounces-523157-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D96F2A3D2DB
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 09:12:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2BBEA3D2D8
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 09:12:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1187C7A7406
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 08:11:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9191D1751CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 08:12:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97BC11EA7FC;
-	Thu, 20 Feb 2025 08:12:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 998EE1E9B35;
+	Thu, 20 Feb 2025 08:12:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="mZLAKJD6"
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="rlJGFKqK";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="fU1qmEQl"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02FEB1E990A;
-	Thu, 20 Feb 2025 08:12:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5488B1E9B2A
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 08:12:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740039148; cv=none; b=g5NLExFFD0jh5nUHbqfAjSTmBY0Mg4AYbSjROmxkILYrS2M2j3c+HArJZvhUa4zEf0yHLeurmPN/eBJDxR6uU+20aE9upiCj95IhPmJE48AFvbvPN59IQ3qXX6DWtzZBKby1V1jp4GHD2toji98HwmXeA56dRhKVH0Tq1SFEcr0=
+	t=1740039147; cv=none; b=UhSFBOgyA0lyI1jBGzCccYdW8sKOPa46euJc0W5vIBBbYLLEyt8jvBdeWgk6p0k9lNq09uYIi65B/EF0t7R21DPTw4JxNoZl0X0CI+qjpZExHN4YqeqFvByXCYW6yvSJt7Xcxbd2DlHHm2ZZNMuYzoZ9WAHgk4sIsB1TRmmKRHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740039148; c=relaxed/simple;
-	bh=sx/l5xw2wcryA5zyymb0FQdxpg6mU8uQ9h43rl8QKZc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=D4yerDOhoMSSQZp8iLLMYdeGMBezFL4NN13t3qYE4/FLewna2cRrlUPMeDI/vfqM2v+Gf6q4Oaygte1DN2WnvKCDn8pOx24IxK9Kio78WGdICzso1f1DXPNcp3RFcmxV1bkBNijiTuEQXIMSUFU3OAdDrQ5q43TiKL6ouniayTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=mZLAKJD6; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 95B084445A;
-	Thu, 20 Feb 2025 08:12:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1740039137;
+	s=arc-20240116; t=1740039147; c=relaxed/simple;
+	bh=H3tFC200g8yvVKGoWYBP6BDYu/3DGTGmDR2JGI04DSU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=B1jIFDKkDeMruOiolHjUbojNWkwl5uc4OJKBnH3HAf0FbJq+NglLrO0EPtOGjvV95GxjEjFXA7pMgngr38c5kCsBgUlq5DlQOZt5490q4VNqnCukBgRWPGdX7z5Rr9KRCA9XvwE/Bd+7R59yYVa7c4Zbr6ALC1BYluPeg4N5OwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=rlJGFKqK; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=fU1qmEQl; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1740039143;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=4JowldrGEMn8XdXvVF14r75ec9GWZZFqficZlofDUto=;
-	b=mZLAKJD6RL3HY1nJ0fHkfJpJZGIrCTrDl7T0xvkVYnQp5KMXdWwU+HkORhqT6YUe3flfl4
-	ez23FtsPzEeuK5Ocq+rAZbO37PjicNu9Dc82vyhbEoA8P2UNVCpJ4+NVQmePSfApxMjkgC
-	7qa5VrCCPee12hGnxaJD+333JsaUeGs/1O9kafJNY1eFSp3T9bKDUNLECXGdiyyRapIrL7
-	gV+9eTC2pQOUlX3zT8uB/HQ2uxkTL3UrJjKORD6A29/a7iSigLv42QfJ8daofxSAAAIEYl
-	rWSTfztFK5VE5aGd9OjrWCqliU8ovfpptCEC1i0dkiIWleCsC7TtSlSgPvSsvQ==
-Date: Thu, 20 Feb 2025 09:12:15 +0100
-From: Herve Codina <herve.codina@bootlin.com>
-To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, Rob Herring
- <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, Bjorn Helgaas
- <bhelgaas@google.com>, Lizhi Hou <lizhi.hou@amd.com>,
- <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-pci@vger.kernel.org>, Allan Nielsen <allan.nielsen@microchip.com>,
- Horatiu Vultur <horatiu.vultur@microchip.com>, Steen Hegelund
- <steen.hegelund@microchip.com>, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v7 1/5] driver core: Introduce
- device_{add,remove}_of_node()
-Message-ID: <20250220091215.41eeb5f9@bootlin.com>
-In-Reply-To: <20250219155901.000009e4@huawei.com>
-References: <20250204073501.278248-1-herve.codina@bootlin.com>
-	<20250204073501.278248-2-herve.codina@bootlin.com>
-	<20250219155901.000009e4@huawei.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	bh=NY4yXpe1ZjPgFcfvLmakZ3jQqRumnHseJKr7+agy5OM=;
+	b=rlJGFKqKRgeuzM9kRnnEnMIQGT8VB19SaK7Kc+hrBH6M44X91NAwsknUCbVLVI/UMTE9tE
+	10OhqxT4NtjTqX+Y8cqWY4tePgwr0IMOJnAyjCu+mkjM7+k4Unc3GbTs1g9yna6KwEYXfn
+	S8ytNMgeoqxhicWUFCNOGqtoRMMumoIvXQqCcRHMm5H6aIyyJMXJ7j1apWFmMmcUdo2qk9
+	X3RIrc5Fq/G7As1nSh8FdY4o5/J6rIIJXJyQgEhK26l46nO9IItnnE1mvahVC+lHHX/IiR
+	TXnx2Mfu4YwR8shQA16aYllSdupjId5zIrPLu7L64zvkC3uOHUJI4WP+1YUa3A==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1740039143;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NY4yXpe1ZjPgFcfvLmakZ3jQqRumnHseJKr7+agy5OM=;
+	b=fU1qmEQlLkv+RsYnJujB47z1j+7Z9zea/C2RH/hspKCQyafnya8AkYA+JuFWqm2hg1OyKA
+	D882TlkcEZ5/uSDA==
+To: Eric Dumazet <edumazet@google.com>, Anna-Maria Behnsen
+ <anna-maria@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>, Benjamin Segall
+ <bsegall@google.com>, Eric Dumazet <eric.dumazet@gmail.com>, Eric Dumazet
+ <edumazet@google.com>
+Subject: Re: [PATCH V2 2/4] posix-timers: Initialise timer->it_id in
+ posix_timer_add()
+In-Reply-To: <20250219125522.2535263-3-edumazet@google.com>
+References: <20250219125522.2535263-1-edumazet@google.com>
+ <20250219125522.2535263-3-edumazet@google.com>
+Date: Thu, 20 Feb 2025 09:12:22 +0100
+Message-ID: <87tt8phw61.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeiieeihecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthekredtredtjeenucfhrhhomhepjfgvrhhvvgcuvehoughinhgruceohhgvrhhvvgdrtghoughinhgrsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeeviefffeegiedtleelieeghfejleeuueevkeevteegffehledtkeegudeigffgvdenucfkphepvdgrtddumegvtdgrmedvgeeimeejjeeltdemvdeitgegmegvvddvmeeitdefugemheekrgenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemvgdtrgemvdegieemjeejledtmedviegtgeemvgdvvdemiedtfegumeehkegrpdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpehhvghrvhgvrdgtohguihhnrgessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudehpdhrtghpthhtoheplfhonhgrthhhrghnrdevrghmvghrohhnsehhuhgrfigvihdrtghomhdprhgtphhtthhopehgrhgvghhkhheslhhinhhugihfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehrrghfrggvlheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggrkhhrsehkv
- ghrnhgvlhdrohhrghdprhgtphhtthhopehrohgshheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshgrrhgrvhgrnhgrkhesghhoohhglhgvrdgtohhmpdhrtghpthhtohepsghhvghlghgrrghssehgohhoghhlvgdrtghomhdprhgtphhtthhopehlihiihhhirdhhohhusegrmhgurdgtohhm
-X-GND-Sasl: herve.codina@bootlin.com
+Content-Type: text/plain
 
-Hi Jonathan,
+On Wed, Feb 19 2025 at 12:55, Eric Dumazet wrote:
+> A timer is visible only when both timer->signal and timer->i_id
+> are set to their final values.
+>
+> We can initialize timer->it_id sooner.
 
-On Wed, 19 Feb 2025 15:59:01 +0000
-Jonathan Cameron <Jonathan.Cameron@huawei.com> wrote:
+This changelog tells nothing. What is this fixing, why is it required to
+initialize this sooner?
 
-...
+We can... We also can not ... Aside of that please write changelogs in
+imperative mood as Documentation asks for.
 
-> > Signed-off-by: Herve Codina <herve.codina@bootlin.com>  
-> A few passing comments. Not suggestions to actually change anything
-> at this stage though. Maybe a potential follow up if you think it's
-> a good idea.
-> 
-...
+> Signed-off-by: Eric Dumazet <edumazet@google.com>
+> ---
+>  kernel/time/posix-timers.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
+>
+> diff --git a/kernel/time/posix-timers.c b/kernel/time/posix-timers.c
+> index 204a351a2fd3..1f73ea955756 100644
+> --- a/kernel/time/posix-timers.c
+> +++ b/kernel/time/posix-timers.c
+> @@ -114,6 +114,7 @@ static int posix_timer_add(struct k_itimer *timer)
+>  
+>  		spin_lock(&hash_lock);
+>  		if (!__posix_timers_find(head, sig, id)) {
+> +			timer->it_id = (timer_t)id;
+>  			hlist_add_head_rcu(&timer->t_hash, head);
+>  			spin_unlock(&hash_lock);
+>  			return id;
+> @@ -407,8 +408,7 @@ static int do_timer_create(clockid_t which_clock, struct sigevent *event,
+>  
+>  	/*
+>  	 * Add the timer to the hash table. The timer is not yet valid
+> -	 * because new_timer::it_signal is still NULL. The timer id is also
+> -	 * not yet visible to user space.
 
-> > +void device_remove_of_node(struct device *dev)
-> > +{
-> > +	dev = get_device(dev);
-> > +	if (!dev)
-> > +		return;  
-> Maybe use
-> 	struct device *d __free(put_device) = get_device(dev);
-> 
-> 	if (!d->of_node);
-> 		return;
-> 
-> Not a reason to respin though!
-> 
-> 
-...
+Even with this change the timer ID is not yet visible to user space
+because it has not yet been copied back ....
 
-> > +int device_add_of_node(struct device *dev, struct device_node *of_node)
-> > +{
-> > +	int ret;
-> > +
-> > +	if (!of_node)
-> > +		return -EINVAL;
-> > +
-> > +	dev = get_device(dev);  
-> 
-> Likewise could use __free() magic here as well for slight simpliciations.
-> 
+Thanks,
 
-I see. Indeed, the __free(put_device) can be an improvement in core.c
-
-I think that this has to be done out of this series in a more globally way
-because put_device() is used in several place in this file and having a mix
-between __free(put_device) and put_device() calls in a goto label is not the
-best solution.
-
-For this reason, as you proposed except if someone else pushes in the
-__free(put_device) direction in functions introduced in this patch, I
-prefer to keep this patch as it is.
-
-Thanks for your feedback,
-Hervé
+        tglx
 
