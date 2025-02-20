@@ -1,98 +1,175 @@
-Return-Path: <linux-kernel+bounces-523377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B09D8A3D5C2
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 11:01:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA9ABA3D5C5
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 11:01:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5456C175841
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 10:01:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CBE616F09F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 10:01:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92EE81F03E2;
-	Thu, 20 Feb 2025 09:59:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD77D1E5B6F;
+	Thu, 20 Feb 2025 10:00:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FyzBJ0IT"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 491871EF0AB
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 09:59:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="BV1BLeNm"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93C541F1301;
+	Thu, 20 Feb 2025 10:00:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740045573; cv=none; b=szGet1H8zbGemQuud68Skf0PaVOi5OQ/xEGu6hgxwfKoDEC1IGs7jjE/JEK5h1LiEjJ9hQxGeZPN/o8fDuq9H86Nla5CxJOSMJ9gCBOsvMqiJzzjwDLWavQuBntvQxfHRIEoOLmk0ok3CYjkJlWNOJUkNkNMKkh+74l4KKnHawQ=
+	t=1740045615; cv=none; b=SImkzICS26/IWQzOUp3GaQBnrgrYTRAHOZGsmKBhJen40P3BPNNDGc6vdVQBi5HhJRkduEJWfTjda1dNk4HeOXODAdstEktoPqBW7Mivbpc+bOUa+PIkv9onuS6hctxtwWCEfMtGxzRW3TyzrJrwy3jzQ9jmq1nhLV3QibJjH9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740045573; c=relaxed/simple;
-	bh=uAMWl9PLfDy04Bs+KIcgrODYhWdNOmoMzeRBBUctSss=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bGe5Yz0XPLxjN2XcDVgTyyk2y57xYj+ik1vtVvsMlEOOpS6X31pEIKlGYP0DTCu/JABGTcXuuY7S3ccEKa6p49URwGnc5dV0dcd7TavAl3K4tQyOHZ7mV4pysICtgH7Luv4Yr4a08VcUTWGskehM2jEEEZsbVK7ddAoGk9OixUk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FyzBJ0IT; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-30a2cdb2b98so7293961fa.0
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 01:59:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740045569; x=1740650369; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uAMWl9PLfDy04Bs+KIcgrODYhWdNOmoMzeRBBUctSss=;
-        b=FyzBJ0IT8gu7btFOGog1SqbrZJgPBxW/HxD9t1zGMt2dS8OykuTfRVtJgam+zdDjRG
-         a+6B8JnLatMGm4kWTigyFLl3/mzq3ZOQWvHMy2KyiSyDXtJVqzZtuUqj1/YFLY+ze0E2
-         d6xJG+zhHHE5h2BqW1naBz88UkBRxVUaCjcqpBzRsZSO9DBNjlivw2+D/Xbm9ByDbqls
-         sgZWMTpjkBO/Lss2PLVL6NzTfOEbEQ/HtBZE9I+LCdk7FP3pk+/yTWBxYxn2oZAqrwFO
-         gCAadVET964p1UjRolMWvekFWsTqP6ucb0R7I11o5ndYT4JRjGgMxFezPddlaimzQFMx
-         tofg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740045569; x=1740650369;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uAMWl9PLfDy04Bs+KIcgrODYhWdNOmoMzeRBBUctSss=;
-        b=GAgLalb0XRAhggUTsR1mGYn3dzcW5d+s/peHNBRenDO6Fby7RVFlHrT1jdxgrYGrb5
-         CbTcZZYgyeEDqKjlqSstdAUsIN0izNtlU1atLq5tsLB9noV3vxaNERHqp4h0Rv4SM+0v
-         8sVDLi3sIjsA0vhu7qdrDgU38sDj4bBdE7UdekwMn14+d9UNYeXDDfoJ5DvGi8lddEZB
-         U3aukYWMFlqJMki4VwvJMlsJjN99y9D2hJ3x0WeWVdVoQIx9kV5qhmCYj0t+As7SScUP
-         pQOOyWUx216VeVxxTAV2TNweIZyBVFX4mrUSnvvdL2riaZvOQLEiZw9FHNUvoOY/m4bM
-         lgqw==
-X-Forwarded-Encrypted: i=1; AJvYcCWXq2LuIJpoltK0GS9DqgfdtHJ1UPz0OQySKEs8TerC6qIlTc1snHqJz7UhdodNuqjGQRbXNOGL4N0BV2A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRvvsPFIQaCOSUUKDMaU5wknSJTY9D8nXDwYO1OrjN8IHrJ+Em
-	Iv2jAS96EOnierArvgRjBhEXOvVIlSMJs+YuYl6SRCTODsUS4iKtCDsSfE9FEjOb+df9RhAS7Ml
-	5OO4sQU7LsRVLraXp0WBb64e2b2w=
-X-Gm-Gg: ASbGncvBrwT36+zQ0F1qAadGGzidHTsUIpp5w17ReOEZDYirbomyyRRwotz7iNtFLph
-	9UW05ofRufzTUQkufUx5RemD+H6RUIz/DjloyOya1ndoHcNYxpcy/8Myzi9LCMi2LeX8bzrHN5T
-	4=
-X-Google-Smtp-Source: AGHT+IFIsSsy0MCPsjXngTu6cybUiCgLNfAULaQySW6JHJyT7glm8RIKirUFoVrvZjgX7bTK37tA+hGGoo7kNDxXcqc=
-X-Received: by 2002:a2e:9bd4:0:b0:308:f827:f8fa with SMTP id
- 38308e7fff4ca-30927b1e718mr62333121fa.27.1740045569014; Thu, 20 Feb 2025
- 01:59:29 -0800 (PST)
+	s=arc-20240116; t=1740045615; c=relaxed/simple;
+	bh=Jh8ska2JiUu6hoEeigD6Clig/7y9WNDWseWg53zbtMc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XqgAVhH6b3bl94y5WJy0SsP8Hy0ojLX0hKqRYUNRL9K1mbFZDiyVBK4Ja1dqN21r6VdqVQwvlMz6c+GWiAZzIoI16OSQqzRu6vDXf8yg15P5g7kirVsGZ/pm6uxQmyZKKsdl4xKf+59Vb/QD3QoifBFcJA+fsye+d5+SdV30tzg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=BV1BLeNm; arc=none smtp.client-ip=220.197.31.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=2RoNr
+	SjHOSnrbQWPVmn0LiRyjXkWM0htcxpHKmfkuqc=; b=BV1BLeNmH6YzL7rRbUtjE
+	R542RFTSXbvkLXpOaNF4F3seYCVa+3SjrpKeZiZYcKGpEPsqiLKakUrKeOmcaGAO
+	ZBzNLLjCNuUN63pG/vPcXOs8ouwGE3ou2uy7VImVeNI39cwS4rCCdln6rMDEWCoK
+	quh8NXRgJ73gCAZ5LATcw0=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g0-3 (Coremail) with SMTP id _____wDn77ML_bZnugebMw--.5396S2;
+	Thu, 20 Feb 2025 17:59:40 +0800 (CST)
+From: oushixiong1025@163.com
+To: Simona Vetter <simona@ffwll.ch>
+Cc: Helge Deller <deller@gmx.de>,
+	linux-fbdev@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	oushixiong <oushixiong@kylinos.cn>
+Subject: [PATCH] fbdev: Register sysfs groups through device_add_group
+Date: Thu, 20 Feb 2025 17:59:35 +0800
+Message-Id: <20250220095935.270797-1-oushixiong1025@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250219072504.1655151-1-rand.sec96@gmail.com>
- <v3rsldvzq4ujgcxamjwcmmfm62wgdgjscg25c6t6xph3itjedp@sbuayguprw2i>
- <CAN8dotnkd-fSQurTFAf_8z3K1yRNj5SVJ4qYc3Tq7cVZLq02qA@mail.gmail.com> <tx4mjsvkleki6butsmbh533y6w55rt44zaorh6auhjyfgzunj3@oaiwslri6x5h>
-In-Reply-To: <tx4mjsvkleki6butsmbh533y6w55rt44zaorh6auhjyfgzunj3@oaiwslri6x5h>
-From: Rand Deeb <rand.sec96@gmail.com>
-Date: Thu, 20 Feb 2025 12:59:16 +0300
-X-Gm-Features: AWEUYZkJyg6yWlqtbY5rQ-SpHsGBNhAbsYs9C2cvgGTGSuJDI8kwfsCK3CkTikQ
-Message-ID: <CAN8dotmC55rYdRjz_nph+C8ZU7K49wC4TEGWA4xjzhM0rjix6g@mail.gmail.com>
-Subject: Re: [PATCH 5.10.y] fs/jfs: cast inactags to s64 to prevent potential overflow
-To: Fedor Pchelkin <pchelkin@ispras.ru>
-Cc: Dave Kleikamp <shaggy@kernel.org>, jfs-discussion@lists.sourceforge.net, 
-	linux-kernel@vger.kernel.org, voskresenski.stanislav@confident.ru, 
-	Rand Deeb <deeb.rand@confident.ru>, lvc-project@linuxtesting.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDn77ML_bZnugebMw--.5396S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxJF43urWUKryfJF15Jw47Jwb_yoWrWw43pr
+	n3JFyFgry5WF1UGFs3uwsrX39xWw4rury5Jr9xt3yxGF43GFZrW34xAFy5A3yrGr97Jr1S
+	qFsrXw18JFZF9aUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jOZ2-UUUUU=
+X-CM-SenderInfo: xrxvxxx0lr0wirqskqqrwthudrp/1tbiXRb5D2e28fjYegAAsH
 
-On Wed, Feb 19, 2025 at 2:37=E2=80=AFPM Fedor Pchelkin <pchelkin@ispras.ru>=
- wrote:
-> Yes. And not specifically, but deliberately (it's a requirement). The
-> existing problems should be fixed there at first.
+From: oushixiong <oushixiong@kylinos.cn>
 
-Done. Thanks again for the feedback!
+Use device_add_group() to simplify creation.
+
+Signed-off-by: Shixiong Ou <oushixiong@kylinos.cn>
+---
+ drivers/video/fbdev/core/fbsysfs.c | 69 +++++++++++++++++-------------
+ 1 file changed, 39 insertions(+), 30 deletions(-)
+
+diff --git a/drivers/video/fbdev/core/fbsysfs.c b/drivers/video/fbdev/core/fbsysfs.c
+index 1b3c9958ef5c..06d75c767579 100644
+--- a/drivers/video/fbdev/core/fbsysfs.c
++++ b/drivers/video/fbdev/core/fbsysfs.c
+@@ -416,55 +416,64 @@ static ssize_t show_bl_curve(struct device *device,
+ /* When cmap is added back in it should be a binary attribute
+  * not a text one. Consideration should also be given to converting
+  * fbdev to use configfs instead of sysfs */
+-static struct device_attribute device_attrs[] = {
+-	__ATTR(bits_per_pixel, S_IRUGO|S_IWUSR, show_bpp, store_bpp),
+-	__ATTR(blank, S_IRUGO|S_IWUSR, show_blank, store_blank),
+-	__ATTR(console, S_IRUGO|S_IWUSR, show_console, store_console),
+-	__ATTR(cursor, S_IRUGO|S_IWUSR, show_cursor, store_cursor),
+-	__ATTR(mode, S_IRUGO|S_IWUSR, show_mode, store_mode),
+-	__ATTR(modes, S_IRUGO|S_IWUSR, show_modes, store_modes),
+-	__ATTR(pan, S_IRUGO|S_IWUSR, show_pan, store_pan),
+-	__ATTR(virtual_size, S_IRUGO|S_IWUSR, show_virtual, store_virtual),
+-	__ATTR(name, S_IRUGO, show_name, NULL),
+-	__ATTR(stride, S_IRUGO, show_stride, NULL),
+-	__ATTR(rotate, S_IRUGO|S_IWUSR, show_rotate, store_rotate),
+-	__ATTR(state, S_IRUGO|S_IWUSR, show_fbstate, store_fbstate),
++static DEVICE_ATTR(bits_per_pixel, 0644, show_bpp, store_bpp);
++static DEVICE_ATTR(blank, 0644, show_blank, store_blank);
++static DEVICE_ATTR(console, 0644, show_console, store_console);
++static DEVICE_ATTR(cursor, 0644, show_cursor, store_cursor);
++static DEVICE_ATTR(mode, 0644, show_mode, store_mode);
++static DEVICE_ATTR(modes, 0644, show_modes, store_modes);
++static DEVICE_ATTR(pan, 0644, show_pan, store_pan);
++static DEVICE_ATTR(virtual_size, 0644, show_virtual, store_virtual);
++static DEVICE_ATTR(name, 0444, show_name, NULL);
++static DEVICE_ATTR(stride, 0444, show_stride, NULL);
++static DEVICE_ATTR(rotate, 0644, show_rotate, store_rotate);
++static DEVICE_ATTR(state, 0644, show_fbstate, store_fbstate);
+ #if IS_ENABLED(CONFIG_FB_BACKLIGHT)
+-	__ATTR(bl_curve, S_IRUGO|S_IWUSR, show_bl_curve, store_bl_curve),
++static DEVICE_ATTR(bl_curve, 0644, show_bl_curve, store_bl_curve);
+ #endif
++
++static struct attribute *fb_device_attrs[] = {
++	&dev_attr_bits_per_pixel.attr,
++	&dev_attr_blank.attr,
++	&dev_attr_console.attr,
++	&dev_attr_cursor.attr,
++	&dev_attr_mode.attr,
++	&dev_attr_modes.attr,
++	&dev_attr_pan.attr,
++	&dev_attr_virtual_size.attr,
++	&dev_attr_name.attr,
++	&dev_attr_stride.attr,
++	&dev_attr_rotate.attr,
++	&dev_attr_state.attr,
++#if IS_ENABLED(CONFIG_FB_BACKLIGHT)
++	&dev_attr_bl_curve.attr,
++#endif
++	NULL,
++};
++
++static const struct attribute_group fb_device_attr_group = {
++	.attrs          = fb_device_attrs,
+ };
+ 
+ static int fb_init_device(struct fb_info *fb_info)
+ {
+-	int i, error = 0;
++	int ret;
+ 
+ 	dev_set_drvdata(fb_info->dev, fb_info);
+ 
+ 	fb_info->class_flag |= FB_SYSFS_FLAG_ATTR;
+ 
+-	for (i = 0; i < ARRAY_SIZE(device_attrs); i++) {
+-		error = device_create_file(fb_info->dev, &device_attrs[i]);
+-
+-		if (error)
+-			break;
+-	}
+-
+-	if (error) {
+-		while (--i >= 0)
+-			device_remove_file(fb_info->dev, &device_attrs[i]);
++	ret = device_add_group(fb_info->dev, &fb_device_attr_group);
++	if (ret)
+ 		fb_info->class_flag &= ~FB_SYSFS_FLAG_ATTR;
+-	}
+ 
+ 	return 0;
+ }
+ 
+ static void fb_cleanup_device(struct fb_info *fb_info)
+ {
+-	unsigned int i;
+-
+ 	if (fb_info->class_flag & FB_SYSFS_FLAG_ATTR) {
+-		for (i = 0; i < ARRAY_SIZE(device_attrs); i++)
+-			device_remove_file(fb_info->dev, &device_attrs[i]);
++		device_remove_group(fb_info->dev, &fb_device_attr_group);
+ 
+ 		fb_info->class_flag &= ~FB_SYSFS_FLAG_ATTR;
+ 	}
+-- 
+2.17.1
+
 
