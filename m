@@ -1,97 +1,108 @@
-Return-Path: <linux-kernel+bounces-523976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8821DA3DD99
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:02:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 91E6EA3DD9C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:02:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 243F217C19C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:01:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DFCC417D4B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:01:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6937B1D6195;
-	Thu, 20 Feb 2025 15:01:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="Ele8cKsI"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 232661D5145
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 15:01:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A89E1D6DA9;
+	Thu, 20 Feb 2025 15:01:23 +0000 (UTC)
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBA6415574E;
+	Thu, 20 Feb 2025 15:01:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740063665; cv=none; b=r4bN2jN1AYn6TSJzbEwh/yjenRl61jcPpDxB9g/NiHw0cGiy8JO8ahzRH2j4O/lh/iRQhayZNUVOKrTWE0aIamEVlZyMQPDbVqAZ/hd14lkEseYGA2NfpJq4NqUYtBQGErxjYwneZgl5727bd2HS9PP1rzXP3TTUZ0v8aZI8qD4=
+	t=1740063683; cv=none; b=j+VpF6N0jZLltattaM1B5a51EDtAReyHb7yjCA/c5ydtOvFithXEgn06LSoZXUCjG5BRXed2QnVVJHBZS+QLEoE1/47QeOStuYOQCK8XziaL2Cg31T1U1+13V9dE5zQ4xa6E52NajIHdVTJJahGjN0/x/Np2X2lWzz9xYmkve4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740063665; c=relaxed/simple;
-	bh=QX45Sw49DqWmVMlR4tXEGRM0noTXirnZFmIFacKpQVc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NupOp1inYTDUmOwkWyK8pVuVQxuwUtsJ5CPogAjbKyyIxZ/ZJ/owQtlzGP3FIcP0Fyt4tBWrvlziwV0f1zfzYEqFEsM7WoF9N2uiR/d+ISZRmjHXPZeeyiOakkuOwrdLiLyMph9lrUv8bL4NCjMRG/F9YayntD/qFh6p1QnJKpg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=Ele8cKsI; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-ab78e6edb99so147504566b.2
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 07:01:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1740063661; x=1740668461; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QX45Sw49DqWmVMlR4tXEGRM0noTXirnZFmIFacKpQVc=;
-        b=Ele8cKsIT24FYjkrAo1OrXddZb0T9pGKeIAPMwU1Tn2ZAE03HbYvgNwIPpM9wDhJ0b
-         DtaxgDorZvJYbcbEyg/OKsjotFUJkC/LTE22dZHd+IZIm0CZ4B6xsP8CZvAmVCommfYy
-         h/NKq4y1/hUARtECAJJ5hVWUnfVzXD74eji7H5YvAZps04k8GNR0Kc0u++HG9DsGusoe
-         7FXMef+WN21el/OWt83SQ+vemUpuFAOVtBLg6jGa+/0V5Pi8D6cLlNq1LDmbPTJcNSms
-         OYb5RleQz5exsyk7xUvjlQ98lpigeLAeBPqJ85VOqmQVXTA4xM8cYrvfqfg8ZCFq36Ig
-         vt5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740063661; x=1740668461;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QX45Sw49DqWmVMlR4tXEGRM0noTXirnZFmIFacKpQVc=;
-        b=AI+HyuZHCaS1LPc/GkshLnFs3d05f9mZEW61+pxWFwre/wge3l2KqN8nAHYrhYZDV8
-         X38Cusr5bh8Aj+6ZqvuliUQDEO68LTgcQzITpMlBVTJ0BJTF/LLmIUJbcGY+iQh8p8Gc
-         ep4XezB+LGL+dpr60PZddKv9fu0wre8KoRcywm085a+F+inwumi6otznfDCg1Ma2klbe
-         HCpt0GWJ+EffDIHZuzrc9C6UOTMK2dUQp9qVQer7Q6gg3GzB5Pd+rI8Q6JSNyDLI+huT
-         beF0eojW1PwbjJ0knco5hRqsTRCjw/DWZ0tiK4xqA6fL8N5KGbEx9oMOVgqIfIXX1njl
-         C+cg==
-X-Forwarded-Encrypted: i=1; AJvYcCWSYiuHh9zGljHOCqoEIfukF87EY56hdIEOFMSNeve/bgxz3RCaGEQUyoC4NUNWnDGfQK1tnucCNV5DPhU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEHjTAQJD4p3PMdyNUlHCVmoRfigiDzJnqG8FzdZsQVx3eThRl
-	D3/LpoM6+b69+J6f4QzQXC/fF39MndcI3nDP804y/3g0oLn55JY55QfIYoLKD4ZTDMFOvowuFKi
-	isdcSMQkFD695dCoyZMQJR0dq867eiofRaZpkgA==
-X-Gm-Gg: ASbGncupYrW4M3b0B16d0Oj+ZGfxqaSa2Orr9s9B7Y+qiI1xKp0VmMRBBGadR5xtYyE
-	p7jcK7IKbNK8ZyyPKDdsvAFGZR6DLxYkRv/4eyx7VNfQQhNcYZSfDtHR6fy948DPRtwkPIWs2Ir
-	vi8OyUgA0KJY5INFwQI/6mNz63EQ==
-X-Google-Smtp-Source: AGHT+IFsNIPyDQGc+75Qve6xdXZqYra68xghYqvPNR/a93wAgL+cet1YYKlnIsmF7J644V3bLmLkzN1ceWcyLicDD5A=
-X-Received: by 2002:a17:907:3d8b:b0:abb:b1a4:b0fd with SMTP id
- a640c23a62f3a-abbccccfde8mr753397866b.7.1740063661328; Thu, 20 Feb 2025
- 07:01:01 -0800 (PST)
+	s=arc-20240116; t=1740063683; c=relaxed/simple;
+	bh=Ahp8fgbGGOnKpyObOEVaVskHj+Jt9ImFKsw5rXZIyh0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BjORiGCcNHcaqZuNyk+2WFbM+e7W9l9CJTgmZU/GLjDloK8zCDyGK07AlvwGW+7jlZOD3sK44DkAzBB43WL3YhhUhrag3VApYU0VhPaDvqWX5AQdcOLr14/EZEZW8mcyYOuTiuaDpWh4GENZLP3a2CDbMZtzX/V+Z8NOd4Verpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; arc=none smtp.client-ip=210.160.252.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
+X-CSE-ConnectionGUID: JAqRgCLZRJyH4fn0ys8UPQ==
+X-CSE-MsgGUID: oOoz0sKeRlWMRSHNgm8Q8w==
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 21 Feb 2025 00:01:18 +0900
+Received: from mulinux.example.org (unknown [10.226.92.65])
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 8684B42C8306;
+	Fri, 21 Feb 2025 00:01:12 +0900 (JST)
+From: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+To: Vinod Koul <vkoul@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+	dmaengine@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v4 0/7] Add DMAC support to the RZ/V2H(P)
+Date: Thu, 20 Feb 2025 15:01:03 +0000
+Message-Id: <20250220150110.738619-1-fabrizio.castro.jz@renesas.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAKPOu+_4mUwYgQtRTbXCmi+-k3PGvLysnPadkmHOyB7Gz0iSMA@mail.gmail.com>
- <20250210191118.3444416-1-max.kellermann@ionos.com> <3978045.1739537266@warthog.procyon.org.uk>
- <CAKPOu+8cD=HkoNYYknivDJnb6Pfxv+KF28SBUDEqha4NE5sxhg@mail.gmail.com> <2025022051-rockband-hydroxide-7471@gregkh>
-In-Reply-To: <2025022051-rockband-hydroxide-7471@gregkh>
-From: Max Kellermann <max.kellermann@ionos.com>
-Date: Thu, 20 Feb 2025 16:00:49 +0100
-X-Gm-Features: AWEUYZn11RtW2auyLztupwrGFbfU0x95LBmhMBqsyNDNUcIi41ux5lVFUDQ1JfI
-Message-ID: <CAKPOu+_WsE_HZ_u_sbP8aPnCXknU51fM9t_L-g+xmNVwWGDHVg@mail.gmail.com>
-Subject: Re: [PATCH] fs/netfs/read_collect: add to next->prev_donated
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: David Howells <dhowells@redhat.com>, netfs@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Feb 20, 2025 at 3:17=E2=80=AFPM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
-> It wasn't sent to me or to the stable list, so how could have I seen it?
+Dear All,
 
-Oh, of course, I forgot to add stable. How shall we proceed? Do you
-want me to resend to you with David's Signed-off-by?
+This series adds DMAC support to the Renesas RZ/V2H(P).
+
+Cheers,
+Fab
+
+v3->v4:
+* Fixed an issue with mid_rid/req_no/ack_no initialization
+v2->v3:
+* Replaced rzv2h_icu_register_dma_req_ack with
+  rzv2h_icu_register_dma_req_ack() in ICU patch changelog
+* Added dummy for rzv2h_icu_register_dma_req_ack()
+* Reworked DMAC driver as per Geert's suggestions.
+v1->v2:
+* Improved macros in ICU driver
+* Shared new macros between ICU driver and DMAC driver
+* Improved dt-bindings
+
+Fabrizio Castro (7):
+  clk: renesas: r9a09g057: Add entries for the DMACs
+  dt-bindings: dma: rz-dmac: Restrict properties for RZ/A1H
+  dt-bindings: dma: rz-dmac: Document RZ/V2H(P) family of SoCs
+  irqchip/renesas-rzv2h: Add rzv2h_icu_register_dma_req_ack()
+  dmaengine: sh: rz-dmac: Allow for multiple DMACs
+  dmaengine: sh: rz-dmac: Add RZ/V2H(P) support
+  arm64: dts: renesas: r9a09g057: Add DMAC nodes
+
+ .../bindings/dma/renesas,rz-dmac.yaml         | 113 ++++++++++--
+ arch/arm64/boot/dts/renesas/r9a09g057.dtsi    | 165 ++++++++++++++++++
+ drivers/clk/renesas/r9a09g057-cpg.c           |  24 +++
+ drivers/clk/renesas/rzv2h-cpg.h               |   2 +
+ drivers/dma/sh/rz-dmac.c                      | 165 ++++++++++++++++--
+ drivers/irqchip/irq-renesas-rzv2h.c           |  56 ++++++
+ include/linux/irqchip/irq-renesas-rzv2h.h     |  26 +++
+ 7 files changed, 517 insertions(+), 34 deletions(-)
+ create mode 100644 include/linux/irqchip/irq-renesas-rzv2h.h
+
+-- 
+2.34.1
+
 
