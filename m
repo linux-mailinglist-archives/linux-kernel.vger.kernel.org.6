@@ -1,125 +1,149 @@
-Return-Path: <linux-kernel+bounces-523245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 505DAA3D42E
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 10:08:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 097EAA3D571
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 10:53:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 704D4189A4A9
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 09:08:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD93E3AD2DC
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 09:50:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD1BF1EB9F9;
-	Thu, 20 Feb 2025 09:08:10 +0000 (UTC)
-Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com [209.85.222.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A2FA1F03E2;
+	Thu, 20 Feb 2025 09:49:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="hsLnC1K5"
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B8AC1C5D67
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 09:08:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FF8B1F03DE;
+	Thu, 20 Feb 2025 09:49:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740042490; cv=none; b=Ck7WJ8m8LzfQuHg3256TTNYJTHDs4Lf6x2MJzLFc/KRlHp5sJXv4Hbqb8EfS1pz33txA7FN9yKDRaEPzEH4EHH1/OBvK1zwpKyFXjirLmH27eoyrN8k6lfFVafNgLrsAuNWkMbebY1G6nyJzWu6UMEF4ZCl2vTsKFeuVHMcCX70=
+	t=1740044991; cv=none; b=rMiATddkX6KoGRdHaWz/LLt9jVRJLtNvB03Y/DkwmmsNu5XXHTiwZUOrq+br2C6i3643F9jU7fFDwAN3nDZIpo+JeLxpi6lOelGt6LwjJqpCn4bUXCBw/XehoWlX+q9RIujokSX/VbJwh/IbMEEUpYTE5xKRE0s/Iu4UPvgtG7U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740042490; c=relaxed/simple;
-	bh=7vx15IQxYZRa3T4lslXZAPYRFL8CcEnox/jZd//eeqg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Q76b7eeQWNVzQ4IOL0MVh29DAeWI+ulX5RNUIDqIku5kTCebv8r4F+cSr/o2uKJ/m+SI2R4qLle17NpfWXR1FKR/qzFiJu+BTRSPti2ZP8FTMjkTdQ8OlFzGOWa2NGHKJt80vQReb7Qj1+iS5NjWrx5trpLxfAvgiNqiphKaklw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f50.google.com with SMTP id a1e0cc1a2514c-868ec803d83so170014241.3
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 01:08:08 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740042486; x=1740647286;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vGBCTmEQKro/QQYdud7kw8Q+pzJM3E9asTpsvZ+X8EM=;
-        b=ZuuhYzcH/Y9MmNv8/95lvsmYYGZXfprm9/jx4jaH2PgxiVYRyIG5dyP+zeXpqoGr/2
-         KPNMTRIMovkpI9L4MO2bvf0ENPqZNqWDdvmpXLDfWVvKXgNyb+YlJy2Ni8/sy4aeaPi5
-         C+DugbxkBhBNoaUypTUH9hHqpjiaFNpeEO34nWCpEeuQgS989LMyX6bPJdZljDB37nR0
-         5vYT9qnwk+In0BWn9zkCzN8AiZCnGg29im4SVqy4ufJ/YVu/G9tRA24lTN7n7b6W8fiO
-         oW8ps0sBuU0bPteOCIugb9NtFgb6Vy6HqwWOCWLHvebFfV5h22S6DTm3UPeB+n2n+TP1
-         PQRg==
-X-Forwarded-Encrypted: i=1; AJvYcCW3GHTRsg5f3hd3xBsiUSE7q36Jm/b+2Y6OHCfYSa/z+B+MGyE+dh9cG2LwULZAcXvyF4MKHLCLA80SOKc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBAVVX0qBwmzj74hINiHUCjas0/mtjgsm5UtnLPaAKg1r71HNn
-	n8bbBR5ZL0KFRP+utqZClejN5vLvSjQkmOw2jpmDDUr0a4jqV3qkLE8zeZqy
-X-Gm-Gg: ASbGncv4mM2KphHVDW854bhTguHWqyTByiATwgtQC7tHzceytYid6dz49ucedTusmcU
-	+xi5PsjXZ8XaYDyiN6Kyc7KvrJm56gDxHGJZWCRd0O5GYapre6urOxLnkkh/4EAh0LZtNAnaQFD
-	IwN69sLdPA42tFTkuRtmPODUFL2JWBBXgRcoFUXNiLnRSHiaqtMy3nx37uz9NhyQF/IAbDp4Xie
-	zWbqmhqZZID9Inqyhfb7FitowuCpFbP98VOUgKrQ+AakY3aWiXxiWo/MYMFnWrr//usZOadHhxs
-	0/9dRoU7n/75Yn2k0DJCE4gT1NjToiOfMiun7iVm2n+rpVjfcXvS6A==
-X-Google-Smtp-Source: AGHT+IFQs3q7uZ8jIVXS65nXIa1a1prkn+MzyAOgRkEvrPeyowa20KmINOaFFNxzKmZrrgiH9i8RsA==
-X-Received: by 2002:a05:6102:4187:b0:4bb:cbbc:42 with SMTP id ada2fe7eead31-4be85b54fe8mr3722999137.5.1740042486571;
-        Thu, 20 Feb 2025 01:08:06 -0800 (PST)
-Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com. [209.85.222.47])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4be58249f76sm2104290137.3.2025.02.20.01.08.05
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Feb 2025 01:08:06 -0800 (PST)
-Received: by mail-ua1-f47.google.com with SMTP id a1e0cc1a2514c-8671441a730so181646241.0
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 01:08:05 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVH/4qfgzWxFaU2twGbpVGzzy4ycwgbnn3QiqjabngH25uq3pAl/y9ewYBf1N6Ut+V0S3Sl+EYn7BM+L2o=@vger.kernel.org
-X-Received: by 2002:a05:6102:8024:b0:4bb:d45c:7f4b with SMTP id
- ada2fe7eead31-4be85bf9778mr4909500137.11.1740042485608; Thu, 20 Feb 2025
- 01:08:05 -0800 (PST)
+	s=arc-20240116; t=1740044991; c=relaxed/simple;
+	bh=ql5dyUwzsmgYnivLcSbAiC+k4nEzrGO6ammvLo/uFNs=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FQmpLf4AFGJC4SnK/57Pljb2BvMwBW+1DaCKtxg8norP6dKDjyZ2vvsRo1kDSPCQFHfcAd88nnGzkfksLMXldOiK5zmYys0lao3WxamTqJaXaRIWhkQL+4Pjnyg5QDubLFPuzkkgemDpUdBODNCOYrCulXAqaJX7aWM+yb0uGpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=hsLnC1K5; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=ql5dyUwzsmgYnivLcSbAiC+k4nEzrGO6ammvLo/uFNs=; b=hsLnC1K5q78HwAijmfQrsz7sQy
+	98Kv/yILHk2lR8N1mro4X2N0PGTSjyWk1iFZ9yFWhqMmZBUqucdWMoMeqGIDoMZF6LhrVH4LWqCUc
+	DLJyWEsYXDwb43jgAzD+r9kE6gJebd0N4MMHcmbh30jbpYA1eAj+cQ17EjQDQHcf8oAhya0zyk42j
+	pzbtrno64PTIqK477bve9Nx9ZfTxRswAdFH87xiv8gURfw5NozPYlYL5JwSCAalSCGQmuY/ulVewT
+	7dTtFaUZ9ApmmHGJiKdr0HS+RHB4Ob82Aldc8FdzOvOa+lDKqXsi25Hcd+o2sBuJNjtTcFmTS0Dr8
+	LLzNM6Og==;
+Date: Thu, 20 Feb 2025 10:08:52 +0100
+From: Andreas Kemnade <andreas@kemnade.info>
+To: Andi Shyti <andi.shyti@kernel.org>
+Cc: vigneshr@ti.com, aaro.koskinen@iki.fi, khilman@baylibre.com,
+ rogerq@kernel.org, tony@atomide.com, jmkrzyszt@gmail.com, reidt@ti.com,
+ wsa@kernel.org, linux-omap@vger.kernel.org, linux-i2c@vger.kernel.org,
+ linux-kernel@vger.kernel.org, stable@kernel.org
+Subject: Re: [PATCH] i2c: omap: fix IRQ storms
+Message-ID: <20250220100745.05c0eff8@akair>
+In-Reply-To: <c3bcusjbn23z5yd2a3xtm7swnfizkl7rb6ufhicdhn52epnjvb@5uqm3g6jcony>
+References: <20250207185435.751878-1-andreas@kemnade.info>
+	<c3bcusjbn23z5yd2a3xtm7swnfizkl7rb6ufhicdhn52epnjvb@5uqm3g6jcony>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <11603b392e2899b44fce61bbc8626a1aaa32b8f0.1740037706.git.geert@linux-m68k.org>
- <CAHp75VcMweeEa=oAsVOLefuUKx96YJVg4ifdqT-uySPLXWeAeg@mail.gmail.com>
-In-Reply-To: <CAHp75VcMweeEa=oAsVOLefuUKx96YJVg4ifdqT-uySPLXWeAeg@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 20 Feb 2025 10:07:52 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdXxu_H52JJPwwU-GSNA=J0qQ8oJtU53+gEidukTaFhseg@mail.gmail.com>
-X-Gm-Features: AWEUYZnSi6YR9zYxT3gcuKH7swpfjTeD4n4sFC5i0xqksvPaaVEdT0XQXTf3TBg
-Message-ID: <CAMuHMdXxu_H52JJPwwU-GSNA=J0qQ8oJtU53+gEidukTaFhseg@mail.gmail.com>
-Subject: Re: [PATCH v2] auxdisplay: MAX6959 should select BITREVERSE
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Andy Shevchenko <andy@kernel.org>, linux-kernel@vger.kernel.org, 
-	kernel test robot <lkp@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_/pGvym2.eb.LfB7wXpsrzdqG";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/pGvym2.eb.LfB7wXpsrzdqG
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Andy,
+Am Wed, 19 Feb 2025 20:22:13 +0100
+schrieb Andi Shyti <andi.shyti@kernel.org>:
 
-On Thu, 20 Feb 2025 at 09:21, Andy Shevchenko <andy.shevchenko@gmail.com> w=
-rote:
-> On Thu, Feb 20, 2025 at 9:48=E2=80=AFAM Geert Uytterhoeven <geert@linux-m=
-68k.org> wrote:
-> >
-> > If CONFIG_BITREVERSE is not enabled:
-> >
-> >     max6959.c:(.text+0x92): undefined reference to `byte_rev_table'
+> Hi,
+>=20
+> On Fri, Feb 07, 2025 at 07:54:35PM +0100, Andreas Kemnade wrote:
+> > On the GTA04A5 writing a reset command to the gyroscope causes IRQ
+> > storms because NACK IRQs are enabled and therefore triggered but not
+> > acked.
+> >=20
+> > Sending a reset command to the gyroscope by
+> > i2cset 1 0x69 0x14 0xb6
+> > with an additional debug print in the ISR (not the thread) itself
+> > causes
+> >=20
+> > [ 363.353515] i2c i2c-1: ioctl, cmd=3D0x720, arg=3D0xbe801b00
+> > [ 363.359039] omap_i2c 48072000.i2c: addr: 0x0069, len: 2, flags: 0x0, =
+stop: 1
+> > [ 363.366180] omap_i2c 48072000.i2c: IRQ LL (ISR =3D 0x1110)
+> > [ 363.371673] omap_i2c 48072000.i2c: IRQ (ISR =3D 0x0010)
+> > [ 363.376892] omap_i2c 48072000.i2c: IRQ LL (ISR =3D 0x0102)
+> > [ 363.382263] omap_i2c 48072000.i2c: IRQ LL (ISR =3D 0x0102)
+> > [ 363.387664] omap_i2c 48072000.i2c: IRQ LL (ISR =3D 0x0102)
+> > repeating till infinity
+> > [...]
+> > (0x2 =3D NACK, 0x100 =3D Bus free, which is not enabled)
+> > Apparently no other IRQ bit gets set, so this stalls.
+> >=20
+> > Do not ignore enabled interrupts and make sure they are acked.
+> > If the NACK IRQ is not needed, it should simply not enabled, but
+> > according to the above log, caring about it is necessary unless
+> > the Bus free IRQ is enabled and handled. The assumption that is
+> > will always come with a ARDY IRQ, which was the idea behind
+> > ignoring it, proves wrong.
+> > It is true for simple reads from an unused address.
+> >=20
+> > So revert
+> > commit c770657bd261 ("i2c: omap: Fix standard mode false ACK readings").
+> >=20
+> > The offending commit was used to reduce the false detections in
+> > i2cdetect. i2cdetect warns for confusing the I2C bus, so having some
+> > rare false detections (I have never seen such on my systems) is the
+> > lesser devil than having basically the system hanging completely.
+> >=20
+> > No more details came to light in the corresponding email thread since
+> > several months:
+> > https://lore.kernel.org/linux-omap/20230426194956.689756-1-reidt@ti.com/
+> > so no better fix to solve both problems can be developed right now. =20
+>=20
+> I need someone from TI or someone who can test to ack here.
+>=20
+> Can someone help?
 >
-> LGTM now, thanks.
-> Do you think we are in an emergency to send it for v6.14?
+The original (IMHO minor) problem which should be fixed by c770657bd261
+is hard to test, I have never seen that on any system (and as a
+platform maintainer have a bunch of them) I have access to.
+There is not much description anywhere about the system in which the
+original system occured, and no reaction since several months from the
+author, so I do not see anything which can be done.
+Maybe it was just faulty hardware.
 
-No.
+As said in the commit message, reverting it should be the lesser devil.
+And that state was tested for many years.
 
-> If possible, I would prefer to send this in PR for v6.15 as the
-> problem was from day 1 and only bitbot found the configuration so far
-> that fails to build.
+Regards,
+Andreas
 
-I had to go through lots of loops to disable BITREVERSE and reproduce
-the build issue (e.g. CRC32 selects BITREVERSE), so I doubt anyone
-will ever encounter it with a real config.
+--Sig_/pGvym2.eb.LfB7wXpsrzdqG
+Content-Type: application/pgp-signature
+Content-Description: Digitale Signatur von OpenPGP
 
-Gr{oetje,eeting}s,
+-----BEGIN PGP SIGNATURE-----
 
-                        Geert
+iHUEARYIAB0WIQT6OyBG8iTmbVOVWD8X53T0dSWG3AUCZ7bxJAAKCRAX53T0dSWG
+3CEnAQD9YPchBZTlbER2pSZE6PR2QcdauLXq2J6xDhm69AFTVAD6AiOkdkrGCCLi
+aYx1UJCBw1gI8VZjHqDZljSOEvWjCgY=
+=OlEK
+-----END PGP SIGNATURE-----
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+--Sig_/pGvym2.eb.LfB7wXpsrzdqG--
 
