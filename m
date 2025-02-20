@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-524226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11E63A3E0D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:34:13 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 171EAA3E0C6
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:30:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C97D3B48A7
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:30:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E61297A8B09
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:29:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25814212FB3;
-	Thu, 20 Feb 2025 16:29:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66E5F2135A2;
+	Thu, 20 Feb 2025 16:29:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DNWw/fR9"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="n5mN0vFR"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E894420DD45
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 16:29:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0AC0212B14
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 16:29:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740068969; cv=none; b=J355JcZijy3/EO6Og+0fmWYvXEptf94Ca1uRDX017fYsKEMod+i6ZSEMi+qIkr4ICsCH7IR5anbYkv3021HuvJ/6QM6yLMGoHMn1c5GEN/TSZ4pik3cdEChrz786Tz1kY6pqwwwXXl9mc/7gro8bkZNUKm0XHgeYsjwN9xvLRbU=
+	t=1740068970; cv=none; b=J2tkBWKxD4QEhuqyF37+UWhH0oBuGeZwaxV3qzyzgwFEmiIY1MqpmJ7LbKA9o+Lo8dtW0eAvZuhT97dGTLzKzqXK/OvpjzkLYrdT2k7aIVBzx+oy9Najw2KuLF2hciQkoBsKJPR9oJsMwSym0Dd70MA392a5IU9pttSo3xJ3zCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740068969; c=relaxed/simple;
-	bh=Dr8Rk5o8L7NeOZgA3IT4ksHpO16HjBDqWkL7REEjaPg=;
+	s=arc-20240116; t=1740068970; c=relaxed/simple;
+	bh=/VfHNWugQzZOouS7hKpPuUUlotDhboVqpoBQsz75KJI=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=b1nTjPgUgmNpJbfEs0fL1m3kFi8nQazYC3IZT2p9jpm5eqxzr8i2N+GSxl442jTdI4PGPAYWpPVQgpXQySOUidcKcwImGvFdYCSRVkU/sT+25vsYy5FqYy1oiqTqR6v/VgCkhmFdGYI/vGM7oZFa7WLDFrZVB/qTpa8QkO1DxjQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DNWw/fR9; arc=none smtp.client-ip=209.85.221.47
+	 MIME-Version; b=Air8OE04yyt9uJeBeH2akCfN75qYSKFFa5xmB8rppLmXBGWFRxSwuFGsif10t8POl8QCYN7OD6ZG1g2gpsrNaM6sRHeKwkDvq6e8kV2lWdwesw7bXq7YD6AF3IpOFXC5ElGuQ7aV/PNDh7CEhl47PuteVqN8zW0xFhbSLAypOrU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=n5mN0vFR; arc=none smtp.client-ip=209.85.221.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-38f2b7ce2f3so916295f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 08:29:26 -0800 (PST)
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-38f2b7ce2f3so916331f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 08:29:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740068965; x=1740673765; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1740068967; x=1740673767; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=wWH0fM1NieugYkKcNBWP1cXDL8AX1zdkriiAZTiM3tI=;
-        b=DNWw/fR9h7YMhL+7ngqVD5BHacs5CcUYj2W4UrzJHYdPugU8YEElWgIHNKVzmtNn41
-         kTA9KLkP4LA7wRY1frSI1O3Q4qAwVvl4orM9fdjZG83hk0lQz64a9xG7MnklpHoXrhuD
-         nnEbs6YmtMEYp8+GWYQCJAtAEjS/isHpvcCpxsKDHrnb7+gJV1g+o3yvPsM/GYna+Iuu
-         DpMX+dj2QU+jvKDshaWTu9P51dhtbs8ijStVrH1ihcavm1VYKJG/sTV7zJEUyAzj35rh
-         P8QOSQuRUkgeNYzgL7Nue0D6sT99oCRfI2rpWsmW3Zrrg/odAXTw58AF1d0u+XfRcd9T
-         mFwg==
+        bh=kNs8W2h+NxjkcVzoJNbEyvvCSIIo8azfvztr8o7DSmU=;
+        b=n5mN0vFR1IPe65oQy+wbhA8osJ7mkeTeTJNjdDqudAuPm0weqIAeqMdiHBajOO5MVw
+         BkJjvqaJeoDf7/zHNNLBzavmWK0x/uk+aB7vvoFr/TFssJLg0eYd6I4aRD9SO5xGmrKy
+         LAumR0Q9NgNst1iJckuJLQj2jG1ckbcn7IyXXQG1ZBbujCN3g8er2BcHJog7tXAjI5tq
+         c0Do7BFknFGODU2dp6+ObO8PE0HFD1xeJHQEA+lj/HNZJW2TkcILX6voJkE+nIOY5wxo
+         wvzma5b4pTErJhKIAIRTo9NqZ368DWp67wCQL9/C9PhNLoQ3xmu5wMa2DY8Qbn5rq2Ap
+         c63g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740068965; x=1740673765;
+        d=1e100.net; s=20230601; t=1740068967; x=1740673767;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=wWH0fM1NieugYkKcNBWP1cXDL8AX1zdkriiAZTiM3tI=;
-        b=lQKa0epfAVJpirCfuUIUH6pEvlkbx0dMgGNmXTDVVD+GADftMnhbimvuxolUpYnP1d
-         9NlFtRXH3gGcGdtZcb4RrPB00HaNTzEbzUE0x51zGH7YoQc4CErSYfW7jN7xu7HdmGeb
-         FOzUsPxsRLAI41gi7Lh1VbZz6onuhmgRBJZWZu7tX2GuM6wRS1nkDmfPMqllnN3dCXHl
-         0/inbeo792p8eteyKIzTzF2wqZKb1W4Aujhw7alFPvA3gEQ5sN9+w6BT7lTEFNitN5uK
-         haklB5ekvAHmSN8Sj2Oxo3xxHZHAD56pTpnCtnGG7ymttteRiBnWM7Bv4O0Zah/TsYcR
-         Peag==
-X-Forwarded-Encrypted: i=1; AJvYcCWbeNOQ1uNwLxuLdLe7HJgDdbaI0NfEvtlbDBiXTFeMWpcouf45rYHesnBbyYQjstBP14ILU/qbiu9CZ+M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8+ewI13q+RyA2r+XlUC+SJP1r6WtZ2MGiYpWFam2wYGllGrrN
-	CRkkgB+OLK7A09ujLqvfuOhxhmNdm7A7NzBcXzgfP+C0hgLhiPYjv+MyXlYbhzk=
-X-Gm-Gg: ASbGncunIN5BPzo1wUNfOvARN9Yz6cjwZVvAFPqUqYDwdtsk4layIBmdgy67ERJXoVM
-	pqcHau2KORWmukT/pALipqig+f8FjaXY85MtjuM9xGL3Mv9Ncen49hPgRMznpTUtV1S5BsDkksF
-	UumDb4u2xUMFAGBRcU1nrlH7N1VlpUnmgzAmzacKGvfq3DNEN45B1ohsQbCy9YmaPQuba++CxZd
-	AvSG4qNNejl/wtH+cFIBAR8b04HkfzPvVdPNNPSmMuEF3YEiEZRPh9TjPoH6S7Vf31S/AHvVuC3
-	0oAeOqnVhY36atvox8dULFYUZgtSRAYWdZ4XmtoD
-X-Google-Smtp-Source: AGHT+IHdOwtU9xb0WEouusC4CcaJUMhnzC1yLBW1Y1gMidwn7Gg10mbC9aK40VRIc2odT8xSgLfmSw==
-X-Received: by 2002:a5d:4641:0:b0:38d:e304:7470 with SMTP id ffacd0b85a97d-38f33f44f3emr20248336f8f.25.1740068965221;
-        Thu, 20 Feb 2025 08:29:25 -0800 (PST)
+        bh=kNs8W2h+NxjkcVzoJNbEyvvCSIIo8azfvztr8o7DSmU=;
+        b=BVelCvhAXXxh6C4nggt1o2t3/4CENFus1yT9GYDRAxFixKXMXSUn/66I6s4Z1dH1hq
+         BufWibGTKIDVo1C5jHC7HGHWmT33/zRVihEFr7rLK3dmOWTTMFSGVx+riX33GiMQjcAR
+         7Yv7GBWRnxdUi3951UiaqgQIaBUmstyagaHQJKJw0PgwAybFdhezIZ/UBcTNnCpQcM2y
+         R1XYunQe1IO+S4hUq/52MIsypSlnigDdcyfcITGz8zcDvrBCBNM6V1Wtfzn0mmWWb7wT
+         ALIkyz8faQh1s5ni+nMC80P4N+XgmSG0lFPO4Q2i7RA98gdUi/HsgHfoVt1+/RCMEwye
+         F0PQ==
+X-Forwarded-Encrypted: i=1; AJvYcCURSn1ChPG5efpgsuvZDQlOMDebun4NDSmE4S7cCTZL127UxBId9VCcsWrUEp/TbGRlulTJD2tEDQRYSXI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyo4lplBDk2zeqJU51OqL+wa/6KAduwuU1gguiNpWUStn40Jmwn
+	9pCfn/Sp0rGbLazPQDsO+lOkTlaHX2e5th6PR+DngHxM1OBWlCDvQlEJGrNKYm4=
+X-Gm-Gg: ASbGncvJFMV86MUkSXYq8en+vszJ9qVLyy2EcxAKUXpjNJ0gnipeJhMS4ZsGN65UeAh
+	KpFxgtR3umLaR3XUfOdvT7szv5ZuW5IdQOrzx9BodJbvbdLJ59PtZEBQmHIB5A43QMc9mzs4uMM
+	XDa3j0w8ftxUt74ilc940K+0L4K0oxt4aMihAnYvh14gBhaEn/nOyU5of2i2dxHiRAye7Yy7EXN
+	gj9GomZ6VMTwh55Ko8lSBpV2sBj28pBH4N4gIyP5ykdmGaFJdMtGUC4YHojrQpxRPe05n52ouws
+	wwFN1cLPFfMFfC+DMsXBkGTEw9YtwC/V8fp5lYBQ
+X-Google-Smtp-Source: AGHT+IHjLSNxeifF/38VMi7dEG8R8mOoiltOqfkJG6DXGhVBYkNfwPD9ab3HxUNuKUZ0XFxpl43IYA==
+X-Received: by 2002:adf:f3cb:0:b0:38f:2a7f:b6cd with SMTP id ffacd0b85a97d-38f33f3dba5mr15018331f8f.20.1740068966979;
+        Thu, 20 Feb 2025 08:29:26 -0800 (PST)
 Received: from localhost.localdomain ([5.133.47.210])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f258f5fabsm20813753f8f.45.2025.02.20.08.29.23
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f258f5fabsm20813753f8f.45.2025.02.20.08.29.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Feb 2025 08:29:23 -0800 (PST)
+        Thu, 20 Feb 2025 08:29:25 -0800 (PST)
 From: srinivas.kandagatla@linaro.org
 To: broonie@kernel.org
 Cc: perex@perex.cz,
@@ -82,9 +82,9 @@ Cc: perex@perex.cz,
 	dmitry.baryshkov@linaro.org,
 	johan+linaro@kernel.org,
 	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH v2 3/5] ASoC: q6apm-dai: make use of q6apm_get_hw_pointer
-Date: Thu, 20 Feb 2025 16:28:45 +0000
-Message-Id: <20250220162847.11994-4-srinivas.kandagatla@linaro.org>
+Subject: [PATCH v2 4/5] ASoC: qdsp6: q6apm-dai: set correct period size
+Date: Thu, 20 Feb 2025 16:28:46 +0000
+Message-Id: <20250220162847.11994-5-srinivas.kandagatla@linaro.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250220162847.11994-1-srinivas.kandagatla@linaro.org>
 References: <20250220162847.11994-1-srinivas.kandagatla@linaro.org>
@@ -98,93 +98,36 @@ Content-Transfer-Encoding: 8bit
 
 From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 
-With the existing code, the buffer position is only reset in pointer
-callback, which leaves the possiblity of it going over the size of
-buffer size and reporting incorrect position to userspace.
-
-Without this patch, its possible to see errors like:
-snd-x1e80100 sound: invalid position: pcmC0D0p:0, pos = 12288, buffer size = 12288, period size = 1536
-snd-x1e80100 sound: invalid position: pcmC0D0p:0, pos = 12288, buffer size = 12288, period size = 1536
+For some reason we ended up with a period size which is less than 1ms,
+DSP does not support such a small fragment size. Adjust this to be in
+the range of 16ms to 32ms.
 
 Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 ---
- sound/soc/qcom/qdsp6/q6apm-dai.c | 23 ++++-------------------
- 1 file changed, 4 insertions(+), 19 deletions(-)
+ sound/soc/qcom/qdsp6/q6apm-dai.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
 diff --git a/sound/soc/qcom/qdsp6/q6apm-dai.c b/sound/soc/qcom/qdsp6/q6apm-dai.c
-index eba51e88a297..7466fe0c661a 100644
+index 7466fe0c661a..049b91fd7a23 100644
 --- a/sound/soc/qcom/qdsp6/q6apm-dai.c
 +++ b/sound/soc/qcom/qdsp6/q6apm-dai.c
-@@ -64,7 +64,6 @@ struct q6apm_dai_rtd {
- 	phys_addr_t phys;
- 	unsigned int pcm_size;
- 	unsigned int pcm_count;
--	unsigned int pos;       /* Buffer position */
- 	unsigned int periods;
- 	unsigned int bytes_sent;
- 	unsigned int bytes_received;
-@@ -124,23 +123,16 @@ static void event_handler(uint32_t opcode, uint32_t token, void *payload, void *
- {
- 	struct q6apm_dai_rtd *prtd = priv;
- 	struct snd_pcm_substream *substream = prtd->substream;
--	unsigned long flags;
- 
- 	switch (opcode) {
- 	case APM_CLIENT_EVENT_CMD_EOS_DONE:
- 		prtd->state = Q6APM_STREAM_STOPPED;
- 		break;
- 	case APM_CLIENT_EVENT_DATA_WRITE_DONE:
--		spin_lock_irqsave(&prtd->lock, flags);
--		prtd->pos += prtd->pcm_count;
--		spin_unlock_irqrestore(&prtd->lock, flags);
- 		snd_pcm_period_elapsed(substream);
- 
- 		break;
- 	case APM_CLIENT_EVENT_DATA_READ_DONE:
--		spin_lock_irqsave(&prtd->lock, flags);
--		prtd->pos += prtd->pcm_count;
--		spin_unlock_irqrestore(&prtd->lock, flags);
- 		snd_pcm_period_elapsed(substream);
- 		if (prtd->state == Q6APM_STREAM_RUNNING)
- 			q6apm_read(prtd->graph);
-@@ -247,7 +239,6 @@ static int q6apm_dai_prepare(struct snd_soc_component *component,
- 	}
- 
- 	prtd->pcm_count = snd_pcm_lib_period_bytes(substream);
--	prtd->pos = 0;
- 	/* rate and channels are sent to audio driver */
- 	ret = q6apm_graph_media_format_shmem(prtd->graph, &cfg);
- 	if (ret < 0) {
-@@ -450,16 +441,12 @@ static snd_pcm_uframes_t q6apm_dai_pointer(struct snd_soc_component *component,
- 	struct snd_pcm_runtime *runtime = substream->runtime;
- 	struct q6apm_dai_rtd *prtd = runtime->private_data;
- 	snd_pcm_uframes_t ptr;
--	unsigned long flags;
- 
--	spin_lock_irqsave(&prtd->lock, flags);
--	if (prtd->pos == prtd->pcm_size)
--		prtd->pos = 0;
--
--	ptr =  bytes_to_frames(runtime, prtd->pos);
--	spin_unlock_irqrestore(&prtd->lock, flags);
-+	ptr = q6apm_get_hw_pointer(prtd->graph, substream->stream) * runtime->period_size;
-+	if (ptr)
-+		return ptr - 1;
- 
--	return ptr;
-+	return 0;
- }
- 
- static int q6apm_dai_hw_params(struct snd_soc_component *component,
-@@ -674,8 +661,6 @@ static int q6apm_dai_compr_set_params(struct snd_soc_component *component,
- 	prtd->pcm_size = runtime->fragments * runtime->fragment_size;
- 	prtd->bits_per_sample = 16;
- 
--	prtd->pos = 0;
--
- 	if (prtd->next_track != true) {
- 		memcpy(&prtd->codec, codec, sizeof(*codec));
- 
+@@ -21,11 +21,11 @@
+ #define PLAYBACK_MIN_NUM_PERIODS	2
+ #define PLAYBACK_MAX_NUM_PERIODS	8
+ #define PLAYBACK_MAX_PERIOD_SIZE	65536
+-#define PLAYBACK_MIN_PERIOD_SIZE	128
+-#define CAPTURE_MIN_NUM_PERIODS		2
+-#define CAPTURE_MAX_NUM_PERIODS		8
+-#define CAPTURE_MAX_PERIOD_SIZE		4096
+-#define CAPTURE_MIN_PERIOD_SIZE		320
++#define PLAYBACK_MIN_PERIOD_SIZE	6144
++#define CAPTURE_MIN_NUM_PERIODS		PLAYBACK_MIN_NUM_PERIODS
++#define CAPTURE_MAX_NUM_PERIODS		PLAYBACK_MAX_NUM_PERIODS
++#define CAPTURE_MAX_PERIOD_SIZE		PLAYBACK_MAX_PERIOD_SIZE
++#define CAPTURE_MIN_PERIOD_SIZE		PLAYBACK_MIN_PERIOD_SIZE
+ #define BUFFER_BYTES_MAX (PLAYBACK_MAX_NUM_PERIODS * PLAYBACK_MAX_PERIOD_SIZE)
+ #define BUFFER_BYTES_MIN (PLAYBACK_MIN_NUM_PERIODS * PLAYBACK_MIN_PERIOD_SIZE)
+ #define COMPR_PLAYBACK_MAX_FRAGMENT_SIZE (128 * 1024)
 -- 
 2.39.5
 
