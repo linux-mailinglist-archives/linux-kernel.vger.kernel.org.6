@@ -1,164 +1,141 @@
-Return-Path: <linux-kernel+bounces-523771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF41FA3DB0A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:15:41 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F19D9A3DB01
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:14:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28CCC3B8CBA
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:13:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4C57A7A626D
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:13:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8661A1F8670;
-	Thu, 20 Feb 2025 13:13:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 714FA1F8670;
+	Thu, 20 Feb 2025 13:13:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dinCZ/DN"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=posteo.net header.i=@posteo.net header.b="eFsd9nWv"
+Received: from mout02.posteo.de (mout02.posteo.de [185.67.36.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C79B3C3C
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 13:13:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A42E43C3C
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 13:13:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740057218; cv=none; b=mfNtbzxGJVq3vPRqt7UzSs4Z7X0+mUbgRAJneceneV7hSQ9sZXzj11pU0S87Qo1T7PovMGde6Yf55pbwGeazdZUqs0MSRe/ETR9qulS91xdFhM9uWdqBVqemb0iwZFQuw/MYedMizCEGSeJjFwlx07uPulFX7hwde/nLuoYzdvY=
+	t=1740057230; cv=none; b=DymX305e8HhMRzVYxJEMPdpIrCCQ6T2Od+cjErtSoW20HTFjeSCfa/zMGOGExsx2uYcXg5OQ03MK40p+wAWh4GgabR62G6uXkjNy4zFOU1BLAythulYiMHU+QTX4hIZJrV5qZyz+YpPNoiMnXIhdzqioIuRLX+jrVOIBbnXrT2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740057218; c=relaxed/simple;
-	bh=6pqby0QmGSRbZZAyan/T4KEF3pkd0eamtLEQbHarphY=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=D8ejKWdbysraT48GXiysANPB7zHKX1Bv/qGRAFUnv1wjp0bsuTMtq/WnePW7+lgD9xl3QYTd7ut8pAV9F1k15DkUdZqoc8ZWF7CQYtBfVe0j1GzqNps7l/WsQQSUwJ9kbagXpYte1r4PZeEvXmkqHikiMssWJ92vaVB4C85vsKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dinCZ/DN; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740057216;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KRwMu7e0ceR1Dgr7qaos9+En2kyirds7dYdEYKFuAug=;
-	b=dinCZ/DNoZOwMhqdj397N63/EtptU8sIBLAi79ZAyAmYpdjxmy33B4el7FobMrBSLNBdOG
-	PXj2zEScq+U4kRNSmfwUBGU4qDMiwj7Nwq/6/vHSFfQlkcoPkYAY9Y95o/UN7GVJQYjKeW
-	B5D4qt3+gYnT2oYHGuKmScoqY5f5eHo=
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
- [209.85.160.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-551-bIWuTXKRN_erHH8eu441Eg-1; Thu, 20 Feb 2025 08:13:34 -0500
-X-MC-Unique: bIWuTXKRN_erHH8eu441Eg-1
-X-Mimecast-MFC-AGG-ID: bIWuTXKRN_erHH8eu441Eg_1740057214
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-472012f2edfso15532061cf.0
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 05:13:34 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740057214; x=1740662014;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KRwMu7e0ceR1Dgr7qaos9+En2kyirds7dYdEYKFuAug=;
-        b=DDPo8d9HwwleMw7c2Iejd3DpbmDNm374Z01ES53NjQQ0glI3Aw4ftZ6OnYNcgVBp4g
-         xsSrHRVzOKYN68cSvjmW4xDSpdXRJ0DXPkLnGKq7MeLFnDTMlWKKBlWvTZhlUxBZu9Fz
-         L2f9Yz4uuQXyCWmnYNJkmFRaXe5BdnW+AM5aarzavbCalqJvDsSmbaaHo5xSpGjl+WyI
-         +OwVIeb16IksrQ2/3H61Kk16OT1RTUnRplFDhUnDmsaVn+E7Y4gfCNIQA6d+3/p7fhQX
-         LfucXs7jxwARDXV/sH+PGXgOvXvHzdLca4QYAw6TdxewEp3tKBRxFS/Um7PAH11GXi9J
-         Az1A==
-X-Forwarded-Encrypted: i=1; AJvYcCVCSObmysbhpzmEZNU/frc9xJBrlXtpQM9dOVYfwVV98B8nQsfTi9A2UwXUMXS0fcuW9m3rEYtPWeOdDY4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTWJfac/qdnXsk0Au+JLbl0tT0z1CNybfvXLgf3naURTlIl0Aj
-	+IPiQkpiKu0VO6ce3E7JbOYM0tQUM8DQ1kei7VMECDkfXeStCT7jGjyZBuW8X3VXOza9ZKaaTQe
-	QQjf+DDRnkLe0rcUiKqDfaev1tVaeLiVfewWvesQIhE00JbdEy91P46hjtbKfjA==
-X-Gm-Gg: ASbGncvpp2BDQPf+1Ej8RwET8chCvlUTPoZXA3Qd595e/28KgFGUtWcBGyGDlFu2lbM
-	0hltIbr1o/ivU3ZvnN0TbsERBUz6umXg7hSgnzpCmCR7w+U3DVipPlXSECkiyCuYPENbLgF+heo
-	vqYaZERiwNSyDxbgNHEMnXxmWMBdCDTjq+6otDuA+/e/w9nA+5QSU6B3/w5sLi6S29ktd6NndE4
-	qO7g1rVA4x7+waa4NsI0CbbAVMkES77XxG3OqaRONpWsygkq6+iNjH5a0jNKhgJ8x1Rz/ArHvGz
-	Nvsf9K278YL7GlaWiElkKHyTiKaadcowomcChc8V3sp837Eu
-X-Received: by 2002:ac8:5f96:0:b0:471:c78d:8d84 with SMTP id d75a77b69052e-472082d520emr103517551cf.43.1740057214427;
-        Thu, 20 Feb 2025 05:13:34 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGD+qphUNuAPQf2oT13JuhFqAIdVj2mI/geMANnLSv7BrPqLTILeTL4glZCJoafX/ZnUZWiPQ==
-X-Received: by 2002:ac8:5f96:0:b0:471:c78d:8d84 with SMTP id d75a77b69052e-472082d520emr103516631cf.43.1740057213554;
-        Thu, 20 Feb 2025 05:13:33 -0800 (PST)
-Received: from ?IPV6:2601:188:c100:5710:627d:9ff:fe85:9ade? ([2601:188:c100:5710:627d:9ff:fe85:9ade])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-472056e87c6sm24826551cf.12.2025.02.20.05.13.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Feb 2025 05:13:32 -0800 (PST)
-From: Waiman Long <llong@redhat.com>
-X-Google-Original-From: Waiman Long <longman@redhat.com>
-Message-ID: <3c09df17-79b2-40d4-a560-f6b1ddbbb73e@redhat.com>
-Date: Thu, 20 Feb 2025 08:13:31 -0500
+	s=arc-20240116; t=1740057230; c=relaxed/simple;
+	bh=zgle9CkTdgmTkE8vQAPkindwi88AxR8vCiCMOn6LD7U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=D5IAioIaS4tqmE9lBzv7l1erazVnTztsxF+P9hx1XXAUMYUMLSidzlUcplA7bNHRJ0OvJIydfrNk0/zjgYGZc/9skPKkHyoWPNcl0Hgesm94oXDirsuo/2++kTcnyI88sbR7vs0Fp3rkZQ3MBhRkN5NrN/pD594MLDq1pOiSG+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net; spf=pass smtp.mailfrom=posteo.net; dkim=pass (2048-bit key) header.d=posteo.net header.i=@posteo.net header.b=eFsd9nWv; arc=none smtp.client-ip=185.67.36.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.net
+Received: from submission (posteo.de [185.67.36.169]) 
+	by mout02.posteo.de (Postfix) with ESMTPS id 339AE240103
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 14:13:40 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=posteo.net; s=2017;
+	t=1740057220; bh=zgle9CkTdgmTkE8vQAPkindwi88AxR8vCiCMOn6LD7U=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:Content-Transfer-Encoding:From;
+	b=eFsd9nWvXJX3p7Juqu2She/EHq8UFMWm+ZDyTBQgu8l3vcr46U8YctQGoaxNyXqPX
+	 om67Mv6ceGxhTw9qC6CyjAIAdrKZvCwZNCXm9w3QAk5lvfR1cwwlVfKSoaRYSlItdy
+	 3/ZmVtw8REzp6j5y4hbVx+XCqfsyJP/K9QbddZMrp1K0cdMTjQ+PkBhMhbOOMX3HCK
+	 Q1hX6QxVhzhksmBe+3aJe4L0jkOresYkdaR3CU5wNIK2AjTjd+3/V5XYdIXvrBdQ0n
+	 a2E876V/G+dPrGfUlN2I7fNSjCF6k0A3hLKnfxwnYJxNSWYkV2sawzWvtVjaZzsJ3Q
+	 YNvWsKb0r7MNQ==
+Received: from customer (localhost [127.0.0.1])
+	by submission (posteo.de) with ESMTPSA id 4YzDGn6MP7z6tvk;
+	Thu, 20 Feb 2025 14:13:37 +0100 (CET)
+Date: Thu, 20 Feb 2025 13:13:37 +0000
+From: =?utf-8?Q?J=2E_Neusch=C3=A4fer?= <j.ne@posteo.net>
+To: j.ne@posteo.net
+Cc: Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>, linuxppc-dev@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] powerpc/fsl_lbc: Explicitly populate bus
+Message-ID: <Z7cqgbullhR47Bb-@probook>
+References: <20250209-localbus-v1-1-efcd780153a0@posteo.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] hung_task: Show the blocker task if the task is hung
- on mutex
-To: Steven Rostedt <rostedt@goodmis.org>,
- "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-Cc: Waiman Long <llong@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>, Boqun Feng
- <boqun.feng@gmail.com>, Joel Granados <joel.granados@kernel.org>,
- Anna Schumaker <anna.schumaker@oracle.com>, Lance Yang
- <ioworker0@gmail.com>, Kent Overstreet <kent.overstreet@linux.dev>,
- Yongliang Gao <leonylgao@tencent.com>, Tomasz Figa <tfiga@chromium.org>,
- Sergey Senozhatsky <senozhatsky@chromium.org>, linux-kernel@vger.kernel.org,
- Linux Memory Management List <linux-mm@kvack.org>
-References: <173997003868.2137198.9462617208992136056.stgit@mhiramat.tok.corp.google.com>
- <173997004932.2137198.7959507113210521328.stgit@mhiramat.tok.corp.google.com>
- <20250219112308.5d905680@gandalf.local.home>
- <0fa9dd8e-2d83-487e-bfb1-1f5d20cd9fe6@redhat.com>
- <20250219152435.35077ac3@gandalf.local.home>
- <db4ee5e9-56bb-408c-85e7-f93e2c3226dc@redhat.com>
- <20250220075639.298616eb494248d390417977@kernel.org>
- <d8c01f69-34c0-45cf-a532-83544a3a3efd@redhat.com>
- <20250219204153.65ed1f5e@gandalf.local.home>
- <20250220114036.e22e388402a00f7809a81dee@kernel.org>
- <20250219221141.09f9fe48@gandalf.local.home>
-Content-Language: en-US
-In-Reply-To: <20250219221141.09f9fe48@gandalf.local.home>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250209-localbus-v1-1-efcd780153a0@posteo.net>
 
+On Sun, Feb 09, 2025 at 10:58:50PM +0100, J. Neuschäfer via B4 Relay wrote:
+> From: "J. Neuschäfer" <j.ne@posteo.net>
+> 
+> Historically, devicetree nodes representing the Freescale Enhanced
+> Local Bus Controller (eLBC) have compatible strings such as:
+> 
+>     compatible = "fsl,mpc8313-elbc", "fsl,elbc", "simple-bus";
+> 
+> The "simple-bus" string causes the bus to be populated, and the memory
+> devices contained within it to be discovered. The eLBC bus (as
+> represented in device trees) differs from a simple-bus in a few ways,
+> though:
+> 
+>  - Addresses are not simple/linear: The first cell of an address is a
+>    chip select, the second is an linear address within the space thus
+>    selected. Representing 1,0 as 100000000, for example, would decrease
+>    readability[1].
+>  - It is expected that the devices on a simple-bus "can be accessed
+>    directly without additional configuration required"[2], but the eLBC
+>    needs some configuration.
+> 
+> To accommodate devicetrees that declare an eLBC without "simple-bus",
+> explicitly populate the bus in the eLBC driver.
+> 
+> [1]: dtc makes such a suggestion opon encountering an eLBC
+> [2]: Quoting the Devicetree Specification Release v0.3
+> 
+> Signed-off-by: J. Neuschäfer <j.ne@posteo.net>
+> ---
 
-On 2/19/25 10:11 PM, Steven Rostedt wrote:
-> On Thu, 20 Feb 2025 11:40:36 +0900
-> Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
->
->> Hmm, right.
->> Since the blocked_on must be NULL before setting flag, if we can ensure
->> the writing order so that blocked_flags is always updated before
->> blocked_on, may it be safe?
->>
->> Or, (this may introduce more memory overhead) don't use union but
->> use different blocked_on_mutex, blocked_on_rwsem, etc.
->>
->> Another idea is to make the owner offset same, like introducing
->>
->> struct common_lock {
->> 	atomic_long_t owner;
->> };
->>
->> But the problem is that rt_mutex does not use atomic for storing
->> the owner. (we can make it atomic using wrapper)
-> Either that, or add to the task_struct:
->
-> 	struct mutex	*blocked_on_mutex;
-> 	struct rwsem	*blocked_on_rwsem;
-> 	struct rtlock	*blocked_on_rtlock;
->
-> And just have each type assign to its own type. Then you only need to look
-> at each one. But yeah, this adds even more bloat to task_struct.
->
->    :-/
+Due to advice from Crystal Wood and Rob Herring[1], I reached the
+conclusion that this patch is not necessary.
 
-Another alternative is to encode the locking type into the lowest 2 bits 
-of the address and combined them into a single atomic_long_t data item. 
-Of course, we can only support 4 different types with this scheme.
+[1]: https://lore.kernel.org/lkml/Z7ILej_AJYot_wKP@probook/
 
-Cheers,
-Longman
-
->
-> -- Steve
->
-
+>  arch/powerpc/sysdev/fsl_lbc.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/powerpc/sysdev/fsl_lbc.c b/arch/powerpc/sysdev/fsl_lbc.c
+> index 217cea150987df1e1b5c6dbf9e9a1607dd5ce49b..2007ced997fcf0c7059e5b780893b530764dc8b2 100644
+> --- a/arch/powerpc/sysdev/fsl_lbc.c
+> +++ b/arch/powerpc/sysdev/fsl_lbc.c
+> @@ -20,6 +20,7 @@
+>  #include <linux/of.h>
+>  #include <linux/of_address.h>
+>  #include <linux/of_irq.h>
+> +#include <linux/of_platform.h>
+>  #include <linux/slab.h>
+>  #include <linux/sched.h>
+>  #include <linux/platform_device.h>
+> @@ -336,7 +337,7 @@ static int fsl_lbc_ctrl_probe(struct platform_device *dev)
+>  	/* Enable interrupts for any detected events */
+>  	out_be32(&fsl_lbc_ctrl_dev->regs->lteir, LTEIR_ENABLE);
+>  
+> -	return 0;
+> +	return devm_of_platform_populate(&dev->dev);
+>  
+>  err1:
+>  	free_irq(fsl_lbc_ctrl_dev->irq[0], fsl_lbc_ctrl_dev);
+> 
+> ---
+> base-commit: 7ccde445dddcca030cd6ed66974bb80915ad9dd5
+> change-id: 20250209-localbus-94a6ebb04c12
+> 
+> Best regards,
+> -- 
+> J. Neuschäfer <j.ne@posteo.net>
+> 
+> 
 
