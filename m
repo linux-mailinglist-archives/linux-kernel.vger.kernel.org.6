@@ -1,112 +1,311 @@
-Return-Path: <linux-kernel+bounces-523416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523414-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFF92A3D67A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 11:25:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11CECA3D677
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 11:24:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79AC317BB09
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 10:24:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C03133B5F35
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 10:24:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 422651F150E;
-	Thu, 20 Feb 2025 10:24:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EECA1F12E0;
+	Thu, 20 Feb 2025 10:24:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="a5+I1Lno"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SmSFSVrq"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F73E1F12E0
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 10:24:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13E271F0E37
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 10:24:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740047062; cv=none; b=O12gflqnxXRubUkrdFm+KPhKIcSPIHSyJ5ircg2KoJSgi47kG0fGIGkg9ZsBxnOXh7/HpoCGncFmWK4spiw+CV877SVTDX1QgdAar8o0Ty+jI4pPC1gBPZBD9dJ6IgY0owCxO5WSIxj9E/5X+xFlv5IT72Z2djt9s60aHFFDRgw=
+	t=1740047050; cv=none; b=H6EJ65uVF3ba5aS0q49est8JsQ50S9GmNegV2SEznmOOt/+pE4hzgJPfDu9JYm9ekkTBdzeV8DFeRBo4ezwIRohk7f+h1F0eEi7o+yjV/oV8ITo5X1r/YZS9lw3n06aBlqLHFkYrB8xBZ+i2v9/zVO5Xkpx5KvWRvs9qXugiQCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740047062; c=relaxed/simple;
-	bh=q302bG0dYTRx3Q9MCyxwC8fqiRLPWMrMdb289xMHBhI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tdm502+UQEuwworJEEWJRElobILoM4StC3tR8Cx1LGMwm+0wF0On2Ez1qPOwRtBLNqm1c7YLPnNLfJ8zI4COead/WYlM8Q2VoLWeFLTTHx5dmRfsG5t3FBRKZL2ZN9mrfJHvftIG0ybNBQ294HrG9I/IlwgWXg1D0fNMs4dLbYM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=a5+I1Lno; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 78FC640E0177;
-	Thu, 20 Feb 2025 10:24:15 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id Y6CF0GisjbJy; Thu, 20 Feb 2025 10:24:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1740047051; bh=G7hgjesSmpA0ko/eTOgvJmvU9Qe0b+EIBkdXyjk/XSo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=a5+I1Lno8dQW6mPso2rBSCErDnruVQpFMduikIWDT3ExtLMEG28z92Pia9zixNyIB
-	 JGKlTzGAuphWYDhZNaSa0Jwm7hTNhY/pwmUCvVRRxcJVO3hqEmtZdLU5SdCywq6FYO
-	 OMLM6vIl0ogEp9I2wbk1w6HgHhXjL9y1JPLOVrWvlNonVdWR2Ye2ceGbTDe2O4lUi3
-	 BADExEKmokHO1ll+EKOV5ltRK/wF4lg0c5bKXqU+fFOfUkqMHWo4jlZynGQQyEnR8u
-	 jof3vQjSxbwu0NcPlrAuJIJo0Vqrbmv18+Mkx2F78jZ3UDlOhdwwI83IjjGjn0TrFs
-	 OZMhilT0Lh/udTtOrfO6hahU5Mff+f4EfBVl3r4UYALmSJrbd0oSkljRe3aIuhZ0wz
-	 j6LhpNPQyYlgA57mmaGgpNMDabtjLqGBp/m9AY6dBU/XWTLV/gtGb1/260wGPCvVDo
-	 sh9htXGmYnnHYhju8pgpNMmBm+yu9poItopA5TDKbv3nBU8e2mHnmKRF9gvKZF3HH1
-	 j89onICHQaUFLf7THUTm7vAba0+Var8ces4qGdqLaRoFE2jyZ4pvUxxYAR8QWYWeOI
-	 lObdoTr2JblxajHwvt2e3BPCaEgo45yjOWzHlzNGanlO621cVnZ9JCcDoD2ViX80Fu
-	 RtxTJzCmXaMKFFyeI9Sg6z98=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 4430340E01A0;
-	Thu, 20 Feb 2025 10:23:54 +0000 (UTC)
-Date: Thu, 20 Feb 2025 11:23:52 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Rik van Riel <riel@surriel.com>
-Cc: Dave Hansen <dave.hansen@intel.com>, x86@kernel.org,
-	linux-kernel@vger.kernel.org, peterz@infradead.org,
-	dave.hansen@linux.intel.com, zhengqi.arch@bytedance.com,
-	nadav.amit@gmail.com, thomas.lendacky@amd.com, kernel-team@meta.com,
-	linux-mm@kvack.org, akpm@linux-foundation.org, jackmanb@google.com,
-	jannh@google.com, mhklinux@outlook.com, andrew.cooper3@citrix.com,
-	Manali Shukla <Manali.Shukla@amd.com>
-Subject: Re: [PATCH v11 05/12] x86/mm: add INVLPGB support code
-Message-ID: <20250220102352.GBZ7cCuGd_hy-OaHlK@fat_crate.local>
-References: <20250213161423.449435-1-riel@surriel.com>
- <20250213161423.449435-6-riel@surriel.com>
- <20250219120441.GNZ7XI2aWWUmXh2H2m@fat_crate.local>
- <2930024a88be186faa6a0338fc003e8ffefb710b.camel@surriel.com>
- <cb55a019-50f1-4824-9a9f-9431d8b89ed7@intel.com>
- <20250219191519.GDZ7YtxzBiMxz3wwlr@fat_crate.local>
- <ac406e2cc2daaed5856df0af787bf21597b95f5c.camel@surriel.com>
+	s=arc-20240116; t=1740047050; c=relaxed/simple;
+	bh=T6C6/yt6mh3mFanDt8kCp8w3RSLW1X0SJGe4BfK/rLU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eFFtJ4JhjaOUCtYD6IZxyYVbmSS7yP9ZzoQYI3llscfiqrJY589cs6gYcD4t6/8M2+0nWw6/BpsQvG/7uzzDrZre/VyyTTFfFqmGCs6XTYDQsPtG3fgwDxz0fP9+E6qjkQ+do4nKym47rRPfij0H/joKYRMobCXFFhYdwuks2CI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SmSFSVrq; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740047047;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=mf2cDKQ5L9gU2E8fN/2evuT1C1fjualTRcJKcrTRx4g=;
+	b=SmSFSVrqQ2mTciXoMg+I69RQGsQTr8NiFIrr/4MaaxsYtxN2bFVHo/XuC08ot91MwkUcaF
+	BYdwUAL5Uyq34+FN9BDeCtOI8aVBoPkTrn4CITTs2GOh2T5Dzzop+UsM06HxwOQ1x9EZ0w
+	8vpeRai5PaPhMupOO4IJoX93+Yi644o=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-573-222BMVzqM_2P1e0-4tANpA-1; Thu, 20 Feb 2025 05:24:05 -0500
+X-MC-Unique: 222BMVzqM_2P1e0-4tANpA-1
+X-Mimecast-MFC-AGG-ID: 222BMVzqM_2P1e0-4tANpA_1740047044
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-43995bff469so4916315e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 02:24:05 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740047044; x=1740651844;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=mf2cDKQ5L9gU2E8fN/2evuT1C1fjualTRcJKcrTRx4g=;
+        b=MbIUAz2Hfpvp729rbAAhgKgnxdcPbVrqLvIVnD0Q08EYEEe6TANfBG+ISnxAdzCHJp
+         vwX21rI+uKrWdN1g94lYVUoPnUEfRkJNX7YdZUfI+B2KxB2nyT9sYqYv39x5K0Lha6Qr
+         hPZTXEKu7UvWEdnT6i8pDx0dET47JWz5BvSZyGZrLsjIzenAQfMBTGQ+mqogqQ26GCm6
+         TXoLNNOA73zOG7VDrs8rnBLQnKwW3gjR1D8Y1d1dbZmpiYy7Nd9exlZpUP2efHjwprRM
+         ClT6SiHXOWUfOyZupZ8YfT/n3iMNd8omoLPI0iL+NMTtLFhF+Tc8noCw0uhWlgelSAxG
+         ffUg==
+X-Forwarded-Encrypted: i=1; AJvYcCUmDBVrCNC3hH0fwlRsG0dnrPszt4eTN7q/zSEMp/SzqBZh+uHH3cfj5z8pwNX/o2Pz7ff6ZEAFvRvHWLc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzwEw//VaouCX0bOwt/0GntHnmkeNLJ4p87zCOOB8MbGwuo4wVq
+	eRFWJeGRAo6Z5vgFc1KWKGFtLR2inKpMIiCEUky2XdWVHyLrpiUr3d/4Wjv8sDGSaMJmaexUWSo
+	D1ltm/SQo0ZSd9eQKWYHmFdYcFxx9nLUlvOiTW2oEXXWuE3GqPaAsRhADczLS3A==
+X-Gm-Gg: ASbGnctSwO0LD1S8CFXZuCDyERtjVTPMg/iN8ybZS+CJ2MIZm/xbL6js1OJcgWSzCSV
+	8m+CluzmDSqLYZHJjHA849Vubepl/e+5i1AjLoNCmKREFUuMEoPSH0XhGXIaIKMEJu6TpC8eVOI
+	jRHblqyQR52en6IQJAABM1hJ0afAhHteF28PMPIyZqGIdAbBMcWNGwj/e7XQXD8VAVGpdqjL8dp
+	rOMQ7CC7GQPo8ZPBUIZSNDDWYMdIjZW8VaSKvJFjwj37pC3kDbpAmVLT1tlCxemNCDGWQzbbvSi
+	FQiB9tT2kbwkKrU/fjG7vLsW6iaFJIjv6y+poZ1HjeHf4VgoFb9gXwS+XRd7FFwByRzlWDBXDZ9
+	KQDq+Ps4Zd8LYkRrRVPg/Y8l53HwVog==
+X-Received: by 2002:a05:600c:3b8c:b0:439:9ee2:5534 with SMTP id 5b1f17b1804b1-4399ee257f2mr54075465e9.12.1740047044175;
+        Thu, 20 Feb 2025 02:24:04 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHd9rEb7gsSDCdQFRuLZkwh4+ij2UtULFUF81rRtRtD1I3bB5L2syyipAqMmVY57Bued0MhDw==
+X-Received: by 2002:a05:600c:3b8c:b0:439:9ee2:5534 with SMTP id 5b1f17b1804b1-4399ee257f2mr54075125e9.12.1740047043745;
+        Thu, 20 Feb 2025 02:24:03 -0800 (PST)
+Received: from ?IPV6:2003:cb:c706:2000:e44c:bc46:d8d3:be5? (p200300cbc7062000e44cbc46d8d30be5.dip0.t-ipconnect.de. [2003:cb:c706:2000:e44c:bc46:d8d3:be5])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43982bcc607sm117006065e9.16.2025.02.20.02.24.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 20 Feb 2025 02:24:02 -0800 (PST)
+Message-ID: <02f14ee1-923f-47e3-a994-4950afb9afcc@redhat.com>
+Date: Thu, 20 Feb 2025 11:24:01 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ac406e2cc2daaed5856df0af787bf21597b95f5c.camel@surriel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC] mm: Fix kernel BUG when userfaultfd_move encounters
+ swapcache
+To: Barry Song <21cnbao@gmail.com>
+Cc: Liam.Howlett@oracle.com, aarcange@redhat.com, akpm@linux-foundation.org,
+ axelrasmussen@google.com, bgeffon@google.com, brauner@kernel.org,
+ hughd@google.com, jannh@google.com, kaleshsingh@google.com,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org, lokeshgidra@google.com,
+ mhocko@suse.com, ngeoffray@google.com, peterx@redhat.com, rppt@kernel.org,
+ ryan.roberts@arm.com, shuah@kernel.org, surenb@google.com,
+ v-songbaohua@oppo.com, viro@zeniv.linux.org.uk, willy@infradead.org,
+ zhangpeng362@huawei.com, zhengtangquan@oppo.com, yuzhao@google.com,
+ stable@vger.kernel.org
+References: <69dbca2b-cf67-4fd8-ba22-7e6211b3e7c4@redhat.com>
+ <20250220092101.71966-1-21cnbao@gmail.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20250220092101.71966-1-21cnbao@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Feb 19, 2025 at 09:49:01PM -0500, Rik van Riel wrote:
-> I'll re-do the series without ifdefs, except for
-> the one masking out X86_FEATURE_INVLPGB (on 32
-> bit systems).
+On 20.02.25 10:21, Barry Song wrote:
+> On Thu, Feb 20, 2025 at 9:40 PM David Hildenbrand <david@redhat.com> wrote:
+>>
+>> On 19.02.25 19:58, Suren Baghdasaryan wrote:
+>>> On Wed, Feb 19, 2025 at 10:30 AM David Hildenbrand <david@redhat.com> wrote:
+>>>>
+>>>> On 19.02.25 19:26, Suren Baghdasaryan wrote:
+>>>>> On Wed, Feb 19, 2025 at 3:25 AM Barry Song <21cnbao@gmail.com> wrote:
+>>>>>>
+>>>>>> From: Barry Song <v-songbaohua@oppo.com>
+>>>>>>
+>>>>>> userfaultfd_move() checks whether the PTE entry is present or a
+>>>>>> swap entry.
+>>>>>>
+>>>>>> - If the PTE entry is present, move_present_pte() handles folio
+>>>>>>      migration by setting:
+>>>>>>
+>>>>>>      src_folio->index = linear_page_index(dst_vma, dst_addr);
+>>>>>>
+>>>>>> - If the PTE entry is a swap entry, move_swap_pte() simply copies
+>>>>>>      the PTE to the new dst_addr.
+>>>>>>
+>>>>>> This approach is incorrect because even if the PTE is a swap
+>>>>>> entry, it can still reference a folio that remains in the swap
+>>>>>> cache.
+>>>>>>
+>>>>>> If do_swap_page() is triggered, it may locate the folio in the
+>>>>>> swap cache. However, during add_rmap operations, a kernel panic
+>>>>>> can occur due to:
+>>>>>>     page_pgoff(folio, page) != linear_page_index(vma, address)
+>>>>>
+>>>>> Thanks for the report and reproducer!
+>>>>>
+>>>>>>
+>>>>>> $./a.out > /dev/null
+>>>>>> [   13.336953] page: refcount:6 mapcount:1 mapping:00000000f43db19c index:0xffffaf150 pfn:0x4667c
+>>>>>> [   13.337520] head: order:2 mapcount:1 entire_mapcount:0 nr_pages_mapped:1 pincount:0
+>>>>>> [   13.337716] memcg:ffff00000405f000
+>>>>>> [   13.337849] anon flags: 0x3fffc0000020459(locked|uptodate|dirty|owner_priv_1|head|swapbacked|node=0|zone=0|lastcpupid=0xffff)
+>>>>>> [   13.338630] raw: 03fffc0000020459 ffff80008507b538 ffff80008507b538 ffff000006260361
+>>>>>> [   13.338831] raw: 0000000ffffaf150 0000000000004000 0000000600000000 ffff00000405f000
+>>>>>> [   13.339031] head: 03fffc0000020459 ffff80008507b538 ffff80008507b538 ffff000006260361
+>>>>>> [   13.339204] head: 0000000ffffaf150 0000000000004000 0000000600000000 ffff00000405f000
+>>>>>> [   13.339375] head: 03fffc0000000202 fffffdffc0199f01 ffffffff00000000 0000000000000001
+>>>>>> [   13.339546] head: 0000000000000004 0000000000000000 00000000ffffffff 0000000000000000
+>>>>>> [   13.339736] page dumped because: VM_BUG_ON_PAGE(page_pgoff(folio, page) != linear_page_index(vma, address))
+>>>>>> [   13.340190] ------------[ cut here ]------------
+>>>>>> [   13.340316] kernel BUG at mm/rmap.c:1380!
+>>>>>> [   13.340683] Internal error: Oops - BUG: 00000000f2000800 [#1] PREEMPT SMP
+>>>>>> [   13.340969] Modules linked in:
+>>>>>> [   13.341257] CPU: 1 UID: 0 PID: 107 Comm: a.out Not tainted 6.14.0-rc3-gcf42737e247a-dirty #299
+>>>>>> [   13.341470] Hardware name: linux,dummy-virt (DT)
+>>>>>> [   13.341671] pstate: 60000005 (nZCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+>>>>>> [   13.341815] pc : __page_check_anon_rmap+0xa0/0xb0
+>>>>>> [   13.341920] lr : __page_check_anon_rmap+0xa0/0xb0
+>>>>>> [   13.342018] sp : ffff80008752bb20
+>>>>>> [   13.342093] x29: ffff80008752bb20 x28: fffffdffc0199f00 x27: 0000000000000001
+>>>>>> [   13.342404] x26: 0000000000000000 x25: 0000000000000001 x24: 0000000000000001
+>>>>>> [   13.342575] x23: 0000ffffaf0d0000 x22: 0000ffffaf0d0000 x21: fffffdffc0199f00
+>>>>>> [   13.342731] x20: fffffdffc0199f00 x19: ffff000006210700 x18: 00000000ffffffff
+>>>>>> [   13.342881] x17: 6c203d2120296567 x16: 6170202c6f696c6f x15: 662866666f67705f
+>>>>>> [   13.343033] x14: 6567617028454741 x13: 2929737365726464 x12: ffff800083728ab0
+>>>>>> [   13.343183] x11: ffff800082996bf8 x10: 0000000000000fd7 x9 : ffff80008011bc40
+>>>>>> [   13.343351] x8 : 0000000000017fe8 x7 : 00000000fffff000 x6 : ffff8000829eebf8
+>>>>>> [   13.343498] x5 : c0000000fffff000 x4 : 0000000000000000 x3 : 0000000000000000
+>>>>>> [   13.343645] x2 : 0000000000000000 x1 : ffff0000062db980 x0 : 000000000000005f
+>>>>>> [   13.343876] Call trace:
+>>>>>> [   13.344045]  __page_check_anon_rmap+0xa0/0xb0 (P)
+>>>>>> [   13.344234]  folio_add_anon_rmap_ptes+0x22c/0x320
+>>>>>> [   13.344333]  do_swap_page+0x1060/0x1400
+>>>>>> [   13.344417]  __handle_mm_fault+0x61c/0xbc8
+>>>>>> [   13.344504]  handle_mm_fault+0xd8/0x2e8
+>>>>>> [   13.344586]  do_page_fault+0x20c/0x770
+>>>>>> [   13.344673]  do_translation_fault+0xb4/0xf0
+>>>>>> [   13.344759]  do_mem_abort+0x48/0xa0
+>>>>>> [   13.344842]  el0_da+0x58/0x130
+>>>>>> [   13.344914]  el0t_64_sync_handler+0xc4/0x138
+>>>>>> [   13.345002]  el0t_64_sync+0x1ac/0x1b0
+>>>>>> [   13.345208] Code: aa1503e0 f000f801 910f6021 97ff5779 (d4210000)
+>>>>>> [   13.345504] ---[ end trace 0000000000000000 ]---
+>>>>>> [   13.345715] note: a.out[107] exited with irqs disabled
+>>>>>> [   13.345954] note: a.out[107] exited with preempt_count 2
+>>>>>>
+>>>>>> Fully fixing it would be quite complex, requiring similar handling
+>>>>>> of folios as done in move_present_pte.
+>>>>>
+>>>>> How complex would that be? Is it a matter of adding
+>>>>> folio_maybe_dma_pinned() checks, doing folio_move_anon_rmap() and
+>>>>> folio->index = linear_page_index like in move_present_pte() or
+>>>>> something more?
+>>>>
+>>>> If the entry is pte_swp_exclusive(), and the folio is order-0, it cannot
+>>>> be pinned and we may be able to move it I think.
+>>>>
+>>>> So all that's required is to check pte_swp_exclusive() and the folio size.
+>>>>
+>>>> ... in theory :) Not sure about the swap details.
+>>>
+>>> Looking some more into it, I think we would have to perform all the
+>>> folio and anon_vma locking and pinning that we do for present pages in
+>>> move_pages_pte(). If that's correct then maybe treating swapcache
+>>> pages like a present page inside move_pages_pte() would be simpler?
+>>
+>> I'd be more in favor of not doing that. Maybe there are parts we can
+>> move out into helper functions instead, so we can reuse them?
 > 
-> Then the compiler should be able to get rid of
-> the other code, when the feature is hard-disabled.
+> I actually have a v2 ready. Maybe we can discuss if some of the code can be
+> extracted as a helper based on the below before I send it formally?
+> 
+> I’d say there are many parts that can be shared with present PTE, but there
+> are two major differences:
+> 
+> 1. Page exclusivity – swapcache doesn’t require it (try_to_unmap_one has remove
+> Exclusive flag;)
+> 2. src_anon_vma and its lock – swapcache doesn’t require it（folio is not mapped）
+> 
 
-Thanks.
+That's a lot of complicated code you have there (not your fault, it's 
+complicated stuff ... ) :)
 
-In talking to Dave last night, I think we are fine with having the majority of
-ifdeffery in headers and keep it away from .c files.
+Some of it might be compressed/simplified by the use of "else if".
 
-Any new Kconfig symbol adds more configurations we must build and test but...
-oh well.
+I'll try to take a closer look later (will have to apply it to see the 
+context better). Just one independent comment because I stumbled over 
+this recently:
+
+[...]
+
+> @@ -1062,10 +1063,13 @@ static int move_present_pte(struct mm_struct *mm,
+>   	folio_move_anon_rmap(src_folio, dst_vma);
+>   	src_folio->index = linear_page_index(dst_vma, dst_addr);
+>   
+> -	orig_dst_pte = mk_pte(&src_folio->page, dst_vma->vm_page_prot);
+> -	/* Follow mremap() behavior and treat the entry dirty after the move */
+> -	orig_dst_pte = pte_mkwrite(pte_mkdirty(orig_dst_pte), dst_vma);
+> -
+> +	if (pte_present(orig_src_pte)) {
+> +		orig_dst_pte = mk_pte(&src_folio->page, dst_vma->vm_page_prot);
+> +		/* Follow mremap() behavior and treat the entry dirty after the move */
+> +		orig_dst_pte = pte_mkwrite(pte_mkdirty(orig_dst_pte), dst_vma);
+
+I'll note that the comment and mkdirty is misleading/wrong. It's 
+softdirty that we care about only. But that is something independent of 
+this change.
+
+For swp PTEs, we maybe also would want to set softdirty.
+
+See move_soft_dirty_pte() on what is actually done on the mremap path.
 
 -- 
-Regards/Gruss,
-    Boris.
+Cheers,
 
-https://people.kernel.org/tglx/notes-about-netiquette
+David / dhildenb
+
 
