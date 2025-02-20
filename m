@@ -1,210 +1,123 @@
-Return-Path: <linux-kernel+bounces-524399-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B78EA3E2CC
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 18:43:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 33A6BA3E2C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 18:43:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19F0D3B1663
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:32:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD9163A3FEF
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:32:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 332812139C6;
-	Thu, 20 Feb 2025 17:32:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71F10212D66;
+	Thu, 20 Feb 2025 17:32:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="nbJmFXiM"
-Received: from mail-oo1-f43.google.com (mail-oo1-f43.google.com [209.85.161.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="LgJ3PuFL"
+Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CF6C20E003
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 17:32:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 090E01CEEB2
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 17:32:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740072737; cv=none; b=WFPGn/jlBQn0ctfdDZ560F0rikd0Noab4ChfakgcPqV/ZrqGD2RgBGIoG1q1cy8MHX8XwhAQbY98D+TMSsApgBEp8gjS03sDZDGN+shNL8/NyihKPmCDZkdt8NurOA3s2+col1Mc+8mo0L8LPfgtQKCtwnn6cVEgRr0UKRzO7KQ=
+	t=1740072777; cv=none; b=Z3Eiij7c3jtMDCYXcHGa/vhRkYPzT87Zkssiln0tn6X+pozQzBcWPWYT+7wVDD9FQRCdW7A+TgK/CyWsXfLhtQIJTerTFYTwFjm23OXSAqJXkTA0KqYxM3nkbLYzdC3FPCVdOrUhfXn9HfHQmlpMPSKwBrsoH3q9ddpSPg1rLvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740072737; c=relaxed/simple;
-	bh=3sYO6hLTbz1Yx4jhh2H9VLVNmtvcj0Yg/VTm0rvs6nk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=j2w3hij9Lt9BSY5e8Fh3t9JpNfSJAWTGJLuri14zsjrvyUODetQ10N+bvjgYIuhJPbafcdQXxq6Z41QlX6GL06ksLskh6TOuh0h0xGJDroLXgAPrMQMjY6IUjYG5XlxZKCaQzme1KVA7u2t+jOpZ/ANFJ5G6SP6SVh8qsv9pezI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=nbJmFXiM; arc=none smtp.client-ip=209.85.161.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oo1-f43.google.com with SMTP id 006d021491bc7-5fc6fe05460so790908eaf.1
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 09:32:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1740072733; x=1740677533; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=AIc+j8TxBrdPej0mz926UOoeIMB5TisIsEjQp/BF3M8=;
-        b=nbJmFXiMhYuFOf79oDrqVL0kUcFacWOkUYIIIVtNWcAouw843PQE6H6udff9h7i+gU
-         K4eFJbkxtrv33IsMJtypin5N4rSk0sdRI+ttHI/mxSDO4A0KnN4PzZ/P3HpBfceM97AN
-         ZSFW8VtWZMDA1DKxgTQ0KjPIWp5/P1usyYosKLxCjuVu4/4KU9tdMgYQyt7hqqGP2/JS
-         XniHexCZveNbWFfTk4e5SAcDRtuwuZtXbx1TAY8A889gGMqIMoOECdNpUlX6+oR1TmrQ
-         ncy6dQ1Cxw4daDyqeZsTLbhTWMqIFz3GX9XN+ELoQoHLWvGmr2inL/N9EN9OVTsJ+xkM
-         tzOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740072733; x=1740677533;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AIc+j8TxBrdPej0mz926UOoeIMB5TisIsEjQp/BF3M8=;
-        b=speSliv2ztUz6FLDvZlDngD7BN4lc+YdduVTsOQ9qvEGSgvzJhzqATfG5iP25Do1PL
-         hcCIshAPECq4ISG/r2RtVI73nQwoVbP9fdSUxM72hiNu+3PdIASWiabFYq3N727Lg8xt
-         AU+lrloFH8Ti1NjBHmi/XDc3yGsxAlhX6ToPURUdDmEmEy1LFzOHJ0E0O9/acwgcQL6K
-         HF4LY6/drZnqPHo5RcGsyfJkBNa2VHnthDh/+NzWpPCa5txiLOYDcOQxFubs8wow5TVN
-         I0/jfZxx44p3y4UOgElTe73Sax9rFuy9zO5y2CvYsUbX4HI4scOyDDOOatrVO0GNyeJW
-         9OUA==
-X-Forwarded-Encrypted: i=1; AJvYcCUD6nUwJcsuLseLpKOSIXcR9iy3U4AyfXVc2HrbKnRCIg2gyT7Tu3OCYAaSJoUUW37tq7ubMvg+E9Tm398=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyemNNeXPzG7OofUH0vNe7ZM1JSQUw3dCRLayKDe2xPN8HWQi5h
-	bmfaP29eu9+BBdEU1lI/5mpnE1T2X5cGKLFAnd3SEo/h3MJa/AjFMOMvkJ+HrIx+4Ihg1DARgrh
-	e
-X-Gm-Gg: ASbGncvuUyZWjaPvDwCG7kNd63GO4vp0AN8pmOseeySbbCySLqt8SpFG1Z7AC22RiUm
-	dXeWPEbyuOXtgHD21sKjrTmMnO7FOSv6Mf2zTay/+Ik4lohw6vPA8gE9K8fjJqvuC8SCasV0OWF
-	mU5SlUM0kNeW2VIwhgPL9OL223trgIt+esI1T5cU3GgNXvPQkCWoT5bY9yio7sDIWKE2oHvVIfx
-	3/Ew24k+ILRRN6qk6F1DKqxN2b3NWpYqWyHWTD7fqS6AS1R9bVxUPtXVfCIYWBucQQR50RO1r09
-	iaY3DLaEz10PhxKyPb//+mzwgvBldk/MbRo1mOhnCTpj6xjvx+Pl
-X-Google-Smtp-Source: AGHT+IHr8T5reKexqMOxlmPqVf7GUavXfHMshpa/XldJ83QUP4dtM6xNCp5f26J8xaA/wL6S5nPJuQ==
-X-Received: by 2002:a05:6820:260d:b0:5fc:92b3:2b03 with SMTP id 006d021491bc7-5fd1949807fmr168082eaf.1.1740072733243;
-        Thu, 20 Feb 2025 09:32:13 -0800 (PST)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7271f7c5ba8sm2752929a34.32.2025.02.20.09.32.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Feb 2025 09:32:12 -0800 (PST)
-Message-ID: <0084eef7-3831-4e62-acf1-6c2dc0e15dd1@baylibre.com>
-Date: Thu, 20 Feb 2025 11:32:10 -0600
+	s=arc-20240116; t=1740072777; c=relaxed/simple;
+	bh=23Fp0bojuUGcLpNPJWrqZVqhQGZCU/4zxnmncuHGrFA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ra0JC9kTB7ke24lDQbFouN+l7FmLQEYUelOv3EvrlKGGtAMtbqwm6Djkp7FhyTIXOhBLQID61IbZDN3OOk0Mv1VMd1uBRCrXkUp5zOvI0AGTKviwOYGs3ndClULx8dRxBzhHflqkH50O6QGdor9BlEntUKBhIQ65AIofIU55lN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=LgJ3PuFL; arc=none smtp.client-ip=91.218.175.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 20 Feb 2025 17:32:46 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1740072773;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xLm69d1JiwcbIZY6/XZSqzpJmY2k5MyhEqHGfOITQ9s=;
+	b=LgJ3PuFLOrdaWsTT71dZDT4Wpah6l8pxu2DAGVwXprSS3+5upKrW4KsW9WV12UvGqwXSPL
+	v4yh5KHpFtiBETrfIWZRsFnhxO1dKnnBNVS0svJ/Jzgu/LufyFsVlS5Ou7FHV1iqbEJU5W
+	ooAdSfemj1nsxTESalAjavU8an1FqZ4=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yosry Ahmed <yosry.ahmed@linux.dev>
+To: Herbert Xu <herbert@gondor.apana.org.au>,
+	Barry Song <21cnbao@gmail.com>
+Cc: "Sridhar, Kanchana P" <kanchana.p.sridhar@intel.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"hannes@cmpxchg.org" <hannes@cmpxchg.org>,
+	"nphamcs@gmail.com" <nphamcs@gmail.com>,
+	"chengming.zhou@linux.dev" <chengming.zhou@linux.dev>,
+	"usamaarif642@gmail.com" <usamaarif642@gmail.com>,
+	"ryan.roberts@arm.com" <ryan.roberts@arm.com>,
+	"21cnbao@gmail.com" <21cnbao@gmail.com>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+	"davem@davemloft.net" <davem@davemloft.net>,
+	"clabbe@baylibre.com" <clabbe@baylibre.com>,
+	"ardb@kernel.org" <ardb@kernel.org>,
+	"ebiggers@google.com" <ebiggers@google.com>,
+	"surenb@google.com" <surenb@google.com>,
+	"Accardi, Kristen C" <kristen.c.accardi@intel.com>,
+	"Feghali, Wajdi K" <wajdi.k.feghali@intel.com>,
+	"Gopal, Vinodh" <vinodh.gopal@intel.com>
+Subject: Re: [PATCH v5 02/12] crypto: acomp - Define new interfaces for
+ compress/decompress batching.
+Message-ID: <Z7dnPh4tPxLO1UEo@google.com>
+References: <20241221063119.29140-1-kanchana.p.sridhar@intel.com>
+ <20241221063119.29140-3-kanchana.p.sridhar@intel.com>
+ <Z2_lAGctG0DDSCIH@gondor.apana.org.au>
+ <SJ0PR11MB5678851E3E6BA49A99D8BAE2C9102@SJ0PR11MB5678.namprd11.prod.outlook.com>
+ <CAJD7tkatpOaortT8Si5GfxprvgPR+bzxwTSOR0rsaRUstdqNMQ@mail.gmail.com>
+ <SJ0PR11MB5678034533E3FAD7B16E2758C9112@SJ0PR11MB5678.namprd11.prod.outlook.com>
+ <CAJD7tkbRHkb7Znzto6=RRDQA9zXZSva43GukhBEfjrgm1qOxHw@mail.gmail.com>
+ <Z3yMNI_DbkKBKJxO@gondor.apana.org.au>
+ <CAJD7tkaTuNWF42+CoCLruPZks3F7H9mS=6S74cmXnyWz-2tuPw@mail.gmail.com>
+ <Z7F1B_blIbByYBzz@gondor.apana.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 05/15] bus: ts-nbus: use bitmap_get_value8()
-To: Simon Horman <horms@kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
- Bartosz Golaszewski <brgl@bgdev.pl>, Andy Shevchenko <andy@kernel.org>,
- Geert Uytterhoeven <geert@linux-m68k.org>,
- Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Jonathan Cameron <jic23@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
- Peter Rosin <peda@axentia.se>, Andrew Lunn <andrew@lunn.ch>,
- Heiner Kallweit <hkallweit1@gmail.com>, Russell King
- <linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Vinod Koul <vkoul@kernel.org>,
- Kishon Vijay Abraham I <kishon@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
- <nuno.sa@analog.com>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>, linux-gpio@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
- linux-mmc@vger.kernel.org, netdev@vger.kernel.org,
- linux-phy@lists.infradead.org, linux-sound@vger.kernel.org,
- Andy Shevchenko <andy.shevchenko@gmail.com>
-References: <20250210-gpio-set-array-helper-v3-0-d6a673674da8@baylibre.com>
- <20250210-gpio-set-array-helper-v3-5-d6a673674da8@baylibre.com>
- <20250220101742.GR1615191@kernel.org>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20250220101742.GR1615191@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z7F1B_blIbByYBzz@gondor.apana.org.au>
+X-Migadu-Flow: FLOW_OUT
 
-On 2/20/25 4:17 AM, Simon Horman wrote:
-> On Mon, Feb 10, 2025 at 04:33:31PM -0600, David Lechner wrote:
->> Use bitmap_get_value8() instead of accessing the bitmap directly.
->>
->> Accessing the bitmap directly is not considered good practice. We now
->> have a helper function that can be used instead, so let's use it.
->>
->> Suggested-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-> u> Signed-off-by: David Lechner <dlechner@baylibre.com>
->> ---
->>  drivers/bus/ts-nbus.c | 5 +++--
->>  1 file changed, 3 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/bus/ts-nbus.c b/drivers/bus/ts-nbus.c
->> index b4c9308caf0647a3261071d9527fffce77784af2..beac67f3b820377f8bb1fc4f4ee77e15ee240834 100644
->> --- a/drivers/bus/ts-nbus.c
->> +++ b/drivers/bus/ts-nbus.c
->> @@ -10,6 +10,7 @@
->>   * TS-4600 SoM.
->>   */
->>  
->> +#include <linux/bitmap.h>
->>  #include <linux/bitops.h>
->>  #include <linux/gpio/consumer.h>
->>  #include <linux/kernel.h>
->> @@ -107,7 +108,7 @@ static void ts_nbus_reset_bus(struct ts_nbus *ts_nbus)
->>  {
->>  	DECLARE_BITMAP(values, 8);
->>  
->> -	values[0] = 0;
->> +	bitmap_set_value8(values, byte, 0);
+On Sun, Feb 16, 2025 at 01:17:59PM +0800, Herbert Xu wrote:
+> On Mon, Jan 06, 2025 at 07:10:53PM -0800, Yosry Ahmed wrote:
+> >
+> > The main problem is memory usage. Zswap needs a PAGE_SIZE*2-sized
+> > buffer for each request on each CPU. We preallocate these buffers to
+> > avoid trying to allocate this much memory in the reclaim path (i.e.
+> > potentially allocating two pages to reclaim one).
 > 
-> Hi David,
+> Actually this PAGE_SIZE * 2 thing baffles me.  Why would you
+> allocate more memory than the input? The comment says that it's
+> because certain hardware accelerators will disregard the output
+> buffer length, but surely that's just a bug in the driver?
 > 
-> byte doesn't appear to exist in the scope of this function.
+> Which driver does this? We should fix it or remove it if it's
+> writing output with no regard to the maximum length.
 > 
-> I tried this:
-> 
-> 	bitmap_set_value8(values, 0, 8);
-> 
-> But when compiling with GCC 14.2.0 I see warnings that values
-> is used uninitialised - bitmap_set_value8() appears to rely on
-> it being so.
+> You should only ever need PAGE_SIZE for the output buffer, if
+> the output exceeds that then just fail the compression.
 
-Ah yes, I see the problem (I don't think this driver compiles with
-allmodconfig so the compiler didn't catch it for me).
+I agree this should be fixed if it can be. This was discussed before
+here:
+https://lore.kernel.org/lkml/CAGsJ_4wuTZcGurby9h4PU2DwFaiEKB4bxuycaeyz3bPw3jSX3A@mail.gmail.com/
+
+Barry is the one who brought up why we need PAGE_SIZE*2. Barry, could
+you please chime in here?
 
 > 
->   CC      drivers/bus/ts-nbus.o
-> In file included from drivers/bus/ts-nbus.c:13:
-> In function ‘bitmap_write’,
->     inlined from ‘ts_nbus_reset_bus’ at drivers/bus/ts-nbus.c:111:2:
-> ./include/linux/bitmap.h:818:12: error: ‘values’ is used uninitialized [-Werror=uninitialized]
->   818 |         map[index] &= (fit ? (~(mask << offset)) : ~BITMAP_FIRST_WORD_MASK(start));
->       |         ~~~^~~~~~~
-> In file included from ./include/linux/kasan-checks.h:5,
->                  from ./include/asm-generic/rwonce.h:26,
->                  from ./arch/x86/include/generated/asm/rwonce.h:1,
->                  from ./include/linux/compiler.h:344,
->                  from ./include/linux/build_bug.h:5,
->                  from ./include/linux/bits.h:22,
->                  from ./include/linux/bitops.h:6,
->                  from ./include/linux/bitmap.h:8:
-> drivers/bus/ts-nbus.c: In function ‘ts_nbus_reset_bus’:
-> drivers/bus/ts-nbus.c:109:24: note: ‘values’ declared here
->   109 |         DECLARE_BITMAP(values, 8);
->       |                        ^~~~~~
-> ./include/linux/types.h:11:23: note: in definition of macro ‘DECLARE_BITMAP’
->    11 |         unsigned long name[BITS_TO_LONGS(bits)]
->       |                       ^~~~
+> Cheers,
+> -- 
+> Email: Herbert Xu <herbert@gondor.apana.org.au>
+> Home Page: http://gondor.apana.org.au/~herbert/
+> PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 > 
-> 
->>  
->>  	gpiod_multi_set_value_cansleep(ts_nbus->data, values);
->>  	gpiod_set_value_cansleep(ts_nbus->csn, 0);
->> @@ -151,7 +152,7 @@ static void ts_nbus_write_byte(struct ts_nbus *ts_nbus, u8 byte)
->>  {
->>  	DECLARE_BITMAP(values, 8);
-
-We can fix by zero-initialing the bitmap.
-
-	DECLARE_BITMAP(values, 8) = { };
-
-Would you like me to send a new version of the patch?
-
->>  
->> -	values[0] = byte;
->> +	bitmap_set_value8(values, byte, 8);
->>  
->>  	gpiod_multi_set_value_cansleep(ts_nbus->data, values);
->>  }
->>
->> -- 
->> 2.43.0
->>
-
 
