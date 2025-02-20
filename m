@@ -1,165 +1,71 @@
-Return-Path: <linux-kernel+bounces-523781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6895CA3DB34
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:22:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC82AA3DB37
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:22:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1EF303A989B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:20:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F07AC189C9ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:22:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBA691F8BAA;
-	Thu, 20 Feb 2025 13:20:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C6DC1F8691;
+	Thu, 20 Feb 2025 13:22:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="2KU9Q+mF"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="J0E0nXLx"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 810531F7910
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 13:20:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A27B61F8BCD
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 13:22:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740057650; cv=none; b=JOuBQ+JuklxPw5pvN+rTNX2xE9DiFfOoZtBwTXThMqYp21JhjJ9DapGem0mwIMkI+BeDbQWGntFgmzX8V/pHKSMl4dwkPZXddGcKCUsApcyNrZJnFzNdbezBQllAKa6QhWz1iLWED51UBtxqFxhbiz0Te5TVfEopXEmGze4OAg4=
+	t=1740057745; cv=none; b=Cd4ngkb8RJgTDHD8TP7vMGXin9Fe2e45+4RlczPleacMFmhmNaq7Gbn1fKIm1isf7lgNdwTYnCTVgZ81goYHElTLOy6RQDrVUTUH9f3lQQ9tha31SiCVP8qJq5XmYcjkuaLRw2mektrEbqJRHgQpCp8hQek8A16pyMh6I8pNF7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740057650; c=relaxed/simple;
-	bh=6fZMCA9aOaCmUGfLC6ePf8dOM/mlXjQAuIm701fRQSg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Zeg7WQ8TMgDK9CCcvYa6YeuEr/e9ggYhbx0EdyecaoPgTJ07jSC6hT7MHxcP25dij4gDGHoYZ9YpFrdLuTvFzcqyRiWVrwYOfnB479grKmG4wngMtoFEMiRhwEcTeFPV8DMzh7KOn6uzzjCUUTkuTjjXpiqzSxzJaNUI/9ncq0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=2KU9Q+mF; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-30762598511so8624731fa.0
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 05:20:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1740057646; x=1740662446; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=v9gfnrwEcsc3B+OhnBf4llWg9LYJEF0Gi8abOqkWDME=;
-        b=2KU9Q+mF1u5RxBFqhiSbJYJ3QlHD1k+liZRL6YfodEgvwjern98SoFPsM2yJ2og6co
-         g2OBKbWSRbMxNmLdZy90PAeHboQhy7SMl1M62ODaWNhTDiLY817K+fPbMTpxkizyGnGC
-         tDq/+6H4PuWwJHHguyKnnswr9obJaJMG4ufHA0vD+LcmJeKq4UxHuIzHm5yAMGTPGnwe
-         tiUVyUJKLq6KqrKpwRlYOCWclOZWU2ykAY3Hw4R55irV48ojM4jOHdSbuOfT00NWsXld
-         bZBQisapwnKXJh2o1NcOIDjX8sTxl2fDea1NwX/zqxqFPrgwphXPY3LS1Wbi5NWJI3lI
-         COmw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740057646; x=1740662446;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=v9gfnrwEcsc3B+OhnBf4llWg9LYJEF0Gi8abOqkWDME=;
-        b=Is54VyG1tMiq8b77ArcQFm5CFRC+YPpTDgM8S5W9LTORqqmw33ZfIYmXBnPELyvU+L
-         wRZAdyCu97BB6fx5hJi3KZhahssJIscNmld+28SXDCwtr0NKEUWyPZDkHcCeklXp1Rgk
-         OrW2VpDQ64P+Ai6g+I7J/wjeZRM0aOadITbBBZ95H1TrURvEExq/Rvd+Tz/q7qEeixfs
-         wsTo4TD7zInafgDq9qjvC3oRh9ujYQQAd0tCajuZeSnIMUBZzS7VNcS57E/KOQ/LJX9v
-         eGW7AK1RovbpZi9yYfFqpjAopnDNIwTxNfetr2bglYpmU6OvQwq/WE+Nnla+loVfScAv
-         hpzg==
-X-Forwarded-Encrypted: i=1; AJvYcCVMyspsoYZ/fLKAHWxLhaK1lMrhC49pbze7CNsdibNt9N2i5BhOSdNR9RznCK5CcejVW2o2M7unkwlZrq4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxawWxcJD/yn28CfxjCSLx7O4gwWsCZAcqcw7DMXkL844zWghXT
-	VKIp7XveDYt4sd14YGB5m6/thlKLdumsPQKJ/IpSP6tCSgXEyi0B2qjQRTh826o4wg2WrvFGAMe
-	/J2mQLHK9Z3AMLrvAQTkglSIqoidXPq0Nu66gDw==
-X-Gm-Gg: ASbGncv2VnJErhBxe5BYGL9gFhy1jWC9mPFYsmPEEqee723M5ZpCXTVat0iYRaVz4np
-	BZREhn+IJzVCoM0HYVxhC8mpmL8/EZeG/J0TFv1UF/YO6QOQKhl7WpIR5LiYVtQkL7I8frPn+fI
-	yDinhwvEpav3Jx5vThU8ITp7nht48=
-X-Google-Smtp-Source: AGHT+IFEIS4/ME3oDsWsGwJajDs1xfmNXc6nXNg/IrJF+sMVx4BssM06X90VPnH8MB49gtSoFXwuJyNa398yQTqZ8o8=
-X-Received: by 2002:a2e:380f:0:b0:302:497a:9e5b with SMTP id
- 38308e7fff4ca-30927a2cd94mr59656331fa.2.1740057646496; Thu, 20 Feb 2025
- 05:20:46 -0800 (PST)
+	s=arc-20240116; t=1740057745; c=relaxed/simple;
+	bh=gFDRPAZulNOHSJBDBjwclKNOYUTJihNdrhChS78Y4Zg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dPIUa72vKNE9RpH6BWMQoOhY3BtEjkeeJCkJmeYlSWndIhDN+/ASG59IylgaKBYUADYo6D1T9BEpyTzePqGp+B0ptrW946N+9QDIQ0e5pKOGl9AaeOgzSYi2J9Y8SMZ9h8EwtdacKJiCZSmZ0D5M+wwRV8xNLHSReQVhbinQnv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=J0E0nXLx; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=gFDRPAZulNOHSJBDBjwclKNOYUTJihNdrhChS78Y4Zg=; b=J0E0nXLxkrXPpSqn7Z4ANpzSF3
+	DZJGFyPGaLwyK7ubWNbny5cmeOXhJIRJ88xgzSg7k8h/rG/FjhosLCy6yY86l8eAwRwvmPqe3bSDq
+	MTbtJofluAf1dfRQpva3c262JRoJVKsZiW/629TejDGpQOELJyGHzpze2AGNvg7WBteEFYOiWr8vA
+	R0ItP0bhF53EYz2h5kwdkoEyCbk26V+yAHk97aodcKNe3+aCh+BkzGQx6SUMRmPbCVG6Baync7KVr
+	RwIMvF8B5opKQDAunumF5DAumjyP86XzPW3PXWfVzmuqlRuasr/Nvi5hz2fx1tIPgtWFcCFw5jzcE
+	E2jwPIqQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tl6VR-00000009htn-0JKe;
+	Thu, 20 Feb 2025 13:22:21 +0000
+Date: Thu, 20 Feb 2025 13:22:20 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: "Shengken.Lin@amlogic.com" <Shengken.Lin@amlogic.com>
+Cc: akpm <akpm@linux-foundation.org>, linux-mm <linux-mm@kvack.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: Re: [PATCH] mm: Remove redundant PageMemcgKmem(page) call
+Message-ID: <Z7csjFF5dkj3aWGq@casper.infradead.org>
+References: <20250212020627.3461237-1-shengken.lin@amlogic.com>
+ <Z6wjYQUxIstEqJHC@casper.infradead.org>
+ <202502201747552959016@amlogic.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250220-pca976x-reset-driver-v1-0-6abbf043050e@cherry.de> <20250220-pca976x-reset-driver-v1-2-6abbf043050e@cherry.de>
-In-Reply-To: <20250220-pca976x-reset-driver-v1-2-6abbf043050e@cherry.de>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Thu, 20 Feb 2025 14:20:35 +0100
-X-Gm-Features: AWEUYZlymfSucIw4j_zdhgZRq8kn25SIdhxYsprdKjRx2D6NlUzPc8TKOmwgyrM
-Message-ID: <CAMRc=MfvbxbUv9PhxttB6LxkpRT=YEo10wfv2j_2rCeaNCJfrg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] gpio: pcf857x: add support for reset-gpios on (most) PCA967x
-To: Quentin Schulz <foss+kernel@0leil.net>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
-	Heiko Stuebner <heiko@sntech.de>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Quentin Schulz <quentin.schulz@cherry.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202502201747552959016@amlogic.com>
 
-On Thu, Feb 20, 2025 at 10:57=E2=80=AFAM Quentin Schulz <foss+kernel@0leil.=
-net> wrote:
->
-> From: Quentin Schulz <quentin.schulz@cherry.de>
->
-> The PCA9670, PCA9671, PCA9672 and PCA9673 all have a RESETN input pin
-> that is used to reset the I2C GPIO expander.
->
-> One needs to hold this pin low for at least 4us and the reset should be
-> finished after about 100us according to the datasheet[1]. Once the reset
-> is done, the "registers and I2C-bus state machine will be held in their
-> default state until the RESET input is once again HIGH.".
->
-> Because the logic is reset, the latch values eventually provided in the
-> Device Tree via lines-initial-states property are inapplicable so they
-> are simply ignored if a reset GPIO is provided.
->
-> [1] https://www.nxp.com/docs/en/data-sheet/PCA9670.pdf 8.5 and fig 22.
-> Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
-> ---
->  drivers/gpio/gpio-pcf857x.c | 29 ++++++++++++++++++++++++++---
->  1 file changed, 26 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/gpio/gpio-pcf857x.c b/drivers/gpio/gpio-pcf857x.c
-> index 7c57eaeb0afeba8953d998d8eec60a65b40efb6d..94077208e24ae99a1e8762e78=
-3f0eabc580fa520 100644
-> --- a/drivers/gpio/gpio-pcf857x.c
-> +++ b/drivers/gpio/gpio-pcf857x.c
-> @@ -5,6 +5,7 @@
->   * Copyright (C) 2007 David Brownell
->   */
->
-> +#include <linux/delay.h>
->  #include <linux/gpio/driver.h>
->  #include <linux/i2c.h>
->  #include <linux/interrupt.h>
-> @@ -272,12 +273,11 @@ static const struct irq_chip pcf857x_irq_chip =3D {
->
->  static int pcf857x_probe(struct i2c_client *client)
->  {
-> +       struct gpio_desc *rstn_gpio;
->         struct pcf857x *gpio;
-> -       unsigned int n_latch =3D 0;
-> +       unsigned int n_latch;
->         int status;
->
-> -       device_property_read_u32(&client->dev, "lines-initial-states", &n=
-_latch);
-> -
->         /* Allocate, initialize, and register this gpio_chip. */
->         gpio =3D devm_kzalloc(&client->dev, sizeof(*gpio), GFP_KERNEL);
->         if (!gpio)
-> @@ -297,6 +297,29 @@ static int pcf857x_probe(struct i2c_client *client)
->         gpio->chip.direction_output     =3D pcf857x_output;
->         gpio->chip.ngpio                =3D (uintptr_t)i2c_get_match_data=
-(client);
->
-> +       rstn_gpio =3D devm_gpiod_get_optional(&client->dev, "reset", GPIO=
-D_OUT_HIGH);
-> +       if (IS_ERR(rstn_gpio)) {
-> +               return dev_err_probe(&client->dev, PTR_ERR(rstn_gpio),
-> +                                    "failed to get reset GPIO\n");
-> +       }
-> +
-> +       if (rstn_gpio) {
-> +               /* Reset already held with devm_gpiod_get_optional with G=
-PIOD_OUT_HIGH */
-> +               usleep_range(4, 8); /* tw(rst) > 4us */
-> +               gpiod_set_value(rstn_gpio, 0);
+On Thu, Feb 20, 2025 at 05:47:56PM +0800, Shengken.Lin@amlogic.com wrote:
+> If it can save a function call, then adding PageMemcgKmem(page)
+> in include/linux/memcontrol.h would make the code more consistent.
 
-Should probably be gpiod_set_value_cansleep().
-
-Bartosz
+The code is fine the way it is.
 
