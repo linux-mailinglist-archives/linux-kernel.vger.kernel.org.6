@@ -1,113 +1,144 @@
-Return-Path: <linux-kernel+bounces-523303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 020BEA3D4EA
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 10:37:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63A51A3D4E8
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 10:37:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C1B217B747
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 09:37:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4416117BA08
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 09:37:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C18A11EE019;
-	Thu, 20 Feb 2025 09:37:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="EWigDSfe"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8564E1F03C0;
-	Thu, 20 Feb 2025 09:37:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 637C41F03C9;
+	Thu, 20 Feb 2025 09:37:09 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 481011EE7C4
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 09:37:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740044233; cv=none; b=tjVBuTg6FCwpvrZBIJUHAGC1vpgS8jRr63okakyu15OqMVz0TH4vue37G7U7u0uyzy4hFjwxMDIYRiFIiYmP/hlq/073qyTkVYcxhLSxgg0AFP63NAPZDnmIqxotzkqIhPPg/8MzOmRzfmUtWV0yapV/UFEbnBimgd9Q3WdbmMw=
+	t=1740044229; cv=none; b=la1boBAgEKzRgKFU4vlxWGwIseH4m0Q/YiumevngIqaguNFQ6JZfu7aYfx3UjAQHPSjCtph7FlOsxyMiusAp+O3Kh6DiOWyR/L5aEmJ9qhEnNrd5YBdY51yrEZSqMpsyEjYLe0OKTLNNhuS+zl1AE0wk80/qFi1Taat7qjFiq3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740044233; c=relaxed/simple;
-	bh=vCuWbxJpcKdKcAOe66DlD/TFiXV9c8xBVuKcplE64B4=;
+	s=arc-20240116; t=1740044229; c=relaxed/simple;
+	bh=s6mHBIV9sVhHqCCbV2rtlb5EthBKknOJ105oulyFrXc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RHhhheURehTYz3Ukug/u7T6g39fphz6zfX+a7yfeQWJYUPQFvlRQmAfbt9LvL27juKjhB+P8zLNoxRoVt3wNhSWekmZIqEsIDGloH6BFwweqiv/ff5V41EnNYaoFdahLkVp53/FnLN+EVKsFGcplLSYQeKT5urtwcdGSW0J8UXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=EWigDSfe; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=phIkeiMZbtKUkz8zihSHcjuzyHiG/Jl1jNrls12kH7c=; b=EWigDSfeke3Is6poNt82ic9DKy
-	LhGt4BFhdRKjrhFXh61yP1/4ws6LRKr4izRndhA0qKS+JgDlCWSxoO1OPzUX4zx0A083kHiPMgLrx
-	NqEa9T0gE32L8XAw9IXMcBGwO3tXZcEkqLHyMRrQnSBoa4dCEUuYpAI1BYgx3AhApmVftBylYbRNR
-	1AHhF8PD6tTrkK4SdlMUI7xzbJyjjrxbwvF6tmCfDejTMxms3UAmWrJSfKTtib6WkKw956FV8FlXb
-	fvZzSHHgQjRi0VkiPQnUywi43pPXqs42QQQJnYR4uc+2GESkLu5bKF31Cy9yD2VI3+gW6fFOP1Nv6
-	7OfYuSjA==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:38750)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1tl2zF-0000Vk-2E;
-	Thu, 20 Feb 2025 09:36:53 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1tl2zB-0000rj-36;
-	Thu, 20 Feb 2025 09:36:49 +0000
-Date: Thu, 20 Feb 2025 09:36:49 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Dimitri Fedrau <dima.fedrau@gmail.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
-	Gregor Herburger <gregor.herburger@ew.tq-group.com>,
-	Stefan Eichenberger <eichest@gmail.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>, netdev@vger.kernel.org,
+	 Content-Type:Content-Disposition:In-Reply-To; b=B8rlcoL0uLRu/EQh6U75izEx7kiVFfgi3PZih3yKTS5lvDddI1JwtXVVS6GrcV6LO89/Os1taB4LeDZjSMseAdz8ggjp02eRO+Mc49aR4H4VAb8TVTFdmu1jNRuMPRgKqhcuANwuXosyvtbj+yGHV4BPXk+Pi/PkGiMGQERnc1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7F93D1BB0;
+	Thu, 20 Feb 2025 01:37:24 -0800 (PST)
+Received: from mazurka.cambridge.arm.com (mazurka.cambridge.arm.com [10.2.80.18])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6BA813F6A8;
+	Thu, 20 Feb 2025 01:37:03 -0800 (PST)
+Date: Thu, 20 Feb 2025 09:37:00 +0000
+From: =?utf-8?Q?Miko=C5=82aj?= Lenczewski <miko.lenczewski@arm.com>
+To: Oliver Upton <oliver.upton@linux.dev>
+Cc: ryan.roberts@arm.com, yang@os.amperecomputing.com,
+	catalin.marinas@arm.com, will@kernel.org, joey.gouly@arm.com,
+	broonie@kernel.org, mark.rutland@arm.com, james.morse@arm.com,
+	yangyicong@hisilicon.com, robin.murphy@arm.com,
+	anshuman.khandual@arm.com, maz@kernel.org, liaochang1@huawei.com,
+	akpm@linux-foundation.org, david@redhat.com, baohua@kernel.org,
+	ioworker0@gmail.com, linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v2 2/2] net: phy: marvell-88q2xxx: Prevent hwmon
- access with asserted reset
-Message-ID: <Z7b3sU0w2daShkBH@shell.armlinux.org.uk>
-References: <20250220-marvell-88q2xxx-hwmon-enable-at-probe-v2-0-78b2838a62da@gmail.com>
- <20250220-marvell-88q2xxx-hwmon-enable-at-probe-v2-2-78b2838a62da@gmail.com>
+Subject: Re: [PATCH v1 1/3] arm64: Add BBM Level 2 cpu feature
+Message-ID: <20250220093700.GB11745@mazurka.cambridge.arm.com>
+References: <20250219143837.44277-3-miko.lenczewski@arm.com>
+ <20250219143837.44277-5-miko.lenczewski@arm.com>
+ <Z7ZqbLdlbmeVX5a0@linux.dev>
+ <Z7Zv90i0DyvxFUcv@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250220-marvell-88q2xxx-hwmon-enable-at-probe-v2-2-78b2838a62da@gmail.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Z7Zv90i0DyvxFUcv@linux.dev>
 
-On Thu, Feb 20, 2025 at 09:11:12AM +0100, Dimitri Fedrau wrote:
-> If the PHYs reset is asserted it returns 0xffff for any read operation.
-> This might happen if the user admins down the interface and wants to read
-> the temperature. Prevent reading the temperature in this case and return
-> with an network is down error. Write operations are ignored by the device
-> when reset is asserted, still return a network is down error in this
-> case to make the user aware of the operation gone wrong.
+Hi Oliver,
 
-If we look at where mdio_device_reset() is called from:
+Thank you for taking the time to review this patch series.
 
-1. mdio_device_register() -> mdiobus_register_device() asserts reset
-   before adding the device to the device layer (which will then
-   cause the driver to be searched for and bound.)
+On Wed, Feb 19, 2025 at 03:57:43PM -0800, Oliver Upton wrote:
+> On Wed, Feb 19, 2025 at 03:34:12PM -0800, Oliver Upton wrote:
+> > Hi Miko,
+> > 
+> > On Wed, Feb 19, 2025 at 02:38:38PM +0000, Mikołaj Lenczewski wrote:
+> > > +config ARM64_ENABLE_BBML2
+> > 
+> > nit: consider calling this ARM64_BBML2_NOABORT or similar, since this
+> > assumes behavior that exceeds the BBML2 baseline.
+> > 
 
-2. mdio_probe(), deasserts the reset signal before calling the MDIO
-   driver's ->probe method, which will be phy_probe().
+That is a better phrasing, will change this.
 
-3. after a probe failure to re-assert the reset signal.
+> > > +	bool "Enable support for Break-Before-Make Level 2 detection and usage"
+> > > +	default y
+> > > +	help
+> > > +	  FEAT_BBM provides detection of support levels for break-before-make
+> > > +	  sequences. If BBM level 2 is supported, some TLB maintenance requirements
+> > > +	  can be relaxed to improve performance. Selecting N causes the kernel to
+> > > +	  fallback to BBM level 0 behaviour even if the system supports BBM level 2.
+> > > +
+> > 
+> > [...]
+> > 
 
-4. after ->remove has been called.
+I will assume you mean to add the comment about this technically
+exceeding the BBML2 baseline to the docs here as well? Or am I
+misunderstanding?
 
-That is the sum total. So, while the driver is bound to the device,
-phydev->mdio.reset_state is guaranteed to be zero.
+> > > +static bool has_bbml2_noconflict(const struct arm64_cpu_capabilities *entry,
+> > > +				 int scope)
+> > > +{
+> > > +	if (!IS_ENABLED(CONFIG_ARM64_ENABLE_BBML2))
+> > > +		return false;
+> > > +
+> > > +	/* We want to allow usage of bbml2 in as wide a range of kernel contexts
+> > > +	 * as possible. This list is therefore an allow-list of known-good
+> > > +	 * implementations that both support bbml2 and additionally, fulfil the
+> > 
+> > typo: fullfill
+> 
+> I can't spell either ;-)
 
-Therefore, is this patch fixing a real observed problem with the
-current driver?
+Spelling is hard, will fix :)
+
+> > > +	 * extra constraint of never generating TLB conflict aborts when using
+> > > +	 * the relaxed bbml2 semantics (such aborts make use of bbml2 in certain
+> > > +	 * kernel contexts difficult to prove safe against recursive aborts).
+> > > +	 */
+> > 
+> > We should be *very* specific of what qualifies a 'known-good'
+> > implementation here. Implementations shouldn't be added to this list
+> > based on the observed behavior, only if *the implementer* states their
+> > design will not generate conflict aborts for BBML2 mapping granularity
+> > changes.
+> > 
+
+Understood, will clarify.
+
+> > > diff --git a/arch/arm64/tools/cpucaps b/arch/arm64/tools/cpucaps
+> > > index 1e65f2fb45bd..8d67bb4448c5 100644
+> > > --- a/arch/arm64/tools/cpucaps
+> > > +++ b/arch/arm64/tools/cpucaps
+> > > @@ -26,6 +26,7 @@ HAS_ECV
+> > >  HAS_ECV_CNTPOFF
+> > >  HAS_EPAN
+> > >  HAS_EVT
+> > > +HAS_BBML2_NOCONFLICT
+> > 
+> > Please add this cap to cpucap_is_possible() test for the config option.
+> > 
+
+Sure, will do so.
 
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Kind regards,
+Mikołaj Lenczewski
 
