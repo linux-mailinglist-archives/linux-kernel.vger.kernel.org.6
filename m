@@ -1,94 +1,99 @@
-Return-Path: <linux-kernel+bounces-523358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0CE8A3D582
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 10:55:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74A95A3D59A
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 10:58:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 067087A5943
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 09:54:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9654D189D9ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 09:58:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 172FE1F03D4;
-	Thu, 20 Feb 2025 09:55:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GQijEXKe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 544291F192E;
+	Thu, 20 Feb 2025 09:57:25 +0000 (UTC)
+Received: from smtp-1909.mail.infomaniak.ch (smtp-1909.mail.infomaniak.ch [185.125.25.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DB6A101DE;
-	Thu, 20 Feb 2025 09:55:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B03451EF0AB
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 09:57:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740045326; cv=none; b=lIPwk/EjeNSWfa/EgR6bL1BHcI4DPbd++RFamg20VwoDx+ql1Wd50B+YXSByqOWQdFjumiKQ3ywdvb8IjYuXVJ6pir6BJjQCOcFoBqit0NxbK5X+So7Q57/jryHFDk/6jywdsJ2vis8UPOyRa6hXwPk3WA8FLUammKDNStzYZ+c=
+	t=1740045443; cv=none; b=KAk0VhoX7ua33x4xizSAM6cKuW098kpkpMhFrGs6Po5ZP2t1cWa05Oi3ieRpEZ7PQp8/3eu7H/ALWNzCo+UtGP/NejzONee+Bdvv3Yn6pfQZJyyczipjlUXkf6BD4D00wvMTTO1JraXzF5d4K+xJPtIf4sZDarEqVCP1xUukOrg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740045326; c=relaxed/simple;
-	bh=xzS6h5KnBHNIoiPvclSQAAioVfZWDom2cKt1SBCr86w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JROAdKQB0WVRzoIqc5GsdByD/+p75oZCH/ffUPQDZI1a1EQBNULTe2Br4cDH2I1XlejiBd3UWmBZLZmfPD9MGfkyPqAbu+fGGKnFDhCRoaqlvRwUKV3MWVKrQwcPk0cGwq8QMRlC+1PePSr+SpNeNKYxPdk5tL2HnypsIxwJR34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GQijEXKe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66189C4CED1;
-	Thu, 20 Feb 2025 09:55:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740045325;
-	bh=xzS6h5KnBHNIoiPvclSQAAioVfZWDom2cKt1SBCr86w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GQijEXKeznE+q3VYmV/ySgRAcUNRB/51FmRor5HU8HyTJ3he5KdezGi+spOmHeliF
-	 5WJztNXBI3+pRk/+clHPp1xkjFbR7mWFJTAaThQiRxU+Zokb/f9l6py4MrygtBJOIA
-	 xY+LVJWNm3+LWMTNnzUZO4s9juml8nZRkdy+hYlrclOHP/TTI9LyaKcSDxl+Ex3k4k
-	 b7kBy2G3zpcNHuQJQsWqLcuAZA0L3sqhqJLH0d/tsuqNCJTH6nm9a1mRNZ6eYPtEOz
-	 hAWsjq8i2wLqcTjPxUmeZGMxdIHWnOiThX6P8ipeM5NHdIffN8pXboohgClckt0Y79
-	 fzOmjWhuP9F/A==
-Date: Thu, 20 Feb 2025 11:55:21 +0200
-From: Leon Romanovsky <leon@kernel.org>
-To: Bart Van Assche <bvanassche@acm.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Jason Gunthorpe <jgg@nvidia.com>,
-	Kees Cook <kees@kernel.org>,
-	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-	Christoph Hellwig <hch@infradead.org>,
-	rust-for-linux <rust-for-linux@vger.kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Greg KH <gregkh@linuxfoundation.org>,
-	David Airlie <airlied@gmail.com>, linux-kernel@vger.kernel.org,
-	ksummit@lists.linux.dev
-Subject: Re: Rust kernel policy
-Message-ID: <20250220095521.GP53094@unreal>
-References: <CANiq72m-R0tOakf=j7BZ78jDHdy=9-fvZbAT8j91Je2Bxy0sFg@mail.gmail.com>
- <Z7SwcnUzjZYfuJ4-@infradead.org>
- <CANiq72myjaA3Yyw_yyJ+uvUrZQcSLY_jNp65iKH8Y5xGY5tXPQ@mail.gmail.com>
- <202502191026.8B6FD47A1@keescook>
- <20250219140821.27fa1e8a@gandalf.local.home>
- <202502191117.8E1BCD4615@keescook>
- <20250219202751.GA42073@nvidia.com>
- <20250219154610.30dc6223@gandalf.local.home>
- <97841173-1de8-4221-8bf3-3470a5ac98a7@acm.org>
+	s=arc-20240116; t=1740045443; c=relaxed/simple;
+	bh=HCenMjy/1zY1WNhoLNaLkQ7qj8Ms8jFNldivjvVtGJA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=COxytdQjA78OJfD/iv5jKB2D53DNBL84jNRYyLiVh1uaOg/5MHvmA+gl8CrG1ojpWqBc6GIRYLkYfEfe/WMGYaUQddBomoeMzIT1kAHEkRX3ql67Y07ED/Bi8MARdRrGxOwSx5y3TSZBCCl+5csMFhfav9cUe/FWETR8iQDRZNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0leil.net; spf=pass smtp.mailfrom=0leil.net; arc=none smtp.client-ip=185.125.25.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0leil.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=0leil.net
+Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Yz7w82L4wz9ps;
+	Thu, 20 Feb 2025 10:57:12 +0100 (CET)
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Yz7w73jlBzbbQ;
+	Thu, 20 Feb 2025 10:57:11 +0100 (CET)
+From: Quentin Schulz <foss+kernel@0leil.net>
+Subject: [PATCH 0/2] gpio: pcf857x: add support for reset-gpios on (most)
+ PCA967x
+Date: Thu, 20 Feb 2025 10:56:50 +0100
+Message-Id: <20250220-pca976x-reset-driver-v1-0-6abbf043050e@cherry.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <97841173-1de8-4221-8bf3-3470a5ac98a7@acm.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAGL8tmcC/x3MMQqAMAxA0atIZgNatBqvIg6ljZpFJRUpSO9uc
+ XzD/y9EVuEIU/WC8iNRzqOgrSvwuzs2RgnFYBrTN6YlvLyjwSZUjnxjUHlY0ZNz1I+WOmOhpJf
+ yKunfzkvOH5SYnhJmAAAA
+X-Change-ID: 20250219-pca976x-reset-driver-c9aa95869426
+To: Linus Walleij <linus.walleij@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc: Heiko Stuebner <heiko@sntech.de>, linux-gpio@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Quentin Schulz <quentin.schulz@cherry.de>
+X-Mailer: b4 0.14.2
+X-Infomaniak-Routing: alpha
 
-On Wed, Feb 19, 2025 at 12:52:14PM -0800, Bart Van Assche wrote:
-> On 2/19/25 12:46 PM, Steven Rostedt wrote:
-> > I do feel that new drivers written in Rust would help with the
-> > vulnerabilities that new drivers usually add to the kernel.
-> 
-> For driver developers it is easier to learn C than to learn Rust. I'm
-> not sure that all driver developers, especially the "drive by"
-> developers, have the skills to learn Rust.
+The PCA9670, PCA9671, PCA9672 and PCA9673 all have a RESETN input pin
+that is used to reset the I2C GPIO expander.
 
-From what I saw, copy-paste is a classical development model for new
-drivers. Copy-paste from C drivers is much more easy than from Rust
-ones, simply because there are much more C drivers.
+One needs to hold this pin low for at least 4us and the reset should be
+finished after about 100us according to the datasheet[1]. Once the reset
+is done, the "registers and I2C-bus state machine will be held in their
+default state until the RESET input is once again HIGH.".
 
-Thanks
+Because the logic is reset, the latch values eventually provided in the
+Device Tree via lines-initial-states property are inapplicable so they
+are simply ignored if a reset GPIO is provided.
+This is eventually enforced by the Device Tree binding by making sure
+both cannot be present at the same time.
 
-> 
-> Bart.
-> 
+Finally, the reset-gpios property is specific to PCA9670, PCA9671,
+PCA9672 and PCA9673 so make it specific to those chips.
+
+[1] https://www.nxp.com/docs/en/data-sheet/PCA9670.pdf 8.5 and fig 22.
+
+Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
+---
+Quentin Schulz (2):
+      dt-bindings: gpio: nxp,pcf8575: add reset GPIO
+      gpio: pcf857x: add support for reset-gpios on (most) PCA967x
+
+ .../devicetree/bindings/gpio/nxp,pcf8575.yaml      | 33 ++++++++++++++++++++++
+ drivers/gpio/gpio-pcf857x.c                        | 29 +++++++++++++++++--
+ 2 files changed, 59 insertions(+), 3 deletions(-)
+---
+base-commit: 6537cfb395f352782918d8ee7b7f10ba2cc3cbf2
+change-id: 20250219-pca976x-reset-driver-c9aa95869426
+
+Best regards,
+-- 
+Quentin Schulz <quentin.schulz@cherry.de>
+
 
