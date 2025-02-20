@@ -1,96 +1,84 @@
-Return-Path: <linux-kernel+bounces-524794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524795-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B74EFA3E732
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 23:05:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD244A3E73C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 23:08:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA5A219C28DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 22:05:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8AEC19C2931
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 22:08:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDEA81EF09C;
-	Thu, 20 Feb 2025 22:04:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1F781F03F3;
+	Thu, 20 Feb 2025 22:08:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fuVRn1eB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j1/JVvdx"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 350B11EDA37;
-	Thu, 20 Feb 2025 22:04:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AC2E13AF2;
+	Thu, 20 Feb 2025 22:08:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740089088; cv=none; b=dQZ5/x6zgJJuB1QrdYX27br+k4KeMBTTipMfAuvLrU6ZQECJSBwO36wsgsIbb0/75Kvyo1gC9PiZ0pYqhc+PlTn7/qPR2ioTMPrZ5xpXqCtq2qE1unTel94oUAeaDmzrI5p4G/CGBqyvy7Nk1C9nuOOgpEzrAP885jmbU/+CK7w=
+	t=1740089289; cv=none; b=j2ytycVsc522BAUivuHXUSxlLvOFNs73x4mFzwe4h4DVfxbVKOKEMeKueNcF9YP7NYgsaq7EFU7k6G4/N99h6D1Y1FRWASCKeqLfuIiqRBv/fjMAwG/HGazOzFl2VZ1Tt/QISknU6L2IIU4UXILT7dheYHGeQ3fy+yk1WcARkO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740089088; c=relaxed/simple;
-	bh=uihc167KrdTrO3EXNbTDVRhAtMtOiSXVR0xiKhEB1uk=;
+	s=arc-20240116; t=1740089289; c=relaxed/simple;
+	bh=3lJEiucPJ0U5M6VLeZLarNcfk2tPxDojdYxu7wYfCbM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hxTg5RYjLfz4VIVKv44Mzsm0Dj5lsX/XYYA3amDeAtPOilv/PuIQn4uBR4mehRO4btsEvbeLXbUk1ZZ673w26QOfkU2IOzGQ1lHnaUdW/f58bgpns82SvBKu23/PEGowcxvE9+VzGOcF+GYyYMSySNKChs3xJaalgjkBXtaYNvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fuVRn1eB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9356C4CED1;
-	Thu, 20 Feb 2025 22:04:47 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=uEAxmNN1QfN3DzFMCazZDaZfjm78IbS7eLS1Yj732TmLA3XzSIR3RW4JLkd87eaJVbwWvorQCRB0eH/s2SmJIc8m2Ch1fcZHc+XcvP5FdwqpLG9V/ZR1B5VAoJqKRMygyj+NGFiIN62H7uh4mDm3/NI2Cl/9QZJfa8kU2X+ZWeo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j1/JVvdx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9572FC4CED1;
+	Thu, 20 Feb 2025 22:08:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740089087;
-	bh=uihc167KrdTrO3EXNbTDVRhAtMtOiSXVR0xiKhEB1uk=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=fuVRn1eBGFijgqaMToS+5aZSPHWQ7TDUp9r+axJ/p/g7q19AwOFCYp8zzW3FzYaHT
-	 CUwZbzampzgFEkSnbHnTzkELwEwO5Lv1x20HU8S5fJSRR7zU5YX78dTCwfXfPt6o/8
-	 nhiFnPUflO2/oiZFpu9WK2DgH0+WqKse2J5p9Ql/SWXQHyc1lsHMHYjrk7b4TIK3+x
-	 Pr6AvKV4w5W8tepcBP1nb20YkexHatFxdH944ao1LaiUPvQr2sA0L8mywu6Mg5PvJo
-	 zoe/evoGfAFgzEUVZhhuxQbNt5UF+NdlhbHDc0IaWqzO1fFsqH2bG/z79MPdyI/enp
-	 +fybSXU80NO5A==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 50CD4CE0B34; Thu, 20 Feb 2025 14:04:47 -0800 (PST)
-Date: Thu, 20 Feb 2025 14:04:47 -0800
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
-Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com,
-	rostedt@goodmis.org, Jens Axboe <axboe@kernel.dk>,
-	ath12k@lists.infradead.org
-Subject: Re: [PATCH rcu 1/9] rcu: Add lockdep_assert_in_rcu_read_lock() and
- friends
-Message-ID: <67063387-6ba9-47fe-b283-d6346da15d9a@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <657595c8-e86c-4594-a5b1-3c64a8275607@paulmck-laptop>
- <20240604222355.2370768-1-paulmck@kernel.org>
- <9130e3da-1cc5-43ea-9153-47117d57caca@oss.qualcomm.com>
+	s=k20201202; t=1740089288;
+	bh=3lJEiucPJ0U5M6VLeZLarNcfk2tPxDojdYxu7wYfCbM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=j1/JVvdxxPnJxok9SV6Arj05GqLj+06+iw7UciSIOQMLwG/xKN3NOB+a2wL1pb6pQ
+	 6mTqZ98RcryITYtAcPJXli043TjfwscYhIox6lvsJXmq3MPSFg62QKuMdu2ms77RuJ
+	 Kf5akj9Bn7quorBz2L6cc03NoszNZ/2QePKG4zYs9G9sEou3H0Ic46xpFIiPMerV5k
+	 1Niw75TyNZQEYu8yTFt7fyr9KfU85lD0FXWKoFnB09ZxvHIJ2wsbMgzf81fsv/uN2J
+	 c6EVEvIz6I8IVLZWDS9uyya108OOyf1Nu3J7+9QVy6Qnuj7KGByjRtJw9cEOBEiEi9
+	 hLANkPjam+Qnw==
+Date: Thu, 20 Feb 2025 14:08:06 -0800
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: Youling Tang <youling.tang@linux.dev>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	linux-kernel@vger.kernel.org, linux-bcachefs@vger.kernel.org,
+	k2ci <kernel-bot@kylinos.cn>, Youling Tang <tangyouling@kylinos.cn>
+Subject: Re: [PATCH] objtool: Add bch2_trans_unlocked_or_in_restart_error()
+ to bcachefs noreturns
+Message-ID: <20250220220806.cv6rnqefseckzlzm@jpoimboe>
+References: <20250218064230.219997-1-youling.tang@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <9130e3da-1cc5-43ea-9153-47117d57caca@oss.qualcomm.com>
+In-Reply-To: <20250218064230.219997-1-youling.tang@linux.dev>
 
-On Thu, Feb 20, 2025 at 11:38:14AM -0800, Jeff Johnson wrote:
-> On 6/4/24 15:23, Paul E. McKenney wrote:
-> > There is no direct RCU counterpart to lockdep_assert_irqs_disabled()
-> > and friends.  Although it is possible to construct them, it would
-> > be more convenient to have the following lockdep assertions:
-> > 
-> > lockdep_assert_in_rcu_read_lock()
-> > lockdep_assert_in_rcu_read_lock_bh()
-> > lockdep_assert_in_rcu_read_lock_sched()
-> > lockdep_assert_in_rcu_reader()
-> > 
-> > This commit therefore creates them.
+On Tue, Feb 18, 2025 at 02:42:30PM +0800, Youling Tang wrote:
+> From: Youling Tang <tangyouling@kylinos.cn>
 > 
-> I'm looking at some downstream code that is trying to become
-> upstream compliant, and currently that code uses:
+> Fix the following objtool warning during build time:
+> fs/bcachefs/btree_cache.o: warning: objtool: btree_node_lock.constprop.0() falls through to next function bch2_recalc_btree_reserve()
+> fs/bcachefs/btree_update.o: warning: objtool: bch2_trans_update_get_key_cache() falls through to next function need_whiteout_for_snapshot()
 > 
-> 	RCU_LOCKDEP_WARN(!rcu_read_lock_held(), "some message");
+> bch2_trans_unlocked_or_in_restart_error() is an Obviously Correct (tm)
+> panic() wrapper, add it to the list of known noreturns.
 > 
-> It seems like this would be a good use of one of these helper
-> functions, but I'm shocked to see that no upstream code is using
-> them yet.
-> 
-> Is there a reason to not use these helpers?
+> Fixes: b318882022a8 ("bcachefs: bch2_trans_verify_not_unlocked_or_in_restart()")
+> Reported-by: k2ci<kernel-bot@kylinos.cn>
+> Signed-off-by: Youling Tang <tangyouling@kylinos.cn>
 
-In cases where there is no additional useful information that can be
-placed in "some message", the new helpers should be just fine.
+Acked-by: Josh Poimboeuf <jpoimboe@kernel.org>
 
-							Thanx, Paul
+Peter, can you take this one?
+
+-- 
+Josh
 
