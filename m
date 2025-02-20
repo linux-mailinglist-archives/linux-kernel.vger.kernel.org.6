@@ -1,177 +1,137 @@
-Return-Path: <linux-kernel+bounces-524799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D66EDA3E742
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 23:09:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 05172A3E746
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 23:11:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 789ED1897513
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 22:09:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3067F19C3038
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 22:11:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59F3C213E9C;
-	Thu, 20 Feb 2025 22:09:25 +0000 (UTC)
-Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D3081EEA56;
-	Thu, 20 Feb 2025 22:09:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9CBA1E9B07;
+	Thu, 20 Feb 2025 22:11:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cUTitxb1"
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C37961EEA56
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 22:11:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740089364; cv=none; b=Oi3M6KXaKofdaS2Kr59mKZQrV0hOnZREWRxmt5Zb1j6++z0tYUB8IveJ9tFUCMfkB5mgN8gDonbG3NPMT4InKsYqsbFm1ruPb7jeAhVS0++d3SULVn9roRYwqIE5ulpsbL3SVsonn7iEzw8/pv9ydMDpmL3htPC7iNR8nTBPdXI=
+	t=1740089504; cv=none; b=RfFYnKuQgm9S6kG54Zkw4QtVKOL76lnVyReVYoatcUsUn6fPDPZ2uA3PGa1b528YsKm4JMVsGccUYOjaL1LYdXdBQAie+8n9wRSu/bDeoO6vpuA3D2hXX55N+URqRFhynroBzBLe2TrpBFta7O8zOa1436Csb/K9Bopv/5NSt1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740089364; c=relaxed/simple;
-	bh=+BSfG7XSQPs3WSZSD8uNQu9wxfwrYohVa9iEe4Bw6bo=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=rmhsML17S2CW/G8lBG6c9x2TVLx9TYXPE6pY2zQ1OzcNZxhOfqmizOEMsOaD2DWsox7YcAAl9dvQiQ5GJIQQL+E/5bwCEW1RHtB5fNmYqno6SWAbC5lcgoLG4E8zRUdwbwaMy8NGa4xXB9o5pZ20R/McRYAGqVPUXHLDF/Bj2jQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
-Received: by angie.orcam.me.uk (Postfix, from userid 500)
-	id 89C8092009C; Thu, 20 Feb 2025 23:09:20 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-	by angie.orcam.me.uk (Postfix) with ESMTP id 829CB92009B;
-	Thu, 20 Feb 2025 22:09:20 +0000 (GMT)
-Date: Thu, 20 Feb 2025 22:09:20 +0000 (GMT)
-From: "Maciej W. Rozycki" <macro@orcam.me.uk>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-cc: Richard Henderson <richard.henderson@linaro.org>, 
-    Ivan Kokshaysky <ink@unseen.parts>, Matt Turner <mattst88@gmail.com>, 
-    Arnd Bergmann <arnd@arndb.de>, 
-    John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
-    Magnus Lindholm <linmag7@gmail.com>, 
-    "Paul E. McKenney" <paulmck@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, 
-    linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Alpha: Emulate unaligned LDx_L/STx_C for data
- consistency
-In-Reply-To: <CAHk-=wgBZk1FFOyiTKLnz4jNe-eZtYsrztcYRRXZZxF8evk1Rw@mail.gmail.com>
-Message-ID: <alpine.DEB.2.21.2502202106200.65342@angie.orcam.me.uk>
-References: <alpine.DEB.2.21.2502181912230.65342@angie.orcam.me.uk> <CAHk-=wgBZk1FFOyiTKLnz4jNe-eZtYsrztcYRRXZZxF8evk1Rw@mail.gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+	s=arc-20240116; t=1740089504; c=relaxed/simple;
+	bh=XoQ9YNrhSqddyyvTwy9PGAcc33M/ALNhUIP4UPWv6bU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dTct2+prdEPunhQyI8IiSeKYfiMhodPZWJiOpwexva19+a/CpO1Gv4Z9GC3dM/DT4jkN5doHdPMLqI8g+6XlJNhgbdHDYMMkxnRqb4VI+pvsfqOMhOwSWEsBKi/8shyLueR5adCzXgg9rOH++POVqYNHnTruNJR1TGHdY8wIUes=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cUTitxb1; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2f9b9c0088fso2657063a91.0
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 14:11:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1740089502; x=1740694302; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=uxsIjlZZ4NvCMtUBbUKBaSillRpgb0iDSMQ6jrfUP4s=;
+        b=cUTitxb17CVOZ65WqYbOURmx9+U9mtcDcGUW8KnMeH/9Yk8X9fCSvF8+MZdz3jiJ0t
+         cpbjFDR2alhSXIK3+w9YtWgdB63OOjJUbNYCMsU5JFRzxnsgwB319rIPwVpuI3h/wSpg
+         9EOjtjhjEmrN3yIwvmn3bAh+sjmjz+4lLNtJNAooxncnNKmhflruQrb3eCTuhHjbn9Wb
+         +obM9/Clv0OvQMJMxXoQ0hob8NCg9UBTYPeDxv5sAKe2kLhk0uUYpoHGzghcTuCdP31w
+         8YG12Mw0Xfh/co+MtybvONvXq3wzQl8Yev+OASOmXO3RV1FaUSkV2Kkfyvn9qd7WIUFO
+         6w0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740089502; x=1740694302;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uxsIjlZZ4NvCMtUBbUKBaSillRpgb0iDSMQ6jrfUP4s=;
+        b=lw9L7w7iiA5r6IWFLJXqSwuur1v7tdc1CTvt3k03TOVIzaWRvQrDgLpfllefT78GCv
+         r8o10A/WRf1Z6fUoIjaPrdwIjf2WrO1o53qYxHSb0K8kLxHAzah9F9dySz2kQ9CDY0Xy
+         jsw2av5TTmozzvogANHlfh7ioF6YpdlDEET4cooxt1NatwQLu2wnuRUYV247SoId3q2G
+         5dLo+TVFgL0k8aWcjz3NQNgGJeeIQfnQO0p3opX0PyXEfEV1prAPhU5DNt57QjtA+HVv
+         TcZA81Ofj7dr9hlYM3EkO/iST0t+owePgF2hSW9X2fS1okTUo/Tz2fOQkW7sJ7pDYUuN
+         OlPw==
+X-Forwarded-Encrypted: i=1; AJvYcCV/OBFVrzj3uq8tUdI3R0rRMHi0ODiWIzVU3UVM8928lPX3KZNxDJJ3e6VOb5Eb+ijpClTlGNihwKvQ59U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxiMNdxSW7A4aehx4j6EvR5rGaBqoc+jvdMBA8cHi0/+zo9qYSA
+	j6zCeHL8LVDjpToxIz60d1+ZUBDMdVzXnmKqaRknB8iWIsq/V+5Q6tCEM/+C3tcwkOiLmPPLLUs
+	HdGvGtN3W/6yEyG8GfTS8sXxAD+daDdzhIBb6
+X-Gm-Gg: ASbGncsVGVkXQgx2g7p/LxiPaZiHqa6EmYqd4d/df/ZqiPhtHU9J+XglFgWpAzVpLTh
+	FU6LMrWIv146yCsoxIc9gVCfoVzaN08mIg4l9/VU3l4oH0hh6gT6jnr0eW2hDLy28ggbapwz9eX
+	DIr6SLBOZGFu9ADPD2ZRCa6305lnxv
+X-Google-Smtp-Source: AGHT+IEIWdX9z1JOma8AW9llag/RxdGA7fLsY2vLgpN0yC7kc+omWzG4eOOU8H13xunLk2NWo3uoV4TbIB9wngAORbk=
+X-Received: by 2002:a17:90b:56cd:b0:2fa:22a2:26a3 with SMTP id
+ 98e67ed59e1d1-2fce7ae91d9mr1293778a91.6.1740089501933; Thu, 20 Feb 2025
+ 14:11:41 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <20250206181711.1902989-1-elver@google.com> <20250206181711.1902989-16-elver@google.com>
+ <a1483cb1-13a5-4d6e-87b0-fda5f66b0817@paulmck-laptop>
+In-Reply-To: <a1483cb1-13a5-4d6e-87b0-fda5f66b0817@paulmck-laptop>
+From: Marco Elver <elver@google.com>
+Date: Thu, 20 Feb 2025 23:11:04 +0100
+X-Gm-Features: AWEUYZlmUbD3zD2pKUzd_1_BxaT4jGAHcCF6wIRviSAHlg-jN4GDUIL9VOeu9Kg
+Message-ID: <CANpmjNOPiZ=h69V207AfcvWOB=Q+6QWzBKoKk1qTPVdfKsDQDw@mail.gmail.com>
+Subject: Re: [PATCH RFC 15/24] rcu: Support Clang's capability analysis
+To: paulmck@kernel.org
+Cc: Alexander Potapenko <glider@google.com>, Bart Van Assche <bvanassche@acm.org>, 
+	Bill Wendling <morbo@google.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Dmitry Vyukov <dvyukov@google.com>, Frederic Weisbecker <frederic@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ingo Molnar <mingo@kernel.org>, 
+	Jann Horn <jannh@google.com>, Joel Fernandes <joel@joelfernandes.org>, 
+	Jonathan Corbet <corbet@lwn.net>, Josh Triplett <josh@joshtriplett.org>, 
+	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Miguel Ojeda <ojeda@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Steven Rostedt <rostedt@goodmis.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Uladzislau Rezki <urezki@gmail.com>, Waiman Long <longman@redhat.com>, 
+	Will Deacon <will@kernel.org>, kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org, 
+	llvm@lists.linux.dev, rcu@vger.kernel.org, linux-crypto@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 19 Feb 2025, Linus Torvalds wrote:
+On Thu, 20 Feb 2025 at 23:00, Paul E. McKenney <paulmck@kernel.org> wrote:
+>
+> On Thu, Feb 06, 2025 at 07:10:09PM +0100, Marco Elver wrote:
+> > Improve the existing annotations to properly support Clang's capability
+> > analysis.
+> >
+> > The old annotations distinguished between RCU, RCU_BH, and RCU_SCHED.
+> > However, it does not make sense to acquire rcu_read_lock_bh() after
+> > rcu_read_lock() - annotate the _bh() and _sched() variants to also
+> > acquire 'RCU', so that Clang (and also Sparse) can warn about it.
+>
+> You lost me on this one.  What breaks if rcu_read_lock_bh() is invoked
+> while rcu_read_lock() is in effect?
 
-> > 1. A trapping unaligned LDx_L operation results in the pair of adjacent
-> >    aligned whole data quantities spanned being read and stored for the
-> >    reference with a subsequent STx_C operation, along with the width of
-> >    the data accessed and its virtual address, and the task referring or
-> >    NULL if the kernel.  The validity marker is set.
-> 
-> So I have a couple of comments. I don't care deeply because I do think
-> alpha is dead, but for completeness:
-> 
->  (a) I don't think the task checking is correct.
-> 
-> You're only checking the task pointer, so what can happen is that a
-> task exits and another starts up with the same task pointer value, and
-> it all matches across one task doing a ld_l and another doing a st_c.
-> 
-> Does this matter? No. You'd literally have to *try* to create that
-> situation with identical mis-aligned addresses and data contents, and
-> an exit after a 'ld_l', and doing a 'st_c' in the new task without the
-> matching ld_l.
-> 
-> So I suspect this works in practice, but it's still worth mentioning.
+I thought something like this does not make sense:
 
- It's an interesting corner case, but executing STx_C without preceding 
-matching LDx_L is hardly useful and depending on the circumstances may or 
-may not cause unpredictable results.  We can make it a part of the psABI 
-that such usage is not supported.  Otherwise we could clear `ll_bit' in 
-a task's termination path.
+  rcu_read_lock_bh();
+  ..
+  rcu_read_lock();
+  ..
+  rcu_read_unlock();
+  ..
+  rcu_read_unlock_bh();
 
->  (b) this is not truly atomic wrt concurrent aligned non-trapping
-> operations to the same words. Or in fact to current trapping ones,
-> since you end up inevitably releasing the spinlock before the final
-> stc emulation.
+However, the inverse may well be something we might find somewhere in
+the kernel?
+Another problem was that if we want to indicate that "RCU" read lock
+is held, then we should just be able to write
+"__must_hold_shared(RCU)", and it shouldn't matter if rcu_read_lock()
+or rcu_read_lock_bh() was used. Previously each of them acquired their
+own capability "RCU" and "RCU_BH" respectively. But rather, we're
+dealing with one acquiring a superset of the other, and expressing
+that is also what I attempted to solve.
+Let me rethink this...
 
- It is not supposed to be.  The only objective of this code is to protect 
-the *unchanged* part of the longword/quadword.
-
-> I think this is fundamental and non-fixable, because the stc is done
-> as two operations, and the first can succeed with the second failing
-> (or they can both succeed, just interleaved with other accesses).
-
- It is absolutely fine and by design.  Atomicity of the unaligned store of 
-the quantity itself is not guaranteed by this sequence, just as it is not 
-with the original one using a pair of STQ_U operations, where a concurrent 
-write to the same location may cause the parts of the quantity to become 
-inconsistent with each other.
-
- If the trapping code wanted to make the data quantity accessed atomic, it 
-should have declared it atomic as well as made it aligned, in which case 
-the compiler would have done the right thing, including padding/separation 
-from other data objects where necessary for the minimum width of data that 
-hardware can guarantee atomicity for.  And then we would not have arrived 
-in this emulation path in the first place.
-
-> Again, I don't think we care, and it works in practice, but it does
-> mean that I *really* think that:
-> 
->  (c) you should not handle the kernel case at all.
-> 
-> If the kernel does an unaligned ld_l/st_c, that's a fundamental kernel
-> bug. Don't emulate it. Particularly when the emulation fundamentally
-> is not truly atomic wrt other accesses.
-
- Good point actually, I think I mentally drove myself into a dead end 
-here.  Yes, absolutely, it is not expected to happen unless we have a bug 
-in our code somewhere!
-
-> Finally:
-> 
->  (d) I think you're doing a few too many inline asms by hand, and
-> you're masking the results too much.
-> 
-> On the read-side emulation, why do you do that
-> 
-> +               "1:     ldl %3,0(%5)\n"
-> +               "2:     ldl %4,4(%5)\n"
-> +               "       srl %3,%6,%1\n"
-> +               "       sll %4,%7,%2\n"
-> +               "       zapnot %1,15,%1\n"
-> +               "       zapnot %2,15,%2\n"
-> 
-> at all? Just do two aligned loads, and don't mask the bytes around
-> them. A *real* ldl/stc will fail not just when the exact bytes are
-> different, but when somebody has touched the same cacheline. So if the
-> aligned values have changed, you should fail the stc even if the
-> change was in other bytes.
-
- We do need to extract the bytes desired for the result of LDx_L though.
-
- Yes, it can be done in C, but the same stands for all the other emulation
-pieces here and yet they use inline assembly.  GCC is happy to do byte 
-extraction itself where necessary, it has machine description patterns for 
-that as it a fairly common operation (it does not for INSxH and MSKxH 
-though, they're handled as intrinsics only, which however we could use 
-instead).
-
- I think there is value in consistency, and with this piece written as 
-inline assembly you can spot the difference from the other variants right 
-away.  Or I could rewrite the byte extraction in C across other patterns.
-
-> And doing two aligned loads don't need any inline asm at all.
-
- Neither does unaligned loads, as GCC is happy to emit LDQ_U itself where 
-necessary, but we want to catch exceptions or we'd get an oops rather than 
-SIGSEGV.
-
-> On the st_c side, I think you're repeating the same inline asm twice,
-> and should have a single helper.
-
- The masks are different as are displacements, but a good point otherwise.  
-I think this guarantees the prologue to the atomic loop to go away, which 
-is a good thing, but I'll yet double-check the quality of code produced.
-
-> Is this a NAK for the patch? No. But I do think it should be massaged a bit.
-
- Thank you for your review, I'll post v2 once I'm done with the massage.
-
-  Maciej
+Thanks,
+-- Marco
 
