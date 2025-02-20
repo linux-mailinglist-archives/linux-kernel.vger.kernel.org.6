@@ -1,117 +1,144 @@
-Return-Path: <linux-kernel+bounces-524849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 617B2A3E7D5
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 23:55:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6993AA3E7D9
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 23:57:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C009B174C84
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 22:55:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7448C19C4D4F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 22:57:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 364A0264F8A;
-	Thu, 20 Feb 2025 22:55:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E626A264F99;
+	Thu, 20 Feb 2025 22:56:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="p8cRiakL"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC6571EE006;
-	Thu, 20 Feb 2025 22:55:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Q2GieosC"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 074B21EE00D;
+	Thu, 20 Feb 2025 22:56:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740092103; cv=none; b=YiEY0e7bE7CWROMmkBO7wSnpg36ntKl3/4NmlaCbfpqcWFgWOaUY7iQ53fW89BMeWqCP2iSmel2napXJ5rtItf606VJ3S280IvVnFtxsajHc8F9JQPf58rKFyunKMHI+4bzTvh+uN/814IGuzSAImUViL/5wspJ2vzdaMjQ7sNk=
+	t=1740092216; cv=none; b=kCq9QrfVyGizHY6a55vhhQ9Z3yDZYjr2b1ud2L0Apd8P11y8QRSrxX7DtlCb2HMvzfjww3NEGLZmtTSx/VtaB2taRxXyIzmHPA9LNnx6ELFJS5XPCNyAceBtC+q7unw7o68MEEdDZl1BHZhUCcuF0hxAz+y7/SLyw4byWqnsmm8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740092103; c=relaxed/simple;
-	bh=DktQpxtauAC5g+lipDBJYaL7npm7F09OzqG0cjR/2ng=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=a4p99ACRCHmoZzAPODfw02LoSYQQfKwE+WT0/yPR4ME6GXkdhKwxPtSnpg9dZ0Mp7HaN/nslzJupDGHv87nPaWmUUR8Xh+wmitDQV6YKg029zaISN9YHs5RtWNRAzt/cq+iMYJX2gxBTqt4CdU7RVeOX1TbXfP06SQFH1VerNFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=p8cRiakL; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
-	Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=oSKKJbUYqziujy0RHotnIyr9o5/uqZVZjvk3oBazYKc=; b=p8cRiakL6Gtp2ex5re1Nep60ng
-	ZcekMOH8a6yqPllf61zcfcjMctyQZaOmIQJyR2f2dk2SM5P8gQpwKBR3AVthxcLbcG2wrf3DsdTnz
-	4qBwZ8FTdFnY2tmvd0VHkqzEm1EWI6Hr69NzRA3ilLXSqQ4f/14qkuAXLrzAHfDyYSr+XCegIKuWJ
-	qOY0R4EUwUinbuOQfSs5woXat9S36i9MnAanR5oWtfP3RBPt5x7RannGh/6ibXXb8YaTrf4nz1Kdh
-	AebWqrETkL7EGxaC0JDyyl1zev29P/vkzlrrgsj0IuHJKer4V0ms0btAmjJacgdsnO1YEmvBhBi+A
-	GMPf6/Hw==;
-Received: from i53875bc0.versanet.de ([83.135.91.192] helo=localhost.localdomain)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1tlFRa-0003ww-Ld; Thu, 20 Feb 2025 23:54:58 +0100
-From: Heiko Stuebner <heiko@sntech.de>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org
-Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	liujianfeng1994@gmail.com,
-	sebastian.reichel@collabora.com,
-	cristian.ciocaltea@collabora.com,
-	Heiko Stuebner <heiko@sntech.de>
-Subject: [PATCH] clk: check for disabled clock-provider in of_clk_get_hw_from_clkspec
-Date: Thu, 20 Feb 2025 23:54:48 +0100
-Message-ID: <20250220225448.2763166-1-heiko@sntech.de>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1740092216; c=relaxed/simple;
+	bh=jNbotbdljxASTCIceywi5vZ2u+PemybdGK21+XfLCm8=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=onjG/a2glRwjWzLVpl+yX99MVU7YFJ8Jx0f4ZIp1jjJt+vzHjCj4w5i99Iv9kH8MKej4jm9ThYgee6xnOnJWyXkovvmj+HAcFKJCRlP1gxhIfdtOTj4/w74gWsGXiOuHlo/ZDxFGlwVKc7xJg60+losA/SCh+v7n608XYx1kj9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=Q2GieosC; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [192.168.35.166] (c-24-22-154-137.hsd1.wa.comcast.net [24.22.154.137])
+	by linux.microsoft.com (Postfix) with ESMTPSA id B124E203E3BD;
+	Thu, 20 Feb 2025 14:56:53 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com B124E203E3BD
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1740092214;
+	bh=KlJ9o1tnOHtBaPAGwZpy5EIMcQfR5rWT7Vt3LiKDITw=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=Q2GieosC+3/oYYgrljt3B37PLvNhNYiMztvtqhlGOuRpi5Ru0KepULlpYPCdIUW+t
+	 5+e1L9PeqJP6iAnpVjrYeNs22r1EIpjq34qfQXy5dNzHcjFJ1gIUWCrudkgl2ADUkN
+	 Sat9JveKOeA4IyootCFsExr2mHOcF/a2WPNi4XKY=
+Message-ID: <a29af204-e4a9-4ef2-b5b8-f99f2ac0a836@linux.microsoft.com>
+Date: Thu, 20 Feb 2025 14:56:53 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Cc: Nuno Das Neves <nunodasneves@linux.microsoft.com>,
+ "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+ "iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+ "mhklinux@outlook.com" <mhklinux@outlook.com>, eahariha@linux.microsoft.com,
+ KY Srinivasan <kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>,
+ "wei.liu@kernel.org" <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+ "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+ "will@kernel.org" <will@kernel.org>, "tglx@linutronix.de"
+ <tglx@linutronix.de>, "mingo@redhat.com" <mingo@redhat.com>,
+ "bp@alien8.de" <bp@alien8.de>,
+ "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+ "x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
+ "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
+ "joro@8bytes.org" <joro@8bytes.org>,
+ "robin.murphy@arm.com" <robin.murphy@arm.com>, "arnd@arndb.de"
+ <arnd@arndb.de>,
+ "jinankjain@linux.microsoft.com" <jinankjain@linux.microsoft.com>,
+ "muminulrussell@gmail.com" <muminulrussell@gmail.com>,
+ "skinsburskii@linux.microsoft.com" <skinsburskii@linux.microsoft.com>
+Subject: Re: [PATCH v2 2/3] hyperv: Change hv_root_partition into a function
+To: MUKESH RATHOR <mukeshrathor@microsoft.com>
+References: <1740076396-15086-1-git-send-email-nunodasneves@linux.microsoft.com>
+ <1740076396-15086-3-git-send-email-nunodasneves@linux.microsoft.com>
+ <5980eaf9-2e77-d0ec-e39b-b48913c8b72f@microsoft.com>
+From: Easwar Hariharan <eahariha@linux.microsoft.com>
+Content-Language: en-US
+In-Reply-To: <5980eaf9-2e77-d0ec-e39b-b48913c8b72f@microsoft.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-of_clk_get_hw_from_clkspec checks all available clock-providers by
-compairing their of-nodes to the one from the clkspec. If no matching
-clock-provider is found, the function returns EPROBE_DEFER to cause a
-re-check at a later date.
+On 2/20/2025 1:59 PM, MUKESH RATHOR wrote:
+> 
+> 
+> On 2/20/25 10:33, Nuno Das Neves wrote:
+>  > Introduce hv_current_partition_type to store the partition type
+>  > as an enum.
+>  >
+>  > Right now this is limited to guest or root partition, but there will
+>  > be other kinds in future and the enum is easily extensible.
+>  >
+>  > Set up hv_current_partition_type early in Hyper-V initialization with
+>  > hv_identify_partition_type(). hv_root_partition() just queries this
+>  > value, and shouldn't be called before that.
+>  >
+>  > Making this check into a function sets the stage for adding a config
+>  > option to gate the compilation of root partition code. In particular,
+>  > hv_root_partition() can be stubbed out always be false if root
+>  > partition support isn't desired.
+>  >
+>  > Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+>  > ---
+>  >   arch/arm64/hyperv/mshyperv.c       |  2 ++
+>  >   arch/x86/hyperv/hv_init.c          | 10 ++++-----
+>  >   arch/x86/kernel/cpu/mshyperv.c     | 24 ++------------------
+>  >   drivers/clocksource/hyperv_timer.c |  4 ++--
+>  >   drivers/hv/hv.c                    | 10 ++++-----
+>  >   drivers/hv/hv_common.c             | 35 +++++++++++++++++++++++++-----
+>  >   drivers/hv/vmbus_drv.c             |  2 +-
+>  >   drivers/iommu/hyperv-iommu.c       |  4 ++--
+>  >   include/asm-generic/mshyperv.h     | 15 +++++++++++--
+>  >   9 files changed, 61 insertions(+), 45 deletions(-)
+>  >
 
-If a matching clock-provider is found, a authoritative answer can be
-retrieved from it whether the clock exists or not.
+<snip>
 
-This does not take into account that the clock-provider may never appear,
-because it's node is disabled. This can happen for example when a clock
-is optional, provided by a separate block which just never gets enabled.
+>  > @@ -34,8 +34,11 @@
+>  >   u64 hv_current_partition_id = HV_PARTITION_ID_SELF;
+>  >   EXPORT_SYMBOL_GPL(hv_current_partition_id);
+>  >
+>  > +enum hv_partition_type hv_current_partition_type;
+>  > +EXPORT_SYMBOL_GPL(hv_current_partition_type);
+>  > +
+> 
+> nit: if possible and not too late, can we please use more Unix
+> style naming, eg, hv_curr_ptid and hv_curr_pt_type rather than this
+> long windows style names that causes unnecessary line wraps/splits.
+> 
+> Thanks,
+> -Mukesh
+> 
 
-One example of this happening is the rk3588's VOP, which has optional
-additional display-clock-supplies coming from PLLs inside the hdmiphy
-blocks. These can be used for better rates, but the system will also
-work without them.
+Per https://docs.kernel.org/process/coding-style.html#naming
 
-The problem around that is described in the followups to:
-https://lore.kernel.org/dri-devel/20250215-vop2-hdmi1-disp-modes-v1-3-81962a7151d6@collabora.com/
+GLOBAL variables (to be used only if you really need them) need to have descriptive names,
+as do global functions. If you have a function that counts the number of active users,
+you should call that count_active_users() or similar, you should not call it cntusr().
 
-As we already know the of-node of the presumed clock-provider, just add
-a check via of_device_is_available whether this is a "valid" device node.
-This prevents ethernal defer-loops.
-
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
----
- drivers/clk/clk.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index cf7720b9172f..50faafbf5dda 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -5258,6 +5258,10 @@ of_clk_get_hw_from_clkspec(struct of_phandle_args *clkspec)
- 	if (!clkspec)
- 		return ERR_PTR(-EINVAL);
- 
-+	/* Check if node in clkspec is in disabled/fail state */
-+	if (!of_device_is_available(clkspec->np))
-+		return ERR_PTR(-ENOENT);
-+
- 	mutex_lock(&of_clk_mutex);
- 	list_for_each_entry(provider, &of_clk_providers, link) {
- 		if (provider->node == clkspec->np) {
--- 
-2.47.2
-
+Thanks,
+Easwar (he/him)
 
