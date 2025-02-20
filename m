@@ -1,443 +1,345 @@
-Return-Path: <linux-kernel+bounces-524894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DFE7A3E877
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 00:29:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9508A3E879
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 00:29:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DA7619C38B2
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 23:29:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D52019C395D
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 23:29:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09FC42676C9;
-	Thu, 20 Feb 2025 23:28:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 209B52676C6;
+	Thu, 20 Feb 2025 23:29:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hB81PmVz"
-Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="IZ0IVFe2";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="wO/oAGus"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 348D92641C3;
-	Thu, 20 Feb 2025 23:28:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740094136; cv=none; b=ZCsDNKf3jGf6ft1po5aj3eCvAi0FLxVBhj6DJvA8QoLSBOZN/Nu/FREUUr1JaRHrNGg08RVVKIAcTqyn11nxvNkrJRe7pIZRXZ6RRJ++RD/sf+m0n2pwIO0OrE6r3xnsatez7jFhAH6u8d6DagOgyOvMpq1TvOcf+bkmAGwRUE0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740094136; c=relaxed/simple;
-	bh=qsZieKwzHxab8YO/Yz6ndIukc27UE3PZsrR3sqbXunY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Me782pDd0bOFWOieo5ETmH3agjWacePfXe+KP8jFbld2vfT75xMq7AQ9IMXpwdawslPWmILemeNPmqIISaqKHjtxKrqk8VbCtd1YfDAocNH8UPbSqpSMLQju3d9ZEtnk7q7BtjoKzbL+ceenOKZHcWSvIFqEtcHbl/E7B4DuCmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hB81PmVz; arc=none smtp.client-ip=209.85.222.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7c0bb7328fbso158605885a.2;
-        Thu, 20 Feb 2025 15:28:53 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C31A264F99
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 23:29:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740094155; cv=fail; b=LPN1odHiu1dXuQo8I+1nw3pqkkfDOrpV2Csozq02uHp6OiuYoXdWGUx9enPQ3rlJn2PDjIPaCThSE/rLdL1SluSOWNkBxNfo6wdg3T1csytO7Q727BQ7JRs2h+Abd9NFGDEDKfXgquc9UJ0S66Gc15GfHH0e6U3jR7UGmhWP+yw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740094155; c=relaxed/simple;
+	bh=p0yu4+Azt3H5w3aGxOL4YIautkDXLMc1NqsBoO98JZ0=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=FtVGq+BI/fMbCnfQxVpFGLpG+plQ3TE+mnomaaKUNAnMMgacctsAgzuhNIB0bXt0xa4gx055nubC8pljMg1xZYUfMBJUeGdr8RUhfki93DY1QafY1x6pd+DFE8bwCzeCzJtXdXMGUOwQpFm5gde4o8ecBUg9gmQlSHDTxSENGY4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=IZ0IVFe2; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=wO/oAGus; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51KLrYE4014125;
+	Thu, 20 Feb 2025 23:28:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	corp-2023-11-20; bh=dTIWcoea5jyuSP+KCLd/gAbh+q6ofn3UO3hP693mTbA=; b=
+	IZ0IVFe2L0s+ehSdTgsNT0I6nyGQHkSNO2LX7FUWS1j7c9KsD8FDV13iHomu9Q2q
+	udYo51nWV/WAiFgD1tl7R5s4W1azjADqFGb676aEFZ+Rlj00rz4Aaiwlvr34HCM8
+	WZU0Nt/zaFJ/URGVOcPTBBsMAQ30BrtLgQAisX3jEkU/LzYiX624dcXPNecCEgt1
+	EzmS/nYEyD62Yy4XQXD/Pk7hd+6AvfxHLmTB6PXkmsVAJyUFnRPrnpCt1hUq4zRq
+	GzdCoy4kK7jbSulbQpHBCoiFBGaWuuBWwcqRT6Y0agtwYBPqQ6WCCWHhFn/VMsen
+	OtPm7Yvyo0txrKHam2AZVA==
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 44w00n58gk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 20 Feb 2025 23:28:55 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 51KN9lB4010593;
+	Thu, 20 Feb 2025 23:28:55 GMT
+Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12lp2171.outbound.protection.outlook.com [104.47.55.171])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 44w07fqgq7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 20 Feb 2025 23:28:55 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=JmawsnkTkJFy3nbKTAaqKe2CnMklOTr+i45qPNk4aCWqFCBakwINlWNttomyhsX7G7iAmJBel/BxISO7KxdRfzlmzOInHSOzzZk5tixwUj7Ni4ZDFd+j1iqnDxude8ipipkG14rvLPbm5bClrbu7Beai8f96oBuKq/u8ypR8ET7mPOzhl4yLelyEEs0SPI5jsDyvPVD2ivJLMBThL5IehDc893jF5NROBKSIOV7z7U9TGoUYqbznzOJGzYT1kkokmlNATAenr7tHg9KaYV/85gsXD6VXtFn+z4gAaaa82qW33lylNbf8Xz5gXhmCBb/UdLG9uPSm0cCzD0ND/OhIfQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=dTIWcoea5jyuSP+KCLd/gAbh+q6ofn3UO3hP693mTbA=;
+ b=oQ7RlLPGm7whIDG9GRBzZgCvflI+GEBKhNR37gVIoWJXJXWokOBTw0+OuD3anBtAk/1rYydmO0l9M1V8jEwt0FgPREqslxuqDo2es0YWtFGCWmvIpXF1ayhh2JKtx8sBJrckyNFqzO0nt+7TXJKmtAeg/2UGSS7KKt6kA6CElb7IRu00piNBJJwrEU0WG2tyaHjYz36LGELHwl6AdwXgU52TBQnue0yFJ7uknd4M7jvTUXW2v+i/VCh7Xl7Ii0PHjGjXGyPu/FjbItS4UtwiToQQ4+Lja7aQ8fGdu18UBlJulQf2jOhtDXQGmCeygsOE2MPn+vxMbCf0/zqHHXzmFA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740094133; x=1740698933; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=A7nsjQsOdLCanrHBE5ga+GmcstPuckFgM2UOaW0NXKA=;
-        b=hB81PmVz5U2VhSjxEhjeUDS3DDgT5SwNtHUtq3T4HbpozrZHKktHwSvMkoGlELhbi4
-         c4JRRHTmSrCs4/6btdnsUkHJJZwzmMCHUal1mdacM9hh3SPFRWvqwW23Xu/V8X+f6/WE
-         Y8hVCndQku/Tj3SufHfe6Bf310WiiqKunmnOtcURmrHMX35XgNsjxw/p0k65qV8f1ezJ
-         gQG4be0lkfonRV/IbkQDIRxpc7X49RLQ20PyjIgXW6Glhsx0opm8LVYc6LCvYhO1H30Y
-         4pYlVqjrh4XNZG6VJVl6Mh159bER/O6J9/WePga/Zqgodsa+DOOsT17Zz4poHWjW/YXQ
-         K++g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740094133; x=1740698933;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=A7nsjQsOdLCanrHBE5ga+GmcstPuckFgM2UOaW0NXKA=;
-        b=nzhaK7VYNO8MI2Z+61yAkAhlwbw59uz+CY+5601zB8uEx8eowliw4uEmkqioH7M66e
-         rgg26TdXHolhmO8G0QiP6TTbIV782gJre1ieNNw3zGAsapfLp87zPAw5gjHdfJyNHrpy
-         Vl7AhE1KXWPWMldKdC4ukHa2orzjgtdELJ2BqyOX/IP0/tI7/MEMCFqJ92MW2Yzxqnol
-         uHO5noGyxZoU8bJlj/mFMYtK0ICDNWs9ioj+g6V2CG72Ind1YB2kGm2ukUX/B4OSJisy
-         ZuiA+wrNv7LgPRAetiFUpeKFa/pm9JsckTXlFm+A/EIrlrlbhqX2bcuXAe9Ty4pdWs46
-         BCng==
-X-Forwarded-Encrypted: i=1; AJvYcCWB4T3pfLbM52PWj79y4L0p78fwWJmz0J7vdxN1+YMTI/79RAIwP6PH8DRzoupRHIyqahbwpJN9LN5w2Sw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy18gJLGqx1lxDf8MUzJSCzyvzJefgVc94sL0jeUsw8NyOPBMpE
-	XI/5LKMj7gzL4JRz8Ug6FO+gF3Fn556h0WxDAhRqKi4ekeGV/GyrKLbzNGbu0PT+okAYIPFP8+M
-	yTp62emzz39LnIfd6deTuOXzTGnk=
-X-Gm-Gg: ASbGncuz9bk5SXVYeQwrreAutUVMT0yeYwyiV3EaWKsn//GVYrby7pjyhgQ/lykaL+J
-	o2V9qpyMkQ8O7Qfnn7FVOOGGtVLu8mUqQdpVNbw/vf3zdO2CWhV3BzCp+znRWL+VJaOb3MNpLUN
-	Ota/0ikugkrAWXK0Afj0E5GN09uRf3
-X-Google-Smtp-Source: AGHT+IEHXJcop8/Ak9HvfAznsV/aGJqQT005imbN1kpgP+gHn3wVTRj3bOocUNK7cMYkjPmFBvJMUnOB8fvHq11vZMk=
-X-Received: by 2002:a05:620a:46a3:b0:7c0:b185:a951 with SMTP id
- af79cd13be357-7c0ceee9997mr213049485a.5.1740094132794; Thu, 20 Feb 2025
- 15:28:52 -0800 (PST)
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=dTIWcoea5jyuSP+KCLd/gAbh+q6ofn3UO3hP693mTbA=;
+ b=wO/oAGusQ4pqMVBm3PyELayuUmHVVcAfF4Mac4l9oA8QXq33qTE6/f4KN+nwh1caxDvKSa7RXprl9iYYVyAWg5cpv2WsMUuu/UBgAtZ0chkxrYF1su4ymMBIlSOv9/9PCneHJ3nCvTAQPecD6Wv37LGdQAhVegNKYQsQ8Dsn0GI=
+Received: from MW5PR10MB5738.namprd10.prod.outlook.com (2603:10b6:303:19b::14)
+ by LV8PR10MB7822.namprd10.prod.outlook.com (2603:10b6:408:1e8::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.16; Thu, 20 Feb
+ 2025 23:28:50 +0000
+Received: from MW5PR10MB5738.namprd10.prod.outlook.com
+ ([fe80::187b:b241:398b:50eb]) by MW5PR10MB5738.namprd10.prod.outlook.com
+ ([fe80::187b:b241:398b:50eb%6]) with mapi id 15.20.8445.020; Thu, 20 Feb 2025
+ 23:28:50 +0000
+Message-ID: <47c49424-e24b-498a-9115-ace3fa4880e3@oracle.com>
+Date: Thu, 20 Feb 2025 17:28:49 -0600
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V3] jfs: Prevent copying of nlink with value 0 from disk
+ inode
+To: Edward Adam Davis <eadavis@qq.com>
+Cc: jfs-discussion@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+        syzbot+355da3b3a74881008e8f@syzkaller.appspotmail.com,
+        syzkaller-bugs@googlegroups.com
+References: <53b75296-d73e-40fe-88dd-9103f3edd3c1@oracle.com>
+ <tencent_AB576D46C3736DE3606961C3B7844CF76A05@qq.com>
+From: Dave Kleikamp <dave.kleikamp@oracle.com>
+Content-Language: en-US
+In-Reply-To: <tencent_AB576D46C3736DE3606961C3B7844CF76A05@qq.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: CH2PR05CA0008.namprd05.prod.outlook.com (2603:10b6:610::21)
+ To MW5PR10MB5738.namprd10.prod.outlook.com (2603:10b6:303:19b::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250206072102.29045-1-kanchana.p.sridhar@intel.com> <20250206072102.29045-17-kanchana.p.sridhar@intel.com>
-In-Reply-To: <20250206072102.29045-17-kanchana.p.sridhar@intel.com>
-From: Nhat Pham <nphamcs@gmail.com>
-Date: Thu, 20 Feb 2025 15:28:42 -0800
-X-Gm-Features: AWEUYZmqO_8pyUpV8OmZZT3mNE43hjKnnoLJe7KFKexIC-rIf29_dV6rwBTILuw
-Message-ID: <CAKEwX=PD8LNvacFP_JF=KO7R3mfjzTp+HyoEhGe06FQCOT0PaA@mail.gmail.com>
-Subject: Re: [PATCH v6 16/16] mm: zswap: Fix for zstd performance regression
- with 2M folios.
-To: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, hannes@cmpxchg.org, 
-	yosry.ahmed@linux.dev, chengming.zhou@linux.dev, usamaarif642@gmail.com, 
-	ryan.roberts@arm.com, 21cnbao@gmail.com, akpm@linux-foundation.org, 
-	linux-crypto@vger.kernel.org, herbert@gondor.apana.org.au, 
-	davem@davemloft.net, clabbe@baylibre.com, ardb@kernel.org, 
-	ebiggers@google.com, surenb@google.com, kristen.c.accardi@intel.com, 
-	wajdi.k.feghali@intel.com, vinodh.gopal@intel.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MW5PR10MB5738:EE_|LV8PR10MB7822:EE_
+X-MS-Office365-Filtering-Correlation-Id: 99bc4c69-e6cb-4dfb-ce84-08dd52065503
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?S3prT3F2ZEZMeHo1VXZWUUNrYWNlQms3eVRERy9hSHgyQk1EdmV1cXd2M2pt?=
+ =?utf-8?B?aXhSTHFLbnhSdHFuOWlKODNncEduN1NydzNVUHpFdU13UnZoellkUmF0RE83?=
+ =?utf-8?B?RkhHVWNmSmpwR0lra1FzaFFIOExuYitNamRBMnZVbW1Ud2grOGJyQ05rRmR4?=
+ =?utf-8?B?dVdFY3A5SzNsTTVDT01kTzVYVWphNHFWRUtseFU5NFFURFU2dVNnbG84RVd4?=
+ =?utf-8?B?V0xnRVZMeXZidVdLVUF6Nk11UlE5R1ZPRDQwYkxsWHc3dTgwZDBEUThGRkVw?=
+ =?utf-8?B?WklReFUvdWFWbTFEWXlpTXRjZ1RnM1R5MFVBN3hDVDAvV2xYdjJQQUpjVXE0?=
+ =?utf-8?B?a0o1T1I3K0grejZ6dWV4d2t0V3lOQ3g5alFod0RYMUJTaUVPeGk1RWdkL24y?=
+ =?utf-8?B?OGdkaEJZUVYyWXdMMkJOZDRCOFhLR3dyeVNxMDAwU2x2TWw2RDUzekhheFI3?=
+ =?utf-8?B?b0ZTbVJyUlI2QzhQRlhzMmwwcDk1Z2VXTGxYTXAxRnVERWV3R3YwWklIR2JH?=
+ =?utf-8?B?R01TQmZ4dkd6WHFydFNnZVVsSCszOWZWdVpIODBTbkcwZjBSbGhBVjhYeHg1?=
+ =?utf-8?B?YTNDRUdGcjNaMjQycFkvcjJhRlFMOHRlSGxBSkR5ait3VWRDMWFPVlBBR0x5?=
+ =?utf-8?B?Q201SjNiYTVZNHBuMHg2SkhJeTYxMGtJZkV6Smc4RUxGSWJscy92dzhxM0ZZ?=
+ =?utf-8?B?ck52dlhWVnRCWEtDNHFqc2hPRU4xWnlIdmRuR2lubW9sSHBNU1Jpb1k3STBG?=
+ =?utf-8?B?c1RhNStZN3hmYy90THlYQlJNalZTaWRmam92cG9EZXRodCtyZjNqUS9BTWlH?=
+ =?utf-8?B?REFoK3BoWGJsYU5hdHNGR1FNMTYzN1hYYXlNeXV6V1M0UGpsQ2JKWTF3TzZP?=
+ =?utf-8?B?WEhkS2J2em9jaG0zcmpHR2JhUytnYldTMURDUTZXeHFyMVZIeFpjYXdiRklD?=
+ =?utf-8?B?R3U5THhuZitGVFlUajZHZ2RFWlB6bjdESjRTaEUrWnVwME1YVTB4akhoNVVN?=
+ =?utf-8?B?SlIyL09LalNCS25pdlo4WmtUbTdEY3NNL0F0bCtYR3JJc2NyYlZhYU9naTk3?=
+ =?utf-8?B?d24ybXFhZzBQaDYrdkRlRDZlbHRleENqQTBhYjN4and3NDZENHUzaWtEQVVN?=
+ =?utf-8?B?aytFY0pPSUMvVmlBbkFvQ1RpUzFwRGhzUktIRUdkNjErV3NxaGxiOXhNdElZ?=
+ =?utf-8?B?emE1ekVRZC95ajNJSzJEcUpWbXBSK3R1QUhKcVpyaGZwM09OdGdwZk5MT3ZZ?=
+ =?utf-8?B?TkRaa1JqVzE1S1dJbFcxcmcxbVM1bWl0bTVrMFN4dExuRmhFWTl1ZWRZLzhW?=
+ =?utf-8?B?eDR5cm10cFVCRGFrOUNUMWw0TDd6QkE3clY3N29BM2Q1TFZkQWZuc1ZHaHl5?=
+ =?utf-8?B?MDRJWjJyS1NzYjljZnpWeHB4eU10NC9vUGg3UGRjTjd6QWpDOFJTZGFnWFV6?=
+ =?utf-8?B?bW1ibTN2dW1pb2FRN28vZ1BpQ3NCQXp5aUw1cHVtb21VRFk5WndxVEY5ejVW?=
+ =?utf-8?B?djl5WEw4ZFhCY1llSmx5T1p1S2N2THRMMXgzeHRabVg5SFBPZ2lxOVBxeEZW?=
+ =?utf-8?B?VnJ6RzJUY3dueWo4ZzBXeHQrNTBCU1hPMTY3MndiajhhT2ZLbkNBR3EzNTln?=
+ =?utf-8?B?QkdnMU9aNFM3TWxnNks1SitDSC9GaEkxOTB1L1d1bzVDZjNOd1BCK0U1bDBJ?=
+ =?utf-8?B?RnVGN3NTMnBnMDByYU9qckNrbS85YmVVZ3dZRHU3cWwyV25Cak02ek9PaThH?=
+ =?utf-8?B?RXhoelhrVk5TMlRaQlJLNHpOVG1OWFhqL3U4SzYvd2phYnBZckRtYTZCWDFI?=
+ =?utf-8?B?Zzh1Q0cvejQvbVpqNmsrdz09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW5PR10MB5738.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?K2Y5a2ZuL0QwNVJnVm41RkhFalN2eVhPeFNwU1NueEovUjIvT0RtVy9jTDUw?=
+ =?utf-8?B?QVJXa0FsL29RMEd5YjFLK2RqUldXZW1wUTZja3R0NzEySUVxU1N0YU9MS0Nw?=
+ =?utf-8?B?cFQraWdNV01YU2VqYTBVWGtVdGRKNVAvVGdoWHg4emJuWnkvbHVqTUl1T09q?=
+ =?utf-8?B?aWxrNmpQcGNoWGJYS1RMQ1RuV1IwMjBSeklYSGZ0YnJNVDFiSk9jYmRrMFIv?=
+ =?utf-8?B?WkZvaGo2UjlIb3N5bUdLQlJTQTlhaEI4N1dvKy83UkRlUTRkZEpmcHB5eEZ6?=
+ =?utf-8?B?Rm13R1pXSS9Wb3FTWU5CSmM3QzE5Q2FEc0dSdnpKcEQ3TjRkSWpVd3NjTS9S?=
+ =?utf-8?B?RXd3aUh2REdYWWZIN2tUSnoxVWQxTEZsVWdxUytVSHUzV3hjTDJBa3EvTFJh?=
+ =?utf-8?B?THJXWEQ5Z0JVRUlLTmR0eUQwZi9ZY2lpZUo2MWQrYjRVWlRtKzY3MjRPOEJh?=
+ =?utf-8?B?NTZkRkk1cHFnd3NXNktqU2pVZWFwR1pZR3c5Q1BoSVNTcHJwWTY3ZXpOSitP?=
+ =?utf-8?B?RFhuNC9Sd2FTbzEvM0kwNlhBU1NYS3VtSG0vUWk5NzdFMHJlbW9ZQnZ6ZXRI?=
+ =?utf-8?B?SUdCM0pYMmQ0eUpUbVNXU1RGRGFiRGZHLzliMFVZR21DMnEwcUUyZW41dmcx?=
+ =?utf-8?B?dWI2clY1SDVMZ3VZSmExbEpvM3hRWWJDT0tuRkpKUThnQzA4NFdSZVRoR0FB?=
+ =?utf-8?B?UDNJcXRBSmZUQVRtaXFVenZvcWVub1pydmo4eDg3WGFPd2E0Tm9JbGNSMXh6?=
+ =?utf-8?B?NWVPVXEzcUUyRGZLOFhtSDNHM0tNVDkwdURiMURFTXZIRjNCeFphejRUTi8z?=
+ =?utf-8?B?VG92ZjU1aTZYRkxEbmk5ZFpwT0NyV2NybGs4WjhhaEhjN21wM08wMXdGbE9Q?=
+ =?utf-8?B?RGVSeFVQT3l3dnYyRzQxeUFrTTh6VzUrODJPQ3N1Q1ZDY21GZDNCUzdkNGVQ?=
+ =?utf-8?B?aE1OTHh5NHRsY2ZMaExDUklOci81bVRPQUhOR3QzVVpTUjE0eW9ua092T3hY?=
+ =?utf-8?B?bUllL0w2TWtGeE1aVyswenVGdU5sdGJzQmZralhva2Zub0UrdDNkdFpRcTFv?=
+ =?utf-8?B?YThIb1hYTGgvbDN6dkNKNUNGaDhKSVB0RXQzQVpmZ0lkNXN6ZDRUOXFOMXBU?=
+ =?utf-8?B?anp4QlA3b0Q1RkIrS1h6T3dJRjFCbEgwZFpoanRpdzlFbU93TDBrZ3JrOFBC?=
+ =?utf-8?B?YU1TQTAzeHJ5Wm1yenBjb2hEditNd25oSmpkMXRYTDlyQk1OTkhLYytiZDY3?=
+ =?utf-8?B?bUJiemFhQ29hQVpSQjMreHdCVWc3ZEV2VXpNUEk4M005TUJjTHI3WXFtbDVG?=
+ =?utf-8?B?RVBvZmVxRVZsZlZibEwvcmk3eko1U3dDWGF2ZmZXWldBQUdVOFdBaFhDb0pi?=
+ =?utf-8?B?OGlKQUUxUVBjUEdWR1g1Q2pwRmdFY1p6LzNwOFZpWFRSM3BPWGE3ZGVmZXcy?=
+ =?utf-8?B?T0NRZzY5dTljOTRKc25xbVhwZ3gyQVkvK1phSFh1dUpEclJJVTh0Vkw2aXgv?=
+ =?utf-8?B?TVBhakVIYXkvTXAyK1BqWVFPNmt0eFE2YWJjaDRQZXZrdlM1L3o1SXBHK09D?=
+ =?utf-8?B?Z1c3WGNuYTJhK3hDZzNzaFpua2pXVE1zZDd2ZzIvUU1wVFNtYWt5YjhhWXBN?=
+ =?utf-8?B?TGJ0SWNsN055Z2J0MzJpSDdPWEw0ODNZZW5aTnRBWUJQTm5xb1l4dWxOWUZD?=
+ =?utf-8?B?RGUySHQ5ZTlCdGF1b1V4cGhONk0xYXUvRDVycFBDTDJKMG56VytEYklSMFpG?=
+ =?utf-8?B?SlFaTlJNNWtjY1lwWTBTdkNFM29abnUzdytmRE0zc1JpMU5wcW1HSVc4T1Zi?=
+ =?utf-8?B?K0FSaWNZdFp0a0dwOU55NUE1TlYyWkhBdytaZlI2dHBZblJUZWZlOUFWU0hJ?=
+ =?utf-8?B?S0FmZ3N2dG9KaXNFNFpuN1U5NmxmbDNlcmw0NEtTa0IzNkFmRE55SzBOM1RE?=
+ =?utf-8?B?b2NkR0hFWjZJZGVVOExZT0xHM1dHWmNXcm9DU09KTm5YNWc3YVlpUXVpVzV4?=
+ =?utf-8?B?cWZSZWV3YXBMaFROeEt1S0d5aUx2WDZzQWhTam52QURmZFErRkUxdERBK1Bw?=
+ =?utf-8?B?ZWFFaGs5Q2JiU052SG84UkhEK0dCS2RnOGVwS1R2YWhobnZodXlXY1VERVZy?=
+ =?utf-8?B?V2ppQ2lBRm8ybkh4dEc3Vjdnb0VMTmllWEJGeWg3L2dDR3BDRGJZbEZ4UjBi?=
+ =?utf-8?B?MVE9PQ==?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	BGCfBG2a95HOR51Zc8XCWgWc6aWVRiWz9eNL4IBKYa1jMWhR+N8wI9e4vsn+n3VZeefB2XbSLaKzh/EPs29xFPrMGmrIWnx9GRy+R7V9SrT8Q2hj2rtYkd9jTIZl47HX/BNfTbjy5alL5J2ONb1vGp65FotD6NxVaxbCXk3xUlI1MQiWrVaCwwtBkDNbwpRrpM/2hp0jvwC9gNWOweOucQSyXYKI25isueki1Z6yjw7eqoez3VF+JiZpYpbnJxcLK4mE7hcdV/clIzaJEYoGBewSwo+JpUTby0yl44IXQ0UpEITPoTgVojRnZbfSAP4p7utmUjXH7+a2ELjhuYDc+7Z7cc7ivIWJMgG63MEuvb75K4s8FVhLABJGWMmZypA1dXb/Aw3AgsElXjlxVAqk8UxoJ2+wCfa54cO218ZA+sAnZwDaArTb23ZN56rjp0vmSFGtdWuwywT/lUZiz5P1HAOPUbH95/FeSn+KYyo5IYzBC7N7Usf+4QwRRj0KvOhBFIqzfKoJl0PoEmFjiv4Tnwh7rQYANzb6SomovXUrQIMAicyUJRNRLy3rz9r8DgBu+s6yk2t9wIUQFp5T5Hi7PsSHTgIk61yl+rw20AeNpGM=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 99bc4c69-e6cb-4dfb-ce84-08dd52065503
+X-MS-Exchange-CrossTenant-AuthSource: MW5PR10MB5738.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Feb 2025 23:28:50.7337
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: z00KjGpt3rjFptngzZMRxUxlR3RzOLxocCII0EFtsZXZaI4DNOKhHggYcaDmOuixtArlvv/NxLZUGIz1YV/eIC8qWWN6NAP1RHOERfnEMow=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR10MB7822
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-20_09,2025-02-20_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 adultscore=0 bulkscore=0
+ mlxlogscore=999 malwarescore=0 suspectscore=0 spamscore=0 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2502100000
+ definitions=main-2502200156
+X-Proofpoint-ORIG-GUID: XFo5a1HrriH4U6o8SFOuHNI-qQoi4k3V
+X-Proofpoint-GUID: XFo5a1HrriH4U6o8SFOuHNI-qQoi4k3V
 
-On Wed, Feb 5, 2025 at 11:21=E2=80=AFPM Kanchana P Sridhar
-<kanchana.p.sridhar@intel.com> wrote:
->
-> With the previous patch that enables support for batch compressions in
-> zswap_compress_folio(), a 6.2% throughput regression was seen with zstd a=
-nd
-> 2M folios, using vm-scalability/usemem.
->
-> For compressors that don't support batching, this was root-caused to the
-> following zswap_store_folio() structure:
->
->  Batched stores:
->  ---------------
->  - Allocate all entries,
->  - Compress all entries,
->  - Store all entries in xarray/LRU.
+On 2/20/25 5:22PM, Edward Adam Davis wrote:
+> On Thu, 20 Feb 2025 10:15:04 -0600, Dave Kleikamp wrote:
+>>> syzbot report a deadlock in diFree. [1]
+>>>
+>>> When calling "ioctl$LOOP_SET_STATUS64", the offset value passed in is 4,
+>>> which does not match the mounted loop device, causing the mapping of the
+>>> mounted loop device to be invalidated.
+>>>
+>>> When creating the directory and creating the inode of iag in diReadSpecial(),
+>>> read the page of fixed disk inode (AIT) in raw mode in read_metapage(), the
+>>> metapage data it returns is corrupted, which causes the nlink value of 0 to be
+>>> assigned to the iag inode when executing copy_from_dinode(), which ultimately
+>>> causes a deadlock when entering diFree().
+>>>
+>>> To avoid this, first check the nlink value of dinode before setting iag inode.
+>>>
+>>> [1]
+>>> WARNING: possible recursive locking detected
+>>> 6.12.0-rc7-syzkaller-00212-g4a5df3796467 #0 Not tainted
+>>> --------------------------------------------
+>>> syz-executor301/5309 is trying to acquire lock:
+>>> ffff888044548920 (&(imap->im_aglock[index])){+.+.}-{3:3}, at: diFree+0x37c/0x2fb0 fs/jfs/jfs_imap.c:889
+>>>
+>>> but task is already holding lock:
+>>> ffff888044548920 (&(imap->im_aglock[index])){+.+.}-{3:3}, at: diAlloc+0x1b6/0x1630
+>>>
+>>> other info that might help us debug this:
+>>>    Possible unsafe locking scenario:
+>>>
+>>>          CPU0
+>>>          ----
+>>>     lock(&(imap->im_aglock[index]));
+>>>     lock(&(imap->im_aglock[index]));
+>>>
+>>>    *** DEADLOCK ***
+>>>
+>>>    May be due to missing lock nesting notation
+>>>
+>>> 5 locks held by syz-executor301/5309:
+>>>    #0: ffff8880422a4420 (sb_writers#9){.+.+}-{0:0}, at: mnt_want_write+0x3f/0x90 fs/namespace.c:515
+>>>    #1: ffff88804755b390 (&type->i_mutex_dir_key#6/1){+.+.}-{3:3}, at: inode_lock_nested include/linux/fs.h:850 [inline]
+>>>    #1: ffff88804755b390 (&type->i_mutex_dir_key#6/1){+.+.}-{3:3}, at: filename_create+0x260/0x540 fs/namei.c:4026
+>>>    #2: ffff888044548920 (&(imap->im_aglock[index])){+.+.}-{3:3}, at: diAlloc+0x1b6/0x1630
+>>>    #3: ffff888044548890 (&imap->im_freelock){+.+.}-{3:3}, at: diNewIAG fs/jfs/jfs_imap.c:2460 [inline]
+>>>    #3: ffff888044548890 (&imap->im_freelock){+.+.}-{3:3}, at: diAllocExt fs/jfs/jfs_imap.c:1905 [inline]
+>>>    #3: ffff888044548890 (&imap->im_freelock){+.+.}-{3:3}, at: diAllocAG+0x4b7/0x1e50 fs/jfs/jfs_imap.c:1669
+>>>    #4: ffff88804755a618 (&jfs_ip->rdwrlock/1){++++}-{3:3}, at: diNewIAG fs/jfs/jfs_imap.c:2477 [inline]
+>>>    #4: ffff88804755a618 (&jfs_ip->rdwrlock/1){++++}-{3:3}, at: diAllocExt fs/jfs/jfs_imap.c:1905 [inline]
+>>>    #4: ffff88804755a618 (&jfs_ip->rdwrlock/1){++++}-{3:3}, at: diAllocAG+0x869/0x1e50 fs/jfs/jfs_imap.c:1669
+>>>
+>>> stack backtrace:
+>>> CPU: 0 UID: 0 PID: 5309 Comm: syz-executor301 Not tainted 6.12.0-rc7-syzkaller-00212-g4a5df3796467 #0
+>>> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+>>> Call Trace:
+>>>    <TASK>
+>>>    __dump_stack lib/dump_stack.c:94 [inline]
+>>>    dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+>>>    print_deadlock_bug+0x483/0x620 kernel/locking/lockdep.c:3037
+>>>    check_deadlock kernel/locking/lockdep.c:3089 [inline]
+>>>    validate_chain+0x15e2/0x5920 kernel/locking/lockdep.c:3891
+>>>    __lock_acquire+0x1384/0x2050 kernel/locking/lockdep.c:5202
+>>>    lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5825
+>>>    __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+>>>    __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
+>>>    diFree+0x37c/0x2fb0 fs/jfs/jfs_imap.c:889
+>>>    jfs_evict_inode+0x32d/0x440 fs/jfs/inode.c:156
+>>>    evict+0x4e8/0x9b0 fs/inode.c:725
+>>>    diFreeSpecial fs/jfs/jfs_imap.c:552 [inline]
+>>>    duplicateIXtree+0x3c6/0x550 fs/jfs/jfs_imap.c:3022
+>>>    diNewIAG fs/jfs/jfs_imap.c:2597 [inline]
+>>>    diAllocExt fs/jfs/jfs_imap.c:1905 [inline]
+>>>    diAllocAG+0x17dc/0x1e50 fs/jfs/jfs_imap.c:1669
+>>>    diAlloc+0x1d2/0x1630 fs/jfs/jfs_imap.c:1590
+>>>    ialloc+0x8f/0x900 fs/jfs/jfs_inode.c:56
+>>>    jfs_mkdir+0x1c5/0xba0 fs/jfs/namei.c:225
+>>>    vfs_mkdir+0x2f9/0x4f0 fs/namei.c:4257
+>>>    do_mkdirat+0x264/0x3a0 fs/namei.c:4280
+>>>    __do_sys_mkdirat fs/namei.c:4295 [inline]
+>>>    __se_sys_mkdirat fs/namei.c:4293 [inline]
+>>>    __x64_sys_mkdirat+0x87/0xa0 fs/namei.c:4293
+>>>    do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>>>    do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>>>    entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>>
+>> I'm taking this patch, but making a change. It's a little cleaner to check ip->i_nlink after calling copy_from_dinode.
+>>
+>>>
+>>> Reported-by: syzbot+355da3b3a74881008e8f@syzkaller.appspotmail.com
+>>> Closes: https://syzkaller.appspot.com/bug?extid=355da3b3a74881008e8f
+>>> Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+>>> ---
+>>> V1 -> V2: if the nlink of disk inode is 0 return -EIO
+>>> V2 -> V3: move the checking to diReadSpecial
+>>>
+>>> ---
+>>>    fs/jfs/jfs_imap.c | 2 +-
+>>>    1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> diff --git a/fs/jfs/jfs_imap.c b/fs/jfs/jfs_imap.c
+>>> index 0cedaccb7218..25bb3485da3b 100644
+>>> --- a/fs/jfs/jfs_imap.c
+>>> +++ b/fs/jfs/jfs_imap.c
+>>> @@ -460,7 +460,7 @@ struct inode *diReadSpecial(struct super_block *sb, ino_t inum, int secondary)
+>>>    	dp += inum % 8;		/* 8 inodes per 4K page */
+>>>    
+>>>    	/* copy on-disk inode to in-memory inode */
+>>> -	if ((copy_from_dinode(dp, ip)) != 0) {
+>>> +	if (!le32_to_cpu(dp->di_nlink) || (copy_from_dinode(dp, ip)) != 0) {
+>>>    		/* handle bad return by returning NULL for ip */
+>>>    		set_nlink(ip, 1);	/* Don't want iput() deleting it */
+>>>    		iput(ip);
+>>
+>> My change:
+>>
+>> diff --git a/fs/jfs/jfs_imap.c b/fs/jfs/jfs_imap.c
+>> index 298445f6d3d4..ecb8e05b8b84 100644
+>> --- a/fs/jfs/jfs_imap.c
+>> +++ b/fs/jfs/jfs_imap.c
+>> @@ -456,7 +456,7 @@ struct inode *diReadSpecial(struct super_block *sb, ino_t inum, int secondary)
+>>    	dp += inum % 8;		/* 8 inodes per 4K page */
+>>    
+>>    	/* copy on-disk inode to in-memory inode */
+>> -	if ((copy_from_dinode(dp, ip)) != 0) {
+>> +	if ((copy_from_dinode(dp, ip) != 0) || (ip->i_nlink == 0)) {
+> This is incorrect. The purpose of adding this check is to prevent copy_from_dinode()
+> from using dip->i_nlink with a value of 0 to assign to ip.
+>>    		/* handle bad return by returning NULL for ip */
+>>    		set_nlink(ip, 1);	/* Don't want iput() deleting it */
 
-Can you clarify why the above structure leads to performance regression?
+It will get set  to 1 right here ^^^
 
->
-> Hence, the above structure is maintained only for batched stores, and the
-> following structure is implemented for sequential stores of large folio p=
-ages,
-> that fixes the zstd regression, while preserving common code paths for ba=
-tched
-> and sequential stores of a folio:
->
->  Sequential stores:
->  ------------------
->  For each page in folio:
->   - allocate an entry,
->   - compress the page,
->   - store the entry in xarray/LRU.
->
-> This is submitted as a separate patch only for code review purposes. I wi=
-ll
-> squash this with the previous commit in subsequent versions of this
-> patch-series.
->
-> Signed-off-by: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
-> ---
->  mm/zswap.c | 193 ++++++++++++++++++++++++++++++-----------------------
->  1 file changed, 111 insertions(+), 82 deletions(-)
->
-> diff --git a/mm/zswap.c b/mm/zswap.c
-> index f1cba77eda62..7bfc720a6201 100644
-> --- a/mm/zswap.c
-> +++ b/mm/zswap.c
-> @@ -1592,40 +1592,32 @@ static bool zswap_batch_compress(struct folio *fo=
-lio,
->         return ret;
->  }
->
-> -static bool zswap_compress_folio(struct folio *folio,
-> -                                struct zswap_entry *entries[],
-> -                                struct zswap_pool *pool)
-> +static __always_inline bool zswap_compress_folio(struct folio *folio,
-> +                                                struct zswap_entry *entr=
-ies[],
-> +                                                long from_index,
-> +                                                struct zswap_pool *pool,
-> +                                                unsigned int batch_size,
-> +                                                struct crypto_acomp_ctx =
-*acomp_ctx)
->  {
-> -       long index, nr_pages =3D folio_nr_pages(folio);
-> -       struct crypto_acomp_ctx *acomp_ctx;
-> -       unsigned int batch_size;
-> +       long index =3D from_index, nr_pages =3D folio_nr_pages(folio);
->         bool ret =3D true;
->
-> -       acomp_ctx =3D acomp_ctx_get_cpu_lock(pool);
-> -       batch_size =3D acomp_ctx->nr_reqs;
-> -
->         if ((batch_size > 1) && (nr_pages > 1)) {
-> -               for (index =3D 0; index < nr_pages; index +=3D batch_size=
-) {
-> +               for (; index < nr_pages; index +=3D batch_size) {
->
->                         if (!zswap_batch_compress(folio, index, batch_siz=
-e,
->                                                   &entries[index], pool, =
-acomp_ctx)) {
->                                 ret =3D false;
-> -                               goto unlock_acomp_ctx;
-> +                               break;
->                         }
->                 }
->         } else {
-> -               for (index =3D 0; index < nr_pages; ++index) {
-> -                       struct page *page =3D folio_page(folio, index);
-> +               struct page *page =3D folio_page(folio, index);
->
-> -                       if (!zswap_compress(page, entries[index], pool, a=
-comp_ctx)) {
-> -                               ret =3D false;
-> -                               goto unlock_acomp_ctx;
-> -                       }
-> -               }
-> +               if (!zswap_compress(page, entries[index], pool, acomp_ctx=
-))
-> +                       ret =3D false;
->         }
->
-> -unlock_acomp_ctx:
-> -       acomp_ctx_put_unlock(acomp_ctx);
->         return ret;
->  }
->
-> @@ -1637,92 +1629,128 @@ static bool zswap_compress_folio(struct folio *f=
-olio,
->   * handles to ERR_PTR(-EINVAL) at allocation time, and the fact that the
->   * entry's handle is subsequently modified only upon a successful zpool_=
-malloc()
->   * after the page is compressed.
-> + *
-> + * For compressors that don't support batching, the following structure
-> + * showed a performance regression with zstd/2M folios:
-> + *
-> + * Batched stores:
-> + * ---------------
-> + *  - Allocate all entries,
-> + *  - Compress all entries,
-> + *  - Store all entries in xarray/LRU.
-> + *
-> + * Hence, the above structure is maintained only for batched stores, and=
- the
-> + * following structure is implemented for sequential stores of large fol=
-io pages,
-> + * that fixes the regression, while preserving common code paths for bat=
-ched
-> + * and sequential stores of a folio:
-> + *
-> + * Sequential stores:
-> + * ------------------
-> + * For each page in folio:
-> + *  - allocate an entry,
-> + *  - compress the page,
-> + *  - store the entry in xarray/LRU.
->   */
->  static bool zswap_store_folio(struct folio *folio,
->                                struct obj_cgroup *objcg,
->                                struct zswap_pool *pool)
->  {
-> -       long index, from_index =3D 0, nr_pages =3D folio_nr_pages(folio);
-> +       long index =3D 0, from_index =3D 0, nr_pages, nr_folio_pages =3D =
-folio_nr_pages(folio);
->         struct zswap_entry **entries =3D NULL;
-> +       struct crypto_acomp_ctx *acomp_ctx;
->         int node_id =3D folio_nid(folio);
-> +       unsigned int batch_size;
->
-> -       entries =3D kmalloc(nr_pages * sizeof(*entries), GFP_KERNEL);
-> +       entries =3D kmalloc(nr_folio_pages * sizeof(*entries), GFP_KERNEL=
-);
->         if (!entries)
->                 return false;
->
-> -       for (index =3D 0; index < nr_pages; ++index) {
-> -               entries[index] =3D zswap_entry_cache_alloc(GFP_KERNEL, no=
-de_id);
-> +       acomp_ctx =3D acomp_ctx_get_cpu_lock(pool);
-> +       batch_size =3D acomp_ctx->nr_reqs;
->
-> -               if (!entries[index]) {
-> -                       zswap_reject_kmemcache_fail++;
-> -                       nr_pages =3D index;
-> -                       goto store_folio_failed;
-> +       nr_pages =3D (batch_size > 1) ? nr_folio_pages : 1;
-> +
-> +       while (1) {
-> +               for (index =3D from_index; index < nr_pages; ++index) {
-> +                       entries[index] =3D zswap_entry_cache_alloc(GFP_KE=
-RNEL, node_id);
-> +
-> +                       if (!entries[index]) {
-> +                               zswap_reject_kmemcache_fail++;
-> +                               nr_pages =3D index;
-> +                               goto store_folio_failed;
-> +                       }
-> +
-> +                       entries[index]->handle =3D (unsigned long)ERR_PTR=
-(-EINVAL);
->                 }
->
-> -               entries[index]->handle =3D (unsigned long)ERR_PTR(-EINVAL=
-);
-> -       }
-> +               if (!zswap_compress_folio(folio, entries, from_index, poo=
-l, batch_size, acomp_ctx))
-> +                       goto store_folio_failed;
->
-> -       if (!zswap_compress_folio(folio, entries, pool))
-> -               goto store_folio_failed;
-> +               for (index =3D from_index; index < nr_pages; ++index) {
-> +                       swp_entry_t page_swpentry =3D page_swap_entry(fol=
-io_page(folio, index));
-> +                       struct zswap_entry *old, *entry =3D entries[index=
-];
->
-> -       for (index =3D 0; index < nr_pages; ++index) {
-> -               swp_entry_t page_swpentry =3D page_swap_entry(folio_page(=
-folio, index));
-> -               struct zswap_entry *old, *entry =3D entries[index];
-> +                       old =3D xa_store(swap_zswap_tree(page_swpentry),
-> +                               swp_offset(page_swpentry),
-> +                               entry, GFP_KERNEL);
-> +                       if (xa_is_err(old)) {
-> +                               int err =3D xa_err(old);
->
-> -               old =3D xa_store(swap_zswap_tree(page_swpentry),
-> -                              swp_offset(page_swpentry),
-> -                              entry, GFP_KERNEL);
-> -               if (xa_is_err(old)) {
-> -                       int err =3D xa_err(old);
-> +                               WARN_ONCE(err !=3D -ENOMEM, "unexpected x=
-array error: %d\n", err);
-> +                               zswap_reject_alloc_fail++;
-> +                               from_index =3D index;
-> +                               goto store_folio_failed;
-> +                       }
->
-> -                       WARN_ONCE(err !=3D -ENOMEM, "unexpected xarray er=
-ror: %d\n", err);
-> -                       zswap_reject_alloc_fail++;
-> -                       from_index =3D index;
-> -                       goto store_folio_failed;
-> -               }
-> +                       /*
-> +                        * We may have had an existing entry that became =
-stale when
-> +                        * the folio was redirtied and now the new versio=
-n is being
-> +                        * swapped out. Get rid of the old.
-> +                        */
-> +                       if (old)
-> +                               zswap_entry_free(old);
->
-> -               /*
-> -                * We may have had an existing entry that became stale wh=
-en
-> -                * the folio was redirtied and now the new version is bei=
-ng
-> -                * swapped out. Get rid of the old.
-> -                */
-> -               if (old)
-> -                       zswap_entry_free(old);
-> +                       /*
-> +                        * The entry is successfully compressed and store=
-d in the tree, there is
-> +                        * no further possibility of failure. Grab refs t=
-o the pool and objcg,
-> +                        * charge zswap memory, and increment zswap_store=
-d_pages.
-> +                        * The opposite actions will be performed by zswa=
-p_entry_free()
-> +                        * when the entry is removed from the tree.
-> +                        */
-> +                       zswap_pool_get(pool);
-> +                       if (objcg) {
-> +                               obj_cgroup_get(objcg);
-> +                               obj_cgroup_charge_zswap(objcg, entry->len=
-gth);
-> +                       }
-> +                       atomic_long_inc(&zswap_stored_pages);
->
-> -               /*
-> -                * The entry is successfully compressed and stored in the=
- tree, there is
-> -                * no further possibility of failure. Grab refs to the po=
-ol and objcg,
-> -                * charge zswap memory, and increment zswap_stored_pages.
-> -                * The opposite actions will be performed by zswap_entry_=
-free()
-> -                * when the entry is removed from the tree.
-> -                */
-> -               zswap_pool_get(pool);
-> -               if (objcg) {
-> -                       obj_cgroup_get(objcg);
-> -                       obj_cgroup_charge_zswap(objcg, entry->length);
-> +                       /*
-> +                        * We finish initializing the entry while it's al=
-ready in xarray.
-> +                        * This is safe because:
-> +                        *
-> +                        * 1. Concurrent stores and invalidations are exc=
-luded by folio lock.
-> +                        *
-> +                        * 2. Writeback is excluded by the entry not bein=
-g on the LRU yet.
-> +                        *    The publishing order matters to prevent wri=
-teback from seeing
-> +                        *    an incoherent entry.
-> +                        */
-> +                       entry->pool =3D pool;
-> +                       entry->swpentry =3D page_swpentry;
-> +                       entry->objcg =3D objcg;
-> +                       entry->referenced =3D true;
-> +                       if (entry->length) {
-> +                               INIT_LIST_HEAD(&entry->lru);
-> +                               zswap_lru_add(&zswap_list_lru, entry);
-> +                       }
->                 }
-> -               atomic_long_inc(&zswap_stored_pages);
->
-> -               /*
-> -                * We finish initializing the entry while it's already in=
- xarray.
-> -                * This is safe because:
-> -                *
-> -                * 1. Concurrent stores and invalidations are excluded by=
- folio lock.
-> -                *
-> -                * 2. Writeback is excluded by the entry not being on the=
- LRU yet.
-> -                *    The publishing order matters to prevent writeback f=
-rom seeing
-> -                *    an incoherent entry.
-> -                */
-> -               entry->pool =3D pool;
-> -               entry->swpentry =3D page_swpentry;
-> -               entry->objcg =3D objcg;
-> -               entry->referenced =3D true;
-> -               if (entry->length) {
-> -                       INIT_LIST_HEAD(&entry->lru);
-> -                       zswap_lru_add(&zswap_list_lru, entry);
-> -               }
-> +               from_index =3D nr_pages++;
-> +
-> +               if (nr_pages > nr_folio_pages)
-> +                       break;
->         }
->
-> +       acomp_ctx_put_unlock(acomp_ctx);
->         kfree(entries);
->         return true;
->
-> @@ -1734,6 +1762,7 @@ static bool zswap_store_folio(struct folio *folio,
->                 zswap_entry_cache_free(entries[index]);
->         }
->
-> +       acomp_ctx_put_unlock(acomp_ctx);
->         kfree(entries);
->         return false;
->  }
-> --
-> 2.27.0
->
+>>    		iput(ip);
+> BR,
+> Edward
+> 
+
 
