@@ -1,216 +1,244 @@
-Return-Path: <linux-kernel+bounces-522919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85EB4A3D01B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 04:37:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF542A3D020
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 04:43:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 509D9177E27
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 03:37:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB4841899C6D
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 03:43:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 529F11CDA0B;
-	Thu, 20 Feb 2025 03:37:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31C1B1D9A70;
+	Thu, 20 Feb 2025 03:42:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MN4xHLvK"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="Jmux3xhH"
+Received: from out203-205-221-209.mail.qq.com (out203-205-221-209.mail.qq.com [203.205.221.209])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BBF04C6C
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 03:37:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A87B61C4A16
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 03:42:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.209
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740022632; cv=none; b=aicL+zdn/EhpeHxyhn7oysQBzSowhZc+vtmXBjwGLO3T6KkgR6czcskmhHQehczOU1etS2tqvMBYAL0TxlJlkJemAw71zOla+1fRbJNVYkiNSBWX/4FLhpKyQ983hqGrc9Do+LUgpppxzhbkGOtEDg724Iym/zd3m1YZ6mdY9f4=
+	t=1740022978; cv=none; b=r0oWXM5STWgDhBa30wPEBV6bkm07QrIZyctj25/KqNkyUqyVWfSwODAFPRiNfaSGOD7/TVz6y16+dyWW2aWcAAOVU99F+uSKBOjJN5zBGwzLiikPM5xCzglvQW8/EyNOJ6E8dOjAsALAEygXMCXmQ2KVps30YXZ23qjjWRlJExE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740022632; c=relaxed/simple;
-	bh=hjRpAsgp90Evyaus4Ci9Ilku5xvI5AxJXA77lXsijFU=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=IiUxX4NHljc+QmtYrJw0bX5eZpwBwtxDW3gXuhqMkZ5r6tWFstvH87B22ZRY0Z59PJR2NW1PO57yu5+T5Hpael0hT1Z6dSjgNr+Ko5ERh0YVpfxf4PbvKleF+wFlCj03RttKO8nTqdWI1DEVQyiYrj/JOMbkbUtytRa5gL2pSDo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MN4xHLvK; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740022629;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3ow4Bas2JrZurs245FgxS4YuHQc9ZSsOuYeCiBScV/U=;
-	b=MN4xHLvKMakPgeF+MGB1Qon+5LnhTwnbahUorOdWuRGMk3gTp4naoV1Lo+2h1UWrbu8PO6
-	nTiZKRSyaXUDLvoQEpHnFuYNAAb0FNUBwt305B6gByfj9cFZ6taGf47tyUKf8qzFL3Rw/V
-	2koueqVt4lTwXJ9GvsgeMAdwn9R97Vs=
-Received: from mail-oi1-f197.google.com (mail-oi1-f197.google.com
- [209.85.167.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-520-xY8xrQWFOWOR6YnO42fd_g-1; Wed, 19 Feb 2025 22:37:07 -0500
-X-MC-Unique: xY8xrQWFOWOR6YnO42fd_g-1
-X-Mimecast-MFC-AGG-ID: xY8xrQWFOWOR6YnO42fd_g_1740022627
-Received: by mail-oi1-f197.google.com with SMTP id 5614622812f47-3f40e8dabdbso148389b6e.2
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 19:37:07 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740022627; x=1740627427;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3ow4Bas2JrZurs245FgxS4YuHQc9ZSsOuYeCiBScV/U=;
-        b=oCoKIhACE5udvE01X4xeKHjA5SsDZxy26DWkjT5eCWnvsk5O3DqjCBObc5GzHjOU1X
-         FnhU0mfhUV48ydZHNFD7MCS4Tvsrwe5CUUVRJuB3tIv3Ta2UCdcUuDoz5VhHvLFsl0N+
-         ZGbm5NQczJ4lanhPuPy76k4M5N0lO0eUqQ96zJ4cNdWEDleNtZ3hmRYq/FuB79y7Z54n
-         FAigq14FQzFl4t+QHz2Rc12xOpC8YaqqGi0O2Vdh3wD8YwWCXl+YjjY+EaY4eICEGkx9
-         RPYiZBknq7ssHLbtv+EJjPVkSnwCAMEp49ND1luSE1C4W8mx1fdnEHfw8rJh7Wi6VxSv
-         kHKg==
-X-Forwarded-Encrypted: i=1; AJvYcCXDh0gZTFmNLddYys1PibXiSQ7VC61mtG3CBoqHu9IRkOSdJHlCGyEAol2NlZbmB3G16/syJCFAjdyFwxU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLuePUUb0ar2Jwzdi9c3Ik0td9HKJep1m3+9qH/sd9P3LveYjp
-	EQNRBk436jJ8JRFgCOrKO6dlgob5TwH04OEDD48ywVy5awCZNMiZ9FFvLFXMRPiB2n5A4nHjjCa
-	9Re+H1gOM22xiCrfbZpizdE8VlVgHn+/49eQGvifJAHDGeLnYdfnGrV+OVJiMDA==
-X-Gm-Gg: ASbGnctPUHX5KMCS3gxfliN7fXBtXgvI9X6IcLgpm2aIyXwqM0zD3WuTqViSinE/AFB
-	xN+11OZGoMHgnR2QcXkoJy69TmrdiDQQgF6WquS8ci4OTzLZYrFjxidFUgKxQ5BV6QcE+X+TBjX
-	dNxRrdKS+oor5ecySbhDZDGxqXcB1Glgf+KfjkwaKumINm0T6cgLjhcMmuYJoBEritpg4Og8C2S
-	mBdbhCWsIJFDsLn4wJHr2IApGeYiTcMOb6O0lGL8EiF6Jt7qjRvvj6qzUPHkqAMTLfRAZqmY//w
-	Tl1ZZfch9pouBMgjyrVUi4xxPkjwUa8HLkGRF4IHWbG2quRD
-X-Received: by 2002:a05:6808:152b:b0:3f4:11b3:fe10 with SMTP id 5614622812f47-3f411b400c4mr4020783b6e.23.1740022626872;
-        Wed, 19 Feb 2025 19:37:06 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGtkqiQcRzaHD+Wga6oKqyRvebB42mVXu8FpnN1eMTxKeDPKC2F/l/pMGLPnwDIv/XvwUbczQ==
-X-Received: by 2002:a05:6808:152b:b0:3f4:11b3:fe10 with SMTP id 5614622812f47-3f411b400c4mr4020762b6e.23.1740022626471;
-        Wed, 19 Feb 2025 19:37:06 -0800 (PST)
-Received: from ?IPV6:2601:188:c100:5710:627d:9ff:fe85:9ade? ([2601:188:c100:5710:627d:9ff:fe85:9ade])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5fceba25fe7sm1657333eaf.37.2025.02.19.19.37.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Feb 2025 19:37:05 -0800 (PST)
-From: Waiman Long <llong@redhat.com>
-X-Google-Original-From: Waiman Long <longman@redhat.com>
-Message-ID: <bb5886cc-a512-4a59-98c7-f21128ab6194@redhat.com>
-Date: Wed, 19 Feb 2025 22:37:04 -0500
+	s=arc-20240116; t=1740022978; c=relaxed/simple;
+	bh=Ajw4pG0ev5Bnl5ToC1yPOZWqbvcdoYkdElP8zGPfIyM=;
+	h=Message-ID:Content-Type:Mime-Version:Subject:From:In-Reply-To:
+	 Date:Cc:References:To; b=I+OVqTz4HDI3l0Gxjr7dpJkzmvDk7IYkhrIz6wOnVF8GnEmssNm84Ekzt+ykyNJMj/b3nZ4/WnOzF1cjgbdCk0DzavQW7naB4MPiHym2eEAUgl5LoZn7EZ+tlddZLhvFDbO8aI+3CAQowyAzo4956vGvcMs0Sncy3JsrhPvLzQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cyyself.name; spf=pass smtp.mailfrom=cyyself.name; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=Jmux3xhH; arc=none smtp.client-ip=203.205.221.209
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cyyself.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyyself.name
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1740022663; bh=QrztbhIzhEGt6f3MGaPx3+gUNHg1v0QODEPxhGsrfR4=;
+	h=Subject:From:In-Reply-To:Date:Cc:References:To;
+	b=Jmux3xhHpiWhhxGFY2yykB2gNrlZWrcjz8P2lBKHeTcyN0ExnhtfdD3xnNHGyx+gR
+	 m4gTLaOd/CQh1EDG++xyvGA05uyJqTgTbKMjZqciFR3PoLlXJK/YCwcpDUinWrBko9
+	 LZPJxj3lP2w15VWvahIxGZcuMGzDXEQVosgVRj2g=
+Received: from smtpclient.apple ([2408:8207:18a0:b53f:e516:fb34:5948:11a1])
+	by newxmesmtplogicsvrszc11-0.qq.com (NewEsmtp) with SMTP
+	id 966A72EB; Thu, 20 Feb 2025 11:37:38 +0800
+X-QQ-mid: xmsmtpt1740022658t0dl3oa06
+Message-ID: <tencent_F70BEE494C40C8752302DF97608DF680E306@qq.com>
+X-QQ-XMAILINFO: NY3HYYTs4gYSd8sfm6LPIWrV+Z0MsMT1ELpP2j1ne2+F7AJakzc5o2w+7Ea9/L
+	 r1plFCfFbwppqIwvN68tO2uPPWIqp/qMqXbJANZAvRVJEdPpD70OXwegSNuVJJ/zQjgaaXpu85j0
+	 aS+2JjqONPqm61y5sc/kd90nJ2o7mUg8msNuGfR6DXnRbZ8UWNXo15cs07pmlHKCEKdXaDjE1Bhp
+	 IaQRdSW/jcF68mst7X1gIjAayzETZoOq2nnCTtdXI4Kcejo9wxfkRA0eJhTGYRpp7gUtbtM3kZSE
+	 qFmttZiIp9Aylbb2yLhabRykQsh3Hz1Lf8NXE0NKs+3TRME938r6ttXmMFMw7QtnTlRI0/D4u4au
+	 qbdL8Hfac9nUSU/C/Pw2cju+C/HsjpZZNTLz3cOR3SpuImGUdn87YdAbd/+KzlWR1tRMHywqbLGQ
+	 Dgpg5XO3sWXCTNyiMuDUN6AdRABY77lCIQ3UePEmnDv7GWq+59BJwLQEaG3cqAw2sCbpS3SLScHv
+	 jdjAK/rczEfjRxEyDPNV/Zi9UJPDcfzm4eb/2RskNBpgR8NmJ6mVfTgXMc+LJxupS4szuMtuRVBf
+	 NxKcmGGJz48c3F+nNk2fhXTnSXVfizzOMyFscU5syfcbzGSEfUYNhplX71l6n4/Dg3gqzTg7QIwv
+	 yXAlNdnDrdygvmq0Z9pjUUjXw5rm3VKor1R2IFEbp5AY5c6fGEejLjEcKo+35XOgZnVE9nxRQJYb
+	 +hNuB23jGA8WQcR2Ukwjd8PtdozrCqiDkQ07SYsL3zXDQM95wIm8Uxav1sL1PO18+5c7+yzQig8N
+	 SfGwRXaTQpkwcDI3MF0xPlEwX7eM4saLuAcqahO7A3tKEOTCwDRM9kY0snAePzWStq3b3N1djRpb
+	 /aGn81KIa1YKhw1Gvrjh8tZ8KoUIbRi3MIZjhto66G7Phf6qr5FGg4newHxdX4KCtEh2/ywtMwK3
+	 XyWxGwPJdrto8K43jVl+uYlrnpkfEFXZ8uqt9w1DrIA8clrGaSdQ==
+X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] hung_task: Show the blocker task if the task is hung
- on mutex
-To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
- Waiman Long <llong@redhat.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Will Deacon <will@kernel.org>, Andrew Morton <akpm@linux-foundation.org>,
- Boqun Feng <boqun.feng@gmail.com>, Joel Granados <joel.granados@kernel.org>,
- Anna Schumaker <anna.schumaker@oracle.com>, Lance Yang
- <ioworker0@gmail.com>, Kent Overstreet <kent.overstreet@linux.dev>,
- Yongliang Gao <leonylgao@tencent.com>, Tomasz Figa <tfiga@chromium.org>,
- Sergey Senozhatsky <senozhatsky@chromium.org>, linux-kernel@vger.kernel.org,
- Linux Memory Management List <linux-mm@kvack.org>
-References: <173997003868.2137198.9462617208992136056.stgit@mhiramat.tok.corp.google.com>
- <173997004932.2137198.7959507113210521328.stgit@mhiramat.tok.corp.google.com>
- <20250219112308.5d905680@gandalf.local.home>
- <0fa9dd8e-2d83-487e-bfb1-1f5d20cd9fe6@redhat.com>
- <20250219152435.35077ac3@gandalf.local.home>
- <db4ee5e9-56bb-408c-85e7-f93e2c3226dc@redhat.com>
- <20250220075639.298616eb494248d390417977@kernel.org>
- <d8c01f69-34c0-45cf-a532-83544a3a3efd@redhat.com>
- <20250219204153.65ed1f5e@gandalf.local.home>
- <9f9150b4-1cf5-4380-b431-419f70775a7d@redhat.com>
- <20250220115904.051e0cc55a9cb88302582ef4@kernel.org>
-Content-Language: en-US
-In-Reply-To: <20250220115904.051e0cc55a9cb88302582ef4@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.400.131.1.6\))
+Subject: Re: [PATCH 0/2] perf vendor events arm64: Add A720/A520
+ events/metrics
+From: Yangyu Chen <cyy@cyyself.name>
+In-Reply-To: <CAP-5=fWXmNoFLyWv+vo7hhLSqTDy7hf+-huKRD9OUWnO-GESRw@mail.gmail.com>
+Date: Thu, 20 Feb 2025 11:37:28 +0800
+Cc: Namhyung Kim <namhyung@kernel.org>,
+ James Clark <james.clark@linaro.org>,
+ linux-perf-users@vger.kernel.org,
+ John Garry <john.g.garry@oracle.com>,
+ Will Deacon <will@kernel.org>,
+ Mike Leach <mike.leach@linaro.org>,
+ Leo Yan <leo.yan@linux.dev>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ Liang Kan <kan.liang@linux.intel.com>,
+ Yoshihiro Furudera <fj5100bi@fujitsu.com>,
+ linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+X-OQ-MSGID: <4EC06A50-E35D-42EF-8219-E6CAF007A620@cyyself.name>
+References: <tencent_5360DA048EE5B8CF3104213F8D037C698208@qq.com>
+ <Z66YjGvjD_yzEHUg@google.com>
+ <tencent_45B4E91CA370C563D6420A1A25F992056D09@qq.com>
+ <1b8b234f-6435-45cf-83e7-8e86c84f075f@linaro.org>
+ <CAP-5=fVAhLLH-a0_wLo8dPoMLOb6rOJiTgGh-OFZJJoaLFE-8Q@mail.gmail.com>
+ <fe46069e-c52e-45ee-b4b3-8b929fb83b31@linaro.org>
+ <Z7UHieRRnvRb5_oU@google.com>
+ <CAP-5=fWXmNoFLyWv+vo7hhLSqTDy7hf+-huKRD9OUWnO-GESRw@mail.gmail.com>
+To: Ian Rogers <irogers@google.com>
+X-Mailer: Apple Mail (2.3826.400.131.1.6)
 
-On 2/19/25 9:59 PM, Masami Hiramatsu (Google) wrote:
-> On Wed, 19 Feb 2025 21:15:08 -0500
-> Waiman Long <llong@redhat.com> wrote:
->
->> On 2/19/25 8:41 PM, Steven Rostedt wrote:
->>> On Wed, 19 Feb 2025 20:36:13 -0500
->>> Waiman Long <llong@redhat.com> wrote:
->>>
->>>    
->>>>>>>> this field, we don't need to take lock, though taking the wait_lock may
->>>>>>>> still be needed to examine other information inside the mutex.
->>>>> Do we need to take it just for accessing owner, which is in an atomic?
->>>> Right. I forgot it is an atomic_long_t. In that case, no lock should be
->>>> needed.
->>> Now if we have a two fields to read:
->>>
->>> 	block_flags (for the type of lock) and blocked_on (for the lock)
->>>
->>> We need a way to synchronize the two. What happens if we read the type, and
->>> the task wakes up and and then blocks on a different type of lock?
->>>
->>> Then the lock read from blocked_on could be a different type of lock than
->>> what is expected.
->> That is different from reading the owner. In this case, we need to use
->> smp_rmb()/wmb() to sequence the read and write operations unless it is
->> guaranteed that they are in the same cacheline. One possible way is as
->> follows:
->>
->> Writer - setting them:
->>
->>       WRITE_ONCE(lock)
->>       smp_wmb()
->>       WRITE_ONCE(type)
->>
->> Clearing them:
->>
->>       WRITE_ONCE(type, 0)
->>       smp_wmb()
->>       WRITE_ONCE(lock, NULL)
->>
->> Reader:
->>
->>       READ_ONCE(type)
->> again:
->>       smp_rmb()
->>       READ_ONCE(lock)
->>       smp_rmb()
->>       if (READ_ONCE(type) != type)
->>           goto again
-> What about mutex-rwsem-mutex case?
->
-> mutex_lock(&lock1);
-> down_read(&lock2);
-> mutex_lock(&lock3);
->
-> The worst scenario is;
->
-> WRITE_ONCE(lock, &lock1)
-> smp_wmb()
-> WRITE_ONCE(type, MUTEX)     READ_ONCE(type) -> MUTEX
-> WRITE_ONCE(type, 0)
-> smp_wmb()
-> WRITE_ONCE(lock, NULL)
-> WRITE_ONCE(lock, &lock2)    READ_ONCE(lock) -> &lock2
-> smp_wmb()
-> WRITE_ONCE(type, RWSEM)
-> WRITE_ONCE(type, 0)
-> smp_wmb()
-> WRITE_ONCE(lock, NULL)
-> WRITE_ONCE(lock, &lock3)
-> smp_wmb()
-> WRITE_ONCE(type, MUTEX)     READ_ONCE(type) -> MUTEX == MUTEX
-> WRITE_ONCE(type, 0)
-> smp_wmb()
-> WRITE_ONCE(lock, NULL)
->
->                              "OK, lock2 is a MUTEX!"
->
-> So unless stopping the blocker task, we can not ensure this works.
-> But unless decode the lock, we don't know the blocker task.
 
-That could only happen if the reader can get interrupted/preempted for a 
-long time. In that case, we may need to reread the lock again to be sure 
-that they are stable.
 
-Cheers,
-Longman
+> On 19 Feb 2025, at 06:33, Ian Rogers <irogers@google.com> wrote:
+>=20
+> On Tue, Feb 18, 2025 at 2:19=E2=80=AFPM Namhyung Kim =
+<namhyung@kernel.org> wrote:
+>>=20
+>> On Tue, Feb 18, 2025 at 09:30:23AM +0000, James Clark wrote:
+>>>=20
+>>>=20
+>>> On 18/02/2025 12:41 am, Ian Rogers wrote:
+>>>> On Fri, Feb 14, 2025 at 2:02=E2=80=AFAM James Clark =
+<james.clark@linaro.org> wrote:
+>>>>>=20
+>>>>>=20
+>>>>>=20
+>>>>> On 14/02/2025 5:49 am, Yangyu Chen wrote:
+>>>>>>=20
+>>>>>>=20
+>>>>>>> On 14 Feb 2025, at 09:12, Namhyung Kim <namhyung@kernel.org> =
+wrote:
+>>>>>>>=20
+>>>>>>> Hello,
+>>>>>>>=20
+>>>>>>> On Thu, Feb 13, 2025 at 11:11:01PM +0800, Yangyu Chen wrote:
+>>>>>>>> This patchset adds the perf JSON files for the Cortex-A720 and =
+Cortex-A520
+>>>>>>>> processors. Some events have been tested on Raxda Orion 6 with =
+Cix P1 SoC
+>>>>>>>> (8xA720 + 4xA520) running mainline Kernel with ACPI mode.
+>>>>>>>=20
+>>>>>>> I'm curious how the name of PMUs look like.  It is cortex_a720 =
+(or a520)?
+>>>>>>=20
+>>>>>> The name of PMUs comes from Arm's documentation. I have included =
+these
+>>>>>> links in each patch.
+>>>>>>=20
+>>>>>>> I remember there's a logic to check the length of hex digits at =
+the end.
+>>>>>>>=20
+>>>>>>=20
+>>>>>> Could you provide more details about this?
+>>>>>>=20
+>>>>>>> Ian, are you ok with this?
+>>>>>>>=20
+>>>>>=20
+>>>>> I think they wouldn't be merged because they're core PMUs, so =
+should be
+>>>>> fine? Even though they would otherwise be merged because they're =
+more
+>>>>> than 3 hex digits.
+>>>>=20
+>>>> Do we know the PMU names? If they are cortex_a520 and cortex_a720 =
+then
+>>>=20
+>>> It will be "armv9_cortex_a720" from this line:
+>>>=20
+>>>  PMUV3_INIT_SIMPLE(armv9_cortex_a720)
+>>=20
+>> I see, thanks!
+>>=20
+>>>=20
+>>>> this comment at least reads a little stale:
+>>>> =
+https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/t=
+ree/tools/perf/util/pmus.c?h=3Dperf-tools-next#n76
+>>>> ```
+>>>> /*
+>>>> * There is a '_{num}' suffix. For decimal suffixes any length
+>>>> * will do, for hexadecimal ensure more than 2 hex digits so
+>>>> * that S390's cpum_cf PMU doesn't match.
+>>>> */
+>>>> ```
+>>>> James is right that core PMUs aren't put on the same list as =
+uncore/other PMUs.
+>>=20
+>> Ok, then I guess we're good.
+>=20
+> I think you may be able to do things that look odd, like today the
+> "i915" PMU can be called just "i", I think the a520/a720 naming will
+> allow "armv9_cortex/cycles/" as an event name, then open it on two
+> PMUs if they are present. We may only show one PMU in perf list as
+> that code I think assumes they're the same PMU as they only differ by
+> suffix:
+> =
+https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/t=
+ree/tools/perf/util/pmus.c?h=3Dperf-tools-next#n384
+> I can imagine aggregation possibly being broken, but I think that
+> works off the number of PMUs not the names of the PMUs, so it should
+> be okay. Probably the only thing broken that matter is perf list when
+> you have a BIG.little system with a520 and a720, this may be broken
+> with say a a53 and a72 today as both of those suffix lengths are >2,
+> but maybe they use the "armv8._pmuv3_0", "armv8._pmuv3_1", etc. naming
+> convention. I suspect the >2 here:
+> =
+https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/t=
+ree/tools/perf/util/pmus.c?h=3Dperf-tools-next#n80
+> would still work and be correct if it were >4. If that changes then
+> this will also need to change:
+> =
+https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/t=
+ree/Documentation/ABI/testing/sysfs-bus-event_source-devices?h=3Dperf-tool=
+s-next#n12
+>=20
+> Thanks,
+> Ian
+>=20
 
->
-> Maybe we can run the hung_task in stop_machine()?
-> (or introduce common_lock)
->
-> Thank you,
->
+On my system, the names of PMUs are `armv8_pmuv3_0` and
+`armv8_pmuv3_1`:
+
+```
+$ ls /sys/bus/event_source/devices/
+armv8_pmuv3_0  armv8_pmuv3_1  breakpoint  kprobe  software  tracepoint  =
+uprobe
+```
+
+I searched for ACPI DSDT on my platform, but there's no mention of
+a720 or a520. I haven't delved into the PMU kernel driver yet.
+
+Additionally, there's a more significant problem for aarch64
+BIG.little platforms when two or more types of cores don't have the
+same PMUs. The perf list can only display the core PMUs on core0
+unless we use the PERF_CPUID env to override it. This is because
+perf will only probe the first MIDR here:
+=
+https://github.com/torvalds/linux/blob/87a132e73910e8689902aed7f2fc229d690=
+8383b/tools/perf/arch/arm64/util/header.c#L60
+
+However, I think this doesn't block this patch for adding events and =
+metrics?
+
+
+Thanks,
+Yangyu Chen
+
+>>=20
+>> Thanks,
+>> Namhyung
 
 
