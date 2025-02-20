@@ -1,282 +1,143 @@
-Return-Path: <linux-kernel+bounces-523668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CA25A3D9D5
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:22:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 189AFA3D9D6
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:23:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98B3F16664B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:21:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8CBA17E86E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:22:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED9AD1F9406;
-	Thu, 20 Feb 2025 12:20:49 +0000 (UTC)
-Received: from smtp-8fac.mail.infomaniak.ch (smtp-8fac.mail.infomaniak.ch [83.166.143.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FE9B1F584F
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 12:20:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2064D1F542E;
+	Thu, 20 Feb 2025 12:21:03 +0000 (UTC)
+Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55F4F1F1523
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 12:20:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740054049; cv=none; b=YvzJ1P+VBEdLJEn/JYdgvCdCxRRjYSRW5xURHiMUd+lfYmb8Ul4wh59AOo7EEcaOEKGdI3eeoNiB7C/vE+6VB1pid6Bzm+u1tJ5QOGTs5KSxu8vnkRaBqJIiEraFpr0UhZCUVVe2+NgdbC4YRwQFGOxlVvnXGcWoS2UixMeI3tI=
+	t=1740054062; cv=none; b=LioAy8oAaPbXkkq/xuZa+s/fO5CgW9SvSvQLhTuBdEckM+GtlCr7g2Gnb61XkYrgCU0NJUfFGfXuSTUl3QMRCxxbUobb4IPTl7mz5vy+kdePPnqpixjo37PrYiQA0e8odjvVwmVCZZ1cu0ONs4u6bSERKVLtejE21LXIyvUCi5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740054049; c=relaxed/simple;
-	bh=Fhu01hguLpxdSCdRiUt6ZoqGPPHRYI7QuUAEHmrpgaE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=WCwc5GTU/9BwQRgNrrOorotN1Gnab9gDWLbkUr0RylyYp0mWEUR+ZD7HpDPH2JrW1mxRtxch8rm+mV8+CPTG7CHw9LlGAKPdxVkd2KYhP+15Zh+3+lJsISz/4iTdESyNcmgGZdSZ5D/xvQCLtAKCHAwb/1EMRgoI34mdFvBFt7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0leil.net; spf=pass smtp.mailfrom=0leil.net; arc=none smtp.client-ip=83.166.143.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0leil.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=0leil.net
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246b])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4YzC5f1kQ7zrLK;
-	Thu, 20 Feb 2025 13:20:38 +0100 (CET)
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4YzC5d4jCJzFb8;
-	Thu, 20 Feb 2025 13:20:37 +0100 (CET)
-From: Quentin Schulz <foss+kernel@0leil.net>
-Date: Thu, 20 Feb 2025 13:20:14 +0100
-Subject: [PATCH 5/5] arm64: dts: rockchip: add overlay for RK3399 Puma
- Haikou Video Demo adapter
+	s=arc-20240116; t=1740054062; c=relaxed/simple;
+	bh=qhK5o+lkXp3UJdFlZGJX3m74glatOzIKBp7MSSmUjyM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Sqi2LKud7PzwqnLZ3/zIVg//lym1pjpJ9/AnACyWMAbgbgRdShUvEU1Ne4CaDoK1CxMmZPKW/hrJobvgLVQTTju35WfyAC+8BZb3mQlrAaJ725NQCrh+1zf3eE8v127s+SeGaWOw23h+wVERw7a59xNEnCdEp0oxPHpj5bQrVBQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-3e1ff7000001d7ae-f4-67b71e250467
+Date: Thu, 20 Feb 2025 21:20:48 +0900
+From: Byungchul Park <byungchul@sk.com>
+To: Hillf Danton <hdanton@sina.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	kernel_team@skhynix.com
+Subject: Re: [RFC PATCH v12 00/26] LUF(Lazy Unmap Flush) reducing tlb numbers
+ over 90%
+Message-ID: <20250220122048.GA8305@system.software.com>
+References: <20250220052027.58847-1-byungchul@sk.com>
+ <20250220103223.2360-1-hdanton@sina.com>
+ <20250220114920.2383-1-hdanton@sina.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250220-ringneck-dtbos-v1-5-25c97f2385e6@cherry.de>
-References: <20250220-ringneck-dtbos-v1-0-25c97f2385e6@cherry.de>
-In-Reply-To: <20250220-ringneck-dtbos-v1-0-25c97f2385e6@cherry.de>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
- Quentin Schulz <quentin.schulz@theobroma-systems.com>, 
- Farouk Bouabid <farouk.bouabid@theobroma-systems.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Quentin Schulz <quentin.schulz@cherry.de>
-X-Mailer: b4 0.14.2
-X-Infomaniak-Routing: alpha
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250220114920.2383-1-hdanton@sina.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrOLMWRmVeSWpSXmKPExsXC9ZZnoa6q3PZ0g03TlC0O/HzOYnF51xw2
+	i3tr/rM6MHts+jSJ3WPSC3ePz5vkApijuGxSUnMyy1KL9O0SuDIeP/jJXPBbqmLRiVXsDYwP
+	RLoYOTkkBEwkfj46yw5jr2xoYAWxWQRUJd5O/scEYrMJqEvcuPGTGcQWEVCW6LwwC6yGWcBf
+	YsKtDSwgtrBAhMSTQyfA6nkFzCV+3TwOVi8k0M0oseZZOkRcUOLkzCcsEL1aEjf+vQSq5wCy
+	pSWW/+MACXMKmEr0H1nECGKLAq06sO04UAkX0Gk/WSX+LmmAulNS4uCKGywTGAVmIRk7C8nY
+	WQhjFzAyr2IUyswry03MzDHRy6jMy6zQS87P3cQIDM5ltX+idzB+uhB8iFGAg1GJh3dG67Z0
+	IdbEsuLK3EOMEhzMSiK8bfVb0oV4UxIrq1KL8uOLSnNSiw8xSnOwKInzGn0rTxESSE8sSc1O
+	TS1ILYLJMnFwSjUwFsZmSDeJJnwp6/u8KaaC+X6RwTwbjtunS+8ezPp51Z/r4MKEhy/1VMSN
+	JL54C8080vDcaMae6YsrvLJUYpgljvU95H38bvEFn92Tvz1WLfnlLDAn+crrA3GGmv5yfrOb
+	JuXdEw1I4mtbvEHPrm/7xGdSdzZO2vaj1MCzrH1q20+Wx+fCFs89q8RSnJFoqMVcVJwIAFUS
+	jP1KAgAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprHLMWRmVeSWpSXmKPExsXC5WfdrKsqtz3d4MMfCYsDP5+zWByee5LV
+	4vKuOWwW99b8Z3Vg8dj0aRK7x6QX7h6LX3xg8vi8SS6AJYrLJiU1J7MstUjfLoEr4/GDn8wF
+	v6UqFp1Yxd7A+ECki5GTQ0LARGJlQwMriM0ioCrxdvI/JhCbTUBd4saNn8wgtoiAskTnhVlg
+	NcwC/hITbm1gAbGFBSIknhw6AVbPK2Au8evmcbB6IYFuRok1z9Ih4oISJ2c+YYHo1ZK48e8l
+	UD0HkC0tsfwfB0iYU8BUov/IIkYQWxRo1YFtx5kmMPLOQtI9C0n3LITuBYzMqxhFMvPKchMz
+	c0z1irMzKvMyK/SS83M3MQJDbVntn4k7GL9cdj/EKMDBqMTD++Dx1nQh1sSy4srcQ4wSHMxK
+	Irxt9VvShXhTEiurUovy44tKc1KLDzFKc7AoifN6hacmCAmkJ5akZqemFqQWwWSZODilGhhX
+	ZPp5RDfbaKyr234xZtls07V+SRUzd90R3Pcuwdx69dYlsy9oHRKcJPrgxNl/NnukPogISZsZ
+	zT+Vpn3t/sUYVtUrz5+IxIhzrX7myZq6smBB2youocfuIcHBEeqMTipfHdbo52QeXM7oFmD6
+	ZP1aP19ft1OSjzNOffPcrxi4+vXOGYbZQUJKLMUZiYZazEXFiQAE6RAjMQIAAA==
+X-CFilter-Loop: Reflected
 
-From: Quentin Schulz <quentin.schulz@cherry.de>
+On Thu, Feb 20, 2025 at 07:49:19PM +0800, Hillf Danton wrote:
+> On Thu, 20 Feb 2025 20:09:35 +0900 Byungchul Park wrote:
+> > On Thu, Feb 20, 2025 at 06:32:22PM +0800, Hillf Danton wrote:
+> > > On Thu, 20 Feb 2025 14:20:01 +0900 Byungchul Park <byungchul@sk.com>
+> > > > To check luf's stability, I ran a heavy LLM inference workload consuming
+> > > > 210GiB over 7 days on a machine with 140GiB memory, and decided it's
+> > > > stable enough.
+> > > > 
+> > > > I'm posting the latest version so that anyone can try luf mechanism if
+> > > > wanted by any chance.  However, I tagged RFC again because there are
+> > > > still issues that should be resolved to merge to mainline:
+> > > > 
+> > > >    1. Even though system wide total cpu time for TLB shootdown is
+> > > >       reduced over 95%, page allocation paths should take additional cpu
+> > > >       time shifted from page reclaim to perform TLB shootdown.
+> > > > 
+> > > >    2. We need luf debug feature to detect when luf goes wrong by any
+> > > >       chance.  I implemented just a draft version that checks the sanity
+> > > >       on mkwrite(), kmap(), and so on.  I need to gather better ideas
+> > > >       to improve the debug feature.
+> > > > 
+> > > > ---
+> > > > 
+> > > > Hi everyone,
+> > > > 
+> > > > While I'm working with a tiered memory system e.g. CXL memory, I have
+> > > > been facing migration overhead esp. tlb shootdown on promotion or
+> > > > demotion between different tiers.  Yeah..  most tlb shootdowns on
+> > > > migration through hinting fault can be avoided thanks to Huang Ying's
+> > > > work, commit 4d4b6d66db ("mm,unmap: avoid flushing tlb in batch if PTE
+> > > > is inaccessible").
+> > > > 
+> > > > However, it's only for migration through hinting fault.  I thought it'd
+> > > > be much better if we have a general mechanism to reduce all the tlb
+> > > > numbers that we can apply to any unmap code, that we normally believe
+> > > > tlb flush should be followed.
+> > > > 
+> > > > I'm suggesting a new mechanism, LUF(Lazy Unmap Flush), that defers tlb
+> > > > flush until folios that have been unmapped and freed, eventually get
+> > > > allocated again.  It's safe for folios that had been mapped read-only
+> > > > and were unmapped, as long as the contents of the folios don't change
+> > > > while staying in pcp or buddy so we can still read the data through the
+> > > > stale tlb entries.
+> > > >
+> > > Given pcp or buddy, you are opening window for use after free which makes
+> > > no sense in 99% cases.
+> > 
+> > Just in case that I don't understand what you meant and for better
+> > understanding, can you provide a simple and problematic example from
+> > the u-a-f?
+> > 
+> Tell us if it is illegal to commit rape without pregnancy in your home town?
 
-This adds support for the video-demo-adapter DEVKIT ADDON CAM-TS-A01
-(https://embedded.cherry.de/product/development-kit/) for the Haikou
-devkit with RK3399 Puma SoM.
+Memory overcommit also looked cheating to someone like you.  You
+definitely think it'd be totally non-sense that each task believes it
+can use its own full virtual space.
 
-The Video Demo adapter is an adapter connected to the fake PCIe slot
-labeled "Video Connector" on the Haikou devkit.
+We say uaf is illegal only when it can cause access the free area
+without *appropriate permission*.
 
-Its main feature is a Leadtek DSI-display with touchscreen and a camera
-(that is not supported yet because the expected clock rate by the driver
-cannot be exactly reached by the clock driver). To drive these
-components a number of additional regulators are grouped on the adapter
-as well as a PCA9670 gpio-expander to provide the needed additional
-gpio-lines.
+> PS defering flushing tlb [1,2] is no go.
 
-Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
----
- arch/arm64/boot/dts/rockchip/Makefile              |   5 +
- .../rockchip/rk3399-puma-haikou-video-demo.dtso    | 166 +++++++++++++++++++++
- 2 files changed, 171 insertions(+)
+I will check this shortly.
 
-diff --git a/arch/arm64/boot/dts/rockchip/Makefile b/arch/arm64/boot/dts/rockchip/Makefile
-index 0f7c5c55c8b8be11e3fd7a69995ce1c17b22c80d..a46ed20e977aedb7cca1a9c0ad15f5441e4fe177 100644
---- a/arch/arm64/boot/dts/rockchip/Makefile
-+++ b/arch/arm64/boot/dts/rockchip/Makefile
-@@ -63,6 +63,7 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-orangepi.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-pinebook-pro.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-pinephone-pro.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-puma-haikou.dtb
-+dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-puma-haikou-video-demo.dtbo
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-roc-pc.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-roc-pc-mezzanine.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-roc-pc-plus.dtb
-@@ -201,6 +202,10 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) += px30-ringneck-haikou-haikou-video-demo.dtb
- px30-ringneck-haikou-haikou-video-demo-dtbs := px30-ringneck-haikou.dtb \
- 	px30-ringneck-haikou-video-demo.dtbo
- 
-+dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-puma-haikou-haikou-video-demo.dtb
-+rk3399-puma-haikou-haikou-video-demo-dtbs := rk3399-puma-haikou.dtb \
-+	rk3399-puma-haikou-video-demo.dtbo
-+
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-wolfvision-pf5-vz-2-uhd.dtb
- rk3568-wolfvision-pf5-vz-2-uhd-dtbs := rk3568-wolfvision-pf5.dtb \
- 	rk3568-wolfvision-pf5-display-vz.dtbo \
-diff --git a/arch/arm64/boot/dts/rockchip/rk3399-puma-haikou-video-demo.dtso b/arch/arm64/boot/dts/rockchip/rk3399-puma-haikou-video-demo.dtso
-new file mode 100644
-index 0000000000000000000000000000000000000000..0377ec860d35461b7d2d4ee1f20bdd4a076a5fe6
---- /dev/null
-+++ b/arch/arm64/boot/dts/rockchip/rk3399-puma-haikou-video-demo.dtso
-@@ -0,0 +1,166 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright (c) 2025 Cherry Embedded Solutions GmbH
-+ *
-+ * DEVKIT ADDON CAM-TS-A01
-+ * https://embedded.cherry.de/product/development-kit/
-+ *
-+ * DT-overlay for the camera / DSI demo appliance for Haikou boards.
-+ * In the flavour for use with a Puma system-on-module.
-+ */
-+
-+/dts-v1/;
-+/plugin/;
-+
-+#include <dt-bindings/clock/rk3399-cru.h>
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/interrupt-controller/irq.h>
-+#include <dt-bindings/leds/common.h>
-+#include <dt-bindings/pinctrl/rockchip.h>
-+
-+&{/} {
-+	backlight: backlight {
-+		compatible = "pwm-backlight";
-+		power-supply = <&dc_12v>;
-+		pwms = <&pwm0 0 25000 0>;
-+	};
-+
-+	cam_afvdd_2v8: regulator-cam-afvdd-2v8 {
-+		compatible  = "regulator-fixed";
-+		gpio = <&pca9670 2 GPIO_ACTIVE_LOW>;
-+		regulator-max-microvolt = <2800000>;
-+		regulator-min-microvolt = <2800000>;
-+		regulator-name = "cam-afvdd-2v8";
-+		vin-supply = <&vcc2v8_video>;
-+	};
-+
-+	cam_avdd_2v8: regulator-cam-avdd-2v8 {
-+		compatible  = "regulator-fixed";
-+		gpio = <&pca9670 4 GPIO_ACTIVE_LOW>;
-+		regulator-max-microvolt = <2800000>;
-+		regulator-min-microvolt = <2800000>;
-+		regulator-name = "cam-avdd-2v8";
-+		vin-supply = <&vcc2v8_video>;
-+	};
-+
-+	cam_dovdd_1v8: regulator-cam-dovdd-1v8 {
-+		compatible  = "regulator-fixed";
-+	        gpio = <&pca9670 3 GPIO_ACTIVE_LOW>;
-+	        regulator-max-microvolt = <1800000>;
-+	        regulator-min-microvolt = <1800000>;
-+	        regulator-name = "cam-dovdd-1v8";
-+	        vin-supply = <&vcc1v8_video>;
-+	};
-+
-+	cam_dvdd_1v2: regulator-cam-dvdd-1v2 {
-+		compatible = "regulator-fixed";
-+		enable-active-high;
-+		gpio = <&pca9670 5 GPIO_ACTIVE_HIGH>;
-+		regulator-max-microvolt = <1200000>;
-+		regulator-min-microvolt = <1200000>;
-+		regulator-name = "cam-dvdd-1v2";
-+		vin-supply = <&vcc3v3_baseboard>;
-+	};
-+
-+	vcc1v8_video: regulator-vcc1v8-video {
-+		compatible = "regulator-fixed";
-+		regulator-always-on;
-+		regulator-boot-on;
-+		regulator-max-microvolt = <1800000>;
-+		regulator-min-microvolt = <1800000>;
-+		regulator-name = "vcc1v8-video";
-+		vin-supply = <&vcc3v3_baseboard>;
-+	};
-+
-+	vcc2v8_video: regulator-vcc2v8-video {
-+		compatible = "regulator-fixed";
-+		regulator-always-on;
-+		regulator-boot-on;
-+		regulator-max-microvolt = <2800000>;
-+		regulator-min-microvolt = <2800000>;
-+		regulator-name = "vcc2v8-video";
-+		vin-supply = <&vcc3v3_baseboard>;
-+	};
-+
-+	video-adapter-leds {
-+		compatible = "gpio-leds";
-+
-+		video-adapter-led {
-+			color = <LED_COLOR_ID_BLUE>;
-+			gpios = <&pca9670 7 GPIO_ACTIVE_HIGH>;
-+			label = "video-adapter-led";
-+			linux,default-trigger = "none";
-+		};
-+	};
-+};
-+
-+&i2c1 {
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+	/* OV5675, GT911, DW9714 are limited to 400KHz */
-+	clock-frequency = <400000>;
-+
-+	touchscreen@14 {
-+		compatible = "goodix,gt911";
-+		reg = <0x14>;
-+		interrupt-parent = <&gpio1>;
-+		interrupts = <RK_PC7 IRQ_TYPE_LEVEL_LOW>;
-+		irq-gpios = <&gpio1 RK_PC7 GPIO_ACTIVE_HIGH>;
-+		pinctrl-0 = <&touch_int>;
-+		pinctrl-names = "default";
-+		reset-gpios = <&pca9670 1 GPIO_ACTIVE_HIGH>;
-+		AVDD28-supply = <&vcc2v8_video>;
-+		VDDIO-supply = <&vcc3v3_baseboard>;
-+	};
-+
-+	pca9670: gpio@27 {
-+		compatible = "nxp,pca9670";
-+		reg = <0x27>;
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+		pinctrl-0 = <&pca9670_resetn>;
-+		pinctrl-names = "default";
-+		reset-gpios = <&gpio4 RK_PD6 GPIO_ACTIVE_LOW>;
-+	};
-+};
-+
-+&mipi_out {
-+	mipi_out_panel: endpoint {
-+		remote-endpoint = <&mipi_in_panel>;
-+	};
-+};
-+
-+&mipi_dsi {
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+	status = "okay";
-+
-+	panel@0 {
-+		compatible = "leadtek,ltk050h3148w";
-+		reg = <0>;
-+		backlight = <&backlight>;
-+		iovcc-supply = <&vcc1v8_video>;
-+		reset-gpios = <&pca9670 0 GPIO_ACTIVE_LOW>;
-+		vci-supply = <&vcc2v8_video>;
-+
-+		port {
-+			mipi_in_panel: endpoint {
-+				remote-endpoint = <&mipi_out_panel>;
-+			};
-+		};
-+	};
-+};
-+
-+&pinctrl {
-+	pca9670 {
-+		pca9670_resetn: pca9670-resetn {
-+			rockchip,pins = <4 RK_PD6 RK_FUNC_GPIO &pcfg_pull_none>;
-+		};
-+	};
-+
-+	touch {
-+		touch_int: touch-int {
-+			rockchip,pins = <1 RK_PC7 RK_FUNC_GPIO &pcfg_pull_none>;
-+		};
-+	};
-+};
-
--- 
-2.48.1
-
+	Byungchul
+> 
+> Subject: Re: [PATCH v4 29/30] x86/mm, mm/vmalloc: Defer flush_tlb_kernel_range() targeting NOHZ_FULL CPUs
+> [1] https://lore.kernel.org/lkml/20250127155146.GB25757@willie-the-truck/
+> [2] https://lore.kernel.org/lkml/xhsmhwmdwihte.mognet@vschneid-thinkpadt14sgen2i.remote.csb/
 
