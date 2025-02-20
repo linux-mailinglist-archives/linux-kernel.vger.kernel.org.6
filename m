@@ -1,126 +1,190 @@
-Return-Path: <linux-kernel+bounces-524304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46DE7A3E1BE
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 18:04:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8557BA3E1B4
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 18:02:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16B2E3B84BF
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:55:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F65A3BA09B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:55:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EE35212B04;
-	Thu, 20 Feb 2025 16:54:14 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA8F620C00D
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 16:54:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B08E20DD6E;
+	Thu, 20 Feb 2025 16:54:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="XTMerqX0";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="eaoodYHM";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="XTMerqX0";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="eaoodYHM"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 279FD17A2F0
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 16:54:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740070453; cv=none; b=RWku81NTVGG+qKbiN9m71Xbtz8g7zN6u3fLerejlfeHYEgpYP16WF4CNS6ip9WVHxm/r5PQly+d5oEMkH7DFFlIEkd13ZiBMSqBPFe9yh5wo3WnHcyQ7Z6GTdfn47sy42jj5jf3lYoh68I8+8OuWH644tPbhIyaHXMkNUstIglo=
+	t=1740070467; cv=none; b=mzqulfE1sbIVI9/sbHV8vLfPOzOzD3HzDEXJOY1qAlJJzdGQ/ZJ4tAcrE3tPEw2Bs5m8NRoeHnkf3h9Voy0T7NIy7C4ADcF7/oNxMjYkepjqC3KjsCKgqvB7U+Qs4Y6BIKm+epjCs1zvFc53orFawQ5s+UvxCoNvuczp92StL7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740070453; c=relaxed/simple;
-	bh=0ihVrinw115rJrSYXwInOqAt0jxw5Rnkv8t8xQTnuTI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sDCF2o+BIV11wI56dTzyDixeG08kCZ8IV6J7q5qKW4G0z7lgoFqO08g2AaaYaRxF1kkO+0DuLvK9SApFzxgO3oxCvBZl6/t8+TrnFVD/m3gXu6aty00tDX53oo8WMwpF8KPJIchFuSniCTga6YHIfJQdkZz4MZjoNIf08g3Oo8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B5A0316F3;
-	Thu, 20 Feb 2025 08:54:27 -0800 (PST)
-Received: from [10.57.80.147] (unknown [10.57.80.147])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8B7703F5A1;
-	Thu, 20 Feb 2025 08:54:06 -0800 (PST)
-Message-ID: <fc199d7c-ab09-4278-b641-962184bff14d@arm.com>
-Date: Thu, 20 Feb 2025 17:54:04 +0100
+	s=arc-20240116; t=1740070467; c=relaxed/simple;
+	bh=ci26Mu8FbxdZmJKduMzpDrDy7ncCG3jMAOBwVjjOSvM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=raJGWPn13BYsJXRzMCCvRqWuiaFi4JQHt/fOs2zmI2H/HPwOB93QdBIGp60F7PPBovXyibZrHF3idEfPQML8YSrAa2yTY5SuexkZe4kUoXx1FOYbTvjtoqM3EE73lSSqbHfBQIzTlghI4cIkjRGxz1BxtmXT2TPIUoAagLsy2Ro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=XTMerqX0; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=eaoodYHM; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=XTMerqX0; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=eaoodYHM; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from localhost (unknown [10.100.12.32])
+	by smtp-out1.suse.de (Postfix) with ESMTP id 7976721186;
+	Thu, 20 Feb 2025 16:54:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1740070464; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wakkuwf1ugz5t/UIuNizagYe9kFHhtgEfpZOsreDN3A=;
+	b=XTMerqX0GICjNsYCmpT3d86Y5d/iCOx3eeIgF+zW9pC0xqJUBLi1xpGj28SIdC6SbeWbMa
+	7NpY3W4Q9XcH8kNohCHJQ5QQWWzOPd1txXDLDLIIh5qQmdD73YynIG3U3SSssZMdl78yqh
+	Uc7N/GG8qI0ZFM7ZFs7VsucAXvt/wCU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1740070464;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wakkuwf1ugz5t/UIuNizagYe9kFHhtgEfpZOsreDN3A=;
+	b=eaoodYHMSTrDFPSZZoxEeoyhBJcAyVrRgb032l5UFSC5tZ7yzLRtWRtBEwYIhzM6LA/9La
+	Q5TByx/Su9H0/ZDw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1740070464; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wakkuwf1ugz5t/UIuNizagYe9kFHhtgEfpZOsreDN3A=;
+	b=XTMerqX0GICjNsYCmpT3d86Y5d/iCOx3eeIgF+zW9pC0xqJUBLi1xpGj28SIdC6SbeWbMa
+	7NpY3W4Q9XcH8kNohCHJQ5QQWWzOPd1txXDLDLIIh5qQmdD73YynIG3U3SSssZMdl78yqh
+	Uc7N/GG8qI0ZFM7ZFs7VsucAXvt/wCU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1740070464;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wakkuwf1ugz5t/UIuNizagYe9kFHhtgEfpZOsreDN3A=;
+	b=eaoodYHMSTrDFPSZZoxEeoyhBJcAyVrRgb032l5UFSC5tZ7yzLRtWRtBEwYIhzM6LA/9La
+	Q5TByx/Su9H0/ZDw==
+Date: Thu, 20 Feb 2025 17:54:24 +0100
+From: Jiri Bohac <jbohac@suse.cz>
+To: Baoquan He <bhe@redhat.com>, Vivek Goyal <vgoyal@redhat.com>,
+	Dave Young <dyoung@redhat.com>, kexec@lists.infradead.org
+Cc: Philipp Rudo <prudo@redhat.com>, Donald Dutile <ddutile@redhat.com>,
+	Pingfan Liu <piliu@redhat.com>, Tao Liu <ltao@redhat.com>,
+	linux-kernel@vger.kernel.org,
+	David Hildenbrand <dhildenb@redhat.com>,
+	Michal Hocko <mhocko@suse.cz>
+Subject: [PATCH v2 3/5] kdump, documentation: describe craskernel CMA
+ reservation
+Message-ID: <Z7deQKy1F8BW1ibi@dwarf.suse.cz>
+References: <Z7dc9Cd8KX3b_brB@dwarf.suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 07/14] arm64/mm: Avoid barriers for invalid or
- userspace mappings
-To: Ryan Roberts <ryan.roberts@arm.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Pasha Tatashin <pasha.tatashin@soleen.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Uladzislau Rezki <urezki@gmail.com>, Christoph Hellwig <hch@infradead.org>,
- David Hildenbrand <david@redhat.com>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Anshuman Khandual <anshuman.khandual@arm.com>,
- Alexandre Ghiti <alexghiti@rivosinc.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-References: <20250217140809.1702789-1-ryan.roberts@arm.com>
- <20250217140809.1702789-8-ryan.roberts@arm.com>
-Content-Language: en-GB
-From: Kevin Brodsky <kevin.brodsky@arm.com>
-In-Reply-To: <20250217140809.1702789-8-ryan.roberts@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z7dc9Cd8KX3b_brB@dwarf.suse.cz>
+X-Spam-Score: -4.26
+X-Spamd-Result: default: False [-4.26 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.16)[-0.785];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_ZERO(0.00)[0];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	MID_RHS_MATCH_FROMTLD(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,localhost:helo]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On 17/02/2025 15:07, Ryan Roberts wrote:
-> __set_pte_complete(), set_pmd(), set_pud(), set_p4d() and set_pgd() are
+Describe the new crashkernel ",cma" suffix in Documentation/
+---
+ Documentation/admin-guide/kdump/kdump.rst     | 19 +++++++++++++++++--
+ .../admin-guide/kernel-parameters.txt         | 14 ++++++++++++++
+ 2 files changed, 31 insertions(+), 2 deletions(-)
 
-Nit: it would be more accurate to say __set_pte() instead of
-__set_pte_complete(), as it is the former that actually writes the PTE
-(and then issues barriers).
+diff --git a/Documentation/admin-guide/kdump/kdump.rst b/Documentation/admin-guide/kdump/kdump.rst
+index 5376890adbeb..3f7ff301c604 100644
+--- a/Documentation/admin-guide/kdump/kdump.rst
++++ b/Documentation/admin-guide/kdump/kdump.rst
+@@ -213,8 +213,7 @@ Dump-capture kernel config options (Arch Dependent, i386 and x86_64)
+    kernel.
+ 
+    Otherwise it should be the start of memory region reserved for
+-   second kernel using boot parameter "crashkernel=Y@X". Here X is
+-   start of memory region reserved for dump-capture kernel.
++   second kernel using boot parameter "crashkernel=Y@X". Here X is start of memory region reserved for dump-capture kernel.
+    Generally X is 16MB (0x1000000). So you can set
+    CONFIG_PHYSICAL_START=0x1000000
+ 
+@@ -315,6 +314,22 @@ crashkernel syntax
+ 
+             crashkernel=0,low
+ 
++4) crashkernel=size,cma
++
++   Reserves additional memory from CMA. A standard crashkernel reservation, as
++   described above, is still needed, but can be just big enough to hold the
++   kernel and initrd. All the memory the crash kernel needs for its runtime and
++   for running the kdump userspace processes can be provided by this CMA
++   reservation, re-using memory available to the production system's userspace.
++   Because of this, the CMA reservation should not be used if kdump is configured
++   to dump userspace memory - the re-used memory ranges won't be in the vmcore.
++
++   This option increases the risk of a kdump failure: DMA transfers configured
++   by the first kernel may end up corrupting the second kernel's memory. This
++   reservation method is intended for systems that can't afford to sacrifice
++   enough memory for standard crashkernel reservation and where less reliable
++   kdump is preferrable to no kdump at all.
++
+ Boot into System Kernel
+ -----------------------
+ 1) Update the boot loader (such as grub, yaboot, or lilo) configuration
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index fb8752b42ec8..ea4d53435515 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -987,6 +987,20 @@
+ 			0: to disable low allocation.
+ 			It will be ignored when crashkernel=X,high is not used
+ 			or memory reserved is below 4G.
++	crashkernel=size[KMG],cma
++			[KNL, X86] Reserve additional crash kernel memory from CMA.
++			This reservation is usable by the first system's userspace,
++			so this should not be used if dumping of userspace
++			memory is intended. A standard crashkernel reservation,
++			as described above, is still needed to hold the crash
++			kernel and initrd.
++			This option increases the risk of a kdump failure: DMA
++			transfers configured by the first kernel may end up
++			corrupting the second kernel's memory. This reservation
++			method is intended for systems that can't afford to
++			sacrifice enough memory for standard crashkernel
++			reservation and where less reliable kdump is preferrable 
++			to no kdump at all.
+ 
+ 	cryptomgr.notests
+ 			[KNL] Disable crypto self-tests
 
-> used to write entries into pgtables. And they issue barriers (currently
-> dsb and isb) to ensure that the written values are observed by the table
-> walker prior to any program-order-future memory access to the mapped
-> location.
->
-> Over the years some of these functions have received optimizations: In
-> particular, commit 7f0b1bf04511 ("arm64: Fix barriers used for page
-> table modifications") made it so that the barriers were only emitted for
-> valid-kernel mappings for set_pte() (now __set_pte_complete()). And
-> commit 0795edaf3f1f ("arm64: pgtable: Implement p[mu]d_valid() and check
-> in set_p[mu]d()") made it so that set_pmd()/set_pud() only emitted the
-> barriers for valid mappings. set_p4d()/set_pgd() continue to emit the
-> barriers unconditionally.
->
-> This is all very confusing to the casual observer; surely the rules
-> should be invariant to the level? Let's change this so that every level
-> consistently emits the barriers only when setting valid, non-user
-> entries (both table and leaf).
->
-> It seems obvious that if it is ok to elide barriers all but valid kernel
-> mappings at pte level, it must also be ok to do this for leaf entries at
-> other levels: If setting an entry to invalid, a tlb maintenance
-> operation must surely follow to synchronise the TLB and this contains
-> the required barriers. If setting a valid user mapping, the previous
-> mapping must have been invalid and there must have been a TLB
-> maintenance operation (complete with barriers) to honour
-> break-before-make. So the worst that can happen is we take an extra
-> fault (which will imply the DSB + ISB) and conclude that there is
-> nothing to do. These are the arguments for doing this optimization at
-> pte level and they also apply to leaf mappings at other levels.
->
-> For table entries, the same arguments hold: If unsetting a table entry,
-> a TLB is required and this will emit the required barriers. If setting a
-
-s/TLB/TLB maintenance/
-
-> table entry, the previous value must have been invalid and the table
-> walker must already be able to observe that. Additionally the contents
-> of the pgtable being pointed to in the newly set entry must be visible
-> before the entry is written and this is enforced via smp_wmb() (dmb) in
-> the pgtable allocation functions and in __split_huge_pmd_locked(). But
-> this last part could never have been enforced by the barriers in
-> set_pXd() because they occur after updating the entry. So ultimately,
-> the wost that can happen by eliding these barriers for user table
-
-s/wost/worst/
-
-- Kevin
-
-> entries is an extra fault.
->
-> [...]
+-- 
+Jiri Bohac <jbohac@suse.cz>
+SUSE Labs, Prague, Czechia
 
 
