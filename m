@@ -1,78 +1,62 @@
-Return-Path: <linux-kernel+bounces-523096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47435A3D1F1
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 08:17:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 226E4A3D1EB
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 08:17:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6AE1817BE3A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 07:13:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EC9B3BE52C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 07:13:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C680A1E5701;
-	Thu, 20 Feb 2025 07:13:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C4221E9916;
+	Thu, 20 Feb 2025 07:13:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mnmsY+yk"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="HVUiokXz"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DE931E4937;
-	Thu, 20 Feb 2025 07:13:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C6481E98E0;
+	Thu, 20 Feb 2025 07:13:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740035588; cv=none; b=nI0dacM7FRF+BX4DsmLP4jTzQDjySQM1kCA+WXlWFTcnejbtfNMHV5V67hbuUZ/XaS2aXt0CUPCxa1olG4D87yQIS5R6id1Lbx3jlNRiq3t88IX+Rw+uc7QXVUF09XigOwof3J9A7Cvy4pQZXNd9MSXDP90qpbD1YRZPJy2qhO8=
+	t=1740035596; cv=none; b=TYEmlHBzT0y5K1Yd8HnxcfECfMP6My2thg6TJG2LhV7fTu3Ds7IKqsc2BHrDQQDhbVDoWavmtl5dDOkH4BirLbZUyRHVcbFk4OCaxFv1tKngjVcRc2P5gf5+JWZm2yscA46QDDGSE2MRUReUEMPvbKybFgIdBsgoyqEp7sVdj+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740035588; c=relaxed/simple;
-	bh=PJgSIw9XkHYZLj89vwvjA1zq1i+3FNHoBiCWYf6Ow9M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=df5qOY9MPSTykHLhqQzdF5FighzGaDQqWKigBg1VFazfXkLaJE25iWh4EPoO1qSkLlIC7CzbVZEauAjRsjPI+lDdHBThRKi+knmiqbI5jt/my8r028jJavE9tJr6ElFTcYAbr1ffXyy4D7JseL7Vj+wsWoqW9Xpjguf1GwWqwV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mnmsY+yk; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-3072f8dc069so5534441fa.3;
-        Wed, 19 Feb 2025 23:13:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740035584; x=1740640384; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+GAX2Ms3C+1iFEiEooYALMC1zyJP6nScc6k91Dyj8T4=;
-        b=mnmsY+ykWWzZbu17se2/tEjtheWNeM7srVRa+AGXWBXmk4HUkusajagvvIChU6xagr
-         NSfDl9HnoNBYWFXgDxUiOR6i4K7YOTI6ZRIlx2m8bPZjF4bNlXWVcm0nMTXcsiy7XkUD
-         LfUI54obFRs96GddU0pFKicGiHBUf2AOE5Oxoumur068wnwLUxPuSwajnIkRczKQqLjp
-         epqA7yj3gvlj0jMMk7u5cHWA3U1ZxHVaSc+PA9xz7kmApN2rIhMViTtxwnEpnv6verX/
-         s0WIU9TISwkEMRw5bZtmAxRT0blh3lovkVqpQcUfWCxWcbo2mncRxkln+/kT0dooRqq4
-         3iEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740035584; x=1740640384;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+GAX2Ms3C+1iFEiEooYALMC1zyJP6nScc6k91Dyj8T4=;
-        b=VYMRU/kL3p+G3QVmk0Yjxc+XGsgLLESez0Cj1aazT8JqINF6SuAmWQJQrnJsPyCJVP
-         FXMZLrrFAEXQnVXWL9lDahYM8sqbebB06MIiii0feestdL1T97V4LsTWZMDxMYU/uumT
-         ojLuoxWlAKhFAD0CDZAJ+gwohADUiI3S+9bZzOw6T58+NuC0Ti0ylH+eLk07L7Z7SF2T
-         lWKnC/YEdK9hhT+FaWbnMyFrI/YY0ifrrZlPpbjuUfOfe8/4Ct4rfZ7541sMPR19EbiG
-         4VshnC0wypSNgiMCk98Fh/zGxffDAKX0eb9hxeTz102/L2Pzr5deSUxeV0Ta8UjUe07f
-         613A==
-X-Forwarded-Encrypted: i=1; AJvYcCUYbFXxoQY5fxolgN5XoMvO+EbIr2gptet6s3QkLAfwyHH9jNeXsbfkSLWUi+39mF7BePBrMO9NEl3WH47v1ahddGQ=@vger.kernel.org, AJvYcCVCDeqNgnk1tXorK5/EMx4blL7H+ODkQxGltkBLM9E2oC3M0d1qdlo29fyt6pu1P3uGPMFO/d1mu3bs@vger.kernel.org, AJvYcCW15fOcgpOoL7cf1e9RsvEonqjXAvT7y8W28CK/g1REKe9sjMS71nT9bShB7hB+8ftkwH7t4DCjfY5L8VSw@vger.kernel.org, AJvYcCXYulZIKPxviyuCeYea29+SlrqHa78Hlt42jAZVE8cjHeLZYwyoBMBds2Hw4jZ5B15VjMrdjiXKAzZB@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCfoJSX/+VgOSR1btoXA6n4W+w1SoUm+Q+tfXjBG0RgrsHpksI
-	1mwclT/ZZx+EiKJoKtp9EsmbbHhSuEGwnrQmnr6okJoy/86wXXM3
-X-Gm-Gg: ASbGncuBPESj+CJB3ZBdC92RDUQGzhyjfhw/QTz0lpaORROOx7MXqc8KnK3h6485yRF
-	e9/G/XBKWYbB+VOM2Y1uEEVRt57bKycE75aVGNTKszvTMRnhbCJfUcMQQr2PLLGINwFuKfHhmfu
-	Y7MyBWOgXXplArTYY64BjTvGWVpHJ/Wz52kWdE2EovgSI+hXrZMU/U9JAdHy08+bBm+uHHAizXT
-	K3dIs4PJI3Jq9xkhJtXVh0F5oxRTXJh+YW7PgiTMaDVJjn1BDZ3gHxq/LdlYRBGADrQutnI6sPH
-	77vZfElHR92q3x+FKFHEwZVlyr5rn1ZS27akxKi5O8Sa5nP+xTcatbfsVST0Kx55qEXtzqZU
-X-Google-Smtp-Source: AGHT+IFKp9trN/cn2Qm66dYQMf1hABQUmyHBmZFJ75NYzdUOuFn45L/HlCdjW3lLCknW0qJmzNb4EQ==
-X-Received: by 2002:a2e:8650:0:b0:308:f479:5696 with SMTP id 38308e7fff4ca-30a44dc4ff1mr17598221fa.15.1740035583979;
-        Wed, 19 Feb 2025 23:13:03 -0800 (PST)
-Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30921447bdcsm21379171fa.35.2025.02.19.23.13.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Feb 2025 23:13:03 -0800 (PST)
-Message-ID: <b1c1ed68-2f4d-447c-9957-5a1bbc63ef6e@gmail.com>
-Date: Thu, 20 Feb 2025 09:13:00 +0200
+	s=arc-20240116; t=1740035596; c=relaxed/simple;
+	bh=yaxjXWijVyI77ueaPwlvEeTDIMMGsvjTUWEjD+hCuEo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=MwX1UcQ3iTywM+v2F7f7cY+viOZnW93b2F1pXNt39MTOoEf78DAeUsT8Hun6z7aTgPmFU/GErc9H1NOWDFt4CP/wYBt5DeJBjfJN2vPAL8QrALaICAQ01yRVYJjX/8UZMoLnHG4OlmFyt27C8eSEWGqewprnPEc7Q0v0zhKFJmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=HVUiokXz; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51JH81QG009732;
+	Thu, 20 Feb 2025 07:13:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	m8Wmdm/C5lzqJIXVHm2jjl5gjWgQah+xD67gZLNzdcA=; b=HVUiokXzv8ydlXfK
+	D2xbPgXKeq7gpGH9wjnHyLhEJz6KTuZMoIb28uA4YM1OtBmoWLWHw3vHrNImjiLl
+	+f6Ytuz+OXw5yz70zd6SQScs4akD9CfM8AcfIXEM2XML+DSHe/d59x0RVbvCz1Xe
+	a2zO+7TTyiq8IqmbtmanGJT4os4edofek4ZQ56weKL/YrVz7UN2ePaHUuj9O0hwj
+	+s7k7goE2bmjtpV6G/qbsgH+b3nJ7KqQWsAEJ+WNM0+5SvD9aNPh4Ry0mjn2FbPa
+	fGhxOTdXUE0l3aZxpfJ047Ska3NAtuq3kcVf9d/G1lWERyrY/B9hfscwO+JVcWgL
+	8vEx1w==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44vyy1wa4x-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Feb 2025 07:13:09 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51K7D8wd010044
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Feb 2025 07:13:08 GMT
+Received: from [10.217.216.47] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 19 Feb
+ 2025 23:13:03 -0800
+Message-ID: <a3903d37-03ab-4f1c-acf0-4683d1297906@quicinc.com>
+Date: Thu, 20 Feb 2025 12:43:00 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,393 +64,158 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/9] iio: adc: add helpers for parsing ADC nodes
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
- Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
- Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Samuel Holland <samuel@sholland.org>,
- Hugo Villeneuve <hvilleneuve@dimonoff.com>, Nuno Sa <nuno.sa@analog.com>,
- David Lechner <dlechner@baylibre.com>,
- Javier Carrasco <javier.carrasco.cruz@gmail.com>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-sunxi@lists.linux.dev
-References: <cover.1739967040.git.mazziesaccount@gmail.com>
- <6c5b678526e227488592d004c315a967b9809701.1739967040.git.mazziesaccount@gmail.com>
- <Z7ZB7RQhyI5Dohrq@smile.fi.intel.com>
-Content-Language: en-US, en-AU, en-GB, en-BW
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <Z7ZB7RQhyI5Dohrq@smile.fi.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH 4/5] clk: qcom: videocc: Add support to attach multiple
+ power domains
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "Stephen
+ Boyd" <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>,
+        Ajit Pandey <quic_ajipan@quicinc.com>,
+        Imran Shaik
+	<quic_imrashai@quicinc.com>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        "Satya Priya
+ Kakitapalli" <quic_skakitap@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20250218-videocc-pll-multi-pd-voting-v1-0-cfe6289ea29b@quicinc.com>
+ <20250218-videocc-pll-multi-pd-voting-v1-4-cfe6289ea29b@quicinc.com>
+ <eec2869a-fa8f-4aaf-9fc5-e7a8baf0f864@linaro.org>
+ <huluiiaqmunvmffoqadrhssd3kl2toutqtcw7rzamv3sqdglsf@7lz66x4sj3gv>
+ <a8350d0f-2a63-46de-86f3-c156809cca0e@quicinc.com>
+ <v744bey7hvqkhzx4f6tb7sqds4yh5ggpv2ftuhbjbose3wossd@hjf6sqaitjfx>
+Content-Language: en-US
+From: Jagadeesh Kona <quic_jkona@quicinc.com>
+In-Reply-To: <v744bey7hvqkhzx4f6tb7sqds4yh5ggpv2ftuhbjbose3wossd@hjf6sqaitjfx>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: uOQZILnm9Uv1qEDJFUDGoXdTXM3g0GUq
+X-Proofpoint-ORIG-GUID: uOQZILnm9Uv1qEDJFUDGoXdTXM3g0GUq
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-20_02,2025-02-20_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 adultscore=0
+ bulkscore=0 phishscore=0 suspectscore=0 malwarescore=0 spamscore=0
+ priorityscore=1501 impostorscore=0 lowpriorityscore=0 mlxscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2502200050
 
-Hi Andy,
 
-Long time no hear ;) First of all, thanks for the review!
 
-On 19/02/2025 22:41, Andy Shevchenko wrote:
-> On Wed, Feb 19, 2025 at 02:30:27PM +0200, Matti Vaittinen wrote:
->> There are ADC ICs which may have some of the AIN pins usable for other
->> functions. These ICs may have some of the AIN pins wired so that they
->> should not be used for ADC.
+On 2/19/2025 5:32 PM, Dmitry Baryshkov wrote:
+> On Wed, Feb 19, 2025 at 05:08:52PM +0530, Jagadeesh Kona wrote:
 >>
->> (Preferred?) way for marking pins which can be used as ADC inputs is to
->> add corresponding channels@N nodes in the device tree as described in
->> the ADC binding yaml.
 >>
->> Add couple of helper functions which can be used to retrieve the channel
->> information from the device node.
+>> On 2/18/2025 10:49 PM, Dmitry Baryshkov wrote:
+>>> On Tue, Feb 18, 2025 at 03:46:15PM +0000, Bryan O'Donoghue wrote:
+>>>> On 18/02/2025 14:26, Jagadeesh Kona wrote:
+>>>>> During boot-up, the PLL configuration might be missed even after
+>>>>> calling pll_configure() from the clock controller probe. This can
+>>>>> happen because the PLL is connected to one or more rails that are
+>>>>> turned off, and the current clock controller code cannot enable
+>>>>> multiple rails during probe. Consequently, the PLL may be activated
+>>>>> with suboptimal settings, causing functional issues.
+>>>>>
+>>>>> To properly configure the video PLLs in the probe on SM8450, SM8475,
+>>>>> SM8550, and SM8650 platforms, the MXC rail must be ON along with MMCX.
+>>>>> Therefore, add support to attach multiple power domains to videocc on
+>>>>> these platforms.
+>>>>>
+>>>>> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
+>>>>> ---
+>>>>>   drivers/clk/qcom/videocc-sm8450.c | 4 ++++
+>>>>>   drivers/clk/qcom/videocc-sm8550.c | 4 ++++
+>>>>>   2 files changed, 8 insertions(+)
+>>>>>
+>>>>> diff --git a/drivers/clk/qcom/videocc-sm8450.c b/drivers/clk/qcom/videocc-sm8450.c
+>>>>> index f26c7eccb62e7eb8dbd022e2f01fa496eb570b3f..b50a14547336580de88a741f1d33b126e9daa848 100644
+>>>>> --- a/drivers/clk/qcom/videocc-sm8450.c
+>>>>> +++ b/drivers/clk/qcom/videocc-sm8450.c
+>>>>> @@ -437,6 +437,10 @@ static int video_cc_sm8450_probe(struct platform_device *pdev)
+>>>>>   	struct regmap *regmap;
+>>>>>   	int ret;
+>>>>> +	ret = qcom_cc_attach_pds(&pdev->dev, &video_cc_sm8450_desc);
+>>>>> +	if (ret)
+>>>>> +		return ret;
+>>>>> +
+>>>>>   	ret = devm_pm_runtime_enable(&pdev->dev);
+>>>>>   	if (ret)
+>>>>>   		return ret;
+>>>>> diff --git a/drivers/clk/qcom/videocc-sm8550.c b/drivers/clk/qcom/videocc-sm8550.c
+>>>>> index 7c25a50cfa970dff55d701cb24bc3aa5924ca12d..d4b223d1392f0721afd1b582ed35d5061294079e 100644
+>>>>> --- a/drivers/clk/qcom/videocc-sm8550.c
+>>>>> +++ b/drivers/clk/qcom/videocc-sm8550.c
+>>>>> @@ -542,6 +542,10 @@ static int video_cc_sm8550_probe(struct platform_device *pdev)
+>>>>>   	int ret;
+>>>>>   	u32 sleep_clk_offset = 0x8140;
+>>>>> +	ret = qcom_cc_attach_pds(&pdev->dev, &video_cc_sm8550_desc);
+>>>>> +	if (ret)
+>>>>> +		return ret;
+>>>>> +
+>>>>>   	ret = devm_pm_runtime_enable(&pdev->dev);
+>>>>>   	if (ret)
+>>>>>   		return ret;
+>>>>>
+>>>>
+>>>> What's the difference between doing the attach here or doing it in
+>>>> really_probe() ?
+>>>
+>>> I'd second this. If the domains are to be attached before calling any
+>>> other functions, move the call to the qcom_cc_map(), so that all drivers
+>>> get all domains attached before configuring PLLs instead of manually
+>>> calling the function.
+>>>
+>>
+>> I earlier tried moving the attach PDs call to qcom_cc_map(), but I faced the below issues
+>> 1. desc passed to qcom_cc_map() has const qualifier, so updating desc->pd_list
+>>    inside qcom_cc_map() is leading to a warning.
 > 
-> ...
-> 
->>   - Rename iio_adc_device_get_channels() as
-> 
-> as?
-
-Oh, looks like I got interrupted :) Thanks!
-
-> 
-> ...
-> 
->> obj-$(CONFIG_FSL_MX25_ADC) += fsl-imx25-gcq.o
->>   obj-$(CONFIG_GEHC_PMC_ADC) += gehc-pmc-adc.o
->>   obj-$(CONFIG_HI8435) += hi8435.o
->>   obj-$(CONFIG_HX711) += hx711.o
-> 
->> +obj-$(CONFIG_IIO_ADC_HELPER) += industrialio-adc.o
-> 
-> Shouldn't this be grouped with other IIO core related objects?
-
-I was unsure where to put this. The 'adc' subfolder contained no other 
-IIO core files, so there really was no group. I did consider putting it 
-on top of the file but then just decided to go with the alphabetical 
-order. Not sure what is the right way though.
-
->>   obj-$(CONFIG_IMX7D_ADC) += imx7d_adc.o
->>   obj-$(CONFIG_IMX8QXP_ADC) += imx8qxp-adc.o
->>   obj-$(CONFIG_IMX93_ADC) += imx93_adc.o
-> 
-> ...
-> 
-> 
-> + bitops.h
-> 
->> +#include <linux/device.h>
->> +#include <linux/errno.h>
-> 
-> + export.h
-> 
-> + module.h
-> 
->> +#include <linux/property.h>
-> 
-> + types.h
-
-Thanks!
-
-> ...
-> 
->> +EXPORT_SYMBOL_GPL(iio_adc_device_num_channels);
-> 
-> No namespace?
-
-I was considering also this. The IIO core functions don't belong into a 
-namespace - so I followed the convention to keep these similar to other 
-IIO core stuff.
-
-(Sometimes I have a feeling that the trend today is to try make things 
-intentionally difficult in the name of the safety. Like, "more difficult 
-I make this, more experience points I gain in the name of the safety".)
-
-Well, I suppose I could add a namespace for these functions - if this 
-approach stays - but I'd really prefer having all IIO core stuff in some 
-global IIO namespace and not to have dozens of fine-grained namespaces 
-for an IIO driver to use...
-
-> ...
-> 
->> +	if (!allowed_types || allowed_types & (~IIO_ADC_CHAN_PROP_TYPE_ALL)) {
-> 
-> Unneeded parentheses around negated value.
-> 
->> +		dev_dbg(dev, "Invalid adc allowed prop types 0x%lx\n",
->> +			allowed_types);
->> +
->> +		return -EINVAL;
->> +	}
->> +	if (found_types & (~allowed_types)) {
-> 
-> Ditto.
-> 
->> +		long unknown_types = found_types & (~allowed_types);
-> 
-> Ditto and so on...
-> 
-> Where did you get this style from? I think I see it first time in your
-> contributions. Is it a new preferences? Why?
-
-Last autumn I found out my house was damaged by water. I had to empty 
-half of the rooms and finally move out for 2.5 months. Now I'm finally 
-back, but during the moves I lost my printed list of operator 
-precedences which I used to have on my desk. I've been writing C for 25 
-years or so, and I still don't remember the precedence rules for all 
-bitwise operations - and I am fairly convinced I am not the only one.
-
-What I understood is that I don't really have to have a printed list at 
-home, or go googling when away from home. I can just make it very, very 
-obvious :) Helps me a lot.
-
-> 
->> +		int type;
->> +
->> +		for_each_set_bit(type, &unknown_types,
->> +				 IIO_ADC_CHAN_NUM_PROP_TYPES - 1) {
->> +			dev_err(dev, "Unsupported channel property %s\n",
->> +				iio_adc_type2prop(type));
->> +		}
->> +
->> +		return -EINVAL;
->> +	}
-> 
-> ...
-> 
->> +int iio_adc_device_channels_by_property(struct device *dev, int *channels,
->> +		int max_channels, const struct iio_adc_props *expected_props)
->> +{
->> +	int num_chan = 0, ret;
->> +
->> +	device_for_each_child_node_scoped(dev, child) {
->> +		u32 ch, diff[2], se;
->> +		struct iio_adc_props tmp;
->> +		int chtypes_found = 0;
->> +
->> +		if (!fwnode_name_eq(child, "channel"))
->> +			continue;
->> +
->> +		if (num_chan == max_channels)
->> +			return -EINVAL;
->> +
->> +		ret = fwnode_property_read_u32(child, "reg", &ch);
->> +		if (ret)
->> +			return ret;
->> +
->> +		ret = fwnode_property_read_u32_array(child, "diff-channels",
->> +						     &diff[0], 2);
-> 
-> 						     diff, ARRAY_SIZE(diff));
-> 
-> (will require array_size.h)
-
-thanks :) And thanks for being helpful with the header - and there is no 
-sarcasm!
-
->> +		if (!ret)
->> +			chtypes_found |= IIO_ADC_CHAN_PROP_TYPE_DIFF;
->> +
->> +		ret = fwnode_property_read_u32(child, "single-channel", &se);
->> +		if (!ret)
->> +			chtypes_found |= IIO_ADC_CHAN_PROP_TYPE_SINGLE_ENDED;
->> +
->> +		tmp = *expected_props;
->> +		/*
->> +		 * We don't bother reading the "common-mode-channel" here as it
->> +		 * doesn't really affect on the primary channel ID. We remove
->> +		 * it from the required properties to allow the sanity check
->> +		 * pass here  also for drivers which require it.
->> +		 */
->> +		tmp.required &= (~BIT(IIO_ADC_CHAN_PROP_COMMON));
-> 
-> Redundant outer parentheses. What's the point, please?
-
-Zero need to think of precedence.
-
->> +		ret = iio_adc_prop_type_check_sanity(dev, &tmp, chtypes_found);
->> +		if (ret)
->> +			return ret;
->> +
->> +		if (chtypes_found & IIO_ADC_CHAN_PROP_TYPE_DIFF)
->> +			ch = diff[0];
->> +		else if (chtypes_found & IIO_ADC_CHAN_PROP_TYPE_SINGLE_ENDED)
->> +			ch = se;
->> +
->> +		/*
->> +		 * We assume the channel IDs start from 0. If it seems this is
->> +		 * not a sane assumption, then we can relax this check or add
->> +		 * 'allowed ID range' parameter.
->> +		 *
->> +		 * Let's just start with this simple assumption.
->> +		 */
->> +		if (ch >= max_channels)
->> +			return -ERANGE;
->> +
->> +		channels[num_chan] = ch;
->> +		num_chan++;
->> +	}
->> +
->> +	return num_chan;
->> +
->> +}
-> 
-> ...
-> 
->> +int devm_iio_adc_device_alloc_chaninfo(struct device *dev,
->> +				const struct iio_chan_spec *template,
->> +				struct iio_chan_spec **cs,
->> +				const struct iio_adc_props *expected_props)
->> +{
->> +	struct iio_chan_spec *chan;
->> +	int num_chan = 0, ret;
->> +
->> +	num_chan = iio_adc_device_num_channels(dev);
->> +	if (num_chan < 1)
->> +		return num_chan;
->> +
->> +	*cs = devm_kcalloc(dev, num_chan, sizeof(**cs), GFP_KERNEL);
->> +	if (!*cs)
->> +		return -ENOMEM;
->> +
->> +	chan = &(*cs)[0];
-> 
-> This and above and below will be easier to read if you introduce a temporary
-> variable which will be used locally and assigned to the output later on.
-> Also the current approach breaks the rule that infiltrates the output even in
-> the error cases.
-
-Agree. Thanks.
-
-> 
->> +	device_for_each_child_node_scoped(dev, child) {
->> +		u32 ch, diff[2], se, common;
->> +		int chtypes_found = 0;
->> +
->> +		if (!fwnode_name_eq(child, "channel"))
->> +			continue;
->> +
->> +		ret = fwnode_property_read_u32(child, "reg", &ch);
->> +		if (ret)
->> +			return ret;
->> +
->> +		ret = fwnode_property_read_u32_array(child, "diff-channels",
->> +						     &diff[0], 2);
-> 
-> As per above.
-> 
->> +		if (!ret)
->> +			chtypes_found |= IIO_ADC_CHAN_PROP_TYPE_DIFF;
->> +
->> +		ret = fwnode_property_read_u32(child, "single-channel", &se);
->> +		if (!ret)
->> +			chtypes_found |= IIO_ADC_CHAN_PROP_TYPE_SINGLE_ENDED;
-> 
->> +		ret = fwnode_property_read_u32(child, "common-mode-channel",
->> +					       &common);
-> 
-> I believe this is okay to have on a single line,
-
-I try to keep things under 80 chars. It really truly helps me as I'd 
-like to have 3 parallel terminals open when writing code. Furthermore, I 
-hate to admit it but during the last two years my near vision has 
-deteriorated... :/ 40 is getting more distant and 50 is approaching ;)
-
-> 
->> +		if (!ret)
->> +			chtypes_found |= BIT(IIO_ADC_CHAN_PROP_COMMON);
->> +
->> +		ret = iio_adc_prop_type_check_sanity(dev, expected_props,
->> +						     chtypes_found);
->> +		if (ret)
->> +			return ret;
->> +
->> +		*chan = *template;
->> +		chan->channel = ch;
->> +
->> +		if (chtypes_found & IIO_ADC_CHAN_PROP_TYPE_DIFF) {
->> +			chan->differential = 1;
->> +			chan->channel = diff[0];
->> +			chan->channel2 = diff[1];
->> +
->> +		} else if (chtypes_found & IIO_ADC_CHAN_PROP_TYPE_SINGLE_ENDED) {
->> +			chan->channel = se;
->> +			if (chtypes_found & BIT(IIO_ADC_CHAN_PROP_COMMON))
->> +				chan->channel2 = common;
->> +		}
->> +
->> +		/*
->> +		 * We assume the channel IDs start from 0. If it seems this is
->> +		 * not a sane assumption, then we have to add 'allowed ID ranges'
->> +		 * to the struct iio_adc_props because some of the callers may
->> +		 * rely on the IDs being in this range - and have arrays indexed
->> +		 * by the ID.
->> +		 */
->> +		if (chan->channel >= num_chan)
->> +			return -ERANGE;
->> +
->> +		chan++;
->> +	}
->> +
->> +	return num_chan;
->> +}
-> 
-> ...
-> 
->> +#ifndef _INDUSTRIAL_IO_ADC_HELPERS_H_
->> +#define _INDUSTRIAL_IO_ADC_HELPERS_H_
-> 
-> + bits.h
-> 
->> +#include <linux/iio/iio.h>
-> 
-> I'm failing to see how this is being used in this header.
-
-I suppose it was the struct iio_chan_spec. Yep, forward declaration 
-could do, but I guess there would be no benefit because anyone using 
-this header is more than likely to use the iio.h as well.
-
-> 
->> +struct device;
->> +struct fwnode_handle;
->> +
->> +enum {
->> +	IIO_ADC_CHAN_PROP_REG,
->> +	IIO_ADC_CHAN_PROP_SINGLE_ENDED,
->> +	IIO_ADC_CHAN_PROP_DIFF,
->> +	IIO_ADC_CHAN_PROP_COMMON,
->> +	IIO_ADC_CHAN_NUM_PROP_TYPES
->> +};
->> +
->> +/*
->> + * Channel property types to be used with iio_adc_device_get_channels,
->> + * devm_iio_adc_device_alloc_chaninfo, ...
-> 
-> Looks like unfinished sentence...
-
-Intention was to just give user an example of functions where this gets 
-used, and leave room for more functions to be added. Reason is that 
-lists like this tend to end up being incomplete anyways. Hence the ...
-
-> 
->> + */
->> +#define IIO_ADC_CHAN_PROP_TYPE_REG BIT(IIO_ADC_CHAN_PROP_REG)
->> +#define IIO_ADC_CHAN_PROP_TYPE_SINGLE_ENDED BIT(IIO_ADC_CHAN_PROP_SINGLE_ENDED)
->> +#define IIO_ADC_CHAN_PROP_TYPE_SINGLE_COMMON					\
->> +	(BIT(IIO_ADC_CHAN_PROP_SINGLE_ENDED) | BIT(IIO_ADC_CHAN_PROP_COMMON))
->> +#define IIO_ADC_CHAN_PROP_TYPE_DIFF BIT(IIO_ADC_CHAN_PROP_DIFF)
->> +#define IIO_ADC_CHAN_PROP_TYPE_ALL GENMASK(IIO_ADC_CHAN_NUM_PROP_TYPES - 1, 0)
-> 
->> +int devm_iio_adc_device_alloc_chaninfo(struct device *dev,
->> +				const struct iio_chan_spec *template,
->> +				struct iio_chan_spec **cs,
->> +				const struct iio_adc_props *expected_props);
->> +
->> +int iio_adc_device_channels_by_property(struct device *dev, int *channels,
->> +				int max_channels,
->> +				const struct iio_adc_props *expected_props);
->> +#endif /* _INDUSTRIAL_IO_ADC_HELPERS_H_ */
-> 
+> And? Can you fix the warning?
 > 
 
+I can remove the const qualifier in qcom_cc_map() prototype to fix this, but that requires changes
+in many other clock drivers also since they are currently passing const descriptor to qcom_cc_map().
+So would like to keep the qcom_cc_map() unchanged.
+
+>> 2. If we attach the PDs after calling get_sync() on device, I observed
+>>    that PDS are not getting enabled during probe. Currently qcom_cc_map()
+>>    is called after get_sync() is already called on device.
+> 
+> Move PM handling into qcom_cc_map(). Then together with the Bryan's
+> proposal most of the probe() functions can just call qcom_cc_probe()
+> 
+
+I agree with this approach to move entire PM handling to qcom_cc_map() but one concern is const
+qualifier mentioned above and it also enables runtime PM for clock controllers that doesn't need
+any runtime PM(e.g:- GCC/GPUCC). That may not cause any issue but we also need to see from where
+we need to call pm_runtime_put().
+
+We may have to add pm_runtime_put() at the end of both qcom_cc_probe() and qcom_cc_really_probe()
+to move the device back to suspend after probe. But ideally runtime PM is not required for most
+clock controllers except MMCC's that have MMCX dependency. Please let me know your thoughts on this.
+
+Thanks,
+Jagadeesh
+
+>>
+>> Probably, we can add a new function qcom_cc_attach_pds_map() where we can
+>> attach PDs and call qcom_cc_map() inside it. We can then invoke this new
+>> function at the start of probe before get_sync(). I will post this change
+>> in next version if this aligns with your thoughts.
+>>
+>> Thanks,
+>> Jagadeesh
+> 
 
