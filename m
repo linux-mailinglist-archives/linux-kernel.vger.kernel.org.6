@@ -1,116 +1,138 @@
-Return-Path: <linux-kernel+bounces-524044-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07E89A3DE61
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:26:42 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4106A3DE5F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:26:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74816188B78C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:23:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B552D17046F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:24:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3006C1FECA3;
-	Thu, 20 Feb 2025 15:23:38 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDFE71FE444;
+	Thu, 20 Feb 2025 15:23:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QNITCZaG"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8D8F61FCE;
-	Thu, 20 Feb 2025 15:23:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C28421FDA94;
+	Thu, 20 Feb 2025 15:23:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740065017; cv=none; b=okxCgWUdYsdc6E5rottsKSQY8a7pMBNzWFyLbb/yu/V26FgczeTfZDrglWVNhpJQrPVFtkm0vLrDzEcv+9j9H0UVTajZdt0GcAlP5k+f6y4HM3p/NzluWwierUQWkT5LDewD42FEBYdd0tcRC5+gQpSnH1T4GC/mV8XjSJUg464=
+	t=1740065025; cv=none; b=WqHFDFGGKFa+eCRQmRTcWKhn1Ez9jzX4sewuVXkxPElCmlgjfhrNcbnQM4E9dN1hw9UYkw0yGUfySbYesY+qI5NmuGrgLWvlsi4gWrDz64c6H828d35Yiu9Xok4L1qzQkVSW0/ij5yZRj5pnsoJ9AxuMlm4lFzw+fS5xjSKKEPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740065017; c=relaxed/simple;
-	bh=U68v7cOKxOImHE/lUvUVXUiZlzQLpKd7IKB/KFsKEj4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HC1mf08q5zsgGpDdx18R5j46QT9fmT/kuGFkCCO/sUcxrC0z1ypaY0xG8ntOuR8mq5X1edN+zPncrn6kRNPrkxDg1nYWBKZbZy8q8JDdnXvDq2LEG07O19onCdvJqyB3gk/0Rq9PHG19iVhhr3VDeFqdWEKlwpaTRDuwygKxgnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2931C4CED1;
-	Thu, 20 Feb 2025 15:23:34 +0000 (UTC)
-Message-ID: <e794c047-ab0e-4589-a1d2-0f73b813eacc@xs4all.nl>
-Date: Thu, 20 Feb 2025 16:23:33 +0100
+	s=arc-20240116; t=1740065025; c=relaxed/simple;
+	bh=nTFKtOjkpt8whIdbOEj5tkvfkIRkCZEcbPHfxP7t6So=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KaCrv1NGBMuvlHVFNwIHH5/5jegi/ELDywqAaaHwcdziIcWfddW66eNQCwcVz5UVSSPJNZnt2nfOlkYkmOBAQ2PUQ1Wr1FgaHY7HgtIWKGcM7y5z+zDTNAzVfp76qFrncaACQd8gdYS3wMKXuVzPKGwxo8jvo9bAEx19YBeL3Ko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QNITCZaG; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740065024; x=1771601024;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=nTFKtOjkpt8whIdbOEj5tkvfkIRkCZEcbPHfxP7t6So=;
+  b=QNITCZaGFPyJ/PCYIKxjdkhS5R+KOBE1Ei5rvV2OiWBsz/b3irH7/oMk
+   lPxCVcX/sq9CPB0fkDjB3bgdYbiegNZjvmRtyO5430MvzcD5ZedVqKhTL
+   +oX3Sf09AjyEW8fdkiLBSv4FYw+2zO0AHmDRdWDNbbo/mghop0NqloMdf
+   ubB1xdc871IDTFvFBvrZ+kS1r/Ky+nEM0o6TSFu2Jdv9PM5n6UpZ8wdgC
+   LkkeontxY0b9ATWDXyfBm737qW/lzYA0YkkLPraW8AXhgdV6YYd3rjum4
+   TEb8jhC5SRUI8rrmgk9lw9o3BMXXsi+HIoNcCRfEx74MEcRqkibSBxGnQ
+   w==;
+X-CSE-ConnectionGUID: ClvMaAPeQS+rTWDuResYEA==
+X-CSE-MsgGUID: j1gFIVK/TtuvQNnlf9YXGQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11351"; a="51838349"
+X-IronPort-AV: E=Sophos;i="6.13,302,1732608000"; 
+   d="scan'208";a="51838349"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Feb 2025 07:23:42 -0800
+X-CSE-ConnectionGUID: KuJfWvMNTaWdKG51NSC4ew==
+X-CSE-MsgGUID: SqanJce5Q02NiPoCTdrYow==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="145963160"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Feb 2025 07:23:38 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tl8Ol-0000000DNFF-1gS6;
+	Thu, 20 Feb 2025 17:23:35 +0200
+Date: Thu, 20 Feb 2025 17:23:35 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>
+Cc: gregkh@linuxfoundation.org, linux-serial@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Subject: Re: [PATCH 26/29] serial: 8250: use serial_in/out() helpers
+Message-ID: <Z7dI9-mTl820lyY-@smile.fi.intel.com>
+References: <20250220111606.138045-1-jirislaby@kernel.org>
+ <20250220111606.138045-27-jirislaby@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 4/4] media: venus: hfi: add a check to handle OOB in
- sfr region
-Content-Language: en-US
-To: Vikash Garodia <quic_vgarodia@quicinc.com>,
- Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Tomasz Figa
- <tfiga@chromium.org>, Hans Verkuil <hans.verkuil@cisco.com>
-Cc: Stanimir Varbanov <stanimir.varbanov@linaro.org>,
- Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, linux-media@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20250207-venus_oob_2-v4-0-522da0b68b22@quicinc.com>
- <20250207-venus_oob_2-v4-4-522da0b68b22@quicinc.com>
-From: Hans Verkuil <hverkuil@xs4all.nl>
-In-Reply-To: <20250207-venus_oob_2-v4-4-522da0b68b22@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250220111606.138045-27-jirislaby@kernel.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On 2/7/25 09:24, Vikash Garodia wrote:
-> sfr->buf_size is in shared memory and can be modified by malicious user.
-> OOB write is possible when the size is made higher than actual sfr data
-> buffer. Cap the size to allocated size for such cases.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: d96d3f30c0f2 ("[media] media: venus: hfi: add Venus HFI files")
-> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-> Signed-off-by: Vikash Garodia <quic_vgarodia@quicinc.com>
-> ---
->  drivers/media/platform/qcom/venus/hfi_venus.c | 9 +++++++--
->  1 file changed, 7 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/media/platform/qcom/venus/hfi_venus.c b/drivers/media/platform/qcom/venus/hfi_venus.c
-> index 6b615270c5dae470c6fad408c9b5bc037883e56e..c3113420d266e61fcab44688580288d7408b50f4 100644
-> --- a/drivers/media/platform/qcom/venus/hfi_venus.c
-> +++ b/drivers/media/platform/qcom/venus/hfi_venus.c
-> @@ -1041,18 +1041,23 @@ static void venus_sfr_print(struct venus_hfi_device *hdev)
->  {
->  	struct device *dev = hdev->core->dev;
->  	struct hfi_sfr *sfr = hdev->sfr.kva;
-> +	u32 size;
->  	void *p;
->  
->  	if (!sfr)
->  		return;
->  
-> -	p = memchr(sfr->data, '\0', sfr->buf_size);
-> +	size = sfr->buf_size;
+On Thu, Feb 20, 2025 at 12:16:03PM +0100, Jiri Slaby (SUSE) wrote:
+> There are serial_in/out() helpers to be used instead of direct
+> p->serial_in/out(). Use them in various 8250 drivers.
 
-If this is ever 0...
+Okay, I have checked all calls, and I think to avoid possible issues
+we need to add a few comments here and there, see below.
 
-> +	if (size > ALIGNED_SFR_SIZE)
-> +		size = ALIGNED_SFR_SIZE;
-> +
-> +	p = memchr(sfr->data, '\0', size);
->  	/*
->  	 * SFR isn't guaranteed to be NULL terminated since SYS_ERROR indicates
->  	 * that Venus is in the process of crashing.
->  	 */
->  	if (!p)
-> -		sfr->data[sfr->buf_size - 1] = '\0';
-> +		sfr->data[size - 1] = '\0';
+But first of all, can we actually use serial_port_in()/serial_port_out()
+in the cases where we have already a pointer to uart_port?
 
-...then this will overwrite memory. It probably can't be 0, but a check or perhaps
-just a comment might be good. It looks a bit scary.
+...
 
-Regards,
+Here we should add a comment like
 
-	Hans
+/*
+ * This function is being called as part of the uart_port::serial_out()
+ * routine. Hence it must not call serial_out() on itself against
+ * the modified registers here, i.e. LCR.
+ */
 
->  
->  	dev_err_ratelimited(dev, "SFR message from FW: %s\n", sfr->data);
->  }
-> 
+> static void dw8250_force_idle(struct uart_port *p)
+> {
+> 	struct uart_8250_port *up = up_to_u8250p(p);
+> 	unsigned int lsr;
+
+Here we should add a comment like
+
+	/*
+	 * The following call currently performs serial_out()
+	 * against the FCR register. Because it differs to LCR
+	 * there will be no dead loop, but if it ever gets
+	 * modified, we might need a new custom version that
+	 * avoids infinite recursion.
+	 */
+
+> 	serial8250_clear_and_reinit_fifos(up);
+
+...
+
+On top of this function we need to add the same comment as on top of
+dw8250_force_idle() above.
+
+>  static void dw8250_check_lcr(struct uart_port *p, int offset, int value)
+
+...
+
+The rest is legit as we shouldn't use those in the ->serial_in()/->serial_out().
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
 
