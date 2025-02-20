@@ -1,328 +1,177 @@
-Return-Path: <linux-kernel+bounces-523767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36C35A3DAF1
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:11:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA0B0A3DAEB
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:10:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6D0217B217
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:10:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14B4B189C77D
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:10:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 718CD1F8921;
-	Thu, 20 Feb 2025 13:10:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F7001F7910;
+	Thu, 20 Feb 2025 13:10:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kqm3fOy4"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="nrPzNydB"
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97F7E1F8672;
-	Thu, 20 Feb 2025 13:10:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BD811F76C0
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 13:10:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740057007; cv=none; b=WDK8ZDbf7+9OmjA8oGfIGvZSo/RG5nlGDsG4E9GMwD698WJirSKYSStY8eESrHTshRNn6QjOBtNPjqXGbkbccwwyI+Pfl2tyF/PJ7tA+p8czuN0aYqKEcmLFiw2j3lNf76VWiEwkulWvWFXY049AjRnS/j1iWQCcoignsmgCDlA=
+	t=1740057010; cv=none; b=og6rXWGS9X29EowJXQl7M77JtY2l6ORylg3Y/BJ3hpmu/j3PXe/xeOw035rY30rjeIpDVBFXQDrsc1SZj65ip7PQF2OTu8RhzpXdB3oF66Zwh14AIsH68njqpnMo+hds3E98dl63BRyeilzsWPobH/SxoZCn+KgD0ra+EbTD4xk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740057007; c=relaxed/simple;
-	bh=PlZuN6lokaVTZxUX3MEc3kP4uFyWBmAY7HEBlNuA+No=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=GZ8HATaXDCfxF4Vke2wOB9jcYYT1/5ZRxRI6w4ac1PFz1XiVGpDhKddnlCXvJSbWafejTx9j0dLXAMg51bRPoqWjKbZwyUOGTKGwN6MI/n4SvlMiNnhD8OY4xRC9EPqyymZsLSUX4tofoY/HWEjWmjMXRRTJQUs6TTTbddi0hGM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Kqm3fOy4; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-30a303a656aso9072581fa.0;
-        Thu, 20 Feb 2025 05:10:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740057004; x=1740661804; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nfLSKOTa7yyc/7LvwUHFg6MR+Jam9EaH0/4MKy/NpD4=;
-        b=Kqm3fOy4aXnQFdhbO4UZqDgnJB/A168fkyRtHSegsmUgt1/Af2NV18i2biRPyAzDss
-         wtDSVGV2AwoW/LJq8gywL1NVbNbTMMxQKSctJrZwKvHmWmaAlVeXpZtO5Ldcb6GPVtj1
-         mWZOOT6GrK/xtmuvpP9OeXOhkvxH3omkzXcBNsKcCxMiZPe79Zhu3oGrZU3xN1wtloGq
-         YB6Ev+o5JbYKB6aW7Jq41vPoGAV1w8ctLtsIbStio4lgBQSR1PD/jIw/Gypx83CrJzl1
-         tRJXj0zzX0tuPpph3yYfCgi0w00gJVqPdFZsVi+20O6DGnbLNyO1tpiv6NCb1GadhnBb
-         8apw==
+	s=arc-20240116; t=1740057010; c=relaxed/simple;
+	bh=OoFlg/wkEKxRqwkvakP/8WXxrSjDzVgjFkv67QkB3o8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AjSP8eQgRbpBq8A2oyNR0sumcy0+fL6a1Jk51ETkgC+/JqcVE78mO4TvBrVuECnTkZP+ELN95sPCTL1Q56VaWX3kjS6/7EvzJKINjdqq65Icq9TooMPkSJqJH6+s5ZgUsaupiS7/rPFbtKmhGwQozpMPgGkJQNhzp30d1ztCDRI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=nrPzNydB; arc=none smtp.client-ip=185.125.188.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com [209.85.216.69])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 67BCB3F277
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 13:10:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1740057001;
+	bh=TDkw57RZdAj5KHZ7bxyyZ0R+TDLfczvy1Fi5CTCDaEU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:In-Reply-To;
+	b=nrPzNydBZgyAxzL0/e/kTK8olPL4D9S+V6/f/0xMZWN1286S0wbFjw5Ina4j0VqpD
+	 hvdWuLUpid3K0j99uavJ/s6CpljCZds9mbTHN7Y1ShZXmCaKKW5bpSEOXjpCBjFYoC
+	 r96f1yRtxKp7hTi4h20mRBMLpQ2iClhCVrUp8B9wKdPzf7kgYhWjXCyheh5+nQi8h0
+	 fU6SFRlCbGWAo2CAPHoReSRpoJorkvxMSskUt4Iv8FxRTPwo6W+NgFSQfWTO51BfQa
+	 OSeqqsj3wC+FWUTYHqKY/W7uWNwQIMdefOvBA+sH5jZjgCatqUsCPoVBxe8IDdmM/i
+	 Sy5q7eHPb60gQ==
+Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-2fc46431885so2974206a91.2
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 05:10:01 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740057004; x=1740661804;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nfLSKOTa7yyc/7LvwUHFg6MR+Jam9EaH0/4MKy/NpD4=;
-        b=v5ORYiObBwm8ACNod8t4S9XxJrLOGcrB2h7T8lKA39gWsYEju1xOegiVgnRDR5tFWl
-         gbLOlWtK92j9BSlkQvFZ0MfqVz9hca0uHYT4Puoxe/98HD3ENhJ8eRdUo7H2Nv2i/7Nm
-         EgqorPvC7KsEZlEyJ98ZyDMlea7gpHJnNLThU7LiGBv/h4F3kpkHqxPx5IsMYse1eCaS
-         n7Al4Ci8+AmHLl0SLJA4ot2GxczGCmTLsqZW5x2B373lXo8XWoxwo8CtsA24m90Du8Ct
-         dztyOvpVYZjqfTIbSR0mj6NlXEFByEnNdZ2Q53B2K0RVyRmA7RFpbRXOlCMga3tBEE+g
-         JpYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV7iw28W1TgJCtnkjyA2bkcK17XMhE1wvyCNzyou2oOC5uvTg4gDMnIi6OAABMBs54JHhW0f94GpE60ekNn@vger.kernel.org, AJvYcCX8lwrrwyX+l3wxYjzXyq3xs0WrkqVFiKqKGZR5aTvBPpIMMcuFpZiozUYeALliMy1l6brqs4xH9WHv1Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/1DkwLtAkBiL9qW+WlH/TWZ+cTxle7KUCcjm8LrR9QXVG356+
-	nhwfFLK+skuBmL7AsTFhTGVr9W2jahgK62bhZJJtIVIM+RdYP+AYnOAjLQ5X
-X-Gm-Gg: ASbGncv1PjmcBcmwrPNssPQkQalal7MIs4i1gNS5O19nt4q8ElYt1YjPMlxbvXvWXf7
-	3kea2XXoPZ27JyRqPZaOiA6EamxY9C7b4p1DcCMtaQ29odFQFaqyuh9/wgvIi5IwtKpNxAknBfG
-	8N5e4bjp1BLIDxs9UJfuHgQiNt4oUpg/iz/52GExRPnsghGsO1/0b1lLhimozwqzbWwgk1+lhA/
-	zIPMgN1XoE+3TfRP0GpHzjlr9akzBv3drvMD0FrfpIVxbVxzmc2H16+noCtPYMG2NFNCqpnD0V7
-	0WBpR/FY7W424mpYqpDPmoclwUhbSRPSzQLKqX1V
-X-Google-Smtp-Source: AGHT+IGU2d50kLZ3mLqizMb/8wIsicUHRVZydM8BivNiqhueplDN8nkYIG6oyZJPxJSE7NmKaYbS5w==
-X-Received: by 2002:a05:651c:a:b0:2ff:8e69:77d7 with SMTP id 38308e7fff4ca-30927a64cacmr63670511fa.20.1740057003048;
-        Thu, 20 Feb 2025 05:10:03 -0800 (PST)
-Received: from NB-5917.corp.yadro.com (avpn01.yadro.com. [89.207.88.243])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3091029b75esm25510721fa.103.2025.02.20.05.10.02
+        d=1e100.net; s=20230601; t=1740056999; x=1740661799;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TDkw57RZdAj5KHZ7bxyyZ0R+TDLfczvy1Fi5CTCDaEU=;
+        b=Pg9TaHpw0uJ8fvodE8Eds0nCsDOclyGBLDDQvbS35boXgTGvmjEO/DwJO+zxeAFs69
+         ZXrxQlGBkbmd+unLj40z/HvmJuacTWZLJh6+JRbF3C6zss9q7cyTsT3L/VbUjbQAZU3B
+         vUx7LXV0qiJWeOtbLUsHUftUXXqyNCdUXCwvLDxTOveBO/jKoRoDF59l51Aqw28N9R49
+         0lMngvFLylSJO67atSrKaj0Bg423IvYdCVmz4S64j//vKuj9yn3QM7R++LTYaigDsPZ1
+         WX7DuUQBligjGFShMO/lMzFp6Ui77AOyVEnWmxRX0/GsYRa5MIHnxr9TDNJO4KV9LRrG
+         961w==
+X-Forwarded-Encrypted: i=1; AJvYcCUu0uBO++0fPiQkFDLQ3zP7ZIjP5LkVmLQjaWlYQSvTSlwUHiBl38APXgWiD+u10dPn8XkChSECydJanvk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGJhY3Y3tTOR4Q7+koa1NQ+QoDrdQbPdFqJ8Z5OKcxPjkoO6Zz
+	EQohTleyzdBUjq7+R23ii2CCV6hJ2zehVYpC/plWinXMCrTgiRZAhra0L+2UuDk+ZureZ3Yg0qg
+	X4svcm6s3CgWQ71hQCOfxSYSAeIc63G/b4I1dYsFlAgdf0elhxK1XXRBP2La+xOk8VgYjJLgxR/
+	J7Kw==
+X-Gm-Gg: ASbGnct91K5dzdehTGNBbJExi3NTI2QEAL8qFZX8NBzyVDg2DLZIEVEoGJeMgm1h/14
+	CeK2Je509+Gat0L/FTvxrzWIVfOhf1egy298ORr7eWvy5s/+zLhUG3iS/1EwOIO6WbpYXl7YqTD
+	6HClylCY+RLPBzIImbyNCqQYkFQJrjizuMa4AI6SgiwQtWAH79GS0mXJtIlrxemPYsD/EnIhOjH
+	rxXA0bxmdSp3zIeYM8ilP78NOsxdZHAkukqcQievNGMe1c0a1b5NCuwQ+hDJUxYpeTzZKV876Sb
+	WaT+Rm0=
+X-Received: by 2002:a05:6a21:6004:b0:1ee:e4f0:62a with SMTP id adf61e73a8af0-1eee4f008a3mr5085211637.20.1740056999406;
+        Thu, 20 Feb 2025 05:09:59 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEvByjuePrsVHk8y766/+TCh6MsNT6Fs9sPnsreg1VEb5YOiXGj9/bDc37i57PPPNYm+t+Nvw==
+X-Received: by 2002:a05:6a21:6004:b0:1ee:e4f0:62a with SMTP id adf61e73a8af0-1eee4f008a3mr5085179637.20.1740056999115;
+        Thu, 20 Feb 2025 05:09:59 -0800 (PST)
+Received: from localhost ([240f:74:7be:1:256c:5029:b967:ebb0])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-adb5813a687sm10818259a12.20.2025.02.20.05.09.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Feb 2025 05:10:02 -0800 (PST)
-From: Dmitry Mastykin <mastichi@gmail.com>
-To: job@noorman.info,
-	dmitry.torokhov@gmail.com,
-	linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	felix@kaechele.ca
-Cc: Dmitry Mastykin <mastichi@gmail.com>
-Subject: [PATCH 2/2] Input: himax_hx83112b - add pen support
-Date: Thu, 20 Feb 2025 16:09:40 +0300
-Message-Id: <20250220130940.2019784-2-mastichi@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250220130940.2019784-1-mastichi@gmail.com>
-References: <20250220130940.2019784-1-mastichi@gmail.com>
+        Thu, 20 Feb 2025 05:09:58 -0800 (PST)
+Date: Thu, 20 Feb 2025 22:09:55 +0900
+From: Koichiro Den <koichiro.den@canonical.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-gpio@vger.kernel.org, geert+renesas@glider.be, 
+	linus.walleij@linaro.org, maciej.borzecki@canonical.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/3] gpio: sim: convert to use dev-sync-probe utilities
+Message-ID: <w6qjqr2uccbli4nejka2z7dusjcyrdqklda6au7qqkesubmfgb@hspgx2zmru3p>
+References: <20250218160333.605829-1-koichiro.den@canonical.com>
+ <20250218160333.605829-3-koichiro.den@canonical.com>
+ <CAMRc=Mc5XfcQPsw1K70ogT6Oyxhy=PJ8neHT9xA8wrZmk069eQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMRc=Mc5XfcQPsw1K70ogT6Oyxhy=PJ8neHT9xA8wrZmk069eQ@mail.gmail.com>
 
-Add pen support based on Himax Android driver, that provides two versions
-of pen data structure. Pen support is activated in device-tree by
-"pen-present" property. Its value is the version number. We tested with:
-	pen-present = <1>;
-Additional set of device-properties must be used to set pen resolution
-and axis orientation:
-	pen-size-x = <2000>;
-	pen-size-y = <1200>;
-	...
-Touchscreen size device-properties may be added for pen points/mm
-calculation:
-	touchscreen-x-mm = <239>;
-	touchscreen-y-mm = <143>;
+On Thu, Feb 20, 2025 at 12:08:18PM GMT, Bartosz Golaszewski wrote:
+> On Tue, Feb 18, 2025 at 5:04 PM Koichiro Den <koichiro.den@canonical.com> wrote:
+> >
+> > Update gpio-sim to use the new dev-sync-probe helper functions for
+> > synchronized platform device creation, reducing code duplication.
+> >
+> > No functional change.
+> >
+> > Signed-off-by: Koichiro Den <koichiro.den@canonical.com>
+> > ---
+> >  drivers/gpio/Kconfig    |  2 +
+> >  drivers/gpio/gpio-sim.c | 84 ++++++-----------------------------------
+> >  2 files changed, 14 insertions(+), 72 deletions(-)
+> >
+> > diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+> > index 2e4c5f0a94f7..ba06f052b9ea 100644
+> > --- a/drivers/gpio/Kconfig
+> > +++ b/drivers/gpio/Kconfig
+> > @@ -1866,6 +1866,7 @@ endmenu
+> >  # This symbol is selected by drivers that need synchronous fake device creation
+> >  config DEV_SYNC_PROBE
+> >         tristate "Utilities for synchronous fake device creation"
+> > +       depends on GPIO_SIM
+> 
+> No, it does not. Please drop this.
 
-Tested on: Starry Electronic XR109IA2T LCM (HX83102J)
+I'll hide the config as you pointed out, and drop this while at it. Thanks.
 
-Signed-off-by: Dmitry Mastykin <mastichi@gmail.com>
----
- drivers/input/touchscreen/himax_hx83112b.c | 135 ++++++++++++++++++++-
- 1 file changed, 131 insertions(+), 4 deletions(-)
+> 
+> >         help
+> >           Common helper functions for drivers that need synchronous fake
+> >           device creation.
+> > @@ -1916,6 +1917,7 @@ config GPIO_SIM
+> >         tristate "GPIO Simulator Module"
+> >         select IRQ_SIM
+> >         select CONFIGFS_FS
+> > +       select DEV_SYNC_PROBE
+> >         help
+> >           This enables the GPIO simulator - a configfs-based GPIO testing
+> >           driver.
+> > diff --git a/drivers/gpio/gpio-sim.c b/drivers/gpio/gpio-sim.c
+> > index a086087ada17..d1cdea450937 100644
+> > --- a/drivers/gpio/gpio-sim.c
+> > +++ b/drivers/gpio/gpio-sim.c
+> > @@ -10,7 +10,6 @@
+> >  #include <linux/array_size.h>
+> >  #include <linux/bitmap.h>
+> >  #include <linux/cleanup.h>
+> > -#include <linux/completion.h>
+> >  #include <linux/configfs.h>
+> >  #include <linux/device.h>
+> >  #include <linux/err.h>
+> > @@ -37,6 +36,8 @@
+> >  #include <linux/sysfs.h>
+> >  #include <linux/types.h>
+> >
+> > +#include "dev-sync-probe.h"
+> > +
+> >  #define GPIO_SIM_NGPIO_MAX     1024
+> >  #define GPIO_SIM_PROP_MAX      4 /* Max 3 properties + sentinel. */
+> >  #define GPIO_SIM_NUM_ATTRS     3 /* value, pull and sentinel */
+> > @@ -541,14 +542,9 @@ static struct platform_driver gpio_sim_driver = {
+> >  };
+> >
+> >  struct gpio_sim_device {
+> > +       struct dev_sync_probe_data data;
+> 
+> Maybe something more indicative of the purpose? probe_data? sync_probe_data?
 
-diff --git a/drivers/input/touchscreen/himax_hx83112b.c b/drivers/input/touchscreen/himax_hx83112b.c
-index 8f112e3038dd..6cabc0fadb68 100644
---- a/drivers/input/touchscreen/himax_hx83112b.c
-+++ b/drivers/input/touchscreen/himax_hx83112b.c
-@@ -42,6 +42,11 @@
- 
- #define HIMAX_INVALID_COORD		0xffff
- 
-+/* default resolution in points/mm */
-+#define HIMAX_RESOLUTION		10
-+
-+#define HIMAX_SENSING_CHANNELS		1600
-+
- struct himax_event_point {
- 	__be16 x;
- 	__be16 y;
-@@ -54,9 +59,32 @@ struct himax_event {
- 	u8 num_points;
- 	u8 pad1[2];
- 	u8 checksum_fix;
-+	__be16 p_x;
-+	__be16 p_y;
-+	__be16 p_w;
-+	union {
-+		struct {
-+			s8 tilt_x;
-+			u8 hover;
-+			u8 btn;
-+			u8 btn2;
-+			s8 tilt_y;
-+			u8 pad;
-+		} p_v1;
-+		struct {
-+			s8 tilt_x;
-+			s8 tilt_y;
-+			u8 status;
-+			u8 pad[3];
-+		} p_v2;
-+	};
- } __packed;
- 
--static_assert(sizeof(struct himax_event) == 56);
-+#define HIMAX_PEN_HOVER		BIT(0)
-+#define HIMAX_PEN_BTN		BIT(1)
-+#define HIMAX_PEN_BTN2		BIT(2)
-+
-+static_assert(sizeof(struct himax_event) == 68);
- 
- struct himax_ts_data;
- struct himax_chip {
-@@ -70,9 +98,12 @@ struct himax_ts_data {
- 	const struct himax_chip *chip;
- 	struct gpio_desc *gpiod_rst;
- 	struct input_dev *input_dev;
-+	struct input_dev *pen_input_dev;
- 	struct i2c_client *client;
- 	struct regmap *regmap;
-+	u32 pen;
- 	struct touchscreen_properties props;
-+	struct touchscreen_properties pen_props;
- };
- 
- static const struct regmap_config himax_regmap_config = {
-@@ -214,6 +245,52 @@ static int himax_input_register(struct himax_ts_data *ts)
- 	return 0;
- }
- 
-+static int himax_pen_input_register(struct himax_ts_data *ts)
-+{
-+	struct input_dev *input;
-+	int error;
-+	u32 x_mm, y_mm;
-+
-+	input = devm_input_allocate_device(&ts->client->dev);
-+	if (!input) {
-+		dev_err(&ts->client->dev, "Failed to allocate input device\n");
-+		return -ENOMEM;
-+	}
-+	ts->pen_input_dev = input;
-+
-+	input->name = "Himax Pen Input";
-+
-+	if (device_property_read_u32(&ts->client->dev, "touchscreen-x-mm", &x_mm) ||
-+	    device_property_read_u32(&ts->client->dev, "touchscreen-y-mm", &y_mm)) {
-+		input_abs_set_res(input, ABS_X, HIMAX_RESOLUTION);
-+		input_abs_set_res(input, ABS_Y, HIMAX_RESOLUTION);
-+	} else {
-+		input_abs_set_res(input, ABS_X, HIMAX_SENSING_CHANNELS / x_mm);
-+		input_abs_set_res(input, ABS_Y, HIMAX_SENSING_CHANNELS / y_mm);
-+	}
-+
-+	input_set_capability(input, EV_ABS, ABS_X);
-+	input_set_capability(input, EV_ABS, ABS_Y);
-+	input_set_abs_params(input, ABS_PRESSURE, 0, 4095, 0, 0);
-+	input_set_abs_params(input, ABS_TILT_X, -60, 60, 0, 0);
-+	input_set_abs_params(input, ABS_TILT_Y, -60, 60, 0, 0);
-+	input_set_capability(input, EV_KEY, BTN_TOUCH);
-+	input_set_capability(input, EV_KEY, BTN_STYLUS);
-+	input_set_capability(input, EV_KEY, BTN_STYLUS2);
-+	input_set_capability(input, EV_KEY, BTN_TOOL_PEN);
-+
-+	touchscreen_parse_properties_prefix(ts->pen_input_dev, false, &ts->pen_props, "pen");
-+
-+	error = input_register_device(input);
-+	if (error) {
-+		dev_err(&ts->client->dev,
-+			"Failed to register input device: %d\n", error);
-+		return error;
-+	}
-+
-+	return 0;
-+}
-+
- static u8 himax_event_get_num_points(const struct himax_event *event)
- {
- 	if (event->num_points == 0xff)
-@@ -257,6 +334,45 @@ static void himax_process_event(struct himax_ts_data *ts,
- 	input_sync(ts->input_dev);
- }
- 
-+static void himax_process_pen(struct himax_ts_data *ts,
-+			      const struct himax_event *event)
-+{
-+	struct input_dev *dev = ts->pen_input_dev;
-+	s8 tilt_x, tilt_y;
-+	bool hover, btn, btn2;
-+	u16 x = be16_to_cpu(event->p_x);
-+	u16 y = be16_to_cpu(event->p_y);
-+	bool valid = x < ts->pen_props.max_x && y < ts->pen_props.max_y;
-+
-+	if (ts->pen == 2) {
-+		tilt_x = event->p_v2.tilt_x;
-+		tilt_y = event->p_v2.tilt_y;
-+		hover = event->p_v2.status & HIMAX_PEN_HOVER;
-+		btn = event->p_v2.status & HIMAX_PEN_BTN;
-+		btn2 = event->p_v2.status & HIMAX_PEN_BTN2;
-+	} else {
-+		tilt_x = event->p_v1.tilt_x;
-+		tilt_y = event->p_v1.tilt_y;
-+		hover = event->p_v1.hover;
-+		btn = event->p_v1.btn;
-+		btn2 = event->p_v1.btn2;
-+	}
-+
-+	input_report_key(dev, BTN_TOOL_PEN, valid);
-+
-+	if (valid) {
-+		input_report_key(dev, BTN_TOUCH, !hover);
-+		touchscreen_report_pos(dev, &ts->pen_props, x, y, false);
-+		input_report_abs(dev, ABS_PRESSURE, be16_to_cpu(event->p_w));
-+		input_report_abs(dev, ABS_TILT_X, tilt_x);
-+		input_report_abs(dev, ABS_TILT_Y, tilt_y);
-+		input_report_key(dev, BTN_STYLUS, btn);
-+		input_report_key(dev, BTN_STYLUS2, btn2);
-+	}
-+
-+	input_sync(dev);
-+}
-+
- static bool himax_verify_checksum(struct himax_ts_data *ts,
- 				  const struct himax_event *event)
- {
-@@ -264,7 +380,7 @@ static bool himax_verify_checksum(struct himax_ts_data *ts,
- 	int i;
- 	u16 checksum = 0;
- 
--	for (i = 0; i < sizeof(*event); i++)
-+	for (i = 0; i <= offsetof(struct himax_event, checksum_fix); i++)
- 		checksum += data[i];
- 
- 	if ((checksum & 0x00ff) != 0) {
-@@ -293,8 +409,9 @@ static int himax_handle_input(struct himax_ts_data *ts)
- {
- 	int error;
- 	struct himax_event event;
-+	size_t length = ts->pen ? sizeof(event) : offsetof(struct himax_event, p_x);
- 
--	error = ts->chip->read_events(ts, &event, sizeof(event));
-+	error = ts->chip->read_events(ts, &event, length);
- 	if (error) {
- 		dev_err(&ts->client->dev, "Failed to read input event: %d\n",
- 			error);
-@@ -305,8 +422,11 @@ static int himax_handle_input(struct himax_ts_data *ts)
- 	 * Only process the current event when it has a valid checksum but
- 	 * don't consider it a fatal error when it doesn't.
- 	 */
--	if (himax_verify_checksum(ts, &event))
-+	if (himax_verify_checksum(ts, &event)) {
- 		himax_process_event(ts, &event);
-+		if (ts->pen)
-+			himax_process_pen(ts, &event);
-+	}
- 
- 	return 0;
- }
-@@ -368,6 +488,13 @@ static int himax_probe(struct i2c_client *client)
- 	if (error)
- 		return error;
- 
-+	device_property_read_u32(dev, "pen-present", &ts->pen);
-+	if (ts->pen) {
-+		error = himax_pen_input_register(ts);
-+		if (error)
-+			return error;
-+	}
-+
- 	error = devm_request_threaded_irq(dev, client->irq, NULL,
- 					  himax_irq_handler, IRQF_ONESHOT,
- 					  client->name, ts);
--- 
-2.34.1
+Hm, right. I'll go with probe_data. Thanks!
 
+> 
+> Bart
 
