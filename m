@@ -1,171 +1,149 @@
-Return-Path: <linux-kernel+bounces-524114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DD78A3DF5B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:53:22 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C164BA3DF60
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:53:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2EDC2423923
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:51:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0849717E237
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:51:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2673720485B;
-	Thu, 20 Feb 2025 15:50:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9EFA14A82;
+	Thu, 20 Feb 2025 15:51:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="taqvxzDf"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FVUxaFza"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FBB81FF7C3
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 15:50:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98D071D5CD9;
+	Thu, 20 Feb 2025 15:51:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740066645; cv=none; b=H2b5kvKJvfVCqNUt63DbnzXU9XSz/jDnxb/u3EGPqD5hWNNW4iolt6DkHBz15+mm/wdip2Uea+zv2yXc8A4eZzHoCMvuOw8gY7GO0W9gtkxQlN76+u6cHwSbhcyshpRs/PX40xN/9Nm9vt6gRx2sJt2nYxcGzNc2f+DNR3zRzDk=
+	t=1740066706; cv=none; b=EnaAJmm+SYfxdvYJn3KLCRZfTSHHOp7o7/Y7TD0Fl4jnm/83GPsyn0UbeyPivS36+5Un1WIJsHbXi00vV06c86URPl+8u1GkrdDH6GE12Udp+plyFJe5N73PSvNpKvPLUVlbuV2ctxPYoOc/AGQXHR6Q+kPDkuR907uuza2e/ZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740066645; c=relaxed/simple;
-	bh=ieiaw5OY+W9wjSsfmsFhHkkrsbAtEYxkH/L30OdT2RU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KlXm/JVw5jNySWL+C0YZifYD0INfefZnoHjoi5vOVsHPhfwRH4N0EkiNMai6L53OirXuz6zWNWVmmuX2Ol/jAWWxUNhQj+QiLSnUkG7NZFTwBFAzuha7AzPX1a2hLVF+a/36LiusxqaqqUJXzJngGLS0NqKJH7hX+mVhMrvGCCw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=taqvxzDf; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-307325f2436so10855711fa.0
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 07:50:43 -0800 (PST)
+	s=arc-20240116; t=1740066706; c=relaxed/simple;
+	bh=oYN3yBwKAFhDDm+1KS08ubJwkHA6hRvCCNjKCImv9Lo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Ni7BQpp4LPUHyOlr4PI0LUuJiBUxPTg6SYwr4LR1dVN3PwrFkOWoUeDrqShswE7EI4G687KehZkE235VR6ztM96agk3I9fJLx6YNlGszCkLYkavF1su3XihVVRyVNznuw/MaXBkvZUZgoA16L6i5K9XI4VIMW0gsftuNSOxYOnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FVUxaFza; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-22128b7d587so21253225ad.3;
+        Thu, 20 Feb 2025 07:51:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740066641; x=1740671441; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=VJw+h4hQVN4nQ/xzWE1GpPEBFqaeNGDtLbmaQLEVPk0=;
-        b=taqvxzDflrbPpXDQ75Y89R/TPR58JLQgAeQ0JDj3Jrhzjpo7FI8RMhTaIw8UP7ejCJ
-         zC/rQEWW58o4v0GlLqGFIk4+9wUhlBtta/QgZ/sevkpxLg20q/GWZpVKmwaxX2WDGKP1
-         luTi7zXtdbNIPQE/hUFKy1SItGQ8NSlzZacHXmoH2XLqT3azeJVx2YzIJXTgRcIHB0ur
-         O+7i4pioOsuEycVOVRXeilKhw3T/3M7ejADzj5dYWGpwCsDLuxeyFGoutZXJ9dlnDlee
-         3qpEWtQ16LoqJm8x1flGLcHww4n9zqVc2OfRe28/j1DZxZpZvDwmmV0I0jVIrOKb9bX7
-         5UvQ==
+        d=gmail.com; s=20230601; t=1740066704; x=1740671504; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=NR8wjcpxYR1ODwGW2lEP9QG5C1p3MxomWI2/rfhGN4U=;
+        b=FVUxaFza+wAoyBd2M6qghrsn/x65ZuUW+kDzxUHKYsfu/pdUSCZLgQnJgNLmBN7dR4
+         TGT8y5KgcZKZf4HpKYcebG3na3OuDBmw7nAFCEjLUvEpc//juwi8aUVMJSkvherBIOr0
+         GnAd7EZUoy+1D+xazA9AN43CTOH81k6mtThgRibYZ/N38vZ7RMpnwJ6xZGXSB1WWWYTW
+         YH4GnAkxRqzVNFGUFAITKu5O9t0obhSsaumwGhw4ynC4GT+D13yzSfNzFqKkY+V1oN1e
+         Qe0j6cgOVEmtQhOGAoD8P9Gg1DMfPxNCY4BUDtaiOGqJ7koTRhFff6QG7lxhm7fy/CQS
+         dzDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740066641; x=1740671441;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VJw+h4hQVN4nQ/xzWE1GpPEBFqaeNGDtLbmaQLEVPk0=;
-        b=HYtBvmAKdd4QJNKgYsE+i8iwjhKoid9IVLKYqs2ZGRmh4L04+p+/tJln0ON/pxZGdW
-         H3lQkhYP38VtuJWcq8Ty+sFnVAJnNfqGV97k26v/H0qs/C0vSonaz4a/7bm5bbvvf2hu
-         UnIop0VnepmURGn0AUcU0BOe/J0Ih4g9KQeg00l+h/GJwUC169jM0dfso6LOxowrIbM+
-         eVkVLL2YTvwwpJ5181qfDnKA6Fu/B5CIx24zVMp1UCE9vcltNJuEFE/mpK/4i5VqO3O/
-         sjddFRsl2Uc8TGShFSWB0FBUls1C4eG8saqyk6hHHPVFSRR1Y82vaZWQWg4hu6r5/sU6
-         B0Xg==
-X-Forwarded-Encrypted: i=1; AJvYcCVrc7r1Bzi8GOD7GCzkgVqDfK+dviZ0rVbJIOICn6o73fyaS2Zj9ThHAVoHsVDKQ78tj8dawouoqH8MWoI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwnDFuGyXzlu/AfALvTnq5A4ZsBsITAlU5qLtJvwYtwytHZ63xN
-	WwUNwV99LcuUNau6XVFqwIzTUPCstJN2C/rrKO2ZAxmLIgtX/ti1VjqHEvEf0y8=
-X-Gm-Gg: ASbGncvThrxNOK6hOh/JZSvhtOw3AIuPMfQrsGug0UoN27tohkUu0nkE5kYHvTYxZy8
-	+C2WB7s66EU5BQiFx72AWQdkoXULFuBcPEE5/hr6FlyLAE1ETIcE/lcIpe1xZGdAF1OGYrN2VaI
-	JeXrcGMP7QKyEFxO8w8GXCZVikxjjzIGcGXmFv/24m7qWFI36Ntxithzqx5uhrx0kjxseqWQp9M
-	vyuQ+iD15tFfJsZq+braEL8iSm9tgic6CmtOrB2IIJPYCdOXAkmUcNE8Dw0lViC2biY92dDx3Hc
-	MOt/S7cGILlRQ5xUDr7QfpIJB6E4+tuMIbHZ+2wuuBADzGO5mXlEHyRj5VaQlSNykhdkwmw=
-X-Google-Smtp-Source: AGHT+IG96cDdlQ5ip9buGSbrayjmMs6tRL76tsdQABR/QmoJLFuyfSuDIZStdfBwmD72ax+ik4u3IQ==
-X-Received: by 2002:a2e:99d7:0:b0:309:214a:6b16 with SMTP id 38308e7fff4ca-30a44ed34bcmr25621661fa.22.1740066641455;
-        Thu, 20 Feb 2025 07:50:41 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30a28000328sm15763861fa.66.2025.02.20.07.50.40
+        d=1e100.net; s=20230601; t=1740066704; x=1740671504;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NR8wjcpxYR1ODwGW2lEP9QG5C1p3MxomWI2/rfhGN4U=;
+        b=FdDDdeYH7neTEH9GQhzWeh0ZmRRMZjSFbVDikal3ypnsZT58Bx3q0rxOi7WHDiZYdY
+         lXY1asSBVm5QIKMjdLaW6Id6uIf9rDVNXgW/TrfwXK7IndDEUHRoo0E2TJqF89FzG+Zz
+         q6uVexObShpAZ/h9QICQcpw5Xu8KHUA0rnnsCBNT2WjUD0fA4D+1YPc9LFYBrFGdT5jJ
+         ZOdThUb19FScBSvG0lBExfRTB8cXAGXOLYyZA4hLcRku6XNlsNsE2wXEPSRtNG96iUKy
+         k2QaQI5/9wCWduiwPZa650DhNCfVpaieHD+DjYBcT65ET/DkelaqBeL3J0syu/F7pNDP
+         CVNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUyR7B56SanfdaWSuyWfm4GVE9SnNe3bmvJucy0YE8XVnUsePYzDtyxI6je0LYs1oWQnb0oou8pdDrsk1Ok@vger.kernel.org, AJvYcCXe8/PKkjRJw0P+5YSSek59bZzupjm/n/QNsE8Y8AhtqTvxjdtoyDRsipu1Dy4s+23ZchKBl5HB9/6d@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywm5lSX51BAun0P/6CNhguLCKoOJgwklW34J6YVVc6pRLAqAldl
+	sAX7R1Uxxl/XYuZWtoPQVUPj1qP44QnYZ4pahkfOP8Vqheonj+zp
+X-Gm-Gg: ASbGncsO/I83Hs0Md6ZpwnuzlR2sHZaonkjVjWkFCKsGIoxnz3k1Aqq9bcY/JFWPHbm
+	jOzhzy5ZDSEeGUrhcLFUtwCzsguUwVxtsyNnBwRUgFU2C1AoB2U7C5c0In6DCxROon5Vh3BLnbK
+	y3ZlUjW4rg8vwwO8SRhnlVJuEbmZ0r75fLLnyXcx9I98dM6Durmg7tt6ancUD4Z70KYnst2S8L5
+	Y2/8iSmADtms+qXYAUthdKKB7GGMcyQypQI+l67j9oUInbh8J3p/h8SUz+xkjSq1xoxYCxrIhUW
+	0YVgRgjHubz45TOwPw==
+X-Google-Smtp-Source: AGHT+IEPhTJ7Bb4lHaVGDGh+KJhL7uPvRBoISpPixnwur50FdUhQQiFL6DTY+T3N+joX7r91AEIt9Q==
+X-Received: by 2002:a17:902:da92:b0:221:7e36:b13e with SMTP id d9443c01a7336-2217e36e109mr106022935ad.12.1740066703713;
+        Thu, 20 Feb 2025 07:51:43 -0800 (PST)
+Received: from [127.0.1.1] ([59.188.211.160])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-220d5349019sm123694345ad.36.2025.02.20.07.51.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Feb 2025 07:50:41 -0800 (PST)
-Date: Thu, 20 Feb 2025 17:50:39 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Akhil P Oommen <quic_akhilpo@quicinc.com>, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/5] nvmem: core: verify cell's raw_len
-Message-ID: <scmsm6wsgspieamsjqftjfdswfmfh5cemiebb6k66qzetdovy5@oa677gskzst4>
-References: <20250109-sar2130p-nvmem-v4-0-633739fe5f11@linaro.org>
- <20250109-sar2130p-nvmem-v4-2-633739fe5f11@linaro.org>
- <Z7Xv9lNc6ckJVtKc@finisterre.sirena.org.uk>
- <CAA8EJpp-mE2w_c3K08+8AR3Mn1r8X58FRXvAUFALQ-u2ppoKgw@mail.gmail.com>
- <Z7c5niuwR3TVTQrj@finisterre.sirena.org.uk>
+        Thu, 20 Feb 2025 07:51:43 -0800 (PST)
+From: Nick Chan <towinchenmi@gmail.com>
+Subject: [PATCH 0/5] arm64: dts: apple: Add DWI backlight dt nodes
+Date: Thu, 20 Feb 2025 23:51:02 +0800
+Message-Id: <20250220-dwi-dt-v1-0-d742431c7373@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z7c5niuwR3TVTQrj@finisterre.sirena.org.uk>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAGZPt2cC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDIyMD3ZTyTN2UEt1ky2TzxDRj46QUQzMloOKCotS0zAqwQdGxtbUAUIX
+ q01gAAAA=
+X-Change-ID: 20250220-dwi-dt-c9c7af33bd16
+To: Janne Grunau <j@jannau.net>, Sven Peter <sven@svenpeter.dev>, 
+ Alyssa Rosenzweig <alyssa@rosenzweig.io>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Nick Chan <towinchenmi@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1533; i=towinchenmi@gmail.com;
+ h=from:subject:message-id; bh=oYN3yBwKAFhDDm+1KS08ubJwkHA6hRvCCNjKCImv9Lo=;
+ b=owEBbQKS/ZANAwAIAQHKCLemxQgkAcsmYgBnt0+MA7ICfOW6+7b5FNbtbwzzWetcXXX3Ugu7b
+ wy4NbpzBBeJAjMEAAEIAB0WIQRLUnh4XJes95w8aIMBygi3psUIJAUCZ7dPjAAKCRABygi3psUI
+ JD9sD/0bhTf5uHb6Eivm89d6HiPlsmiSfNzME1MqWK/3RuukOjP0F9KRGyYTRV1X4EAjahNswEN
+ eKiMl2Czugtw4m8N6udUQhbnHgeSRj5ztf6qy9aruaXVKt6WA0OTASzmzhCadhfl8E4oBWriZ8O
+ oFMO0m/IHBI50Jhb8uv6EuOeng1HIBtW3oWFiKW99U5Gv6aM/WdOYkKZUUlIFmTkpHpAzBHjNIS
+ 7zeS5OQnB9FMzTKqt2cQobcVV3wtc1hRg2i2l/hpTJD2MN3yKg/LRo6QTwgTPD1ntqNnFK3ol7G
+ SAqq6cogOhqOXl2kFRZKQsIsUuhFZ2evgLJ5JPO/dBN1Fhz4R8o2udBxGoIWV9/o2NkXuBRd78U
+ kRdzsMjRrPugHF5/bVlycF74hmNfBeqGT3IDA2ApEn7PtvZ5RY6E5J83aBsEFtPQPUc0yCcE7Oi
+ TpcWzEnjJ6I7K88RJS2u65z/JSxmg7HvEKU3Ik8D9stTXpFZ2J6X8Cppx5yAJA3Cyid+b4GSBny
+ f+KpBpsoyUoCgMiLkU2LgNhxmVA5+H7cEdxiNC23vzDU2m3ZIYUImQKvAxNtAn3XHd5uZtDWB52
+ m06nV2Nbdj4naLaUMiu6bpFG3SZ8ZYwaAy1JMFra7SbCP9kGSgM7/LfniRYNTrEz6zUmZwoWnEo
+ DcZhuh9XZ43nSFg==
+X-Developer-Key: i=towinchenmi@gmail.com; a=openpgp;
+ fpr=4B5278785C97ACF79C3C688301CA08B7A6C50824
 
-On Thu, Feb 20, 2025 at 02:18:06PM +0000, Mark Brown wrote:
-> On Wed, Feb 19, 2025 at 05:14:43PM +0200, Dmitry Baryshkov wrote:
-> > On Wed, 19 Feb 2025 at 16:51, Mark Brown <broonie@kernel.org> wrote:
-> > > On Thu, Jan 09, 2025 at 06:35:46AM +0200, Dmitry Baryshkov wrote:
-> 
-> > > > Check that the NVMEM cell's raw_len is a aligned to word_size. Otherwise
-> > > > Otherwise drivers might face incomplete read while accessing the last
-> > > > part of the NVMEM cell.
-> 
-> > > I'm seeing a bunch of failures on i.MX platforms in -next which bisect
-> > > to this patch.  For example on the i.MX6q based UDOOq various things
-> > > including the ethernet fail to come up due to the efuse not appearing:
-> 
-> > > [    1.735264] nvmem imx-ocotp0: cell mac-addr raw len 6 unaligned to nvmem word size 4
-> > > [    1.735289] imx_ocotp 21bc000.efuse: probe with driver imx_ocotp failed with error -22
-> 
-> > This looks like an error on the i.MX platforms. The raw_len must be
-> > aligned to word size. I think the easiest fix is to implement the
-> > .fixup_dt_cell_info() callback like I did for the qfprom driver.
-> 
-> That sounds pluasible, but as things stand we've got a regression on
-> these platforms - taking out ethernet breaks NFS boot apart from
-> anything else.  I'd also be a bit concerned that there might be other
-> users with issues, does this need an audit of users before trying to
-> enforce this requirement?
+Add device tree nodes for DWI backlight found on some Apple iPhones, iPads
+and iPod touches. Not all devices have this feature, as some devices
+instead have their backlights directly connected to the WLED output of a
+PMU or use self-emissive panels.
 
-A quick grep shows that there are enough drivers using word size greater
-than 1. Would you mind checking if the following patch fixes an issue
-for you? (Note, compile-tested only.)
+Devicetree bindings are in the driver series. Last version at:
+https://lore.kernel.org/asahi/20250214040306.16312-1-towinchenmi@gmail.com/
 
-From 2bde6ec5c9e74771f29170cfa11623208266880b Mon Sep 17 00:00:00 2001
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Thu, 20 Feb 2025 17:43:54 +0200
-Subject: [PATCH] nvmem: make the misaligned raw_len non-fatal
-
-The commit 11ccaa312111 ("nvmem: core: verify cell's raw_len") enforced
-the raw read len being aligned to the NVMEM's word_size. However this
-change broke some of the platforms, because those used misaligned
-reads. Make this error non-fatal for the drivers that didn't specify
-raw_len directly and just increase the raw_len making it aligned.
-
-Fixes: 11ccaa312111 ("nvmem: core: verify cell's raw_len")
-Reported-by: Mark Brown <broonie@kernel.org>
-Closes: https://lore.kernel.org/linux-arm-msm/Z7Xv9lNc6ckJVtKc@finisterre.sirena.org.uk/
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Signed-off-by: Nick Chan <towinchenmi@gmail.com>
 ---
- drivers/nvmem/core.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+Nick Chan (5):
+      arm64: dts: apple: s5l8960x: Add backlight nodes
+      arm64: dts: apple: t7000: Add backlight nodes
+      arm64: dts: apple: s800-0-3: Add backlight nodes
+      arm64: dts: apple: t8010: Add backlight nodes
+      arm64: dts: apple: t8015: Add backlight nodes
 
-diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
-index b6f8544fd966..e206efc29a00 100644
---- a/drivers/nvmem/core.c
-+++ b/drivers/nvmem/core.c
-@@ -612,7 +612,11 @@ static int nvmem_cell_info_to_nvmem_cell_entry_nodup(struct nvmem_device *nvmem,
- 			"cell %s raw len %zd unaligned to nvmem word size %d\n",
- 			cell->name ?: "<unknown>", cell->raw_len,
- 			nvmem->word_size);
--		return -EINVAL;
-+
-+		if (info->raw_len)
-+			return -EINVAL;
-+
-+		cell->raw_len = ALIGN(cell->raw_len, nvmem->word_size);
- 	}
- 
- 	return 0;
+ arch/arm64/boot/dts/apple/s5l8960x-5s.dtsi     | 4 ++++
+ arch/arm64/boot/dts/apple/s5l8960x.dtsi        | 7 +++++++
+ arch/arm64/boot/dts/apple/s800-0-3-common.dtsi | 4 ++++
+ arch/arm64/boot/dts/apple/s800-0-3.dtsi        | 7 +++++++
+ arch/arm64/boot/dts/apple/t7000-handheld.dtsi  | 4 ++++
+ arch/arm64/boot/dts/apple/t7000.dtsi           | 7 +++++++
+ arch/arm64/boot/dts/apple/t8010-common.dtsi    | 4 ++++
+ arch/arm64/boot/dts/apple/t8010.dtsi           | 7 +++++++
+ arch/arm64/boot/dts/apple/t8015-8.dtsi         | 4 ++++
+ arch/arm64/boot/dts/apple/t8015.dtsi           | 7 +++++++
+ 10 files changed, 55 insertions(+)
+---
+base-commit: 3febe9de5ca5267618675650871a626d0901f8cb
+change-id: 20250220-dwi-dt-c9c7af33bd16
+
+Best regards,
 -- 
-2.39.5
+Nick Chan <towinchenmi@gmail.com>
 
-
-
--- 
-With best wishes
-Dmitry
 
