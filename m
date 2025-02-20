@@ -1,104 +1,159 @@
-Return-Path: <linux-kernel+bounces-523514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D25AA3D7DD
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:10:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 728D0A3D7DB
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:09:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D82D7A9606
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 11:07:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B00653B3313
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 11:08:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE4E31F1538;
-	Thu, 20 Feb 2025 11:08:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EA391F0E4B;
+	Thu, 20 Feb 2025 11:08:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="FkQ9bk2A"
-Received: from out-176.mta0.migadu.com (out-176.mta0.migadu.com [91.218.175.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="UL+0Jqbp"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DFB01EBFE0
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 11:08:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 984541F0E3C
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 11:08:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740049715; cv=none; b=LE876tonM2rtzRnFPaVAFgux/Tg1n9q9ZqM9piPXjSyzOXcLbW4LDVOtF/R0bgUdWBgtEHo8eIBPvicmuncBGVsFKwbrd1vyGgo1m+nOf6zfyTc/qLSqKko9+T9l1ZYBNJXRau1nODzMqXhYP1OGCTGs+0QRN9M5T1O9OfNbrkI=
+	t=1740049713; cv=none; b=JQM+Ze0L+dw/ZrDZAai+2gty7VvwHnuPrHNLTeLht23kBycLdnLqd0X5FmB+14p2x4bZ2ENLj27/+uLQBlZMMSJTDVQeiIMHW3x0HccUyD3OmOPdGqvt3yily+ZFEuQKZ38eTEwwINXtMQYMlQL5/40NklMu07xulh1QAXeq5to=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740049715; c=relaxed/simple;
-	bh=oXJNr/gxxvxCZ5rhqqjVPyBrGe3PMFy7vb+NY47McLg=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=CwVvxJYXY6I9HNHOX7fJ9qCX1Aq5iN65N/XT9Q/blhrIS1LFMfXi47pPtLaGCigcnngjh2CH6oeWYOBkq4NST3J4bkUlI42n9eb7DcclMEepzPjfJz3wMAyX27BqCv+u0PGOJHdtJdKmS5kKXzK7cKMH5Ymcn2UHB9wfDrnfztY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=FkQ9bk2A; arc=none smtp.client-ip=91.218.175.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Content-Type: text/plain;
-	charset=us-ascii
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1740049701;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DN4B67Rzb5ZccHJbDxzAn/tcklLewziqHZr7OFYX8jU=;
-	b=FkQ9bk2AuLs0vWYjGGMFl6Lj+vVHipDJNXzsfpR7qS2n8jL8M96eIdFpqZE0mkEsqBqrup
-	cXcIpwu3Kelk+l0cIb0cIlOSPBSR9iJueirwtjD9w41qDY85XqUVQ5MafO4G2AYBfQMMUO
-	sq+0vFTMJlrysK918r42sAWxc6fsiew=
+	s=arc-20240116; t=1740049713; c=relaxed/simple;
+	bh=wsklMZucUPkbHHT0MAAjFIJG2P6Hdi5divFOEI5Inq4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ba5o1fGI55hrRw49ds6ZvVcBRIZa1+EwDJf/8xv4Y4ePDrX19moDEgFOMVnkplAdzcFDlhYd+h8URFs4fDZne/PrOG552ZyOR9RIqNUVG+pNI4xt/FfaURbb0bEy0zJPEl86TjA8sVeONbUcR7rJbPYmZlG06WPzb1qDGF3Bt3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=UL+0Jqbp; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-543cc81ddebso961757e87.1
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 03:08:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1740049709; x=1740654509; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2Wq8QeYYoAG6GqdK6ykrRH0bnFwzccAb5pciRQeLX7g=;
+        b=UL+0JqbpGKdX+6wAg8n25yk7LN3eWa9O8ksL1Qn3M4E7RKVgPDe4msk2cJXSZwHE12
+         viQHYXSj7d4sgdhZu9b6Q1jK4c04KMYPABr3h8y/bDRQIGHZGmBg4XolP69UTqh/G7hU
+         Jp5cORW0Ldk/pnfhVNxu3ChgU68I3k9L/E9R+rntVxsql9TEOTA+KCvW+h8crJga9miT
+         QtVjjnCEvU6bYvsZCkNKqbRJ76JJTQu+cBxJghktDNxuMILbjDvLm3wshhtBXV0XMkcT
+         tPckx9HQQeLSPrf9I2Wq9JjKwwYz3YwxZKaYNVtdoIGl1oOIMGHhnZ8iODOaGS1J687d
+         2FXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740049709; x=1740654509;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2Wq8QeYYoAG6GqdK6ykrRH0bnFwzccAb5pciRQeLX7g=;
+        b=KBgSyuGqsmP8QP1Bcs7mGfz78zPsbDcsCQU9XAe0TLPsfsBq9cHfD2GGSTG1nP+WVr
+         nWoPmd5n9gyA/wgf31x8/riBDJrtyaJPuHYRs/EiI053O1jKYpePR5f42ZGvSYuepbz8
+         xXOBjl7wO0/xqAoMcCfNCEq+Eb+x/BdGLsKaLBA5igovj+83yqfY/ZiNHXcEGvx4emMI
+         FNTNADcCM8M1CDRVnBFheOd+xnuXF49a4hLXEvk/Dgrt0p8nUMr75Avd2dcwI0CEteWj
+         9tXWVCBVsEJD3GJe0rW3L2bNtCMzHtGlWTATOc1rSdY8O2nNad4p4ESW1NgFxHpx6j4i
+         JJRg==
+X-Forwarded-Encrypted: i=1; AJvYcCXbkfFFH6wGK0rHZydEwAxFeJwKCMFPWOpr+V3ma4sOX7bRVk765ldTPgc0A+2Ni5MnY0HFYoe8KcoeH6M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxklxtWP3L+GPOHw84DLrucIG4RknKNoZZO2XVzzC4EQsyV55WM
+	9X5HcsbybJdPOsAk9ZuW4CwI2LqqsO6Rk10Wwxu51S1Khz5YwQzsHsWOX2zQf7fs+ER8/0/DK8d
+	FSmkw8zCisS2IKI+/LyYh8tamivm9dqs7Y9Nz6P2GsVZjWRInUwM=
+X-Gm-Gg: ASbGnctPiLd7hS9FNZULWbvrphbgBQUkDAaBh1p/hn+IAKF6+ZYXkY4vCiUhmqOgk47
+	s8paBKZQkF2EYuCG+lNXNuLZfwy3tKwUnNGEk29T+4VXwri00IQZwD6OPv/ruZuNPV3qYiO0jxt
+	2IdHwnVyhtJJvOSGs+78BpLJM7tGE=
+X-Google-Smtp-Source: AGHT+IGfnHxc0LwSbIsH3Kf0h9dCgr8wHOa++ItKwQprXHL288wbvCBlEUijw2k3KO0J+QRayqaZh9njys8ex67sVUI=
+X-Received: by 2002:a05:6512:318c:b0:545:2b20:5b21 with SMTP id
+ 2adb3069b0e04-5452feaafc1mr7290527e87.50.1740049709567; Thu, 20 Feb 2025
+ 03:08:29 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51.11.1\))
-Subject: Re: [PATCH] net/mlx5: Use secs_to_jiffies() instead of
- msecs_to_jiffies()
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Thorsten Blum <thorsten.blum@linux.dev>
-In-Reply-To: <20250220071327.GL53094@unreal>
-Date: Thu, 20 Feb 2025 12:08:07 +0100
-Cc: Jacob Keller <jacob.e.keller@intel.com>,
- Saeed Mahameed <saeedm@nvidia.com>,
- Tariq Toukan <tariqt@nvidia.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>,
- Yevgeny Kliteynik <kliteyn@nvidia.com>,
- Mark Bloch <mbloch@nvidia.com>,
- Itamar Gozlan <igozlan@nvidia.com>,
- netdev@vger.kernel.org,
- linux-rdma@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 7bit
-Message-Id: <9694B455-87B0-4A70-93C0-93FE77E3CD17@linux.dev>
-References: <20250219205012.28249-2-thorsten.blum@linux.dev>
- <48456fc0-7832-4df1-8177-4346f74d3ccc@intel.com>
- <20250220071327.GL53094@unreal>
-To: Leon Romanovsky <leon@kernel.org>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+References: <20250218160333.605829-1-koichiro.den@canonical.com> <20250218160333.605829-3-koichiro.den@canonical.com>
+In-Reply-To: <20250218160333.605829-3-koichiro.den@canonical.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Thu, 20 Feb 2025 12:08:18 +0100
+X-Gm-Features: AWEUYZm27-QxV--npSm6sC1JkRv8xgNE48OfDabPsd9PEnwFWvOwLgvBjR1dAuo
+Message-ID: <CAMRc=Mc5XfcQPsw1K70ogT6Oyxhy=PJ8neHT9xA8wrZmk069eQ@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] gpio: sim: convert to use dev-sync-probe utilities
+To: Koichiro Den <koichiro.den@canonical.com>
+Cc: linux-gpio@vger.kernel.org, geert+renesas@glider.be, 
+	linus.walleij@linaro.org, maciej.borzecki@canonical.com, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 20. Feb 2025, at 08:13, Leon Romanovsky wrote:
-> On Wed, Feb 19, 2025 at 03:45:02PM -0800, Jacob Keller wrote:
->> On 2/19/2025 12:49 PM, Thorsten Blum wrote:
->>> Use secs_to_jiffies() and simplify the code.
->>> 
->>> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
->> 
->> nit: this is a cleanup which should have the net-next prefix applied,
->> since this doesn't fix any user visible behavior.
->> 
->> Otherwise, seems like an ok change.
-> 
-> IMHO, completely useless change for old code. I can see a value in new
-> secs_to_jiffies() function for new code, but not for old code. I want
-> to believe that people who write kernel patches aware that 1000 msec
-> equal to 1 sec.
+On Tue, Feb 18, 2025 at 5:04=E2=80=AFPM Koichiro Den <koichiro.den@canonica=
+l.com> wrote:
+>
+> Update gpio-sim to use the new dev-sync-probe helper functions for
+> synchronized platform device creation, reducing code duplication.
+>
+> No functional change.
+>
+> Signed-off-by: Koichiro Den <koichiro.den@canonical.com>
+> ---
+>  drivers/gpio/Kconfig    |  2 +
+>  drivers/gpio/gpio-sim.c | 84 ++++++-----------------------------------
+>  2 files changed, 14 insertions(+), 72 deletions(-)
+>
+> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+> index 2e4c5f0a94f7..ba06f052b9ea 100644
+> --- a/drivers/gpio/Kconfig
+> +++ b/drivers/gpio/Kconfig
+> @@ -1866,6 +1866,7 @@ endmenu
+>  # This symbol is selected by drivers that need synchronous fake device c=
+reation
+>  config DEV_SYNC_PROBE
+>         tristate "Utilities for synchronous fake device creation"
+> +       depends on GPIO_SIM
 
-Using secs_to_jiffies() is shorter and requires less cognitive load to
-read imo. Plus, it now fits within the preferred 80 columns limit.
+No, it does not. Please drop this.
 
-This "old code" was added in d74ee6e197a2c ("net/mlx5: HWS, set timeout
-on polling for completion") in January 2025.
+>         help
+>           Common helper functions for drivers that need synchronous fake
+>           device creation.
+> @@ -1916,6 +1917,7 @@ config GPIO_SIM
+>         tristate "GPIO Simulator Module"
+>         select IRQ_SIM
+>         select CONFIGFS_FS
+> +       select DEV_SYNC_PROBE
+>         help
+>           This enables the GPIO simulator - a configfs-based GPIO testing
+>           driver.
+> diff --git a/drivers/gpio/gpio-sim.c b/drivers/gpio/gpio-sim.c
+> index a086087ada17..d1cdea450937 100644
+> --- a/drivers/gpio/gpio-sim.c
+> +++ b/drivers/gpio/gpio-sim.c
+> @@ -10,7 +10,6 @@
+>  #include <linux/array_size.h>
+>  #include <linux/bitmap.h>
+>  #include <linux/cleanup.h>
+> -#include <linux/completion.h>
+>  #include <linux/configfs.h>
+>  #include <linux/device.h>
+>  #include <linux/err.h>
+> @@ -37,6 +36,8 @@
+>  #include <linux/sysfs.h>
+>  #include <linux/types.h>
+>
+> +#include "dev-sync-probe.h"
+> +
+>  #define GPIO_SIM_NGPIO_MAX     1024
+>  #define GPIO_SIM_PROP_MAX      4 /* Max 3 properties + sentinel. */
+>  #define GPIO_SIM_NUM_ATTRS     3 /* value, pull and sentinel */
+> @@ -541,14 +542,9 @@ static struct platform_driver gpio_sim_driver =3D {
+>  };
+>
+>  struct gpio_sim_device {
+> +       struct dev_sync_probe_data data;
 
-Thanks,
-Thorsten
+Maybe something more indicative of the purpose? probe_data? sync_probe_data=
+?
+
+Bart
 
