@@ -1,228 +1,193 @@
-Return-Path: <linux-kernel+bounces-523813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74AFFA3DB8C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:43:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6428A3DB90
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:43:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3EBB19C24C9
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:43:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D8771734F5
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:43:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E440D1F91E3;
-	Thu, 20 Feb 2025 13:43:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C2E51F9F62;
+	Thu, 20 Feb 2025 13:43:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="opj+ESPE"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="Z9a1EfA0"
+Received: from mx0b-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 020891F8AE5
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 13:43:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 750501F76C0;
+	Thu, 20 Feb 2025 13:43:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740058987; cv=none; b=i8iNS1zMxmAt1jmRh41yCQResmBnF5acX2E8itJsoNkJ8FbKTZ8shNKjDGjoBrp6BrTcNT3aqljV18JyKlEX6PbHLdaw28M017lcMRA+GPYsbycwRB+UpYKU2ytOFmBqyfb31xxbv2wqPJ77iqnb3MJXbxyI9SeDJFz5R2M9HtA=
+	t=1740059005; cv=none; b=kmxms1c1Y9+/L8x3x6IpnD0bLxAMeqVEM1T1+9FLcRMmfkgKGU3I+OyL5G67li6AstR0XJ7sxsa8IUIXLrVqCkmsqJWpt9RyN47Bo7yGTelo2PVBuJ6K8QBuoso+MGi9ddLrLx/Iu78CuEu7doSpkKNQ+sEKZD8F0jrHB7MonLg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740058987; c=relaxed/simple;
-	bh=Y7HnBZNToq7GKt7IX/nOZH5V/RcBolG0dGOlUbAzoO4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qEWNVIF6DLpBGDohNZX1ryQuBwkQ9gWuU+yS5npSIzGDBF/MNbOE5RXTgS2+7UqV5Fl10jb6L7A/+UVGVVOvdXH0Wc6i1Y4AFpiUBfZuJtd7iA0hRav2yieKKi6J+l1M8iQ/fp35MAQWd8OCOdtTw6n1uo4WZb03ScxgWNtsOCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=opj+ESPE; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=kOqBlnaxp/e8tP1Wyg8ye2+J2fQPL0Hv5eVWSf6ezbQ=; b=opj+ESPEvOlNdfcVwmMPRmqsA7
-	JaO696vGFSoUxj6QddrGB8fj8zW7h5LwDm79XLQeNc1JGbFE6IPXYC+EVEK+tQQ8+DmgdhsQhOQzx
-	Ur9arKBGMWvsULLBkltSCjmC0co1VoNwfLD20UrNW38lZOXVTHVDEVuAc3ULLNBVyERQ0vnLGPlDq
-	PKhuokC7ogcDuKLsu1IxjrD+l/tl7wjd3CZMPMVP27jdwVl1FNOCnCx0+bFhVHXJAKhjB+GUIo/Is
-	YBr5gEJ3OfLSDUnHQ2DRdE9jFtwvIeljeeAd7Y/p7toOiiBK6qX9OKvp/LtsGbUbEUotU4mZvD6Vp
-	s2zOtlAA==;
-Received: from [187.36.213.55] (helo=[192.168.1.103])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1tl6pC-00FNAe-JI; Thu, 20 Feb 2025 14:42:52 +0100
-Message-ID: <6ec16915-d7ae-4b1f-b156-80892d98e119@igalia.com>
-Date: Thu, 20 Feb 2025 10:42:46 -0300
+	s=arc-20240116; t=1740059005; c=relaxed/simple;
+	bh=D2FcBDeuGwHsiFlE5LsVOdNR9u94mmxTJwaL5dNzU5k=;
+	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=paF6lo+cXo3bgyda5UIwFNyqKpIIzT+pMJZN4wxm4LwGMZoHTjY0HvqH3uu6u8g9Som13whXhfOFlG4cIFgJfPFvF4idG7sDbbEkboHia7F+eg4tMrVIoOxaf3t0VNC0eVocKUnXNUNOsumBFa78zCLwGZldt0wNdaMqaBO2H1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=Z9a1EfA0; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0375855.ppops.net [127.0.0.1])
+	by mx0b-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51KBLvUC023645;
+	Thu, 20 Feb 2025 08:43:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=
+	content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=DKIM; bh=D2FcB
+	DeuGwHsiFlE5LsVOdNR9u94mmxTJwaL5dNzU5k=; b=Z9a1EfA0X/b9e7/b6aGNr
+	TT4NbnRtRhX57eUOBU0QQJrPD0g2H6KwCgPx8RHNoDvKauZIZPJY9I8ApCpueO/U
+	d7TaiC5ONlsWe1CH6uFvPhOcy1TMDYtqFKtO08xt/Qs9Rj2RdQrehgWnTvF43rj1
+	izk5RiGT5XX7FQSZxGGnLRVLBW7nlSKCFPinZB2HntGEO5AY5U4fKiUe3Lh2+bWH
+	t6dcxvn6N3VOSKy9Dw7UaQpnVRaVLZ7bss7tNnpeyZONEQ/mW6FeytGZsSVlNW2D
+	FgvsnFPt8HRvawsRoj32Ojbmy64gAcKytru0GvlnueaMx066w+eTEgSr9PT4WBRK
+	g==
+Received: from nwd2mta4.analog.com ([137.71.173.58])
+	by mx0b-00128a01.pphosted.com (PPS) with ESMTPS id 44x3f40fq6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Feb 2025 08:43:06 -0500 (EST)
+Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
+	by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 51KDh5VN043954
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 20 Feb 2025 08:43:05 -0500
+Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by ASHBMBX8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.14; Thu, 20 Feb
+ 2025 08:43:04 -0500
+Received: from ASHBMBX9.ad.analog.com ([fe80::1cb6:4851:5392:54cf]) by
+ ASHBMBX9.ad.analog.com ([fe80::1cb6:4851:5392:54cf%20]) with mapi id
+ 15.02.0986.014; Thu, 20 Feb 2025 08:43:04 -0500
+From: "Budai, Robert" <Robert.Budai@analog.com>
+To: =?utf-8?B?TnVubyBTw6E=?= <noname.nuno@gmail.com>,
+        Lars-Peter Clausen
+	<lars@metafoo.de>,
+        "Hennerich, Michael" <Michael.Hennerich@analog.com>,
+        "Sa,
+ Nuno" <Nuno.Sa@analog.com>,
+        "Gradinariu, Ramona"
+	<Ramona.Gradinariu@analog.com>,
+        "Miclaus, Antoniu"
+	<Antoniu.Miclaus@analog.com>,
+        Jonathan Cameron <jic23@kernel.org>, "Rob
+ Herring" <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        "Conor
+ Dooley" <conor+dt@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
+Subject: RE: [RESEND PATCH v8 5/6] iio: imu: adis16550: add adis16550 support
+Thread-Topic: [RESEND PATCH v8 5/6] iio: imu: adis16550: add adis16550 support
+Thread-Index: AQHbgTvPfw471rqSUk6RU/zKwUC+57NQMlsAgAADUNA=
+Date: Thu, 20 Feb 2025 13:43:04 +0000
+Message-ID: <45d64de8a1074788b7c4bffc29788742@analog.com>
+References: <20250217105753.605465-1-robert.budai@analog.com>
+	 <20250217105753.605465-6-robert.budai@analog.com>
+ <aee93ef96e71adf70a48ee5877bd75966d9c78c1.camel@gmail.com>
+In-Reply-To: <aee93ef96e71adf70a48ee5877bd75966d9c78c1.camel@gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-dg-rorf: true
+x-adiruleop-newscl: Rule Triggered
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 3/3] drm/sched: Update timedout_job()'s documentation
-To: Philipp Stanner <phasta@kernel.org>,
- Matthew Brost <matthew.brost@intel.com>, Danilo Krummrich <dakr@kernel.org>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20250220112813.87992-2-phasta@kernel.org>
- <20250220112813.87992-5-phasta@kernel.org>
-Content-Language: en-US
-From: =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>
-In-Reply-To: <20250220112813.87992-5-phasta@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-Proofpoint-ORIG-GUID: 403pa-rlJEkUba881PoH13AW3JLeP6Bj
+X-Proofpoint-GUID: 403pa-rlJEkUba881PoH13AW3JLeP6Bj
+X-Authority-Analysis: v=2.4 cv=DuKs+H/+ c=1 sm=1 tr=0 ts=67b7316a cx=c_pps a=3WNzaoukacrqR9RwcOSAdA==:117 a=3WNzaoukacrqR9RwcOSAdA==:17 a=xqWC_Br6kY4A:10 a=ejxIebdwriEA:10 a=IkcTkHD0fZMA:10 a=T2h4t0Lz3GQA:10 a=uherdBYGAAAA:8 a=P-IC7800AAAA:8
+ a=pGLkceISAAAA:8 a=gAnH3GRIAAAA:8 a=VwQbUJbxAAAA:8 a=07d9gI8wAAAA:8 a=0fo_jfcGDxs3koMwgKEA:9 a=QEXdDO2ut3YA:10 a=d3PnA9EDa4IxuAV0gXij:22 a=oVHKYsEdi7-vN-J5QA_j:22 a=e2CUPOnPG4QKp8I52DXD:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-20_05,2025-02-20_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 impostorscore=0
+ mlxscore=0 phishscore=0 suspectscore=0 mlxlogscore=999 bulkscore=0
+ adultscore=0 lowpriorityscore=0 spamscore=0 priorityscore=1501
+ malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
+ definitions=main-2502200099
 
-Hi Philipp,
-
-On 20/02/25 08:28, Philipp Stanner wrote:
-> drm_sched_backend_ops.timedout_job()'s documentation is outdated. It
-> mentions the deprecated function drm_sched_resubmit_job(). Furthermore,
-> it does not point out the important distinction between hardware and
-> firmware schedulers.
-> 
-> Since firmware schedulers tyipically only use one entity per scheduler,
-> timeout handling is significantly more simple because the entity the
-> faulted job came from can just be killed without affecting innocent
-> processes.
-> 
-> Update the documentation with that distinction and other details.
-> 
-> Reformat the docstring to work to a unified style with the other
-> handles.
-> 
-> Signed-off-by: Philipp Stanner <phasta@kernel.org>
-> ---
->   include/drm/gpu_scheduler.h | 83 +++++++++++++++++++++++--------------
->   1 file changed, 52 insertions(+), 31 deletions(-)
-> 
-> diff --git a/include/drm/gpu_scheduler.h b/include/drm/gpu_scheduler.h
-> index 29e5bda91806..18cdeacf8651 100644
-> --- a/include/drm/gpu_scheduler.h
-> +++ b/include/drm/gpu_scheduler.h
-> @@ -393,8 +393,15 @@ static inline bool drm_sched_invalidate_job(struct drm_sched_job *s_job,
->   	return s_job && atomic_inc_return(&s_job->karma) > threshold;
->   }
->   
-> +/**
-> + * enum drm_gpu_sched_stat - the scheduler's status
-> + *
-> + * @DRM_GPU_SCHED_STAT_NONE: Reserved. Do not use.
-> + * @DRM_GPU_SCHED_STAT_NOMINAL: Operation succeeded.
-> + * @DRM_GPU_SCHED_STAT_ENODEV: Error: Device is not available anymore.
-> + */
->   enum drm_gpu_sched_stat {
-> -	DRM_GPU_SCHED_STAT_NONE, /* Reserve 0 */
-> +	DRM_GPU_SCHED_STAT_NONE,
->   	DRM_GPU_SCHED_STAT_NOMINAL,
->   	DRM_GPU_SCHED_STAT_ENODEV,
->   };
-> @@ -430,6 +437,11 @@ struct drm_sched_backend_ops {
->   	 *
->   	 * TODO: Document which fence rules above.
->   	 *
-> +	 * This method is called in a workqueue context - either from the
-> +	 * submit_wq the driver passed through &drm_sched_init(), or, if the
-> +	 * driver passed NULL, a separate, ordered workqueue the scheduler
-> +	 * allocated.
-> +	 *
-
-The commit message mentions "Update timedout_job()'s documentation". As
-this hunk is related to `run_job()`, maybe it would be a better fit to
-patch 2/3.
-
->   	 * @sched_job: the job to run
->   	 *
->   	 * Note that the scheduler expects to 'inherit' its own reference to
-> @@ -449,43 +461,52 @@ struct drm_sched_backend_ops {
->   	 * @timedout_job: Called when a job has taken too long to execute,
->   	 * to trigger GPU recovery.
->   	 *
-> -	 * This method is called in a workqueue context.
-> +	 * @sched_job: The job that has timed out
->   	 *
-> -	 * Drivers typically issue a reset to recover from GPU hangs, and this
-> -	 * procedure usually follows the following workflow:
-> +	 * Drivers typically issue a reset to recover from GPU hangs.
-> +	 * This procedure looks very different depending on whether a firmware
-> +	 * or a hardware scheduler is being used.
->   	 *
-> -	 * 1. Stop the scheduler using drm_sched_stop(). This will park the
-> -	 *    scheduler thread and cancel the timeout work, guaranteeing that
-> -	 *    nothing is queued while we reset the hardware queue
-> -	 * 2. Try to gracefully stop non-faulty jobs (optional)
-> -	 * 3. Issue a GPU reset (driver-specific)
-> -	 * 4. Re-submit jobs using drm_sched_resubmit_jobs()
-> -	 * 5. Restart the scheduler using drm_sched_start(). At that point, new
-> -	 *    jobs can be queued, and the scheduler thread is unblocked
-> +	 * For a FIRMWARE SCHEDULER, each ring has one scheduler, and each
-> +	 * scheduler has one entity. Hence, the steps taken typically look as
-> +	 * follows:
-> +	 *
-> +	 * 1. Stop the scheduler using drm_sched_stop(). This will pause the
-> +	 *    scheduler workqueues and cancel the timeout work, guaranteeing
-> +	 *    that nothing is queued while the ring is being removed.
-> +	 * 2. Remove the ring. The firmware will make sure that the
-> +	 *    corresponding parts of the hardware are resetted, and that other
-> +	 *    rings are not impacted.
-> +	 * 3. Kill the entity and the associated scheduler.
-> +	 *
-> +	 *
-> +	 * For a HARDWARE SCHEDULER, a scheduler instance schedules jobs from
-> +	 * one or more entities to one ring. This implies that all entities
-> +	 * associated with the affected scheduler cannot be torn down, because
-> +	 * this would effectively also affect innocent userspace processes which
-> +	 * did not submit faulty jobs (for example).
-> +	 *
-> +	 * Consequently, the procedure to recover with a hardware scheduler
-> +	 * should look like this:
-> +	 *
-> +	 * 1. Stop all schedulers impacted by the reset using drm_sched_stop().
-> +	 * 2. Kill the entity the faulty job stems from.
-> +	 * 3. Issue a GPU reset on all faulty rings (driver-specific).
-> +	 * 4. Re-submit jobs on all schedulers impacted by re-submitting them to
-> +	 *    the entities which are still alive.
-
-I believe that a mention to `drm_sched_resubmit_jobs()` still worth it,
-even mentioning that it is a deprecated option and it shouldn't be used
-in new code. It is deprecated indeed, but we still have five users.
-
-Best Regards,
-- Maíra
-
-> +	 * 5. Restart all schedulers that were stopped in step #1 using
-> +	 *    drm_sched_start().
->   	 *
->   	 * Note that some GPUs have distinct hardware queues but need to reset
->   	 * the GPU globally, which requires extra synchronization between the
-> -	 * timeout handler of the different &drm_gpu_scheduler. One way to
-> -	 * achieve this synchronization is to create an ordered workqueue
-> -	 * (using alloc_ordered_workqueue()) at the driver level, and pass this
-> -	 * queue to drm_sched_init(), to guarantee that timeout handlers are
-> -	 * executed sequentially. The above workflow needs to be slightly
-> -	 * adjusted in that case:
-> +	 * timeout handlers of different schedulers. One way to achieve this
-> +	 * synchronization is to create an ordered workqueue (using
-> +	 * alloc_ordered_workqueue()) at the driver level, and pass this queue
-> +	 * as drm_sched_init()'s @timeout_wq parameter. This will guarantee
-> +	 * that timeout handlers are executed sequentially.
->   	 *
-> -	 * 1. Stop all schedulers impacted by the reset using drm_sched_stop()
-> -	 * 2. Try to gracefully stop non-faulty jobs on all queues impacted by
-> -	 *    the reset (optional)
-> -	 * 3. Issue a GPU reset on all faulty queues (driver-specific)
-> -	 * 4. Re-submit jobs on all schedulers impacted by the reset using
-> -	 *    drm_sched_resubmit_jobs()
-> -	 * 5. Restart all schedulers that were stopped in step #1 using
-> -	 *    drm_sched_start()
-> +	 * Return: The scheduler's status, defined by &drm_gpu_sched_stat
->   	 *
-> -	 * Return DRM_GPU_SCHED_STAT_NOMINAL, when all is normal,
-> -	 * and the underlying driver has started or completed recovery.
-> -	 *
-> -	 * Return DRM_GPU_SCHED_STAT_ENODEV, if the device is no longer
-> -	 * available, i.e. has been unplugged.
->   	 */
->   	enum drm_gpu_sched_stat (*timedout_job)(struct drm_sched_job *sched_job);
->   
-
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogTnVubyBTw6EgPG5vbmFt
+ZS5udW5vQGdtYWlsLmNvbT4NCj4gU2VudDogVGh1cnNkYXksIEZlYnJ1YXJ5IDIwLCAyMDI1IDEw
+OjIyIEFNDQo+IFRvOiBCdWRhaSwgUm9iZXJ0IDxSb2JlcnQuQnVkYWlAYW5hbG9nLmNvbT47IExh
+cnMtUGV0ZXIgQ2xhdXNlbg0KPiA8bGFyc0BtZXRhZm9vLmRlPjsgSGVubmVyaWNoLCBNaWNoYWVs
+IDxNaWNoYWVsLkhlbm5lcmljaEBhbmFsb2cuY29tPjsNCj4gU2EsIE51bm8gPE51bm8uU2FAYW5h
+bG9nLmNvbT47IEdyYWRpbmFyaXUsIFJhbW9uYQ0KPiA8UmFtb25hLkdyYWRpbmFyaXVAYW5hbG9n
+LmNvbT47IE1pY2xhdXMsIEFudG9uaXUNCj4gPEFudG9uaXUuTWljbGF1c0BhbmFsb2cuY29tPjsg
+Sm9uYXRoYW4gQ2FtZXJvbiA8amljMjNAa2VybmVsLm9yZz47IFJvYg0KPiBIZXJyaW5nIDxyb2Jo
+QGtlcm5lbC5vcmc+OyBLcnp5c3p0b2YgS296bG93c2tpIDxrcnprK2R0QGtlcm5lbC5vcmc+OyBD
+b25vcg0KPiBEb29sZXkgPGNvbm9yK2R0QGtlcm5lbC5vcmc+OyBKb25hdGhhbiBDb3JiZXQgPGNv
+cmJldEBsd24ubmV0PjsgbGludXgtDQo+IGlpb0B2Z2VyLmtlcm5lbC5vcmc7IGRldmljZXRyZWVA
+dmdlci5rZXJuZWwub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOw0KPiBsaW51eC1k
+b2NAdmdlci5rZXJuZWwub3JnDQo+IFN1YmplY3Q6IFJlOiBbUkVTRU5EIFBBVENIIHY4IDUvNl0g
+aWlvOiBpbXU6IGFkaXMxNjU1MDogYWRkIGFkaXMxNjU1MA0KPiBzdXBwb3J0DQo+IA0KPiBbRXh0
+ZXJuYWxdDQo+IA0KPiBPbiBNb24sIDIwMjUtMDItMTcgYXQgMTI6NTcgKzAyMDAsIFJvYmVydCBC
+dWRhaSB3cm90ZToNCj4gPiBUaGUgQURJUzE2NTUwIGlzIGEgY29tcGxldGUgaW5lcnRpYWwgc3lz
+dGVtIHRoYXQgaW5jbHVkZXMgYSB0cmlheGlzDQo+ID4gZ3lyb3Njb3BlIGFuZCBhIHRyaWF4aXMg
+YWNjZWxlcm9tZXRlci4gRWFjaCBpbmVydGlhbCBzZW5zb3IgaW4gdGhlDQo+ID4gQURJUzE2NTUw
+IGNvbWJpbmVzIGluZHVzdHJ5IGxlYWRpbmcgTUVNUyBvbmx5IHRlY2hub2xvZ3kgd2l0aCBzaWdu
+YWwNCj4gPiBjb25kaXRpb25pbmcgdGhhdCBvcHRpbWl6ZXMgZHluYW1pYyBwZXJmb3JtYW5jZS4g
+VGhlIGZhY3RvcnkgY2FsaWJyYXRpb24NCj4gPiBjaGFyYWN0ZXJpemVzIGVhY2ggc2Vuc29yIGZv
+ciBzZW5zaXRpdml0eSwgYmlhcywgYW5kIGFsaWdubWVudC4gQXMgYQ0KPiA+IHJlc3VsdCwgZWFj
+aCBzZW5zb3IgaGFzIGl0cyBvd24gZHluYW1pYyBjb21wZW5zYXRpb24gZm9ybXVsYXMgdGhhdA0K
+PiA+IHByb3ZpZGUgYWNjdXJhdGUgc2Vuc29yIG1lYXN1cmVtZW50cy4NCj4gPg0KPiA+IENvLWRl
+dmVsb3BlZC1ieTogUmFtb25hIEdyYWRpbmFyaXUgPHJhbW9uYS5ncmFkaW5hcml1QGFuYWxvZy5j
+b20+DQo+ID4gU2lnbmVkLW9mZi1ieTogUmFtb25hIEdyYWRpbmFyaXUgPHJhbW9uYS5ncmFkaW5h
+cml1QGFuYWxvZy5jb20+DQo+ID4gQ28tZGV2ZWxvcGVkLWJ5OiBBbnRvbml1IE1pY2xhdXMgPGFu
+dG9uaXUubWljbGF1c0BhbmFsb2cuY29tPg0KPiA+IFNpZ25lZC1vZmYtYnk6IEFudG9uaXUgTWlj
+bGF1cyA8YW50b25pdS5taWNsYXVzQGFuYWxvZy5jb20+DQo+ID4gU2lnbmVkLW9mZi1ieTogTnVu
+byBTw6EgPG51bm8uc2FAYW5hbG9nLmNvbT4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBSb2JlcnQgQnVk
+YWkgPHJvYmVydC5idWRhaUBhbmFsb2cuY29tPg0KPiA+IC0tLQ0KPiA+DQo+IA0KPiBJIGd1ZXNz
+IGl0IHdvdWxkIG1ha2Ugc2Vuc2UgYSBDby1kZXZlbG9wZWQtYnk6IGZvciBSb2JlcnQ/DQo+IA0K
+PiBBbnl3YXlzLCBhbGwgbG9va3MgZ29vZCBleGNlcHQgZm9yIG9uZSB0aGluZyB0aGF0IEkganVz
+dCBzcG90dGVkLi4uDQo+IA0KPiA+IHY4Og0KPiA+IC0gcmVtb3ZlZCBfX2FsaWduZWQgZnJvbSBz
+dHJ1Y3QgYWRpczE2NTUwLCBhcyBzdWdnZXN0ZWQNCj4gPiAtIGNyYyBidWZmZXIgZXh0cmFjdGlv
+biBpbnRvIHRoZSBjcmMgY2hlY2sgZnVuY3Rpb24NCj4gPiAtIHBhc3NlZCBidWZmZXIgaW50byBj
+cmMgdmFsaWRhdGlvbiBhcyBvcmlnaW5hbCwgX19iZTMyIGFuZCBwZXJmb3JtZWQgY2hlY2sNCj4g
+PiB1c2luZyBiZTMyX3RvX2NwdSBjb252ZXJzaW9uIG9mIHRoZSBidWZmZXINCj4gPiAtIGFkZGVk
+IHRyYWlsaW5nIGNvbW1hIHRvIGxpbmUgOTkzDQo+ID4gLSByZW1vdmVkIHRyYWlsaW5nIGNvbW1h
+IGZyb20gbGluZSA4NzcNCj4gPg0KPiA+IMKgZHJpdmVycy9paW8vaW11L0tjb25maWfCoMKgwqDC
+oCB8wqDCoCAxMyArDQo+ID4gwqBkcml2ZXJzL2lpby9pbXUvTWFrZWZpbGXCoMKgwqAgfMKgwqDC
+oCAxICsNCj4gPiDCoGRyaXZlcnMvaWlvL2ltdS9hZGlzMTY1NTAuYyB8IDExNDkNCj4gKysrKysr
+KysrKysrKysrKysrKysrKysrKysrKysrKysrKysNCj4gPiDCoDMgZmlsZXMgY2hhbmdlZCwgMTE2
+MyBpbnNlcnRpb25zKCspDQo+ID4gwqBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9paW8vaW11
+L2FkaXMxNjU1MC5jDQo+ID4NCj4gDQo+IC4uLg0KPiANCj4gPg0KPiA+ICtzdGF0aWMgaW50IGFk
+aXMxNjU1MF9zZXRfZnJlcV9oeihzdHJ1Y3QgYWRpczE2NTUwICpzdCwgdTMyIGZyZXFfaHopDQo+
+ID4gK3sNCj4gPiArCXUxNiBkZWM7DQo+ID4gKwlpbnQgcmV0Ow0KPiA+ICsJdTMyIHNhbXBsZV9y
+YXRlID0gc3QtPmNsa19mcmVxX2h6Ow0KPiA+ICsJLyoNCj4gPiArCSAqIFRoZSBvcHRpbWFsIHNh
+bXBsZSByYXRlIGZvciB0aGUgc3VwcG9ydGVkIElNVXMgaXMgYmV0d2Vlbg0KPiA+ICsJICogaW50
+X2NsayAtIDEwMDAgYW5kIGludF9jbGsgKyA1MDAuDQo+ID4gKwkgKi8NCj4gPiArCXUzMiBtYXhf
+c2FtcGxlX3JhdGUgPSBzdC0+aW5mby0+aW50X2NsayAqIDEwMDAgKyA1MDAwMDA7DQo+ID4gKwl1
+MzIgbWluX3NhbXBsZV9yYXRlID0gc3QtPmluZm8tPmludF9jbGsgKiAxMDAwIC0gMTAwMDAwMDsN
+Cj4gPiArDQo+ID4gKwlpZiAoIWZyZXFfaHopDQo+ID4gKwkJcmV0dXJuIC1FSU5WQUw7DQo+ID4g
+Kw0KPiA+ICsJYWRpc19kZXZfYXV0b19sb2NrKCZzdC0+YWRpcyk7DQo+ID4gKw0KPiA+ICsJaWYg
+KHN0LT5zeW5jX21vZGUgPT0gQURJUzE2NTUwX1NZTkNfTU9ERV9TQ0FMRUQpIHsNCj4gPiArCQl1
+bnNpZ25lZCBsb25nIHNjYWxlZF9yYXRlID0gbGNtKHN0LT5jbGtfZnJlcV9oeiwgZnJlcV9oeik7
+DQo+ID4gKwkJaW50IHN5bmNfc2NhbGU7DQo+ID4gKw0KPiA+ICsJCWlmIChzY2FsZWRfcmF0ZSA+
+IG1heF9zYW1wbGVfcmF0ZSkNCj4gPiArCQkJc2NhbGVkX3JhdGUgPSBtYXhfc2FtcGxlX3JhdGUg
+LyBzdC0+Y2xrX2ZyZXFfaHogKiBzdC0NCj4gPiA+Y2xrX2ZyZXFfaHo7DQo+ID4gKwkJZWxzZQ0K
+PiA+ICsJCQlzY2FsZWRfcmF0ZSA9IG1heF9zYW1wbGVfcmF0ZSAvIHNjYWxlZF9yYXRlICoNCj4g
+PiBzY2FsZWRfcmF0ZTsNCj4gPiArDQo+ID4gKwkJaWYgKHNjYWxlZF9yYXRlIDwgbWluX3NhbXBs
+ZV9yYXRlKQ0KPiA+ICsJCQlzY2FsZWRfcmF0ZSA9IHJvdW5kdXAobWluX3NhbXBsZV9yYXRlLCBz
+dC0NCj4gPiA+Y2xrX2ZyZXFfaHopOw0KPiA+ICsNCj4gDQo+IEkgd291bGQgaW1hZ2luZSB0aGUg
+YWJvdmUgaXMgdGhlIHNhbWUgZGVhbCBhcyBpbiBvdGhlciBkZXZpY2VzIFsxXSBvciBkbyB5b3UN
+Cj4ga25vdyBmb3IgYSBmYWN0IHRoaXMgb25lIGlzIGRpZmZlcmVudD8gTWF5YmUgaXQncyBzaW1w
+bGUgZW5vdWdoIGZvciBKb25hdGhhbiB0bw0KPiB0d2VhayB3aGlsZSBhcHBseWluZy4uLg0KPiAN
+Cj4gWzFdOg0KPiBodHRwczovL3VybGRlZmVuc2UuY29tL3YzL19faHR0cHM6Ly9lbGl4aXIuYm9v
+dGxpbi5jb20vbGludXgvdjYuMTMuMy9zb3VyY2UNCj4gL2RyaXZlcnMvaWlvL2ltdS9hZGlzMTY0
+NzUuYypMMzY0X187SXchIUEzTmk4Q1MweTJZITdZNzF5UGFRQXhWek5SZA0KPiBPX2pUN3dFejRr
+LQ0KPiBzNno0dEpIT2NFUzg0SFlrcThxTkdzZ0pIN3p4d2pmUE5qTEYzT0VHVkluU29sbzFlbm5M
+VV9td3BtRWJvJA0KPiANCj4gLSBOdW5vIFPDoQ0KDQpbUm9iZXJ0IEJ1ZGFpXSANCk5vIGRpZmZl
+cmVuY2VzIHdlcmUgZm91bmQgaW4gdGhlIHNjYWxlZF9zeW5jIGJlaGF2aW9yIG9mIHRoZSBBRElT
+MTY0NzUgYW5kDQpBRElTMTY1NTAuIEl0IGlzIHNhZmUgdG8gYWRkIGZyb20gbXkgc2lkZS4NCg0K
+QmVzdCByZWdhcmRzLA0KUm9iZXJ0IEINCg==
 
