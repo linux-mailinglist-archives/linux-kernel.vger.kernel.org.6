@@ -1,111 +1,94 @@
-Return-Path: <linux-kernel+bounces-524873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F047A3E841
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 00:20:23 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BB31A3E848
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 00:21:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2AB7188DEE7
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 23:20:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7BB3A16731C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 23:21:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2716C2673AB;
-	Thu, 20 Feb 2025 23:20:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E415266192;
+	Thu, 20 Feb 2025 23:21:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="I5XwWEB9"
-Received: from mail-40131.protonmail.ch (mail-40131.protonmail.ch [185.70.40.131])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="DaDqapGV"
+Received: from out-187.mta0.migadu.com (out-187.mta0.migadu.com [91.218.175.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E280E265CBA
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 23:20:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A2361D5CDD
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 23:21:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740093614; cv=none; b=m0ONSKDNHTw1ibKO50QVSvCVm+70fraFzxgH+F6anA5xhaWz+QuJ8bmVD0szush3Gs7KH8+SK2v6vwKudd41WAA8aJrPpm6x5CDjeDvsHzwG0eoNkDmyhqpO2WCpV3s35tUMlZqnLK677Ij4DprkAJHmjtJqISTFi9w2tREQnyQ=
+	t=1740093697; cv=none; b=oPrTZFn2nmB6h6WbaX+uBgtdflV2mfmh3h64FJUDwxHvh2pxqgKhAHPmaOlhiEVQm9cRK+5q+fXBsS5EBC5udY+OKpFDOivOXNJESBcM1+aj2qZye7QO9OS+JKq+pgNXOflU/KcNe2WMz/rJDw9Z7s5ZlG1LCX51e+in4teaBlQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740093614; c=relaxed/simple;
-	bh=2ei6Xr8KtKfCuxF3biIuGcx1xmTWqeXDWTditoITIUs=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VSi60hdBQ1JUb3E6G9Z1hvokEEO39M8kbJ/tEEm/mX99HjXyGqWNv4Rjo30XvhCYIK7VD5JUbnP2JR9k8LLMOxBbWUuxiUDkRvbCipMcQcu+nrYPnJgTd5QDve/lHGZh2dBUML5Q7nwDKhxZ5GmTedeG+951+1f9vfv8TiA4Kvs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=I5XwWEB9; arc=none smtp.client-ip=185.70.40.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=hf4scjpobzbqbotakuxbbsmlbu.protonmail; t=1740093610; x=1740352810;
-	bh=R0xXNryglluujxdF1vg6HlVzkuQzuuyku/Gv+SN/ma4=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=I5XwWEB9oCiZSQLGZThpNvKa1tZx+ebcEoQ5JD1bBpqke73RCtzaoluhYftci4m/p
-	 6doCLvRIjgqnTXtHKMYOo/efw8vCdQu6e/Fwi/hRL0Z2sZvwjiV43RcJ1oCu3sbGbw
-	 cXORL99EwF75W72rWrByZGzIoFTDsOkSxZ2ShipUeNuLylnO8tLfyA9FGxFx+lyAS7
-	 K6xH1E8quXz8oqpSNr2Nq9e4NXzZfySevh4GBAx0vRu126/mkymOitN5af/86dF6OP
-	 QUo85TeYWjhzFqSftXHgYx7bn+EfnqZu8uUKxy04gBNyOvhW4VAtHo4NL5G6ka7Wcr
-	 zMBDo59DJ/zVQ==
-Date: Thu, 20 Feb 2025 23:20:03 +0000
-To: Andreas Hindborg <a.hindborg@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Danilo Krummrich <dakr@kernel.org>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Lyude Paul <lyude@redhat.com>, Guangbo Cui <2407018371@qq.com>, Dirk Behme <dirk.behme@gmail.com>, Daniel Almeida <daniel.almeida@collabora.com>, Tamir Duberstein <tamird@gmail.com>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 10/14] rust: alloc: add `Box::into_pin`
-Message-ID: <2a7283fb-4c93-42c4-a895-36a6e3d1935d@proton.me>
-In-Reply-To: <20250218-hrtimer-v3-v6-12-rc2-v8-10-48dedb015eb3@kernel.org>
-References: <20250218-hrtimer-v3-v6-12-rc2-v8-0-48dedb015eb3@kernel.org> <20250218-hrtimer-v3-v6-12-rc2-v8-10-48dedb015eb3@kernel.org>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 542a649b1cda4b467438e54e139b96c08afc3fe5
+	s=arc-20240116; t=1740093697; c=relaxed/simple;
+	bh=g6ve7xNlVgVdQFgPLeNGusPRvCr3J4hbfDhtJ9gFxqs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=M7JHu+ebdkcHRQbbb/r5+yUZAScBGoWZ6NV9EKdhkNeG4lGq+NtZbDS14vD9VJj28vPx5b+glmq4KLMRuioVPrvC7oRPG0ykvTAj5iBSI1SbEblTcg5swdtH1Axz8iQxdLn1XVznKS7s/lSmzKWCLdFsKpAO1+J2g4OhTi3J3Dg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=DaDqapGV; arc=none smtp.client-ip=91.218.175.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1740093693;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Zm+fIkprFMzXqFqejHYGRIWeMskyoEAHZq3W3dz6AW8=;
+	b=DaDqapGVqZFoote3oBKSCfSKz8yS3GCvcGZZqbYcYUwKdoqKz0rQJKvHfDRiZCcemyw4t+
+	NZhSovbH+/jvLHTC1QmuLClo52pUGEZ9FmtOEQxjvaiCFVc4gViczGxcNs07W4Ni8k+5Pm
+	+Ns0G4E0mXgF15jk5D4WaRNg2Oc3hTc=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	linuxppc-dev@lists.ozlabs.org,
+	kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] KVM: powerpc: Enable commented out BUILD_BUG_ON() assertion
+Date: Fri, 21 Feb 2025 00:20:19 +0100
+Message-ID: <20250220232019.196380-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On 18.02.25 14:27, Andreas Hindborg wrote:
-> Add an associated function to convert a `Box<T>` into a `Pin<Box<T>>`.
+The BUILD_BUG_ON() assertion was commented out in commit 38634e676992
+("powerpc/kvm: Remove problematic BUILD_BUG_ON statement") and fixed in
+commit c0a187e12d48 ("KVM: powerpc: Fix BUILD_BUG_ON condition"), but
+not enabled. Enable it now that this no longer breaks and remove the
+comment.
 
-Why don't you use `into()` directly where you need it? Do you want the
-function call to be more descriptive?
-(To be clear, I'm not against the addition, just wanting to check if our
-motivation is the same)
-
-> Acked-by: Danilo Krummrich <dakr@kernel.org>
-> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
-
-Reviewed-by: Benno Lossin <benno.lossin@proton.me>
-
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
 ---
-Cheers,
-Benno
+ arch/powerpc/kvm/timing.h | 4 ----
+ 1 file changed, 4 deletions(-)
 
-> ---
->  rust/kernel/alloc/kbox.rs | 6 ++++++
->  1 file changed, 6 insertions(+)
->=20
-> diff --git a/rust/kernel/alloc/kbox.rs b/rust/kernel/alloc/kbox.rs
-> index cb4ebea3b0742..9da4a32e60bc3 100644
-> --- a/rust/kernel/alloc/kbox.rs
-> +++ b/rust/kernel/alloc/kbox.rs
-> @@ -245,6 +245,12 @@ pub fn pin(x: T, flags: Flags) -> Result<Pin<Box<T, =
-A>>, AllocError>
->          Ok(Self::new(x, flags)?.into())
->      }
->=20
-> +    /// Convert a [`Box<T,A>`] to a [`Pin<Box<T,A>>`]. If `T` does not i=
-mplement
-> +    /// [`Unpin`], then `x` will be pinned in memory and can't be moved.
-> +    pub fn into_pin(this: Self) -> Pin<Self> {
-> +        this.into()
-> +    }
-> +
->      /// Forgets the contents (does not run the destructor), but keeps th=
-e allocation.
->      fn forget_contents(this: Self) -> Box<MaybeUninit<T>, A> {
->          let ptr =3D Self::into_raw(this);
->=20
-> --
-> 2.47.0
->=20
->=20
+diff --git a/arch/powerpc/kvm/timing.h b/arch/powerpc/kvm/timing.h
+index 45817ab82bb4..14b0e23f601f 100644
+--- a/arch/powerpc/kvm/timing.h
++++ b/arch/powerpc/kvm/timing.h
+@@ -38,11 +38,7 @@ static inline void kvmppc_set_exit_type(struct kvm_vcpu *vcpu, int type) {}
+ static inline void kvmppc_account_exit_stat(struct kvm_vcpu *vcpu, int type)
+ {
+ 	/* type has to be known at build time for optimization */
+-
+-	/* The BUILD_BUG_ON below breaks in funny ways, commented out
+-	 * for now ... -BenH
+ 	BUILD_BUG_ON(!__builtin_constant_p(type));
+-	*/
+ 	switch (type) {
+ 	case EXT_INTR_EXITS:
+ 		vcpu->stat.ext_intr_exits++;
+-- 
+2.48.1
 
 
