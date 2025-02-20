@@ -1,121 +1,86 @@
-Return-Path: <linux-kernel+bounces-523176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF528A3D318
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 09:25:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65C39A3D2CF
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 09:10:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0F6257A94D7
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 08:22:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28EE83A638C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 08:09:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A59491EB180;
-	Thu, 20 Feb 2025 08:23:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAAD61E9B26;
+	Thu, 20 Feb 2025 08:09:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nps1mNmO"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="eNpic2d/";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="QCLrtVlt"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 781AD1E570A;
-	Thu, 20 Feb 2025 08:23:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5A53249F9
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 08:09:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740039816; cv=none; b=FJxsZtcvzGHg7iIN+gPROgdkZMg0nIt9e8XvUpiGlUfiAVZ9aUeWSUMba+wpTe/v8HKWx5d0vT+2qzTkOUjqIf+12TJn78LmFDqdAVOk0lxYaOo3CWDlhZ6CyfmvbPqlJkMcIvuraU3xLUCPAYO7wA+hvsE7B0xc2wFDeax/5iw=
+	t=1740038997; cv=none; b=QgHrTZjfhsiHTH7SgUHN87f+jBMO15dWOyxIAzmkbeZC39JODEtXlpu1zSZ7PrMfewQsNatwLo4rhFFbIlSAto7GnOzqrDZM9MvSuPr4s27xALsyzNymJay0jk0UGA64e5glD01Ttd8lriWcZxEy3TxzT+MAzQIq1Ybh/OZW3kA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740039816; c=relaxed/simple;
-	bh=Zal7sSH7vt6HSev5mTuNXbbPNHeWf9B6HOqVIxwVQzY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=VQ3H6JBQ0DEgg9CXNRdOIIMS49V5dEmUHduTemhWHBnAP0FI7skwV4CQXxyWowtXv2v2acVCseL2tcqXfMuYEJtwaABGX2eUy4rd/pwvkQOYj7kEgEyDIYqnee9jEOqKCRWjATcynDgcKIQhF/jtLjEI4tKrkb35dEcGIKZOh+c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nps1mNmO; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ab744d5e567so118530066b.1;
-        Thu, 20 Feb 2025 00:23:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740039813; x=1740644613; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=lg+lU+01D/1Z6849m8b/2G2o41VVf2CedXajMd7Qp7E=;
-        b=nps1mNmOVdIxlXk0C47utcGU1zlmvTY2QMZq6vFYvygi45XPfbjOanpWIHT36au0mo
-         V7lQZfZKZ6D22eEaLCrCNy61vlHcpo6jv5xHz6gdYFGQJ3vA+Mz13ar9XLDQmeJwt2sJ
-         xjvzksUELGE1w54wrYwYjUSg55SZ9P+/h9OuNjaq3LUzM2fwz6XtSv9g7I0HJ/quZg9s
-         1n0ruG7ZXgQD++9/MH1wq92ufRiW4uxEGAS6Ro1Zg9VTQTE5NBEIq5A29E7c74nSbf2e
-         zBAWoU3izO1mBmr7dC4pLDU96+VLtRUhjsk50HPfQMkc7Dl9wI3o88TuZGXDZO+XFHt7
-         eGDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740039813; x=1740644613;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lg+lU+01D/1Z6849m8b/2G2o41VVf2CedXajMd7Qp7E=;
-        b=bwcDGeYTQdLn7iOH3oa0To5gspGBIWj7p8zGBJDqRgeSJQMhOGCnFLLBXlVFZ7rUK8
-         jHSzhtnxFmenmwYstKsO+T5r1+IAFbGTAGOvyqRcRNNLY7zseC+iz8ehdtP5UuygRcxa
-         cwlKPJ1/PYgqwGYbUUw+CZaBviAuXfj3OrVZiNEVZGMZBbHPoGT3siVTFK29rHWM31V9
-         0Orf2vJYmNiwC/Txn+m9Tpa8d8MAT88LerxVak/FWjFNOyNBA03hLWV2vobYiuX32flw
-         +n9UqfTtzBbmW0kHC2O+jFtdqtgjlYyhBqmzxLX5TwZK2cr4NaoCOJGKHBxgeTiEQKz/
-         +RFw==
-X-Forwarded-Encrypted: i=1; AJvYcCU7cNpRKR4OOKEN16RHpomzZ4R3Mb8JBqLqjDXRbMTBTAyTcrjomu6pQQZalwV8Xxp+GMAPldIxVjf8Nexw@vger.kernel.org, AJvYcCUOOTNmwl1fNgP8m5o5weH4h2+3oisleoUDBD0gVFG8SdDCm7aAk124rCYbhNJRl8fBZ7zJ9vlwJ94=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywvd3TR5PBgK764xzqWGYVvMRmooHRQ1IVoiiZwunKZAs/orZlE
-	SzQ4Sv49cgjKnpqkaUX0Z/Rm6aFBaYQfZbFB4kyPWXVJPctso303
-X-Gm-Gg: ASbGnctNNUx3msLDws1T6qGR5TEMRNkGZ8VC7lCiTszXUxDN57IYrHj5iRNBFEP8NC1
-	8ANHhurBiIcSCE3O5tLhpaDXgY/RML7qwRiCPEsCZUHsKg8NAr6AoUg1QVvDtchNm5M8dTzPHFn
-	u9C/ReiMtIc5z+BYrzIgsng6SPbqRQtGBUFKuQLpjxzR9L0a2WWdUE+gcw/tC6lg0CKZtcPoN2b
-	zM5cq4YASstWeczuZnWFnfqD4G1MmltkFcGO4V/R+r2B7vZ/EuMHypje8Q+VyVxt2BtF78pzjCF
-	OFDp9yo2lkKZl+GEoPZFuLxi0rmG
-X-Google-Smtp-Source: AGHT+IGz4hWgtJBF7y4pxprTI62oKBnlEgPDACOZv8YIsxH6F88gimSEUH12Felcu0muF5xaBOvICQ==
-X-Received: by 2002:a17:907:6c13:b0:ab9:d282:d42e with SMTP id a640c23a62f3a-abbedeea657mr211300166b.21.1740039812403;
-        Thu, 20 Feb 2025 00:23:32 -0800 (PST)
-Received: from localhost.localdomain ([165.51.10.64])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abba358ec3asm657523666b.35.2025.02.20.00.23.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Feb 2025 00:23:31 -0800 (PST)
-From: Salah Triki <salah.triki@gmail.com>
-To: Damien Le Moal <dlemoal@kernel.org>,
-	Niklas Cassel <cassel@kernel.org>,
-	linux-ide@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Salah Triki <salah.triki@gmail.com>
-Subject: [PATCH v2] ata: sata_via: Use str_up_down() helper in vt6420_prereset()
-Date: Thu, 20 Feb 2025 09:07:57 +0100
-Message-Id: <20250220080757.87278-1-salah.triki@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1740038997; c=relaxed/simple;
+	bh=i//B90PkzV7wtJ2+oeAzYYdehz7FBTS2bwE5XLhqAgM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=pYpjdphWpmi5XUVEj0Yq+xD6qhOnEjV5l5+qBYjUt71KpkmqfNcKv6e2acx2ub1QYUNLGQbje8igDx4G481RAlm3ZhlzrtXgka3OYnFKAlXRe9QUGy3ZGdzNWkIPKgMvLVZgBC0iIfyYdWDdJ9KfqKJBa5bcjtn1dpsCryeyWcA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=eNpic2d/; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=QCLrtVlt; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1740038992;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=e1m/Gvo0gLg79ykL56JzR29+XsfYklk8kAWUchCwIKQ=;
+	b=eNpic2d/OrLE8pQXQCNfF5aTPXQZDr7Rk8q2mNpueRyr5kQ9Y2sSmxDiO9sxbDSUBMMX2z
+	HBGsn72guvg9HOO8S9PNApk08bJtOlSo2lmxSmkkbiKF+zSdhFhpQGxGxEZHqEt5FtfMCs
+	gDWAVidoNbMcthO0/9j0GE6R+5XbXqKv6pESffG/B3sCgln/hb5F1mkAgSn+E5YJXMfHjL
+	wtqdkcOuS2dwKTShgu6HRziXOwIDHYbKS1BtBl1l1vWxKKeqhrfOzU2C2EQxKjTcPKlj1R
+	SbavETPUrrTp+FVAjNj4FnHi5c3/DQMLQ4XNAZSfyjravoe1ILt7Ad6NbhxmIg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1740038992;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=e1m/Gvo0gLg79ykL56JzR29+XsfYklk8kAWUchCwIKQ=;
+	b=QCLrtVlt4SWxRKg2bsHpsjd5HY3LCJFHkP49net0W7BFRyljnZuDNzKEbcY5D+7yFfVnV5
+	HJ/YEMasIZdP0lCg==
+To: Eric Dumazet <edumazet@google.com>, Anna-Maria Behnsen
+ <anna-maria@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>, Benjamin Segall
+ <bsegall@google.com>, Eric Dumazet <eric.dumazet@gmail.com>, Eric Dumazet
+ <edumazet@google.com>
+Subject: Re: [PATCH V2 1/4] posix-timers: Make next_posix_timer_id an atomic_t
+In-Reply-To: <20250219125522.2535263-2-edumazet@google.com>
+References: <20250219125522.2535263-1-edumazet@google.com>
+ <20250219125522.2535263-2-edumazet@google.com>
+Date: Thu, 20 Feb 2025 09:09:51 +0100
+Message-ID: <87wmdlhwa8.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Remove hard-coded strings by using the str_up_down() helper function.
+On Wed, Feb 19 2025 at 12:55, Eric Dumazet wrote:
+> Instead of relying on a global and shared hash_lock
+> to protect sig->next_posix_timer_id, make it atomic.
+>
+> This allows the following patch to use RCU.
 
-Signed-off-by: Salah Triki <salah.triki@gmail.com>
----
- drivers/ata/sata_via.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Your patch ordering is slightly off by two :)
 
-diff --git a/drivers/ata/sata_via.c b/drivers/ata/sata_via.c
-index 57cbf2cef618..4ecd8f33b082 100644
---- a/drivers/ata/sata_via.c
-+++ b/drivers/ata/sata_via.c
-@@ -25,6 +25,7 @@
- #include <scsi/scsi_cmnd.h>
- #include <scsi/scsi_host.h>
- #include <linux/libata.h>
-+#include <linux/string_choices.h>
- 
- #define DRV_NAME	"sata_via"
- #define DRV_VERSION	"2.6"
-@@ -359,7 +360,7 @@ static int vt6420_prereset(struct ata_link *link, unsigned long deadline)
- 
- 	ata_port_info(ap,
- 		      "SATA link %s 1.5 Gbps (SStatus %X SControl %X)\n",
--		      online ? "up" : "down", sstatus, scontrol);
-+		      str_up_down(online), sstatus, scontrol);
- 
- 	/* SStatus is read one more time */
- 	svia_scr_read(link, SCR_STATUS, &sstatus);
--- 
-2.34.1
+And it fails to explain for what RCU can be used....
 
+Thanks,
+
+        tglx
 
