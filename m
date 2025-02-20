@@ -1,119 +1,144 @@
-Return-Path: <linux-kernel+bounces-522752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B14DDA3CE2B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 01:38:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A4D5A3CE2E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 01:40:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18A3F189C4BF
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 00:38:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79214189B4F8
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 00:40:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4301535971;
-	Thu, 20 Feb 2025 00:38:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECDEC7B3E1;
+	Thu, 20 Feb 2025 00:40:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nNAD4h9G"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Z1NGxv4r"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97FC87B3E1;
-	Thu, 20 Feb 2025 00:38:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F694208A9
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 00:40:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740011924; cv=none; b=tnbbvrSPdS0BNEzTJbq+o5yrSLyngQiBNWwLIE/3cbq3ph33/h9xqts1bjv6QGLVH8ULrm4R7pFnUp8TK0dhoK5x8LP+mEY8SVlsElbnWCtpO4W7Yu6J7eDqK6xBoMclOls8STkRA4jFcT/OoGBmaKGx8hmrsuYsWWOvwJLOPDI=
+	t=1740012004; cv=none; b=pLnneKnJzpbC54CusXcGGTYxkrANgaI5Nqgwud3auzu6aIV/AsGRWMFBjHYOI/pT08Rlqt/enf0kFO3KacYHeMI9YzxXHfvTDO+1Dv0c99QOC6dgnW8TTDG+YP1motUtRifoc7ZCsKX8jKPeQgJLrMmVrwi7CxYXMg4mcEBDdQk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740011924; c=relaxed/simple;
-	bh=P7UsRUcwKSD5flekPSIZ6XPWnnBvbQuqfzc4mO/MnxM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=VgSiepybUtEEYwmydrrUfPAnHhSDpBNXU1tW2J1lw2OJsWBiPOFz4QlbxQKUP+yvv6bZGkZ10ABqcV/Xk5dKted28AIm3NpX1Pi0fwvRoDZWIVEZWlDA6iu+87nIVJDvqqVegGvnyBPmMUEGUyTQHm5E6Ti6oh7w7xPaW/VAy5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nNAD4h9G; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DE7AC4CEE9;
-	Thu, 20 Feb 2025 00:38:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740011924;
-	bh=P7UsRUcwKSD5flekPSIZ6XPWnnBvbQuqfzc4mO/MnxM=;
-	h=Date:From:To:Cc:Subject:From;
-	b=nNAD4h9G4Fo+MiRF7hX9xDibiQ34fR6gGVJeIkQUJy5aMIsD58cA8/cME9qDmhTHO
-	 Dk+oLITZNVNaOLdV+8bLofHCbTRNYWOggNI26N9Ow8R0F4QBQhtGm/m2mUiYIELBMi
-	 k/C+3ZrhKhLeF9BxOSXe8yp4AoBakNt0Q393CoqmJXaeJUj8jUP/ApLc8LcjhPiaeK
-	 DzQQnQH7+83WOWYreB58rZHHKv7VXkfvIxIlomQwtKE3aHdytMgdkD2jzbkYTzI2b1
-	 FazOUhfzdIMHWdeVNAhinlmKQKbhPofewutO/1W4JNJA464QJwVbms5lTUK0cDUVmr
-	 ZfGMF/C+BvsLg==
-Date: Wed, 19 Feb 2025 16:38:42 -0800
-From: Namhyung Kim <namhyung@kernel.org>
-To: linux-perf-users@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Ian Rogers <irogers@google.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Andi Kleen <ak@linux.intel.com>
-Subject: [RFC] perf tools: About encodings of legacy event names
-Message-ID: <Z7Z5kv75BMML2A1q@google.com>
+	s=arc-20240116; t=1740012004; c=relaxed/simple;
+	bh=g7DErytRUuAKrZakuD3eHoT8POJrCda3VPRgb8Uz+54=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qfTdDumxhcseBe9DbkKU8BJiPKUWSUijpsa8UERJgJKvrBoJwxmvyrZNIQHGQGp36TOIiIZmp9ktfHL0lJ2MDz3B8giOTeK5SGbov7f2S7YZWjuCQtGaLrN7jvPprejYMCL37BrcF4cK+deslOk9NBJlPq1grEBpni9N9YScgcQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Z1NGxv4r; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-abb97e15bcbso78208966b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 16:40:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1740011999; x=1740616799; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=5bX5q6XO7RyF4eoxd1NJpEY9bnTw/y/W8pyoru60AG0=;
+        b=Z1NGxv4rarlXSEpFPzaC6vMv8xCZO7iOpdUsSvy+pqcbNLUWPmKwG+wz0+GfqdORWo
+         fW2tDTTo5pEq9R6zLrO3bRyYeqbbxoOm+c0rweOZd7P//LQM8D1OuIG+m28Nvanjly32
+         OQEa2mDJKQff4lnsAz4OsCNr7rxoyPwpOUNhY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740011999; x=1740616799;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5bX5q6XO7RyF4eoxd1NJpEY9bnTw/y/W8pyoru60AG0=;
+        b=kCAMAfmkeS/9T8doCTTQKNT+6gC9VAbcF6E35Vejhl3M6NUUCbM+RCQuPh9axavSKH
+         PCvBexzUHqSG05Hh7CpjPlc0RhCLRgKe0QJA8e6dx95CFm+EzW/DjLJZ35lRJpRx3Hrm
+         Bwj3ceppYlW/EtEhhkDHqowIsDD+ji/gRDJXd71KtzqO8Gm8W8AI4Ety48HjZREzkq7o
+         z4BmuLAJ4nKuy72acGTFEkdX0Cu4KJxXhaByeok85Sgddr1kwcaDPvj1tCqq+EZ7A/8G
+         TiUkXTZVJdVEAwXSMnnTrsDeIidPLJnGhN9vsZu9oZGZ67y5HlpeoRiaGX4EyfyZ9sQj
+         CqWg==
+X-Forwarded-Encrypted: i=1; AJvYcCVRMCs0X8Fkrizg1LSK69cVNIsrz/ZTtGFUw8cuVjTyN5mGRVmX5uoVG6xSeJZi0/Y/HmFeGxQOvUGKNNM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YywBA6a2EzfCRdlQmtt0TwN9XDeuA5vTRYq0xw7iEBKpileB6p2
+	jAhp8fy1yi1Wa+0ImzmH05bkCH/c9nEHZbbnMtE0Rymr0WY5SEMB5qfFH8YDB0j8go9qH5Gc3yf
+	uCM8=
+X-Gm-Gg: ASbGncuVjQcqlHLkFDCTQZsT7aig46/0apCXN0ZPUY4kFf/fLaqsdXvKiGgxEQtymXo
+	GcmEFW7KYiA4KgbMk8y74VW7YDFE2qi3F9iTt8vhyO7sgn31NPooTKNneTCFpIJz3KJRi0xYOHT
+	Sgi4zgz8uLty4EfFqgjtfxB98DDRWGldcbsSO5TASOTeyLk8+NUNG/QOgz7Lt4Pv6rjq8+Obieg
+	b1sfJIEMYmZ87BJZofPuGU21OSFb3qGDupeil0I+6IwDN+B8OOq1gUhpi7kCw2AMaLi/bAmFr/o
+	ya+b8nAw8vUrPxZJZ1VhZVQuU1grs1YXoxAt/o11eID4Q3TFZpyEaKGa/HkjsvQ/YQ==
+X-Google-Smtp-Source: AGHT+IHZ8PWXtlLSoxwbgc/fkH4R2fVMTUOIHHv9Jfg+OmSZGxk9kGe+sPFwznUIkyM4f5yXkWvkIw==
+X-Received: by 2002:a17:907:6d0c:b0:aa6:a572:49fd with SMTP id a640c23a62f3a-abbcd0d3d07mr546218766b.54.1740011999354;
+        Wed, 19 Feb 2025 16:39:59 -0800 (PST)
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com. [209.85.208.43])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abb961594absm733588966b.111.2025.02.19.16.39.58
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 19 Feb 2025 16:39:58 -0800 (PST)
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5ded69e6134so550491a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 16:39:58 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXLacDUWkL6cbm/fAscvokVzmbR00Q0RksSk3QsGIQFAvrx3gFM1xkVL1shrRXMlalKqsdTMaOJF/OYg4g=@vger.kernel.org
+X-Received: by 2002:a17:907:7744:b0:ab7:c43f:8382 with SMTP id
+ a640c23a62f3a-abbccf1013cmr573598466b.31.1740011997709; Wed, 19 Feb 2025
+ 16:39:57 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+References: <036CD6AE-C560-4FC7-9B02-ADD08E380DC9@juniper.net>
+ <20250218085407.61126-1-michael@stapelberg.de> <39FC2866-DFF3-43C9-9D40-E8FF30A218BD@juniper.net>
+ <a3owf3zywbnntq4h4eytraeb6x7f77lpajszzmsy5d7zumg3tk@utzxmomx6iri> <202502191134.CC80931AC9@keescook>
+In-Reply-To: <202502191134.CC80931AC9@keescook>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 19 Feb 2025 16:39:41 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wgiwRrrcJ_Nc95jL616z=Xqg4TWYXRWZ1t_GTLnvTWc7w@mail.gmail.com>
+X-Gm-Features: AWEUYZlyX3Ars0jVy2kh6EWta3z2VTRB7NefiwUH34z96MyiOgY5ii4BnshdGmo
+Message-ID: <CAHk-=wgiwRrrcJ_Nc95jL616z=Xqg4TWYXRWZ1t_GTLnvTWc7w@mail.gmail.com>
+Subject: Re: [PATCH v3] binfmt_elf: Dump smaller VMAs first in ELF cores
+To: Kees Cook <kees@kernel.org>
+Cc: Jan Kara <jack@suse.cz>, Michael Stapelberg <michael@stapelberg.ch>, Brian Mak <makb@juniper.net>, 
+	Christian Brauner <brauner@kernel.org>, "Eric W. Biederman" <ebiederm@xmission.com>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, 
+	Oleg Nesterov <oleg@redhat.com>, Alexander Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 
-Hello,
+On Wed, 19 Feb 2025 at 11:52, Kees Cook <kees@kernel.org> wrote:
+>
+> Yeah, I think we need to make this a tunable. Updating the kernel breaks
+> elftools, which isn't some weird custom corner case. :P
 
-Ian and I have been discussing the behaviors of event encodings and it's
-hard to find a point so far that we can agree on.  So I'd like to hear
-your opinion to resolve this.  If you happen to have some time, you can
-follow the thread here:
+I wonder if we could also make the default be "no sorting" if the
+vma's are all fairly small...
 
-https://lore.kernel.org/linux-perf-users/20250109222109.567031-5-irogers@google.com/#r
+IOW, only trigger the new behavior when nity actually *matters*.
 
-Basically there are some events that were defined in the perf ABI.
+We already have the code to count how big the core dump is, it's that
 
-  PERF_COUNT_HW_CPU_CYCLES, PERF_COUNT_HW_INSTRUCTIONS, ...
+                cprm->vma_data_size += m->dump_size;
 
-So perf tools use those (legacy) encodings with the matching names like
-"cycles" (or "cpu-cycles"), "instructions", etc.
+in dump_vma_snapshot() thing, so I think this could all basically be a
+one-liner that does the sort() call only if that vma_data_size is
+larger than the core-dump limit, or something like that?
 
-On the another hand, it has wildcard matching for event names in PMUs so
-that users can conveniently use events without specifying PMU names.
-For example, "event1" would expand to "pmuX/event1/", "pmuY/event1/", etc
-as long as the PMUs have the event in sysfs or JSON.
+That way, the normal case could basically work for everybody, and the
+system tunable would be only for people who want to force a certain
+situation.
 
-And there are platforms where "cycles" event is defined in a (core) PMU
-(like "blah/cycles") and the event has a different behavior than the
-legacy encoding.  Then it has to choose which encoding is better for the
-given name.  But it's a general issue for the legacy event names.
+Something trivial like this (ENTIRELY UNTESTED) patch, perhaps:
 
-  Q. what should it do with "cycles"?
-  -----------------------------------
-  1. just use the legacy encoding (PERF_COUNT_HW_CPU_CYCLES).
+  --- a/fs/coredump.c
+  +++ b/fs/coredump.c
+  @@ -1256,6 +1256,10 @@ static bool dump_vma_snapshot(struct
+coredump_params *cprm)
+                  cprm->vma_data_size += m->dump_size;
+          }
 
-  2. expand to (possibly multiple) PMU events (like "cpu/cycles/") and
-     use the encoding defined there.
+  +       /* Only sort the vmas by size if they don't all fit in the
+core dump */
+  +       if (cprm->vma_data_size < cprm->limit)
+  +               return true;
+  +
+          sort(cprm->vma_meta, cprm->vma_count, sizeof(*cprm->vma_meta),
+                  cmp_vma_size, NULL);
 
-I think the #1 is the current behavior.  The upside is it's simple and
-intuitive.  But it's different than other names and can make confusion.
-Users should use the full name ("cpu/cycles/") if they need sysfs one.
+Hmm?
 
-The #2 can make the parsing code simpler and the behavior consistent.
-Also it can override the (possibly broken) behavior of the legacy event
-on some platforms.  No way (and reason?) to use the legacy encodings.
-
-Also Ian says `perf list` shows "cpu-cycles" and "cpu/cpu-cycles/"
-together which assumes they are the same.  But using #1 can result in a
-different behavior respectively.  Probably better to make it consistent.
-
-I tried to summarize the issues concisely but may miss some issues.  I
-hope Ian can fill it up in case I missed something important.
-
-Can you please share your opinion about what would be the best behavior?
-
-Thanks,
-Namhyung
-
+             Linus
 
