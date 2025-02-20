@@ -1,101 +1,159 @@
-Return-Path: <linux-kernel+bounces-524210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04C72A3E0BA
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:29:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BF26A3E0C0
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:29:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D75143B1107
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:23:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 775FE3B5514
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:24:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF69720B812;
-	Thu, 20 Feb 2025 16:23:18 +0000 (UTC)
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9282620485F;
+	Thu, 20 Feb 2025 16:24:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="V63/MU68"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 098711FECD8;
-	Thu, 20 Feb 2025 16:23:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DECE20D4E5;
+	Thu, 20 Feb 2025 16:24:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740068598; cv=none; b=mnQYyM5uIxBNGkZtz0ijreI9r60OQTeEI5UDbXEevAD6Rfjf83jEfrjg+6aCqieDB/YO9jBtszhQsHBI1hyFA1g9Ondl8jlkThrC1qKnEwqL9Wg2d4OrEUZT2sTSmYgyg00mkb4hBxjYAAm8BvjskXrfM1wJAnppUJpRgvtULjg=
+	t=1740068653; cv=none; b=fe+VGT/wI1AM77UdujX1qMBsvpm3wffB6Vxygk3B7/7aOPfvEJKEDy+Cf5moANEKZRARB/HpsEhIG0sgtHMk8OMbSdVthD2YUpRDUZ2CQzgvxm9vHxzBQ9FH3sCqSNMW8mNhJ06cUnxZ/Qh4xUnxBBQfSX8/G/+9nx+MDKjVxjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740068598; c=relaxed/simple;
-	bh=UV91EEUA7p1dTgOf/1BFgaJCW0c53QB7ivumCRNw6nU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d1N2rB/9XrfOLRivVfNRLV6ebnzUvAw8ak7AMG9vVPjOM01j2iHAYyE98KlhN77ZvFwfKT4RQzKXOUKypRyBSdRnlBV+nWOU96ht0MfKK8KdTVTWm9BJaJ0YzAhjPKYlpjWTAKN/85XyG2ABzfR4TM9Ft1yZqEpeX9Hd0GpTWSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-221206dbd7eso22553015ad.2;
-        Thu, 20 Feb 2025 08:23:16 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740068596; x=1740673396;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dgLm1m+OvFNAJVKM8oPbqnxCJCCi3KlXydcSUynOK6g=;
-        b=k79Bmwo6yQNE2b7jxwE33F+22mk1fdVx9vONrgWfFC1QgY7ajPrzunt53uY8G65aCL
-         mH67egfAk44v/n1/QN04ILfZ0sMpsxxxhzujoIoDWbNbUNuXH3vFktIU03ky0Jjljwpv
-         iSRuoGLE8tuR8iMFuenShJbx/+wV4t8dcA0BYF+35iyLbEIt4BLMQm9+USN2zY+iQmgJ
-         GH6qCZEveWYsSxZeCJe9Xhnr1W8mGV1If2xzdC3GKdBwV4sLGj7R/eAYMwV6JdYIca7G
-         5QF5pNXs6nvYG2AGnmnyBKbKD3AVJWjpqOFDmZdN54PQTWemDBHOK5Am2VFZfprhwxhF
-         Sfzg==
-X-Forwarded-Encrypted: i=1; AJvYcCUQlwSsmMiwTsEL/JvkHeMgbE7wc3U3HieEbL41kRGUxWlBufNf0EBVSXLKbth+Gj+4G2Esvm9zxaUd@vger.kernel.org, AJvYcCVXpk7Tz4GYknC28hDAmqnysTfAPa65QnyJZJupkFkxxftGhCxM4Metkv+2WJ/zQ+hUqGi6F76/@vger.kernel.org, AJvYcCXSP8NlpagSuxweKBdVL69KqpJ9QgN3vkt/6rTDvsGG17XEiTuOI558rTa9d21kO5noo5fkodfRGvidkRY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMKlxqVUGgAInMz/kN0Db5Mx370ICCXAvktmzJh5z9ijl25qLV
-	JnugnOO87adg3CUSKKdmg5BqTuHINITOtufqRG0wRSlHl0dqWcOS
-X-Gm-Gg: ASbGncuC/KL/VGmv075Xwv88lLtHT9d9la9lw+2TYFWQ6lKrUK6x/uiv7SDyE9Icv02
-	Jr/OAF5lWrF6x5r22Jr9x83E1fbPZqKuvrchT2XtNwO5by3o7k21O0F7SJI/hN5LOzJ1Ts/9+Ab
-	96JJNxgQEtZkhtFt1Lhhc9CBFrE+g+HvPJuLhzqkftSQYXt9yxDZoQqwgLRODjI3V1MM5zCi+Qj
-	Bwo6B3OPMG0cxFM789ngrLbZQn/dqnpkpUGiW250Jc+GeM3QfyiAQVeAlza/BsUYXSXhG3ZpRAP
-	v3itHQUyqZtHcL7ZW/l44iXc4uZiEqSPhpZHW6w+PN51x9/gSQ==
-X-Google-Smtp-Source: AGHT+IGxDghjV24MGlpOLAShvGV5okwWCIIPd34UUJWTKrxs47PV8/eOQe8MU2IpkQPtA2BMbQevKQ==
-X-Received: by 2002:a17:903:2307:b0:220:fe24:7910 with SMTP id d9443c01a7336-22170968867mr139817165ad.15.1740068596290;
-        Thu, 20 Feb 2025 08:23:16 -0800 (PST)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-220d53494c0sm122756675ad.6.2025.02.20.08.23.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Feb 2025 08:23:15 -0800 (PST)
-Date: Fri, 21 Feb 2025 01:23:13 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: Ma Ke <make24@iscas.ac.cn>
-Cc: lpieralisi@kernel.org, mani@kernel.org, kishon@kernel.org,
-	bhelgaas@google.com, jpinto@synopsys.com, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] PCI: endpoint: Fix a double free in __pci_epc_create()
-Message-ID: <20250220162313.GD2510987@rocinante>
-References: <20250107074601.789649-1-make24@iscas.ac.cn>
- <20250114005737.GA2004845@rocinante>
+	s=arc-20240116; t=1740068653; c=relaxed/simple;
+	bh=+/6yjCYYDC/vx/Xl0epM+sZBCKo21xZL+bewavcyoUs=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=rV7sPc3+9shaVLV165t4n7ce0+3dL8hFJT3VnD6yAqb8/VXe1RgPpmjCMuT6NTCU4snIFSEbtbbfaGT1Tg+EQWDJ76E1U15/ULee1ydkpY5k0amvKLwzvatFKVmS/iT3qkhlHwruK7I/5Wm5FBq73BR1y94DwxWPs0D0VR0+tp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=V63/MU68; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51KAVe4o023220;
+	Thu, 20 Feb 2025 16:23:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=VzLAvJ
+	4OFYe9FsbbjKeRVznanRJha9P7le1bYv/dDM8=; b=V63/MU68CqnbjiETxInFou
+	dDQUV6roS0RmVkfOv/FI/QdZU0BBipbmj6Zvc0Qg1oCxWEKy+RKKqCVfdru1LsGN
+	KQGLTR48fGHSSBs4p5pnkoelmmzIz1+nWX6wtFAHVr6rjvliGTuJH3VIaGlmK5iq
+	sCvDAmltgDQgM5vqLl7rwTqyAYxiY5ZUraI7EbHMYS5NKYEj87nsRHlxHjMXAH2D
+	5TtepDr4db8xh6ZtTXZ2QyzB0/HaXRfKaeuSnrGhsUmaXnvaZ/VbZ2R9wmdqBRNB
+	68K0xvt1P6eb6XVXfdRdeFTxx2fKHNCyNfUbcEjUjcLHzBugcC4MLBr4k2pII7Hg
+	==
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44wu80bxtj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Feb 2025 16:23:37 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51KFHavG005817;
+	Thu, 20 Feb 2025 16:23:36 GMT
+Received: from smtprelay03.dal12v.mail.ibm.com ([172.16.1.5])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 44w02xjwwc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Feb 2025 16:23:36 +0000
+Received: from smtpav02.dal12v.mail.ibm.com (smtpav02.dal12v.mail.ibm.com [10.241.53.101])
+	by smtprelay03.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51KGNZbY22544992
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 20 Feb 2025 16:23:35 GMT
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 827F05805E;
+	Thu, 20 Feb 2025 16:23:35 +0000 (GMT)
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 65CE658051;
+	Thu, 20 Feb 2025 16:23:34 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.68.26])
+	by smtpav02.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 20 Feb 2025 16:23:34 +0000 (GMT)
+Message-ID: <241e6b5336d1dcee751cb35554e507e552563a16.camel@linux.ibm.com>
+Subject: Re: [PATCH v8 1/7] ima: define and call ima_alloc_kexec_file_buf
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: James Bottomley <James.Bottomley@HansenPartnership.com>,
+        steven chen
+	 <chenste@linux.microsoft.com>, stefanb@linux.ibm.com,
+        roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
+        eric.snowberg@oracle.com, ebiederm@xmission.com, paul@paul-moore.com,
+        code@tyhicks.com, bauermann@kolabnow.com,
+        linux-integrity@vger.kernel.org, kexec@lists.infradead.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: madvenka@linux.microsoft.com, nramas@linux.microsoft.com, bhe@redhat.com,
+        vgoyal@redhat.com, dyoung@redhat.com
+Date: Thu, 20 Feb 2025 11:23:34 -0500
+In-Reply-To: <58e70121aaee33679ac295847197c1e5511b2a81.camel@HansenPartnership.com>
+References: <20250218225502.747963-1-chenste@linux.microsoft.com>
+	 <20250218225502.747963-2-chenste@linux.microsoft.com>
+	 <8023fa50a84817cc911a117db9bd3757c34fddfb.camel@linux.ibm.com>
+	 <58e70121aaee33679ac295847197c1e5511b2a81.camel@HansenPartnership.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250114005737.GA2004845@rocinante>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: jLH567s1uVFEACBTyWlJqrwhOXCg8KrD
+X-Proofpoint-ORIG-GUID: jLH567s1uVFEACBTyWlJqrwhOXCg8KrD
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-20_06,2025-02-20_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
+ priorityscore=1501 spamscore=0 phishscore=0 malwarescore=0 mlxscore=0
+ adultscore=0 mlxlogscore=478 bulkscore=0 suspectscore=0 lowpriorityscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2502200113
 
-Hello,
+On Thu, 2025-02-20 at 10:04 -0500, James Bottomley wrote:
+> On Thu, 2025-02-20 at 09:53 -0500, Mimi Zohar wrote:
+> > On Tue, 2025-02-18 at 14:54 -0800, steven chen wrote:
+> [...
+> > > Author: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+> >=20
+> > Steven, thank you again for picking up this patch set.
+> >=20
+> > As previously explained, there is no tag named "Author" in
+> > https://www.kernel.org/doc/Documentation/process/submitting-patches.rst
+> > .=C2=A0 To give credit to the original author use "Co-developed-by".
+>=20
+> Just on this, only use the co-developed-by if you actually *modified*
+> the patch.=C2=A0 If you're just transmitting the patch unmodified you can
+> give original author credit by including a=20
+>=20
+> From: original author <email>
+>=20
+> Followed by a blank line at the beginning of the email.=C2=A0 That makes =
+the
+> git author field contan whatever the From: line says.=C2=A0 You still nee=
+d a
+> signoff from yourself in the original patch because you transmitted it.
+>=20
+> Some people also consider minor modifications to be insufficient to
+> disturb the original copyright ownership and simply document what they
+> did in square brackets under their signoff, like this:
+>=20
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit=
+/?id=3Db5d1e6ee761a109400e97ac6a1b91c57d0f6a43a
 
-> > The put_device(&epc->dev) call will trigger pci_epc_release() which
-> > frees "epc" so the kfree(epc) on the next line is a double free.
-> > 
-> > Found by code review.
+Originally I had said:
 
-[...]
-> Which kernel release did you review?  I don't see this kfree() when looking
-> at the current code base per:
-> 
->   https://elixir.bootlin.com/linux/v6.13-rc1/source/drivers/pci/endpoint/pci-epc-core.c#L956-L1020
+   > Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+   > Signed-off-by: steven chen <chenste@linux.microsoft.com>
 
-I will answer my own question.  This surplus kfree() has already been
-removed as part of the following commit:
+   Before the "Co-developed-by" tag was defined, it was implied simply by t=
+his ordering
+   of the "Signed-off-by" tags.
+  =20
+   For those patches you didn't modify, simply import Tushar's patch with h=
+im as the
+   author and add your Signed-off-by tag after his.
 
-  c9501d268944 ("PCI: endpoint: Fix double free in __pci_epc_create()")
+Thanks, James, for the explanation of using "From: original author <email>"=
+ to force the
+author to be Tushar.
 
-Nevertheless, thank you for the patch.
-
-	Krzysztof
+Mimi
 
