@@ -1,113 +1,79 @@
-Return-Path: <linux-kernel+bounces-524316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3844A3E1BC
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 18:04:16 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A483A3E1B0
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 18:01:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF4C019C1CB7
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:59:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7CE4174BBE
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:59:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B21F81FFC6C;
-	Thu, 20 Feb 2025 16:58:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3AC720E6F7;
+	Thu, 20 Feb 2025 16:59:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DrAJSbQs"
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZdB1b/kg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F826212D68
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 16:58:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D0DB1C1F02;
+	Thu, 20 Feb 2025 16:59:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740070739; cv=none; b=SLpmlkmP1qmIqoSM5TVm/VYQ+ql7dQpRhPgufHJcFsQy7tSWURLZUQdL2ttbiDuLGHRnVE/4a1l83tQ3jSXUko6W4B0cUNq3wNcLMD9CDMzxRbBiPMTfe3fKpXviTLG4F0XRt20Fz78/HRLNO2Q49TY1S/+Jpo0ZwFY2cyIHyNE=
+	t=1740070787; cv=none; b=KsMKoJN6f1mDcW88Ml19m0GfczD9IKrmfIew8nuQVnH62Fsv0LMjrZfJKBNg0tALIam7XgaYKNwBPxH0niPHlO4dhyRR4pipqZMMF81YZQB4YLJA8udVv6nC/zNFDE1zziVvsNubWw6oK73Q3fJTpdHenfGCkscVWZo2Lq8vuhQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740070739; c=relaxed/simple;
-	bh=IaMyx4zJbOc7SlK0SsUvl5E9g4q84clVwL3Qp+Re03k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PyFwxtJ3nPKB3XtcxLu5LycklBr5L1MDGBxhd+rOfnKPFTYDnPtKgx7yU9hRf847LfQ3z9Gc33kAWYl9MpmM2EM34HVHBGKInQwUVUUAifmp7/j96wJXRkMLqEErO6hQkln9nNqhjOuquOZELSPO/zYgImayZPNzQbPDifLqmKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DrAJSbQs; arc=none smtp.client-ip=209.85.128.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-6ef9b8b4f13so10157747b3.2
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 08:58:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740070736; x=1740675536; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=AQGm09mvBdK2cXSMuQL4mPfZFTNbgPhxPgRHKoe39gQ=;
-        b=DrAJSbQsNTEoPjrC7xyEDUT77+IZKnF6iEXQexDsVkaRiwzQdle+aNFLblGEUpsKv7
-         hZyPov+6q5P3TBe+Q7U6RiqmLnBDGM4zhj8KfROlVq4kYWwij8OYy14vYWfH2kCSVX/8
-         uoKnoIve7pQ2zNzgt1v5eJw6cInR7azxbwh0dC6WZwNc7F5R/c6Gc4D0fNMKl/4CmUTz
-         p5L/2xajkaSxVplrWLlx4aFzD9d1Po1Jj+eF/9mCKTa78mmqdp6Arersr/pBMe6pagmV
-         1WU0KFhhvIpeXW2ZOco1EvnMoJQAOvYtTLniwyQ8P83GQ+EVJRL5xNsxK8pAYPRqvSYT
-         xkxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740070736; x=1740675536;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=AQGm09mvBdK2cXSMuQL4mPfZFTNbgPhxPgRHKoe39gQ=;
-        b=rpFHweFXJJtVpKsJDuzqN3ybXL6L9mc0Wz0ODcAZXpTqUu2PwTUehlnWL/78+Pctmf
-         6/jLTY8A2Ct6xXYia8315+JlPPZgHX069IKOcWADCSITLZJzk4Z3PCIASBgCiA+uJSeR
-         e6b56q53vXce6pw/AsFQtlisvIlTXcbqEe2Fgzy7jhZpi0yr3tYIn0qK0lXstxmubWWL
-         5a2V0Q1vKL6HdJiMOQcQEcNUJD+gZPEaVALbGOxzNGUDSuMngo3UvCuQ0iQIh6wdA1px
-         9z5SDB1PaPjRagVU2TOjRdBq/I5789KjkwjOhL7k88FlFVCgQEW8sixWWKCq7vl4eEMo
-         gxQA==
-X-Forwarded-Encrypted: i=1; AJvYcCUEODpCyT1zr703/6grVJr4StPUH3ydItTZc/qCxeFMxmZ09nFk27jUpIm75rkJ2X954G385LLRfRzZ/Ns=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxYthS6jUN3ix2Fx5Atx0sqQ15kv2xegRzdYrkrASdxIWZiQ3x
-	TrKOU0USJf5hzKbtdd0RyWm5OsW1zPGgqtmUmePYaSklzy2TCzimluD3Gqco81qxI0cdCJuOgvl
-	YT662rj8LgbZZ+iVdbO2rpD5VRyxFdjaePkptqkNCYLbUq146
-X-Gm-Gg: ASbGncstNRP0rou6GM/ktz6xAFttK4otBZgC1+ckLNHCyTRRUwlOKUkRq2hWfD4pJol
-	f+gQMpinKNj3NqMm8eFhKTjjWPvzSqSBg0ikU5esYr9lSIQPgOH5dzAZkCWUQDr+a+gFzC7aZUo
-	odK0yRg2v5ujw=
-X-Google-Smtp-Source: AGHT+IHo/TSwDj9rjaJmDI7ueG/cX0IHmiSNBjN/IaIJE2k5Ejy7bMVotuAKIkDs0CnNfxvReAEeAqe1/IzMKeJl4mM=
-X-Received: by 2002:a05:690c:2789:b0:6f7:534b:560a with SMTP id
- 00721157ae682-6fba561941fmr76173317b3.8.1740070736530; Thu, 20 Feb 2025
- 08:58:56 -0800 (PST)
+	s=arc-20240116; t=1740070787; c=relaxed/simple;
+	bh=5bpDcWU8d8GvxsQy1prYmtM/a9rjB8/6Nm/Gqt1Nfvc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dlMR+TbVAiMponsIvP0V8r93cGT00efPd8vh0StiOXezvx7MmFV4w8Jd21tL8TrE0hSQYBcrVi2vQDYH2BZA3dUU2k/27KbUNfStSRr99Cg9yLjidk+UcA81Os5M40i9ipE2lWaJdJab6fi/cgV8r6+5urBC00VPjA4Egdpn870=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZdB1b/kg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC85AC4CED1;
+	Thu, 20 Feb 2025 16:59:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740070787;
+	bh=5bpDcWU8d8GvxsQy1prYmtM/a9rjB8/6Nm/Gqt1Nfvc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ZdB1b/kgMHpLnAOqx+gET0tf3OGl/UB+x9ClkzHu4YbyX0U1vk27Gg9jeBqFTehf3
+	 Op7V+nNEK3VuxzHZzSrUGxRm4iOK/l/11g0qpj3lxPnM/WVL7ttazxNKeYB4muHSSl
+	 tt9kwPEgOwDEm2F0Z4drQZbMz+3EtH7O0YOyKy/IrkIOEMdfOYJkxnSih6tXCAh6Iw
+	 PsDtuxJxjvSYOXr9rBLhSx+kEf4yofJAq5ubYbbsCKJurZ0ptn0+zrTekzWG1AaBSo
+	 MqBnL/w07u6A2TpIK4o0CWAoueTPjxgRkSXqG9pV9Tvkglfo57d5XWaRKK0ihqAnBD
+	 ++byuwZzvkA5g==
+Date: Thu, 20 Feb 2025 08:59:45 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Sean Anderson <sean.anderson@linux.dev>
+Cc: patchwork-bot+netdevbpf@kernel.org, nicolas.ferre@microchip.com,
+ claudiu.beznea@tuxon.dev, netdev@vger.kernel.org, davem@davemloft.net,
+ edumazet@google.com, andrew+netdev@lunn.ch, pabeni@redhat.com,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 0/2] net: cadence: macb: Modernize statistics
+ reporting
+Message-ID: <20250220085945.14961e28@kernel.org>
+In-Reply-To: <12896f89-e99c-4bbc-94c1-fac89883bd92@linux.dev>
+References: <20250214212703.2618652-1-sean.anderson@linux.dev>
+	<173993104298.103969.17353080742885832903.git-patchwork-notify@kernel.org>
+	<12896f89-e99c-4bbc-94c1-fac89883bd92@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250220162847.11994-1-srinivas.kandagatla@linaro.org> <20250220162847.11994-4-srinivas.kandagatla@linaro.org>
-In-Reply-To: <20250220162847.11994-4-srinivas.kandagatla@linaro.org>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Thu, 20 Feb 2025 18:58:45 +0200
-X-Gm-Features: AWEUYZmFJxng0_893ETLEGldfZpNnTmG1J41zgQwIxN-aVy1Spd_reUcQ6cKDbU
-Message-ID: <CAA8EJppOSTFfszx26GzwQb36GNTU6WEpWmSX+j5ds17wc55nig@mail.gmail.com>
-Subject: Re: [PATCH v2 3/5] ASoC: q6apm-dai: make use of q6apm_get_hw_pointer
-To: srinivas.kandagatla@linaro.org
-Cc: broonie@kernel.org, perex@perex.cz, tiwai@suse.com, 
-	krzysztof.kozlowski@linaro.org, linux-sound@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	johan+linaro@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, 20 Feb 2025 at 18:29, <srinivas.kandagatla@linaro.org> wrote:
->
-> From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
->
-> With the existing code, the buffer position is only reset in pointer
-> callback, which leaves the possiblity of it going over the size of
-> buffer size and reporting incorrect position to userspace.
->
-> Without this patch, its possible to see errors like:
-> snd-x1e80100 sound: invalid position: pcmC0D0p:0, pos = 12288, buffer size = 12288, period size = 1536
-> snd-x1e80100 sound: invalid position: pcmC0D0p:0, pos = 12288, buffer size = 12288, period size = 1536
->
-> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+On Thu, 20 Feb 2025 11:01:10 -0500 Sean Anderson wrote:
+> > Here is the summary with links:
+> >   - [net-next,1/2] net: cadence: macb: Convert to get_stats64
+> >     https://git.kernel.org/netdev/net-next/c/75696dd0fd72
+> >   - [net-next,2/2] net: cadence: macb: Report standard stats
+> >     https://git.kernel.org/netdev/net-next/c/f6af690a295a
+> > 
+> > You are awesome, thank you!  
+> 
+> I think this should be deferred until v2 of [1] is applied, to make
+> backporting the fix easier.
 
-Fixes: ?
-
-> ---
->  sound/soc/qcom/qdsp6/q6apm-dai.c | 23 ++++-------------------
->  1 file changed, 4 insertions(+), 19 deletions(-)
-
-
--- 
-With best wishes
-Dmitry
+ETOOLATE :) networking trees don't rebase
 
