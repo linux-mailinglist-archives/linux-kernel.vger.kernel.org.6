@@ -1,115 +1,107 @@
-Return-Path: <linux-kernel+bounces-523075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E271A3D1BA
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 08:05:50 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96EEFA3D1D8
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 08:13:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBAD23B92DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 07:02:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D05A47A8072
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 07:11:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 808B61E47A8;
-	Thu, 20 Feb 2025 07:02:57 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BA3C442C
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 07:02:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B8EC1EC01B;
+	Thu, 20 Feb 2025 07:11:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=tugraz.at header.i=@tugraz.at header.b="eGWYjnnD"
+Received: from mailrelay.tugraz.at (mailrelay.tugraz.at [129.27.2.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23C761E5B7B;
+	Thu, 20 Feb 2025 07:11:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.27.2.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740034977; cv=none; b=gQJfS4i41FNFknVr9TvmGqAg8Uj/mGLiy3sCWeZ+z4bV87Sox8LXldMa0k8waGwJEfFOwc9ggu431reLHAAfiWnhArtVIRKQ0U52Xpa0gJeWQqEJ6Q0VxB1vcO2VQdGCKKuiePCe+xVANgjv02yBPKNHAVUXsEymB2/JAgnLqd4=
+	t=1740035475; cv=none; b=bHK+SMmgcYyrrrxWUJLAQ9y10F64Sdw+M/kpyZi+wyEQ9hEQxZ4O4fMTHUN8DUnpe2Q6XC+qq2u7oFJRWEpfMVrsgXAhgyakYpi37xOodR2kycksHZO8YnNXVYLe3WSR6V7I7K42s7fK1VCTtckQl6vftzmjKMv579cR8jdIVWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740034977; c=relaxed/simple;
-	bh=RU4xImw6sHXhlKPtzwbk1nk+CQyGhsA53NZ7lHc8T0I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=A2Xh5eE6JNHtDxXtf/qohUb/n5CrqvVccuFeLFg4PjN6QZ+Am3gC7Z90we9PCIcF8+pHnr+ubRcLR8kam4/TxwJs0fGjiznqlRkvu14ecWPCzZ7V8T3Jvxm+2JqGPYr9+e5YB/qAdc8clhQRj80oz7Gg/9YIWdHUYX6EJy1lw4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A7BDC2008;
-	Wed, 19 Feb 2025 23:03:12 -0800 (PST)
-Received: from [10.163.38.27] (unknown [10.163.38.27])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DFBFD3F5A1;
-	Wed, 19 Feb 2025 23:02:46 -0800 (PST)
-Message-ID: <dd60e3d2-62ad-4295-8963-35bb1a94b006@arm.com>
-Date: Thu, 20 Feb 2025 12:32:37 +0530
+	s=arc-20240116; t=1740035475; c=relaxed/simple;
+	bh=J0B0YXdvQsUgkAZoGQd5DGyef4ealLirHSCqBDZV8BM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=gc+7njep0xt0JOjmc/CPz9SqCSwogNtsBliapH8fx+qF628XpoBe2p+MON1EI35/FslPFCkkYUgf2+JTjUhT3RgWFw6WroWyANIPjIQbgIxd3NcyaBaKDruPayUDKvmhulVhPjlxMLCgIgKi0acHUwJzHaR0nyaqu5yjpXsgim0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tugraz.at; spf=pass smtp.mailfrom=tugraz.at; dkim=pass (1024-bit key) header.d=tugraz.at header.i=@tugraz.at header.b=eGWYjnnD; arc=none smtp.client-ip=129.27.2.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tugraz.at
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tugraz.at
+Received: from vra-171-197.tugraz.at (vra-171-197.tugraz.at [129.27.171.197])
+	by mailrelay.tugraz.at (Postfix) with ESMTPSA id 4Yz43B6Twbz1JJCN;
+	Thu, 20 Feb 2025 08:03:02 +0100 (CET)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailrelay.tugraz.at 4Yz43B6Twbz1JJCN
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tugraz.at;
+	s=mailrelay; t=1740034984;
+	bh=79iOrJleI/iz7iPUnPOpIes+Agw9KU6s5TsUDIe2kI8=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=eGWYjnnDWcq2gSYJ3zhmIau23n3qUpPkDeNK3NIf2LI7sS6HcF1CpXmRrj8iS7ayS
+	 pa0aJJCHb5NzL4hJPb9NmNFtAsXdtbLtzKousOHESayZ28MvBFZL94LOQBjkFDtRRI
+	 1FRXeIeh5Yv2aH2YAsIhQkzn+qjgktzuGW26oFD4=
+Message-ID: <4e316b01634642cf4fbb087ec8809d93c4b7822c.camel@tugraz.at>
+Subject: Re: Rust kernel policy
+From: Martin Uecker <uecker@tugraz.at>
+To: Greg KH <gregkh@linuxfoundation.org>, Boqun Feng <boqun.feng@gmail.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>, Miguel Ojeda
+ <miguel.ojeda.sandonis@gmail.com>, Christoph Hellwig <hch@infradead.org>, 
+ rust-for-linux <rust-for-linux@vger.kernel.org>, Linus Torvalds
+ <torvalds@linux-foundation.org>, David Airlie <airlied@gmail.com>,
+ linux-kernel@vger.kernel.org, ksummit@lists.linux.dev
+Date: Thu, 20 Feb 2025 08:03:02 +0100
+In-Reply-To: <2025021954-flaccid-pucker-f7d9@gregkh>
+References: 
+	<CANiq72m-R0tOakf=j7BZ78jDHdy=9-fvZbAT8j91Je2Bxy0sFg@mail.gmail.com>
+	 <Z7SwcnUzjZYfuJ4-@infradead.org>
+	 <CANiq72myjaA3Yyw_yyJ+uvUrZQcSLY_jNp65iKH8Y5xGY5tXPQ@mail.gmail.com>
+	 <326CC09B-8565-4443-ACC5-045092260677@zytor.com>
+	 <CANiq72m+r1BZVdVHn2k8XeU37ZeY6VT2S9KswMuFA=ZO3e4uvQ@mail.gmail.com>
+	 <a7c5973a-497c-4f31-a7be-b3123bddb6dd@zytor.com>
+	 <Z7VKW3eul-kGaIT2@Mac.home> <2025021954-flaccid-pucker-f7d9@gregkh>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 08/14] mm/vmalloc: Warn on improper use of
- vunmap_range()
-To: Ryan Roberts <ryan.roberts@arm.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Pasha Tatashin <pasha.tatashin@soleen.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Uladzislau Rezki <urezki@gmail.com>, Christoph Hellwig <hch@infradead.org>,
- David Hildenbrand <david@redhat.com>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Mark Rutland <mark.rutland@arm.com>, Alexandre Ghiti
- <alexghiti@rivosinc.com>, Kevin Brodsky <kevin.brodsky@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-References: <20250217140809.1702789-1-ryan.roberts@arm.com>
- <20250217140809.1702789-9-ryan.roberts@arm.com>
-Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <20250217140809.1702789-9-ryan.roberts@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-TUG-Backscatter-control: G/VXY7/6zeyuAY/PU2/0qw
+X-Spam-Scanner: SpamAssassin 3.003001 
+X-Spam-Score-relay: 0.0
+X-Scanned-By: MIMEDefang 2.74 on 129.27.10.117
 
-On 2/17/25 19:38, Ryan Roberts wrote:
-> A call to vmalloc_huge() may cause memory blocks to be mapped at pmd or
-> pud level. But it is possible to subsequently call vunmap_range() on a
-> sub-range of the mapped memory, which partially overlaps a pmd or pud.
-> In this case, vmalloc unmaps the entire pmd or pud so that the
-> no-overlapping portion is also unmapped. Clearly that would have a bad
-> outcome, but it's not something that any callers do today as far as I
-> can tell. So I guess it's just expected that callers will not do this.
-> 
-> However, it would be useful to know if this happened in future; let's
-> add a warning to cover the eventuality.
-> 
-> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
+Am Mittwoch, dem 19.02.2025 um 06:39 +0100 schrieb Greg KH:
+> On Tue, Feb 18, 2025 at 07:04:59PM -0800, Boqun Feng wrote:
+> > On Tue, Feb 18, 2025 at 04:58:27PM -0800, H. Peter Anvin wrote:
+> > [...]
+> > > > >=20
+...
+>=20
+>=20
+> I'm all for moving our C codebase toward making these types of problems
+> impossible to hit, the work that Kees and Gustavo and others are doing
+> here is wonderful and totally needed, we have 30 million lines of C code
+> that isn't going anywhere any year soon.  That's a worthy effort and is
+> not going to stop and should not stop no matter what.
 
-LGTM and stands on its own independent of the series here.
+It seems to me that these efforts do not see nearly as much attention
+as they deserve.
 
-Reviewed-by: Anshuman Khandual <anshuman.khandual@arm.com>
+I also would like to point out that there is not much investments
+done on C compiler frontends (I started to fix bugs in my spare time
+in GCC because nobody fixed the bugs I filed), and the kernel=C2=A0
+community also is not currently involved in ISO C standardization.
 
-> ---
->  mm/vmalloc.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
-> 
-> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-> index 61981ee1c9d2..a7e34e6936d2 100644
-> --- a/mm/vmalloc.c
-> +++ b/mm/vmalloc.c
-> @@ -374,8 +374,10 @@ static void vunmap_pmd_range(pud_t *pud, unsigned long addr, unsigned long end,
->  		if (cleared || pmd_bad(*pmd))
->  			*mask |= PGTBL_PMD_MODIFIED;
->  
-> -		if (cleared)
-> +		if (cleared) {
-> +			WARN_ON(next - addr < PMD_SIZE);
->  			continue;
-> +		}
->  		if (pmd_none_or_clear_bad(pmd))
->  			continue;
->  		vunmap_pte_range(pmd, addr, next, mask);
-> @@ -399,8 +401,10 @@ static void vunmap_pud_range(p4d_t *p4d, unsigned long addr, unsigned long end,
->  		if (cleared || pud_bad(*pud))
->  			*mask |= PGTBL_PUD_MODIFIED;
->  
-> -		if (cleared)
-> +		if (cleared) {
-> +			WARN_ON(next - addr < PUD_SIZE);
->  			continue;
-> +		}
->  		if (pud_none_or_clear_bad(pud))
->  			continue;
->  		vunmap_pmd_range(pud, addr, next, mask);
+I find this strange, because to me it is very obvious that a lot more
+could be done towards making C a lot safer (with many low hanging fruits),
+and also adding a memory safe=C2=A0subset seems possible.
+
+Martin
+
+
+
 
