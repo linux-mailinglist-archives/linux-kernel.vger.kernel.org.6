@@ -1,119 +1,124 @@
-Return-Path: <linux-kernel+bounces-522779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4FD1A3CE69
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 02:06:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A83DA3CE6D
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 02:08:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42DE3189BA33
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 01:05:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31501164AE7
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 01:08:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DB8A13DDD3;
-	Thu, 20 Feb 2025 01:04:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B743213BAD5;
+	Thu, 20 Feb 2025 01:08:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="LpwcHi9B"
-Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ONW2FNuB"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FEF74204E
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 01:04:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9B37D2FB
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 01:07:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740013499; cv=none; b=u18iz9lkmKx1YmUSwWcxXZKVmWBDpGnYVYsEsUfGnkye0igQJiKUUC4WQ8pfwd8P2LdrJEFjH7hILocwa8KpfJs6nhr0xVhLUs5Pfn0gSGPiQq6v3/n+Jro9J8KNJWdn1QuMJPsveSUoQ5vMJ6UNzD/rtMzNqxfRLEDpCJmOBXE=
+	t=1740013681; cv=none; b=g35Qk4Kin6rihEk+yqKnOLwxanvzIsCW6iGDpjPmbrEjU0NcvmtrpQWgQ+magOD484F/80CcKRl6hmTzxPNVNmzDysvAvrq0gXHN40auSGISmWExTCpTYNwt1xZyq24xz7l3BdxeWmkzdt53JzatGRSg2GJLNbygKYRY8BVMc7U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740013499; c=relaxed/simple;
-	bh=JeYy4pG+I+Mr6dMRTEgew65StItnooXP7D/DpPk71P0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fPSVAVt4uTl6jnnvGa9v1Z8M/SzWlkhIs65ecvF7LF8f9dPQaIb5SsLbQ9YD7jfo9CR95FmOL6Z+XTw8qSzjgDDVdoeUl6789rU4YCdd9sCExOX5dpcXenzjwB88ikNbABqLulKxtxKhvaDY+vJ5YpIhrTg6DHgIttILTeX6oXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=LpwcHi9B; arc=none smtp.client-ip=209.85.219.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-6dd420f82e2so4564746d6.1
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 17:04:57 -0800 (PST)
+	s=arc-20240116; t=1740013681; c=relaxed/simple;
+	bh=/lGakXVZCQx0lc7hrdwMSme41IJ7zwDg4c/s5KFisuE=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Content-Type; b=TpxWyOLSJ7Qm6VkS3uNS3XsWO2re6tuAbkY8iBWfdyRJMwQH/6KI4kpuaRlbxQ1t9C6XdDRMBXxvzDpY4aZPL0QJlcgPgr7oOhhbQGFlVzdc01+67E/kE/jD32ySL4UBlJgRx4lMkQsALWeVb9Y2sOkPGfZ5bk7ZWv8aDXCvtvw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ONW2FNuB; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-220e62c4f27so9414125ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 17:07:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1740013496; x=1740618296; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=1MWBwMxYKDvEMb5Nsgpje67CQl23BipqyXlvrUrw49c=;
-        b=LpwcHi9BDOJSCJUWWYdK0brb0wEW5krsmflzW8JR4gvQvcv7jc6mRsXFxL3RumjwEV
-         ZfMetsHRGgwVCn9xUVbhCQl3mh4XZ219KODBFpdvBqcSsXb7aLItgV1oUGMqP5nMCq5w
-         KXk5DTR66oYBGGhB8AmwvWm0QKP4PCl35YWCOLRLUhaXdyYa6k0BzDP+ziR+AWkh4tdY
-         R1UVJnj5UiTD9jyIvZuutmSth57XYxZtRy0VqTz8844MWeo8CBXJRoAnQahEb/VJvYmr
-         5Ap6qS89RNgKU4OvRubYI1s5UZh36QqRgQSc1oPq6kKANTcw0UkMIUTpu08i3kbYL5mv
-         4lfA==
+        d=google.com; s=20230601; t=1740013679; x=1740618479; darn=vger.kernel.org;
+        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=3V15TKwqZAC8dpBd3zv+ePQ+zbQqk14dXCyWdHzdLQE=;
+        b=ONW2FNuBoUMpZHvR6P1JiHRGrfNz5oKpcuEoTiC+KVc7yz/BLZJqFsJPY9b140ea2S
+         QyUJyeNGAHlWPvoPGPPXjpMrNsiKs47j1TtM/uyJdQkC+7l5y/aNqAy7wL7H0qanUI2P
+         i5VWE8ml6IamonGn6ZyzKuPTLr+S9wvi8JNoqaBPFsJOGxHEv6OSxr/ldQrTeqJVM6ym
+         gN/mSlstgHGYL03mHreeq96HKvKy136hexEvB9Ir6guAWxv9TPNY7pNoywCZD/yEHsVB
+         6UepwPpasx8Zux9H18GOvvJaYeW/Lx4geQeg7J392eNbQCll8ygEgYHg35SM78N78wTK
+         F8cg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740013496; x=1740618296;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1MWBwMxYKDvEMb5Nsgpje67CQl23BipqyXlvrUrw49c=;
-        b=w/2SUP7UyBcqkgVSvn1rtZBaUs69iHSPb9BxhHumQDmTT4fMPrVqDK9kUrTCCCCSli
-         600EofqAII/bHWBmgnuhAXUq8hbr5w31tHArJBxbRCfgtTGUDtP75hXItRiLA73t16G6
-         QLWQ/exYm2aSC8y7h++HY4rknDpWIlTzned+1CQdw59lbWOsKdEk0MqojbdJXAFyrUP9
-         Rg+6zQNW6kwabM9AMN5W09UWk9pnTsUpg9Z7GxkQRsP27DSDJj6mCjiOUrs69HJE+W1+
-         BR9VnKcoPpAZ74cw53/Zc14+RjF0QiIZV0snX2jAU/fDayS5AQvH2cDSM6KstNGk9yxu
-         Tjjg==
-X-Forwarded-Encrypted: i=1; AJvYcCXEb4N15qix2atGuJSkypjJ/VfKxBbmCMywrME0fCxYGNwFENXviNXE6uDGHAVztft8QfwEnJNgNkgBBrk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwakPtX+m/yo6/jGGil3wYuguySAmhu/vboQvZUAnBfx+qvwyAm
-	08XMvoV8E0bYJXZDi9WgO0N4z4TLSB6NAFBqfHiHOhe1dM/gg81xDXOuTA/9rgs=
-X-Gm-Gg: ASbGncszPO+ywEPtJC9T0ViSXpIjCNVHfSkik4PqxcsqelBmmk2hrVTndQiNyPebtdd
-	/GZ/lc7ks3wWg62pc8vQ5F1qaUcKVZgVQmXP9RcuRZlpcOfLCFTrXvQLOh6Xg/sinqbt0DqaAml
-	u9y841UimIIwi/IJJv88flJ307Vp9NJgKcyVL2x1omyiyBfB75fkgBFfZG2rPEaeFLDwLslYYGE
-	zr1uxWnLT4zRVhveIoFfy6SRXCIkke7XR6VGAyWIV3kHVuAYIocmnhxN7u0bOVs78KeFtg98jcf
-	baxNJwXYK5hz6n3JalpBhyE7NnN7N2Yx1qe8zOzt4FOpe7T+48Iiikn+UnfLDpv3
-X-Google-Smtp-Source: AGHT+IFzEq0526xTcxemb2Cr+hRhWjxAyU9EvBZZD37sIHxTHpA3ldPJFUOlpPg8MYbowsx6pgY/ZQ==
-X-Received: by 2002:a05:6214:21c8:b0:6e1:697c:d9b8 with SMTP id 6a1803df08f44-6e66cc8b653mr315657496d6.9.1740013496437;
-        Wed, 19 Feb 2025 17:04:56 -0800 (PST)
-Received: from ziepe.ca (hlfxns017vw-142-68-128-5.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.128.5])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e65daff4a8sm80630306d6.97.2025.02.19.17.04.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Feb 2025 17:04:56 -0800 (PST)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1tkuzn-00000000D8m-2TxB;
-	Wed, 19 Feb 2025 21:04:55 -0400
-Date: Wed, 19 Feb 2025 21:04:55 -0400
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Lu Baolu <baolu.lu@linux.intel.com>
-Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Fenghua Yu <fenghua.yu@intel.com>,
-	Dave Jiang <dave.jiang@intel.com>, Vinod Koul <vkoul@kernel.org>,
-	Zhangfei Gao <zhangfei.gao@linaro.org>,
-	Zhou Wang <wangzhou1@hisilicon.com>, iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 12/12] iommu: Remove iommu_dev_enable/disable_feature()
-Message-ID: <20250220010455.GU3696814@ziepe.ca>
-References: <20250214061104.1959525-1-baolu.lu@linux.intel.com>
- <20250214061104.1959525-13-baolu.lu@linux.intel.com>
+        d=1e100.net; s=20230601; t=1740013679; x=1740618479;
+        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3V15TKwqZAC8dpBd3zv+ePQ+zbQqk14dXCyWdHzdLQE=;
+        b=KGLJq/CV3Nfe82a++Dqe9rFIFNn82KHNQDUMxm9Jv1uBNNz03rYEb8MrPXMwKcMBaQ
+         TxHuRNyEJq6wpyzXDLqrBexLBvuxsRTbijFwhAefvY5nb6jwPo/thzcebcWhxn9BVKL4
+         AYrAClDh2hPdHmioQoePdKkJJnBmhHqEIX31a3EtzmHB0A2q78XDhXk3lsjHt11CL9Nv
+         UiWY5dB+K3qGRdKmG84M3S3NQsIFhQc4koz2YgeGqbfWvPxEuD7dsNpCJ7sVkYB3CKGh
+         GkBWeP1zrowrxJHZ1VsgoFACcYihQxixkwmBxhwZWtL+bDH5Z/4QwFR1kVLE4f97f5ni
+         8XLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUcPoKZs5K9p25F9Wy2ur549fe/JHbYT5ObHqTr2P33RoQP3xU06wQ5Bh7FKeLdGM40O3loAV+OjTr1M80=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4a/gO78U6SCZh/M3JBxUygfwIxnkAqUpn7cDX6Drg/CwyrxC6
+	mfG5y3D7xf4AKxyy+GMd/M2hLfmM2wv+Zp4+pP+BIasVPCKcnbxlJl/VQIWGofAr6s7q3VxiFBn
+	5ng==
+X-Google-Smtp-Source: AGHT+IFzBoJ9kkSVMGki9J8KCMzSJQurVwvUMLJQI9kOhy2xogXJenm8QqJIis7na1Vzj2miDdjT16wwdLc=
+X-Received: from pjbcz12.prod.google.com ([2002:a17:90a:d44c:b0:2fa:15aa:4d1e])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:ccc6:b0:220:ff3f:6cc9
+ with SMTP id d9443c01a7336-221711b98bbmr97110875ad.48.1740013679107; Wed, 19
+ Feb 2025 17:07:59 -0800 (PST)
+Date: Wed, 19 Feb 2025 17:07:57 -0800
+In-Reply-To: <20250215010946.1201353-2-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250214061104.1959525-13-baolu.lu@linux.intel.com>
+Mime-Version: 1.0
+References: <20250215010946.1201353-1-seanjc@google.com> <20250215010946.1201353-2-seanjc@google.com>
+Message-ID: <Z7aAbSQTjS4MBK7z@google.com>
+Subject: Re: [PATCH 1/2] KVM: SVM: Set RFLAGS.IF=1 in C code, to get VMRUN out
+ of the STI shadow
+From: Sean Christopherson <seanjc@google.com>
+To: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Doug Covelli <doug.covelli@broadcom.com>
+Content-Type: text/plain; charset="us-ascii"
 
-On Fri, Feb 14, 2025 at 02:11:04PM +0800, Lu Baolu wrote:
-> No external drivers use these interfaces anymore. Furthermore, no existing
-> iommu drivers implement anything in the callbacks. Remove them to avoid
-> dead code.
-> 
-> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
-> ---
->  drivers/iommu/amd/iommu.c                   | 32 -------------------
->  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c | 34 ---------------------
->  drivers/iommu/intel/iommu.c                 | 25 ---------------
->  drivers/iommu/iommu.c                       | 32 -------------------
->  include/linux/iommu.h                       | 28 -----------------
->  5 files changed, 151 deletions(-)
+On Fri, Feb 14, 2025, Sean Christopherson wrote:
+> diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
+> index 7640a84e554a..fa0687711c48 100644
+> --- a/arch/x86/kvm/svm/svm.c
+> +++ b/arch/x86/kvm/svm/svm.c
+> @@ -4189,6 +4189,18 @@ static noinstr void svm_vcpu_enter_exit(struct kvm_vcpu *vcpu, bool spec_ctrl_in
+>  
+>  	guest_state_enter_irqoff();
+>  
+> +	/*
+> +	 * Set RFLAGS.IF prior to VMRUN, as the host's RFLAGS.IF at the time of
+> +	 * VMRUN controls whether or not physical IRQs are masked (KVM always
+> +	 * runs with V_INTR_MASKING_MASK).  Toggle RFLAGS.IF here to avoid the
+> +	 * temptation to do STI+VMRUN+CLI, as AMD CPUs bleed the STI shadow
+> +	 * into guest state if delivery of an event during VMRUN triggers a
+> +	 * #VMEXIT, and the guest_state transitions already tell lockdep that
+> +	 * IRQs are being enabled/disabled.  Note!  GIF=0 for the entirety of
+> +	 * this path, so IRQs aren't actually unmasked while running host code.
+> +	 */
+> +	local_irq_enable();
 
-Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+Courtesy of the kernel test bot[*], these need to use the raw_ variants to avoid
+tracing.  guest_state_{enter,exit}_irqoff() does all of the necessary tracing
+updates, so we should be good on that front.
 
-Jason
+  svm_vcpu_enter_exit+0x39: call to trace_hardirqs_on() leaves .noinstr.text section
+
+[*] https://lore.kernel.org/all/202502170739.2WX98OXk-lkp@intel.com
+
+> +
+>  	amd_clear_divider();
+>  
+>  	if (sev_es_guest(vcpu->kvm))
+> @@ -4197,6 +4209,8 @@ static noinstr void svm_vcpu_enter_exit(struct kvm_vcpu *vcpu, bool spec_ctrl_in
+>  	else
+>  		__svm_vcpu_run(svm, spec_ctrl_intercepted);
+>  
+> +	local_irq_disable();
+> +
+>  	guest_state_exit_irqoff();
+>  }
 
