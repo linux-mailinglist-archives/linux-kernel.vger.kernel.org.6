@@ -1,188 +1,158 @@
-Return-Path: <linux-kernel+bounces-523521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 265AAA3D7ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:13:47 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33685A3D7F7
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:15:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 867AF3AD3F7
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 11:13:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 69DE37A6AE9
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 11:14:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 969061EF096;
-	Thu, 20 Feb 2025 11:13:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 829B01F1314;
+	Thu, 20 Feb 2025 11:15:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="IJTR6M+X"
-Received: from out162-62-57-137.mail.qq.com (out162-62-57-137.mail.qq.com [162.62.57.137])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eUrrpDX6"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E20861B0F19
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 11:13:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.137
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1A421F0E2D
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 11:14:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740050011; cv=none; b=LAdw08BlF4M+QnScCft7vgrSuCluGTWhBdIg1KVpp+LcqFe4Qk2Vo64FnXgef7eVHVQbVOp9se6RhxuvX78v0JrkdFiDlY/Kj2Q3DbJ30dZ1sxoDXac0TV1kPfwP70hjtGAISqzj1q9tpLw730gox3ljTk/CfVrAqgP6veCCZyo=
+	t=1740050099; cv=none; b=CBIGg9XVPWwERhivQNJa+fR0VUQIAM+BCDTunDf+kvmXEYP39CLBAq4R56yxt2mCQJf2R04tjpg0xMf86jSY2RZ1kCPIRQcqrQeF/lEsc8uYPe3TlNstDWEyoX2hI11fVoZZG1Pm/M1pL9HAKriVraD52ZAVuXApbKJtU/53Drs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740050011; c=relaxed/simple;
-	bh=E5BHwTCE4e8h2G6UeFk88GJE2q/0S3+An7iBunPIN/c=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=pNfv9WYYGHnjfNxEub+/JPl83KMvMn7h2pfUTJZTT2O6KQKDMmXUpnjRYyFGRT/5zAEu6fLR1awazM4f6k1Bh3LSIQ0ckv3196F7crEdS8aQDtxb1GAv2TbmUK24eQR/zAQAYUz7XjGacLIY1R73oPjldCGSwQQtihKS2Yq1MP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=IJTR6M+X; arc=none smtp.client-ip=162.62.57.137
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1740050003; bh=KF6uDAiNEy/NxbwADJhvETXLyW36Mj39HsyXIpVucTw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=IJTR6M+Xvh5ShHOowqTOh30D4hkT0Z9bZvZZSl6K/J6D1BB43vvI0Kk7UaKrGO/ZO
-	 5veDOr1uuE4JKpAMDW2GSzvR4Fm2GwXuYpH9Yq4yp2+iaAgLWy2W0UyD/+pEsKIFRY
-	 NCu7suEA+yLxxogoAqdxJcQkCLQ5H5zhtClJmYk0=
-Received: from pek-lxu-l1.wrs.com ([114.244.57.157])
-	by newxmesmtplogicsvrszb20-0.qq.com (NewEsmtp) with SMTP
-	id 355052BA; Thu, 20 Feb 2025 19:13:21 +0800
-X-QQ-mid: xmsmtpt1740050001tkyzp4wjv
-Message-ID: <tencent_8C6B26DD7364836B096F23B1244E177F3705@qq.com>
-X-QQ-XMAILINFO: OCYbvBDBNb9rKu1+SRd4LswjY1FvIowzqv9NhJI/sLepwMJKoeuwiLO/cFk10X
-	 CljWmON6jDDOSOHPj/qp75FfZ5Mtih8fgLt4mwhmMnK0qik6RkGF5MRJZHg3xl1Ao2bQdsDuRe7u
-	 +dRNxT9asOXBvq6hctYUQOcma90k2zKa9WdsPkQY3i4xKsgRKemu/Gr7a/G8uK0/HClO23BRyNpK
-	 JsogImOh0+j9UMqyryTvcwewRob3UDlPm28nXjB3wYTHJjSPEqdIqwvPAkOtdSO15PQTQOd2TEYv
-	 84O4RVUcWTLhYhkrADw1BHmFNDSa38sKWdjUqXe2jtAUiXVbkpRMr2dkt3K9Xvvudza9rbYhuaZu
-	 aA59lSnKu8zCWkYh14Z8dlXGzEh14R1Cl0aEEEgw8Sm2Nkv8ZCzWXGm6WAYRaIjKgCpdD7Z9sQGU
-	 QzRQ4k7vCnouvVLUzoEMbIVsnyafgHxGjEscZT62+3d161niUcHmgHcwUJMEVR/uzJ9QwZo3N0wi
-	 vISBFJtpGHRj/zOdKz8mQr5UaEMcwP2k5oqWGfjWW05BVDuGPUn64HSLlcfMNvrc4cDISYVtMnmn
-	 OntezZm/grgML5uZL4Lc9dzUKgiQyH0FVh8hwLZgiJIbCvV1Gzlv6XkfMYyS12s/eSZlBDsoSzK3
-	 AmAKdchz6ZcDoio2THbvWkM8g6MMYo9GmVqHcVhYLN5IijnHH8f4iGohQMDxsixS6k87bonS1CXb
-	 Qme0ll8/krCYwzQiFqJOCKNAgy5M6MPFMH546j+OlDlQHEb4sCG641By/+fvvbTaQi+dlRb3G/5w
-	 aPMt9Vn9NZKgQ6b+/ZFL7AgIF0qrChV3CPtRyukNSB/4wFVqXlUxw80kvJcJlnDT/JoF4KS4eCjz
-	 Z6L9gOoT3+41AnOntLzdBNBEETYGGGU7TqZJ0aMvjtefz2ReyRoVae8rPQ4w2N3g==
-X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
-From: Edward Adam Davis <eadavis@qq.com>
-To: dave.kleikamp@oracle.com
-Cc: jfs-discussion@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	shaggy@kernel.org,
-	syzbot+355da3b3a74881008e8f@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com
-Subject: [PATCH V3] jfs: Prevent copying of nlink with value 0 from disk inode
-Date: Thu, 20 Feb 2025 19:13:21 +0800
-X-OQ-MSGID: <20250220111321.2299005-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <b72fbe46-f910-4181-8d5b-fdc66d46700a@oracle.com>
-References: <b72fbe46-f910-4181-8d5b-fdc66d46700a@oracle.com>
+	s=arc-20240116; t=1740050099; c=relaxed/simple;
+	bh=fJB6L5AnL5J+S+1HzyLzt2yON/RIJwdvkGfbsOOWwmk=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=RMjK65lh2xRztFwn3Jmi+eDOfKKDj3xj7DD5b2wuLaQxC6hgzqB9KFKQss2GwjUIXv4bTbWZYndpAge4ixe08EvHH8r3rRF6v/rQ7SwTQ6q6MNPaVrNw5LleIZc+7Oz5hl0Qn4X/nScFjQf0MRrQblM0fzE94bzLBoLm6+l9kLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eUrrpDX6; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-307325f2436so8131231fa.0
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 03:14:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740050095; x=1740654895; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=8LyXwrLGK4GdaCCWLeIZs0AErC/jYbMsOGckx5Nm6AE=;
+        b=eUrrpDX6Qymv7/B5T21ptKcpDCHGNpyAh3+84KBoE4lCUkXvNEI+MWimjXQgepbyE2
+         +TEKp5Zn04cvyAPGLThymL9FlbX0oAo6OgTSLFbN6o6uPCdbufnagfg4i+NNuoj9J00E
+         Qd0OCUeb2vPePPKt40uTVNY7F4Slo+WGzCR+7vH8H9yvVfTbXQpVtkK9bDg9Bc00H2L1
+         30PmlLTYnw3Zmj+USB1rBvsdxZ26xOqhNYrHLn/KRckOVvx+hVj6ztORy/ToAfi7nmS5
+         q1K9bPvlV7Eojh05lOA9CnyxtIpp4/PK2wosS4SdLwvliDB3fFY/rWG70fss7B8NfUD7
+         GOOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740050095; x=1740654895;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8LyXwrLGK4GdaCCWLeIZs0AErC/jYbMsOGckx5Nm6AE=;
+        b=sNFRwu5pbKoHhMcKh1wVOF2g28cMDMku7O5FbxsytgP8dsTUbH/QM04pfkyxKm1B8G
+         GFHdfE60sZjpfr2C8htzzFIBk1MQqecVlqaSDpQX8wzaVKjMEtx/szpQ6GvX+Jin9if5
+         sp79AvoGmRghYYvNYB1BlpZDsvWMRlkaGw6u7Vif5PctjKdGMNiRVkU3fS6IAA0M9TZL
+         Lu1YaLoKf4gabvSdngGB0S7/lhZfQzT28rM7al5f5WiS66tugWqK/v0ZtiL8fh19q4/Q
+         +8LNXonJtzYUht95HP0vpDORkFNQUjB7DE/a7ebMX34VdNEoCLhYjd2KogZGhK9ttzt1
+         DlRg==
+X-Forwarded-Encrypted: i=1; AJvYcCUzFrbvKOG+t+aYSXGK+Wd8BzHLYcw4QtXaxr9IEbTnAtoWSbitIfuvRwwDsCQ8KFNzotmKIO1VJLSfIh0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywhl5GU3ww+UfQKhHItfU8D/TTVywa2iXtaytaBSdFiIxsMWnzc
+	cAeePpI5L0wY2POHqxRDGeFVcIdHYXlL8r1nJ9XpOq534Ca7JoRpRk8GU1Gr0uc=
+X-Gm-Gg: ASbGncvzhda0wVuLb9F31RAcLEFxcWz+H2DeQbuMa6EMupK7rlJVtPSX9kUBYFFzzMo
+	gebCJ7Y/njwJMfQMAUpxk5dq+9VGb0sDb7efD4LuZ06N1VWQRY4dk3wa3agP5wJEtNwI2r9clXl
+	lfQ7Xw1fzADFkIFeFqE0By9YoO806/QPGC1n2XsJDCjkM0W4gNuUZCuwyJLdWobT8MtiT9mIGtu
+	s/MaImTpVOj5doicE56qwn3YKUCNzmQkMUzPUSRa6lfnKpUlwtbt2llnQn12c5FJJDlqMcYJ+Tp
+	s5JcSwKauX7DdSSlWoHPKos=
+X-Google-Smtp-Source: AGHT+IGG9LP6CikwQQLLPJWH6HucdxpA0EQEAovfivAAnbKN4plM1f13MThC8AcAbBz05v8+AbVAlQ==
+X-Received: by 2002:a05:6512:b1f:b0:542:2e09:639a with SMTP id 2adb3069b0e04-5462eeda30fmr2764753e87.10.1740050094711;
+        Thu, 20 Feb 2025 03:14:54 -0800 (PST)
+Received: from umbar.lan ([192.130.178.90])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-545297856c6sm2056164e87.142.2025.02.20.03.14.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Feb 2025 03:14:53 -0800 (PST)
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Subject: [PATCH v2 0/7] drm/msm/mdp4: rework LVDS/LCDC panel support
+Date: Thu, 20 Feb 2025 13:14:42 +0200
+Message-Id: <20250220-fd-mdp4-lvds-v2-0-15afe5578a31@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAKIOt2cC/53OTQqDMBCG4atI1o3kD9t01XsUF6lJzFA1MpFQE
+ e/eKPQCXb4fzMNsJDkEl8i92gi6DAniVEJcKtIFM/WOgi1NBBOKSX6l3tLRzooO2SbqyuJvjbd
+ ad6SczOg8fE7u2Zb2GEe6BHTmhwjW8IZpJgWvlZRCacqpHWHBtX4ZXFN4x/wYYDIY64j9oQZIS
+ 8T1/DGLw/5Lavd9/wJwxaVe8AAAAA==
+X-Change-ID: 20240317-fd-mdp4-lvds-e317f86fd99c
+To: Rob Clark <robdclark@gmail.com>, 
+ Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ freedreno@lists.freedesktop.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1917;
+ i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
+ bh=fJB6L5AnL5J+S+1HzyLzt2yON/RIJwdvkGfbsOOWwmk=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBntw6qU4dq9Ooc3myWYJP8jGjhialgsGg3QNcOT
+ GjxIqpl/luJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZ7cOqgAKCRCLPIo+Aiko
+ 1WvCB/9A/koJ46Wd+4RE/e5z//3JgIwbLhFGDMEWzicgUR4oY1y7WUCLZE+7BLtC/LZR6A+7CSj
+ +jdz+l/5AQMthKplWcUa8iLlh8ului3i6ynQi7D59MvEBhM5m4fWYIdATHMY7QDldKsjRyb5swD
+ Uoa4bz98CR6wxmVNHhV9mbviGyZUw4KYTiaNJuP4hKLnGb7LMCSQSz0UkzkeTHN/uCMgMY5I68P
+ regBLW0wZrjTNFDVWZmyTc+EIud38qQidP+Lh4eb3tFRTNdatHDq0LF3g5LnLWdSZ05n3NVrDF8
+ 3WuUEZJUz9xe/Ng30GqmRPVcXRYnIqkz3OGSwYRNttTG9f1x
+X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
+ fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-syzbot report a deadlock in diFree. [1]
+The LCDC controller uses pixel clock provided by the multimedia clock
+controller (mmcc) instead of using LVDS PHY clock directly. Link LVDS
+clocks properly, taking MMCC into account.
 
-When calling "ioctl$LOOP_SET_STATUS64", the offset value passed in is 4,
-which does not match the mounted loop device, causing the mapping of the
-mounted loop device to be invalidated.
-
-When creating the directory and creating the inode of iag in diReadSpecial(),
-read the page of fixed disk inode (AIT) in raw mode in read_metapage(), the
-metapage data it returns is corrupted, which causes the nlink value of 0 to be
-assigned to the iag inode when executing copy_from_dinode(), which ultimately
-causes a deadlock when entering diFree().
-
-To avoid this, first check the nlink value of dinode before setting iag inode.
-
-[1]
-WARNING: possible recursive locking detected
-6.12.0-rc7-syzkaller-00212-g4a5df3796467 #0 Not tainted
---------------------------------------------
-syz-executor301/5309 is trying to acquire lock:
-ffff888044548920 (&(imap->im_aglock[index])){+.+.}-{3:3}, at: diFree+0x37c/0x2fb0 fs/jfs/jfs_imap.c:889
-
-but task is already holding lock:
-ffff888044548920 (&(imap->im_aglock[index])){+.+.}-{3:3}, at: diAlloc+0x1b6/0x1630
-
-other info that might help us debug this:
- Possible unsafe locking scenario:
-
-       CPU0
-       ----
-  lock(&(imap->im_aglock[index]));
-  lock(&(imap->im_aglock[index]));
-
- *** DEADLOCK ***
-
- May be due to missing lock nesting notation
-
-5 locks held by syz-executor301/5309:
- #0: ffff8880422a4420 (sb_writers#9){.+.+}-{0:0}, at: mnt_want_write+0x3f/0x90 fs/namespace.c:515
- #1: ffff88804755b390 (&type->i_mutex_dir_key#6/1){+.+.}-{3:3}, at: inode_lock_nested include/linux/fs.h:850 [inline]
- #1: ffff88804755b390 (&type->i_mutex_dir_key#6/1){+.+.}-{3:3}, at: filename_create+0x260/0x540 fs/namei.c:4026
- #2: ffff888044548920 (&(imap->im_aglock[index])){+.+.}-{3:3}, at: diAlloc+0x1b6/0x1630
- #3: ffff888044548890 (&imap->im_freelock){+.+.}-{3:3}, at: diNewIAG fs/jfs/jfs_imap.c:2460 [inline]
- #3: ffff888044548890 (&imap->im_freelock){+.+.}-{3:3}, at: diAllocExt fs/jfs/jfs_imap.c:1905 [inline]
- #3: ffff888044548890 (&imap->im_freelock){+.+.}-{3:3}, at: diAllocAG+0x4b7/0x1e50 fs/jfs/jfs_imap.c:1669
- #4: ffff88804755a618 (&jfs_ip->rdwrlock/1){++++}-{3:3}, at: diNewIAG fs/jfs/jfs_imap.c:2477 [inline]
- #4: ffff88804755a618 (&jfs_ip->rdwrlock/1){++++}-{3:3}, at: diAllocExt fs/jfs/jfs_imap.c:1905 [inline]
- #4: ffff88804755a618 (&jfs_ip->rdwrlock/1){++++}-{3:3}, at: diAllocAG+0x869/0x1e50 fs/jfs/jfs_imap.c:1669
-
-stack backtrace:
-CPU: 0 UID: 0 PID: 5309 Comm: syz-executor301 Not tainted 6.12.0-rc7-syzkaller-00212-g4a5df3796467 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- print_deadlock_bug+0x483/0x620 kernel/locking/lockdep.c:3037
- check_deadlock kernel/locking/lockdep.c:3089 [inline]
- validate_chain+0x15e2/0x5920 kernel/locking/lockdep.c:3891
- __lock_acquire+0x1384/0x2050 kernel/locking/lockdep.c:5202
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5825
- __mutex_lock_common kernel/locking/mutex.c:608 [inline]
- __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
- diFree+0x37c/0x2fb0 fs/jfs/jfs_imap.c:889
- jfs_evict_inode+0x32d/0x440 fs/jfs/inode.c:156
- evict+0x4e8/0x9b0 fs/inode.c:725
- diFreeSpecial fs/jfs/jfs_imap.c:552 [inline]
- duplicateIXtree+0x3c6/0x550 fs/jfs/jfs_imap.c:3022
- diNewIAG fs/jfs/jfs_imap.c:2597 [inline]
- diAllocExt fs/jfs/jfs_imap.c:1905 [inline]
- diAllocAG+0x17dc/0x1e50 fs/jfs/jfs_imap.c:1669
- diAlloc+0x1d2/0x1630 fs/jfs/jfs_imap.c:1590
- ialloc+0x8f/0x900 fs/jfs/jfs_inode.c:56
- jfs_mkdir+0x1c5/0xba0 fs/jfs/namei.c:225
- vfs_mkdir+0x2f9/0x4f0 fs/namei.c:4257
- do_mkdirat+0x264/0x3a0 fs/namei.c:4280
- __do_sys_mkdirat fs/namei.c:4295 [inline]
- __se_sys_mkdirat fs/namei.c:4293 [inline]
- __x64_sys_mkdirat+0x87/0xa0 fs/namei.c:4293
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Reported-by: syzbot+355da3b3a74881008e8f@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=355da3b3a74881008e8f
-Signed-off-by: Edward Adam Davis <eadavis@qq.com>
----
-V1 -> V2: if the nlink of disk inode is 0 return -EIO
-V2 -> V3: move the checking to diReadSpecial
+MDP4 uses custom code to handle LVDS panel. It predates handling
+EPROBE_DEFER, it tries to work when the panel device is not available,
+etc. Switch MDP4 LCDC code to use drm_panel_bridge/drm_bridge_connector
+to follow contemporary DRM practices.
 
 ---
- fs/jfs/jfs_imap.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changes in v2:
+- Rebase on top of msm-next.
+- Upgrade LVDS clock code to use clock providers and parent_data
+- Use LVDS clock from the MMCC instead of using LVDS PHY directly
+- Link to v1: https://lore.kernel.org/r/20220616090321.433249-1-dmitry.baryshkov@linaro.org
 
-diff --git a/fs/jfs/jfs_imap.c b/fs/jfs/jfs_imap.c
-index 0cedaccb7218..25bb3485da3b 100644
---- a/fs/jfs/jfs_imap.c
-+++ b/fs/jfs/jfs_imap.c
-@@ -460,7 +460,7 @@ struct inode *diReadSpecial(struct super_block *sb, ino_t inum, int secondary)
- 	dp += inum % 8;		/* 8 inodes per 4K page */
- 
- 	/* copy on-disk inode to in-memory inode */
--	if ((copy_from_dinode(dp, ip)) != 0) {
-+	if (!le32_to_cpu(dp->di_nlink) || (copy_from_dinode(dp, ip)) != 0) {
- 		/* handle bad return by returning NULL for ip */
- 		set_nlink(ip, 1);	/* Don't want iput() deleting it */
- 		iput(ip);
+---
+Dmitry Baryshkov (7):
+      dt-bindings: display: msm: mdp4: add LCDC clock and PLL source
+      drm/msm/mdp4: drop mpd4_lvds_pll_init stub
+      drm/msm/mdp4: register the LVDS PLL as a clock provider
+      drm/msm/mdp4: use parent_data for LVDS PLL
+      drm/msm/mdp4: move move_valid callback to lcdc_encoder
+      drm/msm/mdp4: switch LVDS to use drm_bridge/_connector
+      arm: dts: qcom: apq8064: link LVDS clocks
+
+ .../devicetree/bindings/display/msm/mdp4.yaml      |   9 +-
+ arch/arm/boot/dts/qcom/qcom-apq8064.dtsi           |  16 ++-
+ drivers/gpu/drm/msm/Makefile                       |   1 -
+ drivers/gpu/drm/msm/disp/mdp4/mdp4_kms.c           |  34 ++++--
+ drivers/gpu/drm/msm/disp/mdp4/mdp4_kms.h           |  16 +--
+ drivers/gpu/drm/msm/disp/mdp4/mdp4_lcdc_encoder.c  |  55 +++++-----
+ .../gpu/drm/msm/disp/mdp4/mdp4_lvds_connector.c    | 121 ---------------------
+ drivers/gpu/drm/msm/disp/mdp4/mdp4_lvds_pll.c      |  28 ++---
+ 8 files changed, 86 insertions(+), 194 deletions(-)
+---
+base-commit: 402fdf7dbdc47d0186c4ad4fb1467a05f017bc0f
+change-id: 20240317-fd-mdp4-lvds-e317f86fd99c
+
+Best regards,
 -- 
-2.43.0
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
 
