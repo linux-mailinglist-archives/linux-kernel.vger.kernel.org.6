@@ -1,129 +1,95 @@
-Return-Path: <linux-kernel+bounces-524561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3A83A3E492
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 20:03:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C209A3E499
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 20:04:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B38E19C4044
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 19:02:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 280A619C378B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 19:03:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06B752641D3;
-	Thu, 20 Feb 2025 19:01:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EC04264600;
+	Thu, 20 Feb 2025 19:02:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VU2r/8Tv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52E0A263897;
-	Thu, 20 Feb 2025 19:01:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="TpP0wcMZ"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 857FB257D;
+	Thu, 20 Feb 2025 19:02:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740078073; cv=none; b=qVIrxUfkf+1BcwYiS4hguHKgt2DTAgrthHWNnTsv1Q3DRbeb6LdUXkPvrMRiu/xlZig0OZ2A+v11U5QbGqa9a9nEWKjaDXBzxEEJDHJRbE1D89RpQgpj1rl0QaNPaUDkVYnIA7MDhx5by4M/RQZAlrM2jNyDooR4IU80MWo9JXo=
+	t=1740078127; cv=none; b=QpS4irOagzZvfzVWW671nw1wB+pQOSddW6ToLMDA6Qp1PeGMPG35dwKxRRBGrceEBABEWWLpG/J5GnUb/UM+7Na/Pj2pl1IjTmCHg8boZeE1UcnFcXZkkfSiiWfMO/neUR1BcRSpn0d8pW9YFkLkxwBr4U0PTMuKjEelRgOb5hs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740078073; c=relaxed/simple;
-	bh=3eSbTSY6gzid17O8YvJVmqL/qDONChvMx36LySAdg9w=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=iqRBv9XgyN7QlBQonwPyWM8Aqsl9DSasAcnc9h9TtuaLv/OvdmMi99Dc1ibNxC+O7ap1DcXZ5apz1BKL99jFkp+Mv/ZwH5kW6rVgtCx9+bVEQybgvKcpt5sKDDTU3mq7xqU0/uSL4bfQCMVR7pXksRtvTHPfZcRd62jwcw+cCvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VU2r/8Tv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93E7BC4CED1;
-	Thu, 20 Feb 2025 19:01:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740078072;
-	bh=3eSbTSY6gzid17O8YvJVmqL/qDONChvMx36LySAdg9w=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=VU2r/8TvTX1NZqulGBu9moXAsMcewLzpFHhx0lUz9lSfxHvaIu5RKl7UoxkyW0r6v
-	 vvFgxr0v3sPzsol4Q16uMZdWHd80wDDTuCg427w1SjWtcu9P0hW7gU1SCcqL4fN4Kl
-	 qc0wOfNrbGkDoecAUODHsjql+OzcMbp8djOrSQ2ULglyrUtefF3oGao10PER8DRznr
-	 jX7OmAWhSyEcZAkHOxRE97hd8GTV41ZnlPV+CqSyctqFWrlWEJPXshQ6q6XwURbhfO
-	 sl8tG0RG/kgC2TmSjvXu0RTvQl63Ff9XlYuwZQ8c37CPBYPDWWEegUfKjdmAgpRzAC
-	 m9c8XJpOoeehw==
-Date: Thu, 20 Feb 2025 13:01:11 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1740078127; c=relaxed/simple;
+	bh=CFyn5eFkvEhiAg66OMPRKiFTTmzZl2xZuLvL7BXSNZs=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=knS2zojVzoogpN+NsCza36fz7a1Wfbv8Bo4x6w4dKG/kpAc9POqfRD86ZmmcAk/JnkmWLq6BRFUXR36Oun3qWvBgPPQoI0yRVNUK0jsKVfvrVAwTYeVSYlEJMKClvmYr+botnqnsSNDriEQ+XCkZszUNldRr2DdO6TIBdTDWOHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=TpP0wcMZ; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [192.168.35.166] (c-24-22-154-137.hsd1.wa.comcast.net [24.22.154.137])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 6C1062059191;
+	Thu, 20 Feb 2025 11:02:05 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 6C1062059191
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1740078126;
+	bh=NeQEm7g/5Ed+D26MEHjj4MWfwDZexQdKcjr1nchYGZU=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=TpP0wcMZCTRtM+c3Z7qG3/PCJYlDhwyoZnyPaR09jH6dl45kzjHXtPjI24GQ/6xsL
+	 QQ6Z3LvqJurk+NGZ/iwfdFvK8c1VsWZKifGI+ToeeNOPjuc0+9o/gWeWO/jWYYOFbz
+	 AmUyVSHXWUn9EwXFquo8gNtmRCwIMvXkrdKz1JpU=
+Message-ID: <e85ddfef-2081-4c8a-96e6-e84a8410ff85@linux.microsoft.com>
+Date: Thu, 20 Feb 2025 11:02:06 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Paolo Abeni <pabeni@redhat.com>, Conor Dooley <conor+dt@kernel.org>, 
- Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org, 
- Andrew Lunn <andrew+netdev@lunn.ch>, 
- "David S. Miller" <davem@davemloft.net>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Eric Dumazet <edumazet@google.com>, Claudiu Manoil <claudiu.manoil@nxp.com>, 
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-To: =?utf-8?q?J=2E_Neusch=C3=A4fer?= <j.ne@posteo.net>
-In-Reply-To: <20250220-gianfar-yaml-v1-3-0ba97fd1ef92@posteo.net>
-References: <20250220-gianfar-yaml-v1-0-0ba97fd1ef92@posteo.net>
- <20250220-gianfar-yaml-v1-3-0ba97fd1ef92@posteo.net>
-Message-Id: <174007807159.3628302.7511694627571289256.robh@kernel.org>
-Subject: Re: [PATCH 3/3] dt-bindings: net: Convert fsl,gianfar to YAML
+User-Agent: Mozilla Thunderbird
+Cc: linux-hyperv@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+ iommu@lists.linux.dev, mhklinux@outlook.com, eahariha@linux.microsoft.com,
+ kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
+ decui@microsoft.com, catalin.marinas@arm.com, will@kernel.org,
+ tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+ daniel.lezcano@linaro.org, joro@8bytes.org, robin.murphy@arm.com,
+ arnd@arndb.de, jinankjain@linux.microsoft.com, muminulrussell@gmail.com,
+ skinsburskii@linux.microsoft.com, mukeshrathor@microsoft.com
+Subject: Re: [PATCH v2 3/3] hyperv: Add CONFIG_MSHV_ROOT to gate root
+ partition support
+To: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+References: <1740076396-15086-1-git-send-email-nunodasneves@linux.microsoft.com>
+ <1740076396-15086-4-git-send-email-nunodasneves@linux.microsoft.com>
+From: Easwar Hariharan <eahariha@linux.microsoft.com>
+Content-Language: en-US
+In-Reply-To: <1740076396-15086-4-git-send-email-nunodasneves@linux.microsoft.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-
-On Thu, 20 Feb 2025 18:29:23 +0100, J. Neuschäfer wrote:
-> Add a binding for the "Gianfar" ethernet controller, also known as
-> TSEC/eTSEC.
+On 2/20/2025 10:33 AM, Nuno Das Neves wrote:
+> CONFIG_MSHV_ROOT allows kernels built to run as a normal Hyper-V guest
+> to exclude the root partition code, which is expected to grow
+> significantly over time.
 > 
-> Signed-off-by: J. Neuschäfer <j.ne@posteo.net>
+> This option is a tristate so future driver code can be built as a
+> (m)odule, allowing faster development iteration cycles.
+> 
+> If CONFIG_MSHV_ROOT is disabled, don't compile hv_proc.c, and stub
+> hv_root_partition() to return false unconditionally. This allows the
+> compiler to optimize away root partition code blocks since they will
+> be disabled at compile time.
+> 
+> Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
 > ---
->  .../devicetree/bindings/net/fsl,gianfar.yaml       | 242 +++++++++++++++++++++
->  .../devicetree/bindings/net/fsl-tsec-phy.txt       |  39 +---
->  2 files changed, 243 insertions(+), 38 deletions(-)
-> 
+>  drivers/hv/Kconfig             | 16 ++++++++++++++++
+>  drivers/hv/Makefile            |  3 ++-
+>  include/asm-generic/mshyperv.h | 24 ++++++++++++++++++++----
+>  3 files changed, 38 insertions(+), 5 deletions(-)
 
-My bot found errors running 'make dt_binding_check' on your patch:
+Looks good to me.
 
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-Warning: Duplicate compatible "gianfar" found in schemas matching "$id":
-	http://devicetree.org/schemas/net/fsl,gianfar.yaml#
-	http://devicetree.org/schemas/net/fsl,gianfar-mdio.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/fsl,gianfar.example.dtb: ethernet@24000: device_type:0: 'mdio' was expected
-	from schema $id: http://devicetree.org/schemas/net/fsl,gianfar-mdio.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/fsl,gianfar.example.dtb: ethernet@24000: '#address-cells' is a required property
-	from schema $id: http://devicetree.org/schemas/net/fsl,gianfar-mdio.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/fsl,gianfar.example.dtb: ethernet@24000: '#size-cells' is a required property
-	from schema $id: http://devicetree.org/schemas/net/fsl,gianfar-mdio.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/fsl,gianfar.example.dtb: ethernet@24000: $nodename:0: 'ethernet@24000' does not match '^mdio(-(bus|external))?(@.+|-([0-9]+))?$'
-	from schema $id: http://devicetree.org/schemas/net/fsl,gianfar-mdio.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/fsl,gianfar.example.dtb: ethernet@24000: Unevaluated properties are not allowed ('device_type', 'interrupts', 'local-mac-address', 'model', 'phy-handle' were unexpected)
-	from schema $id: http://devicetree.org/schemas/net/fsl,gianfar-mdio.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/fsl,gianfar.example.dtb: ethernet@24000: device_type:0: 'mdio' was expected
-	from schema $id: http://devicetree.org/schemas/net/fsl,gianfar-mdio.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/fsl,gianfar.example.dtb: ethernet@24000: #size-cells: 0 was expected
-	from schema $id: http://devicetree.org/schemas/net/fsl,gianfar-mdio.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/fsl,gianfar.example.dtb: ethernet@24000: $nodename:0: 'ethernet@24000' does not match '^mdio(-(bus|external))?(@.+|-([0-9]+))?$'
-	from schema $id: http://devicetree.org/schemas/net/fsl,gianfar-mdio.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/fsl,gianfar.example.dtb: ethernet@24000: #size-cells: 0 was expected
-	from schema $id: http://devicetree.org/schemas/net/fsl,gianfar-mdio.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/fsl,gianfar.example.dtb: ethernet@24000: mdio@520:reg:0:0: 1312 is greater than the maximum of 31
-	from schema $id: http://devicetree.org/schemas/net/fsl,gianfar-mdio.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/fsl,gianfar.example.dtb: ethernet@24000: mdio@520:reg:0: [1312, 32] is too long
-	from schema $id: http://devicetree.org/schemas/net/fsl,gianfar-mdio.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/fsl,gianfar.example.dtb: ethernet@24000: Unevaluated properties are not allowed ('#size-cells', 'cell-index', 'device_type', 'interrupts', 'local-mac-address', 'mdio@520', 'model', 'ranges' were unexpected)
-	from schema $id: http://devicetree.org/schemas/net/fsl,gianfar-mdio.yaml#
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250220-gianfar-yaml-v1-3-0ba97fd1ef92@posteo.net
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+Reviewed-by: Easwar Hariharan <eahariha@linux.microsoft.com>
 
