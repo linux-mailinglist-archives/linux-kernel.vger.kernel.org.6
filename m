@@ -1,164 +1,193 @@
-Return-Path: <linux-kernel+bounces-524267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AF73A3E164
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:52:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C81B4A3E16F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:53:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E14BB3A7096
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:46:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77E0F3B09DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:47:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCF2D20DD6E;
-	Thu, 20 Feb 2025 16:46:50 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEEAE1DEFE1;
-	Thu, 20 Feb 2025 16:46:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740070010; cv=none; b=sufKTBBEvkeELa/alqQrthubmdAvk6uBWTljBMPmsLG7iwDs4+k6Gi/m0zoD/EJnlr6+kIP2ci5Z8UsNdqZWKi0jUDX+BPHw/sQBHOArNSbWS2+zn+2SsNsQa7zRlTjLdfdTnwsgHL9e1TFovra8+3ir9ihFRMMZj5bElj25Zx8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740070010; c=relaxed/simple;
-	bh=i++VPGe3JpqhwNQa6BuqC+Ahkz2MVhr+j1/ixd4HO7Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aDfY+ratiVLYHo0DCn5dsgxxsstel1dJ6M2I2cedIlzlRM25gb4jBoMacuNQKeXc3cK+wXy66tzv+sBVZbU4V4M/kisRIhzMRboOsg0I7gXRX4SOBy8GgqJ8pIU2rt8H95sNlp5R7irPRal29q0o0IwOHMUjvWW+TAOmzvBIfGQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0099116F3;
-	Thu, 20 Feb 2025 08:47:05 -0800 (PST)
-Received: from e133380.arm.com (e133380.arm.com [10.1.197.43])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 07B2A3F5A1;
-	Thu, 20 Feb 2025 08:46:42 -0800 (PST)
-Date: Thu, 20 Feb 2025 16:46:40 +0000
-From: Dave Martin <Dave.Martin@arm.com>
-To: Reinette Chatre <reinette.chatre@intel.com>
-Cc: Peter Newman <peternewman@google.com>, "Moger, Babu" <bmoger@amd.com>,
-	Babu Moger <babu.moger@amd.com>, corbet@lwn.net, tglx@linutronix.de,
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
-	tony.luck@intel.com, x86@kernel.org, hpa@zytor.com,
-	paulmck@kernel.org, akpm@linux-foundation.org, thuth@redhat.com,
-	rostedt@goodmis.org, xiongwei.song@windriver.com,
-	pawan.kumar.gupta@linux.intel.com, daniel.sneddon@linux.intel.com,
-	jpoimboe@kernel.org, perry.yuan@amd.com, sandipan.das@amd.com,
-	kai.huang@intel.com, xiaoyao.li@intel.com, seanjc@google.com,
-	xin3.li@intel.com, andrew.cooper3@citrix.com, ebiggers@google.com,
-	mario.limonciello@amd.com, james.morse@arm.com,
-	tan.shaopeng@fujitsu.com, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, maciej.wieczor-retman@intel.com,
-	eranian@google.com
-Subject: Re: [PATCH v11 00/23] x86/resctrl : Support AMD Assignable Bandwidth
- Monitoring Counters (ABMC)
-Message-ID: <Z7dccLOTPzySYTXL@e133380.arm.com>
-References: <Z6zeXby8ajh0ax6i@e133380.arm.com>
- <9e849476-7c4b-478b-bd2a-185024def3a3@intel.com>
- <Z64tw2NbJXbKpLrH@e133380.arm.com>
- <76b02daf-1b45-473e-9d75-5988a11c6887@intel.com>
- <8ef51f28-e01a-4a7d-ba86-059437edb60b@amd.com>
- <a07fca4c-c8fa-41a6-b126-59815b9a58f9@intel.com>
- <CALPaoCh7WpohzpXhSAbumjSZBv1_+1bXON7_V1pwG4bdEBr52Q@mail.gmail.com>
- <ccd9c5d7-0266-4054-879e-e084b6972ad5@intel.com>
- <CALPaoCj1TH+GN6+dFnt5xuN406u=tB-8mj+UuMRSm5KWPJW2wg@mail.gmail.com>
- <2b5a11e3-ee19-47ba-b47e-b7de2818f237@intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B433F20C034;
+	Thu, 20 Feb 2025 16:47:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="gX9Uet9i"
+Received: from EUR02-VI1-obe.outbound.protection.outlook.com (mail-vi1eur02on2084.outbound.protection.outlook.com [40.107.241.84])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9A5620C028;
+	Thu, 20 Feb 2025 16:47:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.241.84
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740070038; cv=fail; b=BOF0ExjP+fTXRROHVn73iB93Mc0EujFblV10zApimdnmeUIWdHUchvfB5YLQ2x74S3VdjNgx+i9VKhPhea40+1zZBQzWo0LO/KBEN05WPvUbFVRSBemg7GeZkugWP6ZfmUfWPaVCU2v5r47jPHxqmCDJKAaKkbpgKahFAwPh0XA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740070038; c=relaxed/simple;
+	bh=L7V46hc5aPY6Ey2CCXt5zPEjHKfxE2wgWWBPiQZh2z8=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=kROgS2rLbIBrOpxeZc4wTSyqdE3LB88NUOyOPFP9eE9BfWM9t6jZCK17NbYvwZRoeH2y61GQ0mRHcOiY5OFdji0XPfOj2T6pgZDy4tvzizaFvaBS1NfUarQht9DmrZzoLd7uJvuXTIdsGz/evzzov3ncz1ZOnFMUKtWY0vnU1mI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=gX9Uet9i; arc=fail smtp.client-ip=40.107.241.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=cb3t1cotP8sGhciHM5lVPbbnZkpDX4IIo6eywtB8ibb32azk+zPQEtfmHKFb2Z8u3HLrLREb/pZueDiST3d5ZBGmxOT1O2aQWaJHZ3ajQ3TfE7B4JpgrO+Aul/++TbvFfmS/MZhjJliiSgyRNlIixq0d1LAt/o8m05v7E1HhkZfc9oMJa50nua1UcdmXRBulfaNu2gQ38S+eFxWCspOvdXiy2k8o4PSPY5+X9uiX2xrLuw8mTcG1gqiGdnHh5DA3OZx9fZMk0Vm3IrTmxdGkvNy/iBToYPJTs/2XWRBqMGQyKVLsIU693k+HrxsKdB85RV9ziYPZyV8y3jU+LQsp4g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=8pbGfVcrEvHKDQIu7RNYlSGQcRYSHe+ZBsoHxGLmzko=;
+ b=AIpP/OCU5kACaMz46w/hddWnUhK6MVN62hp3LSRxQPCVPJapi9iHoFhwM3znV8aEgSYCiQI5K6PJ639VIjh0J6q89iDn/pl9HIbaGx/WE7Sm5n6lH0SoyQTwikOtmXE9CdCFC26YrLRbhe24hXbA8K8CTAbMh28KigLI1H1tDu9Epki3W+s2cARaFHM59TG7DYdS4nWNPGyWAIvFjH7VBCuL7bL4sJgaZ+TX1MGqFGO64UMb7I3/xx1Q/87J4cdHeYBswdPqmveev8A4Vg4V7k+/arqp92IE+NZURF+jOYf9ou9HUGQNeNVoM5fwgKubSk6KG9rsayWfQCKIoXx/cA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=8pbGfVcrEvHKDQIu7RNYlSGQcRYSHe+ZBsoHxGLmzko=;
+ b=gX9Uet9iPKuG/gNcHZMkWEEZG2WB+t/+wdA4Cfz0gDFTh1gdoaOvF3PP0+EWQaCQKu3cndPEziWkSwTeggTkQt7OzSdAXKVxtkPcZVXNpYukleM9VH7pPRBBorSO0CP/SpHYThRdVj7/JbcT17J2y+8kHKbB4a6xw/rglIekdahmVskWd6Ub3zlyPjTH2pc8Gq3xTIxPEXpF4ic9rdOCOYunqSm33b65HPcy+OCG0PyyZ6UVonfcZjLC0Glciod/VbSWTp5p+ipxUqQmhx15ce4Dx1N65S/yBcoNuVSmE57dMDuCHB8dJkoWUwt74trTQjEdU+tG5UbjYkZ+HV0adg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by GV1PR04MB9119.eurprd04.prod.outlook.com (2603:10a6:150:26::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.15; Thu, 20 Feb
+ 2025 16:47:11 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%5]) with mapi id 15.20.8445.017; Thu, 20 Feb 2025
+ 16:47:11 +0000
+From: Frank Li <Frank.Li@nxp.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-mmc@vger.kernel.org (open list:MULTIMEDIA CARD (MMC), SECURE DIGITAL (SD) AND...),
+	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
+	linux-kernel@vger.kernel.org (open list)
+Cc: imx@lists.linux.dev,
+	shawnguo@kernel.org
+Subject: [PATCH 1/1] dt-bindings: mmc: Change to additionalProperties to fix fail detect Unevaluated property
+Date: Thu, 20 Feb 2025 11:46:54 -0500
+Message-Id: <20250220164655.2081224-1-Frank.Li@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: BY3PR05CA0028.namprd05.prod.outlook.com
+ (2603:10b6:a03:254::33) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2b5a11e3-ee19-47ba-b47e-b7de2818f237@intel.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|GV1PR04MB9119:EE_
+X-MS-Office365-Filtering-Correlation-Id: e12875d3-544c-447b-369f-08dd51ce385d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|376014|52116014|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?4X1VXl1Dvqy9RmLN5FtctywS1r1pQqBeIcSlHzTLB4RoxAnx9vXopbD4sD7B?=
+ =?us-ascii?Q?Y/L+9t9X9/7j1BOEf1Nf+6jnv/An83VUi/bDfUBeIQsvA7j+3PTpWup0c7qA?=
+ =?us-ascii?Q?WOb0ZEl13NnNFRUvbQLVPl3BNbucZx8v995Xrwf27zV9vrT38GKtVMRMUnAE?=
+ =?us-ascii?Q?cVgcIGeLCwmzCl7Y8yKdoDgo3/I7IF99K5barTxtoCLT3w+Eypa9rmRoyG+t?=
+ =?us-ascii?Q?X4O0jxvRYVSU5Ndh4iAX5b/hwTGJ3TeHHO9Jfho0/CWa9wUJnOrOxbvlu0Fd?=
+ =?us-ascii?Q?zYvMz+uNObNNTKWOM4lcbfISHRaIRaARj+20V+lSm3BUXmogKJRDp3y1povT?=
+ =?us-ascii?Q?O9b+m52XY5fMkRQVyf4mASxQes4MKtRcX3Zla0iX5iHe/eooU9PM0etw7ni0?=
+ =?us-ascii?Q?s7Jxh6BcXZ3cMb47nWDfkwpi5jXvF2dogJXqL2uJmrcQ1ExCz/mDQ+0vxJ8b?=
+ =?us-ascii?Q?V3Eru4pebnXZYfi0OmYTAJ3mteZML+ef5dZgJde9fJvKx7903VNbozzulvv2?=
+ =?us-ascii?Q?m8kIMztfSCoAzePS5KLKWzdQOMU8G0pY95xWCaia4U4JGPt3S53FGV8IJ7H2?=
+ =?us-ascii?Q?dGJXkQ3/539XwcTugvDA7YQSJxlxGTuVCLOM3i2maAPkGDgDC+uWntP/mGBk?=
+ =?us-ascii?Q?HHH7RcER/cjkTA9HwHdpRyEehuzwALgtAEcVrnGYslpjArVUlgNZU3t4LQ+1?=
+ =?us-ascii?Q?fzr0qpxWNPdmkxGR/C1KhILcQtksescOSocSS0c50OVNw82P+dwoQJx6zKyO?=
+ =?us-ascii?Q?9q6n2Jc+H93XusTR4CALoQ8JZAsPwdKUOBIWKMcR9RxyElLYZb/V7QYp4Dq4?=
+ =?us-ascii?Q?YElkYivWNBsatuADHBWZ3db8eSaBbVXNXTLm5xxKzTI+MnBqYu9oFEGH9+42?=
+ =?us-ascii?Q?j8484Rg8sZqJV0hbRH4xdAetQ0nItz9YqXo7QvQR5L6aUL61qh2NMKrt+Tdd?=
+ =?us-ascii?Q?Lim0gGy2zYsOBRvXFG2dMOyzhg2dBsl7pAmq8Ixr7R+GSc5lmWhoTEaYGp+F?=
+ =?us-ascii?Q?9/XUsfCahMJs479LK07iFqRrKUFrte890iSee8ySHVeleXtWB/Q1ZUyaLXmE?=
+ =?us-ascii?Q?mOdqnGtX9QX+OBesp0u+ddeEfKWmH3rmOYkK1T0w6bMhekCo9+2nPzQ6Mrzy?=
+ =?us-ascii?Q?I6bBdGJ50Pd6jNiof4ZkeI5tXZrLt84Kg07nmfN5iUBPrvHd6KMFv2lpIQ5y?=
+ =?us-ascii?Q?7ggr/6PaLaJzGjjnfae4h8et/X7A9D22IJgPx7Jqs3fpBhRNxv/TC4QOAwwL?=
+ =?us-ascii?Q?N0EKmQJaF84OcbWcdVBF9mh/TcoKPFfy1jjdyjc37V1+s7u5SN1RXQ2FB3qi?=
+ =?us-ascii?Q?IOAFuxwSyiOS7jpXGp47sbJ0yIrUsd3kCzJJ4nzjp3XqDmsuyz+sGCpspymf?=
+ =?us-ascii?Q?LTrFqrV55JMVKO90gpracz127avzZzJYmS65YW4avdRik75F/HPwqKf5OYqL?=
+ =?us-ascii?Q?JhDaz2bJzacTO3IC9/Y5uZb0XKCCazOo?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(52116014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?HsTcyheI/fxtXYoMtH3Xc8hCtmLMTjUvzNie2D4C8vspa/EfFNV69xpXu1pq?=
+ =?us-ascii?Q?aJ/ayDpP6tPyinuvqdZJ0vxoe4X+W4GIm0nMIay2Y28A0fTL6v0vidYkG47a?=
+ =?us-ascii?Q?3B2Odflpmu7McqQYTjQrhO11cTynW1zwNGs4IuJtpPxQ1myt4tDsZ6NoS9ZJ?=
+ =?us-ascii?Q?pgwymZvkbZbDn/m7SZVj9NIl6pCApSbxiJCH67Chn2jh6wOvEnBobPTztMAh?=
+ =?us-ascii?Q?Rc2+3HNdJq7Wa9OlgWY36q0mlt0PftXMMcDtb1Imdc4Y3nDkfu9wfvMCNZXC?=
+ =?us-ascii?Q?h65Ds3RYt/q3O9zELgO0n2rJWHVWjsaMD7sfwWS28JnPKugEvUrBXHIlh2pi?=
+ =?us-ascii?Q?mJGyvtuUZ6HAkVlx/cPiqn4YKLmKoIt1EtjFZYA/6fDBhs9rvsyxSXVsBtUI?=
+ =?us-ascii?Q?lC3TN1IK5PtEDvwpqACkMyT59DROfyCu50KEVxGBkQUySvCr1AihWHtduHao?=
+ =?us-ascii?Q?/BhgiUHE2gQlQWXYSdgHN48qDFOgd+NNaCvcNp0uUJLbgG5baSyXchr6t+8D?=
+ =?us-ascii?Q?GpIh5dv0ko/EQE1CDIL7XtJvxO+zMoZBtAmuWMkrq2CBUnTfU/47y0og0ERt?=
+ =?us-ascii?Q?XZyMipH9FWTPXCJ4NT/PrCAQDtRrH5he/tJNbL7kgkMhmnJrWlKm6bnMCwEw?=
+ =?us-ascii?Q?OYmcMd1P0HlMeNuVPPP381l6b2+/K16D0pgY2ED2AdT9MgZ6IDDuHAvg2IuY?=
+ =?us-ascii?Q?DKCbh0ubjgqq/0Ce9Ebb0EltGzcO6IsgbEUs89LVU6MLw4hkaY+ZzhWLR8oF?=
+ =?us-ascii?Q?uZd3SWtGtERZpL3Gut0z3lErwIpkzsLWHsuvWk3N43+7ZbJz5VZVcB3RLlrY?=
+ =?us-ascii?Q?1u0YeXWuLaDXZ2sno68ecBy60wPZNQ4aQyicKns1r2OlAg1P6Vgmq2Bq0C77?=
+ =?us-ascii?Q?jMYCW+WQkggZop9lF7+as6ZWfECezBI0tyrM3WwhUIbH/TyduOkEOWdqPQf6?=
+ =?us-ascii?Q?TmQ3dt2+0GAii8iaEvRRR+LvJmkzyV6l7eAOKqgCkA4y/RjRExAkh2HRNjOT?=
+ =?us-ascii?Q?1ZQxdB7CsQZcaHa0S7pVpNSmKq4Iyc5qaQZ+4i8HnFLb1Ijg6o3xmLdWK3NW?=
+ =?us-ascii?Q?VeaqK8XvQ596lTrxVugqOEz9eT14Xok6eNXyi0qKSCkKYLDx6TKb9nU8DzEV?=
+ =?us-ascii?Q?DTWqwiPkuK6xd/V8d5Y5ROW4JKJwj/OyVR9JWoollQANjhPIdn7DwpFFM0zs?=
+ =?us-ascii?Q?V/Kc5uG+ycs/cpZQJ0s156dlbkvQoB1/evGIvCGIeQlaIUJXaTkPZJWiMO8z?=
+ =?us-ascii?Q?U1oOB56MmrTLPaYL6l4CwQkEH/gMH45Ww5SeJcPk/S5a8Xt1J108/Ua/FhC8?=
+ =?us-ascii?Q?LBSHKmGobxNWvffGGQX++PKvpLZHeldNfuLbBthbaa7KnDZArhJte2oLcqk/?=
+ =?us-ascii?Q?7aHMZ4Vel92zIdWeSeWLz7kJcvzneoHIK/T5M/w9CO1NyJoY/BmgBRAP9w2L?=
+ =?us-ascii?Q?jL9OGgf0+v4XcLlx5F7u/uCC3KCpePL0vVfQPvB1NTyqzdFmzH7vnGgvzFag?=
+ =?us-ascii?Q?cUGDAD2ip6zf/VuwONnSFaOUOtcwAC5I4rdi/EiccxRm5M0Crja3iaXhUdIz?=
+ =?us-ascii?Q?2c3FDSlrOwy2iW8BVH3aXThwNxiTwGt2qSdUyjMP?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e12875d3-544c-447b-369f-08dd51ce385d
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Feb 2025 16:47:11.0197
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: hOrZQwfvvOnDQFzUALnJbYHW25aRYmS0d5fr0mpJWtP/TyU1iHT++kXgLITJm65Qw2ct92ZJjS8g1zw8tvpYLQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR04MB9119
 
-Hi,
+mmc-controller.yaml is common schema file. According to writing-schema.rst,
 
-On Wed, Feb 19, 2025 at 09:56:29AM -0800, Reinette Chatre wrote:
-> Hi Peter,
-> 
-> On 2/19/25 3:28 AM, Peter Newman wrote:
+* additionalProperties: true
+   Rare case, used for schemas implementing common set of properties. Such
+   schemas are supposed to be referenced by other schemas, which then use
+   'unevaluatedProperties: false'.  Typically bus or common-part schemas.
 
-[...]
+Reproduce steps:
+1. Add unevaluated property 'abc' at example of fsl-imx-esdhc.yaml
+2. Run make dt_binding_check DT_SCHEMA_FILES=fsl-imx-esdhc.yaml
 
-> > In the letters as events model, choosing the events assigned to a
-> > group wouldn't be enough information, since we would want to control
-> > which events should share a counter and which should be counted by
-> > separate counters. I think the amount of information that would need
-> > to be encoded into mbm_assign_control to represent the level of
-> > configurability supported by hardware would quickly get out of hand.
-> > 
-> > Maybe as an example, one counter for all reads, one counter for all
-> > writes in ABMC would look like...
-> > 
-> > (L3_QOS_ABMC_CFG.BwType field names below)
-> > 
-> > (per domain)
-> > group 0:
-> >  counter 0: LclFill,RmtFill,LclSlowFill,RmtSlowFill
-> >  counter 1: VictimBW,LclNTWr,RmtNTWr
-> > group 1:
-> >  counter 2: LclFill,RmtFill,LclSlowFill,RmtSlowFill
-> >  counter 3: VictimBW,LclNTWr,RmtNTWr
-> > ...
-> > 
-> 
-> I think this may also be what Dave was heading towards in [2] but in that
-> example and above the counter configuration appears to be global. You do mention
-> "configurability supported by hardware" so I wonder if per-domain counter
-> configuration is a requirement?
-> 
-> Until now I viewed counter configuration separate from counter assignment,
-> similar to how AMD's counters can be configured via mbm_total_bytes_config and
-> mbm_local_bytes_config before they are assigned. That is still per-domain
-> counter configuration though, not per-counter.
+No any warning report. But suppose report below warning:
+mmc@70004000: Unevaluated properties are not allowed ('abc' was unexpected)
 
-I hadn't tried to work the design through in any detail: it wasn't
-intended as a suggestion for something we should definitely do right
-now; rather, it was just an incomplete sketch of one possible future
-evolution of the interface.
+Signed-off-by: Frank Li <Frank.Li@nxp.com>
+---
+ Documentation/devicetree/bindings/mmc/mmc-controller.yaml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Either way these feel like future concerns, if the first iteration of
-ABMC is just to provide the basics so that ABMC hardware can implement
-resctrl without userspace seeing counters randomly stopping and
-resetting...
+diff --git a/Documentation/devicetree/bindings/mmc/mmc-controller.yaml b/Documentation/devicetree/bindings/mmc/mmc-controller.yaml
+index 9d7a1298c4554..26e4f0f8dc1ce 100644
+--- a/Documentation/devicetree/bindings/mmc/mmc-controller.yaml
++++ b/Documentation/devicetree/bindings/mmc/mmc-controller.yaml
+@@ -24,7 +24,7 @@ properties:
+   $nodename:
+     pattern: "^mmc(@.*)?$"
+ 
+-unevaluatedProperties: true
++additionalProperties: true
+ 
+ examples:
+   - |
+-- 
+2.34.1
 
-Peter, can you give a view on whether the ABMC as proposed in this series
-is a useful stepping-stone?  Or are there things that you need that you
-feel could not be added as a later extension without ABI breakage?
-
-[...]
-
-> > I believe that shared assignments will take care of all the
-> > high-frequency and performance-intensive batch configuration updates I
-> > was originally concerned about, so I no longer see much benefit in
-> > finding ways to textually encode all this information in a single file
-> > when it would be more manageable to distribute it around the
-> > filesystem hierarchy.
-> 
-> This is significant. The motivation for the single file was to support
-> the "high-frequency and performance-intensive" usage. Would "shared assignments"
-> not also depend on the same files that, if distributed, will require many
-> filesystem operations? 
-> Having the files distributed will be significantly simpler while also
-> avoiding the file size issue that Dave Martin exposed. 
-> 
-> Reinette
-
-I still haven't fully understood the "shared assignments" proposal;
-I need to go back and look at it.
-
-If we split the file, it will be more closely aligned with the design
-of the rest of the resctrlfs interface.
-
-OTOH, the current interface seems workable and I think the file size
-issue can be addressed without major re-engineering.
-
-So, from my side, I would not consider the current interface design
-a blocker.
-
-[...]
-
-Cheers
----Dave
 
