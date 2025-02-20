@@ -1,207 +1,218 @@
-Return-Path: <linux-kernel+bounces-524233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08C73A3E0E9
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:36:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9501A3E0DC
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:34:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB0773A8571
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:31:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46493189BEEB
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:32:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F13C202C36;
-	Thu, 20 Feb 2025 16:31:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A6332066C1;
+	Thu, 20 Feb 2025 16:32:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="npLTdfPE"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nAQUxoLE"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27A81F9D9;
-	Thu, 20 Feb 2025 16:31:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD3EB1D63D8;
+	Thu, 20 Feb 2025 16:32:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740069097; cv=none; b=L4v6aBaaNye3jmNd/P2EJfx3UZDe0u1vLWUZ2DN6RXMUv4rhKebEoiCBJW7nTuM9uudSq5De8UUdF9/ndQ8BDIYr0D4XOrgSYlYtuEh6BBenTwZwrRmSx2D73qkuBAKbr6rQxVMCApfGJwXVeBj+ybVYc+WHibKHCI1Da5i3c1E=
+	t=1740069148; cv=none; b=dzZRtXFZVqM/aQVvy7QSaFwOUqwYDaC5DAMy4INEWFnibMnko7R5DzJ1hLWbVLkw1JvMcfZXvIE3jMGLrUSvFD5saDbLlo3N01qdTuRrI33Lz5fT7prPH34+Y1lJ31bYKB/59kUVm+NJkdGei90BVsrwCCDcq7mtCaWZTROP5GM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740069097; c=relaxed/simple;
-	bh=aO1fE6Qa4s9noNPykyl3TxCiGIfXUe06lR4yXW9Vm8U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=qnb73SkIlzYYJWfCB1YfSCdyF2d3qgjlZ3Xrb7i6y8i1a9qvcrKT3qMriAPfia5QQxgvInAK7WfL6tgAAT4UIcF9MoUGmMW/uLGRgxPuB7s5OTRmzhZvPqaZ1OPpOg3UOlCJyllUDrs6D5LLBo/tOxQ5A9owVqvbeZ8WIDXcT28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=npLTdfPE; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51K6rtLU001838;
-	Thu, 20 Feb 2025 16:31:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	g66dFLA6E+ZqKUxrXVdoNn7XMXRkzvbEwqfO7iaGS5M=; b=npLTdfPEqaI3R/sJ
-	JN+2q25q0XVjSxpW1O9LKesrgexioxY9/ZjqBqjC2QOFdrWkQyd7ATQPfTr6PeM0
-	dKbv9bNAfpeJN3stMzNPfrxASMAWpnX4glRU0ZlKq38Xs/RY6Z0X5ibre9dpBcpm
-	WFkh/1bdlefXPM8rIFcnNrmEaUrd9EwFTb6gwQzQ16EEL6KpIE6bePqJp5gfPpkm
-	cpAPuu2EqUEXFXwK7CIFxW7w2LpsJFnGwVvSN70LwGMugvyekpIgzlWfM7B3MLP9
-	AjVx4lsEf8Bp4T3vV3gEfgAGZa4P0ipMHL4MJ4n2PrDIGa2z9axRiyGKjxSpZCOI
-	8+LIIw==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44vyy2erbp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 20 Feb 2025 16:31:16 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51KGVFjh029958
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 20 Feb 2025 16:31:15 GMT
-Received: from [10.226.59.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 20 Feb
- 2025 08:31:15 -0800
-Message-ID: <80cf4e9a-5d49-4bc3-8160-1b23c31d4d36@quicinc.com>
-Date: Thu, 20 Feb 2025 09:31:14 -0700
+	s=arc-20240116; t=1740069148; c=relaxed/simple;
+	bh=/xxoPVQV9rAqO9i3BY7Z44Jp9+qGzPSNQzg74YT7fO8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=i/SwZK+Rd6dgCxTSouBEaRjAsb2tH7qZDG0kXgDHoXwk5JGTKTWRnocgDaqMHADM8u5+xk93B5E8Gp1YlxH5O71ixmqvb1BB+1rG29to1lTfOV0MAIxQ3RSqBO9e3L2afULWV8G08Nlcbzfl0V9MdGPGtah5bsFWqwCvxanonvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nAQUxoLE; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-38f2b7ce2f3so918963f8f.0;
+        Thu, 20 Feb 2025 08:32:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740069145; x=1740673945; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=djJ6cJLCBX31nVMQXMRyTslZq1heGpJZhHxgGn2SThg=;
+        b=nAQUxoLEBw8qICpACpJuwVc5lw/OJcJkGHVUsPMlR/FzUZGCsQOUCWZM17iMdalvNV
+         oPYIsPq9OrTEFQOgO2o6iRT9jmx83gRcpxyzy4XdrC3GbHL4v2pNaU6xfWA5s037Om7+
+         F/ldSWdWZg7BuwbJxR/hGiJB6gBNB+JGadtDp6ODRFk1DtnLkVLC7FcOAJ8yWE2Q9leG
+         bp0uIPWzBWUm6SyRcsTga+zkG5ynXc4mLoneDqN/jbgYiw/+J4PRwSZyHAOVw1vzs7Ig
+         hsC1D2pqJnSl2RHe9Q/u/8xIgneMd32i+hT5158mdps8B/750rkJx5Q5B8xfofy0pLQb
+         SLXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740069145; x=1740673945;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=djJ6cJLCBX31nVMQXMRyTslZq1heGpJZhHxgGn2SThg=;
+        b=GqsetzUCO1O1yK/98hg4jRq2QJUSUvPsPPZvMvuxen5OXG2IwLOj6DjF7X2R0RpH1g
+         MT+sa0YEs8qfsqzqYih7vzXAhoOQQyRJ8NhzrbvgA6rBQ2u3idKyGwGpwiBNF0M73aX4
+         km7+ShONdOIve9Dlxrdo5qk56WO0FfrPGnWz1o8VvuT+kab3BYNsMzj2Tj5rBcsB4414
+         TEZbdwAAzJ1quzUbC0PwX/gR6i+vKeNr5RIIVxc9/8r++3kkoZLNwYunTRi3b12RwkOX
+         oEn2VlM2gz43SOJ5MKvbHjtuLzwQQyeAbjwhUMzdEAdCSx5Ht9GOxY0bkNS912dLsn20
+         6mrA==
+X-Forwarded-Encrypted: i=1; AJvYcCU6KPFeIAh4PSLCzkGl9ItFrstW+44V7UabSRbvFG3CkpSOpm/F1knFAE0M1+nHoqQ9B4mzpILqZIpBQjXx@vger.kernel.org, AJvYcCWuHUCly7CEASHWNUbhZyCB6DCDXjqUOk+SovueDsUHfFxlnKkqeht7YETpb/5A2GONd+tjYC1TBRs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxAtBNqDjzweRIY6yjk12c9w6jW6iZ32g1mXxIZVVhyGyp4BTwR
+	vdv3gAUy77yJQGhIW890X1WPWBKRUt9yLYoJZbDc14mHNb7V/MMqX0vKWvV6pyVIPKvWMgLOi96
+	pUvXXwUYTnfySgNHd5Wj75cGdfk8=
+X-Gm-Gg: ASbGncsxzxum3zPJiMNMi0q0YbTtqOAVCWN4msq3jTjMlinhpMvPUmWaBueBBLAqS73
+	10mwwwpkGeSJrv2QCf5WuwY2ANpaHPzjP02QN4PqthhdyY9ty0vh05Z0ICx6QPtmTo8nOf5ojTS
+	Q=
+X-Google-Smtp-Source: AGHT+IE+fb/qSiQgDRutZeDBlmq5JYRBHFh6IjwYk9fKzL4B9g9ZxsaVzW96bSH5p8ymUhr7jbVsfdyuK+pmPd2y9mA=
+X-Received: by 2002:a05:6000:10c:b0:38f:2111:f5ac with SMTP id
+ ffacd0b85a97d-38f33f51088mr18279347f8f.31.1740069144731; Thu, 20 Feb 2025
+ 08:32:24 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/4] kbuild: slim down package for building external
- modules
-To: Nicolas Schier <n.schier@avm.de>
-CC: Masahiro Yamada <masahiroy@kernel.org>, <linux-kbuild@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Kees Cook <kees@kernel.org>,
-        Nathan
- Chancellor <nathan@kernel.org>,
-        Ben Hutchings <ben@decadent.org.uk>, <regressions@lists.linux.dev>
-References: <20240727074526.1771247-1-masahiroy@kernel.org>
- <20240727074526.1771247-4-masahiroy@kernel.org>
- <b3a8816c-3846-83ab-9750-fd12041d9495@quicinc.com>
- <20250220-red-antelope-of-education-5417aa@l-nschier-nb>
- <0ee862ec-4c36-4c3e-ae90-627c6b0e527b@quicinc.com>
- <20250220-kickass-famous-kittiwake-c11f5b@l-nschier-nb>
-Content-Language: en-US
-From: Jeffrey Hugo <quic_jhugo@quicinc.com>
-In-Reply-To: <20250220-kickass-famous-kittiwake-c11f5b@l-nschier-nb>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: c4qGPsQ4j7RHV5UpELsJ9VOVJP5Dj1ov
-X-Proofpoint-GUID: c4qGPsQ4j7RHV5UpELsJ9VOVJP5Dj1ov
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-20_07,2025-02-20_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- lowpriorityscore=0 clxscore=1011 adultscore=0 phishscore=0 mlxlogscore=999
- bulkscore=0 malwarescore=0 impostorscore=0 priorityscore=1501 mlxscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2502200115
+References: <cover.1739866028.git.maciej.wieczor-retman@intel.com>
+ <d266338a0eae1f673802e41d7230c4c92c3532b3.1739866028.git.maciej.wieczor-retman@intel.com>
+ <CA+fCnZezPtE+xaZpsf3B5MwhpfdQV+5b4EgAa9PX0FR1+iawfA@mail.gmail.com>
+In-Reply-To: <CA+fCnZezPtE+xaZpsf3B5MwhpfdQV+5b4EgAa9PX0FR1+iawfA@mail.gmail.com>
+From: Andrey Konovalov <andreyknvl@gmail.com>
+Date: Thu, 20 Feb 2025 17:32:12 +0100
+X-Gm-Features: AWEUYZlJk8i1PGeryrJoWL6O3cLwlGsfEZG1iYKTI3r7jC586Nd1JaZw47VvF2U
+Message-ID: <CA+fCnZfHAEP08xwUM5TXAihtFzrVG_kJMVXBD1U2Z1BoqkM1gA@mail.gmail.com>
+Subject: Re: [PATCH v2 14/14] x86: Make software tag-based kasan available
+To: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
+Cc: kees@kernel.org, julian.stecklina@cyberus-technology.de, 
+	kevinloughlin@google.com, peterz@infradead.org, tglx@linutronix.de, 
+	justinstitt@google.com, catalin.marinas@arm.com, wangkefeng.wang@huawei.com, 
+	bhe@redhat.com, ryabinin.a.a@gmail.com, kirill.shutemov@linux.intel.com, 
+	will@kernel.org, ardb@kernel.org, jason.andryuk@amd.com, 
+	dave.hansen@linux.intel.com, pasha.tatashin@soleen.com, 
+	ndesaulniers@google.com, guoweikang.kernel@gmail.com, dwmw@amazon.co.uk, 
+	mark.rutland@arm.com, broonie@kernel.org, apopple@nvidia.com, bp@alien8.de, 
+	rppt@kernel.org, kaleshsingh@google.com, richard.weiyang@gmail.com, 
+	luto@kernel.org, glider@google.com, pankaj.gupta@amd.com, 
+	pawan.kumar.gupta@linux.intel.com, kuan-ying.lee@canonical.com, 
+	tony.luck@intel.com, tj@kernel.org, jgross@suse.com, dvyukov@google.com, 
+	baohua@kernel.org, samuel.holland@sifive.com, dennis@kernel.org, 
+	akpm@linux-foundation.org, thomas.weissschuh@linutronix.de, surenb@google.com, 
+	kbingham@kernel.org, ankita@nvidia.com, nathan@kernel.org, ziy@nvidia.com, 
+	xin@zytor.com, rafael.j.wysocki@intel.com, andriy.shevchenko@linux.intel.com, 
+	cl@linux.com, jhubbard@nvidia.com, hpa@zytor.com, 
+	scott@os.amperecomputing.com, david@redhat.com, jan.kiszka@siemens.com, 
+	vincenzo.frascino@arm.com, corbet@lwn.net, maz@kernel.org, mingo@redhat.com, 
+	arnd@arndb.de, ytcoode@gmail.com, xur@google.com, morbo@google.com, 
+	thiago.bauermann@linaro.org, linux-doc@vger.kernel.org, 
+	kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org, 
+	llvm@lists.linux.dev, linux-mm@kvack.org, 
+	linux-arm-kernel@lists.infradead.org, x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2/20/2025 8:54 AM, Nicolas Schier wrote:
-> On Thu, Feb 20, 2025 at 08:03:32AM -0700, Jeffrey Hugo wrote:
->> On 2/20/2025 3:03 AM, Nicolas Schier wrote:
->>> On Tue, Feb 18, 2025 at 01:25:38PM -0700, Jeffrey Hugo wrote:
->>>> On 7/27/2024 1:42 AM, Masahiro Yamada wrote:
->>>>> Exclude directories and files unnecessary for building external modules:
->>>>>
->>>>>     - include/config/  (except include/config/auto.conf)
->>>>>     - scripts/atomic/
->>>>>     - scripts/dtc/
->>>>>     - scripts/kconfig/
->>>>>     - scripts/mod/mk_elfconfig
->>>>>     - scripts/package/
->>>>>     - scripts/unifdef
->>>>>     - .config
->>>>
->>>> Please revert this (the removal of .config).
->>>>
->>>> I got some strange reports that our external module install broke, and
->>>> traced it to this change.  Our external module references the .config
->>>> because we have different logic for the build depending on if other, related
->>>> modules are present or not.
->>>>
->>>> Also, it looks like this broke DKMS for some configurations, which not only
->>>> impacts DKMS itself [1] but also downstream projects [2].
->>>>
->>>> While DKMS may be updated going forward to avoid this issue, there are
->>>> plenty of affected version out in the wild.
->>>>
->>>> Also, I haven't surveyed every distro, but it looks like Ubuntu still
->>>> packages the .config with their headers in their upcoming "Plucky" release
->>>> based on 6.12.  I suspect they wouldn't do that if they didn't feel it was
->>>> needed/useful.
->>>>
->>>> -Jeff
->>>>
->>>> [1]: https://github.com/dell/dkms/issues/464
->>>> [2]: https://github.com/linux-surface/linux-surface/issues/1654
->>>
->>> Hi Jeff,
->>>
->>> do you know the related thread [1]?  According to the last mail, DKMS
->>> has fixed its issue already in December.
->>
->> DKMS tip might be fixed, but production versions are in various distros,
->> which are not updated.  Therefore actual users are impacted by this.
->>
->> What happened to the #1 rule of kernel, that we do not break users?
-> 
-> I think, Masahiro already provided valid and profound reasons for
-> keeping it the way it is.  Users of run-time kernel interfaces are not
-> affected by the change.  Concretely reported issues were, as far as I
-> know, only a matter of specific non-official way to work with .config
-> for other reasons than just building external kernel modules in the way
-> it is thought to work.
+On Thu, Feb 20, 2025 at 12:31=E2=80=AFAM Andrey Konovalov <andreyknvl@gmail=
+.com> wrote:
+>
+> On Tue, Feb 18, 2025 at 9:20=E2=80=AFAM Maciej Wieczor-Retman
+> <maciej.wieczor-retman@intel.com> wrote:
+> >
+> > Make CONFIG_KASAN_SW_TAGS available for x86 machines if they have
+> > ADDRESS_MASKING enabled (LAM) as that works similarly to Top-Byte Ignor=
+e
+> > (TBI) that allows the software tag-based mode on arm64 platform.
+> >
+> > Set scale macro based on KASAN mode: in software tag-based mode 32 byte=
+s
+> > of memory map to one shadow byte and 16 in generic mode.
+>
+> These should be 16 and 8.
+>
+> >
+> > Signed-off-by: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
+> > ---
+> > Changelog v2:
+> > - Remove KASAN dense code.
+> >
+> >  arch/x86/Kconfig                | 6 ++++++
+> >  arch/x86/boot/compressed/misc.h | 1 +
+> >  arch/x86/include/asm/kasan.h    | 2 +-
+> >  arch/x86/kernel/setup.c         | 2 ++
+> >  4 files changed, 10 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+> > index f4ef64bf824a..dc48eb5b664f 100644
+> > --- a/arch/x86/Kconfig
+> > +++ b/arch/x86/Kconfig
+> > @@ -195,6 +195,7 @@ config X86
+> >         select HAVE_ARCH_JUMP_LABEL_RELATIVE
+> >         select HAVE_ARCH_KASAN                  if X86_64
+> >         select HAVE_ARCH_KASAN_VMALLOC          if X86_64
+> > +       select HAVE_ARCH_KASAN_SW_TAGS          if ADDRESS_MASKING
+> >         select HAVE_ARCH_KFENCE
+> >         select HAVE_ARCH_KMSAN                  if X86_64
+> >         select HAVE_ARCH_KGDB
+> > @@ -402,6 +403,11 @@ config KASAN_SHADOW_OFFSET
+> >         hex
+> >         default 0xdffffc0000000000 if KASAN_GENERIC
+> >
+> > +config KASAN_SHADOW_SCALE_SHIFT
+> > +       int
+> > +       default 4 if KASAN_SW_TAGS
+> > +       default 3
+>
+> What's the purpose of this config option? I think we can just change
+> the value of the KASAN_SHADOW_SCALE_SHIFT define when KASAN_SW_TAGS is
+> enabled.
+>
+>
+> > +
+> >  config HAVE_INTEL_TXT
+> >         def_bool y
+> >         depends on INTEL_IOMMU && ACPI
+> > diff --git a/arch/x86/boot/compressed/misc.h b/arch/x86/boot/compressed=
+/misc.h
+> > index dd8d1a85f671..f6a87e9ad200 100644
+> > --- a/arch/x86/boot/compressed/misc.h
+> > +++ b/arch/x86/boot/compressed/misc.h
+> > @@ -13,6 +13,7 @@
+> >  #undef CONFIG_PARAVIRT_SPINLOCKS
+> >  #undef CONFIG_KASAN
+> >  #undef CONFIG_KASAN_GENERIC
+> > +#undef CONFIG_KASAN_SW_TAGS
+> >
+> >  #define __NO_FORTIFY
+> >
+> > diff --git a/arch/x86/include/asm/kasan.h b/arch/x86/include/asm/kasan.=
+h
+> > index 4bfd3641af84..cfc31e4a2f70 100644
+> > --- a/arch/x86/include/asm/kasan.h
+> > +++ b/arch/x86/include/asm/kasan.h
+> > @@ -6,7 +6,7 @@
+> >  #include <linux/kasan-tags.h>
+> >  #include <linux/types.h>
+> >
+> > -#define KASAN_SHADOW_SCALE_SHIFT 3
+> > +#define KASAN_SHADOW_SCALE_SHIFT CONFIG_KASAN_SHADOW_SCALE_SHIFT
+> >
+> >  /*
+> >   * Compiler uses shadow offset assuming that addresses start
+> > diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
+> > index cebee310e200..768990c573ea 100644
+> > --- a/arch/x86/kernel/setup.c
+> > +++ b/arch/x86/kernel/setup.c
+> > @@ -1124,6 +1124,8 @@ void __init setup_arch(char **cmdline_p)
+> >
+> >         kasan_init();
+> >
+> > +       kasan_init_sw_tags();
+> > +
+> >         /*
+> >          * Sync back kernel address range.
+> >          *
+> > --
+> > 2.47.1
+> >
 
-I'm CCing the regressions list, which I probably should have done initially.
-
-I'm pretty sure Linus has indicated that as soon as users start doing 
-something, that becomes the "official way".  I believe your response is 
-not consistent with the precedent set by Linus.
-
-Quoting from [1]:
-It’s a regression if some application or practical use case running fine 
-with one Linux kernel works worse or not at all with a newer version 
-compiled using a similar configuration. The “no regressions” rule 
-forbids this to take place; if it happens by accident, developers that 
-caused it are expected to quickly fix the issue."
-
-As far as I understand its not acceptable to force users to change (the 
-DKMS fix) or update userspace to work with a new kernel.  You could make 
-a change if userspace updated, and all old versions needing the previous 
-behavior were phased out of use, but we have 2 reports indicating that 
-is not the case.
-
- From the thread you pointed out, it looks like Masahiro recommends 
-${kernel_source_dir}/include/config/auto.conf as a replacement for the 
-.config.  Ignoring that such a suggestion seems to violate the 
-regressions rule, doing a diff of that and the .config on a 6.11 build 
-(before the change we are discussing), there are many changes.  It does 
-not look like that is an equivalent replacement.
-
-Are we at an impasse?  Masahiro has not chimed in, which is quite 
-disappointing.  So far, I don't think your responses justify why 
-breaking users is acceptable.  This is not a security fix - the only 
-justification for this change is that .config is not needed, but I argue 
-that has been proven false.  It seems like I am not convincing you.
-
--Jeff
-
-[1]: https://docs.kernel.org/admin-guide/reporting-regressions.html
-
-> Kind regards,
-> Nicolas
-> 
->> This still needs to be reverted.
->>
->> -Jeff
->>
->>>
->>> Kind regards,
->>> Nicolas
->>>
->>> [1]: https://lore.kernel.org/linux-kbuild/CAK7LNARqEOVOzP5vdUVF0KxQBNb9xtYs-COSXXWDMpBzGaLGow@mail.gmail.com/T/#m95f48caf46357a41c1df5e038e227a01ab89dbda
->>
-
+Also please update the descriptions of all related options in lib/Kconfig.k=
+asan.
 
