@@ -1,93 +1,94 @@
-Return-Path: <linux-kernel+bounces-523343-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16840A3D566
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 10:52:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F5F2A3D567
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 10:52:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE6573BBADD
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 09:48:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D54B43BCBE4
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 09:49:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4A8C1F0E5A;
-	Thu, 20 Feb 2025 09:47:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD9FE1F03FF;
+	Thu, 20 Feb 2025 09:48:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="T3FUE++P"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IX0SzRmh"
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 197C41F0E39
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 09:47:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C99241F03DE
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 09:48:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740044879; cv=none; b=d2cwq3RgV7Pr1Bbi/BerHochIc1HTiyIeD5u8Uw4d8fsdbs5/sr8RuIT9UCfFdcDs1ABd27TCNuV+ZoecEAcQZuvAA0O7dblaBCh7c3MocKfRi0Og0mgXuab/2+kdcq34y1iv8qhrqP5DLdLD+FR3fxfyIJEZBSBGkIo3wqPqCg=
+	t=1740044903; cv=none; b=VB1emCldtFXCynMv5FzIk7Xk7fumBuLM1WQvuR0NmugaRRJDgKI16JuiANOj/tMvtKWWQyv0ab7CSvde3QXMOq4OGFthzqui5VJys5upWkbrW8YjjQVHm43Tt08zH2ImQRupyXevArC5TW6HEqs6MNtsT9Yh3QVVKNBmUDOur3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740044879; c=relaxed/simple;
-	bh=IWsg9d6lbEashhnUPHSkRjmEXhpeKPSMS9vOhHCIlfY=;
+	s=arc-20240116; t=1740044903; c=relaxed/simple;
+	bh=T0l7ZXOVLBwC3M70SuYLzm8FEBABVKHNpBCNm24xvR0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mb4YFA6kx0CYshfc0qddU4qW+5SBSKniGuruVWzphkJqVDxwLBnOF2pdi911SKTOHiALLt9hYAD/lq2GgMX6LsRkik2FrLA+Ti2qHnHA0eODu1LE6JcIoT88dyyQGZawch31JJgCLrMI0OmDkBiVc9e7j3Ch5/0mn4yZJRE7dyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=T3FUE++P; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-38f1e8efe82so827670f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 01:47:56 -0800 (PST)
+	 Content-Type:Content-Disposition:In-Reply-To; b=MmT8vtIApFRXFilfX+r0xSZ6P3+rANTitxnpaPeE6BbE2kPq0n1EfE2P7aOs5hi+ijed78S3aEho3QfHluxfqj0XjSMCK4MALIDLpk0eZoMFW5RtPIpCwKbKzvbJwx96jr4hbhttwAwmFftQcUsNORbUrMND09H6D0XPYHfR/Xo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IX0SzRmh; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-30761be8fcfso6903181fa.0
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 01:48:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740044875; x=1740649675; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1740044900; x=1740649700; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3C+kognpjmHLZgIVXwXKpXpKvfpiYLWcBqUjAjWp7Tc=;
-        b=T3FUE++PN0U3+a3SEBSaJHD8QqhO+UgkgQYM8dZRMXZTGqpAYZyJgQT0Q1+6jGr07H
-         H/iUU00igxlY5xiwrjsc19xEVFpDgGInfAqueY4x3/u4hGxRg3JATpGpYuMbtOAnuilk
-         MXfFw17oXJIEnn2s+1bTZOg920iciE+LRztDeurB7uIsV1j3UQQFZ3O4+0jWkcyvf1ca
-         82mvTdeOWU62CIiq8nCmKCtRc/Hsg/Q+wuS7wV2OIJiyuee0tC0WsLCdj1zUQgiTbC4u
-         qHmGahno5mqJsr+fY/iMRbFD/Vl1pJ8HWZfCVueAYZw1spkCPghqbvnjm3snlyEnP747
-         b1kg==
+        bh=WnnHEBGbZXn/iLbbVbgNyyswQeQVsn6ueu7C9pryYmk=;
+        b=IX0SzRmhKWuizhtkomSnDlPH7lnz9YFkgKL1X6Ei6Xw4iSVdE2nL1BRBw/fJ16oiy0
+         GN2ZDr6Upk5SYbmgJD/02/8JKcasHKl70lpFL3NMoGWCzWJ35x+jmpWlyJwRJHyGu83h
+         Bku6Fm3GtJ5qi/Ba/Pq7CTMzWuSFJl+SsVE+O0CigA01RWRunK2f92f++kM72c/mOBdm
+         rOr6dnJ3Ey/n34w93evcDko8Y5/DJONz9kkjuMtELDoXaW5ZBfYxg+ie4Wp2MGw9AMLx
+         7W7bBy9j60dz5rv+KSk9C+U1dHCdMCjw1iBW5j/U4rxCjGdUbyoIG7mk7ntdOaaxOi0J
+         Ik/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740044875; x=1740649675;
+        d=1e100.net; s=20230601; t=1740044900; x=1740649700;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=3C+kognpjmHLZgIVXwXKpXpKvfpiYLWcBqUjAjWp7Tc=;
-        b=WUe9R4HsKQOHZE3R4MfNXt5egFfAl4lJsr/voJxpz9vTg/HME1+5WKyKxfua+gC9gG
-         Z+8rQF8G0CHyZNSvKfHXnVk5yTjlYsipT9A0LSsj0vL2igJsnZOC3lbxu7JCf6l39jQU
-         ThMQvUkIrhu31Q8f/rmk1vsf8j3nOCK0VKShpFuPYAg9bU3yekn0QLGcONlv+aWu7rB9
-         r+1AhhZZswAbN8Gs7bb5RhTTLsf3Q2J7fJ1iB9Q/oXHFfaOo57/7vTbVxJNoJye/N0xY
-         UxlHeyMW0TKCrdWDmoK+km08LyVRmPIxLXpxPYfB2B8OvUVpFWiuUcK112qC/BZE2Uzb
-         ps+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWZxA/qQH25YDhV2GAfcjrWltO+lT80eh9zxaprhYOey4qZ9Nx3XonS3jEGIG7VGNFO6JP/48JMg7TfZ2k=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzsn4946LaRh/RKveGflGKsU0kM8VHihWyj08noasBc+Dsarn75
-	FyuPf5eYuXrIPZJzEo/YaN/4LpASBAug/5aiYTP7CJrDRDVagC3XhnwB6x5VgG8=
-X-Gm-Gg: ASbGnctjh1DVLF3SSzNtFGKqfHst6FOVcUq32xXzsFBUUYNVylNXNIMASMQ4Su22diF
-	lCBpUAEDKxlGBirMKcmWRW44G/jJaSWc927vmYz/FLDnzopphidJFJ1N+cWsqyo+G371E5DDjFe
-	nhfMEB0KhgI/fuYs3/MoUo6EcOq9A6BlJNRFzab+19hImbOjI+Oj25Jtp5kt1EO4yoTouEFnOe+
-	kPeeJjHO0qg9MrV6V3C8kMlToj5IqzvfslaiG38uMbskVsTGm9nUqrdUh0BSP4wEmjGmJ82L3l8
-	/USJbqdhvQ69ykXZNENGPa9X8No=
-X-Google-Smtp-Source: AGHT+IEsCez3GPLSZunwwFDyUVqq7Wkm5lBgpW3JvRE36iu83J5JlqvN9UXFhpA6HMjqTat9XWSXuQ==
-X-Received: by 2002:adf:f08c:0:b0:38f:30c7:eae4 with SMTP id ffacd0b85a97d-38f33f56507mr18120522f8f.52.1740044875163;
-        Thu, 20 Feb 2025 01:47:55 -0800 (PST)
-Received: from linaro.org ([2a02:2454:ff21:ef30:b30c:3d94:4d4a:a6eb])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f561bee3esm5514525f8f.21.2025.02.20.01.47.54
+        bh=WnnHEBGbZXn/iLbbVbgNyyswQeQVsn6ueu7C9pryYmk=;
+        b=ocwnCQAxvlNDFMK8QPwRx5yg/mQwoFzj6QpMeKF4yostgg/+M82ey0TD9DxBoQCWSc
+         quk0RvBP4wKtHnz95uHpIK+ebMMUEVyGNZWXz3qbQemV5s36rS5ETRPS5gDgiEC061Ze
+         RlrEC59MGsTvnuha0uJ8TgIJhg0DbDM/aC08m4JKS96mYCz55NQ8Z/bLk5pf9mwwZ9KC
+         gdz+Oo6sXSNSClKVVD1FebKdCqQCQQQj53IezneXG1k/nfd6uqeY+lcuQg0hvDwgaOuZ
+         NaV89SkJUBn1btTo+j/60FOGg+hHCdP85vnvxgmc83uCj7UCesL1aqCNGV+M2h55an5o
+         Wj7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVjnO1/z2aBBsJUjQDq2zZJKeIzyEqtIQyp/qohWNPnpdafdd6yvD5mEzY5XiBRL4X2Glk8XCxPkjcLkZ4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9cpN2Kf6L4K9AhUUndbkzR9+V/ypiAMw/0Nvm+pVXRaPe/awk
+	cYQ0EOpq1rXt69rvLJCR9MTpjcOtfKddFlvU06eCHOvzsML3URB/M2KLfRHxqHA=
+X-Gm-Gg: ASbGncs64gO1Nwbc2CngL/I+R+KnpFcNi1jvYO90IcygAPheZfPxM+UUpDj0plchIOY
+	37YGjvggSm2HTWhUstYWD/VH7k0N0Y05SMr1SK9nJJzpmJSJXh+A1AcAXruUjr0TQIv+ySLCjhf
+	7GQzjhUWZCRU2JEe88xHur9b9SPuxAbWu9ImiVKALzePuny4PwN2yxzTZvU5ndHLQN5HIktocrS
+	TDHhFxTkidiwntKb4Zi2Hb7097zE86iIgKQie55Ul1fYyabjSr7dVzxIhZe+xmrgcWs6AQH713s
+	0BbBBzY=
+X-Google-Smtp-Source: AGHT+IFalDevTONqluicJCCPb7Sdnk7diBGx2VZQCkifcqIYaN4hBEjD+cfqBSzDu3kZfFTNqaXsNg==
+X-Received: by 2002:a2e:8615:0:b0:304:588a:99ce with SMTP id 38308e7fff4ca-3092797efe8mr62921121fa.0.1740044899278;
+        Thu, 20 Feb 2025 01:48:19 -0800 (PST)
+Received: from curiosity ([5.188.167.4])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3091d92e8ddsm22504011fa.70.2025.02.20.01.48.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Feb 2025 01:47:54 -0800 (PST)
-Date: Thu, 20 Feb 2025 10:47:49 +0100
-From: Stephan Gerhold <stephan.gerhold@linaro.org>
-To: Andi Shyti <andi.shyti@kernel.org>
-Cc: Wolfram Sang <wsa@kernel.org>, Andy Gross <agross@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Konrad Dybcio <konradybcio@kernel.org>
-Subject: Re: [PATCH 3/3] i2c: qup: Vote for interconnect bandwidth to DRAM
-Message-ID: <Z7b6ReQdDtAUn5GP@linaro.org>
-References: <20231128-i2c-qup-dvfs-v1-0-59a0e3039111@kernkonzept.com>
- <20231128-i2c-qup-dvfs-v1-3-59a0e3039111@kernkonzept.com>
- <5dr5ps4vb57xj2mfelgsxgoyrr3gg4ggwqggqchff6pda3ffsn@thxpg4h6kgel>
- <Z7W1EJ7uGsaTZMRh@linaro.org>
- <sc54ro4pwg5j2lqelsryx7cdw6ipcdp4gfk3ce5sxsvk3s7wzp@wup2pgdzmxtl>
+        Thu, 20 Feb 2025 01:48:18 -0800 (PST)
+Date: Thu, 20 Feb 2025 12:48:16 +0300
+From: Sergey Matyukevich <geomatsi@gmail.com>
+To: Alexandre Ghiti <alex@ghiti.fr>
+Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alexghiti@rivosinc.com>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH] riscv: select DMA_DIRECT_REMAP by RISCV_ISA_SVPBMT and
+ ERRATA_THEAD_MAE
+Message-ID: <Z7b6YGiUiUYp9lU-@curiosity>
+References: <20250116172950.1989748-1-geomatsi@gmail.com>
+ <199526de-4351-4fd7-8f6a-9e8dbf05c184@ghiti.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,66 +97,91 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <sc54ro4pwg5j2lqelsryx7cdw6ipcdp4gfk3ce5sxsvk3s7wzp@wup2pgdzmxtl>
+In-Reply-To: <199526de-4351-4fd7-8f6a-9e8dbf05c184@ghiti.fr>
 
-On Wed, Feb 19, 2025 at 08:30:35PM +0100, Andi Shyti wrote:
-> On Wed, Feb 19, 2025 at 11:40:16AM +0100, Stephan Gerhold wrote:
-> > On Wed, Feb 19, 2025 at 12:02:06AM +0100, Andi Shyti wrote:
-> > > 
-> > > sorry for the very late reply here. Just one question.
-> > > 
+Hi Alexandre,
+
+On Mon, Feb 17, 2025 at 01:23:28PM +0100, Alexandre Ghiti wrote:
+> Hi Sergey,
+> 
+> On 16/01/2025 18:29, Sergey Matyukevich wrote:
+> > Select DMA_DIRECT_REMAP for the RISC-V extensions that allow to set
+> > page-based memory types in PTEs according to the requested DMA
+> > attributes. This is the purpose of Svpbmt or XTheadMae extensions.
+> > Zicbom or XTheadCmo serve a different purpose, providing instructions
+> > to flush/invalidate cache blocks.
 > > 
-> > Thanks for bringing the patch back up after such a long time. I've been
-> > meaning to resend it, but never found the time to do so... :-)
-> 
-> We have a long list of forgotten patches that belong to the far
-> past. I'm trying to revive them.
-> 
-
-Thanks, this is much appreciated!
-
-> [...]
-> > > > @@ -1745,6 +1775,11 @@ static int qup_i2c_probe(struct platform_device *pdev)
-> > > >  			goto fail_dma;
-> > > >  		}
-> > > >  		qup->is_dma = true;
-> > > > +
-> > > > +		qup->icc_path = devm_of_icc_get(&pdev->dev, NULL);
-> > > > +		if (IS_ERR(qup->icc_path))
-> > > > +			return dev_err_probe(&pdev->dev, PTR_ERR(qup->icc_path),
-> > > > +					     "failed to get interconnect path\n");
-> > > 
-> > > Can we live without it if it fails?
-> > > 
+> > Fixes: 381cae169853 ("riscv: only select DMA_DIRECT_REMAP from RISCV_ISA_ZICBOM and ERRATA_THEAD_PBMT")
 > > 
-> > of_icc_get() returns NULL if the interconnect API is disabled, or if
-> > "interconnects" is not defined in the device tree, so this is already
-> > handled. If "interconnects" is enabled and defined, I think we shouldn't
-> > ignore errors. Therefore, this should work as intended.
+> > Signed-off-by: Sergey Matyukevich <geomatsi@gmail.com>
+> > ---
+> >   arch/riscv/Kconfig        | 2 +-
+> >   arch/riscv/Kconfig.errata | 2 +-
+> >   2 files changed, 2 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+> > index d4a7ca0388c0..a5dabb744009 100644
+> > --- a/arch/riscv/Kconfig
+> > +++ b/arch/riscv/Kconfig
+> > @@ -603,6 +603,7 @@ config RISCV_ISA_SVPBMT
+> >   	depends on 64BIT && MMU
+> >   	depends on RISCV_ALTERNATIVE
+> >   	default y
+> > +	select DMA_DIRECT_REMAP
 > 
-> yes, because qup_i2c_vote_bw() checks inside for NULL values.
 > 
-> My idea was that:
-> 
-> 	if (IS_ERR(...)) {
-> 		dev_warn(...)
-> 		qup->icc_path = NULL;
-> 	}
-> 
-> and let things work. Anyway, if you want to keep it this way,
-> fine with me, I don't have a strong opinion, rather than a
-> preference to keep going.
+> From what I read, DMA_DIRECT_MAP relies on the ability to map pages uncached
+> (pgprot_dmacoherent() here
+> https://elixir.bootlin.com/linux/v6.13.2/source/kernel/dma/pool.c#L104). But
+> CONFIG_RISCV_ISA_SVPBMT does not guarantee that the underlying platform
+> supports svpbmt so to me it is wrong to select DMA_DIRECT_MAP, we would need
+> some runtime check instead.
 
-I would prefer to keep it the way it is. It's okay to omit the
-"interconnects" in the DT (either for old device trees, or because you
-don't define the "dmas" either). But if they are defined, we should not
-be ignoring errors. -EPROBE_DEFER definitely needs to be handled, but
-even for -EINVAL or similar it would be better to make it obvious in my
-opinion.
+IIUC this function highlights coherent dma allocation options and their
+requirements even more clearly:
+- https://elixir.bootlin.com/linux/v6.13.2/source/kernel/dma/direct.c#L222
 
-None of the existing users should be affected, since no one defines
-"interconnects" at the moment.
+> >   	help
+> >   	   Adds support to dynamically detect the presence of the Svpbmt
+> >   	   ISA-extension (Supervisor-mode: page-based memory types) and
+> > @@ -787,7 +788,6 @@ config RISCV_ISA_ZICBOM
+> >   	depends on RISCV_ALTERNATIVE
+> >   	default y
+> >   	select RISCV_DMA_NONCOHERENT
+> 
+> 
+> And in the same way, we should not enable RISCV_DMA_NONCOHERENT since
+> CONFIG_RISCV_ISA_ZICBOM does guarantee the presence of zicbom. Because then
+> in mm/dma-noncoherent.c, the cache flush operations are nops.
+> 
+> Or am I missing something?
 
-Thanks,
-Stephan
+This is my understanding as well. In fact this patch is almost useless.
+It would only allow to enable DMA_GLOBAL_POOL for platforms that support
+Zicbom, but do not support Svpbmt.
+
+The actual problem is that the RISC-V kernel image cannot have both
+DMA_DIRECT_REMAP and DMA_GLOBAL_POOL since they are now mutually
+exclusive in kernel/dma/Kconfig. This limitation is not convenient for
+RISC-V, where kernels can be built with support for multiple extensions
+and errata. But on boot only appropriate subset of them is enabled based
+on the chip's VENDOR_ID and selected dtb.
+
+Currently a portable RISC-V kernel is suitable only for platforms with
+support for both Zicbom and Svpbmt or their vendor-specific alternatives.
+So it doesn't really matter where DMA_DIRECT_REMAP is selected. Platforms
+without Svpbmt need to build their own non-portable kernels anyway,
+enabling support for DMA_GLOBAL_POOL. For instance, Starfive and Andes
+in arch/riscv/Kconfig.errata and drivers/soc/renesas/Kconfig respectively.
+
+Maybe one possible option would be to revert commit da323d464070
+("dma-direct: add dependencies to CONFIG_DMA_GLOBAL_POOL") and add runtime
+checks in dma_direct_alloc for dma_alloc_from_global_coherent.
+
+In that case RISC-V kernels could be built with support for both
+DMA_GLOBAL_POOL and DMA_DIRECT_REMAP. Global pool code path could be
+enabled only for platforms that explicitly specify it in their dtbs.
+
+Regards,
+Sergey
 
