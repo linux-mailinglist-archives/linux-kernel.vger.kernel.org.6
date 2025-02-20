@@ -1,133 +1,134 @@
-Return-Path: <linux-kernel+bounces-524706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CFC9A3E612
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 21:46:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92F7DA3E611
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 21:46:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15A1517D69A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 20:46:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A13D6189F768
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 20:46:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DA0026388E;
-	Thu, 20 Feb 2025 20:46:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE83B262D39;
+	Thu, 20 Feb 2025 20:46:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=davidfrank-ch.20230601.gappssmtp.com header.i=@davidfrank-ch.20230601.gappssmtp.com header.b="B9vaSphN"
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
+	dkim=pass (2048-bit key) header.d=sladewatkins.com header.i=@sladewatkins.com header.b="b4iQDpzK";
+	dkim=pass (2048-bit key) header.d=sladewatkins.net header.i=@sladewatkins.net header.b="NHwMntY1"
+Received: from dispatch1-us1.ppe-hosted.com (dispatch1-us1.ppe-hosted.com [148.163.129.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2473385C5E
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 20:46:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE1311E9B3C
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 20:46:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.129.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740084407; cv=none; b=VoTw9tq8PlOIw0z/nU7WAlZkaFRNfU6ExU322c4gbF89u3kRh4ldePsL2a2AZsUll2+2QieimkVCZAbt5T1XC9X6zqQIaBdpW+rWLZTr58J4Un0b3JXV7ix8b/ZcI9TwJ752TUjmQ074BCFLHqRa2QKFrfr+UJS4PV06/5YVNAA=
+	t=1740084399; cv=none; b=FFnOFUWQn2UWm82b1IDYlZCCD+coTtrEl4lwa1pnttSxNTUbXTJ8nW2L5OAIXGQ/PDKa5GUOE41Zf/2TuZarUoLGCszdWeonAVatdzD4bCkJiO/zj12teWvolipxvj+RGoviQ92OSJZZzCFBPO9+bKM0QWmDLDwDzRIlqQFwnUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740084407; c=relaxed/simple;
-	bh=m+FGt3B2sml78Z33NDEWBnEXJ2v72RFFLzbRmIFRHG0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BdlHE9CExRdcEKv5IrXwRT+OFkQreuCh631SbYO96PZ9IjFXEC4Vqx5mUkpY3x21UJj+QpGHP6hILnjlCv881L4qd+6Ik9c2YLs3sVJ8vMfP1TYtjTCVXvNN5PUMzlX5VGjXB0F+RQGlr352TCUSLGGjzQvnu2TYdfXHCxWqakM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidfrank.ch; spf=none smtp.mailfrom=davidfrank.ch; dkim=pass (2048-bit key) header.d=davidfrank-ch.20230601.gappssmtp.com header.i=@davidfrank-ch.20230601.gappssmtp.com header.b=B9vaSphN; arc=none smtp.client-ip=209.85.219.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidfrank.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=davidfrank.ch
-Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e5dd7b439e3so1289804276.1
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 12:46:45 -0800 (PST)
+	s=arc-20240116; t=1740084399; c=relaxed/simple;
+	bh=EXXbsELd4TnDhPR+oLxmC6mb4dDV4YYCWuYKmzQgrW4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hlGBLPYkxEMvTcWZ9oOlvHmk0Q/eQKce/vEwPAr/mXhUgP9IqBq1y57fybDJ6cSv5CfxRWSmqj2I6NuODZC7xjYnyxZMp9joCdSkhs27NxPNN63Et0vD8U3HUXWxIMHO9xHso7ii0/vJJ08Zh0wcTggLFMMexWHugl5mu1ECRPU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sladewatkins.net; spf=pass smtp.mailfrom=sladewatkins.com; dkim=pass (2048-bit key) header.d=sladewatkins.com header.i=@sladewatkins.com header.b=b4iQDpzK; dkim=pass (2048-bit key) header.d=sladewatkins.net header.i=@sladewatkins.net header.b=NHwMntY1; arc=none smtp.client-ip=148.163.129.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sladewatkins.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sladewatkins.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sladewatkins.com;
+ h=cc:cc:content-transfer-encoding:content-transfer-encoding:content-type:content-type:date:date:from:from:in-reply-to:in-reply-to:message-id:message-id:mime-version:mime-version:references:references:subject:subject:to:to;
+ s=selector-1739986532; bh=MWhuwPKRWHuBZzoHcb+oOoXnrhWEnQoYXYXKtP6logA=;
+ b=b4iQDpzK7Qt0irFVVmnSEieIo7FsIkqKYnOUsZi2ej5L2FXEEULlgE5U2bExNSOVRIBTGIyhaeUlYzDAbMTgAgwWmcf5sKckOezpRyYoFBBAeNxTtJLVi3OO+S0/ZwnXwE5Z6R1gq0bBYw1bu8CyCTuIvTGk4SQJURoU1+u2YI8N3fEajr/8pniN93JOO+ovNcTjS25adgOC7p5ZHzIpBxfkSRclJc1i95Lx/pBFd5TDcpXlhq1W5ViBLk5EzjrD2+2GmnxEtrXofR7Wh/u/hPFzbxzDpbWCEt9NRv46dVKrZnHmCG4Cz8JaYok4Se01uYCY8Kp48xAaajf8WnoTcw==
+X-Virus-Scanned: Proofpoint Essentials engine
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx1-us1.ppe-hosted.com (PPE Hosted ESMTP Server) with ESMTPS id 144A36000FA
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 20:46:33 +0000 (UTC)
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-472107c4b5eso25686291cf.1
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 12:46:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=davidfrank-ch.20230601.gappssmtp.com; s=20230601; t=1740084405; x=1740689205; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ki4BqDr2jfoSCfBXflnZeD/HvCxdHbHAAIJAh4w+1oM=;
-        b=B9vaSphN4rKT6P8chejrc6Xs4h5Od6bX/gHzxSQOmdPzDX5q0fBkWnyGsq0zlhVXZM
-         K/7J+htVukqpm03mcKdinf2XhfCJcWlYNettbbYAdZCSfAVJIo/d8sszf2SWpIEcZTu1
-         ag11yVeU6fw++kmsbpzFj8DDxMx3HLM+dB/BILX8NVqktMyGxFrxMOvenL55kJdH27gB
-         WKxaKxqdfKRlOsa3hBeF9g05g/NRVL1/KmuqvfO4FoatNjhIxQTsuUrKTqEEymb4ctbh
-         9z4qF+Z25jwgIpwRbJHM7a1MM6aORQafQ8Ohj+hlEoEPrqPqkUMN2EPOwCqRloXHY2rZ
-         zhtQ==
+        d=sladewatkins.net; s=google; t=1740084392; x=1740689192; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=MWhuwPKRWHuBZzoHcb+oOoXnrhWEnQoYXYXKtP6logA=;
+        b=NHwMntY1o3tbflOqqZeLVQShutpfocudVOLx/eQhwBaZeFepdPIPBHX/G8fEqbB/rJ
+         bqaZPqxfl19LLVfMO/+Mpjgspb9V2T/guSe5aUb+/YSzkXsCgl7/lsX5MdSYKLwOHKi5
+         DoAVtdkoFr/gXVwspdVY2ZeC+PXaesmri6AHxKnW0z3/eHs7CpJBXA1Izc0iUDD6CsLp
+         USYpJBvPMtj5wpShbM0dB9trU8jrl3fgg6m+CR9YWJWMz81P/M3wEdR521I5X4+oNdcn
+         caGY6B6lFX2zIz/QBY1/rRW/nF/q+dF9qvLjsFWQqXTVZtavh/fL8Mtw5JUQ/2cpZW+a
+         hLsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740084405; x=1740689205;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ki4BqDr2jfoSCfBXflnZeD/HvCxdHbHAAIJAh4w+1oM=;
-        b=XWI9levj3g0OrR8MrgGSVKU52gp5F37BDxZUcbnzE7AxiCVTkXC4ctjKylM6ccsjfr
-         QOx5OWWP6SLH+NePp0GSK7i/K7J7dyBHhtv1zEe5AvUstcfCNX+lQLvyAMi+APevOlys
-         2DlE/VKgVrS0i4NVifqC6c6Fpm0ERA2fSe+hahkb56PfdZKs8DfOOyLVgS9VnQir7T7e
-         Oe0YV4DB6rDVRJsAINiFpK17sVQdEY/l8CTR/OlpqYs8NFVog1QdnNzhSySIj4MuNHM6
-         +kpy+jLcMK9NJxZt88TeWpmdZf+GQNL43AsrNwKim1aezwd6Hu5ua8YavG8qym77tej6
-         yQQw==
-X-Forwarded-Encrypted: i=1; AJvYcCUUJeVpLM1cs+S3bBRJDfaXtIAn53Qw99mVb/+Boy0YsY8LqIbMFWLg+I7ggryER+fblrAQq+Mxs6V+npM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yydr0kzjpG6kPZGHnDq+fcRciOf1uZJIMQF49XpZ6vJNHBx07yb
-	wxaspwFUBPijMnTvnUIb+Y/5klYOl3yWrvJpHAnFsSwpCCotOA2aawnm+UL4bq2BdWY4o/wQu4I
-	nsYIoCju5xLB1fuRaqlxWUafnZp6azNQZ49QYGrkQP23AL7fhTsE=
-X-Gm-Gg: ASbGncvmHGX2VHFSb4AHNK2DS+9tE4a+U6gpCBtj0W4XHBSlul3u4QrQL+Esy0K04Zi
-	MHrZbiz4Ki7gBtDkJs/hEkTe6tkRPWyYjXtm6CYJIO8GPf9+jpN/DvoXtKgNSiEWmJcmQix7cGi
-	2VIIkWIDcAhl0zIOqo4ov5A7lvNA==
-X-Google-Smtp-Source: AGHT+IECScJWDOKRG/qBJ8UnxAsKCIAGMu+3ZEUFJrWLypTdYZOvw75h5GMNXvgZAYJhA00gHT0/bZsGQCVHkXM8isA=
-X-Received: by 2002:a05:6902:1ac3:b0:e5d:cdc6:7ad2 with SMTP id
- 3f1490d57ef6-e5e8b067de6mr99742276.46.1740084405031; Thu, 20 Feb 2025
- 12:46:45 -0800 (PST)
+        d=1e100.net; s=20230601; t=1740084392; x=1740689192;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=MWhuwPKRWHuBZzoHcb+oOoXnrhWEnQoYXYXKtP6logA=;
+        b=d097ZYieZAjKWq2absVPUd2VDkHKL2OrEcwnAZMFFKbTG8eYvrC7diPZqfu7IQBnWp
+         R5yn2SSnswlNXd2VrAgx6r8HY4hMC2I1C6DFXDkx1uMU9qyfnyyRPSOB9BCxRcQNJgcu
+         Qz9pR5ud7Nbwe1Uj2caTdz6z8SFYgFg3c1fJPjRoVDGc+O391WxO084Q4mqV+mdd6nK/
+         MP9Eh3q8JznOMxuWLgSqyDdFBME9smhKTM35jBFGAK6oNHnjbBO4hAG+dDfmo+yktY6T
+         e4yiUPFnZ0S4nmzrUDiS6JoW5IvFxrfCEU0OIT21YgQ9gWHFEDV6kwibjLOCsFZlfqho
+         6g4A==
+X-Forwarded-Encrypted: i=1; AJvYcCVubnZ6K+o9eL6scCf+iYGPztnLDJXbAPdPKlzsHVvVb2EX0BcqUlVFB82WhwvC4sT8eP2rHRefr4Q6pk0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIW4fRTVxSA02/uB/oNNEb6dURbmCGhnBASFmgVT5BbCDehuQf
+	Lkw87Q6HoBvS9YM7WuKsGrO4F+nykzYzPxZZ9RkPfm660iNXCuNMltUhXTSLHEZbxw7mnvfmGjm
+	pXbq2/DUNRsMEkR2HojnV/WXc79Zeg54c/I1dwIRzCtNv0IXz1KrNzb1SeS4SpmDN/GYEUZ26gM
+	/vWL18QFw=
+X-Gm-Gg: ASbGncuUYKwA4ngAM1vcOWkAg85hnhhGu2gOl3oEajVNgTc7DyEK5MphxD0MAgOiOm8
+	6VYhmE7XKuMt7oMikqM6kAD8cTfiU/cyCAEFmiKTkT58c7CW1EDmntNVFY1eFL5u8bEKB3J0rCg
+	/SzusI37gq5qnG8u3jzhzuqU/oNOVvyL8xlKy1wCBnGYrXUyrD3uiJT72LV0W5PMulgxNUyQli4
+	IoacrzqzBgSsm1E5bNSf11kgPQd6+6fZYyOlNhkff2M5CPBVI3IkOttyVUoyfAsTMu9lDka6/hN
+	by/yO1JF0B6yACFRWcWPm2syn4cxvtUJ6klIh8rszS/BYI7OcrKVgo5oEt7FJs9FqgrS
+X-Received: by 2002:ac8:5d8a:0:b0:471:fa00:fb9b with SMTP id d75a77b69052e-47215028ef8mr70119431cf.7.1740084392170;
+        Thu, 20 Feb 2025 12:46:32 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEwIrdDUc97c/BKbB21dPMuIBxKNLN7eS9xsTKAR4FBChuikeOlqXnwO7mamsv7/7FKtD0kyg==
+X-Received: by 2002:ac8:5d8a:0:b0:471:fa00:fb9b with SMTP id d75a77b69052e-47215028ef8mr70119061cf.7.1740084391862;
+        Thu, 20 Feb 2025 12:46:31 -0800 (PST)
+Received: from [192.168.86.34] (syn-076-037-141-128.res.spectrum.com. [76.37.141.128])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-471f0eba93dsm49479581cf.80.2025.02.20.12.46.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 20 Feb 2025 12:46:31 -0800 (PST)
+Message-ID: <7e94a24d-d2dc-4f77-b2ac-dc900552ec90@sladewatkins.net>
+Date: Thu, 20 Feb 2025 15:46:28 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAOR27cSr9yxodkctfp-Yjybh1NsKBeSkhdbZYeK7O5M87PfEYw@mail.gmail.com>
- <Z7cygtpjGDJadgg0@casper.infradead.org>
-In-Reply-To: <Z7cygtpjGDJadgg0@casper.infradead.org>
-From: David Frank <david@davidfrank.ch>
-Date: Thu, 20 Feb 2025 21:46:08 +0100
-X-Gm-Features: AWEUYZlkfgrMYlKjcUpCPWBRs8CxAmJiDWQaTfFwzPjscJTOpGasU7i9OgJWXII
-Message-ID: <CAOR27cQ8oHmA8fWnmB7Wk5pTL4TRjMPzRuqT=uA1cVROYZH7UA@mail.gmail.com>
-Subject: Re: Efficient mapping of sparse file holes to zero-pages
-To: Matthew Wilcox <willy@infradead.org>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.13 000/258] 6.13.4-rc2 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, rwarsow@gmx.de,
+ conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+References: <20250220104500.178420129@linuxfoundation.org>
+Content-Language: en-US
+From: Slade Watkins <srw@sladewatkins.net>
+In-Reply-To: <20250220104500.178420129@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-MDID: 1740084393-ws5Vp_rMC2QP
+X-MDID-O:
+ us5;ut7;1740084393;ws5Vp_rMC2QP;<slade@sladewatkins.com>;c71d53d8b4bf163c84f4470b0e4d7294
+X-PPE-TRUSTED: V=1;DIR=OUT;
 
-Thank you, Matthew, for your reply.
 
-What do you think about the complexity of this task? I'd be interested
-in taking a look but I don't have kernel development experience so I
-would need guidance.
 
-On Thu, 20 Feb 2025 at 14:47, Matthew Wilcox <willy@infradead.org> wrote:
->
-> On Thu, Feb 20, 2025 at 01:48:18PM +0100, David Frank wrote:
-> > I'd like to efficiently mmap a large sparse file (ext4), 95% of which
-> > is holes. I was unsatisfied with the performance and after profiling,
-> > I found that most of the time is spent in filemap_add_folio and
-> > filemap_alloc_folio - much more than in my algorithm:
-> >
-> >  - 97.87% filemap_fault
-> >     - 97.57% do_sync_mmap_readahead
-> >        - page_cache_ra_order
-> >           - 97.28% page_cache_ra_unbounded
-> >              - 40.80% filemap_add_folio
-> >                 + 21.93% __filemap_add_folio
-> >                 + 8.88% folio_add_lru
-> >                 + 7.56% workingset_refault
-> >              + 28.73% filemap_alloc_folio
-> >              + 22.34% read_pages
-> >              + 3.29% xa_load
->
-> Yes, this is expected.
->
-> The fundamental problem is that we don't have the sparseness information
-> at the right point.  So the read request (or pagefault) comes in, the
-> VFS allocates a page, puts it in the pagecache, then asks the filesystem
-> to fill it.  The filesystem knows, so could theoretically tell the VFS
-> "Oh, this is a hole", but by this point the "damage" is done -- the page
-> has been allocated and added to the page cache.
->
-> Of course, this is a soluble problem.  The VFS could ask the filesystem
-> for its sparseness information (as you do in userspace), but unlike your
-> particular usecase, the kernel must handle attackers who are trying to
-> make it do the wrong thing as well as ill-timed writes.  So the VFS has
-> to ensure it does not use stale data from the filesystem.
->
-> This is a problem I'm somewhat interested in solving, but I'm a bit
-> busy with folios right now.  And once that project is done, improving
-> the page cache for reflinked files is next on my list, so I'm not likely
-> to get to this problem for a few years.
->
+On 2/20/2025 5:58 AM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.13.4 release. 
+> There are 258 patches in this series, all will be posted as a response 
+> to this one. If anyone has any issues with these being applied, please 
+> let me know.
+
+Hi Greg,
+No regressions or any sort of issues to speak of. Builds fine on my 
+x86_64 test machine.
+
+Tested-by: Slade Watkins <srw@sladewatkins.net>
+
+All the best,
+Slade
 
