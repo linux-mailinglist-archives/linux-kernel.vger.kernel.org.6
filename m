@@ -1,128 +1,124 @@
-Return-Path: <linux-kernel+bounces-524867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15532A3E832
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 00:17:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6A44A3E836
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 00:17:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3B00A7A4E64
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 23:16:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7C79420AF0
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 23:17:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8E9326561C;
-	Thu, 20 Feb 2025 23:17:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rkj/tpqS"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BF7A264631;
+	Thu, 20 Feb 2025 23:17:39 +0000 (UTC)
+Received: from relay04.th.seeweb.it (relay04.th.seeweb.it [5.144.164.165])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57651264FBC
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 23:17:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF1621F4E3B;
+	Thu, 20 Feb 2025 23:17:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.144.164.165
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740093446; cv=none; b=tRhMqQbVs8WM3R2oSFOXGrYqhugOeY0NKGP1ie2B3K3vCUKwL31029PaTtIXBVS57Um5EAQA6IaVL+AiXVCSNY7OfGBwpaelZcRpqRa3gSSqrxc/Wworwyc/UdQH9vpi3+Mgo8HeGHGsDvEOIGPERGKqWFxisBf5g4sks+Nt4rY=
+	t=1740093458; cv=none; b=YDuuGnjxIBEdIladOP4E5x956fm8mN+KmeKW93wrKQvnEH1NiJu4JAcndSa4zBKQRSr22lttGRrxAXx16vszgnfBMg3isC9fQw6+GYRGZDF2VMGKQDQxIO2Z4GL+g0RIOfgxd4KSLwVf2rVn0CC57elFXzYM/jCaQQjvwtVHlQI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740093446; c=relaxed/simple;
-	bh=1cIjuvp4munwp36O0Su27G+k3yaY66vxM/AalS2J9ro=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=M2bf7scXE/4FC7A5viTg1l3S12OQi2IjSkD08WNtbuNRupMLsOhM43No/M8SHIAPpSR3L/lyU6ST7N9jmHFsYZsb1LMR3yjIl/PY1FiI5JDJ9G0ydXV5ZOrVlQc2LYGbykJuerIL/zXQia6fEXd5SSvKh8mBgwBffIjPRxlqMz4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rkj/tpqS; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5461a3a03bdso1195e87.1
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 15:17:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740093442; x=1740698242; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yRORyKgcdd4uVm+XGlcno7rV+y967/k6WA8VcDaJDCw=;
-        b=rkj/tpqSLFpjBs0dxR8qkkahDlYqKH/YXlwJaxKghOqYy8beHOre+cqReO0jFT5+HK
-         C7MYN3247mdFm4Mg+XOMABhcWgBCsqwBWvsr18Uh4RXFNY7Mr4hEn1rt0x+EP156OhRj
-         zv+/PqqiLu4XJWlkgOzk3jOhnZog23aBMD7vvytTr8XTa9Cqe5jchjql+YhOpQFx/x8/
-         oJ7QKXIE2NT4tzSIk19kZ3SDzPhI9nidDVZa5Ie2v8aoL+qaMFbdg9OqxIOfhCIqrRcS
-         luGMRxCeEiMtVISXNNpjWFImMCSQUirFI4dxJUXI0HSSu4vGgnKkGyRBRbIOz9x02E3V
-         v3Ww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740093442; x=1740698242;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yRORyKgcdd4uVm+XGlcno7rV+y967/k6WA8VcDaJDCw=;
-        b=RNqSGXXfWyY8zq1zegzHXHumzGDs9RN0jg4CRDIvIpIxvI1g8NTNYagsJ370p3KDXD
-         vAXhrWdFepI9PE4h1+IgjOYvOedSYMN738F45V+T5O3pqbs29tv8R4/jUxXS4b1wqgMx
-         wlb5RTjmTaVNeBPeuiM1X7+71yUmKrMvVMaeJAti3AukRXcvcVrIEjU3sIFSLE5Wa5te
-         ZJo8GjjKaP3tjI/D41fnXLY1bwdQRJK085+FagVhdpqHRmdw3Ciy67SWwkcijzJzZXTt
-         RPJtNQdqgDRDD33R60QKL9UA51inM5km+U9mDc5C+iGD8trRqIDsSSl3VuZpwmv6ijoD
-         j60w==
-X-Forwarded-Encrypted: i=1; AJvYcCXiT8jGH1jox7GYeDKZfP0zbVidY9KhdpT12h0/r3QEhrrB8bB1Vw9T42AnOhRxWP6fceF6jjeRtLPmLnY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9AfbfiTwc6ydm/tftAh+QLQUPy5TvDKvP0SIyqnKEkORePJnh
-	qQSo3dL0gPDWNOF1Erv2/4BZvH1W38T6LLq50VAZeBnHkMVfzqeH3NrM+Dp79VQiPkvrFx1QJ/7
-	ITqvjGArj198bPTal5ASU32UWkUAkxp3na7XM
-X-Gm-Gg: ASbGncsaS0bxvwD6toJ2g+sd2bgPvtwaBXZamsD3Z54Ry9Xo8IALcqop9HBrHFaZL7M
-	joY467z8KAlXqx/a83BbksvxufSAiRdo+UHnvQSKj+NnmyKZiC1qjkz5naUrUxLR1OJlt4Wgw0J
-	lpZ5gjKcTnvqCAbwj1PHnbmLihgdE7
-X-Google-Smtp-Source: AGHT+IEWQiBc288yYrLCTppIrbxa3qN0HBmgiL7WK6l/eN2zlTxhCP/B74cPGse/0Iz95hyG2RtMrjG+GdCe2cYgGKw=
-X-Received: by 2002:a05:6512:124f:b0:545:2301:b1c6 with SMTP id
- 2adb3069b0e04-54839f9c24dmr36007e87.7.1740093442260; Thu, 20 Feb 2025
- 15:17:22 -0800 (PST)
+	s=arc-20240116; t=1740093458; c=relaxed/simple;
+	bh=Ksv6rXwNT0Tae1pM/e3Atoeuf3TBrGkDeeU1xQQn5Vs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MsySTmx56yskrtg1G4wq0os4pjss4Unx0DvnYBOJ+gk3n9WXCwkka2BMFSXUUefZ/psPHmdjmGLuOV6E6GJVPxx2ubVS854JUVORWHWH7FlV340QLxc0aVoPNTMWD79BHEZyZiQiVppk4+E3xvcL47/T25Az+lQ8LVgKJwlLoaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=somainline.org; spf=pass smtp.mailfrom=somainline.org; arc=none smtp.client-ip=5.144.164.165
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=somainline.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=somainline.org
+Received: from SoMainline.org (94-211-6-86.cable.dynamic.v4.ziggo.nl [94.211.6.86])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by m-r1.th.seeweb.it (Postfix) with ESMTPSA id BA80C1F88B;
+	Fri, 21 Feb 2025 00:17:26 +0100 (CET)
+Date: Fri, 21 Feb 2025 00:17:25 +0100
+From: Marijn Suijten <marijn.suijten@somainline.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Rob Clark <robdclark@gmail.com>, 
+	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/7] drm/msm/dpu: don't overwrite CTL_MERGE_3D_ACTIVE
+ register
+Message-ID: <ox5yirb5sxfn5e56khlm32we5rfspsnex3dbbtzkyicp5c6kpz@j5bjhujjntqs>
+References: <20250220-dpu-active-ctl-v1-0-71ca67a564f8@linaro.org>
+ <20250220-dpu-active-ctl-v1-1-71ca67a564f8@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250220211628.1832258-1-vannapurve@google.com>
- <20250220211628.1832258-2-vannapurve@google.com> <9120e074-52af-4ae5-a08c-e62a879c7ebb@intel.com>
-In-Reply-To: <9120e074-52af-4ae5-a08c-e62a879c7ebb@intel.com>
-From: Vishal Annapurve <vannapurve@google.com>
-Date: Thu, 20 Feb 2025 15:17:10 -0800
-X-Gm-Features: AWEUYZlcMEtt0DdUpswWfn-2RnJ9b7h7OlP4aU2QsZo74T1M7MMOMNFwfs29_Zg
-Message-ID: <CAGtprH-utPk=u938odDYAWAFLSZj+OhVH_k_RCHc87k3eqm0jQ@mail.gmail.com>
-Subject: Re: [PATCH V5 1/4] x86/paravirt: Move halt paravirt calls under CONFIG_PARAVIRT
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, linux-coco@lists.linux.dev, 
-	virtualization@lists.linux.dev, pbonzini@redhat.com, seanjc@google.com, 
-	erdemaktas@google.com, ackerleytng@google.com, jxgao@google.com, 
-	sagis@google.com, oupton@google.com, pgonda@google.com, kirill@shutemov.name, 
-	dave.hansen@linux.intel.com, chao.p.peng@linux.intel.com, 
-	isaku.yamahata@gmail.com, sathyanarayanan.kuppuswamy@linux.intel.com, 
-	jgross@suse.com, ajay.kaher@broadcom.com, alexey.amakhalov@broadcom.com, 
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, stable@vger.kernel.org, 
-	Andi Kleen <ak@linux.intel.com>, Tony Luck <tony.luck@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250220-dpu-active-ctl-v1-1-71ca67a564f8@linaro.org>
 
-On Thu, Feb 20, 2025 at 1:47=E2=80=AFPM Dave Hansen <dave.hansen@intel.com>=
- wrote:
->
-> On 2/20/25 13:16, Vishal Annapurve wrote:
-> > Since enabling CONFIG_PARAVIRT_XXL is too bloated for TDX guest
-> > like platforms, move HLT and SAFE_HLT paravirt calls under
-> > CONFIG_PARAVIRT.
->
-> I guess it's just one patch, but doesn't this expose CONFIG_PARAVIRT=3Dy
-> users to what _was_ specific to CONFIG_PARAVIRT_XXL=3Dy? According to the
-> changelog, TDX users shouldn't have to use use PARAVIRT_XXL, so
-> PARAVIRT=3Dy and PARAVIRT_XXL=3Dn must be an *IMPORTANT* configuration fo=
-r
-> TDX users.
->
-> Before this patch, those users would have no way to hit the
-> unsafe-for-TDX pv_native_safe_halt(). After this patch, they will hit it.
+On 2025-02-20 12:26:18, Dmitry Baryshkov wrote:
+> In case of complex pipelines (e.g. the forthcoming quad-pipe) the DPU
+> might use more that one MERGE_3D block for a single output.  Follow the
+> pattern and extend the CTL_MERGE_3D_ACTIVE active register instead of
+> simply writing new value there. Currently at most one MERGE_3D block is
+> being used, so this has no impact on existing targets.
+> 
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.c
+> index 4893f10d6a5832521808c0f4d8b231c356dbdc41..321a89e6400d2824ebda2c08be5e6943cb0f6b11 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.c
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.c
+> @@ -548,6 +548,7 @@ static void dpu_hw_ctl_intf_cfg_v1(struct dpu_hw_ctl *ctx,
+>  	u32 dsc_active = 0;
+>  	u32 wb_active = 0;
+>  	u32 mode_sel = 0;
+> +	u32 merge_3d_active = 0;
+>  
+>  	/* CTL_TOP[31:28] carries group_id to collate CTL paths
+>  	 * per VM. Explicitly disable it until VM support is
+> @@ -562,6 +563,7 @@ static void dpu_hw_ctl_intf_cfg_v1(struct dpu_hw_ctl *ctx,
+>  	intf_active = DPU_REG_READ(c, CTL_INTF_ACTIVE);
+>  	wb_active = DPU_REG_READ(c, CTL_WB_ACTIVE);
+>  	dsc_active = DPU_REG_READ(c, CTL_DSC_ACTIVE);
+> +	merge_3d_active = DPU_REG_READ(c, CTL_MERGE_3D_ACTIVE);
+>  
+>  	if (cfg->intf)
+>  		intf_active |= BIT(cfg->intf - INTF_0);
+> @@ -572,14 +574,16 @@ static void dpu_hw_ctl_intf_cfg_v1(struct dpu_hw_ctl *ctx,
+>  	if (cfg->dsc)
+>  		dsc_active |= cfg->dsc;
+>  
+> +	if (cfg->merge_3d)
+> +		merge_3d_active |= BIT(cfg->merge_3d - MERGE_3D_0);
+> +
+>  	DPU_REG_WRITE(c, CTL_TOP, mode_sel);
+>  	DPU_REG_WRITE(c, CTL_INTF_ACTIVE, intf_active);
+>  	DPU_REG_WRITE(c, CTL_WB_ACTIVE, wb_active);
+>  	DPU_REG_WRITE(c, CTL_DSC_ACTIVE, dsc_active);
+>  
+>  	if (cfg->merge_3d)
+> -		DPU_REG_WRITE(c, CTL_MERGE_3D_ACTIVE,
+> -			      BIT(cfg->merge_3d - MERGE_3D_0));
+> +		DPU_REG_WRITE(c, CTL_MERGE_3D_ACTIVE, merge_3d_active);
 
-Before this patch, those users had access to arch_safe_halt() ->
-native_safe_halt() path. With this patch, such users can execute
-arch_safe_halt -> pv_native_safe_halt() -> native_safe_halt(), so this
-patch doesn't cause any additional regression.
+No other writes (except the new CDM, strangely) are done conditionally, since
+the value does not change.  Let's keep it consistent with the other register
+writes and maybe clean this up in the future when this function gets a single
+view of all "connected" INTFs at once rather than doing many read-update-writes?
 
->
-> So, there are two possibilities:
->
->  1. This patch breaks bisection for an important TDX configuration
->  2. This patch's conjecture that PARAVIRT_XXL=3Dn is important for TDX
->     is wrong and it is not necessary in the first place.
->
-> What am I missing?
+After that:
+
+Reviewed-by: Marijn Suijten <marijn.suijten@somainline.org>
+
+>  
+>  	if (cfg->cdm)
+>  		DPU_REG_WRITE(c, CTL_CDM_ACTIVE, cfg->cdm);
+> 
+> -- 
+> 2.39.5
+> 
 
