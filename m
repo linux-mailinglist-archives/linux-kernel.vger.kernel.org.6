@@ -1,160 +1,110 @@
-Return-Path: <linux-kernel+bounces-524682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524676-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6950DA3E5BC
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 21:21:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DB36A3E5B3
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 21:20:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DADD17A6D1
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 20:21:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DAC117F133
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 20:20:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78DFD266B72;
-	Thu, 20 Feb 2025 20:20:30 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D60A2641D0;
+	Thu, 20 Feb 2025 20:20:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="VATQUrUp"
+Received: from mail-oo1-f43.google.com (mail-oo1-f43.google.com [209.85.161.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFE23264634;
-	Thu, 20 Feb 2025 20:20:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E1881E2845
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 20:20:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740082828; cv=none; b=cHkE+ow4TXFgKv0g5StOaNeoB/Qof4TPDAvBQQFaX3ORZ+zR9dPOOQPJsLUTwvv/t5ARNqSs/7DWr85AtVLNtt5zc+/KpXmpG8NEEoPFa2OLTTH7ex4/NlzAsSVtiqfTxhtAWFI5drT8jNKswHiYna83Bnd+S1g6k/cdqV7nmP8=
+	t=1740082827; cv=none; b=S3yvQ2nh31eZ67mh9nuhyjs4+p2fXB2qbxLc377eDYf7Ov/fHB9zrxqrAbg/ME+e78n1UOodoxlEp7wTnAmD5MHatRjt9/Z2LhUHFk9bb2OXEZhvbvaFOJaHJz5rykIxiMjV+BTo/7+GS/S2d6YeJAY4turViafxbYRPw2FCyhM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740082828; c=relaxed/simple;
-	bh=pAozlZlRZLz4o8quuwhxeiPSC2RgvEOkmxTuBGY5Kd8=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=nN8f+NShiujsA1P7ifN4JNPVrBO/iR3Pq2GT/rjmIukLzKu2S/MeWAZAza9veIrp9GS3TU878YPYQvZ1Kl5PYj8nuyOc+eJcCsJrSJ6aUagoNGt208HBIYC4fpXtNLoyunDxtsGSchP6i8UGz8ZARrHmij0YmBe1CV6t+QYCyZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63292C4CEE4;
-	Thu, 20 Feb 2025 20:20:28 +0000 (UTC)
-Received: from rostedt by gandalf with local (Exim 4.98)
-	(envelope-from <rostedt@goodmis.org>)
-	id 1tlD2V-00000005fYm-3g63;
-	Thu, 20 Feb 2025 15:20:55 -0500
-Message-ID: <20250220202055.733001756@goodmis.org>
-User-Agent: quilt/0.68
-Date: Thu, 20 Feb 2025 15:20:14 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Heiko Carstens <hca@linux.ibm.com>,
- Sven Schnelle <svens@linux.ibm.com>,
- Vasily Gorbik <gor@linux.ibm.com>,
- Alexander Gordeev <agordeev@linux.ibm.com>
-Subject: [PATCH v3 5/5] selftests/ftrace: Update fprobe test to check enabled_functions file
-References: <20250220202009.689253424@goodmis.org>
+	s=arc-20240116; t=1740082827; c=relaxed/simple;
+	bh=9AJ8NJ3fQ71s31AL2ReKVKY4uz5K/1w53C9zcgxtO+E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=BzUlXVuyQagshsj/9YcpCl8Z/oVb72FQSOK1kdiutjWc5L/G6pDsbVrLbQKc86koAizV0HNDQwpb9jcaDuWXWX07t31VKzm3gz9xMVmgVkmdAbBKZFMpE0pRLfF+B3xEHc1D2sVdRP7R/Pmf1HwOCGuLqdzbEvnj+FiRfFkNmtg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=VATQUrUp; arc=none smtp.client-ip=209.85.161.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oo1-f43.google.com with SMTP id 006d021491bc7-5fcde65241cso948979eaf.3
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 12:20:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1740082823; x=1740687623; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=3YA0S6DeTYDLSFKZ0z+n+MPKwXA/ZHvwCQOrhZShsds=;
+        b=VATQUrUpyhnfA/wKRR5imajWPBWt/CitSu1NwmIu5xZMmmgvi51TsTD3b7iDHmreTd
+         fW397KmI+vuS8Y9unSiTWOvpzOClSXH8q2ytMJgrFUw8q7BIP4KZ0coUzZbxUfhPXExI
+         6BdGBuc+E5IMnCfkHaYCH0eOnRdzL5x7RcShAYfzG1BvoxW5u2cwevhvYUdHkl+Ag1O/
+         +dVjnqYOIKPjSMVHQefpq39AW4lhAicb8MPuAmeoeEj9iv8AQWQSTxxPuvUPwZ42Zz45
+         33ykJ1otFBQixPV8p8jj0Nm2mHIcycNW7rZntb1SguOMqaxszLtC5gu/kvSiP6At7gDC
+         Zq4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740082823; x=1740687623;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3YA0S6DeTYDLSFKZ0z+n+MPKwXA/ZHvwCQOrhZShsds=;
+        b=OgBbh000BlN7AxwtNeGnt65CpeFG/SEcMFRXhgzhN1/sWyzmTOsxaRvqwSkQaf0WwT
+         01ynzcy7zNJQ1C6jteVrYAJ3s2tXHdIHeyrQn26PSLBvrjvEJB2B2NrUEpxPGXIjULWc
+         n0zNsVjzsNu+ErfczqGG20Y6NtORZftxPEserV2y8uu6rhMN4gxnVASZP9loKPFbuvVp
+         5X82+M+379py91JgDz5mgwe6CEGx2vEaHaRYN9ydD+4p7tgGvnLm+RSx2pa5xQb1Ej41
+         71HGFH09+Pq+Ww6S9Gc2Lisa0dYmI47YXDH3KvSM1qw+093p+JEA5AUwYxiZuieNS/Oq
+         yA+g==
+X-Forwarded-Encrypted: i=1; AJvYcCUZgeeUFxIfuWct8FTSrpvlmS9FmjTORTjhD/aksRPDs97GxE0JY4z2ONSJcjYxkF5PiwisMpJ2rdqMEJo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyqohmY4zLJyOLXsReEvOncLZiU+NG4GRbiGgMUWVDCc0kk1/lF
+	/qB5N74Hf83xFWEw6yaFrnzcB+p69LkzlkLZzEEO+cOQ6RPGe6b7M3/G0vUU6Zw=
+X-Gm-Gg: ASbGnctPTR9yr4JP6cB++f15OxmcZUpWrY5QTbgZLeq7udgIf9DP3KtifK7NmoWSNiS
+	Orpzdc91f6L5R+662+wGNnWyfstsx5KO4fcWoOtmgyOXuahQtnwNOx127+4WB2nnekwupxnqpmK
+	Fg4wINz9/aY5FtcDtFG/b2Vz+9M/HedtCNOw8QmkO4lyAbf+eLZe/S1xKHoqwsMH3LqQfx/Fl23
+	sW9noJh3CMWADVyNwELOFpicJXuYl2DBvSJ35lIE83+d1uS6iIn05VOQb9YimyRyCJ9iyFTu1U5
+	rAxR7QsclS4exmhHiekxE9211CqifOPvHw6tfCVhRP1ugS2DbtV/
+X-Google-Smtp-Source: AGHT+IGSPaTaOucH2dLQqzNmLsQTf0sq/ili5Qrkv0KGKys857Oj5ka28XQilT2mB8kbG8XY9mj4fw==
+X-Received: by 2002:a05:6808:2112:b0:3f3:d5a1:a928 with SMTP id 5614622812f47-3f4247c1ef4mr590369b6e.32.1740082823499;
+        Thu, 20 Feb 2025 12:20:23 -0800 (PST)
+Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-3f41a6fc550sm504082b6e.39.2025.02.20.12.20.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 20 Feb 2025 12:20:22 -0800 (PST)
+Message-ID: <13c5e420-a3ca-468b-8810-3528b24d8664@baylibre.com>
+Date: Thu, 20 Feb 2025 14:20:20 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 05/14] iio: backend: add support for number of lanes
+To: Antoniu Miclaus <antoniu.miclaus@analog.com>, jic23@kernel.org,
+ robh@kernel.org, conor+dt@kernel.org, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250220135429.8615-1-antoniu.miclaus@analog.com>
+ <20250220135429.8615-6-antoniu.miclaus@analog.com>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <20250220135429.8615-6-antoniu.miclaus@analog.com>
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Steven Rostedt <rostedt@goodmis.org>
+On 2/20/25 7:54 AM, Antoniu Miclaus wrote:
+> Add iio backend support for number of lanes to be enabled.
+> 
+> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
+> ---
+This is why I was pushing for a similar function to be an iio_backend
+function in [1]. :-)
 
-A few bugs were found in the fprobe accounting logic along with it using
-the function graph infrastructure. Update the fprobe selftest to catch
-those bugs in case they or something similar shows up in the future.
+[1]: https://lore.kernel.org/linux-iio/94efa413-5fa9-4014-86c2-331442e9d42e@baylibre.com/
 
-The test now checks the enabled_functions file which shows all the
-functions attached to ftrace or fgraph. When enabling a fprobe, make sure
-that its corresponding function is also added to that file. Also add two
-more fprobes to enable to make sure that the fprobe logic works properly
-with multiple probes.
-
-Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-Tested-by: Heiko Carstens <hca@linux.ibm.com>
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
- .../test.d/dynevent/add_remove_fprobe.tc      | 54 +++++++++++++++++++
- 1 file changed, 54 insertions(+)
-
-diff --git a/tools/testing/selftests/ftrace/test.d/dynevent/add_remove_fprobe.tc b/tools/testing/selftests/ftrace/test.d/dynevent/add_remove_fprobe.tc
-index dc25bcf4f9e2..449f9d8be746 100644
---- a/tools/testing/selftests/ftrace/test.d/dynevent/add_remove_fprobe.tc
-+++ b/tools/testing/selftests/ftrace/test.d/dynevent/add_remove_fprobe.tc
-@@ -7,12 +7,38 @@ echo 0 > events/enable
- echo > dynamic_events
- 
- PLACE=$FUNCTION_FORK
-+PLACE2="kmem_cache_free"
-+PLACE3="schedule_timeout"
- 
- echo "f:myevent1 $PLACE" >> dynamic_events
-+
-+# Make sure the event is attached and is the only one
-+grep -q $PLACE enabled_functions
-+cnt=`cat enabled_functions | wc -l`
-+if [ $cnt -ne 1 ]; then
-+	exit_fail
-+fi
-+
- echo "f:myevent2 $PLACE%return" >> dynamic_events
- 
-+# It should till be the only attached function
-+cnt=`cat enabled_functions | wc -l`
-+if [ $cnt -ne 1 ]; then
-+	exit_fail
-+fi
-+
-+# add another event
-+echo "f:myevent3 $PLACE2" >> dynamic_events
-+
-+grep -q $PLACE2 enabled_functions
-+cnt=`cat enabled_functions | wc -l`
-+if [ $cnt -ne 2 ]; then
-+	exit_fail
-+fi
-+
- grep -q myevent1 dynamic_events
- grep -q myevent2 dynamic_events
-+grep -q myevent3 dynamic_events
- test -d events/fprobes/myevent1
- test -d events/fprobes/myevent2
- 
-@@ -21,6 +47,34 @@ echo "-:myevent2" >> dynamic_events
- grep -q myevent1 dynamic_events
- ! grep -q myevent2 dynamic_events
- 
-+# should still have 2 left
-+cnt=`cat enabled_functions | wc -l`
-+if [ $cnt -ne 2 ]; then
-+	exit_fail
-+fi
-+
- echo > dynamic_events
- 
-+# Should have none left
-+cnt=`cat enabled_functions | wc -l`
-+if [ $cnt -ne 0 ]; then
-+	exit_fail
-+fi
-+
-+echo "f:myevent4 $PLACE" >> dynamic_events
-+
-+# Should only have one enabled
-+cnt=`cat enabled_functions | wc -l`
-+if [ $cnt -ne 1 ]; then
-+	exit_fail
-+fi
-+
-+echo > dynamic_events
-+
-+# Should have none left
-+cnt=`cat enabled_functions | wc -l`
-+if [ $cnt -ne 0 ]; then
-+	exit_fail
-+fi
-+
- clear_trace
--- 
-2.47.2
+Not sure if that changes what we want to do here, but just pointing it
+out as a similar case to help us decide what the most useful generic
+function would be for this.
 
 
 
