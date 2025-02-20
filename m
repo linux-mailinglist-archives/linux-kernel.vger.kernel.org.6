@@ -1,138 +1,127 @@
-Return-Path: <linux-kernel+bounces-524064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EBC1A3DE90
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:31:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7DA1A3DEB3
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:34:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D75841888898
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:30:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 416A0700BD0
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 15:30:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58E76204864;
-	Thu, 20 Feb 2025 15:29:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 500371FE471;
+	Thu, 20 Feb 2025 15:29:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="ndlJCNnt"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WrdraW2z"
+Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 886011E9B12;
-	Thu, 20 Feb 2025 15:29:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41A7E1FC7C1;
+	Thu, 20 Feb 2025 15:29:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740065367; cv=none; b=G7GxQGgf9hzvafxjD6E3SOCcC2xsTg3keU7KNqG5DkDh1nngwXAdrsManXqFztN+JWKwE9594wFuExlXigFA8LmK1pWFu4Meitp4NpuDXpd/y/+IJuNOaK4Kb4y0gXTDE7/BJyyCVvcff7syORhgWs5uWwWPZUjswjFIniiGEuo=
+	t=1740065354; cv=none; b=dBQL6G2CUjlWCvN2K0MwJPWbXSyLmOK+xbEN6yo9RI7TBNv+LT2wMYfT4ZbG2P3W33+wxEqwDMmf7k8/WyvMy4u2YcOvwpl713LTZ2HkYl+UA77AFwAkOUjLmn7sEBXdzgWdB9K374aeURC1fPe9xpP2mPlt/pXm9GKtuKohv4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740065367; c=relaxed/simple;
-	bh=JYf1Ya8/CyfiemDxGThXCwlg5i8rbP/VIeDg9O4gBDs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fickCxXyqfLyI+f2+32SOSaRn/+6tq3oRyb5pJp+DM6wzAWTVVj7bxq752pI2MsALInAqQIo+kx1iYrtumxpbO7364BcbKN5RIgr9EcNPlLvO9FAwbN+6CDw+X4YGx4n0bcqC2ecN1fPqYZSsXjx3mMsLssqGp52C2sNmxgiYho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=ndlJCNnt; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=CcJP8ksRnf3qKh0YWjDzBD4E7z4Wn6EhKqjBJn9G/OU=; b=ndlJCNntkmM/DRZ0gG4+H/dNDm
-	07HBM5inyUCips2IfypxxuGmwf0o3iDTg63voCApCvbdKi0IldOZgwmK5DXTU/iQ08bCNXMTR0T5q
-	hscY0LO67/kB3mDALYADHmeciWnFkIaGwpBE1VZcP1KQ3esnpCeE2p5QvDyCxGQrvILFIyODDA5w8
-	wvK3mCori91Ke6hJTio8u2bkJ7EdjXG7vgw8RgNW8/h7sBsRxRS2kh/NK86SiyctyrawW9wcLlBIx
-	x/kpI4lz0O23y44dY0MQqARCzmcBKj+nrb4sv3wco6jCSrrU/6ezHUuB5sSXfzUsiC3VTZ73Y7TZ6
-	5b3axhdg==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:39386)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1tl8UD-0001Se-1y;
-	Thu, 20 Feb 2025 15:29:13 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1tl8UA-000151-1q;
-	Thu, 20 Feb 2025 15:29:10 +0000
-Date: Thu, 20 Feb 2025 15:29:10 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Dimitri Fedrau <dima.fedrau@gmail.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
-	Gregor Herburger <gregor.herburger@ew.tq-group.com>,
-	Stefan Eichenberger <eichest@gmail.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v2 2/2] net: phy: marvell-88q2xxx: Prevent hwmon
- access with asserted reset
-Message-ID: <Z7dKRrXIUCaVeRfH@shell.armlinux.org.uk>
-References: <20250220-marvell-88q2xxx-hwmon-enable-at-probe-v2-0-78b2838a62da@gmail.com>
- <20250220-marvell-88q2xxx-hwmon-enable-at-probe-v2-2-78b2838a62da@gmail.com>
- <Z7b3sU0w2daShkBH@shell.armlinux.org.uk>
- <20250220152214.GA40326@debian>
+	s=arc-20240116; t=1740065354; c=relaxed/simple;
+	bh=eKWU19n0WBr+VIGXdyoC3+/g/6CUv/SBl+AhU83JuOg=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=G+/lxLDNinWD/dlWx+ZLJnedRh0GKcFUWAVPd+adgUKYtGG8qYmZ00EtT++24KJFRrV86f61QWnO67GpnAMB2hRGFBwcRdR9zv4YJqWaYsobCGrBNYF79oyUFFv0wawaX2oPDO7h3G9lx+zv1IMTETtwq+/7aQJTruG/BtWLqcQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WrdraW2z; arc=none smtp.client-ip=209.85.219.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-6e6711bbd00so1636416d6.1;
+        Thu, 20 Feb 2025 07:29:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740065352; x=1740670152; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=eKWU19n0WBr+VIGXdyoC3+/g/6CUv/SBl+AhU83JuOg=;
+        b=WrdraW2zIM/3ia0IuU++DOXLfoXjLfNKy3F3cPs4DQyllh+jkGTyuI8c2mD8T3lzzm
+         jAGs36Jt6Jv3cmSIQeznfs/CAyhPfa9UGUfetv9tI+9+Kf4ensqUrh/6cSIijPSelXRn
+         cLSMpKOhVr5n3uEvC6ocX+2SNODW48AGb0JANwM0+d7noRrgZDcF/ic2W8ZCNHKpeZ0n
+         +EO0Mp5dAyV2KwMmhGSliocBwRCiZix9zq5LduwSzssMcNcsbg/Yq6eQNbt0SjUGPLkG
+         PuzBzrIt810grrzSArHQPdZtLWug2RpeN/MOF5l0BiCnwT021o2tKt4W2+z2BZ7mXGDs
+         N7BA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740065352; x=1740670152;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=eKWU19n0WBr+VIGXdyoC3+/g/6CUv/SBl+AhU83JuOg=;
+        b=Io4+3kLzJUGIt8hYtzpeTcXSvZUyEOSNDnBYZYVN9Cs5EYjp87eS1ZjTu12OIHFb07
+         6G5w+5ux80KZwRlk9EikgHMl/90Ow6bWjjwG2L0UtdgL5+lkc3Gn56jLNj0IXK9+31At
+         m6yX7p+0fTLQX+axzy44lRQBpdeWYKJnvbFmYug1R/d2gXQZTMEcqclUELI0RUPu5g6z
+         XTb7IqFpdud2VF5wQow5JGH0LvJ113UvHMRilc6xZpiYjyYczM8eOntriX/5PiArjfdx
+         WKsw5VHB3AUO2nZkqkv0uybcaOylgWtCmls5BOEQeShoX/GavNM8pRRN55IzvR10ST9v
+         aOAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVPqC975CmTzwGCZZijlcO0/Z6vhum5g59lR4AK9fJ7zX4iVGVG+8fKPOymNpAp5JAAMFj7hjTpZP64FzE=@vger.kernel.org, AJvYcCVmxtPAs+Y2WUk6gFxxbo9JOQSCDo50PL+6VijiKXcfaSSsHUeIYoYLcPSM6QFDJ8EmIBuV1ffhBNdV2JE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywjc4xUibZYvrdcgLsiWvQ+AgBJGECapWQQevXzPDHN4j6HnHmQ
+	U2k+6q1Q5HdBrTxPbMy5FtMB9LOuy6P+U9/yenCMGtrh0UzTGTN8KmlKdw==
+X-Gm-Gg: ASbGncsIbzCxzoqUi8UnFiXI2EwIzBcMNmBx1QKHMEAU6AGTTV9ovqabjii5dP7kTZb
+	Dw0Z5F98SpS/QdWb1l2+NfVdHmDEtC92Sv4A953HA5yH9xnBCOnjh624JMIwd5PKOwlCKHPcYF0
+	qbTFiDpiwJ1vMZB6R5/5gjKNQFiwJVxokmkbNt0eUxr1HrAgIZBFhtioKpoBc2VYXNF5DmCLiDO
+	TxOthhurFfmw+LjtclStOhF+Urivohjng8tmCS+LWsEETY6dCbQvPbaqqaS/QRj8SRNAL4fQDUN
+	zNPRzzmh0PUPpVrTRmo5BJ1iQLNimO83XXmtXE17oZtJc/5RiQqxcCrBT/XOCt2VRlrj
+X-Google-Smtp-Source: AGHT+IE3BlHjHE+N3vVcpX9SIe1Drmm7gJavU4W/NFg9hMumG9l36jT00FR8pSGnnpptLdmpScHUvQ==
+X-Received: by 2002:ad4:5766:0:b0:6d8:8283:445c with SMTP id 6a1803df08f44-6e66ccc47d9mr109692786d6.4.1740065352096;
+        Thu, 20 Feb 2025 07:29:12 -0800 (PST)
+Received: from ?IPv6:2600:1002:a012:8f2c:1cd:572e:a9fb:7da4? ([2600:1002:a012:8f2c:1cd:572e:a9fb:7da4])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e65d785a4asm87656386d6.29.2025.02.20.07.29.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Feb 2025 07:29:11 -0800 (PST)
+Message-ID: <61bd42742ff8a8e5f409b0f2ccc4ab8875dfe7a4.camel@gmail.com>
+Subject: Re: [PATCH] media: vim2m: print device name after registering device
+From: Matthew Majewski <mattwmajewski@gmail.com>
+To: Shuah Khan <skhan@linuxfoundation.org>, Uwe Kleine-Konig
+	 <u.kleine-koenig@baylibre.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil	
+ <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Date: Thu, 20 Feb 2025 10:29:10 -0500
+In-Reply-To: <5051c252-f1ef-4731-b0cb-fedfcda04d98@linuxfoundation.org>
+References: <20250219190501.295976-1-mattwmajewski@gmail.com>
+	 <ym5q2cpn2lxk7sarylnf4o3ztvtnb47wroxdiibdsp6yz4gt2y@jfyfo2ekmdmj>
+	 <5051c252-f1ef-4731-b0cb-fedfcda04d98@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (by Flathub.org) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250220152214.GA40326@debian>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Thu, Feb 20, 2025 at 04:22:14PM +0100, Dimitri Fedrau wrote:
-> Hi Russell,
-> 
-> Am Thu, Feb 20, 2025 at 09:36:49AM +0000 schrieb Russell King (Oracle):
-> > On Thu, Feb 20, 2025 at 09:11:12AM +0100, Dimitri Fedrau wrote:
-> > > If the PHYs reset is asserted it returns 0xffff for any read operation.
-> > > This might happen if the user admins down the interface and wants to read
-> > > the temperature. Prevent reading the temperature in this case and return
-> > > with an network is down error. Write operations are ignored by the device
-> > > when reset is asserted, still return a network is down error in this
-> > > case to make the user aware of the operation gone wrong.
-> > 
-> > If we look at where mdio_device_reset() is called from:
-> > 
-> > 1. mdio_device_register() -> mdiobus_register_device() asserts reset
-> >    before adding the device to the device layer (which will then
-> >    cause the driver to be searched for and bound.)
-> > 
-> > 2. mdio_probe(), deasserts the reset signal before calling the MDIO
-> >    driver's ->probe method, which will be phy_probe().
-> > 
-> > 3. after a probe failure to re-assert the reset signal.
-> > 
-> > 4. after ->remove has been called.
-> > 
-> 
-> There is also phy_device_reset that calls mdio_device_reset.
+On Wed, 2025-02-19 at 17:21 -0700, Shuah Khan wrote:
+> On 2/19/25 14:58, Uwe Kleine-Konig wrote:
+> > On Wed, Feb 19, 2025 at 02:05:01PM -0500, Matthew Majewski wrote:
+> > > Move the v4l2_info() call displaying the video device name after
+> > > the
+> > > device is actually registered.
+> > >=20
+> > > This fixes a bug where the driver was always displaying
+> > > "/dev/video0"
+> > > since it was reading from the vfd before it was registered.
+> > >=20
+> > > Signed-off-by: Matthew Majewski <mattwmajewski@gmail.com>
+> >=20
+> > A Fixes: tag would be great.
+>=20
+> Matthew, there is no need to resend the patch. Just send me the
+> Fixes tag and I will update the repo.
+>=20
+>=20
 
-Ok, thanks for pointing that out.
+Ok, here is the fixes tag:
 
-> > That is the sum total. So, while the driver is bound to the device,
-> > phydev->mdio.reset_state is guaranteed to be zero.
-> > 
-> > Therefore, is this patch fixing a real observed problem with the
-> > current driver?
-> >
-> Yes, when I admin up and afterwards down the network device then the PHYs
-> reset is asserted. In this case phy_detach is called which calls
-> phy_device_reset(phydev, 1), ...
+Fixes: cf7f34777a5b4100a ("media: vim2m: Register video device after
+setting up internals")
 
-I'm still concerned that this solution is basically racy - the
-netdev can come up/down while hwmon is accessing the device. I'm
-also unconvinced that ENETDOWN is a good idea here.
+Thank you both for your time.
 
-While I get the "describe the hardware" is there a real benefit to
-describing this?
+Best,
+Matthew
 
-What I'm wondering is whether manipulating the reset signal in this
-case provides more pain than gain.
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
