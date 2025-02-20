@@ -1,87 +1,78 @@
-Return-Path: <linux-kernel+bounces-522854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C3F5A3CF47
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 03:15:58 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A1EEA3CF49
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 03:16:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A04BD16CD28
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 02:15:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 121147A894C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 02:16:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAA491C5D7E;
-	Thu, 20 Feb 2025 02:15:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1948F165F13;
+	Thu, 20 Feb 2025 02:16:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="O7+jY41a"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="eVWQ4fJr"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95F21194141
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 02:15:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42361EEB1
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 02:16:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740017718; cv=none; b=k+hqRqKOdPb11mzdoRS0rIh65vdnHsxW/Mrc90SKbwWhvJcNZsa/FYiFstxk+FAJGmED5RfV2WLTczVf+eHzpXxo4c53TLmXTdxGtBzPumVbDlmvi3mRvH2VW2wm913EN0BdocMCX/PSuNhKievHMpesDJOBjm8SKzcRMT52qNw=
+	t=1740017809; cv=none; b=e1lLnyDrsKQSXWjMpIlvB90ayA6XNS9alWBJIMeP8hL85vvv5taNn39nQRKXyzIsUslN6Av3ysNHNMkY33fFeUCuWXc7l2K5uMXhA+bZg+ONiQowSjUNaGL07Zx/mEZ5yIeoYw41W4loZjFsFTLuEDbdLzst7Ex+xj4eflzZy70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740017718; c=relaxed/simple;
-	bh=2c9tYn7eP1R9rrXiS11Y5Ntlx9iLIm2YEjhLlVNWmHI=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=U6s6cQudkwuWD40W3TDgyDgdQedXewSTG7Dzm90Hes8MCGJDJydH6VNZIgta24kJvIUHeXEF604CybZ7Q+yvtpBAtBvh2APC3XUyid7CiPrgldHEIlhd+gMzwU4A88knX5JhKs3HsYzIh3O2VSGdIuTusUFaIDQ86xkxvvGI7zc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=O7+jY41a; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740017714;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wu5Vn28p7MixYC+/9v+4ssvT0nmU9JWyu/14w9WYEg0=;
-	b=O7+jY41a8+KHzeX6l3WmCPsuVZa/qaTtzKCH0ajy1MDO90LXNy02IvIi2tDfjOea7XQpSi
-	XWjc6vyCKpCojiBTQj5av0NulaCWz6IIqt3Q1qMMf1eij1IsnOQTtzyUtmD9v9bebcPEyM
-	mTfotu5JBTx8ykQsW2+tl+ToWSn60UU=
-Received: from mail-oi1-f200.google.com (mail-oi1-f200.google.com
- [209.85.167.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-301-cPFFaHvZOw-sOVqf1ssLAQ-1; Wed, 19 Feb 2025 21:15:12 -0500
-X-MC-Unique: cPFFaHvZOw-sOVqf1ssLAQ-1
-X-Mimecast-MFC-AGG-ID: cPFFaHvZOw-sOVqf1ssLAQ_1740017711
-Received: by mail-oi1-f200.google.com with SMTP id 5614622812f47-3f414d029c9so193378b6e.1
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 18:15:12 -0800 (PST)
+	s=arc-20240116; t=1740017809; c=relaxed/simple;
+	bh=JpgwqCB8zCvfhKFjCKWpOWkLduzHfEVVSLa2+KR6ff8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WUMXodMCFGmXmUEspLLWWrsniRpoeXOk+1r0o4MvPcgBnc4RIVyk6xq9o8q9q9l6UExHZpFuxSR3bRbU1sbNyGdEPuK8t/ZDfyQi2TD4g+T7eSNkxm+AVsYL7c6vk9IbYjrNibaKsq9zdL0IyXWMRoyJLmcS432sy52ZDQPLM00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=eVWQ4fJr; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2211acda7f6so7370125ad.3
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Feb 2025 18:16:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1740017806; x=1740622606; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=uPJrUAVVU255VluMM4NRpdJMTLeQod8b802zAHP71IM=;
+        b=eVWQ4fJrbDm/hRIj4z77Ol2JY6hp64u3tw0UImktGDE9KkDu3CrsXVeLUQwqiBI/Y0
+         YAt8e40n9HUcZOwrm1PSt0teiEKyHUJz7805TI97mmaYPP9ghQHkgFarOf+PPMA8J3zJ
+         0rrMtcoHW3OTUn++ZKqbzyrSUxsDI2SETcJ1zi6kRDc2kl0mBuwtTrFQR2AcIE7Ag1zZ
+         MgANAFSe63RM4OIzuJsCqYN6IWlTTkCel1LkYXPx7qaEC7yx15TZI/bnU7QyIqBMp2Xu
+         JazMyuXelIBeMg5O4YVq4TrPCbMQSLsqJIgNmI2EhqBNq1KBqmYRQKxQGVDFC+F5q1uw
+         11Qg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740017711; x=1740622511;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from
+        d=1e100.net; s=20230601; t=1740017806; x=1740622606;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wu5Vn28p7MixYC+/9v+4ssvT0nmU9JWyu/14w9WYEg0=;
-        b=jCHM7SR45j0CW5HsUwD+1zdVUDz8AjTk8BZ0BwtudbF30DniSUYjs0+xrToff68CXO
-         tFL5xp0tvs/PS3E1Rf0LBoHNUzJpRV4u6MG6xOQZWmuF1Qr+/DxKPnrR3HgDCbF2PMnm
-         KDXGfjvf9dHApUhL6etak0MbRk3d0qw/VsoFVa3ekrIutdGtT7qbJgwU5g2xGcHckczQ
-         o29coq2grtQ+DyrfVCk3vuK8kyyBxkEPbFqarJBhAmjtfLOlOQz22nuB3JeT3Y9qMQ1A
-         egbZbpTojdFZIGgDNVUd4W52fOkP6Gf5prANO2VrQklezBzoZD7ebs1SGzAKNTmCzF/4
-         AGDw==
-X-Forwarded-Encrypted: i=1; AJvYcCUf3sSSKYfj5n1UMwVw20JM+HksGhA/t18uvfVDNXXhJ+zJv01VIq/Y5VPXsx0hsX7VDi9Kxc848+FlMps=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2+keVaik1zpYcz2j8o7Pv9SHnZ0aaJ8Bqiuwb0P3ccRp2qLLp
-	xLR3gfUDZRwZSWSh2ioysJIBgs+afonwa5HFsZIkbxOxMuhv6BfyVx0OQ3uQwZyow71a5AK/lXs
-	z5G9vv9rRcr6JZ0OaZOlxwAm3doMNXDHIhfu7sHvUMooG/m+pE+Y3OaM/YOy7Og==
-X-Gm-Gg: ASbGnctiL6OiXgJ77UhsktuAKxrGOxicBY5ua4zBXDTlFZwtf11DvaJVPu4kAWDCZpd
-	0UxZWwz41mavMnV9W98Z8LCaUFRLdApZUGvy3GafHPEBObm2WxZDicM5nkpvrV1U0RytwZYvbyh
-	PU2YA+1LguItPjfgbeBx42X7FtARwS5Pj2KI9QWgcNpFvz0AQDrn4apysK3V4g2Hlf2Ums0fbSq
-	QbGiR5aG6QW2RQdC+Usi/r4WLB0D7O2z5kogsrdkfrEsrrSOec8f30WZooijMQ6Qa55992jDDYE
-	VOwqmjdjTQt6hL9lHU3u851iIyXlGqLVeC7h50cScHbLk96e
-X-Received: by 2002:a05:6830:6117:b0:727:3f3e:53ba with SMTP id 46e09a7af769-7273f3e5497mr2806113a34.26.1740017711530;
-        Wed, 19 Feb 2025 18:15:11 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFW68eP8r/6kxUFYP+2oduO7DOaqKrtuTM1aeIejvCopjqxsLRzJQJhvDewuc0CLFu7yEtrXw==
-X-Received: by 2002:a05:6830:6117:b0:727:3f3e:53ba with SMTP id 46e09a7af769-7273f3e5497mr2806093a34.26.1740017711226;
-        Wed, 19 Feb 2025 18:15:11 -0800 (PST)
-Received: from ?IPV6:2601:188:c100:5710:627d:9ff:fe85:9ade? ([2601:188:c100:5710:627d:9ff:fe85:9ade])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7273a14070esm720434a34.49.2025.02.19.18.15.09
+        bh=uPJrUAVVU255VluMM4NRpdJMTLeQod8b802zAHP71IM=;
+        b=SoQOr+VfftfHDFNBBOBnpJl3aV39/U0yoXDYf56pzNhLB4SX4qX3g9obhyg4jQ3fsi
+         y7HlcmY3AwlJmeIcF507A7RBSIJxaY3KmMAL3S/ouK30zv9qRKFIFePn1Gzcvvl+xQs9
+         3BjMEdSpYz0Bs8WJQe9OavO8uPI4ciCsROoKkXivXdh2ioSPZ9j/6PEyy9I0dQiZC5Ce
+         wfaAGalDnr8PpqD4yv9CL6swTE0y4gA2zh+snNhBf+hiNrcQSnsEAzT725/DGTHpUOti
+         WIM+cMzqV0rhZfbRrBfL2wZfpCmeg4iG7u0HGWffgbI5tb3zJgR0iQ3iWAmjpkHdiOCZ
+         VzfQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWmq4+H5LfyQ4rslOjXLw0z7fpLkLc9QURfq5swGoLemufgCTZofXFJVB9NAF4ZCyUwUSXqYO839m2qBcM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5Qpoo9nY6s4h29ztTjuO31+ERdijMCYqkhl5CYHCCkoTrN7RN
+	bHy+RzEuqtQF/uahhEmWvLYgEtWNK4ws5BLi7Min1vlQQFntFTyYyX46tWtaXpo=
+X-Gm-Gg: ASbGncshvlwPAh7JuwPSFwu540xr455CDYpRZu7FurXZPJeZalQuBNdr8Vo8YJsNMRP
+	soKpmo4H9u+juZJ7ScdJ7YkuH42DF3ee5GV7gwIQBAMdWbewbXnVwWHciUr1S0lQDsqj61OEj9r
+	iv4dDBHhh0jgqbkreJ8b5oOz3gJEyEl/HXlJGVZBz8bhTUGYHdxDlRJ4KKJkHE5GBL+FCDr6YQv
+	O5fvR9gj4fPP/zyF2b4c0ytZCqIXKy5/3VMCGpDhJqNWXJ9M2comEh7zzLaSBpGHW+zBtJ+LrwD
+	r6FrS/j+INk4xgGeVgWAkuPve1v4JCPNGET/NK1S
+X-Google-Smtp-Source: AGHT+IHsrTf+2IUgEuka8Rdp79QumYTvBN07QjGvbatNc0HfOYKuhS5UhceZtzQLSBZ2eikrfT+dcg==
+X-Received: by 2002:a17:902:f609:b0:220:d79f:60f1 with SMTP id d9443c01a7336-2217119ecc7mr89900345ad.42.1740017806519;
+        Wed, 19 Feb 2025 18:16:46 -0800 (PST)
+Received: from [10.84.150.121] ([63.216.146.179])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22116f0c907sm69252675ad.222.2025.02.19.18.16.41
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Feb 2025 18:15:10 -0800 (PST)
-From: Waiman Long <llong@redhat.com>
-X-Google-Original-From: Waiman Long <longman@redhat.com>
-Message-ID: <9f9150b4-1cf5-4380-b431-419f70775a7d@redhat.com>
-Date: Wed, 19 Feb 2025 21:15:08 -0500
+        Wed, 19 Feb 2025 18:16:45 -0800 (PST)
+Message-ID: <5c5232ee-4b4d-42a1-9be9-3489f93f7590@bytedance.com>
+Date: Thu, 20 Feb 2025 10:16:39 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,81 +80,71 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] hung_task: Show the blocker task if the task is hung
- on mutex
-To: Steven Rostedt <rostedt@goodmis.org>, Waiman Long <llong@redhat.com>
-Cc: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Will Deacon <will@kernel.org>, Andrew Morton <akpm@linux-foundation.org>,
- Boqun Feng <boqun.feng@gmail.com>, Joel Granados <joel.granados@kernel.org>,
- Anna Schumaker <anna.schumaker@oracle.com>, Lance Yang
- <ioworker0@gmail.com>, Kent Overstreet <kent.overstreet@linux.dev>,
- Yongliang Gao <leonylgao@tencent.com>, Tomasz Figa <tfiga@chromium.org>,
- Sergey Senozhatsky <senozhatsky@chromium.org>, linux-kernel@vger.kernel.org,
- Linux Memory Management List <linux-mm@kvack.org>
-References: <173997003868.2137198.9462617208992136056.stgit@mhiramat.tok.corp.google.com>
- <173997004932.2137198.7959507113210521328.stgit@mhiramat.tok.corp.google.com>
- <20250219112308.5d905680@gandalf.local.home>
- <0fa9dd8e-2d83-487e-bfb1-1f5d20cd9fe6@redhat.com>
- <20250219152435.35077ac3@gandalf.local.home>
- <db4ee5e9-56bb-408c-85e7-f93e2c3226dc@redhat.com>
- <20250220075639.298616eb494248d390417977@kernel.org>
- <d8c01f69-34c0-45cf-a532-83544a3a3efd@redhat.com>
- <20250219204153.65ed1f5e@gandalf.local.home>
+Subject: Re: [PATCH v3] arm: pgtable: fix NULL pointer dereference issue
 Content-Language: en-US
-In-Reply-To: <20250219204153.65ed1f5e@gandalf.local.home>
+To: Ezra Buehler <ezra@easyb.ch>
+Cc: linux@armlinux.org.uk, david@redhat.com, hughd@google.com,
+ ryan.roberts@arm.com, akpm@linux-foundation.org, muchun.song@linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, Ezra Buehler
+ <ezra.buehler@husqvarnagroup.com>, stable@vger.kernel.org
+References: <20250217024924.57996-1-zhengqi.arch@bytedance.com>
+ <CAM1KZSnM-imYwM5Gf4gw8yXr1+6PXyLvbpKbBu_KJmPR0WS7cA@mail.gmail.com>
+From: Qi Zheng <zhengqi.arch@bytedance.com>
+In-Reply-To: <CAM1KZSnM-imYwM5Gf4gw8yXr1+6PXyLvbpKbBu_KJmPR0WS7cA@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
 
-On 2/19/25 8:41 PM, Steven Rostedt wrote:
-> On Wed, 19 Feb 2025 20:36:13 -0500
-> Waiman Long <llong@redhat.com> wrote:
->
->   
->>>>>> this field, we don't need to take lock, though taking the wait_lock may
->>>>>> still be needed to examine other information inside the mutex.
->>> Do we need to take it just for accessing owner, which is in an atomic?
->> Right. I forgot it is an atomic_long_t. In that case, no lock should be
->> needed.
-> Now if we have a two fields to read:
->
-> 	block_flags (for the type of lock) and blocked_on (for the lock)
->
-> We need a way to synchronize the two. What happens if we read the type, and
-> the task wakes up and and then blocks on a different type of lock?
->
-> Then the lock read from blocked_on could be a different type of lock than
-> what is expected.
 
-That is different from reading the owner. In this case, we need to use 
-smp_rmb()/wmb() to sequence the read and write operations unless it is 
-guaranteed that they are in the same cacheline. One possible way is as 
-follows:
+On 2025/2/19 18:58, Ezra Buehler wrote:
+> On Mon, Feb 17, 2025 at 3:49 AM Qi Zheng <zhengqi.arch@bytedance.com> wrote:
+>>
+>> When update_mmu_cache_range() is called by update_mmu_cache(), the vmf
+>> parameter is NULL, which will cause a NULL pointer dereference issue in
+>> adjust_pte():
+>>
+>> Unable to handle kernel NULL pointer dereference at virtual address 00000030 when read
+>> Hardware name: Atmel AT91SAM9
+>> PC is at update_mmu_cache_range+0x1e0/0x278
+>> LR is at pte_offset_map_rw_nolock+0x18/0x2c
+>> Call trace:
+>>   update_mmu_cache_range from remove_migration_pte+0x29c/0x2ec
+>>   remove_migration_pte from rmap_walk_file+0xcc/0x130
+>>   rmap_walk_file from remove_migration_ptes+0x90/0xa4
+>>   remove_migration_ptes from migrate_pages_batch+0x6d4/0x858
+>>   migrate_pages_batch from migrate_pages+0x188/0x488
+>>   migrate_pages from compact_zone+0x56c/0x954
+>>   compact_zone from compact_node+0x90/0xf0
+>>   compact_node from kcompactd+0x1d4/0x204
+>>   kcompactd from kthread+0x120/0x12c
+>>   kthread from ret_from_fork+0x14/0x38
+>> Exception stack(0xc0d8bfb0 to 0xc0d8bff8)
+>>
+>> To fix it, do not rely on whether 'ptl' is equal to decide whether to hold
+>> the pte lock, but decide it by whether CONFIG_SPLIT_PTE_PTLOCKS is
+>> enabled. In addition, if two vmas map to the same PTE page, there is no
+>> need to hold the pte lock again, otherwise a deadlock will occur. Just add
+>> the need_lock parameter to let adjust_pte() know this information.
+>>
+>> Reported-by: Ezra Buehler <ezra.buehler@husqvarnagroup.com>
+>> Closes: https://lore.kernel.org/lkml/CAM1KZSmZ2T_riHvay+7cKEFxoPgeVpHkVFTzVVEQ1BO0cLkHEQ@mail.gmail.com/
+>> Fixes: fc9c45b71f43 ("arm: adjust_pte() use pte_offset_map_rw_nolock()")
+>> Cc: stable@vger.kernel.org
+>> Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
+>> Acked-by: David Hildenbrand <david@redhat.com>
+> 
+> Tested-by: Ezra Buehler <ezra.buehler@husqvarnagroup.com>
+> 
+> I confirm that this fixes our issue on the AT91SAM9G25-based GARDENA
+> smart Gateway.
+> 
+> However, unfortunately, I do not have a 4-core ARMv5 board at hand to
+> test the CONFIG_SPLIT_PTE_PTLOCKS case.
 
-Writer - setting them:
+Got it. And thank you very much for your testing!
 
-     WRITE_ONCE(lock)
-     smp_wmb()
-     WRITE_ONCE(type)
-
-Clearing them:
-
-     WRITE_ONCE(type, 0)
-     smp_wmb()
-     WRITE_ONCE(lock, NULL)
-
-Reader:
-
-     READ_ONCE(type)
-again:
-     smp_rmb()
-     READ_ONCE(lock)
-     smp_rmb()
-     if (READ_ONCE(type) != type)
-         goto again
-
-Cheers,
-Longman
-
+> 
+> Cheers,
+> Ezra.
 
