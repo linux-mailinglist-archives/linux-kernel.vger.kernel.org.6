@@ -1,92 +1,121 @@
-Return-Path: <linux-kernel+bounces-524200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA3B3A3E069
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:22:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E412FA3E0A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:27:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5AC6422F15
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:20:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDD943A9A3E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 16:22:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C237920C00C;
-	Thu, 20 Feb 2025 16:20:04 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C90E520B211;
+	Thu, 20 Feb 2025 16:22:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jzXns6wX"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF29F1FECD8
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 16:20:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA62D1FE46F;
+	Thu, 20 Feb 2025 16:22:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740068404; cv=none; b=SgnhLUrIFtLwGV/l49oBSJCcI4IANnTPRwGwrRLDxvulOYPpfO6HGWnwHH1FI+L4PDvDbLR+YpWCO1IMEQbB04tnMiO8dgoSRMMUEeX7yz+q0JDpSwwUvqQAvoYaSXXPZZKH719xMRR7UakMjisTC50EuxnV00usxvmhwxexUN0=
+	t=1740068569; cv=none; b=QooGQL5jRbWl2GKxJfXr2PHv5EcRhCc2cdQTtnOnOyo1HU04EzZBj8cIXkzIrFQxQ4uR8f0anvol9zTPTX2c/ESNqnffigCt/I+SO3fJ+OyVSitpQRdCA+T68zIhvNfp/lP5dD5507kujEOj/Ee+gvjcgEi+qPbY154nzNgHY70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740068404; c=relaxed/simple;
-	bh=APzJKwyhb3OuH1pPBqJmkSn0GS/wNMS+wru7Yxj4RO8=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=ffj92GxdfFvbyDVW6JJYidJqjxWrJwCIhhOJ40WCMbtd3OuGduPNSy5YAS0rHCiTnowXtmo9dOCC+BHpZGYKooewvuBGtC2odTHeFijS8WXNXtXEdTACCKHW2x+qK+g+wIgVc5uIy8mqBykhER/snf7hMJEsf088MuD++mYJnlw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3d2b6d933acso8375025ab.3
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 08:20:02 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740068402; x=1740673202;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=l7pYURb2UEyQVm3UDJSJZBqVAJmGORVXuCUKt2v1imU=;
-        b=MuTjOSUSGgYBQ/Dj4VUwBy8dywIAynohRayv5l/GC0ahvZS7csY8h3VycSB69F2700
-         /6fyJTpZ3UvrGnmUPbYVL9hKI/rtaviYdaO3z/CNG4ZrJjcAKT64l4tXgY/Iou0S6lub
-         +zDpRHvLZmhjxjAbNVLnjA3ic+dcMaDGw7BPZhabMUoda/WiFXS55o1swPg63XHF4S9A
-         EE8i2+cuUKr1697XwKT5nNKSwIbdVe/5MdOmlhuo7mbnCW5uoPHcd78/9TkvKUKqGqJB
-         jnXylTKc+rJ83hylGDyKC2eI/a6wg9ZG9qhPm51A//P5H3bpviIe39qeII5IW9F81SXD
-         v2jw==
-X-Forwarded-Encrypted: i=1; AJvYcCVhsp/nF0vtGMAYhsUVkM6+FP4INKqX992y1JWl8gpT/KgKl+3GBH+It0nOeiB931OY8oLifgR8CuNSTI8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz89x7/PSSlHliJ2mIsvb60Vx1Awm8Zo5nqyLBIuupJvpHl/kJk
-	j/wvF1/yWAjXED+YtbR4d9t1G5kHJW39ennZyzddOMa9Vc1rM4zLmLbFzMn+8rmM8oUliEBtb1K
-	+dImA8f7mXGBfAFXRNkivKpRKZj7AyZyZAhTB5Ljb8AnrVPnOg16/HX8=
-X-Google-Smtp-Source: AGHT+IGuEGXZgTpLDMgM/7S6GNTYnUn0UKrpL/T5rB0YUuM5iNtKYmjKbdIOL1xmpNOVQAHIaCIJ4uHlLv+tqDA4IfFw1W0JU8s5
+	s=arc-20240116; t=1740068569; c=relaxed/simple;
+	bh=ZizhwF/prwc2v8f0MbKp11PKRTGxk53ZE1x8sx5NPYc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fA4khR0WfAgkOfsD58d43AaGwKu6fO2p9oqojUszVP6Fd95JN2m7OUo7+QamRqWV7cKX/ykvl08LVrnaJ3RfLepuF2089kZv7Emb0ujX6Qt8o4gMheHzIMKH3rpX5Rg2qOdMXYVOvqpzv7bDC15GymMgYKE7ZmRk1VJSqk4bMWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jzXns6wX; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740068568; x=1771604568;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=ZizhwF/prwc2v8f0MbKp11PKRTGxk53ZE1x8sx5NPYc=;
+  b=jzXns6wXtCjiuA/4WArNKExdHNkJvRCEOu0gIjH/9DCa/eEjkqb/GnEV
+   GzGzwDms98bouMdnSKDnjyhljfKTGtAhr5+VVqz0VAFcl15W8bxuga9xl
+   JapxIOMSijfbYuVssCTUiOn7BRMiHt9i35ns0acgIyr9u0a5r4wMCCl6T
+   39eNGTjy2CsOX6waKtqTx8XWcJqpj8R7X+CcYkbaG1iGTamaXi82d4Her
+   lX7vD0/Rj8qsp0bEnkVl1esYf5rv6cM3GHgmjK5xwzBsWYspMubNMvoqx
+   Z69edw749bAIQjG6qy5bk994hx7WJk+JyBXrB89t1U5wGqLWU+9/kjYb7
+   w==;
+X-CSE-ConnectionGUID: WajsKgfhTKGGbSp8U54Hvg==
+X-CSE-MsgGUID: JUMuK4L9TD2NLkTKRGQ45g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11351"; a="40043968"
+X-IronPort-AV: E=Sophos;i="6.13,302,1732608000"; 
+   d="scan'208";a="40043968"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Feb 2025 08:22:45 -0800
+X-CSE-ConnectionGUID: gKfbFocXTxegozFRGIuW3Q==
+X-CSE-MsgGUID: cTRgpcheTj6H1RzSRz+ICw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,302,1732608000"; 
+   d="scan'208";a="115061335"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa007.fm.intel.com with ESMTP; 20 Feb 2025 08:22:42 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id A51ED2D0; Thu, 20 Feb 2025 18:22:40 +0200 (EET)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Zijun Hu <quic_zijuhu@quicinc.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Raag Jadav <raag.jadav@intel.com>,
+	linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH v2 0/3] gpiolib: finish conversion to devm_*_action*() APIs
+Date: Thu, 20 Feb 2025 18:20:25 +0200
+Message-ID: <20250220162238.2738038-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.45.1.3035.g276e886db78b
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c24d:0:b0:3d1:966c:fc8c with SMTP id
- e9e14a558f8ab-3d2809066demr217751225ab.17.1740068402061; Thu, 20 Feb 2025
- 08:20:02 -0800 (PST)
-Date: Thu, 20 Feb 2025 08:20:02 -0800
-In-Reply-To: <000000000000d0021505f0522813@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67b75632.050a0220.14d86d.02e4.GAE@google.com>
-Subject: Re: [syzbot] [mm] [fs] possible deadlock in page_cache_ra_unbounded
-From: syzbot <syzbot+47c7e14e1bd09234d0ad@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, axboe@kernel.dk, brauner@kernel.org, 
-	jack@suse.cz, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, reiserfs-devel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com, willy@infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-syzbot suspects this issue was fixed by commit:
+GPIOLIB has some open coded stuff that can be folded to the devm_*_action*()
+calls. This mini-series is for that. The necessary prerequisites are here
+as well, namely:
+1) moving the respective APIs to the devres.h;
+2) adding a simple helper that GPIOLIB will rely on;
+3) finishing the GPIOLIB conversion to the device managed action APIs.
 
-commit 6f861765464f43a71462d52026fbddfc858239a5
-Author: Jan Kara <jack@suse.cz>
-Date:   Wed Nov 1 17:43:10 2023 +0000
+The series is based on another series that's available via immutable tag
+devres-iio-input-pinctrl-v6.15 [1]. The idea is to route this via GPIOLIB
+tree (or Intel GPIO for the starter) with an immutable tag for the device
+core and others if needed. Please, review and acknowledge.
 
-    fs: Block writes to mounted block devices
+Changelog v2:
+- dropped actually unneeded patch (Raag)
+- rewrote last patch as suggested (Raag)
+- collected tags (Raag)
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=16e867f8580000
-start commit:   861deac3b092 Linux 6.7-rc7
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e1e118a9228c45d7
-dashboard link: https://syzkaller.appspot.com/bug?extid=47c7e14e1bd09234d0ad
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=100b9595e80000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1415ff9ee80000
+Link: https://lore.kernel.org/r/Z7cqCaME4LxTTBn6@black.fi.intel.com [1]
+Cc: Raag Jadav <raag.jadav@intel.com>
 
-If the result looks correct, please mark the issue as fixed by replying with:
+Andy Shevchenko (3):
+  devres: Move devm_*_action*() APIs to devres.h
+  devres: Add devm_is_action_added() helper
+  gpiolib: devres: Finish the conversion to use devm_add_action()
 
-#syz fix: fs: Block writes to mounted block devices
+ drivers/base/devres.c         | 11 +++++
+ drivers/gpio/gpiolib-devres.c | 90 ++++++++++-------------------------
+ include/linux/device.h        | 38 ---------------
+ include/linux/device/devres.h | 41 ++++++++++++++++
+ 4 files changed, 77 insertions(+), 103 deletions(-)
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+
+base-commit: 9deb15de8ca27cf9cba0d2bac53bbe37c836591b
+-- 
+2.45.1.3035.g276e886db78b
+
 
