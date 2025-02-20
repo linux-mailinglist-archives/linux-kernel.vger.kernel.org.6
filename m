@@ -1,147 +1,120 @@
-Return-Path: <linux-kernel+bounces-523646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A8B4A3D99D
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:15:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C85DA3D9A3
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:16:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91D94189EB4F
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:14:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0A8B189F793
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:15:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70D9A1F4E49;
-	Thu, 20 Feb 2025 12:14:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BA6C1F5430;
+	Thu, 20 Feb 2025 12:15:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="KGq8p2Sl"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="qZ6OvuUz"
+Received: from mout.web.de (mout.web.de [212.227.15.3])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 104D71F4706
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 12:14:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A3391F462D;
+	Thu, 20 Feb 2025 12:15:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740053678; cv=none; b=klERyiyNy0cY8gd0DPUftrmi3R0kexUutcacIStYJp0IEePZobQi693qN9zpj+dKY4U4R1QKWKPLdS/srjxYy8eJExUzJGgtFjA2IzOdvG5+Q239lXNXpxkogN1u3cjUc6wXp5oRAHlTw127IGAUYDObzMOfxxWEq5gYB5Ck4js=
+	t=1740053717; cv=none; b=AcbE8K/OWufBUUYhYD/NpUSGXpcKl/t+eCbL4v9/abr6k8/q/ODRq5xggWY5YYUH5FjlZZ4pq5PInDAN9JpUCoG1ASGFLykFNh/dgCEC2TKdbIQZ8o9BCs+4McSaawHPcW9d/bsychvAMe3bZshy6icee0dfABgp8a9iOtpYkHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740053678; c=relaxed/simple;
-	bh=ZrSW3WlFsoq4+pWbmw5nXV2YhyzQXMLfxD78lA6xThE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oxyP8rzVZNuINLSYtRqShUUbf0EfottG7Pbfr8ZJzsVqn/KDf1e5tOaUkdyKero1LYinKVvahLSuiVGCxNVCI+YVMGrrDHGSUOTY7AbP0yqmr4GZGajBoge3P/+RNh2+6VY4p16/jbTb91uErSW+L1hDtu40Ve5hhENqV229JVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=KGq8p2Sl; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-38f26a82d1dso486991f8f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 04:14:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1740053675; x=1740658475; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=hGUCY7fitgab0ytTT0Om1EzRQzqjeCpPDOFA2YcYuWg=;
-        b=KGq8p2SlE9lGyKwo4KR4SRbF18g7v3cAIylOvrFSmGGhiDQdq36duUd0DrqygZxipQ
-         6C2qnAyWlcroug/Mukv4Nz1dJkFyFZs/IMeReYcLpj9zePqAuK84qIIgxaINYmsRTg/s
-         6lGrNZZlzaG1wZHtNVseHA3w5Co6W/POSsYUU9mIsJEdLUlOkXyv4238DhvmNoSzg58X
-         E8WqJH7Po2MjJyBz4pcsq6ldyHb/yV+lrEy/ndDwRJXD4t9qJ8E1TKVOG3SLc90WCu/l
-         a6l/tvoeaeF2JdQl5/XzmnWmOc2w3ewIMN5hk3Emo9jdiCAxSZVU+F0AZThAMtJlWg/G
-         5/DA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740053675; x=1740658475;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hGUCY7fitgab0ytTT0Om1EzRQzqjeCpPDOFA2YcYuWg=;
-        b=k/2YvDLrLxnFZqF9uM9tsjk52GDNYAMp64m64PPMoeS/ohbUcPRpogqAzwpN+OnJ8t
-         QUN/7XkLhSPGThZ8zyoeJGk7uGNsj64fgJ9TWr5scLLESF+3NBRSU6WmwMKqEHkFAD14
-         Uk5oJwap53ZecLduKKD+mW+0s6y4rk5ERR/Qv1RA+A0jVoXivpBfW9bHStCcprk4VyBH
-         fy2M0qYD95m1CTkqP63tYUm2wa1C0YRGAZ6orRSMGjcjwHjsl3lf9teBkpNJP0BoGNpn
-         MRyrbaxwvr9dvQJCnY/5K4+F0VmjGnAFnXwEGe3cqKiqaAVL++QuuyWkL/C/zyKAbrY+
-         urww==
-X-Forwarded-Encrypted: i=1; AJvYcCVqnLtoaHq9yoN3V0MZO8n+LHXspKG9QjqNeiDqYkIJPWzKoJZ0IGO6UmZ9lLJzV9BtiDW7ibPXByGDOMk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzgZ/tLxqlMVlvrgK8ceCHrOc0533DlzomUUSltPjm3Xe09rOpz
-	c7oY9yoeY8i7w1KiklVTwiSRd9o6Xg7EyBYOZsW1+XIn0fyZheii0ddRFMkaoOM=
-X-Gm-Gg: ASbGncsrjhaw+jhi1p1YQEDjE276MiVKXYl96z2BjE5Fiko5ZHTl+5hbffoWhV9svBl
-	oj/xdcRmu+bw5GCoBRsXexrCzioqtAS+HASkY+WsTLLqgx2lD2PW+huNp/auNZJQi7EkQMsRzJX
-	9KSbFx+zy5AAElNjjPxXg/EwImIttQhV/3b7l+r7lfSPQkocKUzMC4BSesTrA7x6KlFC/OI2l/p
-	qCcKSR88rhDEizXHrf4DFxIHoFGyTPtYcDwXBw+GI55JbSnYo/A/JqN5AjaeT8hG0eC+KwYr8HK
-	OG4=
-X-Google-Smtp-Source: AGHT+IEmpbegrxw5t/KNdPkGK27oe1/PS+rd7I9A+5GvQsjNYkwQPD+h7mTbFOVdsQ9qj72tvmQ1qQ==
-X-Received: by 2002:a05:6000:188c:b0:38d:d7a4:d447 with SMTP id ffacd0b85a97d-38f33f52ee9mr22748723f8f.34.1740053675184;
-        Thu, 20 Feb 2025 04:14:35 -0800 (PST)
-Received: from localhost ([2a02:8308:a00c:e200::766e])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-439ac276ef7sm4896085e9.40.2025.02.20.04.14.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Feb 2025 04:14:34 -0800 (PST)
-Date: Thu, 20 Feb 2025 13:14:33 +0100
-From: Andrew Jones <ajones@ventanamicro.com>
-To: Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@ventanamicro.com>
-Cc: xiangwencheng <xiangwencheng@lanxincomputing.com>, anup@brainfault.org, 
-	kvm-riscv@lists.infradead.org, kvm@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, atishp@atishpatra.org, paul.walmsley@sifive.com, 
-	palmer@dabbelt.com, aou@eecs.berkeley.edu, 
-	linux-riscv <linux-riscv-bounces@lists.infradead.org>
-Subject: Re: [PATCH] riscv: KVM: Remove unnecessary vcpu kick
-Message-ID: <20250220-1581569f8559049399549cae@orel>
-References: <20250219015426.1939-1-xiangwencheng@lanxincomputing.com>
- <D7WALEFMK28X.13HQ0UL1S3NM5@ventanamicro.com>
- <38cc241c40a8ef2775e304d366bcd07df733ecf0.f7f1d4c7.545f.42a8.90f5.c5d09b1d32ec@feishu.cn>
- <20250220-f9c4c4b3792a66999ea5b385@orel>
- <38cc241c40a8ef2775e304d366bcd07df733ecf0.818d94fe.c229.4f42.a074.e64851f0591b@feishu.cn>
- <D7X576NHG512.2HBBO3JLIA1JH@ventanamicro.com>
+	s=arc-20240116; t=1740053717; c=relaxed/simple;
+	bh=4mM4XiDYuYqyZvcfpTUgRaxwmQYQocp+UqmdOa99NzE=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=r9OS6Y97f1ZxlqXPrpNWAUcnwrV6o8/Z4AWriHEYBkALR7E6++u+w7Q/l9DQC2i/MQ2Hw5d9YtiMQT935Rn05Jv+brbpz5ypTCH51TmSGyc7yslXBQcbDtIYcE7Jpo50fBx8Ldv59ITD9Aqz0JiOB4i+lLayA7Hmf+CmMtdq018=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=qZ6OvuUz; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1740053708; x=1740658508; i=markus.elfring@web.de;
+	bh=p38B3629jIH/BYLg1r7hGseYsvl62uQfCXK0YgIagNM=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=qZ6OvuUzo5j1EbfQD6tvDqYIBCnfdhTfdNjBrO1h+MvoYxgTdm29ox8tWvXeQRSY
+	 xGD2cIJMnNcLtnRK3cQ2HaEHrQgF4U846qhQYvPcr9w209nJlDwk2vlTbbUwUNf56
+	 WOtWySf232+kb/83GhDnK8PLf+u+VYm0vioxbk+rEuyYOw4kwd+F6SO4apGC+3Rou
+	 Vd1rrdeNeCTJro88KjNVvS6GCP70GTT4JFS66l7SOZUfqhWcOEn/rUZHCLFUFgKlS
+	 IUpMHr8v7XocPh96Yz9ocn+Fwfw1RNH+Z+t34rer4P5RjEOYLTohyswkGgpUHR4c9
+	 QzvNGeOJIqIKynDa8g==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.93.25]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1M7usw-1tg7eD3tYI-0018LE; Thu, 20
+ Feb 2025 13:15:07 +0100
+Message-ID: <899f35b2-f4cb-4bea-bcc7-a805a409f7d7@web.de>
+Date: Thu, 20 Feb 2025 13:14:59 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <D7X576NHG512.2HBBO3JLIA1JH@ventanamicro.com>
+User-Agent: Mozilla Thunderbird
+To: vulab@iscas.ac.cn, linux-gpio@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org,
+ Linus Walleij <linus.walleij@linaro.org>
+Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+References: <20250220085001.860-1-vulab@iscas.ac.cn>
+Subject: Re: [PATCH] pinctrl: nomadik: Add error handling for
+ find_nmk_gpio_from_pin
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250220085001.860-1-vulab@iscas.ac.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:OE1UwSWMbg9oiRuGsar0aold0VueVaUeNjRYwWzvluorabn24Ay
+ /X5j9rD4LO+37DzdqLZimon8iCSLMJYxEbc/0hPhWvA3HYTK/v/Is+wKtkZkUrKBYsKkwtV
+ eHPPsQrofUltXTO+fPukMAo+KLpU+XrqGSYR6NxhvGgriY/NmdGlyIQI+0boNj01eD0wQ+k
+ awN221VpoJiclRMsHTjzQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:kS62NSxv3DU=;G3wMwsoEDmdEZf5nM3alRIItu3g
+ mNqJbgMRJYJlFZjUzMAc78Kz+ENZyABR4DjbXd0aGIP1AYTkgEHzEcMmr0NZTtkXbMdks+oXL
+ 2i8m4J/sKuroFGuF6MXtvTQxI/+QIz7k8DmcY0ksaUpWNwE43XoRbq0n+HTX6A7ch2tsFAuLS
+ Wg71wCWwBhZD0woY3o8ZyWYB7Bfl98u5P1KQGbYTGVaQPGJqDnfHO9GVM+QJI9SEu6afm/tle
+ ti0eoydLRNhuin6APHo2j2mI3IWLhdspYYsA1ux8a9m7uUK1wJSeA/uLnj9ZFoUwaMO3rv7pg
+ RBXVo627SB10q/8DADLXYeRgXl6vEIont1DEokAJIQdxwczD9S8SvtnP5UnHnp4o7jaJfb6oz
+ DQ4yLoz7m4pf2dIlAan0oTQbb5yIcybLFr3iIoLl11+JbJfgTkSdZf/hiyJPPX4DxiTU+alC9
+ 9Ko9mvD6WmBGVqGFGljduyqxEwtc9f5hJoshD82REPMHcD2ZAoSw1vm/hPh5l3ZmJyt28tBso
+ aNIR08qhHnRkbGg2psV/dKzozpynh7+z7CKZIVuLYMoUZr/oqr5dSPfWnAP3xZCiTEtmn3u6/
+ tn4CLbscrBoprzPT4M6BW0nd7pZC6HKIPFeZVpGMQnOUTLsnBHzceEJm9WV5+tXvONjYVhEfY
+ JTT7kZrqAAX4pGfyNcVeIvxGCz8REXp14kQRsV0HTmdf6RzwU79OdNLsi3JeRybH+pTwrof0e
+ 5J5kqEQqDfyDO4rL1kQJH0YH1oKCROcC5kz1dPpa65D4UORp7nF5O87wYrDmj4MwQJSTiBRed
+ CzOQRgWvqdI2BJ6FiIX6SwSC/mUyPD8AWCPKND7eqvXNZBcGEcbTG7MUpgOXPIoNwQiv5satZ
+ 5y1tVGuDAX9NEqPnHOzGd3xLEms2JgejCyKYvOhpcMe2IJoNQNSn1lEtfyijTzyD7kOiSaYSG
+ p3rkZDFDtn6HwY5pt+9hVmFQbevMCsxfAs3JDSIpP6wl5snrvuDZD1L9xRVVTUHWKUvAeejwq
+ pxYzGsA6xyVa/b9r17Mz2R8P5wgVEV4En9KuBwfFcAgiLyD7nf4S5fUIsGXVeQYrdzsosmEYB
+ wLuyyT1ZLbk1hvzKzVYptL1LK3Zixc6t2Xppo5XNrfHxpVzs/2r3sd2WXFBQ4AgvFFzxyVa89
+ oe32EmizBmVynPXa7tPQiP5vuX+VbJvEp7lVfzKEbgzBYIaSqEyrwQH6rK5KF0jHhOlAMSQnM
+ //axb+wKcQ4pP5FWomid31RY3Q8D0M7vX7YH/k9uqi1WvJn2dLk074xP0AAs6tNSSo81/OmFa
+ js2Z0CG7U80McZCwUiz0HDxHYzUd50ye4Khfn3onGaMvwPm+kwNFNvfAJoMZK7UJN73je+qTY
+ 0KHj3NdoEvw2bnQDQVAXljlIpgiTKwCc0ioZDZaja3gwyJtpjNVYYw9VDfVhEVEZxnKLvmUhA
+ d2gaq9iYJhFahUGJYLq/B8zUOmBY=
 
-On Thu, Feb 20, 2025 at 09:50:06AM +0100, Radim Krčmář wrote:
-> 2025-02-20T16:17:33+08:00, xiangwencheng <xiangwencheng@lanxincomputing.com>:
-> >> From: "Andrew Jones"<ajones@ventanamicro.com>
-> >> On Thu, Feb 20, 2025 at 03:12:58PM +0800, xiangwencheng wrote:
-> >> > In kvm_arch_vcpu_blocking it will enable guest external interrupt, which
-> >
-> >> > means wirting to VS_FILE will cause an interrupt. And the interrupt handler
-> >
-> >> > hgei_interrupt which is setted in aia_hgei_init will finally call kvm_vcpu_kick
-> >
-> >> > to wake up vCPU.
-> 
-> (Configure your mail client, so it doesn't add a newline between each
->  quoted line when replying.)
-> 
-> >> > So I still think is not necessary to call another kvm_vcpu_kick after writing to
-> >> > VS_FILE.
-> 
-> So the kick wasn't there to mask some other bug, thanks.
-> 
-> >> Right, we don't need anything since hgei_interrupt() kicks for us, but if
-> >> we do
-> >> 
-> >> @@ -973,8 +973,8 @@ int kvm_riscv_vcpu_aia_imsic_inject(struct kvm_vcpu *vcpu,
-> >>         read_lock_irqsave(&imsic->vsfile_lock, flags);
-> >> 
-> >>         if (imsic->vsfile_cpu >= 0) {
-> >> +               kvm_vcpu_wake_up(vcpu);
-> >>                 writel(iid, imsic->vsfile_va + IMSIC_MMIO_SETIPNUM_LE);
-> >> -               kvm_vcpu_kick(vcpu);
-> >>         } else {
-> >>                 eix = &imsic->swfile->eix[iid / BITS_PER_TYPE(u64)];
-> >>                 set_bit(iid & (BITS_PER_TYPE(u64) - 1), eix->eip);
-> >> 
-> >> then we should be able to avoid taking a host interrupt.
-> 
-> The wakeup is asynchronous, and this would practically never avoid the
-> host interrupt, but we'd do extra pointless work...
-> I think it's much better just with the write.  (The wakeup would again
-> make KVM look like it has a bug elsewhere.)
+=E2=80=A6
+> To fix this, add error handling to check the return value of
+> find_nmk_gpio_from_pin. Log an error message indicating an
+> invalid pin offset and return -EINVAL immediately  If the function
 
-Ah yes, the wakeup is asynchronous. Just dropping the kick is the right
-way to go then.
+                                                    if the function call?
 
-Thanks,
-drew
+
+> fails.
+
+  failed?
+
+
+* You may occasionally put more than 66 characters into text lines
+  of such a change description.
+
+* How do you think about to append parentheses to function names?
+
+
+Regards,
+Markus
 
