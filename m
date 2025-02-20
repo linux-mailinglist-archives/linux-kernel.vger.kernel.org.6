@@ -1,74 +1,43 @@
-Return-Path: <linux-kernel+bounces-523709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9678DA3DA3C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:40:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F651A3DA3F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:41:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F4C317AE46
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:40:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 894483B2398
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:41:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8E451F4614;
-	Thu, 20 Feb 2025 12:40:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="VLfdmlPu"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 418D91C831A;
-	Thu, 20 Feb 2025 12:40:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ACFB1F4639;
+	Thu, 20 Feb 2025 12:41:04 +0000 (UTC)
+Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06463286298
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 12:40:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740055214; cv=none; b=fRbhvR2vq+3FtWZBoScto7zOpc9GYEZkLP3XgRS2onHNCn+RMlOkltOx/KACgdt0uyH9/w+Q9MUEfPrWDbrg9fkmNbkST2S+0NdAnh446uN0DQWcPpmLcfHnYx24Jl9jZGG5RtEvRmHVHi9zyhsnV7LxtNyv/mcM8xoScKNtmc8=
+	t=1740055263; cv=none; b=GQx8fi+yP5oYY5m+15WRPrpUeWZKfRJLDCKaO68wgR1SQ4BDE6mcm8rnIRsg0/iFt8YrohhBFR9PjI8echqgmuUlAt6CBnWzW231lqVWcwKPH4jDHc4a9Tqz4Lyqh1mBepvRx6QEB3rXoRPzmPaJFn4uxnZXPqtkShVNTgRz+Q4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740055214; c=relaxed/simple;
-	bh=hoMWmUYah4GFBzBoYZluoo3v+mmfTu1w02/CAA2R1hU=;
+	s=arc-20240116; t=1740055263; c=relaxed/simple;
+	bh=DaDf7XPFvzBZcppXRgBLDzEIu49JiuU5kD0XH7velAA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LJuqm6ne/kJLS9r5l+PyyYv/eHhWB6vQMIy/4oFEmrKq1xeT0EXNg1m01pZKoiY0dY5O89pA5xIacbyysXs0lc1nKJ3RGVKHAaViebkgqAtKQPBQZHcHe8s/hrlufz9tflGWXz4BmFPOufPHtG0tpsS1DVk2cV2yjZ83TK9Hf4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=VLfdmlPu; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=y9gueMMGR1Ohx7g9WsiSevqA6NIph2bjLV1PExbyhAw=; b=VLfdmlPubYGEmyuLQD9xrcOsdG
-	LBC1dVEo9fai396YCV9fBnTdNlhXscZOvzupjQ4WtM+eBdZjaCOSWA0jPS8PSJM6QfhDJvalzyC7g
-	eAH4+vzsabde8P7LkU3Cl+8WkHwvja9KHqHeXKFGsFM8GnFWAdyxyqYRZqnKQrqjPbHbjL/sXrzOv
-	SIDtH89+FuXAjFONCnftvgIkhK/9uynwDY4g/RQs8PtWDAMVCOvdCkLHPeZwxqIJahuFNpJMRZ6JW
-	DMQSbJ6IeMPPYUT6eFpI/3Ay3uChgY6VV+a5pCgTI4VnHJOQU20wNA8+FBv41oWWfIAeNiX03Ay0/
-	eiaDE+IQ==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:58218)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1tl5qO-0000yE-2a;
-	Thu, 20 Feb 2025 12:39:56 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1tl5qK-0000zP-0u;
-	Thu, 20 Feb 2025 12:39:52 +0000
-Date: Thu, 20 Feb 2025 12:39:52 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Swathi K S <swathi.ks@samsung.com>
-Cc: krzk+dt@kernel.org, andrew+netdev@lunn.ch, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	robh@kernel.org, conor+dt@kernel.org, richardcochran@gmail.com,
-	mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	pankaj.dubey@samsung.com, ravi.patel@samsung.com,
-	gost.dev@samsung.com
-Subject: Re: [PATCH v7 2/2] net: stmmac: dwc-qos: Add FSD EQoS support
-Message-ID: <Z7cimPBdZ3W9GKmI@shell.armlinux.org.uk>
-References: <20250220043712.31966-1-swathi.ks@samsung.com>
- <CGME20250220044132epcas5p305e4ed7ed1c84f9800299c2091ea0790@epcas5p3.samsung.com>
- <20250220043712.31966-3-swathi.ks@samsung.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=WfIHSOj7BI0XOdhWLpouYuF9vS0i1lHBaDAUUN1PyLdHkRw90UVSLWysA8+Ete6Wjn17YkrqCAkmuN66pdaEu8yjQAqVWBO75s1dae5bjwGFi7q4rA36kRSibEekahSrwgjX4NVwHtfvqvnVdFh3BQTXq1gtBapRsps1v+thUNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-3e1ff7000001d7ae-dc-67b722d7adf2
+Date: Thu, 20 Feb 2025 21:40:50 +0900
+From: Byungchul Park <byungchul@sk.com>
+To: Hillf Danton <hdanton@sina.com>, torvalds@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	kernel_team@skhynix.com
+Subject: Re: [RFC PATCH v12 00/26] LUF(Lazy Unmap Flush) reducing tlb numbers
+ over 90%
+Message-ID: <20250220124050.GB8305@system.software.com>
+References: <20250220052027.58847-1-byungchul@sk.com>
+ <20250220103223.2360-1-hdanton@sina.com>
+ <20250220114920.2383-1-hdanton@sina.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,154 +46,96 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250220043712.31966-3-swathi.ks@samsung.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+In-Reply-To: <20250220114920.2383-1-hdanton@sina.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrALMWRmVeSWpSXmKPExsXC9ZZnoe51pe3pBttnKlsc+PmcxeLyrjls
+	FvfW/Ge1eNT3lt2BxWPTp0nsHidm/GbxmPTC3ePzJrkAligum5TUnMyy1CJ9uwSujMsPXrMV
+	vJOsuLfpNnsD4zvhLkZODgkBE4nGCTuZYOynd44zgtgsAqoS6xa9YgWx2QTUJW7c+MkMYosI
+	OEk8OnMCrJ5ZwF9iwq0NLCC2sECExJNDIHEODl4Bc4nenRYgYSGBbkaJNc/SQWxeAUGJkzOf
+	sEC0aknc+PcSrJxZQFpi+T8OkDCngKlE/5FFYBeICihLHNh2HKiEC+iyHjaJY5tmMkOcKSlx
+	cMUNlgmMArOQjJ2FZOwshLELGJlXMQpl5pXlJmbmmOhlVOZlVugl5+duYgSG67LaP9E7GD9d
+	CD7EKMDBqMTDO6N1W7oQa2JZcWXuIUYJDmYlEd62+i3pQrwpiZVVqUX58UWlOanFhxilOViU
+	xHmNvpWnCAmkJ5akZqemFqQWwWSZODilGhiN4/rZsvxXSWVqTc69sfSwhKtr2ccGvwO/rq5v
+	elUqI753XWLt9L31S5pDW2wX3ub79oC1SflkL9uasx9YdD7weh5dFh3m+n1zZJDpFk8Gpo+S
+	VVcrVBSkf3ncmCftPzl/xt+bzw/PLRMI+p9UMP/Lhhcyf6b3Mb5YkWiafOn7DjalZY2Lm54q
+	sRRnJBpqMRcVJwIAzcjJIlMCAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrOLMWRmVeSWpSXmKPExsXC5WfdrHtdaXu6wY7rEhYHfj5nsTg89ySr
+	xeVdc9gs7q35z2rxqO8tuwOrx6ZPk9g9Tsz4zeIx6YW7x+IXH5g8Pm+SC2CN4rJJSc3JLEst
+	0rdL4Mq4/OA1W8E7yYp7m26zNzC+E+5i5OSQEDCReHrnOCOIzSKgKrFu0StWEJtNQF3ixo2f
+	zCC2iICTxKMzJ5hAbGYBf4kJtzawgNjCAhESTw6BxDk4eAXMJXp3WoCEhQS6GSXWPEsHsXkF
+	BCVOznzCAtGqJXHj30uwcmYBaYnl/zhAwpwCphL9RxaBXSAqoCxxYNtxpgmMvLOQdM9C0j0L
+	oXsBI/MqRpHMvLLcxMwcU73i7IzKvMwKveT83E2MwOBbVvtn4g7GL5fdDzEKcDAq8fA+eLw1
+	XYg1say4MvcQowQHs5IIb1v9lnQh3pTEyqrUovz4otKc1OJDjNIcLErivF7hqQlCAumJJanZ
+	qakFqUUwWSYOTqkGxpXn+ZvFtj7huvj94Hz27vPVPyctPrZSLF5i/nw+3ZjeX3v2XdnmsDD9
+	unA8++qJLm4aO+PqjtyOrvB+ZpPXxmoU+XeWWsRxpzt2rbsNT63rnLWyvrJ/Q8Ff8WkrOA3C
+	jov6bFqwW/qyhLrVvY9a6R4aqYbee56v80jlnDKra6aS1Pz123TZPJVYijMSDbWYi4oTAXu2
+	oKk6AgAA
+X-CFilter-Loop: Reflected
 
-On Thu, Feb 20, 2025 at 10:07:12AM +0530, Swathi K S wrote:
-> +static int fsd_eqos_probe(struct platform_device *pdev,
-> +			  struct plat_stmmacenet_data *data,
-> +			  struct stmmac_resources *res)
-> +{
-> +	struct clk *clk_rx1 = NULL;
-> +	struct clk *clk_rx2 = NULL;
-> +
-> +	for (int i = 0; i < data->num_clks; i++) {
-> +		if (strcmp(data->clks[i].id, "slave_bus") == 0)
-> +			data->stmmac_clk = data->clks[i].clk;
-> +		else if (strcmp(data->clks[i].id, "eqos_rxclk_mux") == 0)
-> +			clk_rx1 = data->clks[i].clk;
-> +		else if (strcmp(data->clks[i].id, "eqos_phyrxclk") == 0)
-> +			clk_rx2 = data->clks[i].clk;
-> +	}
-> +
-> +	/* Eth0 RX clock doesn't support MUX */
-> +	if (clk_rx1)
-> +		clk_set_parent(clk_rx1, clk_rx2);
+On Thu, Feb 20, 2025 at 07:49:19PM +0800, Hillf Danton wrote:
+> On Thu, 20 Feb 2025 20:09:35 +0900 Byungchul Park wrote:
+> > On Thu, Feb 20, 2025 at 06:32:22PM +0800, Hillf Danton wrote:
+> > > On Thu, 20 Feb 2025 14:20:01 +0900 Byungchul Park <byungchul@sk.com>
+> > > > To check luf's stability, I ran a heavy LLM inference workload consuming
+> > > > 210GiB over 7 days on a machine with 140GiB memory, and decided it's
+> > > > stable enough.
+> > > > 
+> > > > I'm posting the latest version so that anyone can try luf mechanism if
+> > > > wanted by any chance.  However, I tagged RFC again because there are
+> > > > still issues that should be resolved to merge to mainline:
+> > > > 
+> > > >    1. Even though system wide total cpu time for TLB shootdown is
+> > > >       reduced over 95%, page allocation paths should take additional cpu
+> > > >       time shifted from page reclaim to perform TLB shootdown.
+> > > > 
+> > > >    2. We need luf debug feature to detect when luf goes wrong by any
+> > > >       chance.  I implemented just a draft version that checks the sanity
+> > > >       on mkwrite(), kmap(), and so on.  I need to gather better ideas
+> > > >       to improve the debug feature.
+> > > > 
+> > > > ---
+> > > > 
+> > > > Hi everyone,
+> > > > 
+> > > > While I'm working with a tiered memory system e.g. CXL memory, I have
+> > > > been facing migration overhead esp. tlb shootdown on promotion or
+> > > > demotion between different tiers.  Yeah..  most tlb shootdowns on
+> > > > migration through hinting fault can be avoided thanks to Huang Ying's
+> > > > work, commit 4d4b6d66db ("mm,unmap: avoid flushing tlb in batch if PTE
+> > > > is inaccessible").
+> > > > 
+> > > > However, it's only for migration through hinting fault.  I thought it'd
+> > > > be much better if we have a general mechanism to reduce all the tlb
+> > > > numbers that we can apply to any unmap code, that we normally believe
+> > > > tlb flush should be followed.
+> > > > 
+> > > > I'm suggesting a new mechanism, LUF(Lazy Unmap Flush), that defers tlb
+> > > > flush until folios that have been unmapped and freed, eventually get
+> > > > allocated again.  It's safe for folios that had been mapped read-only
+> > > > and were unmapped, as long as the contents of the folios don't change
+> > > > while staying in pcp or buddy so we can still read the data through the
+> > > > stale tlb entries.
+> > > >
+> > > Given pcp or buddy, you are opening window for use after free which makes
+> > > no sense in 99% cases.
+> > 
+> > Just in case that I don't understand what you meant and for better
+> > understanding, can you provide a simple and problematic example from
+> > the u-a-f?
+> > 
+> Tell us if it is illegal to commit rape without pregnancy in your home town?
 
-Isn't there support in DT for automatically setting the clock tree?
-See
-https://github.com/devicetree-org/dt-schema/blob/main/dtschema/schemas/clock/clock.yaml#L24
++to Torvalds
 
-Also, I think a cleanup like the below (sorry, it's on top of other
-patches I'm working on at the moment but could be rebased) would
-make sense.
+Logical blame is welcome but I don't want to see potty-mouthed busters
+like him in Linux community any more.  Please, ban him for better
+community.
 
-With both of these, this should mean that your changes amount to:
+	Byungchul
 
-1. making data->probe optional
-2. providing a dwc_eth_dwmac_data structure that has .stmmac_clk_name
-   filled in
-3. adding your compatible to the match data with a pointer to the
-   above structure.
-
-In other words, support for your device becomes just a matter of adding
-data structures rather than a chunk of extra code.
-
-Thanks.
-
-8<====
-From: "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>
-Subject: [PATCH net-next] net: stmmac: clean up clock initialisation
-
-Clean up the clock initialisation by providing a helper to find a
-named clock in the bulk clocks, and provide the name of the stmmac
-clock in match data so we can locate the stmmac clock in generic
-code.
-
-Signed-off-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
----
- .../stmicro/stmmac/dwmac-dwc-qos-eth.c        | 32 +++++++++++--------
- 1 file changed, 18 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-dwc-qos-eth.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-dwc-qos-eth.c
-index 581c0b40db57..8e343ab7a7e2 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-dwc-qos-eth.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-dwc-qos-eth.c
-@@ -34,6 +34,16 @@ struct tegra_eqos {
- 	struct gpio_desc *reset;
- };
- 
-+static struct clk *dwc_eth_find_clk(struct plat_stmmacenet_data *plat_dat,
-+				    const char *name)
-+{
-+	for (int i = 0; i < plat_dat->num_clks; i++)
-+		if (strcmp(plat_dat->clks[i].id, name) == 0)
-+			return plat_dat->clks[i].clk;
-+
-+	return 0;
-+}
-+
- static int dwc_eth_dwmac_config_dt(struct platform_device *pdev,
- 				   struct plat_stmmacenet_data *plat_dat)
- {
-@@ -120,12 +130,7 @@ static int dwc_qos_probe(struct platform_device *pdev,
- 			 struct plat_stmmacenet_data *plat_dat,
- 			 struct stmmac_resources *stmmac_res)
- {
--	for (int i = 0; i < plat_dat->num_clks; i++) {
--		if (strcmp(plat_dat->clks[i].id, "apb_pclk") == 0)
--			plat_dat->stmmac_clk = plat_dat->clks[i].clk;
--		else if (strcmp(plat_dat->clks[i].id, "phy_ref_clk") == 0)
--			plat_dat->pclk = plat_dat->clks[i].clk;
--	}
-+	plat_dat->pclk = dwc_eth_find_clk(plat_dat, "phy_ref_clk");
- 
- 	return 0;
- }
-@@ -230,18 +235,12 @@ static int tegra_eqos_probe(struct platform_device *pdev,
- 
- 	eqos->dev = &pdev->dev;
- 	eqos->regs = res->addr;
-+	eqos->clk_slave = data->stmmac_clk;
- 
- 	if (!is_of_node(dev->fwnode))
- 		goto bypass_clk_reset_gpio;
- 
--	for (int i = 0; i < data->num_clks; i++) {
--		if (strcmp(data->clks[i].id, "slave_bus") == 0) {
--			eqos->clk_slave = data->clks[i].clk;
--			data->stmmac_clk = eqos->clk_slave;
--		} else if (strcmp(data->clks[i].id, "tx") == 0) {
--			data->clk_tx_i = data->clks[i].clk;
--		}
--	}
-+	data->clk_tx_i = dwc_eth_find_clk(data, "tx");
- 
- 	eqos->reset = devm_gpiod_get(&pdev->dev, "phy-reset", GPIOD_OUT_HIGH);
- 	if (IS_ERR(eqos->reset)) {
-@@ -306,15 +305,18 @@ struct dwc_eth_dwmac_data {
- 		     struct plat_stmmacenet_data *data,
- 		     struct stmmac_resources *res);
- 	void (*remove)(struct platform_device *pdev);
-+	const char *stmmac_clk_name;
- };
- 
- static const struct dwc_eth_dwmac_data dwc_qos_data = {
- 	.probe = dwc_qos_probe,
-+	.stmmac_clk_name = "apb_pclk",
- };
- 
- static const struct dwc_eth_dwmac_data tegra_eqos_data = {
- 	.probe = tegra_eqos_probe,
- 	.remove = tegra_eqos_remove,
-+	.stmmac_clk_name = "slave_bus",
- };
- 
- static int dwc_eth_dwmac_probe(struct platform_device *pdev)
-@@ -354,6 +356,8 @@ static int dwc_eth_dwmac_probe(struct platform_device *pdev)
- 	if (ret)
- 		return dev_err_probe(&pdev->dev, ret, "Failed to enable clocks\n");
- 
-+	data->stmmac_clk = dwc_eth_find_clk(plat_dat, data->stmmac_clk_name);
-+
- 	ret = data->probe(pdev, plat_dat, &stmmac_res);
- 	if (ret < 0) {
- 		dev_err_probe(&pdev->dev, ret, "failed to probe subdriver\n");
--- 
-2.30.2
-
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+> PS defering flushing tlb [1,2] is no go.
+> 
+> Subject: Re: [PATCH v4 29/30] x86/mm, mm/vmalloc: Defer flush_tlb_kernel_range() targeting NOHZ_FULL CPUs
+> [1] https://lore.kernel.org/lkml/20250127155146.GB25757@willie-the-truck/
+> [2] https://lore.kernel.org/lkml/xhsmhwmdwihte.mognet@vschneid-thinkpadt14sgen2i.remote.csb/
 
