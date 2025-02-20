@@ -1,153 +1,99 @@
-Return-Path: <linux-kernel+bounces-523785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0101A3DB3C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:25:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B1BAA3DB45
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:27:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D2883B79DB
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:24:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E924189B9BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:27:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D62EA1F8BBC;
-	Thu, 20 Feb 2025 13:24:57 +0000 (UTC)
-Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com [209.85.217.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68FDD1F8AC0;
+	Thu, 20 Feb 2025 13:26:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rtohReNq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30FC41A8F6D;
-	Thu, 20 Feb 2025 13:24:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9F20433BE
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 13:26:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740057897; cv=none; b=pkMJ4zzUw/mXHX0she+62nRJSoe3vjnyKbumODwdGnY1Iz1SrqC9k3k72gCk+ExOS5UapquAjWOJ0YZ14/M4iXx+dkxvurvPPkpkcHlGsCphkiqUEMCx4WvCbkqFfUqJCi6WdYdStzQNzKuCYxVTNtexdXqIK9YrSK9fSft2cwQ=
+	t=1740058018; cv=none; b=t82Lny1ONjwQ5sXXBoctnpiMPrhvZDDNqjdkE4r+5sCyRHU83mh0FKx6n31usePOD0fMuVwoJdDIIlLmbW/WotloFL6PGAtK2c5PxBYMRxwpRv70350UPf7R+iWyW1EBZSaramOcmXJM6zfnYbG9qbKo2nT4AOTSfZV3mzZrScw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740057897; c=relaxed/simple;
-	bh=4S/kokfs2M+hLO7xvXIOpnR3Kb18m2Ufc7Fsfw5/c+A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=B4IcgA9TyCs7JJHRF3FVZIrCAvLktwWY2/V4W9l3Mq6zWE7MJ6OZM7KKlkKsFcvQaWUyQyfw3ZhSaC/cKS+o+hvzY+gNl9jUa9n587QH1FoDIK+KfCgcXvO+auIiltsV6eDpHScFjAXvCAgT6c3cYJOG6fpXpiCdkfUybCB9obs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-4ba0eb3b0f9so308584137.0;
-        Thu, 20 Feb 2025 05:24:54 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740057894; x=1740662694;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Q7HV2h0jzFh0K1uqK6Lel58fwsmoRdy+eb+pLMM2vV8=;
-        b=XDsDQxW+Zay+IbsRzDGorBrQNfy4tpFeZ93hgHbnc+ae+9nTs4satIWLa/sMqG6mbt
-         zFW9cdKm09G2Mupt7mWcDyPU0MWRdD2Z4cty5++6IO6E5JIy2ha8HWif6FPi2kaP8lXB
-         zY5Q6Z69KvjZzwm+rLYNlKaQnB8loeYZaaY69v68TAq4Jgp5m5kKXOoh36AP8rFj1iwx
-         0DBjjQ/xlOUaa800nvqmX+PkjEIyXEyRdpeYq5bywREof8KKeygtl4pAdAv3pXGj4D1L
-         VaBc3FVsO3D0rYkacajsa9zjbxPbMniZXSBSdFPFgiKzHyBXs34MwuVRApxcQk7+5zqI
-         6xZA==
-X-Forwarded-Encrypted: i=1; AJvYcCXEpcCG0gAN06/+VESvrgT3MvdMOGykloM9VfGJgGflLEZfKxFAhvCtJ6oXaT1u9AxcKpDX+BPcyCmj@vger.kernel.org, AJvYcCXMO82SCxj+youhtt21072IoktaKg/GQMNVQ4JuzbBgJ2TCqdhqKynJlC9cXIf7QfqJQAtS0jTZzmW5isdZ@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxOmEHi6vkeFoo6G0gie9PdlVQ3theugeeBJ2NAzwth0ldSFUV
-	RcTRw2021N3UL5XXTyqkre+A0JIYGRGgSSnrvLXg3SSG+2Opi/LrMA4EYa6C
-X-Gm-Gg: ASbGnctV9v88L0gKs1I00Cj28bWNYCbGJmVJed8H4NNs9ZnyUAhZaArwz2FHCQiJsHW
-	krWQUWgS9cAi3KabVHgxpVFXFtEQfDIarBblP8727Em/npiuURxV5FBwDXej/Z6hcCmk6uRbQ2Z
-	F6IYpSOIcHVQ4iEJORjkRxKUBByF2bfuW2pKU5w33bHNdQWozrPUQumqULLi75VmfJHXfaY4EFQ
-	E8vqt3idO4AfykicVM4YsLON5+nJdiPQ1AHqvpoqVPKhO8aNx6jHdq1t1/m14bFP0+QqiLQoTOd
-	2JvIvwGUn2ZNTakJ0N5kr6jtNqWNB+mr0TzoY5nTsHlP8to1q4HekhVhdA==
-X-Google-Smtp-Source: AGHT+IFj25L+BiHGQ34JaeACDzhHKkjY6XfDwAPEDmH53axbxNo9knHFdbiWIWTF+EuCEPpSI2V4RQ==
-X-Received: by 2002:a05:6102:80a3:b0:4bb:c8e5:aa79 with SMTP id ada2fe7eead31-4bd3fc9f720mr14006428137.8.1740057893765;
-        Thu, 20 Feb 2025 05:24:53 -0800 (PST)
-Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com. [209.85.221.171])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4be638f00b9sm1857412137.12.2025.02.20.05.24.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Feb 2025 05:24:53 -0800 (PST)
-Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-5208736db3fso292431e0c.3;
-        Thu, 20 Feb 2025 05:24:53 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCV/tt0IXR1GPjAAfXxkdX7J2p8gndz2zsmIw3CZMyZ7NpAkrwrMpGBA/XjYuaTSLsXRlevisdKgz2Av@vger.kernel.org, AJvYcCVTT76JP3BwjfxGQ/QViL4qjIuIRkdyWwRn84JAjQonsEWex9hVR/crasabiRATyaQcBBw3KA6kG21HlaTh@vger.kernel.org
-X-Received: by 2002:a05:6102:3e12:b0:4af:be6e:f0aa with SMTP id
- ada2fe7eead31-4bd3fe573cemr13509534137.25.1740057893368; Thu, 20 Feb 2025
- 05:24:53 -0800 (PST)
+	s=arc-20240116; t=1740058018; c=relaxed/simple;
+	bh=P8j1eigvN7rgKJCZBo2OFS0y3OPpg9zieYnI33IBpKo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IMxTPz8e7MSdKBzbaE5YwmyHfcS8F7tEDGXQJInYnXQhPUSCTR9f56NGTa1u4AkJusmHkSyECV+c19ZP5jnXyhmyZrWZ1WW1R8YD+iD/RfL0XGKGwI1r22fGdRFkYaYNDA5FK0VKE+2iHuEsSinOegkYRzb3nlQNdU4wOScvRYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rtohReNq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47379C4CED1;
+	Thu, 20 Feb 2025 13:26:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740058018;
+	bh=P8j1eigvN7rgKJCZBo2OFS0y3OPpg9zieYnI33IBpKo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rtohReNqtYBWFf5m9rELvHj+f1q4VM7eu4mnLTfOWGhooujMFamZfwXRnh1ms0EDX
+	 LRyNXtPf9kcz7SBcBXF2BWUZDICuEe4Yicj3SApHJ9H9GHBsSMSISZjE85iYr6r7T9
+	 4TMHbYr2fST2CTRmPuiZI4ShAqjrRfd1XN0Y6fmHZhYYCLZfxx3A8REMi4IUp667rn
+	 +srDZHdOTcfElyMvM7zUEfSRgR847PNk8I4onfsTKk+hbeITF5WVLEaxH/dMItxuzn
+	 9gMsKFZd6xzANucgdSjRzzMRqVbLz1uWHZVL0LK0O+CRwRVZ8kYQ3n+rQh6hBzFNwl
+	 Sbfef1DOq1r7A==
+Date: Thu, 20 Feb 2025 14:26:48 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Brian Gerst <brgerst@gmail.com>
+Cc: Uros Bizjak <ubizjak@gmail.com>, linux-kernel@vger.kernel.org,
+	x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Borislav Petkov <bp@alien8.de>, Ard Biesheuvel <ardb@kernel.org>
+Subject: Re: [PATCH v6 00/15] x86-64: Stack protector and percpu improvements
+Message-ID: <Z7ctmL3HDGxzyX0g@gmail.com>
+References: <20250123190747.745588-1-brgerst@gmail.com>
+ <Z7RRZ0jdqsrADMm0@gmail.com>
+ <CAFULd4Z_QoOLKCOawyeFtRe6V4+oaaGxfQxav9dS-Di-Ne7tfw@mail.gmail.com>
+ <Z7XE0P6ZFHxtlYXw@gmail.com>
+ <CAMzpN2gyhEnYsimxLhLNPc4HTpVdRGTiBfm9pXiFTL6_3-O=sg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250218160333.605829-1-koichiro.den@canonical.com>
- <20250218160333.605829-2-koichiro.den@canonical.com> <CAMRc=MfmG0okVjV1nH78Aw18dFcoOAZ-UwU-iFc1VKb-BVcTxQ@mail.gmail.com>
-In-Reply-To: <CAMRc=MfmG0okVjV1nH78Aw18dFcoOAZ-UwU-iFc1VKb-BVcTxQ@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 20 Feb 2025 14:24:41 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdULzDfdg-7HBk1f-Z+AZ5L2WGUEiPMqtvk+bNSkLb38BQ@mail.gmail.com>
-X-Gm-Features: AWEUYZnEUyvkz6-PGkijtGsKAP82ZuwbgMK-ONQvuZoqvpUjaHNaiyoeQgSQm1Y
-Message-ID: <CAMuHMdULzDfdg-7HBk1f-Z+AZ5L2WGUEiPMqtvk+bNSkLb38BQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] gpio: introduce utilities for synchronous fake
- device creation
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Koichiro Den <koichiro.den@canonical.com>, linux-gpio@vger.kernel.org, 
-	linus.walleij@linaro.org, maciej.borzecki@canonical.com, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMzpN2gyhEnYsimxLhLNPc4HTpVdRGTiBfm9pXiFTL6_3-O=sg@mail.gmail.com>
 
-Hi Bartosz,
 
-On Thu, 20 Feb 2025 at 12:06, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
-> On Tue, Feb 18, 2025 at 5:04=E2=80=AFPM Koichiro Den <koichiro.den@canoni=
-cal.com> wrote:
-> > Both gpio-sim and gpio-virtuser share a mechanism to instantiate a
-> > platform device, wait for probe completion, and retrieve the probe
-> > success or error status synchronously. With gpio-aggregator planned to
-> > adopt this approach for its configfs interface, it's time to factor
-> > out the common code.
+* Brian Gerst <brgerst@gmail.com> wrote:
+
+> On Wed, Feb 19, 2025 at 6:47 AM Ingo Molnar <mingo@kernel.org> wrote:
 > >
-> > Add dev-sync-probe.[ch] to house helper functions used by all such
-> > implementations.
 > >
-> > No functional change.
+> > * Uros Bizjak <ubizjak@gmail.com> wrote:
 > >
-> > Signed-off-by: Koichiro Den <koichiro.den@canonical.com>
-
-> > --- a/drivers/gpio/Kconfig
-> > +++ b/drivers/gpio/Kconfig
-> > @@ -1863,6 +1863,13 @@ config GPIO_MPSSE
+> > > > Thank you for doing this series - it all looks pretty good from my
+> > > > side and I've applied it experimentally to tip:x86/asm. I fixed up
+> > > > the trivial details other reviewers and me noticed.
+> > > >
+> > > > Note that the merge is tentative, it might still need a rebase if
+> > > > some fundamental problem comes up - but let's see how testing goes
+> > > > in -next.
+> > >
+> > > I wonder if there would be any benefit if stack canary is put into
+> > > struct pcpu_hot?
 > >
-> >  endmenu
+> > It should definitely be one of the hottest data structures on x86, so
+> > moving it there makes sense even if it cannot be measured explicitly.
 > >
-> > +# This symbol is selected by drivers that need synchronous fake device=
- creation
->
-> This comment is unnecessary, please drop it.
->
-> > +config DEV_SYNC_PROBE
-> > +       tristate "Utilities for synchronous fake device creation"
->
-> Please don't make this available for users to select, this should be a
-> hidden symbol only to be selected by its users.
+> 
+> It would have to be done with linker tricks, since you can't make the 
+> compiler use a struct member directly.
 
-It is still useful to make it visible for compile-testing, i.e.
+Probably not worth it then?
 
-    tristate "Utilities for synchronous fake device creation" if COMPILE_TE=
-ST
+Thanks,
 
-As it does not depend on GPIO at all, I think it should be moved
-to the end of the file, outside the big "if GPIOLIB ... endif" block.
-
-> > +       help
-> > +         Common helper functions for drivers that need synchronous fak=
-e
-> > +         device creation.
-> > +
-> >  menu "Virtual GPIO drivers"
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+	Ingo
 
