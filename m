@@ -1,31 +1,31 @@
-Return-Path: <linux-kernel+bounces-522983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65FC8A3D0D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 06:36:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B5A2A3D0D7
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 06:36:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CAD5E189DB34
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 05:36:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F95A3BAA11
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 05:35:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E7471E32BE;
-	Thu, 20 Feb 2025 05:36:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A64AD1E3DDB;
+	Thu, 20 Feb 2025 05:36:03 +0000 (UTC)
 Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDC351A9B4E
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDCC01DE8A2
 	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 05:36:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740029763; cv=none; b=cZt/tp7G1ih+pSmNF8NgMG3gSg7iE4kgPf4Oq4Q6zJwl3q8yj5DJ0mZ27tv1zwwu1Spnhqu/bqJYJp/1S35JRno90NmzS8v1qUHtlXbpEtSyjhPxi39sKXY1ILWY5rKI5SW9D7PGyIFegzdnXK0tc3JxZ/HzYnq8FcbgTMU+y9w=
+	t=1740029763; cv=none; b=bX39BYk1xtVG16Juenwc/YKjwgjM4KAWmz5zeChbuBeWwWMosFskWacPeoa5Uec3FFkIXugNFaANWTV2AJ6+GoOMrmKQCk+Nht/XUX3o8C4/qBN4s77bf8zH5qKdXPwu3vBJaJMljIQKJOi29ZOgKcG2O/kwzMYr2O944QJAxOI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1740029763; c=relaxed/simple;
-	bh=x5P/59Gr/bGb0CCHWfnSxFZ0UEKQuXMdmHzpaAhjp3I=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=rxtNQLl92iUtfdigkuvubsLha89OyhThXeQ4+mb/fa8Yk5Ahlmq4QVLznLIjk2nfikJADteEOHw4X0itWeg6TY4785RP+VitvfvAGoJPpfjIqvcYyMZpog15rLKB+kaOaD30l5eIoTbzhqV1iyegcGOsJ+pbLFFbIxDvps6UyJg=
+	bh=Y2sfbC4g4I7ryoAy/dwLz8LbdSA4fxJRetZmoammRF8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=J3aPUhLBystTSOBm9sF+PzlG8Hl/ZgcyTEtVQdmU23rhc8rbDl9g+m/SifNlY9B9ncFZP3TWoriR2B63EyhB0xqmRnARHO2RK/12a2ATyi4rjTS0ggD4tOHGS5D4yB1sbnV5AggF88ktuSMw31Rd2yV6Ptcvg6tmAh8zWLFDlcI=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-3c9ff7000001d7ae-cb-67b6bba62acc
+X-AuditID: a67dfc5b-3c9ff7000001d7ae-d0-67b6bba63805
 From: Byungchul Park <byungchul@sk.com>
 To: linux-kernel@vger.kernel.org,
 	linux-mm@kvack.org
@@ -44,36 +44,36 @@ Cc: kernel_team@skhynix.com,
 	bp@alien8.de,
 	dave.hansen@linux.intel.com,
 	rjgolo@gmail.com
-Subject: [RFC PATCH v12 06/26] mm: move should_skip_kasan_poison() to mm/internal.h
-Date: Thu, 20 Feb 2025 14:20:07 +0900
-Message-Id: <20250220052027.58847-7-byungchul@sk.com>
+Subject: [RFC PATCH v12 07/26] mm: introduce luf_ugen to be used as a global timestamp
+Date: Thu, 20 Feb 2025 14:20:08 +0900
+Message-Id: <20250220052027.58847-8-byungchul@sk.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20250220052027.58847-1-byungchul@sk.com>
 References: <20250220052027.58847-1-byungchul@sk.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrKLMWRmVeSWpSXmKPExsXC9ZZnoe6y3dvSDa53K1jMWb+GzeLzhn9s
-	Fi82tDNafF3/i9ni6ac+FovLu+awWdxb85/V4vyutawWO5buY7K4dGABk8Xx3gNMFvPvfWaz
-	2LxpKrPF8SlTGS1+/wAqPjlrMouDgMf31j4Wj52z7rJ7LNhU6rF5hZbH4j0vmTw2repk89j0
-	aRK7x7tz59g9Tsz4zeIx72Sgx/t9V9k8tv6y82iceo3N4/MmuQC+KC6blNSczLLUIn27BK6M
-	5ocnWQoW6lQce/6MtYFxjkoXIyeHhICJxPUlW5i7GDnA7I9NqSBhNgF1iRs3fjKD2CICZhIH
-	W/+wg9jMAneZJA70s4HYwgLBEuf2nAKrYRFQlZi04gxYnFfAVGLGhNnMEOPlJVZvOABmcwLN
-	+TGjF6xGCKjm3YJLTF2MXEA179kkftw7wg7RIClxcMUNlgmMvAsYGVYxCmXmleUmZuaY6GVU
-	5mVW6CXn525iBAb+sto/0TsYP10IPsQowMGoxMM7o3VbuhBrYllxZe4hRgkOZiUR3rb6LelC
-	vCmJlVWpRfnxRaU5qcWHGKU5WJTEeY2+lacICaQnlqRmp6YWpBbBZJk4OKUaGBPX886puR3r
-	IndcS81q0Z6aUL1JSsnCesnTZb1V5sf/ePKtbJKjwZ+5Nf2LVf34lJ8flhTZqvNi+fGeI7wm
-	mTE3jr+vDn/4+lzUxhOsla239/z6xtK864FCRdKT+ohXGWZMIVxSyuuyRY588PNSDyn5kXA2
-	4eh8a8W1E3+EMF5ln6dl5BZiq8RSnJFoqMVcVJwIAFMqBtZ4AgAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrDLMWRmVeSWpSXmKPExsXC5WfdrLts97Z0g0mzxCzmrF/DZvF5wz82
-	ixcb2hktvq7/xWzx9FMfi8XhuSdZLS7vmsNmcW/Nf1aL87vWslrsWLqPyeLSgQVMFsd7DzBZ
-	zL/3mc1i86apzBbHp0xltPj9A6j45KzJLA6CHt9b+1g8ds66y+6xYFOpx+YVWh6L97xk8ti0
-	qpPNY9OnSewe786dY/c4MeM3i8e8k4Ee7/ddZfNY/OIDk8fWX3YejVOvsXl83iQXwB/FZZOS
-	mpNZllqkb5fAldH88CRLwUKdimPPn7E2MM5R6WLk4JAQMJH42JTaxcjJwSagLnHjxk9mEFtE
-	wEziYOsfdhCbWeAuk8SBfjYQW1ggWOLcnlNgNSwCqhKTVpwBi/MKmErMmDAbLC4hIC+xesMB
-	MJsTaM6PGb1gNUJANe8WXGKawMi1gJFhFaNIZl5ZbmJmjqlecXZGZV5mhV5yfu4mRmAYL6v9
-	M3EH45fL7ocYBTgYlXh4Hzzemi7EmlhWXJl7iFGCg1lJhLetfku6EG9KYmVValF+fFFpTmrx
-	IUZpDhYlcV6v8NQEIYH0xJLU7NTUgtQimCwTB6dUA2NZ+A6jo08ilpoIanJ3xVt93d+3XEl3
-	zpXJ7tbWf2ZkxWY/iF0kXjozZM65IzuvNS9VZ//nJyT67aTWkxK7eNs5HFv6WNXdT9i4z4/v
-	naIjFTAr71dDw8KfSdsYJ9x1avacrMCQHPPF68r35qjGrKf3j0VXHPc+261ikRxvOne+/eoJ
-	MR5HpZRYijMSDbWYi4oTAa2FdxpfAgAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrGLMWRmVeSWpSXmKPExsXC9ZZnke6y3dvSDdZuU7WYs34Nm8XnDf/Y
+	LF5saGe0+Lr+F7PF0099LBaXd81hs7i35j+rxflda1ktdizdx2Rx6cACJovjvQeYLObf+8xm
+	sXnTVGaL41OmMlr8/gFUfHLWZBYHAY/vrX0sHjtn3WX3WLCp1GPzCi2PxXteMnlsWtXJ5rHp
+	0yR2j3fnzrF7nJjxm8Vj3slAj/f7rrJ5bP1l59E49Rqbx+dNcgF8UVw2Kak5mWWpRfp2CVwZ
+	PbsvsBXcEKm4PHkHSwPjaYEuRk4OCQETia3zj7DC2AveHWUEsdkE1CVu3PjJDGKLCJhJHGz9
+	ww5iMwvcZZI40M8GYgsLhElcvX4PrIZFQFXi5px9YDW8AqYSzT/vsUDMlJdYveEAWA0n0Jwf
+	M3rBeoWAat4tuMTUxcgFVPOeTWLvmQnMEA2SEgdX3GCZwMi7gJFhFaNQZl5ZbmJmjoleRmVe
+	ZoVecn7uJkZg6C+r/RO9g/HTheBDjAIcjEo8vDNat6ULsSaWFVfmHmKU4GBWEuFtq9+SLsSb
+	klhZlVqUH19UmpNafIhRmoNFSZzX6Ft5ipBAemJJanZqakFqEUyWiYNTqoHRWkWcZQ/z1K3b
+	Ct17P9uv/y4+12zX8/SHrS8C98anT2o/d4vR8J/mi5USYus2HxSw/TdhhU7lsidJheu3Wz/8
+	UB+324vZpCvwxNqaSc8VrnL53/Buv7wkr+yRv6nRtq6mp/1JVydeja7+J74rbOMFJff2sKWv
+	1r88dWjpmowLpz2r9Zf+3SW8SomlOCPRUIu5qDgRAPjD1ol5AgAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrLLMWRmVeSWpSXmKPExsXC5WfdrLts97Z0g47nEhZz1q9hs/i84R+b
+	xYsN7YwWX9f/YrZ4+qmPxeLw3JOsFpd3zWGzuLfmP6vF+V1rWS12LN3HZHHpwAImi+O9B5gs
+	5t/7zGaxedNUZovjU6YyWvz+AVR8ctZkFgdBj++tfSweO2fdZfdYsKnUY/MKLY/Fe14yeWxa
+	1cnmsenTJHaPd+fOsXucmPGbxWPeyUCP9/uusnksfvGByWPrLzuPxqnX2Dw+b5IL4I/isklJ
+	zcksSy3St0vgyujZfYGt4IZIxeXJO1gaGE8LdDFyckgImEgseHeUEcRmE1CXuHHjJzOILSJg
+	JnGw9Q87iM0scJdJ4kA/G4gtLBAmcfX6PbAaFgFViZtz9oHV8AqYSjT/vMcCMVNeYvWGA2A1
+	nEBzfszoBesVAqp5t+AS0wRGrgWMDKsYRTLzynITM3NM9YqzMyrzMiv0kvNzNzECA3lZ7Z+J
+	Oxi/XHY/xCjAwajEw/vg8dZ0IdbEsuLK3EOMEhzMSiK8bfVb0oV4UxIrq1KL8uOLSnNSiw8x
+	SnOwKInzeoWnJggJpCeWpGanphakFsFkmTg4pRoYW/d2RHkca+B9vJFh53KuN8mTdZ89zMzL
+	ffNLI+Dor52v2Rhtzm6fuVwy99qCTT6F68QVG9aYGk9+e5wl+lNu2VUJrdN/73efdPK6WZox
+	YYH6w6279jZP63dWlda+EOl/ZorP4Rdv9Mo6D9XcOfz5aLa5x0rlW9opqxhN3YTyJ+bUur7h
+	ZPD1V2Ipzkg01GIuKk4EAAldmBBgAgAA
 X-CFilter-Loop: Reflected
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -82,146 +82,95 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
 Functionally, no change.  This is a preparation for luf mechanism that
-needs to use should_skip_kasan_poison() function in mm/internal.h.
+needs to evaluate the temporal sequence of events to determine whether
+tlb flush required has been done on each CPU.
+
+To achieve that, this patch introduced a generation number, luf_ugen,
+and a few APIs manipulating the number.  It's worth noting the number is
+designed to wraparound so care must be taken when using it.
 
 Signed-off-by: Byungchul Park <byungchul@sk.com>
 ---
- mm/internal.h   | 47 +++++++++++++++++++++++++++++++++++++++++++++++
- mm/page_alloc.c | 47 -----------------------------------------------
- 2 files changed, 47 insertions(+), 47 deletions(-)
+ include/linux/mm.h | 34 ++++++++++++++++++++++++++++++++++
+ mm/rmap.c          | 22 ++++++++++++++++++++++
+ 2 files changed, 56 insertions(+)
 
-diff --git a/mm/internal.h b/mm/internal.h
-index 754f1dd763448..e3084d32272e3 100644
---- a/mm/internal.h
-+++ b/mm/internal.h
-@@ -1038,8 +1038,55 @@ static inline void vunmap_range_noflush(unsigned long start, unsigned long end)
- DECLARE_STATIC_KEY_TRUE(deferred_pages);
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index fecd47239fa99..53a5f1cb21e0d 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -4161,4 +4161,38 @@ static inline int do_mseal(unsigned long start, size_t len_in, unsigned long fla
+ }
+ #endif
  
- bool __init deferred_grow_zone(struct zone *zone, unsigned int order);
-+
-+static inline bool deferred_pages_enabled(void)
-+{
-+	return static_branch_unlikely(&deferred_pages);
-+}
-+#else
-+static inline bool deferred_pages_enabled(void)
-+{
-+	return false;
-+}
- #endif /* CONFIG_DEFERRED_STRUCT_PAGE_INIT */
- 
++#if defined(CONFIG_ARCH_WANT_BATCHED_UNMAP_TLB_FLUSH)
 +/*
-+ * Skip KASAN memory poisoning when either:
-+ *
-+ * 1. For generic KASAN: deferred memory initialization has not yet completed.
-+ *    Tag-based KASAN modes skip pages freed via deferred memory initialization
-+ *    using page tags instead (see below).
-+ * 2. For tag-based KASAN modes: the page has a match-all KASAN tag, indicating
-+ *    that error detection is disabled for accesses via the page address.
-+ *
-+ * Pages will have match-all tags in the following circumstances:
-+ *
-+ * 1. Pages are being initialized for the first time, including during deferred
-+ *    memory init; see the call to page_kasan_tag_reset in __init_single_page.
-+ * 2. The allocation was not unpoisoned due to __GFP_SKIP_KASAN, with the
-+ *    exception of pages unpoisoned by kasan_unpoison_vmalloc.
-+ * 3. The allocation was excluded from being checked due to sampling,
-+ *    see the call to kasan_unpoison_pages.
-+ *
-+ * Poisoning pages during deferred memory init will greatly lengthen the
-+ * process and cause problem in large memory systems as the deferred pages
-+ * initialization is done with interrupt disabled.
-+ *
-+ * Assuming that there will be no reference to those newly initialized
-+ * pages before they are ever allocated, this should have no effect on
-+ * KASAN memory tracking as the poison will be properly inserted at page
-+ * allocation time. The only corner case is when pages are allocated by
-+ * on-demand allocation and then freed again before the deferred pages
-+ * initialization is done, but this is not likely to happen.
++ * luf_ugen will start with 2 so that 1 can be regarded as a passed one.
 + */
-+static inline bool should_skip_kasan_poison(struct page *page)
-+{
-+	if (IS_ENABLED(CONFIG_KASAN_GENERIC))
-+		return deferred_pages_enabled();
++#define LUF_UGEN_INIT 2
 +
-+	return page_kasan_tag(page) == KASAN_TAG_KERNEL;
++static inline bool ugen_before(unsigned long a, unsigned long b)
++{
++	/*
++	 * Consider wraparound.
++	 */
++	return (long)(a - b) < 0;
 +}
 +
- enum mminit_level {
- 	MMINIT_WARNING,
- 	MMINIT_VERIFY,
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 59c26f59db3d6..244cb30496be5 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -299,11 +299,6 @@ int page_group_by_mobility_disabled __read_mostly;
-  */
- DEFINE_STATIC_KEY_TRUE(deferred_pages);
++static inline unsigned long next_ugen(unsigned long ugen)
++{
++	if (ugen + 1)
++		return ugen + 1;
++	/*
++	 * Avoid invalid ugen, zero.
++	 */
++	return ugen + 2;
++}
++
++static inline unsigned long prev_ugen(unsigned long ugen)
++{
++	if (ugen - 1)
++		return ugen - 1;
++	/*
++	 * Avoid invalid ugen, zero.
++	 */
++	return ugen - 2;
++}
++#endif
+ #endif /* _LINUX_MM_H */
+diff --git a/mm/rmap.c b/mm/rmap.c
+index 2de01de164ef0..ed345503e4f88 100644
+--- a/mm/rmap.c
++++ b/mm/rmap.c
+@@ -634,6 +634,28 @@ struct anon_vma *folio_lock_anon_vma_read(const struct folio *folio,
+ }
  
--static inline bool deferred_pages_enabled(void)
--{
--	return static_branch_unlikely(&deferred_pages);
--}
--
+ #ifdef CONFIG_ARCH_WANT_BATCHED_UNMAP_TLB_FLUSH
++
++/*
++ * This generation number is primarily used as a global timestamp to
++ * determine whether tlb flush required has been done on each CPU.  The
++ * function, ugen_before(), should be used to evaluate the temporal
++ * sequence of events because the number is designed to wraparound.
++ */
++static atomic_long_t __maybe_unused luf_ugen = ATOMIC_LONG_INIT(LUF_UGEN_INIT);
++
++/*
++ * Don't return invalid luf_ugen, zero.
++ */
++static unsigned long __maybe_unused new_luf_ugen(void)
++{
++	unsigned long ugen = atomic_long_inc_return(&luf_ugen);
++
++	if (!ugen)
++		ugen = atomic_long_inc_return(&luf_ugen);
++
++	return ugen;
++}
++
  /*
-  * deferred_grow_zone() is __init, but it is called from
-  * get_page_from_freelist() during early boot until deferred_pages permanently
-@@ -316,11 +311,6 @@ _deferred_grow_zone(struct zone *zone, unsigned int order)
- 	return deferred_grow_zone(zone, order);
- }
- #else
--static inline bool deferred_pages_enabled(void)
--{
--	return false;
--}
--
- static inline bool _deferred_grow_zone(struct zone *zone, unsigned int order)
- {
- 	return false;
-@@ -993,43 +983,6 @@ static int free_tail_page_prepare(struct page *head_page, struct page *page)
- 	return ret;
- }
- 
--/*
-- * Skip KASAN memory poisoning when either:
-- *
-- * 1. For generic KASAN: deferred memory initialization has not yet completed.
-- *    Tag-based KASAN modes skip pages freed via deferred memory initialization
-- *    using page tags instead (see below).
-- * 2. For tag-based KASAN modes: the page has a match-all KASAN tag, indicating
-- *    that error detection is disabled for accesses via the page address.
-- *
-- * Pages will have match-all tags in the following circumstances:
-- *
-- * 1. Pages are being initialized for the first time, including during deferred
-- *    memory init; see the call to page_kasan_tag_reset in __init_single_page.
-- * 2. The allocation was not unpoisoned due to __GFP_SKIP_KASAN, with the
-- *    exception of pages unpoisoned by kasan_unpoison_vmalloc.
-- * 3. The allocation was excluded from being checked due to sampling,
-- *    see the call to kasan_unpoison_pages.
-- *
-- * Poisoning pages during deferred memory init will greatly lengthen the
-- * process and cause problem in large memory systems as the deferred pages
-- * initialization is done with interrupt disabled.
-- *
-- * Assuming that there will be no reference to those newly initialized
-- * pages before they are ever allocated, this should have no effect on
-- * KASAN memory tracking as the poison will be properly inserted at page
-- * allocation time. The only corner case is when pages are allocated by
-- * on-demand allocation and then freed again before the deferred pages
-- * initialization is done, but this is not likely to happen.
-- */
--static inline bool should_skip_kasan_poison(struct page *page)
--{
--	if (IS_ENABLED(CONFIG_KASAN_GENERIC))
--		return deferred_pages_enabled();
--
--	return page_kasan_tag(page) == KASAN_TAG_KERNEL;
--}
--
- static void kernel_init_pages(struct page *page, int numpages)
- {
- 	int i;
+  * Flush TLB entries for recently unmapped pages from remote CPUs. It is
+  * important if a PTE was dirty when it was unmapped that it's flushed
 -- 
 2.17.1
 
