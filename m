@@ -1,195 +1,128 @@
-Return-Path: <linux-kernel+bounces-524378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10085A3E25E
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 18:27:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C4EAA3E261
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 18:27:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 12F9C16646E
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:24:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BCD8169A70
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 17:24:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65F52212B15;
-	Thu, 20 Feb 2025 17:23:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 912A4212D83;
+	Thu, 20 Feb 2025 17:24:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hppNGksD"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F9lrXfLo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6E7A204877;
-	Thu, 20 Feb 2025 17:23:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD76F1E2848;
+	Thu, 20 Feb 2025 17:24:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740072235; cv=none; b=NlbORB5tfwI3+PwLqOOexey6KUr0N3Wm0wRSA/lqHitrAIfyIMhORxZSbCUlSlQC3+GvLap69q/zNVQlmw7HHV50A2j3JE+icVN7W9QpZH/QC4H3K+U+giEvULx+2blFAVI+V6aLFkT4+G9WBntMNMJf531nayOPcarpVczAQ38=
+	t=1740072257; cv=none; b=dhEVpfDkQ3q3qqleO+/Q5hY/ZbYzFypNh2kvCbekJDR1Al9K67pcoZMUHNbim3FGjjalUxs7SQn6y37cgov7IxT2pRDNismoLairDrwobUbT2pNuV/s76HUu1nl4K2EOOEzIRw7726pcuXSrTE0O4tV5gv4KxNRnODoKbUR7/b4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740072235; c=relaxed/simple;
-	bh=CoU9Upr5IfW1UbCU/qk6AaXo8dcsi5zMO7uYXliXrGY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=J0/Nrs4LDzxk9R0mH4OJblF1oq4al3ibepO1wSknhcgMxUlWUOFkDY/u474uVA+aoAWm4eMY18PFCJRhh4haJ65gwAbBm0XgPBJVX3edg9hoHT6aRIRMPPJBa5ooEl9QNxAGFhGmUvcYv+poUBRxAbL8fz4ihTHudPM8FVNMP2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hppNGksD; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740072234; x=1771608234;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=CoU9Upr5IfW1UbCU/qk6AaXo8dcsi5zMO7uYXliXrGY=;
-  b=hppNGksDvtLVAT/bygcQKKQ/2ic4Wx8PfBCpBfqG7YBh9cYMUdjL9BDd
-   FrdsVXobnxIwmv37WNOg9ocUQeShWU1dRFLMfweenOmrCGJPtfYYQwzWo
-   Z7fm2fdU9+F6AsEGpzYx+me+Icg9jyMVRQzXPsDEoNYT5i5eCX8toXATC
-   RsfUWC+aqakWDru9ajnhQCA9Ta5GSpHF6XvzFNKgIfE+YAbIRfUvn3KvB
-   LBDYowRa7mpkoKHWlz1XDvEk8dujnB4S84AgX8z/0lrq3Z5yjGgqtAEeO
-   ysoB0qncdKFXQ5U06A9/OQDH8rXyn/enKJlvA8Ps+13HS350KcYdRpop8
-   A==;
-X-CSE-ConnectionGUID: vtIcjIuIR7+T3Pe1coJPwA==
-X-CSE-MsgGUID: Z39tp2oGRCqlOZXIAJcQTQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11314"; a="41076275"
-X-IronPort-AV: E=Sophos;i="6.12,310,1728975600"; 
-   d="scan'208";a="41076275"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Feb 2025 09:23:53 -0800
-X-CSE-ConnectionGUID: xTOc1FKNS0OFg8TAmcXuHQ==
-X-CSE-MsgGUID: jASiOlg7Rz2nvCfhNsk+0Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="114966710"
-Received: from puneetse-mobl.amr.corp.intel.com (HELO [10.125.110.112]) ([10.125.110.112])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Feb 2025 09:23:53 -0800
-Message-ID: <e5cdb4b2-9be4-4af5-9579-01451d221c74@intel.com>
-Date: Thu, 20 Feb 2025 10:23:51 -0700
+	s=arc-20240116; t=1740072257; c=relaxed/simple;
+	bh=0vTN9kKsGessHSXK1lGUwEF13I3IstE4YbEVN7z6DeA=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=MS+l5GNFXsLdf0nPQIxIPGNORvt/zk4a/I7pf/IxwJqe6mIcL9hG1kLP2cp6tq9J8uDWTceBaB/v2IzTPzwA37BiUl06u/R8s3+93WDo2PGf4ixZmD5Ca2f5zPe7r5DQypWcbSCpuCnDlITiIuQKLtacw9CanNI39WM96QnIGM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F9lrXfLo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 343D3C4CED1;
+	Thu, 20 Feb 2025 17:24:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740072256;
+	bh=0vTN9kKsGessHSXK1lGUwEF13I3IstE4YbEVN7z6DeA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=F9lrXfLoGKdONQDtLR43hvtGmLom/4cETRb9HKRvYXfvtFGfPuB16JSU+eQDALYlt
+	 D4CkkHb1drhep3lxmYtX80KPSknuY2OlDgVJXUN5cOHSTwYBUsoJNOA8dz3Y0T9HRi
+	 nxfEqVhfKxuJLeNDR1p+nwJ8VxR21jKCDY5p4n12JUT5HnvGyYuDnCVV4d0dSjOz9j
+	 G8KFmasxukad5p+neYT67aQ1OiZ7LEi255kov736QD/de0+sW9+lno55E4djrkX4iV
+	 OmFJCaZEX2cp3y6l5gLt1gJ7LV3pl5jfg6NpIl4IGmvrc3GCS9YF/IRFJbxLWEV/9g
+	 t8LcST/cB8zOw==
+From: SeongJae Park <sj@kernel.org>
+To: Honggyu Kim <honggyu.kim@sk.com>
+Cc: SeongJae Park <sj@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	kernel_team@skhynix.com,
+	Jonathan Corbet <corbet@lwn.net>,
+	damon@lists.linux.dev,
+	kernel-team@meta.com,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: Re: [PATCH 0/2] mm/damon: introduce DAMOS filter type for unmapped pages
+Date: Thu, 20 Feb 2025 09:24:10 -0800
+Message-Id: <20250220172411.41010-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <93792bf7-9507-474f-a8b0-ccd4d59742dc@sk.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 13/18] cxl/region: Add function to find a port's switch
- decoder by range
-To: Robert Richter <rrichter@amd.com>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- Dan Williams <dan.j.williams@intel.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Davidlohr Bueso <dave@stgolabs.net>
-Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
- Gregory Price <gourry@gourry.net>,
- "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
- Terry Bowman <terry.bowman@amd.com>
-References: <20250211095349.981096-1-rrichter@amd.com>
- <20250211095349.981096-14-rrichter@amd.com>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <20250211095349.981096-14-rrichter@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+Hello Honggyu,
 
+On Thu, 20 Feb 2025 16:45:56 +0900 Honggyu Kim <honggyu.kim@sk.com> wrote:
 
-On 2/11/25 2:53 AM, Robert Richter wrote:
-> Factor out code to find the switch decoder of a port for a specific
-> address range. Reuse the code to search a root decoder, create the
-> function cxl_port_find_switch_decoder() and rework
-> match_root_decoder_by_range() to be usable for switch decoders too.
+> Hi SeongJae,
 > 
-> Signed-off-by: Robert Richter <rrichter@amd.com>
-> Reviewed-by: Gregory Price <gourry@gourry.net>
-> Tested-by: Gregory Price <gourry@gourry.net>
-Reviewed-by: Dave Jiang <dave.jiang@intel.com>
-
-> ---
->  drivers/cxl/core/region.c | 48 +++++++++++++++++++++++----------------
->  1 file changed, 28 insertions(+), 20 deletions(-)
+> On 2/20/2025 7:01 AM, SeongJae Park wrote:
+> > User decides whether their memory will be mapped or unmapped.  It
+> > implies that the two types of memory can have different characteristics
+> > and management requirements.  Provide the DAMON-observaibility
+> > DAMOS-operation capability for the different types by introducing a new
+> > DAMOS filter type for unmapped pages.
 > 
-> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
-> index cfcd235f311e..72e991e7d9ab 100644
-> --- a/drivers/cxl/core/region.c
-> +++ b/drivers/cxl/core/region.c
-> @@ -3189,28 +3189,44 @@ static int devm_cxl_add_dax_region(struct cxl_region *cxlr)
->  	return rc;
->  }
->  
-> -static int match_root_decoder_by_range(struct device *dev,
-> -				       const void *data)
-> +static int match_decoder_by_range(struct device *dev, const void *data)
->  {
->  	const struct range *r1, *r2 = data;
-> -	struct cxl_root_decoder *cxlrd;
-> +	struct cxl_decoder *cxld;
->  
-> -	if (!is_root_decoder(dev))
-> +	if (!is_switch_decoder(dev))
->  		return 0;
->  
-> -	cxlrd = to_cxl_root_decoder(dev);
-> -	r1 = &cxlrd->cxlsd.cxld.hpa_range;
-> +	cxld = to_cxl_decoder(dev);
-> +	r1 = &cxld->hpa_range;
->  	return range_contains(r1, r2);
->  }
->  
-> +static struct cxl_decoder *
-> +cxl_port_find_switch_decoder(struct cxl_port *port, struct range *hpa)
-> +{
-> +	/*
-> +	 * device_find_child() increments the reference count of the
-> +	 * the switch decoder's parent port to protect the reference
-> +	 * to its child. The port is already a parent of the endpoint
-> +	 * decoder's port, at least indirectly in the port hierarchy.
-> +	 * Thus, the endpoint already holds a reference for the parent
-> +	 * port of the switch decoder. Free the unnecessary reference
-> +	 * here.
-> +	 */
-> +	struct device *cxld_dev __free(put_device) =
-> +		device_find_child(&port->dev, hpa, match_decoder_by_range);
-> +
-> +	return cxld_dev ? to_cxl_decoder(cxld_dev) : NULL;
-> +}
-> +
->  static struct cxl_root_decoder *
->  cxl_find_root_decoder(struct cxl_endpoint_decoder *cxled)
->  {
->  	struct cxl_memdev *cxlmd = cxled_to_memdev(cxled);
->  	struct cxl_port *iter = cxled_to_port(cxled);
-> -	struct cxl_decoder *cxld = &cxled->cxld;
-> +	struct cxl_decoder *root, *cxld = &cxled->cxld;
->  	struct range *hpa = &cxld->hpa_range;
-> -	struct device *cxlrd_dev;
->  
->  	while (iter && !is_cxl_root(iter))
->  		iter = to_cxl_port(iter->dev.parent);
-> @@ -3218,9 +3234,8 @@ cxl_find_root_decoder(struct cxl_endpoint_decoder *cxled)
->  	if (!iter)
->  		return NULL;
->  
-> -	cxlrd_dev = device_find_child(&iter->dev, hpa,
-> -				      match_root_decoder_by_range);
-> -	if (!cxlrd_dev) {
-> +	root = cxl_port_find_switch_decoder(iter, hpa);
-> +	if (!root) {
->  		dev_err(cxlmd->dev.parent,
->  			"%s:%s no CXL window for range %#llx:%#llx\n",
->  			dev_name(&cxlmd->dev), dev_name(&cxld->dev),
-> @@ -3228,16 +3243,9 @@ cxl_find_root_decoder(struct cxl_endpoint_decoder *cxled)
->  		return NULL;
->  	}
->  
-> -	/*
-> -	 * device_find_child() created a reference to the root
-> -	 * decoder. Since the root decoder exists as long as the root
-> -	 * port exists and the endpoint already holds a reference to
-> -	 * the root port, this additional reference is not needed.
-> -	 * Free it here.
-> -	 */
-> -	put_device(cxlrd_dev);
->  
-> -	return to_cxl_root_decoder(cxlrd_dev);
-> +
-> +	return to_cxl_root_decoder(&root->dev);
->  }
->  
->  static int match_region_by_range(struct device *dev, const void *data)
+> I asked it before at https://github.com/damonitor/damo/issues/13 about
+> monitoring unused paddr area but I see this patch series is related to
+> applying DAMOS action.
 
+My understanding of "unused" memory that you mentioned is memory that not
+allocated for user data.  This memory cannot get accessed by user, so DAMON
+treats this memory as always not accessed.
+
+"unmapped" memory I'm saying about here is memory that not mapped to userspace.
+For example, unmapped pages in pge cache.  This memory can be accessed, for
+eaxmple through page cache using read()/write() like system calls.
+
+So I think this is not really related with the GitHub discussion.  Please let
+me know if I'm missing something.
+
+> 
+> Regarding that, do you think we can skip those unused memory area using
+> this filter before applying DAMOS action?
+
+So, no.
+
+> 
+> I'm not sure if the current DAMOS tries pageout/migrate action for those
+> unused area because they are detected as cold area although those will
+> be imediately skiped inside action scheme.
+
+This is the current behavior.  DAMOS will try to do whatever action to whatever
+region if requested, see the action is not applicable to the page, and move on
+to the next page.  Please note that filter-based page level skipping is not
+that different from the page level action applicability checking.
+
+If you know where "unused" memory located, and you want to make DAMON/S
+entirely ignore it, you could use DAMON target address range, or address range
+type DAMOS filter.  I'm not sure if this is what you're looking for, though.
+
+My understanding of your concern about "unused" memory on the GitHub discussion
+was more about adaptive reions adjustment efficiency.  I recently posted[1] some
+ideas to improve the mechanism.  Any feedback about the idea will be welcomed
+and help prioritizing it.
+
+[1] https://lore.kernel.org/20250213222303.244724-1-sj@kernel.org
+
+
+Thanks,
+SJ
+
+[...]
 
