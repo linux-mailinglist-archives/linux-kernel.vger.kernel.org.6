@@ -1,244 +1,169 @@
-Return-Path: <linux-kernel+bounces-522922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-522920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF542A3D020
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 04:43:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19A83A3D01F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 04:42:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB4841899C6D
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 03:43:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D69FF3B4C22
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 03:41:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31C1B1D9A70;
-	Thu, 20 Feb 2025 03:42:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 849781D5ACE;
+	Thu, 20 Feb 2025 03:41:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="Jmux3xhH"
-Received: from out203-205-221-209.mail.qq.com (out203-205-221-209.mail.qq.com [203.205.221.209])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="oH3gfmiA"
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A87B61C4A16
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 03:42:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.209
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12D2F4C6C
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 03:41:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740022978; cv=none; b=r0oWXM5STWgDhBa30wPEBV6bkm07QrIZyctj25/KqNkyUqyVWfSwODAFPRiNfaSGOD7/TVz6y16+dyWW2aWcAAOVU99F+uSKBOjJN5zBGwzLiikPM5xCzglvQW8/EyNOJ6E8dOjAsALAEygXMCXmQ2KVps30YXZ23qjjWRlJExE=
+	t=1740022917; cv=none; b=J3xbI6gig6rFgtLBZqHrM8ZwqcVMl47WXIDaiH/3xV0lGfVoePFJR7TWNObVHDmro6F5AgcADfcs5w3ZWX8Nzq4Nr6uB4OjRiY/Eg3JSYSLRHANlOtIXzdCvpxF91aPVrjCfTiQ4Hi66lPB6LZV+40h5l/VTEyB6B16QpEaptec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740022978; c=relaxed/simple;
-	bh=Ajw4pG0ev5Bnl5ToC1yPOZWqbvcdoYkdElP8zGPfIyM=;
-	h=Message-ID:Content-Type:Mime-Version:Subject:From:In-Reply-To:
-	 Date:Cc:References:To; b=I+OVqTz4HDI3l0Gxjr7dpJkzmvDk7IYkhrIz6wOnVF8GnEmssNm84Ekzt+ykyNJMj/b3nZ4/WnOzF1cjgbdCk0DzavQW7naB4MPiHym2eEAUgl5LoZn7EZ+tlddZLhvFDbO8aI+3CAQowyAzo4956vGvcMs0Sncy3JsrhPvLzQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cyyself.name; spf=pass smtp.mailfrom=cyyself.name; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=Jmux3xhH; arc=none smtp.client-ip=203.205.221.209
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cyyself.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyyself.name
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1740022663; bh=QrztbhIzhEGt6f3MGaPx3+gUNHg1v0QODEPxhGsrfR4=;
-	h=Subject:From:In-Reply-To:Date:Cc:References:To;
-	b=Jmux3xhHpiWhhxGFY2yykB2gNrlZWrcjz8P2lBKHeTcyN0ExnhtfdD3xnNHGyx+gR
-	 m4gTLaOd/CQh1EDG++xyvGA05uyJqTgTbKMjZqciFR3PoLlXJK/YCwcpDUinWrBko9
-	 LZPJxj3lP2w15VWvahIxGZcuMGzDXEQVosgVRj2g=
-Received: from smtpclient.apple ([2408:8207:18a0:b53f:e516:fb34:5948:11a1])
-	by newxmesmtplogicsvrszc11-0.qq.com (NewEsmtp) with SMTP
-	id 966A72EB; Thu, 20 Feb 2025 11:37:38 +0800
-X-QQ-mid: xmsmtpt1740022658t0dl3oa06
-Message-ID: <tencent_F70BEE494C40C8752302DF97608DF680E306@qq.com>
-X-QQ-XMAILINFO: NY3HYYTs4gYSd8sfm6LPIWrV+Z0MsMT1ELpP2j1ne2+F7AJakzc5o2w+7Ea9/L
-	 r1plFCfFbwppqIwvN68tO2uPPWIqp/qMqXbJANZAvRVJEdPpD70OXwegSNuVJJ/zQjgaaXpu85j0
-	 aS+2JjqONPqm61y5sc/kd90nJ2o7mUg8msNuGfR6DXnRbZ8UWNXo15cs07pmlHKCEKdXaDjE1Bhp
-	 IaQRdSW/jcF68mst7X1gIjAayzETZoOq2nnCTtdXI4Kcejo9wxfkRA0eJhTGYRpp7gUtbtM3kZSE
-	 qFmttZiIp9Aylbb2yLhabRykQsh3Hz1Lf8NXE0NKs+3TRME938r6ttXmMFMw7QtnTlRI0/D4u4au
-	 qbdL8Hfac9nUSU/C/Pw2cju+C/HsjpZZNTLz3cOR3SpuImGUdn87YdAbd/+KzlWR1tRMHywqbLGQ
-	 Dgpg5XO3sWXCTNyiMuDUN6AdRABY77lCIQ3UePEmnDv7GWq+59BJwLQEaG3cqAw2sCbpS3SLScHv
-	 jdjAK/rczEfjRxEyDPNV/Zi9UJPDcfzm4eb/2RskNBpgR8NmJ6mVfTgXMc+LJxupS4szuMtuRVBf
-	 NxKcmGGJz48c3F+nNk2fhXTnSXVfizzOMyFscU5syfcbzGSEfUYNhplX71l6n4/Dg3gqzTg7QIwv
-	 yXAlNdnDrdygvmq0Z9pjUUjXw5rm3VKor1R2IFEbp5AY5c6fGEejLjEcKo+35XOgZnVE9nxRQJYb
-	 +hNuB23jGA8WQcR2Ukwjd8PtdozrCqiDkQ07SYsL3zXDQM95wIm8Uxav1sL1PO18+5c7+yzQig8N
-	 SfGwRXaTQpkwcDI3MF0xPlEwX7eM4saLuAcqahO7A3tKEOTCwDRM9kY0snAePzWStq3b3N1djRpb
-	 /aGn81KIa1YKhw1Gvrjh8tZ8KoUIbRi3MIZjhto66G7Phf6qr5FGg4newHxdX4KCtEh2/ywtMwK3
-	 XyWxGwPJdrto8K43jVl+uYlrnpkfEFXZ8uqt9w1DrIA8clrGaSdQ==
-X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
-Content-Type: text/plain;
-	charset=utf-8
+	s=arc-20240116; t=1740022917; c=relaxed/simple;
+	bh=krYBnspnrzjnvwlTX5XpErfRhugw92dkZZXwRyzxP2I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
+	 References; b=biY8ma7O7HsBn0RaTYwd48etY0BBXjJMplGs762QSU0dBvoz2ZPnNkBgCoBZT+YHXMd9TKzqaYm2U8Wp/5mRlal04djQjNbrXRdqhuL/19Ojq+7/LQSkdeYdX7WXO9wsdzUCK6bHyebShfgsrH2UZJbytu6+YFCOvTW+VVlIoLk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=oH3gfmiA; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250220034152epoutp01167da4670bf05ee7c90bcbc4f46ac2d0~lzZ7Mndpn2022920229epoutp01g
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 03:41:52 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250220034152epoutp01167da4670bf05ee7c90bcbc4f46ac2d0~lzZ7Mndpn2022920229epoutp01g
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1740022913;
+	bh=wmrJMEYkabUuacOnL6nFEj1/RBSJM2hfnCMBg2NNKoQ=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=oH3gfmiApDoz9q7p5ZbtD166BlnX2n06l47xUlaQR1STu3DqLsmlcww9FjvTTBLfS
+	 GPtj4npwRjx6YZaDBAfDhkzzIZfotEUaQWC7DXZDEj8waJYOEanOlrZKVusN6K57CF
+	 el5I5GY/p31DJXupYOgP3rDJ0TaoZMxjV21uUx7c=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+	epcas2p4.samsung.com (KnoxPortal) with ESMTP id
+	20250220034152epcas2p426b276c30cc9821167bfbc61856b7571~lzZ6sxbpp0354403544epcas2p4L;
+	Thu, 20 Feb 2025 03:41:52 +0000 (GMT)
+Received: from epsmgec2p1-new.samsung.com (unknown [182.195.36.69]) by
+	epsnrtp3.localdomain (Postfix) with ESMTP id 4Yyzb360vbz4x9Q3; Thu, 20 Feb
+	2025 03:41:51 +0000 (GMT)
+Received: from epcas2p4.samsung.com ( [182.195.41.56]) by
+	epsmgec2p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	B2.3D.32010.F74A6B76; Thu, 20 Feb 2025 12:41:51 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas2p3.samsung.com (KnoxPortal) with ESMTPA id
+	20250220034151epcas2p3e23d8496e872b49da28ced7a87edd4ad~lzZ5fIc2t1684616846epcas2p3-;
+	Thu, 20 Feb 2025 03:41:51 +0000 (GMT)
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20250220034151epsmtrp2e44d3dacb76368441774acb0cfd0857d~lzZ5eU_VK0153801538epsmtrp2d;
+	Thu, 20 Feb 2025 03:41:51 +0000 (GMT)
+X-AuditID: b6c32a4d-acffa70000007d0a-41-67b6a47f6d44
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	94.C7.33707.E74A6B76; Thu, 20 Feb 2025 12:41:51 +0900 (KST)
+Received: from localhost.localdomain (unknown [10.229.95.142]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250220034150epsmtip24b12282efba95807f28944fbb80fbdc6~lzZ5SjZo-1561315613epsmtip23;
+	Thu, 20 Feb 2025 03:41:50 +0000 (GMT)
+From: Hyesoo Yu <hyesoo.yu@samsung.com>
+To: 
+Cc: janghyuck.kim@samsung.com, vbabka@suse.cz, Hyesoo Yu
+	<hyesoo.yu@samsung.com>, Christoph Lameter <cl@linux.com>, Pekka Enberg
+	<penberg@kernel.org>, David Rientjes <rientjes@google.com>, Joonsoo Kim
+	<iamjoonsoo.kim@lge.com>, Andrew Morton <akpm@linux-foundation.org>, Roman
+	Gushchin <roman.gushchin@linux.dev>, Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/2] mm: slub: Enhanced debugging in slub error
+Date: Thu, 20 Feb 2025 12:39:42 +0900
+Message-ID: <20250220033953.1606820-1-hyesoo.yu@samsung.com>
+X-Mailer: git-send-email 2.48.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.400.131.1.6\))
-Subject: Re: [PATCH 0/2] perf vendor events arm64: Add A720/A520
- events/metrics
-From: Yangyu Chen <cyy@cyyself.name>
-In-Reply-To: <CAP-5=fWXmNoFLyWv+vo7hhLSqTDy7hf+-huKRD9OUWnO-GESRw@mail.gmail.com>
-Date: Thu, 20 Feb 2025 11:37:28 +0800
-Cc: Namhyung Kim <namhyung@kernel.org>,
- James Clark <james.clark@linaro.org>,
- linux-perf-users@vger.kernel.org,
- John Garry <john.g.garry@oracle.com>,
- Will Deacon <will@kernel.org>,
- Mike Leach <mike.leach@linaro.org>,
- Leo Yan <leo.yan@linux.dev>,
- Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>,
- Adrian Hunter <adrian.hunter@intel.com>,
- Liang Kan <kan.liang@linux.intel.com>,
- Yoshihiro Furudera <fj5100bi@fujitsu.com>,
- linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-X-OQ-MSGID: <4EC06A50-E35D-42EF-8219-E6CAF007A620@cyyself.name>
-References: <tencent_5360DA048EE5B8CF3104213F8D037C698208@qq.com>
- <Z66YjGvjD_yzEHUg@google.com>
- <tencent_45B4E91CA370C563D6420A1A25F992056D09@qq.com>
- <1b8b234f-6435-45cf-83e7-8e86c84f075f@linaro.org>
- <CAP-5=fVAhLLH-a0_wLo8dPoMLOb6rOJiTgGh-OFZJJoaLFE-8Q@mail.gmail.com>
- <fe46069e-c52e-45ee-b4b3-8b929fb83b31@linaro.org>
- <Z7UHieRRnvRb5_oU@google.com>
- <CAP-5=fWXmNoFLyWv+vo7hhLSqTDy7hf+-huKRD9OUWnO-GESRw@mail.gmail.com>
-To: Ian Rogers <irogers@google.com>
-X-Mailer: Apple Mail (2.3826.400.131.1.6)
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrGJsWRmVeSWpSXmKPExsWy7bCmhW79km3pBveW61tM7DGwmLN+DZvF
+	9W9vGC3+dl5gtVjZ3cxmsXlOscXlXXPYLO6t+c9q0fb5H5BYspHJYuIaUYvZjX2MDjweO2fd
+	ZfdYsKnUY9OqTjaPTZ8msXt0vb3C5HFixm8WjydXpjN5LGyYyuzRt2UVo8eZBUfYPT5vkgvg
+	jsq2yUhNTEktUkjNS85PycxLt1XyDo53jjc1MzDUNbS0MFdSyEvMTbVVcvEJ0HXLzAG6XEmh
+	LDGnFCgUkFhcrKRvZ1OUX1qSqpCRX1xiq5RakJJTYF6gV5yYW1yal66Xl1piZWhgYGQKVJiQ
+	nbFw32fGgn9cFb8+9bE1MLZzdjFyckgImEhMvP6LuYuRi0NIYA+jxIK+76wgCSGBT4wS687Z
+	QSSA7AmTf7DBdHRcPsMKkdjJKLF0wgKo9s+MEs8fHGYCqWITUJc4sWUZI4gtIsAisfL7dxaQ
+	ImaBGcwS2w/tBisSFnCSeNFyHCjBwcEioCpxfDczSJhXwEZi2cm97BDb5CVurznJAhEXlDg5
+	8wmYzQwUb946G2yxhMBEDokHp5+zQjS4SDxs7WOGsIUlXh3fAjVISuLzu71QLxRLbFsMcihI
+	cwOjxOaO+1ANxhKznrUzghzELKApsX6XPogpIaAsceQW1F4+iY7Df9khwrwSHW1CEI3KEvuX
+	zWOBsCUlHq1th7rGQ6JzZTMTJERjJT5PaWCawCg/C8k3s5B8Mwth7wJG5lWMUqkFxbnpqclG
+	BYa6eanl8IhNzs/dxAhOwFq+Oxhfr/+rd4iRiYPxEKMEB7OSCG9b/ZZ0Id6UxMqq1KL8+KLS
+	nNTiQ4ymwCCeyCwlmpwPzAF5JfGGJpYGJmZmhuZGpgbmSuK81Tta0oUE0hNLUrNTUwtSi2D6
+	mDg4pRqYQm/X3nmx2lv4xPm+uN0plQKLnqfH+JmfePi07OJXJ/trl7fN/S7/8Pi53iNzI0xC
+	5euMeWdNuhYeLvzG6YrFd4vCdo+/DWt+Hjt1ImSV4GpOvUufz5dcLF5g/9Qttcx66r7zHe9c
+	T/n895SWSmOxCSyePvX83nP2qfVZbr3fug0OJ1y4kRm7hVf+ybmFH849LzYNKPHnvib/cKvZ
+	wfxpbvK9S/mUnRRc2Q6Ktf+aoqKi8rJ92+0Z6hvLn8tffl57PSZifek8/af6ZleWPN5yvWuP
+	X1n4QnHbD9fzlyXWZUwznHRqhwLv9Ofr244rKcz5vqTt/6a2O7NFdxarajpsSzC9FvJ3UT4b
+	f4wna/BJViWW4oxEQy3mouJEAN8gSWhJBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrLLMWRmVeSWpSXmKPExsWy7bCSvG79km3pBr8vMVlM7DGwmLN+DZvF
+	9W9vGC3+dl5gtVjZ3cxmsXlOscXlXXPYLO6t+c9q0fb5H5BYshGofo2oxezGPkYHHo+ds+6y
+	eyzYVOqxaVUnm8emT5PYPbreXmHyODHjN4vHkyvTmTwWNkxl9ujbsorR48yCI+wenzfJBXBH
+	cdmkpOZklqUW6dslcGUs3PeZseAfV8WvT31sDYztnF2MnBwSAiYSHZfPsHYxcnEICWxnlPj7
+	+QUrREJSYtbnk0wQtrDE/ZYjYHEhgY+MEt2XqkFsNgF1iRNbljGC2CICLBIrv39nARnELLCE
+	WeLY/GnMIAlhASeJFy3HgRIcHCwCqhLHd4OFeQVsJJad3MsOMV9e4vaakywQcUGJkzOfgNnM
+	QPHmrbOZJzDyzUKSmoUktYCRaRWjaGpBcW56bnKBoV5xYm5xaV66XnJ+7iZGcAxoBe1gXLb+
+	r94hRiYOxkOMEhzMSiK8bfVb0oV4UxIrq1KL8uOLSnNSiw8xSnOwKInzKud0pggJpCeWpGan
+	phakFsFkmTg4pRqYIgqyezVvKM0SUemw3BrwcpnKfdlQLSsJ/2M7NtZsy4yYcyz63LHCWcJx
+	D464MS12OqFf0i77aeN6z5RWvTPblfiTKpNfS+q//v8h+J6Kwbvzmu1ic6w3NMqE5hqJ5Lre
+	fukY86Z5yUldJ2/fCPblJ86fZnoYtvlF4v09K3YrbH1kG3ZD6vSLjAbtpBql8ntSF/7ODX/w
+	P6DZriHrbuYFF5MbweFHOJZUO+vufBXS+jJ1S0uY0kRz6fedLQZsYU6fXb9L70t+M4fziPbq
+	DTs03l3Orkz2Tptxc5H8zEu8NkuMC8L3Fm71L7Ja5CObNltizpLK2U5Ze5qU1suXaW+7/Fry
+	rkoR72zFS7Mz9dSVWIozEg21mIuKEwFwXkSh8AIAAA==
+X-CMS-MailID: 20250220034151epcas2p3e23d8496e872b49da28ced7a87edd4ad
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250220034151epcas2p3e23d8496e872b49da28ced7a87edd4ad
+References: <CGME20250220034151epcas2p3e23d8496e872b49da28ced7a87edd4ad@epcas2p3.samsung.com>
 
+Dear Maintainer,
 
+The purpose is to improve the debugging capabilities of the slub allocator
+when a error occurs. The following improvements have been made:
 
-> On 19 Feb 2025, at 06:33, Ian Rogers <irogers@google.com> wrote:
->=20
-> On Tue, Feb 18, 2025 at 2:19=E2=80=AFPM Namhyung Kim =
-<namhyung@kernel.org> wrote:
->>=20
->> On Tue, Feb 18, 2025 at 09:30:23AM +0000, James Clark wrote:
->>>=20
->>>=20
->>> On 18/02/2025 12:41 am, Ian Rogers wrote:
->>>> On Fri, Feb 14, 2025 at 2:02=E2=80=AFAM James Clark =
-<james.clark@linaro.org> wrote:
->>>>>=20
->>>>>=20
->>>>>=20
->>>>> On 14/02/2025 5:49 am, Yangyu Chen wrote:
->>>>>>=20
->>>>>>=20
->>>>>>> On 14 Feb 2025, at 09:12, Namhyung Kim <namhyung@kernel.org> =
-wrote:
->>>>>>>=20
->>>>>>> Hello,
->>>>>>>=20
->>>>>>> On Thu, Feb 13, 2025 at 11:11:01PM +0800, Yangyu Chen wrote:
->>>>>>>> This patchset adds the perf JSON files for the Cortex-A720 and =
-Cortex-A520
->>>>>>>> processors. Some events have been tested on Raxda Orion 6 with =
-Cix P1 SoC
->>>>>>>> (8xA720 + 4xA520) running mainline Kernel with ACPI mode.
->>>>>>>=20
->>>>>>> I'm curious how the name of PMUs look like.  It is cortex_a720 =
-(or a520)?
->>>>>>=20
->>>>>> The name of PMUs comes from Arm's documentation. I have included =
-these
->>>>>> links in each patch.
->>>>>>=20
->>>>>>> I remember there's a logic to check the length of hex digits at =
-the end.
->>>>>>>=20
->>>>>>=20
->>>>>> Could you provide more details about this?
->>>>>>=20
->>>>>>> Ian, are you ok with this?
->>>>>>>=20
->>>>>=20
->>>>> I think they wouldn't be merged because they're core PMUs, so =
-should be
->>>>> fine? Even though they would otherwise be merged because they're =
-more
->>>>> than 3 hex digits.
->>>>=20
->>>> Do we know the PMU names? If they are cortex_a520 and cortex_a720 =
-then
->>>=20
->>> It will be "armv9_cortex_a720" from this line:
->>>=20
->>>  PMUV3_INIT_SIMPLE(armv9_cortex_a720)
->>=20
->> I see, thanks!
->>=20
->>>=20
->>>> this comment at least reads a little stale:
->>>> =
-https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/t=
-ree/tools/perf/util/pmus.c?h=3Dperf-tools-next#n76
->>>> ```
->>>> /*
->>>> * There is a '_{num}' suffix. For decimal suffixes any length
->>>> * will do, for hexadecimal ensure more than 2 hex digits so
->>>> * that S390's cpum_cf PMU doesn't match.
->>>> */
->>>> ```
->>>> James is right that core PMUs aren't put on the same list as =
-uncore/other PMUs.
->>=20
->> Ok, then I guess we're good.
->=20
-> I think you may be able to do things that look odd, like today the
-> "i915" PMU can be called just "i", I think the a520/a720 naming will
-> allow "armv9_cortex/cycles/" as an event name, then open it on two
-> PMUs if they are present. We may only show one PMU in perf list as
-> that code I think assumes they're the same PMU as they only differ by
-> suffix:
-> =
-https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/t=
-ree/tools/perf/util/pmus.c?h=3Dperf-tools-next#n384
-> I can imagine aggregation possibly being broken, but I think that
-> works off the number of PMUs not the names of the PMUs, so it should
-> be okay. Probably the only thing broken that matter is perf list when
-> you have a BIG.little system with a520 and a720, this may be broken
-> with say a a53 and a72 today as both of those suffix lengths are >2,
-> but maybe they use the "armv8._pmuv3_0", "armv8._pmuv3_1", etc. naming
-> convention. I suspect the >2 here:
-> =
-https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/t=
-ree/tools/perf/util/pmus.c?h=3Dperf-tools-next#n80
-> would still work and be correct if it were >4. If that changes then
-> this will also need to change:
-> =
-https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/t=
-ree/Documentation/ABI/testing/sysfs-bus-event_source-devices?h=3Dperf-tool=
-s-next#n12
->=20
-> Thanks,
-> Ian
->=20
+ - Added WARN() calls at specific locations (slab_err, object_err) to detect
+errors effectively and to generate a crash dump if panic_on_warn is enabled.
 
-On my system, the names of PMUs are `armv8_pmuv3_0` and
-`armv8_pmuv3_1`:
+ - Additionally, the printing location in check_object has been adjusted to
+display the broken data before the restoration process. This improvement
+allows for a better understanding of how the data was corrupted.
 
-```
-$ ls /sys/bus/event_source/devices/
-armv8_pmuv3_0  armv8_pmuv3_1  breakpoint  kprobe  software  tracepoint  =
-uprobe
-```
+This series combines two patches that were discussed seperately in the links below.
+https://lore.kernel.org/linux-mm/20250120082908.4162780-1-hyesoo.yu@samsung.com/
+https://lore.kernel.org/linux-mm/20250120083023.4162932-1-hyesoo.yu@samsung.com/
 
-I searched for ACPI DSDT on my platform, but there's no mention of
-a720 or a520. I haven't delved into the PMU kernel driver yet.
+Thanks you.
 
-Additionally, there's a more significant problem for aarch64
-BIG.little platforms when two or more types of cores don't have the
-same PMUs. The perf list can only display the core PMUs on core0
-unless we use the PERF_CPUID env to override it. This is because
-perf will only probe the first MIDR here:
-=
-https://github.com/torvalds/linux/blob/87a132e73910e8689902aed7f2fc229d690=
-8383b/tools/perf/arch/arm64/util/header.c#L60
+version 2 changes
+ - Used WARN() to trigger a panic instead of direct calling of BUG_ON()
+ - Print the broken data only once before the restore.
 
-However, I think this doesn't block this patch for adding events and =
-metrics?
+version 3 changes
+ - Move WARN() from slab_fix to slab_err and object to call WARN on
+ all error reporting paths.
+ - Change the parameter t ype of check_bytes_and_report.
 
+Hyesoo Yu (2):
+  mm: slub: Print the broken data before restoring slub.
+  mm: slub: call WARN() when the slab detect an error
 
-Thanks,
-Yangyu Chen
+ mm/slub.c | 60 ++++++++++++++++++++++++++++++-------------------------
+ 1 file changed, 33 insertions(+), 27 deletions(-)
 
->>=20
->> Thanks,
->> Namhyung
+-- 
+2.28.0
 
 
