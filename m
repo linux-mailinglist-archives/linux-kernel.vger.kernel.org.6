@@ -1,118 +1,121 @@
-Return-Path: <linux-kernel+bounces-524832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58E61A3E79F
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 23:39:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55B6CA3E7A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 23:39:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6CC7A3B90CF
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 22:38:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCDD9189D62B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 22:40:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F2F5264F85;
-	Thu, 20 Feb 2025 22:38:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92D8B264634;
+	Thu, 20 Feb 2025 22:39:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="fNKlmkCe"
-Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ethancedwards.com header.i=@ethancedwards.com header.b="f//Vi9u/"
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C0D51EE02A
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 22:38:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3FE91E9B35
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 22:39:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740091112; cv=none; b=EOh47k4QC5SXdQgTJX+UaqXNaclsNMytbRO/rPSJVSiuBSOGT+rhqaso1/NfEJSV40j5AmFPSlwJcEzFdzH/xijGi5XQndi5dq6dSLdrMuKBwxVEuKxX7Q+WAoxVeaKl5MrVy52EflkACLjuvJ69+H2eqK87cmqHT+C4kMVVIrQ=
+	t=1740091188; cv=none; b=awyrnhJcCXXDpZ5hdKUYIXHO319t8Z2wObxbSXzLteHaME+3GC4ZvB450JqoDJK8ue613rfG6qxTw5tLwyhjgLN3xwsaLGSIai6ig45tg4efmt3Gq9nSnJFgEzB0o6MwEGF6/iXbpYtufNG3VrpPNjF/Jh0i0GPxiWMhKCZQA4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740091112; c=relaxed/simple;
-	bh=sWMtMJhIGgZDkwBs1wdeFaJJtPcHRts5l/4w38T2rfk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fU1p6AU2XUhUwBTNr5B+oxvWIzDZrvJotZf59wX92aZqzBL9akCrgJ4/tNaic3FZU7QEpnoJ35/95aomiEHmZ8nFJ0kTy9WPG09rQmZKxhvorxNlyPhTNwP34/AurSv/dmTDIIQKbFCbsFjgdsnUV06PWTDz8dhgZZhiDAemDL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=fNKlmkCe; arc=none smtp.client-ip=209.85.210.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-72716c75f20so434847a34.2
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 14:38:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1740091108; x=1740695908; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=pZvnme7tRdTD63uQFjHp0iE5fgweZwPuVbaZo06CSNU=;
-        b=fNKlmkCeOyqBMIADau+YNglc76AOrOmhQDFNSz2eaZF1tODfP5NcxSn9gfc5fwfgMD
-         Tms4gc6lkuE/ydOWKs8DhFxgfTUKg3p/61QmC7O1hQEK5bgc/Ds2Xfja5RFoLWDJavBk
-         HL9KtkCTtVF3G+xhkZFWO/MMm/8rl098PrckC1+GDDeDkl3nIQ+4VzLAZIIM4BE+iDsU
-         Ugkn6xnCwlGdjYyD9WsbS+E484CBFJ8PFWg9l4uuxPP8/JZNdxwr1oHGYgkg8JQ1yKRs
-         Br+9AYo9lhx+akioUQnaKKeeznxd1NYjE9t6uI1auOEGFAxjTmO4d4t/QwrSOkHxzARw
-         Dr/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740091108; x=1740695908;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pZvnme7tRdTD63uQFjHp0iE5fgweZwPuVbaZo06CSNU=;
-        b=MuZz9hx/EqNJo9BPLSJGNkQaE3zy2TF5MPkmDVhc7EOwU+BSQnLrGyhuwxnDuNRtSs
-         ezBUf0tRyyHYUmwMOv5DCXQr0C1TUg+0v8V+87cR2KNm09l8yxAEXUcshU802nIUj8Bg
-         t6crxIlG1a+kPwbgireqYIzKWYQotqohjMR3Hf07J/srn6TCMkWleO0aEmiHCMWLhNjE
-         YKBXT/Slv0N4XyulQbDi47oO5c0kL2ryMDqWcP8fDx1Kz/OoVKXSHAo/C2DOqu+4n3IL
-         PwtGlrV+OKbtL8O7gbRG2EQGEmlgEU5Ak7Z3jE7GybillqbaCHNkw/32hnzoKOucnmF4
-         OxzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW4DRAO8cdVfIURjxoZD0gbGgwhYXAxgIvVfni9/4ul+50JfDBBQsa//dcJss1DpxNIgHU5KRZujefuKuE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHYiK7SMzdKTphjtrtScV0yDb75ERnFunxcrAC71eYPWNyBS9a
-	q/N+40HHXqywCJOIvb7hWMiKcs9TfaKL98ug4u9tk9tj0o6b5YDa84CciCgvni4=
-X-Gm-Gg: ASbGnctFV0eDjL7A/z55vn5AdcgunekjlZ/i6Q77RPqFZpRtiX7drtYSZY3DTNU+h0s
-	H394A79PpIdy5aC3D1v5Hlrx7+wZBGJTuXWvfq4eBJirLU8Sz9Pg5xniM7+BS6dlU/x1VP/AiFQ
-	X/nelsTdjWaeHleJh2IZ7KYJps/HTFkYsQ7Sk/2uP3n4TOvg24dzcERlo8Sl/wdpNHo7n58Q14+
-	y1fpRdHOj6g3qkGqJWj2xN3XDGuJXNVdinOwH7gvJ8Y8744x2GrKzMjep4KHmaUsxrWeP4U3SEv
-	Xbu21ENhJ/gaC1/Zn8k53IWpzsiTGC15DyYb3rRbZj4F1ryMzRNV
-X-Google-Smtp-Source: AGHT+IEzdfjmrp9J+sxTdexLYB1VUUUSlpEgBRUKFEO5q3qrJomkJEMgCb7UY4Y09D1Vyk3fevqGpw==
-X-Received: by 2002:a05:6830:8d2:b0:727:2751:6b93 with SMTP id 46e09a7af769-7274c25bcedmr785372a34.20.1740091108688;
-        Thu, 20 Feb 2025 14:38:28 -0800 (PST)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-72732331fe0sm1729171a34.43.2025.02.20.14.38.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Feb 2025 14:38:28 -0800 (PST)
-Message-ID: <3c54045c-6001-4f13-a421-f7f4844b6ccc@baylibre.com>
-Date: Thu, 20 Feb 2025 16:38:26 -0600
+	s=arc-20240116; t=1740091188; c=relaxed/simple;
+	bh=J57RcTCyWAxFm2umO0g+4bB4ISjq2IYkSSr7ajlq/gA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=etcvexuwI/bjdktbbjjiE7sCpM5KT5RBJV6u7EqM3N7v53rRJdfxcY6+5qhqPzI+ZrHa7e7s54qNgz4Zg357HeQZn1A86mXtcnKmt61kX9B4+TqICiAR/pwMxjm5frZzn8UckWJH1sQa1AVKY/NXSH19OZDCHq1ZIxnoGqgSQWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ethancedwards.com; spf=pass smtp.mailfrom=ethancedwards.com; dkim=pass (2048-bit key) header.d=ethancedwards.com header.i=@ethancedwards.com header.b=f//Vi9u/; arc=none smtp.client-ip=80.241.56.161
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ethancedwards.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ethancedwards.com
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4YzSqz1hl1z9tDy;
+	Thu, 20 Feb 2025 23:39:43 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ethancedwards.com;
+	s=MBO0001; t=1740091183;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=DA3uhlCDI1A8BDotF0N5GRp5MWr0V4pEHmnZHzSGNPE=;
+	b=f//Vi9u/xq6akrnJWV4SMJm4ueQB4UZlcbQa3xbXHzlyKLZEGAQz5GOx0W1xoDwPY4Kk9y
+	Tph0I7lxGu6YAlY4Vky1I5k5LOBTMSgQ8U4TGn1al2n6TyvnEvfmKxgZSdxnb7RTsNDjzn
+	Ac0QP0q6IfRwjP7l1+QJ/v/aF1Le6BxR/b3NX587g4vCT4JOlImK7mozPKp4GzKiEOHS04
+	UqvPjGGcFFastPKxjSK7p437yw6nru/GBcOyd3sZIdAt2l8hO9cRtxHVVYX0f+/iE13K7G
+	97jNVI5sqImx72rfBRgG8HdI9BSGFUwJ54gU9x5gP2E7rqOgtUCL7AZXYkmeLQ==
+From: Ethan Carter Edwards <ethan@ethancedwards.com>
+Date: Thu, 20 Feb 2025 17:39:40 -0500
+Subject: [PATCH] um: use str_yes_no() to remove hardcoded "yes" and "no"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND v3 13/17] iio: adc: ad7768-1: add multiple scan
- types to support 16-bits mode
-To: Jonathan Santos <Jonathan.Santos@analog.com>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: lars@metafoo.de, Michael.Hennerich@analog.com,
- marcelo.schmitt@analog.com, jic23@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, jonath4nns@gmail.com,
- marcelo.schmitt1@gmail.com
-References: <cover.1739368121.git.Jonathan.Santos@analog.com>
- <854d64a0b431e66e70dcfeaf75bc6e40c4c25a78.1739368121.git.Jonathan.Santos@analog.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <854d64a0b431e66e70dcfeaf75bc6e40c4c25a78.1739368121.git.Jonathan.Santos@analog.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20250220-um_yes_no-v1-1-2a355ed2d225@ethancedwards.com>
+X-B4-Tracking: v=1; b=H4sIACuvt2cC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDIyMD3dLc+MrU4vi8fF2T1DRDgyRTo1SzVAMloPqCotS0zAqwWdGxtbU
+ ATLVp01sAAAA=
+X-Change-ID: 20250220-um_yes_no-4ef10b52e6e0
+To: Richard Weinberger <richard@nod.at>
+Cc: Anton Ivanov <anton.ivanov@cambridgegreys.com>, 
+ Johannes Berg <johannes@sipsolutions.net>, linux-um@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, 
+ Ethan Carter Edwards <ethan@ethancedwards.com>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1418;
+ i=ethan@ethancedwards.com; h=from:subject:message-id;
+ bh=J57RcTCyWAxFm2umO0g+4bB4ISjq2IYkSSr7ajlq/gA=;
+ b=LS0tLS1CRUdJTiBQR1AgTUVTU0FHRS0tLS0tCgpvd0o0bkp2QXk4ekFKWGJEOXFoNThlVGp6e
+ GhQcXlVeHBHOWZyMk1TS3JEb0FVdjA4cTZkOVVlVU4ycFZjMisrCnVsUDExbzBzaGJ0ZTkvS2tH
+ bWQybExJd2lIRXh5SW9wc3Z6UFVVNTdxRGxEWWVkZmx5YVlPYXhNSUVNWXVEZ0YKWUNLZlN4a1o
+ zaWpXQ1p4amY5disvdmxXRGIxTmlSZFRxczRkL2ErWjl6V3ZVTXQrOWRVZGhnei9ETTkva1BmYg
+ pOZjJVeDlhcG9WNXZ1TitGUFpqbXhiRHhpRm1tMXFUNVJSYXJXUUdwQ2s3Rwo9QTFqbAotLS0tL
+ UVORCBQR1AgTUVTU0FHRS0tLS0tCg==
+X-Developer-Key: i=ethan@ethancedwards.com; a=openpgp;
+ fpr=2E51F61839D1FA947A7300C234C04305D581DBFE
+X-Rspamd-Queue-Id: 4YzSqz1hl1z9tDy
 
-On 2/12/25 12:18 PM, Jonathan Santos wrote:
-> When the device is configured to Sinc5 filter and decimation x8,
-> output data is reduced to 16-bits in order to support 1 MHz of
-> sampling frequency due to clock limitation.
+Remove hard-coded strings by using the str_yes_no() helper function
+provided by <linux/string_choices.h>.
 
-It would be a bit more clear if this said that x8 is only possible
-with sinc5, so we don't have to check the filter type in the code.
-At first, I thought the code was missing that part of the check.
+Signed-off-by: Ethan Carter Edwards <ethan@ethancedwards.com>
+---
+ arch/um/kernel/um_arch.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-> 
-> Use multiple scan types feature to enable the driver to switch
-> scan type in runtime, making possible to support both 24-bit and
-> 16-bit resolution.
-> 
-> Signed-off-by: Jonathan Santos <Jonathan.Santos@analog.com>
-> ---
+diff --git a/arch/um/kernel/um_arch.c b/arch/um/kernel/um_arch.c
+index 79ea97d4797ecc9c157ee948ae0505bcdef84da5..7f050783885a0faed0a4f334716d2532b982bb91 100644
+--- a/arch/um/kernel/um_arch.c
++++ b/arch/um/kernel/um_arch.c
+@@ -12,6 +12,7 @@
+ #include <linux/panic_notifier.h>
+ #include <linux/seq_file.h>
+ #include <linux/string.h>
++#include <linux/string_choices.h>
+ #include <linux/utsname.h>
+ #include <linux/sched.h>
+ #include <linux/sched/task.h>
+@@ -78,7 +79,7 @@ static int show_cpuinfo(struct seq_file *m, void *v)
+ 	seq_printf(m, "model name\t: UML\n");
+ 	seq_printf(m, "mode\t\t: skas\n");
+ 	seq_printf(m, "host\t\t: %s\n", host_info);
+-	seq_printf(m, "fpu\t\t: %s\n", cpu_has(&boot_cpu_data, X86_FEATURE_FPU) ? "yes" : "no");
++	seq_printf(m, "fpu\t\t: %s\n", str_yes_no(cpu_has(&boot_cpu_data, X86_FEATURE_FPU)));
+ 	seq_printf(m, "flags\t\t:");
+ 	for (i = 0; i < 32*NCAPINTS; i++)
+ 		if (cpu_has(&boot_cpu_data, i) && (x86_cap_flags[i] != NULL))
 
-Reviewed-by: David Lechner <dlechner@baylire.com>
+---
+base-commit: 27eddbf3449026a73d6ed52d55b192bfcf526a03
+change-id: 20250220-um_yes_no-4ef10b52e6e0
+
+Best regards,
+-- 
+Ethan Carter Edwards <ethan@ethancedwards.com>
 
 
