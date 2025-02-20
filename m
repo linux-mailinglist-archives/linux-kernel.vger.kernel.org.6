@@ -1,119 +1,144 @@
-Return-Path: <linux-kernel+bounces-523139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D8D6A3D291
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 08:47:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90929A3D297
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 08:47:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 618B017C055
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 07:46:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EAAC3B6C60
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 07:47:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EF921E9B15;
-	Thu, 20 Feb 2025 07:46:06 +0000 (UTC)
-Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22DA31E9B2D;
-	Thu, 20 Feb 2025 07:45:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9FC61E3DF7;
+	Thu, 20 Feb 2025 07:47:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="bd+Da69k"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F4953FD4;
+	Thu, 20 Feb 2025 07:47:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740037565; cv=none; b=YGroIZ8VAPNczkM9RS8VMuf5V5/jwt+0umUj4Z45/6/UYf/wfwsQPqnQZnisVVPGP51E/YuduMNe7eX2pbkSVkhMty4YvK7UU8sxgBhqmc7fAvV6Uc/xr1GRMSgI+EQUY6gQsvWM2ypgY+tnG4FSi6yUBBtHs1sFjbQvvyWYktc=
+	t=1740037671; cv=none; b=OXbZiIA9APU5/pNAxaYg0awtZt8u9mSW1hc9B5wbUa3FgNIock+q9aQCuV1jPoZIM69DAwuNdeultjVgwGjyN0imKV7EvW9g6+orpD8a/9dOP4Yub7HnITsjOoGQgwobw/GAncabpz8/S3nAde32aMgdB3tyTEwYP6XTqamlZKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740037565; c=relaxed/simple;
-	bh=24E38aGTaxxEzPyzWRerQJnY8HDDXmt8Rkt7nsVgV3w=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=s6KKaK4ZhGufiV5xrmKqYveeu9F0bd+pusGw3fQMGaw1f3wBq5mVtQh+8FNoDzxSl9f5GQsif09O2wY7Qme/ztoLqQRg7GqmAlbhShQJMSlfw86qIBhO03mUhgTbaO5lZT+KbHff1ZKfiGiFyWk4GAzh0CNPV1Z0kHQix1S2PFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-3c9ff7000001d7ae-49-67b6ddb64ed6
-Message-ID: <93792bf7-9507-474f-a8b0-ccd4d59742dc@sk.com>
-Date: Thu, 20 Feb 2025 16:45:56 +0900
+	s=arc-20240116; t=1740037671; c=relaxed/simple;
+	bh=Zgt/U1cvabUnX93OXZk0Fq0VFi6sYuEjoK8M9eDjZmU=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=SwDEe/K/Ad/eunzjkKTsaxM5IaOruEwrxWxvxkvtug6mOKeVKe5A7AXuZMbea+xd7vIPWEP+EaImjuo5J9EUAjEnG/OTRuyYE5dIM2oeWFUzY/cct7PDhCQBeqUIiqgAOeRcF5usA2ITjU5oed7UcU88wPrwpFto2BkYpCbupLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=bd+Da69k; arc=none smtp.client-ip=220.197.31.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id; bh=Rkcx24TA4MdGm3cT8T
+	BpfbzjtZE4POuH/u4Yyc3aCQ8=; b=bd+Da69kgC9q2YkEPC5cLrEmqxLTUAVogn
+	zuUJwHQ22jIXV8T8NcY1Nmb6/JOKU/fKXyAlYMNpCGGOFBD0+rgllByGrjv86zib
+	S/L2c3n776Nbw+NfqIvjNOEKl4iRpTgY5KzHauc+QH6slVX9Zes3mA4rWCxxBk/Y
+	JKrwwaD4Y=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g0-0 (Coremail) with SMTP id _____wB3rvns3bZnkUJpNg--.12450S2;
+	Thu, 20 Feb 2025 15:46:53 +0800 (CST)
+From: Wenliang Yan <wenliang202407@163.com>
+To: linux@roeck-us.net
+Cc: christophe.jaillet@wanadoo.fr,
+	conor+dt@kernel.org,
+	corbet@lwn.net,
+	jdelvare@suse.com,
+	krzk+dt@kernel.org,
+	linux-hwmon@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	robh@kernel.org,
+	wenliang202407@163.com
+Subject: Re: [PATCH v4 0/2] hwmon:(ina238)Add support for SQ52206
+Date: Thu, 20 Feb 2025 02:46:32 -0500
+Message-Id: <20250220074632.5003-1-wenliang202407@163.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <c7c3d35a-e8a5-40ee-9b47-c22d87fa7f71@roeck-us.net>
+References: <c7c3d35a-e8a5-40ee-9b47-c22d87fa7f71@roeck-us.net>
+X-CM-TRANSID:_____wB3rvns3bZnkUJpNg--.12450S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxWFy8ZF1xuF18Jw1kuw47CFg_yoW5Ww43pa
+	93GF4rCryDGr17XrZ3Kw47ZryYkas5JF18Wr13Xw1rua4Uu3WxWrW29w1Y93Wqqr9avFsY
+	yFySqFnxKF1UAFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0JUKYL9UUUUU=
+X-CM-SenderInfo: xzhqzxhdqjjiisuqlqqrwthudrp/1tbiJRr502e2189yaQAAsH
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: kernel_team@skhynix.com, Jonathan Corbet <corbet@lwn.net>,
- damon@lists.linux.dev, kernel-team@meta.com, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH 0/2] mm/damon: introduce DAMOS filter type for unmapped
- pages
-To: SeongJae Park <sj@kernel.org>, Andrew Morton <akpm@linux-foundation.org>
-References: <20250219220146.133650-1-sj@kernel.org>
-Content-Language: ko
-From: Honggyu Kim <honggyu.kim@sk.com>
-In-Reply-To: <20250219220146.133650-1-sj@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrLLMWRmVeSWpSXmKPExsXC9ZZnke62u9vSDVZ+17GYs34Nm8WTA+2M
-	Fk/+/2a12HcRyF3YtoTF4vKuOWwW99b8Z7U4/PUNkwOHx6ZVnWwemz5NYvc4MeM3i8eLzTMZ
-	PRb3TWb1OHexwuPzJrkA9igum5TUnMyy1CJ9uwSujG/vN7AUvOWumHW8jbGBcS1nFyMnh4SA
-	icS398uYYey2h/dZQWxeAUuJ/X9fsoDYLAKqEvvPbGOEiAtKnJz5BCwuKiAvcf/WDHYQm1lg
-	N6PExFZdEFtYIFjiwYRWpi5GDg4RAR+JluWJIGEhAWOJm5d3MkKUi0jM7mwDW8smoCZx5eUk
-	JhCbE+iEHycXMEHUmEl0be2CqpeX2P52DlA9F9CZJ9gk3i3+ywZxs6TEwRU3WCYwCs5Cct4s
-	JDtmIZk1C8msBYwsqxiFMvPKchMzc0z0MirzMiv0kvNzNzECI2VZ7Z/oHYyfLgQfYhTgYFTi
-	4Z3Rui1diDWxrLgy9xCjBAezkghvW/2WdCHelMTKqtSi/Pii0pzU4kOM0hwsSuK8Rt/KU4QE
-	0hNLUrNTUwtSi2CyTBycUg2MrLlbSjQ0Ljjo7nFomXGYcyXPEeY5XvpHT37h3fTF1+P4jNDq
-	MxdWJRQydl5tuMt2/fVaua8Jj9+WNxX8TszPOL6tPkJd4NryXPm469qC2n9crFxmrldeaxK1
-	4MriT/0vzVjE5e585K8y2LN1BsPysjc1X1ZpJNrU/7uefvvBaxbThFL/PflOSizFGYmGWsxF
-	xYkAJwXW+pACAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrCLMWRmVeSWpSXmKPExsXCNUNLT3fb3W3pBi97ZSzmrF/DZvHkQDuj
-	xZP/v1kt9l0Ecg/PPclqsbBtCYvF5V1z2CzurfnPanH46xsmB06PTas62Tw2fZrE7nFixm8W
-	jxebZzJ6LO6bzOpx7mKFx+IXH5g8Pm+SC+CI4rJJSc3JLEst0rdL4Mr49n4DS8Fb7opZx9sY
-	GxjXcnYxcnJICJhItD28zwpi8wpYSuz/+5IFxGYRUJXYf2YbI0RcUOLkzCdgcVEBeYn7t2aw
-	g9jMArsZJSa26oLYwgLBEg8mtDJ1MXJwiAj4SLQsTwQJCwkYS9y8vJMRolxEYnZnGzOIzSag
-	JnHl5SQmEJsT6IQfJxcwQdSYSXRt7YKql5fY/nYO8wRGvllIrpiFZNQsJC2zkLQsYGRZxSiS
-	mVeWm5iZY6pXnJ1RmZdZoZecn7uJERj2y2r/TNzB+OWy+yFGAQ5GJR7eB4+3pguxJpYVV+Ye
-	YpTgYFYS4W2r35IuxJuSWFmVWpQfX1Sak1p8iFGag0VJnNcrPDVBSCA9sSQ1OzW1ILUIJsvE
-	wSnVwCh5knHnPTeHmQcX7jmkIy72c5WO3MH9vvFaF/a2dzT+m/H/1JRM5kpHY403+b6/Mj5+
-	sLiTWCJgWFk1xe5q6qdUf5n3PWat8y5eOvH10vZt2WniB+bl+G1U4/8izx3XfP97Utfus+H8
-	aSVS3griWqybHYMuvXxYvUGJnWcT1620rWaxkqoS1UosxRmJhlrMRcWJAEgNI9N3AgAA
-X-CFilter-Loop: Reflected
 
-Hi SeongJae,
+At 2025-01-25 13:01:36, "Guenter Roeck" <linux@roeck-us.net> wrote:
+>On 1/24/25 19:02, Wenliang Yan wrote:
+>> Add support for Silergy i2c power monitor SQ52206 to the ina238
+>> driver as those two are similar.
+>> 
+>> Signed-off-by: Wenliang Yan <wenliang202407@163.com>
+>> ---
+>> 
+>> Add new chip SQ52206, the datasheet depends on
+>> https://us1.silergy.com/cloud/index/uniqid/676b659b4a503
+>> The password is fx6NEe.
+>> 
+>> Changes in v4:
+>> - addressed various review comments.
+>> - Link to v3: https://lore.kernel.org/linux-hwmon/20250117082017.688212-1-wenliang202407@163.com/
+>> 
+>
+>Your "change logs" are equivalent to "made changes" and completely pointless.
+>As consequence, I'll only handle your patches if and when I have nothing else
+>to review since I'll have to figure out myself what you changed and if you
+>implemented the feedback. I don't really hve time for that, so please do not
+>expect that I'll apply this series anytime soon.
+>
+>Guenter
 
-On 2/20/2025 7:01 AM, SeongJae Park wrote:
-> User decides whether their memory will be mapped or unmapped.  It
-> implies that the two types of memory can have different characteristics
-> and management requirements.  Provide the DAMON-observaibility
-> DAMOS-operation capability for the different types by introducing a new
-> DAMOS filter type for unmapped pages.
+Sorry to bother you. I'm not sure if the description of the "change log" in
+the email I replied to you on January 25th was still too brief
+(https://lore.kernel.org/linux-hwmon/20250125064432.1242713-1-
+wenliang202407@163.com/). 
+Therefore, I have added more content again, hoping it will be helpful to you.
+At the same time, if you think any part needs adjustment, I will cooperate
+actively. Looking forward to your reply.
 
-I asked it before at https://github.com/damonitor/damo/issues/13 about
-monitoring unused paddr area but I see this patch series is related to
-applying DAMOS action.
+There are two main changes in the V4 version:
 
-Regarding that, do you think we can skip those unused memory area using
-this filter before applying DAMOS action?
+1) add 'Acked-by: Krzysztof Kozlowski' information to PATCH 1.
 
-I'm not sure if the current DAMOS tries pageout/migrate action for those
-unused area because they are detected as cold area although those will
-be imediately skiped inside action scheme.
+2) formatting adjustments have been made to ina2xx.c in PATCH2 with
+Christophe JAILLET's comments.(https://lore.kernel.org/linux-hwmon/
+5f4095b0-8105-4001-81ac-e4f7053e45ae@wanadoo.fr/)
+
+Including:
+
+1.Change 'sprintf()' in the 'energy1_input_show()' to 'sysfs_emit()'.
+
+2.Move up the "enum ina238_ids chip" line in the 'ina238_probe()'
+to keep RCT style
+
+3.Remove the last comma when describing 'ina238_of_match[]' to keep the
+format consistent with the 'i2c_device_id ina238_id[]' structure
+
+4.Change the '5bytes' in the description to '5 bytes'
 
 Thanks,
-Honggyu
+Wenliang Yan
 
-> 
-> Changes from RFC
-> (https://lore.kernel.org/20241127205624.86986-1-sj@kernel.org)
-> - Rebase on latest mm-unstable
-> - Wordsmith commit message
-> - Add documentation
-> 
-> SeongJae Park (2):
->    mm/damon: implement a new DAMOS filter type for unmapped pages
->    Docs/mm/damon/design: document unmapped DAMOS filter type
-> 
->   Documentation/mm/damon/design.rst | 2 ++
->   include/linux/damon.h             | 2 ++
->   mm/damon/paddr.c                  | 3 +++
->   mm/damon/sysfs-schemes.c          | 1 +
->   4 files changed, 8 insertions(+)
-> 
-> 
-> base-commit: a2130e89cbd08ddb6f023b0b10eb87ebbc67add1
+>> Changes in v3:
+>> - addressed various review comments.
+>> - Link to v2: https://lore.kernel.org/linux-hwmon/20250113035023.365697-1-wenliang202407@163.com/
+>> 
+>> Changes in v2:
+>> - Explain why sq52206 compatibility has been added to ina2xx.yaml.
+>> - addressed various review comments
+>> - Link to v1: https://lore.kernel.org/linux-hwmon/20241224063559.391061-1-wenliang202407@163.com/
+>> 
+>> Wenliang Yan (2):
+>>    dt-bindings:Add SQ52206 to ina2xx devicetree bindings
+>>    hwmon:(ina238)Add support for SQ52206
+>> 
+>>   .../devicetree/bindings/hwmon/ti,ina2xx.yaml  |   4 +
+>>   Documentation/hwmon/ina238.rst                |  15 ++
+>>   drivers/hwmon/ina238.c                        | 209 +++++++++++++++---
+>>   3 files changed, 195 insertions(+), 33 deletions(-)
+>> 
+
 
 
