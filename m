@@ -1,123 +1,179 @@
-Return-Path: <linux-kernel+bounces-523572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A60A4A3D890
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:28:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A9A6A3D8AA
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:31:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26EEB168323
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 11:26:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DB133AA8BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 11:28:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 705231FCFF5;
-	Thu, 20 Feb 2025 11:23:03 +0000 (UTC)
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D59581F3BBE;
+	Thu, 20 Feb 2025 11:28:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b="g+Az0dN4";
+	dkim=pass (2048-bit key) header.d=triplefau.lt header.i=@triplefau.lt header.b="OpdFy3BB"
+Received: from e3i103.smtp2go.com (e3i103.smtp2go.com [158.120.84.103])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4972C1FCF60;
-	Thu, 20 Feb 2025 11:23:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 021751F236C
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 11:28:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=158.120.84.103
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740050583; cv=none; b=Gyv7LF2wnCrl/KauB0Ax3peMEE5AmX586jBuuqFAfqCrp+lIZSoiRj3ihMwsB+qTPFjk/hZnNQQMK6FP6jCSTcuX7M9iSsXy1YsnWkJXjc224qNuyGW5Ab22sZMAisKT4jj5DcpvYFDDYxl5m38ec30HRobR78t1/gX7GHpcyt8=
+	t=1740050908; cv=none; b=uxfGh/mGNZVnAEzTksEzehXx5bsB+Vauk996DhL4Wc7FxpipVk5wvcKeQ8giO/agjZV1EShDqUCCrPtN4Qj07R8mDL/7NQf4HiyNjBrHOhRkp1lxeSta/FVgCn1DreZ+LGxLhKJ0x9JJh9B/jIu9i890YbE3KI936kpHTH0GQHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740050583; c=relaxed/simple;
-	bh=937swDBv/4tESpJoLAiVpvmztTsdxbMeFlQ3HC4lwKI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OUcv8RGEPjl4qoUXrO4GFMQ3Wy/u+dy2JvuXt/fQOo/NorTx9MKa6SU5PccEVWDOV8dUbeL74lkKsJOrVcoLH5kcTA5PU1j1ovWhvz9zmgDNrxqXHfKFzySMWwBSO1uQFxWnQ9XFuD9tnbJqoVm6f2vj28xZ3LToX5cl3whP+cA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5e0573a84fcso1080559a12.2;
-        Thu, 20 Feb 2025 03:23:00 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740050579; x=1740655379;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XD9odAiTaOoZIvBUhB+j1xV7nylcFW+OianwZ8HY0v8=;
-        b=o5o2vApjkBfAvorVgX+xcBMVBSwdUSFfYHHawyxJYWcIhKRb1kp5wOqt8Xxy0aNvVn
-         vbA5UNFjmWM4gI9vNPNFUKiyqDryQ4mY/6/eRa28ucxExbOCboJNKwgBeZ3edh94NRH2
-         zgJ+y++Jx86WOSi/PgOE7bBHH2my1KP4/MI4t/KW8Rfo7kdS8sp/NpeA72r5ht37zfX3
-         M+8bnX/aOuLdOBTwcGdDY3y77/RrQsWnb9qE9kZf3h3ZrPdtc2PY7k+v2KWmeIcZxQ0i
-         VMPl7FaFW6mXEKJ6Yv/r+QlckmL47Csx7h8hnPe54rBvXvSvjrx+JJyw6KbTCQQSxvDL
-         bk0g==
-X-Forwarded-Encrypted: i=1; AJvYcCU3nKK4JHkdu3X/2yIU2eXzfqa7eX8fEVLf2hDAb6/vAtqcY3A6iOT1bBwJ7Jx0oynyR/j+/OWLMQdpoUs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBNNl66DuXk/s5aTeTM67clyEImGDEHwP8w7XN1HiaU4uu4hEI
-	3qMqTRJmdGcHoUiT2b7vn+OznhrvCeWNZYsBZj9etB6tvM19S3LR
-X-Gm-Gg: ASbGncvYY36ejR1lZLeQhYg17X7/LJla72aL0wlb2Tv6do52/Zb+4qTvIGcBqzhJQNw
-	o+A9DY/i6L/KZLxlfSfzu5v468jV6uh8SIDZW1DOLCvpSUiACuN9GEQbxE61KBUkFsDB8SMh2X4
-	suxxCAapqKKPv36PP1h3NtuKabtLy3d/XaP4/opxQ4esAqjIkX+eS2XOht4niRtiuXcurJxYb/U
-	VjYEAEk+IFahJE7CZLpxUalqL3YoS1giDYLgKrI7qBFX1gWbi7tKBVoC87thsQMeWaGwM5Z+RZb
-	Wcg16A==
-X-Google-Smtp-Source: AGHT+IHT5LXolvtX2+Vm9JGvTxa3pFzLchGGSykVFvDSmRcx7IyyW9y2kALsn2C/3qJ5lwGFuTKviA==
-X-Received: by 2002:a17:907:72c8:b0:ab7:f245:fbc1 with SMTP id a640c23a62f3a-abb7091d9d6mr2190619566b.3.1740050579019;
-        Thu, 20 Feb 2025 03:22:59 -0800 (PST)
-Received: from gmail.com ([2a03:2880:30ff:2::])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abb9b81aacdsm755900766b.104.2025.02.20.03.22.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Feb 2025 03:22:58 -0800 (PST)
-Date: Thu, 20 Feb 2025 03:22:56 -0800
-From: Breno Leitao <leitao@debian.org>
-To: Jakub Kicinski <kuba@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	David Wei <dw@davidwei.uk>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v3] netdevsim: call napi_schedule from a timer
- context
-Message-ID: <20250220-spotted-obedient-chameleon-2cda9b@leitao>
-References: <20250219-netdevsim-v3-1-811e2b8abc4c@debian.org>
+	s=arc-20240116; t=1740050908; c=relaxed/simple;
+	bh=YkiHPumBN8nAiPNaHtyQooOU01tx/EZ1O8QxZuFIQAw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=IY4AiVRRbLbiJEyvuIz9i0kir5sEZsADTh7LwB91IphxKxg770JpzjaIVfS4brenf3GajJ0aulf/JKRsJww3lAri2Jt/A5FdIsEWisyGzsAMtDbSycf8vCviAK4nUqAmzxw572NE571inBnKh8gXJJ1rwqI69sX394J8uQql2Og=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=triplefau.lt; spf=pass smtp.mailfrom=em510616.triplefau.lt; dkim=pass (2048-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b=g+Az0dN4; dkim=pass (2048-bit key) header.d=triplefau.lt header.i=@triplefau.lt header.b=OpdFy3BB; arc=none smtp.client-ip=158.120.84.103
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=triplefau.lt
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=em510616.triplefau.lt
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=smtpservice.net;
+ i=@smtpservice.net; q=dns/txt; s=a1-4; t=1740050898; h=feedback-id :
+ x-smtpcorp-track : date : message-id : to : subject : from : reply-to
+ : sender : list-unsubscribe : list-unsubscribe-post;
+ bh=M1W1nn58NLGVj+eWLt6EtKwldWjGNarRyKe0cNviRKI=;
+ b=g+Az0dN4XhCXVz/4c4Ms1zjv28DcJNw34A1vpLjtoisd9PsUccqG06h9WCTR9Gla6ykRq
+ q0aCDwdSCNeSUEhkqa6NlhERyE4X/meWxKX3rnoFiXGkKToj6LUIaclD0TlX72L9/zq7YqO
+ SU532AbZL0i09hoQOmTwNbF5T0n9P2lYiniPaV5+6sS7Mb4tkjAyUhjvWoamMvjmFHE74tz
+ waczQntZewOGhjBjNMSJ7HWDTnY/l5wBAgIL6EjBMCgz91AuKqWZrbjhRhFGvV2sJFlUMe9
+ RtKxnBabG4YAockUhFaJAdTNqDpx/Hdo+73U506FIjz2t7ar0BLkZkwqMInA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=triplefau.lt;
+ i=@triplefau.lt; q=dns/txt; s=s510616; t=1740050898; h=from : subject
+ : to : message-id : date;
+ bh=M1W1nn58NLGVj+eWLt6EtKwldWjGNarRyKe0cNviRKI=;
+ b=OpdFy3BBaxZ8UI0awjqzV1J0+LICnF+4LcfH/6is6QFsrqXm5m9HvFkEPx2XQM3Skvc43
+ YxbuQEswpDpyn2jqNCkjd0v+ufJsvXHrvPkZ/tIa/S53XY9qB6i/g6EelkQDwgoP+khWhMk
+ PROl0qtsxNtocJyXytqpHcZT+TUxgK2o8CudgwyIX1l7nfO166835z1RPkuffnpqdRypyM4
+ ZsQLykowZO96A99sbkSDLFlZQD/ZIWQbQPBHMMG30yTyfq1WJDyaV7TbbUWJUhjEia8zTqM
+ D72mzfiRKDvqsksm+HL5sqyDor0e2vfKOharqal5mrgJAHBT/y7Oj7CggJEA==
+Received: from [10.12.239.196] (helo=localhost)
+	by smtpcorp.com with esmtpsa (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.97.1-S2G)
+	(envelope-from <repk@triplefau.lt>)
+	id 1tl4iv-4o5NDgrvJ0D-lp0j;
+	Thu, 20 Feb 2025 11:28:09 +0000
+From: Remi Pommarel <repk@triplefau.lt>
+To: linux-leds@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Lee Jones <lee@kernel.org>,
+	Pavel Machek <pavel@kernel.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+	Remi Pommarel <repk@triplefau.lt>
+Subject: [PATCH v2] leds: Fix LED_OFF brightness race
+Date: Thu, 20 Feb 2025 12:23:17 +0100
+Message-Id: <19c81177059dab7b656c42063958011a8e4d1a66.1740050412.git.repk@triplefau.lt>
+X-Mailer: git-send-email 2.40.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250219-netdevsim-v3-1-811e2b8abc4c@debian.org>
+Content-Transfer-Encoding: 8bit
+X-Report-Abuse: Please forward a copy of this message, including all headers, to <abuse-report@smtp2go.com>
+Feedback-ID: 510616m:510616apGKSTK:510616sDHMaHdAgA
+X-smtpcorp-track: zcFvao-w_nmC.ipaOdkftC_MT.921AGQ20SmT
 
-On Wed, Feb 19, 2025 at 08:41:20AM -0800, Breno Leitao wrote:
-> The netdevsim driver was experiencing NOHZ tick-stop errors during packet
-> transmission due to pending softirq work when calling napi_schedule().
-> This issue was observed when running the netconsole selftest, which
-> triggered the following error message:
-> 
->   NOHZ tick-stop error: local softirq work is pending, handler #08!!!
-> 
-> To fix this issue, introduce a timer that schedules napi_schedule()
-> from a timer context instead of calling it directly from the TX path.
-> 
-> Create an hrtimer for each queue and kick it from the TX path,
-> which then schedules napi_schedule() from the timer context.
-> 
-> Suggested-by: Jakub Kicinski <kuba@kernel.org>
-> Signed-off-by: Breno Leitao <leitao@debian.org>
-> ---
+While commit fa15d8c69238 ("leds: Fix set_brightness_delayed() race")
+successfully forces led_set_brightness() to be called with LED_OFF at
+least once when switching from blinking to LED on state so that
+hw-blinking can be disabled, another race remains. Indeed in
+led_set_brightness(LED_OFF) followed by led_set_brightness(any)
+scenario the following CPU scheduling can happen:
 
-Looking at the tests, 3 of them are failing:
+    CPU0                                     CPU1
+    ----                                     ----
+ set_brightness_delayed() {
+   test_and_clear_bit(BRIGHTNESS_OFF)
+                                         led_set_brightness(LED_OFF) {
+                                           set_bit(BRIGHTNESS_OFF)
+					   queue_work()
+                                         }
+                                         led_set_brightness(any) {
+                                           set_bit(BRIGHTNESS)
+					   queue_work() //already queued
+                                         }
+   test_and_clear_bit(BRIGHTNESS)
+     /* LED set with brightness any */
+ }
 
-https://netdev.bots.linux.dev/flakes.html
+ /* From previous CPU1 queue_work() */
+ set_brightness_delayed() {
+   test_and_clear_bit(BRIGHTNESS_OFF)
+     /* LED turned off */
+   test_and_clear_bit(BRIGHTNESS)
+     /* Clear from previous run, LED remains off */
 
+In that case the led_set_brightness(LED_OFF)/led_set_brightness(any)
+sequence will be effectively executed in reverse order and LED will
+remain off.
 
-2/3 passed when retried and just one of them (ip6gre-custom-multipath-hash-sh) failed
-also on the retry.
+With the introduction of commit 32360bf6a5d4 ("leds: Introduce ordered
+workqueue for LEDs events instead of system_wq") the race is easier to
+trigger as sysfs brightness configuration does not wait for
+set_brightness_delayed() work to finish (flush_work() removal).
 
-Looking at the flakes, I see that ip6gre-custom-multipath-hash-sh was
-flake during yesterday:
+Use delayed_set_value to optionnally re-configure brightness after a
+LED_OFF. That way a LED state could be configured more that once but
+final state will always be as expected. Ensure that delayed_set_value
+modification is seen before set_bit() using smp_mb__before_atomic().
 
-	https://netdev.bots.linux.dev/flakes.html?min-flip=0&tn-needle=ip6gre-custom-multipath-hash-sh
+Fixes: fa15d8c69238 ("leds: Fix set_brightness_delayed() race")
+Signed-off-by: Remi Pommarel <repk@triplefau.lt>
+---
+Changes for v1 to v2:
+  - Use smp_mb__before_atomic().
+---
+ drivers/leds/led-core.c | 22 ++++++++++++++++++----
+ 1 file changed, 18 insertions(+), 4 deletions(-)
 
-I've testd manually it, and the tests is passing:
+diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
+index f6c46d2e5276..e3d8ddcff567 100644
+--- a/drivers/leds/led-core.c
++++ b/drivers/leds/led-core.c
+@@ -159,8 +159,19 @@ static void set_brightness_delayed(struct work_struct *ws)
+ 	 * before this work item runs once. To make sure this works properly
+ 	 * handle LED_SET_BRIGHTNESS_OFF first.
+ 	 */
+-	if (test_and_clear_bit(LED_SET_BRIGHTNESS_OFF, &led_cdev->work_flags))
++	if (test_and_clear_bit(LED_SET_BRIGHTNESS_OFF, &led_cdev->work_flags)) {
+ 		set_brightness_delayed_set_brightness(led_cdev, LED_OFF);
++		/*
++		 * The consecutives led_set_brightness(LED_OFF),
++		 * led_set_brightness(LED_FULL) could have been executed out of
++		 * order (LED_FULL first), if the work_flags has been set
++		 * between LED_SET_BRIGHTNESS_OFF and LED_SET_BRIGHTNESS of this
++		 * work. To avoid ending with the LED turned off, turn the LED
++		 * on again.
++		 */
++		if (led_cdev->delayed_set_value != LED_OFF)
++			set_bit(LED_SET_BRIGHTNESS, &led_cdev->work_flags);
++	}
+ 
+ 	if (test_and_clear_bit(LED_SET_BRIGHTNESS, &led_cdev->work_flags))
+ 		set_brightness_delayed_set_brightness(led_cdev, led_cdev->delayed_set_value);
+@@ -331,10 +342,13 @@ void led_set_brightness_nopm(struct led_classdev *led_cdev, unsigned int value)
+ 	 * change is done immediately afterwards (before the work runs),
+ 	 * it uses a separate work_flag.
+ 	 */
+-	if (value) {
+-		led_cdev->delayed_set_value = value;
++	led_cdev->delayed_set_value = value;
++	/* Ensure delayed_set_value is seen before work_flags modification */
++	smp_mb__before_atomic();
++
++	if (value)
+ 		set_bit(LED_SET_BRIGHTNESS, &led_cdev->work_flags);
+-	} else {
++	else {
+ 		clear_bit(LED_SET_BRIGHTNESS, &led_cdev->work_flags);
+ 		clear_bit(LED_SET_BLINK, &led_cdev->work_flags);
+ 		set_bit(LED_SET_BRIGHTNESS_OFF, &led_cdev->work_flags);
+-- 
+2.40.0
 
-	# vng -v --run . --user root --cpus 4 --
-		make -C tools/testing/selftests TARGETS=net/forwarding TEST_PROGS=ip6gre_custom_multipath_hash.sh TEST_GEN_PROGS="" run_tests
-
-	...
-
-	ok 1 selftests: net/forwarding: ip6gre_custom_multipath_hash.sh
-
-
-So, from a NIPA testing perspective, it seems the patch is good
 
