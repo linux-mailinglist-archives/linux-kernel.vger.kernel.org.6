@@ -1,114 +1,157 @@
-Return-Path: <linux-kernel+bounces-523409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55F10A3D66A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 11:23:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A363AA3D66F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 11:23:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CBC063B56BD
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 10:22:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C551E189BEFE
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 10:23:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08AFD1F12F1;
-	Thu, 20 Feb 2025 10:22:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B3DD1F1302;
+	Thu, 20 Feb 2025 10:23:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="AN6xyaBQ"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="PwEHJ/YR"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72D601F0E37
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 10:22:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E12AD1F0E45;
+	Thu, 20 Feb 2025 10:23:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740046970; cv=none; b=RaLW4Xgkbyf5HNupsUkc7/sNJunOd+bvcNVLmekehD9JvDkItOrTzLztiLlXuN/NOm7hLUxhGY2cAndr30mHY1+/1l/K+pZISS/GbiXVk9Ot4bPrpAWHCtfmaR/XglVmC/5Cp6E5++dOTKmCPu00sYhF6I4qjEx/OeMNFWPHY7A=
+	t=1740046994; cv=none; b=GTnvpcAZgN4L6/iXPFGtikM41u6TwVA6iolI209fYCoq0EtDu7bj6f7TmfSYCiE5aFf16yxrborp/WcKiHBlDvfwC+6Pun6InAG9IFri+/A/Qt1L2aQWQUW5jz8qCThiHv1cPL055TlH9eqaLP8ykrhkXTisFw9h+j6lYDDCtvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740046970; c=relaxed/simple;
-	bh=dwV5C1T08uCJyhf61xNHGbLrnXfynaFJ/L/Ujo0Xy28=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=g5nVKWT+cMtUFfT2kOEGc+uMHLuwbbA5WJMjf/C5D6+IXQk0lsbHvhWoZO/8Ci7/Qbab4i22uVq2129OLGZP9jBsIpS2GJuG+KA1Ji3/s2T0BP2VsuAnQaxgM9CLn+JtdgkyvaP87tSK5iZg2yyGZHqpHYu6gqe7QTbzBkXxmXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=AN6xyaBQ; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-38f265c6cb0so363392f8f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 02:22:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1740046967; x=1740651767; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=mdJ1tjXDGbz7fnnLGr6p9xq7nJI8m1bb43amubJ0qpU=;
-        b=AN6xyaBQmi9zBQcVep+o0zVfgKluhdmta3a2sU90KfgCm5Kfjp1sT/3Jbmh4tlaAxw
-         NgWxJUcR4LdAIxqSrMUYRoxyWh3G1pUYQds0foLS+dJPQybkMKgq/la0xZvOJRDrBokl
-         bQo17+XbHm6MJ0gycY1BkfKhSdnkHmPqfemN2nQph9V3jqEPPlyop6JXKK4+iQFbtf/J
-         GtiyN8gDwRSZpY2Usno9vkxZFtxUNyJwNLgzAzopxMCJ/aJM+DRNdsgFjhheXATGlmTd
-         YOs8Nw+nmrOZIEMQ824ZwlxNA/LP3x+Bj96sR0yaWH10wLb/Rh+p5ky3ZLaHGeEcTcWQ
-         3zDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740046967; x=1740651767;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mdJ1tjXDGbz7fnnLGr6p9xq7nJI8m1bb43amubJ0qpU=;
-        b=QYahgEMcyrIRt8rI5pHeC9msc8ROIY5UOBTHequpYolTL7VZb+C1ko828Ryf9yBO7c
-         V+VzP/eOh0qMBa+0CXKxrskViUVNkdDSGlU6248FQ2sAU6CTzP5Xii+5pjStYqowXLcL
-         3Ypp2IhkSdGObO+LsthLIlwdTJYnMCtlGrjzfIbejVzHSTUgJ5vjxm6PE1Dj/qExHSVN
-         kF8imjFMSwQEBD82hiHbEh8ss5eoXTqra80Cjn2KmC+wuyV48KEHJIz4MRjuMDFDrtTE
-         7+OPSiMtRkWDXb54K6OFGbauMrbu+7dtUY0oqnXCzYMIC+DB3BXRd3+JBsnqjfIMFQll
-         oCuA==
-X-Forwarded-Encrypted: i=1; AJvYcCWtALqNnBhORhplA3eYNTkFfhfaZm8ApCeJDVQeBilRAPoVEkMEp1FPBXtQp+mpUIvGkEO6qP+nCgS2OfE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYdIvvGRRkRHf8aL4+E035+F4cY8k9WB0Bjq7tBI270nn52Rbp
-	8n2vOewBlPMojJRKzWrufdeE0k100MvGa7khbDbNLhu2nXWl4cGDbP9Q2LUA9jA=
-X-Gm-Gg: ASbGncsVHE9JORUrAFSvgt0GKH24gHVSgrJwQlKaD5cxn7RLcaDG8tDKwpa549R3UD0
-	dzcuxVhfA+s/4/F1v/sgWKoRZe/XNqfYFSD3vou9sYoEDoOuAn/mnJqhK2w9czgFqBzFuk4us2E
-	YtPiNlWqFfSKwaCoVYuPqGbC8895JbOLFw9Q0AcZPPEZ7jHHlS1IHDtUectTvB1bIDRdThrY4MC
-	LvP6FpJdhitd+5+h7g3mWHT5h7GFj+D/iUrybi2hFdaS+CvvuGvP6sVpQUTbIWyjtg2fy+aU49d
-	PYBblRwTa7cz1iIC4mqIqUpzceb+EvbzM/CxCMo4Yv6RZuI/W2eLIzcNuA==
-X-Google-Smtp-Source: AGHT+IFNBKicqin94xs9R9bvB+x/bbDZRuNAbanJhmggJELPLRHyKJNVbt685+Z4xzMPELU/nUfw9w==
-X-Received: by 2002:a05:6000:1fa5:b0:38f:4fa5:58ce with SMTP id ffacd0b85a97d-38f4fa55a25mr10752304f8f.6.1740046966694;
-        Thu, 20 Feb 2025 02:22:46 -0800 (PST)
-Received: from ?IPV6:2001:a61:136c:cf01:505d:b6ac:9103:aec6? ([2001:a61:136c:cf01:505d:b6ac:9103:aec6])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f259d65bcsm20344688f8f.65.2025.02.20.02.22.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Feb 2025 02:22:46 -0800 (PST)
-Message-ID: <6d14b473-6d26-4b9e-88df-2532b0c88565@suse.com>
-Date: Thu, 20 Feb 2025 11:22:44 +0100
+	s=arc-20240116; t=1740046994; c=relaxed/simple;
+	bh=QWLgPxFDIW/fOZMr1DmydAcwlt4YRU8zp+vrJkGBY6o=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=eVCgDxmIImyFP5FWKQhnFQlRAqnVLdgsa/ESlzPYnrk1fDNR9gY8+X3cRQx92Y03gQb3w4skRGIKhA57IlYwhx42LKcyte81LFEJeZ+FC4LeL8F42fs8X6P2A7FH28apU1zGVi9eqKAc0TcB0bmm9v3rS8aymc0Qz904yjn/6DI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=PwEHJ/YR; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51K5taps015154;
+	Thu, 20 Feb 2025 10:23:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=YziywmGqcV4CIHs6qTssM7sQGNjh5/hmy96
+	8jmgOSMI=; b=PwEHJ/YR0Ivj6HFTG/F9JALZR6kuMngXm6RmYVr/Nv2A0iGzP1S
+	UIPB47K4pNotjWtsZivF9MSixRnTfckMfENySQInEVmAXIclNlWBgOognbJpwU8O
+	fGW9GeV4n2qXTKQ7//UjRh45GOdpTD9XddZ/4CF0/UUAmHPi74ISTv3+X/Zys/aJ
+	rG6Xpa3xW+3dCzXpm6U+nzH8RhCKB753ZzbPsDBMULQdimylk76HOhJRJIJUNGpI
+	1y7mJDZPgGd+KG+yMsCXKaJd+2vunj3oZ49fDYSdkKHyGqpFxc1N+8NPqE4CxII+
+	nKMJKDywEPAmv0UVD4ufuLL5a83w+FkAn4Q==
+Received: from aptaippmta02.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com [103.229.16.4])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44vyy4dtft-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Feb 2025 10:23:01 +0000 (GMT)
+Received: from pps.filterd (APTAIPPMTA02.qualcomm.com [127.0.0.1])
+	by APTAIPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 51KAMwda004833;
+	Thu, 20 Feb 2025 10:22:58 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APTAIPPMTA02.qualcomm.com (PPS) with ESMTPS id 44wydpgv7x-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Feb 2025 10:22:58 +0000
+Received: from APTAIPPMTA02.qualcomm.com (APTAIPPMTA02.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 51KAMwTo004826;
+	Thu, 20 Feb 2025 10:22:58 GMT
+Received: from cbsp-sh-gv.ap.qualcomm.com (CBSP-SH-gv.ap.qualcomm.com [10.231.249.68])
+	by APTAIPPMTA02.qualcomm.com (PPS) with ESMTPS id 51KAMwNc004824
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Feb 2025 10:22:58 +0000
+Received: by cbsp-sh-gv.ap.qualcomm.com (Postfix, from userid 4635958)
+	id 307E440C3B; Thu, 20 Feb 2025 18:22:57 +0800 (CST)
+From: Wenbin Yao <quic_wenbyao@quicinc.com>
+To: vkoul@kernel.org, kishon@kernel.org, p.zabel@pengutronix.de,
+        dmitry.baryshkov@linaro.org, abel.vesa@linaro.org,
+        quic_qianyu@quicinc.com, neil.armstrong@linaro.org,
+        manivannan.sadhasivam@linaro.org, quic_devipriy@quicinc.com,
+        konrad.dybcio@oss.qualcomm.com, linux-arm-msm@vger.kernel.org,
+        linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: quic_wenbyao@quicinc.com
+Subject: [PATCH v4 0/2] phy: qcom: qmp-pcie: Add PCIe PHY no_csr reset support
+Date: Thu, 20 Feb 2025 18:22:51 +0800
+Message-Id: <20250220102253.755116-1-quic_wenbyao@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] usb: core: Add error handling in usb_reset_device for
- autoresume failure
-To: Wentao Liang <vulab@iscas.ac.cn>, gregkh@linuxfoundation.org
-Cc: stern@rowland.harvard.edu, christophe.jaillet@wanadoo.fr,
- mka@chromium.org, make_ruc2021@163.com, javier.carrasco@wolfvision.net,
- linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20250220095218.970-1-vulab@iscas.ac.cn>
-Content-Language: en-US
-From: Oliver Neukum <oneukum@suse.com>
-In-Reply-To: <20250220095218.970-1-vulab@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: QyHj8-JLoiqou71qm6atcMAlEWnM9p-t
+X-Proofpoint-ORIG-GUID: QyHj8-JLoiqou71qm6atcMAlEWnM9p-t
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-20_04,2025-02-20_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ priorityscore=1501 malwarescore=0 bulkscore=0 suspectscore=0 clxscore=1015
+ lowpriorityscore=0 mlxlogscore=999 spamscore=0 adultscore=0 phishscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2502200077
 
-On 20.02.25 10:52, Wentao Liang wrote:
-> In usb_reset_device(),  the function continues execution and
-> calls usb_autosuspend_device() after usb_autosuspend_device fails.
+The series aims to skip phy register programming and drive PCIe PHY with
+register setting programmed in bootloader by simply toggling no_csr reset,
+which once togglled, PHY hardware will be reset while PHY registers are
+retained.
 
-This can only fail if the device needs to be physically
-resumed. In that case you called usb_reset_device() while
-you weren't supposed to. The purpose of the call is to keep
-the counter elevated in order to disable runtime power management
-temporarily.
+First, determine whether PHY setting can be skipped by checking
+QPHY_START_CTRL register and the existence of nocsr reset. If it is
+programmed and no_csr reset is supported, do no_csr reset and skip BCR
+reset which will reset entire PHY.
 
-The code is older than helpers to elevate the count. The correct
-fix would be to use them rather than handle an error that cannot
-happen.
+This series also remove has_nocsr_reset flag in qmp_phy_cfg structure and
+decide whether the PHY supports nocsr reset by checking the existence of
+nocsr reset in device tree.
 
-	Regards
-		Oliver
+The series are tested on X1E80100-QCP and HDK8550.
+
+The commit messages of this patchset have been modified based on comments
+and suggestions.
+
+Changes in v4:
+- Add Philipp's Reviewed-by tag to Patch 1/2.
+- Use PHY instead of phy in comments in Patch 2/2.
+- Use "if (qmp->nocsr_reset)" instead of "if (!qmp->nocsr_reset)" in
+  function qmp_pcie_exit for readability in Patch 2/2.
+- Use goto statements in function qmp_pcie_power_on and qmp_pcie_power_off
+  for readability in Patch 2/2.
+- Refine the comment of why not checking qmp->skip_init when reset PHY in
+  function qmp_pcie_power_off in Patch 2/2.
+- Link to v3: https://lore.kernel.org/all/20250214104539.281846-1-quic_wenbyao@quicinc.com/
+
+Changes in v3:
+- Replace devm_reset_control_get_exclusive with
+  devm_reset_control_get_optional_exclusive when get phy_nocsr reset
+  control in Patch 1/2.
+- Do not ignore -EINVAL when get phy_nocsr reset control in Patch 1/2.
+- Replace phy_initialized with skip_init in struct qmp_pcie in Patch 2/2.
+- Add a comment to why not check qmp->skip_init in function
+  qmp_pcie_power_off in Patch 2/2.
+- Link to v2: https://lore.kernel.org/all/20250211094231.1813558-1-quic_wenbyao@quicinc.com/
+
+Changes in v2:
+- Add Abel's and Manivannan's Reviewed-by tag to Patch 1/2.
+- Refine commit msg of Patch 2/2.
+- Link to v1: https://lore.kernel.org/all/20250121094140.4006801-1-quic_wenbyao@quicinc.com/
+
+Konrad Dybcio (1):
+  phy: qcom: pcie: Determine has_nocsr_reset dynamically
+
+Qiang Yu (1):
+  phy: qcom: qmp-pcie: Add PHY register retention support
+
+ drivers/phy/qualcomm/phy-qcom-qmp-pcie.c | 77 ++++++++++++++++--------
+ 1 file changed, 53 insertions(+), 24 deletions(-)
+
+
+base-commit: bcf2acd8f64b0a5783deeeb5fd70c6163ec5acd7
+-- 
+2.34.1
 
 
