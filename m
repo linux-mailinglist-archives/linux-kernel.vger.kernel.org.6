@@ -1,119 +1,260 @@
-Return-Path: <linux-kernel+bounces-523764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2B13A3DAE8
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:10:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B09A2A3DAEE
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 14:10:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D93B163974
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:09:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CEE02171C7C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:10:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FDF01F891F;
-	Thu, 20 Feb 2025 13:09:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C1921F76B9;
+	Thu, 20 Feb 2025 13:10:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="WvQEJBM5"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U/Kf5ZHb"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8DCF433BE
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 13:09:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 877161F7076;
+	Thu, 20 Feb 2025 13:09:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740056964; cv=none; b=Dxub19+qq/E7G1xGa2nCSF79zXQuHObOUuFIN3ecWvXnOpT9RojJZPFPufkTAuVPR/KiS0fKL2HN4lz0OgDn713ML/nhBT9x3rVMMW7zSbnd9eN9EoBZC4hfs1yrZiO/KkN7+EQ8Kte0IlS5hiir9ymVw3QCdlni5O7bI9wqgcQ=
+	t=1740057000; cv=none; b=ZXc2PubfEm99HkUBmBwgkeZpNeF69qsRoAd42FeETvD6PRytH9QBbZZqGBKF3loDx/YNseZHf3djs/PKWIEhaiC4EzlH1JDEw+MqiUK9jqArURgl10N4H5QPD+wVSV0PjPu9xi4i0ErovXU1wYD4pcw5QB7GWoOYNgMoQHBnn5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740056964; c=relaxed/simple;
-	bh=EMGp+waGDautIwmgUrw6ZO1fNBDQkmfgSGqUyA8y5PM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SLrMD6PeHulbebXqneEDitrKHnReNDSccMCxEnWTOztsNonWH1WDxqPRJWLhYxCYqMgTn5NaRxrrafzfqRA9KfAy+aqc0H8gXlzyMMtVcOTqxjH3sJWtWnPlyEgdszeG+Gie8l8c5Zgluyfe7O7wAvuxE0PZfZayQkzcfo3aZUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=WvQEJBM5; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-38f5fc33602so510029f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 05:09:22 -0800 (PST)
+	s=arc-20240116; t=1740057000; c=relaxed/simple;
+	bh=FuyaBFCtVG8QDfo2+uDDqvYUgSY8Zj4Vf6m3km7K6XA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BU8lWIVgOyFsLqnmyegMc/VBXeXvzc6GDYnVa9DhgNdLYJt5MH+4De2NBMI9ByczFQ0SWHVQzsEAW99uY2aXXoP0K7ZEhZ8DzleD2lW2B4pCMWLzFNHzvajcIS09J+tmhn9299zjyuR3d91cA0S7qaZG9y6TPvm7KlUXPZ14ulE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U/Kf5ZHb; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-30762598511so8518021fa.0;
+        Thu, 20 Feb 2025 05:09:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1740056961; x=1740661761; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PmtqWvOt9IGhgCN8MYbu66ivp1lZ7PoGeZdQgNdj5Ek=;
-        b=WvQEJBM5pJzH1Zzs8Z5+60jY3Cmt4+u7FkLc4wfSixkXKdN63Ir0RLey3wX4NQBmPR
-         1cfNcnFMxujVMWYMVbrK8ZnhlvimOXB9iOH/N+V7u63yZOfJmzXQPixgibp0ZLJ2lUCt
-         FOox3NGIP31NEeVHUqecbauyYzOP6CR2t5Vh3cNSwOqBM1Jky6FsxmnENElB5LYzN0kj
-         LYigL7HZHQjWfQ17/qCu+BAtj+DlTC9yjTQ4+T/Cp45FNsqqqM1+s73lb3iMMHDVqSsl
-         E9K02Yybg5X8VAUbrgzsE3koezBxi+P6G2kmZ4HVdNlGCtfYAqiesUeiAx/jpbazI+cj
-         oanw==
+        d=gmail.com; s=20230601; t=1740056996; x=1740661796; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=i3a6wLnxZzyaVT9CGz7P1ZX4RPkOR4DtkW51/j2nfMA=;
+        b=U/Kf5ZHboBzNemelyTO0xkmi1FJH+b6hV86gfIJy1lPTcck1IB+gQ4H1Ml307gY6KU
+         nHBQmJ6/rb8qNHoxt7Ipz/ehcVxHfgDLXh81Ii/c2/WL9lABvCcNfaB6hsWrwa1TPPKc
+         I3ttf7W2HQ3UsHQUfKrpuSAgST5R3FAQ9xxa/sKF2V9gO6qiu2FT8xBaYBrw4X8Wqzzr
+         UUtYpI8HU8M1hvFmIMHcF+88t9wpD1JNzNtr76NCisWu1Dwjqu7JKCBNzpmEMwet5Qth
+         0FLaGkg8DuEJj3+rnmQL/Xq+BbrPgszxoduPXmyqHzydEPvWCSvZmw6sg/eVShNWMlQk
+         l1AA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740056961; x=1740661761;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PmtqWvOt9IGhgCN8MYbu66ivp1lZ7PoGeZdQgNdj5Ek=;
-        b=DLzEmGEPZX10miXODB+v1G8+4xp2sFPilwdmKg5c6vf9t5Ne5suy0Secfj/balTT36
-         WiS/twDQBUGC7W+XqE5YRh+67/CWCWjfxmmzK3mqnbHGL/IbiNGzPiDcL9g66LXNA6kP
-         Yd/CvDkpW/zB3YvpVpdBDKNrBQfTQag+q4YRidh1ZK9oJWcAjVtpgrAAmWp4Axm/u8Mo
-         gbdWU42wpJ9ajSmqDMmYD6QbB/Z8FrnzCmB2N/rxcCDH6t0CGSUwq/AatIKaI1qHQ3tA
-         llSDx4lVej2ZFJEY7xdMWeNJN79mb1nUNAUwPZASHrL18bdNfCMZHoCrXfZ/VXvQJdQ6
-         6jSg==
-X-Forwarded-Encrypted: i=1; AJvYcCXnczpk4ICNmdWZOijUVGlNn7+qj3Y+YrRF2+Hm5N+9eVRwMt1w4mbA8m270QtlaKSOpQ9DzipHNryZmrI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3iG3FplYAMY5gGzvIYnjmne3FrMkXHL60Kk+70nKAiogj3sxD
-	XdmoiHjwQQ7UHvA63YUVLXMVIwySDWyjXM+cPG8X4Apy07mXjJJESbxRVhq/GI4=
-X-Gm-Gg: ASbGncscl2vWi9v71/TJPFPLCZfJzYhkyZvdya/WTfBXT/GL0KFEJDBh0w2lQP2ILHR
-	p16V2GeqD4dw7KQf9QXt99BM+BTs2u/cR6rqRyXb1bSz5VhHKZO9Y+YuCXXz5NywbnRqzQeTJ8D
-	ueg/qFqTBYxWzlX1Ps8yalg7lVBJkKrV/unPIjqweOdu2C+Zoh3klXv5h+2X+M7KB45FIdUF/7m
-	0Q7IKlOyrskznel1B2o/5CPrdM7nZpUv5VGBN/7q9qnQVMmeFT5hzHoJ5DXr+2gY7kbOWYsy4F5
-	xFu0R1OqqQ8nGA==
-X-Google-Smtp-Source: AGHT+IGbIfdv9XOdYL2F63zJDoBS3KeglPP1iXZ2SnLsZHSe0oSYlpnW6eY7wK10PTAW2BxL87BbAg==
-X-Received: by 2002:a5d:5f4d:0:b0:38c:5da8:5f88 with SMTP id ffacd0b85a97d-38f61609df3mr3636052f8f.28.1740056960879;
-        Thu, 20 Feb 2025 05:09:20 -0800 (PST)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:e2e4:418d:7462:9cf])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f258ccd2csm21129660f8f.30.2025.02.20.05.09.20
+        d=1e100.net; s=20230601; t=1740056996; x=1740661796;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=i3a6wLnxZzyaVT9CGz7P1ZX4RPkOR4DtkW51/j2nfMA=;
+        b=dJLpPbmN/ZURn0FKHBoD77rqsYyPftQ8u2+C1tg+d5sg1/JFRHKkdH2VChSwV/mJ75
+         5U1VMc0Y85Wgf64ElOz76gVqVLH43udUPZzcWJJQW9nwuG6m6iW7zSqlWR8XodpQezjG
+         SfEvXVKP34V2ATb2Tjb1ns8aG8Sj5hPora5JTni85Nn2vZYU2BNPRYA4rdDlHwXqqHnF
+         aLFCBEWucgKg6ft6CQMDmw5riB2T88VZxVNbULeNn2UFHrkVVK+7Ke/NxZKUhY6yHmV/
+         wy7ulJ8JechR4ODIzsSHcv3ENzNmmQV3qlQTvGpzJPu6EeO13O5IwTqq7lnRXcoATCFm
+         46BQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUKSdR1qbDWKSFlTNNdFYJxWEYdpf19dSVm+SGsd3N07vUGPrXHVD2gHsKCwsQ8qIjeiosTW4MlFSgOXftU@vger.kernel.org, AJvYcCVjUwW22+O/dGE9+n+zZ3YH0uUfdZ8VHi963TRQasJaCL/yu7WolX4uRDp0K7SYFg2b6OYW+1odiY/fgQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFWKBon9Eeb7IGPuUB7UnUXyv7qfqBHPC/sqIjDZYVsNXrXgo5
+	A8fnjM/OGsHfoOCeJykCWieeUYGLSbUA85OgAWO0Zt++6n8uKMld
+X-Gm-Gg: ASbGnct6roV9GhkRjMiQib43imL/U1jMzKVuintrt2DkPw0o3wQNhk2Y6x9LeMzPc0w
+	yUCvAo/IKZVvn2LRiPVxlAuEMl41sv3LnVtEFMeHUZAcvDVTITZY9rPeMMJzGQtbnfAZ54LzfYt
+	TZr4qiFGjyloE9+wEKA29DIMbPEOAgsreUxeNv/QItVgU9QlIYNLjD5Iet4LUOFLTg/sA/JFh4Z
+	DArrYFcxt2YjBeoRqIKny3ITW4KS/NeO2DXTb9UwGwDdjImuMMcLZlp6zztZVmcNBWCn+IDUJRf
+	sCg3/NNLn5AApZfe5dsiLboYckzyfY0eniQicazr
+X-Google-Smtp-Source: AGHT+IFpiHbMgPYRkK3amTIIC6/fQP/OElyD8DSkv9bft3f92vAok+DKDJ/dHYRbJWovBP7pvPpoWA==
+X-Received: by 2002:a2e:9a89:0:b0:308:ed4d:629f with SMTP id 38308e7fff4ca-30927ad512fmr65367321fa.27.1740056995903;
+        Thu, 20 Feb 2025 05:09:55 -0800 (PST)
+Received: from NB-5917.corp.yadro.com (avpn01.yadro.com. [89.207.88.243])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3091029b75esm25510721fa.103.2025.02.20.05.09.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Feb 2025 05:09:20 -0800 (PST)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	linux-gpio@vger.kernel.org,
+        Thu, 20 Feb 2025 05:09:55 -0800 (PST)
+From: Dmitry Mastykin <mastichi@gmail.com>
+To: job@noorman.info,
+	dmitry.torokhov@gmail.com,
+	linux-input@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>,
-	Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH] gpiolib: don't bail out if get_direction() fails in gpiochip_add_data()
-Date: Thu, 20 Feb 2025 14:09:19 +0100
-Message-ID: <174005695734.63211.7320786041973824393.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250219144356.258635-1-brgl@bgdev.pl>
-References: <20250219144356.258635-1-brgl@bgdev.pl>
+	felix@kaechele.ca
+Cc: Dmitry Mastykin <mastichi@gmail.com>
+Subject: [PATCH 1/2] Input: of_touchscreen - support device-properties with other prefixes
+Date: Thu, 20 Feb 2025 16:09:39 +0300
+Message-Id: <20250220130940.2019784-1-mastichi@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Introduce touchscreen_parse_properties_prefix() function, that can parse
+device-properties with given prefix. E.g. both touchscreen-swapped-x-y
+and pen-swapped-x-y may be parsed.
+Some touchscreens may have different pen axis orientation,
+and that should be set in the device tree. Separate set of
+device-properties with prefix "pen-" or "stylus-" will be used to set
+pen resolution and axis orientation.
 
+Signed-off-by: Dmitry Mastykin <mastichi@gmail.com>
+---
+ drivers/input/touchscreen.c       | 83 +++++++++++++++++++------------
+ include/linux/input/touchscreen.h |  3 ++
+ 2 files changed, 54 insertions(+), 32 deletions(-)
 
-On Wed, 19 Feb 2025 15:43:56 +0100, Bartosz Golaszewski wrote:
-> Since commit 9d846b1aebbe ("gpiolib: check the return value of
-> gpio_chip::get_direction()") we check the return value of the
-> get_direction() callback as per its API contract. Some drivers have been
-> observed to fail to register now as they may call get_direction() in
-> gpiochip_add_data() in contexts where it has always silently failed.
-> Until we audit all drivers, replace the bail-out to a kernel log
-> warning.
-> 
-> [...]
-
-Applied, thanks!
-
-[1/1] gpiolib: don't bail out if get_direction() fails in gpiochip_add_data()
-      commit: 96fa9ec477ff60bed87e1441fd43e003179f3253
-
-Best regards,
+diff --git a/drivers/input/touchscreen.c b/drivers/input/touchscreen.c
+index 4620e20d0190..0ed6b85b1ded 100644
+--- a/drivers/input/touchscreen.c
++++ b/drivers/input/touchscreen.c
+@@ -64,12 +64,35 @@ static void touchscreen_set_params(struct input_dev *dev,
+  */
+ void touchscreen_parse_properties(struct input_dev *input, bool multitouch,
+ 				  struct touchscreen_properties *prop)
++{
++	touchscreen_parse_properties_prefix(input, multitouch, prop, "touchscreen");
++}
++EXPORT_SYMBOL(touchscreen_parse_properties);
++
++static char *prefix_prop(const char *property, const char *prefix, char *buf, size_t len)
++{
++	ssize_t n, ret;
++
++	n = strscpy(buf, prefix, len);
++	if (n > 0) {
++		ret = strscpy(buf + n, "-", len - n);
++		if (ret > 0) {
++			n += ret;
++			strscpy(buf + n, property, len - n);
++		}
++	}
++	return buf;
++}
++
++void touchscreen_parse_properties_prefix(struct input_dev *input, bool multitouch,
++					 struct touchscreen_properties *prop, const char *prefix)
+ {
+ 	struct device *dev = input->dev.parent;
+ 	struct input_absinfo *absinfo;
+ 	unsigned int axis, axis_x, axis_y;
+ 	unsigned int minimum, maximum, fuzz;
+ 	bool data_present;
++	char buf[64];
+ 
+ 	input_alloc_absinfo(input);
+ 	if (!input->absinfo)
+@@ -78,41 +101,37 @@ void touchscreen_parse_properties(struct input_dev *input, bool multitouch,
+ 	axis_x = multitouch ? ABS_MT_POSITION_X : ABS_X;
+ 	axis_y = multitouch ? ABS_MT_POSITION_Y : ABS_Y;
+ 
+-	data_present = touchscreen_get_prop_u32(dev, "touchscreen-min-x",
+-						input_abs_get_min(input, axis_x),
+-						&minimum);
+-	data_present |= touchscreen_get_prop_u32(dev, "touchscreen-size-x",
+-						 input_abs_get_max(input,
+-								   axis_x) + 1,
+-						 &maximum);
+-	data_present |= touchscreen_get_prop_u32(dev, "touchscreen-fuzz-x",
+-						 input_abs_get_fuzz(input, axis_x),
+-						 &fuzz);
++	data_present =
++	    touchscreen_get_prop_u32(dev, prefix_prop("min-x", prefix, buf, sizeof(buf)),
++				     input_abs_get_min(input, axis_x), &minimum);
++	data_present |=
++	    touchscreen_get_prop_u32(dev, prefix_prop("size-x", prefix, buf, sizeof(buf)),
++				     input_abs_get_max(input, axis_x) + 1, &maximum);
++	data_present |=
++	    touchscreen_get_prop_u32(dev, prefix_prop("fuzz-x", prefix, buf, sizeof(buf)),
++				     input_abs_get_fuzz(input, axis_x), &fuzz);
+ 	if (data_present)
+ 		touchscreen_set_params(input, axis_x, minimum, maximum - 1, fuzz);
+ 
+-	data_present = touchscreen_get_prop_u32(dev, "touchscreen-min-y",
+-						input_abs_get_min(input, axis_y),
+-						&minimum);
+-	data_present |= touchscreen_get_prop_u32(dev, "touchscreen-size-y",
+-						 input_abs_get_max(input,
+-								   axis_y) + 1,
+-						 &maximum);
+-	data_present |= touchscreen_get_prop_u32(dev, "touchscreen-fuzz-y",
+-						 input_abs_get_fuzz(input, axis_y),
+-						 &fuzz);
++	data_present =
++	    touchscreen_get_prop_u32(dev, prefix_prop("min-y", prefix, buf, sizeof(buf)),
++				     input_abs_get_min(input, axis_y), &minimum);
++	data_present |=
++	    touchscreen_get_prop_u32(dev, prefix_prop("size-y", prefix, buf, sizeof(buf)),
++				     input_abs_get_max(input, axis_y) + 1, &maximum);
++	data_present |=
++	    touchscreen_get_prop_u32(dev, prefix_prop("fuzz-y", prefix, buf, sizeof(buf)),
++				     input_abs_get_fuzz(input, axis_y), &fuzz);
+ 	if (data_present)
+ 		touchscreen_set_params(input, axis_y, minimum, maximum - 1, fuzz);
+ 
+ 	axis = multitouch ? ABS_MT_PRESSURE : ABS_PRESSURE;
+-	data_present = touchscreen_get_prop_u32(dev,
+-						"touchscreen-max-pressure",
+-						input_abs_get_max(input, axis),
+-						&maximum);
+-	data_present |= touchscreen_get_prop_u32(dev,
+-						 "touchscreen-fuzz-pressure",
+-						 input_abs_get_fuzz(input, axis),
+-						 &fuzz);
++	data_present =
++	    touchscreen_get_prop_u32(dev, prefix_prop("max-pressure", prefix, buf, sizeof(buf)),
++				     input_abs_get_max(input, axis), &maximum);
++	data_present |=
++	    touchscreen_get_prop_u32(dev, prefix_prop("fuzz-pressure", prefix, buf, sizeof(buf)),
++				     input_abs_get_fuzz(input, axis), &fuzz);
+ 	if (data_present)
+ 		touchscreen_set_params(input, axis, 0, maximum, fuzz);
+ 
+@@ -123,7 +142,7 @@ void touchscreen_parse_properties(struct input_dev *input, bool multitouch,
+ 	prop->max_y = input_abs_get_max(input, axis_y);
+ 
+ 	prop->invert_x =
+-		device_property_read_bool(dev, "touchscreen-inverted-x");
++	    device_property_read_bool(dev, prefix_prop("inverted-x", prefix, buf, sizeof(buf)));
+ 	if (prop->invert_x) {
+ 		absinfo = &input->absinfo[axis_x];
+ 		absinfo->maximum -= absinfo->minimum;
+@@ -131,7 +150,7 @@ void touchscreen_parse_properties(struct input_dev *input, bool multitouch,
+ 	}
+ 
+ 	prop->invert_y =
+-		device_property_read_bool(dev, "touchscreen-inverted-y");
++	    device_property_read_bool(dev, prefix_prop("inverted-y", prefix, buf, sizeof(buf)));
+ 	if (prop->invert_y) {
+ 		absinfo = &input->absinfo[axis_y];
+ 		absinfo->maximum -= absinfo->minimum;
+@@ -139,11 +158,11 @@ void touchscreen_parse_properties(struct input_dev *input, bool multitouch,
+ 	}
+ 
+ 	prop->swap_x_y =
+-		device_property_read_bool(dev, "touchscreen-swapped-x-y");
++	    device_property_read_bool(dev, prefix_prop("swapped-x-y", prefix, buf, sizeof(buf)));
+ 	if (prop->swap_x_y)
+ 		swap(input->absinfo[axis_x], input->absinfo[axis_y]);
+ }
+-EXPORT_SYMBOL(touchscreen_parse_properties);
++EXPORT_SYMBOL(touchscreen_parse_properties_prefix);
+ 
+ static void
+ touchscreen_apply_prop_to_x_y(const struct touchscreen_properties *prop,
+diff --git a/include/linux/input/touchscreen.h b/include/linux/input/touchscreen.h
+index fe66e2b58f62..42aed1ccc2cd 100644
+--- a/include/linux/input/touchscreen.h
++++ b/include/linux/input/touchscreen.h
+@@ -20,6 +20,9 @@ struct touchscreen_properties {
+ void touchscreen_parse_properties(struct input_dev *input, bool multitouch,
+ 				  struct touchscreen_properties *prop);
+ 
++void touchscreen_parse_properties_prefix(struct input_dev *input, bool multitouch,
++					 struct touchscreen_properties *prop, const char *prefix);
++
+ void touchscreen_set_mt_pos(struct input_mt_pos *pos,
+ 			    const struct touchscreen_properties *prop,
+ 			    unsigned int x, unsigned int y);
 -- 
-Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+2.34.1
+
 
