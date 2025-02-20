@@ -1,126 +1,152 @@
-Return-Path: <linux-kernel+bounces-523584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AB60A3D8B8
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:32:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5852A3D8BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:33:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B021700322
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 11:29:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EEC8716CEBA
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 11:30:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 964121F03D2;
-	Thu, 20 Feb 2025 11:29:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5238C1F3D49;
+	Thu, 20 Feb 2025 11:30:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fgffrj8q"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Y7yslzBK"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECCEB1AF0B8;
-	Thu, 20 Feb 2025 11:29:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C8901EF0A9;
+	Thu, 20 Feb 2025 11:30:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740050984; cv=none; b=KhR32BBwQDL4rYE3aV6aIpoxqWE9k2qEsozohnrD2pS6uVARnRl1Pb5GYbIADDT6q8/9Eq8oxbdHS8Fpor39KzJOjysdlEl1vxQIwF6V8bFrtDdOe4JTpK4wd6CVEkKPbktd4gzd5CQhOgqakIgD/w+MEBsDYEv9rOs33rwUATg=
+	t=1740051015; cv=none; b=kJz4Q0hQw5ACvtspKN3+lbB3fU+j9HftTHn7qAHW+QreONAk3WP/9Pps7cnoJEm2T1ULKrwFoKtzHjyWpVFq6omLQD5CH/Bm4MOTgP0Ve4hKhEd4PFKzlGFDEyx/CoBTdMg4YtKwSumTHtFijLDvBLUrxieUNTnwq/RFnagNzOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740050984; c=relaxed/simple;
-	bh=xIyuCdDta91RFhrabLJ97xYbBUE+BNLouOxyJyc5NLU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=L05RXn0hmEup1yVkILfL47RnDefNYLA9fI5eg9FQ+Mrlz3fDp81ZvP6K27NoqrZL2Haj2N3jEd+ISHHNovWSiOZFX9LDxQe40QF2hXWklRurHeJZuBYfOujanP1F3V3U1mo0LxGpeuSOCjLy8l9Aiq7hP0WrpZjm+60/+lK/3Ww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fgffrj8q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58ADBC4CED6;
-	Thu, 20 Feb 2025 11:29:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740050983;
-	bh=xIyuCdDta91RFhrabLJ97xYbBUE+BNLouOxyJyc5NLU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Fgffrj8qgLn50N+wd4lWvqBK8aI6OMkY1KI+S7pMSaEdNfszfkWScFozrxV3JHIl1
-	 fO8dmpbXxTRKVZpT2xTpK68UM9BmvX5zRlalOHN4SdO+TZ+4PvcmNq86bL0zH2dw7l
-	 UtYh/ZXuELQMhR/n2JpjYsSMqOqIGNFzmHPNOMbgZ5vPTTUp206u/CvKtY6jKTH3R6
-	 yIxBJ0tp6du4ygvgEAsir8LOmbIfZwokqOLbQmQRllx9p1G/L86A4/TjpNfKnmQgYT
-	 vLXmptik8s3JaSQqQtUKt1Ac5mBNBvlDwoCcqgTSWYTdMz+2kbJTAsa03CpG89Wpft
-	 LN0qJn3iE8ljA==
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-30797730cbdso7784201fa.3;
-        Thu, 20 Feb 2025 03:29:43 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVmOSW1fi+RUGHKvdGTBPEInMtZqFVERW6v6N/WKIKT6667drBxTAXUBTRbQY+XTSl3+iEw2p0KFW3uFho=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzkStpeG3qSLAJsnfqkXzxLdLhiqWcdIwT1Bxv2abIfELyg8QU
-	IFpjzRA7FMp7XW7BvLqvNbznmLmKmYlEAfCDsZGUfzoQWnWG5UCgM1VQC+3yWVmbtDCeLjpduo4
-	M12WslK5m+rbc+4yiZ3QT3M/a7Tw=
-X-Google-Smtp-Source: AGHT+IFxxOOpQAUw+YlRFR6QBjCLOInd7MEmyYr+AvpjWokAv0szFn1WY0uNYzQd9wZ1XIBKhwLBI13f9jyZbRMxN/k=
-X-Received: by 2002:a2e:3612:0:b0:300:26bc:4311 with SMTP id
- 38308e7fff4ca-30a44ed1b0amr26869851fa.18.1740050981562; Thu, 20 Feb 2025
- 03:29:41 -0800 (PST)
+	s=arc-20240116; t=1740051015; c=relaxed/simple;
+	bh=GlABbLQNdlEWm8DmN6/oAlkh9Ch4kaIssmUYP35PdPI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Uc3p/PwUrWxOwT3VL4Ab2EVEFwOVjRblrEmyrYW1JRMSr5GwCNX6nzRfEqATpWIJE5MaxB+/IF4d1I2XPLaLIXyGwbhPie264AHcfOPKXeG3tapxdrm7rFc/vTPs8cIFLrzCcFEzhCHL1i0DCIQYu9WduaeAUJI9O3zcXHcoXJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Y7yslzBK; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51KAk96o011748;
+	Thu, 20 Feb 2025 11:30:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=599FXlmZ3EgyEUHHKK5D1A
+	8GuodYRYwTvseL6b1+1ag=; b=Y7yslzBKI41AMRSGMg1JJ4vo95EIQYjZUnAGua
+	OBJONLwb6E/PPbZv4L/vq8Qs7/L+JMjgcV2QZ430abL5JBEHixGkJ3/a0U1vVan3
+	djLxVWbEFXBe2DKVjSrxDRhIhzgKptRkG2537EcoVgI6VInZqfsiomFeF1TCRXV9
+	qznGFSGvFtL5R5shSguEuFvwrYmoa3Xr9RnJYaGJFISZutNu0SSIAeMFD6V1H97H
+	AuMl3AoIta7uYpORvIlNAavLpWGpT8ngoZHzIqBLm1V7O135EBSbeXav/jNEQwib
+	h0Bbh+zMLm7N7CQ/NQYZtO16Iicvmr7sTw8+8htNDycGOhXQ==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44x2xb8427-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Feb 2025 11:30:05 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51KBU4Gu001359
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Feb 2025 11:30:04 GMT
+Received: from hu-janathot-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 20 Feb 2025 03:30:00 -0800
+From: Janaki Ramaiah Thota <quic_janathot@quicinc.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Marcel Holtmann
+	<marcel@holtmann.org>,
+        Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+CC: <quic_mohamull@quicinc.com>, <quic_hbandi@quicinc.com>,
+        <quic_anubhavg@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-bluetooth@vger.kernel.org>
+Subject: [RESEND PATCH v9 0/2] Enable Bluetooth on qcs6490-rb3gen2 board
+Date: Thu, 20 Feb 2025 16:59:43 +0530
+Message-ID: <20250220112945.3106086-1-quic_janathot@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250210174941.3251435-9-ardb+git@google.com>
-In-Reply-To: <20250210174941.3251435-9-ardb+git@google.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Thu, 20 Feb 2025 12:29:30 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXHOqMM5uGxLTYuEf9KrxY5WzYvwo847JzoB-Qa2SN67Sg@mail.gmail.com>
-X-Gm-Features: AWEUYZl6helD3VifwDamRDcDq4rF2tI3pz2H_S1p02AOqkD8vFTeE6BS-0gLbm4
-Message-ID: <CAMj1kXHOqMM5uGxLTYuEf9KrxY5WzYvwo847JzoB-Qa2SN67Sg@mail.gmail.com>
-Subject: Re: [PATCH v2 0/7] x86/efi/mixed: Decouple from legacy decompressor
-To: Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>
-Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org, x86@kernel.org, 
-	hdegoede@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 95jiziUNA9WzUJAIcqrf2DyEP7uvh95A
+X-Proofpoint-ORIG-GUID: 95jiziUNA9WzUJAIcqrf2DyEP7uvh95A
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-20_04,2025-02-20_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 bulkscore=0
+ malwarescore=0 lowpriorityscore=0 phishscore=0 impostorscore=0 spamscore=0
+ mlxlogscore=751 clxscore=1015 priorityscore=1501 adultscore=0 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
+ definitions=main-2502200086
 
-On Mon, 10 Feb 2025 at 18:50, Ard Biesheuvel <ardb+git@google.com> wrote:
->
-> From: Ard Biesheuvel <ardb@kernel.org>
->
-> Since commit
->
->   a1b87d54f4e4 ("x86/efistub: Avoid legacy decompressor when doing EFI boot")
->
-> booting via the EFI stub no longer relies on the legacy decompressor,
-> and instead, the kernel proper is decompressed by code executing in the
-> context of the EFI boot services, and subsequently invoked directly.
->
-> The only remaining dependency is the EFI mixed mode startup code, which
-> makes a detour via the legacy decompressor's 32-bit entrypoint, in order
-> to obtain a 1:1 mapping of memory, which is a prerequisite for 64-bit
-> execution on x86.
->
-> This detour requires some fiddly setup on the part of the mixed mode
-> startup code, which has to stash the firmware stack pointer and boot
-> arguments in memory, and create a fake struct boot_params to trick the
-> code in startup_32 to behave as intended.
->
-> This dependency also impedes reuse of the EFI stub code in other
-> contexts, such as generic EFI zboot, which will reuse the EFI stub but
-> not the legacy decompressor.
->
-> So remove this dependency, by replacing this detour with a minimal
-> reimplementation of the 1:1 mapping code. With some further cleanup
-> applied on top, the line count drops substantially, but without loss of
-> functionality. The resulting code can operate independently from the
-> legacy decompressor, and is therefore moved out of arch/x86/boot/ and
-> into the EFI libstub/ directory.
->
-> Changes since v1 [0]:
-> - Create new long mode GDT that extends the firmware's 32-bit only GDT
->   so that preserving/restoring data segment selectors or swapping out
->   GDTs and IDTs is no longer needed at all.
-> - Rebase onto v6.14-rc1
->
-> [0] https://lore.kernel.org/all/20250108182218.1453754-8-ardb+git@google.com/
->
-> Ard Biesheuvel (7):
->   x86/efistub: Merge PE and handover entrypoints
->   x86/efi/mixed: Check CPU compatibility without relying on verify_cpu()
->   x86/efi/mixed: Factor out and clean up long mode entry
->   x86/efi/mixed: Set up 1:1 mapping of lower 4GiB in the stub
->   x86/efi/mixed: Remove dependency on legacy startup_32 code
->   x86/efi/mixed: Simplify and document thunking logic
->   x86/efi/mixed: Move mixed mode startup code into libstub
->
+Patch 1/2
+  The new state node qup_uart7_sleep is causing a dt-check warning because the 
+  base DTSI (sc7280.dtsi) is defined with individual pin configurations
 
-Unless anyone minds, I'd like to queue this up in the EFI tree.
+----
+Changes from v8:
+* Fixed the dtb-check warning  in P1 and removed tag: Reviewed-by
+* Link to v8: https://lore.kernel.org/linux-arm-msm/20250127064940.1360404-1-quic_janathot@quicinc.com/
 
-Boris, Ingo?
+Changes from v7:
+* updated P1 & P2 with tag: Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org> 
+* Link to v7: https://lore.kernel.org/lkml/20250107134157.211702-1-quic_janathot@quicinc.com/#t
+
+Changes from v6:
+* Elaborated the commit message with more information.
+* Link to v6: https://lore.kernel.org/lkml/20241223135700.22660-1-quic_janathot@quicinc.com/
+
+Changes from v5:
+* Update the wcn6750 required properties in bindings.
+* Link to v5: https://lore.kernel.org/linux-arm-msm/20241209103455.9675-1-quic_janathot@quicinc.com/
+
+Changes from v4:
+* Added reviewed tag by Krzysztof in p1
+* Updated the p2 commit message with sw_ctrl and wifi-enable are
+  handled in wifi FW.
+* Added blank line between the nodes in p2
+* Placed the structures in proper order in p4
+* Link to v4: https://lore.kernel.org/all/20241204131706.20791-1-quic_janathot@quicinc.com/
+
+Changes from v3:
+* Defined the PMU node and used the its output to power up BT
+* Used power sequencer for wcn wcn6750 module
+* Split the patch to multiple as per subtree
+* Add description of the PMU of the WCN6750 module
+* Include separate UART state node for sleep pin configuarion
+* Link to v3: https://lore.kernel.org/linux-arm-msm/20241022104600.3228-1-quic_janathot@quicinc.com/
+
+Changes from v2:
+* Sorted nodes alphabetically
+* Link to v2: https://lore.kernel.org/linux-arm-msm/20241010105107.30118-1-quic_janathot@quicinc.com/
+
+Changes from v1:
+* Corrected the board name in subject
+* Link to v1: https://lore.kernel.org/linux-arm-msm/20241009111436.23473-1-quic_janathot@quicinc.com/
+Janaki Ramaiah Thota (2):
+  arm64: dts: qcom: qcs6490-rb3gen: add and enable BT node
+  Bluetooth: hci_qca: use the power sequencer for wcn6750
+
+ arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts | 167 ++++++++++++++++++-
+ drivers/bluetooth/hci_qca.c                  |   2 +-
+ 2 files changed, 167 insertions(+), 2 deletions(-)
+
+-- 
+
+
 
