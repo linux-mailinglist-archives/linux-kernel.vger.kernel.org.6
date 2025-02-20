@@ -1,360 +1,348 @@
-Return-Path: <linux-kernel+bounces-524759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4660A3E6C5
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 22:38:21 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9BF5A3E6C4
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 22:38:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD04D19C3DAE
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 21:38:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3719C7A6702
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 21:37:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C63A1264F9E;
-	Thu, 20 Feb 2025 21:37:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FA21264624;
+	Thu, 20 Feb 2025 21:37:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZdxNSsVJ"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="E1OMq2Xq"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAAB1264F84;
-	Thu, 20 Feb 2025 21:37:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5086420CCCA
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 21:37:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740087473; cv=none; b=J99uZ4gwnIo4g2Eq4C3zLpOVvkcoQRDwPDICABMun/2VAIvkhSX7IdNgzpkglRs6+7k+j3Hjd7w8syo0zvEKg9dhcerTZ5MYE1Wsyh0pe27nULy5iLA3NWgCMPWOfCTEd8LQ2daW2KSGqupa+Rtc9mr804Y8ErBrZF6MoY4OxWk=
+	t=1740087469; cv=none; b=e6s6A+X1MoeKdm3tvIC2NzLDGxJV92QxBXgwDNHpzCvTrTDWQVS20yj7qF90dYceJi0KbGaWzjxBqOTBVlexcLhFEzihDbQIPBE9WlsYpwmI6uTljVo7lDVqa8KquEAabIZI8vhbDhwLzl0+Rkl1NMLsICqZ737LPpCI730wXRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740087473; c=relaxed/simple;
-	bh=ZMzUV7EagjYA+QnVxN3/s78mmN3Mb1SrscUo0Fe/3wk=;
+	s=arc-20240116; t=1740087469; c=relaxed/simple;
+	bh=88xel4ReXmml0Y0dgHmn02RadkL5KzYs1W8CvR4jbJo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=O3NwwDp/kfNA5CnAY97mQx5oa7vD1VnWlvGo3ip4peNXIzTPNBmAof9PsfUGuo/0ony4it/E7JFrsmm8Ig85DbytbGPXQkITenn69uPZ36vATdUrO8weuqD3jpGbuNAOY4YMegOUAmB9887kKWZuB7MALEgfnBlBQ1IzadRyOUg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZdxNSsVJ; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-30a440effcfso25454031fa.0;
-        Thu, 20 Feb 2025 13:37:51 -0800 (PST)
+	 To:Cc:Content-Type; b=V38tZoetrAIHkB1eNuKd5rPwg++2XdsVCISvruOe6cwnTaDyVaQffulVAjfzc8VlpbU1+Kei+glPBZRADPG2U0ZpkhdrK42O2/w3BZgqhKzBMGiSoXqAT8jf3QynefOxfbYXTdaYOw6KGSPc+EsNsAlJchUAGR9ZOscR2PNUca8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=E1OMq2Xq; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-abb8d63b447so190215866b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 13:37:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740087470; x=1740692270; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1740087465; x=1740692265; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=3/AHxN53omPCKDXXdtdccLlHfpgjy3pWDMb4ampTqog=;
-        b=ZdxNSsVJ+e+3qyZ1LZBNzM5vIAsFfB3Ciar9H8NMvNxpKGb6w8DRIWV1qdOHTWB4Or
-         h0FU1u5vV7gJWbEsG1o9proV3WxZ+HuS6IyHHrEBcinBW9aHGsJSs794ufrhWDgg2Qjq
-         6g00Uzp0atSw6dQx0Av/xNp6vmlBPrGSUXh7CCobIIJ8/whicEEpBpWLvoJ1EswH8u+B
-         wj24CydfVQ7hWygQ9qMsqBIeFYBrMr3Iy5q4Vq9+cq4t8d3n0arHW8NMzHkhN7u0xDd3
-         pkZo8c6qKrnUkDWxXbfpr8FQ2xwzy8Wxgsq+4FXhnaOYlhAzU09Ngk/wYKz4LoWPuwIC
-         fltg==
+        bh=UJgY/DEAxcJuwoGxKe8jJ8rEYcAL/Pax8Zc7JijGPQM=;
+        b=E1OMq2XqIw5/ZO8mSSnaZsaif7vAgFMIgaOn7PhvvAY4clm0GgDXOQnhAmlkOq6kXd
+         vMHF8QG78PFKsQZLxA+I5SYYxjEdeo85M5SOZPXtGjjysBjT9Y1zt/n89eB67C++334T
+         /9QLBarLfPkOqdfMQ+4XyNCp1Wp6AwMeIyVAP8Qpcg1Cbc69dKXuvCHfHX1Ir1VEEdfW
+         itGao2LDQZG9aBFqyHq9yu0TP3fgiKINqWAd9szHC7HMfjkYl7Y17I7rfYGP+wEf9PoG
+         6ZWuItuD0zE5+BKUiVsYDtxb7GL1i3SPEhrVkWw7ZkryLA8tt9FONQFLLyzYwATxQN2n
+         PKXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740087470; x=1740692270;
+        d=1e100.net; s=20230601; t=1740087465; x=1740692265;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=3/AHxN53omPCKDXXdtdccLlHfpgjy3pWDMb4ampTqog=;
-        b=se+33muFYlAuM91aAB9jsnyHnYtCU63KJgM9IrfVcakOe1obgg3cZ3DUWIeK60pDyr
-         zjYQv5UiAlvWsNQFu1MtF+Xhcyl6mFuso9feX241LifybW4Zhem68K5F/QLvepfSpjVl
-         wvfvEWaI1l7XkTjlJpzZyzT7NIJ9MNy3GAompRx8JZWmcZs0UsuFBpL9IcqTy6Ho+Tfq
-         9sxO01tLlmE7XONwtDmgWRBBBi2pfsc2U6CsECBhz5wJXDK4Njh+o5J6ZgDpJBu8a5OC
-         1FkH/90YVa7sb9FgT/gyJIpz4L4mCMOV1DNZY8WjR2pWjgSPyP7/IlXa2xH4/rsbbZAq
-         swvg==
-X-Forwarded-Encrypted: i=1; AJvYcCWQD6myUk2PcfSCg6buxSN+g9In9s7VATP0fKJ15OIC8YbWuXAA5fd4xMj+7CYkpM/TJIhgt8P+1ZZuqnI=@vger.kernel.org, AJvYcCWZ584yMhl/lIl8iq84n4LHmy4NN0oASn2B7ZeNDP4BKFrKsN3PyHlLAlg6BTrASQGJEYw5aGuDIpJOmoBDHDw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQGgqnkogAChiUzBbv/0K+lsWkvXTtv6febHa/s4UgIxmCmTat
-	m/2+7ZADi2Zc4xNw1YyAg06Clp6rU6yGK+IsHAoIm4/MmEIvT+9p0XUzuayAvllWWPZTDuYDm+I
-	Hm5TaQnj1v/Zq3ReO6Ab+a4IaBW0=
-X-Gm-Gg: ASbGncs1QUrEgiQMXABCSvdSxjnc/shpKkE6nQx3+6KTvGwP7c/Li7C2+VbX4MPByAE
-	GsXZ2KoeD6GPfC7V0HwQVZ5f6Hbxrfe8ssIwwTQjST8RuwfJeHFMMkRRVuYZX6qY6BYVk+Jqr7/
-	+GrsljHZntHHyv
-X-Google-Smtp-Source: AGHT+IHdSCDkdxH6Hph3vQPQOkkb7o/CwxydrLmfjQec6aN1CpZ6Znom9bkSkM5L8ajHu6+nL2LCTH97mNKWdeuMMoY=
-X-Received: by 2002:a2e:3c14:0:b0:309:2999:77d4 with SMTP id
- 38308e7fff4ca-30a505d863cmr18037481fa.6.1740087469451; Thu, 20 Feb 2025
- 13:37:49 -0800 (PST)
+        bh=UJgY/DEAxcJuwoGxKe8jJ8rEYcAL/Pax8Zc7JijGPQM=;
+        b=vq8cSq2iVQxqgMxTFHPGc4t0ivlyq4bIK3u2t+1RRNQOz+GfT7n0jYt5dfYbVI8F4d
+         23qSc9RuXBhgj24ixjgCk0CIVYoiGWe8YnldpqLOZj6zrGkQ1Bjb0w2zg4SXmcvt5kxs
+         zSMEcILX46C0gRRw3TOPboyrYoOJcDPUi4J+XJhu5mejJ7h78fnFUGKqvFBPpql7p1HQ
+         opz8ooJrmvyysU0vxyFlAUXutUHkhiLPTBtv3/nYO46vJIdc8f9/j0Q+RLdAW17cmbUK
+         qt/psXL4BjAcHcru3wJDIuiigSc9BCq64MuHH+xwPLuaRtp+ao4KhFhr9IqiM+hvYlaK
+         fyhA==
+X-Forwarded-Encrypted: i=1; AJvYcCWN77qYf49VDxofTI0sj3yopN0QFA9ax2pzNN5YpiXVI5b90SV3gFi3FXG9OeDtM0lWTAe0ME1QfNm679I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXE7o9gimaNFwpHHqO3qrB4gxGgt6YPo9RVZRELrXS7o2WYTuI
+	rjmPLCJeM1HbRhxayIZ9CBcEBOKnyI188vNszXYBQ97vvWgBiGxtuxl7GxIURSqjWxGlyY3YiHb
+	hNIRbnx7PqahttbYnnIsqUHnssWJGU0w8bk/q
+X-Gm-Gg: ASbGncvNZes8JDVnK+bWK33ZFD7BbhrJq+mIq9IXHMkqjIE9mRAj3A/PgYJOMC8mqEH
+	P/2mgGWAG7W4iIgemXl+sveW1mbRwaj+gvjsQxJTDK+v1UN5zvWwPMAC5n7Wtk+zE+DnCbhPGKt
+	pIIqruQsWwpnO5ozdEqVIGIRVMRjs=
+X-Google-Smtp-Source: AGHT+IHk8/fn5FhZEYC+B8X06zJ7j4NoHhOvN9+v3er2xxjzQYmLbruTLQB4WUbNewXmprb13+b2o7CIyIBuqIUXzPg=
+X-Received: by 2002:a17:906:308c:b0:ab7:ec7c:89e4 with SMTP id
+ a640c23a62f3a-abc09a0a2c1mr77488566b.21.1740087464402; Thu, 20 Feb 2025
+ 13:37:44 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250218-hrtimer-v3-v6-12-rc2-v8-0-48dedb015eb3@kernel.org>
- <20250218-hrtimer-v3-v6-12-rc2-v8-2-48dedb015eb3@kernel.org>
- <KDmrJnQA2_Ojf67mD8WA_UafgVCACRRleB9t-D_1yl_bua8e1VWdGQAUvmMGHscqRHu1gzPJCKe_BfotutZm5Q==@protonmail.internalid>
- <CAJ-ks9ncOyGyQsDFOBxg-7wmXkrQYiZr6H6eEFWsFstk=p1uAA@mail.gmail.com> <87wmdkgvr0.fsf@kernel.org>
-In-Reply-To: <87wmdkgvr0.fsf@kernel.org>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Thu, 20 Feb 2025 16:37:13 -0500
-X-Gm-Features: AWEUYZliI_VrX4T85KKg7MveWeq-OsXOuwjUJx6sq2N3HSgYQwiWJGGDJMDmzvU
-Message-ID: <CAJ-ks9mNidHZvWkFJE1jExc2oVk_bbJpiO_DRMrWu5nYhTpKgg@mail.gmail.com>
-Subject: Re: [PATCH v8 02/14] rust: hrtimer: introduce hrtimer support
-To: Andreas Hindborg <a.hindborg@kernel.org>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Anna-Maria Behnsen <anna-maria@linutronix.de>, 
-	Frederic Weisbecker <frederic@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
-	Danilo Krummrich <dakr@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Alice Ryhl <aliceryhl@google.com>, 
-	Trevor Gross <tmgross@umich.edu>, Lyude Paul <lyude@redhat.com>, Guangbo Cui <2407018371@qq.com>, 
-	Dirk Behme <dirk.behme@gmail.com>, Daniel Almeida <daniel.almeida@collabora.com>, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <cover.1739997129.git.ashish.kalra@amd.com> <f1caff4423a46c50564e625fd98932fde2a9a3fc.1739997129.git.ashish.kalra@amd.com>
+ <CAAH4kHab8rvWCPX2x8cvv6Dm+uhZQxpJgwrrn2GAKzn8sqS9Kg@mail.gmail.com> <27d63f0a-f840-42df-a31c-28c8cb457222@amd.com>
+In-Reply-To: <27d63f0a-f840-42df-a31c-28c8cb457222@amd.com>
+From: Dionna Amalie Glaze <dionnaglaze@google.com>
+Date: Thu, 20 Feb 2025 13:37:31 -0800
+X-Gm-Features: AWEUYZkw8JRzTMCWoOsQe1qrRf6TLzBp_lxe1iYiNlk4nmTmKATxQq-pAaeLENg
+Message-ID: <CAAH4kHYXGNTFABo7hWCQvvebiv4VkXfT8HvV-FPneyQcrHA-9w@mail.gmail.com>
+Subject: Re: [PATCH v4 2/7] crypto: ccp: Ensure implicit SEV/SNP init and
+ shutdown in ioctls
+To: "Kalra, Ashish" <ashish.kalra@amd.com>
+Cc: seanjc@google.com, pbonzini@redhat.com, tglx@linutronix.de, 
+	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, 
+	hpa@zytor.com, thomas.lendacky@amd.com, john.allen@amd.com, 
+	herbert@gondor.apana.org.au, michael.roth@amd.com, nikunj@amd.com, 
+	ardb@kernel.org, kevinloughlin@google.com, Neeraj.Upadhyay@amd.com, 
+	aik@amd.com, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-crypto@vger.kernel.org, linux-coco@lists.linux.dev
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Feb 20, 2025 at 4:19=E2=80=AFPM Andreas Hindborg <a.hindborg@kernel=
-.org> wrote:
+On Thu, Feb 20, 2025 at 12:07=E2=80=AFPM Kalra, Ashish <ashish.kalra@amd.co=
+m> wrote:
 >
-> "Tamir Duberstein" <tamird@gmail.com> writes:
+> Hello Dionna,
 >
-> > On Tue, Feb 18, 2025 at 8:29=E2=80=AFAM Andreas Hindborg <a.hindborg@ke=
-rnel.org> wrote:
+> On 2/20/2025 10:44 AM, Dionna Amalie Glaze wrote:
+> > On Wed, Feb 19, 2025 at 12:53=E2=80=AFPM Ashish Kalra <Ashish.Kalra@amd=
+.com> wrote:
 > >>
->
-> [...]
->
-> >> +//! ## State Diagram
-> >> +//!
-> >> +//! ```text
-> >> +//!                  <-- Stop ----
-> >> +//!                  <-- Cancel --
-> >> +//!                  --- Start -->
-> >> +//!        +---------+        +---------+
-> >> +//!   O--->| Stopped |        | Running |---o
-> >> +//!        +---------+        +---------+   |
-> >> +//!                                  ^      |
-> >> +//!                  <- Expire --    |      |
-> >> +//!                                  o------o
-> >> +//!                                   Restart
-> >> +//! ```
-> >> +//!
-> >> +//! A timer is initialized in the **stopped** state. A stopped timer =
-can be
-> >> +//! **started** with an **expiry** time. After the timer is started, =
-it is
-> >> +//! **running**. When the timer **expires**, the timer handler is exe=
-cuted.
-> >> +//! After the handler has executed, the timer may be **restarted** or
-> >> +//! **stopped**. A running timer can be **canceled** before it's hand=
-ler is
+> >> From: Ashish Kalra <ashish.kalra@amd.com>
+> >>
+> >> Modify the behavior of implicit SEV initialization in some of the
+> >> SEV ioctls to do both SEV initialization and shutdown and add
+> >> implicit SNP initialization and shutdown to some of the SNP ioctls
+> >> so that the change of SEV/SNP platform initialization not being
+> >> done during PSP driver probe time does not break userspace tools
+> >> such as sevtool, etc.
+> >>
+> >> Prior to this patch, SEV has always been initialized before these
+> >> ioctls as SEV initialization is done as part of PSP module probe,
+> >> but now with SEV initialization being moved to KVM module load instead
+> >> of PSP driver probe, the implied SEV INIT actually makes sense and get=
+s
+> >> used and additionally to maintain SEV platform state consistency
+> >> before and after the ioctl SEV shutdown needs to be done after the
+> >> firmware call.
+> >>
+> >> It is important to do SEV Shutdown here with the SEV/SNP initializatio=
+n
+> >> moving to KVM, an implicit SEV INIT here as part of the SEV ioctls not
+> >> followed with SEV Shutdown will cause SEV to remain in INIT state and
+> >> then a future SNP INIT in KVM module load will fail.
+> >>
+> >> Similarly, prior to this patch, SNP has always been initialized before
+> >> these ioctls as SNP initialization is done as part of PSP module probe=
+,
+> >> therefore, to keep a consistent behavior, SNP init needs to be done
+> >> here implicitly as part of these ioctls followed with SNP shutdown
+> >> before returning from the ioctl to maintain the consistent platform
+> >> state before and after the ioctl.
+> >>
+> >> Signed-off-by: Ashish Kalra <ashish.kalra@amd.com>
+> >> ---
+> >>  drivers/crypto/ccp/sev-dev.c | 117 ++++++++++++++++++++++++++++------=
+-
+> >>  1 file changed, 93 insertions(+), 24 deletions(-)
+> >>
+> >> diff --git a/drivers/crypto/ccp/sev-dev.c b/drivers/crypto/ccp/sev-dev=
+.c
+> >> index 8f5c474b9d1c..b06f43eb18f7 100644
+> >> --- a/drivers/crypto/ccp/sev-dev.c
+> >> +++ b/drivers/crypto/ccp/sev-dev.c
+> >> @@ -1461,7 +1461,8 @@ static int sev_ioctl_do_platform_status(struct s=
+ev_issue_cmd *argp)
+> >>  static int sev_ioctl_do_pek_pdh_gen(int cmd, struct sev_issue_cmd *ar=
+gp, bool writable)
+> >>  {
+> >>         struct sev_device *sev =3D psp_master->sev_data;
+> >> -       int rc;
+> >> +       bool shutdown_required =3D false;
+> >> +       int rc, error;
+> >>
+> >>         if (!writable)
+> >>                 return -EPERM;
+> >> @@ -1470,19 +1471,26 @@ static int sev_ioctl_do_pek_pdh_gen(int cmd, s=
+truct sev_issue_cmd *argp, bool wr
+> >>                 rc =3D __sev_platform_init_locked(&argp->error);
+> >>                 if (rc)
+> >>                         return rc;
+> >> +               shutdown_required =3D true;
+> >>         }
+> >>
+> >> -       return __sev_do_cmd_locked(cmd, NULL, &argp->error);
+> >> +       rc =3D __sev_do_cmd_locked(cmd, NULL, &argp->error);
+> >> +
+> >> +       if (shutdown_required)
+> >> +               __sev_platform_shutdown_locked(&error);
 > >
-> > "it's" =3D it is. This should be "its" (possessive).
->
-> Thanks =F0=9F=91=8D
->
-> > Just to be clear, after the handler has executed and before the timer
-> > has been **restarted** or **stopped** the timer is still in the
-> > **running** state?
->
-> It depends on the return value of the handler. If the handler returns res=
-tart,
-> the timer the timer does not enter the stopped state. If the handler
-> returns stop, the timer enters the stopped state.
->
-> The timer is still considered to be in running state the handler is
-> running.
->
-> I can add this info to the section.
-
-Yeah, some clarification here would be useful.
-
+> > This error is discarded. Is that by design? If so, It'd be better to
+> > call this ignored_error.
 > >
-> >
-> >> +//! executed. A timer that is cancelled enters the **stopped** state.
-> >> +//!
-> >> +
-> >> +use crate::{init::PinInit, prelude::*, time::Ktime, types::Opaque};
-> >> +use core::marker::PhantomData;
-> >> +
-> >> +/// A timer backed by a C `struct hrtimer`.
-> >> +///
-> >> +/// # Invariants
-> >> +///
-> >> +/// * `self.timer` is initialized by `bindings::hrtimer_setup`.
-> >> +#[pin_data]
-> >> +#[repr(C)]
-> >> +pub struct HrTimer<T> {
-> >> +    #[pin]
-> >> +    timer: Opaque<bindings::hrtimer>,
-> >> +    _t: PhantomData<T>,
-> >> +}
-> >> +
-> >> +// SAFETY: Ownership of an `HrTimer` can be moved to other threads an=
-d
-> >> +// used/dropped from there.
-> >> +unsafe impl<T> Send for HrTimer<T> {}
-> >> +
-> >> +// SAFETY: Timer operations are locked on C side, so it is safe to op=
-erate on a
-> >> +// timer from multiple threads
-> >> +unsafe impl<T> Sync for HrTimer<T> {}
-> >> +
-> >> +impl<T> HrTimer<T> {
-> >> +    /// Return an initializer for a new timer instance.
-> >> +    pub fn new() -> impl PinInit<Self>
-> >> +    where
-> >> +        T: HrTimerCallback,
-> >> +    {
-> >> +        pin_init!(Self {
-> >> +            // INVARIANTS: We initialize `timer` with `hrtimer_setup`=
- below.
-> >> +            timer <- Opaque::ffi_init(move |place: *mut bindings::hrt=
-imer| {
-> >> +                // SAFETY: By design of `pin_init!`, `place` is a poi=
-nter to a
-> >> +                // live allocation. hrtimer_setup will initialize `pl=
-ace` and
-> >> +                // does not require `place` to be initialized prior t=
-o the call.
-> >> +                unsafe {
-> >> +                    bindings::hrtimer_setup(
-> >> +                        place,
-> >> +                        Some(T::CallbackTarget::run),
-> >> +                        bindings::CLOCK_MONOTONIC as i32,
-> >> +                        bindings::hrtimer_mode_HRTIMER_MODE_REL,
-> >> +                    );
-> >> +                }
-> >> +            }),
-> >> +            _t: PhantomData,
-> >> +        })
-> >> +    }
-> >> +
-> >> +    /// Get a pointer to the contained `bindings::hrtimer`.
-> >> +    ///
-> >> +    /// # Safety
-> >> +    ///
-> >> +    /// `ptr` must point to a live allocation of at least the size of=
- `Self`.
-> >> +    unsafe fn raw_get(ptr: *const Self) -> *mut bindings::hrtimer {
-> >> +        // SAFETY: The field projection to `timer` does not go out of=
- bounds,
-> >> +        // because the caller of this function promises that `ptr` po=
-ints to an
-> >> +        // allocation of at least the size of `Self`.
-> >> +        unsafe { Opaque::raw_get(core::ptr::addr_of!((*ptr).timer)) }
-> >> +    }
-> >
-> > Can you help me understand why the various functions here operate on
-> > *const Self? I understand the need to obtain a C pointer to interact
-> > with bindings, but I don't understand why we're dealing in raw
-> > pointers to the abstraction rather than references.
 >
-> We cannot reference the `bindings::hrtimer` without wrapping it in
-> `Opaque`. This would be the primary reason. At other times, we cannot
-> produce references because we might not be able to prove that we satisfy
-> the safety requirements for turning a pointer into a reference. If we
-> are just doing offset arithmetic anyway, we don't need a reference.
-
-Why do we have a pointer, rather than a reference, to Self in the
-first place? I think this is the key thing I don't understand.
-
->
->
-> > This extends to
-> > HrTimerPointer, which is intended to be implemented by *pointers to*
-> > structs that embed `HrTimer`; why isn't it implemented on by the
-> > embedder itself?
->
-> Not sure what you mean here. If you refer to for instance the
-> implementation of `HrTimerPointer for Arc<T>`, I get why you might
-> wonder, why does `HasHrTimer::start` not take a reference instead of a
-> pointer? We could do that, but we would just immediately break it down
-> again in the implementation of `HasHrTimer::start`. Might still be a
-> good idea though.
-
-I was trying to say that my question (which I clarified above,
-hopefully) extends to the description and name of this trait.
-Specifically for this trait I don't understand why its semantics are
-described in terms of pointers rather than references (and AsRef, to
-allow for Arc and friends).
-
-> >
-> > I realize we discussed this on v6, sorry for not keeping up there.
->
-> No worries, it is good that we discuss this.
->
-> [...]
+> This is by design, we cannot overwrite the error for the original command=
+ being issued
+> here which in this case is do_pek_pdh_gen, hence we use a local error for=
+ the shutdown command.
+> And __sev_platform_shutdown_locked() has it's own error logging code, so =
+it will be printing
+> the error message for the shutdown command failure, so the shutdown error=
+ is not eventually
+> being ignored, that error log will assist in any inconsistent SEV/SNP pla=
+tform state and
+> subsequent errors.
 >
 > >> +
-> >> +/// A handle representing a potentially running timer.
-> >> +///
-> >> +/// More than one handle representing the same timer might exist.
-> >> +///
-> >> +/// # Safety
-> >> +///
-> >> +/// When dropped, the timer represented by this handle must be cancel=
-led, if it
-> >> +/// is running. If the timer handler is running when the handle is dr=
-opped, the
-> >> +/// drop method must wait for the handler to finish before returning.
+> >> +       return rc;
+> >>  }
+> >>
+> >>  static int sev_ioctl_do_pek_csr(struct sev_issue_cmd *argp, bool writ=
+able)
+> >>  {
+> >>         struct sev_device *sev =3D psp_master->sev_data;
+> >>         struct sev_user_data_pek_csr input;
+> >> +       bool shutdown_required =3D false;
+> >>         struct sev_data_pek_csr data;
+> >>         void __user *input_address;
+> >>         void *blob =3D NULL;
+> >> -       int ret;
+> >> +       int ret, error;
+> >>
+> >>         if (!writable)
+> >>                 return -EPERM;
+> >> @@ -1513,6 +1521,7 @@ static int sev_ioctl_do_pek_csr(struct sev_issue=
+_cmd *argp, bool writable)
+> >>                 ret =3D __sev_platform_init_locked(&argp->error);
+> >>                 if (ret)
+> >>                         goto e_free_blob;
+> >> +               shutdown_required =3D true;
+> >>         }
+> >>
+> >>         ret =3D __sev_do_cmd_locked(SEV_CMD_PEK_CSR, &data, &argp->err=
+or);
+> >> @@ -1531,6 +1540,9 @@ static int sev_ioctl_do_pek_csr(struct sev_issue=
+_cmd *argp, bool writable)
+> >>         }
+> >>
+> >>  e_free_blob:
+> >> +       if (shutdown_required)
+> >> +               __sev_platform_shutdown_locked(&error);
 > >
-> > Between this comment and the comment on cancel we say "if it is
-> > running" 3 times. Can we say it just once, on the method, and here say
-> > that cancel must be called in Drop?
+> > Another discarded error. This function is called in different
+> > locations in sev-dev.c with and without checking the result, which
+> > seems problematic.
 >
-> Well, the comment on `cancel` is just a description of what the function
-> does. This piece of text is a safety requirement.
+> Not really, if shutdown fails for any reason, the error is printed.
+> The return value here reflects the value of the original command/function=
+.
+> The command/ioctl could have succeeded but the shutdown failed, hence,
+> shutdown error is printed, but the return value reflects that the ioctl s=
+ucceeded.
 >
-> We could make the safety requirement for implementing the trait "Implemen=
-t
-> the methods according to their documentation". But that would not help wi=
-th
-> the drop requirement.
-
-My suggestion is that the safety comment read: when dropped,
-[Self::cancel] must be called. Something like that.
-
+> Additionally, in case of INIT before the command is issued, the command m=
+ay
+> have failed without the SEV state being in INIT state, hence the error fo=
+r the
+> INIT command failure is returned back from the ioctl.
 >
 > >
-> >> +pub unsafe trait HrTimerHandle {
-> >> +    /// Cancel the timer, if it is running. If the timer handler is r=
-unning, block
-> >> +    /// till the handler has finished.
-> >> +    fn cancel(&mut self) -> bool;
-> >> +}
 > >> +
-> >> +/// Implemented by structs that contain timer nodes.
-> >> +///
-> >> +/// Clients of the timer API would usually safely implement this trai=
-t by using
-> >> +/// the [`crate::impl_has_hr_timer`] macro.
-> >> +///
-> >> +/// # Safety
-> >> +///
-> >> +/// Implementers of this trait must ensure that the implementer has a=
- [`HrTimer`]
-> >> +/// field at the offset specified by `OFFSET` and that all trait meth=
-ods are
-> >> +/// implemented according to their documentation.
-> >> +///
-> >> +/// [`impl_has_timer`]: crate::impl_has_timer
-> >> +pub unsafe trait HasHrTimer<T> {
-> >> +    /// Offset of the [`HrTimer`] field within `Self`
-> >> +    const OFFSET: usize;
+> >>         kfree(blob);
+> >>         return ret;
+> >>  }
+> >> @@ -1747,8 +1759,9 @@ static int sev_ioctl_do_pek_import(struct sev_is=
+sue_cmd *argp, bool writable)
+> >>         struct sev_device *sev =3D psp_master->sev_data;
+> >>         struct sev_user_data_pek_cert_import input;
+> >>         struct sev_data_pek_cert_import data;
+> >> +       bool shutdown_required =3D false;
+> >>         void *pek_blob, *oca_blob;
+> >> -       int ret;
+> >> +       int ret, error;
+> >>
+> >>         if (!writable)
+> >>                 return -EPERM;
+> >> @@ -1780,11 +1793,15 @@ static int sev_ioctl_do_pek_import(struct sev_=
+issue_cmd *argp, bool writable)
+> >>                 ret =3D __sev_platform_init_locked(&argp->error);
+> >>                 if (ret)
+> >>                         goto e_free_oca;
+> >> +               shutdown_required =3D true;
+> >>         }
+> >>
+> >>         ret =3D __sev_do_cmd_locked(SEV_CMD_PEK_CERT_IMPORT, &data, &a=
+rgp->error);
+> >>
+> >>  e_free_oca:
+> >> +       if (shutdown_required)
+> >> +               __sev_platform_shutdown_locked(&error);
 > >
-> > Does this need to be part of the trait? As an alternative the provided
-> > methods could be generated in the macro below and reduce the
-> > opportunity to implement this trait incorrectly.
+> > Again.
+> >
+> >> +
+> >>         kfree(oca_blob);
+> >>  e_free_pek:
+> >>         kfree(pek_blob);
+> >> @@ -1901,17 +1918,8 @@ static int sev_ioctl_do_pdh_export(struct sev_i=
+ssue_cmd *argp, bool writable)
+> >>         struct sev_data_pdh_cert_export data;
+> >>         void __user *input_cert_chain_address;
+> >>         void __user *input_pdh_cert_address;
+> >> -       int ret;
+> >> -
+> >> -       /* If platform is not in INIT state then transition it to INIT=
+. */
+> >> -       if (sev->state !=3D SEV_STATE_INIT) {
+> >> -               if (!writable)
+> >> -                       return -EPERM;
+> >> -
+> >> -               ret =3D __sev_platform_init_locked(&argp->error);
+> >> -               if (ret)
+> >> -                       return ret;
+> >> -       }
+> >> +       bool shutdown_required =3D false;
+> >> +       int ret, error;
+> >>
+> >>         if (copy_from_user(&input, (void __user *)argp->data, sizeof(i=
+nput)))
+> >>                 return -EFAULT;
+> >> @@ -1952,6 +1960,16 @@ static int sev_ioctl_do_pdh_export(struct sev_i=
+ssue_cmd *argp, bool writable)
+> >>         data.cert_chain_len =3D input.cert_chain_len;
+> >>
+> >>  cmd:
+> >> +       /* If platform is not in INIT state then transition it to INIT=
+. */
+> >> +       if (sev->state !=3D SEV_STATE_INIT) {
+> >> +               if (!writable)
+> >> +                       goto e_free_cert;
+> >> +               ret =3D __sev_platform_init_locked(&argp->error);
+> >
+> > Using argp->error for init instead of the ioctl-requested command
+> > means that the user will have difficulty distinguishing which process
+> > is at fault, no?
+> >
 >
-> There is no risk of implementing the trait wrong, because it is usually
-> derived by a macro.
+> Not really, in case the SEV command has still not been issued, argp->erro=
+r is still usable
+> and returned back to the caller (no need to use a local error here), we a=
+re not overwriting
+> the argp->error used for the original command/ioctl here.
+>
 
-There's no risk when it's implemented by the macro, but you used the
-word usually,  which means there is a risk.
+I mean in the case that argp->error is set to a value shared by the
+command and init, it's hard to know what the problem was.
+I'd like to ensure that the documentation is updated to reflect that
+(in this case) if PDH_CERT_EXPORT returns INVALID_PLATFORM_STATE, then
+it's because the platform was not in PSTATE.UNINIT state.
+The new behavior of initializing when you need to now means that you
+should have ruled out INVALID_PLATFORM_STATE as a possible value from
+PDH_EXPORT_CERT. Same for SNP_CONFIG.
 
-> We need at least one of the methods to be able to have the type system
-> verify that the type for which we implement `HasHrTImer` actually has a
-> field with the name we specify, and that this field has the right type.
-> And to have that, we need the OFFSET.
+There is not a 1-to-1 mapping between the ioctl commands and the SEV
+commands now, so I think you need extra documentation to clarify the
+new error space for at least pdh_export and set_config
 
-I don't follow this logic. OFFSET is calculated in the body of the
-macro. I'm suggesting that the macro generate the method
-implementations (which would no longer be provided). In effect I'm
-saying: keep OFFSET private.
+SNP_PLATFORM_STATUS, VLEK_LOAD, and SNP_COMMIT appear to not
+necessarily have a provenance confusion after looking closer.
 
-I'm also noticing now that the macro generates an implementation of
-raw_get_timer *in addition to* the provided implementation. Why are
-both needed?
 
->
->
->
-> Best regards,
-> Andreas Hindborg
->
->
+
+--=20
+-Dionna Glaze, PhD, CISSP, CCSP (she/her)
 
