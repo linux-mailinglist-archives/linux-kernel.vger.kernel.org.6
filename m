@@ -1,272 +1,275 @@
-Return-Path: <linux-kernel+bounces-523700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-523702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D39BAA3DA1E
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:33:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50260A3DA24
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 13:33:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04BEE3A7FE2
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:30:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB3D2179B01
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Feb 2025 12:31:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F7651F152B;
-	Thu, 20 Feb 2025 12:30:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25F901EF01;
+	Thu, 20 Feb 2025 12:31:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q8DlLwpP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=cixtech.com header.i=@cixtech.com header.b="AntMyIid"
+Received: from HK2PR02CU002.outbound.protection.outlook.com (mail-eastasiaazon11020083.outbound.protection.outlook.com [52.101.128.83])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 539B41CD15;
-	Thu, 20 Feb 2025 12:30:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740054610; cv=none; b=E439aSvSBJet6xPpQW092RHgBJz0vSzMZ6wdSJrPY0C0J/ijC6DjhZEZ1u9TcUf+YNziPrITcU25E7/X6up1qNqlmcbuo8d79jjMqhLWqMzXObvbN3o77/Z0+PHPSlLfBaTq0RfDmsRWENBstf3KNXpgXkAIyD83zdWuHT4iW7w=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740054610; c=relaxed/simple;
-	bh=2oH03Hf7Yq330CJVN6/UZLAQGmSYLUaXYXtI4buRWmY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=XH86s+Y7Qki3qscvyjTVYSaOXiDRHZc/2y4BW3+He++W5vBt+Ft5dxDcsPwPoy9iggAZ97noeLbWMZwOyrx5VyFfQi61TycTmKo99l501fcSFQybEHnZ+gB2DrBZPbWtl7TQB7IUXxhCG0zwIFlGGYPaqZzqNYIKkFaPlJlLLsA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q8DlLwpP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 2A357C4CED1;
-	Thu, 20 Feb 2025 12:30:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740054610;
-	bh=2oH03Hf7Yq330CJVN6/UZLAQGmSYLUaXYXtI4buRWmY=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=Q8DlLwpP7npsOZSieCsYgxpdejQMuRG2PraJUbrnpVVu7k3VUOYt9GhJaObfc01Rs
-	 v5cWXF3SuKDT+/pPFF3cBnzKfkPTc1JbQXKsC/CcjDWXVTll7JB1H8FIGnzwN/bwmD
-	 45lxiTfILIXmkLQXR949tASQO69XadBjRi2itwBOCoo/nNlWJwJtUuP+fLg4BBb3cy
-	 TNZLd01QVt32B2lGwWTIj+NHR4P+S3/+fhhFknWBCloxE2EkFPTAp8kIUZX3iPIlXj
-	 XdExBwI2oVIAj7sdtgo1FVS40PjQrnK9cF9aWDBDIQvGYbYJTcpxCHk1MX779mYZo+
-	 MMGMoJsCC29BA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E907C021B1;
-	Thu, 20 Feb 2025 12:30:10 +0000 (UTC)
-From: =?utf-8?q?J=2E_Neusch=C3=A4fer_via_B4_Relay?= <devnull+j.ne.posteo.net@kernel.org>
-Date: Thu, 20 Feb 2025 13:29:58 +0100
-Subject: [PATCH v3] dt-bindings: pci: Convert fsl,mpc83xx-pcie to YAML
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BD9D1F584F;
+	Thu, 20 Feb 2025 12:31:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.128.83
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740054673; cv=fail; b=LaummBu/KC4gAcdjQ9k9DyoXFrCVex3yQT7iybMsLCN7st4LPSKtsnVb66qsZvh1zLRjPrG0eb4WOYjnMr+RDj0dQA0j/jG2+ZNkKihQhIfXdt4h8r5EzoY9PthclT2aecLKNMUvDkR7mQ0N4GKucHCvQM/k7Y2oePCziTkt9IE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740054673; c=relaxed/simple;
+	bh=g+fc3C+ZOyEVFWYfUsPYv2upagsNXiT0uSBpb5nbjRE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ni61ItqTa1PrxPc5J2l84Voz3UAZ18juWrTwjxD7vslZQJkEtLUETBLy0HJQhkdWAOYxG/yWnMAARiJHBPjN4OiDbTmkNIZG7QDF5h4gOS2BlBihmvuVSc03MAokHkLLOaFPLaZCeKz1bsUA+2AmnSGw8+lB7AVnuMTo+AqcE8Y=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com; spf=pass smtp.mailfrom=cixtech.com; dkim=pass (2048-bit key) header.d=cixtech.com header.i=@cixtech.com header.b=AntMyIid; arc=fail smtp.client-ip=52.101.128.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cixtech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=DbQfH5lAc42d2VfO9DFSS8AgfxGbIR17PcUlw3wEsAHiJOOJ01cUQGM2H1rXrpNdQDL6EuoAn6qD7NKqu++X+mCBiJhYLTuew/4PeBlTIuSX8jrdV72SWn16qzbvgTUPZVoMB8QI6UwHO1rekObneL0kfyJ/oPxyIoijNhXBhPKapusztHV+b8QNcnbJACQuiujgLwqFVHZf/bW47At8v/bjaAZQKDkUbfvX8/hihMXinI3aydsetUNOzQiU8j4dPLBpI5Cy5JngspSVFbVZMETixz4mg61wPPHr8lcQatLd1tNM/ZGv+Ukp3s4059MpdvWCxKDo06GClks15d14Zg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Yi43V5YG9gUuczc2/rOeuRYqRNtYrSrKuLwFZwDUMl8=;
+ b=IQYzGynTaycPJ1KCXMUZbgp25HbGWiRpp5bjGCrGdTMblOkN3ij62saW/+HQD7SesbqtlnzXNU+kWX1vVNftjYwFOHfnaY5/KulSGqbU4mqFefwrhXRUMc31nkIqomINkTCMzlnxbV6/Aqv/rwaTNWrVaTPc1Oa/H9fEFX8dvXmse2Ig4Lt3U0lwuCZgn78ABBWsl+USnQ5C7iIeAJmCLC6FF8p/EmTU0bo5caBZZ4Zw0+Z/bDP3vkCWcSUFDcm1ydxErzNwU/y3Xe7wFC4UUcTaC5JBCbVuiXgEP1sX8zE+S7SVtpu3fvbg5IPB+fmQktsWOfjJkixX0lEmLAw7/w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 222.71.101.198) smtp.rcpttodomain=arm.com smtp.mailfrom=cixtech.com;
+ dmarc=bestguesspass action=none header.from=cixtech.com; dkim=none (message
+ not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cixtech.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Yi43V5YG9gUuczc2/rOeuRYqRNtYrSrKuLwFZwDUMl8=;
+ b=AntMyIid8N1cB0Kri0v69E6ASCpihdZqdkjY5GFXNnnxLMRLGJeNm84r+3/3DQdCseBx9JF+KIgo5vmwbH6cRw/CLb0mVdtENi+TKx6QQu5OEVK7OUrmaaVj8WNbhMwSslDqlZaDXz19OR5nx94GQo14d9SE71T76IhsxZIsdp9ZbGET02tqaMiau4khhm0nKOPWvZz63suyQ4669FLPIalMz2xZY+7SgVXmDKpRK1JtDsu6x0MzSk/RjiG6hPT2+YwU7Uz6wkPRdXJF0KhFpAGBxbU18WPAQUoB28Uj0D3f2uagLct4GmUHFKOpP1mCyKHNPzfjLCbPf44oFGlDnQ==
+Received: from SI2PR04CA0011.apcprd04.prod.outlook.com (2603:1096:4:197::10)
+ by KL1PR0601MB5534.apcprd06.prod.outlook.com (2603:1096:820:b6::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.14; Thu, 20 Feb
+ 2025 12:30:44 +0000
+Received: from SG2PEPF000B66CF.apcprd03.prod.outlook.com
+ (2603:1096:4:197:cafe::cf) by SI2PR04CA0011.outlook.office365.com
+ (2603:1096:4:197::10) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8466.15 via Frontend Transport; Thu,
+ 20 Feb 2025 12:30:44 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 222.71.101.198)
+ smtp.mailfrom=cixtech.com; dkim=none (message not signed)
+ header.d=none;dmarc=bestguesspass action=none header.from=cixtech.com;
+Received-SPF: Pass (protection.outlook.com: domain of cixtech.com designates
+ 222.71.101.198 as permitted sender) receiver=protection.outlook.com;
+ client-ip=222.71.101.198; helo=smtprelay.cixcomputing.com; pr=C
+Received: from smtprelay.cixcomputing.com (222.71.101.198) by
+ SG2PEPF000B66CF.mail.protection.outlook.com (10.167.240.23) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8466.11 via Frontend Transport; Thu, 20 Feb 2025 12:30:43 +0000
+Received: from nchen-desktop (unknown [172.16.64.25])
+	by smtprelay.cixcomputing.com (Postfix) with ESMTPSA id 4CB6E4160CA0;
+	Thu, 20 Feb 2025 20:30:42 +0800 (CST)
+Date: Thu, 20 Feb 2025 20:30:35 +0800
+From: Peter Chen <peter.chen@cixtech.com>
+To: "Arnd Bergmann" <arnd@arndb.de>
+Cc: "Rob Herring" <robh@kernel.org>, krzk+dt@kernel.org,
+	"Conor Dooley" <conor+dt@kernel.org>,
+	"Catalin Marinas" <catalin.marinas@arm.com>,
+	"Will Deacon" <will@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, cix-kernel-upstream@cixtech.com,
+	"Fugang . duan" <fugang.duan@cixtech.com>
+Subject: Re: [PATCH 6/6] arm64: dts: cix: add initial CIX P1(SKY1) dts support
+Message-ID: <Z7cga0L6UYmPXoFw@nchen-desktop>
+References: <20250220084020.628704-1-peter.chen@cixtech.com>
+ <20250220084020.628704-7-peter.chen@cixtech.com>
+ <4add2867-8c09-454a-b3e2-b4baaeccfd44@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250220-ppcyaml-pci-v3-1-ca94a4f62a85@posteo.net>
-X-B4-Tracking: v=1; b=H4sIAEUgt2cC/x3MQQqAIBBA0avIrBPErEVXiRYyztRAmShEId09a
- fkW/1colIUKTKpCpkuKnLGh7xTg5uNKWkIzWGMHY63RKeHjj10nFO0YkQPyyOSgFSkTy/3f5uV
- 9P73N1kldAAAA
-X-Change-ID: 20250220-ppcyaml-pci-4fccfdcf6fe4
-To: Bjorn Helgaas <bhelgaas@google.com>, 
- Lorenzo Pieralisi <lpieralisi@kernel.org>, 
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- =?utf-8?q?J=2E_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-Cc: linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- =?utf-8?q?J=2E_Neusch=C3=A4fer?= <j.ne@posteo.net>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1740054609; l=6184;
- i=j.ne@posteo.net; s=20240329; h=from:subject:message-id;
- bh=RgTRIY2UX+irY5tpqSZ3owLYm4IerY9v/YGL00K/T60=;
- b=SiGw6Nl9deNVcLRAfAQxTcbtWjLnoLVT6BuXjE7q1wX6JbtWQzDZgsSLH5lPiy8rkyodxTrGE
- eaOstuZRlEQCmen97M9JBylA4s1inXeDiqS2UvpJqn8zh5kUS9CBwEm
-X-Developer-Key: i=j.ne@posteo.net; a=ed25519;
- pk=NIe0bK42wNaX/C4bi6ezm7NJK0IQE+8MKBm7igFMIS4=
-X-Endpoint-Received: by B4 Relay for j.ne@posteo.net/20240329 with
- auth_id=156
-X-Original-From: =?utf-8?q?J=2E_Neusch=C3=A4fer?= <j.ne@posteo.net>
-Reply-To: j.ne@posteo.net
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4add2867-8c09-454a-b3e2-b4baaeccfd44@app.fastmail.com>
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SG2PEPF000B66CF:EE_|KL1PR0601MB5534:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3ae8ac58-e45b-409d-981e-08dd51aa6503
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?HSJB7t/f05qA7/XpvAPyR+YKGNZlpPaeb2u2B25pQ0akOU/vdsaMMY30Ydfw?=
+ =?us-ascii?Q?yd1BJRtDIhGdAR6bJYE6uqiOJkgYQNsL3aTjX8p7gMkrKp85RqOZzSpfrj1E?=
+ =?us-ascii?Q?kd3kiC9JL4xiT+rluJkDcX9QR3JZNxRtR+P3stoeV8+RxfbGFfHxfXtDC+S4?=
+ =?us-ascii?Q?RW+BH0kSuL4HWPktKQfHMV3ia4DK7OZGv48l8V0gFJzZCdVHqHJZ1NLq0yha?=
+ =?us-ascii?Q?TVE5uIkJekPeMrTycSTgJiuSeLXmOCawoJ11BpBevCofSK03BW2iHP31984l?=
+ =?us-ascii?Q?htycO8Z96jJv3TGjtZHhzyzW3vX+12tV0xkR2nMNHqVnp9mUzULKXSQdtBOA?=
+ =?us-ascii?Q?b1DNApIC9var1SJ/mL4BhfVoT5wt64aro9+E1L3L/nmhDxklhW0CtsLBUkjP?=
+ =?us-ascii?Q?tUw38tTuCN5h4nz3tN/VIfygsf1VeszOignZxQ6gm2MmTJIYOaTkkLq49CXG?=
+ =?us-ascii?Q?2nAlLZob6pKgGk8Kr16+EpvEirTLoGZWbUS2kYsP/ftEM0FOHcPOafhio2Pm?=
+ =?us-ascii?Q?E5cXuTzrX08aCedziOVIaBScHETPDIVDFK68kgPP9AspnyzCK27StItQho1q?=
+ =?us-ascii?Q?mLud+VZqDmz8GbIDglRIsyHfE6X270oz2u5zox4isz9cwCq9mbkNgiLCN1NJ?=
+ =?us-ascii?Q?7hY4w7buWfjjTMDo/o6SfQflcRPsP4oP43wCobMUQoc7aIMvrvyQrBLbCw6N?=
+ =?us-ascii?Q?dirV6gQD4CVpSVODniL15jv0FO7reVlj/r+uPGMyCl68DNozPDiL19QFndrV?=
+ =?us-ascii?Q?zkCv90rWPQTz2ReME5GZyZmGGVveB65GK5IfdY+Z0HYtPk/gG4MR5CgHJL1J?=
+ =?us-ascii?Q?22pKhJhOeO2my1m41sfhJBwN/gU3vCyQV3zMSZhm6sH5sgjcbAkHshnvRaXx?=
+ =?us-ascii?Q?831BfFdGXQGF8gihE944B/XQeQVaLKVGvgZ+tEKlqV2D7KWzWQb6vv4YCm6R?=
+ =?us-ascii?Q?Gt1jxnNr+ANf/GQGvg5Vo/ggPTUUfJnc+iEJsFSDXlApQCCJheO+hB0DcwFf?=
+ =?us-ascii?Q?VHbxCwtxyYPis0szkequCatGKtaWxX/Um0NyLoWSKMU9q6qsnZ8ZI9jZp2w4?=
+ =?us-ascii?Q?31COt3S+fxsvTEcM1MYAeH3qj6TndTYQjfEnPzMhJSWDYOcn6eaA3tD9BbM/?=
+ =?us-ascii?Q?w1++XyBbDwPbB5IxMWPrLnCOT56nIPQIBNAOY131Rls9VRaO6cC2cVcou27C?=
+ =?us-ascii?Q?aIGthzRPjvqW0DMHXoyxlLEiFJTORltJcxFQaPEVviO3PtxnyHjlRAlLtYXO?=
+ =?us-ascii?Q?azAFXbYDdXQALiYW92E2hE0O+gScQ3NBwmHMUeqbqr8iyjv72ZZFdNPUTL7U?=
+ =?us-ascii?Q?hHVErw49aoBjCidcG4IpxnYBEvMZRWvx7FS5GHeBS7X2Jt9wueY2cxcea2Fz?=
+ =?us-ascii?Q?O4kMENvgV9pk7VT9VpqHbcLmoaWXA5hEKd0MXQqI7UA/EnI0gJAgJ6ephOY8?=
+ =?us-ascii?Q?PFv73BAJ3xPL0wQkt7h7kLNjkwCg5VzPfvH9IAhMDQlpKmA7WSj68g=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:222.71.101.198;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:smtprelay.cixcomputing.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(376014);DIR:OUT;SFP:1102;
+X-OriginatorOrg: cixtech.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Feb 2025 12:30:43.5784
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3ae8ac58-e45b-409d-981e-08dd51aa6503
+X-MS-Exchange-CrossTenant-Id: 0409f77a-e53d-4d23-943e-ccade7cb4811
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0409f77a-e53d-4d23-943e-ccade7cb4811;Ip=[222.71.101.198];Helo=[smtprelay.cixcomputing.com]
+X-MS-Exchange-CrossTenant-AuthSource: SG2PEPF000B66CF.apcprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR0601MB5534
 
-From: "J. Neuschäfer" <j.ne@posteo.net>
+On 25-02-20 11:58:21, Arnd Bergmann wrote:
+> 
 
-Formalise the binding for the PCI controllers in the Freescale MPC8xxx
-chip family. Information about PCI-X-specific properties was taken from
-fsl,pci.txt. The examples were taken from mpc8315erdb.dts and
-xpedite5200_xmon.dts.
+Arnd, thanks for your review.
 
-Signed-off-by: J. Neuschäfer <j.ne@posteo.net>
----
-V3:
-- split out as a single patch
-- remove obsolete reference to fsl,pci.txt
-- remove unnecessary newline near the end of fsl,mpc8xxx-pci.yaml
+> On Thu, Feb 20, 2025, at 09:40, Peter Chen wrote:
+> 
+> > +#include "sky1.dtsi"
+> > +/ {
+> > +       model = "Radxa Orion O6";
+> > +       compatible = "radxa,orion-o6";
+> 
+> This should list both the compatible string for the board and
+> the one for the SoC.
 
-V2:
-- part of series [PATCH v2 00/12] YAML conversion of several Freescale/PowerPC DT bindings
-  Link: https://lore.kernel.org/lkml/20250207-ppcyaml-v2-6-8137b0c42526@posteo.net/
-- merge fsl,pci.txt into fsl,mpc8xxx-pci.yaml
-- regroup compatible strings, list single-item values in one enum
-- trim subject line (remove "binding")
-- fix property order to comply with dts coding style
----
- .../devicetree/bindings/pci/fsl,mpc8xxx-pci.yaml   | 113 +++++++++++++++++++++
- Documentation/devicetree/bindings/pci/fsl,pci.txt  |  27 -----
- 2 files changed, 113 insertions(+), 27 deletions(-)
+Will change to compatible = "radxa,orion-o6", "cix,sky1";
 
-diff --git a/Documentation/devicetree/bindings/pci/fsl,mpc8xxx-pci.yaml b/Documentation/devicetree/bindings/pci/fsl,mpc8xxx-pci.yaml
-new file mode 100644
-index 0000000000000000000000000000000000000000..28759ab1caaa9c7a475d6d9c61a6607c49dbcbb2
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pci/fsl,mpc8xxx-pci.yaml
-@@ -0,0 +1,113 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+
-+$id: http://devicetree.org/schemas/pci/fsl,mpc8xxx-pci.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Freescale MPC83xx PCI/PCI-X/PCIe controllers
-+
-+description:
-+  Binding for the PCI/PCI-X/PCIe host bridges on MPC8xxx SoCs
-+
-+maintainers:
-+  - J. Neuschäfer <j.neuschaefer@gmx.net>
-+
-+allOf:
-+  - $ref: /schemas/pci/pci-host-bridge.yaml#
-+
-+properties:
-+  compatible:
-+    oneOf:
-+      - enum:
-+          - fsl,mpc8314-pcie
-+          - fsl,mpc8349-pci
-+          - fsl,mpc8540-pci
-+          - fsl,mpc8548-pcie
-+          - fsl,mpc8641-pcie
-+      - items:
-+          - enum:
-+              - fsl,mpc8308-pcie
-+              - fsl,mpc8315-pcie
-+              - fsl,mpc8377-pcie
-+              - fsl,mpc8378-pcie
-+          - const: fsl,mpc8314-pcie
-+      - items:
-+          - const: fsl,mpc8360-pci
-+          - const: fsl,mpc8349-pci
-+      - items:
-+          - const: fsl,mpc8540-pcix
-+          - const: fsl,mpc8540-pci
-+
-+  reg:
-+    minItems: 1
-+    items:
-+      - description: internal registers
-+      - description: config space access registers
-+
-+  clock-frequency: true
-+
-+  interrupts:
-+    items:
-+      - description: Consolidated PCI interrupt
-+
-+  fsl,pci-agent-force-enum:
-+    type: boolean
-+    description:
-+      Typically any Freescale PCI-X bridge hardware strapped into Agent mode is
-+      prevented from enumerating the bus. The PrPMC form-factor requires all
-+      mezzanines to be PCI-X Agents, but one per system may still enumerate the
-+      bus.
-+
-+      This property allows a PCI-X bridge to be used for bus enumeration
-+      despite being strapped into Agent mode.
-+
-+required:
-+  - reg
-+  - compatible
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+
-+    pcie@e0009000 {
-+        compatible = "fsl,mpc8315-pcie", "fsl,mpc8314-pcie";
-+        reg = <0xe0009000 0x00001000>;
-+        ranges = <0x02000000 0 0xa0000000 0xa0000000 0 0x10000000
-+                  0x01000000 0 0x00000000 0xb1000000 0 0x00800000>;
-+        #address-cells = <3>;
-+        #size-cells = <2>;
-+        #interrupt-cells = <1>;
-+        device_type = "pci";
-+        bus-range = <0 255>;
-+        interrupt-map-mask = <0xf800 0 0 7>;
-+        interrupt-map = <0 0 0 1 &ipic 1 IRQ_TYPE_LEVEL_LOW
-+                         0 0 0 2 &ipic 1 IRQ_TYPE_LEVEL_LOW
-+                         0 0 0 3 &ipic 1 IRQ_TYPE_LEVEL_LOW
-+                         0 0 0 4 &ipic 1 IRQ_TYPE_LEVEL_LOW>;
-+        clock-frequency = <0>;
-+    };
-+
-+  - |
-+    pci@ef008000 {
-+        compatible = "fsl,mpc8540-pcix", "fsl,mpc8540-pci";
-+        reg = <0xef008000 0x1000>;
-+        ranges = <0x02000000 0 0x80000000 0x80000000 0 0x20000000
-+                  0x01000000 0 0x00000000 0xd0000000 0 0x01000000>;
-+        #interrupt-cells = <1>;
-+        #size-cells = <2>;
-+        #address-cells = <3>;
-+        device_type = "pci";
-+        clock-frequency = <33333333>;
-+        interrupt-map-mask = <0xf800 0x0 0x0 0x7>;
-+        interrupt-map = </* IDSEL */
-+                         0xe000 0 0 1 &mpic 2 1
-+                         0xe000 0 0 2 &mpic 3 1>;
-+        interrupts-extended = <&mpic 24 2>;
-+        bus-range = <0 0>;
-+        fsl,pci-agent-force-enum;
-+    };
-+
-+...
-diff --git a/Documentation/devicetree/bindings/pci/fsl,pci.txt b/Documentation/devicetree/bindings/pci/fsl,pci.txt
-deleted file mode 100644
-index d8ac4a768e7e65b465f83308cc918ec471309dcf..0000000000000000000000000000000000000000
---- a/Documentation/devicetree/bindings/pci/fsl,pci.txt
-+++ /dev/null
-@@ -1,27 +0,0 @@
--* Bus Enumeration by Freescale PCI-X Agent
--
--Typically any Freescale PCI-X bridge hardware strapped into Agent mode
--is prevented from enumerating the bus. The PrPMC form-factor requires
--all mezzanines to be PCI-X Agents, but one per system may still
--enumerate the bus.
--
--The property defined below will allow a PCI-X bridge to be used for bus
--enumeration despite being strapped into Agent mode.
--
--Required properties:
--- fsl,pci-agent-force-enum : There is no value associated with this
--  property. The property itself is treated as a boolean.
--
--Example:
--
--	/* PCI-X bridge known to be PrPMC Monarch */
--	pci0: pci@ef008000 {
--		fsl,pci-agent-force-enum;
--		#interrupt-cells = <1>;
--		#size-cells = <2>;
--		#address-cells = <3>;
--		compatible = "fsl,mpc8540-pcix", "fsl,mpc8540-pci";
--		device_type = "pci";
--		...
--		...
--	};
+> 
+> > +
+> > +       aliases {
+> > +               serial2 = &uart2;
+> > +       };
+> 
+> Please put the aliases in the .dts file, not the chip specific
+> .dtsi file, as each board typically wires these up differently.
+> 
+> Note that the 'serial2' alias names are meant to correspond
+> to whatever label you find on the board, not the internal
+> numbering inside of the chip they are wired up to. Usually
+> these start with 'serial0' for the first one that is enabled.
 
----
-base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
-change-id: 20250220-ppcyaml-pci-4fccfdcf6fe4
+In fact, we would like to alias the SoC UART controller index here,
+and amba-pl011.c will try to get it, see function pl011_probe_dt_alias.
+It is initial dtsi file, so I only add console one which needs
+to align the bootargs passed by UEFI.
 
-Best regards,
--- 
-J. Neuschäfer <j.ne@posteo.net>
+> 
+> > +               CPU0: cpu0@0 {
+> > +                       compatible = "arm,armv8";
+> > +                       enable-method = "psci";
+> 
+> This should list the actual identifier of the CPU core, not
+> just "arm,armv8" which is the generic string used in the
+> models for emulators that don't try to model a particular
+> core.
 
+Will change big core to 'compatible = "arm,cortex-a720";'
+and LITTLE core to 'compatible = "arm,cortex-a520";'
 
+> 
+> > +       memory@80000000 {
+> > +               #address-cells = <2>;
+> > +               #size-cells = <2>;
+> > +               device_type = "memory";
+> > +               reg = <0x00000000 0x80000000 0x1 0x00000000>;
+> > +       };
+> 
+> The memory size is not part of the SoC either, unless the only
+> way to use this SoC is with on-chip eDRAM or similar.
+> 
+> Normally this gets filled by the bootloader based on how
+> much RAM gets detected.
+
+Will move it to dts file.
+
+> 
+> > +               linux,cma {
+> > +                       compatible = "shared-dma-pool";
+> > +                       reusable;
+> > +                       size = <0x0 0x28000000>;
+> > +                       linux,cma-default;
+> > +               };
+> 
+> Same here, this is a setting from the firmware, not the
+> SoC.
+
+Will move it to dts file since our firmware has already released,
+and it needs to support different kernels.
+
+> 
+> > +       sky1_fixed_clocks: fixed-clocks {
+> > +               uartclk: uartclk {
+> > +                       compatible = "fixed-clock";
+> > +                       #clock-cells = <0>;
+> > +                       clock-frequency = <100000000>;
+> > +                       clock-output-names = "uartclk";
+> 
+> > +               uart_apb_pclk: uart_apb_pclk {
+> > +                       compatible = "fixed-clock";
+> > +                       #clock-cells = <0>;
+> > +                       clock-frequency = <200000000>;
+> > +                       clock-output-names = "apb_pclk";
+> 
+> 
+> Clock names don't need "clk" in them, and there should
+> be no underscore -- use '-' instead of '_' when separating
+> strings in DT.
+
+Will change to:
+uart_apb: clock-uart-apb {
+	...
+	clock-output-names = "uart_apb";
+
+};
+
+> 
+> > +       soc@0 {
+> > +               compatible = "simple-bus";
+> > +               #address-cells = <2>;
+> > +               #size-cells = <2>;
+> > +               ranges;
+> > +               dma-ranges;
+> > +
+> > +               uart2: uart@040d0000 {
+> > +                       compatible = "arm,pl011", "arm,primecell";
+> > +                       reg = <0x0 0x040d0000 0x0 0x1000>;
+> > +                       interrupts = <GIC_SPI 298 IRQ_TYPE_LEVEL_HIGH>;
+> > +                       clock-names = "uartclk", "apb_pclk";
+> > +                       clocks = <&uartclk>, <&uart_apb_pclk>;
+> > +                       status = "disabled";
+> > +               };
+> 
+> It seems strange to list only "uart2" -- usually the dtsi file contains
+> all of the instances that are present on the chip and leave it
+> up to the .dts file to enable the ones that are used.
+
+Since it is the first CIX SoC support patch series, I only added basic
+Kconfig build for booting minimum system for easy review. For device
+node, it relates to clock/reset/power domain binding which will add later.
+
+Regards,
+Peter
 
