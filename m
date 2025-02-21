@@ -1,245 +1,182 @@
-Return-Path: <linux-kernel+bounces-526415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81346A3FE5C
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 19:11:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DF3EA3FE60
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 19:11:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C820119E0CB9
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 18:09:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 321F819E15AC
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 18:10:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 898942512D5;
-	Fri, 21 Feb 2025 18:09:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDF6C2512D8;
+	Fri, 21 Feb 2025 18:10:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i3iEDAtA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3CFD250BFC;
-	Fri, 21 Feb 2025 18:09:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="pX36bqGy"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6027250BFC;
+	Fri, 21 Feb 2025 18:10:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740161373; cv=none; b=TCvCbui/9zCNoyqEHRFJi+fxZ7lnkP9prLTxmaFL5SAhTPX0GUkThBoImJtKY7N/m8fzBF1Zna308fjAIbdZqwUd1OyWHtV91vg6q1lv0g1aGAcLtnv7Kejm6ctDFqkQ7+XPAPrCBRunHpVXM6Y2BZo88GfWPV7n7jWqa5pHw5M=
+	t=1740161406; cv=none; b=FPllPrucTgJL0VNwT10bCFMSOyswg5amMA+aCaouUas8s/mYzm/3+g4sVIAzTaX8almkb4U4u5H+bNWCVfKOe/PxKk08vkJwOMW3aZJyZky4iH/dVBA0etQyZWYDa90384diu5ExMskGkiXj0K/fxaiXHK3SEpXG7TX6Vw2xb+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740161373; c=relaxed/simple;
-	bh=aVbsiWoZIxApCz2+QDbMVPPTpsz8VI9s1WvBplvWgnY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jPwhA3ugt5/UYlOaQ+flg6DIk5P8QNsdqSMzT5Md7yL+h5GM6nTH60A7qQxqoixwPgbLF9dDqjRFfvRlXu/Ro53rNn9oYEQSPR485eKs/5c56waXmW64v55PlSAgRJpwhG2dh2O7I1MNBr3A8/RAI4mDIeGNZUXqNPPy79lZ3ho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i3iEDAtA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53646C4CED6;
-	Fri, 21 Feb 2025 18:09:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740161373;
-	bh=aVbsiWoZIxApCz2+QDbMVPPTpsz8VI9s1WvBplvWgnY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=i3iEDAtAb3sWgbFkRzw96L67Iy7ScCx9rrNiXjqM+kl7dui2AxBQK1D8jJbcqp2BJ
-	 Msy21ZxDF47a7kXRcIMrl5FLUx8l+0iJ6zkZ5zIvjHQ7bC//lzYKvl8dwrFsYgqS6a
-	 gG1lsP0GqJwR4WCnDDg1zHtz0sfAJbO9K3NW6aLjJrE4u4l2CgjMbrc77LCgw+4wcq
-	 CC5wtXQG0JaUjjcZr0SVfK27iWMVpFesAUAD1Vun2i2pXphUs/shbORkFMaYyrVYBF
-	 j+FbQY6EmwJxTTLCTzrqffQMngRENy64bvxpA4JT+De3KmmibK+HEQoH+1weKxb7g5
-	 VXa9EpXJI+vjA==
-Date: Fri, 21 Feb 2025 12:09:30 -0600
-From: Rob Herring <robh@kernel.org>
-To: Kever Yang <kever.yang@rock-chips.com>
-Cc: heiko@sntech.de, linux-rockchip@lists.infradead.org,
-	Simon Xue <xxm@rock-chips.com>, Conor Dooley <conor+dt@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Shawn Lin <shawn.lin@rock-chips.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [RFC PATCH v6 1/2] dt-bindings: PCI: dw: rockchip: Add rk3576
- support
-Message-ID: <20250221180930.GA3486559-robh@kernel.org>
-References: <20250221104357.1514128-1-kever.yang@rock-chips.com>
- <20250221104357.1514128-2-kever.yang@rock-chips.com>
+	s=arc-20240116; t=1740161406; c=relaxed/simple;
+	bh=pRnZuPrU9M8shnH6T9iQhO7+NmgMgoDkb4KpaM3FRxk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PpBnXNiF9HlrzupDB6qVXPxAIGlt21Da+JZ+KGrFi42q/tMrSoyTJAPd/q6MkuqWoz9KBLtMVjyI6TOyFTEx6uEFwadqucqm9t32oicyISH9VVz6jAEoBCyoVjdQVl2jq8pRcRTYLpfx73d0NDBF+Ok2diStCYgZncHrso9PHaM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=pX36bqGy; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [10.0.0.114] (c-67-182-156-199.hsd1.wa.comcast.net [67.182.156.199])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 8C1B0204E5BD;
+	Fri, 21 Feb 2025 10:10:03 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 8C1B0204E5BD
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1740161404;
+	bh=ctZGnlszNAEiyGeHFSMVBfLyM+0PtIeMkQSIV0dR0u4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=pX36bqGypY/zOUYlEK9rRUK1oLe1vm52665jNhuvSz5Sa6UbfPh4/CJHKykrsbUiM
+	 rnsa2fU6iBW0LsdcKXvlWU5d0uU9REHty5Tv6nrMy9+tda4Ka3qgpOGpkTlAyGnkmq
+	 pdVs7lrUaUSWdddlBa8cOmnvn1x5zEKi1bApSdP0=
+Message-ID: <5ae3454f-61e4-4739-816c-20525e2087be@linux.microsoft.com>
+Date: Fri, 21 Feb 2025 10:10:02 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250221104357.1514128-2-kever.yang@rock-chips.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/3] hyperv: Change hv_root_partition into a function
+To: MUKESH RATHOR <mukeshrathor@microsoft.com>,
+ Easwar Hariharan <eahariha@linux.microsoft.com>
+Cc: "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+ "iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+ "mhklinux@outlook.com" <mhklinux@outlook.com>,
+ KY Srinivasan <kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>,
+ "wei.liu@kernel.org" <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+ "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+ "will@kernel.org" <will@kernel.org>, "tglx@linutronix.de"
+ <tglx@linutronix.de>, "mingo@redhat.com" <mingo@redhat.com>,
+ "bp@alien8.de" <bp@alien8.de>,
+ "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+ "x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
+ "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
+ "joro@8bytes.org" <joro@8bytes.org>,
+ "robin.murphy@arm.com" <robin.murphy@arm.com>, "arnd@arndb.de"
+ <arnd@arndb.de>,
+ "jinankjain@linux.microsoft.com" <jinankjain@linux.microsoft.com>,
+ "muminulrussell@gmail.com" <muminulrussell@gmail.com>,
+ "skinsburskii@linux.microsoft.com" <skinsburskii@linux.microsoft.com>
+References: <1740076396-15086-1-git-send-email-nunodasneves@linux.microsoft.com>
+ <1740076396-15086-3-git-send-email-nunodasneves@linux.microsoft.com>
+ <5980eaf9-2e77-d0ec-e39b-b48913c8b72f@microsoft.com>
+ <a29af204-e4a9-4ef2-b5b8-f99f2ac0a836@linux.microsoft.com>
+ <f5366d52-1714-87bc-5fa5-94230f2acca1@microsoft.com>
+Content-Language: en-US
+From: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+In-Reply-To: <f5366d52-1714-87bc-5fa5-94230f2acca1@microsoft.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Feb 21, 2025 at 06:43:56PM +0800, Kever Yang wrote:
-> rk3576 is using dwc controller, with msi interrupt directly to gic instead
-> of to gic its, so
-> - no its support is required and the 'msi-map' is not need anymore,
-> - a new 'msi' interrupt is needed.
+On 2/20/2025 2:59 PM, MUKESH RATHOR wrote:
 > 
-> Signed-off-by: Kever Yang <kever.yang@rock-chips.com>
-> ---
 > 
-> Changes in v6:
-> - Fix make dt_binding_check and make CHECK_DTBS=y
+> On 2/20/25 14:56, Easwar Hariharan wrote:
+>  > On 2/20/2025 1:59 PM, MUKESH RATHOR wrote:
+>  >>
+>  >>
+>  >> On 2/20/25 10:33, Nuno Das Neves wrote:
+>  >>   > Introduce hv_current_partition_type to store the partition type
+>  >>   > as an enum.
+>  >>   >
+>  >>   > Right now this is limited to guest or root partition, but there will
+>  >>   > be other kinds in future and the enum is easily extensible.
+>  >>   >
+>  >>   > Set up hv_current_partition_type early in Hyper-V initialization
+> with
+>  >>   > hv_identify_partition_type(). hv_root_partition() just queries this
+>  >>   > value, and shouldn't be called before that.
+>  >>   >
+>  >>   > Making this check into a function sets the stage for adding a config
+>  >>   > option to gate the compilation of root partition code. In
+> particular,
+>  >>   > hv_root_partition() can be stubbed out always be false if root
+>  >>   > partition support isn't desired.
+>  >>   >
+>  >>   > Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+>  >>   > ---
+>  >>   >   arch/arm64/hyperv/mshyperv.c       |  2 ++
+>  >>   >   arch/x86/hyperv/hv_init.c          | 10 ++++-----
+>  >>   >   arch/x86/kernel/cpu/mshyperv.c     | 24 ++------------------
+>  >>   >   drivers/clocksource/hyperv_timer.c |  4 ++--
+>  >>   >   drivers/hv/hv.c                    | 10 ++++-----
+>  >>   >   drivers/hv/hv_common.c             | 35
+> +++++++++++++++++++++++++-----
+>  >>   >   drivers/hv/vmbus_drv.c             |  2 +-
+>  >>   >   drivers/iommu/hyperv-iommu.c       |  4 ++--
+>  >>   >   include/asm-generic/mshyperv.h     | 15 +++++++++++--
+>  >>   >   9 files changed, 61 insertions(+), 45 deletions(-)
+>  >>   >
+>  >
+>  > <snip>
+>  >
+>  >>   > @@ -34,8 +34,11 @@
+>  >>   >   u64 hv_current_partition_id = HV_PARTITION_ID_SELF;
+>  >>   >   EXPORT_SYMBOL_GPL(hv_current_partition_id);
+>  >>   >
+>  >>   > +enum hv_partition_type hv_current_partition_type;
+>  >>   > +EXPORT_SYMBOL_GPL(hv_current_partition_type);
+>  >>   > +
+>  >>
+>  >> nit: if possible and not too late, can we please use more Unix
+>  >> style naming, eg, hv_curr_ptid and hv_curr_pt_type rather than this
+>  >> long windows style names that causes unnecessary line wraps/splits.
+>  >>
+>  >> Thanks,
+>  >> -Mukesh
+>  >>
+>  >
+>  > Per
+> https://docs.kernel.org/process/coding-style.html#naming
+>  >
+>  > GLOBAL variables (to be used only if you really need them) need to
+> have descriptive names,
+>  > as do global functions. If you have a function that counts the number
+> of active users,
+>  > you should call that count_active_users() or similar, you should not
+> call it cntusr().
 > 
-> Changes in v5:
-> - Add constraints per device for interrupt-names due to the interrupt is
-> different from rk3588.
+> Thant's hardly a fair comparison. Suggestion was NOT hvptid.
 > 
-> Changes in v4:
-> - Fix wrong indentation in dt_binding_check report by Rob
-> 
-> Changes in v3:
-> - Fix dtb check broken on rk3588
-> - Update commit message
-> 
-> Changes in v2:
-> - remove required 'msi-map'
-> - add interrupt name 'msi'
-> 
->  .../bindings/pci/rockchip-dw-pcie-common.yaml | 59 +++++++++++++++----
->  .../bindings/pci/rockchip-dw-pcie.yaml        |  4 +-
->  2 files changed, 50 insertions(+), 13 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/pci/rockchip-dw-pcie-common.yaml b/Documentation/devicetree/bindings/pci/rockchip-dw-pcie-common.yaml
-> index cc9adfc7611c..069eb267c0bb 100644
-> --- a/Documentation/devicetree/bindings/pci/rockchip-dw-pcie-common.yaml
-> +++ b/Documentation/devicetree/bindings/pci/rockchip-dw-pcie-common.yaml
-> @@ -64,6 +64,10 @@ properties:
->            interrupts - aer_rc_err, aer_rc_err_msi, rx_cpl_timeout,
->            tx_cpl_timeout, cor_err_sent, nf_err_sent, f_err_sent, cor_err_rx,
->            nf_err_rx, f_err_rx, radm_qoverflow
-> +      - description:
-> +          Combinded MSI line interrupt, which is to support MSI interrupts
-> +          output to GIC controller via GIC SPI interrupt instead of GIC its
-> +          interrupt.
->        - description:
->            eDMA write channel 0 interrupt
->        - description:
-> @@ -75,16 +79,6 @@ properties:
->  
->    interrupt-names:
->      minItems: 5
-> -    items:
+I'm in favor of shortening the names when the abbreviation is common and
+therefore still perfectly clear to anyone reading it - e.g. "curr" is
+a perfectly acceptable abbreviation of "current", in my view.
 
-You just made the max 5 by dropping this.
+I think abbreviating "partition" to "pt" is probably not a good fit for
+global variables. Anyone seeing a variable with the word "partition"
+(and hv_ prefix) can go look up what a Hyper-V partition is if they don't
+know, but "pt" would be completely impenetrable without reading through a
+fair amount of the code that uses it to figure out what it refers to.
 
-> -      - const: sys
-> -      - const: pmc
-> -      - const: msg
-> -      - const: legacy
-> -      - const: err
-> -      - const: dma0
+I think even slightly longer abbreviations like "part", "ptn", "prt", or
+"prtn" are not good enough unfortunately... the word "partition" just
+doesn't lend itself to abbreviation in an obvious way.
 
-Make this 'enum: [ dma0, msi ]'
+So, for this patch I'm fine with changing it to "hv_curr_partition_type"
+which saves a few characters.
 
-Yeah, that would allow the wrong one to be used, but I prefer that over 
-duplicating the names.
+Feel free to post a followup for "hv_curr_partition_id" if you like.
 
-> -      - const: dma1
-> -      - const: dma2
-> -      - const: dma3
->  
->    num-lanes: true
->  
-> @@ -123,4 +117,49 @@ required:
->  
->  additionalProperties: true
->  
-> +anyOf:
+Note - For the driver code which isn't as exposed to the rest of the
+kernel, I think we can continue to use "pt" or similar to keep the names
+shorter.
 
-allOf
-
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - rockchip,rk3568-pcie
-> +              - rockchip,rk3588-pcie
-> +              - rockchip,rk3588-pcie-ep
-> +    then:
-> +      properties:
-> +        interrupt-names:
-> +          minItems: 5
-
-That's already the min.
-
-> +          type: array
-
-Don't need type. Do you see any schema use 'type: array' outside of the 
-core? 
-
-> +          items:
-> +            - const: sys
-> +            - const: pmc
-> +            - const: msg
-> +            - const: legacy
-> +            - const: err
-> +            - const: dma0
-> +            - const: dma1
-> +            - const: dma2
-> +            - const: dma3
-
-The whole if/then can be dropped.
-
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - rockchip,rk3576-pcie
-> +    then:
-> +      properties:
-> +        interrupt-names:
-> +          type: array
-> +          items:
-> +            - const: sys
-> +            - const: pmc
-> +            - const: msg
-> +            - const: legacy
-> +            - const: err
-> +            - const: msi
-
-Don't need type or items. Just this is enough to ensure 'msi' is used:
-
-contains:
-  const: msi
-
-> +          minItems: 6
-> +          maxItems: 6
-
-This part is correct.
-
-> +
->  ...
-> diff --git a/Documentation/devicetree/bindings/pci/rockchip-dw-pcie.yaml b/Documentation/devicetree/bindings/pci/rockchip-dw-pcie.yaml
-> index 550d8a684af3..9a464731fa4a 100644
-> --- a/Documentation/devicetree/bindings/pci/rockchip-dw-pcie.yaml
-> +++ b/Documentation/devicetree/bindings/pci/rockchip-dw-pcie.yaml
-> @@ -26,6 +26,7 @@ properties:
->        - const: rockchip,rk3568-pcie
->        - items:
->            - enum:
-> +              - rockchip,rk3576-pcie
->                - rockchip,rk3588-pcie
->            - const: rockchip,rk3568-pcie
->  
-> @@ -71,9 +72,6 @@ properties:
->  
->    vpcie3v3-supply: true
->  
-> -required:
-> -  - msi-map
-
-This should be moved to an if/then schema, not just dropped. Unless it 
-was wrong for the existing users. If so, then that's a separate patch.
-
-> -
->  unevaluatedProperties: false
->  
->  examples:
-> -- 
-> 2.25.1
-> 
+Thanks
+Nuno
 
