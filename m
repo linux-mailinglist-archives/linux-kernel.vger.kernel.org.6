@@ -1,61 +1,51 @@
-Return-Path: <linux-kernel+bounces-525272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EBFCA3ED6D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 08:40:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DACC3A3ED7B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 08:41:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9C6C17ABBE3
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 07:39:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26ECE19C2FF3
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 07:41:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51A961FF5EF;
-	Fri, 21 Feb 2025 07:40:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A87E6200119;
+	Fri, 21 Feb 2025 07:41:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Rb56zbuV"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AdCo/KrS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7D861F9F51;
-	Fri, 21 Feb 2025 07:40:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF7961FF7B4;
+	Fri, 21 Feb 2025 07:41:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740123628; cv=none; b=Hr+egWA34Up1jYB5CH/NdCGhXJm1QPuMarFg87NxgOsRnA+XK/GitKZhSWzAx3SVQGkN+rfVHsdRjrocfvC6KaZWG1CZNxEhWv9R/fi2eWQc02AzFnpHylhFZZfzVm8Ush3BXoIfvNoHJI1iTKr6mi4LczH78ZO26qqnyXKqeW0=
+	t=1740123680; cv=none; b=sfXyG8gOndPNrRjOt7LRtnbWjp3E4978L/Oaa09ElYwmkdwaT4SjV2xTSjcQwQ5E6j/GPc39Vfx+wUk7IstxilnGcMlzCGh5kpBlSyEqc7Bu6btV0p16iRNKgtugkvs78IeDlEEq/To76KJ7N/Uyk3fcoFRKRAE+/dcVrjmSqr8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740123628; c=relaxed/simple;
-	bh=TTMctbbdgc6onLfb+2Sfpp5Dv8gnfUaWXhFTGY7keXo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=ih7jr3g08xm8DuNZuVjFr0WR9Ro3l8wjn6eDFdadN3nPHaSt+ypMPN+LBgSZk9fmQzGAQfMW6TbT3/91PgPTOkhDR7q29e4i41VDESsCtTHsKQVLjEnaMIOjQtamm1kx0ONW3wgsaxVbzwKRhMMzFZm9S7i93TvxKi0PSedgGLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Rb56zbuV; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51L627jo020390;
-	Fri, 21 Feb 2025 07:40:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=lbeKc48AASYUaIDpv9z8oe
-	VMeJZHxO7wPHMSBlQFHzk=; b=Rb56zbuVwnjpi45WWTzJ/kK6FviZpBZ7mIDP5e
-	2WOKukSHfXNZvH4MmEJ4wkss7FKT1+1shYE6YRifH/oxYcNtWlKyiWtAh32nvOhw
-	+377qnTUdz4APwitn88SDLRnYgLVt+wzr/Gc7eLcL37eZtfXU32gTEuvl6hYohPD
-	f03A1qjfDD7bWuDUikCLYrvVvdIXJQEKVaIuFhk4lEIqNZ1bpGBYRYTJeSI5VbtK
-	clh9wsU1t02Al4V2uUF11OO8on3Hn4HxR5P+vqJcmzWMFzfJvIUE27cVf22DCeG7
-	bb15zBVgNaVn8xvg7f7FUnK1APY9cBCfUDXrb3UD7UzwDtDA==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44x06t3mhw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Feb 2025 07:40:23 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51L7eN3q026921
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Feb 2025 07:40:23 GMT
-Received: from lijuang2-gv.ap.qualcomm.com (10.80.80.8) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 20 Feb 2025 23:40:17 -0800
-From: Lijuan Gao <quic_lijuang@quicinc.com>
-Date: Fri, 21 Feb 2025 15:39:57 +0800
-Subject: [PATCH] arm64: dts: qcom: qcs615: Add Command DB support
+	s=arc-20240116; t=1740123680; c=relaxed/simple;
+	bh=6jSgqIeR0c/xLJD5vzRfWmph7ikgHRiGHWzqjbobJj8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=fiDkjdqZIh+1u8mC7bB5C928C0oj7rGrU/3r6XK4vgqRP5m7rLfsUcM9rp1GoRjZejSE/phCuJBQzpJR4OITAD4ZMNk1Iv0M5hps+8VbX3wdOvsW1x8FOhDSiAOPuezW5CeHENXm0hwQoJM7VxDYeheIAClCLKAlSgCgUWo7ovU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AdCo/KrS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 627CCC4CEEE;
+	Fri, 21 Feb 2025 07:41:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740123679;
+	bh=6jSgqIeR0c/xLJD5vzRfWmph7ikgHRiGHWzqjbobJj8=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=AdCo/KrSd8m0YzM6OiLc2zfbZPj8+j1QzOqb6SzR0w+LtLIb4o/jKxXtM4IL38HiM
+	 KZV9m67HHs/qICmcoxcKUZ5eLePbwfWPx6iur4F+I6fhaqdf+19ip+Y88rtudoQuPT
+	 pbNfUwul5J6pVlzh57NCM5Ut0uYKOTQI66p9vxaF97vAGV8YjpLzL+sd2ipdFl0/E+
+	 r0yPAxx3UN3kIVjcB4D8PVT4jKvLfO26nNGwmB9iIa0mgYaV8nnKY+68r/3m+LcVCp
+	 WPpbEjBdPZ0RgoAGvczPetbijxYsk8zbYcT6fLzO8YEZ6ogK/8Zyl3ArR4KcNNep+A
+	 3q4R6SFe2ASVA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FA4DC021AA;
+	Fri, 21 Feb 2025 07:41:19 +0000 (UTC)
+From: Dimitri Fedrau via B4 Relay <devnull+dimitri.fedrau.liebherr.com@kernel.org>
+Subject: [PATCH v3 0/2] can: flexcan: add transceiver capabilities
+Date: Fri, 21 Feb 2025 08:40:03 +0100
+Message-Id: <20250221-flexcan-add-transceiver-caps-v3-0-a947bde55a62@liebherr.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,78 +54,69 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-ID: <20250221-add_command_db_support-v1-1-d60acbf913aa@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAMwtuGcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDIyMD3cSUlPjk/NzcxLyU+JSk+OLSgoL8ohJdc8Nkw1TzFDML4yQTJaD
- mgqLUtMwKsMHRsbW1AMCIZ6toAAAA
-To: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: <kernel@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Lijuan Gao
-	<quic_lijuang@quicinc.com>
-X-Mailer: b4 0.15-dev-99b12
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1740123617; l=1220;
- i=quic_lijuang@quicinc.com; s=20240827; h=from:subject:message-id;
- bh=TTMctbbdgc6onLfb+2Sfpp5Dv8gnfUaWXhFTGY7keXo=;
- b=DWxSGAHnYrCU4PSswFas5iZdNYiqjTwMGfFf1blaqsKpekNvk6Utb/+PWzKM+F5fwknif3fNp
- gdiqGkHGvgXDC1iFsTPmWVyp7RPPK/A84mKN5BJuQqx0nuWCd78ZShI
-X-Developer-Key: i=quic_lijuang@quicinc.com; a=ed25519;
- pk=1zeM8FpQK/J1jSFHn8iXHeb3xt7F/3GvHv7ET2RNJxE=
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: kk9bHys0WfF50oaEU_FMO3Y7PNqkc0HA
-X-Proofpoint-GUID: kk9bHys0WfF50oaEU_FMO3Y7PNqkc0HA
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-21_01,2025-02-20_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 adultscore=0
- clxscore=1011 spamscore=0 malwarescore=0 priorityscore=1501 bulkscore=0
- impostorscore=0 mlxlogscore=678 phishscore=0 suspectscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2502210056
+X-B4-Tracking: v=1; b=H4sIANMtuGcC/4XNsQ6CMBSF4Vchna25tyKlTr6HcWjLrTRBIC1pM
+ IR3tzAZBx3/M3xnYZGCp8guxcICJR/90Oc4HQpmW90/iPsmNxMgShSguOtotrrnumn4FHQfLfl
+ EgVs9Ri6tc6oEsEpULBNjIOfnnb/dc7c+TkN47W8Jt3WDzyAQf8MJOXBbaWNkjdKAu3aeTEshH
+ O3wZJudxIcn4I8nsqdrVBIcYl1WX966rm9se3khGwEAAA==
+X-Change-ID: 20241209-flexcan-add-transceiver-caps-7cff9400c926
+To: Marc Kleine-Budde <mkl@pengutronix.de>, 
+ Vincent Mailhol <mailhol.vincent@wanadoo.fr>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-can@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, Dimitri Fedrau <dimitri.fedrau@liebherr.com>, 
+ Dimitri Fedrau <dima.fedrau@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1740123678; l=1632;
+ i=dimitri.fedrau@liebherr.com; s=20241202; h=from:subject:message-id;
+ bh=6jSgqIeR0c/xLJD5vzRfWmph7ikgHRiGHWzqjbobJj8=;
+ b=qzOLZ9cXPue92g9sUo39JYmSXkvp/5FgZFy5Bg7sW9iFjdTL/jxrICP0c9+q6ELMqGf/NRiN/
+ Arkr4WgzQ13DhEhAcn1wLfwyxXewGGr2uB1vNwBBrSbGbyzR/1xJHud
+X-Developer-Key: i=dimitri.fedrau@liebherr.com; a=ed25519;
+ pk=rT653x09JSQvotxIqQl4/XiI4AOiBZrdOGvxDUbb5m8=
+X-Endpoint-Received: by B4 Relay for dimitri.fedrau@liebherr.com/20241202
+ with auth_id=290
+X-Original-From: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+Reply-To: dimitri.fedrau@liebherr.com
 
-Command DB is a database in the shared memory of QCOM SoCs, that
-provides a mapping between resource key and the resource address for a
-system resource managed by a remote processor. The data is stored in a
-shared memory region and is loaded by the remote processor. Therefore,
-enabling Command DB ensures that those resources function properly.
+Currently the flexcan driver does only support adding PHYs by using the
+"old" regulator bindings. Add support for CAN transceivers as a PHY. Add
+the capability to ensure that the PHY is in operational state when the link
+is set to an "up" state.
 
-Signed-off-by: Lijuan Gao <quic_lijuang@quicinc.com>
+Signed-off-by: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
 ---
- arch/arm64/boot/dts/qcom/qcs615.dtsi | 6 ++++++
- 1 file changed, 6 insertions(+)
+Changes in v3:
+- Have xceiver-supply or phys properties in bindings
+- Switch do dev_err_probe in flexcan_probe when checking error of call
+  devm_phy_optional_get
+- Link to v2: https://lore.kernel.org/r/20250220-flexcan-add-transceiver-caps-v2-0-a81970f11846@liebherr.com
 
-diff --git a/arch/arm64/boot/dts/qcom/qcs615.dtsi b/arch/arm64/boot/dts/qcom/qcs615.dtsi
-index f4abfad474ea..4e060ce68e6c 100644
---- a/arch/arm64/boot/dts/qcom/qcs615.dtsi
-+++ b/arch/arm64/boot/dts/qcom/qcs615.dtsi
-@@ -417,6 +417,12 @@ reserved-memory {
- 		#size-cells = <2>;
- 		ranges;
- 
-+		aop_cmd_db_mem: aop-cmd-db@85f20000 {
-+			compatible = "qcom,cmd-db";
-+			reg = <0x0 0x85f20000 0x0 0x20000>;
-+			no-map;
-+		};
-+
- 		smem_region: smem@86000000 {
- 			compatible = "qcom,smem";
- 			reg = <0x0 0x86000000 0x0 0x200000>;
+Changes in v2:
+- Rename variable xceiver to transceiver in struct flexcan_priv and in
+  flexcan_probe
+- Set priv->can.bitrate_max if transceiver is found
+- Fix commit messages which claim that transceivers are not supported
+- Do not print error on EPROBE_DEFER after calling devm_phy_optional_get in
+  flexcan_probe
+- Link to v1: https://lore.kernel.org/r/20250211-flexcan-add-transceiver-caps-v1-0-c6abb7817b0f@liebherr.com
 
 ---
-base-commit: 8936cec5cb6e27649b86fabf383d7ce4113bba49
-change-id: 20250220-add_command_db_support-71c1e7d683b4
+Dimitri Fedrau (2):
+      dt-bindings: can: fsl,flexcan: add transceiver capabilities
+      can: flexcan: add transceiver capabilities
+
+ .../devicetree/bindings/net/can/fsl,flexcan.yaml   | 15 ++++++++++++
+ drivers/net/can/flexcan/flexcan-core.c             | 27 +++++++++++++++++-----
+ drivers/net/can/flexcan/flexcan.h                  |  1 +
+ 3 files changed, 37 insertions(+), 6 deletions(-)
+---
+base-commit: 6a24171b9625471abfc90c7b28c4b45bee64b3a4
+change-id: 20241209-flexcan-add-transceiver-caps-7cff9400c926
 
 Best regards,
 -- 
-Lijuan Gao <quic_lijuang@quicinc.com>
+Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+
 
 
