@@ -1,86 +1,53 @@
-Return-Path: <linux-kernel+bounces-525698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDB1DA3F34F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 12:50:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAD33A3F357
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 12:50:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5709D7A85A9
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 11:49:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B3BD19C1826
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 11:50:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D4FF209F40;
-	Fri, 21 Feb 2025 11:50:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CD04209F30;
+	Fri, 21 Feb 2025 11:50:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="M61dVp5X"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="btR5qn/J"
+Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CA032080F4
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 11:49:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B207F209681;
+	Fri, 21 Feb 2025 11:50:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740138602; cv=none; b=TBR00soAii1qsiijzFEwp0EtdyIc3DVp91PzdGNmpPVTbHUSGw0rIr/ambi4wS/uRwZDflR/8FHFVWfFaj9AlC7NQZowVoGcUVGJXBZAo5VKoq4LOmZIwyXvgoaWX3yleREs82xHlwJ2VeFf55urip41vR6vmlMHFOMQFswBA4g=
+	t=1740138623; cv=none; b=Cmay3QM8yeaXRad378hWkK0LHqQC1MWcLcFXY1WarCqKJjL9lWHKlUQ1fB4BtTESZuXBPZ86PREQo+OpoFB+epE2miYgoP685MGCOwCYvv0oo0BAcVanLind6lDtiTOym7bKliGOaqgmPTht+IWDNaB6K8CsWPhbNvakCS55tH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740138602; c=relaxed/simple;
-	bh=kTzUljDZfO4SYJEnW61vBtVvH4VVgI26rpadfVxj8w0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kwHLz3AQMwWJvfBLEMCT/a8IwDyAHkToq+TIrCJVcDhXIEMzE0zZZ6SahO3mKGW6Bx/0bwW7KtaZPjTiySm5Y5GBFXkO0SA5oXHRwJ+zziiorualuUKdek8Wpkdq7d044hihXmi2GjFaqwgRGNM0ccMJFD6R1A1OmQ4FgWdtLsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=M61dVp5X; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51L6IMQM018834
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 11:49:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	DnXDRqF+7jHzdDMYeLb1GVbJJ6rATcvBORv64B0RqgI=; b=M61dVp5XtBGhkkwp
-	8CbLNOfzXQrnd53lUnvvdMVNlkywZ/HhEYrfQN3qR3owj5i+8x3eS4oozFoHw/z6
-	+wYDslBszqHDV/EQLZ2M8QPbZ4Odk6axqOHlY7PmBAKgp4RKn2up5hCXI+5RHO4Q
-	86j0pwVN1uKvCgZh/EYhuqYF7As4E5PhIbbwW6TJdX9PmBKvauGWKnt7X2ITDgRO
-	J0tlfsLiMpyP3RRojHlDYHKG+fGSzB+JJoFarZ8BADu+Rl/jvoltCs8gbnk08s91
-	U9D6hrQqTcOgx8kpZiKyGrmvD5uc6SKAj/FeT8bJ6KBVEDlWVhls7levwHJiP9O1
-	HCsxFQ==
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44xm3rh41m-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 11:49:58 +0000 (GMT)
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6e665343a70so3198656d6.1
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 03:49:58 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740138598; x=1740743398;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DnXDRqF+7jHzdDMYeLb1GVbJJ6rATcvBORv64B0RqgI=;
-        b=o8XN4ZzDkgeEnw+hdPZOMxlGbO+gSqCNh3dzKXLEix9BJpzLSrGgbgX8EQf5jTq5Gf
-         CxiVj5SQRm4ITRPlJtffSlMiBO9hutaW05FhRyu1GxpPKiknCMsJkVyNu/vhyCxxOzRh
-         +NTshJ4CSkJ3es7r5Ja2fbsFpwVJ1LRcAiciG9pPP6pG/lPzFTWgopD4Ok17e+YqjkHT
-         oAMdJSCSM9HnSsfxQ93YSSI9CjIM7k9OWz8M9ZFt49myfuXFYSlBQ7l9XCq/LNEJDdib
-         bI9saNWT2y6iPkpmRwtX0oKMYXYLMtLTc7KP+1cCjwKDywpCSjTzpy55ZcMr5qW4C0/C
-         +COA==
-X-Forwarded-Encrypted: i=1; AJvYcCWjoxIjv7Kf85DkRfgIrkyfmt7YrfeqaEfj/r2NXldXdk9Fy+ifhs/f4XU2OGA4wu7+W4D6Rr08KExinJQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzgKxkiBAPz4Vo3ORAYBdMaDBBRSbPC2ehfW/W0feG8XwQ0kUOA
-	8j2Icvt4M9Q8ih7Kebt5N1BAnTlnV4wPlVpNUFD7f4JRmZrGhn2JdMMbdvkXuwiFngYM+BI0hB3
-	TCN1pSHNj5ZtfB5zM5Ny5LKShM9BAd8P/zOVHsBX/+PN40f1Em/OWMBbOK9rDf34=
-X-Gm-Gg: ASbGncv7n2/BHT17o/9YDYQcf/PaaxXdAbdROyaSKT8i1qCi+jSXqH9feieau7Afaz2
-	LrHy51WZ7b1a8nnDoDjhug3AJmcFbnDpo5jORtxduxZeglnQUkP6CTA2HOCDcQNBm6Sum5LigyI
-	4h7ZO/wYQSAr+N14JsBT9ggIvU9rRMJnpOcmnlAk4bqDRa5PcjzgUg2I6s0pQN1Tx2fruHQjfcR
-	131HdLzKqTDVUHwqreXRxVNulDzo+6VJ4aK4yZ+cVnbJIwVlTCRX/I0mFV6maaIvkbPIjlay7lO
-	i50G+NZL6KCJXRMep0xy+bOY2Qft/m0vyDwjsza/zOcV8bbDC6DPqtrXM5YQ2j1SlZx2Yg==
-X-Received: by 2002:a05:622a:3cb:b0:471:f185:cdda with SMTP id d75a77b69052e-472228d9e7emr15401681cf.9.1740138598209;
-        Fri, 21 Feb 2025 03:49:58 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGz6tjScwFqnyjtrUPjnhi+ssj2b9sF0tanjJCBHYaWqQMsLgwvd3nnPdcpK3+hrUaFc9rY+g==
-X-Received: by 2002:a05:622a:3cb:b0:471:f185:cdda with SMTP id d75a77b69052e-472228d9e7emr15401471cf.9.1740138597834;
-        Fri, 21 Feb 2025 03:49:57 -0800 (PST)
-Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5dece1b4f59sm13554823a12.6.2025.02.21.03.49.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Feb 2025 03:49:57 -0800 (PST)
-Message-ID: <3bfe9a79-517d-4a27-94da-263dd691ec37@oss.qualcomm.com>
-Date: Fri, 21 Feb 2025 12:49:53 +0100
+	s=arc-20240116; t=1740138623; c=relaxed/simple;
+	bh=Ax1HLOrCM4FuTAt8HYk3+RIVVxX7+VlgLIn7Jnlyv68=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=m/MxzqzqKmSyamxvxoz45+1yi+WavmqwzUcRzX6kYgUjj3uqCigt/x7PK1HW5rtbBJ0qESjxZqxNlqQqGf3FrYoZ+ja5puc829l7SMI83IH9C3UUBUqI/iwJekLzbi3fDYzTGNYJngugPVvt7cQnMBWyUNS8B0gc0Ov/Id3+FLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=btR5qn/J; arc=none smtp.client-ip=157.90.84.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
+Received: from [192.168.42.116] (pd9e59d4d.dip0.t-ipconnect.de [217.229.157.77])
+	(Authenticated sender: wse@tuxedocomputers.com)
+	by mail.tuxedocomputers.com (Postfix) with ESMTPSA id EF6BC2FC0182;
+	Fri, 21 Feb 2025 12:50:16 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
+	s=default; t=1740138617;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ntN7Ken4o08cAX1i2z6UfMc3CME1b/XumOkdtvbq90M=;
+	b=btR5qn/JQZ2iM9Z6Qbqzm/UmO/OMIde4ej5pERpuC3eETwAT8pHKMz6AUIKnWCToZlZAU+
+	/X5twyqGS+nefMFbZx2YpTS3yzfB7Rtmjzup7pjS6YSnwLw+pZ6TEGzSM6OPzbRIVitOpm
+	R9lA9Lc+l3h/gWNXJ5X+Ac/+G521zdY=
+Authentication-Results: mail.tuxedocomputers.com;
+	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
+Message-ID: <cde97a29-bfe6-4dba-a059-b6df91814e6c@tuxedocomputers.com>
+Date: Fri, 21 Feb 2025 12:50:16 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,112 +55,164 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 4/6] clk: qcom: Add NSS clock Controller driver for
- IPQ9574
-To: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>, andersson@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
-        krzk+dt@kernel.org, conor+dt@kernel.org, konradybcio@kernel.org,
-        catalin.marinas@arm.com, will@kernel.org, p.zabel@pengutronix.de,
-        richardcochran@gmail.com, geert+renesas@glider.be,
-        dmitry.baryshkov@linaro.org, arnd@arndb.de, nfraprado@collabora.com,
-        quic_tdas@quicinc.com, biju.das.jz@bp.renesas.com,
-        elinor.montmasson@savoirfairelinux.com, ross.burton@arm.com,
-        javier.carrasco@wolfvision.net, quic_anusha@quicinc.com,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org
-Cc: quic_srichara@quicinc.com, quic_varada@quicinc.com
-References: <20250221101426.776377-1-quic_mmanikan@quicinc.com>
- <20250221101426.776377-5-quic_mmanikan@quicinc.com>
+Subject: Re: [RFC PATCH 1/1] platform/x86/tuxedo: Implement TUXEDO TUXI ACPI
+ TFAN via hwmon
+From: Werner Sembach <wse@tuxedocomputers.com>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: hdegoede@redhat.com, ilpo.jarvinen@linux.intel.com, ukleinek@kernel.org,
+ jdelvare@suse.com, linux-kernel@vger.kernel.org,
+ platform-driver-x86@vger.kernel.org, linux-pwm@vger.kernel.org,
+ linux-hwmon@vger.kernel.org
+References: <20250205162109.222619-1-wse@tuxedocomputers.com>
+ <20250205162109.222619-2-wse@tuxedocomputers.com>
+ <767538f2-d79e-44e4-a671-4be56a3cfe44@roeck-us.net>
+ <fce7929b-87e7-4c9a-8a54-ab678c5dc6b4@tuxedocomputers.com>
+ <8f0a9bd6-52dd-442f-b0fd-73cf7028d9f0@roeck-us.net>
+ <b32284b7-ddc8-4fb5-82f8-20199b0dec5a@tuxedocomputers.com>
 Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250221101426.776377-5-quic_mmanikan@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: z9-KHHnBKt2uihNNqKd7uu6uZMIJTWnO
-X-Proofpoint-GUID: z9-KHHnBKt2uihNNqKd7uu6uZMIJTWnO
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-21_03,2025-02-20_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 mlxscore=0
- suspectscore=0 mlxlogscore=999 phishscore=0 bulkscore=0 lowpriorityscore=0
- impostorscore=0 malwarescore=0 priorityscore=1501 adultscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2502210087
+In-Reply-To: <b32284b7-ddc8-4fb5-82f8-20199b0dec5a@tuxedocomputers.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 21.02.2025 11:14 AM, Manikanta Mylavarapu wrote:
-> From: Devi Priya <quic_devipriy@quicinc.com>
-> 
-> Add Networking Sub System Clock Controller (NSSCC) driver for ipq9574 based
-> devices.
-> 
-> Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
-> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-> ---
+Hi,
 
-[...]
+Am 06.02.25 um 23:55 schrieb Werner Sembach:
+>
+> Am 06.02.25 um 19:57 schrieb Guenter Roeck:
+>> On Thu, Feb 06, 2025 at 10:28:01AM +0100, Werner Sembach wrote:
+>>
+>> [ ... ]
+>>
+>>>>> +        temp = retval * 100 - 272000;
+>>>>> +
+>>>>> +        for (j = 0; temp_levels[j].temp; ++j) {
+>>>>> +            temp_low = j == 0 ? -272000 : temp_levels[j-1].temp;
+>>>>> +            temp_high = temp_levels[j].temp;
+>>>>> +            if (driver_data->temp_level[i] > j)
+>>>>> +                temp_high -= 2000; // hysteresis
+>>>>> +
+>>>>> +            if (temp >= temp_low && temp < temp_high)
+>>>>> +                driver_data->temp_level[i] = j;
+>>>>> +        }
+>>>>> +        if (temp >= temp_high)
+>>>>> +            driver_data->temp_level[i] = j;
+>>>>> +
+>>>>> +        temp_level = driver_data->temp_level[i];
+>>>>> +        min_speed = temp_level == 0 ?
+>>>>> +            0 : temp_levels[temp_level-1].min_speed;
+>>>>> +        curr_speed = driver_data->curr_speed[i];
+>>>>> +        want_speed = driver_data->want_speed[i];
+>>>>> +
+>>>>> +        if (want_speed < min_speed) {
+>>>>> +            if (curr_speed < min_speed)
+>>>>> +                write_speed(dev, i, min_speed);
+>>>>> +        } else if (curr_speed != want_speed)
+>>>>> +            write_speed(dev, i, want_speed);
+>>>>> +    }
+>>>>> +
+>>>>> +    schedule_delayed_work(&driver_data->work, TUXI_SAFEGUARD_PERIOD);
+>>>>> +}
+>>>> This is not expected functionality of a hardware monitoring driver.
+>>>> Hardware monmitoring drivers should not replicate userspace or
+>>>> thermal subsystem functionality.
+>>>>
+>>>> This would be unacceptable in drivers/hwmon/.
+>>> Problem is: The thermal subsystem doesn't do this either as far as I can tell.
+>>>
+>>> See this: 
+>>> https://lore.kernel.org/all/453e0df5-416b-476e-9629-c40534ecfb72@tuxedocomputers.com/
+>>> and this: 
+>>> https://lore.kernel.org/all/41483e2b-361b-4b84-88a7-24fc1eaae745@tuxedocomputers.com/
+>>> thread.
+>>>
+>>> The short version is: The Thermal subsystem always allows userspace to
+>>> select the "userspace" governor which has no way for the kernel to enforce a
+>>> minimum speed.
+>>>
+>> You can specify thermal parameters / limits using devicetree. Also, drivers
+>> can always enforce value ranges.
+>
+> Sorry for my noob question: What do you mean with devicetree in x86 context?
+>
+> I only want to enforce a value range at a certain temperature, if the device 
+> is cool, the fan can be turned off for example.
+Gentle bump
+>
+>>
+>>> As far as I can tell the Thermal subsystem would require a new governor for
+>>> the behavior i want to archive and more importantly, a way to restrict which
+>>> governors userspace can select.
+>>>
+>>> As to why I don't want grant userspace full control: The firmware is
+>>> perfectly fine with accepting potentially mainboard frying settings (as
+>>> mentioned in the cover letter) and the lowest level I can write code for is
+>>> the kernel driver. So that's the location I need to prevent this.
+>>>
+>> It is ok for the kernel to accept and enforce _limits_ (such as lower and upper
+>> ranges for temperatures) when they are written. That is not what the code here
+>> does.
+>
+> It conditionally enforces a minimum fanspeed.
+>
+> So is the problem that hwmon drivers are only allowed to enforce unconditional 
+> limits?
+Here too.
+>
+>>
+>>> Also hwmon is not purely a hardware monitoring, it also allows writing
+>>> fanspeeds. Or did I miss something and this shouldn't actually be used?
+>>>
+>> If doesn't actively control fan speeds, though. It just tells the firmware what
+>> the limits or target values are.
+> What is the difference if it tells the firmware a target fanspeed, which can 
+> be ignored by it, or a driver a target fanspeed, which can be ignored by it?
 
-> +static int nss_cc_ipq9574_probe(struct platform_device *pdev)
-> +{
-> +	struct regmap *regmap;
-> +	int ret;
-> +
-> +	ret = devm_pm_runtime_enable(&pdev->dev);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = devm_pm_clk_create(&pdev->dev);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = pm_clk_add(&pdev->dev, "nsscc");
-> +	if (ret)
-> +		return dev_err_probe(&pdev->dev, ret, "Fail to add AHB clock\n");
-> +
-> +	ret = pm_runtime_resume_and_get(&pdev->dev);
-> +	if (ret)
-> +		return ret;
+Here too.
 
-if /\ suceeds
+Best regards,
 
-> +
-> +	regmap = qcom_cc_map(pdev, &nss_cc_ipq9574_desc);
-> +	if (IS_ERR(regmap))
-> +		return PTR_ERR(regmap);
+Werner Sembach
 
-you return here without pm_runtime_put, which doesn't decrease the refcount
-for core to put down the resource
-
-if (IS_ERR(regmap)) {
-	pm_runtime_put(&pdev->dev);
-	return PTR_ERR(regmap);
-}
-
-instead
-
-Konrad
-
-> +
-> +	clk_alpha_pll_configure(&ubi32_pll_main, regmap, &ubi32_pll_config);
-> +
-> +	ret = qcom_cc_really_probe(&pdev->dev, &nss_cc_ipq9574_desc, regmap);
-> +	pm_runtime_put(&pdev->dev);
-> +
-> +	return ret;
-> +}
-> +
-> +static struct platform_driver nss_cc_ipq9574_driver = {
-> +	.probe = nss_cc_ipq9574_probe,
-> +	.driver = {
-> +		.name = "qcom,nsscc-ipq9574",
-> +		.of_match_table = nss_cc_ipq9574_match_table,
-> +		.pm = &nss_cc_ipq9574_pm_ops,
-> +		.sync_state = icc_sync_state,
-> +	},
-> +};
-> +
-> +module_platform_driver(nss_cc_ipq9574_driver);
-> +
-> +MODULE_DESCRIPTION("QTI NSS_CC IPQ9574 Driver");
-> +MODULE_LICENSE("GPL");
+>>
+>>>> Personally I think this is way too complicated. It would make much more sense
+>>>> to assume a reasonable maximum (say, 16) and use fixed size arrays to access
+>>>> the data. The is_visible function can then simply return 0 for larger channel
+>>>> values if the total number of fans is less than the ones configured in the
+>>>> channel information.
+>>> Didn't know it was possible to filter extra entries out completely with the
+>>> is_visible function, thanks for the tip.
+>>>> Also, as already mentioned, there is no range check of fan_count. This will
+>>>> cause some oddities if the system ever claims to have 256+ fans.
+>>> Will not happen, but i guess a singular additional if in the init doesn't
+>>> hurt, i can add it.
+>> You are making the assumption that the firmware always provides correct
+>> values.
+>>
+>> I fully agree that repeated range checks for in-kernel API functions are
+>> useless. However, values should still be checked when a value enters
+>> the kernel, either via userspace or via hardware, even more so if that value
+>> is used to determine, like here, the amount of memory allocated. Or, worse,
+>> if the value is reported as 32-bit value and written into an 8-byte variable.
+> ok
+>>
+>>>>> +    *hwmdev = devm_hwmon_device_register_with_info(&pdev->dev,
+>>>>> +                               "tuxedo_nbxx_acpi_tuxi",
+>>>>> +                               driver_data, &hwminfo,
+>>>>> +                               NULL);
+>>>>> +    if (PTR_ERR_OR_ZERO(*hwmdev))
+>>>>> +        return PTR_ERR_OR_ZERO(*hwmdev);
+>>>>> +
+>>>> Why not just return hwmdev ?
+>>> because if hwmon is NULL it is still an error, i have to look again at what
+>>> actually is returned by PTR_ERR_OR_ZERO on zero.
+>> That seems a bit philosophical. The caller would have to check for
+>> PTR_ERR_OR_ZERO() instead of checking for < 0.
+>>
+>> On a side note, the code now returns 0 if devm_hwmon_device_register_with_info()
+>> returned NULL.  devm_hwmon_device_register_with_info() never returns NULL,
+>> so that doesn't make a difference in practice, but, still, this should
+>> at least use PTR_ERR().
+> ok
+>>
+>> Guenter
 
