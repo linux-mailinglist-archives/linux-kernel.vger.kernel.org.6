@@ -1,122 +1,158 @@
-Return-Path: <linux-kernel+bounces-526254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED0AEA3FC43
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:55:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 033CDA3FC44
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:55:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 465F786510E
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:49:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2EF85866326
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:50:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 938E31F3FD9;
-	Fri, 21 Feb 2025 16:49:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E5F6209669;
+	Fri, 21 Feb 2025 16:50:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rp2vPOQr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="LjA3vTep"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE5BA1DE4C4;
-	Fri, 21 Feb 2025 16:49:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 937AA1F541E;
+	Fri, 21 Feb 2025 16:50:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740156579; cv=none; b=GKyPOF79p42jwkKvZI1uEXk/yLl4MpDL8k7DgsTo+voo7Gmw3wFoPCie9tG9/zUY2BHYDOvXreM+zHZ1yPwDLT9yuzL2ekInndF2ocZ6Ib1Kqt1mWEEYz+uuaKX7SvAnaXLLXowt+Iw7YLVOWI5dYMcT9WYq0+DJbZO97atR648=
+	t=1740156603; cv=none; b=DGfEskqR1iS2wb2Tdh8BAxIBVQHIp0foIYsGyQR1ThHIM7MUH0RHQK9NWRhyHRY8Ooa8M9qnmUbEP22c3hUlf9SRNz3E8k5/UzcWPfbwz6RnW0iPfk1oXKmhEr9ybrRdxtqbx64GHswQ7iKUgUF/G1juwm2BF53p53jO0qbAySk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740156579; c=relaxed/simple;
-	bh=LZcc3xE+bYEK55np85IMurfVHwUqpCnyi8vtv/PpdQI=;
+	s=arc-20240116; t=1740156603; c=relaxed/simple;
+	bh=HKZcN/N3DkLXI9MD8YSc47ay4XjK1Ufz25FqRlPNRR0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FmcSIwTTGB2CYKPwO5kmP6SOvulRj9K4T2Q+QuvohKPtdY6UoOyPT1jPX3AzpjYg263+DJFwoqdHm9kKgNgI2Wc4svuO4yiRwy0IEZHTTSd2Of4NhiE4HPHzxfzWhEGDsZWNerq7Low8ePCv0s4+XU7dfbfrmtQzDI2DRxtWktk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rp2vPOQr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14A5BC4CED6;
-	Fri, 21 Feb 2025 16:49:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740156578;
-	bh=LZcc3xE+bYEK55np85IMurfVHwUqpCnyi8vtv/PpdQI=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=JJQaQ7L4rCVlLsJx7+KJQc7E/oR8QlCKG1iCRjp1+WQ6pPw02S/oPWd3el4dmaYer2JbJ2XlRZZeYlJiwgG+cks+BIujOA1qO9i4pHDXhmTtbQVdrfXzrU9HRVbTLC6eYNdBYXAcd7D6OolNtWRqQ3gw9VNbsMufPwCiPoed+VQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=LjA3vTep; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 118D47E0;
+	Fri, 21 Feb 2025 17:48:28 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1740156509;
+	bh=HKZcN/N3DkLXI9MD8YSc47ay4XjK1Ufz25FqRlPNRR0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Rp2vPOQrQ29Vfc3Ynj2C+4zTDvYyvoemivprsObQqI+vqGXZz4g58MEhMx9/Id/o8
-	 KD9BDfBAG676amR0oTHqVAKIeTgHvUIhcPv4BJ14ESxbCX7VEknqPf4nHupDZGob1I
-	 I5R3CCLdn6eFgZdWa0X0w0a0PMA6dd47prUY+TLWjhU4rSGGIDNLqGwPZP+F6XGQ3Y
-	 upQT7kpm0731n6D+yusSeUpjRK7kdo7EqvX9X3X4/dvePt6/IoYquPvf2iAj2B3/G+
-	 dYIKOTXIVxzyaYstFvbjhoAd6k2bJQXqtWJPV6vcjB3rE6BBeOT/qCu2dWp6K5xRAb
-	 Y5Na8NYVA/dpw==
-Date: Fri, 21 Feb 2025 16:49:32 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Lukasz Majewski <lukma@denx.de>
-Cc: Rob Herring <robh@kernel.org>,
-	Krzysztof@spud.smtp.subspace.kernel.org,
-	Kozlowski@spud.smtp.subspace.kernel.org,
+	b=LjA3vTephYLSQCNAvtloKyj1bbMpwxl+8ohGv3Z9J60JyPPTAXJSdxT3vyCt3zKfl
+	 i+3T/PnBmY9nGLkVp7L2HWB3c2tmf2OfYdVd14YctWkN/SJKTIE+HYCfBnZgqz9ycw
+	 O9neFqiYuF448HVouYBA1StFySYbDpTYJscDusE4=
+Date: Fri, 21 Feb 2025 18:49:35 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Quentin Schulz <foss+kernel@0leil.net>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Heiko Stuebner <heiko@sntech.de>, Aradhya Bhatia <a-bhatia1@ti.com>,
-	rafal@milecki.pl, devicetree@vger.kernel.org,
-	Guenter Roeck <linux@roeck-us.net>,
-	Noah Wang <noahwang.wang@outlook.com>, linux-kernel@vger.kernel.org,
-	Peter Yin <peteryin.openbmc@gmail.com>,
-	Naresh Solanki <naresh.solanki@9elements.com>,
-	Alex Vdovydchenko <xzeol@yahoo.com>,
-	Grant Peltier <grantpeltier93@gmail.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH 1/2] dt-bindings: vendor-prefixes: Add prefix for
- Liebherr-Werk Ehingen GmbH
-Message-ID: <20250221-seventh-improving-9d22a8dc5108@spud>
-References: <20250221155418.1167670-1-lukma@denx.de>
+	Heiko Stuebner <heiko@sntech.de>, linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Quentin Schulz <quentin.schulz@cherry.de>
+Subject: Re: [PATCH v2 1/2] dt-bindings: gpio: nxp,pcf8575: add reset GPIO
+Message-ID: <20250221164935.GA15988@pendragon.ideasonboard.com>
+References: <20250221-pca976x-reset-driver-v2-0-a2bcb9fdc256@cherry.de>
+ <20250221-pca976x-reset-driver-v2-1-a2bcb9fdc256@cherry.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="YxlxIO2ZW2QARODV"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250221155418.1167670-1-lukma@denx.de>
+In-Reply-To: <20250221-pca976x-reset-driver-v2-1-a2bcb9fdc256@cherry.de>
 
-
---YxlxIO2ZW2QARODV
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, Feb 21, 2025 at 04:54:17PM +0100, Lukasz Majewski wrote:
-> This entry adds vendor prefix for Liebherr-Werk Ehingen GmbH.
->=20
-> Signed-off-by: Lukasz Majewski <lukma@denx.de>
+On Fri, Feb 21, 2025 at 11:14:26AM +0100, Quentin Schulz wrote:
+> From: Quentin Schulz <quentin.schulz@cherry.de>
+> 
+> A few of the I2C GPIO expander chips supported by this binding have a
+> RESETN pin to be able to reset the chip. The chip is held in reset while
+> the pin is low, therefore the polarity of reset-gpios is expected to
+> reflect that, i.e. a GPIO_ACTIVE_HIGH means the GPIO will be driven high
+> for reset and then driven low, GPIO_ACTIVE_LOW means the GPIO will be
+> driven low for reset and then driven high. If a GPIO is directly routed
+> to RESETN pin on the IC without any inverter, GPIO_ACTIVE_LOW is thus
+> expected.
+> 
+> Out of the supported chips, only PCA9670, PCA9671, PCA9672 and PCA9673
+> show a RESETN pin in their datasheets. They all share the same reset
+> timings, that is 4+us reset pulse[0] and 100+us reset time[0].
+> 
+> When performing a reset, "The PCA9670 registers and I2C-bus state
+> machine will be held in their default state until the RESET input is
+> once again HIGH."[1] meaning we now know the state of each line
+> controlled by the GPIO expander. Therefore, setting lines-initial-states
+> and reset-gpios both does not make sense and their presence is XOR'ed.
+> 
+> [0] https://www.nxp.com/docs/en/data-sheet/PCA9670.pdf Fig 22.
+> [1] https://www.nxp.com/docs/en/data-sheet/PCA9670.pdf 8.5
+> 
+> Tested-by: Heiko Stuebner <heiko@sntech.de> # exclusion logic
+> Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
 > ---
->  Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
->  1 file changed, 2 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Doc=
-umentation/devicetree/bindings/vendor-prefixes.yaml
-> index 5079ca6ce1d1..20ea550ac328 100644
-> --- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
-> +++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-> @@ -882,6 +882,8 @@ patternProperties:
->      description: Shenzhen Lunzn Technology Co., Ltd.
->    "^luxul,.*":
->      description: Lagrand | AV
-> +  "^lwe,.*":
-> +    description: Liebherr-Werk Ehingen GmbH
->    "^lwn,.*":
->      description: Liebherr-Werk Nenzing GmbH
+>  .../devicetree/bindings/gpio/nxp,pcf8575.yaml      | 38 ++++++++++++++++++++++
+>  1 file changed, 38 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/gpio/nxp,pcf8575.yaml b/Documentation/devicetree/bindings/gpio/nxp,pcf8575.yaml
+> index 3718103e966a13e1d77f73335ff73c18a3199469..633ac5cfa04a10bcbb748b6580938cddae9e5596 100644
+> --- a/Documentation/devicetree/bindings/gpio/nxp,pcf8575.yaml
+> +++ b/Documentation/devicetree/bindings/gpio/nxp,pcf8575.yaml
+> @@ -73,6 +73,44 @@ properties:
+>  
+>    wakeup-source: true
+>  
+> +  reset-gpios:
+> +    maxItems: 1
+> +    description:
+> +    description:
+> +      GPIO controlling the (reset active LOW) RESET# pin.
+> +
+> +      The active polarity of the GPIO must translate to the low state
+> +      of the RESET# pin on the IC, i.e. if a GPIO is directly routed
+> +      to the RESET# pin without any inverter, GPIO_ACTIVE_LOW is
+> +      expected.
 
-What's the difference between these two?
+I'd reflow this text to 80 columns, like the next paragraph.
 
->    "^lxa,.*":
-> --=20
-> 2.39.5
->=20
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
---YxlxIO2ZW2QARODV
-Content-Type: application/pgp-signature; name="signature.asc"
+> +
+> +      Performing a reset makes all lines initialized to their input (pulled-up)
+> +      state.
+> +
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          not:
+> +            contains:
+> +              enum:
+> +                - nxp,pca9670
+> +                - nxp,pca9671
+> +                - nxp,pca9672
+> +                - nxp,pca9673
+> +    then:
+> +      properties:
+> +        reset-gpios: false
+> +
+> +  # lines-initial-states XOR reset-gpios
+> +  # Performing a reset reinitializes all lines to a known state which
+> +  # may not match passed lines-initial-states
+> +  - if:
+> +      required:
+> +        - lines-initial-states
+> +    then:
+> +      properties:
+> +        reset-gpios: false
+> +
+>  patternProperties:
+>    "^(.+-hog(-[0-9]+)?)$":
+>      type: object
 
------BEGIN PGP SIGNATURE-----
+-- 
+Regards,
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ7iunAAKCRB4tDGHoIJi
-0m6PAP4n2q6CP9SXtajAqIwWnkFMsQ5QaG3xI7VxFwiUPl1f4gD+O86x5FLHEMb0
-ypIa22KxTxq2ljxYNBobpcV7iyBXtgY=
-=2Nd7
------END PGP SIGNATURE-----
-
---YxlxIO2ZW2QARODV--
+Laurent Pinchart
 
