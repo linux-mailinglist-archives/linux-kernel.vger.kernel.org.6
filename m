@@ -1,269 +1,127 @@
-Return-Path: <linux-kernel+bounces-526498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D167AA3FF8B
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 20:16:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAA53A3FF8E
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 20:16:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C37B7A68E9
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 19:15:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F6403A54E5
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 19:16:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D034B1EE7AD;
-	Fri, 21 Feb 2025 19:15:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE5451F12EC;
+	Fri, 21 Feb 2025 19:16:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CtEhtADO"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jhlp4fF7"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1376C1E990B;
-	Fri, 21 Feb 2025 19:15:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 673511FBEAD
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 19:16:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740165339; cv=none; b=f/L5P8sdpHrBFEJevFdNKW2YieZr4P1ZBzsDOiBy2NGX3Yi+RYocF0vfWcV2Vcf6vLEv3wXMvEyuL7PmZxrWSIuvRsRRh6Vpny3T/s/27Lt83drIXlrAGURNIQ/qgEKBiTaX5tHoETpAyIM3hbObWWWG+XFO8IESbo+809EI/xI=
+	t=1740165395; cv=none; b=hQyXRoi8F/9puVAWwWcecYMhNOdjmSyaY5kxP8HuoIaS21qhIg/ENuK8CQVjgaGqsrP76RiVbWUEZ5cvfByyo54BKAPMRZ38pdAxAQabdOpBm1975KVrI5B3bVCRmip1t+wn91xYccMlhB60GCKl8tHHKzjXwWy16GDajK3+DoI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740165339; c=relaxed/simple;
-	bh=7wXWL18I2e+S7HDfKEXHr7snoKAoVoYulnZRFwhp1sA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Yolr4hTm+DkEQ/r0g9WxXXJHErlpt4Z8+CZvu5HB5oRiRgQV1VhbKeyu2jm9Q9xfZbwA/nI/RttCX6tRSFMedg5bFS5xuRsjnFekPn4Mg6qz15coQEZymuW2YxNbA2tHj9tdiHQGWPn4J1J+eLo8GEGL7CoxgdE1JZ/LMbafJI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CtEhtADO; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-abb8d63b447so316809666b.0;
-        Fri, 21 Feb 2025 11:15:37 -0800 (PST)
+	s=arc-20240116; t=1740165395; c=relaxed/simple;
+	bh=5fvG/DVaGj5l8z8BF8vLq3u/qF14rEVt1HH0vUnX6qw=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=B3PcoBHyTtuAJIrAcG4cIBijqg7KIvC7dYAezuDceMTsIwYUv+OyD31xWf5Z0igL9j69vhMmIepvRe8CW3XttMDclggR0Yr/YfRWnUP6Zmoz+0ZPSBx7WeQ83LYVO1++QdNcBEQwx2McQ1GateMqFgL7jvOSLooMka5Ema5UEfE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jhlp4fF7; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-439a331d981so21610825e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 11:16:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740165336; x=1740770136; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=linaro.org; s=google; t=1740165392; x=1740770192; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=iZ4qzcaVyk05FmCACIvsQQhed5C/TdPL3HUS3iSi4mM=;
-        b=CtEhtADONXtZjY46HGFQSVzXEga2fSDHFmp8wsUVrnuXYbxqL1oZ7by8/d2SJIcGVw
-         WFCyP/jS471pcw2EuXzjujDWzaUwmy5itSEtBejzgtKzQPbOq7+v9TQfi5uFmOnNEyZS
-         oh2slvGa5mWGdP/7V1crXSW9K6SWMktFk+ruq8O8HIi0ZAR3cuBeD6lNT4isEcfBdNNs
-         W68vtSKLuTOxUbA11Dw9jMK4HcV59lo8LntKRcFxhxhB0gRotUZzQg/HEAXoO9pGQpd4
-         RKQlJAPEZcLhNGk0pW1M7SCtQHBGuJ/aZ6v8CO96iTucbpkxWwW3hQzr3zU7xTjmlQmn
-         lijA==
+        bh=kVZmPLX9SKE4OV/m5m7MNKgR1nn72J93NrOuCk0UxAI=;
+        b=jhlp4fF79+aaHu5NjiIxAjtLP2Arb58VoghKjVLT1o4339vf//wkkIEljuU9SihVuj
+         q9xODfuPoHFB6INogOBb5XbRhclmOtk86+Ly31KcxBkrL3kUirZgKSbvrqCpJe5Ygj7D
+         f18KmG/KYZxkumNjvAWS7sjF5W78j6y75IXZKG46wR7swOoeYfxxUOzCyfSt2VWJ/swJ
+         RNu22fdKpcXD7q7Ze3RgP3rJrJqx1w3FUuRsHbjhPIBuTijKJr5N5JXmTbQK9s3KvBVC
+         E72scLqVnKBqmfUTL1K+K8GDK6TSz6UVPG/mjeHPtHin02H9nrnDet7AHC1HEdeQAjtt
+         GJDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740165336; x=1740770136;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iZ4qzcaVyk05FmCACIvsQQhed5C/TdPL3HUS3iSi4mM=;
-        b=dFvh38gFJCh818sao/3Oe5PMyFe7u4U8cdXuER3Tk/XPE0O7UEf7Xy1ox67o+KARCB
-         0God8jfNLurITt0SqxNAivxXgRKQVeb6fuCOfTebItrsti4lb/sWqekh2OhdnCH/GuSa
-         CR60sZN6SRxSXv9WFV0GH0QF6GzgoYCnT2wgsgsaEhtZAGb7srxb7Ph2ZbYnPApK1uPB
-         aGyA+RJDmlTqpw6RXjwbmEEclS1TrTsoc+X2L1T9ChNV6jPBvRK2eambp8SnitJDLanS
-         lTLUU7G/tK49ZiIQnB8egbre2E5WeaI5W1OkNURW5Bkza+mI1e20cBK5TsktpB0ga6kU
-         6LBA==
-X-Forwarded-Encrypted: i=1; AJvYcCUA2HL+H74VIGeTHWPU1S6W/kEI6BUvRUS+sxhba/f5lEQMbnHlPyMZ9/7Z+bnyRJLiJmiR3R4AnTWlcA==@vger.kernel.org, AJvYcCUc9Ic3SvISGSx4mj5TP7FAlL4xoIJFDv1xzXFW953hLRk/BzjbmLVgssXSkGsWHJOxnCRM3KnrZ/iA3vZn@vger.kernel.org, AJvYcCV3AlaFT86UAkgvxh7MZZ/O3iWvhFQOiw5fDhowG6Xh9K5Ai/v+PcmvpAxduy970lBf4OHJ+JEuONmO@vger.kernel.org, AJvYcCVHQf7zKj4oTy+q97xbrLhliiNBty7OfcZ6AYU5LJssnkzgTfuuP2ciOz66pj5l6gGx+pRestrHWi6HSo8+@vger.kernel.org, AJvYcCVc/+ujV1gjF6QDXEvJzGoOGhOIpuYcq7PVOD+m1A98ugmCUh3azFrQdvcgHmLIbfbkBD3mlUCy/2nB@vger.kernel.org, AJvYcCWJK2C7Vj34ixPqL3unNk98A0+NyARxRhLFSz7cWTYbeY6PthsFVyXP7rZw2jdh5Y0FJMyu4H81zPC9QC5IwxGCEW4TZeK3@vger.kernel.org, AJvYcCWwHbX89sEYO2Qh6TdCxZ1pZPoEEGLd6keOu0DWJ1eToC4iPvJjNnE+Iik9tIAK/xpR7i+gjsYqPyE=@vger.kernel.org, AJvYcCX7fKvjPYWcmxsfg3yJzp/dU9M/NGvE9iqCQtA1vf3TEOfDxrPMT2Yg3a2eAiUiSu1vpbENL0FDYs+VdA==@vger.kernel.org, AJvYcCXB8H6MgQ/Nxpzh6dm5++1Y6vPUQCzND8E1S1jTCVhp8wqsoZu7+XD5x2E+xBqTkuQ+AVJwh16Q/+I/rQ==@vger.kernel.org, AJvYcCXKvS3dPLXH
- /yCGKNkziK7FMnoE+QoizmJacPAhbP9MT4ELIiRgOIy9dvm9V9R+pbJSouQZ79Ochga1kw==@vger.kernel.org, AJvYcCXgFylXe7/jiZPtNOpB6pzAluMDH6lIi2Fr7pX4RoIavM0DYoxGbiySC2chLQ6lkOMngiExZm9hwzB8Kw==@vger.kernel.org, AJvYcCXnQWpiFGE9FjOgukUKNU1XzkSCgxbKDVGFlCONSxo0DKz67JbcXM5KXXl6OcLV3o7SzjFWAi5SoQ61G/2I2w==@vger.kernel.org
-X-Gm-Message-State: AOJu0YycldZaYi+Zm0siTW4VGZKp5uOYytpWEpTDzx0kuRc7tYQ37BrC
-	Yv7QQSxTTy+EEIrXQPUhkiTF2djLSr7fjPCKBp1W0eZ/trz9b7iEwRSVyMIQsHZrTN9PgamXZ6X
-	A9aFRLHrapkYv17XYQMu+MptuZMo=
-X-Gm-Gg: ASbGncuu7S2ZBH90ZhaoGTExAoXIZSqLxR/57JuNZu/N4bcznPfDo6PlE12sfQmsUjf
-	rdlncics+KVcmqLY+h+gmn26OIRk8pTXJnf0zEqs288x2aGGG44Eb/ykNFxb2QIO8i1Ci7N/gtW
-	oYYunr9g0=
-X-Google-Smtp-Source: AGHT+IFWDn5RXyBT2VBc0JnIa0dvQSE5CN14Z1A/WEoUOuvFw2fX/qPzzDoEoQ7kDiO+vVIgCpjqmVbZCbaRSc500nk=
-X-Received: by 2002:a17:907:2daa:b0:ab7:10e1:8779 with SMTP id
- a640c23a62f3a-abc09a9c58emr545901766b.27.1740165335746; Fri, 21 Feb 2025
- 11:15:35 -0800 (PST)
+        d=1e100.net; s=20230601; t=1740165392; x=1740770192;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=kVZmPLX9SKE4OV/m5m7MNKgR1nn72J93NrOuCk0UxAI=;
+        b=B1DchwaIDJxZzznyoXRhhp8AHvin/JJaVgNDepwrAXYVZMs/G7L16fwS15EhgCcWrH
+         +hgDQcvX09WBNQx+iucZ2UOULWC4K0kx8vvyT9OccLHt0ZYOSib1cw7/PYS+rXK9GTM5
+         PeSzo9+79u78ic46wfHiWblieihHcFGM7aMZ968Q4x7ILuF9G5LZlqZtKU7XyQeou1DC
+         DYvEL/NefWJysMUTvTgd2jubw+iccqh7QtEFW21gwR5RPD91X7IA46cfG4PWOAQhmD0g
+         X8+zzVMUfcnhopagvI8ZAJ+GBQ6KbGN7PSqZ2YMOE4VV9Y6qMkRS0zHZpTxfC6wtM5Bx
+         4C2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU8jL6BsXRbOPkaIBrJONdyKionBxEGuxTNWPiaUZqyCa0RiTTn8/deAyEsmNT2+AKz0koLM6aSv3R3uVU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXSdIxtUnkkcUpcRsGPWjo7/PZs27mIrMkBS5kRDPBkbsI2Jce
+	djSpHYfMMjxFPYIyj/EWBE/VEjiBCqrIbWVaQbKv6lTrvi2xcjLYf0AEacRe/8o=
+X-Gm-Gg: ASbGncu8HenvsU2unXA1/Ktbfn80dkBamb+8+hEIb1WRTOp4DcvCbzlfpiCNzQH9EaK
+	CgtMb4XXXLq+kA0xd3X0yE65b4jDIhaY3sCCDCdGIxCTU+3CEZlW82NForV6ZXa61f81sbCsMux
+	Wl0TFbvASkAD+YRMtNYh/mnF9BknjgwJPhWuB/8bbMRmDR0aYdgB5E4MrbvKfFhBP1u0EM7wTDq
+	GfB0fWsnwV2u4CjUAlzaQf+eVZ6FXeLPh+2wSce0s9nQ7VO/+cknou42aabZtYl1nxNIvK6x/Pn
+	99YVVHtlYZfcmyJg2GqtHnpYwFB2
+X-Google-Smtp-Source: AGHT+IEZIpW2AjGEyy2pSB737lSPq5c0PLgcm0gC9yalYRLXf6Zt62YGC6R9bY4VkJI99cTLRTXYvw==
+X-Received: by 2002:a05:600c:4ed1:b0:439:8ada:e3b0 with SMTP id 5b1f17b1804b1-439ae21636emr38684615e9.19.1740165391631;
+        Fri, 21 Feb 2025 11:16:31 -0800 (PST)
+Received: from localhost ([2.124.154.225])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-439b02e425esm25934415e9.17.2025.02.21.11.16.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 Feb 2025 11:16:31 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250211-xattrat-syscall-v3-1-a07d15f898b2@kernel.org> <20250221181135.GW21808@frogsfrogsfrogs>
-In-Reply-To: <20250221181135.GW21808@frogsfrogsfrogs>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Fri, 21 Feb 2025 20:15:24 +0100
-X-Gm-Features: AWEUYZl6ee15urB13zi6bMenPf2pKrOJTL6JxjfoDGHoEUCbXunWqtruY9b7YnQ
-Message-ID: <CAOQ4uxgyYBFqkq6cQsso4LxJsPJ4uECOdskXmz-nmGhhV5BQWg@mail.gmail.com>
-Subject: Re: [PATCH v3] fs: introduce getfsxattrat and setfsxattrat syscalls
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Andrey Albershteyn <aalbersh@redhat.com>, Richard Henderson <richard.henderson@linaro.org>, 
-	Matt Turner <mattst88@gmail.com>, Russell King <linux@armlinux.org.uk>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Geert Uytterhoeven <geert@linux-m68k.org>, Michal Simek <monstr@monstr.eu>, 
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
-	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
-	Naveen N Rao <naveen@kernel.org>, Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
-	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Sven Schnelle <svens@linux.ibm.com>, Yoshinori Sato <ysato@users.sourceforge.jp>, 
-	Rich Felker <dalias@libc.org>, John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
-	"David S. Miller" <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>, 
-	Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	=?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
-	Arnd Bergmann <arnd@arndb.de>, linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-m68k@lists.linux-m68k.org, 
-	linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org, 
-	linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org, 
-	linux-sh@vger.kernel.org, sparclinux@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	linux-api@vger.kernel.org, linux-arch@vger.kernel.org, 
-	linux-xfs@vger.kernel.org, =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>, 
-	Theodore Tso <tytso@mit.edu>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 21 Feb 2025 19:16:29 +0000
+Message-Id: <D7YD5C0HCSZ1.2DOE3TAA7024Y@linaro.org>
+Cc: <quic_mohamull@quicinc.com>, <quic_hbandi@quicinc.com>,
+ <quic_anubhavg@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+ <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v10 1/1] arm64: dts: qcom: qcs6490-rb3gen: add and
+ enable BT node
+From: "Alexey Klimov" <alexey.klimov@linaro.org>
+To: "Janaki Ramaiah Thota" <quic_janathot@quicinc.com>, "Bjorn Andersson"
+ <andersson@kernel.org>, "Konrad Dybcio" <konradybcio@kernel.org>, "Rob
+ Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+ "Conor Dooley" <conor+dt@kernel.org>
+X-Mailer: aerc 0.20.0
+References: <20250221171014.120946-1-quic_janathot@quicinc.com>
+ <20250221171014.120946-2-quic_janathot@quicinc.com>
+In-Reply-To: <20250221171014.120946-2-quic_janathot@quicinc.com>
 
-On Fri, Feb 21, 2025 at 7:13=E2=80=AFPM Darrick J. Wong <djwong@kernel.org>=
- wrote:
+On Fri Feb 21, 2025 at 5:10 PM GMT, Janaki Ramaiah Thota wrote:
+> Add the PMU node for WCN6750 present on the qcs6490-rb3gen
+
+Is it rb3gen or rb3gen2? Also in the subject.
+
+The file that you patch seems to be "rb3gen2".
+
+> board and assign its power outputs to the Bluetooth module.
 >
-> On Tue, Feb 11, 2025 at 06:22:47PM +0100, Andrey Albershteyn wrote:
-> > From: Andrey Albershteyn <aalbersh@redhat.com>
-> >
-> > Introduce getfsxattrat and setfsxattrat syscalls to manipulate inode
-> > extended attributes/flags. The syscalls take parent directory fd and
-> > path to the child together with struct fsxattr.
-> >
-> > This is an alternative to FS_IOC_FSSETXATTR ioctl with a difference
-> > that file don't need to be open as we can reference it with a path
-> > instead of fd. By having this we can manipulated inode extended
-> > attributes not only on regular files but also on special ones. This
-> > is not possible with FS_IOC_FSSETXATTR ioctl as with special files
-> > we can not call ioctl() directly on the filesystem inode using fd.
-> >
-> > This patch adds two new syscalls which allows userspace to get/set
-> > extended inode attributes on special files by using parent directory
-> > and a path - *at() like syscall.
-> >
-> > Also, as vfs_fileattr_set() is now will be called on special files
-> > too, let's forbid any other attributes except projid and nextents
-> > (symlink can have an extent).
-> >
-> > CC: linux-api@vger.kernel.org
-> > CC: linux-fsdevel@vger.kernel.org
-> > CC: linux-xfs@vger.kernel.org
-> > Signed-off-by: Andrey Albershteyn <aalbersh@redhat.com>
-> > ---
-> > v1:
-> > https://lore.kernel.org/linuxppc-dev/20250109174540.893098-1-aalbersh@k=
-ernel.org/
-> >
-> > Previous discussion:
-> > https://lore.kernel.org/linux-xfs/20240520164624.665269-2-aalbersh@redh=
-at.com/
-> >
-> > XFS has project quotas which could be attached to a directory. All
-> > new inodes in these directories inherit project ID set on parent
-> > directory.
-> >
-> > The project is created from userspace by opening and calling
-> > FS_IOC_FSSETXATTR on each inode. This is not possible for special
-> > files such as FIFO, SOCK, BLK etc. Therefore, some inodes are left
-> > with empty project ID. Those inodes then are not shown in the quota
-> > accounting but still exist in the directory. Moreover, in the case
-> > when special files are created in the directory with already
-> > existing project quota, these inode inherit extended attributes.
-> > This than leaves them with these attributes without the possibility
-> > to clear them out. This, in turn, prevents userspace from
-> > re-creating quota project on these existing files.
-> > ---
-> > Changes in v3:
-> > - Remove unnecessary "dfd is dir" check as it checked in user_path_at()
-> > - Remove unnecessary "same filesystem" check
-> > - Use CLASS() instead of directly calling fdget/fdput
-> > - Link to v2: https://lore.kernel.org/r/20250122-xattrat-syscall-v2-1-5=
-b360d4fbcb2@kernel.org
-> > ---
-> >  arch/alpha/kernel/syscalls/syscall.tbl      |  2 +
-> >  arch/arm/tools/syscall.tbl                  |  2 +
-> >  arch/arm64/tools/syscall_32.tbl             |  2 +
-> >  arch/m68k/kernel/syscalls/syscall.tbl       |  2 +
-> >  arch/microblaze/kernel/syscalls/syscall.tbl |  2 +
-> >  arch/mips/kernel/syscalls/syscall_n32.tbl   |  2 +
-> >  arch/mips/kernel/syscalls/syscall_n64.tbl   |  2 +
-> >  arch/mips/kernel/syscalls/syscall_o32.tbl   |  2 +
-> >  arch/parisc/kernel/syscalls/syscall.tbl     |  2 +
-> >  arch/powerpc/kernel/syscalls/syscall.tbl    |  2 +
-> >  arch/s390/kernel/syscalls/syscall.tbl       |  2 +
-> >  arch/sh/kernel/syscalls/syscall.tbl         |  2 +
-> >  arch/sparc/kernel/syscalls/syscall.tbl      |  2 +
-> >  arch/x86/entry/syscalls/syscall_32.tbl      |  2 +
-> >  arch/x86/entry/syscalls/syscall_64.tbl      |  2 +
-> >  arch/xtensa/kernel/syscalls/syscall.tbl     |  2 +
-> >  fs/inode.c                                  | 75 +++++++++++++++++++++=
-++++++++
-> >  fs/ioctl.c                                  | 16 +++++-
-> >  include/linux/fileattr.h                    |  1 +
-> >  include/linux/syscalls.h                    |  4 ++
-> >  include/uapi/asm-generic/unistd.h           |  8 ++-
-> >  21 files changed, 133 insertions(+), 3 deletions(-)
-> >
+> In WCN6750 module sw_ctrl and wifi-enable pins are handled
+> in the wifi controller firmware. Therefore, it is not required
+> to have those pins' entries in the PMU node.
 >
-> <cut to the syscall definitions>
+> Signed-off-by: Janaki Ramaiah Thota <quic_janathot@quicinc.com>
+> ---
+>  arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts | 171 ++++++++++++++++++-
+>  1 file changed, 170 insertions(+), 1 deletion(-)
 >
-> > diff --git a/fs/inode.c b/fs/inode.c
-> > index 6b4c77268fc0ecace4ac78a9ca777fbffc277f4a..b2dddd9db4fabaf67a6cbf5=
-41a86978b290411ec 100644
-> > --- a/fs/inode.c
-> > +++ b/fs/inode.c
-> > @@ -23,6 +23,9 @@
-> >  #include <linux/rw_hint.h>
-> >  #include <linux/seq_file.h>
-> >  #include <linux/debugfs.h>
-> > +#include <linux/syscalls.h>
-> > +#include <linux/fileattr.h>
-> > +#include <linux/namei.h>
-> >  #include <trace/events/writeback.h>
-> >  #define CREATE_TRACE_POINTS
-> >  #include <trace/events/timestamp.h>
-> > @@ -2953,3 +2956,75 @@ umode_t mode_strip_sgid(struct mnt_idmap *idmap,
-> >       return mode & ~S_ISGID;
-> >  }
-> >  EXPORT_SYMBOL(mode_strip_sgid);
-> > +
-> > +SYSCALL_DEFINE4(getfsxattrat, int, dfd, const char __user *, filename,
-> > +             struct fsxattr __user *, fsx, unsigned int, at_flags)
->
-> Should the kernel require userspace to pass the size of the fsx buffer?
-> That way we avoid needing to rev the interface when we decide to grow
-> the structure.
->
+> diff --git a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts b/arch/arm64/bo=
+ot/dts/qcom/qcs6490-rb3gen2.dts
+> index 7a36c90ad4ec..de03770e0b90 100644
+> --- a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+> +++ b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
 
-This makes sense to me, but I see that Andreas proposed other ways,
-as long as we have a plan on how to extend the struct if we need more space=
-.
+[..]
 
-Andrey, I am sorry to bring this up in v3, but I would like to request
-two small changes before merging this API.
-
-This patch by Pali [1] adds fsx_xflags_mask for the filesystem to
-report the supported set of xflags.
-
-It was argued that we can make this change with the existing ioctl,
-because it is not going to break xfs_io -c lsattr/chattr, which is fine,
-but I think that we should merge the fsx_xflags_mask change along
-with getfsxattrat() which is a new UAPI.
-
-The second request is related to setfsxattrat().
-With current FS_IOC_FSSETXATTR, IIUC, xfs ignores unsupported
-fsx_xflags. I think this needs to be fixed before merging setfsxattrat().
-It's ok that a program calling FS_IOC_FSSETXATTR will not know
-if unsupported flags will be ignored, because that's the way it is,
-but I think that setfsxattrat() must return -EINVAL for trying to
-set unsupported xflags.
-
-As I explained in [2] I think it is fine if FS_IOC_FSSETXATTR
-will also start returning -EINVAL for unsupported flags, but I would
-like setfsxattrat() to make that a guarantee.
-
-There was an open question, what does fsx_xflags_mask mean
-for setfsxattrat() - it is a mask like in inode_set_flags() as Andreas
-suggested? I think that would be a good idea.
-
-Thanks,
-Amir.
-
-[1] https://lore.kernel.org/linux-fsdevel/20250216164029.20673-4-pali@kerne=
-l.org/
-[2] https://lore.kernel.org/linux-fsdevel/CAOQ4uxjwQJiKAqyjEmKUnq-VihyeSsxy=
-Ey2F+J38NXwrAXurFQ@mail.gmail.com/
+Best regards,
+Alexey
 
