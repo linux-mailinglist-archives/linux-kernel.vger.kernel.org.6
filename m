@@ -1,87 +1,121 @@
-Return-Path: <linux-kernel+bounces-526664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF00CA401BE
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 22:06:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 60578A401C2
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 22:07:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94FE5189A9F0
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 21:06:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D082189938D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 21:07:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F3A4254B13;
-	Fri, 21 Feb 2025 21:05:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CB2E254AF4;
+	Fri, 21 Feb 2025 21:05:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uHtzlPiN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAD6C253B64;
-	Fri, 21 Feb 2025 21:05:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="PlsqIhZP"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41138253B62;
+	Fri, 21 Feb 2025 21:05:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740171943; cv=none; b=fsr3OZ623OIF/Hgtw8yTGkTZ0l+sOGD3DLobtVpGTUa2EIp1fFRg79CHZHKWOSm/lDH08sTw0w+vTbggymzEEDe4GVER7nbtt8uUC0XNBKBjfoFO0cMr56aFnoLvvnQNGgf6qzjODqAVfqbseZy3W9mTRYDuoB1Tep2OxCz82gE=
+	t=1740171948; cv=none; b=OGs7QJIMeR9vVC6+inXMuz7VFt4pPAhbq9h/3O1fyoT6/cibrQQlojb2zViCjnzPx77UUxtJA6HIJRk1u+etXnGPfrQP7mX4giKrGyvJopiowlld7H8nZo97+Gq1iA9OFhwBDOxy0CBcMqRcz+z4TaYjyVUzmM9WrN8EruWrcdk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740171943; c=relaxed/simple;
-	bh=0bZ69u0J8mKNwNBMFzORl5doQm4ibw8K9+y0rI9OSeA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZnY1KVZVYXTXGUy1Mpq2MlxyKOq6CNKZ+r3R1hEq/hN5s7SeymBGq1g7cqNSelPTZn5tyi7qj3UObI55SdzyRUDu0QYjN2v1VZ6kmjvKXEyA55COcJk0jX2IGuKaXH3mrcmf99ej3lcNBd1j5EAx20C0fej2e1iDTPwd3QdX1Bs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uHtzlPiN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18900C4CED6;
-	Fri, 21 Feb 2025 21:05:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740171942;
-	bh=0bZ69u0J8mKNwNBMFzORl5doQm4ibw8K9+y0rI9OSeA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uHtzlPiNaCNGbBeHlrnCyBYkMLL0fhqY4i89dvWzyIWRrGpmeSOvhEAby294S14fO
-	 uReXEouIfA7fqHf3k8CZQDe3xBPlDQ2lth1PGpyvj4DkI/lTuyRBibdd4gfKtw38pX
-	 4PY89AI/o7yVuu0VDLKtpsrePslJsTApVCEt81FAHz8UZmAvUVr27bYr8jp2YGO/kf
-	 S4nk0AkWbdHJiSHB9BWe3OKVA/D4pPJUw0xyePGwbW5ifIgNS88T4PnEsl3pdipQy5
-	 MsMo7SYOSVRY3hQiyoDWBaJzkDXOqHOx0aXEJsePYUixoVDYiTDQ0OUKBgX1zXutU3
-	 ibH94VL7esm+Q==
-Date: Fri, 21 Feb 2025 15:05:40 -0600
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Chris Packham <chris.packham@alliedtelesis.co.nz>
-Cc: andrew+netdev@lunn.ch, linux-mips@vger.kernel.org,
-	tsbogend@alpha.franken.de, edumazet@google.com, conor+dt@kernel.org,
-	krzk+dt@kernel.org, devicetree@vger.kernel.org, pabeni@redhat.com,
-	kuba@kernel.org, lee@kernel.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, davem@davemloft.net
-Subject: Re: [RESEND PATCH net-next 1/5] dt-bindings: net: Move
- realtek,rtl9301-switch to net
-Message-ID: <174017193985.80495.3415505860680168485.robh@kernel.org>
-References: <20250218195216.1034220-1-chris.packham@alliedtelesis.co.nz>
- <20250218195216.1034220-2-chris.packham@alliedtelesis.co.nz>
+	s=arc-20240116; t=1740171948; c=relaxed/simple;
+	bh=GWK6sgltHoesfc4Hvs48MbApGe+KxZvU2GqOLuArVLc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tsvIgWH2Nrvg1ETNqZnyainPIE9KpPYMedcP7bgaJXwqpmEUJ+0c7DRTSmBJH7rqdG4TOL9AXSgmvD0afWJs0M/PlISmsv+fyxoExshVktHX8duu7h9zTiYC7vdRHWGhTkPdLxwV/gTOHk0vqH/MZv52vgwbHqkg0w2mQTZDtWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=PlsqIhZP; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [10.17.64.59] (unknown [131.107.8.59])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 79933205367B;
+	Fri, 21 Feb 2025 13:05:46 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 79933205367B
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1740171946;
+	bh=5nEtVawYrUgdWCquTzf4DrLN6Eub03km1393TBgkgBY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=PlsqIhZPJD1i6y0OPUbwIhXXlgdZ2AbNoe6SqE2MjQUSTscFXcpAUHNYPtGCSI4aO
+	 zae24HXFY1JXGtlF6KOJZNxQJHpqNqfoDlqC7Z9on+58eJbtbYIP25EFvxuYHf3STS
+	 zjNseWrCXv0uqFFduPb3oK8ysGVSKzllqRinz820=
+Message-ID: <3723d5f8-12b7-417f-9030-218e561e9397@linux.microsoft.com>
+Date: Fri, 21 Feb 2025 13:05:45 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250218195216.1034220-2-chris.packham@alliedtelesis.co.nz>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 2/7] kexec: define functions to map and unmap segments
+To: Mimi Zohar <zohar@linux.ibm.com>, stefanb@linux.ibm.com,
+ roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
+ eric.snowberg@oracle.com, ebiederm@xmission.com, paul@paul-moore.com,
+ code@tyhicks.com, bauermann@kolabnow.com, linux-integrity@vger.kernel.org,
+ kexec@lists.infradead.org, linux-security-module@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
+ James.Bottomley@HansenPartnership.com, bhe@redhat.com, vgoyal@redhat.com,
+ dyoung@redhat.com
+References: <20250218225502.747963-1-chenste@linux.microsoft.com>
+ <20250218225502.747963-3-chenste@linux.microsoft.com>
+ <c76a6a741b6f465d270153b65ea6f728383ca608.camel@linux.ibm.com>
+Content-Language: en-US
+From: steven chen <chenste@linux.microsoft.com>
+In-Reply-To: <c76a6a741b6f465d270153b65ea6f728383ca608.camel@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
+On 2/20/2025 9:22 AM, Mimi Zohar wrote:
+> Hi Steven,
+>
+> On Tue, 2025-02-18 at 14:54 -0800, steven chen wrote:
+>> Currently, the mechanism to map and unmap segments to the kimage
+>> structure is not available to the subsystems outside of kexec.  This
+>> functionality is needed when IMA is allocating the memory segments
+>> during kexec 'load' operation.  Implement functions to map and unmap
+>> segments to kimage.
+> Obviously up to now Kexec was mapping the segments. Missing from this patch description is
+> the reason "why" these functions are needed now.  It's not enough to say "is needed when
+> IMA is allocating the memory segments during kexec 'load' operation".  The question is why
+> does "IMA" need to allocate the memory segments.  Don't make the kexec/kexec_dump
+> maintainers guess.
+>
+> Refer to the section "Describe your changes" in
+> https://www.kernel.org/doc/Documentation/process/submitting-patches.rst
+>
+>> Implement kimage_map_segment() to enable mapping of IMA buffer source
+>> pages to the kimage structure post kexec 'load'.  This function,
+>> accepting a kimage pointer, an address, and a size, will gather the
+>> source pages within the specified address range, create an array of page
+>> pointers, and map these to a contiguous virtual address range.  The
+>> function returns the start of this range if successful, or NULL if
+>> unsuccessful.
+>>
+>> Implement kimage_unmap_segment() for unmapping segments
+>> using vunmap().
+>>
+>> From: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+>> Author: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+> Again, no such thing as an "Author" tag.  Refer to the comments on 1/7.
+>
+>> Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+> As previously requested, please add the Cc's inline here and in all the kexec/kdump
+> related patches:
+>
+> Cc: Eric Biederman <ebiederm@xmission.com>
+> Cc: Baoquan He <bhe@redhat.com>
+> Cc: Vivek Goyal <vgoyal@redhat.com>
+> Cc: Dave Young <dyoung@redhat.com>
+>
+>> Signed-off-by: steven chen <chenste@linux.microsoft.com>
+> thanks,
+>
+> Mimi
 
-On Wed, 19 Feb 2025 08:52:12 +1300, Chris Packham wrote:
-> Initially realtek,rtl9301-switch was placed under mfd/ because it had
-> some non-switch related blocks (specifically i2c and reset) but with a
-> bit more review it has become apparent that this was wrong and the
-> binding should live under net/.
-> 
-> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
-> ---
-> 
-> Notes:
->     It would probably be simplest for this to come in via net-next with an
->     ack from Lee.
-> 
->  .../bindings/{mfd => net}/realtek,rtl9301-switch.yaml           | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->  rename Documentation/devicetree/bindings/{mfd => net}/realtek,rtl9301-switch.yaml (97%)
-> 
+Mimi, thanks. I will update in next version.
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+Steven
 
 
