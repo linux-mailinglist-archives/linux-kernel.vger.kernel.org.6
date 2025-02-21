@@ -1,58 +1,90 @@
-Return-Path: <linux-kernel+bounces-525615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FEC1A3F248
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 11:40:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE1E6A3F180
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 11:11:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CD2E3BD6C6
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:40:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D843C421104
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:10:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CF8A205E07;
-	Fri, 21 Feb 2025 10:40:15 +0000 (UTC)
-Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F01822054E8;
+	Fri, 21 Feb 2025 10:10:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G6gz5OvM"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB4181FF1AF;
-	Fri, 21 Feb 2025 10:40:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.166.238
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A0501E5B78;
+	Fri, 21 Feb 2025 10:10:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740134414; cv=none; b=sSM6GM1sqReJL1FEu8s/cqzD+Smp77aFzLEJCwZaVZZMrSPayEjydoRBlmgLrwpkwdDaJCp3BnmhZooiwF0dnSa6Eksy1xThRbpfBBaKRX5zkCZWLY9CLUA46Jp9dIyjb2Pacdzr1yWjf9bQNf3ePhVtaHdq0qEYu63TAxkY3yQ=
+	t=1740132632; cv=none; b=JwEDVzM1fyJIQh6obt12ExyaXdw4GK0GKKQJPFxTkAeoVeGantWDvabuICITML5MuS+hMT6t9nOkAMlE3P9fXSVzXvnkikk0E1TwCD3OMmDZ4UKdTILWa2cWkJXkI5Lj/WzOaC01U+adP1R+6dUN3jsg69j/9XTOUmCFJjrRjfA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740134414; c=relaxed/simple;
-	bh=tb4iQsSsKK6fFdbBII0fkbJdJ4vqzYY882OF7ZiKwxI=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nSexdy8f2ZnmLqqrTgjIsGJUuAJEZszMveEl+CBVq+W5W5lwZQzK5NtCM6DXTv0m2Xc7xpximAAlPGmJ54C/vKmp67PfderL3C/7DEb50dXZQyAcv98lybdFQydoUdhVFuX0zboWfcCuGdg29crhW7hj/PGauE0zWo0PeRnQXMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.166.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250809.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51LA2QHM028098;
-	Fri, 21 Feb 2025 02:10:09 -0800
-Received: from ala-exchng02.corp.ad.wrs.com (ala-exchng02.wrs.com [147.11.82.254])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 44xqcar097-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Fri, 21 Feb 2025 02:10:08 -0800 (PST)
-Received: from ala-exchng01.corp.ad.wrs.com (147.11.82.252) by
- ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.43; Fri, 21 Feb 2025 02:10:08 -0800
-Received: from pek-lpd-ccm6.wrs.com (147.11.136.210) by
- ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server id
- 15.1.2507.43 via Frontend Transport; Fri, 21 Feb 2025 02:10:06 -0800
-From: Lizhi Xu <lizhi.xu@windriver.com>
-To: <syzbot+ace60642828c074eb913@syzkaller.appspotmail.com>
-CC: <len.brown@intel.com>, <linux-kernel@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>, <pavel@kernel.org>, <rafael@kernel.org>,
-        <syzkaller-bugs@googlegroups.com>
-Subject: [PATCH] module: replace the mutex lock acquisition method
-Date: Fri, 21 Feb 2025 18:10:05 +0800
-Message-ID: <20250221101005.2742983-1-lizhi.xu@windriver.com>
+	s=arc-20240116; t=1740132632; c=relaxed/simple;
+	bh=wlptftT9TNPT2Wcv9+geiPqs7J3eu1auQHoiSMtTSto=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UMtHbuVL2Iom7vtoJZvhJY2lZf5+Vd1UsetIegVCPFrb1/Xak3fFNRBnS3v0h5cYi9IoM62GkymkA8fjo44za9DfsQ/eLz+749PSHIlDecqkK+HQlWriVuJEGIHY8DuxN7eJO0xHufGUXmefoTJTENSSKnkeL7+AVKNvX7EbKds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G6gz5OvM; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5461cb12e39so1803201e87.2;
+        Fri, 21 Feb 2025 02:10:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740132628; x=1740737428; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zqPEUM8CWBkBnaiq8nBKteDjqMZo/rUNGmbvJpBUdaY=;
+        b=G6gz5OvM8kSJN+WL52HHORFDynGE2/MU3Yt1Gybq5ExKLpPn1A6cISmdboIQIwDmdm
+         JrTWAsGWvDaNPggUTJG2Q0zfPnBslUlN9AHw3Ofs5u+gP7GT/781NGbpLQzqJkoU+mEe
+         9/u9TOEfODh4i8yeRqRtvQBRy3o9rEtq+RomVEw5l634/Zhu+ykp4HuNF1CCJ+wXbc5Z
+         4VmY3kuAWng6VM5U92+iJDk9EfMQR1h/0YuI0Itf3IGpkSSKvx3NexgTbZopMYJR3H9j
+         F8q/U8+2Q6GUKiEqBB+L941G9RVKrR5soN4pv4wEUxbklocrLqrz52eGNKpsDWmXZJgM
+         86bw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740132628; x=1740737428;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zqPEUM8CWBkBnaiq8nBKteDjqMZo/rUNGmbvJpBUdaY=;
+        b=JfIrhc94pbas8iUItAHUt9mfIAt8Xzp17ajjYf7rsL2gQwMeoPP56ZP7alVlQ8NV2h
+         Gu44u8r0/WFZW5Apmt1xT6DvjkvxyRTbJCV2X+ukfkjs5rT/2EqKGCL0ldnZt5ucKZAl
+         LoU7/XYnoKm8JkHYXweas0tQQCNm0cNFocFrsKCcJL/W2dWlbexhU+xYXbyMGnYfDFEp
+         72pHauO1cFT7WbobGYGUEzDEB/JDVgEw60t2xEnYEx0t+jFguHGFWP+cBeD/bWheB/VP
+         gA6raND/VBsIw3KSuGckvd2SaEsGXgeG4G21Tj2TBBq27uVt/GCleUcXeJC1XOleJaI5
+         uFYw==
+X-Forwarded-Encrypted: i=1; AJvYcCXI7LknxVcBSPvgI5+ui2vjqeC1Agw1ves05Linebc4zRu9HHBkKi23Vk+AFNogr79VHooGMck=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+blMnELh0j7h4TKNKYmlWYkY0DFWclxVgOGoB/ZbZ9Hz4pNWq
+	thb6HTX1ycXfDZTF5AbteTemHxiTrV8ug+lBNvJMzKNxhkXvzjv+eWQiNybY1Vw=
+X-Gm-Gg: ASbGnctT7Xt5s5Z0OQ6x1YnrxK+BRn/rppSZm6fmv/ioYIthkPqsYGlxwzsc37yVO0R
+	68+ZItSB4v897zMOYtemhRAMADhRjNXSWw474NrbJXNKWc/EoF5HD1E9aWb4tMFwbA+CM4hiV3w
+	bTBoWKebo+kqVeCb+/DnU4LFWgxITKwifYSRxNv6OiKoBkxGAzdV7OmidEuber04Mu8v0Ew8rWD
+	4K1QhIR4N+6gQvTvbDBigz1kwin2mGuR2Ut5vidvseIzTsk22vx6wiQyE4k0QwA8t3kH0HRD7uW
+	00sWbltHOm7ba63J21URaHhjC1dMmivOM5Y543fkVoIhjOc=
+X-Google-Smtp-Source: AGHT+IFTGRCtCryddXyQLyypDgKtxmrlFtruuFq8ezc0f1owzy2Sl8SNaJCVsLrd3FGNLyFbWg7Ujw==
+X-Received: by 2002:a05:6512:3e0d:b0:545:25c6:d6f5 with SMTP id 2adb3069b0e04-54838f5c9ebmr829809e87.53.1740132627734;
+        Fri, 21 Feb 2025 02:10:27 -0800 (PST)
+Received: from FI-L-7486715.nmea.abb.com ([147.161.186.94])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3092bc01c45sm21255401fa.1.2025.02.21.02.10.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Feb 2025 02:10:27 -0800 (PST)
+From: Jaakko Karrenpalo <jkarrenpalo@gmail.com>
+To: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Lukasz Majewski <lukma@denx.de>,
+	MD Danish Anwar <danishanwar@ti.com>
+Cc: linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	Jaakko Karrenpalo <jaakko.karrenpalo@fi.abb.com>,
+	Jaakko Karrenpalo <jkarrenpalo@gmail.com>
+Subject: [PATCH net-next v2 1/2] net: hsr: Fix PRP duplicate detection
+Date: Fri, 21 Feb 2025 12:10:22 +0200
+Message-ID: <20250221101023.91915-1-jkarrenpalo@gmail.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <67b74749.050a0220.14d86d.02b4.GAE@google.com>
-References: <67b74749.050a0220.14d86d.02b4.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,219 +92,231 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: yqYvnQ0uQpGTyVYqxw1EDgwoiC9uiMXJ
-X-Authority-Analysis: v=2.4 cv=Xb9zzJ55 c=1 sm=1 tr=0 ts=67b85100 cx=c_pps a=K4BcnWQioVPsTJd46EJO2w==:117 a=K4BcnWQioVPsTJd46EJO2w==:17 a=T2h4t0Lz3GQA:10 a=edf1wS77AAAA:8 a=hSkVLCK3AAAA:8 a=t7CeM3EgAAAA:8 a=GzR0737Q8psi_uX2n_oA:9 a=DcSpbTIhAlouE1Uv7lRv:22
- a=cQPPKAXgyycSBL8etih5:22 a=FdTzh2GWekK77mhwV6Dw:22
-X-Proofpoint-GUID: yqYvnQ0uQpGTyVYqxw1EDgwoiC9uiMXJ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-21_01,2025-02-20_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 suspectscore=0
- adultscore=0 bulkscore=0 malwarescore=0 lowpriorityscore=0 spamscore=0
- mlxscore=0 phishscore=0 impostorscore=0 priorityscore=1501 mlxlogscore=999
- classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.21.0-2502100000
- definitions=main-2502210076
 
-syzbot reported a deadlock in lock_system_sleep. [1]
+From: Jaakko Karrenpalo <jaakko.karrenpalo@fi.abb.com>
 
-The write operation to "/sys/module/hibernate/parameters/compressor"
-conflicts with the registration of ieee80211 device, resulting in a deadlock
-in the lock param_lock.
+Add PRP specific function for handling duplicate
+packets. This is needed because of potential
+L2 802.1p prioritization done by network switches.
 
-Since the conflict cannot be avoided, the way to obtain param_lock is changed
-to trylock to avoid deadlock.
-
-[1]
-syz-executor895/5833 is trying to acquire lock:
-ffffffff8e0828c8 (system_transition_mutex){+.+.}-{4:4}, at: lock_system_sleep+0x87/0xa0 kernel/power/main.c:56
-
-but task is already holding lock:
-ffffffff8e07dc68 (param_lock){+.+.}-{4:4}, at: kernel_param_lock kernel/params.c:607 [inline]
-ffffffff8e07dc68 (param_lock){+.+.}-{4:4}, at: param_attr_store+0xe6/0x300 kernel/params.c:586
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #3 (param_lock){+.+.}-{4:4}:
-       __mutex_lock_common kernel/locking/mutex.c:585 [inline]
-       __mutex_lock+0x19b/0xb10 kernel/locking/mutex.c:730
-       ieee80211_rate_control_ops_get net/mac80211/rate.c:220 [inline]
-       rate_control_alloc net/mac80211/rate.c:266 [inline]
-       ieee80211_init_rate_ctrl_alg+0x18d/0x6b0 net/mac80211/rate.c:1015
-       ieee80211_register_hw+0x20cd/0x4060 net/mac80211/main.c:1531
-       mac80211_hwsim_new_radio+0x304e/0x54e0 drivers/net/wireless/virtual/mac80211_hwsim.c:5558
-       init_mac80211_hwsim+0x432/0x8c0 drivers/net/wireless/virtual/mac80211_hwsim.c:6910
-       do_one_initcall+0x128/0x700 init/main.c:1257
-       do_initcall_level init/main.c:1319 [inline]
-       do_initcalls init/main.c:1335 [inline]
-       do_basic_setup init/main.c:1354 [inline]
-       kernel_init_freeable+0x5c7/0x900 init/main.c:1568
-       kernel_init+0x1c/0x2b0 init/main.c:1457
-       ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:148
-       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
--> #2 (rtnl_mutex){+.+.}-{4:4}:
-       __mutex_lock_common kernel/locking/mutex.c:585 [inline]
-       __mutex_lock+0x19b/0xb10 kernel/locking/mutex.c:730
-       wg_pm_notification drivers/net/wireguard/device.c:80 [inline]
-       wg_pm_notification+0x49/0x180 drivers/net/wireguard/device.c:64
-       notifier_call_chain+0xb7/0x410 kernel/notifier.c:85
-       notifier_call_chain_robust kernel/notifier.c:120 [inline]
-       blocking_notifier_call_chain_robust kernel/notifier.c:345 [inline]
-       blocking_notifier_call_chain_robust+0xc9/0x170 kernel/notifier.c:333
-       pm_notifier_call_chain_robust+0x27/0x60 kernel/power/main.c:102
-       snapshot_open+0x189/0x2b0 kernel/power/user.c:77
-       misc_open+0x35a/0x420 drivers/char/misc.c:179
-       chrdev_open+0x237/0x6a0 fs/char_dev.c:414
-       do_dentry_open+0x735/0x1c40 fs/open.c:956
-       vfs_open+0x82/0x3f0 fs/open.c:1086
-       do_open fs/namei.c:3830 [inline]
-       path_openat+0x1e88/0x2d80 fs/namei.c:3989
-       do_filp_open+0x20c/0x470 fs/namei.c:4016
-       do_sys_openat2+0x17a/0x1e0 fs/open.c:1428
-       do_sys_open fs/open.c:1443 [inline]
-       __do_sys_openat fs/open.c:1459 [inline]
-       __se_sys_openat fs/open.c:1454 [inline]
-       __x64_sys_openat+0x175/0x210 fs/open.c:1454
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #1 ((pm_chain_head).rwsem){++++}-{4:4}:
-       down_read+0x9a/0x330 kernel/locking/rwsem.c:1524
-       blocking_notifier_call_chain_robust kernel/notifier.c:344 [inline]
-       blocking_notifier_call_chain_robust+0xa9/0x170 kernel/notifier.c:333
-       pm_notifier_call_chain_robust+0x27/0x60 kernel/power/main.c:102
-       snapshot_open+0x189/0x2b0 kernel/power/user.c:77
-       misc_open+0x35a/0x420 drivers/char/misc.c:179
-       chrdev_open+0x237/0x6a0 fs/char_dev.c:414
-       do_dentry_open+0x735/0x1c40 fs/open.c:956
-       vfs_open+0x82/0x3f0 fs/open.c:1086
-       do_open fs/namei.c:3830 [inline]
-       path_openat+0x1e88/0x2d80 fs/namei.c:3989
-       do_filp_open+0x20c/0x470 fs/namei.c:4016
-       do_sys_openat2+0x17a/0x1e0 fs/open.c:1428
-       do_sys_open fs/open.c:1443 [inline]
-       __do_sys_openat fs/open.c:1459 [inline]
-       __se_sys_openat fs/open.c:1454 [inline]
-       __x64_sys_openat+0x175/0x210 fs/open.c:1454
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #0 (system_transition_mutex){+.+.}-{4:4}:
-       check_prev_add kernel/locking/lockdep.c:3163 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3282 [inline]
-       validate_chain kernel/locking/lockdep.c:3906 [inline]
-       __lock_acquire+0x249e/0x3c40 kernel/locking/lockdep.c:5228
-       lock_acquire.part.0+0x11b/0x380 kernel/locking/lockdep.c:5851
-       __mutex_lock_common kernel/locking/mutex.c:585 [inline]
-       __mutex_lock+0x19b/0xb10 kernel/locking/mutex.c:730
-       lock_system_sleep+0x87/0xa0 kernel/power/main.c:56
-       hibernate_compressor_param_set+0x1c/0x210 kernel/power/hibernate.c:1452
-       param_attr_store+0x18f/0x300 kernel/params.c:588
-       module_attr_store+0x55/0x80 kernel/params.c:924
-       sysfs_kf_write+0x117/0x170 fs/sysfs/file.c:139
-       kernfs_fop_write_iter+0x33d/0x500 fs/kernfs/file.c:334
-       new_sync_write fs/read_write.c:586 [inline]
-       vfs_write+0x5ae/0x1150 fs/read_write.c:679
-       ksys_write+0x12b/0x250 fs/read_write.c:731
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-other info that might help us debug this:
-
-Chain exists of:
-  system_transition_mutex --> rtnl_mutex --> param_lock
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(param_lock);
-                               lock(rtnl_mutex);
-                               lock(param_lock);
-  lock(system_transition_mutex);
-
- *** DEADLOCK ***
-
-Reported-by: syzbot+ace60642828c074eb913@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=ace60642828c074eb913
-Tested-by: syzbot+ace60642828c074eb913@syzkaller.appspotmail.com
-Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
+Signed-off-by: Jaakko Karrenpalo <jaakko.karrenpalo@fi.abb.com>
+Signed-off-by: Jaakko Karrenpalo <jkarrenpalo@gmail.com>
 ---
- include/linux/moduleparam.h | 4 ++++
- kernel/params.c             | 9 ++++++++-
- net/mac80211/rate.c         | 4 +++-
- 3 files changed, 15 insertions(+), 2 deletions(-)
+ net/hsr/hsr_device.c   |  2 +
+ net/hsr/hsr_forward.c  |  4 +-
+ net/hsr/hsr_framereg.c | 93 ++++++++++++++++++++++++++++++++++++++++--
+ net/hsr/hsr_framereg.h |  8 +++-
+ net/hsr/hsr_main.h     |  2 +
+ 5 files changed, 102 insertions(+), 7 deletions(-)
 
-diff --git a/include/linux/moduleparam.h b/include/linux/moduleparam.h
-index bfb85fd13e1f..cbcbfd8db721 100644
---- a/include/linux/moduleparam.h
-+++ b/include/linux/moduleparam.h
-@@ -306,11 +306,15 @@ struct kparam_array
+diff --git a/net/hsr/hsr_device.c b/net/hsr/hsr_device.c
+index b6fb18469439..2c43776b7c4f 100644
+--- a/net/hsr/hsr_device.c
++++ b/net/hsr/hsr_device.c
+@@ -616,6 +616,7 @@ static struct hsr_proto_ops hsr_ops = {
+ 	.drop_frame = hsr_drop_frame,
+ 	.fill_frame_info = hsr_fill_frame_info,
+ 	.invalid_dan_ingress_frame = hsr_invalid_dan_ingress_frame,
++	.register_frame_out = hsr_register_frame_out,
+ };
  
- #ifdef CONFIG_SYSFS
- extern void kernel_param_lock(struct module *mod);
-+extern int kernel_param_trylock(struct module *mod);
- extern void kernel_param_unlock(struct module *mod);
- #else
- static inline void kernel_param_lock(struct module *mod)
+ static struct hsr_proto_ops prp_ops = {
+@@ -626,6 +627,7 @@ static struct hsr_proto_ops prp_ops = {
+ 	.fill_frame_info = prp_fill_frame_info,
+ 	.handle_san_frame = prp_handle_san_frame,
+ 	.update_san_info = prp_update_san_info,
++	.register_frame_out = prp_register_frame_out,
+ };
+ 
+ void hsr_dev_setup(struct net_device *dev)
+diff --git a/net/hsr/hsr_forward.c b/net/hsr/hsr_forward.c
+index a4bacf198555..aebeced10ad8 100644
+--- a/net/hsr/hsr_forward.c
++++ b/net/hsr/hsr_forward.c
+@@ -536,8 +536,8 @@ static void hsr_forward_do(struct hsr_frame_info *frame)
+ 		 * Also for SAN, this shouldn't be done.
+ 		 */
+ 		if (!frame->is_from_san &&
+-		    hsr_register_frame_out(port, frame->node_src,
+-					   frame->sequence_nr))
++			hsr->proto_ops->register_frame_out &&
++		    hsr->proto_ops->register_frame_out(port, frame))
+ 			continue;
+ 
+ 		if (frame->is_supervision && port->type == HSR_PT_MASTER &&
+diff --git a/net/hsr/hsr_framereg.c b/net/hsr/hsr_framereg.c
+index 73bc6f659812..98898f05df6a 100644
+--- a/net/hsr/hsr_framereg.c
++++ b/net/hsr/hsr_framereg.c
+@@ -35,6 +35,7 @@ static bool seq_nr_after(u16 a, u16 b)
+ 
+ #define seq_nr_before(a, b)		seq_nr_after((b), (a))
+ #define seq_nr_before_or_eq(a, b)	(!seq_nr_after((a), (b)))
++#define PRP_DROP_WINDOW_LEN 32768
+ 
+ bool hsr_addr_is_redbox(struct hsr_priv *hsr, unsigned char *addr)
  {
+@@ -176,8 +177,11 @@ static struct hsr_node *hsr_add_node(struct hsr_priv *hsr,
+ 		new_node->time_in[i] = now;
+ 		new_node->time_out[i] = now;
+ 	}
+-	for (i = 0; i < HSR_PT_PORTS; i++)
++	for (i = 0; i < HSR_PT_PORTS; i++) {
+ 		new_node->seq_out[i] = seq_out;
++		new_node->seq_expected[i] = seq_out + 1;
++		new_node->seq_start[i] = seq_out + 1;
++	}
+ 
+ 	if (san && hsr->proto_ops->handle_san_frame)
+ 		hsr->proto_ops->handle_san_frame(san, rx_port, new_node);
+@@ -482,9 +486,11 @@ void hsr_register_frame_in(struct hsr_node *node, struct hsr_port *port,
+  *	 0 otherwise, or
+  *	 negative error code on error
+  */
+-int hsr_register_frame_out(struct hsr_port *port, struct hsr_node *node,
+-			   u16 sequence_nr)
++int hsr_register_frame_out(struct hsr_port *port, struct hsr_frame_info *frame)
+ {
++	struct hsr_node *node = frame->node_src;
++	u16 sequence_nr = frame->sequence_nr;
++
+ 	spin_lock_bh(&node->seq_out_lock);
+ 	if (seq_nr_before_or_eq(sequence_nr, node->seq_out[port->type]) &&
+ 	    time_is_after_jiffies(node->time_out[port->type] +
+@@ -499,6 +505,87 @@ int hsr_register_frame_out(struct hsr_port *port, struct hsr_node *node,
+ 	return 0;
  }
-+static inline int kernel_param_trylock(struct module *mod)
+ 
++/* Adaptation of the PRP duplicate discard algorithm described in wireshark
++ * wiki (https://wiki.wireshark.org/PRP)
++ *
++ * A drop window is maintained for both LANs with start sequence set to the
++ * first sequence accepted on the LAN that has not been seen on the other LAN,
++ * and expected sequence set to the latest received sequence number plus one.
++ *
++ * When a frame is received on either LAN it is compared against the received
++ * frames on the other LAN. If it is outside the drop window of the other LAN
++ * the frame is accepted and the drop window is updated.
++ * The drop window for the other LAN is reset.
++ *
++ * 'port' is the outgoing interface
++ * 'frame' is the frame to be sent
++ *
++ * Return:
++ *	 1 if frame can be shown to have been sent recently on this interface,
++ *	 0 otherwise
++ */
++int prp_register_frame_out(struct hsr_port *port, struct hsr_frame_info *frame)
 +{
++	enum hsr_port_type other_port;
++	enum hsr_port_type rcv_port;
++	struct hsr_node *node;
++	u16 sequence_nr;
++
++	/* out-going frames are always in order
++	 *and can be checked the same way as for HSR
++	 */
++	if (frame->port_rcv->type == HSR_PT_MASTER)
++		return hsr_register_frame_out(port, frame);
++
++	/* for PRP we should only forward frames from the slave ports
++	 * to the master port
++	 */
++	if (port->type != HSR_PT_MASTER)
++		return 1;
++
++	node = frame->node_src;
++	sequence_nr = frame->sequence_nr;
++	rcv_port = frame->port_rcv->type;
++	other_port =
++		rcv_port == HSR_PT_SLAVE_A ? HSR_PT_SLAVE_B : HSR_PT_SLAVE_A;
++
++	spin_lock_bh(&node->seq_out_lock);
++	if (time_is_before_jiffies(node->time_out[port->type] +
++	    msecs_to_jiffies(HSR_ENTRY_FORGET_TIME)) ||
++	    (node->seq_start[rcv_port] == node->seq_expected[rcv_port] &&
++	    node->seq_start[other_port] == node->seq_expected[other_port])) {
++		/* the node hasn't been sending for a while
++		 * or both drop windows are empty, forward the frame
++		 */
++		node->seq_start[rcv_port] = sequence_nr;
++	} else if (seq_nr_before(sequence_nr, node->seq_expected[other_port]) &&
++	    seq_nr_before_or_eq(node->seq_start[other_port], sequence_nr)) {
++		/* drop the frame, update the drop window for the other port
++		 * and reset our drop window
++		 */
++		node->seq_start[other_port] = sequence_nr + 1;
++		node->seq_expected[rcv_port] = sequence_nr + 1;
++		node->seq_start[rcv_port] = node->seq_expected[rcv_port];
++		spin_unlock_bh(&node->seq_out_lock);
++		return 1;
++	}
++
++	/* update the drop window for the port where this frame was received
++	 * and clear the drop window for the other port
++	 */
++	node->seq_start[other_port] = node->seq_expected[other_port];
++	node->seq_expected[rcv_port] = sequence_nr + 1;
++	if ((u16)(node->seq_expected[rcv_port] - node->seq_start[rcv_port])
++	    > PRP_DROP_WINDOW_LEN)
++		node->seq_start[rcv_port] =
++			node->seq_expected[rcv_port] - PRP_DROP_WINDOW_LEN;
++
++	node->time_out[port->type] = jiffies;
++	node->seq_out[port->type] = sequence_nr;
++	spin_unlock_bh(&node->seq_out_lock);
++	return 0;
 +}
- static inline void kernel_param_unlock(struct module *mod)
++
+ static struct hsr_port *get_late_port(struct hsr_priv *hsr,
+ 				      struct hsr_node *node)
  {
- }
-diff --git a/kernel/params.c b/kernel/params.c
-index 0074d29c9b80..d19881fbb2ec 100644
---- a/kernel/params.c
-+++ b/kernel/params.c
-@@ -583,7 +583,9 @@ static ssize_t param_attr_store(const struct module_attribute *mattr,
- 	if (!attribute->param->ops->set)
- 		return -EPERM;
+diff --git a/net/hsr/hsr_framereg.h b/net/hsr/hsr_framereg.h
+index 993fa950d814..b04948659d84 100644
+--- a/net/hsr/hsr_framereg.h
++++ b/net/hsr/hsr_framereg.h
+@@ -44,8 +44,7 @@ void hsr_addr_subst_dest(struct hsr_node *node_src, struct sk_buff *skb,
  
--	kernel_param_lock(mk->mod);
-+	if (!kernel_param_trylock(mk->mod))
-+		return -EPERM;
-+
- 	if (param_check_unsafe(attribute->param))
- 		err = attribute->param->ops->set(buf, attribute->param);
- 	else
-@@ -607,6 +609,11 @@ void kernel_param_lock(struct module *mod)
- 	mutex_lock(KPARAM_MUTEX(mod));
- }
+ void hsr_register_frame_in(struct hsr_node *node, struct hsr_port *port,
+ 			   u16 sequence_nr);
+-int hsr_register_frame_out(struct hsr_port *port, struct hsr_node *node,
+-			   u16 sequence_nr);
++int hsr_register_frame_out(struct hsr_port *port, struct hsr_frame_info *frame);
  
-+int kernel_param_trylock(struct module *mod)
-+{
-+	return mutex_trylock(KPARAM_MUTEX(mod));
-+}
-+
- void kernel_param_unlock(struct module *mod)
- {
- 	mutex_unlock(KPARAM_MUTEX(mod));
-diff --git a/net/mac80211/rate.c b/net/mac80211/rate.c
-index 0d056db9f81e..aecf7ff51cd9 100644
---- a/net/mac80211/rate.c
-+++ b/net/mac80211/rate.c
-@@ -217,7 +217,9 @@ ieee80211_rate_control_ops_get(const char *name)
- 	const struct rate_control_ops *ops;
- 	const char *alg_name;
+ void hsr_prune_nodes(struct timer_list *t);
+ void hsr_prune_proxy_nodes(struct timer_list *t);
+@@ -73,6 +72,8 @@ void prp_update_san_info(struct hsr_node *node, bool is_sup);
+ bool hsr_is_node_in_db(struct list_head *node_db,
+ 		       const unsigned char addr[ETH_ALEN]);
  
--	kernel_param_lock(THIS_MODULE);
-+	if (!kernel_param_trylock(THIS_MODULE))
-+		return NULL;
++int prp_register_frame_out(struct hsr_port *port, struct hsr_frame_info *frame);
 +
- 	if (!name)
- 		alg_name = ieee80211_default_rc_algo;
- 	else
+ struct hsr_node {
+ 	struct list_head	mac_list;
+ 	/* Protect R/W access to seq_out */
+@@ -89,6 +90,9 @@ struct hsr_node {
+ 	bool			san_b;
+ 	u16			seq_out[HSR_PT_PORTS];
+ 	bool			removed;
++	/* PRP specific duplicate handling */
++	u16			seq_expected[HSR_PT_PORTS];
++	u16			seq_start[HSR_PT_PORTS];
+ 	struct rcu_head		rcu_head;
+ };
+ 
+diff --git a/net/hsr/hsr_main.h b/net/hsr/hsr_main.h
+index 7561845b8bf6..1bc47b17a296 100644
+--- a/net/hsr/hsr_main.h
++++ b/net/hsr/hsr_main.h
+@@ -175,6 +175,8 @@ struct hsr_proto_ops {
+ 			       struct hsr_frame_info *frame);
+ 	bool (*invalid_dan_ingress_frame)(__be16 protocol);
+ 	void (*update_san_info)(struct hsr_node *node, bool is_sup);
++	int (*register_frame_out)(struct hsr_port *port,
++				  struct hsr_frame_info *frame);
+ };
+ 
+ struct hsr_self_node {
 -- 
 2.43.0
 
