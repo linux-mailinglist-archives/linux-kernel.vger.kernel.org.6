@@ -1,157 +1,149 @@
-Return-Path: <linux-kernel+bounces-525413-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C7AEA3EF8F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:08:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B5F2A3EF95
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:09:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88AEA188223E
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:08:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC8BA1890C78
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:08:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DE60204590;
-	Fri, 21 Feb 2025 09:07:33 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5543520408E;
+	Fri, 21 Feb 2025 09:08:21 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3B94204096;
-	Fri, 21 Feb 2025 09:07:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8558F201253
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 09:08:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740128853; cv=none; b=DKD0R1RwvmU0pyQj4zPm3o71EDVS1hAocBpFPQblvzut1uVIBNwCx3mRNHSrnrD/obQyfclB8e1d6egKaViVzEAmUOgw0nadDQC9AkU5EkemrBE5zpOILfZnipbtvxggsF4Rj7411RjzLApO+iZpEeCGoPj0jtZ8kcKnyAlj2lU=
+	t=1740128901; cv=none; b=oJSZCQc4fQ4OcXg/xZJn8F9Zuns0H6itMxU0OTbHBvO7ySeM2h5nGGnsTY6tNVZop7WHKfg4RugtXgti7XzBfA5vwQgDTUX+upiiQqOPD8zO53QYBmz4+d2ku6z1iOAYHz2cqGSjNuzucX1ZNhBgWhnyJ2iccItXfCBhtbiX18k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740128853; c=relaxed/simple;
-	bh=+neqxwX4CL/sv7YarzkigmtgjKOZDE/nFmT4qUSQKXQ=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=e2chaEB7t2h3XzOOY2OHisFoGcr0l59iGVbvR1lMADp+wTrs8Qoq/lVgFo74K5osfMabpEtAMxTI31s9JcaRxym5EGn6DQQbr80Y3htXHIxYR8G6ST2ac26rvAvoYYs6/d0dgIMtYgI7+AHTt79aV5yHckDs4q/FQi3f6o+1szk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Yzklz023vz4f3jqN;
-	Fri, 21 Feb 2025 17:07:11 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 58AD71A058E;
-	Fri, 21 Feb 2025 17:07:27 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgDHKl9NQrhnVePhEQ--.4246S3;
-	Fri, 21 Feb 2025 17:07:26 +0800 (CST)
-Subject: Re: [PATCH 02/12] badblocks: factor out a helper try_adjacent_combine
-To: Zheng Qixing <zhengqixing@huaweicloud.com>, axboe@kernel.dk,
- song@kernel.org, colyli@kernel.org, dan.j.williams@intel.com,
- vishal.l.verma@intel.com, dave.jiang@intel.com, ira.weiny@intel.com,
- dlemoal@kernel.org, yanjun.zhu@linux.dev, kch@nvidia.com, hare@suse.de,
- zhengqixing@huawei.com, john.g.garry@oracle.com, geliang@kernel.org,
- xni@redhat.com, colyli@suse.de
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-raid@vger.kernel.org, nvdimm@lists.linux.dev, yi.zhang@huawei.com,
- yangerkun@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
-References: <20250221081109.734170-1-zhengqixing@huaweicloud.com>
- <20250221081109.734170-3-zhengqixing@huaweicloud.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <cfad3954-0572-1da8-38a3-85c8b1164371@huaweicloud.com>
-Date: Fri, 21 Feb 2025 17:07:25 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1740128901; c=relaxed/simple;
+	bh=aLhpoR2Qz3WvtScp8s0/CscGnBuMdFhEXXNXBzl3Hq4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=TX9Z1FiNstHMf63GUV2qhg0TAAd90tgh7lw2PhTQFtGC3v6aFVYxXRONvY8Fy0/R8TGOcTSdCkgClRszHsBIUcJpGBQo4dWcFqj5gtb/duD2hFXi3h10+ZpSjdSPrQPY/r0bsAw5DaEFCqfhEK6lGk688/KAAuDWaZ4la35tdcA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1tlP0n-0006M5-JE; Fri, 21 Feb 2025 10:07:57 +0100
+Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1tlP0k-0024nY-2Z;
+	Fri, 21 Feb 2025 10:07:54 +0100
+Received: from pza by lupine with local (Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1tlP0k-0002L0-29;
+	Fri, 21 Feb 2025 10:07:54 +0100
+Message-ID: <d31a48ebfc0f91de615af75e313caa6afbdd597d.camel@pengutronix.de>
+Subject: Re: [PATCH 2/2] PCI: sophgo-dwc: Add Sophgo SG2044 PCIe driver
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Inochi Amaoto <inochiama@gmail.com>, Lorenzo Pieralisi
+ <lpieralisi@kernel.org>, Krzysztof =?UTF-8?Q?Wilczy=C5=84ski?=
+ <kw@linux.com>,  Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Chen Wang <unicorn_wang@outlook.com>, Paul Walmsley
+ <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
+ <aou@eecs.berkeley.edu>, Niklas Cassel <cassel@kernel.org>,  Shashank Babu
+ Chinta Venkata <quic_schintav@quicinc.com>
+Cc: linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
+	sophgo@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, Yixun Lan <dlan@gentoo.org>, Longbin Li
+	 <looong.bin@gmail.com>
+Date: Fri, 21 Feb 2025 10:07:54 +0100
+In-Reply-To: <20250221013758.370936-3-inochiama@gmail.com>
+References: <20250221013758.370936-1-inochiama@gmail.com>
+	 <20250221013758.370936-3-inochiama@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20250221081109.734170-3-zhengqixing@huaweicloud.com>
-Content-Type: text/plain; charset=gbk; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgDHKl9NQrhnVePhEQ--.4246S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7tFWrJr4rtr43Jw1xWw4rKrg_yoW8tw47pr
-	n8Aw1avryxCr1I9a13XanFyr1rCw1xJr4jyF47Jw18GFy8tw1IgF4ktw13ZF9FvrWxJFna
-	qr1UuFyv9FW8t37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9ab4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
-	e2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4I
-	kC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWU
-	WwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr
-	0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26F4j6r4UJwCI42IY6xAIw20EY4v20xvaj40_
-	Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8Jr
-	UvcSsGvfC2KfnxnUUI43ZEXa7IU07PEDUUUUU==
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-ÔÚ 2025/02/21 16:10, Zheng Qixing Ð´µÀ:
-> From: Li Nan <linan122@huawei.com>
-> 
-> Factor out try_adjacent_combine(), and it will be used in the later patch.
-> 
-> Signed-off-by: Li Nan <linan122@huawei.com>
+On Fr, 2025-02-21 at 09:37 +0800, Inochi Amaoto wrote:
+> Add support for DesignWare-based PCIe controller in SG2044 SoC.
+>=20
+> Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
 > ---
->   block/badblocks.c | 40 ++++++++++++++++++++++++++--------------
->   1 file changed, 26 insertions(+), 14 deletions(-)
-> 
-LGTM
-Reviewed-by: Yu Kuai <yukuai3@huawei.com>
-> diff --git a/block/badblocks.c b/block/badblocks.c
-> index bcee057efc47..f069c93e986d 100644
-> --- a/block/badblocks.c
-> +++ b/block/badblocks.c
-> @@ -855,6 +855,31 @@ static void badblocks_update_acked(struct badblocks *bb)
->   		bb->unacked_exist = 0;
->   }
->   
+>  drivers/pci/controller/dwc/Kconfig          |  10 +
+>  drivers/pci/controller/dwc/Makefile         |   1 +
+>  drivers/pci/controller/dwc/pcie-dw-sophgo.c | 282 ++++++++++++++++++++
+>  3 files changed, 293 insertions(+)
+>  create mode 100644 drivers/pci/controller/dwc/pcie-dw-sophgo.c
+>=20
+[...]
+> diff --git a/drivers/pci/controller/dwc/pcie-dw-sophgo.c b/drivers/pci/co=
+ntroller/dwc/pcie-dw-sophgo.c
+> new file mode 100644
+> index 000000000000..a4ca4f1e26e0
+> --- /dev/null
+> +++ b/drivers/pci/controller/dwc/pcie-dw-sophgo.c
+> @@ -0,0 +1,282 @@
+> +// SPDX-License-Identifier: GPL-2.0
 > +/*
-> + * Return 'true' if the range indicated by 'bad' is exactly backward
-> + * overlapped with the bad range (from bad table) indexed by 'behind'.
+> + * PCIe host controller driver for Sophgo SoCs.
+> + *
 > + */
-> +static bool try_adjacent_combine(struct badblocks *bb, int prev)
-> +{
-> +	u64 *p = bb->page;
 > +
-> +	if (prev >= 0 && (prev + 1) < bb->count &&
-> +	    BB_END(p[prev]) == BB_OFFSET(p[prev + 1]) &&
-> +	    (BB_LEN(p[prev]) + BB_LEN(p[prev + 1])) <= BB_MAX_LEN &&
-> +	    BB_ACK(p[prev]) == BB_ACK(p[prev + 1])) {
-> +		p[prev] = BB_MAKE(BB_OFFSET(p[prev]),
-> +				  BB_LEN(p[prev]) + BB_LEN(p[prev + 1]),
-> +				  BB_ACK(p[prev]));
-> +
-> +		if ((prev + 2) < bb->count)
-> +			memmove(p + prev + 1, p + prev + 2,
-> +				(bb->count -  (prev + 2)) * 8);
-> +		bb->count--;
-> +		return true;
-> +	}
-> +	return false;
-> +}
-> +
->   /* Do exact work to set bad block range into the bad block table */
->   static int _badblocks_set(struct badblocks *bb, sector_t s, int sectors,
->   			  int acknowledged)
-> @@ -1022,20 +1047,7 @@ static int _badblocks_set(struct badblocks *bb, sector_t s, int sectors,
->   	 * merged. (prev < 0) condition is not handled here,
->   	 * because it's already complicated enough.
->   	 */
-> -	if (prev >= 0 &&
-> -	    (prev + 1) < bb->count &&
-> -	    BB_END(p[prev]) == BB_OFFSET(p[prev + 1]) &&
-> -	    (BB_LEN(p[prev]) + BB_LEN(p[prev + 1])) <= BB_MAX_LEN &&
-> -	    BB_ACK(p[prev]) == BB_ACK(p[prev + 1])) {
-> -		p[prev] = BB_MAKE(BB_OFFSET(p[prev]),
-> -				  BB_LEN(p[prev]) + BB_LEN(p[prev + 1]),
-> -				  BB_ACK(p[prev]));
-> -
-> -		if ((prev + 2) < bb->count)
-> -			memmove(p + prev + 1, p + prev + 2,
-> -				(bb->count -  (prev + 2)) * 8);
-> -		bb->count--;
-> -	}
-> +	try_adjacent_combine(bb, prev);
->   
->   	if (space_desired && !badblocks_full(bb)) {
->   		s = orig_start;
-> 
+> +#include <linux/clk.h>
+> +#include <linux/gpio/consumer.h>
+> +#include <linux/irqchip/chained_irq.h>
+> +#include <linux/irqdomain.h>
+> +#include <linux/mfd/syscon.h>
+> +#include <linux/module.h>
+> +#include <linux/phy/phy.h>
+> +#include <linux/property.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/regmap.h>
+> +#include <linux/reset.h>
 
+Drop this ...
+
+> +
+> +#include "pcie-designware.h"
+> +
+> +#define to_sophgo_pcie(x)		dev_get_drvdata((x)->dev)
+> +
+> +#define PCIE_INT_SIGNAL			0xc48
+> +#define PCIE_INT_EN			0xca0
+> +
+> +#define PCIE_SIGNAL_INTX_SHIFT		5
+> +
+> +#define PCIE_INT_EN_INTX_SHIFT		1
+> +#define PCIE_INT_EN_INT_SII		BIT(0)
+> +#define PCIE_INT_EN_INT_INTA		BIT(1)
+> +#define PCIE_INT_EN_INT_INTB		BIT(2)
+> +#define PCIE_INT_EN_INT_INTC		BIT(3)
+> +#define PCIE_INT_EN_INT_INTD		BIT(4)
+> +#define PCIE_INT_EN_INT_MSI		BIT(5)
+> +
+> +struct sophgo_pcie {
+> +	struct dw_pcie pci;
+> +	void __iomem *app_base;
+> +	struct clk_bulk_data *clks;
+> +	unsigned int clk_cnt;
+> +	struct reset_control *rst;
+
+... and this. It is unused.
+
+
+regards
+Philipp
 
