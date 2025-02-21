@@ -1,125 +1,82 @@
-Return-Path: <linux-kernel+bounces-525671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2CABA3F2F7
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 12:34:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A52EDA3F2F8
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 12:34:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16691703471
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 11:34:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A21E07033C4
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 11:34:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7F20207A02;
-	Fri, 21 Feb 2025 11:34:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="amq0o053"
-Received: from xry111.site (xry111.site [89.208.246.23])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D1BE208997;
+	Fri, 21 Feb 2025 11:34:17 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5A032AE89;
-	Fri, 21 Feb 2025 11:34:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C5692AE89;
+	Fri, 21 Feb 2025 11:34:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740137649; cv=none; b=NaXxw/XR4y0e/9Vsq2dSvjZXfUeiovNk2pLx6ptU3mMT3hWa5QdxRicHguDkiXoOvoZMdTHovQ558giglErAiZjYdBTVC3K2baxlOmViSZQIJYiiwJ2bCP0Vq4nIntHYNAdLVBDSeiSvOWsch0Y2aWO1VKRvQ6D4jUHXNyMr35c=
+	t=1740137656; cv=none; b=ugX78HigJJxvLFUHIZ2O6dGuytK3R5QT0rpQ10IyB6MiDLwT2zL2RRQ2fIAXr850wOedRen/ZsjdvE8GdyCt0PjaEARQsM7cuZzLU11LQ32DFFXofKS5um4exS+1lpLr9LGumBtGcHuHI+JcQfng+9og9gPan6l5TuXIwP+Q0io=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740137649; c=relaxed/simple;
-	bh=OS9hY96E/r8fylEp9fwxYpkQLLw5dBFt3WyoGpksN6I=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FeR3n8PDabA07aM/KGdp6OldDvj0gmsLEk6IyD5CDMIRw7azqj8IV3poTVkQGlJc8pWVeJ+jUfjLJnZ7wJO31u/qeuda46951LuI7+dibZY6H+8LB9zrBCf4qyieMsCuZ4mL+eUHL7sh8NeGRHw8J3Qejc7F6Jueqv8bzLNKVhU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=amq0o053; arc=none smtp.client-ip=89.208.246.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xry111.site;
-	s=default; t=1740137647;
-	bh=Cc8ye2VMQWy+pBTH7jzTDaj20fNnEg8wmnHIfxMAHh8=;
-	h=From:To:Cc:Subject:Date:From;
-	b=amq0o05359nZly4KUjcES+dsDoBoRWd42N1782YEbjVd7UEBtI2L5JF0TbIJG8KzU
-	 pzQLPcngYjmPkOoVJNLLmQaVdeEJRAC17ywo0O+86sQI4TdamXmX9SCHhc+UlJX2Yp
-	 mNJE9vQDNHKQP9detTCqWxIRgZpk9CRrsDn2HJRU=
-Received: from stargazer.. (unknown [IPv6:240e:454:4311:1f25:535e:dcbe:c175:b1da])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (secp384r1) server-digest SHA384)
-	(Client did not present a certificate)
-	(Authenticated sender: xry111@xry111.site)
-	by xry111.site (Postfix) with ESMTPSA id CCC45664E4;
-	Fri, 21 Feb 2025 06:34:01 -0500 (EST)
-From: Xi Ruoyao <xry111@xry111.site>
-To: Huacai Chen <chenhuacai@kernel.org>,
-	WANG Xuerui <kernel@xen0n.name>,
-	"Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc: linux-crypto@vger.kernel.org,
-	loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Xi Ruoyao <xry111@xry111.site>
-Subject: [PATCH] LoongArch: vDSO: vgetrandom-chacha: Make use of the t8 register
-Date: Fri, 21 Feb 2025 19:32:43 +0800
-Message-ID: <20250221113341.108063-1-xry111@xry111.site>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1740137656; c=relaxed/simple;
+	bh=XQ7i0IZBYta+l8hAFKKUD5LN00tvTMqxo7kOdnYlEXg=;
+	h=Message-ID:Date:MIME-Version:CC:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=lSWIpvYC+laDzEJ7hJ1YgA9pfIOPyG7Ljlwl5m3nK4QBF6/Wreq113FugORNVxA/ThPks3gHcxc78EYy2+SGmJymJWVVWj0Wlx4luN8wbOWVSEKoe0eORfbbxuOc0GnQb9rKY2CXuzN4uD9Hn2Sidd7JSbrE6NTzmbP/x4fSSTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Yznzp0ClGzWyN1;
+	Fri, 21 Feb 2025 19:32:38 +0800 (CST)
+Received: from kwepemk100013.china.huawei.com (unknown [7.202.194.61])
+	by mail.maildlp.com (Postfix) with ESMTPS id 0B014140158;
+	Fri, 21 Feb 2025 19:34:11 +0800 (CST)
+Received: from [10.67.120.192] (10.67.120.192) by
+ kwepemk100013.china.huawei.com (7.202.194.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 21 Feb 2025 19:34:10 +0800
+Message-ID: <8cdea7c7-6b56-4554-850f-6939327221a1@huawei.com>
+Date: Fri, 21 Feb 2025 19:34:09 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+CC: <shaojijie@huawei.com>, <davem@davemloft.net>, <edumazet@google.com>,
+	<pabeni@redhat.com>, <andrew+netdev@lunn.ch>, <horms@kernel.org>,
+	<shenjian15@huawei.com>, <wangpeiyang1@huawei.com>, <liuyonglong@huawei.com>,
+	<chenhao418@huawei.com>, <sudongming1@huawei.com>, <xujunsheng@huawei.com>,
+	<shiyongbang@huawei.com>, <libaihan@huawei.com>,
+	<jonathan.cameron@huawei.com>, <shameerali.kolothum.thodi@huawei.com>,
+	<salil.mehta@huawei.com>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 net-next 2/6] net: hibmcge: Add rx checksum offload
+ supported in this module
+To: Jakub Kicinski <kuba@kernel.org>
+References: <20250218085829.3172126-1-shaojijie@huawei.com>
+ <20250218085829.3172126-3-shaojijie@huawei.com>
+ <20250220151136.2cb46929@kernel.org>
+From: Jijie Shao <shaojijie@huawei.com>
+In-Reply-To: <20250220151136.2cb46929@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemk100013.china.huawei.com (7.202.194.61)
 
-So we don't need to reuse a register and rematerialize a constant.  I
-couldn't count :(.
 
-Signed-off-by: Xi Ruoyao <xry111@xry111.site>
----
+on 2025/2/21 7:11, Jakub Kicinski wrote:
+> Do you need this? Why would the stack try to set features you don't 
+> support/advertize? Also you may clear SW features unnecessarily this way.
 
-Tested with vdso_test_getrandom and vdso_test_chacha.
+Thanks,
+I will remove this in v3
 
- arch/loongarch/vdso/vgetrandom-chacha.S | 13 +++----------
- 1 file changed, 3 insertions(+), 10 deletions(-)
-
-diff --git a/arch/loongarch/vdso/vgetrandom-chacha.S b/arch/loongarch/vdso/vgetrandom-chacha.S
-index c2733e6c3a8d..c4dd2bab8825 100644
---- a/arch/loongarch/vdso/vgetrandom-chacha.S
-+++ b/arch/loongarch/vdso/vgetrandom-chacha.S
-@@ -58,9 +58,7 @@ SYM_FUNC_START(__arch_chacha20_blocks_nostack)
- #define copy0		t5
- #define copy1		t6
- #define copy2		t7
--
--/* Reuse i as copy3 */
--#define copy3		i
-+#define copy3		t8
- 
- /* Packs to be used with OP_4REG */
- #define line0		state0, state1, state2, state3
-@@ -99,6 +97,7 @@ SYM_FUNC_START(__arch_chacha20_blocks_nostack)
- 	li.w		copy0, 0x61707865
- 	li.w		copy1, 0x3320646e
- 	li.w		copy2, 0x79622d32
-+	li.w		copy3, 0x6b206574
- 
- 	ld.w		cnt_lo, counter, 0
- 	ld.w		cnt_hi, counter, 4
-@@ -108,7 +107,7 @@ SYM_FUNC_START(__arch_chacha20_blocks_nostack)
- 	move		state0, copy0
- 	move		state1, copy1
- 	move		state2, copy2
--	li.w		state3, 0x6b206574
-+	move		state3, copy3
- 
- 	/* state[4,5,..,11] = key */
- 	ld.w		state4, key, 0
-@@ -167,12 +166,6 @@ SYM_FUNC_START(__arch_chacha20_blocks_nostack)
- 	addi.w		i, i, -1
- 	bnez		i, .Lpermute
- 
--	/*
--	 * copy[3] = "expa", materialize it here because copy[3] shares the
--	 * same register with i which just became dead.
--	 */
--	li.w		copy3, 0x6b206574
--
- 	/* output[0,1,2,3] = copy[0,1,2,3] + state[0,1,2,3] */
- 	OP_4REG	add.w	line0, copy
- 	st.w		state0, output, 0
--- 
-2.48.1
+Thanks,
+Jijie Shao
 
 
