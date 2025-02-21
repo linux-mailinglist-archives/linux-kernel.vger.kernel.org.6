@@ -1,107 +1,115 @@
-Return-Path: <linux-kernel+bounces-525383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2939A3EF47
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:59:41 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90991A3EF54
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:01:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2DCE19C361D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 08:59:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E08842314B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:00:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AA87202C41;
-	Fri, 21 Feb 2025 08:59:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 271E1202F70;
+	Fri, 21 Feb 2025 09:00:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jj++nu2J"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="fjFRHyE+";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="OFsgpslr"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 729DB33EA;
-	Fri, 21 Feb 2025 08:59:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1506B1DE896;
+	Fri, 21 Feb 2025 09:00:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740128370; cv=none; b=NuHZw3g+EaMflxLMYL7ZK9aEKaIs5KtWRbaWkxvScBrv+cGmkS4PZU3B/A0GZgw49vrqNuHaLrNI8xwUSn3ZQQYhU8qWod0PXssfp3etHqGjOipDffpIBYulqZm17nIqMKrqZpUSG2A/Qq2lBAKhRBc3MGoxhIidsI2avdvj5hw=
+	t=1740128413; cv=none; b=fmMz1YKtvQnhI56YyT4FMnNuLyOxsp6ndXSPSHUpk56oW1DWJOuugABrkRaaQAuvFw+EQnYuYO4H9z8/9bNaoyQYXy3GjBAVDVpPWnkyYrz9xIoXERiSb9gw1OwxtId4OxGEjU8nqYszWZ7mWta0lUWyU12Ta1FQjk/OYEbfpH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740128370; c=relaxed/simple;
-	bh=vF9wawzvcizoo6jSYAx1QotnSijKYox7CG3RzFsjghM=;
+	s=arc-20240116; t=1740128413; c=relaxed/simple;
+	bh=xkit/bBxrP/47/FJNxQVtKp/kzEycbPTUEmxxkZe/qU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sncplpdWTgtCwT4IPorUcbbkTU5Hwf6+EK0T0S9OogF5lJltRLi5EU5G0Pa4Xml9Ac2nf3R84nRErakXMMsHcG3Weji6KtC5dfp3TjeeOdclc43RIMGC/Y/iC6n0MBPN6zqNpdfLAHTEm4WoNgVnPvaTEib23Z5z5wQ1IHqScik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jj++nu2J; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7FE4C4CED6;
-	Fri, 21 Feb 2025 08:59:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740128369;
-	bh=vF9wawzvcizoo6jSYAx1QotnSijKYox7CG3RzFsjghM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Jj++nu2JRWU+mpnJyThMIp/baCyMMBclJ1fPSRowj67WpZUeNQRSiapJWFtZoOz9M
-	 8YR5NBqebC9xd466eZM3YDbRP+vnz4BKVsnSJfT49Q2sbvajTxnnBRzygp9X0otzn3
-	 vAep/+DdRRg9456PdROhN7mbYERQujC1WvU2iZzKsLwZ0Rj1RZARSynFGjJ+A5cYRN
-	 RLPYlY+ZV6M8YVwwZqtDHrGMH9BodqS/Y8wtaQ5DhMhg6nCCA+foJhrgKZw5XrFqqI
-	 RX2OyI4TDMv54itd51l4NHN45Yb8NxgkGaaE738o3/ErMfad3+vqe6oX3923VXhqMF
-	 +19pQ8cTCAJkQ==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1tlOsm-000000002td-26Nv;
-	Fri, 21 Feb 2025 09:59:40 +0100
-Date: Fri, 21 Feb 2025 09:59:40 +0100
-From: Johan Hovold <johan@kernel.org>
-To: srinivas.kandagatla@linaro.org
-Cc: broonie@kernel.org, perex@perex.cz, tiwai@suse.com,
-	krzysztof.kozlowski@linaro.org, linux-sound@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	dmitry.baryshkov@linaro.org, johan+linaro@kernel.org
-Subject: Re: [PATCH v2 0/5] ASoC: q6apm: fix under runs and fragment sizes
-Message-ID: <Z7hAfGHvdeWpZ4Y3@hovoldconsulting.com>
-References: <20250220162847.11994-1-srinivas.kandagatla@linaro.org>
- <Z7dog3cWe4BroZdT@hovoldconsulting.com>
- <Z7g5c0_vJNpN9fI4@hovoldconsulting.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q0y73oEW3vG3Bz+kqMZBzvw52NKPDN9NrQELUhzdb+8YG0aoVUGvSYVstQpLZrO39jsqYI+60dcfdrsHKzFiSVUK40Rf9ZXgyrWYswcdt86kct351Dj/NsO9OtrzjbCpAeUnE8vQB4lkBQYVuTBk2np/edVQSmyu7GhNai+usvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=fjFRHyE+; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=OFsgpslr; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 21 Feb 2025 10:00:08 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1740128410;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/G8u2w8Nz/6LNRqOihn9/E0oO4aWnl10a49dAoNX2lw=;
+	b=fjFRHyE+thVo4Q5iFcC3ygYJmMOFVyg6DuwmklDo2Uu/mBBp03Dj4HTV+CIXGklN0JeAG2
+	w9HeBnK6ZRp35pq5VJxKiQwvrJ5ayUZ+dTRQj46e4raD5blYmkvJi2lUVDSJ6vYOTwKux6
+	Wfsj6pl8KrDm8dVmP5BgJGKjPNd4ktY4f8xrw98q1E6UZL5V4hCB7F1065ubf4ltY1t9yy
+	WmkRvexmH6g9fuHPxxLeBP5zGsVYMW6ttLu9qrU/t6CIT//fGT0ZA/FcxpWFPH1Hzzt3Rb
+	kcOQXgAkTvJLYdMXncpROhdPJqlS69G8Oylnw2SbGImSET+LtxETv/PaRE+J5g==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1740128410;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/G8u2w8Nz/6LNRqOihn9/E0oO4aWnl10a49dAoNX2lw=;
+	b=OFsgpslrBT/3cxqqJfdOkE1EMygeHC3qIqcF2YoYX+56MorvTojESh7Ho87/zwdXhMGskh
+	lOjDRtOfUnp3sOBw==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Marco Elver <elver@google.com>
+Cc: Oliver Sang <oliver.sang@intel.com>, oe-lkp@lists.linux.dev,
+	lkp@intel.com, Petr Pavlu <petr.pavlu@suse.com>,
+	"H. Peter Anvin" <hpa@zytor.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+	kasan-dev@googlegroups.com, linux-hardening@vger.kernel.org,
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+	Kees Cook <kees@kernel.org>,
+	Alexander Potapenko <glider@google.com>,
+	Andrey Konovalov <andreyknvl@gmail.com>,
+	Dmitry Vyukov <dvyukov@google.com>,
+	Vincenzo Frascino <vincenzo.frascino@arm.com>,
+	Waiman Long <longman@redhat.com>
+Subject: Re: [linux-next:master] [x86] 66fbf67705:
+ kernel-selftests.kvm.hardware_disable_test.fail
+Message-ID: <20250221090008.5aWGygvI@linutronix.de>
+References: <Z7bUC9QY815Cv6nb@xsang-OptiPlex-9020>
+ <20250220155722.2Z2a-3z0@linutronix.de>
+ <CANpmjNN9zpcPa4S+Zq+vJWJ3EcO0zCZJ=Z4FgNzDRXdi0YQA9g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <Z7g5c0_vJNpN9fI4@hovoldconsulting.com>
+In-Reply-To: <CANpmjNN9zpcPa4S+Zq+vJWJ3EcO0zCZJ=Z4FgNzDRXdi0YQA9g@mail.gmail.com>
 
-On Fri, Feb 21, 2025 at 09:29:39AM +0100, Johan Hovold wrote:
-> On Thu, Feb 20, 2025 at 06:38:11PM +0100, Johan Hovold wrote:
-> > On Thu, Feb 20, 2025 at 04:28:42PM +0000, Srinivas Kandagatla wrote:
+On 2025-02-20 17:30:22 [+0100], Marco Elver wrote:
+> > How much do we care here? Is this something that makes UBSAN + KASAN
+> > folks uncomfortable? Or is lockdep slowing things down anyway?
 > 
-> > > On Qualcomm Audioreach setup, some of the audio artifacts are seen in
-> > > both recording and playback. These patches fix issues by
-> > > 1. Adjusting the fragment size that dsp can service.
-> > > 2. schedule available playback buffers in time for dsp to not hit under runs 
-> > > 3. remove some of the manual calculations done to get hardware pointer.
-> > > 
-> > > With these patches, am able to see Audio quality improvements.
-> > > 
-> > > Any testing would be appreciated.
-> > 
-> > With this series, the choppy (robotic) capture when using pipewire
-> > appears to be fixed (pulseaudio worked before).
-> > 
-> > Playback is still choppy (heavily distorted), though, and now it also
-> > appears to be too slow.
-> > 
-> > I tested using pw-record and pw-play (and mpv) on the T14s (6.14-rc3).
-> 
-> Retested this morning and realised that playback is only choppy (and too
-> slow) while I have pavucontrol open. That would be nice to fix if
-> possible, but this is still a great improvement since pipewire was not
-> usable at all before these changes.
-> 
-> Tested-by: Johan Hovold <johan+linaro@kernel.org>
+> Does this series from Waiman help?
+> https://lore.kernel.org/all/20250213200228.1993588-4-longman@redhat.com/
 
-Hmm... Scratch that.
+I have applied
 
-This series apparently breaks pulseaudio instead.
+| locking/lock_events: Add locking events for rtmutex slow paths
+| locking/lock_events: Add locking events for lockdep
+| locking/lockdep: Disable KASAN instrumentation of lockdep.c
+| locking/lockdep: Add kasan_check_byte() check in lock_acquire()
 
-Too fast playback on the T14s with mpv, and after I stopped it I wasn't
-able too play any audio anymore. And systemd complains about a stop job
-running for long when rebooting. Similar issues on the X13s.
+and with this I am down to:
 
-Johan
+| ~# time ./hardware_disable_test
+| Random seed: 0x6b8b4567
+| 
+| real    0m29.517s
+| user    0m0.493s
+| sys     0m10.891s
+
+Which is the pre-RCU case. Yes, the series from Waiman helps. This is my
+favorite solution.
+
+Sebastian
 
