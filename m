@@ -1,149 +1,157 @@
-Return-Path: <linux-kernel+bounces-525559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 312BFA3F14C
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 11:04:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D8DEA3F1D1
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 11:21:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C18951899622
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:04:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF7F03A1BBB
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:20:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F80F20459B;
-	Fri, 21 Feb 2025 10:03:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FBFD204F6F;
+	Fri, 21 Feb 2025 10:20:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mElo3CJ+"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=t12smtp-sign004.email header.i=@t12smtp-sign004.email header.b="jgQQxOtC"
+Received: from mail8.out.titan.email (mail8.out.titan.email [3.220.132.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74B5F1FECA7;
-	Fri, 21 Feb 2025 10:03:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F4B91C1F2F;
+	Fri, 21 Feb 2025 10:20:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=3.220.132.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740132235; cv=none; b=pjlSrhxR7AHqXYDIh2NXfJWTqntnQUI2ToOZMeXqpfi7j42XgoO65rwU3RtLQA1hm84CM12Sx7s9T7hYFJjrxVU1HbaQpGaaD5Di5s7ki4rFg4fxvindRipDbLgawJ646WB5jVs8T0UdTCnXVQD+Z2JbpReGUoxxu9EdjU9F7eg=
+	t=1740133258; cv=none; b=jJvtU8SByx9zAzX/9CWuAIszVmHLtwMZZIqN0pPOtOgdsZ5fmXjbriNTvOL6RSu8b6qVGtYaNXCK/hemdTN1gcHVWimrqk1WclTAfUzNTOYMtJtDZXdEakMilySN9+NY+8DkWmmrw0om8Owxff27/BC1z6+ZzXhounA8UX2AhRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740132235; c=relaxed/simple;
-	bh=kdDYrB6N6WvXiJWxvXdlROQD7OkyuM6+oQ6tfN8JvYQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=o69DU7IAySgjrqkbiWBAkwI/ZYduxX28ATxTrUlXqSIInBxVfPblKTE3m713LDPCn3chkgIQFZgzEMTx22xqxtU/O0REAd0AGCwTaAa65k7TGwf8GG37xpBFOIFexPh65hVAEP6Ut5q4Ip7r73CzLgSgx9Gn4OcgNi57EEqqlWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mElo3CJ+; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-220c8f38febso39643875ad.2;
-        Fri, 21 Feb 2025 02:03:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740132234; x=1740737034; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5PWSZrirQdj8aGkv2pYC6N6bxRY9wPrB8HX8oeQhEtQ=;
-        b=mElo3CJ+NxiWcTxk1m9gzt3Gtxwim4dtcrUv1CLgfEVw+NhAqCxPGcyrfjueVFD5oK
-         qSAcj2i+4ZEfPzocC37EirGG3c6kgZXLMY/UnX96wcvl95k1cAZizcRBuAlz0iQm0ZuZ
-         v/in/l7EIMOEEo49JUVXsx3PTA+raW0RrDine0s9+QFnmzXpjuSo6QQTQbaWVhNU5CY/
-         yvHPFERXemlytf8+wuoJC27VlaYq5HPJIU0toXL6qWuyN2MY17mFDfIsy5J4i/sFeat4
-         Fd63biFfFF8WfMlSh5hRGVxg2MGp2N2vyR6lJ7QDi+C/KJKYSbK7cyhfniNNVYsXagCd
-         YGgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740132234; x=1740737034;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=5PWSZrirQdj8aGkv2pYC6N6bxRY9wPrB8HX8oeQhEtQ=;
-        b=E7Occ+7iqn32hAqOqEnbVrbJSeD3PPwVlvNyBMPEosbChDwfGU65+bzNZkfiFRYztQ
-         /RNHsLFIcBuI/4RuoNXlxT1/3fyPfsDR372kBQdnjDqMX6w4tn9aiwzoSt340gWAxIP4
-         T4wI+c6daq2CpdQ+GwQsy+xONdzQ8BDLSBKBwkOIoOLfCN/BW6EdbUC7HsrC5QFIhrgm
-         uqoI+0a7iRxpwcKyKH0oAOZWjRH/6J6LcneJn7iULGm3eKqKyTlkRWFXw5JieAINnlLS
-         rVd7VpoQ0SFB9NfPakuTNubS59a7zzM58rOczTG0eUgOyMdAVd0QeslM1Z3fjCrUX/Ma
-         LCEg==
-X-Forwarded-Encrypted: i=1; AJvYcCUjUjAf4bH8p+w8gKHqsv5RGKdzZeqrElHHWiigwF0CR/KX1rBeGKmPT1AYPbDf/QjovTolWb7OdT5kpxNk@vger.kernel.org, AJvYcCWjdEYkI2DPkSlWaUMKNBXzXDnKEJKcNx/4fA7slswIMBe/ICs9GcrGFYIlAIc+7t5EDfQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWY/TUxymTPBD7ugc14vactbCie5t9babvP1SCc8vdvSL5BofC
-	/o9e5GerIVc/xCIAi2e/LV58bdQxsH2Qt8VKrRwMcnxjGUTeUCXF
-X-Gm-Gg: ASbGnct9GkoebwaXnJ9i9F4N+hixB5npl186rRsR+XQpke07Neuu6CnkV3wHOtdC7aZ
-	jbpCehh3kKxzJs1stBLMR//ryfBky00wQD95EU6F8TiLQIE/goXFcQdxUnC9J4feaD95QIBtqKw
-	CXpCSbSRIWJup+6LikYY9Kb80GHaHikK5ut/BxX4ndFfqm2QaqvtaUU4pPcq09Jae0p26Mwpotq
-	ZL+hak5Qanfy/Xrp4+OhoC/1sqabbwzZLTlQPaUGQ8hWGcrdK18afA2pvSuwJ3hc0UNGy88B7kH
-	+5WnqVoPsbEYGXOJy38KeAuhCyF63z4FtZ3vi7UC0aZI
-X-Google-Smtp-Source: AGHT+IHcP/adC+b4mN4jC4IWtxIovv4qFvyLf8AWMB5KnZt3UQWVacgb2YqYxya3HyAbW1QZSWC42Q==
-X-Received: by 2002:a17:902:ce0a:b0:21f:860:6d0d with SMTP id d9443c01a7336-2219ff8433dmr48435205ad.5.1740132233683;
-        Fri, 21 Feb 2025 02:03:53 -0800 (PST)
-Received: from [172.23.162.68] ([183.134.211.52])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d556f97dsm133849185ad.172.2025.02.21.02.03.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Feb 2025 02:03:53 -0800 (PST)
-Message-ID: <3305ee5d-167e-4e32-b33f-814f3a63c623@gmail.com>
-Date: Fri, 21 Feb 2025 18:03:49 +0800
+	s=arc-20240116; t=1740133258; c=relaxed/simple;
+	bh=CJTatHUiCB2mk5gZnHEF1n8uf5CwCMiUtV7AVquwh3g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KMQLQ9znxqVquJUeWYgH2qxMlE4FHmNmM72U6gyzOGP9IDGGgDx+DleB2LhOMCcqIBs44BjV3bQdMrQkxXz/aSOx8ViRgNIaRMM3NSjz8Ip8bv24fTuwL7Cg8qirXVlWAFhZpBn53LzVFLKO5CT57f/zJUI7JXrIyDCvTr8PojM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=coly.li; spf=pass smtp.mailfrom=coly.li; dkim=pass (1024-bit key) header.d=t12smtp-sign004.email header.i=@t12smtp-sign004.email header.b=jgQQxOtC; arc=none smtp.client-ip=3.220.132.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=coly.li
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=coly.li
+DKIM-Signature: a=rsa-sha256; bh=E8xDhYB5dTniEqejMlnuKVP8JOLWSCvk34/8j7lmisk=;
+	c=relaxed/relaxed; d=t12smtp-sign004.email;
+	h=date:from:message-id:mime-version:to:subject:cc:references:in-reply-to:from:to:cc:subject:date:message-id:in-reply-to:references:reply-to;
+	q=dns/txt; s=titan1; t=1740132293; v=1;
+	b=jgQQxOtCY/0wbEmtd452iAI/1AkGJ2n42KQSSoyC/8ArS25nfVgud6/J1r2sVMXlJchTb7td
+	596KAbkAgVAQ+J+PpMNJPnhGNDeVjqZjMnj28Y76VZKgNpFv1UhS6/TFwDqN+C0qUJmbcrsB294
+	MH5MvSypHdv3YRjXqZ0UdEtw=
+Received: from studio.local (unknown [141.11.218.23])
+	by smtp-out.flockmail.com (Postfix) with ESMTPA id 7F3FC100280;
+	Fri, 21 Feb 2025 10:04:45 +0000 (UTC)
+Date: Fri, 21 Feb 2025 18:04:43 +0800
+Feedback-ID: :i@coly.li:coly.li:flockmailId
+From: Coly Li <i@coly.li>
+To: Zheng Qixing <zhengqixing@huaweicloud.com>
+Cc: axboe@kernel.dk, song@kernel.org, colyli@kernel.org, 
+	yukuai3@huawei.com, dan.j.williams@intel.com, vishal.l.verma@intel.com, 
+	dave.jiang@intel.com, ira.weiny@intel.com, dlemoal@kernel.org, yanjun.zhu@linux.dev, 
+	kch@nvidia.com, hare@suse.de, zhengqixing@huawei.com, john.g.garry@oracle.com, 
+	geliang@kernel.org, xni@redhat.com, colyli@suse.de, linux-block@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org, nvdimm@lists.linux.dev, 
+	yi.zhang@huawei.com, yangerkun@huawei.com
+Subject: Re: [PATCH 02/12] badblocks: factor out a helper try_adjacent_combine
+Message-ID: <i5vkxswklce2wtn3aolrd6qrtlib3obtlzgmdix22afcurp7lz@jkxbieqcitx4>
+References: <20250221081109.734170-1-zhengqixing@huaweicloud.com>
+ <20250221081109.734170-3-zhengqixing@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND bpf-next v7 0/4] Add prog_kfunc feature probe
-To: Eduard Zingerman <eddyz87@gmail.com>,
- Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
- haoluo@google.com, jolsa@kernel.org, qmo@kernel.org, bpf@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250212153912.24116-1-chen.dylane@gmail.com>
- <2b025df3-144b-4909-a2b4-66356540f71c@gmail.com>
- <598a7d089936b18472937679d4131286f102cb18.camel@gmail.com>
- <CAEf4BzYsGnhmnhkHdUPN8yBfbv57R9h4N2R8RcqdjhmHWvJVkg@mail.gmail.com>
- <1fb198103e72d88c45caf6ef2dd8ebeb258ad48e.camel@gmail.com>
-From: Tao Chen <chen.dylane@gmail.com>
-In-Reply-To: <1fb198103e72d88c45caf6ef2dd8ebeb258ad48e.camel@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250221081109.734170-3-zhengqixing@huaweicloud.com>
+X-F-Verdict: SPFVALID
+X-Titan-Src-Out: 1740132293142604270.29396.4416553515934908601@prod-use1-smtp-out1002.
+X-CMAE-Score: 0
+X-CMAE-Analysis: v=2.4 cv=bq22BFai c=1 sm=1 tr=0 ts=67b84fc5
+	a=USBFZE4A2Ag4MGBBroF6Xg==:117 a=USBFZE4A2Ag4MGBBroF6Xg==:17
+	a=IkcTkHD0fZMA:10 a=CEWIc4RMnpUA:10 a=i0EeH86SAAAA:8
+	a=xfoHWtfPNc-Uf5GpDPwA:9 a=QEXdDO2ut3YA:10 a=HMmSsUQzf63YMr8qf_ya:22
 
-在 2025/2/21 09:11, Eduard Zingerman 写道:
-> On Thu, 2025-02-20 at 17:07 -0800, Andrii Nakryiko wrote:
->> On Tue, Feb 18, 2025 at 2:51 PM Eduard Zingerman <eddyz87@gmail.com> wrote:
->>>
->>> On Mon, 2025-02-17 at 13:21 +0800, Tao Chen wrote:
+On Fri, Feb 21, 2025 at 04:10:59PM +0800, Zheng Qixing wrote:
+> From: Li Nan <linan122@huawei.com>
 > 
-> [...]
-> 
->>> I tried the test enumerating all kfuncs in BTF and doing
->>> libbpf_probe_bpf_kfunc for BPF_PROG_TYPE_{KPROBE,XDP}.
->>> (Source code at the end of the email).
->>>
->>> The set of kfuncs returned for XDP looks correct.
->>> The set of kfuncs returned for KPROBE contains a few incorrect entries:
->>> - bpf_xdp_metadata_rx_hash
->>> - bpf_xdp_metadata_rx_timestamp
->>> - bpf_xdp_metadata_rx_vlan_tag
->>>
->>> This is because of a different string reported by verifier for these
->>> three functions.
->>>
->>> Ideally, I'd write some script looking for
->>> register_btf_kfunc_id_set(BPF_PROG_TYPE_***, kfunc_set)
->>> calls in the kernel source code and extracting the prog type /
->>> functions in the set, and comparing results of this script with
->>> output of the test below for all program types.
->>> But up to you if you'd like to do such rigorous verification or not.
->>>
->>> Otherwise patch-set looks good to me, for all patch-set:
->>>
->>> Reviewed-by: Eduard Zingerman <eddyz87@gmail.com>
->>
->> Shouldn't we fix the issue with those bpf_xdp_metadata_* kfuncs? Do
-> 
-> I assume Tao would post a v8 with the fix.
-> 
+> Factor out try_adjacent_combine(), and it will be used in the later patch.
+>
 
-Sure, will fix it.
+Which patch is try_adjacent_combine() used in? I don't see that at a quick glance.
 
->> you have details on what different string verifier reports?
-> 
-> The string is "metadata kfuncs require device-bound program\n".
-> 
-> [...]
-> 
+Thanks.
 
+Coly Li
+
+ 
+> Signed-off-by: Li Nan <linan122@huawei.com>
+> ---
+>  block/badblocks.c | 40 ++++++++++++++++++++++++++--------------
+>  1 file changed, 26 insertions(+), 14 deletions(-)
+> 
+> diff --git a/block/badblocks.c b/block/badblocks.c
+> index bcee057efc47..f069c93e986d 100644
+> --- a/block/badblocks.c
+> +++ b/block/badblocks.c
+> @@ -855,6 +855,31 @@ static void badblocks_update_acked(struct badblocks *bb)
+>  		bb->unacked_exist = 0;
+>  }
+>  
+> +/*
+> + * Return 'true' if the range indicated by 'bad' is exactly backward
+> + * overlapped with the bad range (from bad table) indexed by 'behind'.
+> + */
+> +static bool try_adjacent_combine(struct badblocks *bb, int prev)
+> +{
+> +	u64 *p = bb->page;
+> +
+> +	if (prev >= 0 && (prev + 1) < bb->count &&
+> +	    BB_END(p[prev]) == BB_OFFSET(p[prev + 1]) &&
+> +	    (BB_LEN(p[prev]) + BB_LEN(p[prev + 1])) <= BB_MAX_LEN &&
+> +	    BB_ACK(p[prev]) == BB_ACK(p[prev + 1])) {
+> +		p[prev] = BB_MAKE(BB_OFFSET(p[prev]),
+> +				  BB_LEN(p[prev]) + BB_LEN(p[prev + 1]),
+> +				  BB_ACK(p[prev]));
+> +
+> +		if ((prev + 2) < bb->count)
+> +			memmove(p + prev + 1, p + prev + 2,
+> +				(bb->count -  (prev + 2)) * 8);
+> +		bb->count--;
+> +		return true;
+> +	}
+> +	return false;
+> +}
+> +
+>  /* Do exact work to set bad block range into the bad block table */
+>  static int _badblocks_set(struct badblocks *bb, sector_t s, int sectors,
+>  			  int acknowledged)
+> @@ -1022,20 +1047,7 @@ static int _badblocks_set(struct badblocks *bb, sector_t s, int sectors,
+>  	 * merged. (prev < 0) condition is not handled here,
+>  	 * because it's already complicated enough.
+>  	 */
+> -	if (prev >= 0 &&
+> -	    (prev + 1) < bb->count &&
+> -	    BB_END(p[prev]) == BB_OFFSET(p[prev + 1]) &&
+> -	    (BB_LEN(p[prev]) + BB_LEN(p[prev + 1])) <= BB_MAX_LEN &&
+> -	    BB_ACK(p[prev]) == BB_ACK(p[prev + 1])) {
+> -		p[prev] = BB_MAKE(BB_OFFSET(p[prev]),
+> -				  BB_LEN(p[prev]) + BB_LEN(p[prev + 1]),
+> -				  BB_ACK(p[prev]));
+> -
+> -		if ((prev + 2) < bb->count)
+> -			memmove(p + prev + 1, p + prev + 2,
+> -				(bb->count -  (prev + 2)) * 8);
+> -		bb->count--;
+> -	}
+> +	try_adjacent_combine(bb, prev);
+>  
+>  	if (space_desired && !badblocks_full(bb)) {
+>  		s = orig_start;
+> -- 
+> 2.39.2
+> 
 
 -- 
-Best Regards
-Tao Chen
+Coly Li
 
