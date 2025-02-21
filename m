@@ -1,78 +1,97 @@
-Return-Path: <linux-kernel+bounces-525087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C86DA3EA9F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 03:14:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7F3EA3EAA2
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 03:16:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32B253B55E4
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 02:12:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25C7519C599B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 02:17:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 884C21D79A0;
-	Fri, 21 Feb 2025 02:12:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6E4B1B87EE;
+	Fri, 21 Feb 2025 02:16:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ScdMywpS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VTV3l/Kn"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E288B1D63F2;
-	Fri, 21 Feb 2025 02:12:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D0BF286298;
+	Fri, 21 Feb 2025 02:16:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740103947; cv=none; b=rQiDesrrzDxwDwnHUYNLSOE/bxNbyAkFnkjbLLbhK2KVmW8lvtXDNMvOe/im5FsIePok3skqBQ8A5iLVyKdvHWWTmyJN0QZSeE/4dG3AQ7eM8gmhWnScteIJBMwaNFbzi1UOJHHaKHNy58m3v9b/w/+2VCH/OoudYpxj9HDFQ90=
+	t=1740104208; cv=none; b=YhZP29jVNI65QXDkqyx/tGxy4dS/AiPid+tdsxA4pyCODjggU+K9bPW+wCnTJgofOHaOnLF6BC/zi8Y0s+gTlWmgjKBHrM1oB1CKpp6vnA5z1lXSi1q9yjx04cKW19nEO/PNHICf2xO/ltC9WaNf5gikI+oWBEGfGDRahgHA79A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740103947; c=relaxed/simple;
-	bh=zWG4BFYzQyItSLuM0QZPIiavJC+sGBG+6J1oP6G41Hs=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=u4NToeMJ/khG/j+uwL7MgxRw5ZyVTb9oIxI/isM4ls+FTYcvoK6shAbX7G3O8WPlk3gne40Km0zuFUnuCXVXYwTzqxVmHGRz6V2XBAEDb4w9jUuVI47tbYWknprOYw9es3zu6ZGlg3XJMcrGprTvZLIjVW5I68hIejvVDb+AyV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ScdMywpS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6917DC4CEE2;
-	Fri, 21 Feb 2025 02:12:26 +0000 (UTC)
+	s=arc-20240116; t=1740104208; c=relaxed/simple;
+	bh=Lmb3eiB2fyBd9+A5hO5hXqYmpD+2eXQd0NJcmWFxFrU=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=k8wof4+QNRbGO7royfo4QB91QQPW2UGwNZaCrrpVuvE/iJeUNrOrhh9+rQp4HJyOooHyajjuZwnWiPYiSn0tX2NEv8qXB/CQ64FxJiJpThcEgEwawWTcQpgzB4ZHm0XOjxec6fXkY42Xy/wHp2BXePoFXrXqkbpICzMjLfs1iW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VTV3l/Kn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5A37C4CED1;
+	Fri, 21 Feb 2025 02:16:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740103946;
-	bh=zWG4BFYzQyItSLuM0QZPIiavJC+sGBG+6J1oP6G41Hs=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=ScdMywpSavg1dcTqXXYR14/9w/MTfMaCB3FjqUG6ZYbS2iANjrf7Q+s+B4OdDfACc
-	 rP7Lefw6+i63g1hWmpX2o1ddVCU5/T4k8zCNonMb/mlDy9YJbKoZohBvDCs/DPllvO
-	 adMiR7PL5QW4fwEg26AhdJQHJzAXljwpPTYmWPfgXLpfxQxjWZZbzgn/5Jq9GPJyz4
-	 WnF4vdeSGthAJNam35z4O5BzaYxGsYWUUcqWuULDlwqF8f7cvFyezpNwTEjYu/IVEr
-	 2gh2uIJamQOGPbTN58aPjD5jfQyywiUvLsTNWHQ54rmz+UkXD1XZlsHUtvRU6fHCrw
-	 pxRsmAuim+MUw==
+	s=k20201202; t=1740104207;
+	bh=Lmb3eiB2fyBd9+A5hO5hXqYmpD+2eXQd0NJcmWFxFrU=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=VTV3l/KntL6NwIsUTpQbjMG0Kd36qbER3VQSsP4FTjI4NYFqCYWuYDyT0wEe3+NQi
+	 fkOwxYLaLumg/xHi/7F/VXAF+IfcsJ1MiQ7jD5ITYVOyOuekjImjZCr76uyS3VNLvw
+	 LcxYLyjnD0JnjOTWcCQDHuhSVg9GOR71hbM5tUodJYiI3ivO1ti0iPqQw+cAmEF5l0
+	 8IfSmsJwsZvLR5VHirrCdo7QxMtfvh7eDzD1dMzbAGkk2NFlk2KRGbNXIHu4s7yeBv
+	 axEHmRHqiO1kEa3xOPin4KB5V1Ob/UygmxfQZc6l2ebZHL4wTnxnc7ia2vz7fq9rCW
+	 1FzwC9Pq9iIBA==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 71B943806641;
-	Fri, 21 Feb 2025 02:12:58 +0000 (UTC)
-Subject: Re: [GIT PULL] power-supply fixes for 6.14
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <73672ehjkrjavtqe3uw3vlpriqclihn3y2k2snrf3qc3ovah7y@jvt2c3vrlnro>
-References: <73672ehjkrjavtqe3uw3vlpriqclihn3y2k2snrf3qc3ovah7y@jvt2c3vrlnro>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <73672ehjkrjavtqe3uw3vlpriqclihn3y2k2snrf3qc3ovah7y@jvt2c3vrlnro>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git tags/for-v6.14-rc
-X-PR-Tracked-Commit-Id: 98380110bd48fbfd6a798ee11fffff893d36062c
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 334426094588f8179fe175a09ecc887ff0c75758
-Message-Id: <174010397710.1552538.8374208410048912217.pr-tracker-bot@kernel.org>
-Date: Fri, 21 Feb 2025 02:12:57 +0000
-To: Sebastian Reichel <sre@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADE693806641;
+	Fri, 21 Feb 2025 02:17:19 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net V3] net: stmmac: dwmac-loongson: Add fix_soc_reset()
+ callback
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <174010423851.1545236.8099662229327070133.git-patchwork-notify@kernel.org>
+Date: Fri, 21 Feb 2025 02:17:18 +0000
+References: <20250219020701.15139-1-zhaoqunqin@loongson.cn>
+In-Reply-To: <20250219020701.15139-1-zhaoqunqin@loongson.cn>
+To: Qunqin Zhao <zhaoqunqin@loongson.cn>
+Cc: kuba@kernel.org, andrew+netdev@lunn.ch, davem@davemloft.net,
+ edumazet@google.com, pabeni@redhat.com, chenhuacai@kernel.org,
+ si.yanteng@linux.dev, fancer.lancer@gmail.com, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org, chenhuacai@loongson.cn
 
-The pull request you sent on Fri, 21 Feb 2025 02:46:17 +0100:
+Hello:
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git tags/for-v6.14-rc
+This patch was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/334426094588f8179fe175a09ecc887ff0c75758
+On Wed, 19 Feb 2025 10:07:01 +0800 you wrote:
+> Loongson's DWMAC device may take nearly two seconds to complete DMA reset,
+> however, the default waiting time for reset is 200 milliseconds.
+> Therefore, the following error message may appear:
+> 
+> [14.427169] dwmac-loongson-pci 0000:00:03.2: Failed to reset the dma
+> 
+> Fixes: 803fc61df261 ("net: stmmac: dwmac-loongson: Add Loongson Multi-channels GMAC support")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Qunqin Zhao <zhaoqunqin@loongson.cn>
+> Reviewed-by: Huacai Chen <chenhuacai@loongson.cn>
+> 
+> [...]
 
-Thank you!
+Here is the summary with links:
+  - [net,V3] net: stmmac: dwmac-loongson: Add fix_soc_reset() callback
+    https://git.kernel.org/netdev/net/c/f06e4bfd010f
 
+You are awesome, thank you!
 -- 
 Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
