@@ -1,153 +1,81 @@
-Return-Path: <linux-kernel+bounces-525779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F305EA3F4E6
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 14:05:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C8230A3F4E9
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 14:06:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D072421DBF
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 13:04:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4EF5B4214A9
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 13:05:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4CC720E703;
-	Fri, 21 Feb 2025 13:03:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5361520C485;
+	Fri, 21 Feb 2025 13:04:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mandelbit.com header.i=@mandelbit.com header.b="Fl4TRcXJ"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AYW1r8SY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED6B3150980
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 13:03:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEB38150980;
+	Fri, 21 Feb 2025 13:04:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740143025; cv=none; b=YTL1nbjuc4A0uZW37kJM5O9vsnShSy77xq6dwjmKskqN/W9re7xR24oX9kvXqUdgArgz2Yd1DT3r5XmhO+iRclth00w78X6yaeB3GjjFLdHPF1ZqxqiY2nod1Vk3rLEdC//C6qGMfhvWOjkTHJ1FJVg63/GX3ooYHj0lCyiu8kw=
+	t=1740143068; cv=none; b=FagXoRFVeLHQwu0bq6l1vi/NJojiqpoHXL0nkgona1H2PFig9LBx5YFV4XsTclvUz33yWTri1KZSM7YyB4AsRtmDhSWJgIrb/uMigZ+TXwnKkteQXtj4/3haTQYn/ANHZJGitMfnJCqfuhbeKJuhX3E8BsmLIMOZgiYOgf/u5ZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740143025; c=relaxed/simple;
-	bh=gQdsptGZ9CaMj//xghZ72pdP5w5JRXTNCAWzn3QbAtk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=O/W20LBt2Nhsw+R9jnicbPO2henF4ki211CHrOYNkaqhBblR1LcUbN+yybDkj5y3pdML60Dydj/TsFU/Kerno0/n+Zfljwr2PL4w04ADZrTEf5thgkK7C+p/rewN0Yw066i8Cz/mLlX7vEKHWJTKbC2l+pbXr02pc+GVkiMd0vo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mandelbit.com; spf=pass smtp.mailfrom=mandelbit.com; dkim=pass (2048-bit key) header.d=mandelbit.com header.i=@mandelbit.com header.b=Fl4TRcXJ; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mandelbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mandelbit.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4393dc02b78so14299275e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 05:03:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mandelbit.com; s=google; t=1740143020; x=1740747820; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FNLCdFptAS+7IKWDtBhu1m5ZWhtk7jbJJUz+DR9hOno=;
-        b=Fl4TRcXJEYFpWPN5QFqYFgRhfb+x2/anQR3xaPLvWkSRUE0DDhkYWOSRPKlSRCoczp
-         Q5Dg6QS9rcyWsTZlZvrhx6zzHA8fsCbaK9m/wyjEPNECCouIhr/ybG/WteCNSyHul2hE
-         0VP+MpEoAw6fVQQFwKIo5hzbaLBRl68LvfGXcxTfyYS7g7E+OkxQcDIG8PUcGpH2JiBS
-         DeViz/ivP25Z2Gj3njAzeeULNIeZ81Qwb+Qd+7k7/9+4ZGDta54D+VQdhWPTcDhQM0Te
-         DXZw4EdaiwjG8KO+DZAAnsJiDQmOddg/XRYjSuPuNRCmnYpf3MXBIjCfq3xh4TLNOX+T
-         QfDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740143020; x=1740747820;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FNLCdFptAS+7IKWDtBhu1m5ZWhtk7jbJJUz+DR9hOno=;
-        b=utN/zjGKsAjZWxLNxM2Q8tjsz3nSBoTFgQg48F8HyD3tcM6nIB8w2OoIaER9NNwtaJ
-         FgPrK/elQa5DitIEkhqQp8YzCG/ptQP7wumk9jr1l2wAkn0Fm+12r+kfSVTAuVp7i+7Z
-         S2ceajKis+xxXjWRO4qmflUVsQLU8WzusC2zuVcsZyklukZausRjniVn4IocDke9vfcK
-         mwMWHvWkepGhR3xydrJcUusrDl0lJpWFELGNeJOS1hMdksSgeHRwhpfmSD6AbWTkf/6l
-         KhXFJwRGzY9Tcot8L3W2/NwHJh9puaKhAFnE+M0jjc4gGHiLGIKFHf1flJlQiQJR03En
-         E0dg==
-X-Gm-Message-State: AOJu0YxwIiDdYk9WwE9wXBLaai66n85zDtdMjFMr6UcITms7jKZ2Oihl
-	9tT9RqftUZvfouMPfUYAOKRqHOlcwttZ6zomXg3XqrQPsJau5+MARRMR9PTEovA=
-X-Gm-Gg: ASbGncvtLcu1676l/OCuCRjtmFaMFYVa3NwzHc2JiCiYW4RELuNPPEz7QpC8t0FHzGl
-	e67T/a7DiP6WyuYdj8g3aVRfn2Kn2AdODkF6bvSzGq9sDmJUtDJyasS0ROl6lp9SIcM9O+WilFz
-	xse7xmZojw9AuiVRUTm1MsEE+VGH2b7UjGAX6C3h35KXsTMTAlBaUEo239k5XJ5kqZo1KZ7iQSn
-	sxAo8GenigtbirfrQVpRRBLRBghyNQiTF11q+Cupf3b+fbEBX2ibWjHOqLZ3nqoQNWzEW5OUeuz
-	+l66ZWNgnTxG5mvPGILA37CtPuX0MXnRTUmEhUhh
-X-Google-Smtp-Source: AGHT+IH2ZlxkzwCrkB6WfL1Ww6nO/RRvy91sdSepv2GdVnmGAXn0nEcSCYeYcY0Bpkux7jlqsNSPbA==
-X-Received: by 2002:a5d:6d0a:0:b0:38d:dd70:d70d with SMTP id ffacd0b85a97d-38f6e947399mr3346487f8f.18.1740143019862;
-        Fri, 21 Feb 2025 05:03:39 -0800 (PST)
-Received: from serenity.mandelbit.com ([2001:67c:2fbc:1:13a9:f3c7:539a:f1c8])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f258ccd51sm23343361f8f.29.2025.02.21.05.03.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Feb 2025 05:03:39 -0800 (PST)
-From: Antonio Quartulli <antonio@mandelbit.com>
-To: jan.kiszka@siemens.com,
-	kbingham@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Antonio Quartulli <antonio@mandelbit.com>,
-	=?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Subject: [PATCH] scripts/gdb/linux/symbols.py: address changes to module_sect_attrs
-Date: Fri, 21 Feb 2025 14:03:04 +0100
-Message-ID: <20250221130304.5882-1-antonio@mandelbit.com>
-X-Mailer: git-send-email 2.45.3
-In-Reply-To: <8e16609a-7e19-4d4a-951f-58c8bd012086@siemens.com>
-References: <8e16609a-7e19-4d4a-951f-58c8bd012086@siemens.com>
+	s=arc-20240116; t=1740143068; c=relaxed/simple;
+	bh=AOTE9050/nKvb/vdg6pehRkE/nL9KFzfRe14a1GPYpQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hIGQ/8rP3d8lL5nLXFyVaf+XQe8mNqKDk5yz/SkjG8dWrnAaAgLe3CsnI6MEMF/oXZT7NlKnfzAyq/jfLwNXiy4T6vvM1uJ8LnKPN/4n+whN/ozuKx2d0Ap4Hb3ofGFk+30CSW+PEko62Q2DDUeOSFvzdkXbIsGmK6Qb8R6m6Rg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AYW1r8SY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CB7EC4CED6;
+	Fri, 21 Feb 2025 13:04:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740143067;
+	bh=AOTE9050/nKvb/vdg6pehRkE/nL9KFzfRe14a1GPYpQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AYW1r8SYP9IftcppJpxAHbSNcURHNdJ8cSErM5QmWT1BpkbZvcRticV4vorDPwkL5
+	 m1TsEUbhCFXQVW0F/HTDSfH0YAwE51n4uu+dWA1x+pZZPsi9ykl32wFX5Vdsx3W+u2
+	 iO3f6bdG8EI7UPOKKnaqHLMMrmzMmdtuIdoZwJxhHyNtV0QOarCKaAM9gRQLqlqQrW
+	 NdlhPlT+Guy7PVGqLk/iwbxQjq2y/wcnaSuJCddWYI8L2bwFE2rxw8ZkOGKwsafUqT
+	 fI3FkSD9TsdpmkctCuT5cLtnO0GOoZ8L288Evd4k9rEQwPGmXSd7O4z+EeFT3RUijZ
+	 PpJWhcSnVWOmw==
+Date: Fri, 21 Feb 2025 14:04:16 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Roman Kisel <romank@linux.microsoft.com>
+Cc: bp@alien8.de, dave.hansen@linux.intel.com, decui@microsoft.com,
+	haiyangz@microsoft.com, hpa@zytor.com, kys@microsoft.com,
+	mingo@redhat.com, tglx@linutronix.de, wei.liu@kernel.org,
+	ssengar@linux.microsoft.com, linux-hyperv@vger.kernel.org,
+	linux-kernel@vger.kernel.org, x86@kernel.org, apais@microsoft.com,
+	benhill@microsoft.com, sunilmut@microsoft.com
+Subject: Re: [PATCH hyperv-next v2 0/2] x86/hyperv: VTL mode reboot fixes
+Message-ID: <Z7h50PqiXxdfMegl@gmail.com>
+References: <20250220202302.2819863-1-romank@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250220202302.2819863-1-romank@linux.microsoft.com>
 
-When loading symbols from kernel modules we used to iterate
-from 0 to module_sect_attrs::nsections, in order to
-retrieve their name and address.
 
-However module_sect_attrs::nsections has been removed from
-the struct by a previous commit.
+* Roman Kisel <romank@linux.microsoft.com> wrote:
 
-Re-arrange the iteration by accessing all items in
-module_sect_attrs::grp::bin_attrs[] until NULL is found
-(it's a NULL terminated array).
+> Roman Kisel (2):
+>   x86/hyperv: VTL mode emergency restart callback
+>   x86/hyperv: VTL mode callback for restarting the system
 
-At the same time the symbol address cannot be extracted
-from module_sect_attrs::attrs[]::address anymore because
-it has also been deleted. Fetch it from
-module_sect_attrs::grp::bin_attrs[]::private as described
-in 4b2c11e4aaf7.
+A: These two patch titles verbs.
+...
+...
+B: These two patch titles are missing verbs.
 
-Fixes: d8959b947a8d ("module: sysfs: Drop member 'module_sect_attrs::nsections'")
-Fixes: 4b2c11e4aaf7 ("module: sysfs: Drop member 'module_sect_attr::address'")
-Cc: Thomas Weißschuh <linux@weissschuh.net>
-Signed-off-by: Antonio Quartulli <antonio@mandelbit.com>
----
- scripts/gdb/linux/symbols.py | 13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+Like me you prefer B too, right? If so, please add back the missing 
+verbs to the titles. I suggest "Add"/"Introduce", and "Call". Thank you!
 
-diff --git a/scripts/gdb/linux/symbols.py b/scripts/gdb/linux/symbols.py
-index f6c1b063775a..610a3dd3c7b4 100644
---- a/scripts/gdb/linux/symbols.py
-+++ b/scripts/gdb/linux/symbols.py
-@@ -15,6 +15,7 @@ import gdb
- import os
- import re
- 
-+from itertools import count
- from linux import modules, utils, constants
- 
- 
-@@ -95,10 +96,14 @@ lx-symbols command."""
-         except gdb.error:
-             return str(module_addr)
- 
--        attrs = sect_attrs['attrs']
--        section_name_to_address = {
--            attrs[n]['battr']['attr']['name'].string(): attrs[n]['address']
--            for n in range(int(sect_attrs['nsections']))}
-+        section_name_to_address = {}
-+        for i in count():
-+            # this is a NULL terminated array
-+            if sect_attrs['grp']['bin_attrs'][i] == 0x0:
-+                break
-+
-+            attr = sect_attrs['grp']['bin_attrs'][i].dereference()
-+            section_name_to_address[attr['attr']['name']] = attr['private']
- 
-         textaddr = section_name_to_address.get(".text", module_addr)
-         args = []
--- 
-2.45.3
-
+	Ingo
 
