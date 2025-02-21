@@ -1,151 +1,171 @@
-Return-Path: <linux-kernel+bounces-526575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F928A4007F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 21:12:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EA29A4007B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 21:11:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05137428437
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 20:12:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F2FC3AB0B5
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 20:11:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33B171FE47A;
-	Fri, 21 Feb 2025 20:11:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF4AB253352;
+	Fri, 21 Feb 2025 20:11:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Ifx8txNa"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LUr2Q7a6"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B5C61FBCB9
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 20:11:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58C2C2512D7;
+	Fri, 21 Feb 2025 20:11:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740168716; cv=none; b=VG702SLKAp2aqisxJJ+nAO4lTD7L45duSaf6rSo3WkMlAaNVb49v4jGR8aWs0AaevvTsxfdc5+ktJDt7kEiwfSEYrLqLQ2XK384i8RWFD8xtftjhXjKtHfmykf5d4/V2EvPBfv3+XIkgUb3QL9zh5FHt4NQuTmHuoDCBcFmFwvM=
+	t=1740168684; cv=none; b=RDmF4JsWxO7ZaeBA2mcQPT21Sc+SmxKL/SZAGfKSn2xw7tnOYPfuVBrjTVm62vxYT2M33sjMH4Ka6j/GR1FZlyURCuCOpbd9bqP/ixKSC4tz/aMD1EXZZeu0kys6h+7zk8MqQkSIAcf7BT6Q+SXKeRQA71QjwlNMdVzTr2f8EQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740168716; c=relaxed/simple;
-	bh=sHDT7bse50uCAtNjA78tyEQ3rjAX9mJG1DMhp6e+0tw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HOV76dNlGV20xXxJp9NMlwuWk5BL4O3HG1iEE6nihRbjFzPpfcL6z074SAR0lYuInbjbT9Gy2cyQck3OPsrL+pwi7jBK0Pa4E8kGZVhMO/mFOeRbY6uN0HLh2sUAKbl3L4LZEXVYtuMmparvttUcMbxOYVAa5Sqf+IfuTFBgxvQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Ifx8txNa; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-ab744d5e567so437859766b.1
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 12:11:53 -0800 (PST)
+	s=arc-20240116; t=1740168684; c=relaxed/simple;
+	bh=L9Ovkk/RRrfQrsD0lsLa4ubovPWTOd9u2jMfCHwM6us=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ILtYhU18eWZIb7+ppfLF5Wffr23bQpRhN2wMfXjD+rJHwRroW3rPSx5aDhWQQ2RMI+FpXkTXhwVNeni+Hc4KcBC/an8Uw/oZCm+YiC0aymn/6ghDevFzn7VFy6jRsL6xqu/sGh5Z/YeYChCp2ePWvWrzffgOSTZbWSUfb8cupKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LUr2Q7a6; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5df07041c24so3660911a12.0;
+        Fri, 21 Feb 2025 12:11:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1740168711; x=1740773511; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=CcGCG2WSdQQovy8qS/ohnfSZbfooRumEZHN+xZ7cilE=;
-        b=Ifx8txNa3aZd2mXmXPHM0flt+njiEbTk1z6/Gir+aDORjgFJm5Dz/Ho1XT983nHOgy
-         6LOC1HtrxfccNwNxXG5ljX9D/RCqVcOTlAg+HwxTkAzxojeN3VGhU9/yipQ5302HUuou
-         ue+e7jvHNtX2qXavZSNh0EsLLBFBU+sCMp+rw=
+        d=gmail.com; s=20230601; t=1740168680; x=1740773480; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=f6QfXUMWQv5rataWRZ+L/ZQO7XWSTCyFXZSgM/69Zyw=;
+        b=LUr2Q7a61imlfgueIlS/Lo88rJQZ18xCTCy7aN9IbdYtJfZ4P8utqSxU5lUnFn6L+B
+         2HFPYEIVY0GIIaVEAUHB9yZMOZOARPNURO8JixYcfi6N1lOntxMOFZ7a61hDAQLeyWAS
+         TviBWdFhs1+Uk72J+SCVjpP9qxpiriS0GlNX8DXUA1HGQNBcWdfR2FqIegmYsZtpYGLa
+         +dMZADPaZ8FmfUwXoTvR/oT4lwJFB3pbzgf6PvicyYTCs/XN2KmNmE+Oe8KIo3D1Bc5T
+         ADB2KZzmovpJOzTklp+F0+gK6qncvamcAfWb6s3YK86ZMcAVOqdiDUTdV1fudEQ8dxmT
+         euVw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740168711; x=1740773511;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=CcGCG2WSdQQovy8qS/ohnfSZbfooRumEZHN+xZ7cilE=;
-        b=Ena3hEcoJdfDInzjbUC+DDB+9xjLnGD2zv1IXK8rDexA8XC+hERr6R8wskTIpw41rl
-         6j3NTqjQwMQ9xDfttjGyvCAoD8s41XCfHEyAlldehhAEbd5Em6tBNQ922h4kjq81OYEA
-         83bDT5BkKyKAtiX4WaCtgHkKmTqpszd9jl/0vgHmcN4OWmls0kSW/rOwEjFZkEPZA6PV
-         RwwcEOXo7pYMM+WjC86EIeyc1xWhajh6Zt4DbQYOAJBKsiOBZ32F4H1CgQkLHri2w9Pj
-         hVsiOWh0OeMWGZQm+aBCzYp/ylt/DfWt0UdLUEX4Ng4XDMQU36eKK9jZ7HGUhX7tUfFx
-         4adw==
-X-Forwarded-Encrypted: i=1; AJvYcCVtYKg6ssHoe2MkGngmh2DD7bCHa+VZ8qkTRTZdLlBviHzjxtxW9kllThdqtpfV4L8QbNuHf9YILaIABpE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJJtC9sSM6fvD4pF6/U+4Hlr7vdj7Z9JYTGBfhbEH4RgCjGmUn
-	ZfWjoy2m0IVhRRQeKIv+YPDzwYoSmwDK1qJt9RMr6ggA3Er8Lx/eyBgN3/GioO4vYlXzlBbmKG4
-	3Cxw=
-X-Gm-Gg: ASbGnct5y+GQlt5l7hzMI0Sh9/SHIRGUeL+L0Q22mTgMfj6gWsgLKlZIyuyRwJmJxxC
-	N2438E5v6XYeO0ETf6iLIhfm2u3tYFfCtxFW71lFsGuhkTFbW9MnxJquintSZYpbp9RYD9vw+o3
-	2Q819qeTRijZ0JZTTCoMAG+1DNuFRoj8BNlFSIt7ExSKJTbO04wVgZ0VJtG5DNV9UWqbyS93ja3
-	EyVJAGqK4oZgIw8Y09TKNfJ7cG8ywRqIcbpPDCUL0IkVXGJt2qoJoZbVSorzKXAgH7X6zxfaP5Z
-	5bN5pk+WcDro/1wzqjTt+/Oqjg1+0cxFSvhq1sf2rhNVotlCFpRq1tZWNdp5QrCKXky/fo++aw6
-	s
-X-Google-Smtp-Source: AGHT+IFxz+MUdR+20X9LRgy3je8dTzxkrH42oZXLg1wPG5UEQ1Si8jr9XbARyum+hrD/jthHTY+8+A==
-X-Received: by 2002:a17:907:9721:b0:abc:675:223a with SMTP id a640c23a62f3a-abc0ae56749mr404248366b.12.1740168711542;
-        Fri, 21 Feb 2025 12:11:51 -0800 (PST)
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com. [209.85.218.43])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abb948b4978sm1084433766b.151.2025.02.21.12.11.49
-        for <linux-kernel@vger.kernel.org>
+        d=1e100.net; s=20230601; t=1740168680; x=1740773480;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=f6QfXUMWQv5rataWRZ+L/ZQO7XWSTCyFXZSgM/69Zyw=;
+        b=VcZ4ZrUHy9YA4hXwDsvbGy/NVjZlT+jLMIOX9TZp8ky3+dLrS5OWSmPAxZNTywWHgi
+         i9fv63SsOU9oZRcAqqnzPBDyxVebgUizhH/GTzHi+nlREb2fpS4RGFILIiJuy9jWWbN/
+         hLECs3IwEpSHvOJW2FIPB73SHdfMPOzhltkFNaeyCbFMkC0rOcjRC5byx3zcSWx0uIv9
+         R6rTFzR78OTF61GP3RT+xGbAxIrcSm6RaVKjP5qQBvqwIhaT2xHVdAeNYfS9UaUILcEM
+         HLF0Ec7n3sgQtynViXhjrv9DUNgs8nffuVfIQ+naFRzst+uizVI405TxGJS0bC3fZZN3
+         c1+g==
+X-Forwarded-Encrypted: i=1; AJvYcCVfjiwBbrxHzcKSdtNFKdZ1/HRur2XFirhZNUVf9R3by0N8QzYFvwTl7s0ihYO2XQawrrWTWN8K@vger.kernel.org, AJvYcCWFefAwiluOz7HetxfjLehb7hOYPtKSvNigDfC/2IricX/1YM5fHpNPThtcEo2niOG5yPHfq6lXU1r8vCM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxyLKUpTKrfEpalcM2s2RbsK1qZxB8vlBVNOAc2UuZv3Tmxb5Mw
+	1A4WtRffm8ER/4rFyQn9eVnowqM++gnJv4RY330jr3tHxaySZR4P
+X-Gm-Gg: ASbGncvUV69m1q27gz141xnarfDcc6j1qjJFgU6t4k4Y+oUCReDY5FVLQLcg4I6+U+U
+	WnNGNJg8R+RzPc+z/FULSpCxeyr9BqYqdypf9IdBDqbsRmrlAebPnun1lx2kywTJODwTfzaPjrt
+	qKpNTSQbsUNTLqgnw+Y5LVTnXf95V/dP2mNdfss9rmmTAcO9MfrtKQ5pCjMejygN2UCuzYCazZo
+	Le7nIuD64oi8vXynYD9rvDPya8715mqyrLRzQg1Jsr0KKtOVdpEZJEISe1+We1VmmFlFZA2Nlk5
+	qjxQSLg5klFqQnLJj2nZE08KvZgIGGE4+Yec/clacGhCd2iDnzs1s/nFPWFT8zS06odnvdfloci
+	ylJ9olmbIJ9rO85vD2Michdnghnt10F/BKozgGANK15uu44VgPuLETPsn9+Tr2ScfRycW5mQyjU
+	WvKRp+2DT3CXK7
+X-Google-Smtp-Source: AGHT+IFNFb+yB0DGuaN58oRk5ysUosLAVKbBemzvkkTtGpLbRvy0yEKVeaIQMhJlEq8RkVd+mesLkA==
+X-Received: by 2002:a17:907:94c8:b0:aa6:6c46:7ca1 with SMTP id a640c23a62f3a-abc0d97e4eemr408476766b.10.1740168680088;
+        Fri, 21 Feb 2025 12:11:20 -0800 (PST)
+Received: from ?IPV6:2a02:3100:b29e:900:9dc2:647a:dfc:6311? (dynamic-2a02-3100-b29e-0900-9dc2-647a-0dfc-6311.310.pool.telefonica.de. [2a02:3100:b29e:900:9dc2:647a:dfc:6311])
+        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-abbbe74100asm756317866b.95.2025.02.21.12.11.18
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Feb 2025 12:11:49 -0800 (PST)
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-abbdf897503so594218166b.0
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 12:11:49 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUnsZCzJxzh4H0GFKCQtWlfIbN5D9Si0QeJkPeUX6AjCANV8WCP2aja6QUadflqcB2t+EtaqHifLVbEXW8=@vger.kernel.org
-X-Received: by 2002:a17:907:9989:b0:abb:daa7:f769 with SMTP id
- a640c23a62f3a-abbed5b21b4mr870873866b.0.1740168709416; Fri, 21 Feb 2025
- 12:11:49 -0800 (PST)
+        Fri, 21 Feb 2025 12:11:19 -0800 (PST)
+Message-ID: <eeba10a2-809a-4583-bd35-1f363c824e14@gmail.com>
+Date: Fri, 21 Feb 2025 21:12:09 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <326CC09B-8565-4443-ACC5-045092260677@zytor.com>
- <CANiq72m+r1BZVdVHn2k8XeU37ZeY6VT2S9KswMuFA=ZO3e4uvQ@mail.gmail.com>
- <a7c5973a-497c-4f31-a7be-b3123bddb6dd@zytor.com> <Z7VKW3eul-kGaIT2@Mac.home>
- <2025021954-flaccid-pucker-f7d9@gregkh> <4e316b01634642cf4fbb087ec8809d93c4b7822c.camel@tugraz.at>
- <2025022024-blooper-rippling-2667@gregkh> <1d43700546b82cf035e24d192e1f301c930432a3.camel@tugraz.at>
- <2025022042-jot-favored-e755@gregkh> <b9a5de64fe1ded2ad3111763f35af9901bd81cc4.camel@tugraz.at>
- <caea3e79-78e6-4d98-9f3b-f8e7f6f00196@stanley.mountain> <61a7e7db786d9549cbe201b153647689cbe12d75.camel@tugraz.at>
- <20250221124304.5dec31b2@gandalf.local.home> <CAHk-=wgg2A_iHNwf_JDjYJF=XHnKVGOjGp50FzVWniA2Z010bw@mail.gmail.com>
- <6b3e4d3bdc9b6efd69068e5b22cfd05d370aed19.camel@tugraz.at>
- <CAHk-=wg=pZvE9cHJUPKGCajRUCtDoW73xwY5UfJApCWms_FgYw@mail.gmail.com> <008cc0939c130ee24fbc71a0407ff82772076668.camel@tugraz.at>
-In-Reply-To: <008cc0939c130ee24fbc71a0407ff82772076668.camel@tugraz.at>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Fri, 21 Feb 2025 12:11:33 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wj5Rt_xhp_n4_gEyGG9LKFOiTrsvN0ueo3q5PyjJPU+AQ@mail.gmail.com>
-X-Gm-Features: AWEUYZnIN0fhlIm3BbR3TnvejgU7vmWR4MU8kuJXCz4EmowYIdocxYD5OpC83wk
-Message-ID: <CAHk-=wj5Rt_xhp_n4_gEyGG9LKFOiTrsvN0ueo3q5PyjJPU+AQ@mail.gmail.com>
-Subject: Re: Rust kernel policy
-To: Martin Uecker <uecker@tugraz.at>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Dan Carpenter <dan.carpenter@linaro.org>, 
-	Greg KH <gregkh@linuxfoundation.org>, Boqun Feng <boqun.feng@gmail.com>, 
-	"H. Peter Anvin" <hpa@zytor.com>, Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, 
-	Christoph Hellwig <hch@infradead.org>, rust-for-linux <rust-for-linux@vger.kernel.org>, 
-	David Airlie <airlied@gmail.com>, linux-kernel@vger.kernel.org, ksummit@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next 3/3] r8169: disable RTL8126 ZRX-DC timeout
+To: Bjorn Helgaas <helgaas@kernel.org>, ChunHao Lin <hau@realtek.com>
+Cc: nic_swsd@realtek.com, andrew+netdev@lunn.ch, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250221200132.GA357821@bhelgaas>
+Content-Language: en-US
+From: Heiner Kallweit <hkallweit1@gmail.com>
+Autocrypt: addr=hkallweit1@gmail.com; keydata=
+ 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
+In-Reply-To: <20250221200132.GA357821@bhelgaas>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, 21 Feb 2025 at 11:59, Martin Uecker <uecker@tugraz.at> wrote:
->
-> The standardized version of __attribute__(()) would look like
->
-> [[safety(ON)]];
-> ....
->
-> [[safety(OFF)]];
->
-> which is not bad (and what C++ seems to plan for profiles),
-> but this also does not nest and is a bit more limited to where
-> it can be used relative _Pragma.  I don't really see any advantage.
->
-> GCC has
->
-> #pragma GCC diagnostic push "-Wxyz"
-> #pragma GCC diagnostic pop
->
-> for nesting. Also not great.
+On 21.02.2025 21:01, Bjorn Helgaas wrote:
+> On Fri, Feb 21, 2025 at 03:18:28PM +0800, ChunHao Lin wrote:
+>> Disable it due to it dose not meet ZRX-DC specification. If it is enabled,
+>> device will exit L1 substate every 100ms. Disable it for saving more power
+>> in L1 substate.
+> 
+> s/dose/does/
+> 
+> Is ZRX-DC a PCIe spec?  A Google search suggests that it might not be
+> completely Realtek-specific?
+> 
+ZRX-DC is the receiver DC impedance as specified in the PCIe Base Specification.
+From what I've found after a quick search ASPM restrictions apply if this impedance
+isn't in the range 40-60 ohm.
 
-I realize that the manual nesting model can be useful, but I do think
-the "default" should be to aim for always associating these kinds of
-things with actual code (or data), and use the normal block nesting
-rules.
+>> +static void rtl_disable_zrxdc_timeout(struct rtl8169_private *tp)
+>> +{
+>> +	struct pci_dev *pdev = tp->pci_dev;
+>> +	u8 val;
+>> +
+>> +	if (pdev->cfg_size > 0x0890 &&
+>> +	    pci_read_config_byte(pdev, 0x0890, &val) == PCIBIOS_SUCCESSFUL &&
+>> +	    pci_write_config_byte(pdev, 0x0890, val & ~BIT(0)) == PCIBIOS_SUCCESSFUL)
+> 
+> Is this a standard PCIe extended capability?  If so, it would be nice
+> to search for it with pci_find_ext_capability() and use standard
+> #defines.
+> 
+> Bjorn
 
-If you are writing safe code - or better yet, you are compiling
-everything in safe mode, and have to annotate the unsafe code - you
-want to annotate the particular *block* that is safe/unsafe. Not this
-kind of "safe on/safe off" model.
-
-At least with the __attribute__ model (or "[[..]]" if you prefer that
-syntax) it is very much designed for the proper nesting behavior.
-That's how attributes were designed.
-
-Afaik #pragma has _no_ such mode at all (but hey, most of it is
-compiler-specific random stuff, so maybe some of the #pragma uses are
-"this block only"), and I don't think _Pragma() is not any better in
-that respect (but again, since it has no real rules, again I guess it
-could be some random thing for different pragmas).
-
-              Linus
 
