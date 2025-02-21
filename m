@@ -1,456 +1,218 @@
-Return-Path: <linux-kernel+bounces-524959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90532A3E92C
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 01:36:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 674DAA3E92E
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 01:38:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D3433BFCF5
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 00:36:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 923543BC32C
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 00:36:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EBD379FD;
-	Fri, 21 Feb 2025 00:36:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3149C11CA9;
+	Fri, 21 Feb 2025 00:36:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OPTAuUEc"
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b="QaziQDP/"
+Received: from mx08-001d1705.pphosted.com (mx08-001d1705.pphosted.com [185.183.30.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15FBBA31
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 00:36:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740098183; cv=none; b=JYFBXoSTV9fn2TJgbT5qIkOaB5SSzk3nxyJ7bqEI3Slb3VknagNRFsz0eYyz4K/2I/yLo7nj+0mWu0Gr/UepjOnhFeZZZm2fob8ZzA/lDogp7oUZwgNGp/XSYTA5h9vgsIJKWjYwIdBpK6LHIWsrkcDDuVyUhYt7wZRjbJUp7Ic=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740098183; c=relaxed/simple;
-	bh=gEnS80rCqQ507kGmSH2X6BN1GafijNf0Icp4TgQxWiI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IctXtilkVKC4QrPGolvWboaeNyk/a1lSGZr8I6wvLRlMu+XhMjmKtr8CHQqTZdE4O0In9eSMSq854D89x9N/oRP/2dRxjMLvdyTw0R33sf39TtQvZPS3cM7v0y3Upaqr54NcgveY4IdQ5OsGxUyMTtGxaZKx2hXAcUKPyEnKPLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OPTAuUEc; arc=none smtp.client-ip=209.85.160.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-472098e6e75so70231cf.1
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 16:36:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740098180; x=1740702980; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ndbATN2bQYxCQ40vKy6hYq1kBt06N1Kmt7sbVE6aE6M=;
-        b=OPTAuUEcsoC3pKfBE/w94M3nzY2ie9FiXfkZl/9GVVslrsukQ+PIRuADL3eI1ZWdb+
-         NVg4dLJevRX4krtj3l5u6Ay9dLeNMVJRN+MMij4Xy4askR5LGJ4aYsZm8QnpWMmpGpD9
-         8JW5qJT63trum86y46t7kaxOwWnZjHixdfLWscRb6vOjsvw+mKrXToKWDwBlXCScjXvh
-         PSyH7nT3twUxvJzXO68PR+njkXb37NRrN0JVXdds++iCUsQgbQ57gwY0GCpPOfqqfVx1
-         Wh4Mnc9jl9i6k2T5j8a5BTfY4QLcDvJnfXFXFIKenpMlUfCdrU+JOP+N34gOraRC73Op
-         e5BQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740098180; x=1740702980;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ndbATN2bQYxCQ40vKy6hYq1kBt06N1Kmt7sbVE6aE6M=;
-        b=Dcm59UzGNJtqi9UZ8imNINYAokBTFsV2UCu+uaPXGxA5V5CVsVURdfuuh3K+cB0zdJ
-         qQjADUo1yMbz4whzsISv3ytpxb0oDRDfrZ8V9DXSzJm6h6Sz/qASLDWrFBfCt4qjoi3h
-         46KBmHMhdguthwKAKel3ZCySBgTerxlPeObMX3B06IpLZCXcYhhOuA0LKjtTq91Uk6+h
-         8mS2qDqDRzCYj8hbIeHLU8uX7otvXtxyK+fVBGRDChcekwWbXKLQfk7lKB+sqGVsIqqQ
-         PMAWuiMjk+GLJV9aT5awnDlBdQrExv4joZdG6TEGmSvo1TztMVeIw6J90tyY+hXIPnma
-         u8sQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVbEXiLTTKBxTrPOE0IDXMsMmdzezEBFJKMCQpMTubhOUALv1Nbzr99SLBHxw0FjBlNYUUtb1Ne0xpeXf4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzuVUlCgffNj6SnIhHHd9ZQZcbHO1YuytscMyQswYhHT1VtRvOg
-	3Z85gp6S5OUNwLw0OziN8f3B4YEcPES5aSY/B0dtEmsUWqhjiI2NPFQF+D9GdO/TPo9rUE5qH/X
-	FbkQb6bMM/i+gsC1gn913w/ntCYNxjYUci9Oi
-X-Gm-Gg: ASbGncssiFi9cI+UPxCEWkfoBSmEHemlJEMP/0RPffVuFyglM9YdsB+Gg4B1ncDupiR
-	KXZP/r01KMLuAWP3QBSrqbVEtyCnL8gUCYImQc+h5rg85VeTiUDl+I8HiIgApDNPs9M+iMuWh
-X-Google-Smtp-Source: AGHT+IE92lIZZbQYgejE/zFDjDSUSYgBR8VlYgUVrXto+vwpwaz2n/RkKysVuugmqszQijY20EYb8Hi2LNd0zwnYHu8=
-X-Received: by 2002:a05:622a:1a06:b0:471:e982:c73d with SMTP id
- d75a77b69052e-472250dbc04mr673351cf.11.1740098179481; Thu, 20 Feb 2025
- 16:36:19 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C67010E0
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 00:36:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=185.183.30.70
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740098205; cv=fail; b=ossAsRB9QNAAGkBGUpmtN3AQJTeAAyjtkuhvPmywjzS6yeQu2eQl35FjqTlCidstwkVcRyDLAKMV0EJoU+aLB3bWoniDQ14KqVl5avwQsARwJA7gW0Ap5gN+J/SYS2CNWHvNKY5HcgcB3hJ/4sMI0IfQmNdiwJMxxCzKPUC/EeI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740098205; c=relaxed/simple;
+	bh=8tBMq2ZxIFXFkk6FgtPwi/s7R+/TnOmQCMysp4i5I1I=;
+	h=From:To:Subject:Date:Message-ID:Content-Type:MIME-Version; b=V4H4O6lA5AYfBCLhml2ome0g7iZYI4CmmMr2UL4PJT7xKd+9N+81jIYE052AcnkVHUR6rPyf4FHa7P8XDpAlINHcGCmqUlaQ15p2MGdCuvqA++52am9jSAoLAldQ1PqYiy568NFUWgk+KbKi2pDh5v/viHnLCxUAmprmJUf+Yr8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com; spf=pass smtp.mailfrom=sony.com; dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b=QaziQDP/; arc=fail smtp.client-ip=185.183.30.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sony.com
+Received: from pps.filterd (m0209320.ppops.net [127.0.0.1])
+	by mx08-001d1705.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51KNZBvl010695
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 00:36:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sony.com; h=
+	content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=S1; bh=Z6DKTnuwHz5ftx5UFFKNPzgggZUqv
+	xPnaw+/2Mq3PO8=; b=QaziQDP/47UW4n7TPhzlraVkdlCHbNEa19yro7+b5RV7x
+	Qu9Xr1sKnaDp6aT2AhKAKk065lGgpNC7U/webG3SRcbRpWa1VIzFHUMVPlj5k+Iu
+	pSyoF1hSdUXeT2SsYsQDptVhQ9Ayyq5HtaBxL+nFNOSxvIHMUN0ps+zE4KWQ4BpY
+	pbo78/VpejEoYgDW8aLtYjMPBeWvGrbVfZO8oB8vXitz33gjKk1IybW6trhohJKk
+	7WYYTMcu1j6pK0rPa6tns34bG4/gysVAY3knhAJvYihtVSEBpOpclAHJuErQRTX/
+	zGSBKJZJidyIHWORBNrEyePOzoLKFOAse1s6T5JCQ==
+Received: from nam04-bn8-obe.outbound.protection.outlook.com (mail-bn8nam04lp2040.outbound.protection.outlook.com [104.47.74.40])
+	by mx08-001d1705.pphosted.com (PPS) with ESMTPS id 44vyyfa7x3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 00:36:38 +0000 (GMT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=dF1KDZmgwNm/9ItOy3IDnpi1z0vafpu70g9gYb8+53LIDl0y3z1qscwnwPZyOXZ72pjn1pRq8SgyoqM6XGjwP5BHA5nGarV0ccMwRuUb88Ff111AaK/z9vtGhEVZ11XSftCc+8LwOu3SE6aAsVqk/zzc6fulgdEAkE+MirDR96buK5zQw6qhaNnrz5A8u9o6bKdbk24gcKEfxu65R/A2hV2oilKFpUDOOK/3SW2BgrO6mbK+dQnkmV7tNo2J3g/lb9pGv5CO92GhQD3YDOQdjHnRyJWo7sd/huYVYPe3FJgKa2VT6ppsawzsCdaybVSbCKmU59yOXSDuv3TMO0bhog==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Z6DKTnuwHz5ftx5UFFKNPzgggZUqvxPnaw+/2Mq3PO8=;
+ b=gGwVKUfeSJFnqlT1Bjc4s1430f7wXz5pApbgU7q8yXQQ2YT/B+qpF4lU9djvsMFVzH2J/pSRYaRf413oH5Wr/Sg1hO0qxEq3+Gq6bWj982gToqUfOwRE7CwgbtDZxwtQveKb0ncEP71HFiogfSDVFNH58tWkU4ryDl+oGCXGbZuDR/h5JREW3BhGP1kGaGA+ngen0NArhY/h4mRBKIHtg++vTRenjRnKtbPNL2a4BUSwrhQjtc9ZhImLxpdO+zFxQhg6gOiqzaWSTHZW3sxaGdzjVUtybjayqiwiein7gLJQf5n6KbOtQuZqVp4p/JAupXGE01yTdDxrUl8w5J5Jig==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=sony.com; dmarc=pass action=none header.from=sony.com;
+ dkim=pass header.d=sony.com; arc=none
+Received: from MW5PR13MB5632.namprd13.prod.outlook.com (2603:10b6:303:197::16)
+ by SN4PR13MB5325.namprd13.prod.outlook.com (2603:10b6:806:208::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.15; Fri, 21 Feb
+ 2025 00:36:34 +0000
+Received: from MW5PR13MB5632.namprd13.prod.outlook.com
+ ([fe80::df7c:a5b9:aa3e:9197]) by MW5PR13MB5632.namprd13.prod.outlook.com
+ ([fe80::df7c:a5b9:aa3e:9197%4]) with mapi id 15.20.8466.015; Fri, 21 Feb 2025
+ 00:36:34 +0000
+From: "Bird, Tim" <Tim.Bird@sony.com>
+To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: [boot time] Call for boot time data!!
+Thread-Topic: [boot time] Call for boot time data!!
+Thread-Index: AduD+Au2+Aj/s/B3TYm/Wzo+GK9ltA==
+Date: Fri, 21 Feb 2025 00:36:33 +0000
+Message-ID:
+ <MW5PR13MB5632D241E8EDE22FF060F791FDC72@MW5PR13MB5632.namprd13.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: MW5PR13MB5632:EE_|SN4PR13MB5325:EE_
+x-ms-office365-filtering-correlation-id: b6fb5840-faab-41aa-4b0b-08dd520fcafa
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|1800799024|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?wdhzLUQ7XUK1uAMwyMk/BM0wl0VkKWYbIwBGtaY5fV+zgarZeiSAI0eXqPak?=
+ =?us-ascii?Q?28bGHiI5O7+BrYhBWPgfQ2Twaqf+5TA660Ucf5xIq1a75rrBe+CbaOcEycIW?=
+ =?us-ascii?Q?ZUnwXahh+w2ZotL1G/S0n459J7CU9Csgkx+fbU5S96AbdcT2HcnNJHyP7TDn?=
+ =?us-ascii?Q?8lObFXUf7JmR45eADeESuVfOBShx0ckegtLxFyU2f5WJiPMZbdqSA8+QIF2Q?=
+ =?us-ascii?Q?aCy+rTQQEVSPiZnvke8OPKWKIE1I7cYbQ7WC9S4BUcdrVqp/QWkvwF6mRtsd?=
+ =?us-ascii?Q?De+HRBIWTDhjvVLzJ3gXWlLwAeoQdya4Yg7XeSb2PuaBIJquV0EgEokDLsRV?=
+ =?us-ascii?Q?1hmvKm+3naxeDR+DOIqZeyOxvljlvDJImxa+jowY85QiVtoCyzQvNTdkzcyW?=
+ =?us-ascii?Q?qdMHjf9ehF85RZZHF7Tli7vB7YVnt/DUdKa+o2LCNh9EPjnE1KieFNtpuLQx?=
+ =?us-ascii?Q?E+CfUOoYwbjIu/LsWUtAH2L2towSXEpCpPMVlBY11kgv7/xgoyS+hBx/9uqA?=
+ =?us-ascii?Q?5vx35mo0/YwisP4uZqmlyiY0iyjBGqkJdPtT8VDIXDUz+o7/ng5uDzjwmzfa?=
+ =?us-ascii?Q?WUGIWqaA989ar35LyP8E4LQarkZqk6cDcwfyjznG9HwCEd2BYk4hKEQE6nj9?=
+ =?us-ascii?Q?p4eiEryYgLH3PBqSk+SiH+1/+an5WTpxXxx3SYZrpl3bgHSML6H1UW/bN9Rh?=
+ =?us-ascii?Q?IJQsIyFYACABU4wtsFmLnQQDVxx/UmFZlNoXMtoXUJkRagajEUBDnTAInbpy?=
+ =?us-ascii?Q?C9aQ75IfaLN1OxWpazriWn0eWwBbJ7zLD0d5EgXV7h13Xh44N15OlEsPAbHr?=
+ =?us-ascii?Q?axchu1nc6ABJZFYGOa2maPAA4rYk/872oFfbDIzp0n9CbLfsjT4NiEJzI6No?=
+ =?us-ascii?Q?kXgQkjQZpiS1Uo5Q0GEiXry8uUH6Pi3gHwLs8pklxNy56GQvu2OyZgJO4Ilr?=
+ =?us-ascii?Q?lf2sqz1mNH4NfjlgOuOaYYvwl62mGGcX0yumLpbm8R5Cfau3kQKXdO9VhzAw?=
+ =?us-ascii?Q?Jfbb0+uotXOAyDPyqjIylYXTabkkuVhk22uk8PyuUB4SfGzhDP92Vj3z7c/c?=
+ =?us-ascii?Q?WOA2NA8/fOql7cygZX8WaavBayjHJ+8T/oMbkHNyYTgT3FXGPAdzDqTl7LPl?=
+ =?us-ascii?Q?HsK8ssekpowiFNKxD1kdEFvFaL+sEwbogGOqxwYZMZU3djALcw4YTNb6zqGY?=
+ =?us-ascii?Q?u3ZX77gSGFsngz4fWtudwabJpn/SZ7qfh3Jo8ILte5E8y3/MBxRa/IPXbFXc?=
+ =?us-ascii?Q?L01KYrHpb8aT14WHl8gVd25HFPL/0SHor+Ye2gpdFMLXKRYw+xdfz9FE+34M?=
+ =?us-ascii?Q?z8vbLSWzHgH87R24Clsh4uxnnuG2C894I0UidwSbmRJcVSPufzJY9yCmVf8Q?=
+ =?us-ascii?Q?2ZYfuGJ2V3VQP0SOG1E+osZs5AKI?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW5PR13MB5632.namprd13.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?IWl756wJHWl6aG+mkqq48E8aBnYDyLV1lz4QzbACMzybYgMweFma1zxvXS2T?=
+ =?us-ascii?Q?4EtmzlvPwgHGMzr3aSO1AY+MbLdidl5uBBxOcINVBeKS/FpdmF5PPj4dDOYV?=
+ =?us-ascii?Q?ct1xr6JxWO8OvbSDOouUVXtQzkxzrS/rH6FyBbXcy3XIZc6sJThs15HBAwvs?=
+ =?us-ascii?Q?XcBfiTd8WLkevlEWuODu94sxWryVU55KeloAEzOnvQUsCUWFQqLVVzBNu6nW?=
+ =?us-ascii?Q?DP95oAuoqxpc+0tNdWL3AmUb0lN71eFiTMxMQ1In8T7xX6mtg9jsBgAnb72v?=
+ =?us-ascii?Q?Xb30dc5CIQlKDAMkcdpeF10K/pzvVkmO19ewstj26xM1CvOxmYxxAPbvGqrh?=
+ =?us-ascii?Q?8G7T5OWQTgFQAMFKSIJaR0NhYe4fMue2zlaCeDSYUZgtgOUMDP3m7hxeVDPb?=
+ =?us-ascii?Q?/ehjQ6i5obmsgpUowyhKOtPwx/Q8oJPaD7KLaS9N2t4ym2hxS3ost05pLoix?=
+ =?us-ascii?Q?NETjKmZLkhgAR+OIyzyw/CE/GiYDsDLe7h59Qvqzb8WdYEgMwidgMY9qmgT4?=
+ =?us-ascii?Q?4tTua2UwhBMRpvB19mRDTLYHLO/H5A3uxEtnIaxRMzuVy7wFyloCZ1vZOmEc?=
+ =?us-ascii?Q?Ah/BfiS4GZ5Oe8ZNwoTWNBDKSulFE4zvQZ5Ex4kW/PbB8iHbMIkJSqcv3NDi?=
+ =?us-ascii?Q?XGQI1hpdJXOH4QesuLX9pHbdpwVOw3NPzZMw13u/K36iviIGn1U9Y4m1cAVF?=
+ =?us-ascii?Q?Y3iZXhVGmvajhcOF5qo2q+kcIo05noOmI/KDFduDJ17oZlUpP9+Ab04/OLr8?=
+ =?us-ascii?Q?4/c8Q6ZJVQlOQGDbVrLv7unt8SXEOAyasROQW8kETL1v6b1G9xl1FOzHN0y1?=
+ =?us-ascii?Q?wRrXaw8eTHxUa3nS7GZ3O9Wcq96RfoYzQsOWuRhGfDyrsuWNJIPpgH4cwdKQ?=
+ =?us-ascii?Q?vGVvFrJ/0cCwBEQuD1XU2YElnVCmCw+qq3QumgRcuOPZnL4f1zMCr20YQPle?=
+ =?us-ascii?Q?u2Y3q7wroXPK3cOvTf9oHjPDnG7xJ3CxIuNJTOhSkRazHTDFd+NF0dBfHBqx?=
+ =?us-ascii?Q?VG3RcfcWfHHXCHz6J4qFuLiAzSro1opGNM2XP0RwpkNmn94YzbDmV/DAodRv?=
+ =?us-ascii?Q?lzFC8h1CdEItQw4M2AhuKQfyla8VvPo2B8XmtKj3LGln0wuQmxEV2F2iTa1M?=
+ =?us-ascii?Q?Zog+hbb48go6O6O3YqzHDo1r95E5q9nskcRNigvsYG5kbcE/m64VGhNCAcTu?=
+ =?us-ascii?Q?1LAq3iu9VcpiYs9xRKHK7nDWwLjj1DNzRSxTi8Pj+HiBYGv8V6+4IfDNZn5i?=
+ =?us-ascii?Q?ySWljR59IopI2sK3k/mvFJ1HrrA/SYp9B5DxT60L5wxAOGThQjxHj4qDDXqN?=
+ =?us-ascii?Q?aTRQhT9acrKr6r8f042HAHM6qtJ0emT+OSm5ewkeHgP4Vfx/V3yD2xbaB+BF?=
+ =?us-ascii?Q?RtE/HbSMoUWNIKqf4A7Y+w1jtpsp/kT3aFluWJc8MpHRTQMV3unTaJ2iuuXa?=
+ =?us-ascii?Q?Cp9nnbCrWFbncVqbRurO2GOWZHCcEMI9p1YxGe2NxmnBF9YUbwxTMOfv1Jii?=
+ =?us-ascii?Q?J0BLkYTFkplH+d13YLYtI/UETp8DimJMPhHCVLKk6tz/jg3SSvUHjLaVRPaB?=
+ =?us-ascii?Q?adDIoWisZR7i04UfgnU=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250219112519.92853-1-21cnbao@gmail.com> <CAJuCfpEWFz14R1vD4Rezy98WBk25HWWX+6DsGBekeYMugKTsfQ@mail.gmail.com>
- <CAGsJ_4yx1=jaQmDG_9rMqHFFkoXqMJw941eYvtby28OqDq+S7g@mail.gmail.com>
- <Z7ZX28XARM7seknO@x1.local> <CAGsJ_4wptMn8HX6Uam7AQpWeE=nOUDHE-Vr81SQJq_oSjmTFHg@mail.gmail.com>
- <Z7ez2Vl8Sa_bRb4e@x1.local> <CAJuCfpHmS7y-gb7YTn4TfPz-YHau3po7TU3tN+8q+1JxXm-rtQ@mail.gmail.com>
- <CAJuCfpHMpEJRAb9O+aRX4f638Ubb7FgwLorm+f1TJ8mUTMV7hA@mail.gmail.com>
-In-Reply-To: <CAJuCfpHMpEJRAb9O+aRX4f638Ubb7FgwLorm+f1TJ8mUTMV7hA@mail.gmail.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Thu, 20 Feb 2025 16:36:08 -0800
-X-Gm-Features: AWEUYZnStP-lAeMijR0y6LNLygrcaQlKBYJ8BbZJ6dED70knG-ILcs1ltaL_Xu4
-Message-ID: <CAJuCfpEeEbdE2ycEQ+3zSbCE3NJsG1vTbqMtZyzry6FRFZB61w@mail.gmail.com>
-Subject: Re: [PATCH RFC] mm: Fix kernel BUG when userfaultfd_move encounters swapcache
-To: Peter Xu <peterx@redhat.com>
-Cc: Barry Song <21cnbao@gmail.com>, Lokesh Gidra <lokeshgidra@google.com>, linux-mm@kvack.org, 
-	akpm@linux-foundation.org, linux-kernel@vger.kernel.org, 
-	zhengtangquan@oppo.com, Barry Song <v-songbaohua@oppo.com>, 
-	Andrea Arcangeli <aarcange@redhat.com>, Al Viro <viro@zeniv.linux.org.uk>, 
-	Axel Rasmussen <axelrasmussen@google.com>, Brian Geffon <bgeffon@google.com>, 
-	Christian Brauner <brauner@kernel.org>, David Hildenbrand <david@redhat.com>, Hugh Dickins <hughd@google.com>, 
-	Jann Horn <jannh@google.com>, Kalesh Singh <kaleshsingh@google.com>, 
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Matthew Wilcox <willy@infradead.org>, 
-	Michal Hocko <mhocko@suse.com>, Mike Rapoport <rppt@kernel.org>, 
-	Nicolas Geoffray <ngeoffray@google.com>, Ryan Roberts <ryan.roberts@arm.com>, 
-	Shuah Khan <shuah@kernel.org>, ZhangPeng <zhangpeng362@huawei.com>, Yu Zhao <yuzhao@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	2uH8OFRrLRW6ZfYEGLasLN18D+RNUuIQ1TD3bRRPbtYF/oW/Nt+Ud9nS+1hAQhCRsiBpPuOGu+C8nFEaBQf65VrvFXTGZ83W7ekPNqwf2kIOm7XrYUSh+Q9XmueifxHGDDkcq16rAq6dhDp1gb3W5PmfPRpjykDgmeyhf36jUcgO10lUJrMZ1xYjLBnUxdHi2L8yRy0fAfZ6M54pdBNq7rXroXUUBEdlTW9YIV0qXG9cDZAboTtYPrkNjbjtqaiWKKGKfBkVNy2zw4RhEHSlJEsYuCAIj3SrPsOxrBDpKE7W6umztdohAD80PtVQ5ewJIdLaiZcWWswTfCqV6Qa/oiC7DnqryL9o8G68EMsmpTk5jT+9w9ZvcB8lVqL1KmX7JjPsQ8ISh0Xa4ha3tMkn5jIV6YLPuFkX3Baj3IcTD52A28Sxn1JeMyoZeO7SM7BfkdobWj1Gv35NBaleZCsxs6pVKGrOwwp6qOHZFiBUJUe398Mpc8v9x09FVF/itmHuKBkjE4vWFMuqw9IZYv3coHXGVgGpi98qUuZNolMMOTkgU4mUBQEJPvutLMVh8/wlnP9T99COhjie+1ER3dN6uugV65GzTETBJzbU8D2/cIQBwokKQYzlMM8iSFjpZsSE
+X-OriginatorOrg: sony.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: MW5PR13MB5632.namprd13.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b6fb5840-faab-41aa-4b0b-08dd520fcafa
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Feb 2025 00:36:33.9434
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 66c65d8a-9158-4521-a2d8-664963db48e4
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: uxbyd/SE1VZ3E6t7zpMgNTrEqxrYRNo4wKUlzlimCCZ90+c3q/8etDZgOTYeWXDAntDMH95A7Kt80DZdCkUoMg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN4PR13MB5325
+X-Proofpoint-GUID: xzWnO-DxTNAXBBy6LjusxHWzLdR6DEaQ
+X-Proofpoint-ORIG-GUID: xzWnO-DxTNAXBBy6LjusxHWzLdR6DEaQ
+X-Sony-Outbound-GUID: xzWnO-DxTNAXBBy6LjusxHWzLdR6DEaQ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-20_09,2025-02-20_02,2024-11-22_01
 
-On Thu, Feb 20, 2025 at 3:52=E2=80=AFPM Suren Baghdasaryan <surenb@google.c=
-om> wrote:
->
-> On Thu, Feb 20, 2025 at 3:47=E2=80=AFPM Suren Baghdasaryan <surenb@google=
-.com> wrote:
-> >
-> > On Thu, Feb 20, 2025 at 2:59=E2=80=AFPM Peter Xu <peterx@redhat.com> wr=
-ote:
-> > >
-> > > On Thu, Feb 20, 2025 at 12:04:40PM +1300, Barry Song wrote:
-> > > > On Thu, Feb 20, 2025 at 11:15=E2=80=AFAM Peter Xu <peterx@redhat.co=
-m> wrote:
-> > > > >
-> > > > > On Thu, Feb 20, 2025 at 09:37:50AM +1300, Barry Song wrote:
-> > > > > > On Thu, Feb 20, 2025 at 7:27=E2=80=AFAM Suren Baghdasaryan <sur=
-enb@google.com> wrote:
-> > > > > > >
-> > > > > > > On Wed, Feb 19, 2025 at 3:25=E2=80=AFAM Barry Song <21cnbao@g=
-mail.com> wrote:
-> > > > > > > >
-> > > > > > > > From: Barry Song <v-songbaohua@oppo.com>
-> > > > > > > >
-> > > > > > > > userfaultfd_move() checks whether the PTE entry is present =
-or a
-> > > > > > > > swap entry.
-> > > > > > > >
-> > > > > > > > - If the PTE entry is present, move_present_pte() handles f=
-olio
-> > > > > > > >   migration by setting:
-> > > > > > > >
-> > > > > > > >   src_folio->index =3D linear_page_index(dst_vma, dst_addr)=
-;
-> > > > > > > >
-> > > > > > > > - If the PTE entry is a swap entry, move_swap_pte() simply =
-copies
-> > > > > > > >   the PTE to the new dst_addr.
-> > > > > > > >
-> > > > > > > > This approach is incorrect because even if the PTE is a swa=
-p
-> > > > > > > > entry, it can still reference a folio that remains in the s=
-wap
-> > > > > > > > cache.
-> > > > > > > >
-> > > > > > > > If do_swap_page() is triggered, it may locate the folio in =
-the
-> > > > > > > > swap cache. However, during add_rmap operations, a kernel p=
-anic
-> > > > > > > > can occur due to:
-> > > > > > > >  page_pgoff(folio, page) !=3D linear_page_index(vma, addres=
-s)
-> > > > > > >
-> > > > > > > Thanks for the report and reproducer!
-> > > > > > >
-> > > > > > > >
-> > > > > > > > $./a.out > /dev/null
-> > > > > > > > [   13.336953] page: refcount:6 mapcount:1 mapping:00000000=
-f43db19c index:0xffffaf150 pfn:0x4667c
-> > > > > > > > [   13.337520] head: order:2 mapcount:1 entire_mapcount:0 n=
-r_pages_mapped:1 pincount:0
-> > > > > > > > [   13.337716] memcg:ffff00000405f000
-> > > > > > > > [   13.337849] anon flags: 0x3fffc0000020459(locked|uptodat=
-e|dirty|owner_priv_1|head|swapbacked|node=3D0|zone=3D0|lastcpupid=3D0xffff)
-> > > > > > > > [   13.338630] raw: 03fffc0000020459 ffff80008507b538 ffff8=
-0008507b538 ffff000006260361
-> > > > > > > > [   13.338831] raw: 0000000ffffaf150 0000000000004000 00000=
-00600000000 ffff00000405f000
-> > > > > > > > [   13.339031] head: 03fffc0000020459 ffff80008507b538 ffff=
-80008507b538 ffff000006260361
-> > > > > > > > [   13.339204] head: 0000000ffffaf150 0000000000004000 0000=
-000600000000 ffff00000405f000
-> > > > > > > > [   13.339375] head: 03fffc0000000202 fffffdffc0199f01 ffff=
-ffff00000000 0000000000000001
-> > > > > > > > [   13.339546] head: 0000000000000004 0000000000000000 0000=
-0000ffffffff 0000000000000000
-> > > > > > > > [   13.339736] page dumped because: VM_BUG_ON_PAGE(page_pgo=
-ff(folio, page) !=3D linear_page_index(vma, address))
-> > > > > > > > [   13.340190] ------------[ cut here ]------------
-> > > > > > > > [   13.340316] kernel BUG at mm/rmap.c:1380!
-> > > > > > > > [   13.340683] Internal error: Oops - BUG: 00000000f2000800=
- [#1] PREEMPT SMP
-> > > > > > > > [   13.340969] Modules linked in:
-> > > > > > > > [   13.341257] CPU: 1 UID: 0 PID: 107 Comm: a.out Not taint=
-ed 6.14.0-rc3-gcf42737e247a-dirty #299
-> > > > > > > > [   13.341470] Hardware name: linux,dummy-virt (DT)
-> > > > > > > > [   13.341671] pstate: 60000005 (nZCv daif -PAN -UAO -TCO -=
-DIT -SSBS BTYPE=3D--)
-> > > > > > > > [   13.341815] pc : __page_check_anon_rmap+0xa0/0xb0
-> > > > > > > > [   13.341920] lr : __page_check_anon_rmap+0xa0/0xb0
-> > > > > > > > [   13.342018] sp : ffff80008752bb20
-> > > > > > > > [   13.342093] x29: ffff80008752bb20 x28: fffffdffc0199f00 =
-x27: 0000000000000001
-> > > > > > > > [   13.342404] x26: 0000000000000000 x25: 0000000000000001 =
-x24: 0000000000000001
-> > > > > > > > [   13.342575] x23: 0000ffffaf0d0000 x22: 0000ffffaf0d0000 =
-x21: fffffdffc0199f00
-> > > > > > > > [   13.342731] x20: fffffdffc0199f00 x19: ffff000006210700 =
-x18: 00000000ffffffff
-> > > > > > > > [   13.342881] x17: 6c203d2120296567 x16: 6170202c6f696c6f =
-x15: 662866666f67705f
-> > > > > > > > [   13.343033] x14: 6567617028454741 x13: 2929737365726464 =
-x12: ffff800083728ab0
-> > > > > > > > [   13.343183] x11: ffff800082996bf8 x10: 0000000000000fd7 =
-x9 : ffff80008011bc40
-> > > > > > > > [   13.343351] x8 : 0000000000017fe8 x7 : 00000000fffff000 =
-x6 : ffff8000829eebf8
-> > > > > > > > [   13.343498] x5 : c0000000fffff000 x4 : 0000000000000000 =
-x3 : 0000000000000000
-> > > > > > > > [   13.343645] x2 : 0000000000000000 x1 : ffff0000062db980 =
-x0 : 000000000000005f
-> > > > > > > > [   13.343876] Call trace:
-> > > > > > > > [   13.344045]  __page_check_anon_rmap+0xa0/0xb0 (P)
-> > > > > > > > [   13.344234]  folio_add_anon_rmap_ptes+0x22c/0x320
-> > > > > > > > [   13.344333]  do_swap_page+0x1060/0x1400
-> > > > > > > > [   13.344417]  __handle_mm_fault+0x61c/0xbc8
-> > > > > > > > [   13.344504]  handle_mm_fault+0xd8/0x2e8
-> > > > > > > > [   13.344586]  do_page_fault+0x20c/0x770
-> > > > > > > > [   13.344673]  do_translation_fault+0xb4/0xf0
-> > > > > > > > [   13.344759]  do_mem_abort+0x48/0xa0
-> > > > > > > > [   13.344842]  el0_da+0x58/0x130
-> > > > > > > > [   13.344914]  el0t_64_sync_handler+0xc4/0x138
-> > > > > > > > [   13.345002]  el0t_64_sync+0x1ac/0x1b0
-> > > > > > > > [   13.345208] Code: aa1503e0 f000f801 910f6021 97ff5779 (d=
-4210000)
-> > > > > > > > [   13.345504] ---[ end trace 0000000000000000 ]---
-> > > > > > > > [   13.345715] note: a.out[107] exited with irqs disabled
-> > > > > > > > [   13.345954] note: a.out[107] exited with preempt_count 2
-> > > > > > > >
-> > > > > > > > Fully fixing it would be quite complex, requiring similar h=
-andling
-> > > > > > > > of folios as done in move_present_pte.
-> > > > > > >
-> > > > > > > How complex would that be? Is it a matter of adding
-> > > > > > > folio_maybe_dma_pinned() checks, doing folio_move_anon_rmap()=
- and
-> > > > > > > folio->index =3D linear_page_index like in move_present_pte()=
- or
-> > > > > > > something more?
-> > > > > >
-> > > > > > My main concern is still with large folios that require a split=
-_folio()
-> > > > > > during move_pages(), as the entire folio shares the same index =
-and
-> > > > > > anon_vma. However, userfaultfd_move() moves pages individually,
-> > > > > > making a split necessary.
-> > > > > >
-> > > > > > However, in split_huge_page_to_list_to_order(), there is a:
-> > > > > >
-> > > > > >         if (folio_test_writeback(folio))
-> > > > > >                 return -EBUSY;
-> > > > > >
-> > > > > > This is likely true for swapcache, right? However, even for mov=
-e_present_pte(),
-> > > > > > it simply returns -EBUSY:
-> > > > > >
-> > > > > > move_pages_pte()
-> > > > > > {
-> > > > > >                 /* at this point we have src_folio locked */
-> > > > > >                 if (folio_test_large(src_folio)) {
-> > > > > >                         /* split_folio() can block */
-> > > > > >                         pte_unmap(&orig_src_pte);
-> > > > > >                         pte_unmap(&orig_dst_pte);
-> > > > > >                         src_pte =3D dst_pte =3D NULL;
-> > > > > >                         err =3D split_folio(src_folio);
-> > > > > >                         if (err)
-> > > > > >                                 goto out;
-> > > > > >
-> > > > > >                         /* have to reacquire the folio after it=
- got split */
-> > > > > >                         folio_unlock(src_folio);
-> > > > > >                         folio_put(src_folio);
-> > > > > >                         src_folio =3D NULL;
-> > > > > >                         goto retry;
-> > > > > >                 }
-> > > > > > }
-> > > > > >
-> > > > > > Do we need a folio_wait_writeback() before calling split_folio(=
-)?
-> > > > >
-> > > > > Maybe no need in the first version to fix the immediate bug?
-> > > > >
-> > > > > It's also not always the case to hit writeback here. IIUC, writeb=
-ack only
-> > > > > happens for a short window when the folio was just added into swa=
-pcache.
-> > > > > MOVE can happen much later after that anytime before a swapin.  M=
-y
-> > > > > understanding is that's also what Matthew wanted to point out.  I=
-t may be
-> > > > > better justified of that in a separate change with some performan=
-ce
-> > > > > measurements.
-> > > >
-> > > > The bug we=E2=80=99re discussing occurs precisely within the short =
-window you
-> > > > mentioned.
-> > > >
-> > > > 1. add_to_swap: The folio is added to swapcache.
-> > > > 2. try_to_unmap: PTEs are converted to swap entries.
-> > > > 3. pageout
-> > > > 4. Swapcache is cleared.
-> > >
-> > > Hmm, I see. I was expecting step 4 to be "writeback is cleared".. or =
-at
-> > > least that should be step 3.5, as IIUC "writeback" needs to be cleare=
-d
-> > > before "swapcache" bit being cleared.
-> > >
-> > > >
-> > > > The issue happens between steps 2 and 4, where the PTE is not prese=
-nt, but
-> > > > the folio is still in swapcache - the current code does move_swap_p=
-te() but does
-> > > > not fixup folio->index within swapcache.
-> > >
-> > > One thing I'm still not clear here is why it's a race condition, rath=
-er
-> > > than more severe than that.  I mean, folio->index is definitely wrong=
-, then
-> > > as long as the page still in swapcache, we should be able to move the=
- swp
-> > > entry over to dest addr of UFFDIO_MOVE, read on dest addr, then it'll=
- see
-> > > the page in swapcache with the wrong folio->index already and trigger=
-.
-> > >
-> > > I wrote a quick test like that, it actually won't trigger..
-> > >
-> > > I had a closer look in the code, I think it's because do_swap_page() =
-has
-> > > the logic to detect folio->index matching first, and allocate a new f=
-olio
-> > > if it doesn't match in ksm_might_need_to_copy().  IIUC that was for
-> > > ksm.. but it looks like it's functioning too here.
-> > >
-> > > ksm_might_need_to_copy:
-> > >         if (folio_test_ksm(folio)) {
-> > >                 if (folio_stable_node(folio) &&
-> > >                     !(ksm_run & KSM_RUN_UNMERGE))
-> > >                         return folio;   /* no need to copy it */
-> > >         } else if (!anon_vma) {
-> > >                 return folio;           /* no need to copy it */
-> > >         } else if (folio->index =3D=3D linear_page_index(vma, addr) &=
-& <---------- [1]
-> > >                         anon_vma->root =3D=3D vma->anon_vma->root) {
-> > >                 return folio;           /* still no need to copy it *=
-/
-> > >         }
-> > >         ...
-> > >
-> > >         new_folio =3D vma_alloc_folio(GFP_HIGHUSER_MOVABLE, 0, vma, a=
-ddr); <---- [2]
-> > >         ...
-> > >
-> > > So I believe what I hit is at [1] it sees index doesn't match, then i=
-t
-> > > decided to allocate a new folio.  In this case, it won't hit your BUG
-> > > because it'll be "folio !=3D swapcache" later, so it'll setup the
-> > > folio->index for the new one, rather than the sanity check.
-> > >
-> > > Do you know how your case got triggered, being able to bypass the abo=
-ve [1]
-> > > which should check folio->index already?
-> >
-> > To understand the change I tried applying the proposed patch to both
-> > mm-unstable and Linus' ToT and got conflicts for both trees. Barry,
-> > which baseline are you using?
->
-> Oops, never mind. My mistake. Copying from the email messed up tabs...
-> It applies cleanly.
+Linux developers and users,
 
-Overall the code seems correct to me, however the new code has quite
-complex logical structure IMO. Original simplified code structure is
-like this:
+I'm trying to build
+a system of reference value files for an initcall duration regression test =
+I'm writing for the Linux kernel).
 
-if (pte_present(orig_src_pte)) {
-        if (is_zero_pfn) {
-                move_zeropage_pte()
-                return
-        }
-        // pin and lock src_folio
-        spin_lock(src_ptl)
-        folio_get(folio)
-        folio_trylock(folio)
-        if (folio_test_large(src_folio))
-                split_folio(src_folio)
-        anon_vma_trylock_write(src_anon_vma)
-        move_present_pte()
-} else {
-        if (non_swap_entry(entry))
-                if (is_migration_entry(entry))
-                        handle migration entry
-        else
-                move_swap_pte()
-}
+If you have a machine, or particularly any embedded dev boards (like a beag=
+leplay, beaglebone (*), raspberry pi, etc.), it
+would help me out a lot of you could run this tool: grab-boot-data.sh
+which you can get from here: https://birdcloud.org/boot-time/Boot-time_Tool=
+s
 
-The new structure looks like this:
+This tool grabs a bunch of information about your machine, including, most =
+importantly, your boot-time
+kernel messages, and sends them to me.  If this sounds too much like a secu=
+rity nightmare, you
+can just not heed this call, or there's an option (described on the page ab=
+ove) to review the data
+before you send it.
 
-if (!pte_present(orig_src_pte)) {
-        if (is_migration_entry(entry)) {
-                handle migration entry
-                return
-       }
-        if (!non_swap_entry() ||  !pte_swp_exclusive())
-                return
-        si =3D get_swap_device(entry);
-}
-if (pte_present(orig_src_pte) && is_zero_pfn(pte_pfn(orig_src_pte)))
-        move_zeropage_pte()
-        return
-}
-pin and lock src_folio
-        spin_lock(src_ptl)
-        if (pte_present(orig_src_pte))
-                folio_get(folio)
-        else {
-                folio =3D filemap_get_folio(swap_entry)
-                if (IS_ERR(folio))
-                        move_swap_pte()
-                        return
-                }
-        }
-        folio_trylock(folio)
-if (folio_test_large(src_folio))
-        split_folio(src_folio)
-if (pte_present(orig_src_pte))
-        anon_vma_trylock_write(src_anon_vma)
-move_pte_and_folio()
+Optimally, I can get the best information if you run the tool with 'quiet' =
+and 'initcall_debug' options
+on the kernel command line, but if that's too hard to configure, you can ju=
+st run grab-boot-data.sh with the '-s' option.
+Please run the script sometime shortly after boot of your machine.
 
-This looks more complex and harder to follow. Might be the reason
-David was not in favour of treating swapcache and present pages in the
-same path. And now I would agree that refactoring some common parts
-and not breaking the original structure might be cleaner.
+Data for any machine, running any recent kernel version, is fine (any kerne=
+ls pre 4.0 are not that useful).
 
->
-> >
-> > >
-> > > >
-> > > > My point is that if we want a proper fix for mTHP, we'd better hand=
-le writeback.
-> > > > Otherwise, this isn=E2=80=99t much different from directly returnin=
-g -EBUSY as proposed
-> > > > in this RFC.
-> > > >
-> > > > For small folios, there=E2=80=99s no split_folio issue, making it r=
-elatively
-> > > > simpler. Lokesh
-> > > > mentioned plans to madvise NOHUGEPAGE in ART, so fixing small folio=
-s is likely
-> > > > the first priority.
-> > >
-> > > Agreed.
-> > >
-> > > --
-> > > Peter Xu
-> > >
+You will need to make up a lab name and a machine name for the machine or b=
+oard you are reporting on.
+I use 'tims_lab' and 'bp1' for a beagleplay in my possession.
+
+The tool will send data to https://birdcloud.org/boot-time/Boot_Data
+
+If you can send data for just one machine, that's great.  If for multiple m=
+achines, that's even better.
+
+I'll be reporting on the boot-time regression test at ELC in June, and any =
+data I can gather in the next
+few weeks will really help me with progress towards the test and my talk.
+
+Thanks.
+ -- Tim
+
+P.S. If you see any problems running grab-boot-data.sh, please report them =
+to me.  Thanks.
+
 
