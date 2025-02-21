@@ -1,88 +1,88 @@
-Return-Path: <linux-kernel+bounces-526794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526795-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6AD7A40368
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 00:22:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54068A4036B
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 00:24:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA4BF3B1815
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 23:22:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE09A3B2130
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 23:23:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 961B520897E;
-	Fri, 21 Feb 2025 23:22:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70825209F4B;
+	Fri, 21 Feb 2025 23:23:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h+QH+5ZO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aNU6ghjP"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA85817CA17;
-	Fri, 21 Feb 2025 23:22:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C590817CA17;
+	Fri, 21 Feb 2025 23:23:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740180159; cv=none; b=Vn8CkfZZ1Miag0YuCy4/rMzibFqqiDSlUUNlmgnCwC5fbdBL1rkip/PTvHAzEg/23LZYbQu3Dms5cUXGPZ/0mIY+BIXmMb4QmTwbIoNe++Sl4qXR3ZqLQ8l7Vu8kWsfj1ykRP6oBOFqWy6jEu9UQA2o54CDrKpx1Ng9tOsk+5ec=
+	t=1740180223; cv=none; b=VZWs+OpmQFnhKULAIjddPSRpAx+dUzHoHojaxAqOeCOBIR1MKhu8XP1M6qqTOgQaEFOxOTSAKQb57N1wC1AzKQsZsbw+9gKG7uWfR+QJ7CGHLo41E46ZlcIMy+ryfVGEJ8V491ZXdhIEcNJZTuivFEJfcZB3tH4xm1bOddJxy2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740180159; c=relaxed/simple;
-	bh=Ls0VCPw6WU0TZlYM1OzIs+8Ykkrhg7H9NnWWEP0Xyag=;
+	s=arc-20240116; t=1740180223; c=relaxed/simple;
+	bh=+xduFCwtrl+bhoxnbvomXra6JaOzL0UrXGBuJPoIqCQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AqsPaREAGIiThaEQCLX+3LfNSiLDObigPfZf4aOhYukvxerV4XjwE1aLdEj277gwQlovQkHRejmQ1YDuryNuYvh2/at80xstvpQLFCvVHP8X6gGSYp9P6oT8zGNFoAeRLFPd1syMLXqkOf5eN4YubLMrHZe3bDN9sYwmpqL4q/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h+QH+5ZO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E127C4CED6;
-	Fri, 21 Feb 2025 23:22:38 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=iIZRiVAj/r2ilrmETXe1Z9Y/kki6jp24Iq7jHkmwjahKRRLsDawqGnNKLRut4boeEztTMO4g0sztNxc7ikOVXlJNB9AyK/MFfizawKJXKlU10HevLeXIv/9WR+rdI9pLTFsvWkgXbRoAL52nB50YX1+sCtvCfMaCYDm71TPb5ME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aNU6ghjP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09604C4CED6;
+	Fri, 21 Feb 2025 23:23:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740180158;
-	bh=Ls0VCPw6WU0TZlYM1OzIs+8Ykkrhg7H9NnWWEP0Xyag=;
+	s=k20201202; t=1740180223;
+	bh=+xduFCwtrl+bhoxnbvomXra6JaOzL0UrXGBuJPoIqCQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=h+QH+5ZOCv6QtchBXY4LSMTLw34S1JpQ6P9gQlbei4rCZyikzFjCp4zGa9tiR3rw7
-	 oxnhEEX3VnIscRnIxVyyZ+Ugc70bKpfYIERv4tcbaUWJmmmd9TOlvP5ZQVd/5w8kdQ
-	 bXGM7TaOr8kherzsfbexPxyr+VA9L022UbN9VtkOCjVF/zqr8rCh3qDJuz9bczSiXn
-	 YMH6UqUQmJRyWAZy3YgxSW2Sw1LNAYmE9uYwbnnqbU71dhHd2IXFd1/olVfeMWII2k
-	 VgUjRCwfvLXCiAGevJn01LMXG027BsxtTQC1uoRCSA5lT5+Bzp8/1YJdYFW+1/zUB4
-	 5d9lFcR9ZSmmQ==
-Date: Fri, 21 Feb 2025 17:22:36 -0600
+	b=aNU6ghjPWB3w2kkqzvgtaI9p8FOB2PcQVhDW9Y/TpzK1e71JUG49KycQ6tUAlKyG9
+	 xK4ZoQn3ooHbOWcfthR03CRpYrVKD15xQGRydLvmmLX9fEInxovew784PhyAbWd9OD
+	 /hmHiJKePCqxh8GG8An2VLoNynlDaQZT6BctSLqwF/LdKWQj37pmnnmpJAX+GyNz+u
+	 SW6Z1/wdh/Rs0sBs7hyM15wok00KHzN0UvPg+q1KSQHxkG+WlEFnkHu64yYnfwPaNb
+	 Edf+4f7szMt2sIHcagnW9vKQxv7cJfcamC019K+uzUQbA2Kgx92136zVKX0Ym6MpZ/
+	 tUvdhVG6jGvyw==
+Date: Fri, 21 Feb 2025 17:23:41 -0600
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Conor Dooley <conor+dt@kernel.org>, shawnguo@kernel.org,
-	Ulf Hansson <ulf.hansson@linaro.org>, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, Krzysztof Kozlowski <krzk+dt@kernel.org>
-Subject: Re: [PATCH 1/1] dt-bindings: mmc: Change to additionalProperties to
- fix fail detect Unevaluated property
-Message-ID: <174018015606.370492.13150603004835486045.robh@kernel.org>
-References: <20250220164655.2081224-1-Frank.Li@nxp.com>
+To: =?iso-8859-1?Q?J=2E_Neusch=E4fer?= <j.ne@posteo.net>
+Cc: Claudiu Manoil <claudiu.manoil@nxp.com>,
+	Conor Dooley <conor+dt@kernel.org>, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	Eric Dumazet <edumazet@google.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Paolo Abeni <pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>
+Subject: Re: [PATCH 2/3] dt-bindings: net: fsl,gianfar-mdio: Update
+ information about TBI
+Message-ID: <174018022084.372294.8853853099533842467.robh@kernel.org>
+References: <20250220-gianfar-yaml-v1-0-0ba97fd1ef92@posteo.net>
+ <20250220-gianfar-yaml-v1-2-0ba97fd1ef92@posteo.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20250220164655.2081224-1-Frank.Li@nxp.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250220-gianfar-yaml-v1-2-0ba97fd1ef92@posteo.net>
 
 
-On Thu, 20 Feb 2025 11:46:54 -0500, Frank Li wrote:
-> mmc-controller.yaml is common schema file. According to writing-schema.rst,
+On Thu, 20 Feb 2025 18:29:22 +0100, J. Neuschäfer wrote:
+> When this binding was originally written, all known TSEC Ethernet
+> controllers had a Ten-Bit Interface (TBI). However, some datasheets such
+> as for the MPC8315E suggest that this is not universally true:
 > 
-> * additionalProperties: true
->    Rare case, used for schemas implementing common set of properties. Such
->    schemas are supposed to be referenced by other schemas, which then use
->    'unevaluatedProperties: false'.  Typically bus or common-part schemas.
+>   The eTSECs do not support TBI, GMII, and FIFO operating modes, so all
+>   references to these interfaces and features should be ignored for this
+>   device.
 > 
-> Reproduce steps:
-> 1. Add unevaluated property 'abc' at example of fsl-imx-esdhc.yaml
-> 2. Run make dt_binding_check DT_SCHEMA_FILES=fsl-imx-esdhc.yaml
-> 
-> No any warning report. But suppose report below warning:
-> mmc@70004000: Unevaluated properties are not allowed ('abc' was unexpected)
-> 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> Signed-off-by: J. Neuschäfer <j.ne@posteo.net>
 > ---
->  Documentation/devicetree/bindings/mmc/mmc-controller.yaml | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  Documentation/devicetree/bindings/net/fsl,gianfar-mdio.yaml | 13 ++++++-------
+>  1 file changed, 6 insertions(+), 7 deletions(-)
 > 
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
 
