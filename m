@@ -1,57 +1,57 @@
-Return-Path: <linux-kernel+bounces-525481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 155E4A3F081
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:37:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 674E8A3F098
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:40:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F162C420325
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:37:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31ECF3BCA56
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:38:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F735204692;
-	Fri, 21 Feb 2025 09:36:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="av8yS7Af"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85149202C30;
-	Fri, 21 Feb 2025 09:36:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB922202F96;
+	Fri, 21 Feb 2025 09:38:14 +0000 (UTC)
+Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AEE4204681;
+	Fri, 21 Feb 2025 09:38:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740130599; cv=none; b=Lqe81y3zcBoU+eMlXAL/vNcmyyaHxBMhNAM6vR1nH1Q5RCQetuhtJHv6Gm8qqAC82271xILz5RNGvRrXpe7lW6ZKEQYAdHVpqa4ThhqKxYwIQejo1TefsJniGSXzTwhIVVWmQ+9qG2Fps72YGkZr6zRLfcz4v8qzDLkxBq+1t5I=
+	t=1740130694; cv=none; b=aW0DnEbVJ+JKvf95/1tl762i9C08aAEJfJws8QE4e9KmpgpFdcRQvU3/mTf0HIaKs418/nIcoBdmf1XpBJ7XheEll3donf14+0OIBz6818CgAdeN9jex+zeIkGukdTsVGEZjF5v1tsqgHyKw9Ga5QZIAYoKmnnL8RA0w4csfgCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740130599; c=relaxed/simple;
-	bh=LcCshsTLz5TYNjtrU59EFDnTq5rwW6zHS0BJSQ45BL0=;
+	s=arc-20240116; t=1740130694; c=relaxed/simple;
+	bh=EJx2vfs/+2gpk8AKPvz/birlYYWJkI2Q7eInv+jf3Ew=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tPcP4578age+hceKWNgcD5qtISTbvOfQ7pLDSq4ARb5WDEYDchrF/InS+WPpBTFKJN+JlohZSplTHPtrYAT+TBF3fjlp3A2fqbOcxEQzY67dIdsGtz4XROV2w3MS+vuDSSjBhcQqhbJjrZYRcOeQfOFEySvB8prrlRuVFZfzc3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=av8yS7Af; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from ideasonboard.com (93-61-96-190.ip145.fastwebnet.it [93.61.96.190])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id AF03E89A;
-	Fri, 21 Feb 2025 10:35:11 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1740130511;
-	bh=LcCshsTLz5TYNjtrU59EFDnTq5rwW6zHS0BJSQ45BL0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=av8yS7AfwDcT0yDnyQPFUSLmz7TiJGA5aus/cQ6UCrmoCmclNHZF4UV4GtPu4SXUw
-	 YtHl3WhDeT2V/buLOLunudzpysZmbcKpFjAgMx5vyBjQYChDo3ZW+VDcsMkj6eBglp
-	 Vuztxo0iETOIo/GDCozZzl0pTVzMgL5qM32/Rgso=
-Date: Fri, 21 Feb 2025 10:36:32 +0100
-From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-To: Jai Luthra <jai.luthra@ideasonboard.com>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Dave Stevenson <dave.stevenson@raspberrypi.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-Subject: Re: [PATCH 3/3] media: i2c: imx219: Use subdev state to calculate
- binning and pixelrate
-Message-ID: <ikq3xkkto566jmxvmc352l4cnjy42bx47nwbihqu77hx76o7c5@jkn37hi4pfe2>
-References: <20250219-imx219_fixes_v2-v1-0-0e3f5dd9b024@ideasonboard.com>
- <20250219-imx219_fixes_v2-v1-3-0e3f5dd9b024@ideasonboard.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ny0JuSkYbF8YLW8/O3q16QwnG4YQJUfU5GE84yADYznS5WIaLscC0Ja31mJxrpZGOBbCiniWJYyLlgrbqWhX/7ml0o7YPiuPgoLNL9VU5nscWZhsdZ+FTknhUFig4I2yVzLvUUBXKeFSxlNDMdRYMhoe2zNv9DPVbUukmpEUm8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
+Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
+	id 1tlPU1-0006Eb-00; Fri, 21 Feb 2025 10:38:09 +0100
+Received: by alpha.franken.de (Postfix, from userid 1000)
+	id C726BC0135; Fri, 21 Feb 2025 10:37:26 +0100 (CET)
+Date: Fri, 21 Feb 2025 10:37:26 +0100
+From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+To: Gregory CLEMENT <gregory.clement@bootlin.com>
+Cc: Jiaxun Yang <jiaxun.yang@flygoat.com>, Rob Herring <robh@kernel.org>,
+	Aleksandar Rikalo <arikalo@gmail.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
+	=?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>,
+	Tawfik Bayouk <tawfik.bayouk@mobileye.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	"linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/5] dt-bindings: mips: mips-cm: Add a new compatible
+ string for EyeQ6
+Message-ID: <Z7hJVnJSg3C9lmLY@alpha.franken.de>
+References: <20250123-cluster-hci-broken-v3-0-8a7ec57cbf68@bootlin.com>
+ <20250123-cluster-hci-broken-v3-2-8a7ec57cbf68@bootlin.com>
+ <afa2e874-c078-4c3e-b485-d948a0bb6a6f@app.fastmail.com>
+ <CAL_JsqKXYruNn+MtxbvCCWU2OmqeV-uAyyzN+F-ppSJVscr91w@mail.gmail.com>
+ <bf08785b-9963-4539-92ef-b73c3abe8c19@app.fastmail.com>
+ <87tt9iucu9.fsf@BLaptop.bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,91 +60,88 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250219-imx219_fixes_v2-v1-3-0e3f5dd9b024@ideasonboard.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <87tt9iucu9.fsf@BLaptop.bootlin.com>
 
-On Wed, Feb 19, 2025 at 05:16:45PM +0530, Jai Luthra wrote:
-> The pixel rate and binning calculations need the format and resolution
-> of the sensor, so pass the v4l2 subdev state directly instead of always
-> operating on the active state.
+On Tue, Jan 28, 2025 at 05:23:26PM +0100, Gregory CLEMENT wrote:
+> > 在2025年1月27日一月 下午10:07，Rob Herring写道：
+> >> On Mon, Jan 27, 2025 at 3:43 PM Jiaxun Yang <jiaxun.yang@flygoat.com> wrote:
+> >>>
+> >>>
+> >>>
+> >>> 在2025年1月23日一月 上午11:01，Gregory CLEMENT写道：
+> >>> > The CM3.5 used on EyeQ6 reports that Hardware Cache Initialization is
+> >>> > complete, but in reality it's not the case. It also incorrectly
+> >>> > indicates that Hardware Cache Initialization is supported. This new
+> >>> > compatible string allows warning about this broken feature that cannot
+> >>> > be detected at runtime.
+> >>> >
+> >>> > Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+> >>> > ---
+> >>> >  Documentation/devicetree/bindings/mips/mti,mips-cm.yaml | 12 +++++++++++-
+> >>> >  1 file changed, 11 insertions(+), 1 deletion(-)
+> >>> >
+> >>> > diff --git a/Documentation/devicetree/bindings/mips/mti,mips-cm.yaml
+> >>> > b/Documentation/devicetree/bindings/mips/mti,mips-cm.yaml
+> >>> > index
+> >>> > 4324b2306535f1bf66c44b1f96be9094ee282041..d129d6382847768dc026336d8d2c7328b6b81f9b
+> >>> > 100644
+> >>> > --- a/Documentation/devicetree/bindings/mips/mti,mips-cm.yaml
+> >>> > +++ b/Documentation/devicetree/bindings/mips/mti,mips-cm.yaml
+> >>> > @@ -19,7 +19,12 @@ maintainers:
+> >>> >
+> >>> >  properties:
+> >>> >    compatible:
+> >>> > -    const: mti,mips-cm
+> >>> > +    oneOf:
+> >>> > +      - const: mti,mips-cm
+> >>> > +      - const: mobileye,eyeq6-cm
+> >>> > +        description:
+> >>> > +          On EyeQ6 the HCI (Hardware Cache Initialization) information for
+> >>> > +          the L2 cache in multi-cluster configuration is broken.
+> >>> >
+> >>> >    reg:
+> >>> >      description:
+> >>> > @@ -44,4 +49,9 @@ examples:
+> >>> >        compatible = "mti,mips-cm";
+> >>> >        reg = <0x1bde8000 0x8000>;
+> >>> >      };
+> >>> > +
+> >>> > +  - |
+> >>> > +    coherency-manager {
+> >>> > +      compatible = "mobileye,eyeq6-cm";
+> >>>
+> >>> I think “mobileye,eyeq6-cm”, “mti,mips-cm” would describe the hardware better as eyeq6’s CM is just a special variant of mips-cm.
+> >>
+> >> Is s/w that only understands “mti,mips-cm” useful on eyeq6 chip? If
+> >> so, I agree. If not, then a fallback compatible is not useful.
+> >
+> > Yes, mobileye,eyeq6-cm only enable an additional bug workaround in software.
+> >
+> 
+> Having "mti,mips-cm" is not useful for the EyeQ6 chip. On the EyeQ6, we
+> obtain all relevant information related to CM dynamically without
+> needing this compatible string.
+> 
+> > The programming interfaces and so on remains unchanged.
+> 
+> Even without a compatible string, we are able to utilize the CM. At
+> present, there is no node in the device tree, and apart from the
+> hardware being faulty, we do not need it.
+> 
+> >
+> > Also other firmware components like U-Boot doesn’t need to be aware of
+> > eyeq6 variant.
+> 
+> It's the same for the firmware; they don't need to have "mti, mips-cm"
+> information, as they can retrieve all they need dynamically.
 
-Yeah I think it's saner, as even if v4l2 ctrl do not support TRY
-state (and thus the pixel rate calculation can't be "tryed") we should
-use the format information from the state at hand.
+so it the current patch version correct ? If yes and nothing else is
+outstanding, I'm going to apply the series.
 
->
-> Suggested-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-> Link: https://lore.kernel.org/linux-media/sejl7xskif6rlpdsg3jhczjwe5gi6rs53ehbyka6omv2zeg7qq@4iis7i2lla5p/
-> Signed-off-by: Jai Luthra <jai.luthra@ideasonboard.com>
+Thomas.
 
-Reviewed-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-
-Thanks
-  j
-
-> ---
->  drivers/media/i2c/imx219.c | 15 +++++++--------
->  1 file changed, 7 insertions(+), 8 deletions(-)
->
-> diff --git a/drivers/media/i2c/imx219.c b/drivers/media/i2c/imx219.c
-> index f02732d8fa95de0a295f247d4f0b60017dbb2ed2..0adfe8e5775ba6661f7d06fedfd920d91c24cba5 100644
-> --- a/drivers/media/i2c/imx219.c
-> +++ b/drivers/media/i2c/imx219.c
-> @@ -400,10 +400,9 @@ static u32 imx219_get_format_bpp(const struct v4l2_mbus_framefmt *format)
->  	}
->  }
->
-> -static void imx219_get_binning(struct imx219 *imx219, u8 *bin_h, u8 *bin_v)
-> +static void imx219_get_binning(struct v4l2_subdev_state *state, u8 *bin_h,
-> +			       u8 *bin_v)
->  {
-> -	struct v4l2_subdev_state *state =
-> -		v4l2_subdev_get_locked_active_state(&imx219->sd);
->  	const struct v4l2_mbus_framefmt *format =
->  		v4l2_subdev_state_get_format(state, 0);
->  	const struct v4l2_rect *crop = v4l2_subdev_state_get_crop(state, 0);
-> @@ -430,11 +429,11 @@ static void imx219_get_binning(struct imx219 *imx219, u8 *bin_h, u8 *bin_v)
->  		*bin_v = IMX219_BINNING_X2;
->  }
->
-> -static inline u32 imx219_get_rate_factor(struct imx219 *imx219)
-> +static inline u32 imx219_get_rate_factor(struct v4l2_subdev_state *state)
->  {
->  	u8 bin_h, bin_v;
->
-> -	imx219_get_binning(imx219, &bin_h, &bin_v);
-> +	imx219_get_binning(state, &bin_h, &bin_v);
->
->  	return (bin_h & bin_v) == IMX219_BINNING_X2_ANALOG ? 2 : 1;
->  }
-> @@ -455,7 +454,7 @@ static int imx219_set_ctrl(struct v4l2_ctrl *ctrl)
->
->  	state = v4l2_subdev_get_locked_active_state(&imx219->sd);
->  	format = v4l2_subdev_state_get_format(state, 0);
-> -	rate_factor = imx219_get_rate_factor(imx219);
-> +	rate_factor = imx219_get_rate_factor(state);
->
->  	if (ctrl->id == V4L2_CID_VBLANK) {
->  		int exposure_max, exposure_def;
-> @@ -689,7 +688,7 @@ static int imx219_set_framefmt(struct imx219 *imx219,
->  	cci_write(imx219->regmap, IMX219_REG_Y_ADD_END_A,
->  		  crop->top - IMX219_PIXEL_ARRAY_TOP + crop->height - 1, &ret);
->
-> -	imx219_get_binning(imx219, &bin_h, &bin_v);
-> +	imx219_get_binning(state, &bin_h, &bin_v);
->  	cci_write(imx219->regmap, IMX219_REG_BINNING_MODE_H, bin_h, &ret);
->  	cci_write(imx219->regmap, IMX219_REG_BINNING_MODE_V, bin_v, &ret);
->
-> @@ -937,7 +936,7 @@ static int imx219_set_pad_format(struct v4l2_subdev *sd,
->
->  		/* Scale the pixel rate based on the mode specific factor */
->  		pixel_rate = imx219_get_pixel_rate(imx219) *
-> -			     imx219_get_rate_factor(imx219);
-> +			     imx219_get_rate_factor(state);
->  		__v4l2_ctrl_modify_range(imx219->pixel_rate, pixel_rate,
->  					 pixel_rate, 1, pixel_rate);
->  	}
->
-> --
-> 2.48.1
->
+-- 
+Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
+good idea.                                                [ RFC1925, 2.3 ]
 
