@@ -1,198 +1,122 @@
-Return-Path: <linux-kernel+bounces-526039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CBD1A3F903
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:38:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFBDAA3F91A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:41:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4CEB3424284
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 15:36:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D39D70478F
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 15:37:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 910351D88A6;
-	Fri, 21 Feb 2025 15:36:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m8M4c6i2"
-Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com [209.85.167.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51F9B26AEC;
-	Fri, 21 Feb 2025 15:36:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F8EB1D6DBB;
+	Fri, 21 Feb 2025 15:37:17 +0000 (UTC)
+Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A83D58632E;
+	Fri, 21 Feb 2025 15:37:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740152196; cv=none; b=lDL47pmvTuiRk4bzSQy0+7pb4U6ysJXd789yBhhNYMe7T2puSr1LXNap2zYmcjl/PDjPnBnYfXedGlazBgHw61lqNA/uLBMpBVI7FeYN66stDqVdlfdaCaP5RsBhlk5HDYeqatTo2VvcFH4oU0iKSLc3FVqe9U+Ka3fO+VZn1GQ=
+	t=1740152237; cv=none; b=YeBgsEAzQhgyDtrpk/atys9jr/QK3BcJmzaBPk60z9VXLZLn+387GtBdagNkEPAy4DeoX3XzWxTfFWcb93y5WzvMHKzJglvM+bpBaKWw1NiykYma/vYMzHcRQBmII7HonSPDtutAY0knHkznv/zx+WgHeMkWW6L2Z0DXsJiVyI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740152196; c=relaxed/simple;
-	bh=zXbyACCdVoVQyiGhkcafjf6zWtsGln899zvfTqmUMy4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=X+Rp/bh+/ZCFfCE+dsAsoOWMxBWpkhpQZ7qPtCot6gpJpV1DEJM9TAJLM/IC6CxLsZTGbi+NKgleZZiJ6HokZBVwO8pZgpRXAhnzhk1nfCeg+drSfRVfuJw4y7CrYNydWjXIMeoPSrHFhSdHKKa3yJu2+eGAlhVZZvOqdtuOhyg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m8M4c6i2; arc=none smtp.client-ip=209.85.167.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f173.google.com with SMTP id 5614622812f47-3f405bdf7e7so406686b6e.3;
-        Fri, 21 Feb 2025 07:36:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740152193; x=1740756993; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=v1yHTvClgL1HOrCrw30baXka1ZGMPkDHp0/uvI9xpJY=;
-        b=m8M4c6i2nY1mW6L77vNrs1G6ws3SWi5CbeORLHSqopI8OYehVfmVzBu+owF8MV3Nkz
-         0Di2mz6exxtWfxIRhw2MAS+hXl5/wRtnUrWIOv9JEuHGChOXGRCltc+n1NkW7FWeKh+g
-         2RMZFVN75ez81OeVLdu1nUG3xXfRgyYPwnW4Ewzs+OI2/J99hrLHKDlUlPbpMqAjdyWN
-         6hmFGG6V5o1UdH5ZqhrlpR1fuWIu8dbziztvSOsMnxotfSicgHA7CSmOsd//bX7ob6e6
-         wJVTIrO1gOmvzqds/nsabakCu8oRVD9EpU3MSDQs4h/FX0l4wLE2tyFeud61pq5nuDCi
-         HT2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740152193; x=1740756993;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=v1yHTvClgL1HOrCrw30baXka1ZGMPkDHp0/uvI9xpJY=;
-        b=V5Fnxkg5isYe1OVk+/7fH5J/coVOo6/qPcuezP0sgxaoV5kJxSdaQwBrJDv42xrQoL
-         +PkQ9Jn6Jlmmbjs0qC5pxLMrXC5BmqT+QJOf04Pu5aD3iF3yEP+Y+jTSXVLdmuMtDa0D
-         UhCXvBYiI5yNsI0vcxT9gTVE4+P7bsPxalFEuVHL17iIBaszqHdgKQ7R90bW3PYBXZY4
-         jP6cHBP79UfSe5yJWuBw6OScoNbPilHDzTNFfkWJKOT8gwXGu5tVQ6qtiOyr4QKxvwLq
-         AjhI8pe1Ih2fWvM0zA+xmmTtrPPrWey8wWxim+pM2FlMTz4Dazwxu7qR3Jm2v/+iimt7
-         4Rkw==
-X-Forwarded-Encrypted: i=1; AJvYcCU01FwpmCErpca+yVEiS/BJd0d+ZzSsmlMOa+bitvpxsXErPw8jRx0vnziDuAdqPHLbb+iZPzWqfu61iISwUQ==@vger.kernel.org, AJvYcCVoSipnbPI1oRwQaKV2Z++6dXV7AfBO3sO0cnC2xXhNFw2Rz+j1EW4fWbzq0uJkTLgFKxCs5CuQolTAFHzD@vger.kernel.org, AJvYcCXNxT0hcPntTSUbSKlU0KJAKbj8sQ55VsbCSRLOgRmfbxUzvj+97AVgkjwaChjQ7MVPQeaBhf6rzA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+XkujA59vOYlSVDeCL6O9bdJHVL4CW/Wh5WhpwK510CCf2vjD
-	xRYfeBPUwqev+NQkVekoj1+xERZCOfpBc4k5og+e/n0rmUu8ezNO
-X-Gm-Gg: ASbGncvYW/sG+N4Jh1/PPsEu946ARgYXf6WKlyZb20nma56oE0Rj/urBQs08C1qr+mV
-	pyBTp7HTAo7YXetkRwRcnCi2WH0zX0xVQ8UXY1u9uN1tOvy0dkHXD8cKUGVFIm5hjsVHTn/o2Ss
-	ELxwC7Af2iZ/oPJdjtRaJ5Cxem+23nVveMrzgtRd3bwdgDbhMsBM1LmzAT5Tgl7u9J1AbBDaYNF
-	Yf1yQngvPTKtYoh7GbehVDJPUOUbsukQ1e8+zRmN4uq2I+dg/IcfjBZPP2wG8qfz0yBaQr+DzHV
-	aR9F/z5UfR6RRyyZDTrh67okOVrtvPNeoySCrlUxAp9ms2h4Gz24XpUIOXJMd4+gMXYvvkwLdGt
-	T3Vr8ZYHXTS4=
-X-Google-Smtp-Source: AGHT+IFFJVL2fg4xBN9j57DjY5+CvBOPQrWPfMGWka5ypcQN2vnYxW2BbNGg+4twdK/FJvrcpTYaTQ==
-X-Received: by 2002:a05:6808:1a08:b0:3f4:218:5c8f with SMTP id 5614622812f47-3f4246d7f2fmr2846586b6e.20.1740152193144;
-        Fri, 21 Feb 2025 07:36:33 -0800 (PST)
-Received: from ?IPV6:2603:8080:1b00:3d:ccc:f28c:f6a1:d9c9? ([2603:8080:1b00:3d:ccc:f28c:f6a1:d9c9])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3f3ffd5a695sm2517613b6e.3.2025.02.21.07.36.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Feb 2025 07:36:32 -0800 (PST)
-Message-ID: <e0019be0-1167-4024-8268-e320fee4bc50@gmail.com>
-Date: Fri, 21 Feb 2025 09:36:30 -0600
+	s=arc-20240116; t=1740152237; c=relaxed/simple;
+	bh=fNwEUMICWArtXN6ij1vQ7gWszyVTypN8591MquG7YJ8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u0IcOx151YsOl3fv+o1XxCFOKebfRzigU3gRaXdx5gbdXsLUtO2cf8j6UKq6SN4H5/K+vnotN4YG7DRVg9hq7bH73Nw3pr3A4YVwNV0Ph8jOhjoS1v2wNDnULEkcD1HeefAyNWXuTOjFiSLSkB23utZDQFJsXhnaC3Oxgs0DT98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
+Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
+	id 1tlV5S-0001AO-00; Fri, 21 Feb 2025 16:37:10 +0100
+Received: by alpha.franken.de (Postfix, from userid 1000)
+	id CA4BEC0135; Fri, 21 Feb 2025 16:36:34 +0100 (CET)
+Date: Fri, 21 Feb 2025 16:36:34 +0100
+From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+To: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+Cc: linux-clk@vger.kernel.org, sboyd@kernel.org, mturquette@baylibre.com,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com,
+	p.zabel@pengutronix.de, linux-mips@vger.kernel.org,
+	devicetree@vger.kernel.org, yangshiji66@outlook.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 0/6] mips: dts: ralink: update system controller nodes
+ and its consumers
+Message-ID: <Z7idguBa2bxZRoxX@alpha.franken.de>
+References: <20250120092146.471951-1-sergio.paracuellos@gmail.com>
+ <CAMhs-H-VevC+_=HxhMU6-at0bKut_JqdgO7j2detuB4s8R_QFQ@mail.gmail.com>
+ <Z7iHorlRgtsi1LOo@alpha.franken.de>
+ <CAMhs-H-fcWU-rz_3FeAuRe0xdCMmvffX2zrZwwmt=8RYpY4Lyg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-Subject: Re: [PATCH] Fuse: Add backing file support for uring_cmd
-To: Bernd Schubert <bernd@bsbernd.com>, Miklos Szeredi <miklos@szeredi.hu>,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- io-uring@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>
-References: <CAKXrOwbkMUo9KJd7wHjcFzJieTFj6NPWPp0vD_SgdS3h33Wdsg@mail.gmail.com>
- <db432e5b-fc90-487e-b261-7771766c56cb@bsbernd.com>
-Content-Language: en-US
-From: Moinak Bhattacharyya <moinakb001@gmail.com>
-In-Reply-To: <db432e5b-fc90-487e-b261-7771766c56cb@bsbernd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMhs-H-fcWU-rz_3FeAuRe0xdCMmvffX2zrZwwmt=8RYpY4Lyg@mail.gmail.com>
 
-Sorry about that. Correctly-formatted patch follows. Should I send out a 
-V2 instead?
+On Fri, Feb 21, 2025 at 03:50:09PM +0100, Sergio Paracuellos wrote:
+> Hi Thomas,
+> 
+> On Fri, Feb 21, 2025 at 3:05 PM Thomas Bogendoerfer
+> <tsbogend@alpha.franken.de> wrote:
+> >
+> > On Fri, Feb 21, 2025 at 11:48:34AM +0100, Sergio Paracuellos wrote:
+> > > Hi Thomas,
+> > >
+> > > El El lun, 20 ene 2025 a las 10:21, Sergio Paracuellos <
+> > > sergio.paracuellos@gmail.com> escribió:
+> > >
+> > > > Hi all!
+> > > >
+> > > > Ralinks SoCs have a system controller node which serves as clock and reset
+> > > > providers for the rest of the world. This patch series introduces clock
+> > > > definitions for these SoCs. The clocks are registered in the driver using
+> > > > a bunch of arrays in specific order so these definitions represent the
+> > > > assigned
+> > > > identifier that is used when this happens so client nodes can easily use it
+> > > > to specify the clock which they consume without the need of checking
+> > > > driver code.
+> > > >
+> > > > DTS files which are currently on tree are not matching system controller
+> > > > bindings. So all of them are updated to properly match them.
+> > > >
+> > > > I'd like this series to go through kernel mips git tree if possible.
+> > > >
+> > > > Thanks in advance for your time.
+> > > >
+> > > > Changes in v3:
+> > > > - Address Krzysztof comments in v2 (Thanks!):
+> > > >   + Drop reset include file since what it was defined there were hardware
+> > > >     constants and no binding related indexes at all.
+> > > >   + Update patches for not referring to this reset removed file.
+> > >
+> > >
+> > > I was expecting this series going through the mips tree.
+> >
+> >   DTC     arch/mips/boot/dts/ralink/rt3883_eval.dtb
+> > Error: /local/tbogendoerfer/korg/linux/arch/mips/boot/dts/ralink/rt3883.dtsi:2.1-9 syntax error
+> > FATAL ERROR: Unable to parse input tree
+> 
+> Weird, it looks like dtc is not happy with the "include" line with new
+> definitions? Are you getting this only with rt3883? Since all the
+> patches are almost the same and I compile tested this before sending..
+> Something got corrupted? I don't have my laptop now to check but I
+> will recheck again on monday.
 
-Add support for opening and closing backing files in the fuse_uring_cmd 
-callback. Store backing_map (for open) and backing_id (for close) in the 
-uring_cmd data.
----
-  fs/fuse/dev_uring.c       | 50 +++++++++++++++++++++++++++++++++++++++
-  include/uapi/linux/fuse.h |  6 +++++
-  2 files changed, 56 insertions(+)
+rt2880_eval.dts:/include/ "rt2880.dtsi"
+rt3052_eval.dts:#include "rt3050.dtsi"
+rt3883_eval.dts:/include/ "rt3883.dtsi"
 
-diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
-index ebd2931b4f2a..df73d9d7e686 100644
---- a/fs/fuse/dev_uring.c
-+++ b/fs/fuse/dev_uring.c
-@@ -1033,6 +1033,40 @@ fuse_uring_create_ring_ent(struct io_uring_cmd *cmd,
-      return ent;
-  }
+rt3052 works, rt2880 and rt3883 don't.
 
-+/*
-+ * Register new backing file for passthrough, getting backing map from 
-URING_CMD data
-+ */
-+static int fuse_uring_backing_open(struct io_uring_cmd *cmd,
-+    unsigned int issue_flags, struct fuse_conn *fc)
-+{
-+    const struct fuse_backing_map *map = io_uring_sqe_cmd(cmd->sqe);
-+    int ret = fuse_backing_open(fc, map);
-+
-+    if (ret < 0) {
-+        return ret;
-+    }
-+
-+    io_uring_cmd_done(cmd, ret, 0, issue_flags);
-+    return 0;
-+}
-+
-+/*
-+ * Remove file from passthrough tracking, getting backing_id from 
-URING_CMD data
-+ */
-+static int fuse_uring_backing_close(struct io_uring_cmd *cmd,
-+    unsigned int issue_flags, struct fuse_conn *fc)
-+{
-+    const int *backing_id = io_uring_sqe_cmd(cmd->sqe);
-+    int ret = fuse_backing_close(fc, *backing_id);
-+
-+    if (ret < 0) {
-+        return ret;
-+    }
-+
-+    io_uring_cmd_done(cmd, ret, 0, issue_flags);
-+    return 0;
-+}
-+
-  /*
-   * Register header and payload buffer with the kernel and puts the
-   * entry as "ready to get fuse requests" on the queue
-@@ -1144,6 +1178,22 @@ int fuse_uring_cmd(struct io_uring_cmd *cmd, 
-unsigned int issue_flags)
-              return err;
-          }
-          break;
-+    case FUSE_IO_URING_CMD_BACKING_OPEN:
-+        err = fuse_uring_backing_open(cmd, issue_flags, fc);
-+        if (err) {
-+            pr_info_once("FUSE_IO_URING_CMD_BACKING_OPEN failed err=%d\n",
-+                    err);
-+            return err;
-+        }
-+        break;
-+    case FUSE_IO_URING_CMD_BACKING_CLOSE:
-+        err = fuse_uring_backing_close(cmd, issue_flags, fc);
-+        if (err) {
-+            pr_info_once("FUSE_IO_URING_CMD_BACKING_CLOSE failed err=%d\n",
-+                    err);
-+            return err;
-+        }
-+        break;
-      default:
-          return -EINVAL;
-      }
-diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
-index 5e0eb41d967e..634265da1328 100644
---- a/include/uapi/linux/fuse.h
-+++ b/include/uapi/linux/fuse.h
-@@ -1264,6 +1264,12 @@ enum fuse_uring_cmd {
+changing the /include/ to #include makes them compile.
 
-      /* commit fuse request result and fetch next request */
-      FUSE_IO_URING_CMD_COMMIT_AND_FETCH = 2,
-+
-+    /* add new backing file for passthrough */
-+    FUSE_IO_URING_CMD_BACKING_OPEN = 3,
-+
-+    /* remove passthrough file by backing_id */
-+    FUSE_IO_URING_CMD_BACKING_CLOSE = 4,
-  };
+Thomas.
 
-  /**
 -- 
-2.39.5 (Apple Git-154)
-
+Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
+good idea.                                                [ RFC1925, 2.3 ]
 
