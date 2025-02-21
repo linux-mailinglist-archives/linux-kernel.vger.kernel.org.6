@@ -1,140 +1,134 @@
-Return-Path: <linux-kernel+bounces-526284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29A17A3FCAC
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 18:04:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4B5FA3FCD3
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 18:06:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C3A11891EFD
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:59:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 350F6707376
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:59:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3FC122A4F1;
-	Fri, 21 Feb 2025 16:57:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD7D722A1C5;
+	Fri, 21 Feb 2025 16:58:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KjnfJHw4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="TYK6ehXe"
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E21E522A4C4;
-	Fri, 21 Feb 2025 16:57:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDAC9216E00;
+	Fri, 21 Feb 2025 16:58:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740157038; cv=none; b=RTrGAul2mm0hASX6W5ArnYrGY4PBq6snPR+Y8mRfPqNzpmVWn9CgIV/ykXTXBHskImf4er1yTfzDIybF3LV0czqFcrwSeB2tMa2GOlX1NUC8jeDQjWmhrThHvCI/wjLx5fOP1amVTJNKpZeDzo5ov07tRBSLXtY2d/obROrBmQ4=
+	t=1740157113; cv=none; b=ef4VpgHRlOuvSFsVp5vXFgxz6k1r1hQfYxWB8XREfvlWlb3oeCEj9z+6LQgfjZqEctjPg//xaCo4E1pE9FCDEfgMJHmUlQzfGj9E0opRcRY2+/CsOs0XvGaoMJBxiINq+wqydZ3dsf8bweobkV8TQJaY9shhGREIa4AUkgG/318=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740157038; c=relaxed/simple;
-	bh=Zermek77njNBefiJAHShs4Pi/BmVFoEIkevP8SsNO7c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l2WWqTeGfq2AFTSUkg/rPsAx+U9qL4OXZKZ8pwbBWjvij3ksKSDmd69+NK1AdkeEunMAFW/ewHz9juxgEMryKklem6hs/5pqjD7G4D85UnkytVu8M4XyDiDggpRafltwEcdhTqqjoqtWz9aYYMOVCMxS683zTjog96IBG12F7l8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KjnfJHw4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB91BC4CEE2;
-	Fri, 21 Feb 2025 16:57:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740157037;
-	bh=Zermek77njNBefiJAHShs4Pi/BmVFoEIkevP8SsNO7c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KjnfJHw4iEGxUc/9qW1y7MXbhibKG8rh7AogVr9UljZJegm57+LQQHRNYxKckJ7CF
-	 FWayh52wKAV7sxOYBy2yRP1kIBucfaUT//Oz6Smay5wM4rX3aDy1XWtHwWW7TEQmw3
-	 SptwbeiWbL/fTdM1HOAih5VwfFervTEScmXCZsx8pEdHzYHE8WrTynaqiBwG4OZ6Ke
-	 vDGpq5FRy5051igtlr0CdoKc2Eih2iIJKMOuJP390ZByyLDQ2pj0Fwqyp9YV6FQXND
-	 O04FwzPPaYC+BJYhF3zEGDLtqIbpBXVRvhPU3jEGlY5r9nvEPOEH4m0Pu+KdL2FdgE
-	 +dM9ARU52UE5A==
-Date: Fri, 21 Feb 2025 16:57:12 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Friday Yang <friday.yang@mediatek.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Garmin Chang <garmin.chang@mediatek.com>,
-	Yong Wu <yong.wu@mediatek.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Project_Global_Chrome_Upstream_Group@mediatek.com
-Subject: Re: [PATCH v4 1/2] dt-bindings: clock: mediatek: Add SMI LARBs reset
- for MT8188
-Message-ID: <20250221-cavalier-property-7e7eceba7bc6@spud>
-References: <20250221075058.14180-1-friday.yang@mediatek.com>
- <20250221075058.14180-2-friday.yang@mediatek.com>
+	s=arc-20240116; t=1740157113; c=relaxed/simple;
+	bh=a9YmoQJudTCJXJbygeI13L8U1BuxiSVyIGvEwomsDj4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=brmDyP2OsG9bvVv+BgmHeAmyXEoO5hsDowVWMKlNIJGRD1Xgm1+3F1pQXnXFE63e+2Kj3Z+aXtjt2fqCcHN5VkY2uouXyh47sEa1MYbDqIS8c+y/2JnL9tJj5QdHuZnXkb5vPENRal4SdrD14eChR51dcfbzBf0YVC0RuFNOtMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=TYK6ehXe; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 0E21244327;
+	Fri, 21 Feb 2025 16:58:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1740157103;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=E0vFszfjLRPUBsYWT5+eUQORh5cGIC4pgSuTijYp52A=;
+	b=TYK6ehXeLbHK0RIEExHccJKgNtcaYsy53jurbwoa4CiaZqXiOv96PkqPPed+4qwAYpjAuO
+	r2uhzLSM4bH6moFmPA2saexW4KimCSKoGMXa9hpqk9Lgf5vynKkwJwe3tADJjZxFz6tw78
+	C4mULaELttNGUC0aQyQMG+PLkRTKcfHJ5svUbmhyVud1is/g4ZRumQwGBlgx/nFDAV4vNj
+	FF95HbqmPoG0cegOhkGupJZXzmmqlu7u2D5MQijyFopXD3na0bVoFWlOXhgGaeD4Qnn4n9
+	Yo27SAheJ0IDMmb/mJk47MKUbAybOUZu16HVxvGmS4ku/9b7Z/Ibw8yYp7Ji1g==
+Message-ID: <b41cb993-3cdf-4cfb-a131-14c1a66c8824@bootlin.com>
+Date: Fri, 21 Feb 2025 17:58:18 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="+dgGrOCgl0PEyxI6"
-Content-Disposition: inline
-In-Reply-To: <20250221075058.14180-2-friday.yang@mediatek.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH bpf-next v2] arm64, bpf: Add 12-argument support for bpf
+ trampoline
+To: Puranjay Mohan <puranjay@kernel.org>, Alexei Starovoitov
+ <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
+ <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>,
+ Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, Puranjay Mohan <puranjay12@gmail.com>,
+ Xu Kuohai <xukuohai@huaweicloud.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>,
+ bpf@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ Florent Revest <revest@chromium.org>, Xu Kuohai <xukuohai@huaweicloud.com>,
+ Bastien Curutchet <bastien.curutchet@bootlin.com>
+References: <20240705125336.46820-1-puranjay@kernel.org>
+From: =?UTF-8?Q?Alexis_Lothor=C3=A9?= <alexis.lothore@bootlin.com>
+Content-Language: en-US
+In-Reply-To: <20240705125336.46820-1-puranjay@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdejtdehiecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvfhfhjggtgfesthekredttddvjeenucfhrhhomheptehlvgigihhsucfnohhthhhorhoruceorghlvgigihhsrdhlohhthhhorhgvsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeduuedugeevveelledtudegleethfffuedtgffhlefgudektdeuheegkeekudehfeenucffohhmrghinhepghhithhhuhgsrdgtohhmpdhkvghrnhgvlhdrohhrghdpsghoohhtlhhinhdrtghomhenucfkphepvdgrtddvmeekgedvkeemfhelgegtmegvtddtmeemfhekheenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtvdemkeegvdekmehfleegtgemvgdttdemmehfkeehpdhhvghloheplgfkrfggieemvdgrtddvmeekgedvkeemfhelgegtmegvtddtmeemfhekhegnpdhmrghilhhfrhhomheprghlvgigihhsrdhlohhthhhorhgvsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvhedprhgtphhtthhopehpuhhrrghnjhgrhieskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghstheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggrnhhivghlsehio
+ hhgvggrrhgsohigrdhnvghtpdhrtghpthhtoheprghnughrihhisehkvghrnhgvlhdrohhrghdprhgtphhtthhopehmrghrthhinhdrlhgruheslhhinhhugidruggvvhdprhgtphhtthhopegvugguhiiikeejsehgmhgrihhlrdgtohhmpdhrtghpthhtohepshhonhhgsehkvghrnhgvlhdrohhrghdprhgtphhtthhopeihohhnghhhohhnghdrshhonhhgsehlihhnuhigrdguvghv
+X-GND-Sasl: alexis.lothore@bootlin.com
 
+Hello everyone,
 
---+dgGrOCgl0PEyxI6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 7/5/24 14:53, Puranjay Mohan wrote:
+> The arm64 bpf JIT currently supports attaching the trampoline to
+> functions with <= 8 arguments. This is because up to 8 arguments can be
+> passed in registers r0-r7. If there are more than 8 arguments then the
+> 9th and later arguments are passed on the stack, with SP pointing to the
+> first stacked argument. See aapcs64[1] for more details.
+> 
+> If the 8th argument is a structure of size > 8B, then it is passed fully
+> on stack and r7 is not used for passing any argument. If there is a 9th
+> argument, it will be passed on the stack, even though r7 is available.
+> 
+> Add the support of storing and restoring arguments passed on the stack
+> to the arm64 bpf trampoline. This will allow attaching the trampoline to
+> functions that take up to 12 arguments.
+> 
+> [1] https://github.com/ARM-software/abi-aa/blob/main/aapcs64/aapcs64.rst#parameter-passing
+> 
+> Signed-off-by: Puranjay Mohan <puranjay@kernel.org>
 
-On Fri, Feb 21, 2025 at 03:50:53PM +0800, Friday Yang wrote:
-> On the MediaTek platform, some SMI LARBs are directly connected to
-> the SMI Common, while others are connected to the SMI Sub-Common,
-> which in turn is connected to the SMI Common. The hardware block
-> diagram can be described as follows.
->=20
->              SMI-Common(Smart Multimedia Interface Common)
->                  |
->          +----------------+------------------+
->          |                |                  |
->          |                |                  |
->          |                |                  |
->          |                |                  |
->          |                |                  |
->        larb0       SMI-Sub-Common0     SMI-Sub-Common1
->                    |      |     |      |             |
->                   larb1  larb2 larb3  larb7       larb9
->=20
-> For previous discussion on the direction of the code modifications,
-> please refer to:
-> https://lore.kernel.org/all/CAFGrd9qZhObQXvm2_abqaX83xMLqxjQETB2=3D
-> wXpobDWU1CnvkA@mail.gmail.com/
-> https://lore.kernel.org/all/CAPDyKFpokXV2gJDgowbixTvOH_5VL3B5H8ey
-> hP+KJ5Fasm2rFg@mail.gmail.com/
->=20
-> On the MediaTek MT8188 SoC platform, we encountered power-off failures
-> and SMI bus hang issues during camera stress tests. The issue arises
-> because bus glitches are sometimes produced when MTCMOS powers on or
-> off. While this is fairly normal, the software must handle these
-> glitches to avoid mistaking them for transaction signals. What's
-> more, this issue emerged only after the initial upstreaming of this
-> binding. Without these patches, the SMI becomes unstable during camera
-> stress tests.
->=20
-> The software solutions can be summarized as follows:
->=20
-> 1. Use CLAMP to disable the SMI sub-common port after turning off the
->    LARB CG and before turning off the LARB MTCMOS.
-> 2. Use CLAMP to disable/enable the SMI sub-common port.
-> 3. Implement an AXI reset for SMI LARBs.
->=20
-> This patch add '#reset-cells' for the clock controller located in image,
-> camera and IPE subsystems.
->=20
-> Signed-off-by: Friday Yang <friday.yang@mediatek.com>
+[...]
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
++cc Xu Kuohai + cc Florent Revest, who are involved in [0]
 
---+dgGrOCgl0PEyxI6
-Content-Type: application/pgp-signature; name="signature.asc"
+We at Bootlin are currently working on improving eBPF selftests coverage and
+aligning ARM64 support with other platforms. For this second topic, one
+remaining point is the support for 12 arguments in bpf trampolines. It looks
+like a big part of the work has been done and submitted through two different
+versions, the first one from Xu ([0]), and this one from Puranjay ([1]). There
+is still some rework needed in both versions to properly handle some alignment
+constraints.
 
------BEGIN PGP SIGNATURE-----
+@Puranjay @Xu are you (or anyone else) actively working on those series (I kind
+of understand that you both agreed that Puranjay was continuing this work) ? If
+so, if there a way to assist you on this topic ? If not, can we take and revive
+your work to try to handle the missing points and make this feature integrated ?
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ7iwaAAKCRB4tDGHoIJi
-0uzgAP4v0yoFN7BfxFWWiitccUXoshHXQp4HLPtHW7d1YoN4TAD+IQ2jThGJf4Pc
-L5rsRAnTiFrghIbu/VG+WOs0atI7nAI=
-=soR+
------END PGP SIGNATURE-----
+Thanks,
 
---+dgGrOCgl0PEyxI6--
+Alexis
+
+[0] https://lore.kernel.org/bpf/20230917150752.69612-1-xukuohai@huaweicloud.com/
+[1] https://lore.kernel.org/bpf/20240705125336.46820-1-puranjay@kernel.org/
+
+-- 
+Alexis Lothoré, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
