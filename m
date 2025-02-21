@@ -1,202 +1,94 @@
-Return-Path: <linux-kernel+bounces-526737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8ACAA4029A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 23:25:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A34C7A4029B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 23:25:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE01E3BD784
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 22:23:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0CF3C421B6A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 22:23:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 638C22528E5;
-	Fri, 21 Feb 2025 22:23:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nqh1IjkR"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15EEC253335;
+	Fri, 21 Feb 2025 22:23:48 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE17D2046B9;
-	Fri, 21 Feb 2025 22:23:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DEDC2045B7;
+	Fri, 21 Feb 2025 22:23:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740176615; cv=none; b=ig2GPo+O/8MbZPZOWxyF17JVKG/YTfaruQCqUB/DSb8L8VngP6LvK2zLhhD6lGhrk5gcGyFnO6B8wn98igtOQrk2rgwwDrNykk+LO2h8jr0PVZpmSWFqjUc9jizijY8vOYEEc4O+/fqHG7Pi9L/BJVzv8RJjA6vkS58i1YA7CvQ=
+	t=1740176627; cv=none; b=DwPrg8bG9GclZJ5Pha5a42/nl0doP8zGCWSR1U3AHp8sSjrgZWNP7BlKPxh0MJPteMoYUHTL+ayEilXYEl09bYI0fsTzditnRMX3vca1iBQQPFlhsRaOTm7hYlf5dCJ/j8/hY1iTBhwFGb+8U4Lacy4x2cpsxCjEmqxpZ+HFYxg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740176615; c=relaxed/simple;
-	bh=ydTbxNnzF9NHjhJuiLRmY8kGI9DwJQg51taLMTOt+pQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=fZ5cGSPn/hMp4673aKf4oEfSJqGSWQJjGMVH58Pim0MWlVNDm1EYtLCR2gVhY25A/akv+69oHT1WTWKoDdob8o8m9cz6vpgQQYGx7ZUVaBUn8u2G2G8k9Ve8B273NDQOkijykiUiv5vmhJNxGGa1V7t4jqjArnSR1eEuvCvhJB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nqh1IjkR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFA53C4CED6;
-	Fri, 21 Feb 2025 22:23:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740176615;
-	bh=ydTbxNnzF9NHjhJuiLRmY8kGI9DwJQg51taLMTOt+pQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=nqh1IjkR1NMlmWGZV2dvFo8IaKW5UyNM6oJS8o1MsjauOfDwF8we2+QdpY9fUicfY
-	 u4fSgE6eXF57pCpG0akZqQS5paxmuhT4WiYOPOpoJ1hoXmp13eToShcTb4sNkXAFSk
-	 kpji1yFMSNh1VuCw4BbJHhtbUBM+G7jx35npItdEfQ55dSTJrq/KAh4HoUh/mrR9ep
-	 SQIKvhWP04coRSd+2YXAK9fCd6IaBImT9vV/3eHPPabfw2kblC2c8qEU/MzNI5HB5O
-	 4GGNGFwTwENoxoDL21AkjpciFJCLvt5dQSQ9jMmef9O8A6G1Mw67v5ySXQ+XlvXx/U
-	 fZI7QKhBd9Jvg==
-Date: Fri, 21 Feb 2025 16:23:33 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Tushar Dave <tdave@nvidia.com>
-Cc: jgg@nvidia.com, corbet@lwn.net, bhelgaas@google.com, paulmck@kernel.org,
-	akpm@linux-foundation.org, thuth@redhat.com, rostedt@goodmis.org,
-	xiongwei.song@windriver.com, vidyas@nvidia.com,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, vsethi@nvidia.com,
-	sdonthineni@nvidia.com
-Subject: Re: [RESEND PATCH v2] PCI: Fix Extend ACS configurability
-Message-ID: <20250221222333.GA368134@bhelgaas>
+	s=arc-20240116; t=1740176627; c=relaxed/simple;
+	bh=L+WRYZAtwOgscC+CovPo7Vs26ly8n19IaxeU6ex2VFE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=alskSVZaXjcoNvh5LlkFfeKwDD23XwS15JxDF1PFRk7Pv9k9fH6q7iRsPwEvRpYmcGEZeXQbreV0L42T6aFlI/JaPZ2uSjTUveZ99peNVE/sjpwF4OVvX3YUqWeB7p8oECF46hS0p9PzOOArigP4JMNhUtYQAyw7cKooeMSr2Kg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE30FC4CED6;
+	Fri, 21 Feb 2025 22:23:45 +0000 (UTC)
+Date: Fri, 21 Feb 2025 17:24:15 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Martin Uecker <uecker@tugraz.at>, Dan Carpenter
+ <dan.carpenter@linaro.org>, Greg KH <gregkh@linuxfoundation.org>, Boqun
+ Feng <boqun.feng@gmail.com>, "H. Peter Anvin" <hpa@zytor.com>, Miguel Ojeda
+ <miguel.ojeda.sandonis@gmail.com>, Christoph Hellwig <hch@infradead.org>,
+ rust-for-linux <rust-for-linux@vger.kernel.org>, David Airlie
+ <airlied@gmail.com>, linux-kernel@vger.kernel.org, ksummit@lists.linux.dev
+Subject: Re: Rust kernel policy
+Message-ID: <20250221172415.5b632ae6@gandalf.local.home>
+In-Reply-To: <CAHk-=wg=pZvE9cHJUPKGCajRUCtDoW73xwY5UfJApCWms_FgYw@mail.gmail.com>
+References: <326CC09B-8565-4443-ACC5-045092260677@zytor.com>
+	<CANiq72m+r1BZVdVHn2k8XeU37ZeY6VT2S9KswMuFA=ZO3e4uvQ@mail.gmail.com>
+	<a7c5973a-497c-4f31-a7be-b3123bddb6dd@zytor.com>
+	<Z7VKW3eul-kGaIT2@Mac.home>
+	<2025021954-flaccid-pucker-f7d9@gregkh>
+	<4e316b01634642cf4fbb087ec8809d93c4b7822c.camel@tugraz.at>
+	<2025022024-blooper-rippling-2667@gregkh>
+	<1d43700546b82cf035e24d192e1f301c930432a3.camel@tugraz.at>
+	<2025022042-jot-favored-e755@gregkh>
+	<b9a5de64fe1ded2ad3111763f35af9901bd81cc4.camel@tugraz.at>
+	<caea3e79-78e6-4d98-9f3b-f8e7f6f00196@stanley.mountain>
+	<61a7e7db786d9549cbe201b153647689cbe12d75.camel@tugraz.at>
+	<20250221124304.5dec31b2@gandalf.local.home>
+	<CAHk-=wgg2A_iHNwf_JDjYJF=XHnKVGOjGp50FzVWniA2Z010bw@mail.gmail.com>
+	<6b3e4d3bdc9b6efd69068e5b22cfd05d370aed19.camel@tugraz.at>
+	<CAHk-=wg=pZvE9cHJUPKGCajRUCtDoW73xwY5UfJApCWms_FgYw@mail.gmail.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250207030338.456887-1-tdave@nvidia.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Feb 06, 2025 at 07:03:38PM -0800, Tushar Dave wrote:
-> Commit 47c8846a49ba ("PCI: Extend ACS configurability") introduced
-> bugs that fail to configure ACS ctrl to the value specified by the
-> kernel parameter. Essentially there are two bugs.
-> 
-> First, when ACS is configured for multiple PCI devices using
-> 'config_acs' kernel parameter, it results into error "PCI: Can't parse
-> ACS command line parameter". This is due to the bug in code that doesn't
-> preserve the ACS mask instead overwrites the mask with value 0.
-> 
-> For example, using 'config_acs' to configure ACS ctrl for multiple BDFs
-> fails:
-> 
-> 	Kernel command line: pci=config_acs=1111011@0020:02:00.0;101xxxx@0039:00:00.0 "dyndbg=file drivers/pci/pci.c +p"
-> 	PCI: Can't parse ACS command line parameter
-> 	pci 0020:02:00.0: ACS mask  = 0x007f
-> 	pci 0020:02:00.0: ACS flags = 0x007b
-> 	pci 0020:02:00.0: Configured ACS to 0x007b
-> 
-> After this fix:
-> 
-> 	Kernel command line: pci=config_acs=1111011@0020:02:00.0;101xxxx@0039:00:00.0 "dyndbg=file drivers/pci/pci.c +p"
-> 	pci 0020:02:00.0: ACS mask  = 0x007f
-> 	pci 0020:02:00.0: ACS flags = 0x007b
-> 	pci 0020:02:00.0: ACS control = 0x005f
-> 	pci 0020:02:00.0: ACS fw_ctrl = 0x0053
-> 	pci 0020:02:00.0: Configured ACS to 0x007b
-> 	pci 0039:00:00.0: ACS mask  = 0x0070
-> 	pci 0039:00:00.0: ACS flags = 0x0050
-> 	pci 0039:00:00.0: ACS control = 0x001d
-> 	pci 0039:00:00.0: ACS fw_ctrl = 0x0000
-> 	pci 0039:00:00.0: Configured ACS to 0x0050
-> 
-> Second bug is in the bit manipulation logic where we copy the bit from
-> the firmware settings when mask bit 0.
-> 
-> For example, 'disable_acs_redir' fails to clear all three ACS P2P redir
-> bits due to the wrong bit fiddling:
-> 
-> 	Kernel command line: pci=disable_acs_redir=0020:02:00.0;0030:02:00.0;0039:00:00.0 "dyndbg=file drivers/pci/pci.c +p"
-> 	pci 0020:02:00.0: ACS mask  = 0x002c
-> 	pci 0020:02:00.0: ACS flags = 0xffd3
-> 	pci 0020:02:00.0: Configured ACS to 0xfffb
-> 	pci 0030:02:00.0: ACS mask  = 0x002c
-> 	pci 0030:02:00.0: ACS flags = 0xffd3
-> 	pci 0030:02:00.0: Configured ACS to 0xffdf
-> 	pci 0039:00:00.0: ACS mask  = 0x002c
-> 	pci 0039:00:00.0: ACS flags = 0xffd3
-> 	pci 0039:00:00.0: Configured ACS to 0xffd3
-> 
-> After this fix:
-> 
-> 	Kernel command line: pci=disable_acs_redir=0020:02:00.0;0030:02:00.0;0039:00:00.0 "dyndbg=file drivers/pci/pci.c +p"
-> 	pci 0020:02:00.0: ACS mask  = 0x002c
-> 	pci 0020:02:00.0: ACS flags = 0xffd3
-> 	pci 0020:02:00.0: ACS control = 0x007f
-> 	pci 0020:02:00.0: ACS fw_ctrl = 0x007b
-> 	pci 0020:02:00.0: Configured ACS to 0x0053
-> 	pci 0030:02:00.0: ACS mask  = 0x002c
-> 	pci 0030:02:00.0: ACS flags = 0xffd3
-> 	pci 0030:02:00.0: ACS control = 0x005f
-> 	pci 0030:02:00.0: ACS fw_ctrl = 0x005f
-> 	pci 0030:02:00.0: Configured ACS to 0x0053
-> 	pci 0039:00:00.0: ACS mask  = 0x002c
-> 	pci 0039:00:00.0: ACS flags = 0xffd3
-> 	pci 0039:00:00.0: ACS control = 0x001d
-> 	pci 0039:00:00.0: ACS fw_ctrl = 0x0000
-> 	pci 0039:00:00.0: Configured ACS to 0x0000
-> 
-> Fixes: 47c8846a49ba ("PCI: Extend ACS configurability")
-> Signed-off-by: Tushar Dave <tdave@nvidia.com>
+On Fri, 21 Feb 2025 11:30:41 -0800
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
-Applied to pci/acs for v6.15, thanks!
+> And yes, it's wrong in general. The problems with "x < 0" warning for
+> an unsigned 'x' are deep and fundamental, and macros that take various
+> types is only one (perhaps more obvious) example of how brokent that
+> garbage is.
 
-> ---
-> 
-> changes in v2:
->  - Addressed review comments by Jason and Bjorn.
->  - Removed Documentation changes (already taken care by other patch).
->  - Amended commit description.
-> 
->  drivers/pci/pci.c | 17 ++++++++++++-----
->  1 file changed, 12 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-> index 869d204a70a3..c1ab5d50112d 100644
-> --- a/drivers/pci/pci.c
-> +++ b/drivers/pci/pci.c
-> @@ -954,8 +954,10 @@ struct pci_acs {
->  };
->  
->  static void __pci_config_acs(struct pci_dev *dev, struct pci_acs *caps,
-> -			     const char *p, u16 mask, u16 flags)
-> +			     const char *p, const u16 acs_mask, const u16 acs_flags)
->  {
-> +	u16 flags = acs_flags;
-> +	u16 mask = acs_mask;
->  	char *delimit;
->  	int ret = 0;
->  
-> @@ -963,7 +965,7 @@ static void __pci_config_acs(struct pci_dev *dev, struct pci_acs *caps,
->  		return;
->  
->  	while (*p) {
-> -		if (!mask) {
-> +		if (!acs_mask) {
->  			/* Check for ACS flags */
->  			delimit = strstr(p, "@");
->  			if (delimit) {
-> @@ -971,6 +973,8 @@ static void __pci_config_acs(struct pci_dev *dev, struct pci_acs *caps,
->  				u32 shift = 0;
->  
->  				end = delimit - p - 1;
-> +				mask = 0;
-> +				flags = 0;
->  
->  				while (end > -1) {
->  					if (*(p + end) == '0') {
-> @@ -1027,10 +1031,13 @@ static void __pci_config_acs(struct pci_dev *dev, struct pci_acs *caps,
->  
->  	pci_dbg(dev, "ACS mask  = %#06x\n", mask);
->  	pci_dbg(dev, "ACS flags = %#06x\n", flags);
-> +	pci_dbg(dev, "ACS control = %#06x\n", caps->ctrl);
-> +	pci_dbg(dev, "ACS fw_ctrl = %#06x\n", caps->fw_ctrl);
->  
-> -	/* If mask is 0 then we copy the bit from the firmware setting. */
-> -	caps->ctrl = (caps->ctrl & ~mask) | (caps->fw_ctrl & mask);
-> -	caps->ctrl |= flags;
-> +	/* For mask bits that are 0 copy them from the firmware setting
-> +	 * and apply flags for all the mask bits that are 1.
-> +	 */
-> +	caps->ctrl = (caps->fw_ctrl & ~mask) | (flags & mask);
->  
->  	pci_info(dev, "Configured ACS to %#06x\n", caps->ctrl);
->  }
-> -- 
-> 2.34.1
-> 
+The bug I recently fixed, and I still constantly make, where this does
+help, is the difference between size_t vs ssize_t. I keep forgetting that
+size_t is unsigned, and I'll check a return of a function that returns
+negative on error with it.
+
+If I could just get a warning for this stupid mistake:
+
+	size_t ret;
+
+	ret = func();
+	if (ret < 0)
+		error();
+
+
+I'd be very happy.
+
+-- Steve
 
