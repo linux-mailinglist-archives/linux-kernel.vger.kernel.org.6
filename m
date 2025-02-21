@@ -1,97 +1,164 @@
-Return-Path: <linux-kernel+bounces-526692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EF2CA4020C
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 22:33:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99BEDA40210
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 22:34:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B8C917A773D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 21:32:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C64E19C7EFF
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 21:34:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 313CC253B7B;
-	Fri, 21 Feb 2025 21:33:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C268824F599;
+	Fri, 21 Feb 2025 21:34:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pI+OqPw3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="TQ8O886S"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BE5C1BC09A;
-	Fri, 21 Feb 2025 21:33:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7440C20E31B
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 21:33:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740173593; cv=none; b=EqnhmrFZumEP1WzFC65BevlTIW9LwuEXjA1+XrmbxAOoB164gM0CR1tSbTdknwuiOtabmdjkx1dJBg216vj1v1a1I/eUZQGQCvWx5YrLJ+CAKpbSq3+E2ZZ4kTsy7SOMZI2jdEr8dOxtPBdzvl4CTPgh1QKPtfxDLDsFQNtZ+ro=
+	t=1740173640; cv=none; b=hPyn+VoV1yrI2duqwq2bOT4M920n4fD6GnwZgH+pcp9upiqlxOTJdCaAgpSzCjjbeSWtwe0ZPRAvpvujJ8cFzwM/lWUEhD5kI2gt6EeYKzISIpO60vTmJ/hcEWE8okOv2cTAPN8z1b3nync9Y8ZeoPfYMRdhn2++4guEFB0S5Wg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740173593; c=relaxed/simple;
-	bh=YguojFeZQ1Lx0oD73VLf2qvbtWuaYfQHYVhFNJxGqcc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=V2TFy3hn91uAArvnYQHuFHYDXOaRdUToupKSjPz55C3Wiyeiuwzo6Kz+IR8S7bkOzpDyTrLR98ezZLynN7FT/YGJdtM3y4Xkuj4OzUUGuI3r88bGVjle+F2D8/yJ00drtMbLUymWoWwPaymqKWIaoGZkFCt+eyM4/efY9dqgLLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pI+OqPw3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF8B4C4CED6;
-	Fri, 21 Feb 2025 21:33:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740173593;
-	bh=YguojFeZQ1Lx0oD73VLf2qvbtWuaYfQHYVhFNJxGqcc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=pI+OqPw3S1f4uPK/qsVZPlTlFkJWoXXV7COQC0U7sscNezGrsRxoHQ7/xOeYHDSev
-	 Ypy/37X2kBbp8bKR0BpV/ndXbZBx4msKzDlYpvA/spRVQvSl7M8QkclZuW5CbNxIsT
-	 fx4Xoe43a7Eg41JFcEXylnOFiG9MAojydrpN8PIAnbRmPBC1rlagN3UaI4VTNIBMp6
-	 bzQKQhU/o9jw8wTKTlYBf7PgQScsDlbsfd29giuk+Nklsj2dHc63joYmTUXUMkzeZJ
-	 WaKcwOS/8GOzvUSQYXRYDGv4r7SZB3pnHLj0xPbOC+cqft1mVBhEBaj7MJyrjJk4eB
-	 6d0fuZiT53IKw==
-Date: Fri, 21 Feb 2025 15:33:11 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Stanimir Varbanov <svarbanov@suse.de>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rpi-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Jim Quinlan <jim2101024@gmail.com>,
-	Nicolas Saenz Julienne <nsaenz@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, kw@linux.com,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Andrea della Porta <andrea.porta@suse.com>,
-	Phil Elwell <phil@raspberrypi.com>,
-	Jonathan Bell <jonathan@raspberrypi.com>,
-	Dave Stevenson <dave.stevenson@raspberrypi.com>
-Subject: Re: [PATCH v5 -next 07/11] PCI: brcmstb: Adjust PHY PLL setup to use
- a 54MHz input refclk
-Message-ID: <20250221213311.GA362736@bhelgaas>
+	s=arc-20240116; t=1740173640; c=relaxed/simple;
+	bh=8tmdo/Ter+kdGrzmZv4+c1CC3FGOX+GbLELDtAoZByo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Z5vApd8G/44M7DPgsFDuIqysMw4xIV//oG90En0ZLxgxa5n5OJ+5VjwFdBG2z990XBqlVgUakYs+yxuIBrOwK1kP736jNI0WvetjoxXAVPE+nlgDIrYNcITUEbWtRnAp3j50y3YqU0ACJ7UHwlazmz8ZOZgTeAU7nlc97WkEt7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=TQ8O886S; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51LDSBj3008310
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 21:33:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Ghn6L4mUBwXpawWqt2VB2BLTybot+6+x5e3CZnMiiBY=; b=TQ8O886SD//Mk5a8
+	T3Xz0YYim+FzYQpLp1+NISKMF0Eu4sh4jDyBL0kCmmA6GR4jgy07JLlHDE3Ev7gC
+	IghEuF+QLWar5EmBYPtCMI9AInB5t14smZKyO4Cl3whg6T3X9MX9EnG901Os6n+Z
+	prjV/aWiVASujUuqDddQfNr4w1iqVD1/lLOHkJ7uNW+PQwhFey8rWVbM8m2JXmIo
+	/rMzKH4Y0i1JiILKyEA6u+1qGgrdxtzaB0FRC5BcLe1L7bxf1wx2l0E+XfuU6H/X
+	tcAMGhARTBBLciIqVi6tQChxXMHpKrDuBIqDzoo0n71h6ecx4mZep05R8PCjA60q
+	/WzY+A==
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44vyy3kard-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 21:33:57 +0000 (GMT)
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-471f426fe28so6106131cf.0
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 13:33:57 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740173636; x=1740778436;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ghn6L4mUBwXpawWqt2VB2BLTybot+6+x5e3CZnMiiBY=;
+        b=fCqZJTmlv2UY9Xm+lxuV8RxQxPodhwUHGQztwsFq0OAzPwgea/RFt8iGRJha1mO/Yc
+         L5exNAodyC3xnj9T26dO2kOfbsYoHGhfIYc+XJcdOZTvVsHu54LZ1tPRwSLx0aJktQWz
+         KymGHGtag58Ov94zKZ3i9/FoTvP7EhRqy1jL4p9c3sFVBT/XZEuTXQhablSzWuyfRrGd
+         qc09WPO3FH059TE65QLP+nnODvQZlWqqHNz+8MBirPqLOCrf7JXQSIpRU6ba/2UNbZ3p
+         w31e/+489fdbdSwarno1Sqbkh1FYZBY9nTfBL6RQne1rBuMSSTlpwS2+56lMFcYU+MIv
+         quWg==
+X-Forwarded-Encrypted: i=1; AJvYcCURIfILmeKpMs06bZ3tzWJimsCTuUTiDEh3AtSeFvwv+9bxJ2pfWKQrLxuPYeyzcm1v82CAVLXfdgNjfzc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPf+UJo12adxIOnIp4tr/ZL05jGJHuzKcQhaAO8RyYB29Ukj57
+	586zlVVuYy6nOZMhIQooGdqKu0vQwnPyqTKMDj0iC0zcD84SnwNBmZOhXrVv/rAwsTqL6Fq1T65
+	wwfXjxFOwgk/8xApjcP8pzbLZjDw5UTdYeJejGfw3qWMpXnPUoBNp4aTXgFP6p0M=
+X-Gm-Gg: ASbGncujQyhksD0f/NLH5/Ns7p9WQWp71FDLwoLaCLWjufwnf0xvvWBDpdvpqBWrtBv
+	m1oFK0/t+Vm0FCs3NrMuqGVO0zmufoWmYorB4LzVKC96gphor/JR+Qsy/nmjBgqN5Qk332JcN6J
+	JVx7nkAzKJOUhG8tnvLID4ZHGNkPVdwD+b4jw3tpoNSCEFhl8OG6lmwu+I5PGeg6YNYDz2k1H+a
+	2PxzPCkjL3piX0pEeKb7EtXGSl5xoo7ZTqHRCtBUqXCR9Xegioz/Z27bwG17lIfhYBrnWOMqd94
+	i5J3nEW+x7194c1dDRrmdU1DvRnR77OPFl4uZ53FnaALjepbCaCSYk9/MMPnW++rchqHTg==
+X-Received: by 2002:ac8:5710:0:b0:471:ef27:a30b with SMTP id d75a77b69052e-472229a8a3dmr25460981cf.13.1740173636388;
+        Fri, 21 Feb 2025 13:33:56 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IF3eGXB/j6IzUtZrEuHEsUKdriBuCF9PZH69iEvZpR1z/0tsNN3yb6D7Tmo01aYFqwMf4Hx6Q==
+X-Received: by 2002:ac8:5710:0:b0:471:ef27:a30b with SMTP id d75a77b69052e-472229a8a3dmr25460631cf.13.1740173635901;
+        Fri, 21 Feb 2025 13:33:55 -0800 (PST)
+Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abb96fa4d79sm1069931966b.126.2025.02.21.13.33.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 Feb 2025 13:33:55 -0800 (PST)
+Message-ID: <752a6234-cf74-48f5-8836-343011b6eeaa@oss.qualcomm.com>
+Date: Fri, 21 Feb 2025 22:33:52 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250120130119.671119-8-svarbanov@suse.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 08/10] arm64: dts: qcom: Add initial support for MSM8937
+To: barnabas.czeman@mainlining.org,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Stephan Gerhold <stephan@gerhold.net>,
+        =?UTF-8?Q?Otto_Pfl=C3=BCger?= <otto.pflueger@abscue.de>,
+        Linus Walleij <linus.walleij@linaro.org>, Lee Jones <lee@kernel.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        iommu@lists.linux.dev, Dang Huynh <danct12@riseup.net>
+References: <20250211-msm8937-v1-0-7d27ed67f708@mainlining.org>
+ <20250211-msm8937-v1-8-7d27ed67f708@mainlining.org>
+ <7664b71c-ed47-4765-9ac4-5dbe3ec80d3c@oss.qualcomm.com>
+ <d4792e6323e2dd5392a0d9633df62174@mainlining.org>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <d4792e6323e2dd5392a0d9633df62174@mainlining.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-ORIG-GUID: B7ufIWwrnWBx30Rz9Oz-dXIiUre7J9SA
+X-Proofpoint-GUID: B7ufIWwrnWBx30Rz9Oz-dXIiUre7J9SA
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-21_08,2025-02-20_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 clxscore=1015
+ phishscore=0 adultscore=0 lowpriorityscore=0 bulkscore=0 impostorscore=0
+ priorityscore=1501 malwarescore=0 spamscore=0 mlxlogscore=856 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
+ definitions=main-2502210147
 
-On Mon, Jan 20, 2025 at 03:01:15PM +0200, Stanimir Varbanov wrote:
-> The default input reference clock for the PHY PLL is 100Mhz, except for
-> some devices where it is 54Mhz like bcm2712C1 and bcm2712D0.
+On 12.02.2025 5:20 PM, barnabas.czeman@mainlining.org wrote:
+> On 2025-02-12 14:07, Konrad Dybcio wrote:
+>> On 11.02.2025 11:37 PM, Barnabás Czémán wrote:
+>>> From: Dang Huynh <danct12@riseup.net>
+>>>
+>>> Add initial support for MSM8937 SoC.
+>>>
+>>> Signed-off-by: Dang Huynh <danct12@riseup.net>
+>>> Co-developed-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
+>>> Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
+>>> ---
+>>
+>> So the computer tells me 8917 and 8937 are *very* similar. Have you
+>> tried assessing how making 8937.dtsi an overlay atop 8917.dtsi would
+>> work out?
 > 
-> To implement this adjustments introduce a new .post_setup op in
-> pcie_cfg_data and call it at the end of brcm_pcie_setup function.
+> They are similar but there are many small differences:
+> - have two dsi
+> - using adreno 505
+> - different iommu it uses arm,smmu for gpu and qcom,iommu for applications
+> - 8 cores
+> - camss will be a different a bit
+> - venus will be different a bit
+> - have more i2c and spi
+> - different mdp version
 > 
-> The bcm2712 .post_setup callback implements the required MDIO writes that
-> switch the PLL refclk and also change PHY PM clock period.
-> 
-> Without this RPi5 PCIex1 is unable to enumerate endpoint devices on
-> the expansion connector.
+> Maybe i can find more differences, originally it was based on msm8917.dtsi
+> but we have decided to keep it separate, also it have different license from 8917.
+> The plan is MSM8940 and SDM439 support will based on msm8937.dtsi in the future.
 
-This makes it sound like this patch should be reordered before "[PATCH
-v5 -next 06/11] PCI: brcmstb: Add bcm2712 support".
+Alright, makes sense to keep them separate then
 
-We don't really want a driver to claim a bcm2712 controller before
-it's able to enumerate devices, because that would break bisection
-through this.
-
-Bjorn
+Konrad
 
