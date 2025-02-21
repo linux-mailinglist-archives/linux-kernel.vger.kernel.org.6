@@ -1,130 +1,99 @@
-Return-Path: <linux-kernel+bounces-526141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B2E6A3FA8F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:16:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44E47A3FA85
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:15:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 088B3442A1A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:10:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9405F19C024E
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:10:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66A131EC011;
-	Fri, 21 Feb 2025 16:03:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43BDA20FA91;
+	Fri, 21 Feb 2025 16:06:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z9ky2b6a"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="deQZW3dh"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0E6E1EBA14;
-	Fri, 21 Feb 2025 16:03:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF8881DF73A
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 16:06:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740153809; cv=none; b=Af+STjCDiy+btnFJIPKepoIH0r8ZaqA8cJ9HbWAuLFP1hKdE9gZPJVyPGHNMscINLXV29aVF2hP+QB+wq2grS/zWwYKt+eYV6+AZ+wDZ7rk1uZE1JIDotBODV1r7rQKTfsSzF7omgUSl8D1UFipwwwbDdrIfXHpiG6ERttiOZd4=
+	t=1740153979; cv=none; b=KBxuCITIVePEsp3qnWYu7H2nmBd3DvDsiJ5CuJ9srsxOPT22SMTF4e+0PfE6keMD715Ioi7VdLvY0zTq62YjwBAV9d8JFC5JXskw2Gunf9kS4cKnuTUbF3764PF4q57XWGPkVzeq4JRtKERGW7WHgXMgPs7etkUbG4jmA19OYZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740153809; c=relaxed/simple;
-	bh=LclqReflO2tGzw33tF/ps3Kyb0oFA93UVfVnH0V8JCM=;
+	s=arc-20240116; t=1740153979; c=relaxed/simple;
+	bh=PfVmD+Ik+4/tjXZKCLh6FwCvjwO81PdnkPtrVB+uvVk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a6KwJFzbYAudapzQD41nuCQkm4GTQSxNH9PV4YcHoIS9IWtHmaiWLs+RvGo5MOFYz9OxGALSqxwshvDFmMei5oRPvj8dwKWzojTRI4pMpDZuhYYzfB2m0dRHNsUUrpIzgMCj0Y/Cyu+rQ2h8V95YLZBhJtCgqe/OteyPr8TWAdw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z9ky2b6a; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F4DCC4CED6;
-	Fri, 21 Feb 2025 16:03:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740153809;
-	bh=LclqReflO2tGzw33tF/ps3Kyb0oFA93UVfVnH0V8JCM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Z9ky2b6aFfaWFuN7W9X4tHxmNSwKIfI7KNaXLJTAOoGsU0zfXloi5LMuxani8P7Gk
-	 +V7rhWSbe6zbftjcnj3QBKnUOSYeyMKkd4kAI+knzSAod1nlDKBGBp+/pytgh/wHsi
-	 knqjuG52ZtxQWnfEb526TbdoYwcHUAof5D59eRGSXDnZVcA9tgVdYW33K8n++Wvaxk
-	 X92VgjNBsv3nxa+y89M4ifD6jB5F1dAaC0ePclV2w+Rt91l22aEKzMbJ2jfSZeR2/4
-	 Bcb7ItLXJn3B/5+EjTYn64Pn8DnoDTa8qwYg7X7EtIXC2RwPWszhZEATOQhlimg8V5
-	 mjDLj9XH5osTw==
-Date: Fri, 21 Feb 2025 16:03:22 +0000
-From: Lee Jones <lee@kernel.org>
-To: Dzmitry Sankouski <dsankouski@gmail.com>
-Cc: Sebastian Reichel <sre@kernel.org>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Pavel Machek <pavel@ucw.cz>, Hans de Goede <hdegoede@redhat.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Sebastian Krzyszkowiak <sebastian.krzyszkowiak@puri.sm>,
-	Purism Kernel Team <kernel@puri.sm>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-input@vger.kernel.org, linux-leds@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [GIT PULL] Immutable branch between MFD, Input, LEDs and Power due
- for the v6.15 merge window
-Message-ID: <20250221160322.GE824852@google.com>
-References: <20250123-starqltechn_integration_upstream-v17-0-8b06685b6612@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=kx3c2sXIfCjyeEKPH1TUppKkr39PBneiNs2NmW9HD6EDKG2t3VLxiPoOy6da0WBEEMc81f0NLoSFAmGpLtcJEFbgAdjiJgkid+u/bDdiK06yYeDjvzLB+Z+7P5E7b1lcLLgqKah0SlYBv6VLK7agozOP8hW33+7BDgpWBLk/YT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=deQZW3dh; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740153978; x=1771689978;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=PfVmD+Ik+4/tjXZKCLh6FwCvjwO81PdnkPtrVB+uvVk=;
+  b=deQZW3dhFypxPYNFp5mgrHOAAXJA+8XEsBixl9sMTxk2Pna1dt8zsz9v
+   RboAZ37CLiDEQOp2m1ODGA/k23ulESu2/D89nRbFndH7+nlLaf4YSWiP8
+   TGd50Mlfb1Jv434wfSBGuG5AkBMBRaBJMypqaCZrNkj7t7gmswLZMxvZO
+   p1qoO6r7FgWuP7JDPkgaWQl1cneZ8x/kPCsVaBp4XQXLgJLwZxSg1gJuq
+   93uIqyKbT3/3Q6dvwnqL5iCiSfaoDEIlMV9/B7JluQ3nHWF22H9+gazn/
+   9c9C/nPrWcb8Sro6g8YjiPu+mYu+Lw8PGQ4aHJi+nqPlvFdRvtLfjUE+e
+   w==;
+X-CSE-ConnectionGUID: 8YOrv8voTpe3varejnTn4g==
+X-CSE-MsgGUID: 2OlHnjudR4Ov+ZAilZGQ3Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11352"; a="28570914"
+X-IronPort-AV: E=Sophos;i="6.13,305,1732608000"; 
+   d="scan'208";a="28570914"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Feb 2025 08:06:17 -0800
+X-CSE-ConnectionGUID: AmaAwK0OTrO5l+UsSLkcxg==
+X-CSE-MsgGUID: 2D53EnSWRpe15VyKLZ4OAQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,305,1732608000"; 
+   d="scan'208";a="120508633"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Feb 2025 08:06:16 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tlVXZ-0000000DgaM-3lqX;
+	Fri, 21 Feb 2025 18:06:13 +0200
+Date: Fri, 21 Feb 2025 18:06:13 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Raag Jadav <raag.jadav@intel.com>
+Cc: arnd@arndb.de, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] io.h: drop unused headers
+Message-ID: <Z7ikdXunA7_uoOsZ@smile.fi.intel.com>
+References: <20250220173305.2752125-1-raag.jadav@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250123-starqltechn_integration_upstream-v17-0-8b06685b6612@gmail.com>
+In-Reply-To: <20250220173305.2752125-1-raag.jadav@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Enjoy!
+On Thu, Feb 20, 2025 at 11:03:05PM +0530, Raag Jadav wrote:
+> Drop unused headers and type declaration from io.h.
 
-The following changes since commit 2014c95afecee3e76ca4a56956a936e23283f05b:
+FWIW,
+Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-  Linux 6.14-rc1 (2025-02-02 15:39:26 -0800)
+...
 
-are available in the Git repository at:
+> PS: I'm not very confident about this but thought I'd give it a try.
 
-  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git tags/ib-mfd-input-leds-power-v6.15
-
-for you to fetch changes up to aebb5fc9a0d87916133b911e1ef2cc04a7996335:
-
-  leds: max77705: Add LEDs support (2025-02-20 16:38:37 +0000)
-
-----------------------------------------------------------------
-Immutable branch between MFD, Input, LEDs and Power due for the v6.15 merge window
-
-----------------------------------------------------------------
-Dzmitry Sankouski (7):
-      dt-bindings: power: supply: add maxim,max77705 charger
-      dt-bindings: mfd: Add maxim,max77705
-      power: supply: max77705: Add charger driver for Maxim 77705
-      mfd: simple-mfd-i2c: Add MAX77705 support
-      mfd: Add new driver for MAX77705 PMIC
-      Input: max77693 - add max77705 haptic support
-      leds: max77705: Add LEDs support
-
- .../devicetree/bindings/mfd/maxim,max77705.yaml    | 158 ++++++
- .../bindings/power/supply/maxim,max77705.yaml      |  50 ++
- MAINTAINERS                                        |   4 +
- drivers/input/misc/Kconfig                         |   6 +-
- drivers/input/misc/max77693-haptic.c               |  13 +-
- drivers/leds/Kconfig                               |   8 +
- drivers/leds/Makefile                              |   1 +
- drivers/leds/leds-max77705.c                       | 275 ++++++++++
- drivers/mfd/Kconfig                                |  13 +
- drivers/mfd/Makefile                               |   1 +
- drivers/mfd/max77705.c                             | 182 +++++++
- drivers/mfd/simple-mfd-i2c.c                       |  11 +
- drivers/power/supply/Kconfig                       |   6 +
- drivers/power/supply/Makefile                      |   1 +
- drivers/power/supply/max77705_charger.c            | 581 +++++++++++++++++++++
- include/linux/mfd/max77693-common.h                |   4 +-
- include/linux/mfd/max77705-private.h               | 195 +++++++
- include/linux/power/max77705_charger.h             | 195 +++++++
- 18 files changed, 1699 insertions(+), 5 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/mfd/maxim,max77705.yaml
- create mode 100644 Documentation/devicetree/bindings/power/supply/maxim,max77705.yaml
- create mode 100644 drivers/leds/leds-max77705.c
- create mode 100644 drivers/mfd/max77705.c
- create mode 100644 drivers/power/supply/max77705_charger.c
- create mode 100644 include/linux/mfd/max77705-private.h
- create mode 100644 include/linux/power/max77705_charger.h
+Sure, I like this change.
 
 -- 
-Lee Jones [李琼斯]
+With Best Regards,
+Andy Shevchenko
+
+
 
