@@ -1,99 +1,73 @@
-Return-Path: <linux-kernel+bounces-525525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 971B5A3F0E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:49:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D3B6A3F0DC
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:48:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 98D3B7A9766
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:46:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5D203AD561
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:47:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64AD5209F2D;
-	Fri, 21 Feb 2025 09:43:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37935204F8D;
+	Fri, 21 Feb 2025 09:44:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="FmAcTuMD"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Y+nN98Uq"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C6D22046B3;
-	Fri, 21 Feb 2025 09:43:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08618204683
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 09:43:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740131010; cv=none; b=ZIe9fRD60bcvlucaXhtMhmMG49+7EyW4NvGVCv2+PI6WBTswAvFoa3u8/gLIKkUYmTAJ1eGbuMB0nYI1eI4c09pBA/ThTEBRgr13KL9UbmvCLfxuvAn0BvY7d481vL15ZoWUZ0yR/3QRzARuEWNiy03Sara9uvMLd9ThaK+CanE=
+	t=1740131040; cv=none; b=B1Gv10fHKFBs7M2XRVwgbARHOk8w3V7LBUyeW2czydOobRqa088bYFVtXCgOjruUydc8ujsMY2CUeUXSunIH0fak3orh/li+8ECFESE9+22wSgh94mVeWITkh8MmDtwWP22xtl+gJQ9zOAMP4RtzHd4ZICb0goHOQhAumakXDZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740131010; c=relaxed/simple;
-	bh=LyR2zZKf5ESahtFq1ig6nTfJHCHBh898KS58abCNjOw=;
+	s=arc-20240116; t=1740131040; c=relaxed/simple;
+	bh=ieEZ8Sj8IsSSLjadFm3PRFXl2p7vBygmX2ckLVo+/Nw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aQwsFctdjdM8ILv1u5n8GeR27ROl/vbuTAKRNHfkBlqqhp+XTXIhIeAwuSBPzxHRtbjmqSEDc4MpChoQPiR8Vbvg0R+9XdS+57Cnc4dPTKmQtgfVSioAxkalrj9PTYh84f+W10SNiY43T4o9WHiaJqVJVLjbB6MjW6+o+/ZQKzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=FmAcTuMD; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51KMnaxs030909;
-	Fri, 21 Feb 2025 09:42:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=eSgcvvVvljqSxVfALXNZPgVnf+ekr0
-	yvWovzwjgyAQY=; b=FmAcTuMDCjB9l2mNpsq2poBs5NzxzsYF37pc07/D5T8AnZ
-	I9oLWcGgbV+mforSMtc9BzPuGW7rsbVBw8ocEp4+OMfUgdQchG/mL//ROvt19Mr+
-	hv9OAUhurdGmzghLf+nHktskCdeHa0A3ntfywZKFkOuxjvJEGRiOT71Zv6Kn++6X
-	io4V6DTIXJZGPPb+UTNU6yitlZNjuZan5gQ7e3ulNY9LZxZm5oRaSRPA4nD53PQW
-	WwUq6PNwu8GLPLO+8ERRN6Mhpa6W0hir3piaSu2A7NcS6i7iB3dJWyiCINixBaar
-	i/+c/ENwdRIr6cDRBTTBtVJwB/xq0Isc0V02cZ5w==
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44xdhatg6h-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Feb 2025 09:42:59 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51L8rGu9005844;
-	Fri, 21 Feb 2025 09:42:57 GMT
-Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 44w02xq3p7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Feb 2025 09:42:57 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51L9grHC40829232
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 21 Feb 2025 09:42:53 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A3C7F2014F;
-	Fri, 21 Feb 2025 09:42:53 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8610C2014E;
-	Fri, 21 Feb 2025 09:42:52 +0000 (GMT)
-Received: from osiris (unknown [9.179.14.8])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Fri, 21 Feb 2025 09:42:52 +0000 (GMT)
-Date: Fri, 21 Feb 2025 10:42:51 +0100
-From: Heiko Carstens <hca@linux.ibm.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-        linux-kbuild@vger.kernel.org, bpf <bpf@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        Nathan Chancellor <nathan@kernel.org>,
-        Nicolas Schier <nicolas@fjasle.eu>,
-        Zheng Yejian <zhengyejian1@huawei.com>,
-        Martin Kelly <martin.kelly@crowdstrike.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>
-Subject: Re: [PATCH v4 0/6] scripts/sorttable: ftrace: Remove place holders
- for weak functions in available_filter_functions
-Message-ID: <20250221094251.11661Ada-hca@linux.ibm.com>
-References: <20250217153401.022858448@goodmis.org>
- <20250218145836.7740B3b-hca@linux.ibm.com>
- <20250219102220.3b79ec5e@gandalf.local.home>
+	 Content-Type:Content-Disposition:In-Reply-To; b=kzGy2zUIwQVVqEY1N1PaXU8DJNOPP5GRXiTty75LBWHC3dsRneXM4aCCsZlTDm2tCJxb4SoXOboTZbJQF5YL1xuIM4tQcNm5rTDQEz6iSKMjFYVwLsvfElmeLORcXbDjDsuqVnuOzktb1MjhqRiLnbQO9ls+SpfAMOzxQQVPeQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Y+nN98Uq; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740131039; x=1771667039;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ieEZ8Sj8IsSSLjadFm3PRFXl2p7vBygmX2ckLVo+/Nw=;
+  b=Y+nN98UqN67s9+MqVieUmFkww5SNCsntukfqJhksqKDkEhvHdbuTwLvk
+   K7rO1f9KMqSu+IFvmThFYCyVcKAdPBMq25aIUjoX+i0SGgSiNORjc69VT
+   viISEsUA74DnufT07N+cqLV1wNyqCvseGTMdm8NKrwu9NlEyZ7PU3sLpG
+   gszkDOQgNF5+f0+5RA+xL6XfYRjndhCCs0Z8k4rg2zkeD7HaxwqSQOqiN
+   fUGIIaqx2B8dBh1TG5Pq3b585pP9bQ9Kj5pN5txYnIgvlyNuNbR/N9kth
+   OsI7UiWa3hz5eQ1rVJK2JYm/9zt63ro1VQHJHXwpWCX6QlrMyxZTGbTQA
+   w==;
+X-CSE-ConnectionGUID: u+xg/VP1QpqXNzPF9bskXg==
+X-CSE-MsgGUID: R8ipBJggSS6nj8AWumfHLw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11351"; a="58353466"
+X-IronPort-AV: E=Sophos;i="6.13,304,1732608000"; 
+   d="scan'208";a="58353466"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Feb 2025 01:43:58 -0800
+X-CSE-ConnectionGUID: v6S1tz5sQgiJeT55/GG1PA==
+X-CSE-MsgGUID: aAG5BJMFQQeoX+5mq5NyKQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="120572761"
+Received: from sgruszka-mobl.ger.corp.intel.com (HELO localhost) ([10.245.97.15])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Feb 2025 01:43:55 -0800
+Date: Fri, 21 Feb 2025 10:43:53 +0100
+From: Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Zhang Lixu <lixu.zhang@intel.com>, linux-kernel@vger.kernel.org,
+	sakari.ailus@linux.intel.com, linus.walleij@linaro.org,
+	brgl@bgdev.pl, andi.shyti@kernel.org, broonie@kernel.org,
+	zhifeng.wang@intel.com, Wentong Wu <wentong.wu@intel.com>
+Subject: Re: [PATCH] MAINTAINERS: Update Intel LJCA maintainer
+Message-ID: <Z7hK2ZYt4K30ACc1@linux.intel.com>
+References: <20250221083713.25947-1-lixu.zhang@intel.com>
+ <2025022134-storewide-greedy-8d4d@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -102,47 +76,37 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250219102220.3b79ec5e@gandalf.local.home>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: tGeBz98IMu-thKTTl-sTAJQe3BEtZNKR
-X-Proofpoint-ORIG-GUID: tGeBz98IMu-thKTTl-sTAJQe3BEtZNKR
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-21_01,2025-02-20_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 spamscore=0
- mlxlogscore=347 mlxscore=0 bulkscore=0 priorityscore=1501 adultscore=0
- clxscore=1015 suspectscore=0 phishscore=0 lowpriorityscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2502210072
+In-Reply-To: <2025022134-storewide-greedy-8d4d@gregkh>
 
-On Wed, Feb 19, 2025 at 10:22:20AM -0500, Steven Rostedt wrote:
-> On Tue, 18 Feb 2025 15:58:36 +0100
-> Heiko Carstens <hca@linux.ibm.com> wrote:
-> > > This series removes the place holder __ftrace_invalid_address___ from
-> > > the available_filter_functions file.
-> > > 
-> > > The rewriting of the sorttable.c code to make it more manageable
-> > > has already been merged:
-> > > 
-> > >   https://git.kernel.org/torvalds/c/c0e75905caf368e19aab585d20151500e750de89
-> > > 
-> > > Now this is only for getting rid of the ftrace invalid function place holders.  
+On Fri, Feb 21, 2025 at 10:36:02AM +0100, Greg KH wrote:
+> On Fri, Feb 21, 2025 at 04:37:12PM +0800, Zhang Lixu wrote:
+> > Wentong is no longer with Intel, I will take over as the maintainer of the
+> > Intel LJCA driver.
 > > 
-> > Since you asked me to test this on s390: seems to work with
-> > HAVE_BUILDTIME_MCOUNT_SORT enabled; the ftrace selftests still
-> > work as before.
+> > Signed-off-by: Zhang Lixu <lixu.zhang@intel.com>
+> > Reviewed-by: Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>
+> > Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+> > ---
+> >  MAINTAINERS | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index d9fd56f205c0..da09f84a87b1 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -11818,7 +11818,7 @@ F:	drivers/crypto/intel/keembay/ocs-hcu.c
+> >  F:	drivers/crypto/intel/keembay/ocs-hcu.h
+> >  
+> >  INTEL LA JOLLA COVE ADAPTER (LJCA) USB I/O EXPANDER DRIVERS
+> > -M:	Wentong Wu <wentong.wu@intel.com>
+> > +M:	Lixu Zhang <lixu.zhang@intel.com>
 > 
-> Great!
-> 
-> I'm guessing by just adding the support in s390 with what is upstream as
-> well as what is in my for-next would work?
+> Wentong also needs to ack this, just because someone leaves a company
+> does not mean they automatically loose maintainership.
 
-Yes, both variants work.
+Not sure how to conntact him, his intel email is bouncing now and
+he did not provide alternative email before he left. 
 
-> You can just add that for the next merge window then.
-
-It is already in linux-next:
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=fa1518875286c94111bdaf1c7bae188c9c426c6b
-
-Thanks for making aware of this!
+Regards
+Stanislaw
 
