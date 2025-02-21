@@ -1,202 +1,170 @@
-Return-Path: <linux-kernel+bounces-525762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3839A3F496
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 13:37:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EAD8A3F497
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 13:39:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86D9B17FB4E
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 12:37:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7822642161B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 12:39:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F0B320B210;
-	Fri, 21 Feb 2025 12:36:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 505E520B7E0;
+	Fri, 21 Feb 2025 12:39:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="R02V9JVp"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JissSfbD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3BBD2063C1
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 12:36:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EABA1EB1B9;
+	Fri, 21 Feb 2025 12:39:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740141418; cv=none; b=dRTsxERGfduecTmUZ/jJcQF/9yhADe9XwMly8N8m1VYPwz59Eu8KuJjtX5o+1seTQZSGRXku7i+0TAeN3ykBME9Ls0F2UkG6G2oVyaNzSta/DWFGO1A3d4wFIz6Yzt1hZwOs0Gcex0RIJb+jUvTTJNbL0sjEO1AiMMUeA1Ywz2E=
+	t=1740141574; cv=none; b=haDUc6uZ58Qirh4b6/4FQcfB6drvgA/oYACfZQfNyaY+O9Ove97kpvnj71TH/OZmLI3Jk5wBNXL74YqJCtfR0MxlmoyyUWsACVtMSIxjCTJLiggh0oeM346UlS9lEOd/C7RCRjxWgH0YiGDA5bfkDXEEHc75pmXwdeyTIVGeDaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740141418; c=relaxed/simple;
-	bh=reN/jN4U2nZz0IZjiNbvfQ2pGtnCDBhdnWOo/v/ZumI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=a/LTVf31W7FHuxMk3CzcEFS/VjaJwI/Stz3XM6+yrnb6JjxclLfLk+0jjtU+UKcT7OhWlSPHLOLsX/Yk+hiM50MuSr3ftVTVCuOiev7GOez3vR0eVbuSseJeOI/FPEfQ53b60WzJbL7LaRu0jBQsHZerlsfRx8QY5BTKvDLvT4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=R02V9JVp; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5decbcd16d2so380765a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 04:36:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740141415; x=1740746215; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=mUQlDd7Utz0aQjBN7sk1gzdB0Wc8pMTCUWTaZwMMJIw=;
-        b=R02V9JVppWmPenPPXMPOwPhXOvMkG20dux2iplsKQCHxLp2oR7T4ZP1ej7aWXYm/5Q
-         lwrrCWFtWqf9AG/pXrXA8bt5U8TmZBjknnUUYkFwrd9NFSBkIP4F8+Co2Pw/weCPclO0
-         g8fzs1eg3zmmOoh67KFgm4x/0232fSOsJXK/Ta+t1/UycFM2yxEf8ur+Qa82kJNaQdiL
-         e79kcotdoVR74iuFS5QFkdSi/0/cZWQFTwYG4Ihojxq70F0ECYBPHOhKpi7zuilnRPFi
-         PHtgoJmV1P90w6fs6mkEAZSRgizgV40F6qoluErMjInbMyOJ/9ZplYuDkcctkgxHfyag
-         HeXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740141415; x=1740746215;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mUQlDd7Utz0aQjBN7sk1gzdB0Wc8pMTCUWTaZwMMJIw=;
-        b=OhoLRb00mxlCJ3RvgnRONs46Y7Jkt65OWNrnimuv2ZUUYYCTiNk7xLXcaiaaaBydQS
-         +PbAaQQ2YyPPL6n9J94nMi5wfb8Dnh9n/NlV6yOGgW9POWE5CfpBTOGl3aiTJT3Bumk4
-         2VpehZ+rouqWCYYKm42jquXZfbADjWQkb4TPgDI1y1Gc0bG+WlEVYyLYco5859xQTpIv
-         fXq+aw2qov8TiKa1TzkoIL4Z23GDYg8jCMdYvCm7+mGC32oMoXpcIus5nH9IkiAyBPTT
-         PLVaGrt+KljVk8EQtI+TmRIE+4n273noDpQJFLBPPbFEHpnM2Vj32XhemN+YtaO+tuoZ
-         G6sg==
-X-Forwarded-Encrypted: i=1; AJvYcCU1wuQmXfNx9CzsOZM9SJ8Yo7sokyxhrDV6UZeAB0hYqwOW4ZBrjQX3npPiGw3XYEllTYCIlGFU6LJCV6Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxbBvoXGOK2sx3nk6/EHox8iKewEq8+82UASIwiDq2+N+WTKisa
-	e78Gm1Xh+7UFsB4BTKdkZIyMFZmcV13dVCbLEs/BLUWDexARjPLeX3yLrwK77ks=
-X-Gm-Gg: ASbGncvDB8IsukQD1dwPhrkSXZo+AQkj5Etd/FkSMzxjukhATiwTuLiLBq1JneS+qYL
-	u9l0k5DJKD7LTwZPbW4M+XiTulXmMZLAp23UZPYzlawBoL1r6BUnuhIt4areJObA7+Qs7iRyQBM
-	4xzDGEtFDDTr9I6GU/AR2CnNhqN4QEqNzGJHWfhoSvojGZ+8K2znhPvat734tGG9Vfu6eAIfGfI
-	q3jHKa9NOkRFTbDII50Z9SoIDJ5k/7KCuUJz8idgJUujAhdDlv8K+SYgHl3JXLgHD3YEwMH4CgG
-	19CVQXuPCJl1rQjLE8NzSbmmXn/hR39iCOHRkPhosDKTcg6HEsJzR1qxZCGBnKCTWG30jhV9mBF
-	GN0YR
-X-Google-Smtp-Source: AGHT+IEJMhelvd9k6prcrL/5SvES/+s36hwykYnIzV7bIabZ3ZkmismiB8YKbKK1g+iW0hPsnp9qYg==
-X-Received: by 2002:a05:6402:26c2:b0:5d0:d183:cc11 with SMTP id 4fb4d7f45d1cf-5e0b70d2736mr945575a12.2.1740141414885;
-        Fri, 21 Feb 2025 04:36:54 -0800 (PST)
-Received: from [192.168.0.18] (78-11-220-99.static.ip.netia.com.pl. [78.11.220.99])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5dece1b4e3bsm13594295a12.11.2025.02.21.04.36.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Feb 2025 04:36:53 -0800 (PST)
-Message-ID: <883fed07-1d21-4ab1-8c72-9a1750ec1606@linaro.org>
-Date: Fri, 21 Feb 2025 13:36:51 +0100
+	s=arc-20240116; t=1740141574; c=relaxed/simple;
+	bh=THMok0Q/W8DPta8lrac9ilEkwc3iYgKDyZsc/gHSzSc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dQfUu+QXQwTGRj/ZhkkcyfO7ypgbAMwS7uqiwhso5zGRVQkPhZO3V4xagC/NFzeW26loCgjW5N0eWsEMv4mpgIILelMNBdXGIhLTZuBG/GTzhocae/KkpFm8Wj7YQPsohFAoQK234QY4dBhxHpbSRvEiRM0QmL1BwSyutspnbBI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JissSfbD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7FF1C4CED6;
+	Fri, 21 Feb 2025 12:39:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740141574;
+	bh=THMok0Q/W8DPta8lrac9ilEkwc3iYgKDyZsc/gHSzSc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JissSfbDTmOYZeAAw7xb15eGe9FwQuQCmwXurgu7FEgy1Pd0WOYlCIrvhfqyee99A
+	 koDSllkwxwOv62ApilcR4RNmkFUPPAMczBSn9hyXFa5kfdJH0hEDEQSGxLpV4K8QEx
+	 f4+2VBzxhwFnvRYBEBC6RNDxwBSoO3VegWdc+PkPFC0BYKJRyRpl6+wWl6fXrwBuBC
+	 XQ7PlhEKze6yWvYxnwtttVjBaaddf7x5oqHn1F/qUAHNwtiMbdLAlGFmoc57uf5FX2
+	 z5WGzLu1IGwe5+/GvmUUgGSTOcabxEdM9xR6d2SLPfdHbgzw53xKWmpHRT18+ZBySm
+	 WhZjFbks1rx/Q==
+Date: Fri, 21 Feb 2025 21:39:29 +0900
+From: William Breathitt Gray <wbg@kernel.org>
+To: Bence =?iso-8859-1?B?Q3Pza+Fz?= <csokas.bence@prolan.hu>
+Cc: linux-arm-kernel@lists.infradead.org, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Kamel Bouhara <kamel.bouhara@bootlin.com>, Dharma.B@microchip.com
+Subject: Re: [PATCH v4 0/2] microchip-tcb-capture: Add Capture, Compare,
+ Overflow etc. events
+Message-ID: <Z7h0AXV1zlgp9Nw-@ishi>
+References: <20250211151914.313585-3-csokas.bence@prolan.hu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 15/16] drm/msm/dpu: Implement new v12.0 DPU differences
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Rob Clark <robdclark@gmail.com>, Abhinav Kumar
- <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>,
- Marijn Suijten <marijn.suijten@somainline.org>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Krishna Manikandan <quic_mkrishn@quicinc.com>,
- Jonathan Marek <jonathan@marek.ca>, Kuogee Hsieh <quic_khsieh@quicinc.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, linux-arm-msm@vger.kernel.org,
- dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Srini Kandagatla <srinivas.kandagatla@linaro.org>
-References: <20250217-b4-sm8750-display-v2-0-d201dcdda6a4@linaro.org>
- <20250217-b4-sm8750-display-v2-15-d201dcdda6a4@linaro.org>
- <qlotuliwnm5spneolztca7avmh2a46pz2xqlxzqbw5kwa53m6q@oyhnzz7fhay3>
- <4b2426d2-a7bb-4c19-9ebe-77f6a90caf5e@linaro.org>
- <CAA8EJpquBhQeac0E66NqeagkxP-qY0whmah2ND0xziUQdxc_7g@mail.gmail.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <CAA8EJpquBhQeac0E66NqeagkxP-qY0whmah2ND0xziUQdxc_7g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-
-On 19/02/2025 18:24, Dmitry Baryshkov wrote:
-> On Wed, 19 Feb 2025 at 19:04, Krzysztof Kozlowski
-> <krzysztof.kozlowski@linaro.org> wrote:
->>
->> On 17/02/2025 20:18, Dmitry Baryshkov wrote:
->>> On Mon, Feb 17, 2025 at 05:41:36PM +0100, Krzysztof Kozlowski wrote:
->>>> Implement new features and differences coming in v12.0 of DPU present on
->>>> Qualcomm SM8750 SoC:
->>>> 1. 10-bit color alpha.
->>>> 2. New CTL_PIPE_ACTIVE and CTL_LAYER_ACTIVE registers for pipes and
->>>>    layer mixers.
->>>> 2. Several differences in LM registers (also changed offsets) for LM
->>>>    crossbar hardware changes.
->>>
->>> I'd really prefer for this patch to be split into a logical chunks
->>> rather than "everything for 12.x"
->> everything 12.x is still logical chunk. I can split more, but without
->> guidance what is here logical chunk, will be tricky.
->>
->> For example 10-bit color alpha looks like separate feature. But
->> remaining PIPE/LAYER active - not sure.
->>
->> I can split them but I would not call such split necessarily logical.
-> 
-> I'd say, the following items are logical chunks:
-> - ctl->ops.active_fetch_pipes in dpu_encoder_helper_reset_mixers() and
-> dpu_hw_ctl_reset_intf_cfg_v1() (with a proper Fixes tag?)
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="aveAWsj+gpRZ7qux"
+Content-Disposition: inline
+In-Reply-To: <20250211151914.313585-3-csokas.bence@prolan.hu>
 
 
-Ack
+--aveAWsj+gpRZ7qux
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> - 10-bit alpha, border color,
+On Tue, Feb 11, 2025 at 04:19:11PM +0100, Bence Cs=F3k=E1s wrote:
+> The TCB has three R/W-able "general purpose" hardware registers:
+> RA, RB and RC. The hardware is capable of:
+> * sampling Counter Value Register (CV) to RA/RB on a trigger edge
+> * sending an interrupt of this change
+> * sending an interrupt on CV change due to trigger
+> * triggering an interrupt on CV compare to RC
+> * stop counting after sampling to RB
+>=20
+> To enable using these features in user-space, an interrupt handler
+> was added, generating the necessary counter events. On top, RA/B/C
+> registers are added as Count Extensions. To aid interoperation, a
+> uapi header was also added, containing the various numeral IDs of
+> the Extensions, Event channels etc.
+>=20
+> Bence Cs=F3k=E1s (2):
+>   counter: microchip-tcb-capture: Add IRQ handling
+>   counter: microchip-tcb-capture: Add capture extensions for registers
+>     RA-RC
+>=20
+>  MAINTAINERS                                   |   1 +
+>  drivers/counter/microchip-tcb-capture.c       | 137 ++++++++++++++++++
+>  .../linux/counter/microchip-tcb-capture.h     |  49 +++++++
+>  3 files changed, 187 insertions(+)
+>  create mode 100644 include/uapi/linux/counter/microchip-tcb-capture.h
 
+Hi Bence,
 
-Ack,
+I had some time to read over your description of the three hardware
+registers (RA, RB, and RC)[^1] and I have some suggestions.
 
-> - active_pipes
-> - blend stage in LM + set_active_lms
+First, register RC seems to serve only as a threshold value for a
+compare operation. So it shouldn't be exposed as "capture2", but rather
+as its own dedicated threshold component. I think the 104-quad-8 module
+is the only other driver supporting THRESHOLD events; it exposes the
+threshold value configuration via the "preset" component, but perhaps we
+should introduce a proper "threshold" component instead so counter
+drivers have a standard way to expose this functionality. What do you
+think?
 
+Regarding registers RA and RB, these do hold historic captures of count
+data so it does seem appropriate to expose these as "capture0" and
+"capture1". However, I'm still somewhat confused about why there are two
+registers holding the same sampled CV (or do RA and RB hold different
+values from each other?). Does a single external line trigger the sample
+of CV to both RA and RB, or are there two separate external lines
+triggering the samples independently; or is this a situation where it's
+a single external line where rising edge triggers a sample to RA while
+falling edge triggers a sample to RB?
 
-Ack,  but you do understand that this is purely from new hardware, so
-new registers. Even the 10bit border color is actually for new
-registers. It makes no context outside of new hardware. same here.
+Next, the driver right now has three separate event channels, but I
+believe you only need two. The purpose of counter event channels is to
+provide a way for users to differentiate between the same type of event
+being issued from different sources. An example might clarify what I
+mean.
 
-Best regards,
-Krzysztof
+Suppose a hypothetical counter device has two independent timers. When
+either timer overflows, the device fires off a single interrupt. We can
+consider this interrupt a counter OVERFLOW event. As users we can watch
+for COUNTER_EVENT_OVERFLOW to collect these events. However, a problem
+arises: we know an OVERFLOW event occurred, but we don't know which
+particular timer is the source of the overflow. The solution is to
+dedicate each source to its own event channel so that users can
+differentiate between them (e.g. channel 0 are events sourced from the
+first timer whereas channel 1 are events sourced from the second timer).
+
+Going back to your driver, there seems to be no ambiguity about the
+source of the CHANGE-OF-STATE, THRESHOLD, and OVERFLOW events, so these
+events can all coexist in the same event channel. The only possible
+ambiguity I see is regarding the CAPTURE events, which could be sourced
+by either a sample to RA or RB. Given this, I believe all your events
+could go in channel 0, with channel 1 serving to simply differentiate
+CAPTURE events that are sourced by samples to RB.
+
+Finally, you mentioned that this device supports a PWM mode that also
+makes use of the RA, RB, and RC registers. To prevent globbering the
+registers when in the wrong mode, you should verify the device is in the
+counter capture mode before handling the capture components (or return
+an appropriate "Operation not support" error code when in PWM mode). You
+don't need to worry about adding these checks for now because it looks
+like this driver does not support PWM mode yet, but it's something to
+keep in mind if you do add support for it in the future.
+
+William Breathitt Gray
+
+[^1] https://lore.kernel.org/all/7b581014-a351-4077-8832-d3d347b4fdb5@prola=
+n.hu/
+
+--aveAWsj+gpRZ7qux
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEARYKAB0WIQSNN83d4NIlKPjon7a1SFbKvhIjKwUCZ7h0AQAKCRC1SFbKvhIj
+K83fAPsGi+Iai9Thlz/7m5fGeJ+HhUhcH6iRbjw/UebvTdm15wD9H7R2IsqBSQ7/
+iWgxHOmcexFlizlbeBzgmR2D7MO4PAA=
+=a885
+-----END PGP SIGNATURE-----
+
+--aveAWsj+gpRZ7qux--
 
