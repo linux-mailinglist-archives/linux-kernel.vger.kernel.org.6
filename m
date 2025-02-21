@@ -1,233 +1,124 @@
-Return-Path: <linux-kernel+bounces-525254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E789AA3ED20
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 08:05:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CC589A3ED22
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 08:05:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15630189D4D8
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 07:05:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A46C189DA2E
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 07:05:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A66C31FDA7B;
-	Fri, 21 Feb 2025 07:04:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A79F35979;
+	Fri, 21 Feb 2025 07:05:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IBGzgkcn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mCHsm1xb"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF15235979;
-	Fri, 21 Feb 2025 07:04:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3A4F1FBC83;
+	Fri, 21 Feb 2025 07:05:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740121495; cv=none; b=L+Bs6uZhXx1r8eQS7+dmlwUykDhqXF7DAk3ZLTW+fn9V6c7dNviHOEDwAyCUWtbKSLXG+0ZhUAvDcC9Qz8CT7+iElyxemUitU5Hfae4PvyYTT+GM/oqzhs8Zg+h3vbPAdA7cffR0tH5fJNkDoyVcVgzFQR6DrFwIbwLV7ot7mzk=
+	t=1740121511; cv=none; b=ji7owNb1cp/ji1Lk51QVojjieqeFObUIwjT/E5K/oGAGFDGqvHoz4bAXN2jsr9nbtYFcbY6q+MfXktNlyZ//1NPe8Xa5UdnCJGBsYyWdo0vS7xnZDZUNLwWIlTbepg1KizcBleGlnihTVxoibCEfjh3OTRT+GAJ8N442mwZFfuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740121495; c=relaxed/simple;
-	bh=AciEKRSh2vJ26CynOQfPy+cpuDLE50NjSlDGS2Q6y34=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pSm2jXMg3SSBLzKb2rycw2mCKTPbTF/PmokHKjuuk3hwwBMSpMb4V2mLHRC9csKUSHU/Z0zgi6C2mradgGdimapPxzT2BOjnlXDOY8LKzP02nUIUx7YiPyvkkXQTcOkjFD0y8h6gS9nAzts4BbsqOkHN/G9zPjsccruhg6n2lUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IBGzgkcn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8938C4CED6;
-	Fri, 21 Feb 2025 07:04:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740121495;
-	bh=AciEKRSh2vJ26CynOQfPy+cpuDLE50NjSlDGS2Q6y34=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IBGzgkcn01JGSDQJ1sOEeJlmz8SaO8CLvWJT9HlMnDGals7Zb0vXpbzSgDSHaK0yi
-	 0dCbVC7BC9dSilBNQF92ojs3YUJBv0v5coga3xiZioc4JL6GaWOTyEA1pbntFQN5sT
-	 zc01DZULEAcAsZVu3bqnlD0aB38uz6Map8YXMGjJbEQs8Aq65UVB+cAkez6BPjefQi
-	 /5cGEstfb0/v7nmDVrc4kC9CYt4aKJi3islz2WjwOJC3ozzpmOmctYozlGHAp1iAjI
-	 IciQ9dBuCIqI26bYR5onoHXSvWFCT7uxrJa7uWdXNkRchEcWoldGkB+qeCurR7IIt6
-	 Jjy0NxsjmzruQ==
-Date: Thu, 20 Feb 2025 23:04:53 -0800
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Kan Liang <kan.liang@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org,
-	Stephane Eranian <eranian@google.com>
-Subject: Re: [PATCH] perf report: Add 'tgid' sort key
-Message-ID: <Z7gllQZeg6U2OvZE@google.com>
-References: <CAP-5=fXw09MM5XyozJMM3FjMANJei1aNVmBghSEQFiCKAtJmXw@mail.gmail.com>
- <CAP-5=fUqcykMdApHVweETg9bp2EVPJhJOj_PR8cByOOA6OyQGw@mail.gmail.com>
- <Z6_CL0RpUUvw0lR7@x1>
- <Z7TvZGjVix2asYWI@x1>
- <Z7T1LVSLo8EEMmkM@x1>
- <Z7UDlZKnqXRqNqQa@google.com>
- <Z7XsltyqUWrdKma0@x1>
- <Z7XvEFEZtCRZKG7Y@x1>
- <Z7ZIqpwffQbibwL2@google.com>
- <CAP-5=fWZXPjD3Ok5XmMwwaYt+9mL+V8t8fNSUdf-F5PPiEAvrg@mail.gmail.com>
+	s=arc-20240116; t=1740121511; c=relaxed/simple;
+	bh=sl7zCBDomJhdG0gnHNMB5kkyU6PcHulXkuYhL3ng/6w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Fhr7CMiQYHKV5Bbdhr/27NzRWtidrTsax3l8C0Bk5yqrHASUIHW2EG6EOE5o4iWQiVTVTslWuOq0IcugJLD5wCMQkXy38ZR6RvBZyKbFNIDFDs+OKFyL0BikCrf/SCORJU9GUb+TL7vZDJXhjlfbY0qEyfceLnryNWQZNHCb5a8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mCHsm1xb; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-aaecf50578eso348240666b.2;
+        Thu, 20 Feb 2025 23:05:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740121508; x=1740726308; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=sl7zCBDomJhdG0gnHNMB5kkyU6PcHulXkuYhL3ng/6w=;
+        b=mCHsm1xbFl7o/vrdwxNupzDTxd6+DqrrpncWd7uEKldHQGXFO5zBFZ94sB2jR9hYD2
+         CDBwbJi7q6oVikIt0A9EUXiLPlnF//mi5LM+b4by7BfHvqop8PlFx9nVb5M4ouxncNoa
+         VIA4327WymWtBzNz4v9Fd8TGy2wbRzZSFrrQfaQh6OEJDDcpQOxdlInG867kqckHrhCn
+         FCWEgHsOQQCGqHaSvCjPd2Er3MlRMuV+OHXyM6vSoWQO+7qDns3mvRhu9H0XP86GTYW2
+         GQ1ZZ0Ah/sGeMWkFMQE8WfyvACfqVU1tgPnU+Niuxans/UoHywnvQmrkv5xE4NeNwPe2
+         6jwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740121508; x=1740726308;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=sl7zCBDomJhdG0gnHNMB5kkyU6PcHulXkuYhL3ng/6w=;
+        b=Lsph4jlAUbUihyWOn+vII8steH8hVYA3SZHwW9h6gRxK5d9km5VsfzKMIlBCEZwRyy
+         99vg3f+AK7DZXuNTsxKPbhF/gGKhZMNi2P+wh2KyWPiwIAbYooupLKCiLk/AfyNLEHJP
+         vHWeQNRMQCAK/8GwztgHfm/+em7+AVIA89Yui+DRkvL07j7Gb2jbtZUo+z31QNZJMnpl
+         wdNLKr4xAwOMI9HQB1NoX7JcjK520eqgLqEMJlye7ALmhmD7GtvcT9ndQIFnW//HJYq4
+         zl8nrr1EnLE+p06K/XrTREKMfBleTya9Dg9EnoTp1FNWXjYo3G3bIyKPVBDAqn/XwgRx
+         +K1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUwes9sxJwZbSdXJ6E6+3qHhILUIEpwTeMc6YWxGZqgVR80KMcoo8kIDLQE/m5PuspiaTuMZwMYkErWp6NjNP0=@vger.kernel.org, AJvYcCX0lgwI2mY4V2rRgPnccsnDhxsEbH9R+i/WT+PF6sThhhl27gPwKk9c3ySqem3pJ4tckK7gCkec+1T9bUM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxwpbCtUGW52eeJ8mvtrZD3JTQqa9vduEu9gsTJOElBXBqwQTAm
+	Fjrz3arwO+g8DnTWENPEoBXv/23RYTQh70z6VyKmvUAlNOlhCqtf9fsXSDAsluy2EsXnmLNj2lP
+	4kS3zxRHc6SNfkEeSvlQb9yq56qk=
+X-Gm-Gg: ASbGncvx8rpIqAJWmIU6GOBRHCKl8u7+qW8S1BNQ6pWZDF5NKFIYGSiPVOzZxzZ0PF6
+	BviagxZJuFb/gAaavFVIesN07M4c5GYkxhj17j4pG7tV0O8UAiSyJD9HSpfpcvOBf/CKpYj+l0Z
+	ymcv/CtA==
+X-Google-Smtp-Source: AGHT+IHOQbo+TvMcu4+X/+LIeByPRKMQIlrYI0AV8qGp1AuzuqpbQz1twMeHfEV8p9x5EVqT5UvJoJGtCx8O1rMKfvg=
+X-Received: by 2002:a17:907:1c28:b0:ab7:462f:647f with SMTP id
+ a640c23a62f3a-abc0da36418mr148564466b.25.1740121507765; Thu, 20 Feb 2025
+ 23:05:07 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fWZXPjD3Ok5XmMwwaYt+9mL+V8t8fNSUdf-F5PPiEAvrg@mail.gmail.com>
+References: <2025021954-flaccid-pucker-f7d9@gregkh> <20250221051909.37478-1-felipe.contreras@gmail.com>
+ <Z7gQ3kSeCf7gY1i9@Mac.home> <CAMP44s1Ai5qMU4yV+Rwz4cY869ZA=cxBcTf2wuaUY1oyLKUNCg@mail.gmail.com>
+In-Reply-To: <CAMP44s1Ai5qMU4yV+Rwz4cY869ZA=cxBcTf2wuaUY1oyLKUNCg@mail.gmail.com>
+From: Dave Airlie <airlied@gmail.com>
+Date: Fri, 21 Feb 2025 17:04:55 +1000
+X-Gm-Features: AWEUYZkbvphXlwFSnn15e6k57DAgnH-HQV5ZI0ER8aN1n4x5jMTuqqoaJo3XkBs
+Message-ID: <CAPM=9ty9KWFE+AkHi5FDrb8=O5bzbVEroT2fx7jLG5JK6HZ+tg@mail.gmail.com>
+Subject: Re: Rust kernel policy
+To: Felipe Contreras <felipe.contreras@gmail.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>, gregkh@linuxfoundation.org, hch@infradead.org, 
+	hpa@zytor.com, ksummit@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	miguel.ojeda.sandonis@gmail.com, rust-for-linux@vger.kernel.org, 
+	torvalds@linux-foundation.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Feb 20, 2025 at 09:12:46AM -0800, Ian Rogers wrote:
-> On Wed, Feb 19, 2025 at 1:10 PM Namhyung Kim <namhyung@kernel.org> wrote:
+On Fri, 21 Feb 2025 at 15:59, Felipe Contreras
+<felipe.contreras@gmail.com> wrote:
+>
+> Boqun Feng wrote:
 > >
-> > On Wed, Feb 19, 2025 at 03:47:44PM +0100, Arnaldo Carvalho de Melo wrote:
-> > > On Wed, Feb 19, 2025 at 03:37:10PM +0100, Arnaldo Carvalho de Melo wrote:
-> > > > On Tue, Feb 18, 2025 at 02:03:01PM -0800, Namhyung Kim wrote:
-> > > > > On Tue, Feb 18, 2025 at 10:01:33PM +0100, Arnaldo Carvalho de Melo wrote:
-> > > > > > On Tue, Feb 18, 2025 at 09:36:52PM +0100, Arnaldo Carvalho de Melo wrote:
-> > > > > > > So the call to maps_fixup_end() will set maps->end_broken to false,
-> > > > > > > since it fixed up the map ends, etc, but then we insert more maps with
-> > > > > > > broken ends:
-> > > > > >
-> > > > > > > #6  0x0000000000633d52 in check_invariants (maps=0xf967c0) at util/maps.c:95
-> > > > > > > 95                                            assert(map__end(prev) <= map__end(map));
-> > > > > > > (gdb) p prev->dso->name
-> > > > > > > $1 = 0xfc47ab "bpf_trampoline_6442522522"
-> > > > > >
-> > > > > > So the above map is created overlapping a previously existing map:
-> > > > > >
-> > > > > > root@number:~# perf probe -l
-> > > > > >   probe_perf:maps_fixup_end (on maps__fixup_end:1@util/maps.c in /home/acme/bin/perf with maps)
-> > > > > >   probe_perf:maps_insert (on maps__insert:1@util/maps.c in /home/acme/bin/perf with maps name start end)
-> > > > > > root@number:~#
-> > > > > >
-> > > > > > root@number:~# perf trace --lib -e probe_perf:maps* perf record sleep
-> > > > > > <SNIP>
-> > > > > >    319.791 perf/1732173 probe_perf:maps_insert((634e5e) maps=0x2d9715d0 name="bpf_prog_6deef7357e7b4530_sd_fw_egress" start=0xffffffffc0160788 end=0xffffffffc01607c8)
-> > > > > >    319.810 perf/1732173 probe_perf:maps_insert((634e5e) maps=0x2d9715d0 name="bpf_prog_6deef7357e7b4530_sd_fw_ingress" start=0xffffffffc01647b8 end=0xffffffffc01647f8)
-> > > > > >    319.822 perf/1732173 probe_perf:maps_insert((634e5e) maps=0x2d9715d0 name="bpf_prog_6deef7357e7b4530_sd_fw_egress" start=0xffffffffc016482c end=0xffffffffc016486c)
-> > > > > >    319.834 perf/1732173 probe_perf:maps_insert((634e5e) maps=0x2d9715d0 name="bpf_prog_6deef7357e7b4530_sd_fw_ingress" start=0xffffffffc01648ac end=0xffffffffc01648ec)
-> > > > > >    319.845 perf/1732173 probe_perf:maps_insert((634e5e) maps=0x2d9715d0 name="bpf_prog_be31ae23198a0378_sd_devices" start=0xffffffffc0186388 end=0xffffffffc01864b2)
-> > > > > >    319.857 perf/1732173 probe_perf:maps_insert((634e5e) maps=0x2d9715d0 name="bpf_trampoline_6442522522" start=0xffffffffc0147640 end=0xffffffffc0148640)
-> > > > > > [ perf record: Captured and wrote 0.035 MB perf.data (7 samples) ]
-> > > > > > perf: util/maps.c:95: check_invariants: Assertion `map__end(prev) <= map__end(map)' failed.
-> > > > > > root@number:~#
-> > > > > >
-> > > > > > So a PERF_RECORD_KSYMBOL processing will add a map for
-> > > > > > "bpf_trampoline_6442522522" that has its start after before the
-> > > > > > "bpf_prog_40ddf486530245f5_sd_devices" start, ok, but ends after
-> > > > > > "bpf_prog_40ddf486530245f5_sd_devices", overlapping it.
-> > > > > >
-> > > > > > machine__process_ksymbol_register() does:
-> > > > > >
-> > > > > > 713                     map__set_start(map, event->ksymbol.addr);
-> > > > > > 714                     map__set_end(map, map__start(map) + event->ksymbol.len);
-> > > > > > 715                     err = maps__insert(machine__kernel_maps(machine), map);
-> > > > > >
-> > > > > > And:
-> > > > > >
-> > > > > > (gdb) p /x event->ksymbol.addr
-> > > > > > $2 = 0xffffffffc0147a2c
-> > > > > > (gdb) p event->ksymbol.len
-> > > > > > $3 = 306
-> > > > >
-> > > > > Hmm.. so I think the situation is like below.
-> > > > >
-> > > > >              (bpf_trampoline_6442522522)
-> > > > >       +---------------------------------------+
-> > > > >       |                                       |
-> > > > >       |       +------------------------+      |
-> > > > >       |       | (bpf_prog_40ddf486...) | <----+----  adding this
-> > > > >       |       |                        |      |
-> > > > >       |       |                        |      |
-> > > > >       |   c0147a2c                            |
-> > > > >       |                                       |
-> > > > >   c0147640                                 c0148640
-> > > > >
-> > > > > And it failed to add bpf_prog_40ddf486... in check_invariants() because
-> > > > > the end address is smaller than the previous map.
-> > > >
-> > > > No, it didn't fail to add, it managed to do it which left the kernel
-> > > > maps in a broken state, with overlappings while it had a cleared
-> > > > ends_broken, then, later, when the checks_invariant is finally called at
-> > > > perf record exit time:
+> > On Thu, Feb 20, 2025 at 11:19:09PM -0600, Felipe Contreras wrote:
+> > > Greg KH wrote:
+> > > > But for new code / drivers, writing them in rust where these types of
+> > > > bugs just can't happen (or happen much much less) is a win for all of
+> > > > us, why wouldn't we do this?
 > > >
-> > > Nope, __maps__insert() should notice that the ends are broken and set
-> > > it:
-> > >
-> > >         if (nr_maps == 1) {
-> > >                 /* If there's just 1 entry then maps are sorted. */
-> > >                 maps__set_maps_by_address_sorted(maps, true);
-> > >                 maps__set_maps_by_name_sorted(maps, maps_by_name != NULL);
-> > >         } else {
-> > >                 /* Sorted if maps were already sorted and this map starts after the last one. */
-> > >                 maps__set_maps_by_address_sorted(maps,
-> > >                         maps__maps_by_address_sorted(maps) &&
-> > >                         map__end(maps_by_address[nr_maps - 2]) <= map__start(new));
-> > >                 maps__set_maps_by_name_sorted(maps, false);
-> > >         }
-> > >         if (map__end(new) < map__start(new))
-> > >                 RC_CHK_ACCESS(maps)->ends_broken = true;
-> > >
-> > >
-> > > humm, RC_CHK_ACCESS(maps)->ends_broken should be set for the case we
-> > > have and I think it isn't being... Then the bpf trampoline map that is
-> > > the last entry to be added is before the last entry and thus
-> > > maps_by_address_sorted is set to false, ends_broken continues false and
-> > > at the end maps_by_address_sorted is set to true and the last
-> > > check_invariants triggerrs the asserts...
+> > > *If* they can be written in Rust in the first place. You are skipping that
+> > > very important precondition.
 > >
-> > Right, probably it needs to set the ends_broken when the end address of
-> > the new map is smaller than the previous (but the start address is
-> > bigger) and fixup the end address when it sorts the maps by address.
-> 
-> Ugh, I get git blamed for ends_broken and I was wondering what the heck it is:
-> https://lore.kernel.org/all/20240210031746.4057262-2-irogers@google.com/
-> My memory is that when the rb-tree was built the maps put in it could
-> be broken and ends_broken was to capture we were in this state as the
-> sorting would get broken, invariants be off, etc.. The rb-tree
-> constructing code would then call maps__fixup_end. Having the caller
-> call maps__fixup_end seems error prone, as does the whole
-> "ends_broken" thing - remember I was in the code to fix memory leaks
-> so modifying the maps API wasn't front of mind. I added ends_broken,
-> the original rb-tree had no notion of it, because I was trying to get
-> the invariants right for the testing I could do and ends_broken was
-> the pragmatic thing to do for odd cases like kernel modules before
-> maps__fixup_end is called.
-> 
-> The maps API has evolved and we have a pretty robust, but possibly not
-> fast, maps__fixup_overlap_and_insert:
-> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/perf/util/maps.h?h=perf-tools-next#n69
-> I think ideally we'd make maps__insert uphold the invariants and not
-> have ends_broken. I'm worried that making ends_broken more load
-> bearing isn't the right thing to do, we may even be able to not have
-> the variable for the "ifndef NDEBUG" case, which making it load
-> bearing would completely defeat.
-> 
-> So I think the fix here should be to understand the maps construction
-> code for the modules, try to work out why maps__fixup_end wasn't
-> called, perhaps migrate the code to maps__fixup_overlap_and_insert or
-> add a missed maps__fixup_end call.
+> > Hmm.. there are multiple old/new drivers (not a complete list) already
+> > in Rust:
+>
+> That is a black swan fallacy. Just because you've seen 4 white swans
+> that doesn't mean all swans are white.
+>
+> > , so is there still a question that drivers can be written in Rust?
+>
+> I didn't say no driver can be written Rust, I questioned whether *all*
+> drivers can be written in Rust.
+>
+> People are operating under that assumption, but it isn't necessarily true.
 
-IIUC module size in /proc/modules are wrong due to the reason in the
-commit 876e80cf83d10585 ("perf tools: Fixup end address of modules") and
-it called maps__fixup_end() for that.
+That doesn't make sense, like you could make a statement that not all
+drivers could be written in C, but it would be trash, so why do you
+think rust is different?
 
-But the problem is some BPF maps processed at real-time during the
-build-id processing at the end of perf record.  One map is inside of
-another and check_invariants() didn't expect such maps and crashed.
+if you said 100% safe rust I'd agree, but that isn't the goal.
 
-Maybe we can fix maps__insert() to check such condition and fix it
-everytime.  But it means it needs to sort the maps which would add big
-overhead we had before.  So I just wanted to set the flag quickly and
-to fix the end address when it calls maps__find() or similar later.
-
-Thanks,
-Namhyung
-
-> 
-> Given the blame I kind of feel responsible for this, but the real
-> issue is adding the invariant checks has caught a latent bug that the
-> rb-tree code would have just ignored and possibly been broken as a
-> consequence. I lack bandwidth and a reproduction so thank you for
-> digging into this.
-> 
-> Thanks,
-> Ian
+Dave.
 
