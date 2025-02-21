@@ -1,73 +1,99 @@
-Return-Path: <linux-kernel+bounces-525095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525096-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B940AA3EAB4
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 03:20:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6BE1A3EAB9
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 03:24:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D4F37A1BC7
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 02:19:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29FDF189F88B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 02:24:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 609B41BEF8A;
-	Fri, 21 Feb 2025 02:20:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 676441CCEE0;
+	Fri, 21 Feb 2025 02:23:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="TEHV+1+V"
-Received: from smtp-fw-6002.amazon.com (smtp-fw-6002.amazon.com [52.95.49.90])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VyQ5B6hW"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B683453AC;
-	Fri, 21 Feb 2025 02:20:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.95.49.90
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DBAB286298;
+	Fri, 21 Feb 2025 02:23:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740104427; cv=none; b=dKFyjdW/kuKBfM7cAGI8yNhYzpsub0IgdO7yZUvVHnRJUv/eWDyfzmmuAGtfIt88TxiZVVY4MRlqCOB/gXGS0IE1Zg6xEUPvmgX0owS6hLW3nFz7f+spazDTEzyFfed/2iIUqC4JuTVh6m6gISo6iZh/npQqIRfsPQHF0K0vVm8=
+	t=1740104636; cv=none; b=mcvPgMG8gCg4+p03PNbD90EufgUIWAyZny0APyQ33H82ypc9hd8K39NZWuVGCCb6s/LDK8pAUF5VG4nYq6Z6c4JJDWNKRN9CoN+kRI1SkxX+M04zXTD8z8Jje7vFos3jdq5xnTKZK1dDtWexMY+k010nad1WvmoGatB55oQt0Os=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740104427; c=relaxed/simple;
-	bh=lCA4hhYmOv5gYMao8xUMteua/5701IKNUWSeDJMLAkA=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qn4xUDl8N4XbUFuEH9bzHLPcAt4bf40D7g4EC+u0OfkVXwZFyKGnCTQepSgdgNV6/gbx2y44NcMP7eVicrqdfypNdIPIBRXAqK9Qm82DVIHxzrgYFDodYvdxEg/hJCpFZwVEMVsO6BwkngIIRmwJtB/Lg8v5rR0OxA1n+Ym7lMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=TEHV+1+V; arc=none smtp.client-ip=52.95.49.90
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
+	s=arc-20240116; t=1740104636; c=relaxed/simple;
+	bh=a82ArUzJQoYcMp9cxaHRf2oYxjAFMyRNIXGxoZAhWfg=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=DC/gcjeJpC7Np73sFYuRYOmGTexGlC6ROylUoAKVkUAtlUkv0gcZKRKcxzMx15SI8LKRtt4UeHAk47SBdy0vEERjhs9g5zb8kRJNjAQd5faB8RDE0CMU6R69hZL7Y+STHkcFYZE/leIslwE/hrarbi4ZvENN7EfzX5lidlOxNOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VyQ5B6hW; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2f9d3d0f55dso2507676a91.1;
+        Thu, 20 Feb 2025 18:23:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1740104425; x=1771640425;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=FZ6R8bvQH0PzNlUlEuECVUoHo8jt+Wqy6pW+mnsbG+s=;
-  b=TEHV+1+VHNU3TzlL+5p7+5FQnigkx7Y7VpbSLH4Gi7jIsY8lLwsiXzBb
-   dvlSGxLSOJb5VL/0vDKzQGwzb8v3k3GTCHiEy3/fg+XN76FiFfYxdFRrW
-   j1uklLeTjmpNIQ5TgFImtY6TTgc5yTxWvl3l6EMSPFs5nXYG0kTrbsTYO
-   k=;
-X-IronPort-AV: E=Sophos;i="6.13,303,1732579200"; 
-   d="scan'208";a="474046324"
-Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
-  by smtp-border-fw-6002.iad6.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Feb 2025 02:20:21 +0000
-Received: from EX19MTAUWA002.ant.amazon.com [10.0.7.35:64636]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.7.176:2525] with esmtp (Farcaster)
- id 621287b5-5e73-44d7-8138-65357e4436d2; Fri, 21 Feb 2025 02:20:21 +0000 (UTC)
-X-Farcaster-Flow-ID: 621287b5-5e73-44d7-8138-65357e4436d2
-Received: from EX19D003ANC003.ant.amazon.com (10.37.240.197) by
- EX19MTAUWA002.ant.amazon.com (10.250.64.202) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.39;
- Fri, 21 Feb 2025 02:20:20 +0000
-Received: from b0be8375a521.amazon.com (10.37.244.7) by
- EX19D003ANC003.ant.amazon.com (10.37.240.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Fri, 21 Feb 2025 02:20:17 +0000
-From: Kohei Enju <enjuk@amazon.com>
-To: <helgaas@kernel.org>
-CC: <alex.williamson@redhat.com>, <bhelgaas@google.com>,
-	<ckoenig.leichtzumerken@gmail.com>, <ilpo.jarvinen@linux.intel.com>,
-	<linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-	<takamitz@amazon.co.jp>, <kuniyu@amazon.com>, <kohei.enju@gmail.com>
-Subject: Re: [PATCH v2 1/2] PCI: Avoid pointless capability searches
-Date: Fri, 21 Feb 2025 11:20:08 +0900
-Message-ID: <20250221022008.69533-1-enjuk@amazon.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
-In-Reply-To: <20250215000301.175097-2-helgaas@kernel.org>
-References: <20250215000301.175097-2-helgaas@kernel.org>
+        d=gmail.com; s=20230601; t=1740104634; x=1740709434; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BfntiJ3fYBa50PKAKPPdGY8NPBu/yzhOMOvddXZwlJU=;
+        b=VyQ5B6hWhIvMCzYUEHhGxBGGEQo/2m/D76ja0BsoM6XZb6j2srfjDtfyB/qUkpfdVx
+         3X6KWgMuEUf9bcnF4Sbi3PjfP8bP5hKcdFzxyRCacuhurPiC5qh4762bFUTu8pVlSt0L
+         lEa6nz1H1kgHHA6WuIKidqEj0S71+0b7r3WOCuuWMbvgk11hz8MQ6UYd7kJhk5xAUY3p
+         7APbND4GFOXl7uISGKbr9A2s826qavOVRJg/7zAo+N6UqkEY5Z2NZY0MDMqvrdue/USz
+         nIzdGg4wkJUGmS4E339FV3H+98qjcmbKB8eLszE1FjE0LRNIY4Sk9mk1w5EiC1kk7pN6
+         0MXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740104634; x=1740709434;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BfntiJ3fYBa50PKAKPPdGY8NPBu/yzhOMOvddXZwlJU=;
+        b=sEezOYUJQyUyKE52+KwG0jAmLLwjYWot6wlcpwv8ORtm5CvgvJqwmfBmBPioyzozA1
+         C7u/XzkFRj/na8rFWZbDL9hh9al/A8WCengK+ED1YFkUNao44DWokcssl58QBkvV5I4c
+         zNwxPj6QPcNNIbfyEE0+NRIB+qfIq3Iqa1PX9JKiCr5rINoThaHsr0qT1cAG8WHtU5nK
+         jMTy7QJtgTMYPJFaoxKT9BWKKEnk9X+xdwAvoQYanpAZQSJzTcDALxG6MnrT8fnYYpW3
+         8qjf5n7Tnrykja1gwhZMCICc6ehWWpc+E9zZh6c691Y3dyvRcSKsqP8l5sMK73hw5B0r
+         6z9w==
+X-Forwarded-Encrypted: i=1; AJvYcCUk/bxmhypdfF1PdH+acd4YlPCBldkKHdCZCB3EZIn6791IJsA2aSNnbAAIdJa8NEHWcS88BEN1VW/zTjum@vger.kernel.org, AJvYcCXoHZGMw4SB7DHBg06s0+QgZb/i0z74iXJtr0l7JurmLqk3lQA/D/KigagG8CHbtIS00FPogp2qPTnh6qA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywad8dHMBZTKzIzbxNUsas+V0B5v/0QrFeU9VYxnk4gcOUOdDfj
+	7OXwaMghScG4Bs415u6362S8fgOq3EneAy+dR/VkUPmlCh3XfPn9
+X-Gm-Gg: ASbGncvP5EdpIr38J47TCsOZQkVnQU7iF1QM3740LwM+QOONOZ5PI4/z/1iAekjVWvZ
+	UrCnWSJo3+2D12nyexhUvFpPhr8wlP5iuCivNXBPjqHGvOnEmFLWZEsdB03QrnJOC/Tc4WqIwjr
+	vQZPmrUeYZen0mGJm+JpkjbGEPr7q2voCLadWC/MxOundhlkp7fFalm4j7bujDNWMwrE+JR0S+m
+	KZyiUPD7ougWOQ+vJ2H5JdYkJWe+j0zhSHzJERAJNnTcqvBLn7gv5QqQLW8bzGFDfAhSOKocj7e
+	iWH/diWVxNvurp3W5WCQ+bsAxLSi+O52KpDJjjSsq0ZgTQMs//Oi/aExo0BeXEX0mPhuf1x+iLt
+	FciyV2B3bnKiB
+X-Google-Smtp-Source: AGHT+IFrVYcY+5mfs4yqK5pW6TklQ6vVhp0egUh2wUZJJnoFqTzcnMio+PLM9VRHLfREmSaQCB7cLw==
+X-Received: by 2002:a17:90b:1e47:b0:2fa:229f:d036 with SMTP id 98e67ed59e1d1-2fce7b356d2mr2424030a91.30.1740104634468;
+        Thu, 20 Feb 2025 18:23:54 -0800 (PST)
+Received: from localhost.localdomain (p12284229-ipxg45101marunouchi.tokyo.ocn.ne.jp. [60.39.60.229])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fceb065299sm157916a91.29.2025.02.20.18.23.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Feb 2025 18:23:54 -0800 (PST)
+From: Ryo Takakura <ryotkkr98@gmail.com>
+To: hamzamahfooz@linux.microsoft.com
+Cc: akpm@linux-foundation.org,
+	bhe@redhat.com,
+	decui@microsoft.com,
+	gregkh@linuxfoundation.org,
+	haiyangz@microsoft.com,
+	jani.nikula@intel.com,
+	jfalempe@redhat.com,
+	joel.granados@kernel.org,
+	john.ogness@linutronix.de,
+	linux-hyperv@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	pmladek@suse.com,
+	takakura@valinux.co.jp,
+	wei.liu@kernel.org
+Subject: Re: [PATCH RFC] panic: call panic handlers before panic_other_cpus_shutdown()
+Date: Fri, 21 Feb 2025 11:23:28 +0900
+Message-Id: <20250221022328.47078-1-ryotkkr98@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250220225302.195282-1-hamzamahfooz@linux.microsoft.com>
+References: <20250220225302.195282-1-hamzamahfooz@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,170 +101,80 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D040UWA004.ant.amazon.com (10.13.139.93) To
- EX19D003ANC003.ant.amazon.com (10.37.240.197)
 
-> From: Bjorn Helgaas <bhelgaas@google.com>
+Hi Hamza!
+
+On Thu, 20 Feb 2025 17:53:00 -0500, Hamza Mahfooz wrote:
+>Since, the panic handlers may require certain cpus to be online to panic
+>gracefully, we should call them before turning off SMP. Without this
+>re-ordering, on Hyper-V hv_panic_vmbus_unload() times out, because the
+>vmbus channel is bound to VMBUS_CONNECT_CPU and unless the crashing cpu
+>is the same as VMBUS_CONNECT_CPU, VMBUS_CONNECT_CPU will be offlined by
+>crash_smp_send_stop() before the vmbus channel can be deconstructed.
+>
+>Signed-off-by: Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>
+>---
+> kernel/panic.c | 4 ++--
+> 1 file changed, 2 insertions(+), 2 deletions(-)
+>
+>diff --git a/kernel/panic.c b/kernel/panic.c
+>index fbc59b3b64d0..9712a46dfe27 100644
+>--- a/kernel/panic.c
+>+++ b/kernel/panic.c
+>@@ -372,8 +372,6 @@ void panic(const char *fmt, ...)
+> 	if (!_crash_kexec_post_notifiers)
+> 		__crash_kexec(NULL);
 > 
-> Many of the save/restore functions in the pci_save_state() and
-> pci_restore_state() paths depend on both a PCI capability of the device and
-> a pci_cap_saved_state structure to hold the configuration data, and they
-> skip the operation if either is missing.
+>-	panic_other_cpus_shutdown(_crash_kexec_post_notifiers);
+>-
+> 	printk_legacy_allow_panic_sync();
+
+I think printk_legacy_allow_panic_sync() is placed after 
+panic_other_cpus_shutdown() so that it flushes the stored 
+cpus backtraces as described [0].
+
+> 	/*
+>@@ -382,6 +380,8 @@ void panic(const char *fmt, ...)
+> 	 */
+> 	atomic_notifier_call_chain(&panic_notifier_list, 0, buf);
 > 
-> Look for the pci_cap_saved_state first so if we don't have one, we can skip
-> searching for the device capability, which requires several slow config
-> space accesses.
-> 
-> Remove some error messages if the pci_cap_saved_state is not found so we
-> don't complain about having no saved state for a capability the device
-> doesn't have.  We have already warned in pci_allocate_cap_save_buffers() if
-> the capability is present but we were unable to allocate a buffer.
-> 
-> Other than the message change, no functional change intended.
-> 
-> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-> ---
->  drivers/pci/pci.c       | 27 ++++++++++++++-------------
->  drivers/pci/pcie/aspm.c | 15 ++++++++-------
->  2 files changed, 22 insertions(+), 20 deletions(-)
-> 
-> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-> index 869d204a70a3..503376bf7e75 100644
-> --- a/drivers/pci/pci.c
-> +++ b/drivers/pci/pci.c
-> @@ -1686,10 +1686,8 @@ static int pci_save_pcie_state(struct pci_dev *dev)
->  		return 0;
->  
->  	save_state = pci_find_saved_cap(dev, PCI_CAP_ID_EXP);
-> -	if (!save_state) {
-> -		pci_err(dev, "buffer not found in %s\n", __func__);
-> +	if (!save_state)
->  		return -ENOMEM;
-> -	}
->  
->  	cap = (u16 *)&save_state->cap.data[0];
->  	pcie_capability_read_word(dev, PCI_EXP_DEVCTL, &cap[i++]);
-> @@ -1742,19 +1740,17 @@ static void pci_restore_pcie_state(struct pci_dev *dev)
->  
->  static int pci_save_pcix_state(struct pci_dev *dev)
->  {
-> -	int pos;
->  	struct pci_cap_saved_state *save_state;
-> +	u8 pos;
-> +
-> +	save_state = pci_find_saved_cap(dev, PCI_CAP_ID_PCIX);
-> +	if (!save_state)
-> +		return -ENOMEM;
->  
->  	pos = pci_find_capability(dev, PCI_CAP_ID_PCIX);
->  	if (!pos)
->  		return 0;
->  
-> -	save_state = pci_find_saved_cap(dev, PCI_CAP_ID_PCIX);
-> -	if (!save_state) {
-> -		pci_err(dev, "buffer not found in %s\n", __func__);
-> -		return -ENOMEM;
-> -	}
+>+	panic_other_cpus_shutdown(_crash_kexec_post_notifiers);
+>+
 
-When devices don't have PCI_CAP_ID_PCIX, this change in order appears to 
-cause a functional change.
-Since probe functions of some drivers (e.g. Intel e1000) rely on the return 
-value, I think they fail after that change in this situation.
+So maybe panic_other_cpus_shutdown() should be palced after 
+atomic_notifier_call_chain() along with printk_legacy_allow_panic_sync()
+like below?
 
-Actually in my QEMU VM, e1000 driver failed to probe the device due to 
--ENOMEM from pci_save_pcix_state().
-```
-[root@localhost ~]# dmesg | grep e1000
-[    0.400303] [      T1] e1000: Intel(R) PRO/1000 Network Driver
-[    0.400805] [      T1] e1000: Copyright (c) 1999-2006 Intel Corporation.
-[    0.710970] [      T1] e1000 0000:00:03.0: probe with driver e1000 failed with error -12
+----- BEGIN -----
+diff --git a/kernel/panic.c b/kernel/panic.c
+index d8635d5cecb2..7ac40e85ee27 100644
+--- a/kernel/panic.c
++++ b/kernel/panic.c
+@@ -372,16 +372,16 @@ void panic(const char *fmt, ...)
+        if (!_crash_kexec_post_notifiers)
+                __crash_kexec(NULL);
 
-[root@localhost ~]# lspci -nnvs 00:03.0
-00:03.0 Ethernet controller [0200]: Intel Corporation 82540EM Gigabit Ethernet Controller [8086:100e] (rev 03)
-        Subsystem: Red Hat, Inc. QEMU Virtual Machine [1af4:1100]
-        Flags: fast devsel, IRQ 11
-        Memory at febc0000 (32-bit, non-prefetchable) [size=128K]
-        I/O ports at c000 [size=64]
-        Expansion ROM at feb80000 [disabled] [size=256K]
-lspci: Unable to load libkmod resources: error -2
-```
+-       panic_other_cpus_shutdown(_crash_kexec_post_notifiers);
+-
+-       printk_legacy_allow_panic_sync();
+-
+        /*
+         * Run any panic handlers, including those that might need to
+         * add information to the kmsg dump output.
+         */
+        atomic_notifier_call_chain(&panic_notifier_list, 0, buf);
 
-Regarding pci_save_vc_state(), I found that similar comments were provided in 
-this context:
-https://lore.kernel.org/all/7dbb0d8b-3708-60ba-ee9e-78aa48bee160@linux.intel.com/
++       panic_other_cpus_shutdown(_crash_kexec_post_notifiers);
++
++       printk_legacy_allow_panic_sync();
++
+        panic_print_sys_info(false);
 
-However, the same type of order change is still left in 
-pci_save_pcix_state().
+        kmsg_dump_desc(KMSG_DUMP_PANIC, buf);
+----- END -----
 
-> -
->  	pci_read_config_word(dev, pos + PCI_X_CMD,
->  			     (u16 *)save_state->cap.data);
->  
-> @@ -1763,14 +1759,19 @@ static int pci_save_pcix_state(struct pci_dev *dev)
->  
->  static void pci_restore_pcix_state(struct pci_dev *dev)
->  {
-> -	int i = 0, pos;
->  	struct pci_cap_saved_state *save_state;
-> +	u8 pos;
-> +	int i = 0;
->  	u16 *cap;
->  
->  	save_state = pci_find_saved_cap(dev, PCI_CAP_ID_PCIX);
-> -	pos = pci_find_capability(dev, PCI_CAP_ID_PCIX);
-> -	if (!save_state || !pos)
-> +	if (!save_state)
->  		return;
-> +
-> +	pos = pci_find_capability(dev, PCI_CAP_ID_PCIX);
-> +	if (!pos)
-> +		return;
-> +
->  	cap = (u16 *)&save_state->cap.data[0];
->  
->  	pci_write_config_word(dev, pos + PCI_X_CMD, cap[i++]);
-> diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
-> index e0bc90597dca..007e4a082e6f 100644
-> --- a/drivers/pci/pcie/aspm.c
-> +++ b/drivers/pci/pcie/aspm.c
-> @@ -35,16 +35,14 @@ void pci_save_ltr_state(struct pci_dev *dev)
->  	if (!pci_is_pcie(dev))
->  		return;
->  
-> +	save_state = pci_find_saved_ext_cap(dev, PCI_EXT_CAP_ID_LTR);
-> +	if (!save_state)
-> +		return;
-> +
->  	ltr = pci_find_ext_capability(dev, PCI_EXT_CAP_ID_LTR);
->  	if (!ltr)
->  		return;
->  
-> -	save_state = pci_find_saved_ext_cap(dev, PCI_EXT_CAP_ID_LTR);
-> -	if (!save_state) {
-> -		pci_err(dev, "no suspend buffer for LTR; ASPM issues possible after resume\n");
-> -		return;
-> -	}
-> -
->  	/* Some broken devices only support dword access to LTR */
->  	cap = &save_state->cap.data[0];
->  	pci_read_config_dword(dev, ltr + PCI_LTR_MAX_SNOOP_LAT, cap);
-> @@ -57,8 +55,11 @@ void pci_restore_ltr_state(struct pci_dev *dev)
->  	u32 *cap;
->  
->  	save_state = pci_find_saved_ext_cap(dev, PCI_EXT_CAP_ID_LTR);
-> +	if (!save_state)
-> +		return;
-> +
->  	ltr = pci_find_ext_capability(dev, PCI_EXT_CAP_ID_LTR);
-> -	if (!save_state || !ltr)
-> +	if (!ltr)
->  		return;
->  
->  	/* Some broken devices only support dword access to LTR */
-> -- 
-> 2.34.1
+Sincerely,
+Ryo Takakura
 
-Regards,
-Kohei
+[0] https://lore.kernel.org/all/20240820063001.36405-30-john.ogness@linutronix.de/
 
