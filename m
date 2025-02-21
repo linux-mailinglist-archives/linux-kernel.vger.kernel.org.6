@@ -1,171 +1,93 @@
-Return-Path: <linux-kernel+bounces-526502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91F28A3FF98
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 20:19:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52989A3FFA8
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 20:21:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3AC219E06FE
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 19:19:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F0C019E06D5
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 19:22:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF15825333E;
-	Fri, 21 Feb 2025 19:19:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3124C2512F6;
+	Fri, 21 Feb 2025 19:21:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="vRtcJACA";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="9Vj/MPO0"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="QmQyT55i"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EFCF25290F;
-	Fri, 21 Feb 2025 19:19:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD8C55223
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 19:21:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740165564; cv=none; b=SQycYhyatcvCOYg6gSLViwjWQaYvTEvmG63QnKunsuryWo48UCSdhZoJ47MkQAiHS1V4a5i5SvS13owxdoewJSYo7l03JKIuHHtEYUjuZkow1yQJ7k88pX/l2ACIrvfw06/ypypDMcKGP52S29CS0tV8EfkSIUPZXr/GvZQhxfs=
+	t=1740165710; cv=none; b=KHcn/hlNLmzNs1VFzZBsMR6Lp2jB5BIRY1aksHDyJUQXS9M+BOnI3AlgzwzfdaA7jUV9/ORmS61f0xzQZiZkRGvrcjz8EWy9VyDGLDlb8QJW3UKSNfloOET1FXBvQ+uVNhBDX5ZgQo/g8m25CZFrJ7xTTBN2AjR8pbSb0ENCQio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740165564; c=relaxed/simple;
-	bh=zxmsWUgNWZNFgsvJHAhCYpf+ENmRHkY81EjWL4vEQGM=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=GUaYwF7DyOiJynjcyCimdEb/ixaZNAfClJ4PHCQbzmVc6m53/aKav95stwEHTd3lMBoaJ2hvxGFNmnyPWmYsPvyScbeUFeTio+sHJgEA6xR37SoNexdukCVh7O0G4DfBxuycTwMgWMqjZzhOHcFK0tflKMW4jyVP11Q8EYG1T+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=vRtcJACA; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=9Vj/MPO0; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 21 Feb 2025 19:19:15 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1740165560;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jxsITrpGY7G/KPdxKChAGRdgrO7clA1QnRdJzmj1QB0=;
-	b=vRtcJACAh5yLwFHxpTnmkDxxgcef1LgOs49n7dL4XXJXgEDPUYa0Y4qDO/PbGIoDKTwitO
-	1dc8bAaGmkLIuk/78tQmwzXSkeecZv7SJLH9tFPdPIXK9Icagcsrvd+tesTK+PbP/ZxIhr
-	sKbLzOgmiDAOl3wVRvTMI0DURxVZ4FnF53smH8zy69KtDI8JTqoSdoVay3ZGNpctZb7Q0h
-	WMhP9/IB+Cjc+wCn2ZLixVC/cgXnywhFz6wcnWUZEfDV4zNpXecW8oUVl7GJ+6DQiNfn72
-	a3qzzr3XC4U71MkCPUsKfjpfNqx4RNw8yaAbWzVR20SxKKtIKn6UOXpM6D928A==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1740165560;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jxsITrpGY7G/KPdxKChAGRdgrO7clA1QnRdJzmj1QB0=;
-	b=9Vj/MPO0A+Mn5muwxrnjAhZ9KdZt3v0OJtP0/YS5hKp7Zry0REZxDjs7EceW999WsROGvQ
-	yZyAeBwZNuXo7eCQ==
-From: "tip-bot2 for Kan Liang" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/urgent] perf/x86/intel: Fix event constraints for LNC
-Cc: Amiri Khalil <amiri.khalil@intel.com>,
- Kan Liang <kan.liang@linux.intel.com>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>, stable@vger.kernel.org,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250219141005.2446823-1-kan.liang@linux.intel.com>
-References: <20250219141005.2446823-1-kan.liang@linux.intel.com>
+	s=arc-20240116; t=1740165710; c=relaxed/simple;
+	bh=AE2g6+aGRUljboHDO9DcIfZ/V/y8WQjPyl3LlS1icIU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ASNtWsZCT5NnhtIbhngWAheFJqlxd8deZ36bIGj9AddNL24qlDqzCq3LVO+j7LSl05CMbxhy/G6LahHPppeFPkr9+NSs+M0NJqnufqsr5OW3BxxJq5HDkSFT3dLg9MeZ1f0UH1yqy1KyHoWCzYeejkn/7iCNAYqiqvEJreT7GYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=QmQyT55i; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=MPtV3jcADDpRsSjNnVTPvU7MlkHEQFqKy/MluV3hk/Q=; b=QmQyT55inVjixzpv70bSmXmI8f
+	QEJ2DDMku8iaDb1o8AQR2ziN1OWy4LD240JPeDzbyHkqEB3kzI/uzZwZ+idmxjRmkSxjXB52UdXd4
+	K2GZ2kZ/4NxwIK1xO8CvrYDewa5UYUuB1qtvRttf8u84dHCb6Q4qzi35w9KptkFv10u315CeDwgjX
+	+SbqDDteWGFVghS3lcFYTfcDvhYZB4XWHl67u0FZS5juMNUgX2MrVd189W3NM1+jZJ3OfYGS4B9W/
+	P2b25ERzs+mCVf70pqTvmlrMsNiuwGRVMJ4UYwbXhS+hGGlZYdzYo1tL+35IMPJKtNRfZ4SbXF8ow
+	3jqy9q5Q==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tlYak-00000002iVl-07lu;
+	Fri, 21 Feb 2025 19:21:42 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id A39FE30066A; Fri, 21 Feb 2025 20:21:41 +0100 (CET)
+Date: Fri, 21 Feb 2025 20:21:41 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: linux-kernel@vger.kernel.org,
+	=?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
+	Darren Hart <dvhart@infradead.org>,
+	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Waiman Long <longman@redhat.com>
+Subject: Re: [PATCH v8 00/15] futex: Add support task local hash maps.
+Message-ID: <20250221192141.GF7373@noisy.programming.kicks-ass.net>
+References: <20250203135935.440018-1-bigeasy@linutronix.de>
+ <20250204151405.GW7145@noisy.programming.kicks-ass.net>
+ <20250205122026.l6AQ2lf7@linutronix.de>
+ <20250220151206.GB11590@noisy.programming.kicks-ass.net>
+ <20250221160043.02H2_t3P@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174016555617.10177.644960926822500092.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250221160043.02H2_t3P@linutronix.de>
 
-The following commit has been merged into the perf/urgent branch of tip:
+On Fri, Feb 21, 2025 at 05:00:43PM +0100, Sebastian Andrzej Siewior wrote:
+> On 2025-02-20 16:12:06 [+0100], Peter Zijlstra wrote:
+> > I've split up the patch a little and stuck them here:
+> > 
+> >   https://git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git/log/?h=futex/scope 
+> 
+> futex_wait_setup() has an unused task argument (current is always used).
+> 
+> You solved the thing in lock_pi, I mentioned, by throwing in a
+> no_free_ptr() in the middle. Well that works, I assumed we wanted to
+> close the context somehow.
 
-Commit-ID:     782cffeec9ad96daa64ffb2d527b2a052fb02552
-Gitweb:        https://git.kernel.org/tip/782cffeec9ad96daa64ffb2d527b2a052fb02552
-Author:        Kan Liang <kan.liang@linux.intel.com>
-AuthorDate:    Wed, 19 Feb 2025 06:10:05 -08:00
-Committer:     Peter Zijlstra <peterz@infradead.org>
-CommitterDate: Thu, 20 Feb 2025 16:07:10 +01:00
+Yeah, it ain't pretty, but given the crazy code flow around there, I
+couldn't come up with something sensible :/
 
-perf/x86/intel: Fix event constraints for LNC
 
-According to the latest event list, update the event constraint tables
-for Lion Cove core.
-
-The general rule (the event codes < 0x90 are restricted to counters
-0-3.) has been removed. There is no restriction for most of the
-performance monitoring events.
-
-Fixes: a932aa0e868f ("perf/x86: Add Lunar Lake and Arrow Lake support")
-Reported-by: Amiri Khalil <amiri.khalil@intel.com>
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20250219141005.2446823-1-kan.liang@linux.intel.com
----
- arch/x86/events/intel/core.c | 20 +++++++-------------
- arch/x86/events/intel/ds.c   |  2 +-
- 2 files changed, 8 insertions(+), 14 deletions(-)
-
-diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
-index e86333e..cdcebf3 100644
---- a/arch/x86/events/intel/core.c
-+++ b/arch/x86/events/intel/core.c
-@@ -397,34 +397,28 @@ static struct event_constraint intel_lnc_event_constraints[] = {
- 	METRIC_EVENT_CONSTRAINT(INTEL_TD_METRIC_FETCH_LAT, 6),
- 	METRIC_EVENT_CONSTRAINT(INTEL_TD_METRIC_MEM_BOUND, 7),
- 
-+	INTEL_EVENT_CONSTRAINT(0x20, 0xf),
-+
-+	INTEL_UEVENT_CONSTRAINT(0x012a, 0xf),
-+	INTEL_UEVENT_CONSTRAINT(0x012b, 0xf),
- 	INTEL_UEVENT_CONSTRAINT(0x0148, 0x4),
- 	INTEL_UEVENT_CONSTRAINT(0x0175, 0x4),
- 
- 	INTEL_EVENT_CONSTRAINT(0x2e, 0x3ff),
- 	INTEL_EVENT_CONSTRAINT(0x3c, 0x3ff),
--	/*
--	 * Generally event codes < 0x90 are restricted to counters 0-3.
--	 * The 0x2E and 0x3C are exception, which has no restriction.
--	 */
--	INTEL_EVENT_CONSTRAINT_RANGE(0x01, 0x8f, 0xf),
- 
--	INTEL_UEVENT_CONSTRAINT(0x01a3, 0xf),
--	INTEL_UEVENT_CONSTRAINT(0x02a3, 0xf),
- 	INTEL_UEVENT_CONSTRAINT(0x08a3, 0x4),
- 	INTEL_UEVENT_CONSTRAINT(0x0ca3, 0x4),
- 	INTEL_UEVENT_CONSTRAINT(0x04a4, 0x1),
- 	INTEL_UEVENT_CONSTRAINT(0x08a4, 0x1),
- 	INTEL_UEVENT_CONSTRAINT(0x10a4, 0x1),
- 	INTEL_UEVENT_CONSTRAINT(0x01b1, 0x8),
-+	INTEL_UEVENT_CONSTRAINT(0x01cd, 0x3fc),
- 	INTEL_UEVENT_CONSTRAINT(0x02cd, 0x3),
--	INTEL_EVENT_CONSTRAINT(0xce, 0x1),
- 
- 	INTEL_EVENT_CONSTRAINT_RANGE(0xd0, 0xdf, 0xf),
--	/*
--	 * Generally event codes >= 0x90 are likely to have no restrictions.
--	 * The exception are defined as above.
--	 */
--	INTEL_EVENT_CONSTRAINT_RANGE(0x90, 0xfe, 0x3ff),
-+
-+	INTEL_UEVENT_CONSTRAINT(0x00e0, 0xf),
- 
- 	EVENT_CONSTRAINT_END
- };
-diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
-index c2e2eae..f122882 100644
---- a/arch/x86/events/intel/ds.c
-+++ b/arch/x86/events/intel/ds.c
-@@ -1199,7 +1199,7 @@ struct event_constraint intel_lnc_pebs_event_constraints[] = {
- 	INTEL_FLAGS_UEVENT_CONSTRAINT(0x100, 0x100000000ULL),	/* INST_RETIRED.PREC_DIST */
- 	INTEL_FLAGS_UEVENT_CONSTRAINT(0x0400, 0x800000000ULL),
- 
--	INTEL_HYBRID_LDLAT_CONSTRAINT(0x1cd, 0x3ff),
-+	INTEL_HYBRID_LDLAT_CONSTRAINT(0x1cd, 0x3fc),
- 	INTEL_HYBRID_STLAT_CONSTRAINT(0x2cd, 0x3),
- 	INTEL_FLAGS_UEVENT_CONSTRAINT_DATALA_LD(0x11d0, 0xf),	/* MEM_INST_RETIRED.STLB_MISS_LOADS */
- 	INTEL_FLAGS_UEVENT_CONSTRAINT_DATALA_ST(0x12d0, 0xf),	/* MEM_INST_RETIRED.STLB_MISS_STORES */
 
