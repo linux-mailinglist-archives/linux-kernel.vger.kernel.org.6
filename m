@@ -1,30 +1,30 @@
-Return-Path: <linux-kernel+bounces-525499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA794A3F0A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:41:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 25B2CA3F0A5
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:41:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC03416DB85
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:41:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0EEB17739D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:41:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9736B205E20;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0DBF2066D9;
 	Fri, 21 Feb 2025 09:39:31 +0000 (UTC)
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75A41205E16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 740B9205E15
 	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 09:39:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740130771; cv=none; b=nqsBaDh57tVOVgBkR807Un7WZWdszLGpd6qTCMbvxnj1Zw5hJjxysxwKPptpcS02Ta9F/+jy+7hV0o/xx560rCCgxWj3aCricJm0fPskdJViYb6GL8Is1hKlqOcZVzcpUWQohLlQlGg78sV0K6fy6XzcBYfkovj6IGcJHPY8NRw=
+	t=1740130771; cv=none; b=VbUDzfSw5wuzTJD+BLKZEVsQ8TmaJ3qcfUYyYyU9AoKVEMqU+mPWFE3mS394H55gWZZ3WtKO5ca4S1bN/nEqAs8yh0q6EOYrQdCA6K2nAKVqyJjyErTkG1DxaNwEgW5sn2JI6Cix8HOW4exoFB5chvTwIUY3B0hd8WctQJrFEOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1740130771; c=relaxed/simple;
-	bh=Adh/Q3rnUh98xXUXofXQcb8ZYwFqHSH9eh8GRfjl3Jg=;
+	bh=xXysUgnWUb03Ymxd112UPtaKGIb6V9So/mjGhcDZ7TQ=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=V2mqx+CHks8iYs1o7oQJW6QENGdrSmsnSl9RkC/NG+ZmYFhs0LSd+MEwKmOU3CtQFCIxHK5a4WLoPGTB9O9Uyp3MRwyQLHNFjW+n7XxwXmN8SZjTs1or10/he6PcZk+ZDQu1L8RBx0fudJ8NJypz7BONA5c/x44oGHqB/NibxY8=
+	 MIME-Version; b=jx7lh6cLYNEs2VELZpHaJvyZIIjLgW2KYCiWM1xxn55G40YIkFTkBj9SHzxdI9x3FYvgDajRXBWmxPrtybjkTAk1sVf/56cPBt9KlB3a/m0I756gBWRQcfy6Spi32D8/BoUGfbb0Ea8obw0S3UuU4pqa4CTekoBnQn6DiIiBkdA=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
@@ -32,16 +32,16 @@ Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
 	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
 	(Exim 4.92)
 	(envelope-from <ore@pengutronix.de>)
-	id 1tlPV9-0001zU-QE; Fri, 21 Feb 2025 10:39:19 +0100
+	id 1tlPV9-0001zV-QE; Fri, 21 Feb 2025 10:39:19 +0100
 Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
 	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96)
 	(envelope-from <ore@pengutronix.de>)
-	id 1tlPV9-0024uu-1G;
+	id 1tlPV9-0024uv-1K;
 	Fri, 21 Feb 2025 10:39:19 +0100
 Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
 	(envelope-from <ore@pengutronix.de>)
-	id 1tlPV9-00GXbZ-13;
+	id 1tlPV9-00GXbk-17;
 	Fri, 21 Feb 2025 10:39:19 +0100
 From: Oleksij Rempel <o.rempel@pengutronix.de>
 To: Ulf Hansson <ulf.hansson@linaro.org>
@@ -54,9 +54,9 @@ Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
 	"Rafael J. Wysocki" <rafael@kernel.org>,
 	=?UTF-8?q?S=C3=B8ren=20Andersen?= <san@skov.dk>,
 	Christian Loehle <christian.loehle@arm.com>
-Subject: [PATCH v3 2/6] mmc: core: make mmc_interrupt_hpi() global
-Date: Fri, 21 Feb 2025 10:39:14 +0100
-Message-Id: <20250221093918.3942378-3-o.rempel@pengutronix.de>
+Subject: [PATCH v3 3/6] mmc: core: refactor _mmc_suspend() for undervoltage handling
+Date: Fri, 21 Feb 2025 10:39:15 +0100
+Message-Id: <20250221093918.3942378-4-o.rempel@pengutronix.de>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250221093918.3942378-1-o.rempel@pengutronix.de>
 References: <20250221093918.3942378-1-o.rempel@pengutronix.de>
@@ -72,40 +72,89 @@ X-SA-Exim-Mail-From: ore@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Make mmc_interrupt_hpi() non-static. This enables usage of HPI outside
-mmc_ops.c and will be used in a follow-up patch.
+Introduce an is_undervoltage parameter to _mmc_suspend() to apply a
+short power-off sequence and optionally flush the cache. This refactoring
+prepares for undervoltage support in a follow-up patch.
 
 Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
 ---
- drivers/mmc/core/mmc_ops.c | 2 +-
- drivers/mmc/core/mmc_ops.h | 1 +
- 2 files changed, 2 insertions(+), 1 deletion(-)
+changes v3:
+- add comments
+- make sure _mmc_flush_cache is not executed in the undervoltage case
+---
+ drivers/mmc/core/mmc.c | 30 +++++++++++++++++++++---------
+ 1 file changed, 21 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/mmc/core/mmc_ops.c b/drivers/mmc/core/mmc_ops.c
-index 5c8e62e8f331..dbb1b5ec4132 100644
---- a/drivers/mmc/core/mmc_ops.c
-+++ b/drivers/mmc/core/mmc_ops.c
-@@ -903,7 +903,7 @@ static int mmc_send_hpi_cmd(struct mmc_card *card)
-  *	Issued High Priority Interrupt, and check for card status
-  *	until out-of prg-state.
-  */
--static int mmc_interrupt_hpi(struct mmc_card *card)
-+int mmc_interrupt_hpi(struct mmc_card *card)
+diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
+index 6a23be214543..9270bde445ad 100644
+--- a/drivers/mmc/core/mmc.c
++++ b/drivers/mmc/core/mmc.c
+@@ -2104,20 +2104,32 @@ static int _mmc_flush_cache(struct mmc_host *host)
+ 	return err;
+ }
+ 
+-static int _mmc_suspend(struct mmc_host *host, bool is_suspend)
++static int _mmc_suspend(struct mmc_host *host, bool is_suspend,
++			bool is_undervoltage)
+ {
++	unsigned int notify_type;
+ 	int err = 0;
+-	unsigned int notify_type = is_suspend ? EXT_CSD_POWER_OFF_SHORT :
+-					EXT_CSD_POWER_OFF_LONG;
++
++	/* In case of undervoltage, we don't have much time, so use short. */
++	if (is_undervoltage || is_suspend)
++		notify_type = EXT_CSD_POWER_OFF_SHORT;
++	else
++		notify_type = EXT_CSD_POWER_OFF_LONG;
+ 
+ 	mmc_claim_host(host);
+ 
+ 	if (mmc_card_suspended(host->card))
+ 		goto out;
+ 
+-	err = _mmc_flush_cache(host);
+-	if (err)
+-		goto out;
++	/*
++	 * For the undervoltage case, we care more about device integrity.
++	 * Avoid cache flush and notify the device to power off quickly.
++	 */
++	if (!is_undervoltage) {
++		err = _mmc_flush_cache(host);
++		if (err)
++			goto out;
++	}
+ 
+ 	if (mmc_can_poweroff_notify(host->card) &&
+ 	    ((host->caps2 & MMC_CAP2_FULL_PWR_CYCLE) || !is_suspend ||
+@@ -2144,7 +2156,7 @@ static int mmc_suspend(struct mmc_host *host)
  {
  	int err;
- 	u32 status;
-diff --git a/drivers/mmc/core/mmc_ops.h b/drivers/mmc/core/mmc_ops.h
-index 0df3ebd900d1..a16361dc5909 100644
---- a/drivers/mmc/core/mmc_ops.h
-+++ b/drivers/mmc/core/mmc_ops.h
-@@ -37,6 +37,7 @@ int mmc_send_cid(struct mmc_host *host, u32 *cid);
- int mmc_spi_read_ocr(struct mmc_host *host, int highcap, u32 *ocrp);
- int mmc_spi_set_crc(struct mmc_host *host, int use_crc);
- int mmc_bus_test(struct mmc_card *card, u8 bus_width);
-+int mmc_interrupt_hpi(struct mmc_card *card);
- int mmc_can_ext_csd(struct mmc_card *card);
- int mmc_switch_status(struct mmc_card *card, bool crc_err_fatal);
- bool mmc_prepare_busy_cmd(struct mmc_host *host, struct mmc_command *cmd,
+ 
+-	err = _mmc_suspend(host, true);
++	err = _mmc_suspend(host, true, false);
+ 	if (!err) {
+ 		pm_runtime_disable(&host->card->dev);
+ 		pm_runtime_set_suspended(&host->card->dev);
+@@ -2191,7 +2203,7 @@ static int mmc_shutdown(struct mmc_host *host)
+ 		err = _mmc_resume(host);
+ 
+ 	if (!err)
+-		err = _mmc_suspend(host, false);
++		err = _mmc_suspend(host, false, false);
+ 
+ 	return err;
+ }
+@@ -2215,7 +2227,7 @@ static int mmc_runtime_suspend(struct mmc_host *host)
+ 	if (!(host->caps & MMC_CAP_AGGRESSIVE_PM))
+ 		return 0;
+ 
+-	err = _mmc_suspend(host, true);
++	err = _mmc_suspend(host, true, false);
+ 	if (err)
+ 		pr_err("%s: error %d doing aggressive suspend\n",
+ 			mmc_hostname(host), err);
 -- 
 2.39.5
 
