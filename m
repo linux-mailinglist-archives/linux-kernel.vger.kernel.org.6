@@ -1,174 +1,139 @@
-Return-Path: <linux-kernel+bounces-524964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45A76A3E93D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 01:42:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1BEBA3E941
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 01:42:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47FB83BF7A1
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 00:42:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62204701037
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 00:42:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3B7118651;
-	Fri, 21 Feb 2025 00:42:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7BB012B93;
+	Fri, 21 Feb 2025 00:42:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TGLmW5i9"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wgl2orus"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 575AA18E2A
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 00:41:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1277B2AE99;
+	Fri, 21 Feb 2025 00:42:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740098520; cv=none; b=o2FACEuTHm2ZSXHX7EwxV9HbFHeWaH1D7Q7b7lLYrq8NvFPLGmRrAj1T7Ng0cp9S/kZzd09vg0Z/EtA0RanmdjyPXsNBHSLQT9w09mi2e0zEkW6vwDbiDox5HIJoP0Cl3o5MIEEJSWKJfSwg7SVCpTwBjcMOaJyCo5SoQM03ad4=
+	t=1740098524; cv=none; b=c7ZqXe+r/Mayj2PCt/CCrixfIqNIEscZcEF3r/6jvZpwM2Rn+7MATAVqzg+Y3t4LuCU19yXMsvxC5A/5aigO9N5recB7YMab3lqE097MfNPSCTRmvxehbpnUq2M2tDvdHEmR5Xhv3O604qX38XmEPN3yu5NN0dsXney0tJJrnTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740098520; c=relaxed/simple;
-	bh=ETp8jkID19Q6clNd9atoSB8ooztT2iJp2Tlq3F9YBFk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uDU9CLJ+qL4sAKXRh4qFDctlQfvbQEgmqYRXx6dRbCRe5ENCrtaW3oDBr+OI7m132QBaVUwyuKFtnTaUChYfjECHIO5tgrc9IUmGnLYj/8Rjbf8cdMTClVEdrsrFajXEF20etQgYjBgNXbEwYu/VshRAZxGjp+gPEmUDqVNH6VY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TGLmW5i9; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-546202d633dso1643270e87.2
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 16:41:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740098516; x=1740703316; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=/pKysWYhWubY7fPYY3ZkE7Dmtc31H4VKjfkNJgksHZ8=;
-        b=TGLmW5i9icSDBDUYCrackD4ihVxJDjJ0+igF1oeSBr0EZTZTUtgkxkAs8jU4lJOm0o
-         Pc5hu67NlZsA4JQ05emfI3kLqoNhGCBKriXDi/DOc9ZGUbNa4QOyIvlYzUu6JQs49dGC
-         NdulSh7XLVcGhXfY64Ky2ck641U0gHfgo9UEKC6Ajv95T2wuNftoO1ct4yIwP7Qhtw0M
-         pAh11MNnS1nvXtBs2kkaUNS0M21fsGKyRfsX16ORLGdQkv1P0ytRxPXhkK+pHRbmghYX
-         EOg5nFhDZebsqr+mE0yiJd93SivKN7BIor1TqYamWq0DuNchUxgGHV9h38XfIzbyP3Pw
-         U4cA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740098516; x=1740703316;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/pKysWYhWubY7fPYY3ZkE7Dmtc31H4VKjfkNJgksHZ8=;
-        b=DM/AXn1LKyT1gqszTg9W/fQysEnMBTFjKqf4EoNs9goOT93d8/8KxJh0RGBN8VwDBy
-         x8JWy7wNDzCkvf0i3/FfBXTbGC3wN2bVhL24s7Mcijvv12H0PLoZYny3yqqmiV1IUog9
-         f1KESuyBBGSIUx9ApqYYgLeaoUS1+ySiA/Acd5Q1vukTMtPA5GYpiZ6onPqpX1G+q9om
-         PN8GL1yILvobeybY5RUuKFOJcXk9X8QxEJCbipc5YEan9ZFprAXTMiW9RLN3LH3B1WGk
-         98JlVwn4ag8Q3ydeTMY2FLHTGc0Qf3CxQzQ/Ga8n/U/aLYI4OETCDwU4nfxq6eiSUyEA
-         xWnA==
-X-Forwarded-Encrypted: i=1; AJvYcCWm6pqjJsR+mjj5GFf3Bw+c444LXf7iBNFAZE53Y/+oqt/Ben/37cvX4WdqAOQn9f/7emlpfzQeVdlo90E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzf46QrxXDsnAvCsRfBi0Y568Rw/BnPZMFjBbfyWojw9hUdb7ma
-	YSTNC0OqlX67E+penb7CJVlyOOv+TkGCQrv/mpAnsJ9ToA6LCaO+wPSSCtlBHgo=
-X-Gm-Gg: ASbGncvu6IecXVBIyZid1ycrV2fGnHaxmchPOrWoCCpewwka2iJOlYnc0K7wk+Qorhe
-	ycrfSqNSxxXSC+M4PbzMKW2wpTHARtjTNfb+3ONm9SCWryGKshjAFE1lziE8AaV3kg/MgvwQJcH
-	Dfvh1THuPNjw37FoTQYo/UxheO+D7gTkq7q6hSk+KWHv/Isg2Kv/17OEyaO06YwiJT5Bo/DsUPx
-	oCSDewGJHBtCpNDot5x48LohT5TLkPnsJ78IKqXeuIc9rdUkkW7mNSptMxLj7rr9aK0lXCdIahF
-	dcZ/WeKXyF6veIGQ7f6njLweuY0KhT226NVMyZkYNjfS1qM6KCIf6tQjUQhV8wAUc1xH4Sc=
-X-Google-Smtp-Source: AGHT+IE6YC3qJWgj+pA7QsnD+7VLqLnqN2QSjIeiyvjgAXpfDQedbS+a7gzdDe5aFOVCj1yTz7b6Nw==
-X-Received: by 2002:a05:6512:3054:b0:545:2fa9:8cf5 with SMTP id 2adb3069b0e04-54838f79d55mr366460e87.49.1740098516390;
-        Thu, 20 Feb 2025 16:41:56 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54530530d93sm1920688e87.199.2025.02.20.16.41.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Feb 2025 16:41:55 -0800 (PST)
-Date: Fri, 21 Feb 2025 02:41:52 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, Rob Herring <robh@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Mrinmay Sarkar <quic_msarkar@quicinc.com>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
-	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/6] dt-bindings: PCI: qcom-ep: describe optional IOMMU
-Message-ID: <plurppltr3ttmmptnrounyjw3l7justgsl3dlpjqtkzsvkctsc@3cz52qtnyd3q>
-References: <20250217-sar2130p-pci-v1-0-94b20ec70a14@linaro.org>
- <20250217-sar2130p-pci-v1-1-94b20ec70a14@linaro.org>
- <20250220071943.edn6q65ijmeldnag@thinkpad>
+	s=arc-20240116; t=1740098524; c=relaxed/simple;
+	bh=kcq2icssB6LIoGsmOFYQXCXzmXJNE/LKNHOLEMUJmG0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=g4y5+dc0YPPcDMVZvlIrSeGhb5eECDyu7WqDZ036UB4cAStnWMvHAbi1EsiIogvOb/fsDqD6PBWxbc9WEn2GpqJ+mLkNQJtxxmQQIUXJ6lAFKfpglm0Nzp7DiZtOrBIHBm4pSyTm6bdTmxLBl0bqiI0u64WLBA/jMr1dv70ChVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wgl2orus; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BA96C4CEE4;
+	Fri, 21 Feb 2025 00:42:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740098523;
+	bh=kcq2icssB6LIoGsmOFYQXCXzmXJNE/LKNHOLEMUJmG0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Wgl2orusA60uthPJd7x08Fm/8mJxOd49NH5ZLUptjH9hzhB2rwbbD5kN7is3OfJOd
+	 nAmt30IoQ23X6MPmh8ZAdSXDHE6a9/ymnDTZ1XA/BFzrJ1hLnXk8A0C2v3eglAdYRb
+	 maQaRxpzV9eo8MlNRExJNIQHH3YM1/YaI68IAN7bxFU6fxprq1xquPhiUQGEnaI11w
+	 753enP6GEo7CyrmvatY4V4TOQAUFD9j4biMUgKpE8hxxq5K3VJrXKoqAbmDHnDkkMN
+	 CO/nyVVluwDxe+FuwZ9TZrIx/vPX4SWTHhJqF5r/p5lFk6MqxkXSOCsHu9VUk21W01
+	 FKZr6ftqHhgPQ==
+Date: Thu, 20 Feb 2025 16:42:01 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Kory Maincent <kory.maincent@bootlin.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Oleksij Rempel <o.rempel@pengutronix.de>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Jonathan Corbet
+ <corbet@lwn.net>, Donald Hunter <donald.hunter@gmail.com>, Rob Herring
+ <robh@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>, Simon Horman
+ <horms@kernel.org>, Heiner Kallweit <hkallweit1@gmail.com>, Russell King
+ <linux@armlinux.org.uk>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
+ Dooley <conor+dt@kernel.org>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org,
+ linux-doc@vger.kernel.org, Kyle Swenson <kyle.swenson@est.tech>, Dent
+ Project <dentproject@linuxfoundation.org>, kernel@pengutronix.de, Maxime
+ Chevallier <maxime.chevallier@bootlin.com>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v5 02/12] net: pse-pd: Add support for
+ reporting events
+Message-ID: <20250220164201.469fdf6d@kernel.org>
+In-Reply-To: <20250218-feature_poe_port_prio-v5-2-3da486e5fd64@bootlin.com>
+References: <20250218-feature_poe_port_prio-v5-0-3da486e5fd64@bootlin.com>
+	<20250218-feature_poe_port_prio-v5-2-3da486e5fd64@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250220071943.edn6q65ijmeldnag@thinkpad>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Feb 20, 2025 at 12:49:43PM +0530, Manivannan Sadhasivam wrote:
-> On Mon, Feb 17, 2025 at 08:56:13PM +0200, Dmitry Baryshkov wrote:
-> > Platforms which use eDMA for PCIe EP transfers (like SA8775P) also use
-> > IOMMU in order to setup transfer windows.
+On Tue, 18 Feb 2025 17:19:06 +0100 Kory Maincent wrote:
+> From: Kory Maincent (Dent Project) <kory.maincent@bootlin.com>
 > 
-> eDMA has nothing to do with IOMMU. In fact, it is not clear on what IOMMU does
-> on the endpoint side since we do not assign SID based on the RID from RC.
+> Add support for devm_pse_irq_helper() to register PSE interrupts. This aims
+> to report events such as over-current or over-temperature conditions
+> similarly to how the regulator API handles them but using a specific PSE
+> ethtool netlink socket.
 
-Well... If my memory serves me right, I had to enable IOMMU after
-switching from iATU to eDMA. But I might be mistaken here. I will update
-this commit message not to mention eDMA.
+I think you should CC HWMON ML on this.
+Avoid any surprises.
 
-> 
-> But the binding should describe it anyway since IOMMU does sit between DDR and
-> PCIe IP.
-> 
-> - Mani
-> 
-> > Fix the schema in order to
-> > allow specifying the IOMMU.
-> > 
-> > Fixes: 9d3d5e75f31c ("dt-bindings: PCI: qcom-ep: Add support for SA8775P SoC")
-> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > ---
-> >  Documentation/devicetree/bindings/pci/qcom,pcie-ep.yaml | 17 +++++++++++++++++
-> >  1 file changed, 17 insertions(+)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/pci/qcom,pcie-ep.yaml b/Documentation/devicetree/bindings/pci/qcom,pcie-ep.yaml
-> > index 1226ee5d08d1ae909b07b0d78014618c4c74e9a8..800accdf5947e7178ad80f0759cf53111be1a814 100644
-> > --- a/Documentation/devicetree/bindings/pci/qcom,pcie-ep.yaml
-> > +++ b/Documentation/devicetree/bindings/pci/qcom,pcie-ep.yaml
-> > @@ -75,6 +75,9 @@ properties:
-> >        - const: doorbell
-> >        - const: dma
-> >  
-> > +  iommus:
-> > +    maxItems: 1
-> > +
-> >    reset-gpios:
-> >      description: GPIO used as PERST# input signal
-> >      maxItems: 1
-> > @@ -233,6 +236,20 @@ allOf:
-> >            minItems: 3
-> >            maxItems: 3
-> >  
-> > +  - if:
-> > +      properties:
-> > +        compatible:
-> > +          contains:
-> > +            const: qcom,sdx55-pcie-ep
-> > +    then:
-> > +      properties:
-> > +        iommus:
-> > +          false
-> > +
-> > +    else:
-> > +      required:
-> > +        - iommus
-> > +
-> >  unevaluatedProperties: false
-> >  
-> >  examples:
-> > 
-> > -- 
-> > 2.39.5
-> > 
-> 
-> -- 
-> மணிவண்ணன் சதாசிவம்
+> diff --git a/Documentation/netlink/specs/ethtool.yaml b/Documentation/netlink/specs/ethtool.yaml
+> index 655d8d10fe24..da78c5daf537 100644
+> --- a/Documentation/netlink/specs/ethtool.yaml
+> +++ b/Documentation/netlink/specs/ethtool.yaml
+> @@ -1526,6 +1526,22 @@ attribute-sets:
+>          name: hwtstamp-flags
+>          type: nest
+>          nested-attributes: bitset
+> +  -
+> +    name: pse-ntf
+> +    attr-cnt-name: __ethtool-a-pse-ntf-cnt
+> +    attributes:
+> +      -
+> +        name: unspec
+> +        type: unused
+> +        value: 0
 
--- 
-With best wishes
-Dmitry
+Please don't add the unused entries unless your code actually needs
+them. YNL will id real ones from 1 anyway.
+
+> +      -
+> +        name: header
+> +        type: nest
+> +        nested-attributes: header
+> +      -
+> +        name: events
+> +        type: nest
+> +        nested-attributes: bitset
+
+Do we really need a bitset here? Much more manual work to make a bitset
+than just a uint + enum with the bits. enum is much easier to use with
+YNL based user space, and it's more self-documenting than a list of bits
+buried in the source of the kernel.
+
+>  operations:
+>    enum-model: directional
+> @@ -2382,3 +2398,13 @@ operations:
+>            attributes: *tsconfig
+>          reply:
+>            attributes: *tsconfig
+> +    -
+> +      name: pse-ntf
+> +      doc: Notification for pse events.
+
+s/pse/PSE/
+
+> +
+> +      attribute-set: pse-ntf
+> +
+> +      event:
+> +        attributes:
+> +          - header
+> +          - events
+
 
