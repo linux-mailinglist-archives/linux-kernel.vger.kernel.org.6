@@ -1,178 +1,326 @@
-Return-Path: <linux-kernel+bounces-525611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C030A3F234
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 11:37:35 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CD5BA3F246
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 11:40:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D8AA19C23A2
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:37:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8E54E7AA50A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:39:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D37A82054E9;
-	Fri, 21 Feb 2025 10:37:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="gmbb0Xmb"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E0F91FF1AF;
-	Fri, 21 Feb 2025 10:37:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EBEB205AD7;
+	Fri, 21 Feb 2025 10:40:04 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32323205501;
+	Fri, 21 Feb 2025 10:40:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740134244; cv=none; b=Xge4j9lS71JIN7tRP6QDAWdGn65ulOGLJj7WRQJAsOy6srt1ee8rosZ8KiDD27tCaPUQKmuEMa2I9xa6bmMt8YT/BIDgBsCTzqRnpP9E6X7uNRumZVpbIh7zvLaQkRQK9uS4lyV4a0z5Sot3X+nBM5fLlMDanreM307DrdQ80SM=
+	t=1740134403; cv=none; b=FOVipTu5L61iapn8FpiIadN+5z9z9T5/egdtYtmLPjp0zrp2g+oVKbi1qduCckLs/vKcBnEAdHyTcDaLFzSgKAfrrPiIorBkYAMwcr/t7Reqs4kUxE/KQQ2NbnyW8m4whdjnBwX1UWVd5Ac5rQU1ABFqT30uNwUgON/vk0wD7nI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740134244; c=relaxed/simple;
-	bh=gRBgJtkXNndTygei2/WU8WKjZkABz8HcvljFdyBrIgo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LLFZDRIV2tKYGTHYohEC1SoaCv9TLKKqR8cgLvw4okndbpDy10IBfTgT9fS0VnmOSl79aGOHeV5RFJicb84SA8MVaLFZTzRGvWQqmG/T5XBYFWJL2GLg53OeibaqIL3lnbkGryUO7A5eSJODIvNRNlNCPhpQyBNor456he6feKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=gmbb0Xmb; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from mail.ideasonboard.com (unknown [IPv6:2401:4900:1c30:4abb:6de5:9248:813e:8db3])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id B49342EC;
-	Fri, 21 Feb 2025 11:35:55 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1740134156;
-	bh=gRBgJtkXNndTygei2/WU8WKjZkABz8HcvljFdyBrIgo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gmbb0XmbO/gfQQ2P9CUic9YnHpaGA9RrxgDPyBrXWK0diB71jGF7PYw1uzI4DKDjY
-	 5U/TcMNX3aEYO7q1DCmdRO+XD0Hi43PgqcPHnjlYc1hH9M7MU42EUhwF88jQGCb4CG
-	 xybQKsMUMzyRAQm+tmGWUf8eYCasPe9xaFPkuYXI=
-Date: Fri, 21 Feb 2025 16:07:13 +0530
-From: Jai Luthra <jai.luthra@ideasonboard.com>
-To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Dave Stevenson <dave.stevenson@raspberrypi.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] media: i2c: imx219: Only use higher LLP_MIN for
- binned resolutions
-Message-ID: <attkqzfqwxjrozx27utbyh2q2jfci3ytjsq2we4db3nhf22l3e@7uv3j2imledv>
-References: <20250219-imx219_fixes_v2-v1-0-0e3f5dd9b024@ideasonboard.com>
- <20250219-imx219_fixes_v2-v1-1-0e3f5dd9b024@ideasonboard.com>
- <mloobyyocd5f4hbkenplebwyffacdjjhzhxefvlx2og5qz5xlx@zswcyzzfcpy3>
+	s=arc-20240116; t=1740134403; c=relaxed/simple;
+	bh=XJrwKG10QSah/ickTZ1lllQw+hW/qqeAgUpJ91gdEms=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RVD26oYkmari7POKVKwBuZZFPf/UvZxa+rmBiAiH794ODlCSqIMQdW2+Y971tzzYLoiIpe5mdOi/aQKb1vE3uWdPSqCUKV4phQfJ9q8MBI+tRZ++NwUzQWp9N4QbPgLaHWzfm4YymCOF/AK4pMsEwmFYXlwEflldvi5Y4nx56kg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5B7A3165C;
+	Fri, 21 Feb 2025 02:40:19 -0800 (PST)
+Received: from [10.57.85.184] (unknown [10.57.85.184])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 18FD43F5A1;
+	Fri, 21 Feb 2025 02:39:58 -0800 (PST)
+Message-ID: <1c92af85-6549-4104-8db0-05cae39ea354@arm.com>
+Date: Fri, 21 Feb 2025 10:39:56 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <mloobyyocd5f4hbkenplebwyffacdjjhzhxefvlx2og5qz5xlx@zswcyzzfcpy3>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 4/6] mmc: core: add undervoltage handler for MMC/eMMC
+ devices
+To: Oleksij Rempel <o.rempel@pengutronix.de>,
+ Ulf Hansson <ulf.hansson@linaro.org>
+Cc: kernel@pengutronix.de, linux-kernel@vger.kernel.org,
+ linux-mmc@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Mark Brown <broonie@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ =?UTF-8?Q?S=C3=B8ren_Andersen?= <san@skov.dk>,
+ Adrian Hunter <adrian.hunter@intel.com>, 'Avri Altman' <avri.altman@wdc.com>
+References: <20250221093918.3942378-1-o.rempel@pengutronix.de>
+ <20250221093918.3942378-5-o.rempel@pengutronix.de>
+Content-Language: en-US
+From: Christian Loehle <christian.loehle@arm.com>
+In-Reply-To: <20250221093918.3942378-5-o.rempel@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Jacopo,
+(+CC Avri and Adrian)
 
-Thanks for the review.
-
-On Feb 21, 2025 at 10:28:40 +0100, Jacopo Mondi wrote:
-> Hi Jai
+On 2/21/25 09:39, Oleksij Rempel wrote:
+> Introduce `_mmc_handle_undervoltage()` to handle undervoltage events for
+> MMC/eMMC devices. This function interrupts ongoing operations using High
+> Priority Interrupt (HPI) and performs a controlled suspend. After
+> completing the sequence, the card is marked as removed to prevent
+> further interactions, ensuring that no further commands are issued after
+> an emergency stop.
 > 
-> On Wed, Feb 19, 2025 at 05:16:43PM +0530, Jai Luthra wrote:
-> > The LLP_MIN of 3560 is only needed to fix artefacts seen with binned
-> > resolutions. As increasing the LLP reduces the highest possible
-> > framerate by ~3%, use the default minimum of 3448 for non-binned
-> > resolutions.
-> >
+> Implementation Details:
+> 1. **Interrupt ongoing operations**:
+>    - If the eMMC is executing a long-running operation (e.g., erase, trim,
+>      or write),
+>      attempt to stop it using HPI (`mmc_interrupt_hpi()`).
+>    - If HPI fails, an error is logged, but the sequence continues.
 > 
-> Also restore the fll_def value for non-binned modes in the modes definition
-> to restore the default mode framerate to 30fps.
+> 2. **Suspend the card in an emergency state**:
+>    - Call `__mmc_suspend()` with `is_undervoltage = true`, which ensures:
+>      - The power-off notification uses `EXT_CSD_POWER_OFF_SHORT`.
+>      - Cache flushing is skipped to minimize time delays.
+>      - If power-off notify is unsupported, alternative methods like sleep
+>        or deselect are used to transition the card into a safe state.
 > 
-
-Will add in v2.
-
-> > Suggested-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
-> > Link: https://lore.kernel.org/linux-media/CAPY8ntC1-S6zKtDvmc6EgyxP+j6rTShuG8Dr8PKb9XQr2PeS_w@mail.gmail.com/
-> > Signed-off-by: Jai Luthra <jai.luthra@ideasonboard.com>
-> > ---
-> >  drivers/media/i2c/imx219.c | 24 ++++++++++++++++--------
-> >  1 file changed, 16 insertions(+), 8 deletions(-)
-> >
-> > diff --git a/drivers/media/i2c/imx219.c b/drivers/media/i2c/imx219.c
-> > index f662c9d755114265aad46c5cc7f5031b9bc0dbba..6e51a7af5e2a05cacefb201d96a9fbdc349f17d8 100644
-> > --- a/drivers/media/i2c/imx219.c
-> > +++ b/drivers/media/i2c/imx219.c
-> > @@ -74,7 +74,8 @@
-> >  #define IMX219_FLL_MAX			0xffff
-> >  #define IMX219_VBLANK_MIN		32
-> >  #define IMX219_REG_LINE_LENGTH_A	CCI_REG16(0x0162)
-> > -#define IMX219_LLP_MIN			0x0de8
-> > +#define IMX219_LLP_MIN			0x0d78
-> > +#define IMX219_BINNED_LLP_MIN		0x0de8
-> >  #define IMX219_LLP_MAX			0x7ff0
-> >
-> >  #define IMX219_REG_X_ADD_STA_A		CCI_REG16(0x0164)
-> > @@ -317,13 +318,13 @@ static const struct imx219_mode supported_modes[] = {
-> >  		/* 8MPix 15fps mode */
-> >  		.width = 3280,
-> >  		.height = 2464,
-> > -		.fll_def = 3415,
-> > +		.fll_def = 3526,
-> >  	},
-> >  	{
-> >  		/* 1080P 30fps cropped */
-> >  		.width = 1920,
-> >  		.height = 1080,
-> > -		.fll_def = 1707,
-> > +		.fll_def = 1763,
-> >  	},
-> >  	{
-> >  		/* 2x2 binned 60fps mode */
-> > @@ -901,7 +902,7 @@ static int imx219_set_pad_format(struct v4l2_subdev *sd,
-> >  	if (fmt->which == V4L2_SUBDEV_FORMAT_ACTIVE) {
-> >  		int exposure_max;
-> >  		int exposure_def;
-> > -		int hblank;
-> > +		int hblank, llp_min;
-> >  		int pixel_rate;
-> >
-> >  		/* Update limits and set FPS to default */
-> > @@ -918,6 +919,17 @@ static int imx219_set_pad_format(struct v4l2_subdev *sd,
-> >  					 imx219->exposure->minimum,
-> >  					 exposure_max, imx219->exposure->step,
-> >  					 exposure_def);
-> > +
-> > +		/*
-> > +		 * With analog binning the default minimum line length of 3448
-> > +		 * can cause artefacts because the ADC operates on two lines
-> > +		 * together. Switch to higher minimum of 3560 if we are binning.
-> > +		 */
-> > +		llp_min = (bin_h || bin_v) ? IMX219_BINNED_LLP_MIN :
+> 3. **Mark the card as removed**:
+>    - This prevents further commands from being issued to the card after
+>      undervoltage shutdown, avoiding potential corruption.
 > 
-> As you know, this is always true.
+> To support this, introduce `__mmc_suspend()` and `__mmc_resume()` as
+> internal  helpers that omit `mmc_claim_host()/mmc_release_host()`,
+> allowing them to be  called when the host is already claimed.
 > 
+> The caller of `_mmc_handle_undervoltage()` is responsible for invoking
+> `mmc_claim_host()` before calling this function and `mmc_release_host()`
+> afterward to ensure exclusive access to the host during the emergency
+> shutdown process.
+> 
+> Device Handling Considerations:
+> - **For eMMC storage**: The new undervoltage handler applies the correct
+>   power-down sequence using power-off notify or alternative methods.
+> - **For SD cards**: The current implementation does not handle undervoltage
+>   events for SD cards. Future extensions may be needed to implement proper
+>   handling.
+> 
+> Testing:
+> This implementation was tested on an iMX8MP-based system, verifying that
+> the  undervoltage sequence correctly stops ongoing operations and
+> prevents further  MMC transactions after the event. The board had
+> approximately 100ms of available  power hold-up time. The Power Off
+> Notification was sent ~4ms after the board  was detached from the power
+> supply, allowing sufficient time for the eMMC to  handle the event
+> properly.
+> 
+> The testing was performed using a logic analyzer to monitor command
+> sequences and timing. While this method confirms that the expected
+> sequence was executed, it does not provide insights into the actual
+> internal behavior of the eMMC storage.
+> 
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> ---
+> changes v3:
+> - reword commit message.
+> - add comments in the code
+> - do not try to resume sleeping device
+> ---
+>  drivers/mmc/core/mmc.c | 115 ++++++++++++++++++++++++++++++++++++-----
+>  1 file changed, 102 insertions(+), 13 deletions(-)
+> 
+> diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
+> index 9270bde445ad..a50cdd550a22 100644
+> --- a/drivers/mmc/core/mmc.c
+> +++ b/drivers/mmc/core/mmc.c
+> @@ -2104,8 +2104,8 @@ static int _mmc_flush_cache(struct mmc_host *host)
+>  	return err;
+>  }
+>  
+> -static int _mmc_suspend(struct mmc_host *host, bool is_suspend,
+> -			bool is_undervoltage)
+> +static int __mmc_suspend(struct mmc_host *host, bool is_suspend,
+> +			 bool is_undervoltage)
+>  {
+>  	unsigned int notify_type;
+>  	int err = 0;
+> @@ -2116,8 +2116,6 @@ static int _mmc_suspend(struct mmc_host *host, bool is_suspend,
+>  	else
+>  		notify_type = EXT_CSD_POWER_OFF_LONG;
+>  
+> -	mmc_claim_host(host);
+> -
+>  	if (mmc_card_suspended(host->card))
+>  		goto out;
+>  
+> @@ -2145,7 +2143,18 @@ static int _mmc_suspend(struct mmc_host *host, bool is_suspend,
+>  		mmc_card_set_suspended(host->card);
+>  	}
+>  out:
+> +	return err;
+> +}
+> +
+> +static int _mmc_suspend(struct mmc_host *host, bool is_suspend,
+> +			bool is_undervoltage)
+> +{
+> +	int err;
+> +
+> +	mmc_claim_host(host);
+> +	err = __mmc_suspend(host, is_suspend, is_undervoltage);
+>  	mmc_release_host(host);
+> +
+>  	return err;
+>  }
+>  
+> @@ -2165,6 +2174,20 @@ static int mmc_suspend(struct mmc_host *host)
+>  	return err;
+>  }
+>  
+> +static int __mmc_resume(struct mmc_host *host)
+> +{
+> +	int err;
+> +
+> +	if (!mmc_card_suspended(host->card))
+> +		return 0;
+> +
+> +	mmc_power_up(host, host->card->ocr);
+> +	err = mmc_init_card(host, host->card->ocr, host->card);
+> +	mmc_card_clr_suspended(host->card);
+> +
+> +	return err;
+> +}
+> +
+>  /*
+>   * This function tries to determine if the same card is still present
+>   * and, if so, restore all state to it.
+> @@ -2174,16 +2197,9 @@ static int _mmc_resume(struct mmc_host *host)
+>  	int err = 0;
+>  
+>  	mmc_claim_host(host);
+> -
+> -	if (!mmc_card_suspended(host->card))
+> -		goto out;
+> -
+> -	mmc_power_up(host, host->card->ocr);
+> -	err = mmc_init_card(host, host->card->ocr, host->card);
+> -	mmc_card_clr_suspended(host->card);
+> -
+> -out:
+> +	err = __mmc_resume(host);
+>  	mmc_release_host(host);
+> +
+>  	return err;
+>  }
+>  
+> @@ -2194,6 +2210,13 @@ static int mmc_shutdown(struct mmc_host *host)
+>  {
+>  	int err = 0;
+>  
+> +	/*
+> +	 * In case of undervoltage, the card will be powered off by
+> +	 * _mmc_handle_undervoltage()
+> +	 */
+> +	if (host->undervoltage)
+> +		return 0;
+> +
+>  	/*
+>  	 * In a specific case for poweroff notify, we need to resume the card
+>  	 * before we can shutdown it properly.
+> @@ -2285,6 +2308,71 @@ static int _mmc_hw_reset(struct mmc_host *host)
+>  	return mmc_init_card(host, card->ocr, card);
+>  }
+>  
+> +/**
+> + * _mmc_handle_undervoltage - Handle an undervoltage event for MMC/eMMC devices
+> + * @host: MMC host structure
+> + *
+> + * This function is triggered when an undervoltage condition is detected.
+> + * It attempts to safely stop ongoing operations and transition the device
+> + * into a low-power or safe state to prevent data corruption.
+> + *
+> + * Steps performed:
+> + * 1. If no card is present, return immediately.
+> + * 2. Attempt to interrupt any ongoing operations using High Priority Interrupt
+> + *    (HPI).
+> + * 3. Perform an emergency suspend using EXT_CSD_POWER_OFF_SHORT if possible.
+> + *    - If power-off notify is not supported, fallback mechanisms like sleep or
+> + *      deselecting the card are attempted.
+> + *    - Cache flushing is skipped to reduce execution time.
+> + * 4. Mark the card as removed to prevent further interactions after
+> + *    undervoltage.
 
-Oops my bad. Will fix in v2.
+The good path now looks like the best bet to me.
+The PON fallbacks are still questionable IMO.
+Deselect, if taking the spec seriously, cannot really give a hint to FTL.
+While daisy-chaining MMC and SD is rather rare these days, that's still the
+behavior vendors implement AFAIK.
+Sleep with it's vendor-defined timeouts can be anything, so this could even
+trigger a cache flush internally, after we avoided sending one because of
+undervoltage.
+If we were to rely on actually getting 100ms heads-up we could check that
+against the timeout reported by the card, but IME those are wild guesses
+rather than measured values.
 
-I realized it would be cleaner to use the new version of 
-imx219_get_binning() to check if analog binning is used before updating 
-the minimum.
+> + *
+> + * Note: This function does not handle host claiming or releasing. The caller
+> + *	 must ensure that the host is properly claimed before calling this
+> + *	 function and released afterward.
+> + *
+> + * Returns: 0 on success, or a negative error code if any step fails.
+> + */
+> +static int _mmc_handle_undervoltage(struct mmc_host *host)
+> +{
+> +	struct mmc_card *card = host->card;
+> +	int err = 0;
+> +
+> +	/* If there is no card attached, nothing to do */
+> +	if (!card)
+> +		return 0;
+> +
+> +	/*
+> +	 * Try to interrupt a long-running operation (such as an erase, trim,
+> +	 * or write) using High Priority Interrupt (HPI). This helps ensure
+> +	 * the card is in a safe state before power loss.
 
-> > +					     IMX219_LLP_MIN;
-> > +		__v4l2_ctrl_modify_range(imx219->hblank, llp_min - mode->width,
-> > +					 IMX219_LLP_MAX - mode->width, 1,
-> > +					 llp_min - mode->width);
-> >  		/*
-> >  		 * Retain PPL setting from previous mode so that the
-> >  		 * line time does not change on a mode change.
-> > @@ -926,10 +938,6 @@ static int imx219_set_pad_format(struct v4l2_subdev *sd,
-> >  		 * mode width subtracted.
-> >  		 */
-> >  		hblank = prev_line_len - mode->width;
-> > -		__v4l2_ctrl_modify_range(imx219->hblank,
-> > -					 IMX219_LLP_MIN - mode->width,
-> > -					 IMX219_LLP_MAX - mode->width, 1,
-> > -					 IMX219_LLP_MIN - mode->width);
-> >  		__v4l2_ctrl_s_ctrl(imx219->hblank, hblank);
-> >
-> >  		/* Scale the pixel rate based on the mode specific factor */
-> >
-> > --
-> > 2.48.1
-> >
+I don't know about safe state before power loss, it's getting it in a
+state where we can execute the below.
 
--- 
-Thanks,
-Jai
+> +	 */
+> +	err = mmc_interrupt_hpi(card);
+> +	if (err)
+> +		pr_err("%s: Interrupt HPI failed, error %d\n",
+> +			mmc_hostname(host), err);
+> +
+> +	/*
+> +	 * Perform an emergency suspend to power off the eMMC quickly.
+> +	 * This ensures the device enters a safe state before power is lost.
+> +	 * We first attempt EXT_CSD_POWER_OFF_SHORT, but if power-off notify
+> +	 * is not supported, we fall back to sleep mode or deselecting the card.
+> +	 * Cache flushing is skipped to minimize delay.
+> +	 */
+> +	err = __mmc_suspend(host, false, true);
+> +	if (err)
+> +		pr_err("%s: error %d doing suspend\n", mmc_hostname(host), err);
+> +
+> +	/*
+> +	 * Mark the card as removed to prevent further operations.
+> +	 * This ensures the system does not attempt to access the device
+> +	 * after an undervoltage event, avoiding potential corruption.
+> +	 */
+> +	mmc_card_set_removed(card);
+> +
+> +	return err;
+> +}
+> +
+>  static const struct mmc_bus_ops mmc_ops = {
+>  	.remove = mmc_remove,
+>  	.detect = mmc_detect,
+> @@ -2297,6 +2385,7 @@ static const struct mmc_bus_ops mmc_ops = {
+>  	.hw_reset = _mmc_hw_reset,
+>  	.cache_enabled = _mmc_cache_enabled,
+>  	.flush_cache = _mmc_flush_cache,
+> +	.handle_undervoltage = _mmc_handle_undervoltage,
+>  };
+>  
+>  /*
+
+No need to resend anything at this point, I'm curious what others have
+to say on the series.
 
