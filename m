@@ -1,149 +1,194 @@
-Return-Path: <linux-kernel+bounces-525944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7351CA3F7A7
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 15:48:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5833A3F7B6
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 15:51:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF3023BE08F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 14:48:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19249422559
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 14:48:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF6FD210F5D;
-	Fri, 21 Feb 2025 14:48:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E99220B7E0;
+	Fri, 21 Feb 2025 14:48:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kyph6rtQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="suE7yiPc"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2083.outbound.protection.outlook.com [40.107.244.83])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1519520FAA1;
-	Fri, 21 Feb 2025 14:48:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740149284; cv=none; b=rn0QErbI+XQNIMX6eFF6tinTwoEftBqRYyudB2njohLo2Jk3ZLl78n7V17dR+HD2txnA1xOiO0CCLuxn9Q/hqLfwezThqXTPkm/JJkOdY9JIF1hGueWkZePoQKpOvhaX1PstLRSIKMOgZ2qgetF4lOLTUPwDwZFj+oMDU+Go3cQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740149284; c=relaxed/simple;
-	bh=Pydel3GDch9z7hvM8q8bAh48qo5Vb3Mw8itGDgMptC4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uZcX/TLmFBkIa30emInHbxtiCdEYqiDT/wSPX6jDqVNEvt91G41bmw7OzFDdH5yqi9HirA8q02+q4GBXfHue8aEOExoh8wvHMFskRZT9Y9d0ERKFWdih3ZQE118+MJnGtRN8evqCnh950eDZFwOm7CjeAst3xbBMWKzudXtYLo0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kyph6rtQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 041BCC4CED6;
-	Fri, 21 Feb 2025 14:47:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740149283;
-	bh=Pydel3GDch9z7hvM8q8bAh48qo5Vb3Mw8itGDgMptC4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kyph6rtQprpre7Tyd49/a/29K19NpkavMg0LywEqDU/Oyut1MviU1AJOCooSkjVnV
-	 vgUpsdp4744feuGl4XEgGrZQdE6NL3sPidMF85rw49qERD++bL6fBtgcPL0LaW1scc
-	 bPOkgUko76Q5egbkgxkGQuBY3xLWbqy3LFJV5OB2p5wmL2jPxT7GW5g1Z3FSX2MK0+
-	 uh6jrLq3Z5SvVA70iKCKEUR+/vdxHZVVa2YvWxHpMCyo0ptQO/hKKhbPL7ivYH6+/M
-	 jSmaAzTL91UHcucDaXBt59XNYXyrrCuf3CXxD4gO3DUyghNtg4IgIgizHRYq49hYHi
-	 QNvl1BEfXmvGQ==
-Date: Fri, 21 Feb 2025 15:47:57 +0100
-From: Danilo Krummrich <dakr@kernel.org>
-To: Daniel Almeida <daniel.almeida@collabora.com>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Russell King <linux@armlinux.org.uk>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH V2 2/2] rust: Add basic bindings for clk APIs
-Message-ID: <Z7iSHR0F2QpiNpMZ@pollux>
-References: <cover.1740118863.git.viresh.kumar@linaro.org>
- <a0a1ba4e27c3a0d9e38c677611eb88027e463287.1740118863.git.viresh.kumar@linaro.org>
- <Z7iGHiQcqa-_AXli@pollux>
- <4AD8A8F3-EA7E-4FBE-9F0D-58CF7BB09ED5@collabora.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C91A1BD9E3;
+	Fri, 21 Feb 2025 14:48:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.83
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740149320; cv=fail; b=u1PPfvNY4qkFByLamGXZ8tKTFgppLqXCxT24OL9+pBY5UeQRAvcIsCB90/v3PJQxku+t1L1qjxwn3xZAWT+Lc6QFEqx90Rofed6FE3VIWCa1E9xQry1xTBvwmJrA8hUGIf7863u9dLDLNjWoNGIYIeQyymp6fi1XPldTAWfAPbU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740149320; c=relaxed/simple;
+	bh=pakDMmdIbVrZ8rtUbnzO74PnckkOyPlKvsZFH8nbs5U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=lxSYRj/SLHdjJnyacSlPXL9y2NBSkP6ff1JSL50868fIZhvxBoUkyDtD4AkSiPws+yZ/IythBZnKnkxgOXG0n08KdE9YsMA2kxNr+1pl2SngvaJfaTyHDKmIy+fo7rbglnA76kz9emGVI96UlNlpO9pizg161SlCCsLiBZRILgc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=suE7yiPc; arc=fail smtp.client-ip=40.107.244.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=rDT/mk8M/gwaJEkLjX9NAcbq7y/2gM9w5jtNRFiClmXtkFGmckNeA/9oVIk5s7BSX4vxq9JrG2nCr+bwGDehQvqZ0diTJiBlG9ORv4lm0kap5IwvrSe9gmBMOwlkN4/c8SPIYkmBifqpb/Cm9xQrXQwmMHXEbBvgcNN6sJT5IUR6XtIvCKd+P/Zo1ThGWfrNWPyl3CJADemqUMBWeI0NXkc7x7roxEgxeE5AvjMf6goV1qXA47EGQ7RiePR316GyoDEed6/x9EgBRCUHX+N60QMYJktLgUEa98seSH3iE76KUg+ag7ns5aqG5UJ/Nrgsdv/Wi7r0vNyFsU4LJ/g+Yw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=nWEIoKJ2dPR4FvssoT4qNeWkE4q9+iZvxeZwnrzE71Q=;
+ b=mTfD3bq5Yl0vFwLqdi0J+m0lT79O3I2BwRAVxFbbmNVfprxuv7GVUMIJKS+lK2kOxU0edllw9ZWpGpw2WIqASt5dUAgLwqs5LiZprQ9eP7rh6eI3h5UcJomJJTDnWvjcso3+HhGuT65Tff+UE8ca5BM+t2nAR/GCSSTXUnYxVE54a6aOzLcWNXmikmb3RtG56C/7Lzp3tYaQhrZ0uOTcYv2Rhduaj0tIRwe5b5KjWzFlu2H6vCqhYP1MOGlCR5H8yarG3iyucyth1Cxt+bkaIpOZFYrjbkrlElHN6H+mbYcfLJ6/KzXlTxrmfUxf6V7Wq72fKwyK9ma31wURTQqi2w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=nWEIoKJ2dPR4FvssoT4qNeWkE4q9+iZvxeZwnrzE71Q=;
+ b=suE7yiPcGBHJEXSgTtbNXi1SlzBg/404qE2Zq1iUXGZEsIbbBNfP90kZN4so5CqsZGxpsu5dmqDfKGox67hxp3Mw2Q/oP1TU445jWfWmZtcJn7gpOE+MQn7y+6yvIxRZ8svFBWaliQ+T6rInt9HZQpAyz4dHbXZiMnbNUK7Vt6FqYg94OXF+xOixfVWfU0Fze2wonK9C0pu63lzCR68It704BlFJn/uk2haOnRPrY6uUCbPAr5Yk4/NTIDPunt94z6zkHL7cPu8/CnwP69o89LXhFwV9yJcyoGV9zdBsnXB+fYMvMi93Sgxuk/BLslHWuMQ13BtO4zRO/n/HaOCd6A==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
+ by CY5PR12MB6550.namprd12.prod.outlook.com (2603:10b6:930:42::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.15; Fri, 21 Feb
+ 2025 14:48:31 +0000
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.8466.015; Fri, 21 Feb 2025
+ 14:48:31 +0000
+Date: Fri, 21 Feb 2025 10:48:30 -0400
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: kevin.tian@intel.com, tglx@linutronix.de, maz@kernel.org,
+	joro@8bytes.org, will@kernel.org, robin.murphy@arm.com,
+	shuah@kernel.org, iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kselftest@vger.kernel.org, eric.auger@redhat.com,
+	baolu.lu@linux.intel.com, yi.l.liu@intel.com, yury.norov@gmail.com,
+	jacob.pan@linux.microsoft.com, patches@lists.linux.dev
+Subject: Re: [PATCH v2 4/7] irqchip: Have CONFIG_IRQ_MSI_IOMMU be selected by
+ irqchips that need it
+Message-ID: <20250221144830.GA285356@nvidia.com>
+References: <cover.1740014950.git.nicolinc@nvidia.com>
+ <a2620f67002c5cdf974e89ca3bf905f5c0817be6.1740014950.git.nicolinc@nvidia.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a2620f67002c5cdf974e89ca3bf905f5c0817be6.1740014950.git.nicolinc@nvidia.com>
+X-ClientProxiedBy: BL0PR0102CA0029.prod.exchangelabs.com
+ (2603:10b6:207:18::42) To CH3PR12MB8659.namprd12.prod.outlook.com
+ (2603:10b6:610:17c::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4AD8A8F3-EA7E-4FBE-9F0D-58CF7BB09ED5@collabora.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|CY5PR12MB6550:EE_
+X-MS-Office365-Filtering-Correlation-Id: bd995de0-784c-45b3-fa2e-08dd5286cf43
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?9vfzPfUsMh7fnqIjrjyTVMwuLawjamsx0xz+vfRoAx5UryVg4V9l51qesZW2?=
+ =?us-ascii?Q?4Z9d8l1HZ8LMjwKmQfx9cnOBCvsJffHKiSd5Ln8GjL3T6ec97vnV9Jcv6PUX?=
+ =?us-ascii?Q?PNdbxEGTNBd3E1FRaTcqlVeOA7ZBFllqsMbWdCbUPZvug05RVFWnjfFhxxA1?=
+ =?us-ascii?Q?hrN3+S5nkBa8iw+X92kuVJxDMXFwzN+b9tcaxgzYNgS+bLM0xKn3doaU3RhF?=
+ =?us-ascii?Q?j7YQG9P6Z4Potr4hhlJs5S+hJSMb09lqkG3QQ8M9+zONQbXhqPnzVHzgkthD?=
+ =?us-ascii?Q?/UGbTslLLIXXH53jdX8UK0Q+lt+Oq831b0EQEPpyxFMzlgdcWuFoTLkc/ZWq?=
+ =?us-ascii?Q?cIQgRh66HbUuj/d8bMpKm/upprKY/Ba2ZyXDzwg9ypYlqVLD/CHoP4gHKY6r?=
+ =?us-ascii?Q?4KD2GeNMlW0IwGiRDZNjOxaOgIODCy6k5//QpiI92f4hnMaXAEvLMPSVCbHa?=
+ =?us-ascii?Q?2koVbFc4J1YJttg0Y9hJ/oceugPkZAhwkAm3IH1nGZ5tryShPFH/Uj3eWSFg?=
+ =?us-ascii?Q?0srCZ40mUUOQaUzpWUk5g+AhRHYFwg29IfzhzciTvDfE9ytlgOwE1fH2Eh5i?=
+ =?us-ascii?Q?u4xkewMtx6/+mTEPKJSWFU+5JberJwlbdR+fG/QlJ52LmHSLC2yZjh/+VEku?=
+ =?us-ascii?Q?cXAGf0JQrCdcXAsEr8bIw0ToBAsueoGfU7aRSrqLtKOxZnsayo91Zxnlo7ls?=
+ =?us-ascii?Q?CL4gqKRZjytHnJlJLR+Qyw6CSHXeJDz67cPqJhYvaZn7WXyMC5q9K/N92bgd?=
+ =?us-ascii?Q?ZJk+uJiOU7Tzg0rpbWyzkTcV/dvhfGO8Msl374xbXRXU4uR7ALBghg0HrQAS?=
+ =?us-ascii?Q?vB2GyVlkQy/MfXPgolllrgalDpAVM80sOMY2nPDigbjfUiDsh8VGNn4kod7N?=
+ =?us-ascii?Q?53lBYIM/ygsADt2MDsAwjRE9wQLzuvm0bTZi3BXRtopoiVuFnJOpHKGA/IfD?=
+ =?us-ascii?Q?yusaCNptFMk/IqDmBb4Tpz3WNVIM8xchGBXPwrmluSZcu1YIHF0zLaQDNusU?=
+ =?us-ascii?Q?dI2VuEs5bLTmipHvl4dz/ei8mrgmJjzqHG106x8OlxlG5jxaAsmLBVfGfcWz?=
+ =?us-ascii?Q?CAMT3sn+n0bwlSv2Xk3MzJSSxYhr2IDCn8cRPWnUcz08/RTvT09WkTpHaCDO?=
+ =?us-ascii?Q?APXg/SUjPut0Af6Vl1aAO8tI8SLGWaS8i09zHGUMZE3+ZNp+mrGKDZxDlTzZ?=
+ =?us-ascii?Q?6cXvYtlOjzMgtFqNZYBqqpSaAt1fM/QVbcWsFdU9JkGuN+21FYUOyzgS++bN?=
+ =?us-ascii?Q?f09vyTSTMLFfMqsIVEompO7EdZDU8b13IVGocEzQ8vDcH0lq/ePVe7z3N2Np?=
+ =?us-ascii?Q?vdZKRJ1iodGsV0AfZQ80hMCLbiWSF9JsUQohpJz+yFxwwE1iBJ7Bfma5hzos?=
+ =?us-ascii?Q?WQz9a8svCEqbRL+pXEFq5CvXxsZc?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?oHGPSzDn3vqVQuuWGCc3QGn6DhLhaJMv7syE4kPztxZhbXiXZkDL4kv7uVWv?=
+ =?us-ascii?Q?Dtu4InQVArcasayxGOHe8T9DxhIxRdkTqAUrODgRTxSV7QYJYS2SyJ6L+8te?=
+ =?us-ascii?Q?uASh2S/MqWaDPpXVUz3zU87eaR+7iyY7/NYpVyYvJqWDHeJsMTg+50/oB0On?=
+ =?us-ascii?Q?gef5vfUcVwXHBBJxBJufuJRD/Tmd9lYBZKPLLfL7BGfdyilxdv+axW6kqTdB?=
+ =?us-ascii?Q?a5e+mzDZXjfCy6T7YsGfjAbE7qryQzC7ZGm6VT6E+vWSE0/IfAbh9i0P71OS?=
+ =?us-ascii?Q?cc74WRjXjGk4j4YYd79oPPbR7l5pfbqlXNpA77lWoW2uqS4AzwfpnRm/Sdz4?=
+ =?us-ascii?Q?f7nOnbtmYeufLMj6WLZ5KrSb80nhZGcD9g0hQDHKO5t05kZlFWU4mOVVIMUN?=
+ =?us-ascii?Q?rM1n+KZipZ6zRUpe4AMD2EPD/d6+uICcTLLrf5vCUe2oLncBUx3kbYvStE6X?=
+ =?us-ascii?Q?wBbmQ1w/nGXvjiToK8XnbnGVt2OUjtSzY0X7Z5U8DmaHG/zr8velnCquAP8u?=
+ =?us-ascii?Q?vR6IibRny4pO9NXlWtsAlRChpes4BQ4qbxV+dSaYW8Ns7batAb1gUCFaOlZM?=
+ =?us-ascii?Q?IVioTkNcU0BkdAiAeGr0pLmvNJTkSHrsnVzZgGnXIzaEB9omoSEwtimZtPlx?=
+ =?us-ascii?Q?fxXf4X31EB6jZCXNusClHSW32lhR6n/ywk23vYt4epAZFaiWxWaKljH96ME3?=
+ =?us-ascii?Q?AYT+zkyenSInL5PVTpqd87WxaEDoCyAWjtCB4jzIb4bKWdS9BOtCYqy6DcN4?=
+ =?us-ascii?Q?OVsHtYK5SQSseWtD73orgcQx78zvnrrsezsi3ieZOI3yGj8Ka/stmko076Pk?=
+ =?us-ascii?Q?d9NDFu9uskFcr4ffC867+0OcLSaX8KB6MTOqjfLcpink79KZP70zbNJr0R3e?=
+ =?us-ascii?Q?JyJN8bzUJY/+QHsrsPSe9xD2u35WnqMkRK3euxVHEwSsGDLePO4LXX7aERRQ?=
+ =?us-ascii?Q?xUQooF1vQ22b4eDgRLf/HhIJhPaOF9TvtkohS7BY3kJHj+9eSvxm/bi/UxyB?=
+ =?us-ascii?Q?sDwO71gd09usVvnBQSyrB2+/zNjLdUFwWMyhwmUp+MFmCuEk+GhwO8TzKIoQ?=
+ =?us-ascii?Q?NXOfrjz/MBZeuzYblPkOM7ZYSSX1YKDc8byhaNXcqKfm1RkR/uQpCaXZ+8uh?=
+ =?us-ascii?Q?YYwVyetVktEY0ucwDHHniMHFQXppq3kv0V9i3aoRyxp8nB46MLo4XoRYV55T?=
+ =?us-ascii?Q?QhqtSwZC5F/5V+l5XZazXeo45QKQffTaRdDrpYXiqu/rxK/VTCEz9Xw6eI8E?=
+ =?us-ascii?Q?UVJgrFeAHFVhfA6ZB1hUnoW6hV6W2YYkZ6e9FCtSSsnJ0oy8CwagwYfQaVB+?=
+ =?us-ascii?Q?J9YRpSJs1wNhT63KBUwLTx8s/3TE/HV9CduH6128T97CXpp1xr2OEBhuNM9O?=
+ =?us-ascii?Q?uqGsTO7VDn4sH9WGtHAKZ0S77d3T6kYYSKUMD2zwT5++W3xf2xS0iyjDb4DP?=
+ =?us-ascii?Q?eZ0r6nAA/39pMiDEkIv2jwdkrJcIxwtFXY8d/ww90tWTFt8Qt635Yifj19qU?=
+ =?us-ascii?Q?PcEtD97bOYpr+yNfIapNnrxFirXof+Y+DW1n9lzmbAMBP8iPb2hzOR1qmpC2?=
+ =?us-ascii?Q?8qs7k+AhMHEmtXQkdiSnDE8u2vAkvn3KYdmNZTKB?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bd995de0-784c-45b3-fa2e-08dd5286cf43
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Feb 2025 14:48:31.5243
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Rr0zExZ4kno0g+fEwmLbjTgWOmQLTTuTnkT70E+K2kZ4HLyT2xh1GWBjEbUJnpvK
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6550
 
-On Fri, Feb 21, 2025 at 11:29:21AM -0300, Daniel Almeida wrote:
-> 
-> 
-> > On 21 Feb 2025, at 10:56, Danilo Krummrich <dakr@kernel.org> wrote:
-> > 
-> > On Fri, Feb 21, 2025 at 12:03:39PM +0530, Viresh Kumar wrote:
-> >> +/// A simple implementation of `struct clk` from the C code.
-> >> +#[repr(transparent)]
-> >> +pub struct Clk(*mut bindings::clk);
-> > 
-> > I remember that Stephen explained that NULL is valid value for struct clk. As a
-> > consequence, all functions implemented for `Clk` have to consider this.
-> 
-> I am a bit confused here. If NULL is valid, then why should we have to specifically
-> consider that in the functions? No functions so far explicitly dereferences that value,
-> they only pass it to the clk framework.
+> --- a/drivers/iommu/Kconfig
+> +++ b/drivers/iommu/Kconfig
+> @@ -154,7 +154,6 @@ config IOMMU_DMA
+>  	select DMA_OPS_HELPERS
+>  	select IOMMU_API
+>  	select IOMMU_IOVA
+> -	select IRQ_MSI_IOMMU
+>  	select NEED_SG_DMA_LENGTH
+>  	select NEED_SG_DMA_FLAGS if SWIOTLB
 
-This was badly phrased, the current implementation does not need to consider it
-indeed. What I meant is that we have to consider it potentially. Especially,
-when adding new functionality later on. For instance, when accessing fields of
-struct clk directly. Maybe this only becomes relevant once we write a clk driver
-itself in Rust, but still.
+Because of the above this patch needs to add:
 
-> 
-> Or are you referring to the safety comments only? In which case I do agree (sorry for
-> the oversight by the way)
-> 
-> > 
-> > I wonder if it could make sense to have a transparent wrapper type
-> > `MaybeNull<T>` (analogous to `NonNull<T>`) to make this fact more obvious for
-> > cases like this?
-> 
-> MaybeNull<T> sounds nice.
+--- a/drivers/iommu/dma-iommu.c
++++ b/drivers/iommu/dma-iommu.c
+@@ -449,8 +449,10 @@ void iommu_put_dma_cookie(struct iommu_domain *domain)
+        struct iommu_dma_cookie *cookie = domain->iova_cookie;
+        struct iommu_dma_msi_page *msi, *tmp;
+ 
++#if IS_ENABLED(CONFIG_IRQ_MSI_IOMMU)
+        if (domain->sw_msi != iommu_dma_sw_msi)
+                return;
++#endif
+ 
+        if (!cookie)
+                return;
 
-Yeah, it's probably the correct thing to do, to make things obvious.
+I fixed it up
 
-> 
-> > 
-> >> +
-> >> +impl Clk {
-> >> +    /// Creates `Clk` instance for a device and a connection id.
-> >> +    pub fn new(dev: &Device, name: Option<&CStr>) -> Result<Self> {
-> >> +        let con_id = if let Some(name) = name {
-> >> +            name.as_ptr() as *const _
-> >> +        } else {
-> >> +            ptr::null()
-> >> +        };
-> >> +
-> >> +        // SAFETY: It is safe to call `clk_get()`, on a device pointer earlier received from the C
-> >> +        // code.
-> >> +        Ok(Self(from_err_ptr(unsafe {
-> >> +            bindings::clk_get(dev.as_raw(), con_id)
-> >> +        })?))
-> >> +    }
-> >> +
-> >> +    /// Obtain the raw `struct clk *`.
-> >> +    pub fn as_raw(&self) -> *mut bindings::clk {
-> >> +        self.0
-> >> +    }
-> >> +
-> >> +    /// Clock enable.
-> >> +    pub fn enable(&self) -> Result<()> {
-> >> +        // SAFETY: By the type invariants, we know that `self` owns a reference, so it is safe to
-> >> +        // use it now.
-> > 
-> > This is not true.
-> > 
-> > 1. There is no type invariant documented for `Clk`.
-> > 2. The pointer contained in an instance of `Clk` may be NULL, hence `self` does
-> >   not necessarily own a reference.
-> 
-> > 
-> > The same applies for all other functions in this implementation.
-> > 
-> 
-> 
+I think the above if can be deleted with the sketch I showed in the
+last email since the put_dma_cookie will only ever be called on the
+default domain or on the vfio domain which guarantees it is not
+iommufd or something else using the union.
+
+Jason
 
