@@ -1,368 +1,181 @@
-Return-Path: <linux-kernel+bounces-525250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FD12A3ECFE
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 07:47:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D28C3A3ED03
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 07:52:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54DA219C2C4B
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 06:47:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DBAE421035
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 06:52:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABBE11FE463;
-	Fri, 21 Feb 2025 06:46:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 456A01FCCEC;
+	Fri, 21 Feb 2025 06:52:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TwSdyyIA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="KR6NbsZo"
+Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D14C370807;
-	Fri, 21 Feb 2025 06:46:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 861F745948;
+	Fri, 21 Feb 2025 06:52:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740120410; cv=none; b=WpvptU+IDuF2Knn1hKqp49ZEcU1Z2gdmILdW64LnPHVgyfbpdfwDZinnNKPhAIRehRZwQXmi5EJWWE8vtcF0CXojPsaqNUlaYGglYTjebomNwhqS2B6iYcYsGRm/b9Xxc0OixerNJ5BesNSEchTmBpAW6btZ6QVuUNncJ2vxa6I=
+	t=1740120760; cv=none; b=ZsLdhwGMEU1w4eyQ2VWGRvaCPhGvTf7vr5eehlvFijczz/cFBeIKQhk7i6R2ehQVE62ag7HC0lsUIMvNF4YwKAdob6nEVscsyDUcOyLKA07naVGN3DNXnZrfTNw7vPEHF0A/CcNELzaV+XgHQUQEqg24Vi4Yf6/Trlpcv7yzUxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740120410; c=relaxed/simple;
-	bh=/lcKvEh7xzFQthcjIJScl1xXg9SkqZpz9b/yOuJqvSo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nLTw0ckS3LhTqI7wZFgpEca7U64RHPJsMkZJNwxoO8BSGmsd11cjU+1DvA1A1l7XeCb89ZxGRJLCJFbIWnZq3MfU9lmZcdCHvnKvUQaIYdXQGpuWrFNFt1j+J5s9w5vt0f/tCOeOu3LZ+qzHk7Lg5Ux4IKYvQmPZRTwOQvitycI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TwSdyyIA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C59CCC4CED6;
-	Fri, 21 Feb 2025 06:46:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740120410;
-	bh=/lcKvEh7xzFQthcjIJScl1xXg9SkqZpz9b/yOuJqvSo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TwSdyyIAnrlexUonJ7U2N/RUiJvQC3SUdMN4bOdK+3fTdhv09IN0qg73LdZHmOkcE
-	 ej/8csoehOaXiy4tmxckC6ZPkAzQKk9FLEmzpKXVjWljLZfOxSeelb2cdNBRpCbaGc
-	 nmFPV81ov9VfizuPCFRTku2eC6RRJdZyz3GTaLioyQ8m1P4VOTg0qM/DehROyZn+Zt
-	 QeoTmWTdrin1BopcNEb1usvWz3nkStvUQr0b8f3J3YMVya4t56z+y2lKqVl7rs6iW4
-	 bHsq/CVYWZ8IdHlSgG1U9VW/T3WhOWWLOJwX67ix5NvQaScxaro0Uud8wTnPsMU8b7
-	 N85O3lHOmhdWg==
-Date: Thu, 20 Feb 2025 22:46:48 -0800
-From: Namhyung Kim <namhyung@kernel.org>
-To: Chun-Tse Shao <ctshao@google.com>
-Cc: linux-kernel@vger.kernel.org, peterz@infradead.org, mingo@redhat.com,
-	acme@kernel.org, mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-	irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, nick.forrington@arm.com,
-	linux-perf-users@vger.kernel.org, bpf@vger.kernel.org
-Subject: Re: [PATCH v6 2/4] perf lock: Retrieve owner callstack in bpf program
-Message-ID: <Z7ghWIq8wXCJ2Y8T@google.com>
-References: <20250219214400.3317548-1-ctshao@google.com>
- <20250219214400.3317548-3-ctshao@google.com>
+	s=arc-20240116; t=1740120760; c=relaxed/simple;
+	bh=/12jEPiLRqlltL/nDh/QR9kLZro+Iv5ZrHFnWhRK2uY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QQ46BziYT7wHslwxOB5pg+KMUwQSy7mFTf3swMYhNJtj5512XR4l84PUxEEMsgcv/m2QNyrF0uPDd12YFiAYD3W3R+IL6p3rsSmfIPz71FtST67AMBnWdCbNgsh6ZmcKPmtOFPZy1k13FmoaeTFSxXYoElLbgHYRPaoU9NvYzow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=KR6NbsZo; arc=none smtp.client-ip=115.124.30.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1740120748; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=oZUpS/ivXDgL9A5kntB0JwVQqbeL7smqaFnK4yBbM34=;
+	b=KR6NbsZodesxkyvr9RHg9ZhB9BxhZd1OHTZr+DIQfWKqZ6xZSmEpP8DkHG770n7XHzL3Ity16q6ZDS5BXxzqJW596b2/99w66X1qr6VpR6gOpFFZdcumzW9ltzu+S5FDc8T8ieS4pDs0WgB2MpKUrJjWL1mMByp/BwM11ZuLE6g=
+Received: from 30.246.161.128(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WPvN845_1740120745 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Fri, 21 Feb 2025 14:52:26 +0800
+Message-ID: <5ff00e53-957b-4a4e-a893-f83c4995c1ed@linux.alibaba.com>
+Date: Fri, 21 Feb 2025 14:52:24 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250219214400.3317548-3-ctshao@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/5] x86/mce: add EX_TYPE_EFAULT_REG as in-kernel
+ recovery context to fix copy-from-user operations regression
+To: Peter Zijlstra <peterz@infradead.org>, Borislav Petkov <bp@alien8.de>,
+ "Luck, Tony" <tony.luck@intel.com>
+Cc: nao.horiguchi@gmail.com, tglx@linutronix.de, mingo@redhat.com,
+ dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+ linmiaohe@huawei.com, akpm@linux-foundation.org, jpoimboe@kernel.org,
+ linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, baolin.wang@linux.alibaba.com,
+ tianruidong@linux.alibaba.com
+References: <20250217063335.22257-1-xueshuai@linux.alibaba.com>
+ <20250217063335.22257-4-xueshuai@linux.alibaba.com>
+ <20250218125408.GD40464@noisy.programming.kicks-ass.net>
+ <1ff716d3-eb3d-477e-ae30-1abe97eee01b@linux.alibaba.com>
+ <20250218141535.GC34567@noisy.programming.kicks-ass.net>
+ <20250218164800.GNZ7S5wL1A4dTaySOP@fat_crate.local>
+ <20250219104037.GG40464@noisy.programming.kicks-ass.net>
+From: Shuai Xue <xueshuai@linux.alibaba.com>
+In-Reply-To: <20250219104037.GG40464@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Feb 19, 2025 at 01:40:01PM -0800, Chun-Tse Shao wrote:
-> This implements per-callstack aggregation of lock owners in addition to
-> per-thread.  The owner callstack is captured using `bpf_get_task_stack()`
-> at `contention_begin()` and it also adds a custom stackid function for the
-> owner stacks to be compared easily.
+
+
+在 2025/2/19 18:40, Peter Zijlstra 写道:
+> On Tue, Feb 18, 2025 at 05:48:00PM +0100, Borislav Petkov wrote:
+>> On Tue, Feb 18, 2025 at 03:15:35PM +0100, Peter Zijlstra wrote:
+>>> diff --git a/arch/x86/kernel/cpu/mce/severity.c b/arch/x86/kernel/cpu/mce/severity.c
+>>> index dac4d64dfb2a..cfdae25eacd7 100644
+>>> --- a/arch/x86/kernel/cpu/mce/severity.c
+>>> +++ b/arch/x86/kernel/cpu/mce/severity.c
+>>> @@ -301,18 +301,19 @@ static noinstr int error_context(struct mce *m, struct pt_regs *regs)
+>>>   	instrumentation_end();
+>>>   
+>>>   	switch (fixup_type) {
+>>> -	case EX_TYPE_UACCESS:
+>>> -		if (!copy_user)
+>>> -			return IN_KERNEL;
+>>> -		m->kflags |= MCE_IN_KERNEL_COPYIN;
+>>> -		fallthrough;
+>>> -
+>>>   	case EX_TYPE_FAULT_MCE_SAFE:
+>>>   	case EX_TYPE_DEFAULT_MCE_SAFE:
+>>>   		m->kflags |= MCE_IN_KERNEL_RECOV;
+>>>   		return IN_KERNEL_RECOV;
+>>>   
+>>>   	default:
+>>> +		if (copy_user) {
+>>
+>> As said on chat, if we can make is_copy_from_user() *always* correctly detect
+>> user access, then sure but I'm afraid EX_TYPE_UACCESS being generated at the
+>> handful places where we do user memory access is there for a reason as it
+>> makes it pretty explicit.
 > 
-> The owner info is kept in a hash map using lock addr as a key to handle
-> multiple waiters for the same lock.  At `contention_end()`, it updates the
-> owner lock stat based on the info that was saved at `contention_begin()`.
-> If there are more waiters, it'd update the owner pid to itself as
-> `contention_end()` means it gets the lock now.  But it also needs to check
-> the return value of the lock function in case task was killed by a signal
-> or something.
+> Thing is, we have copy routines that do not know if its user or not.
+> is_copy_from_user() must be reliable.
 > 
-> Signed-off-by: Chun-Tse Shao <ctshao@google.com>
-> ---
->  .../perf/util/bpf_skel/lock_contention.bpf.c  | 218 +++++++++++++++++-
->  1 file changed, 209 insertions(+), 9 deletions(-)
+> Anyway, if you all really want to go all funny, try the below.
 > 
-> diff --git a/tools/perf/util/bpf_skel/lock_contention.bpf.c b/tools/perf/util/bpf_skel/lock_contention.bpf.c
-> index 23fe9cc980ae..e8b113d5802a 100644
-> --- a/tools/perf/util/bpf_skel/lock_contention.bpf.c
-> +++ b/tools/perf/util/bpf_skel/lock_contention.bpf.c
-> @@ -197,6 +197,9 @@ int data_fail;
->  int task_map_full;
->  int data_map_full;
->  
-> +struct task_struct *bpf_task_from_pid(s32 pid) __ksym __weak;
-> +void bpf_task_release(struct task_struct *p) __ksym __weak;
-> +
->  static inline __u64 get_current_cgroup_id(void)
->  {
->  	struct task_struct *task;
-> @@ -420,6 +423,61 @@ static inline struct tstamp_data *get_tstamp_elem(__u32 flags)
->  	return pelem;
->  }
->  
-> +static inline s32 get_owner_stack_id(u64 *stacktrace)
-> +{
-> +	s32 *id, new_id;
-> +	static s64 id_gen = 1;
-> +
-> +	id = bpf_map_lookup_elem(&owner_stacks, stacktrace);
-> +	if (id)
-> +		return *id;
-> +
-> +	new_id = (s32)__sync_fetch_and_add(&id_gen, 1);
-> +
-> +	bpf_map_update_elem(&owner_stacks, stacktrace, &new_id, BPF_NOEXIST);
-> +
-> +	id = bpf_map_lookup_elem(&owner_stacks, stacktrace);
-> +	if (id)
-> +		return *id;
-> +
-> +	return -1;
-> +}
-> +
-> +static inline void update_contention_data(struct contention_data *data, u64 duration, u32 count)
-> +{
-> +	__sync_fetch_and_add(&data->total_time, duration);
-> +	__sync_fetch_and_add(&data->count, count);
-> +
-> +	/* FIXME: need atomic operations */
-> +	if (data->max_time < duration)
-> +		data->max_time = duration;
-> +	if (data->min_time > duration)
-> +		data->min_time = duration;
-> +}
-> +
-> +static inline void update_owner_stat(u32 id, u64 duration, u32 flags)
-> +{
-> +	struct contention_key key = {
-> +		.stack_id = id,
-> +		.pid = 0,
-> +		.lock_addr_or_cgroup = 0,
-> +	};
-> +	struct contention_data *data = bpf_map_lookup_elem(&owner_stat, &key);
-> +
-> +	if (!data) {
-> +		struct contention_data first = {
-> +			.total_time = duration,
-> +			.max_time = duration,
-> +			.min_time = duration,
-> +			.count = 1,
-> +			.flags = flags,
-> +		};
-> +		bpf_map_update_elem(&owner_stat, &key, &first, BPF_NOEXIST);
-> +	} else {
-> +		update_contention_data(data, duration, 1);
-> +	}
-> +}
-> +
->  SEC("tp_btf/contention_begin")
->  int contention_begin(u64 *ctx)
->  {
-> @@ -437,6 +495,72 @@ int contention_begin(u64 *ctx)
->  	pelem->flags = (__u32)ctx[1];
->  
->  	if (needs_callstack) {
-> +		u32 i = 0;
-> +		u32 id = 0;
-> +		int owner_pid;
-> +		u64 *buf;
-> +		struct task_struct *task;
-> +		struct owner_tracing_data *otdata;
-> +
-> +		if (!lock_owner)
-> +			goto skip_owner;
-> +
-> +		task = get_lock_owner(pelem->lock, pelem->flags);
-> +		if (!task)
-> +			goto skip_owner;
-> +
-> +		owner_pid = BPF_CORE_READ(task, pid);
-> +
-> +		buf = bpf_map_lookup_elem(&stack_buf, &i);
-> +		if (!buf)
-> +			goto skip_owner;
-> +		for (i = 0; i < max_stack; i++)
-> +			buf[i] = 0x0;
-> +
-> +		if (!bpf_task_from_pid)
-> +			goto skip_owner;
-> +
-> +		task = bpf_task_from_pid(owner_pid);
-> +		if (!task)
-> +			goto skip_owner;
-> +
-> +		bpf_get_task_stack(task, buf, max_stack * sizeof(unsigned long), 0);
-> +		bpf_task_release(task);
-> +
-> +		otdata = bpf_map_lookup_elem(&owner_data, &pelem->lock);
-> +		id = get_owner_stack_id(buf);
-> +
-> +		/*
-> +		 * Contention just happens, or corner case `lock` is owned by process not
-> +		 * `owner_pid`. For the corner case we treat it as unexpected internal error and
-> +		 * just ignore the precvious tracing record.
-> +		 */
-> +		if (!otdata || otdata->pid != owner_pid) {
-> +			struct owner_tracing_data first = {
-> +				.pid = owner_pid,
-> +				.timestamp = pelem->timestamp,
-> +				.count = 1,
-> +				.stack_id = id,
-> +			};
-> +			bpf_map_update_elem(&owner_data, &pelem->lock, &first, BPF_ANY);
-> +		}
-> +		/* Contention is ongoing and new waiter joins */
-> +		else {
-> +			__sync_fetch_and_add(&otdata->count, 1);
-> +
-> +			/*
-> +			 * The owner is the same, but stacktrace might be changed. In this case we
-> +			 * store/update `owner_stat` based on current owner stack id.
-> +			 */
-> +			if (id != otdata->stack_id) {
-> +				update_owner_stat(id, pelem->timestamp - otdata->timestamp,
-> +						  pelem->flags);
-> +
-> +				otdata->timestamp = pelem->timestamp;
-> +				otdata->stack_id = id;
-> +			}
-> +		}
-> +skip_owner:
->  		pelem->stack_id = bpf_get_stackid(ctx, &stacks,
->  						  BPF_F_FAST_STACK_CMP | stack_skip);
->  		if (pelem->stack_id < 0)
-> @@ -473,6 +597,7 @@ int contention_end(u64 *ctx)
->  	struct tstamp_data *pelem;
->  	struct contention_key key = {};
->  	struct contention_data *data;
-> +	__u64 timestamp;
->  	__u64 duration;
->  	bool need_delete = false;
->  
-> @@ -500,12 +625,94 @@ int contention_end(u64 *ctx)
->  		need_delete = true;
->  	}
->  
-> -	duration = bpf_ktime_get_ns() - pelem->timestamp;
-> +	timestamp = bpf_ktime_get_ns();
-> +	duration = timestamp - pelem->timestamp;
->  	if ((__s64)duration < 0) {
->  		__sync_fetch_and_add(&time_fail, 1);
->  		goto out;
->  	}
->  
-> +	if (needs_callstack && lock_owner) {
-> +		struct owner_tracing_data *otdata = bpf_map_lookup_elem(&owner_data, &pelem->lock);
-> +
-> +		if (!otdata)
-> +			goto skip_owner;
-> +
-> +		/* Update `owner_stat` */
-> +		update_owner_stat(otdata->stack_id, timestamp - otdata->timestamp, pelem->flags);
-> +
-> +		/* No contention is occurring, delete `lock` entry in `owner_data` */
-> +		if (otdata->count <= 1)
-> +			bpf_map_delete_elem(&owner_data, &pelem->lock);
-> +		/*
-> +		 * Contention is still ongoing, with a new owner (current task). `owner_data`
-> +		 * should be updated accordingly.
-> +		 */
-> +		else {
-> +			u32 i = 0;
-> +			s32 ret = (s32)ctx[1];
-> +			u64 *buf;
-> +
-> +			__sync_fetch_and_add(&otdata->count, -1);
-> +
-> +			buf = bpf_map_lookup_elem(&stack_buf, &i);
-> +			if (!buf)
-> +				goto skip_owner;
-> +			for (i = 0; i < (u32)max_stack; i++)
-> +				buf[i] = 0x0;
-> +
-> +			/*
-> +			 * `ret` has the return code of the lock function.
-> +			 * If `ret` is negative, the current task terminates lock waiting without
-> +			 * acquiring it. Owner is not changed, but we still need to update the owner
-> +			 * stack.
-> +			 */
-> +			if (ret < 0) {
-> +				s32 id = 0;
-> +				struct task_struct *task;
-> +
-> +				if (!bpf_task_from_pid)
-> +					goto skip_owner;
-> +
-> +				task = bpf_task_from_pid(otdata->pid);
-> +				if (!task)
-> +					goto skip_owner;
-> +
-> +				bpf_get_task_stack(task, buf,
-> +						   max_stack * sizeof(unsigned long), 0);
-> +				bpf_task_release(task);
-> +
-> +				id = get_owner_stack_id(buf);
-> +
-> +				/*
-> +				 * If owner stack is changed, update `owner_data` and `owner_stat`
-> +				 * accordingly.
-> +				 */
-> +				if (id != otdata->stack_id) {
-> +					update_owner_stat(id, pelem->timestamp - otdata->timestamp,
-
-Shouldn't it be 'timestamp' instead of 'pelem->timestamp'?
-
-
-> +							  pelem->flags);
-> +
-> +					otdata->timestamp = pelem->timestamp;
-
-Ditto.
-
-Thanks,
-Namhyung
-
-
-> +					otdata->stack_id = id;
-> +				}
-> +			}
-> +			/*
-> +			 * Otherwise, update tracing data with the current task, which is the new
-> +			 * owner.
-> +			 */
-> +			else {
-> +				otdata->pid = pid;
-> +				otdata->timestamp = timestamp;
-> +				/*
-> +				 * We don't want to retrieve callstack here, since it is where the
-> +				 * current task acquires the lock and provides no additional
-> +				 * information. We simply assign -1 to invalidate it.
-> +				 */
-> +				otdata->stack_id = -1;
-> +			}
-> +		}
-> +	}
-> +skip_owner:
->  	switch (aggr_mode) {
->  	case LOCK_AGGR_CALLER:
->  		key.stack_id = pelem->stack_id;
-> @@ -589,14 +796,7 @@ int contention_end(u64 *ctx)
->  	}
->  
->  found:
-> -	__sync_fetch_and_add(&data->total_time, duration);
-> -	__sync_fetch_and_add(&data->count, 1);
-> -
-> -	/* FIXME: need atomic operations */
-> -	if (data->max_time < duration)
-> -		data->max_time = duration;
-> -	if (data->min_time > duration)
-> -		data->min_time = duration;
-> +	update_contention_data(data, duration, 1);
->  
->  out:
->  	pelem->lock = 0;
-> -- 
-> 2.48.1.601.g30ceb7b040-goog
+> Someone has to go and stick some EX_FLAG_USER on things, but I just
+> really don't believe that's doing to be useful. Because while you're
+> doing that, you should also audit if is_copy_from_user() will catch it
+> and if it does, you don't need the tag.
 > 
+> See how much tags you end up with..
+
+Agreed, I think the key point whether the error context is in a read from user
+memory. We do not care about the ex-type if we know its a MOV
+reading from userspace.
+
+is_copy_from_user() return true when both of the following two checks are
+true:
+
+- the current instruction is copy
+- source address is user memory
+
+If copy_user is true, we set
+
+m->kflags |= MCE_IN_KERNEL_COPYIN | MCE_IN_KERNEL_RECOV;
+
+Then do_machine_check will try fixup_exception first.
+
+	/*
+	 * Handle an MCE which has happened in kernel space but from
+	 * which the kernel can recover: ex_has_fault_handler() has
+	 * already verified that the rIP at which the error happened is
+	 * a rIP from which the kernel can recover (by jumping to
+	 * recovery code specified in _ASM_EXTABLE_FAULT()) and the
+	 * corresponding exception handler which would do that is the
+	 * proper one.
+	 */
+	if (m->kflags & MCE_IN_KERNEL_RECOV) {
+		if (!fixup_exception(regs, X86_TRAP_MC, 0, 0))
+			mce_panic("Failed kernel mode recovery", &err, msg);
+	}
+
+	if (m->kflags & MCE_IN_KERNEL_COPYIN)
+		queue_task_work(&err, msg, kill_me_never);
+
+So Peter's code is fine to me.
+
+---
+diff --git a/arch/x86/kernel/cpu/mce/severity.c b/arch/x86/kernel/cpu/mce/severity.c
+index dac4d64dfb2a..cb021058165f 100644
+--- a/arch/x86/kernel/cpu/mce/severity.c
++++ b/arch/x86/kernel/cpu/mce/severity.c
+@@ -300,13 +300,12 @@ static noinstr int error_context(struct mce *m, struct pt_regs *regs)
+  	copy_user  = is_copy_from_user(regs);
+  	instrumentation_end();
+  
+-	switch (fixup_type) {
+-	case EX_TYPE_UACCESS:
+-		if (!copy_user)
+-			return IN_KERNEL;
+-		m->kflags |= MCE_IN_KERNEL_COPYIN;
+-		fallthrough;
++	if (copy_user) {
++		m->kflags |= MCE_IN_KERNEL_COPYIN | MCE_IN_KERNEL_COPYIN;
++		return IN_KERNEL_RECOV
++	}
+  
++	switch (fixup_type) {
+  	case EX_TYPE_FAULT_MCE_SAFE:
+  	case EX_TYPE_DEFAULT_MCE_SAFE:
+  		m->kflags |= MCE_IN_KERNEL_RECOV;
+
+
+Is that ok? Please correct me if I missed anyting.
+
+Thanks.
+Shuai
 
