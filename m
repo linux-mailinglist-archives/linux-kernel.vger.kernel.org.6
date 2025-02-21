@@ -1,119 +1,91 @@
-Return-Path: <linux-kernel+bounces-525601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04F68A3F1F2
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 11:26:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A05E5A3F1F3
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 11:26:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1E5A67A4AEA
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:25:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA44F7A4C89
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:25:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DAED2054E9;
-	Fri, 21 Feb 2025 10:26:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n70omxeJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1BD3205AA6;
+	Fri, 21 Feb 2025 10:26:46 +0000 (UTC)
+Received: from out28-194.mail.aliyun.com (out28-194.mail.aliyun.com [115.124.28.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7302F1EE7BC;
-	Fri, 21 Feb 2025 10:26:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27C6E19CC20;
+	Fri, 21 Feb 2025 10:26:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.28.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740133581; cv=none; b=NYtKOXNC2LZSYjEkPSpTcV/zV9FhT2pC7tVwu5zzzniVpPTq3XEqdrv06uk9RyCyIxxzdsveuXFxrLs+hTUklyCgZ+y1sREzjdMwC8ragQP3ua7dcDJcspdd+bJTVKAIr2P9evUdpSA0ycIClLxfVv+hnDe+VVR9DTnqyodd1ts=
+	t=1740133606; cv=none; b=UhJVocsgzNf3tpFYjYz70FaGgs8abnoQnMk2pYvrV4Xqg/zOy4jZGpGKAPHXwwn+vUM9VAJGV0Af53FRJUTztelYxvzX2J9hfdfse0FhekODrqkjXkoAVFj4Ttrlr7hLoMdNNN0sU4ahrjlE66sqK84lqc4BqP7QicMT96KOj08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740133581; c=relaxed/simple;
-	bh=/8/8sr5tXAM5If0IVypRSEE4sz+/sFVU6d/4Ly9Ee8w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=V+q4AQba7x6ffL1/UyvFQfNwcS/k+MWhsTDsSTX2CWWWh7+AozsDqq7JovGxXIvL7nzoq7hSba6DJZ7lcuWyRU1kAcEipYHcTfNAZhf90HFvLGC5O6QFiuioWTzVrc9Z+l5PihKUkTMVAyqDhgvqO5iNTT8KkB3m5CDoAtOEAdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n70omxeJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5907C4CEEB;
-	Fri, 21 Feb 2025 10:26:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740133580;
-	bh=/8/8sr5tXAM5If0IVypRSEE4sz+/sFVU6d/4Ly9Ee8w=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=n70omxeJhI8GCp8OfWW3RO1kx3qMNRL8zuW4wrLcnOcdV1NRdzSKJ+YYJWVFePAXP
-	 hADz+lCPObX7VXDowr9pvrMtHIR5lSzec00e4bN8DnELBOeKMnAdE6V/AzOOklPK+Y
-	 ndxqN6VKDp2vw5H2t4k5tmqaetzZjacd7iZ+yjQMmtbj4tX/IXSgYBEAXMjPF1IzOl
-	 NOtmrlbfgr6x9tXLHtpTD2Q+R7ap2Qmjl98Lv1l759WGzwkx5qUWMIaQMf1aprGs8t
-	 R0quwt9wMqd6rbapKN4XvfA+y+cj87SyWiZy/ZerRjII2X3+J8e1JVciYWav+jDFHy
-	 u+HdFxVBVp9Hg==
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-aaeec07b705so306315266b.2;
-        Fri, 21 Feb 2025 02:26:20 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUNt69xekSYLQjAZ2yoMMQv/U1pUgcSNjHoc3pa1BraNj8IhEmdD62PLDH42+lgaWwjbhPdDcr3h5m/KG5o@vger.kernel.org, AJvYcCVGaz6gbYAGsRWjyv3rAyilfi0WDqREROd7TOzyAT5IJj9+D88vuZVNCuXZdY7EsTxzq6BEexbAvBZ5Yw==@vger.kernel.org, AJvYcCVMT7q08kFIGoky53i64otLLzzwOG3fZJtViS3JYw6mywF+O8KyQ0ZDnXmI7jZ8d75h1sI3tJYwYzlS@vger.kernel.org
-X-Gm-Message-State: AOJu0YxkQhe7dxD8Dzd2JFbk+KBE/tN00PJRllIySxJh4Xc7+MPsm+HM
-	J357ZT3BQkhfsZ0FLT+Slp3Av4RZ8oOTUcaJyaLVT6cCJbrWsTDqed1PnuciBDyLfsPqV++5CLq
-	Xh9NogsbHTxwxkYLYMwP1z1cqmBI=
-X-Google-Smtp-Source: AGHT+IF+dx1y8jdurtmAxgFLSYpG20X3+0Wp7NOu9CNU4jC2DPzEUAFWpRZ/vYkn9p1RrniyY9Wnwf42URprP3GZyU0=
-X-Received: by 2002:a17:906:318b:b0:abb:b322:2b37 with SMTP id
- a640c23a62f3a-abc0d9888eemr172218566b.7.1740133579401; Fri, 21 Feb 2025
- 02:26:19 -0800 (PST)
+	s=arc-20240116; t=1740133606; c=relaxed/simple;
+	bh=hcojOVOlZteYvTqZoEhKcz1p/KBnRLCEoAM+7JodPXM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZfMc7+9rDZF1BT8MWheInR8kegH8GYa6S2WjtPEw/n+FILNUbRWi4c8gYUkW3Go9A2pWPb2p8+D0DLsMa16Iqqq1YEi1kFYXTZW371PD20vrvCsPwSe8weGl+f2T6JZOMBIoLhr896S/JvPhRcEa4g2j5/BQojtRV6WaltGDMNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=awinic.com; spf=pass smtp.mailfrom=awinic.com; arc=none smtp.client-ip=115.124.28.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=awinic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=awinic.com
+Received: from ubuntu-VirtualBox..(mailfrom:wangweidong.a@awinic.com fp:SMTPD_---.bYUQxFL_1740133585 cluster:ay29)
+          by smtp.aliyun-inc.com;
+          Fri, 21 Feb 2025 18:26:30 +0800
+From: wangweidong.a@awinic.com
+To: lgirdwood@gmail.com,
+	broonie@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	perex@perex.cz,
+	tiwai@suse.com,
+	wangweidong.a@awinic.com,
+	rf@opensource.cirrus.com,
+	jack.yu@realtek.com,
+	ivprusov@salutedevices.com,
+	zhoubinbin@loongson.cn,
+	quic_pkumpatl@quicinc.com,
+	paulha@opensource.cirrus.com,
+	nuno.sa@analog.com,
+	linux-sound@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: yijiangtao@awinic.com
+Subject: [PATCH V1 0/2] ASoC: codecs: Add aw88166 amplifier driver
+Date: Fri, 21 Feb 2025 18:26:21 +0800
+Message-ID: <20250221102623.369435-1-wangweidong.a@awinic.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250221092523.85632-1-xry111@xry111.site> <CAAhV-H5_bKtO2mAFmfcZvD0pn9RhTA+UPjv7K574uPKxZbxX=g@mail.gmail.com>
- <f0c15994e7a79f6cd0c82930c0dfebb50458c941.camel@xry111.site>
-In-Reply-To: <f0c15994e7a79f6cd0c82930c0dfebb50458c941.camel@xry111.site>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Fri, 21 Feb 2025 18:26:11 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H4rDXDnzJwUE6PXMyuNGTs1NwUzQDP5eAPMmaHpqftP-Q@mail.gmail.com>
-X-Gm-Features: AWEUYZkKtsq-lGYG5QXtYRBdszSLZp8SfNp0lQCGpiQmL0851ruHkeCLcoUwyFg
-Message-ID: <CAAhV-H4rDXDnzJwUE6PXMyuNGTs1NwUzQDP5eAPMmaHpqftP-Q@mail.gmail.com>
-Subject: Re: [PATCH] LoongArch: vDSO: Remove --hash-style=sysv
-To: Xi Ruoyao <xry111@xry111.site>
-Cc: Guo Ren <guoren@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, Fangrui Song <i@maskray.me>, 
-	WANG Xuerui <kernel@xen0n.name>, Masahiro Yamada <masahiroy@kernel.org>, 
-	Tiezhu Yang <yangtiezhu@loongson.cn>, "Jason A. Donenfeld" <Jason@zx2c4.com>, loongarch@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	linux-csky@vger.kernel.org, linux-arch@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Feb 21, 2025 at 6:23=E2=80=AFPM Xi Ruoyao <xry111@xry111.site> wrot=
-e:
->
-> On Fri, 2025-02-21 at 17:47 +0800, Huacai Chen wrote:
-> > Hi, Ruoyao,
-> >
-> > On Fri, Feb 21, 2025 at 5:25=E2=80=AFPM Xi Ruoyao <xry111@xry111.site> =
-wrote:
-> > >
-> > > glibc added support for .gnu.hash in 2006 and .hash has been obsolete=
-d
-> > > far before the first LoongArch CPU was taped.  Using
-> > > --hash-style=3Dsysv might imply unaddressed issues and confuse reader=
-s.
-> > >
-> > > In the past we really had an unaddressed issue: the vdso selftests di=
-d
-> > > not know how to process .gnu.hash.  But it has been addressed by comm=
-it
-> > > e0746bde6f82 ("selftests/vDSO: support DT_GNU_HASH") now.
-> > >
-> > > Just drop the option and rely on the linker default, which is likely
-> > > "both" (AOSC) or "gnu" (Arch, Debian, Gentoo, LFS) on all LoongArch
-> > > distros.
-> > What about changing to "--hash-style=3Dboth" as most architectures do?
->
-> IMO we are more close to ARM64 for the aspect that there are no libc
-> (glibc or musl) releases lacking GNU hash support, so I prefer the ARM64
-> way.
->
-> Maybe this should be changed for some of other architectures (RISC-V and
-> C-SKY?) as well because I guess the only reason they used "both" was
-> "hey, without this the self tests don't work on Debian" but this is
-> resolved now.  Adding a few recipients and Cc for discussion.
-OK, maybe we can change it for RISC-V/C-SKY and see what they will.
+From: Weidong Wang <wangweidong.a@awinic.com>
 
-Huacai
+Add the awinic,aw88166 property to support the aw88166 chip.
 
->
-> --
-> Xi Ruoyao <xry111@xry111.site>
-> School of Aerospace Science and Technology, Xidian University
+The driver is for amplifiers aw88166 of Awinic Technology
+Corporation. The AW88166 is a high efficiency digital
+Smart K audio amplifier
+
+Weidong Wang (2):
+  ASoC: dt-bindings: Add schema for "awinic,aw88166"
+  ASoC: codecs: Add aw88166 amplifier driver
+
+ .../bindings/sound/awinic,aw88395.yaml        |    1 +
+ sound/soc/codecs/Kconfig                      |   13 +
+ sound/soc/codecs/Makefile                     |    2 +
+ sound/soc/codecs/aw88166.c                    | 1937 +++++++++++++++++
+ sound/soc/codecs/aw88166.h                    |  534 +++++
+ 5 files changed, 2487 insertions(+)
+ create mode 100644 sound/soc/codecs/aw88166.c
+ create mode 100644 sound/soc/codecs/aw88166.h
+
+
+base-commit: 334426094588f8179fe175a09ecc887ff0c75758
+-- 
+2.47.0
+
 
