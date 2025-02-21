@@ -1,128 +1,275 @@
-Return-Path: <linux-kernel+bounces-525947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB36DA3F7A9
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 15:49:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4A46A3F7B9
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 15:52:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F07E08617D2
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 14:49:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF155425D56
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 14:50:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36951209671;
-	Fri, 21 Feb 2025 14:49:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 498BE21018D;
+	Fri, 21 Feb 2025 14:50:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YCDEjzNH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="HFSQI30C"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9807553AC
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 14:49:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60A241D9688;
+	Fri, 21 Feb 2025 14:49:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740149361; cv=none; b=DDvff9ZA2SspbrzLFL8HzBdc7e/YhSykZe0z+tZRfNShrhsrhpTMw+pv7SxxO6ld/ZR0U6R8zPn3oIbTWNuLRchZAMeLpH50upjed0N7J0Wd/s8BUoeioy35o63rlgG2REZlSgm7oPVNyThdnDTQKEOL5ANctsilnQxCg7l03pk=
+	t=1740149403; cv=none; b=NrUfvtqB3ekseDT5D7cKoUHeSUZ6pdJovrLZo4YiRlnZlx4Xz/nvnjfxCADrVEG+qh8b8NjrS+ZlfkYNwJRHUY/4Arh3inwRX9FzriLtqdZubmbZY2FDzk9wrkMbZLs4THncUOFfKTTziGr/gx7wVIF5XWQ4HOlFFPLt74k7PPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740149361; c=relaxed/simple;
-	bh=jNIwMrKuas8S5bhOgu1FnGuVIiAseKlTQwoMMcQYYHI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WP6udHluIDvdJl4glLrT1rufNt1VieQfc6ncO7PA2ChIIEOfY/kWCymTV4M2ZavfASAxIRCX5PAp7DZs8326JJCqyIqke8V+g5lih8vakmFdOTjEAu7nzADpkZfT6CxKl6nS4iNe8YS+mzn9UOy8KogCUqjlVtbzRRPuPgdsy70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YCDEjzNH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CA5AC4CED6;
-	Fri, 21 Feb 2025 14:49:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740149361;
-	bh=jNIwMrKuas8S5bhOgu1FnGuVIiAseKlTQwoMMcQYYHI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YCDEjzNHHa5lsZd7drnFO7Gc3rFS8WG830+zZSl0TKMtK5+39bEb8FHHanlsAgA5U
-	 YPWwnV67WTHJpBAx3H0DXKnhLKsfHgmtW8xnEasNOh6bc9SjlQF24VhFdYExaPOW6G
-	 XemqVrPmz6UK6prsbeaYJQKY5cdeCHqni/opJ2MYB+2Gnib9y3flsEGWiPyPkUG05A
-	 5Ybn1UYboaipNKQDF/8TdNDqKNCCC/PZNWVdYbXdKYqgsl9rTB1GQJZXcYvXSpr3ea
-	 u/aRr0+i2aQ1TilAZPGhLuFAWzmwXOW3auBepEquO0q1jLspJHPQrt+gBbUSI0Rtff
-	 5A2pkdTWXQuNg==
-Date: Fri, 21 Feb 2025 15:49:18 +0100
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: open list <linux-kernel@vger.kernel.org>, Tejun Heo <tj@kernel.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH] workqueue: Always use wq_select_unbound_cpu() for
- WORK_CPU_UNBOUND.
-Message-ID: <Z7iSboU-05uMJ7-e@localhost.localdomain>
-References: <20250221112003.1dSuoGyc@linutronix.de>
+	s=arc-20240116; t=1740149403; c=relaxed/simple;
+	bh=bQMa1bETMwX0QcNeLATCLvgrmj4wOZuAEtSUu8IqHhk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=oaEj4hrtP91RTis1bK5MKtVgOJpew4P/q1840+fTh6CQHh9WQDZwiRDJagTWGOlijKotlwpQUDn8m5RaPnU4rPMJZAZdF+pCj4eSOt1iWwrGFmwxialmKsLQ/hdM2MN+fEVRkAGj3EjEKFvHr+q0fNPFM3wPYE8eeoytWAP29Sc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=HFSQI30C; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 1bc8b3c8f06311ef8eb9c36241bbb6fb-20250221
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=cyoFmNA4gH9PoRDuPAgIw3tFvZSaFPLD3iSzf04UG9o=;
+	b=HFSQI30CL/bCkUjyNO5ulEUFCHIsHdcPf/1XNPGQ2+uuhSki7mgVcEUgbOo7R0volV8R/k+m3rTMyfmW+0VZAUm+4/KlDWEsBsAIXqEQoLm6vYKlIHutvMijEaiYolfoEuV8MnQJK+N2MYFR2mtQFwXx8QmMEuNxHRK73tMB4lI=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.46,REQID:a1075417-63da-4d5b-90df-2effd141ea09,IP:0,U
+	RL:0,TC:0,Content:0,EDM:-25,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
+	N:release,TS:-25
+X-CID-META: VersionHash:60aa074,CLOUDID:83b06bb5-a2a1-4ef3-9ef9-e116773da0a7,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:1|19,IP:
+	nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,L
+	ES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 1bc8b3c8f06311ef8eb9c36241bbb6fb-20250221
+Received: from mtkmbs14n1.mediatek.inc [(172.21.101.75)] by mailgw02.mediatek.com
+	(envelope-from <macpaul.lin@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 425047828; Fri, 21 Feb 2025 22:49:53 +0800
+Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
+ mtkmbs11n2.mediatek.inc (172.21.101.187) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.28; Fri, 21 Feb 2025 22:49:51 +0800
+Received: from mtksitap99.mediatek.inc (10.233.130.16) by
+ mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1258.28 via Frontend Transport; Fri, 21 Feb 2025 22:49:51 +0800
+From: Macpaul Lin <macpaul.lin@mediatek.com>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
+	<matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-mediatek@lists.infradead.org>, Alexandre Mergnat
+	<amergnat@baylibre.com>
+CC: Bear Wang <bear.wang@mediatek.com>, Pablo Sun <pablo.sun@mediatek.com>,
+	Macpaul Lin <macpaul.lin@mediatek.com>, Macpaul Lin <macpaul@gmail.com>,
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>,
+	<linux-usb@vger.kernel.org>, Chris-qj chen <chris-qj.chen@mediatek.com>,
+	Fabien Parent <fparent@baylibre.com>, Yow-Shin Liou
+	<yow-shin.liou@mediatek.com>, Simon Sun <simon.sun@yunjingtech.com>
+Subject: [PATCH v5] arm64: dts: mediatek: mt8395-genio-1200-evk: add support for TCPC port
+Date: Fri, 21 Feb 2025 22:49:41 +0800
+Message-ID: <20250221144941.2844333-1-macpaul.lin@mediatek.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250221112003.1dSuoGyc@linutronix.de>
+Content-Type: text/plain
+X-MTK: N
 
-Le Fri, Feb 21, 2025 at 12:20:03PM +0100, Sebastian Andrzej Siewior a écrit :
-> If the user did not specify a CPU while enqueuing a work item then
-> WORK_CPU_UNBOUND is passed. In this case, for WQ_UNBOUND a CPU is
-> selected based on wq_unbound_cpumask while the local CPU is preferred.
-> For !WQ_UNBOUND the local CPU is selected.
-> For NOHZ_FULL system with isolated CPU wq_unbound_cpumask is set to the
-> not isolated (housekeeping) CPUs. This leads to different behaviour if a
-> work item is scheduled on an isolated CPU where
-> 	schedule_delayed_work(, 1);
-> 
-> will move the timer to the housekeeping CPU and then schedule the work
-> there (on the housekeeping CPU) while
-> 	schedule_delayed_work(, 0);
-> 
-> will schedule the work item on the isolated CPU.
-> 
-> The documentation says WQ_UNBOUND prefers the local CPU. It can
-> preferer the local CPU if it is part of wq_unbound_cpumask.
-> 
-> Restrict WORK_CPU_UNBOUND to wq_unbound_cpumask via
-> wq_select_unbound_cpu().
-> 
-> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+From: Fabien Parent <fparent@baylibre.com>
 
-I really would like to have this patch in. I have considered
-doing that a few month ago but got sort-of discouraged by the
-lack of properly defined semantics for schedule_work(). And that
-function has too many users to check their locality assumptions.
+Enable USB Type-C support on MediaTek MT8395 Genio 1200 EVK by adding
+configuration for TCPC Port, USB-C connector, MUX IT5205 and related
+settings.
 
-Its headers advertize to queue in global workqueue but the target
-is system_wq and not system_unbound_wq. But then it's using
-WORK_CPU_UNBOUND through queue_work().
+Configure dual role switch capability, set up PD (Power Delivery) profiles,
+and establish endpoints for SS (SuperSpeed) and HS (HighSpeed) USB.
 
-I'm tempted to just assume that none of its users depend on the
-work locality?
+Update pinctrl configurations for U3 P0 VBus default pins and set dr_mode
+to "otg" for OTG (On-The-Go) mode operation.
 
-Thanks.
+Add ITE IT5205 (TYPEC MUX) under I2C2 bus and configure its properties;
+also add references and configurations to 'typec-mux' node.
 
-> ---
->  kernel/workqueue.c | 8 ++------
->  1 file changed, 2 insertions(+), 6 deletions(-)
-> 
-> diff --git a/kernel/workqueue.c b/kernel/workqueue.c
-> index bfe030b443e27..134d9550538aa 100644
-> --- a/kernel/workqueue.c
-> +++ b/kernel/workqueue.c
-> @@ -2261,12 +2261,8 @@ static void __queue_work(int cpu, struct workqueue_struct *wq,
->  	rcu_read_lock();
->  retry:
->  	/* pwq which will be used unless @work is executing elsewhere */
-> -	if (req_cpu == WORK_CPU_UNBOUND) {
-> -		if (wq->flags & WQ_UNBOUND)
-> -			cpu = wq_select_unbound_cpu(raw_smp_processor_id());
-> -		else
-> -			cpu = raw_smp_processor_id();
-> -	}
-> +	if (req_cpu == WORK_CPU_UNBOUND)
-> +		cpu = wq_select_unbound_cpu(raw_smp_processor_id());
->  
->  	pwq = rcu_dereference(*per_cpu_ptr(wq->cpu_pwq, cpu));
->  	pool = pwq->pool;
-> -- 
-> 2.47.2
-> 
+Signed-off-by: Fabien Parent <fparent@baylibre.com>
+Signed-off-by: Yow-Shin Liou <yow-shin.liou@mediatek.com>
+Signed-off-by: Simon Sun <simon.sun@yunjingtech.com>
+Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
+---
+ .../dts/mediatek/mt8395-genio-1200-evk.dts    | 100 ++++++++++++++++++
+ 1 file changed, 100 insertions(+)
+
+Changes for v2:
+ - Drop the no need '1/2' DT Schema update patch in the 1st version.  
+ - Fix indent for 'ports' node, it should under the 'connector' node.
+ - Correct the index for 'port@0' and 'port@1' node.
+
+Changes for v3:
+ - Correct the order between new added nodes.
+
+Changes for v4:
+ - Reorder for property 'op-sink-microwatt'.
+ - Fix indentation for 'source-pdos' and 'sink-pdos' nodes.
+ - Correct node 'pin-cmd-dat' with 'pins-vbus'.
+ - Add both Highspeed and Superspeed ports to ssusb0 port.
+ - Set 'role-switch-default-mode' = "peripheral" for ssusb0 port.
+ - Rename endpoint of USB data port to 'mtu3_hs0_role_sw' and
+   'mtu3_ss0_role_sw'.
+ - Drop it5205fn phandle for node typec-mux@48.
+ - Reorder properties of typec-mux@48
+ - Add "Reviewed-by:" tag. Thanks!
+
+Changes for v5:
+ - Squash two patches into one patch and refine commit messages:
+   suggested by reviewer.
+ - Drop 'role-switch-default-mode'
+ - Add altmodes settings
+ - Drop 'Reviewed-by:' tag since the two sub patches has been combined
+   into a new patch.
+
+diff --git a/arch/arm64/boot/dts/mediatek/mt8395-genio-1200-evk.dts b/arch/arm64/boot/dts/mediatek/mt8395-genio-1200-evk.dts
+index 1ef6262b65c9..6d139d40f8b3 100644
+--- a/arch/arm64/boot/dts/mediatek/mt8395-genio-1200-evk.dts
++++ b/arch/arm64/boot/dts/mediatek/mt8395-genio-1200-evk.dts
+@@ -224,6 +224,21 @@ &i2c2 {
+ 	pinctrl-0 = <&i2c2_pins>;
+ 	pinctrl-names = "default";
+ 	status = "okay";
++
++	typec-mux@48 {
++		compatible = "ite,it5205";
++		reg = <0x48>;
++		vcc-supply = <&mt6359_vibr_ldo_reg>;
++		mode-switch;
++		orientation-switch;
++		status = "okay";
++
++		port {
++			it5205_sbu_ep: endpoint {
++				remote-endpoint = <&mt6360_ssusb_sbu_ep>;
++			};
++		};
++	};
+ };
+ 
+ &i2c6 {
+@@ -330,6 +345,61 @@ mt6360_ldo7: ldo7 {
+ 				regulator-always-on;
+ 			};
+ 		};
++
++		tcpc {
++			compatible = "mediatek,mt6360-tcpc";
++			interrupts-extended = <&pio 17 IRQ_TYPE_LEVEL_LOW>;
++			interrupt-names = "PD_IRQB";
++
++			connector {
++				compatible = "usb-c-connector";
++				label = "USB-C";
++				data-role = "dual";
++				op-sink-microwatt = <10000000>;
++				power-role = "dual";
++				try-power-role = "sink";
++
++				source-pdos = <PDO_FIXED(5000, 1000,
++							 PDO_FIXED_DUAL_ROLE |
++							 PDO_FIXED_DATA_SWAP)>;
++				sink-pdos = <PDO_FIXED(5000, 2000,
++						       PDO_FIXED_DUAL_ROLE |
++						       PDO_FIXED_DATA_SWAP)>;
++
++				altmodes {
++					displayport {
++						svid = /bits/ 16 <0xff01>;
++						vdo = <0x00001c46>;
++					};
++				};
++
++				ports {
++					#address-cells = <1>;
++					#size-cells = <0>;
++
++					port@0 {
++						reg = <0>;
++						typec_con_hs: endpoint {
++							remote-endpoint = <&mtu3_hs0_role_sw>;
++						};
++					};
++
++					port@1 {
++						reg = <1>;
++						typec_con_ss: endpoint {
++							remote-endpoint = <&mtu3_ss0_role_sw>;
++						};
++					};
++
++					port@2 {
++						reg = <2>;
++						mt6360_ssusb_sbu_ep: endpoint {
++							remote-endpoint = <&it5205_sbu_ep>;
++						};
++					};
++				};
++			};
++		};
+ 	};
+ };
+ 
+@@ -755,6 +825,13 @@ pins-reset {
+ 		};
+ 	};
+ 
++	u3_p0_vbus: u3-p0-vbus-default-pins {
++		pins-vbus {
++			pinmux = <PINMUX_GPIO63__FUNC_VBUSVALID>;
++			input-enable;
++		};
++	};
++
+ 	uart0_pins: uart0-pins {
+ 		pins {
+ 			pinmux = <PINMUX_GPIO98__FUNC_UTXD0>,
+@@ -885,8 +962,31 @@ &ufsphy {
+ };
+ 
+ &ssusb0 {
++	dr_mode = "otg";
++	pinctrl-names = "default";
++	pinctrl-0 = <&u3_p0_vbus>;
++	usb-role-switch;
+ 	vusb33-supply = <&mt6359_vusb_ldo_reg>;
+ 	status = "okay";
++
++	ports {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		port@0 {
++			reg = <0>;
++			mtu3_hs0_role_sw: endpoint {
++				remote-endpoint = <&typec_con_hs>;
++			};
++		};
++
++		port@1 {
++			reg = <1>;
++			mtu3_ss0_role_sw: endpoint {
++				remote-endpoint = <&typec_con_ss>;
++			};
++		};
++	};
+ };
+ 
+ &ssusb2 {
+-- 
+2.45.2
+
 
