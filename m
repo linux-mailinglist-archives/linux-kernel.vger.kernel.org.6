@@ -1,388 +1,456 @@
-Return-Path: <linux-kernel+bounces-524958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 402DEA3E927
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 01:26:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90532A3E92C
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 01:36:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 422B019C1A18
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 00:26:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D3433BFCF5
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 00:36:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D58078F6E;
-	Fri, 21 Feb 2025 00:26:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EBD379FD;
+	Fri, 21 Feb 2025 00:36:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YtgzXdC+"
-Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OPTAuUEc"
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B638D566A
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 00:26:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15FBBA31
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 00:36:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740097580; cv=none; b=BiVrWdvtQKgORDyAUdidr6+yVJ/q+pejoscgXFuuXbJboTZyGuZt7nd9sjSh1nzA8ZkECjgvN69Rmwnt2W8SsTsW+IQjpto3JqWP2zfIoqBk6awv0Km+GtuknxTar+wapGPYGILxu7evthNv62L7wYlaW+qTJOCLedkcEdqqUqg=
+	t=1740098183; cv=none; b=JYFBXoSTV9fn2TJgbT5qIkOaB5SSzk3nxyJ7bqEI3Slb3VknagNRFsz0eYyz4K/2I/yLo7nj+0mWu0Gr/UepjOnhFeZZZm2fob8ZzA/lDogp7oUZwgNGp/XSYTA5h9vgsIJKWjYwIdBpK6LHIWsrkcDDuVyUhYt7wZRjbJUp7Ic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740097580; c=relaxed/simple;
-	bh=l8N+TByGDZiYIioSsMlzFQL4lZbUOFhvRVB94wyN95k=;
-	h=From:Content-Type:Message-ID:Date:MIME-Version:To:Cc:Subject; b=jLM/mx2eyxRSgWDItRhHBDu0kbKEldfo5uFaaClYVqD5ApNvmebmZi06b2nxGIN+6/nE4HpSPxXx0M0epc1xrU0wVi6Xccyfrgg55PS1vCFuh/1aWCiiKhTZxB6uDny09Il+3XL+REAI6FftHxCocJyIRdwYsbnB8zwWQcYltbc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YtgzXdC+; arc=none smtp.client-ip=209.85.166.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-3ce87d31480so4809125ab.2
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 16:26:17 -0800 (PST)
+	s=arc-20240116; t=1740098183; c=relaxed/simple;
+	bh=gEnS80rCqQ507kGmSH2X6BN1GafijNf0Icp4TgQxWiI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IctXtilkVKC4QrPGolvWboaeNyk/a1lSGZr8I6wvLRlMu+XhMjmKtr8CHQqTZdE4O0In9eSMSq854D89x9N/oRP/2dRxjMLvdyTw0R33sf39TtQvZPS3cM7v0y3Upaqr54NcgveY4IdQ5OsGxUyMTtGxaZKx2hXAcUKPyEnKPLk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OPTAuUEc; arc=none smtp.client-ip=209.85.160.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-472098e6e75so70231cf.1
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 16:36:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740097576; x=1740702376; darn=vger.kernel.org;
-        h=subject:cc:to:content-language:reply-to:user-agent:mime-version
-         :date:message-id:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=m2LxaVbFnKNd2SWaJEfSQ3Ol5rs4uCia6cLFKHKTZMU=;
-        b=YtgzXdC+iId395I5kjsgx9uzHCcirWkDVpj59qZo4UzBq44haLTtb++0URwFyhEdxm
-         KtiZRp+uoxeyL1OzlGNDFxaEVAdJ0w9M3rkc0b8Va3CdO2q/KUYSrJn05/Dbcopg55nE
-         awUzJ+YtbpYy0Z/tXpGn/274minRlAKrweDHOqIsVESUdxdUJsqj2FGJiKGw541q3Z1B
-         JXdkE5KjqPUbWlsB2ZBAIp1usFHrIwW4mKEwYkRECnRCEASN87c+AnyXAcFlb7pmhi4x
-         Cegk8wIsWg1+VSHnuNxzUnqaQBWF/QWwX5l6/bUI5c1sWUu5tdqEnKvXtBCZC4+T9jEv
-         tJzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740097576; x=1740702376;
-        h=subject:cc:to:content-language:reply-to:user-agent:mime-version
-         :date:message-id:from:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1740098180; x=1740702980; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=m2LxaVbFnKNd2SWaJEfSQ3Ol5rs4uCia6cLFKHKTZMU=;
-        b=aehn4cIOf8464OsV8Mhz5s1fqdWw8rNqnN2x8+iFr51EtKZneCdE/De04UHeHBM2ax
-         2VioZ0cxbXiflNc+1qbUy69WEjFEuhNp92aHQg81KJf4I4WWXVF5Uge28f8eeWuOaO7I
-         2UXYyjHaYL8kMjeDYyPxQ8ugg95exAG2HmMOevm9S7m64g5VYZu/vtluIJLMfoQ7xFYI
-         HxalVYzbZHU95zacCQuoW2RHsXN58+aik7VaixuufU3ASDB8jAI+O6XZrfbwPMG07W2R
-         ViBhl7muciJHX3N+Vc95POdkM8pYhmeoOl4FsGZJajB/K5TwVEX1J9i/A76GPqnCLfLW
-         S9qQ==
-X-Gm-Message-State: AOJu0YwWBYO9O9IDLUYcDvXi+9Ml/0xZkG49R3C+OmH3Qg0Jl95htECf
-	BmyU/fxx2gHbspdSGSd0PaTAJLFcFisEs1aNaGwLLUt7IwaN3lGMlHJuva6B/YM=
-X-Gm-Gg: ASbGncsT+g37OjbdISnoL+4ToceDxptUHFdN0eg/rb82PRjEzAIgIQYwcjsUDU2cW+0
-	oitkTBaJWOD2YvhIeqQrxNkifWnpM44FFThu6tGDrOm0sKkgH3CF2xeuaMzy8mPsmzN4yCK5B6O
-	eOsAqmNWYHWiUv99x17qd0jfNrr0uATPCD8LR+HylOqVEnl/K2oAfp61fHRd68YffvbLNJrO6Gj
-	zXOZUI0NSmKgHmqGui6HUS54cstQMydS6EII9zpjLCyQihWWEug2Cnp5PG7RV3okEkdg/Opqbyp
-	KdTElk085Zmf8Q==
-X-Google-Smtp-Source: AGHT+IEpzn6oRvQcMCKk3X3RuzhrCz8LwVkuwKyA+or12vEiqqlvmzQCBIBtgvj/jczUMB0P1pDFvw==
-X-Received: by 2002:a92:c26c:0:b0:3cf:c7d3:e4b with SMTP id e9e14a558f8ab-3d2caf1d0dcmr13400405ab.21.1740097575903;
-        Thu, 20 Feb 2025 16:26:15 -0800 (PST)
-Received: from [192.168.126.31] ([199.7.156.229])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ee7d9653aesm3112961173.16.2025.02.20.16.26.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Feb 2025 16:26:14 -0800 (PST)
-From: Aravind Ceyardass <aravind.pub@gmail.com>
-X-Google-Original-From: Aravind Ceyardass <dev@aravind.cc>
-Content-Type: multipart/mixed; boundary="------------dRvR4DoswZYzP5cgrXtdxyRE"
-Message-ID: <1a7b27a4-1030-c30f-03e8-0868ee9ea6b9@aravind.cc>
-Date: Thu, 20 Feb 2025 19:26:10 -0500
+        bh=ndbATN2bQYxCQ40vKy6hYq1kBt06N1Kmt7sbVE6aE6M=;
+        b=OPTAuUEcsoC3pKfBE/w94M3nzY2ie9FiXfkZl/9GVVslrsukQ+PIRuADL3eI1ZWdb+
+         NVg4dLJevRX4krtj3l5u6Ay9dLeNMVJRN+MMij4Xy4askR5LGJ4aYsZm8QnpWMmpGpD9
+         8JW5qJT63trum86y46t7kaxOwWnZjHixdfLWscRb6vOjsvw+mKrXToKWDwBlXCScjXvh
+         PSyH7nT3twUxvJzXO68PR+njkXb37NRrN0JVXdds++iCUsQgbQ57gwY0GCpPOfqqfVx1
+         Wh4Mnc9jl9i6k2T5j8a5BTfY4QLcDvJnfXFXFIKenpMlUfCdrU+JOP+N34gOraRC73Op
+         e5BQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740098180; x=1740702980;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ndbATN2bQYxCQ40vKy6hYq1kBt06N1Kmt7sbVE6aE6M=;
+        b=Dcm59UzGNJtqi9UZ8imNINYAokBTFsV2UCu+uaPXGxA5V5CVsVURdfuuh3K+cB0zdJ
+         qQjADUo1yMbz4whzsISv3ytpxb0oDRDfrZ8V9DXSzJm6h6Sz/qASLDWrFBfCt4qjoi3h
+         46KBmHMhdguthwKAKel3ZCySBgTerxlPeObMX3B06IpLZCXcYhhOuA0LKjtTq91Uk6+h
+         8mS2qDqDRzCYj8hbIeHLU8uX7otvXtxyK+fVBGRDChcekwWbXKLQfk7lKB+sqGVsIqqQ
+         PMAWuiMjk+GLJV9aT5awnDlBdQrExv4joZdG6TEGmSvo1TztMVeIw6J90tyY+hXIPnma
+         u8sQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVbEXiLTTKBxTrPOE0IDXMsMmdzezEBFJKMCQpMTubhOUALv1Nbzr99SLBHxw0FjBlNYUUtb1Ne0xpeXf4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzuVUlCgffNj6SnIhHHd9ZQZcbHO1YuytscMyQswYhHT1VtRvOg
+	3Z85gp6S5OUNwLw0OziN8f3B4YEcPES5aSY/B0dtEmsUWqhjiI2NPFQF+D9GdO/TPo9rUE5qH/X
+	FbkQb6bMM/i+gsC1gn913w/ntCYNxjYUci9Oi
+X-Gm-Gg: ASbGncssiFi9cI+UPxCEWkfoBSmEHemlJEMP/0RPffVuFyglM9YdsB+Gg4B1ncDupiR
+	KXZP/r01KMLuAWP3QBSrqbVEtyCnL8gUCYImQc+h5rg85VeTiUDl+I8HiIgApDNPs9M+iMuWh
+X-Google-Smtp-Source: AGHT+IE92lIZZbQYgejE/zFDjDSUSYgBR8VlYgUVrXto+vwpwaz2n/RkKysVuugmqszQijY20EYb8Hi2LNd0zwnYHu8=
+X-Received: by 2002:a05:622a:1a06:b0:471:e982:c73d with SMTP id
+ d75a77b69052e-472250dbc04mr673351cf.11.1740098179481; Thu, 20 Feb 2025
+ 16:36:19 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.1
-Reply-To: dev@aravind.cc
-Content-Language: en-US
-To: linux-kernel@vger.kernel.org
-Cc: gregkh@linuxfoundation.org, torvalds@linux-foundation.org, kees@kernel.org
-Subject: NEW GCC EXTENSION for kernel memory management.
+References: <20250219112519.92853-1-21cnbao@gmail.com> <CAJuCfpEWFz14R1vD4Rezy98WBk25HWWX+6DsGBekeYMugKTsfQ@mail.gmail.com>
+ <CAGsJ_4yx1=jaQmDG_9rMqHFFkoXqMJw941eYvtby28OqDq+S7g@mail.gmail.com>
+ <Z7ZX28XARM7seknO@x1.local> <CAGsJ_4wptMn8HX6Uam7AQpWeE=nOUDHE-Vr81SQJq_oSjmTFHg@mail.gmail.com>
+ <Z7ez2Vl8Sa_bRb4e@x1.local> <CAJuCfpHmS7y-gb7YTn4TfPz-YHau3po7TU3tN+8q+1JxXm-rtQ@mail.gmail.com>
+ <CAJuCfpHMpEJRAb9O+aRX4f638Ubb7FgwLorm+f1TJ8mUTMV7hA@mail.gmail.com>
+In-Reply-To: <CAJuCfpHMpEJRAb9O+aRX4f638Ubb7FgwLorm+f1TJ8mUTMV7hA@mail.gmail.com>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Thu, 20 Feb 2025 16:36:08 -0800
+X-Gm-Features: AWEUYZnStP-lAeMijR0y6LNLygrcaQlKBYJ8BbZJ6dED70knG-ILcs1ltaL_Xu4
+Message-ID: <CAJuCfpEeEbdE2ycEQ+3zSbCE3NJsG1vTbqMtZyzry6FRFZB61w@mail.gmail.com>
+Subject: Re: [PATCH RFC] mm: Fix kernel BUG when userfaultfd_move encounters swapcache
+To: Peter Xu <peterx@redhat.com>
+Cc: Barry Song <21cnbao@gmail.com>, Lokesh Gidra <lokeshgidra@google.com>, linux-mm@kvack.org, 
+	akpm@linux-foundation.org, linux-kernel@vger.kernel.org, 
+	zhengtangquan@oppo.com, Barry Song <v-songbaohua@oppo.com>, 
+	Andrea Arcangeli <aarcange@redhat.com>, Al Viro <viro@zeniv.linux.org.uk>, 
+	Axel Rasmussen <axelrasmussen@google.com>, Brian Geffon <bgeffon@google.com>, 
+	Christian Brauner <brauner@kernel.org>, David Hildenbrand <david@redhat.com>, Hugh Dickins <hughd@google.com>, 
+	Jann Horn <jannh@google.com>, Kalesh Singh <kaleshsingh@google.com>, 
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Matthew Wilcox <willy@infradead.org>, 
+	Michal Hocko <mhocko@suse.com>, Mike Rapoport <rppt@kernel.org>, 
+	Nicolas Geoffray <ngeoffray@google.com>, Ryan Roberts <ryan.roberts@arm.com>, 
+	Shuah Khan <shuah@kernel.org>, ZhangPeng <zhangpeng362@huawei.com>, Yu Zhao <yuzhao@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This is a multi-part message in MIME format.
---------------dRvR4DoswZYzP5cgrXtdxyRE
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+On Thu, Feb 20, 2025 at 3:52=E2=80=AFPM Suren Baghdasaryan <surenb@google.c=
+om> wrote:
+>
+> On Thu, Feb 20, 2025 at 3:47=E2=80=AFPM Suren Baghdasaryan <surenb@google=
+.com> wrote:
+> >
+> > On Thu, Feb 20, 2025 at 2:59=E2=80=AFPM Peter Xu <peterx@redhat.com> wr=
+ote:
+> > >
+> > > On Thu, Feb 20, 2025 at 12:04:40PM +1300, Barry Song wrote:
+> > > > On Thu, Feb 20, 2025 at 11:15=E2=80=AFAM Peter Xu <peterx@redhat.co=
+m> wrote:
+> > > > >
+> > > > > On Thu, Feb 20, 2025 at 09:37:50AM +1300, Barry Song wrote:
+> > > > > > On Thu, Feb 20, 2025 at 7:27=E2=80=AFAM Suren Baghdasaryan <sur=
+enb@google.com> wrote:
+> > > > > > >
+> > > > > > > On Wed, Feb 19, 2025 at 3:25=E2=80=AFAM Barry Song <21cnbao@g=
+mail.com> wrote:
+> > > > > > > >
+> > > > > > > > From: Barry Song <v-songbaohua@oppo.com>
+> > > > > > > >
+> > > > > > > > userfaultfd_move() checks whether the PTE entry is present =
+or a
+> > > > > > > > swap entry.
+> > > > > > > >
+> > > > > > > > - If the PTE entry is present, move_present_pte() handles f=
+olio
+> > > > > > > >   migration by setting:
+> > > > > > > >
+> > > > > > > >   src_folio->index =3D linear_page_index(dst_vma, dst_addr)=
+;
+> > > > > > > >
+> > > > > > > > - If the PTE entry is a swap entry, move_swap_pte() simply =
+copies
+> > > > > > > >   the PTE to the new dst_addr.
+> > > > > > > >
+> > > > > > > > This approach is incorrect because even if the PTE is a swa=
+p
+> > > > > > > > entry, it can still reference a folio that remains in the s=
+wap
+> > > > > > > > cache.
+> > > > > > > >
+> > > > > > > > If do_swap_page() is triggered, it may locate the folio in =
+the
+> > > > > > > > swap cache. However, during add_rmap operations, a kernel p=
+anic
+> > > > > > > > can occur due to:
+> > > > > > > >  page_pgoff(folio, page) !=3D linear_page_index(vma, addres=
+s)
+> > > > > > >
+> > > > > > > Thanks for the report and reproducer!
+> > > > > > >
+> > > > > > > >
+> > > > > > > > $./a.out > /dev/null
+> > > > > > > > [   13.336953] page: refcount:6 mapcount:1 mapping:00000000=
+f43db19c index:0xffffaf150 pfn:0x4667c
+> > > > > > > > [   13.337520] head: order:2 mapcount:1 entire_mapcount:0 n=
+r_pages_mapped:1 pincount:0
+> > > > > > > > [   13.337716] memcg:ffff00000405f000
+> > > > > > > > [   13.337849] anon flags: 0x3fffc0000020459(locked|uptodat=
+e|dirty|owner_priv_1|head|swapbacked|node=3D0|zone=3D0|lastcpupid=3D0xffff)
+> > > > > > > > [   13.338630] raw: 03fffc0000020459 ffff80008507b538 ffff8=
+0008507b538 ffff000006260361
+> > > > > > > > [   13.338831] raw: 0000000ffffaf150 0000000000004000 00000=
+00600000000 ffff00000405f000
+> > > > > > > > [   13.339031] head: 03fffc0000020459 ffff80008507b538 ffff=
+80008507b538 ffff000006260361
+> > > > > > > > [   13.339204] head: 0000000ffffaf150 0000000000004000 0000=
+000600000000 ffff00000405f000
+> > > > > > > > [   13.339375] head: 03fffc0000000202 fffffdffc0199f01 ffff=
+ffff00000000 0000000000000001
+> > > > > > > > [   13.339546] head: 0000000000000004 0000000000000000 0000=
+0000ffffffff 0000000000000000
+> > > > > > > > [   13.339736] page dumped because: VM_BUG_ON_PAGE(page_pgo=
+ff(folio, page) !=3D linear_page_index(vma, address))
+> > > > > > > > [   13.340190] ------------[ cut here ]------------
+> > > > > > > > [   13.340316] kernel BUG at mm/rmap.c:1380!
+> > > > > > > > [   13.340683] Internal error: Oops - BUG: 00000000f2000800=
+ [#1] PREEMPT SMP
+> > > > > > > > [   13.340969] Modules linked in:
+> > > > > > > > [   13.341257] CPU: 1 UID: 0 PID: 107 Comm: a.out Not taint=
+ed 6.14.0-rc3-gcf42737e247a-dirty #299
+> > > > > > > > [   13.341470] Hardware name: linux,dummy-virt (DT)
+> > > > > > > > [   13.341671] pstate: 60000005 (nZCv daif -PAN -UAO -TCO -=
+DIT -SSBS BTYPE=3D--)
+> > > > > > > > [   13.341815] pc : __page_check_anon_rmap+0xa0/0xb0
+> > > > > > > > [   13.341920] lr : __page_check_anon_rmap+0xa0/0xb0
+> > > > > > > > [   13.342018] sp : ffff80008752bb20
+> > > > > > > > [   13.342093] x29: ffff80008752bb20 x28: fffffdffc0199f00 =
+x27: 0000000000000001
+> > > > > > > > [   13.342404] x26: 0000000000000000 x25: 0000000000000001 =
+x24: 0000000000000001
+> > > > > > > > [   13.342575] x23: 0000ffffaf0d0000 x22: 0000ffffaf0d0000 =
+x21: fffffdffc0199f00
+> > > > > > > > [   13.342731] x20: fffffdffc0199f00 x19: ffff000006210700 =
+x18: 00000000ffffffff
+> > > > > > > > [   13.342881] x17: 6c203d2120296567 x16: 6170202c6f696c6f =
+x15: 662866666f67705f
+> > > > > > > > [   13.343033] x14: 6567617028454741 x13: 2929737365726464 =
+x12: ffff800083728ab0
+> > > > > > > > [   13.343183] x11: ffff800082996bf8 x10: 0000000000000fd7 =
+x9 : ffff80008011bc40
+> > > > > > > > [   13.343351] x8 : 0000000000017fe8 x7 : 00000000fffff000 =
+x6 : ffff8000829eebf8
+> > > > > > > > [   13.343498] x5 : c0000000fffff000 x4 : 0000000000000000 =
+x3 : 0000000000000000
+> > > > > > > > [   13.343645] x2 : 0000000000000000 x1 : ffff0000062db980 =
+x0 : 000000000000005f
+> > > > > > > > [   13.343876] Call trace:
+> > > > > > > > [   13.344045]  __page_check_anon_rmap+0xa0/0xb0 (P)
+> > > > > > > > [   13.344234]  folio_add_anon_rmap_ptes+0x22c/0x320
+> > > > > > > > [   13.344333]  do_swap_page+0x1060/0x1400
+> > > > > > > > [   13.344417]  __handle_mm_fault+0x61c/0xbc8
+> > > > > > > > [   13.344504]  handle_mm_fault+0xd8/0x2e8
+> > > > > > > > [   13.344586]  do_page_fault+0x20c/0x770
+> > > > > > > > [   13.344673]  do_translation_fault+0xb4/0xf0
+> > > > > > > > [   13.344759]  do_mem_abort+0x48/0xa0
+> > > > > > > > [   13.344842]  el0_da+0x58/0x130
+> > > > > > > > [   13.344914]  el0t_64_sync_handler+0xc4/0x138
+> > > > > > > > [   13.345002]  el0t_64_sync+0x1ac/0x1b0
+> > > > > > > > [   13.345208] Code: aa1503e0 f000f801 910f6021 97ff5779 (d=
+4210000)
+> > > > > > > > [   13.345504] ---[ end trace 0000000000000000 ]---
+> > > > > > > > [   13.345715] note: a.out[107] exited with irqs disabled
+> > > > > > > > [   13.345954] note: a.out[107] exited with preempt_count 2
+> > > > > > > >
+> > > > > > > > Fully fixing it would be quite complex, requiring similar h=
+andling
+> > > > > > > > of folios as done in move_present_pte.
+> > > > > > >
+> > > > > > > How complex would that be? Is it a matter of adding
+> > > > > > > folio_maybe_dma_pinned() checks, doing folio_move_anon_rmap()=
+ and
+> > > > > > > folio->index =3D linear_page_index like in move_present_pte()=
+ or
+> > > > > > > something more?
+> > > > > >
+> > > > > > My main concern is still with large folios that require a split=
+_folio()
+> > > > > > during move_pages(), as the entire folio shares the same index =
+and
+> > > > > > anon_vma. However, userfaultfd_move() moves pages individually,
+> > > > > > making a split necessary.
+> > > > > >
+> > > > > > However, in split_huge_page_to_list_to_order(), there is a:
+> > > > > >
+> > > > > >         if (folio_test_writeback(folio))
+> > > > > >                 return -EBUSY;
+> > > > > >
+> > > > > > This is likely true for swapcache, right? However, even for mov=
+e_present_pte(),
+> > > > > > it simply returns -EBUSY:
+> > > > > >
+> > > > > > move_pages_pte()
+> > > > > > {
+> > > > > >                 /* at this point we have src_folio locked */
+> > > > > >                 if (folio_test_large(src_folio)) {
+> > > > > >                         /* split_folio() can block */
+> > > > > >                         pte_unmap(&orig_src_pte);
+> > > > > >                         pte_unmap(&orig_dst_pte);
+> > > > > >                         src_pte =3D dst_pte =3D NULL;
+> > > > > >                         err =3D split_folio(src_folio);
+> > > > > >                         if (err)
+> > > > > >                                 goto out;
+> > > > > >
+> > > > > >                         /* have to reacquire the folio after it=
+ got split */
+> > > > > >                         folio_unlock(src_folio);
+> > > > > >                         folio_put(src_folio);
+> > > > > >                         src_folio =3D NULL;
+> > > > > >                         goto retry;
+> > > > > >                 }
+> > > > > > }
+> > > > > >
+> > > > > > Do we need a folio_wait_writeback() before calling split_folio(=
+)?
+> > > > >
+> > > > > Maybe no need in the first version to fix the immediate bug?
+> > > > >
+> > > > > It's also not always the case to hit writeback here. IIUC, writeb=
+ack only
+> > > > > happens for a short window when the folio was just added into swa=
+pcache.
+> > > > > MOVE can happen much later after that anytime before a swapin.  M=
+y
+> > > > > understanding is that's also what Matthew wanted to point out.  I=
+t may be
+> > > > > better justified of that in a separate change with some performan=
+ce
+> > > > > measurements.
+> > > >
+> > > > The bug we=E2=80=99re discussing occurs precisely within the short =
+window you
+> > > > mentioned.
+> > > >
+> > > > 1. add_to_swap: The folio is added to swapcache.
+> > > > 2. try_to_unmap: PTEs are converted to swap entries.
+> > > > 3. pageout
+> > > > 4. Swapcache is cleared.
+> > >
+> > > Hmm, I see. I was expecting step 4 to be "writeback is cleared".. or =
+at
+> > > least that should be step 3.5, as IIUC "writeback" needs to be cleare=
+d
+> > > before "swapcache" bit being cleared.
+> > >
+> > > >
+> > > > The issue happens between steps 2 and 4, where the PTE is not prese=
+nt, but
+> > > > the folio is still in swapcache - the current code does move_swap_p=
+te() but does
+> > > > not fixup folio->index within swapcache.
+> > >
+> > > One thing I'm still not clear here is why it's a race condition, rath=
+er
+> > > than more severe than that.  I mean, folio->index is definitely wrong=
+, then
+> > > as long as the page still in swapcache, we should be able to move the=
+ swp
+> > > entry over to dest addr of UFFDIO_MOVE, read on dest addr, then it'll=
+ see
+> > > the page in swapcache with the wrong folio->index already and trigger=
+.
+> > >
+> > > I wrote a quick test like that, it actually won't trigger..
+> > >
+> > > I had a closer look in the code, I think it's because do_swap_page() =
+has
+> > > the logic to detect folio->index matching first, and allocate a new f=
+olio
+> > > if it doesn't match in ksm_might_need_to_copy().  IIUC that was for
+> > > ksm.. but it looks like it's functioning too here.
+> > >
+> > > ksm_might_need_to_copy:
+> > >         if (folio_test_ksm(folio)) {
+> > >                 if (folio_stable_node(folio) &&
+> > >                     !(ksm_run & KSM_RUN_UNMERGE))
+> > >                         return folio;   /* no need to copy it */
+> > >         } else if (!anon_vma) {
+> > >                 return folio;           /* no need to copy it */
+> > >         } else if (folio->index =3D=3D linear_page_index(vma, addr) &=
+& <---------- [1]
+> > >                         anon_vma->root =3D=3D vma->anon_vma->root) {
+> > >                 return folio;           /* still no need to copy it *=
+/
+> > >         }
+> > >         ...
+> > >
+> > >         new_folio =3D vma_alloc_folio(GFP_HIGHUSER_MOVABLE, 0, vma, a=
+ddr); <---- [2]
+> > >         ...
+> > >
+> > > So I believe what I hit is at [1] it sees index doesn't match, then i=
+t
+> > > decided to allocate a new folio.  In this case, it won't hit your BUG
+> > > because it'll be "folio !=3D swapcache" later, so it'll setup the
+> > > folio->index for the new one, rather than the sanity check.
+> > >
+> > > Do you know how your case got triggered, being able to bypass the abo=
+ve [1]
+> > > which should check folio->index already?
+> >
+> > To understand the change I tried applying the proposed patch to both
+> > mm-unstable and Linus' ToT and got conflicts for both trees. Barry,
+> > which baseline are you using?
+>
+> Oops, never mind. My mistake. Copying from the email messed up tabs...
+> It applies cleanly.
 
-Hello Kernel People,
+Overall the code seems correct to me, however the new code has quite
+complex logical structure IMO. Original simplified code structure is
+like this:
 
-I have developed a new GCC extension called reftrack that could be used for reference counting. Instead of manually adding code for
-add()/dec() the reference count, it could be generated by this extension. 
+if (pte_present(orig_src_pte)) {
+        if (is_zero_pfn) {
+                move_zeropage_pte()
+                return
+        }
+        // pin and lock src_folio
+        spin_lock(src_ptl)
+        folio_get(folio)
+        folio_trylock(folio)
+        if (folio_test_large(src_folio))
+                split_folio(src_folio)
+        anon_vma_trylock_write(src_anon_vma)
+        move_present_pte()
+} else {
+        if (non_swap_entry(entry))
+                if (is_migration_entry(entry))
+                        handle migration entry
+        else
+                move_swap_pte()
+}
 
-1-minute intro 
+The new structure looks like this:
 
-If you have a structure S like this
+if (!pte_present(orig_src_pte)) {
+        if (is_migration_entry(entry)) {
+                handle migration entry
+                return
+       }
+        if (!non_swap_entry() ||  !pte_swp_exclusive())
+                return
+        si =3D get_swap_device(entry);
+}
+if (pte_present(orig_src_pte) && is_zero_pfn(pte_pfn(orig_src_pte)))
+        move_zeropage_pte()
+        return
+}
+pin and lock src_folio
+        spin_lock(src_ptl)
+        if (pte_present(orig_src_pte))
+                folio_get(folio)
+        else {
+                folio =3D filemap_get_folio(swap_entry)
+                if (IS_ERR(folio))
+                        move_swap_pte()
+                        return
+                }
+        }
+        folio_trylock(folio)
+if (folio_test_large(src_folio))
+        split_folio(src_folio)
+if (pte_present(orig_src_pte))
+        anon_vma_trylock_write(src_anon_vma)
+move_pte_and_folio()
 
+This looks more complex and harder to follow. Might be the reason
+David was not in favour of treating swapcache and present pages in the
+same path. And now I would agree that refactoring some common parts
+and not breaking the original structure might be cleaner.
 
-typedef struct S S;
-S *p = ... , *q = ...;
-p = q;
-
-It gets transformed into 
-
-
-typedef struct S S;
-S *p = ... , *q = ...;
-S_addref(q);
-S_removeref(p);
-p = q;
-
-The extension is available at https://github.com/acbits/reftrack-plugin. I have also attached a prototype kernel implementation with this email.
-
-All suggestions welcome.
-
-Regards
-
-Aravind
---------------dRvR4DoswZYzP5cgrXtdxyRE
-Content-Type: text/x-chdr; charset=UTF-8; name="lkrcmm.h"
-Content-Disposition: attachment; filename="lkrcmm.h"
-Content-Transfer-Encoding: base64
-
-Ly8gR0NDIHJlZnRyYWNrIHBsdWdpbiBiYXNlZCBoZWFwIG1hbmFnZW1lbnQgZm9yIHRoZSBM
-aW51eCBrZXJuZWwKLy8gU1BEWC1MaWNlbnNlLUlkZW50aWZpZXI6IEdQTC0yLjAtb25seQov
-KioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioq
-KioqKioqCkNvcHlyaWdodCAoQykgMjAyMi0yMDIzIEFyYXZpbmQgQ2V5YXJkYXNzIChkZXZA
-YXJhdmluZC5jYykKKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioq
-KioqKioqKioqKioqKioqKioqLwoKCiNpZm5kZWYgTEtSQ01NX18KI2RlZmluZSBMS1JDTU1f
-XwoKI2luY2x1ZGUgPGxpbnV4L2NvbXBpbGVyLmg+CiNpbmNsdWRlIDxsaW51eC9jb21waWxl
-cl9hdHRyaWJ1dGVzLmg+CiNpbmNsdWRlIDxsaW51eC9vdmVyZmxvdy5oPgojaW5jbHVkZSA8
-bGludXgvcHJpbnRrLmg+CiNpbmNsdWRlIDxsaW51eC90eXBlcy5oPgojaW5jbHVkZSA8bGlu
-dXgvc3lzbG9nLmg+CiNpbmNsdWRlIDxsaW51eC9tbS5oPgojaW5jbHVkZSA8bGludXgvdm1h
-bGxvYy5oPgojaW5jbHVkZSA8bGludXgvbGltaXRzLmg+CiNpbmNsdWRlIDxsaW51eC9zbGFi
-Lmg+CiNpbmNsdWRlIDxsaW51eC9hdG9taWMuaD4KI2luY2x1ZGUgPGxpbnV4L3JlZnRyYWNr
-Lmg+CgojaWZkZWYgUkVGVFJBQ0tfREVCVUcKI2RlZmluZSBSRUZUUkFDS19VU0VfTUFSSwoj
-ZW5kaWYKCnR5cGVkZWYgYXRvbWljX3QgcmVmdHJhY2tfY291bnRfdDsKCi8vIHN0cnVjdHVy
-ZSB0aGF0IGlzIHByZWZpeGVkIHRvIGFsbG9jYXRlZCBtZW1vcnkKCnN0cnVjdCByZWZ0cmFj
-a18gewogICAgcmVmdHJhY2tfY291bnRfdCByYzsgICAgICAgLy8gcmVmZXJlbmNlIGNvdW50
-CiNpZmRlZiBSRUZUUkFDS19ERUJVRwogICAgY29uc3QgY2hhciAqZmlsZW5hbWU7ICAgICAg
-Ly8gZmlsZW5hbWUgb2YgZmlsZSB3aGVyZSBhbGxvY2F0aW9uIGhhcHBlbmVkCiAgICB1bnNp
-Z25lZCBsaW5lbm87ICAgICAgICAgICAvLyBsaW5lIG51bWJlciBpbiB0aGUgY29ycmVzcG9u
-ZGluZyBmaWxlCiNlbmRpZgojaWZkZWYgUkVGVFJBQ0tfVVNFX01BUksKICAgIGludCBtYXJr
-OwojZW5kaWYKICAgIHZvaWQgKCpkdG9yKSh2b2lkKik7ICAgICAgIC8vIGRlc3RydWN0b3IK
-fTsKCnR5cGVkZWYgc3RydWN0IHJlZnRyYWNrXyByZWZ0cmFja190OwoKLy8gRW5hYmxlIGV4
-dHJlbWVseSB2ZXJib3NlIHRyYWNpbmcuCi8vIFRPRE8gQXQgcHJlc2VudCwgaXQgaXMgYSBj
-b21waWxlIHRpbWUgb3B0aW9uLiBNYWtlIGl0IGR5bmFtaWMgdGhyb3VnaCBrZXJuZWwgZmFj
-aWxpdGllcy4KCiNpZmRlZiBSRUZUUkFDS19UUkFDRQojZGVmaW5lIFJFRlRSQUNLX1RSQUNF
-X0xPRyguLi4pIGRve19fVkFfQVJHU19ffXdoaWxlKDApCiNlbHNlCiNkZWZpbmUgUkVGVFJB
-Q0tfVFJBQ0VfTE9HKC4uLikKI2VuZGlmCgoKI2RlZmluZSBSRUZDT1VOVF9TRVQodiwgeCkg
-ICAgIGF0b21pY19zZXQoJih2KSwgeCkKI2RlZmluZSBSRUZDT1VOVF9JTkModikgICAgICAg
-IGF0b21pY19pbmMoJih2KSkKI2RlZmluZSBSRUZDT1VOVF9ERUModikgICAgICAgIGF0b21p
-Y19kZWMoJih2KSkKI2RlZmluZSBSRUZDT1VOVF9ERUNfUkVBRCh2KSAgIGF0b21pY19kZWNf
-YW5kX3Rlc3QoJih2KSkKI2RlZmluZSBSRUZDT1VOVF9SRUFEKHYpICAgICAgIGF0b21pY19y
-ZWFkKCYodikpCgojZGVmaW5lIFJFRlRSQUNLX01BUktFUiAweGZhY2ViZWVmCgoKdHlwZWRl
-ZiB2b2lkICooKmFsbG9jX2ZuX3QpKHNpemVfdCwgZ2ZwX3QpOwoKI2RlZmluZSBSRUZUUkFD
-S19IRFIoYm9keXApICgocmVmdHJhY2tfdCAqKSgodm9pZCAqKShib2R5cCkgLSBzaXplb2Yo
-cmVmdHJhY2tfdCkpKQojZGVmaW5lIFJFRlRSQUNLX0JPRFkoaGRycCkgKCh2b2lkKiloZHJw
-ICsgc2l6ZW9mKHJlZnRyYWNrX3QpKQojZGVmaW5lIFJFRlRSQUNLX0NPVU5URVIoYm9keXAp
-IChSRUZUUkFDS19IRFIoYm9keXApLT5yYykKI2RlZmluZSBSRUZUUkFDS19DT1VOVChib2R5
-cCkgUkVGQ09VTlRfUkVBRChSRUZUUkFDS19DT1VOVEVSKGJvZHlwKSkKI2RlZmluZSBSRUZU
-UkFDS19EVE9SKGhkcnApIChoZHJwLT5kdG9yKQoKI2lmZGVmIFJFRlRSQUNLX1VTRV9NQVJL
-CgojZGVmaW5lIFJFRlRSQUNLX1NFVF9NQVJLKHAsIHYpIGRveyAocCktPm1hcmsgPSB2OyB9
-IHdoaWxlKDApCiNkZWZpbmUgbWFya19mb3VuZChib2R5cCkgKFJFRlRSQUNLX0hEUihib2R5
-cCktPm1hcmsgPT0gUkVGVFJBQ0tfTUFSS0VSKQoKI2Vsc2UKCiNkZWZpbmUgUkVGVFJBQ0tf
-U0VUX01BUksocCwgdikgLyogZGlzY2FyZCAqLwojZGVmaW5lIG1hcmtfZm91bmQocCkgdHJ1
-ZQoKI2VuZGlmCgojaWZkZWYgUkVGVFJBQ0tfREVCVUcKCiNkZWZpbmUgUkVGVFJBQ0tfREVC
-VUdfQVJHUyAgICAsX19CQVNFX0ZJTEVfXyxfX0xJTkVfXwojZGVmaW5lIFJFRlRSQUNLX0RF
-QlVHX1BBUkFNU19ERUNMICAsY29uc3QgY2hhciAqY29uc3QgZmlsZW5hbWUsY29uc3QgdW5z
-aWduZWQgbGluZW5vCiNkZWZpbmUgUkVGVFJBQ0tfREVCVUdfUEFSQU1TICxmaWxlbmFtZSxs
-aW5lbm8KCiNkZWZpbmUgcmVmdHJhY2tfZGVidWdfaW5pdCh4KSAgICAgICAgICAgICAgICAg
-IFwKICAgIGRveyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgXAog
-ICAgICAgIHJlZnRyYWNrX3QgKmNvbnN0IHAgPSB4OyAgICAgICAgICAgICAgICBcCiAgICAg
-ICAgcC0+ZmlsZW5hbWUgPSBmaWxlbmFtZTsgICAgICAgICAgICAgICAgIFwKICAgICAgICBw
-LT5saW5lbm8gPSBsaW5lbm87ICAgICAgICAgICAgICAgICAgICAgXAogICAgfSB3aGlsZSgw
-KQoKI2RlZmluZSBSRUZUUkFDS19ERUJVR19MT0coLi4uKSAgICAgICAgICAgICAgICBcCiAg
-ICBkb3sgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIFwKICAgICAg
-ICBfX1ZBX0FSR1NfXzsgICAgICAgICAgICAgICAgICAgICAgICAgICAgXAogICAgfSB3aGls
-ZSAoMCkKCiNlbHNlCgojZGVmaW5lIFJFRlRSQUNLX0RFQlVHX0FSR1MKI2RlZmluZSBSRUZU
-UkFDS19ERUJVR19QQVJBTVNfREVDTAojZGVmaW5lIFJFRlRSQUNLX0RFQlVHX1BBUkFNUwoj
-ZGVmaW5lIHJlZnRyYWNrX2RlYnVnX2luaXQoeCkgLyogZGlzY2FyZCAqLwojZGVmaW5lIFJF
-RlRSQUNLX0RFQlVHX0xPRyguLi4pCgojZW5kaWYKCi8qCiAqIENyZWF0ZSB3cmFwcGVycyBh
-cyBzb21lIG9mIHRoZSBrZXJuZWwgbWVtb3J5IGZ1bmN0aW9ucyBhcmUgYWxyZWFkeSBtYWNy
-b3MgYW5kIHdlIGNhbid0IHVzZSBtYWNyb3MKICogZHVlIHRvIHRoZWlyIGxpbWl0YXRpb25z
-LgogKi8KCnN0YXRpYyBpbmxpbmUgdm9pZCAqb2xkX2ttYWxsb2Moc2l6ZV90IG4sIGdmcF90
-IGZsYWdzKXsJcmV0dXJuIGttYWxsb2MobiwgZmxhZ3MpOyB9CgpzdGF0aWMgaW5saW5lIHZv
-aWQgKm9sZF92bWFsbG9jKHVuc2lnbmVkIGxvbmcgbil7IHJldHVybiB2bWFsbG9jKG4pOyB9
-CgpzdGF0aWMgaW5saW5lIHZvaWQgKm9sZF92emFsbG9jKHVuc2lnbmVkIGxvbmcgbil7IHJl
-dHVybiB2emFsbG9jKG4pOyB9CgpzdGF0aWMgaW5saW5lIHZvaWQgKm9sZF9rdm1hbGxvYyhz
-aXplX3QgbiwgZ2ZwX3QgZmxhZ3MpeyByZXR1cm4ga3ZtYWxsb2MobiwgZmxhZ3MpOyB9Cgpz
-dGF0aWMgaW5saW5lIHZvaWQgb2xkX2tmcmVlKGNvbnN0IHZvaWQgKnApIHsga2ZyZWUocCk7
-IH0Kc3RhdGljIGlubGluZSB2b2lkIG9sZF92ZnJlZShjb25zdCB2b2lkICpwKSB7IHZmcmVl
-KHApOyB9CnN0YXRpYyBpbmxpbmUgdm9pZCBvbGRfa3ZmcmVlKGNvbnN0IHZvaWQgKnApIHsg
-a3ZmcmVlKHApOyB9CgpzdGF0aWMgdm9pZCByZWZ0cmFja19oZHJfaW5pdChyZWZ0cmFja190
-ICpjb25zdCBydHAgUkVGVFJBQ0tfREVCVUdfUEFSQU1TX0RFQ0wpewogICAgICAgIFJFRkNP
-VU5UX1NFVChydHAtPnJjLCAwKTsKICAgICAgICBSRUZUUkFDS19TRVRfTUFSSyhydHAsIFJF
-RlRSQUNLX01BUktFUik7CiAgICAgICAgcmVmdHJhY2tfZGVidWdfaW5pdChydHApOwogICAg
-ICAgIHJ0cC0+ZHRvciA9IE5VTEw7Cn0KClJFRlRSQUNLX0lHTk9SRSBNQUxMT0NfTElLRSBz
-dGF0aWMgdm9pZCAqCnJjX2FsbG9jX2hlbHBlcl8oc2l6ZV90IG4sIGdmcF90IGZsYWdzLCBh
-bGxvY19mbl90IGFsbG9jX2ZuIFJFRlRSQUNLX0RFQlVHX1BBUkFNU19ERUNMKQp7CgoJc2l6
-ZV90IHRvdGFsX3NpemU7Cgl2b2lkICpwOwoKCWlmICh1bmxpa2VseShjaGVja19hZGRfb3Zl
-cmZsb3cobiwgc2l6ZW9mKHJlZnRyYWNrX3QpLCAmdG90YWxfc2l6ZSkpKQoJCXJldHVybiBO
-VUxMOwoKCXAgPSBhbGxvY19mbih0b3RhbF9zaXplLCBmbGFncyk7CgoJaWYgKHApIHsKICAg
-ICAgICByZWZ0cmFja19oZHJfaW5pdChwIFJFRlRSQUNLX0RFQlVHX1BBUkFNUyk7CiAgICAg
-ICAgcCA9IFJFRlRSQUNLX0JPRFkocCk7Cgl9CglyZXR1cm4gcDsKfQoKUkVGVFJBQ0tfSUdO
-T1JFIE1BTExPQ19MSUtFIHN0YXRpYyB2b2lkICoKcmNfa2NhbGxvY18oc2l6ZV90IG4sIHNp
-emVfdCBzaXplLCBnZnBfdCBmbGFncyBSRUZUUkFDS19ERUJVR19QQVJBTVNfREVDTCkKewoK
-CXNpemVfdCB0b3RhbF9zaXplOwoKCWlmICh1bmxpa2VseShjaGVja19tdWxfb3ZlcmZsb3co
-biwgc2l6ZSwgJnRvdGFsX3NpemUpKSkKCQlyZXR1cm4gTlVMTDsKCWVsc2UKCQlyZXR1cm4g
-cmNfYWxsb2NfaGVscGVyXyh0b3RhbF9zaXplLCBmbGFncywgb2xkX2ttYWxsb2MgUkVGVFJB
-Q0tfREVCVUdfUEFSQU1TKTsKfQoKClJFRlRSQUNLX0lHTk9SRSBNQUxMT0NfTElLRSBzdGF0
-aWMgdm9pZCAqCnJjX3ZtYWxsb2NfaGVscGVyXyh1bnNpZ25lZCBsb25nIG4sIHZvaWQgKigq
-Y29uc3QgYWxsb2NfZm4pKHVuc2lnbmVkIGxvbmcpCiAgICAgICAgICAgICAgICAgICBSRUZU
-UkFDS19ERUJVR19QQVJBTVNfREVDTCkKewoKCXNpemVfdCB0b3RhbF9zaXplOwoJdm9pZCAq
-cDsKCglpZiAodW5saWtlbHkoY2hlY2tfYWRkX292ZXJmbG93KG4sIHNpemVvZihyZWZ0cmFj
-a190KSwgJnRvdGFsX3NpemUpKSkKCQlyZXR1cm4gTlVMTDsKCglwID0gYWxsb2NfZm4odG90
-YWxfc2l6ZSk7CgoJaWYgKHApIHsKCQlyZWZ0cmFja19oZHJfaW5pdChwIFJFRlRSQUNLX0RF
-QlVHX1BBUkFNUyk7CiAgICAgICAgcCA9IFJFRlRSQUNLX0JPRFkocCk7Cgl9CglyZXR1cm4g
-cDsKfQoKUkVGVFJBQ0tfSEVBUF9GTiBzdGF0aWMgdm9pZCAqCnJjX2tyZWFsbG9jXyhjb25z
-dCB2b2lkICpwLCBzaXplX3QgbmV3X3NpemUsIGdmcF90IGZsYWdzCiAgICAgICAgICAgICBS
-RUZUUkFDS19ERUJVR19QQVJBTVNfREVDTCkKewoJdm9pZCAqcnYgPSBOVUxMOwoKCWlmICgh
-cCkgewoJCXJ2ID0gcmNfYWxsb2NfaGVscGVyXyhuZXdfc2l6ZSwgZmxhZ3MsIG9sZF9rbWFs
-bG9jIFJFRlRSQUNLX0RFQlVHX1BBUkFNUyk7CgkJLyogd2UgaGF2ZSB0byBpbmNyZW1lbnQg
-cmVmZXJlbmNlIGNvdW50IGhlcmUgZHVlIHRvIHJlYWxsb2MKCQkgKiBiZWhhdmluZyBsaWtl
-IG1hbGxvYyBhbmQgd2UgYXJlIGZvcmNlZCB0byBkZWNsYXJlIGtyZWFsbG9jIGFzIGEgaGVh
-cCBmdW5jdGlvbi4KCQkgKi8KCQlpZiAocnYpIHsKCQkJUkVGQ09VTlRfSU5DKFJFRlRSQUNL
-X0NPVU5URVIocnYpKTsKCgkJfQoJfSBlbHNlIGlmIChuZXdfc2l6ZSkgewoJCXZvaWQgKm9y
-aWdfcCA9IFJFRlRSQUNLX0hEUihwKTsKCQlzaXplX3QgdG90YWxfc2l6ZTsKCgkJaWYgKHVu
-bGlrZWx5KGNoZWNrX2FkZF9vdmVyZmxvdyhuZXdfc2l6ZSwgc2l6ZW9mKHJlZnRyYWNrX3Qp
-LCAmdG90YWxfc2l6ZSkpKSB7CgkJCXByX2VycigicmVmdHJhY2s6cmVhbGxvYyBmb3IgfDB4
-JXB8IGhhcyBpbmNvcnJlY3Qgc2l6ZTp8JWx1fFxuIiwKICAgICAgICAgICAgICAgICBwLCBu
-ZXdfc2l6ZSk7CgkJfSBlbHNlIHsKCQkJcnYgPSBrcmVhbGxvYyhvcmlnX3AsIHRvdGFsX3Np
-emUsIGZsYWdzKTsKCQkJaWYgKHJ2ICE9IG9yaWdfcCkgewoJCQkJaW50IGNvdW50ID0gUkVG
-VFJBQ0tfQ09VTlQoUkVGVFJBQ0tfQk9EWShydikpOwoJCQkJaWYgKGNvdW50ID4gMSkKCQkJ
-CQlwcl93YXJuKCJyZWZ0cmFjazpvYmplY3QgfDB4JXB8IG1vdmVkIHdoaWxlIHwlZHwgYWN0
-aXZlIHJlZmVyZW5jZXMgZXhpc3RcbiIsCiAgICAgICAgICAgICAgICAgICAgICAgICBwLCBj
-b3VudCk7CgkJCX0KCQl9Cgl9IGVsc2UgewovKgogKiBjYXNlOiBuZXdfc2l6ZSBpcyB6ZXJv
-CiAqIFdlIGRvbid0IGZyZWUgdGhlIG9iamVjdCBhcyBpbiBvcmlnaW5hbCBpbXBsZW1lbnRh
-dGlvbiBiZWNhdXNlIHRoZSBvYmplY3QgaXMKICogZnJlZWQgd2hlbiByZWZlcmVuY2UgY291
-bnQgZ29lcyB0byB6ZXJvLgogKi8KICAgICAgICBpbnQgY291bnQgPSBSRUZUUkFDS19DT1VO
-VChwKTsKICAgICAgICBpZiAoY291bnQgPiAxKQogICAgICAgICAgICBwcl93YXJuKCJyZWZ0
-cmFjazphdHRlbXB0IHRvIGZyZWUgb2JqZWN0IHwweCVwfCB3aXRoIHwlZHwgYWN0aXZlIHJl
-ZmVyZW5jZXNcbiIsCiAgICAgICAgICAgICAgICAgICAgY291bnQtMSk7Cgl9CgoJcmV0dXJu
-IHJ2ID8gUkVGVFJBQ0tfQk9EWShydikgOiBydjsKCn0KClJFRlRSQUNLX0lHTk9SRSBzdGF0
-aWMgdm9pZApyY19mcmVlX2hlbHBlcl8odm9pZCAqcCwgdm9pZCAoKmNvbnN0IGZyZWVfZm4p
-KGNvbnN0IHZvaWQgKikKICAgICAgICAgICAgICAgIFJFRlRSQUNLX0RFQlVHX1BBUkFNU19E
-RUNMKXsKCgoJaWYoIXAgfHwgIW1hcmtfZm91bmQocCkpCiAgICAgICAgICAgIHJldHVybjsK
-CiAgICByZWZ0cmFja190ICpydHAgPSBSRUZUUkFDS19IRFIocCk7CgogICAgaWYgKFJFRkNP
-VU5UX1JFQUQocnRwLT5yYykgIT0gMCkgewogICAgICAgIHByX3dhcm4oCiNpZmRlZiBSRUZU
-UkFDS19ERUJVRwogICAgICAgICAgICAicmVmdHJhY2s6IFdBUk5JTkcgb2JqZWN0IHwweCVw
-fCBhbGxvY2F0ZWQgYXQgfCVzOiV1fCwgZnJlZWQgYXQgfCVzOiV1fCBoYXMgfCVkfCByZWZl
-cmVuY2UocylcbiIsCiAgICAgICAgICAgIHJ0cCwgcnRwLT5maWxlbmFtZSwgcnRwLT5saW5l
-bm8sCiAgICAgICAgICAgIGZpbGVuYW1lLCBsaW5lbm8sIFJFRkNPVU5UX1JFQUQocnRwLT5y
-YykKI2Vsc2UKICAgICAgICAgICAgInJlZnRyYWNrOiBXQVJOSU5HIG9iamVjdCB8MHglcHwg
-aGFzIHwldXwgcmVmZXJlbmNlKHMpXG4iLAogICAgICAgICAgICBydHAsIFJFRkNPVU5UX1JF
-QUQocnRwLT5yYykKI2VuZGlmCiAgICAgICAgICAgICk7CiAgICB9CgogICAgaWYgKGZyZWVf
-Zm4pIHsKICAgICAgICBSRUZUUkFDS19TRVRfTUFSSyhydHAsIDApOwogICAgICAgIGZyZWVf
-Zm4ocnRwKTsKCiAgICB9Cgp9CgoKCiNkZWZpbmUgcmNfa21hbGxvYyhuLCBmKSAgICAgcmNf
-YWxsb2NfaGVscGVyXyhuLCBmLCBvbGRfa21hbGxvYyBSRUZUUkFDS19ERUJVR19BUkdTKQoj
-ZGVmaW5lIHJjX2tjYWxsb2MoYywgbiwgZikgIHJjX2tjYWxsb2NfKGMsIG4sIGYgUkVGVFJB
-Q0tfREVCVUdfQVJHUykKI2RlZmluZSByY19remFsbG9jKG4sIGYpICAgICByY19hbGxvY19o
-ZWxwZXJfKG4sIChmfF9fR0ZQX1pFUk8pLCBvbGRfa21hbGxvYyBSRUZUUkFDS19ERUJVR19B
-UkdTKQojZGVmaW5lIHJjX3ZtYWxsb2MobikgICAgICAgIHJjX3ZtYWxsb2NfaGVscGVyXyhu
-LCBvbGRfdm1hbGxvYyBSRUZUUkFDS19ERUJVR19BUkdTKQojZGVmaW5lIHJjX3Z6YWxsb2Mo
-bikgICAgICAgIHJjX3ZtYWxsb2NfaGVscGVyXyhuLCBvbGRfdnphbGxvYyBSRUZUUkFDS19E
-RUJVR19BUkdTKQojZGVmaW5lIHJjX2t2bWFsbG9jKG4sIGYpICAgIHJjX2FsbG9jX2hlbHBl
-cl8obiwgZiwgb2xkX2t2bWFsbG9jIFJFRlRSQUNLX0RFQlVHX0FSR1MpCiNkZWZpbmUgcmNf
-a3JlYWxsb2MocCwgbiwgZikgcmNfa3JlYWxsb2NfKHAsIG4sIGYgUkVGVFJBQ0tfREVCVUdf
-QVJHUykKI2RlZmluZSByY19rZnJlZSh4KSAgICAgICAgICByY19mcmVlX2hlbHBlcl8oeCwg
-b2xkX2tmcmVlIFJFRlRSQUNLX0RFQlVHX0FSR1MpCiNkZWZpbmUgcmNfdmZyZWUoeCkgICAg
-ICAgICAgcmNfZnJlZV9oZWxwZXJfKHgsIG9sZF92ZnJlZSBSRUZUUkFDS19ERUJVR19BUkdT
-KQojZGVmaW5lIHJjX2t2ZnJlZSh4KSAgICAgICAgIHJjX2ZyZWVfaGVscGVyXyh4LCBvbGRf
-a3ZmcmVlIFJFRlRSQUNLX0RFQlVHX0FSR1MpCgoKI2RlZmluZSBSRUZUUkFDS19QUk9MT0co
-UykgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIFwKICAgIHN0
-cnVjdCBTOyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgIFwKICAgIHN0YXRpYyB2b2lkIFMjI19hZGRyZWYoY29uc3Qgc3RydWN0IFMg
-KmNvbnN0KTsgICAgICAgICAgICAgICAgICAgIFwKICAgIHN0YXRpYyB2b2lkIFMjI19yZW1v
-dmVyZWYoY29uc3Qgc3RydWN0IFMgKmNvbnN0KTsgICAgICAgICAgICAgICAgIFwKICAgIFJF
-RlRSQUNLX0lHTk9SRSBzdGF0aWMgdm9pZCBTIyNfZGVzdHJveShzdHJ1Y3QgUyAqY29uc3Qp
-OwoKI2RlZmluZSBERUNMX0FERFJFRihTKSAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgXAogICAgc3RhdGljIGlubGluZSB2b2lkIFMjI19hZGRy
-ZWYoY29uc3Qgc3RydWN0IFMgKmNvbnN0IHApIHsgICAgICAgICAgICBcCiAgICAgICAgaWYg
-KCFwKSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgIFwKICAgICAgICAgICAgcmV0dXJuOyAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgXAogICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcCiAgICAg
-ICAgaWYgKCFtYXJrX2ZvdW5kKHApKXsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgIFwKICAgICAgICAgICAgcHJfd2FybigicmVmdHJhY2s6IEludmFsaWQg
-cG9pbnRlci91c2UtYWZ0ZXItZnJlZSB8MHglcHwgdG8gfCVzX2FkZHJlZnxcbiIsIHAsICNT
-KTsgXAogICAgICAgICAgICByZXR1cm47ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICBcCiAgICAgICAgfSAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIFwKICAgICAgICBS
-RUZDT1VOVF9JTkMoUkVGVFJBQ0tfQ09VTlRFUihwKSk7ICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgXAogICAgICAgIFJFRlRSQUNLX1RSQUNFX0xPRyhwcl9pbmZvKCIlczp8MHgl
-cHw6KzFcbiIsICNTLCBwKSk7ICAgICAgICAgICBcCiAgICB9CgojZGVmaW5lIERFQ0xfUkVN
-T1ZFUkVGKFMsIERUT1IpICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICBcCiAgICBzdGF0aWMgaW5saW5lIHZvaWQgUyMjX3JlbW92ZXJlZihjb25zdCBzdHJ1Y3Qg
-UyAqY29uc3QgcCkgeyAgICAgICAgIFwKICAgICAgICBpZiAoIXApICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgXAogICAgICAgICAg
-ICByZXR1cm47ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICBcCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgIFwKICAgICAgICBpZiAoIW1hcmtfZm91bmQo
-cCkpIHsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgXAogICAg
-ICAgICAgICBwcl93YXJuKCJyZWZ0cmFjazogSW52YWxpZCBwb2ludGVyL3VzZS1hZnRlci1m
-cmVlIHwweCVwfCB0byB8JXNfcmVtb3ZlcmVmfFxuIiwgcCwgI1MpOyBcCiAgICAgICAgICAg
-IHJldHVybjsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgIFwKICAgICAgICB9ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgXAogICAgICAgIFJFRlRSQUNLX1RSQUNFX0xP
-Ryhwcl9pbmZvKCIlczp8MHglcHw6LTFuIiwgI1MsIHApKTsgICAgICAgICAgICBcCiAgICAg
-ICAgcmVmdHJhY2tfdCAqY29uc3QgcnRwID0gUkVGVFJBQ0tfSERSKHApOyAgICAgICAgICAg
-ICAgICAgICAgICAgIFwKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgXAogICAgICAgIGlmIChSRUZDT1VO
-VF9ERUNfUkVBRChydHAtPnJjKSl7ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBc
-CiAgICAgICAgICAgIFJFRlRSQUNLX1RSQUNFX0xPRyhwcl9pbmZvKCJyZWZ0cmFjazpmcmVl
-IG9iamVjdDolcDogdHlwZTolczpcbiIscCwjUykpOyBcCiAgICAgICAgICAgIGRveyBEVE9S
-KChzdHJ1Y3QgUyopcCk7IH13aGlsZSgwKTsgICAgICAgICAgICAgICAgICAgICAgICAgIFwK
-ICAgICAgICAgICAgcmNfa3ZmcmVlKCh2b2lkKilwKTsgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgXAogICAgICAgIH0gICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcCiAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgIFwKICAgIH0KCiNkZWZpbmUgUkVGVFJBQ0tfU1RSVUNUKFMpICAgICAgICAgICAgICAg
-ICAgICAgIFwKICAgIFJFRlRSQUNLX1BST0xPRyhTKTsgICAgICAgICAgICAgICAgICAgICAg
-ICAgXAogICAgc3RydWN0IFJFRlRSQUNLKFMpIFMKCiNkZWZpbmUgUkVGVFJBQ0tfRVBJTE9H
-KFMpICAgICAgICAgICAgICAgICAgICAgIFwKICAgIERFQ0xfQUREUkVGKFMpICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgXAogICAgREVDTF9SRU1PVkVSRUYoUywgUkVGVFJBQ0tf
-Tk9QKQoKI2RlZmluZSBSRUZUUkFDS19FUElMT0dfV0lUSF9EVE9SKFMpICAgICAgXAogICAg
-REVDTF9BRERSRUYoUykgICAgICAgICAgICAgICAgICAgICAgICBcCiAgICBERUNMX1JFTU9W
-RVJFRihTLCBTIyNfZGVzdHJveSkKCi8qCiAqIERlZmF1bHQgaW1wbGVtZW50YXRpb24gb2Yg
-YWRkcmVmICYgcmVtb3ZlcmVmIGZ1bmN0aW9ucy4KICovCgpzdGF0aWMgdm9pZCByZWZ0cmFj
-a19hZGRyZWYoY29uc3Qgdm9pZCAqY29uc3QpOwoKc3RhdGljIGlubGluZSB2b2lkIHJlZnRy
-YWNrX2FkZHJlZihjb25zdCB2b2lkICpjb25zdCBwKSB7CiAgICAKICAgIGlmICghcCkKICAg
-ICAgICByZXR1cm47CgogICAgaWYgKCFtYXJrX2ZvdW5kKHApKXsKICAgICAgICBwcl93YXJu
-KCJyZWZ0cmFjazogSW52YWxpZCBwb2ludGVyL3VzZS1hZnRlci1mcmVlIHwweCVwfFxuIiwg
-cCk7CiAgICAgICAgcmV0dXJuOwogICAgfQoKICAgIFJFRkNPVU5UX0lOQyhSRUZUUkFDS19D
-T1VOVEVSKHApKTsKICAgIFJFRlRSQUNLX1RSQUNFX0xPRyhwcl9pbmZvKCJyZWZ0cmFjazp8
-MHglcHw6KzFcbiIsIHApKTsKCn0KCnN0YXRpYyB2b2lkIHJlZnRyYWNrX3JlbW92ZXJlZihj
-b25zdCB2b2lkICpjb25zdCk7CgpzdGF0aWMgaW5saW5lIHZvaWQgcmVmdHJhY2tfcmVtb3Zl
-cmVmKGNvbnN0IHZvaWQgKmNvbnN0IHApIHsKCiAgICBpZiAoIXApCiAgICAgICAgcmV0dXJu
-OwoKICAgIGlmICghbWFya19mb3VuZChwKSl7CiAgICAgICAgcHJfd2FybigicmVmdHJhY2s6
-IEludmFsaWQgcG9pbnRlci91c2UtYWZ0ZXItZnJlZSB8MHglcHxcbiIsIHApOwogICAgICAg
-IHJldHVybjsKICAgIH0KCiAgICBSRUZUUkFDS19UUkFDRV9MT0cocHJfaW5mbygicmVmdHJh
-Y2s6fDB4JXB8Oi0xXG4iLCBwKSk7CiAgICByZWZ0cmFja190ICpjb25zdCBydHAgPSBSRUZU
-UkFDS19IRFIocCk7CgogICAgLyogY2hlY2tpbmcgZm9yIG9uZSBhcyB0aGUgdmFsdWUgYmVm
-b3JlIGRlY3JlbWVudCB0byB6ZXJvIGlzIG9uZSAqLwogICAgaWYgKFJFRkNPVU5UX0RFQ19S
-RUFEKHJ0cC0+cmMpKXsKICAgICAgICBSRUZUUkFDS19ERUJVR19MT0cocHJfaW5mbygicmVm
-dHJhY2s6IHJlbGVhc2luZyBvYmplY3QgfDB4JXB8XG4iLCBwKSk7CiAgICAgICAgdm9pZCAo
-KmR0b3IpKHZvaWQgKikgPSBSRUZUUkFDS19EVE9SKHJ0cCk7CiAgICAgICAgaWYgKGR0b3Ip
-IGR0b3IoKHZvaWQqKXApOwogICAgICAgIHJjX2t2ZnJlZSgodm9pZCopcCk7CiAgICB9Cgp9
-CgojaWZkZWYgUkVGVFJBQ0tfUkVQTEFDRV9BTEwKI2RlZmluZSBrbWFsbG9jKG4sIGYpICBy
-Y19rbWFsbG9jKG4sIGYpCiNkZWZpbmUga2NhbGxvYyhjLCBuLCBmKSAgcmNfa2NhbGxvYyhj
-LCBuLCBmKQojZGVmaW5lIGt6YWxsb2MobiwgZikgIHJjX2t6YWxsb2MobiwgZikKI2RlZmlu
-ZSB2bWFsbG9jKG4pICByY192bWFsbG9jKG4pCiNkZWZpbmUgdnphbGxvYyhuKSAgcmNfdnph
-bGxvYyhuKQojZGVmaW5lIGt2bWFsbG9jKG4sIGYpIHJjX2t2bWFsbG9jKG4sIGYpCiNkZWZp
-bmUga3JlYWxsb2MocCwgbiwgZikgcmNfa3JlYWxsb2MocCwgbiwgZikKI2RlZmluZSBrZnJl
-ZSh4KSAgICByY19rZnJlZSh4KQojZGVmaW5lIHZmcmVlKHgpICAgIHJjX3ZmcmVlKHgpCiNk
-ZWZpbmUga3ZmcmVlKHgpICAgcmNfa3ZmcmVlKHgpCiNlbmRpZgoKI2VuZGlmIC8vIExLUkNN
-TV9fCg==
---------------dRvR4DoswZYzP5cgrXtdxyRE
-Content-Type: text/x-chdr; charset=UTF-8; name="reftrack.h"
-Content-Disposition: attachment; filename="reftrack.h"
-Content-Transfer-Encoding: base64
-
-Ly8gU1BEWC1MaWNlbnNlLUlkZW50aWZpZXI6IEFwYWNoZS0yLjAKLyoqKioqKioqKioqKioq
-KioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKgpDb3B5cmln
-aHQgKEMpIDIwMjMgQXJhdmluZCBDZXlhcmRhc3MgKGRldkBhcmF2aW5kLmNjKQoqKioqKioq
-KioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKiov
-CgojaWZuZGVmIFJFRlRSQUNLX18KI2RlZmluZSBSRUZUUkFDS19fCgojZGVmaW5lIFJFRlRS
-QUNLX0lHTk9SRV9GTEFHIDB4MQojZGVmaW5lIFJFRlRSQUNLX0hFQVBfRk5fRkxBRyAweDIK
-I2RlZmluZSBSRUZUUkFDS19ERVNUUlVDVE9SX0ZOX0ZMQUcgMHg0CgojZGVmaW5lIFJFRlRS
-QUNLICAgICAgICAgICAgX19hdHRyaWJ1dGVfXygoX19yZWZ0cmFja19fKCkpKQojZGVmaW5l
-IFJFRlRSQUNLX0NVU1RPTShTKSAgX19hdHRyaWJ1dGVfXygoX19yZWZ0cmFja19fKFMjI19h
-ZGRyZWYsIFMjI19yZW1vdmVyZWYpKSkKI2RlZmluZSBSRUZUUkFDS19JR05PUkUgICAgIF9f
-YXR0cmlidXRlX18oKF9fcmVmdHJhY2tfXyhSRUZUUkFDS19JR05PUkVfRkxBRykpKQojZGVm
-aW5lIFJFRlRSQUNLX0hFQVBfRk4gICAgX19hdHRyaWJ1dGVfXygoX19yZWZ0cmFja19fKFJF
-RlRSQUNLX0hFQVBfRk5fRkxBRyB8IFJFRlRSQUNLX0lHTk9SRV9GTEFHKSkpCiNkZWZpbmUg
-UkVGVFJBQ0tfREVTVFJVQ1RPUl9GTiBfX2F0dHJpYnV0ZV9fKChfX3JlZnRyYWNrX18oUkVG
-VFJBQ0tfREVTVFJVQ1RPUl9GTl9GTEFHKSkpCiNkZWZpbmUgUkVGVFJBQ0tfTk9QKHgpCgoj
-ZGVmaW5lIE1BTExPQ19MSUtFIF9fYXR0cmlidXRlX18oKF9fbWFsbG9jX18pKQoKI2VuZGlm
-IC8vIFJFRiBUUkFDS19fCg==
-
---------------dRvR4DoswZYzP5cgrXtdxyRE--
+>
+> >
+> > >
+> > > >
+> > > > My point is that if we want a proper fix for mTHP, we'd better hand=
+le writeback.
+> > > > Otherwise, this isn=E2=80=99t much different from directly returnin=
+g -EBUSY as proposed
+> > > > in this RFC.
+> > > >
+> > > > For small folios, there=E2=80=99s no split_folio issue, making it r=
+elatively
+> > > > simpler. Lokesh
+> > > > mentioned plans to madvise NOHUGEPAGE in ART, so fixing small folio=
+s is likely
+> > > > the first priority.
+> > >
+> > > Agreed.
+> > >
+> > > --
+> > > Peter Xu
+> > >
 
