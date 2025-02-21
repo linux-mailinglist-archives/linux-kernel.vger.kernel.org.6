@@ -1,163 +1,163 @@
-Return-Path: <linux-kernel+bounces-526282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E183A3FCC1
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 18:05:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EC7AA3FCC2
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 18:05:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30CC7706CFE
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:58:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DE12706F0B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:58:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDBFC22333D;
-	Fri, 21 Feb 2025 16:57:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5937223716;
+	Fri, 21 Feb 2025 16:57:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YWkugHCT"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="Fz9LKnKo"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A25AF223334
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 16:57:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57E9A215F43;
+	Fri, 21 Feb 2025 16:57:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740157035; cv=none; b=OQt+tDgi80eRRPOaiLd19tI8D7FX9zudwZ/hbxN1KRyqwvusGmI0QibDNJZG9bdbA5FISXcC272O9ss3Pe7kgej2wzAYLctUhbeMf1jIMQTW1+RDjxYO9jXeitXKeDmZ0bkZAWopVjckXfjyyWdFDKvYJVZruqomqK3GFlLF9AM=
+	t=1740157037; cv=none; b=SLCG+/1oABt3uMaG/jUlOeXnbAX1KtvLp1pbpEG2NKdqkPhVE5Ax/enEknoXWajm+Odc6MY4RJafBOd8XmF62aF/fNyAx469Bhnc8thBcwqsr5BXWUrwxBfSe+ZY/BKKvLJ5TRgJZGeE1kSPvQLXwxqL48oDAPCLz/gE9ZVpwfs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740157035; c=relaxed/simple;
-	bh=sLF5oT9Lvef17Xk4wpZ383fnLHw9qC9WCYb+k3DNBwc=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=gVKORWQzO0tsasEfRqF4c8vn4eTq7CbDxXLUIiWqC8+jf+PuQ6AniCbtz9C78RXc9q2jc6Ql3Nti4p8C0ba0e5/V0ZUxYLebia2p1TjSiUwDXXrouUvgqLVGChvCKBADKrOtWDJ15imMMa3sCm1GkZMcZhWecAAFlOXKtDSkngE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YWkugHCT; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740157033; x=1771693033;
-  h=date:from:to:cc:subject:message-id;
-  bh=sLF5oT9Lvef17Xk4wpZ383fnLHw9qC9WCYb+k3DNBwc=;
-  b=YWkugHCTfdfJIM8X8BoJTp2SS2Majy9DgfWK6Ow6f70J6166RcbGqdoS
-   nTEonujM75jpY3ZP1Ai3RiAe8nYybJjd/EXsMiU9UXnPagfQcAmDiDIux
-   M4wPTrCXJHQIKNR8Kx5iTchZe2uwu+36A/HoMuUs2042Yt+M4azwW8yyo
-   JF5KLvvi33+ktNI161OjwfuCOgc9ckPDdt8TzXCWhJf4mIYF4WQlvp72/
-   6rbNZE+siXt0ZxRd/ZBKTcYWLS4IPpKptJ8uH1eNvfcbRso8cHvvnkM0a
-   BImeGKqeG9TS6gi69BYot44GByGMS2SPGtVVDSf4pLmqD7G8bw6mntihs
-   w==;
-X-CSE-ConnectionGUID: 8gRuJeouRHCZwO73ze3yXQ==
-X-CSE-MsgGUID: XJx3fao9S6aaN+RCP3T2mQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11352"; a="51622150"
-X-IronPort-AV: E=Sophos;i="6.13,305,1732608000"; 
-   d="scan'208";a="51622150"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Feb 2025 08:57:12 -0800
-X-CSE-ConnectionGUID: rR2yS4c1S8SjwziqtVeIMA==
-X-CSE-MsgGUID: UYo/+nTrQEa3OGWQiobPhA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,305,1732608000"; 
-   d="scan'208";a="115135441"
-Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
-  by orviesa009.jf.intel.com with ESMTP; 21 Feb 2025 08:57:12 -0800
-Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tlWKr-0005lx-1q;
-	Fri, 21 Feb 2025 16:57:09 +0000
-Date: Sat, 22 Feb 2025 00:56:46 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [paulmck-rcu:non-rcu/next] BUILD SUCCESS
- de3ac915f986e6ecc1c219584797c196ff6d1fa2
-Message-ID: <202502220040.4TlPoLco-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1740157037; c=relaxed/simple;
+	bh=5RV0MfI+eFAbX3TFL3tJA1uo0SVXKiao6tzYw5ckz2o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=thzWhz0+nh/LKTNTOznck2WCLL5tbWEo5hIyTBAhD/Tj7dmiybrCEOw4YS4vrKkbUTcpM/h8HoboAA5T3CkIIC5JyOdogx9MZu8jD/XT+m9S30bco1aKQcElnOz8908tZpMzmpd1hgPEYo+6Bs9ZSG6iebNCRWhUUHOIj7IYPKY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=Fz9LKnKo; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.1)
+ id 31ce6f5f9d79eda8; Fri, 21 Feb 2025 17:57:11 +0100
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 608977F624F;
+	Fri, 21 Feb 2025 17:57:11 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1740157031;
+	bh=5RV0MfI+eFAbX3TFL3tJA1uo0SVXKiao6tzYw5ckz2o=;
+	h=From:Subject:Date;
+	b=Fz9LKnKogtW+RMgIsmLInJFXnkt6DFXL4TR9rzXHbB+Q5pi7Dez2pdJ6yceiYIUAt
+	 Q+wfJqp+pSRVNTbjcoi6WpYOW/srhqdzoaVQjHYtkvwhp1dLw365pQkVhARfsYmrbJ
+	 jAKcSY1e8bQzKgoWbqjtw4MHwZx9VZ1LJMne1Phqqp4mO/3C9VJW5L41G2fXgPFPWq
+	 kIDF7aEi7Kzvp8bFT7Z8/A5/SdmesqFSld9oEqBBjnM9lraMCH+vQe1nuVQezUypMi
+	 TXdvoZisyvtS4ryN7ObEoX12/g7+uWYTyImTu7vLsPiGyXfgOaHFe16IkJ9FjljJ8R
+	 1OuVMU7y0hv6A==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Yu-Che Cheng <giver@chromium.org>
+Subject: [PATCH v1] thermal/of: Fix cdev lookup in thermal_of_should_bind()
+Date: Fri, 21 Feb 2025 17:57:11 +0100
+Message-ID: <2788228.mvXUDI8C0e@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: clean
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdejtdehiecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpeegfffhudejlefhtdegffekteduhfethffhieettefhkeevgfdvgfefieekiefgheenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomheprhhjfiesrhhjfiihshhotghkihdrnhgvthdpnhgspghrtghpthhtohephedprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehluhhkrghsiidrlhhusggrsegrrhhmrdgtohhmpdhrtghpthhtohepuggrnhhivghlrdhlvgiitggrnhhosehlihhnrghrohdrohhrghdprhgtphhtthhopehgihhvvghrseg
+X-DCC--Metrics: v370.home.net.pl 1024; Body=5 Fuz1=5 Fuz2=5
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git non-rcu/next
-branch HEAD: de3ac915f986e6ecc1c219584797c196ff6d1fa2  tools/memory-model: Distinguish between syntactic and semantic tags
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-elapsed time: 1455m
+Since thermal_of_should_bind() terminates the loop after processing
+the first child found in cooling-maps, it will never match more than
+one cdev to a given trip point which is incorrect, as there may be
+cooling-maps associating one trip point with multiple cooling devices.
 
-configs tested: 71
-configs skipped: 1
+Address this by letting the loop continue until either all
+children have been processed or a matching one has been found.
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+To avoid adding conditionals or goto statements, put the loop in
+question into a separate function and make that function return
+right away after finding a matching cooling-maps entry.
 
-tested configs:
-alpha                           allyesconfig    gcc-14.2.0
-arc                             allmodconfig    gcc-13.2.0
-arc                             allyesconfig    gcc-13.2.0
-arc                  randconfig-001-20250221    gcc-13.2.0
-arc                  randconfig-002-20250221    gcc-13.2.0
-arm                             allmodconfig    gcc-14.2.0
-arm                             allyesconfig    gcc-14.2.0
-arm                  randconfig-001-20250221    gcc-14.2.0
-arm                  randconfig-002-20250221    clang-19
-arm                  randconfig-003-20250221    gcc-14.2.0
-arm                  randconfig-004-20250221    clang-21
-arm64                           allmodconfig    clang-18
-arm64                randconfig-001-20250221    clang-15
-arm64                randconfig-002-20250221    clang-21
-arm64                randconfig-003-20250221    clang-21
-arm64                randconfig-004-20250221    gcc-14.2.0
-csky                 randconfig-001-20250221    gcc-14.2.0
-csky                 randconfig-002-20250221    gcc-14.2.0
-hexagon                         allmodconfig    clang-21
-hexagon                         allyesconfig    clang-18
-hexagon              randconfig-001-20250221    clang-21
-hexagon              randconfig-002-20250221    clang-21
-i386                             allnoconfig    gcc-12
-i386       buildonly-randconfig-001-20250221    gcc-12
-i386       buildonly-randconfig-002-20250221    gcc-12
-i386       buildonly-randconfig-003-20250221    gcc-12
-i386       buildonly-randconfig-004-20250221    gcc-12
-i386       buildonly-randconfig-005-20250221    clang-19
-i386       buildonly-randconfig-006-20250221    clang-19
-loongarch            randconfig-001-20250221    gcc-14.2.0
-loongarch            randconfig-002-20250221    gcc-14.2.0
-m68k                            allyesconfig    gcc-14.2.0
-nios2                randconfig-001-20250221    gcc-14.2.0
-nios2                randconfig-002-20250221    gcc-14.2.0
-parisc               randconfig-001-20250221    gcc-14.2.0
-parisc               randconfig-002-20250221    gcc-14.2.0
-powerpc              randconfig-001-20250221    clang-21
-powerpc              randconfig-002-20250221    clang-21
-powerpc              randconfig-003-20250221    clang-17
-powerpc64            randconfig-001-20250221    clang-21
-powerpc64            randconfig-002-20250221    clang-21
-powerpc64            randconfig-003-20250221    clang-19
-riscv                randconfig-001-20250221    clang-21
-riscv                randconfig-002-20250221    clang-21
-s390                            allmodconfig    clang-19
-s390                            allyesconfig    gcc-14.2.0
-s390                 randconfig-001-20250221    gcc-14.2.0
-s390                 randconfig-002-20250221    gcc-14.2.0
-sh                              allmodconfig    gcc-14.2.0
-sh                              allyesconfig    gcc-14.2.0
-sh                   randconfig-001-20250221    gcc-14.2.0
-sh                   randconfig-002-20250221    gcc-14.2.0
-sparc                           allmodconfig    gcc-14.2.0
-sparc                randconfig-001-20250221    gcc-14.2.0
-sparc                randconfig-002-20250221    gcc-14.2.0
-sparc64              randconfig-001-20250221    gcc-14.2.0
-sparc64              randconfig-002-20250221    gcc-14.2.0
-um                              allmodconfig    clang-21
-um                              allyesconfig    gcc-12
-um                   randconfig-001-20250221    gcc-12
-um                   randconfig-002-20250221    gcc-12
-x86_64                           allnoconfig    clang-19
-x86_64     buildonly-randconfig-001-20250221    gcc-12
-x86_64     buildonly-randconfig-002-20250221    clang-19
-x86_64     buildonly-randconfig-003-20250221    clang-19
-x86_64     buildonly-randconfig-004-20250221    clang-19
-x86_64     buildonly-randconfig-005-20250221    clang-19
-x86_64     buildonly-randconfig-006-20250221    clang-19
-x86_64                             defconfig    gcc-11
-xtensa               randconfig-001-20250221    gcc-14.2.0
-xtensa               randconfig-002-20250221    gcc-14.2.0
+Fixes: 94c6110b0b13 ("thermal/of: Use the .should_bind() thermal zone callback")
+Link: https://lore.kernel.org/linux-pm/20250219-fix-thermal-of-v1-1-de36e7a590c4@chromium.org/
+Reported-by: Yu-Che Cheng <giver@chromium.org>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ drivers/thermal/thermal_of.c |   50 ++++++++++++++++++++++++-------------------
+ 1 file changed, 29 insertions(+), 21 deletions(-)
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+--- a/drivers/thermal/thermal_of.c
++++ b/drivers/thermal/thermal_of.c
+@@ -274,6 +274,34 @@
+ 	return true;
+ }
+ 
++static bool thermal_of_cm_lookup(struct device_node *cm_np,
++				 const struct thermal_trip *trip,
++				 struct thermal_cooling_device *cdev,
++				 struct cooling_spec *c)
++{
++	for_each_child_of_node_scoped(cm_np, child) {
++		struct device_node *tr_np;
++		int count, i;
++
++		tr_np = of_parse_phandle(child, "trip", 0);
++		if (tr_np != trip->priv)
++			continue;
++
++		/* The trip has been found, look up the cdev. */
++		count = of_count_phandle_with_args(child, "cooling-device",
++						   "#cooling-cells");
++		if (count <= 0)
++			pr_err("Add a cooling_device property with at least one device\n");
++
++		for (i = 0; i < count; i++) {
++			if (thermal_of_get_cooling_spec(child, i, cdev, c))
++				return true;
++		}
++	}
++
++	return false;
++}
++
+ static bool thermal_of_should_bind(struct thermal_zone_device *tz,
+ 				   const struct thermal_trip *trip,
+ 				   struct thermal_cooling_device *cdev,
+@@ -293,27 +321,7 @@
+ 		goto out;
+ 
+ 	/* Look up the trip and the cdev in the cooling maps. */
+-	for_each_child_of_node_scoped(cm_np, child) {
+-		struct device_node *tr_np;
+-		int count, i;
+-
+-		tr_np = of_parse_phandle(child, "trip", 0);
+-		if (tr_np != trip->priv)
+-			continue;
+-
+-		/* The trip has been found, look up the cdev. */
+-		count = of_count_phandle_with_args(child, "cooling-device", "#cooling-cells");
+-		if (count <= 0)
+-			pr_err("Add a cooling_device property with at least one device\n");
+-
+-		for (i = 0; i < count; i++) {
+-			result = thermal_of_get_cooling_spec(child, i, cdev, c);
+-			if (result)
+-				break;
+-		}
+-
+-		break;
+-	}
++	result = thermal_of_cm_lookup(cm_np, trip, cdev, c);
+ 
+ 	of_node_put(cm_np);
+ out:
+
+
+
 
