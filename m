@@ -1,150 +1,102 @@
-Return-Path: <linux-kernel+bounces-525141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39CF0A3EB65
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 04:35:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9504FA3EB70
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 04:36:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74275189FEEB
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 03:35:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7BAF189FEFA
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 03:36:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3537D1EBA1C;
-	Fri, 21 Feb 2025 03:34:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 240D71F9A95;
+	Fri, 21 Feb 2025 03:36:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="N7bACNBN"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="GEsUhoOq"
+Received: from smtp-fw-9102.amazon.com (smtp-fw-9102.amazon.com [207.171.184.29])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EE9833CA;
-	Fri, 21 Feb 2025 03:34:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA70C33CA;
+	Fri, 21 Feb 2025 03:36:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.171.184.29
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740108892; cv=none; b=hDrQ2UBJzasPkq7WIyyAQtvhba/11/jT3mOUORHnd+1jiw6dTY+r3yHIz7RvQLTDVLaT3BLtjeucHYhluOP06iLJuWd5dzLhtFjsmGuRwytv38J98WTTwE6LymuzBH7Qr+PrgXG5U/tziMJYOGmD6NGrdSw+AFszKcYPYsv+bq8=
+	t=1740108974; cv=none; b=Hr0DnIit8E0R+kFXAH4jUnc1Fkk1HZeHrF7E5XNeJCmpoo7MBD9OTNvc2oB1zKzQPC8+SBb7Ly0SHlvNprGVzKhlbkI/S5l2dQTWivApTZH0NE+UlAbxHpr8UceehFJ6Zms1xFfVE5/XsQaSnnABC7hiKnEsfFoh4WFKGTllFm4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740108892; c=relaxed/simple;
-	bh=/pTeCaq0rFXRNDbVH36KuArqLCGCPpbO27CrX8Gsocc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=s7Q6gfgdywAvdc9Tt6IkLGg8UB54CD6Qhc2NcCGqJ8Zt+C3ZEk6HTLyoOeMaXkwHvK6399wEdXCbtSudDd2Ws2Z+PXyfLMHZDjASEzU+GhaHNAgnfZd7Ndkw4UI/jtjf1Z9q1Sc7N5X+0LJnm+E1gqQJRCPDFRCKdQpPq6Kq7K8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=N7bACNBN; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51KFZIeB031803;
-	Fri, 21 Feb 2025 03:34:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	GRq9K0Ol51zWXo5Sj62pQYKTUBCarLLDQZa9UUTs1Iw=; b=N7bACNBNhw0hFzVO
-	z/IVi9NFVXvhp9ScqPbrPoHHFTyT59i4S3EgG3XsfpouJelZ0lpxpSosvm7FDnpY
-	qRLXgVKtR8EUyvFqRGDAZ7LlcBK+i3iwNUFckUBS1MZ7MEWhbh+sTXM6FSHOoKzu
-	djx0j2iZ/nWgiI+5+n9em7IAQpnWKfzVqEJBKttpZ7AvBLlkU3UhJvqv3n5MUdBs
-	8Vq9tQCn1qfgSPyPPdnZ9EMVgTa+ESGe5ELut/4N16AGsBrKJNSg/UGIERxgUt4e
-	rRb+75ZxL+iW7gh1BKfltdK4Ge232Q9+RaeNJsjWldlc02OECBFcEQkGkyYNYXDk
-	rBJUSQ==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44vyy5g85t-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Feb 2025 03:34:41 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51L3YeEE031277
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Feb 2025 03:34:40 GMT
-Received: from [10.133.33.29] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 20 Feb
- 2025 19:34:38 -0800
-Message-ID: <cc426e67-106d-4b0f-b4ec-f8fbf089770e@quicinc.com>
-Date: Fri, 21 Feb 2025 11:34:35 +0800
+	s=arc-20240116; t=1740108974; c=relaxed/simple;
+	bh=gKthB+K0tAoEXAa0sueo9AGRemYbKF6ODWZJ+MhsZc4=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Y7JOFu2rYGFL4PwcUY3I5m9mDeP5y1i4duWcUOiohZnO2VsqvZkwgOBKih07n4fB/yN8jD+1htMObb3y227NC+y5G5g6AfEDJ4EKjR/cu1z6HwfOukZk2S/zC3fNmnRx7WYKtJg54XI2H/EPNpghXBeiFbWGigd2kXS+NA9oEso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=GEsUhoOq; arc=none smtp.client-ip=207.171.184.29
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1740108973; x=1771644973;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=oFHrnoZA5yunh9fQerpN+ou0poPl6NY3Hw3Lua8KpXw=;
+  b=GEsUhoOq5jmSSgH6tN7mhqjMFxtEigYUddRsNFaT1viaPHC5fOEBQxgT
+   GdmAxZ4cNcNzJuTRjujStW5ZUD8eDTTs0+ppD/IcCs+U7rIXyhybzfaWo
+   +m21pgEHrBXRh3K38mn9xMlJnpaYQkqqu++c+zFESiH8PHfq0zF89N1As
+   o=;
+X-IronPort-AV: E=Sophos;i="6.13,303,1732579200"; 
+   d="scan'208";a="495797487"
+Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.214])
+  by smtp-border-fw-9102.sea19.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Feb 2025 03:36:06 +0000
+Received: from EX19MTAUWB002.ant.amazon.com [10.0.7.35:31178]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.35.58:2525] with esmtp (Farcaster)
+ id 8cb3c8f8-0a7a-4678-9917-956104d654d3; Fri, 21 Feb 2025 03:36:05 +0000 (UTC)
+X-Farcaster-Flow-ID: 8cb3c8f8-0a7a-4678-9917-956104d654d3
+Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
+ EX19MTAUWB002.ant.amazon.com (10.250.64.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.39;
+ Fri, 21 Feb 2025 03:35:58 +0000
+Received: from 6c7e67bfbae3.amazon.com (10.135.209.63) by
+ EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Fri, 21 Feb 2025 03:35:52 +0000
+From: Kuniyuki Iwashima <kuniyu@amazon.com>
+To: <shaw.leon@gmail.com>
+CC: <alex.aring@gmail.com>, <andrew+netdev@lunn.ch>,
+	<b.a.t.m.a.n@lists.open-mesh.org>, <bpf@vger.kernel.org>,
+	<bridge@lists.linux.dev>, <davem@davemloft.net>, <donald.hunter@gmail.com>,
+	<dsahern@kernel.org>, <edumazet@google.com>, <herbert@gondor.apana.org.au>,
+	<horms@kernel.org>, <kuba@kernel.org>, <kuniyu@amazon.com>,
+	<linux-can@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-kselftest@vger.kernel.org>, <linux-ppp@vger.kernel.org>,
+	<linux-rdma@vger.kernel.org>, <linux-wireless@vger.kernel.org>,
+	<linux-wpan@vger.kernel.org>, <miquel.raynal@bootlin.com>,
+	<netdev@vger.kernel.org>, <osmocom-net-gprs@lists.osmocom.org>,
+	<pabeni@redhat.com>, <shuah@kernel.org>, <stefan@datenfreihafen.org>,
+	<steffen.klassert@secunet.com>, <wireguard@lists.zx2c4.com>
+Subject: Re: [PATCH net-next v10 06/13] net: ip_tunnel: Use link netns in newlink() of rtnl_link_ops
+Date: Thu, 20 Feb 2025 19:35:44 -0800
+Message-ID: <20250221033544.74835-1-kuniyu@amazon.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+In-Reply-To: <20250219125039.18024-7-shaw.leon@gmail.com>
+References: <20250219125039.18024-7-shaw.leon@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] devres: Add devm_is_action_added() helper
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>,
-        Bartosz Golaszewski
-	<bartosz.golaszewski@linaro.org>,
-        Raag Jadav <raag.jadav@intel.com>, <linux-kernel@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>
-CC: "Rafael J. Wysocki" <rafael@kernel.org>,
-        Danilo Krummrich
-	<dakr@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz
- Golaszewski <brgl@bgdev.pl>
-References: <20250220162238.2738038-1-andriy.shevchenko@linux.intel.com>
- <20250220162238.2738038-3-andriy.shevchenko@linux.intel.com>
-Content-Language: en-US
-From: Zijun Hu <quic_zijuhu@quicinc.com>
-In-Reply-To: <20250220162238.2738038-3-andriy.shevchenko@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 4ZDUdC2-YKjcmIQ_ixZkJecPf50ECIbx
-X-Proofpoint-GUID: 4ZDUdC2-YKjcmIQ_ixZkJecPf50ECIbx
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-20_09,2025-02-20_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- mlxlogscore=925 spamscore=0 bulkscore=0 clxscore=1011 suspectscore=0
- adultscore=0 malwarescore=0 mlxscore=0 lowpriorityscore=0 impostorscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2502210024
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D039UWA004.ant.amazon.com (10.13.139.68) To
+ EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
-On 2/21/2025 12:20 AM, Andy Shevchenko wrote:
-> In some code we would like to know if the action in device managed resources
-> was added by devm_add_action() family of calls. Introduce a helper for that.
+From: Xiao Liang <shaw.leon@gmail.com>
+Date: Wed, 19 Feb 2025 20:50:32 +0800
+> When link_net is set, use it as link netns instead of dev_net(). This
+> prepares for rtnetlink core to create device in target netns directly,
+> in which case the two namespaces may be different.
 > 
-> Reviewed-by: Raag Jadav <raag.jadav@intel.com>
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
->  drivers/base/devres.c         | 11 +++++++++++
->  include/linux/device/devres.h |  2 ++
->  2 files changed, 13 insertions(+)
+> Convert common ip_tunnel_newlink() to accept an extra link netns
+> argument.
 > 
-> diff --git a/drivers/base/devres.c b/drivers/base/devres.c
-> index 93e7779ef21e..7c2babfa9396 100644
-> --- a/drivers/base/devres.c
-> +++ b/drivers/base/devres.c
-> @@ -749,6 +749,17 @@ int __devm_add_action(struct device *dev, void (*action)(void *), void *data, co
->  }
->  EXPORT_SYMBOL_GPL(__devm_add_action);
->  
-> +bool devm_is_action_added(struct device *dev, void (*action)(void *), void *data)
-> +{
-> +	struct action_devres devres = {
-> +		.data = data,
-> +		.action = action,
-> +	};
-> +
-> +	return devres_find(dev, devm_action_release, devm_action_match, &devres);
-> +}
-> +EXPORT_SYMBOL_GPL(devm_is_action_added);
-> +
->  /**
->   * devm_remove_action_nowarn() - removes previously added custom action
->   * @dev: Device that owns the action
-> diff --git a/include/linux/device/devres.h b/include/linux/device/devres.h
-> index 9cd1787ef28e..ae696d10faff 100644
-> --- a/include/linux/device/devres.h
-> +++ b/include/linux/device/devres.h
-> @@ -165,4 +165,6 @@ static inline int __devm_add_action_or_reset(struct device *dev, void (*action)(
->  #define devm_add_action_or_reset(dev, action, data) \
->  	__devm_add_action_or_reset(dev, action, data, #action)
->  
-> +bool devm_is_action_added(struct device *dev, void (*action)(void *), void *data);
-> +
->  #endif /* _DEVICE_DEVRES_H_ */
+> Signed-off-by: Xiao Liang <shaw.leon@gmail.com>
 
-Reviewed-by: Zijun Hu <quic_zijuhu@quicinc.com>
-
+Reviewed-by: Kuniyuki Iwashima <kuniyu@amazon.com>
 
