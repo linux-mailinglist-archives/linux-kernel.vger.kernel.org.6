@@ -1,199 +1,556 @@
-Return-Path: <linux-kernel+bounces-526097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF742A3F9F2
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:03:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CD79A3F9FC
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:04:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D1EAE7A8334
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 15:56:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 662FB7AAF53
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 15:58:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F46220E018;
-	Fri, 21 Feb 2025 15:54:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31D60213E7C;
+	Fri, 21 Feb 2025 15:56:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hOKKCKCp"
-Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com [209.85.221.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="hWjkRZAP"
+Received: from OS0P286CU011.outbound.protection.outlook.com (mail-japanwestazon11010037.outbound.protection.outlook.com [52.101.228.37])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1F3F205ABF
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 15:54:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.182
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740153280; cv=none; b=SjriVaDrHI4+3ejlbdjMrfIc/9JyRUfAf40RKN2F1AJSDdU57H8lSbOfX26ZxdWlz1JZEGNh5IUA9psZXA4bkrj7Aj8AP1Ooo3QtRDZzvJWnIpn11tQjdA3EM9VgCGAHPILgz+qPMdRqXzb8n02vutpHu1LdoemsaRtYYuJFaUs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740153280; c=relaxed/simple;
-	bh=RKztKjhyXW+cJChux8lNeRXx2Zf3ZV/zmyd+5Z+JIKM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MfHNnVmGbni1omdqmXYuCP/DzPXc/7HGTPXeddilKvXHgaSnPKq9xDq2uppF6HybJi5TvN4iuTjWoMEWVEBLTZEg0ysjlsJ562hmx25s80syMdgvtFmbyttFtHyhvqc0lO3IyiEeh4Q8vttgWh4I8EzpQztJC+0hnDf8MnvG3hs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hOKKCKCp; arc=none smtp.client-ip=209.85.221.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-520aede8ae3so669053e0c.0
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 07:54:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740153277; x=1740758077; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VAlKnvF+99/2m3lfV6+cqEZKBv2WazQ70+jW+VGN9e4=;
-        b=hOKKCKCpirLIFsbbEjaudC48qTPBYi8l6sPDrisuu+OymFT13qN3PD4wf9+15lakhI
-         /Bdblo3KDbRIfLrRHbSqD4ApR2l40PoRL7h26Z9Pf+M92uOh1ID9ImST4c/agLdL7oOc
-         muh5VfGSIQFmr/UOJNVGU3vZWPUJcDjG4/t6aJh6vg3YsiZU0aioNLisjywtd2PPQOSf
-         oydnN8+vWLGI4aI0I7HgX5GKKfL7Pu117Mtdna1dSqunJNlnnxRR/SVWGBX8jUzsuFN9
-         P2ty6mjHb7DTLiqhYRLbpZkcnfjpInIm9LVMHTe4mtehvTL5FkMMLd4HwZ3u7r/vdAhE
-         GO3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740153277; x=1740758077;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VAlKnvF+99/2m3lfV6+cqEZKBv2WazQ70+jW+VGN9e4=;
-        b=BUMAnIoDbzsIXbHfvCpc4ufEddEY1ZLKygv5XZaMTLIUWM3dpTIoCXf7GOKZPFY4t6
-         rKz3ZplXIIZXnM2TuOR37MrnuPhl8g4aMqmmh9q4uRs3mh70DoVySF5sDsYt/3IQTwM6
-         0EhO70a1LXVNwlJsSwvukTl5LvdVafS6paMRAxw2KAkgzD4PSgf9mjm460dvLx52cWmP
-         +CPDlsEwuQSxMq9R43ERK1r2I4FfX+yovoxTljVL74imgCg1YgVVxH5fOt3K43tKs9S0
-         xgoe/s8i5CE67lowxhnLheNX46fbMTJ1oYNoVwe0c1TnBUhogyXr/+BrfwkqQSlTFv5i
-         jLXg==
-X-Gm-Message-State: AOJu0Yy1yWqSF0m5/+QHyMm/LChyAXE0AbobhnkK2+cVZKbaxvstJlL4
-	TjdTd/S4teatNXxXCJ0RUQ3/cB4n3xlvHpyfu1b8p0ilM6qdozVCuyCdo9ST9D55znkLHZCN3DZ
-	Itwa3cOb2entbo07Cd4vpZKwQCLY=
-X-Gm-Gg: ASbGnctS5wIuuNWXdZ4Uq4RTzzAEhSxZYbhY1iLxxaw6VIumDM/XkVS64dUDLHN86Ud
-	QzJ0jdb8WkOtTBH61ZtbQAHV0ZUrhQmNh9GLZymaOHPfrW6cZUstmPP27tUW19pnSAI2/D9R49u
-	rDdZjPUqZJAgd/If1vxpbVHLEXa2rjuyF9CZ0u6B0=
-X-Google-Smtp-Source: AGHT+IGNJWciAvxYEU43nHmk601QXqX/yyFJBTmJeYfZwXATYOt+ya/3dlODsznzoAksL9U/MMx1wrMX1tanFDsjBKc=
-X-Received: by 2002:a05:6122:1790:b0:520:8911:df12 with SMTP id
- 71dfb90a1353d-521ee4b4ffemr1711921e0c.10.1740153277426; Fri, 21 Feb 2025
- 07:54:37 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 821032116F5;
+	Fri, 21 Feb 2025 15:56:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.228.37
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740153371; cv=fail; b=e+LHTjxdgfgqYwBLLDFomRmOOrmEW69DO9iJ3VNaxRraewN7iDD8ZxN/SOyxn8O8mDCXh1jPwbe01dDPU0scA0iMBpwSrS3fz06S/1HOyBjS5SmJ/3EqNm9nLAIv3NCIldW7hi8k/vtdjnjgUZ4qatyX0+YBdkPAUp5azZJJnsw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740153371; c=relaxed/simple;
+	bh=TLs9se6yW8nwupIO5Te1GdORviq7+aKgTPZWY53m8u4=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=oSqUNcfCabu64zZEnAqw9MzPcvIfCW6IT+nEIGBMcyVcQ8SX7+SSa2AMhq4cUPS7FCxCJoe2yfCoMYbnwcdAn77WDM+U3S+97xK1QS/UbrQVHt7CnxxYAA59BpX1DsjzqXnH5C0LcdwD31FEjhOhP8DT3HzWqSKQSzorB5TWFko=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=hWjkRZAP; arc=fail smtp.client-ip=52.101.228.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=YWXGz6qbIWb3FMEwAQMDOBlZUDcbnS8WCj/Sxoh5mJW/kyg7pU2wl7stzNfYX0eBN3+M6xOHgtRh1SAQCN5XtIq3GcMa/a64Ze7mO2fSbxcMljHrJHjKLb+w6mqd9MmjSdC+PXudU8vWSZ1gyAiHNBFa9I453by1EiQ6FlgorcDtMYMAt2DdbT706VNSlcRlsnGv06uN6ZAzxZcpYlPCw4X34AtdDnryLx+z3HP3qZh7q+KVhSYWOkPPBFx7f9xLldJ6mLqGv1oC1BNmchNw85sglt3Q2FPr8FcELyLeb92b6MJ94X9t3DndabpngQeUg0CjCg2kwhSSqlO1ADKYzQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=pDdJlfR2KgDZ1TgNRwSXg0Gmn1WSjVYbK7kIbSYlzks=;
+ b=Dp4VU17m9aGmm4ywww9XGiW+2BUB8pqPlFlsiDCjkZ9vCw2O0/ufS2WEPYY3mZC6hOsnprLx4yQG1RUyTvrlpq4wgmdMW2/s0hvQaANp+GuoTavLb3HGh95LtrscXGL/BMGEeWb6t4zKhmiUCCsGbkrYuej6ykMtDMQsWue5UgI9EuipGLeWu3RA8Q4VhJvESNfN/GHriRkL4JexxEtMXm34IXUVzNF1L8II1TGMddc39iU8T+EAJTfrIsGKSTKHIAmCJX8BjX/5aXMnvlwRIEnFchm6QgILGTwsB1DZXetD8dMfL/El0ZCmok734gRAUrECDtKXD5jVYNGd2i2RyQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=pDdJlfR2KgDZ1TgNRwSXg0Gmn1WSjVYbK7kIbSYlzks=;
+ b=hWjkRZAPXKNQ82otxZ1+tLTiVpmVNYVtdX3Pf9P0G+GWRz7tqb5Q/JfY3VUJb8A9voQtaSbLFsDe8+PXlTXnmBomWR3Yxg7gKuQSfqTaH0dKWql6jeUL9BEk1Vg3WwmaIbAJLCdpiOf1xsTWVy1Ba6U8Se/ayeDkAfYMBALWb70=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=bp.renesas.com;
+Received: from OS9PR01MB13950.jpnprd01.prod.outlook.com (2603:1096:604:35e::5)
+ by TYCPR01MB6238.jpnprd01.prod.outlook.com (2603:1096:400:7d::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.17; Fri, 21 Feb
+ 2025 15:56:04 +0000
+Received: from OS9PR01MB13950.jpnprd01.prod.outlook.com
+ ([fe80::244d:8815:7064:a9f3]) by OS9PR01MB13950.jpnprd01.prod.outlook.com
+ ([fe80::244d:8815:7064:a9f3%5]) with mapi id 15.20.8466.016; Fri, 21 Feb 2025
+ 15:56:03 +0000
+From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+To: tomm.merciai@gmail.com
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	biju.das.jz@bp.renesas.com,
+	prabhakar.mahadev-lad.rj@bp.renesas.com,
+	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 00/18] media: rzg2l-cru: Add support for RZ/G3E (CSI2, CRU)
+Date: Fri, 21 Feb 2025 16:55:14 +0100
+Message-Id: <20250221155532.576759-1-tommaso.merciai.xr@bp.renesas.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: FR0P281CA0260.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:b5::17) To OS9PR01MB13950.jpnprd01.prod.outlook.com
+ (2603:1096:604:35e::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250220154904.2698964-1-daeho43@gmail.com> <e62dfe59-61a9-426f-bec4-69223b7247f9@kernel.org>
-In-Reply-To: <e62dfe59-61a9-426f-bec4-69223b7247f9@kernel.org>
-From: Daeho Jeong <daeho43@gmail.com>
-Date: Fri, 21 Feb 2025 07:54:26 -0800
-X-Gm-Features: AWEUYZmIXYjVM-71wxVtJACatMvbaTMJ5MG_qRydRZx-EkilO0T0WnAkuZKE-E4
-Message-ID: <CACOAw_yOYnJ+zsFS339u8tonQNZkM9kjkAdouD9gooydQL0Zaw@mail.gmail.com>
-Subject: Re: [f2fs-dev] [PATCH] f2fs: do not use granularity control for
- segment or section unit discard
-To: Chao Yu <chao@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, 
-	kernel-team@android.com, Daeho Jeong <daehojeong@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: OS9PR01MB13950:EE_|TYCPR01MB6238:EE_
+X-MS-Office365-Filtering-Correlation-Id: deb34d21-002c-4279-03d2-08dd52903e8c
+X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|52116014|366016|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Qwlc7WhOZk3BEG36H/bjsyCl0dIs5wDKyYRV+JmQIuWgyjAjJsmiQCVvSNTM?=
+ =?us-ascii?Q?Pt7yuc+QxUxNY5zlTfleoBdZo50UeNPCI38+5Q0IhjG+zcHtQmvOsOlYTZ0Z?=
+ =?us-ascii?Q?VKn7hHETLgN82Du/17C4H0eFVDz5UVWZdomz4KpQK2NLBOFYD/rwkI5F0YNv?=
+ =?us-ascii?Q?8f6CwfmXR0FHdLhjy6mJrcbaSpm1PND1dyUzPy9VT6g99cw/mabtHIt5v5e9?=
+ =?us-ascii?Q?CZ87xFmVbWjFObnWOCtvOE3i68hf8smcrNo4RI64DI8ilye6MuUCpARytwbZ?=
+ =?us-ascii?Q?My4eLtu1QWN4MPw86ymNC30Akzv7i2tYmoTLjdjjFeSYbZ4JHHM4UvjWFEE/?=
+ =?us-ascii?Q?hbrafIhrG3UxhJTn8jBlU/dB8EU2gJID78Z7moJNeBz9cAMZQ0Q+Srv8ZqUm?=
+ =?us-ascii?Q?IglqdZus1gpP4ZP98p9Nr8ywXlJwTduxZGKY5IxEMpC2bBEL4U8uS1kD+LzI?=
+ =?us-ascii?Q?TQaq3HxIGpfn2PMOa0r8W8aHomHfT6EL2FnwljYtAww+onFqJMpWX0A7nekV?=
+ =?us-ascii?Q?+U+92aiay0b4V7pDuiPTGcGpyRLlNNyJMa+gjvNO01rO/aRhAExWpZTdl1id?=
+ =?us-ascii?Q?9rW83grbTUADl0SOEv6EsuIP671FruIITqB3C9f5CJjcdJJ33Vtn+B1JvYPa?=
+ =?us-ascii?Q?2HV9kpehmJaJaP1QevTKMD6J45OP9Og5qvPzwdI9H6+VuVZ09UFz6PyJuTIi?=
+ =?us-ascii?Q?Ca0d8WkpqWaBG7ugJHQHAC1S+YCu5UGkdV5rKrvUGiQxkA/ToIFyceaoK1w3?=
+ =?us-ascii?Q?to1skSYn6wxsxgTpjq3dObUYbaqmxjdOf4oj8SzrtLWY3vLASx56ABcMLDNz?=
+ =?us-ascii?Q?k183542t4Fw+sScf3YvhwzsL4/pcIEUH84BfXZOqPW3XEdHyQkuM/XeQmqPJ?=
+ =?us-ascii?Q?MerveJXfuc7zIOCt1SM1sMXvJPPAY2CY4H+vOw8ytreb+/21pqvaTTh8Rxss?=
+ =?us-ascii?Q?vlFzvMkZ1dtU22fggzcdzlncMomuKZYQmKcduzpYam1Ss+5+0otJLStVJJPi?=
+ =?us-ascii?Q?FHnPUkhtXFB3VRxrtAgZLf5D4DDzy8zBBDH8NebejXJ9zbLKMLaVOLweZFMp?=
+ =?us-ascii?Q?09Sgh1Oc6HvgtcS0ZKJbDjb2sihMf+FV46pQ8BjmipyeeoBDxjoqCYuNFVAG?=
+ =?us-ascii?Q?3d6yAhzI7g0H9Ysu6HrQa/KlW1blqXRNDPJkuCcr57vcwis8piOHBMmiUTd3?=
+ =?us-ascii?Q?eLj04vhg7wcPorlcrIK2+DEPSFho3cYUW/GHRAXQt4kESY4CMLPEmIM8vjJD?=
+ =?us-ascii?Q?uKiXImCdXbWJ9kJISCNgNZYeKDyFVtfnbABA2s0+L9f/wdT3oVmv49pGqabC?=
+ =?us-ascii?Q?Nc0Gds2h/dzqbb9mO+a9Eoks3eJaGSrxpnA/sUY0fhJoGE4M5D6iDD1QXo0V?=
+ =?us-ascii?Q?sXf6G+ljZvJaHV3Q4ABD3BXKejRNcqZ1fTHieq/rtiNSY06315ud/evn5vTw?=
+ =?us-ascii?Q?Zd045Uchs37rK4TurFGfUXGvCs++eNFL?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS9PR01MB13950.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(52116014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?ngu2C1TPzBDUDkDiivzpNwR/OC4LzXJVPgNlACKPlo8t466NKy0VTNANT+4L?=
+ =?us-ascii?Q?hXk0dD1iYerI5hPNj4JTjKB+gOmRiBG3hKiE+qpg9UcdgKfC1VpFPRsFfeew?=
+ =?us-ascii?Q?HUXNCDd4O0cxopC+2xmu9/oFTokmQC9gC38c4SmFo1j/WPloEekkwAwZm9Kq?=
+ =?us-ascii?Q?1qKL5O2BJLhvSzAs8nl3WIjqJIRMdEayMOzGy4uTID/dSOtNg6I39QpO0aFO?=
+ =?us-ascii?Q?AfIUGUHnUper/m/ftv+oRyComVeznQWasC01Ka6htOKgLjWfPIE81xDSIHtA?=
+ =?us-ascii?Q?yyav6dQec6/TaEhGLDcym8K2srwpOdv1IQhcSNhvg+JNNghf37qeqGvp4dvO?=
+ =?us-ascii?Q?Cq2FNpup6erJCzz1ydfbTpVKeq/WgWqpTlLQWoOYS5tc85V/QjMYAIEd3Yag?=
+ =?us-ascii?Q?PvO8NAF7q75Uy47W5vWi09H7Y4wWeu9D+ziTw4bsTz7cfUGl+QEn6yKVtUgt?=
+ =?us-ascii?Q?PZJKTRGthGBqPJdI+PJyNzpBD4t8WEZ9EF6k7YgODoPrhEBxNFjsHXBK7nK+?=
+ =?us-ascii?Q?58Le/fjkNBhfIbmrWkwe5SF5LXkZpeNn1lFTVWUolUIS0ynMwlNuBTqOAOIO?=
+ =?us-ascii?Q?nah4nxPvBola9N5hiSkHQlNVg/Kud71qe/7nnQywva4XyQtL3OI2sjNZw03t?=
+ =?us-ascii?Q?dS/w+bv+QriY/Tv2xgn8wTnkEkLMWgEfxX9RMuAaQKYtKT4ssf6S1ii8vFiz?=
+ =?us-ascii?Q?921/6LdeAWJa4qiMstcm8BhX9/r1RD6hPzN6GPiN+OXBeyLg2NTtPaDnSkC3?=
+ =?us-ascii?Q?hVt9VdJ8zfcR8D5fGjYFZRG3fmor4UaOAnAHB8BCceyhsjW2cZp6blV0R0RR?=
+ =?us-ascii?Q?zKNKtzi1u5VUbo6NBS0aNaW5Cc7davACt3BPxZ7ItKBzluEhkXoK7H7TpOt1?=
+ =?us-ascii?Q?ORgR48cb2AOrZCsZ2y3gn576RwmpeZuSYnEGeXGH5tdcdg4wfEfvNUPNs47z?=
+ =?us-ascii?Q?daVm+ggaih3PfmGD7G8knJrny3V2DPUD5ISubgME6HLiUfoUAUpsX58GG63f?=
+ =?us-ascii?Q?WjPpqUgVW9pxyhzW+Q2Uehk6yD6/AtLaDrF7y/rfVlA/ztW15GoGjeDaYsx4?=
+ =?us-ascii?Q?vUMnDAkeQVe7P6H/JO5fgtcaGWrtcqrdDWzowMb+YLkISR3XIH5rXmcQNa2Z?=
+ =?us-ascii?Q?6infvMe5Uzs2jAS5AILbv2XEQH+3pMyk/J0TAMOgMXrW3PtnuOc6F/O/Da2O?=
+ =?us-ascii?Q?bzdXU8KYO26UyT+uBE4nbBxWdncDolVNKe762/0/0SnQnJL9jaxHwytZ6wBV?=
+ =?us-ascii?Q?va8jGSagkaLuzgehHYwlUk+mvhdZSVGlyggLOdEYzKtVpCORVI/bzm0BFVZe?=
+ =?us-ascii?Q?AywsWEVKgcwX2Hh/a7Gsnuy39DIbtS4yLEKdqavtDiVBG+yCMcY9WROsKpgV?=
+ =?us-ascii?Q?DWcd4UVCvnscmAD77p4w0vYllV0w4NdyD+onPS1KXEiqEwOal6zLlxb8jRPw?=
+ =?us-ascii?Q?S1HiCEqqnfkjITnZh3zOtHdE32sjwowiYSyczy7opADTTH0VxTqTExSjC4zg?=
+ =?us-ascii?Q?sl7ZZwQCYfbDNld1hEUqKiW20VPvFxhZUVn+bY4lZm4ZVidW/njuiK1qb7ZD?=
+ =?us-ascii?Q?VXwDWBjTHKin5qbcKcFxpLyV7oSekusTjPhzon5htsHjRrWHLll68pCPnI+6?=
+ =?us-ascii?Q?b83ti9l6t/pEDIGNU+8j9n4=3D?=
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: deb34d21-002c-4279-03d2-08dd52903e8c
+X-MS-Exchange-CrossTenant-AuthSource: OS9PR01MB13950.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Feb 2025 15:56:03.6369
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: cTY5s6gNZBtPAq9XyCa/v1nS+1L9QF6Tf5d7pdEPZ7TDMAieB+OhYEr2coHfV0qkytcWinaYf+8bJeNnRlHDfCtxJpygv/sp71SnGBUL7HUMlaSg72R2XEvOuC2uwieQ
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB6238
 
-On Thu, Feb 20, 2025 at 6:19=E2=80=AFPM Chao Yu <chao@kernel.org> wrote:
->
-> On 2025/2/20 23:49, Daeho Jeong wrote:
-> > From: Daeho Jeong <daehojeong@google.com>
-> >
-> > When we support segment or section unit discard, we should only focus o=
-n
-> > how actively we submit discard commands for only one type of size, such
-> > as segment or section. In this case, we don't have to manage smaller
-> > sized discards.
-> >
-> > Reported-by: Yohan Joung <yohan.joung@sk.com>
-> > Signed-off-by: Daeho Jeong <daehojeong@google.com>
-> > ---
-> >   fs/f2fs/segment.c | 29 ++++++++++++++++++++---------
-> >   1 file changed, 20 insertions(+), 9 deletions(-)
-> >
-> > diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> > index c282e8a0a2ec..4316ff7aa0d1 100644
-> > --- a/fs/f2fs/segment.c
-> > +++ b/fs/f2fs/segment.c
-> > @@ -1661,12 +1661,20 @@ static int __issue_discard_cmd(struct f2fs_sb_i=
-nfo *sbi,
-> >                               f2fs_time_over(sbi, UMOUNT_DISCARD_TIMEOU=
-T))
-> >                       break;
-> >
-> > -             if (i + 1 < dpolicy->granularity)
-> > -                     break;
-> > +             /*
-> > +              * Do not granularity control for segment or section
-> > +              * unit discard, since we have only one type of discard l=
-ength.
-> > +              */
-> > +             if (f2fs_block_unit_discard(sbi)) {
-> > +                     if (i + 1 < dpolicy->granularity)
-> > +                             break;
-> >
-> > -             if (i + 1 < dcc->max_ordered_discard && dpolicy->ordered)=
- {
-> > -                     __issue_discard_cmd_orderly(sbi, dpolicy, &issued=
-);
-> > -                     return issued;
-> > +                     if (i + 1 < dcc->max_ordered_discard &&
-> > +                                     dpolicy->ordered) {
-> > +                             __issue_discard_cmd_orderly(sbi, dpolicy,
-> > +                                             &issued);
-> > +                             return issued;
-> > +                     }
-> >               }
-> >
-> >               pend_list =3D &dcc->pend_list[i];
-> > @@ -1701,6 +1709,13 @@ static int __issue_discard_cmd(struct f2fs_sb_in=
-fo *sbi,
-> >
-> >               if (issued >=3D dpolicy->max_requests || io_interrupted)
-> >                       break;
-> > +
-> > +             /*
-> > +              * We only use the largest discard unit for segment or
-> > +              * section unit discard.
-> > +              */
-> > +             if (!f2fs_block_unit_discard(sbi))
-> > +                     break;
-> >       }
-> >
-> >       if (dpolicy->type =3D=3D DPOLICY_UMOUNT && issued) {
-> > @@ -2320,10 +2335,6 @@ static int create_discard_cmd_control(struct f2f=
-s_sb_info *sbi)
-> >       dcc->discard_granularity =3D DEFAULT_DISCARD_GRANULARITY;
-> >       dcc->max_ordered_discard =3D DEFAULT_MAX_ORDERED_DISCARD_GRANULAR=
-ITY;
-> >       dcc->discard_io_aware =3D DPOLICY_IO_AWARE_ENABLE;
-> > -     if (F2FS_OPTION(sbi).discard_unit =3D=3D DISCARD_UNIT_SEGMENT)
-> > -             dcc->discard_granularity =3D BLKS_PER_SEG(sbi);
-> > -     else if (F2FS_OPTION(sbi).discard_unit =3D=3D DISCARD_UNIT_SECTIO=
-N)
-> > -             dcc->discard_granularity =3D BLKS_PER_SEC(sbi);
->
-> Hi Daeho,
->
-> I think this bug was introduced by commit 4f993264fe29 ("f2fs: introduce
-> discard_unit mount option"), since it set discard_granularity to section
-> size incorrectly for discard_unit=3Dsection mount option, once section si=
-ze
-> is large than segment size, discard_granularity will be larger than 512.
->
-> However, w/ current implementation, we only support range of [1, 512] for
-> discard_granularity parameter, resulting in failing to submitting all
-> dicards.
->
-> So, what do you think of setting discard_granularity to 512 for both
-> discard_unit=3Dsegment and discard_unit=3Dsection mount option, as I prop=
-osed
-> in [1]? Then, discard_thread in DPOLICY_BG mode can submit those large-si=
-zed
-> discards.
->
-> [1] https://lore.kernel.org/linux-f2fs-devel/53598146-1f01-41ad-980e-9f4b=
-989e81ab@kernel.org/
+Dear All,
 
-Yes, it makes sense. Thanks.
+In preparation of supporting the CRU/CSI2 IPs found into the Renesas RZ/G3E
+SoC, this series adds driver/dt-bindings support.
+This adds also some minor fixes into rzg2l-csi2 and rzg2l-core drivers.
 
->
-> Thanks,
->
-> >
-> >       INIT_LIST_HEAD(&dcc->entry_list);
-> >       for (i =3D 0; i < MAX_PLIST_NUM; i++)
->
+The series was tested in an out of tree branch with the following hw pipeline:
+
+ov5645 image sensor (Coral Camera) -> rzg3e CSI2 -> rzg3e CRU
+imx219 image sensor (Pi PiNoir Camera Module V2.1) -> rzg3e CSI2 -> rzg3e CRU
+
+base commit: d4b0fd87ff0d (tag: next-20250221, linux-next/master)
+
+------
+Some logs:
+
+root@smarc-rzg3e:~# media-ctl -p
+Media controller API version 6.14.0
+
+Media device information
+------------------------
+driver          rzg2l_cru
+model           renesas,r9a09g047-cru
+serial
+bus info        platform:16000000.video
+hw revision     0x0
+driver version  6.14.0
+
+Device topology
+- entity 1: csi-16000400.csi2 (2 pads, 2 links, 0 routes)
+            type V4L2 subdev subtype Unknown flags 0
+            device node name /dev/v4l-subdev0
+        pad0: Sink
+                [stream:0 fmt:UYVY8_1X16/320x240 field:none colorspace:srgb]
+                <- "ov5645 0-003c":0 [ENABLED,IMMUTABLE]
+        pad1: Source
+                [stream:0 fmt:UYVY8_1X16/320x240 field:none colorspace:srgb]
+                -> "cru-ip-16000000.video":0 [ENABLED,IMMUTABLE]
+
+- entity 4: ov5645 0-003c (1 pad, 1 link, 0 routes)
+            type V4L2 subdev subtype Sensor flags 0
+            device node name /dev/v4l-subdev1
+        pad0: Source
+                [stream:0 fmt:UYVY8_1X16/1920x1080 field:none colorspace:srgb
+                 crop:(0,0)/1920x1080]
+                -> "csi-16000400.csi2":0 [ENABLED,IMMUTABLE]
+
+- entity 8: cru-ip-16000000.video (2 pads, 2 links, 0 routes)
+            type V4L2 subdev subtype Unknown flags 0
+            device node name /dev/v4l-subdev2
+        pad0: Sink
+                [stream:0 fmt:UYVY8_1X16/320x240 field:none colorspace:srgb]
+                <- "csi-16000400.csi2":1 [ENABLED,IMMUTABLE]
+        pad1: Source
+                [stream:0 fmt:UYVY8_1X16/320x240 field:none colorspace:srgb]
+                -> "CRU output":0 [ENABLED,IMMUTABLE]
+
+- entity 17: CRU output (1 pad, 1 link)
+             type Node subtype V4L flags 0
+             device node name /dev/video0
+        pad0: Sink
+                <- "cru-ip-16000000.video":1 [ENABLED,IMMUTABLE]
+
+root@smarc-rzg3e:~# v4l2-compliance -d /dev/v4l-subdev0
+v4l2-compliance 1.26.1-5142, 64 bits, 64-bit time_t
+v4l2-compliance SHA: 4aee01a02792 2023-12-12 21:40:38
+
+Compliance test for device /dev/v4l-subdev0:
+
+Driver Info:
+        Driver version   : 6.14.0
+        Capabil[  101.574758] csi-16000400.csi2: =================  START STATUS  =================
+ities     : 0x00[  101.583166] csi-16000400.csi2: ==================  END STATUS  ==================
+000000
+
+Required ioctls:
+        test VIDIOC_SUDBEV_QUERYCAP: OK
+        test invalid ioctls: OK
+
+Allow for multiple opens:
+        test second /dev/v4l-subdev0 open: OK
+        test VIDIOC_SUBDEV_QUERYCAP: OK
+        test for unlimited opens: OK
+
+Debug ioctls:
+        test VIDIOC_LOG_STATUS: OK (Not Supported)
+
+Input ioctls:
+        test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
+        test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+        test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
+        test VIDIOC_ENUMAUDIO: OK (Not Supported)
+        test VIDIOC_G/S/ENUMINPUT: OK (Not Supported)
+        test VIDIOC_G/S_AUDIO: OK (Not Supported)
+        Inputs: 0 Audio Inputs: 0 Tuners: 0
+
+Output ioctls:
+        test VIDIOC_G/S_MODULATOR: OK (Not Supported)
+        test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+        test VIDIOC_ENUMAUDOUT: OK (Not Supported)
+        test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
+        test VIDIOC_G/S_AUDOUT: OK (Not Supported)
+        Outputs: 0 Audio Outputs: 0 Modulators: 0
+
+Input/Output configuration ioctls:
+        test VIDIOC_ENUM/G/S/QUERY_STD: OK (Not Supported)
+        test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK (Not Supported)
+        test VIDIOC_DV_TIMINGS_CAP: OK (Not Supported)
+        test VIDIOC_G/S_EDID: OK (Not Supported)
+
+Control ioctls:
+        test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK (Not Supported)
+        test VIDIOC_QUERYCTRL: OK (Not Supported)
+        test VIDIOC_G/S_CTRL: OK (Not Supported)
+        test VIDIOC_G/S/TRY_EXT_CTRLS: OK (Not Supported)
+        test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: OK (Not Supported)
+        test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
+        Standard Controls: 0 Private Controls: 0
+
+Format ioctls:
+        test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK (Not Supported)
+        test VIDIOC_G/S_PARM: OK (Not Supported)
+        test VIDIOC_G_FBUF: OK (Not Supported)
+        test VIDIOC_G_FMT: OK (Not Supported)
+        test VIDIOC_TRY_FMT: OK (Not Supported)
+        test VIDIOC_S_FMT: OK (Not Supported)
+        test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
+        test Cropping: OK (Not Supported)
+        test Composing: OK (Not Supported)
+        test Scaling: OK (Not Supported)
+
+Codec ioctls:
+        test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)
+        test VIDIOC_G_ENC_INDEX: OK (Not Supported)
+        test VIDIOC_(TRY_)DECODER_CMD: OK (Not Supported)
+
+Buffer ioctls:
+        test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK (Not Supported)
+        test CREATE_BUFS maximum buffers: OK
+        test VIDIOC_EXPBUF: OK (Not Supported)
+        test Requests: OK (Not Supported)
+
+Total for device /dev/v4l-subdev0: 44, Succeeded: 44, Failed: 0, Warnings: 0
+
+root@smarc-rzg3e:~# v4l2-compliance -d /dev/v4l-subdev1
+v4l2-compliance 1.26.1-5142, 64 [  125.542264] ov5645 0-003c: =================  START STATUS  =================
+bits, 64-bit tim[  125.550585] ov5645 0-003c: ==================  END STATUS  ==================
+e_t
+v4l2-compliance SHA: 4aee01a02792 2023-12-12 21:40:38
+
+Compliance test for device /dev/v4l-subdev1:
+
+Driver Info:
+        Driver version   : 6.14.0
+        Capabilities     : 0x00000000
+
+Required ioctls:
+        test VIDIOC_SUDBEV_QUERYCAP: OK
+        test invalid ioctls: OK
+
+Allow for multiple opens:
+        test second /dev/v4l-subdev1 open: OK
+        test VIDIOC_SUBDEV_QUERYCAP: OK
+        test for unlimited opens: OK
+
+Debug ioctls:
+        test VIDIOC_LOG_STATUS: OK (Not Supported)
+
+Input ioctls:
+        test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
+        test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+        test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
+        test VIDIOC_ENUMAUDIO: OK (Not Supported)
+        test VIDIOC_G/S/ENUMINPUT: OK (Not Supported)
+        test VIDIOC_G/S_AUDIO: OK (Not Supported)
+        Inputs: 0 Audio Inputs: 0 Tuners: 0
+
+Output ioctls:
+        test VIDIOC_G/S_MODULATOR: OK (Not Supported)
+        test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+        test VIDIOC_ENUMAUDOUT: OK (Not Supported)
+        test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
+        test VIDIOC_G/S_AUDOUT: OK (Not Supported)
+        Outputs: 0 Audio Outputs: 0 Modulators: 0
+
+Input/Output configuration ioctls:
+        test VIDIOC_ENUM/G/S/QUERY_STD: OK (Not Supported)
+        test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK (Not Supported)
+        test VIDIOC_DV_TIMINGS_CAP: OK (Not Supported)
+        test VIDIOC_G/S_EDID: OK (Not Supported)
+
+Control ioctls:
+        test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK
+        test VIDIOC_QUERYCTRL: OK
+        test VIDIOC_G/S_CTRL: OK
+        test VIDIOC_G/S/TRY_EXT_CTRLS: OK
+        test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: OK
+        test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
+        Standard Controls: 12 Private Controls: 0
+
+Format ioctls:
+        test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK (Not Supported)
+        test VIDIOC_G/S_PARM: OK (Not Supported)
+        test VIDIOC_G_FBUF: OK (Not Supported)
+        test VIDIOC_G_FMT: OK (Not Supported)
+        test VIDIOC_TRY_FMT: OK (Not Supported)
+        test VIDIOC_S_FMT: OK (Not Supported)
+        test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
+        test Cropping: OK (Not Supported)
+        test Composing: OK (Not Supported)
+        test Scaling: OK (Not Supported)
+
+Codec ioctls:
+        test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)
+        test VIDIOC_G_ENC_INDEX: OK (Not Supported)
+        test VIDIOC_(TRY_)DECODER_CMD: OK (Not Supported)
+
+Buffer ioctls:
+        test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK (Not Supported)
+        test CREATE_BUFS maximum buffers: OK
+        test VIDIOC_EXPBUF: OK (Not Supported)
+        test Requests: OK (Not Supported)
+
+Total for device /dev/v4l-subdev1: 44, Succeeded: 44, Failed: 0, Warnings: 0
+
+root@smarc-rzg3e:~# v4l2-compliance -d /dev/v4l-subdev2
+v4l2-compliance 1.26.1-5142, 64 [  139.054132] cru-ip-16000000.video: =================  START STATUS  =================
+bits, 64-bit tim[  139.062922] cru-ip-16000000.video: ==================  END STATUS  ==================
+e_t
+v4l2-compliance SHA: 4aee01a02792 2023-12-12 21:40:38
+
+Compliance test for rzg2l_cru device /dev/v4l-subdev2:
+
+Driver Info:
+        Driver version   : 6.14.0
+        Capabilities     : 0x00000000
+Media Driver Info:
+        Driver name      : rzg2l_cru
+        Model            : renesas,r9a09g047-cru
+        Serial           :
+        Bus info         : platform:16000000.video
+        Media version    : 6.14.0
+        Hardware revision: 0x00000000 (0)
+        Driver version   : 6.14.0
+Interface Info:
+        ID               : 0x0300000f
+        Type             : V4L Sub-Device
+Entity Info:
+        ID               : 0x00000008 (8)
+        Name             : cru-ip-16000000.video
+        Function         : Video Pixel Formatter
+        Pad 0x01000009   : 0: Sink, Must Connect
+          Link 0x02000015: from remote pad 0x1000003 of entity 'csi-16000400.csi2' (Video Interface Bridge): Data, Enabled, Immutable
+        Pad 0x0100000a   : 1: Source, Must Connect
+          Link 0x02000017: to remote pad 0x1000012 of entity 'CRU output' (V4L2 I/O): Data, Enabled, Immutable
+
+Required ioctls:
+        test MC information (see 'Media Driver Info' above): OK
+        test VIDIOC_SUDBEV_QUERYCAP: OK
+        test invalid ioctls: OK
+
+Allow for multiple opens:
+        test second /dev/v4l-subdev2 open: OK
+        test VIDIOC_SUBDEV_QUERYCAP: OK
+        test for unlimited opens: OK
+
+Debug ioctls:
+        test VIDIOC_LOG_STATUS: OK (Not Supported)
+
+Input ioctls:
+        test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
+        test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+        test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
+        test VIDIOC_ENUMAUDIO: OK (Not Supported)
+        test VIDIOC_G/S/ENUMINPUT: OK (Not Supported)
+        test VIDIOC_G/S_AUDIO: OK (Not Supported)
+        Inputs: 0 Audio Inputs: 0 Tuners: 0
+
+Output ioctls:
+        test VIDIOC_G/S_MODULATOR: OK (Not Supported)
+        test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+        test VIDIOC_ENUMAUDOUT: OK (Not Supported)
+        test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
+        test VIDIOC_G/S_AUDOUT: OK (Not Supported)
+        Outputs: 0 Audio Outputs: 0 Modulators: 0
+
+Input/Output configuration ioctls:
+        test VIDIOC_ENUM/G/S/QUERY_STD: OK (Not Supported)
+        test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK (Not Supported)
+        test VIDIOC_DV_TIMINGS_CAP: OK (Not Supported)
+        test VIDIOC_G/S_EDID: OK (Not Supported)
+
+Sub-Device ioctls (Sink Pad 0):
+        Try Stream 0
+        test Try VIDIOC_SUBDEV_ENUM_MBUS_CODE/FRAME_SIZE/FRAME_INTERVAL: OK
+        test Try VIDIOC_SUBDEV_G/S_FMT: OK
+        test Try VIDIOC_SUBDEV_G/S_SELECTION/CROP: OK (Not Supported)
+        Active Stream 0
+        test Active VIDIOC_SUBDEV_ENUM_MBUS_CODE/FRAME_SIZE/FRAME_INTERVAL: OK
+        test Active VIDIOC_SUBDEV_G/S_FMT: OK
+        test Active VIDIOC_SUBDEV_G/S_SELECTION/CROP: OK (Not Supported)
+        test VIDIOC_SUBDEV_G/S_FRAME_INTERVAL: OK (Not Supported)
+
+Sub-Device ioctls (Source Pad 1):
+        Try Stream 0
+        test Try VIDIOC_SUBDEV_ENUM_MBUS_CODE/FRAME_SIZE/FRAME_INTERVAL: OK
+        test Try VIDIOC_SUBDEV_G/S_FMT: OK
+        test Try VIDIOC_SUBDEV_G/S_SELECTION/CROP: OK (Not Supported)
+        Active Stream 0
+        test Active VIDIOC_SUBDEV_ENUM_MBUS_CODE/FRAME_SIZE/FRAME_INTERVAL: OK
+        test Active VIDIOC_SUBDEV_G/S_FMT: OK
+        test Active VIDIOC_SUBDEV_G/S_SELECTION/CROP: OK (Not Supported)
+        test VIDIOC_SUBDEV_G/S_FRAME_INTERVAL: OK (Not Supported)
+
+Control ioctls:
+        test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK (Not Supported)
+        test VIDIOC_QUERYCTRL: OK (Not Supported)
+        test VIDIOC_G/S_CTRL: OK (Not Supported)
+        test VIDIOC_G/S/TRY_EXT_CTRLS: OK (Not Supported)
+        test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: OK (Not Supported)
+        test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
+        Standard Controls: 0 Private Controls: 0
+
+Format ioctls:
+        test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK (Not Supported)
+        test VIDIOC_G/S_PARM: OK (Not Supported)
+        test VIDIOC_G_FBUF: OK (Not Supported)
+        test VIDIOC_G_FMT: OK (Not Supported)
+        test VIDIOC_TRY_FMT: OK (Not Supported)
+        test VIDIOC_S_FMT: OK (Not Supported)
+        test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
+        test Cropping: OK (Not Supported)
+        test Composing: OK (Not Supported)
+        test Scaling: OK (Not Supported)
+
+Codec ioctls:
+        test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)
+        test VIDIOC_G_ENC_INDEX: OK (Not Supported)
+        test VIDIOC_(TRY_)DECODER_CMD: OK (Not Supported)
+
+Buffer ioctls:
+        test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK (Not Supported)
+        test CREATE_BUFS maximum buffers: OK
+        test VIDIOC_EXPBUF: OK (Not Supported)
+        test Requests: OK (Not Supported)
+
+Total for rzg2l_cru device /dev/v4l-subdev2: 59, Succeeded: 59, Failed: 0, Warnings: 0
+
+Thanks & Regards,
+Tommaso
+
+Lad Prabhakar (14):
+  media: dt-bindings: renesas,rzg2l-csi2: Document Renesas RZ/V2H(P) SoC
+  media: rzg2l-cru: csi2: Use local variable for struct device in
+    rzg2l_csi2_probe()
+  media: rzg2l-cru: rzg2l-core: Use local variable for struct device in
+    rzg2l_cru_probe()
+  media: rzg2l-cru: csi2: Introduce SoC-specific D-PHY handling
+  media: rzg2l-cru: csi2: Make system clock optional for RZ/V2H(P) SoC
+  media: rzg2l-cru: csi2: Add support for RZ/V2H(P) SoC
+  media: rzg2l-cru: Add register mapping support
+  media: rzg2l-cru: Pass resolution limits via OF data
+  media: rzg2l-cru: Add image_conv offset to OF data
+  media: rzg2l-cru: Add IRQ handler to OF data
+  media: rzg2l-cru: Add function pointers to enable and disable
+    interrupts
+  media: rzg2l-cru: Add function pointer to check if FIFO is empty
+  media: rzg2l-cru: Add function pointer to configure CSI
+  media: rzg2l-cru: Add support for RZ/G3E SoC
+
+Tommaso Merciai (4):
+  media: dt-bindings: renesas,rzg2l-csi2: Document Renesas RZ/G3E CSI-2
+    block
+  media: dt-bindings: renesas,rzg2l-cru: Document Renesas RZ/G3E SoC
+  media: rzg2l-cru: csi2: Use devm_pm_runtime_enable()
+  media: rzg2l-cru: rzg2l-core: Use devm_pm_runtime_enable()
+
+ .../bindings/media/renesas,rzg2l-cru.yaml     |  65 ++++-
+ .../bindings/media/renesas,rzg2l-csi2.yaml    |  62 ++++-
+ .../platform/renesas/rzg2l-cru/rzg2l-core.c   | 149 ++++++++--
+ .../renesas/rzg2l-cru/rzg2l-cru-regs.h        |  90 ++++--
+ .../platform/renesas/rzg2l-cru/rzg2l-cru.h    |  44 ++-
+ .../platform/renesas/rzg2l-cru/rzg2l-csi2.c   | 156 +++++++++--
+ .../platform/renesas/rzg2l-cru/rzg2l-ip.c     |  13 +-
+ .../platform/renesas/rzg2l-cru/rzg2l-video.c  | 259 ++++++++++++++++--
+ 8 files changed, 707 insertions(+), 131 deletions(-)
+
+-- 
+2.34.1
+
 
