@@ -1,64 +1,61 @@
-Return-Path: <linux-kernel+bounces-526230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3819A3FBD1
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:46:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53A79A3FBA5
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:41:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C3A216AD03
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:39:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D64ED8801DD
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:34:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 061B22185B8;
-	Fri, 21 Feb 2025 16:36:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C99A204591;
+	Fri, 21 Feb 2025 16:34:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ZGo9rfnH"
-Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ZP7TW8mV"
+Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FDF6216619
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 16:36:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BE1F1F2388;
+	Fri, 21 Feb 2025 16:34:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740155799; cv=none; b=gJbJJSbzR3t8kUQLXZnSOcDmYfRfOKw3n1Iny/z+A8m5qGYVUJUHbp93X3BBCrBUmpqJRCDNld48wQsMo9/P22fKuhkrpSzIwY2FJXYFrdrdnKLDOK9d2Dy2UJzMZyBXvyZAYlwc/OHJgnLO197ysGAJejYjzU3vjrX9z7gDDl4=
+	t=1740155649; cv=none; b=AWxhjA7WhD9Je1DyvxhhdkxiOAGkP/Ef01o9/N3M3IPO4a5zveqVFGsqm7ehgCXpN+ZWlTBJ9O16oJQ4Iy/8m+x5e9ThJf2b+tV1fvEnPTLe/YzX1kF541SrxbhPwKt9Wza/CPUHCiAUPMErsa4a7YCsvIam22M1HSi1rQM/1SE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740155799; c=relaxed/simple;
-	bh=iX7YqtTQujLLqaNAUh00iVuqffF/jAbti+QBntYH1tk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=mX2oOSrq7sa66+JFWdOGhJYxmZgTMkr59vYKuPEy00pDzLH7HQXbbmRSuDoEJjzlREiL/I7TV/AsZa0cUKeQbY369Tiz0LhH6gjtPre3CuYGgl8v6tPY0ZYkLwcl928xCnCIA4iUIKpL8Ojc51ggi9WdSu/4e/1fUI5YZb1Gi6Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ZGo9rfnH; arc=none smtp.client-ip=91.218.175.184
+	s=arc-20240116; t=1740155649; c=relaxed/simple;
+	bh=RxJEcWVghd6bkxuIVDva9OU4RyA6+Bg4Hi5HSAYu1rc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=R7huQuFWJlXhNlHzzW+uYxD8w9Py/7khsykJ7RSyrTZNb+pAPPZsltFofmmzCqPGqf2x3ip2vAqUs7BZztNKw8b2XEOy2V7OhBTQmhtewGYhMoEPaSx7YjsYG9B685/ahAxFU7SdTAarO+hf/cBvzNMakb6/Ozgvuy5ET2DuCdQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ZP7TW8mV; arc=none smtp.client-ip=91.218.175.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1740155795;
+	t=1740155644;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=v8rj6X3iOa/EdVnWOpvJZa4qIATKiMnTI+AiRDP2lgg=;
-	b=ZGo9rfnHFOI2ll6L/pxZZNSZSsn/4h5DSdVFjyEdQYLlc8UnhLe5XY82bobN1nzc0oazwH
-	Bxv1OuqV3p7zEmae3s83rtmCfkTtjMLZnTBdyW7hxlCYzltskSzIZ4x4lunPZKSsAuXs8N
-	mcwAGJOeM0BBuTogYobqSZmAbSDmuiE=
-From: Tao Chen <chen.dylane@linux.dev>
-To: ast@kernel.org,
-	daniel@iogearbox.net,
-	andrii@kernel.org,
-	eddyz87@gmail.com,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	qmo@kernel.org
-Cc: bpf@vger.kernel.org,
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=tww/0JdYvqBk8GNo5pHsseQ85ix+/4SFx2hfJ+jbOFI=;
+	b=ZP7TW8mVi5VAc5KxB0+BV072B6Lkvp8h1XR717F6U/3P6O/9duyp1Oez2eXiuTh42SKsNj
+	4l4BzkptA/sTnD04LvRClU517WMbbwwQKCle50B0e0r/Pzn8qyFZ7MDthUplEJCetXbGiS
+	rQuByUXnPJogjQp7D62hrTnrkqh1Mms=
+From: Yosry Ahmed <yosry.ahmed@linux.dev>
+To: x86@kernel.org,
+	Sean Christopherson <seanjc@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Jim Mattson <jmattson@google.com>,
+	"Kaplan, David" <David.Kaplan@amd.com>,
+	kvm@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	chen.dylane@gmail.com,
-	Tao Chen <chen.dylane@linux.dev>,
-	Tao Chen <dylane.chen@didiglobal.com>
-Subject: [PATCH bpf-next v8 4/4] selftests/bpf: Add libbpf_probe_bpf_kfunc API selftests
-Date: Sat, 22 Feb 2025 00:33:35 +0800
-Message-Id: <20250221163335.262143-5-chen.dylane@linux.dev>
-In-Reply-To: <20250221163335.262143-1-chen.dylane@linux.dev>
-References: <20250221163335.262143-1-chen.dylane@linux.dev>
+	Yosry Ahmed <yosry.ahmed@linux.dev>
+Subject: [PATCH 0/3] Unify IBRS virtualization
+Date: Fri, 21 Feb 2025 16:33:49 +0000
+Message-ID: <20250221163352.3818347-1-yosry.ahmed@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,208 +65,31 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 
-Add selftests for prog_kfunc feature probing. Thanks for
-Eduard providing the libbpf_probe_func_many test case.
+To properly virtualize IBRS on Intel, an IBPB is executed on emulated
+VM-exits to provide separate predictor modes for L1 and L2.
 
- ./test_progs -t libbpf_probe_kfuncs
- #153     libbpf_probe_kfuncs:OK
- Summary: 1/0 PASSED, 0 SKIPPED, 0 FAILED
+Similar handling is theoretically needed for AMD, unless IbrsSameMode is
+enumerated by the CPU (which should be the case for most/all CPUs
+anyway). For correctness and clarity, this series generalizes the
+handling to apply for both Intel and AMD as needed.
 
- ./test_progs -t libbpf_probe_kfuncs_many
- #154     libbpf_probe_kfuncs_many:OK
- Summary: 1/0 PASSED, 0 SKIPPED, 0 FAILED
+I am not sure if this series would land through the kvm-x86 tree or the
+tip/x86 tree.
 
-Cc: Tao Chen <dylane.chen@didiglobal.com>
-Reviewed-by: Jiri Olsa <jolsa@kernel.org>
-Co-developed-by: Eduard Zingerman <eddyz87@gmail.com>
-Signed-off-by: Eduard Zingerman <eddyz87@gmail.com>
-Signed-off-by: Tao Chen <chen.dylane@linux.dev>
----
- .../selftests/bpf/prog_tests/libbpf_probes.c  | 173 ++++++++++++++++++
- 1 file changed, 173 insertions(+)
+Yosry Ahmed (3):
+  x86/cpufeatures: Define X86_FEATURE_AMD_IBRS_SAME_MODE
+  KVM: x86: Propagate AMD's IbrsSameMode to the guest
+  KVM: x86: Generalize IBRS virtualization on emulated VM-exit
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/libbpf_probes.c b/tools/testing/selftests/bpf/prog_tests/libbpf_probes.c
-index 4ed46ed58a7b..db408fd67add 100644
---- a/tools/testing/selftests/bpf/prog_tests/libbpf_probes.c
-+++ b/tools/testing/selftests/bpf/prog_tests/libbpf_probes.c
-@@ -126,3 +126,176 @@ void test_libbpf_probe_helpers(void)
- 		ASSERT_EQ(res, d->supported, buf);
- 	}
- }
-+
-+static int module_btf_fd(char *module)
-+{
-+	int fd, err;
-+	__u32 id = 0, len;
-+	struct bpf_btf_info info;
-+	char name[64];
-+
-+	while (true) {
-+		err = bpf_btf_get_next_id(id, &id);
-+		if (err)
-+			return -1;
-+
-+		fd = bpf_btf_get_fd_by_id(id);
-+		if (fd < 0) {
-+			if (errno == ENOENT)
-+				continue;
-+			return -1;
-+		}
-+		len = sizeof(info);
-+		memset(&info, 0, sizeof(info));
-+		info.name = ptr_to_u64(name);
-+		info.name_len = sizeof(name);
-+		err = bpf_btf_get_info_by_fd(fd, &info, &len);
-+		if (err) {
-+			close(fd);
-+			return -1;
-+		}
-+		/* find target module BTF */
-+		if (!strcmp(name, module))
-+			break;
-+
-+		close(fd);
-+	}
-+
-+	return fd;
-+}
-+
-+void test_libbpf_probe_kfuncs(void)
-+{
-+	int ret, kfunc_id, fd;
-+	char *kfunc = "bpf_cpumask_create";
-+	struct btf *vmlinux_btf = NULL;
-+	struct btf *module_btf = NULL;
-+
-+	vmlinux_btf = btf__parse("/sys/kernel/btf/vmlinux", NULL);
-+	if (!ASSERT_OK_PTR(vmlinux_btf, "btf_parse"))
-+		return;
-+
-+	kfunc_id = btf__find_by_name_kind(vmlinux_btf, kfunc, BTF_KIND_FUNC);
-+	if (!ASSERT_GT(kfunc_id, 0, kfunc))
-+		goto cleanup;
-+
-+	/* prog BPF_PROG_TYPE_SYSCALL supports kfunc bpf_cpumask_create */
-+	ret = libbpf_probe_bpf_kfunc(BPF_PROG_TYPE_SYSCALL, kfunc_id, -1, NULL);
-+	if (!ASSERT_EQ(ret, 1, "kfunc in vmlinux support"))
-+		goto cleanup;
-+
-+	/* prog BPF_PROG_TYPE_KPROBE does not support kfunc bpf_cpumask_create */
-+	ret = libbpf_probe_bpf_kfunc(BPF_PROG_TYPE_KPROBE, kfunc_id, -1, NULL);
-+	if (!ASSERT_EQ(ret, 0, "kfunc in vmlinux not suuport"))
-+		goto cleanup;
-+
-+	ret = libbpf_probe_bpf_kfunc(BPF_PROG_TYPE_KPROBE, -1, -1, NULL);
-+	if (!ASSERT_EQ(ret, 0, "invalid kfunc id:-1"))
-+		goto cleanup;
-+
-+	ret = libbpf_probe_bpf_kfunc(100000, kfunc_id, -1, NULL);
-+	if (!ASSERT_ERR(ret, "invalid prog type:100000"))
-+		goto cleanup;
-+
-+	if (!env.has_testmod)
-+		goto cleanup;
-+
-+	module_btf = btf__load_module_btf("bpf_testmod", vmlinux_btf);
-+	if (!ASSERT_OK_PTR(module_btf, "load module BTF"))
-+		goto cleanup;
-+
-+	kfunc_id = btf__find_by_name(module_btf, "bpf_kfunc_call_test1");
-+	if (!ASSERT_GT(kfunc_id, 0, "func not found"))
-+		goto cleanup;
-+
-+	fd = module_btf_fd("bpf_testmod");
-+	if (!ASSERT_GE(fd, 0, "module BTF fd"))
-+		goto cleanup;
-+
-+	/* prog BPF_PROG_TYPE_SYSCALL supports kfunc bpf_kfunc_call_test1 in bpf_testmod */
-+	ret = libbpf_probe_bpf_kfunc(BPF_PROG_TYPE_SYSCALL, kfunc_id, fd, NULL);
-+	if (!ASSERT_EQ(ret, 1, "kfunc in module BTF support"))
-+		goto cleanup_fd;
-+
-+	/* prog BPF_PROG_TYPE_KPROBE does not support kfunc bpf_kfunc_call_test1
-+	 * in bpf_testmod
-+	 */
-+	ret = libbpf_probe_bpf_kfunc(BPF_PROG_TYPE_KPROBE, kfunc_id, fd, NULL);
-+	if (!ASSERT_EQ(ret, 0, "kfunc in module BTF not support"))
-+		goto cleanup_fd;
-+
-+	ret = libbpf_probe_bpf_kfunc(BPF_PROG_TYPE_SYSCALL, -1, fd, NULL);
-+	if (!ASSERT_EQ(ret, 0, "invalid kfunc id in module BTF"))
-+		goto cleanup_fd;
-+
-+	ret = libbpf_probe_bpf_kfunc(BPF_PROG_TYPE_SYSCALL, kfunc_id, 100, NULL);
-+	ASSERT_EQ(ret, 0, "invalid BTF fd in module BTF");
-+
-+cleanup_fd:
-+	close(fd);
-+cleanup:
-+	btf__free(vmlinux_btf);
-+	btf__free(module_btf);
-+}
-+
-+static const struct {
-+	const char *name;
-+	int code;
-+} program_types[] = {
-+#define _T(n) { #n, BPF_PROG_TYPE_##n }
-+	_T(KPROBE),
-+	_T(XDP),
-+	_T(SYSCALL),
-+	_T(SCHED_CLS),
-+	_T(SCHED_ACT),
-+	_T(SK_SKB),
-+	_T(SOCKET_FILTER),
-+	_T(CGROUP_SKB),
-+	_T(LWT_OUT),
-+	_T(LWT_IN),
-+	_T(LWT_XMIT),
-+	_T(LWT_SEG6LOCAL),
-+	_T(NETFILTER),
-+	_T(CGROUP_SOCK_ADDR),
-+	_T(SCHED_ACT)
-+#undef _T
-+};
-+
-+void test_libbpf_probe_kfuncs_many(void)
-+{
-+	int i, kfunc_id, ret, id;
-+	const struct btf_type *t;
-+	struct btf *btf = NULL;
-+	const char *kfunc;
-+	const char *tag;
-+
-+	btf = btf__parse("/sys/kernel/btf/vmlinux", NULL);
-+	if (!ASSERT_OK_PTR(btf, "btf_parse"))
-+		return;
-+	for (id = 0; id < btf__type_cnt(btf); ++id) {
-+		t = btf__type_by_id(btf, id);
-+		if (!t)
-+			continue;
-+		if (!btf_is_decl_tag(t))
-+			continue;
-+		tag = btf__name_by_offset(btf, t->name_off);
-+		if (strcmp(tag, "bpf_kfunc") != 0)
-+			continue;
-+		kfunc_id = t->type;
-+		t = btf__type_by_id(btf, kfunc_id);
-+		if (!btf_is_func(t))
-+			continue;
-+		kfunc = btf__name_by_offset(btf, t->name_off);
-+		for (i = 0; i < ARRAY_SIZE(program_types); ++i) {
-+			ret = libbpf_probe_bpf_kfunc(program_types[i].code,
-+						     kfunc_id, -1, NULL);
-+			if (ret < 0) {
-+				ASSERT_FAIL("kfunc:%s use prog type:%d",
-+				      kfunc, program_types[i].code);
-+				goto cleanup;
-+			}
-+		}
-+	}
-+cleanup:
-+	btf__free(btf);
-+}
+ arch/x86/include/asm/cpufeatures.h       |  1 +
+ arch/x86/kvm/cpuid.c                     |  1 +
+ arch/x86/kvm/svm/nested.c                |  2 ++
+ arch/x86/kvm/vmx/nested.c                | 11 +----------
+ arch/x86/kvm/x86.h                       | 18 ++++++++++++++++++
+ tools/arch/x86/include/asm/cpufeatures.h |  1 +
+ 6 files changed, 24 insertions(+), 10 deletions(-)
+
 -- 
-2.43.0
+2.48.1.601.g30ceb7b040-goog
 
 
