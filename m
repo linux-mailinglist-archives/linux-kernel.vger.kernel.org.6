@@ -1,161 +1,110 @@
-Return-Path: <linux-kernel+bounces-525931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EAD9A3F77B
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 15:41:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D2FCA3F778
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 15:41:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8BDC19C734A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 14:39:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1EE7086171E
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 14:39:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEAF4211285;
-	Fri, 21 Feb 2025 14:37:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FAF920D4E4;
+	Fri, 21 Feb 2025 14:38:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="urlMX0uf";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="sMQ96ddv"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sXHfLnCv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEE31210F7E;
-	Fri, 21 Feb 2025 14:37:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E3797080D
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 14:38:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740148667; cv=none; b=oOC6cGHqkaoI0jjfRu/QN/Vgoaa/iGwczLwjLw02Fj83U6qeQORecyQDr0iC3i4leC9bf0nL0f1OxbYDOxYNR7qmI4737q2A8LV69qJSipZCuHIctQvrakObtWNIjUMKX69ySFrvacsRY0x7xVz428EnpLFEs+BuZKSfNhUGu+c=
+	t=1740148738; cv=none; b=JKjX3XYZ5VJsZqtMxGIBfqH60xMBMCKA3DSNp6f5ys7IRIhVH3KgCNZ7k1D5X6GYbu0+EH7FMmitylhzETCJRq2Q3psvtMHQTRaONvfD6H10nY429AHKxzt50tSurk4ds9IE6pbwsYdksCj2IitpWqH5RRi3+qw0D5dd6Pq53qI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740148667; c=relaxed/simple;
-	bh=bVcKOp7IeRqWfL3Zyw6j5EDAjnBwDLss90iFubdNemQ=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=LxW4khjpfG0mAfNgTiIBX0srIncPzQJemtplB4bDKptLklyFKLOve6RK873G2IdlNWV3dJEreouIMQV/MZz8hHbvEmFeEYkETAd8ehMo3p+i8MXjUQUyZb96lOLR6pPYHOWXH4qV0O3nBX4MTKSeH3BDXuxHkgZi/dkJNMHQxug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=urlMX0uf; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=sMQ96ddv; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 21 Feb 2025 14:37:42 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1740148663;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mL+e+11iRXnpGGfTcb2wVZDRgYJuRx6g93sQArL6ZGw=;
-	b=urlMX0ufVcXh3LwtJFSCfRJdrHQhNUh+ldV0mKY2lkeGTnNYr6FpX55rKGCyHhGfr5hQpk
-	Oc1sUcfdotUtoGl9ei+NSgf+dwWIQWW3VHLUtyyvP8ENDKSuxaLVg1WP3Ns3KHs3wc2DlD
-	Ho4U8nXwF0onl+ohuf1JfytTcq+bw4YrqAJhQ6/cdotEG9e4wNTF1GhGs8I1mV6ezNrxYN
-	0D1Ve8bGis3BlKKOSiu2TcV5RwpNgcnClqf0E7R01CXgRX01/c3kbiL+lt5xoYC6/o5Vqm
-	hXMbOsr0mn/k3uYhWMupE2pZ6k1aEGTd7Or1T+iJh0AGAJpM1PqSCW2emuQguQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1740148663;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mL+e+11iRXnpGGfTcb2wVZDRgYJuRx6g93sQArL6ZGw=;
-	b=sMQ96ddvoepdC22D4UFox3ZaoFsj5t6jzYF33tcNC2ZDxMWzT2xwd+BWoBu3duHYM9a/gd
-	X7Iu10BD0aQS+bDg==
-From: "tip-bot2 for Guilherme G. Piccoli" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: sched/core] x86/tsc: Always save/restore TSC sched_clock() on
- suspend/resume
-Cc: "Guilherme G. Piccoli" <gpiccoli@igalia.com>,
- Ingo Molnar <mingo@kernel.org>, stable@vger.kernel.org,
- Thomas Gleixner <tglx@linutronix.de>, Peter Zijlstra <peterz@infradead.org>,
- Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250215210314.351480-1-gpiccoli@igalia.com>
-References: <20250215210314.351480-1-gpiccoli@igalia.com>
+	s=arc-20240116; t=1740148738; c=relaxed/simple;
+	bh=wD8H04nyxo1UfAIg5zJDnOMhSj5Iwgq58P8M+Xj//7A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CcRxoUNTJe1XWp7mtoXJynBbni9PPeSDr7M8FxzoK4aw+1DhnXnvY83IvcaGkcPxSCExRWhjdvvjFqVl3wHhr7t5oagn5BWTC6pHm3ii+1mCFJInbMbk7bj85TlPLzVzcEQ2BMbUlEcR+mDgUnOZjAejKPFQrDcXvMgbNYwgySM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sXHfLnCv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 058C9C4AF09
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 14:38:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740148738;
+	bh=wD8H04nyxo1UfAIg5zJDnOMhSj5Iwgq58P8M+Xj//7A=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=sXHfLnCv00Cs4JS9CnUbSy8+/gr523ylt9Tnwm/7rqF09o0ttZu+8k946Xa379uEV
+	 MXe7+SbFyImKgyJOEj5HDBh2RZS0N7GaFM5cxCGu4gKeuVVIRRAST6DkL2y1f/4NKV
+	 r8H+52OPih1RWq2wuxoiFlTdfH0hBtO1uAGodb2U8RKD8NNmGuPFPWr2Yo6rAEEsyt
+	 leDVcuEJe9uD9LffdecqGo+ZfLiZMFt69Or27FSk2URmJ806AdhSxZCnHvAlVRXS3g
+	 JBbMpZy/lQ/lD3GmXFjGQmBL5rvBObXt5ij3rXerCguNY4VZP3XBTi6K0o3BNj8oAw
+	 DKMkb6FMCvcNg==
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-54605bfcc72so3725044e87.0
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 06:38:57 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXk0QUli2rZxfE3LTDju7xmZsgFsGouRL05jIjrI08ep9iHiLN9F4CSFFAxZnxqRA8StaB06Hd7O2OOBr0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxeKMJmfrQVF5Mqls5khuB6QcmH8QoTi12yhgu5caZdxF5b3xfL
+	GN+DCq0Omvu/dgBdQXUbpJuNXj/W+MOJDVZiwCLGnpo1s56ajUgAgR5Pi3AVzLASNYOmTlp5cgz
+	dG7AMkKBjAvZgUO14Jcd29nE2H8Y=
+X-Google-Smtp-Source: AGHT+IHuiI1BWuhEQY3osJkm6u8PobA8cs5cZHsJhUXyEitmSbAHM+o94n3IrxuTc5IAZc3lHwqD9exRFMNFc6yPwJ4=
+X-Received: by 2002:a05:6512:2353:b0:545:240:55ba with SMTP id
+ 2adb3069b0e04-54838cd2edcmr1039200e87.26.1740148736236; Fri, 21 Feb 2025
+ 06:38:56 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174014866289.10177.10974658062988825500.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+References: <20250220200439.4458-1-ubizjak@gmail.com> <CAMzpN2i8uR7L9DmL1AX1R9p__x5KwAtdey_4iJ5ZP_frTqu9vQ@mail.gmail.com>
+ <CAFULd4b8kgXfr1QcWud-n7PyuKKVUGTNd00GSZU=6va6Gr65EA@mail.gmail.com>
+ <CAMzpN2hHb_T3gZfueeVRbOxUFt8+syWsm8iWQxF4PaUOQA-k=w@mail.gmail.com>
+ <CAFULd4ZGW-FYtEe-BJ53QVjHMLr1jyj_6vJhNEwqqwW6Z77+Tg@mail.gmail.com>
+ <CAMj1kXGKDtWxcuWbPP+o=6_pwhOHKJF_NnOL8F95y0tXt-dQQg@mail.gmail.com> <CAFULd4YuL9DCOs23Ev+iXooirLfKT3O_9poSUM7JeW_dO34o9A@mail.gmail.com>
+In-Reply-To: <CAFULd4YuL9DCOs23Ev+iXooirLfKT3O_9poSUM7JeW_dO34o9A@mail.gmail.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Fri, 21 Feb 2025 15:38:44 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXG_zKei335-CqXwNi=+AkqtQt6xmoVw+qD1XzW7q-aPtA@mail.gmail.com>
+X-Gm-Features: AWEUYZmp3f8FXbOA8urBhoLKNBhV3SA-KZWCYMZbhh4RQY_MZV4MXKkUUr7-Fnk
+Message-ID: <CAMj1kXG_zKei335-CqXwNi=+AkqtQt6xmoVw+qD1XzW7q-aPtA@mail.gmail.com>
+Subject: Re: [PATCH -tip] x86/stackprotector: Move stack canary to struct pcpu_hot
+To: Uros Bizjak <ubizjak@gmail.com>
+Cc: Brian Gerst <brgerst@gmail.com>, x86@kernel.org, linux-kernel@vger.kernel.org, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The following commit has been merged into the sched/core branch of tip:
+On Fri, 21 Feb 2025 at 15:33, Uros Bizjak <ubizjak@gmail.com> wrote:
+>
+> On Fri, Feb 21, 2025 at 3:13=E2=80=AFPM Ard Biesheuvel <ardb@kernel.org> =
+wrote:
+>
+> > > > I got a warning from the relocs tool, but not a hard error.  What
+> > > > compiler/linker are you using?
+> > > >
+> > > > Does the attached patch build in your configuration?
+> > >
+> > > Ah, the attached patch is similar to my previous approach, where the
+> > > build system *warned* on an offset (the patch was abandoned due to
+> > > Ard's request to put stack_canary to the *beginning* of struct
+> > > pcpu_hot, and this allowed for a simplified patch).
+> > >
+> > > The attached patch builds for me without warning/error for both, SMP
+> > > and !SMP build.
+> > >
+> >
+> > Did you try building modules too?
+>
+> make -j 24 olddefconfig prepare modules_prepare bzImage modules
+>
+> for defconfig, SMP and !SMP.
+>
 
-Commit-ID:     d90c9de9de2f1712df56de6e4f7d6982d358cabe
-Gitweb:        https://git.kernel.org/tip/d90c9de9de2f1712df56de6e4f7d6982d358cabe
-Author:        Guilherme G. Piccoli <gpiccoli@igalia.com>
-AuthorDate:    Sat, 15 Feb 2025 17:58:16 -03:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Fri, 21 Feb 2025 15:27:38 +01:00
+OK.
 
-x86/tsc: Always save/restore TSC sched_clock() on suspend/resume
-
-TSC could be reset in deep ACPI sleep states, even with invariant TSC.
-
-That's the reason we have sched_clock() save/restore functions, to deal
-with this situation. But what happens is that such functions are guarded
-with a check for the stability of sched_clock - if not considered stable,
-the save/restore routines aren't executed.
-
-On top of that, we have a clear comment in native_sched_clock() saying
-that *even* with TSC unstable, we continue using TSC for sched_clock due
-to its speed.
-
-In other words, if we have a situation of TSC getting detected as unstable,
-it marks the sched_clock as unstable as well, so subsequent S3 sleep cycles
-could bring bogus sched_clock values due to the lack of the save/restore
-mechanism, causing warnings like this:
-
-  [22.954918] ------------[ cut here ]------------
-  [22.954923] Delta way too big! 18446743750843854390 ts=18446744072977390405 before=322133536015 after=322133536015 write stamp=18446744072977390405
-  [22.954923] If you just came from a suspend/resume,
-  [22.954923] please switch to the trace global clock:
-  [22.954923]   echo global > /sys/kernel/tracing/trace_clock
-  [22.954923] or add trace_clock=global to the kernel command line
-  [22.954937] WARNING: CPU: 2 PID: 5728 at kernel/trace/ring_buffer.c:2890 rb_add_timestamp+0x193/0x1c0
-
-Notice that the above was reproduced even with "trace_clock=global".
-
-The fix for that is to _always_ save/restore the sched_clock on suspend
-cycle _if TSC is used_ as sched_clock - only if we fallback to jiffies
-the sched_clock_stable() check becomes relevant to save/restore the
-sched_clock.
-
-Debugged-by: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
-Signed-off-by: Guilherme G. Piccoli <gpiccoli@igalia.com>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Cc: stable@vger.kernel.org
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Link: https://lore.kernel.org/r/20250215210314.351480-1-gpiccoli@igalia.com
----
- arch/x86/kernel/tsc.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/kernel/tsc.c b/arch/x86/kernel/tsc.c
-index 34dec0b..88e5a4e 100644
---- a/arch/x86/kernel/tsc.c
-+++ b/arch/x86/kernel/tsc.c
-@@ -959,7 +959,7 @@ static unsigned long long cyc2ns_suspend;
- 
- void tsc_save_sched_clock_state(void)
- {
--	if (!sched_clock_stable())
-+	if (!static_branch_likely(&__use_tsc) && !sched_clock_stable())
- 		return;
- 
- 	cyc2ns_suspend = sched_clock();
-@@ -979,7 +979,7 @@ void tsc_restore_sched_clock_state(void)
- 	unsigned long flags;
- 	int cpu;
- 
--	if (!sched_clock_stable())
-+	if (!static_branch_likely(&__use_tsc) && !sched_clock_stable())
- 		return;
- 
- 	local_irq_save(flags);
+I think I prefer Brian's approach - the only nit is that the placement
+of stack_canary creates a padding hole in struct pcpu_hot. However,
+that does not actually matter until we run out of space so I think it
+is fine as is.
 
