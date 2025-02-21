@@ -1,118 +1,233 @@
-Return-Path: <linux-kernel+bounces-525849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43457A3F644
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 14:42:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6970DA3F649
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 14:46:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2596916ED1C
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 13:42:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42C3917864D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 13:46:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B015F20CCF5;
-	Fri, 21 Feb 2025 13:42:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CBFD202F64;
+	Fri, 21 Feb 2025 13:46:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lwRMPVs6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LjSCM2Nq"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C27C1C3BEE
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 13:42:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 347261A270;
+	Fri, 21 Feb 2025 13:46:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740145343; cv=none; b=UQzhBn9RmE+uFqmJahU5Ts9kok9ceInfkERDchvRxmiO5jVNGP7NfAgkaGXwLjAXwpYPqSylKpk4OtR7sfwiBiUYeoQ2QZthb5RUG6toXUZZisxVXDCp+QoEFVllM+PL8YrWaxJVLU8GmJTr3tyiCHf1TkNYDWLYOOLFEA+bJP8=
+	t=1740145603; cv=none; b=ZSRdEMaJr9tGFQvWB2aRwIRvhtbOv7Hn3RSxP9ZuazdFqhncAo71QShD+p8361I/HJB2rq4S9e4rxlvBRG4QXpy8MTo2BBQEaByY/UNFxreHfkR2pdHnvnb26FuWZNDYrzbQehTLeMLIPq9u5DYkiDJlGPZGudZePUrQ7ogl+KY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740145343; c=relaxed/simple;
-	bh=xBM6ZmSN0PndIHe7wKwSBCjgPYHbYHZDY3PSVng7AB4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=F97qU33tDZepR3SeaguTTUtRqOOj6gfCWT9ChfXVJG6jy+m6wCy7x9vloxPtJ8pNfibFgPe6LXXeuI40qUzvX/6kv58fTNIkiHzuipueMBA/4nUMTgRReZPSGqaJZisp+ULhFuvCBgPO901Wwp5gOqi4NHU5ll7gvRQruv24x3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lwRMPVs6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2968C4CEE7
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 13:42:22 +0000 (UTC)
+	s=arc-20240116; t=1740145603; c=relaxed/simple;
+	bh=cNfhu284FHwhKxefe+UYFL9XiiQl2ogxac1UTYPKrqc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eXwdUMM5c4gKFaQRx7o7JkHCKzi8sSxqR7BTLuBeD2e05ez6Wm0S2mXaxjG3LEhnvGYR03zni+kuQ+qvhoPslZIa77H0ioLFSf/TL59xJ3U2oldHuhilrNpXOiFW3zBWp7f1/Rlq06M9TefCpLIK8svQ5yQyLahPV5LXgcCeL2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LjSCM2Nq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFF08C4CED6;
+	Fri, 21 Feb 2025 13:46:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740145342;
-	bh=xBM6ZmSN0PndIHe7wKwSBCjgPYHbYHZDY3PSVng7AB4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=lwRMPVs65iuTKaaE9k4HBw7NASEciuD9iUHsN+6oQ+1yKBKaZ13alrFBs8cmGnuC/
-	 veWxrYITXLV8BpffFcZQog6CQbjFWr2xiTejUacih/vbi4HI/KGhluA4NaKlpVc+sm
-	 DL4W0UCIfQ6IXjRsDgUAnsxaMp//47m9w7peyx5VS+dJu1AubS3KHxrukw8zvf4+9b
-	 gNObSO0kPYOGc6w2tq5C9VK9aIzCW1Y5tO99BNKZhzFEDkM849Bxb5BjrKLK+pXy4+
-	 oUzGDWnBdourJXViJF6vL66XJ8OX2jPNTT8cV0TLmsCJ5cc8FeKHiTKXMKrt+pAw+g
-	 dm1bCjTvXEJ6w==
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-abb75200275so341199166b.3
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 05:42:22 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWmvulUETyD0WklVKMfx8mfov7fGRZlq2HHwBNQk8CfTKCcZZaq8MGGW4rXArzZiM+445SPIyfwjPi/1vw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyi2Wb49/tL8Vyvvwy2e3fyymfY0GzhQ+fj1RNIQ/qcenxMLnb/
-	zNc+NrhkRpQ5njD8+hqjUGPlBfBm/Llun509pZjztLTUV3PkcahahKECNHHHfsvR6WKN0oDMByD
-	dOjPP/fMcySxbzU3GLVoaNnNnqwY=
-X-Google-Smtp-Source: AGHT+IECcLIJ8P9b1c0Hv/sg8PUfBVbf8vqg4ZXC/cdYTtD8V7DLBxdGxLT63W+MRg0G8yD7HdckYJ5k7/zBW5TpI34=
-X-Received: by 2002:a17:906:3712:b0:abc:b8c:7b2d with SMTP id
- a640c23a62f3a-abc0b8c7d83mr243228666b.32.1740145341138; Fri, 21 Feb 2025
- 05:42:21 -0800 (PST)
+	s=k20201202; t=1740145602;
+	bh=cNfhu284FHwhKxefe+UYFL9XiiQl2ogxac1UTYPKrqc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LjSCM2Nq9LbssaI3I7+SmYBw1FlyH2d0P0spkkuOs8zOeAoft4NVV8IYNCTnGN7+Z
+	 uYuBpUUclU48eMhN4uKEOoWjqzD92zY63I4AF+tpny7KCqQAGLoaHB5lsN5meqlVvc
+	 kU0t0sD3pv+H5CNT17NP406q2z+mAEbaOSTxKllbowyB8Pw2kFebnSQHURabNuFpBp
+	 Nd/4Rzrb38Cs0SOweh7/cBv+z+ejoOlcUNRm2PGHpCCHtAgOiuZ2CjOUv+MDiS+Kxo
+	 gqGYV745oJtWDRRh/k7UNtKtrTUah3N5jJmLD9BmztLeR2YRDsE02ocUJaVzfSrG+h
+	 kHqFeLNwLnAqw==
+Date: Fri, 21 Feb 2025 19:16:35 +0530
+From: Sumit Garg <sumit.garg@kernel.org>
+To: Stuart Yoder <stuart.yoder@arm.com>
+Cc: Sumit Garg <sumit.garg@linaro.org>, linux-integrity@vger.kernel.org,
+	jarkko@kernel.org, peterhuewe@gmx.de, jgg@ziepe.ca,
+	sudeep.holla@arm.com, rafael@kernel.org, lenb@kernel.org,
+	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Jens Wiklander <jens.wiklander@linaro.org>,
+	Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH 0/4] Add support for the TPM FF-A start method
+Message-ID: <Z7iDuwLDA2rFPZK6@sumit-X1>
+References: <20250210232227.97761-1-stuart.yoder@arm.com>
+ <CAFA6WYM7K4_toy5_n1arW4po4SOX0R9624rCgO=_MvcMeySwUA@mail.gmail.com>
+ <4bb3cefa-b843-45ca-82c5-d96b13454baa@arm.com>
+ <CAFA6WYM3UA9+TE8L2U5Qd8FZfaGZnbba=QzWU7fEu3LKQVm-tw@mail.gmail.com>
+ <fdaa9a58-790f-4839-8db7-1b9a81eb8edf@arm.com>
+ <CAFA6WYM0ANqc--ScYtJFRjOsCCjzO3NX46=F5V=rza_6Q-Q96g@mail.gmail.com>
+ <e142afd2-38ec-4640-b9be-cb414bccc807@arm.com>
+ <Z7LGbZsOh_w-HRY2@sumit-X1>
+ <5dae96fa-0e54-4274-bcc6-1c20fe846f60@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250221073249.481731-1-maobibo@loongson.cn>
-In-Reply-To: <20250221073249.481731-1-maobibo@loongson.cn>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Fri, 21 Feb 2025 21:42:12 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H6-cH1a-ghgGAp2aOp8MF09YMwj3bCXESLts==d8_4m3Q@mail.gmail.com>
-X-Gm-Features: AWEUYZlohGVxTTSsgoNKxleTI1vMKNnOqVfV4ux_ldKPWxHtoW87QC0yXzL7mfM
-Message-ID: <CAAhV-H6-cH1a-ghgGAp2aOp8MF09YMwj3bCXESLts==d8_4m3Q@mail.gmail.com>
-Subject: Re: [PATCH] LoongArch: Remove unused option with HAVE_VIRT_CPU_ACCOUNTING_GEN
-To: Bibo Mao <maobibo@loongson.cn>
-Cc: WANG Xuerui <kernel@xen0n.name>, loongarch@lists.linux.dev, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5dae96fa-0e54-4274-bcc6-1c20fe846f60@arm.com>
 
-Hi, Bibo,
+On Mon, Feb 17, 2025 at 10:56:58AM -0600, Stuart Yoder wrote:
+> 
+> 
+> On 2/16/25 11:17 PM, Sumit Garg wrote:
+> > On Thu, Feb 13, 2025 at 09:19:58AM -0600, Stuart Yoder wrote:
+> > > 
+> > > 
+> > > On 2/12/25 11:31 PM, Sumit Garg wrote:
+> > > > + Rob
+> > > > 
+> > > > On Thu, 13 Feb 2025 at 03:25, Stuart Yoder <stuart.yoder@arm.com> wrote:
+> > > > > 
+> > > > > 
+> > > > > 
+> > > > > On 2/12/25 1:39 AM, Sumit Garg wrote:
+> > > > > > On Tue, 11 Feb 2025 at 21:39, Stuart Yoder <stuart.yoder@arm.com> wrote:
+> > > > > > > 
+> > > > > > > Hi Sumit,
+> > > > > > > 
+> > > > > > > On 2/11/25 12:45 AM, Sumit Garg wrote:
+> > > > > > > > + Jens
+> > > > > > > > 
+> > > > > > > > Hi Stuart,
+> > > > > > > > 
+> > > > > > > > On Tue, 11 Feb 2025 at 04:52, Stuart Yoder <stuart.yoder@arm.com> wrote:
+> > > > > > > > > 
+> > > > > > > > > These patches add support for the CRB FF-A start method defined
+> > > > > > > > > in the TCG ACPI specification v1.4 and the FF-A ABI defined
+> > > > > > > > > in the Arm TPM Service CRB over FF-A (DEN0138) specification.
+> > > > > > > > > (https://developer.arm.com/documentation/den0138/latest/)
+> > > > > > > > 
+> > > > > > > > Nice to have a specification standardizing interface to TPM
+> > > > > > > > managed/implemented by the firmware. Care to add corresponding kernel
+> > > > > > > > documentation under Documentation/security/tpm/.
+> > > > > > > 
+> > > > > > > Yes, I can add some documentation there.
+> > > > > > > 
+> > > > > > > > BTW, we already have drivers/char/tpm/tpm_ftpm_tee.c, so do you see
+> > > > > > > > possibilities for an abstraction layer on top of communication channel
+> > > > > > > > based on either FF-A or TEE or platform bus?
+> > > > > > > 
+> > > > > > > I think the CRB and OP-TEE based messaging approaches for interacting
+> > > > > > > with a TZ-based TPM are fundamentally different and I don't see how
+> > > > > > > to harmonize them through some abstraction.
+> > > > > > > 
+> > > > > > > The OP-TEE TPM protocol copies the TPM command into a temp shared memory
+> > > > > > > buffer and sends a message to the TPM referencing that buffer.
+> > > > > > > 
+> > > > > > > The CRB uses a permanently shared memory carve-out that in addition
+> > > > > > > to the command/response data has other fields for locality control,
+> > > > > > > command control, status, TPM idle, etc. The only 'message' needed is
+> > > > > > > something to signal 'start'.  Any OS that is FF-A aware and has a
+> > > > > > > CRB driver can simply add a new start method, which is what this
+> > > > > > > patch series does.
+> > > > > > 
+> > > > > > Okay, I see how the CRB driver is closely tied to the ACPI based
+> > > > > > systems.
+> > > > > 
+> > > > > The CRB driver is currently probed based on ACPI, but it fundamentally
+> > > > > doesn't have to be.  If there was a DT binding for CRB-based
+> > > > > TPMs the different start methods would be defined there and the
+> > > > > CRB driver could support that.
+> > > > > 
+> > > > 
+> > > > Can't we rather enable the CRB driver itself probed based on FF-A bus
+> > > > and rather dynamically discover the shared memory buffer via FF-A
+> > > > instead? AFAIU, FF-A provides you with a discovery framework for
+> > > > firmware bits.
+> > > 
+> > > Yes, you could do this. But, then the TPM CRB drivers in all the
+> > > ACPI-based OSes (Linux, Windows) and hypervisors need to be
+> > > taught this new method of discovery. Adding new start methods is
+> > > reasonably straightforward, but changing the basic discovery
+> > > mechanism is a much bigger change.
+> > 
+> > We will be teaching every other OS or hypervisor about FF-A
+> > communication regardless. So it's rather about if we want to do it
+> > properly leveraging auto discovery mechanisms supported by FF-A or not.
+> > 
+> > > 
+> > > > But if we still want to overload ACPI or DT with the
+> > > > discoverable firmware bits then it seems like an overkill here.
+> > > 
+> > > I think it would make sense to do ACPI based discovery or FF-A
+> > > based discovery, but doing both I think would be overkill.  For
+> > > ease of OS integration ACPI is the way to go.  And, potentially
+> > > device tree in the future.
+> > 
+> > Encoding firmware bits in ACPI/DT can be seen as an easy upstream path
+> > in the shorter run. But when the ACPI/DT becomes overloaded with
+> > information that has to be passed from firmware to the OS rather than
+> > purely describing hardware to the OS, it's ABI maintainability becomes
+> > complex. We are already dealing with DT ABI compatibility challenges
+> > especially the forward compatibility, so let's not make it even worse
+> > with firmware information that can be discovered automatically.
+> 
+> The TCG defined ACPI table has the following:
+>    -Physical address of the TPM
+>    -Start method
+>    -Start method specific parameters
+>    -event log address
+> 
+> This has been in place 8+ years and this is what OSes expect.
+> The start method advertises the mechanism a driver uses to
+> signal the TPM that something has changed in the CRB, and
+> this allows different types of TPM implementations:
+>    -memory mapped
+>    -signal via ACPI
+>    -signal via ARM SMC (legacy)
+>    -signal via Pluton mailbox
+>    -signal via FF-A
+> 
+> I don't see this as overloading the ACPI table, it's just what
+> the OS needs to know.
+> 
+> The TPM does not know (and should not know) the address of
+> the event log. An FF-A based TPM has no way to know this.
 
-On Fri, Feb 21, 2025 at 3:32=E2=80=AFPM Bibo Mao <maobibo@loongson.cn> wrot=
-e:
->
-> Option HAVE_VIRT_CPU_ACCOUNTING_GEN is selected by default in kconfig fil=
-e
-> arch/Kconfig. It is meaningless in file arch/loongarch/Kconfig, and on th=
-e
-> contrast it may bring out misunderstanding. Here remove it on arch
-> specified kconfig file.
->
-> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
-> ---
->  arch/loongarch/Kconfig | 1 -
->  1 file changed, 1 deletion(-)
->
-> diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
-> index 2b8bd27a852f..7fd5708fe14a 100644
-> --- a/arch/loongarch/Kconfig
-> +++ b/arch/loongarch/Kconfig
-> @@ -175,7 +175,6 @@ config LOONGARCH
->         select HAVE_STACKPROTECTOR
->         select HAVE_SYSCALL_TRACEPOINTS
->         select HAVE_TIF_NOHZ
-> -       select HAVE_VIRT_CPU_ACCOUNTING_GEN if !SMP
-Please see 01f135506e2ed0403512 ("powerpc/32: select
-HAVE_VIRT_CPU_ACCOUNTING_GEN"). Now HAVE_VIRT_CPU_ACCOUNTING_GEN is
-available on both 32BIT and 64BIT, so I think a better solution is
-unconditionally select HAVE_VIRT_CPU_ACCOUNTING_GEN which is
-convenient for the upcoming LoongArch32.
+The TPM event log is rather something that the firmware should propogate
+to the OS rather than the TPM itself. The standard way for firmware to
+pass that on is via UEFI [1] but still for non-UEFI compatible platforms
+it gets propogated via ACPI/DT from the firmware. As UEFI gets adopted
+further in embedded space, the reliance on ACPI/DT will reduce.
 
+[1] Documentation/security/tpm/tpm_event_log.rst
 
+> 
+> I don't see how changing TPM discovery to be via FF-A directly
+> would improve maintainability.
 
+You are considering ACPI at this point but when people want to use this
+TPM over FF-A on a platform using DT then it will require corresponding
+DT bindings. After that each platform has to enable TPM over FF-A in
+their corresponding ACPI/DT. All that won't be needed with auto
+discovery over FF-A.
 
+> 
+> > The other benefit of auto discovery is that platform enablement becomes
+> > really smooth. Once the firmware starts supporting a particular feature
+> > like TPM over FF-A then the OS can discover and support it.
+> 
+> If we added new CRB/FF-A ABIs to get the CRB physical address,
+> start method specific parameters, event log, it would mean that
+> all OSes and hypervisors need to re-architect their CRB drivers
+> or create new FF-A specific CRB drivers.  That will not smooth
+> enablement for TPMs.  And I don't see advantages for
+> maintainability.
 
-Huacai
+We don't need to pass event log over FF-A as UEFI interface is already
+there. And we are already adding support for start method over FF-A, so
+all I am asking is what significant effort do you see with discovering CRB
+pysical address over FF-A.
 
->         select IRQ_FORCED_THREADING
->         select IRQ_LOONGARCH_CPU
->         select LOCK_MM_AND_FIND_VMA
-> --
-> 2.39.3
->
->
+-Sumit
+
+> 
+> Thanks,
+> Stuart
+> 
+> 
 
