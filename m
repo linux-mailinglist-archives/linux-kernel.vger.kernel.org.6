@@ -1,195 +1,432 @@
-Return-Path: <linux-kernel+bounces-525229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F34F5A3ECC6
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 07:19:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B71AA3ECC7
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 07:20:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1110177395
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 06:19:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD4E519C3BAD
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 06:19:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22FB61FCFD8;
-	Fri, 21 Feb 2025 06:18:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3BBE1FBC94;
+	Fri, 21 Feb 2025 06:19:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="VNtxgC0X"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=m.fudan.edu.cn header.i=@m.fudan.edu.cn header.b="TRGkV4il"
+Received: from smtpbgau2.qq.com (smtpbgau2.qq.com [54.206.34.216])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D22311E5B78;
-	Fri, 21 Feb 2025 06:18:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C48311E5B78;
+	Fri, 21 Feb 2025 06:19:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.34.216
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740118737; cv=none; b=uSkn+fUxtqTeDxb4+kTjBg3XiaRLbsaS7znPKTNNmpAG060Oz4VN59YSCqYTbZvL1J9dCvN3zPrl1iF1FCprNYz2/gED8YIZgQo1GbCliSVdUf1MAD6LpK5uPcOEBzT9LI1I/jWlmdcJ/HEaSWASqeFDh3okAuk0bAnBFh/hMyU=
+	t=1740118775; cv=none; b=HA0pDyRj86/SRmOrBAV18wArnvtdRjBVX4Ux4G/1ZrrsRwL8fed9tAltoErOFVLnXArq+I+aiBm540igp2da9D0FPJgsWrDQomDV1dVRYroAEzxAIEU0P4glikzVoN+ZuVlxzjl4whlNfC7utaXrBcGK50MJKy+PYHErH4b2KTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740118737; c=relaxed/simple;
-	bh=8Tx8j0lvA4+fEQUw3oEHp9MRGre6e3kM75ckUoHtBvM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Mn5P8KODLvCsmyXUdcxqBqaO9WtgXHUy3iuQPVvTpsEDHqYLqnA+wcBFlM8zxSBS6TwSP8p0XuDfrTSEHJHUPYnYXKEmZT6GkdrMvO0izg2ffgDfuRHq2eqsAf0isZ8WdwicqexFzAVW/xhnO0dp0Ozsf3xJVazYng5VZoP7npg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=VNtxgC0X; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51L5xxQM015703;
-	Fri, 21 Feb 2025 06:18:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	8I4xAWQpxfpMRrlRqjIPNzPFALUHLmb31EkOijYpW6M=; b=VNtxgC0Xcwat/Hel
-	II6pZygsOYs+4dL+Gw5OUM+0wJMQF25vPL7o8cxYnJWke32T6oQUL/Nzvp2HlWFU
-	I0s3Pdhlb8UhvDM2YIlsQ7l+vEKC+AK4WghYBxKwtzsicPMCmOgVuGmXlmywhYz8
-	lPrwh1qi0USSZ2+ekpYsVdVvdFfP5geo3DNZTEjIDOJajbjWB500rgWJywoBTC80
-	jCIykSaJdI8Rq/ABSru4o56m1y7ew0t6p6AFl7Ab3mdUGaqxDNNf0MdAPPGmd6Ot
-	0hr8TByMMgvZ2nbSXdFkbeDz5H29Ut1qWFh9meCuJqMOBvWVexKlrisufhd4vg4e
-	ifntgA==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44xku6r1pc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Feb 2025 06:18:50 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51L6InsI031251
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Feb 2025 06:18:49 GMT
-Received: from [10.216.53.96] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 20 Feb
- 2025 22:18:43 -0800
-Message-ID: <17561e13-822b-440a-b62d-3d0eac1861d9@quicinc.com>
-Date: Fri, 21 Feb 2025 11:48:40 +0530
+	s=arc-20240116; t=1740118775; c=relaxed/simple;
+	bh=9L4DQ2nJwlPnST/BntgX/tdcyG7B1tCMejlGYQoNhXE=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=MS7sLeOyolJyWKhFomPLpMejkll4KBy18KBm+BJwxNiq+1hVYawRWqPXCHJwuuuQiuyiIizwSaWK/QcM/IySsrxO1WhFBlpiaZcqgraKWGq/Q8mzudzlGDF3774T5p2UMTt9zTuLml9PwZcKA0kcSNUr+8vdzvziJpF/BsAiVpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=m.fudan.edu.cn; spf=pass smtp.mailfrom=m.fudan.edu.cn; dkim=pass (1024-bit key) header.d=m.fudan.edu.cn header.i=@m.fudan.edu.cn header.b=TRGkV4il; arc=none smtp.client-ip=54.206.34.216
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=m.fudan.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=m.fudan.edu.cn
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=m.fudan.edu.cn;
+	s=sorc2401; t=1740118747;
+	bh=8O5CWu2pUIk59RfMimIWyLFxOn6ChVypQAOh3D0nSwg=;
+	h=Mime-Version:Subject:From:Date:Message-Id:To;
+	b=TRGkV4ilBbMdic/pWLO5374i0sFHyIG4aqmdKUk0x093J7V9Hxqf3mh+rVHP3BbmN
+	 HPjThkDS812DOFTvN4ciQCHG3W7mxXQoWG61j8TmSeAIIthPfpiwiID0aG7tE+Z43K
+	 /Wdm4kl/TZNV7PpaN6u7ETTIB5uo5n3G92ZPKzyE=
+X-QQ-mid: bizesmtpip3t1740118742ty86u0u
+X-QQ-Originating-IP: v5xM0Nwhwvvwqu1TY9QLbHw5KuIsA1ymjtDnskZR93s=
+Received: from smtpclient.apple ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Fri, 21 Feb 2025 14:19:00 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 6257787454314045098
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V8 2/7] interconnect: core: Add dynamic id allocation
- support
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>,
-        Odelu Kukatla <quic_okukatla@quicinc.com>,
-        "Mike
- Tipton" <quic_mdtipton@quicinc.com>,
-        Jeff Johnson
-	<quic_jjohnson@quicinc.com>,
-        Andrew Halaney <ahalaney@redhat.com>,
-        Sibi
- Sankar <quic_sibis@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20250205182743.915-1-quic_rlaggysh@quicinc.com>
- <20250205182743.915-3-quic_rlaggysh@quicinc.com>
- <bwiuhfgv4jw7tlwjqffgrxvskxbpf4forz46nn5g3vihz3z5od@w25y7hdprykf>
- <f40f6b9d-8f31-4ce6-a912-1aa484863d5e@quicinc.com>
- <6j576swreyqcyu7ryxtyojjmo7clfwb7fibw2aeuvif5vzexpq@du2farsldpti>
-Content-Language: en-US
-From: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
-In-Reply-To: <6j576swreyqcyu7ryxtyojjmo7clfwb7fibw2aeuvif5vzexpq@du2farsldpti>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: pg88hATFIV5t7CKqbUc97r4tMNKK-jOM
-X-Proofpoint-GUID: pg88hATFIV5t7CKqbUc97r4tMNKK-jOM
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-21_01,2025-02-20_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 spamscore=0 impostorscore=0 suspectscore=0 clxscore=1015
- mlxscore=0 bulkscore=0 phishscore=0 mlxlogscore=999 lowpriorityscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2502210046
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3818.100.11.1.3\))
+Subject: Re: UBSAN_ shift-out-of-bounds in bch2_trans_iter_init_outlined
+From: Kun Hu <huk23@m.fudan.edu.cn>
+In-Reply-To: <DB301B35-8966-4CB7-AE21-9A792CE4AC6C@m.fudan.edu.cn>
+Date: Fri, 21 Feb 2025 14:18:50 +0800
+Cc: syzkaller@googlegroups.com,
+ linux-bcachefs@vger.kernel.org,
+ "jjtan24@m.fudan.edu.cn" <jjtan24@m.fudan.edu.cn>,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <3C4AC793-1EC9-4891-9280-8E35B954B681@m.fudan.edu.cn>
+References: <DB301B35-8966-4CB7-AE21-9A792CE4AC6C@m.fudan.edu.cn>
+To: kent.overstreet@linux.dev
+X-Mailer: Apple Mail (2.3818.100.11.1.3)
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpip:m.fudan.edu.cn:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: OcC8+NPK8lgMPd0+T0YtrqgHT4QXi40hgL2zAFD6qODKxQraFIQWIeVc
+	nEpt/l4xNkuHMiuwTQQ5LLQnbGEusum1MNu0ODT0CJ8sFVQImr2imsw1NJz8bHAM11dInS9
+	MUR+sqhPdVPvfaPzud6A6w2QBUCKwyudmFUeD/3ls3kYuhw66Zcak2FxOt+nuI6lttNM1n7
+	U4u81bJxYAAuCgqwn/y4ZcbRRWERh4mGzdQ9uAxojLW0mmAh+eh8LA7nBzwQJ8LL8UTWen5
+	Ai3xtpIg6Fyk+9gjYxeyyikSTa3875nVG7naJrFjbSUTflawuRL4uzxDe8efgSuNv+awuCP
+	4RYoavOU/suD2bZvKx9Qv2q+7l/fMQu34rxlpB1V0Goq3VoGckk2b1dB/sFKy+3i6b6DzV/
+	aGEPs/bWQw5V3HwR+D6Cd4zugngQTh74j0Ljvb2ADZXVrX0h8HPSbyvtgyPbWSch7r8hacB
+	y2t+ql72U2/QLBh3g1yRqok8iVgjg4X2Eej4FkMNBHvtMWB0KRBB/W0cGoiCTw6B+6iQMOa
+	+VQqZE3XWC3aWgaJ5Bve9mZnnAlnThHF8CpDnJDavw+4C30PrMH500EBDZK8ZcexOCEu5I0
+	wCX2y2SbwaiUueTh3EE7t1JXQ5aL57qDK5nCrVC6P6R00NoSVDdmIAsIjxS+lL52McsFRlh
+	zqeZlBIBsYmr69djqPuxPAsR5rE0ZXa5U4DX0Uf1fDQ8lXzbzpbNV1MKn1xVwAuGtatNCV7
+	FnyZm3QLNvRMl2+ohPCeRNpuk/hHG9exvZSpUFM4YideiiXCbEIqD7zPpY4ZST2T1s9MeIq
+	1qcEnhsf7dGHwXfqFsSrvHG/i8LC6vDM/5KpnPnIP4NECY7YfVVPxwyS8MSi83n9MAjFRjw
+	ohgVht1+d6Uwa4/UPy9PmgZZ2Hj2zv0jnC69Pet0beeRboQO42+RasgquccZOTgmpv2mKeA
+	egh8Tym8e3tSgMriSO7bSi9mHBseCrkY32F8=
+X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
+X-QQ-RECHKSPAM: 0
 
 
 
-On 2/17/2025 6:32 AM, Dmitry Baryshkov wrote:
-> On Sun, Feb 16, 2025 at 10:08:51PM +0530, Raviteja Laggyshetty wrote:
->>
->>
->> On 2/10/2025 4:20 PM, Dmitry Baryshkov wrote:
->>> On Wed, Feb 05, 2025 at 06:27:38PM +0000, Raviteja Laggyshetty wrote:
->>>> The current interconnect framework relies on static IDs for node
->>>> creation and registration, which limits topologies with multiple
->>>> instances of the same interconnect provider. To address this, update
->>>> the interconnect framework APIs icc_node_create() and icc_link_create()
->>>> APIs to dynamically allocate IDs for interconnect nodes during creation.
->>>> This change removes the dependency on static IDs, allowing multiple
->>>> instances of the same hardware, such as EPSS L3.
->>>>
->>>> Signed-off-by: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
->>>> ---
->>>>  drivers/interconnect/core.c | 13 ++++++++++++-
->>>>  1 file changed, 12 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/drivers/interconnect/core.c b/drivers/interconnect/core.c
->>>> index 9d5404a07e8a..40700246f1b6 100644
->>>> --- a/drivers/interconnect/core.c
->>>> +++ b/drivers/interconnect/core.c
->>>> @@ -20,6 +20,8 @@
->>>>  
->>>>  #include "internal.h"
->>>>  
->>>> +#define ICC_DYN_ID_START 10000
->>>> +
->>>>  #define CREATE_TRACE_POINTS
->>>>  #include "trace.h"
->>>>  
->>>> @@ -826,7 +828,12 @@ static struct icc_node *icc_node_create_nolock(int id)
->>>>  	if (!node)
->>>>  		return ERR_PTR(-ENOMEM);
->>>>  
->>>> -	id = idr_alloc(&icc_idr, node, id, id + 1, GFP_KERNEL);
->>>> +	/* negative id indicates dynamic id allocation */
->>>> +	if (id < 0)
->>>
->>> Nit: I think it might be better to add an explicit define for that and
->>> to decline all other negatdive values. Please leave us some room for
->>> future expansion.
->>>
->> Do you mean to replace the value of ALLOC_DYN_ID from -1 to some
->> positive value like 100000 and to use it as initial ID for the nodes
->> requiring the dynamic allocation ? This explicit define can be used as
->> check for dynamic allocation and also as argument to idr_alloc min value
->> argument. Is my interpretation of the comment correct ?
-> 
-> No, it is not. I asked to add an explicit define for -1 in the ICC
-> framework and make icc_node_create_nolock() reject all other negative
-> values.
+> 2025=E5=B9=B42=E6=9C=8820=E6=97=A5 15:08=EF=BC=8CKun Hu =
+<huk23@m.fudan.edu.cn> =E5=86=99=E9=81=93=EF=BC=9A
+>=20
+> Hi Kent,
+>=20
+> When using our customized Syzkaller to fuzz the latest Linux kernel, =
+the following crash (76s)
+> was triggered.
+>=20
+> HEAD commit: 6537cfb395f352782918d8ee7b7f10ba2cc3cbf2
+> git tree: upstream
+> Console output: =
+https://github.com/pghk13/Kernel-Bug/blob/main/0219_6.13rc7_todo/76-UBSAN_=
+%20shift-out-of-bounds%20in%20bch2_trans_iter_init_outlined/report%20on%20=
+6.14-r3.txt
+> Kernel config: =
+https://github.com/pghk13/Kernel-Bug/blob/main/0219_6.13rc7_todo/config.tx=
+t=20
+> C reproducer: =
+https://github.com/pghk13/Kernel-Bug/blob/main/0219_6.13rc7_todo/76-UBSAN_=
+%20shift-out-of-bounds%20in%20bch2_trans_iter_init_outlined/repro.c
+> Syzlang reproducer: =
+https://github.com/pghk13/Kernel-Bug/blob/main/0219_6.13rc7_todo/76-UBSAN_=
+%20shift-out-of-bounds%20in%20bch2_trans_iter_init_outlined/repro.syz.txt
+>=20
+> We have reproduced this issue repeatedly in 6.14-rc3. =46rom the =
+syscall reproducer, the syscall syz_mount_image mounts a constructed =
+bcachefs image. When the file system attempted to parse these =
+parameters, it caused the btree_id_is_extents, btree_type_has_snapshots, =
+and btree_type_has_snapshot_field functions in btree_types.h to shift =
+out of bounds. It is speculated that the constructed mirror may have =
+caused the btree_id to exceed the u64 bit width, which in turn triggered =
+the shift out-of-bounds. Also, the report shows that the =
+bch2_time_to_timespec function in bcachefs.h also undergoes a shift =
+operation, but this does not seem to be the case when I look at the =
+source code. If you think this issue has little impact on your system, =
+please ignore it =E2=98=BA.
+>=20
+> If you fix this issue, please add the following tag to the commit:
+> Reported-by: Kun Hu <huk23@m.fudan.edu.cn>, Jiaji Qin =
+<jjtan24@m.fudan.edu.cn>
+>=20
+> 2025/02/19 18:35:12 reproducing crash 'UBSAN: shift-out-of-bounds in =
+bch2_trans_iter_init_outlined': final repro crashed as =
+(corrupted=3Dfalse):
+>  u64s 6 type extent 1610612736:24:U32_MAX len 24 ver 0: durability: 1 =
+ptr: 0:34:8 gen 0
+>  u64s 6 type extent 1610612736:24:U32_MAX len 24 ver 0: durability: 1 =
+ptr: 0:34:8 gen 0
+> ------------[ cut here ]------------
+> UBSAN: shift-out-of-bounds in fs/bcachefs/bcachefs.h:1193:41
+> shift exponent 128 is too large for 32-bit type 'unsigned int'
+> CPU: 2 UID: 0 PID: 877 Comm: syz.1.16 Not tainted 6.13.0-rc7 #1
+> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS =
+1.13.0-1ubuntu1.1 04/01/2014
+> Call Trace:
+> <TASK>
+> __dump_stack lib/dump_stack.c:94 [inline]
+> dump_stack_lvl+0x180/0x1b0 lib/dump_stack.c:120
+> ubsan_epilogue+0xa/0x40 lib/ubsan.c:231
+> __ubsan_handle_shift_out_of_bounds+0xf2/0x1e0 lib/ubsan.c:468
+> btree_id_cached fs/bcachefs/bcachefs.h:1193 [inline]
+> bch2_btree_iter_flags fs/bcachefs/btree_iter.h:472 [inline]
+> bch2_trans_iter_init_outlined.cold+0x55/0x78 =
+fs/bcachefs/btree_iter.c:2904
+> bch2_trans_iter_init fs/bcachefs/btree_iter.h:520 [inline]
+> bch2_btree_insert_trans+0x18c/0x290 fs/bcachefs/btree_update.c:647
+> drop_dev_and_update+0x3d4/0x580 fs/bcachefs/backpointers.c:456
+> check_bp_exists+0x1bd2/0x3140 fs/bcachefs/backpointers.c:603
+> check_extent_to_backpointers+0x8d4/0x11f0 =
+fs/bcachefs/backpointers.c:688
+> bch2_check_extents_to_backpointers_pass+0xa6f/0xf20 =
+fs/bcachefs/backpointers.c:884
+> bch2_check_extents_to_backpointers+0x352/0xac0 =
+fs/bcachefs/backpointers.c:937
+> bch2_run_recovery_pass+0x94/0x1a0 fs/bcachefs/recovery_passes.c:191
+> bch2_run_recovery_passes+0x4a4/0x760 fs/bcachefs/recovery_passes.c:244
+> bch2_fs_recovery+0x24d0/0x4f00 fs/bcachefs/recovery.c:861
+> bch2_fs_start+0x2f6/0x610 fs/bcachefs/super.c:1037
+> bch2_fs_get_tree+0x4b6/0x2020 fs/bcachefs/fs.c:2170
+> vfs_get_tree+0x93/0x340 fs/super.c:1814
+> do_new_mount fs/namespace.c:3511 [inline]
+> path_mount+0x1272/0x1ba0 fs/namespace.c:3838
+> do_mount+0xf8/0x110 fs/namespace.c:3851
+> __do_sys_mount fs/namespace.c:4061 [inline]
+> __se_sys_mount fs/namespace.c:4038 [inline]
+> __x64_sys_mount+0x193/0x230 fs/namespace.c:4038
+> do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+> do_syscall_64+0xc3/0x1d0 arch/x86/entry/common.c:83
+> entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7f75b6feb51e
+> Code: ff ff ff 64 c7 00 16 00 00 00 b8 ff ff ff ff c3 66 2e 0f 1f 84 =
+00 00 00 00 00 66 90 f3 0f 1e fa 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d =
+01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007ffceb0a77a8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+> RAX: ffffffffffffffda RBX: 0000000000005b13 RCX: 00007f75b6feb51e
+> RDX: 0000000020005b00 RSI: 0000000020005b40 RDI: 00007ffceb0a7800
+> RBP: 00007ffceb0a7840 R08: 00007ffceb0a7840 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000020005b00
+> R13: 0000000020005b40 R14: 00007ffceb0a7800 R15: 0000000020000080
+> </TASK>
+> ---[ end trace ]---
+> ------------[ cut here ]------------
+> UBSAN: shift-out-of-bounds in fs/bcachefs/btree_types.h:798:9
+> shift exponent 129 is too large for 64-bit type 'long long unsigned =
+int'
+> CPU: 2 UID: 0 PID: 877 Comm: syz.1.16 Not tainted 6.13.0-rc7 #1
+> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS =
+1.13.0-1ubuntu1.1 04/01/2014
+> Call Trace:
+> <TASK>
+> __dump_stack lib/dump_stack.c:94 [inline]
+> dump_stack_lvl+0x180/0x1b0 lib/dump_stack.c:120
+> ubsan_epilogue+0xa/0x40 lib/ubsan.c:231
+> __ubsan_handle_shift_out_of_bounds+0xf2/0x1e0 lib/ubsan.c:468
+> btree_node_type_is_extents fs/bcachefs/btree_types.h:798 [inline]
+> btree_id_is_extents fs/bcachefs/btree_types.h:803 [inline]
+> __bch2_btree_iter_flags fs/bcachefs/btree_iter.h:451 [inline]
+> bch2_btree_iter_flags fs/bcachefs/btree_iter.h:478 [inline]
+> bch2_trans_iter_init_outlined.cold+0x37/0x78 =
+fs/bcachefs/btree_iter.c:2904
+> bch2_trans_iter_init fs/bcachefs/btree_iter.h:520 [inline]
+> bch2_btree_insert_trans+0x18c/0x290 fs/bcachefs/btree_update.c:647
+> drop_dev_and_update+0x3d4/0x580 fs/bcachefs/backpointers.c:456
+> check_bp_exists+0x1bd2/0x3140 fs/bcachefs/backpointers.c:603
+> check_extent_to_backpointers+0x8d4/0x11f0 =
+fs/bcachefs/backpointers.c:688
+> bch2_check_extents_to_backpointers_pass+0xa6f/0xf20 =
+fs/bcachefs/backpointers.c:884
+> bch2_check_extents_to_backpointers+0x352/0xac0 =
+fs/bcachefs/backpointers.c:937
+> bch2_run_recovery_pass+0x94/0x1a0 fs/bcachefs/recovery_passes.c:191
+> bch2_run_recovery_passes+0x4a4/0x760 fs/bcachefs/recovery_passes.c:244
+> bch2_fs_recovery+0x24d0/0x4f00 fs/bcachefs/recovery.c:861
+> bch2_fs_start+0x2f6/0x610 fs/bcachefs/super.c:1037
+> bch2_fs_get_tree+0x4b6/0x2020 fs/bcachefs/fs.c:2170
+> vfs_get_tree+0x93/0x340 fs/super.c:1814
+> do_new_mount fs/namespace.c:3511 [inline]
+> path_mount+0x1272/0x1ba0 fs/namespace.c:3838
+> do_mount+0xf8/0x110 fs/namespace.c:3851
+> __do_sys_mount fs/namespace.c:4061 [inline]
+> __se_sys_mount fs/namespace.c:4038 [inline]
+> __x64_sys_mount+0x193/0x230 fs/namespace.c:4038
+> do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+> do_syscall_64+0xc3/0x1d0 arch/x86/entry/common.c:83
+> entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7f75b6feb51e
+> Code: ff ff ff 64 c7 00 16 00 00 00 b8 ff ff ff ff c3 66 2e 0f 1f 84 =
+00 00 00 00 00 66 90 f3 0f 1e fa 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d =
+01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007ffceb0a77a8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+> RAX: ffffffffffffffda RBX: 0000000000005b13 RCX: 00007f75b6feb51e
+> RDX: 0000000020005b00 RSI: 0000000020005b40 RDI: 00007ffceb0a7800
+> RBP: 00007ffceb0a7840 R08: 00007ffceb0a7840 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000020005b00
+> R13: 0000000020005b40 R14: 00007ffceb0a7800 R15: 0000000020000080
+> </TASK>
+> ---[ end trace ]---
+> ------------[ cut here ]------------
+> UBSAN: shift-out-of-bounds in fs/bcachefs/btree_types.h:825:9
+> shift exponent 128 is too large for 64-bit type 'long long unsigned =
+int'
+> CPU: 2 UID: 0 PID: 877 Comm: syz.1.16 Not tainted 6.13.0-rc7 #1
+> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS =
+1.13.0-1ubuntu1.1 04/01/2014
+> Call Trace:
+> <TASK>
+> __dump_stack lib/dump_stack.c:94 [inline]
+> dump_stack_lvl+0x180/0x1b0 lib/dump_stack.c:120
+> ubsan_epilogue+0xa/0x40 lib/ubsan.c:231
+> __ubsan_handle_shift_out_of_bounds+0xf2/0x1e0 lib/ubsan.c:468
+> btree_type_has_snapshot_field fs/bcachefs/btree_types.h:825 [inline]
+> __bch2_btree_iter_flags fs/bcachefs/btree_iter.h:455 [inline]
+> bch2_btree_iter_flags fs/bcachefs/btree_iter.h:478 [inline]
+> bch2_trans_iter_init_outlined.cold+0x19/0x78 =
+fs/bcachefs/btree_iter.c:2904
+> bch2_trans_iter_init fs/bcachefs/btree_iter.h:520 [inline]
+> bch2_btree_insert_trans+0x18c/0x290 fs/bcachefs/btree_update.c:647
+> drop_dev_and_update+0x3d4/0x580 fs/bcachefs/backpointers.c:456
+> check_bp_exists+0x1bd2/0x3140 fs/bcachefs/backpointers.c:603
+> check_extent_to_backpointers+0x8d4/0x11f0 =
+fs/bcachefs/backpointers.c:688
+> bch2_check_extents_to_backpointers_pass+0xa6f/0xf20 =
+fs/bcachefs/backpointers.c:884
+> bch2_check_extents_to_backpointers+0x352/0xac0 =
+fs/bcachefs/backpointers.c:937
+> bch2_run_recovery_pass+0x94/0x1a0 fs/bcachefs/recovery_passes.c:191
+> bch2_run_recovery_passes+0x4a4/0x760 fs/bcachefs/recovery_passes.c:244
+> bch2_fs_recovery+0x24d0/0x4f00 fs/bcachefs/recovery.c:861
+> bch2_fs_start+0x2f6/0x610 fs/bcachefs/super.c:1037
+> bch2_fs_get_tree+0x4b6/0x2020 fs/bcachefs/fs.c:2170
+> vfs_get_tree+0x93/0x340 fs/super.c:1814
+> do_new_mount fs/namespace.c:3511 [inline]
+> path_mount+0x1272/0x1ba0 fs/namespace.c:3838
+> do_mount+0xf8/0x110 fs/namespace.c:3851
+> __do_sys_mount fs/namespace.c:4061 [inline]
+> __se_sys_mount fs/namespace.c:4038 [inline]
+> __x64_sys_mount+0x193/0x230 fs/namespace.c:4038
+> do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+> do_syscall_64+0xc3/0x1d0 arch/x86/entry/common.c:83
+> entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7f75b6feb51e
+> Code: ff ff ff 64 c7 00 16 00 00 00 b8 ff ff ff ff c3 66 2e 0f 1f 84 =
+00 00 00 00 00 66 90 f3 0f 1e fa 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d =
+01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007ffceb0a77a8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+> RAX: ffffffffffffffda RBX: 0000000000005b13 RCX: 00007f75b6feb51e
+> RDX: 0000000020005b00 RSI: 0000000020005b40 RDI: 00007ffceb0a7800
+> RBP: 00007ffceb0a7840 R08: 00007ffceb0a7840 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000020005b00
+> R13: 0000000020005b40 R14: 00007ffceb0a7800 R15: 0000000020000080
+> </TASK>
+> ---[ end trace ]---
+> ------------[ cut here ]------------
+> UBSAN: shift-out-of-bounds in fs/bcachefs/btree_types.h:814:9
+> shift exponent 128 is too large for 64-bit type 'long long unsigned =
+int'
+> CPU: 2 UID: 0 PID: 877 Comm: syz.1.16 Not tainted 6.13.0-rc7 #1
+> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS =
+1.13.0-1ubuntu1.1 04/01/2014
+> Call Trace:
+> <TASK>
+> __dump_stack lib/dump_stack.c:94 [inline]
+> dump_stack_lvl+0x180/0x1b0 lib/dump_stack.c:120
+> ubsan_epilogue+0xa/0x40 lib/ubsan.c:231
+> __ubsan_handle_shift_out_of_bounds+0xf2/0x1e0 lib/ubsan.c:468
+> btree_type_has_snapshots fs/bcachefs/btree_types.h:814 [inline]
+> __bch2_btree_iter_flags fs/bcachefs/btree_iter.h:459 [inline]
+> bch2_btree_iter_flags fs/bcachefs/btree_iter.h:478 [inline]
+> bch2_trans_iter_init_outlined.cold+0x73/0x78 =
+fs/bcachefs/btree_iter.c:2904
+> bch2_trans_iter_init fs/bcachefs/btree_iter.h:520 [inline]
+> bch2_btree_insert_trans+0x18c/0x290 fs/bcachefs/btree_update.c:647
+> drop_dev_and_update+0x3d4/0x580 fs/bcachefs/backpointers.c:456
+> check_bp_exists+0x1bd2/0x3140 fs/bcachefs/backpointers.c:603
+> check_extent_to_backpointers+0x8d4/0x11f0 =
+fs/bcachefs/backpointers.c:688
+> bch2_check_extents_to_backpointers_pass+0xa6f/0xf20 =
+fs/bcachefs/backpointers.c:884
+> bch2_check_extents_to_backpointers+0x352/0xac0 =
+fs/bcachefs/backpointers.c:937
+> bch2_run_recovery_pass+0x94/0x1a0 fs/bcachefs/recovery_passes.c:191
+> bch2_run_recovery_passes+0x4a4/0x760 fs/bcachefs/recovery_passes.c:244
+> bch2_fs_recovery+0x24d0/0x4f00 fs/bcachefs/recovery.c:861
+> bch2_fs_start+0x2f6/0x610 fs/bcachefs/super.c:1037
+> bch2_fs_get_tree+0x4b6/0x2020 fs/bcachefs/fs.c:2170
+> vfs_get_tree+0x93/0x340 fs/super.c:1814
+> do_new_mount fs/namespace.c:3511 [inline]
+> path_mount+0x1272/0x1ba0 fs/namespace.c:3838
+> do_mount+0xf8/0x110 fs/namespace.c:3851
+> __do_sys_mount fs/namespace.c:4061 [inline]
+> __se_sys_mount fs/namespace.c:4038 [inline]
+> __x64_sys_mount+0x193/0x230 fs/namespace.c:4038
+> do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+> do_syscall_64+0xc3/0x1d0 arch/x86/entry/common.c:83
+> entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7f75b6feb51e
+> Code: ff ff ff 64 c7 00 16 00 00 00 b8 ff ff ff ff c3 66 2e 0f 1f 84 =
+00 00 00 00 00 66 90 f3 0f 1e fa 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d =
+01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007ffceb0a77a8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+> RAX: ffffffffffffffda RBX: 0000000000005b13 RCX: 00007f75b6feb51e
+> RDX: 0000000020005b00 RSI: 0000000020005b40 RDI: 00007ffceb0a7800
+> RBP: 00007ffceb0a7840 R08: 00007ffceb0a7840 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000020005b00
+> R13: 0000000020005b40 R14: 00007ffceb0a7800 R15: 0000000020000080
+> </TASK>
+> ---[ end trace ]---
+> bcachefs (loop1): duplicate versions of same extent, deleting smaller
+>  u64s 6 type extent 1610612736:24:U32_MAX len 24 ver 0: durability: 1 =
+ptr: 0:34:8 gen 0
+>  u64s 6 type extent 1610612736:24:U32_MAX len 24 ver 0: durability: 1 =
+ptr: 0:34:8 gen 0
+> ------------[ cut here ]------------
+> UBSAN: shift-out-of-bounds in fs/bcachefs/btree_types.h:814:9
+> shift exponent 128 is too large for 64-bit type 'long long unsigned =
+int'
+> CPU: 0 UID: 0 PID: 877 Comm: syz.1.16 Not tainted 6.13.0-rc7 #1
+> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS =
+1.13.0-1ubuntu1.1 04/01/2014
+> Call Trace:
+> <TASK>
+> __dump_stack lib/dump_stack.c:94 [inline]
+> dump_stack_lvl+0x180/0x1b0 lib/dump_stack.c:120
+> ubsan_epilogue+0xa/0x40 lib/ubsan.c:231
+> __ubsan_handle_shift_out_of_bounds+0xf2/0x1e0 lib/ubsan.c:468
+> btree_type_has_snapshots fs/bcachefs/btree_types.h:814 [inline]
+> bch2_trans_update_extent_overwrite.cold+0x1d/0x66 =
+fs/bcachefs/btree_update.c:254
+> bch2_trans_update_extent+0x65d/0x1000 fs/bcachefs/btree_update.c:318
+> bch2_trans_update+0x360/0x5b0 fs/bcachefs/btree_update.c:518
+> bch2_btree_insert_trans+0x223/0x290 fs/bcachefs/btree_update.c:650
+> drop_dev_and_update+0x3d4/0x580 fs/bcachefs/backpointers.c:456
+> check_bp_exists+0x1bd2/0x3140 fs/bcachefs/backpointers.c:603
+> check_extent_to_backpointers+0x8d4/0x11f0 =
+fs/bcachefs/backpointers.c:688
+> bch2_check_extents_to_backpointers_pass+0xa6f/0xf20 =
+fs/bcachefs/backpointers.c:884
+> bch2_check_extents_to_backpointers+0x352/0xac0 =
+fs/bcachefs/backpointers.c:937
+> bch2_run_recovery_pass+0x94/0x1a0 fs/bcachefs/recovery_passes.c:191
+> bch2_run_recovery_passes+0x4a4/0x760 fs/bcachefs/recovery_passes.c:244
+> bch2_fs_recovery+0x24d0/0x4f00 fs/bcachefs/recovery.c:861
+> bch2_fs_start+0x2f6/0x610 fs/bcachefs/super.c:1037
+> bch2_fs_get_tree+0x4b6/0x2020 fs/bcachefs/fs.c:2170
+> vfs_get_tree+0x93/0x340 fs/super.c:1814
+> do_new_mount fs/namespace.c:3511 [inline]
+> path_mount+0x1272/0x1ba0 fs/namespace.c:3838
+> do_mount+0xf8/0x110 fs/namespace.c:3851
+> __do_sys_mount fs/namespace.c:4061 [inline]
+> __se_sys_mount fs/namespace.c:4038 [inline]
+> __x64_sys_mount+0x193/0x230 fs/namespace.c:4038
+> do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+> do_syscall_64+0xc3/0x1d0 arch/x86/entry/common.c:83
+> entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7f75b6feb51e
+> Code: ff ff ff 64 c7 00 16 00 00 00 b8 ff ff ff ff c3 66 2e 0f 1f 84 =
+00 00 00 00 00 66 90 f3 0f 1e fa 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d =
+01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007ffceb0a77a8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+> RAX: ffffffffffffffda RBX: 0000000000005b13 RCX: 00007f75b6feb51e
+> RDX: 0000000020005b00 RSI: 0000000020005b40 RDI: 00007ffceb0a7800
+> RBP: 00007ffceb0a7840 R08: 00007ffceb0a7840 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000020005b00
+> R13: 0000000020005b40 R14: 00007ffceb0a7800 R15: 0000000020000080
+> </TASK>
+>=20
+> ---------------
+> thanks,
+> Kun Hu
 
-Understood, will make the change as suggested.
-> 
->>
->>>> +		id = idr_alloc(&icc_idr, node, ICC_DYN_ID_START, 0, GFP_KERNEL);
->>>> +	else
->>>> +		id = idr_alloc(&icc_idr, node, id, id + 1, GFP_KERNEL);
->>>> +
->>>>  	if (id < 0) {
->>>>  		WARN(1, "%s: couldn't get idr\n", __func__);
->>>>  		kfree(node);
->>>> @@ -962,6 +969,10 @@ void icc_node_add(struct icc_node *node, struct icc_provider *provider)
->>>>  	node->avg_bw = node->init_avg;
->>>>  	node->peak_bw = node->init_peak;
->>>>  
->>>> +	if (node->id >= ICC_DYN_ID_START)
->>>> +		node->name = devm_kasprintf(provider->dev, GFP_KERNEL, "%s@%s",
->>>> +					    node->name, dev_name(provider->dev));
->>>> +
->>>>  	if (node->avg_bw || node->peak_bw) {
->>>>  		if (provider->pre_aggregate)
->>>>  			provider->pre_aggregate(node);
->>>> -- 
->>>> 2.39.2
->>>>
->>>
->>
-> 
 
+Sorry for this report.
+
+We just noticed that the wrong kernel version is being used, it's still =
+6.13-rc7, so please ignore this report and let's retest on the latest =
+kernel.
+
+=E2=80=94=E2=80=94
+Best
+Kun=
 
