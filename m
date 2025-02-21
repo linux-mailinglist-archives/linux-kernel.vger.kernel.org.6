@@ -1,147 +1,102 @@
-Return-Path: <linux-kernel+bounces-525486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 674E8A3F098
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:40:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E1B2A3F08E
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:38:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31ECF3BCA56
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:38:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22AB642208B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:38:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB922202F96;
-	Fri, 21 Feb 2025 09:38:14 +0000 (UTC)
-Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AEE4204681;
-	Fri, 21 Feb 2025 09:38:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF2C9204F67;
+	Fri, 21 Feb 2025 09:37:53 +0000 (UTC)
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9D082040BF;
+	Fri, 21 Feb 2025 09:37:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740130694; cv=none; b=aW0DnEbVJ+JKvf95/1tl762i9C08aAEJfJws8QE4e9KmpgpFdcRQvU3/mTf0HIaKs418/nIcoBdmf1XpBJ7XheEll3donf14+0OIBz6818CgAdeN9jex+zeIkGukdTsVGEZjF5v1tsqgHyKw9Ga5QZIAYoKmnnL8RA0w4csfgCw=
+	t=1740130673; cv=none; b=FpAK4BgTaTULp3aBrjyNjnrd5Aw8erDTQ5bgnflNcTF2YI+u7gpXSnbWMOcwW287uNMJT6ijMoBH167hGC/w3bxOaSDEKFDQaoxBYeBHDyQm3PHiyvVQ81jpq+7Tr1LqSIr5rR215Fz7uG0mQXodjLto1o0zL/e2wvOdm866x+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740130694; c=relaxed/simple;
-	bh=EJx2vfs/+2gpk8AKPvz/birlYYWJkI2Q7eInv+jf3Ew=;
+	s=arc-20240116; t=1740130673; c=relaxed/simple;
+	bh=bAeLxz+c1Ts7bphdqbep71s5QSoID+9JDJSBujnvkVo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ny0JuSkYbF8YLW8/O3q16QwnG4YQJUfU5GE84yADYznS5WIaLscC0Ja31mJxrpZGOBbCiniWJYyLlgrbqWhX/7ml0o7YPiuPgoLNL9VU5nscWZhsdZ+FTknhUFig4I2yVzLvUUBXKeFSxlNDMdRYMhoe2zNv9DPVbUukmpEUm8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
-Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
-	id 1tlPU1-0006Eb-00; Fri, 21 Feb 2025 10:38:09 +0100
-Received: by alpha.franken.de (Postfix, from userid 1000)
-	id C726BC0135; Fri, 21 Feb 2025 10:37:26 +0100 (CET)
-Date: Fri, 21 Feb 2025 10:37:26 +0100
-From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-To: Gregory CLEMENT <gregory.clement@bootlin.com>
-Cc: Jiaxun Yang <jiaxun.yang@flygoat.com>, Rob Herring <robh@kernel.org>,
-	Aleksandar Rikalo <arikalo@gmail.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
-	=?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>,
-	Tawfik Bayouk <tawfik.bayouk@mobileye.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	"linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/5] dt-bindings: mips: mips-cm: Add a new compatible
- string for EyeQ6
-Message-ID: <Z7hJVnJSg3C9lmLY@alpha.franken.de>
-References: <20250123-cluster-hci-broken-v3-0-8a7ec57cbf68@bootlin.com>
- <20250123-cluster-hci-broken-v3-2-8a7ec57cbf68@bootlin.com>
- <afa2e874-c078-4c3e-b485-d948a0bb6a6f@app.fastmail.com>
- <CAL_JsqKXYruNn+MtxbvCCWU2OmqeV-uAyyzN+F-ppSJVscr91w@mail.gmail.com>
- <bf08785b-9963-4539-92ef-b73c3abe8c19@app.fastmail.com>
- <87tt9iucu9.fsf@BLaptop.bootlin.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=lTa0lLFtgsi8EIoBsr4qMZlP4nBTQ7UNB4eylam/vuXw/g1N5GnwdaTUm6PY8IvA+9xlkkimhCviP9ldArRjopNfbDyzm+QgGhhYuVBsysyQqvBVXzp+wVj6G1LtBW7Dsw5Zwnxltg9YkGdmF/1RE9OzqtcKdGTPi6FQ1nMSmXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5e02eba02e8so2546139a12.0;
+        Fri, 21 Feb 2025 01:37:51 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740130670; x=1740735470;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3fSnnglnDE4OxiijvbfYtwaf+0cH0qRVW0DkL1E6oSo=;
+        b=SL6l8pTjeZhaMjbGdiCmhWn+Ujqr5Hc5eI5ywWCZwV4I2g9xfsAL+R1sJ732+/7fmw
+         w1RzBLFQvwKB/Ymeq/O25hVLLIbGrWVQwh7rOyJAPLyx/uCUqhbFtDdROCS+e/Rg3QVB
+         HJUZN9SmP3V3XDGh/7Yu1UrUMA/aXswRj1K5sQuv7unRAisHdCpyyK/2tKwqoTNptw24
+         lh2P3RvJyhzHljM4lMYdlz0KW936esz7dqI4WWJb772gE4zb5ZxiIaMMCUyulmz1Vono
+         Af194fj0LsueuajEifH+5CL4w4qtZzcFOX57vJFUKRb3KelGPB9ckmq9+bYrsJ8eVNgB
+         Dkzg==
+X-Forwarded-Encrypted: i=1; AJvYcCUMDNmbSrj+4FmfJPThzsoEmd2UQ9KGWf4LSw62hzur4pNKBGVv6Elb8hO1vNE4y0DUVtq1W6bnAM2KX2/Y6O8=@vger.kernel.org, AJvYcCV5W4lcc/GQ0RuaktH8pBb00uLgeoCbJtFEiX/gTrPqtNlpBj4bOVal4wn/a+Qvta9vK7efL0zw@vger.kernel.org, AJvYcCVKe6q7Mc1I6HQX2qolCFYcW0fKckr0Ap319chJ8VMSN028EI9+W3x1Hvz9WbbgRJKzKDUTWQlUBpT6gHFK@vger.kernel.org, AJvYcCXDTtBpLu4nBc6ssomFMe1eOc/lqSb7KKdzn2e94XOrkiMzNugD2vllpo2gxiI+9iMGwWzPW4Dad1M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZQ2NdPmlZwqHjOiXf/SI0IUG1F1ZWnq03q6tpN0H4xlSHhdmX
+	Qe6gtO+G40Ln3GKLuffozuwkU/SdAbNyK9Qw/i3nBqRY8nAIzOHm
+X-Gm-Gg: ASbGnctXoa5b+tP6ewtVR4btyb/IkHLaWepTqyxIt0YEOP6ekjF/XFy/UBmMs+1Z9as
+	ezQ3DVb00UywEyCFNJ1sBMOLzQd0H88KadhxMwqqx5U7buBfH6XtZgCjiZH3uH4Bc0oXaluZWbp
+	YFPjjijfBalF9Oo54y4yxWE2LIN0CDqpQwmbE13vSjIxxZXkPmR6fjpGoZDKu5SHLjp8OZ/yBEo
+	WP9MMWUS5SxzYXHtVp1rmgxDr9+qLnmJepe5eB3InuAK3/VwQW7nHEd3wbm1Y81d9Ikv066fHoy
+	LLjiBDgohSmQaFCQ
+X-Google-Smtp-Source: AGHT+IHWNmEkqGtajxkcN65Dyk2qU9qs752a20orApMklK9etxurXq/hZktNRXLRI1CrjEYJmjdFLg==
+X-Received: by 2002:a05:6402:50c7:b0:5dc:cc02:5d25 with SMTP id 4fb4d7f45d1cf-5e0b70d5729mr2037533a12.11.1740130669931;
+        Fri, 21 Feb 2025 01:37:49 -0800 (PST)
+Received: from gmail.com ([2a03:2880:30ff:6::])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e07464bcc7sm6281773a12.33.2025.02.21.01.37.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Feb 2025 01:37:49 -0800 (PST)
+Date: Fri, 21 Feb 2025 01:37:46 -0800
+From: Breno Leitao <leitao@debian.org>
+To: Uday Shankar <ushankar@purestorage.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	=?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
+	Simon Horman <horms@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	Jonathan Corbet <corbet@lwn.net>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
+Subject: Re: [PATCH net-next v5 1/2] net, treewide: define and use
+ MAC_ADDR_STR_LEN
+Message-ID: <20250221-glorious-evasive-piculet-40ad13@leitao>
+References: <20250220-netconsole-v5-0-4aeafa71debf@purestorage.com>
+ <20250220-netconsole-v5-1-4aeafa71debf@purestorage.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <87tt9iucu9.fsf@BLaptop.bootlin.com>
+In-Reply-To: <20250220-netconsole-v5-1-4aeafa71debf@purestorage.com>
 
-On Tue, Jan 28, 2025 at 05:23:26PM +0100, Gregory CLEMENT wrote:
-> > 在2025年1月27日一月 下午10:07，Rob Herring写道：
-> >> On Mon, Jan 27, 2025 at 3:43 PM Jiaxun Yang <jiaxun.yang@flygoat.com> wrote:
-> >>>
-> >>>
-> >>>
-> >>> 在2025年1月23日一月 上午11:01，Gregory CLEMENT写道：
-> >>> > The CM3.5 used on EyeQ6 reports that Hardware Cache Initialization is
-> >>> > complete, but in reality it's not the case. It also incorrectly
-> >>> > indicates that Hardware Cache Initialization is supported. This new
-> >>> > compatible string allows warning about this broken feature that cannot
-> >>> > be detected at runtime.
-> >>> >
-> >>> > Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
-> >>> > ---
-> >>> >  Documentation/devicetree/bindings/mips/mti,mips-cm.yaml | 12 +++++++++++-
-> >>> >  1 file changed, 11 insertions(+), 1 deletion(-)
-> >>> >
-> >>> > diff --git a/Documentation/devicetree/bindings/mips/mti,mips-cm.yaml
-> >>> > b/Documentation/devicetree/bindings/mips/mti,mips-cm.yaml
-> >>> > index
-> >>> > 4324b2306535f1bf66c44b1f96be9094ee282041..d129d6382847768dc026336d8d2c7328b6b81f9b
-> >>> > 100644
-> >>> > --- a/Documentation/devicetree/bindings/mips/mti,mips-cm.yaml
-> >>> > +++ b/Documentation/devicetree/bindings/mips/mti,mips-cm.yaml
-> >>> > @@ -19,7 +19,12 @@ maintainers:
-> >>> >
-> >>> >  properties:
-> >>> >    compatible:
-> >>> > -    const: mti,mips-cm
-> >>> > +    oneOf:
-> >>> > +      - const: mti,mips-cm
-> >>> > +      - const: mobileye,eyeq6-cm
-> >>> > +        description:
-> >>> > +          On EyeQ6 the HCI (Hardware Cache Initialization) information for
-> >>> > +          the L2 cache in multi-cluster configuration is broken.
-> >>> >
-> >>> >    reg:
-> >>> >      description:
-> >>> > @@ -44,4 +49,9 @@ examples:
-> >>> >        compatible = "mti,mips-cm";
-> >>> >        reg = <0x1bde8000 0x8000>;
-> >>> >      };
-> >>> > +
-> >>> > +  - |
-> >>> > +    coherency-manager {
-> >>> > +      compatible = "mobileye,eyeq6-cm";
-> >>>
-> >>> I think “mobileye,eyeq6-cm”, “mti,mips-cm” would describe the hardware better as eyeq6’s CM is just a special variant of mips-cm.
-> >>
-> >> Is s/w that only understands “mti,mips-cm” useful on eyeq6 chip? If
-> >> so, I agree. If not, then a fallback compatible is not useful.
-> >
-> > Yes, mobileye,eyeq6-cm only enable an additional bug workaround in software.
-> >
+On Thu, Feb 20, 2025 at 06:29:20PM -0700, Uday Shankar wrote:
+> There are a few places in the tree which compute the length of the
+> string representation of a MAC address as 3 * ETH_ALEN - 1. Define a
+> constant for this and use it where relevant. No functionality changes
+> are expected.
 > 
-> Having "mti,mips-cm" is not useful for the EyeQ6 chip. On the EyeQ6, we
-> obtain all relevant information related to CM dynamically without
-> needing this compatible string.
-> 
-> > The programming interfaces and so on remains unchanged.
-> 
-> Even without a compatible string, we are able to utilize the CM. At
-> present, there is no node in the device tree, and apart from the
-> hardware being faulty, we do not need it.
-> 
-> >
-> > Also other firmware components like U-Boot doesn’t need to be aware of
-> > eyeq6 variant.
-> 
-> It's the same for the firmware; they don't need to have "mti, mips-cm"
-> information, as they can retrieve all they need dynamically.
+> Signed-off-by: Uday Shankar <ushankar@purestorage.com>
+> Reviewed-by: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
+> Acked-by: Johannes Berg <johannes@sipsolutions.net>
 
-so it the current patch version correct ? If yes and nothing else is
-outstanding, I'm going to apply the series.
-
-Thomas.
-
--- 
-Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
-good idea.                                                [ RFC1925, 2.3 ]
+Reviwed-by: Breno Leitao <leitao@debian.org>
 
