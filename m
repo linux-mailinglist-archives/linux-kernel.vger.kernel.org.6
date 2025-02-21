@@ -1,140 +1,213 @@
-Return-Path: <linux-kernel+bounces-525179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8793BA3EC02
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 05:57:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 86E79A3EC06
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 06:02:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64F99178AC2
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 04:57:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 586F917A57E
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 05:02:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 317711FBE9B;
-	Fri, 21 Feb 2025 04:57:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9209E1FBCA9;
+	Fri, 21 Feb 2025 05:02:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y40I6oRu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="cDxxyE1H"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C30AF9D9
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 04:57:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CF158F6E;
+	Fri, 21 Feb 2025 05:02:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740113855; cv=none; b=hhAPVmrmzxwxDOnHEeZTlsaebO/L7R9q8920X7eIYW86qotstWWAnAnb7LlJCXN5hNjhNVBjxRQ6qjhe2h1zrbWW4cT0GhfJDTfMKtAl07/Psqrl3aYkXSfvv0bxTSV1CP+MJMZCx80OAkD2xebsu/XaYywtiKWjbSpYukhr4zc=
+	t=1740114141; cv=none; b=FpyqqqQ0JcnXw9WsTfNRGY+07nY2rgfYEmAj1LDNBZOMNqAIvpb81gaWA8Rjff0avYJxS+M1Cgog99Vf/ccsPu+YfjmPwzlp6NhovBQoKHbHB9Yklj3JP6vREf3CkZKaGepTmTUHK1ApLfA7R2ffj3J1JMSSRpv9s/lbbqdzLZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740113855; c=relaxed/simple;
-	bh=a0SRT1xcLYPZMLZVfUK4U1sanv0c+3i36Oq5Gopf9mE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RXj9fwC0i4naATtqVBtBJnt3Cv2eCSyqV94uKU8rc0MvkH4BOZ1p8hIf092JWl93kzAwwx53rFIChzQVuDCbi6qtREEB2i3DGsehvxl2eclob9826LAz2RgdLaKM1QuClod6DmW9IeE+ETJaEGh4K6/BLRYxQLmIWU8yuVj2KWY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y40I6oRu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51FE7C4CEE4;
-	Fri, 21 Feb 2025 04:57:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740113854;
-	bh=a0SRT1xcLYPZMLZVfUK4U1sanv0c+3i36Oq5Gopf9mE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Y40I6oRuqHoTRQj41+lBW9ZWJrZUON7emuyU3tsiMVJHONZNYs//mAE7+Q3thPSL8
-	 7lJOEXrTCFNGzZ3JtwqyVknSRteDG0kgOEhiD3/DZS004c+27Of+I6ygTFfsIso6R3
-	 FN5aEW8uQKHNCwcUbk08cY/oHo1iPO4Q4KxPeddSJTTx9FdSTCzrjrdW69rHj2nhVp
-	 P/QDG5lk79eFvcOTLMg/qntEHFaF7AhmWXdg7M0Gvfky7uGilqipeJc2ueL+ry6T+f
-	 nC7AzyTvS4Wu0ljvq3ymt9E1jkOiFwcLc+WZNXdPqM2d0AKuz/QplarYcMmLp7yE5c
-	 1kuWZvOzHb95g==
-Date: Fri, 21 Feb 2025 05:57:28 +0100
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Markus Armbruster <armbru@redhat.com>
-Cc: Igor Mammedov <imammedo@redhat.com>, "Michael S . Tsirkin"
- <mst@redhat.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, Shiju
- Jose <shiju.jose@huawei.com>, qemu-arm@nongnu.org, qemu-devel@nongnu.org,
- Cleber Rosa <crosa@redhat.com>, John Snow <jsnow@redhat.com>,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 14/14] scripts/ghes_inject: add a script to generate
- GHES error inject
-Message-ID: <20250221055728.03289b6c@foz.lan>
-In-Reply-To: <87bjvg6c22.fsf@pond.sub.org>
-References: <cover.1738345063.git.mchehab+huawei@kernel.org>
-	<80858743b6fd67db3f48ac8cb466bbcde5b11132.1738345063.git.mchehab+huawei@kernel.org>
-	<87bjvg6c22.fsf@pond.sub.org>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1740114141; c=relaxed/simple;
+	bh=c0i9YKcxMAZSczsGbyv7PfTF7dO7v+vR2vxrFUcpWcI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=laNLAEOMm+DtlVAhPcR+hz/CBC82XA0lmzvE1FaTeHztcON8qcIFVQgJw+o7IfWIb3fDr/0I3IOCARRY4z2qlsOAqqTEjywuzBbyEB/ijD88V+EKWkqg4iK4mPR6kwegbPExG6M52sWP8jAOBWj+iL0jVmu+BF2tODl2iRtgB7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=cDxxyE1H; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 51L51v4M213326
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 20 Feb 2025 23:01:57 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1740114117;
+	bh=MkLdPAobDI226xV6MrDXZ/BCT77j0+a518w5n2XSOTE=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=cDxxyE1HRPjxMhq3S6vKJ2ld3V9almRBCT1eusBDwdsWh2dXupZp4zvgBeGEsJp5M
+	 0Fm5f+8kcbN0nMGwiLDfTERIQXGzNLmVMfz+bdNxRBB0tTKy2Z/2xAMpTUzuA8t0vq
+	 Vl/6q8opOSOeKpkM3phBHJUl/Gje40A6/+cC8Cd4=
+Received: from DFLE107.ent.ti.com (dfle107.ent.ti.com [10.64.6.28])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 51L51vcS013703
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 20 Feb 2025 23:01:57 -0600
+Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 20
+ Feb 2025 23:01:57 -0600
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 20 Feb 2025 23:01:57 -0600
+Received: from [172.24.227.115] (abhilash-hp.dhcp.ti.com [172.24.227.115])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 51L51qaw092694;
+	Thu, 20 Feb 2025 23:01:53 -0600
+Message-ID: <998346fc-9228-49c3-bac7-9a701a0cc5e6@ti.com>
+Date: Fri, 21 Feb 2025 10:31:51 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: =?UTF-8?B?UmU6IOWbnuWkjTogW1BBVENIIHYyIDEvMl0gZHQtYmluZGluZ3M6IG1l?=
+ =?UTF-8?Q?dia=3A_cdns=2Ccsi2rx=2Eyaml=3A_Add_optional_interrupts_for_cdns-c?=
+ =?UTF-8?Q?si2rx?=
+To: Jai Luthra <jai.luthra@linux.dev>,
+        Changhuang Liang
+	<changhuang.liang@starfivetech.com>
+CC: "mripard@kernel.org" <mripard@kernel.org>,
+        "linux-media@vger.kernel.org"
+	<linux-media@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>,
+        "mchehab@kernel.org" <mchehab@kernel.org>,
+        "robh@kernel.org" <robh@kernel.org>,
+        "krzk+dt@kernel.org"
+	<krzk+dt@kernel.org>,
+        "conor+dt@kernel.org" <conor+dt@kernel.org>,
+        "devarsht@ti.com" <devarsht@ti.com>,
+        "vaishnav.a@ti.com" <vaishnav.a@ti.com>,
+        "r-donadkar@ti.com" <r-donadkar@ti.com>,
+        "u-kumar1@ti.com" <u-kumar1@ti.com>
+References: <20250217130013.2802293-1-y-abhilashchandra@ti.com>
+ <20250217130013.2802293-2-y-abhilashchandra@ti.com>
+ <m6ijg5colbev6lyhiobblecb4wlvwezpccibnso26gd3dadrfh@twgul4eel6hg>
+ <ZQ0PR01MB13022FE965643879D8794733F2FAA@ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn>
+ <swqtud4ohcsjjt4ofgrovsa5h7koriuvpmxb3hdemnndwems2a@nwiny4dvuzwg>
+Content-Language: en-US
+From: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
+In-Reply-To: <swqtud4ohcsjjt4ofgrovsa5h7koriuvpmxb3hdemnndwems2a@nwiny4dvuzwg>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Em Wed, 05 Feb 2025 09:16:53 +0100
-Markus Armbruster <armbru@redhat.com> escreveu:
+Hi Jai,Changhuang,
 
-> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
+Thanks for the reviews.
+
+On 18/02/25 21:07, Jai Luthra wrote:
+> On Tue, Feb 18, 2025 at 09:35:50AM +0000, Changhuang Liang wrote:
+>> Hi Jai, Abhilash
+>>
+>>> Hi Abhilash,
+>>>
+>>> On Mon, Feb 17, 2025 at 06:30:12PM +0530, Yemike Abhilash Chandra wrote:
+>>>> The Cadence CSI2RX IP exposes 3 interrupts [0] 12.7 camera subsystem.
+>>>> Enabling these interrupts will provide additional information about a
+>>>> CSI packet or an individual frame. So, add support for optional
+>>>> interrupts and interrupt-names properties.
+>>>>
+>>>> [0]: http://www.ti.com/lit/pdf/spruil1
+>>>>
+>>>> Signed-off-by: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
+>>>> ---
+>>>>
+>>>> Changes in v2:
+>>>> - Address Krzysztof's review comment to remove flexibility while adding
+>>>>    interrupts.
+>>>>
+>>>>   .../devicetree/bindings/media/cdns,csi2rx.yaml         | 10
+>>> ++++++++++
+>>>>   1 file changed, 10 insertions(+)
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/media/cdns,csi2rx.yaml
+>>>> b/Documentation/devicetree/bindings/media/cdns,csi2rx.yaml
+>>>> index 2008a47c0580..f335429cbde9 100644
+>>>> --- a/Documentation/devicetree/bindings/media/cdns,csi2rx.yaml
+>>>> +++ b/Documentation/devicetree/bindings/media/cdns,csi2rx.yaml
+>>>> @@ -24,6 +24,16 @@ properties:
+>>>>     reg:
+>>>>       maxItems: 1
+>>>>
+>>>> +  interrupts:
+>>>> +    minItems: 3
+>>>> +    maxItems: 3
+>>>> +
+>>>> +  interrupt-names:
+>>>> +    items:
+>>>> +      - const: info
+>>>> +      - const: error
+>>>> +      - const: monitor
+>>>> +
+>>>
+>>> How many interrupt lines are actually exposed by the Cadence IP?
+>>
+>> I only see that the Cadence IP exposes two interrupt lines: irq and err_irq. If there are any mistakes,
+>> please help correct them.
+>>
 > 
-> > Using the QMP GHESv2 API requires preparing a raw data array
-> > containing a CPER record.
-> >
-> > Add a helper script with subcommands to prepare such data.
-> >
-> > Currently, only ARM Processor error CPER record is supported, by
-> > using:
-> > 	$ ghes_inject.py arm
-> >
-> > which produces those warnings on Linux:
-> >
-> > [  705.032426] [Firmware Warn]: GHES: Unhandled processor error type 0x02: cache error
-> > [  774.866308] {4}[Hardware Error]: Hardware error from APEI Generic Hardware Error Source: 1
-> > [  774.866583] {4}[Hardware Error]: event severity: recoverable
-> > [  774.866738] {4}[Hardware Error]:  Error 0, type: recoverable
-> > [  774.866889] {4}[Hardware Error]:   section_type: ARM processor error
-> > [  774.867048] {4}[Hardware Error]:   MIDR: 0x00000000000f0510
-> > [  774.867189] {4}[Hardware Error]:   running state: 0x0
-> > [  774.867321] {4}[Hardware Error]:   Power State Coordination Interface state: 0
-> > [  774.867511] {4}[Hardware Error]:   Error info structure 0:
-> > [  774.867679] {4}[Hardware Error]:   num errors: 2
-> > [  774.867801] {4}[Hardware Error]:    error_type: 0x02: cache error
-> > [  774.867962] {4}[Hardware Error]:    error_info: 0x000000000091000f
-> > [  774.868124] {4}[Hardware Error]:     transaction type: Data Access
-> > [  774.868280] {4}[Hardware Error]:     cache error, operation type: Data write
-> > [  774.868465] {4}[Hardware Error]:     cache level: 2
-> > [  774.868592] {4}[Hardware Error]:     processor context not corrupted
-> > [  774.868774] [Firmware Warn]: GHES: Unhandled processor error type 0x02: cache error
-> >
-> > Such script allows customizing the error data, allowing to change
-> > all fields at the record. Please use:
-> >
-> > 	$ ghes_inject.py arm -h
-> >
-> > For more details about its usage.
-> >
-> > Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>  
+> Thank you Changhuang for the quick confirmation.
+> This seems to match CSI_ERR_IRQ and CSI_IRQ in TI's integration.
 > 
-> [...]
+>>> It is not clear to me from the TRM [0]. From the "Table 12-1524. CSI_RX_IF
+>>> Hardware Requests" it looks like there are three separate interrupt lines
+>>> CSI_ERR_IRQ, CSI_IRQ and CSI_LEVEL, which are routed to the Arm core/GIC.
+>>> And four lines for the ASF submodule (?) that are not routed to GIC.
+>>>
 > 
-> > diff --git a/scripts/arm_processor_error.py b/scripts/arm_processor_error.py
-> > new file mode 100644
-> > index 000000000000..b0e8450e667e
-> > --- /dev/null
-> > +++ b/scripts/arm_processor_error.py
-> > @@ -0,0 +1,476 @@
-> > +#!/usr/bin/env python3
-> > +#
-> > +# pylint: disable=C0301,C0114,R0903,R0912,R0913,R0914,R0915,W0511
-> > +# SPDX-License-Identifier: GPL-2.0  
+> Abhilash,
 > 
-> Sorry if this has been answered already...  why not GPL-2.0-or-later?
+> What is unclear to me is where the third CSI_LEVEL interrupt line is coming
+> from?
 > 
-> More of the same below.
+> The TRM description of the CSI_LEVEL interrupt says it is for PSI_L overflow
+> or VP0/VP1 frame/line mismatch, both of which are outside the Cadence CSI2RX,
+> instead belonging to the TI wrapper hardware, which has its own driver.
 
-No particular reason. It is just that GPL-2.0 is my preferred license.
-
-I'll change the license of the three scripts to be GPL-2.0-or-later.
+Yes, we will update the device tree bindings accordingly. We are 
+planning to handle the TI-specific interrupt line separately in another 
+series.
 
 > 
-> [...]
+>>> This does not match with the error, info and monitor line names mentioned
+>>> here.
+>>>
+>>> In my understanding which interrupt lines are actually integrated will vary
+>>> from SoC to SoC, so please check what are the actual interrupt line names
+>>> exposed by the Cadence IP. Maybe Maxime knows more.
+>>>
+>>> But I don't think it is correct to make all 3 mandatory together, as some
+>>> vendors may only integrate the error interrupt ignoring the rest.
+>>
+>> Agreed.
+>>
 > 
+> I think by default there should only be two optional interrupt lines for
+> cdns-csi2rx, "irq" and "err_irq" which is common across vendors.
+> 
+> If this third TI-specific CSI_LEVEL interrupt *has* to be handled by
+> cdns-csi2rx driver, it would be better to create conditional bindings and
+> match data in the driver such that the irq is only requested if
+> "ti,j721e-csi2rx" compatible is present.
 
+I will correct this in v3 by introducing bindings that allow vendors
+the flexibility to use either two or three interrupt lines.
 
+Thanks and Regards,
+Yemike Abhilash Chandra
 
-Thanks,
-Mauro
+> 
+>> Best Regards,
+>> Changhuang
+> 
+> Thanks,
+> Jai
 
