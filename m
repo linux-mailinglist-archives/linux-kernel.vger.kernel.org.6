@@ -1,109 +1,116 @@
-Return-Path: <linux-kernel+bounces-526763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2167A402C6
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 23:36:23 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C30E9A402C5
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 23:35:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 077CD188A6F0
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 22:36:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD87B17A43F
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 22:35:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A64F20766D;
-	Fri, 21 Feb 2025 22:36:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9778205510;
+	Fri, 21 Feb 2025 22:35:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="X+qgijfs"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 377091FFC6A;
-	Fri, 21 Feb 2025 22:36:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m7RKwM0A"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22158A944;
+	Fri, 21 Feb 2025 22:35:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740177374; cv=none; b=Xw1Bg/Z/Xo/q5SuUiv3rey28a9U/SubG7yXJQGeJngOeP446nsZsCw1rMvMGe8AyjA0NbWMSYw+qCzO2UTTGLwkWOPVyTowm3o56apXVTVbelGh/uIMWabkkPEjni691hzPIZVbfTwiqVcqls+RZvUlQhE8xteajAwkGAVRiGpY=
+	t=1740177346; cv=none; b=rE5jr+zIusYnpBBy7EVMzIIySfomlH+qlPYxjC4mGsHzte3EgcbzVgOanDpLZh5DNI9S5disx5n8QqwUCDKNpxSC2Na1gLZ8Ci1qp9WsncU6y9f/rxETTQ7N09yNmkT/sP7FyD2iwy+MiO6DC1EwGW3JklS+z7UK3R7hHVBxzuk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740177374; c=relaxed/simple;
-	bh=Df/G3F66VFOOMEBPuY0a6bwDc8reB4bv6DCHqqRUiiU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=O2V/jbS/GdpvrHb+B2IJ0ihJ+9Kw2viU+5EK4v41yX4MEApe0qoqUO+A4RYZhpI7sqr5bYgCCSdNJFKkPgfEqPrOudFbpAdr/hlHbvDZOOAUuBl9SyC2CMEhHxWyFeHkVanrajJ7TblwqEEDx9tBUwh7Ri7YfDuDL3kXSbBLayo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=X+qgijfs; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from hm-sls2.lan (bras-base-toroon4332w-grc-32-142-114-216-132.dsl.bell.ca [142.114.216.132])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 768DB205367B;
-	Fri, 21 Feb 2025 14:36:11 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 768DB205367B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1740177372;
-	bh=QTP8p/YkwjP9gnklyqmthyBoYuNs/td42uSQ7HlcEOs=;
-	h=From:To:Cc:Subject:Date:From;
-	b=X+qgijfsLtfYqQcRGCQIQsObPy/ZqDfKpL/fOLRWSHCI42u6XsimtNtMFq+knyWKh
-	 pKxna2quG+D2/rKVDPYtFhQJKP4cBF6upILOCEdwl5WFVp+rSFqiGWgDN9wWif1PBX
-	 e9c+x68b5I3pXPohD7km8IeqjGSrJxSR9kJo/1v0=
-From: Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>
-To: rust-for-linux@vger.kernel.org
-Cc: Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Wedson Almeida Filho <walmeida@microsoft.com>,
-	Nell Shamrell-Harrington <nells@linux.microsoft.com>,
-	Dirk Behme <dirk.behme@gmail.com>,
-	Konstantin Andrikopoulos <kernel@mandragore.io>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Roland Xu <mu001999@outlook.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] rust: workqueue: define built-in bh queues
-Date: Fri, 21 Feb 2025 17:35:31 -0500
-Message-ID: <20250221223533.158959-1-hamzamahfooz@linux.microsoft.com>
-X-Mailer: git-send-email 2.47.1
+	s=arc-20240116; t=1740177346; c=relaxed/simple;
+	bh=1mcOLXlU0AURcF3mVdaMpvgweL+7TaLkhfpP3sVJGDo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=IHy+lqXR9j5nZ1Ca4pvmDMNOS/YWS0vkCLtPoH0bgPsSbvJpKTnyPVVkbwmeaU/ddPSokPoUccOlxykipOnjbx7vs7/UuxC81EpQEhOGOJnKXDv25/rsFQuiaNomK+x7tpDlJiEbx9Iem0tKURgP8A/KZZ1wBw2vXWdN+wNi7yg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m7RKwM0A; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70D77C4CED6;
+	Fri, 21 Feb 2025 22:35:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740177344;
+	bh=1mcOLXlU0AURcF3mVdaMpvgweL+7TaLkhfpP3sVJGDo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=m7RKwM0ASUxKpxyVu/J7f3x8uj/pqRE+UJ9zGsZRBw5bBPyWEfxDbA8aUrXyYfTNK
+	 2nuYZsWibqoI3PgRsQvnEOgEovUdwhdsfE9k/Bye9MVsCu/NI2JtEu76zcYnr1P3ze
+	 +ytqld9ewvBAFsBwXW3NOmFr9DjiKtA/c9t6SEK+2v/uw6i6Ic63Pj3+rrlMiiTSzp
+	 6zSqe5GsPc4PBnn2pQESjpm0H8A+URs0WYGTXSOXHgvHc/SzSewe02412iEQXtaltV
+	 p35X4NSjbauf+f5V+tr2CxsdBWdf7MGFRBgymQCCyZJrBA4ORo14/UMMFE8yYCdAUw
+	 rC2XGd5pF+fuQ==
+Date: Fri, 21 Feb 2025 16:35:43 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Zhiyuan Dai <daizhiyuan@phytium.com.cn>
+Cc: bhelgaas@google.com, christian.koenig@amd.com,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+Subject: Re: [PATCH v3] PCI: Update Resizable BAR Capability Register fields
+Message-ID: <20250221223543.GA369205@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250220012546.318577-1-daizhiyuan@phytium.com.cn>
 
-We provide these methods because it lets us access these queues from
-Rust without using unsafe code.
+On Thu, Feb 20, 2025 at 09:25:46AM +0800, Zhiyuan Dai wrote:
+> PCI Express Base Spec r6.0 defines BAR size up to 8 EB (2^63 bytes),
+> but supporting anything bigger than 128TB requires changes to pci_rebar_get_possible_sizes()
+> to read the additional Capability bits from the Control register.
+> 
+> If 8EB support is required, callers will need to be updated to handle u64 instead of u32.
+> For now, support is limited to 128TB, and support for sizes greater than 128TB can be
+> deferred to a later time.
+> 
+> Signed-off-by: Zhiyuan Dai <daizhiyuan@phytium.com.cn>
 
-Signed-off-by: Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>
----
- rust/kernel/workqueue.rs | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+Applied to pci/resource for v6.15, thanks!
 
-diff --git a/rust/kernel/workqueue.rs b/rust/kernel/workqueue.rs
-index 0cd100d2aefb..68ce70d94f2d 100644
---- a/rust/kernel/workqueue.rs
-+++ b/rust/kernel/workqueue.rs
-@@ -703,3 +703,21 @@ pub fn system_freezable_power_efficient() -> &'static Queue {
-     // SAFETY: `system_freezable_power_efficient_wq` is a C global, always available.
-     unsafe { Queue::from_raw(bindings::system_freezable_power_efficient_wq) }
- }
-+
-+/// Returns the system bottom halves work queue (`system_bh_wq`).
-+///
-+/// It is similar to the one returned by [`system`] but for work items which
-+/// need to run from a softirq context.
-+pub fn system_bh() -> &'static Queue {
-+    // SAFETY: `system_bh_wq` is a C global, always available.
-+    unsafe { Queue::from_raw(bindings::system_bh_wq) }
-+}
-+
-+/// Returns the system bottom halves high-priority work queue (`system_bh_highpri_wq`).
-+///
-+/// It is similar to the one returned by [`system_bh`] but for work items which
-+/// require higher scheduling priority.
-+pub fn system_bh_highpri() -> &'static Queue {
-+    // SAFETY: `system_bh_highpri_wq` is a C global, always available.
-+    unsafe { Queue::from_raw(bindings::system_bh_highpri_wq) }
-+}
--- 
-2.47.1
-
+> ---
+>  drivers/pci/pci.c             | 4 ++--
+>  include/uapi/linux/pci_regs.h | 2 +-
+>  2 files changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> index 661f98c6c63a..77b9ceefb4e1 100644
+> --- a/drivers/pci/pci.c
+> +++ b/drivers/pci/pci.c
+> @@ -3752,7 +3752,7 @@ static int pci_rebar_find_pos(struct pci_dev *pdev, int bar)
+>   * @bar: BAR to query
+>   *
+>   * Get the possible sizes of a resizable BAR as bitmask defined in the spec
+> - * (bit 0=1MB, bit 19=512GB). Returns 0 if BAR isn't resizable.
+> + * (bit 0=1MB, bit 31=128TB). Returns 0 if BAR isn't resizable.
+>   */
+>  u32 pci_rebar_get_possible_sizes(struct pci_dev *pdev, int bar)
+>  {
+> @@ -3800,7 +3800,7 @@ int pci_rebar_get_current_size(struct pci_dev *pdev, int bar)
+>   * pci_rebar_set_size - set a new size for a BAR
+>   * @pdev: PCI device
+>   * @bar: BAR to set size to
+> - * @size: new size as defined in the spec (0=1MB, 19=512GB)
+> + * @size: new size as defined in the spec (0=1MB, 31=128TB)
+>   *
+>   * Set the new size of a BAR as defined in the spec.
+>   * Returns zero if resizing was successful, error code otherwise.
+> diff --git a/include/uapi/linux/pci_regs.h b/include/uapi/linux/pci_regs.h
+> index 1601c7ed5fab..ce99d4f34ce5 100644
+> --- a/include/uapi/linux/pci_regs.h
+> +++ b/include/uapi/linux/pci_regs.h
+> @@ -1013,7 +1013,7 @@
+>  
+>  /* Resizable BARs */
+>  #define PCI_REBAR_CAP		4	/* capability register */
+> -#define  PCI_REBAR_CAP_SIZES		0x00FFFFF0  /* supported BAR sizes */
+> +#define  PCI_REBAR_CAP_SIZES		0xFFFFFFF0  /* supported BAR sizes */
+>  #define PCI_REBAR_CTRL		8	/* control register */
+>  #define  PCI_REBAR_CTRL_BAR_IDX		0x00000007  /* BAR index */
+>  #define  PCI_REBAR_CTRL_NBAR_MASK	0x000000E0  /* # of resizable BARs */
+> -- 
+> 2.43.0
+> 
 
