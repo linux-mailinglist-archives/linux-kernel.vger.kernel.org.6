@@ -1,42 +1,46 @@
-Return-Path: <linux-kernel+bounces-526649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF1A3A4018B
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 22:02:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD873A40198
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 22:03:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80C803B47F8
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 21:02:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FE891893FC1
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 21:03:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58C7F253B58;
-	Fri, 21 Feb 2025 21:02:19 +0000 (UTC)
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2BB41D5CCD;
-	Fri, 21 Feb 2025 21:02:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEC3A254AEC;
+	Fri, 21 Feb 2025 21:03:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="QrZAWW+W"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA870253F3F;
+	Fri, 21 Feb 2025 21:03:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740171739; cv=none; b=LNSZxCVNAwbnKoSKHZqLzq4w6oLkGnVE3szOX0l5Uz40zrjDnlkLwqkGyoCpwbpoy8eT2Ey8CJ3a/nKqvME/qw2Yw3s2IJxM6xrsdT7KBsAoVpBHaVdHDfxR8oTJAdjJY5wvjI317GWI1IZt3wWcN+rbD7u2U8+gqbDFqioo8Jg=
+	t=1740171782; cv=none; b=Xaj0doQFZNrvqOXGNYnM/OjcjmKeZ2AkeMnt8vsK/Q1qJzj52W8MhXv2GPNiFh2V1mKX44B4Adh7zvLxzcaOv5oevmjVJqQ4uljq+m+4UV0R4J7e9l4lBt52l9czCTkjpKZlOWiOlOGagaXcpjvgAzedUToInqi4GZxUwfYUgOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740171739; c=relaxed/simple;
-	bh=60QCP9a1fc0i2qunXLPEKvoXFDdpZeQTtyvz1y+2kIo=;
+	s=arc-20240116; t=1740171782; c=relaxed/simple;
+	bh=gXRIoaHEb4ahhX4SMbS7XTFTss9UrOqAcMI194HS5K8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=P1TS/x7tsKzHklh3OZbwv0zDbiXDvotEP8Lr3PJ4ITUr8XcgnpJZ+VTAb24PYW/DkW9LuHOXM6W5fpm6aHT24kZYBqAfYOsw8BOw8BD6UqaUbXPi9rzXaDC/XAEh49zMUuKM4N/Csm+A8AQbMyAXUA7atNvIHPPpk32S8zFGL9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
-Received: from [192.168.0.2] (ip5f5af2a2.dynamic.kabel-deutschland.de [95.90.242.162])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: pmenzel)
-	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 839C261E64783;
-	Fri, 21 Feb 2025 22:02:04 +0100 (CET)
-Message-ID: <36cace3b-7419-409d-95a9-e7c45d335bef@molgen.mpg.de>
-Date: Fri, 21 Feb 2025 22:02:03 +0100
+	 In-Reply-To:Content-Type; b=N5gxAgFXkBe/H4rg3/KUrd02ErqRyk2CwQJ6cGdcebcEzlPC6cwr09dHYi7afWSUrBnSTTTqyR5o6mA5G95IW3+UXaVQqDoUenYErhnzoBNhfFcvDEBaRNt+x/GanprlHuJUd5GhvRjCCeQ2e9/c5FR5ecMwoAxQgzftmh3gJfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=QrZAWW+W; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [10.17.64.59] (unknown [131.107.8.59])
+	by linux.microsoft.com (Postfix) with ESMTPSA id C3AD82053679;
+	Fri, 21 Feb 2025 13:02:59 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com C3AD82053679
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1740171780;
+	bh=q7qimWw3fn4gbEHfpk5d5zJg4X5BJznDEs8fnMd9NWU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=QrZAWW+WlDUN2t1FYwRI+vhXC2SlIyYK0t/b7MF+3kKSdrBoY839/T9e5D3+y+wt+
+	 Auc5gw+nuGbrsM87S9flV4lof9nA4Jb12ZAXHw4GPNRL6ojr1RWSxkWnR+F6RF42Sg
+	 fnKvsKqbpJxDGL+KAz1FClIfYEGipGIyQGoWAXmI=
+Message-ID: <0e82335b-ef66-46bf-a0b8-211e20fff77a@linux.microsoft.com>
+Date: Fri, 21 Feb 2025 13:02:58 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -44,73 +48,69 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: Linux logs new warning `gpio gpiochip0:
- gpiochip_add_data_with_key: get_direction failed: -22`
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
- Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org,
- LKML <linux-kernel@vger.kernel.org>, linux-pci@vger.kernel.org,
- regressions@lists.linux.dev
-References: <9ded85ef-46f1-4682-aabd-531401b511e5@molgen.mpg.de>
- <CAMRc=McJpGMgaUDM2fHZUD7YMi2PBMcWhDWN8dU0MAr911BvXw@mail.gmail.com>
+Subject: Re: [PATCH v8 1/7] ima: define and call ima_alloc_kexec_file_buf
+To: Mimi Zohar <zohar@linux.ibm.com>,
+ James Bottomley <James.Bottomley@HansenPartnership.com>,
+ stefanb@linux.ibm.com, roberto.sassu@huaweicloud.com,
+ roberto.sassu@huawei.com, eric.snowberg@oracle.com, ebiederm@xmission.com,
+ paul@paul-moore.com, code@tyhicks.com, bauermann@kolabnow.com,
+ linux-integrity@vger.kernel.org, kexec@lists.infradead.org,
+ linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: madvenka@linux.microsoft.com, nramas@linux.microsoft.com, bhe@redhat.com,
+ vgoyal@redhat.com, dyoung@redhat.com
+References: <20250218225502.747963-1-chenste@linux.microsoft.com>
+ <20250218225502.747963-2-chenste@linux.microsoft.com>
+ <8023fa50a84817cc911a117db9bd3757c34fddfb.camel@linux.ibm.com>
+ <58e70121aaee33679ac295847197c1e5511b2a81.camel@HansenPartnership.com>
+ <241e6b5336d1dcee751cb35554e507e552563a16.camel@linux.ibm.com>
 Content-Language: en-US
-From: Paul Menzel <pmenzel@molgen.mpg.de>
-In-Reply-To: <CAMRc=McJpGMgaUDM2fHZUD7YMi2PBMcWhDWN8dU0MAr911BvXw@mail.gmail.com>
+From: steven chen <chenste@linux.microsoft.com>
+In-Reply-To: <241e6b5336d1dcee751cb35554e507e552563a16.camel@linux.ibm.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Dear Bartosz,
-
-
-Thank you for your quick reply.
-
-Am 21.02.25 um 21:53 schrieb Bartosz Golaszewski:
-> On Fri, Feb 21, 2025 at 9:40 PM Paul Menzel <pmenzel@molgen.mpg.de> wrote:
-
->> On the Intel Kaby Lake Dell XPS 13 9360, Linux 6.14-rc3+ with your
->> commit 9d846b1aebbe (gpiolib: check the return value of
->> gpio_chip::get_direction()) prints 52 new warnings:
+On 2/20/2025 8:23 AM, Mimi Zohar wrote:
+> On Thu, 2025-02-20 at 10:04 -0500, James Bottomley wrote:
+>> On Thu, 2025-02-20 at 09:53 -0500, Mimi Zohar wrote:
+>>> On Tue, 2025-02-18 at 14:54 -0800, steven chen wrote:
+>> [...
+>>>> Author: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+>>> Steven, thank you again for picking up this patch set.
+>>>
+>>> As previously explained, there is no tag named "Author" in
+>>> https://www.kernel.org/doc/Documentation/process/submitting-patches.rst
+>>> .  To give credit to the original author use "Co-developed-by".
+>> Just on this, only use the co-developed-by if you actually *modified*
+>> the patch.  If you're just transmitting the patch unmodified you can
+>> give original author credit by including a
 >>
->>       $ dmesg
->>       […]
->>       [    0.000000] DMI: Dell Inc. XPS 13 9360/0596KF, BIOS 2.21.0 06/02/2022
->>       […]
->>       [    5.148927] pci 0000:00:1d.0: PCI bridge to [bus 3c]
->>       [    5.150955] gpio gpiochip0: gpiochip_add_data_with_key: get_direction failed: -22
->>       [50 times the same]
->>       [    5.151639] gpio gpiochip0: gpiochip_add_data_with_key: get_direction failed: -22
->>       [    5.151768] ACPI: PCI: Interrupt link LNKA configured for IRQ 11
->>       […]
->>       $ lspci -nn -k -s 1d.0
->>       00:1d.0 PCI bridge [0604]: Intel Corporation Sunrise Point-LP PCI Express Root Port #9 [8086:9d18] (rev f1)
->>          Subsystem: Dell Device [1028:075b]
->>          Kernel driver in use: pcieport
+>> From: original author <email>
 >>
->> Judging from the commit messages, this is expected. But what should a
->> user seeing this do now?
+>> Followed by a blank line at the beginning of the email.  That makes the
+>> git author field contan whatever the From: line says.  You still need a
+>> signoff from yourself in the original patch because you transmitted it.
 >>
->> Also, it probably should not be applied to the stable series, as people
->> might monitor warnings and new warnings in stable series might be
->> unexpected.
+>> Some people also consider minor modifications to be insufficient to
+>> disturb the original copyright ownership and simply document what they
+>> did in square brackets under their signoff, like this:
+>>
+>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=b5d1e6ee761a109400e97ac6a1b91c57d0f6a43a
+> Originally I had said:
+>
+>     > Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+>     > Signed-off-by: steven chen <chenste@linux.microsoft.com>
+>
+>     Before the "Co-developed-by" tag was defined, it was implied simply by this ordering
+>     of the "Signed-off-by" tags.
+>     
+>     For those patches you didn't modify, simply import Tushar's patch with him as the
+>     author and add your Signed-off-by tag after his.
+>
+> Thanks, James, for the explanation of using "From: original author <email>" to force the
+> author to be Tushar.
+>
+> Mimi
 
+Thanks, I will update in next version.
 
->> [1]: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=9d846b1aebbe488f245f1aa463802ff9c34cc078
-
-> What GPIO driver is it using? It's likely that it's not using the
-> provider API correctly and this change uncovered it, I'd like to take
-> a look at it and fix it.
-
-How do I find out? The commands below do not return anything.
-
-     $ lsmod | grep gpio
-     $ lspci -nn | grep -i gpio
-     $ sudo dmesg | grep gpio
-     [    5.150955] gpio gpiochip0: gpiochip_add_data_with_key: 
-get_direction failed: -22
-     [Just these lines match.]
-
-
-Kind regards,
-
-Paul
 
