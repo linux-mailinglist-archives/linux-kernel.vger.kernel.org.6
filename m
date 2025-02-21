@@ -1,459 +1,323 @@
-Return-Path: <linux-kernel+bounces-525298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96CC1A3EDC6
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 08:59:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FD3DA3EDBA
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 08:56:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05C283AD704
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 07:59:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E43C19C2957
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 07:56:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 287071FF7CA;
-	Fri, 21 Feb 2025 07:59:06 +0000 (UTC)
-Received: from n169-110.mail.139.com (n169-110.mail.139.com [120.232.169.110])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E06A31FF7DC;
+	Fri, 21 Feb 2025 07:56:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="A29srHDS"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19D7C1FF612;
-	Fri, 21 Feb 2025 07:59:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=120.232.169.110
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 476251FF610;
+	Fri, 21 Feb 2025 07:56:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740124745; cv=none; b=Vy8RJLIIbYLnFWOvoHmzPo7XyKEFg9lvW08hNgEQfY0RhMLRGIKUpG4mOYKzYlsqSgnTUL+J+bCEm3rS08NJkJEvtknS0EdjYuVALzIZ7ShIye6kFVXs5WtG0cGp2BO8M73P45bWOOOoMfuhLctxfyNYdX/sfJdh0VAot8fKXfE=
+	t=1740124588; cv=none; b=J9eUeqq4rUwGGrH5msOVhMhFsFjxxzdDOrDVu/OUTLMQJEbON//SSUVTvZLm+29aX/iXIsqSIGLFQgIDfVxD5TCwGs3W8pQ93IJvpYCPzr3zS0Y/742GyvuWbsySP9rnPdunYeEqrBOpnNEVUIb2ha8cCSN8GvjVI9nOAdNKWfI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740124745; c=relaxed/simple;
-	bh=Uaa7+CB75hpMijywI/ycAdcPbDs30vfA0Dmh/OBDBks=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rn2Y4hAhGDkw8cvF4gbXUofHAE7XdftaiAYPeMexFWQ7yKDikdDnV5b46G7V7mZhgcMBdgZzR47OiF5AWMhuWwotRXDRklV5GuJ2hAkd9T2ImuuvzC7DtVWMNZVFYyEAAbGxd8oGMRPWDpJXiq4tH0zco7m9aDef9nPXh4ohbe4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=139.com; spf=pass smtp.mailfrom=139.com; arc=none smtp.client-ip=120.232.169.110
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=139.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=139.com
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM:                                                                                        
-X-RM-SPAM-FLAG:00000000
-Received:from [10.103.132.5] (unknown[123.114.236.250])
-	by rmsmtp-lg-appmail-06-12084 (RichMail) with SMTP id 2f3467b8317db2f-2fe14;
-	Fri, 21 Feb 2025 15:55:42 +0800 (CST)
-X-RM-TRANSID:2f3467b8317db2f-2fe14
-Message-ID: <8db32488-2eae-4104-ad91-9ff7d8d814fa@139.com>
-Date: Fri, 21 Feb 2025 15:55:41 +0800
+	s=arc-20240116; t=1740124588; c=relaxed/simple;
+	bh=o+QUEtONbmalO3iHUP+gO1dTRbynEFsTw1lum/2sQJg=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=Ik+/iiu5tzynuiPWecKXIG++VJfQCW7gYHyZTPEJF6+WJzbCFMCGOxizk8e1oLDmcLC0jNzupjSmO7IQ/7t7oHy+W2ha6T9oEE1sxvg/6ttoGHlQjZvF+jRqMchcDIQKHIKKCENiO6KeHRyPol632XawI4b2tnRaeSiw4ik7drI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=A29srHDS; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51L5OUSo002626;
+	Fri, 21 Feb 2025 07:56:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:to; s=pp1;
+	 bh=Wabv1Ir4kV4dUnykC2n2IgUYyZ9+Qc4PLzScfM1u5Bk=; b=A29srHDSqEV7
+	KfgGP3Tg7x8htoE1EqK84MH6BUjJSECa5cPi44R2yaLYKuoaApRGE2p8MBZjNn/R
+	NzDTmC4AIwd/tLte0B2TBflBRUeyRyFytgTvQRl7nwmj5XTWYX101Ri3JZ5fi5tr
+	dl34QFxPx0kTCymN+zrTY9P2l1330/lKmhjSH8XftTyLMAFNrBCjmZ1TUaL8qB2o
+	VDHa8p5taMXKEn5GToA4QhsnE0oSgWZ1H7pMaIs1wtlUV/OFIhuYjumlShjVbWV4
+	kAHy/kT8jJiP447xa50brsoHUOAx36Lm9mBXVmLyaAgE0tHBhaY9esr8UiF0yEDQ
+	nTO0+ZblDQ==
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44xka8gmba-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 21 Feb 2025 07:56:22 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51L5hKHK002330;
+	Fri, 21 Feb 2025 07:56:21 GMT
+Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 44w03xep7r-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 21 Feb 2025 07:56:21 +0000
+Received: from smtpav05.dal12v.mail.ibm.com (smtpav05.dal12v.mail.ibm.com [10.241.53.104])
+	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51L7uJM525887294
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 21 Feb 2025 07:56:19 GMT
+Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 5F78B58067;
+	Fri, 21 Feb 2025 07:56:19 +0000 (GMT)
+Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id B457058056;
+	Fri, 21 Feb 2025 07:56:18 +0000 (GMT)
+Received: from ltc.linux.ibm.com (unknown [9.5.196.140])
+	by smtpav05.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 21 Feb 2025 07:56:18 +0000 (GMT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9] platform/x86:lenovo-wmi-hotkey-utilities.c: Supportfor
- mic and audio mute LEDs
-To: Armin Wolf <W_Armin@gmx.de>, hdegoede@redhat.com,
- ilpo.jarvinen@linux.intel.com
-Cc: linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
- kuurtb@gmail.com, dongeg1@lenovo.com,
- Mark Pearson <mpearson-lenovo@squebb.ca>
-References: <20250217035744.4116-1-xy-jackie@139.com>
- <eab4001e-78f1-419e-b5ce-2d8f46784046@gmx.de>
-Content-Language: en-US
-From: Jackie Dong <xy-jackie@139.com>
-In-Reply-To: <eab4001e-78f1-419e-b5ce-2d8f46784046@gmx.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Date: Fri, 21 Feb 2025 08:56:18 +0100
+From: Harald Freudenberger <freude@linux.ibm.com>
+To: Anthony Krowiak <akrowiak@linux.ibm.com>
+Cc: linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, jjherne@linux.ibm.com, borntraeger@de.ibm.com,
+        pasic@linux.ibm.com, pbonzini@redhat.com, frankja@linux.ibm.com,
+        imbrenda@linux.ibm.com, alex.williamson@redhat.com,
+        kwankhede@nvidia.com, agordeev@linux.ibm.com, gor@linux.ibm.com
+Subject: Re: [PATCH] s390/vio-ap: Fix no AP queue sharing allowed message
+ written to kernel log
+Reply-To: freude@linux.ibm.com
+Mail-Reply-To: freude@linux.ibm.com
+In-Reply-To: <20250220000742.2930832-1-akrowiak@linux.ibm.com>
+References: <20250220000742.2930832-1-akrowiak@linux.ibm.com>
+Message-ID: <96e34cc993a7ce76431ed27c4789736e@linux.ibm.com>
+X-Sender: freude@linux.ibm.com
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: AAKSlSx7_aADwkOaXe9rveOcYqZEhb0K
+X-Proofpoint-ORIG-GUID: AAKSlSx7_aADwkOaXe9rveOcYqZEhb0K
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-21_01,2025-02-20_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 clxscore=1011
+ priorityscore=1501 mlxscore=0 suspectscore=0 lowpriorityscore=0
+ adultscore=0 phishscore=0 spamscore=0 malwarescore=0 impostorscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2502210055
 
-On 2/21/25 03:48, Armin Wolf wrote:
-> Am 17.02.25 um 04:57 schrieb Jackie Dong:
+On 2025-02-20 01:07, Anthony Krowiak wrote:
+> An erroneous message is written to the kernel log when either of the
+> following actions are taken by a user:
 > 
->> Implement Lenovo utility data WMI calls needed to make LEDs
->> work on Ideapads that support this GUID.
->> This enables the mic and audio LEDs to be updated correctly.
->>
->> Tested on below samples.
->> ThinkBook 13X Gen4 IMH
->> ThinkBook 14 G6 ABP
->> ThinkBook 16p Gen4-21J8
->> ThinkBook 16 G8 IRL
->> ThinkBook 16 G7+ ASP
->>
->> Signed-off-by: Jackie Dong <xy-jackie@139.com>
->> Suggested-by: Mark Pearson <mpearson-lenovo@squebb.ca>
->> Reviewed-by: Kurt Borja <kuurtb@gmail.com>
->> Reviewed-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
->> Reviewed-by: Armin Wolf <W_Armin@gmx.de>
->>
->> ---
->> Changes in v9:
->>   - Call devm_led_classdev_register() after the switch statement.
->>   - Update struct wmi_driver with .name = "lenovo_wmi_hotkey_utilities"
->>
->> Changes in v8:
->>   - Update MAINTAINERS for this driver
->>   - Added Reviewed-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
->>   - Added Reviewed-by: Reviewed-by: Armin Wolf <W_Armin@gmx.de>
->>
->> Changes in v7:
->>   - Replaced spaces by tab for items in enum hotkey_set_feature
->>   - Directly return lenovo_super_hotkey_wmi_leds_setup(&wdev->dev)
->>   - Added Reviewed-by: Kurt Borja <kuurtb@gmail.com>
->>
->> Changes in v6:
->>   - Rename lenovo-super-hotkey-wmi.c to lenovo-wmi-hotkey-utilities
->>   - Update LENOVO_WMI_HOTKEY_UTILITIES item description and add select
->>     NEW_LEDS, LEDS_CLASS based on reviewer's suggestion.
->>   - Align items in enum hotkey_set_feature
->>   - Drop some brances and return error message directly
->>   - Check return value of lenovo_super_hotkey_wmi_led_init() in
->>     lenovo_super_hotkey_wmi_leds_setup
->>
->> Changes in v5:
->>   - Take out union acpi_object *obj __free(kfree) = output.pointer from
->>     if-else block
->>   - Remove lsk_wmi_context_lud_keys related source code
->>
->> Changes in v4:
->>   - Add related head files include cleanup.h, dev_printk.h, device.h,
->>     module.h
->>   - Replaced kfree() by __free()
->>   - Remove double free for obj
->>   - Remove wpriv->cdev[led_type].dev = dev
->>   - Remove *wpriv = *(const struct lenovo_super_hotkey_wmi_private 
->> *)context
->>   - Remove wpriv->event == LSH_WMI_EVENT_LUD_KEYS
->>   - Remove lenovo_super_hotkey_wmi_remove() for unnecessary
->>
->> Changes in v3:
->>   - Changed the name of the Kconfig entry to LENOVO_SUPER_HOTKEY_WMI
->>   - Renamed everything in this driver which contains the name "ideapad"
->>     to instead contain the name of this driver.
->>   - Moved struct wmi_device *led_wdev in lenovo_super_hotkey_wmi_private,
->>     and use container_of() to the led_wdev pointer.
->>   - Replaced sizeof(struct wmi_led_args) by sizeof(led_arg)
->>   - Added condtions checking for obj && obj->type == ACPI_TYPE_INTEGER
->>     and free the ACPI object after get the required value.
->>   - Removed led_classdev_unregister() after led_reg_failed label, but
->>     add lenovo_super_hotkey_wmi_remove(struct wmi_device *wdev) to free
->>     resource.
->>   - Removed IDEAPAD_WMI_EVENT_FN_KEYS/IDEAPAD_WMI_EVENT_LUD_KEYS related
->>     source codes and only keep LUD_WMI_METHOD_GUID.
->>
->> Changes in v2:
->>   - Update code layout and formatting as recommended in review
->>   - Improved error handling in ideapad_wmi_led_init
->>   - Separated a WMI driver named lenovo-super-hotkey-wmi.c from
->>     ideapad-lap.c, it's only for Lenovo Super Hotkey WMI devices.
->>
->>   MAINTAINERS                                   |   6 +
->>   drivers/platform/x86/Kconfig                  |  11 +
->>   drivers/platform/x86/Makefile                 |   1 +
->>   .../x86/lenovo-wmi-hotkey-utilities.c         | 216 ++++++++++++++++++
->>   4 files changed, 234 insertions(+)
->>   create mode 100644 drivers/platform/x86/lenovo-wmi-hotkey-utilities.c
->>
->> diff --git a/MAINTAINERS b/MAINTAINERS
->> index 25c86f47353d..793ffb25ea74 100644
->> --- a/MAINTAINERS
->> +++ b/MAINTAINERS
->> @@ -13149,6 +13149,12 @@ S:    Maintained
->>   W:    http://legousb.sourceforge.net/
->>   F:    drivers/usb/misc/legousbtower.c
->>
->> +LENOVO WMI HOTKEY UTILITIES DRIVER
->> +M:    Jackie Dong <xy-jackie@139.com>
->> +L:    platform-driver-x86@vger.kernel.org
->> +S:    Maintained
->> +F:    drivers/platform/x86/lenovo-wmi-hotkey-utilities.c
->> +
->>   LETSKETCH HID TABLET DRIVER
->>   M:    Hans de Goede <hdegoede@redhat.com>
->>   L:    linux-input@vger.kernel.org
->> diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
->> index 0258dd879d64..715bcfbe992f 100644
->> --- a/drivers/platform/x86/Kconfig
->> +++ b/drivers/platform/x86/Kconfig
->> @@ -475,6 +475,17 @@ config IDEAPAD_LAPTOP
->>         This is a driver for Lenovo IdeaPad netbooks contains drivers for
->>         rfkill switch, hotkey, fan control and backlight control.
->>
->> +config LENOVO_WMI_HOTKEY_UTILITIES
->> +    tristate "Lenovo Hotkey Utility WMI extras driver"
->> +    depends on ACPI_WMI
->> +    depends on IDEAPAD_LAPTOP
+> 1. Assign an adapter or domain to a vfio_ap mediated device via its 
+> sysfs
+>    assign_adapter or assign_domain attributes that would result in one 
+> or
+>    more AP queues being assigned that are already assigned to a 
+> different
+>    mediated device. Sharing of queues between mdevs is not allowed.
 > 
-> Why not using "implies" instead of "depends on" for CONFIG_IDEAPAD_LAPTOP?
+> 2. Reserve an adapter or domain for the host device driver via the AP 
+> bus
+>    driver's sysfs apmask or aqmask attribute that would result in 
+> providing
+>    host access to an AP queue that is in use by a vfio_ap mediated 
+> device.
+>    Reserving a queue for a host driver that is in use by an mdev is not
+>    allowed.
 > 
-Hi Armin,
-    At first, I don't find implies in any Kconfig files. Maybe it's 
-should be "imply". I have updated this with "imply" in next revision.
->> +    select NEW_LEDS
->> +    select LEDS_CLASS
->> +    help
->> +      This driver provides WMI support for Lenovo customized hotkeys 
->> function,
->> +      such as LED control for audio/mic mute event for Ideapad, YOGA, 
->> XiaoXin,
->> +      Gaming, ThinkBook and so on.
->> +
->>   config LENOVO_YMC
->>       tristate "Lenovo Yoga Tablet Mode Control"
->>       depends on ACPI_WMI
->> diff --git a/drivers/platform/x86/Makefile b/drivers/platform/x86/ 
->> Makefile
->> index e1b142947067..131fcf974477 100644
->> --- a/drivers/platform/x86/Makefile
->> +++ b/drivers/platform/x86/Makefile
->> @@ -61,6 +61,7 @@ obj-$(CONFIG_UV_SYSFS)       += uv_sysfs.o
->>   # IBM Thinkpad and Lenovo
->>   obj-$(CONFIG_IBM_RTL)        += ibm_rtl.o
->>   obj-$(CONFIG_IDEAPAD_LAPTOP)    += ideapad-laptop.o
->> +obj-$(CONFIG_LENOVO_WMI_HOTKEY_UTILITIES)    += lenovo-wmi-hotkey- 
->> utilities.o
->>   obj-$(CONFIG_LENOVO_YMC)    += lenovo-ymc.o
->>   obj-$(CONFIG_SENSORS_HDAPS)    += hdaps.o
->>   obj-$(CONFIG_THINKPAD_ACPI)    += thinkpad_acpi.o
->> diff --git a/drivers/platform/x86/lenovo-wmi-hotkey-utilities.c b/ 
->> drivers/platform/x86/lenovo-wmi-hotkey-utilities.c
->> new file mode 100644
->> index 000000000000..a8fedc8ed7a6
->> --- /dev/null
->> +++ b/drivers/platform/x86/lenovo-wmi-hotkey-utilities.c
->> @@ -0,0 +1,216 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + *  Lenovo Super Hotkey Utility WMI extras driver for Ideapad laptop
->> + *
->> + *  Copyright (C) 2025    Lenovo
->> + */
->> +
->> +#include <linux/cleanup.h>
->> +#include <linux/dev_printk.h>
->> +#include <linux/device.h>
->> +#include <linux/leds.h>
->> +#include <linux/module.h>
->> +#include <linux/wmi.h>
->> +
->> +/* Lenovo Super Hotkey WMI GUIDs */
->> +#define LUD_WMI_METHOD_GUID    "CE6C0974-0407-4F50-88BA-4FC3B6559AD8"
->> +
->> +/* Lenovo Utility Data WMI method_id */
->> +#define WMI_LUD_GET_SUPPORT 1
->> +#define WMI_LUD_SET_FEATURE 2
->> +
->> +#define WMI_LUD_GET_MICMUTE_LED_VER   20
->> +#define WMI_LUD_GET_AUDIOMUTE_LED_VER 26
->> +
->> +#define WMI_LUD_SUPPORT_MICMUTE_LED_VER   25
->> +#define WMI_LUD_SUPPORT_AUDIOMUTE_LED_VER 27
->> +
->> +/* Input parameters to mute/unmute audio LED and Mic LED */
->> +struct wmi_led_args {
->> +    u8 id;
->> +    u8 subid;
->> +    u16 value;
->> +};
->> +
->> +/* Values of input parameters to SetFeature of audio LED and Mic LED */
->> +enum hotkey_set_feature {
->> +    MIC_MUTE_LED_ON        = 1,
->> +    MIC_MUTE_LED_OFF    = 2,
->> +    AUDIO_MUTE_LED_ON    = 4,
->> +    AUDIO_MUTE_LED_OFF    = 5,
->> +};
->> +
->> +#define LSH_ACPI_LED_MAX 2
->> +
->> +struct lenovo_super_hotkey_wmi_private {
->> +    struct led_classdev cdev[LSH_ACPI_LED_MAX];
->> +    struct wmi_device *led_wdev;
->> +};
->> +
->> +enum mute_led_type {
->> +    MIC_MUTE,
->> +    AUDIO_MUTE,
->> +};
->> +
->> +static int lsh_wmi_mute_led_set(enum mute_led_type led_type, struct 
->> led_classdev *led_cdev,
->> +                enum led_brightness brightness)
->> +
->> +{
->> +    struct lenovo_super_hotkey_wmi_private *wpriv = 
->> container_of(led_cdev,
->> +            struct lenovo_super_hotkey_wmi_private, cdev[led_type]);
->> +    struct wmi_led_args led_arg = {0, 0, 0};
->> +    struct acpi_buffer input;
->> +    acpi_status status;
->> +
->> +    switch (led_type) {
->> +    case MIC_MUTE:
->> +        led_arg.id = brightness == LED_ON ? MIC_MUTE_LED_ON : 
->> MIC_MUTE_LED_OFF;
->> +        break;
->> +    case AUDIO_MUTE:
->> +        led_arg.id = brightness == LED_ON ? AUDIO_MUTE_LED_ON : 
->> AUDIO_MUTE_LED_OFF;
->> +        break;
->> +    default:
->> +        return -EINVAL;
->> +    }
->> +
->> +    input.length = sizeof(led_arg);
->> +    input.pointer = &led_arg;
->> +    status = wmidev_evaluate_method(wpriv->led_wdev, 0, 
->> WMI_LUD_SET_FEATURE, &input, NULL);
->> +    if (ACPI_FAILURE(status))
->> +        return -EIO;
->> +
->> +    return 0;
->> +}
->> +
->> +static int lsh_wmi_audiomute_led_set(struct led_classdev *led_cdev,
->> +                     enum led_brightness brightness)
->> +
->> +{
->> +    return lsh_wmi_mute_led_set(AUDIO_MUTE, led_cdev, brightness);
->> +}
->> +
->> +static int lsh_wmi_micmute_led_set(struct led_classdev *led_cdev,
->> +                   enum led_brightness brightness)
->> +{
->> +    return lsh_wmi_mute_led_set(MIC_MUTE, led_cdev, brightness);
->> +}
->> +
->> +static int lenovo_super_hotkey_wmi_led_init(enum mute_led_type 
->> led_type, struct device *dev)
->> +{
->> +    struct lenovo_super_hotkey_wmi_private *wpriv = 
->> dev_get_drvdata(dev);
->> +    struct acpi_buffer output = { ACPI_ALLOCATE_BUFFER, NULL };
->> +    struct acpi_buffer input;
->> +    int led_version, err = 0;
->> +    unsigned int wmiarg;
->> +    acpi_status status;
->> +
->> +    switch (led_type) {
->> +    case MIC_MUTE:
->> +        wmiarg = WMI_LUD_GET_MICMUTE_LED_VER;
->> +        break;
->> +    case AUDIO_MUTE:
->> +        wmiarg = WMI_LUD_GET_AUDIOMUTE_LED_VER;
->> +        break;
->> +    default:
->> +        return -EINVAL;
->> +    }
->> +
->> +    input.length = sizeof(wmiarg);
->> +    input.pointer = &wmiarg;
->> +    status = wmidev_evaluate_method(wpriv->led_wdev, 0, 
->> WMI_LUD_GET_SUPPORT, &input, &output);
->> +    if (ACPI_FAILURE(status))
->> +        return -EIO;
->> +
->> +    union acpi_object *obj __free(kfree) = output.pointer;
->> +    if (obj && obj->type == ACPI_TYPE_INTEGER)
->> +        led_version = obj->integer.value;
->> +    else
->> +        return -EIO;
->> +
->> +    wpriv->cdev[led_type].max_brightness = LED_ON;
->> +    wpriv->cdev[led_type].flags = LED_CORE_SUSPENDRESUME;
->> +
->> +    switch (led_type) {
->> +    case MIC_MUTE:
->> +        if (led_version != WMI_LUD_SUPPORT_MICMUTE_LED_VER)
->> +            return -EIO;
->> +
->> +        wpriv->cdev[led_type].name = "platform::micmute";
->> +        wpriv->cdev[led_type].brightness_set_blocking = 
->> &lsh_wmi_micmute_led_set;
->> +        wpriv->cdev[led_type].default_trigger = "audio-micmute";
->> +        break;
->> +    case AUDIO_MUTE:
->> +        if (led_version != WMI_LUD_SUPPORT_AUDIOMUTE_LED_VER)
->> +            return -EIO;
->> +
->> +        wpriv->cdev[led_type].name = "platform::mute";
->> +        wpriv->cdev[led_type].brightness_set_blocking = 
->> &lsh_wmi_audiomute_led_set;
->> +        wpriv->cdev[led_type].default_trigger = "audio-mute";
->> +        break;
->> +    default:
->> +        dev_err(dev, "Unknown LED type %d\n", led_type);
->> +        return -EINVAL;
->> +    }
->> +
->> +    err = devm_led_classdev_register(dev, &wpriv->cdev[led_type]);
->> +    if (err < 0)
->> +        goto led_reg_failed;
+> In both cases, the assignment will return an error; however, a message 
+> like
+> the following is written to the kernel log:
 > 
-> Please drop led_reg_failed and call dev_err() directly.
+> vfio_ap_mdev e1839397-51a0-4e3c-91e0-c3b9c3d3047d: Userspace may not
+> re-assign queue 00.0028 already assigned to \
+> e1839397-51a0-4e3c-91e0-c3b9c3d3047d
 > 
-> Otherwise, the driver looks good:
+> Notice the mdev reporting the error is the same as the mdev identified
+> in the message as the one to which the queue is being assigned.
+> It is perfectly okay to assign a queue to an mdev to which it is
+> already assigned; the assignment is simply ignored by the vfio_ap 
+> device
+> driver.
 > 
-> Reviewed-by: Armin Wolf <W_Armin@gmx.de>
+> This patch logs more descriptive and accurate messages for both 1 and 2
+> above to the kernel log:
 > 
-I will update it based your comments in next revision.
-Thanks for your careful review and comments.
+> Example for 1:
+> vfio_ap_mdev 0fe903a0-a323-44db-9daf-134c68627d61: Userspace may not 
+> assign
+> queue 00.0033 to mdev: already assigned to \
+> 62177883-f1bb-47f0-914d-32a22e3a8804
+> 
+> Example for 2:
+> vfio_ap_mdev 62177883-f1bb-47f0-914d-32a22e3a8804: Can not reserve 
+> queue
+> 00.0033 for host driver: in use by mdev
+> 
+> Signed-off-by: Anthony Krowiak <akrowiak@linux.ibm.com>
+> ---
+>  drivers/s390/crypto/vfio_ap_ops.c | 73 ++++++++++++++++++++-----------
+>  1 file changed, 48 insertions(+), 25 deletions(-)
+> 
+> diff --git a/drivers/s390/crypto/vfio_ap_ops.c
+> b/drivers/s390/crypto/vfio_ap_ops.c
+> index a52c2690933f..2ce52b491f8a 100644
+> --- a/drivers/s390/crypto/vfio_ap_ops.c
+> +++ b/drivers/s390/crypto/vfio_ap_ops.c
+> @@ -863,48 +863,66 @@ static void vfio_ap_mdev_remove(struct 
+> mdev_device *mdev)
+>  	vfio_put_device(&matrix_mdev->vdev);
+>  }
+> 
+> -#define MDEV_SHARING_ERR "Userspace may not re-assign queue 
+> %02lx.%04lx " \
+> -			 "already assigned to %s"
+> +#define MDEV_SHARING_ERR "Userspace may not assign queue %02lx.%04lx " 
+> \
+> +			 "to mdev: already assigned to %s"
+> 
+> -static void vfio_ap_mdev_log_sharing_err(struct ap_matrix_mdev 
+> *matrix_mdev,
+> -					 unsigned long *apm,
+> -					 unsigned long *aqm)
+> +#define MDEV_IN_USE_ERR "Can not reserve queue %02lx.%04lx for host 
+> driver: " \
+> +			"in use by mdev"
+> +
+> +static void vfio_ap_mdev_log_sharing_err(struct ap_matrix_mdev 
+> *assignee,
+> +					 struct ap_matrix_mdev *assigned_to,
+> +					 unsigned long *apm, unsigned long *aqm)
+>  {
+>  	unsigned long apid, apqi;
+> -	const struct device *dev = mdev_dev(matrix_mdev->mdev);
+> -	const char *mdev_name = dev_name(dev);
+> 
+>  	for_each_set_bit_inv(apid, apm, AP_DEVICES)
+>  		for_each_set_bit_inv(apqi, aqm, AP_DOMAINS)
+> -			dev_warn(dev, MDEV_SHARING_ERR, apid, apqi, mdev_name);
+> +			dev_warn(mdev_dev(assignee->mdev), MDEV_SHARING_ERR,
+> +				 apid, apqi, dev_name(mdev_dev(assigned_to->mdev)));
+>  }
+> 
+> -/**
+> +static void vfio_ap_mdev_log_in_use_err(struct ap_matrix_mdev 
+> *assignee,
+> +					unsigned long *apm, unsigned long *aqm)
+> +{
+> +	unsigned long apid, apqi;
+> +
+> +	for_each_set_bit_inv(apid, apm, AP_DEVICES)
+> +		for_each_set_bit_inv(apqi, aqm, AP_DOMAINS)
+> +			dev_warn(mdev_dev(assignee->mdev), MDEV_IN_USE_ERR,
+> +				 apid, apqi);
+> +}
+> +
+> +/**assigned
+>   * vfio_ap_mdev_verify_no_sharing - verify APQNs are not shared by 
+> matrix mdevs
+>   *
+> + * @assignee the matrix mdev to which @mdev_apm and @mdev_aqm are 
+> being
+> + *           assigned; or, NULL if this function was called by the AP
+> bus driver
+> + *           in_use callback to verify none of the APQNs being 
+> reserved for the
+> + *           host device driver are in use by a vfio_ap mediated 
+> device
+>   * @mdev_apm: mask indicating the APIDs of the APQNs to be verified
+>   * @mdev_aqm: mask indicating the APQIs of the APQNs to be verified
+>   *
+> - * Verifies that each APQN derived from the Cartesian product of a 
+> bitmap of
+> - * AP adapter IDs and AP queue indexes is not configured for any 
+> matrix
+> - * mediated device. AP queue sharing is not allowed.
+> + * Verifies that each APQN derived from the Cartesian product of APIDs
+> + * represented by the bits set in @mdev_apm and the APQIs of the bits 
+> set in
+> + * @mdev_aqm is not assigned to a mediated device other than the mdev 
+> to which
+> + * the APQN is being assigned (@assignee). AP queue sharing is not 
+> allowed.
+>   *
+>   * Return: 0 if the APQNs are not shared; otherwise return 
+> -EADDRINUSE.
+>   */
+> -static int vfio_ap_mdev_verify_no_sharing(unsigned long *mdev_apm,
+> +static int vfio_ap_mdev_verify_no_sharing(struct ap_matrix_mdev 
+> *assignee,
+> +					  unsigned long *mdev_apm,
+>  					  unsigned long *mdev_aqm)
+>  {
+> -	struct ap_matrix_mdev *matrix_mdev;
+> +	struct ap_matrix_mdev *assigned_to;
+>  	DECLARE_BITMAP(apm, AP_DEVICES);
+>  	DECLARE_BITMAP(aqm, AP_DOMAINS);
+> 
+> -	list_for_each_entry(matrix_mdev, &matrix_dev->mdev_list, node) {
+> +	list_for_each_entry(assigned_to, &matrix_dev->mdev_list, node) {
+>  		/*
+> -		 * If the input apm and aqm are fields of the matrix_mdev
+> -		 * object, then move on to the next matrix_mdev.
+> +		 * If the mdev to which the mdev_apm and mdev_aqm is being
+> +		 * assigned is the same as the mdev being verified
+>  		 */
+> -		if (mdev_apm == matrix_mdev->matrix.apm &&
+> -		    mdev_aqm == matrix_mdev->matrix.aqm)
+> +		if (assignee == assigned_to)
+>  			continue;
+> 
+>  		memset(apm, 0, sizeof(apm));
+> @@ -912,17 +930,21 @@ static int
+> vfio_ap_mdev_verify_no_sharing(unsigned long *mdev_apm,
+> 
+>  		/*
+>  		 * We work on full longs, as we can only exclude the leftover
+> -		 * bits in non-inverse order. The leftover is all zeros.
+> +		 * bits in non-inverse order. The leftover is all zeros.assigned
+>  		 */
+> -		if (!bitmap_and(apm, mdev_apm, matrix_mdev->matrix.apm,
+> +		if (!bitmap_and(apm, mdev_apm, assigned_to->matrix.apm,
+>  				AP_DEVICES))
+>  			continue;
+> 
+> -		if (!bitmap_and(aqm, mdev_aqm, matrix_mdev->matrix.aqm,
+> +		if (!bitmap_and(aqm, mdev_aqm, assigned_to->matrix.aqm,
+>  				AP_DOMAINS))
+>  			continue;
+> 
+> -		vfio_ap_mdev_log_sharing_err(matrix_mdev, apm, aqm);
+> +		if (assignee)
+> +			vfio_ap_mdev_log_sharing_err(assignee, assigned_to,
+> +						     apm, aqm);
+> +		else
+> +			vfio_ap_mdev_log_in_use_err(assigned_to, apm, aqm);
+> 
+>  		return -EADDRINUSE;
+>  	}
+> @@ -951,7 +973,8 @@ static int vfio_ap_mdev_validate_masks(struct
+> ap_matrix_mdev *matrix_mdev)
+>  					       matrix_mdev->matrix.aqm))
+>  		return -EADDRNOTAVAIL;
+> 
+> -	return vfio_ap_mdev_verify_no_sharing(matrix_mdev->matrix.apm,
+> +	return vfio_ap_mdev_verify_no_sharing(matrix_mdev,
+> +					      matrix_mdev->matrix.apm,
+>  					      matrix_mdev->matrix.aqm);
+>  }
+> 
+> @@ -2458,7 +2481,7 @@ int vfio_ap_mdev_resource_in_use(unsigned long
+> *apm, unsigned long *aqm)
+> 
+>  	mutex_lock(&matrix_dev->guests_lock);
+>  	mutex_lock(&matrix_dev->mdevs_lock);
+> -	ret = vfio_ap_mdev_verify_no_sharing(apm, aqm);
+> +	ret = vfio_ap_mdev_verify_no_sharing(NULL, apm, aqm);
+>  	mutex_unlock(&matrix_dev->mdevs_lock);
+>  	mutex_unlock(&matrix_dev->guests_lock);
 
-Jackie Dong
->> +
->> +    return 0;
->> +
->> +led_reg_failed:
->> +    dev_err(dev, "Could not register mute LED %d : %d\n", led_type, 
->> err);
->> +    return err;
->> +}
->> +
->> +static int lenovo_super_hotkey_wmi_leds_setup(struct device *dev)
->> +{
->> +    int err;
->> +
->> +    err = lenovo_super_hotkey_wmi_led_init(MIC_MUTE, dev);
->> +    if (err)
->> +        return err;
->> +
->> +    err = lenovo_super_hotkey_wmi_led_init(AUDIO_MUTE, dev);
->> +    if (err)
->> +        return err;
->> +
->> +    return 0;
->> +}
->> +
->> +static int lenovo_super_hotkey_wmi_probe(struct wmi_device *wdev, 
->> const void *context)
->> +{
->> +    struct lenovo_super_hotkey_wmi_private *wpriv;
->> +
->> +    wpriv = devm_kzalloc(&wdev->dev, sizeof(*wpriv), GFP_KERNEL);
->> +    if (!wpriv)
->> +        return -ENOMEM;
->> +
->> +    dev_set_drvdata(&wdev->dev, wpriv);
->> +    wpriv->led_wdev = wdev;
->> +    return lenovo_super_hotkey_wmi_leds_setup(&wdev->dev);
->> +}
->> +
->> +static const struct wmi_device_id lenovo_super_hotkey_wmi_id_table[] = {
->> +    { LUD_WMI_METHOD_GUID, NULL }, /* Utility data */
->> +    { }
->> +};
->> +
->> +MODULE_DEVICE_TABLE(wmi, lenovo_super_hotkey_wmi_id_table);
->> +
->> +static struct wmi_driver lenovo_wmi_hotkey_utilities_driver = {
->> +     .driver = {
->> +         .name = "lenovo_wmi_hotkey_utilities",
->> +         .probe_type = PROBE_PREFER_ASYNCHRONOUS
->> +     },
->> +     .id_table = lenovo_super_hotkey_wmi_id_table,
->> +     .probe = lenovo_super_hotkey_wmi_probe,
->> +     .no_singleton = true,
->> +};
->> +
->> +module_wmi_driver(lenovo_wmi_hotkey_utilities_driver);
->> +
->> +MODULE_INFO(depends, "wmi,ideapad-laptop");
->> +MODULE_AUTHOR("Jackie Dong <dongeg1@lenovo.com>");
->> +MODULE_DESCRIPTION("Lenovo Super Hotkey Utility WMI extras driver");
->> +MODULE_LICENSE("GPL");
-
-
+I don't see exactly where you do the printk but according to your
+description you do an error log. I would suggest to lower this
+to a warning instead.
 
