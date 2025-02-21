@@ -1,159 +1,422 @@
-Return-Path: <linux-kernel+bounces-525406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEC77A3EF82
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:06:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B719A3EF8D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:08:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34F1817E973
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:05:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A00019C574E
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:07:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EB512063C4;
-	Fri, 21 Feb 2025 09:03:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="IXJgTLgm";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Q1aahflB"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D16E2036E8;
+	Fri, 21 Feb 2025 09:07:08 +0000 (UTC)
+Received: from n169-111.mail.139.com (n169-111.mail.139.com [120.232.169.111])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CDD02054F7;
-	Fri, 21 Feb 2025 09:03:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A9F4202F8B;
+	Fri, 21 Feb 2025 09:07:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=120.232.169.111
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740128601; cv=none; b=drbO3q4ifArP7gBhRo0+cqCPVJN9WEvSsJGnbrkBbFGOXV9pnN5/XCtUhXYYaK21t+wX+B6W/P6iDd34PgQ8DYKstAZqUmkTNYcVQtU3Zz9GebzysU7UrCBZ9efqWX8Gh2X9FpaxXFAiGhDV/bI7RMxzIiO8lIx0PYHwuub7/p8=
+	t=1740128827; cv=none; b=s4Y2Dwq9qrrqXSyrnJlWcKrybd+0XipayYQgDp4L3Etdl49Fq99l6WWYch1ec6csfKu6FRTRuTncEqvuArNQM46FzEbrgHPINQpgFMeLmFe7UYFW93pr5DES29nfRBxHKMPuQovwsRBMKlMWA0639F/Y5/xT1smHGfbAH6yuIgM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740128601; c=relaxed/simple;
-	bh=hwPLoYBLzX0jupI0jmMCJrZVPvRD5czVlxNaO3aJYY4=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=IfI4Xevi2qRSLty/Ws/TMQr0JDWiF2VUiAT5hcwpXh2+y5MvEphAz7aJqP6Qg2/1S/2nXnsiTLokzBtEIc5/eRHb6LJHkJ0yXhL3xN/OMgnMiv6H6rCM+NWW+68xWvx4yG6Z4E55Jm9qR02lCC4WSawZtvniLtxN5Dszg+GFv0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=IXJgTLgm; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Q1aahflB; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 21 Feb 2025 09:03:17 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1740128598;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xRJq18h6zsBYDDEPg6+d7jDg0WMjw8j/HQ4kTR07Acw=;
-	b=IXJgTLgmTVoRh2Wnk/rlnhIIE7bpB9rGFV4YWmbiKh9t+DN17JXYRJx6+R9qpLpKRaAosN
-	xEtO3iOjvq2Wq0hLguWp1VaghwDABWWHqka0ldhKdsC4xPBxY9XRyYm4V54PHdy7uGxmUi
-	k+TIcFGUz89v0ong3a1In5Tzv8a5lTogVFG4mxpL8XlehZOER7UjBtOUswYyxNqDafjNU5
-	nvfP5Bjf0wYzb312I/D4aPdIJGA2JFEKSIbQD0VTsmnqWIG5+z66aNxrsWvgIqqoHvsZOp
-	frccRzQpUiC3Z9ApbPaC1zx6ugqx9EUHjgNOJK3ZbvsdjahL6DtJvhGAG59Lsw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1740128598;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xRJq18h6zsBYDDEPg6+d7jDg0WMjw8j/HQ4kTR07Acw=;
-	b=Q1aahflBPQ96YK0tIW6duFbzbCkQGG+cp0TDMxT7iI3yVpVpBjDeTRUzKb7l47intGvkEc
-	I3I9EZJRcHgDvkBw==
-From:
- tip-bot2 for Thomas =?utf-8?q?Wei=C3=9Fschuh?= <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: timers/vdso] x86/vdso: Fix latent bug in vclock_pages calculation
-Cc: thomas.weissschuh@linutronix.de, Thomas Gleixner <tglx@linutronix.de>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250204-vdso-store-rng-v3-1-13a4669dfc8c@linutronix.de>
-References: <20250204-vdso-store-rng-v3-1-13a4669dfc8c@linutronix.de>
+	s=arc-20240116; t=1740128827; c=relaxed/simple;
+	bh=LojGSz9P5US4UB0/phSXNcKGZDz9q5i96YBS0l9g9og=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=kkKdKzLccFx/sh6049PSykTADC7d323oxc5Y7RiWiO7V7mO5GPMpHwLHz074rYlnBOxzVDT4YIMWAtr9KrtnX2lg8HegmNa/JqdD9XRSUZvvA95ndKB6sloUdM/G7h//IRpdH1gJskKnDyWsPW6UmnI4ckWbkdSVIWyYliPm6vc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=139.com; spf=pass smtp.mailfrom=139.com; arc=none smtp.client-ip=120.232.169.111
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=139.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=139.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM:                                                                                        
+X-RM-SPAM-FLAG:00000000
+Received:from test-ThinkBook-16-G8-IRL.lenovo.com (unknown[123.114.236.250])
+	by rmsmtp-lg-appmail-16-12015 (RichMail) with SMTP id 2eef67b8415b166-30470;
+	Fri, 21 Feb 2025 17:03:37 +0800 (CST)
+X-RM-TRANSID:2eef67b8415b166-30470
+From: Jackie Dong <xy-jackie@139.com>
+To: hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com
+Cc: linux-kernel@vger.kernel.org,
+	platform-driver-x86@vger.kernel.org,
+	kuurtb@gmail.com,
+	W_Armin@gmx.de,
+	dongeg1@lenovo.com,
+	Jackie Dong <xy-jackie@139.com>,
+	Mark Pearson <mpearson-lenovo@squebb.ca>
+Subject: [PATCH v10] platform/x86:lenovo-wmi-hotkey-utilities.c: Support for mic and audio mute LEDs
+Date: Fri, 21 Feb 2025 17:03:19 +0800
+Message-ID: <20250221090322.3706-1-xy-jackie@139.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174012859759.10177.14504433418628527411.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-The following commit has been merged into the timers/vdso branch of tip:
+Implement Lenovo utility data WMI calls needed to make LEDs
+work on Ideapads that support this GUID.
+This enables the mic and audio LEDs to be updated correctly.
 
-Commit-ID:     3ef32d90cdaa0cfa6c4ffd18f8d646a658163e3d
-Gitweb:        https://git.kernel.org/tip/3ef32d90cdaa0cfa6c4ffd18f8d646a6581=
-63e3d
-Author:        Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
-AuthorDate:    Tue, 04 Feb 2025 13:05:33 +01:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Fri, 21 Feb 2025 09:54:00 +01:00
+Tested on below samples.
+ThinkBook 13X Gen4 IMH
+ThinkBook 14 G6 ABP
+ThinkBook 16p Gen4-21J8
+ThinkBook 16 G8 IRL
+ThinkBook 16 G7+ ASP
 
-x86/vdso: Fix latent bug in vclock_pages calculation
-
-The vclock pages are *after* the non-vclock pages. Currently there are both
-two vclock and two non-vclock pages so the existing logic works by
-accident.  As soon as the number of pages changes it will break however.
-This will be the case with the introduction of the generic vDSO data
-storage.
-
-Use a macro to keep the calculation understandable and in sync between
-the linker script and mapping code.
-
-Fixes: e93d2521b27f ("x86/vdso: Split virtual clock pages into dedicated mapp=
-ing")
-Signed-off-by: Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/all/20250204-vdso-store-rng-v3-1-13a4669dfc8c@l=
-inutronix.de
+Signed-off-by: Jackie Dong <xy-jackie@139.com>
+Suggested-by: Mark Pearson <mpearson-lenovo@squebb.ca>
+Reviewed-by: Kurt Borja <kuurtb@gmail.com>
+Reviewed-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+Reviewed-by: Armin Wolf <W_Armin@gmx.de>
 
 ---
- arch/x86/entry/vdso/vdso-layout.lds.S | 2 +-
- arch/x86/entry/vdso/vma.c             | 2 +-
- arch/x86/include/asm/vdso/vsyscall.h  | 1 +
- 3 files changed, 3 insertions(+), 2 deletions(-)
+Changes in v10:
+ - Using "imply" instead of "depends on" for CONFIG_IDEAPAD_LAPTOP
+ - Drop led_reg_failed and call dev_err() directly
 
-diff --git a/arch/x86/entry/vdso/vdso-layout.lds.S b/arch/x86/entry/vdso/vdso=
--layout.lds.S
-index 872947c..918606f 100644
---- a/arch/x86/entry/vdso/vdso-layout.lds.S
-+++ b/arch/x86/entry/vdso/vdso-layout.lds.S
-@@ -24,7 +24,7 @@ SECTIONS
-=20
- 	timens_page  =3D vvar_start + PAGE_SIZE;
-=20
--	vclock_pages =3D vvar_start + VDSO_NR_VCLOCK_PAGES * PAGE_SIZE;
-+	vclock_pages =3D VDSO_VCLOCK_PAGES_START(vvar_start);
- 	pvclock_page =3D vclock_pages + VDSO_PAGE_PVCLOCK_OFFSET * PAGE_SIZE;
- 	hvclock_page =3D vclock_pages + VDSO_PAGE_HVCLOCK_OFFSET * PAGE_SIZE;
-=20
-diff --git a/arch/x86/entry/vdso/vma.c b/arch/x86/entry/vdso/vma.c
-index 39e6efc..aa62949 100644
---- a/arch/x86/entry/vdso/vma.c
-+++ b/arch/x86/entry/vdso/vma.c
-@@ -290,7 +290,7 @@ static int map_vdso(const struct vdso_image *image, unsig=
-ned long addr)
- 	}
-=20
- 	vma =3D _install_special_mapping(mm,
--				       addr + (__VVAR_PAGES - VDSO_NR_VCLOCK_PAGES) * PAGE_SIZE,
-+				       VDSO_VCLOCK_PAGES_START(addr),
- 				       VDSO_NR_VCLOCK_PAGES * PAGE_SIZE,
- 				       VM_READ|VM_MAYREAD|VM_IO|VM_DONTDUMP|
- 				       VM_PFNMAP,
-diff --git a/arch/x86/include/asm/vdso/vsyscall.h b/arch/x86/include/asm/vdso=
-/vsyscall.h
-index 37b4a70..88b31d4 100644
---- a/arch/x86/include/asm/vdso/vsyscall.h
-+++ b/arch/x86/include/asm/vdso/vsyscall.h
-@@ -6,6 +6,7 @@
- #define __VVAR_PAGES	4
-=20
- #define VDSO_NR_VCLOCK_PAGES	2
-+#define VDSO_VCLOCK_PAGES_START(_b)	((_b) + (__VVAR_PAGES - VDSO_NR_VCLOCK_P=
-AGES) * PAGE_SIZE)
- #define VDSO_PAGE_PVCLOCK_OFFSET	0
- #define VDSO_PAGE_HVCLOCK_OFFSET	1
-=20
+Changes in v9:
+ - Call devm_led_classdev_register() after the switch statement
+ - Update struct wmi_driver with .name = "lenovo_wmi_hotkey_utilities"
+
+Changes in v8:
+ - Update MAINTAINERS for this driver
+ - Added Reviewed-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+ - Added Reviewed-by: Reviewed-by: Armin Wolf <W_Armin@gmx.de>
+
+Changes in v7:
+ - Replaced spaces by tab for items in enum hotkey_set_feature
+ - Directly return lenovo_super_hotkey_wmi_leds_setup(&wdev->dev)
+ - Added Reviewed-by: Kurt Borja <kuurtb@gmail.com>
+
+Changes in v6:
+ - Rename lenovo-super-hotkey-wmi.c to lenovo-wmi-hotkey-utilities
+ - Update LENOVO_WMI_HOTKEY_UTILITIES item description and add select
+   NEW_LEDS, LEDS_CLASS based on reviewer's suggestion.
+ - Align items in enum hotkey_set_feature
+ - Drop some brances and return error message directly
+ - Check return value of lenovo_super_hotkey_wmi_led_init() in
+   lenovo_super_hotkey_wmi_leds_setup
+
+Changes in v5:
+ - Take out union acpi_object *obj __free(kfree) = output.pointer from
+   if-else block
+ - Remove lsk_wmi_context_lud_keys related source code
+
+Changes in v4:
+ - Add related head files include cleanup.h, dev_printk.h, device.h,
+   module.h
+ - Replaced kfree() by __free()
+ - Remove double free for obj
+ - Remove wpriv->cdev[led_type].dev = dev
+ - Remove *wpriv = *(const struct lenovo_super_hotkey_wmi_private *)context
+ - Remove wpriv->event == LSH_WMI_EVENT_LUD_KEYS
+ - Remove lenovo_super_hotkey_wmi_remove() for unnecessary
+
+Changes in v3:
+ - Changed the name of the Kconfig entry to LENOVO_SUPER_HOTKEY_WMI
+ - Renamed everything in this driver which contains the name "ideapad"
+   to instead contain the name of this driver.
+ - Moved struct wmi_device *led_wdev in lenovo_super_hotkey_wmi_private,
+   and use container_of() to the led_wdev pointer.
+ - Replaced sizeof(struct wmi_led_args) by sizeof(led_arg)
+ - Added condtions checking for obj && obj->type == ACPI_TYPE_INTEGER
+   and free the ACPI object after get the required value.
+ - Removed led_classdev_unregister() after led_reg_failed label, but
+   add lenovo_super_hotkey_wmi_remove(struct wmi_device *wdev) to free
+   resource.
+ - Removed IDEAPAD_WMI_EVENT_FN_KEYS/IDEAPAD_WMI_EVENT_LUD_KEYS related
+   source codes and only keep LUD_WMI_METHOD_GUID.
+
+Changes in v2:
+ - Update code layout and formatting as recommended in review
+ - Improved error handling in ideapad_wmi_led_init
+ - Separated a WMI driver named lenovo-super-hotkey-wmi.c from
+   ideapad-lap.c, it's only for Lenovo Super Hotkey WMI devices.
+
+ MAINTAINERS                                   |   6 +
+ drivers/platform/x86/Kconfig                  |  11 +
+ drivers/platform/x86/Makefile                 |   1 +
+ .../x86/lenovo-wmi-hotkey-utilities.c         | 213 ++++++++++++++++++
+ 4 files changed, 231 insertions(+)
+ create mode 100644 drivers/platform/x86/lenovo-wmi-hotkey-utilities.c
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 25c86f47353d..793ffb25ea74 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -13149,6 +13149,12 @@ S:	Maintained
+ W:	http://legousb.sourceforge.net/
+ F:	drivers/usb/misc/legousbtower.c
+ 
++LENOVO WMI HOTKEY UTILITIES DRIVER
++M:	Jackie Dong <xy-jackie@139.com>
++L:	platform-driver-x86@vger.kernel.org
++S:	Maintained
++F:	drivers/platform/x86/lenovo-wmi-hotkey-utilities.c
++
+ LETSKETCH HID TABLET DRIVER
+ M:	Hans de Goede <hdegoede@redhat.com>
+ L:	linux-input@vger.kernel.org
+diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
+index 0258dd879d64..b5ac61a0f2fb 100644
+--- a/drivers/platform/x86/Kconfig
++++ b/drivers/platform/x86/Kconfig
+@@ -475,6 +475,17 @@ config IDEAPAD_LAPTOP
+ 	  This is a driver for Lenovo IdeaPad netbooks contains drivers for
+ 	  rfkill switch, hotkey, fan control and backlight control.
+ 
++config LENOVO_WMI_HOTKEY_UTILITIES
++	tristate "Lenovo Hotkey Utility WMI extras driver"
++	depends on ACPI_WMI
++	select NEW_LEDS
++	select LEDS_CLASS
++	imply IDEAPAD_LAPTOP
++	help
++	  This driver provides WMI support for Lenovo customized hotkeys function,
++	  such as LED control for audio/mic mute event for Ideapad, YOGA, XiaoXin,
++	  Gaming, ThinkBook and so on.
++
+ config LENOVO_YMC
+ 	tristate "Lenovo Yoga Tablet Mode Control"
+ 	depends on ACPI_WMI
+diff --git a/drivers/platform/x86/Makefile b/drivers/platform/x86/Makefile
+index e1b142947067..131fcf974477 100644
+--- a/drivers/platform/x86/Makefile
++++ b/drivers/platform/x86/Makefile
+@@ -61,6 +61,7 @@ obj-$(CONFIG_UV_SYSFS)       += uv_sysfs.o
+ # IBM Thinkpad and Lenovo
+ obj-$(CONFIG_IBM_RTL)		+= ibm_rtl.o
+ obj-$(CONFIG_IDEAPAD_LAPTOP)	+= ideapad-laptop.o
++obj-$(CONFIG_LENOVO_WMI_HOTKEY_UTILITIES)	+= lenovo-wmi-hotkey-utilities.o
+ obj-$(CONFIG_LENOVO_YMC)	+= lenovo-ymc.o
+ obj-$(CONFIG_SENSORS_HDAPS)	+= hdaps.o
+ obj-$(CONFIG_THINKPAD_ACPI)	+= thinkpad_acpi.o
+diff --git a/drivers/platform/x86/lenovo-wmi-hotkey-utilities.c b/drivers/platform/x86/lenovo-wmi-hotkey-utilities.c
+new file mode 100644
+index 000000000000..54c61bfdf13f
+--- /dev/null
++++ b/drivers/platform/x86/lenovo-wmi-hotkey-utilities.c
+@@ -0,0 +1,213 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ *  Lenovo Super Hotkey Utility WMI extras driver for Ideapad laptop
++ *
++ *  Copyright (C) 2025	Lenovo
++ */
++
++#include <linux/cleanup.h>
++#include <linux/dev_printk.h>
++#include <linux/device.h>
++#include <linux/leds.h>
++#include <linux/module.h>
++#include <linux/wmi.h>
++
++/* Lenovo Super Hotkey WMI GUIDs */
++#define LUD_WMI_METHOD_GUID	"CE6C0974-0407-4F50-88BA-4FC3B6559AD8"
++
++/* Lenovo Utility Data WMI method_id */
++#define WMI_LUD_GET_SUPPORT 1
++#define WMI_LUD_SET_FEATURE 2
++
++#define WMI_LUD_GET_MICMUTE_LED_VER   20
++#define WMI_LUD_GET_AUDIOMUTE_LED_VER 26
++
++#define WMI_LUD_SUPPORT_MICMUTE_LED_VER   25
++#define WMI_LUD_SUPPORT_AUDIOMUTE_LED_VER 27
++
++/* Input parameters to mute/unmute audio LED and Mic LED */
++struct wmi_led_args {
++	u8 id;
++	u8 subid;
++	u16 value;
++};
++
++/* Values of input parameters to SetFeature of audio LED and Mic LED */
++enum hotkey_set_feature {
++	MIC_MUTE_LED_ON		= 1,
++	MIC_MUTE_LED_OFF	= 2,
++	AUDIO_MUTE_LED_ON	= 4,
++	AUDIO_MUTE_LED_OFF	= 5,
++};
++
++#define LSH_ACPI_LED_MAX 2
++
++struct lenovo_super_hotkey_wmi_private {
++	struct led_classdev cdev[LSH_ACPI_LED_MAX];
++	struct wmi_device *led_wdev;
++};
++
++enum mute_led_type {
++	MIC_MUTE,
++	AUDIO_MUTE,
++};
++
++static int lsh_wmi_mute_led_set(enum mute_led_type led_type, struct led_classdev *led_cdev,
++				enum led_brightness brightness)
++
++{
++	struct lenovo_super_hotkey_wmi_private *wpriv = container_of(led_cdev,
++			struct lenovo_super_hotkey_wmi_private, cdev[led_type]);
++	struct wmi_led_args led_arg = {0, 0, 0};
++	struct acpi_buffer input;
++	acpi_status status;
++
++	switch (led_type) {
++	case MIC_MUTE:
++		led_arg.id = brightness == LED_ON ? MIC_MUTE_LED_ON : MIC_MUTE_LED_OFF;
++		break;
++	case AUDIO_MUTE:
++		led_arg.id = brightness == LED_ON ? AUDIO_MUTE_LED_ON : AUDIO_MUTE_LED_OFF;
++		break;
++	default:
++		return -EINVAL;
++	}
++
++	input.length = sizeof(led_arg);
++	input.pointer = &led_arg;
++	status = wmidev_evaluate_method(wpriv->led_wdev, 0, WMI_LUD_SET_FEATURE, &input, NULL);
++	if (ACPI_FAILURE(status))
++		return -EIO;
++
++	return 0;
++}
++
++static int lsh_wmi_audiomute_led_set(struct led_classdev *led_cdev,
++				     enum led_brightness brightness)
++
++{
++	return lsh_wmi_mute_led_set(AUDIO_MUTE, led_cdev, brightness);
++}
++
++static int lsh_wmi_micmute_led_set(struct led_classdev *led_cdev,
++				   enum led_brightness brightness)
++{
++	return lsh_wmi_mute_led_set(MIC_MUTE, led_cdev, brightness);
++}
++
++static int lenovo_super_hotkey_wmi_led_init(enum mute_led_type led_type, struct device *dev)
++{
++	struct lenovo_super_hotkey_wmi_private *wpriv = dev_get_drvdata(dev);
++	struct acpi_buffer output = { ACPI_ALLOCATE_BUFFER, NULL };
++	struct acpi_buffer input;
++	int led_version, err = 0;
++	unsigned int wmiarg;
++	acpi_status status;
++
++	switch (led_type) {
++	case MIC_MUTE:
++		wmiarg = WMI_LUD_GET_MICMUTE_LED_VER;
++		break;
++	case AUDIO_MUTE:
++		wmiarg = WMI_LUD_GET_AUDIOMUTE_LED_VER;
++		break;
++	default:
++		return -EINVAL;
++	}
++
++	input.length = sizeof(wmiarg);
++	input.pointer = &wmiarg;
++	status = wmidev_evaluate_method(wpriv->led_wdev, 0, WMI_LUD_GET_SUPPORT, &input, &output);
++	if (ACPI_FAILURE(status))
++		return -EIO;
++
++	union acpi_object *obj __free(kfree) = output.pointer;
++	if (obj && obj->type == ACPI_TYPE_INTEGER)
++		led_version = obj->integer.value;
++	else
++		return -EIO;
++
++	wpriv->cdev[led_type].max_brightness = LED_ON;
++	wpriv->cdev[led_type].flags = LED_CORE_SUSPENDRESUME;
++
++	switch (led_type) {
++	case MIC_MUTE:
++		if (led_version != WMI_LUD_SUPPORT_MICMUTE_LED_VER)
++			return -EIO;
++
++		wpriv->cdev[led_type].name = "platform::micmute";
++		wpriv->cdev[led_type].brightness_set_blocking = &lsh_wmi_micmute_led_set;
++		wpriv->cdev[led_type].default_trigger = "audio-micmute";
++		break;
++	case AUDIO_MUTE:
++		if (led_version != WMI_LUD_SUPPORT_AUDIOMUTE_LED_VER)
++			return -EIO;
++
++		wpriv->cdev[led_type].name = "platform::mute";
++		wpriv->cdev[led_type].brightness_set_blocking = &lsh_wmi_audiomute_led_set;
++		wpriv->cdev[led_type].default_trigger = "audio-mute";
++		break;
++	default:
++		dev_err(dev, "Unknown LED type %d\n", led_type);
++		return -EINVAL;
++	}
++
++	err = devm_led_classdev_register(dev, &wpriv->cdev[led_type]);
++	if (err < 0) {
++		dev_err(dev, "Could not register mute LED %d : %d\n", led_type, err);
++		return err;
++	}
++	return 0;
++}
++
++static int lenovo_super_hotkey_wmi_leds_setup(struct device *dev)
++{
++	int err;
++
++	err = lenovo_super_hotkey_wmi_led_init(MIC_MUTE, dev);
++	if (err)
++		return err;
++
++	err = lenovo_super_hotkey_wmi_led_init(AUDIO_MUTE, dev);
++	if (err)
++		return err;
++
++	return 0;
++}
++
++static int lenovo_super_hotkey_wmi_probe(struct wmi_device *wdev, const void *context)
++{
++	struct lenovo_super_hotkey_wmi_private *wpriv;
++
++	wpriv = devm_kzalloc(&wdev->dev, sizeof(*wpriv), GFP_KERNEL);
++	if (!wpriv)
++		return -ENOMEM;
++
++	dev_set_drvdata(&wdev->dev, wpriv);
++	wpriv->led_wdev = wdev;
++	return lenovo_super_hotkey_wmi_leds_setup(&wdev->dev);
++}
++
++static const struct wmi_device_id lenovo_super_hotkey_wmi_id_table[] = {
++	{ LUD_WMI_METHOD_GUID, NULL }, /* Utility data */
++	{ }
++};
++
++MODULE_DEVICE_TABLE(wmi, lenovo_super_hotkey_wmi_id_table);
++
++static struct wmi_driver lenovo_wmi_hotkey_utilities_driver = {
++	 .driver = {
++		 .name = "lenovo_wmi_hotkey_utilities",
++		 .probe_type = PROBE_PREFER_ASYNCHRONOUS
++	 },
++	 .id_table = lenovo_super_hotkey_wmi_id_table,
++	 .probe = lenovo_super_hotkey_wmi_probe,
++	 .no_singleton = true,
++};
++
++module_wmi_driver(lenovo_wmi_hotkey_utilities_driver);
++
++MODULE_INFO(depends, "wmi,ideapad-laptop");
++MODULE_AUTHOR("Jackie Dong <dongeg1@lenovo.com>");
++MODULE_DESCRIPTION("Lenovo Super Hotkey Utility WMI extras driver");
++MODULE_LICENSE("GPL");
+-- 
+2.43.0
+
+
 
