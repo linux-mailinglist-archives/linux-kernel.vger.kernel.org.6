@@ -1,111 +1,84 @@
-Return-Path: <linux-kernel+bounces-526425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4F44A3FE95
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 19:19:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E65ADA3FE94
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 19:19:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 625C8166F94
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 18:18:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0EE053BDF94
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 18:19:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49C3C250BFB;
-	Fri, 21 Feb 2025 18:18:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2CC3h+vU"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50EF1250C13;
+	Fri, 21 Feb 2025 18:19:13 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D8391CAA90
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 18:18:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF17E21128F;
+	Fri, 21 Feb 2025 18:19:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740161921; cv=none; b=MfYF5fUCXhyNjQsEr7ZV2YIsnsevLqEwT3WYd09HaBHgNV+DhUFsIQDGktKdA+Yjyl5I/KisZtOgrWOUPySrpXvgfjkW5WwAKTSV1vJz5XhehjIdkkR59SVkTJq91Bd8ZBppEQTxtj/DNge7eYV4VxkSXE+7FcfxMRPVjfIUw0Y=
+	t=1740161952; cv=none; b=sSldo94E+BXYXhQy+QePJK9z2eDEbE+b1VImAFu+ZHWGdltoVmaJ9JeGUeKoqgwl+DLXcqQtut0h2rIpZ0pwDPHN3Y/sJUiA66XK6V2XoEW8dXpOXFC+9c9RDxg2Hbc5H9HGqy+6Qv5xVnpQJ/njoIgukNvOHCZD7QqpN2ZSGSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740161921; c=relaxed/simple;
-	bh=GGzFnXUDdo94zP/g/M0vl1gNFcXO3KuhwN3auxqRUAw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ldRn+BFtvwU616ep1R4eahQMsMCSssJ4LGX4OXUt/0g99oKjsx258TtMXvjzJbPlHltFn7Mskrh820+SXGo8gEcAHHZxEZUtcy9UMa9IAznjN4snDITn9pWfkiidNXhYMBfqOSFe/xas6+LHVAyW+wQx5sDo679YIwhh16z0+Us=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2CC3h+vU; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5e05780509dso3462982a12.2
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 10:18:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740161918; x=1740766718; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=faRqCA81jH4txu0fAi9rdAQk4yfaELeIVteH/sliYZQ=;
-        b=2CC3h+vUPUMa0M4uAc+cpZgbkYY4vKQHhCtAh0si/b+yP1wtL+cWKwOckjUBDD6qOv
-         w6EnfRPDyMdtQ5aRTck42PcpNG8M7wxRLd3n3GclU9213Rnw65coV/FGpHQuwdTPiXaw
-         tcU7Jyq1Mjig60TaW8Udl+tDKmSGz8t+I+tLazoCWChLaByB3+1z2OtGxgdxD4ousph9
-         CMUP7E5yOQ2V84B5rWTeVowqjBFIMWbdTwkOdarLUA03LJqY0eM0Mq74eSJxaDcU/Lf1
-         q/7iBtmxwGBFDyQWCtc9Cujn1VXKLUl6fN/sPME6++VtHDzZ2kFYIWq7iEDSeSG6iAvM
-         UVxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740161918; x=1740766718;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=faRqCA81jH4txu0fAi9rdAQk4yfaELeIVteH/sliYZQ=;
-        b=KY3SS5gNwR0TxsjvekbP4MqLk6eEW4ENFo3H6tHVissyxHo6IXMq3OccXt/Mujn8tB
-         v88uXizIvK49M9mSHl96FK60l98+u4jAb39ybH9iwuPeIUfSQDPAebG0/aejuI/iE4Br
-         kyL5WB4l53gpCdL1XxjrV5bJBqf56ptaicbo++ldaq/CqPJvMqSyq3QPlW1n2VirWJIM
-         5oQZMU+s81BOFFo6efn3s2ON+aSrMynDDimCz2l7mr/pLX61oQoKKhV/AO1vB+WpCOHE
-         sx0wyjUQIoiHLEXqR3L1Qrq5nbf4x4us6HSKtowWTo7JNfVeLJuL7rhe08TojMndNWME
-         HIFg==
-X-Forwarded-Encrypted: i=1; AJvYcCWG4u7drKTeR4OHjcEhk15GJmRgolASOGzB022RTvVTo2umUGMf2qQx2U+8tIVIWKMq8pInieYEvcY6dYA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyezjjWp2x2fLk/WL04Us9R1im7OPeTOlCFFU3IicmCKPz4xSj6
-	zWtATt2t0nxsw3j3tei+7o1vZvAFfYMRBh4Hj374HwPs9cfP5sjAB8JV3hpACtA8PFRjcPEvxv5
-	+xCpIIrkACgc+GLulzuVzn1FtKhkxf3hKTHrY
-X-Gm-Gg: ASbGncsHH+4Dev6ujsZ+W5Hf4P2R/dyfJxYH+HzuGx+WqmTt1hU/AV4Qvmm6/ARq6Dc
-	tqQ+2/GE4TJ1Tt5mm0UzO7acm0IZODLvnt5qxKhR7X8GWY+1SU0koRc3sRkiAXBlBALCHarGGOk
-	wQelp5pvw=
-X-Google-Smtp-Source: AGHT+IF6v8PIfym1PMyabOHdGTmRgwqRk4s4qoohzkIsffoZydOlVmaS6zsX3+sB8p+2yvlL2fXKdic+GCMXbK141jw=
-X-Received: by 2002:a05:6402:4313:b0:5de:4b81:d3fd with SMTP id
- 4fb4d7f45d1cf-5e0b70fa0efmr4107878a12.13.1740161917702; Fri, 21 Feb 2025
- 10:18:37 -0800 (PST)
+	s=arc-20240116; t=1740161952; c=relaxed/simple;
+	bh=Es7ghDygD2xkMuhK4aDVfA9oFbdQaNPrdep7ueQDqz4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Jwmt3toh0YlCZKpMInM7Z7o6JOitZPYWnL4XlY7vUCVNjouKOdL+6Blmcm5y6GH/vTsXFUpICMeA3SCrXnzvlb0IP/Up+VdIRvC/MduMWKrU5q5IuoeERAfUpDX3DRw6TcCnNVacHmCf/5qY1kc4pRTzh6wvGi6bpaCrjpETu7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B6CCC4CED6;
+	Fri, 21 Feb 2025 18:19:10 +0000 (UTC)
+Date: Fri, 21 Feb 2025 13:19:10 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Martin Uecker <uecker@tugraz.at>, Dan Carpenter
+ <dan.carpenter@linaro.org>, Greg KH <gregkh@linuxfoundation.org>, Boqun
+ Feng <boqun.feng@gmail.com>, "H. Peter Anvin" <hpa@zytor.com>, Miguel Ojeda
+ <miguel.ojeda.sandonis@gmail.com>, Christoph Hellwig <hch@infradead.org>,
+ rust-for-linux <rust-for-linux@vger.kernel.org>, David Airlie
+ <airlied@gmail.com>, linux-kernel@vger.kernel.org, ksummit@lists.linux.dev
+Subject: Re: Rust kernel policy
+Message-ID: <20250221131910.5ddac0f3@batman.local.home>
+In-Reply-To: <CAHk-=wgg2A_iHNwf_JDjYJF=XHnKVGOjGp50FzVWniA2Z010bw@mail.gmail.com>
+References: <326CC09B-8565-4443-ACC5-045092260677@zytor.com>
+	<CANiq72m+r1BZVdVHn2k8XeU37ZeY6VT2S9KswMuFA=ZO3e4uvQ@mail.gmail.com>
+	<a7c5973a-497c-4f31-a7be-b3123bddb6dd@zytor.com>
+	<Z7VKW3eul-kGaIT2@Mac.home>
+	<2025021954-flaccid-pucker-f7d9@gregkh>
+	<4e316b01634642cf4fbb087ec8809d93c4b7822c.camel@tugraz.at>
+	<2025022024-blooper-rippling-2667@gregkh>
+	<1d43700546b82cf035e24d192e1f301c930432a3.camel@tugraz.at>
+	<2025022042-jot-favored-e755@gregkh>
+	<b9a5de64fe1ded2ad3111763f35af9901bd81cc4.camel@tugraz.at>
+	<caea3e79-78e6-4d98-9f3b-f8e7f6f00196@stanley.mountain>
+	<61a7e7db786d9549cbe201b153647689cbe12d75.camel@tugraz.at>
+	<20250221124304.5dec31b2@gandalf.local.home>
+	<CAHk-=wgg2A_iHNwf_JDjYJF=XHnKVGOjGp50FzVWniA2Z010bw@mail.gmail.com>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250221-netcons_fix_shadow-v1-1-dee20c8658dd@debian.org>
-In-Reply-To: <20250221-netcons_fix_shadow-v1-1-dee20c8658dd@debian.org>
-From: Eric Dumazet <edumazet@google.com>
-Date: Fri, 21 Feb 2025 19:18:26 +0100
-X-Gm-Features: AWEUYZlKwQ8cz6aUrcdxM4m4-YuXNW5btQgtHANtkvNmjfxNPFwqDaP_9afxZQ4
-Message-ID: <CANn89iJ0ePmPZW6c3XzUbm_kND1r_EPxz7xNHgroAZwzDjn5eA@mail.gmail.com>
-Subject: Re: [PATCH net-next] net: Remove shadow variable in netdev_run_todo()
-To: Breno Leitao <leitao@debian.org>
-Cc: "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Feb 21, 2025 at 6:51=E2=80=AFPM Breno Leitao <leitao@debian.org> wr=
-ote:
->
-> Fix a shadow variable warning in net/core/dev.c when compiled with
-> CONFIG_LOCKDEP enabled. The warning occurs because 'dev' is redeclared
-> inside the while loop, shadowing the outer scope declaration.
->
->         net/core/dev.c:11211:22: warning: declaration shadows a local var=
-iable [-Wshadow]
->                 struct net_device *dev =3D list_first_entry(&unlink_list,
->
->         net/core/dev.c:11202:21: note: previous declaration is here
->                 struct net_device *dev, *tmp;
->
-> Remove the redundant declaration since the variable is already defined
-> in the outer scope and will be overwritten in the subsequent
-> list_for_each_entry_safe() loop anyway.
->
-> Signed-off-by: Breno Leitao <leitao@debian.org>
+On Fri, 21 Feb 2025 10:07:42 -0800
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
-Reviewed-by: Eric Dumazet <edumazet@google.com>
+>          if (x < 0 || x >= 10) {
+> 
+> just because 'x' may in some cases be an unsigned entity is not worth
+> even discussing with.
+> 
+> Educate yourself. The "unsigned smaller than 0" warning is not valid.
+
+Bah, you're right. I wasn't looking at the x >= 10 part, and just fixed
+a bug in user space that was caused by an unsigend < 0, and my mind was
+on that.
+
+Sorry for the noise here.
+
+-- Steve
 
