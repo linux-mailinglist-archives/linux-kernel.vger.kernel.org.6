@@ -1,82 +1,77 @@
-Return-Path: <linux-kernel+bounces-525514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525516-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2845FA3F0BD
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:45:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F188A3F0BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:45:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F851422F49
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:44:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E0E9173954
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:45:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 578FB2046A6;
-	Fri, 21 Feb 2025 09:40:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D43D2045B7;
+	Fri, 21 Feb 2025 09:40:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gstzdaJD"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDA062040B0;
-	Fri, 21 Feb 2025 09:40:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AA3F205AC6;
+	Fri, 21 Feb 2025 09:40:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740130830; cv=none; b=lbrcW2kTdr0v8iljK2lCGYh5GQFE8SP0AzxP7wedxSQq+vRAiiYrg/eeocmUjyml9K1OzFk8tA2A+li5pdOoqI/x5pyCMgHLX7ei44IeUnyxeoFu3BdhrTEAYuJFwaPZC//zgIN64HXt0dY59qqKUIOeeO/ciDTuytmDBvOGEus=
+	t=1740130841; cv=none; b=Na7ySGeJd6J+ovUE8YDOViIBX/hW7aHmYWtgnwzEZGIenjFm3vt8O+LUCdLeVnmKIo7YKqgH0PgLqkM6Bl31M6fq1gAJB3LHGl5j530PoNMbchKL5z0ff6yVNTNXfX+EgAqdttyfRu+f++sTr1AnT82zPD5u0v82C1AQd6e0c1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740130830; c=relaxed/simple;
-	bh=tR31YKkCIF6OEIJ7x6IHgNoxRksDGG4qcBAMc7iNozs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VVMDdplMvZpYnB1Udl0C2BG5dBdEusIGUI5lEDZx3OWeyqcQcxSY9KOIzId87sajZgacJLHVNRWLyLwvcJ0hO88Tu6GPq4eeE7H+AktmR3meZKRfdIVBpzupolbG5tPo/P7lNQxcbjiJjX5FRjlpJ+Dt8dXWwG1S4Ic9qRxZH3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCD03C4CED6;
-	Fri, 21 Feb 2025 09:40:26 +0000 (UTC)
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	sudeep.holla@arm.com,
-	will@kernel.org,
-	sfr@canb.auug.org.au,
-	Beata Michalska <beata.michalska@arm.com>
-Cc: ionela.voinescu@arm.com,
-	yury.norov@gmail.com,
-	linux-next@vger.kernel.org,
-	sumitg@nvidia.com,
-	yang@os.amperecomputing.com,
-	vanshikonda@os.amperecomputing.com,
-	lihuisong@huawei.com,
-	zhanjie9@hisilicon.com,
-	ptsm@linux.microsoft.com
-Subject: Re: [PATCH v2] arm64: Utilize for_each_cpu_wrap for reference lookup
-Date: Fri, 21 Feb 2025 09:40:24 +0000
-Message-Id: <174013080894.2262863.4824734189364820879.b4-ty@arm.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250220091015.2319901-1-beata.michalska@arm.com>
-References: <20250220091015.2319901-1-beata.michalska@arm.com>
+	s=arc-20240116; t=1740130841; c=relaxed/simple;
+	bh=ATXQuhcsU1yRD4J9xK/fW6XCIpw54vLXsQ7cbzLGCDQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aHJgOUrfWHpAUEAI3LrT3nxqJyUtMGMkwk/fgCDAWBvPgpEM9PMNQpLEwwlWZwmZ4CRupXiVUID/DelsVcmKv6Ziw1qhmFzfItdXHYYAIpSex8V5Vh4wMwDgOhy406L2vDF93Y7HO+RIdpBJRLPTuilWw10R/BWvkRAbSV+DVCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gstzdaJD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B503AC4CED6;
+	Fri, 21 Feb 2025 09:40:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740130841;
+	bh=ATXQuhcsU1yRD4J9xK/fW6XCIpw54vLXsQ7cbzLGCDQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gstzdaJDHFaz8EX/LddhLXI1wdgZpBxj5pUIAuDJrI0nej4P6ecZonO1bHnvfEx/2
+	 b4zXWuRN+CVxu01lEH+lI1tMgyYVf9K5Und7+DMtIE68SfpAM0ui9PJWYF2GCidtrn
+	 GWI4sb057Gdejb9Yadk8ENx1uinX/2nn8eLWfQgN3BXYcRtgF4Pz+p+VbrrlEh5Xw2
+	 zoS9ffu28SIlQxOcGUfcTWZl3DHvW+Zwehy5IUlmkqJig0goJMkYvk4lmyA7VsbVE5
+	 7d9aaz8d6NzpToDhANs41odryQmDhsZEoUTrmsXxA+FnQFZUy7uSwxgw6re/kTinjO
+	 KzLGhUAGAdEPw==
+Date: Fri, 21 Feb 2025 10:40:38 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Kaustabh Chakraborty <kauschluss@disroot.org>
+Cc: Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>, 
+	"Guilherme G. Piccoli" <gpiccoli@igalia.com>, Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH v3 1/7] dt-bindings: hwinfo: samsung,exynos-chipid: add
+ exynos7870-chipid compatible
+Message-ID: <20250221-independent-oxpecker-of-piety-4fb305@krzk-bin>
+References: <20250219-exynos7870-v3-0-e384fb610cad@disroot.org>
+ <20250219-exynos7870-v3-1-e384fb610cad@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250219-exynos7870-v3-1-e384fb610cad@disroot.org>
 
-On Thu, 20 Feb 2025 09:10:15 +0000, Beata Michalska wrote:
-> While searching for a reference CPU within a given policy,
-> arch_freq_get_on_cpu relies on cpumask_next_wrap to iterate over
-> all available CPUs and to ensure each is verified only once.
-> Recent changes to cpumask_next_wrap will handle the latter no more,
-> so switching to for_each_cpu_wrap, which  preserves expected behavior
-> while ensuring compatibility with the updates.
-> Not to mention that when iterating over each CPU, using a dedicated
-> iterator is preferable to an open-coded loop.
-> 
-> [...]
+On Wed, Feb 19, 2025 at 12:33:11AM +0530, Kaustabh Chakraborty wrote:
+> Document the compatible string "samsung,exynos7870-chipid". The
+> registers are entirely compatible with "samsung,exynos4210-chipid".
 
-Applied to arm64 (for-next/amuv1-avg-freq), thanks!
+A bit odd (exynos7885 is compatible with 850), but I guess you really
+checked that.
 
-[1/1] arm64: Utilize for_each_cpu_wrap for reference lookup
-      https://git.kernel.org/arm64/c/20711efa91e8
-
--- 
-Catalin
+Best regards,
+Krzysztof
 
 
