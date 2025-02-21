@@ -1,122 +1,178 @@
-Return-Path: <linux-kernel+bounces-525000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 854AAA3E9AC
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 02:10:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F1FCA3E9AA
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 02:09:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E2CE188E580
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 01:11:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E15934201A2
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 01:09:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB82A35973;
-	Fri, 21 Feb 2025 01:10:50 +0000 (UTC)
-Received: from zg8tmtyylji0my4xnjqumte4.icoremail.net (zg8tmtyylji0my4xnjqumte4.icoremail.net [162.243.164.118])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F186EEC8;
-	Fri, 21 Feb 2025 01:10:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.164.118
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4387178F44;
+	Fri, 21 Feb 2025 01:09:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eiBCLOx4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 890B470803;
+	Fri, 21 Feb 2025 01:09:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740100250; cv=none; b=L4oeFtoyRQIzWKbqpVRKLzWakoRCai/8EFlGAoNTNtb7zH6aTkU2YD89RZygTjoje6VDZchen8bLueIC19Aa+fAqfLGGQ0aFq7p/mhFVAtWSGkUMX3xlTITnMHGfY+w3a8vl0aLSzbjigTZIOfJO8l6sgsHXJk3EyaQ/s2GIlWI=
+	t=1740100188; cv=none; b=KI+3BDwuBjRlhAAX28mKHuwktxxME2sJs0M1zWj09DY+5CE+/CqacdESBeHkyIu+WEFQ0OX02E15qhORQCLC/0yLc7jKBMyBdzGqyRUXsJ20EfWEkSeEMtA4zuC2x6j9nsxCZxPj/5Q1hQ47uFbby4jhv1O4lTpG/pnXVFal7rQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740100250; c=relaxed/simple;
-	bh=yskr+PmFMuRPFwrqPgixSoheIXchw7FPee0esHDRGTU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=h4bnywoxbsYJ8vuq7oifWmYWBl0UnMXbLFgUrHBTipUaYGzYv2CgF5JakoW32fTmNUJzBWMTkE+QnXbGYunNDn7rNw7DA9Mo4FQhWL9HkagK8V8QcqKrK7KApx3hrouC83HWhuRy1AYMfr14Crw79BNzXlnuylQ5jjlW+A/sUWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytium.com.cn; spf=pass smtp.mailfrom=phytium.com.cn; arc=none smtp.client-ip=162.243.164.118
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytium.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phytium.com.cn
-Received: from prodtpl.icoremail.net (unknown [10.12.1.20])
-	by hzbj-icmmx-7 (Coremail) with SMTP id AQAAfwA3xsiD0rdnhFxEBA--.57122S2;
-	Fri, 21 Feb 2025 09:10:28 +0800 (CST)
-Received: from localhost.localdomain (unknown [219.142.137.151])
-	by mail (Coremail) with SMTP id AQAAfwAXGYV_0rdnkdYtAA--.966S2;
-	Fri, 21 Feb 2025 09:10:25 +0800 (CST)
-From: Zhiyuan Dai <daizhiyuan@phytium.com.cn>
-To: cassel@kernel.org
-Cc: bhelgaas@google.com,
-	christian.koenig@amd.com,
-	daizhiyuan@phytium.com.cn,
-	helgaas@kernel.org,
+	s=arc-20240116; t=1740100188; c=relaxed/simple;
+	bh=FXVRulunC3wqJ1fgi01DQJm3OVjZa45dNnmystm3rDQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Hrj7W8tL6A3xB9Wn8/m5aJ9b8spiAYZaQ6FyhVYOQsaLq1AKBoWS+16CYNlCNavXVXEwXyboGTq0+bu64HasAKB68sAbAu/f2G6+dC0ATCvH6K3byf50jjRPhYNxomqaPBmtjnlitRc7J4bIauwteNyLht7EIqZZBv9ni2J8uKM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eiBCLOx4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C87D5C4CED1;
+	Fri, 21 Feb 2025 01:09:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740100188;
+	bh=FXVRulunC3wqJ1fgi01DQJm3OVjZa45dNnmystm3rDQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=eiBCLOx4Aax3YcIDiwPnOhNjtpqwmigZnCNGLzO8W2babK0oMVOqovPyiArugctyW
+	 Vs+xZhITFIfOALSqXDVaznWz4lPZN0EOIatr58G6M/FE7VR+jdrc1nBJ75bTXfzBRc
+	 qgcZhz5tY39vow1PuBrLn6CJz+wfAqTmvERHUH3Gc2GhGKF/CfOjAKRYUElLcrqfKC
+	 +aAhd62gba85E3JxsCHHFuYWjMkJJM8Ub3AYuT0VaQ+i3Aa1Z8uFO0hCYxScbcPkXg
+	 Htk8TD44PhhLRSGuKc/WRTD7DihwxbZs2iU3gmF7/3Hjntdf1K+LvUUQyk2yR7c4yq
+	 cE0kkldNgI3GA==
+From: SeongJae Park <sj@kernel.org>
+To: SeongJae Park <sj@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	damon@lists.linux.dev,
+	kernel-team@meta.com,
+	linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org
-Subject: [PATCH v3] PCI: Update Resizable BAR Capability Register fields
-Date: Fri, 21 Feb 2025 09:09:21 +0800
-Message-ID: <20250221010951.361570-1-daizhiyuan@phytium.com.cn>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <Z7cjS7iuX655O7b3@ryzen>
-References: <Z7cjS7iuX655O7b3@ryzen>
+	linux-mm@kvack.org
+Subject: Re: [RFC PATCH 0/8] mm/damon: auto-tune aggregation interval
+Date: Thu, 20 Feb 2025 17:09:44 -0800
+Message-Id: <20250221010944.40257-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250213014438.145611-1-sj@kernel.org>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:AQAAfwAXGYV_0rdnkdYtAA--.966S2
-X-CM-SenderInfo: hgdl6xpl1xt0o6sk53xlxphulrpou0/
-Authentication-Results: hzbj-icmmx-7; spf=neutral smtp.mail=daizhiyuan
-	@phytium.com.cn;
-X-Coremail-Antispam: 1Uk129KBjvJXoW7ArWkArWDGF1kWw48Gr47XFb_yoW8Kry5pr
-	4DCa97Kr4rKFW29w1kZ3W0yw45K39rZFy5CrWI93sruFnIk3Z2qF4DKay5ta47Jrs7ZF4Y
-	qFnFv345u3s8JaUanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUj1kv1TuYvTs0mT0YCTnIWj
-	DUYxn0WfASr-VFAU7a7-sFnT9fnUUIcSsGvfJ3UbIYCTnIWIevJa73UjIFyTuYvj4RJUUU
-	UUUUU
 
-PCI Express Base Spec r6.0 defines BAR size up to 8 EB (2^63 bytes),
-but supporting anything bigger than 128TB requires changes to 
-pci_rebar_get_possible_sizes() to read the additional Capability bits 
-from the Control register.
+On Wed, 12 Feb 2025 17:44:30 -0800 SeongJae Park <sj@kernel.org> wrote:
 
-If 8EB support is required, callers will need to be updated to handle u64 
-instead of u32. For now, support is limited to 128TB, and support for 
-sizes greater than 128TB can be deferred to a later time.
+> DAMON requires time-consuming and repetitive aggregation interval
+> tuning.  Introduce a feature for automating it using a feedback loop
+> that aims an amount of observed access events, like auto-exposing
+> cameras.
+[...]
+> Aim-oriented Feedback-driven Auto-Tuning
+> =========================================
+[...]
+> we design an automation of aggregation
+> interval tuning, in a way similar to that of camera auto-exposure
+> feature.  It defines the amount of interesting information as the ratio
+> of captured access events to total capturing attempts of single snapshot,
+> or more technically speaking, the ratio of positive access check samples
+> to total samples within the aggregation interval.  It allows the users
+> to set the target value of the ratio.  Once the target is set, the
+> automation periodically measures the current value of the ratio and
+> increase or decrease the aggregation interval if the ratio value is
+> lower or higher than the target.  The amount of the change is proportion
+> to the distance between current value and the target value.
+> 
+> To avoid auto-tuning goes too long way, let users set minimum and
+> maximum aggregation interval time.  Changing only aggregation interval
+> while sampling interval is kept make the maximum level of access
+> frequency in each snapshot, or discernment of regions inconsistent.
+> Also, unnecessarily short sampling interval causes meaningless
+> monitoring overhed.  The automation therefore adjusts the sampling
+> interval together with aggregation interval, while keeping the ratio
+> between the two intervals.  Users can set the ratio, or the discernment.
 
-Signed-off-by: Zhiyuan Dai <daizhiyuan@phytium.com.cn>
-Reviewed-by: Christian König <christian.koenig@amd.com>
-Reviewed-by: Niklas Cassel <cassel@kernel.org>
----
- drivers/pci/pci.c             | 4 ++--
- include/uapi/linux/pci_regs.h | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+I received a concern about a corner case of the metric (positive access check
+samples ratio) offline.  In short, DAMON might find a few discontiguous
+extremely hot and small regions and let those achieve the target positive
+access check samples ratio, even with very short aggregation interval.
 
-diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-index 661f98c6c63a..77b9ceefb4e1 100644
---- a/drivers/pci/pci.c
-+++ b/drivers/pci/pci.c
-@@ -3752,7 +3752,7 @@ static int pci_rebar_find_pos(struct pci_dev *pdev, int bar)
-  * @bar: BAR to query
-  *
-  * Get the possible sizes of a resizable BAR as bitmask defined in the spec
-- * (bit 0=1MB, bit 19=512GB). Returns 0 if BAR isn't resizable.
-+ * (bit 0=1MB, bit 31=128TB). Returns 0 if BAR isn't resizable.
-  */
- u32 pci_rebar_get_possible_sizes(struct pci_dev *pdev, int bar)
+I was able to show the corner case indeed.  It started to increase the
+aggregatiopn interval at the beginning, but it gets reduced as time goes by and
+region boundaries get converged.  It was showing a few very hot 4-8 KiB memory
+regions that showing maximum nr_accesses even with the low aggregation
+interval.  They made the target samples ratio on their own.  So most of other
+regions looked pretty cold.
+
+This means the logic is implemented and designed and work as expected.  But,
+the resulting snapshot is not what we wanted.  We wanted the snapshot to show
+practical amount of differences between regions that we can utilize for better
+memory management, not the dark and cold space with a few flaming but tiny red
+dots.  It might seem ok if that's the true access pattern of the workload.  And
+that's true.  Some workloads would have really biased access pattern that we
+cannot make useful memory management decision.  But, if that's the case,
+according to our tuning theory, the logic should have maximum aggregation
+interval.
+
+I also worried about this corner case when starting the design.  I hence
+considered[1] having two feedback loop goals, namely the positive access check
+samples ratio and total size of >0 nr_accesses regions.  But I ended up making
+this RFC with the first metric only for starting with simpler design.  I'm
+still bit skeptical about having multiple goals, and looking for a better
+single metric.
+
+Now I'm thinking observed total access events ratio might make sense to be used
+instead.  That is, DAMON's regions concept assumes every byte of single region
+shares similar access frequency.  For example, having a DAMON region of size 4
+KiB and nr_accesses 20 can be interpreted as DAMON has observed 4 * 1024 * 20
+access events.  For example, below diff on top of this patch series would
+explain what I'm saying about better than my text.
+
+I will do more tests and share more findings on this thread until I post the
+next spin of this patch series.
+
+
+diff --git a/mm/damon/core.c b/mm/damon/core.c
+index 3c1f401fcbbb..0635882751cc 100644
+--- a/mm/damon/core.c
++++ b/mm/damon/core.c
+@@ -1428,19 +1428,20 @@ static unsigned long damon_get_intervals_adaptation_bp(struct damon_ctx *c)
  {
-@@ -3800,7 +3800,7 @@ int pci_rebar_get_current_size(struct pci_dev *pdev, int bar)
-  * pci_rebar_set_size - set a new size for a BAR
-  * @pdev: PCI device
-  * @bar: BAR to set size to
-- * @size: new size as defined in the spec (0=1MB, 19=512GB)
-+ * @size: new size as defined in the spec (0=1MB, 31=128TB)
-  *
-  * Set the new size of a BAR as defined in the spec.
-  * Returns zero if resizing was successful, error code otherwise.
-diff --git a/include/uapi/linux/pci_regs.h b/include/uapi/linux/pci_regs.h
-index 1601c7ed5fab..ce99d4f34ce5 100644
---- a/include/uapi/linux/pci_regs.h
-+++ b/include/uapi/linux/pci_regs.h
-@@ -1013,7 +1013,7 @@
- 
- /* Resizable BARs */
- #define PCI_REBAR_CAP		4	/* capability register */
--#define  PCI_REBAR_CAP_SIZES		0x00FFFFF0  /* supported BAR sizes */
-+#define  PCI_REBAR_CAP_SIZES		0xFFFFFFF0  /* supported BAR sizes */
- #define PCI_REBAR_CTRL		8	/* control register */
- #define  PCI_REBAR_CTRL_BAR_IDX		0x00000007  /* BAR index */
- #define  PCI_REBAR_CTRL_NBAR_MASK	0x000000E0  /* # of resizable BARs */
--- 
-2.43.0
+ 	struct damon_target *t;
+ 	struct damon_region *r;
+-	unsigned long nr_regions = 0, access_samples = 0;
++	unsigned long sz_regions = 0, heats = 0;
+ 	struct damon_intervals_goal *goal = &c->attrs.intervals_goal;
+-	unsigned long max_samples, target_samples, score_bp;
++	unsigned long max_heats, target_heats, score_bp;
+ 	unsigned long adaptation_bp;
 
+ 	damon_for_each_target(t, c) {
+-		nr_regions = damon_nr_regions(t);
+-		damon_for_each_region(r, t)
+-			access_samples += r->nr_accesses;
++		damon_for_each_region(r, t) {
++			sz_regions += r->ar.end - r->ar.start;
++			heats += (r->ar.end - r->ar.start) * r->nr_accesses;
++		}
+ 	}
+-	max_samples = nr_regions * c->attrs.aggr_samples;
+-	target_samples = max_samples * goal->samples_bp / 10000;
+-	score_bp = access_samples * 10000 / target_samples;
++	max_heats = sz_regions * c->attrs.aggr_samples;
++	target_heats = max_heats * goal->samples_bp / 10000;
++	score_bp = heats * 10000 / target_heats;
+ 	adaptation_bp = damon_feed_loop_next_input(100000000, score_bp) /
+ 		10000;
+ 	/*
+
+[1] https://git.kernel.org/sj/damon-hack/c/b01238ded409828bc427cd037095686483d39faf
+
+
+Thanks,
+SJ
+
+[...]
 
