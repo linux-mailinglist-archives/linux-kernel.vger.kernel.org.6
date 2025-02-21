@@ -1,127 +1,165 @@
-Return-Path: <linux-kernel+bounces-525030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BE93A3E9F4
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 02:27:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F429A3E9F6
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 02:28:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6B52A7A8AF7
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 01:26:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA1777AAA66
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 01:27:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63FEA6088F;
-	Fri, 21 Feb 2025 01:26:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XzSceNiJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25A006088F;
+	Fri, 21 Feb 2025 01:28:01 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5572A94A;
-	Fri, 21 Feb 2025 01:26:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A940B288B1;
+	Fri, 21 Feb 2025 01:27:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740101217; cv=none; b=NTVwP8bQ3noiwhiYUd2f5u4Lqxa9Cc5m8kccU2WiQzzfM/GmvNH8Jz0f9l+qFB6uKaFQcGHwGxz6kSJgiFT7o1zhlid9IqTGaaCZ7DDrNt62+DuhRPaagAQFNnVB46WdvULMAAaNDM8z/0nuu8yG8EdTPecJrBB3Et5K7eTBu4s=
+	t=1740101280; cv=none; b=oPT4v4sS3Iu8tyGNWYP0e+l6UXKMmREZXnNcOlWIAQLe7k5B85FfXrUmMwrm99f96nmipbhSbvK8xAJJ1ChwKW8x27XI7jKcIOzafFuh6JZyA1Et4BWHwzIX4d4mnHvpubou4SXfaAJ1p6lY7ZBhLaSNxLynpvwpGgfWpUiz0ZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740101217; c=relaxed/simple;
-	bh=z0ba38Mwb/77bp059pfXbDuObMcVMksMDAqKXmfGcuQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pTkEwYoBl42WS2C3Hsdy0N97EMY5ofkBFQGOCje9gfuXnIX3meuffdC0LU8USdfytNXlDPb8/QPYQ9YbHTu9eR8oGqUfU58oQ5jMPZOoXGPt7F7BI/QctVODzpqIpAbz33iofi6QqUkdClZH6Q93ZahpsWN0Bgt0oi7Dohj+XaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XzSceNiJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18B53C4CED1;
-	Fri, 21 Feb 2025 01:26:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740101217;
-	bh=z0ba38Mwb/77bp059pfXbDuObMcVMksMDAqKXmfGcuQ=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=XzSceNiJkcaKOCLQOOyMbKjfo8aHXTm2791fyHjotFCHhaqLZexqw1cgzC5oUxzAk
-	 n8NAPEGB3c99/sBBxy5L8js2OQ40jOVqadWS04zy4Qh7nZEFPUpM86PRwGVvXq1lji
-	 Oo8KHwWErPxmuEX63+1FTAIQyo4oc+VUSvjk4EHIpWP1ibtSggZ6eKfiCReM00gYvo
-	 MtjVei1j7h3S8loJ3mRY6ymkVujd1uhl9kDYOjt9+pItFUb8Sti1Db0S24emQv06js
-	 7+I21imZSShsxle0rXeih85mpde7I+E/5SSihDB+zaYo647NeEtFXCL/UlY59NF0vl
-	 tFDvhcJqzxJ5w==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id A122DCE04E4; Thu, 20 Feb 2025 17:26:56 -0800 (PST)
-Date: Thu, 20 Feb 2025 17:26:56 -0800
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Marco Elver <elver@google.com>
-Cc: Alexander Potapenko <glider@google.com>,
-	Bart Van Assche <bvanassche@acm.org>,
-	Bill Wendling <morbo@google.com>, Boqun Feng <boqun.feng@gmail.com>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Ingo Molnar <mingo@kernel.org>, Jann Horn <jannh@google.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Waiman Long <longman@redhat.com>, Will Deacon <will@kernel.org>,
-	kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev, rcu@vger.kernel.org,
-	linux-crypto@vger.kernel.org
-Subject: Re: [PATCH RFC 15/24] rcu: Support Clang's capability analysis
-Message-ID: <772d8ec7-e743-4ea8-8d62-6acd80bdbc20@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20250206181711.1902989-1-elver@google.com>
- <20250206181711.1902989-16-elver@google.com>
- <a1483cb1-13a5-4d6e-87b0-fda5f66b0817@paulmck-laptop>
- <CANpmjNOPiZ=h69V207AfcvWOB=Q+6QWzBKoKk1qTPVdfKsDQDw@mail.gmail.com>
- <3f255ebb-80ca-4073-9d15-fa814d0d7528@paulmck-laptop>
- <CANpmjNNHTg+uLOe-LaT-5OFP+bHaNxnKUskXqVricTbAppm-Dw@mail.gmail.com>
+	s=arc-20240116; t=1740101280; c=relaxed/simple;
+	bh=lQq0ttJjnW//LXZSgipUY+T8kMfxxK3nRLvz98+CNIM=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=dGbJCPl/xB5yySMs2JgdVGzVvwQIdcElLu8PD+eOuUMbZoaJ+Ineq8uRpP20GO0Srv2wm1tsMiPgWu3Krl413keBX9XYrUAvs2A3hzJ4Jb/3XNs8TiVqP+Uq7TfFZYbpv8CIzK3k42V5R5rYr6nm4haSRK3oHlzm6QVynVreEp4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4YzXYj4wz6z4f3jqb;
+	Fri, 21 Feb 2025 09:27:37 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 0C0F31A0DB0;
+	Fri, 21 Feb 2025 09:27:54 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP4 (Coremail) with SMTP id gCh0CgD3Wl+Y1rdnkwrDEQ--.63559S3;
+	Fri, 21 Feb 2025 09:27:53 +0800 (CST)
+Subject: Re: [BUG] possible race between md_free_disk and md_notify_reboot
+To: Guillaume Morin <guillaume@morinfr.org>, Yu Kuai <yukuai1@huaweicloud.com>
+Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
+ song@kernel.org, "yukuai (C)" <yukuai3@huawei.com>
+References: <ad286d5c-fd60-682f-bd89-710a79a710a0@huaweicloud.com>
+ <82BF5B2B-7508-47DB-9845-8A5F19E0D0E5@morinfr.org>
+ <53e93d6e-7b73-968b-c5f2-92d1b124ecd5@huawei.com>
+ <Z7alWBZfQLlP-EO7@bender.morinfr.org>
+ <1e288eb5-c67b-c9ca-c57e-2855b18785b1@huaweicloud.com>
+ <6748f138-ad52-b7c5-ac53-1c7fa6fab9b7@huaweicloud.com>
+ <Z7cwexr7tLRIOlNx@bender.morinfr.org>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <40203778-f217-6789-9c83-ebed3720627b@huaweicloud.com>
+Date: Fri, 21 Feb 2025 09:27:52 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CANpmjNNHTg+uLOe-LaT-5OFP+bHaNxnKUskXqVricTbAppm-Dw@mail.gmail.com>
+In-Reply-To: <Z7cwexr7tLRIOlNx@bender.morinfr.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgD3Wl+Y1rdnkwrDEQ--.63559S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxur18WFyUWw4rWr4xWryUWrg_yoW5Gr1rpF
+	4kJFZ5AFyDJrWrJry7Jw1DuryrZw18t34DCrW7GF18Ar1UXr1jqr13Xr4jgr1DGw48Xr1U
+	tw1Utr15ZryUJrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvl14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
+	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
+	jxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr
+	1lF7xvr2IY64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7Mxk0xIA0c2IEe2xFo4CEbIxv
+	r21lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr
+	0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY
+	17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcV
+	C0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY
+	6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvj
+	DU0xZFpf9x0JUBVbkUUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On Fri, Feb 21, 2025 at 01:16:00AM +0100, Marco Elver wrote:
-> On Thu, 20 Feb 2025 at 23:36, Paul E. McKenney <paulmck@kernel.org> wrote:
-> [...]
-> > Suppose that one function walks an RCU-protected list, calling some
-> > function from some other subsystem on each element.  Suppose that each
-> > element has another RCU protected list.
-> >
-> > It would be good if the two subsystems could just choose their desired
-> > flavor of RCU reader, without having to know about each other.
-> 
-> That's what I figured might be the case - thanks for clarifying.
-> 
-> > > Another problem was that if we want to indicate that "RCU" read lock
-> > > is held, then we should just be able to write
-> > > "__must_hold_shared(RCU)", and it shouldn't matter if rcu_read_lock()
-> > > or rcu_read_lock_bh() was used. Previously each of them acquired their
-> > > own capability "RCU" and "RCU_BH" respectively. But rather, we're
-> > > dealing with one acquiring a superset of the other, and expressing
-> > > that is also what I attempted to solve.
-> > > Let me rethink this...
-> >
-> > Would it work to have just one sort of RCU reader, relying on a separate
-> > BH-disable capability for the additional semantics of rcu_read_lock_bh()?
-> 
-> That's what I've tried with this patch (rcu_read_lock_bh() also
-> acquires "RCU", on top of "RCU_BH"). I need to add a re-entrancy test,
-> and make sure it doesn't complain about that. At a later stage we
-> might also want to add more general "BH" and "IRQ" capabilities to
-> denote they're disabled when held, but that'd overcomplicate the first
-> version of this series.
+Hi,
 
-Fair enough!  Then would it work to just do "RCU" now, and ad the "BH"
-and "IRQ" when those capabilities are added?
+在 2025/02/20 21:39, Guillaume Morin 写道:
+> On 20 Feb 19:55, Yu Kuai wrote:
+>>
+>>> I just take a quick look, the problem looks obviously to me, see how
+>>> md_seq_show() handle the iteration.
+>>>
+>>> diff --git a/drivers/md/md.c b/drivers/md/md.c
+>>> index 465ca2af1e6e..7c7a58f618c1 100644
+>>> --- a/drivers/md/md.c
+>>> +++ b/drivers/md/md.c
+>>> @@ -9911,8 +9911,11 @@ static int md_notify_reboot(struct notifier_block
+>>> *this,
+>>>                           mddev_unlock(mddev);
+>>>                   }
+>>>                   need_delay = 1;
+>>> -               mddev_put(mddev);
+>>> -               spin_lock(&all_mddevs_lock);
+>>> +
+>>> +               spin_lock(&all_mddevs_lock)
+>>> +               if (atomic_dec_and_test(&mddev->active))
+>>> +                       __mddev_put(mddev);
+>>> +
+>>>           }
+>>>           spin_unlock(&all_mddevs_lock);
+>>
+>> While cooking the patch, this is not enough, list_for_each_entry_safe()
+>> should be replaced with list_for_each_entry() as well.
+>>
+>> Will send the patch soon, with:
+>>
+>> Reported-by: Guillaume Morin <guillaume@morinfr.org>
+> 
+> Thank you! I just saw the patch and we are going to test it and let you
+> know.
+> 
+> The issue with the next pointer seems to be fixed with your change.
+> Though I am still unclear how the 2nd potential issue I mentioned -
+> where the current item would be freed concurrently by mddev_free() - is
+> prevented. I am not finding anything in the code that seems to prevent a
+> concurrent call to mddev_free() for the current item in the
+> list_for_each_entry() loop (and therefore accessing mddev after the
+> kfree()).
+> 
+> I understand that we are getting a reference through the active atomic
+> in mddev_get() under the lock in md_notify_reboot() but how is that
+> preventing mddev_free() from freeing the mddev as soon as we release the
+> all_mddevs_lock in the loop?
+> 
+> I am not not familiar with this code so I am most likely missing
+> osmething but if you had the time to explain, that would be very
+> helpful.
 
-							Thanx, Paul
+I'm not quite sure what you're confused. mddev lifetime are both
+protected by lock and reference.
+
+In this case:
+
+hold lock
+get first mddev
+release lock
+// handle first mddev
+
+hold lock
+release mddev
+get next mddev
+release lock
+-> mddev can be freed now
+// handle the next mddev
+...
+
+Thanks,
+Kuai
+
+> 
+> TIA
+> 
+> Guillaume.
+> 
+
 
