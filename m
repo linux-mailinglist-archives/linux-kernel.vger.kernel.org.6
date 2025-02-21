@@ -1,238 +1,153 @@
-Return-Path: <linux-kernel+bounces-526567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9ABE4A40062
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 21:07:16 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBF6BA40065
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 21:07:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6E3B19C3DE1
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 20:07:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96D8C4233F0
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 20:07:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79A8A253349;
-	Fri, 21 Feb 2025 20:07:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0732C25333E;
+	Fri, 21 Feb 2025 20:07:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="EDPpOrWZ"
-Received: from MA0PR01CU012.outbound.protection.outlook.com (mail-southindiaazolkn19011035.outbound.protection.outlook.com [52.103.67.35])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B2+qfeAq"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9FC345948;
-	Fri, 21 Feb 2025 20:07:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.67.35
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740168427; cv=fail; b=NDBJmOfGaSJTocC3QuUR1sA1qte+fkeitVBeVOCtBMNxZ8a/Ylq7AQ35bZryrfFZ1pWlQOZ8GjLwQAogkTl3g1jsXhOrQdUEb45TLrNRUAMdIL0a9VqXEpQ/ekG3R1fxp7DZclcSzbMUeH/rVtke8g9vROnHaQ6+N8BEU9Sr3y8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740168427; c=relaxed/simple;
-	bh=/lmYSZ+NrnHgnm9knxMUxg00g2w1N4jVpB/20xGNG4w=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=K88Z+RXYd5UqZaYm+algZlevgTcGYa4GWJkx3kzU9yTCjHPGcZ54/Bssxht78w01OM2csKLlpFRbeiDWvPzyFfcXL1D4Y9zAN6UdARdZBOM02V2EpK+L2TI8mMGtgdQ2y1witVp+b78raZMSTHSUgo0sprIMYNeW04gEKTmbXV0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=EDPpOrWZ; arc=fail smtp.client-ip=52.103.67.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ElckfelCnYletNAcR9yZlUuq8s1+rGGAa2J2myg/fAseX0Sq68pFkb8QeT9iEQNPMvzIabLQelu6g/bR94l1kQ+JfJ/TGxf3vwMiWcfkuliweNn1tpFCUD9Iy9Z9UhJLADo0/p+8lWgky18LuEb6+SDOFCEjEeUu0Orh9vLQI17gtfDSwHl8PEsZHQdsTy9dUj0YMQDT1HPEy6ueSf2ABWRZABu3L1TGFR+BmLRQLNGzklaBWSW1sDOTNOTz3N2mnUCn7Y0lbQmO+8ov2Y1ziFeCW7S9LvV9rvMfU1toJo/krdudULAnHRTQQPC5d3WxZdCpQguuXqz++h1+JvmIWQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/lmYSZ+NrnHgnm9knxMUxg00g2w1N4jVpB/20xGNG4w=;
- b=LamarteMzanLKAI0qb06NxxS0IBDQKbFthAZ+3N1KvAvKnvyj911j9b4yC5Gc2gnUJP1msv1pwMRyxWsg5H5L3go0qf8Q1zZycAt4XBlMqpjguU3bWufRcS02SieEsclJY78paPeYGBt4PKFHSG8A274jod8ynYRnpBF18JnuVSVRRqEcsO1Tn2nphyYisq7LPVFswcJWgWhIj/kXQ/JKxyGCPx+HzIRwRkMFty1GHJ+xGXFN1CGJ2FAKZ3LUgT3fCl/TxrqqqS8taYg4ozUR1e+ahJntaIskPrg57ymtvohEz6SOMG96lDK/28O8PWiYjOYvOQrV66hGYGBoJNgXg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/lmYSZ+NrnHgnm9knxMUxg00g2w1N4jVpB/20xGNG4w=;
- b=EDPpOrWZgbgIjgXzFrWbefFqiywsBWOXEHUzk5M3Y/txy0Nhd35mp2nroiDON79mncUR+bWZAwIO9lLqGxFr4RX/0OhAfVjxSmLt1AD/9XkKuV8TYgUfjDMklCgSQRGVsZsrZ5g0V+vs6wS05LGFikOJMhzrwfEksjXwltGZP37vVcQf91PiesOqQC6UibLWqluSZ48pmdI2we+dB0znbQNYOicTmeqSD/+rVOQ82sPhr5pUxifzCFwZkrqrBirr1jn2iYXzCG6XdA6ZOvkvjlT0MaEItukwr82Ij4hoIXOSrGuS0is9LS2zmwtkaoSB7YeyTGr2kqP1Ycs0/Vh96g==
-Received: from PNZPR01MB4478.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c01:1d::9)
- by MA0PR01MB9077.INDPRD01.PROD.OUTLOOK.COM (2603:1096:a01:115::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.18; Fri, 21 Feb
- 2025 20:06:51 +0000
-Received: from PNZPR01MB4478.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::27a3:3d7e:30be:e1d1]) by PNZPR01MB4478.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::27a3:3d7e:30be:e1d1%3]) with mapi id 15.20.8466.016; Fri, 21 Feb 2025
- 20:06:51 +0000
-From: Aditya Garg <gargaditya08@live.com>
-To: "andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>
-CC: "pmladek@suse.com" <pmladek@suse.com>, "rostedt@goodmis.org"
-	<rostedt@goodmis.org>, "linux@rasmusvillemoes.dk" <linux@rasmusvillemoes.dk>,
-	"senozhatsky@chromium.org" <senozhatsky@chromium.org>, "corbet@lwn.net"
-	<corbet@lwn.net>, "maarten.lankhorst@linux.intel.com"
-	<maarten.lankhorst@linux.intel.com>, "mripard@kernel.org"
-	<mripard@kernel.org>, "tzimmermann@suse.de" <tzimmermann@suse.de>,
-	"airlied@gmail.com" <airlied@gmail.com>, "simona@ffwll.ch" <simona@ffwll.ch>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>, "apw@canonical.com"
-	<apw@canonical.com>, "joe@perches.com" <joe@perches.com>,
-	"dwaipayanray1@gmail.com" <dwaipayanray1@gmail.com>,
-	"lukas.bulwahn@gmail.com" <lukas.bulwahn@gmail.com>,
-	"sumit.semwal@linaro.org" <sumit.semwal@linaro.org>,
-	"christian.koenig@amd.com" <christian.koenig@amd.com>, "kekrby@gmail.com"
-	<kekrby@gmail.com>, "admin@kodeit.net" <admin@kodeit.net>, Orlando
- Chamberlain <orlandoch.dev@gmail.com>, "evepolonium@gmail.com"
-	<evepolonium@gmail.com>, "linux-doc@vger.kernel.org"
-	<linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org"
-	<dri-devel@lists.freedesktop.org>, "linux-media@vger.kernel.org"
-	<linux-media@vger.kernel.org>, "linaro-mm-sig@lists.linaro.org"
-	<linaro-mm-sig@lists.linaro.org>, Hector Martin <marcan@marcan.st>,
-	"linux@armlinux.org.uk" <linux@armlinux.org.uk>, "asahi@lists.linux.dev"
-	<asahi@lists.linux.dev>, Sven Peter <sven@svenpeter.dev>, Janne Grunau
-	<j@jannau.net>
-Subject: Re: [PATCH v2 2/3] lib/vsprintf: Add support for generic FOURCCs by
- extending %p4cc
-Thread-Topic: [PATCH v2 2/3] lib/vsprintf: Add support for generic FOURCCs by
- extending %p4cc
-Thread-Index: AQHbg7X/VQv9Od0O+UavMLVdMg72b7NR4q0AgABFegCAAAi3Xg==
-Date: Fri, 21 Feb 2025 20:06:51 +0000
-Message-ID:
- <PNZPR01MB4478C12B911E293C645E6EA6B8C72@PNZPR01MB4478.INDPRD01.PROD.OUTLOOK.COM>
-References: <716BCB0A-785B-463A-86C2-94BD66D5D22E@live.com>
- <C66F35BB-2ECC-4DB8-8154-DEC5177967ED@live.com>
- <Z7ibRHb2FS1cTx0O@smile.fi.intel.com>
- <9C31901A-2C5C-478B-BB1C-D4705939EE4D@live.com>
-In-Reply-To: <9C31901A-2C5C-478B-BB1C-D4705939EE4D@live.com>
-Accept-Language: en-IN, en-US
-Content-Language: en-IN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PNZPR01MB4478:EE_|MA0PR01MB9077:EE_
-x-ms-office365-filtering-correlation-id: d80bca38-5a88-4612-b025-08dd52b347d9
-x-microsoft-antispam:
- BCL:0;ARA:14566002|15080799006|8060799006|7092599003|461199028|19110799003|8062599003|102099032|3412199025|440099028|41001999003;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?YILHmyBi5ewI+jC4b4ZgolFccMcwXbpT5nzcclMAnH5SLH+qFRwxbhKIoHXk?=
- =?us-ascii?Q?UlBhnSUkGPx7KBgwEm3c1PQKcI6UBQjhFYVBfwz+Salwl2VPhKFACxQDLYqn?=
- =?us-ascii?Q?bP3zVFOUK4iopQaixQGWeA+CH50i5AV/bumK3WgyGJY+Lup4y8KFjP6y6GeL?=
- =?us-ascii?Q?4n2NxVlW9Ln20PvEOqReXR3T9RCl6bKEKBDSfBXLJ2h9O+/RP4eETj73yl+Y?=
- =?us-ascii?Q?7ROwWrRZ6KUjPQZxYX8UvbVtF+x22QCpW/WsdnMzyDocV7wqynd2LPZQR4no?=
- =?us-ascii?Q?F9xMeZI9JEudYXOWBEfjLig43cfdzIq6zlgeI7aTnucNBaRFKFW9WGlEmJkf?=
- =?us-ascii?Q?oHFVu4ZZPwXEi9uR0qGu3FRhWCoxtmEpXWf9EGSJEnFdtaLPFxPDAE78zyYE?=
- =?us-ascii?Q?V40WFCUk5Uwr2jWpUMMWLlMwjCOePfFupjF3z1ui94eqyKDJt63IoX9ZQHxB?=
- =?us-ascii?Q?kktw/vMG5Cb/ZbA6onCV1+NRN+kCLFLG5Gbju7wgHYYNJSTZQTEANRnkFVqo?=
- =?us-ascii?Q?ODTB8uHXhbZ/UyDK4E3sJk4CnZ65RaW7nXFLoV1YSPIz3Of8SRenNEwx/xT+?=
- =?us-ascii?Q?QDVt2ZQintO3VgMBBkxnJXG/cseB9zyyogiwSz6jGhoV8QdsGoVRqzL89Fyd?=
- =?us-ascii?Q?ayRP/NGlK0gvYvJQLI2CEKZw6SDUnGwun50JUeLw7M3JD7mr4Ub6hQR6w6A9?=
- =?us-ascii?Q?P+TCznebM4KB8eitUMACmOtp7PApQnIm4XifECI7sQxO8eh9jPy7HUV9nNCf?=
- =?us-ascii?Q?ufqSr/+BszymIE+M+4sm7DvibnCUgri+LdXeVKUWZvs6JnkEWH/nJoRlFEr5?=
- =?us-ascii?Q?1JIBJQGnuoTTnA64xmpqwMTYgcoZbBl+fO7ZSEFs7IQiOj086pdOJRuRLozH?=
- =?us-ascii?Q?fT2Fzi27quEYiiqkKVXFDXu055Er7kwHLtQMzOas3xZg6i644gYJBwcUOLxJ?=
- =?us-ascii?Q?3dC3NCE7oVRYF9HQCuqkpmdyFFMbKxZWRhCut6zNYCppuz0EmXtdPdRph3z/?=
- =?us-ascii?Q?XwJxx0hDgYFkwr0Zg+NKyqbfZhe3KqH/+qLn6U/MvbB9Pj8/wKNhlBqwMDNP?=
- =?us-ascii?Q?fLsji81raa5Y6wWx/51DuPTSKwPIA3sWOfrwY/tpb/wPL0bjUNI=3D?=
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?K55wqQMOM/lY5vCk10lOz5/RNEVEOlVlnEKxEbgsW3G1MAqVUy7Bk76v4lsB?=
- =?us-ascii?Q?0cCjQK2y7t/RFjB9fmc/46NIYFAPkYOlJ7q/GIwPV9aaRiC6nhlM9Y5thJPw?=
- =?us-ascii?Q?Qwr38NwHgaBBylHcz+qsM2Z1VwsdUuiF5Rc9CCYxlvBZ5Cc9H/vXpZye1Cbl?=
- =?us-ascii?Q?4uAOa8Ugps9p2kzDOLqFfsZ+zSwVc4GeEpQDg6faE2OdG+mfrQi9Z9KT4CG6?=
- =?us-ascii?Q?NN1ut/3BocVj8tB5UDxUKjnPHn8pe5JxPgh1tlDobUx7/cG1fQIBvyTVueB7?=
- =?us-ascii?Q?WTFcr3S9xyjPIO8hMBwJGXRRfnisEBQ5FDU+GaRELMbz/2zg+sIf2MFKn2vv?=
- =?us-ascii?Q?H7QB1rXV2o0CkcFCNzMk4eXTt8MMRipcbQEaKNciYOid1/q7lj0n6HS5WnKY?=
- =?us-ascii?Q?AbH+1+fd6OXKF0Jhkx1RITbT07RTEgruQM6XaS2d+FAl6spQBiisG0mNxKoH?=
- =?us-ascii?Q?P0OUUv992jnZ/eWoEbfweezxDVIBzjJ6BOVe9XbgC22YihWcqNxSAg42QFQW?=
- =?us-ascii?Q?OLdKM8LxYaDmhapNbkvr+hhOy6Dsnaa+LPNvxJRQH8ibokTAcRywDbkXyzPt?=
- =?us-ascii?Q?IPNUsaoNqJZMkKvRvcMHAEay+FNrtD8cQ3UQedP4GyX2tY4/SCWW2qBFRW5M?=
- =?us-ascii?Q?LnXybo2P2DU4lp3Cv506BEighA2lmEx2QEbFCxl+MnRGEfWG/CkUGEP2jL2f?=
- =?us-ascii?Q?PjMEYifCToFeW/DP9k7xeNbzFtQu8WoeF8VMz4wfb78CnCtHZpNF6Dk1wrNO?=
- =?us-ascii?Q?ullozGpXU9lf11meWxwSkxSAHMQF4NwzHDp0PpWi+3u5TJhR4xb1Ec1fA92B?=
- =?us-ascii?Q?7NFSEzkbSeO9oYC1MWbxhtXBGvkUvkOcqHbWnX/VyNvXFH2zjFOOQ3sm7w1u?=
- =?us-ascii?Q?vl48iz9IrMF+OvMxTCUg0y25PoZmNYdf2HGCzVcBO2cqMsRYReUfKyLNZ2Se?=
- =?us-ascii?Q?ifXey0OfC2nUUBQHjFppFugjM7/ULG1cI4J82qpYVVzBRI6fHzpSe4LUkoI4?=
- =?us-ascii?Q?q1ySbDoLZpgZ5otXzSQkSxPLpf5Np7yvfeYHYyTCMG7C1onHesnOzJVxW+Mk?=
- =?us-ascii?Q?+ycTN6IrrLESzIYRWeQ4lVI8K5LkxECTWOrUErWNht1m7NLZ9EwYjsCVpM9C?=
- =?us-ascii?Q?5mVBvO2oGWsni59uzcnTb/w6eGd2E6rMtZ/83xtC9NFcWs2LvihuvLwXV0z+?=
- =?us-ascii?Q?8OUqJ3UQLhz9DkJN5PLebVxjBFgs36qDCKP570dwWnFa6LopWvSYXgAbFcVc?=
- =?us-ascii?Q?UVmB9DXfQ9MBgiqXsfFzvccX0EodW+Rxx8UzEO6YCOGDNlUFEW/tHgknkLA4?=
- =?us-ascii?Q?lOU=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B4C91FF7CC;
+	Fri, 21 Feb 2025 20:07:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740168452; cv=none; b=sLdzZBvL+M3PWdLZBBHV6tsmXmjKV3xh3wn7XTY+7WM0ObLVe53bTzR6FY1MibdbogW4qgkbrr+GPxz/5wwoXDKv8LHlPB2bennvp/H8bNUtqdZvxiQRZNSEq5CQC8NamLcidhO5HtLXhH5Awa28CSWDM2pCGShXq4jqfM8hkYo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740168452; c=relaxed/simple;
+	bh=J8i3DZmAPGrWlElVvpG1UCxEbqCR2ykVCXYwjltceaQ=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=MTqD8BDHO5n4F+vCqmd7bChCWIuKNOjC4GHwz4o7nKnL6QM7wlt15hfGgFJM7m5BWJ2PoR5yxsvwVXrN1lnSa+xcGErB+wUE+bKmqGFEfqf/YbvMrK3tPI/YMDODIB+bSDHg9bhEOhS3IZFeWUQmAJzvGiqHQCQU3KbJYE6K9os=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B2+qfeAq; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-220c2a87378so44837745ad.1;
+        Fri, 21 Feb 2025 12:07:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740168450; x=1740773250; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RB1lR+aB2DFBicW90ROYujqbV0AEbnFQJOUJctGhXRI=;
+        b=B2+qfeAqD1z6KOnQTUb1NgnQRJRn74wGvwDU60HUYjfNDtpUzo5r3yRKI7gYsRkMsR
+         Nkilg4RjGEYhhusUBCzFrerPtwZrZZTYXzM1Rn9MjmqecBr2rlrX8rixYIoS8YmBO031
+         QXKmmas6+z4okWuzU4ZxiM8D0VwAVf53s8G3wPt90t5KNnZifQB1q4N9j4maiFAaJDbY
+         I/QZ1oWsqJUbb1SEupA3WHbgjarNh//9i6AXlaq5YvUIH8cWEUwlUP4z6uBrMCpUKaYa
+         nqmXTY5JTaO5LD6W+n9DPlK5FPghcm4dLVAyoO2ujR7cy9b9xH8qN1Dxp0hy0ek5u0mG
+         LtnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740168450; x=1740773250;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RB1lR+aB2DFBicW90ROYujqbV0AEbnFQJOUJctGhXRI=;
+        b=T/d3BVWoXpRogBE1KAv0QZLvoMU7OtFWJgtJI28Lzcq4vNeDegut/mP4Nzx86Ez01X
+         Ye6o3/3nP6YLvgpTpRefkl9EwWf/QY2bjmTIQn+NxkD0d/OAUcat7lWrc5nkL2yijU2H
+         LVfoprEPF6gQ2Ibx/znACt0WmdxW7CrpefhFrRDZTGjiF03Eg7PyJWVni382WcC+pd+2
+         xQtpDsygW5miBhZOjwh82CviGF0V4NEo1RomNm3M6uuzvOHxPNg4XilGiaHKqJR26ICh
+         OCTz/SNJgdENbSd1RtEDrUHaW9ljoeCBmZk1oXdmgQ9J9dFxq8ADZa0sMWYo89anpxZr
+         fZTg==
+X-Forwarded-Encrypted: i=1; AJvYcCU28rMl7Gw2n/3a6yPd3LHbcQrkIzS8KR7JnHIKs/6DlsC4Jckn0VlFCQboqRF3ApdnhwX1pb6493T0jmzAS4w=@vger.kernel.org, AJvYcCU4Pi7pNy4ikotJLkuqeteHZQOWaF/gFLHvqQpTvT6e6mm9Pnf+WnL9q3yE1JIthynXFarXZ4PuFQ0saag=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzauGH/AmnBLaemcx/K3e+pBLlV32C6debHGdpEoNw0gUreGXxH
+	TsNvJ0WSn2fTFKyY0r5gS5MEyCG6qVexBNqOOsQdlo9aNXIxeyjk
+X-Gm-Gg: ASbGncuGhDuIeP4+wZOHmGmzESNjNzko3xskubcvn0e2C1hgEDITf1k64LtRuYT4war
+	LnllMpJ32VlVsvcJJLyEVIfVFX6E/UeIaUAMY6oMuDXOMb7ZdfYgLkXWIuKyTphmpCLsjgYqtR/
+	RFZjiU+ps9+Z6HsaXCisiB/5dVBtsvrqbR2W7O/03fPSoNteRaajU4cOLk0xjDimY9OqYcf6z7A
+	wdfibPNpX3h89/Bay/dm00oT01ODxcYjyWIuUKo8ohV1XSvf8Bthjk6b4tDNGMWxkF4jc7rDGzE
+	KBq8ks7c2PGhDrZz11IJJRy4k+Cv/Z2KFH0hmsx+mnQT96B6
+X-Google-Smtp-Source: AGHT+IEV/9ceYaqgCzY1ZQH1uaVVHner+kvO/+TD3nG4jkQEysozy99K0MOUnJ7/OVsYVjRbB6Us6Q==
+X-Received: by 2002:a17:903:2309:b0:220:eaaf:f6ec with SMTP id d9443c01a7336-221a0ec9501mr72162795ad.5.1740168450001;
+        Fri, 21 Feb 2025 12:07:30 -0800 (PST)
+Received: from smtpclient.apple ([2601:645:4300:5ca0:35f7:b1dc:26f7:f292])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-ae624a00dc8sm4660203a12.34.2025.02.21.12.07.28
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 21 Feb 2025 12:07:29 -0800 (PST)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-OriginatorOrg: sct-15-20-7719-20-msonline-outlook-ae5c4.templateTenant
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PNZPR01MB4478.INDPRD01.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: d80bca38-5a88-4612-b025-08dd52b347d9
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Feb 2025 20:06:51.3983
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MA0PR01MB9077
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.400.131.1.6\))
+Subject: Re: C aggregate passing (Rust kernel policy)
+From: comex <comexk@gmail.com>
+In-Reply-To: <CAHk-=wjF0wjD4ko7MgrZ1wBZ9QOrQd_AnyhDDUJQ1L5+i-o22A@mail.gmail.com>
+Date: Fri, 21 Feb 2025 12:07:17 -0800
+Cc: David Laight <david.laight.linux@gmail.com>,
+ Jan Engelhardt <ej@inai.de>,
+ "H. Peter Anvin" <hpa@zytor.com>,
+ Greg KH <gregkh@linuxfoundation.org>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+ Christoph Hellwig <hch@infradead.org>,
+ rust-for-linux <rust-for-linux@vger.kernel.org>,
+ David Airlie <airlied@gmail.com>,
+ linux-kernel@vger.kernel.org,
+ ksummit@lists.linux.dev
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <ACFAF4FA-755C-4AD8-9826-168E4A7337B9@gmail.com>
+References: <CANiq72m-R0tOakf=j7BZ78jDHdy=9-fvZbAT8j91Je2Bxy0sFg@mail.gmail.com>
+ <Z7SwcnUzjZYfuJ4-@infradead.org>
+ <CANiq72myjaA3Yyw_yyJ+uvUrZQcSLY_jNp65iKH8Y5xGY5tXPQ@mail.gmail.com>
+ <326CC09B-8565-4443-ACC5-045092260677@zytor.com>
+ <CANiq72m+r1BZVdVHn2k8XeU37ZeY6VT2S9KswMuFA=ZO3e4uvQ@mail.gmail.com>
+ <a7c5973a-497c-4f31-a7be-b3123bddb6dd@zytor.com> <Z7VKW3eul-kGaIT2@Mac.home>
+ <2025021954-flaccid-pucker-f7d9@gregkh>
+ <2nn05osp-9538-11n6-5650-p87s31pnnqn0@vanv.qr>
+ <2025022052-ferment-vice-a30b@gregkh>
+ <9B01858A-7EBD-4570-AC51-3F66B2B1E868@zytor.com>
+ <n05p910s-r5o3-0n36-5s44-qr769prp69r5@vanv.qr>
+ <20250221183437.1e2b5b94@pumpkin>
+ <CAHk-=wjF0wjD4ko7MgrZ1wBZ9QOrQd_AnyhDDUJQ1L5+i-o22A@mail.gmail.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+X-Mailer: Apple Mail (2.3826.400.131.1.6)
 
 
-> Does this look good now? Made orig a union.
 
-Wait, it's messier. Maybe declare data type of val separately in each case?
+> On Feb 21, 2025, at 11:12=E2=80=AFAM, Linus Torvalds =
+<torvalds@linux-foundation.org> wrote:
 >=20
-> char *fourcc_string(char *buf, char *end, const u32 *fourcc, const char *=
-fmt, struct printf_spec spec)
-> {
-> char output[sizeof("0123 little-endian (0x01234567)")];
-> char *p =3D output;
-> unsigned int i;
-> bool pixel_fmt =3D false;
-> u32 val;
+> On Fri, 21 Feb 2025 at 10:34, David Laight =
+<david.laight.linux@gmail.com> wrote:
+>>=20
+>> As Linus said, most modern ABI pass short structures in one or two =
+registers
+>> (or stack slots).
+>> But aggregate returns are always done by passing a hidden pointer =
+argument.
+>>=20
+>> It is annoying that double-sized integers (u64 on 32bit and u128 on =
+64bit)
+>> are returned in a register pair - but similar sized structures have =
+to be
+>> returned by value.
 >=20
-> union {
-> u32 raw;
-> __le32 le;
-> __be32 be;
-> } orig;
->=20
-> if (fmt[1] !=3D 'c')
-> return error_string(buf, end, "(%p4?)", spec);
->=20
-> if (check_pointer(&buf, end, fourcc, spec))
-> return buf;
->=20
-> orig.raw =3D get_unaligned(fourcc);
->=20
-> switch (fmt[2]) {
-> case 'h':
-> val =3D orig.raw;
-> break;
-> case 'r':
-> val =3D swab32(orig.raw);
-> break;
-> case 'l':
-> val =3D le32_to_cpu(orig.le);
-> break;
-> case 'b':
-> val =3D be32_to_cpu(orig.be);
-> break;
-> case 'c':
-> val =3D swab32(orig.raw & ~BIT(31));
-> pixel_fmt =3D true;
-> break;
-> default:
-> return error_string(buf, end, "(%p4?)", spec);
-> }
->=20
-> for (i =3D 0; i < sizeof(u32); i++) {
-> unsigned char c =3D val >> ((3 - i) * 8);
-> *p++ =3D isascii(c) && isprint(c) ? c : '.';
-> }
->=20
-> if (pixel_fmt) {
-> *p++ =3D ' ';
-> strcpy(p, orig.raw & BIT(31) ? "big-endian" : "little-endian");
-> p +=3D strlen(p);
-> }
->=20
-> *p++ =3D ' ';
-> *p++ =3D '(';
-> p +=3D sprintf(p, "0x%08x", orig.raw);
-> *p++ =3D ')';
-> *p =3D '\0';
->=20
-> return string_nocheck(buf, end, output, spec);
-> }
->=20
+> No, they really don't. At least not on x86 and arm64 with our ABI.
+> Two-register structures get returned in registers too.
+
+This does happen on older ABIs though.
+
+With default compiler flags, two-register structures get returned on the =
+stack on 32-bit x86, 32-bit ARM, 32-bit MIPS, both 32- and 64-bit POWER =
+(but not power64le), and 32-bit SPARC.  On most of those, =
+double-register-sized integers still get returned in registers.
+
+I tested this with GCC and Clang on Compiler Explorer:
+https://godbolt.org/z/xe43Wdo5h
+
+Again, that=E2=80=99s with default compiler flags.  On 32-bit x86, Linux =
+passes -freg-struct-return which avoids this problem.  But I don=E2=80=99t=
+ know whether or not there=E2=80=99s anything similar on other =
+architectures.  This could be easily answered by checking actual kernel =
+binaries, but I didn=E2=80=99t :)=
 
