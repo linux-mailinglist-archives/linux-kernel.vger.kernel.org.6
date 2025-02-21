@@ -1,306 +1,126 @@
-Return-Path: <linux-kernel+bounces-525977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59305A3F813
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:10:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8A6AA3F816
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:10:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DDC6701FCF
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 15:08:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5AE10702C40
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 15:09:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEF6920E70E;
-	Fri, 21 Feb 2025 15:08:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DD6321018C;
+	Fri, 21 Feb 2025 15:09:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="gNAhgefJ"
-Received: from smtp-1908.mail.infomaniak.ch (smtp-1908.mail.infomaniak.ch [185.125.25.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O3L5f0Cu"
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AB902066F1
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 15:08:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B68974BED
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 15:08:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740150528; cv=none; b=RY4zIWQKObSuT1gvZ/PIRS/IrRfrqi8JToL432+I+COBSzE9FD7llcxD5lED8AHbaBLRJ/Nt6E9y5TTxwLHd3PoweqEHRXfoMgMY/O0r9Bhd2taGS2YojMG+2C5UBkMWpdq1i8UnnYQxqE2tAGvb51PEK9MyQKmSx7z3uF5h8FI=
+	t=1740150541; cv=none; b=U1tZpPBuQIQf2qhKHL7PreBphc5vBinoXM9sisHv3cvWieORESgv75gR/WHlV2sGvX55iO7x/NCLoX2Id108Q4P1dGWiCXhvzhbE1kuzThSDd2gzM4zlB5MWbBvV080r5sOaHGG57dGMTw4Tci6dlrytKNfuOAq6A8qkB0hiDZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740150528; c=relaxed/simple;
-	bh=wOUwuoMFBlbf4VclPsw4Y8bvqcLAlISZ+OpN2COxUT0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YK65SVrkas3mLrettzSPc4xOBmYahQqE98pwdpqiCec98J3JX6GmU9UPO/wKtHNgMJKOX5FC7AOa7xxOTJARP/wwSVkQWb4vsoYrC0XRQzJOLgGzO3ZvMH8EXG6USdjrd+R9n7AAlOTcx1ytumiPQPHue7Tt7OfugnkR8eXiOGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=gNAhgefJ; arc=none smtp.client-ip=185.125.25.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246c])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Yztn21Cvqzp7v;
-	Fri, 21 Feb 2025 16:08:38 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1740150518;
-	bh=HAdXvLK8vfW//A0RH2Z8Vgvri1ljkOe8we8oEw/BRJo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gNAhgefJNSQqmpn1R7GjmCDcL8sBVj9Jy8ELxGlJDuSkOcQnFPususm4DJtyM7z3K
-	 N5uOW38hzFreoU0UXhfBHpXriYHLasoIWkBI7w0rFt5bmnCxNP0I8oGntObZgmF0Jy
-	 3Dxnzo71DVTvLCBMWTvR36ekCTxZrE3oQm+YSPuM=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Yztmx6Tb2zB0s;
-	Fri, 21 Feb 2025 16:08:33 +0100 (CET)
-Date: Fri, 21 Feb 2025 16:08:33 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Andrey Albershteyn <aalbersh@redhat.com>, 
-	Paul Moore <paul@paul-moore.com>
-Cc: Richard Henderson <richard.henderson@linaro.org>, 
-	Matt Turner <mattst88@gmail.com>, Russell King <linux@armlinux.org.uk>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Geert Uytterhoeven <geert@linux-m68k.org>, Michal Simek <monstr@monstr.eu>, 
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, 
-	Helge Deller <deller@gmx.de>, Madhavan Srinivasan <maddy@linux.ibm.com>, 
-	Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, Naveen N Rao <naveen@kernel.org>, 
-	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
-	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Sven Schnelle <svens@linux.ibm.com>, Yoshinori Sato <ysato@users.sourceforge.jp>, 
-	Rich Felker <dalias@libc.org>, John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
-	"David S. Miller" <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>, 
-	Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
-	Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, Arnd Bergmann <arnd@arndb.de>, linux-alpha@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org, 
-	linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org, linux-sh@vger.kernel.org, 
-	sparclinux@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-api@vger.kernel.org, linux-arch@vger.kernel.org, 
-	linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v3] fs: introduce getfsxattrat and setfsxattrat syscalls
-Message-ID: <20250221.ahB8jei2Chie@digikod.net>
-References: <20250211-xattrat-syscall-v3-1-a07d15f898b2@kernel.org>
+	s=arc-20240116; t=1740150541; c=relaxed/simple;
+	bh=c5xn0MfChQYvshGz8ppoxuhPdTV5UG4Px4s/vruRdNY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HaaoMbt9W/UUodUjxXX+Yqd6mzOIQ+eohQj5469HvlwuuQWTVZssWvwNZsNLOV4Y7e/LZ7ybPsZeWxfnNU7AE8YvMI+OtkpYgNFikptU9Olih3/u6klVnbJOE74f0CMOVCv3sVVmLRlpBQD+E2pyNm/Y29h4VSwipByfxawYlgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O3L5f0Cu; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2fbfe16cbf5so546315a91.0
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 07:08:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740150539; x=1740755339; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=y1z9enPprBTCltTD6Zq+9N/ViPgRVx/V8w7eQeJHOME=;
+        b=O3L5f0CuJj+cLCpnHQYNeV8IDYrG/dzWTNTGEkLngyv5mrq0wN6/Bs2LmbvK2anHqF
+         Zbe8ftV2cjN9iexDKj2ruZ0rFowfVXpUledytmwnyjJ/XfZfJdccvGYm0BQUPaegJFBn
+         QtU6WPDfZwWh9FXrD3u8UAFH4l+mKpkn9MeYf/l8hZ75yqw25AGZ42MlT+h7botVqQmT
+         cdc+69NMWsF0vz8eWqwrmurXbfPg8zt/OIVbHT9QXV0g39JPDITwh1Tfiqlc9DCrvazm
+         YyiD9m6lKrZX+qm8BeADbQIdh4KTYcf6RUWbkTfCTOML5F3vXqMOqrJowWdYO6Eez01p
+         m4SA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740150539; x=1740755339;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=y1z9enPprBTCltTD6Zq+9N/ViPgRVx/V8w7eQeJHOME=;
+        b=oL92NYmMUGO/gWBgKe13JFuEVk0P1lxlaWMqwN9Vrb4P+wASZz+viaFAmLPrpV59Wy
+         +w3ev6faFCM3Oaa/XCeVqlfDXgS2iuy50Waf7egrOCcYgZ2roGzX0K+OnsI3FO1SbQk+
+         /sCBOEstg7/aR4vmr/C3OIqCCcOJnIkB1dpCYy6EnqAUDL2bk7PM99ZtETK/hEoBlqvm
+         ml0GIRiT0SRaRQIxAc+8nT/drYRqvNM0346KwtUm7vT71vm6pizj4g2EG5HTKfrnwUfx
+         HdATZUiqO9apAQ/I6r9lPCCv4+ggH+QpQv4XMa30V5JWRcgwqCdWhBJYiRVJL1nMeo8y
+         gQGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXYBSffMK4Elv8pTwlOkqimn+vxfK4+fascLAT+lHkkcqxk/yJRZLU+VgZKv3hTzpjZZRqx8sj7KSIFcT4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/2qIwZkrrsiO1w85bljBRohTdfFmjzCxnxssnMUZAD13zpsbE
+	MCIfIzBheqwFV1VquhoJfxVWb9649s+2AFobNSXZRlQ2e6p8lyIjoeWmxh4VuWMstr263dOyTGm
+	rszRc0CT6rM6Yg/Xq3S4oasz8mn8=
+X-Gm-Gg: ASbGnctwZYBruzSue71mbl7qWMnII7F2+RBNqgOddElKV2irQv27gAGqq7pny4wZ9DC
+	D0dqZubGUdoj+EcZUyoWZ/XIIj2qETdIZOCnw376b3TbK/tI16mFwFeHXXy8yoefMP/iTB0m+aW
+	rOW0OZGBU=
+X-Google-Smtp-Source: AGHT+IGVbL0tZlk1tlZK53o23pxJBrsTiqCDJQSUOvTrPIgvq9iQeap92OR0l5X250ulFPr8H3Fb1ZA8O3be8c51hRs=
+X-Received: by 2002:a17:90b:3b43:b0:2ef:c419:6930 with SMTP id
+ 98e67ed59e1d1-2fce7b028bcmr2230885a91.6.1740150539294; Fri, 21 Feb 2025
+ 07:08:59 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250211-xattrat-syscall-v3-1-a07d15f898b2@kernel.org>
-X-Infomaniak-Routing: alpha
+References: <20250220162750.343139-1-andrealmeid@igalia.com> <20250220162750.343139-3-andrealmeid@igalia.com>
+In-Reply-To: <20250220162750.343139-3-andrealmeid@igalia.com>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Fri, 21 Feb 2025 10:08:47 -0500
+X-Gm-Features: AWEUYZlDBUXP17Cs6I6f-XW5ymhm46Qk9g76RKaCWVyT61CDlmLAQDsLOybc4CY
+Message-ID: <CADnq5_O9NnvVObz5BPr4rx0RpWXY-2UWmY0tw=7WhnzG4khf7g@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] drm/amdgpu: Log after a successful ring reset
+To: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
+Cc: Alex Deucher <alexander.deucher@amd.com>, 
+	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	Xinhui Pan <Xinhui.Pan@amd.com>, amd-gfx@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	kernel-dev@igalia.com, siqueira@igalia.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-It looks security checks are missing.  With IOCTL commands, file
-permissions are checked at open time, but with these syscalls the path
-is only resolved but no specific access seems to be checked (except
-inode_owner_or_capable via vfs_fileattr_set).
+Applied.  Thanks!
 
-On Tue, Feb 11, 2025 at 06:22:47PM +0100, Andrey Albershteyn wrote:
-> From: Andrey Albershteyn <aalbersh@redhat.com>
-> 
-> Introduce getfsxattrat and setfsxattrat syscalls to manipulate inode
-> extended attributes/flags. The syscalls take parent directory fd and
-> path to the child together with struct fsxattr.
-> 
-> This is an alternative to FS_IOC_FSSETXATTR ioctl with a difference
-> that file don't need to be open as we can reference it with a path
-> instead of fd. By having this we can manipulated inode extended
-> attributes not only on regular files but also on special ones. This
-> is not possible with FS_IOC_FSSETXATTR ioctl as with special files
-> we can not call ioctl() directly on the filesystem inode using fd.
-> 
-> This patch adds two new syscalls which allows userspace to get/set
-> extended inode attributes on special files by using parent directory
-> and a path - *at() like syscall.
-> 
-> Also, as vfs_fileattr_set() is now will be called on special files
-> too, let's forbid any other attributes except projid and nextents
-> (symlink can have an extent).
-> 
-> CC: linux-api@vger.kernel.org
-> CC: linux-fsdevel@vger.kernel.org
-> CC: linux-xfs@vger.kernel.org
-> Signed-off-by: Andrey Albershteyn <aalbersh@redhat.com>
+On Thu, Feb 20, 2025 at 11:28=E2=80=AFAM Andr=C3=A9 Almeida <andrealmeid@ig=
+alia.com> wrote:
+>
+> When a ring reset happens, the kernel log shows only "amdgpu: Starting
+> <ring name> ring reset", but when it finishes nothing appears in the
+> log. Explicitly write in the log that the reset has finished correctly.
+>
+> Reviewed-by: Christian K=C3=B6nig <christian.koenig@amd.com>
+> Signed-off-by: Andr=C3=A9 Almeida <andrealmeid@igalia.com>
 > ---
-> v1:
-> https://lore.kernel.org/linuxppc-dev/20250109174540.893098-1-aalbersh@kernel.org/
-> 
-> Previous discussion:
-> https://lore.kernel.org/linux-xfs/20240520164624.665269-2-aalbersh@redhat.com/
-> 
-> XFS has project quotas which could be attached to a directory. All
-> new inodes in these directories inherit project ID set on parent
-> directory.
-> 
-> The project is created from userspace by opening and calling
-> FS_IOC_FSSETXATTR on each inode. This is not possible for special
-> files such as FIFO, SOCK, BLK etc. Therefore, some inodes are left
-> with empty project ID. Those inodes then are not shown in the quota
-> accounting but still exist in the directory. Moreover, in the case
-> when special files are created in the directory with already
-> existing project quota, these inode inherit extended attributes.
-> This than leaves them with these attributes without the possibility
-> to clear them out. This, in turn, prevents userspace from
-> re-creating quota project on these existing files.
-> ---
-> Changes in v3:
-> - Remove unnecessary "dfd is dir" check as it checked in user_path_at()
-> - Remove unnecessary "same filesystem" check
-> - Use CLASS() instead of directly calling fdget/fdput
-> - Link to v2: https://lore.kernel.org/r/20250122-xattrat-syscall-v2-1-5b360d4fbcb2@kernel.org
-> ---
->  arch/alpha/kernel/syscalls/syscall.tbl      |  2 +
->  arch/arm/tools/syscall.tbl                  |  2 +
->  arch/arm64/tools/syscall_32.tbl             |  2 +
->  arch/m68k/kernel/syscalls/syscall.tbl       |  2 +
->  arch/microblaze/kernel/syscalls/syscall.tbl |  2 +
->  arch/mips/kernel/syscalls/syscall_n32.tbl   |  2 +
->  arch/mips/kernel/syscalls/syscall_n64.tbl   |  2 +
->  arch/mips/kernel/syscalls/syscall_o32.tbl   |  2 +
->  arch/parisc/kernel/syscalls/syscall.tbl     |  2 +
->  arch/powerpc/kernel/syscalls/syscall.tbl    |  2 +
->  arch/s390/kernel/syscalls/syscall.tbl       |  2 +
->  arch/sh/kernel/syscalls/syscall.tbl         |  2 +
->  arch/sparc/kernel/syscalls/syscall.tbl      |  2 +
->  arch/x86/entry/syscalls/syscall_32.tbl      |  2 +
->  arch/x86/entry/syscalls/syscall_64.tbl      |  2 +
->  arch/xtensa/kernel/syscalls/syscall.tbl     |  2 +
->  fs/inode.c                                  | 75 +++++++++++++++++++++++++++++
->  fs/ioctl.c                                  | 16 +++++-
->  include/linux/fileattr.h                    |  1 +
->  include/linux/syscalls.h                    |  4 ++
->  include/uapi/asm-generic/unistd.h           |  8 ++-
->  21 files changed, 133 insertions(+), 3 deletions(-)
-> 
-
-[...]
-
-> diff --git a/fs/inode.c b/fs/inode.c
-> index 6b4c77268fc0ecace4ac78a9ca777fbffc277f4a..b2dddd9db4fabaf67a6cbf541a86978b290411ec 100644
-> --- a/fs/inode.c
-> +++ b/fs/inode.c
-> @@ -23,6 +23,9 @@
->  #include <linux/rw_hint.h>
->  #include <linux/seq_file.h>
->  #include <linux/debugfs.h>
-> +#include <linux/syscalls.h>
-> +#include <linux/fileattr.h>
-> +#include <linux/namei.h>
->  #include <trace/events/writeback.h>
->  #define CREATE_TRACE_POINTS
->  #include <trace/events/timestamp.h>
-> @@ -2953,3 +2956,75 @@ umode_t mode_strip_sgid(struct mnt_idmap *idmap,
->  	return mode & ~S_ISGID;
->  }
->  EXPORT_SYMBOL(mode_strip_sgid);
-> +
-> +SYSCALL_DEFINE4(getfsxattrat, int, dfd, const char __user *, filename,
-> +		struct fsxattr __user *, fsx, unsigned int, at_flags)
-> +{
-> +	CLASS(fd, dir)(dfd);
-> +	struct fileattr fa;
-> +	struct path filepath;
-> +	int error;
-> +	unsigned int lookup_flags = 0;
-> +
-> +	if ((at_flags & ~(AT_SYMLINK_NOFOLLOW | AT_EMPTY_PATH)) != 0)
-> +		return -EINVAL;
-> +
-> +	if (at_flags & AT_SYMLINK_FOLLOW)
-> +		lookup_flags |= LOOKUP_FOLLOW;
-> +
-> +	if (at_flags & AT_EMPTY_PATH)
-> +		lookup_flags |= LOOKUP_EMPTY;
-> +
-> +	if (fd_empty(dir))
-> +		return -EBADF;
-> +
-> +	error = user_path_at(dfd, filename, lookup_flags, &filepath);
-> +	if (error)
-> +		return error;
-
-security_inode_getattr() should probably be called here.
-
-> +
-> +	error = vfs_fileattr_get(filepath.dentry, &fa);
-> +	if (!error)
-> +		error = copy_fsxattr_to_user(&fa, fsx);
-> +
-> +	path_put(&filepath);
-> +	return error;
-> +}
-> +
-> +SYSCALL_DEFINE4(setfsxattrat, int, dfd, const char __user *, filename,
-> +		struct fsxattr __user *, fsx, unsigned int, at_flags)
-> +{
-> +	CLASS(fd, dir)(dfd);
-> +	struct fileattr fa;
-> +	struct path filepath;
-> +	int error;
-> +	unsigned int lookup_flags = 0;
-> +
-> +	if ((at_flags & ~(AT_SYMLINK_FOLLOW | AT_EMPTY_PATH)) != 0)
-> +		return -EINVAL;
-> +
-> +	if (at_flags & AT_SYMLINK_FOLLOW)
-> +		lookup_flags |= LOOKUP_FOLLOW;
-> +
-> +	if (at_flags & AT_EMPTY_PATH)
-> +		lookup_flags |= LOOKUP_EMPTY;
-> +
-> +	if (fd_empty(dir))
-> +		return -EBADF;
-> +
-> +	if (copy_fsxattr_from_user(&fa, fsx))
-> +		return -EFAULT;
-> +
-> +	error = user_path_at(dfd, filename, lookup_flags, &filepath);
-> +	if (error)
-> +		return error;
-> +
-> +	error = mnt_want_write(filepath.mnt);
-> +	if (!error) {
-
-security_inode_setattr() should probably be called too.
-
-> +		error = vfs_fileattr_set(file_mnt_idmap(fd_file(dir)),
-> +					 filepath.dentry, &fa);
-> +		mnt_drop_write(filepath.mnt);
-> +	}
-> +
-> +	path_put(&filepath);
-> +	return error;
-> +}
-> diff --git a/fs/ioctl.c b/fs/ioctl.c
-> index 638a36be31c14afc66a7fd6eb237d9545e8ad997..dc160c2ef145e4931d625f1f93c2a8ae7f87abf3 100644
-> --- a/fs/ioctl.c
-> +++ b/fs/ioctl.c
-> @@ -558,8 +558,7 @@ int copy_fsxattr_to_user(const struct fileattr *fa, struct fsxattr __user *ufa)
->  }
->  EXPORT_SYMBOL(copy_fsxattr_to_user);
->  
-> -static int copy_fsxattr_from_user(struct fileattr *fa,
-> -				  struct fsxattr __user *ufa)
-> +int copy_fsxattr_from_user(struct fileattr *fa, struct fsxattr __user *ufa)
->  {
->  	struct fsxattr xfa;
->  
-> @@ -646,6 +645,19 @@ static int fileattr_set_prepare(struct inode *inode,
->  	if (fa->fsx_cowextsize == 0)
->  		fa->fsx_xflags &= ~FS_XFLAG_COWEXTSIZE;
->  
-> +	/*
-> +	 * The only use case for special files is to set project ID, forbid any
-> +	 * other attributes
-> +	 */
-> +	if (!(S_ISREG(inode->i_mode) || S_ISDIR(inode->i_mode))) {
-> +		if (fa->fsx_xflags & ~FS_XFLAG_PROJINHERIT)
-> +			return -EINVAL;
-> +		if (!S_ISLNK(inode->i_mode) && fa->fsx_nextents)
-> +			return -EINVAL;
-> +		if (fa->fsx_extsize || fa->fsx_cowextsize)
-> +			return -EINVAL;
-> +	}
-> +
->  	return 0;
->  }
->  
-> diff --git a/include/linux/fileattr.h b/include/linux/fileattr.h
-
-[...]
+>  drivers/gpu/drm/amd/amdgpu/amdgpu_job.c | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_job.c b/drivers/gpu/drm/am=
+d/amdgpu/amdgpu_job.c
+> index 100f04475943..698e5799e542 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_job.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_job.c
+> @@ -149,6 +149,7 @@ static enum drm_gpu_sched_stat amdgpu_job_timedout(st=
+ruct drm_sched_job *s_job)
+>                         amdgpu_fence_driver_force_completion(ring);
+>                         if (amdgpu_ring_sched_ready(ring))
+>                                 drm_sched_start(&ring->sched, 0);
+> +                       dev_err(adev->dev, "Ring %s reset succeeded\n", r=
+ing->sched.name);
+>                         goto exit;
+>                 }
+>                 dev_err(adev->dev, "Ring %s reset failure\n", ring->sched=
+.name);
+> --
+> 2.48.1
+>
 
