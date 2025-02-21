@@ -1,234 +1,332 @@
-Return-Path: <linux-kernel+bounces-526051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D17CCA3F94C
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:46:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D208A3F941
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:44:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BEE7A19E126A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 15:43:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51B5F3BC5EE
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 15:42:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB5A51E7C38;
-	Fri, 21 Feb 2025 15:42:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E077B1DE3D6;
+	Fri, 21 Feb 2025 15:42:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ZGoS3Cd0"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="sNzB7m+X"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D3D71DD9AB;
-	Fri, 21 Feb 2025 15:42:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12C431A23B7;
+	Fri, 21 Feb 2025 15:42:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740152571; cv=none; b=T/vXs4TDlBFIlD/GqrnulEwnxdczPEpKq7JU0stfnW13HjnXFX6jIujqaa7szWt8q9TXhlR3aTkp/0sJJvLX2Sb0fxlNYLPAjobFCoyxBuZOpGBgb2/Fx4tgnlvG6wwIkciL/WPxXPGb+qfSitvCeDyPQkhPOdCy51nzMXS9/dw=
+	t=1740152551; cv=none; b=ElcbGoZu35JF9RadK+XDj23a8KPBzIcR0NddaK+gPemKxJaLdL3/g5evtH78Rw5SpwMolyNPmQQG6jJKB+ZoSjDGlJHem6Iu+3+1b3rXSY65B9bAWj1JD/4GBzC5GZ72IIFfvr0UAPV60I5UoTh+kY9w2ZKWfJeLhXZEYH6sGKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740152571; c=relaxed/simple;
-	bh=3oGfUaAJqfdFFYmlKDmTZtZ50G7yUU86f5/6w5g2HrE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=XR7OZfbKlXZmfw3PU0BimFoqBWnFDUcETryHw9YSrB990UiN3dxqZtLCzS7dgn7yMt9//sMNtaI6Mjw8o9mOMcJEbueLt6dnwwoIE2jUBvBMLUNr2s29ggFI3u0ibInch19xZQmBJKmJXZWj7P+iTgidY6Jj5q9EqTiRd0QOyrQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ZGoS3Cd0; arc=none smtp.client-ip=148.163.156.1
+	s=arc-20240116; t=1740152551; c=relaxed/simple;
+	bh=BuVxySg3rI2xMArXIQnZgqcRdIUml80WsqccuslVpo8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=azK+8HQG/4eOSQIVRtNNcJMecgL0ly8tl30sLyeY+l4gkKImt+s+FlIkAoi1pLL6f3rReB7CWPXcdzYAlsygUJviKEYrK7MNEn/oKiyBCKmHK545Jj+BrWcfEsG8CWyuQNBeBOzeLwPIqt1zCTQj6FbHE7/WQOPMNysT4tpqmeY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=sNzB7m+X; arc=none smtp.client-ip=148.163.158.5
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51LAu7O9029669;
-	Fri, 21 Feb 2025 15:42:18 GMT
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51LDHN3f002123;
+	Fri, 21 Feb 2025 15:42:24 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
 	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=KSlXcQ
-	u4bYwd9QVRA4LMcePl4d8VQOxalou03xKgF+4=; b=ZGoS3Cd0dXzWb/TjJkZBvG
-	RZvPkT10j6+s/4pk6XdYBzFUfLXE58cEjEgxUHHLx9LRf/1rPuNfVj9yj2FbPS9E
-	itruWfagpLsn4Jt5sQwvNRd1zK7O1MFg4E56lsWetS7TjF6NDgXRBP9JcH2YPkLD
-	FXcHSKFIPljDXwUeQtoRW4V6KqRgSKGfnjc6SKCmCKSGJK+7e6FygA0DyYfv7uX4
-	6IjI2S7eJeITRR9q9Od6194SXMuPbP3IAe3CDhW3KRLIylOo1GUTdtrhJZNjUVQO
-	7z736y/dcIZ+ZBb4+FZuVOBDeCpERdjwVX2bsmX2hVa1o6Kl0Zwmy0kzmo4/4PNw
+	:message-id:mime-version:references:subject:to; s=pp1; bh=MoSLgT
+	o3DZZ1lSJ9IWnm75kuyv0Jdr/WiRWs6SyTEk0=; b=sNzB7m+XsERFcYE4gSnHy8
+	iX9fv3oUR5LU02TD08anwZn++hIn+Hy9kTXilWnyHjuN9DsYqFWYcGvkUcDE04yM
+	hcknH9d7W4t6hqWD866H1XQpN9okf1rEOVroK4IVVAGgem7xDA1RPVpUSdO/pdeL
+	i2FYIBjE0vjbbUsaMjR+9ASJQDMNKyYd7Od4O286jIaVxHzF01eNhCVf4inbNAgg
+	jZqh99rBKW+DAfhHX0vSV1fawB8MxMwTL4bS9i8HBlSssVT4DgnwhTxAqJqF2DX/
+	n9+VQ46Fm2iIJNfL2Lr/ggTKDC6cqU0GOeFd/9QvLVZXdKRxTzk2ucmcJu5g+Shw
 	==
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44xfj9uv07-1
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44xgb0bjef-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Feb 2025 15:42:17 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51LFWmDq009721;
-	Fri, 21 Feb 2025 15:42:16 GMT
-Received: from smtprelay04.dal12v.mail.ibm.com ([172.16.1.6])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 44w03ygs12-1
+	Fri, 21 Feb 2025 15:42:24 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51LFYu8H030138;
+	Fri, 21 Feb 2025 15:42:23 GMT
+Received: from smtprelay02.wdc07v.mail.ibm.com ([172.16.1.69])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 44w01xgs9y-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Feb 2025 15:42:16 +0000
-Received: from smtpav04.dal12v.mail.ibm.com (smtpav04.dal12v.mail.ibm.com [10.241.53.103])
-	by smtprelay04.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51LFgGFU16843430
+	Fri, 21 Feb 2025 15:42:23 +0000
+Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
+	by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51LFgMEi23724568
 	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 21 Feb 2025 15:42:16 GMT
-Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 60E9A58052;
-	Fri, 21 Feb 2025 15:42:16 +0000 (GMT)
-Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3B0E95805E;
-	Fri, 21 Feb 2025 15:42:15 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.157.102])
-	by smtpav04.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 21 Feb 2025 15:42:15 +0000 (GMT)
-Message-ID: <1883119129dbeeabad1f5239f042a7b920feef0f.camel@linux.ibm.com>
-Subject: Re: [PATCH v8 3/7] ima: kexec: skip IMA segment validation after
- kexec soft reboot
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: steven chen <chenste@linux.microsoft.com>, stefanb@linux.ibm.com,
-        roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
-        eric.snowberg@oracle.com, ebiederm@xmission.com, paul@paul-moore.com,
-        code@tyhicks.com, bauermann@kolabnow.com,
-        linux-integrity@vger.kernel.org, kexec@lists.infradead.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
-        James.Bottomley@HansenPartnership.com, bhe@redhat.com,
-        vgoyal@redhat.com, dyoung@redhat.com
-Date: Fri, 21 Feb 2025 10:41:59 -0500
-In-Reply-To: <20250218225502.747963-4-chenste@linux.microsoft.com>
-References: <20250218225502.747963-1-chenste@linux.microsoft.com>
-	 <20250218225502.747963-4-chenste@linux.microsoft.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	Fri, 21 Feb 2025 15:42:22 GMT
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 23AEB5805C;
+	Fri, 21 Feb 2025 15:42:22 +0000 (GMT)
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4CF905805D;
+	Fri, 21 Feb 2025 15:42:20 +0000 (GMT)
+Received: from [9.61.107.75] (unknown [9.61.107.75])
+	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 21 Feb 2025 15:42:20 +0000 (GMT)
+Message-ID: <cc925877-f237-48cc-8916-f6c72fb9ce89@linux.ibm.com>
+Date: Fri, 21 Feb 2025 10:42:19 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] s390/vio-ap: Fix no AP queue sharing allowed message
+ written to kernel log
+To: freude@linux.ibm.com
+Cc: linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, jjherne@linux.ibm.com, borntraeger@de.ibm.com,
+        pasic@linux.ibm.com, pbonzini@redhat.com, frankja@linux.ibm.com,
+        imbrenda@linux.ibm.com, alex.williamson@redhat.com,
+        kwankhede@nvidia.com, agordeev@linux.ibm.com, gor@linux.ibm.com
+References: <20250220000742.2930832-1-akrowiak@linux.ibm.com>
+ <96e34cc993a7ce76431ed27c4789736e@linux.ibm.com>
+Content-Language: en-US
+From: Anthony Krowiak <akrowiak@linux.ibm.com>
+In-Reply-To: <96e34cc993a7ce76431ed27c4789736e@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: QCsQPTOODc6JC0-pUekND63em9iiktCZ
-X-Proofpoint-GUID: QCsQPTOODc6JC0-pUekND63em9iiktCZ
+X-Proofpoint-GUID: zUxDkZl7phhJ1leU4smIxCwdUHJvhLRE
+X-Proofpoint-ORIG-GUID: zUxDkZl7phhJ1leU4smIxCwdUHJvhLRE
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
  definitions=2025-02-21_05,2025-02-20_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 clxscore=1015
- spamscore=0 lowpriorityscore=0 adultscore=0 phishscore=0 mlxscore=0
- impostorscore=0 priorityscore=1501 suspectscore=0 bulkscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
+ malwarescore=0 clxscore=1015 lowpriorityscore=0 suspectscore=0
+ impostorscore=0 priorityscore=1501 phishscore=0 adultscore=0 mlxscore=0
+ bulkscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.19.0-2502100000 definitions=main-2502210111
 
-On Tue, 2025-02-18 at 14:54 -0800, steven chen wrote:
-> kexec_calculate_store_digests() calculates and stores the digest of the
-> segment at kexec_file_load syscall where the IMA segment is also
-> allocated.=C2=A0 With this series, the IMA segment will be updated with t=
-he
-> measurement log at kexec execute stage when soft reboot is initiated.=20
-> Therefore, it may fail digest verification in verify_sha256_digest()=20
-> after kexec soft reboot into the new kernel. Therefore, the digest=20
-> calculation/verification of the IMA segment needs to be skipped.
->=20
-> Skip the calculating and storing digest of the IMA segment in
-> kexec_calculate_store_digests() so that it is not added to the
-> 'purgatory_sha_regions'.
->=20
-> Since verify_sha256_digest() only verifies 'purgatory_sha_regions',
-> no change is needed in verify_sha256_digest() in this context.
->=20
-> With this change, the IMA segment is not included in the digest
-> calculation, storage, and verification.
 
-Basically you're saying because the hash verification will fail, don't incl=
-ude
-the IMA buffer.  What's missing is the reason for not caring whether the IM=
-A
-hash is included or not.
 
-I understand this is the best we can do without making some major kexec cha=
-nges.
 
->=20
-> Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
-> Signed-off-by: steven chen <chenste@linux.microsoft.com>
-> Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
+On 2/21/25 2:56 AM, Harald Freudenberger wrote:
+> On 2025-02-20 01:07, Anthony Krowiak wrote:
+>> An erroneous message is written to the kernel log when either of the
+>> following actions are taken by a user:
+>>
+>> 1. Assign an adapter or domain to a vfio_ap mediated device via its 
+>> sysfs
+>>    assign_adapter or assign_domain attributes that would result in 
+>> one or
+>>    more AP queues being assigned that are already assigned to a 
+>> different
+>>    mediated device. Sharing of queues between mdevs is not allowed.
+>>
+>> 2. Reserve an adapter or domain for the host device driver via the AP 
+>> bus
+>>    driver's sysfs apmask or aqmask attribute that would result in 
+>> providing
+>>    host access to an AP queue that is in use by a vfio_ap mediated 
+>> device.
+>>    Reserving a queue for a host driver that is in use by an mdev is not
+>>    allowed.
+>>
+>> In both cases, the assignment will return an error; however, a 
+>> message like
+>> the following is written to the kernel log:
+>> vfio_ap_mdev_log_sharing_err
+>> vfio_ap_mdev e1839397-51a0-4e3c-91e0-c3b9c3d3047d: Userspace may not
+>> re-assign queue 00.0028 already assigned to \
+>> e1839397-51a0-4e3c-91e0-c3b9c3d3047d
+>>
+>> Notice the mdev reporting the error is the same as the mdev identified
+>> in the message as the one to which the queue is being assigned.
+>> It is perfectly okay to assign a queue to an mdev to which it is
+>> already assigned; the assignment is simply ignored by the vfio_ap device
+>> driver.
+>>
+>> This patch logs more descriptive and accurate messages for both 1 and 2
+>> above to the kernel log:
+>>
+>> Example for 1:
+>> vfio_ap_mdev 0fe903a0-a323-44db-9daf-134c68627d61: Userspace may not 
+>> assign
+>> queue 00.0033 to mdev: already assigned to \
+>> 62177883-f1bb-47f0-914d-32a22e3a8804
+>>
+>> Example for 2:
+>> vfio_ap_mdev 62177883-f1bb-47f0-914d-32a22e3a8804: Can not reserve queue
+>> 00.0033 for host driver: in use by mdev
+>>
+>> Signed-off-by: Anthony Krowiak <akrowiak@linux.ibm.com>
+>> ---
+>>  drivers/s390/crypto/vfio_ap_ops.c | 73 ++++++++++++++++++++-----------
+>>  1 file changed, 48 insertions(+), 25 deletions(-)
+>>
+>> diff --git a/drivers/s390/crypto/vfio_ap_ops.c
+>> b/drivers/s390/crypto/vfio_ap_ops.c
+>> index a52c2690933f..2ce52b491f8a 100644
+>> --- a/drivers/s390/crypto/vfio_ap_ops.c
+>> +++ b/drivers/s390/crypto/vfio_ap_ops.c
+>> @@ -863,48 +863,66 @@ static void vfio_ap_mdev_remove(struct 
+>> mdev_device *mdev)
+>>      vfio_put_device(&matrix_mdev->vdev);
+>>  }
+>>
+>> -#define MDEV_SHARING_ERR "Userspace may not re-assign queue 
+>> %02lx.%04lx " \
+>> -             "already assigned to %s"
+>> +#define MDEV_SHARING_ERR "Userspace may not assign queue %02lx.%04lx 
+>> " \
+>> +             "to mdev: already assigned to %s"
+>>
+>> -static void vfio_ap_mdev_log_sharing_err(struct ap_matrix_mdev 
+>> *matrix_mdev,
+>> -                     unsigned long *apm,
+>> -                     unsigned long *aqm)
+>> +#define MDEV_IN_USE_ERR "Can not reserve queue %02lx.%04lx for host 
+>> driver: " \
+>> +            "in use by mdev"
+>> +
+>> +static void vfio_ap_mdev_log_sharing_err(struct ap_matrix_mdev 
+>> *assignee,
+>> +                     struct ap_matrix_mdev *assigned_to,
+>> +                     unsigned long *apm, unsigned long *aqm)
+>>  {
+>>      unsigned long apid, apqi;
+>> -    const struct device *dev = mdev_dev(matrix_mdev->mdev);
+>> -    const char *mdev_name = dev_name(dev);
+>>
+>>      for_each_set_bit_inv(apid, apm, AP_DEVICES)
+>>          for_each_set_bit_inv(apqi, aqm, AP_DOMAINS)
+>> -            dev_warn(dev, MDEV_SHARING_ERR, apid, apqi, mdev_name);
+>> +            dev_warn(mdev_dev(assignee->mdev), MDEV_SHARING_ERR,
+>> +                 apid, apqi, dev_name(mdev_dev(assigned_to->mdev)));
+>>  }
+>>
+>> -/**
+>> +static void vfio_ap_mdev_log_in_use_err(struct ap_matrix_mdev 
+>> *assignee,
+>> +                    unsigned long *apm, unsigned long *aqm)
+>> +{
+>> +    unsigned long apid, apqi;
+>> +
+>> +    for_each_set_bit_inv(apid, apm, AP_DEVICES)
+>> +        for_each_set_bit_inv(apqi, aqm, AP_DOMAINS)
+>> +            dev_warn(mdev_dev(assignee->mdev), MDEV_IN_USE_ERR,
+>> +                 apid, apqi);
+>> +}
+>> +
+>> +/**assigned
+>>   * vfio_ap_mdev_verify_no_sharing - verify APQNs are not shared by 
+>> matrix mdevs
+>>   *
+>> + * @assignee the matrix mdev to which @mdev_apm and @mdev_aqm are being
+>> + *           assigned; or, NULL if this function was called by the AP
+>> bus driver
+>> + *           in_use callback to verify none of the APQNs being 
+>> reserved for the
+>> + *           host device driver are in use by a vfio_ap mediated device
+>>   * @mdev_apm: mask indicating the APIDs of the APQNs to be verified
+>>   * @mdev_aqm: mask indicating the APQIs of the APQNs to be verified
+>>   *
+>> - * Verifies that each APQN derived from the Cartesian product of a 
+>> bitmap of
+>> - * AP adapter IDs and AP queue indexes is not configured for any matrix
+>> - * mediated device. AP queue sharing is not allowed.
+>> + * Verifies that each APQN derived from the Cartesian product of APIDs
+>> + * represented by the bits set in @mdev_apm and the APQIs of the 
+>> bits set in
+>> + * @mdev_aqm is not assigned to a mediated device other than the 
+>> mdev to which
+>> + * the APQN is being assigned (@assignee). AP queue sharing is not 
+>> allowed.
+>>   *
+>>   * Return: 0 if the APQNs are not shared; otherwise return -EADDRINUSE.
+>>   */
+>> -static int vfio_ap_mdev_verify_no_sharing(unsigned long *mdev_apm,
+>> +static int vfio_ap_mdev_verify_no_sharing(struct ap_matrix_mdev 
+>> *assignee,
+>> +                      unsigned long *mdev_apm,
+>>                        unsigned long *mdev_aqm)
+>>  {
+>> -    struct ap_matrix_mdev *matrix_mdev;
+>> +    struct ap_matrix_mdev *assigned_to;
+>>      DECLARE_BITMAP(apm, AP_DEVICES);
+>>      DECLARE_BITMAP(aqm, AP_DOMAINS);
+>>
+>> -    list_for_each_entry(matrix_mdev, &matrix_dev->mdev_list, node) {
+>> +    list_for_each_entry(assigned_to, &matrix_dev->mdev_list, node) {
+>>          /*
+>> -         * If the input apm and aqm are fields of the matrix_mdev
+>> -         * object, then move on to the next matrix_mdev.
+>> +         * If the mdev to which the mdev_apm and mdev_aqm is being
+>> +         * assigned is the same as the mdev being verified
+>>           */
+>> -        if (mdev_apm == matrix_mdev->matrix.apm &&
+>> -            mdev_aqm == matrix_mdev->matrix.aqm)
+>> +        if (assignee == assigned_to)
+>>              continue;
+>>
+>>          memset(apm, 0, sizeof(apm));
+>> @@ -912,17 +930,21 @@ static int
+>> vfio_ap_mdev_verify_no_sharing(unsigned long *mdev_apm,
+>>
+>>          /*
+>>           * We work on full longs, as we can only exclude the leftover
+>> -         * bits in non-inverse order. The leftover is all zeros.
+>> +         * bits in non-inverse order. The leftover is all 
+>> zeros.assigned
+>>           */
+>> -        if (!bitmap_and(apm, mdev_apm, matrix_mdev->matrix.apm,
+>> +        if (!bitmap_and(apm, mdev_apm, assigned_to->matrix.apm,
+>>                  AP_DEVICES))
+>>              continue;
+>>
+>> -        if (!bitmap_and(aqm, mdev_aqm, matrix_mdev->matrix.aqm,
+>> +        if (!bitmap_and(aqm, mdev_aqm, assigned_to->matrix.aqm,
+>>                  AP_DOMAINS))
+>>              continue;
+>>
+>> -        vfio_ap_mdev_log_sharing_err(matrix_mdev, apm, aqm);
+>> +        if (assignee)
+>> +            vfio_ap_mdev_log_sharing_err(assignee, assigned_to,
+>> +                             apm, aqm);
+>> +        else
+>> +            vfio_ap_mdev_log_in_use_err(assigned_to, apm, aqm);
+>>
+>>          return -EADDRINUSE;
+>>      }
+>> @@ -951,7 +973,8 @@ static int vfio_ap_mdev_validate_masks(struct
+>> ap_matrix_mdev *matrix_mdev)
+>>                             matrix_mdev->matrix.aqm))
+>>          return -EADDRNOTAVAIL;
+>>
+>> -    return vfio_ap_mdev_verify_no_sharing(matrix_mdev->matrix.apm,
+>> +    return vfio_ap_mdev_verify_no_sharing(matrix_mdev,
+>> +                          matrix_mdev->matrix.apm,
+>>                            matrix_mdev->matrix.aqm);
+>>  }
+>>
+>> @@ -2458,7 +2481,7 @@ int vfio_ap_mdev_resource_in_use(unsigned long
+>> *apm, unsigned long *aqm)
+>>
+>>      mutex_lock(&matrix_dev->guests_lock);
+>>      mutex_lock(&matrix_dev->mdevs_lock);
+>> -    ret = vfio_ap_mdev_verify_no_sharing(apm, aqm);
+>> +    ret = vfio_ap_mdev_verify_no_sharing(NULL, apm, aqm);
+>>      mutex_unlock(&matrix_dev->mdevs_lock);
+>>      mutex_unlock(&matrix_dev->guests_lock);
+>
+> I don't see exactly where you do the printk but according to your
+> description you do an error log. I would suggest to lower this
+> to a warning instead.
 
-After updating the patch description,
+The messages are written via the two functions above
+using the 'dev_warn' function to post the messages to
+the log. See:
 
-Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+vfio_ap_mdev_log_sharing_err
+vfio_ap_mdev_log_in_use_err
 
-> ---
-> =C2=A0include/linux/kexec.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 3 +++
-> =C2=A0kernel/kexec_file.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 22 ++++++++++++++++++++++
-> =C2=A0security/integrity/ima/ima_kexec.c |=C2=A0 3 +++
-> =C2=A03 files changed, 28 insertions(+)
->=20
-> diff --git a/include/linux/kexec.h b/include/linux/kexec.h
-> index 4dbf806bccef..bd554ced9fb2 100644
-> --- a/include/linux/kexec.h
-> +++ b/include/linux/kexec.h
-> @@ -362,6 +362,9 @@ struct kimage {
-> =C2=A0
-> =C2=A0	phys_addr_t ima_buffer_addr;
-> =C2=A0	size_t ima_buffer_size;
-> +
-> +	unsigned long ima_segment_index;
-> +	bool is_ima_segment_index_set;
-> =C2=A0#endif
-> =C2=A0
-> =C2=A0	/* Core ELF header buffer */
-> diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
-> index 3eedb8c226ad..606132253c79 100644
-> --- a/kernel/kexec_file.c
-> +++ b/kernel/kexec_file.c
-> @@ -38,6 +38,21 @@ void set_kexec_sig_enforced(void)
-> =C2=A0}
-> =C2=A0#endif
-> =C2=A0
-> +#ifdef CONFIG_IMA_KEXEC
-> +static bool check_ima_segment_index(struct kimage *image, int i)
-> +{
-> +	if (image->is_ima_segment_index_set && i =3D=3D image->ima_segment_inde=
-x)
-> +		return true;
-> +	else
-> +		return false;
-> +}
-> +#else
-> +static bool check_ima_segment_index(struct kimage *image, int i)
-> +{
-> +	return false;
-> +}
-> +#endif
-> +
-> =C2=A0static int kexec_calculate_store_digests(struct kimage *image);
-> =C2=A0
-> =C2=A0/* Maximum size in bytes for kernel/initrd files. */
-> @@ -764,6 +779,13 @@ static int kexec_calculate_store_digests(struct kima=
-ge
-> *image)
-> =C2=A0		if (ksegment->kbuf =3D=3D pi->purgatory_buf)
-> =C2=A0			continue;
-> =C2=A0
-> +		/*
-> +		 * Skip the segment if ima_segment_index is set and matches
-> +		 * the current index
-> +		 */
-> +		if (check_ima_segment_index(image, i))
-> +			continue;
-> +
-> =C2=A0		ret =3D crypto_shash_update(desc, ksegment->kbuf,
-> =C2=A0					=C2=A0 ksegment->bufsz);
-> =C2=A0		if (ret)
-> diff --git a/security/integrity/ima/ima_kexec.c
-> b/security/integrity/ima/ima_kexec.c
-> index 89088f1fa989..704676fa6615 100644
-> --- a/security/integrity/ima/ima_kexec.c
-> +++ b/security/integrity/ima/ima_kexec.c
-> @@ -160,6 +160,7 @@ void ima_add_kexec_buffer(struct kimage *image)
-> =C2=A0	kbuf.buffer =3D kexec_buffer;
-> =C2=A0	kbuf.bufsz =3D kexec_buffer_size;
-> =C2=A0	kbuf.memsz =3D kexec_segment_size;
-> +	image->is_ima_segment_index_set =3D false;
-> =C2=A0	ret =3D kexec_add_buffer(&kbuf);
-> =C2=A0	if (ret) {
-> =C2=A0		pr_err("Error passing over kexec measurement buffer.\n");
-> @@ -170,6 +171,8 @@ void ima_add_kexec_buffer(struct kimage *image)
-> =C2=A0	image->ima_buffer_addr =3D kbuf.mem;
-> =C2=A0	image->ima_buffer_size =3D kexec_segment_size;
-> =C2=A0	image->ima_buffer =3D kexec_buffer;
-> +	image->ima_segment_index =3D image->nr_segments - 1;
-> +	image->is_ima_segment_index_set =3D true;
-> =C2=A0
-> =C2=A0	/*
-> =C2=A0	 * kexec owns kexec_buffer after kexec_add_buffer() is called
+
+
 
 
