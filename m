@@ -1,131 +1,199 @@
-Return-Path: <linux-kernel+bounces-526761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8E11A402C2
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 23:35:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED4EAA402B8
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 23:33:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B62643A2BC1
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 22:33:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C219A421BCD
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 22:33:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA06B42A95;
-	Fri, 21 Feb 2025 22:33:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22F9D2512DB;
+	Fri, 21 Feb 2025 22:33:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="sxtUlTih"
-Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dYjhTcww"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A76AC254AEB
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 22:33:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F7FB1FF612;
+	Fri, 21 Feb 2025 22:33:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740177199; cv=none; b=JlpVoQ5Iqyczq7QhOpkk9AoSfFQlKiC2rnL4Pg4Rqr2DLCtD/c8rJHZTl8vkIzol6h5v18UDt8uJ3WtQvqcohvc+BmJ+1frH9qK3+J+h+RYAHafy98xSaPskI8BIt9rDenVYwoojtP69z5+NpVsvskh7ilQFgcEj2CN9sg4sMLg=
+	t=1740177188; cv=none; b=AbPMo1rQARJtGCYGozecnc1Xa3P1QhuPWXicLKiF+rMJBhB2rlx7zoDwnJuvLh9cJsC3mldhVfhz/yf4hPYYwkePWLHJ2ZEvnT4fdGNX9C+KVgzXGBci9ts6s14YcqiJxbTvSFY0q2b7ICRQkeybslypvTLgOWQ2eR4AzubcGFs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740177199; c=relaxed/simple;
-	bh=arFG12Yyu9BZtG4uWu4Apb7FX2TG1iTEcCqqDfZXUVs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=phj2TBQVTAWvJbOpfdstt7jmCsZYZpYrtrdOoqTuQk3YPF9AQdI0FkJ5nLNOh20YlfBQwKv3X1Ud2XE53tm0Xmw48Alz8Rx+c6uQWBSaRWbw6aRIMySEjvcXQaEnWIxf3sdrPHdwyK1jQkZpxfIE+aSDhuvbQJiCGx2UrwFpraU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=sxtUlTih; arc=none smtp.client-ip=95.215.58.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1740177191;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=/oHcAJH8k19ImnwHTRjOmi9oEpJN71Gn5cUukOMpM5A=;
-	b=sxtUlTihMuFhHGUccPcl8B3FZHpU1w0WLyJKoIXgAUuKvEjHyubbSHT8aWeuzXqfch9YWg
-	kQJBhrj8YIYKcv2AoIFW6UM8KcHW47J8ff0J/SjtJSW/Zo8wGAZs51320VheD7gT+qCMXV
-	PuCXfprZf+OUp3rf+9fGW44sIR2NE7o=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Peter Rosin <peda@axentia.se>,
-	Kees Cook <kees@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH] mux: Convert mux_control_ops to a flex array member in mux_chip
-Date: Fri, 21 Feb 2025 23:31:47 +0100
-Message-ID: <20250221223146.248138-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1740177188; c=relaxed/simple;
+	bh=jhNLKKmZdBg6gC6tf7E+ph0/0dRu9QCUxQqNNWqYgC0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J+ljDK6OwJBlTDADdpAY84LqqsIlxlZktv6GChKUrQJCEYkBBobDkOQGQMFzxHniY2jS6Mmw1dvOyfsCFpoV32DBINXmWl5JXa5utC5ectAOYNlStVdX7lLq7MtURlEzG2hiYrxq58U+fpRUWeJxbJpqgy0V/ldG7Tov9WJDc4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dYjhTcww; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3D05C4CEEA;
+	Fri, 21 Feb 2025 22:33:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740177187;
+	bh=jhNLKKmZdBg6gC6tf7E+ph0/0dRu9QCUxQqNNWqYgC0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dYjhTcwwqkB+c0oQIgk5fXqY7qD4VMlHaawaWAbdLAgVxTx4vfF28H23IGQVv6/wW
+	 F5djNnKngrl0f+naFDP4anowjcC+UUlJBfW2G90yCVkA8fnDxg9wUaVQUhJE5Rftwe
+	 x6hyPuSRyFIIAjNBIj9ZU2BH0iHb2D5wtYv/wOgzovzxXuOuy365iHa/Ztyb5Vlnuw
+	 C0VTKNpHdMGINUOuHbM3InaaOMmyisQGF6ZmDQbkC7iPgj1+zH7el90AjnSPPCFqc3
+	 osWpNaSTdCDmB23MaI9DbNlpajc5ecKR025rkdU3EETMUctdciuGxyoF/ejPSHz9AM
+	 vlLgeM8y2HUSQ==
+Date: Fri, 21 Feb 2025 16:33:06 -0600
+From: Rob Herring <robh@kernel.org>
+To: "bo.kong" <bo.kong@mediatek.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Conor Dooley <conor+dt@kernel.org>, linux-media@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Project_Global_Chrome_Upstream_Group@mediatek.com,
+	zhaoyuan.chen@mediatek.com, teddy.chen@mediatek.com
+Subject: Re: [PATCH v4 1/4] media: dt-bindings: add MT8188 AIE
+Message-ID: <20250221223306.GA190439-robh@kernel.org>
+References: <20250220070114.15015-1-bo.kong@mediatek.com>
+ <20250220070114.15015-2-bo.kong@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250220070114.15015-2-bo.kong@mediatek.com>
 
-Convert mux_control_ops to a flexible array member at the end of the
-mux_chip struct and add the __counted_by() compiler attribute to
-improve access bounds-checking via CONFIG_UBSAN_BOUNDS and
-CONFIG_FORTIFY_SOURCE.
+On Thu, Feb 20, 2025 at 02:59:50PM +0800, bo.kong wrote:
+> From: Bo Kong <Bo.Kong@mediatek.com>
+> 
+> Add YAML device tree bindings for MT8188 AIE.
+> 
+> Signed-off-by: Bo Kong <Bo.Kong@mediatek.com>
+> ---
+> Changes in v4:
+> 1. Remove address-cells and size-cells
+> 2. Remove larb12 related content
+> 3. Update id content
+> 
+> Changes in v3:
+> None
+> 
+> Changes in v2:
+> 1. Fix coding style
+> ---
+>  .../bindings/media/mediatek,mt8188-aie.yaml   | 90 +++++++++++++++++++
+>  1 file changed, 90 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/media/mediatek,mt8188-aie.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/media/mediatek,mt8188-aie.yaml b/Documentation/devicetree/bindings/media/mediatek,mt8188-aie.yaml
+> new file mode 100644
+> index 000000000000..232b5afc2ad3
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/media/mediatek,mt8188-aie.yaml
+> @@ -0,0 +1,90 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/media/mediatek,mt8188-aie.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: The AI Engine Unit of MediaTek Camera System
+> +
+> +maintainers:
+> +  - Bo Kong <bo.kong@mediatek.com>
+> +
+> +description:
+> +  AIE(AI Engine) is one of the units in mt8188 ISP which
+> +  provides hardware accelerated face detection function,
+> +  it can detect different sizes of faces in a raw image.
 
-Use struct_size() to calculate the number of bytes to allocate for a new
-mux chip and to remove the following Coccinelle/coccicheck warning:
+Wrap lines at 80 char.
 
-  WARNING: Use struct_size
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - const: mediatek,mt8188-aie
+> +
+> +  reg:
+> +    maxItems: 1
+> +    description: Physical base address and length of the register space.
 
-Use size_add() to safely add any extra bytes.
+Drop description. That's every 'reg' entry.
 
-Compile-tested only.
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  mediatek,larb:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description:
+> +      Must contain the local arbiters in the current SoCs, see
+> +      Documentation/devicetree/bindings/memory-controllers/mediatek,smi-larb.yaml
+> +      for details.
+> +
+> +  iommus:
+> +    maxItems: 4
+> +    description:
+> +      Points to the respective IOMMU block with master port as argument, see
+> +      Documentation/devicetree/bindings/iommu/mediatek,iommu.yaml for details.
+> +      Ports are according to the HW.
 
-Link: https://github.com/KSPP/linux/issues/83
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- drivers/mux/core.c         | 7 +++----
- include/linux/mux/driver.h | 4 ++--
- 2 files changed, 5 insertions(+), 6 deletions(-)
+It's not really clear what the 4 entries are. Like any other property, 
+the order should be defined.
 
-diff --git a/drivers/mux/core.c b/drivers/mux/core.c
-index 02be4ba37257..a3840fe0995f 100644
---- a/drivers/mux/core.c
-+++ b/drivers/mux/core.c
-@@ -98,13 +98,12 @@ struct mux_chip *mux_chip_alloc(struct device *dev,
- 	if (WARN_ON(!dev || !controllers))
- 		return ERR_PTR(-EINVAL);
- 
--	mux_chip = kzalloc(sizeof(*mux_chip) +
--			   controllers * sizeof(*mux_chip->mux) +
--			   sizeof_priv, GFP_KERNEL);
-+	mux_chip = kzalloc(size_add(struct_size(mux_chip, mux, controllers),
-+				    sizeof_priv),
-+			   GFP_KERNEL);
- 	if (!mux_chip)
- 		return ERR_PTR(-ENOMEM);
- 
--	mux_chip->mux = (struct mux_control *)(mux_chip + 1);
- 	mux_chip->dev.class = &mux_class;
- 	mux_chip->dev.type = &mux_type;
- 	mux_chip->dev.parent = dev;
-diff --git a/include/linux/mux/driver.h b/include/linux/mux/driver.h
-index 18824064f8c0..e58e59354e23 100644
---- a/include/linux/mux/driver.h
-+++ b/include/linux/mux/driver.h
-@@ -56,18 +56,18 @@ struct mux_control {
- /**
-  * struct mux_chip -	Represents a chip holding mux controllers.
-  * @controllers:	Number of mux controllers handled by the chip.
-- * @mux:		Array of mux controllers that are handled.
-  * @dev:		Device structure.
-  * @id:			Used to identify the device internally.
-  * @ops:		Mux controller operations.
-+ * @mux:		Array of mux controllers that are handled.
-  */
- struct mux_chip {
- 	unsigned int controllers;
--	struct mux_control *mux;
- 	struct device dev;
- 	int id;
- 
- 	const struct mux_control_ops *ops;
-+	struct mux_control mux[] __counted_by(controllers);
- };
- 
- #define to_mux_chip(x) container_of((x), struct mux_chip, dev)
--- 
-2.48.1
-
+> +
+> +  power-domains:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    items:
+> +      - description: clock for imgsys main ipe
+> +      - description: clock for ipe fdvt
+> +      - description: clock for ipe top
+> +
+> +  clock-names:
+> +    items:
+> +      - const: img_ipe
+> +      - const: ipe_fdvt
+> +      - const: ipe_top
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - iommus
+> +  - power-domains
+> +  - clocks
+> +  - clock-names
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    #include <dt-bindings/memory/mediatek,mt8188-memory-port.h>
+> +    #include <dt-bindings/power/mediatek,mt8188-power.h>
+> +    #include <dt-bindings/clock/mediatek,mt8188-clk.h>
+> +    aie@15310000 {
+> +      compatible = "mediatek,mt8188-aie";
+> +      reg = <0x15310000 0x1000>;
+> +      interrupts = <GIC_SPI 787 IRQ_TYPE_LEVEL_HIGH 0>;
+> +      iommus = <&vpp_iommu M4U_PORT_L12_FDVT_RDA_0>,
+> +               <&vpp_iommu M4U_PORT_L12_FDVT_RDB_0>,
+> +               <&vpp_iommu M4U_PORT_L12_FDVT_WRA_0>,
+> +               <&vpp_iommu M4U_PORT_L12_FDVT_WRB_0>;
+> +      power-domains = <&spm MT8188_POWER_DOMAIN_IPE>;
+> +      clocks = <&imgsys CLK_IMGSYS_MAIN_IPE>,
+> +               <&ipesys CLK_IPE_FDVT>,
+> +               <&ipesys CLK_IPESYS_TOP>;
+> +      clock-names = "img_ipe",
+> +                    "ipe_fdvt",
+> +                    "ipe_top";
+> +    };
+> -- 
+> 2.45.2
+> 
 
