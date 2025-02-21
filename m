@@ -1,263 +1,254 @@
-Return-Path: <linux-kernel+bounces-526348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A27CA3FD90
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 18:37:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BB9BA3FD97
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 18:38:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6040F3B47B3
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:32:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76AB93BABBB
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:32:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF1CC2505CD;
-	Fri, 21 Feb 2025 17:32:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C93572505DE;
+	Fri, 21 Feb 2025 17:32:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ijHunvv5"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bcE6nUxw"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9279235955;
-	Fri, 21 Feb 2025 17:32:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4390E35955;
+	Fri, 21 Feb 2025 17:32:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740159123; cv=none; b=oLv6y1OkMXFM/p/408F33kSmW4mE0IgWMSB4Ff2KsmiGqg7znv44YRrerFZRXn9sRIeZSBVgtLJ+tdqD7lVBVQT4DNy4Bi0Vtnl5gGDDhlgCaV47PkCe1udZ+397KHj2vl2CBiu7wX/QFyCzgz8rhKp5RTWL4MTBMDqT9Wj4E1g=
+	t=1740159167; cv=none; b=GnAxUThcVU3qz90ww6iDAyBLc46FwkkX0Q40k+NFK0ETKAi+JazQQyvKW2hYdgr8vOBXw1H8sAC7G8LmPqV4NBgJ1K79A1vGsIlZJZx5v/FkThmJOrmJTyIgy56RmJxiJxdJWOYl7ePUFs/msbYqYb4OJY+fSDdntKmasY/0ado=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740159123; c=relaxed/simple;
-	bh=VgWxCpwf2Q9KFMIddgUkc2CYRnkLJjOOEXo3QLe5ToE=;
+	s=arc-20240116; t=1740159167; c=relaxed/simple;
+	bh=ZP/AZtmKekbdVa5h3wfllziVebzm3Pt0LiN8jFoe/t0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LwviaYhorPV7VCNQatiOdwUus43vQqfATNx5v2m2j010FDlE1tZPlvBuQ9tTgT1AkEbrTPEwQSzIauEgTkZsL5LjBVw0BMhm0MCRJqVDCRL4d1QYHTfoLZioAlsRfVZYX35/x/+hwVnFL131hDLFg8nEzf8IeJdTsyrlVym47nc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ijHunvv5; arc=none smtp.client-ip=209.85.214.178
+	 To:Cc:Content-Type; b=GVVp7JzsvnRdUWYPmg9P9XTTsDRI2+/S5hCo87dIAjicFtUKKxxNz2ErWl+TC9FHudNp32TZfRGqihsWukIKFgwwyVLCag8btZVkipFQtHLznT5oBk1w1mYD0ROZWSMA1xj6Qft2DkLJlo3/cwKXaAs+zv5iA6BhowOqV0Z4FUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bcE6nUxw; arc=none smtp.client-ip=209.85.208.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-221206dbd7eso50503265ad.2;
-        Fri, 21 Feb 2025 09:32:01 -0800 (PST)
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-30a2594435dso34078941fa.1;
+        Fri, 21 Feb 2025 09:32:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740159121; x=1740763921; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1740159163; x=1740763963; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=QZTfoZLKdGhieUhqNYuabAUMhySDG/Lsaab0mVAiuGk=;
-        b=ijHunvv5LuBZEwGp0skc8ozrfSXxe9VuyCPUkUxQyn7aZgWiyDiumpmHw+In3vJzfU
-         ZSKQ0PCSmmIOOxDnDBt3FwwYS5RMx2zogqQj5+TS0Lk09aQWDtCdnqhK3fqK1rJWoj8z
-         wBKtjB1n5jr47zUktrA0WTVe4JKeA8T2P+lKq8iHcDrra3vp8iihOvjadzK+Ur9RGaqq
-         uOeGpkgbzJZ5NLM+d16h4spYtXmvew8RmHo80MKxfBO4P1rASmEk1kM3PadgJ2OLKXhE
-         mKUFGjYafXoIA12fP5Cl8JYYkou3WEm+2CfYhKz7qW2dXLAJlF8WlJVxnATZ/KZJTFwQ
-         a0Pw==
+        bh=jJaML9956P6Qct9n7YoV3xhm6iSp4V2wMSvsIOJXqbc=;
+        b=bcE6nUxwH6eW0OOHJDmFP4Zj5LHwD8oU46+OD9awqFqZOID8LIvURwGCs1UGIlOJI3
+         PWjv0bjxMK7qBidibKtiHplDyD1qMgfc1IaDRiII30d7Uti4g8JH6sslQXyvCR12AonM
+         eEdySvIxRzcd0KafXAQMtBXiOlKfQ1uCVGmaI6LbVrBNO4EV2jW5ppoOe1mgrQbOcbCP
+         sMAhq8l0OXL2CIq5eWNjAU4eaAMM9QjDb2CYEttSrGXhOkpqSMcJd0sLAZVkZqMLYNlI
+         K0/+fpfZj+I0oBIqPcBI4GwrXCll/2+TbWteK2dfJ/7f1dl99RPyX3X9/VoU7iLISJWd
+         cTUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740159121; x=1740763921;
+        d=1e100.net; s=20230601; t=1740159163; x=1740763963;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=QZTfoZLKdGhieUhqNYuabAUMhySDG/Lsaab0mVAiuGk=;
-        b=C+f2BCF/UoxD8XHjdP3lGCy0G+Dy3bcLgnYEBNUGwcSWiARJTrdKLAfJcMNHAvsyz4
-         A3XuBt8+KCL0N/mdctcJTWmVAnOsfrlXWL6DWoN7rSKVcmDmr3meGVFTPeI9RnJRx4pf
-         ffs2M9OLL5GBPDqQWcuqbLeYNWNRNtFdRC/6LGrwE1GkBbDvZpitBSfmxH7edkIkcnGa
-         87KSVejOO+RFYxO6v8hCbb50jwWLvz4Sbkjgc/K1OGod+AS2HzTNiGaOOuEqwU71ZuqW
-         DOGqqzaQRsKye8EtWPneDgR5x9FeGF7iyYq6V5fheFf8teWUADOvhwkiYtStBs83244K
-         culg==
-X-Forwarded-Encrypted: i=1; AJvYcCUjm/1pXThXFv23EmDyBGABdnktgVfyTwemTw6TqZuKRmgfjYreU5/q4lIhFVTS1XcwotUshekAkFG6@vger.kernel.org, AJvYcCVm4u7gQLMacYFXA10XdLj4g+23ruGHCcKft/Y7xLMpLClKYZ6dn7XQfJ2zmQrP0l94TBIqP95If5GIGQ==@vger.kernel.org, AJvYcCVqbxBplpDgOVUrjZYRaT0MQB+BLQTFMU6BumQlxxIm8WDjs8YZFkZPT9am1LXjFDi2mC2doEQDbOfRZxLt@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywbpl53hfqaGP2RoHF6PaaNIdvI7Tydj0SRM2W3N0ylgATJkpBA
-	sAy3m/r1YbqCxWY08QrLLwnTVEablPykdKzxbIjz6N6KbG0ja2C5PsiQXcnvtYBD+T7Zwn/eBlb
-	gy1GS7mSSyIKVczHNjmz4Ma59hv2XAdndnCM=
-X-Gm-Gg: ASbGncvZ6Zhtq57qe632qldyIY2knTiDOOpGJZ5WMIigYD7mRL4oxMEhclTM7Jf82Sy
-	35ZeFIk24mHWSLVQbnj/0AeD6TpWWQwvyXXHkpdknlggvbWn++cIFi6A62prL+szoX5+4TN2u8h
-	2MNLs50A==
-X-Google-Smtp-Source: AGHT+IGvX6qvGMn+KIoSiym6cWI0/nkZPpF6Z96ZqNT2izY3BoWxN63KfbmCr+lFl0lhQj/RNR4+SRdsolaQeSBPF+s=
-X-Received: by 2002:a17:90b:4fd2:b0:2fc:2a9c:21de with SMTP id
- 98e67ed59e1d1-2fce7b0814emr6701344a91.35.1740159120658; Fri, 21 Feb 2025
- 09:32:00 -0800 (PST)
+        bh=jJaML9956P6Qct9n7YoV3xhm6iSp4V2wMSvsIOJXqbc=;
+        b=NUWZ8nNLvTC7Hzv0FKpiqWeV9Bm/DDUsrlcJsnxkkmdaMGt3ZSSsy26hjpGzrpXwhi
+         zkOAigPl4QZ7raX0wg7eRl60Ne6Sf0xoIffCQhxSM8FFT8Eu7UqkmPHyX/nx27WpvRXm
+         h8N9jLSsESv870UswzMaO9yYPgoFhDTM2SLleh/LRIP2qQC3aaKInV47wXY5d2i8UMkG
+         S1kUpPzzm5Omn4DP6oSU0hoe3WTaR7QclPxOq9KrdDvULnubHXMYWOHmmoOUlvb30Ym6
+         mXUwymUZOrqkPxD/scvHchuxZZvi9e9wSvQNAk0xFmJczagcp3CYcO69YjW67sN83HJw
+         nVdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUBJgwBlTQiF6ILPzJlzOggZX5HzzIA9j7ne7DHqb37dUekNOmbIamMMwT99+OeCieQ4tTFaD8aGlcjAoFw@vger.kernel.org, AJvYcCV6y7oVx9vd+AotpWnp3j9+7ZOGMjusl0dqHvdy+DJwVWvmML/dAblNvsa6tBO7wD/geAIhlArq40PSoxU8SgY=@vger.kernel.org, AJvYcCXZzbUqRa4UdwEzKDmFwAzDbaZ8sxuyljPVHL5mS40FFRe6h0IAhuQz4x3K9Pi+R1KR5l+cbz40Iqtm@vger.kernel.org, AJvYcCXmVzlQAAyqp6QV8QBhDIew0hBRbCy9Bkbx2aBDT4E5AWTryDLWDwrFg6koLaNHXV4nG8UZ2EpJbJ7QAeEg@vger.kernel.org
+X-Gm-Message-State: AOJu0YxU6PHjgW+wjEm9rLZOSNcwKPj23QbRbJGsikXgs9IZ5o8fd63g
+	bOEF/drkEw10cTuV+GU8gzJd2rhYuU/MprgTxnyiBN5bKxwpHzlr+GR9VPC6XTgPCPVcxR7PJOp
+	zit03K5e3IMCUNtXXNZf+75ZgyKA=
+X-Gm-Gg: ASbGnct8ezAk7rZ9ip3uurpVvqx0NZHoxHfThugK6lWYz4VTlHA3b23tAuezouIyGdD
+	o19tAGzbJKkmXQaINr/T10aKk5CndKOFddSiQ6f/lEzfDX8UGhZH1YrRabkG7zi8RXRkKKEDBBW
+	Qrw48upo7A2TlHKWMR5xQ4/+ttaVvwqyVjITLmFObh3Q==
+X-Google-Smtp-Source: AGHT+IFxT4w66GaPlc3A/wTppIBJfgqA6VUJQjnIKnRHSb865LLrlRfQ3PC+ljynjrcEeQeBBsji2Xh3J+hIuoVgSws=
+X-Received: by 2002:a2e:95cf:0:b0:309:271d:711a with SMTP id
+ 38308e7fff4ca-30a5997e02dmr13064501fa.13.1740159163087; Fri, 21 Feb 2025
+ 09:32:43 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250120092146.471951-1-sergio.paracuellos@gmail.com>
- <20250120092146.471951-7-sergio.paracuellos@gmail.com> <Z7i1aDGiHLsOFYyz@alpha.franken.de>
-In-Reply-To: <Z7i1aDGiHLsOFYyz@alpha.franken.de>
-From: Sergio Paracuellos <sergio.paracuellos@gmail.com>
-Date: Fri, 21 Feb 2025 18:31:51 +0100
-X-Gm-Features: AWEUYZmfPnR0Xkg3hXec_be0Y2VGoRk2tcCq1Cvh3Y4Iuwhnyr8MUjUABCqx5YI
-Message-ID: <CAMhs-H-8N766PMZMwmV8B3e=65pPZHA4ntnRWDMoqR-U_xULfA@mail.gmail.com>
-Subject: Re: [PATCH v3 6/6] mips: dts: ralink: mt7628a: update system
- controller node and its consumers
-To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Cc: linux-clk@vger.kernel.org, sboyd@kernel.org, mturquette@baylibre.com, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com, 
-	p.zabel@pengutronix.de, linux-mips@vger.kernel.org, 
-	devicetree@vger.kernel.org, yangshiji66@outlook.com, 
-	linux-kernel@vger.kernel.org
+References: <20250218-rust-xarray-bindings-v17-0-f3a99196e538@gmail.com>
+ <20250218-rust-xarray-bindings-v17-2-f3a99196e538@gmail.com> <Z7imafmrrK0_TO65@pollux>
+In-Reply-To: <Z7imafmrrK0_TO65@pollux>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Fri, 21 Feb 2025 12:32:06 -0500
+X-Gm-Features: AWEUYZmPYku9SRhQtPs7zcM_PkSwe-MlLN_XcNfWi4R554FoIu-TSTRLf0mVB_s
+Message-ID: <CAJ-ks9nQhjXYfjr=kPU1RQON83iWkFXrxM7oXzSrSxRVbg_xTg@mail.gmail.com>
+Subject: Re: [PATCH v17 2/3] rust: xarray: Add an abstraction for XArray
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Matthew Wilcox <willy@infradead.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	FUJITA Tomonori <fujita.tomonori@gmail.com>, "Rob Herring (Arm)" <robh@kernel.org>, 
+	=?UTF-8?B?TWHDrXJhIENhbmFs?= <mcanal@igalia.com>, 
+	Asahi Lina <lina@asahilina.net>, rust-for-linux@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pci@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Feb 21, 2025 at 6:19=E2=80=AFPM Thomas Bogendoerfer
-<tsbogend@alpha.franken.de> wrote:
->
-> On Mon, Jan 20, 2025 at 10:21:46AM +0100, Sergio Paracuellos wrote:
-> > Current MT7628A device tree file system controller node is wrong since =
-it is
-> > not matching bindings. Hence, update it to match current bindings updat=
-ing
-> > it also to use new introduced clock constants.
-> >
-> > Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
-> > ---
-> >  arch/mips/boot/dts/ralink/mt7628a.dtsi | 38 ++++++++++++++++----------
-> >  1 file changed, 24 insertions(+), 14 deletions(-)
-> >
-> > diff --git a/arch/mips/boot/dts/ralink/mt7628a.dtsi b/arch/mips/boot/dt=
-s/ralink/mt7628a.dtsi
-> > index 45a15e005cc4..309966049c56 100644
-> > --- a/arch/mips/boot/dts/ralink/mt7628a.dtsi
-> > +++ b/arch/mips/boot/dts/ralink/mt7628a.dtsi
-> > @@ -1,4 +1,5 @@
-> >  // SPDX-License-Identifier: GPL-2.0
-> > +#include <dt-bindings/clock/mediatek,mtmips-sysc.h>
-> >
-> >  / {
-> >       #address-cells =3D <1>;
-> > @@ -16,11 +17,6 @@ cpu@0 {
-> >               };
-> >       };
-> >
-> > -     resetc: reset-controller {
-> > -             compatible =3D "ralink,rt2880-reset";
-> > -             #reset-cells =3D <1>;
-> > -     };
-> > -
-> >       cpuintc: interrupt-controller {
-> >               #address-cells =3D <0>;
-> >               #interrupt-cells =3D <1>;
-> > @@ -36,9 +32,11 @@ palmbus@10000000 {
-> >               #address-cells =3D <1>;
-> >               #size-cells =3D <1>;
-> >
-> > -             sysc: system-controller@0 {
-> > -                     compatible =3D "ralink,mt7620a-sysc", "syscon";
-> > +             sysc: syscon@0 {
-> > +                     compatible =3D "ralink,mt7628-sysc", "syscon";
-> >                       reg =3D <0x0 0x60>;
-> > +                     #clock-cells =3D <1>;
-> > +                     #reset-cells =3D <1>;
-> >               };
-> >
-> >               pinmux: pinmux@60 {
-> > @@ -138,7 +136,7 @@ watchdog: watchdog@100 {
-> >                       compatible =3D "mediatek,mt7621-wdt";
-> >                       reg =3D <0x100 0x30>;
-> >
-> > -                     resets =3D <&resetc 8>;
-> > +                     resets =3D <&sysc 8>;
-> >                       reset-names =3D "wdt";
-> >
-> >                       interrupt-parent =3D <&intc>;
-> > @@ -154,7 +152,7 @@ intc: interrupt-controller@200 {
-> >                       interrupt-controller;
-> >                       #interrupt-cells =3D <1>;
-> >
-> > -                     resets =3D <&resetc 9>;
-> > +                     resets =3D <&sysc 9>;
-> >                       reset-names =3D "intc";
-> >
-> >                       interrupt-parent =3D <&cpuintc>;
-> > @@ -190,7 +188,9 @@ spi: spi@b00 {
-> >                       pinctrl-names =3D "default";
-> >                       pinctrl-0 =3D <&pinmux_spi_spi>;
-> >
-> > -                     resets =3D <&resetc 18>;
-> > +                     clocks =3D <&sysc MT76X8_CLK_SPI1>;
-> > +
-> > +                     resets =3D <&sysc 18>;
-> >                       reset-names =3D "spi";
-> >
-> >                       #address-cells =3D <1>;
-> > @@ -206,7 +206,9 @@ i2c: i2c@900 {
-> >                       pinctrl-names =3D "default";
-> >                       pinctrl-0 =3D <&pinmux_i2c_i2c>;
-> >
-> > -                     resets =3D <&resetc 16>;
-> > +                     clocks =3D <&sysc MT76X8_CLK_I2C>;
-> > +
-> > +                     resets =3D <&sysc 16>;
-> >                       reset-names =3D "i2c";
-> >
-> >                       #address-cells =3D <1>;
-> > @@ -222,7 +224,9 @@ uart0: uartlite@c00 {
-> >                       pinctrl-names =3D "default";
-> >                       pinctrl-0 =3D <&pinmux_uart0_uart>;
-> >
-> > -                     resets =3D <&resetc 12>;
-> > +                     clocks =3D <&sysc MT76X8_CLK_UART0>;
-> > +
-> > +                     resets =3D <&sysc 12>;
-> >                       reset-names =3D "uart0";
-> >
-> >                       interrupt-parent =3D <&intc>;
-> > @@ -238,7 +242,9 @@ uart1: uart1@d00 {
-> >                       pinctrl-names =3D "default";
-> >                       pinctrl-0 =3D <&pinmux_uart1_uart>;
-> >
-> > -                     resets =3D <&resetc 19>;
-> > +                     clocks =3D <&sysc MT76X8_CLK_UART1>;
-> > +
-> > +                     resets =3D <&sysc 19>;
-> >                       reset-names =3D "uart1";
-> >
-> >                       interrupt-parent =3D <&intc>;
-> > @@ -254,7 +260,9 @@ uart2: uart2@e00 {
-> >                       pinctrl-names =3D "default";
-> >                       pinctrl-0 =3D <&pinmux_uart2_uart>;
-> >
-> > -                     resets =3D <&resetc 20>;
-> > +                     clocks =3D <&sysc MT76X8_CLK_UART2>;
-> > +
-> > +                     resets =3D <&sysc 20>;
-> >                       reset-names =3D "uart2";
-> >
-> >                       interrupt-parent =3D <&intc>;
-> > @@ -290,6 +298,8 @@ wmac: wmac@10300000 {
-> >               compatible =3D "mediatek,mt7628-wmac";
-> >               reg =3D <0x10300000 0x100000>;
-> >
-> > +             clocks =3D <&sysc MT76X8_CLK_WMAC>;
-> > +
-> >               interrupt-parent =3D <&cpuintc>;
-> >               interrupts =3D <6>;
-> >
-> > --
-> > 2.25.1
->
-> I get
->
->   DTC     arch/mips/boot/dts/ralink/vocore2.dtb
-> /local/tbogendoerfer/korg/linux/arch/mips/boot/dts/ralink/mt7628a.dtsi:27=
-5.28-284.4: ERROR (phandle_references): /usb-phy@10120000: Reference to non=
--existent node or label "resetc"
->
-> /local/tbogendoerfer/korg/linux/arch/mips/boot/dts/ralink/mt7628a.dtsi:27=
-5.28-284.4: ERROR (phandle_references): /usb-phy@10120000: Reference to non=
--existent node or label "resetc"
->
-> ERROR: Input tree has errors, aborting (use -f to force output)
->
-> for CONFIG_DTB_VOCORE2=3Dy and a similair failure for CONFIG_DTB_OMEGA2P=
-=3Dy
->
-> I'll apply rest of the series, please send a fixed patch for mt7628a
+(resending because gmail decided =F0=9F=91=8D is only allowed in HTML)
 
-Sure, thanks a lot!
-
-Best regards,
-     Sergio Paracuellos
-
+On Fri, Feb 21, 2025 at 11:14=E2=80=AFAM Danilo Krummrich <dakr@kernel.org>=
+ wrote:
 >
-> Thomas.
+> On Tue, Feb 18, 2025 at 09:37:44AM -0500, Tamir Duberstein wrote:
 >
-> --
-> Crap can work. Given enough thrust pigs will fly, but it's not necessaril=
-y a
-> good idea.                                                [ RFC1925, 2.3 =
-]
+> [...]
+>
+> > +
+> > +impl<T: ForeignOwnable> XArray<T> {
+> > +    /// Creates a new [`XArray`].
+> > +    pub fn new(kind: AllocKind) -> impl PinInit<Self> {
+> > +        let flags =3D match kind {
+> > +            AllocKind::Alloc =3D> bindings::XA_FLAGS_ALLOC,
+> > +            AllocKind::Alloc1 =3D> bindings::XA_FLAGS_ALLOC1,
+> > +        };
+> > +        pin_init!(Self {
+> > +            // SAFETY: `xa` is valid while the closure is called.
+> > +            xa <- Opaque::ffi_init(|xa| unsafe {
+> > +                bindings::xa_init_flags(xa, flags)
+> > +            }),
+> > +            _p: PhantomData,
+> > +        })
+>
+> I think this needs an `INVARIANT` comment.
+
+=F0=9F=91=8D
+
+> [...]
+>
+> > +/// The error returned by [`store`](Guard::store).
+> > +///
+> > +/// Contains the underlying error and the value that was not stored.
+> > +pub struct StoreError<T> {
+> > +    /// The error that occurred.
+> > +    pub error: Error,
+> > +    /// The value that was not stored.
+> > +    pub value: T,
+> > +}
+> > +
+> > +impl<T> From<StoreError<T>> for Error {
+> > +    fn from(value: StoreError<T>) -> Self {
+> > +        let StoreError { error, value: _ } =3D value;
+> > +        error
+> > +    }
+>
+> Still think this should just be `value.error`.
+>
+> If it is important to especially point out that `value` is dropped, maybe=
+ a
+> comment is the better option.
+>
+> IMHO, adding additionally code here just throws up questions on why that
+> additional code is needed.
+
+OK.
+
+> > +}
+> > +
+> > +impl<'a, T: ForeignOwnable> Guard<'a, T> {
+> > +    fn load<F, U>(&self, index: usize, f: F) -> Option<U>
+> > +    where
+> > +        F: FnOnce(NonNull<T::PointedTo>) -> U,
+> > +    {
+> > +        // SAFETY: `self.xa.xa` is always valid by the type invariant.
+> > +        let ptr =3D unsafe { bindings::xa_load(self.xa.xa.get(), index=
+) };
+> > +        let ptr =3D NonNull::new(ptr.cast())?;
+> > +        Some(f(ptr))
+> > +    }
+> > +
+> > +    /// Provides a reference to the element at the given index.
+> > +    pub fn get(&self, index: usize) -> Option<T::Borrowed<'_>> {
+> > +        self.load(index, |ptr| {
+> > +            // SAFETY: `ptr` came from `T::into_foreign`.
+> > +            unsafe { T::borrow(ptr.as_ptr()) }
+> > +        })
+> > +    }
+> > +
+> > +    /// Provides a mutable reference to the element at the given index=
+.
+> > +    pub fn get_mut(&mut self, index: usize) -> Option<T::BorrowedMut<'=
+_>> {
+> > +        self.load(index, |ptr| {
+> > +            // SAFETY: `ptr` came from `T::into_foreign`.
+> > +            unsafe { T::borrow_mut(ptr.as_ptr()) }
+> > +        })
+> > +    }
+> > +
+> > +    /// Removes and returns the element at the given index.
+> > +    pub fn remove(&mut self, index: usize) -> Option<T> {
+> > +        // SAFETY: `self.xa.xa` is always valid by the type invariant.
+> > +        //
+> > +        // SAFETY: The caller holds the lock.
+>
+> I think we only want one `SAFETY` section with an enumeration.
+
+=F0=9F=91=8D
+
+> > +        let ptr =3D unsafe { bindings::__xa_erase(self.xa.xa.get(), in=
+dex) }.cast();
+> > +        // SAFETY: `ptr` is either NULL or came from `T::into_foreign`=
+.
+> > +        //
+> > +        // SAFETY: `&mut self` guarantees that the lifetimes of [`T::B=
+orrowed`] and
+> > +        // [`T::BorrowedMut`] borrowed from `self` have ended.
+>
+> Same here...
+
+=F0=9F=91=8D
+
+> > +        unsafe { T::try_from_foreign(ptr) }
+> > +    }
+> > +
+> > +    /// Stores an element at the given index.
+> > +    ///
+> > +    /// May drop the lock if needed to allocate memory, and then reacq=
+uire it afterwards.
+> > +    ///
+> > +    /// On success, returns the element which was previously at the gi=
+ven index.
+> > +    ///
+> > +    /// On failure, returns the element which was attempted to be stor=
+ed.
+> > +    pub fn store(
+> > +        &mut self,
+> > +        index: usize,
+> > +        value: T,
+> > +        gfp: alloc::Flags,
+> > +    ) -> Result<Option<T>, StoreError<T>> {
+> > +        build_assert!(
+> > +            mem::align_of::<T::PointedTo>() >=3D 4,
+> > +            "pointers stored in XArray must be 4-byte aligned"
+> > +        );
+> > +        let new =3D value.into_foreign();
+> > +
+> > +        let old =3D {
+> > +            let new =3D new.cast();
+> > +            // SAFETY: `self.xa.xa` is always valid by the type invari=
+ant.
+> > +            //
+> > +            // SAFETY: The caller holds the lock.
+>
+> ...and here.
+
+=F0=9F=91=8D
+
+> > +            //
+> > +            // INVARIANT: `new` came from `T::into_foreign`.
+> > +            unsafe { bindings::__xa_store(self.xa.xa.get(), index, new=
+, gfp.as_raw()) }
+> > +        };
 
