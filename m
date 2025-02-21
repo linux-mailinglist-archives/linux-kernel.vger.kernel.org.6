@@ -1,297 +1,113 @@
-Return-Path: <linux-kernel+bounces-525331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52137A3EEA9
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:28:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 834E0A3EDEB
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:09:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 94B7E7A4244
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 08:25:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 238A37008EC
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 08:09:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E22C1FFC77;
-	Fri, 21 Feb 2025 08:26:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b="aSBpS+B3"
-Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2102.outbound.protection.outlook.com [40.107.255.102])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2FAF1FBCAD;
+	Fri, 21 Feb 2025 08:09:03 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A1B61FBCBA;
-	Fri, 21 Feb 2025 08:25:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.102
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740126361; cv=fail; b=S9OU3ljyeEW74M0W/U87qf6vY/jWRfE9oLr2WbQgPfos9yIWenN78jvlvEWtx0Y11xrDDbpkQfaiWsECsqvqSMnh00YkwylXGWcknzUUDdbSbG3BRY54Kc/pwCRQzGp49GknnCjkayUM5JD8MjbuRG2znTMfHcVffWVkJQDTGHI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740126361; c=relaxed/simple;
-	bh=aBsJ0L+e3bdZ5/E+Zx4BKd+fEWB9xRvjlvnvj5sBQMs=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=DD7kEosQw4Z8ZIiquDGAVUtvHVZ1Wgt1FEqZWPTcAw01j0cDTVhNuxPU9NbwDA1WLSaV+am8v39tXKfJxVfuA4RcGSJmyFgGlfIY4alF0LBp0nlcHDmIRsRvApfkNP/G2R9NCzK2xFricjX0GtCs3lSyQtbc+/D5H5EyzHpGRUA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b=aSBpS+B3; arc=fail smtp.client-ip=40.107.255.102
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=DWgpS0csmm2m4lcb5a6wbE9rTtnUSwH3iFs0/3/NWgSpiKK8aMwEo5LjLTUAoZDyJ+Pn+A8DEr3nHbGsA1sRLBJylj0AJ9jM9gy8YY8N7QYyPJREJg4Q3e1TvX/lXOLbIGoE+xKpefiTxtOCGZzI+8sY+pcJUc77cVTSU0jYrrQ0m+Ivj6alsrQmOoiycpMTtzI143glL0RLZGg1+T0fu0GdDIBTse1d1s7SgbThsiINy0hwIACUhvdbOfeD6Kf8GANPSIilIv7aZcJPGa56NHyIScGh0yvUQLB6hGyIFvqIaMnwa4zDkixcbFpBi4uxTXgyimOzb2EI4+hzbb+qUw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=jj3BFtIdCXh8sF/NFp9G4sqf9ccFvga3/sZLML2tnU0=;
- b=lC2ZiOew6QyrmCo5LgVJNNnnh8XFwp5ntq8E3VT04o0j0V2+Z1twGRSYkLvkJFh+ywOELqQMI6WgqT2YxdwSkJWXaO+T1ACwHXN2bKisriSevYyxvX6OmEi1cAx1XXEEY4lWwe+rXg4RPFiU/Rx/lThiTzcOR2mkOXsDVcIgrCmhcSlhERiZlnU/iWYz0qB6XmEjhf8ai/DsoAHwBZOGLtMG8BQdyoutwSbGPIR39RindAQsdnif/jUXgj8+w1NKNEZQ+ZB0CrSFelIWQ/eC9SMRWC7ifyohrJqfqz5wUMBVWJmOEBTFigpzW6Lxbzlq8Fn6OGbEgVmr2S8o/8AkCA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=aspeedtech.com; dmarc=pass action=none
- header.from=aspeedtech.com; dkim=pass header.d=aspeedtech.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aspeedtech.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jj3BFtIdCXh8sF/NFp9G4sqf9ccFvga3/sZLML2tnU0=;
- b=aSBpS+B3FJLIHfOXjfS4qgSv8NZsNl5EXJK3v0ela3wggSTzPbwSr3xwIY3ni34S2XQMGKF8EcyaXhkOpBfkJ3kYTAyxrER8i5MtL48/h3tpfNvPZ35mKUijlRG8rAqM8lv68QuswMZSAbyXUCx0wDEqeJOf174YnhGod7KIhAGjlRutHZoYVvHS+HZ0ulZhFpGHuVgbizux4KyZVTat20aHIC4Ivpjy82LvS6kO4wiy13Qp0v6F0eEBtbGS1rfWZlF4if52TX6NbGuL6beYMmVSiTrR0m5FV/IBdnKlprwCziEoXRuLfYcOMbiMSPmE4JQQu0bzrNCTC4U331OZNw==
-Received: from SI6PR06MB7535.apcprd06.prod.outlook.com (2603:1096:4:235::12)
- by TYZPR06MB5227.apcprd06.prod.outlook.com (2603:1096:400:1fc::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.17; Fri, 21 Feb
- 2025 08:25:53 +0000
-Received: from SI6PR06MB7535.apcprd06.prod.outlook.com
- ([fe80::8af2:b731:a5e5:169f]) by SI6PR06MB7535.apcprd06.prod.outlook.com
- ([fe80::8af2:b731:a5e5:169f%5]) with mapi id 15.20.8466.015; Fri, 21 Feb 2025
- 08:25:53 +0000
-From: Ryan Chen <ryan_chen@aspeedtech.com>
-To: Ryan Chen <ryan_chen@aspeedtech.com>, "brendan.higgins@linux.dev"
-	<brendan.higgins@linux.dev>, "benh@kernel.crashing.org"
-	<benh@kernel.crashing.org>, "joel@jms.id.au" <joel@jms.id.au>,
-	"andi.shyti@kernel.org" <andi.shyti@kernel.org>, "robh@kernel.org"
-	<robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>, "andrew@codeconstruct.com.au"
-	<andrew@codeconstruct.com.au>, "p.zabel@pengutronix.de"
-	<p.zabel@pengutronix.de>, "andriy.shevchenko@linux.intel.com"
-	<andriy.shevchenko@linux.intel.com>, "linux-i2c@vger.kernel.org"
-	<linux-i2c@vger.kernel.org>, "openbmc@lists.ozlabs.org"
-	<openbmc@lists.ozlabs.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-aspeed@lists.ozlabs.org"
-	<linux-aspeed@lists.ozlabs.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-CC: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: RE: [PATCH v15 1/3] dt-bindings: i2c: aspeed: support for
- AST2600-i2cv2
-Thread-Topic: [PATCH v15 1/3] dt-bindings: i2c: aspeed: support for
- AST2600-i2cv2
-Thread-Index: AQHbGGxcg35U+p0xVUGbHH/SlZw4qLNSJngg
-Date: Fri, 21 Feb 2025 08:25:53 +0000
-Message-ID:
- <SI6PR06MB7535BFD3377505F5191AED7FF2C72@SI6PR06MB7535.apcprd06.prod.outlook.com>
-References: <20241007035235.2254138-1-ryan_chen@aspeedtech.com>
- <20241007035235.2254138-2-ryan_chen@aspeedtech.com>
-In-Reply-To: <20241007035235.2254138-2-ryan_chen@aspeedtech.com>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=aspeedtech.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SI6PR06MB7535:EE_|TYZPR06MB5227:EE_
-x-ms-office365-filtering-correlation-id: fbf73d1a-e819-48fa-df17-08dd52515b45
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|376014|7416014|366016|1800799024|38070700018|7053199007|921020;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?8HXg+QfjUAoNKEQknxhR5oxXAhbAKGQCdPWjN6xO+LIYbmVwYyWyy29ElmPV?=
- =?us-ascii?Q?w34fj88zrWUh1y33T5VlQjpnAk/lorsk21m/uoyHwC698RQvhKiKZXl2hHF2?=
- =?us-ascii?Q?8ipKTxtnOoOuWC07Mxh0tXAkqy11TondyFcO2xb6QUgC5QJ8+DcQYNcPNF1d?=
- =?us-ascii?Q?lxjDhZAaE5WPwFbhmDRmRUhK475tuyx09FDon30L5KqhhbB1eRuz/GQrRulp?=
- =?us-ascii?Q?/u5vAJvdnCe6vlW0VV5SdyLyKQRCG2U0K7NIwbcymyn3Rfn2tjC5YJ355grj?=
- =?us-ascii?Q?9OI4IVGjIjKu4NEI33+WweXHMM1GIZD3qXQfj8oS1D6AWQxwuUGoeoh+eEYS?=
- =?us-ascii?Q?WGOZij4r7JBqr+FeXohV1p8njkGyylvoQ9/X4SAojj1kP2Yz2lPZPtQLiM5l?=
- =?us-ascii?Q?Y+ekHDtWsqv+FBnFOr0MV559z8mpE8lhu/191VUJCcmvbERZ3PMUniX07W2h?=
- =?us-ascii?Q?HjIMuH+1Ohkm5/JwxCNqzBWbrYvjYAi7p198lGie2StozD5sIumjDfPcEUTu?=
- =?us-ascii?Q?Vu+goSVSDuGAJVtLVfjTo72qc3kFTRuzWi3V/jH2Z2CU+dyewfo4sZ/9OrYA?=
- =?us-ascii?Q?zhVgJIQT8sQD8sIaseyCANXSpeXQ/tG01FBZeqOP/FYPexmY/GhU1FAjDxFd?=
- =?us-ascii?Q?ASj6tc3xdcAM+saATXLyuwFfzgM3WaqC15O9MY0DAsECo6ZEiDe6xRao1gWd?=
- =?us-ascii?Q?jkAOOKr3iYakSGOktRRwad81/suCJw5c+mBzsdYAVT5MBkjxk4+0/dn11ejO?=
- =?us-ascii?Q?yH3YlSb8DDMel13HVcrx5G96y6HRhDke/l2n8lf8KZSpQ48kgFX9nXwPIqcD?=
- =?us-ascii?Q?05nWrAM5oiNZDs0+4ToJPFdWgRr7QpG3c7WWKBEmLkFdECmPT7fjRzckYOgL?=
- =?us-ascii?Q?n28OzC0iBlcPq1BiFFo/yRgD02Y4hdzIyxOBqMp/ld+NcJGGKGgMxF7waRKK?=
- =?us-ascii?Q?7M64cr6FZs5TC/3PTZgUn5i/tPzL/qMaaQkdweiGLg5nLtgUtJmi3vpwtZNy?=
- =?us-ascii?Q?7GCvntQWV75bvok0rK5ybUbQ59FwnVTNcJ73xxp9qcwMm/IThTXiDd0F8bMk?=
- =?us-ascii?Q?IPflGyF4S5bDXo1dRpqErGS4sCJBOPx/MOdF03MZPkKeAq/qIDwpsbHrltnI?=
- =?us-ascii?Q?GXf1gARLN0yLX8hGIwfZckzDX+sX8388uE1+gUNh2wJIxe+KAWOqXq7AZpOD?=
- =?us-ascii?Q?DzaxQ/kbVV3Dsdt/iAxgK3/nhihQLa8mWC3ShFhYO3Ia36G9SjTHDx46Cdhj?=
- =?us-ascii?Q?BAtZ1cnDJgSL/kC1NUZD0yP+ICtPFaqqM3YJzgoaDWOrtVcZ43PBFQ7xgQiT?=
- =?us-ascii?Q?dr6WgGbAUTGryK8U/t3G3hH1b4Gq5j8Nrj/eq/NLNtZQElOI23KK9XHTYsGz?=
- =?us-ascii?Q?pKvxJbtsmClcuOnf0fRM35vqEywuR3VUnTd1wJwF2TFxelLb3EBujJ8U+Z/U?=
- =?us-ascii?Q?aZMYT2j8nIC6NGMZe0mUPK7T8Pa8G5faLQSGgRjsWomGARqF1/GLAQ=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SI6PR06MB7535.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(38070700018)(7053199007)(921020);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?0T7k6XRbGxxRghJVO9krtBBTOKx4EKdJqPf2hmCIx8IS70zaTkqPiUMXEDhj?=
- =?us-ascii?Q?JtLe4j9JZ1SEAkXGoMcmlAR3CNJ7SMml+cJnTh1X7dzFfVCJjil4PSGeJsNt?=
- =?us-ascii?Q?fTPk8YSa/G4/YUri+/4PCVWMAzxMr9jfE7Z5mqlBmy5dbtwqp6f3JeAq8C0m?=
- =?us-ascii?Q?btw3jj6pkh/JGThcLmARb/JXuRhpTgagGkwjuczv4201MOKHQFN+sIjAmgaY?=
- =?us-ascii?Q?ox36Y5oc6fKpTNa3Ay+FBEKqGis8UodpibL+8eAbpJpNJug21gZVQpSvUNeh?=
- =?us-ascii?Q?p7SWu+xM1fjNVdpsuKJOXi0Mvch+q3oFcN+9P8/TEeqE0iQXR3ikG3MFrOgq?=
- =?us-ascii?Q?QQKF6dFWbYLKqXL8TQ5YlKDlA3LtBAYd8g1/0zXfcUz6Xh4tkXhV2/KLW1Rp?=
- =?us-ascii?Q?8N7i9r+RKjXFlTRzMucGUHjyVaWw9ZZsA4SMKw4QMxCXtI/u/NpxL3OWNXN+?=
- =?us-ascii?Q?2ye2eVLFd3xUhJbt2GEXvano9P/Enj/fKyuA48Ac32hxVlDYGj8bOxHfdLD6?=
- =?us-ascii?Q?xhp6zBy3jW+8lnE1slmIfrn5sBRpZ/v+ytZG78xoWLW9qK+FKsE0VoygxRK9?=
- =?us-ascii?Q?RsaYh7OqFqlmAPK5fxoXlg403rJeydlNHaQIfKku8nalhWDc5t39FhBX5kRt?=
- =?us-ascii?Q?RofrVkb9PkAxeG+FJtQlefl/r1buQklQR7P30b/6pj8mP8PFJ+rO3IOTpz+n?=
- =?us-ascii?Q?0g/FE07kEqxCTdTSugJ3OZaHkGz2np0XP52JpX8HgqbKkrVReQld8Y1fISHD?=
- =?us-ascii?Q?jDJBKffTrzzQV5NyWii0h0qPtwGq2b/POPZ9CfIOSOvAA9ANlHNMRLpOMGxi?=
- =?us-ascii?Q?sm94thQwZ7YsKguB4oy16bpsuSjhrtuE5d/PIzlN1UT6doagxl4q52Bd47WA?=
- =?us-ascii?Q?LOczYNFeDEdYZRnjIO73sqkWy4E7i49rwuV1xIQM5kdIDoNsVXsXjNl87BnL?=
- =?us-ascii?Q?nQe2aF4NeGCxpIpKZ8Z8qmTvco5x5r+uCGtPVqmsC80SUDdsHuTxoMN3RvkI?=
- =?us-ascii?Q?oqOWM6MkYlzzbXE0AFUDCKs9w4xIzFaNfmFDEddvZu7WtVwFkLknuXVDscPq?=
- =?us-ascii?Q?iV477H0ZSlhgwfuiNqL1mA2LMh/TZxam9bJLEmEab7rViTU/nIYT2dYehszF?=
- =?us-ascii?Q?UTFHY+raAHtAWL16ZQUNK7/+A4VcrO2qud/F2E8AYx0TV7BbTwSOF5WpFXpK?=
- =?us-ascii?Q?mCG+ToBTBtIMVilEHE/mwwK0L/gOgWEh/FFwAdxWRgarHBuMaU7x0PqnA464?=
- =?us-ascii?Q?rWy9uY/3EDi9DrNdt3vB9vz44ts0lzkbbi+9JTMyRJcDVXTkM6ksMOJIVplT?=
- =?us-ascii?Q?Daa4w7JzVrAgrND38BUvcgU+lOJ5IiVxAd2VkwBtGIakdt9io/2ZAgpFJVcB?=
- =?us-ascii?Q?7SalwqPwAOhpVfdW2sXSHmDJWWhRL3Gto+TQykYzKloxB+tI/o+vDpBGrv0p?=
- =?us-ascii?Q?S+o3xfK1H5qbtXRg/pyaz3cKqCItWim8b8GPABj6hVZuiYm4Mp+7JSvhmVwJ?=
- =?us-ascii?Q?a9ycO/yBBmfGnnpglVRlyGmCtD3VYa22njB7LKkuB/OLej7EvNAAJAXvPES+?=
- =?us-ascii?Q?cwu8N0cEgyLOpxL/76yXYqkUBwmi7L7ggxkrC9Xt?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 868A51D7E2F;
+	Fri, 21 Feb 2025 08:09:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740125343; cv=none; b=WweoyRCxA/LhZaFVizXn3BBRpotz1e3cZyfpSCzo19oQL4VMjediisY2Y/PV8GfR2lHTqrYUXzgVwKLWa7xNmWlkWFAufr7SGxpjiL8saplAIZtr9ecmzCKd9486EJM9vpgpCHdXPQKJPpWqq5smuwkiErKTzE3DGuH932MfnhI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740125343; c=relaxed/simple;
+	bh=x6Je/MiGfzQ7gAuCruwEQwF7HP2I/8JRFgCqS/KI0K0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ROLOgbH8aawCu2ruOLs06jLwkPdzU7OnRI8p+/ATZcvbWacArkJYQloPzbhOEEv9rm+xnw8BXL6vqmmg/h/3/BFompDhqaCaolAtCn49R6kDPNzh1qUKYhfouDjDUhBlcLo1APWMmgZNIY26XB+0CEUqfU35PZoXWlP0ITWlDX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4YzjMR1rbVz1GDcp;
+	Fri, 21 Feb 2025 16:04:19 +0800 (CST)
+Received: from kwepemg500017.china.huawei.com (unknown [7.202.181.81])
+	by mail.maildlp.com (Postfix) with ESMTPS id BA5641402E2;
+	Fri, 21 Feb 2025 16:08:57 +0800 (CST)
+Received: from huawei.com (10.175.127.227) by kwepemg500017.china.huawei.com
+ (7.202.181.81) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 21 Feb
+ 2025 16:08:56 +0800
+From: Li Lingfeng <lilingfeng3@huawei.com>
+To: <trondmy@kernel.org>, <anna@kernel.org>
+CC: <linux-nfs@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<ehagberg@janestreet.com>, <yukuai1@huaweicloud.com>, <houtao1@huawei.com>,
+	<yi.zhang@huawei.com>, <yangerkun@huawei.com>, <lilingfeng@huaweicloud.com>,
+	<lilingfeng3@huawei.com>
+Subject: [PATCH] nfs: remove SB_RDONLY when remounting nfs
+Date: Fri, 21 Feb 2025 16:26:13 +0800
+Message-ID: <20250221082613.2674633-1-lilingfeng3@huawei.com>
+X-Mailer: git-send-email 2.31.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: aspeedtech.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SI6PR06MB7535.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fbf73d1a-e819-48fa-df17-08dd52515b45
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Feb 2025 08:25:53.3121
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43d4aa98-e35b-4575-8939-080e90d5a249
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: qeex+Lm5yoIlgARvi2uBl8ymH1k+9LRvDKe0EEt8L+8y5ZfxETTZOv7z61dl0pzsskOsoyCXZVjuvAKQgsyeDJI3noS0OamDEY2/Phgp0bA=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR06MB5227
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemg500017.china.huawei.com (7.202.181.81)
 
-Hello Krzysztof,
-	I am going to submit v16, and will update the yaml file, in my this versio=
-n will add aspeed,enable-byte.
-	So, we should I do about this patch about " Reviewed-by: Krzysztof Kozlows=
-ki <krzysztof.kozlowski@linaro.org>"=20
-	Should I remove it ? or I should keep this Reviewed-by?
+In some scenarios, when mounting NFS, more than one superblock may be
+created. The final superblock used is the last one created, but only the
+first superblock carries the ro flag passed from user space. If a ro flag
+is added to the superblock via remount, it will trigger the issue
+described in Link[1].
 
+Link[2] attempted to address this by marking the superblock as ro during
+the initial mount. However, this introduced a new problem in scenarios
+where multiple mount points share the same superblock:
+[root@a ~]# mount /dev/sdb /mnt/sdb
+[root@a ~]# echo "/mnt/sdb *(rw,no_root_squash)" > /etc/exports
+[root@a ~]# echo "/mnt/sdb/test_dir2 *(ro,no_root_squash)" >> /etc/exports
+[root@a ~]# systemctl restart nfs-server
+[root@a ~]# mount -t nfs -o rw 127.0.0.1:/mnt/sdb/test_dir1 /mnt/test_mp1
+[root@a ~]# mount | grep nfs4
+127.0.0.1:/mnt/sdb/test_dir1 on /mnt/test_mp1 type nfs4 (rw,relatime,...
+[root@a ~]# mount -t nfs -o ro 127.0.0.1:/mnt/sdb/test_dir2 /mnt/test_mp2
+[root@a ~]# mount | grep nfs4
+127.0.0.1:/mnt/sdb/test_dir1 on /mnt/test_mp1 type nfs4 (ro,relatime,...
+127.0.0.1:/mnt/sdb/test_dir2 on /mnt/test_mp2 type nfs4 (ro,relatime,...
+[root@a ~]#
 
-> -----Original Message-----
-> From: Ryan Chen <ryan_chen@aspeedtech.com>
-> Sent: Monday, October 7, 2024 11:53 AM
-> To: brendan.higgins@linux.dev; benh@kernel.crashing.org; joel@jms.id.au;
-> andi.shyti@kernel.org; robh@kernel.org; krzk+dt@kernel.org;
-> conor+dt@kernel.org; andrew@codeconstruct.com.au;
-> p.zabel@pengutronix.de; andriy.shevchenko@linux.intel.com;
-> linux-i2c@vger.kernel.org; openbmc@lists.ozlabs.org;
-> devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
-> linux-aspeed@lists.ozlabs.org; linux-kernel@vger.kernel.org; Ryan Chen
-> <ryan_chen@aspeedtech.com>
-> Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Subject: [PATCH v15 1/3] dt-bindings: i2c: aspeed: support for AST2600-i2=
-cv2
->=20
-> Add ast2600-i2cv2 compatible and aspeed,global-regs, aspeed,enable-dma
-> and description for ast2600-i2cv2.
->=20
-> Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
->  .../devicetree/bindings/i2c/aspeed,i2c.yaml   | 51 +++++++++++++++++--
->  1 file changed, 48 insertions(+), 3 deletions(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/i2c/aspeed,i2c.yaml
-> b/Documentation/devicetree/bindings/i2c/aspeed,i2c.yaml
-> index 6df27b47b922..6c16fc76c978 100644
-> --- a/Documentation/devicetree/bindings/i2c/aspeed,i2c.yaml
-> +++ b/Documentation/devicetree/bindings/i2c/aspeed,i2c.yaml
-> @@ -9,9 +9,6 @@ title: ASPEED I2C on the AST24XX, AST25XX, and AST26XX
-> SoCs
->  maintainers:
->    - Rayn Chen <rayn_chen@aspeedtech.com>
->=20
-> -allOf:
-> -  - $ref: /schemas/i2c/i2c-controller.yaml#
-> -
->  properties:
->    compatible:
->      enum:
-> @@ -49,12 +46,50 @@ properties:
->      description:
->        states that there is another master active on this bus
->=20
-> +  aspeed,enable-dma:
-> +    type: boolean
-> +    description: |
-> +      I2C bus enable dma mode transfer.
-> +
-> +      ASPEED ast2600 platform equipped with 16 I2C controllers that shar=
-e
-> a
-> +      single DMA engine. DTS files can specify the data transfer mode
-> to/from
-> +      the device, either DMA or programmed I/O. However, hardware
-> limitations
-> +      may require a DTS to manually allocate which controller can use DM=
-A
-> mode.
-> +      The "aspeed,enable-dma" property allows control of this.
-> +
-> +      In cases where one the hardware design results in a specific
-> +      controller handling a larger amount of data, a DTS would likely
-> +      enable DMA mode for that one controller.
-> +
-> +  aspeed,global-regs:
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-> +    description: The phandle of i2c global register node.
-> +
->  required:
->    - reg
->    - compatible
->    - clocks
->    - resets
->=20
-> +allOf:
-> +  - $ref: /schemas/i2c/i2c-controller.yaml#
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: aspeed,ast2600-i2cv2
-> +
-> +    then:
-> +      properties:
-> +        reg:
-> +          minItems: 2
-> +      required:
-> +        - aspeed,global-regs
-> +    else:
-> +      properties:
-> +        aspeed,global-regs: false
-> +        aspeed,enable-dma: false
-> +
->  unevaluatedProperties: false
->=20
->  examples:
-> @@ -71,3 +106,13 @@ examples:
->        interrupts =3D <0>;
->        interrupt-parent =3D <&i2c_ic>;
->      };
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    i2c1: i2c@80 {
-> +      compatible =3D "aspeed,ast2600-i2cv2";
-> +      reg =3D <0x80 0x80>, <0xc00 0x20>;
-> +      aspeed,global-regs =3D <&i2c_global>;
-> +      clocks =3D <&syscon ASPEED_CLK_APB>;
-> +      resets =3D <&syscon ASPEED_RESET_I2C>;
-> +      interrupts =3D <GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>;
-> +    };
-> --
-> 2.34.1
+When mounting the second NFS, the shared superblock is marked as ro,
+causing the previous NFS mount to become read-only.
+
+To resolve both issues, the ro flag is no longer applied to the superblock
+during remount. Instead, the ro flag on the mount is used to control
+whether the mount point is read-only.
+
+Fixes: 281cad46b34d ("NFS: Create a submount rpc_op")
+Link[1]: https://lore.kernel.org/all/20240604112636.236517-3-lilingfeng@huaweicloud.com/
+Link[2]: https://lore.kernel.org/all/20241130035818.1459775-1-lilingfeng3@huawei.com/
+Signed-off-by: Li Lingfeng <lilingfeng3@huawei.com>
+---
+ fs/nfs/super.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/fs/nfs/super.c b/fs/nfs/super.c
+index aeb715b4a690..f08e1d7fb179 100644
+--- a/fs/nfs/super.c
++++ b/fs/nfs/super.c
+@@ -1047,6 +1047,7 @@ int nfs_reconfigure(struct fs_context *fc)
+ 
+ 	sync_filesystem(sb);
+ 
++	fc->sb_flags &= ~SB_RDONLY;
+ 	/*
+ 	 * Userspace mount programs that send binary options generally send
+ 	 * them populated with default values. We have no way to know which
+-- 
+2.31.1
 
 
