@@ -1,141 +1,366 @@
-Return-Path: <linux-kernel+bounces-525018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7498DA3E9DE
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 02:23:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7309A3E9E6
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 02:25:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E2053BA032
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 01:23:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDA5E1894DEF
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 01:24:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 512B03A8CB;
-	Fri, 21 Feb 2025 01:23:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA094189F43;
+	Fri, 21 Feb 2025 01:24:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LF105ZXb"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="VwxPFtEx"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5334438F80
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 01:23:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCE3E38F9C;
+	Fri, 21 Feb 2025 01:24:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740101020; cv=none; b=YHF3OeQwSFkvOQK6gWax/BsaJVkGXJHz6bCBqg/5onQmDgngfkyeKF8sgV6Rz6WsEkeftcYVXv2BY3nnADVtAHGF21t5AYnMm7tTJPdnkEHm+J5NnlB+rj/ehP/ISyYnSJs1iI3418rs8smMkXX8AEw4I6PkENcYDyi3vaDRTfk=
+	t=1740101059; cv=none; b=ddB5HPvJ48yFzFJbbT8zkcxf/8N0Jw/qYXzAn4s88F+kjwTMZpWwGpsjzMndH28MpJjL1S6yI1jrQPhHK82PL9pezUIz9CfmB7WtyAPLJQmS2MjZkI2/1rAvzp4fHTQh7RtGbqvHmqfsma7Wk6tKnRjHH+QHuehoq3m6ihJrt/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740101020; c=relaxed/simple;
-	bh=+/jL1sKjxeHLtWo39rgoJcwRWHPJLm9CyMRjFTSQPKQ=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=kqOOIqP3hLuwS3CH1UfIuA3D+H5n0Xnaz7yvXnLJBAHY2HUHntutAXQKsJSZQkJ6W4uOstnhEyeTfUPIgwm3HYT302n6+9Gd5H7qaHc0YgPAMNFF0Lj9+B77oairHsopdrz3YoRDJXwoFT1UXwjELxZtqeivo2GxD1ouSMKBuf0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--joshdon.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LF105ZXb; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--joshdon.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-22126a488d7so35083605ad.2
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 17:23:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740101018; x=1740705818; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=jsBMZEnf4s9t1bYeOLz4VcLKTvIZtrhOEcgEkKEyanQ=;
-        b=LF105ZXbo1vi5OmS9ixCQF59U/2ZwrxpUEJI0rBHrhxEC21gmQ8ejR8VJapvRRdo30
-         1ppjZDlxmMpVEM/+p0NZla4UUXuEmxR5TMuAHY05O/oOd9mEuw/iY41xi/+dPsrb0eKy
-         EUaw1cB16awz34AIIJC7LZWeuL+X8zVTO+/uJUiBnH0w4rSh3f2bpxpsntTaaxY0JL33
-         Vffcs54tWQenCVLawRnWjsn+F2t7MU81cM0uZ2XLRK8xVXFNV/m4zyiSK4Afu+J+d1QU
-         VcagKZTjychYq587Zj3t/EkQ3N7tLzzIpO4ZQb7wKdhpJAuiEknqgo26oeDGcCU118gP
-         A7Gg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740101018; x=1740705818;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=jsBMZEnf4s9t1bYeOLz4VcLKTvIZtrhOEcgEkKEyanQ=;
-        b=MuOC86Kz4Cj1pulqk6G5mrsmnFifUW7uUOw85MWoOPScwGXe6zYMNGVrgHzeSboEZf
-         3TpQrQb+LZd0zwmz4So/XsQYOTjQUqEXKX+PvL1D3Ru2lzo2B8q/cTZ193+lNHgNOds1
-         4BcuczV7GTyuQDHvyaZFizgZW9EtrMDBuXMr39LCMRLAWTPJ+dNCW2J4hO9B5zHylXr1
-         HkqfiDHdNCqesV60Wov+nKAUKlfKGCVPkXbg4H+MRI60uB3MTLrfHBdMFXoREvc5+e71
-         vtTBB8MSSG7h7lPmidsI0SE4K3oqrjUiURQUz023HHW+Kqrevqw6w2sZt486VocxKLKF
-         PerA==
-X-Forwarded-Encrypted: i=1; AJvYcCXpjD0iQ1WUVesxmE8rxM3YDaJiVrA4x6oQ52acgwNSXt0AQUm2LB8lwIKri7QA10d+FI9oIzRAtCf+tYA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyk4RjdPZY28Qw6o6R4G6315esCSj8aiNCCwp4V47f/3RQJULt1
-	QfNphMggoUKJ7nrR0INKAKDHEKGPCSfsDaDUjCaAbOP/E45Mgk9XnHD8jqC6zY+fPEqr1gDv3gy
-	y993jBQ==
-X-Google-Smtp-Source: AGHT+IHs9vaSPHZpKo+lbHUKcwsd1xAf3YkXze635/rHioRLOiRBCQk6aYYiYZepHURJsKaE+oHiD0PMqKhZ
-X-Received: from pfgs4.prod.google.com ([2002:a05:6a00:1784:b0:728:e945:d2c2])
- (user=joshdon job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:a103:b0:1ee:e641:cac
- with SMTP id adf61e73a8af0-1eef3cb8fb3mr2702900637.20.1740101018567; Thu, 20
- Feb 2025 17:23:38 -0800 (PST)
-Date: Thu, 20 Feb 2025 17:23:35 -0800
+	s=arc-20240116; t=1740101059; c=relaxed/simple;
+	bh=TEfAd7HsAZOFHcIsdN/PiGBEMnhR/7RCqIf9fF5nf6s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=luD+dUMBhdoECVUyhwY2qTjJssWpMTRLLfcfwIgYDqd5oT4hUfXkB0QvCvTEPoVxaajuG6KedjzAUmsg7RgGtzNbGzGCCEoK3ZEWlm5fPxNTjpoJp5bpr5GOYY2NpskVq3C08JHJz1u7kfLcwKWmiUx6Hfy5nWratV0EU03czyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=VwxPFtEx; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51KFawHn016354;
+	Fri, 21 Feb 2025 01:23:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	AmhIMgW1+wbY5wABjJwWKdRq5lYl5yQJv/t2v68ssUs=; b=VwxPFtExn9neAZTm
+	Twa+THI9F1o8veLbZ70ceBQjfne0pHefvJpKmDLtrq51NBYHkoVKUz5/oHlbH4de
+	LICDbWLQ1OhT8sZemzWjZvVVPBcGh7RTsf6oOmYwXtZjnTpeAqX21RaCldt39/dh
+	amvJp5MALdyrblcibIDzEjVWsnHw69wB7qEe856T+3clf+uUMTS7qxWCdFsKA+7c
+	H8wjK8qaE3D4AIoICMOoAPEL6Em57cmwQL/VvRleStmcj/ezo5THUZwqvsSZv9Vq
+	Pm62H4BHzrAshEoIDbOkIFGnvPI2vUyyO0AgzekEP686mJ2tpg7qoRUBhR5NsyjP
+	gKlipw==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44vyy17xq3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 21 Feb 2025 01:23:55 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51L1NssZ016847
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 21 Feb 2025 01:23:54 GMT
+Received: from [10.133.33.30] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 20 Feb
+ 2025 17:23:49 -0800
+Message-ID: <06bed294-0d48-412b-a844-42d7fea6e4b1@quicinc.com>
+Date: Fri, 21 Feb 2025 09:23:47 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.48.1.658.g4767266eb4-goog
-Message-ID: <20250221012335.233404-1-joshdon@google.com>
-Subject: [PATCH v2] sched: fix potential use-after-free with cfs bandwidth
-From: Josh Don <joshdon@google.com>
-To: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>
-Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	K Prateek Nayak <kprateek.nayak@amd.com>, Chengming Zhou <chengming.zhou@linux.dev>, 
-	Markus Elfring <Markus.Elfring@web.de>, Valentin Schneider <vschneid@redhat.com>, 
-	linux-kernel@vger.kernel.org, Josh Don <joshdon@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v12 2/7] Coresight: Add trace_id function to retrieving
+ the trace ID
+To: Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Mike Leach
+	<mike.leach@linaro.org>,
+        James Clark <james.clark@linaro.org>,
+        "Alexander
+ Shishkin" <alexander.shishkin@linux.intel.com>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+CC: Tingwei Zhang <quic_tingweiz@quicinc.com>,
+        Jinlong Mao
+	<quic_jinlmao@quicinc.com>, <coresight@lists.linaro.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>
+References: <20250217093024.1133096-1-quic_jiegan@quicinc.com>
+ <20250217093024.1133096-3-quic_jiegan@quicinc.com>
+ <168c214a-38a5-45d4-a776-d7819cbab9f3@arm.com>
+Content-Language: en-US
+From: Jie Gan <quic_jiegan@quicinc.com>
+In-Reply-To: <168c214a-38a5-45d4-a776-d7819cbab9f3@arm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: qItzYiTwEx2WAB_2YfQxST5jayKuMeM7
+X-Proofpoint-ORIG-GUID: qItzYiTwEx2WAB_2YfQxST5jayKuMeM7
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-20_09,2025-02-20_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ priorityscore=1501 lowpriorityscore=0 phishscore=0 clxscore=1015
+ suspectscore=0 spamscore=0 mlxlogscore=999 mlxscore=0 bulkscore=0
+ malwarescore=0 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2502100000 definitions=main-2502210008
 
-We remove the cfs_rq throttled_csd_list entry *before* doing the
-unthrottle. The problem with that is that destroy_cfs_bandwidth() does a
-lockless scan of the system for any non-empty CSD lists. As a result,
-it is possible that destroy_cfs_bandwidth() returns while we still have
-a cfs_rq from the task group about to be unthrottled.
 
-For full correctness, we should avoid removal from the list until after
-we're done unthrottling in __cfsb_csd_unthrottle().
 
-For consistency, we make the same change to distribute_cfs_runtime(),
-even though this should already be safe due to destroy_cfs_bandwidth()
-cancelling the bandwidth hrtimers.
+On 2/21/2025 1:34 AM, Suzuki K Poulose wrote:
+> On 17/02/2025 09:30, Jie Gan wrote:
+>> Add 'trace_id' function pointer in ops. It's responsible for
+>> retrieving the device's trace ID.
+>>
+>> Co-developed-by: James Clark <james.clark@linaro.org>
+>> Signed-off-by: James Clark <james.clark@linaro.org>
+>> Reviewed-by: James Clark <james.clark@linaro.org>
+>> Signed-off-by: Jie Gan <quic_jiegan@quicinc.com>
+> 
+> 
+> minor nit: Given this is an optional callback, we could as well make
+> this a generic ops and avoid checking if it is a link/source etc. We
+> anyway check if the op is available before calling it.
+> 
+> i.e.:
+> 
+> struct coresight_ops {
+> +    int (*trace_id)(struct coresight *csdev,...);
+> 
+>      ...
+> };
+>
+Hi Suzuki,
 
-Fixes: 8ad075c2eb1f ("sched: Async unthrottling for cfs bandwidth")
-Signed-off-by: Josh Don <joshdon@google.com>
-Reviewed-and-tested-by: K Prateek Nayak <kprateek.nayak@amd.com>
-Reviewed-by: Chengming Zhou <chengming.zhou@linux.dev>
----
-v2: updated commit message with additional metadata
- kernel/sched/fair.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Thanks for comment. Looks a good idea because the trace_id is a generic
+function for the coresight_deivce, which can simplify our codes.
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 34fe6e9490c2..78f542ab03cf 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -5917,10 +5917,10 @@ static void __cfsb_csd_unthrottle(void *arg)
- 
- 	list_for_each_entry_safe(cursor, tmp, &rq->cfsb_csd_list,
- 				 throttled_csd_list) {
--		list_del_init(&cursor->throttled_csd_list);
--
- 		if (cfs_rq_throttled(cursor))
- 			unthrottle_cfs_rq(cursor);
-+
-+		list_del_init(&cursor->throttled_csd_list);
- 	}
- 
- 	rcu_read_unlock();
-@@ -6034,11 +6034,11 @@ static bool distribute_cfs_runtime(struct cfs_bandwidth *cfs_b)
- 
- 		rq_lock_irqsave(rq, &rf);
- 
--		list_del_init(&cfs_rq->throttled_csd_list);
--
- 		if (cfs_rq_throttled(cfs_rq))
- 			unthrottle_cfs_rq(cfs_rq);
- 
-+		list_del_init(&cfs_rq->throttled_csd_list);
-+
- 		rq_unlock_irqrestore(rq, &rf);
- 	}
- 	SCHED_WARN_ON(!list_empty(&local_unthrottle));
--- 
-2.48.1.658.g4767266eb4-goog
+Will update a new version to acheive the idea.
+
+Thanks,
+Jie
+
+
+> 
+> 
+> 
+>> ---
+>>   drivers/hwtracing/coresight/coresight-core.c  | 27 +++++++++++++++++++
+>>   drivers/hwtracing/coresight/coresight-dummy.c | 11 ++++++++
+>>   .../coresight/coresight-etm3x-core.c          |  1 +
+>>   .../coresight/coresight-etm4x-core.c          |  1 +
+>>   drivers/hwtracing/coresight/coresight-stm.c   | 11 ++++++++
+>>   drivers/hwtracing/coresight/coresight-tpda.c  | 11 ++++++++
+>>   include/linux/coresight.h                     |  8 ++++++
+>>   7 files changed, 70 insertions(+)
+>>
+>> diff --git a/drivers/hwtracing/coresight/coresight-core.c b/drivers/ 
+>> hwtracing/coresight/coresight-core.c
+>> index 0a9380350fb5..6cad777757f3 100644
+>> --- a/drivers/hwtracing/coresight/coresight-core.c
+>> +++ b/drivers/hwtracing/coresight/coresight-core.c
+>> @@ -23,6 +23,7 @@
+>>   #include "coresight-etm-perf.h"
+>>   #include "coresight-priv.h"
+>>   #include "coresight-syscfg.h"
+>> +#include "coresight-trace-id.h"
+>>   /*
+>>    * Mutex used to lock all sysfs enable and disable actions and 
+>> loading and
+>> @@ -1515,6 +1516,32 @@ void coresight_remove_driver(struct amba_driver 
+>> *amba_drv,
+>>   }
+>>   EXPORT_SYMBOL_GPL(coresight_remove_driver);
+>> +int coresight_etm_get_trace_id(struct coresight_device *csdev, enum 
+>> cs_mode mode,
+>> +                   struct coresight_device *sink)
+>> +{
+>> +    int trace_id;
+>> +    int cpu = source_ops(csdev)->cpu_id(csdev);
+>> +
+>> +    switch (mode) {
+>> +    case CS_MODE_SYSFS:
+>> +        trace_id = coresight_trace_id_get_cpu_id(cpu);
+>> +        break;
+>> +    case CS_MODE_PERF:
+>> +        trace_id = coresight_trace_id_get_cpu_id_map(cpu, &sink- 
+>> >perf_sink_id_map);
+>> +        break;
+>> +    default:
+>> +        trace_id = -EINVAL;
+>> +        break;
+>> +    }
+>> +
+>> +    if (!IS_VALID_CS_TRACE_ID(trace_id))
+>> +        dev_err(&csdev->dev,
+>> +            "Failed to allocate trace ID on CPU%d\n", cpu);
+>> +
+>> +    return trace_id;
+>> +}
+>> +EXPORT_SYMBOL_GPL(coresight_etm_get_trace_id);
+>> +
+>>   MODULE_LICENSE("GPL v2");
+>>   MODULE_AUTHOR("Pratik Patel <pratikp@codeaurora.org>");
+>>   MODULE_AUTHOR("Mathieu Poirier <mathieu.poirier@linaro.org>");
+>> diff --git a/drivers/hwtracing/coresight/coresight-dummy.c b/drivers/ 
+>> hwtracing/coresight/coresight-dummy.c
+>> index 9be53be8964b..c47f0382b943 100644
+>> --- a/drivers/hwtracing/coresight/coresight-dummy.c
+>> +++ b/drivers/hwtracing/coresight/coresight-dummy.c
+>> @@ -41,6 +41,16 @@ static void dummy_source_disable(struct 
+>> coresight_device *csdev,
+>>       dev_dbg(csdev->dev.parent, "Dummy source disabled\n");
+>>   }
+>> +static int dummy_source_trace_id(struct coresight_device *csdev, 
+>> __maybe_unused enum cs_mode mode,
+>> +                 __maybe_unused struct coresight_device *sink)
+>> +{
+>> +    struct dummy_drvdata *drvdata;
+>> +
+>> +    drvdata = dev_get_drvdata(csdev->dev.parent);
+>> +
+>> +    return drvdata->traceid;
+>> +}
+>> +
+>>   static int dummy_sink_enable(struct coresight_device *csdev, enum 
+>> cs_mode mode,
+>>                   void *data)
+>>   {
+>> @@ -59,6 +69,7 @@ static int dummy_sink_disable(struct 
+>> coresight_device *csdev)
+>>   static const struct coresight_ops_source dummy_source_ops = {
+>>       .enable    = dummy_source_enable,
+>>       .disable = dummy_source_disable,
+>> +    .trace_id = dummy_source_trace_id,
+>>   };
+>>   static const struct coresight_ops dummy_source_cs_ops = {
+>> diff --git a/drivers/hwtracing/coresight/coresight-etm3x-core.c b/ 
+>> drivers/hwtracing/coresight/coresight-etm3x-core.c
+>> index c103f4c70f5d..a38e72ef8e79 100644
+>> --- a/drivers/hwtracing/coresight/coresight-etm3x-core.c
+>> +++ b/drivers/hwtracing/coresight/coresight-etm3x-core.c
+>> @@ -701,6 +701,7 @@ static const struct coresight_ops_source 
+>> etm_source_ops = {
+>>       .cpu_id        = etm_cpu_id,
+>>       .enable        = etm_enable,
+>>       .disable    = etm_disable,
+>> +    .trace_id    = coresight_etm_get_trace_id,
+>>   };
+>>   static const struct coresight_ops etm_cs_ops = {
+>> diff --git a/drivers/hwtracing/coresight/coresight-etm4x-core.c b/ 
+>> drivers/hwtracing/coresight/coresight-etm4x-core.c
+>> index 2c1a60577728..1a993d5380e7 100644
+>> --- a/drivers/hwtracing/coresight/coresight-etm4x-core.c
+>> +++ b/drivers/hwtracing/coresight/coresight-etm4x-core.c
+>> @@ -1064,6 +1064,7 @@ static const struct coresight_ops_source 
+>> etm4_source_ops = {
+>>       .cpu_id        = etm4_cpu_id,
+>>       .enable        = etm4_enable,
+>>       .disable    = etm4_disable,
+>> +    .trace_id    = coresight_etm_get_trace_id,
+>>   };
+>>   static const struct coresight_ops etm4_cs_ops = {
+>> diff --git a/drivers/hwtracing/coresight/coresight-stm.c b/drivers/ 
+>> hwtracing/coresight/coresight-stm.c
+>> index b581a30a1cd9..64fcfa916562 100644
+>> --- a/drivers/hwtracing/coresight/coresight-stm.c
+>> +++ b/drivers/hwtracing/coresight/coresight-stm.c
+>> @@ -281,9 +281,20 @@ static void stm_disable(struct coresight_device 
+>> *csdev,
+>>       }
+>>   }
+>> +static int stm_trace_id(struct coresight_device *csdev, 
+>> __maybe_unused enum cs_mode mode,
+>> +            __maybe_unused struct coresight_device *sink)
+>> +{
+>> +    struct stm_drvdata *drvdata;
+>> +
+>> +    drvdata = dev_get_drvdata(csdev->dev.parent);
+>> +
+>> +    return drvdata->traceid;
+>> +}
+>> +
+>>   static const struct coresight_ops_source stm_source_ops = {
+>>       .enable        = stm_enable,
+>>       .disable    = stm_disable,
+>> +    .trace_id    = stm_trace_id,
+>>   };
+>>   static const struct coresight_ops stm_cs_ops = {
+>> diff --git a/drivers/hwtracing/coresight/coresight-tpda.c b/drivers/ 
+>> hwtracing/coresight/coresight-tpda.c
+>> index 189a4abc2561..d80b6427e5a6 100644
+>> --- a/drivers/hwtracing/coresight/coresight-tpda.c
+>> +++ b/drivers/hwtracing/coresight/coresight-tpda.c
+>> @@ -241,9 +241,20 @@ static void tpda_disable(struct coresight_device 
+>> *csdev,
+>>       dev_dbg(drvdata->dev, "TPDA inport %d disabled\n", in->dest_port);
+>>   }
+>> +static int tpda_trace_id(struct coresight_device *csdev, 
+>> __maybe_unused enum cs_mode mode,
+>> +             __maybe_unused struct coresight_device *sink)
+>> +{
+>> +    struct tpda_drvdata *drvdata;
+>> +
+>> +    drvdata = dev_get_drvdata(csdev->dev.parent);
+>> +
+>> +    return drvdata->atid;
+>> +}
+>> +
+>>   static const struct coresight_ops_link tpda_link_ops = {
+>>       .enable        = tpda_enable,
+>>       .disable    = tpda_disable,
+>> +    .trace_id    = tpda_trace_id,
+>>   };
+>>   static const struct coresight_ops tpda_cs_ops = {
+>> diff --git a/include/linux/coresight.h b/include/linux/coresight.h
+>> index 157c4bd009a1..70407d61262e 100644
+>> --- a/include/linux/coresight.h
+>> +++ b/include/linux/coresight.h
+>> @@ -368,6 +368,7 @@ struct coresight_ops_sink {
+>>    * Operations available for links.
+>>    * @enable:    enables flow between iport and oport.
+>>    * @disable:    disables flow between iport and oport.
+>> + * @trace_id:    alloc or read the traceid.
+>>    */
+>>   struct coresight_ops_link {
+>>       int (*enable)(struct coresight_device *csdev,
+>> @@ -376,6 +377,8 @@ struct coresight_ops_link {
+>>       void (*disable)(struct coresight_device *csdev,
+>>               struct coresight_connection *in,
+>>               struct coresight_connection *out);
+>> +    int (*trace_id)(struct coresight_device *csdev, enum cs_mode mode,
+>> +            struct coresight_device *sink);
+>>   };
+>>   /**
+>> @@ -385,6 +388,7 @@ struct coresight_ops_link {
+>>    *        is associated to.
+>>    * @enable:    enables tracing for a source.
+>>    * @disable:    disables tracing for a source.
+>> + * @trace_id:    alloc or read the traceid.
+>>    */
+>>   struct coresight_ops_source {
+>>       int (*cpu_id)(struct coresight_device *csdev);
+>> @@ -392,6 +396,8 @@ struct coresight_ops_source {
+>>                 enum cs_mode mode, struct coresight_trace_id_map 
+>> *id_map);
+>>       void (*disable)(struct coresight_device *csdev,
+>>               struct perf_event *event);
+>> +    int (*trace_id)(struct coresight_device *csdev, enum cs_mode mode,
+>> +            struct coresight_device *sink);
+>>   };
+>>   /**
+>> @@ -697,4 +703,6 @@ int coresight_init_driver(const char *drv, struct 
+>> amba_driver *amba_drv,
+>>   void coresight_remove_driver(struct amba_driver *amba_drv,
+>>                    struct platform_driver *pdev_drv);
+>> +int coresight_etm_get_trace_id(struct coresight_device *csdev, enum 
+>> cs_mode mode,
+>> +                   struct coresight_device *sink);
+>>   #endif        /* _LINUX_COREISGHT_H */
+> 
 
 
