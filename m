@@ -1,160 +1,185 @@
-Return-Path: <linux-kernel+bounces-526023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB52FA3F8E1
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:34:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2111A3F8E2
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:34:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FD1719E1899
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 15:31:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CEE18645BD
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 15:31:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F17B1212B1B;
-	Fri, 21 Feb 2025 15:28:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F30DD214201;
+	Fri, 21 Feb 2025 15:27:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="igFUWHSG"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fR9/Oyoi"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AC2521147D;
-	Fri, 21 Feb 2025 15:28:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740151735; cv=pass; b=k3q/ropHf1fnlbrhzL0woU+bJDgm6lJEsBa/ZTj8bdtBmGCZ/O4qzU1Z3H9SZQa1aJoOMBCGTkbyi2HEjhkwboJa/CrCaQ2Z3yH1YFqyRi7NlgYUYfLRGyooTddjhrhaS1wNbPGO9Z65ODEZntpe3qFm/APmMFl4TnZ6Rxetn8Y=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740151735; c=relaxed/simple;
-	bh=btfqHh6gmsSIJcjU3GbXMDgWDvFVm8dzoDhioK/7wOI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g4QBT6Fez0Ij+2XJm7XK09HN+L7fhiBSkly32QFooBhjOk1tWAIy2Kilwps5hj8XVsDCwesqGTMOEPIwDTVXZCzjRPC6AcJ9KmE2qWLUahSlHDkkzPTzHWjUkRbHTGJkg/EOoT1iFBs7pPrt9PDmFhsiwyNoUn/792GJg66SwkE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=igFUWHSG; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1740151705; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=ETIPuLM6VzvUWWHUMIH7mvkbk+G00Mc52iuUtqTsQjo/FcOhLTllrie0OVJeiq2TCNXOlZ7QK5CL05uY7fR8JWfFGdONNSR0iNN4DP/8evV5WKXEzsB0rUt3fzYmU6Zmzb9DHzBuhxM+eCa4KDkfURwvYJuJCDt6Km9JvRbuJOg=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1740151705; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=btfqHh6gmsSIJcjU3GbXMDgWDvFVm8dzoDhioK/7wOI=; 
-	b=lYkTsng4RjSYwfRMWG+t3ZfcbH+Zof52remAbATqeErSTKXSnGeuFA2yttTRt04KTxVvr8aQy1nWTWMWORryLgEPF1f14pAnOohgEup3ql3HpU1KplokTZgo692ZCIu4GoYtIbOHQZ+IGTFYFvwovSCVk4psPr5zEIJvHOeMAWw=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
-	dmarc=pass header.from=<sebastian.reichel@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1740151705;
-	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
-	bh=btfqHh6gmsSIJcjU3GbXMDgWDvFVm8dzoDhioK/7wOI=;
-	b=igFUWHSGKkX9Vaftwno4xBOvaOCkuK2X1S/vdVFYFUgj+mxT8BCmZfUxBAvNo3iF
-	RTeKXOQqsnztJzj+NOQHtkiQ5V8qAMoMZx8xoD7RTjkFLRVllFzhJ9tmx5O6l6pSjV8
-	q3ERmLpe1ldSN0fXXPWFhAPd/RmRzL7j5xJem4kY=
-Received: by mx.zohomail.com with SMTPS id 1740151703226401.9144883348604;
-	Fri, 21 Feb 2025 07:28:23 -0800 (PST)
-Received: by venus (Postfix, from userid 1000)
-	id 1DF301826F6; Fri, 21 Feb 2025 16:28:18 +0100 (CET)
-Date: Fri, 21 Feb 2025 16:28:18 +0100
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Daniel Almeida <daniel.almeida@collabora.com>, 
-	Viresh Kumar <viresh.kumar@linaro.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Trevor Gross <tmgross@umich.edu>, Russell King <linux@armlinux.org.uk>, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH V2 2/2] rust: Add basic bindings for clk APIs
-Message-ID: <aoprvojsnmkbzmmpgx5wxjqtamnr3jyhyqfcqnwhxulp34gn32@aau57u4cotpe>
-References: <cover.1740118863.git.viresh.kumar@linaro.org>
- <a0a1ba4e27c3a0d9e38c677611eb88027e463287.1740118863.git.viresh.kumar@linaro.org>
- <Z7iGHiQcqa-_AXli@pollux>
- <4AD8A8F3-EA7E-4FBE-9F0D-58CF7BB09ED5@collabora.com>
- <Z7iSHR0F2QpiNpMZ@pollux>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64DCF212B07;
+	Fri, 21 Feb 2025 15:27:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740151649; cv=none; b=ORk+50aK8IwKc8gM3fO7WAYJ7MZUv1VC1FVaba9hYQLUG4JEDwQx7UHbp1fzOYVTBSPTQXW9cwMjVBD0/7EgA2eDq8FCxyLqKdqGF1WpqYpnAt1H2BHnrEqZY1Eg6BSBxzQlsbiRmv56YGTqUGQI9VRtbiSZNBdGRGkQzFvhQn4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740151649; c=relaxed/simple;
+	bh=5yxGsMRYTXuIQYRwb+D3swc/pR+GWOkx1HET+lS/Qcg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YJD6WRDir83QjAYRabXWP+coes6OVGJdh3RG2r3G1YUJJ3TemO7uTmVZTugRkM7Snu0K8hU5L109XQyHELTqaC8eCyrMHZfCCBXNrKXxBcVI2Gj7WZrR2OD2WkyQwE0djoxiRPBlezjjUMw1/ydoXZInb2Z+A6+WR+iTtLUlS5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fR9/Oyoi; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-38f3913569fso2018412f8f.1;
+        Fri, 21 Feb 2025 07:27:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740151646; x=1740756446; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=4lCZ8MAj4Q/VEcZka8A73ItGpOE2Ji1aovZAZl6qhTA=;
+        b=fR9/Oyoi2UYmu7jZrGS/5a2/hT+hEOpRshRP+gYkEiS8EzdD6kGfRHtnM2Pcc3JtMJ
+         Jxizi8rUtX3Zf1ZC/dVnbs89Gd5oAVFuGnDh1C01hQiARjD8LHy+T8FGUnQ5J7oQmZJ+
+         SCPi64NKQ9rLBrz24o3fOEmfGzJ3hs/6o2V6CPSn8qQd8q5VOXczPij382vhm8eLpzvx
+         w+5TMTdUKeGZ0tK1bq1O/7u06tLG9MF16KQyBcU7tTrlyvREEjf2vM2lZlimxzRNTsDE
+         XzvkikiN80HpQr1y/XFarDP4BeyzO5+QqeHDj/ST9+Sb/5lcwAIpGSNX6upkA04ju7Vo
+         NhPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740151646; x=1740756446;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4lCZ8MAj4Q/VEcZka8A73ItGpOE2Ji1aovZAZl6qhTA=;
+        b=FMeHG7qhad+rlONxiWhCQTJBnj//aPf0+kgpGdbgyeH8BDARDyHU0KC/k2BmgaT1tw
+         /GUtwNWiA+MePoS/Mz0TqP1QgXboGMwDRGuTZ6dPJbNxSB2cOBQIaBNxfFaCvs4w+LWE
+         /QGoMVWCanVXpmYbwtBWbRh8pphVoknDJcBp7c/oPuIpCYWFk0wX3ADdeep0Ub1W3p8f
+         Sn08qvbDyrrq17mNt7jnFeCSOMPuI9W0ARZcXIxjZw4wRmgW+olw6uEWtlk0/bZ0wAT/
+         nFXJnV5OpEGbyWa0XWcwc+dlt1bU8niHxNJsemBkKUPqNorhsB/OyTfH6O2D22xUEm9h
+         2M2w==
+X-Forwarded-Encrypted: i=1; AJvYcCVjNhFKb74FkNl4d2EZQAsCA+Jql5QdzHeK72F4JtqbEnGYr4a/ZCST7ZKxBvOJ81ph3sMz6n7X/06Nna54@vger.kernel.org, AJvYcCXdHACOcv8gY/YtjldUtZZZUBpaG+nR7v58HG7MzgnAOGtJmw+HGVhMwVg6gkH7jKS2bFC02epUVA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwoL8104NqDImGu2W5l8NQgCvCe+KOFV1aRHVVRrHMSGrpAmOVK
+	lQOMhaCP1T4JuLhhopKh6QsGO6rJ9w3lFSF9odEi2XefUl2TpCu7JWjcyg==
+X-Gm-Gg: ASbGnct0JlxnBW2w2Rv1dHUyH4RYmfuX+QhLYC2YQnQaR/ti3GFpQDDG/UGoUsAtGuO
+	KNcfDIbrfu3vFkpbV/8vF2+d0oOIMM1rxtWYOl3BmyqO7Tpb+2/U8sqp4lSOwcLP07BIf15EV3d
+	9wWMTb9bAlNbGxsCMZ0enQtmZ0DcC9XNoxEcJNpkf0GYNEZ64SrW5TGYFEQmQyzUjt0if+aStBR
+	6Q/bTZQt0kFidgAW/ToA3ih4Q7L8g1q/4mV60nxKYaWFJXEj9PFR9i2cOV63b8kritwZhx3VNht
+	sBBTLzRaA4SLZqkLKpEVx1j56UfmJDlTcWwa
+X-Google-Smtp-Source: AGHT+IGD/aMM2q3Rt2CDkJPFyBfFg5d7nPBarKdfXefG+hE2yGfdQ1oLqoKGdgaTbF12wddYzIBM6Q==
+X-Received: by 2002:a05:6000:1862:b0:38d:b349:2db2 with SMTP id ffacd0b85a97d-38f6f515313mr2830130f8f.22.1740151645193;
+        Fri, 21 Feb 2025 07:27:25 -0800 (PST)
+Received: from [192.168.8.100] ([148.252.141.194])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f258ccd3bsm23702128f8f.22.2025.02.21.07.27.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 Feb 2025 07:27:24 -0800 (PST)
+Message-ID: <b4e6ef48-6b3e-4b62-978c-6e80d3e9218e@gmail.com>
+Date: Fri, 21 Feb 2025 15:28:28 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="k3zauxydw4h5jdhh"
-Content-Disposition: inline
-In-Reply-To: <Z7iSHR0F2QpiNpMZ@pollux>
-X-Zoho-Virus-Status: 1
-X-Zoho-AV-Stamp: zmail-av-1.4.2/240.10.19
-X-ZohoMailClient: External
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 2/2] io_uring/io-wq: try to batch multiple free work
+To: Bui Quang Minh <minhquangbui99@gmail.com>, io-uring@vger.kernel.org
+Cc: Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org
+References: <20250221041927.8470-1-minhquangbui99@gmail.com>
+ <20250221041927.8470-3-minhquangbui99@gmail.com>
+ <f34a5715-fae0-406e-a27b-7e94e3113641@gmail.com>
+ <e4be0a96-8e09-4591-96fe-a1d38208875a@gmail.com>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <e4be0a96-8e09-4591-96fe-a1d38208875a@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
+On 2/21/25 14:52, Bui Quang Minh wrote:
+> On 2/21/25 19:44, Pavel Begunkov wrote:
+>> On 2/21/25 04:19, Bui Quang Minh wrote:
+>>> Currently, in case we don't use IORING_SETUP_DEFER_TASKRUN, when io
+>>> worker frees work, it needs to add a task work. This creates contention
+>>> on tctx->task_list. With this commit, io work queues free work on a
+>>> local list and batch multiple free work in one call when the number of
+>>> free work in local list exceeds IO_REQ_ALLOC_BATCH.
+>>
+>> I see no relation to IO_REQ_ALLOC_BATCH, that should be
+>> a separate macro.
+>>
+>>> Signed-off-by: Bui Quang Minh <minhquangbui99@gmail.com>
+>>> ---
+>>>   io_uring/io-wq.c    | 62 +++++++++++++++++++++++++++++++++++++++++++--
+>>>   io_uring/io-wq.h    |  4 ++-
+>>>   io_uring/io_uring.c | 23 ++++++++++++++---
+>>>   io_uring/io_uring.h |  6 ++++-
+>>>   4 files changed, 87 insertions(+), 8 deletions(-)
+>>>
+>>> diff --git a/io_uring/io-wq.c b/io_uring/io-wq.c
+>>> index 5d0928f37471..096711707db9 100644
+>>> --- a/io_uring/io-wq.c
+>>> +++ b/io_uring/io-wq.c
+>> ...
+>>> @@ -601,7 +622,41 @@ static void io_worker_handle_work(struct io_wq_acct *acct,
+>>>               wq->do_work(work);
+>>>               io_assign_current_work(worker, NULL);
+>>>   -            linked = wq->free_work(work);
+>>> +            /*
+>>> +             * All requests in free list must have the same
+>>> +             * io_ring_ctx.
+>>> +             */
+>>> +            if (last_added_ctx && last_added_ctx != req->ctx) {
+>>> +                flush_req_free_list(&free_list, tail);
+>>> +                tail = NULL;
+>>> +                last_added_ctx = NULL;
+>>> +                free_req = 0;
+>>> +            }
+>>> +
+>>> +            /*
+>>> +             * Try to batch free work when
+>>> +             * !IORING_SETUP_DEFER_TASKRUN to reduce contention
+>>> +             * on tctx->task_list.
+>>> +             */
+>>> +            if (req->ctx->flags & IORING_SETUP_DEFER_TASKRUN)
+>>> +                linked = wq->free_work(work, NULL, NULL);
+>>> +            else
+>>> +                linked = wq->free_work(work, &free_list, &did_free);
+>>
+>> The problem here is that iowq is blocking and hence you lock up resources
+>> of already completed request for who knows how long. In case of unbound
+>> requests (see IO_WQ_ACCT_UNBOUND) it's indefinite, and it's absolutely
+>> cannot be used without some kind of a timer. But even in case of bound
+>> work, it can be pretty long.
+> That's a good point, I've overlooked the fact that work handler might block indefinitely.
+>> Maybe, for bound requests it can target N like here, but read jiffies
+>> in between each request and flush if it has been too long. So in worst
+>> case the total delay is the last req execution time + DT. But even then
+>> it feels wrong, especially with filesystems sometimes not even
+>> honouring NOWAIT.
+>>
+>> The question is, why do you force it into the worker pool with the
+>> IOSQE_ASYNC flag? It's generally not recommended, and the name of the
+>> flag is confusing as it should've been more like "WORKER_OFFLOAD".
+> 
+> 
+> I launched more workers to parallel the work handler, but as you said, it seems like an incorrect use case.
 
---k3zauxydw4h5jdhh
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH V2 2/2] rust: Add basic bindings for clk APIs
-MIME-Version: 1.0
+Not as much incorrect as generally inefficient and not recommended,
+especially not recommended before trying it without the flag. People
+often fall into the trap of "Oh, it's _async_, surely I have to set it",
+really unfortunate naming.
 
-Hi,
+> However, I think the request free seems heavy, we need to create a task work so that we can hold the uring_lock to queue the request to ctx->submit_state->compl_reqs. Let me play around more to see if I can find an optimization for this.
 
-On Fri, Feb 21, 2025 at 03:47:57PM +0100, Danilo Krummrich wrote:
-> On Fri, Feb 21, 2025 at 11:29:21AM -0300, Daniel Almeida wrote:
-> > > On 21 Feb 2025, at 10:56, Danilo Krummrich <dakr@kernel.org> wrote:
-> > > On Fri, Feb 21, 2025 at 12:03:39PM +0530, Viresh Kumar wrote:
-> > >> +/// A simple implementation of `struct clk` from the C code.
-> > >> +#[repr(transparent)]
-> > >> +pub struct Clk(*mut bindings::clk);
-> > >=20
-> > > I remember that Stephen explained that NULL is valid value for struct=
- clk. As a
-> > > consequence, all functions implemented for `Clk` have to consider thi=
-s.
-> >=20
-> > I am a bit confused here. If NULL is valid, then why should we have to =
-specifically
-> > consider that in the functions? No functions so far explicitly derefere=
-nces that value,
-> > they only pass it to the clk framework.
->=20
-> This was badly phrased, the current implementation does not need to consi=
-der it
-> indeed. What I meant is that we have to consider it potentially. Especial=
-ly,
-> when adding new functionality later on. For instance, when accessing fiel=
-ds of
-> struct clk directly.=20
+That's because it's a slow fallback path for cases that can't do
+async for one reason or another, and ideally we wouldn't have it
+at all. In reality it's used more than I'd wish for, but it's
+still a path we don't heavily optimise.
 
-Just a drive-by comment - the current implementation will never have
-a NULL clock anyways. That is only returned by the clk_get functions
-with the _optional() suffix. You are right now only using clk_get(),
-which will instead returns ERR_PTR(-ENOENT).
+Btw, if you're really spamming iowq threads, I'm surprised that's
+the only hotspot you have. There should be some contention for
+CQE posting (->completion_lock), and probably in the iowq queue
+locking, and so on.
 
-> Maybe this only becomes relevant once we write a clk driver itself
-> in Rust, but still.
+-- 
+Pavel Begunkov
 
-For a clock provider implementation you will mainly use 'struct
-clk_hw', which is different from 'struct clk'.
-
-Greetings,
-
--- Sebastian
-
---k3zauxydw4h5jdhh
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAme4m4cACgkQ2O7X88g7
-+prYUQ//f59hToVXMAIGJ333jfHjvWUJFxssHgqDUIQPMSlxxpg9H6v8PiiZeIQf
-wFMPxKupdjH8J97e5hZy0U4NLVwDvj/RzyBPObVtV1f1/1RF2l4dp/gLqj25Hx3u
-zl2ZZhIFQRcfpbawE2FE10Dlk0Yswehiw5wB8HAbdHusjCzSFCZRkt51mEorFpPd
-7IwV/f+lpUgXueohG8JWVoQk2SsW0BOlsvZ3CMv6BuTtFfNDDUubEwja6ZzxV8ZW
-bRdUfEWnQuEd5ukSn39azfQ8obRwEJsmwuennHY0IR699PJIpPNqhCq5p7G6ldSy
-VsirllZ9OX4H2hR0PExn28VX6E6cln3vWlmh3Cw7zIwfaa6FvGL8hY75HkH+IEOq
-bOolzIJAcgTsqb9IFAbsCbPEl4OII87eBf6pABL8DSKnhFzu9KfNYvSKGhCiAiqe
-rHCsX2kElQud5R186pkoDKPNdfQEPuMFUa6eDt465hHP+fKbZ6Oso8PaRxZ8mGCw
-PeCwR5uKVhr7UQCPosrKRRJEZWBiP7lf3wE7TIPEYKl3sZyl8PW5mRUUt+mrIXs9
-AasBjvmHLzVm/TrAYop8vUx8Gcz9GiKKkGNVTTZ3ATvQoeyIyGa3rbxB5wRuynGt
-opY/3Sm3EjAObQTfAnMH5/A9CYnGSpwZtYdY01QxD0hPzZb2uNU=
-=khOL
------END PGP SIGNATURE-----
-
---k3zauxydw4h5jdhh--
 
