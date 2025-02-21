@@ -1,223 +1,265 @@
-Return-Path: <linux-kernel+bounces-526339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F127BA3FD7E
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 18:31:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 479E6A3FD60
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 18:25:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 137DD705451
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:25:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C81C1899BC2
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:25:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BE6C2500C9;
-	Fri, 21 Feb 2025 17:25:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CF482505A2;
+	Fri, 21 Feb 2025 17:25:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AZ5ZBNUp"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P06Dfi0p"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D63C1C5D76
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 17:25:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7C2D2500B1;
+	Fri, 21 Feb 2025 17:25:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740158717; cv=none; b=uQwJRVXYo/wpJe4y43j6wVrIT4MkYj1uJnndr4OgeHJy/oOe/uavBJ8OR1R7oOl0NCLYGVraTRopNPGme/FWGYTWE8mg3HcLyw7LzW9roKxOUZwypU7eORAb03tm+o5Ad/NvWNhwwXY1rPwIB3pWV3gkzVISJaE/1VjCOi7XYvc=
+	t=1740158739; cv=none; b=UCN6i3DIH3ivNp+azE5eg8YFq8JS7uQOg3O+wkat6v/f5eJ6n85QaSiZGQx/ll0i9wo9gKqDrkBrcDwOgRjZ/wZ9paBXsf/OVSSHtEyvthP9oZR28Yp1FYsPtrgMAJapRUyBOlZImSH7haniPMZwXZpnV51pKTTHJBgXd8nQA0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740158717; c=relaxed/simple;
-	bh=/ncBsIXZNHpHN0gN+Ld2krKX7WhegguiyI+QveCr+e8=;
+	s=arc-20240116; t=1740158739; c=relaxed/simple;
+	bh=DTLCcsRH2tYUJKtQ6O0fhalRJ4POnY88Ayew7fIXRes=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GiA/eVdkhiiq2kY0UnCI05EoOz0ocAJ+71hZifN+Lhm0LZPuQOD+cNZ8bFWMiUNrOOYVjzMrupGijPW5cTg7jgejvwMml38xR8rfA29OqyPVIyDckVtvwM10qiLwzcwsCEC6yO7nmBGLsv1j9MKVf1o9Yk/W/LJd9fnLea5a5k0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=AZ5ZBNUp; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5dbfc122b82so12353a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 09:25:15 -0800 (PST)
+	 To:Cc:Content-Type; b=nAd3W/lBub2NkMZuoZT1koUs5wGW79QZQVrZ9jz1As1UWM2ADeDQOsDyB1t5Kfu9Vx/qlLivPXEghYRBlbm0KtjHccXecAhLDBfGjZNuXmJcRYJuKN5YIqjzOMQiYbugZAoxv162C7Zl+9phk6QCoDOcJ4vXp1FLA9W7gjhDKPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P06Dfi0p; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5dee1626093so6309307a12.1;
+        Fri, 21 Feb 2025 09:25:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740158714; x=1740763514; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1740158736; x=1740763536; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=/ncBsIXZNHpHN0gN+Ld2krKX7WhegguiyI+QveCr+e8=;
-        b=AZ5ZBNUpPt7nYAbrPdG8nNME1pgo12U3WjlX4QJm3m2sYmW9nGR8+55o3AgpmspCQ/
-         i/isPhehOl0erdqPWg8Qcb7FFXx65Jr92bM0YecAtxF3vWgZiFkNP5Yh93AOs7X3+qjM
-         iqwNITIhj8gD1gjqDTMj+gntgAb7J9HGgw6a/e1aYMmClKPorHHINamEU54kF76JG+o0
-         408hWo6JZFtk8XAKuERTZ+aIB3UQJyLkrvNW2FQHwgTbqSBkwNwTExGRJOn6ySdAvj8u
-         lDGxsXko9tXuNDhs2IuQVmqxt8suAO8bUn02s2v6L3+hSARhc1ThE9yMu/kINkV5xYkO
-         fJ3Q==
+        bh=mt6xfWZKFzy6o/w7cptGQJi/Nd1+VlAbNwsQ3sQVT6o=;
+        b=P06Dfi0pd4r1xGm4HCSpPLRV7td1i+olmsdrQULFe051Bg2xdtdaJ6F1JljqzZB0Ju
+         0bhh12OntPrJreqDDXL9vn5witcddQX0mLP/DMILua4Jj6qdcMvAp5xhkQkPlvC7X+8q
+         96jUnMg0r9jZkjqRpeG8Nn2CTBF1Ajo/XENDx9eyI0fK2VKIU9+EKDxfKPeyrwSzHklL
+         /7SPhS0I3esOlX2RIm+zbM3ahQl0sq9tzpdkHV7BSkCYgisEU/wX1BqcwAj1+Zv2Mml/
+         wZqlWcAMjeqRgE1V3bAIbim6X9MnuDHj4ZiP2qAaO9YvMJbsrWfH1ap/4ngTLZ2ohsNg
+         7vaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740158714; x=1740763514;
+        d=1e100.net; s=20230601; t=1740158736; x=1740763536;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=/ncBsIXZNHpHN0gN+Ld2krKX7WhegguiyI+QveCr+e8=;
-        b=rz7IqJFtkJOyTYb2o6u+EgkdNjPCLbwdu44tfsKYha9MJjh9SH+/ROTKu6w76teBfC
-         +CpCtilpdGO5bbpKkRH/KeBmw88z5TId7lw4+fHbtgX4BSr9p3hZ3ocEybaHm7M9IbeK
-         eXfi+xCln1RpOnK6uxTb0cO3rYvoKQLUgn5h2TAlHGuyYHiyignDM1FSvxZ8I9EbPyOa
-         K0nAumwck+SWBTWdF9lGz/z/cVqV4fAjYmV0TeRJQcqyRlglkDvVQSSZ5aS8AYm8Z5Jm
-         MVUA4cI9dOyzDVklwCuGTNt6+Qt8XisjUc4syjC69QYU1n6Geizv9ENNYhAy+qaL48aL
-         VX3g==
-X-Forwarded-Encrypted: i=1; AJvYcCXW3hY0ROpz4geAr4RgNKSDcNKiSm2j7VruQuPXFQz4bG6KAOSL95RJXD8Gy6STTk6t4Iwt30hyMCJy3R4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxr1LnuJsiGsnf76jHBEkz31w+6LwlpxOAkPzqgxrPWa3DRzBQP
-	F/mtPbssBZl0M93Ssj93Y1JmaL0ZeMZ3H6bEETrXv7clsmnl5RDaX1xLjlgBSlq6hoWZASq9Rq6
-	MIwHwKdLVM+t/meA4CE1xP83KNCD8JW4tVZ5H
-X-Gm-Gg: ASbGncscBpuXO4IeJZbZz2qAJbeMwKZ+Tpd3/8gEOQKhcMXZ9lnQds7TPluw8TIxlRJ
-	N5ORV7rqqMejXhucHwgO6CEjiY675WHt3GQCp1xyBw2s5SD89Dd3G8tl3zaxG7uzd1rYi59nMtq
-	pC7tQSwMCQFTygsbZGjPi0eyQZBXpQ+givjIP9LiHp
-X-Google-Smtp-Source: AGHT+IF/mE/upBZOdr7pG47eeKvsSM7BgM6wQXtyL0HhiPJHpy7IiE39CO8Vv/dnFrDxUC6lHMyPi9HwaDMwaO4ANKM=
-X-Received: by 2002:a50:d657:0:b0:5e0:788e:296c with SMTP id
- 4fb4d7f45d1cf-5e0b6dedcc7mr116523a12.4.1740158713841; Fri, 21 Feb 2025
- 09:25:13 -0800 (PST)
+        bh=mt6xfWZKFzy6o/w7cptGQJi/Nd1+VlAbNwsQ3sQVT6o=;
+        b=I4xLpbllKM3WHA2h1m2OGuP34x4czRgLD+uUAEsS4uq+Y7jS5Bu8DZCUj3244gGcqn
+         HMcYAQG7Xj1+4Hoe+Q1/wbOnP0DlpRkmV4khLr3leYCBSMZ7LRTLzdt52VXuuWzPWg1Y
+         sTTzC0SlU+0TtntO5Fmc3JuI5whjtkDgHpiqFil02219zLzsZ/hKWHGEuP1Lb1IPAouf
+         KIGgb1xsdLKHP6E6XWH4+xy9W/nRONx7NNhp/xtxZeSf83ecjwfIqfg3z61KfcyO0nhL
+         H0D7XsV2AHCeqVFgMJDEEHjKN5U7LFO3OqY7Z6zPN+d3W4a0cGxJDXeJV9QqHQ3O2mfw
+         bKpA==
+X-Forwarded-Encrypted: i=1; AJvYcCUSWRUFtcgSN9GBQ3bZyXWstT30Swz7z+20U3x1FzlPgy7cw5dRisN52q29P9Gdsg+uyQEB3yGwhQ==@vger.kernel.org, AJvYcCVWZeom6qKq/2EeJicl6FU/5/oN1w0hp0f+PWuhVR+lCKK/yQQqjbWGWSXYqlpCK1J4uJnZ+DeTKpR4jcfxjw==@vger.kernel.org, AJvYcCWw6qfZis2hn50tiCiyFzmQcUg1km4rlcr3Iqb7m6/QVF6msOToWSmNXptCSU8AB5xb4KOZNhMcVWSWeuDq@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/SyOBynVntsLIlQAGVqBRvPDW7aloj+hNX2u8q7BVox84ZOG8
+	SCofjyJnMQtM8mTmc7PWTXgBSrcFzQIKOqMBPGPNwyzemvJ5dbbSpjylG8huNHEsBnbfHo3QOx8
+	GUmgrIEuF4irTY8hXxU85YywbQDrGvZSiRB4=
+X-Gm-Gg: ASbGncvQ6nsj0WzCLSwa2yoRyCAkO/W+64OrH2YlkMrytf9cngTYC49T6Ye8YuY29iP
+	u+yvx+l0d9mCI3lkrOawoh6vn8kIw9zQPGWhuWAQrISru2e6V3yda1g2esCEhQnVZsCr3o+hMqZ
+	mdUJ1Y/pc=
+X-Google-Smtp-Source: AGHT+IFoCWue0lioXG2ZyM8FG1Dpra6vwKZlw29QaoND/rP/jXqNXcr5SZt1dhKumSX57ytDqEnMlW0+uuJLY5Q+d64=
+X-Received: by 2002:a17:906:380d:b0:abc:2aca:e5e1 with SMTP id
+ a640c23a62f3a-abc2acae668mr27789166b.8.1740158735577; Fri, 21 Feb 2025
+ 09:25:35 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <4aa97b5c-3ddc-442b-8ec9-cc43ebe9e599@redhat.com>
- <b0a95f2c-093c-45fd-b4a2-2ba5cbc37e2c@lucifer.local> <387f3516-99f2-41e9-967e-4b051a8d21b8@redhat.com>
- <72e044ba-64af-49c0-8b87-ead508654fb7@lucifer.local> <4f5a9c19-9bdd-47eb-bb14-205e3dcced90@redhat.com>
- <1e959451-2534-44b7-bf62-bc75305048fe@lucifer.local> <bd4597b5-2da2-484c-9410-384e04336a9d@redhat.com>
- <31a007c0-884f-495d-ba27-08e3e0dd767d@lucifer.local> <CAJuCfpHpchh0CzEgh5CKmRLwpscBLx32A-mGi4eudpir1wm=cQ@mail.gmail.com>
- <CAC_TJvd2Y-EnavZkt5_nQUXmRpjo8AYMu6rND7eMUwXn27ab0A@mail.gmail.com> <87bae232-b01d-4962-bbe1-3677b71ff752@lucifer.local>
-In-Reply-To: <87bae232-b01d-4962-bbe1-3677b71ff752@lucifer.local>
-From: Kalesh Singh <kaleshsingh@google.com>
-Date: Fri, 21 Feb 2025 09:24:59 -0800
-X-Gm-Features: AWEUYZnlx1AFsGScoTaTL8obzT8Lj2nGvmv_mtWZZvKaCSW5_GYIYY42YitT7zo
-Message-ID: <CAC_TJve7NVqT5atUgdRkFN+U65RY8HYcfXx_CD8rxjra342-Yg@mail.gmail.com>
-Subject: Re: [PATCH 0/4] mm: permit guard regions for file-backed/shmem mappings
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Suren Baghdasaryan <surenb@google.com>, David Hildenbrand <david@redhat.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
-	Matthew Wilcox <willy@infradead.org>, Vlastimil Babka <vbabka@suse.cz>, 
-	"Paul E . McKenney" <paulmck@kernel.org>, Jann Horn <jannh@google.com>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, Shuah Khan <shuah@kernel.org>, 
-	linux-kselftest@vger.kernel.org, linux-api@vger.kernel.org, 
-	John Hubbard <jhubbard@nvidia.com>, Juan Yescas <jyescas@google.com>
+References: <CAKXrOwbkMUo9KJd7wHjcFzJieTFj6NPWPp0vD_SgdS3h33Wdsg@mail.gmail.com>
+ <db432e5b-fc90-487e-b261-7771766c56cb@bsbernd.com> <e0019be0-1167-4024-8268-e320fee4bc50@gmail.com>
+ <CAOQ4uxiVvc6i+5bV1PDMcvS8bALFdp86i==+ZQAAfxKY6AjGiQ@mail.gmail.com> <a8af0bfc-d739-49aa-ac3f-4f928741fb7a@bsbernd.com>
+In-Reply-To: <a8af0bfc-d739-49aa-ac3f-4f928741fb7a@bsbernd.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Fri, 21 Feb 2025 18:25:24 +0100
+X-Gm-Features: AWEUYZmT2L1W8ibOnlZGVriYXu5FQq2RB5SjuEBMap_MwiVMS4ecV0w52p2KF4g
+Message-ID: <CAOQ4uxiSkLwPL3YLqmYHMqBStGFm7xxVLjD2+NwyyyzFpj3hFQ@mail.gmail.com>
+Subject: Re: [PATCH] Fuse: Add backing file support for uring_cmd
+To: Bernd Schubert <bernd@bsbernd.com>
+Cc: Moinak Bhattacharyya <moinakb001@gmail.com>, Miklos Szeredi <miklos@szeredi.hu>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	io-uring@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Feb 21, 2025 at 3:04=E2=80=AFAM Lorenzo Stoakes
-<lorenzo.stoakes@oracle.com> wrote:
+On Fri, Feb 21, 2025 at 6:13=E2=80=AFPM Bernd Schubert <bernd@bsbernd.com> =
+wrote:
 >
-> On Thu, Feb 20, 2025 at 10:08:36AM -0800, Kalesh Singh wrote:
-> > On Thu, Feb 20, 2025 at 8:22=E2=80=AFAM Suren Baghdasaryan <surenb@goog=
-le.com> wrote:
-> > >
-> > > On Thu, Feb 20, 2025 at 5:18=E2=80=AFAM Lorenzo Stoakes
-> > > <lorenzo.stoakes@oracle.com> wrote:
-> > > >
-> > > > On Thu, Feb 20, 2025 at 01:44:20PM +0100, David Hildenbrand wrote:
-> > > > > On 20.02.25 11:15, Lorenzo Stoakes wrote:
-> > > > > > On Thu, Feb 20, 2025 at 11:03:02AM +0100, David Hildenbrand wro=
-te:
-> > > > > > > > > Your conclusion is 'did not participate with upstream'; I=
- don't agree with
-> > > > > > > > > that. But maybe you and Kalesh have a history on that tha=
-t let's you react
-> > > > > > > > > on his questions IMHO more emotionally than it should hav=
-e been.
-> > > > > > > >
-> > > > > > > > This is wholly unfair, I have been very reasonable in respo=
-nse to this
-> > > > > > > > thread. I have offered to find solutions, I have tried to u=
-nderstand the
-> > > > > > > > problem in spite of having gone to great lengths to try to =
-discuss the
-> > > > > > > > limitations of the proposed approach in every venue I possi=
-bly could.
-> > > > > > > >
-> > > > > > > > I go out of my way to deal professionally and objectively w=
-ith what is
-> > > > > > > > presented. Nothing here is emotional. So I'd ask that you p=
-lease abstain
-> > > > > > > > from making commentary like this which has no basis.
-> > > > > > >
-> > > > > > > I appreciate everything you write below. But this request is =
-just
-> > > > > > > impossible. I will keep raising my opinion and misunderstandi=
-ngs will
-> > > > > > > happen.
-> > > > > >
-> > > > > > Well I wouldn't ask you not to express your opinion David, you =
-know I respect
-> > > > > > and like you, and by all means push back hard or call out what =
-you think is bad
-> > > > > > behaviour :)
-> > > > > >
-> > > > > > I just meant to say, in my view, that there was no basis, but I=
- appreciate
-> > > > > > miscommunications happen.
-> > > > > > > So apologies if I came off as being difficult or rude, it act=
-ually
-> > > > > wasn't
-> > > > > > intended. And to re-emphasise - I have zero personal issue with=
- anybody in this
-> > > > > > thread whatsoever!
-> > > > >
-> > > > > It sounded to me like you were trying to defend your work (again,=
- IMHO too
-> > > > > emotionally, and I might have completely misinterpreted that) and=
- slowly
-> > > > > switching to "friendly fire" (towards me). Apologies from my side=
- if I
-> > > > > completely misunderstood/misinterpreted that.
-> > > >
-> > > > Right this was not at all my intent, sorry if it seemed that way. I=
- may well
-> > > > have communicated terribly, so apologies on my side too.
-> >
-> > Hi everyone,
-> >
-> > Thank you for all the discussion.
-> >
-> > I don't find any personal issues with the communication in this
-> > thread, but I appreciate David being the object voice of reason.
-> >
-> > I understand it can be frustrating since you have made many efforts to
-> > communicate these tradeoffs. Unfortunately these issues were not known
-> > for the file-backed ELF guard regions for my particular use case.
-> >
-> > >
-> > > Sorry for being late to the party. Was sick for a couple of days.
-> > > Lorenzo is right, there was a breakdown in communication at Google an=
+>
+>
+> On 2/21/25 17:24, Amir Goldstein wrote:
+> > On Fri, Feb 21, 2025 at 4:36=E2=80=AFPM Moinak Bhattacharyya
+> > <moinakb001@gmail.com> wrote:
+> >>
+> >> Sorry about that. Correctly-formatted patch follows. Should I send out=
+ a
+> >> V2 instead?
+> >>
+> >> Add support for opening and closing backing files in the fuse_uring_cm=
 d
-> > > he has all the rights to be upset. The issue with obfuscators should
-> > > have been communicated once it was discovered. I was in regular
-> > > discussions with Lorenzo but wasn't directly involved with this
-> > > particular project and wasn't aware or did not realize that the
-> > > obfuscator issue renders guards unusable for this usecase. My
-> > > apologies, I should have asked more questions about it. I suspect
-> > > Lorenzo would have implemented this anyway...
-> > >
+> >> callback. Store backing_map (for open) and backing_id (for close) in t=
+he
+> >> uring_cmd data.
+> >> ---
+> >>   fs/fuse/dev_uring.c       | 50 +++++++++++++++++++++++++++++++++++++=
+++
+> >>   include/uapi/linux/fuse.h |  6 +++++
+> >>   2 files changed, 56 insertions(+)
+> >>
+> >> diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
+> >> index ebd2931b4f2a..df73d9d7e686 100644
+> >> --- a/fs/fuse/dev_uring.c
+> >> +++ b/fs/fuse/dev_uring.c
+> >> @@ -1033,6 +1033,40 @@ fuse_uring_create_ring_ent(struct io_uring_cmd =
+*cmd,
+> >>       return ent;
+> >>   }
+> >>
+> >> +/*
+> >> + * Register new backing file for passthrough, getting backing map fro=
+m
+> >> URING_CMD data
+> >> + */
+> >> +static int fuse_uring_backing_open(struct io_uring_cmd *cmd,
+> >> +    unsigned int issue_flags, struct fuse_conn *fc)
+> >> +{
+> >> +    const struct fuse_backing_map *map =3D io_uring_sqe_cmd(cmd->sqe)=
+;
+> >> +    int ret =3D fuse_backing_open(fc, map);
+> >> +
 > >
-> > Suren's use case is different from mine and this design fits perfectly
-> > for anon guard regions from the allocator. :)
-> >
-> > So I think in conclusion, these aren't VMAs and shouldn't be treated
-> > as such; we will advertise them from pagemap for those who need to
-> > know.
-> >
+> > I am not that familiar with io_uring, so I need to ask -
+> > fuse_backing_open() does
+> > fb->cred =3D prepare_creds();
+> > to record server credentials
+> > what are the credentials that will be recorded in the context of this
+> > io_uring command?
 >
-> Thanks Kalesh, glad there were no issues here and we have found
-> constructive common ground! :)
+> This is run from the io_uring_enter() syscall - it should not make
+> a difference to an ioctl, AFAIK. Someone from @io-uring please
+> correct me if I'm wrong.
 >
-> It turns out implementing the pagemap side of things is _really_
-> straightforward, so I'll be sending a series for that shortly. Hopefully
-> this provides some basis for whichever use cases need this information, a=
-s
-> it is the best and least invasive place for this information at this stag=
-e.
+> >
+> >
+> >> +    if (ret < 0) {
+> >> +        return ret;
+> >> +    }
+> >> +
+> >> +    io_uring_cmd_done(cmd, ret, 0, issue_flags);
+> >> +    return 0;
+> >> +}
+> >> +
+> >> +/*
+> >> + * Remove file from passthrough tracking, getting backing_id from
+> >> URING_CMD data
+> >> + */
+> >> +static int fuse_uring_backing_close(struct io_uring_cmd *cmd,
+> >> +    unsigned int issue_flags, struct fuse_conn *fc)
+> >> +{
+> >> +    const int *backing_id =3D io_uring_sqe_cmd(cmd->sqe);
+> >> +    int ret =3D fuse_backing_close(fc, *backing_id);
+> >> +
+> >> +    if (ret < 0) {
+> >> +        return ret;
+> >> +    }
+> >> +
+> >> +    io_uring_cmd_done(cmd, ret, 0, issue_flags);
+> >> +    return 0;
+> >> +}
+> >> +
+> >>   /*
+> >>    * Register header and payload buffer with the kernel and puts the
+> >>    * entry as "ready to get fuse requests" on the queue
+> >> @@ -1144,6 +1178,22 @@ int fuse_uring_cmd(struct io_uring_cmd *cmd,
+> >> unsigned int issue_flags)
+> >>               return err;
+> >>           }
+> >>           break;
+> >> +    case FUSE_IO_URING_CMD_BACKING_OPEN:
+> >> +        err =3D fuse_uring_backing_open(cmd, issue_flags, fc);
+> >> +        if (err) {
+> >> +            pr_info_once("FUSE_IO_URING_CMD_BACKING_OPEN failed err=
+=3D%d\n",
+> >> +                    err);
+> >> +            return err;
+> >> +        }
+> >> +        break;
+> >> +    case FUSE_IO_URING_CMD_BACKING_CLOSE:
+> >> +        err =3D fuse_uring_backing_close(cmd, issue_flags, fc);
+> >> +        if (err) {
+> >> +            pr_info_once("FUSE_IO_URING_CMD_BACKING_CLOSE failed err=
+=3D%d\n",
+> >> +                    err);
+> >> +            return err;
+> >> +        }
+> >> +        break;
+> >>       default:
+> >>           return -EINVAL;
+> >>       }
+> >> diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
+> >> index 5e0eb41d967e..634265da1328 100644
+> >> --- a/include/uapi/linux/fuse.h
+> >> +++ b/include/uapi/linux/fuse.h
+> >> @@ -1264,6 +1264,12 @@ enum fuse_uring_cmd {
+> >>
+> >>       /* commit fuse request result and fetch next request */
+> >>       FUSE_IO_URING_CMD_COMMIT_AND_FETCH =3D 2,
+> >> +
+> >> +    /* add new backing file for passthrough */
+> >> +    FUSE_IO_URING_CMD_BACKING_OPEN =3D 3,
+> >> +
+> >> +    /* remove passthrough file by backing_id */
+> >> +    FUSE_IO_URING_CMD_BACKING_CLOSE =3D 4,
+> >>   };
+> >>
+> >
+> > An anecdote:
+> > Why are we using FUSE_DEV_IOC_BACKING_OPEN
+> > and not passing the backing fd directly in OPEN response?
+> >
+> > The reason for that was security related - there was a concern that
+> > an adversary would be able to trick some process into writing some fd
+> > to /dev/fuse, whereas tricking some proces into doing an ioctl is not
+> > so realistic.
+> >
+> > AFAICT this concern does not exist when OPEN response is via
+> > io_uring(?), so the backing_id indirection is not strictly needed,
+> > but for the sake of uniformity with standard fuse protocol,
+> > I guess we should maintain those commands in io_uring as well.
+>
+> Yeah, the way it is done is not ideal
+>
+> fi->backing_id =3D do_passthrough_open(); /* blocking */
+> fuse_reply_create()
+>     fill_open()
+>       arg->backing_id =3D f->backing_id; /* f is fi */
+>
+>
+> I.e. there are still two operations that depend on each other.
+> Maybe we could find a way to link the SQEs.
 
-Hi Lorenzo,
+If we can utilize io_uring infrastructure to link the two
+commands it would be best IMO, to keep protocol uniform.
 
-Reviewed your patches, agreed that is the cleanest way to advertise
-this information.
+> Or maybe easier, if the security concern is gone with IO-URING,
+> just set FOPEN_PASSTHROUGH for requests over io-uring and then
+> let the client/kernel side do the passthrough open internally?
+
+It is possible, for example set FOPEN_PASSTHROUGH_FD to
+interpret backing_id as backing_fd, but note that in the current
+implementation of passthrough_hp, not every open does
+fuse_passthrough_open().
+The non-first open of an inode uses a backing_id stashed in inode,
+from the first open so we'd need different server logic depending on
+the commands channel, which is not nice.
 
 Thanks,
-Kalesh
-
->
-> Cheers, Lorenzo
->
-> > -- Kalesh
+Amir.
 
