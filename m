@@ -1,131 +1,130 @@
-Return-Path: <linux-kernel+bounces-524943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C95E5A3E900
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 01:08:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50001A3E902
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 01:09:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC00A19C468F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 00:08:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F03617DA75
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 00:09:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D227D29A5;
-	Fri, 21 Feb 2025 00:07:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0019A1876;
+	Fri, 21 Feb 2025 00:09:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X+d8IImj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b="LpzWX2Gx"
+Received: from mail-oa1-f53.google.com (mail-oa1-f53.google.com [209.85.160.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28C0C79FD;
-	Fri, 21 Feb 2025 00:07:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6254CA31
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 00:09:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740096476; cv=none; b=UjPCcAKorv8Bg1tIaB/kKc80FRlEOxyTD8H01m+YMM+drB1/j/cBmc3VXjuOy2Eb8e/r71LaGAdG5TlFaCGxn+1iL+/3QSf3uz5kjjCIoHEmIgwW590uSnw5P/VM9LpEhoiQhgh1agu+VNWGzrHha7GB9Lw+OOjikjdYsxAzXrk=
+	t=1740096569; cv=none; b=SlayWYo/bbrZmeQONXUcYpIZhRJXiAIJgIDAnjI1tO5WbxuffIQSP1SYnNxeHttqBhk1M/yWtz6l8bTH1v122VRzi9Pq2oTKV5PpjTBmve4FNRg67C76w5hZz/e7eqvXjbzrewil19DqiwU4M9n+H+XwB75yEiQOwMbyOLG6GYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740096476; c=relaxed/simple;
-	bh=MPbfCbKAkSdljx/wX1JlhNJCEQqGUqYR8EvE7LJRmyg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=m4pYHIBWdjpzY4d4QK7tWvndzWEc1Z/ILhpltR2gv9gaJo8lOYbKJm4p2XSf9gOd3Qi/z3+u88YfIhpFop1LQq43nYHuvlwVKsXWlfOb/dTQuxK3A1M2HUtkCOQTzkrBe/KlWWedOeecGLvK96FDNwcEFhxg7vF1VcFru4+v20c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X+d8IImj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76D21C4CED1;
-	Fri, 21 Feb 2025 00:07:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740096475;
-	bh=MPbfCbKAkSdljx/wX1JlhNJCEQqGUqYR8EvE7LJRmyg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=X+d8IImjHxMPta5Rx3DMNAhdbWYzxB3hGSwWgR2QVBL44VMjwlIji1WcBS2pSzNSQ
-	 THSX/CT/78mVYBSeI722N2qQslP3okYN78UgqZ7aQ9y/LC5yNWjTOh87xV7Sfv3Mcz
-	 DLlkLVWuPM3f/Zq6EvNsQJlYTF2WKJn8Xj7WsAp1OTfAWiNVQC2wYFpQFl97ppN/AC
-	 D6L8qdCdfZ15PS973HanZFoHv8mhk19rgwDnP+CHcRQsFdWB5fRgDDOTKzGqyyZsWT
-	 2G3a4XgpXjljvEJ15QiKWFndHbAqfPuJ01rpgCun3/wi/O4jSV7lPx93ED9cSZkHCE
-	 Owm6rucZVjdUQ==
-Date: Thu, 20 Feb 2025 18:07:53 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>, Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, Lizhi Hou <lizhi.hou@amd.com>,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	Allan Nielsen <allan.nielsen@microchip.com>,
-	Horatiu Vultur <horatiu.vultur@microchip.com>,
-	Steen Hegelund <steen.hegelund@microchip.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v7 5/5] PCI: of: Create device-tree PCI host bridge node
-Message-ID: <20250221000753.GA321042@bhelgaas>
+	s=arc-20240116; t=1740096569; c=relaxed/simple;
+	bh=/K7dnnSV2000TsDSh46XoDrYyzMYikcQMryVPchPHAs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=B4TwCoi4UNB7xmkAQ0FkuIxuhrQPSOil2chhNY0QawR4ZczYDdElbjrWIMw5Prs9fIxzW83RlDh34cOVBUWZut2CDGpGqYUHXe14nsR1W8iItwkL3/Y1YzG7atVeT+VEIakgnNh9fTNBFnCj5dvRfGiXn5gbe5jTSYwyqJQudDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com; spf=pass smtp.mailfrom=tenstorrent.com; dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b=LpzWX2Gx; arc=none smtp.client-ip=209.85.160.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tenstorrent.com
+Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-2b199bb8af9so1588905fac.1
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 16:09:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tenstorrent.com; s=google; t=1740096566; x=1740701366; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=c5RHohY8rfSaMQdVznrllxN3pGVzi32rdYlqu3XuSUA=;
+        b=LpzWX2GxINLPD81TyU/1Y6H5OxKw8d5D1n4nA79xYfMNNdQrgsDvF63+wObO/pckCA
+         7L+JW7wu+IhAl3xw0dgrblBO2W+WNfn3uZhTul2oAmfNH1GrhUSutCxZecU00H/KLyuu
+         nD5u8GyfF1SlZXWquVt8Im64Udobhro5ejbFM+23n44N8rGHDRniWXCN14/GPo8nyqBw
+         V3AJb1jceiLJqrWt0A7HxGFEvoIqqMaUTOHuCt6w+oj6sQV9MJ0uWZEGR1FCDVnXW1t2
+         KaI0Xot3lb7ryMAXb/xx0FQ88kWNQPvhMWO2MlkiGe50aWJyH70lb4kwbWxeysBe9a/8
+         2AQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740096566; x=1740701366;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=c5RHohY8rfSaMQdVznrllxN3pGVzi32rdYlqu3XuSUA=;
+        b=VdbBiaZU6mFeXBRK0jHFpDS8uetIL9NCG6GyMayxslF8HPDX4jfaZkQR0x6kaoeWXw
+         iMjrvIv//QN3UVq/M6Of65je+cN3J2R9XHaYkBkrrtlIYaTL8WLeDFQC0jsVpzm0anyk
+         3ee2fyjGui9zHQ5js/RJhYNtA6I6VdgfNDTpc0/a6jLNKfFMHmjlCe7sq9mcA3QqMROc
+         bnN3sbA1/3i1Ji+3U3uDnXedrVxHSjM9yj3e/nygdsyBkT0WpoZTzTh3qElYjrvdDaIF
+         V5kOWu9OnONt7naH5r5l2ykNoeglwl11sbwQ5ZLFH7ggcD9RS6iVQrOwT4Ms1IIjqwgx
+         jxEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVgtzPcuRWWSzsYJBDOeP5cg1dOsdv3RmgjQkDzGtx5NuTItGkDv8X68YzM1EbkoTUSePEyZ6fYBQOpVLM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxgDow9Zp76c4Gjb6udMumT7Zz/QvbpzeEANvoaXlB7WqfmHCCd
+	4d4Nxab9LBdGlpEdvWu7BcubDR8kqmiwu6uu4XiNmq+5PIQGao9SvZVnJh+JiQ==
+X-Gm-Gg: ASbGncttvox+N2ljZRJDB32uk0eVw0igp0NUYUx/mDYT4Em/7WlonBfcgORSyf8KCWD
+	63Ey3yKnMVrIJpdn2czfNxJt5sTrNHM8uU0hpmg8VbiYnNM51tIPQ0FjrnYEiJnRHfNHFz+jXae
+	NvYf1QHBbTq/4oUFwW5oo0RVTpe0lljT3FOBkVLiMn5XxCRQkoC+QrXMII5X1G3lv9+EFs/zPRL
+	CxJoMZhTip+uKtiq1fFDLqfM5/HmQ9ExbpDKbpkmEHFgHaWMf2LSB2Vs5wkqWUrm+bUyqBRhOvO
+	Yf6VIGfSgkHVtIAgjhKojZt0CYqPm0O2tQ==
+X-Google-Smtp-Source: AGHT+IFLLufz7FCvALtBDLCNlSBShOP+uObi95wVRF1EC3vzov2bGxRF1xe20tQaoGmGTc5DR9TQmw==
+X-Received: by 2002:a05:6808:3987:b0:3f4:9e6:fb7 with SMTP id 5614622812f47-3f424c163c7mr1180195b6e.1.1740096566280;
+        Thu, 20 Feb 2025 16:09:26 -0800 (PST)
+Received: from aus-ird.tenstorrent.com ([38.104.49.66])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-3f40b027906sm1573401b6e.42.2025.02.20.16.09.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Feb 2025 16:09:25 -0800 (PST)
+From: Cyril Bur <cyrilbur@tenstorrent.com>
+To: palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	paul.walmsley@sifive.com,
+	charlie@rivosinc.com,
+	jrtc27@jrtc27.com,
+	ben.dooks@codethink.co.uk
+Cc: linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	jszhang@kernel.org
+Subject: [PATCH v3 0/4] riscv: uaccess: optimizations
+Date: Fri, 21 Feb 2025 00:09:20 +0000
+Message-Id: <20250221000924.734006-1-cyrilbur@tenstorrent.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250220092514.444e90e4@bootlin.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Feb 20, 2025 at 09:25:14AM +0100, Herve Codina wrote:
-> On Wed, 19 Feb 2025 11:39:12 -0600
-> Bjorn Helgaas <helgaas@kernel.org> wrote:
-> > On Tue, Feb 04, 2025 at 08:35:00AM +0100, Herve Codina wrote:
-> > > PCI devices device-tree nodes can be already created. This was
-> > > introduced by commit 407d1a51921e ("PCI: Create device tree node for
-> > > bridge").
-> > > 
-> > > In order to have device-tree nodes related to PCI devices attached on
-> > > their PCI root bus (the PCI bus handled by the PCI host bridge), a PCI
-> > > root bus device-tree node is needed. This root bus node will be used as
-> > > the parent node of the first level devices scanned on the bus. On
-> > > device-tree based systems, this PCI root bus device tree node is set to
-> > > the node of the related PCI host bridge. The PCI host bridge node is
-> > > available in the device-tree used to describe the hardware passed at
-> > > boot.
-> > > 
-> > > On non device-tree based system (such as ACPI), a device-tree node for
-> > > the PCI host bridge or for the root bus does not exist. Indeed, the PCI
-> > > host bridge is not described in a device-tree used at boot simply
-> > > because no device-tree are passed at boot.
-> > > 
-> > > The device-tree PCI host bridge node creation needs to be done at
-> > > runtime. This is done in the same way as for the creation of the PCI
-> > > device nodes. I.e. node and properties are created based on computed
-> > > information done by the PCI core. Also, as is done on device-tree based
-> > > systems, this PCI host bridge node is used for the PCI root bus.  
-> > 
-> > This is a detailed low-level description of what this patch does.  Can
-> > we include a high level outline of what the benefit is and why we want
-> > this patch?
-> > 
-> > Based on 185686beb464 ("misc: Add support for LAN966x PCI device"), I
-> > assume the purpose is to deal with some kind of non-standard PCI
-> > topology, e.g., a single B/D/F function contains several different
-> > pieces of functionality to be driven by several different drivers, and
-> > we build a device tree description of those pieces and then bind those
-> > drivers to the functionality using platform_device interfaces?
-> 
-> What do you think if I add the following at the end of the commit log?
-> 
->    With this done, hardware available in complex PCI device can be
->    described by a device-tree overlay loaded by the PCI device driver
->    on non device-tree based systems. For instance, the LAN966x PCI device
->    introduced by commit 185686beb464 ("misc: Add support for LAN966x
->    PCI device") can be available on x86 systems.
+This series tries to optimize riscv uaccess by allowing the use of
+user_access_begin() and user_access_end() which permits grouping user accesses
+and avoiding the CSR write penalty for each access.
 
-This isn't just about complexity of the device.  There are NICs that
-are much more complex.
+The error path can also be optimised using asm goto which patches 3 and 4
+achieve. This will speed up jumping to labels by avoiding the need of an
+intermediary error type variable within the uaccess macros
 
-IIUC this is really about devices that don't follow the standard
-"one PCI function <--> one driver" model, so I think it's important to
-include something about the case of a single function that includes
-several unrelated bits of functionality that require different
-drivers.
+I did read the discussion this series generated. It isn't clear to me
+which direction to take the patches, if any.
 
-"LAN966x" might mean something to people who know that this thing has
-a half dozen separate things inside it, but the name by itself doesn't
-suggest that, so I don't think it's really helpful to the general
-audience.
+V2:
+I've taken on this series as there isn't any response from Jisheng. No
+significant changes other than build fixes.
+- Fixes build breakage in patch 3 to do with not having used 'goto' keyword.
+- Fixes build breakage in patch 4 on 32bit not having delcared __ptr in the
+  macro.
 
-Bjorn
+V3:
+Significant commit message rewrites.
+ - Corrected the justification for patch 2
+ - Better explained/justified patches 3 and 4
+Minor code changes for legibility and more comments.
+
+Jisheng Zhang (4):
+  riscv: implement user_access_begin() and families
+  riscv: uaccess: use input constraints for ptr of __put_user()
+  riscv: uaccess: use 'asm goto' for put_user()
+  riscv: uaccess: use 'asm_goto_output' for get_user()
+
+ arch/riscv/include/asm/uaccess.h | 205 +++++++++++++++++++++++--------
+ 1 file changed, 152 insertions(+), 53 deletions(-)
+
+-- 
+2.34.1
+
 
