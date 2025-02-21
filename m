@@ -1,209 +1,219 @@
-Return-Path: <linux-kernel+bounces-525621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2323FA3F25D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 11:43:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEE6AA3F262
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 11:44:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB2D617018F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:43:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D1E9188F856
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:44:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 857A4207A15;
-	Fri, 21 Feb 2025 10:43:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5FE2207656;
+	Fri, 21 Feb 2025 10:44:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="UYd/P8+k"
-Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11013038.outbound.protection.outlook.com [40.107.162.38])
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="QFH26siR"
+Received: from mail-m49242.qiye.163.com (mail-m49242.qiye.163.com [45.254.49.242])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 857202066F4;
-	Fri, 21 Feb 2025 10:43:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.38
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740134625; cv=fail; b=e0Jgw9Y/d17V/Q5nR4OOmB+uVQcwn55m3y3rQrD2zPLh2B0Tq3FddBSV26U3a4OrIyn8uHhvHJjBh9blMbAlexH/k03sOKs2kmJNJb2BR/5qFTncOPD2VrHr00MvnW5huHJ+qqjNEBrwk2MZ4qsK9ui1Jh8IiGZ0NHWLhFMHaCM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740134625; c=relaxed/simple;
-	bh=gKjNfKS0KhgVXyfQrMEGUF23hCvQeyYamqV097dmqnU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=t8YkLXY8+8jGMrWPmUA1Suaw/s37B8+GwpDwz9H5GrHv5S0ii5bYkdg96GbNWx4yjD9N5U0DGSPcqjB9Vzbe6YWXpVMbzKjJBpJNNI3sa72gq6HNXsU8abJ8T/plWZzt+NZllyFVE5EfBkcTAckFAoci5/HU8wY5dzFiAB7zwEk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=UYd/P8+k; arc=fail smtp.client-ip=40.107.162.38
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=AbFzuF0KvZVsDyrvSduMqoLwuLWWwXVRMQi3+btQhqI7dcU6oBm/rcx5kt0WwL7woDygOkNtrss7xHsGkfenqX/OUKyXl2tRaJ5Pg1aFFuVzcbTgQGOZvX3bncsy1HveQZFieQu/yDnOc8dLt/NbfKl7C6ADeic+SG/cnp6+oAEkRUy+4+KADwoykeaH2+WqoTSJY6MVBkFeMqQngU2Xln0RbYp5YmJvrycJwQBLRa1OMkVm5feY2mK8GwO6CeBTU1AoJwTicRcRiY71+J+ZIhtmN6KVzmYn7ytoBfafuvLewlPRRSeCnHiyAvau8ZMDLi+4P/+mwxB6ZnzP2bNgTg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4CFWJf09zmzYGYfYYeZY10EiUYQURk8uX2RNg888TK0=;
- b=dV4mDYHeVkfM8Dcc9t8SV812oBtSWACqTSjGFXPOOy7hO2XBPI+aWbIl/ruR9Lad/2wX2TLz0dXdXQ+gEuo/iRucOOtNpBqfTrW/GCg+g+YY5oaI77cztU7WBX2Ugam3NjCt12VeWP2+OMT9vzkaiYBetDE3rJvb2f1DRBTiwSEbkQk0lHS9BvzHp35sSrGge0Bo3aaFc6xbg2us3mH9c8S0zGAhkldSpIv7Jf824Ld02FXnT0x0CsKemtDhMy43fm3E0RvTKHNPd+vQqzveyQov5mR/PjryL3xxne6ffnqXAo/TA9LDScF3vuxpPygEF+Tyi52fMPXu2AxJZan5wg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4CFWJf09zmzYGYfYYeZY10EiUYQURk8uX2RNg888TK0=;
- b=UYd/P8+kFBSyXz8XniBCPLNEo0PskZE44xfeJlbZuTmcuP46TYBVwGgfdWgkV+eNo8hvjOloeqRIJyXB13eIecWNdnQksC/XjEBO8DQHKhZrtUPm5vpPSJH6Eq5wdvwauDlT91dXbwQmJ3iqTrXFF6ynj2VKIpe08zH14A/yxH/fYZgNnTtmamHOw4+UBXfK//OleTeziRXOIjLtlIyJcOpZAJZJ0wcxssVvgr0sLkSRIWh2rWfEAwNJ94iNC3XJKfAZjF/IFaR5I4/fmOtNeMD2IaZAnoljTUoho2jTI0uSpSd0d3ndk6lqtc+oqbjrY+f57EH+xjBEcGEncNmEdQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM8PR04MB7779.eurprd04.prod.outlook.com (2603:10a6:20b:24b::14)
- by GVXPR04MB10971.eurprd04.prod.outlook.com (2603:10a6:150:21a::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.17; Fri, 21 Feb
- 2025 10:43:38 +0000
-Received: from AM8PR04MB7779.eurprd04.prod.outlook.com
- ([fe80::7417:d17f:8d97:44d2]) by AM8PR04MB7779.eurprd04.prod.outlook.com
- ([fe80::7417:d17f:8d97:44d2%6]) with mapi id 15.20.8466.016; Fri, 21 Feb 2025
- 10:43:38 +0000
-Date: Fri, 21 Feb 2025 12:43:33 +0200
-From: Vladimir Oltean <vladimir.oltean@nxp.com>
-To: Furong Xu <0x1207@gmail.com>,
-	Faizal Rahim <faizal.abdul.rahim@linux.intel.com>
-Cc: Tony Nguyen <anthony.l.nguyen@intel.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Simon Horman <horms@kernel.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Russell King <rmk+kernel@armlinux.org.uk>,
-	Serge Semin <fancer.lancer@gmail.com>,
-	Xiaolei Wang <xiaolei.wang@windriver.com>,
-	Suraj Jaiswal <quic_jsuraj@quicinc.com>,
-	Kory Maincent <kory.maincent@bootlin.com>,
-	Gal Pressman <gal@nvidia.com>,
-	Jesper Nilsson <jesper.nilsson@axis.com>,
-	Andrew Halaney <ahalaney@redhat.com>,
-	Choong Yong Liang <yong.liang.choong@linux.intel.com>,
-	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-	Vinicius Costa Gomes <vinicius.gomes@intel.com>,
-	intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D6F8204C3A;
+	Fri, 21 Feb 2025 10:44:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.242
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740134669; cv=none; b=UToK56rSe2ibxS7PKjqLQFjf14pEpoDVw3mvJhtir0STPm3z5c9gb0t/LPPrQgkyJcjlLtLBWJ1pnLEEHPNddAOe0yR4IRy1rai27JalbxPN39DARVySgFjIUsEE5Ndo6OGJeUlHH9ASOV18VMAnONB1bMLEFWvn1UDeAIFHQBU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740134669; c=relaxed/simple;
+	bh=j5KCACYN/OJuCD6P05XQ/GtFAu5HmVoQqpiBN/SU1Cc=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=PBrGwg7CXwjeEkZKr4mcLxAk2yZSoge+Z8y4diMAfLoThxmk4Gd6naLrLxP5GnZHV/b3Kfygz8b+v2CLDhe9nwVshmAyyMxGQI5c1gVtzx3NOX6V424UvO1CghRxSq3nMBO8SIOU2LQrz2vwmRre/wBG7RKUKW/gVOfuj2U+U4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=QFH26siR; arc=none smtp.client-ip=45.254.49.242
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from localhost.localdomain (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id bca250c1;
+	Fri, 21 Feb 2025 18:44:15 +0800 (GMT+08:00)
+From: Kever Yang <kever.yang@rock-chips.com>
+To: heiko@sntech.de
+Cc: linux-rockchip@lists.infradead.org,
+	Kever Yang <kever.yang@rock-chips.com>,
+	devicetree@vger.kernel.org,
+	Conor Dooley <conor+dt@kernel.org>,
+	Finley Xiao <finley.xiao@rock-chips.com>,
+	Frank Wang <frank.wang@rock-chips.com>,
+	Rob Herring <robh@kernel.org>,
+	Liang Chen <cl@rock-chips.com>,
+	Detlev Casanova <detlev.casanova@collabora.com>,
 	linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, bpf@vger.kernel.org
-Subject: Re: [PATCH iwl-next v5 1/9] net: ethtool: mm: extract stmmac
- verification logic into common library
-Message-ID: <20250221104333.6s7nvn2wwco3axr3@skbuf>
-References: <20250220025349.3007793-1-faizal.abdul.rahim@linux.intel.com>
- <20250220025349.3007793-2-faizal.abdul.rahim@linux.intel.com>
- <20250221174249.000000cc@gmail.com>
- <20250221095651.npjpkoy2y6nehusy@skbuf>
- <20250221182409.00006fd1@gmail.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250221182409.00006fd1@gmail.com>
-X-ClientProxiedBy: VI1PR04CA0086.eurprd04.prod.outlook.com
- (2603:10a6:803:64::21) To AM8PR04MB7779.eurprd04.prod.outlook.com
- (2603:10a6:20b:24b::14)
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Elaine Zhang <zhangqing@rock-chips.com>,
+	linux-arm-kernel@lists.infradead.org
+Subject: [RFC PATCH v6 2/2] arm64: dts: rockchip: Add rk3576 pcie nodes
+Date: Fri, 21 Feb 2025 18:43:57 +0800
+Message-Id: <20250221104357.1514128-3-kever.yang@rock-chips.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20250221104357.1514128-1-kever.yang@rock-chips.com>
+References: <20250221104357.1514128-1-kever.yang@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM8PR04MB7779:EE_|GVXPR04MB10971:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3a922cca-d036-488e-6166-08dd52649954
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?31Rh0BkkoMP8r77dR4FxSzZ+w5+pYiPVqOhsgcflkyE2BWkBz9AsS2Y28Zdz?=
- =?us-ascii?Q?vrryMF8bUSIG69ARPivmadO0FlO2T2wm/k9qidMou7N6tI1E60fFkhhhRcBi?=
- =?us-ascii?Q?/mFOvuircl2QGHE4QLrn8015czA8g7ldjhYKnwNF88y1YFgCipPTulcBr5Vb?=
- =?us-ascii?Q?8Z4scdgJXY3412ca5y1P26Npc42zlN6f0qis80KbIuEN89xXSXnzgBRYYkDw?=
- =?us-ascii?Q?FPJI/3M0qWBWNzFoCrfxW2bJkhpyRhBfOX0FDqxXTujJ4JqGCsn9iwwwT7Gr?=
- =?us-ascii?Q?Y+aMvZLN4AhjKm3N3nSZECh2sledL8N5FHBhUjGk4H7m2AeaprKqxl9tS6dK?=
- =?us-ascii?Q?F7jW6ExS/H2o1EWiZe0V8PV2xO5SLhaoEeasnlhW+UOgkUsQHiijnB9qu0iJ?=
- =?us-ascii?Q?EnBifIDSXl1aoZjK98VA/BdSfAxMIh/DdnCbLGObyDG7zS1NEof1AjdW5ojG?=
- =?us-ascii?Q?QRV36N2rL+ntk2KgPnzy1bba53AR+ufPc/oY2my9/uPY1CbuOh8i3BNd6nLy?=
- =?us-ascii?Q?YIMMdfckFEhozub7v8aXzWey19MUyKxY3PoOq7vuGIzmBI40PZ/4SVnAJRhb?=
- =?us-ascii?Q?RPTsJ3j4ZDgyTWJfTGxLQaLsFNMa3a003WzgHbNOIF8eQ9Ntor/+9iZgJvSQ?=
- =?us-ascii?Q?5oxMXbl3vODLwnKFurvNwF9MWNA7zg0uVu4rBDC3LcIYhIcrnYzhgCC+KdCK?=
- =?us-ascii?Q?La9umIDHqpUu6QHbgK6oh2Y3Rdm2fX+WcbasoVkp0wnyw6mhO4lvibeVJhyk?=
- =?us-ascii?Q?bVAtyt+NPJO7Cy9z8n2T0XnCvC0meKAMJTIJVnUNqJBBcR1Ch6+cs8jXEMfG?=
- =?us-ascii?Q?pV4LQw0vjbD+05EPgdb2KtdkqGxmT1337NasQQWZVmA0ISJT0W8NHYQwuNzY?=
- =?us-ascii?Q?nUWjD4WvXYtT/zhALqQelThtwUL6jBA1vAa8GS7lQljFtAe/a5A4U5zJiN/8?=
- =?us-ascii?Q?XG+Ab6dgLjW8EW+xoIeeudneTaMQRGFMBXcxwYUWruHiQOOvKlU+Q3g98HeQ?=
- =?us-ascii?Q?nz+RP0x4HNQPkEUTusAu4ezE5yNtbmmyf5WTy7DKYYQB1so3ncMjNKVef9sl?=
- =?us-ascii?Q?8GzHUS/GmT1usJdKR0LxZ9qnxbVQcSGEe3fFO6ZYQlIVSD7IXuMBqTNQv+he?=
- =?us-ascii?Q?GeR3nJXn+ZCONXWwx1LEn3ffsT+m/7+2YrowLWoEh0dpaJGUsSrh5kSBJi4M?=
- =?us-ascii?Q?5WXCQ1E87mS9t51F0JojlOj6FT6wSxn8tE8+aE58flQbh3yrOV02FikU2npQ?=
- =?us-ascii?Q?31mUT5JWIH5HvSGcb+1WRJ1A+Sk4rRtHsVzLi8V18ioG1Z4SaxENh1y3Bljq?=
- =?us-ascii?Q?Gb3Hg5kfRRd8r+4CgXcLLT9qQ+BL0s9HxoMB1LwcUCKl7I/vF/UXu1TgnWJW?=
- =?us-ascii?Q?kEjJYMRXJcpxtECGQJBtXGUp94Ol?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR04MB7779.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?AWOUjLdubmL0ilXUtpfOczPYSUTgwz7O616BCPyHLxMW3JgOsebP7IQ6TXgR?=
- =?us-ascii?Q?lpB+mN/p3eMBmDt+ZLUb/rabr8Av2PmGMroEgVgLv8lx7k6pXar3fBzDx9/s?=
- =?us-ascii?Q?ui95lQfhGFYinxh43t8G8/Xnh0MgNPkaFGKvdi1oH5W2VYFREEj6h2KHsxFv?=
- =?us-ascii?Q?1vFKfWXMGhRsU1+L7muto40+oFpr8rukFj50TVlyg2mQ7YtCzDTc16uFOexD?=
- =?us-ascii?Q?gYQHNNmlHU7y2W8jM5jQH6pvz2GzOhUp7miZWdTADPlszGnoQfxYqaRVL2wA?=
- =?us-ascii?Q?I/BvhhsznA0fovJkkeByr7xO8EC3FAU3uCTCMZHhY8E33GcM5PlmPH0nM0Dm?=
- =?us-ascii?Q?V0iAnKliu8ZBSWqacUxnwZP+8OWPiaUrCIdosFFLfOhqORxkpRralVO/uW5g?=
- =?us-ascii?Q?F4kydcfQuXT0fodLTsZv3JcmnhWdRTk6BxkM7uu2XctkWyAuvErDH4ei6/6i?=
- =?us-ascii?Q?X0EG4BUGrSwOxIHoTtYRP4zEdl8VtzVsb5XDV9KHfTRVBn7DxBkRfHMuF0QS?=
- =?us-ascii?Q?S2Do6q2IqPCgDQui/8KuuivmRwYbGZdrX5YYiAEyxQsXGUeAc6qfcfLkjTmy?=
- =?us-ascii?Q?kKyJpkvsp7WYI/WmBdhFQ52JiNcUQyHLVznkyCxsdXcPrxDNBS3Hk6Cyexwg?=
- =?us-ascii?Q?qYH3ueY0EholAOV5+jQP11NENJaa9P1aLb/1gtsASeYKZX2rJVCJ8oTY5g5r?=
- =?us-ascii?Q?5UzfpLC8VVQnzeVUJv7VdaEh03hnwS8hjZE1kMNQ3fVAFER3Ou6I4RhnSEs3?=
- =?us-ascii?Q?8rU295M7W7K7Z5Lc66nsmt1LJWb3dunAinLYX2OqQNd1PxtuZ3z8G4pnDNXG?=
- =?us-ascii?Q?EAiDlHtcQKw0M/0etWga8gUnw4+vQw938ykcMLmXLeZ4I0xLJkA8t2oklF5C?=
- =?us-ascii?Q?S+QXgRzUrCoe4hNFmRxyVeiWDFo1BM/WgiBoEWN/7Rjy/gssH9scaPZXfiZy?=
- =?us-ascii?Q?ERLv0Mbq+KGdXq/xLnqFXzlqmoCbdEZCM7Yf0CWOpRnxd1CPBzcB3zLBARO1?=
- =?us-ascii?Q?x6/iEJyAMhmEF8kiSjeHQWDLXo/EHthf6bcPRWz7LCmF9FMxx0p2XTu9dca/?=
- =?us-ascii?Q?i2gQqIGSjr32dQdhraTihBGSORdBfubyvWBadKg3BblF9LFtgwsQqmDpyvVx?=
- =?us-ascii?Q?qXqChAt3GbrnYg58H4PMlP5CHdlJuzgcQveQFjGQa8HFxoBWazUtOx+Z0V5E?=
- =?us-ascii?Q?HwkQoj08UbV0sZLdJo1Xms+zeUbht2YL+J+lY8P+3NrXrJPCq2HmLbMl7hta?=
- =?us-ascii?Q?SoRTguJH+2hXYJ3Y28HKm9IAY2c5XRHGjYXPaNr1gbAaVTq+DycPZBF6zVQd?=
- =?us-ascii?Q?khGMXQZ0091qpmRBD1rFMjZTSKPWaxoahq5QB3VvT3n9vT/ov+U9Etr760hu?=
- =?us-ascii?Q?5sZ2JuOObHivq27eyk4CTEtjs7DOodisGy6Hk7D0KCs/jAXNpHNRZIyFXAJ3?=
- =?us-ascii?Q?f93d0d3P/YjSm3AVTZEv0KS47gUkvlaeQ95e4MCW3yoWTAq5ioGc+Va6wJAI?=
- =?us-ascii?Q?DqJaV5RaPmfqipynNPwRrZiVZpu/kgM2bbTNQ1O9rRZAXhbzbzo7n1a5+yCK?=
- =?us-ascii?Q?dku6ZPrkNy5DylV1Ud8hrYDUUILkL6zViJIAr0XrkVegyBlugtfn9s7x7/TV?=
- =?us-ascii?Q?tg=3D=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3a922cca-d036-488e-6166-08dd52649954
-X-MS-Exchange-CrossTenant-AuthSource: AM8PR04MB7779.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Feb 2025 10:43:38.0583
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 74geiKKLS2ECvYseyT3d5zg2aCkfEOYTgbLyDxBrhOC8j9ShWWU3wvcCIltJfSef34IoY8bDhNK8zG4qOB2k8A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR04MB10971
+Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQkwfS1YYQhlMSxpLH0JNSE5WFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+X-HM-Tid: 0a95281ba4f803afkunmbca250c1
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Pgw6Pgw*IzIJQhkZGQMPGAEj
+	DxgwFCtVSlVKTE9LSkhPTU5NTktNVTMWGhIXVRAeDR4JVQIaFRw7CRQYEFYYExILCFUYFBZFWVdZ
+	EgtZQVlOQ1VJSVVMVUpKT1lXWQgBWUFPQkhPNwY+
+DKIM-Signature:a=rsa-sha256;
+	b=QFH26siRGVcCZyIMEOMBXhpxRMjqpng20geAqyTffKjmHdP0ZSkO9tH+QSpZZUhtplCAun2hctJmV0k48FeOlB/glVsPnQTxPOgAynnaw5zt6yPwQrvHLuGTSejJX5ye2lb5hBMdAWr4yBJLwovT65txiES3E/zJH2AW1gVaNNQ=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=YLtGowOkt8ndAKlUsXif47m975sM/2ZzAAVHl3AULBw=;
+	h=date:mime-version:subject:message-id:from;
 
-On Fri, Feb 21, 2025 at 06:24:09PM +0800, Furong Xu wrote:
-> Your fix is better when link is up/down, so I vote verify_enabled.
+rk3576 has two pcie controllers, both are pcie2x1 work with
+naneng-combphy.
 
-Hmmm... I thought this was a bug in stmmac that was carried over to
-ethtool_mmsv, but it looks like it isn't.
+Signed-off-by: Kever Yang <kever.yang@rock-chips.com>
+---
 
-In fact, looking at the original refactoring patch I had attached in
-this email:
-https://lore.kernel.org/netdev/20241217002254.lyakuia32jbnva46@skbuf/
+Changes in v6: None
+Changes in v5: None
+Changes in v4: None
+Changes in v3:
+- Update the subject
 
-these 2 lines in ethtool_mmsv_link_state_handle() didn't exist at all.
+Changes in v2:
+- Update clock and reset names and sequence to pass DTB check
 
-	} else {
->>>>		mmsv->status = ETHTOOL_MM_VERIFY_STATUS_INITIAL;
->>>>		mmsv->verify_retries = ETHTOOL_MM_MAX_VERIFY_RETRIES;
+ arch/arm64/boot/dts/rockchip/rk3576.dtsi | 109 +++++++++++++++++++++++
+ 1 file changed, 109 insertions(+)
 
-		/* No link or pMAC not enabled */
-		ethtool_mmsv_configure_pmac(mmsv, false);
-		ethtool_mmsv_configure_tx(mmsv, false);
-	}
+diff --git a/arch/arm64/boot/dts/rockchip/rk3576.dtsi b/arch/arm64/boot/dts/rockchip/rk3576.dtsi
+index 4dde954043ef..b4f396421686 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3576.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3576.dtsi
+@@ -1127,6 +1127,115 @@ qos_npu_m1ro: qos@27f22100 {
+ 			reg = <0x0 0x27f22100 0x0 0x20>;
+ 		};
+ 
++		pcie0: pcie@2a200000 {
++			compatible = "rockchip,rk3576-pcie", "rockchip,rk3568-pcie";
++			#address-cells = <3>;
++			#size-cells = <2>;
++			bus-range = <0x0 0xf>;
++			clocks = <&cru ACLK_PCIE0_MST>, <&cru ACLK_PCIE0_SLV>,
++				 <&cru ACLK_PCIE0_DBI>, <&cru PCLK_PCIE0>,
++				 <&cru CLK_PCIE0_AUX>;
++
++			clock-names = "aclk_mst", "aclk_slv",
++				      "aclk_dbi", "pclk",
++				      "aux";
++			device_type = "pci";
++			interrupts = <GIC_SPI 281 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 282 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 279 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 280 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 278 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 283 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "sys", "pmc", "msg", "legacy", "err", "msi";
++			#interrupt-cells = <1>;
++			interrupt-map-mask = <0 0 0 7>;
++			interrupt-map = <0 0 0 1 &pcie0_intc 0>,
++					<0 0 0 2 &pcie0_intc 1>,
++					<0 0 0 3 &pcie0_intc 2>,
++					<0 0 0 4 &pcie0_intc 3>;
++			linux,pci-domain = <0>;
++			num-ib-windows = <8>;
++			num-viewport = <8>;
++			num-ob-windows = <2>;
++			max-link-speed = <2>;
++			num-lanes = <1>;
++			phys = <&combphy0_ps PHY_TYPE_PCIE>;
++			phy-names = "pcie-phy";
++			power-domains = <&power RK3576_PD_PHP>;
++			ranges = <0x01000000 0x0 0x20100000 0x0 0x20100000 0x0 0x00100000
++				  0x02000000 0x0 0x20200000 0x0 0x20200000 0x0 0x00e00000
++				  0x03000000 0x9 0x00000000 0x9 0x00000000 0x0 0x80000000>;
++			reg = <0x0 0x22000000 0x0 0x00400000>,
++			      <0x0 0x2a200000 0x0 0x00010000>,
++			      <0x0 0x20000000 0x0 0x00100000>;
++			reg-names = "dbi", "apb", "config";
++			resets = <&cru SRST_PCIE0_POWER_UP>, <&cru SRST_P_PCIE0>;
++			reset-names = "pwr", "pipe";
++			status = "disabled";
++
++			pcie0_intc: legacy-interrupt-controller {
++				interrupt-controller;
++				#address-cells = <0>;
++				#interrupt-cells = <1>;
++				interrupt-parent = <&gic>;
++				interrupts = <GIC_SPI 280 IRQ_TYPE_EDGE_RISING>;
++			};
++		};
++
++		pcie1: pcie@2a210000 {
++			compatible = "rockchip,rk3576-pcie", "rockchip,rk3568-pcie";
++			#address-cells = <3>;
++			#size-cells = <2>;
++			bus-range = <0x20 0x2f>;
++			clocks = <&cru ACLK_PCIE1_MST>, <&cru ACLK_PCIE1_SLV>,
++				 <&cru ACLK_PCIE1_DBI>, <&cru PCLK_PCIE1>,
++				 <&cru CLK_PCIE1_AUX>;
++			clock-names = "aclk_mst", "aclk_slv",
++				      "aclk_dbi", "pclk",
++				      "aux";
++			device_type = "pci";
++			interrupts = <GIC_SPI 267 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 265 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 266 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 264 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 269 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "sys", "pmc", "msg", "legacy", "err", "msi";
++			#interrupt-cells = <1>;
++			interrupt-map-mask = <0 0 0 7>;
++			interrupt-map = <0 0 0 1 &pcie1_intc 0>,
++					<0 0 0 2 &pcie1_intc 1>,
++					<0 0 0 3 &pcie1_intc 2>,
++					<0 0 0 4 &pcie1_intc 3>;
++			linux,pci-domain = <0>;
++			num-ib-windows = <8>;
++			num-viewport = <8>;
++			num-ob-windows = <2>;
++			max-link-speed = <2>;
++			num-lanes = <1>;
++			phys = <&combphy1_psu PHY_TYPE_PCIE>;
++			phy-names = "pcie-phy";
++			power-domains = <&power RK3576_PD_SUBPHP>;
++			ranges = <0x01000000 0x0 0x21100000 0x0 0x21100000 0x0 0x00100000
++				  0x02000000 0x0 0x21200000 0x0 0x21200000 0x0 0x00e00000
++				  0x03000000 0x9 0x80000000 0x9 0x80000000 0x0 0x80000000>;
++			reg = <0x0 0x22400000 0x0 0x00400000>,
++			      <0x0 0x2a210000 0x0 0x00010000>,
++			      <0x0 0x21000000 0x0 0x00100000>;
++			reg-names = "dbi", "apb", "config";
++			resets = <&cru SRST_PCIE1_POWER_UP>, <&cru SRST_P_PCIE1>;
++			reset-names = "pwr", "pipe";
++			status = "disabled";
++
++			pcie1_intc: legacy-interrupt-controller {
++				interrupt-controller;
++				#address-cells = <0>;
++				#interrupt-cells = <1>;
++				interrupt-parent = <&gic>;
++				interrupts = <GIC_SPI 266 IRQ_TYPE_EDGE_RISING>;
++			};
++		};
++
+ 		gmac0: ethernet@2a220000 {
+ 			compatible = "rockchip,rk3576-gmac", "snps,dwmac-4.20a";
+ 			reg = <0x0 0x2a220000 0x0 0x10000>;
+-- 
+2.25.1
 
-Faizal, could you remind me why they were added? I don't see this
-explained in change logs.
 
