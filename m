@@ -1,209 +1,104 @@
-Return-Path: <linux-kernel+bounces-526403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4BB5A3FE34
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 19:06:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40095A3FE44
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 19:08:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E04F701128
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 18:06:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA3D419E239D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 18:06:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A97C2528F6;
-	Fri, 21 Feb 2025 18:04:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RHcjYxJk"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 829131CAA90;
-	Fri, 21 Feb 2025 18:04:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED15A2512D8;
+	Fri, 21 Feb 2025 18:05:31 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 606C31CAA90;
+	Fri, 21 Feb 2025 18:05:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740161082; cv=none; b=PsVlpxIAVPEUPo5hCI6++KcyTIyo+0wH10Y6bwzAA54iwCVIBs3jz1j194pvrtyirSfvk5aWulXdOW/kN2/qaXPCDssBD1pUwzMmZsQ/rJ40np7uMOR9mOw3R5Sv0fVQLNtQefHu9jICmzWqh5ZuviZRdRQYGhR3V5lJhzH4OfA=
+	t=1740161131; cv=none; b=B85xRf/QpUYUopDvMQDAERX2I+q1Hoc88buTRvo/dQmNzPljGU1JpT14/ilJ+dRNjnzPh2Me5Ur1WWDUdD1q1xkdoB8lN+zMUfWKkPAIhhxYqUC30gzHPlBin1A4I7FLYUQbg0x16x4ENNhgvUFVkRMBSB/BMG3qpOrBPS2SruQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740161082; c=relaxed/simple;
-	bh=9aMZE364K486QAxLJ/ZNbxZVklK8NjPrlBoPl3rLfGw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=m97zb6lnlR28z+7VjDAFnYNGjsy+M/e2vPQ5egy7RlM2YxDSJyeWdArpRUegL33oi1uii+VdX64Rp10oGecKnSLdXrudloX+Ic3aV3S/KUnjBhVSyNgPoFhWSLdDLsecRl/xxitZSOT5xHeSIJ1byEX5c4fNLsKj1xFggtCr7Fo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RHcjYxJk; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43984e9cc90so20965705e9.1;
-        Fri, 21 Feb 2025 10:04:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740161078; x=1740765878; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=D08fN3Xk4KdmoYxvgS9MK5BgvFndwMmKF/+z4H8I+eA=;
-        b=RHcjYxJkPS70qL97ro0iR2QK25M9hJ2ODbgqgRNKxiGaiv8NXMNprTBQnqH1T9N5Xs
-         93crWZggnuYIfCaTel2LfMuZWuGdVe/AD/NQxHd7z0g4cvDsGQs13H/aEuNejPWkXlHH
-         SR4/SwiX04OafMI0pSEvY3sVCCTEx1qjI2XAoxlJrdvw8T3JZBqv9GMX3bcHPiI98N9g
-         Qp+vJ2PVtjcGjtW3+/Ql3T0DwRaYpXBGFnfpaVm+sUVnPTRGLTLyYZIx+qvt8BSlDotc
-         EXWCIRQrSx6Myo5orRKA4tR+TaNuP4oFpyuShtRw0BAzhqz6ZuQ1uFUyLMVSb0FH4PK+
-         y64Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740161078; x=1740765878;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=D08fN3Xk4KdmoYxvgS9MK5BgvFndwMmKF/+z4H8I+eA=;
-        b=uKeJXW8hr/IqF481wP6vsy1bVU3k4SzRGF4NWKeU8VGNB6zgtpfXR9and37ye91CHk
-         G9EeLNaQNnT4gn43eBIZ1iJhlYGtq5QMDkKtBe2ML0KRrUcQJaBxxS1yeNAUBtGh9JVU
-         WzcPm2mIwZQs+rnYegzlPYfl4y0nXs7p1lAO95bkSAcOWivGXJaJIbNs6UmpFdVMxZho
-         pV35nwnN0Q6RcCHxdk6DJktlVej+Ja86uP4t6WBkTYJTtQjas4MZ+l0x0WgJhMaH1NIr
-         mO7+VqufRotiHuG0TLpCTEarOoNxO+KhhLWGIPskjju0xxldrEIVUDg+6Jn581podASj
-         yAiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXz/0DRvwSGm2HZYolQ1aW5Q3AgFUY6q7ZDtBQoGpw/Ou7cuTxoOHJBniw7U1oQCrotuHChwEzxAyNBqwI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFozMncfZASuBI5Gm4bxEXURU/jVoay1KkxCy52DRCDz9JCTI5
-	xH7P6LhTSICxHAOSId9GHYRnTQR9BGpxAqtUPeWveiA3LljQo04x
-X-Gm-Gg: ASbGncv27GBXFGe/KEB8urZ1nJe09M6H/GGLKhiVUsO8UCgAaYgR16jXyfWJicfOO2s
-	xL+3uSm+VlADVRGlFP7rOdVUBDVT4I30e5GNeMOz3MptdToki6rxnylYpTW/6fVrt5MUEBxrYth
-	VRShN5bDQxl+0r5G0C0F8I/W93vX/TOCdNKOVqeqHmOzHcmxigeqkkX/eYiPgtNe0V637MHXZmb
-	67JZKrRZAF/PUih/hhlrD5LT47QctBq440EzxFY15wkNO5KF/+XsHO8IvzoWtqwHc8sBOWMkIzh
-	zuVslckrj9s9hjCzsfAyRIdBm47mlA8GRoi+64MqU/2ItwXHO0CCPeIZ5Ss7sRp4
-X-Google-Smtp-Source: AGHT+IFgnW7CtVnR30ocGrxT4E0GJCDxMkGoT4am7vr/lpqvphvlcsJFHp5NwkPWrF+K41xGbSMcYg==
-X-Received: by 2002:a5d:5988:0:b0:38d:d274:4537 with SMTP id ffacd0b85a97d-38f614b54fcmr6090661f8f.7.1740161078090;
-        Fri, 21 Feb 2025 10:04:38 -0800 (PST)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-439b02ce435sm25131955e9.3.2025.02.21.10.04.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Feb 2025 10:04:37 -0800 (PST)
-Date: Fri, 21 Feb 2025 18:04:35 +0000
-From: David Laight <david.laight.linux@gmail.com>
-To: Nick Child <nnac123@linux.ibm.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, horms@kernel.org,
- nick.child@ibm.com, pmladek@suse.com, rostedt@goodmis.org,
- john.ogness@linutronix.de, senozhatsky@chromium.org
-Subject: Re: [PATCH net-next v3 1/3] hexdump: Implement macro for converting
- large buffers
-Message-ID: <20250221180435.4bbf8c8f@pumpkin>
-In-Reply-To: <Z7i56s7jwc_y0cIz@li-4c4c4544-0047-5210-804b-b8c04f323634.ibm.com>
-References: <20250219211102.225324-1-nnac123@linux.ibm.com>
-	<20250219211102.225324-2-nnac123@linux.ibm.com>
-	<20250220220050.61aa504d@pumpkin>
-	<Z7i56s7jwc_y0cIz@li-4c4c4544-0047-5210-804b-b8c04f323634.ibm.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	s=arc-20240116; t=1740161131; c=relaxed/simple;
+	bh=axA6tnd1XCiBHxILTIvjnho1a8aiw4DtSi//aa0JOLg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WiShggcoNELonM4dnxMLzN3Qh9XM6YyyImIH7yxVFEbUh5ml2bz0qUx7Ns0o8ZxNnzjOwwe+fzEG7IEAsBdR8wmjR9NzMpnaQj4HVfMNF98ia9z43zW+I3TJvVpcEs17MN5RAqAyx8SOHE9nZGL5lZIDVCfsDNO3Uz6mKzoNfyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A6559169C;
+	Fri, 21 Feb 2025 10:05:39 -0800 (PST)
+Received: from [10.1.197.49] (eglon.cambridge.arm.com [10.1.197.49])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7D4063F59E;
+	Fri, 21 Feb 2025 10:05:17 -0800 (PST)
+Message-ID: <797bb878-8049-47dc-b1c9-193158b9ba45@arm.com>
+Date: Fri, 21 Feb 2025 18:05:15 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v11 06/23] x86/resctrl: Add support to enable/disable AMD
+ ABMC feature
+To: Babu Moger <babu.moger@amd.com>, corbet@lwn.net,
+ reinette.chatre@intel.com, tglx@linutronix.de, mingo@redhat.com,
+ bp@alien8.de, dave.hansen@linux.intel.com, tony.luck@intel.com,
+ peternewman@google.com
+Cc: fenghua.yu@intel.com, x86@kernel.org, hpa@zytor.com, paulmck@kernel.org,
+ akpm@linux-foundation.org, thuth@redhat.com, rostedt@goodmis.org,
+ xiongwei.song@windriver.com, pawan.kumar.gupta@linux.intel.com,
+ daniel.sneddon@linux.intel.com, jpoimboe@kernel.org, perry.yuan@amd.com,
+ sandipan.das@amd.com, kai.huang@intel.com, xiaoyao.li@intel.com,
+ seanjc@google.com, xin3.li@intel.com, andrew.cooper3@citrix.com,
+ ebiggers@google.com, mario.limonciello@amd.com, tan.shaopeng@fujitsu.com,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ maciej.wieczor-retman@intel.com, eranian@google.com
+References: <cover.1737577229.git.babu.moger@amd.com>
+ <920cafec1920358ad0c8af2e78a8f8bbd8c0b77d.1737577229.git.babu.moger@amd.com>
+Content-Language: en-GB
+From: James Morse <james.morse@arm.com>
+In-Reply-To: <920cafec1920358ad0c8af2e78a8f8bbd8c0b77d.1737577229.git.babu.moger@amd.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On Fri, 21 Feb 2025 11:37:46 -0600
-Nick Child <nnac123@linux.ibm.com> wrote:
+Hi Babu,
 
-> Hi David,
+On 22/01/2025 20:20, Babu Moger wrote:
+> Add the functionality to enable/disable AMD ABMC feature.
 > 
-> On Thu, Feb 20, 2025 at 10:00:50PM +0000, David Laight wrote:
-> > On Wed, 19 Feb 2025 15:11:00 -0600
-> > Nick Child <nnac123@linux.ibm.com> wrote:
-> >   
-> > > ---
-> > >  include/linux/printk.h | 20 ++++++++++++++++++++
-> > >  1 file changed, 20 insertions(+)
-> > > 
-> > > diff --git a/include/linux/printk.h b/include/linux/printk.h
-> > > index 4217a9f412b2..12e51b1cdca5 100644
-> > > --- a/include/linux/printk.h
-> > > +++ b/include/linux/printk.h
-> > > +				   buf, len) \
-> > > +	for ((i) = 0;							\
-> > > +	     (i) < (len) &&						\
-> > > +	     hex_dump_to_buffer((unsigned char *)(buf) + (i),		\
-> > > +				(len) - (i), (rowsize), (groupsize),	\
-> > > +				(linebuf), (linebuflen), false);	\  
-> > 
-> > You can avoid the compiler actually checking the function result
-> > it you try a bit harder - see below.
-> >   
+> AMD ABMC feature is enabled by setting enabled bit(0) in MSR
+> L3_QOS_EXT_CFG. When the state of ABMC is changed, the MSR needs
+> to be updated on all the logical processors in the QOS Domain.
 > 
-> This was an extra precaution against infinite loops, breaking when
-> hex_dump_to_buffer returns 0 when len is 0. Technically this won't happen
-> since we check i < len first, and increment i by at least 16 (though
-> your proposal removes the latter assertion). 
+> Hardware counters will reset when ABMC state is changed.
 > 
-> My other thought was to check for error case by checking if
-> the return value was > linebuflen. But I actually prefer the behavior
-> of continuing with the truncated result.
-> 
-> I think I prefer it how it is rather than completely ignoring it.
-> Open to other opinons though.
+> The ABMC feature details are documented in APM listed below [1].
+> [1] AMD64 Architecture Programmer's Manual Volume 2: System Programming
+> Publication # 24593 Revision 3.41 section 19.3.3.3 Assignable Bandwidth
+> Monitoring (ABMC).
 
-There are plenty of ways to generate infinite loops.
-I wouldn't worry about someone passing 0 for rowsize.
 
-> 
-> > > +	     (i) += (rowsize) == 32 ? 32 : 16				\
-> > > +	    )  
-> > 
-> > If you are doing this as a #define you really shouldn't evaluate the
-> > arguments more than once.
-> > I'd also not add more code that relies on the perverse and pointless
-> > code that enforces rowsize of 16 or 32.
-> > Maybe document it, but there is no point changing the stride without
-> > doing the equivalent change to the rowsize passed to hex_dump_to_buffer.
-> >   
-> 
-> The equivalent conditonal exists in hex_dump_to_buffer so doing it
-> again seemed unnecessary. I understand your recent patch [1] is trying
-> to replace the rowsize is 16 or 32 rule with rowsize is a power of 2
-> and multiple of groupsize. I suppose the most straightforward and
-> flexible thing the for_each loop can do is to just assume rowsize is
-> valid.
-> 
-> > You could do:
-> > #define for_each_line_in_hex_dump(buf_offset, rowsize, linebuf, linebuflen, groupsize, buf, len, ascii) \
-> > for (unsigned int _offset = 0, _rowsize = (rowsize), _len = (len); \
-> > 	((offset) = _offset) < _len && (hex_dump_to_buffer((const char *)(buf) + _offset, _len - _offset, \
-          ^ needs to be buf_offset.
+> diff --git a/arch/x86/kernel/cpu/resctrl/internal.h b/arch/x86/kernel/cpu/resctrl/internal.h
+> index 05358e78147b..ca69f2e0909f 100644
+> --- a/arch/x86/kernel/cpu/resctrl/internal.h
+> +++ b/arch/x86/kernel/cpu/resctrl/internal.h
+> @@ -658,4 +663,6 @@ void resctrl_file_fflags_init(const char *config, unsigned long fflags);
+>  void rdt_staged_configs_clear(void);
+>  bool closid_allocated(unsigned int closid);
+>  int resctrl_find_cleanest_closid(void);
+> +int resctrl_arch_mbm_cntr_assign_set(struct rdt_resource *r, bool enable);
+> +bool resctrl_arch_mbm_cntr_assign_enabled(struct rdt_resource *r);
+>  #endif /* _ASM_X86_RESCTRL_INTERNAL_H */
 
-> > 		_rowsize, (groupsize), (linebuf), (linebuflen), (ascii)), 1); \
-> > 	_offset += _rowsize )
-> > 
-> > (Assuming I've not mistyped it.)
-> >   
-> 
-> Trying to understand the reasoning for declaring new tmp variables;
-> Is this to prevent the values from changing in the body of the loop?
+A minor nit - but could these be added to include/linux/resctrl.h instead?
+This is where they need to end up after the arch/fs split, and its harmless to do it from
+the beginning.
 
-No, it is to prevent side-effects happening more than once.
-Think about what would happen if someone passed 'foo -= 4' for len.
 
-> I tried to avoid declaring new vars in this design because I thought it
-> would recive pushback due to possible name collision and variable
-> declaration inside for loop initializer.
+Thanks,
 
-The c std level got upped recently to allow declarations inside loops.
-Usually for a 'loop iterator' - but I think you needed that to be
-exposed outsize the loop.
-(Otherwise you don't need _offset and buf_offset.
-
-> I suppose both implementations come with tradeoffs.
-> 
-> > As soon as 'ascii' gets replaced by 'flags' you'll need to pass it through.
-> >   
-> 
-> Yes, if hex_dump_to_buffer becomes a wrapper around a new function
-> (which accepts flag arg), I think there is an opportunity for a lot
-> of confusion to clear up. Old behaviour of hex_dump_to_buffer will be
-> respected but the underlying function will be more flexible.
-
-My changed version (honoring row_size) passes all the self tests.
-I've not done a grep (yet) to if anything other that 16 or 32 is
-actually passed.
-
-	David
-
-> 
-> Appreciate the review!
-> - Nick
-> 
-> [1] - https://lore.kernel.org/lkml/20250216201901.161781-1-david.laight.linux@gmail.com/
-
+James
 
