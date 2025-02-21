@@ -1,73 +1,73 @@
-Return-Path: <linux-kernel+bounces-525510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5BDCA3F0C0
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:45:46 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78E89A3F0BE
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:45:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36079188A1E7
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:44:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0ABD27AD42A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:43:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 271E72054FB;
-	Fri, 21 Feb 2025 09:40:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66009204C02;
+	Fri, 21 Feb 2025 09:40:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="MUibJIx4"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Zd1gDhsf"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 333C92054E9
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 09:40:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B95C202F96
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 09:40:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740130808; cv=none; b=C3LVvW3dZoXGLNy/rrUcpwElb/u4iN2Ag9gsqyyHdYiD3EzbWXeJdJdwd08RcFJYTwM+kNgiOQL7q2vHE+5bArQVzmN9dfi4MjwWtm1lxX+aI00IccvjqogyD6NGHE8Jz1FykV7UShOf4gvPAYrQYvRHGjwgkbRI801wZrIwJgc=
+	t=1740130815; cv=none; b=Bsd/Vzdp1vairMDZLPAlRjahRVZarjbZ1H7RNlURddROUV45poiOAxhrAeIc/74I3QYCF0e0XNfYvYdP1zWotQSIaPNL1eSQxxoMmjxvzHMAEET60mMbg5wCUio4tyTSmkAAqDBZPuOn5R0mKDZh8/Y2BvxA9d5/jFs0MEsgNvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740130808; c=relaxed/simple;
-	bh=aCg3ZHdCI8MVwshZm6i0nWyuXLOfe87XpUBdrYVXXFU=;
+	s=arc-20240116; t=1740130815; c=relaxed/simple;
+	bh=4ECjkVJZGjCWtN7ZuQfyB0BeUv4fd6cOc0FBKhTa2+0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qPFOWUWG0VUOnounI+X30qlRakFuLYJiyx18GmFNXRGeuhWdf2sxv0IZzluVAKWyHPAwmt/2RjzJUDpTvxcQpNPfL59hvFVZc+s8AHeiQLA1iukA5DzFdChYlcnAKyfv6naWERO9dsGxFFIi/Fz6SdIMzrLVyGIEc/o0FI9vcWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=MUibJIx4; arc=none smtp.client-ip=209.85.214.176
+	 MIME-Version; b=TXt3LpuhsakOJC+3HhPn3G04ODfl81ERuYVcuViUWT2+qqxLZfqeJJItT/xw/I8IMNWg5kiVPRk7GhIh9i8hVnslXC/EmoHbFFZd0R8Jp+tWlVnOCXu7CE8TzD5oD+9nwiN/xd59pTHG5W9GjyQPsxbFosWgQ6M+Qx1URjAPdwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Zd1gDhsf; arc=none smtp.client-ip=209.85.214.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-220bff984a0so36182505ad.3
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 01:40:06 -0800 (PST)
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-220bfdfb3f4so41200795ad.2
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 01:40:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1740130806; x=1740735606; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1740130814; x=1740735614; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=X/8bmw52gxKP9HlvW7ud00ppVmPtFMCISSlcsi1PIXo=;
-        b=MUibJIx4FpsKCytg7GSXiEnPivH0oZ6RMcW6Tken9Nrkm9gJnrayCO1lgQlQVUdFwI
-         XZvnzKylwTwagap2sZS9IOejaO7CT45CYI92k/b+GPrC72VK90xvoQoailgnQdfZLosm
-         rUBBe6/WJ5lzS+BUsA+MJPi3OIU0F3+7KgCgk=
+        bh=0hGRfBbi2fKBhcLL3toY8LXz3XIHS2H2SZvxy9aDrUM=;
+        b=Zd1gDhsfe/LCUDCr8ess941Es/4yq0VhSr3dFY5L7CtOcRIyXNijhq32mZH9D3bCVz
+         dxgVtkPRibT9eLFmp0S9l9lJiGkuXrljAxnCUA4fSrpalPR6bEp7oMLH0q4s1nGYqGu7
+         1k4PjlYTsze3GUMW3byN1DQUDcNMKldRJ3InE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740130806; x=1740735606;
+        d=1e100.net; s=20230601; t=1740130814; x=1740735614;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=X/8bmw52gxKP9HlvW7ud00ppVmPtFMCISSlcsi1PIXo=;
-        b=D4Cbvi2CPttwIQtXUdL/zfCqrvfk1/xV5llpNWcMFK0C59EC3BXyrig14FJsYwVIRR
-         UYlUbnQc0MrTtV7jYHWJb7T8T+qYaqxq2h88BSC/BWPhBU5OdQYlB5Y5DmuezRl7e5vD
-         oPkKfsHnqUXpwt2QfneYnmLZY06C+H9C10QWwSgwRVCgpHxRargHFJ3g/tC/ByhAHkGT
-         3+85mXYw2PdNR7B6v05bEql7WN48sMsuMUSvEuPJK9DJRn5O1lZdbIBFiSoNqsnv+lrj
-         oeYHpHAt3TEP/vMqceaurtDbYQnvv3kS8WQ0aoZ3IQuLFPBUpZF4zT2PGS6f13SxBW3R
-         edcw==
-X-Forwarded-Encrypted: i=1; AJvYcCW6seP6Wo02EC2NX8P2QRMopDRw94PuXeVyQaLo3Swv/seuoCHAK95SHxCoP8zJ4jdP5Qrwg3ZFZ9S3rKA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxElcGLk4Ts1Mk8wXJfsRG3N7U3vz+MdHFj+D1kXD/4gBDqrUP3
-	rndNvr4FqqLBoJkQsVLtB7M13Eq5EEwaFYHPjKOsepWyGKawM7cmcu82Wyonuw==
-X-Gm-Gg: ASbGncuZGokbjAtEniIHO4OXIS90xiujwVSmy3oY/qv3ROyqO1zTgIVrGhLrn82imvj
-	4HmuSxC9vMlenamaE9c4054w5YGP1uIVQSHg57s4EmHJMJsyqFlLyF3yKPIgRM62PWUVHZw3+xg
-	LVVFEHZYn4FkULEKg5PjlH21OG7lrvBjAMvMNEJo/dC0ygN189NBrzjf3KyFrlDaDeesvZEnsse
-	H6u29lsdEvYNcxlBuonra8Uf3w9q4Q8JWQjJYKzbtDn08MG06KWEej/39Nxwh8FP51m3+06vUFj
-	1nFrKxX07Ha98yJCCpPxm8iUkY4=
-X-Google-Smtp-Source: AGHT+IFiDsUOFrogVCXhwG7jE5UhzUG2HXzmhm8iuLxdnK1gwrZ2PnYz7hKVVRLeqXubsVEuTmgEmg==
-X-Received: by 2002:a05:6a00:c89:b0:730:91fc:f9c9 with SMTP id d2e1a72fcca58-73426d6b971mr4177006b3a.16.1740130806309;
-        Fri, 21 Feb 2025 01:40:06 -0800 (PST)
+        bh=0hGRfBbi2fKBhcLL3toY8LXz3XIHS2H2SZvxy9aDrUM=;
+        b=gaPi9jsev+ZACUF94+5JATL0S5f16wZsWCiPkldv0xK/noRhAd21Tw8TJrugJU4SEg
+         fk9cSwJhWraetpgV/S0UlGxvaP5NBe60fqQEcoOZ0t+eou985f3cyrPblrn1tsoicHrb
+         xdqrk4TCT70qQENZrTddNk+7ZcC1pJ8XEPE5m7H2XtoxlV4EU8almjSdmwaY7/n11s8n
+         iZdHRymHhTFPINXK1ECc5Te9dDiK4Q/DPzbsg8Q87hGIwu2O7fpOecenNGP+PZx6Yhwi
+         K87A6QPOnJRHgl8ZQvSqii5ayoyJqXlYe23N+q8C9NgTi2Rm8FG0mO15QFkyArGg0mSF
+         PnCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUk7BhvVF3XU+hlXZmRaZoAW+u8VZFL4OVFprbASAJ/IA5WOhqZrUf1EIrHjbSMGBXy5/TebQxignHheGE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwITNZpXW9Z4Q7G1K63nSROP02onOq8IIietHGPEEsVhgS40YWn
+	A9nEUoNfeegRFbPvo6M3DNpZQdGlH7HJSDlgw5OXlKEDOzAiZwaqq22Rl1h8Dg==
+X-Gm-Gg: ASbGncvftcbkXjqNeXMmc5D3Rkp3+JFtyAzqFLV0GoUWEggTl7SkrXRbADKUQl1r9H6
+	IjKM3/FHRpz+i6oHbfMBFqw0AD3CkrtawnTVfdbtzykYNwh99g0altFmHogEgpVe7Ew6SOkkvgI
+	sf8OOC1hJa+a4RqI9B+hoHVjaQBJXbUAy4BzFJ0pLY7g92kSFlle3kzgNY2x9bOFc+RF9YRI+KC
+	0hdE3hCsoUeg6JTSUFr2U2RrDP880JPH0qXJ6KI+wtEMiDVgDAoMUsQGqdmKGj++wJCuq5Y3Guf
+	gHbBi+9pX75hy581yo8mIk/x/Gs=
+X-Google-Smtp-Source: AGHT+IHnD4WYtByveH7o9SWK4ZPshLs+PqzDTaY7xc5G/UiEwzsRQaEFLwJdetxPgoe922xVEvOq1g==
+X-Received: by 2002:a17:902:e892:b0:220:fae9:8a6 with SMTP id d9443c01a7336-2219ff3127emr51606815ad.4.1740130813846;
+        Fri, 21 Feb 2025 01:40:13 -0800 (PST)
 Received: from localhost ([2401:fa00:8f:203:f987:e1e:3dbb:2191])
-        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-73242568aaasm15111670b3a.41.2025.02.21.01.40.03
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-220d545d051sm131952525ad.108.2025.02.21.01.40.11
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Feb 2025 01:40:06 -0800 (PST)
+        Fri, 21 Feb 2025 01:40:13 -0800 (PST)
 From: Sergey Senozhatsky <senozhatsky@chromium.org>
 To: Andrew Morton <akpm@linux-foundation.org>
 Cc: Yosry Ahmed <yosry.ahmed@linux.dev>,
@@ -78,9 +78,9 @@ Cc: Yosry Ahmed <yosry.ahmed@linux.dev>,
 	linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org,
 	Sergey Senozhatsky <senozhatsky@chromium.org>
-Subject: [PATCH v7 15/17] zram: do not leak page on recompress_store error path
-Date: Fri, 21 Feb 2025 18:38:08 +0900
-Message-ID: <20250221093832.1949691-16-senozhatsky@chromium.org>
+Subject: [PATCH v7 16/17] zram: do not leak page on writeback_store error path
+Date: Fri, 21 Feb 2025 18:38:09 +0900
+Message-ID: <20250221093832.1949691-17-senozhatsky@chromium.org>
 X-Mailer: git-send-email 2.48.1.601.g30ceb7b040-goog
 In-Reply-To: <20250221093832.1949691-1-senozhatsky@chromium.org>
 References: <20250221093832.1949691-1-senozhatsky@chromium.org>
@@ -95,31 +95,31 @@ Content-Transfer-Encoding: 8bit
 Ensure the page used for local object data is freed
 on error out path.
 
-Fixes: 3f909a60cec1 ("zram: rework recompress target selection strategy")
+Fixes: 330edc2bc059 (zram: rework writeback target selection strategy)
 Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
 ---
- drivers/block/zram/zram_drv.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/block/zram/zram_drv.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
-index 47ccda207bf3..48639a48ddb8 100644
+index 48639a48ddb8..7a5c5b861fe5 100644
 --- a/drivers/block/zram/zram_drv.c
 +++ b/drivers/block/zram/zram_drv.c
-@@ -2022,7 +2022,7 @@ static ssize_t recompress_store(struct device *dev,
- 	struct zram_pp_slot *pps;
- 	u32 mode = 0, threshold = 0;
- 	u32 prio, prio_max;
+@@ -792,7 +792,7 @@ static ssize_t writeback_store(struct device *dev,
+ 	unsigned long index = 0;
+ 	struct bio bio;
+ 	struct bio_vec bio_vec;
 -	struct page *page;
 +	struct page *page = NULL;
- 	ssize_t ret;
+ 	ssize_t ret = len;
+ 	int mode, err;
+ 	unsigned long blk_idx = 0;
+@@ -934,8 +934,10 @@ static ssize_t writeback_store(struct device *dev,
  
- 	prio = ZRAM_SECONDARY_COMP;
-@@ -2166,9 +2166,9 @@ static ssize_t recompress_store(struct device *dev,
- 		cond_resched();
- 	}
- 
+ 	if (blk_idx)
+ 		free_block_bdev(zram, blk_idx);
 -	__free_page(page);
--
++
  release_init_lock:
 +	if (page)
 +		__free_page(page);
