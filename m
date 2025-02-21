@@ -1,51 +1,51 @@
-Return-Path: <linux-kernel+bounces-526089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C9F9A3F9EC
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:02:57 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7150BA3F9B9
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:58:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A7BD86608B
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 15:55:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C26BA7AE011
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 15:54:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50D86215793;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5487D215798;
 	Fri, 21 Feb 2025 15:52:25 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B18321505C
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 15:52:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1691215067;
+	Fri, 21 Feb 2025 15:52:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740153143; cv=none; b=ReraveAqzOCFqSjm2dAz/5uL2waXzf80crWx+Ev/uAMSlmN2L/eHyj5o10fFFUt79M/FcT0WUwrjPESkT2lEscUNZ7jOMjpaCZ7wWzGeEQ+du9SI3BTVsEFubfnT0sTu+d4J7aEP3qNbqOSGLyCgPpsFCeTRZakpxz0l6qAwzcs=
+	t=1740153143; cv=none; b=iqP9K+dQjSJBvBMN18Ek16vnlW7xlFpbmYeHbDfR6ojB7G7zQUowS92dbZKemuT8dx9D0fPOwlno7GBTJsTne1GjrUPqRw4wwAZhI2/GfStkIirdHcDZv22qwqfRV+3GToM9KTe5OwbSrnZyc1OwVIEC5UzRCG0pVh/D76Yer18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1740153143; c=relaxed/simple;
-	bh=3iUBIWBbUV2MnTgkSTiKS6AZ0qhvJdfXi5B+lzGQ4kQ=;
+	bh=ArlzHz5sHRcomKQ7ycDmntfz8f0x2xGW9b/ECO602Vk=;
 	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=BEidKOYXSaYxrFVEvKyai88H9OIiphp+NKfmxM60Ayd62OuBG5IJQ+c1W6cEuXu3qhgx9HI0DfRFiKbU2VRQKs5DQEWOth0Y0WPJSMcC7iVoGIcc/tv2FaJfj+/cEFCJPYMUy4wxR7kqH/UD8alSlwd9aTLPHcZO580pn9Nkb60=
+	 Content-Type; b=F8DJ5A0hMRL8Y0AsjRH6iExmEcOipCg0Ryz4FoqJpJjYv6ebgcsLobK5jEzEeb0ZeVHa+tFL6ykVnE4CnIumyPq48DFKDXl0i3w7JI9duArE9lywjwoBgBfSiVmIp8/k+6QEV5IKufZTdp94+/EZ8wW0JujRDfQKQ8wkLeooZZw=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14FC2C4CEE4;
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46B9BC4CED6;
 	Fri, 21 Feb 2025 15:52:23 +0000 (UTC)
 Received: from rostedt by gandalf with local (Exim 4.98)
 	(envelope-from <rostedt@goodmis.org>)
-	id 1tlVKe-00000006KTc-26JF;
+	id 1tlVKe-00000006KU6-2oSI;
 	Fri, 21 Feb 2025 10:52:52 -0500
-Message-ID: <20250221155252.355693893@goodmis.org>
+Message-ID: <20250221155252.520741008@goodmis.org>
 User-Agent: quilt/0.68
-Date: Fri, 21 Feb 2025 10:52:15 -0500
+Date: Fri, 21 Feb 2025 10:52:16 -0500
 From: Steven Rostedt <rostedt@goodmis.org>
 To: linux-kernel@vger.kernel.org
 Cc: Masami Hiramatsu <mhiramat@kernel.org>,
  Mark Rutland <mark.rutland@arm.com>,
  Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
  Andrew Morton <akpm@linux-foundation.org>,
- Sven Schnelle <svens@linux.ibm.com>,
- Vasily Gorbik <gor@linux.ibm.com>,
- Alexander Gordeev <agordeev@linux.ibm.com>,
- Heiko Carstens <hca@linux.ibm.com>
-Subject: [for-linus][PATCH 5/7] selftests/ftrace: Update fprobe test to check enabled_functions file
+ stable@vger.kernel.org,
+ Wander Lairson Costa <wander@redhat.com>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: [for-linus][PATCH 6/7] ftrace: Correct preemption accounting for function tracing.
 References: <20250221155210.755295517@goodmis.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -55,110 +55,62 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 
-From: Steven Rostedt <rostedt@goodmis.org>
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 
-A few bugs were found in the fprobe accounting logic along with it using
-the function graph infrastructure. Update the fprobe selftest to catch
-those bugs in case they or something similar shows up in the future.
+The function tracer should record the preemption level at the point when
+the function is invoked. If the tracing subsystem decrement the
+preemption counter it needs to correct this before feeding the data into
+the trace buffer. This was broken in the commit cited below while
+shifting the preempt-disabled section.
 
-The test now checks the enabled_functions file which shows all the
-functions attached to ftrace or fgraph. When enabling a fprobe, make sure
-that its corresponding function is also added to that file. Also add two
-more fprobes to enable to make sure that the fprobe logic works properly
-with multiple probes.
+Use tracing_gen_ctx_dec() which properly subtracts one from the
+preemption counter on a preemptible kernel.
 
-Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: stable@vger.kernel.org
+Cc: Wander Lairson Costa <wander@redhat.com>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
 Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Sven Schnelle <svens@linux.ibm.com>
-Cc: Vasily Gorbik <gor@linux.ibm.com>
-Cc: Alexander Gordeev <agordeev@linux.ibm.com>
-Link: https://lore.kernel.org/20250220202055.733001756@goodmis.org
-Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-Tested-by: Heiko Carstens <hca@linux.ibm.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lore.kernel.org/20250220140749.pfw8qoNZ@linutronix.de
+Fixes: ce5e48036c9e7 ("ftrace: disable preemption when recursion locked")
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Tested-by: Wander Lairson Costa <wander@redhat.com>
 Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 ---
- .../test.d/dynevent/add_remove_fprobe.tc      | 54 +++++++++++++++++++
- 1 file changed, 54 insertions(+)
+ kernel/trace/trace_functions.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/tools/testing/selftests/ftrace/test.d/dynevent/add_remove_fprobe.tc b/tools/testing/selftests/ftrace/test.d/dynevent/add_remove_fprobe.tc
-index dc25bcf4f9e2..449f9d8be746 100644
---- a/tools/testing/selftests/ftrace/test.d/dynevent/add_remove_fprobe.tc
-+++ b/tools/testing/selftests/ftrace/test.d/dynevent/add_remove_fprobe.tc
-@@ -7,12 +7,38 @@ echo 0 > events/enable
- echo > dynamic_events
+diff --git a/kernel/trace/trace_functions.c b/kernel/trace/trace_functions.c
+index d358c9935164..df56f9b76010 100644
+--- a/kernel/trace/trace_functions.c
++++ b/kernel/trace/trace_functions.c
+@@ -216,7 +216,7 @@ function_trace_call(unsigned long ip, unsigned long parent_ip,
  
- PLACE=$FUNCTION_FORK
-+PLACE2="kmem_cache_free"
-+PLACE3="schedule_timeout"
+ 	parent_ip = function_get_true_parent_ip(parent_ip, fregs);
  
- echo "f:myevent1 $PLACE" >> dynamic_events
-+
-+# Make sure the event is attached and is the only one
-+grep -q $PLACE enabled_functions
-+cnt=`cat enabled_functions | wc -l`
-+if [ $cnt -ne 1 ]; then
-+	exit_fail
-+fi
-+
- echo "f:myevent2 $PLACE%return" >> dynamic_events
+-	trace_ctx = tracing_gen_ctx();
++	trace_ctx = tracing_gen_ctx_dec();
  
-+# It should till be the only attached function
-+cnt=`cat enabled_functions | wc -l`
-+if [ $cnt -ne 1 ]; then
-+	exit_fail
-+fi
-+
-+# add another event
-+echo "f:myevent3 $PLACE2" >> dynamic_events
-+
-+grep -q $PLACE2 enabled_functions
-+cnt=`cat enabled_functions | wc -l`
-+if [ $cnt -ne 2 ]; then
-+	exit_fail
-+fi
-+
- grep -q myevent1 dynamic_events
- grep -q myevent2 dynamic_events
-+grep -q myevent3 dynamic_events
- test -d events/fprobes/myevent1
- test -d events/fprobes/myevent2
+ 	data = this_cpu_ptr(tr->array_buffer.data);
+ 	if (!atomic_read(&data->disabled))
+@@ -321,7 +321,6 @@ function_no_repeats_trace_call(unsigned long ip, unsigned long parent_ip,
+ 	struct trace_array *tr = op->private;
+ 	struct trace_array_cpu *data;
+ 	unsigned int trace_ctx;
+-	unsigned long flags;
+ 	int bit;
  
-@@ -21,6 +47,34 @@ echo "-:myevent2" >> dynamic_events
- grep -q myevent1 dynamic_events
- ! grep -q myevent2 dynamic_events
+ 	if (unlikely(!tr->function_enabled))
+@@ -347,8 +346,7 @@ function_no_repeats_trace_call(unsigned long ip, unsigned long parent_ip,
+ 	if (is_repeat_check(tr, last_info, ip, parent_ip))
+ 		goto out;
  
-+# should still have 2 left
-+cnt=`cat enabled_functions | wc -l`
-+if [ $cnt -ne 2 ]; then
-+	exit_fail
-+fi
-+
- echo > dynamic_events
+-	local_save_flags(flags);
+-	trace_ctx = tracing_gen_ctx_flags(flags);
++	trace_ctx = tracing_gen_ctx_dec();
+ 	process_repeats(tr, ip, parent_ip, last_info, trace_ctx);
  
-+# Should have none left
-+cnt=`cat enabled_functions | wc -l`
-+if [ $cnt -ne 0 ]; then
-+	exit_fail
-+fi
-+
-+echo "f:myevent4 $PLACE" >> dynamic_events
-+
-+# Should only have one enabled
-+cnt=`cat enabled_functions | wc -l`
-+if [ $cnt -ne 1 ]; then
-+	exit_fail
-+fi
-+
-+echo > dynamic_events
-+
-+# Should have none left
-+cnt=`cat enabled_functions | wc -l`
-+if [ $cnt -ne 0 ]; then
-+	exit_fail
-+fi
-+
- clear_trace
+ 	trace_function(tr, ip, parent_ip, trace_ctx);
 -- 
 2.47.2
 
