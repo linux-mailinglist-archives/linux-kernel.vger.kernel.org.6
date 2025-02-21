@@ -1,204 +1,275 @@
-Return-Path: <linux-kernel+bounces-526662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 721ADA401C5
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 22:07:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 361A1A401BC
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 22:06:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DB8E3B5CA7
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 21:06:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 565D018997D2
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 21:06:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB8B9253F06;
-	Fri, 21 Feb 2025 21:05:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A3F7254AE7;
+	Fri, 21 Feb 2025 21:05:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="Jv+cISC5";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="DqzVx0ug"
-Received: from fhigh-b8-smtp.messagingengine.com (fhigh-b8-smtp.messagingengine.com [202.12.124.159])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ok8cpyoU"
+Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com [209.85.222.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69732253B62
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 21:05:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.159
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B46BA253B62;
+	Fri, 21 Feb 2025 21:05:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740171909; cv=none; b=GJ3M26RFLJd1V/2d2kHQG9HMYLBCBKk5XTfdO54peYQ97hSrZptT5NUP7nr/vtlFi949X0BGXi0JZa7RchOeeAlBdu6OeO0fmb+9T645eC56VG/pW/AR7PY8XigleumvmV/WV6TcH5ML2cxV6UipxB+qGa2O850iRkENTEMTFj4=
+	t=1740171942; cv=none; b=G5Rg9IXRp6VS3bxklhEFvwZrpbHuFhWW/9IXzIC38wjy5U3CdWdYOMpr+a5Uo9qcq89wLwZZQOcoJIY9me9aM4vj3Iruiip1xMEcaaiuEmJFOlagyxTLJVwOrfsy9foUH7+hPCMTcfimu6g0+M2aU8V796zsbuCUWAcWhOTNE2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740171909; c=relaxed/simple;
-	bh=zCf1fGnjwEaXW2uXPOmlkzNxN8T0BhAcjoGULfwsoXE=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:Subject:Content-Type; b=D0buArYXUT09CIC6Em8Exr+d2S1R20zCg4FC3nqow0KOUirBeNdq/X8qR7fpZpdu2gJXPEHOoaiKDu3ch4jX+Sst4wlBy1gVHD8yFQf5ke8V1nR9o32sSHxxpuhh7gV0Ds7Gvb45v3+BLdgZSepqZCVNrja4rOZj4KfSwEuFR1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=Jv+cISC5; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=DqzVx0ug; arc=none smtp.client-ip=202.12.124.159
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 53954254016F;
-	Fri, 21 Feb 2025 16:05:04 -0500 (EST)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-11.internal (MEProxy); Fri, 21 Feb 2025 16:05:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:message-id:mime-version:reply-to
-	:subject:subject:to:to; s=fm3; t=1740171904; x=1740258304; bh=h6
-	S9aTUxsv5QV59pv6B0q9blu0YqRJjwoZGl3ssFhSU=; b=Jv+cISC5xfPQU8CRNL
-	PO+ja6DMGHvkZlDsfvt5HlVjtcWJ6navKlqE/KLH5RBQERqXxb4rMWoQtwnumrgr
-	3O+JhfP4ERA7Q5/tcHe1MmnX8lRzt9hxHyZUvx0v1XmdyktCMurKXhCZ2L2L6K2H
-	ujEqu8cUbwtvJsrcUBRG4XvVD1E8d8H53vpWWF5B/AO0z5BNmZ27wqSGPDMl+XKH
-	nwTsy3gD4ivesin8tYkfvzSQkjATt8HJILrSTcTtzXwQru4JhXwjbSd3AiAzjALu
-	iyXwIKy/Y1cW9wnL+0DawyYjW2YgW3VvtY7MdagC45+CASYtwaTKtH1L4ypOOqfE
-	ZgcQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
-	:subject:to:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm1; t=1740171904; x=1740258304; bh=h6S9aTUxsv5QV59pv6B0q9blu0Yq
-	RJjwoZGl3ssFhSU=; b=DqzVx0ugVyIb8qBSu+M4FGkp5v9tMwwHvWTlh5V7++DA
-	gzasp6in3Y5bSe0oG7ECEtRa9UF+8lMyN0jnPmqSU+JIPAehDdfjJCsCwJzgaDX2
-	fYRQuSzBRglWSCLQ0Sle/IYerRNaWajzFxM80Zj0Um9HAUWgYmOiRPIq2Lx1YFm5
-	/qFYNevut0aTiSxpRbfqs7TMadMjVmJZQb+NxOYImZN7XVPEyQ6OweT52aTEehZs
-	k8g/S+5Pa22psqXQiPJo18BKJt8lw1wrQAosHl+7gGEZOHgIdjH949AVkEQoC818
-	eGpSfqu3hntbLqRO8VF5S7WHl85d8H0E//ol+4noyQ==
-X-ME-Sender: <xms:f-q4ZwtfKpsYRlHykYaB-GA8n1Cx-zjmYVf5QgD3atSqDdLw-jCphQ>
-    <xme:f-q4Z9d1iJI86qgjJ_G89LDJFftT8enB8zi6kWuqopVzltcpV4vDBSuz7r3K_Z2ff
-    TTbN4V48-SKQHlzwcE>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdejuddtgecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkufgtgfesthejredtredttden
-    ucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdrug
-    gvqeenucggtffrrghtthgvrhhnpeduleeigeekveeugeettdejtddtleeghefhvdfhueeh
-    tefhudelffduvdeuleevteenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluh
-    hsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnhgusegrrhhn
-    uggsrdguvgdpnhgspghrtghpthhtohepgedpmhhouggvpehsmhhtphhouhhtpdhrtghpth
-    htohepthhorhhvrghlughssehlihhnuhigqdhfohhunhgurghtihhonhdrohhrghdprhgt
-    phhtthhopehlihhnuhigqdgrrhhmqdhkvghrnhgvlheslhhishhtshdrihhnfhhrrgguvg
-    grugdrohhrghdprhgtphhtthhopehsohgtsehlihhsthhsrdhlihhnuhigrdguvghvpdhr
-    tghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:f-q4Z7yujQmmDw9RvvXZ3r4p7oOCCP3IyGmdgL7vcTCJN9g0FY4WxA>
-    <xmx:f-q4ZzO6g76F2WFZyP1jrzEVqMSsDSUFPaQwgiw_-77RC_N0_lPquw>
-    <xmx:f-q4Zw_ep5QPPzB3j9DYCjO1Gv-W9Z_2_2bR8LQnF791rtJ7k3lmsw>
-    <xmx:f-q4Z7WitVULrcEx5XD3U1MjNpw7inadO1V1qsMicctRuYWl6-7zLA>
-    <xmx:gOq4Z_bJSbHscvxf3Q4rYO7clnJ662l20fclJBnQtEt0A2O3BzoMPLHm>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id A518D2220074; Fri, 21 Feb 2025 16:05:03 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1740171942; c=relaxed/simple;
+	bh=7Pfl8aw3qhTmCH+E5sZnLIZAe8Zb3kp+T4MgqEHCs3w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KenPhoKscoLpI3aR00v0kUotJMfs8/bm+VrZgINWfUCkpUALKV3bKY5j4f7wWNHedKxtWhAM2tYvtHQ04rpfO+YZ+qnKKe8XXn44mfT0gqwQ1IVAaXFtzdiLVAeiWxJMac/BEGvun0izYnIO/nPuK3Go4nLfwj3BDoQBcv96NUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ok8cpyoU; arc=none smtp.client-ip=209.85.222.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f48.google.com with SMTP id a1e0cc1a2514c-86718541914so1899014241.1;
+        Fri, 21 Feb 2025 13:05:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740171939; x=1740776739; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=akxiV5AyxUKHb/z70st9KPeMZlHgKTT5ElAUCHcsWo0=;
+        b=Ok8cpyoU1askTivPLdAXpd92QhvnRHCbhkBcVrsdJwA/DKG3FHsBoeshjsNHKdRQ26
+         6MLafAjkdymFStvlw0hZSzZ6zw1E5UFf64AfOZVYSHBI1/lTr1ToS97ERJGX8P8jQXGN
+         FYp7a27ZavXNKMPiZp8E9hNp8m4CV7azv6KVa/GbPHf0P8HK9koT/j5v7wbY0brjbbyi
+         aZVgESfU1jNp+htaEjpFoWkxqvGA8ayO/2/v+tjAMZB6OAnRTeVdjxoXahwt+kVnvLdM
+         kp0hVTglTrt70DapAndE65ec9QLmMHoa3DSIYG1haGCIDQHBQdF798iIzhsj3VWgFvD5
+         +r8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740171939; x=1740776739;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=akxiV5AyxUKHb/z70st9KPeMZlHgKTT5ElAUCHcsWo0=;
+        b=gkSJPwv0JTZLs+OokCewDtHxPtDmkFLmvsjszlubiJPEDOSDRrV128/J4dxEjPrS6M
+         CXoWrxgzBfvbT3WtJ7HbJwvF7gfWtGVhcGdm+QPM3u0N6xZqpSRjMQhVyjDEjIgLnNUq
+         PwzJUatLpphp+cZSSJkNuSKB1e7T+0HrIyNJi+n9OfrzoDJrBRlzD66N3CI+L62ZZfvd
+         r6ddC+D56xDLBI1d9zpPkqO0pWyiTnByjqOet6Owr7FZZvqy30VFNBedWSlgi7j27Qc6
+         mdwBhrv4FKRbgBOk2bPKP41Ix6YvQlEpXIXOb0CnhA1w6MuXs+Kyp/38xqYR5iMcJm6h
+         oHOA==
+X-Forwarded-Encrypted: i=1; AJvYcCVd1zVRhVON8gPJWDZYpK63UCNkNTUe3OhvXerjdpRQhqY7T3M1CkpKPh2Ie8326vI3fq0NLkOPA9Aebiw=@vger.kernel.org, AJvYcCXsgMQh5/9JQilg+TWOjt3VwsQCqo5ziGEkaFrt2qy6bjKNefWh0Eet1plMD3dJxL3QOFEx4UAhTe5hSLVgY5mCpSE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfxlxT+h5j5pVjVsMjocTe0+4jdVQEdWJubM5VHBlPuFP/E4Ut
+	+ABeAV+8ZApHxdxn6YQfxrmvdzJ2KS+Ko7ClLDft0345qXtOcezshwCm5NBwogLxmU7AgFXlSHg
+	kX5f7ktdhLE3NwWwYgEoy5B1/p9mHn2GLbms9dg==
+X-Gm-Gg: ASbGncuLNVhshxzjdo1WCiGDDO+DrNcS8k10J5ZJ419YD1JnDzP/at5jAKkKyT0orT0
+	G9TX2KmFk/q0NNSvLRzRn6meDveppv2pLq55gzsOHMoJP4OLsdnLvqfdiCtxnA4NaQNXgoXznBa
+	QqsbKCNAaFNpFn+4hEl2ALLn+6QdStD+tn1lat9a/W
+X-Google-Smtp-Source: AGHT+IFIdI1bnw9/RHrswWgsrCDZp1nad+fSvNSGwNcyjHcOwcCpFAxA0r4vDk14J4ClfkeOe4UOyy7mit6/46Iac4I=
+X-Received: by 2002:a05:6122:4081:b0:51e:ffd1:67f3 with SMTP id
+ 71dfb90a1353d-521eed1ccfbmr2730401e0c.7.1740171939443; Fri, 21 Feb 2025
+ 13:05:39 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Fri, 21 Feb 2025 22:04:42 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Linus Torvalds" <torvalds@linux-foundation.org>
-Cc: soc@lists.linux.dev, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Message-Id: <22f7e0e5-1ccc-41bf-a474-6cd09b23a26f@app.fastmail.com>
-Subject: [GIT PULL] soc: fixes for 6.14
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+References: <20250220150110.738619-1-fabrizio.castro.jz@renesas.com> <20250220150110.738619-5-fabrizio.castro.jz@renesas.com>
+In-Reply-To: <20250220150110.738619-5-fabrizio.castro.jz@renesas.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Fri, 21 Feb 2025 21:05:11 +0000
+X-Gm-Features: AWEUYZk5EDyEfXlYmI03ntsnnaka3hY8V0qXYeaBjMmkypatNv5sddUTfysheb0
+Message-ID: <CA+V-a8sHjVri+5VGTQo8yNrZ8Qko5gG+7hc0qwTTpr0Do642Fw@mail.gmail.com>
+Subject: Re: [PATCH v4 4/7] irqchip/renesas-rzv2h: Add rzv2h_icu_register_dma_req_ack()
+To: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The following changes since commit a64dcfb451e254085a7daee5fe51bf22959d52d3:
+On Thu, Feb 20, 2025 at 3:06=E2=80=AFPM Fabrizio Castro
+<fabrizio.castro.jz@renesas.com> wrote:
+>
+> On the Renesas RZ/V2H(P) family of SoCs, DMAC IPs are connected
+> to the Interrupt Control Unit (ICU).
+> For DMA transfers, a request number and an ack number must be
+> registered with the ICU, which means that the DMAC driver has
+> to be able to instruct the ICU driver with the registration of
+> such ids.
+>
+> Export rzv2h_icu_register_dma_req_ack() so that the DMA driver
+> can register both ids in one go.
+>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+> Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+> ---
+> v3->v4:
+> * No change.
+> v2->v3:
+> * Replaced rzv2h_icu_register_dma_req_ack with
+>   rzv2h_icu_register_dma_req_ack() in changelog.
+> * Added dummy for rzv2h_icu_register_dma_req_ack().
+> * Added Rb Thomas.
+> v1->v2:
+> * Improved macros.
+> * Shared new macros for minimum values.
+> ---
+>  drivers/irqchip/irq-renesas-rzv2h.c       | 56 +++++++++++++++++++++++
+>  include/linux/irqchip/irq-renesas-rzv2h.h | 26 +++++++++++
+>  2 files changed, 82 insertions(+)
+>  create mode 100644 include/linux/irqchip/irq-renesas-rzv2h.h
+>
+Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-  Linux 6.14-rc2 (2025-02-09 12:45:03 -0800)
+Cheers,
+Prabhakar
 
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git tags/soc-fixes-6.14
-
-for you to fetch changes up to e31e3f6c0ce473f7ce1e70d54ac8e3ed190509f8:
-
-  soc: loongson: loongson2_guts: Add check for devm_kstrdup() (2025-02-20 22:29:05 +0100)
-
-----------------------------------------------------------------
-soc: fixes for 6.14
-
-Two people stepped up as platform co-maintainers: Andrew Jeffery for
-ASpeed and Janne Grunau for Apple.
-
-The rockchip platform gets 9 small fixes for devicetree files, addressing
-both compile-time warnings and board specific bugs.
-
-One bugfix for the optee firmware driver addresses a reboot-time hang.
-
-Two drivers need improved Kconfig dependencies to allow wider compile-
-testing while hiding the drivers on platforms that can't use them.
-
-ARM SCMI and loongson-guts drivers get minor bugfixes.
-
-----------------------------------------------------------------
-Alexander Shiyan (1):
-      arm64: dts: rockchip: Fix broken tsadc pinctrl names for rk3588
-
-Andrew Jeffery (1):
-      MAINTAINERS: Mark Andrew as M: for ASPEED MACHINE SUPPORT
-
-Andy Yan (1):
-      arm64: dts: rockchip: Fix lcdpwr_en pin for Cool Pi GenBook
-
-Arnd Bergmann (3):
-      Merge tag 'v6.14-rockchip-dtsfixes1' of https://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip into HEAD
-      Merge tag 'ti-k3-config-fixes-for-v6.14' of https://git.kernel.org/pub/scm/linux/kernel/git/ti/linux into HEAD
-      Merge tag 'scmi-fix-6.14' of https://git.kernel.org/pub/scm/linux/kernel/git/sudeep.holla/linux into arm/fixes
-
-Geert Uytterhoeven (2):
-      firmware: imx: IMX_SCMI_MISC_DRV should depend on ARCH_MXC
-      platform: cznic: CZNIC_PLATFORMS should depend on ARCH_MVEBU
-
-Haoxiang Li (1):
-      soc: loongson: loongson2_guts: Add check for devm_kstrdup()
-
-Heiko Stuebner (1):
-      arm64: dts: rockchip: fix fixed-regulator renames on rk3399-gru devices
-
-Janne Grunau (1):
-      MAINTAINERS: arm: apple: Add Janne as maintainer
-
-Lukasz Czechowski (2):
-      arm64: dts: rockchip: Move uart5 pin configuration to px30 ringneck SoM
-      arm64: dts: rockchip: Disable DMA for uart5 on px30-ringneck
-
-Niklas Cassel (1):
-      arm64: dts: rockchip: disable IOMMU when running rk3588 in PCIe endpoint mode
-
-Patrick Wildt (1):
-      arm64: dts: rockchip: adjust SMMU interrupt type on rk3588
-
-Peng Fan (1):
-      firmware: arm_scmi: imx: Correct tx size of scmi_imx_misc_ctrl_set
-
-Rob Herring (Arm) (1):
-      dt-bindings: rockchip: pmu: Ensure all properties are defined
-
-Sumit Garg (1):
-      tee: optee: Fix supplicant wait loop
-
-Tianling Shen (1):
-      arm64: dts: rockchip: change eth phy mode to rgmii-id for orangepi r1 plus lts
-
-Vaishnav Achath (1):
-      arm64: defconfig: Enable TISCI Interrupt Router and Aggregator
-
- .../devicetree/bindings/arm/rockchip/pmu.yaml      |  8 ++++-
- MAINTAINERS                                        |  3 +-
- .../boot/dts/rockchip/px30-ringneck-haikou.dts     |  1 -
- arch/arm64/boot/dts/rockchip/px30-ringneck.dtsi    |  6 ++++
- .../dts/rockchip/rk3328-orangepi-r1-plus-lts.dts   |  3 +-
- .../boot/dts/rockchip/rk3328-orangepi-r1-plus.dts  |  1 +
- .../boot/dts/rockchip/rk3328-orangepi-r1-plus.dtsi |  1 -
- .../boot/dts/rockchip/rk3399-gru-chromebook.dtsi   |  8 ++---
- .../boot/dts/rockchip/rk3399-gru-scarlet.dtsi      |  6 ++--
- arch/arm64/boot/dts/rockchip/rk3399-gru.dtsi       | 22 +++++++-------
- arch/arm64/boot/dts/rockchip/rk3588-base.dtsi      | 22 +++++++-------
- .../dts/rockchip/rk3588-coolpi-cm5-genbook.dts     |  4 +--
- arch/arm64/boot/dts/rockchip/rk3588-extra.dtsi     |  1 -
- .../boot/dts/rockchip/rk3588-rock-5b-pcie-ep.dtso  |  4 +++
- arch/arm64/configs/defconfig                       |  2 ++
- .../firmware/arm_scmi/vendors/imx/imx-sm-misc.c    |  4 +--
- drivers/firmware/imx/Kconfig                       |  1 +
- drivers/platform/cznic/Kconfig                     |  1 +
- drivers/soc/loongson/loongson2_guts.c              |  5 +++-
- drivers/tee/optee/supp.c                           | 35 +++++-----------------
- 20 files changed, 70 insertions(+), 68 deletions(-)
+> diff --git a/drivers/irqchip/irq-renesas-rzv2h.c b/drivers/irqchip/irq-re=
+nesas-rzv2h.c
+> index fe2d29e91026..a8e9feda73b0 100644
+> --- a/drivers/irqchip/irq-renesas-rzv2h.c
+> +++ b/drivers/irqchip/irq-renesas-rzv2h.c
+> @@ -15,6 +15,7 @@
+>  #include <linux/err.h>
+>  #include <linux/io.h>
+>  #include <linux/irqchip.h>
+> +#include <linux/irqchip/irq-renesas-rzv2h.h>
+>  #include <linux/irqdomain.h>
+>  #include <linux/of_address.h>
+>  #include <linux/of_platform.h>
+> @@ -41,6 +42,8 @@
+>  #define ICU_TSCLR                              0x24
+>  #define ICU_TITSR(k)                           (0x28 + (k) * 4)
+>  #define ICU_TSSR(k)                            (0x30 + (k) * 4)
+> +#define ICU_DMkSELy(k, y)                      (0x420 + (k) * 0x20 + (y)=
+ * 4)
+> +#define ICU_DMACKSELk(k)                       (0x500 + (k) * 4)
+>
+>  /* NMI */
+>  #define ICU_NMI_EDGE_FALLING                   0
+> @@ -80,6 +83,19 @@
+>  #define ICU_TINT_EXTRACT_GPIOINT(x)            FIELD_GET(GENMASK(31, 16)=
+, (x))
+>  #define ICU_PB5_TINT                           0x55
+>
+> +/* DMAC */
+> +#define ICU_DMAC_DkRQ_SEL_MASK                 GENMASK(9, 0)
+> +
+> +#define ICU_DMAC_DMAREQ_SHIFT(up)              ((up) * 16)
+> +#define ICU_DMAC_DMAREQ_MASK(up)               (ICU_DMAC_DkRQ_SEL_MASK \
+> +                                                << ICU_DMAC_DMAREQ_SHIFT=
+(up))
+> +#define ICU_DMAC_PREP_DMAREQ(sel, up)          (FIELD_PREP(ICU_DMAC_DkRQ=
+_SEL_MASK, (sel)) \
+> +                                                << ICU_DMAC_DMAREQ_SHIFT=
+(up))
+> +
+> +#define ICU_DMAC_DACK_SEL_SHIFT(field_no)      ((field_no) * 8)
+> +#define ICU_DMAC_DACK_SEL_MASK(field_no)       (GENMASK(6, 0) << ICU_DMA=
+C_DACK_SEL_SHIFT(field_no))
+> +#define ICU_DMAC_PREP_DACK_SEL(sel, field_no)  ((sel) << ICU_DMAC_DACK_S=
+EL_SHIFT(field_no))
+> +
+>  /**
+>   * struct rzv2h_icu_priv - Interrupt Control Unit controller private dat=
+a structure.
+>   * @base:      Controller's base address
+> @@ -94,6 +110,45 @@ struct rzv2h_icu_priv {
+>         raw_spinlock_t                  lock;
+>  };
+>
+> +void rzv2h_icu_register_dma_req_ack(struct platform_device *icu_dev, u8 =
+dmac_index, u8 dmac_channel,
+> +                                   u16 req_no, u8 ack_no)
+> +{
+> +       struct rzv2h_icu_priv *priv =3D platform_get_drvdata(icu_dev);
+> +       u32 icu_dmackselk, dmaack, dmaack_mask;
+> +       u32 icu_dmksely, dmareq, dmareq_mask;
+> +       u8 k, field_no;
+> +       u8 y, upper;
+> +
+> +       if (req_no >=3D RZV2H_ICU_DMAC_REQ_NO_MIN_FIX_OUTPUT)
+> +               req_no =3D RZV2H_ICU_DMAC_REQ_NO_DEFAULT;
+> +
+> +       if (ack_no >=3D RZV2H_ICU_DMAC_ACK_NO_MIN_FIX_OUTPUT)
+> +               ack_no =3D RZV2H_ICU_DMAC_ACK_NO_DEFAULT;
+> +
+> +       y =3D dmac_channel / 2;
+> +       upper =3D dmac_channel % 2;
+> +
+> +       dmareq =3D ICU_DMAC_PREP_DMAREQ(req_no, upper);
+> +       dmareq_mask =3D ICU_DMAC_DMAREQ_MASK(upper);
+> +
+> +       k  =3D ack_no / 4;
+> +       field_no =3D ack_no % 4;
+> +
+> +       dmaack_mask =3D ICU_DMAC_DACK_SEL_MASK(field_no);
+> +       dmaack =3D ICU_DMAC_PREP_DACK_SEL(ack_no, field_no);
+> +
+> +       guard(raw_spinlock_irqsave)(&priv->lock);
+> +
+> +       icu_dmksely =3D readl(priv->base + ICU_DMkSELy(dmac_index, y));
+> +       icu_dmksely =3D (icu_dmksely & ~dmareq_mask) | dmareq;
+> +       writel(icu_dmksely, priv->base + ICU_DMkSELy(dmac_index, y));
+> +
+> +       icu_dmackselk =3D readl(priv->base + ICU_DMACKSELk(k));
+> +       icu_dmackselk =3D (icu_dmackselk & ~dmaack_mask) | dmaack;
+> +       writel(icu_dmackselk, priv->base + ICU_DMACKSELk(k));
+> +}
+> +EXPORT_SYMBOL_GPL(rzv2h_icu_register_dma_req_ack);
+> +
+>  static inline struct rzv2h_icu_priv *irq_data_to_priv(struct irq_data *d=
+ata)
+>  {
+>         return data->domain->host_data;
+> @@ -446,6 +501,7 @@ static int rzv2h_icu_init(struct device_node *node, s=
+truct device_node *parent)
+>                 goto put_dev;
+>         }
+>
+> +       platform_set_drvdata(pdev, rzv2h_icu_data);
+>         rzv2h_icu_data->irqchip =3D &rzv2h_icu_chip;
+>
+>         rzv2h_icu_data->base =3D devm_of_iomap(&pdev->dev, pdev->dev.of_n=
+ode, 0, NULL);
+> diff --git a/include/linux/irqchip/irq-renesas-rzv2h.h b/include/linux/ir=
+qchip/irq-renesas-rzv2h.h
+> new file mode 100644
+> index 000000000000..d06e01bf969b
+> --- /dev/null
+> +++ b/include/linux/irqchip/irq-renesas-rzv2h.h
+> @@ -0,0 +1,26 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Renesas RZ/V2H(P) Interrupt Control Unit (ICU)
+> + *
+> + * Copyright (C) 2025 Renesas Electronics Corporation.
+> + */
+> +
+> +#ifndef __LINUX_IRQ_RENESAS_RZV2H
+> +#define __LINUX_IRQ_RENESAS_RZV2H
+> +
+> +#include <linux/platform_device.h>
+> +
+> +#define RZV2H_ICU_DMAC_REQ_NO_DEFAULT          0x3ff
+> +#define RZV2H_ICU_DMAC_ACK_NO_DEFAULT          0x7f
+> +#define RZV2H_ICU_DMAC_REQ_NO_MIN_FIX_OUTPUT   0x1b5
+> +#define RZV2H_ICU_DMAC_ACK_NO_MIN_FIX_OUTPUT   0x50
+> +
+> +#ifdef CONFIG_RENESAS_RZV2H_ICU
+> +void rzv2h_icu_register_dma_req_ack(struct platform_device *icu_dev, u8 =
+dmac_index, u8 dmac_channel,
+> +                                   u16 req_no, u8 ack_no);
+> +#else
+> +static inline void rzv2h_icu_register_dma_req_ack(struct platform_device=
+ *icu_dev, u8 dmac_index,
+> +                                                 u8 dmac_channel, u16 re=
+q_no, u8 ack_no) { }
+> +#endif
+> +
+> +#endif
+> --
+> 2.34.1
+>
+>
 
