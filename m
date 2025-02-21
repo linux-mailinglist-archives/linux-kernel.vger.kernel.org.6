@@ -1,132 +1,132 @@
-Return-Path: <linux-kernel+bounces-525240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACB28A3ECE6
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 07:36:21 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06E6CA3ECE7
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 07:36:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F4D9422486
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 06:35:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6100C17FCC7
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 06:35:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C0021FDE04;
-	Fri, 21 Feb 2025 06:35:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88A221FCFCC;
+	Fri, 21 Feb 2025 06:35:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="idZAGIMr"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FF/NZIsu"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3797F1FBCB0
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 06:35:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3A361FC114;
+	Fri, 21 Feb 2025 06:35:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740119712; cv=none; b=aMI5OoFW/vj9FFw2WU2pMQVlv/RHnBLRtyLI3Lc/qRItjN6Vx1pQMyqoDu35IkH3be9cYmaVWBti+pIB69gNloQ2CDP1MkzPJmKL+2QdAEIJrT0SrVkvza7tybTKdEyH2u5UiKKEkxOAH6+O86W0EqEMz8erdnH5EL9MkAnBQp4=
+	t=1740119737; cv=none; b=aoySlFCpaJzRJVVFO0CifSW8/dXQd+agkC+69KQ8nzw39zerXEB4rrtJPEUFysOzcZa20F4EC0fJmYfJAR8ttfEaKdT/t95nWGvn4J1bIDzPOdU5ly7bvZTdaCeFxy5csI4rPyJCuV2mM1a/7bSgXpZwPAFHm05a+C+5sCgC/JM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740119712; c=relaxed/simple;
-	bh=oc+EtHShi6bbNj9AJnLiY/NJj0NfEanMXEUTL2lUbmU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hto5nPTIFUGQFFM49SgKudoRpKMYxVhquHuG+79R1+Cgox1bLtaX5NwSDA/d4huUmDzQHiVlsXnFm73RE0T3mO0I8AXnj4KcKyx4pJXMuc+z4jaXkrbQlm2jBDNFUL9BKJTDf+XYzS9NtGR9v40+HLnRqVXx4ek+jrzsULl0uzU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=idZAGIMr; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2211acda7f6so36729295ad.3
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 22:35:10 -0800 (PST)
+	s=arc-20240116; t=1740119737; c=relaxed/simple;
+	bh=Nf4fcOuWgRppA+LblaREvE6VQmo3gUUHrklfBY5bz90=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=skneyhoBbQ2G3ZPQZypf8m7YpJRe3XbV/rGSmlA3TisufEpyVJrv0GQ67L6OoF+Zn4+V0dbMgCUwFcqiGeh/xhLa3lxjWr+DdP9nZNjg3rnMgRJpIMC+AzWG0HEBsHk344YnbG2wLtoD/K1uPe8pQIGfCa1qr/zOelpEIVpfYIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FF/NZIsu; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-220bff984a0so33712405ad.3;
+        Thu, 20 Feb 2025 22:35:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740119710; x=1740724510; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=4+iMivRKCEBsggc2rtGQq+coCu/bncplKGZAc6W2LxM=;
-        b=idZAGIMr16AeU38mVAUPU1g9TanDgO5TeB7Pv4IqYTw6Sv/Iwz2dQT/nXj9EGQXEaV
-         3SqdmwZz4Lo5Fda8PcJkT90hKaHznB3dEZUQbtNRl/i4L8HpxRNc1mHxDMRhtdo0A3Sm
-         aFKT0MYtKtWXHTEAYH2eTMTxQaKq/L6wHJyRLYC3ZlTQCYWGU9y624JZ1/pK2N5bCvwC
-         Bq1Ufa91CFoaCfQni5AvDauaED9YveH0TFTIhPoqnaDRWaBJ2KDzHPSlh7eObMngmwsW
-         WR4+Qc6lO3Q8mD8nmz0VeZojSJTQIDoQ31SkZ19lGBT+mGbVN9D9WSwbJL2vD3M3lHqg
-         t8tA==
+        d=gmail.com; s=20230601; t=1740119735; x=1740724535; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=gaAwgWYN6mC8bbarqgL9b/ntEOrc+hTOljfxQkKCFDg=;
+        b=FF/NZIsuQOL6aQur6rN/Hf6IfItdnTYYGIsMZ0g6E9tz8kt22ogPE988VyDGiG8IcI
+         QcNbKu0cJ4hvo+y4sqLIq/Uw6oY5gEtnBNIOy2bLRXBUvyh8QhgpHOyeBp73UcHXNfL+
+         tu6t4SR+zy7OgZhYiqBOsDQnepCEIt9RQvCd/Lp6uDX6nj1+fCgn4ui91wJ7u/sg9maQ
+         v+reEUXW6bxFL8+EuKHR15COBdB3HlYoOKpoUP52W3LrXcOw3bo587O5JbzeZ3lYevaZ
+         BYvRzbrVNcsPCFeBU4z2u9dvfQDxdCtEuHHg6uNczNLOC5WlyFMIjG1EBlgBL8wCg5N+
+         oyNQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740119710; x=1740724510;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4+iMivRKCEBsggc2rtGQq+coCu/bncplKGZAc6W2LxM=;
-        b=f84A9POxPnjaEc+w1o5UnKInjJqTI9q3gdSsx25464R3X2SxJ+ftirGGu1jelav+M/
-         knwkarO21AHKF6zkZEAgqh2+Oz3tjNRizZ8UbEA1c3ijQXSYrhhXa+WDyGlZ3QpH4E+7
-         wibvctWTcj3xu//72RzBY/nV74YyNRW7RW3tMTta8Q50bQ6VIIMb9oifNPRwAefKsTOm
-         gda/RCEpkihDuvCcQs5mEEX2HCSilRtMLMHYAWZI50ZrJejlFm59NF5GLhmGp1YUoEPK
-         BZxqMh/95GVT9iyEkThkDPCaQbSrdT6Ts5aqSKPWcltmmnwC9miYzvXdqxLPxX94Ppz1
-         XjaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU8jVdZMboGoVtkgYybGLoFaPe/Etv6KFmFQItjVG8rB29Wnlu6I/Zl9UFuGeziCcG3G1RdtHBa+yDNGQI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWkXpfErDQNTGvuwnzDkPD4nNxnwieI9PqX+W00+3Xm4cC2dYd
-	yaPBN0mVMpx+QCwuhHIwvC4lvg1FcPeDePx11+Lmdghm3wXgeMbYJh9S5JFbntA=
-X-Gm-Gg: ASbGncvMXUcfMGjjKMOCalxQQqmAt0IvFtdrMfbiFDV2saG7tEQ0oAQjH3Z3XGZTpji
-	5noLkTs+wn1ub2TccflCj2seYoyg1Eig7Vkzq8YTbepXTIhyRb6w5iBPSUc5aLBUbSNnYZuk1SJ
-	8ww7c0Nrfe3Smbslq/m8Rk6U/1q7kC3r2+iDTkoEPjr4+snPtfvmimoTD4iZKyYNqbL8dfQ6OSt
-	nDCFEe8d7WH/MNNPKjP5pzlb31gf26ZVyDc5QPqfBvvR6iyA8ECFJAgrWSLoNNp3BTOZEPxyz41
-	o1Y8qT1XUd49CUiuonu5BaYQ5kxT
-X-Google-Smtp-Source: AGHT+IEjF2u2RW/3YdAr0lHzjtV+TNOOgg3zCjt+GF/uyeQexQA0ARkffz5BS1YIj4YSEzPUqYDV+w==
-X-Received: by 2002:a05:6a00:2e08:b0:730:76a1:3935 with SMTP id d2e1a72fcca58-73426ca8308mr2801175b3a.6.1740119710461;
-        Thu, 20 Feb 2025 22:35:10 -0800 (PST)
-Received: from localhost ([122.172.84.139])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7324273e324sm14929891b3a.88.2025.02.20.22.35.09
+        d=1e100.net; s=20230601; t=1740119735; x=1740724535;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gaAwgWYN6mC8bbarqgL9b/ntEOrc+hTOljfxQkKCFDg=;
+        b=X+4MvuA1CsDnmS8A6i8AIUFzh7EaIWAfjWkmFiIcmCjvm/P536+WhQlsIkIu+K5Cr1
+         B6cuACr1JdmpoymEdryiT/Bh2vxFBsitU72+VADu4It7zwJb4v1PNSyVgQ72phtW6XO4
+         qIOKd6T2LLbZimKfPPJHicx6vdBuQNACN4TV4Cp4bq8CD/JV0GFhuBCw8aLj7FhYNMmn
+         giAOlZiqskD/X+Q7y25K/OVYXs4hvPRez1CG5Ke88WSu+lEgs+m61j5CJHNJN970UGhy
+         jvKnC/ryPkf5ZQlShSc1BhS6O8nwp4RQB+J+s8Us+cYzow+jFaYk4D78ues4GFwsdczi
+         9ELQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVlDZGqlS0KILoAXr+fDVvoYABWos8i8XEw2w1g7aLsgaNLnC4q/mKjz4YZeuUMIQOC6zzLpvuj6278@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYf+yh3iO8fck5UArdhgEfBhRK/a4rXbPY1CZvYgto7YjJ3xPd
+	aYqOqqKGvhBY67JYzVVAvYTt6AVPJmPgBmwthpOPg4IdzOacQURx2OPiiw==
+X-Gm-Gg: ASbGncsW5oTI+WEK0YCdxuUPJcLhR/Q1R7ADlHuThC431jHPuyjOUvqbNUXd/MKdmpu
+	YAQQjGq4M3kTJ4F8hyUOWinmAzlSlrpOs/oapYxvCEF1wHX39qSAuRqhj3xI82H7kOGW79A021E
+	Sdk4EccJoOqMzv+DKvNBxTmDDEKiWNXmX73k9iR6PGEpwe1lC43/z1LDNURhVuJwNmKB6/oLd5o
+	/PLXSUlsMxszuJ6AXsSkzs6vVdv01U1dp2ruGgYXbXp1avLoKSQRFJwDqNh4XZ+rSHSDB3PQEqD
+	pezEWJE0C/5d0gMeD3uY9kszUY2rR6ylLJKu
+X-Google-Smtp-Source: AGHT+IH9IEr9JoMJYSAg85kbfpXIEgYLzM3yHCu2Pv76Pa87pXjWae8C0Nh0Xn4+HTysrZd6HUuoIg==
+X-Received: by 2002:a05:6a21:9988:b0:1ee:bd99:9c71 with SMTP id adf61e73a8af0-1eef3cdcb2fmr4082990637.24.1740119734846;
+        Thu, 20 Feb 2025 22:35:34 -0800 (PST)
+Received: from cs20-buildserver.lan ([2403:c300:dc0a:4fe5:2e0:4cff:fe68:863])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-adb57c5dc68sm13777275a12.9.2025.02.20.22.35.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Feb 2025 22:35:09 -0800 (PST)
-Date: Fri, 21 Feb 2025 12:05:07 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Daniel Almeida <daniel.almeida@collabora.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-	Danilo Krummrich <dakr@redhat.com>, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-pm@vger.kernel.org,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Nishanth Menon <nm@ti.com>, rust-for-linux@vger.kernel.org,
-	Manos Pitsidianakis <manos.pitsidianakis@linaro.org>,
-	Erik Schilling <erik.schilling@linaro.org>,
-	Alex =?utf-8?Q?Benn=C3=A9e?= <alex.bennee@linaro.org>,
-	Joakim Bech <joakim.bech@linaro.org>, Rob Herring <robh@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH V8 06/14] rust: Add bare minimal bindings for clk
- framework
-Message-ID: <20250221063507.3vffn55hkmcn6x35@vireshk-i7>
-References: <cover.1738832118.git.viresh.kumar@linaro.org>
- <c68081e18d939aefc7f6dac798df6b72e81bba4b.1738832118.git.viresh.kumar@linaro.org>
- <EC290802-2C5E-4ACA-A530-E776654C7E94@collabora.com>
+        Thu, 20 Feb 2025 22:35:34 -0800 (PST)
+From: Stanley Chu <stanley.chuys@gmail.com>
+X-Google-Original-From: Stanley Chu <yschu@nuvoton.com>
+To: frank.li@nxp.com,
+	miquel.raynal@bootlin.com,
+	alexandre.belloni@bootlin.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	linux-i3c@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	tomer.maimon@nuvoton.com,
+	kwliu@nuvoton.com,
+	yschu@nuvoton.com
+Subject: [PATCH RESEND v2 0/4] Add support for Nuvoton npcm845 i3c controller
+Date: Fri, 21 Feb 2025 14:35:24 +0800
+Message-Id: <20250221063528.1810007-1-yschu@nuvoton.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <EC290802-2C5E-4ACA-A530-E776654C7E94@collabora.com>
 
-On 17-02-25, 09:19, Daniel Almeida wrote:
-> Hi Viresh
-> 
-> > On 6 Feb 2025, at 06:28, Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> > 
-> > This adds very basic bindings for the clk framework, implements only
-> > clk_get() and clk_put(). These are the bare minimum bindings required
-> > for many users and are simple enough to add in the first attempt.
-> 
-> I am missing clk_prepare_enable/clk_disable_unprepare.
-> 
-> Otherwise I see no way of enabling and disabling clks. IMHO I would also
-> consider these as “bare minimum”.
+This patchset adds support for the Nuvoton npcm845
+Board Management controller (BMC) SoC family.
 
-I have posted the clk bindings separately now:
+The Nuvoton npcm845 uses the same Silvico IP but an older version.
+This patchset adds fixes for the npcm845 specific hardware issues.
 
-https://lore.kernel.org/all/cover.1740118863.git.viresh.kumar@linaro.org/
+--
+v3:
+ - Add more description in dt-binging commit message
+ - Add the svc_i3c_drvdata structure in struct svc_i3c_master
+ - Improve the do_daa
+---
+v2:
+ - Add a new compatible string in dt-binding doc.
+ - Add driver data for npcm845 to address the quirks.
+ - Modify svc_i3c_master_write to be reused by SVC_I3C_QUIRK_FIFO_EMPTY fix.
+ - Fix typo of SVC_I3C_QUIRK_FALSE_SLVSTART fix.
+ - Remove the code changes in svc_i3c_master_do_daa_locked, will add it in
+   another patch series for common improvement.
+---
+
+Stanley Chu (4):
+  dt-bindings: i3c: silvaco: Add npcm845 compatible string
+  i3c: master: svc: Add support for Nuvoton npcm845 i3c
+  i3c: master: svc: Fix npcm845 FIFO empty issue
+  i3c: master: svc: Fix npcm845 invalid slvstart event
+
+ .../bindings/i3c/silvaco,i3c-master.yaml      |  4 +-
+ drivers/i3c/master/svc-i3c-master.c           | 57 +++++++++++++++++--
+ 2 files changed, 56 insertions(+), 5 deletions(-)
 
 -- 
-viresh
+2.34.1
+
 
