@@ -1,216 +1,136 @@
-Return-Path: <linux-kernel+bounces-525687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71575A3F335
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 12:43:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC6E6A3F333
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 12:42:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4139A3BDDC5
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 11:42:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F77D19C0DF3
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 11:43:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59853208997;
-	Fri, 21 Feb 2025 11:42:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49ABE20967B;
+	Fri, 21 Feb 2025 11:42:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eUFSqDSD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HSGPSgql"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 941F12080D5;
-	Fri, 21 Feb 2025 11:42:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF79720897C;
+	Fri, 21 Feb 2025 11:42:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740138148; cv=none; b=j5Kdgewsmta1xdt6rkmRepYFoJARLg62uaXz1dcE3CAU5s5r3xUOziBaE583QXOtxIAYBTNL+gwk91A6z8J6MGcfZeE8zhrFXJ9PZJcF0Jh/wRjnC8Cscn1HGFrJmJ/e731rg3xTURPaC7COH2epW26lPkt/NyH2sZ5dDTEzBGo=
+	t=1740138172; cv=none; b=CVvMmVBVENgJPnzGbIfegEhlq+alBKv6DHJSXlII76N8+EqZdyOGw/vWAGqwWPXGlIMJEYbB00ivXS9yMGdqQHX7saTAV0CPmyTR1W2FkTfPPvrj1qumBdK1G7U+PkieL+LBFBn2eIKS3UTsH2WoERnSIgWcr2euiKyMVQ7FfQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740138148; c=relaxed/simple;
-	bh=mEM56gOe1RUhzRvrGiRYe0IGW6VYqKO+9eumbJbLHJ0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=p9sCPWRzHLv0FTmXI2aGuzKKa8uQZmRxIBKc6zjzmGEwozaDN0vHHUTDuPJS2fWYwr0ZEeUi8GodDOQSA8PvzQv/w8oTwP0mxPMMuvvLs0T1gfUgKDEuehIJEDNzltlrpwpnwPNF/Uwu6mz4+hxbPDcOpU6xS8T02mf8qDR88NI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eUFSqDSD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48AA3C4CED6;
-	Fri, 21 Feb 2025 11:42:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740138148;
-	bh=mEM56gOe1RUhzRvrGiRYe0IGW6VYqKO+9eumbJbLHJ0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=eUFSqDSD+1wrIC1whrcC2n2Q277DBn/FacpI8Q3Q3hIZfQuk7ztGxevepO/z6hi11
-	 ot7tFICYPgEZB/TlpJ7xP0t5kbqBCx8OQPHurtrDc/vVQWHKLpjuzDdVsNpO0E2K6v
-	 SVYREiiOoYJcO+rt5vtvID0ae2CRb5+KvSZ+cdCl857pZjdENUwtOElhzeNy1ShJDo
-	 LrB+qrnan1dV92uN/I76wqkjHkza/GOEqHTma1KX1gEk/c5VLXOnsYnRt5vKGVsiVI
-	 Goel35HBYaVVdvuphRQtBt+Gk3lmjG8k8qgZG8IHXUwP2OPPKcDxoIdZYDqLH0Xyzp
-	 R8k0p1crwcGPA==
-Message-ID: <5f88cdbe-f396-49c6-bb48-f50cbbb21caf@kernel.org>
-Date: Fri, 21 Feb 2025 12:42:23 +0100
+	s=arc-20240116; t=1740138172; c=relaxed/simple;
+	bh=XkLj3L4dQlpMsdIQhF3lEl4OZRGB90PZA1PEkLCsjsA=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=UM3slonnH5GqjCtt41meFN8vfslzSReO6+WSOG5naW2EeIRvTnHFENi6NSpGAgmuKMWoi2A4YT7ttf+tq+3DCBlFmEosA3nIjWFObQwL9WG6tMAmSX5wrMa1boFnBGgG4Gh1jUTZctTEh0ev3KtwOZyir9ybg38cTHAvwh0Rr60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HSGPSgql; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5dee1626093so5723615a12.1;
+        Fri, 21 Feb 2025 03:42:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740138168; x=1740742968; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XkLj3L4dQlpMsdIQhF3lEl4OZRGB90PZA1PEkLCsjsA=;
+        b=HSGPSgqlEvWAR7VlAJQncfX4f6eqWs/3iXGvtjD4TTF9h9sLBNGwQGFv6C8mDwK75y
+         q0WQmNsn8v3gm8gCms3VWcZLACARLhmFUwzNaAzSL7Oachfd/2x25zCJ7WAUQpfBwx6J
+         MPhDmC1Knm9DS0ptM2sf0eV1tqIESEUQFqo/TPpBApnW41/VZPpCfT/AksWpFY01KuKS
+         PzIwIQRaiyMVKZdVHhkB6XqqzFeHscLjuudVHjkWkVc8YBbrF2g1FeEeCbqgdXUhqnRd
+         LNfXguIoxVkIIxOF28IZ8McKzxP13gDEauL/HBYDdknb3bRKAEqSJMnaVlYyT0gEhoDC
+         bFqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740138168; x=1740742968;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XkLj3L4dQlpMsdIQhF3lEl4OZRGB90PZA1PEkLCsjsA=;
+        b=ERof8Wi5BxIVdcq/MT7nuV6K2mkZ8/CwShJO9wISOv1cXgEoQqZ/e0cnDYwkdrjz/y
+         sFMNPzaIYhq7dCQUfF1QTJnWFnsVr13MqEf39aIpzIyRcDDnjdjVSqBlr0uvzhI62mZi
+         h6DdwWxMYV04kJNIPlP+KF1QV4Y1PiYjeLqm1/o/ZWN5okjCncbTs7tDtk6epTeGmDbH
+         m0n2UlswjrxKwMlSsZ4KFvXHAXlBI9uer4LgwRESu0cgbq9Ukw68p6chv/SNboBGBd1n
+         L65JpvNEcrwYo6x7/H5vF7r5KbECXEzjcQ8Cduvlpgy+VSRMCtTL77ZWU44zKB1Qu57P
+         0Ybg==
+X-Forwarded-Encrypted: i=1; AJvYcCWe7DBl970YqlBL9xYrLpYE9UBtsrwtG7PrGWtlmuVSqSeKbso6dp5NQh8VCB16WlAWTNJLIhVNH+cs@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZsqI30pRzQQhtJn3m+Z2xq+d+VwAb7YN2EWwH457dGB/HsJQ/
+	D39l6Q8uEAs/yoKS4yYP/UiB75q1QIVQPYmx4GAO5DnH+5eplcZyb8Kgq4S2
+X-Gm-Gg: ASbGncsCI7ua9AX52wG8XTlVlhBVIskWBnVVuPsTfUqqJpVDfWMdmJLlUXpJIOa2s9w
+	/fQzR3gkaJlJKIXfwpWerUIyzd09EQ0hDjIx/dzwrbczou9tm+ZUaUg/EghDkzQEAHFHreM67Rj
+	Hl25+Ix6OFLHA3ANyGDNdFnRBQVwqg6CqaoSeIYs8zCch9QCb2SOaJmkCf8xBWjOTlSj1yhn9lm
+	cnrK9mLsdVA9tL//8ajTOsK5eZhbuvX3Ju7lzCALOyn13p3D9mNpADbfrJWi60+Iw1Pu9H0EXOV
+	MvA60q0a029GF3YDuJ7WNktGgnwmMJPwjRmZhcsUshpFcUDqvmxXp/yUrLT+Ijzwu2u7eFB3rwR
+	k9L6aacs=
+X-Google-Smtp-Source: AGHT+IGqnd85Z6uUbc80gi8ICKJ1IHVsX+dg/Mm+5UiTzJwBP7TGxu1s6WSYqAFeYjWEnu0FlWu8JQ==
+X-Received: by 2002:a17:907:7e8e:b0:abb:b411:5e02 with SMTP id a640c23a62f3a-abc0aea5253mr285729366b.18.1740138167711;
+        Fri, 21 Feb 2025 03:42:47 -0800 (PST)
+Received: from smtpclient.apple (89-66-237-154.dynamic.chello.pl. [89.66.237.154])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abbad879b26sm789563166b.44.2025.02.21.03.42.45
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 21 Feb 2025 03:42:47 -0800 (PST)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6/6] arm64: dts: cix: add initial CIX P1(SKY1) dts support
-To: Peter Chen <peter.chen@cixtech.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: Rob Herring <robh@kernel.org>, krzk+dt@kernel.org,
- Conor Dooley <conor+dt@kernel.org>, Catalin Marinas
- <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, cix-kernel-upstream@cixtech.com,
- "Fugang . duan" <fugang.duan@cixtech.com>
-References: <20250220084020.628704-1-peter.chen@cixtech.com>
- <20250220084020.628704-7-peter.chen@cixtech.com>
- <4add2867-8c09-454a-b3e2-b4baaeccfd44@app.fastmail.com>
- <Z7cga0L6UYmPXoFw@nchen-desktop>
-Content-Language: en-US
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <Z7cga0L6UYmPXoFw@nchen-desktop>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-
-On 20/02/2025 13:30, Peter Chen wrote:
->>
->>> +
->>> +       aliases {
->>> +               serial2 = &uart2;
->>> +       };
->>
->> Please put the aliases in the .dts file, not the chip specific
->> .dtsi file, as each board typically wires these up differently.
->>
->> Note that the 'serial2' alias names are meant to correspond
->> to whatever label you find on the board, not the internal
->> numbering inside of the chip they are wired up to. Usually
->> these start with 'serial0' for the first one that is enabled.
-> 
-> In fact, we would like to alias the SoC UART controller index here,
-> and amba-pl011.c will try to get it, see function pl011_probe_dt_alias.
-> It is initial dtsi file, so I only add console one which needs
-> to align the bootargs passed by UEFI.
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.400.131.1.6\))
+Subject: Re: [PATCH v7 0/3] Add HDMI audio on the rk3588 SoC
+From: Piotr Oniszczuk <piotr.oniszczuk@gmail.com>
+In-Reply-To: <BA73C4A1-C680-4748-9CE1-4B3B19A14261@gmail.com>
+Date: Fri, 21 Feb 2025 12:42:31 +0100
+Cc: linux-kernel@vger.kernel.org,
+ Algea Cao <algea.cao@rock-chips.com>,
+ Heiko Stuebner <heiko@sntech.de>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ dri-devel@lists.freedesktop.org,
+ Niklas Cassel <cassel@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Andrzej Hajda <andrzej.hajda@intel.com>,
+ kernel@collabora.com,
+ David Airlie <airlied@gmail.com>,
+ Dragan Simic <dsimic@manjaro.org>,
+ Simona Vetter <simona@ffwll.ch>,
+ Rob Herring <robh@kernel.org>,
+ Robert Foss <rfoss@kernel.org>,
+ Sebastian Reichel <sebastian.reichel@collabora.com>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Sugar Zhang <sugar.zhang@rock-chips.com>,
+ linux-rockchip@lists.infradead.org,
+ Chen-Yu Tsai <wens@csie.org>,
+ FUKAUMI Naoki <naoki@radxa.com>,
+ devicetree@vger.kernel.org,
+ Conor Dooley <conor+dt@kernel.org>,
+ Jonas Karlman <jonas@kwiboo.se>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Johan Jonker <jbx6244@gmail.com>,
+ linux-arm-kernel@lists.infradead.org,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Alexey Charkov <alchark@gmail.com>,
+ Thomas Zimmermann <tzimmermann@suse.de>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <5E535D58-AEFF-45A4-A1EA-1FA282F366AE@gmail.com>
+References: <20250217215641.372723-1-detlev.casanova@collabora.com>
+ <B8EF5196-55FB-44EC-B93C-E327C791225B@gmail.com> <2357838.ElGaqSPkdT@earth>
+ <BA73C4A1-C680-4748-9CE1-4B3B19A14261@gmail.com>
+To: Detlev Casanova <detlev.casanova@collabora.com>
+X-Mailer: Apple Mail (2.3826.400.131.1.6)
 
 
-Your "in fact" is not really related to the problem described. If you
-put it in the correct place, drivers will work just as fine.
+Small data point: on rock5b switching in dts analog audio: from =
+audio-graph-card to simple-audio-card (so dts is: =
+https://gist.github.com/warpme/349b27e49bc6f617ef1041047e75adab ) makes =
+kernel oops go away with analog audio still working=E2=80=A6
 
-> 
->>
->>> +               CPU0: cpu0@0 {
->>> +                       compatible = "arm,armv8";
->>> +                       enable-method = "psci";
->>
->> This should list the actual identifier of the CPU core, not
->> just "arm,armv8" which is the generic string used in the
->> models for emulators that don't try to model a particular
->> core.
-> 
-> Will change big core to 'compatible = "arm,cortex-a720";'
-> and LITTLE core to 'compatible = "arm,cortex-a520";'
-> 
->>
->>> +       memory@80000000 {
->>> +               #address-cells = <2>;
->>> +               #size-cells = <2>;
->>> +               device_type = "memory";
->>> +               reg = <0x00000000 0x80000000 0x1 0x00000000>;
->>> +       };
->>
->> The memory size is not part of the SoC either, unless the only
->> way to use this SoC is with on-chip eDRAM or similar.
->>
->> Normally this gets filled by the bootloader based on how
->> much RAM gets detected.
-> 
-> Will move it to dts file.
-> 
->>
->>> +               linux,cma {
->>> +                       compatible = "shared-dma-pool";
->>> +                       reusable;
->>> +                       size = <0x0 0x28000000>;
->>> +                       linux,cma-default;
->>> +               };
->>
->> Same here, this is a setting from the firmware, not the
->> SoC.
-> 
-> Will move it to dts file since our firmware has already released,
-> and it needs to support different kernels.
-> 
->>
->>> +       sky1_fixed_clocks: fixed-clocks {
->>> +               uartclk: uartclk {
->>> +                       compatible = "fixed-clock";
->>> +                       #clock-cells = <0>;
->>> +                       clock-frequency = <100000000>;
->>> +                       clock-output-names = "uartclk";
->>
->>> +               uart_apb_pclk: uart_apb_pclk {
->>> +                       compatible = "fixed-clock";
->>> +                       #clock-cells = <0>;
->>> +                       clock-frequency = <200000000>;
->>> +                       clock-output-names = "apb_pclk";
->>
->>
->> Clock names don't need "clk" in them, and there should
->> be no underscore -- use '-' instead of '_' when separating
->> strings in DT.
-> 
-> Will change to:
-> uart_apb: clock-uart-apb {
-
-No, instead explain why this is part of SoC - or what are you missing
-here - and use preferred naming.
-
-Please use name for all fixed clocks which matches current format
-recommendation: 'clock-<freq>' (see also the pattern in the binding for
-any other options).
-
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/clock/fixed-clock.yaml?h=v6.11-rc1
+so maybe issue is in audio-graph-card code (or its dts fragments)?
 
 
-
-Best regards,
-Krzysztof
 
