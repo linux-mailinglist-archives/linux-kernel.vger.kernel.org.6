@@ -1,184 +1,122 @@
-Return-Path: <linux-kernel+bounces-525541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05FA4A3F10B
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:55:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72677A3F112
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:56:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B61A63B366D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:54:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0012117D5E1
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:55:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAB9C2046A1;
-	Fri, 21 Feb 2025 09:54:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NkOPN4BG"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3E202046B5;
+	Fri, 21 Feb 2025 09:55:22 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6307B1EB18D;
-	Fri, 21 Feb 2025 09:54:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A2D820459E;
+	Fri, 21 Feb 2025 09:55:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740131684; cv=none; b=tOP2U9NobcaTT2lu/8ewwzSbzJ27YvfYlqNQIb/uVMWrgiuZBm21WuvaXBmB7ELK2nG+u7M8onwsdq2o8gSE4/o5vtsXlVGSV0sv5fm1BxHpu2tfyfXNgTLWiDFOYZcwRffRr3koz0N37ngxZminnV8H4vm9LYlCGkHxHyOlTec=
+	t=1740131722; cv=none; b=ER9lV2T126s8lcg2OTkBBiKa1861QOjWqippQYAkxxWwSFCJ9frvZ6oERCyMuMskSc+HdYO00XSLT9I9srrJjbYeweaQbCYprCWuorg1M+xqYBNx4FqIHr9CGEsdy6S2JuJXNRdyUbjLyMuLIAHGG+aKpH2YuKkYqJktQsVOFg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740131684; c=relaxed/simple;
-	bh=ro3d+iKXGoqGnuNHlS/fgeOaWF0UBAOH6kPyVBHtOvc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PAnqCJEQkLWEfoZt5u3SaDK1uH5x28E2hYHsL+tMTF1JVfC7LDwvyjyYkf+xe1ww99ZixBGYHK+5E/+fjWgdbnOst9iLlv3JtlwqwbwBeZw2qEnf+a5pfvgzBHTmV9n+e5fhBAG6tO39hAsggQoiUULtOOIW9HDqehW1Aj/9z2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NkOPN4BG; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5dccaaca646so3481380a12.0;
-        Fri, 21 Feb 2025 01:54:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740131681; x=1740736481; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PCWLQJXIRaGa+NaKBUA5lVma2HK+tvmrsuX2eAKzx3I=;
-        b=NkOPN4BG9MXg0QTCk4CxCM1p6P9kITIMSVAnU0qs3YGkIrR0iGXBLES+tmz9rTKQZc
-         7kBzhG3tCWhd5WY0wA4g20bcqsm52KLaFNWCHAv1H6YMY04t4bVbSmUslgp9BXTR6Mny
-         QYckUIXRAcULhYpAPf36sH7QnMGF19TIl1vhKwUjAR9/PAp70nmFKi4PEJrrucZHXzm9
-         2L1BR36dW8ZMreumuWk18uGZiMW7idv5QjfSy/WzHx9igo436HWvJ6+/BwWyOLBsiyr7
-         dSpxbMw4bPRU8vso96gSPkKLsbxQoakBP4teON3nGQkuMqvKnfkqgx/qzc9+qUSvgm8f
-         8BtQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740131681; x=1740736481;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PCWLQJXIRaGa+NaKBUA5lVma2HK+tvmrsuX2eAKzx3I=;
-        b=p1RRB6ApKl0ehiWwMJAswYv/ZWXihj5EMxHYIMYtP3kR9X6NRqUTgJq200LcUntOyB
-         XPaKBm3VUOS5mAsRFn3DCQy8T9Ueyp6M4BnHp37SvCPAmfx8Q0WFaSegiSO+k3z45yJc
-         UCsIU9AZas+iYgdINVsbl2Au5lNJqxQR09t4gm64Nq4HBhBBGvQbxYBaCD+VoM9CjU6U
-         OIg7X/0M7chDAym28/rbqivok9J/BQOidvxPJMrYVgrmjOdOzuqRBY7xclEnv9KroOr8
-         9k3UlvJKL4bEQdjph9Fx9Avhw1hYhejYEGGiHJKJVW8bqyWt0VDFusY6UAQYgsDeqAax
-         qQ9A==
-X-Forwarded-Encrypted: i=1; AJvYcCWBkrAu3RNzEpNxxwQcRwPaxBQskKcbjjMJOW2GGqmFDp36FYD9kNMx0AyOApleIQbknAmGmWsKI/IX@vger.kernel.org, AJvYcCXmHi5XXn1iia/4YFPZRR6l11wLKtZwErhcJl+inih4324IOIADolLYXtcCVH8WhFJZHMk8mT6RK7wBPruH@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1DS5tJWn/aLOOXHVJlFWIZgGN/a4yVZfwq1fKHhr55tsMXK6L
-	I4wsHSelenikf3/CkNyLjN59oCnuEw7T/1dYFoY3u4IJ6QGWTxXvMW3N2gY5OgALURlB6ExM1z1
-	96PdRoEYCpotW9WlVRH+n51IvKUc=
-X-Gm-Gg: ASbGncsTRsKp4xz/2jxsq9o8cVjGVpQFhVxTlwqwuljdYMwBpSlA9PAjEhNclySOVFr
-	+atKi39ujUiIbP4ytAOjAxWpEnLeicD+n2RgQqSXNqgryNBbOBi/UzZWaTgXtOTJHtrQPLXRfMp
-	5iAlnmhuA=
-X-Google-Smtp-Source: AGHT+IERzieE0HXpOGPr2oPq6V5HcGC9rINMOoagVFBANbqyTomsPjFp0m4XiausshWj0LORrEm4V/CktVu+ZQyj1Kw=
-X-Received: by 2002:a05:6402:90b:b0:5e0:6e6c:e2b5 with SMTP id
- 4fb4d7f45d1cf-5e0a1261230mr6369087a12.9.1740131680329; Fri, 21 Feb 2025
- 01:54:40 -0800 (PST)
+	s=arc-20240116; t=1740131722; c=relaxed/simple;
+	bh=/4FZ7qzIHqBG+3bR25Zn6qVvLpHv3e8zPmnL9xGVzAw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=irkWjqRZ5T/zQq14iq3/o8sidTE4MTVfm5aqHC7z2FRZe81goOBU0wE9vOjXWmx653aepzwgCPRROjFSWVvlz6Kg/B/XFZgg7+U8bXHyCeStulxdJgSVLQfzW3Jb2BmdOQdxhndEO5QZi4axNVhMOYh6zm3SqvwzMGyi3RwhUc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8DF8C4CED6;
+	Fri, 21 Feb 2025 09:55:15 +0000 (UTC)
+Date: Fri, 21 Feb 2025 09:55:13 +0000
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Anshuman Khandual <anshuman.khandual@arm.com>
+Cc: Ryan Roberts <ryan.roberts@arm.com>, Will Deacon <will@kernel.org>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	WANG Xuerui <kernel@xen0n.name>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+	Helge Deller <deller@gmx.de>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Arnd Bergmann <arnd@arndb.de>, Muchun Song <muchun.song@linux.dev>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Christoph Hellwig <hch@infradead.org>,
+	David Hildenbrand <david@redhat.com>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Mark Rutland <mark.rutland@arm.com>, Dev Jain <dev.jain@arm.com>,
+	Kevin Brodsky <kevin.brodsky@arm.com>,
+	Alexandre Ghiti <alexghiti@rivosinc.com>,
+	linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v2 2/4] arm64: hugetlb: Fix huge_ptep_get_and_clear() for
+ non-present ptes
+Message-ID: <Z7hNgSBw6lfwwcch@arm.com>
+References: <20250217140419.1702389-1-ryan.roberts@arm.com>
+ <20250217140419.1702389-3-ryan.roberts@arm.com>
+ <e26a59a1-ff9a-49c7-b10a-c3f5c096a2c4@arm.com>
+ <5477d161-12e7-4475-a6e9-ff3921989673@arm.com>
+ <50f48574-241d-42d8-b811-3e422c41e21a@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250118102207.9339-1-simons.philippe@gmail.com>
- <20250118102207.9339-3-simons.philippe@gmail.com> <3229934.fEcJ0Lxnt5@jernej-laptop>
-In-Reply-To: <3229934.fEcJ0Lxnt5@jernej-laptop>
-From: Philippe Simons <simons.philippe@gmail.com>
-Date: Fri, 21 Feb 2025 10:54:27 +0100
-X-Gm-Features: AWEUYZlqXqdJfwgEwnpCfDSpt4wrYNSKsocDQVRpSu4fjABOQ7YP3MhnhFElf50
-Message-ID: <CADomA4_yMUS_S-YDrQdSKmZrDMwPeakkJBix-r08UFQejTYYcw@mail.gmail.com>
-Subject: Re: [RFC PATCH 3/3] arm64: dts: allwinner: h700: Enable USB OTG
-To: =?UTF-8?Q?Jernej_=C5=A0krabec?= <jernej.skrabec@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
-	Samuel Holland <samuel@sholland.org>, 
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, 
-	"moderated list:ARM/Allwinner sunXi SoC support" <linux-arm-kernel@lists.infradead.org>, 
-	"open list:ARM/Allwinner sunXi SoC support" <linux-sunxi@lists.linux.dev>, open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <50f48574-241d-42d8-b811-3e422c41e21a@arm.com>
 
-On Thu, Feb 20, 2025 at 9:38=E2=80=AFPM Jernej =C5=A0krabec <jernej.skrabec=
-@gmail.com> wrote:
->
-> Dne sobota, 18. januar 2025 ob 11:22:06 Srednjeevropski standardni =C4=8D=
-as je Philippe Simons napisal(a):
-> > RG35XX have a GPIO controlled regulator for phy0 vbus, add it.
-> > Enable HCI0s controllers and otg for dr_mode.
-> > Add phy0 properties to descrive id_det, external vbus, and internal vbu=
-s
-> >
-> > Signed-off-by: Philippe Simons <simons.philippe@gmail.com>
->
-> This could work without previous two patches, right?
+On Thu, Feb 20, 2025 at 12:07:35PM +0530, Anshuman Khandual wrote:
+> On 2/19/25 14:28, Ryan Roberts wrote:
+> > On 19/02/2025 08:45, Anshuman Khandual wrote:
+> >> On 2/17/25 19:34, Ryan Roberts wrote:
+> >>> +	while (--ncontig) {
+> >>
+> >> Should this be converted into a for loop instead just to be in sync with other
+> >> similar iterators in this file.
+> >>
+> >> for (i = 1; i < ncontig; i++, addr += pgsize, ptep++)
+> >> {
+> >> 	tmp_pte = __ptep_get_and_clear(mm, addr, ptep);
+> >> 	if (present) {
+> >> 		if (pte_dirty(tmp_pte))
+> >> 			pte = pte_mkdirty(pte);
+> >> 		if (pte_young(tmp_pte))
+> >> 			pte = pte_mkyoung(pte);
+> >> 	}
+> >> }
+> > 
+> > I think the way you have written this it's incorrect. Let's say we have 16 ptes
+> > in the block. We want to iterate over the last 15 of them (we have already read
+> > pte 0). But you're iterating over the first 15 because you don't increment addr
+> > and ptep until after you've been around the loop the first time. So we would
+> > need to explicitly increment those 2 before entering the loop. But that is only
+> > neccessary if ncontig > 1. Personally I think my approach is neater...
+> 
+> Thinking about this again. Just wondering should not a pte_present()
+> check on each entries being cleared along with (ncontig > 1) in this
+> existing loop before transferring over the dirty and accessed bits -
+> also work as intended with less code churn ?
 
-While this correctly describes the board, it currently doesn't works
-as expected.
-HCIs will enable the 5v on PHY and will never disable it.
-Resulting in a blown regulator on the board if plugged with another host.
-I managed to get this working by removing the PHY ref from the HCI,
-but this is wrong.
+Shouldn't all the ptes in a contig block be either all present or all
+not-present? Is there any point in checking each individually?
 
->
-> Reviewed-by: Jernej Skrabec <jernej.skrabec@gmail.com>
->
-> Best regards,
-> Jernej
->
-> > ---
-> >  .../sun50i-h700-anbernic-rg35xx-2024.dts      | 25 +++++++++++++++++--
-> >  1 file changed, 23 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h700-anbernic-rg35xx-=
-2024.dts b/arch/arm64/boot/dts/allwinner/sun50i-h700-anbernic-rg35xx-2024.d=
-ts
-> > index 80ccab7b5..5a6ae42de 100644
-> > --- a/arch/arm64/boot/dts/allwinner/sun50i-h700-anbernic-rg35xx-2024.dt=
-s
-> > +++ b/arch/arm64/boot/dts/allwinner/sun50i-h700-anbernic-rg35xx-2024.dt=
-s
-> > @@ -175,6 +175,16 @@ reg_vcc5v: regulator-vcc5v { /* USB-C power input =
-*/
-> >               regulator-min-microvolt =3D <5000000>;
-> >               regulator-max-microvolt =3D <5000000>;
-> >       };
-> > +
-> > +     reg_usb0_vbus: regulator-usb0-vbus {
-> > +             compatible =3D "regulator-fixed";
-> > +             enable-active-high;
-> > +             gpio =3D <&pio 8 16 GPIO_ACTIVE_HIGH>; /* PI16 */
-> > +             regulator-min-microvolt =3D <5000000>;
-> > +             regulator-max-microvolt =3D <5000000>;
-> > +             regulator-name =3D "usb0-vbus";
-> > +             vin-supply =3D <&reg_boost>;
-> > +     };
-> >  };
-> >
-> >  &cpu0 {
-> > @@ -337,12 +347,23 @@ &uart0 {
-> >       status =3D "okay";
-> >  };
-> >
-> > -/* the AXP717 has USB type-C role switch functionality, not yet descri=
-bed by the binding */
-> > +/* the AXP717 has USB type-C role switch functionality */
-> >  &usbotg {
-> > -     dr_mode =3D "peripheral";   /* USB type-C receptable */
-> > +     dr_mode =3D "otg";   /* USB type-C receptable */
-> > +     status =3D "okay";
-> > +};
-> > +
-> > +&ehci0 {
-> > +     status =3D "okay";
-> > +};
-> > +
-> > +&ohci0 {
-> >       status =3D "okay";
-> >  };
-> >
-> >  &usbphy {
-> > +     usb0_id_det-gpios =3D <&pio 8 4 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>=
-; /* PI4 */
-> > +     usb0_vbus_power-supply =3D <&usb_power>;
-> > +     usb0_vbus-supply =3D <&reg_usb0_vbus>;
-> >       status =3D "okay";
-> >  };
-> >
->
->
->
->
+-- 
+Catalin
 
