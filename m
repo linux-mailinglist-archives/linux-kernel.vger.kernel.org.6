@@ -1,251 +1,413 @@
-Return-Path: <linux-kernel+bounces-526571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EAF0A40071
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 21:10:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3519EA40075
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 21:11:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA64C3AA5F3
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 20:10:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CFC019C7363
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 20:11:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC6DF25333E;
-	Fri, 21 Feb 2025 20:10:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58CC225334A;
+	Fri, 21 Feb 2025 20:11:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="VmfaX9iI"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2085.outbound.protection.outlook.com [40.107.237.85])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kali.org header.i=@kali.org header.b="dUBlFg1l"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D4AF1FBCB9;
-	Fri, 21 Feb 2025 20:10:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.85
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740168629; cv=fail; b=R7XgiLAIBnqulDohFW67kWyjn6GdSMzBjRVxUeLFPaoT4iztWWS1HEGR7Ff5XzV+prgWVXkeilm5/jK1XGNYsOAwa9WdFX5tHn9X+giUq/HOSP7AbE5aHMefDYO/PKpt+tbcy7FBp3vDmnELJOlNQiZSJwdwtu3CIXQMuS8u9w0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740168629; c=relaxed/simple;
-	bh=xTMVFTE7N7hkhhKK4Xn04B2ktP9MHAChqFfVM9g/5ZM=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=or0Y8El/uR7HPINwVk83+Hqu656QQm2Fcu8J5jKPpc0CV3GIBY65bHxccJpcVf5sFRByQhN4i4cQsc2DrD0hEjfi7ExJGKqbnlkc/iPTSR313J4+jdoQ3D7v7CYQmEbvZWU2gaPosYcYnKeEUkGUokDfM3LHGH+LKlIuaxws4VA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=VmfaX9iI; arc=fail smtp.client-ip=40.107.237.85
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ym8/ywGhgx1H6xEzecdqETywCV5d+1y48/KW2BBiA4hMvhAm3u/6iUXjY/b3PCktCtNzHTokPf9JXHuaDVzkUInGCAAQr4Qz9UJoEgEmMovl+O0gRHS6RCs45pHxI8+Yu5bxqEi3sWUUAWQm/ClzhM8nOk1g53ajjkDf5kbvPOliCY3SQObVzgY1B/fGQ19JXHJwvxkTKp/tW86CrJtLbp/WgYZW+LXw7XbyJDfwB75zp7zgjUzwxf87VKYz19j72ESQDmkhJs26G335Lww+yi7yvHI409fFoIbUQxXrqV7Zz8/NX+jIkCkBgtAMinCuRaeBgu0KGkEftehWKc8clw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=8IWjpzewkAR4GnU/elzHEVknQoycO703YM+2fRZgiJI=;
- b=GS5FWz5ICnig6Hkm9mjMeIA5rvECTU2gGcHB4qEb5xvfWr1kqGestYlElQ5mKX2aBtdoW28He+Rod7YAQsKugejCcH/oeVJ1S4byDScy9TIGqZn5kfhS2fxqS1XK/BELF/OgQs/ExICJMAEuPA0eHMhY4aZgAwX1yiM9Jy+TPgOHh7x+RsS1DmhWINpmZSEXq0ju1njPwQv0P7hvp1ZbmV+sEp3PhtWCQkxWk2UGTL0yzTSL64nzBiD9FB6WLQeA9htcc3RcswKj1b/4fHvlCuRAhhj8lGvfWyI1dMVN17fbj9DkNaRemLpVc4ZryDflkaWSnU2tEWSTo/tEyiE8Mg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8IWjpzewkAR4GnU/elzHEVknQoycO703YM+2fRZgiJI=;
- b=VmfaX9iIC+3yOWwoLoiU8a6DXIVOV7SNtcWN1MfgJxK3lIz6KiViRP89r3ZRGOOymQDxnsgQEHehQflkVsMiqrHMgj84Zs9jCnBomI2N5issdDr2yP3PZw7FWM0GnS/UOVKx5Q3jhV8/zZi5uFmZKoBTUVvQZ3Fzzyjq6bXFzSM=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from MW3PR12MB4553.namprd12.prod.outlook.com (2603:10b6:303:2c::19)
- by SA3PR12MB7781.namprd12.prod.outlook.com (2603:10b6:806:31a::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.14; Fri, 21 Feb
- 2025 20:10:21 +0000
-Received: from MW3PR12MB4553.namprd12.prod.outlook.com
- ([fe80::b0ef:2936:fec1:3a87]) by MW3PR12MB4553.namprd12.prod.outlook.com
- ([fe80::b0ef:2936:fec1:3a87%4]) with mapi id 15.20.8466.015; Fri, 21 Feb 2025
- 20:10:21 +0000
-Message-ID: <d597f2c1-bcf3-4d00-8d48-1ebe95015245@amd.com>
-Date: Fri, 21 Feb 2025 14:10:16 -0600
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v11 11/23] x86/resctrl: Introduce mbm_cntr_cfg to track
- assignable counters at domain
-To: Reinette Chatre <reinette.chatre@intel.com>,
- James Morse <james.morse@arm.com>, Babu Moger <babu.moger@amd.com>,
- corbet@lwn.net, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com, tony.luck@intel.com, peternewman@google.com
-Cc: x86@kernel.org, hpa@zytor.com, paulmck@kernel.org,
- akpm@linux-foundation.org, thuth@redhat.com, rostedt@goodmis.org,
- xiongwei.song@windriver.com, pawan.kumar.gupta@linux.intel.com,
- daniel.sneddon@linux.intel.com, jpoimboe@kernel.org, perry.yuan@amd.com,
- sandipan.das@amd.com, kai.huang@intel.com, xiaoyao.li@intel.com,
- seanjc@google.com, xin3.li@intel.com, andrew.cooper3@citrix.com,
- ebiggers@google.com, mario.limonciello@amd.com, tan.shaopeng@fujitsu.com,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- maciej.wieczor-retman@intel.com, eranian@google.com
-References: <cover.1737577229.git.babu.moger@amd.com>
- <30652061d4a21eb5952a1323b76ca70927412a30.1737577229.git.babu.moger@amd.com>
- <aef8e061-8754-4bf9-86eb-18c0bacc6476@arm.com>
- <dd52a51a-e0b1-4c5d-89d2-8732d4e9e2ff@intel.com>
-Content-Language: en-US
-From: "Moger, Babu" <bmoger@amd.com>
-In-Reply-To: <dd52a51a-e0b1-4c5d-89d2-8732d4e9e2ff@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SA9PR13CA0123.namprd13.prod.outlook.com
- (2603:10b6:806:27::8) To MW3PR12MB4553.namprd12.prod.outlook.com
- (2603:10b6:303:2c::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51B7D25333B
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 20:10:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740168659; cv=none; b=B6ROrKg2D0Zs0H4hB8ryFeqJaGuffG+9/jKc/xIqG2sUBwR5f8CTY3+UiWMMR6Qd4WDlDPSgSDqbwQoKwGLzUwcE8YlQNck5t0dUJTfuO9ZRcrLoO+F+wR2gOy6e0VRJVEeQ6b+jXeVdwnrcYDjAkKnCP/unNV3P5m0n6OjvPZs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740168659; c=relaxed/simple;
+	bh=EDWww/LgXi4rD2gjhpGMFHSy1Axfqo7k3FPoX59UcOs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=K1liSHkDORTorm42pT+IeIKDstZm117RUmnnomiRRMt7h2xJxx9YLg3M8hb6stn7W7SrbLssR4vRaGByK/fSGriHJiu/XjstszAHKDYqdEs1l0xKs5Fgy+vz5lkU9QAcpeCFmcqWr7+uj5Ys/broPD/kNYQzBy2aWeLYtcOuB5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kali.org; spf=pass smtp.mailfrom=kali.org; dkim=pass (2048-bit key) header.d=kali.org header.i=@kali.org header.b=dUBlFg1l; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kali.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kali.org
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5e05780509dso3593160a12.2
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 12:10:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kali.org; s=google; t=1740168655; x=1740773455; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Bo9ISiBdYLAO7mwWcXDsfQJTeIVmf8ba5d1w8C/Q7H8=;
+        b=dUBlFg1li9W9ijZ5XW04sUbkKVadrbPTx1upHDq/F43vjBJ5vX5Hp+35eMOLJPEBFQ
+         nr6W1TQRD4S0NNCT6k0LyMT9GBERW+IPEzB58+zOO4hKHTnhsvs9S4zHfkw27iv6djjO
+         0Yj/qfiOjwrrotD6zi1zoKbHxjRdVQRq6CY90cTRnRyoe6iqXLW7l65EopKCX3DYOQfD
+         UYP2u7amYqOnxswm+C8AqtGBOujs6IDRnE6cIF7hi0ggswuasjXoAGNte17coEhHMjmo
+         KwPi4W5Vii09seTRXR7P2wCYc0baz3t31KOFzBctCDLoWsVKUmqhQ+TBlpwPFUa+Y/P2
+         +9RQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740168655; x=1740773455;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Bo9ISiBdYLAO7mwWcXDsfQJTeIVmf8ba5d1w8C/Q7H8=;
+        b=a13wUkTh6hyv2U7J381/uZ8De9TioFsveWkXoT8pqZ6EdSfyxcQmQ5lXn5BzK/OqnO
+         JtC9uUXi2ibGAqcnoRZcoQP8d/Dk8IJ6v5GoEiUzy4Dqhobu9WjssxALNsfB15kgD6dz
+         9O4/Zp9jQbFImjRXBllgdKqRpIKUFxBRIYhQfI1tQeFshfSjvAvsqki1nR4BGVigTGUo
+         lYqbvwhAX4vPGLtwHuYhPfgPAb27Myvd/CsBSNCfXPKhSw3+JPJhSK7vyjk0MTQphr7L
+         7LdqdsZ0E7whlGhRx9GPfQHApTjpbd5YT16pUXPabajUy9MRcCBcs3KdnZeNsmh06pp4
+         Z7Ww==
+X-Forwarded-Encrypted: i=1; AJvYcCXKGdVE9s3gGZKyHRJWRwcaUtX729Q119CkvmGU7+lGEz5cktMc0z0ZRW+t+dPFixMweJZ28H6kd58D6j8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyzds5Umc3RBfC9BOoEHYpBPpBcXDN/DTtZ77xmpaHlEJN+ligc
+	K8/7D0dGbCeA+MUpRbGbw5cCuXRDXGekG2Yh2LCgenTaD7KvXQXaEx9wUqnKVCgrXsZJ6LFY3t+
+	MPnCKdrvJk+oeFm0fJu4NxxzlJ0uwbEveUt0ukQ==
+X-Gm-Gg: ASbGncviVlTYHblqQzHhUuAVjJAGPznjkXNNaQIH1i3SKOuOc3wqi7UNvf6yThhpZcB
+	yKSr7uS2Bp15ckfZl70k1z/zdrusdIn5sRUjFl6PMYbmSP98x2pDnJ4Dnfm9flxkM8n1PWjb/2y
+	x3nhQd0H28
+X-Google-Smtp-Source: AGHT+IH2/qlbQgPbIh/nbYWi/sUpWIZX1a8MxJ070ntxeD0TZgcVfNJ3nmCoSR7bEK91zKOVWBiymAVyhtJ0SVa7Cyo=
+X-Received: by 2002:a05:6402:51cf:b0:5e0:8c35:a137 with SMTP id
+ 4fb4d7f45d1cf-5e0b7247888mr3715021a12.23.1740168655462; Fri, 21 Feb 2025
+ 12:10:55 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MW3PR12MB4553:EE_|SA3PR12MB7781:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6be94b89-91f6-4dd0-a571-08dd52b3c472
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|7416014|376014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?ZmJGa0FxU0xKd3F1QUpKNmY0TFZKbjNBRmFNY3ZTVlFodzVicTQ4RWZENVg3?=
- =?utf-8?B?eURlTHZDSmYrZ2ZUVmxhN21UUERJVXBHSGlWUC9OOFlBdzVZVmxuWmFjQVlW?=
- =?utf-8?B?d09INGFnV25xUnN1R3E0ZytlUjVkWTdiS01oM0hXSHZkd2dyalBzSkZSb3Q0?=
- =?utf-8?B?cGpCU1UxN2hsQ1pDSWpWQTU2K3V6RkIzWStxZERwcm9ma3dvTW1Bemg0bFlB?=
- =?utf-8?B?bDBmVno4WWcycm5lTlVuQmxzbjdZWDhLU1dIVGVoZ0dLVW45Qm9WOG9VUmFu?=
- =?utf-8?B?dXNlejRXRndRVExQNVhMSEZIZU8yTnhiUStuYjRxOHEzeUYxMldWYUw4UGwz?=
- =?utf-8?B?QjhFRE5qQnB1bGMxM3N2UzRJc2lSQnpmSm1WeHFYbEhxRW0rQTkyNDRzQjRa?=
- =?utf-8?B?Y29yQW83cGhBcEgzdG9KUjJ1L0pxRm9UWjB5S2RBeS85dFdub0dDYUptQnpn?=
- =?utf-8?B?TW9GMUNtZXh1cXhueE5ZcW8vbGtqZWlIS1dOeWszaUhHQ1RaakNWQStBYmRr?=
- =?utf-8?B?dlcySnlPMWwrQVV0cFlQcWVSZW9zMVIzTFk5L1pvbWUrOU54VEZOR0pRNE9I?=
- =?utf-8?B?REZFaGszVkozWkJHbzNzMTdHV2EwcTFaYTk4TFpuMFBXdVZocUtVbEprK0NU?=
- =?utf-8?B?c2UreVlQYkFkK1BlVG90L29jb3ZPT0U1aDlIUlhiWitmdlFpd3JZWVEvWkdP?=
- =?utf-8?B?YUd1eDB5elFsTjlqTGx1SGQvZkswdDZzRHo1OG9YNHFIWkkzRmZHcVZRTVYx?=
- =?utf-8?B?Zi9WZkg1cmkycmNOQXV6RTdUOW5uV0JUNmRNYXIvV0RIdStRVVA5MmJOc3Ew?=
- =?utf-8?B?bjdUdTNUL0ZaaDdXekFyUHN4MHBRUW1sZTNFbzdTZUJPT0N6QnVsSHhFMk4x?=
- =?utf-8?B?eFNyaVk4Ri81SnAvN2c5TDl6ZUhJQ0E3MEwxUXVOb2pKZGExQWZVNHhmSCtL?=
- =?utf-8?B?Z2ozK3BQblRiUEovSGFKR1gxQ241N0I0VUdNeHNiZk96N0VjbS94ZElRSmx3?=
- =?utf-8?B?TXYzTGROejRQdXI4ZGw1dHkvL0s3V0RaRmpsS25uOW5xQlFuaW5zZzBCaGV6?=
- =?utf-8?B?Y1VHdXp0NjVaeHc1ZDk5Z2V0QjJ0VkJnck5yQ2hqR01VWDNRajNzTEtuT1Zw?=
- =?utf-8?B?emNldGJnUTNDQnE2S0JJV0dFbWdScjZjbXFXaTNnSXdSOGRZUmdFRGQyY09D?=
- =?utf-8?B?RXlhYkRqNExmRTNLbTA0MkdIQzBTdWhnUVhZNitkcVBZbkNaRWZOYlNXV3NE?=
- =?utf-8?B?bmNKRjJtaDJjWVYraHBmcklnL1ZyeXRBMm9vQk4vZ0h3RlYvNGpZRUpVM3dH?=
- =?utf-8?B?K3BTcjJzMlBaMUZCZUF3NFZsVXowS3J3UlYvR1ZmV2paU2RObmdZTlNBdjlH?=
- =?utf-8?B?UXAyWHRGcHExVEIwT3ZkREhMbG1MUGVJYUpWd2xBSEZIZjJmT2pOZDB4Uy9o?=
- =?utf-8?B?T25qNGM2STQybG13cUpYdWxueXF4L3pMeXQ2SmZESVNGV0o2ZkhWOVZFcERv?=
- =?utf-8?B?V1ZmQ0RpMWduOWkrK1FDV1JhQTJTdUFoTVBENjE3cVhSeFlSczU4UFZLTzVh?=
- =?utf-8?B?YUY3b1Z3TkVOREV4Nk1aRUlVNkVzWisrZHk1dVNmQWE4ZmZmUFYyQkhFQjA1?=
- =?utf-8?B?WUh5Y0xpeFB1aGJvOUhJbTZMNWU1SWtnek9TTVoxYXYyVWFldHlydU9tSUt4?=
- =?utf-8?B?dndSTnEvNDBSNTVpdE5SQnBCR0Z2RUxJNExobUpVTFkvNGY3VnNLVWtWd3p4?=
- =?utf-8?B?NW9KZ0NQUXo5MEhJMUNYTWpCbnpnbGo0OHdyQWF5UE12bVVBK29iVm9BSzBq?=
- =?utf-8?B?VmEvbnh1RTZ2cTcwb1lDSnRGQzhmaUZrWHJOaVJTaFF1aHRQMDh4TWJEcVA4?=
- =?utf-8?B?eVRXZG5GOVJoQUtrcFpDQTRneU1BRGdvM0hTZURWV042WHZubENLTkh0K3VK?=
- =?utf-8?Q?XZwabXS6SOM=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW3PR12MB4553.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?RG5yQzI2YXNhSjlLN3F1Z093YlhkTUVkbnoyQ2ZwSk1DZmN0ajVWL3VDbDJH?=
- =?utf-8?B?cHowaS9HZHhkZUJIeTRpRFowVlU4UFVpQUtxWlUyNGp0dy9RNWtuS0Rra1h5?=
- =?utf-8?B?VnRBcHdsamt3cm9oQitRLzN0Rmh5UUNlZzNUbytOSmFqdVpUek5CNEF3TWFu?=
- =?utf-8?B?SHpyY3VPNHZZZU1jWmxBU2RaZURlbUxoeFNUSXFuVWVrUDduNHN2ZGVxdCtz?=
- =?utf-8?B?NG9reVNXMXhsa2tpNHN1R21MejVxaDdXQ1k1empNQW5Cd29CNUtBaWxXYzBn?=
- =?utf-8?B?YTdCUlVEaWhzczlySkxuRWNFdXdoYWtqWnlYcnpqeml0aGdnUXliTWtSK3Rw?=
- =?utf-8?B?RkRYQ25nZ253dlFYSWZ0aEdaSmtsSjA0djhzSVIyWTExMmdkTkE4UnY1bW9v?=
- =?utf-8?B?OXdOeEhRbVUwNkdyZnhSd1VZaVV5NFBub0xNQWMyN0J4MDdJdTQyUnVmTXlv?=
- =?utf-8?B?dThQYitMRmdjbVpSNjBBUHFsVjF1Y2VtY2J5RXRxaGVYS2h4L0tHZXlORWhC?=
- =?utf-8?B?SUxvVExaT1p5RjVHaHFDN3VIZGVGNG5qK3BibXZ3YS92K1UvQm5TRS85UEJS?=
- =?utf-8?B?eklJUTVDVzhva1U2bDhlL2xCcGlvU2k0dHlKYVFRY0RiR1VpU3NHL1hpb3N5?=
- =?utf-8?B?NFFGQzM0Wk5NZmQ2OUowbjUrcHFTTFFLbVhIWVpHT2FjUU1hWW5nSmY1Vlds?=
- =?utf-8?B?U2ovTXJEKzQ4TmszUUZOOGlzK1lUelFWbzh3OHhOT05QbE52MkxvTnBhdUh3?=
- =?utf-8?B?SkZLandsQUZtY3BvaTZrVDRGMTVTUk4rUC81UDZjQ2pwb2pTdDhwZ0x1T1VN?=
- =?utf-8?B?aUlYTGUwZ0YzeVBqTmRaYVFpcFhjR1FrbTFwZ0NpMTlYMGpQNkdhc0N5TVVU?=
- =?utf-8?B?ZU03eWNEa0ZBcndURjl5QjBuZ0dtUzRpbEhYam85TmxSTU16NXFNR1BZQTlB?=
- =?utf-8?B?cWxkV1NPWlphblZ6Qm85MDRablhLT2tzWTJlUUkvVE1kZ0tSMDVUUE1qOEhv?=
- =?utf-8?B?a09leUVISVR5U2FnUm1WTHRBNTZCOGV2WXg3Z3BRSjZ1SFFtaG9sV0RwUkhF?=
- =?utf-8?B?SjhWZzlrWlB2ZHhvcjQ5VUFNSUdLeUNUZnJoaUluUDB3SUlFdGhWcStpeUw1?=
- =?utf-8?B?VWx3V2s0SVZSODhOOExUTzJyTyttc1JKTnphWlhuRUZmVlJoZmtrLzdtUHlS?=
- =?utf-8?B?bG15K2NqZVYwbTVWb2JNdGY4Zk16SVRkU3BXc0s4WCtVeTNKV1YrdmIxU1pK?=
- =?utf-8?B?MHR0ZEJXUGFjWGJFOGt1Z0hQR0JDeWorU1Byb1BnaXB1Y0ZoVE50ZGUxUlRG?=
- =?utf-8?B?aHRpaXBwekVCNERMZFM2RS94eldUVDRVakRJOEtiS1VWTllYMWkxb0taUkMy?=
- =?utf-8?B?SlMzQjVFbHRTaWlzTHFsUVlTN25QcE1TSWdPRXcxNVdXQlNxSENCZDNSaFJu?=
- =?utf-8?B?ZTc3Y2dVeVhaV1ZFcmdEL0xVMEx4TlVFVnlxcUdQUndBODJWakdSQ0ZwdzJt?=
- =?utf-8?B?R0xwWk5PYllzaUpCdk1wTDRnZnhzSFh6TURhTEh6amhrM2xUWGw5M3RvdmhT?=
- =?utf-8?B?M3hDYnlIQWRnZGlMN09XZ0VIT0dBekRLcGVEKzBKam5zbDRLa0ZUSDZKNm1p?=
- =?utf-8?B?cFNsMjY3TG1CdG5ENk9pdmZjQVBYZDlsekw4U2FKQjVxM1NPZGtySy9vWit1?=
- =?utf-8?B?WUNENTc1NG45TkNicGFKbWZ6YXBaQWNaLzNSZmZkNEw2T01XVW16ZXA5UWVH?=
- =?utf-8?B?NXozZGtyU2FNcXA4ckcxRGx0YkpmaVRweWx3MkhyWWQ5OG5zMlRFeXpMaEpZ?=
- =?utf-8?B?SzZqdVA3NVFjeWpPaEV2Q1gvUjRMZzBIUFVkOWZBZWxPbkNjMmtCWEo3MmZX?=
- =?utf-8?B?SFZtNjlGMEp4cW03VGNhSnNjbFd6M0grRStDTVBwR3lKNUI2Zk9RRXozQ3M3?=
- =?utf-8?B?Q0RwTnpldW9RUU8zL1JYRkdDOG4wMHExT3AyWk1UZ2ZseHFIckdZdWl0a0ZL?=
- =?utf-8?B?RXdDRmdaRmE1UTBCTGhxbUozOHZLSGpST0Qxd1lnVkt2L3JaOEF2MTd5aENG?=
- =?utf-8?B?b0dNTmFmNm5Nb09Gd29yNlVsd0wvREdQd1ZmVFV0ekh4VzBJUGNxem5WNm52?=
- =?utf-8?Q?ofSJnAe8ejsB08QHIKRP4eE9y?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6be94b89-91f6-4dd0-a571-08dd52b3c472
-X-MS-Exchange-CrossTenant-AuthSource: MW3PR12MB4553.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Feb 2025 20:10:20.7657
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: sDPi5pA335V2Ylf9Wz+JZfQsN1BwT7RDxp1BRDLsv+i6Cv2y+jQ9o3ZjP0WGVGb4
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB7781
+References: <20250221032141.1206902-1-alexey.klimov@linaro.org>
+In-Reply-To: <20250221032141.1206902-1-alexey.klimov@linaro.org>
+From: Steev Klimaszewski <steev@kali.org>
+Date: Fri, 21 Feb 2025 14:10:44 -0600
+X-Gm-Features: AWEUYZkAkKBDn-7D-WRkZwle1yjWvpLxfhceFL155lYDXn9_dqF05SAG85Mwlwo
+Message-ID: <CAKXuJqj4zKfA4HNNcooG5Ffqi+EKQ1RvuzWndZd=htoatwszOw@mail.gmail.com>
+Subject: Re: [PATCH v2] ASoC: codecs: wsa883x: Implement temperature reading
+ and hwmon
+To: Alexey Klimov <alexey.klimov@linaro.org>
+Cc: srinivas.kandagatla@linaro.org, broonie@kernel.org, lgirdwood@gmail.com, 
+	krzysztof.kozlowski@linaro.org, perex@perex.cz, tiwai@suse.com, 
+	jdelvare@suse.com, linux@roeck-us.net, linux-sound@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-hwmon@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi Alexey,
 
+On Thu, Feb 20, 2025 at 9:21=E2=80=AFPM Alexey Klimov <alexey.klimov@linaro=
+.org> wrote:
+>
+> Read temperature of the amplifier and expose it via hwmon interface, whic=
+h
+> will be later used during calibration of speaker protection algorithms.
+> The method is the same as for wsa884x and therefore this is based on
+> Krzysztof Kozlowski's approach implemented in commit 6b99dc62d940 ("ASoC:
+> codecs: wsa884x: Implement temperature reading and hwmon").
+>
+> Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> Cc: Steev Klimaszewski <steev@kali.org>
+> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
+> ---
+>
+> Changes in v2:
+> - add temperature conversion to millidegrees of Celcius
+>   when amplifier is on to report correct data to hwmon;
+> - minor coding style fixes to make checkpatch --strict happy;
+> - correct typo (reference to wsa884x in the comment), small rewording.
+>
+>  sound/soc/codecs/wsa883x.c | 194 +++++++++++++++++++++++++++++++++++++
+>  1 file changed, 194 insertions(+)
+>
+> diff --git a/sound/soc/codecs/wsa883x.c b/sound/soc/codecs/wsa883x.c
+> index 47da5674d7c9..a5a6cb90bb43 100644
+> --- a/sound/soc/codecs/wsa883x.c
+> +++ b/sound/soc/codecs/wsa883x.c
+> @@ -6,6 +6,7 @@
+>  #include <linux/bitops.h>
+>  #include <linux/device.h>
+>  #include <linux/gpio/consumer.h>
+> +#include <linux/hwmon.h>
+>  #include <linux/init.h>
+>  #include <linux/kernel.h>
+>  #include <linux/module.h>
+> @@ -156,8 +157,28 @@
+>  #define WSA883X_PA_FSM_ERR_COND         (WSA883X_DIG_CTRL_BASE + 0x0014)
+>  #define WSA883X_PA_FSM_MSK              (WSA883X_DIG_CTRL_BASE + 0x0015)
+>  #define WSA883X_PA_FSM_BYP              (WSA883X_DIG_CTRL_BASE + 0x0016)
+> +#define WSA883X_PA_FSM_BYP_DC_CAL_EN_MASK              0x01
+> +#define WSA883X_PA_FSM_BYP_DC_CAL_EN_SHIFT             0
+> +#define WSA883X_PA_FSM_BYP_CLK_WD_EN_MASK              0x02
+> +#define WSA883X_PA_FSM_BYP_CLK_WD_EN_SHIFT             1
+> +#define WSA883X_PA_FSM_BYP_BG_EN_MASK                  0x04
+> +#define WSA883X_PA_FSM_BYP_BG_EN_SHIFT                 2
+> +#define WSA883X_PA_FSM_BYP_BOOST_EN_MASK               0x08
+> +#define WSA883X_PA_FSM_BYP_BOOST_EN_SHIFT              3
+> +#define WSA883X_PA_FSM_BYP_PA_EN_MASK                  0x10
+> +#define WSA883X_PA_FSM_BYP_PA_EN_SHIFT                 4
+> +#define WSA883X_PA_FSM_BYP_D_UNMUTE_MASK               0x20
+> +#define WSA883X_PA_FSM_BYP_D_UNMUTE_SHIFT              5
+> +#define WSA883X_PA_FSM_BYP_SPKR_PROT_EN_MASK           0x40
+> +#define WSA883X_PA_FSM_BYP_SPKR_PROT_EN_SHIFT          6
+> +#define WSA883X_PA_FSM_BYP_TSADC_EN_MASK               0x80
+> +#define WSA883X_PA_FSM_BYP_TSADC_EN_SHIFT              7
+>  #define WSA883X_PA_FSM_DBG              (WSA883X_DIG_CTRL_BASE + 0x0017)
+>  #define WSA883X_TADC_VALUE_CTL          (WSA883X_DIG_CTRL_BASE + 0x0020)
+> +#define WSA883X_TADC_VALUE_CTL_TEMP_VALUE_RD_EN_MASK   0x01
+> +#define WSA883X_TADC_VALUE_CTL_TEMP_VALUE_RD_EN_SHIFT  0
+> +#define WSA883X_TADC_VALUE_CTL_VBAT_VALUE_RD_EN_MASK   0x02
+> +#define WSA883X_TADC_VALUE_CTL_VBAT_VALUE_RD_EN_SHIFT  1
+>  #define WSA883X_TEMP_DETECT_CTL         (WSA883X_DIG_CTRL_BASE + 0x0021)
+>  #define WSA883X_TEMP_MSB                (WSA883X_DIG_CTRL_BASE + 0x0022)
+>  #define WSA883X_TEMP_LSB                (WSA883X_DIG_CTRL_BASE + 0x0023)
+> @@ -427,6 +448,17 @@
+>                 SNDRV_PCM_FMTBIT_S24_LE |\
+>                 SNDRV_PCM_FMTBIT_S24_3LE | SNDRV_PCM_FMTBIT_S32_LE)
+>
+> +/* Two-point trimming for temperature calibration */
+> +#define WSA883X_T1_TEMP                        -10L
+> +#define WSA883X_T2_TEMP                        150L
+> +
+> +/*
+> + * Device will report senseless data in many cases, so discard any measu=
+rements
+> + * outside of valid range.
+> + */
+> +#define WSA883X_LOW_TEMP_THRESHOLD     5
+> +#define WSA883X_HIGH_TEMP_THRESHOLD    45
+> +
+>  struct wsa883x_priv {
+>         struct regmap *regmap;
+>         struct device *dev;
+> @@ -441,6 +473,13 @@ struct wsa883x_priv {
+>         int active_ports;
+>         int dev_mode;
+>         int comp_offset;
+> +       /*
+> +        * Protects temperature reading code (related to speaker protecti=
+on) and
+> +        * fields: temperature and pa_on.
+> +        */
+> +       struct mutex sp_lock;
+> +       unsigned int temperature;
+> +       bool pa_on;
+>  };
+>
+>  enum {
+> @@ -1186,6 +1225,10 @@ static int wsa883x_spkr_event(struct snd_soc_dapm_=
+widget *w,
+>
+>         switch (event) {
+>         case SND_SOC_DAPM_POST_PMU:
+> +               mutex_lock(&wsa883x->sp_lock);
+> +               wsa883x->pa_on =3D true;
+> +               mutex_unlock(&wsa883x->sp_lock);
+> +
+>                 switch (wsa883x->dev_mode) {
+>                 case RECEIVER:
+>                         snd_soc_component_write_field(component, WSA883X_=
+CDC_PATH_MODE,
+> @@ -1235,6 +1278,9 @@ static int wsa883x_spkr_event(struct snd_soc_dapm_w=
+idget *w,
+>                                               WSA883X_GLOBAL_PA_EN_MASK, =
+0);
+>                 snd_soc_component_write_field(component, WSA883X_PDM_WD_C=
+TL,
+>                                               WSA883X_PDM_EN_MASK, 0);
+> +               mutex_lock(&wsa883x->sp_lock);
+> +               wsa883x->pa_on =3D false;
+> +               mutex_unlock(&wsa883x->sp_lock);
+>                 break;
+>         }
+>         return 0;
+> @@ -1367,6 +1413,140 @@ static struct snd_soc_dai_driver wsa883x_dais[] =
+=3D {
+>         },
+>  };
+>
+> +static int wsa883x_get_temp(struct wsa883x_priv *wsa883x, long *temp)
+> +{
+> +       unsigned int d1_msb =3D 0, d1_lsb =3D 0, d2_msb =3D 0, d2_lsb =3D=
+ 0;
+> +       unsigned int dmeas_msb =3D 0, dmeas_lsb =3D 0;
+> +       int d1, d2, dmeas;
+> +       unsigned int mask;
+> +       int ret, range;
+> +       long val;
+> +
+> +       guard(mutex)(&wsa883x->sp_lock);
+> +
+> +       if (wsa883x->pa_on) {
+> +               /*
+> +                * Reading temperature is possible only when Power Amplif=
+ier is
+> +                * off. Report last cached data.
+> +                */
+> +               *temp =3D wsa883x->temperature * 1000;
+> +               return 0;
+> +       }
+> +
+> +       ret =3D pm_runtime_resume_and_get(wsa883x->dev);
+> +       if (ret < 0)
+> +               return ret;
+> +
+> +       mask =3D WSA883X_PA_FSM_BYP_DC_CAL_EN_MASK |
+> +              WSA883X_PA_FSM_BYP_CLK_WD_EN_MASK |
+> +              WSA883X_PA_FSM_BYP_BG_EN_MASK |
+> +              WSA883X_PA_FSM_BYP_D_UNMUTE_MASK |
+> +              WSA883X_PA_FSM_BYP_SPKR_PROT_EN_MASK |
+> +              WSA883X_PA_FSM_BYP_TSADC_EN_MASK;
+> +
+> +       /*
+> +        * Here and further do not care about read or update failures.
+> +        * For example, before turning the amplifier on for the first
+> +        * time, reading WSA883X_TEMP_DIN_MSB will always return 0.
+> +        * Instead, check if returned value is within reasonable
+> +        * thresholds.
+> +        */
+> +       regmap_update_bits(wsa883x->regmap, WSA883X_PA_FSM_BYP, mask, mas=
+k);
+> +
+> +       regmap_update_bits(wsa883x->regmap, WSA883X_TADC_VALUE_CTL,
+> +                          WSA883X_TADC_VALUE_CTL_TEMP_VALUE_RD_EN_MASK,
+> +                          FIELD_PREP(WSA883X_TADC_VALUE_CTL_TEMP_VALUE_R=
+D_EN_MASK, 0x0));
+> +
+> +       regmap_read(wsa883x->regmap, WSA883X_TEMP_MSB, &dmeas_msb);
+> +       regmap_read(wsa883x->regmap, WSA883X_TEMP_LSB, &dmeas_lsb);
+> +
+> +       regmap_update_bits(wsa883x->regmap, WSA883X_TADC_VALUE_CTL,
+> +                          WSA883X_TADC_VALUE_CTL_TEMP_VALUE_RD_EN_MASK,
+> +                          FIELD_PREP(WSA883X_TADC_VALUE_CTL_TEMP_VALUE_R=
+D_EN_MASK, 0x1));
+> +
+> +       regmap_read(wsa883x->regmap, WSA883X_OTP_REG_1, &d1_msb);
+> +       regmap_read(wsa883x->regmap, WSA883X_OTP_REG_2, &d1_lsb);
+> +       regmap_read(wsa883x->regmap, WSA883X_OTP_REG_3, &d2_msb);
+> +       regmap_read(wsa883x->regmap, WSA883X_OTP_REG_4, &d2_lsb);
+> +
+> +       regmap_update_bits(wsa883x->regmap, WSA883X_PA_FSM_BYP, mask, 0x0=
+);
+> +
+> +       dmeas =3D (((dmeas_msb & 0xff) << 0x8) | (dmeas_lsb & 0xff)) >> 0=
+x6;
+> +       d1 =3D (((d1_msb & 0xff) << 0x8) | (d1_lsb & 0xff)) >> 0x6;
+> +       d2 =3D (((d2_msb & 0xff) << 0x8) | (d2_lsb & 0xff)) >> 0x6;
+> +
+> +       if (d1 =3D=3D d2) {
+> +               /* Incorrect data in OTP? */
+> +               ret =3D -EINVAL;
+> +               goto out;
+> +       }
+> +
+> +       val =3D WSA883X_T1_TEMP + (((dmeas - d1) * (WSA883X_T2_TEMP - WSA=
+883X_T1_TEMP)) / (d2 - d1));
+> +       range =3D WSA883X_HIGH_TEMP_THRESHOLD - WSA883X_LOW_TEMP_THRESHOL=
+D;
+> +       if (in_range(val, WSA883X_LOW_TEMP_THRESHOLD, range)) {
+> +               wsa883x->temperature =3D val;
+> +               *temp =3D val * 1000;
+> +               ret =3D 0;
+> +       } else {
+> +               ret =3D -EAGAIN;
+> +       }
+> +out:
+> +       pm_runtime_mark_last_busy(wsa883x->dev);
+> +       pm_runtime_put_autosuspend(wsa883x->dev);
+> +
+> +       return ret;
+> +}
+> +
+> +static umode_t wsa883x_hwmon_is_visible(const void *data,
+> +                                       enum hwmon_sensor_types type, u32=
+ attr,
+> +                                       int channel)
+> +{
+> +       if (type !=3D hwmon_temp)
+> +               return 0;
+> +
+> +       switch (attr) {
+> +       case hwmon_temp_input:
+> +               return 0444;
+> +       default:
+> +               break;
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+> +static int wsa883x_hwmon_read(struct device *dev,
+> +                             enum hwmon_sensor_types type,
+> +                             u32 attr, int channel, long *temp)
+> +{
+> +       int ret;
+> +
+> +       switch (attr) {
+> +       case hwmon_temp_input:
+> +               ret =3D wsa883x_get_temp(dev_get_drvdata(dev), temp);
+> +               break;
+> +       default:
+> +               ret =3D -EOPNOTSUPP;
+> +               break;
+> +       }
+> +
+> +       return ret;
+> +}
+> +
+> +static const struct hwmon_channel_info *const wsa883x_hwmon_info[] =3D {
+> +       HWMON_CHANNEL_INFO(temp, HWMON_T_INPUT),
+> +       NULL
+> +};
+> +
+> +static const struct hwmon_ops wsa883x_hwmon_ops =3D {
+> +       .is_visible     =3D wsa883x_hwmon_is_visible,
+> +       .read           =3D wsa883x_hwmon_read,
+> +};
+> +
+> +static const struct hwmon_chip_info wsa883x_hwmon_chip_info =3D {
+> +       .ops    =3D &wsa883x_hwmon_ops,
+> +       .info   =3D wsa883x_hwmon_info,
+> +};
+> +
+>  static int wsa883x_probe(struct sdw_slave *pdev,
+>                          const struct sdw_device_id *id)
+>  {
+> @@ -1402,6 +1582,7 @@ static int wsa883x_probe(struct sdw_slave *pdev,
+>         wsa883x->sconfig.bps =3D 1;
+>         wsa883x->sconfig.direction =3D SDW_DATA_DIR_RX;
+>         wsa883x->sconfig.type =3D SDW_STREAM_PDM;
+> +       mutex_init(&wsa883x->sp_lock);
+>
+>         /**
+>          * Port map index starts with 0, however the data port for this c=
+odec
+> @@ -1424,6 +1605,19 @@ static int wsa883x_probe(struct sdw_slave *pdev,
+>                                     "regmap_init failed\n");
+>                 goto err;
+>         }
+> +
+> +       if (IS_REACHABLE(CONFIG_HWMON)) {
+> +               struct device *hwmon;
+> +
+> +               hwmon =3D devm_hwmon_device_register_with_info(dev, "wsa8=
+83x",
+> +                                                            wsa883x,
+> +                                                            &wsa883x_hwm=
+on_chip_info,
+> +                                                            NULL);
+> +               if (IS_ERR(hwmon))
+> +                       return dev_err_probe(dev, PTR_ERR(hwmon),
+> +                                            "Failed to register hwmon se=
+nsor\n");
+> +       }
+> +
+>         pm_runtime_set_autosuspend_delay(dev, 3000);
+>         pm_runtime_use_autosuspend(dev);
+>         pm_runtime_mark_last_busy(dev);
+> --
+> 2.47.2
+>
 
-On 2/21/2025 12:35 PM, Reinette Chatre wrote:
-> Hi James,
-> 
-> On 2/21/25 10:07 AM, James Morse wrote:
->> Hi Babu,
->>
->> On 22/01/2025 20:20, Babu Moger wrote:
->>> In mbm_cntr_assign mode hardware counters are assigned/unassigned to an
->>> MBM event of a monitor group. Hardware counters are assigned/unassigned
->>> at monitoring domain level.
->>>
->>> Manage a monitoring domain's hardware counters using a per monitoring
->>> domain array of struct mbm_cntr_cfg that is indexed by the hardware
->>> counter	ID. A hardware counter's configuration contains the MBM event
->>> ID and points to the monitoring group that it is assigned to, with a
->>> NULL pointer meaning that the hardware counter is available for assignment.
->>>
->>> There is no direct way to determine which hardware counters are	assigned
->>> to a particular monitoring group. Check every entry of every hardware
->>> counter	configuration array in every monitoring domain to query which
->>> MBM events of a monitoring group is tracked by hardware. Such queries
->>> are acceptable because of a very small number of assignable counters.
->>
->>> diff --git a/include/linux/resctrl.h b/include/linux/resctrl.h
->>> index 511cfce8fc21..9a54e307d340 100644
->>> --- a/include/linux/resctrl.h
->>> +++ b/include/linux/resctrl.h
->>> @@ -94,6 +94,18 @@ struct rdt_ctrl_domain {
->>>   	u32				*mbps_val;
->>>   };
->>>   
->>> +/**
->>> + * struct mbm_cntr_cfg - assignable counter configuration
->>> + * @evtid:		 MBM event to which the counter is assigned. Only valid
->>> + *			 if @rdtgroup is not NULL.
->>> + * @rdtgroup:		 resctrl group assigned to the counter. NULL if the
->>> + *			 counter is free.
->>> + */
->>> +struct mbm_cntr_cfg {
->>> +	enum resctrl_event_id	evtid;
->>> +	struct rdtgroup		*rdtgrp;
->>> +};
->>
->> struct rdtgroup here suggests this shouldn't be something the arch code is touching.
->>
->> If its not needed by any arch specific code, (I couldn't find a resctrl_arch helper that
->> takes this) - could it be moved to resctrl's internal.h.
->>
->> (If this does need to be visible to the arch code, one option would be to replace rdtgroup
->> with the closid/rmid, and a valid flag so that memset() continues to reset these entries)
->>
-> 
-> Thank you for catching this!
-> 
-> Reinette
-> 
-> 
+With v2 applied, I do get the cached value showing up in monitoring
+and not 0C or 1C whenever audio playback occurs!
 
-Sure. Will move it to arch/x86/kernel/cpu/resctrl/internal.h.
-
-thanks
-Babu
+Tested-by: Steev Klimaszewski <steev@kali.org> #Thinkpad X13s
 
