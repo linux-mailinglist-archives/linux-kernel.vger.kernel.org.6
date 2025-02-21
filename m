@@ -1,476 +1,213 @@
-Return-Path: <linux-kernel+bounces-525803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDF55A3F5A9
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 14:20:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A16E4A3F5B1
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 14:20:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AEE3C425786
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 13:14:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 233F6188EFFF
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 13:16:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7432F20DD54;
-	Fri, 21 Feb 2025 13:13:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA4B520E02F;
+	Fri, 21 Feb 2025 13:14:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LSSKsBDM"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="s2OE14ap"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2046.outbound.protection.outlook.com [40.107.237.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16D5020C489
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 13:13:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740143597; cv=none; b=aDnWPdVx/D+yZ1q6uv5iU00NKALiUR0oZTocinTsf7+XT/4mnmBoUZVMDkTH/Vn5aZUCrcB+ahEsLIMVdLc3fMX3S7WbypxmbGiMMygCAa9C8AnPcKskjrkKptkMTN8yIfStrs2sRPKM0bWBgUqHNZJOHgG4I7mNa3Pz3abdnOU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740143597; c=relaxed/simple;
-	bh=yz7l+2hucwQYabRJfcpXcNb+5iu7A7IUhj8Vu94P1QI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kLorX4E99IhRYI1UVNux4ZJXDYm/UIAussmiZhPl1khdpc02YXAvck2v/oj01kianRhYv4IQOZQaLFb9rh8CgH4A9ROw334DsDJsIvd95+FmIgxNlOYnbUPa66i2Xpi1xe2e/pNFOaTLnMZtFPyp5q16hvkWqOoF1m2cmVfhDJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LSSKsBDM; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-abbda4349e9so305949466b.0
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 05:13:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740143583; x=1740748383; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QxKgSVBFr1Jj9c3ThVva5AWPrKinPAeaGUJ/lmxHvl4=;
-        b=LSSKsBDMVQ5hvQhLWItcUxlWS13spkxg0UjzVDB1PuziKl5odjDBj8L9JQShBvU+Z9
-         4HsQVTguhK6R0lDsS9oUAu6VonuKXDOAVbQW1hclbgKvIbYxJjJBOIC07g3DX3JPmwtX
-         CegghD5h1fP3sGqR60dbx+HhPJhMRZByXe8JKlsJmzWYrmIVnnabi3MJlcZPIE8BoK1X
-         ovDs9bZ92MMbWDVqRPiV1GlhzmMYUB6SQFjRT44ZywQruooyjL5W/Zig2LRw2NxwxZkV
-         YScMmK42iWsopUADXzbjCcnzX7P4pbqL0YN/Y/ol8vGg1TIdD7TUiZNTLP6+H4HQn/j9
-         13mA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740143583; x=1740748383;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QxKgSVBFr1Jj9c3ThVva5AWPrKinPAeaGUJ/lmxHvl4=;
-        b=sS5GUi01QEwbDIYPPjNe7Q6B7oyS8vcj6d34SEMHrpXs3lG6n3yTxrbVAdu1qNYPbp
-         LMNXMzU6smNeH3qMSqitmdhzSnYJOnyV3rvIw7uy3oVomH+oU9DRSu9b82pl1DyMyWDk
-         /3t46O5Lz5OEh4oPlcmIfdwVVWtHU4MgBZlsMjLBgJ6OUDhcOF4x6x4cK9ku4jwuvY9T
-         32zdQg7V9FWYjEBn42pfdIsKsJN3y3V3D2mBjeYc33r+bAGyj9daYxV5ihB6RuNlpE4H
-         ITuhFr8qiykn2mJAgQUw6nCyLAXUrBNlcJuJmgQRwsT8zmcHc2PWPbRMpx80cJDfDji5
-         K8cA==
-X-Forwarded-Encrypted: i=1; AJvYcCVay1AUFB5JUg5UuFkXFhPdx3bvB4Iu0wO59uorHfLh+dkPP5H1KmeFhtm7eZBIcIfvWmJaB/AvZyXeeGY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyngnofgdh465pMzF40l502+3K/LII4RciFDVznUkI+M5Oe2WAW
-	a89UZKj6lkOS10846dCVTEjF+hvea5x8iRIPEdAercaV7Gc4UmMf1ebKQI9/BtN6l1H0QmMbuzJ
-	ZFBkzxeTzbB/xPO4Tb/RK4A8tdxLioxRlSNLd
-X-Gm-Gg: ASbGnctqpHcxm4J84nbWKOEW4sATitt5LnWzTi8+1/3TPF18Gs5EsNGy6Nh+igzVl8h
-	MLoaI7XwI2EAxG4D5i4oKyCQIxz2+9MaI3kndrjEc3nkhm+po+lL0SMVfStOFntJtHSdgF5ylnX
-	n4UY+GlXxBuICAJP0ZMPNIkm9+ss5mkLUu8mn7lg==
-X-Google-Smtp-Source: AGHT+IF0Y74UAxrbedLnaIJQ/t63IYMtMdYuIsubxScoTWeDzOkMWcwhZbqBVc9a6Sdxm6/kam3mZ620GyoJKZpTVlE=
-X-Received: by 2002:a17:907:7285:b0:ab6:f06b:4a26 with SMTP id
- a640c23a62f3a-abc0da33bf1mr320648166b.34.1740143583018; Fri, 21 Feb 2025
- 05:13:03 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CB921E87B;
+	Fri, 21 Feb 2025 13:14:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.46
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740143689; cv=fail; b=SwkYEHtnlhuJSfw3R6QvNEuXn5rndNt3PAOx8BKmzjq/YA2zudOpRXiSs0AweEvbOpmotJzXcXfF7k9oQ4T6NHo+AN+ndE8j43hO82z2UTxeMNLSJfyq5HxJmW5W2vFEgL0h0sLdOYljHBkZY7s+fPTYbyhQquPco1vM5dAeh/c=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740143689; c=relaxed/simple;
+	bh=BkNmySyZ0vq2vc3/32hvXLVv5wLXERBOSZJhaPBo5FY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Y047wqWRNZpfFJyz/ar0nonlFIAaKjmn60sR8S9LwC4Zi878bWB2tU6Z9ZHuHljE+EOSTwpBrW6PQASj1zbCsCQMlnkEv5uIYXTht4AerbT+4q0X04Ft/UJ2k5KhRRcKTSnTP4nMNXhatcULORDJeN+aeiRqWxS6rrEzEFnbtQg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=s2OE14ap; arc=fail smtp.client-ip=40.107.237.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ibfj9wTBMrA45GVHbYSavzDktQpIpK9IZIZ+Culgkq/FHraFCTitr3uqsbXmV/lIDCFgKJolXoxj7jF5gZXYSUrqz8hassM1V5Zqfwg7asvl76gFSx9GfKXdsBBEaJzuO19cLp0nzmQCzDzXzBQtWxhpLhSxVkxicrMm+qoIi4jvoV3B1NkYAoo50AvIvL+U/2GiDzApp8tEuX8/ONvpa5i0oZ4jGY28uYOlAjWMx2ujbFhB/0O1Dke21QDfx7NUvQr/D/8MbMHpgi9loSAaDYVYLmmgkOVnjKPUEa2pAq8p99S38qNDxsTqfcay2c+Ivhb36M+Jau/b4TaX/vvPOA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=WaFukh8+tB9PxqkAkUSFbLsniGJgAwAxHNorMAf7OxQ=;
+ b=VzSadEIlRzpz5IcIxdRFGSS1Dje/XglGyvk76U5kPw5jUgAZW7xG93Jch6yq8o7RdhItQUXTJp0hpbH2e+Xz/3N5SIgqSRENuCLhxHERyf0Sjb7fY3T/QX14SOAm7IG9nFaxEgvWk2rzOjiAN4BMPFEdmYvN8U0tEn6hDhS4N/GtIO2jFzknwUddfJDyt8U8LNTc801QigUj01LWHGfGxNT4UM4YHsJv1RPZlNPyCd8hZAOTV2wbH3wn5kzm06dRqp51z+VLxSRxKo2HjuxIUEz7OWjpjKidNw+5LdAtGMykhW11Hf1x36s4BpRxXrzqVQVbfNBRAN/De+rWUxQyew==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=WaFukh8+tB9PxqkAkUSFbLsniGJgAwAxHNorMAf7OxQ=;
+ b=s2OE14aphAD4bSZ5yk49DZrmqTk2YZWtQwx0nrHoHaw5CNsfPL5WqS+naBtPeNE/KsexOodKm7pO+G9f/k1r8Q/QSCAUNWjQbTM3+dAiCVFRQ99A4k/1eSDCZ/mrKSEZv5xldtGzdIasXeIZNB/BHo9MquuceUHWzhE+/mNNpXFqL/D8tb1/08ecN5PIY7k9w6LPpEXwue5I5fvtq6TBz9IWeS5kEG659yrj5MIDK+FRydv1BHXp93kHpQNE9jTY8ZotqZYPkoHBbxjGaS7wpfscUHaOT0eusIDG+e0tFJ1J/s8ayv+xIJ1OE8ElhrFe/FrcipcO+jP/VApv1zmovw==
+Received: from MW4PR04CA0067.namprd04.prod.outlook.com (2603:10b6:303:6b::12)
+ by DS0PR12MB8341.namprd12.prod.outlook.com (2603:10b6:8:f8::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.14; Fri, 21 Feb
+ 2025 13:14:43 +0000
+Received: from CO1PEPF000066E9.namprd05.prod.outlook.com
+ (2603:10b6:303:6b:cafe::5b) by MW4PR04CA0067.outlook.office365.com
+ (2603:10b6:303:6b::12) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8466.15 via Frontend Transport; Fri,
+ 21 Feb 2025 13:14:43 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ CO1PEPF000066E9.mail.protection.outlook.com (10.167.249.11) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8466.11 via Frontend Transport; Fri, 21 Feb 2025 13:14:43 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 21 Feb
+ 2025 05:14:22 -0800
+Received: from [10.41.21.79] (10.126.231.35) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Fri, 21 Feb
+ 2025 05:14:17 -0800
+Message-ID: <e58a20f8-e8bf-409c-a878-af2bd3c7d243@nvidia.com>
+Date: Fri, 21 Feb 2025 18:44:14 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1737577229.git.babu.moger@amd.com> <Z6zeXby8ajh0ax6i@e133380.arm.com>
- <9e849476-7c4b-478b-bd2a-185024def3a3@intel.com> <Z64tw2NbJXbKpLrH@e133380.arm.com>
- <76b02daf-1b45-473e-9d75-5988a11c6887@intel.com> <8ef51f28-e01a-4a7d-ba86-059437edb60b@amd.com>
- <a07fca4c-c8fa-41a6-b126-59815b9a58f9@intel.com> <CALPaoCh7WpohzpXhSAbumjSZBv1_+1bXON7_V1pwG4bdEBr52Q@mail.gmail.com>
- <ccd9c5d7-0266-4054-879e-e084b6972ad5@intel.com> <CALPaoCj1TH+GN6+dFnt5xuN406u=tB-8mj+UuMRSm5KWPJW2wg@mail.gmail.com>
- <2b5a11e3-ee19-47ba-b47e-b7de2818f237@intel.com> <CALPaoChXvLNMg240C7RyBvg0SxXfGf_ozKC6X7Qe4OxyEcL2tw@mail.gmail.com>
- <a3b46f6f-a844-4648-905e-53d662e5715f@intel.com>
-In-Reply-To: <a3b46f6f-a844-4648-905e-53d662e5715f@intel.com>
-From: Peter Newman <peternewman@google.com>
-Date: Fri, 21 Feb 2025 14:12:51 +0100
-X-Gm-Features: AWEUYZk3iR5VxlU9mHLttofMrNuxRSxNZKJLECLXx2xtrPiD90h6ry76gw9zM44
-Message-ID: <CALPaoCi0mFZ9TycyNs+SCR+2tuRJovQ2809jYMun4HtC64hJmA@mail.gmail.com>
-Subject: Re: [PATCH v11 00/23] x86/resctrl : Support AMD Assignable Bandwidth
- Monitoring Counters (ABMC)
-To: Reinette Chatre <reinette.chatre@intel.com>
-Cc: "Moger, Babu" <bmoger@amd.com>, Dave Martin <Dave.Martin@arm.com>, Babu Moger <babu.moger@amd.com>, 
-	corbet@lwn.net, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
-	dave.hansen@linux.intel.com, tony.luck@intel.com, x86@kernel.org, 
-	hpa@zytor.com, paulmck@kernel.org, akpm@linux-foundation.org, 
-	thuth@redhat.com, rostedt@goodmis.org, xiongwei.song@windriver.com, 
-	pawan.kumar.gupta@linux.intel.com, daniel.sneddon@linux.intel.com, 
-	jpoimboe@kernel.org, perry.yuan@amd.com, sandipan.das@amd.com, 
-	kai.huang@intel.com, xiaoyao.li@intel.com, seanjc@google.com, 
-	xin3.li@intel.com, andrew.cooper3@citrix.com, ebiggers@google.com, 
-	mario.limonciello@amd.com, james.morse@arm.com, tan.shaopeng@fujitsu.com, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	maciej.wieczor-retman@intel.com, eranian@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Patch 0/5] Support Autonomous Selection mode in cppc_cpufreq
+To: "Rafael J. Wysocki" <rafael@kernel.org>, "zhenglifeng (A)"
+	<zhenglifeng1@huawei.com>
+CC: Viresh Kumar <viresh.kumar@linaro.org>, <lenb@kernel.org>,
+	<robert.moore@intel.com>, <corbet@lwn.net>, <linux-pm@vger.kernel.org>,
+	<linux-acpi@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+	<acpica-devel@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>, <treding@nvidia.com>, <jonathanh@nvidia.com>,
+	<sashal@nvidia.com>, <vsethi@nvidia.com>, <ksitaraman@nvidia.com>,
+	<sanjayc@nvidia.com>, <bbasu@nvidia.com>, Sumit Gupta <sumitg@nvidia.com>
+References: <20250211103737.447704-1-sumitg@nvidia.com>
+ <20250211104428.dibsnxmkiluzixvz@vireshk-i7>
+ <b45d0d81-e4f7-474e-a146-0075a6145cc2@huawei.com>
+ <868d4c2a-583a-4cbb-a572-d884090a7134@nvidia.com>
+ <8d5e0035-d8fe-49ef-bda5-f5881ff96657@huawei.com>
+ <94bdab73-adc4-4b43-9037-5639f23e3d1e@nvidia.com>
+ <CAJZ5v0iAg6HFROHctYQwW=V9XiV8p3XVYgeKUcX4qBgfwQK6Ow@mail.gmail.com>
+Content-Language: en-US
+From: Sumit Gupta <sumitg@nvidia.com>
+In-Reply-To: <CAJZ5v0iAg6HFROHctYQwW=V9XiV8p3XVYgeKUcX4qBgfwQK6Ow@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: rnnvmail202.nvidia.com (10.129.68.7) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PEPF000066E9:EE_|DS0PR12MB8341:EE_
+X-MS-Office365-Filtering-Correlation-Id: 370b9286-daa1-49bb-f4ba-08dd5279b492
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|36860700013|82310400026|7416014|376014|13003099007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?VW1iYURCTytZM25LbEs5SVNoeW1QZFgzWHRNTUIydjhtZzRQcGMwQStrZzdV?=
+ =?utf-8?B?dk1abGhUQ1FwOHhTYXcxRVBGRS9uV0RrRkpkQWZWTktwQld6THVvdWZUSDI4?=
+ =?utf-8?B?QXM4Q2twQ2d2U1dvbVY0VTN6THNYRGFHUVZnV3NJNmM4b0ZjTmIvQ3dEZDRZ?=
+ =?utf-8?B?RkhIVzc0YXQ0RXBhYTJWMWFjdzdFUHJld1MzWWxsR0JXV0phVkRBTC9RL01S?=
+ =?utf-8?B?K1R2TUt3bFV1L0FuTXEzMVlMVVNObVFrc0YyV1FXNDVuNWVQdVhwSXRVQUdO?=
+ =?utf-8?B?OENTTURzNHMyTThaODVhQzZ6TGl1bXlxTFdXRUdoZENuL3hOaFEySitCWWNl?=
+ =?utf-8?B?TlhPVU9yajFtTU10YzAxTnpXM3grVnd4ZUZwNVpPTGQwQnlQZkhKS1Jia0x5?=
+ =?utf-8?B?dU1TK1BzeTVIN3hRaGVnM25NRTl3eUQ0cFFldSsxTWZKK0ZpMUh3RDg3K2VZ?=
+ =?utf-8?B?ZUJZVjk3Y2szeGdqQjF0U0RlUDlMc2RYTmY2N1U2ZzNtbEJSaHJWa2ErbGlF?=
+ =?utf-8?B?bGdVenluR3doVEYxTE9TS2QzZU5CYUVjZWZ6UlF6TExFL1U0NGpNZ2F0V2VW?=
+ =?utf-8?B?bThnamt3Q29LVk9sSDRUMWZZbXV2Wmh2Z2pjeHlzczVqMkZnMjYzaDhKcFYw?=
+ =?utf-8?B?N29xdExXQk9CRlFOVStDT0diV2U2aXp3SmZ0M2Mydm9BcTdadzIzbXBHWnU0?=
+ =?utf-8?B?SFdrS1pqNVVnMDFwZkgxdEtCQzYvMW53SDNBbEc3aE1YYXBES2dyRjYwbXd6?=
+ =?utf-8?B?VzhvNjA5NzR4RjduakQ4T1lucXRlVW1oY0J5YXBjYW9HQXpjSHFQdWJ6bWtL?=
+ =?utf-8?B?M3ZhSGNyNElGOHl1QjRNZER2RGV6bGRseFJycUtXZE1xY00zTC9ubDd6ZGNK?=
+ =?utf-8?B?UThMcnhPL01Ed1dJc2VOV1l6R1lySmdsUWlNVUpKQ3ZaVGFBNWRpTXZwYWVT?=
+ =?utf-8?B?R0VUZktPVE1pSGlZV0tlY1hLVzJIaG11Q1U3TXR1Q0xGK0haNGlCMm1BT0Z6?=
+ =?utf-8?B?emtKUGQzNGtPZkZ2WDFPbWR5T0luc1hyckxPZ2FyTXRsai9zWGxQaUxOK2pV?=
+ =?utf-8?B?VkR1Y2JSbDEwM2JPL1BEaWZMVXFYdGFXbFYybWNmNDVNNEFZYmpmWjRvM1Ju?=
+ =?utf-8?B?dldFZUtXL0JFZkpMWlhVa3Z6SVFtSlB3YnBKRW1CQTBoMCtIQnk1R0VxZzFz?=
+ =?utf-8?B?TVNDaVAvYVdUV29VSGNLdTJYOVNJSUh4VUdJU0VXWThtdkRwR21iMkhxUTh4?=
+ =?utf-8?B?UDY3WTRtd1pIdzkrYmFRV1VSNlFaU1FnWXpKWDRjekRxcVNNZE9DZTNQeHFU?=
+ =?utf-8?B?ZVMyOWlFUStjSksvdlZibW1kdFNQL1MyQ2l5ZkxBR2ZPUlFnVVFJNjM5VmJU?=
+ =?utf-8?B?eUFBY3FHZy9YcGlid1dQaDBQbjhCM3paMVB3VHQ2WHJkVmx2VFhtQ1YrOVZT?=
+ =?utf-8?B?aS9tc0dQdENDQmdGMXYzMjZmTjBNMDhzU05xZVlRb0ttZWFBRm16OVI0Tlg0?=
+ =?utf-8?B?djBOYUFIbjd3V3RuS1NWcHAralpVanBvSWdsMjlWdnUwR0ZYdFlpOXRwMjMv?=
+ =?utf-8?B?OHJKME40eTRkZ3pBOVJVdUhlUFZmUUlINXc1WktaQ1dWVVZFcjZvbmMyZnQ3?=
+ =?utf-8?B?cTRVSHo3VXZKWkMraTJWbmxiZEdmdU1oaDIrenZKZU1zaXg5SVdPRmJldDQ0?=
+ =?utf-8?B?clgwUVVsVis0ejVsQlVUelhXc2hHUlJvVkVlYnFHOE8wcUlvckIyMjJKd3Fh?=
+ =?utf-8?B?QXFnU2k0YitZVDNqVTR2Z1liL1NzZjY3SUdaVjZlbkh0YVlMSEc4cFdjSXFE?=
+ =?utf-8?B?SmpDc3hHOU0vRTVQdmhIbmM5aVlPa2VwckZZOGNFamZqbkwzOHYveWNtbHZB?=
+ =?utf-8?B?cEpTTGdKcVpSYkRIUEpCYW5IVVU2MWlXZTEyRnRENVJzM2Q4bzJWRUFVNmVH?=
+ =?utf-8?B?dkV2dkVUWWlqMmtuSm5jUlVKSHFNa0p0N3JyQ0hJUjhTTGtJS3pKTEZHUXlG?=
+ =?utf-8?Q?5QaIWCcnvayyEk8/Sl05UVQp4cYeXY=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(82310400026)(7416014)(376014)(13003099007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Feb 2025 13:14:43.0216
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 370b9286-daa1-49bb-f4ba-08dd5279b492
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CO1PEPF000066E9.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8341
 
-Hi Reinette,
 
-On Thu, Feb 20, 2025 at 7:36=E2=80=AFPM Reinette Chatre
-<reinette.chatre@intel.com> wrote:
->
-> Hi Peter,
->
-> On 2/20/25 6:53 AM, Peter Newman wrote:
-> > Hi Reinette,
-> >
-> > On Wed, Feb 19, 2025 at 7:21=E2=80=AFPM Reinette Chatre
-> > <reinette.chatre@intel.com> wrote:
-> >>
-> >> Hi Peter,
-> >>
-> >> On 2/19/25 3:28 AM, Peter Newman wrote:
-> >>> Hi Reinette,
-> >>>
-> >>> On Tue, Feb 18, 2025 at 6:50=E2=80=AFPM Reinette Chatre
-> >>> <reinette.chatre@intel.com> wrote:
-> >>>>
-> >>>> Hi Peter,
-> >>>>
-> >>>> On 2/17/25 2:26 AM, Peter Newman wrote:
-> >>>>> Hi Reinette,
-> >>>>>
-> >>>>> On Fri, Feb 14, 2025 at 8:18=E2=80=AFPM Reinette Chatre
-> >>>>> <reinette.chatre@intel.com> wrote:
-> >>>>>>
-> >>>>>> Hi Babu,
-> >>>>>>
-> >>>>>> On 2/14/25 10:31 AM, Moger, Babu wrote:
-> >>>>>>> On 2/14/2025 12:26 AM, Reinette Chatre wrote:
-> >>>>>>>> On 2/13/25 9:37 AM, Dave Martin wrote:
-> >>>>>>>>> On Wed, Feb 12, 2025 at 03:33:31PM -0800, Reinette Chatre wrote=
-:
-> >>>>>>>>>> On 2/12/25 9:46 AM, Dave Martin wrote:
-> >>>>>>>>>>> On Wed, Jan 22, 2025 at 02:20:08PM -0600, Babu Moger wrote:
-> >>>>>>
-> >>>>>> (quoting relevant parts with goal to focus discussion on new possi=
-ble syntax)
-> >>>>>>
-> >>>>>>>>>> I see the support for MPAM events distinct from the support of=
- assignable counters.
-> >>>>>>>>>> Once the MPAM events are sorted, I think that they can be assi=
-gned with existing interface.
-> >>>>>>>>>> Please help me understand if you see it differently.
-> >>>>>>>>>>
-> >>>>>>>>>> Doing so would need to come up with alphabetical letters for t=
-hese events,
-> >>>>>>>>>> which seems to be needed for your proposal also? If we use pos=
-sible flags of:
-> >>>>>>>>>>
-> >>>>>>>>>> mbm_local_read_bytes a
-> >>>>>>>>>> mbm_local_write_bytes b
-> >>>>>>>>>>
-> >>>>>>>>>> Then mbm_assign_control can be used as:
-> >>>>>>>>>> # echo '//0=3Dab;1=3Db' >/sys/fs/resctrl/info/L3_MON/mbm_assig=
-n_control
-> >>>>>>>>>> # cat /sys/fs/resctrl/mon_data/mon_L3_00/mbm_local_read_bytes
-> >>>>>>>>>> <value>
-> >>>>>>>>>> # cat /sys/fs/resctrl/mon_data/mon_L3_00/mbm_local_bytes
-> >>>>>>>>>> <sum of mbm_local_read_bytes and mbm_local_write_bytes>
-> >>>>>>>>>>
-> >>>>>>>>>> One issue would be when resctrl needs to support more than 26 =
-events (no more flags available),
-> >>>>>>>>>> assuming that upper case would be used for "shared" counters (=
-unless this interface is defined
-> >>>>>>>>>> differently and only few uppercase letters used for it). Would=
- this be too low of a limit?
-> >>>>>>
-> >>>>>> As mentioned above, one possible issue with existing interface is =
-that
-> >>>>>> it is limited to 26 events (assuming only lower case letters are u=
-sed). The limit
-> >>>>>> is low enough to be of concern.
-> >>>>>
-> >>>>> The events which can be monitored by a single counter on ABMC and M=
-PAM
-> >>>>> so far are combinable, so 26 counters per group today means it limi=
-ts
-> >>>>> breaking down MBM traffic for each group 26 ways. If a user complai=
-ned
-> >>>>> that a 26-way breakdown of a group's MBM traffic was limiting their
-> >>>>> investigation, I would question whether they know what they're look=
-ing
-> >>>>> for.
-> >>>>
-> >>>> The key here is "so far" as well as the focus on MBM only.
-> >>>>
-> >>>> It is impossible for me to predict what we will see in a couple of y=
-ears
-> >>>> from Intel RDT, AMD PQoS, and Arm MPAM that now all rely on resctrl =
-interface
-> >>>> to support their users. Just looking at the Intel RDT spec the event=
- register
-> >>>> has space for 32 events for each "CPU agent" resource. That does not=
- take into
-> >>>> account the "non-CPU agents" that are enumerated via ACPI. Tony alre=
-ady mentioned
-> >>>> that he is working on patches [1] that will add new events and share=
-d the idea
-> >>>> that we may be trending to support "perf" like events associated wit=
-h RMID. I
-> >>>> expect AMD PQoS and Arm MPAM to provide related enhancements to supp=
-ort their
-> >>>> customers.
-> >>>> This all makes me think that resctrl should be ready to support more=
- events than 26.
-> >>>
-> >>> I was thinking of the letters as representing a reusable, user-define=
-d
-> >>> event-set for applying to a single counter rather than as individual
-> >>> events, since MPAM and ABMC allow us to choose the set of events each
-> >>> one counts. Wherever we define the letters, we could use more symboli=
-c
-> >>> event names.
-> >>
-> >> Thank you for clarifying.
-> >>
-> >>>
-> >>> In the letters as events model, choosing the events assigned to a
-> >>> group wouldn't be enough information, since we would want to control
-> >>> which events should share a counter and which should be counted by
-> >>> separate counters. I think the amount of information that would need
-> >>> to be encoded into mbm_assign_control to represent the level of
-> >>> configurability supported by hardware would quickly get out of hand.
-> >>>
-> >>> Maybe as an example, one counter for all reads, one counter for all
-> >>> writes in ABMC would look like...
-> >>>
-> >>> (L3_QOS_ABMC_CFG.BwType field names below)
-> >>>
-> >>> (per domain)
-> >>> group 0:
-> >>>  counter 0: LclFill,RmtFill,LclSlowFill,RmtSlowFill
-> >>>  counter 1: VictimBW,LclNTWr,RmtNTWr
-> >>> group 1:
-> >>>  counter 2: LclFill,RmtFill,LclSlowFill,RmtSlowFill
-> >>>  counter 3: VictimBW,LclNTWr,RmtNTWr
-> >>> ...
-> >>>
-> >>
-> >> I think this may also be what Dave was heading towards in [2] but in t=
-hat
-> >> example and above the counter configuration appears to be global. You =
-do mention
-> >> "configurability supported by hardware" so I wonder if per-domain coun=
-ter
-> >> configuration is a requirement?
-> >
-> > If it's global and we want a particular group to be watched by more
-> > counters, I wouldn't want this to result in allocating more counters
-> > for that group in all domains, or allocating counters in domains where
-> > they're not needed. I want to encourage my users to avoid allocating
-> > monitoring resources in domains where a job is not allowed to run so
-> > there's less pressure on the counters.
-> >
-> > In Dave's proposal it looks like global configuration means
-> > globally-defined "named counter configurations", which works because
-> > it's really per-domain assignment of the configurations to however
-> > many counters the group needs in each domain.
->
-> I think I am becoming lost. Would a global configuration not break your
-> view of "event-set applied to a single counter"? If a counter is configur=
-ed
-> globally then it would not make it possible to support the full configura=
-bility
-> of the hardware.
-> Before I add more confusion, let me try with an example that builds on yo=
-ur
-> earlier example copied below:
->
-> >>> (per domain)
-> >>> group 0:
-> >>>  counter 0: LclFill,RmtFill,LclSlowFill,RmtSlowFill
-> >>>  counter 1: VictimBW,LclNTWr,RmtNTWr
-> >>> group 1:
-> >>>  counter 2: LclFill,RmtFill,LclSlowFill,RmtSlowFill
-> >>>  counter 3: VictimBW,LclNTWr,RmtNTWr
-> >>> ...
->
-> Since the above states "per domain" I rewrite the example to highlight th=
-at as
-> I understand it:
->
-> group 0:
->  domain 0:
->   counter 0: LclFill,RmtFill,LclSlowFill,RmtSlowFill
->   counter 1: VictimBW,LclNTWr,RmtNTWr
->  domain 1:
->   counter 0: LclFill,RmtFill,LclSlowFill,RmtSlowFill
->   counter 1: VictimBW,LclNTWr,RmtNTWr
-> group 1:
->  domain 0:
->   counter 2: LclFill,RmtFill,LclSlowFill,RmtSlowFill
->   counter 3: VictimBW,LclNTWr,RmtNTWr
->  domain 1:
->   counter 2: LclFill,RmtFill,LclSlowFill,RmtSlowFill
->   counter 3: VictimBW,LclNTWr,RmtNTWr
->
-> You mention that you do not want counters to be allocated in domains that=
- they
-> are not needed in. So, let's say group 0 does not need counter 0 and coun=
-ter 1
-> in domain 1, resulting in:
->
-> group 0:
->  domain 0:
->   counter 0: LclFill,RmtFill,LclSlowFill,RmtSlowFill
->   counter 1: VictimBW,LclNTWr,RmtNTWr
-> group 1:
->  domain 0:
->   counter 2: LclFill,RmtFill,LclSlowFill,RmtSlowFill
->   counter 3: VictimBW,LclNTWr,RmtNTWr
->  domain 1:
->   counter 2: LclFill,RmtFill,LclSlowFill,RmtSlowFill
->   counter 3: VictimBW,LclNTWr,RmtNTWr
->
-> With counter 0 and counter 1 available in domain 1, these counters could
-> theoretically be configured to give group 1 more data in domain 1:
->
-> group 0:
->  domain 0:
->   counter 0: LclFill,RmtFill,LclSlowFill,RmtSlowFill
->   counter 1: VictimBW,LclNTWr,RmtNTWr
-> group 1:
->  domain 0:
->   counter 2: LclFill,RmtFill,LclSlowFill,RmtSlowFill
->   counter 3: VictimBW,LclNTWr,RmtNTWr
->  domain 1:
->   counter 0: LclFill,RmtFill
->   counter 1: LclNTWr,RmtNTWr
->   counter 2: LclSlowFill,RmtSlowFill
->   counter 3: VictimBW
->
-> The counters are shown with different per-domain configurations that seem=
-s to
-> match with earlier goals of (a) choose events counted by each counter and
-> (b) do not allocate counters in domains where they are not needed. As I
-> understand the above does contradict global counter configuration though.
-> Or do you mean that only the *name* of the counter is global and then
-> that it is reconfigured as part of every assignment?
 
-Yes, I meant only the *name* is global. I assume based on a particular
-system configuration, the user will settle on a handful of useful
-groupings to count.
+On 19/02/25 00:53, Rafael J. Wysocki wrote:
+> 
+> There seems to be some quite fundamental disagreement on how this
+> should be done, so I'm afraid I cannot do much about it ATM.
+> 
+> Please agree on a common approach and come back to me when you are ready.
+> 
+> Sending two concurrent patchsets under confusingly similar names again
+> and again isn't particularly helpful.
+> 
+> Thanks!
 
-Perhaps mbm_assign_control syntax is the clearest way to express an example=
-...
+Hi Rafael,
 
- # define global configurations (in ABMC terms), not necessarily in this
- # syntax and probably not in the mbm_assign_control file.
+Thank you for looking into this.
 
- r=3DLclFill,RmtFill,LclSlowFill,RmtSlowFill
- w=3DVictimBW,LclNTWr,RmtNTWr
+Hi Lifeng,
 
- # legacy "total" configuration, effectively r+w
- t=3DLclFill,RmtFill,LclSlowFill,RmtSlowFill,VictimBW,LclNTWr,RmtNTWr
+As per the discussion, we can make the driver future extensible and
+also can optimize the register read/write access.
 
- /group0/0=3Dt;1=3Dt
- /group1/0=3Dt;1=3Dt
- /group2/0=3D_;1=3Dt
- /group3/0=3Drw;1=3D_
+I gave some thought and below is my proposal.
 
-- group2 is restricted to domain 0
-- group3 is restricted to domain 1
-- the rest are unrestricted
-- In group3, we decided we need to separate read and write traffic
+1) Pick 'Patch 1-7' from your patch series [1] which optimize API's
+    to read/write a cpc register.
 
-This consumes 4 counters in domain 0 and 3 counters in domain 1.
+2) Pick my patches in [2]:
+    - Patch 1-4: Keep all cpc registers together under acpi_cppc sysfs.
+                 Also, update existing API's to read/write regs in batch.
+    - Patch 5: Creates 'cppc_cpufreq_epp_driver' instance for booting
+      all CPU's in Auto mode and set registers with right values.
+      They can be updated after boot from sysfs to change hints to HW.
+      I can use the optimized API's from [1] where required in [2].
 
->
-> >> Until now I viewed counter configuration separate from counter assignm=
-ent,
-> >> similar to how AMD's counters can be configured via mbm_total_bytes_co=
-nfig and
-> >> mbm_local_bytes_config before they are assigned. That is still per-dom=
-ain
-> >> counter configuration though, not per-counter.
-> >>
-> >>> I assume packing all of this info for a group's desired counter
-> >>> configuration into a single line (with 32 domains per line on many
-> >>> dual-socket AMD configurations I see) would be difficult to look at,
-> >>> even if we could settle on a single letter to represent each
-> >>> universally.
-> >>>
-> >>>>
-> >>>> My goal is for resctrl to have a user interface that can as much as =
-possible
-> >>>> be ready for whatever may be required from it years down the line. O=
-f course,
-> >>>> I may be wrong and resctrl would never need to support more than 26 =
-events per
-> >>>> resource (*). The risk is that resctrl *may* need to support more th=
-an 26 events
-> >>>> and how could resctrl support that?
-> >>>>
-> >>>> What is the risk of supporting more than 26 events? As I highlighted=
- earlier
-> >>>> the interface I used as demonstration may become unwieldy to parse o=
-n a system
-> >>>> with many domains that supports many events. This is a concern for m=
-e. Any suggestions
-> >>>> will be appreciated, especially from you since I know that you are v=
-ery familiar with
-> >>>> issues related to large scale use of resctrl interfaces.
-> >>>
-> >>> It's mainly just the unwieldiness of all the information in one file.
-> >>> It's already at the limit of what I can visually look through.
-> >>
-> >> I agree.
-> >>
-> >>>
-> >>> I believe that shared assignments will take care of all the
-> >>> high-frequency and performance-intensive batch configuration updates =
-I
-> >>> was originally concerned about, so I no longer see much benefit in
-> >>> finding ways to textually encode all this information in a single fil=
-e
-> >>> when it would be more manageable to distribute it around the
-> >>> filesystem hierarchy.
-> >>
-> >> This is significant. The motivation for the single file was to support
-> >> the "high-frequency and performance-intensive" usage. Would "shared as=
-signments"
-> >> not also depend on the same files that, if distributed, will require m=
-any
-> >> filesystem operations?
-> >> Having the files distributed will be significantly simpler while also
-> >> avoiding the file size issue that Dave Martin exposed.
-> >
-> > The remaining filesystem operations will be assigning or removing
-> > shared counter assignments in the applicable domains, which would
-> > normally correspond to mkdir/rmdir of groups or changing their CPU
-> > affinity. The shared assignments are more "program and forget", while
-> > the exclusive assignment approach requires updates for every counter
-> > (in every domain) every few seconds to cover a large number of groups.
-> >
-> > When they want to pay extra attention to a particular group, I expect
-> > they'll ask for exclusive counters and leave them assigned for a while
-> > as they collect extra data.
->
-> The single file approach is already unwieldy. The demands that will be
-> placed on it to support the usages currently being discussed would make t=
-his
-> interface even harder to use and manage. If the single file is not requir=
-ed
-> then I think we should go back to smaller files distributed in resctrl.
-> This may not even be an either/or argument. One way to view mbm_assign_co=
-ntrol
-> could be as a way for user to interact with the distributed counter
-> related files with a single file system operation. Although, without
-> knowing how counter configuration is expected to work this remains unclea=
-r.
+Let me know if you are okay with this proposal.
+I can also send an updated patch series with all the patches combined?
 
-If we do both interfaces and the multi-file model gives us more
-capability to express configurations, we could find situations where
-there are configurations we cannot represent when reading back from
-mbm_assign_control, or updates through mbm_assign_control have
-ambiguous effects on existing configurations which were created with
-other files.
+[1] 
+https://lore.kernel.org/all/20250206131428.3261578-1-zhenglifeng1@huawei.com/
+[2] https://lore.kernel.org/lkml/20250211103737.447704-1-sumitg@nvidia.com/
 
-However, the example I gave above seems to be adequately represented
-by a minor extension to mbm_assign_control and we all seem to
-understand it now, so maybe it's not broken yet. It's unfortunate that
-work went into a requirement that's no longer relevant, but I don't
-think that on its own is a blocker.
+Regards,
+Sumit Gupta
 
--Peter
 
