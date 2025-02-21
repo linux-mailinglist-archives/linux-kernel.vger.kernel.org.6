@@ -1,56 +1,94 @@
-Return-Path: <linux-kernel+bounces-525189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DAE4A3EC2F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 06:19:08 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 224DCA3EC33
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 06:20:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D1ED3B90CF
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 05:18:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D16E317F24E
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 05:19:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3B851FBC83;
-	Fri, 21 Feb 2025 05:18:37 +0000 (UTC)
-Received: from mx.socionext.com (mx.socionext.com [202.248.49.38])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC70635979;
-	Fri, 21 Feb 2025 05:18:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.248.49.38
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90C591FBCBF;
+	Fri, 21 Feb 2025 05:19:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f066jlLS"
+Received: from mail-oa1-f44.google.com (mail-oa1-f44.google.com [209.85.160.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89DA41DC184;
+	Fri, 21 Feb 2025 05:19:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740115117; cv=none; b=BjDOkBarRUkz8joRcOvy+d5RGmyFeyKW0NTRLt4HdpiTGIbbsSMRL+7wbIlfwpbK/vTB83mFffaixiqdil2QQftW3KXYEcpmMwEkENDQ9rPw19zMDm40HmvertQHBESg2YrctTZjLpECmZomlSQ7QBXxIZE1tYtYzMRdtB9bSAg=
+	t=1740115186; cv=none; b=lTJOxST0dccdy8JQdCnM4LCv3umTxw/dgOyTGpZelG5VX0PPYcy/AbV29Wkpklylz7lEGtSpY/B4lnXsuSPyyI/FsCa/JBWborCmqmHUfvqmD+PFUQiUm9ozO7CpLHc+U4E7LHHQnCq42gOBP2Y/+6u1qHxr4OX8g4eh1TTj3aQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740115117; c=relaxed/simple;
-	bh=EbUAX9Vl2P5753Jv8TWa4wWdEHrNy4FRvo0yPgix670=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=trzgaacN5WtpXQa5ewN3r3TAvV2ibSzEmtq8Vj6JTA2tVNeCSh8yb5z447i2hPIdEX+C5Xx53QltKyrwhk6m26BXHhrzXUvXa7pyyacrDCRCoa05nuMDEso+xlsfa7VFVAxVni/lAK3Lx8ff0R/uqTk5xP20TNR5pK3g2L4N+I8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=socionext.com; spf=pass smtp.mailfrom=socionext.com; arc=none smtp.client-ip=202.248.49.38
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=socionext.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=socionext.com
-Received: from unknown (HELO kinkan2-ex.css.socionext.com) ([172.31.9.52])
-  by mx.socionext.com with ESMTP; 21 Feb 2025 14:18:27 +0900
-Received: from mail.mfilter.local (mail-arc02.css.socionext.com [10.213.46.40])
-	by kinkan2-ex.css.socionext.com (Postfix) with ESMTP id 21B6E20AE29A;
-	Fri, 21 Feb 2025 14:18:27 +0900 (JST)
-Received: from kinkan2.css.socionext.com ([172.31.9.51]) by m-FILTER with ESMTP; Fri, 21 Feb 2025 14:18:27 +0900
-Received: from plum.e01.socionext.com (unknown [10.212.245.39])
-	by kinkan2.css.socionext.com (Postfix) with ESMTP id CAB493732;
-	Fri, 21 Feb 2025 14:18:26 +0900 (JST)
-From: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-To: Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
-	Huacai Chen <chenhuacai@kernel.org>
-Cc: netdev@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
+	s=arc-20240116; t=1740115186; c=relaxed/simple;
+	bh=O8d0sg3OiW0EYlu6tUHyrluwGg3zHX9W1ljOIFTfvP0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=R/X203SpuGuvUIV05F7BPvh0YQD2hapObFmrixsWxAwIqpMK3PsDsiClo9v70uQ5vIJIdvkbYjN/97eQxNrvoWkcODYkyX9OpjiuoF3YSyW5emgkpyKUJ9Y+G13cc7vG8P6slfnFqMnHoMhQT7oI+1Lxwm2PKi0mCjIVdKzEGEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f066jlLS; arc=none smtp.client-ip=209.85.160.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-2adc2b6837eso436948fac.1;
+        Thu, 20 Feb 2025 21:19:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740115183; x=1740719983; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=S7GxnhS9WVFYcGLggu6o4ECrksBl/EI/neRDN6fay0Y=;
+        b=f066jlLSNADNGohAqSqkwSGfIpCyUWE8CS9GYAA4chFwLsX9nUCbiDw3nUnwBmXiKD
+         +kHCaLLQpW68+JXUAT1EAzo/0ZaTvwB9ZRJDRBlUhFr/ogdZZ5aUlGDp8wB6mmRo4vdH
+         2sb79lv1OO4rd6rICmUTFbwBzNFBXs0LAzjK6W6+1j+BdeDguhC+p1JMB49QgPIuOBNJ
+         3T2XD9WO1RALHh4EPLz/gYA7CyqC+ySret181CEUzSnC95dyEYAvazY/LNbHPGzmQfZ/
+         ptGa/A3geUA4rBfs0p2nbJTNzo/uQ+nYJWI/eIkTvw4ivpcDOM1MHdi2cNMfbrHVxcz7
+         XC2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740115183; x=1740719983;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=S7GxnhS9WVFYcGLggu6o4ECrksBl/EI/neRDN6fay0Y=;
+        b=t/OR0tOIZuOn7n8VfOuZKYeFqZHflbQT5f4lKQuy+j0kIJCsDzzSnLabQkMCNaRhum
+         9k45i/TMQo14gJRtU9qElykQNEAp7jaSvS2KUhAeqHbavtCvKVLckbp1v4Pe1XHm9B9I
+         CmN49egWuaQjrSECMrJU/to0EsiV6Y2sopMkv2u7TRpx33g/mcd2ogcEvPAZ95g5/c4e
+         B9xNDuMz+yXZSNqNpKLd29KBdRGsbt72bK+/EEqjAKWfBJS5bZZT+f8ifrDlFd8BouQx
+         pNn5PUZGzq04o5qp52r7sU4/Qqd5vuRGEWjEhC+ZU1r55uW8uuGp6Lcl+9+1rykx5tiu
+         at2w==
+X-Forwarded-Encrypted: i=1; AJvYcCUGUJtoccm3FtYyoI0pnGa2Q3UF8nPS0eUQRm75Wi1Co9GylICSSocimS0oT7t0qP7GUSvuLPhdNqrvCTx4eY0=@vger.kernel.org, AJvYcCUY1EyrU6w6SuieeLmZwUhR4S3izB8beFMlb0pX0mlyTXYhCCIfOSh5eoT+ey7WbFC5ZTVZZ2YkEiCjfNQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YykWkVOlDxG8IMAnxchNYDIPpcaQ15mnKdlq8gDvwu5Li9kbg/I
+	RIRnOwp8hU8DLaICGvD0Hj3EtQZbG9dzRFiRsVNKlGlqDyH7JNg1
+X-Gm-Gg: ASbGncuMWXajy9SDlDuR84lKW0o/HD3Ik6ORnihXJXAO1Pvb+uInJRV9OCKfIH6rYFS
+	tn7hRWyh+y2cxJo+VKpUCA5R/FNs+P0XmLA0x2WIkxDTW4yzcEOBeYOysXM9VMAGoWpY9/PdF4T
+	b+FrrTNbTlaf1ebXffd6YWH5JV2dITOvYAdu4SVkZGSQOfyNUms5mAtHN4/LSZ2uHOWnnu64gaN
+	SHsFh2fEE8P71fGBKdfO1pqhrMtx3bmz8RdBJ9KL4wBwn7c8U8lq23YEVOqrpTXrVyEyRrzJo7p
+	LJnByGUeIQ0yIL0M0v3+qsZM44rf2P7djGg=
+X-Google-Smtp-Source: AGHT+IGoA6z3KE2h72mJwhh7s7O3jt1mACU41v7uUqoGM/05ZbXw7E/XMUInCarZyEeaGUD9Lfpnrg==
+X-Received: by 2002:a05:6870:9613:b0:27d:10f5:347 with SMTP id 586e51a60fabf-2bd50d01beemr1409542fac.15.1740115183524;
+        Thu, 20 Feb 2025 21:19:43 -0800 (PST)
+Received: from localhost ([2806:230:6026:c0c8:4ae7:daff:fe31:3285])
+        by smtp.gmail.com with UTF8SMTPSA id 586e51a60fabf-2bc70042fa9sm6016647fac.43.2025.02.20.21.19.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Feb 2025 21:19:42 -0800 (PST)
+From: Felipe Contreras <felipe.contreras@gmail.com>
+To: gregkh@linuxfoundation.org
+Cc: airlied@gmail.com,
+	boqun.feng@gmail.com,
+	hch@infradead.org,
+	hpa@zytor.com,
+	ksummit@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
-	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-Subject: [PATCH net-next v2] net: stmmac: Correct usage of maximum queue number macros
-Date: Fri, 21 Feb 2025 14:18:18 +0900
-Message-Id: <20250221051818.4163678-1-hayashi.kunihiko@socionext.com>
-X-Mailer: git-send-email 2.25.1
+	miguel.ojeda.sandonis@gmail.com,
+	rust-for-linux@vger.kernel.org,
+	torvalds@linux-foundation.org,
+	Felipe Contreras <felipe.contreras@gmail.com>
+Subject: Re: Rust kernel policy
+Date: Thu, 20 Feb 2025 23:19:09 -0600
+Message-Id: <20250221051909.37478-1-felipe.contreras@gmail.com>
+X-Mailer: git-send-email 0.1
+In-Reply-To: <2025021954-flaccid-pucker-f7d9@gregkh>
+References: <2025021954-flaccid-pucker-f7d9@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,70 +97,34 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The maximum numbers of each Rx and Tx queues are defined by
-MTL_MAX_RX_QUEUES and MTL_MAX_TX_QUEUES respectively.
+Greg KH wrote:
+> But for new code / drivers, writing them in rust where these types of
+> bugs just can't happen (or happen much much less) is a win for all of
+> us, why wouldn't we do this?
 
-There are some places where Rx and Tx are used in reverse. There is no
-issue when the Tx and Rx macros have the same value, but should correct
-usage of macros for maximum queue number to keep consistency and prevent
-unexpected mistakes.
+*If* they can be written in Rust in the first place. You are skipping that
+very important precondition.
 
-Reviewed-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
-Reviewed-by: Huacai Chen <chenhuacai@kernel.org>
-Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
----
- drivers/net/ethernet/stmicro/stmmac/common.h | 4 ++--
- drivers/net/ethernet/stmicro/stmmac/stmmac.h | 7 +++----
- 2 files changed, 5 insertions(+), 6 deletions(-)
+> Rust isn't a "silver bullet" that will solve all of our problems, but it
+> sure will help in a huge number of places, so for new stuff going
+> forward, why wouldn't we want that?
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/common.h b/drivers/net/ethernet/stmicro/stmmac/common.h
-index 55053528e498..412b07e77945 100644
---- a/drivers/net/ethernet/stmicro/stmmac/common.h
-+++ b/drivers/net/ethernet/stmicro/stmmac/common.h
-@@ -101,8 +101,8 @@ struct stmmac_rxq_stats {
- /* Updates on each CPU protected by not allowing nested irqs. */
- struct stmmac_pcpu_stats {
- 	struct u64_stats_sync syncp;
--	u64_stats_t rx_normal_irq_n[MTL_MAX_TX_QUEUES];
--	u64_stats_t tx_normal_irq_n[MTL_MAX_RX_QUEUES];
-+	u64_stats_t rx_normal_irq_n[MTL_MAX_RX_QUEUES];
-+	u64_stats_t tx_normal_irq_n[MTL_MAX_TX_QUEUES];
- };
- 
- /* Extra statistic and debug information exposed by ethtool */
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac.h b/drivers/net/ethernet/stmicro/stmmac/stmmac.h
-index f05cae103d83..dae279ee2c28 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac.h
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac.h
-@@ -257,7 +257,7 @@ struct stmmac_priv {
- 	/* Frequently used values are kept adjacent for cache effect */
- 	u32 tx_coal_frames[MTL_MAX_TX_QUEUES];
- 	u32 tx_coal_timer[MTL_MAX_TX_QUEUES];
--	u32 rx_coal_frames[MTL_MAX_TX_QUEUES];
-+	u32 rx_coal_frames[MTL_MAX_RX_QUEUES];
- 
- 	int hwts_tx_en;
- 	bool tx_path_in_lpi_mode;
-@@ -265,8 +265,7 @@ struct stmmac_priv {
- 	int sph;
- 	int sph_cap;
- 	u32 sarc_type;
--
--	u32 rx_riwt[MTL_MAX_TX_QUEUES];
-+	u32 rx_riwt[MTL_MAX_RX_QUEUES];
- 	int hwts_rx_en;
- 
- 	void __iomem *ioaddr;
-@@ -343,7 +342,7 @@ struct stmmac_priv {
- 	char int_name_sfty[IFNAMSIZ + 10];
- 	char int_name_sfty_ce[IFNAMSIZ + 10];
- 	char int_name_sfty_ue[IFNAMSIZ + 10];
--	char int_name_rx_irq[MTL_MAX_TX_QUEUES][IFNAMSIZ + 14];
-+	char int_name_rx_irq[MTL_MAX_RX_QUEUES][IFNAMSIZ + 14];
- 	char int_name_tx_irq[MTL_MAX_TX_QUEUES][IFNAMSIZ + 18];
- 
- #ifdef CONFIG_DEBUG_FS
+It *might* help in new stuff.
+
+But since when is the Linux kernel development going for what is better on
+paper over what is actually the case? This is wishful thinking.
+
+Remember reiser4 and kdbus? Just because it sounds good on paper doesn't
+mean that it will work.
+
+> Adding another language really shouldn't be a problem,
+
+That depends on the specifics of the language and how that language is
+developed.
+
+And once again: what *should* be the case and what *is* the case are two
+very different things.
+
 -- 
-2.25.1
-
+Felipe Contreras
 
