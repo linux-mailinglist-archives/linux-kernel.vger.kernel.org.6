@@ -1,49 +1,89 @@
-Return-Path: <linux-kernel+bounces-526799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18418A40375
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 00:30:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 435B6A40378
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 00:31:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D54B87AC428
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 23:29:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97D0C7027CD
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 23:31:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 670D5253F1B;
-	Fri, 21 Feb 2025 23:30:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E3821FE46B;
+	Fri, 21 Feb 2025 23:31:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vhf0qQ0v"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="RZtL8cRR"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C086824E4BF;
-	Fri, 21 Feb 2025 23:29:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9FCC200BAA
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 23:31:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740180599; cv=none; b=r8wE8ccnlxou5et1agiXaNlUfUx+vq+GKTGAYsYXfuy4Q2GrEjqOPRtskKnmQZHggvhHH6myYld4QgAsoEl5Z72x8jcH20K3bECoVlUFfMu+Yuuc++cAsDwXd1RLrMWq4RwnwgU5UqC3TDb34AYB2cblyRrB3VZ158PHVQogis0=
+	t=1740180685; cv=none; b=R4aitJjMad9PFgvZi19awsrC2LDLihiNChRbQ3H79U9pHRB5mFYMlxd3RtqcbJLGfg17WMuqyx8xd76QCgFx4rfhm0PtH1JtMJqhmLHo4gp8k4sU+XPmzdKPwNudio6ip3cJitq/UQ3dt7vvefkS5xx8cglV1OrL+SiH2Fbf480=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740180599; c=relaxed/simple;
-	bh=QrMx7i4NMDdJbHUydUFTbi3xniAj9JRWH5I9HdeVqLo=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=ixzt+nPvAheen3is9wzsIztDggzW7ZqF7A29LoppzGPEOVz64IceF+nmJk07UwHhplsm9xcXAoSLPll15t/2Jd05rrQmHAI2WoNhnFgikSYeMQlZCuaxGwxo+h5pFgi8Ud6V16QNmGZXI43rnPxRzwEIs6+wtALjEuAal070F/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vhf0qQ0v; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34A63C4CEE8;
-	Fri, 21 Feb 2025 23:29:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740180599;
-	bh=QrMx7i4NMDdJbHUydUFTbi3xniAj9JRWH5I9HdeVqLo=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=Vhf0qQ0vCz6xbOdbibyG2YHM2tMMySz7NsFKC6XSaFWiZwrj8+gN4WI9EcdE7mB9z
-	 CgZtJohGoYNSq8eTYZqy/+G5ljGja9lsexvwGWx3Hx58mcRrOGycxnYpY09IS9CG/1
-	 9qYRUrnGQ9waRJo9lV5hUXrD4l28dMIpxA0la7gTMUF6CCqh9WpK9AY2xqoE68w5tM
-	 L7TtXKezCXzpikGbuzwWZzE2V8z4oIGEW1CNei5d7RHzOibB1lsW0DwUNJZbALMfZv
-	 LhQtOFjY3UpqgbTxohqrk7Fn5bGkiDqULziREnmHoN6z9rAp2Rx9RGdY2L2bIGhHD+
-	 e4ryu3fN+hJbw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70FC9380CEEC;
-	Fri, 21 Feb 2025 23:30:31 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1740180685; c=relaxed/simple;
+	bh=f51eqVy7xwWHEuczDtwNNkEGNpGXp5mse0YoxqxxuSI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pvm9Ur1SeeTMVgUA6riAL9iCGYjyx6zKBR3g1bg72bwSLRb8AXKY1wrRY6kAFPoVdzeRIz/2GybJw/kMR8THcBM2y8gvRdHlXaednRX9cK9q96sTXCiVCnlCnxRBsGXB9U586ePO5Cqh3Rykj5CKZqsvTLmVUbUDqcltMW9JsGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=RZtL8cRR; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-221206dbd7eso56434575ad.2
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 15:31:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1740180683; x=1740785483; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=81FA3e/JZjjDAMLf5iojUcA5/pLMU3O5i7ad+AEyuhI=;
+        b=RZtL8cRRevN4bA/z4199K3c/ybJuHlTdFkv3Owb9C4PomGVsLNBL2j8Sgdbf403ZeT
+         ZC2GtdKsvFGGbMiApOG5lwfkWvbSOOEWrKAyRKWAfUssSfmUorrN8xxFQ0JuSACY9CAP
+         QSXFJPyF7CAj3SdSefLZbnyM2v10dz4qXBrpA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740180683; x=1740785483;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=81FA3e/JZjjDAMLf5iojUcA5/pLMU3O5i7ad+AEyuhI=;
+        b=rp/iiWNYuhiOx3t2P0BHCcNxKkHGaQpMS+qed2BF393eiv+HEcyQxXzjxI3kON27tf
+         xyWN1TtwFhgDiz/9BX13MfQmnnXR5NiVhqa0zGZvK+6vRVJOx/+9+LxmTN05MM5Qzy1f
+         55x+rxIxP427pa2Ilvn+gNqc/g2TkKhcSFIgnncuA2pZami6LDmahA32JShHFhI2xJF0
+         WzWnmmkfpoxTbr17ZKNYeh3FM7Bf7vXIdsKk3v9nJbD0Oupyyg3MVtPkJG4f18rahFQ4
+         WRtON4UTdlPsUwg45w+uyTIpV/8lcQyt9gcuYbsIgZP/QnHuIQla2GpSRhI/wYWVIvae
+         NuWA==
+X-Gm-Message-State: AOJu0YyHODDXyyW+7rEoKpqQIuh38pSZh+7JbztZLkIYAYTDRNAgGieS
+	vxszq5WAqfTkL61xkHabZoOjJlphInzJQXgwV1d2WwtEaB/Jem0brwiDBWidIFUuz+Vx7ZSIluY
+	=
+X-Gm-Gg: ASbGncsxBe9PRekTvV/z/cDTkOOqktQnokFGUJCOJke8g9yeNWzTXnutsZMGz5mc72f
+	jPZp13L1A151HttFxEjf03AWtuqhCh7c/iL6gORTN4WXDS1TDkaqn3sKprqYQMwL5qIPRsGzpwe
+	bfwBaKIUKJbETdZxP9KMgNp8T3yznqA5BPIkdlWHAbCfvZr0bB+2UAgTb8NprcRAOrBq/spJS7G
+	Yltm7CTwPYpSLmbG69AskiDUeY+TFgHjjiwvN0e2hY/rtW659fNiIr7j1KvD1gSOuBI7Vpd1CZz
+	zPj/zSnVMEStKMTVZsgXN7cBhG06i92Z/S19vXxMlxqwCRBnTI2w+3bvgSRg8ZL8VA==
+X-Google-Smtp-Source: AGHT+IGkH7xMxeGNr82l2STxZJtAA8Gv2n4NyOTr4CeAZCvwgPvVhf6sJzdIj4GQWhVoUq34JljyhA==
+X-Received: by 2002:a17:902:ce8a:b0:216:760c:3879 with SMTP id d9443c01a7336-2219ffc00c1mr74674785ad.46.1740180683043;
+        Fri, 21 Feb 2025 15:31:23 -0800 (PST)
+Received: from localhost (222.246.125.34.bc.googleusercontent.com. [34.125.246.222])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-2210001ea01sm113953455ad.176.2025.02.21.15.31.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 Feb 2025 15:31:21 -0800 (PST)
+From: Stephen Boyd <swboyd@chromium.org>
+To: Konrad Dybcio <konradybcio@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	patches@lists.linux.dev,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Benson Leung <bleung@chromium.org>,
+	devicetree@vger.kernel.org,
+	chrome-platform@lists.linux.dev,
+	Pin-yen Lin <treapking@chromium.org>,
+	cros-qcom-dts-watchers@chromium.org
+Subject: [PATCH v4 0/2] arm64: dts: qcom: sc7180-trogdor: Wire up USB
+Date: Fri, 21 Feb 2025 15:31:13 -0800
+Message-ID: <20250221233120.3596158-1-swboyd@chromium.org>
+X-Mailer: git-send-email 2.48.1.601.g30ceb7b040-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,42 +91,69 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] net: sfp: add quirk for 2.5G OEM BX SFP
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <174018063000.2236176.16722302541554170478.git-patchwork-notify@kernel.org>
-Date: Fri, 21 Feb 2025 23:30:30 +0000
-References: <20250218-b4-lkmsub-v1-1-1e51dcabed90@birger-koblitz.de>
-In-Reply-To: <20250218-b4-lkmsub-v1-1-1e51dcabed90@birger-koblitz.de>
-To: Birger Koblitz <mail@birger-koblitz.de>
-Cc: linux@armlinux.org.uk, andrew@lunn.ch, hkallweit1@gmail.com,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org, daniel@makrotopia.org
 
-Hello:
+Wiring up the USB hub to the connectors allows us to gain the proper
+'connect_type' and 'removable' values in sysfs for the USB devices on
+sc7180 trogdor devices. These two patches are split off of a larger
+series[1] so they can land faster and because we've come to the
+conclusion that the DisplayPort path is going to connect to the
+cros-ec-typec node, not the usb-c-connector node.
 
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+The first patch adds the pogo pin binding to describe the detachable
+keyboards found on some trogdor devices (actually strongbad). The second
+patch is the dts changes required to wire up all the USB stuff. This is
+sufficient to set the sysfs properties for USB devices so that the
+builtin USB webcam is considered "fixed" or hard-wired while devices
+plugged into the connectors or the keyboard are considered "removable"
+or hotpluggable.
 
-On Tue, 18 Feb 2025 18:59:40 +0100 you wrote:
-> The OEM SFP-2.5G-BX10-D/U SFP module pair is meant to operate with
-> 2500Base-X. However, in their EEPROM they incorrectly specify:
-> Transceiver codes   : 0x00 0x12 0x00 0x00 0x12 0x00 0x01 0x05 0x00
-> BR, Nominal         : 2500MBd
-> 
-> Use sfp_quirk_2500basex for this module to allow 2500Base-X mode anyway.
-> Tested on BananaPi R3.
-> 
-> [...]
+Changes from v3 https://lore.kernel.org/r/20250210225714.1073618-1-swboyd@chromium.org
+ * Consistent quotes in binding
+ * Drop unused labels on hub ports
 
-Here is the summary with links:
-  - [net-next] net: sfp: add quirk for 2.5G OEM BX SFP
-    https://git.kernel.org/netdev/net-next/c/a85035561025
+Changes from v2 https://lore.kernel.org/r/20250205233016.1600517-1-swboyd@chromium.org
+ * Make binding specific to keyboard and move to usb/
+ * Update dts to reflect new compatible string for pogo pin keyboard
 
-You are awesome, thank you!
+Changes from v1 https://lore.kernel.org/r/20240210070934.2549994-1-swboyd@chromium.org
+ * Split out of larger series
+ * Added description to DT binding
+ * Removed DP part of dts changes
+
+[1] https://lore.kernel.org/r/20240210070934.2549994-1-swboyd@chromium.org
+
+Cc: Rob Herring <robh@kernel.org>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
+Cc: Conor Dooley <conor+dt@kernel.org>
+Cc: Benson Leung <bleung@chromium.org>
+Cc: <devicetree@vger.kernel.org>
+Cc: <chrome-platform@lists.linux.dev>
+Cc: Pin-yen Lin <treapking@chromium.org>
+Cc: <cros-qcom-dts-watchers@chromium.org>
+
+Stephen Boyd (2):
+  dt-bindings: usb: Add binding for ChromeOS Pogo pin keyboard connector
+  arm64: dts: qcom: sc7180-trogdor: Wire up USB to usb-c-connectors
+
+ .../usb/google,usb-pogo-keyboard.yaml         |  68 +++++++++++
+ .../dts/qcom/sc7180-trogdor-clamshell.dtsi    |  21 ++++
+ .../boot/dts/qcom/sc7180-trogdor-coachz.dtsi  |  47 ++++++++
+ .../dts/qcom/sc7180-trogdor-detachable.dtsi   |  15 +++
+ .../dts/qcom/sc7180-trogdor-homestar.dtsi     |  47 ++++++++
+ .../dts/qcom/sc7180-trogdor-kingoftown.dts    |  55 +++++++++
+ .../boot/dts/qcom/sc7180-trogdor-lazor.dtsi   |  55 +++++++++
+ .../boot/dts/qcom/sc7180-trogdor-pazquel.dtsi |  55 +++++++++
+ .../boot/dts/qcom/sc7180-trogdor-pompom.dtsi  |  44 +++++++
+ .../qcom/sc7180-trogdor-quackingstick.dtsi    |  31 +++++
+ .../arm64/boot/dts/qcom/sc7180-trogdor-r1.dts |  56 ++++++++-
+ .../dts/qcom/sc7180-trogdor-wormdingler.dtsi  |  47 ++++++++
+ arch/arm64/boot/dts/qcom/sc7180-trogdor.dtsi  | 109 ++++++++++++++++++
+ 13 files changed, 648 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/usb/google,usb-pogo-keyboard.yaml
+
+
+base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+https://chromeos.dev
 
 
