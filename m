@@ -1,117 +1,345 @@
-Return-Path: <linux-kernel+bounces-526028-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFFE7A3F8EA
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:35:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4CAFA3F8EB
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:35:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71B1719E1FF5
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 15:32:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE649703AE8
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 15:31:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E608E2153CF;
-	Fri, 21 Feb 2025 15:29:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D1E021516A;
+	Fri, 21 Feb 2025 15:29:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="h+qejeEB"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="NXwZTEcD";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="F7rkwJCb"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E86ED215F40
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 15:29:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E213212F92;
+	Fri, 21 Feb 2025 15:29:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740151772; cv=none; b=N2QT4nMfiOwtVRpVGT2/zKNcscF5dUjFVO0ZcRHtUvwtCUbgg1VEOIZIIxyBj5iLZelmM14kOkfCI0882z5ZoeIwm+TjAP4qMRwv/H4rcyoK7s4Pgs1nsUBdc4akIdtnjwNAn8O8EZGUYq0qcqhc21vhydtq0Seh/vE26/HjM4U=
+	t=1740151760; cv=none; b=eDL83iQmVAv8P2t7Dtlc8mFIO01xFfxzS8200Ql7Dx7NNu8V+B8k8K7JG07XG2dF7xHK0LLJpn0sgQtdi9JwTPQ/o/7yO/9pN/o2v17fE7MLvEMFkps2NWbSawlOLkF3Fd/GxX7ekQ2jFB/pperouFHdyBcueW27yTjCV5s0zIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740151772; c=relaxed/simple;
-	bh=RPWq7Di80wCaezBdT5MKfthytldTTyeI8zqYu5ssG9A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DDvKG5ip7rwL5BrUHDXO8iw5zCJzZVvi7Bnmdf0G+aF27nIzscARr/hi6GIAYmZGIzgzueEZgq/rOBwiWCsOIiE2DCSkeUhQWcbQ7o4Eirc1041X2FFUULyWOuaNOzDK/RP2Z+BbR4lRbKdX1ZotoMtA5+9dc2WKnMtQ+MjXvAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=h+qejeEB; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740151768;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1740151760; c=relaxed/simple;
+	bh=FN3wVqvn0IQIfAHqCy6oCl28/dgMayTPYSnGR3Pm1zU=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=O7adedG1jA088SMpS4TC8deyXO2PYQ77IMH6QrZfwSjIhheHfnTbvs8dRwk4al8VFBUhSE/H8eOY1gP+5twCTvPUPS7y/UvTJX4TrhgSXw723PNwblsOyieKxMsCjAvHbh5OHk38x2iKO5Q2/WrdUqb0FO5CvXqFPcTJZzZVizM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=NXwZTEcD; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=F7rkwJCb; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 21 Feb 2025 15:29:04 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1740151755;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Ic1/uViOEImLUfOGxnGRSWveOc6wET399Ae2ZdSNHEc=;
-	b=h+qejeEBMi7n15RS4Ng0N3d2Rp74Lwg1RSMFqXHHwEJ7dsK+LscZ+xg0JQSxtdvxLSnINp
-	ClIbUDND+AHuH2oy1swcI2OKRkiTxGuLs0Ruoyrmc222yF0JQIwyqiD/cWpuigUN45aIvB
-	6Dj737DB5RHWeXAQxD6rJyk83w2gwVI=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-30-W3hhLAD0P8O_s-BkpsjBfQ-1; Fri,
- 21 Feb 2025 10:29:25 -0500
-X-MC-Unique: W3hhLAD0P8O_s-BkpsjBfQ-1
-X-Mimecast-MFC-AGG-ID: W3hhLAD0P8O_s-BkpsjBfQ_1740151763
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E2F6619373D8;
-	Fri, 21 Feb 2025 15:29:20 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.44.32.97])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 3BE231800943;
-	Fri, 21 Feb 2025 15:29:11 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Fri, 21 Feb 2025 16:28:51 +0100 (CET)
-Date: Fri, 21 Feb 2025 16:28:41 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: Tong Tiangen <tongtiangen@huawei.com>
-Cc: David Hildenbrand <david@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Peter Xu <peterx@redhat.com>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org,
-	bpf@vger.kernel.org, wangkefeng.wang@huawei.com,
-	Guohanjun <guohanjun@huawei.com>
-Subject: Re: [PATCH -next v2] uprobes: fix two zero old_folio bugs in
- __replace_page()
-Message-ID: <20250221152841.GA24705@redhat.com>
-References: <20250221015056.1269344-1-tongtiangen@huawei.com>
+	bh=jexkDkSD6taFW6G0zMw6c6AWCbmEYs2xm3WdGEeghC8=;
+	b=NXwZTEcDwxhzRPRJtSC4GUYprWBblgMb7ACxY4sAcr0s9ZsktjcGRZHqpHfot6D+Pja+WR
+	d5hRBS5fYgWo1jETsLghrpxzDIJoZ4scID9mE2OUT0st9B6igquinHKqe8sNj0B5jJscOg
+	Cd5nJoxPRMkjq+dLL/MB5AgB+62CEBTmkHuRBSZl/4p0nci7jukJ6B7+6fTTbKOEd0ggLF
+	z6SJXpoi2228QNQ28dl49g25C4t+NbduwwgXLc5GUY6NnAwvyp5DRNF4ykMiIhXoUga4On
+	be8Xtej+vw3LIf8xI2pbl2p4sH5fqjcbuRIPwADYgtnkCKkrKv4CN1LQHOT9ng==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1740151755;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jexkDkSD6taFW6G0zMw6c6AWCbmEYs2xm3WdGEeghC8=;
+	b=F7rkwJCbqirXbd/qCs82tct5N+ZmWyZdnFjUzYt19GHC3p15GQn+fVU/tp+u/JFnQhf4Rj
+	U6kuPvSO1GCDDeDQ==
+From: "tip-bot2 for Mike Rapoport (Microsoft)" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/boot] x86/e820: Drop obsolete E820_TYPE_RESERVED_KERN and
+ related code
+Cc: "Mike Rapoport (Microsoft)" <rppt@kernel.org>,
+ Ingo Molnar <mingo@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
+ Ard Biesheuvel <ardb@kernel.org>, Kees Cook <keescook@chromium.org>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250214090651.3331663-5-rppt@kernel.org>
+References: <20250214090651.3331663-5-rppt@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250221015056.1269344-1-tongtiangen@huawei.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+Message-ID: <174015175242.10177.981417045108157021.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On 02/21, Tong Tiangen wrote:
->
-> --- a/kernel/events/uprobes.c
-> +++ b/kernel/events/uprobes.c
-> @@ -506,6 +506,11 @@ int uprobe_write_opcode(struct arch_uprobe *auprobe, struct mm_struct *mm,
->  	if (ret <= 0)
->  		goto put_old;
->
-> +	if (is_zero_page(old_page)) {
-> +		ret = -EINVAL;
-> +		goto put_old;
-> +	}
+The following commit has been merged into the x86/boot branch of tip:
 
-I agree with David, the subject looks a bit misleading.
+Commit-ID:     efe659ac014647eb048d62475e55cce42d8951d7
+Gitweb:        https://git.kernel.org/tip/efe659ac014647eb048d62475e55cce42d8951d7
+Author:        Mike Rapoport (Microsoft) <rppt@kernel.org>
+AuthorDate:    Fri, 14 Feb 2025 11:06:51 +02:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Fri, 21 Feb 2025 16:05:00 +01:00
 
-And. I won't insist, this is cosmetic, but if you send V2 please consider
-moving the "verify_opcode()" check down, after the is_zero_page/PageCompound
-checks.
+x86/e820: Drop obsolete E820_TYPE_RESERVED_KERN and related code
 
-Oleg.
+E820_TYPE_RESERVED_KERN is a relict from the ancient history that was used
+to early reserve setup_data, see:
 
+  28bb22379513 ("x86: move reserve_setup_data to setup.c")
+
+Nowadays setup_data is anyway reserved in memblock and there is no point in
+carrying E820_TYPE_RESERVED_KERN that behaves exactly like E820_TYPE_RAM
+but only complicates the code.
+
+A bonus for removing E820_TYPE_RESERVED_KERN is a small but measurable
+speedup of 20 microseconds in init_mem_mappings() on a VM with 32GB or RAM.
+
+Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Ard Biesheuvel <ardb@kernel.org>
+Cc: Kees Cook <keescook@chromium.org>
+Link: https://lore.kernel.org/r/20250214090651.3331663-5-rppt@kernel.org
+---
+ arch/x86/include/asm/e820/api.h   |  1 +-
+ arch/x86/include/asm/e820/types.h |  9 +----
+ arch/x86/kernel/e820.c            | 65 +-----------------------------
+ arch/x86/kernel/setup.c           |  1 +-
+ arch/x86/kernel/tboot.c           |  3 +-
+ arch/x86/mm/init_64.c             |  8 +----
+ 6 files changed, 4 insertions(+), 83 deletions(-)
+
+diff --git a/arch/x86/include/asm/e820/api.h b/arch/x86/include/asm/e820/api.h
+index 2e74a7f..c83645d 100644
+--- a/arch/x86/include/asm/e820/api.h
++++ b/arch/x86/include/asm/e820/api.h
+@@ -29,7 +29,6 @@ extern unsigned long e820__end_of_low_ram_pfn(void);
+ extern u64  e820__memblock_alloc_reserved(u64 size, u64 align);
+ extern void e820__memblock_setup(void);
+ 
+-extern void e820__reserve_setup_data(void);
+ extern void e820__finish_early_params(void);
+ extern void e820__reserve_resources(void);
+ extern void e820__reserve_resources_late(void);
+diff --git a/arch/x86/include/asm/e820/types.h b/arch/x86/include/asm/e820/types.h
+index 314f75d..80c4a72 100644
+--- a/arch/x86/include/asm/e820/types.h
++++ b/arch/x86/include/asm/e820/types.h
+@@ -35,15 +35,6 @@ enum e820_type {
+ 	 * marking it with the IORES_DESC_SOFT_RESERVED designation.
+ 	 */
+ 	E820_TYPE_SOFT_RESERVED	= 0xefffffff,
+-
+-	/*
+-	 * Reserved RAM used by the kernel itself if
+-	 * CONFIG_INTEL_TXT=y is enabled, memory of this type
+-	 * will be included in the S3 integrity calculation
+-	 * and so should not include any memory that the BIOS
+-	 * might alter over the S3 transition:
+-	 */
+-	E820_TYPE_RESERVED_KERN	= 128,
+ };
+ 
+ /*
+diff --git a/arch/x86/kernel/e820.c b/arch/x86/kernel/e820.c
+index 8d8bd03..9fb67ab 100644
+--- a/arch/x86/kernel/e820.c
++++ b/arch/x86/kernel/e820.c
+@@ -187,8 +187,7 @@ void __init e820__range_add(u64 start, u64 size, enum e820_type type)
+ static void __init e820_print_type(enum e820_type type)
+ {
+ 	switch (type) {
+-	case E820_TYPE_RAM:		/* Fall through: */
+-	case E820_TYPE_RESERVED_KERN:	pr_cont("usable");			break;
++	case E820_TYPE_RAM:		pr_cont("usable");			break;
+ 	case E820_TYPE_RESERVED:	pr_cont("reserved");			break;
+ 	case E820_TYPE_SOFT_RESERVED:	pr_cont("soft reserved");		break;
+ 	case E820_TYPE_ACPI:		pr_cont("ACPI data");			break;
+@@ -764,7 +763,7 @@ void __init e820__register_nosave_regions(unsigned long limit_pfn)
+ 
+ 		pfn = PFN_DOWN(entry->addr + entry->size);
+ 
+-		if (entry->type != E820_TYPE_RAM && entry->type != E820_TYPE_RESERVED_KERN)
++		if (entry->type != E820_TYPE_RAM)
+ 			register_nosave_region(PFN_UP(entry->addr), pfn);
+ 
+ 		if (pfn >= limit_pfn)
+@@ -991,60 +990,6 @@ static int __init parse_memmap_opt(char *str)
+ early_param("memmap", parse_memmap_opt);
+ 
+ /*
+- * Reserve all entries from the bootloader's extensible data nodes list,
+- * because if present we are going to use it later on to fetch e820
+- * entries from it:
+- */
+-void __init e820__reserve_setup_data(void)
+-{
+-	struct setup_indirect *indirect;
+-	struct setup_data *data;
+-	u64 pa_data, pa_next;
+-	u32 len;
+-
+-	pa_data = boot_params.hdr.setup_data;
+-	if (!pa_data)
+-		return;
+-
+-	while (pa_data) {
+-		data = early_memremap(pa_data, sizeof(*data));
+-		if (!data) {
+-			pr_warn("e820: failed to memremap setup_data entry\n");
+-			return;
+-		}
+-
+-		len = sizeof(*data);
+-		pa_next = data->next;
+-
+-		e820__range_update(pa_data, sizeof(*data)+data->len, E820_TYPE_RAM, E820_TYPE_RESERVED_KERN);
+-
+-		if (data->type == SETUP_INDIRECT) {
+-			len += data->len;
+-			early_memunmap(data, sizeof(*data));
+-			data = early_memremap(pa_data, len);
+-			if (!data) {
+-				pr_warn("e820: failed to memremap indirect setup_data\n");
+-				return;
+-			}
+-
+-			indirect = (struct setup_indirect *)data->data;
+-
+-			if (indirect->type != SETUP_INDIRECT)
+-				e820__range_update(indirect->addr, indirect->len,
+-						   E820_TYPE_RAM, E820_TYPE_RESERVED_KERN);
+-		}
+-
+-		pa_data = pa_next;
+-		early_memunmap(data, len);
+-	}
+-
+-	e820__update_table(e820_table);
+-
+-	pr_info("extended physical RAM map:\n");
+-	e820__print_table("reserve setup_data");
+-}
+-
+-/*
+  * Called after parse_early_param(), after early parameters (such as mem=)
+  * have been processed, in which case we already have an E820 table filled in
+  * via the parameter callback function(s), but it's not sorted and printed yet:
+@@ -1063,7 +1008,6 @@ void __init e820__finish_early_params(void)
+ static const char *__init e820_type_to_string(struct e820_entry *entry)
+ {
+ 	switch (entry->type) {
+-	case E820_TYPE_RESERVED_KERN:	/* Fall-through: */
+ 	case E820_TYPE_RAM:		return "System RAM";
+ 	case E820_TYPE_ACPI:		return "ACPI Tables";
+ 	case E820_TYPE_NVS:		return "ACPI Non-volatile Storage";
+@@ -1079,7 +1023,6 @@ static const char *__init e820_type_to_string(struct e820_entry *entry)
+ static unsigned long __init e820_type_to_iomem_type(struct e820_entry *entry)
+ {
+ 	switch (entry->type) {
+-	case E820_TYPE_RESERVED_KERN:	/* Fall-through: */
+ 	case E820_TYPE_RAM:		return IORESOURCE_SYSTEM_RAM;
+ 	case E820_TYPE_ACPI:		/* Fall-through: */
+ 	case E820_TYPE_NVS:		/* Fall-through: */
+@@ -1101,7 +1044,6 @@ static unsigned long __init e820_type_to_iores_desc(struct e820_entry *entry)
+ 	case E820_TYPE_PRAM:		return IORES_DESC_PERSISTENT_MEMORY_LEGACY;
+ 	case E820_TYPE_RESERVED:	return IORES_DESC_RESERVED;
+ 	case E820_TYPE_SOFT_RESERVED:	return IORES_DESC_SOFT_RESERVED;
+-	case E820_TYPE_RESERVED_KERN:	/* Fall-through: */
+ 	case E820_TYPE_RAM:		/* Fall-through: */
+ 	case E820_TYPE_UNUSABLE:	/* Fall-through: */
+ 	default:			return IORES_DESC_NONE;
+@@ -1124,7 +1066,6 @@ static bool __init do_mark_busy(enum e820_type type, struct resource *res)
+ 	case E820_TYPE_PRAM:
+ 	case E820_TYPE_PMEM:
+ 		return false;
+-	case E820_TYPE_RESERVED_KERN:
+ 	case E820_TYPE_RAM:
+ 	case E820_TYPE_ACPI:
+ 	case E820_TYPE_NVS:
+@@ -1353,7 +1294,7 @@ void __init e820__memblock_setup(void)
+ 		if (entry->type == E820_TYPE_SOFT_RESERVED)
+ 			memblock_reserve(entry->addr, entry->size);
+ 
+-		if (entry->type != E820_TYPE_RAM && entry->type != E820_TYPE_RESERVED_KERN)
++		if (entry->type != E820_TYPE_RAM)
+ 			continue;
+ 
+ 		memblock_add(entry->addr, entry->size);
+diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
+index 6fb9a85..46d92d0 100644
+--- a/arch/x86/kernel/setup.c
++++ b/arch/x86/kernel/setup.c
+@@ -895,7 +895,6 @@ void __init setup_arch(char **cmdline_p)
+ 		setup_clear_cpu_cap(X86_FEATURE_APIC);
+ 	}
+ 
+-	e820__reserve_setup_data();
+ 	e820__finish_early_params();
+ 
+ 	if (efi_enabled(EFI_BOOT))
+diff --git a/arch/x86/kernel/tboot.c b/arch/x86/kernel/tboot.c
+index 4c1bcb6..46b8f1f 100644
+--- a/arch/x86/kernel/tboot.c
++++ b/arch/x86/kernel/tboot.c
+@@ -200,8 +200,7 @@ static int tboot_setup_sleep(void)
+ 	tboot->num_mac_regions = 0;
+ 
+ 	for (i = 0; i < e820_table->nr_entries; i++) {
+-		if ((e820_table->entries[i].type != E820_TYPE_RAM)
+-		 && (e820_table->entries[i].type != E820_TYPE_RESERVED_KERN))
++		if (e820_table->entries[i].type != E820_TYPE_RAM)
+ 			continue;
+ 
+ 		add_mac_region(e820_table->entries[i].addr, e820_table->entries[i].size);
+diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
+index 01ea7c6..519aa53 100644
+--- a/arch/x86/mm/init_64.c
++++ b/arch/x86/mm/init_64.c
+@@ -469,8 +469,6 @@ phys_pte_init(pte_t *pte_page, unsigned long paddr, unsigned long paddr_end,
+ 			    !e820__mapped_any(paddr & PAGE_MASK, paddr_next,
+ 					     E820_TYPE_RAM) &&
+ 			    !e820__mapped_any(paddr & PAGE_MASK, paddr_next,
+-					     E820_TYPE_RESERVED_KERN) &&
+-			    !e820__mapped_any(paddr & PAGE_MASK, paddr_next,
+ 					     E820_TYPE_ACPI))
+ 				set_pte_init(pte, __pte(0), init);
+ 			continue;
+@@ -526,8 +524,6 @@ phys_pmd_init(pmd_t *pmd_page, unsigned long paddr, unsigned long paddr_end,
+ 			    !e820__mapped_any(paddr & PMD_MASK, paddr_next,
+ 					     E820_TYPE_RAM) &&
+ 			    !e820__mapped_any(paddr & PMD_MASK, paddr_next,
+-					     E820_TYPE_RESERVED_KERN) &&
+-			    !e820__mapped_any(paddr & PMD_MASK, paddr_next,
+ 					     E820_TYPE_ACPI))
+ 				set_pmd_init(pmd, __pmd(0), init);
+ 			continue;
+@@ -615,8 +611,6 @@ phys_pud_init(pud_t *pud_page, unsigned long paddr, unsigned long paddr_end,
+ 			    !e820__mapped_any(paddr & PUD_MASK, paddr_next,
+ 					     E820_TYPE_RAM) &&
+ 			    !e820__mapped_any(paddr & PUD_MASK, paddr_next,
+-					     E820_TYPE_RESERVED_KERN) &&
+-			    !e820__mapped_any(paddr & PUD_MASK, paddr_next,
+ 					     E820_TYPE_ACPI))
+ 				set_pud_init(pud, __pud(0), init);
+ 			continue;
+@@ -704,8 +698,6 @@ phys_p4d_init(p4d_t *p4d_page, unsigned long paddr, unsigned long paddr_end,
+ 			    !e820__mapped_any(paddr & P4D_MASK, paddr_next,
+ 					     E820_TYPE_RAM) &&
+ 			    !e820__mapped_any(paddr & P4D_MASK, paddr_next,
+-					     E820_TYPE_RESERVED_KERN) &&
+-			    !e820__mapped_any(paddr & P4D_MASK, paddr_next,
+ 					     E820_TYPE_ACPI))
+ 				set_p4d_init(p4d, __p4d(0), init);
+ 			continue;
 
