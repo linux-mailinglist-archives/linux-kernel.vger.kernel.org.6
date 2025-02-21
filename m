@@ -1,85 +1,75 @@
-Return-Path: <linux-kernel+bounces-526198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 118E8A3FBB6
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:44:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C25FEA3FB9A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:40:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 114F18844BF
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:29:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15B748613B5
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:30:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB2CD1EE028;
-	Fri, 21 Feb 2025 16:29:03 +0000 (UTC)
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A7E51F3BBC;
+	Fri, 21 Feb 2025 16:30:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IBrZU0d8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03DDE1ADC6F;
-	Fri, 21 Feb 2025 16:29:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 855E41F2388;
+	Fri, 21 Feb 2025 16:30:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740155343; cv=none; b=Hcazws1uIr2ryFE6uW9BLnR56lGF47uQPKzZXMi+hUo3Pq6r1B3I0yPevdycXX4UrlVtUAZnmgWXoFGWr6uI+r8vWWYQ7/DKki8rPanRRLpJP1b9oySFnrGmCTvUOSdadQ9I28mt6U/HFwjsZXMTeyixSv7x8knRe15P2ygM7F8=
+	t=1740155435; cv=none; b=kO7Cjb9MfuXDufZserkme9169TueP9AMXh7IlIzFBt2pjk3WDfSO9iLdlKkuYA5s0FBupADiqDvnzTvtq6Z0tq5WfEHEzpUR4qnrH9On521zlSQgEsxoj/SRrThFmQuBV+Iwh0H1Z/hgpLguQcDa8Mw1H3sa+kJ0JuKnwDl3QbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740155343; c=relaxed/simple;
-	bh=2ATtzT02wCwcEbZK1lFLROTj13r4al03IL2WJgZYNMY=;
+	s=arc-20240116; t=1740155435; c=relaxed/simple;
+	bh=peJoIjn/lcRBU6pV4UiXQxxm+ZfErwKhGJ/8tg/aPdU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qjiu5WM1wiv0MM7O89j1HN4ZZEOU6egE3QO+qiFhdwb1qN4oklzUQC41toU7fVkAHfnlAxKL5s0+IwSkPOPgP7mJryr3cKq0rYj51kk2neAxzEkpXpOWQfbsTcwSLQG1IeF5RFdwX2UQkP+cvGSZHODGb6qj3Dtr23NLP526gW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-220bff984a0so46447265ad.3;
-        Fri, 21 Feb 2025 08:29:01 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740155341; x=1740760141;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=auYo1q28WZyuHNh2pfR3G8yFEtkgsHI7ZygRzgYrpuw=;
-        b=wH0zSG9v27XemUDMBn8nKhGNCIdu6aEA1yuTkz/8CQStlE79EGoUKl0AN7ZaKlywSE
-         IaCY+q+wtjERMDEMXHoWedgGDkZrKE5OBjQJnNt4bhYocTrDH+ca94HO9d9dijDuhdyX
-         tYcM3pmmtwMayAOC3X4rJxlRy7Mg6eAPCscxlx09Lvk7Wk5jmfQdBRMkjYVMHB8c6mL0
-         3Y/bubeQJl6WrKXoX0KTbVNZuhJon41kyApysUdJl5Ca+7OJjty3KjFPAgyXyekTZosq
-         PB0tvCuelQamy0nPJKErNU1MWUX0BBYicJrLlKGkpsekENF35xTY2mkPFzhoSccNnfum
-         /3eQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUFcRR2G38TZEW0UkYu7Ub+aKNOEEIGqMe/Av9Ic2u24RWH44cs0w2Mgo+XO8ysjehYA2irxKfpQv3Z@vger.kernel.org, AJvYcCWyp9dfo4QZoDaTYHgHQ+PZGjVxURM1V1HYggcBuierXnJgq3LBPHJtxGHQVoONBRZF2JB6ZIzJ5xMp@vger.kernel.org
-X-Gm-Message-State: AOJu0YzAdHJsv48wR5FPT/gG5Y1MianSI6UIGuByW+wkopI8GB70zBGd
-	pfu9n81Qg6aHaRaCZWZqdSebWTuEpAH8cVHZ2V9xq4QsO2/ThTAB
-X-Gm-Gg: ASbGncuvQ+SNMPLhk63qCwyDInszsMKkB9uCRY5EjWoNSV6n6IeOwa4PfD0F9XE0OHa
-	UlFg6J2SQt2oQPa/XSpV9vkoPFp782ph21Pm0WDxTwEJjlzwdT7I1eT0ZZj+33qboord3U5aize
-	mDBGr/ClbyJf/EWFrMtjxeEtVZ39z0+S8KBADHC+eP3k/z9uLWNe8Smj3dRCO5s7Ezel1vUKynC
-	OrQoiEuQTLBKcCTGzXFGLGzs6Gc/ugoSFaB7zAyUMt7Jhx5q454P4va6aEcQjiQhyOAZFOPTO4Q
-	mHqqySUvlUYxKrFu5TPKWanxqXUDYrswmclqiVTNfixsTXEcsfPNkxtTJmuY
-X-Google-Smtp-Source: AGHT+IFnKdGjvlhZUCgvom/r84nNQnNYczGg1sVtsp3HGbrc13BuFoyVtD/Y/b8wcoZfazYzawaYOA==
-X-Received: by 2002:a17:902:e5c2:b0:221:7b4a:475a with SMTP id d9443c01a7336-2219ffe1401mr54015415ad.52.1740155341168;
-        Fri, 21 Feb 2025 08:29:01 -0800 (PST)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-220d5349061sm140095945ad.5.2025.02.21.08.28.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Feb 2025 08:29:00 -0800 (PST)
-Date: Sat, 22 Feb 2025 01:28:58 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: Stanimir Varbanov <svarbanov@suse.de>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rpi-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Jim Quinlan <jim2101024@gmail.com>,
-	Nicolas Saenz Julienne <nsaenz@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Andrea della Porta <andrea.porta@suse.com>,
-	Phil Elwell <phil@raspberrypi.com>,
-	Jonathan Bell <jonathan@raspberrypi.com>,
-	Dave Stevenson <dave.stevenson@raspberrypi.com>
-Subject: Re: [PATCH v5 -next 00/11] Add PCIe support for bcm2712
-Message-ID: <20250221162858.GE3753638@rocinante>
-References: <20250120130119.671119-1-svarbanov@suse.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=bVYRmXHXQWFvS8uumS4Ig4Em7qRR7ne+vRlHzX5ptcvafM4Sp89HafDdFWPmKXQeAYjkvkN/I8sPKhcPOKlojxtniGIBN14szAOP4jkI8uED0z93AapM9qn7Yy0Fp6jvop9nXRadM6nKzhc6OyG8sWi/IvBzl5FXiyEt5EQ7ESo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IBrZU0d8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1702AC4CED6;
+	Fri, 21 Feb 2025 16:30:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740155435;
+	bh=peJoIjn/lcRBU6pV4UiXQxxm+ZfErwKhGJ/8tg/aPdU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IBrZU0d8BAYwdl1hhWZIz2ADAu1Bb4i21ZBFgizW6LukDfTPfF2IEFSzn70jG1+Lq
+	 H3y8mbF6U2kySYBGPxfok4RIbRSiVorznbcfL4hoC38izjBtQfHHq9RxR5fSDY6rAb
+	 N0gvdlVliwjj+dMS5uLu3EsFhxm38xL0FZCLkUAJVe/9sXZdrRR8Yno0Jp4QS1VezO
+	 cMz2BJl/kJMu3OUZIStoQNmEKo8mnkyc+BA46GqyZL2wTUkobyU+OalyQtS4oVg9yH
+	 IRcz68b5DjF6QDcPaBaJRzBqcLHK8rI3p3LsFDTijbNkZP37TGrHlp07eiMcmHHI0e
+	 uWw0ojmIpRufg==
+Date: Fri, 21 Feb 2025 09:30:30 -0700
+From: Keith Busch <kbusch@kernel.org>
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: "Paul E. McKenney" <paulmck@kernel.org>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Boqun Feng <boqun.feng@gmail.com>, Christoph Lameter <cl@linux.com>,
+	David Rientjes <rientjes@google.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>,
+	Julia Lawall <Julia.Lawall@inria.fr>,
+	Jakub Kicinski <kuba@kernel.org>,
+	"Jason A. Donenfeld" <Jason@zx2c4.com>,
+	"Uladzislau Rezki (Sony)" <urezki@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
+	Alexander Potapenko <glider@google.com>,
+	Marco Elver <elver@google.com>, Dmitry Vyukov <dvyukov@google.com>,
+	kasan-dev@googlegroups.com, Jann Horn <jannh@google.com>,
+	Mateusz Guzik <mjguzik@gmail.com>, linux-nvme@lists.infradead.org,
+	leitao@debian.org
+Subject: Re: [PATCH v2 6/7] mm, slab: call kvfree_rcu_barrier() from
+ kmem_cache_destroy()
+Message-ID: <Z7iqJtCjHKfo8Kho@kbusch-mbp>
+References: <20240807-b4-slab-kfree_rcu-destroy-v2-0-ea79102f428c@suse.cz>
+ <20240807-b4-slab-kfree_rcu-destroy-v2-6-ea79102f428c@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,16 +78,115 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250120130119.671119-1-svarbanov@suse.de>
+In-Reply-To: <20240807-b4-slab-kfree_rcu-destroy-v2-6-ea79102f428c@suse.cz>
 
-Hello,
-
-> Here is v5 of the series which aims to add support for PCIe on bcm2712 SoC
-> used by RPi5. Previous v4 can be found at [1].
+On Wed, Aug 07, 2024 at 12:31:19PM +0200, Vlastimil Babka wrote:
+> We would like to replace call_rcu() users with kfree_rcu() where the
+> existing callback is just a kmem_cache_free(). However this causes
+> issues when the cache can be destroyed (such as due to module unload).
 > 
-> Based the series on linux-next because of vc4 gpu node in bcm2712.dtsi.
+> Currently such modules should be issuing rcu_barrier() before
+> kmem_cache_destroy() to have their call_rcu() callbacks processed first.
+> This barrier is however not sufficient for kfree_rcu() in flight due
+> to the batching introduced by a35d16905efc ("rcu: Add basic support for
+> kfree_rcu() batching").
+> 
+> This is not a problem for kmalloc caches which are never destroyed, but
+> since removing SLOB, kfree_rcu() is allowed also for any other cache,
+> that might be destroyed.
+> 
+> In order not to complicate the API, put the responsibility for handling
+> outstanding kfree_rcu() in kmem_cache_destroy() itself. Use the newly
+> introduced kvfree_rcu_barrier() to wait before destroying the cache.
+> This is similar to how we issue rcu_barrier() for SLAB_TYPESAFE_BY_RCU
+> caches, but has to be done earlier, as the latter only needs to wait for
+> the empty slab pages to finish freeing, and not objects from the slab.
+> 
+> Users of call_rcu() with arbitrary callbacks should still issue
+> rcu_barrier() before destroying the cache and unloading the module, as
+> kvfree_rcu_barrier() is not a superset of rcu_barrier() and the
+> callbacks may be invoking module code or performing other actions that
+> are necessary for a successful unload.
+> 
+> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+> ---
+>  mm/slab_common.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/mm/slab_common.c b/mm/slab_common.c
+> index c40227d5fa07..1a2873293f5d 100644
+> --- a/mm/slab_common.c
+> +++ b/mm/slab_common.c
+> @@ -508,6 +508,9 @@ void kmem_cache_destroy(struct kmem_cache *s)
+>  	if (unlikely(!s) || !kasan_check_byte(s))
+>  		return;
+>  
+> +	/* in-flight kfree_rcu()'s may include objects from our cache */
+> +	kvfree_rcu_barrier();
+> +
+>  	cpus_read_lock();
+>  	mutex_lock(&slab_mutex);
 
-Applied to controller/brcmstb, thank you!
+This patch appears to be triggering a new warning in certain conditions
+when tearing down an nvme namespace's block device. Stack trace is at
+the end.
 
-	Krzysztof
+The warning indicates that this shouldn't be called from a
+WQ_MEM_RECLAIM workqueue. This workqueue is responsible for bringing up
+and tearing down block devices, so this is a memory reclaim use AIUI.
+I'm a bit confused why we can't tear down a disk from within a memory
+reclaim workqueue. Is the recommended solution to simply remove the WQ
+flag when creating the workqueue?
+
+  ------------[ cut here ]------------
+  workqueue: WQ_MEM_RECLAIM nvme-wq:nvme_scan_work is flushing !WQ_MEM_RECLAIM events_unbound:kfree_rcu_work
+  WARNING: CPU: 21 PID: 330 at kernel/workqueue.c:3719 check_flush_dependency+0x112/0x120
+  Modules linked in: intel_uncore_frequency(E) intel_uncore_frequency_common(E) skx_edac(E) skx_edac_common(E) nfit(E) libnvdimm(E) x86_pkg_temp_thermal(E) intel_powerclamp(E) coretemp(E) kvm_intel(E) iTCO_wdt(E) xhci_pci(E) mlx5_ib(E) ipmi_si(E) iTCO_vendor_support(E) i2c_i801(E) ipmi_devintf(E) evdev(E) kvm(E) xhci_hcd(E) ib_uverbs(E) acpi_cpufreq(E) wmi(E) i2c_smbus(E) ipmi_msghandler(E) button(E) efivarfs(E) autofs4(E)
+  CPU: 21 UID: 0 PID: 330 Comm: kworker/u144:6 Tainted: G            E      6.13.2-0_g925d379822da #1
+  Hardware name: Wiwynn Twin Lakes MP/Twin Lakes Passive MP, BIOS YMM20 02/01/2023
+  Workqueue: nvme-wq nvme_scan_work
+  RIP: 0010:check_flush_dependency+0x112/0x120
+  Code: 05 9a 40 14 02 01 48 81 c6 c0 00 00 00 48 8b 50 18 48 81 c7 c0 00 00 00 48 89 f9 48 c7 c7 90 64 5a 82 49 89 d8 e8 7e 4f 88 ff <0f> 0b eb 8c cc cc cc cc cc cc cc cc cc cc 0f 1f 44 00 00 41 57 41
+  RSP: 0018:ffffc90000df7bd8 EFLAGS: 00010082
+  RAX: 000000000000006a RBX: ffffffff81622390 RCX: 0000000000000027
+  RDX: 00000000fffeffff RSI: 000000000057ffa8 RDI: ffff88907f960c88
+  RBP: 0000000000000000 R08: ffffffff83068e50 R09: 000000000002fffd
+  R10: 0000000000000004 R11: 0000000000000000 R12: ffff8881001a4400
+  R13: 0000000000000000 R14: ffff88907f420fb8 R15: 0000000000000000
+  FS:  0000000000000000(0000) GS:ffff88907f940000(0000) knlGS:0000000000000000
+  CR2: 00007f60c3001000 CR3: 000000107d010005 CR4: 00000000007726f0
+  PKRU: 55555554
+  Call Trace:
+   <TASK>
+   ? __warn+0xa4/0x140
+   ? check_flush_dependency+0x112/0x120
+   ? report_bug+0xe1/0x140
+   ? check_flush_dependency+0x112/0x120
+   ? handle_bug+0x5e/0x90
+   ? exc_invalid_op+0x16/0x40
+   ? asm_exc_invalid_op+0x16/0x20
+   ? timer_recalc_next_expiry+0x190/0x190
+   ? check_flush_dependency+0x112/0x120
+   ? check_flush_dependency+0x112/0x120
+   __flush_work.llvm.1643880146586177030+0x174/0x2c0
+   flush_rcu_work+0x28/0x30
+   kvfree_rcu_barrier+0x12f/0x160
+   kmem_cache_destroy+0x18/0x120
+   bioset_exit+0x10c/0x150
+   disk_release.llvm.6740012984264378178+0x61/0xd0
+   device_release+0x4f/0x90
+   kobject_put+0x95/0x180
+   nvme_put_ns+0x23/0xc0
+   nvme_remove_invalid_namespaces+0xb3/0xd0
+   nvme_scan_work+0x342/0x490
+   process_scheduled_works+0x1a2/0x370
+   worker_thread+0x2ff/0x390
+   ? pwq_release_workfn+0x1e0/0x1e0
+   kthread+0xb1/0xe0
+   ? __kthread_parkme+0x70/0x70
+   ret_from_fork+0x30/0x40
+   ? __kthread_parkme+0x70/0x70
+   ret_from_fork_asm+0x11/0x20
+   </TASK>
+  ---[ end trace 0000000000000000 ]---
 
