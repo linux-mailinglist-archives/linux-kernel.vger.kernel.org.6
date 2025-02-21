@@ -1,122 +1,157 @@
-Return-Path: <linux-kernel+bounces-525412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F1D8A3EF8C
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:08:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C7AEA3EF8F
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:08:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13815175EB6
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:07:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88AEA188223E
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:08:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C005D2036F9;
-	Fri, 21 Feb 2025 09:07:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="sVkzAQAs";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1s81yxFB"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DE60204590;
+	Fri, 21 Feb 2025 09:07:33 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB372200BB8;
-	Fri, 21 Feb 2025 09:07:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3B94204096;
+	Fri, 21 Feb 2025 09:07:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740128845; cv=none; b=ItqgtqMDrgxrTm6VLL1GXIxPHIYD3s/MtOSHuwujnbQCjV7dSVKNe7/ZWRVIWemUb2G/Hah1LSr3X2GcZ0z3LoEsrZaWuJndFPB6GecwaGqr0B7iFYhvLD4zNMu+C345K7FudsIiTRACiNLcHSaJPD9gw4NZKYiUdp783yEQtfk=
+	t=1740128853; cv=none; b=DKD0R1RwvmU0pyQj4zPm3o71EDVS1hAocBpFPQblvzut1uVIBNwCx3mRNHSrnrD/obQyfclB8e1d6egKaViVzEAmUOgw0nadDQC9AkU5EkemrBE5zpOILfZnipbtvxggsF4Rj7411RjzLApO+iZpEeCGoPj0jtZ8kcKnyAlj2lU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740128845; c=relaxed/simple;
-	bh=0h0KpTGZDIVKElckKrZ+svrK42oXdAOUjJmyf+eJKIk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=kZehkx31jt/LgE1F3ZOYR4ZD5KRrFOF4IzuQsSqKT01Rw0tlNDKOamkCLjLICceXYHF/gav2ZYGYXH600RyYg89JZVzTO12O3eUHxaHuztbFOP8rRkuVcQTTQJIDTNC+wOcBQaX2+eMm2omMLuQjq9gex2vdd/iBH27PWraOdfc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=sVkzAQAs; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1s81yxFB; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1740128842;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GvIQ8d5TYCzCTqp4FjW1nkQDlwUNWCKgzYX5Dv2bm5E=;
-	b=sVkzAQAsvdHbBqFtg7QgnAn6l5yKDF8NHa3H9r8wViYVWLFwrnfbAMGvtA10nL3lIsm45q
-	GsKjn76FujDmJY41kEqOTOpWcZmKE/EeNEqeaRkeDAqFlXWjWeD65PPhSHXy8NPXGus4s+
-	OQStSauBYfW41bVXuRs5YT/UiFPpqB1KeYaueaetAAqbw1JB5ZS+/+INLYiepoToMsFB/e
-	H6GENMhowl7fLn/3Kukx/Ydq+O5iwuHojqGLdNdPOr8OTjxX7CVQnWL+UHxxofNu5Oj7IY
-	Mi0RzzLBxl4BDooHUzFWRqDHhJqZt+ogZYy0XYvl42YQkC9k6siMSYqJlxzhxQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1740128842;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GvIQ8d5TYCzCTqp4FjW1nkQDlwUNWCKgzYX5Dv2bm5E=;
-	b=1s81yxFBfBM6r5o8P7Xc//nNkIUNEmn04A1iCXJM+bKCkKdc0ram9G7uNYN43Z8lWU4v2X
-	FpRM3tkDIFG0psCw==
-To: Xianwei Zhao via B4 Relay <devnull+xianwei.zhao.amlogic.com@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Neil Armstrong
- <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, Jerome
- Brunet <jbrunet@baylibre.com>, Martin Blumenstingl
- <martin.blumenstingl@googlemail.com>, Heiner Kallweit
- <hkallweit1@gmail.com>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org,
- Xianwei Zhao <xianwei.zhao@amlogic.com>
-Subject: Re: [PATCH 2/4] irqchip: Add support for Amlogic A4 and A5 SoCs
-In-Reply-To: <20250219-irqchip-gpio-a4-a5-v1-2-3c8e44ae42df@amlogic.com>
-References: <20250219-irqchip-gpio-a4-a5-v1-0-3c8e44ae42df@amlogic.com>
- <20250219-irqchip-gpio-a4-a5-v1-2-3c8e44ae42df@amlogic.com>
-Date: Fri, 21 Feb 2025 10:07:21 +0100
-Message-ID: <87o6yvhdiu.ffs@tglx>
+	s=arc-20240116; t=1740128853; c=relaxed/simple;
+	bh=+neqxwX4CL/sv7YarzkigmtgjKOZDE/nFmT4qUSQKXQ=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=e2chaEB7t2h3XzOOY2OHisFoGcr0l59iGVbvR1lMADp+wTrs8Qoq/lVgFo74K5osfMabpEtAMxTI31s9JcaRxym5EGn6DQQbr80Y3htXHIxYR8G6ST2ac26rvAvoYYs6/d0dgIMtYgI7+AHTt79aV5yHckDs4q/FQi3f6o+1szk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Yzklz023vz4f3jqN;
+	Fri, 21 Feb 2025 17:07:11 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 58AD71A058E;
+	Fri, 21 Feb 2025 17:07:27 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP4 (Coremail) with SMTP id gCh0CgDHKl9NQrhnVePhEQ--.4246S3;
+	Fri, 21 Feb 2025 17:07:26 +0800 (CST)
+Subject: Re: [PATCH 02/12] badblocks: factor out a helper try_adjacent_combine
+To: Zheng Qixing <zhengqixing@huaweicloud.com>, axboe@kernel.dk,
+ song@kernel.org, colyli@kernel.org, dan.j.williams@intel.com,
+ vishal.l.verma@intel.com, dave.jiang@intel.com, ira.weiny@intel.com,
+ dlemoal@kernel.org, yanjun.zhu@linux.dev, kch@nvidia.com, hare@suse.de,
+ zhengqixing@huawei.com, john.g.garry@oracle.com, geliang@kernel.org,
+ xni@redhat.com, colyli@suse.de
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-raid@vger.kernel.org, nvdimm@lists.linux.dev, yi.zhang@huawei.com,
+ yangerkun@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
+References: <20250221081109.734170-1-zhengqixing@huaweicloud.com>
+ <20250221081109.734170-3-zhengqixing@huaweicloud.com>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <cfad3954-0572-1da8-38a3-85c8b1164371@huaweicloud.com>
+Date: Fri, 21 Feb 2025 17:07:25 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20250221081109.734170-3-zhengqixing@huaweicloud.com>
+Content-Type: text/plain; charset=gbk; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgDHKl9NQrhnVePhEQ--.4246S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7tFWrJr4rtr43Jw1xWw4rKrg_yoW8tw47pr
+	n8Aw1avryxCr1I9a13XanFyr1rCw1xJr4jyF47Jw18GFy8tw1IgF4ktw13ZF9FvrWxJFna
+	qr1UuFyv9FW8t37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9ab4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
+	e2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4I
+	kC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWU
+	WwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr
+	0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26F4j6r4UJwCI42IY6xAIw20EY4v20xvaj40_
+	Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8Jr
+	UvcSsGvfC2KfnxnUUI43ZEXa7IU07PEDUUUUU==
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On Wed, Feb 19 2025 at 15:29, Xianwei Zhao via wrote:
->  
-> +static int meson_ao_gpio_irq_set_type(struct meson_gpio_irq_controller *ctl,
-> +				      unsigned int type, u32 *channel_hwirq)
+ÔÚ 2025/02/21 16:10, Zheng Qixing Ð´µÀ:
+> From: Li Nan <linan122@huawei.com>
+> 
+> Factor out try_adjacent_combine(), and it will be used in the later patch.
+> 
+> Signed-off-by: Li Nan <linan122@huawei.com>
+> ---
+>   block/badblocks.c | 40 ++++++++++++++++++++++++++--------------
+>   1 file changed, 26 insertions(+), 14 deletions(-)
+> 
+LGTM
+Reviewed-by: Yu Kuai <yukuai3@huawei.com>
+> diff --git a/block/badblocks.c b/block/badblocks.c
+> index bcee057efc47..f069c93e986d 100644
+> --- a/block/badblocks.c
+> +++ b/block/badblocks.c
+> @@ -855,6 +855,31 @@ static void badblocks_update_acked(struct badblocks *bb)
+>   		bb->unacked_exist = 0;
+>   }
+>   
+> +/*
+> + * Return 'true' if the range indicated by 'bad' is exactly backward
+> + * overlapped with the bad range (from bad table) indexed by 'behind'.
+> + */
+> +static bool try_adjacent_combine(struct badblocks *bb, int prev)
 > +{
-> +	u32 val = 0;
-> +	unsigned int idx;
+> +	u64 *p = bb->page;
 > +
-> +	idx = meson_gpio_irq_get_channel_idx(ctl, channel_hwirq);
+> +	if (prev >= 0 && (prev + 1) < bb->count &&
+> +	    BB_END(p[prev]) == BB_OFFSET(p[prev + 1]) &&
+> +	    (BB_LEN(p[prev]) + BB_LEN(p[prev + 1])) <= BB_MAX_LEN &&
+> +	    BB_ACK(p[prev]) == BB_ACK(p[prev + 1])) {
+> +		p[prev] = BB_MAKE(BB_OFFSET(p[prev]),
+> +				  BB_LEN(p[prev]) + BB_LEN(p[prev + 1]),
+> +				  BB_ACK(p[prev]));
 > +
-> +	type &= IRQ_TYPE_SENSE_MASK;
-> +
-> +	meson_gpio_irq_update_bits(ctl, REG_EDGE_POL_AO, BIT(idx), 0);
-> +
-> +	if (type == IRQ_TYPE_EDGE_BOTH) {
-> +		val |= BIT(ctl->params->edge_both_offset + (idx));
-> +		meson_gpio_irq_update_bits(ctl, REG_EDGE_POL_AO,
-> +					   BIT(ctl->params->edge_both_offset + (idx)), val);
-> +		return 0;
+> +		if ((prev + 2) < bb->count)
+> +			memmove(p + prev + 1, p + prev + 2,
+> +				(bb->count -  (prev + 2)) * 8);
+> +		bb->count--;
+> +		return true;
 > +	}
+> +	return false;
+> +}
 > +
-> +	if (type & (IRQ_TYPE_LEVEL_LOW | IRQ_TYPE_EDGE_FALLING))
-> +		val |= BIT(ctl->params->pol_low_offset + idx);
-> +
-> +	if (type & (IRQ_TYPE_EDGE_RISING | IRQ_TYPE_EDGE_FALLING))
-> +		val |= BIT(ctl->params->edge_single_offset + idx);
-> +
-> +	meson_gpio_irq_update_bits(ctl, REG_EDGE_POL,
-> +				   BIT(idx) | BIT(12 + idx), val);
-> +
-> +	return 0;
-> +};
+>   /* Do exact work to set bad block range into the bad block table */
+>   static int _badblocks_set(struct badblocks *bb, sector_t s, int sectors,
+>   			  int acknowledged)
+> @@ -1022,20 +1047,7 @@ static int _badblocks_set(struct badblocks *bb, sector_t s, int sectors,
+>   	 * merged. (prev < 0) condition is not handled here,
+>   	 * because it's already complicated enough.
+>   	 */
+> -	if (prev >= 0 &&
+> -	    (prev + 1) < bb->count &&
+> -	    BB_END(p[prev]) == BB_OFFSET(p[prev + 1]) &&
+> -	    (BB_LEN(p[prev]) + BB_LEN(p[prev + 1])) <= BB_MAX_LEN &&
+> -	    BB_ACK(p[prev]) == BB_ACK(p[prev + 1])) {
+> -		p[prev] = BB_MAKE(BB_OFFSET(p[prev]),
+> -				  BB_LEN(p[prev]) + BB_LEN(p[prev + 1]),
+> -				  BB_ACK(p[prev]));
+> -
+> -		if ((prev + 2) < bb->count)
+> -			memmove(p + prev + 1, p + prev + 2,
+> -				(bb->count -  (prev + 2)) * 8);
+> -		bb->count--;
+> -	}
+> +	try_adjacent_combine(bb, prev);
+>   
+>   	if (space_desired && !badblocks_full(bb)) {
+>   		s = orig_start;
+> 
 
-This function is a full copy of meson_s4_gpio_irq_set_type() with the
-only difference of:
-
-           s/REG_EDGE_POL_S4/REG_EDGE_POL_AO/
-
-Can you please stick that register offset into the parameter structure
-and use the function for both variants?
-
-Thanks,
-
-        tglx
 
