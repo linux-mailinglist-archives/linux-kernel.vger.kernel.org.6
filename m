@@ -1,118 +1,189 @@
-Return-Path: <linux-kernel+bounces-525352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 880C7A3EEE4
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:42:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8B8DA3EEE7
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:42:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBE9819C321D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 08:42:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 721A43A5B9B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 08:42:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC29A20102A;
-	Fri, 21 Feb 2025 08:42:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 893BB201249;
+	Fri, 21 Feb 2025 08:42:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="kfGKmFqr";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="srR+I1cW"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B08O8XZt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C31671B0406
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 08:42:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5B7C201004;
+	Fri, 21 Feb 2025 08:42:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740127357; cv=none; b=DSXzdOMQ/phCZdiyMEwpSTQVSYGtXPkDQ21rUcgFVWvLpTEBWR/9vuzE2Lh2UufWhpLk+pa1Epx7prapGD67rvi9ZA7KFaZtq3YBHmDZjrX5tImA39MSKbj7oL2TRYAwjNbkOhttkGi2nPLoCDTI7CtuAlJpRQYbdRu+RR69y/8=
+	t=1740127365; cv=none; b=cMfDAETc/8WgZDIBtqfTYK7VZTQbTKdN/1v3HXKc0HoZ6ofuNbJT0bYQ9zVXbpWpMKFKKC27qiRUaiO4xIW2E5ut6W1n7c/jZr7M3Ld6xF9Tnm40lfAzoiJKMRmeuFCPWv1bFPpjvQQ6UieNI0haNTu1Ra75eaf8HpZQKDecTqU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740127357; c=relaxed/simple;
-	bh=aQugDc1TgMoiAluzr/ZwOKQLVI9JjCwit02YYaVSkkY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NqBYbxdjna6ImXKI/BTE5LDL///z1neJVcCuqIgP8qw9SRzKPSCvHAJdliRno8o+0CRu+zxut7IKihMD/z+jyrfcAvx4/7RmwLwzjtylXLMw03k9JawVOxrir1Y1M/+pwXxN4kLIibLT0SrqecodXouRZcGxRX5J+1jRThgu7YY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=kfGKmFqr; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=srR+I1cW; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 21 Feb 2025 09:42:32 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1740127354;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kfWyW3Ru7mRAcB4wq3FWMDy1z1YI9IDwUbQQozwZ2fs=;
-	b=kfGKmFqrsUsC5Btlox5K/xTLxBkL5kMb4J/6BBU6q4SsReXp8/SESVsTCKZ/1rBfbTfgHr
-	uie01s8+0U3EgF5lUgI3VvuJ6xvCzoK1wER+xvdhrcmvQvbocLplcxWuhgcTRsX8TT6gh+
-	4mBtMd40bPje8WbgcDvXa4XhCb6jV4muOrKM5BzgCjMoSOSYIMHmwyDCj91rn/kAuIkFQ4
-	vtCv+z46oF/wccsYi4W7RVXyRXgRYWURsFYWwsJEXvdtiVh9xmnFCoKhvUh+fJ73yqCcqv
-	9KJsq1tQ5MqLgps6Ex0mcNlIOHhY24arZSGXxMwsc4c6iyTIByr3s9WZnP51ww==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1740127354;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kfWyW3Ru7mRAcB4wq3FWMDy1z1YI9IDwUbQQozwZ2fs=;
-	b=srR+I1cWWWSLd48L5cbU+8tnEAw4D199lz2dx4HcvuF9hUvesAbuPN6YVVAuC0SUeyTVRE
-	qBPQtRLrfuYeKRCA==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: syzbot <syzbot+ecccecbc636b455f9084@syzkaller.appspotmail.com>,
-	gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com, tj@kernel.org,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH] kernfs: Move dput() outside of the RCU section.
-Message-ID: <20250221084232.xksA_IQ4@linutronix.de>
-References: <67b45276.050a0220.173698.004f.GAE@google.com>
- <20250218163938.xmvjlJ0K@linutronix.de>
- <20250220203924.GL1977892@ZenIV>
+	s=arc-20240116; t=1740127365; c=relaxed/simple;
+	bh=tiSil00U2JnnP/E3p6huezKqRMcZxe+h8zlz8nw2jKs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OVic2l1e2zsjhwQZswLV4ZCuezoucrjVcsvbBv+WSXfjWJsyDCbMPO7GBPP27lzDNZYE6hv1imOobccwNxBUrlQwY3fyeMDa3LtGPntJF+2D+YDKboKTHqDymXFf0ytuvZceffVG1myFcdltLHmeDHnlCquNfXeEqyuydHoAb8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B08O8XZt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C868BC4CED6;
+	Fri, 21 Feb 2025 08:42:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740127365;
+	bh=tiSil00U2JnnP/E3p6huezKqRMcZxe+h8zlz8nw2jKs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=B08O8XZtpmkFmyuZRyImuXZVPePB/tjexi6Y/rSbdFMvp/WHg67u+UOAjYf1bSSxC
+	 jmuIUGF3/TIpbf6do3X9wkSaWZX33AIphlbuZn/dL3n+YujVlpVNHczq0xjqSn1VGi
+	 sbI+sU/IuSxeRMo68/2GVsqJnFOzIDibdnOZtLXd53NAz3F+OXs6qIhSnZEq1XpJnn
+	 CEgz09/e3ehmXX3Zs0LVt++4Q6q76Mx9Bnky5vOS7d6WH2neMBTnmzrTYXxxcAaCMy
+	 aNW/iqvr0pNhEjTulukl79VeZn4Sea93fu3CLwKRyb0/D9iLWnRzUXW36V51tQjmS6
+	 +q0h6tmOYkcEw==
+Message-ID: <abe231fb-6891-4008-92a9-9c3525ea0bcf@kernel.org>
+Date: Fri, 21 Feb 2025 09:42:41 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250220203924.GL1977892@ZenIV>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] leds: add support for TI LP5860 LED driver chip
+To: Steffen Trumtrar <s.trumtrar@pengutronix.de>, Pavel Machek
+ <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Steffen Trumtrar <kernel@pengutronix.de>
+Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250220-v6-14-topic-ti-lp5860-v1-0-42874bdc7513@pengutronix.de>
+ <20250220-v6-14-topic-ti-lp5860-v1-2-42874bdc7513@pengutronix.de>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250220-v6-14-topic-ti-lp5860-v1-2-42874bdc7513@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Al Viro pointed out that dput() might sleep and must not be invoked
-within an RCU section.
+On 20/02/2025 13:57, Steffen Trumtrar wrote:
+> This adds support for the Texas Instruments LP5860 LED driver chip
+> via SPI interfaces.
+> 
 
-Keep only find_next_ancestor() winthin the RCU section.
-Correct the wording in the comment.
+Please do not use "This commit/patch/change", but imperative mood. See
+longer explanation here:
+https://elixir.bootlin.com/linux/v5.17.1/source/Documentation/process/submitting-patches.rst#L95
 
-Fixes: 6ef5b6fae3040 ("kernfs: Drop kernfs_rwsem while invoking lookup_positive_unlocked().")
-Reported-by: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
----
- fs/kernfs/mount.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+....
 
-diff --git a/fs/kernfs/mount.c b/fs/kernfs/mount.c
-index f1cea282aae32..5124e196c2bfd 100644
---- a/fs/kernfs/mount.c
-+++ b/fs/kernfs/mount.c
-@@ -222,17 +222,17 @@ struct dentry *kernfs_node_dentry(struct kernfs_node *kn,
- 	root = kernfs_root(kn);
- 	/*
- 	 * As long as kn is valid, its parent can not vanish. This is cgroup's
--	 * kn so it not have its parent replaced. Therefore it is safe to use
-+	 * kn so it can't have its parent replaced. Therefore it is safe to use
- 	 * the ancestor node outside of the RCU or locked section.
- 	 */
- 	if (WARN_ON_ONCE(!(root->flags & KERNFS_ROOT_INVARIANT_PARENT)))
- 		return ERR_PTR(-EINVAL);
- 	scoped_guard(rcu) {
- 		knparent = find_next_ancestor(kn, NULL);
--		if (WARN_ON(!knparent)) {
--			dput(dentry);
--			return ERR_PTR(-EINVAL);
--		}
-+	}
-+	if (WARN_ON(!knparent)) {
-+		dput(dentry);
-+		return ERR_PTR(-EINVAL);
- 	}
- 
- 	do {
--- 
-2.47.2
 
+> +
+> +	return 0;
+> +}
+> +
+> +int lp5860_device_init(struct lp5860 *lp)
+> +{
+> +	int ret;
+> +
+> +	dev_set_drvdata(lp->dev, lp);
+> +
+> +	ret = lp5860_enable_disable(lp, 1);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = regmap_update_bits(lp->regmap, LP5860_DEV_INITIAL,
+> +				 LP5860_MODE_MASK,
+> +				 LP5860_MODE_1 << LP5860_MODE_OFFSET);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	ret = sysfs_create_group(&lp->dev->kobj, &lp5860_group);
+
+
+Where is ABI documentation?
+
+> +	if (ret)
+> +		return ret;
+> +
+> +	return lp5860_probe_dt(lp);
+> +}
+
+
+...
+
+> +static const struct of_device_id lp5860_of_match[] = {
+> +	{ .compatible = "ti,lp5860" },
+> +	{}
+> +};
+> +MODULE_DEVICE_TABLE(of, lp5860_of_match);
+> +
+> +static struct spi_driver lp5860_driver = {
+> +	.driver = {
+> +		.name = "lp5860",
+> +		.of_match_table = of_match_ptr(lp5860_of_match),
+
+
+Drop of_match_ptr, you have a warning here.
+
+> +	},
+> +	.probe	= lp5860_probe,
+> +	.remove = lp5860_remove,
+> +};
+> +
+> +module_spi_driver(lp5860_driver);
+> +
+> +MODULE_DESCRIPTION("TI leds lp5860");
+> +MODULE_AUTHOR("Steffen Trumtrar <kernel@pengutronix.de>");
+> +MODULE_LICENSE("GPL");
+> +MODULE_ALIAS("spi:leds-lp5860");
+
+You should not need MODULE_ALIAS() in normal cases. If you need it,
+usually it means your device ID table is wrong (e.g. misses either
+entries or MODULE_DEVICE_TABLE()). MODULE_ALIAS() is not a substitute
+for incomplete ID table.
+
+Best regards,
+Krzysztof
 
