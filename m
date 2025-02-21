@@ -1,189 +1,150 @@
-Return-Path: <linux-kernel+bounces-525536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC822A3F0EC
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:50:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE572A3F0FA
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:53:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97DAA3B76C6
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:49:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADDD519C7A2D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:50:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9884202C32;
-	Fri, 21 Feb 2025 09:48:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 064FB202C32;
+	Fri, 21 Feb 2025 09:50:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="J8g6ynmI";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="SiIisenH";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Rndu6kxt";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="wwHv7E2s"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QceuWUWz"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66EDC204087
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 09:48:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CEFC1FF5EF;
+	Fri, 21 Feb 2025 09:50:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740131318; cv=none; b=ea7hdsrFGjjYT+sMHImLc5FfkBiDK6pfoaUYWrIaEtaF4+fEmY/tyHysFSY4WkCxGsLGJ/JOgepCiMyG8e9bmwGYH4uDCjfovj+/yBk6F3MaPgyNBQt0HiqeeKaUY7x5UuBgY63o2FZ58L6nQUnHCWBEfQTrchesR8d7CexUInw=
+	t=1740131417; cv=none; b=bmLpGKK1lhENOFS59kfU1Aq+PnxfP8qRMayvUC9Bnn1bf7WtaOCle+6Z6E80dcVJw2Rp1mSAZxhlw4Y6YLgWWJA316pq4OSWlQh+YyS5ZgKuzKK7tgR8cJUA6kfXeYK+sybNhke2jzK/tL2Ws3bLUg0sLLV5j9R17f3bQYcID4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740131318; c=relaxed/simple;
-	bh=thg+KPgdeNl5ZEv8D01cSfBVXSh8ziTQ7XXzKSqmXOM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=idTVPtsrYYkfwPxlA12/qbCIgi05bwQeZRrsTEqjM5gemngFAu9LqQi+OFU7MnIq9zNnQXvCNYqAjPSPBb5djRp38bpuXglFPfZn0ZAW8F6H6yOmS4yKlfHu8vLsCukXjEZA7hLbRl8Q365Qg4blOEPfB8lQGL7u8eyw3L8qMDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=J8g6ynmI; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=SiIisenH; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Rndu6kxt; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=wwHv7E2s; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id F010F211D2;
-	Fri, 21 Feb 2025 09:48:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1740131309; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MqyX7HGqPKp4niDYTusUzp5w/Yf2gRba6+xe39ad1cc=;
-	b=J8g6ynmIvSu4XXEpTtBbpskTxMPL4ZX1c/QyTPREln/InEUNChz+EgoaxXdJUh5o+YtZxH
-	L2R0pH69rbi8LETBbP5atwHYY38YvwxhVB8E2+84sDYlYvVOCn9dsRWB1H/h/wO5YQP/TY
-	pF5vzB+QJWd54vk/coDFIUdsPEwy4Gk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1740131309;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MqyX7HGqPKp4niDYTusUzp5w/Yf2gRba6+xe39ad1cc=;
-	b=SiIisenHj+jkGc9PSBgzR6yE7xEpbmn7yQHBOsHoGNzqn/P84SpXfIn+R/QqSzCTH7Chq6
-	ZBfha9WpVOk202AA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=Rndu6kxt;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=wwHv7E2s
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1740131308; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MqyX7HGqPKp4niDYTusUzp5w/Yf2gRba6+xe39ad1cc=;
-	b=Rndu6kxt4mMRvoIxJor9KNG2q7htS7KGO/4owQ86bVMsbg3eHK57Fs83MtNwJVvEYjHJRa
-	3RjHOBiukI2cTe7kOTMynvxTCBsl4gy5H0dqCdYg1K3OuAxclQPsjvnjpA4UUyc/lZ3hbF
-	f71Tsf7TlC71zG1XfA/91/e5uVKkWjU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1740131308;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MqyX7HGqPKp4niDYTusUzp5w/Yf2gRba6+xe39ad1cc=;
-	b=wwHv7E2sD9jV31h0+MjtCCx/du9cFxjGcGyPW82y2xZp7o9VxiwSfyfaI0Bpnn0DTWZMi9
-	2ajRllDyEzAiDXBQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D8A43136AD;
-	Fri, 21 Feb 2025 09:48:28 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id nnPHMuxLuGcZLQAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Fri, 21 Feb 2025 09:48:28 +0000
-Message-ID: <cfc2d4f2-08d4-45c1-830f-d1786306454a@suse.cz>
-Date: Fri, 21 Feb 2025 10:48:28 +0100
+	s=arc-20240116; t=1740131417; c=relaxed/simple;
+	bh=14wihrgxDAMUcm++Tqe/xZOkIahAfsAi/hjuQ1z8YnA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gt2owH0Tu4MflNNEWEOtjuD39IA2s1/PrLvLnQ7TD2sS7x0xLHb/bKPE2D/5ivKOO7H9bO4blo5clmb8gqE0ImtJFKA+zKuHMcrj1S8/bZy80UNX0GWMIVSh6emvMbMvPflGPfKUnEdyzEI21X93gEJguaRdgd4eAYEEY2ZK1OM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QceuWUWz; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740131416; x=1771667416;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=14wihrgxDAMUcm++Tqe/xZOkIahAfsAi/hjuQ1z8YnA=;
+  b=QceuWUWzQLwrKunv/LbSRjHVVlsXk7kPyiEjVYbcSkqNOJ/ZcPgexaMA
+   tgXqnxZDrsNr0yGRf0llo6m8729Sy+JR2TZvzpofogkOsKUf2FK7F+VnA
+   XTJPb7eErtpnhjk6qyzkQaxcsGUH/e73bRfAKOCFN07wcyytZWG4J90nV
+   bXHNx8ULu2ZDUfniRXaPmQSNhv4ht21w285YKMJoX+b/lbHAoGjxDssyc
+   ka4WG27Rv6HDXY61pAFcSOBPG3rsKPF7hCYpo6WfiYrhgpfM3P+p1Vsd8
+   LVO9W1ab7rrP7N41XQM6zW2tdtMxdBlqt7OzcmcHNyCM0ASj8Lrlcq//t
+   Q==;
+X-CSE-ConnectionGUID: 37Qf/9U3SJG1eieX/eHevA==
+X-CSE-MsgGUID: O/1pYI13SMWuSERRK04LHw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11351"; a="44731167"
+X-IronPort-AV: E=Sophos;i="6.13,304,1732608000"; 
+   d="scan'208";a="44731167"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Feb 2025 01:50:15 -0800
+X-CSE-ConnectionGUID: nvscHLlGQeKJjK5VYLNqCg==
+X-CSE-MsgGUID: b029fyUDTOWE658I96WXXA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="146216348"
+Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
+  by fmviesa001.fm.intel.com with ESMTP; 21 Feb 2025 01:50:12 -0800
+Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tlPfb-0005MV-1X;
+	Fri, 21 Feb 2025 09:50:08 +0000
+Date: Fri, 21 Feb 2025 17:49:12 +0800
+From: kernel test robot <lkp@intel.com>
+To: Wentao Liang <vulab@iscas.ac.cn>, alexander.deucher@amd.com,
+	christian.koenig@amd.com, Xinhui.Pan@amd.com, airlied@gmail.com,
+	simona@ffwll.ch
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, Wentao Liang <vulab@iscas.ac.cn>,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] drm/radeon: Add error handlings for r420 cp errata
+ initiation
+Message-ID: <202502211718.EFZaW3pW-lkp@intel.com>
+References: <20250220064050.686-1-vulab@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm, percpu: do not consider sleepable allocations atomic
-Content-Language: en-US
-To: Dennis Zhou <dennis@kernel.org>, Michal Hocko <mhocko@suse.com>
-Cc: Tejun Heo <tj@kernel.org>, Filipe Manana <fdmanana@suse.com>,
- Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
- LKML <linux-kernel@vger.kernel.org>
-References: <20250206122633.167896-1-mhocko@kernel.org>
- <Z6u5OJIQBw8QLGe_@slm.duckdns.org> <Z6zS4Dtyway78Gif@tiehlicka>
- <Z6zlC3juT46dLHr9@slm.duckdns.org> <Z60KQCuPCueqRwzc@tiehlicka>
- <Z60S4NMUzzKbW5HY@slm.duckdns.org> <Z60VE9SJHXEtfIbw@snowbird>
- <Z69mygllBATJ6dsm@tiehlicka> <Z7fmnsHTU49eYEaU@snowbird>
-From: Vlastimil Babka <vbabka@suse.cz>
-In-Reply-To: <Z7fmnsHTU49eYEaU@snowbird>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: F010F211D2
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	TO_DN_SOME(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.51
-X-Spam-Flag: NO
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250220064050.686-1-vulab@iscas.ac.cn>
 
-On 2/21/25 03:36, Dennis Zhou wrote:
-> I've thought about this in the back of my head for the past few weeks. I
-> think I have 2 questions about this change.
-> 
-> 1. Back to what TJ said earlier about probing. I feel like GFP_KERNEL
->    allocations should be okay because that more or less is control plane
->    time? I'm not sure dropping PR_SET_IO_FLUSHER is all that big of a
->    work around?
+Hi Wentao,
 
-This solves the iscsid case but not other cases, where GFP_KERNEL
-allocations are fundamentally impossible.
+kernel test robot noticed the following build warnings:
 
-> 2. This change breaks the feedback loop as we discussed above.
->    Historically we've targeted 2-4 free pages worth of percpu memory.
->    This is done by kicking the percpu work off. That does GFP_KERNEL
->    allocations and if that requires reclaim then it goes and does it.
->    However, now we're saying kswapd is going to work in parallel while
->    we try to get pages in the worker thread.
-> 
->    Given you're more versed in the reclaim side. I presume it must be
->    pretty bad if we're failing to get order-0 pages even if we have
->    NOFS/NOIO set?
+[auto build test WARNING on drm-exynos/exynos-drm-next]
+[also build test WARNING on linus/master v6.14-rc3 next-20250220]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-IMHO yes, so I don't think we need to pre-emptively fear that situation that
-much. OTOH in the current state, depleting pcpu's atomic reserves and
-failing pcpu_alloc due to not being allowed to take the mutex can happen
-easily and even if there's plenty of free memory.
+url:    https://github.com/intel-lab-lkp/linux/commits/Wentao-Liang/drm-radeon-Add-error-handlings-for-r420-cp-errata-initiation/20250220-144327
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos.git exynos-drm-next
+patch link:    https://lore.kernel.org/r/20250220064050.686-1-vulab%40iscas.ac.cn
+patch subject: [PATCH] drm/radeon: Add error handlings for r420 cp errata initiation
+config: i386-buildonly-randconfig-005-20250221 (https://download.01.org/0day-ci/archive/20250221/202502211718.EFZaW3pW-lkp@intel.com/config)
+compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250221/202502211718.EFZaW3pW-lkp@intel.com/reproduce)
 
->    My feeling is that we should add back some knowledge of the
->    dependency so if the worker fails to get pages, it doesn't reschedule
->    immediately. Maybe it's as simple as adding a sleep in the worker or
->    playing with delayed work...
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202502211718.EFZaW3pW-lkp@intel.com/
 
-I think if we wanted things to be more robust (and perhaps there's no need
-to, see above), the best way would be to make the worker preallocate with
-GFP_KERNEL outside of pcpu_alloc_mutex. I assume it's probably not easy to
-implement as page table allocations are involved in the process and we don't
-have a way to supply preallocated memory for those.
+All warnings (new ones prefixed by >>):
 
-> Thanks,
-> Dennis
+>> drivers/gpu/drm/radeon/r420.c:229:1: warning: non-void function does not return a value in all control paths [-Wreturn-type]
+     229 | }
+         | ^
+   1 warning generated.
 
+
+vim +229 drivers/gpu/drm/radeon/r420.c
+
+9f022ddfb23793 Jerome Glisse   2009-09-11  206  
+fe881d3e554a1f Wentao Liang    2025-02-20  207  static int r420_cp_errata_init(struct radeon_device *rdev)
+62cdc0c20663ef Corbin Simpson  2010-01-06  208  {
+c346fb74fb6463 Pan Bian        2017-04-24  209  	int r;
+e32eb50dbe4386 Christian König 2011-10-23  210  	struct radeon_ring *ring = &rdev->ring[RADEON_RING_TYPE_GFX_INDEX];
+7b1f2485db253a Christian König 2011-09-23  211  
+62cdc0c20663ef Corbin Simpson  2010-01-06  212  	/* RV410 and R420 can lock up if CP DMA to host memory happens
+62cdc0c20663ef Corbin Simpson  2010-01-06  213  	 * while the 2D engine is busy.
+62cdc0c20663ef Corbin Simpson  2010-01-06  214  	 *
+62cdc0c20663ef Corbin Simpson  2010-01-06  215  	 * The proper workaround is to queue a RESYNC at the beginning
+62cdc0c20663ef Corbin Simpson  2010-01-06  216  	 * of the CP init, apparently.
+62cdc0c20663ef Corbin Simpson  2010-01-06  217  	 */
+fe881d3e554a1f Wentao Liang    2025-02-20  218  	r = radeon_scratch_get(rdev, &rdev->config.r300.resync_scratch);
+fe881d3e554a1f Wentao Liang    2025-02-20  219  	if (r) {
+fe881d3e554a1f Wentao Liang    2025-02-20  220  		DRM_ERROR("failed to get scratch reg (%d).\n", r);
+fe881d3e554a1f Wentao Liang    2025-02-20  221  		return r;
+fe881d3e554a1f Wentao Liang    2025-02-20  222  	}
+c346fb74fb6463 Pan Bian        2017-04-24  223  	r = radeon_ring_lock(rdev, ring, 8);
+c346fb74fb6463 Pan Bian        2017-04-24  224  	WARN_ON(r);
+e32eb50dbe4386 Christian König 2011-10-23  225  	radeon_ring_write(ring, PACKET0(R300_CP_RESYNC_ADDR, 1));
+e32eb50dbe4386 Christian König 2011-10-23  226  	radeon_ring_write(ring, rdev->config.r300.resync_scratch);
+e32eb50dbe4386 Christian König 2011-10-23  227  	radeon_ring_write(ring, 0xDEADBEEF);
+1538a9e0e04f6a Michel Dänzer   2014-08-18  228  	radeon_ring_unlock_commit(rdev, ring, false);
+62cdc0c20663ef Corbin Simpson  2010-01-06 @229  }
+62cdc0c20663ef Corbin Simpson  2010-01-06  230  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
