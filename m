@@ -1,392 +1,178 @@
-Return-Path: <linux-kernel+bounces-525633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07E9FA3F28E
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 11:54:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C030A3F234
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 11:37:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65ACC70165F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:53:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D8AA19C23A2
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:37:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 455E3209686;
-	Fri, 21 Feb 2025 10:53:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D37A82054E9;
+	Fri, 21 Feb 2025 10:37:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=t12smtp-sign004.email header.i=@t12smtp-sign004.email header.b="cv37/sX0"
-Received: from mail123.out.titan.email (mail123.out.titan.email [34.198.80.90])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="gmbb0Xmb"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 147B82080E7;
-	Fri, 21 Feb 2025 10:53:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=34.198.80.90
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E0F91FF1AF;
+	Fri, 21 Feb 2025 10:37:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740135188; cv=none; b=A6cfd8FsC1rJDVNNLnNVyC6VakcBoHxORKuu+uxb94ZK/ZkqOAPRWkaeplpG+zP6XjceKbceb76XlfG4cKADN88j0NJs1FUq1sWwb250YnxOm+GF2vR4EzlMFp/dxHXMCDzszhzBRDFN+rgV9phz95iZvlCurZnJjkmP6RsCwm4=
+	t=1740134244; cv=none; b=Xge4j9lS71JIN7tRP6QDAWdGn65ulOGLJj7WRQJAsOy6srt1ee8rosZ8KiDD27tCaPUQKmuEMa2I9xa6bmMt8YT/BIDgBsCTzqRnpP9E6X7uNRumZVpbIh7zvLaQkRQK9uS4lyV4a0z5Sot3X+nBM5fLlMDanreM307DrdQ80SM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740135188; c=relaxed/simple;
-	bh=h+QNlcvzViK8K5cAukfP4Zs7Gtz/aUhcVmZFanumUIA=;
+	s=arc-20240116; t=1740134244; c=relaxed/simple;
+	bh=gRBgJtkXNndTygei2/WU8WKjZkABz8HcvljFdyBrIgo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HRyFfZmOp42UK6dfvgKoi5KTmn6M7dgIpMffBbSanhluz/IUEdzdVtlCxvvFxU3wto3Zs18+weTA1h5Sxd69U91mHu7boE30NgPjafm6bYIlhbHT+XtJMTuCAAdhJjtSE4zCv1YpEdYRqzD9NR7MThhAm2OcSau2UKy59kl/z/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=coly.li; spf=pass smtp.mailfrom=coly.li; dkim=pass (1024-bit key) header.d=t12smtp-sign004.email header.i=@t12smtp-sign004.email header.b=cv37/sX0; arc=none smtp.client-ip=34.198.80.90
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=coly.li
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=coly.li
-DKIM-Signature: a=rsa-sha256; bh=gl4dDbOYoZlZrKikvXfyyn1o/IWgBwKN4Igl8P+rNwA=;
-	c=relaxed/relaxed; d=t12smtp-sign004.email;
-	h=mime-version:subject:date:from:cc:message-id:in-reply-to:to:references:from:to:cc:subject:date:message-id:in-reply-to:references:reply-to;
-	q=dns/txt; s=titan1; t=1740134239; v=1;
-	b=cv37/sX0g6tB4EFFSkuqj8uLyP4JogmXRz7gRfu426rRlAJKgMiaPL+gO0uu86ioiTqsmO9O
-	pywXTAR0vmvhfy0hkyG4dQTpP8QSZtyLS/zHDCkRiE7w24Bb2i0IGUsWXniuXtrsQxtl/rpFfxO
-	H9xqenUvticRn5+mfVyvUQqs=
-Received: from studio.local (unknown [141.11.218.23])
-	by smtp-out.flockmail.com (Postfix) with ESMTPA id 31BA4E01AE;
-	Fri, 21 Feb 2025 10:37:09 +0000 (UTC)
-Date: Fri, 21 Feb 2025 18:37:07 +0800
-Feedback-ID: :i@coly.li:coly.li:flockmailId
-From: Coly Li <i@coly.li>
-To: Zheng Qixing <zhengqixing@huaweicloud.com>
-Cc: axboe@kernel.dk, song@kernel.org, colyli@kernel.org, 
-	yukuai3@huawei.com, dan.j.williams@intel.com, vishal.l.verma@intel.com, 
-	dave.jiang@intel.com, ira.weiny@intel.com, dlemoal@kernel.org, yanjun.zhu@linux.dev, 
-	kch@nvidia.com, hare@suse.de, zhengqixing@huawei.com, john.g.garry@oracle.com, 
-	geliang@kernel.org, xni@redhat.com, colyli@suse.de, linux-block@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org, nvdimm@lists.linux.dev, 
-	yi.zhang@huawei.com, yangerkun@huawei.com
-Subject: Re: [PATCH 12/12] badblocks: use sector_t instead of int to avoid
- truncation of badblocks length
-Message-ID: <z6pwiqalhwvp5ov56folmxg3fv6ut2sxblwx5qwvvltgphop3a@bu7arwtc3rat>
-References: <20250221081109.734170-1-zhengqixing@huaweicloud.com>
- <20250221081109.734170-13-zhengqixing@huaweicloud.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=LLFZDRIV2tKYGTHYohEC1SoaCv9TLKKqR8cgLvw4okndbpDy10IBfTgT9fS0VnmOSl79aGOHeV5RFJicb84SA8MVaLFZTzRGvWQqmG/T5XBYFWJL2GLg53OeibaqIL3lnbkGryUO7A5eSJODIvNRNlNCPhpQyBNor456he6feKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=gmbb0Xmb; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from mail.ideasonboard.com (unknown [IPv6:2401:4900:1c30:4abb:6de5:9248:813e:8db3])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id B49342EC;
+	Fri, 21 Feb 2025 11:35:55 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1740134156;
+	bh=gRBgJtkXNndTygei2/WU8WKjZkABz8HcvljFdyBrIgo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gmbb0XmbO/gfQQ2P9CUic9YnHpaGA9RrxgDPyBrXWK0diB71jGF7PYw1uzI4DKDjY
+	 5U/TcMNX3aEYO7q1DCmdRO+XD0Hi43PgqcPHnjlYc1hH9M7MU42EUhwF88jQGCb4CG
+	 xybQKsMUMzyRAQm+tmGWUf8eYCasPe9xaFPkuYXI=
+Date: Fri, 21 Feb 2025 16:07:13 +0530
+From: Jai Luthra <jai.luthra@ideasonboard.com>
+To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Dave Stevenson <dave.stevenson@raspberrypi.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] media: i2c: imx219: Only use higher LLP_MIN for
+ binned resolutions
+Message-ID: <attkqzfqwxjrozx27utbyh2q2jfci3ytjsq2we4db3nhf22l3e@7uv3j2imledv>
+References: <20250219-imx219_fixes_v2-v1-0-0e3f5dd9b024@ideasonboard.com>
+ <20250219-imx219_fixes_v2-v1-1-0e3f5dd9b024@ideasonboard.com>
+ <mloobyyocd5f4hbkenplebwyffacdjjhzhxefvlx2og5qz5xlx@zswcyzzfcpy3>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250221081109.734170-13-zhengqixing@huaweicloud.com>
-X-F-Verdict: SPFVALID
-X-Titan-Src-Out: 1740134239764907271.19601.5898338928718616590@prod-use1-smtp-out1004.
-X-CMAE-Score: 0
-X-CMAE-Analysis: v=2.4 cv=bq22BFai c=1 sm=1 tr=0 ts=67b8575f
-	a=USBFZE4A2Ag4MGBBroF6Xg==:117 a=USBFZE4A2Ag4MGBBroF6Xg==:17
-	a=IkcTkHD0fZMA:10 a=CEWIc4RMnpUA:10 a=i0EeH86SAAAA:8 a=VwQbUJbxAAAA:8
-	a=j8_hKfAro-a2qkMN4hQA:9 a=QEXdDO2ut3YA:10
+In-Reply-To: <mloobyyocd5f4hbkenplebwyffacdjjhzhxefvlx2og5qz5xlx@zswcyzzfcpy3>
 
-On Fri, Feb 21, 2025 at 04:11:09PM +0800, Zheng Qixing wrote:
-> From: Zheng Qixing <zhengqixing@huawei.com>
-> 
-> There is a truncation of badblocks length issue when set badblocks as
-> follow:
-> 
-> echo "2055 4294967299" > bad_blocks
-> cat bad_blocks
-> 2055 3
-> 
-> Change 'sectors' argument type from 'int' to 'sector_t'.
-> 
-> This change avoids truncation of badblocks length for large sectors by
-> replacing 'int' with 'sector_t' (u64), enabling proper handling of larger
-> disk sizes and ensuring compatibility with 64-bit sector addressing.
-> 
-> Fixes: 9e0e252a048b ("badblocks: Add core badblock management code")
-> Signed-off-by: Zheng Qixing <zhengqixing@huawei.com>
+Hi Jacopo,
 
-Looks good to me.
+Thanks for the review.
 
-Acked-by: Coly Li <colyli@kernel.org>
-
-Thanks.
-
-> ---
->  block/badblocks.c             | 20 ++++++++------------
->  drivers/block/null_blk/main.c |  2 +-
->  drivers/md/md.h               |  6 +++---
->  drivers/md/raid1-10.c         |  2 +-
->  drivers/md/raid1.c            |  4 ++--
->  drivers/md/raid10.c           |  8 ++++----
->  drivers/nvdimm/nd.h           |  2 +-
->  drivers/nvdimm/pfn_devs.c     |  7 ++++---
->  drivers/nvdimm/pmem.c         |  2 +-
->  include/linux/badblocks.h     |  8 ++++----
->  10 files changed, 29 insertions(+), 32 deletions(-)
+On Feb 21, 2025 at 10:28:40 +0100, Jacopo Mondi wrote:
+> Hi Jai
 > 
-> diff --git a/block/badblocks.c b/block/badblocks.c
-> index 8f057563488a..14e3be47d22d 100644
-> --- a/block/badblocks.c
-> +++ b/block/badblocks.c
-> @@ -836,7 +836,7 @@ static bool try_adjacent_combine(struct badblocks *bb, int prev)
->  }
->  
->  /* Do exact work to set bad block range into the bad block table */
-> -static bool _badblocks_set(struct badblocks *bb, sector_t s, int sectors,
-> +static bool _badblocks_set(struct badblocks *bb, sector_t s, sector_t sectors,
->  			   int acknowledged)
->  {
->  	int len = 0, added = 0;
-> @@ -956,8 +956,6 @@ static bool _badblocks_set(struct badblocks *bb, sector_t s, int sectors,
->  	if (sectors > 0)
->  		goto re_insert;
->  
-> -	WARN_ON(sectors < 0);
-> -
->  	/*
->  	 * Check whether the following already set range can be
->  	 * merged. (prev < 0) condition is not handled here,
-> @@ -1048,7 +1046,7 @@ static int front_splitting_clear(struct badblocks *bb, int prev,
->  }
->  
->  /* Do the exact work to clear bad block range from the bad block table */
-> -static bool _badblocks_clear(struct badblocks *bb, sector_t s, int sectors)
-> +static bool _badblocks_clear(struct badblocks *bb, sector_t s, sector_t sectors)
->  {
->  	struct badblocks_context bad;
->  	int prev = -1, hint = -1;
-> @@ -1171,8 +1169,6 @@ static bool _badblocks_clear(struct badblocks *bb, sector_t s, int sectors)
->  	if (sectors > 0)
->  		goto re_clear;
->  
-> -	WARN_ON(sectors < 0);
-> -
->  	if (cleared) {
->  		badblocks_update_acked(bb);
->  		set_changed(bb);
-> @@ -1187,8 +1183,8 @@ static bool _badblocks_clear(struct badblocks *bb, sector_t s, int sectors)
->  }
->  
->  /* Do the exact work to check bad blocks range from the bad block table */
-> -static int _badblocks_check(struct badblocks *bb, sector_t s, int sectors,
-> -			    sector_t *first_bad, int *bad_sectors)
-> +static int _badblocks_check(struct badblocks *bb, sector_t s, sector_t sectors,
-> +			    sector_t *first_bad, sector_t *bad_sectors)
->  {
->  	int prev = -1, hint = -1, set = 0;
->  	struct badblocks_context bad;
-> @@ -1298,8 +1294,8 @@ static int _badblocks_check(struct badblocks *bb, sector_t s, int sectors,
->   * -1: there are bad blocks which have not yet been acknowledged in metadata.
->   * plus the start/length of the first bad section we overlap.
->   */
-> -int badblocks_check(struct badblocks *bb, sector_t s, int sectors,
-> -			sector_t *first_bad, int *bad_sectors)
-> +int badblocks_check(struct badblocks *bb, sector_t s, sector_t sectors,
-> +			sector_t *first_bad, sector_t *bad_sectors)
->  {
->  	unsigned int seq;
->  	int rv;
-> @@ -1340,7 +1336,7 @@ EXPORT_SYMBOL_GPL(badblocks_check);
->   *  true: success
->   *  false: failed to set badblocks (out of space)
->   */
-> -bool badblocks_set(struct badblocks *bb, sector_t s, int sectors,
-> +bool badblocks_set(struct badblocks *bb, sector_t s, sector_t sectors,
->  		   int acknowledged)
->  {
->  	return _badblocks_set(bb, s, sectors, acknowledged);
-> @@ -1361,7 +1357,7 @@ EXPORT_SYMBOL_GPL(badblocks_set);
->   *  true: success
->   *  false: failed to clear badblocks
->   */
-> -bool badblocks_clear(struct badblocks *bb, sector_t s, int sectors)
-> +bool badblocks_clear(struct badblocks *bb, sector_t s, sector_t sectors)
->  {
->  	return _badblocks_clear(bb, s, sectors);
->  }
-> diff --git a/drivers/block/null_blk/main.c b/drivers/block/null_blk/main.c
-> index 623db72ad66b..6e7d80b6e92b 100644
-> --- a/drivers/block/null_blk/main.c
-> +++ b/drivers/block/null_blk/main.c
-> @@ -1302,7 +1302,7 @@ static inline blk_status_t null_handle_badblocks(struct nullb_cmd *cmd,
->  {
->  	struct badblocks *bb = &cmd->nq->dev->badblocks;
->  	sector_t first_bad;
-> -	int bad_sectors;
-> +	sector_t bad_sectors;
->  
->  	if (badblocks_check(bb, sector, nr_sectors, &first_bad, &bad_sectors))
->  		return BLK_STS_IOERR;
-> diff --git a/drivers/md/md.h b/drivers/md/md.h
-> index 923a0ef51efe..6edc0f71b7d4 100644
-> --- a/drivers/md/md.h
-> +++ b/drivers/md/md.h
-> @@ -266,8 +266,8 @@ enum flag_bits {
->  	Nonrot,			/* non-rotational device (SSD) */
->  };
->  
-> -static inline int is_badblock(struct md_rdev *rdev, sector_t s, int sectors,
-> -			      sector_t *first_bad, int *bad_sectors)
-> +static inline int is_badblock(struct md_rdev *rdev, sector_t s, sector_t sectors,
-> +			      sector_t *first_bad, sector_t *bad_sectors)
->  {
->  	if (unlikely(rdev->badblocks.count)) {
->  		int rv = badblocks_check(&rdev->badblocks, rdev->data_offset + s,
-> @@ -284,7 +284,7 @@ static inline int rdev_has_badblock(struct md_rdev *rdev, sector_t s,
->  				    int sectors)
->  {
->  	sector_t first_bad;
-> -	int bad_sectors;
-> +	sector_t bad_sectors;
->  
->  	return is_badblock(rdev, s, sectors, &first_bad, &bad_sectors);
->  }
-> diff --git a/drivers/md/raid1-10.c b/drivers/md/raid1-10.c
-> index 4378d3250bd7..62b980b12f93 100644
-> --- a/drivers/md/raid1-10.c
-> +++ b/drivers/md/raid1-10.c
-> @@ -247,7 +247,7 @@ static inline int raid1_check_read_range(struct md_rdev *rdev,
->  					 sector_t this_sector, int *len)
->  {
->  	sector_t first_bad;
-> -	int bad_sectors;
-> +	sector_t bad_sectors;
->  
->  	/* no bad block overlap */
->  	if (!is_badblock(rdev, this_sector, *len, &first_bad, &bad_sectors))
-> diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
-> index 8beb8cccc6af..0b2839105857 100644
-> --- a/drivers/md/raid1.c
-> +++ b/drivers/md/raid1.c
-> @@ -1537,7 +1537,7 @@ static void raid1_write_request(struct mddev *mddev, struct bio *bio,
->  		atomic_inc(&rdev->nr_pending);
->  		if (test_bit(WriteErrorSeen, &rdev->flags)) {
->  			sector_t first_bad;
-> -			int bad_sectors;
-> +			sector_t bad_sectors;
->  			int is_bad;
->  
->  			is_bad = is_badblock(rdev, r1_bio->sector, max_sectors,
-> @@ -2886,7 +2886,7 @@ static sector_t raid1_sync_request(struct mddev *mddev, sector_t sector_nr,
->  		} else {
->  			/* may need to read from here */
->  			sector_t first_bad = MaxSector;
-> -			int bad_sectors;
-> +			sector_t bad_sectors;
->  
->  			if (is_badblock(rdev, sector_nr, good_sectors,
->  					&first_bad, &bad_sectors)) {
-> diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
-> index 7ed933181712..a8664e29aada 100644
-> --- a/drivers/md/raid10.c
-> +++ b/drivers/md/raid10.c
-> @@ -747,7 +747,7 @@ static struct md_rdev *read_balance(struct r10conf *conf,
->  
->  	for (slot = 0; slot < conf->copies ; slot++) {
->  		sector_t first_bad;
-> -		int bad_sectors;
-> +		sector_t bad_sectors;
->  		sector_t dev_sector;
->  		unsigned int pending;
->  		bool nonrot;
-> @@ -1438,7 +1438,7 @@ static void raid10_write_request(struct mddev *mddev, struct bio *bio,
->  		if (rdev && test_bit(WriteErrorSeen, &rdev->flags)) {
->  			sector_t first_bad;
->  			sector_t dev_sector = r10_bio->devs[i].addr;
-> -			int bad_sectors;
-> +			sector_t bad_sectors;
->  			int is_bad;
->  
->  			is_bad = is_badblock(rdev, dev_sector, max_sectors,
-> @@ -3413,7 +3413,7 @@ static sector_t raid10_sync_request(struct mddev *mddev, sector_t sector_nr,
->  				sector_t from_addr, to_addr;
->  				struct md_rdev *rdev = conf->mirrors[d].rdev;
->  				sector_t sector, first_bad;
-> -				int bad_sectors;
-> +				sector_t bad_sectors;
->  				if (!rdev ||
->  				    !test_bit(In_sync, &rdev->flags))
->  					continue;
-> @@ -3609,7 +3609,7 @@ static sector_t raid10_sync_request(struct mddev *mddev, sector_t sector_nr,
->  		for (i = 0; i < conf->copies; i++) {
->  			int d = r10_bio->devs[i].devnum;
->  			sector_t first_bad, sector;
-> -			int bad_sectors;
-> +			sector_t bad_sectors;
->  			struct md_rdev *rdev;
->  
->  			if (r10_bio->devs[i].repl_bio)
-> diff --git a/drivers/nvdimm/nd.h b/drivers/nvdimm/nd.h
-> index 5ca06e9a2d29..cc5c8f3f81e8 100644
-> --- a/drivers/nvdimm/nd.h
-> +++ b/drivers/nvdimm/nd.h
-> @@ -673,7 +673,7 @@ static inline bool is_bad_pmem(struct badblocks *bb, sector_t sector,
->  {
->  	if (bb->count) {
->  		sector_t first_bad;
-> -		int num_bad;
-> +		sector_t num_bad;
->  
->  		return !!badblocks_check(bb, sector, len / 512, &first_bad,
->  				&num_bad);
-> diff --git a/drivers/nvdimm/pfn_devs.c b/drivers/nvdimm/pfn_devs.c
-> index cfdfe0eaa512..8f3e816e805d 100644
-> --- a/drivers/nvdimm/pfn_devs.c
-> +++ b/drivers/nvdimm/pfn_devs.c
-> @@ -367,9 +367,10 @@ static int nd_pfn_clear_memmap_errors(struct nd_pfn *nd_pfn)
->  	struct nd_namespace_common *ndns = nd_pfn->ndns;
->  	void *zero_page = page_address(ZERO_PAGE(0));
->  	struct nd_pfn_sb *pfn_sb = nd_pfn->pfn_sb;
-> -	int num_bad, meta_num, rc, bb_present;
-> +	int meta_num, rc, bb_present;
->  	sector_t first_bad, meta_start;
->  	struct nd_namespace_io *nsio;
-> +	sector_t num_bad;
->  
->  	if (nd_pfn->mode != PFN_MODE_PMEM)
->  		return 0;
-> @@ -394,7 +395,7 @@ static int nd_pfn_clear_memmap_errors(struct nd_pfn *nd_pfn)
->  		bb_present = badblocks_check(&nd_region->bb, meta_start,
->  				meta_num, &first_bad, &num_bad);
->  		if (bb_present) {
-> -			dev_dbg(&nd_pfn->dev, "meta: %x badblocks at %llx\n",
-> +			dev_dbg(&nd_pfn->dev, "meta: %llx badblocks at %llx\n",
->  					num_bad, first_bad);
->  			nsoff = ALIGN_DOWN((nd_region->ndr_start
->  					+ (first_bad << 9)) - nsio->res.start,
-> @@ -413,7 +414,7 @@ static int nd_pfn_clear_memmap_errors(struct nd_pfn *nd_pfn)
->  			}
->  			if (rc) {
->  				dev_err(&nd_pfn->dev,
-> -					"error clearing %x badblocks at %llx\n",
-> +					"error clearing %llx badblocks at %llx\n",
->  					num_bad, first_bad);
->  				return rc;
->  			}
-> diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
-> index d81faa9d89c9..43156e1576c9 100644
-> --- a/drivers/nvdimm/pmem.c
-> +++ b/drivers/nvdimm/pmem.c
-> @@ -249,7 +249,7 @@ __weak long __pmem_direct_access(struct pmem_device *pmem, pgoff_t pgoff,
->  	unsigned int num = PFN_PHYS(nr_pages) >> SECTOR_SHIFT;
->  	struct badblocks *bb = &pmem->bb;
->  	sector_t first_bad;
-> -	int num_bad;
-> +	sector_t num_bad;
->  
->  	if (kaddr)
->  		*kaddr = pmem->virt_addr + offset;
-> diff --git a/include/linux/badblocks.h b/include/linux/badblocks.h
-> index 8764bed9ff16..996493917f36 100644
-> --- a/include/linux/badblocks.h
-> +++ b/include/linux/badblocks.h
-> @@ -48,11 +48,11 @@ struct badblocks_context {
->  	int		ack;
->  };
->  
-> -int badblocks_check(struct badblocks *bb, sector_t s, int sectors,
-> -		   sector_t *first_bad, int *bad_sectors);
-> -bool badblocks_set(struct badblocks *bb, sector_t s, int sectors,
-> +int badblocks_check(struct badblocks *bb, sector_t s, sector_t sectors,
-> +		    sector_t *first_bad, sector_t *bad_sectors);
-> +bool badblocks_set(struct badblocks *bb, sector_t s, sector_t sectors,
->  		   int acknowledged);
-> -bool badblocks_clear(struct badblocks *bb, sector_t s, int sectors);
-> +bool badblocks_clear(struct badblocks *bb, sector_t s, sector_t sectors);
->  void ack_all_badblocks(struct badblocks *bb);
->  ssize_t badblocks_show(struct badblocks *bb, char *page, int unack);
->  ssize_t badblocks_store(struct badblocks *bb, const char *page, size_t len,
-> -- 
-> 2.39.2
+> On Wed, Feb 19, 2025 at 05:16:43PM +0530, Jai Luthra wrote:
+> > The LLP_MIN of 3560 is only needed to fix artefacts seen with binned
+> > resolutions. As increasing the LLP reduces the highest possible
+> > framerate by ~3%, use the default minimum of 3448 for non-binned
+> > resolutions.
+> >
 > 
+> Also restore the fll_def value for non-binned modes in the modes definition
+> to restore the default mode framerate to 30fps.
+> 
+
+Will add in v2.
+
+> > Suggested-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
+> > Link: https://lore.kernel.org/linux-media/CAPY8ntC1-S6zKtDvmc6EgyxP+j6rTShuG8Dr8PKb9XQr2PeS_w@mail.gmail.com/
+> > Signed-off-by: Jai Luthra <jai.luthra@ideasonboard.com>
+> > ---
+> >  drivers/media/i2c/imx219.c | 24 ++++++++++++++++--------
+> >  1 file changed, 16 insertions(+), 8 deletions(-)
+> >
+> > diff --git a/drivers/media/i2c/imx219.c b/drivers/media/i2c/imx219.c
+> > index f662c9d755114265aad46c5cc7f5031b9bc0dbba..6e51a7af5e2a05cacefb201d96a9fbdc349f17d8 100644
+> > --- a/drivers/media/i2c/imx219.c
+> > +++ b/drivers/media/i2c/imx219.c
+> > @@ -74,7 +74,8 @@
+> >  #define IMX219_FLL_MAX			0xffff
+> >  #define IMX219_VBLANK_MIN		32
+> >  #define IMX219_REG_LINE_LENGTH_A	CCI_REG16(0x0162)
+> > -#define IMX219_LLP_MIN			0x0de8
+> > +#define IMX219_LLP_MIN			0x0d78
+> > +#define IMX219_BINNED_LLP_MIN		0x0de8
+> >  #define IMX219_LLP_MAX			0x7ff0
+> >
+> >  #define IMX219_REG_X_ADD_STA_A		CCI_REG16(0x0164)
+> > @@ -317,13 +318,13 @@ static const struct imx219_mode supported_modes[] = {
+> >  		/* 8MPix 15fps mode */
+> >  		.width = 3280,
+> >  		.height = 2464,
+> > -		.fll_def = 3415,
+> > +		.fll_def = 3526,
+> >  	},
+> >  	{
+> >  		/* 1080P 30fps cropped */
+> >  		.width = 1920,
+> >  		.height = 1080,
+> > -		.fll_def = 1707,
+> > +		.fll_def = 1763,
+> >  	},
+> >  	{
+> >  		/* 2x2 binned 60fps mode */
+> > @@ -901,7 +902,7 @@ static int imx219_set_pad_format(struct v4l2_subdev *sd,
+> >  	if (fmt->which == V4L2_SUBDEV_FORMAT_ACTIVE) {
+> >  		int exposure_max;
+> >  		int exposure_def;
+> > -		int hblank;
+> > +		int hblank, llp_min;
+> >  		int pixel_rate;
+> >
+> >  		/* Update limits and set FPS to default */
+> > @@ -918,6 +919,17 @@ static int imx219_set_pad_format(struct v4l2_subdev *sd,
+> >  					 imx219->exposure->minimum,
+> >  					 exposure_max, imx219->exposure->step,
+> >  					 exposure_def);
+> > +
+> > +		/*
+> > +		 * With analog binning the default minimum line length of 3448
+> > +		 * can cause artefacts because the ADC operates on two lines
+> > +		 * together. Switch to higher minimum of 3560 if we are binning.
+> > +		 */
+> > +		llp_min = (bin_h || bin_v) ? IMX219_BINNED_LLP_MIN :
+> 
+> As you know, this is always true.
+> 
+
+Oops my bad. Will fix in v2.
+
+I realized it would be cleaner to use the new version of 
+imx219_get_binning() to check if analog binning is used before updating 
+the minimum.
+
+> > +					     IMX219_LLP_MIN;
+> > +		__v4l2_ctrl_modify_range(imx219->hblank, llp_min - mode->width,
+> > +					 IMX219_LLP_MAX - mode->width, 1,
+> > +					 llp_min - mode->width);
+> >  		/*
+> >  		 * Retain PPL setting from previous mode so that the
+> >  		 * line time does not change on a mode change.
+> > @@ -926,10 +938,6 @@ static int imx219_set_pad_format(struct v4l2_subdev *sd,
+> >  		 * mode width subtracted.
+> >  		 */
+> >  		hblank = prev_line_len - mode->width;
+> > -		__v4l2_ctrl_modify_range(imx219->hblank,
+> > -					 IMX219_LLP_MIN - mode->width,
+> > -					 IMX219_LLP_MAX - mode->width, 1,
+> > -					 IMX219_LLP_MIN - mode->width);
+> >  		__v4l2_ctrl_s_ctrl(imx219->hblank, hblank);
+> >
+> >  		/* Scale the pixel rate based on the mode specific factor */
+> >
+> > --
+> > 2.48.1
+> >
 
 -- 
-Coly Li
+Thanks,
+Jai
 
