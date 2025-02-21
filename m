@@ -1,163 +1,186 @@
-Return-Path: <linux-kernel+bounces-525911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60289A3F747
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 15:30:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E68E5A3F745
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 15:30:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A04519C6058
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 14:30:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DCA9717A5B0
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 14:30:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DD4320FAAC;
-	Fri, 21 Feb 2025 14:30:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C41D20FA90;
+	Fri, 21 Feb 2025 14:29:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="a2zt5gX9"
-Received: from sender3-pp-f112.zoho.com (sender3-pp-f112.zoho.com [136.143.184.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QiQFTrOx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 853F821018A;
-	Fri, 21 Feb 2025 14:30:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.184.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740148213; cv=pass; b=dSvnq2pcrN5mR2mGyBcsVH93bwtra6zAXqzgnGa2DVnqwMRnaUHlfW3fJmDu6tBUABn6XuVNTAi0R4MN/4L7h0DjWS0JUGKOgQVpWJAB4fgrCWPb2ea4WxFjDTIIozZi4imeXrwerM727MtnQhvvzIiaa6KdFVqRXtjxengmgNE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740148213; c=relaxed/simple;
-	bh=Chjhf8vJRRIgpjHc/tp8kE54BRHZN3NALF21aMcfaHA=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=c4p0Y4ed9S1j8FH9vfYFwT6hKtU9hkuFJHNLIXOZouR6/vJLhuv28ZW/S1XtohWdYzAV1gbzvCuufcI7MgSBXTmB93aWyPkCChGgWPTrhUO1wDkSJXjD1jNoqbRJNHq+0j55VetiqHh0AM/de/WX9hRaYErGFcG/FQgxK7h1KYQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=a2zt5gX9; arc=pass smtp.client-ip=136.143.184.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1740148181; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=jH+Xy4+9AYhc8lqk6kHd5V7bLdJU+U8s+TJrmbRb9qfw7yURYlVcdNcoHkfV9lwFbbnB06p26NUv9sPfsn9KEv2QmFAU/3j0BbtXjQ0WXNBeE3OaLgoJdyR3fLlABIiiVEyBvty2vb5jcwIcVBgoiHW89JenhtDQ41nnBKqfkxQ=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1740148181; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=FyMjlHOrINYVn23syNq5kTMbUgMoK8l1mTchNcYyMuQ=; 
-	b=RxEgDRY3aL/zQKLx7X0Vg57MMpsEDKSUQXgNTN6+MctF1I3r3M3Ym6RTbQm+rOcvNFN1DFd6Dugl2idyebsJBbINmGlBT62s+6QV66n6cMfX8U7nrmWfmbMHR8Nmj+V5Rd/hHwv/Sk5I9uIc6Vro2llNyoceVgOpxRPBEZ+oF80=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1740148181;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=FyMjlHOrINYVn23syNq5kTMbUgMoK8l1mTchNcYyMuQ=;
-	b=a2zt5gX90/33JfzmrEp1ofuABKSB8jnf397rM9Gi8np5LtI260wmC6uBKlYgSqsA
-	oiQwuvq7ikLeCyw6y1K+jonR8rxpUVIarB1Ci5B9gLbAASvzafrwqFKmerecRenpKR5
-	6RAvYqQX7nmGAnz3XQW41i13rMogCmj8KFna/d48=
-Received: by mx.zohomail.com with SMTPS id 1740148180118383.75730877084106;
-	Fri, 21 Feb 2025 06:29:40 -0800 (PST)
-Content-Type: text/plain;
-	charset=us-ascii
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9478420B1EE
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 14:29:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740148196; cv=none; b=Q+Oj3MQlnv84pLjDf63nylJlBNrgnqtqTeIL+UnJsMeG2eN522OwiDF+8JILmdZ+nWr2WqyGGHYpyiyFqHMU3VY49Nm3PllF0D5oLqKeWs4r51FjnQlZXlEgOKZrZZgkPyOZFxY5IW2RqXQj16kHp1osQ68ccm5e3ABa++fhegA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740148196; c=relaxed/simple;
+	bh=jiAtYkJ93H+bXGtd4GAtjs0YWd901kf8MHW9Qhn4ztk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=F08dbjjYyqLtY5B2+fwRACf5bxuu7s18U4Rqyu5lLpqbiB6mv3i+w/10oe6b8uyOebxH57TortDO5BD1UfipPQMjM9AJwOCo9L3dm+qPHJB9kNLfhdtEWZpXxZVBfeKhU2sc2uRUoXT+mYvSSq+7NMhPtvnJgqehFVhN1vXSgCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QiQFTrOx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1EC86C4CED6;
+	Fri, 21 Feb 2025 14:29:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740148196;
+	bh=jiAtYkJ93H+bXGtd4GAtjs0YWd901kf8MHW9Qhn4ztk=;
+	h=From:To:Cc:Subject:Date:From;
+	b=QiQFTrOxx6hu7gaU9+j36xYhUYNz073ryM1ZE+jGwt3tuvzhNIP8c9Nm2RXVH4O/s
+	 3SZaliO5Tfe4+CGKQw8VDBOj3wLrnst/T6DjljjytsZ1ujo8/k3oaxwxyEr/h83ZKM
+	 WUyVyzmklqkcs23E19OMjB/EwQuZhTZNC7b0wpLuEwOrcTqoRXNbkJqDgTgxGUat1G
+	 Pyj3/9aAgujCCQxK2nZfXrtHaoVXtWX367KB2WZHQqT6ptdetSz26PApZfF3aJ5+qr
+	 NzER9PqiUUnrE08Bc9F1vvY4+VI4IWV0f+ZX8B18T504UCbhc/rzJMFuo6DJ60MxR+
+	 yx/C/KGNha3ow==
+From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Will Deacon <will@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: Boqun Feng <boqun.feng@gmail.com>,
+	Waiman Long <longman@redhat.com>,
+	Joel Granados <joel.granados@kernel.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Anna Schumaker <anna.schumaker@oracle.com>,
+	Lance Yang <ioworker0@gmail.com>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	Yongliang Gao <leonylgao@tencent.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Tomasz Figa <tfiga@chromium.org>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/2] hung_task: Dump the blocking task stacktrace
+Date: Fri, 21 Feb 2025 23:29:51 +0900
+Message-ID:  <174014819072.967666.10146255401631551816.stgit@mhiramat.tok.corp.google.com>
+X-Mailer: git-send-email 2.48.1.658.g4767266eb4-goog
+User-Agent: StGit/0.19
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.300.87.4.3\))
-Subject: Re: [PATCH V2 2/2] rust: Add basic bindings for clk APIs
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <Z7iGHiQcqa-_AXli@pollux>
-Date: Fri, 21 Feb 2025 11:29:21 -0300
-Cc: Viresh Kumar <viresh.kumar@linaro.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>,
- Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- Russell King <linux@armlinux.org.uk>,
- linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <4AD8A8F3-EA7E-4FBE-9F0D-58CF7BB09ED5@collabora.com>
-References: <cover.1740118863.git.viresh.kumar@linaro.org>
- <a0a1ba4e27c3a0d9e38c677611eb88027e463287.1740118863.git.viresh.kumar@linaro.org>
- <Z7iGHiQcqa-_AXli@pollux>
-To: Danilo Krummrich <dakr@kernel.org>
-X-Mailer: Apple Mail (2.3826.300.87.4.3)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+
+Hi,
+
+Here is the 2nd version of the dumping mutex blocker in hung_task
+message. The previous version is here;
+
+https://lore.kernel.org/all/173997003868.2137198.9462617208992136056.stgit@mhiramat.tok.corp.google.com/
+
+This version introduced CONFIG_DETECT_HUNG_TASK_BLOCKER and
+save the mutex on task_struct as blocker_mutex field.
+
+The hung_task detector is very useful for detecting the lockup.
+However, since it only dumps the blocked (uninterruptible sleep)
+processes, it is not enough to identify the root cause of that
+lockup.
+
+For example, if a process holds a mutex and sleep an event in
+interruptible state long time, the other processes will wait on
+the mutex in uninterruptible state. In this case, the waiter
+processes are dumped, but the blocker process is not shown
+because it is sleep in interruptible state.
+
+This adds a feature to dump the blocker task which holds a mutex
+when detecting a hung task. e.g.
+
+ INFO: task cat:113 blocked for more than 122 seconds.
+       Not tainted 6.14.0-rc3-00002-g6afe972e1b9b #152
+ "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+ task:cat             state:D stack:13432 pid:113   tgid:113   ppid:103    task_flags:0x400100 flags:0x00000002
+ Call Trace:
+  <TASK>
+  __schedule+0x731/0x960
+  ? schedule_preempt_disabled+0x54/0xa0
+  schedule+0xb7/0x140
+  ? __mutex_lock+0x51d/0xa50
+  ? __mutex_lock+0x51d/0xa50
+  schedule_preempt_disabled+0x54/0xa0
+  __mutex_lock+0x51d/0xa50
+  ? current_time+0x3a/0x120
+  read_dummy+0x23/0x70
+  full_proxy_read+0x6a/0xc0
+  vfs_read+0xc2/0x340
+  ? __pfx_direct_file_splice_eof+0x10/0x10
+  ? do_sendfile+0x1bd/0x2e0
+  ksys_read+0x76/0xe0
+  do_syscall_64+0xe3/0x1c0
+  ? exc_page_fault+0xa9/0x1d0
+  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+ RIP: 0033:0x4840cd
+ RSP: 002b:00007ffe632b76c8 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
+ RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00000000004840cd
+ RDX: 0000000000001000 RSI: 00007ffe632b7710 RDI: 0000000000000003
+ RBP: 00007ffe632b7710 R08: 0000000000000000 R09: 0000000000000000
+ R10: 0000000001000000 R11: 0000000000000246 R12: 0000000000001000
+ R13: 000000003a8b63a0 R14: 0000000000000001 R15: ffffffffffffffff
+  </TASK>
+ INFO: task cat:113 is blocked on a mutex owned by task cat:112.
+ task:cat             state:S stack:13432 pid:112   tgid:112   ppid:103    task_flags:0x400100 flags:0x00000002
+ Call Trace:
+  <TASK>
+  __schedule+0x731/0x960
+  ? schedule_timeout+0xa8/0x120
+  schedule+0xb7/0x140
+  schedule_timeout+0xa8/0x120
+  ? __pfx_process_timeout+0x10/0x10
+  msleep_interruptible+0x3e/0x60
+  read_dummy+0x2d/0x70
+  full_proxy_read+0x6a/0xc0
+  vfs_read+0xc2/0x340
+  ? __pfx_direct_file_splice_eof+0x10/0x10
+  ? do_sendfile+0x1bd/0x2e0
+  ksys_read+0x76/0xe0
+  do_syscall_64+0xe3/0x1c0
+  ? exc_page_fault+0xa9/0x1d0
+  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+ RIP: 0033:0x4840cd
+ RSP: 002b:00007ffd69513748 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
+ RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00000000004840cd
+ RDX: 0000000000001000 RSI: 00007ffd69513790 RDI: 0000000000000003
+ RBP: 00007ffd69513790 R08: 0000000000000000 R09: 0000000000000000
+ R10: 0000000001000000 R11: 0000000000000246 R12: 0000000000001000
+ R13: 0000000029d8d3a0 R14: 0000000000000001 R15: ffffffffffffffff
+  </TASK>
+
+TBD:
+We can extend this feature to cover other locks like rwsem and rt_mutex,
+but rwsem requires to dump all the tasks which acquire and wait that
+rwsem. We can follow the waiter link but the output will be a bit
+different compared with mutex case.
+
+Thank you,
+
+---
+
+Masami Hiramatsu (Google) (2):
+      hung_task: Show the blocker task if the task is hung on mutex
+      samples: Add hung_task detector mutex blocking sample
 
 
+ include/linux/mutex.h               |    2 +
+ include/linux/sched.h               |    4 ++
+ kernel/hung_task.c                  |   31 ++++++++++++++++
+ kernel/locking/mutex.c              |   14 +++++++
+ lib/Kconfig.debug                   |   10 +++++
+ samples/Kconfig                     |    9 +++++
+ samples/Makefile                    |    1 +
+ samples/hung_task/Makefile          |    2 +
+ samples/hung_task/hung_task_mutex.c |   66 +++++++++++++++++++++++++++++++++++
+ 9 files changed, 139 insertions(+)
+ create mode 100644 samples/hung_task/Makefile
+ create mode 100644 samples/hung_task/hung_task_mutex.c
 
-> On 21 Feb 2025, at 10:56, Danilo Krummrich <dakr@kernel.org> wrote:
->=20
-> On Fri, Feb 21, 2025 at 12:03:39PM +0530, Viresh Kumar wrote:
->> +/// A simple implementation of `struct clk` from the C code.
->> +#[repr(transparent)]
->> +pub struct Clk(*mut bindings::clk);
->=20
-> I remember that Stephen explained that NULL is valid value for struct =
-clk. As a
-> consequence, all functions implemented for `Clk` have to consider =
-this.
-
-I am a bit confused here. If NULL is valid, then why should we have to =
-specifically
-consider that in the functions? No functions so far explicitly =
-dereferences that value,
-they only pass it to the clk framework.
-
-Or are you referring to the safety comments only? In which case I do =
-agree (sorry for
-the oversight by the way)
-
->=20
-> I wonder if it could make sense to have a transparent wrapper type
-> `MaybeNull<T>` (analogous to `NonNull<T>`) to make this fact more =
-obvious for
-> cases like this?
-
-MaybeNull<T> sounds nice.
-
->=20
->> +
->> +impl Clk {
->> +    /// Creates `Clk` instance for a device and a connection id.
->> +    pub fn new(dev: &Device, name: Option<&CStr>) -> Result<Self> {
->> +        let con_id =3D if let Some(name) =3D name {
->> +            name.as_ptr() as *const _
->> +        } else {
->> +            ptr::null()
->> +        };
->> +
->> +        // SAFETY: It is safe to call `clk_get()`, on a device =
-pointer earlier received from the C
->> +        // code.
->> +        Ok(Self(from_err_ptr(unsafe {
->> +            bindings::clk_get(dev.as_raw(), con_id)
->> +        })?))
->> +    }
->> +
->> +    /// Obtain the raw `struct clk *`.
->> +    pub fn as_raw(&self) -> *mut bindings::clk {
->> +        self.0
->> +    }
->> +
->> +    /// Clock enable.
->> +    pub fn enable(&self) -> Result<()> {
->> +        // SAFETY: By the type invariants, we know that `self` owns =
-a reference, so it is safe to
->> +        // use it now.
->=20
-> This is not true.
->=20
-> 1. There is no type invariant documented for `Clk`.
-> 2. The pointer contained in an instance of `Clk` may be NULL, hence =
-`self` does
->   not necessarily own a reference.
-
->=20
-> The same applies for all other functions in this implementation.
->=20
-
+--
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
