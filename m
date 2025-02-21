@@ -1,186 +1,136 @@
-Return-Path: <linux-kernel+bounces-525594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3815A3F1D4
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 11:21:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B4B7A3F1DA
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 11:22:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1F2E188B0E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:21:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 256AC188C241
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:22:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9022F204C23;
-	Fri, 21 Feb 2025 10:21:35 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0270204C23;
+	Fri, 21 Feb 2025 10:22:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cl1EevkJ"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF32A20102C;
-	Fri, 21 Feb 2025 10:21:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5A02204587;
+	Fri, 21 Feb 2025 10:22:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740133295; cv=none; b=J70v/CEn3mxl+JDtKhqkvxWfPMM8tu7p1SJoeEBFIDUcT9XvJmRPkNdwtbraXlBjdyt7sI2vbeaTPOWvUSCd35wjpP8rN+hVnjSkH5Emf12VKrlKEE9pN6XHwU1pgNGS8V/No2PhtW/9mbCXvRF1ItGLt11MbyudEaOtvnNeZcI=
+	t=1740133338; cv=none; b=ZyZvxxW/WzLqMFso+6KjmwgQOW2Amt5IifPleuvxOLx/tXdDvuTzCzTA5hPS3quPwQpBUm0P+ImIITl7qL08pnfvZa36qvthtCprKtqznkcDwy+7ON0TCbH4sUdc4lJ70cJfSHXhF5q05UqI3pLckfxJAfjKCL2DX6htj9w4wtI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740133295; c=relaxed/simple;
-	bh=KIY1UUNUalxnVN5x6j7pVuh9asszExDiV/UCvVb5Mgw=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Lm/IobZ3GcNEinu4iLQZYL6PhP81zOwg3DeD5v3k796qzmqmWcFmK9Hu6IRwyGRgr93a6J+hK5GVhbWPiS+KqCN9IyTZAU8SOVFBCJEXIQw90tgLeMTGzMu4iNDzLTRSjB8Db++2YkDEriJKFCRxRfzbTHnllLB7HttB8vLCtP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4YzmMm39xkz67QqC;
-	Fri, 21 Feb 2025 18:19:48 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 7629D140257;
-	Fri, 21 Feb 2025 18:21:29 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 21 Feb
- 2025 11:21:28 +0100
-Date: Fri, 21 Feb 2025 10:21:27 +0000
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-CC: Igor Mammedov <imammedo@redhat.com>, "Michael S . Tsirkin"
-	<mst@redhat.com>, Shiju Jose <shiju.jose@huawei.com>, <qemu-arm@nongnu.org>,
-	<qemu-devel@nongnu.org>, Philippe =?ISO-8859-1?Q?Mathieu-Daud=E9?=
-	<philmd@linaro.org>, Ani Sinha <anisinha@redhat.com>, Cleber Rosa
-	<crosa@redhat.com>, Dongjiu Geng <gengdongjiu1@gmail.com>, Eduardo Habkost
-	<eduardo@habkost.net>, Eric Blake <eblake@redhat.com>, John Snow
-	<jsnow@redhat.com>, Marcel Apfelbaum <marcel.apfelbaum@gmail.com>, "Markus
- Armbruster" <armbru@redhat.com>, Michael Roth <michael.roth@amd.com>, "Paolo
- Bonzini" <pbonzini@redhat.com>, Peter Maydell <peter.maydell@linaro.org>,
-	Shannon Zhao <shannon.zhaosl@gmail.com>, Yanan Wang <wangyanan55@huawei.com>,
-	Zhao Liu <zhao1.liu@intel.com>, <kvm@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Gavin Shan <gshan@redhat.com>
-Subject: Re: [PATCH v3 00/14] Change ghes to use HEST-based offsets and add
- support for error inject
-Message-ID: <20250221102127.000059e6@huawei.com>
-In-Reply-To: <20250221073823.061a1039@foz.lan>
-References: <cover.1738345063.git.mchehab+huawei@kernel.org>
-	<20250203110934.000038d8@huawei.com>
-	<20250203162236.7d5872ff@imammedo.users.ipa.redhat.com>
-	<20250221073823.061a1039@foz.lan>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1740133338; c=relaxed/simple;
+	bh=Sjc1BaSMeJRPeCcL/epzdtctw6/nuuB3OAwal9CBkZ0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PAFNBrW4dlKnu0XvVGxED7Kl37yH7753gr7kisZAiK+KbRY4FhETYYum8z7NgBp6FRwcl2zfNxjsZVJDEKi4oMX9S1X8FQPr2UNEQ6p5X/jdFRymw4/clP/a6Ey0f7vqV3emLneNJwElEuJesTN+h47rAa+LdOF3HqU8h7tApVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Cl1EevkJ; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-220f4dd756eso37502375ad.3;
+        Fri, 21 Feb 2025 02:22:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740133335; x=1740738135; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=BUiInESylQ443K1PbNMFuTYC6xpLt2zG6UzEqWDU58A=;
+        b=Cl1EevkJ/k5SdM1wbb4OxJ77Gw3N8hFViYg1dGRvK9r2CngsKuVqAFv6JMPo40JAAx
+         aXfGtNf/+yIKNTKgFkLLnJqOJIIVhJTEnYb3vtsZYJ1RX6Nhgymx7y0x0i9Qcn2Xpe2O
+         +ZbTYOgNJ7ZSAxWe0JyexoMNxPS9vmNRBdFpM062Xnv67NVuDWeHdBKZKZyxIC6WnKU7
+         y2fy+RMlA67aR774L8PXNwrWr/uCGDL6ENUaSVwRiwFMA4oFX83gCyO77VFvo5mMYNyP
+         1ZWGyvp8wxkaTqM03DN9i38GQuJMaGh6wRuAPvMUddx9kaRVcbTkgPnfD29wH2UXfbC8
+         8CAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740133335; x=1740738135;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BUiInESylQ443K1PbNMFuTYC6xpLt2zG6UzEqWDU58A=;
+        b=d3rOu3FIsnS1MGXZ32sbrDG3xGtEb4JhT9DWCVqjkto3h1XTHtyEFqaCkRjhMouNvU
+         5ORod+f1tsIiqMT0QaessCmlD6yFkwo69V/rZVr59OkBfYZV7evBLN90o3CO2mbU0ewp
+         nkwWGJZ4m3SGc+SLzYpkFY95enR8lqk0kehPFn9q/n59HwulApzeCbvbAOlUkIh+45LN
+         rZ2z0JsGEds94L5NKuUU4si4P0lwdLjvgFgNXBpY3MZvpP6OER85c44He7qZTz/TadXz
+         zw+qBYGEjPyf2jOX8mvEZYGYdfQ26jU8uZYf6tE1/pMdc/7PQ/vj4ROF+/KcuM7KfJkQ
+         6a0A==
+X-Forwarded-Encrypted: i=1; AJvYcCUp0O79QO3+cNNdUpbfDixq6ngAPSHUcs2tD/qTqvGE06YuSLK6S9Ciui2JC06l4u1t1/cvSKlctOA3yLnrYITB@vger.kernel.org, AJvYcCVZn9LMjcG1fe4rdxW3bF0snzoSWcT3/J+uWBABlOTnrG6GE9u5SlEVpAQB6uYMvnsV0KpXp5kWqu+6uPg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy20nfKx6e6XtiJ/DkNoi/CMklymduFE8kY6+UFeK2Y8wIa+a59
+	bY0abtcz+BCliKAD1ndNcot8eDvnJFzpwzjATxSJ0CpxVBhnAIJk
+X-Gm-Gg: ASbGncvIzDkhYC+zQ0qMVPX/e+0h2lH1SwF93bEJimm8WUXq46MSupezUY6SvJa4zAx
+	Utwd24+YqzMSjXLoOo2fXQ6S0ca4lhq00MtleKYMWGRbyeBOV1gSgvq7SfoPFGp8h6GFqWeRT+U
+	qO108e8Hn3R8zrwKdRzX7JGCgieQm+7h6S9OuyHAdcrzBRxmIqzyNFGeSS6gJTkZIad3viPCUFt
+	ukfYBznuJjRQ5Ym+GMr/J1dRJGIiaHTozipTQJdVxrLuZaXAdVrcq9NK7jrABc5iIEzV5T+aiVZ
+	nH/84xWoSng6r8FA1B2bx5P1S7xy50KXCyt0QdE+m6CZNm0=
+X-Google-Smtp-Source: AGHT+IHDNNa9+STTHVJu9rG3iYk4wdYRkirFxgdhDuCzUpvTXWsEe5U1+ypJwPqU6S1lu1S8FtE5Xw==
+X-Received: by 2002:a17:902:e5d0:b0:21f:9107:fca3 with SMTP id d9443c01a7336-2219ff5efccmr36540465ad.30.1740133334784;
+        Fri, 21 Feb 2025 02:22:14 -0800 (PST)
+Received: from localhost.localdomain ([14.139.69.34])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2211d4c9c64sm87690365ad.214.2025.02.21.02.22.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Feb 2025 02:22:14 -0800 (PST)
+From: Bharadwaj Raju <bharadwaj.raju777@gmail.com>
+To: kees@kernel.org
+Cc: Bharadwaj Raju <bharadwaj.raju777@gmail.com>,
+	joel.granados@kernel.org,
+	shuah@kernel.org,
+	skhan@linuxfoundation.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-kernel-mentees@lists.linux.dev
+Subject: [PATCH sysctl-next v2] selftests/sysctl: fix wording of help messages
+Date: Fri, 21 Feb 2025 15:51:49 +0530
+Message-ID: <20250221102151.5593-1-bharadwaj.raju777@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100011.china.huawei.com (7.191.174.247) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Transfer-Encoding: 8bit
 
-On Fri, 21 Feb 2025 07:38:23 +0100
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
+Fix grammar such as "number amount of times is
+recommended" etc -> "the recommended number of
+times".
 
-> Em Mon, 3 Feb 2025 16:22:36 +0100
-> Igor Mammedov <imammedo@redhat.com> escreveu:
-> 
-> > On Mon, 3 Feb 2025 11:09:34 +0000
-> > Jonathan Cameron <Jonathan.Cameron@huawei.com> wrote:
-> >   
-> > > On Fri, 31 Jan 2025 18:42:41 +0100
-> > > Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
-> > >     
-> > > > Now that the ghes preparation patches were merged, let's add support
-> > > > for error injection.
-> > > > 
-> > > > On this series, the first 6 patches chang to the math used to calculate offsets at HEST
-> > > > table and hardware_error firmware file, together with its migration code. Migration tested
-> > > > with both latest QEMU released kernel and upstream, on both directions.
-> > > > 
-> > > > The next patches add a new QAPI to allow injecting GHESv2 errors, and a script using such QAPI
-> > > >    to inject ARM Processor Error records.
-> > > > 
-> > > > If I'm counting well, this is the 19th submission of my error inject patches.      
-> > > 
-> > > Looks good to me. All remaining trivial things are in the category
-> > > of things to consider only if you are doing another spin.  The code
-> > > ends up how I'd like it at the end of the series anyway, just
-> > > a question of the precise path to that state!    
-> > 
-> > if you look at series as a whole it's more or less fine (I guess you
-> > and me got used to it)
-> > 
-> > however if you take it patch by patch (as if you've never seen it)
-> > ordering is messed up (the same would apply to everyone after a while
-> > when it's forgotten)
-> > 
-> > So I'd strongly suggest to restructure the series (especially 2-6/14).
-> > re sum up my comments wrt ordering:
-> > 
-> > 0  add testcase for HEST table with current HEST as expected blob
-> >    (currently missing), so that we can be sure that we haven't messed
-> >    existing tables during refactoring.  
+Signed-off-by: Bharadwaj Raju <bharadwaj.raju777@gmail.com>
+---
+ tools/testing/selftests/sysctl/sysctl.sh | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-To potentially save time I think Igor is asking that before you do anything
-at all you plug the existing test hole which is that we don't test HEST
-at all.   Even after this series I think we don't test HEST.  You add
-a stub hest and exclusion but then in patch 12 the HEST stub is deleted whereas
-it should be replaced with the example data for the test.
-
-That indeed doesn't address testing the error data storage which would be
-a different problem.
-> 
-> Not sure if I got this one. The HEST table is part of etc/acpi/tables,
-> which is already tested, as you pointed at the previous reviews. Doing
-> changes there is already detected. That's basically why we added patches
-> 10 and 12:
-> 
-> 	[PATCH v3 10/14] tests/acpi: virt: allow acpi table changes for a new table: HEST
-> 	[PATCH v3 12/14] tests/acpi: virt: add a HEST table to aarch64 virt and update DSDT
-> 
-> What tests don't have is a check for etc/hardware_errors firmware inside 
-> tests/data/acpi/aarch64/virt/, but, IMO, we shouldn't add it there.
-> 
-> See, hardware_errors table contains only some skeleton space to
-> store:
-> 
-> 	- 1 or more error block address offsets;
-> 	- 1 or more read ack register;
-> 	- 1 or more HEST source entries containing CPER blocks.
-> 
-> There's nothing there to be actually checked: it is just some
-> empty spaces with a variable number of fields.
-> 
-> With the new code, the actual number of CPER blocks and their
-> corresponding offsets and read ack registers can be different on 
-> different architectures. So, for instance, when we add x86 support,
-> we'll likely start with just one error source entry, while arm will
-> have two after this changeset.
-> 
-> Also, one possibility to address the issues reported by Gavin Shan at
-> https://lore.kernel.org/qemu-devel/20250214041635.608012-1-gshan@redhat.com/
-> would be to have one entry per each CPU. So, the size of such firmware
-> could be dependent on the number of CPUs.
-> 
-> So, adding any validation to it would just cause pain and probably
-> won't detect any problems.
-
-If we did do this the test would use a fixed number of CPUs so
-would just verify we didn't break a small number of variants. Useful
-but to me a follow up to this series not something that needs to
-be part of it - particularly as Gavin's work may well change that!
-
-> 
-> What could be done instead is to have a different type of tests that
-> would use the error injection script to check if regressions are 
-> introduced after QEMU 10.0. Such new kind of test would require
-> this series to be merged first. It would also require the usage of
-> an OSPM image with some testing tools on it. This is easier said 
-> than done, as besides the complexity of having an OSPM test image,
-> such kind of tests would require extra logic, specially if it would
-> check regressions for SEA and other notification sources.
-> 
-Agreed that a more end to end test is even better, but those are
-quite a bit more complex so definitely a follow up.
-
-J
-> Thanks,
-> Mauro
-> 
+diff --git a/tools/testing/selftests/sysctl/sysctl.sh b/tools/testing/selftests/sysctl/sysctl.sh
+index f6e129a82ffd..db1616857d89 100755
+--- a/tools/testing/selftests/sysctl/sysctl.sh
++++ b/tools/testing/selftests/sysctl/sysctl.sh
+@@ -857,7 +857,7 @@ list_tests()
+ 	echo
+ 	echo "TEST_ID x NUM_TEST"
+ 	echo "TEST_ID:   Test ID"
+-	echo "NUM_TESTS: Number of recommended times to run the test"
++	echo "NUM_TESTS: Recommended number of times to run the test"
+ 	echo
+ 	echo "0001 x $(get_test_count 0001) - tests proc_dointvec_minmax()"
+ 	echo "0002 x $(get_test_count 0002) - tests proc_dostring()"
+@@ -884,7 +884,7 @@ usage()
+ 	echo "Valid tests: 0001-$MAX_TEST"
+ 	echo ""
+ 	echo "    all     Runs all tests (default)"
+-	echo "    -t      Run test ID the number amount of times is recommended"
++	echo "    -t      Run test ID the recommended number of times"
+ 	echo "    -w      Watch test ID run until it runs into an error"
+ 	echo "    -c      Run test ID once"
+ 	echo "    -s      Run test ID x test-count number of times"
+@@ -898,7 +898,7 @@ usage()
+ 	echo Example uses:
+ 	echo
+ 	echo "$TEST_NAME.sh            -- executes all tests"
+-	echo "$TEST_NAME.sh -t 0002    -- Executes test ID 0002 number of times is recommended"
++	echo "$TEST_NAME.sh -t 0002    -- Executes test ID 0002 the recommended number of times"
+ 	echo "$TEST_NAME.sh -w 0002    -- Watch test ID 0002 run until an error occurs"
+ 	echo "$TEST_NAME.sh -s 0002    -- Run test ID 0002 once"
+ 	echo "$TEST_NAME.sh -c 0002 3  -- Run test ID 0002 three times"
+-- 
+2.48.1
 
 
