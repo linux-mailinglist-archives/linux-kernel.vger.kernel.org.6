@@ -1,123 +1,106 @@
-Return-Path: <linux-kernel+bounces-525609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3742DA3F228
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 11:32:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF01DA3F231
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 11:35:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4821E1896722
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:31:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 813843B668B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:35:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD422205AC1;
-	Fri, 21 Feb 2025 10:31:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LWTVpvlT"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44173205501;
-	Fri, 21 Feb 2025 10:31:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 882AC204F86;
+	Fri, 21 Feb 2025 10:35:35 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1A2E1FF1AF;
+	Fri, 21 Feb 2025 10:35:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740133889; cv=none; b=nNcgM1BLZU48K3ol6NF1vWcmXPrEWOhXRVSzX/oU7vlt7XmgUhdIsZvegnVFW9wsZKftUOXIi3KAh4zw8pbqDIk3jdlde1Wjcm85Kt5WmYI5af6i6ZnI4J5K0+PbhEa4zOZLsZK3EWqHeZHdrRYFlAnWy5QKznid3ktjQUqRCYc=
+	t=1740134135; cv=none; b=TT6Oz08genoPCmGHgNby0eDu86EPKHEddyIXtvX4EKYeOMzGc4q6ytMRl/g46peBMu+sQOoWkrJk1S/b4oPusR4WCbqwKjQQQ1BSSx6QLzYT/fWwuocrg4wpD36Hs/9Dz1fBQAX325GMICt7iQIuBwzTcEpCYjzheUrwAeYbZPM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740133889; c=relaxed/simple;
-	bh=UOD81SOOv99aZPAdnSzK6KX7d0xxkiZrq3cW/CpKd4s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ib5jWq75hpInh50u6lobQk0SMoRlgG83ly4TxnhJ9PKcHaJUcWjcMbhOQcVCctsSoYAf8Hd8tw9powZrga8VluQN5CpxJo3PXSvUqtiPPVVvNw71CQB2hRw3MTH82gNtoJY6ph9hrWjs7A5pFYfgKBpDCMk+DTyAfTrubNy21RM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LWTVpvlT; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740133887; x=1771669887;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=UOD81SOOv99aZPAdnSzK6KX7d0xxkiZrq3cW/CpKd4s=;
-  b=LWTVpvlT15dM0Ml+rMQxje4/s4Toz8z4v10FEtj27R3SrEymu1T1BQGe
-   AqqMEbtL5Pg/gjHjSdj91ekFVDm/fhVdIiPLXKWkjm5Ne4fhrZ8uTG8uD
-   1LyArxKHWuT8yARSzfRKfqX66YcT0JGuOtBpZPE/htka96w2o32DwV4Bx
-   e4K22sXYU1vQY7R7gnQzqXyPtAxVkGurzelE3cXfePaPUghh4Ov4fF4rt
-   yDXU9TfNRX7lSP9Of4WsGvXzLz4lh+fr3ZnCeIc6hkrKhMObgX8N8VuJR
-   eU6rRYPZj0IxG+pjtyCREdjxO+dl+CX8WJn0RXF2f0Tod+vwjoO3JFIZk
-   g==;
-X-CSE-ConnectionGUID: KV81JenzTwaV42YTdEk0bA==
-X-CSE-MsgGUID: SC9NlRrCT1yY5cHdWBgbrQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11351"; a="63422850"
-X-IronPort-AV: E=Sophos;i="6.13,304,1732608000"; 
-   d="scan'208";a="63422850"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Feb 2025 02:31:26 -0800
-X-CSE-ConnectionGUID: Wi7D5EgORwu+yzzB+zKGBQ==
-X-CSE-MsgGUID: nIAPelcTQEa2ho7+H5+r5Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,304,1732608000"; 
-   d="scan'208";a="138555009"
-Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
-  by fmviesa002.fm.intel.com with ESMTP; 21 Feb 2025 02:31:24 -0800
-Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tlQJW-0005ON-39;
-	Fri, 21 Feb 2025 10:31:22 +0000
-Date: Fri, 21 Feb 2025 18:30:52 +0800
-From: kernel test robot <lkp@intel.com>
-To: Nam Tran <trannamatk@gmail.com>, pavel@kernel.org, lee@kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, linux-leds@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Nam Tran <trannamatk@gmail.com>
-Subject: Re: [PATCH v1 2/2] leds: add new LED driver for TI LP5812
-Message-ID: <202502211827.2FKKhUB7-lkp@intel.com>
-References: <20250220181541.2341-3-trannamatk@gmail.com>
+	s=arc-20240116; t=1740134135; c=relaxed/simple;
+	bh=9yfpDYwiRXTbAwNM4+S8KEq65OP2vDs72ScJnryKwII=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rUth7q4Tr3TfyITKUGR2WtMCDQ2xKv7qO8rYvNGC2exqQOg47d7w2K4A3D3odJi417zPKMgu4UyhAUIRHXvWYCrFSPh3X0y+jfu9+ln1xMoJYpPgdvEofjjAoYg9ADidrXDOQWU5Lr7w1ACz7N5eK/1KYpQ+6+acK04Ye99MDxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B5521169C;
+	Fri, 21 Feb 2025 02:35:50 -0800 (PST)
+Received: from [10.57.64.214] (unknown [10.57.64.214])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 669A63F5A1;
+	Fri, 21 Feb 2025 02:35:31 -0800 (PST)
+Message-ID: <9cc02f9e-9326-4fe1-820b-ca725f68de29@arm.com>
+Date: Fri, 21 Feb 2025 10:35:30 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250220181541.2341-3-trannamatk@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] thermal: gov_power_allocator: Fix incorrect calculation
+ in divvy_up_power
+To: "Rafael J. Wysocki" <rafael@kernel.org>, Yu-Che Cheng <giver@chromium.org>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Zhang Rui <rui.zhang@intel.com>,
+ "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Chen-Yu Tsai <wenst@chromium.org>
+References: <20250219-fix-power-allocator-calc-v1-1-48b860291919@chromium.org>
+ <CAJZ5v0jSh=aOfP7BKTCSxnPGy-XKJKcHNw8bN5PXPH0LA0tAGg@mail.gmail.com>
+Content-Language: en-US
+From: Lukasz Luba <lukasz.luba@arm.com>
+In-Reply-To: <CAJZ5v0jSh=aOfP7BKTCSxnPGy-XKJKcHNw8bN5PXPH0LA0tAGg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Nam,
 
-kernel test robot noticed the following build warnings:
 
-[auto build test WARNING on lee-leds/for-leds-next]
-[also build test WARNING on linus/master v6.14-rc3 next-20250221]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+On 2/20/25 19:45, Rafael J. Wysocki wrote:
+> On Wed, Feb 19, 2025 at 8:07 AM Yu-Che Cheng <giver@chromium.org> wrote:
+>>
+>> divvy_up_power should use weighted_req_power instead of req_power to
+>> calculate the granted_power. Otherwise, the granted_power may be
+>> unexpected as the denominator total_req_power is weighted sum.
+> 
+> Yes, this is what's happening, to my eyes.
+> 
+>> This is a mistake during the previous refactor.
+>>
+>> Replace the req_power with weighted_req_power in divvy_up_power
+>> calculation.
+>>
+>> Fixes: 912e97c67cc3 ("thermal: gov_power_allocator: Move memory allocation out of throttle()")
+>> Signed-off-by: Yu-Che Cheng <giver@chromium.org>
+>> ---
+>>   drivers/thermal/gov_power_allocator.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/thermal/gov_power_allocator.c b/drivers/thermal/gov_power_allocator.c
+>> index 3b644de3292e..3b626db55b2b 100644
+>> --- a/drivers/thermal/gov_power_allocator.c
+>> +++ b/drivers/thermal/gov_power_allocator.c
+>> @@ -370,7 +370,7 @@ static void divvy_up_power(struct power_actor *power, int num_actors,
+>>
+>>          for (i = 0; i < num_actors; i++) {
+>>                  struct power_actor *pa = &power[i];
+>> -               u64 req_range = (u64)pa->req_power * power_range;
+>> +               u64 req_range = (u64)pa->weighted_req_power * power_range;
+>>
+>>                  pa->granted_power = DIV_ROUND_CLOSEST_ULL(req_range,
+>>                                                            total_req_power);
+>>
+>> ---
+> 
+> And the fix looks good to me.
+> 
+> Lukasz, any concerns?
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Nam-Tran/dt-bindings-leds-Add-LP5812-LED-driver-bindings/20250221-021848
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/lee/leds.git for-leds-next
-patch link:    https://lore.kernel.org/r/20250220181541.2341-3-trannamatk%40gmail.com
-patch subject: [PATCH v1 2/2] leds: add new LED driver for TI LP5812
-reproduce: (https://download.01.org/0day-ci/archive/20250221/202502211827.2FKKhUB7-lkp@intel.com/reproduce)
+Good catch! It went through since the test didn't set different weights.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202502211827.2FKKhUB7-lkp@intel.com/
+Thanks for the fix!
 
-versioncheck warnings: (new ones prefixed by >>)
-   INFO PATH=/opt/cross/rustc-1.78.0-bindgen-0.65.1/cargo/bin:/opt/cross/clang-19/bin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-   /usr/bin/timeout -k 100 3h /usr/bin/make KCFLAGS= -Wtautological-compare -Wno-error=return-type -Wreturn-type -Wcast-function-type -funsigned-char -Wundef -fstrict-flex-arrays=3 -Wformat-overflow -Wformat-truncation -Wenum-conversion W=1 --keep-going LLVM=1 -j32 ARCH=x86_64 versioncheck
-   find ./* \( -name SCCS -o -name BitKeeper -o -name .svn -o -name CVS -o -name .pc -o -name .hg -o -name .git \) -prune -o \
-   	-name '*.[hcS]' -type f -print | sort \
-   	| xargs perl -w ./scripts/checkversion.pl
->> ./drivers/leds/leds-lp5812.c: 10 linux/version.h not needed.
-   ./samples/bpf/spintest.bpf.c: 8 linux/version.h not needed.
-   ./tools/lib/bpf/bpf_helpers.h: 424: need linux/version.h
-   ./tools/testing/selftests/bpf/progs/dev_cgroup.c: 9 linux/version.h not needed.
-   ./tools/testing/selftests/bpf/progs/netcnt_prog.c: 3 linux/version.h not needed.
-   ./tools/testing/selftests/bpf/progs/test_map_lock.c: 4 linux/version.h not needed.
-   ./tools/testing/selftests/bpf/progs/test_send_signal_kern.c: 4 linux/version.h not needed.
-   ./tools/testing/selftests/bpf/progs/test_spin_lock.c: 4 linux/version.h not needed.
-   ./tools/testing/selftests/bpf/progs/test_tcp_estats.c: 37 linux/version.h not needed.
-   ./tools/testing/selftests/wireguard/qemu/init.c: 27 linux/version.h not needed.
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Reviewed-by: Lukasz Luba <lukasz.luba@arm.com>
 
