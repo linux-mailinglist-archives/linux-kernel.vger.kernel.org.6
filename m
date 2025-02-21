@@ -1,100 +1,90 @@
-Return-Path: <linux-kernel+bounces-526789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B72E1A40350
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 00:10:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 926BAA4035B
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 00:14:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0170619E16B4
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 23:10:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF12A3A55E9
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 23:11:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDF092063D3;
-	Fri, 21 Feb 2025 23:10:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4305205E1C;
+	Fri, 21 Feb 2025 23:11:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iof8DAg2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t5UdMqzL"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F79C204C0E;
-	Fri, 21 Feb 2025 23:10:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1088C1F9F70;
+	Fri, 21 Feb 2025 23:11:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740179401; cv=none; b=PWkQzG9MFEW1AssZnoI69X3LduireLVQPXIGTqv3i7eglQe8K8K9E7DGVuJ+fmZiMl42LCrnjMuzFC+0pxGe+Xek1whDIsjVRWmjGW6z/QSYGxgfq3dOSJDcGPoLyJ17br6RsumNfRe+KuQblQVG2b8fz7pgyUgbyKykUJv5REw=
+	t=1740179509; cv=none; b=pVrUmK5xOnm6oWoaKL37avzcCxY9N7sMQ/ZkyMlK9bqE7YMCfZV6rn9D1Uuq/epETxErlfbTG5ROom0ahB1PL67qSBLfZ1Lm13scK19ZJEWPaTXRqLMJEAQZTmJRW6qsTbw3Y1VpRzx/SB9sqPXr6TchHbyEFNeLn8jFYbWAQW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740179401; c=relaxed/simple;
-	bh=iyuxnVnQuTrsFsc4O1vreET7eNP3Ti4uW2MASu5/uBA=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=OKzAYjD7cEfeUinm2JbFt3fqyjgSZ1LvY9uisAtTslVDw+/gsZSHD5MC5PHITj6gxNi+fFfM950RKEeKwXM+eOHoktVgdZ26dIytL+6zDVhKcbfrJDZxQJe/X8eJeFO1WgToKhQ2j90lCy+tpoztUoU5G5pstb7dSpVshmgUAEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iof8DAg2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B99D9C4CEE4;
-	Fri, 21 Feb 2025 23:10:00 +0000 (UTC)
+	s=arc-20240116; t=1740179509; c=relaxed/simple;
+	bh=AQoq1PHYG8aFQ1LcI2Aef/ozCgtbZVuCUR1MfPY45j4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Yfv6a/gDfsK5cmsXg4JezronSa7l418w+lRUjljE7XwZluo8G+pmPynjinh1cmWCqFXkQ7z5uGb0hzii9fEW0FeZ+7JccY4kHUQfjx1YfuGuLFXN07gXHr8YAJJ8RGVLLGZ8lhymV3IJsdoqk/f2ZDoZ5V6VqztIWpMMcXUjfjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t5UdMqzL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 443B1C4CED6;
+	Fri, 21 Feb 2025 23:11:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740179400;
-	bh=iyuxnVnQuTrsFsc4O1vreET7eNP3Ti4uW2MASu5/uBA=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=iof8DAg2CtvyT75sTZTtDIwImyHTetW5e3Z+W4u4TEKFOwHUIYo3+smnE8eyyEij4
-	 86JavVnifYd3aGrS8+obehtw1YtTIYvqIDOm0UbtAwlojEmt8j7/LhEwsFusWtTvWO
-	 dyJcu8RzQfQCg+/qwXBJHpUoGQKzWkU1qgQg5T8Z21eh+t26+ugMijCPSOUNNt6BLf
-	 01eh9iZvq+cX2et40zkn44HcRVGj37b+dHLL8n46tS77H/UH7PLOFPBsPY335ki9GY
-	 XzjhHOGedD1PSalKVuKbkekA91P4cnTJtBALZeWlumjaHeE44rnDrNIRsJgpK62JV4
-	 kFB6tAZIOD94A==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAF38380CEEC;
-	Fri, 21 Feb 2025 23:10:32 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1740179508;
+	bh=AQoq1PHYG8aFQ1LcI2Aef/ozCgtbZVuCUR1MfPY45j4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=t5UdMqzLtGN/zULWN5fYMHTSUXmM4WhK6vp9903+CjUqOks/gJlBE2+LOUk58Zn35
+	 3G/K9pygR5yz8upm+foCC1zwRYYkkbeAvqUqXb7+Hiu3pjiybZzBtHDSk6R/K1+AdO
+	 bIlZUtwX0/PnAX4eunvETPj/jjdABLP963XlG1xwamfBArQPnvOkOPni0N+6lHwP23
+	 TJdcsXCayzQuOTjJ8/2iQWvN3jJcs1Lpoye8UE1z17Qb0n/iixsXITXR3CcVS+WfvB
+	 pLYdW/Kwy/rDO4dhCuHvj6ZLJoXIjD//nbv81ZBuOFS5FH+rUD9lIbPEH0wXiKrdVF
+	 edsatwJWy1MuA==
+Date: Fri, 21 Feb 2025 17:11:46 -0600
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Sean Paul <sean@poorly.run>, devicetree@vger.kernel.org,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	linux-arm-msm@vger.kernel.org,
+	Abhinav Kumar <quic_abhinavk@quicinc.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Simona Vetter <simona@ffwll.ch>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	freedreno@lists.freedesktop.org, Rob Clark <robdclark@gmail.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	David Airlie <airlied@gmail.com>
+Subject: Re: [PATCH v2 1/7] dt-bindings: display: msm: mdp4: add LCDC clock
+ and PLL source
+Message-ID: <174017950586.286463.3669528376090939192.robh@kernel.org>
+References: <20250220-fd-mdp4-lvds-v2-0-15afe5578a31@linaro.org>
+ <20250220-fd-mdp4-lvds-v2-1-15afe5578a31@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net 0/5] rxrpc, afs: Miscellaneous fixes
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <174017943176.2232673.6967417998548585164.git-patchwork-notify@kernel.org>
-Date: Fri, 21 Feb 2025 23:10:31 +0000
-References: <20250218192250.296870-1-dhowells@redhat.com>
-In-Reply-To: <20250218192250.296870-1-dhowells@redhat.com>
-To: David Howells <dhowells@redhat.com>
-Cc: netdev@vger.kernel.org, marc.dionne@auristor.com, kuba@kernel.org,
- davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
- linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250220-fd-mdp4-lvds-v2-1-15afe5578a31@linaro.org>
 
-Hello:
 
-This series was applied to netdev/net.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Tue, 18 Feb 2025 19:22:43 +0000 you wrote:
-> Here are some miscellaneous fixes for rxrpc and afs:
+On Thu, 20 Feb 2025 13:14:43 +0200, Dmitry Baryshkov wrote:
+> Add the LCDC / LVDS clock input and the XO used to drive internal LVDS
+> PLL to MDP4 controller bindings. The controller also provides LVDS PHY
+> PLL, so add optional #clock-cells to the device.
 > 
->  (1) In the rxperf test server, make it correctly receive and decode the
->      terminal magic cookie.
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>  Documentation/devicetree/bindings/display/msm/mdp4.yaml | 9 ++++++++-
+>  1 file changed, 8 insertions(+), 1 deletion(-)
 > 
->  (2) In rxrpc, get rid of the peer->mtu_lock as it is not only redundant,
->      it now causes a lockdep complaint.
-> 
-> [...]
 
-Here is the summary with links:
-  - [net,1/5] rxrpc: rxperf: Fix missing decoding of terminal magic cookie
-    https://git.kernel.org/netdev/net/c/c34d999ca314
-  - [net,2/5] rxrpc: peer->mtu_lock is redundant
-    https://git.kernel.org/netdev/net/c/833fefa07444
-  - [net,3/5] rxrpc: Fix locking issues with the peer record hash
-    https://git.kernel.org/netdev/net/c/71f5409176f4
-  - [net,4/5] afs: Fix the server_list to unuse a displaced server rather than putting it
-    https://git.kernel.org/netdev/net/c/add117e48df4
-  - [net,5/5] afs: Give an afs_server object a ref on the afs_cell object it points to
-    https://git.kernel.org/netdev/net/c/1f0fc3374f33
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
 
