@@ -1,124 +1,470 @@
-Return-Path: <linux-kernel+bounces-525971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C54DFA3F7F8
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:05:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38CA4A3F7FC
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:06:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E943270087A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 15:04:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D22413BE884
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 15:05:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FE2720A5C3;
-	Fri, 21 Feb 2025 15:04:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="dRaf2h8s"
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA59E1D5166
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 15:04:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D162920FAB4;
+	Fri, 21 Feb 2025 15:05:56 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92F5C74BED;
+	Fri, 21 Feb 2025 15:05:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740150246; cv=none; b=ApdfkTlYYAMGr7ZlN+GOVasi65Qk/eeRQ3FrqJNIbbw5WXT2WuX5ZzMR5AXPkgxFOVI9s2g/I9CqIg0aAVWXup6b5vCcUseVv13YGCLjc7+08xdnDaXOyyBh4CcZL7ONfUpkWRxUg2Zh8TBV3mK9CBjCV7AIjesLr20+E5Oz8Cc=
+	t=1740150356; cv=none; b=UgP4QZW89riv32uiq0xMXh7Fs6paRLVxO8DQm5wa55fzHMx4JLDLxSDpSiWHdg/hf1Cpym/vOIiGyjeYPpkjD49WFaShcAkdxuFWlDQoc0QGYIZb5fsYybB+/X+TW0Rb7Upqxtz1e5VmR73AFVahT4Bm4WrNUBe7ZaPS8qaP6wU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740150246; c=relaxed/simple;
-	bh=KFRtnFkBQ3nC/ONHLc235b88cizu7aDwFPzxp2mtWKE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D3yS+k8ZAF8eccCPnVvEAYomCWYygZ/lH2LErIOAsy7FHx/xMJcV8ZlWRYDa7WLN5hFszvBNw/ooaj6wxeX0+zWAP5/hxtgSmJc5YmAVOwKbRb9q6jIPAWrgaQEwDCmAd8JBlm1CILH9cfZxzXwzJkxQk60s5as7BtyRSpqXk+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=dRaf2h8s; arc=none smtp.client-ip=209.85.160.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4720cfc35e9so35353361cf.2
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 07:04:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1740150243; x=1740755043; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=raGdtvv05v7TE9T3+zg6DVv8x4HSkjlAQxhegISHwbU=;
-        b=dRaf2h8s1vPFB92blYlbw8Moctc10fxs0LcjvyDcA7Z7Xxpef2S1dXZqawh2BpEO+1
-         wJrLmrV0nh6LgGRWcc+ATjFa/ghhC0jD+tISVlmw784aHUGGZq0TlNirGmBlhAqv9sdx
-         pZnnMdC+CQY4iacbpewj4TayjbHSeTpMWgpw/RveJLYoi74a5yB4upO7n4qpT5J7N8Im
-         4OjBR1laaFpeeD2XJFbUS8TFjb0dkTYFEv03BbV3i9by6BzEMuXhOKAmjYYVt9VlRDnf
-         UrI1OLmJkH25FHaIVRCqt5uSnSlgv1svofW/Ec9hSm/wVVfoKMfX8UbxjJxFSmRSZtDV
-         sQgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740150243; x=1740755043;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=raGdtvv05v7TE9T3+zg6DVv8x4HSkjlAQxhegISHwbU=;
-        b=R0m2Carz6CtsoEgKEZfnXsB8X475FSdsI95/hgj1+QixtJ/YFR6HmuEtKUJWah/1ED
-         LHDq4D80iokVxPS2I6MZP7j32XSZ01Mlr4n86HLbgVoMaudGlg5fIPUDerbbaE/TFwh5
-         xMuR4CWd/zEqQNwPRwcMJuVZ6vgpUZsjB8HqSBtoDdSv6/LXpYz3BI7UnHsr7w8fPZNT
-         aG2FEBXwQlkjNQlCbatS26pn7U0cJIn2FYYtrxfHi4hFHah5N9dF+Ga27+lXJFvRPNrd
-         NK11sSFmh6ssqoKaTiDexuPraMEM0Mg3017FwpsMvKf4IW9YYgnxEN41M0+8O0kvkiDJ
-         YMSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWquKhbHpzLORZtxSjjCmQ49EmheJmvTGYr6wqFyaDE+TGxLuYskQHvB83qBy95xYUyi01qUuAcZ+FWD5g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzfsCPAond9efNJ7ZC0AgTrlCKou1cUBA71BaXu4TXXB+eQaedb
-	ZhAuc7fPJjmM24oHVlfHey0/blneeVcw70LAK107rfKMm9knbPNCYM0RtsfCoO4=
-X-Gm-Gg: ASbGncs2eycuFUA8dIzUWfBb0lUV7voyp9EGMLyuYhZP4x31tP8ZcDlBe1ChAbhgPRb
-	NhHt3lZN3yuSKSnbhjSjKfrvRtsBAH6FytbzF0ET9c5fEgSXpzBzKcEZjdVPtFhMzAAZBttac5c
-	N6doCxOO503HQUATZWaO+Zceh5vIIFWfP/itdiEm4sEPb1qXRPpHzpoHq4PJdQ2wjekH1sPTyeX
-	+tHXxW7Mslf3CAoe08emuCKwbub250PHP8yjFXoL/OAYyiHWiL1yL+oe/myl1N0WXHM2BKrIYAY
-	SzsJuwKotH1LSUHunnuzgfSIcUI05JOIAW13acA7uv6Db30RCDqcwYx2n7oqlxQKzKBWcbcdmp0
-	=
-X-Google-Smtp-Source: AGHT+IEyhGHpN40DqDI/gpoNpoHjMZUsgC5bbatQsZIqzLlRoImR8TUs8p3nfPNs4rz85K0lqk/aKg==
-X-Received: by 2002:a05:622a:148c:b0:472:16c0:202e with SMTP id d75a77b69052e-472228e4c54mr51741521cf.29.1740150243373;
-        Fri, 21 Feb 2025 07:04:03 -0800 (PST)
-Received: from ziepe.ca (hlfxns017vw-142-68-128-5.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.128.5])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-471f2b0476dsm56422141cf.28.2025.02.21.07.04.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Feb 2025 07:04:02 -0800 (PST)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1tlUZN-00000001IAj-3wKe;
-	Fri, 21 Feb 2025 11:04:01 -0400
-Date: Fri, 21 Feb 2025 11:04:01 -0400
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Baolu Lu <baolu.lu@linux.intel.com>
-Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Dave Jiang <dave.jiang@intel.com>, Vinod Koul <vkoul@kernel.org>,
-	Zhangfei Gao <zhangfei.gao@linaro.org>,
-	Zhou Wang <wangzhou1@hisilicon.com>, iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 08/12] iommufd/selftest: Put iopf enablement in domain
- attach path
-Message-ID: <20250221150401.GY3696814@ziepe.ca>
-References: <20250214061104.1959525-1-baolu.lu@linux.intel.com>
- <20250214061104.1959525-9-baolu.lu@linux.intel.com>
- <20250220010250.GQ3696814@ziepe.ca>
- <d93c8cc9-77a5-4b78-85d2-6b4601f52266@linux.intel.com>
- <20250220180004.GX3696814@ziepe.ca>
- <6754e308-d2ee-4389-9dcd-c2a5bbb16c48@linux.intel.com>
+	s=arc-20240116; t=1740150356; c=relaxed/simple;
+	bh=RmaUw2Q7eZbRJ3qWd4wzqKsmmWuF5Q2UojTq6ksc414=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=n/GH9RLa8KSt5UDPXNNVMnTz1tfL7i3Wk/jVCCzrwIvPB6K8SRZMGN8/1ZXay9RKiVbFkYNCeo6UkIn6o8tgk0151YLoDzWrgF8U+2BFeJX1K8ocgS1dNj2TExhRJSxrf0beW8L0OhrtciTw426mX2spvvB3Mj4gx4PcOCHsBHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 67F50168F;
+	Fri, 21 Feb 2025 07:06:10 -0800 (PST)
+Received: from [10.1.197.1] (ewhatever.cambridge.arm.com [10.1.197.1])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8F4613F59E;
+	Fri, 21 Feb 2025 07:05:50 -0800 (PST)
+Message-ID: <1d9a187a-aa09-47c0-96b5-b19ba6cbb24e@arm.com>
+Date: Fri, 21 Feb 2025 15:05:49 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6754e308-d2ee-4389-9dcd-c2a5bbb16c48@linux.intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v14 5/8] coresight: tmc: Add support for reading crash
+ data
+To: Linu Cherian <lcherian@marvell.com>, mike.leach@linaro.org,
+ james.clark@arm.com
+Cc: linux-arm-kernel@lists.infradead.org, coresight@lists.linaro.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, corbet@lwn.net,
+ devicetree@vger.kernel.org, sgoutham@marvell.com, gcherian@marvell.com,
+ Anil Kumar Reddy <areddy3@marvell.com>, Tanmay Jagdale <tanmay@marvell.com>
+References: <20250212114918.548431-1-lcherian@marvell.com>
+ <20250212114918.548431-6-lcherian@marvell.com>
+Content-Language: en-US
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+In-Reply-To: <20250212114918.548431-6-lcherian@marvell.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Feb 21, 2025 at 09:31:48AM +0800, Baolu Lu wrote:
-
-> How about below change?
-
-Sure
-
-> -       return mock_dev_enable_iopf(dev, domain);
-> +       if (mdev->domain)
-> +               mock_dev_disable_iopf(dev, mdev->domain);
+On 12/02/2025 11:49, Linu Cherian wrote:
+> * Add support for reading crashdata using special device files.
+>    The special device files /dev/crash_tmc_xxx would be available
+>    for read file operation only when the crash data is valid.
+> 
+> * User can read the crash data as below
+> 
+>    For example, for reading crash data from tmc_etf sink
+> 
+>    #dd if=/dev/crash_tmc_etfXX of=~/cstrace.bin
+> 
+> Signed-off-by: Anil Kumar Reddy <areddy3@marvell.com>
+> Signed-off-by: Tanmay Jagdale <tanmay@marvell.com>
+> Signed-off-by: Linu Cherian <lcherian@marvell.com>
+> ---
+> Changelog from v13:
+> * Changed the log levels of crc error check failure prints from dev_dbg to
+>    dev_err
+> * Added CRC recalculation upon barrier packet insertion for overflow
+>    cases, this fixes wrong crc check failures for subsequent boots
+> * Add metadata valid flag checks for successfully opening crashdata files
+> * Report to the user during probe if valid crash tracedata is found
+> * Few other trivial cleanups
+> 
+>   .../hwtracing/coresight/coresight-tmc-core.c  | 226 +++++++++++++++++-
+>   .../hwtracing/coresight/coresight-tmc-etr.c   |  22 +-
+>   drivers/hwtracing/coresight/coresight-tmc.h   |  14 +-
+>   3 files changed, 259 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/hwtracing/coresight/coresight-tmc-core.c b/drivers/hwtracing/coresight/coresight-tmc-core.c
+> index c6224eed705d..045d37606750 100644
+> --- a/drivers/hwtracing/coresight/coresight-tmc-core.c
+> +++ b/drivers/hwtracing/coresight/coresight-tmc-core.c
+> @@ -105,6 +105,128 @@ u32 tmc_get_memwidth_mask(struct tmc_drvdata *drvdata)
+>   	return mask;
+>   }
+>   
+> +static bool is_tmc_crashdata_valid(struct tmc_drvdata *drvdata)
+> +{
+> +	struct tmc_crash_metadata *mdata;
 > +
-> +       ret = mock_dev_enable_iopf(dev, domain);
-> +       if (ret)
+> +	if (!tmc_has_reserved_buffer(drvdata) ||
+> +	    !tmc_has_crash_mdata_buffer(drvdata))
+> +		return false;
+> +
+> +	mdata = drvdata->crash_mdata.vaddr;
+> +
+> +	/* Check version match */
+> +	if (mdata->version != CS_CRASHDATA_VERSION)
+> +		return false;
+> +
+> +	/* Check for valid metadata */
+> +	if (!mdata->valid) {
+> +		dev_dbg(&drvdata->csdev->dev,
+> +			"Data invalid in tmc crash metadata\n");
+> +		return false;
+> +	}
+> +
+> +	/*
+> +	 * Buffer address given by metadata for retrieval of trace data
+> +	 * from previous boot is expected to be same as the reserved
+> +	 * trace buffer memory region provided through DTS
+> +	 */
+> +	if (drvdata->resrv_buf.paddr != mdata->trace_paddr) {
+> +		dev_dbg(&drvdata->csdev->dev,
+> +			"Trace buffer address of previous boot invalid\n");
+> +		return false;
+> +	}
+> +
+> +	/* Check data integrity of metadata */
+> +	if (mdata->crc32_mdata != find_crash_metadata_crc(mdata)) {
+> +		dev_err(&drvdata->csdev->dev,
+> +			"CRC mismatch in tmc crash metadata\n");
+> +		return false;
+> +	}
+> +	/* Check data integrity of tracedata */
+> +	if (mdata->crc32_tdata != find_crash_tracedata_crc(drvdata, mdata)) {
+> +		dev_err(&drvdata->csdev->dev,
+> +			"CRC mismatch in tmc crash tracedata\n");
+> +		return false;
+> +	}
+> +
+> +	return true;
+> +}
+> +
+> +static inline ssize_t tmc_get_resvbuf_trace(struct tmc_drvdata *drvdata,
+> +					  loff_t pos, size_t len, char **bufpp)
+> +{
+> +	s64 offset;
+> +	ssize_t actual = len;
+> +	struct tmc_resrv_buf *rbuf = &drvdata->resrv_buf;
+> +
+> +	if (pos + actual > rbuf->len)
+> +		actual = rbuf->len - pos;
+> +	if (actual <= 0)
+> +		return 0;
+> +
+> +	/* Compute the offset from which we read the data */
+> +	offset = rbuf->offset + pos;
+> +	if (offset >= rbuf->size)
+> +		offset -= rbuf->size;
+> +
+> +	/* Adjust the length to limit this transaction to end of buffer */
+> +	actual = (actual < (rbuf->size - offset)) ?
+> +		actual : rbuf->size - offset;
+> +
+> +	*bufpp = (char *)rbuf->vaddr + offset;
+> +
+> +	return actual;
+> +}
+> +
+> +static int tmc_prepare_crashdata(struct tmc_drvdata *drvdata)
+> +{
+> +	char *bufp;
+> +	ssize_t len;
+> +	u32 status, size;
+> +	u64 rrp, rwp, dba;
+> +	struct tmc_resrv_buf *rbuf;
+> +	struct tmc_crash_metadata *mdata;
+> +
+> +	mdata = drvdata->crash_mdata.vaddr;
+> +	rbuf = &drvdata->resrv_buf;
+> +
+> +	rrp = mdata->tmc_rrp;
+> +	rwp = mdata->tmc_rwp;
+> +	dba = mdata->tmc_dba;
+> +	status = mdata->tmc_sts;
+> +	size = mdata->tmc_ram_size << 2;
+> +
+> +	/* Sync the buffer pointers */
+> +	rbuf->offset = rrp - dba;
+> +	if (status & TMC_STS_FULL)
+> +		rbuf->len = size;
+> +	else
+> +		rbuf->len = rwp - rrp;
+> +
+> +	/* Additional sanity checks for validating metadata */
+> +	if ((rbuf->offset > size) ||
+> +	    (rbuf->len > size)) {
+> +		dev_dbg(&drvdata->csdev->dev,
+> +			"Offset and length invalid in tmc crash metadata\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	if (status & TMC_STS_FULL) {
+> +		len = tmc_get_resvbuf_trace(drvdata, 0x0,
+> +					    CORESIGHT_BARRIER_PKT_SIZE, &bufp);
+> +		if (len >= CORESIGHT_BARRIER_PKT_SIZE) {
+> +			coresight_insert_barrier_packet(bufp);
+> +			/* Recalculate crc */
+> +			mdata->crc32_tdata = find_crash_tracedata_crc(drvdata,
+> +								      mdata);
+> +			mdata->crc32_mdata = find_crash_metadata_crc(mdata);
+> +		}
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>   static int tmc_read_prepare(struct tmc_drvdata *drvdata)
+>   {
+>   	int ret = 0;
+> @@ -223,6 +345,84 @@ static const struct file_operations tmc_fops = {
+>   	.release	= tmc_release,
+>   };
+>   
+> +static int tmc_crashdata_open(struct inode *inode, struct file *file)
+> +{
+> +	int err = 0;
+> +	unsigned long flags;
+> +	struct tmc_resrv_buf *rbuf;
+> +	struct tmc_crash_metadata *mdata;
+> +	struct tmc_drvdata *drvdata = container_of(file->private_data,
+> +						   struct tmc_drvdata,
+> +						   crashdev);
+> +
+> +	mdata = drvdata->crash_mdata.vaddr;
+> +	rbuf = &drvdata->resrv_buf;
+> +
+> +	spin_lock_irqsave(&drvdata->spinlock, flags);
+> +	if (mdata->valid)
+> +		rbuf->reading = true;
+> +	else
+> +		err = -ENOENT;
+> +	spin_unlock_irqrestore(&drvdata->spinlock, flags);
+> +	if (err)
+> +		goto exit;
+> +
+> +	nonseekable_open(inode, file);
+> +	dev_dbg(&drvdata->csdev->dev, "%s: successfully opened\n", __func__);
+> +exit:
+> +	return err;
+> +}
+> +
+> +static ssize_t tmc_crashdata_read(struct file *file, char __user *data,
+> +				  size_t len, loff_t *ppos)
+> +{
+> +	char *bufp;
+> +	ssize_t actual;
+> +	struct tmc_drvdata *drvdata = container_of(file->private_data,
+> +						   struct tmc_drvdata,
+> +						   crashdev);
+> +
+> +	actual = tmc_get_resvbuf_trace(drvdata, *ppos, len, &bufp);
+> +	if (actual <= 0)
+> +		return 0;
+> +
+> +	if (copy_to_user(data, bufp, actual)) {
+> +		dev_dbg(&drvdata->csdev->dev,
+> +			"%s: copy_to_user failed\n", __func__);
+> +		return -EFAULT;
+> +	}
+> +
+> +	*ppos += actual;
+> +	dev_dbg(&drvdata->csdev->dev, "%zu bytes copied\n", actual);
+> +
+> +	return actual;
+> +}
+> +
+> +static int tmc_crashdata_release(struct inode *inode, struct file *file)
+> +{
+> +	int ret = 0;
+> +	unsigned long flags;
+> +	struct tmc_resrv_buf *rbuf;
+> +	struct tmc_drvdata *drvdata = container_of(file->private_data,
+> +						   struct tmc_drvdata,
+> +						   crashdev);
+> +
+> +	rbuf = &drvdata->resrv_buf;
+> +	spin_lock_irqsave(&drvdata->spinlock, flags);
+> +	rbuf->reading = false;
+> +	spin_unlock_irqrestore(&drvdata->spinlock, flags);
+> +
+> +	dev_dbg(&drvdata->csdev->dev, "%s: released\n", __func__);
+> +	return ret;
+> +}
+> +
+> +static const struct file_operations tmc_crashdata_fops = {
+> +	.owner		= THIS_MODULE,
+> +	.open		= tmc_crashdata_open,
+> +	.read		= tmc_crashdata_read,
+> +	.release	= tmc_crashdata_release,
+> +};
+> +
+>   static enum tmc_mem_intf_width tmc_get_memwidth(u32 devid)
+>   {
+>   	enum tmc_mem_intf_width memwidth;
+> @@ -532,6 +732,22 @@ static u32 tmc_etr_get_max_burst_size(struct device *dev)
+>   	return burst_size;
+>   }
+>   
+> +static void register_crash_dev_interface(struct tmc_drvdata *drvdata,
+> +					 const char *name)
+> +{
+> +	drvdata->crashdev.name =
+> +		devm_kasprintf(&drvdata->csdev->dev, GFP_KERNEL, "%s_%s", "crash", name);
+> +	drvdata->crashdev.minor = MISC_DYNAMIC_MINOR;
+> +	drvdata->crashdev.fops = &tmc_crashdata_fops;
+> +	if (misc_register(&drvdata->crashdev)) {
+> +		dev_dbg(&drvdata->csdev->dev,
+> +			"Failed to setup user interface for crashdata\n");
+> +		drvdata->crashdev.fops = NULL;
+> +	} else
+> +		dev_info(&drvdata->csdev->dev,
+> +			"Valid crash tracedata found\n");
+> +}
+> +
+>   static int __tmc_probe(struct device *dev, struct resource *res)
+>   {
+>   	int ret = 0;
+> @@ -632,9 +848,15 @@ static int __tmc_probe(struct device *dev, struct resource *res)
+>   	drvdata->miscdev.minor = MISC_DYNAMIC_MINOR;
+>   	drvdata->miscdev.fops = &tmc_fops;
+>   	ret = misc_register(&drvdata->miscdev);
+> -	if (ret)
+> +	if (ret) {
+>   		coresight_unregister(drvdata->csdev);
+> +		goto out;
+> +	}
+> +
+>   out:
+> +	if (is_tmc_crashdata_valid(drvdata) &&
+> +	    !tmc_prepare_crashdata(drvdata))
+> +		register_crash_dev_interface(drvdata, desc.name);
+>   	return ret;
+>   }
+>   
+> @@ -687,6 +909,8 @@ static void __tmc_remove(struct device *dev)
+>   	 * handler to this device is closed.
+>   	 */
+>   	misc_deregister(&drvdata->miscdev);
+> +	if (drvdata->crashdev.fops)
+> +		misc_deregister(&drvdata->crashdev);
+>   	coresight_unregister(drvdata->csdev);
+>   }
+>   
+> diff --git a/drivers/hwtracing/coresight/coresight-tmc-etr.c b/drivers/hwtracing/coresight/coresight-tmc-etr.c
+> index fb944a68a11c..c92556e1b4db 100644
+> --- a/drivers/hwtracing/coresight/coresight-tmc-etr.c
+> +++ b/drivers/hwtracing/coresight/coresight-tmc-etr.c
+> @@ -2012,6 +2012,26 @@ static ssize_t buf_mode_preferred_show(struct device *dev,
+>   	return sysfs_emit(buf, "%s\n", buf_modes_str[drvdata->etr_mode]);
+>   }
+>   
+> +static int buf_mode_set_resrv(struct tmc_drvdata *drvdata)
+> +{
+> +	int err = -EBUSY;
+> +	unsigned long flags;
+> +	struct tmc_resrv_buf *rbuf;
+> +
+> +	rbuf = &drvdata->resrv_buf;
+> +
+> +	/* Ensure there are no active crashdata read sessions */
+> +	spin_lock_irqsave(&drvdata->spinlock, flags);
+> +	if (!rbuf->reading) {
+> +		tmc_crashdata_set_invalid(drvdata);
+> +		rbuf->len = 0;
+> +		drvdata->etr_mode = ETR_MODE_RESRV;
+> +		err = 0;
+> +	}
+> +	spin_unlock_irqrestore(&drvdata->spinlock, flags);
+> +	return err;
+> +}
+> +
+>   static ssize_t buf_mode_preferred_store(struct device *dev,
+>   					  struct device_attribute *attr,
+>   					  const char *buf, size_t size)
+> @@ -2027,7 +2047,7 @@ static ssize_t buf_mode_preferred_store(struct device *dev,
+>   	else if (sysfs_streq(buf, buf_modes_str[ETR_MODE_CATU]) && buf_hw.has_catu)
+>   		drvdata->etr_mode = ETR_MODE_CATU;
+>   	else if (sysfs_streq(buf, buf_modes_str[ETR_MODE_RESRV]) && buf_hw.has_resrv)
+> -		drvdata->etr_mode = ETR_MODE_RESRV;
+> +		return buf_mode_set_resrv(drvdata) ? : size;
+>   	else if (sysfs_streq(buf, buf_modes_str[ETR_MODE_AUTO]))
+>   		drvdata->etr_mode = ETR_MODE_AUTO;
+>   	else
+> diff --git a/drivers/hwtracing/coresight/coresight-tmc.h b/drivers/hwtracing/coresight/coresight-tmc.h
+> index d76e83fc840b..e3707b69abff 100644
+> --- a/drivers/hwtracing/coresight/coresight-tmc.h
+> +++ b/drivers/hwtracing/coresight/coresight-tmc.h
+> @@ -195,11 +195,17 @@ struct etr_buf {
+>    * @paddr	: Start address of reserved memory region.
+>    * @vaddr	: Corresponding CPU virtual address.
+>    * @size	: Size of reserved memory region.
+> + * @offset	: Offset of the trace data in the buffer for consumption.
+> + * @reading	: Flag to indicate if reading is active
+> + * @len	: Available trace data @buf (may round up to the beginning).
+>    */
+>   struct tmc_resrv_buf {
+>   	phys_addr_t     paddr;
+>   	void		*vaddr;
+>   	size_t		size;
+> +	unsigned long	offset;
+> +	bool		reading;
+> +	s64		len;
+>   };
+>   
+>   /**
+> @@ -208,6 +214,8 @@ struct tmc_resrv_buf {
+>    * @base:	memory mapped base address for this component.
+>    * @csdev:	component vitals needed by the framework.
+>    * @miscdev:	specifics to handle "/dev/xyz.tmc" entry.
+> + * @crashdev:	specifics to handle "/dev/crash_tmc_xyz" entry for reading
+> + *		crash tracedata.
+>    * @spinlock:	only one at a time pls.
+>    * @pid:	Process ID of the process that owns the session that is using
+>    *		this component. For example this would be the pid of the Perf
+> @@ -227,7 +235,7 @@ struct tmc_resrv_buf {
+>    * @idr_mutex:	Access serialisation for idr.
+>    * @sysfs_buf:	SYSFS buffer for ETR.
+>    * @perf_buf:	PERF buffer for ETR.
+> - * @resrv_buf:	Used by ETR as hardware trace buffer and for trace data
+> + * @resrv_buf:  Used by ETR as hardware trace buffer and for trace data
+>    *		retention (after crash) only when ETR_MODE_RESRV buffer
+>    *		mode is enabled. Used by ETF for trace data retention
+>    *		(after crash) by default.
+> @@ -239,6 +247,7 @@ struct tmc_drvdata {
+>   	void __iomem		*base;
+>   	struct coresight_device	*csdev;
+>   	struct miscdevice	miscdev;
+> +	struct miscdevice	crashdev;
+>   	spinlock_t		spinlock;
+>   	pid_t			pid;
+>   	bool			reading;
+> @@ -309,6 +318,8 @@ void tmc_flush_and_stop(struct tmc_drvdata *drvdata);
+>   void tmc_enable_hw(struct tmc_drvdata *drvdata);
+>   void tmc_disable_hw(struct tmc_drvdata *drvdata);
+>   u32 tmc_get_memwidth_mask(struct tmc_drvdata *drvdata);
+> +int tmc_read_prepare_crashdata(struct tmc_drvdata *drvdata);
 
-Though here the domain is disabled but not removed from mdev->domain,
-is it OK?
+> +int tmc_read_unprepare_crashdata(struct tmc_drvdata *drvdata);
 
-Jason
+This is no longer required. I can fix this up at my end.
+
+
+Suzuki
+
+>   
+>   /* ETB/ETF functions */
+>   int tmc_read_prepare_etb(struct tmc_drvdata *drvdata);
+> @@ -371,6 +382,7 @@ void tmc_sg_table_sync_data_range(struct tmc_sg_table *table,
+>   				  u64 offset, u64 size);
+>   ssize_t tmc_sg_table_get_data(struct tmc_sg_table *sg_table,
+>   			      u64 offset, size_t len, char **bufpp);
+> +
+>   static inline unsigned long
+>   tmc_sg_table_buf_size(struct tmc_sg_table *sg_table)
+>   {
+
 
