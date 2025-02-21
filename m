@@ -1,175 +1,322 @@
-Return-Path: <linux-kernel+bounces-526634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B834A40155
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 21:51:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E792BA40161
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 21:54:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 451AA17CE37
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 20:51:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A6163A9C2D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 20:51:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BEC424FC1E;
-	Fri, 21 Feb 2025 20:50:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D87BC253326;
+	Fri, 21 Feb 2025 20:51:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VA1+jkJY"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZazHA5jc"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E20621EE028
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 20:50:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3991D1EE028
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 20:51:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740171056; cv=none; b=GKNr/x4r6PcrHxeND/a8ElA8BxTNi+30rMjWmil0/I5Y/wjsjhCX/byQVe3uAt8s0KVidAA/Ujknrm8i0AdqW6J1xARxRorRtwPZuxz3oqezeSt84riSbzU4IszKh9dKwKa52mX6nyQEs24pR4P+jH836ojaHxexrYITxV4zdxg=
+	t=1740171108; cv=none; b=gFYedKVbF7pHEOS0UuD45u+6/fpWgveIVkSaFRKomnp2zRk9gqUmxxIK9eol6TNIskViO1w6XzKBDdUOxbrMcYDU1U3L8K6uT5IN4pA7GIFEBULdL/IhV4rpH70yx6mw5hVKxHLw988KDWAUL+thTSvzmQTUIAC/m4+h3Ky5zC4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740171056; c=relaxed/simple;
-	bh=R4Gd/0PqgqBgOjam/WcC8XGdif0HDapNSAKmsg0sOu8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=B3Rgu1vj1vAhEVIBHITbvYuEMPFS5VtaE/b5Q+4aMSPkMKITPYIFRW5ZBfEgMzMxmLAWfTl1Gtu2c4wmWBEpEgi4lPUropPu6MUGlEAaKx4PQSUEwIePbAPwZvtSoL0GBvTuPrtBTRu4bpKnzQkImCSYQjy9bcS0rAZ6p10CO7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VA1+jkJY; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740171055; x=1771707055;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=R4Gd/0PqgqBgOjam/WcC8XGdif0HDapNSAKmsg0sOu8=;
-  b=VA1+jkJY7iGSBObs4nbMRgL7q99q8V0a/zaqW6lkQY/f0K5mJggsc8i0
-   8kqIcg70ToaON/+96ezGmOWbAytobKa33DdEvrQ/LFzGrWIN9Ym2N7YSG
-   P5WZavh08zSu/w9CKRY8i9tRAW01Xh95WpE2JI6pTXxMFv5fWBLmM7v1K
-   YCt88CXvq1tFZcZsk8quDa6R3JWT/k6UH0cgsUZ/ZWtX9tYFMA3Fr8sZ+
-   yRtXiljvQoZRmkaWO9CaEArgHaVzHfJk3H+QrV1CoAXTpc+SPOLGO4j8A
-   orESFkKV1VSs7n71vhxLiYNCBMGBtt7XJAtrbaRfKwchIeEnPOR2cGlWr
-   g==;
-X-CSE-ConnectionGUID: Xb6VZQsgQDW6XZPZ0EbBOg==
-X-CSE-MsgGUID: 8wu0w4CCRo6HZyI70IX//Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11352"; a="63476026"
-X-IronPort-AV: E=Sophos;i="6.13,305,1732608000"; 
-   d="scan'208";a="63476026"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Feb 2025 12:50:54 -0800
-X-CSE-ConnectionGUID: U1BtcQHZTx6ajled2tQKcw==
-X-CSE-MsgGUID: pfh0/r8JQ6q908IYSymM6A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="119591139"
-Received: from aschofie-mobl2.amr.corp.intel.com (HELO [10.125.110.177]) ([10.125.110.177])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Feb 2025 12:50:53 -0800
-Message-ID: <c793e1d0-e508-4cf5-a18b-29d30d5e401f@intel.com>
-Date: Fri, 21 Feb 2025 12:50:56 -0800
+	s=arc-20240116; t=1740171108; c=relaxed/simple;
+	bh=lD9AXcjn0RZGhvHYTzO56i8eaPDx1JEByHYcHlBDOxY=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=nWNyj6ZwZYM6BDFCtHCwaOb4iq8KVSCB+1l6A/U+u6ZJSWodzX1/x7gyFF1o6wnlmg98Yt4MhwTTiMDX6dxjS/9OyaXX6gDpGub+T35HrDd0ZeYe0aj70UqsSlB8Y2vI1CU2LhRmOHpE+yJQLY55s4KqsQLmRJoVgw+kkVqM/WY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZazHA5jc; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-aaedd529ba1so308965966b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 12:51:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740171104; x=1740775904; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=x96f1GfMBe0SzhF3gidD9+1z7xQuC/mzsHXfqU7tA9M=;
+        b=ZazHA5jcoKLl+BNUM08QK6s3dewEgaRHkEADo3T67bCcnBgphT9Sxbc/Wy7shc0i4Y
+         Sd3snmUYKeRzb2DA8r+WGbz+4TG/SG8MjzyGh0CzWwkaxflv/PG0A2WMrZBz2enQYz/X
+         qGeaWThEoN3z8InKOq8YHLjmCPf/p//qMZaZdVobKzcKuvEQ0yRFZnxk8y7JpJpZLfNQ
+         L0Tv/q5y2QVIRADqed3JVZbqRiwQjDo11Rrl84zyzmF0ShbURqpVfK1bsn5h7CF2rEzW
+         cQyWDN0gxQVvOvli4Qnd3RqQgTqepChEETu0QHkNBnsb666ya5i5RRmgvnqHkVCLkxTH
+         IRYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740171104; x=1740775904;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=x96f1GfMBe0SzhF3gidD9+1z7xQuC/mzsHXfqU7tA9M=;
+        b=S5oNKO6hYPIet+u50LdOjsHCuZYmwyjW8KLwoRpCoU3t1kyL7hDlxpx2/G+I1rwihW
+         RQxf8M7FCi/mOpNL6OSjR4S4V3EDUhREXUJKZQNZz0cxriYzLHn695iywXvIRfNRlM9E
+         UEZCX9Cqgd6W+1MVyBTHicogfDbDj6ZpyCI78SnVRjEAUlAUUfItKITyaugPX5S/dd3H
+         /ce7j3gxtyfg/YJwiLxdfJGswjG5YCGbOyOqa9U/EXvgUWRJ8Ka+cALkxmnRYvzV5o0/
+         iihXeAKdnLurDEuw6jeUs79YPF79GHZv0C1iDKMB6CMiJMjq/m/UH/WWPP8SB4ug0DTt
+         tpKA==
+X-Forwarded-Encrypted: i=1; AJvYcCVhUGUGnqq31TzeVnhDWKYlnf17YWkXpId0VRjcOBeBdR0Oq3R3/W8Hm/VlsDBvYsnJ3T0417V9QfjbpJs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4eRPoFl2upsZNx2iKos2DsiHhutmeU8CJZ/fxZhRuBMxwnVs8
+	J67lOwyViAsjmQBOMeOCYToCfJvW2EY+KYCKyFc61fG9X0n3PiaSTmsFdTcJV446I2qVBJ/aEeG
+	o6PSdPKShUAqwYHthRhABAt8nBDdBMyh5
+X-Gm-Gg: ASbGncsAgWbtwvF9ue0ZnFjOz1iJl453jgFiUWrl7kzDD7SNBsBMVf6I9CfnOs1SuU+
+	5aLl4X/F8dHpgmg85CH5SZifu2w6mQu679Fim4hyK5hfFU9eirPEIfWF7R3uvWppYVv4TyeKCNB
+	7BzSwFig==
+X-Google-Smtp-Source: AGHT+IEBIM3w/S/4VXusmbdzIx6RtxGNJF3Zb9ZxCF2ectBaJO4SRI3P29mXck8mE014TqAR9asMcjXvZEJGv/MBQe0=
+X-Received: by 2002:a05:6402:2350:b0:5de:a6a8:5ec6 with SMTP id
+ 4fb4d7f45d1cf-5e0b70f0872mr9828315a12.10.1740171104188; Fri, 21 Feb 2025
+ 12:51:44 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/4] rseq: Make rseq work with protection keys
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Dmitry Vyukov <dvyukov@google.com>, peterz@infradead.org,
- boqun.feng@gmail.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com, hpa@zytor.com, aruna.ramakrishna@oracle.com,
- elver@google.com
-Cc: "Paul E. McKenney" <paulmck@kernel.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-References: <cover.1739790300.git.dvyukov@google.com>
- <0d0e0a0a7136d49af9a8d6a849e1aa4bf086c472.1739790300.git.dvyukov@google.com>
- <81d94ec3-16af-45a7-87c6-ef76570953f8@intel.com>
- <6ada635e-973d-4e32-ab47-1fda12ee7ce7@efficios.com>
- <90a36a64-8ea5-4ea1-965f-bcec604c7d5b@intel.com>
- <6ad30642-c3b5-4ab8-9ed6-1fa8c56a8995@efficios.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <6ad30642-c3b5-4ab8-9ed6-1fa8c56a8995@efficios.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Dave Airlie <airlied@gmail.com>
+Date: Sat, 22 Feb 2025 06:51:33 +1000
+X-Gm-Features: AWEUYZlHT0KIW6LET21wCc2AX_ISkd6d3ZxA2cwyAdI4KGn4QmjXCgDhU4YQ-2Q
+Message-ID: <CAPM=9tyHJiMrF8nxXe=mhn0i5N1v-7RHh2TZfoz8BoUBBnuxzw@mail.gmail.com>
+Subject: [git pull] drm fixes for 6.14-rc4
+To: Linus Torvalds <torvalds@linux-foundation.org>, Sima Vetter <sima@ffwll.ch>
+Cc: dri-devel <dri-devel@lists.freedesktop.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2/21/25 12:05, Mathieu Desnoyers wrote:
-> On 2025-02-21 14:48, Dave Hansen wrote:
->> On 2/21/25 11:38, Mathieu Desnoyers wrote:
->>> I agree that switching to permissive key in the fast path would be
->>> simpler. AFAIU, the switch_to_permissive_pkey_reg() is only a pkey
->>> read when the key is already permissive.
->>
->> Unfortunately, on x86, PKRU is almost never in its permissive state. We
->> chose a policy (stored in the global init_pkru_value variable) that
->> allows R/W access to pkey 0, but disables access to everything else.
->> It's 0xfffffff5, IIRC.
->>
->> This ensures deny-by-default behavior and ensures that threads cloned
->> off long ago don't have a dangerous PKRU value for newly-allocated and
->> pkey-protected memory.
->>
->> If I had a time machine, it'd be interesting to go back and try to make
->> PKRU's default value be all 0's and also represent the logically most
->> restrictive value.
-> 
-> Can we assume (or require) that struct rseq and struct rseq_cs reside in
-> pkey-0 memory ?
+Hi Linus,
 
-Maybe. Signal stacks are _practically_ only able to use pkey-0. You can
-technically protect them with anything you want and then WRPKRU as the
-first instruction once you hop into the signal handler (since
-instruction fetches aren't affected by x86 pkeys), but I seriously doubt
-anybody would go to the trouble.
+Weekly drm fixes pull request, lots of small things all over, msm has
+a bunch of things but all very small, xe, i915, a fix for the cgroup
+dmem controller.
 
-> In that case, we could add something to the pkey API that switches to a
-> permissive state only if pkey 0 cannot be accessed.
-> 
-> Therefore it would only trigger a pkey read in the common case, and
-> issue a pkey write only if pkey 0 is not accessible.
-I think that's a sane policy. An rseq access can happen at any time
-(from the app's perspective) so the access would theoretically be done
-with a random PKRU value from a random point in the thread's lifetime.
+Thanks,
+Dave.
 
-But it is a different policy that we've chosen with signals and "remote"
-accesses, which is to just ignore pkeys entirely.
+drm-fixes-2025-02-22:
+drm fixes for v6.14-rc4
 
-I don't have a strong opinion. It's hard to balance performance and
-consistency with the other ABI here.
+core:
+- remove MAINTAINERS entry
+
+cgroup/dmem:
+- use correct function for pool descendants
+
+panel:
+- fix signal polarity issue jd9365da-h3
+
+nouveau:
+- folio handling fix
+- config fix
+
+amdxdna:
+- fix missing header
+
+xe:
+- Fix error handling in xe_irq_install
+- Fix devcoredump format
+
+i915:
+- Use spin_lock_irqsave() in interruptible context on guc submission
+- Fixes on DDI and TRANS programming
+- Make sure all planes in use by the joiner have their crtc included
+- Fix 128b/132b modeset issues
+
+msm:
+- More catalog fixes:
+- to skip watchdog programming through top block if its not present
+- fix the setting of WB mask to ensure the WB input control is programmed
+  correctly through ping-pong
+- drop lm_pair for sm6150 as that chipset does not have any 3dmerge block
+- Fix the mode validation logic for DP/eDP to account for widebus (2ppc)
+  to allow high clock resolutions
+- Fix to disable dither during encoder disable as otherwise this was
+  causing kms_writeback failure due to resource sharing between
+  WB and DSI paths as DSI uses dither but WB does not
+- Fixes for virtual planes, namely to drop extraneous return and fix
+  uninitialized variables
+- Fix to avoid spill-over of DSC encoder block bits when programming
+  the bits-per-component
+- Fixes in the DSI PHY to protect against concurrent access of
+  PHY_CMN_CLK_CFG regs between clock and display drivers
+- Core/GPU:
+- Fix non-blocking fence wait incorrectly rounding up to 1 jiffy timeout
+- Only print GMU fw version once, instead of each time the GPU resumes
+The following changes since commit 0ad2507d5d93f39619fc42372c347d6006b64319=
+:
+
+  Linux 6.14-rc3 (2025-02-16 14:02:44 -0800)
+
+are available in the Git repository at:
+
+  https://gitlab.freedesktop.org/drm/kernel.git tags/drm-fixes-2025-02-22
+
+for you to fetch changes up to 9a1cd7d6df5d708ef244f93715855c8e54d79448:
+
+  Merge tag 'drm-msm-fixes-2025-02-20' of
+https://gitlab.freedesktop.org/drm/msm into drm-fixes (2025-02-21
+10:50:29 +1000)
+
+----------------------------------------------------------------
+drm fixes for v6.14-rc4
+
+core:
+- remove MAINTAINERS entry
+
+cgroup/dmem:
+- use correct function for pool descendants
+
+panel:
+- fix signal polarity issue jd9365da-h3
+
+nouveau:
+- folio handling fix
+- config fix
+
+amdxdna:
+- fix missing header
+
+xe:
+- Fix error handling in xe_irq_install
+- Fix devcoredump format
+
+i915:
+- Use spin_lock_irqsave() in interruptible context on guc submission
+- Fixes on DDI and TRANS programming
+- Make sure all planes in use by the joiner have their crtc included
+- Fix 128b/132b modeset issues
+
+msm:
+- More catalog fixes:
+- to skip watchdog programming through top block if its not present
+- fix the setting of WB mask to ensure the WB input control is programmed
+  correctly through ping-pong
+- drop lm_pair for sm6150 as that chipset does not have any 3dmerge block
+- Fix the mode validation logic for DP/eDP to account for widebus (2ppc)
+  to allow high clock resolutions
+- Fix to disable dither during encoder disable as otherwise this was
+  causing kms_writeback failure due to resource sharing between
+  WB and DSI paths as DSI uses dither but WB does not
+- Fixes for virtual planes, namely to drop extraneous return and fix
+  uninitialized variables
+- Fix to avoid spill-over of DSC encoder block bits when programming
+  the bits-per-component
+- Fixes in the DSI PHY to protect against concurrent access of
+  PHY_CMN_CLK_CFG regs between clock and display drivers
+- Core/GPU:
+- Fix non-blocking fence wait incorrectly rounding up to 1 jiffy timeout
+- Only print GMU fw version once, instead of each time the GPU resumes
+
+----------------------------------------------------------------
+Aaron Kling (1):
+      drm/nouveau/pmu: Fix gp10b firmware guard
+
+Abhinav Kumar (1):
+      drm/msm/dp: account for widebus and yuv420 during mode validation
+
+Dave Airlie (4):
+      Merge tag 'drm-misc-fixes-2025-02-20' of
+https://gitlab.freedesktop.org/drm/misc/kernel into drm-fixes
+      Merge tag 'drm-xe-fixes-2025-02-20' of
+https://gitlab.freedesktop.org/drm/xe/kernel into drm-fixes
+      Merge tag 'drm-intel-fixes-2025-02-20' of
+https://gitlab.freedesktop.org/drm/i915/kernel into drm-fixes
+      Merge tag 'drm-msm-fixes-2025-02-20' of
+https://gitlab.freedesktop.org/drm/msm into drm-fixes
+
+David Hildenbrand (1):
+      nouveau/svm: fix missing folio unlock + put after
+make_device_exclusive_range()
+
+Dmitry Baryshkov (3):
+      drm/msm/dpu: skip watchdog timer programming through TOP on >=3D SM84=
+50
+      drm/msm/dpu: enable DPU_WB_INPUT_CTRL for DPU 5.x
+      drm/msm/dpu: correct LM pairing for SM6150
+
+Ethan Carter Edwards (1):
+      drm/msm/dpu: Fix uninitialized variable
+
+Friedrich Vock (1):
+      cgroup/dmem: Don't open-code css_for_each_descendant_pre
+
+Hugo Villeneuve (1):
+      drm: panel: jd9365da-h3: fix reset signal polarity
+
+Imre Deak (4):
+      drm/i915/dsi: Use TRANS_DDI_FUNC_CTL's own port width macro
+      drm/i915/ddi: Fix HDMI port width programming in DDI_BUF_CTL
+      drm/i915/dp: Fix error handling during 128b/132b link training
+      drm/i915/dp: Fix disabling the transcoder function in 128b/132b mode
+
+Jessica Zhang (2):
+      drm/msm/dpu: Disable dither in phys encoder cleanup
+      drm/msm/dpu: Drop extraneous return in dpu_crtc_reassign_planes()
+
+Jos=C3=A9 Roberto de Souza (1):
+      drm/xe: Make GUC binaries dump consistent with other binaries in
+devcoredump
+
+Karol Herbst (1):
+      MAINTAINERS: Remove myself
+
+Konrad Dybcio (1):
+      drm/msm/a6xx: Only print the GMU firmware version once
+
+Krzysztof Karas (1):
+      drm/i915/gt: Use spin_lock_irqsave() in interruptible context
+
+Krzysztof Kozlowski (3):
+      drm/msm/dsi/phy: Protect PHY_CMN_CLK_CFG0 updated from driver side
+      drm/msm/dsi/phy: Protect PHY_CMN_CLK_CFG1 against clock driver
+      drm/msm/dsi/phy: Do not overwite PHY_CMN_CLK_CFG1 when choosing
+bitclk source
+
+Lucas De Marchi (2):
+      drm/xe: Fix error handling in xe_irq_install()
+      drm/xe/guc: Fix size_t print format
+
+Marijn Suijten (1):
+      drm/msm/dpu: Don't leak bits_per_component into random DSC_ENC fields
+
+Rob Clark (1):
+      drm/msm: Avoid rounding up to one jiffy
+
+Su Hui (1):
+      accel/amdxdna: Add missing include linux/slab.h
+
+Ville Syrj=C3=A4l=C3=A4 (1):
+      drm/i915: Make sure all planes in use by the joiner have their
+crtc included
+
+ MAINTAINERS                                        |  2 -
+ drivers/accel/amdxdna/amdxdna_mailbox.c            |  1 +
+ drivers/gpu/drm/i915/display/icl_dsi.c             |  4 +-
+ drivers/gpu/drm/i915/display/intel_ddi.c           |  8 ++--
+ drivers/gpu/drm/i915/display/intel_display.c       | 18 ++++++++
+ .../gpu/drm/i915/display/intel_dp_link_training.c  | 15 +++++-
+ drivers/gpu/drm/i915/gt/uc/intel_guc_submission.c  |  4 +-
+ drivers/gpu/drm/i915/i915_reg.h                    |  2 +-
+ drivers/gpu/drm/msm/adreno/a6xx_gmu.c              |  8 ++--
+ .../gpu/drm/msm/disp/dpu1/catalog/dpu_5_0_sm8150.h |  2 +-
+ .../drm/msm/disp/dpu1/catalog/dpu_5_1_sc8180x.h    |  2 +-
+ .../gpu/drm/msm/disp/dpu1/catalog/dpu_5_3_sm6150.h |  2 -
+ .../gpu/drm/msm/disp/dpu1/catalog/dpu_5_4_sm6125.h |  2 +-
+ drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c           |  2 -
+ drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c        |  3 ++
+ drivers/gpu/drm/msm/disp/dpu1/dpu_hw_dsc.c         |  3 +-
+ drivers/gpu/drm/msm/disp/dpu1/dpu_hw_top.c         |  2 +-
+ drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c          |  7 ++-
+ drivers/gpu/drm/msm/dp/dp_display.c                | 11 +++--
+ drivers/gpu/drm/msm/dp/dp_drm.c                    |  5 +-
+ drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c          | 53 +++++++++++++++---=
+----
+ drivers/gpu/drm/msm/msm_drv.h                      | 11 ++---
+ .../gpu/drm/msm/registers/display/dsi_phy_7nm.xml  | 11 ++++-
+ drivers/gpu/drm/nouveau/nouveau_svm.c              |  9 +++-
+ drivers/gpu/drm/nouveau/nvkm/subdev/pmu/gp10b.c    |  2 +-
+ drivers/gpu/drm/panel/panel-jadard-jd9365da-h3.c   |  8 ++--
+ drivers/gpu/drm/xe/xe_guc_ct.c                     |  6 ++-
+ drivers/gpu/drm/xe/xe_guc_log.c                    |  3 +-
+ drivers/gpu/drm/xe/xe_irq.c                        | 14 +-----
+ kernel/cgroup/dmem.c                               | 50 +++++-------------=
+--
+ 30 files changed, 146 insertions(+), 124 deletions(-)
 
