@@ -1,115 +1,139 @@
-Return-Path: <linux-kernel+bounces-525385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90991A3EF54
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:01:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AEC7A3EF52
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:01:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E08842314B
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:00:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 356633B96CC
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:01:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 271E1202F70;
-	Fri, 21 Feb 2025 09:00:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="fjFRHyE+";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="OFsgpslr"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 934C8202F71;
+	Fri, 21 Feb 2025 09:01:07 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1506B1DE896;
-	Fri, 21 Feb 2025 09:00:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4306F1E32D9;
+	Fri, 21 Feb 2025 09:01:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740128413; cv=none; b=fmMz1YKtvQnhI56YyT4FMnNuLyOxsp6ndXSPSHUpk56oW1DWJOuugABrkRaaQAuvFw+EQnYuYO4H9z8/9bNaoyQYXy3GjBAVDVpPWnkyYrz9xIoXERiSb9gw1OwxtId4OxGEjU8nqYszWZ7mWta0lUWyU12Ta1FQjk/OYEbfpH8=
+	t=1740128467; cv=none; b=oY7VgkwjZWZEV+aQp6fMHMoEbvehyf+YTXmzSSXAVXs2WmoM8OSxu0FVknUBah8xRjGC1ZHGLVUCjLKGeQHgSPdCEb55Gxl5qu5YJ8LLSJeXVb1CEuSj2aEd6fRuEH8qhW79fAoHZG+bTOuCvjXhEkV3SP40ujoYcKLyuM/os/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740128413; c=relaxed/simple;
-	bh=xkit/bBxrP/47/FJNxQVtKp/kzEycbPTUEmxxkZe/qU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q0y73oEW3vG3Bz+kqMZBzvw52NKPDN9NrQELUhzdb+8YG0aoVUGvSYVstQpLZrO39jsqYI+60dcfdrsHKzFiSVUK40Rf9ZXgyrWYswcdt86kct351Dj/NsO9OtrzjbCpAeUnE8vQB4lkBQYVuTBk2np/edVQSmyu7GhNai+usvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=fjFRHyE+; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=OFsgpslr; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 21 Feb 2025 10:00:08 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1740128410;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/G8u2w8Nz/6LNRqOihn9/E0oO4aWnl10a49dAoNX2lw=;
-	b=fjFRHyE+thVo4Q5iFcC3ygYJmMOFVyg6DuwmklDo2Uu/mBBp03Dj4HTV+CIXGklN0JeAG2
-	w9HeBnK6ZRp35pq5VJxKiQwvrJ5ayUZ+dTRQj46e4raD5blYmkvJi2lUVDSJ6vYOTwKux6
-	Wfsj6pl8KrDm8dVmP5BgJGKjPNd4ktY4f8xrw98q1E6UZL5V4hCB7F1065ubf4ltY1t9yy
-	WmkRvexmH6g9fuHPxxLeBP5zGsVYMW6ttLu9qrU/t6CIT//fGT0ZA/FcxpWFPH1Hzzt3Rb
-	kcOQXgAkTvJLYdMXncpROhdPJqlS69G8Oylnw2SbGImSET+LtxETv/PaRE+J5g==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1740128410;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/G8u2w8Nz/6LNRqOihn9/E0oO4aWnl10a49dAoNX2lw=;
-	b=OFsgpslrBT/3cxqqJfdOkE1EMygeHC3qIqcF2YoYX+56MorvTojESh7Ho87/zwdXhMGskh
-	lOjDRtOfUnp3sOBw==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Marco Elver <elver@google.com>
-Cc: Oliver Sang <oliver.sang@intel.com>, oe-lkp@lists.linux.dev,
-	lkp@intel.com, Petr Pavlu <petr.pavlu@suse.com>,
-	"H. Peter Anvin" <hpa@zytor.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
-	kasan-dev@googlegroups.com, linux-hardening@vger.kernel.org,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-	Kees Cook <kees@kernel.org>,
-	Alexander Potapenko <glider@google.com>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Vincenzo Frascino <vincenzo.frascino@arm.com>,
-	Waiman Long <longman@redhat.com>
-Subject: Re: [linux-next:master] [x86] 66fbf67705:
- kernel-selftests.kvm.hardware_disable_test.fail
-Message-ID: <20250221090008.5aWGygvI@linutronix.de>
-References: <Z7bUC9QY815Cv6nb@xsang-OptiPlex-9020>
- <20250220155722.2Z2a-3z0@linutronix.de>
- <CANpmjNN9zpcPa4S+Zq+vJWJ3EcO0zCZJ=Z4FgNzDRXdi0YQA9g@mail.gmail.com>
+	s=arc-20240116; t=1740128467; c=relaxed/simple;
+	bh=V/WC878/m89s/Z5XeDingIqbZTQiDl+/BAF06rycO1E=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=cflQncG6kaCVjhv9bFOjNNL8fxEZl0oTJolbP3uPmHfxn0Fzelb6GzLwSbtavUgEkd9VszZBPVprK0mYtAa6XTSbvY+9eaN5YyxsPIY3KkrVYWpElenQ7oZ/5gFmOKM58bQ4F3F2xj1DzWUFdHkDDb/qFEgjTQU4R0UffXkacU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4YzkcR12NQz4f3jXt;
+	Fri, 21 Feb 2025 17:00:39 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id C14201A1179;
+	Fri, 21 Feb 2025 17:01:00 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP4 (Coremail) with SMTP id gCh0CgCH61_KQLhnK3ThEQ--.4447S3;
+	Fri, 21 Feb 2025 17:01:00 +0800 (CST)
+Subject: Re: [PATCH 00/12] badblocks: bugfix and cleanup for badblocks
+To: Zheng Qixing <zhengqixing@huaweicloud.com>, axboe@kernel.dk,
+ song@kernel.org, colyli@kernel.org, dan.j.williams@intel.com,
+ vishal.l.verma@intel.com, dave.jiang@intel.com, ira.weiny@intel.com,
+ dlemoal@kernel.org, yanjun.zhu@linux.dev, kch@nvidia.com, hare@suse.de,
+ zhengqixing@huawei.com, john.g.garry@oracle.com, geliang@kernel.org,
+ xni@redhat.com, colyli@suse.de
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-raid@vger.kernel.org, nvdimm@lists.linux.dev, yi.zhang@huawei.com,
+ yangerkun@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
+References: <20250221081109.734170-1-zhengqixing@huaweicloud.com>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <0ee2aa61-9190-53ce-1cbc-a8b40303187c@huaweicloud.com>
+Date: Fri, 21 Feb 2025 17:00:57 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CANpmjNN9zpcPa4S+Zq+vJWJ3EcO0zCZJ=Z4FgNzDRXdi0YQA9g@mail.gmail.com>
+In-Reply-To: <20250221081109.734170-1-zhengqixing@huaweicloud.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgCH61_KQLhnK3ThEQ--.4447S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7KFyfGw4rGFyrKFW5tr4UXFb_yoW8AFW3pr
+	9xG343Ar18ury8Wa1DZw4jqryrCw1xJayUG3yUJ398WryUAa4xGr1kXa1rXFyqqry3JrnF
+	qF1Yga45uFy5Cw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Ib4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
+	e2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4I
+	kC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWU
+	WwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr
+	0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWU
+	JVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJb
+	IYCTnIWIevJa73UjIFyTuYvjxUIa0PDUUUU
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On 2025-02-20 17:30:22 [+0100], Marco Elver wrote:
-> > How much do we care here? Is this something that makes UBSAN + KASAN
-> > folks uncomfortable? Or is lockdep slowing things down anyway?
+Hi,
+
+在 2025/02/21 16:10, Zheng Qixing 写道:
+> From: Zheng Qixing <zhengqixing@huawei.com>
 > 
-> Does this series from Waiman help?
-> https://lore.kernel.org/all/20250213200228.1993588-4-longman@redhat.com/
+> During RAID feature implementation testing, we found several bugs
+> in badblocks.
+> 
+> This series contains bugfixes and cleanups for MD RAID badblocks
+> handling code.
 
-I have applied
+In addition, patch 1-8 is found while testing badblocks APIs, by mdraid
+sysfs APIs, and it's applied and running in downstream kernels for a
+long time.
 
-| locking/lock_events: Add locking events for rtmutex slow paths
-| locking/lock_events: Add locking events for lockdep
-| locking/lockdep: Disable KASAN instrumentation of lockdep.c
-| locking/lockdep: Add kasan_check_byte() check in lock_acquire()
+Patch 9-12 is found recently by RAID new feature that is still in
+development.
 
-and with this I am down to:
+Thanks,
+Kuai
 
-| ~# time ./hardware_disable_test
-| Random seed: 0x6b8b4567
-| 
-| real    0m29.517s
-| user    0m0.493s
-| sys     0m10.891s
+> 
+> Li Nan (8):
+>    badblocks: Fix error shitf ops
+>    badblocks: factor out a helper try_adjacent_combine
+>    badblocks: attempt to merge adjacent badblocks during
+>      ack_all_badblocks
+>    badblocks: return error directly when setting badblocks exceeds 512
+>    badblocks: return error if any badblock set fails
+>    badblocks: fix the using of MAX_BADBLOCKS
+>    badblocks: try can_merge_front before overlap_front
+>    badblocks: fix merge issue when new badblocks align with pre+1
+> 
+> Zheng Qixing (4):
+>    badblocks: fix missing bad blocks on retry in _badblocks_check()
+>    badblocks: return boolen from badblocks_set() and badblocks_clear()
+>    md: improve return types of badblocks handling functions
+>    badblocks: use sector_t instead of int to avoid truncation of
+>      badblocks length
+> 
+>   block/badblocks.c             | 317 +++++++++++++---------------------
+>   drivers/block/null_blk/main.c |  19 +-
+>   drivers/md/md.c               |  47 +++--
+>   drivers/md/md.h               |  14 +-
+>   drivers/md/raid1-10.c         |   2 +-
+>   drivers/md/raid1.c            |  10 +-
+>   drivers/md/raid10.c           |  14 +-
+>   drivers/nvdimm/badrange.c     |   2 +-
+>   drivers/nvdimm/nd.h           |   2 +-
+>   drivers/nvdimm/pfn_devs.c     |   7 +-
+>   drivers/nvdimm/pmem.c         |   2 +-
+>   include/linux/badblocks.h     |  10 +-
+>   12 files changed, 181 insertions(+), 265 deletions(-)
+> 
 
-Which is the pre-RCU case. Yes, the series from Waiman helps. This is my
-favorite solution.
-
-Sebastian
 
