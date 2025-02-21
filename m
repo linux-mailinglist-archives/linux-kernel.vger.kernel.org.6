@@ -1,125 +1,124 @@
-Return-Path: <linux-kernel+bounces-525288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EFABA3ED98
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 08:51:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D607A3ED99
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 08:51:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2FD23B9B05
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 07:50:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A54CD3B9A1C
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 07:51:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B9AA1FF601;
-	Fri, 21 Feb 2025 07:51:01 +0000 (UTC)
-Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com [209.85.221.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0291D1FFC4D;
+	Fri, 21 Feb 2025 07:51:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="dTd9H/mu"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45B2C1E2848;
-	Fri, 21 Feb 2025 07:50:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AD0A1FF1D1;
+	Fri, 21 Feb 2025 07:51:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740124261; cv=none; b=XHKPD2tYOgwDOEWrlcDiG1be8xQvxeUiRu0pRZ8JuyGS/sV7j8qPLCsKHVEdgZspKZNVuG1qiwZbKxdCrr609i6V9kWjnBEV8uXrh8bhYn2OiEZ6V7o2ON0WhMBlQzuR4QVNQqOYUg0MDNiChQRsGA6W3/FR57RFElTs5yV2YSs=
+	t=1740124270; cv=none; b=SgOCxtOnqX90sD3Rfd1ptnQ8Bd6+nj3AnMoq9tNO5RK9SyPaXJjHbS2fEc2sEIsRjnrj+G8ShYQ607WrzloGMpPcIpSyeKrJA8ZKU9vpNVh1zujozTw4Zoi0oa3bLbpPCsLsaLHuejYN26qKbbasRxkPiKO2pwp+hJyfEtA1b7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740124261; c=relaxed/simple;
-	bh=1kMNugAKyH4hzXjWj6B7lPTh+D3yutJkXAiQPKueVDM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Avz7W7Xm344nzLHNISopdXupJHSYKLO5qtbCdBcb3biFt5XL9tcizDhtq5KgWUebNw0i9Rm65OWFg00Iv4RRhplrgrj6NRU419cHQG8f3Y+/oKMQf150nJx9HhBp2Xu257dBwe0UybfKqXVXBlJwX1JzrhxZ6CH6ozaiqjgpqh4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f179.google.com with SMTP id 71dfb90a1353d-521b3ebb0f3so511024e0c.3;
-        Thu, 20 Feb 2025 23:50:58 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740124257; x=1740729057;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qxSgNBs1pQnNkNjgay4FGLNT4AcgrE/QPtbdFr16wxs=;
-        b=SvaNNmCAtt7gBmqCEZ7peOXoaTdsVdTXDTrtg2sHcgykMBgMMLPs+De9lrk1ZnlE3x
-         QoYknMQtRQLEyBaKNH3/gEZ9CU4EQiPMTumbco83ENwvKkspkWRkHChAnmjn+suDwRgd
-         eWt8VRS2FL+LjzzjHMrCCUXlSvy/h3NIK8TKLtcoXIesmf59BeWMDRzwpqycoElMZMxf
-         Lk6lfXYn+HOEeT40jZowYL8/0sAg9kB8QRjj3pe1fra//CirQXm4MdKG6PcaRAXBYBBo
-         wDKuTRWaWjj0I7awqCMkLFUaylFij5FMnXcHHpCWpqJdPjlUlM9RVOGBLuJyEDwK6XzI
-         DLMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUlcHrDiYJZyKjJ1KvT/Cih6aJ86Sf1AVuJb+W3jJHf8AUUjdcKCxtzx5lMEbvtSvTQFhk/imBgFDRj6vM=@vger.kernel.org, AJvYcCVeRY2xPYbynM5i1Gwi7oXmzD+S9BxQDOFxlwS/esXE5kDznkGGtuZ1752a91TVEf4/ScVk35I568aHJG0xFy/CzR0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+1rS+o0KCzG9NYdMqP47TS0XAocICKS1Zt1MKwbr20eAk+2YI
-	BNWf0bBOnt2+rp5mhBOx6UJHwx1bB/QD0NngxmzBbX9PfSQuQ96tl/YRNrDc
-X-Gm-Gg: ASbGncvZDOR4I/D3vpKzZkwnJmKFlV9PLLlf3eG4WQJxpctqjOEbfZREwm7ui+lytg/
-	Ge+lSuJFHIyyXGnhKdsXs8xCKSZrDqro3I763Kg+Sm4XUf9l4XtOj7C8OEaXBsHeI9YVgX2IeBs
-	9PfIj/8X1zOkTvr8qOdgFtPk2staHDym+VkbwdVpfkoH1qgdkfj77/KZEO8YATtgxA1QqVyv1zv
-	7oI/H0sWEiP2jK5FtDdyoZKRgbfY7KT/BFEFukaOtPkrIhShP+ibRDGtxWzLElZCmU9Xhhy20GN
-	KDR29veWhRKOcNNXPE6y0PiFU8hpd94DY2czbvV7Wbg4Z1FlNKLWG/k2awlePbM8velp
-X-Google-Smtp-Source: AGHT+IHJ5b5M5eBIJE9mslcjq1WY3O67Dg26G6CSMCsoIUQEDEaH0PwvUI+EI+Vq82lsnk2Liu1caw==
-X-Received: by 2002:a05:6122:8297:b0:520:61ee:c814 with SMTP id 71dfb90a1353d-521ee1f1568mr1008734e0c.1.1740124256714;
-        Thu, 20 Feb 2025 23:50:56 -0800 (PST)
-Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com. [209.85.221.175])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-520ad678ba8sm2634981e0c.5.2025.02.20.23.50.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Feb 2025 23:50:56 -0800 (PST)
-Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-5209f22ecfeso466442e0c.1;
-        Thu, 20 Feb 2025 23:50:55 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU0uPhNydiQU/xK7vxqfeW3bejA2odxqzGeEROPag/OHI7U8j0muA4DMoRbBux9mPuOWppKH7+mZZTTAuE=@vger.kernel.org, AJvYcCWNCZHXuo2Jg8Zl9N4+X7ONXH15h2ZnvAEBiEzBPB0UjsKCjEttmv0zhm8i+0ZnCpPQb1LKu+56VXs5S5C+8bNiLZg=@vger.kernel.org
-X-Received: by 2002:a05:6122:1b84:b0:520:5a87:66eb with SMTP id
- 71dfb90a1353d-521ee236fd1mr1320633e0c.3.1740124255544; Thu, 20 Feb 2025
- 23:50:55 -0800 (PST)
+	s=arc-20240116; t=1740124270; c=relaxed/simple;
+	bh=WDF+AaPoasicPg5cjVd43KSl6VbCzFp6Lbsto9p3UZo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OYMgCNj3eVu+1D3iBRrGBixV4orUxWhzWE778orFI/yYjtLZLtKCDPmbPfLr2YCseVHbROMPRPjih0DkXGygV+KqHB11WvPYoD+t9xL0pvSetmW5X1Un4ReAiOqe1v7VR8a+1RvXNfm7Tnw0YK9nMxoHtFx+YmzvI0YGdMJKx10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=dTd9H/mu; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 987e4e86f02811ef8eb9c36241bbb6fb-20250221
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=8NPujDCOA2i+sZ1Eo+mp2xCE16CGmm1ZdIPKOowNMtk=;
+	b=dTd9H/muFL+Wagj+GFDqM3ZXmia2b/QpBKPhDXD+XkDEgaJoTti9EvEPBryJsFf3pJQiRKB5PoYP4xdLeW8HbOWOosjwUJF3IUjukRjqKMKCAEe1KcxwnjvO5AY7AlrrIUnHb0M7LbFr7sawRhaexhL2aHn4DR4KWrU4F/15XmM=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.46,REQID:9938e1d6-09b7-4b87-8eb9-74d3a9758de0,IP:0,U
+	RL:0,TC:0,Content:0,EDM:-30,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
+	N:release,TS:-30
+X-CID-META: VersionHash:60aa074,CLOUDID:800b63a4-5c06-4e72-8298-91cabc9efadf,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:2,IP:nil
+	,URL:1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:
+	1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
+X-UUID: 987e4e86f02811ef8eb9c36241bbb6fb-20250221
+Received: from mtkmbs09n1.mediatek.inc [(172.21.101.35)] by mailgw02.mediatek.com
+	(envelope-from <friday.yang@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 596277761; Fri, 21 Feb 2025 15:51:01 +0800
+Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
+ mtkmbs13n1.mediatek.inc (172.21.101.193) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.28; Fri, 21 Feb 2025 15:51:01 +0800
+Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
+ mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1258.28 via Frontend Transport; Fri, 21 Feb 2025 15:51:00 +0800
+From: Friday Yang <friday.yang@mediatek.com>
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
+	<matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>, Garmin Chang
+	<garmin.chang@mediatek.com>, Yong Wu <yong.wu@mediatek.com>
+CC: Friday Yang <friday.yang@mediatek.com>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>
+Subject: [PATCH v4 0/2] Add SMI LARBs reset for MediaTek MT8188 SoC
+Date: Fri, 21 Feb 2025 15:50:52 +0800
+Message-ID: <20250221075058.14180-1-friday.yang@mediatek.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250219160749.1750797-1-claudiu.beznea.uj@bp.renesas.com>
- <20250219160749.1750797-3-claudiu.beznea.uj@bp.renesas.com> <TYCPR01MB11040051BFF6ECA0F45FD6038D8C72@TYCPR01MB11040.jpnprd01.prod.outlook.com>
-In-Reply-To: <TYCPR01MB11040051BFF6ECA0F45FD6038D8C72@TYCPR01MB11040.jpnprd01.prod.outlook.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 21 Feb 2025 08:50:42 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdVkf67sGpQt=SKi+3xUMyKRErFdrhtf7XOvoUnCE2XnCw@mail.gmail.com>
-X-Gm-Features: AWEUYZmvzCpq9TZOHHJ9beRJMa9M-uoWiYwVWT145YSTckgBloLWjlMkRAXbI_Y
-Message-ID: <CAMuHMdVkf67sGpQt=SKi+3xUMyKRErFdrhtf7XOvoUnCE2XnCw@mail.gmail.com>
-Subject: Re: [PATCH RFT 2/5] phy: renesas: rcar-gen3-usb2: Move IRQ request in probe
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: "Claudiu.Beznea" <claudiu.beznea@tuxon.dev>, "vkoul@kernel.org" <vkoul@kernel.org>, 
-	"kishon@kernel.org" <kishon@kernel.org>, 
-	"horms+renesas@verge.net.au" <horms+renesas@verge.net.au>, 
-	"fabrizio.castro@bp.renesas.com" <fabrizio.castro@bp.renesas.com>, "robh@kernel.org" <robh@kernel.org>, 
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, 
-	"linux-phy@lists.infradead.org" <linux-phy@lists.infradead.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Hi Shimoda-san,
+Based on tag: next-20250220, linux-next/master
 
-On Fri, 21 Feb 2025 at 03:11, Yoshihiro Shimoda
-<yoshihiro.shimoda.uh@renesas.com> wrote:
-> > From: Claudiu, Sent: Thursday, February 20, 2025 1:08 AM
-> > From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> >
-> > Commit 08b0ad375ca6 ("phy: renesas: rcar-gen3-usb2: move IRQ registration
-> > to init") moved the IRQ request operation from probe to
->
-> I don't know why the checkpatch.pl said the following ERROR though,
-> as I sent my Reviewed-by on the top of this email thread, this patch is good,
-> I think.
-> ---
-> ERROR: Please use git commit description style 'commit <12+ chars of sha1> ("<title line>")' - ie: 'Commit 08b0ad375ca6 ("phy: renesas: rcar-gen3-usb2: move irq registration to init")'
-> #6:
-> Commit 08b0ad375ca6 ("phy: renesas: rcar-gen3-usb2: move IRQ registration
-> to init") moved the IRQ request operation from probe to
+On the MediaTek MT8188 SoC platform, we encountered power-off failures
+and SMI bus hang issues during camera stress tests. The issue arises
+because bus glitches are sometimes produced when MTCMOS powers on or
+off. While this is fairly normal, the software must handle these
+glitches to avoid mistaking them for transaction signals. What's
+more, this issue emerged only after the initial upstreaming of this
+binding.
 
-Checkpatch complains because the quoted commit description (the part
-between '("' and '")') is split across two lines. As this is in flowed
-text, and not in tag, it is a false positive, and can be ignored.
+The software solutions can be summarized as follows:
 
-Gr{oetje,eeting}s,
+1. Use CLAMP to disable the SMI sub-common port after turning off the
+   LARB CG and before turning off the LARB MTCMOS.
+2. Use CLAMP to disable/enable the SMI sub-common port.
+3. Implement an AXI reset for SMI LARBs.
 
-                        Geert
+This patch primarily provides the implementation of an AXI reset.
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Changes v4:
+- Modify the commit message
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+v3:
+https://lore.kernel.org/lkml/20250121065045.13514-2
+-friday.yang@mediatek.com/
+https://lore.kernel.org/lkml/20250121065045.13514-3
+-friday.yang@mediatek.com/
+
+Friday Yang (2):
+  dt-bindings: clock: mediatek: Add SMI LARBs reset for MT8188
+  clk: mediatek: Add SMI LARBs reset for MT8188
+
+ .../bindings/clock/mediatek,mt8188-clock.yaml | 21 +++++++++++++++++++
+ drivers/clk/mediatek/clk-mt8188-cam.c         | 17 +++++++++++++++
+ drivers/clk/mediatek/clk-mt8188-img.c         | 18 ++++++++++++++++
+ drivers/clk/mediatek/clk-mt8188-ipe.c         | 14 +++++++++++++
+ 4 files changed, 70 insertions(+)
+
+--
+2.46.0
+
 
