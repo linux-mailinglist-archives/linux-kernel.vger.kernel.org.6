@@ -1,191 +1,121 @@
-Return-Path: <linux-kernel+bounces-525984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F390A3F82A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:13:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B359A3F832
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:14:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 132DF1795F9
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 15:13:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 390053BBE3F
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 15:13:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F05F220A5C3;
-	Fri, 21 Feb 2025 15:13:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98B4D2101AE;
+	Fri, 21 Feb 2025 15:13:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SR9ofafM"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Hz4yQCfv"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FACC20B7EC
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 15:13:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 959E820B7EC;
+	Fri, 21 Feb 2025 15:13:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740150802; cv=none; b=Snm5CnG5YD20rfLsKKecwOcY89P92yybgB5vrhpZ0aArlPxBWs5WZRHhSofrWOM1h5H09g52vFHKbFONKcs3R7yBSdZvhZx+P//HRcd3bODFz5RccUr+rg8fSGLuiGVII8F0Tb9sxUKXl/BGt2aij7ZQEUe5eeTGovjT2Zr6MgI=
+	t=1740150838; cv=none; b=G+QL5QwGMn+sxdETVGu35Go0Smua9RBy4UbSL/HlrM6WTW0SHxMr7wdOeM+UNEzdROuFcNheaShyquxtawR0whFc93eOeMlneXkskFHcugdba85PbdcZviNFVgIntn7ts+2hx7jaf7gcZ9BqODqCVbBtukfDLqjN+TP2UDzzWj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740150802; c=relaxed/simple;
-	bh=Fa1BddI3XJm8BQciNHEuwUqNi53s9MtiqS6q/dOK9Yo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CUNlKKzGW3EeYbygnqSNxcVNnbQqfR3C2sgscnkYhaAQDBv7DrMMWdNpgpUBJQQ4RRFJ5PX+hzJZ3sope7TIv0+aNYEFt8rHxv2pw/jkI1xFbyBBcXkGFyqa2XFIC53T+dbjFc/BYJ6TiLkD9iPTTRJl6ryIFmhpVBjdLXQQ6do=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SR9ofafM; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5dc050e6a9dso449537a12.2
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 07:13:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740150799; x=1740755599; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Kffi9mM57RBxjp4z5FLBrRuQy7GA5fKXeHplvEZGGf4=;
-        b=SR9ofafMegilwl9LWHIOnO6ymnxn9Ndukl8qs1irlSjqzhDbrg3Plxu1E376q5lutJ
-         g4AR7Xu1SEgchInZBMOKo8MY4MHdSfenMA8jAfw9JvoFRHhgwUnlWP5cMF5hwiYSzeEB
-         n46/HwCSTQ1RT1vRpVigFYIf3CNWwXWWFBaXT5NM79nacKvU8DjcKdDPnkNAt/es8Vmr
-         JQUFluZhwzbbFfqGkZHguTcL6G6XLgo9jzSywLPYmejHBzdGKvNCQjW0ny83enLPWd4V
-         w5ekHp84g9scuGERSXxEd0uWvarwVaT1MPYhDvtV+IBYmyWDzpUyozOLfkv0Z218qwkC
-         fJlw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740150799; x=1740755599;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Kffi9mM57RBxjp4z5FLBrRuQy7GA5fKXeHplvEZGGf4=;
-        b=fqr7ApcvRnrkz6mNSjW4RIokP02TBZU6be/sbJTBrZKmQeEg5tPAG03eFVf2KpOYsi
-         jsqhhl81gDVS2uNMzrJgoTJ7FlSAv1SyRkiYAceO3ZxQID3DctAp/lNNn80Bx79Z8PBY
-         hgC3PD41III3RuYRAascqwWDJywFmYRWsRDYnqz00oKzFWyQPK+dHAbRwFlCzoHLu0qz
-         mCitnILgfn+NbiIE+BX5zdTWiymU4UGzSohDrNXg7n7vWe7/Pc7HMgz5wsfxxq94898i
-         3kLv0Y2NYPHdWgtigVPLLeSXbJU2Bg0KaLPQmt7YmCTISUovJflKsgIrS/TQQxBeUvUf
-         ZuKw==
-X-Forwarded-Encrypted: i=1; AJvYcCU7hT5DueQpV7m0y+FLQ9zYPE4G+FNMrggCZMnlXdFxcLIQd8zyZVMhreNyTTXczjcK9H0mMLYDfbUDhwk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJK4f651nNmq/YtD1wBPNsj5l6soasv/utGRmBN8dXEqR0Dg/4
-	QP5lBs5u4bgHZlsfr64u8nUgeZkNX9mCpFkRzgTVz6/36dr8RA0zB6AnzHjXFyU=
-X-Gm-Gg: ASbGncuk+eP3xoxB2WRc1IptvriJHpN+TDp5tHzYR5r6icuciNJvjKTGab9nzU/nnLR
-	QEPr74jdUbz3HradxG5mOu82owV3DYiRKnsuNfdQmu+qnbKb9zS7yTJVGNyKih+0eLt7R7ke50u
-	PK5Ry+kdUF71m4JEhfsM0NBWJZWYOvjUQ0xRLBMonlrSQfCfLIWR9h4VaPxdXHkET/z5w4AT2Rm
-	6Up3Uz2B1JDnkraLc0j4kDtks51r7I7JShbutU7AKhKu0u8chUzUi4qM3XbP4edZDtVHCLrfdWu
-	4zEUhu7HW1kahJVajiVfsKg4CijJDP2IiDSJ0C6Jg4qRAR7ptI0LF53xHGsIdjo12ND1eTePnuQ
-	=
-X-Google-Smtp-Source: AGHT+IE2efORy+XnFq6iGRbNUJ79O3DLiV+WA47UQiAkKow39HzZeGH66x8Isz/Apww6BksdMEVRpw==
-X-Received: by 2002:a17:907:a089:b0:aa6:9574:1728 with SMTP id a640c23a62f3a-abc09a0bf96mr141099466b.6.1740150798792;
-        Fri, 21 Feb 2025 07:13:18 -0800 (PST)
-Received: from krzk-bin.. (78-11-220-99.static.ip.netia.com.pl. [78.11.220.99])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abb8ab30726sm1110640166b.153.2025.02.21.07.13.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Feb 2025 07:13:18 -0800 (PST)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Rob Clark <robdclark@gmail.com>,
-	Abhinav Kumar <quic_abhinavk@quicinc.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Sean Paul <sean@poorly.run>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Mahadevan <quic_mahap@quicinc.com>,
-	linux-arm-msm@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	freedreno@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v2] dt-bindings: display/msm: qcom,sa8775p-mdss: Add missing eDP phy
-Date: Fri, 21 Feb 2025 16:13:11 +0100
-Message-ID: <20250221151311.138755-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1740150838; c=relaxed/simple;
+	bh=YnPo1+zP4R+BDJN+AsbIJ43w8ViJH0a7Uh3tBOwEca0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YqcYrBb1iCEfxw1S47GbRsdP0qmkAPcgSBZ7cPhUruZaSgPAH1GIXWZ1I8dG13/8R+GxFhV3rWDUJUkqq8UhIY2667hc4wGM4v8XKAsAMDrV2gCbC+47m/6x2BAJpTcYgxCJC+m0uv+GcaJ742UxuY7IcX4W9My+CLCjoXo8QZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Hz4yQCfv; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51L5OjmU002802;
+	Fri, 21 Feb 2025 15:13:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=fzOR4M+IM6YAi1rK83cNA6lvnRgfTM
+	bWJ9VcA6dXwxM=; b=Hz4yQCfvuETZ4GASUYZcQ7sZhXvzZen4RElGeqd1Bc/bpJ
+	EsFjMvgzBTiIYdKygZo2i8EvlCPs/rUfrnHx5ZDc0EFJhyfuV++WcqudD+W4OhTf
+	xxcH3qZGjLr/X44CI5gbZhgihjcq7mb+R/RRbrTiDsylmctb2HU8evMsSqsw/3w/
+	DzOYzgnoFMf9+yemeo96+rjJXNFp4epDMqCBpNFsXM1Ke2FrzDVk4QDFsRrcqodC
+	Kon1MsfKvbEIgHoJjspAizAVcMWeTg4BVE50Myt5tKto+S+r+mt941iotzBQQc1n
+	XhvsDN2YXyam4InvVGBSZAgQHHok8AnD5aDv7FNA==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44xka8jtkh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 21 Feb 2025 15:13:55 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 51LFDt89002328;
+	Fri, 21 Feb 2025 15:13:55 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44xka8jtkd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 21 Feb 2025 15:13:55 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51LBwkHi030118;
+	Fri, 21 Feb 2025 15:13:54 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 44w01xgnma-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 21 Feb 2025 15:13:53 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51LFDoo444761500
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 21 Feb 2025 15:13:50 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3187F20043;
+	Fri, 21 Feb 2025 15:13:50 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id CA29E20040;
+	Fri, 21 Feb 2025 15:13:49 +0000 (GMT)
+Received: from osiris (unknown [9.179.14.8])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Fri, 21 Feb 2025 15:13:49 +0000 (GMT)
+Date: Fri, 21 Feb 2025 16:13:48 +0100
+From: Heiko Carstens <hca@linux.ibm.com>
+To: Haoxiang Li <haoxiang_li2024@163.com>
+Cc: gor@linux.ibm.com, agordeev@linux.ibm.com, borntraeger@linux.ibm.com,
+        svens@linux.ibm.com, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] s390/tty: Fix a potential memory leak bug
+Message-ID: <20250221151348.11661Dae-hca@linux.ibm.com>
+References: <20250218034104.2436469-1-haoxiang_li2024@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250218034104.2436469-1-haoxiang_li2024@163.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: DuOIvNRpalieeDDtj2zmsuyhFeEKOKQK
+X-Proofpoint-ORIG-GUID: hCTMIvRyWYUVEbnQuBaujGB6FS0cIHOF
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-21_05,2025-02-20_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 clxscore=1015
+ priorityscore=1501 mlxscore=0 suspectscore=0 lowpriorityscore=0
+ adultscore=0 phishscore=0 spamscore=0 malwarescore=0 impostorscore=0
+ mlxlogscore=477 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2502210108
 
-The Qualcomm SA8775p MDSS display block comes with eDP phy, already used
-in DTS and already documented in phy/qcom,edp-phy.yaml binding.  Add the
-missing device node in the binding and extend example to silence
-dtbs_check warnings like:
+On Tue, Feb 18, 2025 at 11:41:04AM +0800, Haoxiang Li wrote:
+> The check for get_zeroed_page() leads to a direct return
+> and overlooked the memory leak caused by loop allocation.
+> Add a free helper to free spaces allocated by get_zeroed_page().
+> 
+> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Haoxiang Li <haoxiang_li2024@163.com>
+> ---
+>  drivers/s390/char/sclp_tty.c | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
 
-  sa8775p-ride.dtb: display-subsystem@ae00000: Unevaluated properties are not allowed ('phy@aec2a00', 'phy@aec5a00' were unexpected)
+Same here: no fixes and Cc stable.
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
----
-
-Changes in v2:
-1. Fix reg size (address/size cells =1) in the example (Rob)
----
- .../display/msm/qcom,sa8775p-mdss.yaml        | 32 +++++++++++++++++--
- 1 file changed, 30 insertions(+), 2 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/display/msm/qcom,sa8775p-mdss.yaml b/Documentation/devicetree/bindings/display/msm/qcom,sa8775p-mdss.yaml
-index a90a8b3f1a9e..5fac3e266703 100644
---- a/Documentation/devicetree/bindings/display/msm/qcom,sa8775p-mdss.yaml
-+++ b/Documentation/devicetree/bindings/display/msm/qcom,sa8775p-mdss.yaml
-@@ -52,6 +52,13 @@ patternProperties:
-         items:
-           - const: qcom,sa8775p-dp
- 
-+  "^phy@[0-9a-f]+$":
-+    type: object
-+    additionalProperties: true
-+    properties:
-+      compatible:
-+        const: qcom,sa8775p-edp-phy
-+
- required:
-   - compatible
- 
-@@ -61,6 +68,7 @@ examples:
-   - |
-     #include <dt-bindings/interconnect/qcom,icc.h>
-     #include <dt-bindings/interrupt-controller/arm-gic.h>
-+    #include <dt-bindings/clock/qcom,sa8775p-dispcc.h>
-     #include <dt-bindings/clock/qcom,sa8775p-gcc.h>
-     #include <dt-bindings/interconnect/qcom,sa8775p-rpmh.h>
-     #include <dt-bindings/power/qcom,rpmhpd.h>
-@@ -158,6 +166,26 @@ examples:
-             };
-         };
- 
-+        mdss0_dp0_phy: phy@aec2a00 {
-+            compatible = "qcom,sa8775p-edp-phy";
-+
-+            reg = <0x0aec2a00 0x200>,
-+                  <0x0aec2200 0xd0>,
-+                  <0x0aec2600 0xd0>,
-+                  <0x0aec2000 0x1c8>;
-+
-+            clocks = <&dispcc0 MDSS_DISP_CC_MDSS_DPTX0_AUX_CLK>,
-+                     <&dispcc0 MDSS_DISP_CC_MDSS_AHB_CLK>;
-+            clock-names = "aux",
-+                          "cfg_ahb";
-+
-+            #clock-cells = <1>;
-+            #phy-cells = <0>;
-+
-+            vdda-phy-supply = <&vreg_l1c>;
-+            vdda-pll-supply = <&vreg_l4a>;
-+        };
-+
-         displayport-controller@af54000 {
-             compatible = "qcom,sa8775p-dp";
- 
-@@ -186,9 +214,9 @@ examples:
- 
-             assigned-clocks = <&dispcc_mdss_dptx0_link_clk_src>,
-                               <&dispcc_mdss_dptx0_pixel0_clk_src>;
--            assigned-clock-parents = <&mdss0_edp_phy 0>, <&mdss0_edp_phy 1>;
-+            assigned-clock-parents = <&mdss0_dp0_phy 0>, <&mdss0_dp0_phy 1>;
- 
--            phys = <&mdss0_edp_phy>;
-+            phys = <&mdss0_dp0_phy>;
-             phy-names = "dp";
- 
-             operating-points-v2 = <&dp_opp_table>;
--- 
-2.43.0
-
+Acked-by: Heiko Carstens <hca@linux.ibm.com>
 
