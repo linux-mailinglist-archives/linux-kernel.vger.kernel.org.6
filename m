@@ -1,145 +1,150 @@
-Return-Path: <linux-kernel+bounces-525832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A685FA3F600
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 14:31:36 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9417BA3F606
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 14:32:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC05D189C94F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 13:30:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8865F7ACACA
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 13:31:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3379920FA93;
-	Fri, 21 Feb 2025 13:29:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A482420FA86;
+	Fri, 21 Feb 2025 13:30:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qc8QROx4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CIf3ZSMX"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AB0020E319;
-	Fri, 21 Feb 2025 13:29:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6663820D4E8;
+	Fri, 21 Feb 2025 13:30:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740144551; cv=none; b=AEc4qyCDNZbtaHYBuTMgkofLI7hhoMoLx0hOCU7p1LYkzEvnmqHUJrolp0wy1DQIYaHN7Y0laLV9D9Qe/maZwHDwKFF3VjWeFMyy5s55WgZGxXeUyH//qBte/sGDBHjHb905RV/tHP09DKTq+M17IzCPBef1FmmBcsPvtV0+BGk=
+	t=1740144625; cv=none; b=AKPV/Z/25EmoLsZVhPUvXNLg1/xcrsidcRnZnOqjtl2D/i0EfXi7GqBBBX3XAnWJY9S+NjEKvqLaVt3cODqCeKlMWZLC7YqNMNf3gNZHhbYU7lmozUtaaXEi31r9rEKVz5Xt5GhjzPqpfAIROHAzaTnZlD+Ic6rrRfELW9m5yzQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740144551; c=relaxed/simple;
-	bh=nxSpFXWj1K8bHTtDOvknUrF/otwEmVm0exiS2Owmm6o=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=HqcPSVmaIhA9KcEvtm48KJoUpSkM7WMCT98jHJvHPC99+IKhORtypoGCFuyxvFI/XzUcFHI36Sju+GJfRab3NK1Hv5yznfwT2YGERz4YetFb9tDDlYajGgR5rfibKg28h3bVfoSz1HXIoUgLsC8YDQ8WG5vGphmxAnH8fBOrgRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qc8QROx4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B21B4C4CED6;
-	Fri, 21 Feb 2025 13:29:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740144550;
-	bh=nxSpFXWj1K8bHTtDOvknUrF/otwEmVm0exiS2Owmm6o=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=Qc8QROx4pPhLuR6Z4UQenN2J0Jou6PpCN2kEtOYqKrPY3tCOTqQnxeM8uGtNXPd4w
-	 T3Q3duZ/s+0J4HFWk+gIRXhhmRC5vdHENLw6H+2QkGlIfsm92X3HuUAHvw+eyCan6C
-	 kpDwO0VEFEcDnCb8l5OJtmgIT3D9iO8q0Fps2RYrO9mNGYbUlxdWMV/YBQOuUjnIgz
-	 CmNFPtS5W747Hk05KuK4Sr4xaiAdY0jxFfN3wph6yQRcNz3yFIkIXAB6G6DTrQhoUK
-	 d6uQjWH9ZgVgscVw4o9KzTMUZ0fjZVHHQvSNL2QGcGWaaGylWWiAmlu07AGAqTQOxy
-	 lxn0mcJNxPC9w==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Tamir Duberstein" <tamird@gmail.com>
-Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Anna-Maria Behnsen"
- <anna-maria@linutronix.de>,  "Frederic Weisbecker" <frederic@kernel.org>,
-  "Thomas Gleixner" <tglx@linutronix.de>,  "Danilo Krummrich"
- <dakr@kernel.org>,  "Alex Gaynor" <alex.gaynor@gmail.com>,  "Boqun Feng"
- <boqun.feng@gmail.com>,  "Gary Guo" <gary@garyguo.net>,  =?utf-8?Q?Bj?=
- =?utf-8?Q?=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,  "Benno Lossin" <benno.lossin@proton.me>,
-  "Alice Ryhl" <aliceryhl@google.com>,  "Trevor Gross" <tmgross@umich.edu>,
-  "Lyude Paul" <lyude@redhat.com>,  "Guangbo Cui" <2407018371@qq.com>,
-  "Dirk Behme" <dirk.behme@gmail.com>,  "Daniel Almeida"
- <daniel.almeida@collabora.com>,  <rust-for-linux@vger.kernel.org>,
-  <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v8 02/14] rust: hrtimer: introduce hrtimer support
-In-Reply-To: <87ldtzhexi.fsf@kernel.org> (Andreas Hindborg's message of "Fri,
-	21 Feb 2025 09:36:57 +0100")
-References: <20250218-hrtimer-v3-v6-12-rc2-v8-0-48dedb015eb3@kernel.org>
-	<20250218-hrtimer-v3-v6-12-rc2-v8-2-48dedb015eb3@kernel.org>
-	<KDmrJnQA2_Ojf67mD8WA_UafgVCACRRleB9t-D_1yl_bua8e1VWdGQAUvmMGHscqRHu1gzPJCKe_BfotutZm5Q==@protonmail.internalid>
-	<CAJ-ks9ncOyGyQsDFOBxg-7wmXkrQYiZr6H6eEFWsFstk=p1uAA@mail.gmail.com>
-	<87wmdkgvr0.fsf@kernel.org>
-	<djAeSx8DNZwss2-UqXGmhVPqYm2z4LhKWC70jPHPisd1w70qmpmOfVbHfhqJErhoFwVFM8IpbTv4MKkk_BIpQw==@protonmail.internalid>
-	<CAJ-ks9mNidHZvWkFJE1jExc2oVk_bbJpiO_DRMrWu5nYhTpKgg@mail.gmail.com>
-	<87ldtzhexi.fsf@kernel.org>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Fri, 21 Feb 2025 14:28:58 +0100
-Message-ID: <87cyfbe89x.fsf@kernel.org>
+	s=arc-20240116; t=1740144625; c=relaxed/simple;
+	bh=yrgPSzS1iVpcnrrmsNx/lFzIbzwcOZjCNokDJvcWQ3s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=S0GpbRIezTYOPDcI4KGi4fY8FiyxT710Umq6AZ1+djZY3PlgBoNi4YgM8T9+zrPmfffHDxn3xjQkWcaYzU2iw2TBqZspW8zsiwt7MMZB+osyyDAq31uU0y9QtrXJPrjflO1uBzQwWM2ME1KtREEz3HrhI+l12yzVw4z42g0XL5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CIf3ZSMX; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740144624; x=1771680624;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=yrgPSzS1iVpcnrrmsNx/lFzIbzwcOZjCNokDJvcWQ3s=;
+  b=CIf3ZSMX1nmKSHmNXl96Aea/7otTl25rRQTxYIZPQ8fRomVnz4fgX+/P
+   p2gB3HhZkqx7Rf5pd4rLkQbFROj4pklqBhMuBxW1m24EyZZ/ilNZSnbsO
+   VVXF1FeHCPfMfUQdh+VmbgNrr8ULsnxJvIvgvzy8nedU0J8oqkJ8wWCgq
+   aDVulbrDV7qdl/kJywiwOhBy/z42dXOZWKnqVgaWoqAz9Y0UVoan5MuzA
+   RYZmQlJxsj5qjHO0JCXDrYi7py03MoVREqD2BK9OeSYmvX2z/PWFAd9uC
+   p1ziHL/b4KiLavA5wBfR3coae88WGBDI+KX2nT8cah0XERpBBcZyBWhde
+   g==;
+X-CSE-ConnectionGUID: j/bm6XUJSq+D913a6mFo6A==
+X-CSE-MsgGUID: k+ieUTekRi2e2FzyPimLPQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11351"; a="58510784"
+X-IronPort-AV: E=Sophos;i="6.13,304,1732608000"; 
+   d="scan'208";a="58510784"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Feb 2025 05:30:22 -0800
+X-CSE-ConnectionGUID: Yyg/CP+UTXO0VBzS4RNfow==
+X-CSE-MsgGUID: k5Pn0+0ERjyzbmGZjjCwkQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="120614996"
+Received: from mohdfai2-mobl.gar.corp.intel.com (HELO [10.247.60.175]) ([10.247.60.175])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Feb 2025 05:30:11 -0800
+Message-ID: <3fbe3955-48b8-449d-93ff-2699a7efcd8d@linux.intel.com>
+Date: Fri, 21 Feb 2025 21:30:09 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH iwl-next v5 1/9] net: ethtool: mm: extract stmmac
+ verification logic into common library
+To: Vladimir Oltean <vladimir.oltean@nxp.com>, Furong Xu <0x1207@gmail.com>
+Cc: Tony Nguyen <anthony.l.nguyen@intel.com>,
+ Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S . Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Simon Horman <horms@kernel.org>, Russell King <linux@armlinux.org.uk>,
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ Jesper Dangaard Brouer <hawk@kernel.org>,
+ John Fastabend <john.fastabend@gmail.com>,
+ Russell King <rmk+kernel@armlinux.org.uk>,
+ Serge Semin <fancer.lancer@gmail.com>,
+ Xiaolei Wang <xiaolei.wang@windriver.com>,
+ Suraj Jaiswal <quic_jsuraj@quicinc.com>,
+ Kory Maincent <kory.maincent@bootlin.com>, Gal Pressman <gal@nvidia.com>,
+ Jesper Nilsson <jesper.nilsson@axis.com>,
+ Andrew Halaney <ahalaney@redhat.com>,
+ Choong Yong Liang <yong.liang.choong@linux.intel.com>,
+ Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+ Vinicius Costa Gomes <vinicius.gomes@intel.com>,
+ intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, bpf@vger.kernel.org
+References: <20250220025349.3007793-1-faizal.abdul.rahim@linux.intel.com>
+ <20250220025349.3007793-2-faizal.abdul.rahim@linux.intel.com>
+ <20250221174249.000000cc@gmail.com> <20250221095651.npjpkoy2y6nehusy@skbuf>
+ <20250221182409.00006fd1@gmail.com> <20250221104333.6s7nvn2wwco3axr3@skbuf>
+Content-Language: en-US
+From: "Abdul Rahim, Faizal" <faizal.abdul.rahim@linux.intel.com>
+In-Reply-To: <20250221104333.6s7nvn2wwco3axr3@skbuf>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Andreas Hindborg <a.hindborg@kernel.org> writes:
 
-> "Tamir Duberstein" <tamird@gmail.com> writes:
->
->> On Thu, Feb 20, 2025 at 4:19=E2=80=AFPM Andreas Hindborg <a.hindborg@ker=
-nel.org> wrote:
->>>
->>> "Tamir Duberstein" <tamird@gmail.com> writes:
->>>
->>> > On Tue, Feb 18, 2025 at 8:29=E2=80=AFAM Andreas Hindborg <a.hindborg@=
-kernel.org> wrote:
 
-[...]
+On 21/2/2025 6:43 pm, Vladimir Oltean wrote:
+> On Fri, Feb 21, 2025 at 06:24:09PM +0800, Furong Xu wrote:
+>> Your fix is better when link is up/down, so I vote verify_enabled.
+> 
+> Hmmm... I thought this was a bug in stmmac that was carried over to
+> ethtool_mmsv, but it looks like it isn't.
+> 
+> In fact, looking at the original refactoring patch I had attached in
+> this email:
+> https://lore.kernel.org/netdev/20241217002254.lyakuia32jbnva46@skbuf/
+> 
+> these 2 lines in ethtool_mmsv_link_state_handle() didn't exist at all.
+> 
+> 	} else {
+>>>>> 		mmsv->status = ETHTOOL_MM_VERIFY_STATUS_INITIAL;
+>>>>> 		mmsv->verify_retries = ETHTOOL_MM_MAX_VERIFY_RETRIES;
+> 
+> 		/* No link or pMAC not enabled */
+> 		ethtool_mmsv_configure_pmac(mmsv, false);
+> 		ethtool_mmsv_configure_tx(mmsv, false);
+> 	}
+> 
+> Faizal, could you remind me why they were added? I don't see this
+> explained in change logs.
+> 
 
->>> >> +    /// Get a pointer to the contained `bindings::hrtimer`.
->>> >> +    ///
->>> >> +    /// # Safety
->>> >> +    ///
->>> >> +    /// `ptr` must point to a live allocation of at least the size =
-of `Self`.
->>> >> +    unsafe fn raw_get(ptr: *const Self) -> *mut bindings::hrtimer {
->>> >> +        // SAFETY: The field projection to `timer` does not go out =
-of bounds,
->>> >> +        // because the caller of this function promises that `ptr` =
-points to an
->>> >> +        // allocation of at least the size of `Self`.
->>> >> +        unsafe { Opaque::raw_get(core::ptr::addr_of!((*ptr).timer))=
- }
->>> >> +    }
->>> >
->>> > Can you help me understand why the various functions here operate on
->>> > *const Self? I understand the need to obtain a C pointer to interact
->>> > with bindings, but I don't understand why we're dealing in raw
->>> > pointers to the abstraction rather than references.
->>>
->>> We cannot reference the `bindings::hrtimer` without wrapping it in
->>> `Opaque`. This would be the primary reason. At other times, we cannot
->>> produce references because we might not be able to prove that we satisfy
->>> the safety requirements for turning a pointer into a reference. If we
->>> are just doing offset arithmetic anyway, we don't need a reference.
->>
->> Why do we have a pointer, rather than a reference, to Self in the
->> first place? I think this is the key thing I don't understand.
->
-> Perhaps it makes more sense if you look at the context. One of the entry
-> points to `HrTimer::raw_get` is via `<ArcHrTimerHandle as
-> HrTimerHandle>::cancel`. This user facing method takes `&mut self`. The
-> handle contains an arc to a type that contains a `Timer` and implements
-> `HasHrTImer`. To get to the timer, we need to do pointer manipulation.
-> We only know how to get the `Timer` field via the `OFFSET`. The natural
-> return value from the offset operation is a raw pointer. Rather than
-> convert back to a reference, we stay in pointer land when we call
-> `HrTimer::raw_cancel`, because we need a pointer to the
-> `bindings::hrtimer` anyway, not a reference.
+Hi Vladimir,
 
-I changed `HasHrTimer::start` to take a reference, and I think that
-makes sense =F0=9F=91=8D Taking an `impl AsRef` does not work out when `Sel=
-f` is
-`Pin<&T>`. I'll go over the whole thing and see of other places could
-benefit.
+Yeah, it wasn’t there originally. I added that change because it failed the 
+link down/link up test.
+After a successful verification, if the link partner goes down, the status 
+still shows ETHTOOL_MM_VERIFY_STATUS_SUCCEEDED, which isn’t correct—so 
+that’s why I added it.
 
-Best regards,
-Andreas Hindborg
+Sorry for not mentioning it earlier. I assumed you’d check the delta 
+between the original patch and the upstream one, my bad, should have 
+mentioned this logic change.
+
+Should I update it to the latest suggestion?
+
 
 
 
