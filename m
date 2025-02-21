@@ -1,118 +1,212 @@
-Return-Path: <linux-kernel+bounces-525642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9D3FA3F2A8
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 12:06:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1875A3F2AC
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 12:07:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3EC9420D57
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 11:06:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB2C8420D65
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 11:07:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E51F72080E7;
-	Fri, 21 Feb 2025 11:06:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DE97207E1A;
+	Fri, 21 Feb 2025 11:07:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="JINSsEtD"
-Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="UJWgZfor";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="obwZH9J9";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="UJWgZfor";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="obwZH9J9"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5707B1EB9FD
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 11:06:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E49CB1EB9FD
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 11:07:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740135964; cv=none; b=WdxzXhIA+ftzkfj+NVO7JU8p7m1Ofcl8zwrIIqnl0a+/cOqA09JHZkYaEhLDQDWeIuZnQD4llUJphJIEsRhcbyMIxLJfJnL3YvwVNEHveH9okL8N6da4Vl7xlawQXk/q10NVvx9O9SUIuPqHQqYJT9ddixSC/dizs64+TT86QBo=
+	t=1740136026; cv=none; b=Cuvb7FzPQSMgX1hOBauDJYPzvRBb46asrvuPk5By7ZEXJFSca2T0ECpe+DIgGLl2mxFDp8vU5c0+mpjmhjl4+HoqKsZzVbZ3TVV/j8i+jtX4Nm1ZsM5JVwniJ2eBjWucwE1l3swEftPt1A/3FuZNOqFnIx/DfSza3fbJymWrMiw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740135964; c=relaxed/simple;
-	bh=anOuCfNH47yXTTnJtmxXS+2gfLZg83sKL8+xPDZPT2M=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=It1OQ/GegZ5UP++8m5Oj8DPBLz9EbvSEEa8JU0z2LR3mD/T46i8rkv/IGgkd/H7+nidtjish523ymrxRVy5NwQyn6OE2+awWZb8vY3jSeKHb1Da3eX98a9tFeZOszyFwc+GmOQBkP3ueEjlsr2VHiiVlcmXG045xG+qaUeSSCd0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=JINSsEtD; arc=none smtp.client-ip=185.70.43.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1740135954; x=1740395154;
-	bh=rHs69VGW/0W+MTyzpA9DFjxHwcWHt7q+JvqWNi3rTCM=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=JINSsEtDTP/ej+x5MrVtYxkJdC+FbKmI9pnqHPU+e+a6j3OV3ROVUPlLR0WECPBzn
-	 JXcT17jqVCf0lC3slpJnZkO3joLzbDoI5xEvJWKAn935j46WQfMZKKtsMKOWKn6PVY
-	 M3eqKRji3d7WiD4x1hTrFHp7nY60o/uxQKhVzj/Dh4TCf6SFK8BsKwlCYXKd5j6dMe
-	 g+yKW1R2EqVyyTabFv8000/diPfDDq9vqNqJl6iqcujMYrQJEbTr3YquyoaFVHLrS/
-	 p2vJSJOWEbB+lGLdehhr1T0q+pgQR93ypULPCSohhcn6yQDTSelMyLw5ezKEc2HHMT
-	 UbDlD5VxEgfoA==
-Date: Fri, 21 Feb 2025 11:05:49 +0000
-To: Andreas Hindborg <a.hindborg@kernel.org>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Danilo Krummrich <dakr@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Lyude Paul <lyude@redhat.com>, Guangbo Cui <2407018371@qq.com>, Dirk Behme <dirk.behme@gmail.com>, Daniel Almeida <daniel.almeida@collabora.com>, Tamir Duberstein <tamird@gmail.com>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 02/14] rust: hrtimer: introduce hrtimer support
-Message-ID: <841150db-2f92-4cfe-bb1f-29b34b4662c1@proton.me>
-In-Reply-To: <875xl3fvtm.fsf@kernel.org>
-References: <20250218-hrtimer-v3-v6-12-rc2-v8-0-48dedb015eb3@kernel.org> <20250218-hrtimer-v3-v6-12-rc2-v8-2-48dedb015eb3@kernel.org> <1id7is_U22yzuGODgkUIoB5AFM6snF9CPu7F_sY7Mfkn3EwQRPfjB5JNkRFYu6DX1N8X_OQvdEB2BT-l3rFhwg==@protonmail.internalid> <df748ac2-3551-460f-a16f-85d805671a3f@proton.me> <87a5afhdq0.fsf@kernel.org> <875xl3fvtm.fsf@kernel.org>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: c255e78e8e8a832e098872ac728771bdfff1615f
+	s=arc-20240116; t=1740136026; c=relaxed/simple;
+	bh=2dNkq+if3KctHidNQfTnOgOQrVVn8cf8oDqUjvcxeDU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jcpqLELtOfAEmjvt08HrBjhKND+ummoVpD20jDlghaOshpVIhqjBufNIh3bs137UPdtw/8qrrZX6ZG4Kdw6/2LdajAoVZwQXEm/6mO/Ojb7ZrDzUHTymlE4ZDcQyyp8gf4DFOb599Vn0iYl12MzbJDz4VPAuBRJR6ZKDgl8/6iw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=UJWgZfor; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=obwZH9J9; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=UJWgZfor; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=obwZH9J9; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 088C81F871;
+	Fri, 21 Feb 2025 11:07:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1740136023; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=JtTNdpQtb3ECji2LJqmg5fq7uQElGxxCPChnqksnsM0=;
+	b=UJWgZfor2ckOSg/3TNm2xRqCL6UvBGHZgIgma72+MbZVhTcQViccy46bbm9POgbgXplPYD
+	nRzzHPFSiiaB5Wbami9NBiS+8uRDRQ8De1mCrxpGy64kMXhLEBfY4oTL6Gx8m2Pa8mtvoe
+	XlSmNdo4UZRoNcTVQfSSpWnHRZcsPNE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1740136023;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=JtTNdpQtb3ECji2LJqmg5fq7uQElGxxCPChnqksnsM0=;
+	b=obwZH9J9a+vAjHmwt+tZn//20bcdiipfGM95epBYcwAjcwBDM/xmTcY6n9kllygPm+Vl+x
+	V0LCIkHvwymLw7Bw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1740136023; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=JtTNdpQtb3ECji2LJqmg5fq7uQElGxxCPChnqksnsM0=;
+	b=UJWgZfor2ckOSg/3TNm2xRqCL6UvBGHZgIgma72+MbZVhTcQViccy46bbm9POgbgXplPYD
+	nRzzHPFSiiaB5Wbami9NBiS+8uRDRQ8De1mCrxpGy64kMXhLEBfY4oTL6Gx8m2Pa8mtvoe
+	XlSmNdo4UZRoNcTVQfSSpWnHRZcsPNE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1740136023;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=JtTNdpQtb3ECji2LJqmg5fq7uQElGxxCPChnqksnsM0=;
+	b=obwZH9J9a+vAjHmwt+tZn//20bcdiipfGM95epBYcwAjcwBDM/xmTcY6n9kllygPm+Vl+x
+	V0LCIkHvwymLw7Bw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B295F13806;
+	Fri, 21 Feb 2025 11:07:02 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Xe5AK1ZeuGc0RgAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Fri, 21 Feb 2025 11:07:02 +0000
+Message-ID: <9854b4f2-3482-415c-8e1b-46cb4a2650b2@suse.cz>
+Date: Fri, 21 Feb 2025 12:07:02 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v10 04/18] mm: introduce vma_iter_store_attached() to use
+ with attached vmas
+Content-Language: en-US
+To: Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org
+Cc: peterz@infradead.org, willy@infradead.org, liam.howlett@oracle.com,
+ lorenzo.stoakes@oracle.com, david.laight.linux@gmail.com, mhocko@suse.com,
+ hannes@cmpxchg.org, mjguzik@gmail.com, oliver.sang@intel.com,
+ mgorman@techsingularity.net, david@redhat.com, peterx@redhat.com,
+ oleg@redhat.com, dave@stgolabs.net, paulmck@kernel.org, brauner@kernel.org,
+ dhowells@redhat.com, hdanton@sina.com, hughd@google.com,
+ lokeshgidra@google.com, minchan@google.com, jannh@google.com,
+ shakeel.butt@linux.dev, souravpanda@google.com, pasha.tatashin@soleen.com,
+ klarasmodin@gmail.com, richard.weiyang@gmail.com, corbet@lwn.net,
+ linux-doc@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ kernel-team@android.com
+References: <20250213224655.1680278-1-surenb@google.com>
+ <20250213224655.1680278-5-surenb@google.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ EP+ylKVEKb0Q2A==
+In-Reply-To: <20250213224655.1680278-5-surenb@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_TLS_ALL(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_TWELVE(0.00)[34];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com,sina.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[infradead.org,oracle.com,gmail.com,suse.com,cmpxchg.org,intel.com,techsingularity.net,redhat.com,stgolabs.net,kernel.org,sina.com,google.com,linux.dev,soleen.com,lwn.net,vger.kernel.org,kvack.org,android.com];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	R_RATELIMIT(0.00)[to_ip_from(RLumbhs4xhzuuihrchnpuyb6qu)]
+X-Spam-Score: -2.80
+X-Spam-Flag: NO
 
-On 21.02.25 11:15, Andreas Hindborg wrote:
-> Andreas Hindborg <a.hindborg@kernel.org> writes:
->=20
->> "Benno Lossin" <benno.lossin@proton.me> writes:
->>
->>> On 18.02.25 14:27, Andreas Hindborg wrote:
->>>> +pub trait HrTimerCallback {
->>>> +    /// The type whose [`RawHrTimerCallback::run`] method will be inv=
-oked when
->>>> +    /// the timer expires.
->>>> +    type CallbackTarget<'a>: RawHrTimerCallback;
->>>> +
->>>> +    /// This type is passed to the timer callback function. It may be=
- a borrow
->>>> +    /// of [`Self::CallbackTarget`], or it may be `Self::CallbackTarg=
-et` if the
->>>> +    /// implementation can guarantee exclusive access to the target d=
-uring timer
->>>
->>> Technically "exclusive" access is correct if the `CallbackTarget` is
->>> `Pin<&Self>`, since you will get exclusive access to a `Pin<&Self>`, bu=
-t
->>> it might confuse people, because there can be multiple `Pin<&Self>`. So
->>> I would just drop the word "exclusive" here.
->>
->> Yes, maybe it should be "shared or exclusive access, depending on the ty=
-pe"?
->>
->>>
->>>> +    /// handler execution.
->>>> +    type CallbackTargetParameter<'a>;
->>>
->>> Also why can't this type be an associated type of `HrTimerPointer`?
->>> Since this seems to always be constrained in the impls of
->>> `RawHrTimerCallback`.
->>
->> That might be a nice improvement, I'll try that out.
->=20
-> Looking closer at this, I don't see how to achieve this. We need access
-> to the type here, because it is used in the signature of `run`.
-> `HrTimerCallback` has no bounds on it, and that is nice. If we want to
-> move these associated types, we have to introduce a bound here.
->=20
-> We need to be generic over the type of the parameter to `run`, and by
-> the time the user implements this trait, the type must be known and so
-> the user has to specify somehow.
+On 2/13/25 23:46, Suren Baghdasaryan wrote:
+> vma_iter_store() functions can be used both when adding a new vma and
+> when updating an existing one. However for existing ones we do not need
+> to mark them attached as they are already marked that way. With
+> vma->detached being a separate flag, double-marking a vmas as attached
+> or detached is not an issue because the flag will simply be overwritten
+> with the same value. However once we fold this flag into the refcount
+> later in this series, re-attaching or re-detaching a vma becomes an
+> issue since these operations will be incrementing/decrementing a
+> refcount.
+> Introduce vma_iter_store_new() and vma_iter_store_overwrite() to replace
+> vma_iter_store() and avoid re-attaching a vma during vma update. Add
+> assertions in vma_mark_attached()/vma_mark_detached() to catch invalid
+> usage. Update vma tests to check for vma detached state correctness.
+> 
+> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
 
-I think if you put the associated type on the `RawHrTimerCallback`
-trait, it should work.
+Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
 
----
-Cheers,
-Benno
+> ---
+> Changes since v9 [1]:
+> - Change VM_BUG_ON_VMA() to WARN_ON_ONCE() in vma_assert_{attached|detached},
+> per Lorenzo Stoakes
+
+Maybe later we can reduce the paranoia to VM_WARN_ON_ONCE()?
 
 
