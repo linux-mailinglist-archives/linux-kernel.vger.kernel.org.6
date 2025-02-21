@@ -1,199 +1,125 @@
-Return-Path: <linux-kernel+bounces-525741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07B45A3F414
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 13:20:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3157DA3F342
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 12:46:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67AF517B72C
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 12:18:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8101F19C10E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 11:46:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE2F820B814;
-	Fri, 21 Feb 2025 12:17:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 398AA2080F5;
+	Fri, 21 Feb 2025 11:45:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hiZbOIHB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CGa4xxrR"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C43D20A5D2;
-	Fri, 21 Feb 2025 12:17:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 572141E9B01;
+	Fri, 21 Feb 2025 11:45:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740140262; cv=none; b=p6yn9LjFeiau07tbS91f9kcymgsoSJlykni4o60TywxKQc4lKLxa79I9RInNZA46cwjwwmJ6UlzMsWZTU4ytIcbNeVYkKNfw+M6KaDIZaXcjRCXv0+OGPCW+qocKIICa3x0toeR5lRTZN/Sb0RGgRgkWIhVr/4VxLQR3HQaQ30Q=
+	t=1740138358; cv=none; b=hNvGLXdyia/8y1OplsBLJpyNfOLFqA6evpvBwJDVv5cH9AK77jHI78wnblUHQDhGGwIDJW4prxxhCea7EzUgxZHv7uPX4l8Ukq2glmWSl/xL07HjTn4IUGiSIU7zO3iyvBiHN+ZFnIGaWdGkNJ+A6h5TsPshuAO3fTVXI4gDN6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740140262; c=relaxed/simple;
-	bh=2wtTNZErjn1SqfWUbPF2f49AL1ImwjpkG6hFzaWY16o=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Z5jaZb3nlFoVP+E6uzJgYp1/WbLEMHrRnT3vQF0bNLOrKMWiXy9tijQqSZI/vmB1RgxHdrPdqrTezPI9Pj5cRDaq6FXyoHHLAosEKsOGWHVK2zDPPPELGFhJuIZfpFusI9iLG4yeTvEt/bUTmfE/J6hwjvdbWjzB33TiSTbslpo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hiZbOIHB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74D51C4CED6;
-	Fri, 21 Feb 2025 12:17:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740140261;
-	bh=2wtTNZErjn1SqfWUbPF2f49AL1ImwjpkG6hFzaWY16o=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=hiZbOIHBg+3gKpFdnS9fpc/4Gt1itvBGqGC2BBqIJHnX/JyspISk3/qrnK6ddxakz
-	 q3BtBxLNzjtQIzeH581rkU3nVg8Ocne1thbGqIaT/EzQTFwSUWjswY3N0Iwn6EixB0
-	 lSaq0z0A2N0grUvIqldxxV54OtSyJkP20jnhGS9/Qss+jmC6Gee5TY3Zr9DMQQKBRe
-	 7yEVxtmJfcuBJ68sZOnJ8URl5ZI4wWPfFBSxdZY6FC1u6sQDH2yZbMrRF6CcYIKJSf
-	 rfoIV/S8cdID30bdS3ulGpONsi34d+h21ft3HUZVTgqTQuJdxaPpvXnZECb39/xItO
-	 BPEh0RWLUrZgQ==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Frederic Weisbecker" <frederic@kernel.org>
-Cc: "Benno Lossin" <benno.lossin@proton.me>,  "Miguel Ojeda"
- <ojeda@kernel.org>,  "Anna-Maria Behnsen" <anna-maria@linutronix.de>,
-  "Thomas Gleixner" <tglx@linutronix.de>,  "Danilo Krummrich"
- <dakr@kernel.org>,  "Alex Gaynor" <alex.gaynor@gmail.com>,  "Boqun Feng"
- <boqun.feng@gmail.com>,  "Gary Guo" <gary@garyguo.net>,  =?utf-8?Q?Bj?=
- =?utf-8?Q?=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,  "Alice Ryhl" <aliceryhl@google.com>,  "Trevor
- Gross" <tmgross@umich.edu>,  "Lyude Paul" <lyude@redhat.com>,  "Guangbo
- Cui" <2407018371@qq.com>,  "Dirk Behme" <dirk.behme@gmail.com>,  "Daniel
- Almeida" <daniel.almeida@collabora.com>,  "Tamir Duberstein"
- <tamird@gmail.com>,  <rust-for-linux@vger.kernel.org>,
-  <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v8 02/14] rust: hrtimer: introduce hrtimer support
-In-Reply-To: <Z7hjrzyVNd5BIcEy@pavilion.home> (Frederic Weisbecker's message
-	of "Fri, 21 Feb 2025 12:29:51 +0100")
-References: <20250218-hrtimer-v3-v6-12-rc2-v8-0-48dedb015eb3@kernel.org>
-	<20250218-hrtimer-v3-v6-12-rc2-v8-2-48dedb015eb3@kernel.org>
-	<df748ac2-3551-460f-a16f-85d805671a3f@proton.me>
-	<knRTiXibND0ILf7cUQ5sOLy-c9oVveVdLy2b4iN1kIh0_XPwARxjXset0ads8-7zJAaG2YnLHx3WK6vY-nXyEw==@protonmail.internalid>
-	<Z7hjrzyVNd5BIcEy@pavilion.home>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Fri, 21 Feb 2025 12:44:53 +0100
-Message-ID: <87tt8ned3e.fsf@kernel.org>
+	s=arc-20240116; t=1740138358; c=relaxed/simple;
+	bh=ZSod0JSXClAnVodb7sY5zxmKd1Vxxty+5PRsmtu+3G8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jT2JSMq1Pxfmx8Q1MTBA5jPZjGMRw/1cMm8nF64Oi5doMeUj8pCgMrhmLRB16oStzzD4JE7Puqxwx0jUdp5jfSVoL2YaIOzCKDMrwsJji8x3VtiuxiBmOJ9HeVBNm0WXiSHaRm2YhRSUGzMaz+8AwHVwwxwidKqPWbw76HAqo+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CGa4xxrR; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-22104c4de96so32889325ad.3;
+        Fri, 21 Feb 2025 03:45:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740138356; x=1740743156; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=WqVrVtqhHGV46+pvkCL/SfPhRn3JfHdmD86m4b6YRJw=;
+        b=CGa4xxrRc2LI55pNFC3SdNbw0/7SDTlGcw8YQt21UNIqi8xk7n2RXVnwTwvyIH8Jvo
+         cl7i8ZqXSMLxAtTzMnI/MOEbCf3ekDYmVeSK9DI1yMzli3n+xiVpbmy2bz/3v6/A02Ud
+         6lqKdkG07hxbb2EtRtYocYrdMhpk9IKmOK75qGRbacJPkxXPFcsV8Vt43eCRk7zsICG8
+         VEIS0QEIPOf8Bb1KW+jmamA1jUsLLFet80lQX5oDmJIL6mXTDY6ogMJgjRrJ9p59f/L5
+         QCIXxAAurJO6NVo2WWETig36mNoBDIS/TvsU/c60+AoIn54Ee78vJFItMAhSeOVPsMtk
+         FiWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740138356; x=1740743156;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WqVrVtqhHGV46+pvkCL/SfPhRn3JfHdmD86m4b6YRJw=;
+        b=UUySknuENW3stsdfNltW+T6M4YQSYL7KWvEAwKP7p38OdIRvvD0oxBTZLG2jdEnnMV
+         TU37DZF4+jrOcDutgQYOclutIbq9Key57kTP4sokPYBo9JzoOr3kj3Ib/ScpcI9w537m
+         l/1sG9OP+Ujh7Y1OYPk54QtlxGxcDxk5lA1FPCpYj7l+bEKo3+MeFTczxWB0+Qoibhs6
+         9lFHwRX5eXmki+MzPqR+WdbUIUdHqwRchskSh/8kFbrU0KWZGLrhccyv6TdYf6BtDpcn
+         IPDslp9HKuoy3M9u9s/8Asx89tD7SB2fAd35GSLTvGbe5cLn46Kvi6azT8errZ8rUfN9
+         +8Dw==
+X-Forwarded-Encrypted: i=1; AJvYcCX6WqPgnODAyz2sCYsal6AkcB1cxvRVHXnS+ukcJinDsUhzR4XR6SpR/qYCV8mnq3Tp6jYXk9gQz/NR3ZY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yym11e280ltPtvlWgg8H1SKinHozDUbNsVGcxBj0nr34BH2A6hn
+	Oq31GvEs3T1v2glu42KZPzp5/8uesfMkRU1I95Vm1zCTUKBuxU33iOaZZZ3S
+X-Gm-Gg: ASbGnctYT5iJRZ/TnPfEOOaiUgyI26IGC0nPYJ9X9qZhhGsf2aubIJS6cnvsChsXAGa
+	w/x2QA65J3i8WzsQWkbqF3IFXYeMTZ3+TaQnJfV4m/ZYHDAlDPmK0Ze9dIUuQ5p6WhcSLN2UCkD
+	42f0RSYNWqElTNwCEcFpcLGUeDtMg9rVAta6wk0btXCYz3GLcrmX1pIJWEvLaWOQ9LKSk5UKsrk
+	7IoPFRS9bsEBOWHwXQlGpA+BHuor0gXmpM4OkVNJNwobgHX17i+aNkjUWukm2BSpNKIeqPbff8+
+	aVAeQLrEcyfKA8h4K/xLj2M+BPsfumYlFRPt
+X-Google-Smtp-Source: AGHT+IFcAfVUWAqeDB8YofqpO3R7cRi4WO/5R4DpHpuIcnB7ZsVIk/FckbktqkoiUypWAZ6+6Hsy+w==
+X-Received: by 2002:a05:6a21:99aa:b0:1ee:d7b1:38b2 with SMTP id adf61e73a8af0-1eef3c56982mr5653689637.3.1740138356324;
+        Fri, 21 Feb 2025 03:45:56 -0800 (PST)
+Received: from [147.47.189.163] ([147.47.189.163])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-ade083277b3sm10693310a12.27.2025.02.21.03.45.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 Feb 2025 03:45:55 -0800 (PST)
+Message-ID: <2f44710b-5f4d-4edb-8b1e-ced6636e2957@gmail.com>
+Date: Fri, 21 Feb 2025 20:45:51 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: Null-pointer-dereference in ef100_process_design_param()
+To: Edward Cree <ecree.xilinx@gmail.com>,
+ Martin Habets <habetsm.xilinx@gmail.com>
+Cc: netdev@vger.kernel.org, linux-net-drivers@amd.com,
+ linux-kernel@vger.kernel.org
+References: <CAHiwTZ=O=sHBD1RCZgAWRRo3Kb-DQvWdu_7FSws=Zxg+TM4Dyw@mail.gmail.com>
+ <92115b07-a0ba-1881-cbca-3798510c3f16@gmail.com>
+Content-Language: en-US
+From: Kyungwook Boo <bookyungwook@gmail.com>
+In-Reply-To: <92115b07-a0ba-1881-cbca-3798510c3f16@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-"Frederic Weisbecker" <frederic@kernel.org> writes:
+Hello, Edward,
 
-> Le Thu, Feb 20, 2025 at 11:46:10PM +0000, Benno Lossin a =C3=A9crit :
->> On 18.02.25 14:27, Andreas Hindborg wrote:
->> > This patch adds support for intrusive use of the hrtimer system. For n=
-ow,
->> > only one timer can be embedded in a Rust struct.
->> >
->> > The hrtimer Rust API is based on the intrusive style pattern introduce=
-d by
->> > the Rust workqueue API.
->> >
->> > Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
->> > ---
->> >  rust/kernel/time.rs         |   2 +
->> >  rust/kernel/time/hrtimer.rs | 312 +++++++++++++++++++++++++++++++++++=
-+++++++++
->> >  2 files changed, 314 insertions(+)
->> >
->> > diff --git a/rust/kernel/time.rs b/rust/kernel/time.rs
->> > index 87e47f2f5618d..2cf365cfb412e 100644
->> > --- a/rust/kernel/time.rs
->> > +++ b/rust/kernel/time.rs
->> > @@ -10,6 +10,8 @@
->> >
->> >  use core::convert::Into;
->> >
->> > +pub mod hrtimer;
->> > +
->> >  /// The number of nanoseconds per millisecond.
->> >  pub const NSEC_PER_MSEC: i64 =3D bindings::NSEC_PER_MSEC as i64;
->> >
->> > diff --git a/rust/kernel/time/hrtimer.rs b/rust/kernel/time/hrtimer.rs
->> > new file mode 100644
->> > index 0000000000000..a6332924efabd
->> > --- /dev/null
->> > +++ b/rust/kernel/time/hrtimer.rs
->> > @@ -0,0 +1,312 @@
->> > +// SPDX-License-Identifier: GPL-2.0
->> > +
->> > +//! Intrusive high resolution timers.
->> > +//!
->> > +//! Allows running timer callbacks without doing allocations at the t=
-ime of
->> > +//! starting the timer. For now, only one timer per type is allowed.
->> > +//!
->> > +//! # Vocabulary
->> > +//!
->> > +//! States:
->> > +//!
->> > +//! * Stopped
->> > +//! * Running
->> > +//!
->> > +//! Operations:
->> > +//!
->> > +//! * Start
->> > +//! * Cancel
->> > +//! * Stop
->> > +//! * Restart
->> > +//!
->> > +//! Events:
->> > +//!
->> > +//! * Expire
->> > +//!
->> > +//! ## State Diagram
->> > +//!
->> > +//! ```text
->> > +//!                  <-- Stop ----
->> > +//!                  <-- Cancel --
->> > +//!                  --- Start -->
->> > +//!        +---------+        +---------+
->> > +//!   O--->| Stopped |        | Running |---o
->> > +//!        +---------+        +---------+   |
->> > +//!                                  ^      |
->> > +//!                  <- Expire --    |      |
->> > +//!                                  o------o
->> > +//!                                   Restart
->> > +//! ```
->> > +//!
->> > +//! A timer is initialized in the **stopped** state. A stopped timer =
-can be
->> > +//! **started** with an **expiry** time. After the timer is started, =
-it is
->> > +//! **running**. When the timer **expires**, the timer handler is exe=
-cuted.
->> > +//! After the handler has executed, the timer may be **restarted** or
->> > +//! **stopped**. A running timer can be **canceled** before it's hand=
-ler is
->>
->> This confuses me a bit, in the other thread you wrote that the handler
->> decides if the timer should restart or be stopped. But What happens when
->> I call `cancel` on the `HrTimerHandle` while the handler is running, but
->> finishes shortly after with a restart request? Will it be canceled?
->>
->> I also have a bit of a wording issue with "the timer is running" IIUC,
->> this means that the timer subsystem keeps track of the expiry time and
->> when the time is elapsed, it fires the code that you registered prior.
->> At first, I thought that "the timer is running" meant that the
->> registered code is running. Maybe we should have two different terms for
->> that? I personally would prefer "active timer" for "the timer subsystem
->> is currently tracking the time and when it is elapsed, it will run the
->> code" and "running timer" for "the timer's expiry time has elapsed and
->> the timer callback is currently being executed".
->
-> Good point. "Running" in the hrtimer terminology is usually to
-> describe a running callback and not just an elapsing (or say started) tim=
-er.
->
-> I would rather have:
->
-> Stopped: initialized but not started, or cancelled, or not restarted
-> Started: initialized and started or restarted
-> Running: executing the callback
+Thank you for your reply.
 
-Alright, we can do that. That makes sense =F0=9F=91=8D
+On 25. 2. 21. 00:35, Edward Cree wrote:
+> On 19/02/2025 10:04, Kyungwook Boo wrote:
+> > It seems that a null pointer dereference issue in ef100_process_design_param()
+> > can occur due to an uninitialized pointer efx->net_dev.
+> 
+> Yes, your diagnosis looks correct to me.
+> Moreover, besides the calls you identify, the function also has calls to
+>  netif_err() using the same efx->net_dev pointer.
 
+I agree with your finding--I missed that one.
 
+> My preferred solution is to keep ef100_check_design_params() where it is,
+>  but move the netif_set_tso_max_{size,segs}() calls into
+>  ef100_probe_netdev(), after the netdevice is allocated, and using the
+>  values stashed in nic_data; also to replace the netif_err() calls with
+>  pci_err().  I will develop a patch accordingly.
+
+I was wondering whether the calling condition will be properly maintained when
+relocating netif_set_tso_max_{size,segs}().
+
+I’m not entirely sure, but if maintaining this condition is unnecessary or has
+already been considered, then your suggestion seems to be the better approach.
 
 Best regards,
-Andreas Hindborg
-
-
+Kyungwook Boo
 
