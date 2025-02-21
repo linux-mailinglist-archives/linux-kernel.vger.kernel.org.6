@@ -1,180 +1,111 @@
-Return-Path: <linux-kernel+bounces-526424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 167EBA3FE90
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 19:17:41 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4F44A3FE95
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 19:19:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2827C189FE2A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 18:17:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 625C8166F94
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 18:18:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3A6F250BFE;
-	Fri, 21 Feb 2025 18:17:31 +0000 (UTC)
-Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49C3C250BFB;
+	Fri, 21 Feb 2025 18:18:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2CC3h+vU"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B445E1D5AA7
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 18:17:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D8391CAA90
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 18:18:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740161851; cv=none; b=JN6E7aQ25H9b2v5UxIQbEx+AXChjoPkFF+ucWEmig4SQtL4ES/zOwTPl3XkO8pcNY5L2tXc6FzobvE1RvMOuVpe9rJ7nUWmVcW5YD5emuJu9OYPFlAU1kv7GqGDHi1c/+mg3PhEJdKnjQrbAGEcOkS9j52zXbCbmi6pg//tQxd8=
+	t=1740161921; cv=none; b=MfYF5fUCXhyNjQsEr7ZV2YIsnsevLqEwT3WYd09HaBHgNV+DhUFsIQDGktKdA+Yjyl5I/KisZtOgrWOUPySrpXvgfjkW5WwAKTSV1vJz5XhehjIdkkR59SVkTJq91Bd8ZBppEQTxtj/DNge7eYV4VxkSXE+7FcfxMRPVjfIUw0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740161851; c=relaxed/simple;
-	bh=lA2nlzpAaURGAtJmBUMe0SN0v7RrsV9E8H4P1g1Cdc0=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=hwzW7ZEuI+V3ttgz5VSZDwX6Ris9weSJPs3yj+6QdCZr5NUgL7E4Ed/bZgC0M/29Nphur9U8WTl0MitjBMfbald348du8jG/TtbgHsA84LNlwTgRtkjmTktwwU/WAGDy7NI+1y75spoDsY5KTANWidx8Wjlapr/H2vibVNtCr2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3d2a6b4b2d4so46564505ab.2
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 10:17:29 -0800 (PST)
+	s=arc-20240116; t=1740161921; c=relaxed/simple;
+	bh=GGzFnXUDdo94zP/g/M0vl1gNFcXO3KuhwN3auxqRUAw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ldRn+BFtvwU616ep1R4eahQMsMCSssJ4LGX4OXUt/0g99oKjsx258TtMXvjzJbPlHltFn7Mskrh820+SXGo8gEcAHHZxEZUtcy9UMa9IAznjN4snDITn9pWfkiidNXhYMBfqOSFe/xas6+LHVAyW+wQx5sDo679YIwhh16z0+Us=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2CC3h+vU; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5e05780509dso3462982a12.2
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 10:18:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1740161918; x=1740766718; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=faRqCA81jH4txu0fAi9rdAQk4yfaELeIVteH/sliYZQ=;
+        b=2CC3h+vUPUMa0M4uAc+cpZgbkYY4vKQHhCtAh0si/b+yP1wtL+cWKwOckjUBDD6qOv
+         w6EnfRPDyMdtQ5aRTck42PcpNG8M7wxRLd3n3GclU9213Rnw65coV/FGpHQuwdTPiXaw
+         tcU7Jyq1Mjig60TaW8Udl+tDKmSGz8t+I+tLazoCWChLaByB3+1z2OtGxgdxD4ousph9
+         CMUP7E5yOQ2V84B5rWTeVowqjBFIMWbdTwkOdarLUA03LJqY0eM0Mq74eSJxaDcU/Lf1
+         q/7iBtmxwGBFDyQWCtc9Cujn1VXKLUl6fN/sPME6++VtHDzZ2kFYIWq7iEDSeSG6iAvM
+         UVxw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740161849; x=1740766649;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=AsFl9EJBSb+e8quohGosTe2uvfmQrjH5XQ/WwcGXrks=;
-        b=Pa1PpNdSH9IHxhsgBtbnMunidcSuzrQ13wl0pxq/9slzVsKKqHWtF4lX7EtYsZ5FQ0
-         aGzp/zOOyzBeKv4tdq+WZO8FyBsxKdt7PYpCplKShZizTULNbohboyTddR95i8X5ApX1
-         ++UDoGVeS8umDvXTojWBc/YkD6lsk6aQ9WlDnJ9oMh2hppJUtjNC3Gz/GhOwizacwIy5
-         jiEc2A4VWaX+Z8NStZbuAlfXhwJIx7J8YvzCWNcsrXjTGPzyVHDO0hxOmVFHji5OatKD
-         Pvo2uNWg+OzsLeXEVr46Hf4CrNVsr7CMKN8ohPqztnSVQh3/NXWr95BxruWKqIuNb2s7
-         gKEA==
-X-Forwarded-Encrypted: i=1; AJvYcCWzM0uywcZUeoQ/E1ohROpjWhCF4MGSSZlG/OQKswu82S8GDvM1MQU+WsbygWerqpG9lBJkWbO8D8zk7ZQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwpjAry72NhDuk614yBEnjE3zCfcmc0/PSvHO2pqqBp0lypdCO+
-	gUbk/Rx6hI/emudA0CpfC9/dSMIxY/yiAkNTBrR+mRxceaDQOu6HrAttnMGEBOXmbWdvIZ/AshS
-	7xYrgrsrp1+WpaMQoV2/XpNIZYD5ZcffE5jxYg0EfFtRQU2byRwUZNQc=
-X-Google-Smtp-Source: AGHT+IETZZhmzmoxxeGC6Ec3U96cmbI+Owv/n0peGurubbzeAlFlq4vC0kLDlwMjg4wDZ3NJMyuJjz/li3CaDIfsT34dtcPBJk4T
+        d=1e100.net; s=20230601; t=1740161918; x=1740766718;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=faRqCA81jH4txu0fAi9rdAQk4yfaELeIVteH/sliYZQ=;
+        b=KY3SS5gNwR0TxsjvekbP4MqLk6eEW4ENFo3H6tHVissyxHo6IXMq3OccXt/Mujn8tB
+         v88uXizIvK49M9mSHl96FK60l98+u4jAb39ybH9iwuPeIUfSQDPAebG0/aejuI/iE4Br
+         kyL5WB4l53gpCdL1XxjrV5bJBqf56ptaicbo++ldaq/CqPJvMqSyq3QPlW1n2VirWJIM
+         5oQZMU+s81BOFFo6efn3s2ON+aSrMynDDimCz2l7mr/pLX61oQoKKhV/AO1vB+WpCOHE
+         sx0wyjUQIoiHLEXqR3L1Qrq5nbf4x4us6HSKtowWTo7JNfVeLJuL7rhe08TojMndNWME
+         HIFg==
+X-Forwarded-Encrypted: i=1; AJvYcCWG4u7drKTeR4OHjcEhk15GJmRgolASOGzB022RTvVTo2umUGMf2qQx2U+8tIVIWKMq8pInieYEvcY6dYA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyezjjWp2x2fLk/WL04Us9R1im7OPeTOlCFFU3IicmCKPz4xSj6
+	zWtATt2t0nxsw3j3tei+7o1vZvAFfYMRBh4Hj374HwPs9cfP5sjAB8JV3hpACtA8PFRjcPEvxv5
+	+xCpIIrkACgc+GLulzuVzn1FtKhkxf3hKTHrY
+X-Gm-Gg: ASbGncsHH+4Dev6ujsZ+W5Hf4P2R/dyfJxYH+HzuGx+WqmTt1hU/AV4Qvmm6/ARq6Dc
+	tqQ+2/GE4TJ1Tt5mm0UzO7acm0IZODLvnt5qxKhR7X8GWY+1SU0koRc3sRkiAXBlBALCHarGGOk
+	wQelp5pvw=
+X-Google-Smtp-Source: AGHT+IF6v8PIfym1PMyabOHdGTmRgwqRk4s4qoohzkIsffoZydOlVmaS6zsX3+sB8p+2yvlL2fXKdic+GCMXbK141jw=
+X-Received: by 2002:a05:6402:4313:b0:5de:4b81:d3fd with SMTP id
+ 4fb4d7f45d1cf-5e0b70fa0efmr4107878a12.13.1740161917702; Fri, 21 Feb 2025
+ 10:18:37 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2405:b0:3cf:bb6e:3065 with SMTP id
- e9e14a558f8ab-3d2cad7e5c3mr49944225ab.0.1740161848706; Fri, 21 Feb 2025
- 10:17:28 -0800 (PST)
-Date: Fri, 21 Feb 2025 10:17:28 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67b8c338.050a0220.14d86d.0594.GAE@google.com>
-Subject: [syzbot] [btrfs?] kernel BUG in btrfs_backref_release_cache
-From: syzbot <syzbot+1de7265d1e4c0c19dd35@syzkaller.appspotmail.com>
-To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+References: <20250221-netcons_fix_shadow-v1-1-dee20c8658dd@debian.org>
+In-Reply-To: <20250221-netcons_fix_shadow-v1-1-dee20c8658dd@debian.org>
+From: Eric Dumazet <edumazet@google.com>
+Date: Fri, 21 Feb 2025 19:18:26 +0100
+X-Gm-Features: AWEUYZlKwQ8cz6aUrcdxM4m4-YuXNW5btQgtHANtkvNmjfxNPFwqDaP_9afxZQ4
+Message-ID: <CANn89iJ0ePmPZW6c3XzUbm_kND1r_EPxz7xNHgroAZwzDjn5eA@mail.gmail.com>
+Subject: Re: [PATCH net-next] net: Remove shadow variable in netdev_run_todo()
+To: Breno Leitao <leitao@debian.org>
+Cc: "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Fri, Feb 21, 2025 at 6:51=E2=80=AFPM Breno Leitao <leitao@debian.org> wr=
+ote:
+>
+> Fix a shadow variable warning in net/core/dev.c when compiled with
+> CONFIG_LOCKDEP enabled. The warning occurs because 'dev' is redeclared
+> inside the while loop, shadowing the outer scope declaration.
+>
+>         net/core/dev.c:11211:22: warning: declaration shadows a local var=
+iable [-Wshadow]
+>                 struct net_device *dev =3D list_first_entry(&unlink_list,
+>
+>         net/core/dev.c:11202:21: note: previous declaration is here
+>                 struct net_device *dev, *tmp;
+>
+> Remove the redundant declaration since the variable is already defined
+> in the outer scope and will be overwritten in the subsequent
+> list_for_each_entry_safe() loop anyway.
+>
+> Signed-off-by: Breno Leitao <leitao@debian.org>
 
-syzbot found the following issue on:
-
-HEAD commit:    0ad2507d5d93 Linux 6.14-rc3
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14b775a4580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b7bde34acd8f53b1
-dashboard link: https://syzkaller.appspot.com/bug?extid=1de7265d1e4c0c19dd35
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-0ad2507d.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/dfb4fc7c042e/vmlinux-0ad2507d.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/1682113b81f5/bzImage-0ad2507d.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+1de7265d1e4c0c19dd35@syzkaller.appspotmail.com
-
-loop0: detected capacity change from 0 to 32768
-BTRFS: device fsid ed167579-eb65-4e76-9a50-61ac97e9b59d devid 1 transid 8 /dev/loop0 (7:0) scanned by syz.0.0 (5320)
-BTRFS info (device loop0): first mount of filesystem ed167579-eb65-4e76-9a50-61ac97e9b59d
-BTRFS info (device loop0): using sha256 (sha256-avx2) checksum algorithm
-BTRFS info (device loop0): rebuilding free space tree
-BTRFS info (device loop0): disabling free space tree
-BTRFS info (device loop0): clearing compat-ro feature flag for FREE_SPACE_TREE (0x1)
-BTRFS info (device loop0): clearing compat-ro feature flag for FREE_SPACE_TREE_VALID (0x2)
-BTRFS info (device loop0): balance: start -d -m
-BTRFS info (device loop0): relocating block group 6881280 flags data|metadata
-BTRFS info (device loop0): relocating block group 5242880 flags data|metadata
-BTRFS info (device loop0): found 139 extents, stage: move data extents
-assertion failed: !cache->nr_nodes, in fs/btrfs/backref.c:3160
-------------[ cut here ]------------
-kernel BUG at fs/btrfs/backref.c:3160!
-Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
-CPU: 0 UID: 0 PID: 5320 Comm: syz.0.0 Not tainted 6.14.0-rc3-syzkaller #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:btrfs_backref_release_cache+0x1b5/0x1e0 fs/btrfs/backref.c:3160
-Code: 23 fd 90 0f 0b e8 db 93 be fd 48 c7 c7 a0 ea 6d 8c 48 c7 c6 40 f3 6d 8c 48 c7 c2 40 eb 6d 8c b9 58 0c 00 00 e8 fc e1 23 fd 90 <0f> 0b e8 b4 93 be fd 48 c7 c7 a0 ea 6d 8c 48 c7 c6 80 f3 6d 8c 48
-RSP: 0018:ffffc9000d457838 EFLAGS: 00010246
-RAX: 000000000000003e RBX: 0000000000000002 RCX: 83d820ae1486a200
-RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
-RBP: ffffc9000d457a00 R08: ffffffff81a1108c R09: 1ffff92001a8aea4
-R10: dffffc0000000000 R11: fffff52001a8aea5 R12: dffffc0000000000
-R13: dffffc0000000000 R14: ffff888052f880f0 R15: ffff888052f88020
-FS:  00007fb48b6ac6c0(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000000000 CR3: 0000000044042000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- relocate_block_group+0xabf/0xd40 fs/btrfs/relocation.c:3664
- btrfs_relocate_block_group+0x77d/0xd90 fs/btrfs/relocation.c:4009
- btrfs_relocate_chunk+0x12c/0x3b0 fs/btrfs/volumes.c:3511
- __btrfs_balance+0x1b0f/0x26b0 fs/btrfs/volumes.c:4292
- btrfs_balance+0xbdc/0x10c0 fs/btrfs/volumes.c:4669
- btrfs_ioctl_balance+0x3f5/0x660 fs/btrfs/ioctl.c:3587
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:906 [inline]
- __se_sys_ioctl+0xf5/0x170 fs/ioctl.c:892
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fb48a78cde9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fb48b6ac038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007fb48a9a5fa0 RCX: 00007fb48a78cde9
-RDX: 0000400000000180 RSI: 00000000c4009420 RDI: 0000000000000004
-RBP: 00007fb48a80e2a0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007fb48a9a5fa0 R15: 00007ffedc7a6988
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:btrfs_backref_release_cache+0x1b5/0x1e0 fs/btrfs/backref.c:3160
-Code: 23 fd 90 0f 0b e8 db 93 be fd 48 c7 c7 a0 ea 6d 8c 48 c7 c6 40 f3 6d 8c 48 c7 c2 40 eb 6d 8c b9 58 0c 00 00 e8 fc e1 23 fd 90 <0f> 0b e8 b4 93 be fd 48 c7 c7 a0 ea 6d 8c 48 c7 c6 80 f3 6d 8c 48
-RSP: 0018:ffffc9000d457838 EFLAGS: 00010246
-RAX: 000000000000003e RBX: 0000000000000002 RCX: 83d820ae1486a200
-RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
-RBP: ffffc9000d457a00 R08: ffffffff81a1108c R09: 1ffff92001a8aea4
-R10: dffffc0000000000 R11: fffff52001a8aea5 R12: dffffc0000000000
-R13: dffffc0000000000 R14: ffff888052f880f0 R15: ffff888052f88020
-FS:  00007fb48b6ac6c0(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055dd4cdc80e8 CR3: 0000000044042000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Reviewed-by: Eric Dumazet <edumazet@google.com>
 
