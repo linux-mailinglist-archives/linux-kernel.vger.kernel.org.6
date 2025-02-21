@@ -1,102 +1,132 @@
-Return-Path: <linux-kernel+bounces-525881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DA58A3F6CD
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 15:06:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 094E9A3F700
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 15:16:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12AD4860825
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 14:05:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 403EE1888E6D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 14:15:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16A3220E6FB;
-	Fri, 21 Feb 2025 14:05:46 +0000 (UTC)
-Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2B671BCA07;
-	Fri, 21 Feb 2025 14:05:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 596C21D5173;
+	Fri, 21 Feb 2025 14:15:20 +0000 (UTC)
+Received: from smtp-1909.mail.infomaniak.ch (smtp-1909.mail.infomaniak.ch [185.125.25.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F12120F09A
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 14:15:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740146745; cv=none; b=G7XQ8pszPEGV9gN21UrvVFi4Wz6nyqwBINAqgCoA/AIBv7TrfXGD7FzorCz6QCbwn+KZyHPAwbPK17oNpKlfuezadEg/zHYzIQ2Pxc22JNnE48dHe9G2d/4MyhiN5oN+2TZJ9d9OldAv1ADzppB78pttsEcO+ArjGWuXWm6C0TQ=
+	t=1740147320; cv=none; b=JgmVZd+02s6Za81M52H2UVjhrv7JqLr+mvVL9qpqRDjVOfQrE0uBoV6Rs/HHrxhsMdAG7CX4spIy3AwwKK0jjXNt5yzHTf74bMVvzy38bTkymad+b8LxctPK6e+Qy2VuCvuWfTpRVWxUOoCr9+nIA+IxLLNUwEGYxeahNhcJnhU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740146745; c=relaxed/simple;
-	bh=xU7/wEZfiw+9Pn0wYe4JOCCx45ck0D30lzuetNbvIYw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BAMXJ+B18qzn+L1pgufpMMJBZ1AlkF3ht2G76gVNV64ul5BgApeqe1cKIIG8/YJ0V6ErDVgGSCIKN4m/ZB3TmyAmoh8yncQey3kA3FupCn2KKPC+BfTxorihugoaXsjlpkhIRW/yWUCIcHXMYtmwJyXyF/kJNyxqJQIeo450gog=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
-Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
-	id 1tlTet-00007t-00; Fri, 21 Feb 2025 15:05:39 +0100
-Received: by alpha.franken.de (Postfix, from userid 1000)
-	id C0706C0135; Fri, 21 Feb 2025 15:03:14 +0100 (CET)
-Date: Fri, 21 Feb 2025 15:03:14 +0100
-From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-To: Sergio Paracuellos <sergio.paracuellos@gmail.com>
-Cc: linux-clk@vger.kernel.org, sboyd@kernel.org, mturquette@baylibre.com,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com,
-	p.zabel@pengutronix.de, linux-mips@vger.kernel.org,
-	devicetree@vger.kernel.org, yangshiji66@outlook.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/6] mips: dts: ralink: update system controller nodes
- and its consumers
-Message-ID: <Z7iHorlRgtsi1LOo@alpha.franken.de>
-References: <20250120092146.471951-1-sergio.paracuellos@gmail.com>
- <CAMhs-H-VevC+_=HxhMU6-at0bKut_JqdgO7j2detuB4s8R_QFQ@mail.gmail.com>
+	s=arc-20240116; t=1740147320; c=relaxed/simple;
+	bh=KWJsaOGT1S2BOpWR5uwWI86Z7VASm2XxQy/u07uzcZw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=I2mczWleI18ft6zKlTEyIEE6TMT5RCMIW+5X4Y6J/TeIFI60JLzWFvrwDQGm7yfoerId3WMTz491eiASE8gIR8srO/U/6SXTbZ+bo+AaPEWUh3Rj9tMUo4f0jYkOPKjgYrsAjbtBeKsJTH4LWMoUzvtU2yh23+yCsqS44T1pgCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0leil.net; spf=pass smtp.mailfrom=0leil.net; arc=none smtp.client-ip=185.125.25.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0leil.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=0leil.net
+Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4YzsMb73YXzCBl;
+	Fri, 21 Feb 2025 15:04:59 +0100 (CET)
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4YzsMb1kxCzQ1x;
+	Fri, 21 Feb 2025 15:04:59 +0100 (CET)
+From: Quentin Schulz <foss+kernel@0leil.net>
+Subject: [PATCH v2 0/5] arm64: dts: rockchip: pinmux fixes and support for
+ 2 adapters for Theobroma boards
+Date: Fri, 21 Feb 2025 15:04:32 +0100
+Message-Id: <20250221-ringneck-dtbos-v2-0-310c0b9a3909@cherry.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMhs-H-VevC+_=HxhMU6-at0bKut_JqdgO7j2detuB4s8R_QFQ@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAPCHuGcC/12Py26EMAxFfwVlXVfBIQGz6n9UswiJGaJqYOpQN
+ KMR/14ei0pdHks+996XyiyJs2qLlxJeUk7TuAG+FSoMfrwypLixQo1Wl9iApPE6cviCOHdTBmq
+ 0qxpDxlpW29NduE+PQ/h5OVn4+2fzzufxT7ul7FIsCe7BU+0eIJx5hihpYYFA3pNtHFXo2gV3e
+ +czQ5hutzS3hWPWHfloiCyz7T0iaWODI12aro5RR+NM1am9x5DyPMnz2LmUR5EzHfX/SUsJGtA
+ Gqns0jWX3EQYWeb5HVpd1XX8BWRURDTQBAAA=
+X-Change-ID: 20250128-ringneck-dtbos-98064839355e
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
+ Quentin Schulz <quentin.schulz@theobroma-systems.com>, 
+ Farouk Bouabid <farouk.bouabid@theobroma-systems.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Quentin Schulz <quentin.schulz@cherry.de>, stable@vger.kernel.org
+X-Mailer: b4 0.14.2
+X-Infomaniak-Routing: alpha
 
-On Fri, Feb 21, 2025 at 11:48:34AM +0100, Sergio Paracuellos wrote:
-> Hi Thomas,
-> 
-> El El lun, 20 ene 2025 a las 10:21, Sergio Paracuellos <
-> sergio.paracuellos@gmail.com> escribió:
-> 
-> > Hi all!
-> >
-> > Ralinks SoCs have a system controller node which serves as clock and reset
-> > providers for the rest of the world. This patch series introduces clock
-> > definitions for these SoCs. The clocks are registered in the driver using
-> > a bunch of arrays in specific order so these definitions represent the
-> > assigned
-> > identifier that is used when this happens so client nodes can easily use it
-> > to specify the clock which they consume without the need of checking
-> > driver code.
-> >
-> > DTS files which are currently on tree are not matching system controller
-> > bindings. So all of them are updated to properly match them.
-> >
-> > I'd like this series to go through kernel mips git tree if possible.
-> >
-> > Thanks in advance for your time.
-> >
-> > Changes in v3:
-> > - Address Krzysztof comments in v2 (Thanks!):
-> >   + Drop reset include file since what it was defined there were hardware
-> >     constants and no binding related indexes at all.
-> >   + Update patches for not referring to this reset removed file.
-> 
-> 
-> I was expecting this series going through the mips tree.
+This is based on top of
+https://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git/log/?h=v6.15-armsoc/dts64
+6ee0b9ad3995 ("arm64: dts: rockchip: Add rng node to RK3588") as it
+depends on the (merged) series from
+https://lore.kernel.org/all/20250211-pre-ict-jaguar-v6-0-4484b0f88cfc@cherry.de/
 
-  DTC     arch/mips/boot/dts/ralink/rt3883_eval.dtb
-Error: /local/tbogendoerfer/korg/linux/arch/mips/boot/dts/ralink/rt3883.dtsi:2.1-9 syntax error
-FATAL ERROR: Unable to parse input tree
+Patches for Haikou Video Demo adapter for PX30 Ringneck and RK3399 Puma
+(patches 4 and 5) also depend on the following patch series:
+https://lore.kernel.org/linux-devicetree/20250220-pca976x-reset-driver-v1-0-6abbf043050e@cherry.de/
 
-that's what I get after applying the series building for RT3883.
+This fixes incorrect pinmux on UART0 and UART5 for PX30 Ringneck on
+Haikou.
 
-Thomas.
+This adds support for the HAIKOU-LVDS-9904379 adapter for PX30 Ringneck
+fitted on a Haikou carrierboard.
 
+Additionally, this adds support for Haikou Video Demo adapter on PX30
+Ringneck and RK3399 Puma fitted on a Haikou carrierboard. Notably
+missing from the overlay is the OV5675 camera module which expects
+19.2MHz which we cannot exactly feed right now. Modifications to the
+OV5675 drivers will be made so it's more flexible and then support for
+the camera module will be added. This adapter has a 720x1280 DSI display
+with a GT911 touchscreen, a GPIO-controllable LED and an I2C GPIO
+expander. Support for this adapter on RK3588 Tiger is being added in a
+separate patch series[1].
+
+Note that the DSI panel currently is glitchy on both PX30 Ringneck and
+RK3399 Puma but this is being tackled in another series[2]. Since this
+will not be fixed through DT properties for the panel, adding the DT
+nodes for the DSI panel even if not perfect right now seems acceptable
+to me.
+
+[1] https://lore.kernel.org/linux-rockchip/20241127143719.660658-1-heiko@sntech.de/
+[2] https://lore.kernel.org/r/20240626084722.832763-1-heiko@sntech.de
+
+Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
+---
+Changes in v2:
+- rename uart5_rts_gpio to uart5_rts_pin to stop triggering a false
+  positive of the dtschema checker,
+- remove PU from uart5_rts_pin,
+- Link to v1: https://lore.kernel.org/r/20250220-ringneck-dtbos-v1-0-25c97f2385e6@cherry.de
+
+---
+Quentin Schulz (5):
+      arm64: dts: rockchip: fix pinmux of UART0 for PX30 Ringneck on Haikou
+      arm64: dts: rockchip: fix pinmux of UART5 for PX30 Ringneck on Haikou
+      arm64: dts: rockchip: add support for HAIKOU-LVDS-9904379 adapter for PX30 Ringneck
+      arm64: dts: rockchip: add overlay for PX30 Ringneck Haikou Video Demo adapter
+      arm64: dts: rockchip: add overlay for RK3399 Puma Haikou Video Demo adapter
+
+ arch/arm64/boot/dts/rockchip/Makefile              |  15 ++
+ .../px30-ringneck-haikou-lvds-9904379.dtso         | 130 ++++++++++++++
+ .../rockchip/px30-ringneck-haikou-video-demo.dtso  | 190 +++++++++++++++++++++
+ .../boot/dts/rockchip/px30-ringneck-haikou.dts     |  10 +-
+ .../rockchip/rk3399-puma-haikou-video-demo.dtso    | 166 ++++++++++++++++++
+ 5 files changed, 510 insertions(+), 1 deletion(-)
+---
+base-commit: 6ee0b9ad3995ee5fa229035c69013b7dd0d3634b
+change-id: 20250128-ringneck-dtbos-98064839355e
+prerequisite-change-id: 20250219-pca976x-reset-driver-c9aa95869426:v2
+prerequisite-patch-id: 25c49bae002eb11bc6fec479f49f5e3b28b8f403
+prerequisite-patch-id: 58e9acffbbd052710bfe672c99ef05f59b1978a6
+
+Best regards,
 -- 
-Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
-good idea.                                                [ RFC1925, 2.3 ]
+Quentin Schulz <quentin.schulz@cherry.de>
+
 
