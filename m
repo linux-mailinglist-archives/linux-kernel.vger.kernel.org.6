@@ -1,210 +1,522 @@
-Return-Path: <linux-kernel+bounces-524962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F33FA3E937
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 01:40:35 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8348DA3E939
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 01:40:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C5AC421F0B
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 00:40:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21B0D421F05
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 00:40:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 958781A270;
-	Fri, 21 Feb 2025 00:40:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77CAF28E37;
+	Fri, 21 Feb 2025 00:40:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="OLWLCW56"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iJGEpcHa"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4324C79FD
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 00:40:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3041A2AE8E;
+	Fri, 21 Feb 2025 00:40:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740098421; cv=none; b=oVoXGYiuVEiM2w5k0AXZADq2fynXpQuUFAlpQqrM6cx8zSORjZIvAT6S4GB01SrYKSOpMdOVOeVf+e8wCYeil5CDUENwVVl9M62bbe+tGl9ZOSoY3gBywJpNlELH4Bjc0wlNo3bCGM2/uLBEyvKx9qsZkcbqZ8Rm+HkpA8B1YBQ=
+	t=1740098429; cv=none; b=jir4ATZ9YY5U89iytlU4wHPE1PwDrGDRhB6zWHhsqqxWuGkILWyR3wx+2Ckue3blVlPDYw7zYkZbRfY4FUhKwSVGvoVKAPPyJQEOTZIDPrRQcfxvyJh3tiCX4SjSJjhS6rU7HsLNocQdRjOgdgbsbrWX0Nr2nOTWQwrgSvPeNhQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740098421; c=relaxed/simple;
-	bh=4TZmT0OVj6lmyqRooEpFA8ZqX8x6sU7ElubS1e40FT8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Wy7szalf3iIMUnh4tHWeBVakWI3vPHAETn0ovfmDkO0sB3zNZMxwd5YbzYRqhAcw2DLAfyWNkahdaqG1od3S1IiXSSGxLkVuSblBhXUJ7HOgptS7ldRdXtEBXKQNyko77+Aqp6aT4gKdhR2XL1+cagMYIwGqabSOvwJxBJVeJrg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=OLWLCW56; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5dedae49c63so2852113a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 16:40:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1740098417; x=1740703217; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=IIRyFU8js5MTrYu3kLLDCqOpLqxeTQMOioCoscja6X0=;
-        b=OLWLCW56OcgSQuwQyYvNAeN+ju6tl0cJQDIRFq774y/I8245K/ddPULdhvLDAp8EY1
-         0CjP11k5Hyz843TpgpRCNqyYo+dpfCog2droIYQgcQDBmHf5jIyP6GBTyipJJHhNuKiY
-         W6grixhHkcpw29culiybkw1FvoGBB7CJhRwW8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740098417; x=1740703217;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=IIRyFU8js5MTrYu3kLLDCqOpLqxeTQMOioCoscja6X0=;
-        b=vvrgNPQbmNmp/12yfPLYCTkrGaeU6KQnVsOdHgfvukP7BfUYdt8U1W4H1Wt2dLRn2I
-         DefOQStTPl0dCYR0aSd46HiFYuL2zNCUOfcRdlx6FNOf0tadL3d8Ej+pSqt+w0s335Id
-         K74m+qgLA3tzhobYi99lI3Wo1yH1Ui1mYX9zw+CvBBrzRo4oCMpajJ0Xl1t4E2530HJf
-         EpzdhqHC/4tU2mxxYuMCpwzw1OyZTSy5CHEJG+4zzDLsUQAP1PXuEdAGVh5P78yiCPQZ
-         eOJSwjMI03oUVmvBJreP/kVuxxxboIMI6RYkjLOYdJx1GuLo+iaTGdpO9kdH5OimC/Ip
-         ef6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXNDAELWCavJo416jvKwcUWGD/j41+wTueDni4PFlUSxirMpOEnoNGrMoqV1bAxduNALaEM6vRS3UTsygk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxglwfykG19TnJqWuyDVmGPPEdUzaeA9U8CXncjXp6xtCzYdF90
-	sibk+E+B7zBrAYlz/yTntnMxGTWHHPMpQ5UQYjVEeStQ6eomTGSe98M3SrSfGY3HKU7Ihudk3xe
-	dxQo=
-X-Gm-Gg: ASbGncuOn2eW9+Zqz7y56+OWo427SS9C+xSzQnEX+oNqg83rns3Qh7HZoRgqTkx5j6m
-	mNeQmWeJR4rQpAteMXfhQLYrZ36PCBylvqUw63ZSRoJZv7/Zk5ZZMIUzN9rT5WWNKygujBiJsSn
-	FgSCoAPQfhobqEDBLaZI0iPtzbGPiJHSZRdOQ6ofcRmervDTAUb4/uhsQh54Alg1LHtHfKYYYhf
-	ISGG41OSMESNqEFjtabBaG/zVMPCfFim1Zr2vCRYIZrhfNd9C4iy+2VC9khZVByj7cusfaDxquE
-	aHhioFe4vziMghTVWnSkjTVnvJKBTWQMdkfX14Iz7eBRuLvHtM0uduiNV0h6eA8g+Q==
-X-Google-Smtp-Source: AGHT+IHat3xpapNpPTeq7oILL5oOSkY29vavgnrNcKWHMRNhyDLeU0vsKMql0X4THSorxV04r7frkw==
-X-Received: by 2002:a17:907:d8f:b0:ab3:85f2:ff67 with SMTP id a640c23a62f3a-abc0d9e5349mr72239166b.16.1740098417245;
-        Thu, 20 Feb 2025 16:40:17 -0800 (PST)
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com. [209.85.218.48])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abbbe74100asm595402066b.95.2025.02.20.16.40.15
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Feb 2025 16:40:16 -0800 (PST)
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-aaecf50578eso308835766b.2
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 16:40:15 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXKNLqP5lGhiS6/9Z5NVLsVYV5kjE598hUQzJS0S9TvQ0xJCoWLDBRKYtSX/1hob2/7JX6s0solQH84zQU=@vger.kernel.org
-X-Received: by 2002:a17:906:f5a9:b0:abb:a88d:ddaf with SMTP id
- a640c23a62f3a-abc0df5d5a1mr76770566b.55.1740098415082; Thu, 20 Feb 2025
- 16:40:15 -0800 (PST)
+	s=arc-20240116; t=1740098429; c=relaxed/simple;
+	bh=33BgvPZAiafePkil4ejP9WWjA02TZ/LaIn8LMxbUI2o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CK/WNd1aGi2PI9zxz6VMFJYo5mH2xjq44KNzLNBtwkNAh0n9ke1XPLzeGenkwPz0C4YPEDl63G2V3vvRFoSq/ruEJt/o4e4++EObjYCWFURN3FjCSFb6Xjonq8zNGmda3WNXBABlQ3nSKp68MRlRN/p0f587yBmcVBr2ZAFera4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iJGEpcHa; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740098428; x=1771634428;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=33BgvPZAiafePkil4ejP9WWjA02TZ/LaIn8LMxbUI2o=;
+  b=iJGEpcHapTSEJbVKoB4XEs4VMMIe0NsjveHno6vQJzvnT6EtMdCJj9MM
+   tXua9g5kDpa52EKM02A3J6+jmOIUiI+KGw1TUUOAXeMCljEKGSw0benhr
+   C7iLHYAb9h+oRNevbEkRrpVTLZNcTCii/RAgZ0Im8av4YgkorpcpL1Pod
+   zKIl5VwYHnBlFLG+AcWFGgxyl2vaCXsPGl7A2pqzT1XbtgmQIvVhFUL85
+   WpzUOd3dn7b+XNs5jLjv/yl3BmaZq5tEkyYqoIyGgSgetquK5gq3l4xKv
+   kRr3eL92icFeMuqNuW776J+x5Fe7An57OfnAxZhYWA1GQWKc4+Y/IjmVn
+   g==;
+X-CSE-ConnectionGUID: OlbtfrcmQNeCz6corqwHpg==
+X-CSE-MsgGUID: 8tEBMFu8RZyOrIUP3t4DHw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11314"; a="41113303"
+X-IronPort-AV: E=Sophos;i="6.12,310,1728975600"; 
+   d="scan'208";a="41113303"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Feb 2025 16:40:27 -0800
+X-CSE-ConnectionGUID: Udb3dOjcQvGSO5paC17IJg==
+X-CSE-MsgGUID: F3aEuEYMShKu/+AXBF6F0g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="152401595"
+Received: from puneetse-mobl.amr.corp.intel.com (HELO [10.125.110.112]) ([10.125.110.112])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Feb 2025 16:40:24 -0800
+Message-ID: <a127127a-b8ea-4390-b8e9-d3ad0bcc311e@intel.com>
+Date: Thu, 20 Feb 2025 17:40:21 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CANiq72m-R0tOakf=j7BZ78jDHdy=9-fvZbAT8j91Je2Bxy0sFg@mail.gmail.com>
- <Z7SwcnUzjZYfuJ4-@infradead.org> <CANiq72myjaA3Yyw_yyJ+uvUrZQcSLY_jNp65iKH8Y5xGY5tXPQ@mail.gmail.com>
- <Z7bO1jT2onZFZwgH@infradead.org>
-In-Reply-To: <Z7bO1jT2onZFZwgH@infradead.org>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Thu, 20 Feb 2025 16:39:58 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wgLbz1Bm8QhmJ4dJGSmTuV5w_R0Gwvg5kHrYr4Ko9dUHQ@mail.gmail.com>
-X-Gm-Features: AWEUYZl110dqtgnPbf_5O23eqr6Efb1z5WIykrA3dNVGStovQIgnPSeO4hmGu6I
-Message-ID: <CAHk-=wgLbz1Bm8QhmJ4dJGSmTuV5w_R0Gwvg5kHrYr4Ko9dUHQ@mail.gmail.com>
-Subject: Re: Rust kernel policy
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, 
-	rust-for-linux <rust-for-linux@vger.kernel.org>, Greg KH <gregkh@linuxfoundation.org>, 
-	David Airlie <airlied@gmail.com>, linux-kernel@vger.kernel.org, ksummit@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 14/15] cxl/amd: Enable Zen5 address translation using
+ ACPI PRMT
+To: Robert Richter <rrichter@amd.com>,
+ Alison Schofield <alison.schofield@intel.com>,
+ Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+ Dan Williams <dan.j.williams@intel.com>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ Davidlohr Bueso <dave@stgolabs.net>, Terry Bowman <terry.bowman@amd.com>
+Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Gregory Price <gourry@gourry.net>,
+ "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
+References: <20250218132356.1809075-1-rrichter@amd.com>
+ <20250218132356.1809075-15-rrichter@amd.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20250218132356.1809075-15-rrichter@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, 19 Feb 2025 at 22:42, Christoph Hellwig <hch@infradead.org> wrote:
->
-> The document claims no subsystem is forced to take Rust.  That's proven
-> to be wrong by Linus.  And while you might not have known that when
-> writing the document, you absolutely did when posting it to the list.
 
-I was hopeful, and I've tried to just see if this long thread results
-in anything constructive, but this seems to be going backwards (or at
-least not forwards).
 
-The fact is, the pull request you objected to DID NOT TOUCH THE DMA
-LAYER AT ALL.
+On 2/18/25 6:23 AM, Robert Richter wrote:
+> Add AMD platform specific Zen5 support for address translation.
+> 
+> Zen5 systems may be configured to use 'Normalized addresses'. Then,
+> CXL endpoints use their own physical address space and are programmed
+> passthrough (DPA == HPA), the number of interleaving ways for the
+> endpoint is set to one. The Host Physical Addresses (HPAs) need to be
+> translated from the endpoint to its CXL host bridge. The HPA of a CXL
+> host bridge is equivalent to the System Physical Address (SPA).
+> 
+> ACPI Platform Runtime Mechanism (PRM) is used to translate the CXL
+> Device Physical Address (DPA) to its System Physical Address. This is
+> documented in:
+> 
+>  AMD Family 1Ah Models 00h–0Fh and Models 10h–1Fh
+>  ACPI v6.5 Porting Guide, Publication # 58088
+>  https://www.amd.com/en/search/documentation/hub.html
+> 
+> To implement AMD Zen5 address translation the following steps are
+> needed:
+> 
+> Apply platform specific changes to each port where necessary using
+> platform detection and the existing architectural framework.
+> 
+> Add a function cxl_port_setup_amd() to implement AMD platform specific
+> code. Use Kbuild and Kconfig options respectively to enable the code
+> depending on architecture and platform options. Handle architecture
+> specifics in arch_cxl_port_platform_setup() and create a new file
+> core/x86/amd.c for this.
+> 
+> Introduce a function cxl_zen5_init() to handle Zen5 specific
+> enablement. Zen5 platforms are detected using the PCIe vendor and
+> device ID of the corresponding CXL root port. There is a check for
+> ACPI PRMT CXL address translation support.
+> 
+> Apply cxl_zen5_to_hpa() as cxl_port->to_hpa() callback to Zen5 CXL
+> host bridges to enable platform specific address translation.
+> 
+> Use ACPI PRM DPA-to-SPA translation to determine an endpoint's
+> interleaving configuration and base address during the early
+> initialization process. This is used to determine an endpoint's SPA
+> range and to check the address translation setup.
+> 
+> The configuration can be determined calling the PRM for specific HPAs
+> given. The resulting SPAs are used to calculate interleaving
+> parameters of the host bridge and root port. The maximum granularity
+> (chunk size) is 16k, minimum is 256. Use the following calculation for
+> the given HPAs:
+> 
+>  ways    = hpa_len(SZ_16K) / SZ_16K
+>  gran    = (hpa_len(SZ_16K) - hpa_len(SZ_16K - SZ_256) - SZ_256)
+>           / (ways - 1)
+>  pos     = (hpa_len(SZ_16K) - ways * SZ_16K) / gran
+> 
+> Before the endpoint is attached to a region the translation is checked
+> for reasonable values.
+> 
+> Signed-off-by: Robert Richter <rrichter@amd.com>
 
-It was literally just another user of it, in a completely separate
-subdirectory, that didn't change the code you maintain in _any_ way,
-shape, or form.
+What is the possibilty of making this ACPI PRM call interface public and teach drivers/cxl/acpi.c to make it common code? That way if the platform implements the ACPI call then the translation gets registered and we don't need to have platform specific code. Really would like to avoid drivers/cxl/core/$arch if that's possible. 
 
-I find it distressing that you are complaining about new users of your
-code, and then you keep bringing up these kinds of complete garbage
-arguments.
+DJ
 
-Honestly, what you have been doing is basically saying "as a DMA
-maintainer I control what the DMA code is used for".
+> ---
+>  drivers/cxl/Kconfig           |   4 +
+>  drivers/cxl/core/Makefile     |   1 +
+>  drivers/cxl/core/core.h       |   3 +
+>  drivers/cxl/core/region.c     |  25 +++-
+>  drivers/cxl/core/x86/amd.c    | 259 ++++++++++++++++++++++++++++++++++
+>  drivers/cxl/core/x86/common.c |   2 +
+>  6 files changed, 293 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/cxl/core/x86/amd.c
+> 
+> diff --git a/drivers/cxl/Kconfig b/drivers/cxl/Kconfig
+> index 876469e23f7a..e576028dd983 100644
+> --- a/drivers/cxl/Kconfig
+> +++ b/drivers/cxl/Kconfig
+> @@ -146,4 +146,8 @@ config CXL_REGION_INVALIDATION_TEST
+>  	  If unsure, or if this kernel is meant for production environments,
+>  	  say N.
+>  
+> +config CXL_AMD
+> +       def_bool y
+> +       depends on AMD_NB
+> +
+>  endif
+> diff --git a/drivers/cxl/core/Makefile b/drivers/cxl/core/Makefile
+> index db1d16d39037..cfe41b8edfd3 100644
+> --- a/drivers/cxl/core/Makefile
+> +++ b/drivers/cxl/core/Makefile
+> @@ -18,3 +18,4 @@ cxl_core-$(CONFIG_TRACING) += trace.o
+>  cxl_core-$(CONFIG_CXL_REGION) += region.o
+>  
+>  cxl_core-$(CONFIG_X86)		+= x86/common.o
+> +cxl_core-$(CONFIG_CXL_AMD)	+= x86/amd.o
+> diff --git a/drivers/cxl/core/core.h b/drivers/cxl/core/core.h
+> index e2955f91fd98..d5c94e8cea42 100644
+> --- a/drivers/cxl/core/core.h
+> +++ b/drivers/cxl/core/core.h
+> @@ -119,5 +119,8 @@ int cxl_port_get_switch_dport_bandwidth(struct cxl_port *port,
+>  
+>  int cxl_gpf_port_setup(struct device *dport_dev, struct cxl_port *port);
+>  void arch_cxl_port_platform_setup(struct cxl_port *port);
+> +#if defined(CONFIG_X86)
+> +void cxl_port_setup_amd(struct cxl_port *port);
+> +#endif
+>  
+>  #endif /* __CXL_CORE_H__ */
+> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
+> index dab059ee26ef..b6806e67c62a 100644
+> --- a/drivers/cxl/core/region.c
+> +++ b/drivers/cxl/core/region.c
+> @@ -837,10 +837,24 @@ static int cxl_port_calc_hpa(struct cxl_port *port, struct cxl_decoder *cxld,
+>  {
+>  	struct range hpa = *hpa_range;
+>  	u64 len = range_len(&hpa);
+> +	int bits;
+>  
+>  	if (!port->to_hpa)
+>  		return 0;
+>  
+> +	/*
+> +	 * Check range and length alignment of 256 MB for the
+> +	 * interleaved address range. With max. 16-way interleaving
+> +	 * applied this is at least 16 KB.
+> +	 */
+> +
+> +	if (!len || hpa_range->start & (SZ_16K - 1) || len & (SZ_16K - 1)) {
+> +		dev_warn(&port->dev,
+> +			"HPA range not aligned or multiple of 16 kB: %#llx-%#llx(%s)\n",
+> +			hpa_range->start, hpa_range->end, dev_name(&cxld->dev));
+> +		return -ENXIO;
+> +	}
+> +
+>  	/* Translate HPA to the next upper domain. */
+>  	hpa.start = port->to_hpa(cxld, hpa.start);
+>  	hpa.end = port->to_hpa(cxld, hpa.end);
+> @@ -853,7 +867,16 @@ static int cxl_port_calc_hpa(struct cxl_port *port, struct cxl_decoder *cxld,
+>  		return -ENXIO;
+>  	}
+>  
+> -	if (range_len(&hpa) != len * cxld->interleave_ways) {
+> +	/*
+> +	 *  Apply min and max interleaving addresses to the range.
+> +	 *  Determine the interleave ways and expand the 16 KB range
+> +	 *  by the power-of-2 part it.
+> +	 */
+> +	bits = range_len(&hpa) > len ? __ffs(range_len(&hpa) / len) : 0;
+> +	hpa.start &= ~((SZ_16K << bits) - 1);
+> +	hpa.end |= (SZ_16K << bits) - 1;
+> +
+> +	if (range_len(&hpa) % len) {
+>  		dev_warn(&port->dev,
+>  			"CXL address translation: HPA range not contiguous: %#llx-%#llx:%#llx-%#llx(%s)\n",
+>  			hpa.start, hpa.end, hpa_range->start,
+> diff --git a/drivers/cxl/core/x86/amd.c b/drivers/cxl/core/x86/amd.c
+> new file mode 100644
+> index 000000000000..483c92c18054
+> --- /dev/null
+> +++ b/drivers/cxl/core/x86/amd.c
+> @@ -0,0 +1,259 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (C) 2025 Advanced Micro Devices, Inc.
+> + */
+> +
+> +#include <linux/prmt.h>
+> +#include <linux/pci.h>
+> +
+> +#include <cxlmem.h>
+> +#include "../core.h"
+> +
+> +#define PCI_DEVICE_ID_AMD_ZEN5_ROOT		0x153e
+> +
+> +static const struct pci_device_id zen5_root_port_ids[] = {
+> +	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_ZEN5_ROOT) },
+> +	{},
+> +};
+> +
+> +static int is_zen5_root_port(struct device *dev, void *unused)
+> +{
+> +	if (!dev_is_pci(dev))
+> +		return 0;
+> +
+> +	return !!pci_match_id(zen5_root_port_ids, to_pci_dev(dev));
+> +}
+> +
+> +static bool is_zen5(struct cxl_port *port)
+> +{
+> +	if (!IS_ENABLED(CONFIG_ACPI_PRMT))
+> +		return false;
+> +
+> +	/* To get the CXL root port, find the CXL host bridge first. */
+> +	if (is_cxl_root(port) ||
+> +	    !port->host_bridge ||
+> +	    !is_cxl_root(to_cxl_port(port->dev.parent)))
+> +		return false;
+> +
+> +	return !!device_for_each_child(port->host_bridge, NULL,
+> +				       is_zen5_root_port);
+> +}
+> +
+> +/*
+> + * PRM Address Translation - CXL DPA to System Physical Address
+> + *
+> + * Reference:
+> + *
+> + * AMD Family 1Ah Models 00h–0Fh and Models 10h–1Fh
+> + * ACPI v6.5 Porting Guide, Publication # 58088
+> + */
+> +
+> +static const guid_t prm_cxl_dpa_spa_guid =
+> +	GUID_INIT(0xee41b397, 0x25d4, 0x452c, 0xad, 0x54, 0x48, 0xc6, 0xe3,
+> +		  0x48, 0x0b, 0x94);
+> +
+> +struct prm_cxl_dpa_spa_data {
+> +	u64 dpa;
+> +	u8 reserved;
+> +	u8 devfn;
+> +	u8 bus;
+> +	u8 segment;
+> +	void *out;
+> +} __packed;
+> +
+> +static u64 prm_cxl_dpa_spa(struct pci_dev *pci_dev, u64 dpa)
+> +{
+> +	struct prm_cxl_dpa_spa_data data;
+> +	u64 spa;
+> +	int rc;
+> +
+> +	data = (struct prm_cxl_dpa_spa_data) {
+> +		.dpa     = dpa,
+> +		.devfn   = pci_dev->devfn,
+> +		.bus     = pci_dev->bus->number,
+> +		.segment = pci_domain_nr(pci_dev->bus),
+> +		.out     = &spa,
+> +	};
+> +
+> +	rc = acpi_call_prm_handler(prm_cxl_dpa_spa_guid, &data);
+> +	if (rc) {
+> +		pci_dbg(pci_dev, "failed to get SPA for %#llx: %d\n", dpa, rc);
+> +		return ULLONG_MAX;
+> +	}
+> +
+> +	pci_dbg(pci_dev, "PRM address translation: DPA -> SPA: %#llx -> %#llx\n", dpa, spa);
+> +
+> +	return spa;
+> +}
+> +
+> +/* Bits used for interleaving. */
+> +#define SPA_INTERLEAVING_BITS	GENMASK_ULL(14, 8)
+> +
+> +static u64 cxl_zen5_to_hpa(struct cxl_decoder *cxld, u64 hpa)
+> +{
+> +	struct cxl_memdev *cxlmd;
+> +	struct pci_dev *pci_dev;
+> +	struct cxl_port *port;
+> +	u64 base, spa, spa2, len, len2, offset, granularity, gran_mask;
+> +	int ways, pos, ways_bits, gran_bits;
+> +
+> +	/*
+> +	 * Nothing to do if base is non-zero and Normalized Addressing
+> +	 * is disabled.
+> +	 */
+> +	if (cxld->hpa_range.start)
+> +		return hpa;
+> +
+> +	/* Only translate from endpoint to its parent port. */
+> +	if (!is_endpoint_decoder(&cxld->dev))
+> +		return hpa;
+> +
+> +	/*
+> +	 * Endpoints are programmed passthrough in Normalized
+> +	 * Addressing mode.
+> +	 */
+> +	if (cxld->interleave_ways != 1) {
+> +		dev_dbg(&cxld->dev, "unexpected interleaving config: ways: %d granularity: %d\n",
+> +			cxld->interleave_ways, cxld->interleave_granularity);
+> +		return ULLONG_MAX;
+> +	}
+> +
+> +	if (hpa > cxld->hpa_range.end) {
+> +		dev_dbg(&cxld->dev, "hpa addr %#llx out of range %#llx-%#llx\n",
+> +			hpa, cxld->hpa_range.start, cxld->hpa_range.end);
+> +		return ULLONG_MAX;
+> +	}
+> +
+> +	port = to_cxl_port(cxld->dev.parent);
+> +	cxlmd = port ? to_cxl_memdev(port->uport_dev) : NULL;
+> +	if (!port || !dev_is_pci(cxlmd->dev.parent)) {
+> +		dev_dbg(&cxld->dev, "No endpoint found: %s, range %#llx-%#llx\n",
+> +			dev_name(cxld->dev.parent), cxld->hpa_range.start,
+> +			cxld->hpa_range.end);
+> +		return ULLONG_MAX;
+> +	}
+> +	pci_dev = to_pci_dev(cxlmd->dev.parent);
+> +
+> +	/*
+> +	 * If the decoder is already attached we are past the decoder
+> +	 * initialization, do not determine the address mapping and
+> +	 * just return here.
+> +	 */
+> +	if (cxld->region)
+> +		return prm_cxl_dpa_spa(pci_dev, hpa);
+> +
+> +	/*
+> +	 * Determine the interleaving config. Maximum granularity
+> +	 * (chunk size) is 16k, minimum is 256. Calculated with:
+> +	 *
+> +	 *	ways	= hpa_len(SZ_16K) / SZ_16K
+> +	 * 	gran	= (hpa_len(SZ_16K) - hpa_len(SZ_16K - SZ_256) - SZ_256)
+> +	 *                / (ways - 1)
+> +	 *	pos	= (hpa_len(SZ_16K) - ways * SZ_16K) / gran
+> +	 */
+> +
+> +	base = prm_cxl_dpa_spa(pci_dev, 0);
+> +	spa  = prm_cxl_dpa_spa(pci_dev, SZ_16K);
+> +	spa2 = prm_cxl_dpa_spa(pci_dev, SZ_16K - SZ_256);
+> +
+> +	/* Includes checks to avoid div by zero */
+> +	if (!base || base == ULLONG_MAX || spa == ULLONG_MAX ||
+> +	    spa2 == ULLONG_MAX || spa < base + SZ_16K || spa2 <= base ||
+> +	    (spa > base + SZ_16K && spa - spa2 < SZ_256 * 2)) {
+> +		dev_dbg(&cxld->dev, "Error translating HPA: base: %#llx spa: %#llx spa2: %#llx\n",
+> +			base, spa, spa2);
+> +		return ULLONG_MAX;
+> +	}
+> +
+> +	len = spa - base;
+> +	len2 = spa2 - base;
+> +
+> +	/* offset = pos * granularity */
+> +	if (len == SZ_16K && len2 == SZ_16K - SZ_256) {
+> +		ways = 1;
+> +		offset = 0;
+> +		granularity = SZ_256;
+> +		pos = 0;
+> +		ways_bits = 0;
+> +		gran_bits = 8;
+> +	} else {
+> +		ways = len / SZ_16K;
+> +		offset = spa & (SZ_16K - 1);
+> +		granularity = (len - len2 - SZ_256) / (ways - 1);
+> +		ways_bits = __ffs(ways);
+> +		gran_bits = __ffs(granularity);
+> +		pos = offset >> gran_bits;
+> +	}
+> +
+> +	/*
+> +	 * Check the mapping: Number of ways is power of 2 or a
+> +	 * multiple of 3 ways (len == ways * SZ_16K), granularitys is
+> +	 * power of 2.
+> +	 */
+> +	if (len & ~(3ULL << (ways_bits + 14)) ||
+> +	    granularity != 1 << gran_bits || offset != pos << gran_bits) {
+> +		dev_dbg(&cxld->dev, "Error determining address mapping: base: %#llx spa: %#llx spa2: %#llx ways: %d pos: %d granularity: %llu\n",
+> +			base, spa, spa2, ways, pos, granularity);
+> +		return ULLONG_MAX;
+> +	}
+> +
+> +	spa = prm_cxl_dpa_spa(pci_dev, hpa);
+> +
+> +	/*
+> +	 * Check SPA using a PRM call for the closest DPA calculated
+> +	 * for the HPA. If the HPA matches a different interleaving
+> +	 * position other than the decoder's, determine its offset to
+> +	 * adjust the SPA.
+> +	 */
+> +
+> +	gran_mask = GENMASK_ULL(gran_bits, 0);
+> +	spa2 = base + (hpa & ~gran_mask) * ways + (hpa & gran_mask);
+> +	base = base - pos * granularity;
+> +
+> +	dev_dbg(&cxld->dev,
+> +		"address mapping found for %s (hpa -> spa): %#llx -> %#llx (%#llx+%#llx) ways: %d pos: %d granularity: %llu\n",
+> +		pci_name(pci_dev), hpa, spa, base, spa - base, ways, pos,
+> +		granularity);
+> +
+> +
+> +	if ((spa ^ spa2) & ~SPA_INTERLEAVING_BITS) {
+> +		dev_dbg(&cxld->dev, "SPA calculation failed: %#llx:%#llx\n",
+> +			spa, spa2);
+> +		return ULLONG_MAX;
+> +	}
+> +
+> +	return spa;
+> +}
+> +
+> +static void cxl_zen5_init(struct cxl_port *port)
+> +{
+> +	u64 spa;
+> +	struct prm_cxl_dpa_spa_data data = { .out = &spa, };
+> +	int rc;
+> +
+> +	if (!is_zen5(port))
+> +		return;
+> +
+> +	/* Check kernel and firmware support */
+> +	rc = acpi_call_prm_handler(prm_cxl_dpa_spa_guid, &data);
+> +
+> +	if (rc == -EOPNOTSUPP) {
+> +		pr_warn_once("ACPI PRMT: PRM address translation not supported by kernel\n");
+> +		return;
+> +	}
+> +
+> +	if (rc == -ENODEV) {
+> +		pr_warn_once("ACPI PRMT: PRM address translation not supported by firmware\n");
+> +		return;
+> +	}
+> +
+> +	port->to_hpa = cxl_zen5_to_hpa;
+> +
+> +	dev_dbg(port->host_bridge, "PRM address translation enabled for %s.\n",
+> +		dev_name(&port->dev));
+> +}
+> +
+> +void cxl_port_setup_amd(struct cxl_port *port)
+> +{
+> +	cxl_zen5_init(port);
+> +}
+> diff --git a/drivers/cxl/core/x86/common.c b/drivers/cxl/core/x86/common.c
+> index eeb9bdadb26d..7ccd68b035e6 100644
+> --- a/drivers/cxl/core/x86/common.c
+> +++ b/drivers/cxl/core/x86/common.c
+> @@ -9,4 +9,6 @@
+>  
+>  void arch_cxl_port_platform_setup(struct cxl_port *port)
+>  {
+> +	if (IS_ENABLED(CONFIG_CXL_AMD))
+> +		cxl_port_setup_amd(port);
+>  }
 
-And that is not how *any* of this works.
-
-What's next? Saying that particular drivers can't do DMA, because you
-don't like that device, and as a DMA maintainer you control who can
-use the DMA code?
-
-That's _literally_ exactly what you are trying to do with the Rust code.
-
-You are saying that you disagree with Rust - which is fine, nobody has
-ever required you to write or read Rust code.
-
-But then you take that stance to mean that the Rust code cannot even
-use or interface to code you maintain.
-
-So let me be very clear: if you as a maintainer feel that you control
-who or what can use your code, YOU ARE WRONG.
-
-I respect you technically, and I like working with you.
-
-And no, I am not looking for yes-men, and I like it when you call me
-out on my bullshit. I say some stupid things at times, there needs to
-be people who just stand up to me and tell me I'm full of shit.
-
-But now I'm calling you out on *YOURS*.
-
-So this email is not about some "Rust policy". This email is about a
-much bigger issue: as a maintainer you are in charge of your code,
-sure - but you are not in charge of who uses the end result and how.
-
-You don't have to like Rust. You don't have to care about it. That's
-been made clear pretty much from the very beginning, that nobody is
-forced to suddenly have to learn a new language, and that people who
-want to work purely on the C side can very much continue to do so.
-
-So to get back to the very core of your statement:
-
-   "The document claims no subsystem is forced to take Rust"
-
-that is very much true.
-
-You are not forced to take any Rust code, or care about any Rust code
-in the DMA code. You can ignore it.
-
-But "ignore the Rust side" automatically also means that you don't
-have any *say* on the Rust side.
-
-You can't have it both ways. You can't say "I want to have nothing to
-do with Rust", and then in the very next sentence say "And that means
-that the Rust code that I will ignore cannot use the C interfaces I
-maintain".
-
-Maintainers who *want* to be involved in the Rust side can be involved
-in it, and by being involved with it, they will have some say in what
-the Rust bindings look like. They basically become the maintainers of
-the Rust interfaces too.
-
-But maintainers who are taking the "I don't want to deal with Rust"
-option also then basically will obviously not have to bother with the
-Rust bindings - but as a result they also won't have any say on what
-goes on on the Rust side.
-
-So when you change the C interfaces, the Rust people will have to deal
-with the fallout, and will have to fix the Rust bindings. That's kind
-of the promise here: there's that "wall of protection" around C
-developers that don't want to deal with Rust issues in the promise
-that they don't *have* to deal with Rust.
-
-But that "wall of protection" basically goes both ways. If you don't
-want to deal with the Rust code, you get no *say* on the Rust code.
-
-Put another way: the "nobody is forced to deal with Rust" does not
-imply "everybody is allowed to veto any Rust code".
-
-See?
-
-And no, I don't actually think it needs to be all that
-black-and-white. I've stated the above in very black-and-white terms
-("becoming a maintainer of the Rust bindings too" vs "don't want to
-deal with Rust at all"), but in many cases I suspect it will be a much
-less harsh of a line, where a subsystem maintainer may be *aware* of
-the Rust bindings, and willing to work with the Rust side, but perhaps
-not hugely actively involved.
-
-So it really doesn't have to be an "all or nothing" situation.
-
-                  Linus
 
