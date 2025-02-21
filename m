@@ -1,100 +1,121 @@
-Return-Path: <linux-kernel+bounces-526201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72B01A3FB81
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:37:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2E01A3FB92
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:39:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBA5718955E5
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:31:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8E81880CAB
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:31:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E761B1F3FE2;
-	Fri, 21 Feb 2025 16:30:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22ED51F2388;
+	Fri, 21 Feb 2025 16:31:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BeFnWvVY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="E9c6Vp8q"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49F061F1506;
-	Fri, 21 Feb 2025 16:30:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDB421F1506;
+	Fri, 21 Feb 2025 16:31:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740155449; cv=none; b=iPFLDU0kCILT4mrn6JsXMWJnmjgct6oIMQpXhKkYuGgKGo3tdgSIDCIG0pT1CHH6nN0eZJixEc3EPKtvvd7SqWMpAndXoO3d/faUqdTmC0bv00NrsaikOkuoBVzgZC3ZsLX+m/3vO14vK0Pjk56Hww/MuSsNvQZoz0aErsScJR4=
+	t=1740155474; cv=none; b=MXxVjcFixdinYm8E+hUgcY0x9LAVv/5aTViHK4K2rJkGHIypE7QumnovWoOPfwK47r40LlYhB62OfQWXYSxiVdgEoFaakrUqfhU2dlzzC5sPAf2yFX3N+zZo+WUbrSqT1RrLeYlE6hmPY77K9qjIAjS5zH/WlCSEZYKIOwnnXIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740155449; c=relaxed/simple;
-	bh=739odh34bcM9h+m6IMaljlp2W8wK/OpxowHnUoF4iWY=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=e1bfSReOxuV4O/+R/X6XeVsNs22ThoeAbr+hX0V7ZV9GSzOIxL0HC3p6vxtquaGjLoy+Gq0LpdgRbeYNDqpoP1s35tk4gydw/8MBYcG89m2dKCpjjcnmUFOft5rjKc/Je5gDqV/yh7pkVZnY/27VE2WXBzDvBj5lNua9BWo3JdQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BeFnWvVY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2016FC4CED6;
-	Fri, 21 Feb 2025 16:30:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740155449;
-	bh=739odh34bcM9h+m6IMaljlp2W8wK/OpxowHnUoF4iWY=;
-	h=From:Date:Subject:To:Cc:From;
-	b=BeFnWvVYVofO9FFGCPKknG16r0ADEKUHWLvfDbSeFtBNML+mVBRp8WKxL6k5yeekJ
-	 ixzJmAxzFMTdwNE7cLOJSKvL65lIDNX0IcP58YcjH2f0zZaIdXAB7VmGvYadq+Hl3D
-	 RrgHv6w93u4jkBIQpNU5hYv06hkDQ6xVMYEqOv/ub5R/eoVTJjCT0/xOraT0kPaLmD
-	 n1GmegYZU8I0puol7pH2o0BI1Wkww71qJzqAvYx04iVgG6jBC8DvYOmLM61K2tlHeB
-	 ujFPILaGvoHUBYezqCOkYxMWViyjT6ejPXjgY2gXMOBwjA2e1X7laAybgfk3TsEqQl
-	 79WKzKX8/D3Ow==
-Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-5fce3e43159so1621295eaf.3;
-        Fri, 21 Feb 2025 08:30:49 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVVSMf/Li/X27zdx9yQ60MmWDI6qZJxOGyLJCK3CAeZmQus+DPjDZHKDPcUGLSKPeD5XcAEW1sqSpYjeOY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyI5ol38k8bNuSk+iQvqGXavNNPq9rdIFhcoKblHZnO0moeZaoT
-	Lm6HtWZKskcDOyTp9hNbhbjxAF7bbOCk4vqxN0r//fkYGdeZsAyRl90GgWBLgY+fh+OBvQgbQBU
-	eKZUt668PHIB2kKMSL0T0OizcyLU=
-X-Google-Smtp-Source: AGHT+IHjAIrw5KXvd/qt43GkWQrQtfQNkSdoUWXKFTXQTlaniatgJN3dsMgZRwBIathZtxDK9a9PxRgJMBhMUtXzLrA=
-X-Received: by 2002:a05:6820:1612:b0:5fd:50d:49e4 with SMTP id
- 006d021491bc7-5fd19648f16mr2404402eaf.7.1740155448458; Fri, 21 Feb 2025
- 08:30:48 -0800 (PST)
+	s=arc-20240116; t=1740155474; c=relaxed/simple;
+	bh=irguvaW4ZDyHOQ4VjIoMpbSmgH5YwZYJd0OZO144sjw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CzRxFashBuUFM82MBOec/2+4HSj9Q64TLgl7g6TA5LCesi2iDqji7kDnDIJvxHaLTbwjgiPGpI+xNcyIpjFLqd/hbvN1TZV8rtDlyjukz2+9UyksVrIf2jPfTdkSXDy9DPzbchLcjLrhxc64M4DWlm190YhKDQGZETcbjNXoP7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=E9c6Vp8q; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740155473; x=1771691473;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=irguvaW4ZDyHOQ4VjIoMpbSmgH5YwZYJd0OZO144sjw=;
+  b=E9c6Vp8qheyKGjRMRgRyFUW7FvLRN5YuCE/RYPbTkiXm03EOPjTkFjh9
+   u+CaYRrrJII/Hl91ET7i68N5i9Zn4FKLpmLb0bhlt6v5RE32iYsqVj4pC
+   HV5TpneVx09VJpHqw2aNsybNX133uJBIQylrHMvJUfsnDeFrQYrl1yKX4
+   ryj0aj3ZsGSqK9Pd3JD0i4J1x8NjGIXqHk6/KOxoWjK8btGqrKrvgnnyi
+   0hAIlxeBImwHIjulO2uBD/6w7h5SsDDqH3+9x9aaZEDOhHu6GRfPWxTRx
+   iD7duMX4pXx9cZ/DHGYv8uhywvMsy7jMjj83rPBMyFwJ+OHj/+BsLp4pM
+   g==;
+X-CSE-ConnectionGUID: G3o3OMIERgyse0bM+evzjg==
+X-CSE-MsgGUID: UANdtXwZSXKWjSvKeW0/xg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11352"; a="44625958"
+X-IronPort-AV: E=Sophos;i="6.13,305,1732608000"; 
+   d="scan'208";a="44625958"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Feb 2025 08:31:13 -0800
+X-CSE-ConnectionGUID: 2Z/vM83URUqksJET5tHwyQ==
+X-CSE-MsgGUID: qNK1JJjtRf+ulNr65R6iqQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,305,1732608000"; 
+   d="scan'208";a="120513464"
+Received: from inaky-mobl1.amr.corp.intel.com (HELO [10.125.110.189]) ([10.125.110.189])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Feb 2025 08:31:11 -0800
+Message-ID: <17a8be14-988c-4199-8304-827f679cceb2@intel.com>
+Date: Fri, 21 Feb 2025 09:31:09 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 21 Feb 2025 17:30:37 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0hzMUGnqx=GfLUkVZXsMMqqguMV4S7Bf0z9EoPt4AYFaA@mail.gmail.com>
-X-Gm-Features: AWEUYZkmAITJ6AyyT22nBx1Z9q6UGq-Qmb2sAVm9FBqQm0zlo3zo1jeICJ7HieE
-Message-ID: <CAJZ5v0hzMUGnqx=GfLUkVZXsMMqqguMV4S7Bf0z9EoPt4AYFaA@mail.gmail.com>
-Subject: [GIT PULL] ACPI fix for v6.14-rc4
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: ACPI Devel Maling List <linux-acpi@vger.kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-
-Hi Linus,
-
-Please pull from the tag
-
- git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
- acpi-6.14-rc4
-
-with top-most commit d403120cb9d4787b283ea202b2162f459d18fe9d
-
- ACPI: platform_profile: Fix memory leak in profile_class_is_visible()
-
-on top of commit 0ad2507d5d93f39619fc42372c347d6006b64319
-
- Linux 6.14-rc3
-
-to receive an ACPI fix for 6.14-rc4.
-
-This fixes a memory leak in the ACPI platform_profile driver (Kurt Borja).
-
-Thanks!
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/7] Use guard() instead of rwsem locking
+To: Li Ming <ming.li@zohomail.com>, dave@stgolabs.net,
+ jonathan.cameron@huawei.com, alison.schofield@intel.com,
+ vishal.l.verma@intel.com, ira.weiny@intel.com, dan.j.williams@intel.com
+Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250221012453.126366-1-ming.li@zohomail.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20250221012453.126366-1-ming.li@zohomail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
----------------
 
-Kurt Borja (1):
-      ACPI: platform_profile: Fix memory leak in profile_class_is_visible()
+On 2/20/25 6:24 PM, Li Ming wrote:
+> Use scoped resource management to replace open-coded locking operation
+> is recommended. CXL subsystem still remains some down_read()/up_read()
+> and down_write()/up_write() which can be replaced by guard() simply.
+> 
+> This patchset includes simply using guard() instead of some
+> down_read()/up_read() and down_write()/up_write() cases. Besides, it
+> also includes some function code cleanup after using guard().
+> 
+> base-commit: d5d2106e2118c4e09fef131d9889f79559b95bfc cxl/next
 
----------------
+thanks for the rebase. applied to cxl/next
 
- drivers/acpi/platform_profile.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+> 
+> v3:
+> - Drop the renaming of __construct_region() to construct_auto_region(). (Dan)
+> - Rebase to the top of cxl/next. (Dave)
+> v2:
+> - Drop some local variables. (Jonathan)
+> - Rename __construct_region() to construct_auto_region(). (Jonathan and Dave)
+> 
+> Li Ming (7):
+>   cxl/core: Use guard() to replace open-coded down_read/write()
+>   cxl/core: cxl_mem_sanitize() cleanup
+>   cxl/memdev: cxl_memdev_ioctl() cleanup
+>   cxl/core: Use guard() to drop the goto pattern of cxl_dpa_free()
+>   cxl/core: Use guard() to drop goto pattern of cxl_dpa_alloc()
+>   cxl/region: Drop goto pattern in cxl_dax_region_alloc()
+>   cxl/region: Drop goto pattern of construct_region()
+> 
+>  drivers/cxl/core/hdm.c    |  69 ++++++++++---------------
+>  drivers/cxl/core/mbox.c   |  10 ++--
+>  drivers/cxl/core/memdev.c |  17 +++---
+>  drivers/cxl/core/port.c   |   8 +--
+>  drivers/cxl/core/region.c | 105 +++++++++++++++++++-------------------
+>  5 files changed, 91 insertions(+), 118 deletions(-)
+> 
+
 
