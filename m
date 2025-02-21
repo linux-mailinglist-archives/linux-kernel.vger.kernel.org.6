@@ -1,99 +1,125 @@
-Return-Path: <linux-kernel+bounces-525743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55416A3F40D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 13:20:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79659A3F413
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 13:20:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F02B4188F241
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 12:19:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21D87860FCC
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 12:19:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5129120AF89;
-	Fri, 21 Feb 2025 12:19:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9B3920A5EC;
+	Fri, 21 Feb 2025 12:19:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZZZ5wLf5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LiLs8i8W"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABBD4155336;
-	Fri, 21 Feb 2025 12:19:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A47A6155336;
+	Fri, 21 Feb 2025 12:19:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740140358; cv=none; b=oE2BPHbV2HGnkcDaWUfY1V1zp72GUAY1F7CVLykkfMZDPhzAmXbUfIhicdowpx7UXxVo/VQJlOGGqTmVl+egFT51YW0tOkS9mH3jhrDSr2XPqgDC00rkAjdMWwE1DoaA9tYa2DQGnl2z+p2+CJu3yl3YxL+M0cqHHxCT2TfDwIs=
+	t=1740140370; cv=none; b=NZx/Mc6m3P4IuEazWhnbwc1LEGk2p9cL9ztAOtDYHCsvAqjMS9muPMuJFaedswavm5ftTNeW/iuxHELLtu/nGI0+E6Kl/wFVdADv24KSA/0a0XiPAnl3KU6UfP6GBSgdV11c//aYgIBxJxVRX2WAWKbHDDRYNGOlk7DQzfKLK6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740140358; c=relaxed/simple;
-	bh=U0KNTaFUX+p6z2lVUkCdSpbxBvvlCxp+c7WOKr3+c8w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iOE/M23Fa9SkRhPUWTC880DBA7qjXrZm1hlKMVI9aE74A4GRkMCXLAjGWwNh/jy4wL3Ktrwd1zDk0Z/K8CKqVJ41O0b6FYs1eGiDwHuKNoZMrda6PhdhZ/heXLtkJ75dASKX//Io8CorFkngaSCQJYVMkwgbKcwGBbx5q2t5YWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZZZ5wLf5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 810A3C4CED6;
-	Fri, 21 Feb 2025 12:19:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740140358;
-	bh=U0KNTaFUX+p6z2lVUkCdSpbxBvvlCxp+c7WOKr3+c8w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZZZ5wLf5VtHPf8ZqzyS32bZ3e0tK1MDH84+jLF1+fXonbYfSETFUwNgz+NAZUn/S0
-	 RgeREfRdgPEvaFDFzQ8qKqZN0uXh6dKbnL2hQ7g2AnmbViNhzORic3NtPyTBqeQSjT
-	 Pus32lE/bxfMzTE118OJGAgwG0BnLlKcfiwmf9eO2aNNdXpsXbxOg99LLvTHbSJs3Z
-	 cfAcWNViw8WESGB708v54Ey3fZVL6c+r1PcxzMOY1OKlHmq2vBQCIHOXg55V2bBNwa
-	 L7TH4wpQvmrg84s24EXbEobUxeBTVOK4X7johFfDLQiW+8+gBgC0xW0CZLJa7CD0Dg
-	 /6y0PN8IGR1bA==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1tlS09-000000007ck-27ZI;
-	Fri, 21 Feb 2025 13:19:29 +0100
-Date: Fri, 21 Feb 2025 13:19:29 +0100
-From: Johan Hovold <johan@kernel.org>
-To: Abel Vesa <abel.vesa@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Rajendra Nayak <quic_rjendra@quicinc.com>,
-	Sibi Sankar <quic_sibis@quicinc.com>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Trilok Soni <quic_tsoni@quicinc.com>, linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RESEND v5 0/4] arm64: dts: qcom: x1e80100: crd/t14s:
- Enable Parade Type-C retimers
-Message-ID: <Z7hvUZiza6DWHZnp@hovoldconsulting.com>
-References: <20250220-x1e80100-dts-crd-t14s-enable-typec-retimers-v5-0-380a3e0e7edc@linaro.org>
- <Z7hGbEUsQU_MUL5t@hovoldconsulting.com>
- <Z7hKXNOwHlLLNtNx@linaro.org>
+	s=arc-20240116; t=1740140370; c=relaxed/simple;
+	bh=dDuOSMiZlreg6zCSu9mLVqtPGIg+/TPcYUzJCeCHcEY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jYP5FLVv/19ajrOccb0r6suaH5AkYT6vPI1Uvrfo3HEcJZi32t5zoUr5vDE76C1lkpCCiTOaogAs7qRyziTw8C+rZEr8HccT34ZZLYTc0zxQ1aRTG2eWZigJz/REINlssNNCwah/1mmyFYr9trt0ZOtWOD7T23oy9BejDbk2j3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LiLs8i8W; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-ab744d5e567so360308166b.1;
+        Fri, 21 Feb 2025 04:19:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740140367; x=1740745167; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=84BNNH4OFUTTsn2LV2g9aQ8aZ+4jEh72APMwWnrioZE=;
+        b=LiLs8i8Wv9obJJ05K9dvHWFmTQEd+EdwHsIZ6VtxcJY58aQoxt2p+KkkNqN5o2yPYP
+         rSJN10+RFJSMXMJKJJ4JMP6C9fwUkiJDLFKfa6aXlWFqIO1/E/H6fgwP+rRsMra2cZfx
+         dDT5aWIiLG2gQbQwulgSTUdht1CfoVTJLkIOXNm56RfvZzGiYpYICoLW9h0pQJQ6MENH
+         AyEmqxpKLhqY53zoTW0Ha/NWcF9qXHRlhlj6cYOt2QjOg2q1trkOKfHM8NF85TT+0BqR
+         WMoP724uQ+HS6JTXgJ3IrMGPtqaGzu76bSvNN+3px0tBgXkbRj9vRWHvYBtoquEPANU4
+         Uluw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740140367; x=1740745167;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=84BNNH4OFUTTsn2LV2g9aQ8aZ+4jEh72APMwWnrioZE=;
+        b=XHoehAbkKvelS53k5qWs0kpzB5d32CuN2MnJtvG/o9kTOiYqq6MaWJQLOMDBC2nJSQ
+         zzWtDeqWaf3AcXpeXaZ+KjYpa9NYXoFPEZ9noQnAYaHyqwDC4bQbgL1G9AtxCesL0IdG
+         vDwYJCOSBU2dGoAtsRxe5JQIJsxmXXRZhUSVO5o/AS7i99UYV/S3YGlKKOFuPdCnUBhP
+         KkNxxStLr11mSq85fNoTL1Rypb7vB6TOxQhXHL+H2ugt+BQ+49YM0oH+aqe98mNnC11I
+         +9qPl3PovbJbsxU9XSYZQfPA7JKaR2ReQyW+qboRchp7KscFoH2Sm53ug2NBA5lFug10
+         iy5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUvVnFj9HVL9No/zCmIlHfoUqAqpWMgVEvx7XjhfgeofM7KHwytuOSLOZt5tC80+C8mR/FcXtYIWg==@vger.kernel.org, AJvYcCXWndnk6uLqK/FWtmIePoP22oUDq0L7cpnJ2xIR7yMjf1mgJkEiMEJPYOyT0+zwnNMFec22yAKObYIYqpRo@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+BDBJlQRup/JIkQqh3IYsZ5Yd/ZH40CZOb/491DBN24kwFnyu
+	J/fAenpk26xG36QMvkru/CTx36bU8XWjmEiVI/3R2tj57tcwwqcu
+X-Gm-Gg: ASbGncsKRXY1tDhMeFmlXJlT0l5czBR8w2xYHucQs245/HRvxeyzHT/JXy9Y3i+et+h
+	2nVUbqE4i3z8iBDS90kOqWseRmeNldqMwWgUls10EqcX/5c0FPfiVrWMbCAMLMouHqZrPAcitDx
+	1hiqVAoH/nxhY4UAGcBoANj/7nXw3LsxxOfDlIJsoEtK+dQ2YgZd3Wsz0DsJvBfs4IpfGTQJiKl
+	qHuZF5TQIGFqD6mFD1e3dkbVqi77VsMqeZns6XeYLpHzH7nO3wLTUP1bsDjayoXJ6SdY2w0dSmf
+	89y/SfZRn8gKPJeiE18srjp+hIfhHrKtkA+0xrO+TceJW0wm1iOTL8eMsmM=
+X-Google-Smtp-Source: AGHT+IGYSku4Z0bQqSe7NtXRBWj8U3CUiCrP9SUzdwnbBAK4If1/shtrr2RE4iWuvn5tdtsya/8mmQ==
+X-Received: by 2002:a17:907:8a92:b0:abb:d047:960a with SMTP id a640c23a62f3a-abbeded95d8mr628600366b.22.1740140366695;
+        Fri, 21 Feb 2025 04:19:26 -0800 (PST)
+Received: from ?IPV6:2620:10d:c096:325:77fd:1068:74c8:af87? ([2620:10d:c092:600::1:5e88])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abbb66ebb84sm726062066b.181.2025.02.21.04.19.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 Feb 2025 04:19:26 -0800 (PST)
+Message-ID: <79189960-b645-4b51-a3d7-609708dc3ee2@gmail.com>
+Date: Fri, 21 Feb 2025 12:20:24 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z7hKXNOwHlLLNtNx@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] io_uring: add missing IORING_MAP_OFF_ZCRX_REGION in
+ io_uring_mmap
+To: lizetao <lizetao1@huawei.com>, Bui Quang Minh <minhquangbui99@gmail.com>
+Cc: Jens Axboe <axboe@kernel.dk>, David Wei <dw@davidwei.uk>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>
+References: <20250221085933.26034-1-minhquangbui99@gmail.com>
+ <590cff7ccda34b028706b9288f8928d3@huawei.com>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <590cff7ccda34b028706b9288f8928d3@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Feb 21, 2025 at 11:41:48AM +0200, Abel Vesa wrote:
-> On 25-02-21 10:25:00, Johan Hovold wrote:
-> > On Thu, Feb 20, 2025 at 07:42:29PM +0200, Abel Vesa wrote:
-
-> > > Abel Vesa (4):
-> > >       arm64: dts: qcom: x1e80100-crd: Describe the Parade PS8830 retimers
-> > >       arm64: dts: qcom: x1e80100-crd: Enable external DisplayPort support
-> > >       arm64: dts: qcom: x1e80100-t14s: Describe the Parade PS8830 retimers
-> > >       arm64: dts: qcom: x1e80100-t14s: Enable external DisplayPort support
-> > 
-> > It looks like you've addressed all the comments I had on v1 (except for
+On 2/21/25 09:10, lizetao wrote:
+> Hi,
 > 
-> Oh, sorry, missed that one.
+>> -----Original Message-----
+>> From: Bui Quang Minh <minhquangbui99@gmail.com>
+>> Sent: Friday, February 21, 2025 5:00 PM
+>> To: io-uring@vger.kernel.org
+>> Cc: Jens Axboe <axboe@kernel.dk>; Pavel Begunkov
+>> <asml.silence@gmail.com>; David Wei <dw@davidwei.uk>; linux-
+>> kernel@vger.kernel.org; Bui Quang Minh <minhquangbui99@gmail.com>
+>> Subject: [PATCH] io_uring: add missing IORING_MAP_OFF_ZCRX_REGION in
+>> io_uring_mmap
+>>
+>> Allow user to mmap the kernel allocated zerocopy-rx refill queue.
+>>
 > 
-> Let me respin.
+> Maybe fixed-tag should be added here.
 
-I don't think you need to respin over just that. And that extra newline
-has already been copy-pasted into two more dts in mainline since (yeah,
-it's odd to see the original patch go in after the copies). We can just
-take a pass at cleaning this up at some later point.
+No need, it's not strictly a fix, and whlist it's not yet sent to
+linus, the tags only cause confusion when hashes change, e.g. on rebase.
 
-Johan
+
+> Other than that, it looks good to me.
+> Reviewed-by: Li Zetao <lizetao1@huawei.com>
+
+-- 
+Pavel Begunkov
+
 
