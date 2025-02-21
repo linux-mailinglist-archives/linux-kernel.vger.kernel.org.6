@@ -1,153 +1,237 @@
-Return-Path: <linux-kernel+bounces-526695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12613A4021C
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 22:38:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFE5FA4021F
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 22:38:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF4114260C6
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 21:38:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D70842617F
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 21:38:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DAB0253B73;
-	Fri, 21 Feb 2025 21:38:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 430FF254AEB;
+	Fri, 21 Feb 2025 21:38:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="VnJ3Vlxs"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b="eXvSFf9V"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74DA22500BC
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 21:38:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11F2B2500BC
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 21:38:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740173917; cv=none; b=CMu7ZH7KwRqTqZRj/h1J9rn9WYVZj6srsRNCS2SUMg6sWD4Rfj96cwH0qom/8ptDHExgQpWJ5GZUJrCg0B+d5juG5x2tD4P4uVzY8TQ+gZnBzdY+GVcVnAingfXvMUTYfrK/Qr2phasYre8UZvLbu6bBx1LbGaCs6vBtEIqh45k=
+	t=1740173926; cv=none; b=QnfonpWPUu0bWFwceubBqRmh11o5kYG1uXkTqZcMi6dYoVAAUANytyeBxLkJbJAwdqI75zqeSUoEeUA2lLC63qMt5Q+S3sBzELw1CUH5hm9hf+drtbXan6ECHyXXgiAxoK8dR1ea07MpbSw8bi9ncCd5csb1mGzHXaj4GHcGucU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740173917; c=relaxed/simple;
-	bh=IBkOH1tAujIMIld5Y0K6nJEIXF1q0yB8Wrv8ujg0wiI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jcKKZVIkTkBAtsiFVbj3CK/5JdV6TZe8GUhsFNpJdWUOnHgFMwIsrqlsz1Chmq2PCD86MPaRt69/Vfk/fSjVscmZokaynKFy56ekoWOmh2tzBjwybpG4LNeiPFYR8pJE2c1K9lpfsjM84DNR/xGckC7IPSRlBtDbjZaA+b6jfzk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=VnJ3Vlxs; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51LCVAG8015948
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 21:38:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	GEGqIXErPMXc8VdTd0Xo8EVD7trao539YyYrYV1kddk=; b=VnJ3VlxsPP5SAuja
-	84F786enzzLmtqgh6IwPcgwyLXUSuvIixqaPTzVxU4Yy6jye64J9Ynv/wU7xNxK+
-	SQa8lJjwmSSHaZD87/gHzaY8hZwEsd6CayZqGS4uZlxJlOPhZvFa0Z6iZNKfFulX
-	178+jugqEsE85Jbat9ISeyLYRcMWm+mz6ht8EwYf4HXaeP7Q3SLarBTento34dWR
-	+k6SLaXRdkul+4m7nVRazvykUqYjPEaZcfGgiCqhXsPh4TcpLa2FHcjj7wJJKyGv
-	g6pXkUYO+9APyfugjaoXzKZldklTkfo08CC93Vu+nI7R5MOCpnnN/bmUJJhLvrz2
-	LP+QQg==
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44vyy4kaaw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 21:38:35 +0000 (GMT)
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6e66c7e5348so3089056d6.0
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 13:38:35 -0800 (PST)
+	s=arc-20240116; t=1740173926; c=relaxed/simple;
+	bh=V2vxeqGcz6v1wBjMLxM8YUFEw0TmKZQqqqNaFB/ASIU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BwdZg4riqXOnVzg3EawIIF+YcFASqZlnrFyQVqHMcA1ejSJcIzke0eL9t4S0mGU83rUsvUQp3bQj6VSlemUVps1s7Ck/oEqP+taTqWVOpi0cu44LPNIPAsPpRy/YLOBA52cBeJEw78RE2K5sX1nXq87cENu7KXjfdHlD8JYtxwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=9elements.com; spf=pass smtp.mailfrom=9elements.com; dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b=eXvSFf9V; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=9elements.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=9elements.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4399deda4bfso18081345e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 13:38:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=9elements.com; s=google; t=1740173922; x=1740778722; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+FLJWEXe/gWqpKMG4WdI1PcaJ/SApfiUlaX83AGaMh4=;
+        b=eXvSFf9V9EAs2uREzGTBpJvWOO11ZpbcvoQ1CXY+DnleyEX/nzgyLuNUIuEU03XCwC
+         vrHi4j3NdUUTa7ABNPPYptRH2z4gt2jih5PsETJNgeB+Wd23HOqP8FPzdmCREsanOXR3
+         4go3PJkuL9lIU7q1abesaQyvvoTJhrHLpaiLDfqeeplnvdKLWSH0XT0WliaWn6dLpcjX
+         bTLeo63/KIxtgCl0M6fZkcAA1gWVgo8heZ7pdrecLrxTS6LHTDOf07kaKmCqITL8nHYr
+         bAAF/n2htPGeRcrTpbjeb2+BEEnIvg5GbVVYXJD1hwJ4DV+oUtPFSF+vncZdhgk2BDJJ
+         6VFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740173914; x=1740778714;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GEGqIXErPMXc8VdTd0Xo8EVD7trao539YyYrYV1kddk=;
-        b=OAihZi3nv8sABZcXfiAKScie2t7+ykXJZI8nA3fJdyId1L0eTERahYXvtDqPV6kKo3
-         95pVs6C5phVCfVd2kAIwQB3lmYKVYfz3u8ngLG6Nq3KHeCNRI3oWDAmeeyCjfVQ+RPCr
-         ngd69WCa1bs3AqL0Mx0tKvKaxBnOo1jggY6nQ8gzic3pZ09W+aFkohD+JoEJ+z9LeSs2
-         X5ZmDKQM8y+8k1lVez6QIcGHvX82/4JPjhz29lJoW78foI4E/ATezcgsxA670BxL2BAw
-         M+7SqcngiDXH4dvrFDUpVGszfHER6djmRU1FAycj58DM56zH4rmMh5//T7ECukK35olI
-         kddQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWJlom5AZFyn7770wq07A4tzLwTUZ58s2XTH48vj0wRtY2roJPfCaf728OCiDGCOhcHcF8nRP7P+ix/Ue8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywjyml06EWVQh+ARNJ5vDAubgTzlGLZ3IfFgzcVNosehw4VJK3V
-	a5g9GVcl0bvKJ5Jz1H7hcTFh/9krLsaaSmGbkfA5uGSsJJ8VpD/89b/HTPwKQdug9WkDIjW6zXY
-	gTQiSlPTYtv8xpHwdqCaNfQ5KFnPoFZY8sMLQnSwFApCrwFg+o+O0iYmBzz5KZWI=
-X-Gm-Gg: ASbGncuPRXP9y3dHOz0z4pwhngRSQGz/suET0uUERQiZ5OTH776/isZufEWMLiSpfCY
-	A+EURw/RZdO8NwsLwnkKN95ysD2EFIuKPmkWrtSul0zuUkEfiN2DYyEbDSp18Lhbj9fHj5W1h3L
-	mUh5uVr2k4DzVKxn8JuAXikRllHOe33nMlgwoHwSH3Fz/6sXeo/s+nJXHkTZDe5mTjSBuDLiVbF
-	SyhHv1kjunaKVcQ/Wqs+tEbFpZDoxqLCeXzilytoBipOZ2m2OWImcrFVx+MMDZHKuXRoEGpU+c+
-	FPLoqpJ8ZEExSLnMpwYeAwkGZxoRpL6MA+RBZ87dpgbP65o4mealwMbQsOBZ2mDa2SwxIA==
-X-Received: by 2002:a05:6214:21a6:b0:6e1:a79c:4cb8 with SMTP id 6a1803df08f44-6e6ae7c5824mr24980086d6.2.1740173914368;
-        Fri, 21 Feb 2025 13:38:34 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGEkBIHDw/lt993IkXFaOsT/W0kUYMHTX3ghqlaAwXsDraeaclttfOGzvb1ylLr5/jMIBmC+Q==
-X-Received: by 2002:a05:6214:21a6:b0:6e1:a79c:4cb8 with SMTP id 6a1803df08f44-6e6ae7c5824mr24979986d6.2.1740173913944;
-        Fri, 21 Feb 2025 13:38:33 -0800 (PST)
-Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abbeb38e05dsm434092166b.90.2025.02.21.13.38.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Feb 2025 13:38:33 -0800 (PST)
-Message-ID: <4ae230e9-021e-411d-add4-e7e1bfb2dfff@oss.qualcomm.com>
-Date: Fri, 21 Feb 2025 22:38:31 +0100
+        d=1e100.net; s=20230601; t=1740173922; x=1740778722;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+FLJWEXe/gWqpKMG4WdI1PcaJ/SApfiUlaX83AGaMh4=;
+        b=btOYD7H1jml15EMXZ31cjXk1FcHgz05I9uPLgQFBDpzh0BUw0JcEG+Dy/WUJlWI4D8
+         0Ud3UIYziPl4cRAxnPGqecVFLx44n2LWjPZowIadiK28bd4isMgyxGaqhaJiNYbfRwPf
+         6id+tFEOBCplVDwqpyIirMz/czpqSsn52Lq50cgs9UAxjNU4stb0n4tQOu+LNoj315nX
+         3C2oAwYtmqQw8eW4Eqys5+qz5eH4t+xPWPEixluFy8WIe7af4be9TarSZSiG+3eXGNv+
+         V67QT7y+7WoV5sUUDpJx/BY9+uR1aEiJoHC7bsq8Gpr7/mZrF+KfcjkAgZzkJz8c/Y0q
+         Pvvg==
+X-Forwarded-Encrypted: i=1; AJvYcCW/plpcGFVpRPgcQCalIMPK9tcfj+pZDs4eLz5jTY95Mi9foZqNUMqmQGu7nDPb+DKkyfp2tviN6QeNE18=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3/IxU8/kcS0yTdvTdz25BjEjvlLtbMb264vZdwg3mYhIwt5bk
+	i9onQco6MWBRaVFUvb1yB8FJy7KK/wZsod+cJMb7gP9yIfZTZ9I3qkx+LqR0fEc=
+X-Gm-Gg: ASbGnctl5HEamAZU9xmPJZINmR/ItHy1sf8uDVl0HK1/qvKVhyiAHWKLb+SYdTATzOY
+	iNEDnD+usyHYcd+bGNJ5z3kX4mYBvPZ6r2JurezzD8TwPIlVW8B7CC+DJflX6LgTdFckIca1psB
+	hVXwe//WZ1wIgOLvk82Sw7nr8eDQ76rA9MijGQpfcVG2pITTwiIG6iIJ28EhA46Qup9A7xSWI/C
+	YvkjalfeYnq4S28UGvohP/sKM8AtfGfh8AB6lOfP3mUwsGhBmze0OR/FgTTViWcKMFE6aRjD7S4
+	/KFVXvGXgny7PziH2Rqe/NAdkqxiM/+9NOcKZM84/k2kdhdqoZiie8A8fy41ftrD4ghb6z2nG4g
+	XB4YphPsgXr9SatBf+LLSsA==
+X-Google-Smtp-Source: AGHT+IFdUP6T9iCt96pQdqThAMw82tn0jcur3WlLTZDovg9QtmKcOK4dK/9s5fTF1HR8qyXDnahPkg==
+X-Received: by 2002:a05:6000:1844:b0:38d:b325:471f with SMTP id ffacd0b85a97d-38f6e9474bdmr4665482f8f.15.1740173922229;
+        Fri, 21 Feb 2025 13:38:42 -0800 (PST)
+Received: from stroh80.lab.9e.network (ip-078-094-000-050.um19.pools.vodafone-ip.de. [78.94.0.50])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f25913f5asm24767461f8f.52.2025.02.21.13.38.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Feb 2025 13:38:41 -0800 (PST)
+From: Naresh Solanki <naresh.solanki@9elements.com>
+To: Guenter Roeck <linux@roeck-us.net>,
+	broonie@kernel.org,
+	conor@kernel.org,
+	Jean Delvare <jdelvare@suse.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>
+Cc: linux-hwmon@vger.kernel.org,
+	Naresh Solanki <naresh.solanki@9elements.com>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/2] dt-bindings: hwmon: ir38060: Move & update dt binding
+Date: Sat, 22 Feb 2025 03:08:34 +0530
+Message-ID: <20250221213837.1594057-1-naresh.solanki@9elements.com>
+X-Mailer: git-send-email 2.42.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/4] arm64: dts: qcom: sm8750: Add LPASS macro codecs
- and pinctrl
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Melody Olvera <quic_molvera@quicinc.com>,
-        Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-References: <20250220-sm8750-audio-v2-0-fbe243c4afc3@linaro.org>
- <20250220-sm8750-audio-v2-2-fbe243c4afc3@linaro.org>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250220-sm8750-audio-v2-2-fbe243c4afc3@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: Pzmgs_M_1a6_QIWeK2H34MgAtDRs-w_V
-X-Proofpoint-ORIG-GUID: Pzmgs_M_1a6_QIWeK2H34MgAtDRs-w_V
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-21_08,2025-02-20_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- priorityscore=1501 malwarescore=0 bulkscore=0 suspectscore=0 clxscore=1015
- lowpriorityscore=0 mlxlogscore=799 spamscore=0 adultscore=0 phishscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2502210147
+Content-Transfer-Encoding: 8bit
 
-On 20.02.2025 9:49 AM, Krzysztof Kozlowski wrote:
-> Add LPASS macro codecs and LPASS TLMM pin controller on Qualcomm SM8750
-> for proper sound support.  These are fully compatible with earlier SM8550.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
+Move dt binding under hwmon/pmbus & align accordingly.
 
-[...]
+Previously the DT binding was invalid & wouldn't work with pmbus driver.
+Pmbus driver expects a regulator node & hence added the same.
 
-> +		lpass_vamacro: codec@7660000 {
-> +			compatible = "qcom,sm8750-lpass-va-macro", "qcom,sm8550-lpass-va-macro";
-> +			reg = <0x0 0x07660000 0x0 0x1000>;
+Signed-off-by: Naresh Solanki <naresh.solanki@9elements.com>
+---
+Changes in V2:
+1. Update commit message
+---
+ .../hwmon/pmbus/infineon,ir38060.yaml         | 61 +++++++++++++++++++
+ .../bindings/regulator/infineon,ir38060.yaml  | 45 --------------
+ 2 files changed, 61 insertions(+), 45 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/hwmon/pmbus/infineon,ir38060.yaml
+ delete mode 100644 Documentation/devicetree/bindings/regulator/infineon,ir38060.yaml
 
-The VA macro is 0x2000-long instead
+diff --git a/Documentation/devicetree/bindings/hwmon/pmbus/infineon,ir38060.yaml b/Documentation/devicetree/bindings/hwmon/pmbus/infineon,ir38060.yaml
+new file mode 100644
+index 000000000000..e1f683846a54
+--- /dev/null
++++ b/Documentation/devicetree/bindings/hwmon/pmbus/infineon,ir38060.yaml
+@@ -0,0 +1,61 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/hwmon/pmbus/infineon,ir38060.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Infineon Buck Regulators with PMBUS interfaces
++
++maintainers:
++  - Not Me.
++
++properties:
++  compatible:
++    enum:
++      - infineon,ir38060
++      - infineon,ir38064
++      - infineon,ir38164
++      - infineon,ir38263
++
++  reg:
++    maxItems: 1
++
++  regulators:
++    type: object
++    description:
++      list of regulators provided by this controller.
++
++    properties:
++      vout:
++        $ref: /schemas/regulator/regulator.yaml#
++        type: object
++
++        unevaluatedProperties: false
++
++    additionalProperties: false
++
++required:
++  - compatible
++  - reg
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    i2c {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        regulator@34 {
++            compatible = "infineon,ir38060";
++            reg = <0x34>;
++
++            regulators {
++                vout {
++                    regulator-name = "p5v_aux";
++                    regulator-min-microvolt = <437500>;
++                    regulator-max-microvolt = <1387500>;
++                };
++            };
++        };
++    };
+diff --git a/Documentation/devicetree/bindings/regulator/infineon,ir38060.yaml b/Documentation/devicetree/bindings/regulator/infineon,ir38060.yaml
+deleted file mode 100644
+index e6ffbc2a2298..000000000000
+--- a/Documentation/devicetree/bindings/regulator/infineon,ir38060.yaml
++++ /dev/null
+@@ -1,45 +0,0 @@
+-# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+-%YAML 1.2
+----
+-$id: http://devicetree.org/schemas/regulator/infineon,ir38060.yaml#
+-$schema: http://devicetree.org/meta-schemas/core.yaml#
+-
+-title: Infineon Buck Regulators with PMBUS interfaces
+-
+-maintainers:
+-  - Not Me.
+-
+-allOf:
+-  - $ref: regulator.yaml#
+-
+-properties:
+-  compatible:
+-    enum:
+-      - infineon,ir38060
+-      - infineon,ir38064
+-      - infineon,ir38164
+-      - infineon,ir38263
+-
+-  reg:
+-    maxItems: 1
+-
+-required:
+-  - compatible
+-  - reg
+-
+-unevaluatedProperties: false
+-
+-examples:
+-  - |
+-    i2c {
+-      #address-cells = <1>;
+-      #size-cells = <0>;
+-
+-      regulator@34 {
+-        compatible = "infineon,ir38060";
+-        reg = <0x34>;
+-
+-        regulator-min-microvolt = <437500>;
+-        regulator-max-microvolt = <1387500>;
+-      };
+-    };
 
-> +			clocks = <&q6prmcc LPASS_CLK_ID_TX_CORE_MCLK LPASS_CLK_ATTRIBUTE_COUPLE_NO>,
-> +				 <&q6prmcc LPASS_HW_MACRO_VOTE LPASS_CLK_ATTRIBUTE_COUPLE_NO>,
-> +				 <&q6prmcc LPASS_HW_DCODEC_VOTE LPASS_CLK_ATTRIBUTE_COUPLE_NO>;
-> +			clock-names = "mclk",
-> +				      "macro",
-> +				      "dcodec";
-> +
-> +			#clock-cells = <0>;
-> +			clock-output-names = "fsgen";
-> +			#sound-dai-cells = <1>;
-> +		};
-> +
+base-commit: 8df0f002827e18632dcd986f7546c1abf1953a6f
+-- 
+2.42.0
 
-Looks reasonable otherwise
-
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-
-Konrad
 
