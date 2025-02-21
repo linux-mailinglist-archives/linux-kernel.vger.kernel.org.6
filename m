@@ -1,121 +1,91 @@
-Return-Path: <linux-kernel+bounces-526721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19EADA40268
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 22:57:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 071EDA40266
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 22:56:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7690B1897F02
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 21:55:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1709C440C7B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 21:55:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0C06255E36;
-	Fri, 21 Feb 2025 21:53:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E779F255E59;
+	Fri, 21 Feb 2025 21:54:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="aLBk2Vrc"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="anOKXzdN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74F92255E33
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 21:53:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B1D817CA17;
+	Fri, 21 Feb 2025 21:54:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740174813; cv=none; b=OLdB2fDXrI/cTv0HKxVhmk/7A8brp7HGD2m6NjFWhD/zmb/QU4W5J83XUdsR8TE191hFGyWv4OK+F6AEJSoQ51W70vRtRBzKlU+mLYAzTsxyf0MW8+jfsVwMYlQ8JeqW7iuUmkIoqbfD0BmacHesCxppZwx0tkbtWfr0sayKSJc=
+	t=1740174887; cv=none; b=dKOP74cNZzjXOxYtGo59gRL/EWhTWr2jrE4/dKFRC7a9NEZasA4QbdYLD2Lr88/4MhBCSMFR6Bk7HdiPDw9Gr/HBBpnoHOgppJuOKRerVdWUf6hIzxELwnm/F87SKgWxVg/lwJcxRbH3Xcqzg7CYCwwHMd2WNDPa6O4GiPMfkPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740174813; c=relaxed/simple;
-	bh=jD1UHBj/5BpnuO45s3LMfMn45Ou7M8qSe5D6YffY3wo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eGPygQ98VQkGWc3PwPtQLAYFrGpVGP4H5mssGGfyIGiIoG09udlcd5XH0K+8irnnoQpf5s8uwrl7RgtdtFK5LOeBs3ZBMHGeAyNmyVBG7ydpv+vq07MAhGJbEsy14j83cSKweLJn+pGlOL1ljNKwz3JW1Ff8t/lRzM1iHMiit8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=aLBk2Vrc; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=kAP8eop3O7GR+A6CqIyEeQtqDRTGSTC0Z9XT4Ce5THE=; b=aLBk2VrcsBJW7jnMYXuwVda+aV
-	Hbzk6iKeWjoj80LZKAtwRv/tgEfohDTqbwsOClXGFp/7UGhfjYsi1SHSgrhFQqVP9++C+G19KjSNE
-	GHBlk4BVHMJvenE1hStXZzQl4bELedpgC1H8YUihOjRNBbh32PQ+EnUf5aT9l7Z44qCXdi0lN8L5k
-	rLHEVQb8v/+vV9urCzb3lpKzoUSs5BHvmgyK6DrMElRx9SeO7Pudy3M3tumYD/iGsLwDPVrF6k19R
-	o92lBFDg/k7amU0VBayeEhFsoSA/d40ueZw0doZpAG08hEDwmWCyTwyTl1Iv3AauZfATN23ITONN2
-	7I1iMFxQ==;
-Received: from i53875a87.versanet.de ([83.135.90.135] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1tlaxV-0000xw-Ha; Fri, 21 Feb 2025 22:53:21 +0100
-From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
-To: Quentin Schulz <quentin.schulz@cherry.de>
-Cc: linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org, Heiko Stuebner <heiko.stuebner@cherry.de>,
- Chen-Yu Tsai <wens@csie.org>
-Subject:
- Re: [PATCH v2] arm64: dts: rockchip: add usb typec host support to
- rk3588-jaguar
-Date: Fri, 21 Feb 2025 22:53:20 +0100
-Message-ID: <18716872.sWSEgdgrri@diego>
-In-Reply-To: <c50c6053-4569-44b0-943d-5450960be147@cherry.de>
-References:
- <20250218211044.2256762-1-heiko@sntech.de>
- <c50c6053-4569-44b0-943d-5450960be147@cherry.de>
+	s=arc-20240116; t=1740174887; c=relaxed/simple;
+	bh=8p6+VP4B9zMLJumDh9LV1cR9GZpIPZw1eSXwG+FYe4s=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=PxLLWUA1Ej544IYqRGVZip52raOP6+p8F2bdj7oz5Q6yFmB7ycagbERkd6mns/0AWAzO9vsMaX7+/RjFcYQhlPoPIkH5rAqI6hMnir3rrO1jzjCp2l5762cRie/cyGAoIuaOMe9IK1cOSfjTqXDh1yFBIgYYXNanTdTZf0XyPVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=anOKXzdN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E164C4CED6;
+	Fri, 21 Feb 2025 21:54:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740174886;
+	bh=8p6+VP4B9zMLJumDh9LV1cR9GZpIPZw1eSXwG+FYe4s=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=anOKXzdNXhBEqdQyq0A0musZeCWjzR8suonvaKAKoQs835lURYqKZoGst/eZw3UB9
+	 IS7arcyNPytAhghdSGEkyUVp7RcZn7OxHCtWAjurRvQe8Xf+JP0at8pNpyupIp9pzW
+	 zl5cZIb/tznVUevu0dOYcyP2THw7ndq1aQ9jvrfsogBAjCpSNrql1P2QG4yx0e4NXP
+	 Z/4F3p4ZFuxdW1bdLhUp7loLd8lnAQAK9WWA7RqtDSScoVaPk4RsvGWM6yM/8Jv+e5
+	 OFU6qakOps+txZX+Fjh2elstR7e4ubE97gOeI01iE1Mv+XYRd7GeD9JhOaMoijiMfd
+	 ShB5019xa3I8g==
+Date: Fri, 21 Feb 2025 15:54:45 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+Cc: Mrinmay Sarkar <quic_msarkar@quicinc.com>,
+	manivannan.sadhasivam@linaro.org, quic_shazhuss@quicinc.com,
+	quic_ramkri@quicinc.com, quic_nayiluri@quicinc.com,
+	quic_krichai@quicinc.com, quic_vbadigan@quicinc.com,
+	quic_nitegupt@quicinc.com,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Slark Xiao <slark_xiao@163.com>, Qiang Yu <quic_qianyu@quicinc.com>,
+	Mank Wang <mank.wang@netprisma.us>,
+	Johan Hovold <johan+linaro@kernel.org>,
+	Jeff Johnson <quic_jjohnson@quicinc.com>,
+	Fabio Porcedda <fabio.porcedda@gmail.com>, mhi@lists.linux.dev,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org
+Subject: Re: [PATCH v1 0/2] pci_generic: Add supoprt for SA8775P target
+Message-ID: <20250221215445.GA363532@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250221060522.GB1376787@rocinante>
 
-Am Freitag, 21. Februar 2025, 17:43:08 MEZ schrieb Quentin Schulz:
-> Hi Heiko,
+On Fri, Feb 21, 2025 at 03:05:22PM +0900, Krzysztof Wilczyński wrote:
+> Hello,
 > 
-> On 2/18/25 10:10 PM, Heiko Stuebner wrote:
-> > From: Heiko Stuebner <heiko.stuebner@cherry.de>
+> > This patch series add separate MHI host configuration to enable
+> > only IP_SW channel for SA8775P target.
 > > 
-> > Jaguar has two type-c ports connected to fusb302 controllers that can
-> > work both in host and device mode and can also run in display-port
-> > altmode.
-> > 
-> > While these ports can work in dual-role data mode, they do not support
-> > powering the device itself as power-sink. This causes issues because
-> > the current infrastructure does not cope well with dual-role data
-> > without dual-role power.
-> > 
-> > So add the necessary nodes for the type-c controllers as well
-> > as enable the relevant core usb nodes, but limit the mode to host-mode
-> > for now until we figure out device mode.
-> > 
-> > Signed-off-by: Heiko Stuebner <heiko.stuebner@cherry.de>
+> > And also update the proper device id for SA8775P endpoint.
 > 
-> While the USB functionality does work for both ports, and the 
-> orientation is properly reported, it seems like there may be some issue 
-> with how the PHY or controller interacts with that info because I do not 
-> get USB3 speeds when the device is inserted in reverse orientation, 
-> while I do when it's in normal orientation.
+> Applied to epf-mhi, thank you!
 
-I've tested both ports and saw the issue too.
-Interestingly on the usbdp-phy side, orientation detection seems correct
-and also the sbu pins are set accordingly.
+I see "[2/2] PCI: epf-mhi: Update device id for SA8775P" on
+pci/epf-mhi, but I don't see patch [1/2].  Where did that go?
+They seem related, so I would think we'd want to merge them together.
 
+Also, in [2/2], I guess the .deviceid change is known not to break
+anything that's already in the field?
 
-> I assume that's the case for the Rock 5 ITX and Orange Pi 5+ as well and 
-> probably has nothing to do with the DT?
-> 
-> Should we go still go on with trying to merge this patch knowing that? I 
-> mean USB2 is still better than no USB at all :)
-> 
-> +Cc Chen-Yu, owner of an Orange Pi 5+, who may be able to confirm the 
-> issue is widespread.
-> 
-> Cheers,
-> Quentin
-> 
-
-
-
-
+Bjorn
 
