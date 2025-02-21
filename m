@@ -1,70 +1,67 @@
-Return-Path: <linux-kernel+bounces-525350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91E8AA3EEE0
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:41:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 880C7A3EEE4
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:42:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58AFA19C494A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 08:41:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBE9819C321D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 08:42:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4C9F201253;
-	Fri, 21 Feb 2025 08:40:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC29A20102A;
+	Fri, 21 Feb 2025 08:42:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FYVfyiFm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="kfGKmFqr";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="srR+I1cW"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4923D1FE470;
-	Fri, 21 Feb 2025 08:40:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C31671B0406
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 08:42:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740127254; cv=none; b=B2ibBlaI/Wc8K2vfvl/7oIpQriuBtjB4kktN9xKjMgSNlLuV2WDl+G3pa20LBuXh+OyXRG+2R1aacPMetwWvkuZfeFREE++iqGi1la0vW/EDehaJgaPCUST6pvk+w2rt0GvLHBJsxuxiiSGDiWmgDIBEnmH3r0O7+gqePG38wqs=
+	t=1740127357; cv=none; b=DSXzdOMQ/phCZdiyMEwpSTQVSYGtXPkDQ21rUcgFVWvLpTEBWR/9vuzE2Lh2UufWhpLk+pa1Epx7prapGD67rvi9ZA7KFaZtq3YBHmDZjrX5tImA39MSKbj7oL2TRYAwjNbkOhttkGi2nPLoCDTI7CtuAlJpRQYbdRu+RR69y/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740127254; c=relaxed/simple;
-	bh=ksiB2feXfFyAELIxHHK8fCEYWlhK7aI5fAfT5cd0t0c=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=rzxHblYedxX2mX07snz+Xe1uaqpJRuBi/TorV+eBuHoeFJVtaDWal07e9JBrqB2OeGJtVIKkozk0W+Tzrd1KmI0cCs6Sk4csmTVFXENe2TNLzAD1NAu2vGpOHYwBQd0jZgGA/zENQbyfIXeIRFGCe3a3NVb0Vq8cmZrVWTJ3s3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FYVfyiFm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99FB6C4CED6;
-	Fri, 21 Feb 2025 08:40:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740127253;
-	bh=ksiB2feXfFyAELIxHHK8fCEYWlhK7aI5fAfT5cd0t0c=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=FYVfyiFmh5QuGh0Vp1hYQumPGGAjAaTaJE7TQ4wiOyLLDp1svjzeIXzKH0oizVoRZ
-	 pvwF1Cr1jUUZ3hH+1dHhqIkJ8nQM0hq2y/R+5IA89UXH2YeMGMVTUkjMbxLTxU6fw9
-	 OXyt10P6naj5fLTWprcUT0yULsCWNDwkeQymG5y8lb+/I9St/uT+a7p7SvlUhFAbIy
-	 9aZVTRqUfYSF5IHV8xUEP2RK725NVhaCam69EmkgEtbMY5dtZdBLoRNxywa9D+u5i8
-	 kiw54MSb1Bc69JwJK50E/7O+MWDNoHA8rDdUvI9jFMS2L30IZ56X2Qu4Lzi0uVj/47
-	 R6jk3WqmZlBPA==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Frederic Weisbecker" <frederic@kernel.org>
-Cc: "Anna-Maria Behnsen" <anna-maria@linutronix.de>,  "Thomas Gleixner"
- <tglx@linutronix.de>,  "Miguel Ojeda" <ojeda@kernel.org>,  "Danilo
- Krummrich" <dakr@kernel.org>,  "Alex Gaynor" <alex.gaynor@gmail.com>,
-  "Boqun Feng" <boqun.feng@gmail.com>,  "Gary Guo" <gary@garyguo.net>,
-  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron <bjorn3_gh@protonmail.com>,  "Benno
- Lossin"
- <benno.lossin@proton.me>,  "Alice Ryhl" <aliceryhl@google.com>,  "Trevor
- Gross" <tmgross@umich.edu>,  "Lyude Paul" <lyude@redhat.com>,  "Guangbo
- Cui" <2407018371@qq.com>,  "Dirk Behme" <dirk.behme@gmail.com>,  "Daniel
- Almeida" <daniel.almeida@collabora.com>,  "Tamir Duberstein"
- <tamird@gmail.com>,  <rust-for-linux@vger.kernel.org>,
-  <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v8 00/14] hrtimer Rust API
-In-Reply-To: <Z7eYp_vZo5yDVOdI@pavilion.home> (Frederic Weisbecker's message
-	of "Thu, 20 Feb 2025 22:03:35 +0100")
-References: <aIJ0ymzdUceCN05hwJpth4erH5u2SHYzYl52wGeT3uiO9bdk92ZkEmEEq9a9NXsInJYSz9uziwq-1fvdsXoeDA==@protonmail.internalid>
-	<20250218-hrtimer-v3-v6-12-rc2-v8-0-48dedb015eb3@kernel.org>
-	<877c5mci3p.fsf@kernel.org>
-	<5kF-NYTBZbEqnnQud5LKnRXO0lfM0i6I2PoeFrpKDhCYwUuk_bG2Li1T1Nuv82r3VFD8adTcdx7yenXSIfTwmw==@protonmail.internalid>
-	<Z7eYp_vZo5yDVOdI@pavilion.home>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Fri, 21 Feb 2025 09:40:41 +0100
-Message-ID: <87frk7hera.fsf@kernel.org>
+	s=arc-20240116; t=1740127357; c=relaxed/simple;
+	bh=aQugDc1TgMoiAluzr/ZwOKQLVI9JjCwit02YYaVSkkY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NqBYbxdjna6ImXKI/BTE5LDL///z1neJVcCuqIgP8qw9SRzKPSCvHAJdliRno8o+0CRu+zxut7IKihMD/z+jyrfcAvx4/7RmwLwzjtylXLMw03k9JawVOxrir1Y1M/+pwXxN4kLIibLT0SrqecodXouRZcGxRX5J+1jRThgu7YY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=kfGKmFqr; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=srR+I1cW; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 21 Feb 2025 09:42:32 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1740127354;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kfWyW3Ru7mRAcB4wq3FWMDy1z1YI9IDwUbQQozwZ2fs=;
+	b=kfGKmFqrsUsC5Btlox5K/xTLxBkL5kMb4J/6BBU6q4SsReXp8/SESVsTCKZ/1rBfbTfgHr
+	uie01s8+0U3EgF5lUgI3VvuJ6xvCzoK1wER+xvdhrcmvQvbocLplcxWuhgcTRsX8TT6gh+
+	4mBtMd40bPje8WbgcDvXa4XhCb6jV4muOrKM5BzgCjMoSOSYIMHmwyDCj91rn/kAuIkFQ4
+	vtCv+z46oF/wccsYi4W7RVXyRXgRYWURsFYWwsJEXvdtiVh9xmnFCoKhvUh+fJ73yqCcqv
+	9KJsq1tQ5MqLgps6Ex0mcNlIOHhY24arZSGXxMwsc4c6iyTIByr3s9WZnP51ww==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1740127354;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kfWyW3Ru7mRAcB4wq3FWMDy1z1YI9IDwUbQQozwZ2fs=;
+	b=srR+I1cWWWSLd48L5cbU+8tnEAw4D199lz2dx4HcvuF9hUvesAbuPN6YVVAuC0SUeyTVRE
+	qBPQtRLrfuYeKRCA==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: syzbot <syzbot+ecccecbc636b455f9084@syzkaller.appspotmail.com>,
+	gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com, tj@kernel.org,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH] kernfs: Move dput() outside of the RCU section.
+Message-ID: <20250221084232.xksA_IQ4@linutronix.de>
+References: <67b45276.050a0220.173698.004f.GAE@google.com>
+ <20250218163938.xmvjlJ0K@linutronix.de>
+ <20250220203924.GL1977892@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,57 +69,50 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+In-Reply-To: <20250220203924.GL1977892@ZenIV>
 
-"Frederic Weisbecker" <frederic@kernel.org> writes:
+Al Viro pointed out that dput() might sleep and must not be invoked
+within an RCU section.
 
-> Le Wed, Feb 19, 2025 at 12:02:50PM +0100, Andreas Hindborg a =C3=A9crit :
->> "Andreas Hindborg" <a.hindborg@kernel.org> writes:
->>
->> > This series adds support for using the `hrtimer` subsystem from Rust c=
-ode.
->> >
->> > The series adds support for timer mode and clock source configuration =
-during
->> > timer initialization. Examples and functionality to execute closures a=
-t timer
->> > expiration has been removed, as these depend on either atomics [3] or
->> > `SpinLockIrq` [4], which are still being worked on.
->> >
->> > This series is a dependency for unmerged features of the Rust null blo=
-ck driver
->> > [1], and for rkvms [2].
->> >
->>
->> @ timer subsystem maintainers: did you discuss how you want to set up
->> maintenance for this yet? As mentioned, I'm happy stepping up to
->> maintain this, but if you want to handle it with existing resources that
->> is perfectly fine as well.
->
-> You're the best candidate to maintain this code since you wrote it :-)
->
-> Also I personally have near zero skills in Rust as of today so all I can =
-do
-> is to vaguely keep an eye on the binding's interface and keep in touch
-> with the changes.
->
-> So I suggest you to add a new entry with you as a maintainer (I suggested
-> something similar to Fujita for some other timer related things) but plea=
-se
-> keep us Cc'ed for future changes.
+Keep only find_next_ancestor() winthin the RCU section.
+Correct the wording in the comment.
 
-Alright, lets do that.
+Fixes: 6ef5b6fae3040 ("kernfs: Drop kernfs_rwsem while invoking lookup_positive_unlocked().")
+Reported-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+---
+ fs/kernfs/mount.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-Do you want to pick future changes to this directly form list or would
-you prefer that I send you a PR with changes?
-
-We are probably going to have a new iteration anyway, as discussion
-picked up again.
-
-
-Best regards,
-Andreas Hindborg
-
-
+diff --git a/fs/kernfs/mount.c b/fs/kernfs/mount.c
+index f1cea282aae32..5124e196c2bfd 100644
+--- a/fs/kernfs/mount.c
++++ b/fs/kernfs/mount.c
+@@ -222,17 +222,17 @@ struct dentry *kernfs_node_dentry(struct kernfs_node *kn,
+ 	root = kernfs_root(kn);
+ 	/*
+ 	 * As long as kn is valid, its parent can not vanish. This is cgroup's
+-	 * kn so it not have its parent replaced. Therefore it is safe to use
++	 * kn so it can't have its parent replaced. Therefore it is safe to use
+ 	 * the ancestor node outside of the RCU or locked section.
+ 	 */
+ 	if (WARN_ON_ONCE(!(root->flags & KERNFS_ROOT_INVARIANT_PARENT)))
+ 		return ERR_PTR(-EINVAL);
+ 	scoped_guard(rcu) {
+ 		knparent = find_next_ancestor(kn, NULL);
+-		if (WARN_ON(!knparent)) {
+-			dput(dentry);
+-			return ERR_PTR(-EINVAL);
+-		}
++	}
++	if (WARN_ON(!knparent)) {
++		dput(dentry);
++		return ERR_PTR(-EINVAL);
+ 	}
+ 
+ 	do {
+-- 
+2.47.2
 
 
