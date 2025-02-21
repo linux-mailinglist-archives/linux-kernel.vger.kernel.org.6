@@ -1,157 +1,117 @@
-Return-Path: <linux-kernel+bounces-525593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D8DEA3F1D1
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 11:21:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF3CBA3F156
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 11:05:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF7F03A1BBB
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:20:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03C0F4218DC
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:05:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FBFD204F6F;
-	Fri, 21 Feb 2025 10:20:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68172204C3B;
+	Fri, 21 Feb 2025 10:05:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=t12smtp-sign004.email header.i=@t12smtp-sign004.email header.b="jgQQxOtC"
-Received: from mail8.out.titan.email (mail8.out.titan.email [3.220.132.193])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="QJIvTzM+"
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F4B91C1F2F;
-	Fri, 21 Feb 2025 10:20:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=3.220.132.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D1391D6DDC;
+	Fri, 21 Feb 2025 10:05:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740133258; cv=none; b=jJvtU8SByx9zAzX/9CWuAIszVmHLtwMZZIqN0pPOtOgdsZ5fmXjbriNTvOL6RSu8b6qVGtYaNXCK/hemdTN1gcHVWimrqk1WclTAfUzNTOYMtJtDZXdEakMilySN9+NY+8DkWmmrw0om8Owxff27/BC1z6+ZzXhounA8UX2AhRg=
+	t=1740132309; cv=none; b=Wj3zsU8LUMpt1LXtK45xukR4fyCtn6eRE6U3y1AQVuXEhxn5BVwYOnFnfTIc90TmnihQdmO8GnoWFos/LzDe2qStajwWWejthhtNAXakEuaoPmHqTL4+jYOouEOiCzKWrLiasMWcyMiYwjjppCh7HvQhESTBeqMr3HIPoygwYPM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740133258; c=relaxed/simple;
-	bh=CJTatHUiCB2mk5gZnHEF1n8uf5CwCMiUtV7AVquwh3g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KMQLQ9znxqVquJUeWYgH2qxMlE4FHmNmM72U6gyzOGP9IDGGgDx+DleB2LhOMCcqIBs44BjV3bQdMrQkxXz/aSOx8ViRgNIaRMM3NSjz8Ip8bv24fTuwL7Cg8qirXVlWAFhZpBn53LzVFLKO5CT57f/zJUI7JXrIyDCvTr8PojM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=coly.li; spf=pass smtp.mailfrom=coly.li; dkim=pass (1024-bit key) header.d=t12smtp-sign004.email header.i=@t12smtp-sign004.email header.b=jgQQxOtC; arc=none smtp.client-ip=3.220.132.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=coly.li
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=coly.li
-DKIM-Signature: a=rsa-sha256; bh=E8xDhYB5dTniEqejMlnuKVP8JOLWSCvk34/8j7lmisk=;
-	c=relaxed/relaxed; d=t12smtp-sign004.email;
-	h=date:from:message-id:mime-version:to:subject:cc:references:in-reply-to:from:to:cc:subject:date:message-id:in-reply-to:references:reply-to;
-	q=dns/txt; s=titan1; t=1740132293; v=1;
-	b=jgQQxOtCY/0wbEmtd452iAI/1AkGJ2n42KQSSoyC/8ArS25nfVgud6/J1r2sVMXlJchTb7td
-	596KAbkAgVAQ+J+PpMNJPnhGNDeVjqZjMnj28Y76VZKgNpFv1UhS6/TFwDqN+C0qUJmbcrsB294
-	MH5MvSypHdv3YRjXqZ0UdEtw=
-Received: from studio.local (unknown [141.11.218.23])
-	by smtp-out.flockmail.com (Postfix) with ESMTPA id 7F3FC100280;
-	Fri, 21 Feb 2025 10:04:45 +0000 (UTC)
-Date: Fri, 21 Feb 2025 18:04:43 +0800
-Feedback-ID: :i@coly.li:coly.li:flockmailId
-From: Coly Li <i@coly.li>
-To: Zheng Qixing <zhengqixing@huaweicloud.com>
-Cc: axboe@kernel.dk, song@kernel.org, colyli@kernel.org, 
-	yukuai3@huawei.com, dan.j.williams@intel.com, vishal.l.verma@intel.com, 
-	dave.jiang@intel.com, ira.weiny@intel.com, dlemoal@kernel.org, yanjun.zhu@linux.dev, 
-	kch@nvidia.com, hare@suse.de, zhengqixing@huawei.com, john.g.garry@oracle.com, 
-	geliang@kernel.org, xni@redhat.com, colyli@suse.de, linux-block@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org, nvdimm@lists.linux.dev, 
-	yi.zhang@huawei.com, yangerkun@huawei.com
-Subject: Re: [PATCH 02/12] badblocks: factor out a helper try_adjacent_combine
-Message-ID: <i5vkxswklce2wtn3aolrd6qrtlib3obtlzgmdix22afcurp7lz@jkxbieqcitx4>
-References: <20250221081109.734170-1-zhengqixing@huaweicloud.com>
- <20250221081109.734170-3-zhengqixing@huaweicloud.com>
+	s=arc-20240116; t=1740132309; c=relaxed/simple;
+	bh=LD5Lhl1Q+KLHq2xv3l+SsRfVNOf4Q5JroCfGt9RJiOI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=U4Y+Our8K+ccQVd5qU19DpnapsPx1sCl0YFNqp8vlOOjwnkk7zCAoncQ24t+PWuaZgJUviIF66qjmS1nZZofByxhNTRT31TCj4yAuBuRwE5OpHT8Xf95spsjOkrqbJqNiHwHHd3G2liH4+HDQyOAS74Roxc4B/xBeIEmNFwyKOA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=QJIvTzM+; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id D7ADC4439E;
+	Fri, 21 Feb 2025 10:04:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1740132300;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=9o77DNgMUQd4emSOMc0omKMZ7sD/eszdoHGQSaoXRJI=;
+	b=QJIvTzM+G6gu/+bqs869VfAHqnZB53fGjm/HKF+/31QTi/1+RdxYlFLAQsmgG36J5W+SUc
+	aqpijeoLOD764Dts6O+oIcV2kRSnMtItSUSi5ER1frY8KW81SHu7DNcZUTbrEuChIwRxt3
+	NndqiOJFQPPncso4TQuvVrEJFVZKtKLzhWcSNMsrS0Dtw8flONJKOiiPbyVaR3XYsXKnT0
+	MNLZ53qfVTazEh6C/oJBB3Un4xaw7zmSpPdReP8CVm7BHX07S8XRPPYWwgL5b0nLKTxqUb
+	vxlBIAACtgIaeTAkOrRvyqva/mcc4WT/5Kw7G/cARALLRyPAfqk4u14TsRgKZw==
+From: "Bastien Curutchet (eBPF Foundation)" <bastien.curutchet@bootlin.com>
+Subject: [PATCH bpf-next 0/2] selftests/bpf: Migrate test_xdp_vlan.sh into
+ test_progs
+Date: Fri, 21 Feb 2025 11:04:56 +0100
+Message-Id: <20250221-xdp_vlan-v1-0-7d29847169af@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250221081109.734170-3-zhengqixing@huaweicloud.com>
-X-F-Verdict: SPFVALID
-X-Titan-Src-Out: 1740132293142604270.29396.4416553515934908601@prod-use1-smtp-out1002.
-X-CMAE-Score: 0
-X-CMAE-Analysis: v=2.4 cv=bq22BFai c=1 sm=1 tr=0 ts=67b84fc5
-	a=USBFZE4A2Ag4MGBBroF6Xg==:117 a=USBFZE4A2Ag4MGBBroF6Xg==:17
-	a=IkcTkHD0fZMA:10 a=CEWIc4RMnpUA:10 a=i0EeH86SAAAA:8
-	a=xfoHWtfPNc-Uf5GpDPwA:9 a=QEXdDO2ut3YA:10 a=HMmSsUQzf63YMr8qf_ya:22
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAMlPuGcC/x3MQQqAIBBA0avIrBPUCqKrRITpWANhoiGCdPek5
+ YPPr5AwEiaYWYWImRLdvkF2DMyp/YGcbDMooUYhe8GLDVu+tOc4qdGYwTo5aGh5iOio/KsF9uC
+ 4x/LA+r4fuXeWwWQAAAA=
+X-Change-ID: 20250130-xdp_vlan-e825cc4df14a
+To: Alexei Starovoitov <ast@kernel.org>, 
+ Daniel Borkmann <daniel@iogearbox.net>, 
+ "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, 
+ Jesper Dangaard Brouer <hawk@kernel.org>, 
+ John Fastabend <john.fastabend@gmail.com>, 
+ Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman <eddyz87@gmail.com>, 
+ Mykola Lysenko <mykolal@fb.com>, Martin KaFai Lau <martin.lau@linux.dev>, 
+ Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, 
+ KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, 
+ Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+ Shuah Khan <shuah@kernel.org>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Alexis Lothore <alexis.lothore@bootlin.com>, netdev@vger.kernel.org, 
+ bpf@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ "Bastien Curutchet (eBPF Foundation)" <bastien.curutchet@bootlin.com>
+X-Mailer: b4 0.14.2
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeileejhecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffufffkgggtgffvvefosehtjeertdertdejnecuhfhrohhmpedfuegrshhtihgvnhcuvehurhhuthgthhgvthculdgvuefrhfcuhfhouhhnuggrthhiohhnmddfuceosggrshhtihgvnhdrtghurhhuthgthhgvthessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepkedtkefgtedtgeekhfdujeevfefhvdetgfduudeifedvhfdvgfefteehhfdvvefhnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopegludelvddrudeikedrtddrudegngdpmhgrihhlfhhrohhmpegsrghsthhivghnrdgtuhhruhhttghhvghtsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvgedprhgtphhtthhopehsohhngheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhhpshhinhhghheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepmhgrrhhtihhnrdhlrghusehlihhnuhigrdguvghvpdhrtghpthhtohepshhhuhgrhheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepvgguugihiiekj
+ eesghhmrghilhdrtghomhdprhgtphhtthhopegsphhfsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepmhihkhholhgrlhesfhgsrdgtohhmpdhrtghpthhtoheprghstheskhgvrhhnvghlrdhorhhg
+X-GND-Sasl: bastien.curutchet@bootlin.com
 
-On Fri, Feb 21, 2025 at 04:10:59PM +0800, Zheng Qixing wrote:
-> From: Li Nan <linan122@huawei.com>
-> 
-> Factor out try_adjacent_combine(), and it will be used in the later patch.
->
+Hi all,
 
-Which patch is try_adjacent_combine() used in? I don't see that at a quick glance.
+This patch series continues the work to migrate the script tests into
+prog_tests.
 
-Thanks.
+test_xdp_vlan.sh tests the ability of an XDP program to modify the VLAN
+ids on the fly. This isn't currently covered by an other test in the
+test_progs framework so I add a new file prog_tests/xdp_vlan.c that does
+the exact same tests (same network topology, same BPF programs) and
+remove the script.
 
-Coly Li
+Signed-off-by: Bastien Curutchet (eBPF Foundation) <bastien.curutchet@bootlin.com>
+---
+Bastien Curutchet (eBPF Foundation) (2):
+      selftests/bpf: test_xdp_vlan: Rename BPF sections
+      selftests/bpf: Migrate test_xdp_vlan.sh into test_progs
 
- 
-> Signed-off-by: Li Nan <linan122@huawei.com>
-> ---
->  block/badblocks.c | 40 ++++++++++++++++++++++++++--------------
->  1 file changed, 26 insertions(+), 14 deletions(-)
-> 
-> diff --git a/block/badblocks.c b/block/badblocks.c
-> index bcee057efc47..f069c93e986d 100644
-> --- a/block/badblocks.c
-> +++ b/block/badblocks.c
-> @@ -855,6 +855,31 @@ static void badblocks_update_acked(struct badblocks *bb)
->  		bb->unacked_exist = 0;
->  }
->  
-> +/*
-> + * Return 'true' if the range indicated by 'bad' is exactly backward
-> + * overlapped with the bad range (from bad table) indexed by 'behind'.
-> + */
-> +static bool try_adjacent_combine(struct badblocks *bb, int prev)
-> +{
-> +	u64 *p = bb->page;
-> +
-> +	if (prev >= 0 && (prev + 1) < bb->count &&
-> +	    BB_END(p[prev]) == BB_OFFSET(p[prev + 1]) &&
-> +	    (BB_LEN(p[prev]) + BB_LEN(p[prev + 1])) <= BB_MAX_LEN &&
-> +	    BB_ACK(p[prev]) == BB_ACK(p[prev + 1])) {
-> +		p[prev] = BB_MAKE(BB_OFFSET(p[prev]),
-> +				  BB_LEN(p[prev]) + BB_LEN(p[prev + 1]),
-> +				  BB_ACK(p[prev]));
-> +
-> +		if ((prev + 2) < bb->count)
-> +			memmove(p + prev + 1, p + prev + 2,
-> +				(bb->count -  (prev + 2)) * 8);
-> +		bb->count--;
-> +		return true;
-> +	}
-> +	return false;
-> +}
-> +
->  /* Do exact work to set bad block range into the bad block table */
->  static int _badblocks_set(struct badblocks *bb, sector_t s, int sectors,
->  			  int acknowledged)
-> @@ -1022,20 +1047,7 @@ static int _badblocks_set(struct badblocks *bb, sector_t s, int sectors,
->  	 * merged. (prev < 0) condition is not handled here,
->  	 * because it's already complicated enough.
->  	 */
-> -	if (prev >= 0 &&
-> -	    (prev + 1) < bb->count &&
-> -	    BB_END(p[prev]) == BB_OFFSET(p[prev + 1]) &&
-> -	    (BB_LEN(p[prev]) + BB_LEN(p[prev + 1])) <= BB_MAX_LEN &&
-> -	    BB_ACK(p[prev]) == BB_ACK(p[prev + 1])) {
-> -		p[prev] = BB_MAKE(BB_OFFSET(p[prev]),
-> -				  BB_LEN(p[prev]) + BB_LEN(p[prev + 1]),
-> -				  BB_ACK(p[prev]));
-> -
-> -		if ((prev + 2) < bb->count)
-> -			memmove(p + prev + 1, p + prev + 2,
-> -				(bb->count -  (prev + 2)) * 8);
-> -		bb->count--;
-> -	}
-> +	try_adjacent_combine(bb, prev);
->  
->  	if (space_desired && !badblocks_full(bb)) {
->  		s = orig_start;
-> -- 
-> 2.39.2
-> 
+ tools/testing/selftests/bpf/Makefile               |   4 +-
+ tools/testing/selftests/bpf/prog_tests/xdp_vlan.c  | 175 ++++++++++++++++
+ tools/testing/selftests/bpf/progs/test_xdp_vlan.c  |  20 +-
+ tools/testing/selftests/bpf/test_xdp_vlan.sh       | 233 ---------------------
+ .../selftests/bpf/test_xdp_vlan_mode_generic.sh    |   9 -
+ .../selftests/bpf/test_xdp_vlan_mode_native.sh     |   9 -
+ 6 files changed, 186 insertions(+), 264 deletions(-)
+---
+base-commit: a814b9be27fb3c3f49343aee4b015b76f5875558
+change-id: 20250130-xdp_vlan-e825cc4df14a
 
+Best regards,
 -- 
-Coly Li
+Bastien Curutchet (eBPF Foundation) <bastien.curutchet@bootlin.com>
+
 
