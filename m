@@ -1,110 +1,140 @@
-Return-Path: <linux-kernel+bounces-526687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9CE5A40200
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 22:24:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BE98A40205
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 22:26:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F3C819C71E7
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 21:24:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E2643B67E7
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 21:26:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E31620127D;
-	Fri, 21 Feb 2025 21:24:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 771592500B1;
+	Fri, 21 Feb 2025 21:26:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WKd3PWwv"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ntbgDBND"
+Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com [209.85.221.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0783536AF5
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 21:24:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EBF520127D;
+	Fri, 21 Feb 2025 21:26:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740173075; cv=none; b=qURWRh1iR8Hdrif7CLpJn4Ll0YoZdoOrcd2nBUmgZR1maZ5Nfbd003lvuORh5/f2/HjnKJK5xuZITSDdRfhQmYd2K56QuhNTGkh3tKe61dDR5CXs5+m6lIobz3NGmnfeFjvmRkN7yES6bMhX+Vco6QGatgEFmH7x0pxVZYVg1Lk=
+	t=1740173187; cv=none; b=eUyAWm08xxIVoxfRfBhXkbOS3Bzj4IhryPmA5S4kFo2CfuLJOvH/n5V//MalDL2+9/f7DCaJY8I9B1aYOL0dUSucnVtY2+X4bMGHBhStmt+wkkwwaf5uW2FNC1+f7NSqDKh0erU3HTpujeh9oe0muQGVRRdgIM+0a0tagUyE3Z0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740173075; c=relaxed/simple;
-	bh=1762NVQXdGje3dlNxOQSEQN5RBB3Nw2JuPPfR11IEIw=;
+	s=arc-20240116; t=1740173187; c=relaxed/simple;
+	bh=0JZr1OTYHU6I546M2sCDypnp4G0f0H3twdTm5RJTP0Q=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SOrLMZ6ixp6Qu6VLZcz5bONfsnhuQ7614yVfVwyY6ohVX5aat4vjPxIs2m0gOMp2uRRDi2p2Z08BFdFn7wTL8YRGbygRKYSM2g6qf7xomHr1oSd3E3iwx41JTg1afwchC8Xc5pGGED1zlWsdk1lQBcGPjYfdO5HJ67IH3clgSeo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WKd3PWwv; arc=none smtp.client-ip=209.85.208.42
+	 To:Cc:Content-Type; b=aPpiGba4tRW643GPBXZx6hNiG6dUmceVAz+1HCOM1ts4+mNm7MU1RePVyfoJyIW4oJuNCwvxantUq+hswgboHh2jUK2Gu33LRHdSueVCeCCgtgl140DXqQ5Xv78VA9DMpbcDMo6b09Q3emzu47mwSbrbGBfAgquBD1Z2KiF8pW4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ntbgDBND; arc=none smtp.client-ip=209.85.221.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5deb956aa5eso3182875a12.2
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 13:24:33 -0800 (PST)
+Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-52096b4e163so675237e0c.1;
+        Fri, 21 Feb 2025 13:26:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740173072; x=1740777872; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=1762NVQXdGje3dlNxOQSEQN5RBB3Nw2JuPPfR11IEIw=;
-        b=WKd3PWwvPVfjGUDESAF6DHLUQgG/7XN4oe7j2jT3hih6Jc6hCDLxJIqxxu5beMZYIC
-         hTzv7n0c876gTYp7XBiXhF0v1RI41A7l3yqsyfFabXrMJ4ZWaZcSa+rMpiTHF2Jzy5nZ
-         symdJseml2e8H0+5OTSIgVPF3S6dTytk2ZPjdN4Jwmt8XZjVHwXC3NiyZUSO5bCL9g9q
-         I509DsxTAc04a0WqMZT22lGT8j675DoEcfiHVUtFcWgVgpE1oaa8sM2CdDnZIPorqmY5
-         mbVpL9EPyWDgB8pJpyvkF8JOPpYRn+4Aj2xcufHMfCaZeJ+tKaBDW26nelyiESiWlp10
-         4OxQ==
+        d=gmail.com; s=20230601; t=1740173185; x=1740777985; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=reoZdkGd6IKDiFN/Zy14cGrpEppzK19WZOoOxv4BnGA=;
+        b=ntbgDBND9UleMurHkPbqIavhf4b5Ghnl+mEo+lRaduG9JY4xSO1+wybSn1FvQ5MyZj
+         +5ace4/Ei43xPD1WUqywC5cK2kbI7U/h5JTphH9B3A0vK1FzzL5T8R4f4yk4wutdfzs0
+         cI5NdbWwzNC1Cjrvi/HHz3S+vZ+0rAxIk10GhXGiwJteqjVnsO+fxduWvl6AI9tUzbyF
+         1z4WN5sz56NuZv4KYCnQr87ilZFuaX/Itu4bfbRUiEGCek10qWT4KiaFoMwd8c8wlaWp
+         R0W1XpZcHUARrH/IREleoQb5lRDQ+NRKnWM+zlyzkqdn3Ihc9vZYZUSyIaR4YJd0dQSf
+         efZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740173072; x=1740777872;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1762NVQXdGje3dlNxOQSEQN5RBB3Nw2JuPPfR11IEIw=;
-        b=BeIXzDl324x2JMlJwH8i6zyYQX0plFSeW6kXQYCCzShHJRH4yOZ50Pty+xbmMC/ZFE
-         vEspXlBMzmb8i1kAyeo6TgrV8DJFmIMbsGw+ouMXP0j+YylEf6065Wt6Ub41yT8ppBPI
-         MZ/hCTCPQ6lC+tNeqjQveU+XbqYqZdIRi1k4gSaITHXu4gobn/PRPG5OEqwr2QQdgUdv
-         jXidAusz71Y7abET0CB+kR+lNYPTTuQNutSFilkcLsZDWhIm2d+bEojU/G3BkFzSZfnb
-         nXZCWS/8/ESCRf3ZGpyGmF59L8OYuItHwqMiQ+A3BPL3VvVlFFK8MWBOeKwaW2OYO8SL
-         iKXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU1Uh/a1ByVqqnXAydboXiC2U/Y7okx6HDSiuV9xsHVPK1rFhaAZo0v/1IaNfVsaal4vGxgIOHLb6Btjw4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQxI4trzaUatVqWuV9Uo01bcoMm6HSf+I57CXDLBHVpDjM31kH
-	MMpPDOWjEo67qLh8z5yOuIpRtMrZZz+YPXJu1n6hRWdhrkzg5pUmGSpSGqgseAWGDuPyBrezFc3
-	n8StOo5YbnQOxL/xttxxQvWPppkDNgA==
-X-Gm-Gg: ASbGncs7Y/MFhKFarrGInxkGi9ryiTUuuywDIttkV132AlQ8fz1YmEDW3wF9UE3Inhx
-	jh5q3IZhq9Ou3xtt0SurxX5Lmrr4AQm6DI8W+hyLWPoHUTeeaGNb5xR+aJjkjfgZogKl/N5KlGM
-	ak6E0a7A==
-X-Google-Smtp-Source: AGHT+IGHZ3p0Yhcy1NooWckT7km21FHzEsXX7wdW6PJ+zdzWXhvCub+62TXotrdDn5kDSCkT35k7Jp72jwVmVlApND0=
-X-Received: by 2002:a05:6402:51d2:b0:5e0:9250:435a with SMTP id
- 4fb4d7f45d1cf-5e0b7252eb7mr10284527a12.20.1740173072026; Fri, 21 Feb 2025
- 13:24:32 -0800 (PST)
+        d=1e100.net; s=20230601; t=1740173185; x=1740777985;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=reoZdkGd6IKDiFN/Zy14cGrpEppzK19WZOoOxv4BnGA=;
+        b=HwtqY1tGB/5JfioyWo8dg53qw3Z0Os9Ui8D+ZFTIg5xCoUwLjzhSS8OLPsPQDVqgr1
+         OKK7oJVoFLLeHeskkIX9QswL0fXBP3f/tQCNW8g9msx0/AYNDTUw/8cY6J6xq8IYtOCE
+         3BiNuIXKTgrTFPXeEV5EuxN3/+LkzHkh0+iIJkRMrgHZKxLT3E0MaytABCie+w0cH6ur
+         y7UnZqk/flbDlQCyOq7hRSmrSqgmfFJKC6nJvPVGc9GYUrrhwyqcc+Ebc0BNcWMdTBz8
+         JcpmomyO7HypIY0BFDWRdnUnq5gTPqXIf9h/sIhG5T+gIggBWfmoYsa7lo5ohuauOrJI
+         c/Uw==
+X-Forwarded-Encrypted: i=1; AJvYcCV/4NuJZNEphdA8Rf4lq4TZvBKPVdVyPhmWYPEt8deJeXbFPuZBkVXbKSV8oBZk8gXaMT4h5K42hKrEX6I1@vger.kernel.org, AJvYcCXAQCIDan4OS1J54dyh92/uNHODrAns4hb2l0ymWu1Y8ihl8jJ9d/mDvQoQiTl16hW1nlLJC0LAJrjCcwRRzG3YYAk=@vger.kernel.org, AJvYcCXiijTHA1SP+fFKJ1kCzJzxlKEWp2S6AE4a+024I6/Y+gy0QToZm/deCcmkmAASu55YvZCp0tjZXnc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1DvgBu8J+4NI1K4489O4/CCZRjkJH326fmDLBBFN4Jy6UYmmz
+	JFXxk7sUE8hfk5Cp9mGacTG7vzDhL6SfUY6WS/YO4wkDMVvkDLoIJBO0WCTKFmvmYZOGI6WfuCT
+	2rrg+BoyIWcOEePWb21bMSbPezmU=
+X-Gm-Gg: ASbGncvU4gRj8Q0I4gHug6Bsv7kKkRtYQNIu7XZsus8Cy3k6E6byB+htzXod3V3H61r
+	UNjf2s6ZjtoWtknjSQqGjxjTbqlDN5AIRvEUf5uoZXZGUASojDzMtko72SDnnqjXIMQAM6o/V7b
+	Fw4qib5JSSuWiYQ6kQyDgJ5U/ff/+hnQaVHnaPQrHl
+X-Google-Smtp-Source: AGHT+IE6UPS72YkSqlKZ+QYEzcPsJMmz0YCcgutaTCTiSHM5m4OFcCZsb1r7pyS+E5OKHwj5jTicJSV8EkBAW3O4plE=
+X-Received: by 2002:a05:6122:488a:b0:520:3e1c:500f with SMTP id
+ 71dfb90a1353d-521ee45bc56mr2974670e0c.8.1740173185098; Fri, 21 Feb 2025
+ 13:26:25 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAPM=9tyHJiMrF8nxXe=mhn0i5N1v-7RHh2TZfoz8BoUBBnuxzw@mail.gmail.com>
- <CAHk-=wiJYQwSMoor__B-8D71S8=Dn5BeAY6tOzSL4u3MEZrtcw@mail.gmail.com>
-In-Reply-To: <CAHk-=wiJYQwSMoor__B-8D71S8=Dn5BeAY6tOzSL4u3MEZrtcw@mail.gmail.com>
-From: Dave Airlie <airlied@gmail.com>
-Date: Sat, 22 Feb 2025 07:24:20 +1000
-X-Gm-Features: AWEUYZmZnwC1hboMSOHw37C9Yg-dylJMTIImEuvQIZT68-vvD-BB6UCjp2DW_C8
-Message-ID: <CAPM=9txwcTE048cOGnSNfXqX+ykADgqDHRZmyfnLQGQ_9oRZTA@mail.gmail.com>
-Subject: Re: [git pull] drm fixes for 6.14-rc4
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Sima Vetter <sima@ffwll.ch>, dri-devel <dri-devel@lists.freedesktop.org>, 
-	LKML <linux-kernel@vger.kernel.org>
+References: <20250220150110.738619-1-fabrizio.castro.jz@renesas.com> <20250220150110.738619-6-fabrizio.castro.jz@renesas.com>
+In-Reply-To: <20250220150110.738619-6-fabrizio.castro.jz@renesas.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Fri, 21 Feb 2025 21:25:57 +0000
+X-Gm-Features: AWEUYZmUQVuSUN907GGzhYeVZd-6WPU13YSQyfpxScQSV9_0kwPc0QsAQTvJNJs
+Message-ID: <CA+V-a8tV1gw_m1_5PyQNzf=uRZmYr7N9RMiQxQF+PKxSOE6C4w@mail.gmail.com>
+Subject: Re: [PATCH v4 5/7] dmaengine: sh: rz-dmac: Allow for multiple DMACs
+To: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+Cc: Vinod Koul <vkoul@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Wolfram Sang <wsa+renesas@sang-engineering.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
+	dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, linux-renesas-soc@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, 22 Feb 2025 at 07:15, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
+On Thu, Feb 20, 2025 at 3:02=E2=80=AFPM Fabrizio Castro
+<fabrizio.castro.jz@renesas.com> wrote:
 >
-> Side note: I think you do something while editing or
-> cutting-and-pasting that loses indentation.
+> dma_request_channel() calls into __dma_request_channel() with
+> NULL as value for np, which won't allow for the selection of the
+> correct DMAC when multiple DMACs are available.
 >
-> I sometimes have to guess at what the intended grouping is.
+> Switch to using __dma_request_channel() directly so that we can
+> choose the desired DMA for the channel. This is in preparation
+> of adding DMAC support for the Renesas RZ/V2H(P) and similar SoCs.
 >
-> In this case, notice the "More catalog fixes" entry for the msm driver.
+> Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+> ---
+> v3->v4:
+> * No change.
+> v2->v3:
+> * Added () for calls in changelog.
+> v1->v2:
+> * No change.
+> ---
+>  drivers/dma/sh/rz-dmac.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 >
-> I *think* it refers to all the following bullet points up until the
-> "Core/GPU" grouping, but that is literally nothing but an edumacated
-> guess.
->
-> So when you write (or copy) the description, can I ask you to not drop
-> indentation like this?
+Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-I rewrite the MSM bits usually to align with others as they
-subcategorise and nobody else does, but I can keep the indentation if
-it doesn't look like noise on your end.
+Cheers,
+Prabhakar
 
-Dave.
+> diff --git a/drivers/dma/sh/rz-dmac.c b/drivers/dma/sh/rz-dmac.c
+> index 9235db551026..d7a4ce28040b 100644
+> --- a/drivers/dma/sh/rz-dmac.c
+> +++ b/drivers/dma/sh/rz-dmac.c
+> @@ -748,7 +748,8 @@ static struct dma_chan *rz_dmac_of_xlate(struct of_ph=
+andle_args *dma_spec,
+>         dma_cap_zero(mask);
+>         dma_cap_set(DMA_SLAVE, mask);
+>
+> -       return dma_request_channel(mask, rz_dmac_chan_filter, dma_spec);
+> +       return __dma_request_channel(&mask, rz_dmac_chan_filter, dma_spec=
+,
+> +                                    ofdma->of_node);
+>  }
+>
+>  /*
+> --
+> 2.34.1
+>
+>
 
