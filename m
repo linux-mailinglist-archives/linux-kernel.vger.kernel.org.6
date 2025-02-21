@@ -1,229 +1,146 @@
-Return-Path: <linux-kernel+bounces-525157-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0780A3EBCD
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 05:21:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEBF2A3EBCF
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 05:25:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 852414223B4
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 04:21:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6398B4223B4
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 04:25:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A07B1FAC38;
-	Fri, 21 Feb 2025 04:21:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E2741FAC33;
+	Fri, 21 Feb 2025 04:25:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="M3WDFcjJ";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="YhnCUkOl"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="tRxdbV+M"
+Received: from out-175.mta1.migadu.com (out-175.mta1.migadu.com [95.215.58.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B42CD17C9F1;
-	Fri, 21 Feb 2025 04:21:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740111676; cv=fail; b=RToCafl5QJJ+4+HSz0nGN3lnzVRtwRJYl8u+xi7z5XGWvd7Cv1SyW6ssVqAYC+4Rxmg0LOKX+1KZGbujnTIaBaoRZWT5pyHLO/7Z5OccuWWB+aaU9dLxGAxRhbp/Xry9CNYS8NKi/75jxE0zTUz1PIotpg66BM75bQ+4cX8gowA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740111676; c=relaxed/simple;
-	bh=ALN//A3oE8zCnveJjeBY6bjDoYpWjcTTm/DXDOPL5vA=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=hI06XSGBalvvdE3o/nW+WPtK830GDxsE6jpbtNFIXkE6z8KsEwwHsDgHpxN19fuevvq3ew0PJM7jJ129reBZNeCixGVIcHeF0bVVtM9FiWJzhpRXJJWH6q1034acVopk0LJF2xbhmI3Zq/gdGJKa0oPahAXgI0mjRxTySn41nk0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=M3WDFcjJ; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=YhnCUkOl; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51KLrZNK016236;
-	Fri, 21 Feb 2025 04:21:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2023-11-20; bh=hJZ1lLsHKRuA+YrpOWSrDSA+0q7wbcvBGTPsXP7EyMc=; b=
-	M3WDFcjJkKuRmj6s6BVaDza4pAKV110ik4l7wZffoRcwI+KMLH8YtgvDNVipfjSh
-	bxMku1b0uXTICKfBWHH2ecMTJ2xRtyPy9ooKcpqBxp15Xc+Y+RIUtNePOOcdKuB/
-	XkA8eI+RB7zWRVo8fZDFP8uequFKkvn00jj7BWStzhYpr5+ascUv02ynCNzwzW+m
-	cBLDv3E8KBvk262MaVK05sJU5bOfrwoyEbtmEUVegZYw/xIl2eYmS1LGHbWj1QDq
-	3bT4VHz63GuOvSyr3LDSTlsgCWXoK+sKr/Q5x7ZY3Wil35yTL8F1+6lvNoMNEvmd
-	AVvUkgb0lu60AX8xJ6wsnA==
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 44w02ynjar-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 21 Feb 2025 04:21:10 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 51L2Xkpg002176;
-	Fri, 21 Feb 2025 04:21:09 GMT
-Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12lp2041.outbound.protection.outlook.com [104.47.66.41])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 44w0tp677c-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 21 Feb 2025 04:21:09 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Qu+VEeoDk7nXqNPG/UAu+XRIvfHfSaqPK2df9EVXWbveKSAj1dD6LJRq232h95EJ4S++g0ESlHHlBXT6bTokTRgzHstkAWVJu19lJLn9zY4ZBZlDNet8csYl5pmODKgEbbLHa6PyDprBxUs0xH9wF9c+EX0av29pANW3wVZMEv0rD8S6LMEgaEKL8wZrJ4IqtnXRbFT7hKwIWxgWegpaWbn+1S4zApLmcI0W5wUlPayoCOMhakUYEffmoQj7IrgYA1DqNpUhJedVt4pa8ZbucfbuwNjX6xQdTbRWjQ/Qd/4Tu7xy77+oeANFyeZdjMY19VVhj7opqetnwRt4+qMZYA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=hJZ1lLsHKRuA+YrpOWSrDSA+0q7wbcvBGTPsXP7EyMc=;
- b=L8rm71MUfSn5SpD0Oz9P8Ww8CblfllRlCLFNZ8EKxavrSPhkXpDDTsRqygzwpUKJ/tXiHmj8fOkLA8U+Jfri3IOEf6jbYd9V2c5LgM61tfXLOGeeJrUJ/9jqEwbr/2iFEWf9ELAzm5d3KqfDe1mrinG5G/LH0R676V0RssSNnEbKtRE1fSWPlTchwqboT2oXTTgM2ybyqOOLxYv+x8Y+aCAE6cX3SA1ppPbo1kZzhE+ubB9fSZzR6o9VGiwP0eLfaq83FGvsdsicQeIEP1hlIMgdN5gvQXqMY4m1OTDNlJmWC318WYZuQT39HU449GoHtYbqvWqX0o6uDFmpk0rfCw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hJZ1lLsHKRuA+YrpOWSrDSA+0q7wbcvBGTPsXP7EyMc=;
- b=YhnCUkOlvtI3l1cHY7Q94wh19ZKYhVrU9yihuC7cZatVZUgW8lHME9QdrC2r14DwLTVULkC1FJShAaZimvhJy47HTsimv/L2084xMzI6oN82IDOHsaKqtuv9nIqsdGkNdmph06Ucy8KTrPQch/3HWFanIRB58U00abwibZtQhMs=
-Received: from CO1PR10MB4705.namprd10.prod.outlook.com (2603:10b6:303:96::11)
- by MN0PR10MB5958.namprd10.prod.outlook.com (2603:10b6:208:3ce::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.16; Fri, 21 Feb
- 2025 04:21:06 +0000
-Received: from CO1PR10MB4705.namprd10.prod.outlook.com
- ([fe80::10db:799:49cf:f735]) by CO1PR10MB4705.namprd10.prod.outlook.com
- ([fe80::10db:799:49cf:f735%3]) with mapi id 15.20.8466.016; Fri, 21 Feb 2025
- 04:21:06 +0000
-From: Chris Hyser <chris.hyser@oracle.com>
-To: Sinadin Shan <sinadin.shan@oracle.com>,
-        Shrikanth Hegde
-	<sshegde@linux.ibm.com>
-CC: "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "shuah@kernel.org" <shuah@kernel.org>
-Subject: Re: [PATCH] selftests: sched: add sched as a default selftest target
-Thread-Topic: [PATCH] selftests: sched: add sched as a default selftest target
-Thread-Index: AQHbgpobAwexZNUbBkmXCDWzivovC7NP0a4AgAB3QoCAAAjatYAAELEAgADHpzM=
-Date: Fri, 21 Feb 2025 04:21:06 +0000
-Message-ID:
- <CO1PR10MB47051B268FCBD44E24B281439BC72@CO1PR10MB4705.namprd10.prod.outlook.com>
-References: <20250219064658.449069-1-sinadin.shan@oracle.com>
- <74dddd26-4a0e-4bb6-958a-229cca3c24d1@linux.ibm.com>
- <a3b5bbc0-f875-451f-8528-38a7eafc4949@oracle.com>
- <CO1PR10MB4705883FED10DAE126DEC9D59BC42@CO1PR10MB4705.namprd10.prod.outlook.com>
- <0d22f89a-d896-44ed-b4a9-c860c63450fa@oracle.com>
-In-Reply-To: <0d22f89a-d896-44ed-b4a9-c860c63450fa@oracle.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CO1PR10MB4705:EE_|MN0PR10MB5958:EE_
-x-ms-office365-filtering-correlation-id: 82e9dbce-70ce-4b4a-c0d3-08dd522f2915
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|1800799024|38070700018;
-x-microsoft-antispam-message-info:
- =?iso-8859-1?Q?cKrJv2UnudFAjAvEGYEmWoI3h1tELUZH2wM46VayiS16iKDZhLjubz0CkM?=
- =?iso-8859-1?Q?2BMywSVJSn824FjuoyeXnAd8C8rkPfMp7za0MipmKq1yo7xdcwN34o9/t1?=
- =?iso-8859-1?Q?iNi2UgFaFQ+4tt2Izf3pbbjG1AyH2m69JK10Ejb5lRwODSWQZH8K2W1vU/?=
- =?iso-8859-1?Q?7uyC5661UhijChYdFRNdToPNyKG69UGcqbxfuID5vu5k+t6JJGIR1T0J2w?=
- =?iso-8859-1?Q?SuQhBMF5+DuweJ8QGcOvixSZezoXopPX7pmc5KNXXpOioXjwJUI8sPWNuL?=
- =?iso-8859-1?Q?sBB55YEI+ecX6MDLYy/tdOUcR94c6lkNYwpRzYtRlSjn1cKQhJTjZAegNv?=
- =?iso-8859-1?Q?OF6qok0uKvbs+elVHrbqzuQPAbhuAExcWynwzoVrRjpzSzHMbBYuz7dhyR?=
- =?iso-8859-1?Q?ck4olv4NX5sOMli3qtTTgKB8CvAi4ldg2QQfPhdBuhAGE1AQxCVM/wHgQC?=
- =?iso-8859-1?Q?DbzVXPqDrqmsYdsHDv61QT34pwd/liP5FtZCUmGtrKj91QoA2i/mZh+Dyh?=
- =?iso-8859-1?Q?A6nYKCL1vK4ezIG6bLqASOf2zyegTD7xzUZfRnaMf8/MFguNzJhtCux9Pm?=
- =?iso-8859-1?Q?NiZff4L0T1IkYSxnZHyuPbDduMmeom/g0drDC+0zriKmXnz3LXAR6HWNu9?=
- =?iso-8859-1?Q?bV9XukNlW0mqi5LYWZk5WweIS4LAsb3ra/G5uvekX0W9GJnvs6ccm+8Np3?=
- =?iso-8859-1?Q?0QHwG0wpcwq7mzF1oKIXpWevVr/11QWHvxgXizEV5CB8Gb4P7ygKvvDa/J?=
- =?iso-8859-1?Q?nP+gnVbWefVjT2O3EzYqZcwzR2PDarw7fISIRog5CBxNygFdnw+Bkp5pau?=
- =?iso-8859-1?Q?AJMVPSfx/PgiLyvKo34SERhMpAAkyqVfLAmcaSphrPOZBDZ8AiNs7/zCgs?=
- =?iso-8859-1?Q?jc8BSJSIwRlxVYd5w29XDptI8uxlRQgbwWoLJQ67YsVzjklgzpVX5r8eJg?=
- =?iso-8859-1?Q?kgLftljvj/C7iy2gCiqQ+3Ryv15cQdF5xoRJR+NdyCgS43TkgVUh2tsXfB?=
- =?iso-8859-1?Q?wlBKSFKJ4NMNRePohgMEnFd5Y6g87BhP4EoBXiUdo7xLkP2RxfwtcZIwKN?=
- =?iso-8859-1?Q?qlrSceF764kaE3cJ4dPNRCuP//8TI0bGCoosreUMBSgbKSoy06MmlZH/Bk?=
- =?iso-8859-1?Q?z/ET64mJkJ2jG8wV/FGPqzTrylvPDCht82Z1YR0B+geIfXEynCUu0FUoWU?=
- =?iso-8859-1?Q?4dp3bnQrlVpVFfTdaTW639B5HuBfmuNiAfMGYkAC9+G7O3+TqLD0zQvyYS?=
- =?iso-8859-1?Q?EY5jyJ3uOUXLUC2cU4StIB+PAb3i/hUnY9NHZ8hk43ZXOGaMAhgp+Sfjzd?=
- =?iso-8859-1?Q?Kh3Jt//cS37Gyxcz6VGAkgbXuKUVCphkD+UJJTONUsCjC6GrcrbqyDJ36y?=
- =?iso-8859-1?Q?IuvJcY/AUOZ+G1Mcyi9ArwNCadWycS0+Fah7mSwUGWaZNwg9LIzPxGZVTT?=
- =?iso-8859-1?Q?r8XQcT8M/OOonQs5B4UI42eyWkHlgSYkEUqwwO25zaRbgM4l2HZY2abEVG?=
- =?iso-8859-1?Q?hkyOGlji8AIQBC0E5vgegD?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO1PR10MB4705.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?iso-8859-1?Q?OqgZ+5mh0nsBeYqjHw+dX9efOZsFbiVjsnpQjjDjbHCWRs6G4QCNgTCCNK?=
- =?iso-8859-1?Q?TljeLG8Cib+mogvBLhVzwVJpjC9El6yOMPJnf0KE2Rioi9afruN1DUl5q9?=
- =?iso-8859-1?Q?S7bseQO8RpCLnT9mMIFwbK0Jnu7bken3iossWlOEWjPp1pvxSGqDASFVWX?=
- =?iso-8859-1?Q?dgqbnqaCQ1xyDhxzXUyNSNH6F/Oujjg1vMa7WLCtpgah0q9t7IGqSkKR6v?=
- =?iso-8859-1?Q?Jqi+93+6x3xPzIhP0eMzz/zhjTWXAXLr35D2OaR1CDxq4sL2medmW+PWyj?=
- =?iso-8859-1?Q?cvO2nFPLOEvrncoMWDiLa7NF5qPUHOtQD0BFe9QcmpEhgPH9FPcjvfZR/E?=
- =?iso-8859-1?Q?fVk3nH1ZO6DJ/PhAA063vZ89xUZi57rPjofGG8t9FlTCZPaY5l5w+wikPY?=
- =?iso-8859-1?Q?ILv2BrH2uVqbEylPlkQ3EHWFARY1lrAUktyGi8jRtaZy6/kFGV82L6yA0o?=
- =?iso-8859-1?Q?8UktOF9eD/dDvE8ytjAyKN9mctDJHx+tDULR7Jew2sZp+Vaa5XsyPkvFGu?=
- =?iso-8859-1?Q?slx+OiOnraVdm5ft1pIUUBMVGYYLzAuA98gqkvp7DcW16xoC6aRSF7ePaw?=
- =?iso-8859-1?Q?TaNS7fiAL6YB+znyhQOpnULOiQRadFU9piGYVi3detGV+E58FqTLbX1Rgm?=
- =?iso-8859-1?Q?dYG+YfAr4R9q0lgpIN9gBoX1IMDx8sKjBHCztWY0tk2oCrTsVCS8rTGNqJ?=
- =?iso-8859-1?Q?WTFDBvBqcZm0F6fZm2qid92zOGBTeJgSzGqa0RhWrKf42MFtOqLn1bI4Mf?=
- =?iso-8859-1?Q?FXtucKw8kgUFBNf26rPliRhuyw8xTBHlLhXJF4XM5jZlT3Da2JpaqtSMRH?=
- =?iso-8859-1?Q?MWkPRA5q43c07D467CWSdNc9l+lPjo7S2YtnFZdVPZN5pRvAG6hdDOEtRn?=
- =?iso-8859-1?Q?vhsA7kKiFH8NpNdBvQtUnb2F3nuUkwbd5vg96ivfjwnQRDVOVYYjjOdNDv?=
- =?iso-8859-1?Q?HAUKrf+lvaj/YFHlNUbiold4uAvNLhklKgUwsTQRCF2Z5yA+3RrTWGVqEm?=
- =?iso-8859-1?Q?MPZeBwkRzSnDKiTXo+86tQ1G+b2BBXaNEPmQXx7k2mW0wl84UWTD/BLGGy?=
- =?iso-8859-1?Q?CuQ1pIinR2cLihFUaIyXNXXeLk//pmBUvKwWIgq9JAuTIZktb+fdWOvR+T?=
- =?iso-8859-1?Q?6V5Ws7f+0f1VTrNY8lv0wLW35sDXu1mlamodRZMgeRoHt7mERpgqinh6eB?=
- =?iso-8859-1?Q?zOZRzd4qVad6Hregk2b0NEMGxNh1GACaZwQAAx8vmQ7izT1DFFt4sT1t00?=
- =?iso-8859-1?Q?1eVIxK33dl61Pyri8CJ0edEQZ//nqGqIhKmxrD8eCdO8kOoarxoXWwApsD?=
- =?iso-8859-1?Q?2BEQdVmRG9tBpqID1mW4rn4kPdCcniNbzw6OwTioec8Z5wLSqNRLai0Oqs?=
- =?iso-8859-1?Q?fG+lk6W/EipOYletvWk+huTyYbhFJNXitPwmcqeum+gpQhWqBFAh2Y62KY?=
- =?iso-8859-1?Q?2kyYtkfEJRFu1BhTnJ44B+rFFt9uHJyIFoY5p5s0tSxoAmzoz31znVkgFb?=
- =?iso-8859-1?Q?Ng/ZP0yMtvDsYDAKknojEZSWL4/8c0erDpRdJBdGtJNizuD4S6WH2+6bfh?=
- =?iso-8859-1?Q?qaeUebG3w5eZRLxJ6SxQMlnK6Q/WuW97TPXKS3i/7Zq93YCxQzfSzdl8EJ?=
- =?iso-8859-1?Q?vVjFUx3AtmwCenFC/75Pl3TJIaNVb2kbLn?=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15F4717C9F1
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 04:25:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.175
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740111951; cv=none; b=YU/hYHMmn0Sk07E3pn12ufHuvyBsHGQZ94OHxbX5vjwVxWESyL5cxrmWlNEFE5QNvzHpi/dY2wpYo80P7goqV+ksNGTiBXgjkJN/jeetrtgGoyO7XrYeRp6bYFvuEsSshjQSPIM6tk3lMszaipCwlYumNUZxnrH0fDcZJHAGTvY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740111951; c=relaxed/simple;
+	bh=E7Nm3WSnjzg1lTWDP9lo2TtW+3uCwqS1vFmUidogKr4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z15Pwh8jirNdKKBZdz0Efm4Gr9a7c5C9IsJAjqBS4PDvmlT5ditIagtLnouHmiGf/KbSwbEgSRSliX1/Os2zF+tZ3HoQ+gbhgJ4tzDCWDAFMkeFQvlqchF1Ex3VBD7X9hcfgHbcMXvBxz8yzok7LCz0LYBvwx96bEln11JFw1xA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=tRxdbV+M; arc=none smtp.client-ip=95.215.58.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Fri, 21 Feb 2025 04:25:41 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1740111945;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Rzgu8sGsKSv9PrQBzZpe815ts9xxtbG0aSoQgLcsQ6g=;
+	b=tRxdbV+MZNe8jo1rs5F2tRKuHOewENDZqaqqZzU9wtcpVS/JH9tJAisKckziVoCsGzrM2F
+	srqX86aPOQqZFQEVN9J1MxDAIOHyTLOcq1Rwa9abjD8FKAoYixD5rkBH5j0VGtvdQwnxO0
+	Hg491EwibMXPtbX9IF2+VCVoSXWGCfc=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Roman Gushchin <roman.gushchin@linux.dev>
+To: Parav Pandit <parav@mellanox.com>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
+	Maher Sanalla <msanalla@nvidia.com>,
+	"linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] RDMA/core: fix a NULL-pointer dereference in
+ hw_stat_device_show()
+Message-ID: <Z7gARTF0mpbOj7gN@google.com>
+References: <20250221020555.4090014-1-roman.gushchin@linux.dev>
+ <CY8PR12MB71958C150D7604EAD4463F4ADCC72@CY8PR12MB7195.namprd12.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	l1U6NXtMF7uS9WUFzmRix/hfzTWy19KZLIj/5d/iqzhcbwHd9/7OfdE9sNTuLTDrbmNC89J6gWYzocgXjVquCnWeV4Huk32ctlWnZrOqVEz1hv3aJNHiMM9qCIAE/YIhdvyBYOJrG1DDFgkxlP8PIH74mG7vqJ5g17B13I6ShQypuuBG//YcxrTMW9hUl/r3cE53tG9BlCUwzANVnlqoSbMP7ey+1LVET+Y86O63atbseUXIf7YoTugExjoxKpYjWrLzRX+r9uGvEhV1/EhBCuXfun8uBgoTmgJrPFhgT8ZyYupM/sxRgTMjBwbeT1xVoO10P7HujTtQ+ncfpvgx4BoOhCpkrYnwUVhS80trXV6YL0zDoE6Kcb/QEyXf0l/f23uZ/MFUzKpY0bEiy5eHfVK/brACgVs8wL8s7H/Cf1TVohIAo5ofjAbLVj/fwlheEXC5NjA7J6EzG3z0cXsyj0NSSvIedswLLjP6ZX6a8JtlsBcjf1quRaGQQMLjS354s0wvacKR0VPsZbbuusQMlXilQtKybGg+0sqT7mjeQO+J7yKpL3YwEH/3fWKf393y9qezvR6r3w7tZfC0KeWsvMvo3+bS2gTAe2RJOhWXhNU=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CO1PR10MB4705.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 82e9dbce-70ce-4b4a-c0d3-08dd522f2915
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Feb 2025 04:21:06.2536
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: e5Gmuhuf9Uwiw2JHlinX+oSfK9seyYxl4j8m+1uDP3MDTxsZAELuHwH474O8LuK0+SMuc9wAlGqVmQ8LSpFRMQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR10MB5958
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-20_09,2025-02-20_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 bulkscore=0 malwarescore=0
- mlxscore=0 spamscore=0 phishscore=0 suspectscore=0 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2502100000
- definitions=main-2502210029
-X-Proofpoint-ORIG-GUID: iOwPj6Cf_DUIs5ch0f2B8-J8PEQbFmGR
-X-Proofpoint-GUID: iOwPj6Cf_DUIs5ch0f2B8-J8PEQbFmGR
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CY8PR12MB71958C150D7604EAD4463F4ADCC72@CY8PR12MB7195.namprd12.prod.outlook.com>
+X-Migadu-Flow: FLOW_OUT
 
-From: Sinadin Shan <sinadin.shan@oracle.com>=0A=
-Sent: Thursday, February 20, 2025 11:23 AM=0A=
-To: Chris Hyser; Shrikanth Hegde=0A=
-Cc: linux-kselftest@vger.kernel.org; linux-kernel@vger.kernel.org; shuah@ke=
-rnel.org=0A=
-Subject: Re: [PATCH] selftests: sched: add sched as a default selftest targ=
-et=0A=
-=0A=
->> I guess my question is what if SCHED_CORE was supposed to be configed in=
-to=0A=
->> the test kernel?  Silently burying the error might be bad. I'm not stron=
-gly tied to=0A=
->> that, just looking for opinions. At the same time, if you put the orig c=
-hange in,=0A=
->> people w/o SCHED_CORE on will start seeing "failures" they didn't see be=
-fore,=0A=
->> yes? and that seems bad.=0A=
->=0A=
-> Yes, that seems bad as rightly pointed out by Shrikant. I have a patch=0A=
-> that does the above mentioned skip, and if skipping is a right option to=
-=0A=
-> take here I can send it in the next version.=0A=
-=0A=
-If that is the plan, I prefer to fix it myself.=0A=
-=0A=
--chrish=0A=
+On Fri, Feb 21, 2025 at 03:14:16AM +0000, Parav Pandit wrote:
+> 
+> > From: Roman Gushchin <roman.gushchin@linux.dev>
+> > Sent: Friday, February 21, 2025 7:36 AM
+> > 
+> > Commit 54747231150f ("RDMA: Introduce and use rdma_device_to_ibdev()")
+> > introduced rdma_device_to_ibdev() helper which has to be used to obtain an
+> > ib_device pointer from a device pointer.
+> >
+>  
+> > hw_stat_device_show() and hw_stat_device_store() were missed.
+> > 
+> > It causes a NULL pointer dereference panic on an attempt to read hw counters
+> > from a namespace, when the device structure is not embedded into the
+> > ib_device structure. 
+> Do you mean net namespace other than default init_net?
+> Assuming the answer is yes, some question below.
+> 
+> > In this case casting the device pointer into the ib_device
+> > pointer using container_of() is wrong.
+> > Instead, rdma_device_to_ibdev() should be used, which uses the back-
+> > reference (container_of(device, struct ib_core_device, dev))->owner.
+> > 
+> > [42021.807566] BUG: kernel NULL pointer dereference, address:
+> > 0000000000000028 [42021.814463] #PF: supervisor read access in kernel
+> > mode [42021.819549] #PF: error_code(0x0000) - not-present page
+> > [42021.824636] PGD 0 P4D 0 [42021.827145] Oops: 0000 [#1] SMP PTI
+> > [42021.830598] CPU: 82 PID: 2843922 Comm: switchto-defaul Kdump: loaded
+> > Tainted: G S      W I        XXX
+> > [42021.841697] Hardware name: XXX
+> > [42021.849619] RIP: 0010:hw_stat_device_show+0x1e/0x40 [ib_core]
+> > [42021.855362] Code: 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 0f 1f
+> > 44 00 00 49 89 d0 4c 8b 5e 20 48 8b 8f b8 04 00 00 48 81 c7 f0 fa ff ff <48> 8b
+> > 41 28 48 29 ce 48 83 c6 d0 48 c1 ee 04 69 d6 ab aa aa aa 48 [42021.873931]
+> > RSP: 0018:ffff97fe90f03da0 EFLAGS: 00010287 [42021.879108] RAX:
+> > ffff9406988a8c60 RBX: ffff940e1072d438 RCX: 0000000000000000
+> > [42021.886169] RDX: ffff94085f1aa000 RSI: ffff93c6cbbdbcb0 RDI:
+> > ffff940c7517aef0 [42021.893230] RBP: ffff97fe90f03e70 R08:
+> > ffff94085f1aa000 R09: 0000000000000000 [42021.900294] R10:
+> > ffff94085f1aa000 R11: ffffffffc0775680 R12: ffffffff87ca2530 [42021.907355]
+> > R13: ffff940651602840 R14: ffff93c6cbbdbcb0 R15: ffff94085f1aa000
+> > [42021.914418] FS:  00007fda1a3b9700(0000) GS:ffff94453fb80000(0000)
+> > knlGS:0000000000000000 [42021.922423] CS:  0010 DS: 0000 ES: 0000 CR0:
+> > 0000000080050033 [42021.928130] CR2: 0000000000000028 CR3:
+> > 00000042dcfb8003 CR4: 00000000003726f0 [42021.935194] DR0:
+> > 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> > [42021.942257] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7:
+> > 0000000000000400 [42021.949324] Call Trace:
+> > [42021.951756]  <TASK>
+> > [42021.953842]  [<ffffffff86c58674>] ? show_regs+0x64/0x70 [42021.959030]
+> > [<ffffffff86c58468>] ? __die+0x78/0xc0 [42021.963874]  [<ffffffff86c9ef75>] ?
+> > page_fault_oops+0x2b5/0x3b0 [42021.969749]  [<ffffffff87674b92>] ?
+> > exc_page_fault+0x1a2/0x3c0 [42021.975549]  [<ffffffff87801326>] ?
+> > asm_exc_page_fault+0x26/0x30 [42021.981517]  [<ffffffffc0775680>] ?
+> > __pfx_show_hw_stats+0x10/0x10 [ib_core] [42021.988482]
+> > [<ffffffffc077564e>] ? hw_stat_device_show+0x1e/0x40 [ib_core]
+> > [42021.995438]  [<ffffffff86ac7f8e>] dev_attr_show+0x1e/0x50
+> > [42022.000803]  [<ffffffff86a3eeb1>] sysfs_kf_seq_show+0x81/0xe0
+> > [42022.006508]  [<ffffffff86a11134>] seq_read_iter+0xf4/0x410
+> > [42022.011954]  [<ffffffff869f4b2e>] vfs_read+0x16e/0x2f0 [42022.017058]
+> > [<ffffffff869f50ee>] ksys_read+0x6e/0xe0 [42022.022073]  [<ffffffff8766f1ca>]
+> > do_syscall_64+0x6a/0xa0 [42022.027441]  [<ffffffff8780013b>]
+> > entry_SYSCALL_64_after_hwframe+0x78/0xe2
+> > 
+> > Fixes: 54747231150f ("RDMA: Introduce and use rdma_device_to_ibdev()")
+> Commit eb15c78b05bd9 eliminated hw_counters sysfs directory into the net namespace.
+> I don't see it created in any other net ns other than init_net with kernel 6.12+.
+> 
+> I am puzzled. Can you please explain/share the reproduction steps for generating above call trace?
+
+Hi Parav!
+
+This bug was spotted in the production on a small number of machines. They were
+running a 6.6-based kernel (with no changes around this code). I don't have
+a reproducer (and there is no simple way for me to reproduce the problem), but
+I've several core dumps and from inspecting them it was clear that a ib_device
+pointer obtained in hw_stat_device_show() was wrong. At the same time the
+ib_pointer obtained in the way rdma_device_to_ibdev() works was correct.
+
+Thanks!
 
