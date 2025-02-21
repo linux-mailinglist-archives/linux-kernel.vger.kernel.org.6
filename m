@@ -1,193 +1,110 @@
-Return-Path: <linux-kernel+bounces-526174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A945A3FB16
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:26:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0199A3FBDC
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:48:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D520819C300F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:21:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3590E18963F7
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:42:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F163205ABF;
-	Fri, 21 Feb 2025 16:17:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFB0E1F3FD9;
+	Fri, 21 Feb 2025 16:40:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b="FnuSgRCg";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="N/YyxUFv"
-Received: from fout-a2-smtp.messagingengine.com (fout-a2-smtp.messagingengine.com [103.168.172.145])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=szczodrzynski.pl header.i=@szczodrzynski.pl header.b="2hls+aUo"
+Received: from s2.avantea.pl (s2.avantea.pl [46.242.128.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E8E61DC07D;
-	Fri, 21 Feb 2025 16:17:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BEF21F12EC;
+	Fri, 21 Feb 2025 16:40:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.242.128.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740154659; cv=none; b=tMyIPrayeaQg5DZSvnVwX15ySKDsxEZtd9K/TUaUcio8c7Z4uSzUH86xK042qwmdV1SBBL+qDDC6lQHcy7xU2qTQX3f8WYdJDGYpIPz8MOiNOKdG7764TGfy/8r8uh5J01gOqhL1JQnZv0DWitot5zd4sMJYGIhiCmbycbDVMKs=
+	t=1740156037; cv=none; b=XSj3gVPZJ3q1S7DBYxULw1KZWgqc7XucTiQljOgYgqPRM84Xl/Y+QPtMNnaSH8BpfdFUePHURjNfntAxK67y1rgRkxF8Jqzjh8A81pBJ4jmOI4ODaCgtJK7j+vjVpWLua7ZlqM6h5D+1qSmT/bao7q/bafrwxjmSHMIJZJxoTyY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740154659; c=relaxed/simple;
-	bh=UmsexPj0uS5upDkIMkslL7wlhLAmn8I+VAHDRTFfrPA=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:References:
-	 In-Reply-To:Content-Type; b=rGOR7WxdMNlLee7b6wngPrrmDuI2RGTuKm2fZAil6ekPIQIzfBdT5AI5spOU/3KRI3GxWCOHgbQRdMBON+tBacf36RZsHNIjKo0w79Gsg43DLig+gLe3dKIGW4NtzjzW+Ce8fzwmAkgYwK9tfep8PCtoZ59AvoC4k+AL9IY+onY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com; spf=pass smtp.mailfrom=bsbernd.com; dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b=FnuSgRCg; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=N/YyxUFv; arc=none smtp.client-ip=103.168.172.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bsbernd.com
-Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
-	by mailfout.phl.internal (Postfix) with ESMTP id 7AA3B13809B6;
-	Fri, 21 Feb 2025 11:17:36 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-01.internal (MEProxy); Fri, 21 Feb 2025 11:17:36 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bsbernd.com; h=
-	cc:content-transfer-encoding:content-type:content-type:date:date
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1740154656;
-	 x=1740241056; bh=As4LYdoKt6G2SPn7LmN2IRqDn3P8jSGUvgLzO6fsoqA=; b=
-	FnuSgRCg3Nnh1Rjvoy5o8LakHnarhkeAborw18YS8Z5rZn90lGYxMg7Gx4y4QeUm
-	MCezLfOjYZQ4m+wNy1+ZnkhlOnHiO35W25EHCwgHKNBDafJqH8DvgmT205w07/fb
-	WlBQlicYUxX4JU1Zmk39y9S0qf3bfc2X1/cWmw+WYduXJDWiNxBVKBKak65yqWZL
-	B+H3/OiRpFeZis3W9cz8/KIQD78Ffyk8IieM4iO2HNQkqMH9HZDRsT9iXeEgxQ1D
-	IGmHM4mz4/TFAoovraPa60cdaGs4ITCjz1RXab9/OCaSXxhM10nQ/dWwa32AWOL4
-	qrxfatA0HZDtlxXKoAwG2g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:content-transfer-encoding:content-type
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
-	:x-me-sender:x-sasl-enc; s=fm1; t=1740154656; x=1740241056; bh=A
-	s4LYdoKt6G2SPn7LmN2IRqDn3P8jSGUvgLzO6fsoqA=; b=N/YyxUFvtH0G8b7C3
-	dMAJ4RShZbqb7DW5ORpUymhfkLi17C0UUPgFZgRvDx8G//t+l5jGfDgpEwrQqnK4
-	6cvf845HAU2TeIMd3zhVdwMLGElPBgoCr82P8r/EcnCMzjaWsZMAf9NVrEeHI0TE
-	yZbgBAdeN8wZLNt0kG/ILZoHlTadcvA5vAlI4B8B//l31I5a757kuzOB9TxMuP6z
-	OqM/RT0RzyH/IXwHiKAa8wSBC9RoV7Twd/PXd87uhx+1sq8Io6M0W/g3NfF3iy61
-	acDoiAS0aVtmX6SUkvHYkp76KuTRjyipFjUdgFjs+HzlLKH4p+t0hvITX1TwdoWO
-	CuJ8Q==
-X-ME-Sender: <xms:IKe4Z42i3ts8lTp1KbBjOuBXh8CVvM7SeiKf_O2FXGai13k1WiCBtQ>
-    <xme:IKe4ZzEAyAspYxG33v46w-zX5eOAuv0nRmduZot1391Pjy-napJT2uCf2ZEG912op
-    EUDpx1vYVMGo7aT>
-X-ME-Received: <xmr:IKe4Zw5z4FbU8hEqla1HJYlKtGP2UtvSEU1b88XyPBE1nxz_2p0ae1nKpLAVM_RwNjf1M15gI3iS2-rh4AtNR7TFki34jo4n4-BsgxZC94JyU9XEvAhV>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdejtdegjecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefkffggfgfuhffvfhgjtgfgsehtkeertddtvdej
-    necuhfhrohhmpeeuvghrnhguucfutghhuhgsvghrthcuoegsvghrnhgusegsshgsvghrnh
-    gurdgtohhmqeenucggtffrrghtthgvrhhnpefgtdegtdegfedtuddvffffgeeliefgkeef
-    teejgeehvdevleefgeeuvdduhfeuleenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
-    grmhepmhgrihhlfhhrohhmpegsvghrnhgusegsshgsvghrnhgurdgtohhmpdhnsggprhgt
-    phhtthhopeeipdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehmohhinhgrkhgstd
-    dtudesghhmrghilhdrtghomhdprhgtphhtthhopehmihhklhhoshesshiivghrvgguihdr
-    hhhupdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlh
-    drohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgv
-    lhdrohhrghdprhgtphhtthhopehiohdquhhrihhnghesvhhgvghrrdhkvghrnhgvlhdroh
-    hrghdprhgtphhtthhopegrmhhirhejfehilhesghhmrghilhdrtghomh
-X-ME-Proxy: <xmx:IKe4Zx39uh5JLcJ9oIIoYItSTB0-4twDeCtFJFK4YToBzgyFxXBN1g>
-    <xmx:IKe4Z7GXBc60r55Kws1UNO566-1u4vaX5aG9gk_2TVLomgaV7BXSTg>
-    <xmx:IKe4Z684vZSfJkggHPC7trhwxpJTvI8C00mUBaCPvCfW4Nr42XWzTw>
-    <xmx:IKe4Zwnub8u1v5xQQo7HiaBF-OXN9jKyxGMMWzn__tKHrKYhcsi6bQ>
-    <xmx:IKe4Zw7FHcSpuFzI2_ngBPqQhzXJhBBcAnB1ed_SJoCIivLNeHSZQ3b6>
-Feedback-ID: i5c2e48a5:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 21 Feb 2025 11:17:35 -0500 (EST)
-Message-ID: <216baa7e-2a97-4f12-b30a-4e21b4696ddd@bsbernd.com>
-Date: Fri, 21 Feb 2025 17:17:34 +0100
+	s=arc-20240116; t=1740156037; c=relaxed/simple;
+	bh=ZVmiymIAhMQOMLZ34be0QbNLgSkp+U56bA+I1slqbnI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=hSFAAzEBh4mMa+IVU+IncdZGc/asjs0a83G7mfmMp3lsky0b5BeGV5tDt+6S5gVOhLX8YnDVf9890io2m6QRu9QZOh1hLUSrFz9391Y+k4/K1G30DYgmltCbuu2ouVcUY2ynyXPuyTwriR24hgETuOGZhLA50CRefINbuP5ehYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=szczodrzynski.pl; spf=pass smtp.mailfrom=szczodrzynski.pl; dkim=pass (2048-bit key) header.d=szczodrzynski.pl header.i=@szczodrzynski.pl header.b=2hls+aUo; arc=none smtp.client-ip=46.242.128.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=szczodrzynski.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szczodrzynski.pl
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=szczodrzynski.pl; s=x; h=Content-Transfer-Encoding:Content-Type:
+	MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=7RHCIXkAEB3Q6gvisTKmVhU8q9lDZL30dJeI5tINmhs=; b=2hls+aUoDtpBz0zvI2ZI+E++3Y
+	2siSdOmW4PBTuCYqdXDVDUjQQzkZolBRiM/lcNIyuEBi3qoke0fXe8kGHUj0EXivc5mMo90iPZlOj
+	UugrMUSaZD6WPVVUXYBxfZ8qRsQpzkHGvN6lGAQVlprOSt+fsD+ZFLtNob53O7VRou3OqBDqpToaD
+	O3Lmfdm+LI+F2GigjHqX68zctIEpDRVm+PgNmysmtiegJsoUH25nBghgwpD2+0aKgU5q7WPMf0xpv
+	OLkrjOlqMvbx5EFFJlFxp5sAIQKRbDi1NJXVyvPkA9JrUsf4gM3A21nFS/uNLty+KLTvVlBrRC7mA
+	SXhLlq+g==;
+Received: from [62.171.184.96] (helo=buildhost.contaboserver.net)
+	by s2.avantea.pl with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96-58-g4e9ed49f8)
+	(envelope-from <kuba@szczodrzynski.pl>)
+	id 1tlVit-00AOLX-29;
+	Fri, 21 Feb 2025 17:17:55 +0100
+From: =?UTF-8?q?Kuba=20Szczodrzy=C5=84ski?= <kuba@szczodrzynski.pl>
+To: Maxime Ripard <mripard@kernel.org>,
+	Samuel Holland <samuel@sholland.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	linux-phy@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	dri-devel@lists.freedesktop.org
+Subject: [PATCH 0/5] drm/sun4i: Support LVDS on D1s/T113 combo D-PHY
+Date: Fri, 21 Feb 2025 17:17:46 +0100
+Message-Id: <20250221161751.1278049-1-kuba@szczodrzynski.pl>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Fuse: Add backing file support for uring_cmd
-From: Bernd Schubert <bernd@bsbernd.com>
-To: Moinak Bhattacharyya <moinakb001@gmail.com>,
- Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, io-uring@vger.kernel.org,
- Amir Goldstein <amir73il@gmail.com>
-References: <CAKXrOwbkMUo9KJd7wHjcFzJieTFj6NPWPp0vD_SgdS3h33Wdsg@mail.gmail.com>
- <db432e5b-fc90-487e-b261-7771766c56cb@bsbernd.com>
- <e0019be0-1167-4024-8268-e320fee4bc50@gmail.com>
- <9a930d23-25e5-4d36-9233-bf34eb377f9b@bsbernd.com>
-Content-Language: en-US, de-DE, fr
-In-Reply-To: <9a930d23-25e5-4d36-9233-bf34eb377f9b@bsbernd.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Authenticated-Id: kuba@szczodrzynski.pl
 
+Some Allwinner chips (notably the D1s/T113 and the A100) have a "combo
+MIPI DSI D-PHY" which is required when using single-link LVDS0. The same
+PD0..PD9 pins are used for either DSI or LVDS.
 
+Other than having to use the combo D-PHY, LVDS output is configured in
+the same way as on older chips.
 
-On 2/21/25 17:14, Bernd Schubert wrote:
-> 
-> 
-> On 2/21/25 16:36, Moinak Bhattacharyya wrote:
->> Sorry about that. Correctly-formatted patch follows. Should I send out a
->> V2 instead?
->>
->> Add support for opening and closing backing files in the fuse_uring_cmd
->> callback. Store backing_map (for open) and backing_id (for close) in the
->> uring_cmd data.
->> ---
->>  fs/fuse/dev_uring.c       | 50 +++++++++++++++++++++++++++++++++++++++
->>  include/uapi/linux/fuse.h |  6 +++++
->>  2 files changed, 56 insertions(+)
->>
->> diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
->> index ebd2931b4f2a..df73d9d7e686 100644
->> --- a/fs/fuse/dev_uring.c
->> +++ b/fs/fuse/dev_uring.c
->> @@ -1033,6 +1033,40 @@ fuse_uring_create_ring_ent(struct io_uring_cmd *cmd,
->>      return ent;
->>  }
->>
->> +/*
->> + * Register new backing file for passthrough, getting backing map from
->> URING_CMD data
->> + */
->> +static int fuse_uring_backing_open(struct io_uring_cmd *cmd,
->> +    unsigned int issue_flags, struct fuse_conn *fc)
->> +{
->> +    const struct fuse_backing_map *map = io_uring_sqe_cmd(cmd->sqe);
->> +    int ret = fuse_backing_open(fc, map);
-> 
-> Do you have the libfuse part somewhere? I need to hurry up to split and
-> clean up my uring branch. Not promised, but maybe this weekend. 
-> What we need to be careful here about is that in my current 'uring'
-> libfuse always expects to get a CQE - here you introduce a 2nd user
-> for CQEs - it needs credit management.
-> 
-> 
->> +
->> +    if (ret < 0) {
->> +        return ret;
->> +    }
->> +
->> +    io_uring_cmd_done(cmd, ret, 0, issue_flags);
->> +    return 0;
->> +}
->> +
->> +/*
->> + * Remove file from passthrough tracking, getting backing_id from
->> URING_CMD data
->> + */
->> +static int fuse_uring_backing_close(struct io_uring_cmd *cmd,
->> +    unsigned int issue_flags, struct fuse_conn *fc)
->> +{
->> +    const int *backing_id = io_uring_sqe_cmd(cmd->sqe);
->> +    int ret = fuse_backing_close(fc, *backing_id);
->> +
->> +    if (ret < 0) {
->> +        return ret;
->> +    }
-> 
-> 
-> Both functions don't have the check for 
-> 
-> 	if (!IS_ENABLED(CONFIG_FUSE_PASSTHROUGH))
-> 		return -EOPNOTSUPP;
-> 
-> but their ioctl counter parts have that.
-> 
+This series enables the sun6i MIPI D-PHY to also work in LVDS mode. It
+is then configured by the LCD TCON, which allows connecting a
+single-link LVDS display panel.
 
-In order to avoid code dup, maybe that check could be moved
-into fuse_backing_open() / fuse_backing_close() as preparation
-patch? Amir?
+Kuba Szczodrzyński (5):
+  phy: allwinner: phy-sun6i-mipi-dphy: Support LVDS in combo D-PHY
+  drm/sun4i: Support LVDS using MIPI DSI combo D-PHY
+  drm/sun4i: Enable LVDS output on sun20i D1s/T113
+  riscv: dts: allwinner: d1s-t113: Add D-PHY to TCON LCD0
+  riscv: dts: allwinner: d1s-t113: Add LVDS0 pins
 
-Thanks,
-Bernd
+ .../boot/dts/allwinner/sunxi-d1s-t113.dtsi    | 10 +++
+ drivers/gpu/drm/sun4i/sun4i_tcon.c            | 40 ++++++++++++
+ drivers/gpu/drm/sun4i/sun4i_tcon.h            |  6 ++
+ drivers/phy/allwinner/phy-sun6i-mipi-dphy.c   | 65 ++++++++++++++++++-
+ 4 files changed, 119 insertions(+), 2 deletions(-)
+
+-- 
+2.25.1
+
 
