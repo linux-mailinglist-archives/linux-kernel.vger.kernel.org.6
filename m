@@ -1,190 +1,385 @@
-Return-Path: <linux-kernel+bounces-525130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 258AEA3EB2D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 04:17:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80D8BA3EB3C
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 04:21:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 51510420338
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 03:17:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84C7A19C5E1C
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 03:22:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D87C71F470E;
-	Fri, 21 Feb 2025 03:17:03 +0000 (UTC)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF8491F3FD7;
+	Fri, 21 Feb 2025 03:21:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="maf9e9SY"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04B1C1F419E
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 03:17:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B46A61D63DF
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 03:21:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740107823; cv=none; b=m4fXIWETZhapa0V9wPjwdMn+Lc5VcAglmCIlLZEZmdF+Ucmqp8dFj1Gn0lj4mApwSyzVm9WXayiGQ/+QZrGcQOjuPpmJwdE2X6JEKzCXAARiBEerhrNanMbmaK7rYy587AigeSMP7orh9kPV5sA5o2Xxh9qwSGYv3Ce9ZezbXl8=
+	t=1740108106; cv=none; b=DtEK+fFCyxeiU2Fj2I48OfiqsC3SfRDcI6qQAjLUWy7c5o2jwkA2B0XgfDeFXTtIXyBwdXiWUwwG32Fl3waZKbAtTvPX4sLh52nuj75Q6AqNSd/w/x73i5JOGum+Oxs51kfgef2hIIeKtKV2/tmMsvosnz2DA98yehRcsj7ZZz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740107823; c=relaxed/simple;
-	bh=fkJUrUjClwz0xIFTlR4oOE/nQ9uZCXm7ZSY+kT72RMM=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=A0+Iao6JLTfuHj5jJInGz0Uxhfy9+0QRIUx0ZHqNkbCltEM5mHcu1QpvnvdcBZAam5yEBbaTsLhwEYkMmnsubtn/QkIaGOMS1TasetovlMVyYKuZgom7vzjxTYkpSn3bE5gznooGX6YYE4ubcEv8zGtNkRkRMEmK5Am5lUWGpfI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4Yzb0L4KD2znl1x;
-	Fri, 21 Feb 2025 11:17:22 +0800 (CST)
-Received: from kwepemd100023.china.huawei.com (unknown [7.221.188.33])
-	by mail.maildlp.com (Postfix) with ESMTPS id 6ACF31A016C;
-	Fri, 21 Feb 2025 11:16:51 +0800 (CST)
-Received: from kwepemj200003.china.huawei.com (7.202.194.15) by
- kwepemd100023.china.huawei.com (7.221.188.33) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 21 Feb 2025 11:16:51 +0800
-Received: from kwepemj200003.china.huawei.com ([7.202.194.15]) by
- kwepemj200003.china.huawei.com ([7.202.194.15]) with mapi id 15.02.1544.011;
- Fri, 21 Feb 2025 11:16:51 +0800
-From: xiaqinxin <xiaqinxin@huawei.com>
-To: Barry Song <21cnbao@gmail.com>
-CC: yangyicong <yangyicong@huawei.com>, "hch@lst.de" <hch@lst.de>,
-	"iommu@lists.linux.dev" <iommu@lists.linux.dev>, Jonathan Cameron
-	<jonathan.cameron@huawei.com>, "Zengtao (B)" <prime.zeng@hisilicon.com>,
-	"fanghao (A)" <fanghao11@huawei.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: =?utf-8?B?5Zue5aSNOiBbUEFUQ0ggMi8zXSBkbWEtbWFwcGluZzogYmVuY2htYXJrOiBh?=
- =?utf-8?B?ZGQgc3VwcG9ydCBmb3IgZG1hX21hcF9zZw==?=
-Thread-Topic: [PATCH 2/3] dma-mapping: benchmark: add support for dma_map_sg
-Thread-Index: AQHbgX7YzcPnGzwh2U+6pcruEJoiibNRGtHQ
-Date: Fri, 21 Feb 2025 03:16:50 +0000
-Message-ID: <43618c9167654c68945ec5e7d9bf69d5@huawei.com>
-References: <20250212022718.1995504-1-xiaqinxin@huawei.com>
- <20250212022718.1995504-3-xiaqinxin@huawei.com>
- <CAGsJ_4yDBT4rJyG4-Ow4T3xLq8VujBjG+-uxjnWUm_vW1nzT_A@mail.gmail.com>
-In-Reply-To: <CAGsJ_4yDBT4rJyG4-Ow4T3xLq8VujBjG+-uxjnWUm_vW1nzT_A@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1740108106; c=relaxed/simple;
+	bh=9lQloC8xrSrvv0NL4PTcGbjNs7+WeOoNHlIVlv8UiaI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BhBmjrtKpU9TvkTZ0J3mgdMVoz14PMPNZr4P/PpDF39K7B+EtFkjDrsdpRYJpaN2+xOpKub5Aq802hMhEk7FVjZ04phUq2+Mr7gM+gBVDQ4kILdyiM6Z3lLf4YC3KfcKFe9ZzEZfKglwkSas5AapaovrTTFJ88vWyvIEMFrl7s4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=maf9e9SY; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4394a0c65fcso16247855e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 19:21:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740108103; x=1740712903; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Tav3PNxevwKiDqCQMCZ2Ad3WIauSHdQjU2aO6+32oKU=;
+        b=maf9e9SYbNU4tmmkNDY0pNzgffVJvRG5p/GgN4wAj3GNzjwZBUEPoMtwmKVF8zNO2r
+         aVvMBPLoPnV2uPpQJSpCySUUoGI+l6Ai5y1WyXKdtihKYHEC+jKRD5BQ6DxKNKSpWUuh
+         ASlZ13R/KiKJmxHi3zqdlW3YKYaZ4oGnfWliHRsR/4ujbY59yCdgkFsfnUmh1/2avOKJ
+         dSVfxEuJyUelIW3DcLixIH46xZqdK+dp0wWt0o1ByBpd3puX4AabrVWRTXv7P0z8RPPl
+         2Ia1elAyMU2+p6A6GNJNUCiiBwD/G7sST3haX9yBkVhzjUkcYsGLD4Yr0KetgwmQa4qO
+         Dxzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740108103; x=1740712903;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Tav3PNxevwKiDqCQMCZ2Ad3WIauSHdQjU2aO6+32oKU=;
+        b=J4k0CbpnpxdbiCCoEtZcWXsmIr59Ot0euT97la+ttz3U4ZQVbkhneU70qjfEdAEgEE
+         Io0uxJ4QP8VV25ePvwxFEQp02qJsMMXH2RqziqQdcTltPfrOE5374a+s5jY73NQ9s9+C
+         6/0jNSCxih5TYL8XO8mRleeIPjXJjp4DEjdre+2rSaF2bQFBUXLYvJM68ev78JBA1+Gq
+         IxJb7UfQPjYUDJabel2UyFOGC2CYx4FJLFzTAV/rxg7BRtw+kr1YtsIKSxzHHHtcVUDO
+         z7cXK1bvGqUJwiP6lX15AkfyWLgSxBLvKlCbzc/1O6+GgSPe00k93+Nm182gq4GwO2qp
+         ieUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX2fOXD78e5ZWQ28C9OGuhL8glHAqUZKM5h4WZyNhC9YCkaSUErNPIwPf/YRXmXIMZcsBHlYGVHTlX6C4w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUKa6H50yCrXH/O8No/FM5XctebsCjxB1DXGVz18ZxiAeY9nWz
+	BRFJNBwD6BLSV129y1xX6NcEPgproeU6GBb936LWVUDh1tCXzdFcrh7glGEjglA=
+X-Gm-Gg: ASbGnct2rLm4NJ4mtgkQyWdm37AmzczZEjeM3Zcxz49wyWuKmmPz807PnCQoltWQg6Q
+	Er5M7CsowXZv1DjDBs7XVScNXR6h4j/3aAjyaq8t+SYQaJaLzaGIoNOKfY5gNQr4ZEZ6vKWiqsw
+	ZeMA3iOqsK/2msZSJTYVCUh0teOTjflFdaVF5VQYz2RypbdqpziXSoi8w8shDylpWVsc7iuanE8
+	Wvuvb8EyvqtpQmYaXA4Zw/VIfuK2UQgJGYbvcUuIz5Y8tuyxF7oE72i2HE/mQ9Pfx+uAKGS1QNn
+	0rvf0aNLKv6NJ5H51U92RZyU+wA6cpW2vuOpyAthZu5f
+X-Google-Smtp-Source: AGHT+IFHRKBF41ynLQkyGP19rFquObp3TYcaLCdzafxkPCgt8hie9i36wOi7U4rAgvAVyC9I9BlmXw==
+X-Received: by 2002:a05:600c:524a:b0:439:86c4:a8ec with SMTP id 5b1f17b1804b1-439ae1f1147mr12496995e9.15.1740108102943;
+        Thu, 20 Feb 2025 19:21:42 -0800 (PST)
+Received: from localhost.localdomain ([2.124.154.225])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-439b02f5b38sm3725615e9.24.2025.02.20.19.21.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Feb 2025 19:21:41 -0800 (PST)
+From: Alexey Klimov <alexey.klimov@linaro.org>
+To: srinivas.kandagatla@linaro.org,
+	broonie@kernel.org,
+	lgirdwood@gmail.com
+Cc: krzysztof.kozlowski@linaro.org,
+	steev@kali.org,
+	perex@perex.cz,
+	tiwai@suse.com,
+	jdelvare@suse.com,
+	linux@roeck-us.net,
+	linux-sound@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-hwmon@vger.kernel.org
+Subject: [PATCH v2] ASoC: codecs: wsa883x: Implement temperature reading and hwmon
+Date: Fri, 21 Feb 2025 03:21:41 +0000
+Message-ID: <20250221032141.1206902-1-alexey.klimov@linaro.org>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-DQoNCi0tLS0t6YKu5Lu25Y6f5Lu2LS0tLS0NCuWPkeS7tuS6ujogQmFycnkgU29uZyA8MjFjbmJh
-b0BnbWFpbC5jb20+IA0K5Y+R6YCB5pe26Ze0OiAyMDI15bm0MuaciDE45pelIDQ6NTkNCuaUtuS7
-tuS6ujogeGlhcWlueGluIDx4aWFxaW54aW5AaHVhd2VpLmNvbT4NCuaKhOmAgTogY2hlbnhpYW5n
-NjZAaGlzaWxpY29uLmNvbTsgeWFuZ3lpY29uZyA8eWFuZ3lpY29uZ0BodWF3ZWkuY29tPjsgaGNo
-QGxzdC5kZTsgaW9tbXVAbGlzdHMubGludXguZGV2OyBKb25hdGhhbiBDYW1lcm9uIDxqb25hdGhh
-bi5jYW1lcm9uQGh1YXdlaS5jb20+OyBaZW5ndGFvIChCKSA8cHJpbWUuemVuZ0BoaXNpbGljb24u
-Y29tPjsgZmFuZ2hhbyAoQSkgPGZhbmdoYW8xMUBodWF3ZWkuY29tPjsgbGludXgta2VybmVsQHZn
-ZXIua2VybmVsLm9yZw0K5Li76aKYOiBSZTogW1BBVENIIDIvM10gZG1hLW1hcHBpbmc6IGJlbmNo
-bWFyazogYWRkIHN1cHBvcnQgZm9yIGRtYV9tYXBfc2cNCg0KT24gV2VkLCBGZWIgMTIsIDIwMjUg
-YXQgMzoyN+KAr1BNIFFpbnhpbiBYaWEgPHhpYXFpbnhpbkBodWF3ZWkuY29tPiB3cm90ZToNCj4N
-Cj4gU3VwcG9ydCBmb3IgZG1hIHNjYXR0ZXItZ2F0aGVyIG1hcHBpbmcgYW5kIGlzIGludGVuZGVk
-IGZvciB0ZXN0aW5nIA0KPiBtYXBwaW5nIHBlcmZvcm1hbmNlLiBJdCBhY2hpZXZlcyBieSBpbnRy
-b2R1Y2luZyB0aGUgZG1hX3NnX21hcF9wYXJhbSANCj4gc3RydWN0dXJlIGFuZCByZWxhdGVkIGZ1
-bmN0aW9ucywgd2hpY2ggZW5hYmxlIHRoZSBpbXBsZW1lbnRhdGlvbiBvZiANCj4gc2NhdHRlci1n
-YXRoZXIgbWFwcGluZyBwcmVwYXJhdGlvbiwgbWFwcGluZywgYW5kIHVubWFwcGluZyBvcGVyYXRp
-b25zLg0KPiBBZGRpdGlvbmFsbHksIHRoZSBkbWFfbWFwX2JlbmNobWFya19vcHMgYXJyYXkgaXMg
-dXBkYXRlZCB0byBpbmNsdWRlIA0KPiBvcGVyYXRpb25zIGZvciBzY2F0dGVyLWdhdGhlciBtYXBw
-aW5nLiBUaGlzIGNvbW1pdCBhaW1zIHRvIHByb3ZpZGUgYSANCj4gd2lkZXIgcmFuZ2Ugb2YgbWFw
-cGluZyBwZXJmb3JtYW5jZSB0ZXN0ICB0byBjYXRlciB0byBkaWZmZXJlbnQgc2NlbmFyaW9zLg0K
-DQpUaGlzIGJlbmNobWFyayBpcyBtYWlubHkgZGVzaWduZWQgdG8gZGVidWcgY29udGVudGlvbiBp
-c3N1ZXMsIHN1Y2ggYXMgSU9NTVUgVExCIGZsdXNoZXMgb3IgSU9NTVUgZHJpdmVyIGJvdHRsZW5l
-Y2tzLiBJIGRvbid0IGZ1bGx5IHVuZGVyc3RhbmQgaG93IFNHIG9yIHNpbmdsZSB3aWxsIGltcGFj
-dCB0aGUgZXZhbHVhdGlvbiBvZiB0aGUgSU9NTVUgZHJpdmVyLCBtYWtpbmcgaXQgdW5jbGVhciBp
-ZiB0aGUgYWRkZWQgY29tcGxleGl0eSBpcyBqdXN0aWZpZWQuDQoNCkNhbiB5b3UgYWRkIHNvbWUg
-ZXhwbGFuYXRpb24gb24gd2h5IHNpbmdsZSBtb2RlIGlzIG5vdCBzdWZmaWNpZW50IGZvciBwcm9m
-aWxpbmcgYW5kIGltcHJvdmluZyBJT01NVSBkcml2ZXJzPw0KDQpIZWxsbyBCYXJyeSAhIPCfmIoN
-CkN1cnJlbnRseSwgdGhlIEhpU2lsaWNvbiBhY2NlbGVyYXRvciBzZXJ2aWNlIHVzZXMgdGhlIGRt
-YV9tYXBfc2cgaW50ZXJmYWNlLiBXZSB3YW50IHRvIGV2YWx1YXRlIHRoZSBwZXJmb3JtYW5jZSBv
-ZiB0aGUgZW50aXJlIERNQSBtYXAgcHJvY2Vzcy4gKGluY2x1ZGluZyBub3Qgb25seSB0aGUgaW9t
-bXUsIGJ1dCBhbHNvIHRoZSBtYXAgZnJhbWV3b3JrKS4gSW4gYWRkaXRpb24sIGZvciBzY2F0dGVy
-bGlzdCwgX19pb21tdV9tYXAgaXMgZXhlY3V0ZWQgZm9yIGVhY2ggbmVudC4gVGhpcyBpbmNyZWFz
-ZXMgdGhlIGNvbXBsZXhpdHkgYW5kIHRpbWUgb3ZlcmhlYWQgb2YgbWFwcGluZy4gVGhlIGVmZmVj
-dCBvZiB0aGlzIGZyYWdtZW50YXRpb24gaXMgbm90IG9idmlvdXMgaW4gZG1hX21hcF9zaW5nbGUs
-IHdoaWNoIG9ubHkgaGFuZGxlcyBhIHNpbmdsZSBjb250aWd1b3VzIGJsb2NrIG9mIG1lbW9yeS4N
-Cg0KPg0KPiBTaWduZWQtb2ZmLWJ5OiBRaW54aW4gWGlhIDx4aWFxaW54aW5AaHVhd2VpLmNvbT4N
-Cj4gLS0tDQo+ICBpbmNsdWRlL2xpbnV4L21hcF9iZW5jaG1hcmsuaCB8ICAgMSArDQo+ICBrZXJu
-ZWwvZG1hL21hcF9iZW5jaG1hcmsuYyAgICB8IDEwMiArKysrKysrKysrKysrKysrKysrKysrKysr
-KysrKysrKysrDQo+ICAyIGZpbGVzIGNoYW5nZWQsIDEwMyBpbnNlcnRpb25zKCspDQo+DQo+IGRp
-ZmYgLS1naXQgYS9pbmNsdWRlL2xpbnV4L21hcF9iZW5jaG1hcmsuaCANCj4gYi9pbmNsdWRlL2xp
-bnV4L21hcF9iZW5jaG1hcmsuaCBpbmRleCAwNTRkYjAyYTAzYTcuLmE5YzFhMTA0YmE0ZiANCj4g
-MTAwNjQ0DQo+IC0tLSBhL2luY2x1ZGUvbGludXgvbWFwX2JlbmNobWFyay5oDQo+ICsrKyBiL2lu
-Y2x1ZGUvbGludXgvbWFwX2JlbmNobWFyay5oDQo+IEBAIC0xNyw2ICsxNyw3IEBADQo+DQo+ICBl
-bnVtIHsNCj4gICAgICAgICBETUFfTUFQX1NJTkdMRV9NT0RFLA0KPiArICAgICAgIERNQV9NQVBf
-U0dfTU9ERSwNCj4gICAgICAgICBETUFfTUFQX01PREVfTUFYDQo+ICB9Ow0KPg0KPiBkaWZmIC0t
-Z2l0IGEva2VybmVsL2RtYS9tYXBfYmVuY2htYXJrLmMgYi9rZXJuZWwvZG1hL21hcF9iZW5jaG1h
-cmsuYyANCj4gaW5kZXggZDhlYzBjZTA1OGQ4Li5iNTgyOGVlYjNkYjcgMTAwNjQ0DQo+IC0tLSBh
-L2tlcm5lbC9kbWEvbWFwX2JlbmNobWFyay5jDQo+ICsrKyBiL2tlcm5lbC9kbWEvbWFwX2JlbmNo
-bWFyay5jDQo+IEBAIC0xNyw2ICsxNyw3IEBADQo+ICAjaW5jbHVkZSA8bGludXgvbW9kdWxlLmg+
-DQo+ICAjaW5jbHVkZSA8bGludXgvcGNpLmg+DQo+ICAjaW5jbHVkZSA8bGludXgvcGxhdGZvcm1f
-ZGV2aWNlLmg+DQo+ICsjaW5jbHVkZSA8bGludXgvc2NhdHRlcmxpc3QuaD4NCj4gICNpbmNsdWRl
-IDxsaW51eC9zbGFiLmg+DQo+ICAjaW5jbHVkZSA8bGludXgvdGltZWtlZXBpbmcuaD4NCj4NCj4g
-QEAgLTExMSw4ICsxMTIsMTA5IEBAIHN0YXRpYyBzdHJ1Y3QgbWFwX2JlbmNobWFya19vcHMgZG1h
-X3NpbmdsZV9tYXBfYmVuY2htYXJrX29wcyA9IHsNCj4gICAgICAgICAuZG9fdW5tYXAgPSBkbWFf
-c2luZ2xlX21hcF9iZW5jaG1hcmtfZG9fdW5tYXAsDQo+ICB9Ow0KPg0KPiArc3RydWN0IGRtYV9z
-Z19tYXBfcGFyYW0gew0KPiArICAgICAgIHN0cnVjdCBzZ190YWJsZSBzZ3Q7DQo+ICsgICAgICAg
-c3RydWN0IGRldmljZSAqZGV2Ow0KPiArICAgICAgIHZvaWQgKipidWY7DQo+ICsgICAgICAgdTMy
-IG5wYWdlczsNCj4gKyAgICAgICB1MzIgZG1hX2RpcjsNCj4gK307DQo+ICsNCj4gK3N0YXRpYyB2
-b2lkICpkbWFfc2dfbWFwX2JlbmNobWFya19wcmVwYXJlKHN0cnVjdCBtYXBfYmVuY2htYXJrX2Rh
-dGEgDQo+ICsqbWFwKSB7DQo+ICsgICAgICAgc3RydWN0IHNjYXR0ZXJsaXN0ICpzZzsNCj4gKyAg
-ICAgICBpbnQgaSA9IDA7DQo+ICsNCj4gKyAgICAgICBzdHJ1Y3QgZG1hX3NnX21hcF9wYXJhbSAq
-bXBhcmFtIF9fZnJlZShrZnJlZSkgPSBremFsbG9jKHNpemVvZigqbXBhcmFtKSwgR0ZQX0tFUk5F
-TCk7DQo+ICsgICAgICAgaWYgKCFtcGFyYW0pDQo+ICsgICAgICAgICAgICAgICByZXR1cm4gTlVM
-TDsNCj4gKw0KPiArICAgICAgIG1wYXJhbS0+bnBhZ2VzID0gbWFwLT5icGFyYW0uZ3JhbnVsZTsN
-Cj4gKyAgICAgICBtcGFyYW0tPmRtYV9kaXIgPSBtYXAtPmJwYXJhbS5kbWFfZGlyOw0KPiArICAg
-ICAgIG1wYXJhbS0+ZGV2ID0gbWFwLT5kZXY7DQo+ICsgICAgICAgbXBhcmFtLT5idWYgPSBrbWFs
-bG9jX2FycmF5KG1wYXJhbS0+bnBhZ2VzLCBzaXplb2YoKm1wYXJhbS0+YnVmKSwNCj4gKyAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgR0ZQX0tFUk5FTCk7DQo+ICsgICAgICAgaWYg
-KCFtcGFyYW0tPmJ1ZikNCj4gKyAgICAgICAgICAgICAgIGdvdG8gZXJyMTsNCj4gKw0KPiArICAg
-ICAgIGlmIChzZ19hbGxvY190YWJsZSgmbXBhcmFtLT5zZ3QsIG1wYXJhbS0+bnBhZ2VzLCBHRlBf
-S0VSTkVMKSkNCj4gKyAgICAgICAgICAgICAgIGdvdG8gZXJyMjsNCj4gKw0KPiArICAgICAgIGZv
-cl9lYWNoX3NndGFibGVfc2coJm1wYXJhbS0+c2d0LCBzZywgaSkgew0KPiArICAgICAgICAgICAg
-ICAgbXBhcmFtLT5idWZbaV0gPSAodm9pZCAqKV9fZ2V0X2ZyZWVfcGFnZShHRlBfS0VSTkVMKTsN
-Cj4gKyAgICAgICAgICAgICAgIGlmICghbXBhcmFtLT5idWZbaV0pDQo+ICsgICAgICAgICAgICAg
-ICAgICAgICAgIGdvdG8gZXJyMzsNCj4gKw0KPiArICAgICAgICAgICAgICAgaWYgKG1wYXJhbS0+
-ZG1hX2RpciAhPSBETUFfRlJPTV9ERVZJQ0UpDQo+ICsgICAgICAgICAgICAgICAgICAgICAgIG1l
-bXNldChtcGFyYW0tPmJ1ZltpXSwgMHg2NiwgUEFHRV9TSVpFKTsNCj4gKw0KPiArICAgICAgICAg
-ICAgICAgc2dfc2V0X2J1ZihzZywgbXBhcmFtLT5idWZbaV0sIFBBR0VfU0laRSk7DQo+ICsgICAg
-ICAgfQ0KPiArDQo+ICsgICAgICAgcmV0dXJuX3B0cihtcGFyYW0pOw0KPiArDQo+ICtlcnIzOg0K
-PiArICAgICAgIHdoaWxlIChpLS0gPiAwKQ0KPiArICAgICAgICAgICAgICAgZnJlZV9wYWdlKCh1
-bnNpZ25lZCBsb25nKW1wYXJhbS0+YnVmW2ldKTsNCj4gKw0KPiArICAgICAgIHByX2VycigiZG1h
-X21hcF9zZyBmYWlsZWQgZ2V0IGZyZWUgcGFnZSBvbiAlc1xuIiwgZGV2X25hbWUobXBhcmFtLT5k
-ZXYpKTsNCj4gKyAgICAgICBzZ19mcmVlX3RhYmxlKCZtcGFyYW0tPnNndCk7DQo+ICtlcnIyOg0K
-PiArICAgICAgIHByX2VycigiZG1hX21hcF9zZyBmYWlsZWQgYWxsb2Mgc2cgdGFibGUgb24gJXNc
-biIsIGRldl9uYW1lKG1wYXJhbS0+ZGV2KSk7DQo+ICsgICAgICAga2ZyZWUobXBhcmFtLT5idWYp
-Ow0KPiArZXJyMToNCj4gKyAgICAgICBwcl9lcnIoImRtYV9tYXBfc2cgZmFpbGVkIGFsbG9jIG1w
-YXJhbSBidWYgb24gJXNcbiIsIGRldl9uYW1lKG1wYXJhbS0+ZGV2KSk7DQo+ICsgICAgICAgcmV0
-dXJuIE5VTEw7DQo+ICt9DQo+ICsNCj4gK3N0YXRpYyB2b2lkIGRtYV9zZ19tYXBfYmVuY2htYXJr
-X3VucHJlcGFyZSh2b2lkICphcmcpIHsNCj4gKyAgICAgICBzdHJ1Y3QgZG1hX3NnX21hcF9wYXJh
-bSAqbXBhcmFtID0gYXJnOw0KPiArICAgICAgIGludCBpOw0KPiArDQo+ICsgICAgICAgZm9yIChp
-ID0gMDsgaSA8IG1wYXJhbS0+bnBhZ2VzOyBpKyspDQo+ICsgICAgICAgICAgICAgICBmcmVlX3Bh
-Z2UoKHVuc2lnbmVkIGxvbmcpbXBhcmFtLT5idWZbaV0pOw0KPiArDQo+ICsgICAgICAgc2dfZnJl
-ZV90YWJsZSgmbXBhcmFtLT5zZ3QpOw0KPiArDQo+ICsgICAgICAga2ZyZWUobXBhcmFtLT5idWYp
-Ow0KPiArICAgICAgIGtmcmVlKG1wYXJhbSk7DQo+ICt9DQo+ICsNCj4gK3N0YXRpYyBpbnQgZG1h
-X3NnX21hcF9iZW5jaG1hcmtfZG9fbWFwKHZvaWQgKmFyZykgew0KPiArICAgICAgIHN0cnVjdCBk
-bWFfc2dfbWFwX3BhcmFtICptcGFyYW0gPSBhcmc7DQo+ICsNCj4gKyAgICAgICBpbnQgc2dfbWFw
-cGVkID0gZG1hX21hcF9zZyhtcGFyYW0tPmRldiwgbXBhcmFtLT5zZ3Quc2dsLA0KPiArICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgIG1wYXJhbS0+bnBhZ2VzLCBtcGFyYW0tPmRtYV9k
-aXIpOw0KPiArICAgICAgIGlmICghc2dfbWFwcGVkKSB7DQo+ICsgICAgICAgICAgICAgICBwcl9l
-cnIoImRtYV9tYXBfc2cgZmFpbGVkIG9uICVzXG4iLCBkZXZfbmFtZShtcGFyYW0tPmRldikpOw0K
-PiArICAgICAgICAgICAgICAgcmV0dXJuIC1FTk9NRU07DQo+ICsgICAgICAgfQ0KPiArDQo+ICsg
-ICAgICAgcmV0dXJuIDA7DQo+ICt9DQo+ICsNCj4gK3N0YXRpYyBpbnQgZG1hX3NnX21hcF9iZW5j
-aG1hcmtfZG9fdW5tYXAodm9pZCAqYXJnKSB7DQo+ICsgICAgICAgc3RydWN0IGRtYV9zZ19tYXBf
-cGFyYW0gKm1wYXJhbSA9IGFyZzsNCj4gKw0KPiArICAgICAgIGRtYV91bm1hcF9zZyhtcGFyYW0t
-PmRldiwgbXBhcmFtLT5zZ3Quc2dsLCBtcGFyYW0tPm5wYWdlcywNCj4gKyAgICAgICAgICAgICAg
-ICAgICAgbXBhcmFtLT5kbWFfZGlyKTsNCj4gKw0KPiArICAgICAgIHJldHVybiAwOw0KPiArfQ0K
-PiArDQo+ICtzdGF0aWMgc3RydWN0IG1hcF9iZW5jaG1hcmtfb3BzIGRtYV9zZ19tYXBfYmVuY2ht
-YXJrX29wcyA9IHsNCj4gKyAgICAgICAucHJlcGFyZSA9IGRtYV9zZ19tYXBfYmVuY2htYXJrX3By
-ZXBhcmUsDQo+ICsgICAgICAgLnVucHJlcGFyZSA9IGRtYV9zZ19tYXBfYmVuY2htYXJrX3VucHJl
-cGFyZSwNCj4gKyAgICAgICAuZG9fbWFwID0gZG1hX3NnX21hcF9iZW5jaG1hcmtfZG9fbWFwLA0K
-PiArICAgICAgIC5kb191bm1hcCA9IGRtYV9zZ19tYXBfYmVuY2htYXJrX2RvX3VubWFwLCB9Ow0K
-PiArDQo+ICBzdGF0aWMgc3RydWN0IG1hcF9iZW5jaG1hcmtfb3BzICpkbWFfbWFwX2JlbmNobWFy
-a19vcHNbRE1BX01BUF9NT0RFX01BWF0gPSB7DQo+ICAgICAgICAgW0RNQV9NQVBfU0lOR0xFX01P
-REVdID0gJmRtYV9zaW5nbGVfbWFwX2JlbmNobWFya19vcHMsDQo+ICsgICAgICAgW0RNQV9NQVBf
-U0dfTU9ERV0gPSAmZG1hX3NnX21hcF9iZW5jaG1hcmtfb3BzLA0KPiAgfTsNCj4NCj4gIHN0YXRp
-YyBpbnQgbWFwX2JlbmNobWFya190aHJlYWQodm9pZCAqZGF0YSkNCj4gLS0NCj4gMi4zMy4wDQo+
-DQoNClRoYW5rcw0KQmFycnkNCg==
+Read temperature of the amplifier and expose it via hwmon interface, which
+will be later used during calibration of speaker protection algorithms.
+The method is the same as for wsa884x and therefore this is based on
+Krzysztof Kozlowski's approach implemented in commit 6b99dc62d940 ("ASoC:
+codecs: wsa884x: Implement temperature reading and hwmon").
+
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: Steev Klimaszewski <steev@kali.org>
+Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
+---
+
+Changes in v2:
+- add temperature conversion to millidegrees of Celcius
+  when amplifier is on to report correct data to hwmon;
+- minor coding style fixes to make checkpatch --strict happy;
+- correct typo (reference to wsa884x in the comment), small rewording.
+
+ sound/soc/codecs/wsa883x.c | 194 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 194 insertions(+)
+
+diff --git a/sound/soc/codecs/wsa883x.c b/sound/soc/codecs/wsa883x.c
+index 47da5674d7c9..a5a6cb90bb43 100644
+--- a/sound/soc/codecs/wsa883x.c
++++ b/sound/soc/codecs/wsa883x.c
+@@ -6,6 +6,7 @@
+ #include <linux/bitops.h>
+ #include <linux/device.h>
+ #include <linux/gpio/consumer.h>
++#include <linux/hwmon.h>
+ #include <linux/init.h>
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+@@ -156,8 +157,28 @@
+ #define WSA883X_PA_FSM_ERR_COND         (WSA883X_DIG_CTRL_BASE + 0x0014)
+ #define WSA883X_PA_FSM_MSK              (WSA883X_DIG_CTRL_BASE + 0x0015)
+ #define WSA883X_PA_FSM_BYP              (WSA883X_DIG_CTRL_BASE + 0x0016)
++#define WSA883X_PA_FSM_BYP_DC_CAL_EN_MASK		0x01
++#define WSA883X_PA_FSM_BYP_DC_CAL_EN_SHIFT		0
++#define WSA883X_PA_FSM_BYP_CLK_WD_EN_MASK		0x02
++#define WSA883X_PA_FSM_BYP_CLK_WD_EN_SHIFT		1
++#define WSA883X_PA_FSM_BYP_BG_EN_MASK			0x04
++#define WSA883X_PA_FSM_BYP_BG_EN_SHIFT			2
++#define WSA883X_PA_FSM_BYP_BOOST_EN_MASK		0x08
++#define WSA883X_PA_FSM_BYP_BOOST_EN_SHIFT		3
++#define WSA883X_PA_FSM_BYP_PA_EN_MASK			0x10
++#define WSA883X_PA_FSM_BYP_PA_EN_SHIFT			4
++#define WSA883X_PA_FSM_BYP_D_UNMUTE_MASK		0x20
++#define WSA883X_PA_FSM_BYP_D_UNMUTE_SHIFT		5
++#define WSA883X_PA_FSM_BYP_SPKR_PROT_EN_MASK		0x40
++#define WSA883X_PA_FSM_BYP_SPKR_PROT_EN_SHIFT		6
++#define WSA883X_PA_FSM_BYP_TSADC_EN_MASK		0x80
++#define WSA883X_PA_FSM_BYP_TSADC_EN_SHIFT		7
+ #define WSA883X_PA_FSM_DBG              (WSA883X_DIG_CTRL_BASE + 0x0017)
+ #define WSA883X_TADC_VALUE_CTL          (WSA883X_DIG_CTRL_BASE + 0x0020)
++#define WSA883X_TADC_VALUE_CTL_TEMP_VALUE_RD_EN_MASK	0x01
++#define WSA883X_TADC_VALUE_CTL_TEMP_VALUE_RD_EN_SHIFT	0
++#define WSA883X_TADC_VALUE_CTL_VBAT_VALUE_RD_EN_MASK	0x02
++#define WSA883X_TADC_VALUE_CTL_VBAT_VALUE_RD_EN_SHIFT	1
+ #define WSA883X_TEMP_DETECT_CTL         (WSA883X_DIG_CTRL_BASE + 0x0021)
+ #define WSA883X_TEMP_MSB                (WSA883X_DIG_CTRL_BASE + 0x0022)
+ #define WSA883X_TEMP_LSB                (WSA883X_DIG_CTRL_BASE + 0x0023)
+@@ -427,6 +448,17 @@
+ 		SNDRV_PCM_FMTBIT_S24_LE |\
+ 		SNDRV_PCM_FMTBIT_S24_3LE | SNDRV_PCM_FMTBIT_S32_LE)
+ 
++/* Two-point trimming for temperature calibration */
++#define WSA883X_T1_TEMP			-10L
++#define WSA883X_T2_TEMP			150L
++
++/*
++ * Device will report senseless data in many cases, so discard any measurements
++ * outside of valid range.
++ */
++#define WSA883X_LOW_TEMP_THRESHOLD	5
++#define WSA883X_HIGH_TEMP_THRESHOLD	45
++
+ struct wsa883x_priv {
+ 	struct regmap *regmap;
+ 	struct device *dev;
+@@ -441,6 +473,13 @@ struct wsa883x_priv {
+ 	int active_ports;
+ 	int dev_mode;
+ 	int comp_offset;
++	/*
++	 * Protects temperature reading code (related to speaker protection) and
++	 * fields: temperature and pa_on.
++	 */
++	struct mutex sp_lock;
++	unsigned int temperature;
++	bool pa_on;
+ };
+ 
+ enum {
+@@ -1186,6 +1225,10 @@ static int wsa883x_spkr_event(struct snd_soc_dapm_widget *w,
+ 
+ 	switch (event) {
+ 	case SND_SOC_DAPM_POST_PMU:
++		mutex_lock(&wsa883x->sp_lock);
++		wsa883x->pa_on = true;
++		mutex_unlock(&wsa883x->sp_lock);
++
+ 		switch (wsa883x->dev_mode) {
+ 		case RECEIVER:
+ 			snd_soc_component_write_field(component, WSA883X_CDC_PATH_MODE,
+@@ -1235,6 +1278,9 @@ static int wsa883x_spkr_event(struct snd_soc_dapm_widget *w,
+ 					      WSA883X_GLOBAL_PA_EN_MASK, 0);
+ 		snd_soc_component_write_field(component, WSA883X_PDM_WD_CTL,
+ 					      WSA883X_PDM_EN_MASK, 0);
++		mutex_lock(&wsa883x->sp_lock);
++		wsa883x->pa_on = false;
++		mutex_unlock(&wsa883x->sp_lock);
+ 		break;
+ 	}
+ 	return 0;
+@@ -1367,6 +1413,140 @@ static struct snd_soc_dai_driver wsa883x_dais[] = {
+ 	},
+ };
+ 
++static int wsa883x_get_temp(struct wsa883x_priv *wsa883x, long *temp)
++{
++	unsigned int d1_msb = 0, d1_lsb = 0, d2_msb = 0, d2_lsb = 0;
++	unsigned int dmeas_msb = 0, dmeas_lsb = 0;
++	int d1, d2, dmeas;
++	unsigned int mask;
++	int ret, range;
++	long val;
++
++	guard(mutex)(&wsa883x->sp_lock);
++
++	if (wsa883x->pa_on) {
++		/*
++		 * Reading temperature is possible only when Power Amplifier is
++		 * off. Report last cached data.
++		 */
++		*temp = wsa883x->temperature * 1000;
++		return 0;
++	}
++
++	ret = pm_runtime_resume_and_get(wsa883x->dev);
++	if (ret < 0)
++		return ret;
++
++	mask = WSA883X_PA_FSM_BYP_DC_CAL_EN_MASK |
++	       WSA883X_PA_FSM_BYP_CLK_WD_EN_MASK |
++	       WSA883X_PA_FSM_BYP_BG_EN_MASK |
++	       WSA883X_PA_FSM_BYP_D_UNMUTE_MASK |
++	       WSA883X_PA_FSM_BYP_SPKR_PROT_EN_MASK |
++	       WSA883X_PA_FSM_BYP_TSADC_EN_MASK;
++
++	/*
++	 * Here and further do not care about read or update failures.
++	 * For example, before turning the amplifier on for the first
++	 * time, reading WSA883X_TEMP_DIN_MSB will always return 0.
++	 * Instead, check if returned value is within reasonable
++	 * thresholds.
++	 */
++	regmap_update_bits(wsa883x->regmap, WSA883X_PA_FSM_BYP, mask, mask);
++
++	regmap_update_bits(wsa883x->regmap, WSA883X_TADC_VALUE_CTL,
++			   WSA883X_TADC_VALUE_CTL_TEMP_VALUE_RD_EN_MASK,
++			   FIELD_PREP(WSA883X_TADC_VALUE_CTL_TEMP_VALUE_RD_EN_MASK, 0x0));
++
++	regmap_read(wsa883x->regmap, WSA883X_TEMP_MSB, &dmeas_msb);
++	regmap_read(wsa883x->regmap, WSA883X_TEMP_LSB, &dmeas_lsb);
++
++	regmap_update_bits(wsa883x->regmap, WSA883X_TADC_VALUE_CTL,
++			   WSA883X_TADC_VALUE_CTL_TEMP_VALUE_RD_EN_MASK,
++			   FIELD_PREP(WSA883X_TADC_VALUE_CTL_TEMP_VALUE_RD_EN_MASK, 0x1));
++
++	regmap_read(wsa883x->regmap, WSA883X_OTP_REG_1, &d1_msb);
++	regmap_read(wsa883x->regmap, WSA883X_OTP_REG_2, &d1_lsb);
++	regmap_read(wsa883x->regmap, WSA883X_OTP_REG_3, &d2_msb);
++	regmap_read(wsa883x->regmap, WSA883X_OTP_REG_4, &d2_lsb);
++
++	regmap_update_bits(wsa883x->regmap, WSA883X_PA_FSM_BYP, mask, 0x0);
++
++	dmeas = (((dmeas_msb & 0xff) << 0x8) | (dmeas_lsb & 0xff)) >> 0x6;
++	d1 = (((d1_msb & 0xff) << 0x8) | (d1_lsb & 0xff)) >> 0x6;
++	d2 = (((d2_msb & 0xff) << 0x8) | (d2_lsb & 0xff)) >> 0x6;
++
++	if (d1 == d2) {
++		/* Incorrect data in OTP? */
++		ret = -EINVAL;
++		goto out;
++	}
++
++	val = WSA883X_T1_TEMP + (((dmeas - d1) * (WSA883X_T2_TEMP - WSA883X_T1_TEMP)) / (d2 - d1));
++	range = WSA883X_HIGH_TEMP_THRESHOLD - WSA883X_LOW_TEMP_THRESHOLD;
++	if (in_range(val, WSA883X_LOW_TEMP_THRESHOLD, range)) {
++		wsa883x->temperature = val;
++		*temp = val * 1000;
++		ret = 0;
++	} else {
++		ret = -EAGAIN;
++	}
++out:
++	pm_runtime_mark_last_busy(wsa883x->dev);
++	pm_runtime_put_autosuspend(wsa883x->dev);
++
++	return ret;
++}
++
++static umode_t wsa883x_hwmon_is_visible(const void *data,
++					enum hwmon_sensor_types type, u32 attr,
++					int channel)
++{
++	if (type != hwmon_temp)
++		return 0;
++
++	switch (attr) {
++	case hwmon_temp_input:
++		return 0444;
++	default:
++		break;
++	}
++
++	return 0;
++}
++
++static int wsa883x_hwmon_read(struct device *dev,
++			      enum hwmon_sensor_types type,
++			      u32 attr, int channel, long *temp)
++{
++	int ret;
++
++	switch (attr) {
++	case hwmon_temp_input:
++		ret = wsa883x_get_temp(dev_get_drvdata(dev), temp);
++		break;
++	default:
++		ret = -EOPNOTSUPP;
++		break;
++	}
++
++	return ret;
++}
++
++static const struct hwmon_channel_info *const wsa883x_hwmon_info[] = {
++	HWMON_CHANNEL_INFO(temp, HWMON_T_INPUT),
++	NULL
++};
++
++static const struct hwmon_ops wsa883x_hwmon_ops = {
++	.is_visible	= wsa883x_hwmon_is_visible,
++	.read		= wsa883x_hwmon_read,
++};
++
++static const struct hwmon_chip_info wsa883x_hwmon_chip_info = {
++	.ops	= &wsa883x_hwmon_ops,
++	.info	= wsa883x_hwmon_info,
++};
++
+ static int wsa883x_probe(struct sdw_slave *pdev,
+ 			 const struct sdw_device_id *id)
+ {
+@@ -1402,6 +1582,7 @@ static int wsa883x_probe(struct sdw_slave *pdev,
+ 	wsa883x->sconfig.bps = 1;
+ 	wsa883x->sconfig.direction = SDW_DATA_DIR_RX;
+ 	wsa883x->sconfig.type = SDW_STREAM_PDM;
++	mutex_init(&wsa883x->sp_lock);
+ 
+ 	/**
+ 	 * Port map index starts with 0, however the data port for this codec
+@@ -1424,6 +1605,19 @@ static int wsa883x_probe(struct sdw_slave *pdev,
+ 				    "regmap_init failed\n");
+ 		goto err;
+ 	}
++
++	if (IS_REACHABLE(CONFIG_HWMON)) {
++		struct device *hwmon;
++
++		hwmon = devm_hwmon_device_register_with_info(dev, "wsa883x",
++							     wsa883x,
++							     &wsa883x_hwmon_chip_info,
++							     NULL);
++		if (IS_ERR(hwmon))
++			return dev_err_probe(dev, PTR_ERR(hwmon),
++					     "Failed to register hwmon sensor\n");
++	}
++
+ 	pm_runtime_set_autosuspend_delay(dev, 3000);
+ 	pm_runtime_use_autosuspend(dev);
+ 	pm_runtime_mark_last_busy(dev);
+-- 
+2.47.2
+
 
