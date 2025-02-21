@@ -1,103 +1,222 @@
-Return-Path: <linux-kernel+bounces-525598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2902FA3F1E4
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 11:24:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 55D36A3F1EB
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 11:24:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A16B16AF78
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:23:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89BA916C801
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:24:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 244DA204F7C;
-	Fri, 21 Feb 2025 10:23:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DBDD205AA9;
+	Fri, 21 Feb 2025 10:24:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="WtMABoZr"
-Received: from xry111.site (xry111.site [89.208.246.23])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KfwY+BaF"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D542202F7B;
-	Fri, 21 Feb 2025 10:23:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 265C22046A2;
+	Fri, 21 Feb 2025 10:24:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740133396; cv=none; b=gWWpvUYQKfDW+Klrj0c4xZYN+kY5UgE5zGm5l3m3oYob3/oCD8pV8QAyF4UAGMuYxuILavi5KRul/LwUrFqRaJ9Q43JogTqvLB8UBj3vPFlQjQ3nBQtsf41eCWNONwdiyxsAu9QRDxDlO5iObP1L2xqt5JpFY+UqM2UbEGGUPsA=
+	t=1740133467; cv=none; b=S+zYpB/dgGQvZ1QOOFrLvM+VBklyns7ASW7QAZOZ6y6g2UttFT4R+8Jz2vlCbsLxz7l/mr2hHsOQYfpN+I3CJVafCDXMGgeV+nKxdH4+DjsSrZoqYHCKfgXoYGF8lXR6iyYXYEwMtGX9RB1fW3jGmstxchHrAqGLfg7c94tcK4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740133396; c=relaxed/simple;
-	bh=FAyrGqPrf8Jf0k72WyiBqChIuho3jLqkjBUtjpkLbso=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=re1XtO9n3qU0LoMFKDQlKxXNE3b/caGmOcKNtMyeLax9SZ4oxTF/FsNM4nspOAyKG+EpPdS/2jeoDZlGUtUBYzKYkdcglFYC4KcIfNqIgkluz5ThSgoYI7VUpUOpas1u/trAiQNxzoDmyQsaAuG69FTpfSmVdVP2zurOFUtDPmk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=WtMABoZr; arc=none smtp.client-ip=89.208.246.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xry111.site;
-	s=default; t=1740133390;
-	bh=UNb8a2gN3+1bqIY2UlUBT79h0w78rJrfN5H29nStXmA=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=WtMABoZrJ/YKP84/osWAcdY5B60fkN/JuxWW8xzNbjVy2h4F0XQ0zhJSSJ9Ku7A+K
-	 6uan4Fj0VBrfWJYj4K/a9k5ayZKfjgHB9cE8hXP+mwZsup3bGuoNAtm2jOZ5/Rsb8y
-	 6N+i35/XTLe1qKDunHFEB7/NIqsLRmY8V1h1WsYE=
-Received: from [127.0.0.1] (unknown [IPv6:2001:470:683e::1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature ECDSA (secp384r1))
-	(Client did not present a certificate)
-	(Authenticated sender: xry111@xry111.site)
-	by xry111.site (Postfix) with ESMTPSA id 651B91A3F60;
-	Fri, 21 Feb 2025 05:23:08 -0500 (EST)
-Message-ID: <f0c15994e7a79f6cd0c82930c0dfebb50458c941.camel@xry111.site>
-Subject: Re: [PATCH] LoongArch: vDSO: Remove --hash-style=sysv
-From: Xi Ruoyao <xry111@xry111.site>
-To: Huacai Chen <chenhuacai@kernel.org>, Guo Ren <guoren@kernel.org>, Palmer
- Dabbelt <palmer@dabbelt.com>, Fangrui Song <i@maskray.me>
-Cc: WANG Xuerui <kernel@xen0n.name>, Masahiro Yamada <masahiroy@kernel.org>,
-  Tiezhu Yang <yangtiezhu@loongson.cn>, "Jason A. Donenfeld"
- <Jason@zx2c4.com>, loongarch@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	linux-csky@vger.kernel.org, linux-arch@vger.kernel.org
-Date: Fri, 21 Feb 2025 18:23:07 +0800
-In-Reply-To: <CAAhV-H5_bKtO2mAFmfcZvD0pn9RhTA+UPjv7K574uPKxZbxX=g@mail.gmail.com>
-References: <20250221092523.85632-1-xry111@xry111.site>
-	 <CAAhV-H5_bKtO2mAFmfcZvD0pn9RhTA+UPjv7K574uPKxZbxX=g@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 
+	s=arc-20240116; t=1740133467; c=relaxed/simple;
+	bh=Eu+HjUPlHpd1kdRtWMGR+4QSBzjUTWtnpfAPcG0GlQ4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XrMdLQmjPSLdcw/8T3eMQb7i6g5S2KKyzCDRFbaGAqoIsdYHsmX3KOwBikNCLLk0k4quVYRnMwuCkm/69iYJFHio4xGJn/9stTiIc/oKjss62ou/HZQsmSLlNoMBJ6Sa1Udym8rqE5HORUWkZLrVohiLqbFtNK/xIn+VVNXtlFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KfwY+BaF; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2212a930001so51271245ad.0;
+        Fri, 21 Feb 2025 02:24:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740133465; x=1740738265; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8Ew/m0Tesk9Nn8WJobtK7q6jqPTmqqXgIVl6zfztn/w=;
+        b=KfwY+BaFFJtz9Mw4K5XbCtKI/2kPY4b0/2Z7Z+j86WI9cl8C06FD2fgBCTkXiHFSsj
+         hf0xn812GOowv9ZSGb0nhoPEDwMxvOljG4Boa0/pdczLdnc1mTAHJnwhaxKGbWFO3hel
+         z+xpclU5xsVy+ZLHyx5c0U9y2fISHV0tP0z6FrtNjLXB/7SfLqCcyphHtOkDkCEgk0UA
+         yprBYXialNPKmNzlU5WpWsoJCa8b4Tdm3235UYcUHhmvmguKM9SQWwUX655c2A9+MUwv
+         2+56vv1+E8RhttopOTcNBUSCa/22BF4nyeQhS41bwH7snnd7CTWKKaRbFM1IFo6ROWEw
+         dnbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740133465; x=1740738265;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8Ew/m0Tesk9Nn8WJobtK7q6jqPTmqqXgIVl6zfztn/w=;
+        b=C8EHZyj8zCjdsUhTR3z0W+e1n5WEK4dzHVhkyaxj2AEwk7i85HhvncPmawwxFvmZU3
+         2LfIFkgbf5oW29H5N7nsmOviq5xrTVs/9IfTtEIkmHd7ZbFbmW6ZvjhbPn9Zi83N9W4O
+         /4NvfOYjyI6Bmcfo2QkpYprYUcMqHiwN8ZtFC4UG2jppIQijw8lx3UcktYTHgfl7RnV+
+         AWy34HIT3HB1UqrfQxTkevLka7SyIlBoDQ6UiPJ4GANBCK2OaXNk5z8N/nxkKu1b6U1I
+         NcNW2lVL96r5i67O54qgs+CQTSRWmH+fGCyr+uIxNHWtqYig8Kx8rpqxuHxMUuuH+odA
+         STEA==
+X-Forwarded-Encrypted: i=1; AJvYcCUHNSW1I+frYw6sZTkAbnAA+0OhXHKDsGlqGJpBZ8Z9vpEoayZ+CcZ+40u8l/aGssXEtdJTkky44YMNTBlp@vger.kernel.org, AJvYcCX3iyIcXdF2LG3XMQYuvtXDv2Aa13bhEDERKal4gDAzwIKq1guUZDvLLtLpQBs0shTnarA=@vger.kernel.org, AJvYcCXYMMP+MXBEwiCAyi+r0CvHw1Uv34phEji3l4+zGH2yNaGo7QzHiVOelrV097tDKaT0NnhTluVQ@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2mZNlusrJS7639qrId5olmE3oupnQIRWwL8GZxhnytFfDkGZR
+	57aLNU3eY0IkIobpaG8qPpHdumpIsHxtPHalDin9o15Qlo9v6iZB
+X-Gm-Gg: ASbGncuBojAM7XgzdLcSaTMB/9y5QVfLWRGwqB72Puf2qXPxGXiCujRjPNEJLnwZKEI
+	M80BBeJ9RE5j6SbP/+x04/RQuFDn1fKvPPRWs0sK2ChBkeabUNRL+yLpv7Vdr+TqQMOuPSib5Md
+	EpeqDSLSnLX6O3RYxJAI4Oj7Nr7ydsXR+E90oBeMS5JRd4lym7wlEtzcMFJ7nonaXa4guyW6oQi
+	msNIQ9+x2K/BfV2NMWs+aZM8mLfsuCKzezU0SXtD2f9L0uNc0vyIeVVaSinhKI7CRSo900SeIHi
+	9+F9jUY8pHFzHa9OHRDXnHM=
+X-Google-Smtp-Source: AGHT+IGJZmPsP1AQp35fmvwVzaW4gHUPKNfzSI/RTvC+piEPapIcYtvOiFrJzWkqFVimOfGDgcDxpA==
+X-Received: by 2002:a05:6a21:7888:b0:1ee:e669:ef88 with SMTP id adf61e73a8af0-1eef52da075mr4126395637.16.1740133465235;
+        Fri, 21 Feb 2025 02:24:25 -0800 (PST)
+Received: from localhost ([129.146.253.192])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73250dd701bsm13961074b3a.131.2025.02.21.02.24.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Feb 2025 02:24:24 -0800 (PST)
+Date: Fri, 21 Feb 2025 18:24:09 +0800
+From: Furong Xu <0x1207@gmail.com>
+To: Vladimir Oltean <vladimir.oltean@nxp.com>
+Cc: Faizal Rahim <faizal.abdul.rahim@linux.intel.com>, Tony Nguyen
+ <anthony.l.nguyen@intel.com>, Przemek Kitszel
+ <przemyslaw.kitszel@intel.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David
+ S . Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Maxime
+ Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue
+ <alexandre.torgue@foss.st.com>, Simon Horman <horms@kernel.org>, Russell
+ King <linux@armlinux.org.uk>, Alexei Starovoitov <ast@kernel.org>, Daniel
+ Borkmann <daniel@iogearbox.net>, Jesper Dangaard Brouer <hawk@kernel.org>,
+ John Fastabend <john.fastabend@gmail.com>, Russell King
+ <rmk+kernel@armlinux.org.uk>, Serge Semin <fancer.lancer@gmail.com>,
+ Xiaolei Wang <xiaolei.wang@windriver.com>, Suraj Jaiswal
+ <quic_jsuraj@quicinc.com>, Kory Maincent <kory.maincent@bootlin.com>, Gal
+ Pressman <gal@nvidia.com>, Jesper Nilsson <jesper.nilsson@axis.com>, Andrew
+ Halaney <ahalaney@redhat.com>, Choong Yong Liang
+ <yong.liang.choong@linux.intel.com>, Kunihiko Hayashi
+ <hayashi.kunihiko@socionext.com>, Vinicius Costa Gomes
+ <vinicius.gomes@intel.com>, intel-wired-lan@lists.osuosl.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, bpf@vger.kernel.org
+Subject: Re: [PATCH iwl-next v5 1/9] net: ethtool: mm: extract stmmac
+ verification logic into common library
+Message-ID: <20250221182409.00006fd1@gmail.com>
+In-Reply-To: <20250221095651.npjpkoy2y6nehusy@skbuf>
+References: <20250220025349.3007793-1-faizal.abdul.rahim@linux.intel.com>
+	<20250220025349.3007793-2-faizal.abdul.rahim@linux.intel.com>
+	<20250221174249.000000cc@gmail.com>
+	<20250221095651.npjpkoy2y6nehusy@skbuf>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, 2025-02-21 at 17:47 +0800, Huacai Chen wrote:
-> Hi, Ruoyao,
->=20
-> On Fri, Feb 21, 2025 at 5:25=E2=80=AFPM Xi Ruoyao <xry111@xry111.site> wr=
-ote:
-> >=20
-> > glibc added support for .gnu.hash in 2006 and .hash has been obsoleted
-> > far before the first LoongArch CPU was taped.=C2=A0 Using
-> > --hash-style=3Dsysv might imply unaddressed issues and confuse readers.
-> >=20
-> > In the past we really had an unaddressed issue: the vdso selftests did
-> > not know how to process .gnu.hash.=C2=A0 But it has been addressed by c=
-ommit
-> > e0746bde6f82 ("selftests/vDSO: support DT_GNU_HASH") now.
-> >=20
-> > Just drop the option and rely on the linker default, which is likely
-> > "both" (AOSC) or "gnu" (Arch, Debian, Gentoo, LFS) on all LoongArch
-> > distros.
-> What about changing to "--hash-style=3Dboth" as most architectures do?
+On Fri, 21 Feb 2025 11:56:51 +0200, Vladimir Oltean <vladimir.oltean@nxp.com> wrote:
 
-IMO we are more close to ARM64 for the aspect that there are no libc
-(glibc or musl) releases lacking GNU hash support, so I prefer the ARM64
-way.
+> On Fri, Feb 21, 2025 at 05:42:49PM +0800, Furong Xu wrote:
+> > > +void ethtool_mmsv_link_state_handle(struct ethtool_mmsv *mmsv, bool up)
+> > > +{
+> > > +	unsigned long flags;
+> > > +
+> > > +	ethtool_mmsv_stop(mmsv);
+> > > +
+> > > +	spin_lock_irqsave(&mmsv->lock, flags);
+> > > +
+> > > +	if (up && mmsv->pmac_enabled) {
+> > > +		/* VERIFY process requires pMAC enabled when NIC comes up */
+> > > +		ethtool_mmsv_configure_pmac(mmsv, true);
+> > > +
+> > > +		/* New link => maybe new partner => new verification process */
+> > > +		ethtool_mmsv_apply(mmsv);
+> > > +	} else {
+> > > +		mmsv->status = ETHTOOL_MM_VERIFY_STATUS_INITIAL;  
+> > 
+> > Tested this patch on my side, everything works well, but the verify-status
+> > is a little weird:
+> > 
+> > # kernel booted, check initial states:
+> > ethtool --include-statistics --json --show-mm eth1
+> > [ {
+> >         "ifname": "eth1",
+> >         "pmac-enabled": false,
+> >         "tx-enabled": false,
+> >         "tx-active": false,
+> >         "tx-min-frag-size": 60,
+> >         "rx-min-frag-size": 60,
+> >         "verify-enabled": false,
+> >         "verify-time": 128,
+> >         "max-verify-time": 128,
+> >         "verify-status": "INITIAL",
+> >         "statistics": {
+> >             "MACMergeFrameAssErrorCount": 0,
+> >             "MACMergeFrameSmdErrorCount": 0,
+> >             "MACMergeFrameAssOkCount": 0,
+> >             "MACMergeFragCountRx": 0,
+> >             "MACMergeFragCountTx": 0,
+> >             "MACMergeHoldCount": 0
+> >         }
+> >     } ]
+> > 
+> > # Enable pMAC by: ethtool --set-mm eth1 pmac-enabled on
+> > ethtool --include-statistics --json --show-mm eth1
+> > [ {
+> >         "ifname": "eth1",
+> >         "pmac-enabled": true,
+> >         "tx-enabled": false,
+> >         "tx-active": false,
+> >         "tx-min-frag-size": 60,
+> >         "rx-min-frag-size": 60,
+> >         "verify-enabled": false,
+> >         "verify-time": 128,
+> >         "max-verify-time": 128,
+> >         "verify-status": "DISABLED",
+> >         "statistics": {
+> >             "MACMergeFrameAssErrorCount": 0,
+> >             "MACMergeFrameSmdErrorCount": 0,
+> >             "MACMergeFrameAssOkCount": 0,
+> >             "MACMergeFragCountRx": 0,
+> >             "MACMergeFragCountTx": 0,
+> >             "MACMergeHoldCount": 0
+> >         }
+> >     } ]
+> > 
+> > # Disable pMAC by: ethtool --set-mm eth1 pmac-enabled off
+> > ethtool --include-statistics --json --show-mm eth1
+> > [ {
+> >         "ifname": "eth1",
+> >         "pmac-enabled": true,
+> >         "tx-enabled": false,
+> >         "tx-active": false,
+> >         "tx-min-frag-size": 60,
+> >         "rx-min-frag-size": 60,
+> >         "verify-enabled": false,
+> >         "verify-time": 128,
+> >         "max-verify-time": 128,
+> >         "verify-status": "DISABLED",
+> >         "statistics": {
+> >             "MACMergeFrameAssErrorCount": 0,
+> >             "MACMergeFrameSmdErrorCount": 0,
+> >             "MACMergeFrameAssOkCount": 0,
+> >             "MACMergeFragCountRx": 0,
+> >             "MACMergeFragCountTx": 0,
+> >             "MACMergeHoldCount": 0
+> >         }
+> >     } ]
+> > 
+> > verify-status always normal on other cases.  
+> 
+> Thanks for testing and for reporting this inconsistency.
+> 
+> > @Vladimir, maybe we shouldn't update mmsv->status in ethtool_mmsv_link_state_handle()?
+> > Or, update mmsv->status like below:
+> > mmsv->status = mmsv->pmac_enabled ?
+> > 		ETHTOOL_MM_VERIFY_STATUS_INITIAL :
+> > 		ETHTOOL_MM_VERIFY_STATUS_DISABLED;  
+> 
+> You mean mmsv->status = mmsv->verify_enabled ? ETHTOOL_MM_VERIFY_STATUS_INITIAL :
+>                         ~~~~~~~~~~~~~~~~~~~~   ETHTOOL_MM_VERIFY_STATUS_DISABLED?
 
-Maybe this should be changed for some of other architectures (RISC-V and
-C-SKY?) as well because I guess the only reason they used "both" was
-"hey, without this the self tests don't work on Debian" but this is
-resolved now.  Adding a few recipients and Cc for discussion.
-
---=20
-Xi Ruoyao <xry111@xry111.site>
-School of Aerospace Science and Technology, Xidian University
+Your fix is better when link is up/down, so I vote verify_enabled.
 
