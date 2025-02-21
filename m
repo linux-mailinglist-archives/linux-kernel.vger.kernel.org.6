@@ -1,153 +1,128 @@
-Return-Path: <linux-kernel+bounces-525349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67BD1A3EEDF
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:40:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91E8AA3EEE0
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:41:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 150EE702231
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 08:40:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58AFA19C494A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 08:41:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6096820102C;
-	Fri, 21 Feb 2025 08:40:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4C9F201253;
+	Fri, 21 Feb 2025 08:40:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PeFQlmVp"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FYVfyiFm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 442BF1FE470
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 08:40:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4923D1FE470;
+	Fri, 21 Feb 2025 08:40:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740127246; cv=none; b=CIZZ/qLEAI2X8qVw52Nj8vZzRDxW5PZIdJ+9CN8bA/nOXFIEABhOR7Kg3qVz5SjQPcUiy7knWVxcG+gqsfPukeBwpQ7tn6uDYwRNHa+HXsB9M+xOjvC92EDAIN0UaWilv0BB8UPXpv8q4xz5NZnjkuWqC7ZDHmxDK4TPH+6B9pM=
+	t=1740127254; cv=none; b=B2ibBlaI/Wc8K2vfvl/7oIpQriuBtjB4kktN9xKjMgSNlLuV2WDl+G3pa20LBuXh+OyXRG+2R1aacPMetwWvkuZfeFREE++iqGi1la0vW/EDehaJgaPCUST6pvk+w2rt0GvLHBJsxuxiiSGDiWmgDIBEnmH3r0O7+gqePG38wqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740127246; c=relaxed/simple;
-	bh=6c1PzwN4NRYtcuftWBGGwWofWdbrcsG9TaB1kFxsjk8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=JxBmltS2jm8XV6H78y4DCjMwDolOdZ2Brv94gP5CnYs61vd56Aq1KFQA909J8Pq7STyxUf1nQ5k2/JwLe4S64V1HDEPD3lJ/j1VbjdkYjR4cLZXF8Buu0pT/zqxpOoqbHYkWEY2s8pMsILcyTGIhNdf8RBWPnUA+0XCOjmjGM+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PeFQlmVp; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740127245; x=1771663245;
-  h=message-id:date:mime-version:subject:to:references:from:
-   in-reply-to:content-transfer-encoding;
-  bh=6c1PzwN4NRYtcuftWBGGwWofWdbrcsG9TaB1kFxsjk8=;
-  b=PeFQlmVpt8603c17hjJBHQ6/PAidXxZmhQCXIE9UFOw4NfbMFwVqMVH/
-   CssyqozI9Slq67nvJ/rPXDzMiJTaSkAqjNLZ8JO+QjWyU+ndj21WiiPSd
-   23DG1luqq6XGOdVUCXFF03PQbma9Dm2JmC6Y9ROBgs3O8/VfKlE5Mkw5j
-   b9J2Ft3EbKsIzCD8rPYNpknmY18bYiBSEEGLe37wGGxrVqVGNddl4JJq7
-   OdY7wsnGYHgJXEp8UIYrDJ5c+Pfomsq6lmsT9LXnaIOQtbYPTPq1eK2O1
-   abPSNClGWpHaCPz3kLWnldzoKaDqRGKEobdUu36sYZye9v1LViCsswsil
-   g==;
-X-CSE-ConnectionGUID: RQxpr59FT5OwiZnUP7D5Tw==
-X-CSE-MsgGUID: y39Jvd/YTXGTIIsyDxUp/A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11351"; a="40166557"
-X-IronPort-AV: E=Sophos;i="6.13,304,1732608000"; 
-   d="scan'208";a="40166557"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Feb 2025 00:40:44 -0800
-X-CSE-ConnectionGUID: tatSNnKISYKsAhQoAB6QQw==
-X-CSE-MsgGUID: /hamaI1eRC2aNuKA/a7Fhw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,304,1732608000"; 
-   d="scan'208";a="119930193"
-Received: from zhaohaif-mobl1.ccr.corp.intel.com (HELO [10.124.242.192]) ([10.124.242.192])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Feb 2025 00:40:42 -0800
-Message-ID: <ba2a6295-7983-4701-8c42-797efe22ecb7@linux.intel.com>
-Date: Fri, 21 Feb 2025 16:40:39 +0800
+	s=arc-20240116; t=1740127254; c=relaxed/simple;
+	bh=ksiB2feXfFyAELIxHHK8fCEYWlhK7aI5fAfT5cd0t0c=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=rzxHblYedxX2mX07snz+Xe1uaqpJRuBi/TorV+eBuHoeFJVtaDWal07e9JBrqB2OeGJtVIKkozk0W+Tzrd1KmI0cCs6Sk4csmTVFXENe2TNLzAD1NAu2vGpOHYwBQd0jZgGA/zENQbyfIXeIRFGCe3a3NVb0Vq8cmZrVWTJ3s3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FYVfyiFm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99FB6C4CED6;
+	Fri, 21 Feb 2025 08:40:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740127253;
+	bh=ksiB2feXfFyAELIxHHK8fCEYWlhK7aI5fAfT5cd0t0c=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=FYVfyiFmh5QuGh0Vp1hYQumPGGAjAaTaJE7TQ4wiOyLLDp1svjzeIXzKH0oizVoRZ
+	 pvwF1Cr1jUUZ3hH+1dHhqIkJ8nQM0hq2y/R+5IA89UXH2YeMGMVTUkjMbxLTxU6fw9
+	 OXyt10P6naj5fLTWprcUT0yULsCWNDwkeQymG5y8lb+/I9St/uT+a7p7SvlUhFAbIy
+	 9aZVTRqUfYSF5IHV8xUEP2RK725NVhaCam69EmkgEtbMY5dtZdBLoRNxywa9D+u5i8
+	 kiw54MSb1Bc69JwJK50E/7O+MWDNoHA8rDdUvI9jFMS2L30IZ56X2Qu4Lzi0uVj/47
+	 R6jk3WqmZlBPA==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "Frederic Weisbecker" <frederic@kernel.org>
+Cc: "Anna-Maria Behnsen" <anna-maria@linutronix.de>,  "Thomas Gleixner"
+ <tglx@linutronix.de>,  "Miguel Ojeda" <ojeda@kernel.org>,  "Danilo
+ Krummrich" <dakr@kernel.org>,  "Alex Gaynor" <alex.gaynor@gmail.com>,
+  "Boqun Feng" <boqun.feng@gmail.com>,  "Gary Guo" <gary@garyguo.net>,
+  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron <bjorn3_gh@protonmail.com>,  "Benno
+ Lossin"
+ <benno.lossin@proton.me>,  "Alice Ryhl" <aliceryhl@google.com>,  "Trevor
+ Gross" <tmgross@umich.edu>,  "Lyude Paul" <lyude@redhat.com>,  "Guangbo
+ Cui" <2407018371@qq.com>,  "Dirk Behme" <dirk.behme@gmail.com>,  "Daniel
+ Almeida" <daniel.almeida@collabora.com>,  "Tamir Duberstein"
+ <tamird@gmail.com>,  <rust-for-linux@vger.kernel.org>,
+  <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v8 00/14] hrtimer Rust API
+In-Reply-To: <Z7eYp_vZo5yDVOdI@pavilion.home> (Frederic Weisbecker's message
+	of "Thu, 20 Feb 2025 22:03:35 +0100")
+References: <aIJ0ymzdUceCN05hwJpth4erH5u2SHYzYl52wGeT3uiO9bdk92ZkEmEEq9a9NXsInJYSz9uziwq-1fvdsXoeDA==@protonmail.internalid>
+	<20250218-hrtimer-v3-v6-12-rc2-v8-0-48dedb015eb3@kernel.org>
+	<877c5mci3p.fsf@kernel.org>
+	<5kF-NYTBZbEqnnQud5LKnRXO0lfM0i6I2PoeFrpKDhCYwUuk_bG2Li1T1Nuv82r3VFD8adTcdx7yenXSIfTwmw==@protonmail.internalid>
+	<Z7eYp_vZo5yDVOdI@pavilion.home>
+User-Agent: mu4e 1.12.7; emacs 29.4
+Date: Fri, 21 Feb 2025 09:40:41 +0100
+Message-ID: <87frk7hera.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] iommu/vt-d: fix system hang on reboot -f
-To: Yunhui Cui <cuiyunhui@bytedance.com>, dwmw2@infradead.org,
- baolu.lu@linux.intel.com, joro@8bytes.org, will@kernel.org,
- robin.murphy@arm.com, iommu@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20250220101511.37602-1-cuiyunhui@bytedance.com>
-From: Ethan Zhao <haifeng.zhao@linux.intel.com>
-Autocrypt: addr=haifeng.zhao@linux.intel.com; keydata=
- xsDNBGdk+/wBDADPlR5wKSRRgWDfH5+z+LUhBsFhuVPzmVBykmUECBwzIF/NgKeuRv2U0GT1
- GpbF6bDQp6yJT8pdHj3kk612FqkHVLlMGHgrQ50KmwClPp7ml67ve8KvCnoC1hjymVj2mxnL
- fdfjwLHObkCCUE58+NOCSimJOaicWr39No8t2hIDkahqSy4aN2UEqL/rqUumxh8nUFjMQQSR
- RJtiek+goyH26YalOqGUsSfNF7oPhApD6iHETcUS6ZUlytqkenOn+epmBaTal8MA9/X2kLcr
- IFr1X8wdt2HbCuiGIz8I3MPIad0Il6BBx/CS0NMdk1rMiIjogtEoDRCcICJYgLDs/FjX6XQK
- xW27oaxtuzuc2WL/MiMTR59HLVqNT2jK/xRFHWcevNzIufeWkFLPAELMV+ODUNu2D+oGUn/6
- BZ7SJ6N6MPNimjdu9bCYYbjnfbHmcy0ips9KW1ezjp2QD+huoYQQy82PaYUtIZQLztQrDBHP
- 86k6iwCCkg3nCJw4zokDYqkAEQEAAc0pRXRoYW4gWmhhbyA8aGFpZmVuZy56aGFvQGxpbnV4
- LmludGVsLmNvbT7CwQcEEwEIADEWIQSEaSGv5l4PT4Wg1DGpx5l9v2LpDQUCZ2T7/AIbAwQL
- CQgHBRUICQoLBRYCAwEAAAoJEKnHmX2/YukNztAL/jkfXzpuYv5RFRqLLruRi4d8ZG4tjV2i
- KppIaFxMmbBjJcHZCjd2Q9DtjjPQGUeCvDMwbzq1HkuzxPgjZcsV9OVYbXm1sqsKTMm9EneL
- nCG0vgr1ZOpWayuKFF7zYxcF+4WM0nimCIbpKdvm/ru6nIXJl6ZsRunkWkPKLvs9E/vX5ZQ4
- poN1yRLnSwi9VGV/TD1n7GnpIYiDhYVn856Xh6GoR+YCwa1EY2iSJnLj1k9inO3c5HrocZI9
- xikXRsUAgParJxPK80234+TOg9HGdnJhNJ3DdyVrvOx333T0f6lute9lnscPEa2ELWHxFFAG
- r4E89ePIa2ylAhENaQoSjjK9z04Osx2p6BQA0uZuz+fQh9TDqh4JRKaq50uPnM+uQ0Oss2Fx
- 4ApWvrG13GsjGF5Qpd7vl0/gxHtztDcr5Kln6U1i5FW0MP1Z6z/JRI2WPED1dnieA6/tBqwj
- oiHixmpw4Zp/5gITmGoUdF1jTwXcYC7cPM/dvsCZ1AGgdmk/ic7AzQRnZPv9AQwA0rdIWu25
- zLsl9GLiZHGBVZIVut88S+5kkOQ8oIih6aQ8WJPwFXzFNrkceHiN5g16Uye8jl8g58yWP8T+
- zpXLaPyq6cZ1bfjmxQ7bYAWFl74rRrdots5brSSBq3K7Q3W0v1SADXVVESjGa3FyaBMilvC/
- kTrx2kqqG+jcJm871Lfdij0A5gT7sLytyEJ4GsyChsEL1wZETfmU7kqRpLYX+l44rNjOh7NO
- DX3RqR6JagRNBUOBkvmwS5aljOMEWpb8i9Ze98AH2jjrlntDxPTc1TazE1cvSFkeVlx9NCDE
- A6KDe0IoPB2X4WIDr58ETsgRNq6iJJjD3r6OFEJfb/zfd3W3JTlzfBXL1s2gTkcaz6qk/EJP
- 2H7Uc2lEM+xBRTOp5LMEIoh2HLAqOLEfIr3sh1negsvQF5Ll1wW7/lbsSOOEnKhsAhFAQX+i
- rUNkU8ihMJbZpIhYqrBuomE/7ghI/hs3F1GtijdM5wG7lrCvPeEPyKHYhcp3ASUrj8DMVEw/
- ABEBAAHCwPYEGAEIACAWIQSEaSGv5l4PT4Wg1DGpx5l9v2LpDQUCZ2T7/QIbDAAKCRCpx5l9
- v2LpDSePC/4zDfjFDg1Bl1r1BFpYGHtFqzAX/K4YBipFNOVWPvdr0eeKYEuDc7KUrUYxbOTV
- I+31nLk6HQtGoRvyCl9y6vhaBvcrfxjsyKZ+llBR0pXRWT5yn33no90il1/ZHi3rwhgddQQE
- 7AZJ6NGWXJz0iqV72Td8iRhgIym53cykWBakIPyf2mUFcMh/BuVZNj7+zdGHwkS+B9gIL3MD
- GzPKkGmv7EntB0ccbFVWcxCSSyTO+uHXQlc4+0ViU/5zw49SYca8sh2HFch93JvAz+wZ3oDa
- eNcrHQHsGqh5c0cnu0VdZabSE0+99awYBwjJi2znKp+KQfmJJvDeSsjya2iXQMhuRq9gXKOT
- jK7etrO0Bba+vymPKW5+JGXoP0tQpNti8XvmpmBcVWLY4svGZLunmAjySfPp1yTjytVjWiaL
- ZEKDJnVrZwxK0oMB69gWc772PFn/Sz9O7WU+yHdciwn0G5KOQ0bHt+OvynLNKWVR+ANGrybN
- 8TCx1OJHpvWFmL4Deq8=
-In-Reply-To: <20250220101511.37602-1-cuiyunhui@bytedance.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
+"Frederic Weisbecker" <frederic@kernel.org> writes:
 
-在 2025/2/20 18:15, Yunhui Cui 写道:
-> When entering intel_iommu_shutdown, system interrupts are disabled,
-
-System interrupts were disabled ? you mean all interrupts were disabled
-when entering intel_iommu_shutdown(), perhaps it is not true, at least
-for upstream latest code.
-
-> and the reboot process might be scheduled out by down_write(). If the
-> scheduled process does not yield (e.g., while(1)), the system will hang.
-
-No NMI lockup watchdog jumping out here ?
-
-Thanks,
-Ethan
-
+> Le Wed, Feb 19, 2025 at 12:02:50PM +0100, Andreas Hindborg a =C3=A9crit :
+>> "Andreas Hindborg" <a.hindborg@kernel.org> writes:
+>>
+>> > This series adds support for using the `hrtimer` subsystem from Rust c=
+ode.
+>> >
+>> > The series adds support for timer mode and clock source configuration =
+during
+>> > timer initialization. Examples and functionality to execute closures a=
+t timer
+>> > expiration has been removed, as these depend on either atomics [3] or
+>> > `SpinLockIrq` [4], which are still being worked on.
+>> >
+>> > This series is a dependency for unmerged features of the Rust null blo=
+ck driver
+>> > [1], and for rkvms [2].
+>> >
+>>
+>> @ timer subsystem maintainers: did you discuss how you want to set up
+>> maintenance for this yet? As mentioned, I'm happy stepping up to
+>> maintain this, but if you want to handle it with existing resources that
+>> is perfectly fine as well.
 >
-> Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
-> ---
->   drivers/iommu/intel/iommu.c | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
+> You're the best candidate to maintain this code since you wrote it :-)
 >
-> diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
-> index cc46098f875b..76a1d83b46bf 100644
-> --- a/drivers/iommu/intel/iommu.c
-> +++ b/drivers/iommu/intel/iommu.c
-> @@ -2871,7 +2871,8 @@ void intel_iommu_shutdown(void)
->   	if (no_iommu || dmar_disabled)
->   		return;
->   
-> -	down_write(&dmar_global_lock);
-> +	if (!down_write_trylock(&dmar_global_lock))
-> +		return;
->   
->   	/* Disable PMRs explicitly here. */
->   	for_each_iommu(iommu, drhd)
+> Also I personally have near zero skills in Rust as of today so all I can =
+do
+> is to vaguely keep an eye on the binding's interface and keep in touch
+> with the changes.
+>
+> So I suggest you to add a new entry with you as a maintainer (I suggested
+> something similar to Fujita for some other timer related things) but plea=
+se
+> keep us Cc'ed for future changes.
 
--- 
-"firm, enduring, strong, and long-lived"
+Alright, lets do that.
+
+Do you want to pick future changes to this directly form list or would
+you prefer that I send you a PR with changes?
+
+We are probably going to have a new iteration anyway, as discussion
+picked up again.
+
+
+Best regards,
+Andreas Hindborg
+
+
 
 
