@@ -1,114 +1,136 @@
-Return-Path: <linux-kernel+bounces-526675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DDAEA401E4
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 22:14:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4E75A401EA
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 22:15:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 55AE316A3F0
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 21:14:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D42E19C04CC
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 21:15:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D87D9253F22;
-	Fri, 21 Feb 2025 21:14:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6F84253F11;
+	Fri, 21 Feb 2025 21:15:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="DggnDjAl"
-Received: from mail-il1-f178.google.com (mail-il1-f178.google.com [209.85.166.178])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="YmmD8SWc"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 976DE253B7E
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 21:14:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3A1E201110
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 21:15:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740172463; cv=none; b=hu5pvjVdh84yk+axICNpFMmYBJ9sSB9oH9zkILYCf11GUJyjZmQPSRcBCbLVS5OQ/HswY08L1MtFZnCP1GCc/98xDsfdm7i02b18yszj+hI9n+PD7rXaoqzIhEI4KsfthZeQHCzJUienz3NHvWVSXzC7tSj0xkOPNr0F2vcymgc=
+	t=1740172540; cv=none; b=VLSoi8posebghonM4B9VwAMftRbRAL9nFB65rj13+esLweS3bYe267RtmNJC8IkdW2WOx7sRA27Jja/c5vbIdbzAW3nBM6vZ580nn85PH52ujN/JEqmdTr4qZjCfZygPsuPVhl8YiOV/LOJmj3FIxixAJahCrjfBqeRp5ZpX//s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740172463; c=relaxed/simple;
-	bh=LUST0WfY2YYH8MixRvQVt0HfCogiQFfD5LD4HDRjTGs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nMPbP0CBAk7KO8vpy6T8d4pfLrFRVhMqaskh5w/g9oN9Ngn+rzfylQEzO3TBc8pCqthTpldkafdSWJz3zwi9c/3bDKJF2c9g6Sv114zur+WtvToEtMbWDEc+ustM/LYrUIzK9xlNCyVdBk9tPkOjEKOT5b+XR+6Lip400S4wFgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=DggnDjAl; arc=none smtp.client-ip=209.85.166.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f178.google.com with SMTP id e9e14a558f8ab-3d19e40a891so8026055ab.3
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 13:14:21 -0800 (PST)
+	s=arc-20240116; t=1740172540; c=relaxed/simple;
+	bh=5RWvWfGb/6tM++brVT4P5h/GIgplYKYVaghjCdtVd1g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=beJ121VczN+/2Dt+Vd+ELRgXj9QflBG6jB0hg6gIQDVWaqNh/BG5uNEZI5ZPBLyDlpX3aVIcovsTTiXHh6hMnrE/t4pcUIDqx6j2J9gVBLagDXNuPtnUO1Rq0G+n7QE/dQ+8qm1VghryR9ZaVHjz/sl3ls7Y+4uPAyRGnb80LXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=YmmD8SWc; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-ab7430e27b2so418883066b.3
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 13:15:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1740172460; x=1740777260; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=cl2P2JOYJNBx1mtaYBayROisqQOMPgvFm8FiItSAUM8=;
-        b=DggnDjAl6GpDqoVT7yu5rvRJunyrlidW2SMS+sWDipW3UsaZSHTJ/VA+o82jx0dK3u
-         gU4JLW2db0a5ooygz1bMYEJ7WKhEmi5PEOlRKNwLKp6j+nJa3+Pz0oGNV27FKH9AZOtP
-         nXho8bWRQl8P8FG5iNYjLW77Vrp2LSWcw+Eria77FOmCCS02P7AxYAP9d87QNiFrGyR1
-         AB3gIxiMB81VaXP7WbpAV8CNuipxbWupn9U6PcWVJUS1oPb4b3FYHl0YAT1NxssRkJy3
-         cxa8AmfPxvKq2mVx4C8eo5oCV1u+WyCpnoDmFivCXMbfyeDqSPk1lyh7syNre35pubeo
-         hnNw==
+        d=linux-foundation.org; s=google; t=1740172536; x=1740777336; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=LwDyl4qTU31EYFlp5dVtYKLArSitXPy3ISMIrVX8EG4=;
+        b=YmmD8SWcjc3djRhOrA93tC/wqELfj9kxZDB7OgGaP/A8EXl3IYSzD4FKy019XA/mam
+         7yBPS01COw94A63qkDn5YM1iaAHscFkjnn6ZxVUMz597cL6s2TzJuapcCB43GQOeYhTz
+         PvyhnMEERpr+3URLG9Mq6taLSWFQcPpaq8SPc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740172460; x=1740777260;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cl2P2JOYJNBx1mtaYBayROisqQOMPgvFm8FiItSAUM8=;
-        b=vH9rogtHI69e8lQnR33bYC/vwZ8bPh6j+i9uaRLlZulJMHNMulMPvho4CnRegpsUVK
-         eQUau4CTyi/Hkqq+MhF/boNYyixv8hLrx2HbuP8OswzowLelGsw39EkilBhh5uZrdoxh
-         e9u4Opoy5pnSjr9GWfMU2Ux+S1B729n4gnhyDBzAJxkjMWcacNbXs9zpuVW7K4bWA6hC
-         TKTRKdDQtqx2GLj+1ol88Kp/+MHd2VGP+pw/8+Ew6h2VSjxy40MuOpY0/aCUpPXG2WF2
-         SnfIbIs/s2dVe35epOlAkq4qYn78HHeBIlld4SIF6A35MJi5CyTqRZ7tZ8ZR3wlCKIvw
-         lZww==
-X-Forwarded-Encrypted: i=1; AJvYcCXQ5AGchS+rThRhkdx5L83T0uGi4fguQ7ToaZqiq9VDfI1fk1qP7TFpISJHtp5TA38y18mlEQNBaxntBSE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxyZMYWkg0sE86pNU/8jQZl2NbSksYU4PP1ZQKe+hJuaVWQsmJA
-	kVxUda94iIwCI/kLsMJdHJpGiVc25bum1ixvuhOI/HXkea32LTFvm9AQ6bpVu+Y=
-X-Gm-Gg: ASbGnctaAa9f7lb25LM33vp1PPK2wNDeAGVF/Kxv+c6+GFVU9g/PozVdAE8c1i5G/Db
-	mWzy1SfgJzRMDppCrC1NCIdBsWm+oY1o4fFPvcxnHIo1QFgFVYZ9rA+R856S6aUufAAi07pnsWN
-	HvFjvvPups03SFO7U32Fk3+KFs2G8LTw9nDMU6lLPD6NGMQwoqlNMZEf43n3ujbXjGdDAY400TL
-	4CZc6WBzkQLiUZENFqNFzcWS5DH4e4SIemAh5bMGyzII32uuqCHH4GMqxfHOOLH8oK+LBVTxWt5
-	WwAN7cdknXqUSF/iMcs2Am8=
-X-Google-Smtp-Source: AGHT+IHGUx3T72p6QUiwnKjXxwo0LmjfmkSlf2+w+lCN8J9EyU2JybXz1K2UEwewJnnNAq4zeENvnA==
-X-Received: by 2002:a05:6e02:156e:b0:3d0:4ba1:adf1 with SMTP id e9e14a558f8ab-3d2caf1a20emr50626825ab.22.1740172460685;
-        Fri, 21 Feb 2025 13:14:20 -0800 (PST)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3d18f9c5a21sm40521905ab.21.2025.02.21.13.14.19
+        d=1e100.net; s=20230601; t=1740172536; x=1740777336;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LwDyl4qTU31EYFlp5dVtYKLArSitXPy3ISMIrVX8EG4=;
+        b=d527ct3XfRkUai8XNGSCH1p3+UMIUmexmQvHXbhacKB5XFw6Y1goQZAwQh8Yxi0H1o
+         Sa1OVk2SaDI0enKDyWx4FzVySk2twmdUnYMw2E5BP/fwiAf7RKibuMp3CoGgXdf+QNf/
+         rPNBqwudhSNLbbnARJf7Foo7x6al4BclwqvwbkIqU7/dJkhK8pmNykIKuuU38e9DOYEk
+         BwSfLwnhDu7C3SC4kot7KJBAnrRdOjnSxWjCRAbEXEyQGb2qQzC5y6ePqHIpyiCHhmgA
+         iAcEfnh7Hq8Oc/do9QRPsDFEtE2f7dzpcwsN8bNJSgt/tfXLDbvasRHiP7jTw7rDe0iW
+         WZbA==
+X-Forwarded-Encrypted: i=1; AJvYcCU/E1ZUgCCZ3cRfp06JnwyTuYMJReGSC0tNHkzKPRhU8zLj+KQg+FveP3et0Tk8SbDjHf/1gr2Fml0FXlM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YztiHj+g711JhB7MiKyELwe3vQvySwMo6K13zXrVBQBBckd+fpl
+	KuagEPWId5SYmBzhoWwLJRQ6oMB/1NV5hKq+UH51I2Q28kTphpFwBIbNmhKRYNhMlU4NqRdxV41
+	MLLU=
+X-Gm-Gg: ASbGncuq3km0Wbq7dzHGo/hYf8tLszSqgO6+NTHLeSjwczBdYmLyRaqNDTVMpbaHqr0
+	94RjYoJ4nm6Mdl3+urGsitA6eEoELah9gh7SRg3oJY9Pmh6p1x1PKaGYPkAhGmo+00gA+iSCRM1
+	kE7SaMjJSQTqNGG8ObVSn9jKxWS2ISOnc6H2AtY8iWgJU7+nUrUogkbj/lozP+9OL9UQFqH701F
+	Vvk+DgQ1j4+gQanq4lBrcFSWps/mQCT3jyymAdQudhVUVxvkFb70CysggM9sR2DRYYzNH9n8iLq
+	ogAKyqr4xC+83g74tea0+jQHHfueUSDURsKQpMBvH9D6hks9XHAgUcazOroUtG4IIBMeXaI+cOj
+	F
+X-Google-Smtp-Source: AGHT+IGAp7PjUmk/VR/1VBF4183+GiKuLNf5VTWaV9f8n3WVUFhd3JpVP1ExDGsN4pUuqkfycNORuA==
+X-Received: by 2002:a17:906:31cf:b0:ab6:ef33:402 with SMTP id a640c23a62f3a-abc0d9e4ef5mr417282166b.18.1740172535958;
+        Fri, 21 Feb 2025 13:15:35 -0800 (PST)
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com. [209.85.218.41])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5dece1c4407sm14348186a12.23.2025.02.21.13.15.33
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Feb 2025 13:14:20 -0800 (PST)
-Message-ID: <3a3644d2-1762-4504-938a-6776c137aab8@kernel.dk>
-Date: Fri, 21 Feb 2025 14:14:18 -0700
+        Fri, 21 Feb 2025 13:15:34 -0800 (PST)
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-abadccdfe5aso440451466b.0
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 13:15:33 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXVdXwEeZVLISNCr17PT+MJZF5oO54Rq43nrGvvtDWgcB/q/IYRJlmxzOV27jo+MJCJ7c5a1xP0zelH3pI=@vger.kernel.org
+X-Received: by 2002:a17:906:c148:b0:ab7:7cf7:9f7a with SMTP id
+ a640c23a62f3a-abc0df592b6mr489239266b.53.1740172533587; Fri, 21 Feb 2025
+ 13:15:33 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v18 0/3] rust: xarray: Add a minimal abstraction for
- XArray
-To: Tamir Duberstein <tamird@gmail.com>, Danilo Krummrich <dakr@kernel.org>,
- Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>, Matthew Wilcox <willy@infradead.org>,
- Bjorn Helgaas <bhelgaas@google.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- FUJITA Tomonori <fujita.tomonori@gmail.com>,
- "Rob Herring (Arm)" <robh@kernel.org>
-Cc: =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>,
- Asahi Lina <lina@asahilina.net>, rust-for-linux@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pci@vger.kernel.org
-References: <20250221-rust-xarray-bindings-v18-0-cbabe5ddfc32@gmail.com>
-From: Jens Axboe <axboe@kernel.dk>
-Content-Language: en-US
-In-Reply-To: <20250221-rust-xarray-bindings-v18-0-cbabe5ddfc32@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <CAPM=9tyHJiMrF8nxXe=mhn0i5N1v-7RHh2TZfoz8BoUBBnuxzw@mail.gmail.com>
+In-Reply-To: <CAPM=9tyHJiMrF8nxXe=mhn0i5N1v-7RHh2TZfoz8BoUBBnuxzw@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 21 Feb 2025 13:15:17 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wiJYQwSMoor__B-8D71S8=Dn5BeAY6tOzSL4u3MEZrtcw@mail.gmail.com>
+X-Gm-Features: AWEUYZnwpf68JgRFG_HmCCL32GS0Ch2KPkBiw_7IJ37MT9V30ylIZmtFeJqV1h8
+Message-ID: <CAHk-=wiJYQwSMoor__B-8D71S8=Dn5BeAY6tOzSL4u3MEZrtcw@mail.gmail.com>
+Subject: Re: [git pull] drm fixes for 6.14-rc4
+To: Dave Airlie <airlied@gmail.com>
+Cc: Sima Vetter <sima@ffwll.ch>, dri-devel <dri-devel@lists.freedesktop.org>, 
+	LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Please have (at least) a 24h cool down between versions, spamming
-versions within hours of the last one is not productive for (or
-conducive to) review.
+Side note: I think you do something while editing or
+cutting-and-pasting that loses indentation.
 
--- 
-Jens Axboe
+I sometimes have to guess at what the intended grouping is.
+
+In this case, notice the "More catalog fixes" entry for the msm driver.
+
+I *think* it refers to all the following bullet points up until the
+"Core/GPU" grouping, but that is literally nothing but an edumacated
+guess.
+
+So when you write (or copy) the description, can I ask you to not drop
+indentation like this?
+
+            Linus
+
+On Fri, 21 Feb 2025 at 12:51, Dave Airlie <airlied@gmail.com> wrote:
+>
+> msm:
+> - More catalog fixes:
+> - to skip watchdog programming through top block if its not present
+> - fix the setting of WB mask to ensure the WB input control is programmed
+>   correctly through ping-pong
+> - drop lm_pair for sm6150 as that chipset does not have any 3dmerge block
+> - Fix the mode validation logic for DP/eDP to account for widebus (2ppc)
+>   to allow high clock resolutions
+> - Fix to disable dither during encoder disable as otherwise this was
+>   causing kms_writeback failure due to resource sharing between
+>   WB and DSI paths as DSI uses dither but WB does not
+> - Fixes for virtual planes, namely to drop extraneous return and fix
+>   uninitialized variables
+> - Fix to avoid spill-over of DSC encoder block bits when programming
+>   the bits-per-component
+> - Fixes in the DSI PHY to protect against concurrent access of
+>   PHY_CMN_CLK_CFG regs between clock and display drivers
+> - Core/GPU:
+> - Fix non-blocking fence wait incorrectly rounding up to 1 jiffy timeout
+> - Only print GMU fw version once, instead of each time the GPU resumes
 
