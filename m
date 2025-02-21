@@ -1,253 +1,158 @@
-Return-Path: <linux-kernel+bounces-524997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C47FDA3E9A6
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 02:08:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C446DA3E9A8
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 02:09:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE6523AB895
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 01:07:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E83AF3BB87E
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 01:08:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 091D636AF5;
-	Fri, 21 Feb 2025 01:07:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84A7936AF5;
+	Fri, 21 Feb 2025 01:08:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IMITTjhB"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Np/yl9h5"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6E103594E;
-	Fri, 21 Feb 2025 01:07:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71AC91DA53
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 01:08:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740100058; cv=none; b=kUsaJjuh9rxBgshJRQEfiQgYEm7ojUCUgEUeeWM3//S4kQEcfwqHivW5bloFkhHLzpIK5tRy2Z03sFe2j0hNll34r1h5+UwS970JYlWHa7GCgPBlBEnMEELbVLbOt5+AzV8LMUfWbLXOPDF2dvOVriFTzLI1IWbSNE5m7CnCU6I=
+	t=1740100131; cv=none; b=uXEXzafON+qk5+Me24xkLlCvBP4xopN2rt4U/SJn/Swd4jTGOxL8WHZX8/OY/sr39LZlbqeB8UnI0GCPtUBzcP08hvo+vQ+1NV2VTyiOed8NVf9mc0KHWcqrd32L5lopP+Q61z6cmFm0c7tuYDdzQecT7ASWTt8wWXvmGSi9q34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740100058; c=relaxed/simple;
-	bh=2g8oNieasSQT1QPvU7TEQo0RSe+QF1XO8YP8P7wA2co=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fBEwqboYJAOyzADo7JNiSl/Ge24WFbHy/u6q61zOpkDAEwPs1eLxSzn44oMhggB/BpkGYokti0C5E31mX3bD4TQARM4r7fH4Tewh4PjzGbknMmVByE75jDLEZHocytuAWTGJ2KeiIizs4yqZFr5YadVvPPSldgDAO8lRTFnTASo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IMITTjhB; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2fcc99efe9bso2509765a91.2;
-        Thu, 20 Feb 2025 17:07:36 -0800 (PST)
+	s=arc-20240116; t=1740100131; c=relaxed/simple;
+	bh=3fHapjZeNh1VjYeXTfp2z5nti+mCkYcx8zwxVW4YXrE=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=sHNEwC8hn7hmvwghDswH/kA/QAzWfs/NpDcfezhawK3qFNG1xbqjlShfOsAZ2Ax7+sI+rn5y3+8Yl1mpn/p49ToIDaaIYdjzUo6oNjysqeIAmu2/HZwaG2f13EoWBZ9ouwvJLk9w2t3zt7Yyh+JU8VUFz3RIWcqcW5iQjztwsGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Np/yl9h5; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2fc17c3eeb5so3515753a91.1
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 17:08:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740100056; x=1740704856; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xoj4+GfmmJXx597AEiArFiq+jfsACOsOdKSiW+SWgWI=;
-        b=IMITTjhBFmOVXEqWOTUM4k083NOEVYPO8FXVgRKhEFCYifyoZnXKQLr6B+z1Qr19tt
-         o9enzdNeuFhRdIUWq9i0Kk43QDQ7j+HU1PkW8Q+8/lX+ZNiwi5jm7oNqqZVBzNwFnnHd
-         EU+e4lMUBdolM4e51HTWKBD1JHVNcOOWFwKzjj4lglJo0uEi1SeAIlixmpPo4cGAFL1Z
-         HoAffTx5dIj1Ty6ziuvf+eBuIf8X39BmsOoxaIzjUDljEVazMrhg2QgMZjnGobQcBs1/
-         Kzzri32gPrxolGvQR2Pzu8kOHIlNEqOfKR0eTikdlzrqnmvkT1wFSjvT+2kd3Ud+JP+o
-         H/pA==
+        d=google.com; s=20230601; t=1740100129; x=1740704929; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=FQFtq5zh8p2czyGe6VdUykaj2fCcZy9a/aoX6y/tI5o=;
+        b=Np/yl9h5Yd6gWoxEpEaPokQRUS3jucWrtyPrv2c8KZLPLGxoFZyEOiIrGetC+z/a82
+         8fgbhW22fTtFVWLox2XlRGqddOf52BULDb9oKsC7FJl0cjl27cGfTeaViiYDBTKGVr8/
+         8parOVaU1lPROa1PtZxx5uZza/dJBgqZoXb6Ab54Fh2UlLeBgnvp8aKHW7tx2intX5+F
+         SJNZ8a1cnHg9ZLKZyfvIzLBFHXOmcRPzv43zxyI8AncylB2A8eCRLxM72HOnwZWwTzCq
+         kHaF8JJLJrRCFP7UepaJcL/T3D6rdtefm7AOlas2e2RjphAwOBbeUAlXArmFfxjQZwaP
+         GZOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740100056; x=1740704856;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xoj4+GfmmJXx597AEiArFiq+jfsACOsOdKSiW+SWgWI=;
-        b=lKYqNmG8Ia8qctFBDu6KykUsxv9HTU9TrXwl7ux7llakDnlJUkM7nOL54LnNMcp4I2
-         3LBPK4aWlXNYeKaBuREz+WvJOf15xW6pX14E485BuJzmdkW56hp1HNy2bCoOLEB6tHhh
-         ZdDVPG70nMfKrfUPNOoqBvVFXGSasM68pKZfgh7kNOkvlRDrNRztlSzOF9p3c1Z00HNq
-         jHeOqyfwgS584IZuq6Wzo+B9XuMAl4IGh2uwyOGdPzkpVC1Tdd4z0PjFMq+k/61N+gMN
-         4xItvO5LvriZsftakW1bFIsw/QoWPEZS9IJTg8z+cswagNU0PqgUtlIMEl7sv9Ft9jsX
-         IqwA==
-X-Forwarded-Encrypted: i=1; AJvYcCURePCSR4VIpRwoRcOttEQjgOAVyVRzPsSGxChSGSjc73vhYs070AuH+51Loh875ByCzMdmgFfXUsCTVuel@vger.kernel.org, AJvYcCVxnRkofv9bu1YqXdKMY/j8zRmCldqg9/B0Y3k+dnWvR/oc+zEG9lFEPsmHfiYS3C7ROrI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSaiFBbM455QyMteeBuuUERYb4zhXsJNVvrcGzixNCUE7E3e56
-	P/ZJKXrSLoz3deHfclVnWRUyUxH+saFu2I589AvU5NqR5ga5vIz8QFOFmLXkbQCW1Xe97sP6TzE
-	ygvulIIOv7NGtCwEHVoxLNGlQU/0=
-X-Gm-Gg: ASbGnctHouebHjWvfbn+Ih+XfRvgUR8GJBqQ934EvX6jtsT+MHMdgy/bGFWSGZgsKUS
-	KRh0q/GNAnH4xulwd6Upo0cAbsR9RPs8CiQdk3La8ZnYdoPT7Ne7QqUHIYZs5LLYe9GMTGtfmGX
-	JGNTQfmEac2rW6
-X-Google-Smtp-Source: AGHT+IE1x5MV8fPXVRSn8nvItza1FwLhDZR/wmkfbON5BEbuV+Qy5Rdnel/iXrp2rYviXo5ZN56X5Q3o0So8P6HOjK4=
-X-Received: by 2002:a17:90b:5201:b0:2ee:c6c8:d89f with SMTP id
- 98e67ed59e1d1-2fce86af0b9mr1721474a91.14.1740100055928; Thu, 20 Feb 2025
- 17:07:35 -0800 (PST)
+        d=1e100.net; s=20230601; t=1740100129; x=1740704929;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FQFtq5zh8p2czyGe6VdUykaj2fCcZy9a/aoX6y/tI5o=;
+        b=R+IEpEk5OaR+t09xbYh9g12fs1VYjljlm6jMKLZ4gX7FmjMLpiAmsJyerNq0T2wZP6
+         PWEBDFwF28Jza3YA4r+2rlYv7sCHLlhHhv+dOK30Whjl8/YW6SQjyZLj4wR3djgXstMB
+         6I4sXnQWVXqV9+zqS8hLo++p14cnM06C5ZkexdXAcf3cQpUpu2xIKJVPXz6vBAnE/FJq
+         8HA/zDeN5oYnD5biPusVjCwh78oRPVIvrFBaG5q5Qvv7Q3W5gQu4lhQe3NxzNpw9efU4
+         PuDkK81GcQdV95hpWczrWx+S2EOzRikmQ7jwb4zWtuhC6/lpgPVwxTlX0LTUBFw/NqjZ
+         V32g==
+X-Gm-Message-State: AOJu0Yw39HLZWVQmZ0pz4Hjc/L1dV3gPQIuk3tmZAADrMWTOCprr7Kjg
+	Qz2KVqBf95ig3H/f4cFQMMiJ/K+fdATsAcwoXADIe9Hd0UZYaUGHHuEdMLYmcDPB5mAAULDQjJd
+	iYQ==
+X-Google-Smtp-Source: AGHT+IGvGA5L3s3OecPlM4JUTxJyjvxBe691JnF9OIkyTKNxVRjzLqxhj39XqoXWXYt1NKhGI05T1/JGVwI=
+X-Received: from pjbsy7.prod.google.com ([2002:a17:90b:2d07:b0:2ea:5084:5297])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4c10:b0:2ee:b4bf:2d06
+ with SMTP id 98e67ed59e1d1-2fce86d0e70mr1396072a91.19.1740100129598; Thu, 20
+ Feb 2025 17:08:49 -0800 (PST)
+Date: Thu, 20 Feb 2025 17:08:48 -0800
+In-Reply-To: <Z7fO9gqzgaETeMYB@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250212153912.24116-1-chen.dylane@gmail.com> <2b025df3-144b-4909-a2b4-66356540f71c@gmail.com>
- <598a7d089936b18472937679d4131286f102cb18.camel@gmail.com>
-In-Reply-To: <598a7d089936b18472937679d4131286f102cb18.camel@gmail.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Thu, 20 Feb 2025 17:07:24 -0800
-X-Gm-Features: AWEUYZklNpNYJotUClQoF-3pgJL_VeYuQKw0D528FsdEtUwuATrGIy81FBXFwvQ
-Message-ID: <CAEf4BzYsGnhmnhkHdUPN8yBfbv57R9h4N2R8RcqdjhmHWvJVkg@mail.gmail.com>
-Subject: Re: [PATCH RESEND bpf-next v7 0/4] Add prog_kfunc feature probe
-To: Eduard Zingerman <eddyz87@gmail.com>
-Cc: Tao Chen <chen.dylane@gmail.com>, ast@kernel.org, daniel@iogearbox.net, 
-	andrii@kernel.org, haoluo@google.com, jolsa@kernel.org, qmo@kernel.org, 
-	bpf@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+References: <20250220170604.2279312-1-pbonzini@redhat.com> <20250220170604.2279312-21-pbonzini@redhat.com>
+ <Z7fO9gqzgaETeMYB@google.com>
+Message-ID: <Z7fSIMABm4jp5ADA@google.com>
+Subject: Re: [PATCH 20/30] KVM: TDX: create/destroy VM structure
+From: Sean Christopherson <seanjc@google.com>
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
+	Yan Zhao <yan.y.zhao@intel.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
+	Isaku Yamahata <isaku.yamahata@intel.com>, Tony Lindgren <tony.lindgren@linux.intel.com>, 
+	Sean Christopherson <sean.j.christopherson@intel.com>, Kai Huang <kai.huang@intel.com>
+Content-Type: text/plain; charset="us-ascii"
 
-On Tue, Feb 18, 2025 at 2:51=E2=80=AFPM Eduard Zingerman <eddyz87@gmail.com=
-> wrote:
->
-> On Mon, 2025-02-17 at 13:21 +0800, Tao Chen wrote:
-> > =E5=9C=A8 2025/2/12 23:39, Tao Chen =E5=86=99=E9=81=93:
-> > > More and more kfunc functions are being added to the kernel.
-> > > Different prog types have different restrictions when using kfunc.
-> > > Therefore, prog_kfunc probe is added to check whether it is supported=
-,
-> > > and the use of this api will be added to bpftool later.
-> > >
-> > > Change list:
-> > > - v6 -> v7:
-> > >    - wrap err with libbpf_err
-> > >    - comments fix
-> > >    - handle btf_fd < 0 as vmlinux
-> > >    - patchset Reviewed-by: Jiri Olsa <jolsa@kernel.org>
-> > > - v6
-> > >    https://lore.kernel.org/bpf/20250211111859.6029-1-chen.dylane@gmai=
-l.com
-> > >
-> > > - v5 -> v6:
-> > >    - remove fd_array_cnt
-> > >    - test case clean code
-> > > - v5
-> > >    https://lore.kernel.org/bpf/20250210055945.27192-1-chen.dylane@gma=
-il.com
-> > >
-> > > - v4 -> v5:
-> > >    - use fd_array on stack
-> > >    - declare the scope of use of btf_fd
-> > > - v4
-> > >    https://lore.kernel.org/bpf/20250206051557.27913-1-chen.dylane@gma=
-il.com/
-> > >
-> > > - v3 -> v4:
-> > >    - add fd_array init for kfunc in mod btf
-> > >    - add test case for kfunc in mod btf
-> > >    - refactor common part as prog load type check for
-> > >      libbpf_probe_bpf_{helper,kfunc}
-> > > - v3
-> > >    https://lore.kernel.org/bpf/20250124144411.13468-1-chen.dylane@gma=
-il.com
-> > >
-> > > - v2 -> v3:
-> > >    - rename parameter off with btf_fd
-> > >    - extract the common part for libbpf_probe_bpf_{helper,kfunc}
-> > > - v2
-> > >    https://lore.kernel.org/bpf/20250123170555.291896-1-chen.dylane@gm=
-ail.com
-> > >
-> > > - v1 -> v2:
-> > >    - check unsupported prog type like probe_bpf_helper
-> > >    - add off parameter for module btf
-> > >    - check verifier info when kfunc id invalid
-> > > - v1
-> > >    https://lore.kernel.org/bpf/20250122171359.232791-1-chen.dylane@gm=
-ail.com
-> > >
-> > > Tao Chen (4):
-> > >    libbpf: Extract prog load type check from libbpf_probe_bpf_helper
-> > >    libbpf: Init fd_array when prog probe load
-> > >    libbpf: Add libbpf_probe_bpf_kfunc API
-> > >    selftests/bpf: Add libbpf_probe_bpf_kfunc API selftests
-> > >
-> > >   tools/lib/bpf/libbpf.h                        |  19 ++-
-> > >   tools/lib/bpf/libbpf.map                      |   1 +
-> > >   tools/lib/bpf/libbpf_probes.c                 |  86 +++++++++++---
-> > >   .../selftests/bpf/prog_tests/libbpf_probes.c  | 111 +++++++++++++++=
-+++
-> > >   4 files changed, 201 insertions(+), 16 deletions(-)
-> > >
-> >
-> > Ping...
-> >
-> > Hi Andrii, Eduard,
-> >
-> > I've revised the previous suggestions. Please review it again. Thanks.
-> >
->
-> I tried the test enumerating all kfuncs in BTF and doing
-> libbpf_probe_bpf_kfunc for BPF_PROG_TYPE_{KPROBE,XDP}.
-> (Source code at the end of the email).
->
-> The set of kfuncs returned for XDP looks correct.
-> The set of kfuncs returned for KPROBE contains a few incorrect entries:
-> - bpf_xdp_metadata_rx_hash
-> - bpf_xdp_metadata_rx_timestamp
-> - bpf_xdp_metadata_rx_vlan_tag
->
-> This is because of a different string reported by verifier for these
-> three functions.
->
-> Ideally, I'd write some script looking for
-> register_btf_kfunc_id_set(BPF_PROG_TYPE_***, kfunc_set)
-> calls in the kernel source code and extracting the prog type /
-> functions in the set, and comparing results of this script with
-> output of the test below for all program types.
-> But up to you if you'd like to do such rigorous verification or not.
->
-> Otherwise patch-set looks good to me, for all patch-set:
->
-> Reviewed-by: Eduard Zingerman <eddyz87@gmail.com>
+On Thu, Feb 20, 2025, Sean Christopherson wrote:
+> TL;DR: Please don't merge this patch to kvm/next or kvm/queue.
+> 
+> On Thu, Feb 20, 2025, Paolo Bonzini wrote:
+> > @@ -72,8 +94,10 @@ struct kvm_x86_ops vt_x86_ops __initdata = {
+> >  	.has_emulated_msr = vmx_has_emulated_msr,
+> >  
+> >  	.vm_size = sizeof(struct kvm_vmx),
+> > -	.vm_init = vmx_vm_init,
+> > -	.vm_destroy = vmx_vm_destroy,
+> > +
+> > +	.vm_init = vt_vm_init,
+> > +	.vm_destroy = vt_vm_destroy,
+> > +	.vm_free = vt_vm_free,
+> >  
+> >  	.vcpu_precreate = vmx_vcpu_precreate,
+> >  	.vcpu_create = vmx_vcpu_create,
+> 
+> ...
+> 
+> > diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> > index 374d89e6663f..e0b9b845df58 100644
+> > --- a/arch/x86/kvm/x86.c
+> > +++ b/arch/x86/kvm/x86.c
+> > @@ -12884,6 +12884,7 @@ void kvm_arch_destroy_vm(struct kvm *kvm)
+> >  	kvm_page_track_cleanup(kvm);
+> >  	kvm_xen_destroy_vm(kvm);
+> >  	kvm_hv_destroy_vm(kvm);
+> > +	static_call_cond(kvm_x86_vm_free)(kvm);
+> >  }
+> 
+> Sorry to throw a wrench in things, but I have a fix that I want to send for 6.14[1],
+> i.e. before this code, and to land that fix I need/want to destroy vCPUs before
+> calling kvm_x86_ops.vm_destroy().  *sigh*
+> 
+> The underlying issue is that both nVMX and nSVM suck and access all manner of VM-wide
+> state when destroying a vCPU that is currently in nested guest mode, and I want
+> to fix the most pressing issue of destroying vCPUs at a random time once and for
+> all.  nVMX and nSVM also need to be cleaned up to not access so much darn state,
+> but I'm worried that "fixing" the nested cases will only whack the biggest mole.
 
-Shouldn't we fix the issue with those bpf_xdp_metadata_* kfuncs? Do
-you have details on what different string verifier reports?
+...
 
->
-> --- 8< -----------------------------------------------------
->
-> static const struct {
->         const char *name;
->         int code;
-> } program_types[] =3D {
-> #define _T(n) { #n, BPF_PROG_TYPE_ ## n }
->         _T(KPROBE),
->         _T(XDP),
-> #undef _T
-> };
->
-> void test_libbpf_probe_kfuncs_many(void)
+> And so my plan is to carved out a kvm_destroy_mmus() helper, which can then call
+> the TDX hook to release/reclaim the HKID, which I assume needs to be done after
+> KVM's general MMU destruction, but before vCPUs are freed.
+
+...
+
+> void kvm_arch_destroy_vm(struct kvm *kvm)
 > {
->         int i, kfunc_id, ret, id;
->         const struct btf_type *t;
->         struct btf *btf =3D NULL;
->         const char *kfunc;
->         const char *tag;
->
->         btf =3D btf__parse("/sys/kernel/btf/vmlinux", NULL);
->         if (!ASSERT_OK_PTR(btf, "btf_parse"))
->                 return;
->
->         for (id =3D 0; id < btf__type_cnt(btf); ++id) {
->                 t =3D btf__type_by_id(btf, id);
->                 if (!btf_is_decl_tag(t))
->                         continue;
->                 tag =3D btf__name_by_offset(btf, t->name_off);
->                 if (strcmp(tag, "bpf_kfunc") !=3D 0)
->                         continue;
->                 kfunc_id =3D t->type;
->                 t =3D btf__type_by_id(btf, kfunc_id);
->                 if (!btf_is_func(t))
->                         continue;
->                 kfunc =3D btf__name_by_offset(btf, t->name_off);
->                 printf("[%-6d] %-42s ", kfunc_id, kfunc);
->                 for (i =3D 0; i < ARRAY_SIZE(program_types); ++i) {
->                         ret =3D libbpf_probe_bpf_kfunc(program_types[i].c=
-ode, kfunc_id, -1, NULL);
->                         if (ret < 0)
->                                 printf("%-8d  ", ret);
->                         else if (ret =3D=3D 0)
->                                 printf("%8s  ", "");
->                         else
->                                 printf("%8s  ", program_types[i].name);
->                 }
->                 printf("\n");
->         }
->         btf__free(btf);
-> }
->
-> ----------------------------------------------------- >8 ---
->
+> 	/*
+> 	 * WARNING!  MMUs must be destroyed before vCPUs, and vCPUs must be
+> 	 * destroyed before any VM state.  Most MMU state is VM-wide, but is
+> 	 * tracked per-vCPU, and so must be unloaded/freed in its entirety
+> 	 * before any one vCPU is destroyed.
+
+Argh, after digging more, this isn't actually true.  The separate "unload MMUs"
+code is leftover from when KVM rather stupidly tried to free all MMU pages when
+freeing a vCPU.
+
+Commit 7b53aa565084 ("KVM: Fix vcpu freeing for guest smp") "fixed" things by
+unloading MMUs before destroying vCPUs, but the underlying problem was trying to
+free _all_ MMU pages when destroying a single vCPU.  That eventually got fixed
+for good (haven't checked when), but the separate MMU unloading never got cleaned
+up.
+
+So, scratch the mmu_destroy() idea.  But I still want/need to move vCPU destruction
+before vm_destroy.
+
+Now that kvm_arch_pre_destroy_vm() is a thing, one idea would be to add
+kvm_x86_ops.pre_destroy_vm(), which would pair decently well with the existing
+call to kvm_mmu_pre_destroy_vm().
 
