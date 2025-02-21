@@ -1,132 +1,186 @@
-Return-Path: <linux-kernel+bounces-525808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9BE0A3F5CB
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 14:23:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20259A3F5D7
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 14:24:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9AF9C428158
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 13:16:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 428E6169648
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 13:18:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1527120D50F;
-	Fri, 21 Feb 2025 13:16:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1273D20CCD1;
+	Fri, 21 Feb 2025 13:17:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RwvpD8k7"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q9UxkfVn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2C3020ADD5;
-	Fri, 21 Feb 2025 13:16:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A5022B9BC;
+	Fri, 21 Feb 2025 13:17:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740143783; cv=none; b=Etd7z7UfU3BEJzcDyorlFBmP3uAFIeRqGUhnTYS2N9/LfbaBD707Bj/H0puRI0q+Id796v0Bz0W7pySgzlJKAYwXrjK7Mkthz6P0PfBVj+Luk20MpTJPj8EkDmsXKyZz+Rv4A+vQV70xvPIU1zom5glpLHGyOj/tRYsLm/0xFKk=
+	t=1740143860; cv=none; b=qhi4V0f+Yh0gzIZ/5rfYsRk/9bn2r6DrfR/cKK9dCDDI2FQ8PEuepq22AkzMTQrhdwg+GaGusLa4uOAAFZAyJ/pccwBLjQyGSrX6+9xKEpnFIp+2Ta/VSOTKuvEAfakmNQmtJ3FaQyTu5yD9rFtaw4nRA+EbPA7Yfjw0K2e6wRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740143783; c=relaxed/simple;
-	bh=hEfxolmO06K0UStHo90/Om11/E8igLCbiEfZngCLRSU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=S2JG7mBhPgs/hdAKlGgxNVr3K8HI9Wpkw5h2WXHPwgC8yjTpaCqG2o0EFfS5zgVgg7H9RBAnMzaYjL8LVGHalb+RzuO/pQQo9L3lUmp4prw16xAjJ7VvfTaUOoRpKyqkM3zQVcsbVGqrrcKJaqFKgDgtJ4IHEZqkAKuahbpM6VA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RwvpD8k7; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740143781; x=1771679781;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=hEfxolmO06K0UStHo90/Om11/E8igLCbiEfZngCLRSU=;
-  b=RwvpD8k7jqT8Y+BG0/45viudiJKhC4Ih9TCFQqL6nxHtdSTy0q8pWWgR
-   1qdAMyYlUZSqjHDCyO7DGZ0n7vsaQ6gUwNCWk320qX+66yTzh3dBCcjPo
-   Uk0b4EHUHqZ0gU8FOoOSN1KOxtx2K9NvHLRaGTava1ehDgw3elkKpsRO/
-   ZP7+6g96tLLw3zKQh0sHMNyylLWTHIygKbItdoSp5JYFmHtmjZOw+vvoL
-   jnKD9ta1Tdl3Ss53wQpR/4y7sJ4n4n8vBjFZMsJLB4JPqp2snP70U/DMq
-   1P8pNqAdL1EGbCmSNf9gkR/tO42ZEPj/2iPXshciSEWKSwhsEI2p9GJjT
-   g==;
-X-CSE-ConnectionGUID: HoXzTk5aSL6FNYMG2QvShw==
-X-CSE-MsgGUID: QgwfFuyWSd6IJZQkGsxdwQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11351"; a="41085662"
-X-IronPort-AV: E=Sophos;i="6.13,304,1732608000"; 
-   d="scan'208";a="41085662"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Feb 2025 05:16:21 -0800
-X-CSE-ConnectionGUID: wa5aUpxnRLmpKI5R8IrZtg==
-X-CSE-MsgGUID: y6zMRK2LSIOnzghgfLl3lg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="120613445"
-Received: from unknown (HELO [10.237.72.199]) ([10.237.72.199])
-  by orviesa005.jf.intel.com with ESMTP; 21 Feb 2025 05:16:19 -0800
-Message-ID: <e72b2f2b-d327-49f6-bf16-d846e9283e00@linux.intel.com>
-Date: Fri, 21 Feb 2025 15:17:19 +0200
+	s=arc-20240116; t=1740143860; c=relaxed/simple;
+	bh=5cvYvAHUz4xhfZ0K/Zz/P7LVxYvka8wZVGyvuq7QIzY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=qMhfTKng87qCDz8l2pXY/8gbwUfFF9UzuxO+QYFdtu2fTNdjuNmElVwnAXFQK9GSGn4fHxyVJQtAf60KmAYcydzvDsKov/RnC11WuuRnyNYImCIBnHCSyMXUv2UehChsji3K4L0AbGUwHP1FUg+jdCXwZr1HGzJ4bA1qrJFBp3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q9UxkfVn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F831C4CED6;
+	Fri, 21 Feb 2025 13:17:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740143859;
+	bh=5cvYvAHUz4xhfZ0K/Zz/P7LVxYvka8wZVGyvuq7QIzY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=q9UxkfVnWC453l0sV9IJT712ytaO7hRzXGgnclEAzRipeN+wIpNuO7euYraHaFQKO
+	 GCkhutX/Rf9KbPoC4JFzyBKcUsTbbaVc9t0aByaH8jM55/CdG4RLKpJKgFvKEqcLsH
+	 7uH0BsQUeWkojmFCHHIgxTu0tmmqMvGE/mm/x8iQ0pWHUpb6l/crCVAB1mpJUoCAzz
+	 xBUmaT2fUVM+m0UMBM4ZCdKnu+vLIZPh4efCQLh2Xo70W+RC/auwbPZYv0DUwcCPeA
+	 bn9tCXumXnTIsc8X5Ky21GoggBXGoO8LFy+sxVkUsdQF5BmVybJuzv9KUmYmVKXRod
+	 i2QKkA1bGpxPw==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "Tamir Duberstein" <tamird@gmail.com>
+Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Anna-Maria Behnsen"
+ <anna-maria@linutronix.de>,  "Frederic Weisbecker" <frederic@kernel.org>,
+  "Thomas Gleixner" <tglx@linutronix.de>,  "Danilo Krummrich"
+ <dakr@kernel.org>,  "Alex Gaynor" <alex.gaynor@gmail.com>,  "Boqun Feng"
+ <boqun.feng@gmail.com>,  "Gary Guo" <gary@garyguo.net>,  =?utf-8?Q?Bj?=
+ =?utf-8?Q?=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>,  "Benno Lossin" <benno.lossin@proton.me>,
+  "Alice Ryhl" <aliceryhl@google.com>,  "Trevor Gross" <tmgross@umich.edu>,
+  "Lyude Paul" <lyude@redhat.com>,  "Guangbo Cui" <2407018371@qq.com>,
+  "Dirk Behme" <dirk.behme@gmail.com>,  "Daniel Almeida"
+ <daniel.almeida@collabora.com>,  <rust-for-linux@vger.kernel.org>,
+  <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v8 02/14] rust: hrtimer: introduce hrtimer support
+In-Reply-To: <CAJ-ks9mfe3JBVALO6RJPie6Ae1afH7jsE5jR1jWo_sK266_XPQ@mail.gmail.com>
+ (Tamir
+	Duberstein's message of "Fri, 21 Feb 2025 08:04:40 -0500")
+References: <20250218-hrtimer-v3-v6-12-rc2-v8-0-48dedb015eb3@kernel.org>
+	<20250218-hrtimer-v3-v6-12-rc2-v8-2-48dedb015eb3@kernel.org>
+	<KDmrJnQA2_Ojf67mD8WA_UafgVCACRRleB9t-D_1yl_bua8e1VWdGQAUvmMGHscqRHu1gzPJCKe_BfotutZm5Q==@protonmail.internalid>
+	<CAJ-ks9ncOyGyQsDFOBxg-7wmXkrQYiZr6H6eEFWsFstk=p1uAA@mail.gmail.com>
+	<87wmdkgvr0.fsf@kernel.org>
+	<djAeSx8DNZwss2-UqXGmhVPqYm2z4LhKWC70jPHPisd1w70qmpmOfVbHfhqJErhoFwVFM8IpbTv4MKkk_BIpQw==@protonmail.internalid>
+	<CAJ-ks9mNidHZvWkFJE1jExc2oVk_bbJpiO_DRMrWu5nYhTpKgg@mail.gmail.com>
+	<87r03rhfpu.fsf@kernel.org>
+	<mEsEoJuiP_lEKsnf8nfVaquySinIsovqCT5_TxJD_22KTGqOgH7NO9jKYy1W-q95uiGd50brnTE13ydtRZgioA==@protonmail.internalid>
+	<CAJ-ks9mfe3JBVALO6RJPie6Ae1afH7jsE5jR1jWo_sK266_XPQ@mail.gmail.com>
+User-Agent: mu4e 1.12.7; emacs 29.4
+Date: Fri, 21 Feb 2025 14:17:25 +0100
+Message-ID: <87ikp3e8t6.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/5] usb: xhci: Skip only one TD on Ring Underrun/Overrun
-To: =?UTF-8?Q?Micha=C5=82_Pecio?= <michal.pecio@gmail.com>
-Cc: Mathias Nyman <mathias.nyman@intel.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Niklas Neronin <niklas.neronin@linux.intel.com>, linux-usb@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250210083718.2dd337c3@foxbook>
- <20250210084220.3e5414e9@foxbook>
- <7bb25848-c80e-4ba8-8790-8628951806b3@linux.intel.com>
- <20250221021712.48c07fe0@foxbook>
-Content-Language: en-US
-From: Mathias Nyman <mathias.nyman@linux.intel.com>
-In-Reply-To: <20250221021712.48c07fe0@foxbook>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 21.2.2025 3.17, Michał Pecio wrote:
-> On Tue, 11 Feb 2025 17:41:39 +0200, Mathias Nyman wrote:
->> On 10.2.2025 9.42, Michal Pecio wrote:
->>> +				if (ring_xrun_event) {
->>> +					/*
->>> +					 * If we are here, we are on xHCI 1.0 host with no idea how
->>> +					 * many TDs were missed and where the xrun occurred. Don't
->>> +					 * skip more TDs, they may have been queued after the xrun.
->>> +					 */
->>> +					xhci_dbg(xhci, "Skipped one TD for slot %u ep %u",
->>> +							slot_id, ep_index);
->>> +					break;
+"Tamir Duberstein" <tamird@gmail.com> writes:
+
+> On Fri, Feb 21, 2025 at 3:20=E2=80=AFAM Andreas Hindborg <a.hindborg@kern=
+el.org> wrote:
 >>
->> This would be the same as return 0; right?
+>> "Tamir Duberstein" <tamird@gmail.com> writes:
 >>
->> Whole series looks good, I'll add it
-> 
-> I hope you haven't sent it out yet because I found two minor issues.
-> 
-> 
-> Firstly,
-> [PATCH 3/5] usb: xhci: Fix isochronous Ring Underrun/Overrun event handling
-> 
-> increases the number of xrun events that we handle but doesn't suppress
-> the "Event TRB for slot %u ep %u with no TDs queued\n" warning, so the
-> warning started to show up sometimes for no good reason. The fix is to
-> add ring_xrun_event to the list of exception for this warning.
-> 
-> 
-> Secondly,
-> [PATCH 5/5] usb: xhci: Skip only one TD on Ring Underrun/Overrun
-> 
-> can be improved to clear the skip flag if skipped TD was the only one.
-> This eliminates any confusion and risk of skipping bugs in the future.
-> The change is a matter of moving that code to a different branch.
-> 
-> I also changed 'break' to 'return 0' because it gets hard to follow at
-> this level of indentation.
-> 
-> 
-> I'll send a v2 of those two patches. Sorry for any inconvenience.
+>> > On Thu, Feb 20, 2025 at 4:19=E2=80=AFPM Andreas Hindborg <a.hindborg@k=
+ernel.org> wrote:
+>>
+>> [...]
+>>
+>> >> >> +pub unsafe trait HrTimerHandle {
+>> >> >> +    /// Cancel the timer, if it is running. If the timer handler =
+is running, block
+>> >> >> +    /// till the handler has finished.
+>> >> >> +    fn cancel(&mut self) -> bool;
+>> >> >> +}
+>> >> >> +
+>> >> >> +/// Implemented by structs that contain timer nodes.
+>> >> >> +///
+>> >> >> +/// Clients of the timer API would usually safely implement this =
+trait by using
+>> >> >> +/// the [`crate::impl_has_hr_timer`] macro.
+>> >> >> +///
+>> >> >> +/// # Safety
+>> >> >> +///
+>> >> >> +/// Implementers of this trait must ensure that the implementer h=
+as a [`HrTimer`]
+>> >> >> +/// field at the offset specified by `OFFSET` and that all trait =
+methods are
+>> >> >> +/// implemented according to their documentation.
+>> >> >> +///
+>> >> >> +/// [`impl_has_timer`]: crate::impl_has_timer
+>> >> >> +pub unsafe trait HasHrTimer<T> {
+>> >> >> +    /// Offset of the [`HrTimer`] field within `Self`
+>> >> >> +    const OFFSET: usize;
+>> >> >
+>> >> > Does this need to be part of the trait? As an alternative the provi=
+ded
+>> >> > methods could be generated in the macro below and reduce the
+>> >> > opportunity to implement this trait incorrectly.
+>> >>
+>> >> There is no risk of implementing the trait wrong, because it is usual=
+ly
+>> >> derived by a macro.
+>> >
+>> > There's no risk when it's implemented by the macro, but you used the
+>> > word usually,  which means there is a risk.
+>> >
+>> >> We need at least one of the methods to be able to have the type system
+>> >> verify that the type for which we implement `HasHrTImer` actually has=
+ a
+>> >> field with the name we specify, and that this field has the right typ=
+e.
+>> >> And to have that, we need the OFFSET.
+>> >
+>> > I don't follow this logic. OFFSET is calculated in the body of the
+>> > macro. I'm suggesting that the macro generate the method
+>> > implementations (which would no longer be provided). In effect I'm
+>> > saying: keep OFFSET private.
+>> >
+>> > I'm also noticing now that the macro generates an implementation of
+>> > raw_get_timer *in addition to* the provided implementation. Why are
+>> > both needed?
+>>
+>> HasHrTimer is unsafe, because it would be unsound to implement, if the
+>> type it is implemented on does not have a `Timer` at the specified
+>> offset.
+>>
+>> To be able to implement it safely with a macro, the macro must verify
+>> that the type we implement the trait on satisfies the safety
+>> requirement. That is, we have to have the macro verify that the type
+>> indeed has a field of type `Timer` with the given name. If that is the
+>> case, the macro can calculate OFFSET.
+>>
+>> The way we achieve this is we re-implement on of the trait methods in
+>> such a way that it only compiles if the type we reimplement trait
+>> on actually have the field of the right type.
+>>
+>> I want to generate as little code as possible in the macro, and I would
+>> rather rely on the default implementations given in the trait, than have
+>> the macro generate implementations for all the methods. Generated code
+>> are more difficult to reason about.
+>
+> Again, I don't follow. The provided implementation of raw_get_timer is
+> either not used (in the presence of the macro) or it relies on the
+> implementer correctly setting OFFSET, which the compiler cannot check
+> and which can break at a distance.
+>
+> Wouldn't it be simpler to just generate both functions that rely on
+> OFFSET? They're both one-liners that delegate to other existing
+> macros.
 
-Patches updated, they are now in my for-usb-next branch
+No, I would rather generate as little code as possible. The only reason
+I am generating `raw_get_timer` is to be able to type check that the
+field name given to the macro has the right type.
 
-Thanks
-Mathias
+
+Best regards,
+Andreas Hindborg
+
 
 
