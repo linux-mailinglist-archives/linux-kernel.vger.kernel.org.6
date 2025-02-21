@@ -1,136 +1,119 @@
-Return-Path: <linux-kernel+bounces-526296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74136A3FD01
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 18:11:43 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD7ABA3FCEC
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 18:10:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB4063A61FE
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:05:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A44D47B0F70
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:06:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AABE924BD06;
-	Fri, 21 Feb 2025 17:05:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5495424BD13;
+	Fri, 21 Feb 2025 17:06:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P/o2s9nf"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="b52MpnWz"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DABD02475E9;
-	Fri, 21 Feb 2025 17:05:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1256924C66A
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 17:06:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740157513; cv=none; b=uRT82PgZ4D37PzMt/eHGeG5Jbblz8Bm/rhPd6ia/Wvc2aRFUctnhZa+TYJariMLbAOsWFevN2b7NVjFmAaXnYGI49L1eeiqHhnQ/IVs9dN242fUSm5a2rfyT4Zf3o8ZdV0275UX+Gm1PYPb2p+YQ8Q6mTvTxO2CQ3WPDg5Nl64A=
+	t=1740157602; cv=none; b=iSyLb2cAztFj0UBdYihiWVEVbWKJ5bxy2774NqeKHqO8idoy5eR0gk408o2o3Tk5rDQ+/69J2vIDum2k1YLDcxZMxOBzCd1MicYWRqpm3+v2TVBm59E4OoZJNIRgAR9/UnqB0QofanplKiLBxe/4gh4CDwWu7J38UhXe01A45fQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740157513; c=relaxed/simple;
-	bh=fApzqprR+kBcAG0IK+keq7VmTz0rdzUDdm/bBzx1Ydg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=F1en+BF7irakdsjAU3A5c35CpbOYAckK8VlE30BBVBv5YHQPzSHtpBOw3LVRWA15YiMKfNor8kOKIwp+Cq4n6LISZ+1wHVkE7nblDbv3y+MYxJW0jxiS6dSfDPqTvKA5AR1zaTCjSOKjgJeTn8I6pYLYfswkczmrhKh3o7GrIqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P/o2s9nf; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-38f29a1a93bso1948844f8f.1;
-        Fri, 21 Feb 2025 09:05:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740157509; x=1740762309; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=KRX3VkuTpvxQnJlyqWWAKHuLSqRVn8HPKCGBcwwEsXw=;
-        b=P/o2s9nfIFdaLVEhrOuaft9gJpm08Wl+KWXRki4VMM4YhjWJ1ni1zEo9i/XfROY9iC
-         VWedzgVqUhvi5kxg07YS58c8OM6noKuZ1UPLeutILcQKmaChFhmJI/Wwb9aCrSP0Lzlh
-         k/5mZqY+4pEII9v9VF+GQRN8m6s8BzgQdfC5GtbT8Yk9OazADoObvms3TMJMztUpXvOp
-         6+YTodxLyzgL8DU03efUw69nEai9iyGFZ6XEHDDyTXkX+myyey1VP9fDi3maIIlR01O1
-         1SELCp9NLr9LFv2GSBOCdr76ZL9tWwHBU19T6FJB8iXAmPrwQZu+OqDSXYBfF869Juj9
-         L2ag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740157509; x=1740762309;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KRX3VkuTpvxQnJlyqWWAKHuLSqRVn8HPKCGBcwwEsXw=;
-        b=kZ5DKdmX/GTT3gZkwWPy3MHjva0HWmLAqgjWw1/4pk5QZ/n+EkGVyiiRV96fh2lpDr
-         tkyRPbh5pVKoFMciltEpWZVOLEl2dd8Ha0D6/VyCejf1Kh7RNC135Y82nVPuex7ujBpm
-         aGXIvDzIgxZnRGKYgJC6oXn4Pd98OUIyCz9lw59hR3dm0v53jSv3qSdjZrjZU6sjqABl
-         ThDCKayTKy5QmnUXYhX1vViV5eS2k9OpibEdTOGa1Frn61tsdqBevEi8b8DhYPAJN68p
-         ti5yXcIglJKLR/gc+379e6/vY3LcdYUvk6NBZbgrpDYWY/N2CWHD5uyhEXj8XoDVLo5x
-         BcFw==
-X-Forwarded-Encrypted: i=1; AJvYcCXXadua7Oa2/ImINrp3lJEHRDvyoskD57YCLUxkG1ZxM2hHcWxNWh4EVju5zVv3hRk04b4Z2BSNDL1+mXTg@vger.kernel.org, AJvYcCXjnkDAnl0wq5qsB0/zePc2FHKFoqE6G4mBgZfL20vrEtLVCcscSOStxGHCw1uYOS/8KrCPxWUN8g==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxImLv1LSwneU7yaWD6E93DEENbZXM5ExgRHK1s0tV5bfHpfzxv
-	RfspWd/y1tIr0ornkSM2PIExvw2eblTwnJD+vkgNrK7zsTOxNy+/
-X-Gm-Gg: ASbGncutmA3Ur/ZY9JCaLXN63YGPb8rbtJy7+NOlkTXa8pyJ3mCt6jTxTzmMM4DXveh
-	l2U+NwVG4nEfDgv3lyTk5wmDXrBFwPJT6PmMpGRXpNMGf7TuXkpCISr2KKl6tNjZnhYPpX1EE4z
-	4bBfct2tb3iZtelaCu5I/XoZDDQ+Jwx80cvOXpfj1NEohu0E/QZ4tdVhbA6xybGGcoPFKEH81HA
-	YGv+qdlS6hKY2ON8+3FU6dosycpv/ZIWNwUZsEEE5CrC8WEoNto3xmw7E0aF/n/dT+a6KaqyGYQ
-	reF0EOCwbPgw/8DoAiEPqA84V+gkoxSLGXY2
-X-Google-Smtp-Source: AGHT+IEMlVnkqCxUzksHUs5LQ2R7/mAK+ghtouNkT9cEa99kYGtaZy3dL4QaNKlQYSqzVdLX0zWXFg==
-X-Received: by 2002:a5d:6c6f:0:b0:38f:2173:b7b7 with SMTP id ffacd0b85a97d-38f6e95c4a3mr3830573f8f.18.1740157508501;
-        Fri, 21 Feb 2025 09:05:08 -0800 (PST)
-Received: from [192.168.8.100] ([148.252.141.194])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f259d5e9esm24271471f8f.61.2025.02.21.09.05.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Feb 2025 09:05:07 -0800 (PST)
-Message-ID: <d510f0c5-d25d-44cb-9974-46026964beca@gmail.com>
-Date: Fri, 21 Feb 2025 17:06:14 +0000
+	s=arc-20240116; t=1740157602; c=relaxed/simple;
+	bh=V6EaOwBFX+1JslXbpLD2c1d1PfxGv3uM7IyU5g8Z3Cc=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=uIc3k3fUlg9L90OlKj2uRjxe0Qw1jsAlY4LZeVUbK5hM6KvexhgAZFomfD8xi+dkwJqnwO7RTc1wemgxVKnZL0eCu2KO9YbQ6XGTI+HbBTuH/FB6LDo2pd8keLcb/zAw2W4a3CjSwGW0xqULq7L/s4GFeKBQ2iB4wTtV8V54z8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=b52MpnWz; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740157600;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=DPPgpqmJ+YG+3SDYIopKnv0LWWUDy/TFlJMPIfTEKMg=;
+	b=b52MpnWz/6a3ZSxAMGm3HV2jRnMmjdNEZpTV/To9h4Kej8jNqzV4Ylh9y8DEB8hUlRaF2O
+	czCINp56p9E+8+Qvcn0+IahOGUslHs49IL+COtllkLOu99zogCL346oYq/iLpGGymB7dV/
+	/PdzLBzbhShysfghoQI7BAqvk/+QDj0=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-608-qWK9XoGDPdaBm1ZGtoM1Qg-1; Fri,
+ 21 Feb 2025 12:06:36 -0500
+X-MC-Unique: qWK9XoGDPdaBm1ZGtoM1Qg-1
+X-Mimecast-MFC-AGG-ID: qWK9XoGDPdaBm1ZGtoM1Qg_1740157595
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DCABA180036F;
+	Fri, 21 Feb 2025 17:06:34 +0000 (UTC)
+Received: from eperezma-thinkpadt480s.rmtes.csb (unknown [10.44.32.170])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 453CD180094B;
+	Fri, 21 Feb 2025 17:06:28 +0000 (UTC)
+From: =?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>
+To: Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Stefan Hajnoczi <stefanha@redhat.com>,
+	Hanna Reitz <hreitz@redhat.com>,
+	linux-kernel@vger.kernel.org,
+	German Maglione <gmaglione@redhat.com>,
+	virtualization@lists.linux.dev,
+	Stefano Garzarella <sgarzare@redhat.com>,
+	yama@redhat.com,
+	Vivek Goyal <vgoyal@redhat.com>,
+	Miklos Szeredi <miklos@szeredi.hu>,
+	mst@redhat.com,
+	Jason Wang <jasowang@redhat.com>
+Subject: [RFC v2 0/5] virtiofs: map buffer out of virtqueue lock
+Date: Fri, 21 Feb 2025 18:06:21 +0100
+Message-ID: <20250221170626.261687-1-eperezma@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] io_uring: add missing IORING_MAP_OFF_ZCRX_REGION in
- io_uring_mmap
-To: Jens Axboe <axboe@kernel.dk>, lizetao <lizetao1@huawei.com>,
- Bui Quang Minh <minhquangbui99@gmail.com>
-Cc: David Wei <dw@davidwei.uk>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>
-References: <20250221085933.26034-1-minhquangbui99@gmail.com>
- <590cff7ccda34b028706b9288f8928d3@huawei.com>
- <79189960-b645-4b51-a3d7-609708dc3ee2@gmail.com>
- <0c1faa58-b658-4a64-9d42-eaf603fdc69d@kernel.dk>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <0c1faa58-b658-4a64-9d42-eaf603fdc69d@kernel.dk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On 2/21/25 16:39, Jens Axboe wrote:
-> On 2/21/25 5:20 AM, Pavel Begunkov wrote:
->> On 2/21/25 09:10, lizetao wrote:
->>> Hi,
->>>
->>>> -----Original Message-----
->>>> From: Bui Quang Minh <minhquangbui99@gmail.com>
->>>> Sent: Friday, February 21, 2025 5:00 PM
->>>> To: io-uring@vger.kernel.org
->>>> Cc: Jens Axboe <axboe@kernel.dk>; Pavel Begunkov
->>>> <asml.silence@gmail.com>; David Wei <dw@davidwei.uk>; linux-
->>>> kernel@vger.kernel.org; Bui Quang Minh <minhquangbui99@gmail.com>
->>>> Subject: [PATCH] io_uring: add missing IORING_MAP_OFF_ZCRX_REGION in
->>>> io_uring_mmap
->>>>
->>>> Allow user to mmap the kernel allocated zerocopy-rx refill queue.
->>>>
->>>
->>> Maybe fixed-tag should be added here.
->>
->> No need, it's not strictly a fix, and whlist it's not yet sent to
->> linus, the tags only cause confusion when hashes change, e.g. on rebase.
-> 
-> I do like using fixes still, if only to provide a link to the original
-> commit without needing to dig for it. And yeah there's the occasional
-> rebase where I forget to update the sha, but those get discovered pretty
-> quick.
+This is useful for some setups like swiotlb or VDUSE where the DMA
+operations are expensive and/or need to be performed with a write lock.
 
-Maybe a "Link" tag would be better or some more inconsequential
-"Refers-to", but otherwise you can call it a feature and avoid the
-hassle of fixing it up, and people getting spammed by tooling,
-and Stephen having to write about broken hashes.
+After applying these patches, fio read test goes from 1124MiB/s to
+1263.14MiB/s.
+
+v2:
+* Follow current add_premapped virtio API
+* Disable notification more aggressive too.
+
+---
+Sending this series to obtain feedback if this is the right way to go &
+to profile it properly.
+
+TODO: Profile multiqueue.
+TODO: Handling errors.
+TODO: Do the same for hiprio queue.
+TODO: Can we batch maps? virtiofs always sends many buffers.
+
+Eugenio Pérez (5):
+  vduse: add virtio_fs to allowed dev id
+  virtiofs: Move stack sg to fuse_req
+  virtio_ring: add api for premapped out and in buffer chain
+  virtiofs: perform DMA operations out of the spinlock
+  virtiofs: Disable notifications more aggresively
+
+ drivers/vdpa/vdpa_user/vduse_dev.c |  1 +
+ drivers/virtio/virtio_ring.c       | 35 ++++++++++++
+ fs/fuse/fuse_i.h                   |  7 +++
+ fs/fuse/virtio_fs.c                | 85 +++++++++++++++++++++---------
+ include/linux/virtio.h             |  7 +++
+ 5 files changed, 110 insertions(+), 25 deletions(-)
 
 -- 
-Pavel Begunkov
+2.48.1
 
 
