@@ -1,119 +1,109 @@
-Return-Path: <linux-kernel+bounces-525308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19C2FA3EE0A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:11:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BEA2A3EE0C
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:12:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E7EAC7A87A4
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 08:10:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ECA4C7AAFB9
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 08:11:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D40C920010A;
-	Fri, 21 Feb 2025 08:11:44 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1068D201022;
+	Fri, 21 Feb 2025 08:11:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="v2hT8SRZ"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29A341E1A05
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 08:11:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD4B11FFC67
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 08:11:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740125504; cv=none; b=MZDJn2pLc+1GgNQSBwF1txHIoCq2sQ2tj0JrWODVyLROAFk6NI5/c6Qjwy86Ya7Jrjls6moZH7lXLaTiytYtbLFPeQdZvI7r5doWORHjttQaspnYYYgBu+StXntVjg+xH6N1kZF3zLCzD/TcwTMWl5GWkINPp5LtKppoxMnToLQ=
+	t=1740125506; cv=none; b=omnWcHZrd8geiFDRBX1du8flQKX6+0OH8JWtv0jynmjgzVBGgSm5SaKyS4QIZKPeLMl2/ETFYnVL9sHkML4lKS0893XmMbcqkE6u201H/CBVL7qXiA/OSG1fOHxtXSGT30vxgx7cE01SLU+oUHjmF74UvdzJI9CwMDveb7r3tsk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740125504; c=relaxed/simple;
-	bh=WsD0bE8zHwBw2Ief2jaburMH+zxntZbbKKUDyA9s6U0=;
+	s=arc-20240116; t=1740125506; c=relaxed/simple;
+	bh=hCwB8kSF7aboWe9MWosKA0MPvltpikkpS8eP32SogpI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ItVOxRA8MYqs5ehT3AHqZ5L+nIQU2nUk1u6My7AKbUoABgzGrOChGSi0mbHEsb2EdA0DW/bs+pmzHQrZ15aYOMbCiij7NYvsfXphQZif85Txub/gNbbBfDuvlBs+JHwp3fA98kmxDs7XEdMrrz6aFDf6qWrGU4bQWSkTJync3Wo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1tlO8C-0008CR-KX; Fri, 21 Feb 2025 09:11:32 +0100
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1tlO8B-0024Om-2a;
-	Fri, 21 Feb 2025 09:11:31 +0100
-Received: from pengutronix.de (p5b164285.dip0.t-ipconnect.de [91.22.66.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id 771CB3C831F;
-	Fri, 21 Feb 2025 08:11:31 +0000 (UTC)
-Date: Fri, 21 Feb 2025 09:11:31 +0100
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Dimitri Fedrau via B4 Relay <devnull+dimitri.fedrau.liebherr.com@kernel.org>
-Cc: Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, linux-can@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, Dimitri Fedrau <dimitri.fedrau@liebherr.com>, 
-	Dimitri Fedrau <dima.fedrau@gmail.com>
-Subject: Re: [PATCH v3 0/2] can: flexcan: add transceiver capabilities
-Message-ID: <20250221-industrious-chamois-of-promotion-980ecd-mkl@pengutronix.de>
-References: <20250221-flexcan-add-transceiver-caps-v3-0-a947bde55a62@liebherr.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=QbYspQYX640Y/Gg+s7fpqQrCvApDVQT9xNB4lhjRQt9qT+LwpWkQqvvr3Ev2xjBEKQPdYPMEvgHeakvhn3j4R5pPqCgoTtf7O8wcvsa66syMbC+DqqyFk/ySeKoL8WaIl7ULSdy4DBXwek9iqbYAjxRPABry1jPri7qMtCsHE6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=v2hT8SRZ; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-ab771575040so517834966b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 00:11:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740125503; x=1740730303; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=hCwB8kSF7aboWe9MWosKA0MPvltpikkpS8eP32SogpI=;
+        b=v2hT8SRZdMvTB1ggAqXj5t4H5JOYRhCTSEgRmsDR2lns6DSaiNg/T46BhMz8Z8DtZi
+         iHoR1m897dt1+aBEIiFzVNpcmgVTiAieUow3jDrsqcpduTCvleCLigm7F6wkUhYpAqlX
+         pUVQO5KjqTW/VyR6SDF2UtKbmDu74tjH6jWhnvVblXJVXiYATj3q5MzV//dZ5BQXD4f1
+         RO9bcfXo2vb4LI6iUequLqJGCqBaX3wSN9mpY7QWdTQVuojbGOkCNbT7217C78v+Ps6r
+         L1Pjq3/WrE9w9HNHUL7R5fOC7o3iU4ZPyTq0PdGAFWQMaZkOSg6hg/EqsTpEtOfJcr9l
+         X1rA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740125503; x=1740730303;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hCwB8kSF7aboWe9MWosKA0MPvltpikkpS8eP32SogpI=;
+        b=Gpzb9zlysXG21KNBxV24pL8nVUH07H7RrKo9EF+yCjAG20IeAzAXOSGFDshPUpD9p4
+         7+MnhDWrjRM5uHwIWzHHK2UNC1Nv3aMPSlIJkBA+rD8eaAf5EaCucLVyKHuFw8DL+lh4
+         kLFyZtXh4v7GEH7Ejff78mekI8sdEjKBhOOxevIQL4/J5RTSGwmuVF+d7sQ4f+dptUHH
+         I//ZFaBpqw7TZlLC08L1mmjxc+T612i1WpUbU8VpsEWRVgEJqchtBP1vaMSKZrownVVh
+         ahDcwEZy1cXJRuXlzNRuP38CYXctsGZ9DhaI88ILqjZK49UGbfRtuGXUN0ud9Qhwkglg
+         UJzw==
+X-Forwarded-Encrypted: i=1; AJvYcCXqxHBcebmyrFyGTTursvHJ9TMdwqvn98vc7+F5oyO2M70/K659OwDYfqbjQPsrVdzpDGg3TLR5nH6OWsA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0S69rN5FAvOp2LnHH+CNQQDA12VDjIRygyx72K+IgYWb0W2Nz
+	8aRox7/2J1IvJ+yffV9DmsQz0ldNX/e2t2ZxbFkzpa8bVxFnCAhtuWjcmgCDwtw=
+X-Gm-Gg: ASbGncuhi3bCHvtwiYHo1ehBvaT029yfMu+pmJFKLBy7+jDXbEaFpmQvDEWDPH+HWyE
+	OrrIMMCqcLTE/PpRbijfxjpAZRuaaj+Wh2Xrty3uWU0Gbgl8nmUsvbbzziJLqNdF118jgjZPl7n
+	lN98k8B2sVwKywaCQJwVhjc+HNawpLud90yy4kJXLKVxhFxJxU2bYFw7yj+VKSlwfxeC9XmNwfp
+	I4czmfwyLGZJEcoLKba7OcI/92I3njUNo/VAyk+YosWuAxkDpjs4lCUzPWg4Nk06OB51hJL2HYX
+	ojvmSkp/iEIZlmJL5jveSD8BlHPGDbg=
+X-Google-Smtp-Source: AGHT+IFuU0kFfUB+9CyBx7lXud4c9haNcdYJF6e0i3cVIr8FWn1DAHV4Txb/+etbyGDMWrWlIiVGAQ==
+X-Received: by 2002:a17:907:720a:b0:aba:6385:576e with SMTP id a640c23a62f3a-abc0ae1aed3mr186595766b.3.1740125503011;
+        Fri, 21 Feb 2025 00:11:43 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-abbbefd080asm648847866b.179.2025.02.21.00.11.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Feb 2025 00:11:42 -0800 (PST)
+Date: Fri, 21 Feb 2025 11:11:38 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: Josh Don <joshdon@google.com>, kernel-janitors@vger.kernel.org,
+	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Ben Segall <bsegall@google.com>,
+	Chengming Zhou <chengming.zhou@linux.dev>,
+	Daniel Bristot de Oliveira <bristot@redhat.com>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	Mel Gorman <mgorman@suse.de>, Steven Rostedt <rostedt@goodmis.org>,
+	Valentin Schneider <vschneid@redhat.com>
+Subject: Re: [PATCH v2] sched: fix potential use-after-free with cfs bandwidth
+Message-ID: <9f1f3ff7-b4dc-43b0-993f-1f062f85d0a5@stanley.mountain>
+References: <20250221012335.233404-1-joshdon@google.com>
+ <05f3fc66-f11d-4cda-8ea3-91aac650ec20@web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="gs72lukjhvbmuanp"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250221-flexcan-add-transceiver-caps-v3-0-a947bde55a62@liebherr.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <05f3fc66-f11d-4cda-8ea3-91aac650ec20@web.de>
 
+Markus, it was good to ask for a Fixes tag but now you're just distracting
+people who are doing actual work.
 
---gs72lukjhvbmuanp
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v3 0/2] can: flexcan: add transceiver capabilities
-MIME-Version: 1.0
-
-On 21.02.2025 08:40:03, Dimitri Fedrau via B4 Relay wrote:
-> Currently the flexcan driver does only support adding PHYs by using the
-> "old" regulator bindings. Add support for CAN transceivers as a PHY. Add
-> the capability to ensure that the PHY is in operational state when the li=
-nk
-> is set to an "up" state.
->=20
-> Signed-off-by: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
-
-Looks good to me! Now we need an Ack for the DT binding changes.
+https://lore.kernel.org/all/60c7ed79-c344-4f6a-aefc-d6d45a4d9004@kernel.org/
 
 regards,
-Marc
-
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---gs72lukjhvbmuanp
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAme4NTAACgkQDHRl3/mQ
-kZzquwf9G3DksJ7fQGrMTolFPT1AgFo6aXUI3kfJuhJhP+XLr9x+2HkAfrNWOAef
-ITYmplQXkWBlb7nSOeUCsWiSk9Wh0gVwtgSSFCZtDTC7O6Hk20ysFys6TWOjDZAZ
-CeXgBLKZzZ+//kVEwyyLvDg/0lAlj2J2uRhW6M9tT+4GNvLGT1i0LlLCOUpnlk5u
-7+AvqUkWWCwYuqjNCtao9isP2lRhJEV5Gv4SfJX/doNoIt1vwV3JQFTCqAZQgxfr
-fvUHwn0oc8iY68ecaf30Q2m+X3wtHLdsS/qVG8bIKxNf4T40TfAXuJ0NB6o1WcYJ
-acdwYBeMUugv7YfB12cRdsRjV8Axrg==
-=mKfl
------END PGP SIGNATURE-----
-
---gs72lukjhvbmuanp--
+dan carpenter
 
