@@ -1,144 +1,107 @@
-Return-Path: <linux-kernel+bounces-526700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36E6DA4022B
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 22:40:31 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83510A4022E
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 22:40:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7367119E0286
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 21:40:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B55FE7AEA32
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 21:39:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35FBF253B7C;
-	Fri, 21 Feb 2025 21:40:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27FB9253F22;
+	Fri, 21 Feb 2025 21:40:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="chhKv+9G";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="iR4XMekW"
-Received: from fhigh-b8-smtp.messagingengine.com (fhigh-b8-smtp.messagingengine.com [202.12.124.159])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lrqIfVBf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB2C31E9B29;
-	Fri, 21 Feb 2025 21:40:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.159
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CDD62505A0;
+	Fri, 21 Feb 2025 21:40:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740174024; cv=none; b=W0Yig6x9k+wxb5YIsiXQhnhQ5HAQmCWCXWFJFbSBSp1sKML7j7+Egmy+S5hvxESJmgAqvoAbuAop5YjxJwHMZz4LSVTGVyJOVRrP11ZG2wtJLBUjUHI5OKpsKFY036KjQ+R6nFPJt6EYVAVLJMw+E+g9qwqE1xDpRdzZqMjSMnA=
+	t=1740174037; cv=none; b=eijrba0XzDcw/LwM83ZcfHcQJYcd2x2GeQbThIyFRfkZW+FVp6a5lYyciuMj3/SgiiTQLBCTFq1N8C+NVJT2cloVMOvsup9UmDC+dHoC6uRT70+vg7Tyq5Zc/DnXjdcFOX8nR9KH6sjj74nDw5TDwTKDpLKTnhSq827m0+vTeb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740174024; c=relaxed/simple;
-	bh=aGUIFalwthnnlJdpMqYs1U7O+Uk6WG3t8O3Vxnm7kQw=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=QYCbDnCuSHQpAp8s2cI+EC1RNt1AAG+/RIs/eviqyWbyKVY3rWFseIW+fgISoYdO4ySeuslzcz9Y6eSg5G+6Oz7bGRebAknAFWM0E4Ybcb2G1TLyBx6Q6BstSGVu1VcBOh6VccbXvjtxHOpJ/G3AE5iEfxcsxqDV0n5evLjWgBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=chhKv+9G; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=iR4XMekW; arc=none smtp.client-ip=202.12.124.159
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 770CE25401A0;
-	Fri, 21 Feb 2025 16:40:21 -0500 (EST)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-11.internal (MEProxy); Fri, 21 Feb 2025 16:40:21 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1740174021;
-	 x=1740260421; bh=H/UUOthfQinux8BMnpfbWu8T1PvGNs7p7CNTyG/xg+Y=; b=
-	chhKv+9GhGg9DG/QpWCLX1JT+lGGtTCvsWRSi20skPTKwQEFm/NSO31JD6bB/Z3a
-	JME+QDAgvIupS2kNhxuPxAGNY+eMCWT1L7LR0CoYF5x+c/8iyKnbEkD543NNGa+l
-	W67uqAmJbwPiOF0IDjrOoGUJ2SnXQ/wlXoZ2z6W9JEWENAvmU1i8WBKVzFQlV2cq
-	hVptQ4kvH4UMcOZwH2e0+qrwzE6+/4wVm9ceW1yT/Ur3mvSG3Kn8pt1JOzMScpBM
-	xWHWMeat8lGdC0UkfidDjU4kBT+rSPzBgHvHOJsxkGD5aw7Liuu83DZg03e5fQqe
-	LSh/4HFzqSeCtR1gPbHfow==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1740174021; x=
-	1740260421; bh=H/UUOthfQinux8BMnpfbWu8T1PvGNs7p7CNTyG/xg+Y=; b=i
-	R4XMekWbhDAm6/cCx+EwddG1/n+YOZFFTcN80kXJwh87Q58WFrH9hFI6JU1ng9x8
-	MwsDdrCJQjQaMQPr7Jv66b5frtPUTL42iD3NCJNASiZFWEWRW8EqbSw3KwSZB7oA
-	78tr/HpobLnkGDT6vdQTWk5tVW2peKDj/fLJXrN/td5NXKIuCDnHjKBJJxEenM8f
-	yo4gWKI6irMyKtpmJtJnAuAhnLEBboStC1CRTE8JP16jAoHqj0uuUxrqowl0HRUq
-	6ULUkWgg3UlfhH1cxpJH3nqTc/Sy2j7rsKzoRLwQZb7/pF/gTY48NO0ZIFWzhN4q
-	xnEuCgroFlY2kpFxciTkg==
-X-ME-Sender: <xms:xPK4Z8eVNHw2Ph_0ob4HZuUH-Hlcl5KDT_MeHA60I6t9jRi9HDq4rA>
-    <xme:xPK4Z-OrXg6W81Rhbv3NsGc7qlltnF_2lPC9aSmDIT2K2CYchehoRbXjntmDOI0WW
-    hRYdS3r6-bxqKBy5Ww>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdejudduudcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
-    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
-    druggvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteef
-    gffgvedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopedu
-    uddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepnhhitgholhgrshesfhhjrghslh
-    gvrdgvuhdprhgtphhtthhopehgvggvrhhtodhrvghnvghsrghssehglhhiuggvrhdrsggv
-    pdhrtghpthhtohepnhhitghkrdguvghsrghulhhnihgvrhhsodhlkhhmlhesghhmrghilh
-    drtghomhdprhgtphhtthhopehjuhhsthhinhhsthhithhtsehgohhoghhlvgdrtghomhdp
-    rhgtphhtthhopehmohhrsghosehgohhoghhlvgdrtghomhdprhgtphhtthhopegrrhhnug
-    eskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepmhgrshgrhhhirhhohieskhgvrhhnvghl
-    rdhorhhgpdhrtghpthhtohepnhgrthhhrghnsehkvghrnhgvlhdrohhrghdprhgtphhtth
-    hopehllhhvmheslhhishhtshdrlhhinhhugidruggvvh
-X-ME-Proxy: <xmx:xPK4Z9h5YXP_HfDuJA2OhTULx_MSUdaHxRYtZKq95_ak-9g5ct7JUg>
-    <xmx:xPK4Zx9d_JuJFmhJlncQl5nq6Dem5SfFSW2SboWzrY-dxI6TgdfzYw>
-    <xmx:xPK4Z4tE9RxyY0FmRd2csGvhOwtz7lj5kY_Bi1d9mBxTAkVS6qEJtw>
-    <xmx:xPK4Z4GtDeu5jZwEhYqGwGoQO-hKalumBDj0Nmeiu3evPcQ0hqUhCQ>
-    <xmx:xfK4Z5kPMgRkBq0MtD7nr_JMsPqR3g_6PS-cIFVuxz5Gh9LkEjKm2Fm1>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 0F3F72220072; Fri, 21 Feb 2025 16:40:19 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1740174037; c=relaxed/simple;
+	bh=9fvV1HXHQezyHbGraYC4O5PEEvTUXe//QLm/vAzf9a0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=RhkFHM9/sY8xWg1nlCkWdr5euHFk1AXl2xeL7xdEYHYweNXJpfmHBmXMgt/R6Ckj/537ZnI5goenzw7xK4//EFBnDoIapTvfjkgZ6TIltCluMHe+A0mSCYiJoD0y773wGFC5beMtD6Io9XipwOIbiJAuCTvsQVSyRTijrzHFJ5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lrqIfVBf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3CE8C4CED6;
+	Fri, 21 Feb 2025 21:40:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740174037;
+	bh=9fvV1HXHQezyHbGraYC4O5PEEvTUXe//QLm/vAzf9a0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=lrqIfVBfJONAREehMa52UNOot1th/3/B4a+NqS7b7TbT6xuGaqMSF+ZmHZCxPviuV
+	 7Um77DfVykXYaoZq8gRPEqdq/uKufY0jYKWnHxvED2bVEbD4s25RcmVlRRNsBZsNCC
+	 43fLjUiyeYIEAJm45P3gmC/obYuYwjvlhj5Xuv6Idpv/IByGD34GihwIyyNA9McwKI
+	 vS4FhoFMR5QivgpnLAcIAnYl9KyMhH1EdIuu+jctszitd/I+xKFQyXh+tNsH8boub6
+	 ucH21pL8TXW0/zv6SD+iZfBIWvyEmZQ1oZhVNsrDY4dCjtnS0c6rPkBbH75GrCDmGn
+	 NJnrEjFyAjvdw==
+Date: Fri, 21 Feb 2025 15:40:35 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Stanimir Varbanov <svarbanov@suse.de>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rpi-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Jim Quinlan <jim2101024@gmail.com>,
+	Nicolas Saenz Julienne <nsaenz@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, kw@linux.com,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Andrea della Porta <andrea.porta@suse.com>,
+	Phil Elwell <phil@raspberrypi.com>,
+	Jonathan Bell <jonathan@raspberrypi.com>,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>
+Subject: Re: [PATCH v5 -next 08/11] PCI: brcmstb: Adding a softdep to MIP
+ MSI-X driver
+Message-ID: <20250221214035.GA362971@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Fri, 21 Feb 2025 22:39:59 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Nathan Chancellor" <nathan@kernel.org>, "Arnd Bergmann" <arnd@kernel.org>
-Cc: "Masahiro Yamada" <masahiroy@kernel.org>,
- "Nicolas Schier" <nicolas@fjasle.eu>,
- "Nick Desaulniers" <nick.desaulniers+lkml@gmail.com>,
- "Bill Wendling" <morbo@google.com>, "Justin Stitt" <justinstitt@google.com>,
- "Geert Uytterhoeven" <geert+renesas@glider.be>, linux-kbuild@vger.kernel.org,
- linux-kernel@vger.kernel.org, llvm@lists.linux.dev
-Message-Id: <4045e93b-3352-428e-91c6-a86dc8f9c8bd@app.fastmail.com>
-In-Reply-To: <20250221212603.GA3561672@ax162>
-References: <20250221212017.809382-1-arnd@kernel.org>
- <20250221212603.GA3561672@ax162>
-Subject: Re: [PATCH] kbuild: hdrcheck: fix cross build with clang
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250120130119.671119-9-svarbanov@suse.de>
 
-On Fri, Feb 21, 2025, at 22:26, Nathan Chancellor wrote:
-> On Fri, Feb 21, 2025 at 10:20:07PM +0100, Arnd Bergmann wrote:
->> From: Arnd Bergmann <arnd@arndb.de>
->> 
->> The headercheck tries to call clang with a mix of compiler arguments
->> that don't include the target architecture. When building e.g. x86
->> headers on arm64, this produces a warning like
->> 
->>    clang: warning: unknown platform, assuming -mfloat-abi=soft
->> 
->> Add in the CLANG_FLAGS, which contain the target, in order to make it
->> build properly.
->> 
->> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
->
-> This looks like a similar problem as the one fixed by
-> commit 1b71c2fb04e7 ("kbuild: userprogs: fix bitsize and target
-> detection on clang"), should it be addressed in the same manner
-> (especially since I think the Fixes commit would be the same)? Given
-> that the filter expression is the same, maybe it would be possible to
-> unify them but that could happen as a follow up.
+On Mon, Jan 20, 2025 at 03:01:16PM +0200, Stanimir Varbanov wrote:
+> In case brcmstb PCIe driver and MIP MSI-X interrupt controller
+> drivers are built as modules there could be a race in probing.
+> To avoid this add a softdep to MIP driver to guarantee that MIP
+> driver will be load first.
 
-My bad, I actually had an old patch that addressed both issues
-and then dropped it when the Thomas' patch made it into linux-next
-but ended up picking my old change for usr/include/Makefile instead
-of trying to understand the difference.
-
-I'll send a v2 after some more build testing.
-
-     Arnd
+Maybe this one too?  Should this be moved to after the irq_bcm2712_mip
+driver is added, but before brcmstb will claim bcm2712?  I just want
+to avoid bisection problems when possible, and it sounds like if we
+lose the race, interrupts might not work as expected?
+> 
+> Signed-off-by: Stanimir Varbanov <svarbanov@suse.de>
+> ---
+> v4 -> v5:
+>  - New patch in the series.
+> 
+>  drivers/pci/controller/pcie-brcmstb.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/controller/pcie-brcmstb.c
+> index 03396a9d97be..744fe1a4cf9c 100644
+> --- a/drivers/pci/controller/pcie-brcmstb.c
+> +++ b/drivers/pci/controller/pcie-brcmstb.c
+> @@ -1997,3 +1997,4 @@ module_platform_driver(brcm_pcie_driver);
+>  MODULE_LICENSE("GPL");
+>  MODULE_DESCRIPTION("Broadcom STB PCIe RC driver");
+>  MODULE_AUTHOR("Broadcom");
+> +MODULE_SOFTDEP("pre: irq_bcm2712_mip");
+> -- 
+> 2.47.0
+> 
 
