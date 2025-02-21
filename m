@@ -1,73 +1,73 @@
-Return-Path: <linux-kernel+bounces-525503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2312A3F0B1
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:43:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 270BDA3F0AD
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:42:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B0333A7939
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:42:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00E731718CA
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:42:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 459B8208973;
-	Fri, 21 Feb 2025 09:39:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5845C209F35;
+	Fri, 21 Feb 2025 09:39:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="OucQOtz7"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="lSmDuB/K"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA506204C28
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 09:39:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AB1020896A
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 09:39:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740130772; cv=none; b=I89CCXEK3SDwjZaXR2fwcwTyX75TfKk2FYiGB8IqYwP0xODRz8tdPsIOuMm4ZrVebinz9ZjOP0gxXlizL6eTUzhE1p7AHbk+ecb4aMZzEuJCkiOFUatzv/BbUumVbtPq0MXePJm2wdusSCTPBCKWTgZ05DcjJueJcB6Y0Yi91l0=
+	t=1740130775; cv=none; b=XAJfzO0ajc70o8xPKaAWAK+pL4T//fn7bBt50yPJK9E9G/wm7d/aEclXUHHzGeUEn/IFRVqLFnCliPqeiEFNIV6PpxcZ0MS5sfgEeZHbx3T6tBmTicpey9VorsliqDWbmVrAeG3PS9jo1UnRKkCkKZqAvhLKKuFybjp2gl9wQ20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740130772; c=relaxed/simple;
-	bh=jnOJzYCzgxpKde1HZP0K8E1XsiPZuvUciCdLehqUngw=;
+	s=arc-20240116; t=1740130775; c=relaxed/simple;
+	bh=he0JJ1tlAzKmHMaVFR336aPCxcQkLP9FrAuZmoitajg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=sr/UOYTONeOy9jHGz9pwQOS2r4KdgZmW5FOURinwQ0rJYiIC82/jgYOiys7LR2TiFNjvANudWVXHNUrw5CGW8XLepQJZLaZFK3tB5yc2OlDG949iaso1K5g9+7Yw2gZalXKsdOvYN+ZS7cAURYQbHqcWM0Y5WyD8r7AC7l5dOmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=OucQOtz7; arc=none smtp.client-ip=209.85.216.52
+	 MIME-Version; b=vDcYljfJz+kaBOaJ76nHPq9ARpgZSlNfdHvTT5GmzdnFDcGQN4/2i2jVc4/l9crsvclCHbCFzOjg9cb+KtlDTSnsgljPYHtnz1KlsoRYdHGQ9WfYuY9v2Um83twxJkITjkCiBZZRY6vJEKf/eTmQiArYQRv0PRXmaAsZe78CKHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=lSmDuB/K; arc=none smtp.client-ip=209.85.214.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2f42992f608so3075169a91.0
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 01:39:28 -0800 (PST)
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-21f2339dcfdso32869635ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 01:39:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1740130767; x=1740735567; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1740130773; x=1740735573; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=6Ti7CmEaorHMBg5DWvmUEjK7cf0LUhuuwHacW6S7Q+w=;
-        b=OucQOtz7VG9XLq3rWVThwLf7oJCX+ip5cQoPvu3dt77VRt1Wq1RWqPRuHsXTTlhcZs
-         ShVtoKMa5h1hq0h3Cf+/fhlphlw41digLyEFtis7U/H2sBcRzIBuwCBXYDkYw8QGP5DQ
-         M3kKKl0zuiVsnvpaXIlmOZq1gg5MVTvJYzN3E=
+        bh=ooRAT30N+1IineDWVp9J6MTWf65J1t58JBJO7W1ETBg=;
+        b=lSmDuB/KcrfIgeFrqI3zL1fKI2yxrnmqtPKa44iF7tA3VPN1Ui/bgEaENvwfv7T0Xv
+         nCHy2UKChL/gVXxxm+E7EMtwmIw6VAdVd88c4M2E32Gnhb/txMvMHr/TllAlzjjDVK/e
+         KBUEhXAFiE3N2SXtB5eZh+ZS8K7croTssp06g=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740130767; x=1740735567;
+        d=1e100.net; s=20230601; t=1740130773; x=1740735573;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=6Ti7CmEaorHMBg5DWvmUEjK7cf0LUhuuwHacW6S7Q+w=;
-        b=ey9RaX59IgNQ6hd6ffx+4y1aKJS8b/vTEApIOvTMSIji3gXyfAyPxRVePU6xMaEgQ9
-         lLlcaX/DleoumCCNV/WVBJeA4/g3KpRO+01zO8H9jfrDThRoQynAP3taEUdU7YOmTUyh
-         vDYItoAti8J7BZMAvmJdQJ0OtPVMQE3SvQrdq6P/b0FrSQu1x2M4HxYkcmOTRgwanN3S
-         FsAKTDL4/1W6S3S7rUOZhkto8EnoRKKxnhgVBhW/N1k/1HsH0WirJvCXII+Rbyk/1v9z
-         kDK8Dvg8B4N88FTgc/NmaLeOjZi5srMM/O3f3Q9oJW87BUxsSsDF3zqSkeCy7dnyN0Bi
-         JYOg==
-X-Forwarded-Encrypted: i=1; AJvYcCWgHwiblfMCjV51EXiQzIwcHI3MCTzFbVFqlTyv6vXLLa7KC6M6GXRlYG8G29egKhUBiwDPzguz6n2I4LI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwdqgVhZSsNLREykYzeSKEwxUSfcgrQ+vVFCX2k8I317p0tyRAT
-	1Hw+qkJzUf2SnOVSN79GA6DU7velkP+BmA6pDpinDNB7K8LGEiqQma2bSaqC4Q==
-X-Gm-Gg: ASbGnctqQlQfDPP8GpDOZy1P2oSGdVlvWGg1ifSayjwr48XvTMMzeKhcSIACZs3XbGw
-	IOoTAgo0/DGM4g7cilg46IZ49C2SdYQ3l9xF8BzApWDDPK8/87jSan47/AWhnH7KFHczxtlVuzH
-	kw4kSkMpLDtbQ98iyoHE7sW3aKGf19RRKau59bzQAA/kgw3gYB7ack0xR2AxFh1xKa4RKKOznqH
-	fCQGv45CU5qTol0BJOrXDoR0SFjBHeYtqYaWsMYTm65VbjRgSGn6AH4KUul1afAMoAkbM3Jam1n
-	r45PwrLEOsP4WB/6uwY5h57KzOw=
-X-Google-Smtp-Source: AGHT+IFkEw5rhjwVGmuiSJO9ZqK4LoqieklxjbVlzdvGmp36x+X05fC+JwKkd7RRpGwQHuo2CguWWw==
-X-Received: by 2002:a17:90b:5303:b0:2fa:1a8a:cfe8 with SMTP id 98e67ed59e1d1-2fce7b3ad90mr4368050a91.29.1740130767623;
-        Fri, 21 Feb 2025 01:39:27 -0800 (PST)
+        bh=ooRAT30N+1IineDWVp9J6MTWf65J1t58JBJO7W1ETBg=;
+        b=WM6zpQExFVcHKs/h7C8f7ZRh1neDWI/RBIWbxS4utipPiSkJHi9GzYWbsOsU8hegkD
+         9ZbyDgjO1FUgtJdpWNAB7y2jIcWqyAt30vnl70YhgFdSewvBe211oe06mEhfbZ7TEf3u
+         xQgIrOBIfeMhaLGeB/zIRjqnIV3iwHToif0eTkvNQDnpUjI++kgQHgoSuKJQgrSEVKIP
+         itBnllz/NaLMUnydWutYjO/v6YN3daxsqdG/VN3A7kq2joWxLoDNsp3CJq9FqnfyYaVg
+         jx0lt+Cp12HZZRX+NesPGpN0z8NgaBxaM4pmMBpocYidB0kvDqfJzye4A6xlkoq4PfOn
+         4mdg==
+X-Forwarded-Encrypted: i=1; AJvYcCWRUmLEwJL8UM1sSidIwfOvwWXGzm0HJTp15nKIUs993hXXgAC69mrWc+ZWhxNMQEdSr5TxVLgowtxnAQs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwE4vUmWW8gAb2YBKG8RVosPLBr5mL15eVS00Yax/058IcC/OjO
+	30oAtHDMhuhs86TTxFshE3hrMQnN5Vw7mY9uexgIAR4XzAEL3F9eFlwSbW6yIQ==
+X-Gm-Gg: ASbGncvMwfKSZ8a/9qObqzlgPCBvwZJVNKheWzy3unxQ262Idc5Xv6QgM6E2vjdglGF
+	npeoNAmHYkhyl/ek5V/FsgAwrX9ENUiHFVWvhX/Zd189tWPntjcsluc0uPGn3piOTlJZkUDtKgG
+	VsN/mIG7/vGrZHZEQmmftNFvzZv90rjFH27JL6JjGtfLsewOfcdBRFfocon4E+Ct/nqvoK10Bbz
+	y+AsaDIGNzykq1yiMFX3IeOBIh7VQNBCKt8DJI7eo/76sRbW25HJFNpm/16PnHFkLrFVdiO91ka
+	Mm4X1QvjUxoj6Rbr0vnYml/V9LQ=
+X-Google-Smtp-Source: AGHT+IGRF3A51Ju1CJymIu4QEKwvzsIx5m8/kDSMhapHrOeLOdsD4MZEno2i5dRKAI8Yq2xbHCHWYA==
+X-Received: by 2002:a17:903:2311:b0:21f:5063:d3ca with SMTP id d9443c01a7336-2218c5575dbmr109218605ad.16.1740130773425;
+        Fri, 21 Feb 2025 01:39:33 -0800 (PST)
 Received: from localhost ([2401:fa00:8f:203:f987:e1e:3dbb:2191])
-        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-2fceb05f715sm900785a91.24.2025.02.21.01.39.25
+        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-73242761538sm15686426b3a.139.2025.02.21.01.39.30
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Feb 2025 01:39:27 -0800 (PST)
+        Fri, 21 Feb 2025 01:39:33 -0800 (PST)
 From: Sergey Senozhatsky <senozhatsky@chromium.org>
 To: Andrew Morton <akpm@linux-foundation.org>
 Cc: Yosry Ahmed <yosry.ahmed@linux.dev>,
@@ -78,9 +78,9 @@ Cc: Yosry Ahmed <yosry.ahmed@linux.dev>,
 	linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org,
 	Sergey Senozhatsky <senozhatsky@chromium.org>
-Subject: [PATCH v7 08/17] zram: filter out recomp targets based on priority
-Date: Fri, 21 Feb 2025 18:38:01 +0900
-Message-ID: <20250221093832.1949691-9-senozhatsky@chromium.org>
+Subject: [PATCH v7 09/17] zram: rework recompression loop
+Date: Fri, 21 Feb 2025 18:38:02 +0900
+Message-ID: <20250221093832.1949691-10-senozhatsky@chromium.org>
 X-Mailer: git-send-email 2.48.1.601.g30ceb7b040-goog
 In-Reply-To: <20250221093832.1949691-1-senozhatsky@chromium.org>
 References: <20250221093832.1949691-1-senozhatsky@chromium.org>
@@ -92,83 +92,136 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Do no select for post processing slots that are already
-compressed with same or higher priority compression
-algorithm.
+This reworks recompression loop handling:
 
-This should save some memory, as previously we would still
-put those entries into corresponding post-processing buckets
-and filter them out later in recompress_slot().
+- set a rule that stream-put NULLs the stream pointer
+  If the loop returns with a non-NULL stream then it's a
+  successfull recompression, otherwise the stream should
+  always be NULL.
+
+- do not count the number of recompressions
+  Mark object as incompressible as soon as the algorithm
+  with the highest priority failed to compress that object.
+
+- count compression errors as resource usage
+  Even if compression has failed, we still need to bump
+  num_recomp_pages counter.
 
 Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
 ---
- drivers/block/zram/zram_drv.c | 25 ++++++++++++++++---------
- 1 file changed, 16 insertions(+), 9 deletions(-)
+ drivers/block/zram/zram_drv.c | 53 +++++++++++++----------------------
+ 1 file changed, 19 insertions(+), 34 deletions(-)
 
 diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
-index a886827f0b3c..a1880e621895 100644
+index a1880e621895..814e64f4ee38 100644
 --- a/drivers/block/zram/zram_drv.c
 +++ b/drivers/block/zram/zram_drv.c
-@@ -1827,7 +1827,7 @@ static int zram_bvec_write(struct zram *zram, struct bio_vec *bvec,
- #define RECOMPRESS_IDLE		(1 << 0)
- #define RECOMPRESS_HUGE		(1 << 1)
+@@ -1892,9 +1892,8 @@ static int recompress_slot(struct zram *zram, u32 index, struct page *page,
+ 	unsigned int comp_len_new;
+ 	unsigned int class_index_old;
+ 	unsigned int class_index_new;
+-	u32 num_recomps = 0;
+ 	void *src, *dst;
+-	int ret;
++	int ret = 0;
  
--static int scan_slots_for_recompress(struct zram *zram, u32 mode,
-+static int scan_slots_for_recompress(struct zram *zram, u32 mode, u32 prio_max,
- 				     struct zram_pp_ctl *ctl)
- {
- 	unsigned long nr_pages = zram->disksize >> PAGE_SHIFT;
-@@ -1859,6 +1859,10 @@ static int scan_slots_for_recompress(struct zram *zram, u32 mode,
- 		    zram_test_flag(zram, index, ZRAM_INCOMPRESSIBLE))
- 			goto next;
- 
-+		/* Already compressed with same of higher priority */
-+		if (zram_get_priority(zram, index) + 1 >= prio_max)
-+			goto next;
-+
- 		pps->index = index;
- 		place_pp_slot(zram, ctl, pps);
- 		pps = NULL;
-@@ -1915,6 +1919,16 @@ static int recompress_slot(struct zram *zram, u32 index, struct page *page,
- 	zram_clear_flag(zram, index, ZRAM_IDLE);
- 
- 	class_index_old = zs_lookup_class_index(zram->mem_pool, comp_len_old);
-+
-+	prio = max(prio, zram_get_priority(zram, index) + 1);
-+	/*
-+	 * Recompression slots scan should not select slots that are
-+	 * already compressed with a higher priority algorithm, but
-+	 * just in case
-+	 */
-+	if (prio >= prio_max)
-+		return 0;
-+
- 	/*
- 	 * Iterate the secondary comp algorithms list (in order of priority)
- 	 * and try to recompress the page.
-@@ -1923,13 +1937,6 @@ static int recompress_slot(struct zram *zram, u32 index, struct page *page,
+ 	handle_old = zram_get_handle(zram, index);
+ 	if (!handle_old)
+@@ -1937,7 +1936,6 @@ static int recompress_slot(struct zram *zram, u32 index, struct page *page,
  		if (!zram->comps[prio])
  			continue;
  
--		/*
--		 * Skip if the object is already re-compressed with a higher
--		 * priority algorithm (or same algorithm).
--		 */
--		if (prio <= zram_get_priority(zram, index))
--			continue;
--
- 		num_recomps++;
+-		num_recomps++;
  		zstrm = zcomp_stream_get(zram->comps[prio]);
  		src = kmap_local_page(page);
-@@ -2154,7 +2161,7 @@ static ssize_t recompress_store(struct device *dev,
- 		goto release_init_lock;
+ 		ret = zcomp_compress(zram->comps[prio], zstrm,
+@@ -1946,7 +1944,8 @@ static int recompress_slot(struct zram *zram, u32 index, struct page *page,
+ 
+ 		if (ret) {
+ 			zcomp_stream_put(zstrm);
+-			return ret;
++			zstrm = NULL;
++			break;
+ 		}
+ 
+ 		class_index_new = zs_lookup_class_index(zram->mem_pool,
+@@ -1956,6 +1955,7 @@ static int recompress_slot(struct zram *zram, u32 index, struct page *page,
+ 		if (class_index_new >= class_index_old ||
+ 		    (threshold && comp_len_new >= threshold)) {
+ 			zcomp_stream_put(zstrm);
++			zstrm = NULL;
+ 			continue;
+ 		}
+ 
+@@ -1963,14 +1963,6 @@ static int recompress_slot(struct zram *zram, u32 index, struct page *page,
+ 		break;
  	}
  
--	scan_slots_for_recompress(zram, mode, ctl);
-+	scan_slots_for_recompress(zram, mode, prio_max, ctl);
+-	/*
+-	 * We did not try to recompress, e.g. when we have only one
+-	 * secondary algorithm and the page is already recompressed
+-	 * using that algorithm
+-	 */
+-	if (!zstrm)
+-		return 0;
+-
+ 	/*
+ 	 * Decrement the limit (if set) on pages we can recompress, even
+ 	 * when current recompression was unsuccessful or did not compress
+@@ -1980,38 +1972,31 @@ static int recompress_slot(struct zram *zram, u32 index, struct page *page,
+ 	if (*num_recomp_pages)
+ 		*num_recomp_pages -= 1;
  
- 	ret = len;
- 	while ((pps = select_pp_slot(ctl))) {
+-	if (class_index_new >= class_index_old) {
++	/* Compression error */
++	if (ret)
++		return ret;
++
++	if (!zstrm) {
+ 		/*
+ 		 * Secondary algorithms failed to re-compress the page
+-		 * in a way that would save memory, mark the object as
+-		 * incompressible so that we will not try to compress
+-		 * it again.
++		 * in a way that would save memory.
+ 		 *
+-		 * We need to make sure that all secondary algorithms have
+-		 * failed, so we test if the number of recompressions matches
+-		 * the number of active secondary algorithms.
++		 * Mark the object incompressible if the max-priority
++		 * algorithm couldn't re-compress it.
+ 		 */
+-		if (num_recomps == zram->num_active_comps - 1)
+-			zram_set_flag(zram, index, ZRAM_INCOMPRESSIBLE);
++		if (prio < zram->num_active_comps)
++			return 0;
++		zram_set_flag(zram, index, ZRAM_INCOMPRESSIBLE);
+ 		return 0;
+ 	}
+ 
+-	/* Successful recompression but above threshold */
+-	if (threshold && comp_len_new >= threshold)
+-		return 0;
+-
+ 	/*
+-	 * No direct reclaim (slow path) for handle allocation and no
+-	 * re-compression attempt (unlike in zram_write_bvec()) since
+-	 * we already have stored that object in zsmalloc. If we cannot
+-	 * alloc memory for recompressed object then we bail out and
+-	 * simply keep the old (existing) object in zsmalloc.
++	 * We are holding per-CPU stream mutex and entry lock so better
++	 * avoid direct reclaim.  Allocation error is not fatal since
++	 * we still have the old object in the mem_pool.
+ 	 */
+ 	handle_new = zs_malloc(zram->mem_pool, comp_len_new,
+-			       __GFP_KSWAPD_RECLAIM |
+-			       __GFP_NOWARN |
+-			       __GFP_HIGHMEM |
+-			       __GFP_MOVABLE);
++			       GFP_NOWAIT | __GFP_HIGHMEM | __GFP_MOVABLE);
+ 	if (IS_ERR_VALUE(handle_new)) {
+ 		zcomp_stream_put(zstrm);
+ 		return PTR_ERR((void *)handle_new);
 -- 
 2.48.1.601.g30ceb7b040-goog
 
