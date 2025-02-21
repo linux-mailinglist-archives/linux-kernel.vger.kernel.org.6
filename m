@@ -1,164 +1,285 @@
-Return-Path: <linux-kernel+bounces-526693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99BEDA40210
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 22:34:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA921A40213
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 22:36:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C64E19C7EFF
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 21:34:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B754D19E0C04
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 21:36:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C268824F599;
-	Fri, 21 Feb 2025 21:34:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84F2725291B;
+	Fri, 21 Feb 2025 21:36:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="TQ8O886S"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="gU1QzXhd"
+Received: from YT3PR01CU008.outbound.protection.outlook.com (mail-canadacentralazon11020076.outbound.protection.outlook.com [52.101.189.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7440C20E31B
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 21:33:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740173640; cv=none; b=hPyn+VoV1yrI2duqwq2bOT4M920n4fD6GnwZgH+pcp9upiqlxOTJdCaAgpSzCjjbeSWtwe0ZPRAvpvujJ8cFzwM/lWUEhD5kI2gt6EeYKzISIpO60vTmJ/hcEWE8okOv2cTAPN8z1b3nync9Y8ZeoPfYMRdhn2++4guEFB0S5Wg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740173640; c=relaxed/simple;
-	bh=8tmdo/Ter+kdGrzmZv4+c1CC3FGOX+GbLELDtAoZByo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Z5vApd8G/44M7DPgsFDuIqysMw4xIV//oG90En0ZLxgxa5n5OJ+5VjwFdBG2z990XBqlVgUakYs+yxuIBrOwK1kP736jNI0WvetjoxXAVPE+nlgDIrYNcITUEbWtRnAp3j50y3YqU0ACJ7UHwlazmz8ZOZgTeAU7nlc97WkEt7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=TQ8O886S; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51LDSBj3008310
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 21:33:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Ghn6L4mUBwXpawWqt2VB2BLTybot+6+x5e3CZnMiiBY=; b=TQ8O886SD//Mk5a8
-	T3Xz0YYim+FzYQpLp1+NISKMF0Eu4sh4jDyBL0kCmmA6GR4jgy07JLlHDE3Ev7gC
-	IghEuF+QLWar5EmBYPtCMI9AInB5t14smZKyO4Cl3whg6T3X9MX9EnG901Os6n+Z
-	prjV/aWiVASujUuqDddQfNr4w1iqVD1/lLOHkJ7uNW+PQwhFey8rWVbM8m2JXmIo
-	/rMzKH4Y0i1JiILKyEA6u+1qGgrdxtzaB0FRC5BcLe1L7bxf1wx2l0E+XfuU6H/X
-	tcAMGhARTBBLciIqVi6tQChxXMHpKrDuBIqDzoo0n71h6ecx4mZep05R8PCjA60q
-	/WzY+A==
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44vyy3kard-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 21:33:57 +0000 (GMT)
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-471f426fe28so6106131cf.0
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 13:33:57 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740173636; x=1740778436;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ghn6L4mUBwXpawWqt2VB2BLTybot+6+x5e3CZnMiiBY=;
-        b=fCqZJTmlv2UY9Xm+lxuV8RxQxPodhwUHGQztwsFq0OAzPwgea/RFt8iGRJha1mO/Yc
-         L5exNAodyC3xnj9T26dO2kOfbsYoHGhfIYc+XJcdOZTvVsHu54LZ1tPRwSLx0aJktQWz
-         KymGHGtag58Ov94zKZ3i9/FoTvP7EhRqy1jL4p9c3sFVBT/XZEuTXQhablSzWuyfRrGd
-         qc09WPO3FH059TE65QLP+nnODvQZlWqqHNz+8MBirPqLOCrf7JXQSIpRU6ba/2UNbZ3p
-         w31e/+489fdbdSwarno1Sqbkh1FYZBY9nTfBL6RQne1rBuMSSTlpwS2+56lMFcYU+MIv
-         quWg==
-X-Forwarded-Encrypted: i=1; AJvYcCURIfILmeKpMs06bZ3tzWJimsCTuUTiDEh3AtSeFvwv+9bxJ2pfWKQrLxuPYeyzcm1v82CAVLXfdgNjfzc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPf+UJo12adxIOnIp4tr/ZL05jGJHuzKcQhaAO8RyYB29Ukj57
-	586zlVVuYy6nOZMhIQooGdqKu0vQwnPyqTKMDj0iC0zcD84SnwNBmZOhXrVv/rAwsTqL6Fq1T65
-	wwfXjxFOwgk/8xApjcP8pzbLZjDw5UTdYeJejGfw3qWMpXnPUoBNp4aTXgFP6p0M=
-X-Gm-Gg: ASbGncujQyhksD0f/NLH5/Ns7p9WQWp71FDLwoLaCLWjufwnf0xvvWBDpdvpqBWrtBv
-	m1oFK0/t+Vm0FCs3NrMuqGVO0zmufoWmYorB4LzVKC96gphor/JR+Qsy/nmjBgqN5Qk332JcN6J
-	JVx7nkAzKJOUhG8tnvLID4ZHGNkPVdwD+b4jw3tpoNSCEFhl8OG6lmwu+I5PGeg6YNYDz2k1H+a
-	2PxzPCkjL3piX0pEeKb7EtXGSl5xoo7ZTqHRCtBUqXCR9Xegioz/Z27bwG17lIfhYBrnWOMqd94
-	i5J3nEW+x7194c1dDRrmdU1DvRnR77OPFl4uZ53FnaALjepbCaCSYk9/MMPnW++rchqHTg==
-X-Received: by 2002:ac8:5710:0:b0:471:ef27:a30b with SMTP id d75a77b69052e-472229a8a3dmr25460981cf.13.1740173636388;
-        Fri, 21 Feb 2025 13:33:56 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IF3eGXB/j6IzUtZrEuHEsUKdriBuCF9PZH69iEvZpR1z/0tsNN3yb6D7Tmo01aYFqwMf4Hx6Q==
-X-Received: by 2002:ac8:5710:0:b0:471:ef27:a30b with SMTP id d75a77b69052e-472229a8a3dmr25460631cf.13.1740173635901;
-        Fri, 21 Feb 2025 13:33:55 -0800 (PST)
-Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abb96fa4d79sm1069931966b.126.2025.02.21.13.33.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Feb 2025 13:33:55 -0800 (PST)
-Message-ID: <752a6234-cf74-48f5-8836-343011b6eeaa@oss.qualcomm.com>
-Date: Fri, 21 Feb 2025 22:33:52 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F010202F79
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 21:36:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.189.76
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740173786; cv=fail; b=uauvBXQ84+nHHaHf7mZ5+FqyirBI2jaPTvcTL+lcJ4DSsFvSB68T/cayBFfaUGdiNJo/K+5hPfHFqf/dJyNlHBQjf9rg0lA3MGS1CGNM+BnvFdcutRmz66eDQXDuaog53RDiim1dSCyNwM/f5Ux1sWUzjzWmeg5meGLYekE+FjE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740173786; c=relaxed/simple;
+	bh=X1swAR6qnyDf0iCEKnNPI+ECe/l3iGUEGB3GqWGgl0w=;
+	h=Message-ID:Date:Subject:From:To:Cc:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=q1OjZwM8ut1yK4aSFHdy6rhpi9XmfE5lhJN3kbWm98iWituPh7sNQjCeBcBkh43NVwmVmcTfMZKo1M3wublWE0PEWqo0U5r2wAt5ImggOyXMOd1F1xaa0WknfRhZ9KJwUlr3Tf2hZl3wffu/+XckNt2+vVH8MCNApZ2mZ+J0iBE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=gU1QzXhd; arc=fail smtp.client-ip=52.101.189.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=G4ud50NHsnYBWNr53RpVQI4CIqTKTkHb9kKFkxut0mKU80ghbdHVOnuEABJETNoQxr0CXa7ttv0KPFREbGZ5v10dFvsLYoqx8OQj6wi5rEwxez9dBtM1WYCFT1QyDFW1BgJgtOaj+kXMQFTXiWwW1YOSncHfwTSpzNw6Vm+m1vGqbkWAdegkw3DL4FdlyAyKSCx98G2wJ32p8nFdbeDNi4q9ulAehS96VKfe1IMro5ZSBbTZWoxoEftuGxQINZWHFYLqsnjuimMeF4dug05euDbyHPlWYbZpf0ePlzPkAPXZDl+2FCPSLA3ZMJmzV78Xe2FXOKXlWItl4NwYsVNHDQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=SALpkj8S2D9VXdv+YQLCHfw8x8zwTIX8h8PIHpd/cgg=;
+ b=NDdN6otP2hNeYjwHYeWr1fEI71xdmiOZdhbphSx6VjEo+KIYbDU1t3+I60arjBpcvI3IikvwCz3oAtpKC2qcQyJlMcIJaAe+wa89eV+guZZ5Zlr4F7HtX9fdUzelL/QKZNH++DO/C0nsJngCCpbWu+ESyGlvEunyvDruOznxLyPvOH27LNeYRz0MHz6iPpZrEEQ183eHEXzeg8tiD828y5iJNhT+GvRYjrg/3JhcfCA6YHgRURlassvDVUoFDkCv5E38Xgw/gQupap89XV8P1DHxZZTZ/Ndl9wzQ1TNPpHQPRXnBasDz5ogu5VMCh6TFgBdWBTQPWx8c/dWabcgMQg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=efficios.com; dmarc=pass action=none header.from=efficios.com;
+ dkim=pass header.d=efficios.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=SALpkj8S2D9VXdv+YQLCHfw8x8zwTIX8h8PIHpd/cgg=;
+ b=gU1QzXhdrSphkIhWOeY3WWfaKO74hYymc7MsmdNEM4VX32jP/SOQKqDB5/UnmdB/eHBs6qih0fgewhtNArJXfNJpRuIDrehnjNdRUQpfGUqkN7TS3dSXcLf1qWdeG9ssQnXlC+K4q+g6w2Kebj5E2n9HSUFMptsWI1AqrBRueEtzVYjVkWo98eUWPMwvRx283KHTlXtqh/oJj7BpPHJroud2WhHjuzhUNHSA4bVVKjhAh6IHGQBzGy6J5HE4dBRYmOjxTaBOcvWSzcNKYoMsFFBG5l78tuGpodLHBVV0MbjXt7jpTX2AxDrG+2JtA6IzjAPsWB5Ece8WhO0RnxdZlw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=efficios.com;
+Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:be::5)
+ by YQBPR0101MB8175.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:c01:52::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.18; Fri, 21 Feb
+ 2025 21:36:16 +0000
+Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::50f1:2e3f:a5dd:5b4]) by YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::50f1:2e3f:a5dd:5b4%4]) with mapi id 15.20.8466.015; Fri, 21 Feb 2025
+ 21:36:16 +0000
+Message-ID: <470ee918-59fb-4af8-b5c7-93077963b437@efficios.com>
+Date: Fri, 21 Feb 2025 16:36:15 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/4] rseq: Make rseq work with protection keys
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To: Dave Hansen <dave.hansen@intel.com>, Dmitry Vyukov <dvyukov@google.com>,
+ peterz@infradead.org, boqun.feng@gmail.com, tglx@linutronix.de,
+ mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com,
+ aruna.ramakrishna@oracle.com, elver@google.com
+Cc: "Paul E. McKenney" <paulmck@kernel.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+References: <cover.1739790300.git.dvyukov@google.com>
+ <0d0e0a0a7136d49af9a8d6a849e1aa4bf086c472.1739790300.git.dvyukov@google.com>
+ <81d94ec3-16af-45a7-87c6-ef76570953f8@intel.com>
+ <6ada635e-973d-4e32-ab47-1fda12ee7ce7@efficios.com>
+ <90a36a64-8ea5-4ea1-965f-bcec604c7d5b@intel.com>
+ <6ad30642-c3b5-4ab8-9ed6-1fa8c56a8995@efficios.com>
+ <c793e1d0-e508-4cf5-a18b-29d30d5e401f@intel.com>
+ <eb087edd-4ff5-40f8-afcb-e4d94fb2a7ba@efficios.com>
+Content-Language: en-US
+In-Reply-To: <eb087edd-4ff5-40f8-afcb-e4d94fb2a7ba@efficios.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: YQBPR0101CA0209.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:c01:67::9) To YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:be::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 08/10] arm64: dts: qcom: Add initial support for MSM8937
-To: barnabas.czeman@mainlining.org,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Stephan Gerhold <stephan@gerhold.net>,
-        =?UTF-8?Q?Otto_Pfl=C3=BCger?= <otto.pflueger@abscue.de>,
-        Linus Walleij <linus.walleij@linaro.org>, Lee Jones <lee@kernel.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        iommu@lists.linux.dev, Dang Huynh <danct12@riseup.net>
-References: <20250211-msm8937-v1-0-7d27ed67f708@mainlining.org>
- <20250211-msm8937-v1-8-7d27ed67f708@mainlining.org>
- <7664b71c-ed47-4765-9ac4-5dbe3ec80d3c@oss.qualcomm.com>
- <d4792e6323e2dd5392a0d9633df62174@mainlining.org>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <d4792e6323e2dd5392a0d9633df62174@mainlining.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-ORIG-GUID: B7ufIWwrnWBx30Rz9Oz-dXIiUre7J9SA
-X-Proofpoint-GUID: B7ufIWwrnWBx30Rz9Oz-dXIiUre7J9SA
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-21_08,2025-02-20_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 clxscore=1015
- phishscore=0 adultscore=0 lowpriorityscore=0 bulkscore=0 impostorscore=0
- priorityscore=1501 malwarescore=0 spamscore=0 mlxlogscore=856 mlxscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
- definitions=main-2502210147
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: YT2PR01MB9175:EE_|YQBPR0101MB8175:EE_
+X-MS-Office365-Filtering-Correlation-Id: 19c9b81d-061b-46a1-c069-08dd52bfc58d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|366016|1800799024|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?N2h1ZWtwK3hsL0lsYTFQaHpFdzFqdTZPVVF3LzBFZStvVTdqa2JKVkRzWDZ3?=
+ =?utf-8?B?RHgzVjVaaVk4Tm9HeHNBb0Vzb3JMQlMxV29KOEdpQUZnYU9ub0JMbHpyVDJw?=
+ =?utf-8?B?TEdTYTVMZlI1aDNIMnVIQk42aHN4WFM2Q3BHUS9lR0FkTzdDbEtBcEJDMzZG?=
+ =?utf-8?B?YVgzc09jd2Vsa1pvVm9yeUlDUkVBblF6c3lBYUg1SnV1eVBocVoyN3lqVkV3?=
+ =?utf-8?B?eENMSCsyZCtmL1hXREhza0tCMXVhT3JSU20vK1FaVU5oWGtvSGR2ZExaTkN6?=
+ =?utf-8?B?RkNZdTJTdGZmYm4xbzRvNjB4TXdDRmxRSHRRMkdJYnEzUUZFVlpKZmIyNERT?=
+ =?utf-8?B?Q0wwK1Jtek15MEdCSk5SeEphZWlCZTNOWHZEZkMraUw2SjBZTklhKysxb0JV?=
+ =?utf-8?B?OUtnN1dRdy94NXc5UFQ1emo1YkZUR042SW55MUJNV0x6NHZvR055blIxSXJP?=
+ =?utf-8?B?Q2JuYk8zbHQvelJVQ2FCT3Y0TWxaZ2ZUVyt0OVQ0V2QwZmJrbSt3aTZWb25D?=
+ =?utf-8?B?VUY5WlZ6OC83aExUQ1VaeTlEdEJLQmRQckQrbHFXVU9ITFQvN2RwMU1qVURM?=
+ =?utf-8?B?dTExQ204bXRKTm42akZHWXIvMmRWeGFnbld2aG1nL1l4NE1TT3Q1K09lTzRJ?=
+ =?utf-8?B?Qy9zV0xtWUY1YytzaUNrdHUwRTA5Z0wwZFUva0s0VlU0ZWtBTVFVVnNES3FH?=
+ =?utf-8?B?SXBOK1d6MjRKMnlMZStoMjUvWmtXaExqV3VIS1dtc2d6MUwyQy9jWGZIeUU3?=
+ =?utf-8?B?NEIzWE1sMTRTdksvZHZ3VDlseU95REVQVnFOeEd3clNZREE3RXk4MFk4clUv?=
+ =?utf-8?B?bGJzbWZtTG5yLzFwL1BuOHlFNEZWSkVodThsbFNSL3kzN2FVZDg5NlYrOFZF?=
+ =?utf-8?B?L0g0TngrWVF4cElndHBwQ2JUYm42QjhtSzVGUjZCMUdveTVNZStIYVZHRG4y?=
+ =?utf-8?B?V01VM0FUREp5UWRwMm9jUEhUK3RYdmVjdld1NWc3Z1h2SlNtam0wLzhqNktV?=
+ =?utf-8?B?bThoeExjUU5nSEVTRmNZaENKZmt6L29RaklyRy9OY3NBMGErR1g3REduL04z?=
+ =?utf-8?B?bmNNYW9LSEQ1U2c1aHpTYUsrYkVwZ3RBeG9VN1dHVXNXQTJEUVNicW9ucnEy?=
+ =?utf-8?B?cWoydUlFSXlVVlNtdWhGUzNNTythckE5cWJXdGJzMHJ6Nk03UGFxaWdKZVlJ?=
+ =?utf-8?B?OUdrMGh1MUlNWndJRk82WWRtUWNubGorMW5mc1RhV1V3TDRvUWlXVWNlSWVX?=
+ =?utf-8?B?TVhkR0J2Z1RGaWZCUUFnYUUxeWcwMVFrbHhwaTRVWlFBYVB3RzVCSEtpNy9F?=
+ =?utf-8?B?KzhHWXJaenFTS0JNeFhKQnprTlRWSTVrWTlST1hVeGtZQ1YvQ1o0MGJFL1FJ?=
+ =?utf-8?B?ZlhoYTAwVjZ2MGJ3V25MdDQ4dGlFQUdwQnFncytZUjhacUZ4czFWQnA4aGpF?=
+ =?utf-8?B?clBTSGtMakszMmJQa2JNKzdVQXh1Q0NJaUJyV1N6YjlQeUJrekFLdm5DT3JY?=
+ =?utf-8?B?VmZKWnRpZ2VCaDNsWndrZDQwQjhHdVdKWmd2VWkrT25aZ0phODU1WExIYkQ0?=
+ =?utf-8?B?VjFNZnBlN3VtSlNPS0FqY3RWdXIxdDEvU0xXWVIwUTFkdUVBemNQQ3NaSzY0?=
+ =?utf-8?B?YkFqUUhFamlBcERkZ2VBVW4zNGRyZzMyMUZJN3JkZTBNd0FWZUpqalAwZDBH?=
+ =?utf-8?B?L0s0dHh6MmFUQXVrVkc2VnArS3RYM1lVcDVPbDZkR1B6UUE2aTZDS1BiL01y?=
+ =?utf-8?B?WDJFbkRvN3drUk96UzlhY1gvUGpJcEZPTkw1Z2dxdExxc2c5WGlEaVZhNzhR?=
+ =?utf-8?B?WUt1d3R1ekRhOHM4bmE0NU92UlgzV2p4bFpKdmJJZ3E1VWZZS0toaGVlcXYw?=
+ =?utf-8?Q?/rAyTqcTJ9pLD?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(921020);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?M3loWUIyYVVicWlMVjY3VEY0QmVDQmd1SDM2cFFNV0FRcm9oUFFPL0hrR2dC?=
+ =?utf-8?B?cXg5b2NUbmFTeHhhcUVKRllCcVZEVlhYaldMNUdwTnNGY1BCek5tbDZCZUVF?=
+ =?utf-8?B?dWdhZEdBR3hac20wbmJvTWdwOCtVYVIwNVcrdW1DWmNOcVFkNy9kR3FXbTJK?=
+ =?utf-8?B?ZVlhUmNaT1VmOVh0TU4wSXlRZUJ6NUpUU3dpcVJrUGY5ZHI3Qnlra0xiNHhD?=
+ =?utf-8?B?cmNjcHh4NkVLL2EzS1prRHNtdmNIeEpNeWl5TUthMjVIOUJkTzJLaGlFVFR0?=
+ =?utf-8?B?SWZVWmRVUVlWVm4xZzk4NjdMQmg5cERXQmxHc0twV1lqQStaQmUxQ2s0T2Nw?=
+ =?utf-8?B?T3FUMjVGZjk1RWRQOGozTzMvSEVBMDY4eEE2UlhmNnlkY3BFdzc3aWNKa1M2?=
+ =?utf-8?B?ZjRXc1VBRHdLaEYxamRwL25BNnJmWFBSMjNLMXlyUDNLZ1ZBaElUeUVGTHpU?=
+ =?utf-8?B?SStWSWFLNnNsT2Njck1vVXVRT0tEYUdFZFJvZ1FieHdIdlpualRGelhJdXgr?=
+ =?utf-8?B?YXBLY3VTdHlrcnJJQXQzbldTaHVpYTRicTBMejVKbmpkOUlLejRkREFzVFVn?=
+ =?utf-8?B?cStranc3VFdBYngxMFBaVkhsZWMxMnpWTDdsNUhLaHhYVkxZUDQ5M0Y1NnFF?=
+ =?utf-8?B?aTZ4ZXZJSVJCL2xFeTR6ZEJ2a1JraHd5Wm5tRzJuU3NoK3NubS9rdXJvTlhJ?=
+ =?utf-8?B?MDBpWE9jTUlKVzdLOU11VjlncFh0dnpMcTIrQkpHQkdtdDlkZlUyYjZlZVNq?=
+ =?utf-8?B?ekZvdnk1WVYxcy80L0xsTjc0UXgrM3BPbWkvc2MxTXFZS0FMNWxEdVRzTFdy?=
+ =?utf-8?B?aUQ1emZHMTY2WGpTVzNEcmNHZGQ5YXUzUWdDWVBmdDZqZ3VvbnhvNmpFeHFM?=
+ =?utf-8?B?SlJWVmIyTDlPQkFtQWVDS2swY1RUbUJLU2Nacmhnem5pbEVlZTNTMEpvcUZk?=
+ =?utf-8?B?YnJ1VlRLK1RJbkYzdTJCOUJMQnhQV3JHVFY1K3VvV1Q3WFlvYjljalVwY1Ex?=
+ =?utf-8?B?bjNBd0xUcERnaVlQQlZTd2dQeEtEdHlOWXlYTEMzV1lSL3V1RWZmQTZiMyts?=
+ =?utf-8?B?OHlzMExtNDN5bVN5SUtEVFlnYWlyVHdzRHc1dkR1c1p2OG9vUng0L3Z3V3dV?=
+ =?utf-8?B?U0hSOFllak9URGN4ZmJxTUxFeXBQSlNoYUZDTnNZaElGMlNNWlIzNnhvSWsx?=
+ =?utf-8?B?QVdvcmduNG4rT3BUSDN0dHpoZWNZOVJ1QUZqMUV6bXpsa1NVZ09aeEdPUlMx?=
+ =?utf-8?B?M3FtckRGdnFGOWtyS0xWbUZpTDFudmI0LzJlSkFGQlFZSkkxSmlKdnl6NE82?=
+ =?utf-8?B?bHNTMm9kT3hYVko4cVJsd0NSczJYaFJEeUU0NDBML3BUWUtGdUw2Y25KYVlU?=
+ =?utf-8?B?MWdQcUZheXRJdDJLTTNpYk0xWFcrU0dZVjhsZ1hEc3VhZ1R1Q2x3T0JZb3JF?=
+ =?utf-8?B?cDU5VkRGWGZ4S2FibTZ4SUxocU1SL3poa3plY2RJSjRRa045enhSWWIxK2Vj?=
+ =?utf-8?B?TGVteS9LcHllRVROU3FnOGtvcE9HeVlsbjJkYjRDeHhPVkxqZHJISmJDbSta?=
+ =?utf-8?B?ZE9ZZXBpc3l4QXZIdXdDNk42VWVmSlhOakNRTlppbDlOZTVPNGhPcVFOVFNw?=
+ =?utf-8?B?ZUUrK2ZkalVwZTBid2ZwS0xMRU5ISGlsMXR0aEhVeGk1UFkwOEE4VTcyWWI0?=
+ =?utf-8?B?c0NBek5BY3ZjcXc2RGc0emFhYkJnQzM3bnZvZkd0NjZNN2lCOFh5dGs1bWZL?=
+ =?utf-8?B?LzMvbGJYVHBCR0o1V080QkhmdjZEdHRMVFI5RGVQSmxVKzdQLzM4cFFndmxx?=
+ =?utf-8?B?dHFGQTlTT1c2YmJ4Y05Kb3VMS2ZPelQ3NTVON1cwQWlyOGJ1MllOT091WDJI?=
+ =?utf-8?B?UW9wTWxnMHlmT2Z4RjkzaXpkWXZDNU9IZ2M5QTZteVNGVDNKN1FSWWlOS1Zp?=
+ =?utf-8?B?dlBSZlNldUp4d3dGRC91SkptUlpVcWpWR1Q3eTRvbEdGSVpjMGV5QUFiQi9J?=
+ =?utf-8?B?aDRNTEdsdlRyZnFBdlQwT29JOFI4VzU3TkJoRWZyZlAzbkdMQjA4eE9IT3M2?=
+ =?utf-8?B?NjJSWXV0UUdqRnhnckg0UTNlSmR2L2lRMVl0UzVMeVUzbmNqL2JXYXgrYjBM?=
+ =?utf-8?B?Z1N3RVAydm8wK1FETW1VZXN1b2l6eUlXQXlDWGF4OGxqaFh0dFlBRHduSXcx?=
+ =?utf-8?Q?ONwVaQ7fZCuaJGUvekRMXaA=3D?=
+X-OriginatorOrg: efficios.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 19c9b81d-061b-46a1-c069-08dd52bfc58d
+X-MS-Exchange-CrossTenant-AuthSource: YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Feb 2025 21:36:16.4156
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4f278736-4ab6-415c-957e-1f55336bd31e
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: hRcwpAdxCFLcda73KN00xiOwtoK7v9eelSojtedRUmk3A4qMwSRXo480hehyJ30AsAEedcL2iUeuCJoX+frcCl72GDYGVzor2kkpyrbMA9A=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: YQBPR0101MB8175
 
-On 12.02.2025 5:20 PM, barnabas.czeman@mainlining.org wrote:
-> On 2025-02-12 14:07, Konrad Dybcio wrote:
->> On 11.02.2025 11:37 PM, Barnabás Czémán wrote:
->>> From: Dang Huynh <danct12@riseup.net>
+On 2025-02-21 16:11, Mathieu Desnoyers wrote:
+> On 2025-02-21 15:50, Dave Hansen wrote:
+>> On 2/21/25 12:05, Mathieu Desnoyers wrote:
+>>> On 2025-02-21 14:48, Dave Hansen wrote:
+>>>> On 2/21/25 11:38, Mathieu Desnoyers wrote:
+>>>>> I agree that switching to permissive key in the fast path would be
+>>>>> simpler. AFAIU, the switch_to_permissive_pkey_reg() is only a pkey
+>>>>> read when the key is already permissive.
+>>>>
+>>>> Unfortunately, on x86, PKRU is almost never in its permissive state. We
+>>>> chose a policy (stored in the global init_pkru_value variable) that
+>>>> allows R/W access to pkey 0, but disables access to everything else.
+>>>> It's 0xfffffff5, IIRC.
+>>>>
+>>>> This ensures deny-by-default behavior and ensures that threads cloned
+>>>> off long ago don't have a dangerous PKRU value for newly-allocated and
+>>>> pkey-protected memory.
+>>>>
+>>>> If I had a time machine, it'd be interesting to go back and try to make
+>>>> PKRU's default value be all 0's and also represent the logically most
+>>>> restrictive value.
 >>>
->>> Add initial support for MSM8937 SoC.
->>>
->>> Signed-off-by: Dang Huynh <danct12@riseup.net>
->>> Co-developed-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
->>> Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
->>> ---
+>>> Can we assume (or require) that struct rseq and struct rseq_cs reside in
+>>> pkey-0 memory ?
 >>
->> So the computer tells me 8917 and 8937 are *very* similar. Have you
->> tried assessing how making 8937.dtsi an overlay atop 8917.dtsi would
->> work out?
+>> Maybe. Signal stacks are _practically_ only able to use pkey-0. You can
+>> technically protect them with anything you want and then WRPKRU as the
+>> first instruction once you hop into the signal handler (since
+>> instruction fetches aren't affected by x86 pkeys), but I seriously doubt
+>> anybody would go to the trouble.
 > 
-> They are similar but there are many small differences:
-> - have two dsi
-> - using adreno 505
-> - different iommu it uses arm,smmu for gpu and qcom,iommu for applications
-> - 8 cores
-> - camss will be a different a bit
-> - venus will be different a bit
-> - have more i2c and spi
-> - different mdp version
+> And that would not work on arm64, AFAIU arm64 POR_EL0 also applies to
+> instruction fetches, which somewhat prevents what can be done for signal
+> handlers if the code intends to be portable.
 > 
-> Maybe i can find more differences, originally it was based on msm8917.dtsi
-> but we have decided to keep it separate, also it have different license from 8917.
-> The plan is MSM8940 and SDM439 support will based on msm8937.dtsi in the future.
+>>
+>>> In that case, we could add something to the pkey API that switches to a
+>>> permissive state only if pkey 0 cannot be accessed.
+>>>
+>>> Therefore it would only trigger a pkey read in the common case, and
+>>> issue a pkey write only if pkey 0 is not accessible.
+>> I think that's a sane policy. An rseq access can happen at any time
+>> (from the app's perspective) so the access would theoretically be done
+>> with a random PKRU value from a random point in the thread's lifetime.
+>>
+>> But it is a different policy that we've chosen with signals and "remote"
+>> accesses, which is to just ignore pkeys entirely.
+>>
+>> I don't have a strong opinion. It's hard to balance performance and
+>> consistency with the other ABI here.
+> 
+> Because the rseq return to userspace handler is called on every return
+> to userspace after a task is scheduled back after preemption, I am
+> concerned about the overhead that would be added by a WRPKRU on the
+> fast-path, given that it acts as as barrier against speculation. Issuing
+> WRPKRU only after checking that pkey-0 is not accessible appears to be
+> moving the overhead to a much less common case.
 
-Alright, makes sense to keep them separate then
+Actually, we should distinguish between two accesses here:
 
-Konrad
+A) loads/stores from/to struct rseq
+
+B) loads from struct rseq_cs (only happens on rseq abort)
+
+(A) is a fast-path executed on return to userspace after a preemption.
+In order to make it fast, we could require that struct rseq is pkey-0
+and typically skip any WRPKRU for this access when pkey-0 is already
+accessible. We can add a check on rseq registration to make sure that
+struct rseq is indeed pkey-0, and reject it with an error if not. This
+should help make the ABI robust and less error-prone.
+
+Now for (B), it's a slow path. When we observe that rseq->rseq_cs is
+not NULL, we can simply override with a permissive pkey to make sure
+the rseq_cs access will work.
+
+Thoughts ?
+
+Thanks,
+
+Mathieu
+
+> 
+> And perhaps if we end up observing that for some reasons either the
+> sigframe and/or "remote" pkey accesses really must use pkey-0 as well
+> to work in real-life, then we could make them require pkey-0. That's
+> of course assuming it would cause no observable ABI breakage.
+> Once advantage here would be to speed up signal handler delivery.
+> 
+> I have no clue what a "remote" pkey access is. Is this the io_uring
+> use-case ?
+> 
+> Thanks,
+> 
+> Mathieu
+> 
+
+
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+https://www.efficios.com
 
