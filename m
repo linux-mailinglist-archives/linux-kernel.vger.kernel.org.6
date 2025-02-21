@@ -1,129 +1,148 @@
-Return-Path: <linux-kernel+bounces-526234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B971A3FBD8
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:47:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A1E5A3FC01
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:50:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45A398656C7
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:40:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D46F866E8E
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:42:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C130E20FAAC;
-	Fri, 21 Feb 2025 16:40:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0C0C215068;
+	Fri, 21 Feb 2025 16:40:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Y2GBrl1Y"
-Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="E6Q3n6QC"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 860491EBA14
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 16:39:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71908215066
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 16:40:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740156001; cv=none; b=EEwo6L1EEQn6HD/XiDT3z1AsIrPM7ECqVd7uAxDUFZsztxFiOSLgCJk+AR+1Xz7MB6NEClfTeGR5Jo2aTWh5Yd/XaU2s+fVB+gVDPaRBEUWhfPehWD63fJYrsYtYPyXyhxKgRbfFqd+g7dLEyhL+aYzrCbz8dMWFwuBkLBkH19s=
+	t=1740156025; cv=none; b=SyUTRtvPSB1+oTS1KxuV3ijbenLAljGdQjwBw7gSQmTY5aqwsAICOkW8MxoFYl3Ne/3zdwwBx7a2uo9xaS3v7NPiqUnQjSm3QlRaAAEy10KmCw6AHRIxJKv0x27LteydbTxvZOXuhHuO0nH442zw5PJyO1blqCUT7FKS6bAyKS0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740156001; c=relaxed/simple;
-	bh=VE5mMyStHsDU17NQ22dtIc4GazCDgcLebbjhX7Gm4lQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IcgjAgUhgZFMehFPyf0eWyVHN+Z30vibG+amPpUbka0v1/UWpOQ899U4w1mO3FJKy6SRMlw/0p0PiTpMq41lsCjL7esn+q7Yw6Dad655cnJJ5bL5bz7yjMp69+fmveMVN6rISAzjm91uC9uxds8XCuH+KbhvI8CR2/f6Lga6eyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Y2GBrl1Y; arc=none smtp.client-ip=209.85.166.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-855a1f50a66so60500939f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 08:39:58 -0800 (PST)
+	s=arc-20240116; t=1740156025; c=relaxed/simple;
+	bh=17uKUo9FOPy07r+XAiIBseIm0cdymLN5f3xEcVtffWs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aiZT9/4EpKzctitF0mWAYhJtMI2A4VAzYkBRathJMKRhv3XbpEhKNT7yPL6Pv0wcT1jd4z4yMZpSmMcDdbIDB6T1lCH2HxeRknuEqa9rUFAvGOd3OLclmkfg02jz0mfLndnCGftQuiN+UxR3ZOzYO+97UnMlPwhr4jbqm0N2ntY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=E6Q3n6QC; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5452e6f2999so2397283e87.3
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 08:40:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1740155997; x=1740760797; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=tpIVheEuZLG2iAHIpc9LKyrAoq5nqc9ptuNxDevkzBg=;
-        b=Y2GBrl1YCah/odD6SEeL6NNdNgHuuHA5oMu1xzQeXx7mdo5U5Jy0ZGKMKllFlLjzS1
-         dqzFJVDKfUEoORsrEAgTho30PKqum+rUlmoLUAofgt9SGG9ewqIo2aqYWW1LSa5KxR0r
-         Xcd03+Rrzfpg0sg/xMMztPEdaXMAdp4aUgs/XCNs7Dyaw/+p/kb+565lvc2Ul+Kgbh2R
-         7OKA5zIPvAKZIfuzeBOpJzqWGLmSP4XKCAIbPGSKHzBpUmOalOvp8um4HtXNSFtflxa8
-         lhKfqRPejPPkqO7qtky4gTM2RT3Znm3I6O39ea2PlAFqgL2yXx2thhwRTpdij9d1CduM
-         MJIQ==
+        d=linaro.org; s=google; t=1740156021; x=1740760821; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=XeJTx/vmHBx5GNuwonywXW9ioDFWEnQJoc6Kq60Yt8U=;
+        b=E6Q3n6QCPyYl/qtLwU94xCNQSql6zjpvWVCqvzHGb6UqQ4GTFRZoLr7ICjxNqSlcE2
+         qsl0jhY3Ba9owghfbvkztyjirHiAbiYHdaawZCk5ncuHIg6DVKXliQWxhwQ2nbbp+9q1
+         oNi0HM03UnlWfwjn24mGvDTbpnvBjQtHAGGnidVxswCT2FF8+JWNQLfaSQpZDBpsOacD
+         +ID5ubx4lamDsB5MoKMxZ9kI/GhoD3RJAsHk5Ce5shPcCGO2gJIjMEWTWxs7ibOmIkJz
+         QYRWeOSgRj46oQ0YQDkkSGPs/1NdZ6a+FXWNNP96NXRLr1/kXb3h9YWM1nPom4Cp9yZN
+         nNxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740155997; x=1740760797;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tpIVheEuZLG2iAHIpc9LKyrAoq5nqc9ptuNxDevkzBg=;
-        b=u4mFvwodM1h0hlIw3DVKoARw/mdREUDLi0NMGUKp6b0xlLznNcfNFwHKqM1iMWxYpE
-         Yt4gxHHmp+cp3vjxMl01bGuVV6qhWt57OJTDu2b7/NXwG/FjwODTaG86URxCbQ9z53FY
-         930A2sTmv4ljy8rxkSgulEyjnP7Foiev9WcJeKjjFzTzf+9wmzL1OB21kJc9QwTY4Wx8
-         iK4cL6uzjbYDBMX3P2sTpu2yx6TPN7etQpXPo9CdrKCYafJPZt2+nawHnX7yHSUnHdiz
-         Cp+HrsQVnBzMooweZnPo5fEKXPUqGF+VLfGkCNX402QRGVMvI9ltw7iWhoiLiypvPN1L
-         NGzA==
-X-Forwarded-Encrypted: i=1; AJvYcCXcg1V2BAZOde/2kMKFEhApAXLE+GOs9Xtl4bt1fZ6eUvRDEROxvejRzEifYjZOROI8iTBnKOohKEkhT/8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxh3qc4Kya83ogiI80WERmPD6RSKulCNp/2dzX1/LwMiQY6WUhL
-	j+IV3yjMlXri0ZR6+ZXJYnxTGRZJT64JGi8YsO8bgI4TCHOu5jBo9tfSvGc5ksg=
-X-Gm-Gg: ASbGnctgYEkIXA0eaouQ2CbZWOi7zqXCrQdggnMFHjuo9hQRnCehXYtuhbxbw0jBZ0s
-	FSyN8SSwVZPxmRmxkg5haOO7Z18OZEyf/dzs7ebSt0et8weZil5gp2Fx4kT7aPdsp/WXlJ/yVww
-	QXZnWLosE9OPzr01Z4Z9mP3QFAd8WVcTvTxw7AvV1JtjgXO9iY/dh0EuVDA1c3b3gwR98j7jLuo
-	yQRHPsmsib9lx2Sk/ryiW/svSWEA1O5lUfGOGeji5aOf1iMMZfTiw/JJISNcDAEOoXBCUTvYc1Z
-	982veq2CBeu3stQvxbG0MAU=
-X-Google-Smtp-Source: AGHT+IEQDPSURcGXmuozZVdFy3UCuIUjqREgH/Da4GyTWHQurE3pBhVbAP+8ISGsn67fSxl7Tt603A==
-X-Received: by 2002:a05:6e02:156e:b0:3d1:968a:6d46 with SMTP id e9e14a558f8ab-3d2cae6b841mr37216195ab.6.1740155997651;
-        Fri, 21 Feb 2025 08:39:57 -0800 (PST)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3d18f9c5bc9sm39596575ab.28.2025.02.21.08.39.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Feb 2025 08:39:56 -0800 (PST)
-Message-ID: <0c1faa58-b658-4a64-9d42-eaf603fdc69d@kernel.dk>
-Date: Fri, 21 Feb 2025 09:39:55 -0700
+        d=1e100.net; s=20230601; t=1740156021; x=1740760821;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XeJTx/vmHBx5GNuwonywXW9ioDFWEnQJoc6Kq60Yt8U=;
+        b=s7wMtxcokhcFlsq4DLnF/FbbZMAAi3n4kZ9zCK6RjXhryBYVH5x98IF38KIejSl6ju
+         m7jKGCRb8MxZ/p3bvhhl7wLuWBaA/Cmb8vHfz+jFqmqh0ObqoVfQgDDQac0u5XJfKnV/
+         Ejl8Aw26OGb8xh30kWGF5Cn722JQBmVUH4ZavU9A6QCa6cem3k27381FBTRTEp8ef63A
+         UCom+YRDScYjlVoMLJCN1Jm6rul49NiXry+3M9uR+tL1qpxdrgQqPmoQTLm9TJuq3EP/
+         IkddDYFju49WDrylTG5HgQRwITGia6qEclnqtBtO6SItj7Epgk8KL7Om59SdBVJAXziq
+         d9AA==
+X-Forwarded-Encrypted: i=1; AJvYcCVz+pNpeOToIremypf0+KW7RBrPqG2Wbp4hecCOyZ3k55AID4g6qZfSyspVY6mXWp30szQuf7EuJsHJGjU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxrFcaWYOp7bqyt+o7Py8B1RbOv1F53UodTQBbtFvE6/3QPPKTY
+	XuV1jTgw6EZAL8XeTJEAGPW+y/jHDVh847iKFaA6znWphqooR+3U/nwpakFGkP8=
+X-Gm-Gg: ASbGncvCq19GkVBqHh2TH9g+9JT4GUTePCYV2dIHBZifWqJE/gIVPKv6GGPOwYrXNgC
+	c9LxEjUsQgET3jez4XQCUimA3yD4WkXld6ar7E+EECEExyPS9wugcTfLk6Y/YRUnsesmo3DbDqf
+	Ik7SSmMfVstp7MIgTGlLfiPHq6fXyK/Hv192T72CtoCV4Nc0btE0pk1jcgIFquIUj2IgcxsPIhX
+	e1NTMQ8cNoB6i5GY4FajMAFIhHoJni7EWnxRNlkCUjwB8Q+KaVm344/yewGFSENEg/rsz3AkUq9
+	LJgnGeH/9j9OVmWsz89pPhhuT15Gm2Ez3ErJ8qWdVyuIGs35zztn3qhBrLodhPmwFvVFJxlAcwT
+	WXzd9jw==
+X-Google-Smtp-Source: AGHT+IG3sGSgu3fmfjjVa5dP0zopYhRJHZeGFgM+rQzAw/dbKCd7icrIJbdMAouX19sYLz/WmVSHOA==
+X-Received: by 2002:a05:6512:e97:b0:544:11cf:10c1 with SMTP id 2adb3069b0e04-54838ef8ae9mr1535911e87.30.1740156021503;
+        Fri, 21 Feb 2025 08:40:21 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54531815e02sm1992234e87.228.2025.02.21.08.40.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Feb 2025 08:40:20 -0800 (PST)
+Date: Fri, 21 Feb 2025 18:40:17 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Jun Nie <jun.nie@linaro.org>
+Cc: Rob Clark <robdclark@gmail.com>, 
+	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
+	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 15/15] drm/msm/dpu: Enable quad-pipe for DSC and
+ dual-DSI case
+Message-ID: <kouoar4xfsyuxmxjg3pc5jkbddpc7kbyvdpqkwnzecuroilnra@4aa4cpdkr7gc>
+References: <20250217-sm8650-v6-14-hmd-deckard-mdss-quad-upstream-oldbootwrapper-36-prep-v6-0-c11402574367@linaro.org>
+ <20250217-sm8650-v6-14-hmd-deckard-mdss-quad-upstream-oldbootwrapper-36-prep-v6-15-c11402574367@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] io_uring: add missing IORING_MAP_OFF_ZCRX_REGION in
- io_uring_mmap
-To: Pavel Begunkov <asml.silence@gmail.com>, lizetao <lizetao1@huawei.com>,
- Bui Quang Minh <minhquangbui99@gmail.com>
-Cc: David Wei <dw@davidwei.uk>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>
-References: <20250221085933.26034-1-minhquangbui99@gmail.com>
- <590cff7ccda34b028706b9288f8928d3@huawei.com>
- <79189960-b645-4b51-a3d7-609708dc3ee2@gmail.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <79189960-b645-4b51-a3d7-609708dc3ee2@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250217-sm8650-v6-14-hmd-deckard-mdss-quad-upstream-oldbootwrapper-36-prep-v6-15-c11402574367@linaro.org>
 
-On 2/21/25 5:20 AM, Pavel Begunkov wrote:
-> On 2/21/25 09:10, lizetao wrote:
->> Hi,
->>
->>> -----Original Message-----
->>> From: Bui Quang Minh <minhquangbui99@gmail.com>
->>> Sent: Friday, February 21, 2025 5:00 PM
->>> To: io-uring@vger.kernel.org
->>> Cc: Jens Axboe <axboe@kernel.dk>; Pavel Begunkov
->>> <asml.silence@gmail.com>; David Wei <dw@davidwei.uk>; linux-
->>> kernel@vger.kernel.org; Bui Quang Minh <minhquangbui99@gmail.com>
->>> Subject: [PATCH] io_uring: add missing IORING_MAP_OFF_ZCRX_REGION in
->>> io_uring_mmap
->>>
->>> Allow user to mmap the kernel allocated zerocopy-rx refill queue.
->>>
->>
->> Maybe fixed-tag should be added here.
+On Mon, Feb 17, 2025 at 10:16:04PM +0800, Jun Nie wrote:
+> To support high-resolution cases that exceed the width limitation of
+> a pair of SSPPs, or scenarios that surpass the maximum MDP clock rate,
+> additional pipes are necessary to enable parallel data processing
+> within the SSPP width constraints and MDP clock rate.
 > 
-> No need, it's not strictly a fix, and whlist it's not yet sent to
-> linus, the tags only cause confusion when hashes change, e.g. on rebase.
+> Request 4 mixers and 4 DSCs for high-resolution cases where both DSC
+> and dual interfaces are enabled. More use cases can be incorporated
+> later if quad-pipe capabilities are required.
+> 
+> Signed-off-by: Jun Nie <jun.nie@linaro.org>
+> ---
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c         |  2 +-
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.h         |  6 ++---
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c      | 28 ++++++++++++++++++------
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys.h |  2 +-
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h   |  2 +-
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h      |  2 +-
+>  6 files changed, 28 insertions(+), 14 deletions(-)
+> 
 
-I do like using fixes still, if only to provide a link to the original
-commit without needing to dig for it. And yeah there's the occasional
-rebase where I forget to update the sha, but those get discovered pretty
-quick.
+>  
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h
+> index 64e220987be5682f26d02074505c5474a547a814..804858e69e7da1c8c67c725aa462c1a558d1b402 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h
+> @@ -35,8 +35,8 @@
+>  #endif
+>  
+>  #define STAGES_PER_PLANE		2
+> -#define PIPES_PER_PLANE			2
+>  #define PIPES_PER_STAGE			2
+> +#define PIPES_PER_PLANE			(PIPES_PER_STAGE * STAGES_PER_PLANE)
+
+This should be changes when STAGES_PER_PLANE is introduced. With that
+fixed:
+
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+
+>  #ifndef DPU_MAX_DE_CURVES
+>  #define DPU_MAX_DE_CURVES		3
+>  #endif
+> 
+> -- 
+> 2.34.1
+> 
 
 -- 
-Jens Axboe
-
+With best wishes
+Dmitry
 
