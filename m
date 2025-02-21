@@ -1,142 +1,79 @@
-Return-Path: <linux-kernel+bounces-526292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 938FEA3FCBE
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 18:05:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F986A3FCDF
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 18:08:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F3647A940F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:01:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85F69707CEA
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:00:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2C26243962;
-	Fri, 21 Feb 2025 17:02:22 +0000 (UTC)
-Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 223B124336E;
-	Fri, 21 Feb 2025 17:02:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72F3022A7F5;
+	Fri, 21 Feb 2025 17:00:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="cryrOQYN"
+Received: from mr85p00im-ztdg06011101.me.com (mr85p00im-ztdg06011101.me.com [17.58.23.185])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C24622A81D
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 17:00:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.23.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740157342; cv=none; b=s+C31e0r4U/ZdR1EaBb4qE3TDddkVZs3NyXeC12rCMna1IDhRGKcrypHRU31swXMxoiv/sXN0LKH8WcSJLpyeU7Or37lYrUQ5NnsBA7cu+JWufFU+ebMn4D4CuWtjIh9OhnRE3zec+LWiTlnXvtHYTgG1CFapuUyU68qbTdx5jI=
+	t=1740157225; cv=none; b=X0/QUq4XuYFrn5PGhvSBNN13/V37SeoTL9KjE0mhC5KzcjiphU6v+ZSQE5Sd9Wo/VwgC56mkUIjvifa+dAGAaigRJ0K2BvJAQyo/49cil5vIrTfgLjaMUgcW2ZmkL4ub4JzIidXYveYXuzpwGmDrbE16j5zVAwNGQZoU4eEX6Tw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740157342; c=relaxed/simple;
-	bh=eDJSMOr+h1SSZEQ8kxz+WyG6t2AUCYwQFo5uAoH21rY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IKXvoldzEQHLUKEmbr65s7f6mavb7nXrmxiGKooxvZGgHhpxTtr0acbHjSVM+A+x60NAFRowm3JeXf6QQY9p3a5uO/rwf0s74SOy1uzLXPDOxHHHbH9EvRJMsIOCK8P72o4i6tTTftc9WaQxDCAlOzWt/J4v23ojwr68nanTnvs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
-Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
-	id 1tlWPn-00020g-00; Fri, 21 Feb 2025 18:02:15 +0100
-Received: by alpha.franken.de (Postfix, from userid 1000)
-	id A1DE8C0135; Fri, 21 Feb 2025 18:01:48 +0100 (CET)
-Date: Fri, 21 Feb 2025 18:01:48 +0100
-From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-To: Sergio Paracuellos <sergio.paracuellos@gmail.com>
-Cc: linux-clk@vger.kernel.org, sboyd@kernel.org, mturquette@baylibre.com,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com,
-	p.zabel@pengutronix.de, linux-mips@vger.kernel.org,
-	devicetree@vger.kernel.org, yangshiji66@outlook.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/6] mips: dts: ralink: update system controller nodes
- and its consumers
-Message-ID: <Z7ixfMbpePvkpp2q@alpha.franken.de>
-References: <20250120092146.471951-1-sergio.paracuellos@gmail.com>
- <CAMhs-H-VevC+_=HxhMU6-at0bKut_JqdgO7j2detuB4s8R_QFQ@mail.gmail.com>
- <Z7iHorlRgtsi1LOo@alpha.franken.de>
- <CAMhs-H-fcWU-rz_3FeAuRe0xdCMmvffX2zrZwwmt=8RYpY4Lyg@mail.gmail.com>
- <Z7idguBa2bxZRoxX@alpha.franken.de>
- <CAMhs-H91Pv4bygmL2jL0=swn-wHT0mRYGaYO6Hjm5O-xmmrJ0w@mail.gmail.com>
+	s=arc-20240116; t=1740157225; c=relaxed/simple;
+	bh=k48eyJ2p7HyLaUv2o2mxvuTNXjQuhQ/0FgAmjAYDOHY=;
+	h=Content-Type:From:Mime-Version:Subject:Message-Id:Date:Cc:To; b=Zy+Of/4n6O7PBhSp7w0sqZv7AgECJEvTj5SZ6cq5FwUtbgIbjG5uaSB7zf7GkjistZngm0hUlPskZYnLg1sP0g73QcGxzZpVM2+QMVSx4zf3h6Q1UmLMIsO2FVEi0u393MzO6ZAAL23ZFoUah7dOGsTF72sY5ICt9LKlXNhTY4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=cryrOQYN; arc=none smtp.client-ip=17.58.23.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1a1hai; bh=k48eyJ2p7HyLaUv2o2mxvuTNXjQuhQ/0FgAmjAYDOHY=;
+	h=Content-Type:From:Mime-Version:Subject:Message-Id:Date:To:x-icloud-hme;
+	b=cryrOQYNAWELojRD0mBYV/p8Ou8xztj5ak+NZlc4aiUf9fzExWnDhQtQKWRAhJrIg
+	 WXH6P694BwSxvLR/kez0jinne1P9cxYLyNya478lGRvrSTbI4g9fRa+dlnq6d9zpFq
+	 Pu11JA+v4nExpOOWpVUbBpDHji6kmDUXDbiMd3FlUBYrDO7f2/oCQxkgbpUrkJKOTu
+	 XyQlTYtcBAs6uMTGepxUTem4j68YAM38rb5FvA9fiVTnTgUds1904Aai98RUod8I+8
+	 ETU2qFxbrlwmj6zH8u/CVS+HJ2s82r+MVr/tNLlL0yuW/YvCig+xpq3JibPWsLdbA2
+	 t4i70s5xQnARQ==
+Received: from smtpclient.apple (mr38p00im-dlb-asmtp-mailmevip.me.com [17.57.152.18])
+	by mr85p00im-ztdg06011101.me.com (Postfix) with ESMTPSA id 145EEDA06AC;
+	Fri, 21 Feb 2025 17:00:21 +0000 (UTC)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+From: MICHAEL TURNER <kameronwayneturner@icloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMhs-H91Pv4bygmL2jL0=swn-wHT0mRYGaYO6Hjm5O-xmmrJ0w@mail.gmail.com>
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH v2 2/5] modules: Refactor + kdoc elf_validity_cached_copy
+Message-Id: <1DBAD107-A179-41CB-B389-0AE2F491F2FF@icloud.com>
+Date: Fri, 21 Feb 2025 11:00:11 -0600
+Cc: gary@garyguo.net, laura@labbott.name, linux-kbuild@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, masahiroy@kernel.org, mcgrof@kernel.org,
+ mmaurer@google.com, nathan@kernel.org, ndesaulniers@google.com,
+ nicolas@fjasle.eu, ojeda@kernel.org, rust-for-linux@vger.kernel.org
+To: greg@kroah.com
+X-Mailer: iPhone Mail (22D72)
+X-Proofpoint-GUID: Dlwmpce8l6-mV_ZriHRkhcE34hI0OpRT
+X-Proofpoint-ORIG-GUID: Dlwmpce8l6-mV_ZriHRkhcE34hI0OpRT
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-21_05,2025-02-20_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 phishscore=0 bulkscore=0
+ suspectscore=0 mlxlogscore=643 adultscore=0 spamscore=0 mlxscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2308100000 definitions=main-2502210120
 
-On Fri, Feb 21, 2025 at 05:40:34PM +0100, Sergio Paracuellos wrote:
-> On Fri, Feb 21, 2025 at 4:37 PM Thomas Bogendoerfer
-> <tsbogend@alpha.franken.de> wrote:
-> >
-> > On Fri, Feb 21, 2025 at 03:50:09PM +0100, Sergio Paracuellos wrote:
-> > > Hi Thomas,
-> > >
-> > > On Fri, Feb 21, 2025 at 3:05 PM Thomas Bogendoerfer
-> > > <tsbogend@alpha.franken.de> wrote:
-> > > >
-> > > > On Fri, Feb 21, 2025 at 11:48:34AM +0100, Sergio Paracuellos wrote:
-> > > > > Hi Thomas,
-> > > > >
-> > > > > El El lun, 20 ene 2025 a las 10:21, Sergio Paracuellos <
-> > > > > sergio.paracuellos@gmail.com> escribió:
-> > > > >
-> > > > > > Hi all!
-> > > > > >
-> > > > > > Ralinks SoCs have a system controller node which serves as clock and reset
-> > > > > > providers for the rest of the world. This patch series introduces clock
-> > > > > > definitions for these SoCs. The clocks are registered in the driver using
-> > > > > > a bunch of arrays in specific order so these definitions represent the
-> > > > > > assigned
-> > > > > > identifier that is used when this happens so client nodes can easily use it
-> > > > > > to specify the clock which they consume without the need of checking
-> > > > > > driver code.
-> > > > > >
-> > > > > > DTS files which are currently on tree are not matching system controller
-> > > > > > bindings. So all of them are updated to properly match them.
-> > > > > >
-> > > > > > I'd like this series to go through kernel mips git tree if possible.
-> > > > > >
-> > > > > > Thanks in advance for your time.
-> > > > > >
-> > > > > > Changes in v3:
-> > > > > > - Address Krzysztof comments in v2 (Thanks!):
-> > > > > >   + Drop reset include file since what it was defined there were hardware
-> > > > > >     constants and no binding related indexes at all.
-> > > > > >   + Update patches for not referring to this reset removed file.
-> > > > >
-> > > > >
-> > > > > I was expecting this series going through the mips tree.
-> > > >
-> > > >   DTC     arch/mips/boot/dts/ralink/rt3883_eval.dtb
-> > > > Error: /local/tbogendoerfer/korg/linux/arch/mips/boot/dts/ralink/rt3883.dtsi:2.1-9 syntax error
-> > > > FATAL ERROR: Unable to parse input tree
-> > >
-> > > Weird, it looks like dtc is not happy with the "include" line with new
-> > > definitions? Are you getting this only with rt3883? Since all the
-> > > patches are almost the same and I compile tested this before sending..
-> > > Something got corrupted? I don't have my laptop now to check but I
-> > > will recheck again on monday.
-> >
-> > rt2880_eval.dts:/include/ "rt2880.dtsi"
-> > rt3052_eval.dts:#include "rt3050.dtsi"
-> > rt3883_eval.dts:/include/ "rt3883.dtsi"
-> >
-> > rt3052 works, rt2880 and rt3883 don't.
-> >
-> > changing the /include/ to #include makes them compile.
-> 
-> Mmmm...does this mean that this was broken before my patches? Since I
-> have not touched the files that need the replacement.
+=EF=BB=BFRemove everything that is attacking me this is invalid
+All information. Has been stolen I=E2=80=99ve been attacked over 2yrs
+Please stop all of this
+I didn=E2=80=99t approve any of this
 
-no, without your patches everything compiles. I guess dtc (?) doesn't
-allow #include in files, which were included via / include /. But that's
-just guesswork
-
- So I probably
-> checked in the openwrt tree and missed this totally. Sorry for that.
-> How do you want to handle this? Should I send v4 including these
-> replacements? Or do you prefer to handle them directly?
-
-I'll fix the includes while applying.
-
-Thomas.
-
--- 
-Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
-good idea.                                                [ RFC1925, 2.3 ]
+Sent from my iPhone=
 
