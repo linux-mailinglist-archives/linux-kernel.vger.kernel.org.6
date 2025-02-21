@@ -1,182 +1,252 @@
-Return-Path: <linux-kernel+bounces-525176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A145A3EBFB
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 05:49:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE8C7A3EC01
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 05:57:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 207161898A1F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 04:50:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6AFE13B3477
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 04:57:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 679471FBC99;
-	Fri, 21 Feb 2025 04:49:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="M4BXBTjo"
-Received: from out-175.mta1.migadu.com (out-175.mta1.migadu.com [95.215.58.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39F761D8DFB
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 04:49:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08E111FBC83;
+	Fri, 21 Feb 2025 04:57:33 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD84EF9D9;
+	Fri, 21 Feb 2025 04:57:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740113387; cv=none; b=lNVJXOhXirOTk6o6p2TtsFrOVVFVPhfDanhFAd5+3hlA7mJ/08y27plcAb7DAl8Q9noBT1XtfPML93CJc0y+z+cFs9okwr66/aCB8jASfHUAlCV43qNUNA/RDZlEOgr7+G5Zni7t2fK05czNReWLeqH/tNxu74C+ezjowoG3sKY=
+	t=1740113852; cv=none; b=HZeoiN9JZH2+ATPRiFW7jwiWCpDrb0gUpDTPTwKHySV08om//+PNBdVxNhWFCZD6Kxk0no4ojThAur05FVjr4Roz4zK//Rb8ChbBy8iH5g/+LjPIKm0NQyrnzflsjFi1r2O7W8KZmP7/ok9A+2kjkQ2lJLspTPOAlVSrA6zHgWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740113387; c=relaxed/simple;
-	bh=fn6SPHX/tcnnve4tTFK8cDxojPBkNX1AWRBMvSARYew=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QPHQVZLF5IUYLWKjEJMJPHy72lzTNn/RXDbM8vY9CqfccXZ345ZyB4oGcmRavaZ3IUvCuOkjuhQvmheV0JX6M/Z3gnkLwgCo8P8FR3CaE4aVNDkMSYG36n+PUKy6+tp4V279Ywap8WtC5t62zf3c8WqDa91Xe8WAgz9e8UZFWck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=M4BXBTjo; arc=none smtp.client-ip=95.215.58.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Fri, 21 Feb 2025 04:49:33 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1740113383;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9MC9KUOR9F3fzdshxIn31GmmTBR4r7x740xG42mMsfI=;
-	b=M4BXBTjoV0yly7UQeNRdlaQjH5INvV4HEbKP9CMh2iWrVB2zc+eYEeyCmYONp//0pw/FXE
-	4gyHJw2UQrO8TTaV70ymx5bNklWGCY6AqeFclYkq2YVDXS0pvLsohRKJHsjn2E5LPrl5Rs
-	F4XdXCNzW6NllbD6ELT5iQ1CLIz4b3U=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Roman Gushchin <roman.gushchin@linux.dev>
-To: Parav Pandit <parav@mellanox.com>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
-	Maher Sanalla <msanalla@nvidia.com>,
-	"linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] RDMA/core: fix a NULL-pointer dereference in
- hw_stat_device_show()
-Message-ID: <Z7gF3UC7PvVxeRcq@google.com>
-References: <20250221020555.4090014-1-roman.gushchin@linux.dev>
- <CY8PR12MB71958C150D7604EAD4463F4ADCC72@CY8PR12MB7195.namprd12.prod.outlook.com>
- <Z7gARTF0mpbOj7gN@google.com>
- <CY8PR12MB7195F3ACB8CFA05C4B8D26D3DCC72@CY8PR12MB7195.namprd12.prod.outlook.com>
+	s=arc-20240116; t=1740113852; c=relaxed/simple;
+	bh=6aI+GHr2BBwATOUxRUp9CTA9xgtY8w2tQT/HqCn+JY8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QcxNT/GIIb0ttsvtqrOy8GZajYsIvBCU5K4LcEDGPqDz9mxaxbO3W7xZ9yEUhanGyWIXBvXX83gpk6vAaTrad9jU5jElE67bF6i0xJSbHE3Q4LrKXMN0lp/KoJ7MTc7sE9wcX4R+fFBKiC98YBQSCg5/hS8K8pMIfjyb8AeB5Eg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E037916A3;
+	Thu, 20 Feb 2025 20:57:47 -0800 (PST)
+Received: from [10.162.41.20] (K4MQJ0H1H2.blr.arm.com [10.162.41.20])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 695743F59E;
+	Thu, 20 Feb 2025 20:57:17 -0800 (PST)
+Message-ID: <db344bf6-a064-4646-9edb-828f3d20d200@arm.com>
+Date: Fri, 21 Feb 2025 10:27:14 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CY8PR12MB7195F3ACB8CFA05C4B8D26D3DCC72@CY8PR12MB7195.namprd12.prod.outlook.com>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC v2 0/9] khugepaged: mTHP support
+To: Nico Pache <npache@redhat.com>
+Cc: Ryan Roberts <ryan.roberts@arm.com>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, linux-mm@kvack.org,
+ anshuman.khandual@arm.com, catalin.marinas@arm.com, cl@gentwo.org,
+ vbabka@suse.cz, mhocko@suse.com, apopple@nvidia.com,
+ dave.hansen@linux.intel.com, will@kernel.org, baohua@kernel.org,
+ jack@suse.cz, srivatsa@csail.mit.edu, haowenchao22@gmail.com,
+ hughd@google.com, aneesh.kumar@kernel.org, yang@os.amperecomputing.com,
+ peterx@redhat.com, ioworker0@gmail.com, wangkefeng.wang@huawei.com,
+ ziy@nvidia.com, jglisse@google.com, surenb@google.com,
+ vishal.moola@gmail.com, zokeefe@google.com, zhengqi.arch@bytedance.com,
+ jhubbard@nvidia.com, 21cnbao@gmail.com, willy@infradead.org,
+ kirill.shutemov@linux.intel.com, david@redhat.com, aarcange@redhat.com,
+ raquini@redhat.com, sunnanyong@huawei.com, usamaarif642@gmail.com,
+ audra@redhat.com, akpm@linux-foundation.org, rostedt@goodmis.org,
+ mathieu.desnoyers@efficios.com, tiwai@suse.de
+References: <20250211003028.213461-1-npache@redhat.com>
+ <8a37f99b-f207-4688-bc90-7f8e6900e29d@arm.com>
+ <CAA1CXcDHCesahmZs21rVP=xai9C=-TpK_7=_8DMqxGJRJzyKSA@mail.gmail.com>
+ <867280bf-2ba1-4e83-8e16-9d93e1c41e08@arm.com>
+ <CAA1CXcDLU-ZQJiF2pXH_=EtqXcqaZKLS+gJ7SGtTq7+2HA47QA@mail.gmail.com>
+Content-Language: en-US
+From: Dev Jain <dev.jain@arm.com>
+In-Reply-To: <CAA1CXcDLU-ZQJiF2pXH_=EtqXcqaZKLS+gJ7SGtTq7+2HA47QA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, Feb 21, 2025 at 04:34:25AM +0000, Parav Pandit wrote:
+
+
+On 21/02/25 12:42 am, Nico Pache wrote:
+> On Wed, Feb 19, 2025 at 2:01 AM Dev Jain <dev.jain@arm.com> wrote:
+>>
+>>
+>>
+>> On 19/02/25 4:00 am, Nico Pache wrote:
+>>> On Tue, Feb 18, 2025 at 9:07 AM Ryan Roberts <ryan.roberts@arm.com> wrote:
+>>>>
+>>>> On 11/02/2025 00:30, Nico Pache wrote:
+>>>>> The following series provides khugepaged and madvise collapse with the
+>>>>> capability to collapse regions to mTHPs.
+>>>>>
+>>>>> To achieve this we generalize the khugepaged functions to no longer depend
+>>>>> on PMD_ORDER. Then during the PMD scan, we keep track of chunks of pages
+>>>>> (defined by MTHP_MIN_ORDER) that are utilized. This info is tracked
+>>>>> using a bitmap. After the PMD scan is done, we do binary recursion on the
+>>>>> bitmap to find the optimal mTHP sizes for the PMD range. The restriction
+>>>>> on max_ptes_none is removed during the scan, to make sure we account for
+>>>>> the whole PMD range. max_ptes_none will be scaled by the attempted collapse
+>>>>> order to determine how full a THP must be to be eligible. If a mTHP collapse
+>>>>> is attempted, but contains swapped out, or shared pages, we dont perform the
+>>>>> collapse.
+>>>>>
+>>>>> With the default max_ptes_none=511, the code should keep its most of its
+>>>>> original behavior. To exercise mTHP collapse we need to set max_ptes_none<=255.
+>>>>> With max_ptes_none > HPAGE_PMD_NR/2 you will experience collapse "creep" and
+>>>>
+>>>> nit: I think you mean "max_ptes_none >= HPAGE_PMD_NR/2" (greater or *equal*)?
+>>>> This is making my head hurt, but I *think* I agree with you that if
+>>>> max_ptes_none is less than half of the number of ptes in a pmd, then creep
+>>>> doesn't happen.
+>>> Haha yea the compressed bitmap does not make the math super easy to
+>>> follow, but i'm glad we arrived at the same conclusion :)
+>>>>
+>>>> To make sure I've understood;
+>>>>
+>>>>    - to collapse to 16K, you would need >=3 out of 4 PTEs to be present
+>>>>    - to collapse to 32K, you would need >=5 out of 8 PTEs to be present
+>>>>    - to collapse to 64K, you would need >=9 out of 16 PTEs to be present
+>>>>    - ...
+>>>>
+>>>> So if we start with 3 present PTEs in a 16K area, we collapse to 16K and now
+>>>> have 4 PTEs in a 32K area which is insufficient to collapse to 32K.
+>>>>
+>>>> Sounds good to me!
+>>> Great! Another easy way to think about it is, with max_ptes_none =
+>>> HPAGE_PMD_NR/2, a collapse will double the size, and we only need half
+>>> for it to collapse again. Each size is 2x the last, so if we hit one
+>>> collapse, it will be eligible again next round.
+>>
+>> Please someone correct me if I am wrong.
+>>
 > 
-> > From: Roman Gushchin <roman.gushchin@linux.dev>
-> > Sent: Friday, February 21, 2025 9:56 AM
-> > 
-> > On Fri, Feb 21, 2025 at 03:14:16AM +0000, Parav Pandit wrote:
-> > >
-> > > > From: Roman Gushchin <roman.gushchin@linux.dev>
-> > > > Sent: Friday, February 21, 2025 7:36 AM
-> > > >
-> > > > Commit 54747231150f ("RDMA: Introduce and use
-> > > > rdma_device_to_ibdev()") introduced rdma_device_to_ibdev() helper
-> > > > which has to be used to obtain an ib_device pointer from a device pointer.
-> > > >
-> > >
-> > > > hw_stat_device_show() and hw_stat_device_store() were missed.
-> > > >
-> > > > It causes a NULL pointer dereference panic on an attempt to read hw
-> > > > counters from a namespace, when the device structure is not embedded
-> > > > into the ib_device structure.
-> > > Do you mean net namespace other than default init_net?
-> > > Assuming the answer is yes, some question below.
-> > >
-> > > > In this case casting the device pointer into the ib_device pointer
-> > > > using container_of() is wrong.
-> > > > Instead, rdma_device_to_ibdev() should be used, which uses the back-
-> > > > reference (container_of(device, struct ib_core_device, dev))->owner.
-> > > >
-> > > > [42021.807566] BUG: kernel NULL pointer dereference, address:
-> > > > 0000000000000028 [42021.814463] #PF: supervisor read access in
-> > > > kernel mode [42021.819549] #PF: error_code(0x0000) - not-present
-> > > > page [42021.824636] PGD 0 P4D 0 [42021.827145] Oops: 0000 [#1] SMP
-> > > > PTI [42021.830598] CPU: 82 PID: 2843922 Comm: switchto-defaul Kdump:
-> > loaded
-> > > > Tainted: G S      W I        XXX
-> > > > [42021.841697] Hardware name: XXX
-> > > > [42021.849619] RIP: 0010:hw_stat_device_show+0x1e/0x40 [ib_core]
-> > > > [42021.855362] Code: 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa
-> > > > 0f 1f
-> > > > 44 00 00 49 89 d0 4c 8b 5e 20 48 8b 8f b8 04 00 00 48 81 c7 f0 fa ff
-> > > > ff <48> 8b
-> > > > 41 28 48 29 ce 48 83 c6 d0 48 c1 ee 04 69 d6 ab aa aa aa 48
-> > > > [42021.873931]
-> > > > RSP: 0018:ffff97fe90f03da0 EFLAGS: 00010287 [42021.879108] RAX:
-> > > > ffff9406988a8c60 RBX: ffff940e1072d438 RCX: 0000000000000000
-> > > > [42021.886169] RDX: ffff94085f1aa000 RSI: ffff93c6cbbdbcb0 RDI:
-> > > > ffff940c7517aef0 [42021.893230] RBP: ffff97fe90f03e70 R08:
-> > > > ffff94085f1aa000 R09: 0000000000000000 [42021.900294] R10:
-> > > > ffff94085f1aa000 R11: ffffffffc0775680 R12: ffffffff87ca2530
-> > > > [42021.907355]
-> > > > R13: ffff940651602840 R14: ffff93c6cbbdbcb0 R15: ffff94085f1aa000
-> > > > [42021.914418] FS:  00007fda1a3b9700(0000)
-> > GS:ffff94453fb80000(0000)
-> > > > knlGS:0000000000000000 [42021.922423] CS:  0010 DS: 0000 ES: 0000
-> > CR0:
-> > > > 0000000080050033 [42021.928130] CR2: 0000000000000028 CR3:
-> > > > 00000042dcfb8003 CR4: 00000000003726f0 [42021.935194] DR0:
-> > > > 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> > > > [42021.942257] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7:
-> > > > 0000000000000400 [42021.949324] Call Trace:
-> > > > [42021.951756]  <TASK>
-> > > > [42021.953842]  [<ffffffff86c58674>] ? show_regs+0x64/0x70
-> > > > [42021.959030] [<ffffffff86c58468>] ? __die+0x78/0xc0 [42021.963874]
-> > [<ffffffff86c9ef75>] ?
-> > > > page_fault_oops+0x2b5/0x3b0 [42021.969749]  [<ffffffff87674b92>] ?
-> > > > exc_page_fault+0x1a2/0x3c0 [42021.975549]  [<ffffffff87801326>] ?
-> > > > asm_exc_page_fault+0x26/0x30 [42021.981517]  [<ffffffffc0775680>] ?
-> > > > __pfx_show_hw_stats+0x10/0x10 [ib_core] [42021.988482]
-> > > > [<ffffffffc077564e>] ? hw_stat_device_show+0x1e/0x40 [ib_core]
-> > > > [42021.995438]  [<ffffffff86ac7f8e>] dev_attr_show+0x1e/0x50
-> > > > [42022.000803]  [<ffffffff86a3eeb1>] sysfs_kf_seq_show+0x81/0xe0
-> > > > [42022.006508]  [<ffffffff86a11134>] seq_read_iter+0xf4/0x410
-> > > > [42022.011954]  [<ffffffff869f4b2e>] vfs_read+0x16e/0x2f0
-> > > > [42022.017058] [<ffffffff869f50ee>] ksys_read+0x6e/0xe0
-> > > > [42022.022073]  [<ffffffff8766f1ca>]
-> > > > do_syscall_64+0x6a/0xa0 [42022.027441]  [<ffffffff8780013b>]
-> > > > entry_SYSCALL_64_after_hwframe+0x78/0xe2
-> > > >
-> > > > Fixes: 54747231150f ("RDMA: Introduce and use
-> > > > rdma_device_to_ibdev()")
-> > > Commit eb15c78b05bd9 eliminated hw_counters sysfs directory into the
-> > net namespace.
-> > > I don't see it created in any other net ns other than init_net with kernel
-> > 6.12+.
-> > >
-> > > I am puzzled. Can you please explain/share the reproduction steps for
-> > generating above call trace?
-> > 
-> > Hi Parav!
-> > 
-> > This bug was spotted in the production on a small number of machines. They
-> > were running a 6.6-based kernel (with no changes around this code). I don't
-> > have a reproducer (and there is no simple way for me to reproduce the
-> > problem), but I've several core dumps and from inspecting them it was clear
-> > that a ib_device pointer obtained in hw_stat_device_show() was wrong. At
-> > the same time the ib_pointer obtained in the way rdma_device_to_ibdev()
-> > works was correct.
-> > 
-> I just tried reproducing now on 6.12+ kernel manually.
+> max_ptes_none = 204
+> scaled_none = (204 >> 9 - 3) = ~3.1
+> so 4 pages need to be available in each chunk for the bit to be set, not 5.
+> 
+> at 204 the bitmap check is
+> 512 - 1 - 204 = 307
+> (PMD) 307 >> 3 = 38
+> (1024k) 307 >> 4 = 19
+> (512k) 307 >> 5 = 9
+> (256k) 307 >> 6 = 4
+> 
+>> Consider this; you are collapsing a 256K folio. => #PTEs = 256K/4K = 64
+>> => #chunks = 64 / 8 = 8.
+>>
+>> Let the PTE state within the chunks be as follows:
+>>
+>> Chunk 0: < 5 filled   Chunk 1: 5 filled   Chunk 2: 5 filled   Chunk 3: 5
+>> filled
+>>
+>> Chunk 4: 5 filled   Chunk 5: < 5 filled   Chunk 6: < 5 filled   Chunk 7:
+>> < 5 filled
+>>
+>> Consider max_ptes_none = 40% (512 * 40 / 100 = 204.8 (round down) = 204
+>> < HPAGE_PMD_NR/2).
+>> => To collapse we need at least 60% of the PTEs filled.
+>>
+>> Your algorithm marks chunks in the bitmap if 60% of the chunk is filled.
+>> Then, if the number of chunks set is greater than 60%, then we will
+>> collapse.
+>>
+>> Chunk 0 will be marked zero because less than 5 PTEs are filled =>
+>> percentage filled <= 50%
+>>
+>> Right now the state is
+>> 0111 1000
+>> where the indices are the chunk numbers.
+>> Since #1s = 4 => percent filled = 4/8 * 100 = 50%, 256K folio collapse
+>> won't happen.
+>>
+>> For the first 4 chunks, the percent filled is 75%.  So the state becomes
+>> 1111 1000
+>> after 128K collapse, and now 256K collapse will happen.
+>>
+>> Either I got this correct, or I do not understand the utility of
+>> maintaining chunks :) What you are doing is what I am doing except that
+>> my chunk size = 1.
+> 
+> Ignoring all the math, and just going off the 0111 1000
+> We do "creep", but its not the same type of "creep" we've been
+> describing. The collapse in the first half will allow the collapse in
+> order++ to collapse but it stops there and doesnt keep getting
+> promoted to a PMD size. That is unless the adjacent 256k also has some
+> bits set, then it can collapse to 512k. So I guess we still can creep,
+> but its way less aggressive and only when there is actual memory being
+> utilized in the adjacent chunk, so it's not like we are creating a
+> huge waste.
 
-Can you, please, share your steps? Or try the 6.6 kernel?
+I get you. You will creep when the adjacent chunk has at least 1 bit 
+set. I don't really have a strong opinion on this one.
 
-> It appears impossible to reach flow to me as intended in the commit I listed.
-> And the call trace shows opposite.
-> So please gather the information from the production system on reproducing it or configuration wise.
-> We still need to block the hw counters from net ns and will have to generate different fix if it was reached somehow.
+> 
+> 
+>>
+>>>>
+>>>>> constantly promote mTHPs to the next available size.
+>>>>>
+>>>>> Patch 1:     Some refactoring to combine madvise_collapse and khugepaged
+>>>>> Patch 2:     Refactor/rename hpage_collapse
+>>>>> Patch 3-5:   Generalize khugepaged functions for arbitrary orders
+>>>>> Patch 6-9:   The mTHP patches
+>>>>>
+>>>>> ---------
+>>>>>    Testing
+>>>>> ---------
+>>>>> - Built for x86_64, aarch64, ppc64le, and s390x
+>>>>> - selftests mm
+>>>>> - I created a test script that I used to push khugepaged to its limits while
+>>>>>      monitoring a number of stats and tracepoints. The code is available
+>>>>>      here[1] (Run in legacy mode for these changes and set mthp sizes to inherit)
+>>>>>      The summary from my testings was that there was no significant regression
+>>>>>      noticed through this test. In some cases my changes had better collapse
+>>>>>      latencies, and was able to scan more pages in the same amount of time/work,
+>>>>>      but for the most part the results were consistant.
+>>>>> - redis testing. I tested these changes along with my defer changes
+>>>>>     (see followup post for more details).
+>>>>> - some basic testing on 64k page size.
+>>>>> - lots of general use. These changes have been running in my VM for some time.
+>>>>>
+>>>>> Changes since V1 [2]:
+>>>>> - Minor bug fixes discovered during review and testing
+>>>>> - removed dynamic allocations for bitmaps, and made them stack based
+>>>>> - Adjusted bitmap offset from u8 to u16 to support 64k pagesize.
+>>>>> - Updated trace events to include collapsing order info.
+>>>>> - Scaled max_ptes_none by order rather than scaling to a 0-100 scale.
+>>>>> - No longer require a chunk to be fully utilized before setting the bit. Use
+>>>>>      the same max_ptes_none scaling principle to achieve this.
+>>>>> - Skip mTHP collapse that requires swapin or shared handling. This helps prevent
+>>>>>      some of the "creep" that was discovered in v1.
+>>>>>
+>>>>> [1] - https://gitlab.com/npache/khugepaged_mthp_test
+>>>>> [2] - https://lore.kernel.org/lkml/20250108233128.14484-1-npache@redhat.com/
+>>>>>
+>>>>> Nico Pache (9):
+>>>>>     introduce khugepaged_collapse_single_pmd to unify khugepaged and
+>>>>>       madvise_collapse
+>>>>>     khugepaged: rename hpage_collapse_* to khugepaged_*
+>>>>>     khugepaged: generalize hugepage_vma_revalidate for mTHP support
+>>>>>     khugepaged: generalize alloc_charge_folio for mTHP support
+>>>>>     khugepaged: generalize __collapse_huge_page_* for mTHP support
+>>>>>     khugepaged: introduce khugepaged_scan_bitmap for mTHP support
+>>>>>     khugepaged: add mTHP support
+>>>>>     khugepaged: improve tracepoints for mTHP orders
+>>>>>     khugepaged: skip collapsing mTHP to smaller orders
+>>>>>
+>>>>>    include/linux/khugepaged.h         |   4 +
+>>>>>    include/trace/events/huge_memory.h |  34 ++-
+>>>>>    mm/khugepaged.c                    | 422 +++++++++++++++++++----------
+>>>>>    3 files changed, 306 insertions(+), 154 deletions(-)
+>>>>>
+>>>>
+>>>
+>>>
+>>
+> 
 
-I'll try, but it'll take a lot of time - I'm very limited in terms of what I can
-do because it's a production workload.
-
-So if you have any suggestions on where to look at or what to try, I'll
-appreciate it.
-
-Thanks!
 
