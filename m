@@ -1,134 +1,93 @@
-Return-Path: <linux-kernel+bounces-525810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C431CA3F5CC
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 14:23:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50E5BA3F5D6
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 14:24:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56B7C4401F7
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 13:17:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4297C441466
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 13:18:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E946204C00;
-	Fri, 21 Feb 2025 13:16:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E8D12A1A4;
+	Fri, 21 Feb 2025 13:17:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="B0tz05hs";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="C9sXG3fA"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J4pbgy9n"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F89C1DFF7;
-	Fri, 21 Feb 2025 13:16:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 692C512F399;
+	Fri, 21 Feb 2025 13:17:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740143814; cv=none; b=oZnm3MuSNxBwmucDIfNP0JkADqdC6omKP60hSeknTRW4fqSf9Gh9uA0Pp+MelwFFC6lLTsiHJeQouC/Mv0OJlKxpQ4vXknwl6VqA0vGeJnUXRbxryp5ngvu86jOnF3EnmcYKw6qYEvZ5dngI0K+9VeCpCCB5DL8C5pDjAyuGeoU=
+	t=1740143838; cv=none; b=Gm/l30L+eqXCoBsym8odI9jRk1IWuC/FI+nB0A6SANaBhTHzn+kvMQz2HeVE0w9EwsBNASH1wBKcvXKbWG4UQ5R1lMa3Z4R5jCqtnitz2WYsBl49MDP60bvnazucEnTmEGSEMx9cJu+UN6u3gTmzY8B4lUHXnf+OMILo9NjvNgY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740143814; c=relaxed/simple;
-	bh=s6izq4i+E02HhRjQkccsm0geW0vOCOEdFReFIdgUn0E=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=JF28vOjdEIB9IXlycWmAcuBUxnFF/GsNdUeG1m3lFfcbA8ieErBwVv4CtFIaG7fqkstVKgfAUGUnwM5tLV8e08tYIyrOezTOwilNtVmOCagfrrQ8xjYtQVgqhPWOJNpojuR8Ja9BWuLFIYjRWQukrCZRLf/EOs5nMZ04silOLNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=B0tz05hs; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=C9sXG3fA; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 21 Feb 2025 13:16:46 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1740143810;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BSNUpnZS9Opw3aYHbfY1rn2ZAFjK0egvr5v04TaCI6Y=;
-	b=B0tz05hsxA5sjQTaBdYjkJYMaWz2Jg6ehz6lZ70a65hfNmgqUQbP+8crNjpXo1HpwGYt9q
-	JBQzawUFPAlLKUqW2sZWP0A5VRwvLnbj4BKiqaIpzWze1ny/XluwJJTjaUiq8OFcKlOWmw
-	noM8PQYfnY+eS8t361VeTfxytCO9IURRVq2xBu5m+mRquKcOSmC6RplWFMhf7xMEMeuZfN
-	dwaYG385QQ95BL7+VCVxJCTiS5XLu9Z8Cyyo3hv2qutpXpQYP7FIg/4BciFEDJou5tfy8d
-	5VgN9J0ZWzxPE5DHtbbfRPlB3vv9KYR7TJvEEnImD1Ku1grNeu19vXPjmYFcDA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1740143810;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BSNUpnZS9Opw3aYHbfY1rn2ZAFjK0egvr5v04TaCI6Y=;
-	b=C9sXG3fADXZpSt/OJYysI5eR3LG1LX9uhF9lLsmbShCbajWVOSNxdmeA0si7cz1TPt/c9Q
-	i98Uae1oAKfof5CA==
-From: "tip-bot2 for Nathan Chancellor" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/asm] x86/build: Raise the minimum LLVM version to 15.0.0
-Cc: Nathan Chancellor <nathan@kernel.org>, Ingo Molnar <mingo@kernel.org>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Ard Biesheuvel <ardb@kernel.org>, Brian Gerst <brgerst@gmail.com>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To:
- <20250220-x86-bump-min-llvm-for-stackp-v1-1-ecb3c906e790@kernel.org>
-References:
- <20250220-x86-bump-min-llvm-for-stackp-v1-1-ecb3c906e790@kernel.org>
+	s=arc-20240116; t=1740143838; c=relaxed/simple;
+	bh=IzQqM/tThZ0C5KtPCUAq1uZgnfCzsKn9/uiesSAdNLQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RimnY3UNaC7uLXbyW5vK1GRxrf8dQh/eRQ0IeWVdxKXsYIQW4iat+u2O/Yt/tfEbeG1NAaEPwkXe7LmwQg71j0Ly/LW1RtfImDNDRAwD0W0zVCv5sfT8CVheMbQjSUgOLls7GPMYGoQ9dNfVYpi+Ky9n5VcP+iMeUu5iaVWHg90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J4pbgy9n; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F780C4CED6;
+	Fri, 21 Feb 2025 13:17:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740143835;
+	bh=IzQqM/tThZ0C5KtPCUAq1uZgnfCzsKn9/uiesSAdNLQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=J4pbgy9nCMrcYruxoSOBTEqSbk9lpOOgmjbKXe/w8ZDhrOsfkdw+hskl6DqWJ/AQB
+	 SW9yRSy6Vl2hCEkdlxSRNo2UJ0fnCC9/Ri8fYbHyQFYKKFIDIkkTNsgWBzaM166a0J
+	 Rs9OSQURw5RhYgSs8fxCDGBz9Q2CctVJrtQSc/2PmU0CL6MXFUQ/3pWNJ5OtK+YbqB
+	 Z5EtNtv86ovmulECI08Z/CswDbBXfynQpOkx5TdHmEHHGPCaNXmnurDRa2j4rD1fGX
+	 astxXDF8SKrZ+bfLNr2/phTjEIKbTbKvoAHBf3CGbRM2NPHdKlT/u1yrOZrjqQjAvy
+	 5lFAtQwgT1UOA==
+Message-ID: <5f4b6e0e-cbeb-460e-ae03-34c678866c85@kernel.org>
+Date: Fri, 21 Feb 2025 22:17:13 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174014380628.10177.1455453395562694018.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ntb: reduce stack usage in idt_scan_mws
+To: Arnd Bergmann <arnd@kernel.org>, Jon Mason <jdmason@kudzu.us>,
+ Dave Jiang <dave.jiang@intel.com>, Allen Hubbe <allenbh@gmail.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, kernel test robot <lkp@intel.com>,
+ Bjorn Helgaas <bhelgaas@google.com>,
+ zhang jiao <zhangjiao2@cmss.chinamobile.com>,
+ Philipp Stanner <pstanner@redhat.com>, ntb@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+References: <20250221085748.2298463-1-arnd@kernel.org>
+From: Damien Le Moal <dlemoal@kernel.org>
+Content-Language: en-US
+Organization: Western Digital Research
+In-Reply-To: <20250221085748.2298463-1-arnd@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-The following commit has been merged into the x86/asm branch of tip:
+On 2/21/25 17:57, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+> 
+> idt_scan_mws() puts a large fixed-size array on the stack and copies
+> it into a smaller dynamically allocated array at the end. On 32-bit
+> targets, the fixed size can easily exceed the warning limit for
+> possible stack overflow:
+> 
+> drivers/ntb/hw/idt/ntb_hw_idt.c:1041:27: error: stack frame size (1032) exceeds limit (1024) in 'idt_scan_mws' [-Werror,-Wframe-larger-than]
+> 
+> Change it to instead just always use dynamic allocation for the
+> array from the start. It's too big for the stack, but not actually
+> all that much for a permanent allocation.
+> 
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/all/202205111109.PiKTruEj-lkp@intel.com/
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Commit-ID:     7861640aac52bbbb3dc2cd40fb93dfb3b3d0f43c
-Gitweb:        https://git.kernel.org/tip/7861640aac52bbbb3dc2cd40fb93dfb3b3d0f43c
-Author:        Nathan Chancellor <nathan@kernel.org>
-AuthorDate:    Thu, 20 Feb 2025 13:08:12 -07:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Fri, 21 Feb 2025 14:08:16 +01:00
+Looks good to me.
 
-x86/build: Raise the minimum LLVM version to 15.0.0
+Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
 
-In a similar vein as to this pending commit in the x86/asm tree:
-
-  a3e8fe814ad1 ("x86/build: Raise the minimum GCC version to 8.1")
-
-... bump the minimum supported version of LLVM for building x86 kernels
-to 15.0.0, as that is the first version that has support for
-'-mstack-protector-guard-symbol', which is used unconditionally after:
-
-  80d47defddc0 ("x86/stackprotector/64: Convert to normal per-CPU variable"):
-
-Older Clang versions will fail the build with:
-
-  clang-14: error: unknown argument: '-mstack-protector-guard-symbol=__ref_stack_chk_guard'
-
-Fixes: 80d47defddc0 ("x86/stackprotector/64: Convert to normal per-CPU variable")
-Signed-off-by: Nathan Chancellor <nathan@kernel.org>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Reviewed-by: Ard Biesheuvel <ardb@kernel.org>
-Reviewed-by: Brian Gerst <brgerst@gmail.com>
-Link: https://lore.kernel.org/r/20250220-x86-bump-min-llvm-for-stackp-v1-1-ecb3c906e790@kernel.org
----
- scripts/min-tool-version.sh | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/scripts/min-tool-version.sh b/scripts/min-tool-version.sh
-index 06c4e41..7878681 100755
---- a/scripts/min-tool-version.sh
-+++ b/scripts/min-tool-version.sh
-@@ -26,7 +26,7 @@ gcc)
- 	fi
- 	;;
- llvm)
--	if [ "$SRCARCH" = s390 ]; then
-+	if [ "$SRCARCH" = s390 -o "$SRCARCH" = x86 ]; then
- 		echo 15.0.0
- 	elif [ "$SRCARCH" = loongarch ]; then
- 		echo 18.0.0
+-- 
+Damien Le Moal
+Western Digital Research
 
