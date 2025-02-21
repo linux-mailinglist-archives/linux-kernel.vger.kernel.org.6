@@ -1,134 +1,131 @@
-Return-Path: <linux-kernel+bounces-525268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0078CA3ED59
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 08:34:01 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1844A3ED40
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 08:20:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C65237A5468
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 07:33:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 541937ABBA8
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 07:19:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 142EF1FF1D0;
-	Fri, 21 Feb 2025 07:33:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 303221FF1CB;
+	Fri, 21 Feb 2025 07:19:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ShDaEQSg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=crpt.ru header.i=@crpt.ru header.b="uLFS1n03"
+Received: from mail.crpt.ru (mail.crpt.ru [91.236.205.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C4251FECC2
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 07:33:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 687E11FBCBD;
+	Fri, 21 Feb 2025 07:19:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.236.205.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740123233; cv=none; b=ipgCNR1DYMJYeRZdC2Ae0FCRuQ9FAIdPOL53JpzarhLpOWZPlgqeMZtXXWnMmsdcbgPuyfMKwqR6Emp++vEGkN1YxWmpmSFfRJ8tgFC1I0IOmB+v1FBSwaeyBqTPKSYUDdC1nsGgvLK1Cy3V6aTD8FLPQ4qD/XoRLcfiFHlvkOM=
+	t=1740122391; cv=none; b=OZg0VyEQkivibJDF+YklEeYApE464RvhxDQT/G6pBwX6Pf6Z+wuMS567usKXnmd8EyqiVdUkP+p40g/KhJ3aOIhaPzR8B+/vMOX9Pww52BSLjX8AKXQ2SQ6DA/5IrgBswuZvh6Tb9piriZpA9y/6wxvuNnv+smsBfh/R6jHJ2n0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740123233; c=relaxed/simple;
-	bh=oRRxcUBsqPy8Q3B54F/KOcic1sLKeTYqF42oWYwzgdQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HuqhtyyuRXOKfwispeVd+bEeuSx11FVOZrX6K0hZSbAhfwOW1NtlFx2weN2WJtblqo4Oyjue2kQbjqLsF8/Y1l4GHbwrxsoOcKKIwJ/URY5QEa1KXNGZl1W8M448uqKkhRgqVhCJ+xp3C3ohfftYicdoEzVHMN+EFVhhSrkoFW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ShDaEQSg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47C44C4CED6;
-	Fri, 21 Feb 2025 07:33:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740123232;
-	bh=oRRxcUBsqPy8Q3B54F/KOcic1sLKeTYqF42oWYwzgdQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ShDaEQSgrJARrMHk9KJA6WGJ+FnJKhaV/gv715Wgzr6FNwNFHgVB+lBhZniYYIOby
-	 oY8A3Vi1YcGf/myF7Hzx08KUMu69H4wVnG/NJiy+Ly81SeSXh86ykoGqqetBgLakmW
-	 /vjcMiwYkuXmSyMra8oFqUJfQtsllrVKruWmuqzR1ThebcekVA0XlJpaeOqYbYNcQP
-	 UMTSeqF2z/ak4WXpoQqsy4pZxLh5J0pwFb4py0h6tGYe2mp4wbxgLE8k231JCO0+zX
-	 aOcKz4jJGoe9o2vECreEtpfiSv+yDKBOjqvKu9OrF7eftkFpiNT8bCnkkHDZDALdew
-	 y3jFpHTI99bDQ==
-Date: Tue, 18 Feb 2025 11:35:27 +0100
-From: Joel Granados <joel.granados@kernel.org>
-To: Petr Mladek <pmladek@suse.com>
-Cc: bot+bpf-ci@kernel.org, Douglas Anderson <dianders@chromium.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, kernel-ci@meta.com, andrii@kernel.org, daniel@iogearbox.net, 
-	martin.lau@linux.dev, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] treewide: const qualify ctl_tables where applicable
-Message-ID: <hrxhjywchs7kbovfvlpkqlazz4gakmntrwq74xhuno5ti6ye43@4rqev6uweu4p>
-References: <20250109-jag-ctl_table_const-v1-1-622aea7230cf@kernel.org>
- <501b718d1bd046bf3eb1932b11627e4cec6194f992124722840145bed109ac0a@mail.kernel.org>
- <fnrup4bdfgoeiy3nfsl56juhqjrnstntf4fg5jrcdxv226ehqp@alrqzkyfw6sl>
- <Z4TnZXCjgCIGEfsR@pathway.suse.cz>
- <42gh2e7ckwjcccorbrapeos42n4yr22koqotsu7qithb7cxl6x@ynn6yr5h7dtb>
+	s=arc-20240116; t=1740122391; c=relaxed/simple;
+	bh=sObIvvCiUAn9qXnHNJpDFM36vWf1/wfpwgBNnrtetPc=;
+	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=lOvuQDQuoeoAh00/ZzXoj7/QJC26mCsCUBdkjkB4ACdbJCJ8soc2cjRMDzxrjrInQteSwloB2P7ct2yXsCzfX/4RR7AC2WZtWv6JOhnha2iOyUOS8PcqZZKwmmbAEAetdW+ojzFgT2d8B1mehvYkmDixRYXLJWyEDzX88z4Xzq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crpt.ru; spf=pass smtp.mailfrom=crpt.ru; dkim=pass (2048-bit key) header.d=crpt.ru header.i=@crpt.ru header.b=uLFS1n03; arc=none smtp.client-ip=91.236.205.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crpt.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crpt.ru
+Received: from mail.crpt.ru ([192.168.60.3])
+	by mail.crpt.ru  with ESMTP id 51L73AUP029765-51L73AUR029765
+	(version=TLSv1.2 cipher=AES256-SHA256 bits=256 verify=OK);
+	Fri, 21 Feb 2025 10:03:10 +0300
+Received: from EX02-PR-BO.crpt.local (10.200.60.52) by ex1.crpt.local
+ (192.168.60.3) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.44; Fri, 21 Feb
+ 2025 10:03:09 +0300
+Received: from EX1.crpt.local (192.168.60.3) by EX02-PR-BO.crpt.local
+ (10.200.60.52) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.6; Fri, 21 Feb
+ 2025 10:03:09 +0300
+Received: from EX1.crpt.local ([192.168.60.3]) by EX1.crpt.local
+ ([192.168.60.3]) with mapi id 15.01.2507.044; Fri, 21 Feb 2025 10:03:09 +0300
+From: =?koi8-r?B?98HUz9LP0MnOIOHOxNLFyg==?= <a.vatoropin@crpt.ru>
+To: Kai Shen <kaishen@linux.alibaba.com>
+CC: =?koi8-r?B?98HUz9LP0MnOIOHOxNLFyg==?= <a.vatoropin@crpt.ru>, "Jason
+ Gunthorpe" <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>, Wei Yongjun
+	<weiyongjun1@huawei.com>, Yang Li <yang.lee@linux.alibaba.com>,
+	"linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"lvc-project@linuxtesting.org" <lvc-project@linuxtesting.org>
+Subject: [PATCH] RDMA/erdma: handle ib_umem_find_best_pgsz() return value
+Thread-Topic: [PATCH] RDMA/erdma: handle ib_umem_find_best_pgsz() return value
+Thread-Index: AQHbhC6pbGv+eguF8Uexqo4ANK64zw==
+Date: Fri, 21 Feb 2025 07:03:09 +0000
+Message-ID: <20250221070301.18010-1-a.vatoropin@crpt.ru>
+Accept-Language: ru-RU, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-kse-serverinfo: EX02-PR-BO.crpt.local, 9
+x-kse-antivirus-interceptor-info: scan successful
+x-kse-antivirus-info: Clean, bases: 17.02.2025 9:52:00
+x-kse-attachment-filter-triggered-rules: Clean
+x-kse-attachment-filter-triggered-filters: Clean
+x-kse-bulkmessagesfiltering-scan-result: protection disabled
+Content-Type: text/plain; charset="koi8-r"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <42gh2e7ckwjcccorbrapeos42n4yr22koqotsu7qithb7cxl6x@ynn6yr5h7dtb>
+X-KSE-ServerInfo: EX1.crpt.local, 9
+X-KSE-Attachment-Filter-Triggered-Rules: Clean
+X-KSE-Attachment-Filter-Triggered-Filters: Clean
+X-KSE-BulkMessagesFiltering-Scan-Result: protection disabled
+X-FEAS-Client-IP: 192.168.60.3
+X-FE-Policy-ID: 2:4:0:SYSTEM
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; d=crpt.ru; s=crpt.ru; c=relaxed/relaxed;
+ h=from:to:cc:subject:date:message-id:content-type:mime-version;
+ bh=rM29OcfKSzG0Xvr/iq7K+TDmsX7muLKw5JXGtiH19iw=;
+ b=uLFS1n03admF9tfidPvwn/BC2su4qLerS0j6nq2kVEW4Rh6wuJffcft7mwqJOfXDiyVMznpqIdot
+	MYEa2W2q8lHL1hXKKf4BH9v6tVBnMUE3tw2TfmfVaDCv4sdT++cdnMkvX15S3H/kfQxWveB8LSyr
+	AytOu8sHwIiswjrAhOQQe/Nj+I2UXM/fteRoeqPdI6ohHHeqYagELhOeyPYcLjxRLu8GN8iosYxU
+	730s1r442jxwxo1HZsuAkUP5P972SKZR0sfMr/4FKVpn7S2hBloYImDj2/Akd0ShDAxzSnnweZD2
+	x200rurhsv+7QZooGg3xMjRI80u2al9D6LWTjQ==
 
-On Tue, Feb 18, 2025 at 11:29:53AM +0100, Joel Granados wrote:
-> On Mon, Jan 13, 2025 at 11:13:57AM +0100, Petr Mladek wrote:
-> > On Fri 2025-01-10 14:32:30, Joel Granados wrote:
-> > > On Thu, Jan 09, 2025 at 01:38:33PM +0000, bot+bpf-ci@kernel.org wrote:
-> > > > Dear patch submitter,
-> > > > 
-> > > > CI has tested the following submission:
-> > > > Status:     FAILURE
-> > > > Name:       treewide: const qualify ctl_tables where applicable
-> > > > Patchwork:  https://patchwork.kernel.org/project/netdevbpf/list/?series=923743&state=*
-> > > > Matrix:     https://github.com/kernel-patches/bpf/actions/runs/12690795270
-> > > > 
-> > > > Failed jobs:
-> > > > build-x86_64-gcc: https://github.com/kernel-patches/bpf/actions/runs/12690795270/job/35372434718
-> > > > build-x86_64-llvm-17: https://github.com/kernel-patches/bpf/actions/runs/12690795270/job/35372434997
-> > > > build-x86_64-llvm-17-O2: https://github.com/kernel-patches/bpf/actions/runs/12690795270/job/35372435294
-> > > > build-x86_64-llvm-18: https://github.com/kernel-patches/bpf/actions/runs/12690795270/job/35372435638
-> > > > build-x86_64-llvm-18-O2: https://github.com/kernel-patches/bpf/actions/runs/12690795270/job/35372435949
-> > > We can't make watchdog_hardlockup_sysctl const here because it is
-> > > changing the ctl_talbe.mode to 0644 if watchdog_hardlockup_available is
-> > > true. I'll remove this sysctl array from my patchset to move forward
-> > > with the general constification, but I still don't fully understand the
-> > > need for the modification of the permissions. 
-> > > 
-> > > My main question is: Cant we just leave the permissions as they where
-> > > originally (before the this commit [1])? The problem touched by [1] is
-> > > when the user writes to nmi_watchdog and watchdog_hardlockup_available
-> > > is false, they will receive a -ENOTSUPP error from proc_nmi_watchdog.
-> > > But wont they get an error anyway if they try to write to a read-only
-> > > file? Does this fix target some specific user-space application?
-> > > 
-> > > I have added the original to:/from: contacts from [1]. Please correct me
-> > > if I have miss-read the situation.
-> > > 
-> > > Best
-> > > 
-> > > [1] https://lore.kernel.org/lkml/20230526184139.1.I0d75971cc52a7283f495aac0bd5c3041aadc734e@changeid/
-> > 
-> > My understanding is that adding the const is going to help
-> > security. It will move the structure into .rodata section.
-> > Do I get it correctly, please?
-> > 
-> > On the other hand, the manipulation of the access rights just affects
-> > the error code which users might see: -ENOTSUPP vs. -EPERM.
-> > I agree that this is not important. Some people might even consider
-> > -ENOTSUPP as more informative.
-> > 
-> > From my POV, the commit 9ec272c586b07d1 ("watchdog/hardlockup: keep
-> > kernel.nmi_watchdog sysctl as 0444 if probe fails") can be reverted.
-> Perfect. I'll prepare a V1 with the revert and add some other
-> "straglers" that also need to be const qualified.
+From: Andrey Vatoropin <a.vatoropin@crpt.ru>
 
-Adding the list for visibility
-> 
-> Best
-> 
-> 
-> > 
-> > Best Regards,
-> > Petr
-> 
-> -- 
-> 
-> Joel Granados
+The ib_umem_find_best_pgsz function is necessary for obtaining the optimal
+hardware page size. In the comment above, function has statement:=20
+"Drivers always supporting PAGE_SIZE or smaller will never see a 0 result."
 
--- 
+But it's hard to prove this holds true for the erdma driver.
 
-Joel Granados
+Similar to other drivers that use ib_umem_find_best_pgsz, it is essential=20
+to add an error handler to manage potential error situations in the future.
+
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
+
+Fixes: 155055771704 ("RDMA/erdma: Add verbs implementation")
+Signed-off-by: Andrey Vatoropin <a.vatoropin@crpt.ru>
+---
+ drivers/infiniband/hw/erdma/erdma_verbs.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/drivers/infiniband/hw/erdma/erdma_verbs.c b/drivers/infiniband=
+/hw/erdma/erdma_verbs.c
+index 51d619edb6c5..7ad38fb84661 100644
+--- a/drivers/infiniband/hw/erdma/erdma_verbs.c
++++ b/drivers/infiniband/hw/erdma/erdma_verbs.c
+@@ -781,6 +781,10 @@ static int get_mtt_entries(struct erdma_dev *dev, stru=
+ct erdma_mem *mem,
+ 	mem->page_size =3D ib_umem_find_best_pgsz(mem->umem, req_page_size, virt)=
+;
++	if (!mem->page_size) {
++		ret =3D -EINVAL;
++		goto error_ret;
++	}
+ 	mem->page_offset =3D start & (mem->page_size - 1);
+ 	mem->mtt_nents =3D ib_umem_num_dma_blocks(mem->umem, mem->page_size);
+ 	mem->page_cnt =3D mem->mtt_nents;
+ 	mem->mtt =3D erdma_create_mtt(dev, MTT_SIZE(mem->page_cnt),
+ 				    force_continuous);
+--=20
+2.43.0
 
