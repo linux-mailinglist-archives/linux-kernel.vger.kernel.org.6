@@ -1,128 +1,199 @@
-Return-Path: <linux-kernel+bounces-525775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C523CA3F4C9
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 14:02:17 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECA33A3F4E0
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 14:04:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD0BF4212BC
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 13:02:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 593C87ABCAB
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 13:03:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AB8820B7E2;
-	Fri, 21 Feb 2025 13:02:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FF5420E302;
+	Fri, 21 Feb 2025 13:03:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="CHM9auL9"
-Received: from mout.web.de (mout.web.de [212.227.17.11])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="WrEGPCgn"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6184A31;
-	Fri, 21 Feb 2025 13:02:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB49F20B7E2;
+	Fri, 21 Feb 2025 13:03:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740142928; cv=none; b=h+J2IidzslE1+LRdEp0UiAtqdu19AEWpIglonHW/ER0lY5sbLG0kmQYz6+J6pAJexKU2h/gEXVi5eXMdhzBRSDbNVYrBYIB7k7nwcMtvi/OMR1ykL40ADDQDo7UMivJfLRQeWAaNetCuhCnFRKAf3nQ2/dY3IzgEb5ncKzoPDi4=
+	t=1740143024; cv=none; b=omoVFaoP7funBalHxkl03dh2U7ikp95PfL+GGT0KY4EH8K9X6geGN4XsUhWbIHzJXrWUgq/wvVZ+OT0ygz3CPKsyQqq/g+RjBrZyVGh4Y7r5GF8cYhvE1IQSz4MR6WEFTNZdY1FUZP9kzG8TKWBfeW4/7ZGRhnxHe2cld8UTcEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740142928; c=relaxed/simple;
-	bh=ZqTPC6SKPHwCsDGINweqJvHTyb3S2pYCu2pMOZrxkB0=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=kI5liRMYl/PpMqyQ/E5L46+2X6CS8oJykETxxICKEfZtUXmWOJMB4J1Lun3I191bKvqAKUFuFaFAj/q1FpI/tab4QUH5BLiPhXxwDHsZxENyKvb5QsPD+SKWHr8RTo/DH4jbSUt2tW9oTFC9jQQku5wJEpo1YykKnSX2IDjkR0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=CHM9auL9; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1740142904; x=1740747704; i=markus.elfring@web.de;
-	bh=85ZqJ2WnsK+xsV2MUlzgduJL4PyG/D51U/cS63JS8II=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=CHM9auL9al+K6GjKDD9yPsDUZ30bsleiNs194UHYjwOkZeppGJSTjbSyICdbk4mt
-	 6n/bSgc7pdEy5DoaeW4v7hfmjVzrg5u621R/f5KbhckewRCI0Uy5LCXeNZuRQ3cDP
-	 Z89fDER8yZCxRjiOe7yAOUYj4Ef1/RfvhBKvRx8HhfrrIvgtgyEDjjGThPFWLnAC1
-	 2mVoassSLDqSFsZKVTUDVPs2pVf/ykStv3v1MqtdMbpxx2nhu0OXsdMH9g0eu+v7w
-	 ifli+1r8PNErCOP26Kdm/72hlraPt+35NtYgZC3oDdqcX8e62NCufXmOlOs3kv4w+
-	 1sVi4uOc6Y1cfdNyjQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.93.4]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MjBVv-1t9MYH25ll-00hNJl; Fri, 21
- Feb 2025 14:01:44 +0100
-Message-ID: <b8e127d4-0a8b-437f-a856-3f75d4680045@web.de>
-Date: Fri, 21 Feb 2025 14:01:40 +0100
+	s=arc-20240116; t=1740143024; c=relaxed/simple;
+	bh=YuTZuPM8fsNmASUzmGSbKLvC77k5AXhZhjx4kfap1ow=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=D1lLbezGBXLrSUz5hsPgWx9iGRsnfOjuiKzvcthL8r615T5fWR68p3wvtGVaWjDhyPHjgAsh0dEH6Pg/PwCKYESV2E2MAXaQ++Jpce+0t6A87C3KR8N2Apqgo65XfYgMaw0Q+Rktnt+nn4d+EBIyCa5dlfgIE+jTmP4KqprIRCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=WrEGPCgn; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51L5WA3b008310;
+	Fri, 21 Feb 2025 13:02:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=Jrf2seTrRs2kHXX0JDUsRw
+	6WJbyG652B6YuDCk/1ywM=; b=WrEGPCgnXS+A3yQhrfKsjtSTbv+scw5hW34L4M
+	IBWwj7OE+c+gUs7rXg6n7EnUPJNd060FBWOiXEQ/ZGI/PKIud+90+k8uq4sjm23o
+	ORiIjaqjHGIqZa/griFhcrcJCXLhk08ckHjjfv+BdShRPp1I/6v3p3bX22L2lCSZ
+	Kp1R4z2UI58B+7HSx43+78JfP12irExnw1gPfajpK+qlVFA94r2H63wwGPDBGhBC
+	dqjFEFnjbgPzBJYpn+jn/IpsJihYZCMiSVzsQ0cnzePughdheRFTnKD9u3XspqXH
+	hLgxOajBvXTHzkxxMD5BaYvuywfD16Owq1lDaEjllNwaXG6w==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44vyy3j2mq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 21 Feb 2025 13:02:41 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51LD2T6m020137
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 21 Feb 2025 13:02:29 GMT
+Received: from hu-zijuhu-lv.qualcomm.com (10.49.16.6) by
+ nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Fri, 21 Feb 2025 05:02:28 -0800
+From: Zijun Hu <quic_zijuhu@quicinc.com>
+Subject: [PATCH *-next 00/18] Remove weird and needless 'return' for void
+ APIs
+Date: Fri, 21 Feb 2025 05:02:05 -0800
+Message-ID: <20250221-rmv_return-v1-0-cc8dff275827@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Hans Verkuil <hverkuil@xs4all.nl>, Ricardo Ribalda
- <ribalda@chromium.org>, linux-media@vger.kernel.org, cocci@inria.fr,
- Joseph Liu <kwliu@nuvoton.com>, Marvin Lin <kflin@nuvoton.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Philipp Zabel <p.zabel@pengutronix.de>
-Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- openbmc@lists.ozlabs.org, Marvin Lin <milkfafa@gmail.com>
-References: <df5693d0-7747-4423-809e-ae081c9aae92@xs4all.nl>
-Subject: Re: [PATCH 1/4] media: nuvoton: Fix reference handling of ece_pdev
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <df5693d0-7747-4423-809e-ae081c9aae92@xs4all.nl>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:iFsHkTyzJQla9LP+6t/K5VjRFy7phUQNDh4Men40wXmfAgHQZAO
- BAFszW1jSronbk2zcvpuTTav61LBTyccqcQFDQORsyQlfDVVirQI5PnSCEtZeEWRd5xFMMA
- mzxy11KaOa6hDDfV4QWj6lsTIxYtHnDaIFW9MZPJdAb7XriUShYvkx6cMp/Qble1RJqD40N
- UebwF5jr4cGJTiemgi9rA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:vKbg0xmAZbE=;scMx0Cag00azSe+gAuLGqt+F6My
- f/00eXJv0UI9rH73lTmQZneILMNCVkl7/NkGixj3YPhDGBeB5MY8B9ij1KLkhCquguXB6nGAc
- KcGmezzVSap5tgJEh2kX9aqgBH75GZiUA59Jdb1UyGT5yKR4l5beYWGQiSoEeUuv8ZXFXNDIL
- aKK70IRA0pT/+9QSlmSzNmTBBFxiuqo2CePRyvlXZkOD8iYCnAJqKUtnQ9LlBYcN3TYjskbdt
- vAAiJl+7UtZ3jP1bdJnBkDBv2WIkxZBToFo05HDYxph+/fTbN4H1U3N9P27cBJBbQnAPqK0gW
- M+98vYxx7RXU9bo+JgosWZnQnrv37ZmBHNVpU5jBAAZ6bk6F1kI9bOnOjBKfpzwt8vgJ+1yQl
- osewOTQTPjRQjP1qdWk0HUWnKLyW9/tOiWsjLr8SZKWDakBSNcxQoJz5fFGSpvXDioBhfDQIX
- E8vbolf8WZGzpikwNxz/2KYpm0PdjaLkWYdTFAYiJMcMrOKnb4/LByeo+q6wNmd1unu9n/YCe
- 6VNRc7T1VAEQJnkOq9fXo7epCSJWpe9j6bbU1pUowIzF+2J3XaGalz+AbRIl9rp7bPtjjB/6l
- uRjAVfgNuog++8ggKI8K1A6+2xXc2vx2PKUwyz4KIE5PZG3+IHcwwhAwQdKdi8JSjKNuvTHQO
- WF9hPUQTn+VAIdEvaiSmCYsjWShmw8yzQJeCV3YFfngB7lnlwj5GwSQMtdb+UezcGEMfvxphr
- ZkjQTD2f9N5bb1F1Ai7s3H0XCeSQalyfDnAf3CXauvSZf5OMjJ5X6H6ETFr5dStqaYuVvB212
- PwdH7BncfsTDQTooM4/wUsM6gpBq7tlJKM+UyMfSjY/Xh0JvAQNV2jqaiT6Tk/PlyLnp4Z4ui
- 9WdJKdkxYpTghKg49VLfV6m8IZnzKWC3TF9ISUZC18DRfH06NMfFPCQdLlMW1UVWZsu9DUgvQ
- Drp5XCzhDBuTNc0DPTk6A6rK480L3pTrrJLOZyzeCXUN0cdCLr/LsES+ufhqRQx2u6thi3Toj
- Uvb+EohhnHXsq7bDOiguOkO5sIcm0gT0XSaqA6SDuUicHbwh3Wfnnn03p9VObyxMFFsYsp/ZV
- T0nIKU/jYN5gl1bqM25Buub9sotUz5t7xOscdfrXxCKKlbBA12hRc05LrL+saI6s2X7cl1xTA
- PyA5oF5Ey6aYq020WnqrUMs6rB9oCOgeTyWfZdGSljlShgOGusweto9Tp7KOU4RThk5sd8CpQ
- 07hlLszPG64p9z0uJ58M0ROyDEbKe7to//C9NnsKeq+TZVFjeZiWalqJlipFQvN1kuwvCIKcj
- tqfhjwDJ1YMyvjmJzWwOrR+d1ZUajQv+95kJFZ2prN5vHjHle4IgsXHJ+sllLOG0NIpr6lku3
- lIyWKIbnhcAI9fRkSgoHjEToUwhN0FRw4V/1aWpY8vfsWRNJldBudVbLnJxlt/FJ1ZurN68TG
- L70SlOZk01HcHTYGrHxxgLp6va1M=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAE55uGcC/x3MQQqAIBBA0avILCNBh4LqKhEROdYsshgtgujuS
+ cu3+P+BSMIUoVMPCF0ceQ8ZtlQwr1NYSLPLBjRYG0SrZbtGoXRK0N66uUFXtegN5OAQ8nz/sx4
+ KHehOMLzvB1Tls1xkAAAA
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Will Deacon
+	<will@kernel.org>,
+        Aneesh Kumar K.V <aneesh.kumar@kernel.org>,
+        Andrew Morton
+	<akpm@linux-foundation.org>,
+        Nick Piggin <npiggin@gmail.com>,
+        Peter Zijlstra
+	<peterz@infradead.org>, Arnd Bergmann <arnd@arndb.de>,
+        Thomas Gleixner
+	<tglx@linutronix.de>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S.
+ Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        "Danilo Krummrich" <dakr@kernel.org>,
+        Eric Dumazet <edumazet@google.com>, "Jakub Kicinski" <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, Simon
+ Horman <horms@kernel.org>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        "Jamal
+ Hadi Salim" <jhs@mojatatu.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>, Jiri
+ Pirko <jiri@resnulli.us>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky
+	<leon@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "Bartosz
+ Golaszewski" <brgl@bgdev.pl>, Lee Jones <lee@kernel.org>,
+        Thomas Graf
+	<tgraf@suug.ch>, Christoph Hellwig <hch@lst.de>,
+        Marek Szyprowski
+	<m.szyprowski@samsung.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        "Miquel
+ Raynal" <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>
+CC: Zijun Hu <zijun_hu@icloud.com>, <linux-arch@vger.kernel.org>,
+        <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
+        <linux-crypto@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-wireless@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+        <iommu@lists.linux.dev>, <linux-mtd@lists.infradead.org>,
+        Zijun Hu
+	<quic_zijuhu@quicinc.com>
+X-Mailer: b4 0.14.1
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: NDRu5OKSayRbCwCev8nS9u-wqeqQNEdY
+X-Proofpoint-GUID: NDRu5OKSayRbCwCev8nS9u-wqeqQNEdY
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-21_04,2025-02-20_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 clxscore=1015
+ phishscore=0 adultscore=0 lowpriorityscore=0 bulkscore=0 impostorscore=0
+ priorityscore=1501 malwarescore=0 spamscore=0 mlxlogscore=999 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
+ definitions=main-2502210096
 
-=E2=80=A6
-> > Found by cocci:
-> > ./platform/nuvoton/npcm-video.c:1677:3-9: ERROR: missing put_device; c=
-all of_find_device_by_node on line 1667, but without a corresponding objec=
-t release within this function.
-=E2=80=A6
-> This driver uses this construct:
->
->                 struct device *ece_dev __free(put_device) =3D &ece_pdev-=
->dev;
->
-> to automatically call put_device. So this patch would 'put' the device t=
-wice.
->
-> Does cocci understand constructs like this? =E2=80=A6
+This patch series is to remove weird and needless 'return' for
+void APIs under include/ with the following pattern:
 
-Not yet directly (for coccicheck scripts).
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/log/scr=
-ipts/coccinelle/free/put_device.cocci?h=3Dv6.14-rc3
+api_header.h:
 
-I am unsure under which circumstances support can be added for the detecti=
-on
-of scope-based resource management also by the means of the semantic patch=
- language.
+void api_func_a(...);
 
-Regards,
-Markus
+static inline void api_func_b(...)
+{
+	return api_func_a(...);
+}
+
+Remove the needless 'return' in api_func_b().
+
+Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+---
+Zijun Hu (18):
+      mm/mmu_gather: Remove needless return in void API tlb_remove_page()
+      cpu: Remove needless return in void API suspend_enable_secondary_cpus()
+      crypto: api - Remove needless return in void API crypto_free_tfm()
+      crypto: scomp - Remove needless return in void API crypto_scomp_free_ctx()
+      sysfs: Remove needless return in void API sysfs_enable_ns()
+      skbuff: Remove needless return in void API consume_skb()
+      wifi: mac80211: Remove needless return in void API _ieee80211_hw_set()
+      net: sched: Remove needless return in void API qdisc_watchdog_schedule_ns()
+      ipv4/igmp: Remove needless return in void API ip_mc_dec_group()
+      IB/rdmavt: Remove needless return in void API rvt_mod_retry_timer()
+      ratelimit: Remove needless return in void API ratelimit_default_init()
+      siox: Remove needless return in void API siox_driver_unregister()
+      gpiolib: Remove needless return in two void APIs
+      PM: wakeup: Remove needless return in three void APIs
+      mfd: db8500-prcmu: Remove needless return in three void APIs
+      rhashtable: Remove needless return in three void APIs
+      dma-mapping: Remove needless return in five void APIs
+      mtd: nand: Do not return void function in void function
+
+ include/asm-generic/tlb.h           |  2 +-
+ include/crypto/internal/scompress.h |  2 +-
+ include/linux/cpu.h                 |  2 +-
+ include/linux/crypto.h              |  2 +-
+ include/linux/dma-mapping.h         | 12 ++++++------
+ include/linux/gpio.h                |  4 ++--
+ include/linux/igmp.h                |  2 +-
+ include/linux/mfd/dbx500-prcmu.h    |  6 +++---
+ include/linux/mtd/nand.h            | 18 ++++++++++++------
+ include/linux/pm_wakeup.h           |  6 +++---
+ include/linux/ratelimit.h           |  4 ++--
+ include/linux/rhashtable.h          |  6 +++---
+ include/linux/siox.h                |  2 +-
+ include/linux/skbuff.h              |  2 +-
+ include/linux/sysfs.h               |  2 +-
+ include/net/mac80211.h              |  2 +-
+ include/net/pkt_sched.h             |  2 +-
+ include/rdma/rdmavt_qp.h            |  2 +-
+ 18 files changed, 42 insertions(+), 36 deletions(-)
+---
+base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
+change-id: 20250221-rmv_return-f1dc82d492f0
+
+Best regards,
+-- 
+Zijun Hu <quic_zijuhu@quicinc.com>
+
 
