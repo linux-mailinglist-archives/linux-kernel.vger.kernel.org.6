@@ -1,323 +1,254 @@
-Return-Path: <linux-kernel+bounces-525294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FD3DA3EDBA
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 08:56:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D786A3EDC3
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 08:58:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E43C19C2957
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 07:56:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38ED63BD811
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 07:56:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E06A31FF7DC;
-	Fri, 21 Feb 2025 07:56:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AE2B1FFC68;
+	Fri, 21 Feb 2025 07:56:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="A29srHDS"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="5A5WDF5W"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2052.outbound.protection.outlook.com [40.107.244.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 476251FF610;
-	Fri, 21 Feb 2025 07:56:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740124588; cv=none; b=J9eUeqq4rUwGGrH5msOVhMhFsFjxxzdDOrDVu/OUTLMQJEbON//SSUVTvZLm+29aX/iXIsqSIGLFQgIDfVxD5TCwGs3W8pQ93IJvpYCPzr3zS0Y/742GyvuWbsySP9rnPdunYeEqrBOpnNEVUIb2ha8cCSN8GvjVI9nOAdNKWfI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740124588; c=relaxed/simple;
-	bh=o+QUEtONbmalO3iHUP+gO1dTRbynEFsTw1lum/2sQJg=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=Ik+/iiu5tzynuiPWecKXIG++VJfQCW7gYHyZTPEJF6+WJzbCFMCGOxizk8e1oLDmcLC0jNzupjSmO7IQ/7t7oHy+W2ha6T9oEE1sxvg/6ttoGHlQjZvF+jRqMchcDIQKHIKKCENiO6KeHRyPol632XawI4b2tnRaeSiw4ik7drI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=A29srHDS; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51L5OUSo002626;
-	Fri, 21 Feb 2025 07:56:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:to; s=pp1;
-	 bh=Wabv1Ir4kV4dUnykC2n2IgUYyZ9+Qc4PLzScfM1u5Bk=; b=A29srHDSqEV7
-	KfgGP3Tg7x8htoE1EqK84MH6BUjJSECa5cPi44R2yaLYKuoaApRGE2p8MBZjNn/R
-	NzDTmC4AIwd/tLte0B2TBflBRUeyRyFytgTvQRl7nwmj5XTWYX101Ri3JZ5fi5tr
-	dl34QFxPx0kTCymN+zrTY9P2l1330/lKmhjSH8XftTyLMAFNrBCjmZ1TUaL8qB2o
-	VDHa8p5taMXKEn5GToA4QhsnE0oSgWZ1H7pMaIs1wtlUV/OFIhuYjumlShjVbWV4
-	kAHy/kT8jJiP447xa50brsoHUOAx36Lm9mBXVmLyaAgE0tHBhaY9esr8UiF0yEDQ
-	nTO0+ZblDQ==
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44xka8gmba-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Feb 2025 07:56:22 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51L5hKHK002330;
-	Fri, 21 Feb 2025 07:56:21 GMT
-Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 44w03xep7r-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Feb 2025 07:56:21 +0000
-Received: from smtpav05.dal12v.mail.ibm.com (smtpav05.dal12v.mail.ibm.com [10.241.53.104])
-	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51L7uJM525887294
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 21 Feb 2025 07:56:19 GMT
-Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 5F78B58067;
-	Fri, 21 Feb 2025 07:56:19 +0000 (GMT)
-Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id B457058056;
-	Fri, 21 Feb 2025 07:56:18 +0000 (GMT)
-Received: from ltc.linux.ibm.com (unknown [9.5.196.140])
-	by smtpav05.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 21 Feb 2025 07:56:18 +0000 (GMT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AEC61FF7BE
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 07:56:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.52
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740124602; cv=fail; b=CXq9h1dnGL27fp4L6zON+oc0Giowm1U7sipT86LohBW133f0UMiHzbajKnoNDynWwxL/ne2aD344RcU06R5VKmYacA3FInfpjkbpzXH3U8wsh7K7wlaHlVWoDQm2Nwe0cmoyN23hy3QxQ45D46D+RdYqhciHeHMLTsg7C15dagk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740124602; c=relaxed/simple;
+	bh=sKpdjrBKBEv/hoHASl22bmaed7T98x7Q+YjdxGqOYfo=;
+	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=DWYdK52o+Ym2EIGjC9Jlco6J1vlaIo14W5IjPuwkYxiO6dIOgIa+q83Y6DlZ41IzHf81sV87O/9QHUIiue3kEsDX1/uKWOv45KDBRfK4Qrj0YE/PDaWUA867ZBvITiXMQL2jos71K4OT0pLR73pm8YEKTrIKlOJminfZfIOp08Q=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=5A5WDF5W; arc=fail smtp.client-ip=40.107.244.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=e7TIgzJJ/aTXRdVHF3f53AhKaBN0XbeN33/gkKnMVKWgPRenk0HIO6wEvahmT2rexb7HPzl8C6yo0k7+20neUYV57fPEzHRYYH2yaC261Ys8fDmv+NPzH8q+akHn6PkFGAHHUWL2A5yVSKXVGW4lmn6qUoz5S0sVVsuPz9MrPsvBdpzxEg1U7RIxiOx7kdGoMR36RdyBX2M8sBS06WZGLeFGSOP7nG2K2icOEQSd6+uwbtCapiZhjONbflXSSJpJHuzjMDTRs8izTPMDE4n5e5HiKk3EWQUi1D68us7wg181/ldJy+lYO9IriLUVZG5eBh0xmitWiUXmJGELJ0oSTQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=o5UOjxDb6dOTaQ0pgBwv9hKcR+AGcI80cpfG1xI8eIM=;
+ b=IXpoVfLoRqY2nYr4sscCvavtUHDAKekyf5VUE0KPIWXU2ICmAGtvOQnTIZ6vakC0GlM4mB91Vy3cKBRKBmXcefLY+vaN7j3sn0Juyul6XQx0kQx6zeq/8O/81w+swBsRGaHZdex8SmP5DXEcRjIHtujyeMKwfLoEjyFkgnQEa3NH60N4/hDBX8jTqykGgRCBROgBNmnRaDRnJl6IwgRZWF7Lnl6WHJnXVTveew+XLltgnFmSY39WB7kc8tcNxKMrSbNAqMsvPGWdh62zrhEAzx8HKbguivRnTshzpN57KjZdy8/aC4wfckftGqS+rhAkmp71FdNNPw35pAGCCsRATg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=o5UOjxDb6dOTaQ0pgBwv9hKcR+AGcI80cpfG1xI8eIM=;
+ b=5A5WDF5WBxEmzRoTIkty5ZuXP4zmway0YiRgM8s9uVdFoPxqGH+LOc/C0ipsqi+gD4HklbvvMW184HLcD6+9mWCUpu8d9PIxu80Z2uwkgnYA9B/aKW02hWCCXQ1X+wnHUWoZpdsP38vcSvZb8+LryLbC11H0rSeEfFTPZ1rlfM0=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
+ by MW6PR12MB8899.namprd12.prod.outlook.com (2603:10b6:303:248::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.20; Fri, 21 Feb
+ 2025 07:56:37 +0000
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5%5]) with mapi id 15.20.8466.015; Fri, 21 Feb 2025
+ 07:56:37 +0000
+Message-ID: <b32a4ce7-6701-4328-a31d-6efed0c539de@amd.com>
+Date: Fri, 21 Feb 2025 08:56:31 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/3] drm/amdgpu: Trigger a wedged event for every type
+ of reset
+To: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>,
+ Alex Deucher <alexander.deucher@amd.com>, Xinhui Pan <Xinhui.Pan@amd.com>,
+ amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, kernel-dev@igalia.com, siqueira@igalia.com
+References: <20250220162750.343139-1-andrealmeid@igalia.com>
+ <20250220162750.343139-4-andrealmeid@igalia.com>
+Content-Language: en-US
+From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+In-Reply-To: <20250220162750.343139-4-andrealmeid@igalia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: FR4P281CA0289.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:e7::18) To PH7PR12MB5685.namprd12.prod.outlook.com
+ (2603:10b6:510:13c::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Fri, 21 Feb 2025 08:56:18 +0100
-From: Harald Freudenberger <freude@linux.ibm.com>
-To: Anthony Krowiak <akrowiak@linux.ibm.com>
-Cc: linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, jjherne@linux.ibm.com, borntraeger@de.ibm.com,
-        pasic@linux.ibm.com, pbonzini@redhat.com, frankja@linux.ibm.com,
-        imbrenda@linux.ibm.com, alex.williamson@redhat.com,
-        kwankhede@nvidia.com, agordeev@linux.ibm.com, gor@linux.ibm.com
-Subject: Re: [PATCH] s390/vio-ap: Fix no AP queue sharing allowed message
- written to kernel log
-Reply-To: freude@linux.ibm.com
-Mail-Reply-To: freude@linux.ibm.com
-In-Reply-To: <20250220000742.2930832-1-akrowiak@linux.ibm.com>
-References: <20250220000742.2930832-1-akrowiak@linux.ibm.com>
-Message-ID: <96e34cc993a7ce76431ed27c4789736e@linux.ibm.com>
-X-Sender: freude@linux.ibm.com
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: AAKSlSx7_aADwkOaXe9rveOcYqZEhb0K
-X-Proofpoint-ORIG-GUID: AAKSlSx7_aADwkOaXe9rveOcYqZEhb0K
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-21_01,2025-02-20_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 clxscore=1011
- priorityscore=1501 mlxscore=0 suspectscore=0 lowpriorityscore=0
- adultscore=0 phishscore=0 spamscore=0 malwarescore=0 impostorscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2502210055
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|MW6PR12MB8899:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3d2a745d-676d-49e9-2f2d-08dd524d4495
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?c1NSY1ZncmFqQmRNZ3h2L0JwREpHSVVtcDdnTWgrd2ZKODUyNk4vVmZzd0pa?=
+ =?utf-8?B?eVoxUFc5Y0dZMStMV2d2SDZqSkRXUzdQUnYrWURPVGw5b0pWTjV3eE9aenl4?=
+ =?utf-8?B?VDMyR2h2bUtQZXhGcTJoMkh0UDVUQit6M0lVd0FDUm1ZMFpSbUdnQU1qYmZq?=
+ =?utf-8?B?ZjVVV2x1bTltTXBYLzhCR2RBcjFpRFc2MEhyOXNQZFdyWVlrLzhrWjFOREJo?=
+ =?utf-8?B?cjAzRTZ2MHhLcHdiMnhFQzI0U1JJNG9QUFZOQXpUSlhoaXZmSzkwUUEyelZz?=
+ =?utf-8?B?WW5RVytkKzQ4bVBuZzd3WElIRmJ0MTZuT3VzSGNXbDYvaTVwb2kxWnkyamx0?=
+ =?utf-8?B?YlhteFRKRFp5QTV5WGJML0Fjemo3SFJMZVhodXhDdjJCbHdldTFCZTgzcWto?=
+ =?utf-8?B?MWl1Vm42Z1BPK21jSkFkcTdFMGpSUGpka294RUN5dnNkRUZNWjQ5QVRRa2k1?=
+ =?utf-8?B?anR6SllUR1JDUld2UUZBOTc4YWM0ank5ZFR1YlR3NUc3YmdtcTlTaUdZN0Rp?=
+ =?utf-8?B?VDE0aEdyY0FLZG1rbGhETVlJVXB1OSttSlFWNkpyc0NWbnpSakp0Yk00TDdi?=
+ =?utf-8?B?MEx5bENxbW1WRXhJVmp1NlVIa252SUt1ZDFkYS9DdlYvUkg3UVlxaEF5bjR6?=
+ =?utf-8?B?VW52c09neXN4VTcxOXRQa3BRV2N0YXdBMjkzeFV6UUhRSUJVZE9TSlFzdmpa?=
+ =?utf-8?B?WVV1ODZ2NmdTa1hpemJkMDJkYytZaFpUVlZBVkJqN2xWb3g0MlNDNVQrT1VX?=
+ =?utf-8?B?aHBCVjdRN05Hd1ZGZW5NTWRHdVYvQ0ROWFpLT0dSZmxZSDl4V0VtQ2hobEdt?=
+ =?utf-8?B?SnhRc3lhS1BIektkc09IQUJ4M2N1QjVsL0QrZFNjNjIwbUE2UFZGWjVPOGNn?=
+ =?utf-8?B?aWtNTm50dm1kYlpUMy9pUW1SeUsyaThzMytKNnhEelJEa0lnKzZtenJBTEY4?=
+ =?utf-8?B?SHE3R09FdjJvQ2FsWlFXVC9LdjYzamZUMkhzN3l0R2hYckVBbkgvWG5haGRh?=
+ =?utf-8?B?SFErd0MrN1lIV2VGVlNTYlIxTG1XTTNYZ2kyMVhaZXpZMkRZeElNQWJjVkVG?=
+ =?utf-8?B?Y1YyeXZZN1A4LzZJeEx2VXVVTk5BdTN1OFVNZVZBVlhMK0tKczBCSEZ2Slhs?=
+ =?utf-8?B?WitSUFlMM1FsbHBmSE1xclA4OC84Y3ZGMUxmVnI5V3FJOThNVW5hNllIS01j?=
+ =?utf-8?B?ODE5WHBidlU5S0RWejFBRysxS3ZEL0xPSUhNRlVUOEZjWXNhbStidHI3WEw2?=
+ =?utf-8?B?M1U4eU8veHMzdTdYZnRtejA3d2syaUNWbkFBTFllWUNqeVdtTHhZc05hK0ho?=
+ =?utf-8?B?bjJwVHdRRkFmZXZPbDdpNTZyd0dFZks4M3dJSjQ3WXQzWm55MmVybEM4WHpo?=
+ =?utf-8?B?SmluQ0RUU29rMWhzc01iQjQrQSs5RDE4eGxBY2xtYmNMQWVOZ2tad29nNXFs?=
+ =?utf-8?B?NzdzOTA0cnF3YnlFVGZTVGtqSTRhNEJLMks2bnRSMEIvbU1CWlpkOURId1RF?=
+ =?utf-8?B?V3B1RXQvYUxGaGc4QS9BTDViT280Y2FIbmNJcGs4enZWTkwwVURyS3ZlNnNy?=
+ =?utf-8?B?cTBKSUZUVnpCakcxZkhOejNnR09uVTQ5SHE5aHJVcTdLU0dNbVhJR01VdVpj?=
+ =?utf-8?B?VEdSQUxQYWwzcytYMXFQUnJJeSsxZzB4MzNTVlFGR3NpN0Zscm5zVlNkZEx1?=
+ =?utf-8?B?dDRybFRENURkdDJiZFhEdWgwaUhzRkxNTzZhMGVoNWRid2sxRDlZSmRDcnJB?=
+ =?utf-8?B?MFRYY3Q5ei9KS2l6ZW9DZ0NWUmhEMU9CMHpQTDY5UEVlbUNYYjdSeUhaUDJU?=
+ =?utf-8?B?aldBeFNoL1A5S3l2Y21sTHEvWVk3dHlzV3pxSitlcG0razlRbE1uVGhXZG1j?=
+ =?utf-8?Q?gXWAEdAfhr9Aw?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?dEFGa0xqdDU0ZkVFMUZtdzFhQXJmQ2RhUW1pSERiOVo0TFkvNzBzZGl1YkdQ?=
+ =?utf-8?B?RTZRMmtBUHgxbkRjNEFYUGNXc3FEVXdCZlY5YkkwT2RoNDc5SmYrZFU5dTNC?=
+ =?utf-8?B?WmY1bWM2TTZqbnd2b281KzBEczJaQVp3VWFqZ0lJSGNYMjUzc1JpTXBNUmkx?=
+ =?utf-8?B?VUxkRFltdFl5RVR3TEVBSUN4MERzb3IrY0czMklrSDRSSmF4Ny9sUytCZzcr?=
+ =?utf-8?B?a1Z0R0Rta1ZrRjVsa2w5ak94NWRQVjdmVkxCVlRzb1dHankrWVJsOVRkdU5v?=
+ =?utf-8?B?bUVnRjJEb2lwZHZ1dGl6VjhneEdMSWNlcjdteUgxd0Y5QVh0V3h5ZFNHTmNQ?=
+ =?utf-8?B?Z1lCeDJrQVdEZ0I3TU9uRkYweVByUXhVTXJKS3YvVnRBTnZtVDl4TTM1TGFp?=
+ =?utf-8?B?WkpCRnJBM2piSkliVzZQQ3ZrWUl4eklRZHJYaFBxNEpMMUFlSXFOVnR1WUdI?=
+ =?utf-8?B?eW00YyswOGE2V1IycVZaSzMwcTlKK2FBbHI2NFNSUExDTTNqcWJVZzg5MC9Q?=
+ =?utf-8?B?MGVoUHdPZ0s4Rlpyc2JHSHY0VHNZRDQ1UjBiVTZvWjM1WCtUS2c0clJIaEpq?=
+ =?utf-8?B?Q1h4eEprQmlaY0NYWkphSGlPS01UalhabzdnbXY3a0svd3VHM29QeVpMcUlO?=
+ =?utf-8?B?d2hhWXNhUEdabFJZOTNaYi9VQ1F1V0hDTUJXVmd1Q1JEeWZOZDFSaUlXclE4?=
+ =?utf-8?B?Mzdqb2FleVdzSTFwSzBzVU9qc05LWGRwb0RvVzV4UkJuNjgzdlJlb1hRdlJo?=
+ =?utf-8?B?bDZDaGdpbXpHRlV0Yjk3djdjdnRmQTU5MDFZQW03ZkRWYk03cllPSmEybWFY?=
+ =?utf-8?B?bDM4TG9CSno5S2F5cDFTN1pkZlBiNTBZa0RqejQvRXNwUmRLeEx6UXUwVjNl?=
+ =?utf-8?B?VFo4YTZFMTRKdFF0TWZINWZ2TXVWRm9VYzYxMStIZVNKNUVKYVlNbnA4WFlH?=
+ =?utf-8?B?WkZTc2FKbWsyYmJUS2M2K05uL3FGeUtWWlVOb1NIR3RySU9pN0JHUk5jdnor?=
+ =?utf-8?B?b0R6N2ZCMVVzLzJTV21IcmUzNlREUjB0YWY4NmdwN3ZpQ0JXbGdLY09US3dC?=
+ =?utf-8?B?SE50NWROTnhJSkQ5T3B5czdWeXRBMWdGeDAzeXJuM1AwZWVQWnB4bU8rSVlC?=
+ =?utf-8?B?dkp6eXBQYTVtcG9qT3RmaWJLZy9ZTlFFN3FRQ2syZmNsNTdrWE54TlZFOEJh?=
+ =?utf-8?B?YjBsMXJzMCs0NHZhR1RsODhJM21QdjlZSW0rbFBHeE5oTVllbER4RktXTlB4?=
+ =?utf-8?B?bEc1NVZBRUp6eDY1KzRkZVkrdXA4R2tBVG1vSVJQU2R2UUtyMm80WWVQQzR4?=
+ =?utf-8?B?My9rd1p6L0FyOWtMMnN4L0NMcjlFcWtxTFM3RzhQSFNjc25uM3ZRVXFQK0Fi?=
+ =?utf-8?B?NUx5R08wL3ExREdJZEtyYmRpUWE2NTA5UzJDL1Y1OUROakM4QmdUYWpkeVF6?=
+ =?utf-8?B?L1ZscG9LOEpZWUZrbHZMYnEwaU1DSnMrZUVVaStQZmVyYXZscWwyVlFBL2JU?=
+ =?utf-8?B?MXpZYWQrUDhkdXIyRlk3WmRRWGRMNERNYTJDQ1Z2eUJ5R0JTNUhjMjBWU0lU?=
+ =?utf-8?B?RlpHMlprZENmOFdCZkJEc3pOTStxeTByemJkTTVWY29RdXJPUFVlMWFVTHpG?=
+ =?utf-8?B?dEhwanlvaEVNejRlUDBDekVWV0ttaW1ZTnNTRkJHMUFodzFPNTNBQ2taYnli?=
+ =?utf-8?B?d0pMc0ljMTdlQVZXZVEvR01mSlhycUo3RjRMNW05ejN0WHg0K01TNzB0MG5y?=
+ =?utf-8?B?LzcvNVZHMVI4ejJjaFBTL3V6am5FQjlnbHZaTzFRMnM1RDltT3Rld2VrTExM?=
+ =?utf-8?B?dmY5elE4Z0gxcG5sZjlKc2dwTjh6RHdQOFNCOUtRUjVCQWlUMTBHdkZCMXBE?=
+ =?utf-8?B?aGsrd0tLV0tRbWwzWUZjdDFvbXI2R0tITDVvOVZncHlWdFA0eHdjS2VBcjFW?=
+ =?utf-8?B?WGRsSzJUL01xN29iMDB0ZkZxakZUSDRHN0wyWkdxWkp4V25kRTN0N2Y2dFNR?=
+ =?utf-8?B?dVZzYW1wait0S2MvSXVSVEgwYzR4dGg2OCtmYzcyTmQ3cTMyeTlpb1Y0T1Mz?=
+ =?utf-8?B?TENvSDF2a0haYXNiSzdiS1NmMWV5UU1LcGVWR2txVUU4Y0FIRnFjSWM0WlRy?=
+ =?utf-8?Q?6tdPR//Ldod3o0+Rz/lYQ7x0a?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3d2a745d-676d-49e9-2f2d-08dd524d4495
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Feb 2025 07:56:37.4240
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: +IC8bLdbXygCfr1pjOW47ttZ/vIyfe++Gh5qT7/mg9bEOTi11CeRzRqfNgSwDray
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW6PR12MB8899
 
-On 2025-02-20 01:07, Anthony Krowiak wrote:
-> An erroneous message is written to the kernel log when either of the
-> following actions are taken by a user:
-> 
-> 1. Assign an adapter or domain to a vfio_ap mediated device via its 
-> sysfs
->    assign_adapter or assign_domain attributes that would result in one 
-> or
->    more AP queues being assigned that are already assigned to a 
-> different
->    mediated device. Sharing of queues between mdevs is not allowed.
-> 
-> 2. Reserve an adapter or domain for the host device driver via the AP 
-> bus
->    driver's sysfs apmask or aqmask attribute that would result in 
-> providing
->    host access to an AP queue that is in use by a vfio_ap mediated 
-> device.
->    Reserving a queue for a host driver that is in use by an mdev is not
->    allowed.
-> 
-> In both cases, the assignment will return an error; however, a message 
-> like
-> the following is written to the kernel log:
-> 
-> vfio_ap_mdev e1839397-51a0-4e3c-91e0-c3b9c3d3047d: Userspace may not
-> re-assign queue 00.0028 already assigned to \
-> e1839397-51a0-4e3c-91e0-c3b9c3d3047d
-> 
-> Notice the mdev reporting the error is the same as the mdev identified
-> in the message as the one to which the queue is being assigned.
-> It is perfectly okay to assign a queue to an mdev to which it is
-> already assigned; the assignment is simply ignored by the vfio_ap 
-> device
-> driver.
-> 
-> This patch logs more descriptive and accurate messages for both 1 and 2
-> above to the kernel log:
-> 
-> Example for 1:
-> vfio_ap_mdev 0fe903a0-a323-44db-9daf-134c68627d61: Userspace may not 
-> assign
-> queue 00.0033 to mdev: already assigned to \
-> 62177883-f1bb-47f0-914d-32a22e3a8804
-> 
-> Example for 2:
-> vfio_ap_mdev 62177883-f1bb-47f0-914d-32a22e3a8804: Can not reserve 
-> queue
-> 00.0033 for host driver: in use by mdev
-> 
-> Signed-off-by: Anthony Krowiak <akrowiak@linux.ibm.com>
+Am 20.02.25 um 17:27 schrieb André Almeida:
+> Instead of only triggering a wedged event for complete GPU resets,
+> trigger for all types, like soft resets and ring resets. Regardless of
+> the reset, it's useful for userspace to know that it happened because
+> the kernel will reject further submissions from that app.
+>
+> Signed-off-by: André Almeida <andrealmeid@igalia.com>
 > ---
->  drivers/s390/crypto/vfio_ap_ops.c | 73 ++++++++++++++++++++-----------
->  1 file changed, 48 insertions(+), 25 deletions(-)
-> 
-> diff --git a/drivers/s390/crypto/vfio_ap_ops.c
-> b/drivers/s390/crypto/vfio_ap_ops.c
-> index a52c2690933f..2ce52b491f8a 100644
-> --- a/drivers/s390/crypto/vfio_ap_ops.c
-> +++ b/drivers/s390/crypto/vfio_ap_ops.c
-> @@ -863,48 +863,66 @@ static void vfio_ap_mdev_remove(struct 
-> mdev_device *mdev)
->  	vfio_put_device(&matrix_mdev->vdev);
->  }
-> 
-> -#define MDEV_SHARING_ERR "Userspace may not re-assign queue 
-> %02lx.%04lx " \
-> -			 "already assigned to %s"
-> +#define MDEV_SHARING_ERR "Userspace may not assign queue %02lx.%04lx " 
-> \
-> +			 "to mdev: already assigned to %s"
-> 
-> -static void vfio_ap_mdev_log_sharing_err(struct ap_matrix_mdev 
-> *matrix_mdev,
-> -					 unsigned long *apm,
-> -					 unsigned long *aqm)
-> +#define MDEV_IN_USE_ERR "Can not reserve queue %02lx.%04lx for host 
-> driver: " \
-> +			"in use by mdev"
-> +
-> +static void vfio_ap_mdev_log_sharing_err(struct ap_matrix_mdev 
-> *assignee,
-> +					 struct ap_matrix_mdev *assigned_to,
-> +					 unsigned long *apm, unsigned long *aqm)
->  {
->  	unsigned long apid, apqi;
-> -	const struct device *dev = mdev_dev(matrix_mdev->mdev);
-> -	const char *mdev_name = dev_name(dev);
-> 
->  	for_each_set_bit_inv(apid, apm, AP_DEVICES)
->  		for_each_set_bit_inv(apqi, aqm, AP_DOMAINS)
-> -			dev_warn(dev, MDEV_SHARING_ERR, apid, apqi, mdev_name);
-> +			dev_warn(mdev_dev(assignee->mdev), MDEV_SHARING_ERR,
-> +				 apid, apqi, dev_name(mdev_dev(assigned_to->mdev)));
->  }
-> 
-> -/**
-> +static void vfio_ap_mdev_log_in_use_err(struct ap_matrix_mdev 
-> *assignee,
-> +					unsigned long *apm, unsigned long *aqm)
-> +{
-> +	unsigned long apid, apqi;
-> +
-> +	for_each_set_bit_inv(apid, apm, AP_DEVICES)
-> +		for_each_set_bit_inv(apqi, aqm, AP_DOMAINS)
-> +			dev_warn(mdev_dev(assignee->mdev), MDEV_IN_USE_ERR,
-> +				 apid, apqi);
-> +}
-> +
-> +/**assigned
->   * vfio_ap_mdev_verify_no_sharing - verify APQNs are not shared by 
-> matrix mdevs
->   *
-> + * @assignee the matrix mdev to which @mdev_apm and @mdev_aqm are 
-> being
-> + *           assigned; or, NULL if this function was called by the AP
-> bus driver
-> + *           in_use callback to verify none of the APQNs being 
-> reserved for the
-> + *           host device driver are in use by a vfio_ap mediated 
-> device
->   * @mdev_apm: mask indicating the APIDs of the APQNs to be verified
->   * @mdev_aqm: mask indicating the APQIs of the APQNs to be verified
->   *
-> - * Verifies that each APQN derived from the Cartesian product of a 
-> bitmap of
-> - * AP adapter IDs and AP queue indexes is not configured for any 
-> matrix
-> - * mediated device. AP queue sharing is not allowed.
-> + * Verifies that each APQN derived from the Cartesian product of APIDs
-> + * represented by the bits set in @mdev_apm and the APQIs of the bits 
-> set in
-> + * @mdev_aqm is not assigned to a mediated device other than the mdev 
-> to which
-> + * the APQN is being assigned (@assignee). AP queue sharing is not 
-> allowed.
->   *
->   * Return: 0 if the APQNs are not shared; otherwise return 
-> -EADDRINUSE.
->   */
-> -static int vfio_ap_mdev_verify_no_sharing(unsigned long *mdev_apm,
-> +static int vfio_ap_mdev_verify_no_sharing(struct ap_matrix_mdev 
-> *assignee,
-> +					  unsigned long *mdev_apm,
->  					  unsigned long *mdev_aqm)
->  {
-> -	struct ap_matrix_mdev *matrix_mdev;
-> +	struct ap_matrix_mdev *assigned_to;
->  	DECLARE_BITMAP(apm, AP_DEVICES);
->  	DECLARE_BITMAP(aqm, AP_DOMAINS);
-> 
-> -	list_for_each_entry(matrix_mdev, &matrix_dev->mdev_list, node) {
-> +	list_for_each_entry(assigned_to, &matrix_dev->mdev_list, node) {
->  		/*
-> -		 * If the input apm and aqm are fields of the matrix_mdev
-> -		 * object, then move on to the next matrix_mdev.
-> +		 * If the mdev to which the mdev_apm and mdev_aqm is being
-> +		 * assigned is the same as the mdev being verified
->  		 */
-> -		if (mdev_apm == matrix_mdev->matrix.apm &&
-> -		    mdev_aqm == matrix_mdev->matrix.aqm)
-> +		if (assignee == assigned_to)
->  			continue;
-> 
->  		memset(apm, 0, sizeof(apm));
-> @@ -912,17 +930,21 @@ static int
-> vfio_ap_mdev_verify_no_sharing(unsigned long *mdev_apm,
-> 
->  		/*
->  		 * We work on full longs, as we can only exclude the leftover
-> -		 * bits in non-inverse order. The leftover is all zeros.
-> +		 * bits in non-inverse order. The leftover is all zeros.assigned
->  		 */
-> -		if (!bitmap_and(apm, mdev_apm, matrix_mdev->matrix.apm,
-> +		if (!bitmap_and(apm, mdev_apm, assigned_to->matrix.apm,
->  				AP_DEVICES))
->  			continue;
-> 
-> -		if (!bitmap_and(aqm, mdev_aqm, matrix_mdev->matrix.aqm,
-> +		if (!bitmap_and(aqm, mdev_aqm, assigned_to->matrix.aqm,
->  				AP_DOMAINS))
->  			continue;
-> 
-> -		vfio_ap_mdev_log_sharing_err(matrix_mdev, apm, aqm);
-> +		if (assignee)
-> +			vfio_ap_mdev_log_sharing_err(assignee, assigned_to,
-> +						     apm, aqm);
-> +		else
-> +			vfio_ap_mdev_log_in_use_err(assigned_to, apm, aqm);
-> 
->  		return -EADDRINUSE;
->  	}
-> @@ -951,7 +973,8 @@ static int vfio_ap_mdev_validate_masks(struct
-> ap_matrix_mdev *matrix_mdev)
->  					       matrix_mdev->matrix.aqm))
->  		return -EADDRNOTAVAIL;
-> 
-> -	return vfio_ap_mdev_verify_no_sharing(matrix_mdev->matrix.apm,
-> +	return vfio_ap_mdev_verify_no_sharing(matrix_mdev,
-> +					      matrix_mdev->matrix.apm,
->  					      matrix_mdev->matrix.aqm);
->  }
-> 
-> @@ -2458,7 +2481,7 @@ int vfio_ap_mdev_resource_in_use(unsigned long
-> *apm, unsigned long *aqm)
-> 
->  	mutex_lock(&matrix_dev->guests_lock);
->  	mutex_lock(&matrix_dev->mdevs_lock);
-> -	ret = vfio_ap_mdev_verify_no_sharing(apm, aqm);
-> +	ret = vfio_ap_mdev_verify_no_sharing(NULL, apm, aqm);
->  	mutex_unlock(&matrix_dev->mdevs_lock);
->  	mutex_unlock(&matrix_dev->guests_lock);
+> v2: Keep the wedge event in amdgpu_device_gpu_recover() and add and
+>     extra check to avoid triggering two events.
+> ---
+>  drivers/gpu/drm/amd/amdgpu/amdgpu_job.c | 20 +++++++++++++-------
+>  1 file changed, 13 insertions(+), 7 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_job.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_job.c
+> index 698e5799e542..9948ea33d2c6 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_job.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_job.c
+> @@ -91,8 +91,8 @@ static enum drm_gpu_sched_stat amdgpu_job_timedout(struct drm_sched_job *s_job)
+>  	struct amdgpu_job *job = to_amdgpu_job(s_job);
+>  	struct amdgpu_task_info *ti;
+>  	struct amdgpu_device *adev = ring->adev;
+> -	int idx;
+> -	int r;
+> +	bool gpu_recover = false;
+> +	int idx, ret = 0;
 
-I don't see exactly where you do the printk but according to your
-description you do an error log. I would suggest to lower this
-to a warning instead.
+We usually stick to "r" as name for the return variable in amdgpu.
+
+>  
+>  	if (!drm_dev_enter(adev_to_drm(adev), &idx)) {
+>  		dev_info(adev->dev, "%s - device unplugged skipping recovery on scheduler:%s",
+> @@ -141,8 +141,8 @@ static enum drm_gpu_sched_stat amdgpu_job_timedout(struct drm_sched_job *s_job)
+>  		 * we'll fall back to full GPU reset.
+>  		 */
+>  		drm_sched_wqueue_stop(&ring->sched);
+> -		r = amdgpu_ring_reset(ring, job->vmid);
+> -		if (!r) {
+> +		ret = amdgpu_ring_reset(ring, job->vmid);
+> +		if (!ret) {
+>  			if (amdgpu_ring_sched_ready(ring))
+>  				drm_sched_stop(&ring->sched, s_job);
+>  			atomic_inc(&ring->adev->gpu_reset_counter);
+> @@ -170,9 +170,11 @@ static enum drm_gpu_sched_stat amdgpu_job_timedout(struct drm_sched_job *s_job)
+>  		 */
+>  		set_bit(AMDGPU_SKIP_COREDUMP, &reset_context.flags);
+>  
+> -		r = amdgpu_device_gpu_recover(ring->adev, job, &reset_context);
+> -		if (r)
+> -			dev_err(adev->dev, "GPU Recovery Failed: %d\n", r);
+> +		ret = amdgpu_device_gpu_recover(ring->adev, job, &reset_context);
+> +		if (ret)
+> +			dev_err(adev->dev, "GPU Recovery Failed: %d\n", ret);
+> +		else
+> +			gpu_recover = true;
+>  	} else {
+>  		drm_sched_suspend_timeout(&ring->sched);
+>  		if (amdgpu_sriov_vf(adev))
+> @@ -180,6 +182,10 @@ static enum drm_gpu_sched_stat amdgpu_job_timedout(struct drm_sched_job *s_job)
+>  	}
+>  
+>  exit:
+> +	/* Avoid sending two wedge events for the same reset */
+> +	if (!ret && !gpu_recover)
+
+Ugh, that's rather ugly I think.
+
+Probably better to just add an extra drm_dev_wedged_event() after the amdgpu_ring_reset() call.
+
+The soft recovery should probably never send a wedged event in the first place and we plan to remove it anyway when queue reset works reliable.
+
+Regards,
+Christian.
+
+> +		drm_dev_wedged_event(adev_to_drm(adev), DRM_WEDGE_RECOVERY_NONE);
+> +
+>  	drm_dev_exit(idx);
+>  	return DRM_GPU_SCHED_STAT_NOMINAL;
+>  }
+
 
