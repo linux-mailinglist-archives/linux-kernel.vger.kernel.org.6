@@ -1,152 +1,107 @@
-Return-Path: <linux-kernel+bounces-526172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87A43A3FB15
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:25:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85ADFA3FB79
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:36:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1BFFB7A83D3
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:19:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAEBA881C18
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:20:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61AAD1EF0B9;
-	Fri, 21 Feb 2025 16:16:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="BJ7hB8pc"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEFBF1F3D58;
+	Fri, 21 Feb 2025 16:16:49 +0000 (UTC)
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDD5D1E1C36;
-	Fri, 21 Feb 2025 16:16:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740154600; cv=pass; b=t388+eFFEkX4bUBC/Cn6M6UvNpS/3Y8Otz6cnF2vRpmAzusB66o0wA7eHrMKU8kIvNZgX/nF87HuKlguwdge4PifWMED+EmTuc6VNlHKWdIIo8DiDN8HCz4Z/H/1zIXFjAq9YJiQ/+IwkNfyGLtDLv8mjPaScE+pVMbRpjKsOuc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740154600; c=relaxed/simple;
-	bh=jOzJHq8+4wQqwKjhyLa1Z3VwwS37RnvY9pGLMAgnTLw=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=akP94vgUUU7ET04AQwui2LnUoZJZl0JC9PialSdzqJfb62oAsXUinIyMIktmGU8ctqGFnJM9XZi/aqWZtlyt6kgfe3IOk+LfmVvWpKbxq5coLGQcMtDzjgPLdMXrDsakRvqp799YtNTpIinAgMsS6dywNTYdpC3GPsJYO2ZOlpE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=BJ7hB8pc; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1740154558; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=VhLhNhUzP54DD6vMRPUo125BM+LXQgfPZ8gjRvb0QXfqJXYHeLIPSqFAOh4J6JqX+Z6Xw+utK0ii0MK+441qG3PmnMLWJYLlnXi8Vtw5zz78yRFE75WqS1ppi7zP7bQxcJAqYqF4VYhNU3KXdKdHomZUnTMzq29qcz9vJuC5LJM=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1740154558; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=l133VrdCg0Pj7Gbh3P0YhOoWAIun5QkcWnsNlg1Ey2Q=; 
-	b=KRJWysobFndxVP6cjpeH0YS+35yOdhfGVTkmaHjdS2m+FSJHutDREdF8hw8JDAVEMaKVO72O8MUZE4jZwWR3Gzdg82bAc9ZexNoLk+kvjovq1P2XWqm5hcoLt+AilecYgS8tqtnbG/hAfnp3bsJ+PnxCOtACQwVpxIE9CgJ3u20=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1740154558;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=l133VrdCg0Pj7Gbh3P0YhOoWAIun5QkcWnsNlg1Ey2Q=;
-	b=BJ7hB8pcl/l/K0B9LTPrK4t63Ju6TTkaeS5mogSLaM/GhoXmCGnuwwNBDMt2bqt/
-	rp3+6t8rMsfaYJraCvfNpIDNvjti4J6qOzLTdOrzgavHEnYSJwipxebx37B+HyyWBdD
-	SpVtXZoAwbtGNFexAoJaEWDZDYdIp1itFEpnJpjY=
-Received: by mx.zohomail.com with SMTPS id 174015455580945.3150431144137;
-	Fri, 21 Feb 2025 08:15:55 -0800 (PST)
-Content-Type: text/plain;
-	charset=us-ascii
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DD081E1C36;
+	Fri, 21 Feb 2025 16:16:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740154609; cv=none; b=mUg4DmpKpW6+A85qhfSNuCpD7+7uY10HyJk9Lq0howhJI803o3nWQDvDlu3s3lxieBY2SOkHH67F7FWSADsJIcuCrI9M5dNM0BbnoWxXmXmQEYVqV7j3DoixgNIvgEL76yv3Z3nWMgPeMla1CpLZ73WKeCNklW5laYXCPwbxt3Q=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740154609; c=relaxed/simple;
+	bh=62BjU1wiNs+I6ByCG2YQUuxnFrCx1qtKkdARbuTJls4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=D/QTlQWZVBlS6V0DB5/miIRS3YvrQLg3/MrTzU4R9vgIVKI7pyF41W8OkkEIpIdwmJyvWwX1Dj5QftHRbwZMzhxXtsV2gd1boJDhMYBp9zil1M0Tq8JaUtSYp/ph5QEkH4AC229Rw5yKwCxf5xqedokniDKG6RTi8TYv0XT03vk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2fc1c80cdc8so3784328a91.2;
+        Fri, 21 Feb 2025 08:16:47 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740154607; x=1740759407;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dtzdmLHWgF7iyekmReF4eZfVX/GiXF6V9kKExFtIjGQ=;
+        b=Tq3AqJ+T0xkzas9AkCLCOZctX4qBM1tTg1ISxc2ZxRXH8RGbmV58HHc6gXOOZv74mS
+         gslnacapKOx2+XhK+om/SURVI+uDUZ8esb116hNCmpG12qHIHMx+LNt6VeKSAwi5L4Hd
+         BFC45H3+MpDgT0gcwitnNCJ5MDxSy80GrVS1VxH4wsvNYFa67KqxOYOYVjO3ktPv90mB
+         xXTiGG30Du3kOvh4IyFqUoLgpuyCEuGCqU0pWFcbZwcprSe1jTi0/KLvQTcv9jX3g7Aq
+         mcvev3vTIlr8RaDoZ3VNS6HXmfM8jvY3Vq/cUiC+vHeE4i9TePkxeHsVhLFf5dVnPIou
+         /Rlw==
+X-Forwarded-Encrypted: i=1; AJvYcCW21XvV7esrVKwLo6HCQ4ytCHmaLuNRLTO1bwWD84CN9NDOZw1JyRi4QaUaQSlTaxldws45PSJWVR/z@vger.kernel.org, AJvYcCWCvFWjr4gi/21BfNucbThU2LGtkOCtDCenNgi33csh/5RV9ovDafoV0HnG8nEuFKMU4GmmaIENv8iNqCF4@vger.kernel.org, AJvYcCX4qIKaHk2fAccbqAKbLzZWLPCG4u1Og/uMIJZ04mUytdDC0AKQLgJ8gmSP/GnQS61l3HLfa093sQLY@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzSNnXZEk45zd6udajaDUvXAALrhv6lESkWlJ4l+3jkQQvEUMf
+	Z6BGBRR3aHtd6z/fjXjLedlD4Y628iWKO1/OgAR0WG1txUK1Nq32
+X-Gm-Gg: ASbGncu+gJg+dhu4aeuW+QtyFs64fCb6EZmobL42W1ZiuNqabWGcowHeD12J60zXtPp
+	I0Mn9jDnbzNhapKCtKlski/4IKQuOg0N3Fq34RORq0W49tUgvXE4xGOyLncEiyMhncKMMcxAlDJ
+	u7/Q39Gfz1FglIdwSEXlDWZeBRYYpcARj9rCapIjOhlOlZ+o5r0MPOe5/uOiBF5wUScjInXgsFf
+	j44GffrUlMrnQdqYZt8Qz5mr7KCZr6KdMiF7SCI4bJyK5HP0iENp3RItCkeuvp7KwM8YfxKq7GO
+	iSDIuIE3m6j1mTmw6YKWG7DTE8Uk/p+zWpccqsPVseGEemsESwk/4Jc4wOzx
+X-Google-Smtp-Source: AGHT+IEDUawQ7p9G7A8dpF66pDVzseghqUjomgJNjmCvXMcR3CS02dZrBRorlwXIR837s2Xy/Uu6aw==
+X-Received: by 2002:a17:90b:5292:b0:2ee:7c65:ae8e with SMTP id 98e67ed59e1d1-2fce77a638fmr6700136a91.11.1740154607259;
+        Fri, 21 Feb 2025 08:16:47 -0800 (PST)
+Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
+        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-2fceb05f715sm1586207a91.24.2025.02.21.08.16.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Feb 2025 08:16:46 -0800 (PST)
+Date: Sat, 22 Feb 2025 01:16:44 +0900
+From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Stanimir Varbanov <svarbanov@suse.de>, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-rpi-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Jim Quinlan <jim2101024@gmail.com>,
+	Nicolas Saenz Julienne <nsaenz@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Andrea della Porta <andrea.porta@suse.com>,
+	Phil Elwell <phil@raspberrypi.com>,
+	Jonathan Bell <jonathan@raspberrypi.com>,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>
+Subject: Re: [PATCH v5 -next 06/11] PCI: brcmstb: Add bcm2712 support
+Message-ID: <20250221161644.GA3753638@rocinante>
+References: <20250120130119.671119-7-svarbanov@suse.de>
+ <20250212180237.GA85622@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.300.87.4.3\))
-Subject: Re: [PATCH v7 3/6] rust: str: implement `AsRef<BStr>` for `[u8]` and
- `BStr`
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <87372128-2734-4402-B46F-EF81ECEE546A@collabora.com>
-Date: Fri, 21 Feb 2025 13:15:38 -0300
-Cc: Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- Masahiro Yamada <masahiroy@kernel.org>,
- Nathan Chancellor <nathan@kernel.org>,
- Nicolas Schier <nicolas@fjasle.eu>,
- Luis Chamberlain <mcgrof@kernel.org>,
- rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Adam Bratschi-Kaye <ark.email@gmail.com>,
- linux-kbuild@vger.kernel.org,
- Petr Pavlu <petr.pavlu@suse.com>,
- Sami Tolvanen <samitolvanen@google.com>,
- Daniel Gomez <da.gomez@samsung.com>,
- Simona Vetter <simona.vetter@ffwll.ch>,
- Greg KH <gregkh@linuxfoundation.org>,
- linux-modules@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <94DA7409-439D-4D6B-98F5-687A743DB277@collabora.com>
-References: <20250218-module-params-v3-v7-0-5e1afabcac1b@kernel.org>
- <20250218-module-params-v3-v7-3-5e1afabcac1b@kernel.org>
- <87372128-2734-4402-B46F-EF81ECEE546A@collabora.com>
-To: Andreas Hindborg <a.hindborg@kernel.org>
-X-Mailer: Apple Mail (2.3826.300.87.4.3)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250212180237.GA85622@bhelgaas>
 
+Hello,
 
+> > Add bare minimum amount of changes in order to support PCIe RC hardware
+> > IP found on RPi5. The PCIe controller on bcm2712 is based on bcm7712 and
+> > as such it inherits register offsets, perst, bridge_reset ops and inbound
+> > windows count.
+> 
+> Add blank line between paragraphs.  We can fix when merging if you
+> don't repost for other reasons.
 
-> On 21 Feb 2025, at 13:01, Daniel Almeida =
-<daniel.almeida@collabora.com> wrote:
->=20
->=20
->=20
->> On 18 Feb 2025, at 10:00, Andreas Hindborg <a.hindborg@kernel.org> =
-wrote:
->>=20
->> Implement `AsRef<BStr>` for `[u8]` and `BStr` so these can be used
->> interchangeably for operations on `BStr`.
->>=20
->> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
->> ---
->> rust/kernel/str.rs | 12 ++++++++++++
->> 1 file changed, 12 insertions(+)
->>=20
->> diff --git a/rust/kernel/str.rs b/rust/kernel/str.rs
->> index ba6b1a5c4f99d..c6bd2c69543dc 100644
->> --- a/rust/kernel/str.rs
->> +++ b/rust/kernel/str.rs
->> @@ -125,6 +125,18 @@ fn index(&self, index: Idx) -> &Self::Output {
->>    }
->> }
->>=20
->> +impl AsRef<BStr> for [u8] {
->> +    fn as_ref(&self) -> &BStr {
->> +        BStr::from_bytes(self)
->> +    }
->> +}
->> +
->> +impl AsRef<BStr> for BStr {
->> +    fn as_ref(&self) -> &BStr {
->> +        self
->> +    }
->> +}
->=20
-> Why do you need this last one?
+Updated directly on the branch.  Thank you!
 
-I see that this is used by the following patch.
-
->=20
->> +
->> /// Creates a new [`BStr`] from a string literal.
->> ///
->> /// `b_str!` converts the supplied string literal to byte string, so =
-non-ASCII
->>=20
->> --=20
->> 2.47.0
-
-Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
-
-
+	Krzysztof
 
