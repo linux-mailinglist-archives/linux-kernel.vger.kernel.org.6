@@ -1,197 +1,244 @@
-Return-Path: <linux-kernel+bounces-525094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB9CBA3EAB5
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 03:20:50 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B940AA3EAB4
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 03:20:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6423D3A5525
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 02:19:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D4F37A1BC7
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 02:19:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ED551BD9DD;
-	Fri, 21 Feb 2025 02:19:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 609B41BEF8A;
+	Fri, 21 Feb 2025 02:20:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UebIWKuW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="TEHV+1+V"
+Received: from smtp-fw-6002.amazon.com (smtp-fw-6002.amazon.com [52.95.49.90])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A6FF7E110
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 02:19:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B683453AC;
+	Fri, 21 Feb 2025 02:20:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.95.49.90
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740104362; cv=none; b=YNLCn0+Eb9THAViXynmdZxSuVPn/YFXx7DDnUHdZjGO3UaRBCO8NLFWLAXHUcMBDYXjwwJhhpnAE0Jim2DH2DtSqKXXm7omGJFrjW9XKYq3mGzmuYn/3n7eQVOo6hjYcefTgsLvubz3RDQp/bVB872JSR9i0Uk99kkzNJj3k2+4=
+	t=1740104427; cv=none; b=dKFyjdW/kuKBfM7cAGI8yNhYzpsub0IgdO7yZUvVHnRJUv/eWDyfzmmuAGtfIt88TxiZVVY4MRlqCOB/gXGS0IE1Zg6xEUPvmgX0owS6hLW3nFz7f+spazDTEzyFfed/2iIUqC4JuTVh6m6gISo6iZh/npQqIRfsPQHF0K0vVm8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740104362; c=relaxed/simple;
-	bh=IXFVmyxXiZyUE5Rvw8hT3fkk95tLDsh1VA2zohW+Ih0=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=j4rUSZnMm//zetUM+XM9N8vv757+9YoMHch89YuXndY20q12BQcn79sVoUfPLQBX/wCJoRtdv7mX8blYPivwX7yt2ENbXI6/84bpi8nMAd93msey2r9kOfUXzOwctcjmkOrNJVdEHkk4J2Eu6OT5+pJfOwhk/mUebCF7z+hs27Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UebIWKuW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0E83C4CEE2;
-	Fri, 21 Feb 2025 02:19:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740104362;
-	bh=IXFVmyxXiZyUE5Rvw8hT3fkk95tLDsh1VA2zohW+Ih0=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=UebIWKuWMhOPD+PWUaoEMWVO9NwQQADbJ4s3lZdcwgtg583zHbzrmli1adVKTdp21
-	 NZMRmFHWouaMQ2wFHCoo0lONYmWWJPAZOvelFFrzJHbCcMTfRUmyPtglzedztWxjQs
-	 bkD0jkJ5d+wMz8H8iffknkcHZo6Nz7S4eUYY+/pukDAVRqsupwzgRzrbv5qW1p/N0c
-	 ibecU9bweVjX/KEz4eyXPTIUmeDys3gVkumROySUEtT8vv7qzXLA/52odAKMlWfcmP
-	 L04Jmrjyy1mzDpMayfRASVmqOt9wEKdvSzuFSsLtfKyfvb0a/3K6T/gGZm9M/R9DPb
-	 GF93GJIHrX2Dg==
-Message-ID: <e62dfe59-61a9-426f-bec4-69223b7247f9@kernel.org>
-Date: Fri, 21 Feb 2025 10:19:17 +0800
+	s=arc-20240116; t=1740104427; c=relaxed/simple;
+	bh=lCA4hhYmOv5gYMao8xUMteua/5701IKNUWSeDJMLAkA=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qn4xUDl8N4XbUFuEH9bzHLPcAt4bf40D7g4EC+u0OfkVXwZFyKGnCTQepSgdgNV6/gbx2y44NcMP7eVicrqdfypNdIPIBRXAqK9Qm82DVIHxzrgYFDodYvdxEg/hJCpFZwVEMVsO6BwkngIIRmwJtB/Lg8v5rR0OxA1n+Ym7lMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=TEHV+1+V; arc=none smtp.client-ip=52.95.49.90
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1740104425; x=1771640425;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=FZ6R8bvQH0PzNlUlEuECVUoHo8jt+Wqy6pW+mnsbG+s=;
+  b=TEHV+1+VHNU3TzlL+5p7+5FQnigkx7Y7VpbSLH4Gi7jIsY8lLwsiXzBb
+   dvlSGxLSOJb5VL/0vDKzQGwzb8v3k3GTCHiEy3/fg+XN76FiFfYxdFRrW
+   j1uklLeTjmpNIQ5TgFImtY6TTgc5yTxWvl3l6EMSPFs5nXYG0kTrbsTYO
+   k=;
+X-IronPort-AV: E=Sophos;i="6.13,303,1732579200"; 
+   d="scan'208";a="474046324"
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
+  by smtp-border-fw-6002.iad6.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Feb 2025 02:20:21 +0000
+Received: from EX19MTAUWA002.ant.amazon.com [10.0.7.35:64636]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.7.176:2525] with esmtp (Farcaster)
+ id 621287b5-5e73-44d7-8138-65357e4436d2; Fri, 21 Feb 2025 02:20:21 +0000 (UTC)
+X-Farcaster-Flow-ID: 621287b5-5e73-44d7-8138-65357e4436d2
+Received: from EX19D003ANC003.ant.amazon.com (10.37.240.197) by
+ EX19MTAUWA002.ant.amazon.com (10.250.64.202) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.39;
+ Fri, 21 Feb 2025 02:20:20 +0000
+Received: from b0be8375a521.amazon.com (10.37.244.7) by
+ EX19D003ANC003.ant.amazon.com (10.37.240.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Fri, 21 Feb 2025 02:20:17 +0000
+From: Kohei Enju <enjuk@amazon.com>
+To: <helgaas@kernel.org>
+CC: <alex.williamson@redhat.com>, <bhelgaas@google.com>,
+	<ckoenig.leichtzumerken@gmail.com>, <ilpo.jarvinen@linux.intel.com>,
+	<linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+	<takamitz@amazon.co.jp>, <kuniyu@amazon.com>, <kohei.enju@gmail.com>
+Subject: Re: [PATCH v2 1/2] PCI: Avoid pointless capability searches
+Date: Fri, 21 Feb 2025 11:20:08 +0900
+Message-ID: <20250221022008.69533-1-enjuk@amazon.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+In-Reply-To: <20250215000301.175097-2-helgaas@kernel.org>
+References: <20250215000301.175097-2-helgaas@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: Chao Yu <chao@kernel.org>, Daeho Jeong <daehojeong@google.com>
-Subject: Re: [f2fs-dev] [PATCH] f2fs: do not use granularity control for
- segment or section unit discard
-To: Daeho Jeong <daeho43@gmail.com>, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, kernel-team@android.com
-References: <20250220154904.2698964-1-daeho43@gmail.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-Autocrypt: addr=chao@kernel.org; keydata=
- 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
-In-Reply-To: <20250220154904.2698964-1-daeho43@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D040UWA004.ant.amazon.com (10.13.139.93) To
+ EX19D003ANC003.ant.amazon.com (10.37.240.197)
 
-On 2025/2/20 23:49, Daeho Jeong wrote:
-> From: Daeho Jeong <daehojeong@google.com>
+> From: Bjorn Helgaas <bhelgaas@google.com>
 > 
-> When we support segment or section unit discard, we should only focus on
-> how actively we submit discard commands for only one type of size, such
-> as segment or section. In this case, we don't have to manage smaller
-> sized discards.
+> Many of the save/restore functions in the pci_save_state() and
+> pci_restore_state() paths depend on both a PCI capability of the device and
+> a pci_cap_saved_state structure to hold the configuration data, and they
+> skip the operation if either is missing.
 > 
-> Reported-by: Yohan Joung <yohan.joung@sk.com>
-> Signed-off-by: Daeho Jeong <daehojeong@google.com>
+> Look for the pci_cap_saved_state first so if we don't have one, we can skip
+> searching for the device capability, which requires several slow config
+> space accesses.
+> 
+> Remove some error messages if the pci_cap_saved_state is not found so we
+> don't complain about having no saved state for a capability the device
+> doesn't have.  We have already warned in pci_allocate_cap_save_buffers() if
+> the capability is present but we were unable to allocate a buffer.
+> 
+> Other than the message change, no functional change intended.
+> 
+> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 > ---
->   fs/f2fs/segment.c | 29 ++++++++++++++++++++---------
->   1 file changed, 20 insertions(+), 9 deletions(-)
+>  drivers/pci/pci.c       | 27 ++++++++++++++-------------
+>  drivers/pci/pcie/aspm.c | 15 ++++++++-------
+>  2 files changed, 22 insertions(+), 20 deletions(-)
 > 
-> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> index c282e8a0a2ec..4316ff7aa0d1 100644
-> --- a/fs/f2fs/segment.c
-> +++ b/fs/f2fs/segment.c
-> @@ -1661,12 +1661,20 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
->   				f2fs_time_over(sbi, UMOUNT_DISCARD_TIMEOUT))
->   			break;
->   
-> -		if (i + 1 < dpolicy->granularity)
-> -			break;
-> +		/*
-> +		 * Do not granularity control for segment or section
-> +		 * unit discard, since we have only one type of discard length.
-> +		 */
-> +		if (f2fs_block_unit_discard(sbi)) {
-> +			if (i + 1 < dpolicy->granularity)
-> +				break;
->   
-> -		if (i + 1 < dcc->max_ordered_discard && dpolicy->ordered) {
-> -			__issue_discard_cmd_orderly(sbi, dpolicy, &issued);
-> -			return issued;
-> +			if (i + 1 < dcc->max_ordered_discard &&
-> +					dpolicy->ordered) {
-> +				__issue_discard_cmd_orderly(sbi, dpolicy,
-> +						&issued);
-> +				return issued;
-> +			}
->   		}
->   
->   		pend_list = &dcc->pend_list[i];
-> @@ -1701,6 +1709,13 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
->   
->   		if (issued >= dpolicy->max_requests || io_interrupted)
->   			break;
+> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> index 869d204a70a3..503376bf7e75 100644
+> --- a/drivers/pci/pci.c
+> +++ b/drivers/pci/pci.c
+> @@ -1686,10 +1686,8 @@ static int pci_save_pcie_state(struct pci_dev *dev)
+>  		return 0;
+>  
+>  	save_state = pci_find_saved_cap(dev, PCI_CAP_ID_EXP);
+> -	if (!save_state) {
+> -		pci_err(dev, "buffer not found in %s\n", __func__);
+> +	if (!save_state)
+>  		return -ENOMEM;
+> -	}
+>  
+>  	cap = (u16 *)&save_state->cap.data[0];
+>  	pcie_capability_read_word(dev, PCI_EXP_DEVCTL, &cap[i++]);
+> @@ -1742,19 +1740,17 @@ static void pci_restore_pcie_state(struct pci_dev *dev)
+>  
+>  static int pci_save_pcix_state(struct pci_dev *dev)
+>  {
+> -	int pos;
+>  	struct pci_cap_saved_state *save_state;
+> +	u8 pos;
 > +
-> +		/*
-> +		 * We only use the largest discard unit for segment or
-> +		 * section unit discard.
-> +		 */
-> +		if (!f2fs_block_unit_discard(sbi))
-> +			break;
->   	}
->   
->   	if (dpolicy->type == DPOLICY_UMOUNT && issued) {
-> @@ -2320,10 +2335,6 @@ static int create_discard_cmd_control(struct f2fs_sb_info *sbi)
->   	dcc->discard_granularity = DEFAULT_DISCARD_GRANULARITY;
->   	dcc->max_ordered_discard = DEFAULT_MAX_ORDERED_DISCARD_GRANULARITY;
->   	dcc->discard_io_aware = DPOLICY_IO_AWARE_ENABLE;
-> -	if (F2FS_OPTION(sbi).discard_unit == DISCARD_UNIT_SEGMENT)
-> -		dcc->discard_granularity = BLKS_PER_SEG(sbi);
-> -	else if (F2FS_OPTION(sbi).discard_unit == DISCARD_UNIT_SECTION)
-> -		dcc->discard_granularity = BLKS_PER_SEC(sbi);
+> +	save_state = pci_find_saved_cap(dev, PCI_CAP_ID_PCIX);
+> +	if (!save_state)
+> +		return -ENOMEM;
+>  
+>  	pos = pci_find_capability(dev, PCI_CAP_ID_PCIX);
+>  	if (!pos)
+>  		return 0;
+>  
+> -	save_state = pci_find_saved_cap(dev, PCI_CAP_ID_PCIX);
+> -	if (!save_state) {
+> -		pci_err(dev, "buffer not found in %s\n", __func__);
+> -		return -ENOMEM;
+> -	}
 
-Hi Daeho,
+When devices don't have PCI_CAP_ID_PCIX, this change in order appears to 
+cause a functional change.
+Since probe functions of some drivers (e.g. Intel e1000) rely on the return 
+value, I think they fail after that change in this situation.
 
-I think this bug was introduced by commit 4f993264fe29 ("f2fs: introduce
-discard_unit mount option"), since it set discard_granularity to section
-size incorrectly for discard_unit=section mount option, once section size
-is large than segment size, discard_granularity will be larger than 512.
+Actually in my QEMU VM, e1000 driver failed to probe the device due to 
+-ENOMEM from pci_save_pcix_state().
+```
+[root@localhost ~]# dmesg | grep e1000
+[    0.400303] [      T1] e1000: Intel(R) PRO/1000 Network Driver
+[    0.400805] [      T1] e1000: Copyright (c) 1999-2006 Intel Corporation.
+[    0.710970] [      T1] e1000 0000:00:03.0: probe with driver e1000 failed with error -12
 
-However, w/ current implementation, we only support range of [1, 512] for
-discard_granularity parameter, resulting in failing to submitting all
-dicards.
+[root@localhost ~]# lspci -nnvs 00:03.0
+00:03.0 Ethernet controller [0200]: Intel Corporation 82540EM Gigabit Ethernet Controller [8086:100e] (rev 03)
+        Subsystem: Red Hat, Inc. QEMU Virtual Machine [1af4:1100]
+        Flags: fast devsel, IRQ 11
+        Memory at febc0000 (32-bit, non-prefetchable) [size=128K]
+        I/O ports at c000 [size=64]
+        Expansion ROM at feb80000 [disabled] [size=256K]
+lspci: Unable to load libkmod resources: error -2
+```
 
-So, what do you think of setting discard_granularity to 512 for both
-discard_unit=segment and discard_unit=section mount option, as I proposed
-in [1]? Then, discard_thread in DPOLICY_BG mode can submit those large-sized
-discards.
+Regarding pci_save_vc_state(), I found that similar comments were provided in 
+this context:
+https://lore.kernel.org/all/7dbb0d8b-3708-60ba-ee9e-78aa48bee160@linux.intel.com/
 
-[1] https://lore.kernel.org/linux-f2fs-devel/53598146-1f01-41ad-980e-9f4b989e81ab@kernel.org/
+However, the same type of order change is still left in 
+pci_save_pcix_state().
 
-Thanks,
+> -
+>  	pci_read_config_word(dev, pos + PCI_X_CMD,
+>  			     (u16 *)save_state->cap.data);
+>  
+> @@ -1763,14 +1759,19 @@ static int pci_save_pcix_state(struct pci_dev *dev)
+>  
+>  static void pci_restore_pcix_state(struct pci_dev *dev)
+>  {
+> -	int i = 0, pos;
+>  	struct pci_cap_saved_state *save_state;
+> +	u8 pos;
+> +	int i = 0;
+>  	u16 *cap;
+>  
+>  	save_state = pci_find_saved_cap(dev, PCI_CAP_ID_PCIX);
+> -	pos = pci_find_capability(dev, PCI_CAP_ID_PCIX);
+> -	if (!save_state || !pos)
+> +	if (!save_state)
+>  		return;
+> +
+> +	pos = pci_find_capability(dev, PCI_CAP_ID_PCIX);
+> +	if (!pos)
+> +		return;
+> +
+>  	cap = (u16 *)&save_state->cap.data[0];
+>  
+>  	pci_write_config_word(dev, pos + PCI_X_CMD, cap[i++]);
+> diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
+> index e0bc90597dca..007e4a082e6f 100644
+> --- a/drivers/pci/pcie/aspm.c
+> +++ b/drivers/pci/pcie/aspm.c
+> @@ -35,16 +35,14 @@ void pci_save_ltr_state(struct pci_dev *dev)
+>  	if (!pci_is_pcie(dev))
+>  		return;
+>  
+> +	save_state = pci_find_saved_ext_cap(dev, PCI_EXT_CAP_ID_LTR);
+> +	if (!save_state)
+> +		return;
+> +
+>  	ltr = pci_find_ext_capability(dev, PCI_EXT_CAP_ID_LTR);
+>  	if (!ltr)
+>  		return;
+>  
+> -	save_state = pci_find_saved_ext_cap(dev, PCI_EXT_CAP_ID_LTR);
+> -	if (!save_state) {
+> -		pci_err(dev, "no suspend buffer for LTR; ASPM issues possible after resume\n");
+> -		return;
+> -	}
+> -
+>  	/* Some broken devices only support dword access to LTR */
+>  	cap = &save_state->cap.data[0];
+>  	pci_read_config_dword(dev, ltr + PCI_LTR_MAX_SNOOP_LAT, cap);
+> @@ -57,8 +55,11 @@ void pci_restore_ltr_state(struct pci_dev *dev)
+>  	u32 *cap;
+>  
+>  	save_state = pci_find_saved_ext_cap(dev, PCI_EXT_CAP_ID_LTR);
+> +	if (!save_state)
+> +		return;
+> +
+>  	ltr = pci_find_ext_capability(dev, PCI_EXT_CAP_ID_LTR);
+> -	if (!save_state || !ltr)
+> +	if (!ltr)
+>  		return;
+>  
+>  	/* Some broken devices only support dword access to LTR */
+> -- 
+> 2.34.1
 
->   
->   	INIT_LIST_HEAD(&dcc->entry_list);
->   	for (i = 0; i < MAX_PLIST_NUM; i++)
-
+Regards,
+Kohei
 
