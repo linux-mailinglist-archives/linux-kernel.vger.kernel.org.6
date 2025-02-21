@@ -1,152 +1,110 @@
-Return-Path: <linux-kernel+bounces-526686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B2F4A401FE
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 22:23:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9CE5A40200
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 22:24:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E1FF47A5B09
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 21:22:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F3C819C71E7
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 21:24:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFF15202C4A;
-	Fri, 21 Feb 2025 21:23:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E31620127D;
+	Fri, 21 Feb 2025 21:24:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="LHOk3ztX"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5AFA36AF5;
-	Fri, 21 Feb 2025 21:23:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WKd3PWwv"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0783536AF5
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 21:24:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740173002; cv=none; b=m8dM5N1amzINXTRq5wOviZPt3RQqbFYlIXyXwcSgnS0vh57EtUosqAZ9wr3BGvHLML7fiYtsfkGYOtL+atnrVGo+UYZpr/i7G1MveqnrO/K+8CWbhO18duXctB3kVZsjhIwwZWtCFjFHG+mbcitpNXDCVR6CO8ZZqMqB7PoiKQA=
+	t=1740173075; cv=none; b=qURWRh1iR8Hdrif7CLpJn4Ll0YoZdoOrcd2nBUmgZR1maZ5Nfbd003lvuORh5/f2/HjnKJK5xuZITSDdRfhQmYd2K56QuhNTGkh3tKe61dDR5CXs5+m6lIobz3NGmnfeFjvmRkN7yES6bMhX+Vco6QGatgEFmH7x0pxVZYVg1Lk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740173002; c=relaxed/simple;
-	bh=ZTSuJI4NpA2G+Uhgn5aDFK0ZVKGllwLkSTgD4pjOJ3s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LzTesjXrOMua/DkXsHL2zUnyFl8aaBQuf9z0IJO8w27K+5dbE22dv0F0itpnLu47qdGOhc36INCa34cmeXM518k/DlA+pFQhBQnp9+QF5FXGwWykaP6zWtNklvV4/iEdOmMmEWXjf38wwgoOl5bBKXHlO2E4Mn6CU1/uvzWvtz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=LHOk3ztX; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from hm-sls2 (bras-base-toroon4332w-grc-32-142-114-216-132.dsl.bell.ca [142.114.216.132])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 5B98F204E5BD;
-	Fri, 21 Feb 2025 13:23:18 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 5B98F204E5BD
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1740172999;
-	bh=cqnvgwsa9KsqqXm7ZC1c0BQtDHXhaxp07maFvW8SBZc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LHOk3ztXYb8BSdV6NZytHCKh1X23+/yRWSuV7zA6UQ6c4z+LRBYknD0EDMRLdM1bb
-	 Xh+o1rO9c5eK2mnHaeTSlIxhh3CzCIDJRaQUOToWaGRMf1eeJjekuP6zn+zBVdEV+J
-	 MZCwk922GFjdDndYAB/QaMgaI/iBFcA2zA3OKddw=
-Date: Fri, 21 Feb 2025 16:23:07 -0500
-From: Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>
-To: Ryo Takakura <ryotkkr98@gmail.com>
-Cc: akpm@linux-foundation.org, bhe@redhat.com, decui@microsoft.com,
-	gregkh@linuxfoundation.org, haiyangz@microsoft.com,
-	jani.nikula@intel.com, jfalempe@redhat.com,
-	joel.granados@kernel.org, john.ogness@linutronix.de,
-	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
-	pmladek@suse.com, takakura@valinux.co.jp, wei.liu@kernel.org
-Subject: Re: [PATCH RFC] panic: call panic handlers before
- panic_other_cpus_shutdown()
-Message-ID: <Z7juu2YMiVfYm7ZM@hm-sls2>
-References: <20250220225302.195282-1-hamzamahfooz@linux.microsoft.com>
- <20250221022328.47078-1-ryotkkr98@gmail.com>
+	s=arc-20240116; t=1740173075; c=relaxed/simple;
+	bh=1762NVQXdGje3dlNxOQSEQN5RBB3Nw2JuPPfR11IEIw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SOrLMZ6ixp6Qu6VLZcz5bONfsnhuQ7614yVfVwyY6ohVX5aat4vjPxIs2m0gOMp2uRRDi2p2Z08BFdFn7wTL8YRGbygRKYSM2g6qf7xomHr1oSd3E3iwx41JTg1afwchC8Xc5pGGED1zlWsdk1lQBcGPjYfdO5HJ67IH3clgSeo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WKd3PWwv; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5deb956aa5eso3182875a12.2
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 13:24:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740173072; x=1740777872; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=1762NVQXdGje3dlNxOQSEQN5RBB3Nw2JuPPfR11IEIw=;
+        b=WKd3PWwvPVfjGUDESAF6DHLUQgG/7XN4oe7j2jT3hih6Jc6hCDLxJIqxxu5beMZYIC
+         hTzv7n0c876gTYp7XBiXhF0v1RI41A7l3yqsyfFabXrMJ4ZWaZcSa+rMpiTHF2Jzy5nZ
+         symdJseml2e8H0+5OTSIgVPF3S6dTytk2ZPjdN4Jwmt8XZjVHwXC3NiyZUSO5bCL9g9q
+         I509DsxTAc04a0WqMZT22lGT8j675DoEcfiHVUtFcWgVgpE1oaa8sM2CdDnZIPorqmY5
+         mbVpL9EPyWDgB8pJpyvkF8JOPpYRn+4Aj2xcufHMfCaZeJ+tKaBDW26nelyiESiWlp10
+         4OxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740173072; x=1740777872;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1762NVQXdGje3dlNxOQSEQN5RBB3Nw2JuPPfR11IEIw=;
+        b=BeIXzDl324x2JMlJwH8i6zyYQX0plFSeW6kXQYCCzShHJRH4yOZ50Pty+xbmMC/ZFE
+         vEspXlBMzmb8i1kAyeo6TgrV8DJFmIMbsGw+ouMXP0j+YylEf6065Wt6Ub41yT8ppBPI
+         MZ/hCTCPQ6lC+tNeqjQveU+XbqYqZdIRi1k4gSaITHXu4gobn/PRPG5OEqwr2QQdgUdv
+         jXidAusz71Y7abET0CB+kR+lNYPTTuQNutSFilkcLsZDWhIm2d+bEojU/G3BkFzSZfnb
+         nXZCWS/8/ESCRf3ZGpyGmF59L8OYuItHwqMiQ+A3BPL3VvVlFFK8MWBOeKwaW2OYO8SL
+         iKXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU1Uh/a1ByVqqnXAydboXiC2U/Y7okx6HDSiuV9xsHVPK1rFhaAZo0v/1IaNfVsaal4vGxgIOHLb6Btjw4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQxI4trzaUatVqWuV9Uo01bcoMm6HSf+I57CXDLBHVpDjM31kH
+	MMpPDOWjEo67qLh8z5yOuIpRtMrZZz+YPXJu1n6hRWdhrkzg5pUmGSpSGqgseAWGDuPyBrezFc3
+	n8StOo5YbnQOxL/xttxxQvWPppkDNgA==
+X-Gm-Gg: ASbGncs7Y/MFhKFarrGInxkGi9ryiTUuuywDIttkV132AlQ8fz1YmEDW3wF9UE3Inhx
+	jh5q3IZhq9Ou3xtt0SurxX5Lmrr4AQm6DI8W+hyLWPoHUTeeaGNb5xR+aJjkjfgZogKl/N5KlGM
+	ak6E0a7A==
+X-Google-Smtp-Source: AGHT+IGHZ3p0Yhcy1NooWckT7km21FHzEsXX7wdW6PJ+zdzWXhvCub+62TXotrdDn5kDSCkT35k7Jp72jwVmVlApND0=
+X-Received: by 2002:a05:6402:51d2:b0:5e0:9250:435a with SMTP id
+ 4fb4d7f45d1cf-5e0b7252eb7mr10284527a12.20.1740173072026; Fri, 21 Feb 2025
+ 13:24:32 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250221022328.47078-1-ryotkkr98@gmail.com>
+References: <CAPM=9tyHJiMrF8nxXe=mhn0i5N1v-7RHh2TZfoz8BoUBBnuxzw@mail.gmail.com>
+ <CAHk-=wiJYQwSMoor__B-8D71S8=Dn5BeAY6tOzSL4u3MEZrtcw@mail.gmail.com>
+In-Reply-To: <CAHk-=wiJYQwSMoor__B-8D71S8=Dn5BeAY6tOzSL4u3MEZrtcw@mail.gmail.com>
+From: Dave Airlie <airlied@gmail.com>
+Date: Sat, 22 Feb 2025 07:24:20 +1000
+X-Gm-Features: AWEUYZmZnwC1hboMSOHw37C9Yg-dylJMTIImEuvQIZT68-vvD-BB6UCjp2DW_C8
+Message-ID: <CAPM=9txwcTE048cOGnSNfXqX+ykADgqDHRZmyfnLQGQ_9oRZTA@mail.gmail.com>
+Subject: Re: [git pull] drm fixes for 6.14-rc4
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Sima Vetter <sima@ffwll.ch>, dri-devel <dri-devel@lists.freedesktop.org>, 
+	LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Hey Ryo,
+On Sat, 22 Feb 2025 at 07:15, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> Side note: I think you do something while editing or
+> cutting-and-pasting that loses indentation.
+>
+> I sometimes have to guess at what the intended grouping is.
+>
+> In this case, notice the "More catalog fixes" entry for the msm driver.
+>
+> I *think* it refers to all the following bullet points up until the
+> "Core/GPU" grouping, but that is literally nothing but an edumacated
+> guess.
+>
+> So when you write (or copy) the description, can I ask you to not drop
+> indentation like this?
 
-On Fri, Feb 21, 2025 at 11:23:28AM +0900, Ryo Takakura wrote:
-> Hi Hamza!
-> 
-> On Thu, 20 Feb 2025 17:53:00 -0500, Hamza Mahfooz wrote:
-> >Since, the panic handlers may require certain cpus to be online to panic
-> >gracefully, we should call them before turning off SMP. Without this
-> >re-ordering, on Hyper-V hv_panic_vmbus_unload() times out, because the
-> >vmbus channel is bound to VMBUS_CONNECT_CPU and unless the crashing cpu
-> >is the same as VMBUS_CONNECT_CPU, VMBUS_CONNECT_CPU will be offlined by
-> >crash_smp_send_stop() before the vmbus channel can be deconstructed.
-> >
-> >Signed-off-by: Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>
-> >---
-> > kernel/panic.c | 4 ++--
-> > 1 file changed, 2 insertions(+), 2 deletions(-)
-> >
-> >diff --git a/kernel/panic.c b/kernel/panic.c
-> >index fbc59b3b64d0..9712a46dfe27 100644
-> >--- a/kernel/panic.c
-> >+++ b/kernel/panic.c
-> >@@ -372,8 +372,6 @@ void panic(const char *fmt, ...)
-> > 	if (!_crash_kexec_post_notifiers)
-> > 		__crash_kexec(NULL);
-> > 
-> >-	panic_other_cpus_shutdown(_crash_kexec_post_notifiers);
-> >-
-> > 	printk_legacy_allow_panic_sync();
-> 
-> I think printk_legacy_allow_panic_sync() is placed after 
-> panic_other_cpus_shutdown() so that it flushes the stored 
-> cpus backtraces as described [0].
-> 
-> > 	/*
-> >@@ -382,6 +380,8 @@ void panic(const char *fmt, ...)
-> > 	 */
-> > 	atomic_notifier_call_chain(&panic_notifier_list, 0, buf);
-> > 
-> >+	panic_other_cpus_shutdown(_crash_kexec_post_notifiers);
-> >+
-> 
-> So maybe panic_other_cpus_shutdown() should be palced after 
-> atomic_notifier_call_chain() along with printk_legacy_allow_panic_sync()
-> like below?
-> 
-> ----- BEGIN -----
-> diff --git a/kernel/panic.c b/kernel/panic.c
-> index d8635d5cecb2..7ac40e85ee27 100644
-> --- a/kernel/panic.c
-> +++ b/kernel/panic.c
-> @@ -372,16 +372,16 @@ void panic(const char *fmt, ...)
->         if (!_crash_kexec_post_notifiers)
->                 __crash_kexec(NULL);
-> 
-> -       panic_other_cpus_shutdown(_crash_kexec_post_notifiers);
-> -
-> -       printk_legacy_allow_panic_sync();
-> -
->         /*
->          * Run any panic handlers, including those that might need to
->          * add information to the kmsg dump output.
->          */
->         atomic_notifier_call_chain(&panic_notifier_list, 0, buf);
-> 
-> +       panic_other_cpus_shutdown(_crash_kexec_post_notifiers);
-> +
-> +       printk_legacy_allow_panic_sync();
-> +
->         panic_print_sys_info(false);
-> 
->         kmsg_dump_desc(KMSG_DUMP_PANIC, buf);
-> ----- END -----
+I rewrite the MSM bits usually to align with others as they
+subcategorise and nobody else does, but I can keep the indentation if
+it doesn't look like noise on your end.
 
-Ya, that looks fine to me, that's actually how I had it initally, but I
-wasn't sure if it had to go before the panic handlers. So, I erred on
-the side of caution.
-
-BR,
-Hamza
-
-> 
-> Sincerely,
-> Ryo Takakura
-> 
-> [0] https://lore.kernel.org/all/20240820063001.36405-30-john.ogness@linutronix.de/
+Dave.
 
