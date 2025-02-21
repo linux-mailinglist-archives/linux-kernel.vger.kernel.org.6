@@ -1,121 +1,89 @@
-Return-Path: <linux-kernel+bounces-525452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2B1BA3F02D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:26:36 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84DAFA3F026
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:25:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 223527ABAAD
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:24:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C16916C2AA
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:25:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82BA8204F76;
-	Fri, 21 Feb 2025 09:24:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CE5A2054ED;
+	Fri, 21 Feb 2025 09:24:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OT4/XvES"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="JhScgHJj"
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD45C2046AD
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 09:24:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 183E7204698;
+	Fri, 21 Feb 2025 09:24:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740129882; cv=none; b=cVCdPH+cKqu5a9ZTdNlimu7T2Mj+vqslZcZrBmwne5z+jeYDiUVMQx4HWukH0uzKJG4429aisY1hvicRrz4crHzas0Mu+G/sXBD4aVgLRucevSyJvt76RrafdlkBjJO1sPM/Z9inI+xZ1g2MXkntGKxH7fBnraSRGar0LKW3hPA=
+	t=1740129889; cv=none; b=k2Poo/Eb2Oqu+sr+dcZ1ED/N95zpMvqgIXAODGcUTIb9hFpVSK47hkPvtArIs6GEuufnrHBMx8ZRKbTwX6NAiUcjurRreqV7a3i1EDV5W6dFHFxfX/AGvxHSZ7Al9cMdVLJZh1SBN56CgBei0K2NvmYB8sTsAWbubq/KsIqtWqQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740129882; c=relaxed/simple;
-	bh=DTv9IgDCFSHkLIkM5pR4+LbykpRtGpw2Nod8ujiYIk4=;
+	s=arc-20240116; t=1740129889; c=relaxed/simple;
+	bh=AAhzNWrchG+hGSr4mhaPtLJ8UhuPrFonFRtyi6ur1gc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MYLUxs40pGX8FjmB53vepEd8VTate6PWkR81/3MKAhf3nbCq4OC16TjJ2LvEOr1jWBXLa3x/Kvjg9e0pjsfWJOsdvi3DGuh26R6YrG1xMTIHqWQfQzNJL1FsIMog7zRPa1h/exmAo/lqEmyM7uyRSUSgpBBKFtrOQCVWW9CUQns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OT4/XvES; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5e0505275b7so2999415a12.3
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 01:24:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740129879; x=1740734679; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=t2OCFr3FvjMVutt67tzLs3oJXOFjcIvzlo6FuwE7EGw=;
-        b=OT4/XvES+hEgYj4dIzyglPtmN/WmZJpGgjuAu3tUkvsXN8bwYG9FagrVkxuuyici4i
-         gjg/Xa9jj2JDfNKOfKa81N4eshPyeAa7xcByVG/vPueWH/HF0ANqg6pwEC/an02Okah0
-         lvztQLA6zlLU7jRniAfOgxYZjtHfhwOqOMftPe0cl9qwKrwIcFW7VMS3sbWtxN7Cqr05
-         VPk5FAUghIvuVpiEXNxDU5pDsLtVu3V00+Yhr3JJjGFkPWmy/vf9/ZzgdmVIpkxesYBc
-         IyLz/wNyQhzEuAz/pjx6KijGNQ4YSs+Fw/yqIAbyocZ19xLsdKLaaTXz/CKpC4zPCxh1
-         Kp9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740129879; x=1740734679;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=t2OCFr3FvjMVutt67tzLs3oJXOFjcIvzlo6FuwE7EGw=;
-        b=gJbC71V4Hl7okw/iOy+d/VY4sWNi+lW4aNT9cmqGaN+U7ydSzAigFIve724lGQpJwt
-         FWeJOruBog3rRAIe4tRHttLTvMfT8fTCL6u5PLjDNQbWGrIz7ncLgAFvSYq3oQIe/KLf
-         XyuipNRGSt+J8/eNYgvF+uwJ49QF/F4xOaXokPB+Oyv6NDFdFf4Sqi3VC1qjotiCh3I8
-         SC6lkvYBhU/zWJ32UjifZLjxbmF6kt7twNR0418GtWh05Vf1A50MFJNsDtEt4ERkA9rA
-         cMEl/kDyWHRSLJBqlnRkyJzqztOtSXv2oNJ4iUfOUbmhP02gHAbf15TKLtEtJe1/X/C5
-         /p2g==
-X-Forwarded-Encrypted: i=1; AJvYcCXMXO8jRNzQJXLsamwYZplRrTADfghytWKz/PoPW5vH/MKZK3cZT+49PSjZjqFP4NbKtt2ENxJ9/59feqY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywp9q6EBhJUUoyjk4bqFnCkIklvDNsFb9HP5tuzZ+7ckcLGqkoU
-	JuypPhYNmcOSYraMClXIkZVDGMNhOWGOeKZ94xAOXLPuIz2QHuZAJsmZU33Op20=
-X-Gm-Gg: ASbGncvk5aqnkUfNn4GiNr0VfOWLyIQCzR58aRzURC8sCPngzmvD5e6IIMSCcuHhuZu
-	VijDv/BT0CwGXhtZ0YOD8Q/BPbvjY/2eAx1z42MvxrmC5HTOxsSGmNOzWjabTJNbMiIwf3FgWoY
-	2vwmnsbQe35u1bT7+mKjqAXKqR9pXHRiNzbpicXsUfubGZONzmLfROZszUBMRe+4c6ZK2H3Yi4e
-	qyiT69+9ZkJq1/xy9iifB5ngBIsgxjH9CEnEYdmGSoAqw3MeruKhofYMt5E/tx7pJldXYGVTu7X
-	4B9kuzL0UDuQd+j+gLSg6UUztgaSUKo=
-X-Google-Smtp-Source: AGHT+IGvsUKhSRAqepH1KbmQmRBn3Qp0tkLa9c2jo3XvRvzmw9oedXS1XvDKOvUW+mdkWwGyXUvSYg==
-X-Received: by 2002:a05:6402:430c:b0:5da:d76:7b2e with SMTP id 4fb4d7f45d1cf-5e0b6fec4b4mr2071323a12.0.1740129879032;
-        Fri, 21 Feb 2025 01:24:39 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 4fb4d7f45d1cf-5dece1c58e2sm13551475a12.20.2025.02.21.01.24.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Feb 2025 01:24:38 -0800 (PST)
-Date: Fri, 21 Feb 2025 12:24:34 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: kernel-janitors@vger.kernel.org, Josh Don <joshdon@google.com>,
-	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Ben Segall <bsegall@google.com>,
-	Chengming Zhou <chengming.zhou@linux.dev>,
-	Daniel Bristot de Oliveira <bristot@redhat.com>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	K Prateek Nayak <kprateek.nayak@amd.com>,
-	Mel Gorman <mgorman@suse.de>, Steven Rostedt <rostedt@goodmis.org>,
-	Valentin Schneider <vschneid@redhat.com>
-Subject: Re: [PATCH v2] sched: fix potential use-after-free with cfs bandwidth
-Message-ID: <14f3ae5c-bf74-4a1a-aaf6-b113f7821d4d@stanley.mountain>
-References: <20250221012335.233404-1-joshdon@google.com>
- <05f3fc66-f11d-4cda-8ea3-91aac650ec20@web.de>
- <9f1f3ff7-b4dc-43b0-993f-1f062f85d0a5@stanley.mountain>
- <7be6a786-18eb-464c-a47a-298208a343cc@web.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=IK7fyuB5FmLJWebcOSGpjvwjqYGWl43PJ3dmTpfecmSHrWWVjcGEUiemxpPWlqUXGban3s1cHxLu+Ax1MSHEAeKgXhe5DgHgIfrUMbaLCZKivwEqFdsRIaIMoo+FNiWpd41+9H30DovXvAlWZ/dkNB/D6NbWzOvd8OAKSfDJ0cA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=JhScgHJj; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=Mqh+2C9vWGF8WY8llBEoQCvJjWOvLlDot1UeDn21GSQ=; b=JhScgHJjQZ92VvtWJHB+Y0dZuW
+	4ajt+o6OJ5pmetH0E0ul2Jh5Gw/1Qc0QY3nl3PJgqeOv+Uxf92o4mAipPC3F0oqy/Tb5g30D7U/QP
+	1wJET/O7KBzaah0j1Uql1REGHvAE7uZ8ot7u/fnjxTPbrTAiDGWwpe5p/oJ/2jDOPq2+u69YdxeBg
+	TmMPisy1qjWfX/6vxuK4BltD10itVbOVvcF5cLpwZZUVF/LquSW5XatxhzwN7ofwYDA+y6UZC3ZtF
+	NpxXLJAMMCONLP7iEY086lBV38QXp2qL7r81gEe5vcvFefHJ1BcE84d629aevKNh06dS3iwzstPVK
+	N282AoPA==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1tlPGx-000YNP-2W;
+	Fri, 21 Feb 2025 17:24:40 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 21 Feb 2025 17:24:39 +0800
+Date: Fri, 21 Feb 2025 17:24:39 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Abel Vesa <abel.vesa@linaro.org>
+Cc: Thara Gopinath <thara.gopinath@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	linux-arm-msm@vger.kernel.org, linux-crypto@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: crypto: qcom-qce: Document the X1E80100
+ crypto engine
+Message-ID: <Z7hGV9escUKrTXtD@gondor.apana.org.au>
+References: <20250213-dt-bindings-qcom-qce-x1e80100-v1-1-d17ef73a1c12@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <7be6a786-18eb-464c-a47a-298208a343cc@web.de>
+In-Reply-To: <20250213-dt-bindings-qcom-qce-x1e80100-v1-1-d17ef73a1c12@linaro.org>
 
-On Fri, Feb 21, 2025 at 09:33:24AM +0100, Markus Elfring wrote:
-> > Markus, it was good to ask for a Fixes tag but now you're just distracting
-> > people who are doing actual work.
+On Thu, Feb 13, 2025 at 02:37:05PM +0200, Abel Vesa wrote:
+> Document the crypto engine on the X1E80100 Platform.
 > 
-> Will any contributors add also a “stable tag”?
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/stable-kernel-rules.rst?h=v6.14-rc3#n3
-> 
+> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> ---
+>  Documentation/devicetree/bindings/crypto/qcom-qce.yaml | 1 +
+>  1 file changed, 1 insertion(+)
 
-Sure, it wouldn't hurt to add a stable tag.  In real life terms the
-stable scripts are going to pick this one up automatically because
-it has "use-after-free" in the subject.
-
-regards,
-dan carpenter
-
+Patch applied.  Thanks.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
