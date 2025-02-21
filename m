@@ -1,151 +1,86 @@
-Return-Path: <linux-kernel+bounces-525448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCE53A3F023
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:25:42 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE1DAA3F019
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:24:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A5B119C63A8
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:24:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C1B8167C54
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:24:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A19002046B5;
-	Fri, 21 Feb 2025 09:23:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACDAD204C23;
+	Fri, 21 Feb 2025 09:24:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="aBJl9f+Y"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="sN7bvsVB"
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9A70200BBF;
-	Fri, 21 Feb 2025 09:23:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9409204C0E;
+	Fri, 21 Feb 2025 09:24:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740129786; cv=none; b=lJC3mpXnZbCmyCA4HAfaix1WxDS0H6mlSi6PU8lu6K/0U/snNU2+C3WxXRGAE9koIxaDsUKktfvaHaE4WtWTLmr0LMncKGxE3vyRso9BcoOkgO/X1Vqta9OExdUlCIl9VEfnWd2t9AF8dALaYMMKFoW/Liq9orIQBvVl6Xb3jLU=
+	t=1740129849; cv=none; b=AFlY/ztpf/ljcodwuiHc3niGrnK67sjuyuiv0XjJLYNMlilMzdU//+yczBOuP1vbc1UaX2ZSVZuKPpddveMLnkR3Af4J00i3BMy1kUiH5KSV2L289K4J0YnKktL4eC3oEMc2GT1TV+UfWhtSzXC8z59PQhrVsM1vfC0RYYdut0w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740129786; c=relaxed/simple;
-	bh=xBKnQrbFq+DZ81DeESCjTS/8FxFGSDzN45oZZOj+6XU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ULuIMS1QGPE7NoNzgnXTxscxZ9jMQDrr8io1SIxrJaHQ5rEJ8DaNWZ4ybA3YfOWze3pSJ4ajqSNMXoN+isP73ZyXvjOov5BfQggogJoA7kVIeCQPUr2b1+m496JH1ogXEouXpsRe8Omt9PmJAQ8nklTEZpGMH4HV415Ta8AjGQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=aBJl9f+Y; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51L8pGeL011936;
-	Fri, 21 Feb 2025 09:23:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	FIGvqXYsEca9hsO6i4pUmiiXqNZHW9zFCMAy+11jNx4=; b=aBJl9f+Y8+E0Y5Lk
-	8dTprqz6Arnwq/xmzdUlYaFz0xcdzO1B8PQ8Jl9rqdAQiGfu/qFvJbAFiFLC8bOv
-	gNDlG30UyRqTWHTC9/5OmKzYjtbzCWRo0ey853UBxMVMC8Ar3zrGF6CUyrKpLvfD
-	RrZ/MmiBn27iCKza85cdKpICZt/cnJvXruWzpjrZgoOO+1I31j96rBTBAJFKTtPZ
-	7iDQPwy26oCyimHnEWQLleyuMLqQY73ZZPZkQ2DPhi3aSAIXAEgpMU9zR5G7yzzx
-	EMv2RDVAwpPLrEOAC/wx/POH8QQIg1rV/iV2higCIzxz2bs+CfKP+bbXg/utpuzn
-	gtjUwg==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44x2xbbm54-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Feb 2025 09:23:00 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51L9N0P1017344
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Feb 2025 09:23:00 GMT
-Received: from [10.217.216.53] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 21 Feb
- 2025 01:22:55 -0800
-Message-ID: <cc72420c-65f1-4ea7-a702-60188c89aa64@quicinc.com>
-Date: Fri, 21 Feb 2025 14:52:52 +0530
+	s=arc-20240116; t=1740129849; c=relaxed/simple;
+	bh=j3mwWCaLC21m0MC8FpSSUM9CpODuqjEdyWr9WgHfp7U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jOH4PQ9nB6mH/6OmZeONbtssIawUStv/i+IUEpQLIVf5rrnzQ1PYd7ZRyGTASg2gvcV7t/s+71il9jTz4K99yrwWxIJjEtz9vL/fxHfhLSXsS66d2D5T93HWvB3kr57v265GQqvuvl8w2r0gtCYmXXao+eJZRF5jtxWgO8ck/yk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=sN7bvsVB; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=U5FcsabVuGWT81RU+nUUy+iqfRsVRxU0xLqN8PLJKlM=; b=sN7bvsVB7qh7XsaEKAGFoyGJYo
+	op97Rbx+lQ6r/LeyyLa9UWXpErER6UUKfLzYQQ1ghwSG4eJVBB+0sTF0zkJqJpHesLc+G90xhlUHb
+	Z4P4FLF1f31iZuXIbfJSvgM8ekK7j0dinLwP6p9RWOZtb4rRO6llvMtBs+QBrAq0A2EGla0rBXoyw
+	SQ80/rgdGEMxkk6+xf1qVeB6AjGM0UndgokmoK/S15wts9+2eQoEtn8x0hgqbGMv0UwrkWugaHn4a
+	Gl3RHhniCig0P/Zzzb9xmw54zceQ+5srsugFyFkrgtGbQ0uFLSW3REoyxYxf+YxkkhSJVdUhcnwCZ
+	zw0qjH5g==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1tlPG4-000YLR-1t;
+	Fri, 21 Feb 2025 17:23:45 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 21 Feb 2025 17:23:44 +0800
+Date: Fri, 21 Feb 2025 17:23:44 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
+	Chen Ridong <chenridong@huawei.com>, linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] crypto: bcm - set memory to zero only once
+Message-ID: <Z7hGIM9hOvSgr5qB@gondor.apana.org.au>
+References: <20250210223647.362921-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/4] dt-bindings: clock: qcom: Add compatible for
- QCM6490 boards
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Ajit Pandey
-	<quic_ajipan@quicinc.com>,
-        Imran Shaik <quic_imrashai@quicinc.com>,
-        "Jagadeesh Kona" <quic_jkona@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20250220-lpass_qcm6490_resets-v4-0-68dbed85c485@quicinc.com>
- <20250220-lpass_qcm6490_resets-v4-1-68dbed85c485@quicinc.com>
- <20250221-rainbow-goldfish-of-masquerade-7d7627@krzk-bin>
-Content-Language: en-US
-From: Taniya Das <quic_tdas@quicinc.com>
-In-Reply-To: <20250221-rainbow-goldfish-of-masquerade-7d7627@krzk-bin>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: B3slYTwysz-VbHc3mgaBmrIGPFpl7txn
-X-Proofpoint-ORIG-GUID: B3slYTwysz-VbHc3mgaBmrIGPFpl7txn
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-21_01,2025-02-20_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 bulkscore=0
- malwarescore=0 lowpriorityscore=0 phishscore=0 impostorscore=0 spamscore=0
- mlxlogscore=999 clxscore=1015 priorityscore=1501 adultscore=0 mlxscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
- definitions=main-2502210071
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250210223647.362921-2-thorsten.blum@linux.dev>
 
-
-
-On 2/21/2025 2:50 PM, Krzysztof Kozlowski wrote:
-> On Thu, Feb 20, 2025 at 09:52:50AM +0530, Taniya Das wrote:
->> Add the new QCM6490 compatible to support the reset functionality for
->> Low Power Audio subsystem.
->>
->> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
->> ---
->>  Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscorecc.yaml | 5 ++++-
->>  1 file changed, 4 insertions(+), 1 deletion(-)
->>
->> diff --git a/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscorecc.yaml b/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscorecc.yaml
->> index 488d63959424088ede67835eb4dcf3feef6d0848..64efb2c533d1e71a9bdc3bf0d245b00cec00841a 100644
->> --- a/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscorecc.yaml
->> +++ b/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscorecc.yaml
->> @@ -20,6 +20,7 @@ description: |
->>  properties:
->>    compatible:
->>      enum:
->> +      - qcom,qcm6490-lpassaudiocc
->>        - qcom,sc7280-lpassaoncc
->>        - qcom,sc7280-lpassaudiocc
->>        - qcom,sc7280-lpasscorecc
->> @@ -68,7 +69,9 @@ allOf:
->>        properties:
->>          compatible:
->>            contains:
->> -            const: qcom,sc7280-lpassaudiocc
->> +            enum:
->> +              - qcom,sc7280-lpassaudiocc
->> +              - qcom,qcm6490-lpassaudiocc
+On Mon, Feb 10, 2025 at 11:36:44PM +0100, Thorsten Blum wrote:
+> Use kmalloc_array() instead of kcalloc() because sg_init_table() already
+> sets the memory to zero. This avoids zeroing the memory twice.
 > 
-> Alphabetical order... although now I question whether these are
-> compatible. Nothing in commit msg explains this, but it should.
-> 
+> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+> ---
+>  drivers/crypto/bcm/cipher.c | 24 ++++++++++++------------
+>  1 file changed, 12 insertions(+), 12 deletions(-)
 
-Sure, I will add the details of why we need this in the commit.
-
-> Best regards,
-> Krzysztof
-> 
-
+Patch applied.  Thanks.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
