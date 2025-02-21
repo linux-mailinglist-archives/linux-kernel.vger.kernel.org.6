@@ -1,74 +1,73 @@
-Return-Path: <linux-kernel+bounces-526751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EA6BA402B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 23:31:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F4ACA402B5
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 23:32:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5AF14228D6
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 22:31:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97B4A3BE95A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 22:31:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 580A7253B74;
-	Fri, 21 Feb 2025 22:31:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B058255E21;
+	Fri, 21 Feb 2025 22:31:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="mcyB45Zq"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="HfR9FhqV"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FE41254B18
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 22:30:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 183F1253F06
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 22:31:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740177059; cv=none; b=PGSaq8Yi27TEPXlvFVIPL39r2bwMWAmxW7IAilAB98qsseNZm8I9rJlILIEYqMKUpchaDLjQPnBbEHnaX59L8740WlkcqEVGqQ5iBkuSFpAMfkLgRUDQX/iJJYJk3QJ8y5/narRarHRQANM0PwCohSZxiPttIqpW+ry/8aIgu5Q=
+	t=1740177065; cv=none; b=Lz4MtKH3WHn4bJJYMhUfrrBKCusFCSw+m8cFItI5lZJgocH45KCLmNE+JdeuZ1qGT+XT02m5Q1uXSAojFv0CyAfWsKRG6QfEtIzZZ9y/IqiGMTidGrFm9xU8ADHgdh8tuU521CpIg1+9NSMaS5fAW568aZUWzWwyPP532NB8d2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740177059; c=relaxed/simple;
-	bh=VAxtUiD6VaoaEcK5Q9XLVLbHC0vVIMqByf6eR6DBo5c=;
+	s=arc-20240116; t=1740177065; c=relaxed/simple;
+	bh=OmQqpQdAdpFq4en3WutiCoYviYGMtxAOkzqQFIWZZ2k=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=BEi374OFbBMususiNObE2t381hYMPUhYqWGY7yQf0i/+SeRVeetbT/kLjgAwjsplugWkVSU/fr1YbTOdHWciKDdJZP9La1F2dX6IKFZsepKmUnRraHC+msfBWzpivdkwePHa9lNFTfEx0QeGGfQjC175g32MS20xIWqXZnSz21U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=mcyB45Zq; arc=none smtp.client-ip=209.85.214.172
+	 MIME-Version; b=LTCVXrWT/0WlrU0xrrsCU5NF2TcoiIWdPHG/t3zvkXu2a7nvpuTKPzER5tiepp88ZeAVCaPDydtZ2tX07LxsxWHL/8f9wAkXGgG0rbMtnZKbZ+2CDIKuDlJF/dM2CMk8eaP7esRGI4Wb4BnMcO//1nXTMYqz2Vt6lgRu2M5FkS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=HfR9FhqV; arc=none smtp.client-ip=209.85.214.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-22101839807so56095715ad.3
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 14:30:57 -0800 (PST)
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-21c2f1b610dso75316225ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 14:31:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1740177057; x=1740781857; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1740177063; x=1740781863; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=yMiFPpRmjEuGJFug3yngS8shb+rlTOrw+KkttJGol4I=;
-        b=mcyB45ZqbqekR0YR4TBEg4duvbUjT/X0tmVGrVTx2ej8duuBJOqWbuv11fNNSSyJNo
-         fR4JKXgphgfIniMOzcmvI775IsD5ZFIT6LrXvdM9f7Hc8CosWGAafwBgNleEuF4SWI/9
-         w5rhhndHgpl2WRKD0a9x0UvwAZajFO8w1Nfk8=
+        bh=5HvQEcjJeXsHC85jXzgvN7MoOE9VPDedZeSd2dLCsl4=;
+        b=HfR9FhqVIJ2YvC7hqn3AHLCYSRQ+oD9q0wBUxDpU0a6y0BvWKpBhDFYD7akKThC96v
+         QnBFx0L4jPF23kFRp7wwN3wGSU6Y7k2aubrEgRFhZGqnccO+IKK2HXYzFFdezyC7tRiL
+         FeHSkydOCJeBif095tw7icg4yUBOfZ5xtYThU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740177057; x=1740781857;
+        d=1e100.net; s=20230601; t=1740177063; x=1740781863;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=yMiFPpRmjEuGJFug3yngS8shb+rlTOrw+KkttJGol4I=;
-        b=fP2hfD8r35epN3nUguYgZFOxRIa9YhebCHM/RVo1h6gsH+k1cHxoSdOwOatdmW84q2
-         KpxeleAX7vUqZfxUkJt77/1BmQOFKT+tFFbjeFdvc0kcUfoJlWqLoydmyKg//HFtqPZl
-         OOeJuDXy3PkgovA0EfqWqYfKKut/JqeoPmoRSGhzXeze7wDunUX+4tD6Fu5zip1NEbxo
-         LEwf1pZw2Oc7KozNenML3gUd8h0Ig040VZiDmHTXk0/GgXLBSvSQbsE4czgGCxQsqI6F
-         gf9UB0CvszucILssBG9VP31QXMMpNcUvp6rvNo7NgpqOb1L6Quwgvew8nH9tfC11bCAt
-         utmA==
-X-Forwarded-Encrypted: i=1; AJvYcCU387QFCMCdMA6dDOdboWYsnfUWLEBPhKegtA4YD22AqrtZ1Q9h2jWoAZGA/DrP1qiv/5qNfdBwDWoXwt0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyf5vC+/TIJE/kABcHKqJnkg9/gX8lSJwl5w0mC093grZjDd2/8
-	oOUWwlC7abXTmGb1gs6bBOg836rBpM8DE/9TlQesXWhPBusg/oNbYe/yMz2T4VPXWu+vRSwx2tM
-	=
-X-Gm-Gg: ASbGnctmWPdKDQRYWd9aSHF0dMLE07L4eqMzI8UMGKbNbNOs5sR9ddu8idO44453nt8
-	aXaLmJVbJAyTgTKtkYEhaSdzz1cnRcb9BEXlJwWerckbivLZABvDGCyykQAu1+qc7W9kit3B/cL
-	nes+HvC685KOYQoWQ/G/3OSOX6N98kXMccLMJ/aYeYshcBcEELIl8iN8LXa/YePGqb04lP8jcYQ
-	sMDh9tFOOyMyxl17As0zUncDjf8pumqboBdAEJd1fBUMKBCuhLLK/NgwkbZlck9pqR8a3gfMxX4
-	8r5Y8mDimLD25hYWjJ+eHEHYT+c=
-X-Google-Smtp-Source: AGHT+IEQrQ7GyEMKY0xC/QjOZMueeZal8jjrcZZyRbZ+PqQnVupxiIMR8/upUlsyn1jWc83rlKp/Qw==
-X-Received: by 2002:a17:903:32c5:b0:21f:1096:7cb with SMTP id d9443c01a7336-2219ff50eecmr69781335ad.20.1740177057264;
-        Fri, 21 Feb 2025 14:30:57 -0800 (PST)
+        bh=5HvQEcjJeXsHC85jXzgvN7MoOE9VPDedZeSd2dLCsl4=;
+        b=FFXqj29ldW1s2T7HyqXjSiZ1YCIPARzlCQRMc/u5TrY9EGPWDE/pF9dqsy7oPcS2Yj
+         QrLFqvc0luWivsGMEyot6b9f5FkxFJx1Q3aEbHOvx/Bq/jEby4h5esvQyETzzLDQcTJO
+         QJ18ojFbBrzP2/wOoRKVioZSGt6b9xaQZ2bkYrWp9Qi1LLaEQaLRP3AnBKfkheMfMeJE
+         tPg3d9uMjn0claKGn6I0l4pR1MzMuWWOGY8XMoED3rQF7Nm5zm0oX+IJVnI8SD5WHeMS
+         Xc8fHPM3lfMrbizLCnhBkOHFcOwYIHQ4+Vs2U5r0MUPvK9fT1S4SyVnkZiczWUz6yX1x
+         6L3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVKor7hYBcw1e/WE20AO+ZPOQEQ58ak7+XD5LXt1l1z89AaxJFecsvRTkwgikWGyTHV7ZR8OVVBZ0Gids8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YybH6f66+hv/DRav2z9AJ4x8ECA9d6IfYpyDxiVSTpBmuRFeDI8
+	0dp4hTGxf2tasDxAU1ZnzZnXxZtDfoDhcNSS4mD9d03Oq3y8AxgmhInyhKOibA==
+X-Gm-Gg: ASbGnctbZeOLbugputcQ6NFRd9EIx3d3a/ZzAeMFvCkMty2yt3kW7LeHKnVUuOQgO2n
+	ldaPILyU9cvGFAAb5EanscSVoqlZd/x38o9svclYjgQP/apeTw4ZMiwCo1V2fT11fRMVfOySfJF
+	jzeb3b84/kVEszU2XtWSxKMSoI49vL1nIB1/HBwbTeeYGOte7erxbaYidVw7mV0r7sAVCRQ0qRC
+	EByc1qLgiViGKd4Gz3V7A+1+Ed7ZCu6Pxy+eucx/RFFSwywprG0nYq3v5MHIPryF4w/8Zn0VxEC
+	zOjM7wqksL9wECTCxT863y/GEKw=
+X-Google-Smtp-Source: AGHT+IGH+xDdgjkZXGk8hJrCHMpFTK6rCRlJkYunn5adYXvOt3xJPKeFvrD1nPrfp4BOcOqmXKFuTQ==
+X-Received: by 2002:a05:6a21:730a:b0:1ee:e20f:f161 with SMTP id adf61e73a8af0-1eef3dc6819mr10529598637.34.1740177063308;
+        Fri, 21 Feb 2025 14:31:03 -0800 (PST)
 Received: from localhost ([2401:fa00:8f:203:f987:e1e:3dbb:2191])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-220d5349056sm142860655ad.22.2025.02.21.14.30.54
+        by smtp.gmail.com with UTF8SMTPSA id 41be03b00d2f7-adecac2150csm10427909a12.67.2025.02.21.14.31.00
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Feb 2025 14:30:56 -0800 (PST)
+        Fri, 21 Feb 2025 14:31:02 -0800 (PST)
 From: Sergey Senozhatsky <senozhatsky@chromium.org>
 To: Andrew Morton <akpm@linux-foundation.org>
 Cc: Yosry Ahmed <yosry.ahmed@linux.dev>,
@@ -79,9 +78,9 @@ Cc: Yosry Ahmed <yosry.ahmed@linux.dev>,
 	linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org,
 	Sergey Senozhatsky <senozhatsky@chromium.org>
-Subject: [PATCH v8 09/17] zram: rework recompression loop
-Date: Sat, 22 Feb 2025 07:25:40 +0900
-Message-ID: <20250221222958.2225035-10-senozhatsky@chromium.org>
+Subject: [PATCH v8 10/17] zsmalloc: rename pool lock
+Date: Sat, 22 Feb 2025 07:25:41 +0900
+Message-ID: <20250221222958.2225035-11-senozhatsky@chromium.org>
 X-Mailer: git-send-email 2.48.1.601.g30ceb7b040-goog
 In-Reply-To: <20250221222958.2225035-1-senozhatsky@chromium.org>
 References: <20250221222958.2225035-1-senozhatsky@chromium.org>
@@ -93,136 +92,155 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This reworks recompression loop handling:
+The old name comes from the times when the pool did not have
+compaction (defragmentation).  Rename it to ->lock because these
+days it synchronizes not only migration.
 
-- set a rule that stream-put NULLs the stream pointer
-  If the loop returns with a non-NULL stream then it's a
-  successfull recompression, otherwise the stream should
-  always be NULL.
-
-- do not count the number of recompressions
-  Mark object as incompressible as soon as the algorithm
-  with the highest priority failed to compress that object.
-
-- count compression errors as resource usage
-  Even if compression has failed, we still need to bump
-  num_recomp_pages counter.
-
+Reviewed-by: Yosry Ahmed <yosry.ahmed@linux.dev>
 Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
 ---
- drivers/block/zram/zram_drv.c | 53 +++++++++++++----------------------
- 1 file changed, 19 insertions(+), 34 deletions(-)
+ mm/zsmalloc.c | 38 +++++++++++++++++++-------------------
+ 1 file changed, 19 insertions(+), 19 deletions(-)
 
-diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
-index 92908495c904..b96be8576cbc 100644
---- a/drivers/block/zram/zram_drv.c
-+++ b/drivers/block/zram/zram_drv.c
-@@ -1892,9 +1892,8 @@ static int recompress_slot(struct zram *zram, u32 index, struct page *page,
- 	unsigned int comp_len_new;
- 	unsigned int class_index_old;
- 	unsigned int class_index_new;
--	u32 num_recomps = 0;
- 	void *src, *dst;
--	int ret;
-+	int ret = 0;
+diff --git a/mm/zsmalloc.c b/mm/zsmalloc.c
+index 817626a351f8..1424ee73cbb5 100644
+--- a/mm/zsmalloc.c
++++ b/mm/zsmalloc.c
+@@ -18,7 +18,7 @@
+ /*
+  * lock ordering:
+  *	page_lock
+- *	pool->migrate_lock
++ *	pool->lock
+  *	class->lock
+  *	zspage->lock
+  */
+@@ -223,8 +223,8 @@ struct zs_pool {
+ #ifdef CONFIG_COMPACTION
+ 	struct work_struct free_work;
+ #endif
+-	/* protect page/zspage migration */
+-	rwlock_t migrate_lock;
++	/* protect zspage migration/compaction */
++	rwlock_t lock;
+ 	atomic_t compaction_in_progress;
+ };
  
- 	handle_old = zram_get_handle(zram, index);
- 	if (!handle_old)
-@@ -1937,7 +1936,6 @@ static int recompress_slot(struct zram *zram, u32 index, struct page *page,
- 		if (!zram->comps[prio])
- 			continue;
+@@ -1206,7 +1206,7 @@ void *zs_map_object(struct zs_pool *pool, unsigned long handle,
+ 	BUG_ON(in_interrupt());
  
--		num_recomps++;
- 		zstrm = zcomp_stream_get(zram->comps[prio]);
- 		src = kmap_local_page(page);
- 		ret = zcomp_compress(zram->comps[prio], zstrm,
-@@ -1946,7 +1944,8 @@ static int recompress_slot(struct zram *zram, u32 index, struct page *page,
- 
- 		if (ret) {
- 			zcomp_stream_put(zstrm);
--			return ret;
-+			zstrm = NULL;
-+			break;
- 		}
- 
- 		class_index_new = zs_lookup_class_index(zram->mem_pool,
-@@ -1956,6 +1955,7 @@ static int recompress_slot(struct zram *zram, u32 index, struct page *page,
- 		if (class_index_new >= class_index_old ||
- 		    (threshold && comp_len_new >= threshold)) {
- 			zcomp_stream_put(zstrm);
-+			zstrm = NULL;
- 			continue;
- 		}
- 
-@@ -1963,14 +1963,6 @@ static int recompress_slot(struct zram *zram, u32 index, struct page *page,
- 		break;
- 	}
- 
--	/*
--	 * We did not try to recompress, e.g. when we have only one
--	 * secondary algorithm and the page is already recompressed
--	 * using that algorithm
--	 */
--	if (!zstrm)
--		return 0;
--
- 	/*
- 	 * Decrement the limit (if set) on pages we can recompress, even
- 	 * when current recompression was unsuccessful or did not compress
-@@ -1980,38 +1972,31 @@ static int recompress_slot(struct zram *zram, u32 index, struct page *page,
- 	if (*num_recomp_pages)
- 		*num_recomp_pages -= 1;
- 
--	if (class_index_new >= class_index_old) {
-+	/* Compression error */
-+	if (ret)
-+		return ret;
-+
-+	if (!zstrm) {
- 		/*
- 		 * Secondary algorithms failed to re-compress the page
--		 * in a way that would save memory, mark the object as
--		 * incompressible so that we will not try to compress
--		 * it again.
-+		 * in a way that would save memory.
- 		 *
--		 * We need to make sure that all secondary algorithms have
--		 * failed, so we test if the number of recompressions matches
--		 * the number of active secondary algorithms.
-+		 * Mark the object incompressible if the max-priority
-+		 * algorithm couldn't re-compress it.
- 		 */
--		if (num_recomps == zram->num_active_comps - 1)
--			zram_set_flag(zram, index, ZRAM_INCOMPRESSIBLE);
-+		if (prio < zram->num_active_comps)
-+			return 0;
-+		zram_set_flag(zram, index, ZRAM_INCOMPRESSIBLE);
- 		return 0;
- 	}
- 
--	/* Successful recompression but above threshold */
--	if (threshold && comp_len_new >= threshold)
--		return 0;
--
- 	/*
--	 * No direct reclaim (slow path) for handle allocation and no
--	 * re-compression attempt (unlike in zram_write_bvec()) since
--	 * we already have stored that object in zsmalloc. If we cannot
--	 * alloc memory for recompressed object then we bail out and
--	 * simply keep the old (existing) object in zsmalloc.
-+	 * We are holding per-CPU stream mutex and entry lock so better
-+	 * avoid direct reclaim.  Allocation error is not fatal since
-+	 * we still have the old object in the mem_pool.
+ 	/* It guarantees it can get zspage from handle safely */
+-	read_lock(&pool->migrate_lock);
++	read_lock(&pool->lock);
+ 	obj = handle_to_obj(handle);
+ 	obj_to_location(obj, &zpdesc, &obj_idx);
+ 	zspage = get_zspage(zpdesc);
+@@ -1218,7 +1218,7 @@ void *zs_map_object(struct zs_pool *pool, unsigned long handle,
+ 	 * which is smaller granularity.
  	 */
- 	handle_new = zs_malloc(zram->mem_pool, comp_len_new,
--			       __GFP_KSWAPD_RECLAIM |
--			       __GFP_NOWARN |
--			       __GFP_HIGHMEM |
--			       __GFP_MOVABLE);
-+			       GFP_NOWAIT | __GFP_HIGHMEM | __GFP_MOVABLE);
- 	if (IS_ERR_VALUE(handle_new)) {
- 		zcomp_stream_put(zstrm);
- 		return PTR_ERR((void *)handle_new);
+ 	migrate_read_lock(zspage);
+-	read_unlock(&pool->migrate_lock);
++	read_unlock(&pool->lock);
+ 
+ 	class = zspage_class(pool, zspage);
+ 	off = offset_in_page(class->size * obj_idx);
+@@ -1450,16 +1450,16 @@ void zs_free(struct zs_pool *pool, unsigned long handle)
+ 		return;
+ 
+ 	/*
+-	 * The pool->migrate_lock protects the race with zpage's migration
++	 * The pool->lock protects the race with zpage's migration
+ 	 * so it's safe to get the page from handle.
+ 	 */
+-	read_lock(&pool->migrate_lock);
++	read_lock(&pool->lock);
+ 	obj = handle_to_obj(handle);
+ 	obj_to_zpdesc(obj, &f_zpdesc);
+ 	zspage = get_zspage(f_zpdesc);
+ 	class = zspage_class(pool, zspage);
+ 	spin_lock(&class->lock);
+-	read_unlock(&pool->migrate_lock);
++	read_unlock(&pool->lock);
+ 
+ 	class_stat_sub(class, ZS_OBJS_INUSE, 1);
+ 	obj_free(class->size, obj);
+@@ -1796,7 +1796,7 @@ static int zs_page_migrate(struct page *newpage, struct page *page,
+ 	 * The pool migrate_lock protects the race between zpage migration
+ 	 * and zs_free.
+ 	 */
+-	write_lock(&pool->migrate_lock);
++	write_lock(&pool->lock);
+ 	class = zspage_class(pool, zspage);
+ 
+ 	/*
+@@ -1833,7 +1833,7 @@ static int zs_page_migrate(struct page *newpage, struct page *page,
+ 	 * Since we complete the data copy and set up new zspage structure,
+ 	 * it's okay to release migration_lock.
+ 	 */
+-	write_unlock(&pool->migrate_lock);
++	write_unlock(&pool->lock);
+ 	spin_unlock(&class->lock);
+ 	migrate_write_unlock(zspage);
+ 
+@@ -1956,7 +1956,7 @@ static unsigned long __zs_compact(struct zs_pool *pool,
+ 	 * protect the race between zpage migration and zs_free
+ 	 * as well as zpage allocation/free
+ 	 */
+-	write_lock(&pool->migrate_lock);
++	write_lock(&pool->lock);
+ 	spin_lock(&class->lock);
+ 	while (zs_can_compact(class)) {
+ 		int fg;
+@@ -1983,14 +1983,14 @@ static unsigned long __zs_compact(struct zs_pool *pool,
+ 		src_zspage = NULL;
+ 
+ 		if (get_fullness_group(class, dst_zspage) == ZS_INUSE_RATIO_100
+-		    || rwlock_is_contended(&pool->migrate_lock)) {
++		    || rwlock_is_contended(&pool->lock)) {
+ 			putback_zspage(class, dst_zspage);
+ 			dst_zspage = NULL;
+ 
+ 			spin_unlock(&class->lock);
+-			write_unlock(&pool->migrate_lock);
++			write_unlock(&pool->lock);
+ 			cond_resched();
+-			write_lock(&pool->migrate_lock);
++			write_lock(&pool->lock);
+ 			spin_lock(&class->lock);
+ 		}
+ 	}
+@@ -2002,7 +2002,7 @@ static unsigned long __zs_compact(struct zs_pool *pool,
+ 		putback_zspage(class, dst_zspage);
+ 
+ 	spin_unlock(&class->lock);
+-	write_unlock(&pool->migrate_lock);
++	write_unlock(&pool->lock);
+ 
+ 	return pages_freed;
+ }
+@@ -2014,10 +2014,10 @@ unsigned long zs_compact(struct zs_pool *pool)
+ 	unsigned long pages_freed = 0;
+ 
+ 	/*
+-	 * Pool compaction is performed under pool->migrate_lock so it is basically
++	 * Pool compaction is performed under pool->lock so it is basically
+ 	 * single-threaded. Having more than one thread in __zs_compact()
+-	 * will increase pool->migrate_lock contention, which will impact other
+-	 * zsmalloc operations that need pool->migrate_lock.
++	 * will increase pool->lock contention, which will impact other
++	 * zsmalloc operations that need pool->lock.
+ 	 */
+ 	if (atomic_xchg(&pool->compaction_in_progress, 1))
+ 		return 0;
+@@ -2139,7 +2139,7 @@ struct zs_pool *zs_create_pool(const char *name)
+ 		return NULL;
+ 
+ 	init_deferred_free(pool);
+-	rwlock_init(&pool->migrate_lock);
++	rwlock_init(&pool->lock);
+ 	atomic_set(&pool->compaction_in_progress, 0);
+ 
+ 	pool->name = kstrdup(name, GFP_KERNEL);
 -- 
 2.48.1.601.g30ceb7b040-goog
 
