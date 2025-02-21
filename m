@@ -1,123 +1,101 @@
-Return-Path: <linux-kernel+bounces-525070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAF06A3EA6E
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 02:58:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2AA5A3EA78
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 03:00:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8ADC5189F0E0
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 01:58:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 152D017EAF2
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 01:58:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F9BF1C5F39;
-	Fri, 21 Feb 2025 01:58:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BC081CCEE0;
+	Fri, 21 Feb 2025 01:58:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="fWmbGxN+"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="qeXA+tnk"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 567AE70807
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 01:58:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2DCA1C3C08;
+	Fri, 21 Feb 2025 01:58:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740103118; cv=none; b=eBnMNTiEqIQTClgJELfklMb1qsPWVA4CYN16+gE9x2sOetAhIFTy1euqdvH18NbG6fMHI9KHE2E21D3UBKg2ZE2B0HVztZ2q7y73bOqQfgupR3DyWCGlHnyQVNGyz/oFn+5fFkrDnZAYnJOdcCW6W87lTR1w/T1Y8RvPVBEpFa0=
+	t=1740103134; cv=none; b=kr/1ykBoEwfg5BEDue80wQ5lJ0EmF8PSza+4cx58lp3cu5RX6qyD7Bv+60XSPebmZ7nhRClAHkmIMHhc4WhRxN4Zx8ycbq+DAcVBtL/KDAVqoWdv2NLMjLPW77JB5O4Sqg0dPqHdkrtT1UBBhpvXQgbO6E7XU/aQxEE/iWR1uAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740103118; c=relaxed/simple;
-	bh=/riqiRMoWV7AJ4n4S0gjpVmQgAOIKoR3sJopGzAHVI0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XwTVxjiKI4WzT+HMXsCUrymIeB8HNINrmetez6ob60yAsrDnSPjK7QRbBGUKN4tjrxizekn/9PFEUbVm02kpC1cPCjqKN4c2lXjX4av8Br6PfpnEubENYlbgXII+XzxqbY3dEW/aE3GzkwA+6/W9vW/kS05hoaXGxS8tFpDNrEA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=fWmbGxN+; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 025BF40E01A0;
-	Fri, 21 Feb 2025 01:58:30 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id KlF8eqA3UIG5; Fri, 21 Feb 2025 01:58:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1740103105; bh=9pl8mc1+LryrdBQUYpnpwMJchQlk3HW4nhPbnRy/OnE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fWmbGxN+1yA8Ht7WT08Or9Rv113NVICpFGmCyrTzNE2u2AoYcTsLA6ivYjXD+6bkx
-	 RJriWPB+DlKI/Dd1ivBp57HMScPqs+f6bfCzGpXeX4uW3/zEv+9TiQ8DHX96Yg9qAi
-	 fH70I3VmTM0hT2J+FgsgThJJKf891P+12ioxculXYZEVp9sYMRfIBy0aR/JRr2rYob
-	 DgzX56dU9tFnmYDc8+4szqlqoMgQohRourYM2W3pW/qM1I8Puj0B1BhmEK11Br5dy/
-	 8YF5Y98m8NS4ncbJ2hbhRdB/V9aNf+lRhCU7Y7pKfqzbrJ6kERc3oyJK93qfVzhUSW
-	 BQt217wZRlgaIVcuvgtOsNluiLv4Etn2/5WU8NAkaKkVCuW0bSORizETQscSXLYAjU
-	 qHom5jDorBsjfgbITli88oCx1w0Jnl2d7aOWLFqktSHMXUIpGci+YIoOFuRUGR4JmX
-	 Ol0XDhH4sYSqN50oXDL/mkoLPn1B986rts6F8zpQvQ0MH7wfR4Z656oQy7RAQDN88Z
-	 xrfVzUkgP+b/5a9h90yZgL86Wj9eg1fDiEpm3bsgTUa0bURmYw3wqAI09o0Y5wvK6l
-	 MX+ho7hIDHiuir9D/U0mYA6wU17XRdACM+3DzwBSzq2HHbK9qrTXEDGj0EZ5OQFJWc
-	 wUjnXXLNXhPKmZfQfR6SW7s8=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 4CEDB40E0176;
-	Fri, 21 Feb 2025 01:58:08 +0000 (UTC)
-Date: Fri, 21 Feb 2025 02:58:01 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Rik van Riel <riel@surriel.com>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, peterz@infradead.org,
-	dave.hansen@linux.intel.com, zhengqi.arch@bytedance.com,
-	nadav.amit@gmail.com, thomas.lendacky@amd.com, kernel-team@meta.com,
-	linux-mm@kvack.org, akpm@linux-foundation.org, jackmanb@google.com,
-	jannh@google.com, mhklinux@outlook.com, andrew.cooper3@citrix.com,
-	Manali.Shukla@amd.com, Dave Hansen <dave.hansen@intel.com>
-Subject: Re: [PATCH v12 04/16] x86/mm: get INVLPGB count max from CPUID
-Message-ID: <20250221015801.GHZ7fdqaGFEvsG6qW1@fat_crate.local>
-References: <20250221005345.2156760-1-riel@surriel.com>
- <20250221005345.2156760-5-riel@surriel.com>
+	s=arc-20240116; t=1740103134; c=relaxed/simple;
+	bh=YKzB9LlS+hz9zHtYRIJ5VBIMcp4B9hLVUYeSJF2x+4c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GUPS1vWqlt03IZNF7g20dbj1QRxtnuLATjsNkCb3e6+enDTg5yIXQeNt29hobJPf5RgfH4asjTo06C9Ln89S4t/5fsEaJBhEhrgjTkGmm9jT6LibMDHgSVUTLdR3bOuWIQyS1VH/Y0cxA7JzNRJjruurzRXd8Di7HqfxTU3VECk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=qeXA+tnk; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
+	:Subject; bh=8PnzCTyZw6paCch4lbu5zV0UA8a6YCbFLxHKnS85TRs=; b=qeXA+tnkY/r5Sifr
+	hXlECacakS7zd8TnqWIm13DoahDn0sjQkLKbmizrY56EwFyzlqi5aXxwUe5yiL0l77Fil4pRdyEtH
+	srJkfROQQSlIlk/16vUxCiXtYnAVb4LG/qwRcrBf5rmBwgdpj76mB7q+8H/L4xLHtqANlt7tle2uo
+	DDZRCFEgxQGvMpCdHVVoiQBPIf4cSEVHDx5klC0BjLbzSH9FH7gLw4D3z91nLF1pT/b9jbQueX3Pp
+	VM33CYvEu4wum+ycRhLupjUs3FMJTXh0o84zfBf/YMnBzZtKPBw0k9pRyPQOEmIi16cwwUARCQESM
+	csdLdQm4w3stVcbIOQ==;
+Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
+	by mx.treblig.org with esmtp (Exim 4.96)
+	(envelope-from <linux@treblig.org>)
+	id 1tlIJN-00HM47-2y;
+	Fri, 21 Feb 2025 01:58:41 +0000
+From: linux@treblig.org
+To: srinivas.kandagatla@linaro.org
+Cc: corbet@lwn.net,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"Dr. David Alan Gilbert" <linux@treblig.org>
+Subject: [PATCH 0/3] Remove nvmem deadcode
+Date: Fri, 21 Feb 2025 01:58:38 +0000
+Message-ID: <20250221015841.209458-1-linux@treblig.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250221005345.2156760-5-riel@surriel.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Feb 20, 2025 at 07:53:03PM -0500, Rik van Riel wrote:
-> diff --git a/arch/x86/Kconfig.cpu b/arch/x86/Kconfig.cpu
-> index 2a7279d80460..bb6943c21b7f 100644
-> --- a/arch/x86/Kconfig.cpu
-> +++ b/arch/x86/Kconfig.cpu
-> @@ -401,6 +401,10 @@ menuconfig PROCESSOR_SELECT
->  	  This lets you choose what x86 vendor support code your kernel
->  	  will include.
->  
-> +config X86_BROADCAST_TLB_FLUSH
-> +	def_bool y
-> +	depends on CPU_SUP_AMD && 64BIT
-> +
->  config CPU_SUP_INTEL
->  	default y
->  	bool "Support Intel processors" if PROCESSOR_SELECT
-> @@ -431,6 +435,7 @@ config CPU_SUP_CYRIX_32
->  config CPU_SUP_AMD
->  	default y
->  	bool "Support AMD processors" if PROCESSOR_SELECT
-> +	select X86_BROADCAST_TLB_FLUSH
->  	help
->  	  This enables detection, tunings and quirks for AMD processors
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-You missed my comment again. How about you read review feedback more carefully
-please?
+Hi,
+  This series removes some uncalled deadcode in nvmem.
+The third patch probably deserves a bit closer inspection.
 
-CPU_SUP_AMD selects X86_BROADCAST_TLB_FLUSH which depends on CPU_SUP_AMD which
-selects X86_BROADCAST_TLB_FLUSH which depends on CPU_SUP_AMD...
+The first one removes nvmem_device_cell_read/write functions
+that haven't been used in ~10 years.
 
-You need to make up your mind in which way the dependency should be. Certainly
-not circular.
+The second removes nvmem_add/del_cell_table - again this is
+removing uncalled functions; nvmem_add_cell_table is unused
+after the removal of the Davinci machines.
+
+The third one removes the remaining nvmem_cell_table code - including
+a function that's called ( nvmem_add_cells_from_table ) - but
+my reading is that from the previous patch there's no way for this
+function to do anything active any more since the list it walks is
+empty.
+
+Build tested only.
+
+Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+
+
+Dr. David Alan Gilbert (3):
+  nvmem: core: Remove unused nvmem_device_cell_(read|write)
+  nvmem: core: Remove nvmem_(add|del)_cell_table
+  nvmem: core: Remove remains of nvmem_cell_table
+
+ Documentation/driver-api/nvmem.rst |  23 ------
+ drivers/nvmem/core.c               | 126 -----------------------------
+ include/linux/nvmem-consumer.h     |   4 -
+ include/linux/nvmem-provider.h     |  24 ------
+ 4 files changed, 177 deletions(-)
 
 -- 
-Regards/Gruss,
-    Boris.
+2.48.1
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
