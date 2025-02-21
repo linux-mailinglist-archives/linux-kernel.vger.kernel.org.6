@@ -1,88 +1,189 @@
-Return-Path: <linux-kernel+bounces-526666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1C98A401D5
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 22:11:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AB0EA401C6
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 22:07:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B1663BA93B
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 21:07:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35E0E169E38
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 21:07:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ABA6254B10;
-	Fri, 21 Feb 2025 21:06:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6DA8253F1D;
+	Fri, 21 Feb 2025 21:06:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dp60rGrq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC0EE253336;
-	Fri, 21 Feb 2025 21:06:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="WeswjTuN"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94030253F07;
+	Fri, 21 Feb 2025 21:06:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740171988; cv=none; b=p5T1rc2J88RgdclZoLZ6dPbuxrCIc/NI3DPbP3OQgjd5FTCwab8DDNg4xSeUdlKnCfEmma+LiFTEhdgvTLDe9HwTaEeWdNhiQBmRpGXo9KNe0NMDmBaVHbhBnlNR8scwsbsBclFCH8LDF6uOoI+nww/nbohjozeH6eazjLEHuBY=
+	t=1740172001; cv=none; b=EGVQMuLIDr8ecWBZ0MOi1N3HS8fAPc5Y3Hf9tYaHE9efCd2/YTavguiQ/+WIdmcMUKKXQaQb2Nc/rqRByjJUepSay0V4RIx26bHM29QAfdN1fl0yGhek9H4prqWkDsofPR4ainYRtXCz1yi4dPt4dHR4Yl1wzfmK0TcRSNM8miI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740171988; c=relaxed/simple;
-	bh=qmjNEUFgu/ZxCPLIcQrJ7jiCisWI5FZVUdmhNrXSM5s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hG06Ez03niDhp6w2d10Fb0uqlMV0a05PiRDq3b1W4Qwda9lhh1ikOFSwScsRhQhO0imoynsMeItbxRPqeY6i8GDXyENKLGv5slDrSuZ5zyh3/MpEUmouqWvn1VTKgCyJzgR6goHETvG70Za10aGPxlAL1voQpQuavdm1WQA3qkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dp60rGrq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01FC4C4CED6;
-	Fri, 21 Feb 2025 21:06:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740171988;
-	bh=qmjNEUFgu/ZxCPLIcQrJ7jiCisWI5FZVUdmhNrXSM5s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Dp60rGrq6U1l67hpl/CYzbZ3zyyZo6W5wWv3Y/1JEPznaiaiORw56TUo+qaqoP5gu
-	 5RYvlC/SQ7V7N3uh7aTiqHWlUFV6OhPwWoUZFsDPIUtpJWU2eigIr67Zbj1CwBtY3Q
-	 rskyK8M8V18bs8XHHhKRYVcwoAHhufOLrOLN6y+esIrLAyCe9wN8yn5rHnmceSCvNL
-	 /uOZ92pylNx/daZvi33/rEi/TiPYiJUy4bZlAvx5DNCXdbegksVwb/tB2t9+EwdlS7
-	 VD187nIanJ50eG0aZwqOt0c3N3NuEactEAX68WDySsJYrTWi0BJlk16KCINZ5P2X1a
-	 PkXYbEYOTfT/A==
-Date: Fri, 21 Feb 2025 15:06:26 -0600
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Chris Packham <chris.packham@alliedtelesis.co.nz>
-Cc: conor+dt@kernel.org, tsbogend@alpha.franken.de, davem@davemloft.net,
-	pabeni@redhat.com, netdev@vger.kernel.org, kuba@kernel.org,
-	andrew+netdev@lunn.ch, devicetree@vger.kernel.org, lee@kernel.org,
-	linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
-	krzk+dt@kernel.org, edumazet@google.com
-Subject: Re: [RESEND PATCH net-next 2/5] dt-bindings: net: Add switch ports
- and interrupts to RTL9300
-Message-ID: <174017197206.81138.17349230717480144240.robh@kernel.org>
-References: <20250218195216.1034220-1-chris.packham@alliedtelesis.co.nz>
- <20250218195216.1034220-3-chris.packham@alliedtelesis.co.nz>
+	s=arc-20240116; t=1740172001; c=relaxed/simple;
+	bh=FVB5odcTnl6iIyoZpZrtPi71Db2uyEV+wlrjkdu/XdY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=USkUpY6j3CFetwA/flQb+9nl9Ds45GTWf3EbLDiJL8o2AgyDRK11JrJHgGTyl4iv8e+ShvR2IOfX/MT83Fd4qj5Zfpb2PgdRa5PZ3R319GEoyJxPHyfNTlx+8QvqBLo/v7WnviBYq1XYHWheb9c0s8CqlE8Q3o43pzJbpOhfkJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=WeswjTuN; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [10.17.64.59] (unknown [131.107.8.59])
+	by linux.microsoft.com (Postfix) with ESMTPSA id E71A0205367B;
+	Fri, 21 Feb 2025 13:06:38 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com E71A0205367B
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1740171999;
+	bh=FUlp7EisKMHoz+xilvHRinAU2TQZ+x4bdo9N281fpHY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=WeswjTuNzlG4W7eElUmgmU2MU266rObyW3PfV6HWjdXePbZxpzFDg8EiYGFrOooe5
+	 vuf/vXW9Ail2ZrGQXDQnlcXLJGMjzb3XCnLtB4jBljRm+aVg4EXQOxcOR8DNiyEEGy
+	 1+NvYn0GNnuKEqXZY41l+Z4rocZqtw5AooSP98Ps=
+Message-ID: <a8814f0f-3613-4efd-afb2-655a5c0c9f38@linux.microsoft.com>
+Date: Fri, 21 Feb 2025 13:06:37 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250218195216.1034220-3-chris.packham@alliedtelesis.co.nz>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 3/7] ima: kexec: skip IMA segment validation after
+ kexec soft reboot
+To: Mimi Zohar <zohar@linux.ibm.com>, stefanb@linux.ibm.com,
+ roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
+ eric.snowberg@oracle.com, ebiederm@xmission.com, paul@paul-moore.com,
+ code@tyhicks.com, bauermann@kolabnow.com, linux-integrity@vger.kernel.org,
+ kexec@lists.infradead.org, linux-security-module@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
+ James.Bottomley@HansenPartnership.com, bhe@redhat.com, vgoyal@redhat.com,
+ dyoung@redhat.com
+References: <20250218225502.747963-1-chenste@linux.microsoft.com>
+ <20250218225502.747963-4-chenste@linux.microsoft.com>
+ <1883119129dbeeabad1f5239f042a7b920feef0f.camel@linux.ibm.com>
+Content-Language: en-US
+From: steven chen <chenste@linux.microsoft.com>
+In-Reply-To: <1883119129dbeeabad1f5239f042a7b920feef0f.camel@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
+On 2/21/2025 7:41 AM, Mimi Zohar wrote:
+> On Tue, 2025-02-18 at 14:54 -0800, steven chen wrote:
+>> kexec_calculate_store_digests() calculates and stores the digest of the
+>> segment at kexec_file_load syscall where the IMA segment is also
+>> allocated.  With this series, the IMA segment will be updated with the
+>> measurement log at kexec execute stage when soft reboot is initiated.
+>> Therefore, it may fail digest verification in verify_sha256_digest()
+>> after kexec soft reboot into the new kernel. Therefore, the digest
+>> calculation/verification of the IMA segment needs to be skipped.
+>>
+>> Skip the calculating and storing digest of the IMA segment in
+>> kexec_calculate_store_digests() so that it is not added to the
+>> 'purgatory_sha_regions'.
+>>
+>> Since verify_sha256_digest() only verifies 'purgatory_sha_regions',
+>> no change is needed in verify_sha256_digest() in this context.
+>>
+>> With this change, the IMA segment is not included in the digest
+>> calculation, storage, and verification.
+> Basically you're saying because the hash verification will fail, don't include
+> the IMA buffer.  What's missing is the reason for not caring whether the IMA
+> hash is included or not.
+>
+> I understand this is the best we can do without making some major kexec changes.
+>
+>> Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+>> Signed-off-by: steven chen <chenste@linux.microsoft.com>
+>> Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
+> After updating the patch description,
+>
+> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+>
+>> ---
+>>   include/linux/kexec.h              |  3 +++
+>>   kernel/kexec_file.c                | 22 ++++++++++++++++++++++
+>>   security/integrity/ima/ima_kexec.c |  3 +++
+>>   3 files changed, 28 insertions(+)
+>>
+>> diff --git a/include/linux/kexec.h b/include/linux/kexec.h
+>> index 4dbf806bccef..bd554ced9fb2 100644
+>> --- a/include/linux/kexec.h
+>> +++ b/include/linux/kexec.h
+>> @@ -362,6 +362,9 @@ struct kimage {
+>>   
+>>   	phys_addr_t ima_buffer_addr;
+>>   	size_t ima_buffer_size;
+>> +
+>> +	unsigned long ima_segment_index;
+>> +	bool is_ima_segment_index_set;
+>>   #endif
+>>   
+>>   	/* Core ELF header buffer */
+>> diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
+>> index 3eedb8c226ad..606132253c79 100644
+>> --- a/kernel/kexec_file.c
+>> +++ b/kernel/kexec_file.c
+>> @@ -38,6 +38,21 @@ void set_kexec_sig_enforced(void)
+>>   }
+>>   #endif
+>>   
+>> +#ifdef CONFIG_IMA_KEXEC
+>> +static bool check_ima_segment_index(struct kimage *image, int i)
+>> +{
+>> +	if (image->is_ima_segment_index_set && i == image->ima_segment_index)
+>> +		return true;
+>> +	else
+>> +		return false;
+>> +}
+>> +#else
+>> +static bool check_ima_segment_index(struct kimage *image, int i)
+>> +{
+>> +	return false;
+>> +}
+>> +#endif
+>> +
+>>   static int kexec_calculate_store_digests(struct kimage *image);
+>>   
+>>   /* Maximum size in bytes for kernel/initrd files. */
+>> @@ -764,6 +779,13 @@ static int kexec_calculate_store_digests(struct kimage
+>> *image)
+>>   		if (ksegment->kbuf == pi->purgatory_buf)
+>>   			continue;
+>>   
+>> +		/*
+>> +		 * Skip the segment if ima_segment_index is set and matches
+>> +		 * the current index
+>> +		 */
+>> +		if (check_ima_segment_index(image, i))
+>> +			continue;
+>> +
+>>   		ret = crypto_shash_update(desc, ksegment->kbuf,
+>>   					  ksegment->bufsz);
+>>   		if (ret)
+>> diff --git a/security/integrity/ima/ima_kexec.c
+>> b/security/integrity/ima/ima_kexec.c
+>> index 89088f1fa989..704676fa6615 100644
+>> --- a/security/integrity/ima/ima_kexec.c
+>> +++ b/security/integrity/ima/ima_kexec.c
+>> @@ -160,6 +160,7 @@ void ima_add_kexec_buffer(struct kimage *image)
+>>   	kbuf.buffer = kexec_buffer;
+>>   	kbuf.bufsz = kexec_buffer_size;
+>>   	kbuf.memsz = kexec_segment_size;
+>> +	image->is_ima_segment_index_set = false;
+>>   	ret = kexec_add_buffer(&kbuf);
+>>   	if (ret) {
+>>   		pr_err("Error passing over kexec measurement buffer.\n");
+>> @@ -170,6 +171,8 @@ void ima_add_kexec_buffer(struct kimage *image)
+>>   	image->ima_buffer_addr = kbuf.mem;
+>>   	image->ima_buffer_size = kexec_segment_size;
+>>   	image->ima_buffer = kexec_buffer;
+>> +	image->ima_segment_index = image->nr_segments - 1;
+>> +	image->is_ima_segment_index_set = true;
+>>   
+>>   	/*
+>>   	 * kexec owns kexec_buffer after kexec_add_buffer() is called
 
-On Wed, 19 Feb 2025 08:52:13 +1300, Chris Packham wrote:
-> Add bindings for the ethernet-switch and interrupt properties for the
-> RTL9300.
-> 
-> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
-> ---
-> 
-> Notes:
->     This is tecnically v7 of [1] changes from that are:
->     - Use ethernet-switch.yaml#/$defs/ethernet-ports
->     - Enforce "ethernet-ports" be used instead of just "ports"
->     - Add interrupts for the switch block
-> 
->     [1] - https://lore.kernel.org/lkml/20250204030249.1965444-2-chris.packham@alliedtelesis.co.nz/
-> 
->  .../bindings/net/realtek,rtl9301-switch.yaml  | 30 +++++++++++++++++++
->  1 file changed, 30 insertions(+)
-> 
-
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Thanks, Mimi. I will update in next version.
 
 
