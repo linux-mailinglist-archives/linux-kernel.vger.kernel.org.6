@@ -1,130 +1,125 @@
-Return-Path: <linux-kernel+bounces-525564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50FDEA3F163
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 11:07:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA06CA3F172
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 11:09:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 338E117D6FC
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:07:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8A66189BA5D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:09:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2169204F8A;
-	Fri, 21 Feb 2025 10:07:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B5F7204F62;
+	Fri, 21 Feb 2025 10:08:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="pmmMCG9j"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	dkim=pass (1024-bit key) header.d=t12smtp-sign004.email header.i=@t12smtp-sign004.email header.b="JYWW2Grh"
+Received: from mail89.out.titan.email (mail89.out.titan.email [209.209.25.102])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E96C20469D;
-	Fri, 21 Feb 2025 10:07:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 554CB20469D
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 10:08:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.209.25.102
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740132466; cv=none; b=OWbGSzHFWv7YdTH/0rmMQ4b46ZrbijHOR3QLPJAlTXhc3wYpW89owx6B8ftGEwuUD+TmUZszS8qihv/pf4/IjyUxrFg/UG/5vX3MNzzL8ArbzTfkyqUvBwBJWipMmQMBRs72vN5noxrjFpdbVMs/wwiRNuRb04h0nkUO4CiUJ0U=
+	t=1740132530; cv=none; b=eS6zjh4EIRktP2f+nwkWtW2Ivml2sxpcAwvUz+2xbXV+e6RWR9XXQgHiKPPP56nAq19yJSvj6mbLzFvWHjgdTYaLsyLCCwLusOaR6S/crE/dY3mLdOgUvYqMmdGqprWUNgcjWtidWFnZmnkVCI0jtrSxx+REtDDYQm+AHMKr7rs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740132466; c=relaxed/simple;
-	bh=wtNoofFv6KoVXE2Qy2UY/PwELQzz2XofI38+Etocco4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HPvoxdpHZT2mZ1mPox3FOEyhAy0MZtfACn66pn2znT11aKoNayQCVOjApQj5bkygnRFy9Z3BYgf+KllKjdLlOk5BA8KzI+5hHfBkw5xmMV4cx1fam6nDiWyrNdGe+d6/N4OlcVNF25ZREthaIESuejFBBMWuhX7e7vePcBUP20I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=pmmMCG9j; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=W+26npf18RRwsCWtDsEbmc9w9HSuCv1j/NyTX3JxquE=; b=pmmMCG9jXqbiNJJ6GmtbO6FRsX
-	ARRLZAhlhtPCOl5SKYYH4jzI1WMpRYPi6B1VK779IhlgPgm+3uGz6H4K2RPVVjx1umDTQT7ILSz6Q
-	XmtkEsJfEImhk5hZqrVA6r7EYi35xg+iF2SyPsl/HufSuWsG94G+LPV6Fg3438zjO7i/67O7waij3
-	s7Y5zZiwO3U4cbLFzbwFr9ot77cTfKdduSXt+hMQ4A5j2c0TJ8YNNPxy/PLCBHadHN2Ix21ZQL+ic
-	J53yrW+4bSLBNJ9jlGXesT0oS65Idbf8QOmu3v6R5BKtVhbD9u4p25ThBL1hN30pHrUM0MIjzaugN
-	KgsC6gYw==;
-Received: from i53875a87.versanet.de ([83.135.90.135] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1tlPwY-0002cL-4E; Fri, 21 Feb 2025 11:07:38 +0100
-From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
-To: "Rob Herring (Arm)" <robh@kernel.org>,
- Quentin Schulz <foss+kernel@0leil.net>,
- Quentin Schulz <quentin.schulz@cherry.de>
-Cc: Farouk Bouabid <farouk.bouabid@theobroma-systems.com>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-rockchip@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>,
- Quentin Schulz <quentin.schulz@theobroma-systems.com>,
- devicetree@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- stable@vger.kernel.org
-Subject:
- Re: [PATCH 0/5] arm64: dts: rockchip: pinmux fixes and support for 2 adapters
- for Theobroma boards
-Date: Fri, 21 Feb 2025 11:07:37 +0100
-Message-ID: <3771836.RUnXabflUD@diego>
-In-Reply-To: <f9b40055-bcb0-4245-b899-4c7890e81b20@cherry.de>
-References:
- <20250220-ringneck-dtbos-v1-0-25c97f2385e6@cherry.de>
- <174008661935.4046882.3221866764998287397.robh@kernel.org>
- <f9b40055-bcb0-4245-b899-4c7890e81b20@cherry.de>
+	s=arc-20240116; t=1740132530; c=relaxed/simple;
+	bh=p+2rsaQ4FhCWyfKQl3y+ihQwoGzxuywBqGvV8Qy4oro=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aYd4IQhu0DPBnbYsI/c2Wd5EiPfLcgpGf4Xya366Cj1y/eSVkFsSoxZuuaAGBLhkIQ1m35uQ1FR7HJkB9Ed/RCAXuTeeDXTp/mdDFp6pB4b0XRHCjEJbtznJKPE0uAEJUjO4LDsG+NLh68ySP0pDyDd9gvLdhsyRsSMt0wCj3hE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=coly.li; spf=pass smtp.mailfrom=coly.li; dkim=pass (1024-bit key) header.d=t12smtp-sign004.email header.i=@t12smtp-sign004.email header.b=JYWW2Grh; arc=none smtp.client-ip=209.209.25.102
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=coly.li
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=coly.li
+Received: from smtp-out.flockmail.com (localhost [127.0.0.1])
+	by smtp-out.flockmail.com (Postfix) with ESMTP id 6898F140047;
+	Fri, 21 Feb 2025 10:08:48 +0000 (UTC)
+DKIM-Signature: a=rsa-sha256; bh=cqetpmvMD/jN/5sZxj0Bd7e9Bah0FkeGurb936MERnc=;
+	c=relaxed/relaxed; d=t12smtp-sign004.email;
+	h=message-id:references:mime-version:from:cc:subject:to:date:in-reply-to:from:to:cc:subject:date:message-id:in-reply-to:references:reply-to;
+	q=dns/txt; s=titan1; t=1740132528; v=1;
+	b=JYWW2GrhxrD87R/6VDrIuznv0wXZf8RZQe9zr+sTIISV6NXdTYjOutiXUk70VsmWxiGBZ75f
+	JSOQGAG1c9IBCwtHhIbTpRLV+kr/914VH6Adg+XcNwILI0S88RbLgTGjzj6Vr1U9rmkWekwKYoS
+	DAb9B9d42RFRyglmgNlcYs2k=
+Received: from studio.local (unknown [141.11.218.23])
+	by smtp-out.flockmail.com (Postfix) with ESMTPA id 65BF0140108;
+	Fri, 21 Feb 2025 10:08:38 +0000 (UTC)
+Date: Fri, 21 Feb 2025 18:08:36 +0800
+Feedback-ID: :i@coly.li:coly.li:flockmailId
+From: Coly Li <i@coly.li>
+To: Zheng Qixing <zhengqixing@huaweicloud.com>
+Cc: axboe@kernel.dk, song@kernel.org, colyli@kernel.org, 
+	yukuai3@huawei.com, dan.j.williams@intel.com, vishal.l.verma@intel.com, 
+	dave.jiang@intel.com, ira.weiny@intel.com, dlemoal@kernel.org, yanjun.zhu@linux.dev, 
+	kch@nvidia.com, hare@suse.de, zhengqixing@huawei.com, john.g.garry@oracle.com, 
+	geliang@kernel.org, xni@redhat.com, colyli@suse.de, linux-block@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org, nvdimm@lists.linux.dev, 
+	yi.zhang@huawei.com, yangerkun@huawei.com
+Subject: Re: [PATCH 03/12] badblocks: attempt to merge adjacent badblocks
+ during ack_all_badblocks
+Message-ID: <w527neyzlfzjxzhxge2pmip7qxzwrumn5bvztjtuonu3opoyf6@7umwkulb6eeb>
+References: <20250221081109.734170-1-zhengqixing@huaweicloud.com>
+ <20250221081109.734170-4-zhengqixing@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250221081109.734170-4-zhengqixing@huaweicloud.com>
+X-F-Verdict: SPFVALID
+X-Titan-Src-Out: 1740132528291528194.32605.5719148889041607543@prod-use1-smtp-out1003.
+X-CMAE-Score: 0
+X-CMAE-Analysis: v=2.4 cv=bq22BFai c=1 sm=1 tr=0 ts=67b850b0
+	a=USBFZE4A2Ag4MGBBroF6Xg==:117 a=USBFZE4A2Ag4MGBBroF6Xg==:17
+	a=IkcTkHD0fZMA:10 a=CEWIc4RMnpUA:10 a=i0EeH86SAAAA:8 a=VwQbUJbxAAAA:8
+	a=ZuRJGKQMYiGAcWkIlfYA:9 a=QEXdDO2ut3YA:10
+X-Virus-Scanned: ClamAV using ClamSMTP
 
-Hi Quentin,
-
-Am Freitag, 21. Februar 2025, 11:01:44 MEZ schrieb Quentin Schulz:
-> On 2/20/25 10:29 PM, Rob Herring (Arm) wrote:
-> > On Thu, 20 Feb 2025 13:20:09 +0100, Quentin Schulz wrote:
-> I believe this is a false positive due to the node suffix being -gpio? 
-> If I change -gpio suffix to -pin, it doesn't complain anymore.
+On Fri, Feb 21, 2025 at 04:11:00PM +0800, Zheng Qixing wrote:
+> From: Li Nan <linan122@huawei.com>
 > 
-> """
-> diff --git a/arch/arm64/boot/dts/rockchip/px30-ringneck-haikou.dts 
-> b/arch/arm64/boot/dts/rockchip/px30-ringneck-haikou.dts
-> index 08a11e4758413..249e50d64791e 100644
-> --- a/arch/arm64/boot/dts/rockchip/px30-ringneck-haikou.dts
-> +++ b/arch/arm64/boot/dts/rockchip/px30-ringneck-haikou.dts
-> @@ -196,7 +196,7 @@ sd_card_led_pin: sd-card-led-pin {
->   	};
+> If ack and unack badblocks are adjacent, they will not be merged and will
+> remain as two separate badblocks. Even after the bad blocks are written
+> to disk and both become ack, they will still remain as two independent
+> bad blocks. This is not ideal as it wastes the limited space for
+> badblocks. Therefore, during ack_all_badblocks(), attempt to merge
+> badblocks if they are adjacent.
 > 
->   	uart {
-> -		uart5_rts_gpio: uart5-rts-gpio {
-> +		uart5_rts_pin: uart5-rts-pin {
->   			rockchip,pins =
->   			  <0 RK_PB5 RK_FUNC_GPIO &pcfg_pull_up>;
->   		};
-> @@ -234,7 +234,7 @@ &uart0 {
->   };
+> Fixes: aa511ff8218b ("badblocks: switch to the improved badblock handling code")
+> Signed-off-by: Li Nan <linan122@huawei.com>
+
+Looks good to me.
+
+Acked-by: Coly Li <colyli@kernel.org>
+
+Thanks.
+
+> ---
+>  block/badblocks.c | 5 +++++
+>  1 file changed, 5 insertions(+)
 > 
->   &uart5 {
-> -	pinctrl-0 = <&uart5_xfer &uart5_rts_gpio>;
-> +	pinctrl-0 = <&uart5_xfer &uart5_rts_pin>;
->   	rts-gpios = <&gpio0 RK_PB5 GPIO_ACTIVE_HIGH>;
->   	status = "okay";
->   };
-> """
+> diff --git a/block/badblocks.c b/block/badblocks.c
+> index f069c93e986d..ad8652fbe1c8 100644
+> --- a/block/badblocks.c
+> +++ b/block/badblocks.c
+> @@ -1491,6 +1491,11 @@ void ack_all_badblocks(struct badblocks *bb)
+>  				p[i] = BB_MAKE(start, len, 1);
+>  			}
+>  		}
+> +
+> +		for (i = 0; i < bb->count ; i++)
+> +			while (try_adjacent_combine(bb, i))
+> +				;
+> +
+>  		bb->unacked_exist = 0;
+>  	}
+>  	write_sequnlock_irq(&bb->lock);
+> -- 
+> 2.39.2
 > 
-> @Heiko, I guess you would like a warning-less DT :) I can send a v2 with 
-> that change then if that works for you? I can wait a few days for other 
-> reviews :)
 
-that would be great - the v2.
-
-We already had patches addressing the -gpio thing for other boards in the
-past, so going to "-pin" is the preferred solution here.
-
-Also, your patches are totally specific to Theobroma-boards, so just send
-your v2 at your convenience - I don't really expect that much additional
-outside review comments ;-) .
-
-
-Heiko
-
-
+-- 
+Coly Li
 
