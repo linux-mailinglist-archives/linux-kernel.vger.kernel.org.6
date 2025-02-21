@@ -1,74 +1,78 @@
-Return-Path: <linux-kernel+bounces-525039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02607A3EA14
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 02:32:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A92A0A3EA12
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 02:32:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3556A19C5A99
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 01:33:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 947BB19C5A98
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 01:32:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB81B70807;
-	Fri, 21 Feb 2025 01:32:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4D90137932;
+	Fri, 21 Feb 2025 01:32:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nT0PHOXY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FRlF11im"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 518308821;
-	Fri, 21 Feb 2025 01:32:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19CF98821;
+	Fri, 21 Feb 2025 01:32:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740101563; cv=none; b=q7n9i5sDSJaXlpDnrSTIj2J/sxG4IzOGgqE0e0qGxEpegIqEDvApTMe8l6hJpKsu2LmlmY/K5iy9qN5ji4A7MgNi9WJqyoQ80lhXp1Vi7u+SVDYgAldBtlhmOechc2TqTzsjfxG88QaqJ626tyBFOogi1bn7CXuir9LyCbBm3MA=
+	t=1740101548; cv=none; b=uAUQ8wKfVZvS3cepKDgyqW9N/H6n5QiToF5qAcfEHeE4T9FAD8R0Bz7CCcvAE5Ho4hrimFi8pIukUhjzbCVDDF1kq2JWEAwar1oeK0xtYKiccWXkipdV+naYUsJF4Vvl7LyjxUYqFYnzo3wLngb5gFLVVPTs+1+1JHUDFU++M4E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740101563; c=relaxed/simple;
-	bh=bICxg/KZ8fYAMVBO7f9Pw5O4sSUhtSMXVxKr+6OEke0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R7G0/t2KjGIcBL+FRXzR6AOOQ2asSm+eppLXD/jfrDu0WjElD97QLNLLmlhGqrcX8jbUKQwCBKnCcg7RCM8e5TH0cRHqKY9+wTv6BvItxJzUwC+wUgnFublMJgGKrbXIxck6l5j/uSadY/Jaoe2pA1gETx6Nyd4sYnZp9OG866w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nT0PHOXY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A72EAC4CEE9;
-	Fri, 21 Feb 2025 01:32:38 +0000 (UTC)
+	s=arc-20240116; t=1740101548; c=relaxed/simple;
+	bh=sHDFzEYghSBSVnShTOcQ89fQRVPyj55hm+u8IeVIL4k=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=Wbnv8+kRWm+YFWrEoCdu/FAo9ajSaKeusBOAizK7MdR6qn20Wv+utbQKmQm/R9aEEGg44wYA/TEByOk3tJRsSawP9MGIgI/+b6pMp9hhaQAQ7+fGZjbaB19XP3j05rj44U5DYKQyjpDDNk2t85Wg8dQ5kmcHwHm7zvmiHWIfE94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FRlF11im; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7062C4CED1;
+	Fri, 21 Feb 2025 01:32:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740101560;
-	bh=bICxg/KZ8fYAMVBO7f9Pw5O4sSUhtSMXVxKr+6OEke0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nT0PHOXYW4fFKJfrXebiDQN/gNspiEu8rfpQ431j/hXlmcAzXpoC/T4549r2ijOn/
-	 r1VpWu4qkSIQXoyrDINIZtisKlnx4hqURQH71sznOPOEt/McjJ4tjSBHsoR7yqp8g8
-	 wEiaRKbF1H/mzUTgI70N60dX5iSRWMHHenunxzASkMLrdBR7JvkOKIwgyFCRbA6uVb
-	 13fjXF6vWI4r3naKLrFs2pu7pBxQLYbvtRIJXZjLynnUbggWvvft3qD7hM46jz5txo
-	 P+dillbyM6c4ESWh20jUBhrF6pF8yjBy8mn5FCTbR6j2sB+1/Bj7B8UsbNAR3sol3H
-	 TzVUgzclf3VZQ==
-Date: Fri, 21 Feb 2025 01:32:36 +0000
-From: Tzung-Bi Shih <tzungbi@kernel.org>
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: Cheng-Yi Chiang <cychiang@chromium.org>,
-	Guenter Roeck <groeck@chromium.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>, Benson Leung <bleung@chromium.org>,
-	chrome-platform@lists.linux.dev, linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ASoC: cros_ec_codec: Use str_enable_disable() helper in
- wov_enable_put()
-Message-ID: <Z7fXtFWlci-c52K-@google.com>
-References: <20250220120100.1530-2-thorsten.blum@linux.dev>
+	s=k20201202; t=1740101548;
+	bh=sHDFzEYghSBSVnShTOcQ89fQRVPyj55hm+u8IeVIL4k=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=FRlF11imUfrkiu0kVqBv3szHydxXoVcZ7Tktb1NXY8MCf3IaBIaK7+atuEwAra1G9
+	 2C9G2sLOsjNYtJe33+2ClrF2XPk6j0cIorZYUwwtLdLlmX8JpXLr/UWemDexAJi8yg
+	 fxday3q3ezy4qEkGtT6Xz70Y4j0Lm65CVxltMs92we/oKswGX4ke4pJcAxpVpCU3aR
+	 ojE6A9sPez0LgxngsVnhhGzCCwOcuowl02RTknV+3fbBGQN7MrfRYgMIuGlVww9DxV
+	 hhAsMQ0ZlAbkLobsunwteKIzg8mqso35aM2pCHjZVVNRWkiJAuhsPlO0LMMtcBv9Dc
+	 gC9m61sKRGPdQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAFCF380CEE2;
+	Fri, 21 Feb 2025 01:32:59 +0000 (UTC)
+Subject: Re: [GIT PULL] bpf for v6.14-rc4
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20250220225331.46335-1-daniel@iogearbox.net>
+References: <20250220225331.46335-1-daniel@iogearbox.net>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20250220225331.46335-1-daniel@iogearbox.net>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf.git tags/bpf-fixes
+X-PR-Tracked-Commit-Id: dbf7cc560007c8624ba42bbda369eca2973fc2da
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 319fc77f8f45a1b3dba15b0cc1a869778fd222f7
+Message-Id: <174010157858.1537942.12356827966825077517.pr-tracker-bot@kernel.org>
+Date: Fri, 21 Feb 2025 01:32:58 +0000
+To: Daniel Borkmann <daniel@iogearbox.net>
+Cc: torvalds@linux-foundation.org, bpf@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, alexei.starovoitov@gmail.com, andrii@kernel.org, daniel@iogearbox.net, martin.lau@kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250220120100.1530-2-thorsten.blum@linux.dev>
 
-On Thu, Feb 20, 2025 at 01:01:01PM +0100, Thorsten Blum wrote:
-> Remove hard-coded strings by using the str_enable_disable() helper
-> function.
-> 
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+The pull request you sent on Thu, 20 Feb 2025 23:53:31 +0100:
 
-Acked-by: Tzung-Bi Shih <tzungbi@kernel.org>
+> https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf.git tags/bpf-fixes
+
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/319fc77f8f45a1b3dba15b0cc1a869778fd222f7
+
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
