@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-525091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525092-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9502BA3EAA9
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 03:17:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20175A3EAB2
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 03:20:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D1DA423739
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 02:17:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9AB623BD1A9
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 02:18:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B6FF1DC07D;
-	Fri, 21 Feb 2025 02:16:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 056501E500C;
+	Fri, 21 Feb 2025 02:16:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HF3BW8Zh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aqypkQ2n"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A53531D9A5F;
-	Fri, 21 Feb 2025 02:16:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EC551DF751;
+	Fri, 21 Feb 2025 02:16:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740104214; cv=none; b=c1N25lxs0HiLVbmtWLRbo/BaGp++igTaYhTAAO8Kde3fOIEiqFvYt2DGLTNxih4HrfqMMsJqxKl8/SnkTpku339iLTAfFQ41F6pLjnsQp9CFPKVHUd/P4+93VUNvh35VJHDNHqVURN1XnTNlsSQ4xUPLtAyXPpXngVMHAgINtTk=
+	t=1740104217; cv=none; b=CphW2KbNH0oIM2/IT2w5X3CQb7OtEEKXOBpLIEB+mC5/0HYqlHGClssdbUmmA2ur53yL/9saTrk7Y1rBSj979cRxxL8Hi8oVzphL7gXpXu9JJN/QLYrY9D2CpXTnAxteCM/YHRUmkKAAzJgtw0xsZUase6WpPBsxLHqpY1KY7hM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740104214; c=relaxed/simple;
-	bh=IIZUhe4iqiKE9td0sdnXsAYcdEj5Wq5rgkzqXAp2Gfk=;
+	s=arc-20240116; t=1740104217; c=relaxed/simple;
+	bh=7a8knPkOhFr6cHhvuytLC0QSHkxRP+zRqx4LPcIjRNQ=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=GUGZ0hrCzSfwVw59nqE3bAX/w0x3jSxtEBZOiAXj9nbs7zfLgaThQhD/Wgakudy2/JsXaZ5VhxRduR3nDHaodxmbD83ndRQqq2IBWM+ul0cYBnNwbikY6YGdp83AUXe98nwbZAl/G/c0zHPqA0eV/7F1XJceCdY+9na16GycfxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HF3BW8Zh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23AABC4CEE8;
-	Fri, 21 Feb 2025 02:16:54 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=B0OKY7qvRWobaNkLFH5c30TWpEbYDQIAxyCn8ilQ/TKVcdxozZwWCldca+vCvo28jg1mPHbD/ES567aCISCuu8jlFgAs8yLZ4BrpUNVPCsNC6kMWEffFC773h7CgPgmQcrzxrQM77IS/faiwdbU26+2UtNfk6tpRET62tt9KeAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aqypkQ2n; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E14E3C4CED1;
+	Fri, 21 Feb 2025 02:16:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740104214;
-	bh=IIZUhe4iqiKE9td0sdnXsAYcdEj5Wq5rgkzqXAp2Gfk=;
+	s=k20201202; t=1740104216;
+	bh=7a8knPkOhFr6cHhvuytLC0QSHkxRP+zRqx4LPcIjRNQ=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=HF3BW8ZhHh6fHsWG+NqTt3xEhjZlxjF+f8Wo7ui89XUWw5tzxafHCO03osgZiicIS
-	 1iUAHsPpxjuSZ1Cf1G/6xOwJ6Tyw2xs0I5Kqu3e1cdvc3xxkw0qjgBZQSJTh10UUP/
-	 ztaFTZiEjOFp0YUBkzr89NBXlrDzGKVs514xSwdDlzI7e1DttorFz+9NPAqzoc9kHl
-	 YbSKrUKxaBX3bGyXJaeOoI/cjNcrmnpcTDfv22LU26oiok3xoabArdyC+tvBpC48Lx
-	 UTKyPzOV8/F0dJ18BUsAqrk1/+YlasOB2lkCkOQ7az1ahzBCWdl+W87yK+x3R3b7qa
-	 1QJ9rln0IMD8g==
+	b=aqypkQ2nglW/Va73AUqKnBjrOjnm/zabgempsOuSySmALNrf81KD+YKOSPxbTX2/5
+	 CWkX81xtdaf8L0pBlDPKT4QoIjoPJWG5oAs2bwagT3PzlEhVbTHsycnFMmZqDiwqsp
+	 LXi3+t6b22OkNoSqt6dMM2ml28/ykyo8Wm+9dkBF02q+r8yUXV9Al9/6B/ymXkJ58S
+	 W6volLwmelA00cSIh0Mr1r0V03leknnQ2dl07gz24BZfIUPjYtT2LDMAQ1SDoE3Wzc
+	 SmP32G7DKy2oED7uX54EkNOTT8k1L8N9Tn9HsmQ+SSfItlwJ+4YgqC9zBpbgjvjaMc
+	 F2I/ZFimY7iTQ==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33BF23806641;
-	Fri, 21 Feb 2025 02:17:26 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAFB23806641;
+	Fri, 21 Feb 2025 02:17:28 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,19 +51,19 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] [net-next v2] octeontx2: hide unused label
+Subject: Re: [PATCH net v2] net: phy: qt2025: Fix hardware revision check
+ comment
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <174010424499.1545236.3393470473825318769.git-patchwork-notify@kernel.org>
-Date: Fri, 21 Feb 2025 02:17:24 +0000
-References: <20250219162239.1376865-1-arnd@kernel.org>
-In-Reply-To: <20250219162239.1376865-1-arnd@kernel.org>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: sgoutham@marvell.com, gakula@marvell.com, sbhatta@marvell.com,
- hkelam@marvell.com, bbhushan2@marvell.com, arnd@arndb.de,
- andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, sumang@marvell.com,
- saikrishnag@marvell.com, ndabilpuram@marvell.com, netdev@vger.kernel.org,
+ <174010424774.1545236.14600610160946307263.git-patchwork-notify@kernel.org>
+Date: Fri, 21 Feb 2025 02:17:27 +0000
+References: <20250219-qt2025-comment-fix-v2-1-029f67696516@posteo.net>
+In-Reply-To: <20250219-qt2025-comment-fix-v2-1-029f67696516@posteo.net>
+To: Charalampos Mitrodimas <charmitro@posteo.net>
+Cc: fujita.tomonori@gmail.com, tmgross@umich.edu, andrew@lunn.ch,
+ hkallweit1@gmail.com, linux@armlinux.org.uk, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ netdev@vger.kernel.org, rust-for-linux@vger.kernel.org,
  linux-kernel@vger.kernel.org
 
 Hello:
@@ -71,22 +71,20 @@ Hello:
 This patch was applied to netdev/net-next.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Wed, 19 Feb 2025 17:21:14 +0100 you wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
+On Wed, 19 Feb 2025 12:41:55 +0000 you wrote:
+> Correct the hardware revision check comment in the QT2025 driver. The
+> revision value was documented as 0x3b instead of the correct 0xb3,
+> which matches the actual comparison logic in the code.
 > 
-> A previous patch introduces a build-time warning when CONFIG_DCB
-> is disabled:
-> 
-> drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c: In function 'otx2_probe':
-> drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c:3217:1: error: label 'err_free_zc_bmap' defined but not used [-Werror=unused-label]
-> drivers/net/ethernet/marvell/octeontx2/nic/otx2_vf.c: In function 'otx2vf_probe':
-> drivers/net/ethernet/marvell/octeontx2/nic/otx2_vf.c:740:1: error: label 'err_free_zc_bmap' defined but not used [-Werror=unused-label]
+> Fixes: fd3eaad826da ("net: phy: add Applied Micro QT2025 PHY driver")
+> Reviewed-by: FUJITA Tomonori <fujita.tomonori@gmail.com>
+> Signed-off-by: Charalampos Mitrodimas <charmitro@posteo.net>
 > 
 > [...]
 
 Here is the summary with links:
-  - [net-next,v2] octeontx2: hide unused label
-    https://git.kernel.org/netdev/net-next/c/ca57d1c56f40
+  - [net,v2] net: phy: qt2025: Fix hardware revision check comment
+    https://git.kernel.org/netdev/net-next/c/8279a8dacf9f
 
 You are awesome, thank you!
 -- 
