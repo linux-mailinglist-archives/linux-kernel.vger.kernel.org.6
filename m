@@ -1,92 +1,150 @@
-Return-Path: <linux-kernel+bounces-525424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBA28A3EFC6
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:15:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99C50A3EFBE
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:15:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D85D63BF90A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:13:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7F11188939A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:15:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FDFA2040AD;
-	Fri, 21 Feb 2025 09:12:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E26412036E1;
+	Fri, 21 Feb 2025 09:14:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eOvrXnia"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iT8H/NJ9"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D65E203718;
-	Fri, 21 Feb 2025 09:12:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47E9F1E9B21;
+	Fri, 21 Feb 2025 09:14:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740129177; cv=none; b=HKOr7PpwU2HYA7aUsQ4ZM0b32T0gvwopFynlT9iPrZ1PH5Vx1JcspNovuOOf9VMCwOBC1beCWQPDJklVSzK3ogI/2zBfGozQJJuohSGlzbj6985cMlkOJ2US0cPFQwvbYNj5fcmqJ0T2rLBMliV5dzQRz7WKY3dSptrv9bSipIw=
+	t=1740129298; cv=none; b=XfBrRdRoZIiP5c7u0HbPsWa8c1D/JTsWTZRXGaYsvo2Z2SGk26tw8ogKjYVAvjGRDiT+l9iGezWaP1Or51EMJ4yAJg+j2b5Xw3Rz1prYxAVRkxLNda3m3KcDEDyrD+ymf6FUbgjV28lT8PMxC/aKCEuPD611nEAULbH0FQWKvzQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740129177; c=relaxed/simple;
-	bh=mGyruGLf48W9PdHCU/1T2pGmF4R+E3nW6UeeBVAtmrA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CVOTsU541qMwKuM2NFKASCok2xXBFINj1RVeIyfR6rq0JRLmUci+NiNiz2c2y6ztVi/xLRSleEDkhiCEzcC3F0meMubgQMCkvnWGAgW5Jb5dc2TvELLlh2grclVHyJjcRrKfkIMx0c3LWaz7R25lbine976jhUhOOCrIqJqMXnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eOvrXnia; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CF0DC4CED6;
-	Fri, 21 Feb 2025 09:12:56 +0000 (UTC)
+	s=arc-20240116; t=1740129298; c=relaxed/simple;
+	bh=FPSnej4gRORvz9fIoO0ZHKVoxlk58vTwK5PRU598Dfk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Uzm1fpBeFmu4MswTMeLXXS/mMpBXtG0DMyxHRso7ftBh4WtNcOiy3syLwQbmc4CORORE1oYVleoUY84P3azMh0VeKwp1gtUIsRFQzS5b5zq8I9ZQ07+XuvzFz46Me2dtiqZTFBdMbFoaVZuRgvhgvchCXzZznDqIZJoQ1MexEGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iT8H/NJ9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4E32C4CEE7;
+	Fri, 21 Feb 2025 09:14:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740129177;
-	bh=mGyruGLf48W9PdHCU/1T2pGmF4R+E3nW6UeeBVAtmrA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eOvrXniaMi5ISUyFw5P3LDYA3GLaau6Z0hBefRURq22U28Gtx89/qJZqaKQAlFjFn
-	 NzsqPEeTOS/uB//GvmU2vykTyWBtxHH0fzQMsL9fpmSdqgr4kiX/qreqMIQdIsEilE
-	 0gpESbJ1rO+tUsJYxEIkKHiuweHLkPPSQo9UZ7D/Rix6NDr7pNTY5HlzlpDk7+bwe4
-	 2dmjKx7HrIYGyUgRWzAwCM31jwcf2L3OScZDa+jKwqi2TiloIutJDvIHu/s7Pw/cQ1
-	 rp1f+v5OPY28kaIS5uiLSkMMIqMDOSRqRNEAxfOYqZ67w/rjNERHsYnAN7zXJQKwhu
-	 n0zmklCfvEevQ==
-Date: Fri, 21 Feb 2025 10:12:54 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Michal Wilczynski <m.wilczynski@samsung.com>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, drew@pdp7.com, guoren@kernel.org, 
-	wefu@redhat.com, jassisinghbrar@gmail.com, paul.walmsley@sifive.com, 
-	palmer@dabbelt.com, aou@eecs.berkeley.edu, frank.binns@imgtec.com, 
-	matt.coster@imgtec.com, maarten.lankhorst@linux.intel.com, mripard@kernel.org, 
-	tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, ulf.hansson@linaro.org, 
-	jszhang@kernel.org, p.zabel@pengutronix.de, m.szyprowski@samsung.com, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, dri-devel@lists.freedesktop.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH v5 00/21] Enable drm/imagination BXM-4-64 Support for
- LicheePi 4A
-Message-ID: <20250221-eminent-squirrel-of-honor-dee80d@krzk-bin>
-References: <CGME20250219140249eucas1p1291eb86c932373c847a3314ae54789d5@eucas1p1.samsung.com>
- <20250219140239.1378758-1-m.wilczynski@samsung.com>
+	s=k20201202; t=1740129297;
+	bh=FPSnej4gRORvz9fIoO0ZHKVoxlk58vTwK5PRU598Dfk=;
+	h=From:To:Cc:Subject:Date:From;
+	b=iT8H/NJ9b3Nb0+G0ar4ucq4X7ucegkJRj4HYn1Urba6EsbH0WMjy/Ivi1CXS1IoyE
+	 /wumnkPZYHrIDSfMbfw3e/AHfFwh3Fk87Tvhg2/CGEkQVqy03Be90x6ObhnxiBbLeF
+	 V1qASkjq2K8SqczFy3H1vwxp2iKN6Ax96ikLus0a3LbvDFPo6GRQOtPDzf+OJlo1oJ
+	 mYhic2hQlq1YPJOdkpdLySZfeIVeOf3TiTEe3JZC/SPnX+ffz8ufV2K5nEr83sSaT/
+	 UTeQJBSbAemajlSfDYgQMWOMyD5J7/8Wb35dYDOJ36RLSNmHdVl0i1Vr/WyFzUXp/0
+	 O3RAiCLqSdcKw==
+From: Michael Walle <mwalle@kernel.org>
+To: Nishanth Menon <nm@ti.com>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Tero Kristo <kristo@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Jared McArthur <j-mcarthur@ti.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	Michael Walle <mwalle@kernel.org>
+Subject: [PATCH 1/2] arm64: dts: ti: k3-am62p: fix pinctrl settings
+Date: Fri, 21 Feb 2025 10:14:46 +0100
+Message-Id: <20250221091447.595199-1-mwalle@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250219140239.1378758-1-m.wilczynski@samsung.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Feb 19, 2025 at 03:02:18PM +0100, Michal Wilczynski wrote:
-> The LicheePi 4A board, featuring the T-HEAD TH1520 SoC, includes an Imagination
-> Technologies BXM-4-64 GPU. Initial support for this GPU was provided through a
-> downstream driver [1]. Recently, efforts have been made to upstream support for
-> the Rogue family GPUs, which the BXM-4-64 is part of [2].
-> 
-> While the initial upstream driver focused on the AXE-1-16 GPU, newer patches
-> have introduced support for the BXS-4-64 GPU [3]. The modern upstream
-> drm/imagination driver is expected to support the BXM-4-64 as well [4][5]. As
-> this support is being developed, it's crucial to upstream the necessary glue
-> code including clock and power-domain drivers so they're ready for integration
-> with the drm/imagination driver.
-> 
+It appears that pinctrl-single is misused on this SoC to control both
+the mux and the input and output and bias settings. This results in
+non-working pinctrl configurations for GPIOs within the device tree.
 
-This is v5 of big patchset which became huge. I understand you did like
-that for v1 which was RFC. But it stopped being RFC.
+This is what happens:
+ (1) During startup the pinctrl settings are applied according to the
+     device tree. I.e. the pin is configured as output and with
+     pull-ups enabled.
+ (2) During startup a device driver requests a GPIO.
+ (3) pinctrl-single is applying the default GPIO setting according to
+     the pinctrl-single,gpio-range property.
 
-Split your patchset, keeping versioning and changelog, per subsystem.
+This would work as expected if the pinctrl-single is only controlling
+the function mux, but it also controls the input/output buffer enable,
+the pull-up and pull-down settings etc (pinctrl-single,function-mask
+covers the entire pad setting instead of just the mux field).
 
-Best regards,
-Krzysztof
+Remove the pinctrl-single,gpio-range property, so that no settings are
+applied during a gpio_request() call.
+
+Fixes: d72d73a44c3c ("arm64: dts: ti: k3-am62p: Add gpio-ranges properties")
+Signed-off-by: Michael Walle <mwalle@kernel.org>
+---
+
+Maybe one could also switch the pinctrl-single to a pinconf-single node
+which is able to control all the bias settings and restrict
+"pinctrl-single,function-mask" to just the actual function. Not
+sure.
+
+ .../boot/dts/ti/k3-am62p-j722s-common-mcu.dtsi     |  8 --------
+ arch/arm64/boot/dts/ti/k3-am62p-main.dtsi          | 14 --------------
+ 2 files changed, 22 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/ti/k3-am62p-j722s-common-mcu.dtsi b/arch/arm64/boot/dts/ti/k3-am62p-j722s-common-mcu.dtsi
+index b33aff0d65c9..bd6a00d13aea 100644
+--- a/arch/arm64/boot/dts/ti/k3-am62p-j722s-common-mcu.dtsi
++++ b/arch/arm64/boot/dts/ti/k3-am62p-j722s-common-mcu.dtsi
+@@ -12,15 +12,7 @@ mcu_pmx0: pinctrl@4084000 {
+ 		#pinctrl-cells = <1>;
+ 		pinctrl-single,register-width = <32>;
+ 		pinctrl-single,function-mask = <0xffffffff>;
+-		pinctrl-single,gpio-range =
+-			<&mcu_pmx_range 0 21 PIN_GPIO_RANGE_IOPAD>,
+-			<&mcu_pmx_range 23 1 PIN_GPIO_RANGE_IOPAD>,
+-			<&mcu_pmx_range 32 2 PIN_GPIO_RANGE_IOPAD>;
+ 		bootph-all;
+-
+-		mcu_pmx_range: gpio-range {
+-			#pinctrl-single,gpio-range-cells = <3>;
+-		};
+ 	};
+ 
+ 	mcu_esm: esm@4100000 {
+diff --git a/arch/arm64/boot/dts/ti/k3-am62p-main.dtsi b/arch/arm64/boot/dts/ti/k3-am62p-main.dtsi
+index 420c77c8e9e5..0a888392137c 100644
+--- a/arch/arm64/boot/dts/ti/k3-am62p-main.dtsi
++++ b/arch/arm64/boot/dts/ti/k3-am62p-main.dtsi
+@@ -42,20 +42,6 @@ &inta_main_dmss {
+ 	ti,interrupt-ranges = <5 69 35>;
+ };
+ 
+-&main_pmx0 {
+-	pinctrl-single,gpio-range =
+-		<&main_pmx0_range 0 32 PIN_GPIO_RANGE_IOPAD>,
+-		<&main_pmx0_range 33 38 PIN_GPIO_RANGE_IOPAD>,
+-		<&main_pmx0_range 72 22 PIN_GPIO_RANGE_IOPAD>,
+-		<&main_pmx0_range 137 5 PIN_GPIO_RANGE_IOPAD>,
+-		<&main_pmx0_range 143 3 PIN_GPIO_RANGE_IOPAD>,
+-		<&main_pmx0_range 149 2 PIN_GPIO_RANGE_IOPAD>;
+-
+-	main_pmx0_range: gpio-range {
+-		#pinctrl-single,gpio-range-cells = <3>;
+-	};
+-};
+-
+ &main_gpio0 {
+ 	gpio-ranges = <&main_pmx0 0 0 32>, <&main_pmx0 32 33 38>,
+ 			<&main_pmx0 70 72 22>;
+-- 
+2.39.5
 
 
