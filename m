@@ -1,157 +1,143 @@
-Return-Path: <linux-kernel+bounces-525748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE06AA3F434
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 13:27:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFD57A3F448
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 13:29:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3BA53B22DD
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 12:27:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D20F189F0A4
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 12:29:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BB2820AF84;
-	Fri, 21 Feb 2025 12:27:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65E9E20AF89;
+	Fri, 21 Feb 2025 12:29:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KDWs/cKw"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5AE5209F2E;
-	Fri, 21 Feb 2025 12:27:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B779B209F2E;
+	Fri, 21 Feb 2025 12:29:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740140841; cv=none; b=dqBhHsbBvEtnhlBJ0k8Y+PQEDvw7HUujpxx0Qgyol9+oSAS9GerwZY+KiO9q4tIYWL2XIK2t+2foaKDx5DX71AnoOoXreOGxZuROjlTtxCRwDm7xBJ9qSCNRboafeNry25/bOLfUXxZhJpfLoeiuuOxSbFkUfrncDbGiX/TDGHo=
+	t=1740140969; cv=none; b=evcW6eoQacqHIfdovvbSx/ogs11yoktM+hE2HbbAc+o6BtJfR0V8p7VOJvKMVGoO3KvvxQp/8rsASGZjsdlCgHcLvbfNlehDuZrP/PYpYnQCMfz6U3i3A3+LOfvHf4p5nPvcKN/F9X1xfeKBt+ei6SsBWW0rJvy/x2/NLzvAPvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740140841; c=relaxed/simple;
-	bh=lZoHxOGcfy3q2OL6Eli0jg/KBp4T/ELGKhLw5xt4kgw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WBVTHE6DwwKyT+7iyDCNBQ9dMy2RM+wCOvcb9YidcRp3FM09pHEP50rh4IwfCAwRn8EtstbEE+tTgLvGlnOdJnW9RcXPKcoq8Ba7JkIr15ovAh8nP5aIxGceNn8QQ6Gbni+JJrjS5vJ4VMn15DcplIywQ53xURRCv8TqT7kl4io=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D893DC4CED6;
-	Fri, 21 Feb 2025 12:27:18 +0000 (UTC)
-Message-ID: <310e5f92-e4d9-4127-afff-9566ba8a075e@xs4all.nl>
-Date: Fri, 21 Feb 2025 13:27:17 +0100
+	s=arc-20240116; t=1740140969; c=relaxed/simple;
+	bh=yeXSTli4MjZbx7FP0/Y3On8xKZiLQ1Wgmzdq+wGSUmg=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=WgP9aFuupVe7F01CWmTJ3bClrcf4zG1hgY6KeBP+GDZO6IzaKssaxFNZA45u71RqcNIm3MOfR8fKJDD6fh/HemS/uXeH8mQ3zUrj8yne6oOUfleHlG9lu0TyfdPJNMfd7B3ouu23Y/+WM7Y3+ttRDegOvbeb+0ARmJ2hxh8Bvkk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KDWs/cKw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E56EC4CEDD;
+	Fri, 21 Feb 2025 12:29:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740140969;
+	bh=yeXSTli4MjZbx7FP0/Y3On8xKZiLQ1Wgmzdq+wGSUmg=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=KDWs/cKwawUW6RUJpFTguLvs6ax6RrAFU9bAFB2Om9yvjH2i/1RXMvDs1s8x4ilad
+	 VpGg8HGVR3Aq6NUzjMe9PdYjkvcf7chFBOkkGIM99T+MV2ena0gM+qXFq40b0Z/way
+	 IdZKWm58LDy9pIWGoEU7LHLhRbcJO5xmQ9gekIP1+tsqH24cS5RZaaSg8XXbiqxkhc
+	 oyJolu1DDUQ3jl54N+KARxpfxIE/NO3bSe9tVeI9uSdMF6kJLz1reojsuHsawo3Jt1
+	 AWNg7/t7+UsgL4Od+JmS96abev+jaYpMT6Tj9EESw7hyvV/G3n3fw4ax2x7DGMBnA8
+	 G7F9/Hy1W1leg==
+Date: Fri, 21 Feb 2025 06:29:27 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 00/11] media: Remove vidioc_g/s_ctrl and
- vidioc_queryctrl callbacks
-To: Ricardo Ribalda <ribalda@chromium.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Mike Isely <isely@pobox.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Hans de Goede <hdegoede@redhat.com>,
- Sakari Ailus <sakari.ailus@linux.intel.com>,
- Andy Shevchenko <andy@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-staging@lists.linux.dev
-References: <20241210-queryctrl-v2-0-c0a33d69f416@chromium.org>
-Content-Language: en-US, nl
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Autocrypt: addr=hverkuil@xs4all.nl; keydata=
- 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
-In-Reply-To: <20241210-queryctrl-v2-0-c0a33d69f416@chromium.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Conor Dooley <conor+dt@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+ devicetree@vger.kernel.org, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ heiko@sntech.de, linux-rockchip@lists.infradead.org, 
+ Shawn Lin <shawn.lin@rock-chips.com>, linux-pci@vger.kernel.org, 
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Simon Xue <xxm@rock-chips.com>
+To: Kever Yang <kever.yang@rock-chips.com>
+In-Reply-To: <20250221104357.1514128-2-kever.yang@rock-chips.com>
+References: <20250221104357.1514128-1-kever.yang@rock-chips.com>
+ <20250221104357.1514128-2-kever.yang@rock-chips.com>
+Message-Id: <174014096734.2508114.17981034112064393929.robh@kernel.org>
+Subject: Re: [RFC PATCH v6 1/2] dt-bindings: PCI: dw: rockchip: Add rk3576
+ support
 
-On 10/12/2024 10:28, Ricardo Ribalda wrote:
-> Most of the drivers use the control framework or can use the superset
-> version of these callbacks: vidioc_g/s_ext_ctrl and
-> vidioc_query_ext_ctrl.
+
+On Fri, 21 Feb 2025 18:43:56 +0800, Kever Yang wrote:
+> rk3576 is using dwc controller, with msi interrupt directly to gic instead
+> of to gic its, so
+> - no its support is required and the 'msi-map' is not need anymore,
+> - a new 'msi' interrupt is needed.
 > 
-> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> Signed-off-by: Kever Yang <kever.yang@rock-chips.com>
 > ---
+> 
+> Changes in v6:
+> - Fix make dt_binding_check and make CHECK_DTBS=y
+> 
+> Changes in v5:
+> - Add constraints per device for interrupt-names due to the interrupt is
+> different from rk3588.
+> 
+> Changes in v4:
+> - Fix wrong indentation in dt_binding_check report by Rob
+> 
+> Changes in v3:
+> - Fix dtb check broken on rk3588
+> - Update commit message
+> 
 > Changes in v2:
-> - v4l2_query_ext_ctrl_to_v4l2_queryctrl
-> - Fix conversion (Thanks Hans)
-> - Link to v1: https://lore.kernel.org/r/20241209-queryctrl-v1-0-deff7acfcdcb@chromium.org
+> - remove required 'msi-map'
+> - add interrupt name 'msi'
 > 
-> ---
-> Ricardo Ribalda (11):
->       media: ioctl: Simulate v4l2_queryctrl with v4l2_query_ext_ctrl
->       media: pvrusb2: Convert queryctrl to query_ext_ctrl
->       media: pvrusb2: Remove g/s_ctrl callbacks
->       media: uvcvideo: Remove vidioc_queryctrl
->       media: atomisp: Replace queryctrl with query_ext_ctrl
->       media: atomisp: Remove vidioc_g/s callback
->       media: v4l2: Remove vidioc_queryctrl callback
->       media: v4l2: Remove vidioc_g_ctrl callback
->       media: cx231xx: Replace s_ctrl with s_ext_ctrls
->       media: v4l2: Remove vidioc_s_ctrl callback
->       media: v4l2-core: Introduce v4l2_query_ext_ctrl_to_v4l2_queryctrl
+>  .../bindings/pci/rockchip-dw-pcie-common.yaml | 59 +++++++++++++++----
+>  .../bindings/pci/rockchip-dw-pcie.yaml        |  4 +-
+>  2 files changed, 50 insertions(+), 13 deletions(-)
 > 
->  drivers/media/usb/cx231xx/cx231xx-417.c           | 21 ++++++----
->  drivers/media/usb/pvrusb2/pvrusb2-v4l2.c          | 40 ++++--------------
->  drivers/media/usb/uvc/uvc_v4l2.c                  | 10 -----
->  drivers/media/v4l2-core/v4l2-ctrls-api.c          | 51 +++++++++++++----------
->  drivers/media/v4l2-core/v4l2-dev.c                |  6 +--
->  drivers/media/v4l2-core/v4l2-ioctl.c              | 19 +++++----
->  drivers/staging/media/atomisp/pci/atomisp_ioctl.c | 35 ++++++++--------
->  include/media/v4l2-ctrls.h                        | 12 ++++++
->  include/media/v4l2-ioctl.h                        | 12 ------
->  9 files changed, 97 insertions(+), 109 deletions(-)
-> ---
-> base-commit: 6c10d1adae82e1c8da16e7ebd2320e69f20b9d6f
-> change-id: 20241209-queryctrl-5c3632b7c857
-> 
-> Best regards,
 
-$ git grep vidioc_s_ctrl
-drivers/media/radio/radio-wl1273.c:static int wl1273_fm_vidioc_s_ctrl(struct v4l2_ctrl *ctrl)
-drivers/media/radio/radio-wl1273.c:     .s_ctrl = wl1273_fm_vidioc_s_ctrl,
+My bot found errors running 'make dt_binding_check' on your patch:
 
-Now that s_ctrl is the callback of the control handler ops, but
-I think it is wise if you add a patch that renames wl1273_fm_vidioc_s_ctrl to wl1273_fm_s_ctrl.
+yamllint warnings/errors:
 
-Just so the string 'vidioc_s_ctrl' no longer exists in the code base.
-Besides, it isn't the correct name of this function anyway. It's clearly a left-over
-from the past.
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pci/rockchip-dw-pcie-common.yaml: anyOf:1:then:properties:interrupt-names: {'type': 'array', 'items': [{'const': 'sys'}, {'const': 'pmc'}, {'const': 'msg'}, {'const': 'legacy'}, {'const': 'err'}, {'const': 'msi'}], 'minItems': 6, 'maxItems': 6} should not be valid under {'required': ['maxItems']}
+	hint: "maxItems" is not needed with an "items" list
+	from schema $id: http://devicetree.org/meta-schemas/items.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pci/rockchip-dw-pcie-common.yaml: anyOf:1:then:properties:interrupt-names: 'oneOf' conditional failed, one must be fixed:
+	[{'const': 'sys'}, {'const': 'pmc'}, {'const': 'msg'}, {'const': 'legacy'}, {'const': 'err'}, {'const': 'msi'}] is too long
+	[{'const': 'sys'}, {'const': 'pmc'}, {'const': 'msg'}, {'const': 'legacy'}, {'const': 'err'}, {'const': 'msi'}] is too short
+	False schema does not allow 6
+	1 was expected
+	6 is greater than the maximum of 2
+	6 is greater than the maximum of 3
+	6 is greater than the maximum of 4
+	6 is greater than the maximum of 5
+	hint: "minItems" is only needed if less than the "items" list length
+	from schema $id: http://devicetree.org/meta-schemas/items.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pci/rockchip-dw-pcie-ep.example.dtb: pcie-ep@fe150000: interrupt-names: ['sys', 'pmc', 'msg', 'legacy', 'err', 'dma0', 'dma1', 'dma2', 'dma3'] is too long
+	from schema $id: http://devicetree.org/schemas/pci/rockchip-dw-pcie-ep.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pci/rockchip-dw-pcie-ep.example.dtb: pcie-ep@fe150000: Unevaluated properties are not allowed ('power-domains' was unexpected)
+	from schema $id: http://devicetree.org/schemas/pci/rockchip-dw-pcie-ep.yaml#
 
-Regards,
+doc reference errors (make refcheckdocs):
 
-	Hans
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250221104357.1514128-2-kever.yang@rock-chips.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
