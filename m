@@ -1,97 +1,159 @@
-Return-Path: <linux-kernel+bounces-525456-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A93AFA3F03E
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:29:08 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED6DEA3F03D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:28:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 861BC3A79F7
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:28:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CEBBD17F03A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:28:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAC4F204099;
-	Fri, 21 Feb 2025 09:28:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CA5A204096;
+	Fri, 21 Feb 2025 09:28:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DOsbBNx1";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="fkGnpwX7"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="rQ+0CbRQ"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B36C9201017;
-	Fri, 21 Feb 2025 09:28:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2872D201021;
+	Fri, 21 Feb 2025 09:28:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740130104; cv=none; b=gcA2+OgmDlR0oEXcLfbAclMxpozBU6hczzrE9Cp97Xq4wnoi1b1DsNn8Z9rLKtQDERQ0KJJ0k/rz8wDH+ESuINGtMdYKcqmAsbbXKjqxIh39/kSzahP/vHblc5URDz0TQL/HdqEvNHWtLNmnr5BzKltamV/2cE6DM+RfWF/roW4=
+	t=1740130126; cv=none; b=MX94PqHmmUbz2CUIlIMMxiytDSai7iHxYZP+u3t9nDPWclIdwTXCv5vZTAOEACFUf3aDqjTQQy+n5B28OScscZ6kGA8v3XTlcj0LzOK5SziWDIDNjvVVvv90dGKP5jGbhCWrp3ZIeTS9/jqHnG+iNgBv4xAdmwJdHZz6M3S/oWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740130104; c=relaxed/simple;
-	bh=TFQcaNN4BhjsY8helJtRFXwS8Z3t6w4D7fo6NiCwK1M=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=PCooPulvHzMC7Kx88TtN/HCA7ES+TpXyX7ygt37q+XumCi/Nva4Wd9gZMtLDk9BGTpyrfe5+mAa8lq+KjBCqI3w1+ZuyNg1+4iFV02GfuS7tJ8za0r4gLrbNZSAM3ttX1bDyVeXBKP8gmKFkNo6HU3oUjqy5Eo/L4DKfGPLzw7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DOsbBNx1; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=fkGnpwX7; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1740130101;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=W4RDEkxswbUbhEqdazfb85bOV8IiqvBYeb8Hqd67Gjw=;
-	b=DOsbBNx15V3te3uSwQkkoQh8pumg9j1OQwos8Wq6tlZ1fHlK4USHZhrlj2Z+KFK5EV0a5Y
-	yu52Dt06CaklHEPoASJGAtJs3VJF/LhNhSwM9ytDyySMI/slQ6yiW6DQPj06CrpXvFuR0e
-	kCdlOsJm27epmZUSg5TuYitQKxZj4KdK1Z836JaiLvyqRvw28H1JAA11e9rmygxIO9tmdM
-	gNtFCdP+zzJPnOEhkEPCbdVUaFfmiGjwz1cBHfhKJK7VGDp/4uwMnN2hdD3kw8cqyoeIWi
-	KmcpfKqkKzPbqvV2KvP4UZxdXVq7Kv6mOM/7vIGJQ9wfSspsanV+Z/GUNxn8sQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1740130101;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=W4RDEkxswbUbhEqdazfb85bOV8IiqvBYeb8Hqd67Gjw=;
-	b=fkGnpwX7xaB0MJgMVSfZ73m14LAJWC3zzXp0zNdV5PL7QQKnBMpSPX9LZ/UcxHQpfJkKXk
-	HoZaMLJZAc6KE6DA==
-To: Nicolin Chen <nicolinc@nvidia.com>, jgg@nvidia.com,
- kevin.tian@intel.com, maz@kernel.org
-Cc: joro@8bytes.org, will@kernel.org, robin.murphy@arm.com,
- shuah@kernel.org, iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kselftest@vger.kernel.org,
- eric.auger@redhat.com, baolu.lu@linux.intel.com, yi.l.liu@intel.com,
- yury.norov@gmail.com, jacob.pan@linux.microsoft.com,
- patches@lists.linux.dev
-Subject: Re: [PATCH v2 1/7] genirq/msi: Store the IOMMU IOVA directly in
- msi_desc instead of iommu_cookie
-In-Reply-To: <a4f2cd76b9dc1833ee6c1cf325cba57def22231c.1740014950.git.nicolinc@nvidia.com>
-References: <cover.1740014950.git.nicolinc@nvidia.com>
- <a4f2cd76b9dc1833ee6c1cf325cba57def22231c.1740014950.git.nicolinc@nvidia.com>
-Date: Fri, 21 Feb 2025 10:28:20 +0100
-Message-ID: <87ldtzhcjv.ffs@tglx>
+	s=arc-20240116; t=1740130126; c=relaxed/simple;
+	bh=qxvoZ0T9EMBgepWuCu8iM2WFq6KQD/xh9Uvx0MaC+ZE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A7qGbwz/AgmDhz5ApBjFGGi4mQGXXg3YyOwNRfsHxCvWuqUli2NyXXqk5zjM9l3DO2N2ernqP7Htgun0fH8R9u2IU0/iER/Z4copVDveyENxittAP/TVWbHFNY568Km6V1YyYVbh8r0QJZsIwqqeua5wuR3kSRhaobid2WLn2/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=rQ+0CbRQ; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from ideasonboard.com (93-61-96-190.ip145.fastwebnet.it [93.61.96.190])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 0086889A;
+	Fri, 21 Feb 2025 10:27:18 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1740130039;
+	bh=qxvoZ0T9EMBgepWuCu8iM2WFq6KQD/xh9Uvx0MaC+ZE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rQ+0CbRQu7d8TsSci8JuQYbxEG5Lp3mWRNKtXnX/bb7OpCnxDqzwGiyKeP+0vR0rC
+	 O3kdOx9LkmomrcL93SqgWM/aCEgpJ9dLPWHEVo4VA3OGo7knmF+YjhBR4BdLdIDKYN
+	 GdW+upC0hMsc2Aj8m75qHvs9+kJsaoaJpsNmHco0=
+Date: Fri, 21 Feb 2025 10:28:40 +0100
+From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+To: Jai Luthra <jai.luthra@ideasonboard.com>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Dave Stevenson <dave.stevenson@raspberrypi.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+Subject: Re: [PATCH 1/3] media: i2c: imx219: Only use higher LLP_MIN for
+ binned resolutions
+Message-ID: <mloobyyocd5f4hbkenplebwyffacdjjhzhxefvlx2og5qz5xlx@zswcyzzfcpy3>
+References: <20250219-imx219_fixes_v2-v1-0-0e3f5dd9b024@ideasonboard.com>
+ <20250219-imx219_fixes_v2-v1-1-0e3f5dd9b024@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250219-imx219_fixes_v2-v1-1-0e3f5dd9b024@ideasonboard.com>
 
-On Wed, Feb 19 2025 at 17:31, Nicolin Chen wrote:
-> Fix the MSI cookie UAF by removing the cookie pointer. The translated IOVA
-> address is already known during iommu_dma_prepare_msi() and cannot change.
-> Thus, it can simply be stored as an integer in the MSI descriptor.
+Hi Jai
+
+On Wed, Feb 19, 2025 at 05:16:43PM +0530, Jai Luthra wrote:
+> The LLP_MIN of 3560 is only needed to fix artefacts seen with binned
+> resolutions. As increasing the LLP reduces the highest possible
+> framerate by ~3%, use the default minimum of 3448 for non-binned
+> resolutions.
 >
-> A following patch will fix the other UAF in iommu_get_domain_for_dev(), by
-> using the IOMMU group mutex.
 
-"A following patch" has no meaning once the current one is
-applied. Simply say:
+Also restore the fll_def value for non-binned modes in the modes definition
+to restore the default mode framerate to 30fps.
 
-  The other UAF in iommu_get_domain_for_dev() will be addressed
-  seperately, by ....
+> Suggested-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
+> Link: https://lore.kernel.org/linux-media/CAPY8ntC1-S6zKtDvmc6EgyxP+j6rTShuG8Dr8PKb9XQr2PeS_w@mail.gmail.com/
+> Signed-off-by: Jai Luthra <jai.luthra@ideasonboard.com>
+> ---
+>  drivers/media/i2c/imx219.c | 24 ++++++++++++++++--------
+>  1 file changed, 16 insertions(+), 8 deletions(-)
+>
+> diff --git a/drivers/media/i2c/imx219.c b/drivers/media/i2c/imx219.c
+> index f662c9d755114265aad46c5cc7f5031b9bc0dbba..6e51a7af5e2a05cacefb201d96a9fbdc349f17d8 100644
+> --- a/drivers/media/i2c/imx219.c
+> +++ b/drivers/media/i2c/imx219.c
+> @@ -74,7 +74,8 @@
+>  #define IMX219_FLL_MAX			0xffff
+>  #define IMX219_VBLANK_MIN		32
+>  #define IMX219_REG_LINE_LENGTH_A	CCI_REG16(0x0162)
+> -#define IMX219_LLP_MIN			0x0de8
+> +#define IMX219_LLP_MIN			0x0d78
+> +#define IMX219_BINNED_LLP_MIN		0x0de8
+>  #define IMX219_LLP_MAX			0x7ff0
+>
+>  #define IMX219_REG_X_ADD_STA_A		CCI_REG16(0x0164)
+> @@ -317,13 +318,13 @@ static const struct imx219_mode supported_modes[] = {
+>  		/* 8MPix 15fps mode */
+>  		.width = 3280,
+>  		.height = 2464,
+> -		.fll_def = 3415,
+> +		.fll_def = 3526,
+>  	},
+>  	{
+>  		/* 1080P 30fps cropped */
+>  		.width = 1920,
+>  		.height = 1080,
+> -		.fll_def = 1707,
+> +		.fll_def = 1763,
+>  	},
+>  	{
+>  		/* 2x2 binned 60fps mode */
+> @@ -901,7 +902,7 @@ static int imx219_set_pad_format(struct v4l2_subdev *sd,
+>  	if (fmt->which == V4L2_SUBDEV_FORMAT_ACTIVE) {
+>  		int exposure_max;
+>  		int exposure_def;
+> -		int hblank;
+> +		int hblank, llp_min;
+>  		int pixel_rate;
+>
+>  		/* Update limits and set FPS to default */
+> @@ -918,6 +919,17 @@ static int imx219_set_pad_format(struct v4l2_subdev *sd,
+>  					 imx219->exposure->minimum,
+>  					 exposure_max, imx219->exposure->step,
+>  					 exposure_def);
+> +
+> +		/*
+> +		 * With analog binning the default minimum line length of 3448
+> +		 * can cause artefacts because the ADC operates on two lines
+> +		 * together. Switch to higher minimum of 3560 if we are binning.
+> +		 */
+> +		llp_min = (bin_h || bin_v) ? IMX219_BINNED_LLP_MIN :
 
-> Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
-> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
+As you know, this is always true.
 
-With that fixed:
-
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+> +					     IMX219_LLP_MIN;
+> +		__v4l2_ctrl_modify_range(imx219->hblank, llp_min - mode->width,
+> +					 IMX219_LLP_MAX - mode->width, 1,
+> +					 llp_min - mode->width);
+>  		/*
+>  		 * Retain PPL setting from previous mode so that the
+>  		 * line time does not change on a mode change.
+> @@ -926,10 +938,6 @@ static int imx219_set_pad_format(struct v4l2_subdev *sd,
+>  		 * mode width subtracted.
+>  		 */
+>  		hblank = prev_line_len - mode->width;
+> -		__v4l2_ctrl_modify_range(imx219->hblank,
+> -					 IMX219_LLP_MIN - mode->width,
+> -					 IMX219_LLP_MAX - mode->width, 1,
+> -					 IMX219_LLP_MIN - mode->width);
+>  		__v4l2_ctrl_s_ctrl(imx219->hblank, hblank);
+>
+>  		/* Scale the pixel rate based on the mode specific factor */
+>
+> --
+> 2.48.1
+>
 
