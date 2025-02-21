@@ -1,217 +1,128 @@
-Return-Path: <linux-kernel+bounces-525355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B31CA3EEEE
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:45:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1E31A3EEF4
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:45:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 380033A7AE8
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 08:44:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FDC63B0D59
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 08:45:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80068201246;
-	Fri, 21 Feb 2025 08:45:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A0B0201015;
+	Fri, 21 Feb 2025 08:45:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J7D3t3hb"
-Received: from mail-pl1-f193.google.com (mail-pl1-f193.google.com [209.85.214.193])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="FW1KnZ9p"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D9FB2010E3
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 08:45:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DAC4169397
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 08:45:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740127502; cv=none; b=fjwrS8uemM5PV2s6cnfwf+SHQvv3nz+H+HAOwNqCSNtWEO73WX9ePQxK7Giot72oaKVijWF3qFiPOcRQ1OWqOaYXfojH0k0O9qBigpqOLVlTXjs9RrKF+QjwunES6IbSQ+sihYyjvBIPlqKAXe2yocGUB3uW/ZM92aimSDKVinA=
+	t=1740127535; cv=none; b=LRWxWkvNeGN10yJ/a0yocdAu0okXs9oiFrTN7riY6gwYQskxlYtw3PDNkOqePOg6ws9RJ9AN7DUQxOJuikJ93l03n9FhRUMr7Mbhp5YYEfXhDM51PpFKi9otojH6ht0hKKyY8j5CsxJXexms19h0NZYxvWYFTOpp5bsHHguFiUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740127502; c=relaxed/simple;
-	bh=lLT1PsTxhagaQpn7A+gkGEB9wV9n8hynndSOSuMAtTw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=q8ZrKOkFzvNjV2+30eOuekXsX49J4uurS6DqmdJyvXAa3Y5lqWH0PCLmmlI055mY65z6D7d7KMlGZakt1o/C7As1t6w0m/lVjCTZuRmLWHiiaL1MFwvUs1/fCuwo7etYLccOLE8XGFg6YtVSAAvqDG5+/D18PjDg6a6ZQs5eZqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J7D3t3hb; arc=none smtp.client-ip=209.85.214.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f193.google.com with SMTP id d9443c01a7336-220ec47991aso24397055ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 00:45:00 -0800 (PST)
+	s=arc-20240116; t=1740127535; c=relaxed/simple;
+	bh=JOiSkw3Of29GygdrXa01G2NFBo9/Jd+ajUfDgGEETbE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DVFinMyNAZEXxrpkpO2YwzkmmZStJr650zoH8tb859LASAeKfxfVq8h9lSg6cQnEhwivZiEsd8ZjPY+RwXMY9y4NZYyQIzAg8Ycrqz6O/VjxNGbqic5qElHZJ05CNmXTm6US79bocrbrGRBYSDw1LER93DyVtXnVmag6q/Ai2b4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=FW1KnZ9p; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-38f406e9f80so1680777f8f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 00:45:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740127500; x=1740732300; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=LxzmFhiq725Vc+Km6timKNw3y3UtVeTzCzEuoi1T3f0=;
-        b=J7D3t3hbr3TdueujmJJArj67m7r3r/Odm7y2furZNG28XR4zam3KIIE4NYIeoIBb13
-         N3BSAH+GRfgvJUT8fD0Pso+2R5WRywB04ZbO16YnEF+e8tkd+lYW7WMdb7R5Gic7AQDc
-         63Y5j6kZFTX+1DQh1WNk+nG/c4Tdx9dnuOqLSfz3NWLRR7N6hgwRXx3YUjo8lHJK3eTs
-         ajvCzq2E788JYYGgoyE6zeyVgT8D63bm4+M5gOIjC+ueC1bx8OkjpJzcg0zPobjXTOGf
-         hflr8Gchhlz3stK7gVs694uzkY86EQGZ+KKu8+o0eSucc31mRPmx91AMnbTW/LLn+NG6
-         fy7A==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1740127532; x=1740732332; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=b6sHuIYCGIcbnzcIquUs9mIF+IdKdCyx3g4gcUskxo0=;
+        b=FW1KnZ9p+nEmSIPsskwiWsnKhfS32JMvKmBggnoDr6B0P54j1WA7FcoYPIytqlE74G
+         Gs8FIO5XIOA0SGFU4SV4Yvvyak+3PFQStmPg86UU0mj3wkuJIJKADZ2qhqzhLg+g1P0w
+         8KkF4l1124uF30AIm74/cD+n4iIHL4uHhCMUtzkCl/ut0ZsTfJzeWWCLCnUlFWA22arU
+         DfYfgzWg3Ghp8fMARM+T3+5beBNbKGbS+H5N05MZSOJ43HtkzNKHr006bPSZr+tARv6T
+         OVkH2YadzYsa8XO2bWHWUdPVr9/lPvI2i1t7sMsDGWgWRrQZMcPMx4J9Q/UcCM3ISaSm
+         wsiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740127500; x=1740732300;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LxzmFhiq725Vc+Km6timKNw3y3UtVeTzCzEuoi1T3f0=;
-        b=WJMpftdZ6/aKHFPjbvsvojbd/23x835mI8TdHGbzUwapnoDqClEDfLEt8zavsl1Z1+
-         peeyg/f/HNMuw48J5FMle8IQi3Ae416XUXpQEqhUeU/UKadbEhxKbzDCeHRl5F793yq4
-         zQY9poEk8sJf/nXyGYhUTZJRtaspncv37j7oP3pBcRGPARrgUFfUvMpfsfDyFr3ox9g6
-         701FRZ7qhkI2ILL+uvIkSaJG2InnYNxMj3vrPmlaSi1EQoankMcE0vF9x6dvhsHpw/Yy
-         +Ia86O/awO951vp4SmHTAKfxP+lYIc72o6VeboJMAsLYT0Mhc6FHQ+nonpeNZfGKFN/m
-         b3+Q==
-X-Gm-Message-State: AOJu0Yx60kkIubsZtXYd0SacXFgsBmOJyC11wHVM+WzMNzgdOQjAVh2M
-	2hsvwRombXpgLnDx+TUQJ9G08QPefTAeHcPDU5CQo0gxbTxKgZlD
-X-Gm-Gg: ASbGnctKIZS0YBCCLATSohA8G1NL1JVmaQHrqi0Cqp4XgqbBsOTRYEo7t9+WaiD2BUT
-	VHEpUnMs2ExJAwEdUVLjdE3j4lcxtlinkLPCFfjiza5PNFk2ttp0zQA4q+kCjfdLvoWin2/gh2t
-	oKasuJbwASj+tBiN/1c2zr6hymJtBQS+X0DxeUzRAGrW+4XQ/HM1imz7NNtGu3mkFSs+UkoOyAz
-	LHUwSHpqyiLaZUVtjC20OeaNpo8ES1vecj7YlGEvFUdwIzb7pmc8wjpwVATUC3SuqNBpASvbWir
-	bU/kB1XhBViM3YHSmYDgyPjK2QwD6vllPQ==
-X-Google-Smtp-Source: AGHT+IEozFw7Sb2KrtttFjw5vk4spLYbpu2gKbjhmTkleaXon0SY6+VWo3UXveWxffzvPbqtcvFrpg==
-X-Received: by 2002:a05:6a20:72a3:b0:1ee:6b39:c386 with SMTP id adf61e73a8af0-1eef3c77081mr4660869637.13.1740127500318;
-        Fri, 21 Feb 2025 00:45:00 -0800 (PST)
-Received: from localhost.localdomain ([129.227.63.233])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-adb5aa216f2sm13920955a12.69.2025.02.21.00.44.56
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Fri, 21 Feb 2025 00:44:59 -0800 (PST)
-From: zihan zhou <15645113830zzh@gmail.com>
-To: mingo@redhat.com,
-	peterz@infradead.org,
-	juri.lelli@redhat.com,
-	vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com,
-	rostedt@goodmis.org,
-	bsegall@google.com,
-	mgorman@suse.de,
-	vschneid@redhat.com
-Cc: linux-kernel@vger.kernel.org,
-	zihan zhou <15645113830zzh@gmail.com>
-Subject: [PATCH V1 0/4] sched: Predict load based on conditional probability
-Date: Fri, 21 Feb 2025 16:44:38 +0800
-Message-Id: <20250221084437.31284-1-15645113830zzh@gmail.com>
-X-Mailer: git-send-email 2.39.3 (Apple Git-146)
+        d=1e100.net; s=20230601; t=1740127532; x=1740732332;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=b6sHuIYCGIcbnzcIquUs9mIF+IdKdCyx3g4gcUskxo0=;
+        b=Yd5EKQSh5Vm6nLVZFQYuOhCVmPsLLBeVayRcfSwvIqD6jAiimUBLN0r11FLvfiaBka
+         R7QrvjKlXHBtthnxsvMyeoNWL9hEQWfFLdxXcsLnH77ObrG2Ern8bSWzRDgqsL9tUL4w
+         sJreds1i8XFyhTro5h2OjnwdZnS9fRMD9aE5CwfKhbPbcIIiJAXVwCsWJhKj1kR6zufg
+         vAYXLtI37noS1H/u/B2Xr+FWma2/y5ZEv54cJDc+OfXnpC4sDZNBhVkZfbpSS3JDS+v4
+         Y/cd5C+BdG/ezNQHd3cBEerO/742M4qa6RbEL2iAl1xlN3thysNFLVwLYkpRKJtSGs8G
+         f/0A==
+X-Forwarded-Encrypted: i=1; AJvYcCW34J0lOa8P5zV+HlhBq1SvZ0bjpsay8vB9XDZQmiFLPMgKNj6Mrn4610qeG04DrpGQotW3adQd8nl40CE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkOPHAJAnrXkgHQDQhqLyWEj3le65izgXD5WfFA8+gjYTbjZnW
+	YBuaXgetDtPeBhGANoagF0fuUSclyZxe5Qp0NAsHRapN8rZ8tQGX7N/AxYOt4pY=
+X-Gm-Gg: ASbGnctWYZavGkhouUoNNkrh74ZwE4e1LZJnxN/YhD+fz9IathYAyaT1FG4myILhyuE
+	s2lpTWLP0wV6UOsfmDL9R//mTMymem+Tva2nUM4azDvVI3NUGcco+PQVlfzsuTu6y+RF9OXk6os
+	2dfMBAiMw8VphTMi9tEVDZorvMkyHBFMMJwCrtiq16W/LiyGse7LwpSiFV6GsdyCxt14AiCuOy1
+	Y0UoX1JuaC2T0Xusx3/Ik3leEyDVCi3TlZhfyzS1NAGWTlP/9E4KVlPVt0xscXkPjUgOs1uyjxS
+	AD3thj9AExCld7Fj4d4KNhH16w==
+X-Google-Smtp-Source: AGHT+IFAHTvEXFJzOIEkvB/aBJb6Sj6QnltRBBjY5ZIakODLnKkwmz9VPK9ijSywKE/LojJKWNxV+g==
+X-Received: by 2002:a05:6000:156d:b0:38d:d0ea:b04c with SMTP id ffacd0b85a97d-38f6f0b0f03mr2321820f8f.38.1740127532336;
+        Fri, 21 Feb 2025 00:45:32 -0800 (PST)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:6cbc:77f7:6f0e:5a7c])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f258f5efdsm22501778f8f.43.2025.02.21.00.45.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Feb 2025 00:45:32 -0800 (PST)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Michael Walle <mwalle@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	athieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+Subject: Re: [PATCH v1 0/5] gpio: regmap: Make use of 'ngpios' property
+Date: Fri, 21 Feb 2025 09:45:30 +0100
+Message-ID: <174012752846.7834.12670955707272367276.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20250213195621.3133406-1-andriy.shevchenko@linux.intel.com>
+References: <20250213195621.3133406-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-The work of this patch is to predict the load after a period of time in
-the future based on the conditional probability, so as to optimize the
-load balancing, wake-up preemption, cpu frequency adjustment or other
-tasks. PATCH 4/4 is a simple example of optimizing wake-up preemption,
-which can improve the performance of the hackbench a little.
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-I am optimistic about the potential of this patch, but my ability and my
-time are limited. I sincerely hope that more kind people can join in and
-help me...
 
-In the kernel, pelt works very well, but I think it is not perfect. For
-example, there is a task 1 that sleeps for 10s, and then runs for 10s. In
-this scenario, it is likely to make the wrong choice in load balancing.
+On Thu, 13 Feb 2025 21:48:45 +0200, Andy Shevchenko wrote:
+> It appears that regmap GPIO doesn't take into account 'ngpios' property
+> and requires hard coded values or duplication of the parsing the same
+> outside of GPIO library. This miniseries addresses that.
+> 
+> For the record, I have checked all bgpio_init() users and haven't seen
+> the suspicious code that this series might break, e.g., an equivalent of
+> something like this:
+> 
+> [...]
 
-Suppose we currently have two cpus (or said rqs). The load of cpu 0 is 0,
-and the load of cpu 1 is 512 with a task 2:
+Applied, thanks!
 
-cpu 0 (0)       cpu 1 (512)
-                task 2 (512)
+[1/5] gpiolib: Extract gpiochip_choose_fwnode() for wider use
+      commit: 375790f18396b2ba706e031b150c58cd37b45a11
+[2/5] gpiolib: Use fwnode instead of device in gpiochip_get_ngpios()
+      commit: 6f077e575893214136f9739f993bd9fedf61731a
+[3/5] gpio: regmap: Group optional assignments together for better understanding
+      commit: 97673ea38a77e42eaafcf5181c84f6c8d40b97e7
+[4/5] gpio: regmap: Move optional assignments down in the code
+      commit: a630d3960b6ac3c37cb0789605056e8845ffbf16
+[5/5] gpio: regmap: Allow ngpio to be read from the property
+      commit: db305161880a024a43f4b1cbafa7a294793d7a9e
 
-After task 1 wakes up, it will select cpu 0 because of the lower load,
-while task 1 has a load of 0 due to long sleep, so the next time, the load
-of cpus will still be like this:
-
-cpu 0 (0)       cpu 1 (512)
-task 1 (0)      task 2 (512)
-
-At this time, there is a task 3 that wants select a cpu. Since the load of
-cpu 0 is lower than cpu 1, it will choose cpu 0 to compete with a high
-load task 1:
-
-cpu 0 (128)       cpu 1 (512)
-task 1 (0)      task 2 (512)
-task 3 (128)
-
-After a while, the load of two cpus is unbalanced, and the task can only be
-migrated again:
-
-cpu 0 (1152)       cpu 1 (512)
-task 1 (1024)      task 2 (512)
-task 3 (128)
-
-This scenario is a fantasy of mine, there may be some wrong guesses. I
-just want to illustrate my point through this example: if we can accurately
-predict the future load of the task, then we can optimize many things on
-the scheduler.
-
-My idea is to predict the load when dequeue based on the load when enqueue.
-This algorithm is based on conditional probability:
-p(A|B) = p(AB) / p(B)
-
-To do it, we need to count the load of tasks when they enter or leave the
-rq, if we need detailed statistics, we need to use a two-dimensional array
-to record:
-
-  record_load_array[load_when_enqueue][load_when_dequeue] = count;
-
-When enqueue, the most likely load2 when dequeue can be predicted through
-the load1, where
-
-  record_load_array[load1][load2] == max(record_load_array[load1])
-
-Regardless of special circumstances, the maximum load is 1024, which
-requires 1024*1024*8b = 1MB,
-
-Considering that every se will maintain such a two-dimensional array, the
-cost is unacceptable, and given the complexity of the actual scene, the
-probability of accurately predicting the load with this array is probably
-small.
-
-So I made two optimizations:
-The first optimization is to normalize the load to 0~1024 (the maximum
-value of se->avg.load_avg is related to its weight), and then offset it to
-the right LOAD_GRAN_SHIFT (4), so that it represents a range of 16.
-
-For example, if the load is 893, then 893 >> 4 = 55, 55 << 4 = 880, so it
-means the load from 880 to 896 (880 + (1<<4)).
-For a normal process, se_weight=1024, the load change per 1ms is about
-1024*1000 / 47742 = 21 < 16. Theoretically, the statistical error will not
-exceed 1ms.
-
-The second optimization is use Boyer–Moore majority vote algorithm, to
-record the maximum possible dequeue load. For details, refer to the
-implementation of record_predict_load_data().
-
-Through these two optimizations, each record_load_array only needs 128B of
-memory. With some other data structures included, a total of 176B of memory
-is needed. My machine uses about 3MB memory:
-
-[root@test tip]# cat /proc/slabinfo | grep predict_load_data
-predict_load_data  14652  18584    176   ...
-
-According to the experiment, the accuracy of load prediction is about
-50%~70%, which is not so good, but we can already try to do something with
-it!
-
-zihan zhou (4):
-  kconfig: Add kconfig of predict load.
-  sched: do predict load.
-  sched/debug: add debug for predict load.
-  sched/fair: add sched feature PREDICT_NO_PREEMPT.
-
----
- fs/proc/base.c              |  39 ++++++
- include/linux/sched.h       |  46 +++++++
- include/linux/sched/debug.h |   5 +
- include/linux/sched/task.h  |   2 +-
- init/Kconfig                |  10 ++
- init/init_task.c            |   3 +
- kernel/fork.c               |   6 +-
- kernel/sched/core.c         |  15 ++-
- kernel/sched/debug.c        |  39 ++++++
- kernel/sched/fair.c         | 240 +++++++++++++++++++++++++++++++++++-
- kernel/sched/features.h     |   4 +
- kernel/sched/sched.h        |   2 +
- lib/Kconfig.debug           |  12 ++
- 13 files changed, 414 insertions(+), 9 deletions(-)
-
+Best regards,
 -- 
-2.33.0
-
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
