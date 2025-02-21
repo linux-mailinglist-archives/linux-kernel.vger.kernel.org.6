@@ -1,236 +1,74 @@
-Return-Path: <linux-kernel+bounces-525040-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 977D0A3EA17
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 02:33:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02607A3EA14
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 02:32:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B4D1162B90
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 01:33:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3556A19C5A99
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 01:33:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DBE3200B0;
-	Fri, 21 Feb 2025 01:32:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB81B70807;
+	Fri, 21 Feb 2025 01:32:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zohomail.com header.i=ming.li@zohomail.com header.b="FB+m5EbW"
-Received: from sender4-pp-o94.zoho.com (sender4-pp-o94.zoho.com [136.143.188.94])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nT0PHOXY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48D3578F20;
-	Fri, 21 Feb 2025 01:32:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.94
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740101565; cv=pass; b=OcQDXwA7fzwFLDYaUpNuFtjV+RN5OU00xMgHJac1SMx+gtwmqZvvzCx8o+sf0Vwq7J5KEg+J7q7/E8nkz2VTNarEAxrVUs8RN8KcVcmrRU/H9PW/W0WuepyhRzfGCFm/UFO5qgwn9qPyAYLXAe8bVPEUePgcQncNP6GCcXwawEw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740101565; c=relaxed/simple;
-	bh=l2ia1P25YQ3Mf4mDhF0k4Q5xMVysd29f7M4fX3GmTKQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=VFSNs41dVpvDVZ51BUn4JyxDvjHxBioq7qzeg8cdmwraerBzltB7o/cLNX8AmMsf3z8oYwTOKxz1ZqupZJIbxusdfzguce6qwWFmxE0+B7nrRkTBhoe1IbSztr1qXxPSLSbQO9eOyyaB8sz4x6DRMMllxU3A+Y7rPSubgq1PoU4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=ming.li@zohomail.com header.b=FB+m5EbW; arc=pass smtp.client-ip=136.143.188.94
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
-ARC-Seal: i=1; a=rsa-sha256; t=1740101546; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=Lu43KBZtEt7AFdDQImnyCTD3tI9u93k787RdZoT6lrq3GoQZYN5BqYIG0eXgxICwGaZ3Om9SX1IJcM6aOxGdzcjdRpbxsNDGckDo814Zvvwb4qGO572whzKtTCNzEB65rh1GAPE9qlRdJs9YEq3BiC5csIyRAcr6Kq+jc2XlvGs=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1740101546; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=XbeiqXG68L38/7TIuRvqSKkNvkHaENKByIF8L8Iwwag=; 
-	b=F8/XI/oxXmoQfCNgjVsCrcOLh++tQOuZ2uiQs8HhmHQEJlA5XO4jQU02gdVtlXyUWZ+vfXp7MQ4kp5w+inTu9euoP8kxCM4tgaMzgtnvyZ6cT5gqkAk/XZX9atWfZS0v1dQIHJxi4Jgx5kK5uhAs3JfIlA8t9zGV7fIKyozIkFg=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=zohomail.com;
-	spf=pass  smtp.mailfrom=ming.li@zohomail.com;
-	dmarc=pass header.from=<ming.li@zohomail.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1740101546;
-	s=zm2022; d=zohomail.com; i=ming.li@zohomail.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-Id:Message-Id:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Feedback-ID:Reply-To;
-	bh=XbeiqXG68L38/7TIuRvqSKkNvkHaENKByIF8L8Iwwag=;
-	b=FB+m5EbWp8c4V+L0koNO9ccyGNA3SXW3VbajxyHTW8A1EzD6VvrNPJFZm49G0a4L
-	ZIGOtge210cC97PMTe141zlNDiGeJAT+lCI8Px7654uhzNPuwvsSdyrY4SlKFOlLKR+
-	mR2/I30Nfno2X70JLHDBLMnhvAlnfmB9Ma+igDH8=
-Received: by mx.zohomail.com with SMTPS id 174010154362018.66000672863879;
-	Thu, 20 Feb 2025 17:32:23 -0800 (PST)
-From: Li Ming <ming.li@zohomail.com>
-To: dave@stgolabs.net,
-	jonathan.cameron@huawei.com,
-	dave.jiang@intel.com,
-	alison.schofield@intel.com,
-	vishal.l.verma@intel.com,
-	ira.weiny@intel.com,
-	dan.j.williams@intel.com
-Cc: linux-cxl@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Li Ming <ming.li@zohomail.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: [PATCH v3 7/7] cxl/region: Drop goto pattern of construct_region()
-Date: Fri, 21 Feb 2025 09:32:05 +0800
-Message-Id: <20250221013205.126419-1-ming.li@zohomail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250221012453.126366-1-ming.li@zohomail.com>
-References: <20250221012453.126366-1-ming.li@zohomail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 518308821;
+	Fri, 21 Feb 2025 01:32:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740101563; cv=none; b=q7n9i5sDSJaXlpDnrSTIj2J/sxG4IzOGgqE0e0qGxEpegIqEDvApTMe8l6hJpKsu2LmlmY/K5iy9qN5ji4A7MgNi9WJqyoQ80lhXp1Vi7u+SVDYgAldBtlhmOechc2TqTzsjfxG88QaqJ626tyBFOogi1bn7CXuir9LyCbBm3MA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740101563; c=relaxed/simple;
+	bh=bICxg/KZ8fYAMVBO7f9Pw5O4sSUhtSMXVxKr+6OEke0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R7G0/t2KjGIcBL+FRXzR6AOOQ2asSm+eppLXD/jfrDu0WjElD97QLNLLmlhGqrcX8jbUKQwCBKnCcg7RCM8e5TH0cRHqKY9+wTv6BvItxJzUwC+wUgnFublMJgGKrbXIxck6l5j/uSadY/Jaoe2pA1gETx6Nyd4sYnZp9OG866w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nT0PHOXY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A72EAC4CEE9;
+	Fri, 21 Feb 2025 01:32:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740101560;
+	bh=bICxg/KZ8fYAMVBO7f9Pw5O4sSUhtSMXVxKr+6OEke0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nT0PHOXYW4fFKJfrXebiDQN/gNspiEu8rfpQ431j/hXlmcAzXpoC/T4549r2ijOn/
+	 r1VpWu4qkSIQXoyrDINIZtisKlnx4hqURQH71sznOPOEt/McjJ4tjSBHsoR7yqp8g8
+	 wEiaRKbF1H/mzUTgI70N60dX5iSRWMHHenunxzASkMLrdBR7JvkOKIwgyFCRbA6uVb
+	 13fjXF6vWI4r3naKLrFs2pu7pBxQLYbvtRIJXZjLynnUbggWvvft3qD7hM46jz5txo
+	 P+dillbyM6c4ESWh20jUBhrF6pF8yjBy8mn5FCTbR6j2sB+1/Bj7B8UsbNAR3sol3H
+	 TzVUgzclf3VZQ==
+Date: Fri, 21 Feb 2025 01:32:36 +0000
+From: Tzung-Bi Shih <tzungbi@kernel.org>
+To: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: Cheng-Yi Chiang <cychiang@chromium.org>,
+	Guenter Roeck <groeck@chromium.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>, Benson Leung <bleung@chromium.org>,
+	chrome-platform@lists.linux.dev, linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ASoC: cros_ec_codec: Use str_enable_disable() helper in
+ wov_enable_put()
+Message-ID: <Z7fXtFWlci-c52K-@google.com>
+References: <20250220120100.1530-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Feedback-ID: rr0801122787e1089ae2cfd4493ccb2d0100005e49b58b3a16a64b6ce805ef390e6ff2bee79d0789ac43cbcf:zu080112271e8ff87ffc2ac7730f475cf80000f6a46113b88e0ffe05cc23c5ad4e1571e5f568cb4cbceef50c:rf0801122df3d6a5f08848c75d152a743800008096e50ab0d2c03a46f4357e7c1ba25604d2764f294324b0c49bbc4ad15a92:ZohoMail
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250220120100.1530-2-thorsten.blum@linux.dev>
 
-Some operations need to be protected by the cxl_region_rwsem in
-construct_region(). Currently, construct_region() uses down_write() and
-up_write() for the cxl_region_rwsem locking, so there is a goto pattern
-after down_write() invoked to release cxl_region_rwsem.
+On Thu, Feb 20, 2025 at 01:01:01PM +0100, Thorsten Blum wrote:
+> Remove hard-coded strings by using the str_enable_disable() helper
+> function.
+> 
+> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
 
-construct region() can be optimized to remove the goto pattern. The
-changes are creating a new function called __construct_region() which
-will include all checking and operations protected by the
-cxl_region_rwsem, and using guard(rwsem_write) to replace down_write()
-and up_write() in __construct_region().
-
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Reviewed-by: Dave Jiang <dave.jiang@intel.com>
-Reviewed-by: Alison Schofield <alison.schofield@intel.com>
-Reviewed-by: Dan Williams <dan.j.williams@intel.com>
-Reviewed-by: Ira Weiny <ira.weiny@intel.com>
-Acked-by: Davidlohr Bueso <dave@stgolabs.net>
-Signed-off-by: Li Ming <ming.li@zohomail.com>
----
-v3:
-- Drop the renaming of __construct_region() to construct_auto_region(). (Dan)
-v2:
-- Rename __construct_region() to construct_auto_region(). (Jonathan and Dave)
----
- drivers/cxl/core/region.c | 81 +++++++++++++++++++++------------------
- 1 file changed, 44 insertions(+), 37 deletions(-)
-
-diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
-index 9f082bc0f4e3..3cb91cf0e2dd 100644
---- a/drivers/cxl/core/region.c
-+++ b/drivers/cxl/core/region.c
-@@ -3215,53 +3215,31 @@ static int match_region_by_range(struct device *dev, const void *data)
- 	return 0;
- }
- 
--/* Establish an empty region covering the given HPA range */
--static struct cxl_region *construct_region(struct cxl_root_decoder *cxlrd,
--					   struct cxl_endpoint_decoder *cxled)
-+static int __construct_region(struct cxl_region *cxlr,
-+			      struct cxl_root_decoder *cxlrd,
-+			      struct cxl_endpoint_decoder *cxled)
- {
- 	struct cxl_memdev *cxlmd = cxled_to_memdev(cxled);
--	struct cxl_port *port = cxlrd_to_port(cxlrd);
--	struct cxl_dev_state *cxlds = cxlmd->cxlds;
- 	struct range *hpa = &cxled->cxld.hpa_range;
--	int rc, part = READ_ONCE(cxled->part);
- 	struct cxl_region_params *p;
--	struct cxl_region *cxlr;
- 	struct resource *res;
-+	int rc;
- 
--	if (part < 0)
--		return ERR_PTR(-EBUSY);
--
--	do {
--		cxlr = __create_region(cxlrd, cxlds->part[part].mode,
--				       atomic_read(&cxlrd->region_id));
--	} while (IS_ERR(cxlr) && PTR_ERR(cxlr) == -EBUSY);
--
--	if (IS_ERR(cxlr)) {
--		dev_err(cxlmd->dev.parent,
--			"%s:%s: %s failed assign region: %ld\n",
--			dev_name(&cxlmd->dev), dev_name(&cxled->cxld.dev),
--			__func__, PTR_ERR(cxlr));
--		return cxlr;
--	}
--
--	down_write(&cxl_region_rwsem);
-+	guard(rwsem_write)(&cxl_region_rwsem);
- 	p = &cxlr->params;
- 	if (p->state >= CXL_CONFIG_INTERLEAVE_ACTIVE) {
- 		dev_err(cxlmd->dev.parent,
- 			"%s:%s: %s autodiscovery interrupted\n",
- 			dev_name(&cxlmd->dev), dev_name(&cxled->cxld.dev),
- 			__func__);
--		rc = -EBUSY;
--		goto err;
-+		return -EBUSY;
- 	}
- 
- 	set_bit(CXL_REGION_F_AUTO, &cxlr->flags);
- 
- 	res = kmalloc(sizeof(*res), GFP_KERNEL);
--	if (!res) {
--		rc = -ENOMEM;
--		goto err;
--	}
-+	if (!res)
-+		return -ENOMEM;
- 
- 	*res = DEFINE_RES_MEM_NAMED(hpa->start, range_len(hpa),
- 				    dev_name(&cxlr->dev));
-@@ -3284,7 +3262,7 @@ static struct cxl_region *construct_region(struct cxl_root_decoder *cxlrd,
- 
- 	rc = sysfs_update_group(&cxlr->dev.kobj, get_cxl_region_target_group());
- 	if (rc)
--		goto err;
-+		return rc;
- 
- 	dev_dbg(cxlmd->dev.parent, "%s:%s: %s %s res: %pr iw: %d ig: %d\n",
- 		dev_name(&cxlmd->dev), dev_name(&cxled->cxld.dev), __func__,
-@@ -3293,14 +3271,43 @@ static struct cxl_region *construct_region(struct cxl_root_decoder *cxlrd,
- 
- 	/* ...to match put_device() in cxl_add_to_region() */
- 	get_device(&cxlr->dev);
--	up_write(&cxl_region_rwsem);
- 
--	return cxlr;
-+	return 0;
-+}
- 
--err:
--	up_write(&cxl_region_rwsem);
--	devm_release_action(port->uport_dev, unregister_region, cxlr);
--	return ERR_PTR(rc);
-+/* Establish an empty region covering the given HPA range */
-+static struct cxl_region *construct_region(struct cxl_root_decoder *cxlrd,
-+					   struct cxl_endpoint_decoder *cxled)
-+{
-+	struct cxl_memdev *cxlmd = cxled_to_memdev(cxled);
-+	struct cxl_port *port = cxlrd_to_port(cxlrd);
-+	struct cxl_dev_state *cxlds = cxlmd->cxlds;
-+	int rc, part = READ_ONCE(cxled->part);
-+	struct cxl_region *cxlr;
-+
-+	if (part < 0)
-+		return ERR_PTR(-EBUSY);
-+
-+	do {
-+		cxlr = __create_region(cxlrd, cxlds->part[part].mode,
-+				       atomic_read(&cxlrd->region_id));
-+	} while (IS_ERR(cxlr) && PTR_ERR(cxlr) == -EBUSY);
-+
-+	if (IS_ERR(cxlr)) {
-+		dev_err(cxlmd->dev.parent,
-+			"%s:%s: %s failed assign region: %ld\n",
-+			dev_name(&cxlmd->dev), dev_name(&cxled->cxld.dev),
-+			__func__, PTR_ERR(cxlr));
-+		return cxlr;
-+	}
-+
-+	rc = __construct_region(cxlr, cxlrd, cxled);
-+	if (rc) {
-+		devm_release_action(port->uport_dev, unregister_region, cxlr);
-+		return ERR_PTR(rc);
-+	}
-+
-+	return cxlr;
- }
- 
- int cxl_add_to_region(struct cxl_port *root, struct cxl_endpoint_decoder *cxled)
--- 
-2.34.1
-
+Acked-by: Tzung-Bi Shih <tzungbi@kernel.org>
 
