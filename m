@@ -1,42 +1,62 @@
-Return-Path: <linux-kernel+bounces-526728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83FA8A4027A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 23:14:18 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AD65A4028B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 23:18:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 885F23BBCC6
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 22:13:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5106D7A7ED6
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 22:16:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1BA2253F06;
-	Fri, 21 Feb 2025 22:14:02 +0000 (UTC)
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E48E252909;
+	Fri, 21 Feb 2025 22:17:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="0U6dckmc"
+Received: from 003.mia.mailroute.net (003.mia.mailroute.net [199.89.3.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 175C420127C
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 22:13:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19E882528E5;
+	Fri, 21 Feb 2025 22:17:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740176042; cv=none; b=AHZtbIbkhFU1FFOzexRlTNrmSz5HRdoI+nwa+X1ZEGG3ENkJmREKoRsN3uhS72T2JV3VFQShIymJGoNfemMemSVnWpjYWOLUSrZbkJYM2IUbSRgE9LTc/CyTQn4EB2GO7AIb8xVQPBEuOLCPIzHG+OhzAByGzemVWlgiAjm2d7w=
+	t=1740176257; cv=none; b=u4zTz87JdUDPbi2xvKB0Uqqv/H7G49bzh3HKuad5kyfLl/ML9Sv+jlO7cdBNmStbx0rR9kTkl14yHyW2R6o9fJrobYOItgT26BJ7kSMGmkFiL+20f6wrqHDj/nTqg0GJ13MCsqyLEl04sC376kHdX+SfynnQW+6ZSejN1bLy5hE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740176042; c=relaxed/simple;
-	bh=m+rPxBzkIa0z7AuS9o7gJYFRiFN57fnzjgdytkOLE28=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=oA0UCgvjWfQkw0OjV9+nM339o18VrngqdzoeskhD+Hr528V7IKzI2OKUlUphLmJPNLiAEjg29s3kGoXxQvgtWEivReCe5OAkUgyGgK4JbspxLNIOfbZKWYV0lHDVpjUHIt2xnkR4aiI2GEQI6SxP/ydwkL9o6b2h8yeg1EiYOMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
-Received: from [192.168.0.2] (ip5f5af2a2.dynamic.kabel-deutschland.de [95.90.242.162])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	s=arc-20240116; t=1740176257; c=relaxed/simple;
+	bh=Ci3gisbLXRxROB64O9pHO44MI+ObXvntWq5pIqDL81k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rEuafgCeYJGGz9weDfJ6f0z7YE3oHWy0Fluym1Hk7nGj/l4e0SDXVBSo/o66EZjaMHx1888o16eJZs/y19Kh4JPGAubGLiV7IqAbzYOZw6eu9PCAeexMbleMcjMT7aU9u+FplUpVZMJyk91VQYTCcAOdWpEUVT5VvHMOUq1h43o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=0U6dckmc; arc=none smtp.client-ip=199.89.3.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 003.mia.mailroute.net (Postfix) with ESMTP id 4Z04Cd1HlWzlrwfX;
+	Fri, 21 Feb 2025 22:13:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1740176026; x=1742768027; bh=Rpv6qg5LJ6vh68awsAl0E+as
+	qhk7CuPogw8UREwVqAg=; b=0U6dckmcqX9LtnZXE5xmuCnA3ixG9loGUnrl/dvI
+	UEbXsokv+pv7MF+U1z9CNP2p5TJybCDDWW/PGOSBfBhxpRKuoQDnunWzgl7Kti+u
+	ybJODXttnYQM8JfLAqqqigh8dRLXWkAA73yASlRQKkAOK25k44DHhEa/X9P0G5fc
+	lc30W59Q2VhFKGHzXXoOlOa//iGn0QspjivRW4ciwH+jJAtXVTEab0/OUFQ8d6oc
+	8o1jcQHUHyfuyx+5hMZeG1C9I4EKBlSj8G60/NxnKKFzEy3Af7SKtihbP5+JkWTz
+	wiXmkEfXeIv5B7W11AWJ1mUbV4qaPzT1f9CSaZKPdozmYg==
+X-Virus-Scanned: by MailRoute
+Received: from 003.mia.mailroute.net ([127.0.0.1])
+ by localhost (003.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id Wx3eBg_UPJEB; Fri, 21 Feb 2025 22:13:46 +0000 (UTC)
+Received: from [100.66.154.22] (unknown [104.135.204.82])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	(Authenticated sender: pmenzel)
-	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 4435E61E64783;
-	Fri, 21 Feb 2025 23:13:33 +0100 (CET)
-Message-ID: <51e0d018-f4c5-4a2d-93bd-265b4c13415f@molgen.mpg.de>
-Date: Fri, 21 Feb 2025 23:13:32 +0100
+	(Authenticated sender: bvanassche@acm.org)
+	by 003.mia.mailroute.net (Postfix) with ESMTPSA id 4Z04CX48QtzlrnRt;
+	Fri, 21 Feb 2025 22:13:43 +0000 (UTC)
+Message-ID: <917f49a5-dae4-4810-8116-9bc93ddcd9f5@acm.org>
+Date: Fri, 21 Feb 2025 14:13:42 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -44,118 +64,78 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: Linux warns `sched: DL replenish lagged too much`
-From: Paul Menzel <pmenzel@molgen.mpg.de>
-To: Juri Lelli <juri.lelli@redhat.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- LKML <linux-kernel@vger.kernel.org>
-References: <6ebe1130-0143-4388-9d69-ead0bf1fddf9@molgen.mpg.de>
- <Z7cvifR-y0CWK1e6@jlelli-thinkpadt14gen4.remote.csb>
- <47903c9d-3949-43b3-8f27-d59db20acb1e@molgen.mpg.de>
+Subject: Re: C aggregate passing (Rust kernel policy)
+To: David Laight <david.laight.linux@gmail.com>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Jan Engelhardt <ej@inai.de>, "H. Peter Anvin" <hpa@zytor.com>,
+ Greg KH <gregkh@linuxfoundation.org>, Boqun Feng <boqun.feng@gmail.com>,
+ Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+ Christoph Hellwig <hch@infradead.org>,
+ rust-for-linux <rust-for-linux@vger.kernel.org>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ David Airlie <airlied@gmail.com>, linux-kernel@vger.kernel.org,
+ ksummit@lists.linux.dev
+References: <CANiq72m+r1BZVdVHn2k8XeU37ZeY6VT2S9KswMuFA=ZO3e4uvQ@mail.gmail.com>
+ <a7c5973a-497c-4f31-a7be-b3123bddb6dd@zytor.com> <Z7VKW3eul-kGaIT2@Mac.home>
+ <2025021954-flaccid-pucker-f7d9@gregkh>
+ <2nn05osp-9538-11n6-5650-p87s31pnnqn0@vanv.qr>
+ <2025022052-ferment-vice-a30b@gregkh>
+ <9B01858A-7EBD-4570-AC51-3F66B2B1E868@zytor.com>
+ <n05p910s-r5o3-0n36-5s44-qr769prp69r5@vanv.qr>
+ <20250221183437.1e2b5b94@pumpkin>
+ <p7946077-rn30-n3p3-ppp0-80o9n9p07718@vanv.qr>
+ <20250221202332.GA6576@pendragon.ideasonboard.com>
+ <20250221220201.7068dfa3@pumpkin>
 Content-Language: en-US
-In-Reply-To: <47903c9d-3949-43b3-8f27-d59db20acb1e@molgen.mpg.de>
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20250221220201.7068dfa3@pumpkin>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-Dear Juri,
+On 2/21/25 2:02 PM, David Laight wrote:
+> And there is nothing to stop (I think even std::string) using ref-counted
+> buffers for large malloc()ed strings.
 
+This is what an LLM told me about this topic (this matches what I 
+remember about the std::string implementation):
 
-Am 20.02.25 um 21:18 schrieb Paul Menzel:
+<quote>
+Does the std::string implementation use a reference count?
 
-> Am 20.02.25 um 14:35 schrieb Juri Lelli:
-> 
->> On 20/02/25 11:47, Paul Menzel wrote:
-> 
->>> On the Intel Kaby Lake laptop Dell XPS 13 with Linux
->>> 6.14.0-rc3-00060-g6537cfb395f3, waking it up from ACPI S3 with an LMP  USB-C
->>> mini dock connected, that had an Ethernet cable and a power adapter plugged
->>> in, everything was lagging, and also the video in the opened Firefox Nightly
->>> browser lagged quite a bit. This has happened in the past, but not  that bad
->>> and long. Today for the first time, Linux logged the warning below:
->>>
->>>      sched: DL replenish lagged too much
->>>
->>> (This is from `kernel/sched/deadline.c`.)
->>>
->>> I have no idea, if it’s related to the hardware itself, that causes it to
->>> lag, that a suspend/resume cycle fixes, or if it’s related to the USB-C
->>> controller that has bugs in that early generation, or if it’s related to
->>> GNOME/Mutter (*mutter-common* 48~beta-3) or Firefox or the Web video player
->>> used by the site.
->>>
->>> As often the case with this, I have no way to reliably reproduce it, and in
->>> this case to reproduce the warning. I can only say, that this warning has
->>> not been logged in the available log files since September 2024. Linux
->>> “6.11-rc0” was used then. Please find the log messages attached.
->>>
->>> In case this information is not useful, should this happen again, it’d be
->>> great if you could suggest what and how I should collect debugging
->>> information next time.
->>
->> Assuming no explicit usage of SCHED_DEADLINE, I would say the warning
->> message might be related to the recently introduced deadline servers:
->> 5f6bd380c7bd ("sched/rt: Remove default bandwidth control") and related
->> commits.
->>
->> They were merged in v6.12 (IIRC), though,
-> 
-> Indeed, it first appeared in v6.12-rc1.
-> 
->> so I would expect you had noticed already before if they introduced
->> issues on your setup? That said, it might also be the case that
->> something else changed more recently that now triggers a corner
->> case.
-> 
-> On this device, I sometimes experience lags after resuming from ACPI S3, 
-> and, although I cannot prove it, using USB-C mini docks (LMP USB-C mini 
-> Dock [1] or Dell DA300) seems to increase the chances of hitting the 
-> problem. Re-plugging and doing ACPI S3 suspend/resume again often helps.
+No. [ ... ]
 
-I guess, I didn’t see this yet, as I haven’t been using the USB-C 
-charger with the USB-C mini dock up until now as the laptop also has a 
-barel jack for charging.
+Why does std::string not use a reference count? Has this always been the
+case?
 
->> The warning message per-se it's not fatal, it just warns that the kernel
->> is recovering from an unexpected situation. Did you notice that things
->> went back to normal (no lag from a user perspective) right after that
->> message was printed?
-> 
-> As far as I remember, the lagging stayed even after the log was printed. 
-> In this case, I had to reboot the device, and until now – with no ACPI 
-> S3 suspend/resume – it works fine.
+[ ... ]
+Reference counting adds overhead. Every time a string is copied or 
+assigned, the reference count has to be incremented or decremented, and 
+when it reaches zero, memory has to be deallocated. This adds both time 
+complexity (due to the need to update the reference count) and space 
+complexity (to store the count alongside the string data).
 
-I was able to reproduce this today. The same behavior after resuming 
-from ACPI S3.
+The goal with std::string is to minimize this overhead as much as 
+possible for the most common cases, particularly short strings, which 
+are frequent in real-world applications. The small string optimization 
+(SSO) allows short strings to be stored directly within the std::string 
+object itself, avoiding heap allocation and reference counting 
+altogether. For long strings, reference counting might not provide much 
+of an advantage anyway because memory management would still have to 
+involve the heap.
+[ ... ]
+Reference counting introduces unpredictable performance in terms of 
+memory management, especially in multithreaded applications. Each string 
+operation might require atomic operations on the reference count, 
+leading to potential contention in multithreaded environments.
+[ ... ]
+Initially, early implementations of std::string may have used CoW or 
+reference counting techniques. However, over time, as the language 
+evolved and as multithreading and performance became more of a priority, 
+the C++ standard moved away from these features. Notably, the C++11 
+standard explicitly banned CoW for std::string in order to avoid its 
+pitfalls.
+[ ... ]
+</quote>
 
-     Feb 21 17:20:19 abreu gnome-shell[1775]: 
-meta_wayland_buffer_process_damage: assertion 'buffer->resource' failed
-     Feb 21 17:20:19 abreu gnome-shell[1775]: 
-(../src/wayland/meta-wayland-buffer.c:709):meta_wayland_buffer_inc_use_count: 
-runtime check failed: (buffer->resource)
-     Feb 21 17:20:21 abreu rtkit-daemon[1017]: Supervising 7 threads of 
-5 processes of 1 users.
-     Feb 21 17:20:21 abreu rtkit-daemon[1017]: Supervising 7 threads of 
-5 processes of 1 users.
-     Feb 21 17:20:59 abreu kernel: sched: DL replenish lagged too much
-     Feb 21 17:21:01 abreu systemd[1588]: Started 
-app-gnome-ptyxis-26577.scope - Application launched by gsd-media-keys.
-     […]
-     Feb 21 17:23:43 abreu gnome-shell[1775]: libinput error: event11 - 
-DLL075B:01 06CB:76AF Touchpad: client bug: event processing lagging 
-behind by 31ms, your system is too slow
-
-Move lags sometimes, and also switching GNOME virtual desktops, or just 
-opening a new window takes several seconds.
-
-Can I set an option so more stuff is logged, once the scheduler warning 
-is logged?
-
-
-Kind regards,
-
-Paul
-
-
-> [1]: https://lmp-adapter.com/product/lmp-usb-c-mini-dock/
+Bart.
 
