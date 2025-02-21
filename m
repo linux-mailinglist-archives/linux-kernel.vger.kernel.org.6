@@ -1,131 +1,88 @@
-Return-Path: <linux-kernel+bounces-525263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1844A3ED40
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 08:20:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 657A4A3ED2C
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 08:18:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 541937ABBA8
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 07:19:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B89C0179E1F
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 07:18:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 303221FF1CB;
-	Fri, 21 Feb 2025 07:19:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=crpt.ru header.i=@crpt.ru header.b="uLFS1n03"
-Received: from mail.crpt.ru (mail.crpt.ru [91.236.205.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 687E11FBCBD;
-	Fri, 21 Feb 2025 07:19:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.236.205.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2346D1FF1D0;
+	Fri, 21 Feb 2025 07:18:25 +0000 (UTC)
+Received: from mail.nfschina.com (unknown [42.101.60.213])
+	by smtp.subspace.kernel.org (Postfix) with SMTP id 48C698F6E;
+	Fri, 21 Feb 2025 07:18:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.213
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740122391; cv=none; b=OZg0VyEQkivibJDF+YklEeYApE464RvhxDQT/G6pBwX6Pf6Z+wuMS567usKXnmd8EyqiVdUkP+p40g/KhJ3aOIhaPzR8B+/vMOX9Pww52BSLjX8AKXQ2SQ6DA/5IrgBswuZvh6Tb9piriZpA9y/6wxvuNnv+smsBfh/R6jHJ2n0=
+	t=1740122304; cv=none; b=iZ7CZ/ChJP+YionuOf3Iwa14M/z8ucEFrjc7ozMDb0CR3w9yp5A6SHFbLBNxC/6kMcZLWD275FCvldD+DtO0DZzRhkCZNSh+W+HUlKG74hID39Ys+tiFfdDvteuqAmFp/zqiZLwVH6REfccf1VBG0eDIf8zJmwP5Fapm5RpWYpA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740122391; c=relaxed/simple;
-	bh=sObIvvCiUAn9qXnHNJpDFM36vWf1/wfpwgBNnrtetPc=;
-	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=lOvuQDQuoeoAh00/ZzXoj7/QJC26mCsCUBdkjkB4ACdbJCJ8soc2cjRMDzxrjrInQteSwloB2P7ct2yXsCzfX/4RR7AC2WZtWv6JOhnha2iOyUOS8PcqZZKwmmbAEAetdW+ojzFgT2d8B1mehvYkmDixRYXLJWyEDzX88z4Xzq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crpt.ru; spf=pass smtp.mailfrom=crpt.ru; dkim=pass (2048-bit key) header.d=crpt.ru header.i=@crpt.ru header.b=uLFS1n03; arc=none smtp.client-ip=91.236.205.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crpt.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crpt.ru
-Received: from mail.crpt.ru ([192.168.60.3])
-	by mail.crpt.ru  with ESMTP id 51L73AUP029765-51L73AUR029765
-	(version=TLSv1.2 cipher=AES256-SHA256 bits=256 verify=OK);
-	Fri, 21 Feb 2025 10:03:10 +0300
-Received: from EX02-PR-BO.crpt.local (10.200.60.52) by ex1.crpt.local
- (192.168.60.3) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.44; Fri, 21 Feb
- 2025 10:03:09 +0300
-Received: from EX1.crpt.local (192.168.60.3) by EX02-PR-BO.crpt.local
- (10.200.60.52) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.6; Fri, 21 Feb
- 2025 10:03:09 +0300
-Received: from EX1.crpt.local ([192.168.60.3]) by EX1.crpt.local
- ([192.168.60.3]) with mapi id 15.01.2507.044; Fri, 21 Feb 2025 10:03:09 +0300
-From: =?koi8-r?B?98HUz9LP0MnOIOHOxNLFyg==?= <a.vatoropin@crpt.ru>
-To: Kai Shen <kaishen@linux.alibaba.com>
-CC: =?koi8-r?B?98HUz9LP0MnOIOHOxNLFyg==?= <a.vatoropin@crpt.ru>, "Jason
- Gunthorpe" <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>, Wei Yongjun
-	<weiyongjun1@huawei.com>, Yang Li <yang.lee@linux.alibaba.com>,
-	"linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"lvc-project@linuxtesting.org" <lvc-project@linuxtesting.org>
-Subject: [PATCH] RDMA/erdma: handle ib_umem_find_best_pgsz() return value
-Thread-Topic: [PATCH] RDMA/erdma: handle ib_umem_find_best_pgsz() return value
-Thread-Index: AQHbhC6pbGv+eguF8Uexqo4ANK64zw==
-Date: Fri, 21 Feb 2025 07:03:09 +0000
-Message-ID: <20250221070301.18010-1-a.vatoropin@crpt.ru>
-Accept-Language: ru-RU, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-kse-serverinfo: EX02-PR-BO.crpt.local, 9
-x-kse-antivirus-interceptor-info: scan successful
-x-kse-antivirus-info: Clean, bases: 17.02.2025 9:52:00
-x-kse-attachment-filter-triggered-rules: Clean
-x-kse-attachment-filter-triggered-filters: Clean
-x-kse-bulkmessagesfiltering-scan-result: protection disabled
-Content-Type: text/plain; charset="koi8-r"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1740122304; c=relaxed/simple;
+	bh=Z92IeH03E87WjMgNNGxUrtb6MDAucuDKaPVm85LC7wE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=QdUu91M5s9yxnfK3+Z3KHW5jXunrnSNYjGjBpP9j0hmv/NDESxOfUP4mW1xFGX233mza+7ZWBccFk2tltF3LHeMFPMlirwPch7KMLpEKntYDr6qU/nLKNyB+uy+IO+Jq0dLSxAeMwMnDmCZBH2YYOCHD/WmgItdvvfIrv7RcBXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.213
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
+Received: from localhost.localdomain (unknown [180.167.10.98])
+	by mail.nfschina.com (MailData Gateway V2.8.8) with ESMTPSA id 2F21360234D6D;
+	Fri, 21 Feb 2025 15:18:08 +0800 (CST)
+X-MD-Sfrom: suhui@nfschina.com
+X-MD-SrcIP: 180.167.10.98
+From: Su Hui <suhui@nfschina.com>
+To: binbin.wu@linux.intel.com
+Cc: Su Hui <suhui@nfschina.com>,
+	seanjc@google.com,
+	pbonzini@redhat.com,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	kvm@vger.kernel.org
+Subject: [PATCH] include/linux/log2.h: mark is_power_of_2() with __always_inline
+Date: Fri, 21 Feb 2025 15:16:25 +0800
+Message-Id: <20250221071624.1356899-1-suhui@nfschina.com>
+X-Mailer: git-send-email 2.30.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-KSE-ServerInfo: EX1.crpt.local, 9
-X-KSE-Attachment-Filter-Triggered-Rules: Clean
-X-KSE-Attachment-Filter-Triggered-Filters: Clean
-X-KSE-BulkMessagesFiltering-Scan-Result: protection disabled
-X-FEAS-Client-IP: 192.168.60.3
-X-FE-Policy-ID: 2:4:0:SYSTEM
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; d=crpt.ru; s=crpt.ru; c=relaxed/relaxed;
- h=from:to:cc:subject:date:message-id:content-type:mime-version;
- bh=rM29OcfKSzG0Xvr/iq7K+TDmsX7muLKw5JXGtiH19iw=;
- b=uLFS1n03admF9tfidPvwn/BC2su4qLerS0j6nq2kVEW4Rh6wuJffcft7mwqJOfXDiyVMznpqIdot
-	MYEa2W2q8lHL1hXKKf4BH9v6tVBnMUE3tw2TfmfVaDCv4sdT++cdnMkvX15S3H/kfQxWveB8LSyr
-	AytOu8sHwIiswjrAhOQQe/Nj+I2UXM/fteRoeqPdI6ohHHeqYagELhOeyPYcLjxRLu8GN8iosYxU
-	730s1r442jxwxo1HZsuAkUP5P972SKZR0sfMr/4FKVpn7S2hBloYImDj2/Akd0ShDAxzSnnweZD2
-	x200rurhsv+7QZooGg3xMjRI80u2al9D6LWTjQ==
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-From: Andrey Vatoropin <a.vatoropin@crpt.ru>
+When build kernel with randconfig, there is an error:
 
-The ib_umem_find_best_pgsz function is necessary for obtaining the optimal
-hardware page size. In the comment above, function has statement:=20
-"Drivers always supporting PAGE_SIZE or smaller will never see a 0 result."
+In function ‘kvm_is_cr4_bit_set’,inlined from
+‘kvm_update_cpuid_runtime’ at arch/x86/kvm/cpuid.c:310:9:
 
-But it's hard to prove this holds true for the erdma driver.
+include/linux/compiler_types.h:542:38: error: call to
+‘__compiletime_assert_380’ declared with attribute error:
+BUILD_BUG_ON failed: !is_power_of_2(cr4_bit).
 
-Similar to other drivers that use ib_umem_find_best_pgsz, it is essential=20
-to add an error handler to manage potential error situations in the future.
+'!is_power_of_2(X86_CR4_OSXSAVE)' is False, but gcc treats is_power_of_2()
+as non-inline function and a compilation error happens. Fix this by marking
+is_power_of_2() with __always_inline.
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
-
-Fixes: 155055771704 ("RDMA/erdma: Add verbs implementation")
-Signed-off-by: Andrey Vatoropin <a.vatoropin@crpt.ru>
+Signed-off-by: Su Hui <suhui@nfschina.com>
 ---
- drivers/infiniband/hw/erdma/erdma_verbs.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ include/linux/log2.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/infiniband/hw/erdma/erdma_verbs.c b/drivers/infiniband=
-/hw/erdma/erdma_verbs.c
-index 51d619edb6c5..7ad38fb84661 100644
---- a/drivers/infiniband/hw/erdma/erdma_verbs.c
-+++ b/drivers/infiniband/hw/erdma/erdma_verbs.c
-@@ -781,6 +781,10 @@ static int get_mtt_entries(struct erdma_dev *dev, stru=
-ct erdma_mem *mem,
- 	mem->page_size =3D ib_umem_find_best_pgsz(mem->umem, req_page_size, virt)=
-;
-+	if (!mem->page_size) {
-+		ret =3D -EINVAL;
-+		goto error_ret;
-+	}
- 	mem->page_offset =3D start & (mem->page_size - 1);
- 	mem->mtt_nents =3D ib_umem_num_dma_blocks(mem->umem, mem->page_size);
- 	mem->page_cnt =3D mem->mtt_nents;
- 	mem->mtt =3D erdma_create_mtt(dev, MTT_SIZE(mem->page_cnt),
- 				    force_continuous);
---=20
-2.43.0
+diff --git a/include/linux/log2.h b/include/linux/log2.h
+index 9f30d087a128..1366cb688a6d 100644
+--- a/include/linux/log2.h
++++ b/include/linux/log2.h
+@@ -41,7 +41,7 @@ int __ilog2_u64(u64 n)
+  * *not* considered a power of two.
+  * Return: true if @n is a power of 2, otherwise false.
+  */
+-static inline __attribute__((const))
++static __always_inline __attribute__((const))
+ bool is_power_of_2(unsigned long n)
+ {
+ 	return (n != 0 && ((n & (n - 1)) == 0));
+-- 
+2.30.2
+
 
