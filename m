@@ -1,355 +1,427 @@
-Return-Path: <linux-kernel+bounces-526773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09D8FA402FB
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 23:47:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4366A402FA
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 23:47:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C325617ABBC
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 22:47:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC07519C2EDF
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 22:47:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C18C253B73;
-	Fri, 21 Feb 2025 22:46:57 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2745E1D5166;
-	Fri, 21 Feb 2025 22:46:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96222209696;
+	Fri, 21 Feb 2025 22:46:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PGkQXt1/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3BC11F03DC;
+	Fri, 21 Feb 2025 22:46:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740178016; cv=none; b=m52SUBHOvKo7ODtR6vzpx1qhPaDAzXbUqKmeAfm7nBNRLWqWE3yrLkcofSCJWAwBzLtdMSGgEp8MhU8kzqU9tN5bASmjvuOblUimFESyO0cdmHXOOUh7A0/fjvuMObVVdkeGAQeJv5GIokmdhTrD1MxRvbTycJl3VkH55Ydwk7U=
+	t=1740178014; cv=none; b=OxmS3o+jLgxIFtlyuJIb4aj6riogq3NVNZbAZnYEftuincOmOb2poDOdPSoyK5Ri03QVfqtBoxobUzmIg2e3J3t3t9BDV/74PRCcgE8hC88tkaSdnHwAmoSf/GihgKqzZGdsKUWgNWoixsqViLLeKvbUl0nvAVapyQqs2H50ol4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740178016; c=relaxed/simple;
-	bh=h4AhTDsIETUbnkS5fG0gPKt7CYxmwPg4xcQsnkYOrkY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=cua3AzYmgM/FXQ0BN95fpYGCPb8iJGuGpdNioAaPvFhou5D3+XPYa7G8kBq7fXkN7CYjPau+Jy5JhM7gWvE2W95XOkEABdrdAYxpzB5Nry9iGrPyhOZX35rZ2as3kepjCA9oBgTn/u8PzKKaGxPeGv2KRTSwkXz8bx29u1jSfMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9F89A150C;
-	Fri, 21 Feb 2025 14:47:09 -0800 (PST)
-Received: from ampere-altra-2-1.usa.arm.com (ampere-altra-2-1.usa.arm.com [10.118.91.158])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id A040B3F6A8;
-	Fri, 21 Feb 2025 14:46:51 -0800 (PST)
-From: Wathsala Vithanage <wathsala.vithanage@arm.com>
-To: linux-kernel@vger.kernel.org
-Cc: nd@arm.com,
-	Wathsala Vithanage <wathsala.vithanage@arm.com>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Philipp Stanner <pstanner@redhat.com>,
-	Yunxiang Li <Yunxiang.Li@amd.com>,
-	"Dr. David Alan Gilbert" <linux@treblig.org>,
-	Ankit Agrawal <ankita@nvidia.com>,
-	kvm@vger.kernel.org (open list:VFIO DRIVER)
-Subject: [RFC PATCH] vfio/pci: add PCIe TPH to device feature ioctl
-Date: Fri, 21 Feb 2025 22:46:33 +0000
-Message-ID: <20250221224638.1836909-1-wathsala.vithanage@arm.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1740178014; c=relaxed/simple;
+	bh=Bj5XeMMlWNoOQqinEQeMbQ7s90ZmJ+tHoedMx1SjyTw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Plljk4nttbn5WBDBPa4JqYK3MoRWlvdEa0H++oMfPxchSZ2zrP043miQJDRF+F1NTMwTXis/U1YA9I2OEvczAGBg5MS0SwU4TwUHZrJofwdVjpD0v5qoxHSmm58S9j2wKBjAFT0oSxtmQbjSDqwlYb3/1hXbVOJaxp8+5M8HMzM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PGkQXt1/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28C00C4CED6;
+	Fri, 21 Feb 2025 22:46:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740178013;
+	bh=Bj5XeMMlWNoOQqinEQeMbQ7s90ZmJ+tHoedMx1SjyTw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PGkQXt1/qiDU9PqRG/31BKqsYquB3kRz/AgzXjg0qHJf4pf6V+4nenrvojOZp1+N6
+	 Ku2CohG2BCz/UqFF3eGk+B4Sxm4/1EIUECT94Ns6zb+ony1CY3viqGwiN6nRK+Ft2a
+	 MkA8l7mUu27JpcFb3f+lunbDBRCQZNpBXpG5QFN+SZLOvkPyDKGmIY/Zk69d6QO8Fe
+	 9S2F3CLRQKP3N0G60tztoim059YpcJxNzFW+qDsG7xxYKHjCxppp23eSctNs1tua2G
+	 AjQumYwweVBfcSLz/zv/mjfZZEfBUVullfyOQ/TC19hIr3jskScFzdxiiGnzyKGVmQ
+	 ZH5vuhtG0A+xA==
+Date: Fri, 21 Feb 2025 16:46:51 -0600
+From: Rob Herring <robh@kernel.org>
+To: Peter Chen <peter.chen@cixtech.com>
+Cc: krzk+dt@kernel.org, conor+dt@kernel.org, catalin.marinas@arm.com,
+	will@kernel.org, arnd@arndb.de,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, cix-kernel-upstream@cixtech.com,
+	"Fugang . duan" <fugang.duan@cixtech.com>
+Subject: Re: [PATCH 6/6] arm64: dts: cix: add initial CIX P1(SKY1) dts support
+Message-ID: <20250221224651.GA195444-robh@kernel.org>
+References: <20250220084020.628704-1-peter.chen@cixtech.com>
+ <20250220084020.628704-7-peter.chen@cixtech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250220084020.628704-7-peter.chen@cixtech.com>
 
-Linux v6.13 introduced the PCIe TLP Processing Hints (TPH) feature for
-direct cache injection. As described in the relevant patch set [1],
-direct cache injection in supported hardware allows optimal platform
-resource utilization for specific requests on the PCIe bus. This feature
-is currently available only for kernel device drivers. However,
-user space applications, especially those whose performance is sensitive
-to the latency of inbound writes as seen by a CPU core, may benefit from
-using this information (E.g., DPDK cache stashing RFC [2] or an HPC
-application running in a VM).
+On Thu, Feb 20, 2025 at 04:40:20PM +0800, Peter Chen wrote:
+> CIX SKY1 SoC is high performance Armv9 SoC designed by Cixtech,
+> and Orion O6 is open source motherboard launched by Radxa.
+> See below for detail:
+> https://docs.radxa.com/en/orion/o6/getting-started/introduction
+> 
+> In this commit, it only adds limited components for running initramfs
+> at Orion O6.
+> 
+> Acked-by: Fugang.duan <fugang.duan@cixtech.com>
+> Signed-off-by: Peter Chen <peter.chen@cixtech.com>
+> ---
+>  arch/arm64/boot/dts/Makefile              |   1 +
+>  arch/arm64/boot/dts/cix/Makefile          |   2 +
+>  arch/arm64/boot/dts/cix/sky1-orion-o6.dts |  21 ++
+>  arch/arm64/boot/dts/cix/sky1.dtsi         | 264 ++++++++++++++++++++++
+>  4 files changed, 288 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/cix/Makefile
+>  create mode 100644 arch/arm64/boot/dts/cix/sky1-orion-o6.dts
+>  create mode 100644 arch/arm64/boot/dts/cix/sky1.dtsi
+> 
+> diff --git a/arch/arm64/boot/dts/Makefile b/arch/arm64/boot/dts/Makefile
+> index 79b73a21ddc2..8e7ccd0027bd 100644
+> --- a/arch/arm64/boot/dts/Makefile
+> +++ b/arch/arm64/boot/dts/Makefile
+> @@ -13,6 +13,7 @@ subdir-y += bitmain
+>  subdir-y += blaize
+>  subdir-y += broadcom
+>  subdir-y += cavium
+> +subdir-y += cix
+>  subdir-y += exynos
+>  subdir-y += freescale
+>  subdir-y += hisilicon
+> diff --git a/arch/arm64/boot/dts/cix/Makefile b/arch/arm64/boot/dts/cix/Makefile
+> new file mode 100644
+> index 000000000000..ed3713982012
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/cix/Makefile
+> @@ -0,0 +1,2 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +dtb-$(CONFIG_ARCH_CIX) += sky1-orion-o6.dtb
+> diff --git a/arch/arm64/boot/dts/cix/sky1-orion-o6.dts b/arch/arm64/boot/dts/cix/sky1-orion-o6.dts
+> new file mode 100644
+> index 000000000000..dbee1616076d
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/cix/sky1-orion-o6.dts
+> @@ -0,0 +1,21 @@
+> +// SPDX-License-Identifier: BSD-3-Clause
+> +/*
+> + * Copyright 2025 Cix Technology Group Co., Ltd.
+> + *
+> + */
+> +
+> +/dts-v1/;
+> +
+> +#include "sky1.dtsi"
+> +/ {
+> +	model = "Radxa Orion O6";
+> +	compatible = "radxa,orion-o6";
+> +
+> +	chosen {
+> +		stdout-path = &uart2;
+> +	};
+> +};
+> +
+> +&uart2 {
+> +	status = "okay";
+> +};
+> diff --git a/arch/arm64/boot/dts/cix/sky1.dtsi b/arch/arm64/boot/dts/cix/sky1.dtsi
+> new file mode 100644
+> index 000000000000..d98735f782e0
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/cix/sky1.dtsi
+> @@ -0,0 +1,264 @@
+> +// SPDX-License-Identifier: BSD-3-Clause
+> +/*
+> + * Copyright 2025 Cix Technology Group Co., Ltd.
+> + *
+> + */
+> +
+> +#include <dt-bindings/interrupt-controller/arm-gic.h>
+> +
+> +/ {
+> +	interrupt-parent = <&gic>;
+> +	#address-cells = <2>;
+> +	#size-cells = <2>;
+> +
+> +	aliases {
+> +		serial2 = &uart2;
+> +	};
+> +
+> +	cpus {
+> +		#address-cells = <2>;
+> +		#size-cells = <0>;
+> +
+> +		cpu-map {
+> +			cluster0 {
+> +				core0 {
+> +					cpu = <&CPU0>;
+> +				};
+> +				core1 {
+> +					cpu = <&CPU1>;
+> +				};
+> +				core2 {
+> +					cpu = <&CPU2>;
+> +				};
+> +				core3 {
+> +					cpu = <&CPU3>;
+> +				};
+> +				core4 {
+> +					cpu = <&CPU4>;
+> +				};
+> +				core5 {
+> +					cpu = <&CPU5>;
+> +				};
+> +				core6 {
+> +					cpu = <&CPU6>;
+> +				};
+> +				core7 {
+> +					cpu = <&CPU7>;
+> +				};
+> +				core8 {
+> +					cpu = <&CPU8>;
+> +				};
+> +				core9 {
+> +					cpu = <&CPU9>;
+> +				};
+> +				core10 {
+> +					cpu = <&CPU10>;
+> +				};
+> +				core11 {
+> +					cpu = <&CPU11>;
+> +				};
+> +			};
+> +		};
+> +
+> +		CPU0: cpu0@0 {
+> +			compatible = "arm,armv8";
+> +			enable-method = "psci";
+> +			reg = <0x0 0x0>;
+> +			device_type = "cpu";
+> +			capacity-dmips-mhz = <403>;
+> +		};
+> +
+> +		CPU1: cpu1@100 {
+> +			compatible = "arm,armv8";
+> +			enable-method = "psci";
+> +			reg = <0x0 0x100>;
+> +			device_type = "cpu";
+> +			capacity-dmips-mhz = <403>;
+> +		};
+> +
+> +		CPU2: cpu2@200 {
+> +			compatible = "arm,armv8";
+> +			enable-method = "psci";
+> +			reg = <0x0 0x200>;
+> +			device_type = "cpu";
+> +			capacity-dmips-mhz = <403>;
+> +		};
+> +
+> +		CPU3: cpu3@300 {
+> +			compatible = "arm,armv8";
+> +			enable-method = "psci";
+> +			reg = <0x0 0x300>;
+> +			device_type = "cpu";
+> +			capacity-dmips-mhz = <403>;
+> +		};
+> +
+> +		CPU4: cpu4@400 {
+> +			compatible = "arm,armv8";
+> +			enable-method = "psci";
+> +			reg = <0x0 0x400>;
+> +			device_type = "cpu";
+> +			capacity-dmips-mhz = <1024>;
+> +		};
+> +
+> +		CPU5: cpu5@500 {
+> +			compatible = "arm,armv8";
+> +			enable-method = "psci";
+> +			reg = <0x0 0x500>;
+> +			device_type = "cpu";
+> +			capacity-dmips-mhz = <1024>;
+> +		};
+> +
+> +		CPU6: cpu6@600 {
+> +			compatible = "arm,armv8";
+> +			enable-method = "psci";
+> +			reg = <0x0 0x600>;
+> +			device_type = "cpu";
+> +			capacity-dmips-mhz = <1024>;
+> +		};
+> +
+> +		CPU7: cpu7@700 {
+> +			compatible = "arm,armv8";
+> +			enable-method = "psci";
+> +			reg = <0x0 0x700>;
+> +			device_type = "cpu";
+> +			capacity-dmips-mhz = <1024>;
+> +		};
+> +
+> +		CPU8: cpu8@800 {
+> +			compatible = "arm,armv8";
+> +			enable-method = "psci";
+> +			reg = <0x0 0x800>;
+> +			device_type = "cpu";
+> +			capacity-dmips-mhz = <1024>;
+> +		};
+> +
+> +		CPU9: cpu9@900 {
+> +			compatible = "arm,armv8";
+> +			enable-method = "psci";
+> +			reg = <0x0 0x900>;
+> +			device_type = "cpu";
+> +			capacity-dmips-mhz = <1024>;
+> +		};
+> +
+> +		CPU10: cpu10@a00 {
+> +			compatible = "arm,armv8";
+> +			enable-method = "psci";
+> +			reg = <0x0 0xa00>;
+> +			device_type = "cpu";
+> +			capacity-dmips-mhz = <1024>;
+> +		};
+> +
+> +		CPU11: cpu11@b00 {
+> +			compatible = "arm,armv8";
+> +			enable-method = "psci";
+> +			reg = <0x0 0xb00>;
+> +			device_type = "cpu";
+> +			capacity-dmips-mhz = <1024>;
+> +		};
+> +	};
+> +
+> +	arch_timer: timer {
+> +		compatible = "arm,armv8-timer";
+> +		interrupts = <GIC_PPI 13 IRQ_TYPE_LEVEL_LOW>,
+> +			     <GIC_PPI 14 IRQ_TYPE_LEVEL_LOW>,
+> +			     <GIC_PPI 11 IRQ_TYPE_LEVEL_LOW>,
+> +			     <GIC_PPI 10 IRQ_TYPE_LEVEL_LOW>;
+> +		clock-frequency = <1000000000>;
+> +		interrupt-parent = <&gic>;
+> +		arm,no-tick-in-suspend;
+> +	};
+> +
+> +	memory@80000000 {
+> +		#address-cells = <2>;
+> +		#size-cells = <2>;
+> +		device_type = "memory";
+> +		reg = <0x00000000 0x80000000 0x1 0x00000000>;
+> +	};
+> +
+> +	psci {
+> +		compatible = "arm,psci-1.0";
+> +		method = "smc";
+> +	};
+> +
+> +	pmu: pmu {
+> +		compatible = "arm,armv8-pmuv3";
 
-This patch enables configuring of TPH from the user space via
-VFIO_DEVICE_FEATURE IOCLT. It provides an interface to user space
-drivers and VMMs to enable/disable the TPH feature on PCIe devices and
-set steering tags in MSI-X or steering-tag table entries using
-VFIO_DEVICE_FEATURE_SET flag or read steering tags from the kernel using
-VFIO_DEVICE_FEATURE_GET to operate in device-specific mode.
+Also needs the CPU model specific compatible string.
 
-[1] lore.kernel.org/linux-pci/20241002165954.128085-1-wei.huang2@amd.com
-[2] inbox.dpdk.org/dev/20241021015246.304431-2-wathsala.vithanage@arm.com
+> +		interrupts = <GIC_PPI 7 IRQ_TYPE_LEVEL_LOW>;
+> +		interrupt-parent = <&gic>;
+> +		status = "okay";
 
-Signed-off-by: Wathsala Vithanage <wathsala.vithanage@arm.com>
----
- drivers/vfio/pci/vfio_pci_core.c | 163 +++++++++++++++++++++++++++++++
- include/uapi/linux/vfio.h        |  68 +++++++++++++
- 2 files changed, 231 insertions(+)
+okay is the default, don't need status.
 
-diff --git a/drivers/vfio/pci/vfio_pci_core.c b/drivers/vfio/pci/vfio_pci_core.c
-index 586e49efb81b..d6dd0495b08b 100644
---- a/drivers/vfio/pci/vfio_pci_core.c
-+++ b/drivers/vfio/pci/vfio_pci_core.c
-@@ -29,6 +29,7 @@
- #include <linux/nospec.h>
- #include <linux/sched/mm.h>
- #include <linux/iommufd.h>
-+#include <linux/pci-tph.h>
- #if IS_ENABLED(CONFIG_EEH)
- #include <asm/eeh.h>
- #endif
-@@ -1510,6 +1511,165 @@ static int vfio_pci_core_feature_token(struct vfio_device *device, u32 flags,
- 	return 0;
- }
- 
-+static ssize_t vfio_pci_tph_uinfo_dup(struct vfio_pci_tph *tph,
-+				      void __user *arg, size_t argsz,
-+				      struct vfio_pci_tph_info **info)
-+{
-+	size_t minsz;
-+
-+	if (tph->count > VFIO_TPH_INFO_MAX)
-+		return -EINVAL;
-+	if (!tph->count)
-+		return 0;
-+
-+	minsz = tph->count * sizeof(struct vfio_pci_tph_info);
-+	if (minsz < argsz)
-+		return -EINVAL;
-+
-+	*info = memdup_user(arg, minsz);
-+	if (IS_ERR(info))
-+		return PTR_ERR(info);
-+
-+	return minsz;
-+}
-+
-+static int vfio_pci_feature_tph_st_op(struct vfio_pci_core_device *vdev,
-+				      struct vfio_pci_tph *tph,
-+				      void __user *arg, size_t argsz)
-+{
-+	int i, mtype, err = 0;
-+	u32 cpu_uid;
-+	struct vfio_pci_tph_info *info = NULL;
-+	ssize_t data_size = vfio_pci_tph_uinfo_dup(tph, arg, argsz, &info);
-+
-+	if (data_size <= 0)
-+		return data_size;
-+
-+	for (i = 0; i < tph->count; i++) {
-+		if (!(info[i].cpu_id < nr_cpu_ids && cpu_present(info[i].cpu_id))) {
-+			info[i].err = -EINVAL;
-+			continue;
-+		}
-+		cpu_uid = topology_core_id(info[i].cpu_id);
-+		mtype = (info[i].flags & VFIO_TPH_MEM_TYPE_MASK) >>
-+			VFIO_TPH_MEM_TYPE_SHIFT;
-+
-+		/* processing hints are always ignored */
-+		info[i].ph_ignore = 1;
-+
-+		info[i].err = pcie_tph_get_cpu_st(vdev->pdev, mtype, cpu_uid,
-+						  &info[i].st);
-+		if (info[i].err)
-+			continue;
-+
-+		if (tph->flags & VFIO_DEVICE_FEATURE_TPH_SET_ST) {
-+			info[i].err = pcie_tph_set_st_entry(vdev->pdev,
-+							    info[i].index,
-+							    info[i].st);
-+		}
-+	}
-+
-+	if (copy_to_user(arg, info, data_size))
-+		err = -EFAULT;
-+
-+	kfree(info);
-+	return err;
-+}
-+
-+
-+static int vfio_pci_feature_tph_enable(struct vfio_pci_core_device *vdev,
-+				       struct vfio_pci_tph *arg)
-+{
-+	int mode = arg->flags & VFIO_TPH_ST_MODE_MASK;
-+
-+	switch (mode) {
-+	case VFIO_TPH_ST_NS_MODE:
-+		return pcie_enable_tph(vdev->pdev, PCI_TPH_ST_NS_MODE);
-+
-+	case VFIO_TPH_ST_IV_MODE:
-+		return pcie_enable_tph(vdev->pdev, PCI_TPH_ST_IV_MODE);
-+
-+	case VFIO_TPH_ST_DS_MODE:
-+		return pcie_enable_tph(vdev->pdev, PCI_TPH_ST_DS_MODE);
-+
-+	default:
-+		return -EINVAL;
-+	}
-+
-+}
-+
-+static int vfio_pci_feature_tph_disable(struct vfio_pci_core_device *vdev)
-+{
-+	pcie_disable_tph(vdev->pdev);
-+	return 0;
-+}
-+
-+static int vfio_pci_feature_tph_prepare(struct vfio_pci_tph __user *arg,
-+					size_t argsz, u32 flags,
-+					struct vfio_pci_tph *tph)
-+{
-+	u32 op;
-+	int err = vfio_check_feature(flags, argsz,
-+				 VFIO_DEVICE_FEATURE_SET |
-+				 VFIO_DEVICE_FEATURE_GET,
-+				 sizeof(struct vfio_pci_tph));
-+	if (err != 1)
-+		return err;
-+
-+	if (copy_from_user(tph, arg, sizeof(struct vfio_pci_tph)))
-+		return -EFAULT;
-+
-+	op = tph->flags & VFIO_DEVICE_FEATURE_TPH_OP_MASK;
-+
-+	switch (op) {
-+	case VFIO_DEVICE_FEATURE_TPH_ENABLE:
-+	case VFIO_DEVICE_FEATURE_TPH_DISABLE:
-+	case VFIO_DEVICE_FEATURE_TPH_SET_ST:
-+		return (flags & VFIO_DEVICE_FEATURE_SET) ? 0 : -EINVAL;
-+
-+	case VFIO_DEVICE_FEATURE_TPH_GET_ST:
-+		return (flags & VFIO_DEVICE_FEATURE_GET) ? 0 : -EINVAL;
-+
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
-+static int vfio_pci_core_feature_tph(struct vfio_device *device, u32 flags,
-+				     struct vfio_pci_tph __user *arg,
-+				     size_t argsz)
-+{
-+	u32 op;
-+	struct vfio_pci_tph tph;
-+	void __user *uinfo;
-+	size_t infosz;
-+	struct vfio_pci_core_device *vdev =
-+		container_of(device, struct vfio_pci_core_device, vdev);
-+	int err = vfio_pci_feature_tph_prepare(arg, argsz, flags, &tph);
-+
-+	if (err)
-+		return err;
-+
-+	op = tph.flags & VFIO_DEVICE_FEATURE_TPH_OP_MASK;
-+
-+	switch (op) {
-+	case VFIO_DEVICE_FEATURE_TPH_ENABLE:
-+		return vfio_pci_feature_tph_enable(vdev, &tph);
-+
-+	case VFIO_DEVICE_FEATURE_TPH_DISABLE:
-+		return vfio_pci_feature_tph_disable(vdev);
-+
-+	case VFIO_DEVICE_FEATURE_TPH_GET_ST:
-+	case VFIO_DEVICE_FEATURE_TPH_SET_ST:
-+		uinfo = (u8 *)(arg) + offsetof(struct vfio_pci_tph, info);
-+		infosz = argsz - sizeof(struct vfio_pci_tph);
-+		return vfio_pci_feature_tph_st_op(vdev, &tph, uinfo, infosz);
-+
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
- int vfio_pci_core_ioctl_feature(struct vfio_device *device, u32 flags,
- 				void __user *arg, size_t argsz)
- {
-@@ -1523,6 +1683,9 @@ int vfio_pci_core_ioctl_feature(struct vfio_device *device, u32 flags,
- 		return vfio_pci_core_pm_exit(device, flags, arg, argsz);
- 	case VFIO_DEVICE_FEATURE_PCI_VF_TOKEN:
- 		return vfio_pci_core_feature_token(device, flags, arg, argsz);
-+	case VFIO_DEVICE_FEATURE_PCI_TPH:
-+		return vfio_pci_core_feature_tph(device, flags,
-+						 arg, argsz);
- 	default:
- 		return -ENOTTY;
- 	}
-diff --git a/include/uapi/linux/vfio.h b/include/uapi/linux/vfio.h
-index c8dbf8219c4f..608d57dfe279 100644
---- a/include/uapi/linux/vfio.h
-+++ b/include/uapi/linux/vfio.h
-@@ -1458,6 +1458,74 @@ struct vfio_device_feature_bus_master {
- };
- #define VFIO_DEVICE_FEATURE_BUS_MASTER 10
- 
-+/*
-+ * Upon VFIO_DEVICE_FEATURE_SET, enable or disable PCIe TPH or set steering tags
-+ * on the device. Data provided when setting this feature is a __u32 with the
-+ * following flags. VFIO_DEVICE_FEATURE_TPH_ENABLE enables PCIe TPH in
-+ * no-steering-tag, interrupt-vector, or device-specific mode when feature flags
-+ * VFIO_TPH_ST_NS_MODE, VFIO_TPH_ST_IV_MODE, and VFIO_TPH_ST_DS_MODE are set
-+ * respectively.
-+ * VFIO_DEVICE_FEATURE_TPH_DISABLE disables PCIe TPH on the device.
-+ * VFIO_DEVICE_FEATURE_TPH_SET_ST set steering tags on a device at an index in
-+ * MSI-X or ST-table depending on the VFIO_TPH_ST_x_MODE flag used and device
-+ * capabilities. The caller can set multiple steering tags by passing an array
-+ * of vfio_pci_tph_info objects containing cpu_id, cache_level, and
-+ * MSI-X/ST-table index. The caller can also set the intended memory type and
-+ * the processing hint by setting VFIO_TPH_MEM_TYPE_x and VFIO_TPH_HINT_x flags,
-+ * respectively. The return value for each vfio_pci_tph_info object is stored in
-+ * err, with the steering-tag set on the device and the ph_ignore status bit
-+ * resulting from the steering-tag lookup operation. If err < 0, the values
-+ * stored in the st and ph_ignore fields should be considered invalid.
-+ *
-+ * Upon VFIO_DEVICE_FEATURE_GET,  return steering tags to the caller.
-+ * VFIO_DEVICE_FEATURE_TPH_GET_ST returns steering tags to the caller.
-+ * The return values per vfio_pci_tph_info object are stored in the st,
-+ * ph_ignore, and err fields.
-+ */
-+struct vfio_pci_tph_info {
-+	/* in */
-+	__u32 cpu_id;
-+	__u32 cache_level;
-+	__u8  flags;
-+#define VFIO_TPH_MEM_TYPE_MASK		0x1
-+#define VFIO_TPH_MEM_TYPE_SHIFT		0
-+#define VFIO_TPH_MEM_TYPE_VMEM		0	/* Request volatile memory ST */
-+#define VFIO_TPH_MEM_TYPE_PMEM		1	/* Request persistent memory ST */
-+
-+#define VFIO_TPH_HINT_MASK		0x3
-+#define VFIO_TPH_HINT_SHIFT		1
-+#define VFIO_TPH_HINT_BIDIR		0
-+#define VFIO_TPH_HINT_REQSTR		(1 << VFIO_TPH_HINT_SHIFT)
-+#define VFIO_TPH_HINT_TARGET		(2 << VFIO_TPH_HINT_SHIFT)
-+#define VFIO_TPH_HINT_TARGET_PRIO	(3 << VFIO_TPH_HINT_SHIFT)
-+	__u16 index;			/* MSI-X/ST-table index to set ST */
-+	/* out */
-+	__u16 st;			/* Steering-Tag */
-+	__u8  ph_ignore;		/* Processing hint was ignored by */
-+	__s32 err;			/* Error on getting/setting Steering-Tag*/
-+};
-+
-+struct vfio_pci_tph {
-+	__u32 argsz;			/* Size of vfio_pci_tph and info[] */
-+	__u32 flags;
-+#define VFIO_DEVICE_FEATURE_TPH_OP_MASK		0x7
-+#define VFIO_DEVICE_FEATURE_TPH_OP_SHIFT	3
-+#define VFIO_DEVICE_FEATURE_TPH_ENABLE		0	/* Enable TPH on device */
-+#define VFIO_DEVICE_FEATURE_TPH_DISABLE	1	/* Disable TPH on device */
-+#define VFIO_DEVICE_FEATURE_TPH_GET_ST		2	/* Get steering-tags */
-+#define VFIO_DEVICE_FEATURE_TPH_SET_ST		4	/* Set steering-rags */
-+
-+#define	VFIO_TPH_ST_MODE_MASK	(0x3 << VFIO_DEVICE_FEATURE_TPH_OP_SHIFT)
-+#define	VFIO_TPH_ST_NS_MODE	(0 << VFIO_DEVICE_FEATURE_TPH_OP_SHIFT)
-+#define	VFIO_TPH_ST_IV_MODE	(1 << VFIO_DEVICE_FEATURE_TPH_OP_SHIFT)
-+#define	VFIO_TPH_ST_DS_MODE	(2 << VFIO_DEVICE_FEATURE_TPH_OP_SHIFT)
-+	__u32 count;				/* Number of entries in info[] */
-+	struct vfio_pci_tph_info info[];
-+#define VFIO_TPH_INFO_MAX	64		/* Max entries allowed in info[] */
-+};
-+
-+#define VFIO_DEVICE_FEATURE_PCI_TPH 11
-+
- /* -------- API for Type1 VFIO IOMMU -------- */
- 
- /**
--- 
-2.43.0
+> +	};
+> +
+> +	pmu_spe: pmu_spe {
+> +		compatible = "arm,statistical-profiling-extension-v1";
+> +		interrupts = <GIC_PPI 5 IRQ_TYPE_LEVEL_LOW>;
+> +		interrupt-parent = <&gic>;
+> +		status = "okay";
+> +	};
+> +
+> +	reserved-memory {
+> +		#address-cells = <2>;
+> +		#size-cells = <2>;
+> +		ranges;
+> +
+> +		linux,cma {
+> +			compatible = "shared-dma-pool";
+> +			reusable;
+> +			size = <0x0 0x28000000>;
+> +			linux,cma-default;
+> +		};
+> +
+> +	};
+> +
+> +	sky1_fixed_clocks: fixed-clocks {
 
+Drop this container node.
+
+> +		uartclk: uartclk {
+
+clock-100000000 for the node name.
+
+> +			compatible = "fixed-clock";
+> +			#clock-cells = <0>;
+> +			clock-frequency = <100000000>;
+> +			clock-output-names = "uartclk";
+> +		};
+> +
+> +		uart_apb_pclk: uart_apb_pclk {
+
+Similar here.
+
+> +			compatible = "fixed-clock";
+> +			#clock-cells = <0>;
+> +			clock-frequency = <200000000>;
+> +			clock-output-names = "apb_pclk";
+> +		};
+> +	};
+> +
+> +	soc@0 {
+> +		compatible = "simple-bus";
+> +		#address-cells = <2>;
+> +		#size-cells = <2>;
+> +		ranges;
+> +		dma-ranges;
+> +
+> +		uart2: uart@040d0000 {
+
+serial@...
+
+> +			compatible = "arm,pl011", "arm,primecell";
+> +			reg = <0x0 0x040d0000 0x0 0x1000>;
+> +			interrupts = <GIC_SPI 298 IRQ_TYPE_LEVEL_HIGH>;
+> +			clock-names = "uartclk", "apb_pclk";
+> +			clocks = <&uartclk>, <&uart_apb_pclk>;
+> +			status = "disabled";
+> +		};
+> +
+> +		gic: interrupt-controller@0e001000 {
+> +			compatible = "arm,gic-v3";
+> +			#address-cells = <2>;
+> +			#interrupt-cells = <3>;
+> +			#size-cells = <2>;
+> +			ranges;
+> +			interrupt-controller;
+> +			#redistributor-regions = <1>;
+> +			reg = <0x0 0x0e010000 0 0x10000>,	/* GICD */
+> +			      <0x0 0x0e090000 0 0x300000>;       /* GICR * 12 */
+> +			redistributor-stride = <0x40000>;
+> +			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_LOW>;
+> +			interrupt-parent = <&gic>;
+> +
+> +			its_pcie: its@e050000 {
+
+msi-controller@...
+
+> +				compatible = "arm,gic-v3-its";
+> +				msi-controller;
+> +				reg = <0x0 0x0e050000 0x0 0x30000>;
+> +			};
+> +		};
+> +	};
+> +};
+> -- 
+> 2.25.1
+> 
 
