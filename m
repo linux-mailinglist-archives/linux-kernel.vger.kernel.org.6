@@ -1,52 +1,74 @@
-Return-Path: <linux-kernel+bounces-525121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89643A3EB17
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 04:10:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 132B3A3EB1B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 04:11:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 306E37AC950
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 03:07:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A6EB27A9C3D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 03:09:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FA8F1D63F2;
-	Fri, 21 Feb 2025 03:08:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B19A61D7E37;
+	Fri, 21 Feb 2025 03:10:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="iIcoiqYb"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E4B323A6;
-	Fri, 21 Feb 2025 03:08:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="S7sTtJ7r"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D1DC23A6;
+	Fri, 21 Feb 2025 03:10:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740107318; cv=none; b=c/qhaXf9zpUyGAh5PtgRXz/8LpEJPTeAOrE1A6+z6EUF/614NYsw8JHr5PVZtQcfRhPY7EgIz3HoJyM310DwPC7i2xu6WudAOjdmxNh2Dl0EkwojgXWPRJPtR8ggRKkDOHQ5LWCBMYqYAtLm6/Z2XAxVLHvw6BtGcCPT6Qd53RM=
+	t=1740107426; cv=none; b=u0IKnNLX4FDxggg81U5Hk+JQifn80ztQY/PWSLAPPJ+ZG0irNWIxk23CAUnSoL1/HEWQH0WOMDgHy28emuZSmhOCseDUXiWCVzuo3Su8REgJJMWjEQ1UWRlbUW4pf5loEobXT68fzaP6jq1Lhx8OQntl6ZNvalHCtPyEHvhoBH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740107318; c=relaxed/simple;
-	bh=aMh7PWd/nPU+F6S05farHl3FMDorY9sLkJX/uYIxCLk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=sUE/JmqD3qKRAIjdj4a8sZ0kGE6F0yWtCDwSJe8QiLL2ZfRP/SUJ5J/HkyPI3gEsdla5vB7hHTNdR2dC4HGXjMQR22CDU/VWr1MxqTKNQKnOCK1mKtfLZollkYxHs8IfS+uhHJoWdCsTdP7CRSvkYk5JMZu9lfmnN8T2FE7edNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=iIcoiqYb; arc=none smtp.client-ip=117.135.210.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=QhmKk
-	EpK7TAbWhCmZSDRLTRjZc6e3DY7VfFo5NaGp1M=; b=iIcoiqYbaB+zlDQS5vhmP
-	unpU/YilBpFvzxqxRfQjiEDbifoSjxqudbji0tGsW1BkY1ALzK9q7ifjFLNq9eW7
-	tnkGxjbEOh55nLgkAyX2J9ajQGA+9OWnpQLI8h/+rAOzhzN9bkNv9VC9Q8Q7x5Zt
-	moR44Zf2R3DGmeUtvh5idw=
-Received: from wdhh6.sugon.cn (unknown [])
-	by gzsmtp4 (Coremail) with SMTP id PygvCgD3P_8O7rdn5BLdAQ--.10993S2;
-	Fri, 21 Feb 2025 11:07:59 +0800 (CST)
-From: Chaohai Chen <wdhh66@163.com>
-To: James.Bottomley@HansenPartnership.com,
-	martin.petersen@oracle.com
-Cc: linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	bvanassche@acm.org,
-	Chaohai Chen <wdhh66@163.com>
-Subject: [PATCH v2] scsi: fix missing lock protection
-Date: Fri, 21 Feb 2025 11:07:55 +0800
-Message-Id: <20250221030755.219277-1-wdhh66@163.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1740107426; c=relaxed/simple;
+	bh=PYPNKspVV6VM+zXQHdw9hvhwh5+E2yUJVrrNGwcaziQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=g4EXkM3uesutZRH65qmWO+KjR/7uqk7WDfy5nCHesW1B1VXj33Oulz2fknEtde9tlzEJpMgsIqKQwq1q3ic6kMdOkCUwv/gHYE0XrlExuQVQh+1Rg68+0l0F/CJ5N5tw1gWbjJBZsiQFJqv2jl9LGsfEv94raodDiIL0K6cbs7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=S7sTtJ7r; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 6165ddf0f00111ef8eb9c36241bbb6fb-20250221
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=eTvhGN67CDGMIMBF1P9Jd8dvnolQ2SQJqyOz+NNLKsg=;
+	b=S7sTtJ7rf+1E3BB+yyyQAr/BkNCrwLzU40ln5lNpts7+NoQU3UNP5ItUFfN55IcWO+CD/qFURNbnVRcipHLNf4mOEsGyw9chQDLjVkG7SqCp+T+pvOsTw9Xt1bzIuNGosjlXfRhX/uE64WUFJww5ahaDkFKeBHJ6BqDg0jsWv5I=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.46,REQID:1762eb5e-c289-46d2-b0cb-10704105955a,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:60aa074,CLOUDID:a59d1229-e0f8-414e-b8c3-b75c08217be8,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:-3,IP:ni
+	l,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
+	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 6165ddf0f00111ef8eb9c36241bbb6fb-20250221
+Received: from mtkmbs10n1.mediatek.inc [(172.21.101.34)] by mailgw02.mediatek.com
+	(envelope-from <irui.wang@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 90525754; Fri, 21 Feb 2025 11:10:19 +0800
+Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
+ MTKMBS14N1.mediatek.inc (172.21.101.75) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.28; Fri, 21 Feb 2025 11:10:17 +0800
+Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
+ mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1258.28 via Frontend Transport; Fri, 21 Feb 2025 11:10:17 +0800
+From: Irui Wang <irui.wang@mediatek.com>
+To: Hans Verkuil <hverkuil-cisco@xs4all.nl>, Mauro Carvalho Chehab
+	<mchehab@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+	<angelogioacchino.delregno@collabora.com>, <nicolas.dufresne@collabora.com>,
+	Yunfei Dong <yunfei.dong@mediatek.com>
+CC: <Project_Global_Chrome_Upstream_Group@mediatek.com>,
+	<linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
+	Longfei Wang <longfei.wang@mediatek.com>, Irui Wang <irui.wang@mediatek.com>
+Subject: [PATCH 0/2] Add support for MT8196 video encoder
+Date: Fri, 21 Feb 2025 11:10:02 +0800
+Message-ID: <20250221031004.9050-1-irui.wang@mediatek.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,38 +76,29 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:PygvCgD3P_8O7rdn5BLdAQ--.10993S2
-X-Coremail-Antispam: 1Uf129KBjvdXoWrtw4xZF13uw45Ary7Xr15XFb_yoW3trg_ur
-	ZYqrn7GF4jkr47tws5tFW3uryj9r48XrnY9F1fta43ZayrXF1ktas3tr43Z3yxJrWkCr15
-	Aw1DZryFyr1DGjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7xRNNtxUUUUUU==
-X-CM-SenderInfo: hzgkxlqw6rljoofrz/1tbiEBX61me36jtclgAAsi
+Content-Type: text/plain
+X-MTK: N
 
-async_scan_lock is designed to protect the scanning_hosts list,
-but there is no protection here.
+This patch series adds support for MT8196 video encoder. The changes
+include introducing a new encoder driver interface and add support for the
+new encoder driver encoding process.
 
-Signed-off-by: Chaohai Chen <wdhh66@163.com>
----
- drivers/scsi/scsi_scan.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Irui Wang (2):
+  media: mediatek: encoder: Add a new encoder driver interface
+  media: mediatek: encoder: Add support for common driver encode process
 
-diff --git a/drivers/scsi/scsi_scan.c b/drivers/scsi/scsi_scan.c
-index 96d7e1a9a7c7..4833b8fe251b 100644
---- a/drivers/scsi/scsi_scan.c
-+++ b/drivers/scsi/scsi_scan.c
-@@ -151,8 +151,9 @@ int scsi_complete_async_scans(void)
- 	struct async_scan_data *data;
- 
- 	do {
--		if (list_empty(&scanning_hosts))
--			return 0;
-+		scoped_guard(spinlock, &async_scan_lock)
-+			if (list_empty(&scanning_hosts))
-+				return 0;
- 		/* If we can't get memory immediately, that's OK.  Just
- 		 * sleep a little.  Even if we never get memory, the async
- 		 * scans will finish eventually.
+ .../platform/mediatek/vcodec/encoder/Makefile |   1 +
+ .../mediatek/vcodec/encoder/mtk_vcodec_enc.c  |   2 +
+ .../vcodec/encoder/mtk_vcodec_enc_drv.h       |   3 +
+ .../vcodec/encoder/venc/venc_common_if.c      | 704 ++++++++++++++++++
+ .../mediatek/vcodec/encoder/venc_drv_if.c     |   3 +-
+ .../mediatek/vcodec/encoder/venc_drv_if.h     |   3 +
+ .../mediatek/vcodec/encoder/venc_ipi_msg.h    |  26 +
+ .../mediatek/vcodec/encoder/venc_vpu_if.c     |  37 +-
+ 8 files changed, 764 insertions(+), 15 deletions(-)
+ create mode 100644 drivers/media/platform/mediatek/vcodec/encoder/venc/venc_common_if.c
+
 -- 
-2.34.1
+2.46.0
 
 
