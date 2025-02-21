@@ -1,139 +1,112 @@
-Return-Path: <linux-kernel+bounces-525008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79A06A3E9C4
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 02:17:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 375DAA3E9C7
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 02:18:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7A4419C0CB2
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 01:17:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE02A3BCA80
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 01:17:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 316373A8CB;
-	Fri, 21 Feb 2025 01:17:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27D514207F;
+	Fri, 21 Feb 2025 01:17:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eBo32tUd"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gv51tuVU"
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F071478F3A;
-	Fri, 21 Feb 2025 01:17:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09E1F17996
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 01:17:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740100640; cv=none; b=Hm9o7YQU97dL8ZPkcc2XWRiU2YaSr+Qg8FwjHGX3NKM475Csmvj5Tr1ipENZ/56HuMp39HxIJZeBegEsnOHmO27QzuQ2UlwDvkdnf+0oXRyWcw820N1gMgbzo6/7QIJKJraDm6hEoxHYsXcMTOIMJhw9AAEgNRHeh7EVN5rIja0=
+	t=1740100659; cv=none; b=uDIwafJNrohuCUKKXNG7+8hhamPzGGWLmf4aEx/NRsFsYe75ofpPlRXY62h11JY7vcMYhBhLwJ2mEJ6mwNM9mjjde9IDnUX/OUcfy23Cx/5eUGOIb0VoJotXyjpEltTdOQAji3nZ8Sfcg4MnZbnfr9iUo8GfGxtA3c1bN9cbGtw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740100640; c=relaxed/simple;
-	bh=eNDF3KzeU9FTB0eW035Ua9FeFcYDtA1ElcYayck/FgA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fnP8PDFyDNGXWaCMZvE34WnHi3qKJIxVkhZtKqHnXUQTOpUAwnj3D11kqbFiUzkZcgpg1Qlk+3FeqeyYDYz7pscayf0OTVe5RPkAZygg7JzDZDOf8oMMTF1ZgJlt4VLsQKlhA0d4sAR+OQ4kAFyFoK7C7HZPkW9KONL2UyL9sbM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eBo32tUd; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-aaec111762bso358372566b.2;
-        Thu, 20 Feb 2025 17:17:18 -0800 (PST)
+	s=arc-20240116; t=1740100659; c=relaxed/simple;
+	bh=1gCFFhPre328Jo6BJaxyEfCZJIQOlY9Sp8B3gGnSSpc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=V7+QpbjauoaZmRiAqgz93otJttWjW1Rss1GQleqjhri9AK1S+WflIhkKLB6IKqBWwFsM+9qvfIq6b8FZeLNMLzXsK2RCwCC0+InIjqDOHkK+I8q8d5aRuuYqGHx1K6AcMM0i4q0ZUUa5GuHs80erbBHfhWfaIBzmc67pgjGgRm8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gv51tuVU; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-471fbfe8b89so176301cf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 17:17:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740100637; x=1740705437; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1740100657; x=1740705457; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=MNYf8gvUKIK6z2omU7NjF3p1iZczAqWaT1UYqslXvvQ=;
-        b=eBo32tUdE/p5LsmalM6G0neyT6lwJ0tAVfcYcR6/bMwg1a66ldDJ3nWC/K6Lh9IymY
-         M6oB8H9coLFszZfKkBk+R5BFW1a+IvQ9+gLIWG3Cf9nbHWWQUDK9eXCNRl/y2J21OZ5t
-         ZlV56hCHbAeUMFEe70WCbe3w61Y0amS2r/98IhCBYWDZulf8mLxq+tsIHOz0KeRCpNwc
-         vhfl8UKoEQWtQmNTehmgq/lXLoN02ZScYPl71a6Op9lEk0Z9a1k2NwcHWsqMqYrbcnaf
-         QS8BSZVFKsGRgpssrEtIqLLno0Usi2sgrAir1/2i4jUy5CZgD84Y/fxVnR8QqERoBExo
-         nABQ==
+        bh=1gCFFhPre328Jo6BJaxyEfCZJIQOlY9Sp8B3gGnSSpc=;
+        b=gv51tuVUcwD97ggiy/TBbAFhZK32mQqRJhk56+IN8T1SgMbReEC29JqEko+w3fPs0r
+         kUtDCpLqwS7T1ppYUcBJ5udeqZv/3vRi7Ezt56NH0XzAPzNelB5AG8z/gny1eurV4T5U
+         5w5u4KLgHwv8eEiIfDwG7tfNwCzKeE7L1qSGX4M6GqSotX76T4l4JzGg4etMO54qXY+v
+         KkHbiC6XbpAiid/01eHjB8CirGjWN8JFQQDtiO/a2A1m1Tb8YBkWbx5jlJc04A4Qsk2/
+         aQy03+fqyvwRHKHL3AW8x+KbrsO9WBX925xg9QEDyPwub1D7ggBfl9txLJpLpVtZQopq
+         NJ+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740100637; x=1740705437;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1740100657; x=1740705457;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=MNYf8gvUKIK6z2omU7NjF3p1iZczAqWaT1UYqslXvvQ=;
-        b=lj8qCe96/eh616ZwTrzEwqrtNAkJShS1bngx00YpLjqMgMnUsSPKHTokh3uDQEDXkS
-         kEEF5z8i/OnpNLxpn8xVxO/THS7Wckvu0oBtwdplObgxT5zV8TQ/SBf0MMSu7W2+GNCN
-         2EmaPCNRLwAdZFidyOtVkv8w5MfV1E3wNaSiiUwiq80mPe+y2BfTA2LMYGIHJInKHqsd
-         Po9RbEtmU/MnvRbbV8QRsH9F6CjW7sberV6IzGJbsTYBRnNYp0QBswBz3rxGDT7lRdwc
-         3tU831IT0A8Ix3nbOcgIzyHMifUGrQh41et7XE3F85ZgDlUAiOH7ryRgYc2mYyGIJ9n6
-         21oA==
-X-Forwarded-Encrypted: i=1; AJvYcCV9rCE9u/e56hFFe1vPo0h2MTiostIRkObdKKKC+dtHd8rHiXCdQicd6xvHI1njvW4fumCffH5P8GXX@vger.kernel.org, AJvYcCWYYZd1ZdYZF7VrhuT48DmVc2P6/Obopv5iCALAm+6FXIe3H+2dYg6HH/7QdmxJbe35/8bQ22UuSKi7ImE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyvBXqsQO30nDCnbLtovGePK1bd77hYOHIlqp1mf9gcOYpLgPeu
-	0ZWkkZr+mRS78tw3q02cfPH3kInHOdnv8TZv5WOZEna5VrS0CCLO+E90YQ==
-X-Gm-Gg: ASbGncuDm3KbG6NWsje5LePSGfiCeeAt11acpwGDXVgBgdC7cCwtFtshiatAITvflSL
-	Cy4VLw3itQZ1sUiCH3/Dg3RN39efr8Cc2btSSEwGfjLiAwHUefg4cwAaTBnT2c9ytTZ6Jv0STYE
-	BzP3K0L0etO/6h6ZG3ym/Nm9oEO1eWr8fPIkHY6XeLQwsWHSrNGWolbqCKVKSysT2qnLNdzPp6Y
-	qsdZZe+G392x0hbVCjOfS2kz1g98YNF0KupwCxh3E+4JmaRquJiRhGWn5hf6m62IaGMyu9X5LPm
-	Gg7XLecnQsq8S4hx5ineoQEORo20mX7+
-X-Google-Smtp-Source: AGHT+IFjBI2eeNQdYSu40Bn0PtNyNd8RBK+113npY8OkqddVeS1rr/8D6XY5mZU/TA2EeL2+RORNdQ==
-X-Received: by 2002:a17:907:948c:b0:abb:fcbb:ab20 with SMTP id a640c23a62f3a-abc09aa96bfmr156838066b.22.1740100636861;
-        Thu, 20 Feb 2025 17:17:16 -0800 (PST)
-Received: from foxbook (adtt173.neoplus.adsl.tpnet.pl. [79.185.231.173])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abb989d89edsm894200066b.81.2025.02.20.17.17.15
-        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
-        Thu, 20 Feb 2025 17:17:16 -0800 (PST)
-Date: Fri, 21 Feb 2025 02:17:12 +0100
-From: =?UTF-8?B?TWljaGHFgg==?= Pecio <michal.pecio@gmail.com>
-To: Mathias Nyman <mathias.nyman@linux.intel.com>
-Cc: Mathias Nyman <mathias.nyman@intel.com>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, Niklas Neronin
- <niklas.neronin@linux.intel.com>, linux-usb@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 5/5] usb: xhci: Skip only one TD on Ring
- Underrun/Overrun
-Message-ID: <20250221021712.48c07fe0@foxbook>
-In-Reply-To: <7bb25848-c80e-4ba8-8790-8628951806b3@linux.intel.com>
-References: <20250210083718.2dd337c3@foxbook>
-	<20250210084220.3e5414e9@foxbook>
-	<7bb25848-c80e-4ba8-8790-8628951806b3@linux.intel.com>
+        bh=1gCFFhPre328Jo6BJaxyEfCZJIQOlY9Sp8B3gGnSSpc=;
+        b=XXgtEOJ3k9pSYZrMM3xPS97RlYMN/xdrfbP7Yo3f+C3X23xV8TeOl5A/6AyBMU8R/e
+         lmwvhAxZRtr8TfawUTvDPnbSZvy+sXGKrF0g28uGLgOuBljeog3L3kawVJqTE8tniRej
+         kYtrdO1u/sILNOcFpN/f/nPr4dUbMTC64mjdnfntqWVnCWdQFCCddskEmYWOck/If28P
+         c5UR0VMhXFTP11vWfFxf7Je1y/fptsy9fW2GMMOKoD+hPmDnOI5Lw6BpghzgdNej4oUD
+         JRalXeILE3B5jsBF1awsEhdU/2qNHDNcC2EDwe7l+ZRf6+G6oXB6Ums3IU4J39g/IPaG
+         r1vw==
+X-Forwarded-Encrypted: i=1; AJvYcCWtLQeeuYpm2nCVAUSgZOCUXXM668EXl5YjJTKXirBd05aixOn10AUE8Ptm3B7lIQ+onB8er8j9H9hp4Zw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywf5xGK8QXbTBb6xVxxwMGvyP1d6oJKnrWWjZnmOp9r91YMDiYR
+	fcNXp13T6kYY3S5YNa7NWFCj/Hpt2+fu70pzKyB4b6SN7no49W38EfZ01xC8f/CT+m4u3rpD5z2
+	F0AfCU6CX+rOA5+4Mi5PeYk9w3O1Yqc9HiQ9/
+X-Gm-Gg: ASbGncs7YXQK4JbsKCDhkRK8O0lDhjZ3Ig8icT2kw0kS3GA7eJN4F44KVqAXOLXbpyS
+	Q+9IdFW8JkkFqoWPPv5uzzdR6BGTJTucNQqzcW8rUYLTUsHL/Dt9Lhj7YkKHc7pEgatoDHTvvOA
+	==
+X-Google-Smtp-Source: AGHT+IF7AlNAgH0UjxRv2es5ALe+A6mfPGmSxVbX6luAUr0KjSPvKmibXyCkkasN3H9u5m8y/v5ldowj7oAsz0/k9wY=
+X-Received: by 2002:ac8:5a48:0:b0:467:8416:d99e with SMTP id
+ d75a77b69052e-47225106af3mr714471cf.21.1740100656296; Thu, 20 Feb 2025
+ 17:17:36 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250210195117.1074569-1-joshdon@google.com> <8923aaae-becd-489a-bfe1-8c1c569d8d48@web.de>
+In-Reply-To: <8923aaae-becd-489a-bfe1-8c1c569d8d48@web.de>
+From: Josh Don <joshdon@google.com>
+Date: Thu, 20 Feb 2025 17:17:25 -0800
+X-Gm-Features: AWEUYZmnLnZOx-woOtot8P2f9Hp1GdUS6u38mNdHZANKITXS0Y2iOa1hU6CM9p8
+Message-ID: <CABk29NvJu82jsMBvoE0Fte4oo=tcVk0H=z1WpcaBasdaXC0Kmw@mail.gmail.com>
+Subject: Re: [PATCH] sched: fix potential use-after-free with cfs bandwidth
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: kernel-janitors@vger.kernel.org, Ingo Molnar <mingo@redhat.com>, 
+	Juri Lelli <juri.lelli@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Vincent Guittot <vincent.guittot@linaro.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Ben Segall <bsegall@google.com>, Chengming Zhou <chengming.zhou@linux.dev>, 
+	Daniel Bristot de Oliveira <bristot@redhat.com>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+	K Prateek Nayak <kprateek.nayak@amd.com>, Mel Gorman <mgorman@suse.de>, 
+	Steven Rostedt <rostedt@goodmis.org>, Valentin Schneider <vschneid@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 11 Feb 2025 17:41:39 +0200, Mathias Nyman wrote:
-> On 10.2.2025 9.42, Michal Pecio wrote:
-> > +				if (ring_xrun_event) {
-> > +					/*
-> > +					 * If we are here, we are on xHCI 1.0 host with no idea how
-> > +					 * many TDs were missed and where the xrun occurred. Don't
-> > +					 * skip more TDs, they may have been queued after the xrun.
-> > +					 */
-> > +					xhci_dbg(xhci, "Skipped one TD for slot %u ep %u",
-> > +							slot_id, ep_index);
-> > +					break;  
-> 
-> This would be the same as return 0; right?
-> 
-> Whole series looks good, I'll add it
+On Wed, Feb 19, 2025 at 12:11=E2=80=AFPM Markus Elfring <Markus.Elfring@web=
+.de> wrote:
+>
+> =E2=80=A6
+> > For full correctness, we should avoid removal from the list until after
+> > we're done unthrottling in __cfsb_csd_unthrottle().
+> =E2=80=A6
+>
+> How do you think about to add any tags (like =E2=80=9CFixes=E2=80=9D and =
+=E2=80=9CCc=E2=80=9D) accordingly?
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/D=
+ocumentation/process/submitting-patches.rst?h=3Dv6.14-rc3#n145
 
-I hope you haven't sent it out yet because I found two minor issues.
+Thanks, yea I'll resend with the fixes tag and with all the additional
+review tags collected.
 
-
-Firstly,
-[PATCH 3/5] usb: xhci: Fix isochronous Ring Underrun/Overrun event handling
-
-increases the number of xrun events that we handle but doesn't suppress
-the "Event TRB for slot %u ep %u with no TDs queued\n" warning, so the
-warning started to show up sometimes for no good reason. The fix is to
-add ring_xrun_event to the list of exception for this warning.
-
-
-Secondly,
-[PATCH 5/5] usb: xhci: Skip only one TD on Ring Underrun/Overrun
-
-can be improved to clear the skip flag if skipped TD was the only one.
-This eliminates any confusion and risk of skipping bugs in the future.
-The change is a matter of moving that code to a different branch.
-
-I also changed 'break' to 'return 0' because it gets hard to follow at
-this level of indentation.
-
-
-I'll send a v2 of those two patches. Sorry for any inconvenience.
-
-Michal
+Best,
+Josh
 
