@@ -1,120 +1,237 @@
-Return-Path: <linux-kernel+bounces-525889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 508CEA3F6E0
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 15:11:24 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11E5FA3F6E6
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 15:12:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF8993B269D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 14:11:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C28777A31D9
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 14:11:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE3D020E00D;
-	Fri, 21 Feb 2025 14:11:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F87020E70E;
+	Fri, 21 Feb 2025 14:12:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wL1U4wty"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	dkim=pass (2048-bit key) header.d=fooishbar.org header.i=@fooishbar.org header.b="BUi9cF2+"
+Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C9C520E02F
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 14:11:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71EF8433DE
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 14:12:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740147078; cv=none; b=a0cnrn5fjfyNxz2gvXnktV58dc31c/ch6kCUFwRbWL5foUOZqqiluJydVpMxbESAG7veGOtt5d0s/acVn9/X9/2sQTrK3vQ1gaF1fKrN+rDyF9L8YUs9OljLzrwSSDLA+08Yy6kRXT3edJIYyWT3y9CHNMhyra7anVCdCE7qgx8=
+	t=1740147142; cv=none; b=qFKCO0cbjdhBVbJyJiH50Okg+M/MZjomQT1dMwKJl8XQbVypD0uoRYTvHHpbEnHxNtlB8JL73i9SzF+ivEGiSUecbTRipK7HP8yEWFP29qMKwH2yE0amDDLL41GB2tFvRm4Brb5xU29lnyNjVdErqYlBmOjcJTbwG+/dO0xg8/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740147078; c=relaxed/simple;
-	bh=do6kcs4VaPfIUQ4XmVGLCf5JoEMWdQCupCtvTEi3S3w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j+5NhqUK5QEsbpjCPe26kjHkdjixKmx8kWaa2FFvH2QoUDsCnzIBAj0cRBjHkUa2Z4Y24p7eWRVFxmHzUZmfAcDovcbQPFC4vXYQBYqINWo4cTmfOcOnwZQaVbqtMZqU9758tuYZU1GkURmW0Igc59iclDACV1mid+/4M7FQuMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wL1U4wty; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-3061513d353so22415501fa.2
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 06:11:15 -0800 (PST)
+	s=arc-20240116; t=1740147142; c=relaxed/simple;
+	bh=c0w7UdT7ZWmCjWsO5qjgXEeM8ReRbGDdHyMSS6JxZvs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pwYfzw38JlwtXA77KbpajDLDBn/eBOWBiubE5zEGXtR9hZNf/U42EuUyCLbm3Zdg6NRPRQ2vsOQJcQ6JdEwUiPtcyJlyM5uAuabGVbQT8CPbch4dCrikuWTRt1oSLZ2HBZDkYl4c24ae4vT0UwKLLyTUYX2STF49YqvHc0HC2kw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org; spf=pass smtp.mailfrom=fooishbar.org; dkim=pass (2048-bit key) header.d=fooishbar.org header.i=@fooishbar.org header.b=BUi9cF2+; arc=none smtp.client-ip=209.85.222.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fooishbar.org
+Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7c0b0ca6742so224666785a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 06:12:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740147074; x=1740751874; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=hY7q6HQ4FQaZazAg7YSbphco7l3aJQzJCtoIpLMsi3M=;
-        b=wL1U4wtya6qYKibQKOux2flP/Bg1V5rUVdUF4O1fKqQuN0Qg1TD4ASdQLj3uuUOexf
-         xKjcjzaK3my1TwFT2hfjeUg4O2zjRUs94WtO73opBGSGyBqlv77yZNGCP9i0TdLN81SR
-         ZoxroCsZmF3ZNuv4T9LG2VgHdOgFkocDmVtbrjZRFZT939BdKVNpHsBPIqyxsTTJi5km
-         6e/l/g+ZgqnKbQM+M4Llci2HbW6sy6TClvGyBUumVPXhtf3iJHROaRUAJMew3Tkd/IDH
-         JVC4asgE15HzAOodofBHJEm+segKyvYZcKXDUpWSpOEe/noYpX1iCsx5jjFRd+/kRFKH
-         4cTg==
+        d=fooishbar.org; s=google; t=1740147139; x=1740751939; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=m9yE+NbJbzuXxkBEw/1a0dtqEVxR7Jj4LrNBop/jhXU=;
+        b=BUi9cF2+dvIm3/U1zP+HvTbRQBeR/OCsnRnsq3fMgP12Y8IGRZ2DaeIjisHXFJkLzQ
+         XrojHNJSt/z3j9Me4569WlmsXz8IPuKxEdElZlZ/dFqudJUoIifwfIiZnJXYOg8JZitx
+         0uaKDN7obl1YqX7SJpAfALGiFgP8xX8s7qVL8+LJX7p8+qawnK/ZxMLtBxvPdEk4SY9R
+         6lTkmjaBzhpag4xZzeMK9hWCGnXe+hB7nR+nH2KD7crg9GgAF5pE2dJdysoBrq2IRCaM
+         KIVCqiPFKPnXeK610WOrheTa3HUxOaWNBbny1pS6otxHqa8MDYBkPpoGudMul3haP5T+
+         P6Hg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740147074; x=1740751874;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hY7q6HQ4FQaZazAg7YSbphco7l3aJQzJCtoIpLMsi3M=;
-        b=trmSDannFCH9SUzD0tLKSjWazROdqFSt20gvc1Nwy0WMjBT5Olof9d+F9wDuBBj4tT
-         XVdmGL+lp9shvE2K9kQMMuvyLy01BQMX28SLpAo/r4pgG2d8uMs/zRacN2sWz/gEPkop
-         le0Iiq5p3OVFteL+2TqSJa5s5VFFNSrPUgpSOBupIMGNoucQqmTRbgxDFKqdjXa2qoZS
-         rgbfbm6p9Z1QQY2houlyiwjvUNwF2Cq5BkobasEIbaIAd6LGc+toXybC0avKRTdc73sp
-         phkE4YHDazhGHh60VNtpwwi5n0UmGaUNNDmzH7Db+Trx2COwgfTkwaGC35Afy8dhNtCm
-         wrfg==
-X-Forwarded-Encrypted: i=1; AJvYcCXd61/GWBlTMC3LZWhQyff4rzmfudfnfvRzJt4vQXT7HYgnUMBU1+k13w+zZG26qOOiHtqwq0nAkAGYV5g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNs8Rqf/GVnaHV3yLGrCn2zpKkfISgC+5RD+8a8VO9gibxKBV2
-	Yi15Cvs/vj+TFIRd9f3lU+RApRVDPIfni5kHznWksf6gM3tESInaSmJvXNMnLmA=
-X-Gm-Gg: ASbGncvHH3e1VR5fXRXriXc5WbWtstKzPvJqXjEQOUrA3vMMNPXiPwbt2sOCfOQ1eEk
-	IRUzNQTPN4Yc2KXxmt12M1Csu56ksiShUgSEoE2ZpJHtzjl/nv+zmsppB8pMd4q59Io7wjDDBLx
-	UCUY+rJ8cTHpqG/qdkAlXzIRuHMbqYh0oDPhLgg/2/gjbqK4f5ry0XCfOue4ZZhpsby8MY5taFW
-	G2eWxYxCRqbxA6Okw6gtS5iCyfaMIIOVPSqFnU+CkDQN4UYfH2+9U1xsKzo7oKetDuqZyQpAM65
-	YN9aYnvRNvOOv/ddEtbObgJOZYQGJm/GRfMn6FfQyTeaA76JlzJIChdr4FSMYmMmn4InE5PXpLH
-	xRsZQNQ==
-X-Google-Smtp-Source: AGHT+IF4YOFfa5Kt8R2qRuDLGtHoO3z4a0J1rMxXFbaWLFLtIOV4Chzyik4Qt1FBw4hvpqQhKIqgvA==
-X-Received: by 2002:a2e:8202:0:b0:30a:44ca:7e72 with SMTP id 38308e7fff4ca-30a5b20dc6dmr10079311fa.24.1740147074062;
-        Fri, 21 Feb 2025 06:11:14 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30a3a6d3dcesm13384331fa.67.2025.02.21.06.11.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Feb 2025 06:11:13 -0800 (PST)
-Date: Fri, 21 Feb 2025 16:11:11 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Taniya Das <quic_tdas@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Ajit Pandey <quic_ajipan@quicinc.com>, Imran Shaik <quic_imrashai@quicinc.com>, 
-	Jagadeesh Kona <quic_jkona@quicinc.com>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v5 02/10] dt-bindings: clock: Add Qualcomm QCS615 Camera
- clock controller
-Message-ID: <ljfgljuhlpkjvqwomhvq5l6giihqv6h5nzswncaqgelvjycgew@bcxjrgbj3lts>
-References: <20250221-qcs615-v5-mm-cc-v5-0-b6d9ddf2f28d@quicinc.com>
- <20250221-qcs615-v5-mm-cc-v5-2-b6d9ddf2f28d@quicinc.com>
+        d=1e100.net; s=20230601; t=1740147139; x=1740751939;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=m9yE+NbJbzuXxkBEw/1a0dtqEVxR7Jj4LrNBop/jhXU=;
+        b=pCrBAJFCGMg3hiZOvoC0vZM7uqioBARwr7wG4XJwh1pz1T+DcgSJiLmAu1loUmkI99
+         Mq3ebjpxUWGQHlFwbQkLo/zyFBEMn6fpB4d19UlJyXLIumVPGI4zoIO2cATZSIFbkPN2
+         XOcQUEr8+CdiIx9MaUVGQXat0m91MeXgtAsTkj58u4VZyCF7D8l6XSm/A9FgX3xk+9Jn
+         ttgxvZR1sSOAFRYRLqWH5PjFDhDM47L9BHZLAJzthNPTbXYLDCMT/ilfIShj3bu39sks
+         Cv1T83fI+Y6GGGkpp8Ici6uLXDQHSJ1gNQIB0XgINa8jmw9xnkjvM6Vcrhy1Ra1aU/+r
+         7sCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU1+bslT+zs9P2/qt7JfySobdOyrDVC7B1HTM2qL4oh/ek1thPveR6W3xJ6/AcVk1Of+WxyyaJ6To/AHLY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQXD3vUV7ZWphhy6wC37YfgMUFqJHBddDWJb/CG+uxF06QsaPM
+	GY6DFnqw3iDP5mXRiAdu5WLWnDtN6aMperuUcFbt2DIDxSsvhLeDo3gDz/DRSbEvC2NAc1KMX7G
+	9NAJVc2zWyy6T2N3nmzTLO4nYIyTaK1MnR16UzA==
+X-Gm-Gg: ASbGnctpjQT4KVZ/CAZ09rvM1r95myjDq/JQAQJaTfjcm32TB73H3BhZR6PD77Whc3H
+	jk3JsrBUoeT5Sh/QovYJ8wLWScY7i2ilXJebPbSN7YGfhGrHmrlfveBLQy+bIcBMWXTdg13b8nW
+	jP+oIZlg==
+X-Google-Smtp-Source: AGHT+IFieBNTxJ4hx1OI2gSZB618IgbZaKxKQewYduWvvTgUefuy7AogKvIO9imSGUNujouK58RLbPzlVZ8deqdW1G0=
+X-Received: by 2002:a05:620a:171e:b0:7c0:7eb4:6635 with SMTP id
+ af79cd13be357-7c0ceeff2f5mr489949685a.20.1740147139124; Fri, 21 Feb 2025
+ 06:12:19 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250221-qcs615-v5-mm-cc-v5-2-b6d9ddf2f28d@quicinc.com>
+References: <20241217100809.3962439-1-jens.wiklander@linaro.org>
+ <20250212205613.4400a888@collabora.com> <CAFA6WYOaGEPj0xNEDBCoEmjJreEHChjQ2hyXRJ_CYoGhiBonfw@mail.gmail.com>
+ <20250213093557.278f5d19@collabora.com> <CAFA6WYOJkSRsH-15QdqXNMd08Q=Dg4NkRd1Cr9LXA+5nozTF6g@mail.gmail.com>
+ <20250213134008.4cbef142@collabora.com> <CAPj87rM5Y=-Jgf4mwukicF6Yb-vccn2fpG2X1jNq0upH2+cAEQ@mail.gmail.com>
+ <CAHUa44G9hw-z6wzxg=HkVAxPKEW1yES5JTEqRWMvJUJAtcUDkQ@mail.gmail.com>
+ <CAPj87rPHnME5Osgnf5-FSAu22mDpLj=dzvhi_NqEcOwr1ThgGw@mail.gmail.com>
+ <CAHUa44Gs0D1fBD0=+EDgcQUMeDv4knci9trUkYEc1J98qFV7HQ@mail.gmail.com>
+ <CAFA6WYOuTwRPEh3L7+hMyARB_E73xmp+OwhKyS-r4+ryS7=9sw@mail.gmail.com>
+ <20250214164856.0d2ead8a@collabora.com> <CAFA6WYPc6EHQwcPuMZRm4C1P6SoDrCzEPUmju_meupB6NXQ1sg@mail.gmail.com>
+ <CAPj87rN-OYTzh5=Gdv619UQD5=x=U6Yt=uV4N1kCs4Zao4RVAg@mail.gmail.com> <CAFA6WYMLLLSuz3y5J+DuRFAGrmwpZoWax5sasfAUhXoQXmrNNA@mail.gmail.com>
+In-Reply-To: <CAFA6WYMLLLSuz3y5J+DuRFAGrmwpZoWax5sasfAUhXoQXmrNNA@mail.gmail.com>
+From: Daniel Stone <daniel@fooishbar.org>
+Date: Fri, 21 Feb 2025 14:12:07 +0000
+X-Gm-Features: AWEUYZmP2uYJ9getqaxkEL4eegweLIaIcbeabrpYDd9o5HHeksDQJ2ryFyndM6w
+Message-ID: <CAPj87rN7J6u9NsviAdw8=OenEYc8t719Lds6u6-BhFKrtkLZ-A@mail.gmail.com>
+Subject: Re: [PATCH v4 0/6] TEE subsystem for restricted dma-buf allocations
+To: Sumit Garg <sumit.garg@linaro.org>
+Cc: Boris Brezillon <boris.brezillon@collabora.com>, 
+	Jens Wiklander <jens.wiklander@linaro.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Media Mailing List <linux-media@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, 
+	"moderated list:DMA BUFFER SHARING FRAMEWORK" <linaro-mm-sig@lists.linaro.org>, op-tee@lists.trustedfirmware.org, 
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, 
+	Olivier Masse <olivier.masse@nxp.com>, Thierry Reding <thierry.reding@gmail.com>, 
+	Yong Wu <yong.wu@mediatek.com>, Sumit Semwal <sumit.semwal@linaro.org>, 
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>, 
+	John Stultz <jstultz@google.com>, "T . J . Mercier" <tjmercier@google.com>, 
+	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, azarrabi@qti.qualcomm.com, 
+	Florent Tomasin <florent.tomasin@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Feb 21, 2025 at 02:50:13PM +0530, Taniya Das wrote:
-> Add DT bindings for the Camera clock on QCS615 platforms. Add the
-> relevant DT include definitions as well.
-> 
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Hi Sumit,
 
-Just noticed. I've never replied with this tag. I've provided a comment
-to the v3 of the series, then in v4 this somehow appeared. Could you
-please comment, what has happened?
+On Fri, 21 Feb 2025 at 11:24, Sumit Garg <sumit.garg@linaro.org> wrote:
+> On Tue, 18 Feb 2025 at 21:52, Daniel Stone <daniel@fooishbar.org> wrote:
+> > dma-heaps was created to solve the problem of having too many
+> > 'allocate $n bytes from $specialplace' uAPIs. The proliferation was
+> > painful and making it difficult for userspace to do what it needed to
+> > do. Userspace doesn't _yet_ make full use of it, but the solution is
+> > to make userspace make full use of it, not to go create entirely
+> > separate allocation paths for unclear reasons.
+> >
+> > Besides, I'm writing this from a platform that implements SVP not via
+> > TEE. I've worked on platforms which implement SVP without any TEE,
+> > where the TEE implementation would be at best a no-op stub, and at
+> > worst flat-out impossible.
+>
+> Can you elaborate the non-TEE use-case for Secure Video Path (SVP) a
+> bit more? As to how the protected/encrypted media content pipeline
+> works? Which architecture support does your use-case require? Is there
+> any higher privileged level firmware interaction required to perform
+> media content decryption into restricted memory? Do you plan to
+> upstream corresponding support in near future?
 
-> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
-> ---
->  .../bindings/clock/qcom,qcs615-camcc.yaml          |  54 ++++++++++
->  include/dt-bindings/clock/qcom,qcs615-camcc.h      | 110 +++++++++++++++++++++
->  2 files changed, 164 insertions(+)
+You can see the MTK SVP patches on list which use the MTK SMC to mediate it.
 
--- 
-With best wishes
-Dmitry
+There are TI Jacinto platforms which implement a 'secure' area
+configured statically by (IIRC) BL2, with static permissions defined
+for each AXI endpoint, e.g. CPU write + codec RW + dispc read. I've
+heard of another SoC vendor doing the same, but I don't think I can
+share those details. There is no TEE interaction.
+
+I'm writing this message from an AMD laptop which implements
+restricted content paths outside of TEE. I don't have the full picture
+of how SVP is implemented on AMD systems, but I do know that I don't
+have any TEE devices exposed.
+
+> Let me try to elaborate on the Secure Video Path (SVP) flow requiring
+> a TEE implementation (in general terms a higher privileged firmware
+> managing the pipeline as the kernel/user-space has no access
+> permissions to the plain text media content):
+>
+> - [...]
+
+Yeah, I totally understand the TEE usecase. I think that TEE is a good
+design to implement this. I think that TEE should be used for SVP
+where it makes sense.
+
+Please understand that I am _not_ arguing that no-one should use TEE for SVP!
+
+> > So, again, let's
+> > please turn this around: _why_ TEE? Who benefits from exposing this as
+> > completely separate to the more generic uAPI that we specifically
+> > designed to handle things like this?
+>
+> The bridging between DMA heaps and TEE would still require user-space
+> to perform an IOCTL into TEE to register the DMA-bufs as you can see
+> here [1]. Then it will rather be two handles for user-space to manage.
+
+Yes, the decoder would need to do this. That's common though: if you
+want to share a buffer between V4L2 and DRM, you have three handles:
+the V4L2 buffer handle, the DRM GEM handle, and the dmabuf you use to
+bridge the two.
+
+> Similarly during restricted memory allocation/free we need another
+> glue layer under DMA heaps to TEE subsystem.
+
+Yep.
+
+> The reason is simply which has been iterated over many times in the
+> past threads that:
+>
+>     "If user-space has to interact with a TEE device for SVP use-case
+> then why it's not better to ask TEE to allocate restricted DMA-bufs
+> too"
+
+The first word in your proposition is load-bearing.
+
+Build out the usecase a little more here. You have a DRMed video
+stream coming in, which you need to decode (involving TEE for this
+usecase). You get a dmabuf handle to the decoded frame. You need to
+pass the dmabuf across to the Wayland compositor. The compositor needs
+to pass it to EGL/Vulkan to import and do composition, which in turn
+passes it to the GPU DRM driver. The output of the composition is in
+turn shared between the GPU DRM driver and the separate KMS DRM
+driver, with the involvement of GBM.
+
+For the platforms I'm interested in, the GPU DRM driver needs to
+switch into protected mode, which has no involvement at all with TEE -
+it's architecturally impossible to have TEE involved without moving
+most of the GPU driver into TEE and destroying performance. The
+display hardware also needs to engage protected mode, which again has
+no involvement with TEE and again would need to have half the driver
+moved into TEE for no benefit in order to do so. The Wayland
+compositor also has no interest in TEE: it tells the GPU DRM driver
+about the protected status of its buffers, and that's it.
+
+What these components _are_ opinionated about, is the way buffers are
+allocated and managed. We built out dmabuf modifiers for this usecase,
+and we have a good negotiation protocol around that. We also really
+care about buffer placement in some usecases - e.g. some display/codec
+hardware requires buffers to be sourced from contiguous memory, other
+hardware needs to know that when it shares buffers with another
+device, it needs to place the buffers outside of inaccessible/slow
+local RAM. So we built out dma-heaps, so every part of the component
+in the stack can communicate their buffer-placement needs in the same
+way as we do modifiers, and negotiate an acceptable allocation.
+
+That's my starting point for this discussion. We have a mechanism to
+deal with the fact that buffers need to be shared between different IP
+blocks which have their own constraints on buffer placement, avoiding
+the current problem of having every subsystem reinvent their own
+allocation uAPI which was burying us in impedance mismatch and
+confusion. That mechanism is dma-heaps. It seems like your starting
+point from this discussion is that you've implemented a TEE-centric
+design for SVP, and so all of userspace should bypass our existing
+cross-subsystem special-purpose allocation mechanism, and write
+specifically to one implementation. I believe that is a massive step
+backwards and an immediate introduction of technical debt.
+
+Again, having an implementation of SVP via TEE makes a huge amount of
+sense. Having _most_ SVP implementations via TEE still makes a lot of
+sense. Having _all_ SVP implementations eventually be via TEE would
+still make sense. But even if we were at that point - which we aren't
+- it still doesn't justify telling userspace 'use the generic dma-heap
+uAPI for every device-specific allocation constraint, apart from SVP
+which has a completely different way to allocate some bytes'.
+
+Cheers,
+Daniel
 
