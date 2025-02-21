@@ -1,123 +1,164 @@
-Return-Path: <linux-kernel+bounces-525571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8508A3F189
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 11:12:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DDCE3A3F1D7
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 11:21:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1438422B4A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:11:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AFF0E421FFF
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:18:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D05F42054F7;
-	Fri, 21 Feb 2025 10:11:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B57D9205AC4;
+	Fri, 21 Feb 2025 10:18:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="XhHkyLIj"
-Received: from mout.web.de (mout.web.de [217.72.192.78])
+	dkim=pass (1024-bit key) header.d=t12smtp-sign004.email header.i=@t12smtp-sign004.email header.b="JMb1cjPz"
+Received: from mail64.out.titan.email (mail64.out.titan.email [44.205.83.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3B6D1F4299;
-	Fri, 21 Feb 2025 10:11:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 015852046B0
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 10:18:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.205.83.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740132681; cv=none; b=gGkdyBjVybRe98st0UrhIxaG5Aoo+pBtvD/bSxQC+bsKY/BLg79aW6syuPs+ndV5GMABbHgCxYlyipmLpuMSvRbHrCClyp9T8InZrD6ey4eCYzDymX1bV5KRhQ6/vhODf3y+nU9ud4xU33ngznIdQwkCNkSa55cEfX2lqsr97pM=
+	t=1740133108; cv=none; b=f6j2yODPE4XtrwfMiTX9zt68KVEyK7iajfxPvbJEDaUUBLpehovCk+LGOb1yIiXF7HUNoUadc/c9rqK9C1Oq0hwNRI/cYorRYt1o19IyRgaLU5oC02doDjKJ71OYY+0sT0EsDYxVdPTGCqkIaiPKZIgwZSISW1dg09+X2M/qxgI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740132681; c=relaxed/simple;
-	bh=GDmCe53Y2cxCxTc2pZ7YEzEK4/9czcfUq1+QZdAFsTk=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=qw0rByUlUmCah9IrJvQ/VYZ8024yv1iGET4WpEVQd26vncWVopC4ILQYRg87SjTpzVxPWKUZ0TSiJYE6isTtTtSDHHyozBO62L7Be29enASbWFYb97gvP8EEcO47QJfDGtMc/VRUKZ2YdTw8N7kDG0G6Ypzzwsp/W4yIoHsZlm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=XhHkyLIj; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1740132670; x=1740737470; i=markus.elfring@web.de;
-	bh=GDmCe53Y2cxCxTc2pZ7YEzEK4/9czcfUq1+QZdAFsTk=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=XhHkyLIjGTT7Il28wEPj+RRjv0JrC5f33PfZH262kEuNEMIz4hmlGpvw2W9HWFZF
-	 /ndcPonxwDeZLXaEtwO04OIm1K8K2QFrCBEDx6ktho1ceQQpl8F6rv4uwJZgoplGS
-	 zmu2pX+7XKGAFuXBqAEJeNXx3vtVVDCDzW9xWKcNeyQS07xQARbAe4wdkQSFlNQ46
-	 UIpGlVl6cQBLRwmgwJIit5W6q5cyuly3w6A6T+dMekAcRPkRlZlPpvyY0FUbpaGj1
-	 iXmBPUIqEd/m6sb+SyRvmnwL6jLlqDwq+dUsxxZ2YVyoeR1XE9Wy9wY6HL5KhRs9e
-	 YzL+US2TPV1qDyMzhw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.93.4]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1Mc1ZN-1tC66r0bKZ-00bIp4; Fri, 21
- Feb 2025 11:11:10 +0100
-Message-ID: <1fab8d2f-20e5-4e92-afb3-53167fecab54@web.de>
-Date: Fri, 21 Feb 2025 11:11:09 +0100
+	s=arc-20240116; t=1740133108; c=relaxed/simple;
+	bh=88uwBBXufAtaQcvEse9Nf2OflZeEY/+ZdeDq35vNfXY=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=LwIdSiTWKFcBONX5Hj955tuwRLXTSI7kMsCpKkHP78CgwXn15FUJrTnHDRsTNQck11US1P7pGxWEmk48n8NAOwPzngPcifiiRde6H8fZ45zQJdV7zRLuTTb6tnIrCmznl8ebOEkMgpqYHb4pXLpxagRljPCIdW9YwYWc68XjB94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=coly.li; spf=pass smtp.mailfrom=coly.li; dkim=pass (1024-bit key) header.d=t12smtp-sign004.email header.i=@t12smtp-sign004.email header.b=JMb1cjPz; arc=none smtp.client-ip=44.205.83.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=coly.li
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=coly.li
+Received: from smtp-out.flockmail.com (localhost [127.0.0.1])
+	by smtp-out.flockmail.com (Postfix) with ESMTP id 4DBD8140382;
+	Fri, 21 Feb 2025 10:12:36 +0000 (UTC)
+DKIM-Signature: a=rsa-sha256; bh=PpkrBXoFOyORs1lMVcREow+qzezp156LadshzoN79Os=;
+	c=relaxed/relaxed; d=t12smtp-sign004.email;
+	h=date:cc:to:mime-version:message-id:references:subject:from:in-reply-to:from:to:cc:subject:date:message-id:in-reply-to:references:reply-to;
+	q=dns/txt; s=titan1; t=1740132756; v=1;
+	b=JMb1cjPzguFGas2VepbOgIqvTQb6AukhOW1x2FKY/ErkpqLfFf3YcUg3gPnYzU83A91CBZ83
+	DogDD8VpSbPtHk2cyJuyrvTwWVGuAOQV6K1t1z2Rl3rXay3upVE54BEPzNJXLGKAGk97yB1s00Z
+	FAyAGJJLhthaDwMYg+Qc675I=
+Received: from smtpclient.apple (unknown [141.11.218.23])
+	by smtp-out.flockmail.com (Postfix) with ESMTPA id 16EEE1403BA;
+	Fri, 21 Feb 2025 10:12:26 +0000 (UTC)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: cocci@inria.fr
-Content-Language: en-GB
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: More benefits from higher level structures for coccicheck scripts?
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:9LNEizQ2clxvfWWQdpZe1VFLV2jQrBCIvewuRxWmh8LctzB6RW3
- tQXBeNI/JAXr/5mX40qGXqU4JaMsM8ctXSNU12i3u87Mc3pM1LWRdPHwDjnpBLg/9GS2LtL
- O/x4j9kPphMGi7I4VlbspWlw9NF/HyLoCITfRdqo1WKmNrDQ9vU2xxThB25RvzcZOxEYJJ1
- nC2VEakr7sJy7dnzZgKRQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:DU4gnxnkiRo=;sXvtjMmjVszrThb0iCyBmFJUlQJ
- f06t+T3zG3C30VHEzr4Xc+B1PMcFH3/brZUB96xwqq5zMF9HZ7MaV0BBlPK3ijIWDs5Dl0pAM
- Zml5EXwiAm58uWb5Q1NKGJIBKnw4kTsu5TkoXzbZr8gOi98HV4wN3XFdR7z/TeDGBlUVlw6L9
- S8CIy/gOfGvXjS7lwuNcxKoE2b60zI08bu7JOwMQeJVneShdOBi08P2/XavFmOsUfGwkswR8S
- EqPKGNF9QEFSfBd4EoGbKkGzD9LTvKOoZbxJpH2rSrRYhg/W/bEcJDq1uBVSPQ1/Egk9E5Fw5
- CsZkNkn44F1fiBu48BptEaJcvIXgsf22t1FvHNc0VB7vvUUtau1CL7PjvtOYmwx9oRp2C1+7f
- kTFw1P9uoHItjhnTI/t5T7J4t2PXedLlqKNESrPZfnlP6glUmGBbEUjxv502ZXUFvgSpjn/T2
- 8s3BnyHMs6q6vOf5b8znJ43xbvxsR/8+hYqYRX9KQQhn4rIkSSnelZHit1Ih6g5IGpv15a/c0
- EN5fXVKzo0B4T7j82LpKJMXv9keTba78b3jvgUpm0Y55HCEz2ItxWW7ByZHn9tGbpn9+tZin7
- m71uES0s0GhYMRdUaaVr+3iJliUjPW48E+eNSs3xErytatz4Hh//zcEkksBvucKP9bpO59d93
- Pf8POMr2Wi6VxQj9IqLBV4+634lOJxab5JPvlHm7S9TdBW/fvJS2qaabhxOJXkmLs/OEwG8hj
- w3P4EqYzOo3sACbBQEsxPxpkr5K9yOjNxK0k+34oi7ibmF3ejJKboOPTGFJM/nF2Ek07QTfEw
- V1SkXdXfyIi96TK3fdCzn0cNqiWoPpgo0MymBpBUg671NZjK5PEZ3oolxNUuZJYOwJzMlFcwY
- oAVBPEvhqBoYPkUSfwWVoDP6t8kS0tD3UskKsupIdbN+odcon3wzdFQ4AfWm2FHZO9nzPAGGQ
- TrbVmAJ7QhcCtbR9nFbNk4XvC4V0b4PS1q10wJCfWr41W72cSN4YpQbDWnpLl5ptGMYrtJBKM
- nXgj74Vv4DG7AobpCqPjQJYxRlAEuM3xrQydl+fvHl6Um+uquGBQzp7dZd2rqLPNgC1crJXE1
- viulVomotiDKkXMjQHWewVxNbPNXmGwEAAtyQRHZR7lni9tVsf75yaQ+gIyz7kWzduC6qfhQj
- Lnux/aCp+4mbK9SIpgWoNrxy0gwpdr6byC/q4yGUAzuryXj8RIkrO84QU3tkkLfWulRVxwDnq
- 1qegcpgt8lG1msOXhNC4PeWd95EDa5NrSUQ0ClHgN6UC2ab1pTfWAK3enF+xfqWRJkslA4+BW
- Ib3DzToyp0gxu1p/JqOOeo5yyGu2Yv4PL1Z5SU7u0xowCQ3lTD5nwP8xQszgxeYC1FTyWAIvo
- mqZ+cbsxD5T6sM58ySjX+c+WQ4jiJPDWTdfJKzCHxpOMHhBqUCg1ejN/L0eWyc/6aX84DyT7f
- vxsAHTLjU2bMfWc5jH4R0iEOVQfs=
-
-Hello,
-
-Various source code was assigned to functions (or function-like macros).
-Common functionality is stored at selected places.
-Thus there is a desire to increase the corresponding usage.
-
-Some scripts were constructed also according to the means of the semantic
-patch language.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/dev-tools/coccinelle.rst?h=v6.14-rc3#n71
-
-It can be seen that some of these SmPL scripts share also program structures.
-
-* Operation modes need to be determined.
-
-* Special source code items should be detected somehow.
-
-* Data output should be provided.
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.400.131.1.6\))
+Subject: Re: [PATCH 05/12] badblocks: return error if any badblock set fails
+Feedback-ID: :i@coly.li:coly.li:flockmailId
+From: Coly Li <i@coly.li>
+In-Reply-To: <272e37ea-886c-8a44-fd6b-96940a268906@huaweicloud.com>
+Date: Fri, 21 Feb 2025 18:12:14 +0800
+Cc: Zheng Qixing <zhengqixing@huaweicloud.com>,
+ axboe@kernel.dk,
+ song@kernel.org,
+ colyli@kernel.org,
+ dan.j.williams@intel.com,
+ vishal.l.verma@intel.com,
+ dave.jiang@intel.com,
+ ira.weiny@intel.com,
+ dlemoal@kernel.org,
+ yanjun.zhu@linux.dev,
+ kch@nvidia.com,
+ Hannes Reinecke <hare@suse.de>,
+ zhengqixing@huawei.com,
+ john.g.garry@oracle.com,
+ geliang@kernel.org,
+ xni@redhat.com,
+ colyli@suse.de,
+ linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ linux-raid@vger.kernel.org,
+ nvdimm@lists.linux.dev,
+ yi.zhang@huawei.com,
+ yangerkun@huawei.com,
+ "yukuai (C)" <yukuai3@huawei.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <70D2392E-4F75-43C6-8C34-498AACC78E0C@coly.li>
+References: <20250221081109.734170-1-zhengqixing@huaweicloud.com>
+ <20250221081109.734170-6-zhengqixing@huaweicloud.com>
+ <4qo5qliidycbjmauq22tqgv6nbw2dus2xlhg2qvfss7nawdr27@arztxmrwdhzb>
+ <272e37ea-886c-8a44-fd6b-96940a268906@huaweicloud.com>
+To: Yu Kuai <yukuai1@huaweicloud.com>
+X-Mailer: Apple Mail (2.3826.400.131.1.6)
+X-F-Verdict: SPFVALID
+X-Titan-Src-Out: 1740132756194826561.32605.1336086399975024175@prod-use1-smtp-out1003.
+X-CMAE-Score: 0
+X-CMAE-Analysis: v=2.4 cv=bq22BFai c=1 sm=1 tr=0 ts=67b85194
+	a=USBFZE4A2Ag4MGBBroF6Xg==:117 a=USBFZE4A2Ag4MGBBroF6Xg==:17
+	a=IkcTkHD0fZMA:10 a=CEWIc4RMnpUA:10 a=AiHppB-aAAAA:8 a=i0EeH86SAAAA:8
+	a=6wd6frUFB1wQldR6h7YA:9 a=QEXdDO2ut3YA:10
+X-Virus-Scanned: ClamAV using ClamSMTP
 
 
 
-Would you be looking for the support of higher level structures for
-coccicheck scripts?
+> 2025=E5=B9=B42=E6=9C=8821=E6=97=A5 18:09=EF=BC=8CYu Kuai =
+<yukuai1@huaweicloud.com> =E5=86=99=E9=81=93=EF=BC=9A
+>=20
+> Hi,
+>=20
+> =E5=9C=A8 2025/02/21 17:52, Coly Li =E5=86=99=E9=81=93:
+>> On Fri, Feb 21, 2025 at 04:11:02PM +0800, Zheng Qixing wrote:
+>>> From: Li Nan <linan122@huawei.com>
+>>>=20
+>>> _badblocks_set() returns success if at least one badblock is set
+>>> successfully, even if others fail. This can lead to data =
+inconsistencies
+>>> in raid, where a failed badblock set should trigger the disk to be =
+kicked
+>>> out to prevent future reads from failed write areas.
+>>>=20
+>>> _badblocks_set() should return error if any badblock set fails. =
+Instead
+>>> of relying on 'rv', directly returning 'sectors' for clearer logic. =
+If all
+>>> badblocks are successfully set, 'sectors' will be 0, otherwise it
+>>> indicates the number of badblocks that have not been set yet, thus
+>>> signaling failure.
+>>>=20
+>>> By the way, it can also fix an issue: when a newly set unack =
+badblock is
+>>> included in an existing ack badblock, the setting will return an =
+error.
+>>> =C2=B7=C2=B7=C2=B7
+>>>   echo "0 100" /sys/block/md0/md/dev-loop1/bad_blocks
+>>>   echo "0 100" /sys/block/md0/md/dev-loop1/unacknowledged_bad_blocks
+>>>   -bash: echo: write error: No space left on device
+>>> ```
+>>> After fix, it will return success.
+>>>=20
+>>> Fixes: aa511ff8218b ("badblocks: switch to the improved badblock =
+handling code")
+>>> Signed-off-by: Li Nan <linan122@huawei.com>
+>>> ---
+>>>  block/badblocks.c | 16 ++++------------
+>>>  1 file changed, 4 insertions(+), 12 deletions(-)
+>>>=20
+>> NACK.   Such modification will break current API.
+>=20
+> Take a look at current APIs:
+> - for raid, error should be returned, otherwise data may be corrupted.
+> - for nvdimm, there is only error message if fail, and it make sense =
+as
+> well if any badblocks set failed:
+>        if (badblocks_set(bb, s, num, 1))
+>                dev_info_once(bb->dev, "%s: failed for sector %llx\n",
+>                                __func__, (u64) s);
+> - for null_blk, I think it's fine as well.
+>=20
+> Hence I think it's fine to return error if any badblocks set failed.
+> There is no need to invent a new API and switch all callers to a new
+> API.
 
-Is there a need for placeholders (or variables) which could be filled from
-other advanced information sources so that selected data processing
-will eventually not be mapped to separate SmPL script files to achieve more
-desirable transformations?
+So we don=E2=80=99t need to add a negative return value for partial =
+success/failure?
 
-Regards,
-Markus
+Coly Li=
 
