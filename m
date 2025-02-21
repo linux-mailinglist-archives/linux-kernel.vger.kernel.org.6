@@ -1,123 +1,117 @@
-Return-Path: <linux-kernel+bounces-525206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 025D4A3EC65
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 06:57:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B8C93A3EC68
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 06:58:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E66319C4A53
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 05:57:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3175188A469
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 05:58:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E10ED1FC0FE;
-	Fri, 21 Feb 2025 05:57:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF7AF1FBEB1;
+	Fri, 21 Feb 2025 05:58:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wpdm2Dgb"
-Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="HaBXhcLM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA8521FBEA6
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 05:57:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DCE81EEA59
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 05:58:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740117442; cv=none; b=YpfQb9TVVu+UBqPL937Bn5QuZnq4eSJWTjBTyLSkepJGZREAzMXSMZEjVjg+fcKJ+o8IHg0cIt9zUDdIhiMMad6uaXtvEEnRrKNMPICZXYmdVQD3k6m/JYPH/4EhpzRjhjPAEWQHSaz6QTjjGYwJJIZkuhExWch/k7pbb3scb1M=
+	t=1740117514; cv=none; b=l4DuSK/dOgElMRZY8VuIRDDrN8fgXgvVu2HXvkNSLUj2fb3Xy5tIebrJByNSJFyi6kX9GMqS+Ip2Yh5zDKQMWqCIr9fMZXTWGp9xd48C/IAQP+8MoRZxqDLe3Lx35Q/INuuHP8dxOObTAXuEWK04TXbF4CgCXzKPT1VG+2eNSKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740117442; c=relaxed/simple;
-	bh=ehpZZfbi2AF75flpipDr/7bESK6ftfSMA3zivtpaI78=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mvUWzpeQGNsnysNukam/wjpzYZq6WgTgUNY0BlLqXeXuE8ptK/CkzH3x884zS/JVWnvT0iZenvct4CBu4jscvU5XVrZMx3rkF28Jr4fFN27WQMKYXeqdnvBJxrgYjNQ+jMhmFKuwgkMANbJCS9lADoYenwdvdPgRP3V785+bKUs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wpdm2Dgb; arc=none smtp.client-ip=209.85.219.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e455bf1f4d3so1436697276.2
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 21:57:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740117440; x=1740722240; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hBewxCJLhSyYTZDz5rlN63USGkLSk86TbO+BwKjDqTs=;
-        b=wpdm2Dgb6e4ovbQPUTKY79UCxXDTXps9lxUSD7PPVlTGh9iTIqGaSiwPOT60t8DDzS
-         iK5QtyNd3ZwPKkamA6bDthenlEhBimUQrgF3mTC/zpMhZJCJPP3rENIdjSQjeLZJbOb3
-         G6cbMU8riZTIv8+sfN25SuEozFaGqojNPupTHCeYr58XlPUfLi+KKktxHekdvnFSSrlw
-         w7SJnvmZftjvLjO7crvYPAf+5ejQTTCTvM/kGdy7vIRyqbKWqVrOUbkA/yRTfL85GtjG
-         1lsNQiqG6eVk63e+IxsRBmdHyty0EXuT0xzauyCVe4cyH/nKbE7l3s73vRrK3y5Kj8C9
-         We4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740117440; x=1740722240;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hBewxCJLhSyYTZDz5rlN63USGkLSk86TbO+BwKjDqTs=;
-        b=iPFUq/wWuLa29bou9itQa5oR0WWbHBLF9BvoyS8vudwgj4BhSVD/QX2dBXJFemkDKl
-         +4Bjej2L1JwMo9bTERhkpgaKnNZCVvyuFoCMjJFKyN2dAB+poyC+iTVMcnOmQsjCC/V4
-         hLYBGi8ERVRo1c7ULub/9tmR0O5q+2+GJwgUmAXWjMAC+IAB2N/WTZ5B0AukNm16ar9y
-         ghR5MZY4sxg+w0kCFdLfZUe1smU89YdOLXHSuivfwiUO7pgqFClx+51qI0yVggYaVzRd
-         zqJUJUIr2vTSIc90EAmsxmovY2jX2lfaMeB8pMWu6oNFPEy/FlJCYPgkMgLV1mNhd6Mi
-         GN8A==
-X-Forwarded-Encrypted: i=1; AJvYcCVw/68+q820oPyrUj5ZAmRF0yyEFifBobTKhouj6kGigXqv3lpJG8UlSWmvHI3qVSpjZM4fw3oTJVOZsns=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx70TK5WNmBBRRVAxLFU118O9o72L8Y1ejdINqR5Kf1MiIIrHQG
-	jXZTLwRdYnoMIMG60rTU+h2gotBMzrXqB2JrW1wK0m4Pjo48Nx0nGhNPHguqUhQ2nxHoPXTVOlo
-	yOV0V3Aswl+5xu85XcDnWv6QRCdp62NoSSJVJ
-X-Gm-Gg: ASbGncv37o2NMCvSPUwRIhukb2Nc0ET0T1F50nkx8v5FMSALNEUskE9/5yk8S2L/XX4
-	l4uPYz7TQ2R569Q8yg68vZ7R1DL4xDMpXcET/tK/Fx2Ghtwu568LWOflDZTKJvzoo+8F3iq2GBW
-	/H9exbLphp
-X-Google-Smtp-Source: AGHT+IFGgmGLdhl/6umh45K26S9GZkhD9bYD2oQAzttgTTrWX5Gm7a98+2nxYrPQ33yycf1dwLxHOLwf9tCHMDrdVec=
-X-Received: by 2002:a05:6902:260d:b0:e5d:b671:8fe4 with SMTP id
- 3f1490d57ef6-e5e245b92f8mr1701103276.7.1740117439742; Thu, 20 Feb 2025
- 21:57:19 -0800 (PST)
+	s=arc-20240116; t=1740117514; c=relaxed/simple;
+	bh=eAuYwlysZ7m/8cEe+oEJgI+h3VQhPc9pSBGB6ags7Uc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XO8VD6+4ysB/6wrZXEAzw/1+XEo4sVM626zjc0qAA4/EUx8PeYH2EOgT8ng+95slPEZrkDAsxYwAKab07Er6kAbGZWU7EfjXBMUSQpl28+jZjxnEoDD+aL5/n3RUz0Mg/WCNI2YUQh7Qqh8xW0W1GsIr4FzeYoK/aZ2MqTjCuEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=HaBXhcLM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F60BC4CEE2;
+	Fri, 21 Feb 2025 05:58:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1740117513;
+	bh=eAuYwlysZ7m/8cEe+oEJgI+h3VQhPc9pSBGB6ags7Uc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HaBXhcLMbmXEktGS8xExYWOIRJx4iu28bJYpKdWe6sFRAQEk7X3FmLFtZzdLWTWSE
+	 aqGB6WtsmkM80XRAlrAG7qTMEPf795k1FfkObOKuRVqreJSMiKUBSo//CqBUH4gaKP
+	 zG6aTDW17Ohe2etUth4Y8w1RT7l3GFtaSk6ggGhI=
+Date: Fri, 21 Feb 2025 06:57:26 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Lucas De Marchi <lucas.demarchi@intel.com>
+Cc: linux-kernel@vger.kernel.org, Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	dri-devel@lists.freedesktop.org, Danilo Krummrich <dakr@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>
+Subject: Re: [PATCH 1/6] drivers: base: devres: Allow to release group on
+ device release
+Message-ID: <2025022102-another-balmy-fe4d@gregkh>
+References: <20250212200542.515493-1-lucas.demarchi@intel.com>
+ <20250212200542.515493-2-lucas.demarchi@intel.com>
+ <2025022007-judiciary-broadly-a1f8@gregkh>
+ <ky3kd4rwuwm6lehmb3n7bplnaoxiwuje67q6m7tvuz6vt7bnnb@lool6xnskx32>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250219220255.v7.1.If6f14aa2512336173a53fc3552756cd8a332b0a3@changeid>
- <CADg1FFfCjXupCu3VaGprdVtQd3HFn3+rEANBCaJhSZQVkm9e4g@mail.gmail.com> <2025022100-garbage-cymbal-1cf2@gregkh>
-In-Reply-To: <2025022100-garbage-cymbal-1cf2@gregkh>
-From: Hsin-chen Chuang <chharry@google.com>
-Date: Fri, 21 Feb 2025 13:56:53 +0800
-X-Gm-Features: AWEUYZkaKtd9Ka_CJ7ZwAOSKumXyaF7yyb25pQiYedxpLC4hamOj3h32BsBEze8
-Message-ID: <CADg1FFc=U0JqQKTieNfxdnKQyF29Ox_2UdUUcnVXx6iDfwVvfg@mail.gmail.com>
-Subject: Re: [PATCH v7] Bluetooth: Fix possible race with userspace of sysfs isoc_alt
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: linux-bluetooth@vger.kernel.org, luiz.dentz@gmail.com, 
-	chromeos-bluetooth-upstreaming@chromium.org, 
-	Hsin-chen Chuang <chharry@chromium.org>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Johan Hedberg <johan.hedberg@gmail.com>, Marcel Holtmann <marcel@holtmann.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Ying Hsu <yinghsu@chromium.org>, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ky3kd4rwuwm6lehmb3n7bplnaoxiwuje67q6m7tvuz6vt7bnnb@lool6xnskx32>
 
-On Fri, Feb 21, 2025 at 1:47=E2=80=AFPM Greg KH <gregkh@linuxfoundation.org=
-> wrote:
->
-> On Fri, Feb 21, 2025 at 09:42:16AM +0800, Hsin-chen Chuang wrote:
-> > On Wed, Feb 19, 2025 at 10:03=E2=80=AFPM Hsin-chen Chuang <chharry@goog=
-le.com> wrote:
->
-> <snip>
->
-> > Hi Luiz and Greg,
-> >
-> > Friendly ping for review, thanks.
->
-> A review in less than 2 days?  Please be reasonable here, remember, many
-> of us get 1000+ emails a day to deal with.
->
-> To help reduce our load, take the time and review other patches on the
-> mailing lists.  You are doing that, right?  If not, why not?
->
-> patience please.
->
-> greg k-h
+On Thu, Feb 20, 2025 at 05:48:10PM -0600, Lucas De Marchi wrote:
+> On Thu, Feb 20, 2025 at 01:24:20PM +0100, Greg Kroah-Hartman wrote:
+> > On Wed, Feb 12, 2025 at 12:05:37PM -0800, Lucas De Marchi wrote:
+> > > When releasing a device, if the release action causes a group to be
+> > > released, a warning is emitted because it can't find the group. This
+> > > happens because devres_release_all() moves the entire list to a todo
+> > > list and also move the group markers. Considering r* normal resource
+> > > nodes and g1 a group resource node:
+> > > 
+> > > 		    g1 -----------.
+> > > 		    v		  v
+> > > 	r1 -> r2 -> g1[0] -> r3-> g[1] -> r4
+> > > 
+> > > After devres_release_all(), dev->devres_head becomes empty and the todo
+> > > list it iterates on becomes:
+> > > 
+> > > 			       g1
+> > > 			       v
+> > > 	r1 -> r2 -> r3-> r4 -> g1[0]
+> > > 
+> > > When a call to component_del() is made and takes down the aggregate
+> > > device, a warning like this happen:
+> > > 
+> > > 	RIP: 0010:devres_release_group+0x362/0x530
+> > > 	...
+> > > 	Call Trace:
+> > > 	 <TASK>
+> > > 	 component_unbind+0x156/0x380
+> > > 	 component_unbind_all+0x1d0/0x270
+> > > 	 mei_component_master_unbind+0x28/0x80 [mei_hdcp]
+> > > 	 take_down_aggregate_device+0xc1/0x160
+> > > 	 component_del+0x1c6/0x3e0
+> > > 	 intel_hdcp_component_fini+0xf1/0x170 [xe]
+> > > 	 xe_display_fini+0x1e/0x40 [xe]
+> > > 
+> > > Because the devres group corresponding to the hdcp component cannot be
+> > > found. Just ignore this corner case: if the dev->devres_head is empty
+> > > and the caller is trying to remove a group, it's likely in the process
+> > > of device cleanup so just ignore it instead of warning.
+> > > 
+> > > Signed-off-by: Lucas De Marchi <lucas.demarchi@intel.com>
+> > > ---
+> > 
+> > Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> 
+> Thanks. Is it ok to take these 3 through the drm tree or are you taking
+> it through yours?
 
-Got it. Take your time and thank you
+As the drm patches depened on these, I figured they should all go
+through the drm tree, so please feel free to take them.
 
---=20
-Best Regards,
-Hsin-chen
+thanks,
+
+greg k-h
 
