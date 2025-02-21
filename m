@@ -1,90 +1,78 @@
-Return-Path: <linux-kernel+bounces-526159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C552A3FAE0
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:21:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BECA1A3FAE9
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:22:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C7B07A1BBC
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:16:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5647F7A538A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:16:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9B4D22333F;
-	Fri, 21 Feb 2025 16:11:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="azSe1hIu"
-Received: from smtp-190b.mail.infomaniak.ch (smtp-190b.mail.infomaniak.ch [185.125.25.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CD8821149F;
-	Fri, 21 Feb 2025 16:11:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83402286298;
+	Fri, 21 Feb 2025 16:11:45 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C13F211A29
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 16:11:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740154297; cv=none; b=jnRJanN1c66Ve9bLm8ORuHA9nVwde9CFrzydU8sDbq8QibXbXgYyTaZsGNCZu0CtOmm2ox72usPkfgnYC0m3dYRtv2NluL7pOFY5xh9jMMLlQ7as3xE9ejPnHsTbrJG9Nh7Udjh4trQwX09sGxT83wGq54Zvc7ihkKx2eHH0bps=
+	t=1740154305; cv=none; b=cx39k0rVh8qFmLJibOjrXJ1sZBsrs8f36ZHYrhmyBVy+PPmUGPTdGFxzqwP3mk3xrWhY0STGv/0cJwauxW+amwtwiK6kNTDqpsejIYMxQTrb2DMymMeKQVa96mRUwRHoCH+yhyVnupUsKdRZxxGsxMomsOo4g5XpKDaTIPLdb5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740154297; c=relaxed/simple;
-	bh=T6dHZGQk0pjWXFu/aSpqEr6oeLaxTvUf4yKCsJYPulw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SfSNJ17TkEs2qnORob9SmLw5EHAf3euHiSl01mnyNfb8Uau82LkSyT8qgfG4bi/mDOj5Di1nbq0a4dw0k+h3l76vPWgay7y1bnsGJS2Ov2NhsCv6QNbhNv7SAyrY24OdjwwgfDmzk6XoGpmu5dL0FIMr5vLnQRCZiWc7lbcgJss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=azSe1hIu; arc=none smtp.client-ip=185.125.25.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-4-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10:40ca:feff:fe05:1])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Yzw9b4wLVzqHw;
-	Fri, 21 Feb 2025 17:11:31 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1740154291;
-	bh=yQcOqV1VkaALUen0yjiE4okMbU08ONwrQynXhHTnX2M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=azSe1hIuIY7sAaid+jbJN+ejJw4gKzqOzf7ryu/CXumCodUdC7tku/ZAVGQ5ojFGQ
-	 Ve7nC+MHkAwS+LTYjHezaUBEUlO4Yrl0bPkzPbIvN8yfnTHijt4Cvt5v+okYoC589P
-	 GZ6Q8MDD0EXk4MVplgqasHYGEDrJPHi0EsAPXvRU=
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Yzw9b14lkzj1j;
-	Fri, 21 Feb 2025 17:11:31 +0100 (CET)
-Date: Fri, 21 Feb 2025 17:11:30 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Bharadwaj Raju <bharadwaj.raju777@gmail.com>
-Cc: gnoack@google.com, shuah@kernel.org, skhan@linuxfoundation.org, 
-	linux-security-module@vger.kernel.org, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-kernel-mentees@lists.linux.dev
-Subject: Re: [PATCH] selftests/landlock: add binaries to gitignore
-Message-ID: <20250221.iehieChaoki1@digikod.net>
-References: <20250210161101.6024-1-bharadwaj.raju777@gmail.com>
+	s=arc-20240116; t=1740154305; c=relaxed/simple;
+	bh=jPzhQLziuukG5FdheaOtRYonGAgmyp9BzYy+rI+G5/U=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=TZQCmiA9AyREEazBoBTLcvpKQDgRNYnz/y3hKfJnqp/naCfVEbLqWAsJxFGmNe0RFJTlW1yizlDLr3x1V1GeSnWR2kfBdYhFE1SeEmeq29ZKEFID1vDpaU9Y8AOfKBWkc/DP9ldZ5xdpRfbB+vAa52X04EaPIqhIXvCIrrU6ufI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 691C9168F;
+	Fri, 21 Feb 2025 08:12:00 -0800 (PST)
+Received: from ewhatever.cambridge.arm.com (ewhatever.cambridge.arm.com [10.1.197.1])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 846A43F5A1;
+	Fri, 21 Feb 2025 08:11:41 -0800 (PST)
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+To: Mike Leach <mike.leach@linaro.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	James Clark <james.clark@linaro.org>,
+	Ilkka Koskinen <ilkka@os.amperecomputing.com>
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	coresight@lists.linaro.org
+Subject: Re: [PATCH] coresight: catu: Fix number of pages while using 64k pages
+Date: Fri, 21 Feb 2025 16:11:34 +0000
+Message-ID: <174015423971.1326003.7421875844813609772.b4-ty@arm.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250109215348.5483-1-ilkka@os.amperecomputing.com>
+References: <20250109215348.5483-1-ilkka@os.amperecomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250210161101.6024-1-bharadwaj.raju777@gmail.com>
-X-Infomaniak-Routing: alpha
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Mon, Feb 10, 2025 at 09:40:57PM +0530, Bharadwaj Raju wrote:
-> Building the test creates binaries 'wait-pipe' and
-> 'sandbox-and-launch' which need to be gitignore'd.
-> 
-> Signed-off-by: Bharadwaj Raju <bharadwaj.raju777@gmail.com>
 
-Thanks!
+On Thu, 9 Jan 2025 21:53:48 +0000, Ilkka Koskinen wrote:
+> Trying to record a trace on kernel with 64k pages resulted in -ENOMEM.
+> This happens due to a bug in calculating the number of table pages, which
+> returns zero. Fix the issue by rounding up.
+> 
+> $ perf record --kcore -e cs_etm/@tmc_etr55,cycacc,branch_broadcast/k --per-thread taskset --cpu-list 1 dd if=/dev/zero of=/dev/null
+> failed to mmap with 12 (Cannot allocate memory)
+> 
+> [...]
 
-> ---
->  tools/testing/selftests/landlock/.gitignore | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/tools/testing/selftests/landlock/.gitignore b/tools/testing/selftests/landlock/.gitignore
-> index 470203a7cd73..0566c50dfcad 100644
-> --- a/tools/testing/selftests/landlock/.gitignore
-> +++ b/tools/testing/selftests/landlock/.gitignore
-> @@ -1,2 +1,4 @@
->  /*_test
->  /true
-> +/wait-pipe
-> +/sandbox-and-launch
-> -- 
-> 2.43.0
-> 
-> 
+Applied, thanks!
+
+[1/1] coresight: catu: Fix number of pages while using 64k pages
+      https://git.kernel.org/coresight/c/0e14e062f5ff
+
+Best regards,
+-- 
+Suzuki K Poulose <suzuki.poulose@arm.com>
 
