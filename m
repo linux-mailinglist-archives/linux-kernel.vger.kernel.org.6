@@ -1,171 +1,142 @@
-Return-Path: <linux-kernel+bounces-526289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 137A6A3FC9A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 18:02:50 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 938FEA3FCBE
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 18:05:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EDBCA7AAD3E
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:00:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F3647A940F
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:01:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48F77241CA9;
-	Fri, 21 Feb 2025 17:01:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RtGRm0k7"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BF0D2405E4
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 17:01:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2C26243962;
+	Fri, 21 Feb 2025 17:02:22 +0000 (UTC)
+Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 223B124336E;
+	Fri, 21 Feb 2025 17:02:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740157263; cv=none; b=mlXDtMxUeAoskvaFg+eWJ9CQlZSDZ7jc6WFeFnEtwMnhLORvBUHwcr0O0evw1SK5OOTM43fLKcTYA71VVHNGaxlEJaQUTth5VDMfWTKfMpS62UAljqnl/d2m7IUTHjge4yrslTWFA8ZZEIydXDRQHRrZfkS1VAehR2Xk3dNOe+0=
+	t=1740157342; cv=none; b=s+C31e0r4U/ZdR1EaBb4qE3TDddkVZs3NyXeC12rCMna1IDhRGKcrypHRU31swXMxoiv/sXN0LKH8WcSJLpyeU7Or37lYrUQ5NnsBA7cu+JWufFU+ebMn4D4CuWtjIh9OhnRE3zec+LWiTlnXvtHYTgG1CFapuUyU68qbTdx5jI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740157263; c=relaxed/simple;
-	bh=j+nR+337vj5+MRg/OUYVi4F6tWqvE2RTx8jtkTapEhE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hkmuIbpXlufaisFsJKre0+UND45+5nwCzNKSgZC0sYMu8H8rJGwAumlls8UYWVWs0XoWQILmKdM4paR0WcsBOa5de/wwEszmrpXbxiZ3lMrix47DAQnNyU4cGhJkKR5E7xytJ9iOQQVk05XA2vn+gTykarmbowU/s2gaAN2Q2Ms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RtGRm0k7; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740157263; x=1771693263;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=j+nR+337vj5+MRg/OUYVi4F6tWqvE2RTx8jtkTapEhE=;
-  b=RtGRm0k7SBiAnfrEPuQVmuYAo7kTU/+8q/GhOLLhcP3UzK/pOUeR4Uc4
-   hu9tAbMOSUqYNMDjXxjSWsh7xQdsvNRpmPBNosSBpOxWbDbJfCyeSwCAT
-   /vvDJR8ieDNZuCQxzuEVoGroEU5O2Kj+pU75RlSWjGyh7pIgDKX/PSCM9
-   msE9Uijn3wok/w+PZ5/DvGxdFmuUK1U+oUAezqHchlB4EOf9M63bXWVOe
-   4naXlWlDMeN0TOmVAwPACxZXmWJSRMOKV4udQCzy+vKkNNLE7LHOzO5jW
-   3EYOz34quKRIzW2Evyn79ePNkhGXpH7CHPU81WVZDQVTK52Lflqslv15f
-   Q==;
-X-CSE-ConnectionGUID: DO/0L/z+SdeBRa2mNqNdVw==
-X-CSE-MsgGUID: GYVw2SrJTr6s7o1LNuDBng==
-X-IronPort-AV: E=McAfee;i="6700,10204,11352"; a="44765399"
-X-IronPort-AV: E=Sophos;i="6.13,305,1732608000"; 
-   d="scan'208";a="44765399"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Feb 2025 09:01:02 -0800
-X-CSE-ConnectionGUID: gMIxSY2/TiGO4+kTXeK1HA==
-X-CSE-MsgGUID: wO5gwcSXQzykwLKDKs5oOQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,305,1732608000"; 
-   d="scan'208";a="146261314"
-Received: from aschofie-mobl2.amr.corp.intel.com (HELO [10.125.110.177]) ([10.125.110.177])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Feb 2025 09:01:01 -0800
-Message-ID: <32af68b8-4280-4c15-8e5c-be807c282f94@intel.com>
-Date: Fri, 21 Feb 2025 09:01:03 -0800
+	s=arc-20240116; t=1740157342; c=relaxed/simple;
+	bh=eDJSMOr+h1SSZEQ8kxz+WyG6t2AUCYwQFo5uAoH21rY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IKXvoldzEQHLUKEmbr65s7f6mavb7nXrmxiGKooxvZGgHhpxTtr0acbHjSVM+A+x60NAFRowm3JeXf6QQY9p3a5uO/rwf0s74SOy1uzLXPDOxHHHbH9EvRJMsIOCK8P72o4i6tTTftc9WaQxDCAlOzWt/J4v23ojwr68nanTnvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
+Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
+	id 1tlWPn-00020g-00; Fri, 21 Feb 2025 18:02:15 +0100
+Received: by alpha.franken.de (Postfix, from userid 1000)
+	id A1DE8C0135; Fri, 21 Feb 2025 18:01:48 +0100 (CET)
+Date: Fri, 21 Feb 2025 18:01:48 +0100
+From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+To: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+Cc: linux-clk@vger.kernel.org, sboyd@kernel.org, mturquette@baylibre.com,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com,
+	p.zabel@pengutronix.de, linux-mips@vger.kernel.org,
+	devicetree@vger.kernel.org, yangshiji66@outlook.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 0/6] mips: dts: ralink: update system controller nodes
+ and its consumers
+Message-ID: <Z7ixfMbpePvkpp2q@alpha.franken.de>
+References: <20250120092146.471951-1-sergio.paracuellos@gmail.com>
+ <CAMhs-H-VevC+_=HxhMU6-at0bKut_JqdgO7j2detuB4s8R_QFQ@mail.gmail.com>
+ <Z7iHorlRgtsi1LOo@alpha.franken.de>
+ <CAMhs-H-fcWU-rz_3FeAuRe0xdCMmvffX2zrZwwmt=8RYpY4Lyg@mail.gmail.com>
+ <Z7idguBa2bxZRoxX@alpha.franken.de>
+ <CAMhs-H91Pv4bygmL2jL0=swn-wHT0mRYGaYO6Hjm5O-xmmrJ0w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] pkeys: add API to switch to permissive pkey register
-To: Dmitry Vyukov <dvyukov@google.com>, mathieu.desnoyers@efficios.com,
- peterz@infradead.org, boqun.feng@gmail.com, tglx@linutronix.de,
- mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com,
- aruna.ramakrishna@oracle.com, elver@google.com
-Cc: "Paul E. McKenney" <paulmck@kernel.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-References: <cover.1739790300.git.dvyukov@google.com>
- <ffd123bb0c73df5cdd3a5807b360bd390983150b.1739790300.git.dvyukov@google.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
- oAiUXvGAOxPDsB/P6UEOISPpLl5IuYsSwAeZGkdQ5g6m1xq7AlDJQZddhr/1DC/nMVa/2BoY
- 2UnKuZuSBu7lgOE193+7Uks3416N2hTkyKUSNkduyoZ9F5twiBhxPJwPtn/wnch6n5RsoXsb
- ygOEDxLEsSk/7eyFycjE+btUtAWZtx+HseyaGfqkZK0Z9bT1lsaHecmB203xShwCPT49Blxz
- VOab8668QpaEOdLGhtvrVYVK7x4skyT3nGWcgDCl5/Vp3TWA4K+IofwvXzX2ON/Mj7aQwf5W
- iC+3nWC7q0uxKwwsddJ0Nu+dpA/UORQWa1NiAftEoSpk5+nUUi0WE+5DRm0H+TXKBWMGNCFn
- c6+EKg5zQaa8KqymHcOrSXNPmzJuXvDQ8uj2J8XuzCZfK4uy1+YdIr0yyEMI7mdh4KX50LO1
- pmowEqDh7dLShTOif/7UtQYrzYq9cPnjU2ZW4qd5Qz2joSGTG9eCXLz5PRe5SqHxv6ljk8mb
- ApNuY7bOXO/A7T2j5RwXIlcmssqIjBcxsRRoIbpCwWWGjkYjzYCjgsNFL6rt4OL11OUF37wL
- QcTl7fbCGv53KfKPdYD5hcbguLKi/aCccJK18ZwNjFhqr4MliQARAQABzUVEYXZpZCBDaHJp
- c3RvcGhlciBIYW5zZW4gKEludGVsIFdvcmsgQWRkcmVzcykgPGRhdmUuaGFuc2VuQGludGVs
- LmNvbT7CwXgEEwECACIFAlQ+9J0CGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEGg1
- lTBwyZKwLZUP/0dnbhDc229u2u6WtK1s1cSd9WsflGXGagkR6liJ4um3XCfYWDHvIdkHYC1t
- MNcVHFBwmQkawxsYvgO8kXT3SaFZe4ISfB4K4CL2qp4JO+nJdlFUbZI7cz/Td9z8nHjMcWYF
- IQuTsWOLs/LBMTs+ANumibtw6UkiGVD3dfHJAOPNApjVr+M0P/lVmTeP8w0uVcd2syiaU5jB
- aht9CYATn+ytFGWZnBEEQFnqcibIaOrmoBLu2b3fKJEd8Jp7NHDSIdrvrMjYynmc6sZKUqH2
- I1qOevaa8jUg7wlLJAWGfIqnu85kkqrVOkbNbk4TPub7VOqA6qG5GCNEIv6ZY7HLYd/vAkVY
- E8Plzq/NwLAuOWxvGrOl7OPuwVeR4hBDfcrNb990MFPpjGgACzAZyjdmYoMu8j3/MAEW4P0z
- F5+EYJAOZ+z212y1pchNNauehORXgjrNKsZwxwKpPY9qb84E3O9KYpwfATsqOoQ6tTgr+1BR
- CCwP712H+E9U5HJ0iibN/CDZFVPL1bRerHziuwuQuvE0qWg0+0SChFe9oq0KAwEkVs6ZDMB2
- P16MieEEQ6StQRlvy2YBv80L1TMl3T90Bo1UUn6ARXEpcbFE0/aORH/jEXcRteb+vuik5UGY
- 5TsyLYdPur3TXm7XDBdmmyQVJjnJKYK9AQxj95KlXLVO38lczsFNBFRjzmoBEACyAxbvUEhd
- GDGNg0JhDdezyTdN8C9BFsdxyTLnSH31NRiyp1QtuxvcqGZjb2trDVuCbIzRrgMZLVgo3upr
- MIOx1CXEgmn23Zhh0EpdVHM8IKx9Z7V0r+rrpRWFE8/wQZngKYVi49PGoZj50ZEifEJ5qn/H
- Nsp2+Y+bTUjDdgWMATg9DiFMyv8fvoqgNsNyrrZTnSgoLzdxr89FGHZCoSoAK8gfgFHuO54B
- lI8QOfPDG9WDPJ66HCodjTlBEr/Cwq6GruxS5i2Y33YVqxvFvDa1tUtl+iJ2SWKS9kCai2DR
- 3BwVONJEYSDQaven/EHMlY1q8Vln3lGPsS11vSUK3QcNJjmrgYxH5KsVsf6PNRj9mp8Z1kIG
- qjRx08+nnyStWC0gZH6NrYyS9rpqH3j+hA2WcI7De51L4Rv9pFwzp161mvtc6eC/GxaiUGuH
- BNAVP0PY0fqvIC68p3rLIAW3f97uv4ce2RSQ7LbsPsimOeCo/5vgS6YQsj83E+AipPr09Caj
- 0hloj+hFoqiticNpmsxdWKoOsV0PftcQvBCCYuhKbZV9s5hjt9qn8CE86A5g5KqDf83Fxqm/
- vXKgHNFHE5zgXGZnrmaf6resQzbvJHO0Fb0CcIohzrpPaL3YepcLDoCCgElGMGQjdCcSQ+Ci
- FCRl0Bvyj1YZUql+ZkptgGjikQARAQABwsFfBBgBAgAJBQJUY85qAhsMAAoJEGg1lTBwyZKw
- l4IQAIKHs/9po4spZDFyfDjunimEhVHqlUt7ggR1Hsl/tkvTSze8pI1P6dGp2XW6AnH1iayn
- yRcoyT0ZJ+Zmm4xAH1zqKjWplzqdb/dO28qk0bPso8+1oPO8oDhLm1+tY+cOvufXkBTm+whm
- +AyNTjaCRt6aSMnA/QHVGSJ8grrTJCoACVNhnXg/R0g90g8iV8Q+IBZyDkG0tBThaDdw1B2l
- asInUTeb9EiVfL/Zjdg5VWiF9LL7iS+9hTeVdR09vThQ/DhVbCNxVk+DtyBHsjOKifrVsYep
- WpRGBIAu3bK8eXtyvrw1igWTNs2wazJ71+0z2jMzbclKAyRHKU9JdN6Hkkgr2nPb561yjcB8
- sIq1pFXKyO+nKy6SZYxOvHxCcjk2fkw6UmPU6/j/nQlj2lfOAgNVKuDLothIxzi8pndB8Jju
- KktE5HJqUUMXePkAYIxEQ0mMc8Po7tuXdejgPMwgP7x65xtfEqI0RuzbUioFltsp1jUaRwQZ
- MTsCeQDdjpgHsj+P2ZDeEKCbma4m6Ez/YWs4+zDm1X8uZDkZcfQlD9NldbKDJEXLIjYWo1PH
- hYepSffIWPyvBMBTW2W5FRjJ4vLRrJSUoEfJuPQ3vW9Y73foyo/qFoURHO48AinGPZ7PC7TF
- vUaNOTjKedrqHkaOcqB185ahG2had0xnFsDPlx5y
-In-Reply-To: <ffd123bb0c73df5cdd3a5807b360bd390983150b.1739790300.git.dvyukov@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMhs-H91Pv4bygmL2jL0=swn-wHT0mRYGaYO6Hjm5O-xmmrJ0w@mail.gmail.com>
 
-On 2/17/25 03:07, Dmitry Vyukov wrote:
-...
->  /*
->   * If more than 16 keys are ever supported, a thorough audit
->   * will be necessary to ensure that the types that store key
-> @@ -123,4 +125,16 @@ static inline int vma_pkey(struct vm_area_struct *vma)
->  	return (vma->vm_flags & vma_pkey_mask) >> VM_PKEY_SHIFT;
->  }
->  
-> +typedef u32 pkey_reg_t;
-> +
-> +static inline pkey_reg_t switch_to_permissive_pkey_reg(void)
-> +{
-> +	return write_pkru(0);
-> +}
+On Fri, Feb 21, 2025 at 05:40:34PM +0100, Sergio Paracuellos wrote:
+> On Fri, Feb 21, 2025 at 4:37 PM Thomas Bogendoerfer
+> <tsbogend@alpha.franken.de> wrote:
+> >
+> > On Fri, Feb 21, 2025 at 03:50:09PM +0100, Sergio Paracuellos wrote:
+> > > Hi Thomas,
+> > >
+> > > On Fri, Feb 21, 2025 at 3:05 PM Thomas Bogendoerfer
+> > > <tsbogend@alpha.franken.de> wrote:
+> > > >
+> > > > On Fri, Feb 21, 2025 at 11:48:34AM +0100, Sergio Paracuellos wrote:
+> > > > > Hi Thomas,
+> > > > >
+> > > > > El El lun, 20 ene 2025 a las 10:21, Sergio Paracuellos <
+> > > > > sergio.paracuellos@gmail.com> escribió:
+> > > > >
+> > > > > > Hi all!
+> > > > > >
+> > > > > > Ralinks SoCs have a system controller node which serves as clock and reset
+> > > > > > providers for the rest of the world. This patch series introduces clock
+> > > > > > definitions for these SoCs. The clocks are registered in the driver using
+> > > > > > a bunch of arrays in specific order so these definitions represent the
+> > > > > > assigned
+> > > > > > identifier that is used when this happens so client nodes can easily use it
+> > > > > > to specify the clock which they consume without the need of checking
+> > > > > > driver code.
+> > > > > >
+> > > > > > DTS files which are currently on tree are not matching system controller
+> > > > > > bindings. So all of them are updated to properly match them.
+> > > > > >
+> > > > > > I'd like this series to go through kernel mips git tree if possible.
+> > > > > >
+> > > > > > Thanks in advance for your time.
+> > > > > >
+> > > > > > Changes in v3:
+> > > > > > - Address Krzysztof comments in v2 (Thanks!):
+> > > > > >   + Drop reset include file since what it was defined there were hardware
+> > > > > >     constants and no binding related indexes at all.
+> > > > > >   + Update patches for not referring to this reset removed file.
+> > > > >
+> > > > >
+> > > > > I was expecting this series going through the mips tree.
+> > > >
+> > > >   DTC     arch/mips/boot/dts/ralink/rt3883_eval.dtb
+> > > > Error: /local/tbogendoerfer/korg/linux/arch/mips/boot/dts/ralink/rt3883.dtsi:2.1-9 syntax error
+> > > > FATAL ERROR: Unable to parse input tree
+> > >
+> > > Weird, it looks like dtc is not happy with the "include" line with new
+> > > definitions? Are you getting this only with rt3883? Since all the
+> > > patches are almost the same and I compile tested this before sending..
+> > > Something got corrupted? I don't have my laptop now to check but I
+> > > will recheck again on monday.
+> >
+> > rt2880_eval.dts:/include/ "rt2880.dtsi"
+> > rt3052_eval.dts:#include "rt3050.dtsi"
+> > rt3883_eval.dts:/include/ "rt3883.dtsi"
+> >
+> > rt3052 works, rt2880 and rt3883 don't.
+> >
+> > changing the /include/ to #include makes them compile.
+> 
+> Mmmm...does this mean that this was broken before my patches? Since I
+> have not touched the files that need the replacement.
 
-Just a naming nit: the "switch_to" and "reg" parts of this don't quite
-parse for me. This is writing a _value_ to a register. Maybe:
+no, without your patches everything compiles. I guess dtc (?) doesn't
+allow #include in files, which were included via / include /. But that's
+just guesswork
 
-	write_permissive_pkey_val()
-or
-	set_permissive_pkey_val()
+ So I probably
+> checked in the openwrt tree and missed this totally. Sorry for that.
+> How do you want to handle this? Should I send v4 including these
+> replacements? Or do you prefer to handle them directly?
 
-would be a better name.
+I'll fix the includes while applying.
 
-> diff --git a/include/linux/pkeys.h b/include/linux/pkeys.h
-> index 86be8bf27b41b..d94a0ae7a784b 100644
-> --- a/include/linux/pkeys.h
-> +++ b/include/linux/pkeys.h
-> @@ -48,4 +48,26 @@ static inline bool arch_pkeys_enabled(void)
->  
->  #endif /* ! CONFIG_ARCH_HAS_PKEYS */
->  
-> +#ifndef CONFIG_ARCH_HAS_PERMISSIVE_PKEY
-> +
-> +/*
-> + * Common name for value of the register that controls access to PKEYs
-> + * (called differently on different arches: PKRU, POR, AMR).
-> + */
-> +typedef int pkey_reg_t;
-Tiny nit: Should this be an unsigned type?
+Thomas.
 
-Nobody should be manipulating it, but I'd be surprised if any of the
-architectures have a signed type for it.
+-- 
+Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
+good idea.                                                [ RFC1925, 2.3 ]
 
