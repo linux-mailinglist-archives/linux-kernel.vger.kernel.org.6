@@ -1,144 +1,131 @@
-Return-Path: <linux-kernel+bounces-525576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9D47A3F197
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 11:15:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86558A3F1C1
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 11:18:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B771701EEB
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:15:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1AC919C1EC5
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:18:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20C91204F90;
-	Fri, 21 Feb 2025 10:14:50 +0000 (UTC)
-Received: from smtp-bc08.mail.infomaniak.ch (smtp-bc08.mail.infomaniak.ch [45.157.188.8])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 796B220A5D5;
+	Fri, 21 Feb 2025 10:16:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="IfiNzZHX"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99CD7205AC0
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 10:14:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B4CB204C23;
+	Fri, 21 Feb 2025 10:16:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740132889; cv=none; b=a7nuAUyDscEeZiTGwxP52/ymKDGBDBcLQVaw4OvdIdgn0EkZhI2lLiGeLmB3X8lwHdnOPn3N+SzU9g4RWbn+H2cyAjJqr9cWrk0258cZt+VqehjmWJ95rRTrpnCc/J88FNWA5whDp+J3Ca8nfsXEKAv7ar+Ts/7i72JOx5LVhJA=
+	t=1740132968; cv=none; b=HNyeW/FtExvyxn+jOJ4o/URzEcUvCJLNBS5uXbZ1JPG1RFcegFtTNNkyyrG+badvhHIg25gUomwKzunvXqHoWjnxExKoBRrJr7pFlLQjIETNUMBW4cL7rUXVaQkLso+lNJrscTNHKeUBGOI0gSx4a15nD9q0/uA+v5+/1amh0OE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740132889; c=relaxed/simple;
-	bh=s6kvTlBWs3QTc69KNC5Ob0gAjwaprTQipz5QovyifGg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Asb82vXlayn7Zw3QgHykGI1P31nskaJ3ldlUSN8wUsfBajMjig56UxyuW2R874bIf3T720FgfhcEIc7xkM7m4bAQOjeIdLqf+5V5cLVFm4/3dbErNH+uAhI8fdr9j3OFWqq92SU6cdDIX/BLZwDhQGkDWaTlKFLcznP3HuI2t8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0leil.net; spf=pass smtp.mailfrom=0leil.net; arc=none smtp.client-ip=45.157.188.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0leil.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=0leil.net
-Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4YzmFr4N0wz4Fy;
-	Fri, 21 Feb 2025 11:14:40 +0100 (CET)
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4YzmFr0MTFzJSZ;
-	Fri, 21 Feb 2025 11:14:40 +0100 (CET)
-From: Quentin Schulz <foss+kernel@0leil.net>
-Date: Fri, 21 Feb 2025 11:14:26 +0100
-Subject: [PATCH v2 1/2] dt-bindings: gpio: nxp,pcf8575: add reset GPIO
+	s=arc-20240116; t=1740132968; c=relaxed/simple;
+	bh=kKhpBRlaW/A8aGQxiWOQvbls/kNsMTrgz+fYDWkzahE=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JPMxDJEKMKXJW6H6aXtOHgTUv9c/dYAvBfSMLV4A6qrsOVQHgv4ndTb1bi0MsfdaXHfeN7GvHd9EvJa62WcPlB45t3jHXlafCHqtVrFXuahdcj7r+yRnbUipf3eiw5M2TbucM1gQFjw9BBmXQhyGhKaY6GKi1dKeKcsRk7WCE8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=IfiNzZHX; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51L5VGk3011673;
+	Fri, 21 Feb 2025 10:15:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	JlFtUewgNQ6c5s971L7K4Z8oNh1c5TvFLWRHKTDdIO0=; b=IfiNzZHXuluH31bj
+	hGxfhA+upmXHLXFQKIMTyRvEMNIgR85Qv6gESoWqJXSp4iSl8jFA5UncOhV2xwvV
+	DhQa95W0DojxSu0phPd3kodriG8ZC117fyvELFAtmFixf4hE9WixnAGCILqYGj/m
+	+iGk8Fti2bmAIjVWZlHWptKt1CIpAxZeRyIugd/RSLl+AQ4aKI1b3pdKVzJ0FzMD
+	tezVx9OQnkg9FaFXaSWpTbVB2G980nNh0KFEUfAc73pT/aW3yvLWOYpoeb1vf+DT
+	La5EAW5Sl9C3Je/pOv8xq2CjEE++Exgvznghlw5/oYzxcTSPFrGuPWfKKiwHOyjB
+	50t8zg==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44vyy3sjmx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 21 Feb 2025 10:15:49 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51LAFmng002513
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 21 Feb 2025 10:15:48 GMT
+Received: from hu-mmanikan-blr.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Fri, 21 Feb 2025 02:15:39 -0800
+From: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+To: <andersson@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <konradybcio@kernel.org>, <catalin.marinas@arm.com>, <will@kernel.org>,
+        <p.zabel@pengutronix.de>, <richardcochran@gmail.com>,
+        <geert+renesas@glider.be>, <dmitry.baryshkov@linaro.org>,
+        <arnd@arndb.de>, <nfraprado@collabora.com>, <quic_tdas@quicinc.com>,
+        <biju.das.jz@bp.renesas.com>, <elinor.montmasson@savoirfairelinux.com>,
+        <ross.burton@arm.com>, <javier.carrasco@wolfvision.net>,
+        <quic_anusha@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <netdev@vger.kernel.org>
+CC: <quic_srichara@quicinc.com>, <quic_varada@quicinc.com>
+Subject: [PATCH v10 6/6] arm64: defconfig: Build NSS Clock Controller driver for IPQ9574
+Date: Fri, 21 Feb 2025 15:44:26 +0530
+Message-ID: <20250221101426.776377-7-quic_mmanikan@quicinc.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250221101426.776377-1-quic_mmanikan@quicinc.com>
+References: <20250221101426.776377-1-quic_mmanikan@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250221-pca976x-reset-driver-v2-1-a2bcb9fdc256@cherry.de>
-References: <20250221-pca976x-reset-driver-v2-0-a2bcb9fdc256@cherry.de>
-In-Reply-To: <20250221-pca976x-reset-driver-v2-0-a2bcb9fdc256@cherry.de>
-To: Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Cc: Heiko Stuebner <heiko@sntech.de>, linux-gpio@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Quentin Schulz <quentin.schulz@cherry.de>
-X-Mailer: b4 0.14.2
-X-Infomaniak-Routing: alpha
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 4-b4hYEDN2nrxj1PTDqFDcVj-o8uDntD
+X-Proofpoint-GUID: 4-b4hYEDN2nrxj1PTDqFDcVj-o8uDntD
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-21_01,2025-02-20_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ impostorscore=0 mlxlogscore=818 bulkscore=0 mlxscore=0 spamscore=0
+ lowpriorityscore=0 phishscore=0 priorityscore=1501 clxscore=1015
+ malwarescore=0 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2502100000 definitions=main-2502210077
 
-From: Quentin Schulz <quentin.schulz@cherry.de>
+From: Devi Priya <quic_devipriy@quicinc.com>
 
-A few of the I2C GPIO expander chips supported by this binding have a
-RESETN pin to be able to reset the chip. The chip is held in reset while
-the pin is low, therefore the polarity of reset-gpios is expected to
-reflect that, i.e. a GPIO_ACTIVE_HIGH means the GPIO will be driven high
-for reset and then driven low, GPIO_ACTIVE_LOW means the GPIO will be
-driven low for reset and then driven high. If a GPIO is directly routed
-to RESETN pin on the IC without any inverter, GPIO_ACTIVE_LOW is thus
-expected.
+NSSCC driver is needed to enable the ethernet interfaces present
+in RDP433 based on IPQ9574. Since this is not necessary for bootup
+enabling it as a module.
 
-Out of the supported chips, only PCA9670, PCA9671, PCA9672 and PCA9673
-show a RESETN pin in their datasheets. They all share the same reset
-timings, that is 4+us reset pulse[0] and 100+us reset time[0].
-
-When performing a reset, "The PCA9670 registers and I2C-bus state
-machine will be held in their default state until the RESET input is
-once again HIGH."[1] meaning we now know the state of each line
-controlled by the GPIO expander. Therefore, setting lines-initial-states
-and reset-gpios both does not make sense and their presence is XOR'ed.
-
-[0] https://www.nxp.com/docs/en/data-sheet/PCA9670.pdf Fig 22.
-[1] https://www.nxp.com/docs/en/data-sheet/PCA9670.pdf 8.5
-
-Tested-by: Heiko Stuebner <heiko@sntech.de> # exclusion logic
-Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
+Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
+Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
 ---
- .../devicetree/bindings/gpio/nxp,pcf8575.yaml      | 38 ++++++++++++++++++++++
- 1 file changed, 38 insertions(+)
+Changes in V10:
+	- No change.
 
-diff --git a/Documentation/devicetree/bindings/gpio/nxp,pcf8575.yaml b/Documentation/devicetree/bindings/gpio/nxp,pcf8575.yaml
-index 3718103e966a13e1d77f73335ff73c18a3199469..633ac5cfa04a10bcbb748b6580938cddae9e5596 100644
---- a/Documentation/devicetree/bindings/gpio/nxp,pcf8575.yaml
-+++ b/Documentation/devicetree/bindings/gpio/nxp,pcf8575.yaml
-@@ -73,6 +73,44 @@ properties:
- 
-   wakeup-source: true
- 
-+  reset-gpios:
-+    maxItems: 1
-+    description:
-+      GPIO controlling the (reset active LOW) RESET# pin.
-+
-+      The active polarity of the GPIO must translate to the low state
-+      of the RESET# pin on the IC, i.e. if a GPIO is directly routed
-+      to the RESET# pin without any inverter, GPIO_ACTIVE_LOW is
-+      expected.
-+
-+      Performing a reset makes all lines initialized to their input (pulled-up)
-+      state.
-+
-+allOf:
-+  - if:
-+      properties:
-+        compatible:
-+          not:
-+            contains:
-+              enum:
-+                - nxp,pca9670
-+                - nxp,pca9671
-+                - nxp,pca9672
-+                - nxp,pca9673
-+    then:
-+      properties:
-+        reset-gpios: false
-+
-+  # lines-initial-states XOR reset-gpios
-+  # Performing a reset reinitializes all lines to a known state which
-+  # may not match passed lines-initial-states
-+  - if:
-+      required:
-+        - lines-initial-states
-+    then:
-+      properties:
-+        reset-gpios: false
-+
- patternProperties:
-   "^(.+-hog(-[0-9]+)?)$":
-     type: object
+ arch/arm64/configs/defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index a1cc3814b09b..56a1fd81ab6c 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -1334,6 +1334,7 @@ CONFIG_IPQ_GCC_5332=y
+ CONFIG_IPQ_GCC_6018=y
+ CONFIG_IPQ_GCC_8074=y
+ CONFIG_IPQ_GCC_9574=y
++CONFIG_IPQ_NSSCC_9574=m
+ CONFIG_MSM_GCC_8916=y
+ CONFIG_MSM_MMCC_8994=m
+ CONFIG_MSM_GCC_8994=y
 -- 
-2.48.1
+2.34.1
 
 
