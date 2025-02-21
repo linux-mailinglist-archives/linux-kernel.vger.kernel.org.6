@@ -1,143 +1,140 @@
-Return-Path: <linux-kernel+bounces-525694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9E91A3F343
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 12:48:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0648BA3F344
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 12:49:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A8FA3B7CB6
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 11:47:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B632189E288
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 11:49:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C2A82080F5;
-	Fri, 21 Feb 2025 11:47:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8F3C2080F4;
+	Fri, 21 Feb 2025 11:49:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QcGRL9uT"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KPFMKgDt"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E54A205ADA
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 11:47:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EF5B20550D
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 11:49:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740138437; cv=none; b=RFiUQTPb+PmF38lfdjFAG7+bbV9A4oDP9D0kNNMtEkHbSm81t0W/IKNCylNzKwWw7fEglrVQaI9npdTkhWTuNvhrX23xJKvgWSh1bE8D0vaOKpTn0+pIs8tc7S5MgC5U9H6U8NfhyLyyf/czkHWK01zGC8opdVlbcerUOBHJthc=
+	t=1740138551; cv=none; b=iRsMQjME3UQ2hLDj/bpr5mX5JPy8CY8w/RO5CXzzpfJfsvPxQ3t3ufjNFL7iWcPVnW7gMdclrZCqOtGdMKTHuqm+Nfj34tYgNH9nYs75d3zd4Pm3S34+6dn+TmvSPASzNTIzpzKobztt6Z+Q6R54ClQhEQ2tdCsb12f4NfskiaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740138437; c=relaxed/simple;
-	bh=ABY1TCmlToByq1IOLk66sUQr0qnecw/tSow9TAlG5as=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=IplmOEDT3I7so/5bsNPNV5dQ/2ptqTWoUdMGJcMArEkL9wDpAcUv8AmT48MMN0Q/MnvBKZtCUnQ4jNCxF7rE9FUdY8FKqKBZyY5qRZPXHiZqMLRcoC7D1TPyY0Arb/r6irqz9uvOK80+WEhm4URIruy9Du3PnexmTgLRGlyWp2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QcGRL9uT; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740138435; x=1771674435;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=ABY1TCmlToByq1IOLk66sUQr0qnecw/tSow9TAlG5as=;
-  b=QcGRL9uTUuzgcAQweGHGe23ShRXDHRT10R1b8s5+ylroFi3VF9YFX4Wn
-   5R58N6InvdpIus6sJiidplb6ZwR9MSNrnlMVTIfqW7o/x6nTKVVAviIzW
-   BUs9XKI4iDCRgm8OZwrm/hm0EIGQ2IGAIIYYJWsMpcZG2Xegnu5NCe6JZ
-   eJ7UKsvP7OmK8cv9ePuT7sAS04SIZVr4aDwvTjoaBsPzSZR8pDINO+/y3
-   9Hq2AP7Zrvp671RNLr2SgNvWEfN6Jt3ynnZE8YpKCSJXo+Mmy/Rp8MDm0
-   FUdC/2kTQeH0f9/IvOs88UMRx6ya32rnCSnOHmyQgyDipeK4kvYHuURb3
-   g==;
-X-CSE-ConnectionGUID: G/jqdx/jTcGH/sH6TkqzsQ==
-X-CSE-MsgGUID: Zp2mUwBlRZ2zRvfONMC1Bg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11351"; a="51580128"
-X-IronPort-AV: E=Sophos;i="6.13,304,1732608000"; 
-   d="scan'208";a="51580128"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Feb 2025 03:47:14 -0800
-X-CSE-ConnectionGUID: 0jil1O78QlqN01HRD7PX2g==
-X-CSE-MsgGUID: aC+Sewv9QTCpGGKr1vsmFA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,304,1732608000"; 
-   d="scan'208";a="138567660"
-Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
-  by fmviesa002.fm.intel.com with ESMTP; 21 Feb 2025 03:47:12 -0800
-Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tlRUs-0005Sh-1o;
-	Fri, 21 Feb 2025 11:47:10 +0000
-Date: Fri, 21 Feb 2025 19:46:11 +0800
-From: kernel test robot <lkp@intel.com>
-To: Aurabindo Pillai <aurabindo.pillai@amd.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Alex Deucher <alexander.deucher@amd.com>
-Subject: drivers/gpu/drm/amd/amdgpu/../display/dc/dml2/dml21/src/dml2_core/dml2_core_dcn4.c:134
- core_dcn4_initialize() warn: inconsistent indenting
-Message-ID: <202502211920.txUfwtSj-lkp@intel.com>
+	s=arc-20240116; t=1740138551; c=relaxed/simple;
+	bh=rBCn26SKuERi+K4acNcV/AEZi1MsaI5ALTJmnv5MRtE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RD8+mlkkkXk72edbUC5dxmLJQRGQYqRpIgjM5bpCgXjrUrObIMtv3sAlQp+tlb0yctku+orKQswzQoVXQzyMCamD/HlN6SVUJ+YP5AI/1HJVfkOKx1NjH/Spr+IVbCGoT1l9+Zbbo/6h2919prUbv0ss42s0nWfXA+1JTDtyQhU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KPFMKgDt; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5deb956aa5eso2549818a12.2
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 03:49:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740138547; x=1740743347; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=DG8wPb2kV/9iYl+Wn7aZlDrzmlhxomPPSfL6qAQ1p+E=;
+        b=KPFMKgDtNwh0A8uD7EAipePz0QICBaQw3+owzwwxghnSc0qFZ7RpT6TrbhAw4m6iBX
+         1jt+5fg6zgo7WWL60e9Wuzi4b/PH9kE2lNxJTZoqyBcngsrcHiF1mKAuFfEMw33Tzql2
+         wq3LjwTqmeX64DnpTdiJbF5+jkpHg0rwkcMTgQumKeif9Z8sv8nTOdKvcmdc/P9/FArU
+         X28UsCaoJtY9m43pYJgrIB0ISn1CBFjPGiqqr5YLrwvSXy2TNmTYQAWxjWHRUMsXB7Q8
+         YuL5H9EbhuxTXAHKYsuEuJ5JCjSeJ5NK4hrjbvnkKI0slTA1fU60yiNvdkARpc4FMPRS
+         V29g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740138547; x=1740743347;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DG8wPb2kV/9iYl+Wn7aZlDrzmlhxomPPSfL6qAQ1p+E=;
+        b=rd/dJeR7YhtemEXQEYof+7emS6Nvd+G7/Vhv61eITIHpQK49wBXTVWCmUTRdnaxcVy
+         otRSVaXLr8iSQAtD2H6yxMklcbNlqsPeb8NexmgYfhk9NDgIc5dhVX/mBtngRdx3mE4F
+         v5cjLsBokyqcwVyU7IBMezG9X2VtjNqOJ0U6FN7YNQGiSLn2laXyNH0VRgffHm2Y9Zpz
+         W4Uz2o3UpQvf6s8QZW/VMcZG5ShmkF6LgRBne4KKDCDsG6Hc6L7A1wtMBQh1554+ASHq
+         sEmk0fGd9KhV+oODv1Tbz8SEYQJBHi93+vM6Pb4bx5UoCBfKPnPzd4SjSE58JrSa5voa
+         zIWw==
+X-Forwarded-Encrypted: i=1; AJvYcCVGAerNh9O/tyvsWysVfn2hFoWe5vQNSACeXN4Nq4i+RGx1TUYtVP0WDUkUBqZ9RSEwDrnK7Q1qlRlnXDw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxvdEyn+hl3D1GOrUZBAUC/C1fbh3h/ZLdQidiKckzR9XTYMmK2
+	egvuh9KrsXLGZ40NAljqQde+Ck81ulcDMKQ0ESKOzP9zTRSNDYxX9y+bvHq6kMpkeovl1ShrZnd
+	UG6w/+A1zfYrB1Bj5kO4fx+2n+NlTzJPHiHHxdw==
+X-Gm-Gg: ASbGncuGlPlCJyhmLa7yjJ2nZQQPJeCLwXH+tbsgAmh07dhJh5poHL4B/KhUE9CfOXG
+	wzqJjaqxuA1iKUdAgwZCohMOZnwh/kqzWdO8EAAvCPsfldkbYASGL5QYrtESfnPNG2Hdy6u23U4
+	7sb6kAup//YQ8T35cW3MY2nuAxoxf3rZIdIRDy
+X-Google-Smtp-Source: AGHT+IHDZOHwjhHYUSvphB+NwmYxo/bfrrJtTGZfAtHWzJg28NcQtjXAhkKHnW0f9pBc/5j6zzEh739LRBCxYioUrFo=
+X-Received: by 2002:a05:6402:3488:b0:5e0:8b68:e2c3 with SMTP id
+ 4fb4d7f45d1cf-5e0b7265813mr6028593a12.29.1740138547390; Fri, 21 Feb 2025
+ 03:49:07 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20250221111226.64455-1-wuyun.abel@bytedance.com> <20250221111226.64455-2-wuyun.abel@bytedance.com>
+In-Reply-To: <20250221111226.64455-2-wuyun.abel@bytedance.com>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Fri, 21 Feb 2025 12:48:55 +0100
+X-Gm-Features: AWEUYZkSXVZ4GQ-z4ro9kS7bzhxwhhXZCqwdQ1bfcrZZzB0xRA6JdjBNyU-sFXE
+Message-ID: <CAKfTPtDTs2btXekkhcSw3vNy3bR-S7+FY69Cb0AQEhK+RsQMZg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] sched/fair: Do not let idle entities preempt others
+To: Abel Wu <wuyun.abel@bytedance.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Juri Lelli <juri.lelli@redhat.com>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Valentin Schneider <vschneid@redhat.com>, Josh Don <joshdon@google.com>, 
+	Tianchen Ding <dtcccc@linux.alibaba.com>, 
+	"open list:SCHEDULER" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   334426094588f8179fe175a09ecc887ff0c75758
-commit: 00c391102abc13763e2bfc90e05503109b19f074 drm/amd/display: Add misc DC changes for DCN401
-date:   10 months ago
-config: loongarch-randconfig-r072-20250221 (https://download.01.org/0day-ci/archive/20250221/202502211920.txUfwtSj-lkp@intel.com/config)
-compiler: loongarch64-linux-gcc (GCC) 14.2.0
+On Fri, 21 Feb 2025 at 12:12, Abel Wu <wuyun.abel@bytedance.com> wrote:
+>
+> A task with SCHED_IDLE policy doesn't preempt others by definition, and
+> the semantics are intended to be preserved when extending to cgroups
+> introduced in commit 304000390f88 ("sched: Cgroup SCHED_IDLE support").
+>
+> But current implementation allows idle entities to preempt each other
+> on wakeup, which seems not behave as expected especially after
+> commit faa42d29419d ("sched/fair: Make SCHED_IDLE entity be preempted in strict hierarchy")
+> so fix this by explicitly skip wakeup preemption for idle entities.
+>
+> Fixes: 304000390f88 ("sched: Cgroup SCHED_IDLE support")
+> Signed-off-by: Abel Wu <wuyun.abel@bytedance.com>
+> ---
+>  kernel/sched/fair.c | 9 ++++++---
+>  1 file changed, 6 insertions(+), 3 deletions(-)
+>
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index 1c0ef435a7aa..4340178f29b7 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -8778,12 +8778,15 @@ static void check_preempt_wakeup_fair(struct rq *rq, struct task_struct *p, int
+>         pse_is_idle = se_is_idle(pse);
+>
+>         /*
+> -        * Preempt an idle entity in favor of a non-idle entity (and don't preempt
+> -        * in the inverse case).
+> +        * Preempt an idle entity in favor of a non-idle entity.
+>          */
+>         if (cse_is_idle && !pse_is_idle)
+>                 goto preempt;
+> -       if (cse_is_idle != pse_is_idle)
+> +
+> +       /*
+> +        * IDLE entities do not preempt others.
+> +        */
+> +       if (unlikely(pse_is_idle))
+>                 return;
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202502211920.txUfwtSj-lkp@intel.com/
+Fair enough
 
-New smatch warnings:
-drivers/gpu/drm/amd/amdgpu/../display/dc/dml2/dml21/src/dml2_core/dml2_core_dcn4.c:134 core_dcn4_initialize() warn: inconsistent indenting
+Reviewed-by: Vincent Guittot <vincent.guittot@linaro.org>
 
-Old smatch warnings:
-drivers/gpu/drm/amd/amdgpu/../display/dc/dml2/dml21/src/dml2_core/dml2_core_dcn4.c:553 core_dcn4_mode_programming() warn: inconsistent indenting
-drivers/gpu/drm/amd/amdgpu/../display/dc/dml2/dml21/src/dml2_core/dml2_core_dcn4.c:568 core_dcn4_mode_programming() warn: curly braces intended?
+>
+>         /*
 
-vim +134 drivers/gpu/drm/amd/amdgpu/../display/dc/dml2/dml21/src/dml2_core/dml2_core_dcn4.c
-
-70839da6360500 Aurabindo Pillai 2024-04-19  112  
-70839da6360500 Aurabindo Pillai 2024-04-19  113  bool core_dcn4_initialize(struct dml2_core_initialize_in_out *in_out)
-70839da6360500 Aurabindo Pillai 2024-04-19  114  {
-70839da6360500 Aurabindo Pillai 2024-04-19  115  	struct dml2_core_instance *core = in_out->instance;
-70839da6360500 Aurabindo Pillai 2024-04-19  116  
-70839da6360500 Aurabindo Pillai 2024-04-19  117  	if (!in_out->minimum_clock_table)
-70839da6360500 Aurabindo Pillai 2024-04-19  118  		return false;
-70839da6360500 Aurabindo Pillai 2024-04-19  119  	else
-70839da6360500 Aurabindo Pillai 2024-04-19  120  		core->minimum_clock_table = in_out->minimum_clock_table;
-70839da6360500 Aurabindo Pillai 2024-04-19  121  
-70839da6360500 Aurabindo Pillai 2024-04-19  122  	if (in_out->explicit_ip_bb && in_out->explicit_ip_bb_size > 0) {
-70839da6360500 Aurabindo Pillai 2024-04-19  123  		memcpy(&core->clean_me_up.mode_lib.ip, in_out->explicit_ip_bb, in_out->explicit_ip_bb_size);
-70839da6360500 Aurabindo Pillai 2024-04-19  124  
-70839da6360500 Aurabindo Pillai 2024-04-19  125  		// FIXME_STAGE2:
-70839da6360500 Aurabindo Pillai 2024-04-19  126  		// DV still uses stage1 ip_param_st for each variant, need to patch the ip_caps with ip_param info
-70839da6360500 Aurabindo Pillai 2024-04-19  127  		// Should move DV to use ip_caps but need move more overrides to ip_caps
-70839da6360500 Aurabindo Pillai 2024-04-19  128  		patch_ip_caps_with_explicit_ip_params(in_out->ip_caps, in_out->explicit_ip_bb);
-70839da6360500 Aurabindo Pillai 2024-04-19  129  		core->clean_me_up.mode_lib.ip.subvp_pstate_allow_width_us = core_dcn4_ip_caps_base.subvp_pstate_allow_width_us;
-70839da6360500 Aurabindo Pillai 2024-04-19  130  		core->clean_me_up.mode_lib.ip.subvp_fw_processing_delay_us = core_dcn4_ip_caps_base.subvp_pstate_allow_width_us;
-70839da6360500 Aurabindo Pillai 2024-04-19  131  		core->clean_me_up.mode_lib.ip.subvp_swath_height_margin_lines = core_dcn4_ip_caps_base.subvp_swath_height_margin_lines;
-70839da6360500 Aurabindo Pillai 2024-04-19  132  	} else {
-70839da6360500 Aurabindo Pillai 2024-04-19  133  			memcpy(&core->clean_me_up.mode_lib.ip, &core_dcn4_ip_caps_base, sizeof(struct dml2_core_ip_params));
-70839da6360500 Aurabindo Pillai 2024-04-19 @134  		patch_ip_params_with_ip_caps(&core->clean_me_up.mode_lib.ip, in_out->ip_caps);
-70839da6360500 Aurabindo Pillai 2024-04-19  135  
-70839da6360500 Aurabindo Pillai 2024-04-19  136  		core->clean_me_up.mode_lib.ip.imall_supported = false;
-70839da6360500 Aurabindo Pillai 2024-04-19  137  	}
-70839da6360500 Aurabindo Pillai 2024-04-19  138  
-70839da6360500 Aurabindo Pillai 2024-04-19  139  	memcpy(&core->clean_me_up.mode_lib.soc, in_out->soc_bb, sizeof(struct dml2_soc_bb));
-70839da6360500 Aurabindo Pillai 2024-04-19  140  
-70839da6360500 Aurabindo Pillai 2024-04-19  141  	return true;
-70839da6360500 Aurabindo Pillai 2024-04-19  142  }
-70839da6360500 Aurabindo Pillai 2024-04-19  143  
-
-:::::: The code at line 134 was first introduced by commit
-:::::: 70839da6360500a82e4d5f78499284474cbed7c1 drm/amd/display: Add new DCN401 sources
-
-:::::: TO: Aurabindo Pillai <aurabindo.pillai@amd.com>
-:::::: CC: Alex Deucher <alexander.deucher@amd.com>
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> --
+> 2.37.3
+>
 
