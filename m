@@ -1,155 +1,141 @@
-Return-Path: <linux-kernel+bounces-525271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45F5EA3ED68
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 08:39:21 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EBFCA3ED6D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 08:40:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9552189E692
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 07:39:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9C6C17ABBE3
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 07:39:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CDBE1FF1D7;
-	Fri, 21 Feb 2025 07:39:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51A961FF5EF;
+	Fri, 21 Feb 2025 07:40:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WrJq+F9S"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Rb56zbuV"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD5A01F9F51;
-	Fri, 21 Feb 2025 07:39:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7D861F9F51;
+	Fri, 21 Feb 2025 07:40:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740123547; cv=none; b=jFCXfiXUrOoKpnmi6sUn42RnoJQnDRjZE35oKPd8F3/D1e8I+SkE5mqeY+Qb0AQcLkfiAVmz0PczPiver1I63rbx2rEOvS94zWLiO83d1G5uqYVWTtXPYsWExLegnD1MXHsKiXxjbEyR+xueV5DTLyB27XlLR6oLAFZ/wLckY18=
+	t=1740123628; cv=none; b=Hr+egWA34Up1jYB5CH/NdCGhXJm1QPuMarFg87NxgOsRnA+XK/GitKZhSWzAx3SVQGkN+rfVHsdRjrocfvC6KaZWG1CZNxEhWv9R/fi2eWQc02AzFnpHylhFZZfzVm8Ush3BXoIfvNoHJI1iTKr6mi4LczH78ZO26qqnyXKqeW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740123547; c=relaxed/simple;
-	bh=b/GiAGqv7s9yuuud5Txj5aS72CRFiu7njwkY+rnk2PM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hUTPttGF4n5RNSsD7hh3VAK3YdmzNmvf2T0CpMz0tIdG3GnPd0yjrPM0rnlyUXiC3/mucnO6oq0CqDKXN8pZniohi7njGZ+7a+aSMYrAuyDkYTnmlTKrcypta9nhZia8a4SBrCMxk0Z1HM779+26wRRpKW3Wlm34oOs8FUJAU0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WrJq+F9S; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4397dff185fso15159225e9.2;
-        Thu, 20 Feb 2025 23:39:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740123544; x=1740728344; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FPpdsdL4n88yx8HwEA3SbEzBAydGSiAFaXP8UXGVdK4=;
-        b=WrJq+F9SgCNjUvWzfKeWmqVEgYccVhQ6aDkr2hwjaVK1WZmu5IIyT3p91/hcc9J7G2
-         0PIOPhycQwhM8tCaBTdY+pKujEFdpy7SX7apd7LhszQnf5zgheV4al27sFyEYYlZZkfu
-         Or2n/QY/SFFsWeRasu9hRXUEruQ4rluFozOclQkd/2j8XQOwm5vm9Sb2zzhUWH1qkFTY
-         UJvkkVi4RYuVKK9Lg+hpMZlJ7Lk1nXPDVV8krj2Oi/0iUZx2hxrvYXsYfkDfMk6RfXqN
-         HpWBj0K/HkH+1sC30ZwfeWE14voKpBs3p0yl3Yy8pQRyQzdkWyWobMm0Si2Sycq2W/US
-         Fczg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740123544; x=1740728344;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FPpdsdL4n88yx8HwEA3SbEzBAydGSiAFaXP8UXGVdK4=;
-        b=mp020jHJ5Zh6R2IV/Lra0Kx4RUcMPJGnPNbSubn43eeOKc7cajujC4BYoO5sBjZFxd
-         GxwQMJW/hQFs0FvXK0G58m7XIkLKGXQClgZOXgJSCqfzOlX0o2KVmIWgZKNNWuSVPFT2
-         v1QaUJaEc0v9JrKkfmWrHgDl8u7jxXDs3gbodSVePdRGoqUSkz5UqX/f9VXb4lAT+mru
-         JJobVCR+rn1GRmzxPXa9/E/N/sgJfPS1y4uc8OGidCaD8Z4nflr2ZMRDad/DxoR8b1D0
-         EGmAGsYICb/pH+10F1m+4O1ZElRKvsNi/4iGKJr6RUvudz8FQ21oUwHoQuu1UMthdPYl
-         jW+A==
-X-Forwarded-Encrypted: i=1; AJvYcCWa8r2A0KSgCzXROqTVVHNKKXhvGr78WYi8KY9h5eos6JEViWH08WsOZisLz2zmdSGufI0bHJ0VkSa9Pr4=@vger.kernel.org, AJvYcCXmjn9J4VBoJ1juXaIhwXWdHrliCOncJEuu8R74pKyFvr44OvFtTVGksrw2y4G2oJGxk/dXuV28CSRgRAJU@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/oLbsC7KKJ2R5500STnM7mMkORW/1m/8MktPoI8OLicNnsK7y
-	1o4mDpClMZFfqukc0wLwD47hcIh4rmQ8MmibUyml6bcn8TL+aB9J06LR/JQ7lmKyARed/OWf7Mo
-	5GoznfsQ7lohnemxG/P9jtd3Lzs0=
-X-Gm-Gg: ASbGncuvbgan58Xyh+btSBc8h7N5ITHc2jeEW1bFIxS8PzaOoSWDwJLBcKkwjEp642D
-	1A6xzRFZeEiEtRkcvPCLuMFuJfBHY0+AJOW3WTwE2kXc0CX4YtGet4QEj9SOXnssHA1BnzREK+7
-	INasijIw==
-X-Google-Smtp-Source: AGHT+IGKzvTku4u3P+ZC0blF8cwRCmiouqJC8xvDkD7mTD+KrqUsUnan7eMjRClBQVvkTYZCKVCdYcufvFJIX6SQ9/A=
-X-Received: by 2002:a05:600c:4fd3:b0:439:9543:9488 with SMTP id
- 5b1f17b1804b1-439ae2196a6mr13824825e9.21.1740123544039; Thu, 20 Feb 2025
- 23:39:04 -0800 (PST)
+	s=arc-20240116; t=1740123628; c=relaxed/simple;
+	bh=TTMctbbdgc6onLfb+2Sfpp5Dv8gnfUaWXhFTGY7keXo=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=ih7jr3g08xm8DuNZuVjFr0WR9Ro3l8wjn6eDFdadN3nPHaSt+ypMPN+LBgSZk9fmQzGAQfMW6TbT3/91PgPTOkhDR7q29e4i41VDESsCtTHsKQVLjEnaMIOjQtamm1kx0ONW3wgsaxVbzwKRhMMzFZm9S7i93TvxKi0PSedgGLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Rb56zbuV; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51L627jo020390;
+	Fri, 21 Feb 2025 07:40:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=lbeKc48AASYUaIDpv9z8oe
+	VMeJZHxO7wPHMSBlQFHzk=; b=Rb56zbuVwnjpi45WWTzJ/kK6FviZpBZ7mIDP5e
+	2WOKukSHfXNZvH4MmEJ4wkss7FKT1+1shYE6YRifH/oxYcNtWlKyiWtAh32nvOhw
+	+377qnTUdz4APwitn88SDLRnYgLVt+wzr/Gc7eLcL37eZtfXU32gTEuvl6hYohPD
+	f03A1qjfDD7bWuDUikCLYrvVvdIXJQEKVaIuFhk4lEIqNZ1bpGBYRYTJeSI5VbtK
+	clh9wsU1t02Al4V2uUF11OO8on3Hn4HxR5P+vqJcmzWMFzfJvIUE27cVf22DCeG7
+	bb15zBVgNaVn8xvg7f7FUnK1APY9cBCfUDXrb3UD7UzwDtDA==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44x06t3mhw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 21 Feb 2025 07:40:23 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51L7eN3q026921
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 21 Feb 2025 07:40:23 GMT
+Received: from lijuang2-gv.ap.qualcomm.com (10.80.80.8) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 20 Feb 2025 23:40:17 -0800
+From: Lijuan Gao <quic_lijuang@quicinc.com>
+Date: Fri, 21 Feb 2025 15:39:57 +0800
+Subject: [PATCH] arm64: dts: qcom: qcs615: Add Command DB support
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250220051325.340691-1-ebiggers@kernel.org> <20250220051325.340691-2-ebiggers@kernel.org>
-In-Reply-To: <20250220051325.340691-2-ebiggers@kernel.org>
-From: Xiao Liang <shaw.leon@gmail.com>
-Date: Fri, 21 Feb 2025 15:38:27 +0800
-X-Gm-Features: AWEUYZm1g7Mr-grFK6X7pFEBOlj1wJCqmi_y2CU0k4OaIFulJAdMCCqigR4Bje8
-Message-ID: <CABAhCOQjnSsos3gm4GWrxFUdV8dw-=r_mMn0+xdjnZjJ0PQ9MA@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/2] x86/fpu: make kernel-mode FPU reliably usable in softirqs
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: x86@kernel.org, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Ard Biesheuvel <ardb@kernel.org>, Ben Greear <greearb@candelatech.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, Andy Lutomirski <luto@kernel.org>, 
-	"Jason A . Donenfeld" <Jason@zx2c4.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20250221-add_command_db_support-v1-1-d60acbf913aa@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAMwtuGcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDIyMD3cSUlPjk/NzcxLyU+JSk+OLSgoL8ohJdc8Nkw1TzFDML4yQTJaD
+ mgqLUtMwKsMHRsbW1AMCIZ6toAAAA
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: <kernel@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Lijuan Gao
+	<quic_lijuang@quicinc.com>
+X-Mailer: b4 0.15-dev-99b12
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1740123617; l=1220;
+ i=quic_lijuang@quicinc.com; s=20240827; h=from:subject:message-id;
+ bh=TTMctbbdgc6onLfb+2Sfpp5Dv8gnfUaWXhFTGY7keXo=;
+ b=DWxSGAHnYrCU4PSswFas5iZdNYiqjTwMGfFf1blaqsKpekNvk6Utb/+PWzKM+F5fwknif3fNp
+ gdiqGkHGvgXDC1iFsTPmWVyp7RPPK/A84mKN5BJuQqx0nuWCd78ZShI
+X-Developer-Key: i=quic_lijuang@quicinc.com; a=ed25519;
+ pk=1zeM8FpQK/J1jSFHn8iXHeb3xt7F/3GvHv7ET2RNJxE=
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: kk9bHys0WfF50oaEU_FMO3Y7PNqkc0HA
+X-Proofpoint-GUID: kk9bHys0WfF50oaEU_FMO3Y7PNqkc0HA
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-21_01,2025-02-20_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 adultscore=0
+ clxscore=1011 spamscore=0 malwarescore=0 priorityscore=1501 bulkscore=0
+ impostorscore=0 mlxlogscore=678 phishscore=0 suspectscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2502210056
 
-On Thu, Feb 20, 2025 at 1:16=E2=80=AFPM Eric Biggers <ebiggers@kernel.org> =
-wrote:
->
-> From: Eric Biggers <ebiggers@google.com>
->
-> Currently kernel-mode FPU is not always usable in softirq context on
-> x86, since softirqs can nest inside a kernel-mode FPU section in task
-> context, and nested use of kernel-mode FPU is not supported.
->
-> Therefore, x86 SIMD-optimized code that can be called in softirq context
-> has to sometimes fall back to non-SIMD code.  There are two options for
-> the fallback, both of which are pretty terrible:
->
->   (a) Use a scalar fallback.  This can be 10-100x slower than vectorized
->       code because it cannot use specialized instructions like AES, SHA,
->       or carryless multiplication.
->
->   (b) Execute the request asynchronously using a kworker.  In other
->       words, use the "crypto SIMD helper" in crypto/simd.c.
->
-> Currently most of the x86 en/decryption code (skcipher and aead
-> algorithms) uses option (b), since this avoids the slow scalar fallback
-> and it is easier to wire up.  But option (b) is still really bad for its
-> own reasons:
->
->   - Punting the request to a kworker is bad for performance too.
->
->   - It forces the algorithm to be marked as asynchronous
->     (CRYPTO_ALG_ASYNC), preventing it from being used by crypto API
->     users who request a synchronous algorithm.  That's another huge
->     performance problem, which is especially unfortunate for users who
->     don't even do en/decryption in softirq context.
->
->   - It makes all en/decryption operations take a detour through
->     crypto/simd.c.  That involves additional checks and an additional
->     indirect call, which slow down en/decryption for *everyone*.
+Command DB is a database in the shared memory of QCOM SoCs, that
+provides a mapping between resource key and the resource address for a
+system resource managed by a remote processor. The data is stored in a
+shared memory region and is loaded by the remote processor. Therefore,
+enabling Command DB ensures that those resources function properly.
 
-Thank you for the detailed information.
+Signed-off-by: Lijuan Gao <quic_lijuang@quicinc.com>
+---
+ arch/arm64/boot/dts/qcom/qcs615.dtsi | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-> Fortunately, the skcipher and aead APIs are only usable in task and
-> softirq context in the first place, nor is it supported to call them
-> with hardirqs disabled.  Thus, if kernel-mode FPU were to be reliably
-> usable in softirq context, no fallback would be needed.  Indeed, other
-> architectures such as arm, arm64, and riscv have already done this.
->
-> Therefore, this patch updates x86 accordingly to reliably support
-> kernel-mode FPU in softirqs (except when hardirqs are disabled).
->
-> This is done by just disabling softirq processing in kernel-mode FPU
-> sections, as that prevents the nesting that was problematic.
->
-> This will delay some softirqs slightly, but only ones that would have
-> otherwise been nested inside a task context kernel-mode FPU section.
-> Any such softirqs would have taken the slow fallback path before if they
-> tried to do any en/decryption.  Now these softirqs will just run at the
-> end of the task context kernel-mode FPU section (since local_bh_enable()
-> runs pending softirqs) and will no longer take the slow fallback path.
+diff --git a/arch/arm64/boot/dts/qcom/qcs615.dtsi b/arch/arm64/boot/dts/qcom/qcs615.dtsi
+index f4abfad474ea..4e060ce68e6c 100644
+--- a/arch/arm64/boot/dts/qcom/qcs615.dtsi
++++ b/arch/arm64/boot/dts/qcom/qcs615.dtsi
+@@ -417,6 +417,12 @@ reserved-memory {
+ 		#size-cells = <2>;
+ 		ranges;
+ 
++		aop_cmd_db_mem: aop-cmd-db@85f20000 {
++			compatible = "qcom,cmd-db";
++			reg = <0x0 0x85f20000 0x0 0x20000>;
++			no-map;
++		};
++
+ 		smem_region: smem@86000000 {
+ 			compatible = "qcom,smem";
+ 			reg = <0x0 0x86000000 0x0 0x200000>;
 
-I think this will delay all softirqs, including those that don't use
-FPU. Will there be a performance impact?
-(I guess you've noticed the patch I submitted last year. And this is
-the main reason why it was implemented in the way you mentioned as
-the second alternative.)
+---
+base-commit: 8936cec5cb6e27649b86fabf383d7ce4113bba49
+change-id: 20250220-add_command_db_support-71c1e7d683b4
+
+Best regards,
+-- 
+Lijuan Gao <quic_lijuang@quicinc.com>
+
 
