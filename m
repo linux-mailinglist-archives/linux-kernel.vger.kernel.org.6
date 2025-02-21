@@ -1,125 +1,115 @@
-Return-Path: <linux-kernel+bounces-525134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DE40A3EB3E
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 04:23:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FF8FA3EB2A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 04:16:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3252F1752DA
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 03:23:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DC6A19C5D33
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 03:17:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D02621F8ADF;
-	Fri, 21 Feb 2025 03:22:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55D071F7075;
+	Fri, 21 Feb 2025 03:16:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ruhr-uni-bochum.de header.i=@ruhr-uni-bochum.de header.b="JvTTDic9"
-Received: from out1.mail.ruhr-uni-bochum.de (out1.mail.ruhr-uni-bochum.de [134.147.53.149])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="a4RAVbIO"
+Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com [209.85.221.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76C7E1F4E38;
-	Fri, 21 Feb 2025 03:22:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.147.53.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23B431F3FC0
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 03:16:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740108178; cv=none; b=PPpCv6kLeU463gyPOopA/NizTr3IYal3OnnGd3s+DLBMIwt/OkwUCutMpCT6bSycwIglyHskuoYWAqO6mTbAv2JIkfmBuc9OCLTbc87510BfPqT0zjo1LZP5ko6rv6znrxvn/1RQ9f6t1w92oI4TyKUwpLAqzU5M1Y+K92pb/rU=
+	t=1740107803; cv=none; b=l7qNq/5Bq/55iKQC4IPMXpL28RAosyaz8iPK0EqTaRVtPAcdX3T8fVVm6Mehl8eyAROaQkSswIssMYtkQXZyDJPywJjgoT5JplgexAoR55KVyZ6yJJsoygpfxI2FWNHnMGRQsjxRL/BlwQM0HSLeOxOJAahr0WJ24tlEPG2VSmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740108178; c=relaxed/simple;
-	bh=k4vfaryULm0wVI7PaW//SBe7RD4zp/MFtgRUgrB4+IY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qQlCwkMSF1niOvnFyeTe+58ayFBlsbVq/kdFHBlxgREjmjpOJgHOrxJrEP0WUC5Wr22qBOa1wF4D8xrkg/M+jszGn5TZTRsEjhnwNzloqB8h8LvKN0Q6ca/i0HL7LvcNYaJikj8ELR9OCSkOcX2M08gwEYh8JL29PeuqB8NA/Qc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ruhr-uni-bochum.de; spf=pass smtp.mailfrom=ruhr-uni-bochum.de; dkim=pass (2048-bit key) header.d=ruhr-uni-bochum.de header.i=@ruhr-uni-bochum.de header.b=JvTTDic9; arc=none smtp.client-ip=134.147.53.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ruhr-uni-bochum.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ruhr-uni-bochum.de
-Received: from mx1.mail.ruhr-uni-bochum.de (localhost [127.0.0.1])
-	by out1.mail.ruhr-uni-bochum.de (Postfix mo-ext) with ESMTP id 4YzZyt2s33z8S6s;
-	Fri, 21 Feb 2025 04:16:06 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ruhr-uni-bochum.de;
-	s=mail-2024; t=1740107766;
-	bh=k4vfaryULm0wVI7PaW//SBe7RD4zp/MFtgRUgrB4+IY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=JvTTDic9UlIcexaw6dtFTBvlI8mc7PBunf+Q3W8PDBuRDKiTx0RCweIroiPne4u8x
-	 Cgf+sSgkDYQxXcpzmwXxmy41AV6ZiSusv3TmOmOLo/nkWRVeONC6Vj3iiZAQD1b/dQ
-	 LNLkNHytaRcQWTFxFBfwnNRczzhvqvV5/XVto7BG+Bp9XcSJZ8LWZ+RYRdIMpxFFAI
-	 kbbTqvYgeLLGjaoCMNNlM6dD1hu0VyyT7m4zlPymb2KukF6NmeuwC1USYW/rqlSGyk
-	 3yhR0Vxv3q05tU/h+z7WnUNsNykhIPL3Sy1Wdf4qYJxTef4jQjQSR5AZaXE57p3gec
-	 vlJNwSDetRNqg==
-Received: from out1.mail.ruhr-uni-bochum.de (localhost [127.0.0.1])
-	by mx1.mail.ruhr-uni-bochum.de (Postfix idis) with ESMTP id 4YzZyt11Xnz8S4P;
-	Fri, 21 Feb 2025 04:16:06 +0100 (CET)
-X-Envelope-Sender: <Jude.Gyimah@ruhr-uni-bochum.de>
-X-RUB-Notes: Internal origin=IPv6:2a05:3e00:c:1001::8693:2aec
-Received: from mail2.mail.ruhr-uni-bochum.de (mail2.mail.ruhr-uni-bochum.de [IPv6:2a05:3e00:c:1001::8693:2aec])
-	by out1.mail.ruhr-uni-bochum.de (Postfix mi-int) with ESMTPS id 4YzZys4wZ2z8S6L;
-	Fri, 21 Feb 2025 04:16:05 +0100 (CET)
-X-Virus-Status: Clean
-X-Virus-Scanned: clamav-milter 1.0.7 at mx1.mail.ruhr-uni-bochum.de
-Received: from [192.168.0.102] (unknown [77.37.5.67])
-	by mail2.mail.ruhr-uni-bochum.de (Postfix) with ESMTPSA id 4YzZys0CsRzDgyN;
-	Fri, 21 Feb 2025 04:16:04 +0100 (CET)
-X-Virus-Status: Clean
-X-Virus-Scanned: clamav-milter 1.4.1 at mail2.mail.ruhr-uni-bochum.de
-Message-ID: <4da401e6-bfd1-4fa1-9a4a-5ce3705e571d@ruhr-uni-bochum.de>
-Date: Fri, 21 Feb 2025 04:16:04 +0100
+	s=arc-20240116; t=1740107803; c=relaxed/simple;
+	bh=kdrOUzgVVdFR3sHFxXYQEjkbdG9MBlaaptabQxv0kQU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=F/yhH0jUGhJUAu3yqg79OVVrDdPps63rH4Q8AFZjXSJyBESOltYlvygcFqvXZ6WNFIa1XLHgOI1Dol5VPItp8QVstCNEeI1eWImeWolaecTkBjiag3F3Z+T0qaJZ41Uxol8TfkLsQkMEwm95oRLNkcG3t6lWfFKj01etreXQFcs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=a4RAVbIO; arc=none smtp.client-ip=209.85.221.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-52099627b5aso1113066e0c.1
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 19:16:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1740107801; x=1740712601; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DkwUVxurgul/K7FCcMY+3Tk9R0xuunIgonMxNv/xP3Q=;
+        b=a4RAVbIOfJ9x4isztn4snzAIQkKsa2B4Ev/2g9k8qeTpj9xGOAW87HuLHh5HVLExoX
+         lzAadz9B0iCjyj/k2wlypSEkZdlaov3Kur7BqYAC/qDAmeXIfHGOeyp6HJAe5/dT1+qR
+         +Q5bAVtg/QIEE+y+DUnyABwyURrH2xk3DqWvEwbSjsO8HgBmu5JYgMxYfgKXFlYKfA+K
+         h+YHXjAZ/MOqhqi3GJLJOUw7hn1WZZtlMLmy1iAss+p4Q6wEke2fx08JzXfhveqn9TWY
+         R0UaJaovVuhL6I5AXhPbom6thjGdPXeGd+8Yq354mUBhZTB4FO7GDPvrGbHvAUu2V+77
+         3icg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740107801; x=1740712601;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DkwUVxurgul/K7FCcMY+3Tk9R0xuunIgonMxNv/xP3Q=;
+        b=HsOIf8E3h4aDNZfqauEgbCdhCSc1ruHvf9tNPRpjdSsmb24oNadSSAVSxETmhpN/dy
+         +s/RmP3+RDKRGGQt7YMl9abbJNCMFFo6W/HyJS/H+KgDGIj2dAwo9gWk9Q1NyD1Ivzxa
+         pfJn4TdZ2OSkoFRFcxiZhG1VQiTj0iZ4rWxUQE4V/Fv1ABgaqugMii5pvEkOgnq7Aivl
+         ig71khjXJPq6ResIzSyaeO4DWxfMjHw/ZQR4tY5xxon4vBY4Y/KsV+0VzEZAZ7MYEzfa
+         kEiM211oQfc8UamhB3g1GMzQAu/4CDfTT1x8fJaspDCLNKY67o8mha35mOJcJvvZfrTF
+         RSLA==
+X-Forwarded-Encrypted: i=1; AJvYcCVjZTxo1P6bhnLA6mi8f+h5rSkEzvfoMxyCqZp2kdu42k/vlja4sYC9LN535EwJSR/K/SRNL2IRG/QQjzU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyd53bDYrYvWM2jYpc5ZygX4nNg3PjGezZzy4aSMDhxKhtM5oi9
+	jNHm9FBOHRRhYVHFxrj8k5h99od1Ox93gmugXcfoLuDZSPYQgdTO2863i55gnJZFjDZHKoESW1c
+	dG7r20vmBQpKLpxGebmYTCUoV2C2ZhIsU4iMp
+X-Gm-Gg: ASbGnctB/Uc7PqBUjhcms5t5jz3Q1U0P+LAr2fqebYImStpo7m7mns89ne6tj4XlZaz
+	a5lHAsyhkQ73Yq7+o4yCobIOH3x7y48y70Y5e9iwAzoH9no89KDd29tZuIVuPOWo0DrbNhq8iD2
+	QlMD6id5k=
+X-Google-Smtp-Source: AGHT+IH4wi2+Fbki2I5z7rt08OZ60QpOG7qQiecIvmmUTNGESL+MgXrnaybH2kx63UDin7eeHdz7nGr7qRecyFqb7AQ=
+X-Received: by 2002:a05:6122:1789:b0:520:a84c:1b59 with SMTP id
+ 71dfb90a1353d-521dcfc0dd1mr3393922e0c.5.1740107801011; Thu, 20 Feb 2025
+ 19:16:41 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 00/11] kconfig: Add support for conflict resolution
-To: Masahiro Yamada <masahiroy@kernel.org>,
- Luis Chamberlain <mcgrof@kernel.org>
-Cc: Ole Schuerks <ole0811sch@gmail.com>, linux-kbuild@vger.kernel.org,
- jude.gyimah@rub.de, thorsten.berger@rub.de, deltaone@debian.org,
- jan.sollmann@rub.de, linux-kernel@vger.kernel.org, nathan@kernel.org,
- nicolas@fjasle.eu
-References: <20250208163959.3973163-1-ole0811sch@gmail.com>
- <CAK7LNAQBBKfSwQ=z3yBchg--gcrAykWz6xvpAYWKse9R9g8KVQ@mail.gmail.com>
- <Z6oeplCypN825pyR@bombadil.infradead.org>
- <CAK7LNAT48101gZzcHF3U-VL1i0Ekns6zXKpNDb3MnScoSNr-kw@mail.gmail.com>
-Content-Language: en-US
-From: Jude Gyimah <Jude.Gyimah@ruhr-uni-bochum.de>
-In-Reply-To: <CAK7LNAT48101gZzcHF3U-VL1i0Ekns6zXKpNDb3MnScoSNr-kw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20241023212158.18718-1-casey@schaufler-ca.com>
+ <20241023212158.18718-5-casey@schaufler-ca.com> <CAEjxPJ56H_Y-ObgNHrCggDK28NOARZ0CDmLDRvY5qgzu=YgE=A@mail.gmail.com>
+ <CAHC9VhSSpLx=ku7ZJ7qVxHHyOZZPQWs_hoxVRZpTfhOJ=T2X9w@mail.gmail.com>
+ <CAHC9VhQUUOqh3j9mK5eaVOc6H7JXsjH8vajgrDOoOGOBTszWQw@mail.gmail.com>
+ <CAEjxPJ6-jL=h-Djxp5MGRbTexQF1vRDPNcwpxCZwFM22Gja0dg@mail.gmail.com>
+ <CAEjxPJ5KTJ1DDaAJ89sSdxUetbP_5nHB5OZ0qL18m4b_5N10-w@mail.gmail.com>
+ <1b6af217-a84e-4445-a856-3c69222bf0ed@schaufler-ca.com> <CAEjxPJ44NNZU7u7vLN_Oj4jeptZ=Mb9RkKvJtL=xGciXOWDmKA@mail.gmail.com>
+ <eba48af3-a8ef-4220-87a1-c86b96bcdad8@schaufler-ca.com> <CAEjxPJ7aXgOCP4+1Lbfe2b5fjB9Mu1n2h2juDY1RjPgP10PUxQ@mail.gmail.com>
+ <784b9c6d-22e1-44d0-86f8-d2b13c4b0e11@schaufler-ca.com>
+In-Reply-To: <784b9c6d-22e1-44d0-86f8-d2b13c4b0e11@schaufler-ca.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Thu, 20 Feb 2025 22:16:30 -0500
+X-Gm-Features: AWEUYZmAClGRobwy2rc6ntcXOfyVW75ozxug9Z5R0cdhhnSfjf0Qve2WSPi3N4M
+Message-ID: <CAHC9VhT968J3zBxtzJcnW+6AKzDKA4MzBgMYoHHXsEaREAe=ww@mail.gmail.com>
+Subject: Re: [PATCH v3 4/5] LSM: lsm_context in security_dentry_init_security
+To: Casey Schaufler <casey@schaufler-ca.com>
+Cc: Stephen Smalley <stephen.smalley.work@gmail.com>, linux-security-module@vger.kernel.org, 
+	jmorris@namei.org, serge@hallyn.com, keescook@chromium.org, 
+	john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp, 
+	linux-kernel@vger.kernel.org, selinux@vger.kernel.org, mic@digikod.net, 
+	ceph-devel@vger.kernel.org, linux-nfs@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Quick follow-up. On our end, our SAT-solver implementations can be 
-easily adapted to accommodate your future toolchain selection 
-refactorings. Also, could you share with us the timelines for your 
-refactorings so we can plan and deliver the adjusted SAT-solver patches. 
-Best Regards, Jude Gyimah
+On Thu, Feb 20, 2025 at 4:08=E2=80=AFPM Casey Schaufler <casey@schaufler-ca=
+.com> wrote:
+>
+> Adding the lsm_context was cleaner. Not worth yet another roadblock.
+> I will have a patch asap. I'm dealing with a facilities issue at
+> Smack Labs (whole site being painted, everything in disarray) that
+> is slowing things down.
 
-On 2/11/25 01:46, Masahiro Yamada wrote:
-> On Tue, Feb 11, 2025 at 12:43 AM Luis Chamberlain <mcgrof@kernel.org> wrote:
->> On Mon, Feb 10, 2025 at 02:00:52PM +0900, Masahiro Yamada wrote:
->>> Thanks for this, but I have no plans to merge the SAT solver.
->>>
->>> The reason is that my future plan is to move toolchain selection
->>> to the Kconfig stage instead of specifying it statically from the command line.
->> That makes sense.
->>
->>> This approach was suggested by Linus [1], and to achieve that,
->>> the shell evaluation must be dynamically re-evaluated [2].
->> Sure.
->>
->>> The SAT solver would likely conflict with this plan. At least due to the
->>> significant amount of additional code, which would be an obstacle.
->> I can't see how the toolchain selection, if set on Kconfig can't be
->> leveraged later to enable / disable the SAT solver, however I can
->> see the amount of code shuffling incurred to be an extra hurdle to
->> address and a preference to leave that for later.
->>
->> In other words, I susepct it is still possible to evaluate to
->> add support for the SAT solver post toolchain kconfig integration.
->>
->> Thoughts?
->
-> It depends on how the dynamic shell evaluation is implemented.
-> This is not limited to bool/tristate, but SAT solver only works for
-> those two types.
->
->
->
->
+Sorry for the delay today, I was distracted by some meetings and
+wrestling with gcc v15 on my Fedora Rawhide dev/test system while I
+try to test the LSM init patchset.  Anyway, I'll add my comments to
+Stephen's formal patch posting.
+
+--=20
+paul-moore.com
 
