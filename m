@@ -1,78 +1,193 @@
-Return-Path: <linux-kernel+bounces-526351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49C34A3FD91
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 18:37:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A682A3FDA8
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 18:42:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78A9F189B427
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:37:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A69E3BF371
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:38:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E8922505D2;
-	Fri, 21 Feb 2025 17:37:10 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 654102505C9
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 17:37:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30AF1250BEA;
+	Fri, 21 Feb 2025 17:38:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="hXIN3Z5O"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF5C31E9B31;
+	Fri, 21 Feb 2025 17:37:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740159429; cv=none; b=CpJKyxWcgE6AbAcZUHD3kqMEzBGYefJPw7EmG5G/APlKEYhajArXWFJghxSY9hCcyVwspvSJ7ZM6zQEJ9mGPOlJYmhtUap7VGLb2pIWSKgbCvPc+QuXqI68k8e504b81Jo9YLbJM/R6JmUNYnHCGUUw7C0/3VYidyni8+0a6GQU=
+	t=1740159479; cv=none; b=SqkTxrUimJC90bVmm1fizEz/CzHdoRv8ij6Q+RyL9oreC7u1Ce7DYAkPeqRC0ziCGKU9jzhX7qAzF43EAXn7d6x5COKDO+b+9RL3xdr2lxh3qcKSIpHEG5orTfBySu0BDuJz4AlgB2k0T+Ie9jLA6r+Gi7+v4f9Xl/9LIjZMDy4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740159429; c=relaxed/simple;
-	bh=SM/0S75aqELInpwNA95plCPb2mbTtRI/VcjLtQaJuOU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KLPyQL1Ynh4B66ItWFS7N832wLcddoj8Y5QwqYkDQoJTZEtVyhIhebWgJKsDNbyPjDs8AYYAe56puNltwVnGt1HebQHj2XxiInofUiyTQv0TnCedm/keB3fs7knn9TEynugLtulePzYdxGv70LI6AvNXVtfETUn0cbjtakFhrAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5E1151063;
-	Fri, 21 Feb 2025 09:37:25 -0800 (PST)
-Received: from [10.163.38.241] (unknown [10.163.38.241])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E66F13F5A1;
-	Fri, 21 Feb 2025 09:37:04 -0800 (PST)
-Message-ID: <0c251bd0-88b7-4df0-bc53-333d16008ab8@arm.com>
-Date: Fri, 21 Feb 2025 23:07:01 +0530
+	s=arc-20240116; t=1740159479; c=relaxed/simple;
+	bh=wIc0LcJDOs1i48hZA97m2pwA+nhyQVyiw2aP2OkNwEc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hL7Lv+HEZGCpItVEZy1HTYPqGXmMAc4gr3Nh6W6tcDKA5Tw0nwfEMCAKBA/yN4EoBIPQs/ANBeRMT2efoUK/xijoxvLivkhXbjheL+ufXR0hV72Sx5SyN93KMSjvxAmhyhP+nsUZs+vFNprdVdtn+ouylJ0WmmD9O2GPY5yyG4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=hXIN3Z5O; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51LB9LDm001350;
+	Fri, 21 Feb 2025 17:37:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=669DWXN4P39AfzDosqBdxQgy1+JPQG
+	AZQsinsyWix10=; b=hXIN3Z5OQhdJBooRXXuRybv72DWfi0kzbRw3tBKXSmyexI
+	l/1r0sxqOHQLqTM7omTY0IpqkOHdxY9kMV1dcyuZHujcnmRXWLS8IcmNiki0JXrn
+	O85p/x2//JuwQPxAFmbt5hz8VGJ1d1dTlkb3hKMKP59lM0gs5fOvtWwOUvJ0lJXs
+	IboyORKLziWRIJBm2//6Kj9re4WKeEszYUzJj74W4WJAWbDFBTkqAhX0rd0Y4IrS
+	A+xmuesKCPEQ5DV7VY7qjS7ITCk0lFKlrYqFIl15gZg2ZPzrgeSlkTm6RdMo52Qs
+	HbEH0SatpHGDzAWJooa67Cuw3rzyegxO3ousRgdg==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44xdhaw01a-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 21 Feb 2025 17:37:49 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 51LHbmpr032575;
+	Fri, 21 Feb 2025 17:37:49 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44xdhaw016-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 21 Feb 2025 17:37:48 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51LFZSUF002348;
+	Fri, 21 Feb 2025 17:37:48 GMT
+Received: from smtprelay02.dal12v.mail.ibm.com ([172.16.1.4])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 44w03xh906-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 21 Feb 2025 17:37:48 +0000
+Received: from smtpav01.wdc07v.mail.ibm.com (smtpav01.wdc07v.mail.ibm.com [10.39.53.228])
+	by smtprelay02.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51LHblr828836508
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 21 Feb 2025 17:37:47 GMT
+Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 5379858059;
+	Fri, 21 Feb 2025 17:37:47 +0000 (GMT)
+Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 327565804B;
+	Fri, 21 Feb 2025 17:37:47 +0000 (GMT)
+Received: from localhost (unknown [9.61.179.202])
+	by smtpav01.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 21 Feb 2025 17:37:47 +0000 (GMT)
+Date: Fri, 21 Feb 2025 11:37:46 -0600
+From: Nick Child <nnac123@linux.ibm.com>
+To: David Laight <david.laight.linux@gmail.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, horms@kernel.org,
+        nick.child@ibm.com, pmladek@suse.com, rostedt@goodmis.org,
+        john.ogness@linutronix.de, senozhatsky@chromium.org
+Subject: Re: [PATCH net-next v3 1/3] hexdump: Implement macro for converting
+ large buffers
+Message-ID: <Z7i56s7jwc_y0cIz@li-4c4c4544-0047-5210-804b-b8c04f323634.ibm.com>
+References: <20250219211102.225324-1-nnac123@linux.ibm.com>
+ <20250219211102.225324-2-nnac123@linux.ibm.com>
+ <20250220220050.61aa504d@pumpkin>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] arm64/mm/hotplug: Drop redundant [pgd|p4d]_present()
-To: Anshuman Khandual <anshuman.khandual@arm.com>,
- linux-arm-kernel@lists.infradead.org
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Ard Biesheuvel <ardb@kernel.org>, Ryan Roberts <ryan.roberts@arm.com>,
- Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org
-References: <20250221094449.1188427-1-anshuman.khandual@arm.com>
- <20250221094449.1188427-2-anshuman.khandual@arm.com>
-Content-Language: en-US
-From: Dev Jain <dev.jain@arm.com>
-In-Reply-To: <20250221094449.1188427-2-anshuman.khandual@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250220220050.61aa504d@pumpkin>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 5xECC4AGJpgVrmjDK2pr7w7ca8IzgKH_
+X-Proofpoint-ORIG-GUID: UX1jSzdChIvbnXu7-wKNUaqVzIJJz7xz
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-21_05,2025-02-20_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 spamscore=0
+ mlxlogscore=927 mlxscore=0 bulkscore=0 priorityscore=1501 adultscore=0
+ clxscore=1015 suspectscore=0 phishscore=0 lowpriorityscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2502210122
 
+Hi David,
 
-
-On 21/02/25 3:14 pm, Anshuman Khandual wrote:
-> [pgd|p4d]_present() are inverse to their corresponding [pgd|p4d]_none(). So
-> [pgd|p4d]_present() test right after corresponding [pgd|p4d]_none() inverse
-> test does not make sense. Hence just drop these redundant checks.
+On Thu, Feb 20, 2025 at 10:00:50PM +0000, David Laight wrote:
+> On Wed, 19 Feb 2025 15:11:00 -0600
+> Nick Child <nnac123@linux.ibm.com> wrote:
 > 
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will@kernel.org>
-> Cc: Ard Biesheuvel <ardb@kernel.org>
-> Cc: Ryan Roberts <ryan.roberts@arm.com>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+> > ---
+> >  include/linux/printk.h | 20 ++++++++++++++++++++
+> >  1 file changed, 20 insertions(+)
+> > 
+> > diff --git a/include/linux/printk.h b/include/linux/printk.h
+> > index 4217a9f412b2..12e51b1cdca5 100644
+> > --- a/include/linux/printk.h
+> > +++ b/include/linux/printk.h
+> > +				   buf, len) \
+> > +	for ((i) = 0;							\
+> > +	     (i) < (len) &&						\
+> > +	     hex_dump_to_buffer((unsigned char *)(buf) + (i),		\
+> > +				(len) - (i), (rowsize), (groupsize),	\
+> > +				(linebuf), (linebuflen), false);	\
+> 
+> You can avoid the compiler actually checking the function result
+> it you try a bit harder - see below.
+> 
 
-LGTM
+This was an extra precaution against infinite loops, breaking when
+hex_dump_to_buffer returns 0 when len is 0. Technically this won't happen
+since we check i < len first, and increment i by at least 16 (though
+your proposal removes the latter assertion). 
 
-Reviewed-by: Dev Jain <dev.jain@arm.com>
+My other thought was to check for error case by checking if
+the return value was > linebuflen. But I actually prefer the behavior
+of continuing with the truncated result.
 
+I think I prefer it how it is rather than completely ignoring it.
+Open to other opinons though.
+
+> > +	     (i) += (rowsize) == 32 ? 32 : 16				\
+> > +	    )
+> 
+> If you are doing this as a #define you really shouldn't evaluate the
+> arguments more than once.
+> I'd also not add more code that relies on the perverse and pointless
+> code that enforces rowsize of 16 or 32.
+> Maybe document it, but there is no point changing the stride without
+> doing the equivalent change to the rowsize passed to hex_dump_to_buffer.
+> 
+
+The equivalent conditonal exists in hex_dump_to_buffer so doing it
+again seemed unnecessary. I understand your recent patch [1] is trying
+to replace the rowsize is 16 or 32 rule with rowsize is a power of 2
+and multiple of groupsize. I suppose the most straightforward and
+flexible thing the for_each loop can do is to just assume rowsize is
+valid.
+
+> You could do:
+> #define for_each_line_in_hex_dump(buf_offset, rowsize, linebuf, linebuflen, groupsize, buf, len, ascii) \
+> for (unsigned int _offset = 0, _rowsize = (rowsize), _len = (len); \
+> 	((offset) = _offset) < _len && (hex_dump_to_buffer((const char *)(buf) + _offset, _len - _offset, \
+> 		_rowsize, (groupsize), (linebuf), (linebuflen), (ascii)), 1); \
+> 	_offset += _rowsize )
+> 
+> (Assuming I've not mistyped it.)
+> 
+
+Trying to understand the reasoning for declaring new tmp variables;
+Is this to prevent the values from changing in the body of the loop?
+I tried to avoid declaring new vars in this design because I thought it
+would recive pushback due to possible name collision and variable
+declaration inside for loop initializer.
+I suppose both implementations come with tradeoffs.
+
+> As soon as 'ascii' gets replaced by 'flags' you'll need to pass it through.
+> 
+
+Yes, if hex_dump_to_buffer becomes a wrapper around a new function
+(which accepts flag arg), I think there is an opportunity for a lot
+of confusion to clear up. Old behaviour of hex_dump_to_buffer will be
+respected but the underlying function will be more flexible.
+
+Appreciate the review!
+- Nick
+
+[1] - https://lore.kernel.org/lkml/20250216201901.161781-1-david.laight.linux@gmail.com/
 
