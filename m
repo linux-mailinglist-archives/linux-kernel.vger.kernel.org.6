@@ -1,439 +1,224 @@
-Return-Path: <linux-kernel+bounces-526616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78A27A40113
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 21:35:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4557BA40105
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 21:34:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1B1E189BB43
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 20:34:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7F047019F7
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 20:34:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81CF0255E28;
-	Fri, 21 Feb 2025 20:32:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC49F253358;
+	Fri, 21 Feb 2025 20:33:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jlcx8//u"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	dkim=pass (2048-bit key) header.d=mandelbit.com header.i=@mandelbit.com header.b="N5MfwPaM"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4252254AED;
-	Fri, 21 Feb 2025 20:32:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7908E4207F
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 20:33:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740169976; cv=none; b=o2AiwGeFFkxwtO2iZ88Xax1/1Uf8Y/dt1J7kIRP2Pbx/YjWVCjD15u+VjQYCsjCQ8E3RQPes34fsV0rEU6EMjpcrqeIY/QaYpA1nllmDe3GphJZwBtAgHaVUb3/zNfZkRbUshwmUqm41QsV5N/3b42mmsB5uHMoeVA0hEOGpXY4=
+	t=1740169994; cv=none; b=dtt40YuAaLxR0gslxMzXRQ3hf2oe9y7jmNfX+TBtOH2o3SBJ/f7JvWi0uo8Fi7UTnHv5i52Y+TMjSIzyTm3zCYptwGRN9bMeGE3nxHFGfMqoIyyhuhw1L5R2AXi4B+vMq2I1szfsp30GjQbgLlYEFie2jOxJo+FkRGR4uCepiAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740169976; c=relaxed/simple;
-	bh=PoeeTQAJjZ5RdKFBcSwIbKAekpRiUcC0+f84D/Pj5vE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=rD6OubIiwfvAvY5sTMKxHmCHsZGtoYAr92BUw4fniXr4A5xZAHNWO/1tJDmYSB+I79CGykPy+Oy+ehCa5KWxZRoiZQHrG+CrhjY8N0kDCt20V3kdlEYAQwovxoAN3bnYtGeEnu1p56jWsVk+QrwDw8oPdwR5SIgm5azMaVDbj+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jlcx8//u; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5e04cb346eeso4163249a12.2;
-        Fri, 21 Feb 2025 12:32:54 -0800 (PST)
+	s=arc-20240116; t=1740169994; c=relaxed/simple;
+	bh=HV1/qvjRpqlQskal+20g+fl4AKeeNVnKzMW/aAF5sYs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Xxf6Ea7olMEAb7MUCr3gw4denyGCs9iONV1096Hjz/Kz9vqfw9Lp9A6meVbdTBSUpOFfL94EJKopRjvDQ/uTFZBArr2IMtfLRVfv1bfYFqf6eo6g2P7skVPbe9mSHPHXtBdvCU7o7gWnnnN5b8OkVnxABOFrERWU4CWOk9ZYQSM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mandelbit.com; spf=pass smtp.mailfrom=mandelbit.com; dkim=pass (2048-bit key) header.d=mandelbit.com header.i=@mandelbit.com header.b=N5MfwPaM; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mandelbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mandelbit.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-38f406e9f80so2268705f8f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 12:33:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740169973; x=1740774773; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1pvaaqiA/SmRoJNAwsNTHeXGNX/6oeYrcqiqLNPnA9o=;
-        b=jlcx8//uJbfcmkgHONTE0ejGXsxM4W40g1zIqOSLWIxevSstrOaSvblUi0DZQ53Z4d
-         iMr7BPvEvAwzh7mDFDzp2scB1R7tEpJctjhRT2A1zeoeGhX7NW5irSVmZ4rOQC7p8dyl
-         qQLgPrEf/53kNcPPJL+urjbs91c7VC7Ieu8ihRQWBEJDJTXNi9szy2tjGZa1ft3/sOmL
-         jzNOJFKjoGhUJNmkQ+Bc4Vw7BjjmP+n7Fo9Wpr9kfyHJ9RBh90kWVWzYa3u1oVeEYNEv
-         3AZWTOU/DliLKdfG4VqHyTQ5g2cMwa37TsAlyEaMsrTLOqCeAQ8rIz0GFsP0Fp8m5pZR
-         TFuw==
+        d=mandelbit.com; s=google; t=1740169991; x=1740774791; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=dmGA1hr+frMZBLC4GUTcWtS/D8D1WkVOYrGRa76QtDk=;
+        b=N5MfwPaMsu5+UPjdplLQU+UVgpx23sQxBVogdMT5V+GERoSJPmPWjqpoVDNVPftfgI
+         psDALjzMNXryoDA1wjWZ4GU4hALEyOhTYWpT+HgiWzc7YR/n0j7CP9o5wfL4mgUIMoR8
+         TxL7FY8SWjayyYitcNzqlE/N04b7qQTtPyq3QgEdPilSnee3MZXVMzKce7b0+Li/ldDq
+         Y2W8PVKqWrs+7Fntb7KCZGwnZIaXhjxVNtb9cUt0SLtAF9xMcB2hxQhxQ8bK3l0CaytW
+         /C4JyP2Jv0SRpxE/DQqc+yUFHn1tKhBDmDikJq7FSWRk090sCedjua3prWOx+fpHOdUR
+         ajyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740169973; x=1740774773;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1pvaaqiA/SmRoJNAwsNTHeXGNX/6oeYrcqiqLNPnA9o=;
-        b=mbjOr5lTLq8BzPR4psTVRzCt4rFzWpcoSMWRcMRv6nn8dzadXJUdzTza0geJfktlbY
-         wQH2jo80WLubuV3bjzzOVAhOaFX8ZKyJ3/od6pIR7fs8AG/IgEc4KqloJOVWeAsZc5EC
-         y6u1TDmeEaiJ/rSLcfp+MmhBY2ExKobKdNFilw+jk7ws9SjYJPdiPPUpuN6WGhDoyOqZ
-         kNyvpHsRVxx9SFOH8knnbdEsioRU9pf+F0JwOE5e0wjWzxmShclACoDUyDDQjeJiy23x
-         TQoWIM3sBB5gxFBw2nfVwVjD697Lg5MUDWPGAPb3SpmN0W80XDXJW/XAo0J9s1+5r4UT
-         JaWw==
-X-Forwarded-Encrypted: i=1; AJvYcCWuTy90rQFE9pELxGbqWt040ifL76iPdC059dCol+XazpOezSCA9BiGwtYMY9wZRI9o74Cn5HAD1QEf@vger.kernel.org, AJvYcCWwd+KLbV7unjLld8vX7io7WZPpKTRH8fRGkgmEQAzXnnAnpAv+O69EHaWJrS9ig2Y5LD+AnkEUyerWVTTj@vger.kernel.org
-X-Gm-Message-State: AOJu0YxO5Ub8PsZjb+lcVfp40j4wFiCpDhcydGKJWYm7pTjz8uWMzFR+
-	a6VZ+SZtjvgW6YZBYgG4xSgXhwjlwa0N82CS7jK6dlDg63JGRvmwAKyyYQ==
-X-Gm-Gg: ASbGnctvjNf2ESsw8H95iL6C+Z8vb15FFaUpzsfMGispQGw5+J7QlSZzFb8IEniUJtG
-	jcykx3tvsS7WPXaQ+4267Gs5VoFnRQ/U32JJ7Gf6Nb7VnOQCgWBNzKrELH/I8HTIbAdAkMTMpeP
-	papvtf/WiuDElErHgqc3Vi2dUKmpFZc2Pq21BR5mRlYXBiIS4HSFw03tePuTP6PQRrHr0rXnYDu
-	XH3ujx0GcGz7YZ/KwM0RrA9daNW9UInKQ1Ota9WJCy+vjZCf6hIwgK1Tn9BKDcj92iC3YYBJ8Jm
-	DIphtid61dqiwv2Wj7sFroLKbErPCvDjNr/CDHZZTRmOt4LESfkmCrgkgFpK0UCzh6RHftjW
-X-Google-Smtp-Source: AGHT+IG8svSNh/gYeOBTqhQ8L5Z26mBOThRhLDOKdDTtl2i++2iJPATf7jNc/coLmYedzNMKZxPuAA==
-X-Received: by 2002:a05:6402:5192:b0:5de:4f37:e59c with SMTP id 4fb4d7f45d1cf-5e0b724782amr4219796a12.31.1740169972869;
-        Fri, 21 Feb 2025 12:32:52 -0800 (PST)
-Received: from hex.my.domain (83.8.202.192.ipv4.supernova.orange.pl. [83.8.202.192])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5dece1c418bsm14653485a12.24.2025.02.21.12.32.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Feb 2025 12:32:52 -0800 (PST)
-From: Artur Weber <aweber.kernel@gmail.com>
-Date: Fri, 21 Feb 2025 21:32:42 +0100
-Subject: [PATCH v2 6/6] ARM: dts: bcm2166x: Add bcm2166x-pinctrl DTSI
+        d=1e100.net; s=20230601; t=1740169991; x=1740774791;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dmGA1hr+frMZBLC4GUTcWtS/D8D1WkVOYrGRa76QtDk=;
+        b=KqGN95d/dYUqIPYOTxHDtFov3Uma4+km79XDjGFLRpTZN8Bf2VcZ+MyNHeflD+2dzc
+         IsfIu92beHEiQ2kIFbw358bnC1ee+6+nBYVNffVrn57dP3jIWRz6N8/rNiXUsnOgQA3J
+         oOZotVJfzLHfJvMMlwHZxqxHCFurh+ZI/2aF+IVZqlPg1+LxcO00oyE6pum3oyJOHDhK
+         3O93odzIKf0E0rjK60CB8sTrEK0QAjKYQK4rG8AKELXaDJ7p0LygZYRBsyf7iNbpoljt
+         0CWYWi2xcdRHNv/Br/70YOHWLQ3bZS08VU3v4etkvdYXMtTSkOJf+JvQWHiUUS6Iac7M
+         L/FA==
+X-Gm-Message-State: AOJu0YxWY/i3nS3dJSOfpJzYGxT6qgwbIGT2s8cIzHFO31zYSj7SWzw8
+	AltBxYOZ0pZ/H4yDEphT4ZWwssrFzYDbYOchOAs7bssyT+mnrPvWG20UN0IiQhw=
+X-Gm-Gg: ASbGnctdFD2r695YzjuBDe+P3CTsfTybCtJWkLWDe0CnyCp8RP1PKs2n8h2haqvub2e
+	raKsjIZTt/R1obNBFh5Dl6eOmI1ohb3FZQ/yzEVR2aFfAIdFOpG0OZGa0n/76oPy/83TO9oZTWv
+	bU9JMYzgTmwmwIsfbz7GNJfVE+UEFRlosPekWQ7irDTGnv+As4LLCzOHTKHAwLURJIE5xYcZ23F
+	I1TQ08/m1OgszSs6q5M5ZzCHzGLk59ZZOoGk873LLjUwVgib3OOCO79NX46F/IegaJ9Nncsh5CL
+	JYI1SQgV0+ib3O2qXdQzKuVVFyg8xf2A67t/LATGA4FkJBjxc7cLYPExKL5+l9Y+eUk=
+X-Google-Smtp-Source: AGHT+IFSbsh9CqdtQC5L41mFgB1ivLevuDk5yaMx/kNzzefpfHL64v0pMJwZ3DucrDs2P5mPNUFhwA==
+X-Received: by 2002:a05:6000:156b:b0:38f:2a82:4427 with SMTP id ffacd0b85a97d-38f6e95fe69mr3971928f8f.20.1740169990488;
+        Fri, 21 Feb 2025 12:33:10 -0800 (PST)
+Received: from ?IPV6:2001:67c:2fbc:1:13a9:f3c7:539a:f1c8? ([2001:67c:2fbc:1:13a9:f3c7:539a:f1c8])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-439b02ce404sm27769045e9.7.2025.02.21.12.33.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 Feb 2025 12:33:09 -0800 (PST)
+Message-ID: <0849b8a0-e1b7-4486-a376-43403e52dd1f@mandelbit.com>
+Date: Fri, 21 Feb 2025 21:33:14 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250221-bcm21664-pinctrl-v2-6-7d1f0279fe16@gmail.com>
-References: <20250221-bcm21664-pinctrl-v2-0-7d1f0279fe16@gmail.com>
-In-Reply-To: <20250221-bcm21664-pinctrl-v2-0-7d1f0279fe16@gmail.com>
-To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Florian Fainelli <florian.fainelli@broadcom.com>, 
- Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
-Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- Stanislav Jakubek <stano.jakubek@gmail.com>, 
- ~postmarketos/upstreaming@lists.sr.ht, 
- Artur Weber <aweber.kernel@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1740169959; l=7006;
- i=aweber.kernel@gmail.com; s=20231030; h=from:subject:message-id;
- bh=PoeeTQAJjZ5RdKFBcSwIbKAekpRiUcC0+f84D/Pj5vE=;
- b=zlHYkjc9MveY75Vzf279SZEL8zo1UrW74RttN4qfEkj8EQd/GvUY6pm98QsjvEAOjreBhiXbx
- /0PJXFlhOgeACkWOYaL/NeOugqp7mwMACJ6zcDULsBLMj7+0miqiOkn
-X-Developer-Key: i=aweber.kernel@gmail.com; a=ed25519;
- pk=RhDBfWbJEHqDibXbhNEBAnc9FMkyznGxX/hwfhL8bv8=
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] scripts/gdb/linux/symbols.py: address changes to
+ module_sect_attrs
+To: Jan Kiszka <jan.kiszka@siemens.com>, kbingham@kernel.org
+Cc: linux-kernel@vger.kernel.org, =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?=
+ <linux@weissschuh.net>
+References: <8e16609a-7e19-4d4a-951f-58c8bd012086@siemens.com>
+ <20250221130304.5882-1-antonio@mandelbit.com>
+ <7d00d9cb-6860-446c-9eb2-a908c9f7b15c@siemens.com>
+Content-Language: en-US
+From: Antonio Quartulli <antonio@mandelbit.com>
+Autocrypt: addr=antonio@mandelbit.com; keydata=
+ xsFNBFN3k+ABEADEvXdJZVUfqxGOKByfkExNpKzFzAwHYjhOb3MTlzSLlVKLRIHxe/Etj13I
+ X6tcViNYiIiJxmeHAH7FUj/yAISW56lynAEt7OdkGpZf3HGXRQz1Xi0PWuUINa4QW+ipaKmv
+ voR4b1wZQ9cZ787KLmu10VF1duHW/IewDx9GUQIzChqQVI3lSHRCo90Z/NQ75ZL/rbR3UHB+
+ EWLIh8Lz1cdE47VaVyX6f0yr3Itx0ZuyIWPrctlHwV5bUdA4JnyY3QvJh4yJPYh9I69HZWsj
+ qplU2WxEfM6+OlaM9iKOUhVxjpkFXheD57EGdVkuG0YhizVF4p9MKGB42D70pfS3EiYdTaKf
+ WzbiFUunOHLJ4hyAi75d4ugxU02DsUjw/0t0kfHtj2V0x1169Hp/NTW1jkqgPWtIsjn+dkde
+ dG9mXk5QrvbpihgpcmNbtloSdkRZ02lsxkUzpG8U64X8WK6LuRz7BZ7p5t/WzaR/hCdOiQCG
+ RNup2UTNDrZpWxpwadXMnJsyJcVX4BAKaWGsm5IQyXXBUdguHVa7To/JIBlhjlKackKWoBnI
+ Ojl8VQhVLcD551iJ61w4aQH6bHxdTjz65MT2OrW/mFZbtIwWSeif6axrYpVCyERIDEKrX5AV
+ rOmGEaUGsCd16FueoaM2Hf96BH3SI3/q2w+g058RedLOZVZtyQARAQABzSlBbnRvbmlvIFF1
+ YXJ0dWxsaSA8YW50b25pb0BtYW5kZWxiaXQuY29tPsLBrQQTAQgAVwIbAwULCQgHAwUVCgkI
+ CwUWAgMBAAIeAQIXgAUJFZDZMhYhBMq9oSggF8JnIZiFx0jwzLaPWdFMBQJhFSq4GBhoa3Bz
+ Oi8va2V5cy5vcGVucGdwLm9yZwAKCRBI8My2j1nRTC6+EACi9cdzbzfIaLxGfn/anoQyiK8r
+ FMgjYmWMSMukJMe0OA+v2+/VTX1Zy8fRwhjniFfiypMjtm08spZpLGZpzTQJ2i07jsAZ+0Kv
+ ybRYBVovJQJeUmlkusY3H4dgodrK8RJ5XK0ukabQlRCe2gbMja3ec/p1sk26z25O/UclB2ti
+ YAKnd/KtD9hoJZsq+sZFvPAhPEeMAxLdhRZRNGib82lU0iiQO+Bbox2+Xnh1+zQypxF6/q7n
+ y5KH/Oa3ruCxo57sc+NDkFC2Q+N4IuMbvtJSpL1j6jRc66K9nwZPO4coffgacjwaD4jX2kAp
+ saRdxTTr8npc1MkZ4N1Z+vJu6SQWVqKqQ6as03pB/FwLZIiU5Mut5RlDAcqXxFHsium+PKl3
+ UDL1CowLL1/2Sl4NVDJAXSVv7BY51j5HiMuSLnI/+99OeLwoD5j4dnxyUXcTu0h3D8VRlYvz
+ iqg+XY2sFugOouX5UaM00eR3Iw0xzi8SiWYXl2pfeNOwCsl4fy6RmZsoAc/SoU6/mvk82OgN
+ ABHQRWuMOeJabpNyEzA6JISgeIrYWXnn1/KByd+QUIpLJOehSd0o2SSLTHyW4TOq0pJJrz03
+ oRIe7kuJi8K2igJrfgWxN45ctdxTaNW1S6X1P5AKTs9DlP81ZiUYV9QkZkSS7gxpwvP7CCKF
+ n11s24uF1c7ATQRmaEkXAQgA4BaIiPURiRuKTFdJI/cBrOQj5j8gLN0UOaJdetid/+ZgTM5E
+ HQq+o1FA50vKNsso9DBKNgS3W6rApoPUtEtsDsWmS0BKEMrjIiWOTGG8Mjyx6Z9DlYT/UmP8
+ j9BT7hVeGR3pS++nJC38uJa/IB+8TE8S+GIyeyDbORBsFD8zg2ztyTTNDgFMBXNb8aqhPbPT
+ eaCnUWHGR/Mcwo9DoiYSm5jlxlNDCsFSBaJ/ofMK1AkvsilrZ8WcNogdB6IkbRFeX+D3HdiX
+ BYazE4WulZayHoYjQyjZbaeSKcQi2zjz7A0MEIxwyU5oxinIAjt9PnOIO4bYIEDTrRlPuqp2
+ XptpdQARAQABwsF8BBgBCAAmFiEEyr2hKCAXwmchmIXHSPDMto9Z0UwFAmZoSRcCGwwFCQHh
+ M4AACgkQSPDMto9Z0UxtFQ//S3kWuMXwpjq4JThPHTb01goM33MmvQJXBIaw18LxZaicqzrp
+ ATWl3rEFWgHO7kicVFZrZ53p3q8HDYFokcLRoyDeLDAFsSA+fgnHz1B9zMUwm8Wb4w1zYMsO
+ uo3NpBKoHNDlK9SPGHyVD6KoCGLQw+/h7ZhtcPRE7I74hNGBBVkFVeg+bggkZhaCZWbE/fih
+ RCEEzuKl8JVtw4VTk4+F33+OfUEIfOKv7+LR9jZn9p7ExgfBdQyFr+K2+wEcZwgRgqTs8v0U
+ R+zCVur69agK1RNRzQCMOAHvoBxRXHEm3HGnK8RL1oXFYPtBz52cYmd/FUkjTNs3Zvft9fXf
+ wF/bs24qmiS/SwGc0S2wPtNjiAHPhCG9E1IGWLQTlsZRuQzfWuHgjPbVCTRwLBH0P+/BBWyA
+ +8aKhGqG8Va0uwS3/EqiU6ZRYD+M/SnzCdD7eNjpr8Mn6jkudUXMWpsrd9KiMpt+vdtjfeJl
+ NKMNf0DgFyiFHKqGek1jIcvfqBo6c2c5z65cUJ2hCQjnfWFePMixWzY6V9G5+4OtbAC/56ba
+ 45MGdFf2cXH2Q9I7jZOQUrnkOvkQN4E7e/fet5yxy4HxVU3nG+HQZXntCt772wmsSrsSz1br
+ T1r4zTJElYkSMWcxr+OwZn5DIsPlBMvpIa5n2AojdbVJ8Vk7NXuEezE9Nno=
+Organization: Mandelbit SRL
+In-Reply-To: <7d00d9cb-6860-446c-9eb2-a908c9f7b15c@siemens.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Add common DTSI with common pin control configs for BCM21664/BCM23550
-and include it in bcm2166x-common.dtsi. The configs are kept in a
-separate DTSI to keep things cleaner (pin config definitions take up
-quite a lot of space).
+On 21/02/2025 17:52, Jan Kiszka wrote:
+> On 21.02.25 14:03, Antonio Quartulli wrote:
+>> When loading symbols from kernel modules we used to iterate
+>> from 0 to module_sect_attrs::nsections, in order to
+>> retrieve their name and address.
+>>
+>> However module_sect_attrs::nsections has been removed from
+>> the struct by a previous commit.
+>>
+>> Re-arrange the iteration by accessing all items in
+>> module_sect_attrs::grp::bin_attrs[] until NULL is found
+>> (it's a NULL terminated array).
+>>
+>> At the same time the symbol address cannot be extracted
+>> from module_sect_attrs::attrs[]::address anymore because
+>> it has also been deleted. Fetch it from
+>> module_sect_attrs::grp::bin_attrs[]::private as described
+>> in 4b2c11e4aaf7.
+>>
+>> Fixes: d8959b947a8d ("module: sysfs: Drop member 'module_sect_attrs::nsections'")
+>> Fixes: 4b2c11e4aaf7 ("module: sysfs: Drop member 'module_sect_attr::address'")
+>> Cc: Thomas Weißschuh <linux@weissschuh.net>
+>> Signed-off-by: Antonio Quartulli <antonio@mandelbit.com>
+>> ---
+>>   scripts/gdb/linux/symbols.py | 13 +++++++++----
+>>   1 file changed, 9 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/scripts/gdb/linux/symbols.py b/scripts/gdb/linux/symbols.py
+>> index f6c1b063775a..610a3dd3c7b4 100644
+>> --- a/scripts/gdb/linux/symbols.py
+>> +++ b/scripts/gdb/linux/symbols.py
+>> @@ -15,6 +15,7 @@ import gdb
+>>   import os
+>>   import re
+>>   
+>> +from itertools import count
+>>   from linux import modules, utils, constants
+>>   
+>>   
+>> @@ -95,10 +96,14 @@ lx-symbols command."""
+>>           except gdb.error:
+>>               return str(module_addr)
+>>   
+>> -        attrs = sect_attrs['attrs']
+>> -        section_name_to_address = {
+>> -            attrs[n]['battr']['attr']['name'].string(): attrs[n]['address']
+>> -            for n in range(int(sect_attrs['nsections']))}
+>> +        section_name_to_address = {}
+>> +        for i in count():
+>> +            # this is a NULL terminated array
+>> +            if sect_attrs['grp']['bin_attrs'][i] == 0x0:
+>> +                break
+>> +
+>> +            attr = sect_attrs['grp']['bin_attrs'][i].dereference()
+>> +            section_name_to_address[attr['attr']['name']] = attr['private']
+> 
+> You dropped that .string() from the name - I don't remember the details
+> anymore but we have it all around when picking up strings from C
+> structures. Was there a particular reason to do that?
 
-Currently contains pins for BSC buses and SD/MMC; more pins can be
-added in the future.
+Ouch. That was not intentional and my test did not explode, therefore I 
+assumed the code was correct.
 
-Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
----
- arch/arm/boot/dts/broadcom/bcm2166x-common.dtsi  |   2 +
- arch/arm/boot/dts/broadcom/bcm2166x-pinctrl.dtsi | 297 +++++++++++++++++++++++
- 2 files changed, 299 insertions(+)
+I presume it may explode if 'name' is changed into something not a 
+string. In this case .string() would throw an exception and block the 
+execution.
 
-diff --git a/arch/arm/boot/dts/broadcom/bcm2166x-common.dtsi b/arch/arm/boot/dts/broadcom/bcm2166x-common.dtsi
-index d4b412ac8b0343bd3773f50c59a20fa00a3923f8..f535212cb52fec0668abfc06e7268bead70d958a 100644
---- a/arch/arm/boot/dts/broadcom/bcm2166x-common.dtsi
-+++ b/arch/arm/boot/dts/broadcom/bcm2166x-common.dtsi
-@@ -337,3 +337,5 @@ master_ccu: master_ccu@3f001000 {
- 		};
- 	};
- };
-+
-+#include "bcm2166x-pinctrl.dtsi"
-diff --git a/arch/arm/boot/dts/broadcom/bcm2166x-pinctrl.dtsi b/arch/arm/boot/dts/broadcom/bcm2166x-pinctrl.dtsi
-new file mode 100644
-index 0000000000000000000000000000000000000000..51b8730c8feea501f2c5ca6a7bad8233ed708c82
---- /dev/null
-+++ b/arch/arm/boot/dts/broadcom/bcm2166x-pinctrl.dtsi
-@@ -0,0 +1,297 @@
-+// SPDX-License-Identifier: BSD-3-Clause
-+/*
-+ * Common pinmux configrations for BCM2166x (BCM21664/BCM23550).
-+ *
-+ * Copyright (C) 2025 Artur Weber <aweber.kernel@gmail.com>
-+ */
-+
-+&pinctrl {
-+	/* BSC1 */
-+	bsc1_pins: bsc1-pins {
-+		bsc1clk-grp0 {
-+			pins = "bsc1clk";
-+			function = "alt1"; /* BSC1CLK */
-+		};
-+
-+		bsc1dat-grp0 {
-+			pins = "bsc1dat";
-+			function = "alt1"; /* BSC1DAT */
-+		};
-+	};
-+
-+	/* BSC2 */
-+	bsc2_pins: bsc2-pins {
-+		bsc2clk-grp0 {
-+			pins = "gpio16";
-+			function = "alt2"; /* BSC2CLK */
-+		};
-+
-+		bsc2dat-grp0 {
-+			pins = "gpio17";
-+			function = "alt2"; /* BSC2DAT */
-+		};
-+	};
-+
-+	/* BSC3 */
-+	bsc3_pins: bsc3-pins {
-+		bsc3clk-grp0 {
-+			pins = "lcdscl";
-+			function = "alt1"; /* BSC3_CLK */
-+		};
-+
-+		bsc3dat-grp0 {
-+			pins = "lcdsda";
-+			function = "alt1"; /* BSC3_SDA */
-+		};
-+	};
-+
-+	/* BSC4 */
-+	bsc4_pins: bsc4-pins {
-+		bsc4clk-grp0 {
-+			pins = "lcdres";
-+			function = "alt1"; /* BSC4_CLK */
-+		};
-+
-+		bsc4dat-grp0 {
-+			pins = "lcdte";
-+			function = "alt1"; /* BSC4_SDA */
-+		};
-+	};
-+
-+	/* PMBSC */
-+	pmbsc_pins: pmbsc-pins {
-+		pmbscclk-grp0 {
-+			pins = "pmbscclk";
-+			function = "alt1"; /* PMBSCCLK */
-+		};
-+
-+		pmbscdat-grp0 {
-+			pins = "pmbscdat";
-+			function = "alt1"; /* PMBSCDAT */
-+		};
-+	};
-+
-+	/* SD */
-+	sd_width1_pins: sd-width1-pins {
-+		sdck-grp0 {
-+			pins = "sdck";
-+			function = "alt1"; /* SDCK */
-+			bias-disable;
-+		};
-+
-+		sdcmd-grp0 {
-+			pins = "sdcmd";
-+			function = "alt1"; /* SDCMD */
-+			bias-pull-up;
-+		};
-+
-+		sddat-grp0 {
-+			pins = "sddat0";
-+			function = "alt1"; /* SDDATx */
-+			bias-pull-up;
-+		};
-+	};
-+
-+	sd_width4_pins: sd-width4-pins {
-+		sdck-grp0 {
-+			pins = "sdck";
-+			function = "alt1"; /* SDCK */
-+			bias-disable;
-+		};
-+
-+		sdcmd-grp0 {
-+			pins = "sdcmd";
-+			function = "alt1"; /* SDCMD */
-+			bias-pull-up;
-+		};
-+
-+		sddat-grp0 {
-+			pins = "sddat0", "sddat1", "sddat2", "sddat3";
-+			function = "alt1"; /* SDDATx */
-+			bias-pull-up;
-+		};
-+	};
-+
-+	/* SD1 */
-+	sd1_width1_pins: sd1-width1-pins {
-+		sd1ck-grp0 {
-+			pins = "mmc1dat7";
-+			function = "alt6"; /* SD1CK */
-+			bias-disable;
-+		};
-+
-+		sd1cmd-grp0 {
-+			pins = "spi0txd";
-+			function = "alt2"; /* SD1CMD */
-+			bias-pull-up;
-+		};
-+
-+		sd1dat0-grp0 {
-+			pins = "mmc1dat5";
-+			function = "alt6"; /* SD1DAT0 */
-+			bias-pull-up;
-+		};
-+	};
-+
-+	sd1_width4_pins: sd1-width4-pins {
-+		sd1ck-grp0 {
-+			pins = "mmc1dat7";
-+			function = "alt6"; /* SD1CK */
-+			bias-disable;
-+		};
-+
-+		sd1cmd-grp0 {
-+			pins = "spi0txd";
-+			function = "alt2"; /* SD1CMD */
-+			bias-pull-up;
-+		};
-+
-+		sd1dat0-grp0 {
-+			pins = "mmc1dat5";
-+			function = "alt6"; /* SD1DAT0 */
-+			bias-pull-up;
-+		};
-+
-+		sd1dat1-grp0 {
-+			pins = "gpio93";
-+			function = "alt1"; /* SD1DAT1 */
-+			bias-pull-up;
-+		};
-+
-+		sd1dat2-grp0 {
-+			pins = "gpio94";
-+			function = "alt1"; /* SD1DAT2 */
-+			bias-pull-up;
-+		};
-+
-+		sd1dat3-grp0 {
-+			pins = "mmc1dat3";
-+			function = "alt6"; /* SD1DAT3 */
-+			bias-pull-up;
-+		};
-+	};
-+
-+	/* MMC0 */
-+	mmc0_width1_pins: mmc0-width1-pins {
-+		mmc0ck-grp0 {
-+			pins = "mmc0ck";
-+			function = "alt1"; /* MMC0CK */
-+			bias-disable;
-+		};
-+
-+		mmc0cmd-grp0 {
-+			pins = "mmc0cmd";
-+			function = "alt1"; /* MMC0CMD */
-+			bias-pull-up;
-+		};
-+
-+		mmc0dat-grp0 {
-+			pins = "mmc0dat0";
-+			function = "alt1"; /* MMC0DATx */
-+			bias-pull-up;
-+		};
-+	};
-+
-+	mmc0_width4_pins: mmc0-width4-pins {
-+		mmc0ck-grp0 {
-+			pins = "mmc0ck";
-+			function = "alt1"; /* MMC0CK */
-+			bias-disable;
-+		};
-+
-+		mmc0cmd-grp0 {
-+			pins = "mmc0cmd";
-+			function = "alt1"; /* MMC0CMD */
-+			bias-pull-up;
-+		};
-+
-+		mmc0dat-grp0 {
-+			pins = "mmc0dat0", "mmc0dat1", "mmc0dat2", "mmc0dat3";
-+			function = "alt1"; /* MMC0DATx */
-+			bias-pull-up;
-+		};
-+	};
-+
-+	mmc0_width8_pins: mmc0-width8-pins {
-+		mmc0ck-grp0 {
-+			pins = "mmc0ck";
-+			function = "alt1"; /* MMC0CK */
-+			bias-disable;
-+		};
-+
-+		mmc0cmd-grp0 {
-+			pins = "mmc0cmd";
-+			function = "alt1"; /* MMC0CMD */
-+			bias-pull-up;
-+		};
-+
-+		mmc0dat-grp0 {
-+			pins = "mmc0dat0", "mmc0dat1", "mmc0dat2", "mmc0dat3",
-+			       "mmc0dat4", "mmc0dat5", "mmc0dat6", "mmc0dat7";
-+			function = "alt1"; /* MMC0DATx */
-+			bias-pull-up;
-+		};
-+	};
-+
-+	/* MMC1 */
-+	mmc1_width1_pins: mmc1-width1-pins {
-+		mmc1ck-grp0 {
-+			pins = "mmc1ck";
-+			function = "alt1"; /* MMC1CK */
-+			bias-disable;
-+		};
-+
-+		mmc1cmd-grp0 {
-+			pins = "mmc1cmd";
-+			function = "alt1"; /* MMC1CMD */
-+			bias-pull-up;
-+		};
-+
-+		mmc1dat-grp0 {
-+			pins = "mmc1dat0";
-+			function = "alt1"; /* MMC1DATx */
-+			bias-pull-up;
-+		};
-+	};
-+
-+	mmc1_width4_pins: mmc1-width4-pins {
-+		mmc1ck-grp0 {
-+			pins = "mmc1ck";
-+			function = "alt1"; /* MMC1CK */
-+			bias-disable;
-+		};
-+
-+		mmc1cmd-grp0 {
-+			pins = "mmc1cmd";
-+			function = "alt1"; /* MMC1CMD */
-+			bias-pull-up;
-+		};
-+
-+		mmc1dat-grp0 {
-+			pins = "mmc1dat0", "mmc1dat1", "mmc1dat2", "mmc1dat3";
-+			function = "alt1"; /* MMC1DATx */
-+			bias-pull-up;
-+		};
-+	};
-+
-+	mmc1_width8_pins: mmc1-width8-pins {
-+		mmc1ck-grp0 {
-+			pins = "mmc1ck";
-+			function = "alt1"; /* MMC1CK */
-+			bias-disable;
-+		};
-+
-+		mmc1cmd-grp0 {
-+			pins = "mmc1cmd";
-+			function = "alt1"; /* MMC1CMD */
-+			bias-pull-up;
-+		};
-+
-+		mmc1dat-grp0 {
-+			pins = "mmc1dat0", "mmc1dat1", "mmc1dat2", "mmc1dat3",
-+			       "mmc1dat4", "mmc1dat5", "mmc1dat6", "mmc1dat7";
-+			function = "alt1"; /* MMC1DATx */
-+			bias-pull-up;
-+		};
-+	};
-+};
+I will send v2 shortly with .string().
+
+> 
+>>   
+>>           textaddr = section_name_to_address.get(".text", module_addr)
+>>           args = []
+> 
+> Thanks for picking up this task so quickly!
+
+Well, I needed gdb to break into ovpn.ko :-)
+
+Cheers,
 
 -- 
-2.48.1
+Antonio Quartulli
+
+CEO and Co-Founder
+Mandelbit Srl
+https://www.mandelbit.com
 
 
