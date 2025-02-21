@@ -1,301 +1,217 @@
-Return-Path: <linux-kernel+bounces-525727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4890FA3F3BE
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 13:07:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59E2BA3F3CB
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 13:08:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6066919C5C2B
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 12:06:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01E373B4003
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 12:08:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DFA020E6E5;
-	Fri, 21 Feb 2025 12:04:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1499520FA91;
+	Fri, 21 Feb 2025 12:05:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="HUwxAZmW"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="IPWAltJo";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="Si4Xnoq/"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3952020A5D2;
-	Fri, 21 Feb 2025 12:03:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740139442; cv=none; b=RTzl8dXtouZcqElhUVP9fI2RaY6uNx4AIYY23uQTb9bmfhDtJZJh/6djA9IlJDZuOpP/JL26FT/KlR7wzYa6ZPT3vReCAlq48N9KIm1B/ggVglkILdEuzM7tsQunbTSgYrYEg+P11/4ZAOIGuZcpaThrYiqwF4gKCaSFPYuItFs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740139442; c=relaxed/simple;
-	bh=mbe8Fnz1rafg+y8G7bwPHSnV4vmc5rfV17O3HXs1JlY=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DC1BvtIr8CSAAH4aZGNuutiyY+F15xrdvMRjHkSbV5nTxGcTC3uhA0c3onPe2Lk5EmK8KTmwUK3nc/T8hah/HyVkZD+w0/TFIAI6rQEza5xLh2UyeUGCNuEMl1IpvvkKMt6uJjmMS3d/d7bfqTCJ5Vkaz4mInGlkUjQEwkUDAFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=HUwxAZmW; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 51LC3t9s292131
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 21 Feb 2025 06:03:55 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1740139435;
-	bh=/Hhk2zXabDVjq1g9zFrPtdn7b/cjxEoRSmu4UDiatO4=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=HUwxAZmW19ypy6DHrbAsrIVjw4pzCg32KKG+iZxzhgNRe34MM/qFfYpdI7YQJ2NG7
-	 deD4P7aAzJMPC5FgCwpVaPiO5rCdAAKWXJV03TQgO8f1GCkp8fjYs3qyVJiIdi+SC3
-	 nfj/1N4uCwgHeplaf2bOdXg4EpkSb9fuQI377Pqw=
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 51LC3tfv094010
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 21 Feb 2025 06:03:55 -0600
-Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 21
- Feb 2025 06:03:54 -0600
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 21 Feb 2025 06:03:54 -0600
-Received: from abhilash-HP.dhcp.ti.com (abhilash-hp.dhcp.ti.com [172.24.227.115])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 51LC3d4p046967;
-	Fri, 21 Feb 2025 06:03:51 -0600
-From: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
-To: <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-CC: <mripard@kernel.org>, <mchehab@kernel.org>, <jai.luthra@linux.dev>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <devarsht@ti.com>, <vaishnav.a@ti.com>, <r-donadkar@ti.com>,
-        <u-kumar1@ti.com>, <y-abhilashchandra@ti.com>
-Subject: [PATCH v3 2/2] media: cadence: csi2rx: Enable csi2rx_err_irq interrupt and add support for VIDIOC_LOG_STATUS
-Date: Fri, 21 Feb 2025 17:33:37 +0530
-Message-ID: <20250221120337.3920874-3-y-abhilashchandra@ti.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250221120337.3920874-1-y-abhilashchandra@ti.com>
-References: <20250221120337.3920874-1-y-abhilashchandra@ti.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 742BB20E71C;
+	Fri, 21 Feb 2025 12:05:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740139548; cv=fail; b=WHoor2esJsNlecNi/ROVdGDg7tcDe6EwLwugjaJqR2SwBs0njjNFz8KBJmeMEoWss3VhWGeNtT301FhefuKGIuOtgTfh83n5vzNq4gZj2/dH6CAcv1pHzCARsq7ER4PzjWURA8AhGqOFQExUjqoXivlhL2jzqntHIVEE3vbA86U=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740139548; c=relaxed/simple;
+	bh=ssTonn2+0suZifZwx+lCVrum435w9wd9xMYyzRqw/bg=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=kqXUikIrXcg6poybZy54ckDblr70clAABshlP5ibYIdaJqavZOqMPzzQm+TNuIIWhTuul+BIDCA7wHfac0qN1LozUivdQx+CvByQL0JlgbNWEwK/H/1guxh+rXV+O42mKOkwiQsdxY5X6HaockYNf8R7ahWqWeYfsQXglePLMv4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=IPWAltJo; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=Si4Xnoq/; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51L8ff6C016642;
+	Fri, 21 Feb 2025 12:05:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=corp-2023-11-20; bh=MwPqZZ5uihCw0/Ur
+	EoxROWhl2BKNUq+EJJT1pxxyTnc=; b=IPWAltJo6uygzdXHGaROuwhg7wZLIBg7
+	pd+o/rIWxssHY51tL9R6Pmm5CxAqVLjCGlCYQMiAlGnxnsL54Ed+4lQDqJqtCRvM
+	MuF/EwAE0sy9+SmFmD5fxJSYIF1J09M4ljgYFGpXHWE4ehF7SgZOg7Xin/T+eolA
+	HYX57eriPNnMvCWxqRnE7Y8nNFC5143iT7i2mWa17ym93E94/M9eRpo6GYycOVqb
+	m4ga2nxCpkBui/JkecBVaRvL2BvEoT4yDgDaCrqT09Io/SHz/uHCa7nt2cfZs/ov
+	bWck+8rT2y4uUdWFpwqdNAK2qiFsPKy5//6EhcUN55T2EWXMjn0VxA==
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 44w00np3yt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 21 Feb 2025 12:05:30 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 51LBGubJ025565;
+	Fri, 21 Feb 2025 12:05:29 GMT
+Received: from nam04-mw2-obe.outbound.protection.outlook.com (mail-mw2nam04lp2173.outbound.protection.outlook.com [104.47.73.173])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 44w090g4yq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 21 Feb 2025 12:05:29 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=HS78p4Hh2l0N1DJifI6wkKXvBb72YGySeJRgJ+rpListW7WhUR17wl0D94bZjz2ySkbycUiIa9+h6N9dqdL70JYj5RGf48x6Bxr6elrmPR2oIs13zSKrm5B0UEQ0mfjmSiJ8Ip0PbjEipbPX8ER+Yn3Z4+NMRhVyEJxl+K1SrJ4RzFP879yzsc/PEhGs68TUUxafYVgb8/vsmtoRqX7698BXbKfiBD3DAMfGHhZ+bewDv2LhUhGpV3cTAwMWmRQ82+TxoiwXb0OBiHBWK5pz/Xj3lsEj0QeZYJ+y9JpNIhbVQJYkEGmcuYVSFRzrbjfvIqqFd6BOpXXrZz43BVvjNA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=MwPqZZ5uihCw0/UrEoxROWhl2BKNUq+EJJT1pxxyTnc=;
+ b=N8CRDgFejjH94q9IrSFveP/PVbw2tupUHn7GkDC76fyF7L/xpm7iGC9PA9LsOHN3UoFjeD+z8nRN8G93rwZrwo4buswseOaqzyxcgynHj1IkKnfxXa3pkQKCi0JChIhJtBXOKOVhpfivhA3eoEACk4GiUd9EhCYN6IPsO+8NkCoQEeINbbXvoqyWM5oVuzsIYXAFtWQNIEdc7qw7bztiT5Ng1ur/foh+qpEisCdct2oJxCf44MwnswzP6c9ZxAO8SVvD1whJziD7zEMM62H88OprLDikyoZWLtly+1yCKiJrDuE6BI6b2sjOz4MvFScMRAp9LymrjJeMIqd/hxLm+w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=MwPqZZ5uihCw0/UrEoxROWhl2BKNUq+EJJT1pxxyTnc=;
+ b=Si4Xnoq/M1jBIhU2fq7T8FrpmDjBcpPl8wfBrlX4udsI8JeCGGCC2Je8fcj38EJvFXKsoJb5TrPtj4sjeUSfRqZRId3h0USCh4lVSlGxnPsSwqRWdlS5/SGxAjdFX0BV5NfCn6LW8+WUbUTNY+7T2ynfORo+ZbuC/DTPnXhlKQo=
+Received: from BYAPR10MB3366.namprd10.prod.outlook.com (2603:10b6:a03:14f::25)
+ by LV8PR10MB7822.namprd10.prod.outlook.com (2603:10b6:408:1e8::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.16; Fri, 21 Feb
+ 2025 12:05:27 +0000
+Received: from BYAPR10MB3366.namprd10.prod.outlook.com
+ ([fe80::baf2:dff1:d471:1c9]) by BYAPR10MB3366.namprd10.prod.outlook.com
+ ([fe80::baf2:dff1:d471:1c9%5]) with mapi id 15.20.8466.015; Fri, 21 Feb 2025
+ 12:05:27 +0000
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
+        David Hildenbrand <david@redhat.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Kalesh Singh <kaleshsingh@google.com>,
+        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Matthew Wilcox <willy@infradead.org>, Vlastimil Babka <vbabka@suse.cz>,
+        "Paul E . McKenney" <paulmck@kernel.org>, Jann Horn <jannh@google.com>,
+        Juan Yescas <jyescas@google.com>, linux-mm@kvack.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-api@vger.kernel.org
+Subject: [PATCH 0/2] fs/proc/task_mmu: add guard region bit to pagemap
+Date: Fri, 21 Feb 2025 12:05:21 +0000
+Message-ID: <cover.1740139449.git.lorenzo.stoakes@oracle.com>
+X-Mailer: git-send-email 2.48.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: LO4P123CA0534.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:2c5::19) To BYAPR10MB3366.namprd10.prod.outlook.com
+ (2603:10b6:a03:14f::25)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BYAPR10MB3366:EE_|LV8PR10MB7822:EE_
+X-MS-Office365-Filtering-Correlation-Id: d35d363a-eacd-4563-8826-08dd52700740
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?RWSVOijCuOonesy+yZpgpSSBcjrIcH28jiCAr+HV6Sf0+Oxl/Q6E2qdBovZl?=
+ =?us-ascii?Q?4a8lBFAgtBh0WoGqZ+IpY0ebXrL1Sqlg1/71J/j9WP9Z1GoT1gsiU04IJg7D?=
+ =?us-ascii?Q?r23yZQR3pko4hnL6ZxfRGFHpSzoVGakvMOFTphMIqImbFQDUIw3cRpm3oOlA?=
+ =?us-ascii?Q?EtLJromxSqoUIpFvfdfXpm1C49Jg540q08MyQP1KhpK0UfCnEegt/+U3YxSR?=
+ =?us-ascii?Q?eGUGDGP2nuLc5xwRcSf2rYpP44/29Tt1IKecF+MzcuUjOp42ag7Y7/VTxZr1?=
+ =?us-ascii?Q?wPBUtWHO8cXmilUjabNzF6bRdtuxOCkYkqR6JR29O140qNRyUA5wuC8QZzxm?=
+ =?us-ascii?Q?Li4YEvy05kXFIKfFdYSxaD2GUUH5doPvtDn7hl+JqgpCv1TJTzRmbQ/LGmNp?=
+ =?us-ascii?Q?5ndaF+ljtRED4d8lz9WTjdm2WsDarwEmVr7DogT3FmQoOMvjOAiZEUZ0jbNU?=
+ =?us-ascii?Q?XLIissiTXzuRVCwjZtLkBqnyt77IonSO/vc2iRfD8AXweFjgK4I+O52yaZkC?=
+ =?us-ascii?Q?ov3inEUQkR2Jqngspuh+JCUsoikhWb73j/1xbGQ1RxAwJ3il0ePoBuR4Jkb/?=
+ =?us-ascii?Q?A1i804BdASevdVR0YYFdP81XxTvvtyqd01Jf0am/ZiuKTicKqt4x1Ci7c+Yt?=
+ =?us-ascii?Q?S4k/3vpTXDDGgm2n7XnNDnJhWtWwCQnj1QLRFBcjya+tazmSlBOhQHhTlpWf?=
+ =?us-ascii?Q?omkuR9xdUQt4ndfOJ4D7NUV10A8uUk70yyZ+BWk9I87yx9LcWl59o32Mcz9t?=
+ =?us-ascii?Q?qbJsRX0EvuNpd5ksy07l0et1PLx2V92JyYT591ppRJv2iCsY45FPM8fjammK?=
+ =?us-ascii?Q?X5jzrmMnphqtYTGQ6su+8LrXEN2nLgO80695ypHvU3tjWA6Ic8o7xva+5npY?=
+ =?us-ascii?Q?CC5H4clM9IBL2wN4DQIBRJ1LLJPvwGlPztBLdM8t3UQskGDefT05AkK2bbC6?=
+ =?us-ascii?Q?YWuVhpkV0YEnvnpDPr5gYKDwyELH0iVdGNIdrDRz2SqAbAU3xJzhmO25j1Pb?=
+ =?us-ascii?Q?5ZCvurQzJ37sfBTUfH7q2MdJAnS57WZJHq1W10O/L/+yXUW+7A0t2KYofOY8?=
+ =?us-ascii?Q?P31PblWyu0YgzUwjg95MskpqN//xVls1zTFkzSm/MkiSdx6LtG1qOzMxp26a?=
+ =?us-ascii?Q?I7LbwOcmwXQCKTFU/XfFg73LOco1zForSWVnlkxwNqImZHeG15awdgTZQ/la?=
+ =?us-ascii?Q?klLGXZviw+SkKggR8Dl4kLDMV2F90/NnCb58GOCHa8pSQWSe0vsCv4/5lf+4?=
+ =?us-ascii?Q?ODFajRtB/hypLCUK2rMXNnDz0Sh0rxsnOOYpooS112AQg8tBF3Erb2uOo4dG?=
+ =?us-ascii?Q?FdkgyfY6p17701HQgRTCDWa9AUkfCWO4TgdnWQxW7X7vWK0RHKqYTjT7tey2?=
+ =?us-ascii?Q?NH49JB/7yZYjM0xt4yPr2alwqgiZ?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR10MB3366.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?coK28HQLCvqA45iaKXauKT/zgg2lchoinc9MLuadqgFFG6zYJY2uV7Llt2XB?=
+ =?us-ascii?Q?USgR+P98pUBXa95WakgmIe9EhbjsGoCRpdIKbHOPDH/dWwqGF3AfEuC/EchD?=
+ =?us-ascii?Q?/y67loiwAfnzzirzZfgI64Soxct5GE1l2/NzzYMHod7oZeD8+in/NmUxCUlP?=
+ =?us-ascii?Q?gOxcR6lM5svJlZJFkX7dGZvDj5r3vnzFwtMCxmVy0Xb5tTbkJ8LDlS0Smkkb?=
+ =?us-ascii?Q?NJc9v7uIn73zlTiLePGO38vzJeAkoP1T9eEafxSHqXzWWIc90fYukrznSem1?=
+ =?us-ascii?Q?cO2NlRUli6nbTob61XHITYgdOpqEdcCMhDvptkv5F/7XaaWJ0AItVRMBE6IC?=
+ =?us-ascii?Q?wy63UHQJ0nHFRo37eKCtspzgkK0Olc4ITN0gEWcMZ2/SE+1cWfjMMhOYC8dn?=
+ =?us-ascii?Q?IGghsfj+h0pk1CgLDDigdMhNpLtAOsHrVAXHUT883rYT3tRd3t1XcOgJxjvU?=
+ =?us-ascii?Q?eDMhCJqcXUMkki6p4B5b/TXeqaLBpILDtukLyJwt6tHuqfLNn8+JkkUFwRfZ?=
+ =?us-ascii?Q?4U7Xfc72Qv85IRKRunniM9omf9hXKVAgyXR/JjxmHusr9HaOiCEcclHsnqEO?=
+ =?us-ascii?Q?+S3xRDn3opMLCmT0WJIjzIXxV/g/QeUHZ8aK5uUSxhfkdnQwvRUj8oUHjwvS?=
+ =?us-ascii?Q?fGuY+dK+FyWIdlxyaIIvwb9Axm7HVo4ArvvGPY/hYJZosKw0gunm0vBVrMl1?=
+ =?us-ascii?Q?B2YYXJDOP4mVn/mS1TXPNyxLzr04G0y8t794orTS5q2RBD8R1OzysEFmAkxg?=
+ =?us-ascii?Q?cG79WMZZ5U2L4y/OGrhdQS2LSLya99Df4RHtIBPD7HEDiCe4HhTPEx+ji6bV?=
+ =?us-ascii?Q?44zYzB9WuuW+UwkWRecgwujVKlKJtIC2uBbK5OhUVTVfQSBjvgNEg9B8APM+?=
+ =?us-ascii?Q?5PtnHZh0WMiaRkTEZvW3byAja9ZDjh7EuxIU2tTYYKCrm2Gj4VzorS8wnYpc?=
+ =?us-ascii?Q?VAMoRb8S17fE/XvDRY9yr35VZwaXvEvqIUjuV5Xj23CY/yq+wZFyDSzaA713?=
+ =?us-ascii?Q?URrUYAakX6lpJEFL78B8ypVIsfilZ7zSrFKq3W/btxW9fRICsnGRaJqA+Hf0?=
+ =?us-ascii?Q?99fROAM5e//LxJTVKkMVHJwZw0Q9aup42e1PY1Y3g0x4Wn+kK4HOhVQUibH6?=
+ =?us-ascii?Q?B/DzOoR4435oY3tr099zgwDjnsmVe+lt0RtiBFCYcYcvtC/R39AHK7joOEdF?=
+ =?us-ascii?Q?Emn9spKEQrDsyqmakcNWjNL5uxbuLwzY8kSS3XSX0qJdo9mcgsX3YZTxLxHw?=
+ =?us-ascii?Q?JhyItHsMgXe6QE+L3F2wOq+5cI6KNUl7fKQbbHL8/0ZSeG1n3YUCQHVn2Kud?=
+ =?us-ascii?Q?o/8IsKBjsYH7NqlBpoFZ0+kx1CHX0mEtGL/KCVVEP417AShuLgqzL4Oz3jt8?=
+ =?us-ascii?Q?XO1I42l3xyCgYeqM0e8a7um4Q3r0E8GWiqv4l3uhWezB/UcW875aeCnayVVl?=
+ =?us-ascii?Q?PzadXkM+DXJUpFrsMe8A5S44jseg96yCKcZf1X1zUSMgh3J13olC8niwlQdZ?=
+ =?us-ascii?Q?4uFkdCsUaB5wEB+liCVj1VtGVuXGSdOcgZIfN5Ds7ukvgNvejiv0d55EGo5A?=
+ =?us-ascii?Q?9jZEc6CSr2z6SOZ5mS9PWpOhhGDpIXNyWvWxyFoJdQ4RYpsEAySDBUHo8pAv?=
+ =?us-ascii?Q?Ig=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	cQCQDdRJTaXTCtRfnXyS0JJfylLJGL5Gkr7FtYlZxi88AKg80XRKSa0Cv2SBcneEqySwzyno1KwqWbgSflUJVhR3tc6PrJrKOkA1n0Wzsc7TW30Yi4zJuKMkrSOdj0RFpsoLNpXXF73FR7JR4ipGnJCTRi0vxPeMNGV+5s2lR1brX1o7rwCkoNQFXGFHxCx9v63BJhjV1wj6l9AyIwgY2A69SiZcDNUDIhlR/34os+ThSihfwO1wVDV5d3CpsoBDbf/KjWbAGyvCu0W3QRj08+IeAfNa6T07ho3uTaRuKRbTGwZauxwKCZH+wBr9V5+EdHl2/w0bPQBxohb5WCf+/5sQkA1xF9JBeXugYyTadGxAjdYOxMq2KQ8Ak1KSJlY6zS2EszoSk+9zd9wFvKz3abj/Hew5Y4+dFV4oe77OfO9ghOObYGzRHXq6q+JvrLXin+FJeiQQWHvWpsC+iFD20Q3ndsDOWqlyYTeP3xXTXynibQ1tfnsqyd57aVTHZtdJBrCGIQr+V56XIGM2G+RBMmvjHW3isQzaXzjqBBdYwMM9kxOZWp/0vh6kDRBn4TiVBaKB3SjBd4dDLQZHl43dryBx00FQKrIbU+twULl/5BQ=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d35d363a-eacd-4563-8826-08dd52700740
+X-MS-Exchange-CrossTenant-AuthSource: BYAPR10MB3366.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Feb 2025 12:05:26.9363
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: VInSQCTgvP49nOe9atzc0F/oUKlMyY0H3y8bpETsAoU706jVp9Cl+9GRKprnEMsv9T/+Egz0LFLEc3UX0gxrIL5C5BupCxL1QSZzMjHftYY=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR10MB7822
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-21_03,2025-02-20_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 adultscore=0 bulkscore=0
+ mlxscore=0 spamscore=0 mlxlogscore=999 phishscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2502100000
+ definitions=main-2502210088
+X-Proofpoint-ORIG-GUID: heYPK1S1pKX9DWaGRhoVqUBZdWlE6LIE
+X-Proofpoint-GUID: heYPK1S1pKX9DWaGRhoVqUBZdWlE6LIE
 
-Enable the csi2rx_err_irq interrupt to record any errors during streaming
-and also add support for VIDIOC_LOG_STATUS ioctl. The VIDIOC_LOG_STATUS
-ioctl can be invoked from user space to retrieve the device status,
-including details about any errors.
+Currently there is no means of determining whether a give page in a mapping
+range is designated a guard region (as installed via madvise() using the
+MADV_GUARD_INSTALL flag).
 
-Signed-off-by: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
----
+This is generally not an issue, but in some instances users may wish to
+determine whether this is the case.
 
-Changes in v3:
-- Address Jai's review comment to enable FIFO overflow bits in the mask
-  only for the source pads that have an active remote.
-- Drop TI-specific interrupt and have support for only two interrupts
-  that are common across all vendors.
-- Address Changhuang's review to use pdev directly to get the interrupt.
-- Set the interrupt mask register only if the interrupt is defined in the DT.
+This series adds this ability via /proc/$pid/pagemap, updates the
+documentation and adds a self test to assert that this functions correctly.
 
+Lorenzo Stoakes (2):
+  fs/proc/task_mmu: add guard region bit to pagemap
+  tools/selftests: add guard region test for /proc/$pid/pagemap
 
- drivers/media/platform/cadence/cdns-csi2rx.c | 125 +++++++++++++++++++
- 1 file changed, 125 insertions(+)
+ Documentation/admin-guide/mm/pagemap.rst   |  3 +-
+ fs/proc/task_mmu.c                         |  6 ++-
+ tools/testing/selftests/mm/guard-regions.c | 47 ++++++++++++++++++++++
+ tools/testing/selftests/mm/vm_util.h       |  1 +
+ 4 files changed, 55 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/platform/cadence/cdns-csi2rx.c b/drivers/media/platform/cadence/cdns-csi2rx.c
-index cebcae196eec..81375f11a32f 100644
---- a/drivers/media/platform/cadence/cdns-csi2rx.c
-+++ b/drivers/media/platform/cadence/cdns-csi2rx.c
-@@ -57,6 +57,25 @@
- #define CSI2RX_LANES_MAX	4
- #define CSI2RX_STREAMS_MAX	4
- 
-+#define CSI2RX_ERROR_IRQS_REG			0x28
-+#define CSI2RX_ERROR_IRQS_MASK_REG		0x2C
-+
-+#define CSI2RX_STREAM3_FIFO_OVERFLOW_IRQ	BIT(19)
-+#define CSI2RX_STREAM2_FIFO_OVERFLOW_IRQ	BIT(18)
-+#define CSI2RX_STREAM1_FIFO_OVERFLOW_IRQ	BIT(17)
-+#define CSI2RX_STREAM0_FIFO_OVERFLOW_IRQ	BIT(16)
-+#define CSI2RX_FRONT_TRUNC_HDR_IRQ		BIT(12)
-+#define CSI2RX_PROT_TRUNCATED_PACKET_IRQ	BIT(11)
-+#define CSI2RX_FRONT_LP_NO_PAYLOAD_IRQ		BIT(10)
-+#define CSI2RX_SP_INVALID_RCVD_IRQ		BIT(9)
-+#define CSI2RX_DATA_ID_IRQ			BIT(7)
-+#define CSI2RX_HEADER_CORRECTED_ECC_IRQ	BIT(6)
-+#define CSI2RX_HEADER_ECC_IRQ			BIT(5)
-+#define CSI2RX_PAYLOAD_CRC_IRQ			BIT(4)
-+
-+#define CSI2RX_ECC_ERRORS		GENMASK(7, 4)
-+#define CSI2RX_PACKET_ERRORS		GENMASK(12, 9)
-+
- enum csi2rx_pads {
- 	CSI2RX_PAD_SINK,
- 	CSI2RX_PAD_SOURCE_STREAM0,
-@@ -71,9 +90,32 @@ struct csi2rx_fmt {
- 	u8				bpp;
- };
- 
-+struct csi2rx_event {
-+	u32 mask;
-+	const char *name;
-+};
-+
-+static const struct csi2rx_event csi2rx_events[] = {
-+	{ CSI2RX_STREAM3_FIFO_OVERFLOW_IRQ, "Overflow of the Stream 3 FIFO detected" },
-+	{ CSI2RX_STREAM2_FIFO_OVERFLOW_IRQ, "Overflow of the Stream 2 FIFO detected" },
-+	{ CSI2RX_STREAM1_FIFO_OVERFLOW_IRQ, "Overflow of the Stream 1 FIFO detected" },
-+	{ CSI2RX_STREAM0_FIFO_OVERFLOW_IRQ, "Overflow of the Stream 0 FIFO detected" },
-+	{ CSI2RX_FRONT_TRUNC_HDR_IRQ, "A truncated header [short or long] has been received" },
-+	{ CSI2RX_PROT_TRUNCATED_PACKET_IRQ, "A truncated long packet has been received" },
-+	{ CSI2RX_FRONT_LP_NO_PAYLOAD_IRQ, "A truncated long packet has been received. No payload" },
-+	{ CSI2RX_SP_INVALID_RCVD_IRQ, "A reserved or invalid short packet has been received" },
-+	{ CSI2RX_DATA_ID_IRQ, "Data ID error in the header packet" },
-+	{ CSI2RX_HEADER_CORRECTED_ECC_IRQ, "ECC error detected and corrected" },
-+	{ CSI2RX_HEADER_ECC_IRQ, "Unrecoverable ECC error" },
-+	{ CSI2RX_PAYLOAD_CRC_IRQ, "CRC error" },
-+};
-+
-+#define CSI2RX_NUM_EVENTS		ARRAY_SIZE(csi2rx_events)
-+
- struct csi2rx_priv {
- 	struct device			*dev;
- 	unsigned int			count;
-+	int				error_irq;
- 
- 	/*
- 	 * Used to prevent race conditions between multiple,
-@@ -95,6 +137,7 @@ struct csi2rx_priv {
- 	u8				max_lanes;
- 	u8				max_streams;
- 	bool				has_internal_dphy;
-+	u32				events[CSI2RX_NUM_EVENTS];
- 
- 	struct v4l2_subdev		subdev;
- 	struct v4l2_async_notifier	notifier;
-@@ -124,6 +167,50 @@ static const struct csi2rx_fmt formats[] = {
- 	{ .code	= MEDIA_BUS_FMT_BGR888_1X24,  .bpp = 24, },
- };
- 
-+static void csi2rx_configure_error_irq_mask(void __iomem *base, struct csi2rx_priv *csi2rx)
-+{
-+	u32 error_irq_mask = 0;
-+
-+	error_irq_mask |= CSI2RX_ECC_ERRORS;
-+	error_irq_mask |= CSI2RX_PACKET_ERRORS;
-+
-+	/*
-+	 * iterate through all source pads and check if they are linked
-+	 * to an active remote pad. If an active remote pad is found,
-+	 * calculate the corresponding bit position and set it in
-+	 * mask, enabling the stream overflow error in the mask.
-+	 */
-+
-+	for (int i = CSI2RX_PAD_SOURCE_STREAM0; i < CSI2RX_PAD_MAX; i++) {
-+		struct media_pad *remote_pad = media_pad_remote_pad_first(&csi2rx->pads[i]);
-+
-+		if (remote_pad) {
-+			int bit_position = 16 + (i - CSI2RX_PAD_SOURCE_STREAM0);
-+
-+			error_irq_mask |= (1 << bit_position);
-+		}
-+	}
-+
-+	writel(error_irq_mask, base + CSI2RX_ERROR_IRQS_MASK_REG);
-+}
-+
-+static irqreturn_t csi2rx_irq_handler(int irq, void *dev_id)
-+{
-+	struct csi2rx_priv *csi2rx = dev_id;
-+	int i;
-+	u32 error_status;
-+
-+	error_status = readl(csi2rx->base + CSI2RX_ERROR_IRQS_REG);
-+
-+	for (i = 0; i < CSI2RX_NUM_EVENTS; i++)
-+		if (error_status & csi2rx_events[i].mask)
-+			csi2rx->events[i]++;
-+
-+	writel(error_status, csi2rx->base + CSI2RX_ERROR_IRQS_REG);
-+
-+	return IRQ_HANDLED;
-+}
-+
- static const struct csi2rx_fmt *csi2rx_get_fmt_by_code(u32 code)
- {
- 	unsigned int i;
-@@ -220,6 +307,9 @@ static int csi2rx_start(struct csi2rx_priv *csi2rx)
- 	reset_control_deassert(csi2rx->p_rst);
- 	csi2rx_reset(csi2rx);
- 
-+	if (csi2rx->error_irq >= 0)
-+		csi2rx_configure_error_irq_mask(csi2rx->base, csi2rx);
-+
- 	reg = csi2rx->num_lanes << 8;
- 	for (i = 0; i < csi2rx->num_lanes; i++) {
- 		reg |= CSI2RX_STATIC_CFG_DLANE_MAP(i, csi2rx->lanes[i]);
-@@ -332,6 +422,8 @@ static void csi2rx_stop(struct csi2rx_priv *csi2rx)
- 	reset_control_assert(csi2rx->sys_rst);
- 	clk_disable_unprepare(csi2rx->sys_clk);
- 
-+	writel(0, csi2rx->base + CSI2RX_ERROR_IRQS_MASK_REG);
-+
- 	for (i = 0; i < csi2rx->max_streams; i++) {
- 		writel(CSI2RX_STREAM_CTRL_STOP,
- 		       csi2rx->base + CSI2RX_STREAM_CTRL_REG(i));
-@@ -363,6 +455,21 @@ static void csi2rx_stop(struct csi2rx_priv *csi2rx)
- 	}
- }
- 
-+static int csi2rx_log_status(struct v4l2_subdev *sd)
-+{
-+	struct csi2rx_priv *csi2rx = v4l2_subdev_to_csi2rx(sd);
-+	unsigned int i;
-+
-+	for (i = 0; i < CSI2RX_NUM_EVENTS; i++) {
-+		if (csi2rx->events[i])
-+			dev_info(csi2rx->dev, "%s events: %d\n",
-+				 csi2rx_events[i].name,
-+				 csi2rx->events[i]);
-+	}
-+
-+	return 0;
-+}
-+
- static int csi2rx_s_stream(struct v4l2_subdev *subdev, int enable)
- {
- 	struct csi2rx_priv *csi2rx = v4l2_subdev_to_csi2rx(subdev);
-@@ -468,7 +575,12 @@ static const struct v4l2_subdev_video_ops csi2rx_video_ops = {
- 	.s_stream	= csi2rx_s_stream,
- };
- 
-+static const struct v4l2_subdev_core_ops csi2rx_core_ops = {
-+	.log_status	= csi2rx_log_status,
-+};
-+
- static const struct v4l2_subdev_ops csi2rx_subdev_ops = {
-+	.core		= &csi2rx_core_ops,
- 	.video		= &csi2rx_video_ops,
- 	.pad		= &csi2rx_pad_ops,
- };
-@@ -705,6 +817,19 @@ static int csi2rx_probe(struct platform_device *pdev)
- 	if (ret)
- 		goto err_cleanup;
- 
-+	csi2rx->error_irq = platform_get_irq_byname_optional(pdev, "error_irq");
-+
-+	if (csi2rx->error_irq < 0) {
-+		dev_dbg(csi2rx->dev, "Optional interrupt not defined, proceeding without it\n");
-+	} else {
-+		ret = devm_request_irq(csi2rx->dev, csi2rx->error_irq, csi2rx_irq_handler, 0,
-+					"csi2rx-error-irq", csi2rx);
-+		if (ret) {
-+			dev_err(csi2rx->dev, "Unable to request interrupt: %d\n", ret);
-+			return ret;
-+		}
-+	}
-+
- 	ret = v4l2_subdev_init_finalize(&csi2rx->subdev);
- 	if (ret)
- 		goto err_cleanup;
--- 
-2.34.1
-
+--
+2.48.1
 
