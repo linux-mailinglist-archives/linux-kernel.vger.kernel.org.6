@@ -1,191 +1,156 @@
-Return-Path: <linux-kernel+bounces-525531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E125A3F0E7
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:50:06 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D0A0A3F0ED
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:50:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF019178797
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:48:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 27AF57ACF96
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:48:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA4FC2045B2;
-	Fri, 21 Feb 2025 09:45:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B43B204695;
+	Fri, 21 Feb 2025 09:46:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="oRbDChC6"
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="ObBU6+rH"
+Received: from mail-oi1-f174.google.com (mail-oi1-f174.google.com [209.85.167.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F03F201246;
-	Fri, 21 Feb 2025 09:45:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE6191EB18D
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 09:46:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740131132; cv=none; b=IMFbciEe+BQcMHfyzr3gz8TF8Msypbxgnb1TyIBprvynNRMBKacQH5pcelO41rTu0FwNJ/B81aXk3PAOf3Qg3bcu24mxI26b1sLdKSn/4T3AakJUzpQfEqRZxh+QjvcDjTrL/qYBocnZ6qm6qE6WA1xbOqGRaRhuTA0Uh8RiZfc=
+	t=1740131202; cv=none; b=KRH5i4keHCqqJITH/5MV9+IXpNW5v5j0qLPHug71Nt6oPfv+2NMXeaOMmQ18d8O8+asud9k7yYkuTZPCy34m5HGawrmjPOt6nsWKwDyTcPYOJHCjTaRtgxWhAggVD/I11qHfpbTy7j3F0ngAIrx/ojaS8jP7jpQoK44GwLBfi+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740131132; c=relaxed/simple;
-	bh=/KcGc01eSsUrerPGVPWSAYZtIfEjNnei9zlH7mBhz24=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=hQ2Gdys1FbPvwh0LuNv5D/+fkwKFZfi8iukOZtkxVQfhyCTWhpeg17xc1DtZG+C5SWbsaXFLEbNHk4BXtr5Tu7WsvJjtFdhAk4wbMBqjSelPos9rPnvoauK6hcF+yiiF7bGjlFowJRnS0npdBHEB75LRxjQKi6Uwi/R8SjrXF8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=oRbDChC6; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 0DBEB43299;
-	Fri, 21 Feb 2025 09:45:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1740131122;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UpG//t1awC6TTYgGgCG1xSqQY/MSKf51OZV8VicRJJw=;
-	b=oRbDChC6bFmowtU0JHKSoS4k/X7btTZpHcZ8WaDUz442bJdEC9M9nY5L1e0roqJh/FCl7q
-	feEJmVov/RmYcssEDj9U0icJtAxEz8rlJHUF+9MeL5X5VErjTkJVh/e9LfqncMHDh08d3h
-	dt2/pSgtDxz5LTHXOFl29bNKYPWhuHWUBbS0qDq1UdT+LK6A6zJUqE4gClKK639bpcA78M
-	L5nsCrV3tZ3nvI1TljibJKR2Y8dVpozUtdQvDIjq6ry/3YRE8OL+Aa+J2vnEBl5HL2KcLN
-	LUtyBX15132MvBzMSIHCVZ9MxNSTelYGtBsN4QNK0y2clxl8LP5FwfUCePo7GQ==
-From: Gregory CLEMENT <gregory.clement@bootlin.com>
-To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Cc: Jiaxun Yang <jiaxun.yang@flygoat.com>, Rob Herring <robh@kernel.org>,
- Aleksandar Rikalo <arikalo@gmail.com>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Vladimir
- Kondratiev <vladimir.kondratiev@mobileye.com>, =?utf-8?Q?Th=C3=A9o?= Lebrun
- <theo.lebrun@bootlin.com>, Tawfik Bayouk <tawfik.bayouk@mobileye.com>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/5] dt-bindings: mips: mips-cm: Add a new compatible
- string for EyeQ6
-In-Reply-To: <Z7hJVnJSg3C9lmLY@alpha.franken.de>
-References: <20250123-cluster-hci-broken-v3-0-8a7ec57cbf68@bootlin.com>
- <20250123-cluster-hci-broken-v3-2-8a7ec57cbf68@bootlin.com>
- <afa2e874-c078-4c3e-b485-d948a0bb6a6f@app.fastmail.com>
- <CAL_JsqKXYruNn+MtxbvCCWU2OmqeV-uAyyzN+F-ppSJVscr91w@mail.gmail.com>
- <bf08785b-9963-4539-92ef-b73c3abe8c19@app.fastmail.com>
- <87tt9iucu9.fsf@BLaptop.bootlin.com> <Z7hJVnJSg3C9lmLY@alpha.franken.de>
-Date: Fri, 21 Feb 2025 10:45:21 +0100
-Message-ID: <877c5jskb2.fsf@BLaptop.bootlin.com>
+	s=arc-20240116; t=1740131202; c=relaxed/simple;
+	bh=eQJL+meMUpiM4NI7kP2j/MMgufqHNxN/rIC7ZWyqMl8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=W9J/tRcdUd6Vi77H8JUFhEiMDKDkA9dlqCZ892fzwTpjOCJBhfkH1cjGBQuBe4hk5iRvsI0ohxARTBDPPpPEdVavgxPTTlRUWERDBKtu8O4fmgZ9hLobEG7AMsbyQ4qDSSJdxxOppOgSXp7iER2xzMoV41tStKeDU7kZA/vjm88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=ObBU6+rH; arc=none smtp.client-ip=209.85.167.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-oi1-f174.google.com with SMTP id 5614622812f47-3f40a38cb6bso849413b6e.1
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 01:46:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1740131199; x=1740735999; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FK9YWaslx6HNqwJPESJVhu2TqR0s7ppmYvVLNX5onZk=;
+        b=ObBU6+rH6vq686YOlNh48lPFBn8Rv86Pj2NKxOo8xxKU3KUYC5h3OaXqNAcbhCPYFp
+         0OTvlg7hTtBeXx7/RDdGx+JmrpcqrIY8WlgmyxDXrDB05x4Jlqstsq+wCa/9fkd4qdzP
+         HkjunBYv/eNa0FEDzHgJdo/gChplqqE8Q1klrvzzoClk58h35QLqauACSEBOwhiqqYrt
+         ElmK8jMXxIX+7H60VLBF1yIVus7Obwt9VC17dZlHikiHfJTl1JBvGWjrPfZUvjhFSOvR
+         qr+ps9iYX4w3UAg6S7GL/BXKmfOznrisYhp4und22NUPtZMHRM6zb8jhqeZe8xyq/Y/b
+         AIqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740131199; x=1740735999;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FK9YWaslx6HNqwJPESJVhu2TqR0s7ppmYvVLNX5onZk=;
+        b=j4PMQAR28wVvXeEUgZCGHTbzecO0nVgKHDHxTr+eAsvZN93DqBSOqaiQ7OqF5GDnK1
+         Y8hAPEE/Ehv9wJcy+qe7FO7CHvoAPSypeinB5nAO43N6MPBsL+oXzxs9RBo8ErgkGC/4
+         sqzsMaPN8JaNusXMUgdiKlEas4p2hR4JGczkzycTOmT8LZAnK450eZwqcSxnBxbzOBId
+         f6u19lWJmfF1iBFKZBIVq05mku45i0kIHgK+6xT7VtfhtWH9/rN0i6kiS/N3tHD2GGil
+         AXKs1cOBLVsaTt4scYBEOFklrodLkbKwrXqjaSlFx60hhHx39T5QTzc0aqOBDjfcqaVI
+         STQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX+FPayOLpKYwG1UheZiOjHQyquUQdLPccD/2BOonRSGEkSkI5f6rdnSoNZZAda4/pbE1K3cSJZXVbohck=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwMwc0dq5H6uYFF5SeGVraArFnt9Rn+4bq5hdOfnq3T2BUkic4g
+	gpycgg6/BweihkM27tQ90QQ8UCkWLosDlEIKAcsPEcMw2pYnmQotvKTKofcFfhXVrJ/GVdHlOVB
+	Owc6Qh1G2IWjG0tGwv2Ts5Vu4Iq7na1x8Ag5R7g==
+X-Gm-Gg: ASbGncvEpbhrMsbaqzjeI90JXKhJWlNAhlpUr07OJ+pn8zbwUHZCquPRbXi6KhxFFlV
+	71TFxMMNrip7arszmAWFTpO435qkUdRMmYcmgTExhh1F9c06YYWoR1i9Yemj/HR9200JfjNy0Al
+	Sh4jvmuhrMvA==
+X-Google-Smtp-Source: AGHT+IGKyiCnfDfAcOf96/Pz2fYUxZ2ya298ZCqluJV66qLCCSHa32SRsS9lfGx93hGxLg3TS7OQXnUDo/JPgXH6CeY=
+X-Received: by 2002:a05:6808:15a8:b0:3f4:ed9:d4c1 with SMTP id
+ 5614622812f47-3f4246e1bfbmr2178808b6e.22.1740131198879; Fri, 21 Feb 2025
+ 01:46:38 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <20250220101511.37602-1-cuiyunhui@bytedance.com> <ba2a6295-7983-4701-8c42-797efe22ecb7@linux.intel.com>
+In-Reply-To: <ba2a6295-7983-4701-8c42-797efe22ecb7@linux.intel.com>
+From: yunhui cui <cuiyunhui@bytedance.com>
+Date: Fri, 21 Feb 2025 17:46:27 +0800
+X-Gm-Features: AWEUYZkJqSgMY7u4dhOrvQExbs4Qf6MpItdHGfjihq8Thi_KuEFs--dsdZv-1_4
+Message-ID: <CAEEQ3wkygXexsu9x16Q+6yMtmtM+9aD=-DH1tMVNq1yuyZ7Dcg@mail.gmail.com>
+Subject: Re: [External] Re: [PATCH] iommu/vt-d: fix system hang on reboot -f
+To: Ethan Zhao <haifeng.zhao@linux.intel.com>
+Cc: dwmw2@infradead.org, baolu.lu@linux.intel.com, joro@8bytes.org, 
+	will@kernel.org, robin.murphy@arm.com, iommu@lists.linux.dev, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeileejudcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefujghffffkgggtgfesthhqredttddtjeenucfhrhhomhepifhrvghgohhrhicuvefngffogffpvfcuoehgrhgvghhorhihrdgtlhgvmhgvnhhtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpefghfegvdehgfdtjedvtefhvdeikefgteeuhfeukeettefgvdeuueettddtkeegveenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepvdgrtddumegtsgdugeemheehieemjegrtddtmedukeeitgemfhgvsgefmegtfhegtdemsgdtrgejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgdugeemheehieemjegrtddtmedukeeitgemfhgvsgefmegtfhegtdemsgdtrgejpdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpehgrhgvghhorhihrdgtlhgvmhgvnhhtsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedufedprhgtphhtthhopehtshgsohhgvghnugesrghlphhhrgdrfhhrrghnkhgvnhdruggvpdhrtghpthhtohepjhhirgiguhhnrdihrghnghesfhhlhihgohgrthdrtghomhdprhgtphhtthhopehrohgsh
- heskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghrihhkrghlohesghhmrghilhdrtghomhdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegtohhnohhrodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepvhhlrgguihhmihhrrdhkohhnughrrghtihgvvhesmhhosghilhgvhigvrdgtohhmpdhrtghpthhtohepthhhvghordhlvggsrhhunhessghoohhtlhhinhdrtghomh
-X-GND-Sasl: gregory.clement@bootlin.com
 
-Hello Thomas,
+Hi Ethan,
 
-> On Tue, Jan 28, 2025 at 05:23:26PM +0100, Gregory CLEMENT wrote:
->> > =E5=9C=A82025=E5=B9=B41=E6=9C=8827=E6=97=A5=E4=B8=80=E6=9C=88 =E4=B8=
-=8B=E5=8D=8810:07=EF=BC=8CRob Herring=E5=86=99=E9=81=93=EF=BC=9A
->> >> On Mon, Jan 27, 2025 at 3:43=E2=80=AFPM Jiaxun Yang <jiaxun.yang@flyg=
-oat.com> wrote:
->> >>>
->> >>>
->> >>>
->> >>> =E5=9C=A82025=E5=B9=B41=E6=9C=8823=E6=97=A5=E4=B8=80=E6=9C=88 =E4=B8=
-=8A=E5=8D=8811:01=EF=BC=8CGregory CLEMENT=E5=86=99=E9=81=93=EF=BC=9A
->> >>> > The CM3.5 used on EyeQ6 reports that Hardware Cache Initialization=
- is
->> >>> > complete, but in reality it's not the case. It also incorrectly
->> >>> > indicates that Hardware Cache Initialization is supported. This new
->> >>> > compatible string allows warning about this broken feature that ca=
-nnot
->> >>> > be detected at runtime.
->> >>> >
->> >>> > Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
->> >>> > ---
->> >>> >  Documentation/devicetree/bindings/mips/mti,mips-cm.yaml | 12 ++++=
-+++++++-
->> >>> >  1 file changed, 11 insertions(+), 1 deletion(-)
->> >>> >
->> >>> > diff --git a/Documentation/devicetree/bindings/mips/mti,mips-cm.ya=
-ml
->> >>> > b/Documentation/devicetree/bindings/mips/mti,mips-cm.yaml
->> >>> > index
->> >>> > 4324b2306535f1bf66c44b1f96be9094ee282041..d129d6382847768dc026336d=
-8d2c7328b6b81f9b
->> >>> > 100644
->> >>> > --- a/Documentation/devicetree/bindings/mips/mti,mips-cm.yaml
->> >>> > +++ b/Documentation/devicetree/bindings/mips/mti,mips-cm.yaml
->> >>> > @@ -19,7 +19,12 @@ maintainers:
->> >>> >
->> >>> >  properties:
->> >>> >    compatible:
->> >>> > -    const: mti,mips-cm
->> >>> > +    oneOf:
->> >>> > +      - const: mti,mips-cm
->> >>> > +      - const: mobileye,eyeq6-cm
->> >>> > +        description:
->> >>> > +          On EyeQ6 the HCI (Hardware Cache Initialization) inform=
-ation for
->> >>> > +          the L2 cache in multi-cluster configuration is broken.
->> >>> >
->> >>> >    reg:
->> >>> >      description:
->> >>> > @@ -44,4 +49,9 @@ examples:
->> >>> >        compatible =3D "mti,mips-cm";
->> >>> >        reg =3D <0x1bde8000 0x8000>;
->> >>> >      };
->> >>> > +
->> >>> > +  - |
->> >>> > +    coherency-manager {
->> >>> > +      compatible =3D "mobileye,eyeq6-cm";
->> >>>
->> >>> I think =E2=80=9Cmobileye,eyeq6-cm=E2=80=9D, =E2=80=9Cmti,mips-cm=E2=
-=80=9D would describe the hardware better as eyeq6=E2=80=99s CM is just a s=
-pecial variant of mips-cm.
->> >>
->> >> Is s/w that only understands =E2=80=9Cmti,mips-cm=E2=80=9D useful on =
-eyeq6 chip? If
->> >> so, I agree. If not, then a fallback compatible is not useful.
->> >
->> > Yes, mobileye,eyeq6-cm only enable an additional bug workaround in sof=
-tware.
->> >
->>=20
->> Having "mti,mips-cm" is not useful for the EyeQ6 chip. On the EyeQ6, we
->> obtain all relevant information related to CM dynamically without
->> needing this compatible string.
->>=20
->> > The programming interfaces and so on remains unchanged.
->>=20
->> Even without a compatible string, we are able to utilize the CM. At
->> present, there is no node in the device tree, and apart from the
->> hardware being faulty, we do not need it.
->>=20
->> >
->> > Also other firmware components like U-Boot doesn=E2=80=99t need to be =
-aware of
->> > eyeq6 variant.
->>=20
->> It's the same for the firmware; they don't need to have "mti, mips-cm"
->> information, as they can retrieve all they need dynamically.
+On Fri, Feb 21, 2025 at 4:40=E2=80=AFPM Ethan Zhao <haifeng.zhao@linux.inte=
+l.com> wrote:
 >
-> so it the current patch version correct ? If yes and nothing else is
-> outstanding, I'm going to apply the series.
+>
+> =E5=9C=A8 2025/2/20 18:15, Yunhui Cui =E5=86=99=E9=81=93:
+> > When entering intel_iommu_shutdown, system interrupts are disabled,
+>
+> System interrupts were disabled ? you mean all interrupts were disabled
+> when entering intel_iommu_shutdown(), perhaps it is not true, at least
+> for upstream latest code.
+>
+> > and the reboot process might be scheduled out by down_write(). If the
+> > scheduled process does not yield (e.g., while(1)), the system will hang=
+.
+>
+> No NMI lockup watchdog jumping out here ?
 
-Thank you for taking care of it. From my perspective, this patch is the
-correct version, and you can apply this series.
+Steps to reproduce:
 
-Gregory
+1. Avoid return in:
+if (no_iommu || dmar_disabled)
+    return;
+
+2. Write a.out with while(1).
+
+3. ./a.out &; reboot -f.
+
+4. Observe. Send NMI via BIOS to check system response.
+
+5. Add console=3DttyS0,115200 to cmdline to increase reproduction chance.
+
+Let's continue discussing based on the above.
 
 >
-> Thomas.
+> Thanks,
+> Ethan
 >
-> --=20
-> Crap can work. Given enough thrust pigs will fly, but it's not necessaril=
-y a
-> good idea.                                                [ RFC1925, 2.3 ]
+> >
+> > Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
+> > ---
+> >   drivers/iommu/intel/iommu.c | 3 ++-
+> >   1 file changed, 2 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
+> > index cc46098f875b..76a1d83b46bf 100644
+> > --- a/drivers/iommu/intel/iommu.c
+> > +++ b/drivers/iommu/intel/iommu.c
+> > @@ -2871,7 +2871,8 @@ void intel_iommu_shutdown(void)
+> >       if (no_iommu || dmar_disabled)
+> >               return;
+> >
+> > -     down_write(&dmar_global_lock);
+> > +     if (!down_write_trylock(&dmar_global_lock))
+> > +             return;
+> >
+> >       /* Disable PMRs explicitly here. */
+> >       for_each_iommu(iommu, drhd)
+>
+> --
+> "firm, enduring, strong, and long-lived"
+>
 
---=20
-Gr=C3=A9gory CLEMENT, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Thanks,
+Yunhui
 
