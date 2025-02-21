@@ -1,441 +1,303 @@
-Return-Path: <linux-kernel+bounces-526168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1942AA3FB7E
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:37:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E4CFA3FB87
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:38:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D13C9705205
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:19:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF6627055F4
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:19:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C1EE2153F4;
-	Fri, 21 Feb 2025 16:14:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BB0F217642;
+	Fri, 21 Feb 2025 16:14:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b="BJKGiSO0"
-Received: from CWXP265CU008.outbound.protection.outlook.com (mail-ukwestazon11020108.outbound.protection.outlook.com [52.101.195.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dC5RwDqf"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7488210F65;
-	Fri, 21 Feb 2025 16:14:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.195.108
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740154489; cv=fail; b=RMVxGuTQRAeWeIzjOqkpIWjI5QrsPVwOFdqtS8l3b076THS9+tnAZfFpS6vUu5Wo74PmuAATerB0fhtpi8vweiK/DaGs11nAnPa+l4NVhLgJ98R+2kGkcNSHrux6RB6t/bTm5ihL+TekJKLUaO5CYRtwB7XqUAeC1qaZ09+4wgc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740154489; c=relaxed/simple;
-	bh=Qu05F259toLVHH8zwHZQy0LtDH46+MbcUq1TfFMPSxo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=hvCbBW98mbgCcR2+H5fNRje2c4S2YFpanEypvMEpAjujgWJgHIHdtLaYXaP45XxXK9tkGXYvM2i69MUbQDkocSO2a4yjfS8/yCIUu95ibW4qQiKezWYd9DoU7DeTOh6dhh3NlHgjrzK4fUk8tqFLIJUAeW/bkO6+fRGG5yEoM9M=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=garyguo.net; spf=pass smtp.mailfrom=garyguo.net; dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b=BJKGiSO0; arc=fail smtp.client-ip=52.101.195.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=garyguo.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=garyguo.net
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=miOKbx5OIzg11ES/COvI0esV1paS4cBwCg/tDYb42s6DKtURpNxRAfIac4Bm1MBxf/V0OXXpg5jfMWJVbuyRkid6fsrsQJUYXIDBCupViTiaFh5MXra9YmZyIvIQ9S4Bi4QtQ82ZVHxVkP6drCU+EwUFwtwTSnTMkcScGEIPupJ0j5GG6lfg8djBMZLdQa+sC8qvsiKMm03aQ/+pWKEHoAWLDUWRohLjHOZbUyecQ5c0kO96VnX+AwtWPZDC5k1+bJo0Qp4SyfkBQdtNh6NupKCw+TgsiISoXMhhgjhu6phBKwBcA/d+1Xkmw7jy85qXN9is5DO8oWJW3/f5+oA2Ag==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Kgo/pLCynhYIyReuIrVizfWHJZJB2I6sJv6VNZ9T4i8=;
- b=yoqenh46hrKzN30rru+0TfNsgp2mmZ0aAM5penEwR7niW+TVIxlSaKEAlI7StO8B4t7uZ509PXMwEl82s5HOAC8Fhar2FBxgbf6R8x1WpAFIhB15oYcsVcCZ9Mn5hTDYuDycXBuSkR6BOHqCihKtTQ8Sk2OgovQBCgMZHGPUra3FpufgzY/f9gD+QYqUb7rywwaJ/2Y0pss95vEMLjuIVowvg7l9XLSXlV4rxNHzS0ydSHLNgVB5GLJ3F8+pemkbW1ulZbe3lspfv+Tm6JE5xt7YaVJXNgRAf6H4UC0efcGLDWvyyap3Rz41AsHCKbmaNZ8kTM+oqt3RRBLGFkOlfA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=garyguo.net; dmarc=pass action=none header.from=garyguo.net;
- dkim=pass header.d=garyguo.net; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=garyguo.net;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Kgo/pLCynhYIyReuIrVizfWHJZJB2I6sJv6VNZ9T4i8=;
- b=BJKGiSO06VBi7lKQiIEXb5BoYWIMBEZ5ymiECiH2NwVRlDEl+uxSnmRZZA8qfKrYkJxZBGhJXHRfLcSOCueD8VigvwGLJVmhVxgyWasyBKNfz9TIVwFXhJ6IERJcEvw2AT9z6jo2g1ETBYUOTQnMFYjnGF8MX3St4V8XEu4/RSs=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=garyguo.net;
-Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:253::10)
- by CW1P265MB7745.GBRP265.PROD.OUTLOOK.COM (2603:10a6:400:203::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.17; Fri, 21 Feb
- 2025 16:14:41 +0000
-Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
- ([fe80::1818:a2bf:38a7:a1e7]) by LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
- ([fe80::1818:a2bf:38a7:a1e7%4]) with mapi id 15.20.8466.016; Fri, 21 Feb 2025
- 16:14:41 +0000
-Date: Fri, 21 Feb 2025 16:14:39 +0000
-From: Gary Guo <gary@garyguo.net>
-To: Tamir Duberstein <tamird@gmail.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>, =?UTF-8?B?QmrDtnJu?= Roy Baron
- <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, Andreas
- Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor
- Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Wedson
- Almeida Filho <walmeida@microsoft.com>, Alex Mantel
- <alexmantel93@mailbox.org>, Will Deacon <will@kernel.org>, Peter Zijlstra
- <peterz@infradead.org>, Mark Rutland <mark.rutland@arm.com>,
- rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/4] rust: convert `Arc` to use `Refcount`
-Message-ID: <20250221161439.0e34fba9@eugeo>
-In-Reply-To: <CAJ-ks9npk8oSFHZHdViR1XhF+A8e2L+P0wCgmjE7mzAxS9WK1g@mail.gmail.com>
-References: <20250219201602.1898383-1-gary@garyguo.net>
-	<20250219201602.1898383-3-gary@garyguo.net>
-	<CAJ-ks9npk8oSFHZHdViR1XhF+A8e2L+P0wCgmjE7mzAxS9WK1g@mail.gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: LO4P123CA0050.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:152::19) To LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:253::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6C46215F7F;
+	Fri, 21 Feb 2025 16:14:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740154496; cv=none; b=rlbJBL8NPC5OVovXUZv+j2QRIRCrBHrqTG1K8JuYCDrPQcSbR/7rCRDq3UfFgRNVbuOLfbrI5qeWWvnKzgXXAptJW910oZG0Ev7/MhWRTkT7qr8nPmu8bh9LOTiBVTDGpJCIiC2/QkUSF/D1vRrAgjatpvTWD7vi4OJLTqh9Vj4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740154496; c=relaxed/simple;
+	bh=Mwb/+mIr9sIX1Vh/JjcDwlfuWKiF8GcXc20i7qJ1zco=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P2/zsqpuZxT2/rrCN7LtNNepqZWwLE8zQyQb7eYe/cqaTZ6P/DwOYZ9e2xZsYEJjR5Vwf25tZw1XoH2yR8atBCPJCIT3HAteyOGZOJKvIlnWyw3ORYBXKPdFWz+dVs15G6UJZ+fQJaR+r8o73rnE4eIspLmraCCIO4JgUeN6tdM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dC5RwDqf; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-22128b7d587so45464895ad.3;
+        Fri, 21 Feb 2025 08:14:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740154494; x=1740759294; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=VRw10QmKS+pwaQiTD1eJol1DMaMXwa3QEswpCoiMVg8=;
+        b=dC5RwDqfrNNXICUHQjpS74W8u4rTYbongzm2rw/IGp3a8zR6rJ9/lrYxzs0ugWzoKY
+         1RKPy6xZRkeEZSofKw6obno+Yc266XH59HEuixZSNC4KUc2iARQR3rMdqgBVqTMsC/td
+         PDy8lLR2PMpwjftnll2u9U+yggWXq77Gf6Cr+o1RCQvyvUTiGr5RNAyg7JdhA2CnR6LH
+         T4wlIy9oAgH4sAM/WPGSfMCW2nfRoeyjYuMEbFluWaggIkNUw81Crf7kK650Z0+OcLcZ
+         zlgVjyAMOF9thHSA+5T4y3rbX17D9/rePwnFUWGAsyW5kMw2b8Gi5scF0XPyzXgoDc4Y
+         wxqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740154494; x=1740759294;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VRw10QmKS+pwaQiTD1eJol1DMaMXwa3QEswpCoiMVg8=;
+        b=TxImKnXKvftJNqlyGK/+JuhLGBLUvA5XE6a7RLgfAdt5iQ9ZVaVWC7xEhwYMRS1nSq
+         DJZ94zqLwHgchTMItvKajWL22zq0TFgPGAA5yJMip2MqX0qE5diGvE8wGgRi0NOe9HD3
+         MunBN6J2bzxMyW0jFDTzSmNp6H7IwnoFyrQIr+b++8OoBdmOS/8nShUTODiPWN6fksar
+         Hk6QgeG70nS4ygbJaEB0rABDJZZ/Vpt9QetW8hfOMBlJ7nzcRlpmTmmGqoifT9f8SwTQ
+         1gBSKQhg2nh+Rg/+E9EXYj4FB5nXfp9ez8rcPXQTTU8LH07V67fgVMhQqaEG1AwrfDDt
+         t+Fg==
+X-Forwarded-Encrypted: i=1; AJvYcCVqtr39imLCEZP88MC8NpNzz8vkHVFvxYco5SL0B69j40fumr1c6CuDeAy9gAPxG3G4EGUh0jSXo23tpbtt2U1x@vger.kernel.org, AJvYcCWC1JC7K5Hl7UB2w57XJXKhycLWKjFNl7/vKCefVuKEZgfEdTHU8qz85azjgl04csKPfgg=@vger.kernel.org, AJvYcCWS1hmHRDLVx6wE4YbjocIVJ+tAcz/z82F8xhM6qYn68Dw3Y5C/nIUg8oZmkmI9A2DX25nXtlzC@vger.kernel.org, AJvYcCWwp6g7oxIXBrieIrxPKKf3EKtC6mscsHvFHKkJjP+/jfIEHso1+XwMB3pqtceFu0rF1+xD2bmnoeSfWXd9@vger.kernel.org
+X-Gm-Message-State: AOJu0YxvnJTW+2CZ9nBc6bg1SFJm+foUwdvhjPkGBFJIFqvWv35FzsF4
+	FrmVzRNGF+YQT7FxxOJfR3QG8Ksu+BD0doC7NTwSCeFfJG7H4YM=
+X-Gm-Gg: ASbGncv0VqOahLgLLDCkT4LN9YiZRgb/pF/HSzcbaHm1PelTGPuoHAWf4ykR+uSE/n6
+	s4I+sSTem+fdqUBPmghc1P5/dnTq7C5JbwEkgwd7sRRnf8l5fvOxirowLZcG9qfHdYJAw0C+PkG
+	891hIlAkHQ6QxIQzDF9w6yG69t74L+FTkczTZxZk42EnnCVz6Idl1MhFAPfhR7uOP/+yF1zunpY
+	fj0cbcykfp1QpONGCTQlIpOM10HA7CKH7ESEVwqi6L2uMaWLqqb0b4ncSz1dGbglTFPho29HQzK
+	47JgXxyciw2Lk35hS0tBJkQzwA==
+X-Google-Smtp-Source: AGHT+IFriNgiLyWVrFraOkel3ezG8+RV3+l5DHO1UXAqXjqjIc4HYuUR8iAH7/VmO5yu8/AkmsOQ1A==
+X-Received: by 2002:a05:6a00:4f8c:b0:730:8e2c:e53b with SMTP id d2e1a72fcca58-73426c8e2b8mr5469542b3a.5.1740154493744;
+        Fri, 21 Feb 2025 08:14:53 -0800 (PST)
+Received: from localhost ([2601:646:9e00:f56e:123b:cea3:439a:b3e3])
+        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-732642d908esm12253499b3a.159.2025.02.21.08.14.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Feb 2025 08:14:53 -0800 (PST)
+Date: Fri, 21 Feb 2025 08:14:52 -0800
+From: Stanislav Fomichev <stfomichev@gmail.com>
+To: "Bastien Curutchet (eBPF Foundation)" <bastien.curutchet@bootlin.com>
+Cc: Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	"David S. Miller" <davem@davemloft.net>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Mykola Lysenko <mykolal@fb.com>,
+	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	Shuah Khan <shuah@kernel.org>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Alexis Lothore <alexis.lothore@bootlin.com>, netdev@vger.kernel.org,
+	bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH bpf-next 2/2] selftests/bpf: Migrate test_xdp_vlan.sh
+ into test_progs
+Message-ID: <Z7imfH-Adq5qUUsB@mini-arch>
+References: <20250221-xdp_vlan-v1-0-7d29847169af@bootlin.com>
+ <20250221-xdp_vlan-v1-2-7d29847169af@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LO2P265MB5183:EE_|CW1P265MB7745:EE_
-X-MS-Office365-Filtering-Correlation-Id: 71ce654c-5bcb-4498-d568-08dd5292d8c3
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|366016|7416014|10070799003|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?RTh2c1lOWnJWQUlhczJNeGRhL1ZnalliODhNMlJoTmliNlp1dENrTVB1With?=
- =?utf-8?B?anZRSVRzcEdzN1VlNFFaUGtDdzlOL2k1U1NnZW5MWE16K0Y3dWV1R3RiN2Ez?=
- =?utf-8?B?L0tySkFPQnNoT0pidFlMWktWT21yR3BVbEh3QngzazV5YnpVYSs1ZzU4RFZi?=
- =?utf-8?B?QXUvQkxNb0oyV0FydnkxWEhOcDVaNWxnMDBqeWhSYjVZK3hLMjVmV1hpcXhF?=
- =?utf-8?B?NEFqWTUvUSsvL1NUeUlkTWFZNm9QZ3hNcFZUU0dHRFB1Sm1mdTFMTFlNKzFt?=
- =?utf-8?B?WUlZYTBXTVFNSldIRCtRUmI0dGZvZUkvclpvMEp1bG9uSWtzTVVyKzdYbitN?=
- =?utf-8?B?ZjlhOE1DM3lFMzIzL1pHNmF3TnVzTDlKTS9Uay8vQmp2TytzZnVwWUdIZnZz?=
- =?utf-8?B?NENrVnAraVowNjE5dEZndUtCREtBTmdMc0xGWU9mU2t0MS9oQlBjMEZma0dQ?=
- =?utf-8?B?bG5Lei9LQXpLR0RrZGxvcy9Nd3g0V3JiTHR4N3FhMjMvaHo1THNjbndUVnJE?=
- =?utf-8?B?RHg4VEZUallSVEtUbDNvWkJjUEVCZC9KQ1Rua0pGTlhtSXMxTGpLbWk5Y2Ns?=
- =?utf-8?B?V2YyNmNNUjlyU1IzS3JxQ3ZUb0V6ZTZiWWtTY25zNXlkWUpFTUljUk5kWHNS?=
- =?utf-8?B?OVZ5ODdaTUwvZTY4Uzd5SkRIV3MxVUhYc0t2c0UwWXFFODgxS3dIT3p4dTY0?=
- =?utf-8?B?a3RWeUEzQ3crZ1ozMWtXTWxsYzhiMy93SlhtZHdMcjlrVDJSaTIyK0U2STlV?=
- =?utf-8?B?WUFFTXBla1dLOUJwUXVlSytIY01HeDVvbzZVa0V0eFVTdlVQV0V5VWxEV3dI?=
- =?utf-8?B?dXROeW5qUEZybE5iL3orOU5iMTQwdlN0UW5SUlR3WnlkK1NtZ1JaaUJ4OE1t?=
- =?utf-8?B?L2hwMmlESWdRWUEyb256bnNaMWtQU2NpblhoUDFob05yT2xyejhhb0pLTzVQ?=
- =?utf-8?B?ZFo1QmhpL2VOSVluYm8wMmpwMytqMG1lVWFzVXhjNmxUNUUzbXA2MkJaQkNx?=
- =?utf-8?B?V2RSWktpVHgwVjd2U2Z2KzN3L1pkRTIxeFp4WEJzWlN3SEZBdUpFQjBxbnNS?=
- =?utf-8?B?WHFTYjZCdkpFcEszb3RUVCtoZ01NVVllZXBEZys3VlV3L3ZxNlEyL0U3RGtk?=
- =?utf-8?B?NnhPa2MyZm5aYVdSS0tPMjFSSUxiNmMvTG5zSWZVT3lXRktTYW1MaHlyMnFu?=
- =?utf-8?B?RVRXOUZmVUtocmIyZXFRd3IyRnA5eTU5MmkyNGRHaUcxUWFROVp6YStsS045?=
- =?utf-8?B?TUUzVXpvWFRDTHptcGQ5TTFpSTZRYUp6SGpSSFgwTDBQLzVvZjc3eG5SYTJj?=
- =?utf-8?B?WFkvUnQ2L1FhMXlhM1BFZTUwQ1NiU1hGak5SS3lrc0c4ZVI5blRpZFpEakVU?=
- =?utf-8?B?RjZTbXBFZ2x2dEF5TWEvNlVRQWpzekY4V245dHNoM05OZzVIUjM0eUY3SDJQ?=
- =?utf-8?B?bG85b1dYeitYOTM1WUVVWnNhOTdydERWS2pjR1UrZ0VueUpKaVBHRG8wMjR5?=
- =?utf-8?B?SVdtcnRRLzRYOWZ4STZtd212a2Z2Uy9XOWhaeG1HYWlaMENLUm8zTkJQOTN5?=
- =?utf-8?B?Z3RyMHlaRW9mSkQwRWl6VHU0bnpsbmZBZGFubUxHZTg3WDJONWIrbHk3Q3c2?=
- =?utf-8?B?SVE1OUoycVRtbjgraWFtVTQ2bVFCakJDMzFqeklXdjNQOXArbzRRSUJrZ1Bs?=
- =?utf-8?B?S3BYUnhnWmF5RloxSVhDalN3dG9UWkR5ZlRLQ09HWUxoeVBGVVQzRmh1OGs0?=
- =?utf-8?B?aFNlRVc0Mnk4SXk0MS9JVUNHK3dwam1SSEV3UkttWnpaVEloY0VOMjc0dWdO?=
- =?utf-8?B?LzVvSXNpK1VCdmY4YXBKcUdPM29nNGNRMC9UU2NsM1NlenlVZklYbXF2Zmd2?=
- =?utf-8?Q?W7UESVEh7+9Lj?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(7416014)(10070799003)(7053199007);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ZW5zaGVhcnFuVFhqSERqM3VPWUpxMTJpL0tXcGlkK2pIRGhsNTdTZDVrQzls?=
- =?utf-8?B?d3JXSytUNzZnVmtLVjUrY0VnaHhnc0lXMUpLN2tQR3R6Ym5qWlp2S3dJU3hC?=
- =?utf-8?B?ajhPd0ZlTW5tY0hzZlBYelRVTjlVRTJEczB1SUVVYkROMzREUzR3MzFkZlZa?=
- =?utf-8?B?THA0QkdYZExSQkt3RmlvTWI5SWt2MUQwTUFFaXBSd2RqNlNYVXU3S3FwUjJn?=
- =?utf-8?B?NkhPUFplbWdyNjhROHZha2MvRTMybWVySUszeTVOK21pQ0o1MElDTkIrbERG?=
- =?utf-8?B?SWVOVGNIQk5jMTRPL25yUXhOeEpFVlNwVjBhUjBrUlpaUUlQTUZ0RUE5S3pJ?=
- =?utf-8?B?SDRqVHJWOUFuUkgvTmU2QlZ1TVVFbW5ZU2xpdk9qd01NYVpGTGxqbDRMZDRR?=
- =?utf-8?B?bGNVVkw0OC8wUjlWYk1BTHphVjYrRGlHZjMxTkM4WEcxRWU5cjNIbHhZR0pY?=
- =?utf-8?B?b0JXUldieHlaL3QvZDg4NE0zc0NidlgyNWlWZTFnNmtSVDBGdGo0Z25Xa1ZZ?=
- =?utf-8?B?WG8zeXFsb3lpUUNsMUIrckVrNXJ6QWh5TCs1bFpCQ2hzUFNFamtEaFhBZFBE?=
- =?utf-8?B?emlSdjFzaFBkMU5wNXNudkQ0cGdpc0lBUmpucmF6UStnTHJ5NjNkdUptVWRI?=
- =?utf-8?B?bVVwdlpjaGhMbzVrbkpNRG1rS0lBMFA1b3VMQlUra1Z6eWZyeGtLZk5kSlB2?=
- =?utf-8?B?SU5uTkpPYjlud1pQTGxxU21vc0JlWVhDZnQvMzRaamkrUVpObExxZUlVU1dj?=
- =?utf-8?B?Q2tNTDJKcVJ4M2ppbUxHQzVnQU56VXhYWUVxTlp2OENoMVJBT0Qrd1d6eVNE?=
- =?utf-8?B?Tmk5amlEYW1LL2wrM3lMdkF2SFljMzd0T3d6ejNTU21uSzBlM2t0dW14YVNO?=
- =?utf-8?B?elFSRUNYY2hpcFVoUGpwcEV3Zkw0aFlCRVhIUmZCYUx1bTg4WDJOQkJReS9O?=
- =?utf-8?B?a3F6c1o4b0lVQ2szbXdtZWxkWmdMaFA4bUR1VEg1ZndTTWxRR01jYWkwQ2ht?=
- =?utf-8?B?WFoyYUU1ckxVQ1JXWElzSlRJR3h5clJHci9RajFLc3N4TURXcEh0TE5tUlZa?=
- =?utf-8?B?eU1rMXFFZnZZczBwSENycEtaUHFWZEdpbGltR0FTcDVJOXVzN2VUdDFlcUhP?=
- =?utf-8?B?aUxUR2JWaFlHQXcwTWtNK2lCem11bTlrVUpPekhJUUJpOE5xT0U0RFNiYUsz?=
- =?utf-8?B?U2NyUnd4NVFOa0NITXVoZlkwOWFFbXFoaHNNN21tVVVHWGtGMko0bkNCd3d4?=
- =?utf-8?B?VjlORmFiTWVLcXlFNTJ4RURCNnoyNk02UXJQYWh1Wkp0YmxDR2l0ZXZvQ1VW?=
- =?utf-8?B?dzgvOGVEc25COXJWTU1tamJGR0kwNGY4NUtHLzkwRU5mYTJhY2I4azN5U0Iz?=
- =?utf-8?B?anhuSzRhQVgwUGNjbWlVSGg1Y3RFdzFTbTQvSWM5TndSZ2V1L1ZuRXErdUw0?=
- =?utf-8?B?NTJ5ZVo3Sjh2ZUVLOHpRSmpKQ3ptME9jdmlDWkwrcjgrQ2pUSVJxVE43emNI?=
- =?utf-8?B?ek5qM2RsSTNuUnVJang1d2t3cmYwRHlGdG9WQUdwUjhKZ05MdndtUytsWXhz?=
- =?utf-8?B?bXBQdWNyMFk0aHljdE9pMVQxbkpRa0NiNS9ycWJmelF6U05DQnFNU3VWWkRQ?=
- =?utf-8?B?WElFbm45aXBnNnRPNUhURW02ZHpXcFlsSjFLdW5WYUFadmZpTHBkRDFFWnNP?=
- =?utf-8?B?WWN0MU9CUmVxZ2NSNzRQaUcwT1c4a3ZvZy9qcnJUSGoyVWpYU3hmMGpPNVpM?=
- =?utf-8?B?dnVwREs3UzV0cnRGMUFhem4ycncyczhReElsSTIrK2t3ZnRqa05FR3E3T1pN?=
- =?utf-8?B?TVdpYXorVTMrOUxTVjBIc2l6T0VHRjlIQTU0a0V3ZUdDMTF1Qm9iWktlcEYz?=
- =?utf-8?B?emNZU3ZwZlpaRWF0R05DRVZCd0RUelN5MFhRa0x1OHYvQktaRWVJMUFESUVD?=
- =?utf-8?B?bHBnT3RGUUJ0TDB6VmFSdmd6RVBDdW92YURqZE16UGE0cStXeGJEMklxNy9T?=
- =?utf-8?B?RFROT0hPT00yQlNyU3owckVSMm94bjY0VjlsTHZ6VWgrOXc5aE5vQXUvZzBV?=
- =?utf-8?B?dEpqVVRWc3hUcTVPaG9TZTRac3UxRWtkb1VITkF5aHEvdGpxYlQyUnZRY0g2?=
- =?utf-8?B?eTBROFBUSGZ4SFpQYjFMaUJSWVU0aTgreDhWeEpmR2lxTTJiaDFjY2E3RjdE?=
- =?utf-8?Q?scdH0Dh04BpNEvOhz9B+PRU=3D?=
-X-OriginatorOrg: garyguo.net
-X-MS-Exchange-CrossTenant-Network-Message-Id: 71ce654c-5bcb-4498-d568-08dd5292d8c3
-X-MS-Exchange-CrossTenant-AuthSource: LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Feb 2025 16:14:41.3256
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: bbc898ad-b10f-4e10-8552-d9377b823d45
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: +Dq2UKaHfd6VylAYc0fHCTu+nKROA1BKJhKthjQmErbWqiVHb13ViY/xCLzRj8/kee+WJqMZgK7b6jXIDRj9bw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CW1P265MB7745
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250221-xdp_vlan-v1-2-7d29847169af@bootlin.com>
 
-On Wed, 19 Feb 2025 17:12:10 -0500
-Tamir Duberstein <tamird@gmail.com> wrote:
+On 02/21, Bastien Curutchet (eBPF Foundation) wrote:
+> test_xdp_vlan.sh isn't used by the BPF CI.
+> 
+> Migrate test_xdp_vlan.sh in prog_tests/xdp_vlan.c.
+> It uses the same BPF programs located in progs/test_xdp_vlan.c and the
+> same network topology.
+> Remove test_xdp_vlan*.sh and their Makefile entries.
+> 
+> Signed-off-by: Bastien Curutchet (eBPF Foundation) <bastien.curutchet@bootlin.com>
+> ---
+>  tools/testing/selftests/bpf/Makefile               |   4 +-
+>  tools/testing/selftests/bpf/prog_tests/xdp_vlan.c  | 175 ++++++++++++++++
+>  tools/testing/selftests/bpf/test_xdp_vlan.sh       | 233 ---------------------
+>  .../selftests/bpf/test_xdp_vlan_mode_generic.sh    |   9 -
+>  .../selftests/bpf/test_xdp_vlan_mode_native.sh     |   9 -
+>  5 files changed, 176 insertions(+), 254 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/bpf/Makefile b/tools/testing/selftests/bpf/Makefile
+> index 5dc9c84ed30f6e5a46572a9e428f692a79623469..09c1f731b8280696c729e3c87020ef749fee9dcb 100644
+> --- a/tools/testing/selftests/bpf/Makefile
+> +++ b/tools/testing/selftests/bpf/Makefile
+> @@ -103,8 +103,6 @@ TEST_PROGS := test_kmod.sh \
+>  	test_tunnel.sh \
+>  	test_lwt_seg6local.sh \
+>  	test_lirc_mode2.sh \
+> -	test_xdp_vlan_mode_generic.sh \
+> -	test_xdp_vlan_mode_native.sh \
+>  	test_lwt_ip_encap.sh \
+>  	test_tc_tunnel.sh \
+>  	test_tc_edt.sh \
+> @@ -118,7 +116,7 @@ TEST_PROGS := test_kmod.sh \
+>  
+>  TEST_PROGS_EXTENDED := \
+>  	ima_setup.sh verify_sig_setup.sh \
+> -	test_xdp_vlan.sh test_bpftool.py
+> +	test_bpftool.py
+>  
+>  TEST_KMODS := bpf_testmod.ko bpf_test_no_cfi.ko bpf_test_modorder_x.ko \
+>  	bpf_test_modorder_y.ko
+> diff --git a/tools/testing/selftests/bpf/prog_tests/xdp_vlan.c b/tools/testing/selftests/bpf/prog_tests/xdp_vlan.c
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..18dd25344de768aa83a162a0c091f28a4e5f505e
+> --- /dev/null
+> +++ b/tools/testing/selftests/bpf/prog_tests/xdp_vlan.c
+> @@ -0,0 +1,175 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +/*
+> + * Network topology:
+> + *  -----------        -----------
+> + *  |  NS1    |        |   NS2   |
+> + *  | veth0  -|--------|- veth0  |
+> + *  -----------        -----------
+> + *
+> + */
+> +
+> +#define _GNU_SOURCE
+> +#include <net/if.h>
+> +#include <uapi/linux/if_link.h>
+> +
+> +#include "network_helpers.h"
+> +#include "test_progs.h"
+> +#include "test_xdp_vlan.skel.h"
+> +
+> +
+> +#define VETH_NAME	"veth0"
+> +#define NS_MAX_SIZE	32
+> +#define NS1_NAME	"ns-xdp-vlan-1-"
+> +#define NS2_NAME	"ns-xdp-vlan-2-"
+> +#define NS1_IP_ADDR	"100.64.10.1"
+> +#define NS2_IP_ADDR	"100.64.10.2"
+> +#define VLAN_ID		4011
+> +
+> +static int setup_network(char *ns1, char *ns2)
+> +{
+> +	if (!ASSERT_OK(append_tid(ns1, NS_MAX_SIZE), "create ns1 name"))
+> +		goto fail;
+> +	if (!ASSERT_OK(append_tid(ns2, NS_MAX_SIZE), "create ns2 name"))
+> +		goto fail;
+> +
 
-> On Wed, Feb 19, 2025 at 3:17=E2=80=AFPM Gary Guo <gary@garyguo.net> wrote=
-:
-> >
-> > With `Refcount` type created, `Arc` can use `Refcount` instead of
-> > calling into FFI directly.
-> >
-> > Signed-off-by: Gary Guo <gary@garyguo.net>
-> > ---
-> >  rust/kernel/sync/arc.rs | 65 +++++++++++++++++------------------------
-> >  1 file changed, 26 insertions(+), 39 deletions(-)
-> >
-> > diff --git a/rust/kernel/sync/arc.rs b/rust/kernel/sync/arc.rs
-> > index 3cefda7a4372..1f5fbc6b3742 100644
-> > --- a/rust/kernel/sync/arc.rs
-> > +++ b/rust/kernel/sync/arc.rs
-> > @@ -8,7 +8,7 @@
-> >  //! threads.
-> >  //!
-> >  //! It is different from the standard library's [`Arc`] in a few ways:
-> > -//! 1. It is backed by the kernel's `refcount_t` type.
-> > +//! 1. It is backed by the kernel's [`Refcount`] type.
-> >  //! 2. It does not support weak references, which allows it to be half=
- the size.
-> >  //! 3. It saturates the reference count instead of aborting when it go=
-es over a threshold.
-> >  //! 4. It does not provide a `get_mut` method, so the ref counted obje=
-ct is pinned.
-> > @@ -18,10 +18,10 @@
-> >
-> >  use crate::{
-> >      alloc::{AllocError, Flags, KBox},
-> > -    bindings,
-> >      init::{self, InPlaceInit, Init, PinInit},
-> > +    sync::Refcount,
-> >      try_init,
-> > -    types::{ForeignOwnable, Opaque},
-> > +    types::ForeignOwnable,
-> >  };
-> >  use core::{
-> >      alloc::Layout,
-> > @@ -143,7 +143,7 @@ pub struct Arc<T: ?Sized> {
-> >  #[pin_data]
-> >  #[repr(C)]
-> >  struct ArcInner<T: ?Sized> {
-> > -    refcount: Opaque<bindings::refcount_t>,
-> > +    refcount: Refcount,
-> >      data: T,
-> >  }
-> >
-> > @@ -155,7 +155,7 @@ impl<T: ?Sized> ArcInner<T> {
-> >      /// `ptr` must have been returned by a previous call to [`Arc::int=
-o_raw`], and the `Arc` must
-> >      /// not yet have been destroyed.
-> >      unsafe fn container_of(ptr: *const T) -> NonNull<ArcInner<T>> {
-> > -        let refcount_layout =3D Layout::new::<bindings::refcount_t>();
-> > +        let refcount_layout =3D Layout::new::<Refcount>();
-> >          // SAFETY: The caller guarantees that the pointer is valid.
-> >          let val_layout =3D Layout::for_value(unsafe { &*ptr });
-> >          // SAFETY: We're computing the layout of a real struct that ex=
-isted when compiling this
-> > @@ -207,8 +207,7 @@ impl<T> Arc<T> {
-> >      pub fn new(contents: T, flags: Flags) -> Result<Self, AllocError> =
-{
-> >          // INVARIANT: The refcount is initialised to a non-zero value.
-> >          let value =3D ArcInner {
-> > -            // SAFETY: There are no safety requirements for this FFI c=
-all.
-> > -            refcount: Opaque::new(unsafe { bindings::REFCOUNT_INIT(1) =
-}),
-> > +            refcount: Refcount::new(1),
-> >              data: contents,
-> >          };
-> >
-> > @@ -290,7 +289,7 @@ pub fn ptr_eq(this: &Self, other: &Self) -> bool {
-> >      /// use kernel::sync::{Arc, UniqueArc};
-> >      ///
-> >      /// let arc =3D Arc::new(42, GFP_KERNEL)?;
-> > -    /// let unique_arc =3D arc.into_unique_or_drop();
-> > +    /// let unique_arc =3D Arc::into_unique_or_drop(arc);
-> >      ///
-> >      /// // The above conversion should succeed since refcount of `arc`=
- is 1.
-> >      /// assert!(unique_arc.is_some());
-> > @@ -306,35 +305,30 @@ pub fn ptr_eq(this: &Self, other: &Self) -> bool =
-{
-> >      /// let arc =3D Arc::new(42, GFP_KERNEL)?;
-> >      /// let another =3D arc.clone();
-> >      ///
-> > -    /// let unique_arc =3D arc.into_unique_or_drop();
-> > +    /// let unique_arc =3D Arc::into_unique_or_drop(arc);
-> >      ///
-> >      /// // The above conversion should fail since refcount of `arc` is=
- >1.
-> >      /// assert!(unique_arc.is_none());
-> >      ///
-> >      /// # Ok::<(), Error>(())
-> >      /// ```
-> > -    pub fn into_unique_or_drop(self) -> Option<Pin<UniqueArc<T>>> {
-> > +    pub fn into_unique_or_drop(this: Self) -> Option<Pin<UniqueArc<T>>=
-> { =20
->=20
-> Why did this signature need to change?
+[..]
 
-I think I mentioned this in a earlier series. Smart pointers are not
-supposed to have methods (i.e. with a self receiver) as it may shadow
-deref'ed functions.
+> +	SYS(fail, "ip netns add %s", ns1);
+> +	SYS(fail, "ip netns add %s", ns2);
 
->=20
-> >          // We will manually manage the refcount in this method, so we =
-disable the destructor.
-> > -        let me =3D ManuallyDrop::new(self);
-> > +        let this =3D ManuallyDrop::new(this);
-> >          // SAFETY: We own a refcount, so the pointer is still valid.
-> > -        let refcount =3D unsafe { me.ptr.as_ref() }.refcount.get();
-> > +        let refcount =3D unsafe { &this.ptr.as_ref().refcount };
-> >
-> >          // If the refcount reaches a non-zero value, then we have dest=
-royed this `Arc` and will
-> >          // return without further touching the `Arc`. If the refcount =
-reaches zero, then there are
-> >          // no other arcs, and we can create a `UniqueArc`.
-> > -        //
-> > -        // SAFETY: We own a refcount, so the pointer is not dangling.
-> > -        let is_zero =3D unsafe { bindings::refcount_dec_and_test(refco=
-unt) };
-> > -        if is_zero {
-> > -            // SAFETY: We have exclusive access to the arc, so we can =
-perform unsynchronized
-> > -            // accesses to the refcount.
-> > -            unsafe { core::ptr::write(refcount, bindings::REFCOUNT_INI=
-T(1)) };
-> > +        if refcount.dec_and_test() {
-> > +            refcount.set(1); =20
->=20
-> We could retain the unsynchronized operation here by taking a mutable
-> reference above and writing through it. Right? Could we remove `set`
-> from the abstraction in the previous patch?
+Will replacing these with open_netns work? Or we don't setup up enough
+state to cooperate with 'ip' tool? (same for cleanup_network if it
+works)
 
-This was suggested as well in a previous series but I don't think it's
-a good idea. Creating a mutable reference and using unsynchronized
-write requires `unsafe`. `set` doesn't.
+> +	SYS(fail, "ip -n %s link add %s type veth peer name %s netns %s",
+> +	    ns1, VETH_NAME, VETH_NAME, ns2);
+> +
+> +	/* NOTICE: XDP require VLAN header inside packet payload
+> +	 *  - Thus, disable VLAN offloading driver features
+> +	 */
+> +	SYS(fail, "ip netns exec %s ethtool -K %s rxvlan off txvlan off", ns1, VETH_NAME);
+> +	SYS(fail, "ip netns exec %s ethtool -K %s rxvlan off txvlan off", ns2, VETH_NAME);
+> +
+> +	/* NS1 configuration */
+> +	SYS(fail, "ip -n %s addr add %s/24 dev %s", ns1, NS1_IP_ADDR, VETH_NAME);
+> +	SYS(fail, "ip -n %s link set %s up", ns1, VETH_NAME);
+> +
+> +	/* NS2 configuration */
+> +	SYS(fail, "ip -n %s link add link %s name %s.%d type vlan id %d",
+> +	    ns2, VETH_NAME, VETH_NAME, VLAN_ID, VLAN_ID);
+> +	SYS(fail, "ip -n %s addr add %s/24 dev %s.%d", ns2, NS2_IP_ADDR, VETH_NAME, VLAN_ID);
+> +	SYS(fail, "ip -n %s link set %s up", ns2, VETH_NAME);
+> +	SYS(fail, "ip -n %s link set %s.%d up", ns2, VETH_NAME, VLAN_ID);
+> +
+> +	/* At this point ping should fail because VLAN tags are only used by NS2 */
+> +	return !SYS_NOFAIL("ip netns exec %s ping -W 1 -c1 %s", ns2, NS1_IP_ADDR);
+> +
+> +fail:
+> +	return -1;
+> +}
+> +
+> +static void cleanup_network(const char *ns1, const char *ns2)
+> +{
+> +	SYS_NOFAIL("ip netns del %s", ns1);
+> +	SYS_NOFAIL("ip netns del %s", ns2);
+> +}
+> +
+> +static void xdp_vlan(struct bpf_program *xdp, struct bpf_program *tc, u32 flags)
+> +{
+> +	LIBBPF_OPTS(bpf_tc_hook, tc_hook, .attach_point = BPF_TC_EGRESS);
+> +	LIBBPF_OPTS(bpf_tc_opts, tc_opts, .handle = 1, .priority = 1);
+> +	char ns1[NS_MAX_SIZE] = NS1_NAME;
+> +	char ns2[NS_MAX_SIZE] = NS2_NAME;
+> +	struct nstoken *nstoken = NULL;
+> +	int interface;
+> +	int ret;
+> +
+> +	if (!ASSERT_OK(setup_network(ns1, ns2), "setup network"))
+> +		goto cleanup;
+> +
+> +	nstoken = open_netns(ns1);
+> +	if (!ASSERT_OK_PTR(nstoken, "open NS1"))
+> +		goto cleanup;
+> +
+> +	interface = if_nametoindex(VETH_NAME);
+> +	if (!ASSERT_NEQ(interface, 0, "get interface index"))
+> +		goto cleanup;
+> +
+> +	ret = bpf_xdp_attach(interface, bpf_program__fd(xdp), flags, NULL);
+> +	if (!ASSERT_OK(ret, "attach xdp_vlan_change"))
+> +		goto cleanup;
+> +
+> +	tc_hook.ifindex = interface;
+> +	ret = bpf_tc_hook_create(&tc_hook);
+> +	if (!ASSERT_OK(ret, "bpf_tc_hook_create"))
+> +		goto detach_xdp;
+> +
+> +	/* Now we'll use BPF programs to pop/push the VLAN tags */
+> +	tc_opts.prog_fd = bpf_program__fd(tc);
+> +	ret = bpf_tc_attach(&tc_hook, &tc_opts);
+> +	if (!ASSERT_OK(ret, "bpf_tc_attach"))
+> +		goto detach_xdp;
+> +
+> +	close_netns(nstoken);
+> +	nstoken = NULL;
+> +
+> +	/* Now the namespaces can reach each-other, test with pings */
+> +	SYS(detach_tc, "ip netns exec %s ping -i 0.2 -W 2 -c 2 %s > /dev/null", ns1, NS2_IP_ADDR);
+> +	SYS(detach_tc, "ip netns exec %s ping -i 0.2 -W 2 -c 2 %s > /dev/null", ns2, NS1_IP_ADDR);
+> +
+> +
+> +detach_tc:
+> +	bpf_tc_detach(&tc_hook, &tc_opts);
+> +detach_xdp:
+> +	bpf_xdp_detach(interface, flags, NULL);
+> +cleanup:
+> +	close_netns(nstoken);
+> +	cleanup_network(ns1, ns2);
+> +}
+> +
+> +/* First test: Remove VLAN by setting VLAN ID 0, using "xdp_vlan_change"
+> + * egress use TC to add back VLAN tag 4011
+> + */
+> +void test_xdp_vlan_change(void)
+> +{
+> +	struct test_xdp_vlan *skel;
+> +
+> +	skel = test_xdp_vlan__open_and_load();
+> +	if (!ASSERT_OK_PTR(skel, "xdp_vlan__open_and_load"))
+> +		return;
+> +
 
-Note that the `set` here is relaxed order. I doubt (if things are
-inlined properly) there'll be any codegen difference with a completely
-unsynchronized write.
+[..]
 
-Not having an additional unsafe is a good trade-off to me.
+> +	if (test__start_subtest("0"))
+> +		xdp_vlan(skel->progs.xdp_vlan_change, skel->progs.tc_vlan_push, 0);
 
->=20
-> >
-> > -            // INVARIANT: We own the only refcount to this arc, so we =
-may create a `UniqueArc`. We
-> > -            // must pin the `UniqueArc` because the values was previou=
-sly in an `Arc`, and they pin
-> > -            // their values.
-> > +            // INVARIANT: If the refcount failed to decrement because =
-it is 1, then we have the
-> > +            // exclusive ownership, so we may create a `UniqueArc`. We=
- must pin the `UniqueArc`
-> > +            // because the values was previously in an `Arc`, and they=
- pin their values. =20
->=20
-> Pre-existing typo you're taking ownership of: "the values" should be
-> "the value". But why touch this comment at all?
-
-I think this is a left-over that I forget to undo.
-
->=20
-> >              Some(Pin::from(UniqueArc {
-> > -                inner: ManuallyDrop::into_inner(me),
-> > +                inner: ManuallyDrop::into_inner(this),
-> >              }))
-> >          } else {
-> >              None
-> > @@ -396,14 +390,10 @@ fn as_ref(&self) -> &T {
-> >
-> >  impl<T: ?Sized> Clone for Arc<T> {
-> >      fn clone(&self) -> Self {
-> > -        // SAFETY: By the type invariant, there is necessarily a refer=
-ence to the object, so it is
-> > -        // safe to dereference it.
-> > -        let refcount =3D unsafe { self.ptr.as_ref() }.refcount.get();
-> > -
-> > -        // INVARIANT: C `refcount_inc` saturates the refcount, so it c=
-annot overflow to zero.
-> > +        // INVARIANT: `Refcount` saturates the refcount, so it cannot =
-overflow to zero.
-> >          // SAFETY: By the type invariant, there is necessarily a refer=
-ence to the object, so it is
-> >          // safe to increment the refcount.
-> > -        unsafe { bindings::refcount_inc(refcount) };
-> > +        unsafe { self.ptr.as_ref().refcount.inc() };
-> >
-> >          // SAFETY: We just incremented the refcount. This increment is=
- now owned by the new `Arc`.
-> >          unsafe { Self::from_inner(self.ptr) }
-> > @@ -412,16 +402,14 @@ fn clone(&self) -> Self {
-> >
-> >  impl<T: ?Sized> Drop for Arc<T> {
-> >      fn drop(&mut self) {
-> > -        // SAFETY: By the type invariant, there is necessarily a refer=
-ence to the object. We cannot
-> > -        // touch `refcount` after it's decremented to a non-zero value=
- because another thread/CPU
-> > -        // may concurrently decrement it to zero and free it. It is ok=
- to have a raw pointer to
-> > -        // freed/invalid memory as long as it is never dereferenced.
-> > -        let refcount =3D unsafe { self.ptr.as_ref() }.refcount.get();
-> > -
-> >          // INVARIANT: If the refcount reaches zero, there are no other=
- instances of `Arc`, and
-> >          // this instance is being dropped, so the broken invariant is =
-not observable.
-> > -        // SAFETY: Also by the type invariant, we are allowed to decre=
-ment the refcount.
-> > -        let is_zero =3D unsafe { bindings::refcount_dec_and_test(refco=
-unt) };
-> > +        // SAFETY: By the type invariant, there is necessarily a refer=
-ence to the object.
-> > +        // NOTE: we cannot touch `refcount` after it's decremented to =
-a non-zero value because
-> > +        // another thread/CPU may concurrently decrement it to zero an=
-d free it. However it is okay
-> > +        // to have a transient reference to decrement the refcount, se=
-e
-> > +        // https://github.com/rust-lang/rust/issues/55005.
-> > +        let is_zero =3D unsafe { self.ptr.as_ref().refcount.dec_and_te=
-st() }; =20
->=20
-> How come this careful handling is not required in into_unique_or_drop?
-> At least, the SAFETY comment there is much more mundane.
-
-Because `into_unique_or_drop` doesn't actually remove the allocation
-(it only decrements refcount for non-zero or turn it into `UniqueArc`).
-
->=20
-> >          if is_zero {
-> >              // The count reached zero, we must free the memory.
-> >              //
-> > @@ -673,8 +661,7 @@ pub fn new_uninit(flags: Flags) -> Result<UniqueArc=
-<MaybeUninit<T>>, AllocError>
-> >          // INVARIANT: The refcount is initialised to a non-zero value.
-> >          let inner =3D KBox::try_init::<AllocError>(
-> >              try_init!(ArcInner {
-> > -                // SAFETY: There are no safety requirements for this F=
-FI call.
-> > -                refcount: Opaque::new(unsafe { bindings::REFCOUNT_INIT=
-(1) }),
-> > +                refcount: Refcount::new(1),
-> >                  data <- init::uninit::<T, AllocError>(),
-> >              }? AllocError),
-> >              flags,
-> > --
-> > 2.47.2
-> > =20
-
+Does the original test also test with flags=0? What is the purpose?
 
