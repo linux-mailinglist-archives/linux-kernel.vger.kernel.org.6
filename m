@@ -1,147 +1,180 @@
-Return-Path: <linux-kernel+bounces-525991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9288A3F844
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:20:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EC09A3F848
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:20:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 24CB97A885B
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 15:19:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 139B8189A882
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 15:20:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E19ED21128D;
-	Fri, 21 Feb 2025 15:19:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADA292116ED;
+	Fri, 21 Feb 2025 15:19:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=morinfr.org header.i=@morinfr.org header.b="RfYU+tH6"
-Received: from smtp2-g21.free.fr (smtp2-g21.free.fr [212.27.42.2])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GQBlMv14"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A7E9210F5D;
-	Fri, 21 Feb 2025 15:19:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.27.42.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CCBF21148F;
+	Fri, 21 Feb 2025 15:19:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740151186; cv=none; b=Dc2p5O67l5eao6nQx8Vn1BOSvGXW4gmyGw9B2a2tM+YXhw1tqJaI3J7AMQpo/0nf8GXmtu9sDAz4wFNTJF43DDmJV7gfQxiNAwL8aX+ogF7C8nCTf2+lWJ6Lo/Wjm+r/c6gjzv5HRIm2uqyFyvgLBl14uJ/L1tjpDtYqlXeIvQI=
+	t=1740151191; cv=none; b=edMoyNdPIMlAak+cLUn8Y7N58VH+EoV8YDMpp0B4F6T0GXBMnXViOw572E6izIUjUReQJNL+WgvVstHsFZe41UclVbDn1yDVIFXasCWiwLYGgmW9raXQ6G6ZE7pD+xkGmB5ogSjMCfh5zqKSGMMdxYhgzW5CMnZ02hpkce46SNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740151186; c=relaxed/simple;
-	bh=636J0L2L57i85Fk1pbRRH32NY1pol6A8kSUF0OXuRvQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AWKPm3WGULSDm6VPl4LlZSE78yJLX3+OxPPeGueQaaZ+mlrhTgeEE2fNDh3rRynrNpa9//QKdY5smv3fU2CKD8PCs/fs4ycXo+pJ/u81ckxqkumh01VyY494LGv5GwiMZhDt1/J2QS7UADQLIZ+ZpZlA9MMJ+t0AzYNO59xZIJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=morinfr.org; spf=pass smtp.mailfrom=morinfr.org; dkim=pass (1024-bit key) header.d=morinfr.org header.i=@morinfr.org header.b=RfYU+tH6; arc=none smtp.client-ip=212.27.42.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=morinfr.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=morinfr.org
-Received: from bender.morinfr.org (unknown [82.66.66.112])
-	by smtp2-g21.free.fr (Postfix) with ESMTPS id AFC3B200406;
-	Fri, 21 Feb 2025 16:19:36 +0100 (CET)
-Authentication-Results: smtp2-g21.free.fr;
-	dkim=pass (1024-bit key; unprotected) header.d=morinfr.org header.i=@morinfr.org header.a=rsa-sha256 header.s=20170427 header.b=RfYU+tH6;
-	dkim-atps=neutral
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=morinfr.org
-	; s=20170427; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=emYbpo5GLAv7fQmupNkR79c6pzM8OUd6OqHZnaplvZU=; b=RfYU+tH6iBU9TZdmw/tEFaVT8f
-	+7KV23IDFfLNN7DePzO9jJuiKQQWm/n18fn++y32XOrmnZO5yrP0Eqvrrk1FG9KsepfttJAVogWgB
-	jaIJBHeo1oNhjcb19XIY4FHey+Oj7HK4DTARIqSitrEtDDkl0lYVm1UvzF5muc6cWt+g=;
-Received: from guillaum by bender.morinfr.org with local (Exim 4.96)
-	(envelope-from <guillaume@morinfr.org>)
-	id 1tlUoR-001F74-2G;
-	Fri, 21 Feb 2025 16:19:35 +0100
-Date: Fri, 21 Feb 2025 16:19:35 +0100
-From: Guillaume Morin <guillaume@morinfr.org>
-To: Yu Kuai <yukuai1@huaweicloud.com>
-Cc: Guillaume Morin <guillaume@morinfr.org>, linux-raid@vger.kernel.org,
-	linux-kernel@vger.kernel.org, song@kernel.org,
-	"yukuai (C)" <yukuai3@huawei.com>
-Subject: Re: [BUG] possible race between md_free_disk and md_notify_reboot
-Message-ID: <Z7iZh56mykLW82SN@bender.morinfr.org>
-References: <ad286d5c-fd60-682f-bd89-710a79a710a0@huaweicloud.com>
- <82BF5B2B-7508-47DB-9845-8A5F19E0D0E5@morinfr.org>
- <53e93d6e-7b73-968b-c5f2-92d1b124ecd5@huawei.com>
- <Z7alWBZfQLlP-EO7@bender.morinfr.org>
- <1e288eb5-c67b-c9ca-c57e-2855b18785b1@huaweicloud.com>
- <6748f138-ad52-b7c5-ac53-1c7fa6fab9b7@huaweicloud.com>
- <Z7cwexr7tLRIOlNx@bender.morinfr.org>
- <40203778-f217-6789-9c83-ebed3720627b@huaweicloud.com>
+	s=arc-20240116; t=1740151191; c=relaxed/simple;
+	bh=0Sfi5OhsmXDc0XGmKqmk2NvefOoyLYkNnDfLKFL8czg=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=oNd8Ny+K+P0h0g1CFh2nUQ6jqoy/DxXD8C5ZHsSq6hSfh90PkpjwbJAqKeroErBogDeoVqOeq5vQi/o9nOgn8Vv3fYoK/SvGfIJJP7Z4MBgiM2M1jd/FcQQoiE1ddPRMcACyBerxXSgGaopWe6WqvAwnNp2qerccrOb91m32vxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GQBlMv14; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-545316f80beso2043995e87.1;
+        Fri, 21 Feb 2025 07:19:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740151187; x=1740755987; darn=vger.kernel.org;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=TsCVMsET+UHJUAvFwcMuiLqRvzL8dXcTNPDug2riv8k=;
+        b=GQBlMv14+9D9b62RRJsOZpALcR8Pnh4SgJTOiHwb+PmR7Uy+U4XgrGb8fTwEqiqxPv
+         5RUliIvLJQx5vNHyQiwQNtZUufg5ihSUBvGqR9gzBPp4YeMc1phv766hRJcpopOxo++h
+         ci/2hDGJNzxrK7hBZh7qvhzpLPFPfqwdiMYMf0Cmt8mf78fk13LvzaVkpH3dKCTmOJDx
+         X6JMsOzp2qD2WAhaOaaNfco32wvuSoBq2KSdEQt2vxSKPZ1dPrfgDBK/H2GYyUUwNhT6
+         jUDSZ6dUHBCRfPyvS0+SCJsVo/ZhMzsu5HwEzvkB9k33+3S4VrpRg6uURk3zCWrkoQP3
+         t+Rg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740151187; x=1740755987;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=TsCVMsET+UHJUAvFwcMuiLqRvzL8dXcTNPDug2riv8k=;
+        b=hH8fKmI9vK+vR7m3scdcJzy12qHFij7U6KNoC+f2bgTbc6V0CFpKiilzvLIq3nr1b3
+         doVUZaeHiEUkpuMJSGSEkY2VDAkkQAnJZlWZmcnrTeitztb5oTO5ExFJ5yFfz6hslTUA
+         8WlHCZCnWR0ae4BicnNqRU6Blop5hZfXuN9aIwOwgnKcaiZwkvbPVj0/JxMFDYwt/ePC
+         EEF2Qxu8e9LKvQDvJ2srFSSxB1My8ZKpEy35az/4vyg75Z3GX/sCN2xnpZgGP++ju3ez
+         L5LYEo5xs9VAqeNSr/KyyKuJdV7O6H+bnG8hI2hIOg0daUy3D75GO05g72Hekq6/OC1s
+         ra5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUgRzySfsNiSrtXHloG7qWXpmBGh4V9mVTjZWM1RY+ZMLx3tuHh0eemRppkIhUvv3oHmpbDjlVLqQ==@vger.kernel.org, AJvYcCWnKOB+zkZ4859vLBiQAedWT56XUM0g0JboUmQWlh4Cgp9kH4LIv7eSKbWKTMyNGKJbsIRArKZCV5i6SILvGw==@vger.kernel.org, AJvYcCXyISTw9HX2gYTsE30UIo4d9oKxnJ2bCpvBv8X/5HiKLnD7ztNPAsi/4RURjno1ADzWNmfUziJxbi2KyNtT@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3qst5fbTvvYOCa/rsSE8w/7omsr8cDvk/uKxnqW+2et1bLT2l
+	kUSCuw+K0pXjOiihlPHaWKYq1kTSHfTdVRKP1QKpLBjwivvXOkM6e5Fn49LDWIfdVhzlNs+eQOR
+	SEMSsZv11nhDnG6H9Ovai/pxlCBO2jYlu
+X-Gm-Gg: ASbGncvcVLLwaAfqA8SPWnLeG5Q66AI1M1Xu+1S2XzexYaVsOHU1RV3jESbsa99kfVb
+	9C0vVkhkclEff/VYHUkfGjqgWxu80SkxPnDhJ6q1HKNgBoDeAhEJDL9RAHdqBnaqIeAeXDd1DjQ
+	Ysha7cULFZUJdVzgGa9FLFYhe8iAWIRuaWja7Z+A==
+X-Google-Smtp-Source: AGHT+IHq4qLBz9m2NFhBpeqJ4xzYrCtbHSLby1iC6TO1KwEL2ALcorCpci5X/OlhxzeL2mxeMbL7CXJXSKSSCVGVnxU=
+X-Received: by 2002:a05:6512:3b07:b0:544:13e0:d5b4 with SMTP id
+ 2adb3069b0e04-54838ede5b9mr1329754e87.10.1740151187041; Fri, 21 Feb 2025
+ 07:19:47 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <40203778-f217-6789-9c83-ebed3720627b@huaweicloud.com>
+From: Moinak Bhattacharyya <moinakb001@gmail.com>
+Date: Fri, 21 Feb 2025 09:19:35 -0600
+X-Gm-Features: AWEUYZnvdT7tjZcJDsWqhEFZoe3RD5rXqne-b-tMkyFB4ytnTpybHbigd0_tFjA
+Message-ID: <CAKXrOwbkMUo9KJd7wHjcFzJieTFj6NPWPp0vD_SgdS3h33Wdsg@mail.gmail.com>
+Subject: [PATCH] Fuse: Add backing file support for uring_cmd
+To: Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 21 Feb  9:27, Yu Kuai wrote:
-> > The issue with the next pointer seems to be fixed with your change.
-> > Though I am still unclear how the 2nd potential issue I mentioned -
-> > where the current item would be freed concurrently by mddev_free() - is
-> > prevented. I am not finding anything in the code that seems to prevent a
-> > concurrent call to mddev_free() for the current item in the
-> > list_for_each_entry() loop (and therefore accessing mddev after the
-> > kfree()).
-> > 
-> > I understand that we are getting a reference through the active atomic
-> > in mddev_get() under the lock in md_notify_reboot() but how is that
-> > preventing mddev_free() from freeing the mddev as soon as we release the
-> > all_mddevs_lock in the loop?
-> > 
-> > I am not not familiar with this code so I am most likely missing
-> > osmething but if you had the time to explain, that would be very
-> > helpful.
-> 
-> I'm not quite sure what you're confused. mddev lifetime are both
-> protected by lock and reference.
-> 
-> In this case:
-> 
-> hold lock
-> get first mddev
-> release lock
-> // handle first mddev
-> 
-> hold lock
-> release mddev
-> get next mddev
-> release lock
-> -> mddev can be freed now
-> // handle the next mddev
-> ...
-> 
+Add support for opening and closing backing files in the
+fuse_uring_cmd callback. Store backing_map (for open) and backing_id
+(for close) in the uring_cmd data.
+---
+ fs/fuse/dev_uring.c       | 50 +++++++++++++++++++++++++++++++++++++++
+ include/uapi/linux/fuse.h |  6 +++++
+ 2 files changed, 56 insertions(+)
 
-In my original message, I mentioned 2 potential issues
-Let's say md_notify_reboot() is handling mddev N from the all_mddevs
-list.
+diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
+index ebd2931b4f2a..df73d9d7e686 100644
+--- a/fs/fuse/dev_uring.c
++++ b/fs/fuse/dev_uring.c
+@@ -1033,6 +1033,40 @@ fuse_uring_create_ring_ent(struct io_uring_cmd *cmd,
+  return ent;
+ }
 
-1) The GPF we pasted in the original message happened when mddev_free()
-is called concurrently for mddev N+1. This lead to the GPF since the cpu
-would try to load the list poisoned values from the 'n' pointer.
++/*
++ * Register new backing file for passthrough, getting backing map
+from URING_CMD data
++ */
++static int fuse_uring_backing_open(struct io_uring_cmd *cmd,
++ unsigned int issue_flags, struct fuse_conn *fc)
++{
++ const struct fuse_backing_map *map = io_uring_sqe_cmd(cmd->sqe);
++ int ret = fuse_backing_open(fc, map);
++
++ if (ret < 0) {
++ return ret;
++ }
++
++ io_uring_cmd_done(cmd, ret, 0, issue_flags);
++ return 0;
++}
++
++/*
++ * Remove file from passthrough tracking, getting backing_id from
+URING_CMD data
++ */
++static int fuse_uring_backing_close(struct io_uring_cmd *cmd,
++ unsigned int issue_flags, struct fuse_conn *fc)
++{
++ const int *backing_id = io_uring_sqe_cmd(cmd->sqe);
++ int ret = fuse_backing_close(fc, *backing_id);
++
++ if (ret < 0) {
++ return ret;
++ }
++
++ io_uring_cmd_done(cmd, ret, 0, issue_flags);
++ return 0;
++}
++
+ /*
+  * Register header and payload buffer with the kernel and puts the
+  * entry as "ready to get fuse requests" on the queue
+@@ -1144,6 +1178,22 @@ int fuse_uring_cmd(struct io_uring_cmd *cmd,
+unsigned int issue_flags)
+  return err;
+  }
+  break;
++ case FUSE_IO_URING_CMD_BACKING_OPEN:
++ err = fuse_uring_backing_open(cmd, issue_flags, fc);
++ if (err) {
++ pr_info_once("FUSE_IO_URING_CMD_BACKING_OPEN failed err=%d\n",
++     err);
++ return err;
++ }
++ break;
++ case FUSE_IO_URING_CMD_BACKING_CLOSE:
++ err = fuse_uring_backing_close(cmd, issue_flags, fc);
++ if (err) {
++ pr_info_once("FUSE_IO_URING_CMD_BACKING_CLOSE failed err=%d\n",
++     err);
++ return err;
++ }
++ break;
+  default:
+  return -EINVAL;
+  }
+diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
+index 5e0eb41d967e..634265da1328 100644
+--- a/include/uapi/linux/fuse.h
++++ b/include/uapi/linux/fuse.h
+@@ -1264,6 +1264,12 @@ enum fuse_uring_cmd {
 
-Your patch definitely fixes this race and we cannot reproduce the GPF
-anymore.
+  /* commit fuse request result and fetch next request */
+  FUSE_IO_URING_CMD_COMMIT_AND_FETCH = 2,
++
++ /* add new backing file for passthrough */
++ FUSE_IO_URING_CMD_BACKING_OPEN = 3,
++
++ /* remove passthrough file by backing_id */
++ FUSE_IO_URING_CMD_BACKING_CLOSE = 4,
+ };
 
-2) Instead of mddev_free() being called for mddev N+1 like in 1, I wonder
-what's preventing mddev_free() being called for mddev N (the one we're
-iterating about). Something like
-
-CPU1							CPU2
-list_for_each_entry(mddev, &all_mddevs, all_mddevs) {
-if (!mddev_get(mddev))
-    continue;
-spin_unlock(&all_mddevs_lock);
-						        mddev_free(mddev) (same mddev as CPU1)
-
-mddev_free() does not check the active atomic, or acquire the
-reconfig_mutex/md_lock and will kfree() mddev. So the loop execution
-on CPU1 after spin_unlock() could be a UAF.
-
-So I was wondering if you could clarify what is preventing race 2?
-i.e what is preventing mddev_free(mddev) from being calling kfree(mddev)
-while the md_notify_reboot() loop is handling mddev.
-
--- 
-Guillaume Morin <guillaume@morinfr.org>
+ /**
+--
+2.39.5 (Apple Git-154)
 
