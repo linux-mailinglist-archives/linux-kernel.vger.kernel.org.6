@@ -1,211 +1,180 @@
-Return-Path: <linux-kernel+bounces-525635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7CA8A3F293
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 11:54:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07B40A3F29D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 12:02:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D655516E96F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:54:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E99F1700B20
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 11:02:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 712D6207A15;
-	Fri, 21 Feb 2025 10:54:44 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEF062080E8;
+	Fri, 21 Feb 2025 11:02:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="MurHizg3"
+Received: from smtp-fw-52004.amazon.com (smtp-fw-52004.amazon.com [52.119.213.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92C6720102C
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 10:54:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4170B1EB1A6;
+	Fri, 21 Feb 2025 11:02:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740135284; cv=none; b=ZOXMBWrc5y070fTxFIb5YKEVy/d3rzURmRm6pSufg7dCdqFyTpgcirBjMRcxQ0sH/yzuTl6X1yOPtmavTssuRcRj3pcgwsYIqNMEpMgPvPyP2OXItF43YyD4UVm1lHDSbJz8tCt0nI5UuZRHIV7WMeSiV4WsT+DcwxAuYL9+HM0=
+	t=1740135749; cv=none; b=LejdgP048zqsHeA88GtAeQ2W+VlGZezFvLVtRmoBPp6hOk5w8GfDGapjzL+1qb7g3iVGIeFLOJPI1QQvycUU43/P5LvG3k4qRtTMIVUWKPB0NYTSMjt91f6KtJlbZcC4HrUustSe+YdSDQmZK5CqHNrl13MeDw6HIdyKdnpHA+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740135284; c=relaxed/simple;
-	bh=+nf6EkVyuqBxAPQJOfjGJo4CTW87TwhHGYBAflrbPWY=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=PMZ3LrRmnaTGk93Sespq4xOG0c5kvrWKyrwpcuPt1yrOMdLOaUAUrAaWXrfhaC41A/W8f/bXNXsyZerBHsf9Wmhb2mLjKglV6mMZCFoRN18jyzsoGX6M7t1EZgJX2ASMhBwLMhXgYtr36Dik2u1YIASw/u3bET3jP302J3I8GC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4Yzn2c018bz1GDfg;
-	Fri, 21 Feb 2025 18:49:59 +0800 (CST)
-Received: from kwepemd200014.china.huawei.com (unknown [7.221.188.8])
-	by mail.maildlp.com (Postfix) with ESMTPS id 9DECE180087;
-	Fri, 21 Feb 2025 18:54:38 +0800 (CST)
-Received: from localhost.localdomain (10.50.165.33) by
- kwepemd200014.china.huawei.com (7.221.188.8) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Fri, 21 Feb 2025 18:54:37 +0800
-From: Yicong Yang <yangyicong@huawei.com>
-To: <suzuki.poulose@arm.com>, <jonathan.cameron@huawei.com>,
-	<linux-kernel@vger.kernel.org>
-CC: <shenyang39@huawei.com>, <moubingquan@huawei.com>,
-	<prime.zeng@hisilicon.com>, <yangyicong@hisilicon.com>, <linuxarm@huawei.com>
-Subject: [PATCH] hwtracing: hisi_ptt: Initialize the filter sysfs attribute when allocation
-Date: Fri, 21 Feb 2025 18:54:49 +0800
-Message-ID: <20250221105449.64892-1-yangyicong@huawei.com>
-X-Mailer: git-send-email 2.31.0
+	s=arc-20240116; t=1740135749; c=relaxed/simple;
+	bh=eNLkknFRSmBxOet24bmBXoewQoMVBIWYBNaTmtsnYTE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=WDVmaphPs9J/uLNJpU2pZHJSYRbG4xti8QjLy3fVESJ6KZs7SJNY9YYXmm64fHrx3FRrKWZ6xjZ7Em+G6mj1+g/L7cvei00GX1//oKmZVewM2iN+pwQ245FOMfxcgPSHZcNADRGEgGCWLFr2rMi//rfU6NXcyLeE9IsfqxwI1kM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=MurHizg3; arc=none smtp.client-ip=52.119.213.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1740135748; x=1771671748;
+  h=message-id:date:mime-version:reply-to:subject:to:cc:
+   references:from:in-reply-to:content-transfer-encoding;
+  bh=wVZmmrzgZqCCthLth4G92Wt3dsta5fcgtbs4H+qCwfI=;
+  b=MurHizg3kjSv9jQIf6F8ot4q+OWuloVaFs7XWnSC09xTGkJGTAzXnX21
+   dxymkKDH4NK/gZxwcyIHdm/xMqOI2iboBNbvSXZ9p1hC4Ugnurw3IFy0v
+   YdsCQZGCjnohyPMo7J/erb2NfsKrXFTretxT4Gcxl4Nspii2wNp5YA2rA
+   w=;
+X-IronPort-AV: E=Sophos;i="6.13,304,1732579200"; 
+   d="scan'208";a="273223897"
+Received: from iad12-co-svc-p1-lb1-vlan2.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.43.8.2])
+  by smtp-border-fw-52004.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Feb 2025 11:02:24 +0000
+Received: from EX19MTAEUC002.ant.amazon.com [10.0.10.100:44889]
+ by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.35.107:2525] with esmtp (Farcaster)
+ id f351c569-4f9b-48af-8480-bb025a5a6c0a; Fri, 21 Feb 2025 11:02:23 +0000 (UTC)
+X-Farcaster-Flow-ID: f351c569-4f9b-48af-8480-bb025a5a6c0a
+Received: from EX19D022EUC002.ant.amazon.com (10.252.51.137) by
+ EX19MTAEUC002.ant.amazon.com (10.252.51.181) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.39;
+ Fri, 21 Feb 2025 11:02:23 +0000
+Received: from [192.168.7.129] (10.106.83.15) by EX19D022EUC002.ant.amazon.com
+ (10.252.51.137) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14; Fri, 21 Feb 2025
+ 11:02:21 +0000
+Message-ID: <f820b630-13c1-4164-baa8-f5e8231612d1@amazon.com>
+Date: Fri, 21 Feb 2025 11:02:20 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemd200014.china.huawei.com (7.221.188.8)
+User-Agent: Mozilla Thunderbird
+Reply-To: <kalyazin@amazon.com>
+Subject: Re: [RFC PATCH 0/6] KVM: x86: async PF user
+To: Sean Christopherson <seanjc@google.com>
+CC: <pbonzini@redhat.com>, <corbet@lwn.net>, <tglx@linutronix.de>,
+	<mingo@redhat.com>, <bp@alien8.de>, <dave.hansen@linux.intel.com>,
+	<hpa@zytor.com>, <rostedt@goodmis.org>, <mhiramat@kernel.org>,
+	<mathieu.desnoyers@efficios.com>, <kvm@vger.kernel.org>,
+	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-trace-kernel@vger.kernel.org>, <jthoughton@google.com>,
+	<david@redhat.com>, <peterx@redhat.com>, <oleg@redhat.com>,
+	<vkuznets@redhat.com>, <gshan@redhat.com>, <graf@amazon.de>,
+	<jgowans@amazon.com>, <roypat@amazon.co.uk>, <derekmn@amazon.com>,
+	<nsaenz@amazon.es>, <xmarcalx@amazon.com>
+References: <20241118123948.4796-1-kalyazin@amazon.com>
+ <Z6u-WdbiW3n7iTjp@google.com>
+ <a7080c07-0fc5-45ce-92f7-5f432a67bc63@amazon.com>
+ <Z7X2EKzgp_iN190P@google.com>
+ <6eddd049-7c7a-406d-b763-78fa1e7d921b@amazon.com>
+ <Z7d5HT7FpE-ZsHQ9@google.com>
+Content-Language: en-US
+From: Nikita Kalyazin <kalyazin@amazon.com>
+Autocrypt: addr=kalyazin@amazon.com; keydata=
+ xjMEY+ZIvRYJKwYBBAHaRw8BAQdA9FwYskD/5BFmiiTgktstviS9svHeszG2JfIkUqjxf+/N
+ JU5pa2l0YSBLYWx5YXppbiA8a2FseWF6aW5AYW1hem9uLmNvbT7CjwQTFggANxYhBGhhGDEy
+ BjLQwD9FsK+SyiCpmmTzBQJnrNfABQkFps9DAhsDBAsJCAcFFQgJCgsFFgIDAQAACgkQr5LK
+ IKmaZPOpfgD/exazh4C2Z8fNEz54YLJ6tuFEgQrVQPX6nQ/PfQi2+dwBAMGTpZcj9Z9NvSe1
+ CmmKYnYjhzGxzjBs8itSUvWIcMsFzjgEY+ZIvRIKKwYBBAGXVQEFAQEHQCqd7/nb2tb36vZt
+ ubg1iBLCSDctMlKHsQTp7wCnEc4RAwEIB8J+BBgWCAAmFiEEaGEYMTIGMtDAP0Wwr5LKIKma
+ ZPMFAmes18AFCQWmz0MCGwwACgkQr5LKIKmaZPNTlQEA+q+rGFn7273rOAg+rxPty0M8lJbT
+ i2kGo8RmPPLu650A/1kWgz1AnenQUYzTAFnZrKSsXAw5WoHaDLBz9kiO5pAK
+In-Reply-To: <Z7d5HT7FpE-ZsHQ9@google.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: EX19D013EUB004.ant.amazon.com (10.252.51.92) To
+ EX19D022EUC002.ant.amazon.com (10.252.51.137)
 
-From: Yicong Yang <yangyicong@hisilicon.com>
+On 20/02/2025 18:49, Sean Christopherson wrote:
+> On Thu, Feb 20, 2025, Nikita Kalyazin wrote:
+>> On 19/02/2025 15:17, Sean Christopherson wrote:
+>>> On Wed, Feb 12, 2025, Nikita Kalyazin wrote:
+>>> The conundrum with userspace async #PF is that if userspace is given only a single
+>>> bit per gfn to force an exit, then KVM won't be able to differentiate between
+>>> "faults" that will be handled synchronously by the vCPU task, and faults that
+>>> usersepace will hand off to an I/O task.  If the fault is handled synchronously,
+>>> KVM will needlessly inject a not-present #PF and a present IRQ.
+>>
+>> Right, but from the guest's point of view, async PF means "it will probably
+>> take a while for the host to get the page, so I may consider doing something
+>> else in the meantime (ie schedule another process if available)".
+> 
+> Except in this case, the guest never gets a chance to run, i.e. it can't do
+> something else.  From the guest point of view, if KVM doesn't inject what is
+> effectively a spurious async #PF, the VM-Exiting instruction simply took a (really)
+> long time to execute.
 
-The filter sysfs attribute is initialized when creating to the sysfs.
-This is unnecessary and could be done when allocation without
-distinguishing the filter type.
+Sorry, I didn't get that.  If userspace learns from the 
+kvm_run::memory_fault::flags that the exit is due to an async PF, it 
+should call kvm run immediately, inject the not-present PF and allow the 
+guest to reschedule.  What do you mean by "the guest never gets a chance 
+to run"?
 
-After the changes above, we don't need a wrapper for initializing and
-registering the filter's sysfs attributes. Remove them and call the
-sysfs creating/removing functions in place.
+>> If we are exiting to userspace, it isn't going to be quick anyway, so we can
+>> consider all such faults "long" and warranting the execution of the async PF
+>> protocol.  So always injecting a not-present #PF and page ready IRQ doesn't
+>> look too wrong in that case.
+> 
+> There is no "wrong", it's simply wasteful.  The fact that the userspace exit is
+> "long" is completely irrelevant.  Decompressing zswap is also slow, but it is
+> done on the current CPU, i.e. is not background I/O, and so doesn't trigger async
+> #PFs.
+> 
+> In the guest, if host userspace resolves the fault before redoing KVM_RUN, the
+> vCPU will get two events back-to-back: an async #PF, and an IRQ signalling completion
+> of that #PF.
 
-Signed-off-by: Yicong Yang <yangyicong@hisilicon.com>
----
- drivers/hwtracing/ptt/hisi_ptt.c | 92 ++++++++++----------------------
- 1 file changed, 29 insertions(+), 63 deletions(-)
+Is this practically likely?  At least in our scenario (Firecracker 
+snapshot restore) and probably in live migration postcopy, if a vCPU 
+hits a fault, it's probably because the content of the page is somewhere 
+remote (eg on the source machine or wherever the snapshot data is 
+stored) and isn't going to be available quickly.  Conversely, if the 
+page content is available, it must have already been prepopulated into 
+guest memory pagecache, the bit in the bitmap is cleared and no exit to 
+userspace occurs.
 
-diff --git a/drivers/hwtracing/ptt/hisi_ptt.c b/drivers/hwtracing/ptt/hisi_ptt.c
-index 3090479a2979..83cf84cc6df9 100644
---- a/drivers/hwtracing/ptt/hisi_ptt.c
-+++ b/drivers/hwtracing/ptt/hisi_ptt.c
-@@ -368,6 +368,19 @@ static void hisi_ptt_del_free_filter(struct hisi_ptt *hisi_ptt,
- 	kfree(filter);
- }
- 
-+static ssize_t hisi_ptt_filter_show(struct device *dev, struct device_attribute *attr,
-+				    char *buf)
-+{
-+	struct hisi_ptt_filter_desc *filter;
-+	unsigned long filter_val;
-+
-+	filter = container_of(attr, struct hisi_ptt_filter_desc, attr);
-+	filter_val = hisi_ptt_get_filter_val(filter->devid, filter->is_port) |
-+		     (filter->is_port ? HISI_PTT_PMU_FILTER_IS_PORT : 0);
-+
-+	return sysfs_emit(buf, "0x%05lx\n", filter_val);
-+}
-+
- static struct hisi_ptt_filter_desc *
- hisi_ptt_alloc_add_filter(struct hisi_ptt *hisi_ptt, u16 devid, bool is_port)
- {
-@@ -396,6 +409,11 @@ hisi_ptt_alloc_add_filter(struct hisi_ptt *hisi_ptt, u16 devid, bool is_port)
- 	filter->is_port = is_port;
- 	filter->devid = devid;
- 
-+	sysfs_attr_init(&filter->attr.attr);
-+	filter->attr.attr.name = filter->name;
-+	filter->attr.attr.mode = 0400; /* DEVICE_ATTR_ADMIN_RO */
-+	filter->attr.show = hisi_ptt_filter_show;
-+
- 	if (filter->is_port) {
- 		list_add_tail(&filter->list, &hisi_ptt->port_filters);
- 
-@@ -408,74 +426,18 @@ hisi_ptt_alloc_add_filter(struct hisi_ptt *hisi_ptt, u16 devid, bool is_port)
- 	return filter;
- }
- 
--static ssize_t hisi_ptt_filter_show(struct device *dev, struct device_attribute *attr,
--				    char *buf)
--{
--	struct hisi_ptt_filter_desc *filter;
--	unsigned long filter_val;
--
--	filter = container_of(attr, struct hisi_ptt_filter_desc, attr);
--	filter_val = hisi_ptt_get_filter_val(filter->devid, filter->is_port) |
--		     (filter->is_port ? HISI_PTT_PMU_FILTER_IS_PORT : 0);
--
--	return sysfs_emit(buf, "0x%05lx\n", filter_val);
--}
--
--static int hisi_ptt_create_rp_filter_attr(struct hisi_ptt *hisi_ptt,
--					  struct hisi_ptt_filter_desc *filter)
--{
--	struct kobject *kobj = &hisi_ptt->hisi_ptt_pmu.dev->kobj;
--
--	sysfs_attr_init(&filter->attr.attr);
--	filter->attr.attr.name = filter->name;
--	filter->attr.attr.mode = 0400; /* DEVICE_ATTR_ADMIN_RO */
--	filter->attr.show = hisi_ptt_filter_show;
--
--	return sysfs_add_file_to_group(kobj, &filter->attr.attr,
--				       HISI_PTT_RP_FILTERS_GRP_NAME);
--}
--
--static void hisi_ptt_remove_rp_filter_attr(struct hisi_ptt *hisi_ptt,
--					  struct hisi_ptt_filter_desc *filter)
--{
--	struct kobject *kobj = &hisi_ptt->hisi_ptt_pmu.dev->kobj;
--
--	sysfs_remove_file_from_group(kobj, &filter->attr.attr,
--				     HISI_PTT_RP_FILTERS_GRP_NAME);
--}
--
--static int hisi_ptt_create_req_filter_attr(struct hisi_ptt *hisi_ptt,
--					   struct hisi_ptt_filter_desc *filter)
--{
--	struct kobject *kobj = &hisi_ptt->hisi_ptt_pmu.dev->kobj;
--
--	sysfs_attr_init(&filter->attr.attr);
--	filter->attr.attr.name = filter->name;
--	filter->attr.attr.mode = 0400; /* DEVICE_ATTR_ADMIN_RO */
--	filter->attr.show = hisi_ptt_filter_show;
--
--	return sysfs_add_file_to_group(kobj, &filter->attr.attr,
--				       HISI_PTT_REQ_FILTERS_GRP_NAME);
--}
--
--static void hisi_ptt_remove_req_filter_attr(struct hisi_ptt *hisi_ptt,
--					   struct hisi_ptt_filter_desc *filter)
--{
--	struct kobject *kobj = &hisi_ptt->hisi_ptt_pmu.dev->kobj;
--
--	sysfs_remove_file_from_group(kobj, &filter->attr.attr,
--				     HISI_PTT_REQ_FILTERS_GRP_NAME);
--}
--
- static int hisi_ptt_create_filter_attr(struct hisi_ptt *hisi_ptt,
- 				       struct hisi_ptt_filter_desc *filter)
- {
-+	struct kobject *kobj = &hisi_ptt->hisi_ptt_pmu.dev->kobj;
- 	int ret;
- 
- 	if (filter->is_port)
--		ret = hisi_ptt_create_rp_filter_attr(hisi_ptt, filter);
-+		ret = sysfs_add_file_to_group(kobj, &filter->attr.attr,
-+					      HISI_PTT_RP_FILTERS_GRP_NAME);
- 	else
--		ret = hisi_ptt_create_req_filter_attr(hisi_ptt, filter);
-+		ret = sysfs_add_file_to_group(kobj, &filter->attr.attr,
-+					      HISI_PTT_REQ_FILTERS_GRP_NAME);
- 
- 	if (ret)
- 		pci_err(hisi_ptt->pdev, "failed to create sysfs attribute for filter %s\n",
-@@ -487,10 +449,14 @@ static int hisi_ptt_create_filter_attr(struct hisi_ptt *hisi_ptt,
- static void hisi_ptt_remove_filter_attr(struct hisi_ptt *hisi_ptt,
- 					struct hisi_ptt_filter_desc *filter)
- {
-+	struct kobject *kobj = &hisi_ptt->hisi_ptt_pmu.dev->kobj;
-+
- 	if (filter->is_port)
--		hisi_ptt_remove_rp_filter_attr(hisi_ptt, filter);
-+		sysfs_remove_file_from_group(kobj, &filter->attr.attr,
-+					     HISI_PTT_RP_FILTERS_GRP_NAME);
- 	else
--		hisi_ptt_remove_req_filter_attr(hisi_ptt, filter);
-+		sysfs_remove_file_from_group(kobj, &filter->attr.attr,
-+					     HISI_PTT_REQ_FILTERS_GRP_NAME);
- }
- 
- static void hisi_ptt_remove_all_filter_attributes(void *data)
--- 
-2.24.0
+>>>> What advantage can you see in it over exiting to userspace (which already exists
+>>>> in James's series)?
+>>>
+>>> It doesn't exit to userspace :-)
+>>>
+>>> If userspace simply wakes a different task in response to the exit, then KVM
+>>> should be able to wake said task, e.g. by signalling an eventfd, and resume the
+>>> guest much faster than if the vCPU task needs to roundtrip to userspace.  Whether
+>>> or not such an optimization is worth the complexity is an entirely different
+>>> question though.
+>>
+>> This reminds me of the discussion about VMA-less UFFD that was coming up
+>> several times, such as [1], but AFAIK hasn't materialised into something
+>> actionable.  I may be wrong, but James was looking into that and couldn't
+>> figure out a way to scale it sufficiently for his use case and had to stick
+>> with the VM-exit-based approach.  Can you see a world where VM-exit
+>> userfaults coexist with no-VM-exit way of handling async PFs?
+> 
+> The issue with UFFD is that it's difficult to provide a generic "point of contact",
+> whereas with KVM userfault, signalling can be tied to the vCPU, and KVM can provide
+> per-vCPU buffers/structures to aid communication.
+> 
+> That said, supporting "exitless" KVM userfault would most definitely be premature
+> optimization without strong evidence it would benefit a real world use case.
 
+Does that mean that the "exitless" solution for async PF is a long-term 
+one (if required), while the short-term would still be "exitful" (if we 
+find a way to do it sensibly)?
 
