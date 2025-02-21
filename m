@@ -1,275 +1,231 @@
-Return-Path: <linux-kernel+bounces-527124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CA0EA407AE
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 11:57:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E857A407B1
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 11:57:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69DED42525F
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 10:57:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70FF719C70B0
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 10:57:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87636208977;
-	Sat, 22 Feb 2025 10:57:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C266208986;
+	Sat, 22 Feb 2025 10:57:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Ty+KarZK"
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="GYXp/GXq"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 696ED205E04
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 10:57:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8EF6205E04
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 10:57:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740221842; cv=none; b=onG8Nyo3frkxb57p92iyLP0Ox1LrcHE8DVardGACbTtymyxTtgGL0FTFDI1WUAe06g/ztLpUvAHjSU4WIJr4b0YxmqOiKikqwAd3DzRkOrPjtwpo0FMy4C+WUKJiOT+UGktjRDpo6N+lURZaM7AZPAwTH+FwxLaXPjT3pL4oRWw=
+	t=1740221850; cv=none; b=XI/lhORvwk2HJXaezpptgeycdT6G1eXZ0stRuHnlljdrJJv3uW2c+tOLmPpO0oiDqAKUXw9GwP/HuV+jJHGOZhKLufnrpjhvv3sJQWjtikDOHx5tVTI7oiB9Pq2QZ3n6AilRNFaFPIL702hGsFgcVMQGuz1S4JWvLSncXLpFW2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740221842; c=relaxed/simple;
-	bh=OJnn5cS0MRDvMVptc0oW4WIGYXfLMxTM9P15OxLT2iU=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=XdVcahwVuhKmx0Wx2/nZNaBex1DMYFG/zNJ0zTmVTwDf+TJmP51H8qiOWN98hIKvtGJctZxaDdnEU6g2xenLM7dYeE+T9fTCDsfJxhpOWgHwKqgTS/TlaYd0Jj8Ii1mN/1W1haIhvepYzK54mPiVhqx7hOLuonkEOGKZK/1yXFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Ty+KarZK; arc=none smtp.client-ip=203.254.224.24
+	s=arc-20240116; t=1740221850; c=relaxed/simple;
+	bh=e0erdF0twJYNSVrbGQobI/jjDPZ3kjL8JPlHMSiooE0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=l13GStFTl6Q2RNwqzjQ3QXjLHaC1NJIKtegC0r5cN+R/ffI4Dus1WfesKgRlUDHA5loeBtsc5EblefwnczDgQqSucu+JKjT7S//rWByCiZEBzxpUJbHG8QNxfimmORH9SGkS61jnobUKLfLHOl9yQfKJ2iaHWZY/Q98anOpjO2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=GYXp/GXq; arc=none smtp.client-ip=203.254.224.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250222105713epoutp018a797d2621a9a29890c4f71b26498660~mgol7Wjzd2414424144epoutp01B
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 10:57:13 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250222105713epoutp018a797d2621a9a29890c4f71b26498660~mgol7Wjzd2414424144epoutp01B
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250222105720epoutp0357f25e106fd48c9af529d9d623bda215~mgotPl5TS0298602986epoutp03S
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 10:57:20 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250222105720epoutp0357f25e106fd48c9af529d9d623bda215~mgotPl5TS0298602986epoutp03S
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1740221833;
-	bh=i5aDg870JR0h8YgZiOQ6UQwWW+YSdG8hHILX/AshJZA=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=Ty+KarZK02xDe4cZptje/kYFBVRZGjrOhB8j7R3k2lmHLhfozUvKafJpaCICLZjdo
-	 sILI7vCx5EAcuaspR1bETe6GOSqvo0jJar/SrOrhcQKHpp8MgaHUhtaB6J163BDnA9
-	 Keqo7q46Rmou476SIiKHhrHR+yUjiSZCyHQrJD50=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
-	20250222105711epcas5p41d3105a43475cede325a637eb79eebae~mgokhlM4v2991529915epcas5p48;
-	Sat, 22 Feb 2025 10:57:11 +0000 (GMT)
-Received: from epsmges5p3new.samsung.com (unknown [182.195.38.176]) by
-	epsnrtp2.localdomain (Postfix) with ESMTP id 4Z0P8P3VGCz4x9Pt; Sat, 22 Feb
-	2025 10:57:09 +0000 (GMT)
-Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
-	epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	23.6C.19956.58DA9B76; Sat, 22 Feb 2025 19:57:09 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	s=mail20170921; t=1740221840;
+	bh=GDrRxJdDKDeQsLoUyWU3HU1LlEhYeBjbVEKvneEwPbA=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=GYXp/GXqD2Dic8EuXYEAysvkDYMeGSY6HiwnB7lrUzsjwPH2I5Ri2br086yu0o6Z5
+	 DRoYb/nrHDIxOtRLoqabNnvczSBlTYr5R5m6Qt4XQ8T610GLftTVQILWsJ77RpzAsE
+	 rjalYyCBZdHGaU1l2N/lqxghkwRorDzrCjC/4y08=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTP id
+	20250222105720epcas5p30631c60540b66daefad7ce8b0694f303~mgosqZVgq0573205732epcas5p3p;
+	Sat, 22 Feb 2025 10:57:20 +0000 (GMT)
+Received: from epsmgec5p1new.samsung.com (unknown [182.195.38.176]) by
+	epsnrtp4.localdomain (Postfix) with ESMTP id 4Z0P8Z29D0z4x9Pv; Sat, 22 Feb
+	2025 10:57:18 +0000 (GMT)
+Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
+	epsmgec5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	BF.F1.19710.E8DA9B76; Sat, 22 Feb 2025 19:57:18 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
 	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-	20250221125625epcas5p4afd134f2b673c6d4fc837bae639a7272~mOnZBkIaO1178211782epcas5p4O;
-	Fri, 21 Feb 2025 12:56:25 +0000 (GMT)
-Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20250221125625epsmtrp1642093dff4eb31cf9ab88e24b1e666ad~mOnZAezKy1665716657epsmtrp1e;
-	Fri, 21 Feb 2025 12:56:25 +0000 (GMT)
-X-AuditID: b6c32a4b-fe9f470000004df4-04-67b9ad85e2ee
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	97.C5.23488.9F778B76; Fri, 21 Feb 2025 21:56:25 +0900 (KST)
-Received: from FDSFTE596 (unknown [107.122.82.131]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250221125622epsmtip1a5aa8f5bee732437a75f9687a24a5609~mOnWNEp4Z1852718527epsmtip1H;
-	Fri, 21 Feb 2025 12:56:22 +0000 (GMT)
-From: "Swathi K S" <swathi.ks@samsung.com>
-To: "'Russell King \(Oracle\)'" <linux@armlinux.org.uk>
-Cc: <krzk+dt@kernel.org>, <andrew+netdev@lunn.ch>, <davem@davemloft.net>,
-	<edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
-	<robh@kernel.org>, <conor+dt@kernel.org>, <richardcochran@gmail.com>,
-	<mcoquelin.stm32@gmail.com>, <alexandre.torgue@foss.st.com>,
-	<netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-stm32@st-md-mailman.stormreply.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<pankaj.dubey@samsung.com>, <ravi.patel@samsung.com>, <gost.dev@samsung.com>
-In-Reply-To: <Z7hoWHfMCMEABJlp@shell.armlinux.org.uk>
-Subject: RE: [PATCH v7 2/2] net: stmmac: dwc-qos: Add FSD EQoS support
-Date: Fri, 21 Feb 2025 18:26:15 +0530
-Message-ID: <02bb01db8460$03c4d640$0b4e82c0$@samsung.com>
+	20250221132011epcas5p4dea1e9ae5c09afaabcd1822f3a7d15c5~mO8JJOwUe2791427914epcas5p4r;
+	Fri, 21 Feb 2025 13:20:11 +0000 (GMT)
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20250221132011epsmtrp22f7624b78aa3385ffea22835fa5d06a6~mO8JIRaK91906719067epsmtrp26;
+	Fri, 21 Feb 2025 13:20:11 +0000 (GMT)
+X-AuditID: b6c32a44-363dc70000004cfe-8d-67b9ad8eb5a4
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	EB.3F.33707.B8D78B76; Fri, 21 Feb 2025 22:20:11 +0900 (KST)
+Received: from cheetah.samsungds.net (unknown [107.109.115.53]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250221132008epsmtip24b146ccec521cc047535442a2ce80e91~mO8GTgdud0684606846epsmtip2x;
+	Fri, 21 Feb 2025 13:20:08 +0000 (GMT)
+From: Shradha Todi <shradha.t@samsung.com>
+To: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-perf-users@vger.kernel.org
+Cc: manivannan.sadhasivam@linaro.org, lpieralisi@kernel.org, kw@linux.com,
+	robh@kernel.org, bhelgaas@google.com, jingoohan1@gmail.com,
+	Jonathan.Cameron@Huawei.com, fan.ni@samsung.com, nifan.cxl@gmail.com,
+	a.manzanares@samsung.com, pankaj.dubey@samsung.com, cassel@kernel.org,
+	18255117159@163.com, xueshuai@linux.alibaba.com, renyu.zj@linux.alibaba.com,
+	will@kernel.org, mark.rutland@arm.com, Shradha Todi <shradha.t@samsung.com>
+Subject: [PATCH v7 0/5] Add support for debugfs based RAS DES feature in
+ PCIe DW
+Date: Fri, 21 Feb 2025 18:45:43 +0530
+Message-Id: <20250221131548.59616-1-shradha.t@samsung.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQGZEuZRAcWsCKSMCeR5cs/NRCOZvwH8VK0qAZITr+wCOUn/kgE3KFRrAhKCh/Ozjg7NAA==
-Content-Language: en-in
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Tf1CTZRz32bt3G+a61zHiASN3r6ceFLjlGM/KaV3IvSeZeF2WWY7JXjdk
-	bLv90NkPI0M6OYFA8XQtJDAJEKTJjw2EkJDCuEGBFF0qCuP4eWAaHSDSxkbx3+f5fj+f5/P9
-	PM99ORjvMSuUk6w10QatQkOyVjJrfwgPjzxR4VQJv8sJQTMjZwEq6Xfg6HKji4FsnelMdKHV
-	hSN323026mt2MtCI9Q4LddVm48g+0Iuj7nobC2X2DuKoJb8RoIL5Chy1FT6Dpn8eB6io5hEb
-	3Zu6xkatHcMYWrjmYL/Cp7p7f8Go6tI+BuXOqWFTTuttNlVoN1P2spMs6urFTyin4yGDmmy6
-	xaKyq8sAdb1JRD20P5ew6t2ULWpaoaQNAlqbpFMma1UyMv5N+WvyaIlQFCmSohhSoFWk0jIy
-	9vWEyLhkjScmKTis0Jg9pQSF0Uhu2rrFoDObaIFaZzTJSFqv1OjF+iijItVo1qqitLTpJZFQ
-	+GK0h5iYor4yOcXS5260dFVa8TQwsDYTBHAgIYbnWutAJljJ4RENAGbOu3Df4S8Aj19t93em
-	AXTPPWAuSRZ+L2X5Go0Aljxw+yXDAGZ0jWFeFouIgEXZTWwv5hMxMP9k6yIJI/KY8FzNEMPb
-	CCCi4Vj5JPDiQCIO9g51LAqYxHqYN1HhuYjD4RJS2DDyrLfMJVbD9vODi1NgxFpYN2HDfBMJ
-	4Iz7Eu7z2gNr0s/gPk4wvDFzCvP6QqIkAFaN3/ULYmHP3QmWDwfC0R+r2T4cCkdyMvxYDsuz
-	b/kjq+Ht2Vw/fxts7rExvbNhRDi8Ur/JVw6D+TcrGT7fp2HW3CDDV+dCR8ESXgfnx3r9V4bA
-	2m8m2V8A0rosmnVZNOuyCNb/3QoBswyE0Hpjqoo2Rus3a+kj//14ki7VDhbXICLeAe73T0W1
-	AAYHtADIwUg+N9LkUPG4SsXRD2iDTm4wa2hjC4j2PHcuFhqUpPPskdYkF4mlQrFEIhFLN0tE
-	ZDD3M2e6ikeoFCY6hab1tGFJx+AEhKYx3Ks3Ftie//TLt10sbs0A7mwoO1Bxw7AqQ/xncrNT
-	oz6G0nZNjHbu3/EPt2hPg31t8T5ZgtJiUbSc6tvQvffbfdptZ6oWGt9Atbsf59Z3WHa889bf
-	74c8FYvzy8M2zJrDL/Kk77VVHv9Jvv5Qe/fwzkMMFdI7SMnBC2GzUT1rrgdmFY/s4v9xYLRr
-	vHjn9rmh2d028rROaTWXff59UOGx0rzfXj5/NmavckWGtPwoMfPoa1w2wytdl3Vnxel7/TK8
-	sjNlv/hI0K/2m3Rd3CXiq9gqQbqw1SVMjNvqLrz8RPRqVXDxC2MzHfFw0tkVyTvxsSURC7An
-	uA6Dgza+Zc2T6Q8/QiTTqFaIIjCDUfEvWuA4Ko8EAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0hTYRjHec9l52gbnXTpq4bawBLJ6eziG0R2ATmBlGDJKMNGnabkZZ05
-	bwlZWamYXY0aq8yk0ryuZjOd5DKhDLMs07KwvCW6tFbS7GJsK/Lbn//lx/PhoXG3D4Q3nZiS
-	xvEpiiSJwJVoeCDxDbZlGJWhunYvZBs7D9CNASOJqkydGNI9zSPQlbZOEg23f6BQ3/1GDI1p
-	3wlQV0MxifSDPSTqvqcToMKeIRKZS0wAXf5VTaL2Ug803TEBUJnhK4XeTzVTqO3JRxzNNhup
-	dWK2u+cZzt6p6MPY4ZMGim3UvqXYUr2G1VcWCNjb5QfZRqMVYydbXgrY4juVgG1tkbFWvW+0
-	cLvrmj1cUmI6x4es3eWaUDs5JVCdXprZVaMlc8GgXyFwoSGzAs72VggKgSvtxjQBWPVyGnMG
-	XvDLkRLSqd1hxe9RylkaAXDgViewBwImCJYVt1B2LWbCYUlBG2kv4cxNAva29BN/sRgcrNI5
-	UC7MSjh+a9KxdmciYc/IE8eaYALgGUs1XghoWsSshk1ji+y2iFkAH10cIuw2zkjhsXrHEmf8
-	4F2LDnce5w9tw9dJ5w2x0JB3jnR2POFDWxF+Crhr55C0/0naOSTtnEUpICqBF6dSJyuTd8tU
-	shQuQ6pWJKs1KUrp7tRkPXC8QVCgEXyaPhxiBhgNzADSuEQsCk4zKt1EexRZ2RyfGs9rkji1
-	GfjQhMRTVCGTK90YpSKN28dxKo7/l2K0i3cuxu8P44cuTVANldKa3G3h1KWsTX4dVbO6qMBP
-	+QWa2TcvtvO1PzWPg9/4bIn4IlwScLrI0j3Wvzbp6MwPy+VVHqbNQfXvJ1SdmfG340LuNyUw
-	kctsseLy9PzIvMR6orzJNlXvYZspw4Wbs02Wa40lGR0Bh/Oihd8Dy8W5OTty4r3OpZuPt3p/
-	GzVX81MXzq9+GD4g32B+Pj/06oT/vMX+36N8PIV35R8PxawfGV/Sdq8s6mqoNCIiNmLTxuaw
-	Gnp0Ya96eeYB+UycKNqgOOM9Tpn6fT/vrct6tcXqtyzsinRrnzX8wrTV9LpVju00NmvqhnfO
-	5ITFdMX4n6g1pHZnB5+VEOoEhSwI59WKP1u39r11AwAA
-X-CMS-MailID: 20250221125625epcas5p4afd134f2b673c6d4fc837bae639a7272
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrBJsWRmVeSWpSXmKPExsWy7bCmum7f2p3pBpev8Fhcaf/NbjH9sKLF
+	kqYMi2MTVjBbNK2+y2qx4stMdotVC6+xWTT0/Ga12PT4GqvF5V1z2CzOzjvOZnFl6zoWi5Y/
+	LSwWd1s6WS2WXr/IZPF3215Gi0Vbv7BbLGx+yWjxf88Odovew7UWLXdMLd7/3MzmIOaxeMUU
+	Vo8189YweuycdZfdY8GmUo+WI29ZPTat6mTzuHNtD5vHzoeWHk+uTGfy2Lyk3qNvyypGj8+b
+	5AJ4orJtMlITU1KLFFLzkvNTMvPSbZW8g+Od403NDAx1DS0tzJUU8hJzU22VXHwCdN0yc4C+
+	VVIoS8wpBQoFJBYXK+nb2RTll5akKmTkF5fYKqUWpOQUmBToFSfmFpfmpevlpZZYGRoYGJkC
+	FSZkZ9w5vYalYLZqxYb7X5gaGB/IdjFyckgImEi83vKXqYuRi0NIYDejxLsX7UwgCSGBT4wS
+	u6dkQySA7IMTF7PDdKyZ08QKkdjJKHFn3nso5wujxL2+j2BVbAJaEo1fu5hBbBGBVkaJI8/E
+	QIqYBbYxSxxYsQIsISwQJPFjXRsLiM0ioCrx/e98oGYODl4BK4k9K+0htslLrN5wAKycV0BQ
+	4uTMJ2DlzEDx5q2zmSFqvnBIfJnNB2G7SCzadQPqUmGJV8e3QNlSEp/f7WWDsNMlVm6eAdWb
+	I/Ft8xImCNte4sCVOSwgJzALaEqs36UPEZaVmHpqHRPEWj6J3t9PoMp5JXbMg7GVJb783cMC
+	YUtKzDt2mRXC9pDYufkh2EghgViJ/v+2ExjlZyF5ZhaSZ2YhLF7AyLyKUTK1oDg3PTXZtMAw
+	L7UcHq3J+bmbGMFJXstlB+ON+f/0DjEycTAeYpTgYFYS4dUt2ZEuxJuSWFmVWpQfX1Sak1p8
+	iNEUGMATmaVEk/OBeSavJN7QxNLAxMzMzMTS2MxQSZy3eWdLupBAemJJanZqakFqEUwfEwen
+	VAOTyWph2UVGD0z1j0+NvfvEdnGQ413ON1OnCFx4vMfJeqvN3Mp7Kx86NXwKsN+sdkziZXTt
+	kesTTnswSfQ/W1W2UrvUr+Mf14yGGbL9V1cY802NfhC1Su7CI57OFPH5lz5En/srKjG9MXbJ
+	wbvLF2vMuPtkX2nEE4bFtdvOlN1YvEY1xMF6apLnj5CG0sSSXn3PgKUsajzVWQ/TfU7n/lD5
+	bfjrwVJLhqPcRqoTSkq8zi29HTM1wO3dCcNfq6we9H4Sbrx8ef67MN+3L8NLzveyuAo5iV1+
+	s8+BVbngfu6khvO+c9YriUadC2QxkJvBY3eiVHQx3yuDqBXzeubVRsnkfzzpt9tl19/cGTOv
+	1GuzKrEUZyQaajEXFScCAMosolJ7BAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrJIsWRmVeSWpSXmKPExsWy7bCSvG537Y50g2MLlC2utP9mt5h+WNFi
+	SVOGxbEJK5gtmlbfZbVY8WUmu8WqhdfYLBp6frNabHp8jdXi8q45bBZn5x1ns7iydR2LRcuf
+	FhaLuy2drBZLr19ksvi7bS+jxaKtX9gtFja/ZLT4v2cHu0Xv4VqLljumFu9/bmZzEPNYvGIK
+	q8eaeWsYPXbOusvusWBTqUfLkbesHptWdbJ53Lm2h81j50NLjydXpjN5bF5S79G3ZRWjx+dN
+	cgE8UVw2Kak5mWWpRfp2CVwZd06vYSmYrVqx4f4XpgbGB7JdjJwcEgImEmvmNLF2MXJxCAls
+	Z5Q4cm4FE0RCUuLzxXVQtrDEyn/P2SGKPjFKnLi3HyzBJqAl0fi1ixkkISLQySix98g7sCpm
+	gXPMEjM/tzCCVAkLBEicWbwezGYRUJX4/nc+UBEHB6+AlcSelfYQG+QlVm84wAxi8woISpyc
+	+YQFpIRZQF1i/TwhkDAzUEnz1tnMExj5ZyGpmoVQNQtJ1QJG5lWMoqkFxbnpuckFhnrFibnF
+	pXnpesn5uZsYwbGpFbSDcdn6v3qHGJk4GA8xSnAwK4nw6pbsSBfiTUmsrEotyo8vKs1JLT7E
+	KM3BoiTOq5zTmSIkkJ5YkpqdmlqQWgSTZeLglGpg4pjMtu2b3EL3R9/vnl2nEvFC55TM2YSA
+	my6J94qZeTt8782a/COa5zfzt5k3prcfseJ7luLkekH78Adlm03yN7mZkk1XMM56/M3uTPar
+	ex8KP295FMh6s2nhnKm/5osxdX5TKq3b61nX9iT1YXNdyKerQsdqYjgT+VaEJK99GX3A6He8
+	1XIWZ2vz9ffnsnQutJ2jtMajR/n7bM0NmbNmena/SZXhnfzD5alN2PFWrd0vK8Je8Blf3/b1
+	x9bwBX5/Yl/s/XhNzGKZrer2uvBbUQqvGNOWb17bYhX/xT3W2q3tpEjcHY7SxiIpxtc63+us
+	rinukH9y8IUFl3ej4vrW9/u/5z0wPMPHsW9quEntZSWW4oxEQy3mouJEAI4aFoM8AwAA
+X-CMS-MailID: 20250221132011epcas5p4dea1e9ae5c09afaabcd1822f3a7d15c5
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 X-Sendblock-Type: REQ_APPROVE
 CMS-TYPE: 105P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250220044132epcas5p305e4ed7ed1c84f9800299c2091ea0790
-References: <20250220043712.31966-1-swathi.ks@samsung.com>
-	<CGME20250220044132epcas5p305e4ed7ed1c84f9800299c2091ea0790@epcas5p3.samsung.com>
-	<20250220043712.31966-3-swathi.ks@samsung.com>
-	<Z7cimPBdZ3W9GKmI@shell.armlinux.org.uk>
-	<02b701db844c$36b7aeb0$a4270c10$@samsung.com>
-	<Z7hoWHfMCMEABJlp@shell.armlinux.org.uk>
+X-CMS-RootMailID: 20250221132011epcas5p4dea1e9ae5c09afaabcd1822f3a7d15c5
+References: <CGME20250221132011epcas5p4dea1e9ae5c09afaabcd1822f3a7d15c5@epcas5p4.samsung.com>
 
+DesignWare controller provides a vendor specific extended capability
+called RASDES as an IP feature. This extended capability  provides
+hardware information like:
+ - Debug registers to know the state of the link or controller. 
+ - Error injection mechanisms to inject various PCIe errors including
+   sequence number, CRC
+ - Statistical counters to know how many times a particular event
+   occurred
 
+However, in Linux we do not have any generic or custom support to be
+able to use this feature in an efficient manner. This is the reason we
+are proposing this framework. Debug and bring up time of high-speed IPs
+are highly dependent on costlier hardware analyzers and this solution
+will in some ways help to reduce the HW analyzer usage.
 
-> -----Original Message-----
-> From: Russell King (Oracle) <linux@armlinux.org.uk>
-> Sent: 21 February 2025 17:20
-> To: Swathi K S <swathi.ks@samsung.com>
-> Cc: krzk+dt@kernel.org; andrew+netdev@lunn.ch; davem@davemloft.net;
-> edumazet@google.com; kuba@kernel.org; pabeni@redhat.com;
-> robh@kernel.org; conor+dt@kernel.org; richardcochran@gmail.com;
-> mcoquelin.stm32@gmail.com; alexandre.torgue@foss.st.com;
-> netdev@vger.kernel.org; devicetree@vger.kernel.org; linux-stm32@st-md-
-> mailman.stormreply.com; linux-arm-kernel@lists.infradead.org; linux-
-> kernel@vger.kernel.org; pankaj.dubey@samsung.com;
-> ravi.patel@samsung.com; gost.dev@samsung.com
-> Subject: Re: [PATCH v7 2/2] net: stmmac: dwc-qos: Add FSD EQoS support
-> 
-> On Fri, Feb 21, 2025 at 04:04:25PM +0530, Swathi K S wrote:
-> >
-> >
-> > > -----Original Message-----
-> > > From: Russell King (Oracle) <linux@armlinux.org.uk>
-> > > Sent: 20 February 2025 18:10
-> > > To: Swathi K S <swathi.ks@samsung.com>
-> > > Cc: krzk+dt@kernel.org; andrew+netdev@lunn.ch;
-> davem@davemloft.net;
-> > > edumazet@google.com; kuba@kernel.org; pabeni@redhat.com;
-> > > robh@kernel.org; conor+dt@kernel.org; richardcochran@gmail.com;
-> > > mcoquelin.stm32@gmail.com; alexandre.torgue@foss.st.com;
-> > > netdev@vger.kernel.org; devicetree@vger.kernel.org;
-> > > linux-stm32@st-md- mailman.stormreply.com;
-> > > linux-arm-kernel@lists.infradead.org; linux- kernel@vger.kernel.org;
-> > > pankaj.dubey@samsung.com; ravi.patel@samsung.com;
-> > > gost.dev@samsung.com
-> > > Subject: Re: [PATCH v7 2/2] net: stmmac: dwc-qos: Add FSD EQoS
-> > > support
-> > >
-> > > On Thu, Feb 20, 2025 at 10:07:12AM +0530, Swathi K S wrote:
-> > > > +static int fsd_eqos_probe(struct platform_device *pdev,
-> > > > +			  struct plat_stmmacenet_data *data,
-> > > > +			  struct stmmac_resources *res) {
-> > > > +	struct clk *clk_rx1 = NULL;
-> > > > +	struct clk *clk_rx2 = NULL;
-> > > > +
-> > > > +	for (int i = 0; i < data->num_clks; i++) {
-> > > > +		if (strcmp(data->clks[i].id, "slave_bus") == 0)
-> > > > +			data->stmmac_clk = data->clks[i].clk;
-> > > > +		else if (strcmp(data->clks[i].id, "eqos_rxclk_mux")
-== 0)
-> > > > +			clk_rx1 = data->clks[i].clk;
-> > > > +		else if (strcmp(data->clks[i].id, "eqos_phyrxclk")
-== 0)
-> > > > +			clk_rx2 = data->clks[i].clk;
-> > > > +	}
-> > > > +
-> > > > +	/* Eth0 RX clock doesn't support MUX */
-> > > > +	if (clk_rx1)
-> > > > +		clk_set_parent(clk_rx1, clk_rx2);
-> > >
-> > > Isn't there support in DT for automatically setting the clock tree?
-> > > See
-> > > https://protect2.fireeye.com/v1/url?k=f0089f78-90ea0225-f0091437-
-> > > 000babd9f1ba-cf835b8b94ccd94a&q=1&e=4ae794ec-f443-4d77-aee4-
-> > > 449f53a3a1a4&u=https%3A%2F%2Fgithub.com%2Fdevicetree-org%2Fdt-
-> > >
-> schema%2Fblob%2Fmain%2Fdtschema%2Fschemas%2Fclock%2Fclock.yaml
-> > > %23L24
-> > >
-> > > Also, I think a cleanup like the below (sorry, it's on top of other
-> > patches I'm
-> > > working on at the moment but could be rebased) would make sense.
-> > >
-> > > With both of these, this should mean that your changes amount to:
-> > >
-> > > 1. making data->probe optional
-> > > 2. providing a dwc_eth_dwmac_data structure that has
-> .stmmac_clk_name
-> > >    filled in
-> > > 3. adding your compatible to the match data with a pointer to the
-> > >    above structure.
-> >
-> > Hi Russell,
-> > Thanks for your input.
-> > Will implement this in v8.
-> > But I could not find your patch 'net: stmmac: clean up clock
-initialisation'
-> > in mailing list
-> > Could you point me to that?
-> > Or do you want me to integrate the below changes into my patch series
-> > and post?
-> >
-> > Please let me know
-> 
-> Please have patience - I'm a volunteer here, and I included the patch in
-the
-> email for you. You're not the only one whom I'm addressing issues in the
-> stmmac driver for. Since Sunday, I have a total of 16 new stmmac patches
-> plus been debugging a regression someone has reported.
+The debugfs entries can be used to get information about underlying
+hardware and can be shared with user space. Separate debugfs entries has
+been created to cater to all the DES hooks provided by the controller.
+The debugfs entries interacts with the RASDES registers in the required
+sequence and provides the meaningful data to the user. This eases the
+effort to understand and use the register information for debugging.
 
-I understand your concern and thanks for improving the code.
+This series creates a generic debugfs framework for DesignWare PCIe
+controllers where other debug features apart from RASDES can also be
+added as and when required.
 
-> 
-> Coincidentally, I just sent out the patch as a stand-alone patch, it
-should be
-> quicker to get it into net-next rather than trying to get all the other
-patches
-> I'd *already* had queued up in first.
-> 
-> https://lore.kernel.org/r/E1tlRMP-004Vt5-W1@rmk-PC.armlinux.org.uk
+v7:
+    - Moved the patches to make finding VSEC IDs common from Mani's patchset [1]
+      into this series to remove dependancy as discussed
+    - Addressed style related change requests from v6
 
-Will test your patch on FSD platform.
+v6: https://lore.kernel.org/all/20250214105007.97582-1-shradha.t@samsung.com/
+    - Addressed Niklas's comment to make vsec ID finding similar to perf
+    - Minor changes in the driver to make the debugfs file common and
+      not specefic to RASDES so that other developers can add debug
+      related features to this file.
 
-- Swathi
+v5: https://lore.kernel.org/all/20250121111421.35437-1-shradha.t@samsung.com/
+    - Addressed Fan's comment to split the patches for easier review
+    - Addressed Bjorn's comment to fix vendor specific cap search
+    - Addressed style related change requests from v4
+    - Added rasdes debugfs init call to common designware files for host
+      and EP.
 
-> 
-> However, I'm expecting someone to say that dwc_eth_find_clk() should be
-> moved into the stmmac platform code, and the other platforms need to be
-> converted to use it... so it may be some time before we're at a stage
-where
-> you can proceed.
-> 
-> Please be patient.
-> 
-> --
-> RMK's Patch system: https://protect2.fireeye.com/v1/url?k=9539722c-
-> f442d8a5-9538f963-74fe48600034-5bc44de329219ee1&q=1&e=0bc950e5-
-> 2fde-481e-bce0-
-> 534d0f94352b&u=https%3A%2F%2Fwww.armlinux.org.uk%2Fdeveloper%2F
-> patches%2F
-> FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+v4: https://lore.kernel.org/lkml/20241206074456.17401-1-shradha.t@samsung.com/
+    - Addressed comments from Manivannan, Bjorn and Jonathan
+    - Addressed style related change requests from v3
+    - Added Documentation under Documentation/ABI/testing and kdoc stype
+      comments wherever required for better understanding
+    - Enhanced error injection to include all possible error groups
+    - Removed debugfs init call from common designware file and left it
+      up to individual platform drivers to init/deinit as required.
+
+v3: https://lore.kernel.org/all/20240625093813.112555-1-shradha.t@samsung.com/
+    - v2 had suggestions about moving this framework to perf/EDAC instead of a
+      controller specific debugfs but after discussions we decided to go ahead
+      with the same. Rebased and posted v3 with minor style changes.
+
+v2: https://lore.kernel.org/lkml/20231130115044.53512-1-shradha.t@samsung.com/
+    - Addressed comments from Krzysztof Wilczyński, Bjorn Helgaas and
+      posted v2 with a changed implementation for a better code design
+
+v1: https://lore.kernel.org/all/20210518174618.42089-1-shradha.t@samsung.com/T/
+
+[1] https://lore.kernel.org/all/20250218-pcie-qcom-ptm-v1-0-16d7e480d73e@linaro.org/
+
+Manivannan Sadhasivam (1):
+  perf/dwc_pcie: Move common DWC struct definitions to 'pcie-dwc.h'
+
+Shradha Todi (4):
+  PCI: dwc: Add helper to find the Vendor Specific Extended Capability
+    (VSEC)
+  Add debugfs based silicon debug support in DWC
+  Add debugfs based error injection support in DWC
+  Add debugfs based statistical counter support in DWC
+
+ Documentation/ABI/testing/debugfs-dwc-pcie    | 144 +++++
+ MAINTAINERS                                   |   1 +
+ drivers/pci/controller/dwc/Kconfig            |  10 +
+ drivers/pci/controller/dwc/Makefile           |   1 +
+ .../controller/dwc/pcie-designware-debugfs.c  | 564 ++++++++++++++++++
+ .../pci/controller/dwc/pcie-designware-ep.c   |   5 +
+ .../pci/controller/dwc/pcie-designware-host.c |   6 +
+ drivers/pci/controller/dwc/pcie-designware.c  |  46 ++
+ drivers/pci/controller/dwc/pcie-designware.h  |  21 +
+ drivers/perf/dwc_pcie_pmu.c                   |  25 +-
+ include/linux/pcie-dwc.h                      |  36 ++
+ 11 files changed, 837 insertions(+), 22 deletions(-)
+ create mode 100644 Documentation/ABI/testing/debugfs-dwc-pcie
+ create mode 100644 drivers/pci/controller/dwc/pcie-designware-debugfs.c
+ create mode 100644 include/linux/pcie-dwc.h
+
+-- 
+2.17.1
 
 
