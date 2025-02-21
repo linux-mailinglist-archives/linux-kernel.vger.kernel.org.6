@@ -1,86 +1,155 @@
-Return-Path: <linux-kernel+bounces-525269-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 080E0A3ED5A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 08:35:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45F5EA3ED68
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 08:39:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7900C166D77
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 07:35:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9552189E692
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 07:39:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D7C91FF1C3;
-	Fri, 21 Feb 2025 07:35:06 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CDBE1FF1D7;
+	Fri, 21 Feb 2025 07:39:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WrJq+F9S"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A27651D89E4
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 07:35:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD5A01F9F51;
+	Fri, 21 Feb 2025 07:39:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740123306; cv=none; b=bXQX0e9ubVXztStYFHh/KVDaBsqnmS1ER1b76MY1JZQgQpptKYvaOttkLucYP9k96G4ykHbAdRfkGD8AhVvNM30GOxSJJsFmbtwS21WCZsEG93ygpFkNZ2tZfjJ0n07w8FmOwrHmBIybNr0TROCyiJom6rGwmrrHfyAW15E6TQQ=
+	t=1740123547; cv=none; b=jFCXfiXUrOoKpnmi6sUn42RnoJQnDRjZE35oKPd8F3/D1e8I+SkE5mqeY+Qb0AQcLkfiAVmz0PczPiver1I63rbx2rEOvS94zWLiO83d1G5uqYVWTtXPYsWExLegnD1MXHsKiXxjbEyR+xueV5DTLyB27XlLR6oLAFZ/wLckY18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740123306; c=relaxed/simple;
-	bh=peLrDcldK+g+S+9NNIER4V16mGRIhRlylovUJitm8tY=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=R7DaQPW818P9r0Ouh3Qr0YytWJIpoO5s5suyk2nGNZZCAGmgtc3+ymY/nj+hUim2mvW1ATTrthkDawCDTZSQvlzT9RM28ws7gdAWOqWqpsC13Xpy/Fhj7B9rhX1+zXrlsVirQsSYDr5KbWnIkFNYi3X8O+pkIeUsXmYifIjHmLI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3d289bf6c39so21717455ab.1
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 23:35:04 -0800 (PST)
+	s=arc-20240116; t=1740123547; c=relaxed/simple;
+	bh=b/GiAGqv7s9yuuud5Txj5aS72CRFiu7njwkY+rnk2PM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hUTPttGF4n5RNSsD7hh3VAK3YdmzNmvf2T0CpMz0tIdG3GnPd0yjrPM0rnlyUXiC3/mucnO6oq0CqDKXN8pZniohi7njGZ+7a+aSMYrAuyDkYTnmlTKrcypta9nhZia8a4SBrCMxk0Z1HM779+26wRRpKW3Wlm34oOs8FUJAU0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WrJq+F9S; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4397dff185fso15159225e9.2;
+        Thu, 20 Feb 2025 23:39:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740123544; x=1740728344; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FPpdsdL4n88yx8HwEA3SbEzBAydGSiAFaXP8UXGVdK4=;
+        b=WrJq+F9SgCNjUvWzfKeWmqVEgYccVhQ6aDkr2hwjaVK1WZmu5IIyT3p91/hcc9J7G2
+         0PIOPhycQwhM8tCaBTdY+pKujEFdpy7SX7apd7LhszQnf5zgheV4al27sFyEYYlZZkfu
+         Or2n/QY/SFFsWeRasu9hRXUEruQ4rluFozOclQkd/2j8XQOwm5vm9Sb2zzhUWH1qkFTY
+         UJvkkVi4RYuVKK9Lg+hpMZlJ7Lk1nXPDVV8krj2Oi/0iUZx2hxrvYXsYfkDfMk6RfXqN
+         HpWBj0K/HkH+1sC30ZwfeWE14voKpBs3p0yl3Yy8pQRyQzdkWyWobMm0Si2Sycq2W/US
+         Fczg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740123304; x=1740728104;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2wO7Tys3wAQpSEY9OUnS2SGDXJLNVPcAyT82FAwUBps=;
-        b=iStx7IoTsfxJFLU86qNoKOFAhPUwR6NLGnWZG96UWRmHnPi7JPkeKfewdoCIoHB5gd
-         2Hbo2Yv2/8Bdy2ha2xYRaYj0f35vKlf6Sulsa/77VpAQJCx8svrxykN4wjmNSNwUuWPP
-         8I432g62D+n5nq7hwignfOCgZRTAqzwtKZMaVKXVeZY8xRzJ/jSIBpXuOsTf0SPa0a+F
-         2rtnBoZ6vdnTH2wBXqhmf/RwvCBIdfUQpvr1L2p/68C39+eaSQMuHG6/0vhpxIrShZsV
-         xTFAJKNoJF7aoxcdb4x8hRTZMuDclNXtsbhzv6A8ZxpO+Ikt9sJ/Muee85Getc2D/Crs
-         W6kA==
-X-Gm-Message-State: AOJu0Yx/fnSoUlnH5yhyqB6zEs/0HKbY/HiyfoK/10r4MSVMYJU9nMKy
-	7nm3tpAk0smlufqL2jZMbdELnJC/YzdSOa3XIN+q9moWCS5UGEVNYNrjCVCuUW5VgGEZOYPL4+k
-	sCGhTJ0msl3eSCsiuu+2qxcPdDP4vFsvzy4ULXLo8NcAGhZsBXJiErRI=
-X-Google-Smtp-Source: AGHT+IHAO1OUlanWs93544Puzl3lr6ASaQEN2ZXpvwYN1qlARprQpekoU9Qsra701uXQNXe0tx9QcTkXd+cE6Yt+Mcp0moMJFj7D
+        d=1e100.net; s=20230601; t=1740123544; x=1740728344;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FPpdsdL4n88yx8HwEA3SbEzBAydGSiAFaXP8UXGVdK4=;
+        b=mp020jHJ5Zh6R2IV/Lra0Kx4RUcMPJGnPNbSubn43eeOKc7cajujC4BYoO5sBjZFxd
+         GxwQMJW/hQFs0FvXK0G58m7XIkLKGXQClgZOXgJSCqfzOlX0o2KVmIWgZKNNWuSVPFT2
+         v1QaUJaEc0v9JrKkfmWrHgDl8u7jxXDs3gbodSVePdRGoqUSkz5UqX/f9VXb4lAT+mru
+         JJobVCR+rn1GRmzxPXa9/E/N/sgJfPS1y4uc8OGidCaD8Z4nflr2ZMRDad/DxoR8b1D0
+         EGmAGsYICb/pH+10F1m+4O1ZElRKvsNi/4iGKJr6RUvudz8FQ21oUwHoQuu1UMthdPYl
+         jW+A==
+X-Forwarded-Encrypted: i=1; AJvYcCWa8r2A0KSgCzXROqTVVHNKKXhvGr78WYi8KY9h5eos6JEViWH08WsOZisLz2zmdSGufI0bHJ0VkSa9Pr4=@vger.kernel.org, AJvYcCXmjn9J4VBoJ1juXaIhwXWdHrliCOncJEuu8R74pKyFvr44OvFtTVGksrw2y4G2oJGxk/dXuV28CSRgRAJU@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/oLbsC7KKJ2R5500STnM7mMkORW/1m/8MktPoI8OLicNnsK7y
+	1o4mDpClMZFfqukc0wLwD47hcIh4rmQ8MmibUyml6bcn8TL+aB9J06LR/JQ7lmKyARed/OWf7Mo
+	5GoznfsQ7lohnemxG/P9jtd3Lzs0=
+X-Gm-Gg: ASbGncuvbgan58Xyh+btSBc8h7N5ITHc2jeEW1bFIxS8PzaOoSWDwJLBcKkwjEp642D
+	1A6xzRFZeEiEtRkcvPCLuMFuJfBHY0+AJOW3WTwE2kXc0CX4YtGet4QEj9SOXnssHA1BnzREK+7
+	INasijIw==
+X-Google-Smtp-Source: AGHT+IGKzvTku4u3P+ZC0blF8cwRCmiouqJC8xvDkD7mTD+KrqUsUnan7eMjRClBQVvkTYZCKVCdYcufvFJIX6SQ9/A=
+X-Received: by 2002:a05:600c:4fd3:b0:439:9543:9488 with SMTP id
+ 5b1f17b1804b1-439ae2196a6mr13824825e9.21.1740123544039; Thu, 20 Feb 2025
+ 23:39:04 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1066:b0:3d1:54ce:a8f9 with SMTP id
- e9e14a558f8ab-3d2c027290emr60604425ab.10.1740123303790; Thu, 20 Feb 2025
- 23:35:03 -0800 (PST)
-Date: Thu, 20 Feb 2025 23:35:03 -0800
-In-Reply-To: <20250221062718.2353693-1-lizhi.xu@windriver.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67b82ca7.050a0220.14d86d.030d.GAE@google.com>
-Subject: Re: [syzbot] [pm?] possible deadlock in lock_system_sleep
-From: syzbot <syzbot+ace60642828c074eb913@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, lizhi.xu@windriver.com, 
-	syzkaller-bugs@googlegroups.com
+References: <20250220051325.340691-1-ebiggers@kernel.org> <20250220051325.340691-2-ebiggers@kernel.org>
+In-Reply-To: <20250220051325.340691-2-ebiggers@kernel.org>
+From: Xiao Liang <shaw.leon@gmail.com>
+Date: Fri, 21 Feb 2025 15:38:27 +0800
+X-Gm-Features: AWEUYZm1g7Mr-grFK6X7pFEBOlj1wJCqmi_y2CU0k4OaIFulJAdMCCqigR4Bje8
+Message-ID: <CABAhCOQjnSsos3gm4GWrxFUdV8dw-=r_mMn0+xdjnZjJ0PQ9MA@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/2] x86/fpu: make kernel-mode FPU reliably usable in softirqs
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: x86@kernel.org, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Ard Biesheuvel <ardb@kernel.org>, Ben Greear <greearb@candelatech.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Andy Lutomirski <luto@kernel.org>, 
+	"Jason A . Donenfeld" <Jason@zx2c4.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Thu, Feb 20, 2025 at 1:16=E2=80=AFPM Eric Biggers <ebiggers@kernel.org> =
+wrote:
+>
+> From: Eric Biggers <ebiggers@google.com>
+>
+> Currently kernel-mode FPU is not always usable in softirq context on
+> x86, since softirqs can nest inside a kernel-mode FPU section in task
+> context, and nested use of kernel-mode FPU is not supported.
+>
+> Therefore, x86 SIMD-optimized code that can be called in softirq context
+> has to sometimes fall back to non-SIMD code.  There are two options for
+> the fallback, both of which are pretty terrible:
+>
+>   (a) Use a scalar fallback.  This can be 10-100x slower than vectorized
+>       code because it cannot use specialized instructions like AES, SHA,
+>       or carryless multiplication.
+>
+>   (b) Execute the request asynchronously using a kworker.  In other
+>       words, use the "crypto SIMD helper" in crypto/simd.c.
+>
+> Currently most of the x86 en/decryption code (skcipher and aead
+> algorithms) uses option (b), since this avoids the slow scalar fallback
+> and it is easier to wire up.  But option (b) is still really bad for its
+> own reasons:
+>
+>   - Punting the request to a kworker is bad for performance too.
+>
+>   - It forces the algorithm to be marked as asynchronous
+>     (CRYPTO_ALG_ASYNC), preventing it from being used by crypto API
+>     users who request a synchronous algorithm.  That's another huge
+>     performance problem, which is especially unfortunate for users who
+>     don't even do en/decryption in softirq context.
+>
+>   - It makes all en/decryption operations take a detour through
+>     crypto/simd.c.  That involves additional checks and an additional
+>     indirect call, which slow down en/decryption for *everyone*.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Thank you for the detailed information.
 
-Reported-by: syzbot+ace60642828c074eb913@syzkaller.appspotmail.com
-Tested-by: syzbot+ace60642828c074eb913@syzkaller.appspotmail.com
+> Fortunately, the skcipher and aead APIs are only usable in task and
+> softirq context in the first place, nor is it supported to call them
+> with hardirqs disabled.  Thus, if kernel-mode FPU were to be reliably
+> usable in softirq context, no fallback would be needed.  Indeed, other
+> architectures such as arm, arm64, and riscv have already done this.
+>
+> Therefore, this patch updates x86 accordingly to reliably support
+> kernel-mode FPU in softirqs (except when hardirqs are disabled).
+>
+> This is done by just disabling softirq processing in kernel-mode FPU
+> sections, as that prevents the nesting that was problematic.
+>
+> This will delay some softirqs slightly, but only ones that would have
+> otherwise been nested inside a task context kernel-mode FPU section.
+> Any such softirqs would have taken the slow fallback path before if they
+> tried to do any en/decryption.  Now these softirqs will just run at the
+> end of the task context kernel-mode FPU section (since local_bh_enable()
+> runs pending softirqs) and will no longer take the slow fallback path.
 
-Tested on:
-
-commit:         33442609 Merge tag 'for-v6.14-rc' of git://git.kernel...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=126303b8580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=61cbf5ac8a063ad4
-dashboard link: https://syzkaller.appspot.com/bug?extid=ace60642828c074eb913
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=16b0e7f8580000
-
-Note: testing is done by a robot and is best-effort only.
+I think this will delay all softirqs, including those that don't use
+FPU. Will there be a performance impact?
+(I guess you've noticed the patch I submitted last year. And this is
+the main reason why it was implemented in the way you mentioned as
+the second alternative.)
 
