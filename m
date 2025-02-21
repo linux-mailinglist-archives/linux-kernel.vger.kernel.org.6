@@ -1,144 +1,135 @@
-Return-Path: <linux-kernel+bounces-526073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47A1DA3F996
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:56:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF5F1A3F9CE
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:01:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F4B11893B4D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 15:51:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B64C97045E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 15:54:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BB611E1C36;
-	Fri, 21 Feb 2025 15:51:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1892D1DF73A;
+	Fri, 21 Feb 2025 15:52:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eFS/44Zp"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="hmxIeYl4"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A0441DB366;
-	Fri, 21 Feb 2025 15:51:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740153086; cv=none; b=sWwTaeDPVncax5MQEO4RP1gqGYXwMWBYb0+S/Zc2iGkAXNMkt4RMqe9XNEAfs+Xjveqy2kQHR2BZul/TEHe6gN/+QRiS+p5jC9dx9PDgdPW3R+v9e0Vc/18JUhaapFI+89cNBtUkb0+5wBzoOTmhNJHtT3w7R6JpJv+oUIhfE8o=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740153086; c=relaxed/simple;
-	bh=vPnGBuoiFN+rapBDrtIDIJGXal1oiR/Y9ccwXwbtNnc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IGupb3bfVPh6ZtiX4q5i+auHdpehOHtk0tlPDRYpA9yKDsnXFvB2JyZYaOwVhZQMwSNJKMnOfb6Wr29UsHnOJ4n0eCOc38nSvvZkxKBowKqiLotE0Oi4VKTh5wgHKyvTsROltcAD76qO54C3/TKlQpmd/g2Fv5S8UbOtp/MCuRk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eFS/44Zp; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740153085; x=1771689085;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=vPnGBuoiFN+rapBDrtIDIJGXal1oiR/Y9ccwXwbtNnc=;
-  b=eFS/44Zpqw3oOcfzORjLqXHY37K3NbygPjv8Irrc0ti11PY/oViHKuEN
-   3cpynLX99/JL3gDI2T40VivyRyr+5PXKkgZosKj4K6wjvjbG6qSNulDKV
-   m2vSq6DjwnM7RhLCTIzvp4m3+5DMJuxs8VO5Fojxqau6Ju5mID5W5nSmj
-   HZXgp/JO7nPalB9eNW1t+DO6GH1j3IMJUo0OSSyI7fcHf7ivzC3XnWOOm
-   1gOzifUnu8f+dlbw3ltr8SDiP+J6TdXqscNCCj+gA7AuLCNFn24JkEAKJ
-   EWo220bMmtcbDJvH9tNc0LIjTC4z1q0ygQ/Obxks1nx4tFsdTVuL228p7
-   A==;
-X-CSE-ConnectionGUID: jtd2JGleSNeuoRRr7ggLtQ==
-X-CSE-MsgGUID: N1DNTarbQUmT3S22aMYddw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11352"; a="66340982"
-X-IronPort-AV: E=Sophos;i="6.13,305,1732608000"; 
-   d="scan'208";a="66340982"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Feb 2025 07:51:24 -0800
-X-CSE-ConnectionGUID: bP+ES1DSSYups3Xn+KJcoA==
-X-CSE-MsgGUID: CuNXA0VLQISSIv90x3lSew==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="119525320"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Feb 2025 07:51:17 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tlVJ2-0000000DgNg-1aMo;
-	Fri, 21 Feb 2025 17:51:12 +0200
-Date: Fri, 21 Feb 2025 17:51:12 +0200
-From: "andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>
-To: Aditya Garg <gargaditya08@live.com>
-Cc: "pmladek@suse.com" <pmladek@suse.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	"linux@rasmusvillemoes.dk" <linux@rasmusvillemoes.dk>,
-	"senozhatsky@chromium.org" <senozhatsky@chromium.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
-	"mripard@kernel.org" <mripard@kernel.org>,
-	"tzimmermann@suse.de" <tzimmermann@suse.de>,
-	"airlied@gmail.com" <airlied@gmail.com>,
-	"simona@ffwll.ch" <simona@ffwll.ch>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"apw@canonical.com" <apw@canonical.com>,
-	"joe@perches.com" <joe@perches.com>,
-	"dwaipayanray1@gmail.com" <dwaipayanray1@gmail.com>,
-	"lukas.bulwahn@gmail.com" <lukas.bulwahn@gmail.com>,
-	"sumit.semwal@linaro.org" <sumit.semwal@linaro.org>,
-	"christian.koenig@amd.com" <christian.koenig@amd.com>,
-	Kerem Karabay <kekrby@gmail.com>, Aun-Ali Zaidi <admin@kodeit.net>,
-	Orlando Chamberlain <orlandoch.dev@gmail.com>,
-	Atharva Tiwari <evepolonium@gmail.com>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-	"linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>,
-	Hector Martin <marcan@marcan.st>,
-	"linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-	Asahi Linux Mailing List <asahi@lists.linux.dev>,
-	Sven Peter <sven@svenpeter.dev>, Janne Grunau <j@jannau.net>
-Subject: Re: [PATCH v3 1/3] drm/format-helper: Add conversion from XRGB8888
- to BGR888
-Message-ID: <Z7ig8Br4duEt2TUG@smile.fi.intel.com>
-References: <DC5079B2-9D3D-4917-A50D-20D633071808@live.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E5102139DD;
+	Fri, 21 Feb 2025 15:52:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740153142; cv=pass; b=abiUVTPSS1b+v/lcmVAlt8wVD+21gkuKT6/xBLiv6iGVR1AdL3yEDOsscztm+yER8CGSH6pU6nsYUOWJ9ZMyJ7z7YbsTDjhO1AZK2DCsKIbgsucu9HPOqIeSnAMHoJMdfX88I79RZm56uJGASjhS/AY7kmJR7SIQYqMmiN3Dwxg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740153142; c=relaxed/simple;
+	bh=iaQ+8410xKoAcD7janib56GRmsqyMB9cJ17s5UofjeM=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=riU1lRuy2eBGjlP3YLlscfk2IeTRrQuex8Qv05SgUyDibFQt5FcQzCLJJl6WPvvcL0xkwAhnNptFiF3AImcgcKM8zNH/f4p6hQFSYHPslVdxVELBsVjA5JRUEdhsd30la8XLqVGbWv1JaWLFnAbWpdMdc2Jnl0PA1B9HE3xd09w=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=hmxIeYl4; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1740153098; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=Ur8DFaCXw/kfGxqm2t3KTY/RqUQ9/Hm7NPzbLZo907lsoPJtfhPofBmeoRETtZIzKy7XKnfr8jM3E04GcOp00g11fWii7pTAQepqxHLlntonTdcfv1if8m5QwME8VMmMI1rDrnrIASCZlNmizdQViJ9psupxliVrXjqGx8xzkVY=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1740153098; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=HlQHYE1pagm2zjFO6/6LR3Vvs32N93jmTgtwHYFPo48=; 
+	b=CUb+cps4DvmJ92jWd4kjfM772bDK7IebZrfq41FAMwBGajdgF5Rd6gxT2k2+ZDuudFT97gaJdvSBhmbj15u4CGbkoSO2GZRL5okUbxbo3QyM7ey85aCy+KnO2H2Trgd0oLAAblmrDOAIxCwwf2UfkZfEfEgpzEUOMcQ2Z1hRzrc=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1740153098;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=HlQHYE1pagm2zjFO6/6LR3Vvs32N93jmTgtwHYFPo48=;
+	b=hmxIeYl48SOWkT35ShjoRjzHy48BbupoVwnc1RTMvjQ1bWk8RvIqEDg52ggG87fH
+	D4qJ/Ctk4ZlA5imdzpkQQfG6jW/3P2u2JTTMKbUymnMnArX/2xgBGEZwS9uaBUSSF+e
+	goUrc3U3SI2GT1d5tWzDiLFRFFksjDzXz1MUwRkA=
+Received: by mx.zohomail.com with SMTPS id 1740153097184404.12164099489894;
+	Fri, 21 Feb 2025 07:51:37 -0800 (PST)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DC5079B2-9D3D-4917-A50D-20D633071808@live.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-
-On Fri, Feb 21, 2025 at 11:36:00AM +0000, Aditya Garg wrote:
-> From: Kerem Karabay <kekrby@gmail.com>
-> 
-> Add XRGB8888 emulation helper for devices that only support BGR888.
-
-...
-
-> +	for (x = 0; x < pixels; x++) {
-> +		pix = le32_to_cpu(sbuf32[x]);
-> +		/* write red-green-blue to output in little endianness */
-> +		*dbuf8++ = (pix & 0x00ff0000) >> 16;
-> +		*dbuf8++ = (pix & 0x0000ff00) >> 8;
-> +		*dbuf8++ = (pix & 0x000000ff) >> 0;
-
-put_unaligned_be24()
-
-> +	}
-
-...
-
-> +	static const u8 dst_pixsize[DRM_FORMAT_MAX_PLANES] = {
-> +		3,
-> +	};
-
-One line?
-
-	static const u8 dst_pixsize[DRM_FORMAT_MAX_PLANES] = { 3 };
-
--- 
-With Best Regards,
-Andy Shevchenko
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.300.87.4.3\))
+Subject: Re: [PATCH v7 1/6] rust: str: implement `PartialEq` for `BStr`
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <20250218-module-params-v3-v7-1-5e1afabcac1b@kernel.org>
+Date: Fri, 21 Feb 2025 12:51:20 -0300
+Cc: Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ Masahiro Yamada <masahiroy@kernel.org>,
+ Nathan Chancellor <nathan@kernel.org>,
+ Nicolas Schier <nicolas@fjasle.eu>,
+ Luis Chamberlain <mcgrof@kernel.org>,
+ rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ Adam Bratschi-Kaye <ark.email@gmail.com>,
+ linux-kbuild@vger.kernel.org,
+ Petr Pavlu <petr.pavlu@suse.com>,
+ Sami Tolvanen <samitolvanen@google.com>,
+ Daniel Gomez <da.gomez@samsung.com>,
+ Simona Vetter <simona.vetter@ffwll.ch>,
+ Greg KH <gregkh@linuxfoundation.org>,
+ linux-modules@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <FB41A276-5A3A-4878-8DA6-CE0EA751E768@collabora.com>
+References: <20250218-module-params-v3-v7-0-5e1afabcac1b@kernel.org>
+ <20250218-module-params-v3-v7-1-5e1afabcac1b@kernel.org>
+To: Andreas Hindborg <a.hindborg@kernel.org>
+X-Mailer: Apple Mail (2.3826.300.87.4.3)
+X-ZohoMailClient: External
 
 
+
+> On 18 Feb 2025, at 10:00, Andreas Hindborg <a.hindborg@kernel.org> =
+wrote:
+>=20
+> Implement `PartialEq` for `BStr` by comparing underlying byte slices.
+>=20
+> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+> Reviewed-by: Gary Guo <gary@garyguo.net>
+> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
+> ---
+> rust/kernel/str.rs | 6 ++++++
+> 1 file changed, 6 insertions(+)
+>=20
+> diff --git a/rust/kernel/str.rs b/rust/kernel/str.rs
+> index 28e2201604d67..002dcddf7c768 100644
+> --- a/rust/kernel/str.rs
+> +++ b/rust/kernel/str.rs
+> @@ -108,6 +108,12 @@ fn deref(&self) -> &Self::Target {
+>     }
+> }
+>=20
+> +impl PartialEq for BStr {
+> +    fn eq(&self, other: &Self) -> bool {
+> +        self.deref().eq(other.deref())
+> +    }
+> +}
+> +
+> /// Creates a new [`BStr`] from a string literal.
+> ///
+> /// `b_str!` converts the supplied string literal to byte string, so =
+non-ASCII
+>=20
+> --=20
+> 2.47.0
+>=20
+>=20
+>=20
+
+Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>=
 
