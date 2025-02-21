@@ -1,117 +1,133 @@
-Return-Path: <linux-kernel+bounces-526452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44D1FA3FED3
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 19:29:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A8BFDA3FED7
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 19:31:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52DB71897753
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 18:29:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3181188F08A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 18:31:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20B80252914;
-	Fri, 21 Feb 2025 18:29:09 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4BF2252901;
-	Fri, 21 Feb 2025 18:29:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22E5E2512FD;
+	Fri, 21 Feb 2025 18:31:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=tugraz.at header.i=@tugraz.at header.b="JCg4unUf"
+Received: from mailrelay.tugraz.at (mailrelay.tugraz.at [129.27.2.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E19701F03F2;
+	Fri, 21 Feb 2025 18:31:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.27.2.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740162548; cv=none; b=BZhO3iFajBULshB4I0eE8tpdmow7cZJUbbhj/7irdWaqC+SMpJv236lC/uPjj7I2g+dfrWKEWNU6YnFjaN8OUsXzBjL3TI1tfOtGI10CET732knfyfiOx0uw+oWoxy6Niw4sVZ1hoK+gdIJqYaowceNAeezpWH5rWOFhZ+JvwmQ=
+	t=1740162690; cv=none; b=taaqg06K6KdM6kFELQrsLYPb1LPxTcOzCCKQ5ll75QWUe4Q/NcWggjLEp5/hb9rYFRW7jgVXFnBR0mA4eDvRoTmfTxFpcVx7ziHf5xT72axTFC099OmjuxndF42S9yIt29Rw4ZTrAXwFjKZsqVAp5/0MlJ8GgeVVOIFInh1DrGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740162548; c=relaxed/simple;
-	bh=EQIeLXQqxD3x0BWaZ1lDI0FqVhuWHunLIysa+rgnkTs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Iyf0PjIxAm+M1teOhv62/QITF1+XAn2Ucujj3ZPOAvh+VRWuK4coOMGbfie+JnxvowT6yIkRDsQtuXm+bsH4OW0p4ntaZtreNFAtzV13r9x9iaqhYzrYJ0Vb5CWwqiizBTJo0VukwPNcNwnzN7NjyxBFVekPFbS3lLf5k9v6VXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9B583169C;
-	Fri, 21 Feb 2025 10:29:22 -0800 (PST)
-Received: from [10.122.18.120] (unknown [10.122.18.120])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 413323F59E;
-	Fri, 21 Feb 2025 10:29:04 -0800 (PST)
-Message-ID: <79dd35d4-147b-4b12-8ce8-1909428d75bd@arm.com>
-Date: Fri, 21 Feb 2025 12:29:03 -0600
+	s=arc-20240116; t=1740162690; c=relaxed/simple;
+	bh=MxpumlDwhnylpkxHEgoZ0MXmhXAvcnQNyZqB93PA5AY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Zb7Am+3APyH9gL9t/cHQJ8u3GCY2vDBbXCft6S8PrK2mfwxkBu/2xSl9Zxf0P/MaVTk3NGqk63OtKLSZfnn9sz7Dj6heJp6pw0/t/LeynRBg1nYgiBopcNTyM8I5BtmzG5Llg6e+975r/eyU8NlRbSi2HhZuI6Ai/tmc6lO7sx8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tugraz.at; spf=pass smtp.mailfrom=tugraz.at; dkim=pass (1024-bit key) header.d=tugraz.at header.i=@tugraz.at header.b=JCg4unUf; arc=none smtp.client-ip=129.27.2.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tugraz.at
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tugraz.at
+Received: from vra-171-233.tugraz.at (vra-171-233.tugraz.at [129.27.171.233])
+	by mailrelay.tugraz.at (Postfix) with ESMTPSA id 4YzzGl5gKZz1LLyr;
+	Fri, 21 Feb 2025 19:31:11 +0100 (CET)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailrelay.tugraz.at 4YzzGl5gKZz1LLyr
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tugraz.at;
+	s=mailrelay; t=1740162672;
+	bh=/+dtQ4s+qGuePICY9AN+id1kJcoRIC7mJUtJi5sAuCs=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=JCg4unUf2mZWL8AqlPSBPf7kO5cMjGm1uMeqrNChJEUDiE6EO5aEjL3cb6NxkwiHj
+	 zqWdd3XRmYeg2I1Stxr9SLA94cPZVze+lrjna6OXiGdb2wJR5XgLjKEJj+8MAOxU1A
+	 dZ8b1YyhZIduyrlFpYyw4EW21v41/gep59bbslSg=
+Message-ID: <6b3e4d3bdc9b6efd69068e5b22cfd05d370aed19.camel@tugraz.at>
+Subject: Re: Rust kernel policy
+From: Martin Uecker <uecker@tugraz.at>
+To: Linus Torvalds <torvalds@linux-foundation.org>, Steven Rostedt
+	 <rostedt@goodmis.org>
+Cc: Dan Carpenter <dan.carpenter@linaro.org>, Greg KH
+ <gregkh@linuxfoundation.org>, Boqun Feng <boqun.feng@gmail.com>, "H. Peter
+ Anvin" <hpa@zytor.com>, Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+ Christoph Hellwig <hch@infradead.org>, rust-for-linux
+ <rust-for-linux@vger.kernel.org>, David Airlie <airlied@gmail.com>,
+ linux-kernel@vger.kernel.org, ksummit@lists.linux.dev
+Date: Fri, 21 Feb 2025 19:31:11 +0100
+In-Reply-To: <CAHk-=wgg2A_iHNwf_JDjYJF=XHnKVGOjGp50FzVWniA2Z010bw@mail.gmail.com>
+References: <326CC09B-8565-4443-ACC5-045092260677@zytor.com>
+	 <CANiq72m+r1BZVdVHn2k8XeU37ZeY6VT2S9KswMuFA=ZO3e4uvQ@mail.gmail.com>
+	 <a7c5973a-497c-4f31-a7be-b3123bddb6dd@zytor.com>
+	 <Z7VKW3eul-kGaIT2@Mac.home> <2025021954-flaccid-pucker-f7d9@gregkh>
+	 <4e316b01634642cf4fbb087ec8809d93c4b7822c.camel@tugraz.at>
+	 <2025022024-blooper-rippling-2667@gregkh>
+	 <1d43700546b82cf035e24d192e1f301c930432a3.camel@tugraz.at>
+	 <2025022042-jot-favored-e755@gregkh>
+	 <b9a5de64fe1ded2ad3111763f35af9901bd81cc4.camel@tugraz.at>
+	 <caea3e79-78e6-4d98-9f3b-f8e7f6f00196@stanley.mountain>
+	 <61a7e7db786d9549cbe201b153647689cbe12d75.camel@tugraz.at>
+	 <20250221124304.5dec31b2@gandalf.local.home>
+	 <CAHk-=wgg2A_iHNwf_JDjYJF=XHnKVGOjGp50FzVWniA2Z010bw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/4] Add support for the TPM FF-A start method
-To: Sudeep Holla <sudeep.holla@arm.com>, Sumit Garg <sumit.garg@kernel.org>
-Cc: Sumit Garg <sumit.garg@linaro.org>, linux-integrity@vger.kernel.org,
- jarkko@kernel.org, peterhuewe@gmx.de, jgg@ziepe.ca, rafael@kernel.org,
- lenb@kernel.org, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
- Jens Wiklander <jens.wiklander@linaro.org>, Rob Herring <robh@kernel.org>
-References: <20250210232227.97761-1-stuart.yoder@arm.com>
- <CAFA6WYM7K4_toy5_n1arW4po4SOX0R9624rCgO=_MvcMeySwUA@mail.gmail.com>
- <4bb3cefa-b843-45ca-82c5-d96b13454baa@arm.com>
- <CAFA6WYM3UA9+TE8L2U5Qd8FZfaGZnbba=QzWU7fEu3LKQVm-tw@mail.gmail.com>
- <fdaa9a58-790f-4839-8db7-1b9a81eb8edf@arm.com>
- <CAFA6WYM0ANqc--ScYtJFRjOsCCjzO3NX46=F5V=rza_6Q-Q96g@mail.gmail.com>
- <e142afd2-38ec-4640-b9be-cb414bccc807@arm.com> <Z7LGbZsOh_w-HRY2@sumit-X1>
- <5dae96fa-0e54-4274-bcc6-1c20fe846f60@arm.com> <Z7iDuwLDA2rFPZK6@sumit-X1>
- <Z7iHaWPyq3KDG7J2@bogus>
-Content-Language: en-US
-From: Stuart Yoder <stuart.yoder@arm.com>
-In-Reply-To: <Z7iHaWPyq3KDG7J2@bogus>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-TUG-Backscatter-control: G/VXY7/6zeyuAY/PU2/0qw
+X-Spam-Scanner: SpamAssassin 3.003001 
+X-Spam-Score-relay: 0.0
+X-Scanned-By: MIMEDefang 2.74 on 129.27.10.117
+
+Am Freitag, dem 21.02.2025 um 10:07 -0800 schrieb Linus Torvalds:
+> On Fri, 21 Feb 2025 at 09:42, Steven Rostedt <rostedt@goodmis.org> wrote:
+> >=20
+> > Because they are arcane and even the gcc documentation recommends avoid=
+ing
+> > them.
+> >=20
+> >  "Note that in general we do not recommend the use of pragmas"
+> >  https://gcc.gnu.org/onlinedocs/gcc/Pragmas.html
+>=20
+> Yeah, #pragma is complete garbage and should never be used. It's a
+> fundamentally broken feature because it doesn't work AT ALL with a
+> very core piece of C infrastructure: the pre-processor.
+>=20
+> Now, we all hopefully know that the C pre-processor is the _real_
+> fundamental problem here in how limited it is, but it is what it is.
+> Given the fact of how weak C pre-processing is, adding a feature like
+> #pragma was a complete failure.
+
+Isn't this what _Pragma() is for? =20
+
+>=20
+> So gcc - and other compilers - have figured out alternatives to pragma
+> that actually work within the context of the C pre-processor. The main
+> one tends to be to use __attribute__(()) to give magical extra
+> context.
+
+The issue with __attribute__ is that it is always tied to a specific
+syntactic construct.  Possible it could be changed, but then I do
+not see a major difference to _Pragma, or?
+
+...[Linus' rant]...
+
+>=20
+> This is non-negotiable. Anybody who thinks that a compiler is valid
+> warning about
+>=20
+>          if (x < 0 || x >=3D 10) {
+>=20
+> just because 'x' may in some cases be an unsigned entity is not worth
+> even discussing with.
+
+Do you think the warning is useless in macros, or in general?
+
+Martin
 
 
 
-On 2/21/25 8:02 AM, Sudeep Holla wrote:
-> Hi Sumit,
-> 
-> On Fri, Feb 21, 2025 at 07:16:35PM +0530, Sumit Garg wrote:
->> On Mon, Feb 17, 2025 at 10:56:58AM -0600, Stuart Yoder wrote:
->>>
->>> I don't see how changing TPM discovery to be via FF-A directly
->>> would improve maintainability.
->>
->> You are considering ACPI at this point but when people want to use this
->> TPM over FF-A on a platform using DT then it will require corresponding
->> DT bindings. After that each platform has to enable TPM over FF-A in
->> their corresponding ACPI/DT. All that won't be needed with auto
->> discovery over FF-A.
-
-Yes, we would need a new DT binding.
-
-> I hear you and completely agree. However, someone thought it was a good idea
-> to align with other start methods and duplicate information in the TCG ACPI
-> specification. This is definitely a bad idea, as it may contradict the
-> firmware. All we needed was a simple flag to indicate whether FF-A is the
-> start method.
-
-Do you mean a flag exposed via ACPI?  If you do FF-A based discovery you
-don't even need that.  Everything could be determined via an FF-A
-interface.
-
-> It sounds like a classic case of misalignment between specification authors
-> and practical implementation needs. Instead of a simple flag to indicate FF-A
-> as the start method, duplicating information in the TCG ACPI specification
-> seems unnecessary and potentially problematic—especially if it risks
-> conflicting with firmware behavior.
-
-There is a lot of history, but I think it was simply that ACPI
-advertisement of an FF-A based TPM seemed like the approach
-with the least friction. And Linux is not the only target OS.
-
-> Anyway, I can't comment on how we ended up here, but this seems to be the reality.
-
-I don't think we are locked into ACPI (or DT) only discovery.
-It's possible that with a modest delta on top of this patch series
-that the tpm_crb driver could also probe based on FF-A.
-
-The CRB over FF-A spec (DEN0138) could be extended in a backwards
-compatible way to expose additional info like the base address of the
-CRB.
-
-Thanks,
-Stuart
 
 
