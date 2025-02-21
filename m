@@ -1,113 +1,97 @@
-Return-Path: <linux-kernel+bounces-526711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2499EA40245
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 22:50:06 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EF2CA4020C
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 22:33:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 897D619C3E65
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 21:49:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B8C917A773D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 21:32:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2B7620127C;
-	Fri, 21 Feb 2025 21:48:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 313CC253B7B;
+	Fri, 21 Feb 2025 21:33:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lV2uaRVO"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pI+OqPw3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D73F17CA17;
-	Fri, 21 Feb 2025 21:48:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BE5C1BC09A;
+	Fri, 21 Feb 2025 21:33:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740174538; cv=none; b=ay5mleVdnVavgr+1ajilE+7MXdYnOcUT+7HRmBGw/QhhmJr3ivWQ7xrSUvvqBVnXYdmI4AtBYOdtNs0Z59dpf65fbd//yOHDqIcYjC7+rYIGsIYBrrt9zejmD0b7h9aCe7BV+Is1wyQyCWNnEy2zRe9FGqYjqncP/+aUhrZUD2c=
+	t=1740173593; cv=none; b=EqnhmrFZumEP1WzFC65BevlTIW9LwuEXjA1+XrmbxAOoB164gM0CR1tSbTdknwuiOtabmdjkx1dJBg216vj1v1a1I/eUZQGQCvWx5YrLJ+CAKpbSq3+E2ZZ4kTsy7SOMZI2jdEr8dOxtPBdzvl4CTPgh1QKPtfxDLDsFQNtZ+ro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740174538; c=relaxed/simple;
-	bh=gPyFzIP24Lc4ZAQes/Bw3FIR5J4Tu1cY7Qe5OFglfYQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ku7279CEzdsp1Vz+KwWe5KNv54E6vetHVMnKqK7HlCMh1qRH5qdrPO/Ik2LTjog3+Smv4xIkNQbm7BYLLqPtvPaWfjrrLUkLELCAsysSYpNRNb44iIWSyz55jEoLzybD1CHxO9+bxVrpDRkg0Dahwy3IAS/KBJFFRsvLooqEQAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lV2uaRVO; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5ded1395213so4391905a12.2;
-        Fri, 21 Feb 2025 13:48:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740174535; x=1740779335; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=a9pTIn8QHxz7zjuURjxwEBW82WNxe/Jc1n8xte3Y49I=;
-        b=lV2uaRVOBqW5Daj74v0NEGNczsVV3WyEWbSCyHnjg1+QKiSQuuJm/l5QNSiwHLByjW
-         6aLfmSbwwyHEcDVJWTb8+fhF/zqc8i/VHg1WNImwaSiVx69tw24rWqB19QlpS94msArk
-         EOIkCRWlqR/AQYf8vVa5QKGyhiQYrBuPgOxamJqUXsCazDd13/P6V7uIYuyyTB0074hx
-         DwDAvra3G8pW9o6FNGW8/I9JtqLc6rXSjA81owq4rF+b5OvpG/5TkrIb0i/gaIBjaY6F
-         2EDNNKUQT1e7Dn754tKFjmqOKK18BXGGkfKsadqRVOeCJAFBt+y+vhn4Jq16A3Ih5S8V
-         W53g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740174535; x=1740779335;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=a9pTIn8QHxz7zjuURjxwEBW82WNxe/Jc1n8xte3Y49I=;
-        b=lrwvuhAvmi1+G73oxvp4DlXqnv4I83/yDrG4S/vTMcewFnzIPG+IWKQ7IvdRQq2XEw
-         7rji695UptHIopzjYT62vwyFbOEv+UdCDG9D23o4KvuTtvYEcZvumz6wri/fpobNL62Y
-         cP90bLJc7Qz1szM1eZdoQX+/8sZlT5KoZSsvBbBblI+b42h+oKNhGQq9v6FkI71y8J8u
-         Eo+EulXmvyMVe08ajfTBVfBLKKJweSCntT6A9iDv6jeD8FaowAv2sTF9r7gZ7VCm4lKQ
-         i1BYyoWHJFHK1LhRDJiKluCd873X9d14UhlYUn4tUqN5N1TJYQx8Ze1vy/PPeumKCDeB
-         2KVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWmllxdIy3yM/g3HBwPVEd9/zG8TiMtU0/7DxjIM4JO61PxR5LQfplQ1HJxyxDtKldzYCFViEUOlhMrV8V3@vger.kernel.org, AJvYcCXCr7Ro8/WrmxDZDS/9+hqQu58nk3ngEPc3nLRc44xZW9Z+fx4ZllBZhU8WwJJpQooibRRgnrTtn5+Gl07RBqA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPa5F4KTEsMaqIMZuCZGQ3kw1+Wiq4ciJ28PWYu0X4C//GtiPw
-	518YowWsS/ScbuFCKfbUf+UysOjYCk1W3ekxkNYHld+uf25KWScF
-X-Gm-Gg: ASbGncv/LvxfxYEoQIxRXJYiaTGmqfJC+cDpE9f/GcAQOjZX+AERXu0+szo9vOgkaeq
-	pT1ryCuKunEQdH0CvoVnXkzp6Q6kwg5mRG3hZ1HE4jEA9OpV2GgFNuXIhHtNNPE48vqs0TyDyqn
-	qlI6G51PGyy8kFxf8uWHsSxIxLmmmWK0ZoJoD+iegSE3m3lyvhg+zczl6WC6UFsQ8dFYqxQS/FO
-	ZY9UQ4aGGmjXIIHaTPNDe+ngW21W2gAhtyf/Zii8u2dzo+TyrIyyhIqhTxRhFFabM9VUXfRC5fx
-	+K1jRQGsZvb0LRodh3/vOWSF9pkUk0u7/HdB/dEyx0Q=
-X-Google-Smtp-Source: AGHT+IHgjsel/2ffzhG3H5/MfbiB4SAy1GJZeV3sYofZe0e1mMUm9l0y3bfHwh1UadRhS/V6bvw8EQ==
-X-Received: by 2002:a17:907:94cf:b0:aa6:a87e:f2e1 with SMTP id a640c23a62f3a-abc09e2f100mr549352466b.56.1740174534537;
-        Fri, 21 Feb 2025 13:48:54 -0800 (PST)
-Received: from localhost.localdomain ([196.235.227.170])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abb5781da94sm1374547966b.85.2025.02.21.13.48.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Feb 2025 13:48:53 -0800 (PST)
-From: Salah Triki <salah.triki@gmail.com>
-To: Marcel Holtmann <marcel@holtmann.org>,
-	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-	linux-bluetooth@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Salah Triki <salah.triki@gmail.com>
-Subject: [PATCH] bluetooth: btusb: Initialize .owner field of force_poll_sync_fops
-Date: Fri, 21 Feb 2025 22:32:59 +0100
-Message-Id: <20250221213259.180833-1-salah.triki@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1740173593; c=relaxed/simple;
+	bh=YguojFeZQ1Lx0oD73VLf2qvbtWuaYfQHYVhFNJxGqcc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=V2TFy3hn91uAArvnYQHuFHYDXOaRdUToupKSjPz55C3Wiyeiuwzo6Kz+IR8S7bkOzpDyTrLR98ezZLynN7FT/YGJdtM3y4Xkuj4OzUUGuI3r88bGVjle+F2D8/yJ00drtMbLUymWoWwPaymqKWIaoGZkFCt+eyM4/efY9dqgLLg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pI+OqPw3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF8B4C4CED6;
+	Fri, 21 Feb 2025 21:33:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740173593;
+	bh=YguojFeZQ1Lx0oD73VLf2qvbtWuaYfQHYVhFNJxGqcc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=pI+OqPw3S1f4uPK/qsVZPlTlFkJWoXXV7COQC0U7sscNezGrsRxoHQ7/xOeYHDSev
+	 Ypy/37X2kBbp8bKR0BpV/ndXbZBx4msKzDlYpvA/spRVQvSl7M8QkclZuW5CbNxIsT
+	 fx4Xoe43a7Eg41JFcEXylnOFiG9MAojydrpN8PIAnbRmPBC1rlagN3UaI4VTNIBMp6
+	 bzQKQhU/o9jw8wTKTlYBf7PgQScsDlbsfd29giuk+Nklsj2dHc63joYmTUXUMkzeZJ
+	 WaKcwOS/8GOzvUSQYXRYDGv4r7SZB3pnHLj0xPbOC+cqft1mVBhEBaj7MJyrjJk4eB
+	 6d0fuZiT53IKw==
+Date: Fri, 21 Feb 2025 15:33:11 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Stanimir Varbanov <svarbanov@suse.de>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rpi-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Jim Quinlan <jim2101024@gmail.com>,
+	Nicolas Saenz Julienne <nsaenz@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, kw@linux.com,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Andrea della Porta <andrea.porta@suse.com>,
+	Phil Elwell <phil@raspberrypi.com>,
+	Jonathan Bell <jonathan@raspberrypi.com>,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>
+Subject: Re: [PATCH v5 -next 07/11] PCI: brcmstb: Adjust PHY PLL setup to use
+ a 54MHz input refclk
+Message-ID: <20250221213311.GA362736@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250120130119.671119-8-svarbanov@suse.de>
 
-Initialize .owner field of force_poll_sync_fops to THIS_MODULE in order to
-prevent btusb from being unloaded while its operations are in use.
+On Mon, Jan 20, 2025 at 03:01:15PM +0200, Stanimir Varbanov wrote:
+> The default input reference clock for the PHY PLL is 100Mhz, except for
+> some devices where it is 54Mhz like bcm2712C1 and bcm2712D0.
+> 
+> To implement this adjustments introduce a new .post_setup op in
+> pcie_cfg_data and call it at the end of brcm_pcie_setup function.
+> 
+> The bcm2712 .post_setup callback implements the required MDIO writes that
+> switch the PLL refclk and also change PHY PM clock period.
+> 
+> Without this RPi5 PCIex1 is unable to enumerate endpoint devices on
+> the expansion connector.
 
-Signed-off-by: Salah Triki <salah.triki@gmail.com>
----
- drivers/bluetooth/btusb.c | 1 +
- 1 file changed, 1 insertion(+)
+This makes it sound like this patch should be reordered before "[PATCH
+v5 -next 06/11] PCI: brcmstb: Add bcm2712 support".
 
-diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
-index 90966dfbd278..6cd9428419cb 100644
---- a/drivers/bluetooth/btusb.c
-+++ b/drivers/bluetooth/btusb.c
-@@ -3642,6 +3642,7 @@ static ssize_t force_poll_sync_write(struct file *file,
- }
- 
- static const struct file_operations force_poll_sync_fops = {
-+	.owner		= THIS_MODULE,
- 	.open		= simple_open,
- 	.read		= force_poll_sync_read,
- 	.write		= force_poll_sync_write,
--- 
-2.34.1
+We don't really want a driver to claim a bcm2712 controller before
+it's able to enumerate devices, because that would break bisection
+through this.
 
+Bjorn
 
