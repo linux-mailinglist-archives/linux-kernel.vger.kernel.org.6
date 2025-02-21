@@ -1,73 +1,73 @@
-Return-Path: <linux-kernel+bounces-525490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60AD7A3F095
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:40:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E3EEA3F096
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:40:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0B9C4230B1
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:39:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 786DE423265
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:39:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09C18204698;
-	Fri, 21 Feb 2025 09:39:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94362204F71;
+	Fri, 21 Feb 2025 09:39:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="E8dni/rU"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="KZ11zuZV"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7604204683
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 09:39:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E7A6204F64
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 09:39:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740130743; cv=none; b=cYq0oh7LS75wsrU25KejuUV5dpFbzk5KSjX136ZLTdTXHih2kkfjrTOPM4FI1DEC4CPZvqjnnNAYc4T1TntVey5goIvaiP9s8tpO1HwwXqMhP/49hwLSB7MRTuPLcb3WHb0xdvPJWUvmcl0O/LZXFKjZZnrb9dAjZcq6jHjnujg=
+	t=1740130748; cv=none; b=KrCr1Mio+yaUHphA8bwu5hn6Fk1NK/IKS8790+bcjnbhz/SVWHJW3I0VI4w9zk1RWNaYRK8OA0CsIqlv2AYnJgZX5C8RJ0oINyrSOabk9QDTmrnub3wSLLLsnP3mOnb6ILtYgycYsCIPnAL6vdTyCwBf4+iZFbXZdMQX/ywtI58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740130743; c=relaxed/simple;
-	bh=iHYDRTGSEmzyXdPtUbJDrKvAXv3M7Oc7UQJqSinxIVQ=;
+	s=arc-20240116; t=1740130748; c=relaxed/simple;
+	bh=NM0Mwtz66MpPm3L6SQxCvGbK6fY+DqlCy7/lxKNXPjs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=VwW9unUuhGH5zE2jmfMfAjWkEqq3M4siiLv2AKmljRBEGdWgR6cSXUAgCOnCtJ5zCQa4xAFLsnuWTEu2LR7SgZlGWDPXglbvA6wh6PO78bN7mcNieiNa21XI/iBOc51JL6dbD/Rb6lrorwGdx/Ck7jzeNEDLFhpp2mRnVtWGlh8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=E8dni/rU; arc=none smtp.client-ip=209.85.214.170
+	 MIME-Version; b=SJQE8V6COTpDdr5AUARsyvgpFaQL+I32TkqlRoammQzJuf/kUhCTp3cclXgZ1sHxq0lp2g7U2Dr0B9oS6P11hE9V2ktXz1Xz3WeWO0o/lFG4235i0JtKPSDpWdJhjiuUdtZMM99Gl3kcJa1jUzCUS65IUqCQm5svoCC63syHAqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=KZ11zuZV; arc=none smtp.client-ip=209.85.214.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2211cd4463cso37181975ad.2
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 01:39:01 -0800 (PST)
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-220dc3831e3so46243775ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 01:39:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1740130741; x=1740735541; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1740130746; x=1740735546; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=F1Fr47oZvnwPkNkfXAk51rgR9W9ztXQBGqxFE9BRxTc=;
-        b=E8dni/rUkEccZgrFWHVHtuS7o5o2Kwl5a2ukBkdpJZKYBHlx2Zn/AtzRCtsUhgo43c
-         bnTxnfyNBalURtGprP/w6pnmM3aZleAM5nM/hPBHT3FCmSQnUH1Kz1z+DBqt1+zBrVZQ
-         7tdJHri8Vqp09namveyjWSfww1wVbVTs9TlPg=
+        bh=gNAdjSZPdBAH3LrqV88ZZwXLFy97UrlICUdu5mXaygY=;
+        b=KZ11zuZVBFRSRNFGoIQLLykbtwSDYAlLzSplfjjAiKFwF4JYuQrXjfqlQBrzKwlymV
+         1EZBzmR5JAWUd1F1HbKWtKovrAXei/ryW+8jLwuBcf1RzC9+abV2rjrCp/maRSYvTxxY
+         p5HbDk3Rv2n/1zLCW9Y1QKwsMMrUKh6Bf5qXE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740130741; x=1740735541;
+        d=1e100.net; s=20230601; t=1740130746; x=1740735546;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=F1Fr47oZvnwPkNkfXAk51rgR9W9ztXQBGqxFE9BRxTc=;
-        b=FKT98pTqtXiLqlIZcTgl5zMhyUv5/udoaVg9mR5oT4znaTFdNfzCH5mT5KdQu266P1
-         Va7vokydEsPvGZtyPQX8JxByA1CKZKhNfmmphln/7Or7vV+PQNvMQlVz6sAapfJSqgGe
-         42Ir9F8258Za3sgrL8dx19JwqDi32g6BfyowCGcALO89jJgA7FTbjJ3UkQusbUtRUWzy
-         cw04kz887IEBB24eepEdIlTArrV83gr2ZIUiq8d3QIx8IQHBZ0nmnIJCTegfeRZgZ9T9
-         ZKd4nugmpqt+D4Zqonww62u409X4I3aPIjOBJjAh7F9Yry2aR0uXpYx2LD95qifMqRdZ
-         RWYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXbkE78+JzpPHaDTvFg1tVlqsPVDOgLyd3kJ9cG+2yk7iieTyIAAdjbYjzaXHk1wMtcyTZAcRJc6dx4uTY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGB/4C74+FnJxjnDKXwn/jd/RWi2BtXqDQaooLkepWDyOHWVCe
-	O7TsSk5eMBTh/cIsjwGgasKWgCJVuJ2eoR/BMnrGQQBu6H9PFrDhwuRKA2VlTg==
-X-Gm-Gg: ASbGncuQfjOdmdHgfzs8m6I1K7EyOJd7CLs7m5Q5hacVal8kiiKCxI270cAjULaEFr0
-	ucJeCjHUTI4Wo/BrjWFLalCetu/pdK94YOoVinEiy3QZCvnZx9Yp1BeTk5bnrVzkh+aJ+gT/W8d
-	gqAPFOrbwgjXNaw1jp5ROnIcwpXJB6U2XxelDN7ELBDY93PypK4EqGz6ALvK+Wdy9yUfvmT4OBs
-	LcFWc40W0OeWZ+A7zbutqSdAQiL0HuoO+JM559ya30d6QXyOPtX4vmGsjgI1LED47wMe5dopDMV
-	hvxAQU+NuCJ7hB915dXeilpQ4XE=
-X-Google-Smtp-Source: AGHT+IFRUnCZlCQ55FhwarcrVaKRWTrZj4RkPpnwVEGcDwDMY39AagQltM3YaVXCI6t8ZJ/r6pw83w==
-X-Received: by 2002:a05:6a00:4fd3:b0:732:5b10:572b with SMTP id d2e1a72fcca58-73426cb2b0bmr3161816b3a.10.1740130741168;
-        Fri, 21 Feb 2025 01:39:01 -0800 (PST)
+        bh=gNAdjSZPdBAH3LrqV88ZZwXLFy97UrlICUdu5mXaygY=;
+        b=Jrv+kO5+ZrxsPxFVegJheODVdagzRLjv4mJMmUbzUzvZTr7pjr5fp0oiIon71emDP3
+         afDkNSG3rMi3tkXDJJoU8WfjMqukl4hnqfaXziZPLDROON2Ie7EOS/1uAH1jY3SOQA8F
+         xFoNhvz5rELgY2qMn9WqDubuFknTCTOdAm59xhWfEzY4y07WHaOdXhYOhj135rzbJUWb
+         ix5yvNQnUI+YdORkPQJseNlEauRRzTGuEQiF8Hf2MUIap1Y96p6NzU2/4ZuxKTbVtoBA
+         cIBjLUKI6ZZLlf+rk+v9RyIIM94ws2aulmp3KMlXcQBtZnmc9xRAqx4OvPYISERg+kYR
+         3mYw==
+X-Forwarded-Encrypted: i=1; AJvYcCXHtCkJwTeuZ4fiRyIfBX2rZa3qMWA5LXuueTVc5ZHRTgEtfK5BfBaU+NKQp+l8j4tmN74l0GcgkUsjSGI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzyd3RYZdREQM+pQuUKAqvnbv0Rksa5G5zCu8UFmXqSUK9MlVad
+	PvMCNvyYtom7GorxjLRdVvNqXgW7Nqu+7KXIikXuhQ/dgEMZHl363ZduQ2VfGQ==
+X-Gm-Gg: ASbGncuTeuE0ahnu+iSD4vYx/AbT5KVrzCv8pakYBFJvXuOoRrBWBEmsRSDJdeYQIqL
+	IuWcOtTb7Vq7pvqCOhh+lfqLjIgSuiKGMqSk9CEKh0WHsIN5ohfH+UkPyZ3z6yVkuQb81107CNc
+	ZfjJd1pLkEpCLZPg1Kypa47WjK9EZqNX9imD0EjS/emS6Wvj+zg8aVohs2/LV0Qd6PlKfZBSchv
+	2ORVOrvRT2B1VpJEDlSU1nmPE1e+MmuIviGMGOGi2KaMyHtvEjI4x5XYD2/f3cFgMOqgulNbDlM
+	R7zGXOD/r/7ZJjbbA3wQ9qgYXH8=
+X-Google-Smtp-Source: AGHT+IFV3Kv4elyYdLzHIwLUKC2Z7+Or+dH9Vd4/YSg3c0Jz7xi+JB7UxI+JSjhGhix3fONvjyLTTw==
+X-Received: by 2002:a05:6a00:2e14:b0:730:9637:b2ff with SMTP id d2e1a72fcca58-73425ca201fmr3949487b3a.7.1740130746241;
+        Fri, 21 Feb 2025 01:39:06 -0800 (PST)
 Received: from localhost ([2401:fa00:8f:203:f987:e1e:3dbb:2191])
-        by smtp.gmail.com with UTF8SMTPSA id 41be03b00d2f7-adb5813a687sm11978723a12.20.2025.02.21.01.38.58
+        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-7326b5ef448sm11220174b3a.173.2025.02.21.01.39.03
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Feb 2025 01:39:00 -0800 (PST)
+        Fri, 21 Feb 2025 01:39:05 -0800 (PST)
 From: Sergey Senozhatsky <senozhatsky@chromium.org>
 To: Andrew Morton <akpm@linux-foundation.org>
 Cc: Yosry Ahmed <yosry.ahmed@linux.dev>,
@@ -78,9 +78,9 @@ Cc: Yosry Ahmed <yosry.ahmed@linux.dev>,
 	linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org,
 	Sergey Senozhatsky <senozhatsky@chromium.org>
-Subject: [PATCH v7 03/17] zram: remove unused crypto include
-Date: Fri, 21 Feb 2025 18:37:56 +0900
-Message-ID: <20250221093832.1949691-4-senozhatsky@chromium.org>
+Subject: [PATCH v7 04/17] zram: remove max_comp_streams device attr
+Date: Fri, 21 Feb 2025 18:37:57 +0900
+Message-ID: <20250221093832.1949691-5-senozhatsky@chromium.org>
 X-Mailer: git-send-email 2.48.1.601.g30ceb7b040-goog
 In-Reply-To: <20250221093832.1949691-1-senozhatsky@chromium.org>
 References: <20250221093832.1949691-1-senozhatsky@chromium.org>
@@ -92,63 +92,201 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-We stopped using crypto API (for the time being), so remove
-its include and replace CRYPTO_MAX_ALG_NAME with a local
-define.
+max_comp_streams device attribute has been defunct since
+May 2016 when zram switched to per-CPU compression streams,
+remove it.
 
 Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
 ---
- drivers/block/zram/zcomp.c    | 1 -
- drivers/block/zram/zram_drv.c | 4 +++-
- drivers/block/zram/zram_drv.h | 1 -
- 3 files changed, 3 insertions(+), 3 deletions(-)
+ Documentation/ABI/testing/sysfs-block-zram  |  8 -----
+ Documentation/admin-guide/blockdev/zram.rst | 36 ++++++---------------
+ drivers/block/zram/zram_drv.c               | 23 -------------
+ 3 files changed, 10 insertions(+), 57 deletions(-)
 
-diff --git a/drivers/block/zram/zcomp.c b/drivers/block/zram/zcomp.c
-index 53e4c37441be..cfdde2e0748a 100644
---- a/drivers/block/zram/zcomp.c
-+++ b/drivers/block/zram/zcomp.c
-@@ -7,7 +7,6 @@
- #include <linux/wait.h>
- #include <linux/sched.h>
- #include <linux/cpuhotplug.h>
--#include <linux/crypto.h>
- #include <linux/vmalloc.h>
+diff --git a/Documentation/ABI/testing/sysfs-block-zram b/Documentation/ABI/testing/sysfs-block-zram
+index 1ef69e0271f9..36c57de0a10a 100644
+--- a/Documentation/ABI/testing/sysfs-block-zram
++++ b/Documentation/ABI/testing/sysfs-block-zram
+@@ -22,14 +22,6 @@ Description:
+ 		device. The reset operation frees all the memory associated
+ 		with this device.
  
- #include "zcomp.h"
+-What:		/sys/block/zram<id>/max_comp_streams
+-Date:		February 2014
+-Contact:	Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+-Description:
+-		The max_comp_streams file is read-write and specifies the
+-		number of backend's zcomp_strm compression streams (number of
+-		concurrent compress operations).
+-
+ What:		/sys/block/zram<id>/comp_algorithm
+ Date:		February 2014
+ Contact:	Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+diff --git a/Documentation/admin-guide/blockdev/zram.rst b/Documentation/admin-guide/blockdev/zram.rst
+index 714a5171bfc0..7ad4c86f8258 100644
+--- a/Documentation/admin-guide/blockdev/zram.rst
++++ b/Documentation/admin-guide/blockdev/zram.rst
+@@ -54,7 +54,7 @@ The list of possible return codes:
+ If you use 'echo', the returned value is set by the 'echo' utility,
+ and, in general case, something like::
+ 
+-	echo 3 > /sys/block/zram0/max_comp_streams
++	echo foo > /sys/block/zram0/comp_algorithm
+ 	if [ $? -ne 0 ]; then
+ 		handle_error
+ 	fi
+@@ -73,21 +73,7 @@ This creates 4 devices: /dev/zram{0,1,2,3}
+ num_devices parameter is optional and tells zram how many devices should be
+ pre-created. Default: 1.
+ 
+-2) Set max number of compression streams
+-========================================
+-
+-Regardless of the value passed to this attribute, ZRAM will always
+-allocate multiple compression streams - one per online CPU - thus
+-allowing several concurrent compression operations. The number of
+-allocated compression streams goes down when some of the CPUs
+-become offline. There is no single-compression-stream mode anymore,
+-unless you are running a UP system or have only 1 CPU online.
+-
+-To find out how many streams are currently available::
+-
+-	cat /sys/block/zram0/max_comp_streams
+-
+-3) Select compression algorithm
++2) Select compression algorithm
+ ===============================
+ 
+ Using comp_algorithm device attribute one can see available and
+@@ -107,7 +93,7 @@ Examples::
+ For the time being, the `comp_algorithm` content shows only compression
+ algorithms that are supported by zram.
+ 
+-4) Set compression algorithm parameters: Optional
++3) Set compression algorithm parameters: Optional
+ =================================================
+ 
+ Compression algorithms may support specific parameters which can be
+@@ -138,7 +124,7 @@ better the compression ratio, it even can take negatives values for some
+ algorithms), for other algorithms `level` is acceleration level (the higher
+ the value the lower the compression ratio).
+ 
+-5) Set Disksize
++4) Set Disksize
+ ===============
+ 
+ Set disk size by writing the value to sysfs node 'disksize'.
+@@ -158,7 +144,7 @@ There is little point creating a zram of greater than twice the size of memory
+ since we expect a 2:1 compression ratio. Note that zram uses about 0.1% of the
+ size of the disk when not in use so a huge zram is wasteful.
+ 
+-6) Set memory limit: Optional
++5) Set memory limit: Optional
+ =============================
+ 
+ Set memory limit by writing the value to sysfs node 'mem_limit'.
+@@ -177,7 +163,7 @@ Examples::
+ 	# To disable memory limit
+ 	echo 0 > /sys/block/zram0/mem_limit
+ 
+-7) Activate
++6) Activate
+ ===========
+ 
+ ::
+@@ -188,7 +174,7 @@ Examples::
+ 	mkfs.ext4 /dev/zram1
+ 	mount /dev/zram1 /tmp
+ 
+-8) Add/remove zram devices
++7) Add/remove zram devices
+ ==========================
+ 
+ zram provides a control interface, which enables dynamic (on-demand) device
+@@ -208,7 +194,7 @@ execute::
+ 
+ 	echo X > /sys/class/zram-control/hot_remove
+ 
+-9) Stats
++8) Stats
+ ========
+ 
+ Per-device statistics are exported as various nodes under /sys/block/zram<id>/
+@@ -228,8 +214,6 @@ mem_limit         	WO	specifies the maximum amount of memory ZRAM can
+ writeback_limit   	WO	specifies the maximum amount of write IO zram
+ 				can write out to backing device as 4KB unit
+ writeback_limit_enable  RW	show and set writeback_limit feature
+-max_comp_streams  	RW	the number of possible concurrent compress
+-				operations
+ comp_algorithm    	RW	show and change the compression algorithm
+ algorithm_params	WO	setup compression algorithm parameters
+ compact           	WO	trigger memory compaction
+@@ -310,7 +294,7 @@ a single line of text and contains the following stats separated by whitespace:
+ 		Unit: 4K bytes
+  ============== =============================================================
+ 
+-10) Deactivate
++9) Deactivate
+ ==============
+ 
+ ::
+@@ -318,7 +302,7 @@ a single line of text and contains the following stats separated by whitespace:
+ 	swapoff /dev/zram0
+ 	umount /dev/zram1
+ 
+-11) Reset
++10) Reset
+ =========
+ 
+ 	Write any positive value to 'reset' sysfs node::
 diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
-index 3fd1608bbe9e..424ed1128fb3 100644
+index 424ed1128fb3..d3b70aae2660 100644
 --- a/drivers/block/zram/zram_drv.c
 +++ b/drivers/block/zram/zram_drv.c
-@@ -44,6 +44,8 @@ static DEFINE_MUTEX(zram_index_mutex);
- static int zram_major;
- static const char *default_compressor = CONFIG_ZRAM_DEF_COMP;
+@@ -1109,27 +1109,6 @@ static void zram_debugfs_register(struct zram *zram) {};
+ static void zram_debugfs_unregister(struct zram *zram) {};
+ #endif
  
-+#define ZRAM_MAX_ALGO_NAME_SZ	128
-+
- /* Module params (documentation at end) */
- static unsigned int num_devices = 1;
- /*
-@@ -1154,7 +1156,7 @@ static int __comp_algorithm_store(struct zram *zram, u32 prio, const char *buf)
- 	size_t sz;
- 
- 	sz = strlen(buf);
--	if (sz >= CRYPTO_MAX_ALG_NAME)
-+	if (sz >= ZRAM_MAX_ALGO_NAME_SZ)
- 		return -E2BIG;
- 
- 	compressor = kstrdup(buf, GFP_KERNEL);
-diff --git a/drivers/block/zram/zram_drv.h b/drivers/block/zram/zram_drv.h
-index 794c9234e627..2c380ea9a816 100644
---- a/drivers/block/zram/zram_drv.h
-+++ b/drivers/block/zram/zram_drv.h
-@@ -17,7 +17,6 @@
- 
- #include <linux/rwsem.h>
- #include <linux/zsmalloc.h>
--#include <linux/crypto.h>
- 
- #include "zcomp.h"
- 
+-/*
+- * We switched to per-cpu streams and this attr is not needed anymore.
+- * However, we will keep it around for some time, because:
+- * a) we may revert per-cpu streams in the future
+- * b) it's visible to user space and we need to follow our 2 years
+- *    retirement rule; but we already have a number of 'soon to be
+- *    altered' attrs, so max_comp_streams need to wait for the next
+- *    layoff cycle.
+- */
+-static ssize_t max_comp_streams_show(struct device *dev,
+-		struct device_attribute *attr, char *buf)
+-{
+-	return scnprintf(buf, PAGE_SIZE, "%d\n", num_online_cpus());
+-}
+-
+-static ssize_t max_comp_streams_store(struct device *dev,
+-		struct device_attribute *attr, const char *buf, size_t len)
+-{
+-	return len;
+-}
+-
+ static void comp_algorithm_set(struct zram *zram, u32 prio, const char *alg)
+ {
+ 	/* Do not free statically defined compression algorithms */
+@@ -2546,7 +2525,6 @@ static DEVICE_ATTR_WO(reset);
+ static DEVICE_ATTR_WO(mem_limit);
+ static DEVICE_ATTR_WO(mem_used_max);
+ static DEVICE_ATTR_WO(idle);
+-static DEVICE_ATTR_RW(max_comp_streams);
+ static DEVICE_ATTR_RW(comp_algorithm);
+ #ifdef CONFIG_ZRAM_WRITEBACK
+ static DEVICE_ATTR_RW(backing_dev);
+@@ -2568,7 +2546,6 @@ static struct attribute *zram_disk_attrs[] = {
+ 	&dev_attr_mem_limit.attr,
+ 	&dev_attr_mem_used_max.attr,
+ 	&dev_attr_idle.attr,
+-	&dev_attr_max_comp_streams.attr,
+ 	&dev_attr_comp_algorithm.attr,
+ #ifdef CONFIG_ZRAM_WRITEBACK
+ 	&dev_attr_backing_dev.attr,
 -- 
 2.48.1.601.g30ceb7b040-goog
 
