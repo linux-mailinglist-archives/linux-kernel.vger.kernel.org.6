@@ -1,47 +1,64 @@
-Return-Path: <linux-kernel+bounces-525812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50E5BA3F5D6
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 14:24:20 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9BE0A3F5CB
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 14:23:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4297C441466
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 13:18:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9AF9C428158
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 13:16:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E8D12A1A4;
-	Fri, 21 Feb 2025 13:17:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1527120D50F;
+	Fri, 21 Feb 2025 13:16:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J4pbgy9n"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RwvpD8k7"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 692C512F399;
-	Fri, 21 Feb 2025 13:17:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2C3020ADD5;
+	Fri, 21 Feb 2025 13:16:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740143838; cv=none; b=Gm/l30L+eqXCoBsym8odI9jRk1IWuC/FI+nB0A6SANaBhTHzn+kvMQz2HeVE0w9EwsBNASH1wBKcvXKbWG4UQ5R1lMa3Z4R5jCqtnitz2WYsBl49MDP60bvnazucEnTmEGSEMx9cJu+UN6u3gTmzY8B4lUHXnf+OMILo9NjvNgY=
+	t=1740143783; cv=none; b=Etd7z7UfU3BEJzcDyorlFBmP3uAFIeRqGUhnTYS2N9/LfbaBD707Bj/H0puRI0q+Id796v0Bz0W7pySgzlJKAYwXrjK7Mkthz6P0PfBVj+Luk20MpTJPj8EkDmsXKyZz+Rv4A+vQV70xvPIU1zom5glpLHGyOj/tRYsLm/0xFKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740143838; c=relaxed/simple;
-	bh=IzQqM/tThZ0C5KtPCUAq1uZgnfCzsKn9/uiesSAdNLQ=;
+	s=arc-20240116; t=1740143783; c=relaxed/simple;
+	bh=hEfxolmO06K0UStHo90/Om11/E8igLCbiEfZngCLRSU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RimnY3UNaC7uLXbyW5vK1GRxrf8dQh/eRQ0IeWVdxKXsYIQW4iat+u2O/Yt/tfEbeG1NAaEPwkXe7LmwQg71j0Ly/LW1RtfImDNDRAwD0W0zVCv5sfT8CVheMbQjSUgOLls7GPMYGoQ9dNfVYpi+Ky9n5VcP+iMeUu5iaVWHg90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J4pbgy9n; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F780C4CED6;
-	Fri, 21 Feb 2025 13:17:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740143835;
-	bh=IzQqM/tThZ0C5KtPCUAq1uZgnfCzsKn9/uiesSAdNLQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=J4pbgy9nCMrcYruxoSOBTEqSbk9lpOOgmjbKXe/w8ZDhrOsfkdw+hskl6DqWJ/AQB
-	 SW9yRSy6Vl2hCEkdlxSRNo2UJ0fnCC9/Ri8fYbHyQFYKKFIDIkkTNsgWBzaM166a0J
-	 Rs9OSQURw5RhYgSs8fxCDGBz9Q2CctVJrtQSc/2PmU0CL6MXFUQ/3pWNJ5OtK+YbqB
-	 Z5EtNtv86ovmulECI08Z/CswDbBXfynQpOkx5TdHmEHHGPCaNXmnurDRa2j4rD1fGX
-	 astxXDF8SKrZ+bfLNr2/phTjEIKbTbKvoAHBf3CGbRM2NPHdKlT/u1yrOZrjqQjAvy
-	 5lFAtQwgT1UOA==
-Message-ID: <5f4b6e0e-cbeb-460e-ae03-34c678866c85@kernel.org>
-Date: Fri, 21 Feb 2025 22:17:13 +0900
+	 In-Reply-To:Content-Type; b=S2JG7mBhPgs/hdAKlGgxNVr3K8HI9Wpkw5h2WXHPwgC8yjTpaCqG2o0EFfS5zgVgg7H9RBAnMzaYjL8LVGHalb+RzuO/pQQo9L3lUmp4prw16xAjJ7VvfTaUOoRpKyqkM3zQVcsbVGqrrcKJaqFKgDgtJ4IHEZqkAKuahbpM6VA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RwvpD8k7; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740143781; x=1771679781;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=hEfxolmO06K0UStHo90/Om11/E8igLCbiEfZngCLRSU=;
+  b=RwvpD8k7jqT8Y+BG0/45viudiJKhC4Ih9TCFQqL6nxHtdSTy0q8pWWgR
+   1qdAMyYlUZSqjHDCyO7DGZ0n7vsaQ6gUwNCWk320qX+66yTzh3dBCcjPo
+   Uk0b4EHUHqZ0gU8FOoOSN1KOxtx2K9NvHLRaGTava1ehDgw3elkKpsRO/
+   ZP7+6g96tLLw3zKQh0sHMNyylLWTHIygKbItdoSp5JYFmHtmjZOw+vvoL
+   jnKD9ta1Tdl3Ss53wQpR/4y7sJ4n4n8vBjFZMsJLB4JPqp2snP70U/DMq
+   1P8pNqAdL1EGbCmSNf9gkR/tO42ZEPj/2iPXshciSEWKSwhsEI2p9GJjT
+   g==;
+X-CSE-ConnectionGUID: HoXzTk5aSL6FNYMG2QvShw==
+X-CSE-MsgGUID: QgwfFuyWSd6IJZQkGsxdwQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11351"; a="41085662"
+X-IronPort-AV: E=Sophos;i="6.13,304,1732608000"; 
+   d="scan'208";a="41085662"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Feb 2025 05:16:21 -0800
+X-CSE-ConnectionGUID: wa5aUpxnRLmpKI5R8IrZtg==
+X-CSE-MsgGUID: y6zMRK2LSIOnzghgfLl3lg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="120613445"
+Received: from unknown (HELO [10.237.72.199]) ([10.237.72.199])
+  by orviesa005.jf.intel.com with ESMTP; 21 Feb 2025 05:16:19 -0800
+Message-ID: <e72b2f2b-d327-49f6-bf16-d846e9283e00@linux.intel.com>
+Date: Fri, 21 Feb 2025 15:17:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,45 +66,67 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ntb: reduce stack usage in idt_scan_mws
-To: Arnd Bergmann <arnd@kernel.org>, Jon Mason <jdmason@kudzu.us>,
- Dave Jiang <dave.jiang@intel.com>, Allen Hubbe <allenbh@gmail.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, kernel test robot <lkp@intel.com>,
- Bjorn Helgaas <bhelgaas@google.com>,
- zhang jiao <zhangjiao2@cmss.chinamobile.com>,
- Philipp Stanner <pstanner@redhat.com>, ntb@lists.linux.dev,
+Subject: Re: [PATCH 5/5] usb: xhci: Skip only one TD on Ring Underrun/Overrun
+To: =?UTF-8?Q?Micha=C5=82_Pecio?= <michal.pecio@gmail.com>
+Cc: Mathias Nyman <mathias.nyman@intel.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Niklas Neronin <niklas.neronin@linux.intel.com>, linux-usb@vger.kernel.org,
  linux-kernel@vger.kernel.org
-References: <20250221085748.2298463-1-arnd@kernel.org>
-From: Damien Le Moal <dlemoal@kernel.org>
+References: <20250210083718.2dd337c3@foxbook>
+ <20250210084220.3e5414e9@foxbook>
+ <7bb25848-c80e-4ba8-8790-8628951806b3@linux.intel.com>
+ <20250221021712.48c07fe0@foxbook>
 Content-Language: en-US
-Organization: Western Digital Research
-In-Reply-To: <20250221085748.2298463-1-arnd@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Mathias Nyman <mathias.nyman@linux.intel.com>
+In-Reply-To: <20250221021712.48c07fe0@foxbook>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 2/21/25 17:57, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
+On 21.2.2025 3.17, Michał Pecio wrote:
+> On Tue, 11 Feb 2025 17:41:39 +0200, Mathias Nyman wrote:
+>> On 10.2.2025 9.42, Michal Pecio wrote:
+>>> +				if (ring_xrun_event) {
+>>> +					/*
+>>> +					 * If we are here, we are on xHCI 1.0 host with no idea how
+>>> +					 * many TDs were missed and where the xrun occurred. Don't
+>>> +					 * skip more TDs, they may have been queued after the xrun.
+>>> +					 */
+>>> +					xhci_dbg(xhci, "Skipped one TD for slot %u ep %u",
+>>> +							slot_id, ep_index);
+>>> +					break;
+>>
+>> This would be the same as return 0; right?
+>>
+>> Whole series looks good, I'll add it
 > 
-> idt_scan_mws() puts a large fixed-size array on the stack and copies
-> it into a smaller dynamically allocated array at the end. On 32-bit
-> targets, the fixed size can easily exceed the warning limit for
-> possible stack overflow:
+> I hope you haven't sent it out yet because I found two minor issues.
 > 
-> drivers/ntb/hw/idt/ntb_hw_idt.c:1041:27: error: stack frame size (1032) exceeds limit (1024) in 'idt_scan_mws' [-Werror,-Wframe-larger-than]
 > 
-> Change it to instead just always use dynamic allocation for the
-> array from the start. It's too big for the stack, but not actually
-> all that much for a permanent allocation.
+> Firstly,
+> [PATCH 3/5] usb: xhci: Fix isochronous Ring Underrun/Overrun event handling
 > 
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/all/202205111109.PiKTruEj-lkp@intel.com/
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> increases the number of xrun events that we handle but doesn't suppress
+> the "Event TRB for slot %u ep %u with no TDs queued\n" warning, so the
+> warning started to show up sometimes for no good reason. The fix is to
+> add ring_xrun_event to the list of exception for this warning.
+> 
+> 
+> Secondly,
+> [PATCH 5/5] usb: xhci: Skip only one TD on Ring Underrun/Overrun
+> 
+> can be improved to clear the skip flag if skipped TD was the only one.
+> This eliminates any confusion and risk of skipping bugs in the future.
+> The change is a matter of moving that code to a different branch.
+> 
+> I also changed 'break' to 'return 0' because it gets hard to follow at
+> this level of indentation.
+> 
+> 
+> I'll send a v2 of those two patches. Sorry for any inconvenience.
 
-Looks good to me.
+Patches updated, they are now in my for-usb-next branch
 
-Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
+Thanks
+Mathias
 
--- 
-Damien Le Moal
-Western Digital Research
 
