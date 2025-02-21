@@ -1,39 +1,80 @@
-Return-Path: <linux-kernel+bounces-525614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CD5BA3F246
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 11:40:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA929A3F24C
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 11:41:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8E54E7AA50A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:39:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9BF819C29D9
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:41:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EBEB205AD7;
-	Fri, 21 Feb 2025 10:40:04 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32323205501;
-	Fri, 21 Feb 2025 10:40:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A103C206F1F;
+	Fri, 21 Feb 2025 10:41:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eF6LzoJJ"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F488205E18
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 10:41:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740134403; cv=none; b=FOVipTu5L61iapn8FpiIadN+5z9z9T5/egdtYtmLPjp0zrp2g+oVKbi1qduCckLs/vKcBnEAdHyTcDaLFzSgKAfrrPiIorBkYAMwcr/t7Reqs4kUxE/KQQ2NbnyW8m4whdjnBwX1UWVd5Ac5rQU1ABFqT30uNwUgON/vk0wD7nI=
+	t=1740134486; cv=none; b=Z7zxf/zeunnGcc+32vizsnzZQMCP+3AVizc56B8n6NubKbmNvtkhlZXEqRAqmAbLFScgvU4EH2Ewl2voalsADvAfUCuJ+GfFGXsSfaKqn/8/vh+W+YJdtps2IqY0N4rZ8xLKYyjnBz1/CgS0p+G+HVjVIzzGvNeybAE+rEo0/Lg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740134403; c=relaxed/simple;
-	bh=XJrwKG10QSah/ickTZ1lllQw+hW/qqeAgUpJ91gdEms=;
+	s=arc-20240116; t=1740134486; c=relaxed/simple;
+	bh=HRGKp4PTcrfPhEDDYVhwA4A3grCZV4+hHImd0KjhF88=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RVD26oYkmari7POKVKwBuZZFPf/UvZxa+rmBiAiH794ODlCSqIMQdW2+Y971tzzYLoiIpe5mdOi/aQKb1vE3uWdPSqCUKV4phQfJ9q8MBI+tRZ++NwUzQWp9N4QbPgLaHWzfm4YymCOF/AK4pMsEwmFYXlwEflldvi5Y4nx56kg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5B7A3165C;
-	Fri, 21 Feb 2025 02:40:19 -0800 (PST)
-Received: from [10.57.85.184] (unknown [10.57.85.184])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 18FD43F5A1;
-	Fri, 21 Feb 2025 02:39:58 -0800 (PST)
-Message-ID: <1c92af85-6549-4104-8db0-05cae39ea354@arm.com>
-Date: Fri, 21 Feb 2025 10:39:56 +0000
+	 In-Reply-To:Content-Type; b=YVNnK4uU3VY8vXK3kjMvyV6T7fr1RUPjXzDeLA6n5acevBUdeRiJiBMnbzEdZ4saG6bm0Av8UsADG3QH+0rPwcmjzDvFbDjJSludxC8lJY6Owfa6p5vr8bm2phy2hcm74Wv/ZI/NsG+pwpfd3RuRo3nxaZa+xMMbAK3drIVtJKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eF6LzoJJ; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-abad214f9c9so32623366b.0
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 02:41:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740134483; x=1740739283; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=IbPTL2MRvkhMm18G18+076KXTh1mOsNcC8FEdn2M8XY=;
+        b=eF6LzoJJ5ZhW/HN15VsXaQSoSMAocPmZACHU7GQSqI/crvmw3J3tNSWmEOLUQP1okv
+         Xx0bWAOxdjix7Q0UbSY3J01c42R8Oli3fPF+1067eLlQ5wwJ9pxlJF6CsNQEafIN3o0u
+         X7DbAD2qOcb/Qm9w/A4wnNqBIWV+9uiYQv9Yb7/RJj/aOYAJBpAjOKNF3qsN6A6cKb0F
+         7re65jD5HwdCiX49uFozmumUktqtvIvb2HEDM0dn4VK/FSPMKbp+whEX+Av5B55hcOP7
+         tjkplcBPRljUs+T8oCgFa9QBQBH+SSip8HrTvqxgxdvMgolWZAEHpZ+t5yAhx/qyMPKu
+         Vt2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740134483; x=1740739283;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IbPTL2MRvkhMm18G18+076KXTh1mOsNcC8FEdn2M8XY=;
+        b=NNMP7LKH8nurv+WwlTZXpdrbKMVHRn+Jin7w5SNIOy424DEOmLA/0clr0+3sr6OGOs
+         JW/h8XEaTwhNFulvgPciwQQmpuzVL91v8R/Yh4h2wf+s+jaK2zhglGUXiUuX6rw/B0QW
+         i83St4cxhXr7AOUSaxtLd3isVI0rf4xPje2b7wl6m6ViWQpOvYII9BUXk6YarzK7wShL
+         37QgleiYMwgYWXifmo/jB+1P+TEfuYV8GpTel6n5Bujo5R2PupsXfgIZVoNRXppGjcrs
+         wVX3DAah9U7yrGyTi/Vji7CAdUfTzF/VHHV7iYkCDLvACB+is+gWby3KAEzHVn6h89Ut
+         4T9A==
+X-Forwarded-Encrypted: i=1; AJvYcCWqGTps2EiCphvLMsKUw81Scl7qBmtCrIsBQFIWOh/imz9f/VgMhotz1yRmV7YBv5zf2tPr3y3vMQCJ75Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzbFowm5Hss+WXpMRAQYPKbfDokzO08PeY3bZ3lrsP+oboJX+F2
+	mAjVgoz68xJsJCzhiehfTDtVr+l6HU7zDk9C91IAjZsy19VDL9vWs4DhdsrOBho=
+X-Gm-Gg: ASbGncsfzguPoaJ6ZYFcM0rpTSVjSMgNZ1KZnXIVTd4jVbo1IQO/I3Ym6zYeYxVwLu/
+	sWpJOHZcscsHHNy98dIjZqJ6rsJPyyGfm23jmzlQCOus/ChOeFXIRCsn5r3KxP/h12g8Kqc/vxb
+	ydjwg/OtuTTxiWjkfW7R0gu2hRR5JfkOe8AEZ2OF6aCPpH2K6oe5+/V6eAezpIo7665cuU5RYdZ
+	AXusl4n5LJxd+Lb+S/dbVcVnDyxde888igrtRFbjhmlAs5ai5XVVbnJKn3qd3XA80KnyFKKutQs
+	OnY3W4HrVBN7K0MHAvdMcQ5fAonGUwHKFoDLJcap8vXhls+KiPJcStQaZ7GkWWa7qZ1+Ibzyb1F
+	AZs26
+X-Google-Smtp-Source: AGHT+IEuJ8iuesNChPDrriNaIn7Vco3g4VAXYe7aSMcR8uOugRPzUwuC3ibURMIqMQmOaMTN70ZN7Q==
+X-Received: by 2002:a17:907:86ab:b0:aa6:6792:8bce with SMTP id a640c23a62f3a-abc099c1e93mr98976266b.3.1740134483371;
+        Fri, 21 Feb 2025 02:41:23 -0800 (PST)
+Received: from [192.168.0.18] (78-11-220-99.static.ip.netia.com.pl. [78.11.220.99])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abb77551c60sm1223095866b.63.2025.02.21.02.41.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 Feb 2025 02:41:22 -0800 (PST)
+Message-ID: <30b29961-881d-48a6-8688-cb520363b50f@linaro.org>
+Date: Fri, 21 Feb 2025 11:41:21 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,286 +82,103 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 4/6] mmc: core: add undervoltage handler for MMC/eMMC
- devices
-To: Oleksij Rempel <o.rempel@pengutronix.de>,
- Ulf Hansson <ulf.hansson@linaro.org>
-Cc: kernel@pengutronix.de, linux-kernel@vger.kernel.org,
- linux-mmc@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Mark Brown <broonie@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
- =?UTF-8?Q?S=C3=B8ren_Andersen?= <san@skov.dk>,
- Adrian Hunter <adrian.hunter@intel.com>, 'Avri Altman' <avri.altman@wdc.com>
-References: <20250221093918.3942378-1-o.rempel@pengutronix.de>
- <20250221093918.3942378-5-o.rempel@pengutronix.de>
+Subject: Re: [PATCH v2 11/16] drm/msm/dsi/phy: Add support for SM8750
+To: Jessica Zhang <quic_jesszhan@quicinc.com>, Rob Clark
+ <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Sean Paul <sean@poorly.run>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Krishna Manikandan <quic_mkrishn@quicinc.com>,
+ Jonathan Marek <jonathan@marek.ca>, Kuogee Hsieh <quic_khsieh@quicinc.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ Srini Kandagatla <srinivas.kandagatla@linaro.org>
+References: <20250217-b4-sm8750-display-v2-0-d201dcdda6a4@linaro.org>
+ <20250217-b4-sm8750-display-v2-11-d201dcdda6a4@linaro.org>
+ <e5b6b5cc-2afb-411d-903e-152a6a617d53@quicinc.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Content-Language: en-US
-From: Christian Loehle <christian.loehle@arm.com>
-In-Reply-To: <20250221093918.3942378-5-o.rempel@pengutronix.de>
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <e5b6b5cc-2afb-411d-903e-152a6a617d53@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-(+CC Avri and Adrian)
+On 20/02/2025 01:50, Jessica Zhang wrote:
+>>   
+>> -	if ((pll->phy->cfg->quirks & DSI_PHY_7NM_QUIRK_V5_2)) {
+>> +	if ((pll->phy->cfg->quirks & DSI_PHY_7NM_QUIRK_V5_2) ||
+>> +	    (pll->phy->cfg->quirks & DSI_PHY_7NM_QUIRK_V7_0)) {
+>>   		if (pll->vco_current_rate < 1557000000ULL)
+>>   			vco_config_1 = 0x08;
+>>   		else
+>> @@ -624,6 +648,7 @@ static int dsi_7nm_pll_restore_state(struct msm_dsi_phy *phy)
+>>   static int dsi_7nm_set_usecase(struct msm_dsi_phy *phy)
+>>   {
+>>   	struct dsi_pll_7nm *pll_7nm = to_pll_7nm(phy->vco_hw);
+>> +	void __iomem *base = phy->base;
+> 
+> Hi Krzysztof,
+> 
+> I see that this line was only previously removed in a patch that was in 
+> an older revision of your PHY_CMN_CLK_CFG[01] improvements series 
+> ("drm/msm/dsi/phy: Do not overwite PHY_CMN_CLK_CFG1 when choosing bitclk 
+> source").
+> 
+> Did you mean for this patch/series to be dependent on that patch? If so, 
+> can you make a note of that in the cover letter?
 
-On 2/21/25 09:39, Oleksij Rempel wrote:
-> Introduce `_mmc_handle_undervoltage()` to handle undervoltage events for
-> MMC/eMMC devices. This function interrupts ongoing operations using High
-> Priority Interrupt (HPI) and performs a controlled suspend. After
-> completing the sequence, the card is marked as removed to prevent
-> further interactions, ensuring that no further commands are issued after
-> an emergency stop.
-> 
-> Implementation Details:
-> 1. **Interrupt ongoing operations**:
->    - If the eMMC is executing a long-running operation (e.g., erase, trim,
->      or write),
->      attempt to stop it using HPI (`mmc_interrupt_hpi()`).
->    - If HPI fails, an error is logged, but the sequence continues.
-> 
-> 2. **Suspend the card in an emergency state**:
->    - Call `__mmc_suspend()` with `is_undervoltage = true`, which ensures:
->      - The power-off notification uses `EXT_CSD_POWER_OFF_SHORT`.
->      - Cache flushing is skipped to minimize time delays.
->      - If power-off notify is unsupported, alternative methods like sleep
->        or deselect are used to transition the card into a safe state.
-> 
-> 3. **Mark the card as removed**:
->    - This prevents further commands from being issued to the card after
->      undervoltage shutdown, avoiding potential corruption.
-> 
-> To support this, introduce `__mmc_suspend()` and `__mmc_resume()` as
-> internal  helpers that omit `mmc_claim_host()/mmc_release_host()`,
-> allowing them to be  called when the host is already claimed.
-> 
-> The caller of `_mmc_handle_undervoltage()` is responsible for invoking
-> `mmc_claim_host()` before calling this function and `mmc_release_host()`
-> afterward to ensure exclusive access to the host during the emergency
-> shutdown process.
-> 
-> Device Handling Considerations:
-> - **For eMMC storage**: The new undervoltage handler applies the correct
->   power-down sequence using power-off notify or alternative methods.
-> - **For SD cards**: The current implementation does not handle undervoltage
->   events for SD cards. Future extensions may be needed to implement proper
->   handling.
-> 
-> Testing:
-> This implementation was tested on an iMX8MP-based system, verifying that
-> the  undervoltage sequence correctly stops ongoing operations and
-> prevents further  MMC transactions after the event. The board had
-> approximately 100ms of available  power hold-up time. The Power Off
-> Notification was sent ~4ms after the board  was detached from the power
-> supply, allowing sufficient time for the eMMC to  handle the event
-> properly.
-> 
-> The testing was performed using a logic analyzer to monitor command
-> sequences and timing. While this method confirms that the expected
-> sequence was executed, it does not provide insights into the actual
-> internal behavior of the eMMC storage.
-> 
-> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-> ---
-> changes v3:
-> - reword commit message.
-> - add comments in the code
-> - do not try to resume sleeping device
-> ---
->  drivers/mmc/core/mmc.c | 115 ++++++++++++++++++++++++++++++++++++-----
->  1 file changed, 102 insertions(+), 13 deletions(-)
-> 
-> diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
-> index 9270bde445ad..a50cdd550a22 100644
-> --- a/drivers/mmc/core/mmc.c
-> +++ b/drivers/mmc/core/mmc.c
-> @@ -2104,8 +2104,8 @@ static int _mmc_flush_cache(struct mmc_host *host)
->  	return err;
->  }
->  
-> -static int _mmc_suspend(struct mmc_host *host, bool is_suspend,
-> -			bool is_undervoltage)
-> +static int __mmc_suspend(struct mmc_host *host, bool is_suspend,
-> +			 bool is_undervoltage)
->  {
->  	unsigned int notify_type;
->  	int err = 0;
-> @@ -2116,8 +2116,6 @@ static int _mmc_suspend(struct mmc_host *host, bool is_suspend,
->  	else
->  		notify_type = EXT_CSD_POWER_OFF_LONG;
->  
-> -	mmc_claim_host(host);
-> -
->  	if (mmc_card_suspended(host->card))
->  		goto out;
->  
-> @@ -2145,7 +2143,18 @@ static int _mmc_suspend(struct mmc_host *host, bool is_suspend,
->  		mmc_card_set_suspended(host->card);
->  	}
->  out:
-> +	return err;
-> +}
-> +
-> +static int _mmc_suspend(struct mmc_host *host, bool is_suspend,
-> +			bool is_undervoltage)
-> +{
-> +	int err;
-> +
-> +	mmc_claim_host(host);
-> +	err = __mmc_suspend(host, is_suspend, is_undervoltage);
->  	mmc_release_host(host);
-> +
->  	return err;
->  }
->  
-> @@ -2165,6 +2174,20 @@ static int mmc_suspend(struct mmc_host *host)
->  	return err;
->  }
->  
-> +static int __mmc_resume(struct mmc_host *host)
-> +{
-> +	int err;
-> +
-> +	if (!mmc_card_suspended(host->card))
-> +		return 0;
-> +
-> +	mmc_power_up(host, host->card->ocr);
-> +	err = mmc_init_card(host, host->card->ocr, host->card);
-> +	mmc_card_clr_suspended(host->card);
-> +
-> +	return err;
-> +}
-> +
->  /*
->   * This function tries to determine if the same card is still present
->   * and, if so, restore all state to it.
-> @@ -2174,16 +2197,9 @@ static int _mmc_resume(struct mmc_host *host)
->  	int err = 0;
->  
->  	mmc_claim_host(host);
-> -
-> -	if (!mmc_card_suspended(host->card))
-> -		goto out;
-> -
-> -	mmc_power_up(host, host->card->ocr);
-> -	err = mmc_init_card(host, host->card->ocr, host->card);
-> -	mmc_card_clr_suspended(host->card);
-> -
-> -out:
-> +	err = __mmc_resume(host);
->  	mmc_release_host(host);
-> +
->  	return err;
->  }
->  
-> @@ -2194,6 +2210,13 @@ static int mmc_shutdown(struct mmc_host *host)
->  {
->  	int err = 0;
->  
-> +	/*
-> +	 * In case of undervoltage, the card will be powered off by
-> +	 * _mmc_handle_undervoltage()
-> +	 */
-> +	if (host->undervoltage)
-> +		return 0;
-> +
->  	/*
->  	 * In a specific case for poweroff notify, we need to resume the card
->  	 * before we can shutdown it properly.
-> @@ -2285,6 +2308,71 @@ static int _mmc_hw_reset(struct mmc_host *host)
->  	return mmc_init_card(host, card->ocr, card);
->  }
->  
-> +/**
-> + * _mmc_handle_undervoltage - Handle an undervoltage event for MMC/eMMC devices
-> + * @host: MMC host structure
-> + *
-> + * This function is triggered when an undervoltage condition is detected.
-> + * It attempts to safely stop ongoing operations and transition the device
-> + * into a low-power or safe state to prevent data corruption.
-> + *
-> + * Steps performed:
-> + * 1. If no card is present, return immediately.
-> + * 2. Attempt to interrupt any ongoing operations using High Priority Interrupt
-> + *    (HPI).
-> + * 3. Perform an emergency suspend using EXT_CSD_POWER_OFF_SHORT if possible.
-> + *    - If power-off notify is not supported, fallback mechanisms like sleep or
-> + *      deselecting the card are attempted.
-> + *    - Cache flushing is skipped to reduce execution time.
-> + * 4. Mark the card as removed to prevent further interactions after
-> + *    undervoltage.
+I indeed rebased on top of my previous set, assuming it will get merged
+faster. I will mention this in cover letter.
 
-The good path now looks like the best bet to me.
-The PON fallbacks are still questionable IMO.
-Deselect, if taking the spec seriously, cannot really give a hint to FTL.
-While daisy-chaining MMC and SD is rather rare these days, that's still the
-behavior vendors implement AFAIK.
-Sleep with it's vendor-defined timeouts can be anything, so this could even
-trigger a cache flush internally, after we avoided sending one because of
-undervoltage.
-If we were to rely on actually getting 100ms heads-up we could check that
-against the timeout reported by the card, but IME those are wild guesses
-rather than measured values.
-
-> + *
-> + * Note: This function does not handle host claiming or releasing. The caller
-> + *	 must ensure that the host is properly claimed before calling this
-> + *	 function and released afterward.
-> + *
-> + * Returns: 0 on success, or a negative error code if any step fails.
-> + */
-> +static int _mmc_handle_undervoltage(struct mmc_host *host)
-> +{
-> +	struct mmc_card *card = host->card;
-> +	int err = 0;
-> +
-> +	/* If there is no card attached, nothing to do */
-> +	if (!card)
-> +		return 0;
-> +
-> +	/*
-> +	 * Try to interrupt a long-running operation (such as an erase, trim,
-> +	 * or write) using High Priority Interrupt (HPI). This helps ensure
-> +	 * the card is in a safe state before power loss.
-
-I don't know about safe state before power loss, it's getting it in a
-state where we can execute the below.
-
-> +	 */
-> +	err = mmc_interrupt_hpi(card);
-> +	if (err)
-> +		pr_err("%s: Interrupt HPI failed, error %d\n",
-> +			mmc_hostname(host), err);
-> +
-> +	/*
-> +	 * Perform an emergency suspend to power off the eMMC quickly.
-> +	 * This ensures the device enters a safe state before power is lost.
-> +	 * We first attempt EXT_CSD_POWER_OFF_SHORT, but if power-off notify
-> +	 * is not supported, we fall back to sleep mode or deselecting the card.
-> +	 * Cache flushing is skipped to minimize delay.
-> +	 */
-> +	err = __mmc_suspend(host, false, true);
-> +	if (err)
-> +		pr_err("%s: error %d doing suspend\n", mmc_hostname(host), err);
-> +
-> +	/*
-> +	 * Mark the card as removed to prevent further operations.
-> +	 * This ensures the system does not attempt to access the device
-> +	 * after an undervoltage event, avoiding potential corruption.
-> +	 */
-> +	mmc_card_set_removed(card);
-> +
-> +	return err;
-> +}
-> +
->  static const struct mmc_bus_ops mmc_ops = {
->  	.remove = mmc_remove,
->  	.detect = mmc_detect,
-> @@ -2297,6 +2385,7 @@ static const struct mmc_bus_ops mmc_ops = {
->  	.hw_reset = _mmc_hw_reset,
->  	.cache_enabled = _mmc_cache_enabled,
->  	.flush_cache = _mmc_flush_cache,
-> +	.handle_undervoltage = _mmc_handle_undervoltage,
->  };
->  
->  /*
-
-No need to resend anything at this point, I'm curious what others have
-to say on the series.
+Best regards,
+Krzysztof
 
