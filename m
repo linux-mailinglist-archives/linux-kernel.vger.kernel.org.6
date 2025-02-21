@@ -1,156 +1,107 @@
-Return-Path: <linux-kernel+bounces-525532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D0A0A3F0ED
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:50:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E9E2A3F0F4
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:52:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 27AF57ACF96
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:48:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED80B188A099
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:49:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B43B204695;
-	Fri, 21 Feb 2025 09:46:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB6D8205AD9;
+	Fri, 21 Feb 2025 09:46:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="ObBU6+rH"
-Received: from mail-oi1-f174.google.com (mail-oi1-f174.google.com [209.85.167.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="c9CW/cbQ"
+Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE6191EB18D
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 09:46:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C65F204C23;
+	Fri, 21 Feb 2025 09:46:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.152.168
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740131202; cv=none; b=KRH5i4keHCqqJITH/5MV9+IXpNW5v5j0qLPHug71Nt6oPfv+2NMXeaOMmQ18d8O8+asud9k7yYkuTZPCy34m5HGawrmjPOt6nsWKwDyTcPYOJHCjTaRtgxWhAggVD/I11qHfpbTy7j3F0ngAIrx/ojaS8jP7jpQoK44GwLBfi+c=
+	t=1740131216; cv=none; b=qc/YDGeuIpDAqaoX/FZNKqQJZ5WHBHauGbPAJOMMPVdLir+8s6zjGwQgth6yi2FWlSYi8HrY8cOJ/6wjGWNcEpNqHu6ahwZBSM9zUcOMXlwpklgQig6/wPnqwbiDfL7WdHOz4URY++YgvZSYBvVtkVcwfXn9mIjGbFO4PvjE/Bw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740131202; c=relaxed/simple;
-	bh=eQJL+meMUpiM4NI7kP2j/MMgufqHNxN/rIC7ZWyqMl8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=W9J/tRcdUd6Vi77H8JUFhEiMDKDkA9dlqCZ892fzwTpjOCJBhfkH1cjGBQuBe4hk5iRvsI0ohxARTBDPPpPEdVavgxPTTlRUWERDBKtu8O4fmgZ9hLobEG7AMsbyQ4qDSSJdxxOppOgSXp7iER2xzMoV41tStKeDU7kZA/vjm88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=ObBU6+rH; arc=none smtp.client-ip=209.85.167.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-oi1-f174.google.com with SMTP id 5614622812f47-3f40a38cb6bso849413b6e.1
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 01:46:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1740131199; x=1740735999; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FK9YWaslx6HNqwJPESJVhu2TqR0s7ppmYvVLNX5onZk=;
-        b=ObBU6+rH6vq686YOlNh48lPFBn8Rv86Pj2NKxOo8xxKU3KUYC5h3OaXqNAcbhCPYFp
-         0OTvlg7hTtBeXx7/RDdGx+JmrpcqrIY8WlgmyxDXrDB05x4Jlqstsq+wCa/9fkd4qdzP
-         HkjunBYv/eNa0FEDzHgJdo/gChplqqE8Q1klrvzzoClk58h35QLqauACSEBOwhiqqYrt
-         ElmK8jMXxIX+7H60VLBF1yIVus7Obwt9VC17dZlHikiHfJTl1JBvGWjrPfZUvjhFSOvR
-         qr+ps9iYX4w3UAg6S7GL/BXKmfOznrisYhp4und22NUPtZMHRM6zb8jhqeZe8xyq/Y/b
-         AIqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740131199; x=1740735999;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FK9YWaslx6HNqwJPESJVhu2TqR0s7ppmYvVLNX5onZk=;
-        b=j4PMQAR28wVvXeEUgZCGHTbzecO0nVgKHDHxTr+eAsvZN93DqBSOqaiQ7OqF5GDnK1
-         Y8hAPEE/Ehv9wJcy+qe7FO7CHvoAPSypeinB5nAO43N6MPBsL+oXzxs9RBo8ErgkGC/4
-         sqzsMaPN8JaNusXMUgdiKlEas4p2hR4JGczkzycTOmT8LZAnK450eZwqcSxnBxbzOBId
-         f6u19lWJmfF1iBFKZBIVq05mku45i0kIHgK+6xT7VtfhtWH9/rN0i6kiS/N3tHD2GGil
-         AXKs1cOBLVsaTt4scYBEOFklrodLkbKwrXqjaSlFx60hhHx39T5QTzc0aqOBDjfcqaVI
-         STQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX+FPayOLpKYwG1UheZiOjHQyquUQdLPccD/2BOonRSGEkSkI5f6rdnSoNZZAda4/pbE1K3cSJZXVbohck=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMwc0dq5H6uYFF5SeGVraArFnt9Rn+4bq5hdOfnq3T2BUkic4g
-	gpycgg6/BweihkM27tQ90QQ8UCkWLosDlEIKAcsPEcMw2pYnmQotvKTKofcFfhXVrJ/GVdHlOVB
-	Owc6Qh1G2IWjG0tGwv2Ts5Vu4Iq7na1x8Ag5R7g==
-X-Gm-Gg: ASbGncvEpbhrMsbaqzjeI90JXKhJWlNAhlpUr07OJ+pn8zbwUHZCquPRbXi6KhxFFlV
-	71TFxMMNrip7arszmAWFTpO435qkUdRMmYcmgTExhh1F9c06YYWoR1i9Yemj/HR9200JfjNy0Al
-	Sh4jvmuhrMvA==
-X-Google-Smtp-Source: AGHT+IGKyiCnfDfAcOf96/Pz2fYUxZ2ya298ZCqluJV66qLCCSHa32SRsS9lfGx93hGxLg3TS7OQXnUDo/JPgXH6CeY=
-X-Received: by 2002:a05:6808:15a8:b0:3f4:ed9:d4c1 with SMTP id
- 5614622812f47-3f4246e1bfbmr2178808b6e.22.1740131198879; Fri, 21 Feb 2025
- 01:46:38 -0800 (PST)
+	s=arc-20240116; t=1740131216; c=relaxed/simple;
+	bh=zf1SyORZqfZjkffuYXcPmbuH1XsivG8HNOpibUwyJd0=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J2UM/C28+TR04AO0jwQ5/ZSURcH7SSm6IHT4u2WUaIj+OpmQgcW9ppBlCOhbrIPb3EfRnYrRjo6uZAVJZ3jRZmX94ZFIXGvyD5CP9C8/nMZVNIIhbaOz12NpAdzJcOjbOPnCmqJ0i0xgAtcmofWj1yKSLKfB8PXjZgIwXURPzmE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=c9CW/cbQ; arc=none smtp.client-ip=67.231.152.168
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
+	by mx0b-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51L6jgZF013439;
+	Fri, 21 Feb 2025 03:46:30 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=PODMain02222019; bh=kUXpsxt39/VziyhmUX
+	TXA0VmtdZKPc6S0GNSpJjMKek=; b=c9CW/cbQMnC1eifeuLXSEXgXwExxtRQ0dx
+	7j1h8JMLeOInLC3HHite1vVEDEUDrBx/HCuSmvQL+Bup+vVjxWPUPwGMl8V8tH7B
+	DMoDRCCaEqc4ubr59+GGms9wBfYkdm9IKDXCRxCGDeQI5p5Ymx/ZHr9088nxMw6f
+	btDoNMXgrdAR0utt1Umk9UHUaaFFir8AkoWhZlNbNuPOaDlJ+VhmRi5p3CnHGYF8
+	6OLnrZ/HYcb3uRmIyBdRuRuSSfRthV3AEB0UcFk+b6y7SQ2YTRSg1ss56hXecJsB
+	VNBrdvkY23RFeJ3WM1OHAU8gxahdKpWWvkkRsgiRUlR2j9QNMUog==
+Received: from ediex02.ad.cirrus.com ([84.19.233.68])
+	by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 44wjcamjv7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 21 Feb 2025 03:46:29 -0600 (CST)
+Received: from ediex02.ad.cirrus.com (198.61.84.81) by ediex02.ad.cirrus.com
+ (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Fri, 21 Feb
+ 2025 09:46:28 +0000
+Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
+ anon-ediex02.ad.cirrus.com (198.61.84.81) with Microsoft SMTP Server id
+ 15.2.1544.14 via Frontend Transport; Fri, 21 Feb 2025 09:46:28 +0000
+Received: from opensource.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTPS id 20908820248;
+	Fri, 21 Feb 2025 09:46:28 +0000 (UTC)
+Date: Fri, 21 Feb 2025 09:46:27 +0000
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
+To: Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>
+CC: <broonie@kernel.org>, <lgirdwood@gmail.com>,
+        <peter.ujfalusi@linux.intel.com>, <yung-chuan.liao@linux.intel.com>,
+        <linux-kernel@vger.kernel.org>, <linux-sound@vger.kernel.org>
+Subject: Re: [PATCH 0/4] Add SDCA register map support
+Message-ID: <Z7hLc647A8wUIQtO@opensource.cirrus.com>
+References: <20250217140159.2288784-1-ckeepax@opensource.cirrus.com>
+ <8f0f70de-d3cf-4956-a5aa-c5bed91a61cf@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250220101511.37602-1-cuiyunhui@bytedance.com> <ba2a6295-7983-4701-8c42-797efe22ecb7@linux.intel.com>
-In-Reply-To: <ba2a6295-7983-4701-8c42-797efe22ecb7@linux.intel.com>
-From: yunhui cui <cuiyunhui@bytedance.com>
-Date: Fri, 21 Feb 2025 17:46:27 +0800
-X-Gm-Features: AWEUYZkJqSgMY7u4dhOrvQExbs4Qf6MpItdHGfjihq8Thi_KuEFs--dsdZv-1_4
-Message-ID: <CAEEQ3wkygXexsu9x16Q+6yMtmtM+9aD=-DH1tMVNq1yuyZ7Dcg@mail.gmail.com>
-Subject: Re: [External] Re: [PATCH] iommu/vt-d: fix system hang on reboot -f
-To: Ethan Zhao <haifeng.zhao@linux.intel.com>
-Cc: dwmw2@infradead.org, baolu.lu@linux.intel.com, joro@8bytes.org, 
-	will@kernel.org, robin.murphy@arm.com, iommu@lists.linux.dev, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <8f0f70de-d3cf-4956-a5aa-c5bed91a61cf@linux.dev>
+X-Authority-Analysis: v=2.4 cv=aplICTZV c=1 sm=1 tr=0 ts=67b84b75 cx=c_pps a=uGhh+3tQvKmCLpEUO+DX4w==:117 a=uGhh+3tQvKmCLpEUO+DX4w==:17 a=kj9zAlcOel0A:10 a=T2h4t0Lz3GQA:10 a=4Vqx6HtD56EmJ5slJp8A:9 a=CjuIK1q_8ugA:10 a=zZCYzV9kfG8A:10
+X-Proofpoint-ORIG-GUID: uwfMfv4jYVSXbopqAuSshCoMsxoKDdJU
+X-Proofpoint-GUID: uwfMfv4jYVSXbopqAuSshCoMsxoKDdJU
+X-Proofpoint-Spam-Reason: safe
 
-Hi Ethan,
+On Thu, Feb 20, 2025 at 07:01:44AM -0600, Pierre-Louis Bossart wrote:
+> On 2/17/25 08:01, Charles Keepax wrote:
+> > This series is the next step of adding SDCA support. Here we add
+> > helper functions to allow drivers to easily use the SDCA DisCo
+> > information to create a register map for the device.
+> 
+> Can you remind me where we ended-up in the discussion on one
+> regmap per physical device or one regmap per function?
+> 
+> The DisCo definition are all function-centric, but the physical
+> SoundWire bus access for all read/writes is shared by all functions
+> so having a single regmap isn't silly either.
+> 
 
-On Fri, Feb 21, 2025 at 4:40=E2=80=AFPM Ethan Zhao <haifeng.zhao@linux.inte=
-l.com> wrote:
->
->
-> =E5=9C=A8 2025/2/20 18:15, Yunhui Cui =E5=86=99=E9=81=93:
-> > When entering intel_iommu_shutdown, system interrupts are disabled,
->
-> System interrupts were disabled ? you mean all interrupts were disabled
-> when entering intel_iommu_shutdown(), perhaps it is not true, at least
-> for upstream latest code.
->
-> > and the reboot process might be scheduled out by down_write(). If the
-> > scheduled process does not yield (e.g., while(1)), the system will hang=
-.
->
-> No NMI lockup watchdog jumping out here ?
+We haven't really fully resolved that yet, however, I have
+came to the conclusion that all the helper function bits I am
+currently adding are completely agnostic of the choice.
 
-Steps to reproduce:
-
-1. Avoid return in:
-if (no_iommu || dmar_disabled)
-    return;
-
-2. Write a.out with while(1).
-
-3. ./a.out &; reboot -f.
-
-4. Observe. Send NMI via BIOS to check system response.
-
-5. Add console=3DttyS0,115200 to cmdline to increase reproduction chance.
-
-Let's continue discussing based on the above.
-
->
-> Thanks,
-> Ethan
->
-> >
-> > Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
-> > ---
-> >   drivers/iommu/intel/iommu.c | 3 ++-
-> >   1 file changed, 2 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
-> > index cc46098f875b..76a1d83b46bf 100644
-> > --- a/drivers/iommu/intel/iommu.c
-> > +++ b/drivers/iommu/intel/iommu.c
-> > @@ -2871,7 +2871,8 @@ void intel_iommu_shutdown(void)
-> >       if (no_iommu || dmar_disabled)
-> >               return;
-> >
-> > -     down_write(&dmar_global_lock);
-> > +     if (!down_write_trylock(&dmar_global_lock))
-> > +             return;
-> >
-> >       /* Disable PMRs explicitly here. */
-> >       for_each_iommu(iommu, drhd)
->
-> --
-> "firm, enduring, strong, and long-lived"
->
+So I think it makes most sense to address this once we are adding
+an actually driver component. That way we will have the most
+context for discussion.
 
 Thanks,
-Yunhui
+Charles
 
