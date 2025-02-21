@@ -1,116 +1,159 @@
-Return-Path: <linux-kernel+bounces-525574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 807A6A3F194
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 11:14:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CE8AFA3F1B9
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 11:18:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 423701899709
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:14:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9912819C35BC
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:17:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C0322054E9;
-	Fri, 21 Feb 2025 10:14:45 +0000 (UTC)
-Received: from smtp-190e.mail.infomaniak.ch (smtp-190e.mail.infomaniak.ch [185.125.25.14])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4245920968D;
+	Fri, 21 Feb 2025 10:16:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="KgNB9HFm"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 951E3204F7A
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 10:14:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2880F204F96;
+	Fri, 21 Feb 2025 10:15:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740132885; cv=none; b=u9OVV/59Q1o+iVrGKA1wTWdcRXHnB22uikhZPqmjVqx3iirqhrl4of2weBYbXXmIwvuQpyWLGlB3Atb2OVjDnbfk7usUNM7fug2wOm2MI5oOcArdOtOtMyCPipvbDM9Ik5YPKFHioyGtbhmV4JtvNQE690WcNVme0ojeR8htiR4=
+	t=1740132960; cv=none; b=TP9ySOyAklJ78cTIezV0rFRtCR+FJIEDsX/npLwncnMwTGPQOZhAaisfexUYLynEvjwA8MIjZwPSm2y8aHejZVMIG/RK/UwL+xRk/ApNg4f+jQIO3Qt/DwAf48+1dXdU4i94HC9mzTx3U3AjBO7nC9gAIDLrNRGicGtbR4AODFQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740132885; c=relaxed/simple;
-	bh=bCQOa/TimHFKkucWMI7IGgeFSMMiFn7NMUIE/QL9MYM=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=U28fAybUfztQKGRN7Vl48UyNe9HUtVJjQZZx/zsLNDxUfIqLRQJ/hjhiNB9d9gB3yqc7NBSb11ZJgdmEwQVUFwIgA6vFcHYSloXED8OD9NYPNWt8rIia0pt5khAieGRh0Paxhdb7txdiNX+byYjXCxDQMjgcTifwgWqtPjP8FoI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0leil.net; spf=pass smtp.mailfrom=0leil.net; arc=none smtp.client-ip=185.125.25.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0leil.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=0leil.net
-Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4YzmFr0nszz81M;
-	Fri, 21 Feb 2025 11:14:40 +0100 (CET)
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4YzmFq2mSSzM2M;
-	Fri, 21 Feb 2025 11:14:39 +0100 (CET)
-From: Quentin Schulz <foss+kernel@0leil.net>
-Subject: [PATCH v2 0/2] gpio: pcf857x: add support for reset-gpios on
- (most) PCA967x
-Date: Fri, 21 Feb 2025 11:14:25 +0100
-Message-Id: <20250221-pca976x-reset-driver-v2-0-a2bcb9fdc256@cherry.de>
+	s=arc-20240116; t=1740132960; c=relaxed/simple;
+	bh=AjtuEIO3aLKlc5blqthM8ADBYKqJAsxNvPEIcv0vok4=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gpX2xpQz08sGAq4lGYdSZh9sSBZGt5IBLpPJ+rduRFYim4qmCsNvXADlnSmmZLZlUXZ4UTtyBvDC7WvnSkKmUeC0l3yHFOM+oWaRacs0JWNPI9OhGhL6a28i1RJ8KP5X6yJ3sLeCpfAIdARvgC+Hregx7w9lCqOHFusYrgUXxLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=KgNB9HFm; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51L6cTsa009360;
+	Fri, 21 Feb 2025 10:15:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	79DSFu2L5TmgYR/onO+o12QMuRd3z+SaurRalry1BWc=; b=KgNB9HFm+YUrczQj
+	c7NUlilGGMiYLMo/GJVCEUDlJJ3P7rpctNbJc/iZ7Qrijbzh1V41wLsCsyXKa48N
+	+F8NWk1eCGzSRZC6cdyRJapjf2Q2cG4WPOMLuoMXHKWlft6ZcRBxQpp9sqP7Qqz9
+	GayqptCeWFe55a71ctabORt/6WLq/FN0ctbsB+8Q8Pm29gGrw8ijM2+SXwnFysY+
+	0Mm2bxOiWhLqcuNpdS1AMblRAvnPDAO23/EKqcO+cd4M4/lGlhfW9NDkArltSM/J
+	iFIPKTKZDTozlyoV4Oejr92zHLMaIsCz7hJOskRtrqIaymxKAv+LxuQMVl2WsEeD
+	v1FfTg==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44vyy3hn4c-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 21 Feb 2025 10:15:40 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51LAFdFk002448
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 21 Feb 2025 10:15:39 GMT
+Received: from hu-mmanikan-blr.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Fri, 21 Feb 2025 02:15:31 -0800
+From: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+To: <andersson@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <konradybcio@kernel.org>, <catalin.marinas@arm.com>, <will@kernel.org>,
+        <p.zabel@pengutronix.de>, <richardcochran@gmail.com>,
+        <geert+renesas@glider.be>, <dmitry.baryshkov@linaro.org>,
+        <arnd@arndb.de>, <nfraprado@collabora.com>, <quic_tdas@quicinc.com>,
+        <biju.das.jz@bp.renesas.com>, <elinor.montmasson@savoirfairelinux.com>,
+        <ross.burton@arm.com>, <javier.carrasco@wolfvision.net>,
+        <quic_anusha@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <netdev@vger.kernel.org>
+CC: <quic_srichara@quicinc.com>, <quic_varada@quicinc.com>
+Subject: [PATCH v10 5/6] arm64: dts: qcom: ipq9574: Add nsscc node
+Date: Fri, 21 Feb 2025 15:44:25 +0530
+Message-ID: <20250221101426.776377-6-quic_mmanikan@quicinc.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250221101426.776377-1-quic_mmanikan@quicinc.com>
+References: <20250221101426.776377-1-quic_mmanikan@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAAFSuGcC/22NQQ6CMBBFr2Jm7ZihQrWuvIdhUcogswEyJQ2Ec
- HcrcenyveS/v0FkFY7wOG2gnCTKOGQw5xOE3g9vRmkzgyFTkSkcTsG7m11QOfKMrUpixeC8d9X
- dutJYyNNJuZPlyL7qzL3EedT1eEnF1/6Chv4HU4GE1jdNR+WVKuJn6Fl1vbQM9b7vH/r3JY+4A
- AAA
-X-Change-ID: 20250219-pca976x-reset-driver-c9aa95869426
-To: Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Cc: Heiko Stuebner <heiko@sntech.de>, linux-gpio@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Quentin Schulz <quentin.schulz@cherry.de>
-X-Mailer: b4 0.14.2
-X-Infomaniak-Routing: alpha
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: lfNmFZj3fQJ_1X747QlKgLs5K2LWlLIU
+X-Proofpoint-GUID: lfNmFZj3fQJ_1X747QlKgLs5K2LWlLIU
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-21_01,2025-02-20_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 clxscore=1011
+ phishscore=0 adultscore=0 lowpriorityscore=0 bulkscore=0 impostorscore=0
+ priorityscore=1501 malwarescore=0 spamscore=0 mlxlogscore=967 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
+ definitions=main-2502210077
 
-The PCA9670, PCA9671, PCA9672 and PCA9673 all have a RESETN input pin
-that is used to reset the I2C GPIO expander.
+From: Devi Priya <quic_devipriy@quicinc.com>
 
-One needs to hold this pin low for at least 4us and the reset should be
-finished after about 100us according to the datasheet[1]. Once the reset
-is done, the "registers and I2C-bus state machine will be held in their
-default state until the RESET input is once again HIGH.".
+Add a node for the nss clock controller found on ipq9574 based devices.
 
-Because the logic is reset, the latch values eventually provided in the
-Device Tree via lines-initial-states property are inapplicable so they
-are simply ignored if a reset GPIO is provided.
-This is eventually enforced by the Device Tree binding by making sure
-both cannot be present at the same time.
-
-Finally, the reset-gpios property is specific to PCA9670, PCA9671,
-PCA9672 and PCA9673 so make it specific to those chips.
-
-[1] https://www.nxp.com/docs/en/data-sheet/PCA9670.pdf 8.5 and fig 22.
-
-Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
+Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
+Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
 ---
-Changes in v2:
-- init n_latch to 0 again by default,
-- include linux/gpio/consumer.h,
-- update reset+latch comment to match what's in the datasheet from
-  RESETN input chapter instead of Power-on reset chapter,
-- clarify/fix expectation in commit log and binding around active level
-  for the reset-gpio wrt RESET# line (ACTIVE_LOW means reset is asserted
-  when the GPIO is low),
-- rename rstn_gpio to reset_gpio,
-- remove curly brackets around return dev_err_probe,
-- use fsleep instead of usleep_range,
-- use cansleep variant for setting the gpio level,
-- add T-b trailers from Heiko,
-- Link to v1: https://lore.kernel.org/r/20250220-pca976x-reset-driver-v1-0-6abbf043050e@cherry.de
+Changes in V10:
+	- Added clock-names.
+	- Dropped #power-domain-cells from nsscc node, because nsscc
+	  doesn't provide any power domains.
 
----
-Quentin Schulz (2):
-      dt-bindings: gpio: nxp,pcf8575: add reset GPIO
-      gpio: pcf857x: add support for reset-gpios on (most) PCA967x
+ arch/arm64/boot/dts/qcom/ipq9574.dtsi | 29 +++++++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
 
- .../devicetree/bindings/gpio/nxp,pcf8575.yaml      | 38 ++++++++++++++++++++++
- drivers/gpio/gpio-pcf857x.c                        | 29 +++++++++++++++--
- 2 files changed, 65 insertions(+), 2 deletions(-)
----
-base-commit: 6537cfb395f352782918d8ee7b7f10ba2cc3cbf2
-change-id: 20250219-pca976x-reset-driver-c9aa95869426
-
-Best regards,
+diff --git a/arch/arm64/boot/dts/qcom/ipq9574.dtsi b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
+index 942290028972..bbb5bd7f8618 100644
+--- a/arch/arm64/boot/dts/qcom/ipq9574.dtsi
++++ b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
+@@ -1193,6 +1193,35 @@ pcie0: pci@28000000 {
+ 			status = "disabled";
+ 		};
+ 
++		nsscc: clock-controller@39b00000 {
++			compatible = "qcom,ipq9574-nsscc";
++			reg = <0x39b00000 0x80000>;
++			clocks = <&xo_board_clk>,
++				 <&cmn_pll NSS_1200MHZ_CLK>,
++				 <&cmn_pll PPE_353MHZ_CLK>,
++				 <&gcc GPLL0_OUT_AUX>,
++				 <0>,
++				 <0>,
++				 <0>,
++				 <0>,
++				 <0>,
++				 <0>,
++				 <&gcc GCC_NSSCC_CLK>;
++			clock-names = "xo",
++				      "nss_1200",
++				      "ppe_353",
++				      "gpll0_out",
++				      "uniphy0_rx",
++				      "uniphy0_tx",
++				      "uniphy1_rx",
++				      "uniphy1_tx",
++				      "uniphy2_rx",
++				      "uniphy2_tx",
++				      "nsscc";
++			#clock-cells = <1>;
++			#reset-cells = <1>;
++			#interconnect-cells = <1>;
++		};
+ 	};
+ 
+ 	thermal-zones {
 -- 
-Quentin Schulz <quentin.schulz@cherry.de>
+2.34.1
 
 
