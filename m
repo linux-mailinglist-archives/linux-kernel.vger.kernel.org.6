@@ -1,166 +1,258 @@
-Return-Path: <linux-kernel+bounces-526221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF416A3FBB9
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:44:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E653A3FBC5
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:45:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3EA397A52C0
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:37:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4871E19E3083
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:40:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB8E3215050;
-	Fri, 21 Feb 2025 16:36:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D04C211A02;
+	Fri, 21 Feb 2025 16:36:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ENeSBtOi"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J9oYJyXx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4855721504E
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 16:36:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8593C20012D;
+	Fri, 21 Feb 2025 16:36:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740155782; cv=none; b=T0uQYDxs79SdSl0VVdhTzFw9FFUPzsFXNyWZp1sVIQsPzAyBKU0wvQg4pPrwcHwzBHO1Hw8niYvtdK5JO6hGHTagDy0bg0eoNzvpzRliD6p2IX27L/ds7GJ6UHwZ3g9Ydio8xEGiZ9/+awEihQxVK59p+A4Ivl2v/0MXeUdJCzA=
+	t=1740155813; cv=none; b=TZwh07ejTVZqeXt6axfYYBaoPVdfPuPpTXG2mgQQ/hYQpEf5qhfKvpI95CqQad+NEFuIe/OT8AqX/qaygakYKeXwirLcV9xmgEozqa5HxQ13eLlcfBpAb+6tpaLhUOwVdZ3idZsOc5DCAE7uYtH2uqGA9TyQsz9kDH+5QD8q3XE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740155782; c=relaxed/simple;
-	bh=PNSjA21YyMY5b4mfcA7P0wgvMvVvhz9wuyfsaZhxbP8=;
+	s=arc-20240116; t=1740155813; c=relaxed/simple;
+	bh=h95P4AcDHTPKa8n4KBUFfHZ3f+SCiz2fCZdKlS89CWU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t/jOfc2h3jgWYdzxzbCtBJGNwfUhW4CPeMhftg34xjaPgVP5oXg3/RMxyLaxylhxpyd3hTppsZHssAMzinmNHAkAAaU3rTrTuazuzKyjo5SOJ5HOM1mFpFWIU0WpsTzKydd9hYcgPdjs3yxBncV7uo1+a+jYjE4+1rjbZ3AU1i4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ENeSBtOi; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-545fed4642aso2290176e87.0
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 08:36:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740155778; x=1740760578; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=bPds9oAtueHibvIS0BHa1Q9Tu3GfdsskW31+FCbd/E0=;
-        b=ENeSBtOiaSYf8PniUEfCWiRJvvf4oP6xLt2v/An5pbvFKJpX4joDZYUE949Aa28c7A
-         IxiGAZeLdvvLRU8+YtnIpoa3t5uqTWcM1qekLP4bG7G5e1rItyKsRietG5Z5rdjfqI2b
-         XDwkO7yMlGvUO5dV4gPRFQxChIXXN8aOkUk2oIFauSSrb2yAXpsMvRW9f9Voqp1faKHa
-         6A+H0GRZiAZS1NtP877axIVvKlsfDHnCPO4DJz/diml4ekIAxiRVeCQIw+njMHrWmUIr
-         BsGiEGGSYjTY+nUgpm8qZmhwuvKcNdessIXRUO5mIh9HoUuxdvuV0QnvSm71lm/XQbzb
-         rkfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740155778; x=1740760578;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bPds9oAtueHibvIS0BHa1Q9Tu3GfdsskW31+FCbd/E0=;
-        b=kcY2HoYLQ3FNfM99hWncnbWDwK7ARdxEeg84Knp3g6KD6rGwV47Fdle/x1jreYbYTF
-         QWDHPaUuH63a9jDQZtS4UvfmGXEiV0+nrAINPe4/LghUFZwyJEbkUguaQmcYLZGK+kOa
-         F0I6uc7JAkRpHhXQYh2CRycckVYh9QU3IZyr0qf4mG+YmOr3HcykcCcippMnjXxkvQ+f
-         EGBPYLzIMJ1f09N3VpKRMbgYebyc268r0+J7iZPfHwUAUG8JRDMZIXiyCWYMQBzyC2Zu
-         ChUOU8T1p1wcDBayWZOldyUm9vHXnPp2yWkudirGBSceixtIGjYqCi11umB3swSpIyPw
-         2DSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV1PqmA0ZYON3Po5q8tfA0+KT/zSGDu92y9ej4zy9dMLaiU/C8NvJw0LdF9fmfcutKDavj8O3ypNt4epq0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNsfUNG9O5+JT/u8pgXgto1ejgATUmtKcDMm7gftTps8angVxy
-	V57GFwKhiem8PIWqcGje2gJs5dh51A0fUntk3wnha1PYgmaN+bjTcGY2wHE5vVI=
-X-Gm-Gg: ASbGncvDnhr/3wNA/fuJT/5P+iFMYAPN/E+/TKJ0ZXtoUVeNcmiwBUYdMjNKHyEq43+
-	zT8ovgRBsQ7lJcDJhWF86vRHAQW1dQthebeymgzT1v/O6u+PiCWvwasSb0hQK17213Ycla/sA1+
-	SwqdDdZfeym/F+CJ9mGuOu1KsmU+l4CZwtMOLM7g2Rv+InlcuY3XRnmgI2kw79XHd8HnQFNN2ik
-	IMyFrgpbDp8EgRP/ZvgY+Mhk+F3B2jeT2crv9tFnwm4rvqkimnSEBdniYSA6jBuMy/1auFUi6uz
-	lzgLDrvHpAKhyFTi7zeafsU9Y16/qxrOsTb4HfxkX9Hz5+KOhvDWSoH4DubG76DxxygCaLZz7ET
-	a//Mc1A==
-X-Google-Smtp-Source: AGHT+IG5OE0xMdR23O2TUN2vTwu+eGSplv/MmFU+Pt5AentUHO2eMzUBhfbNGyJXT3btW78Y1ZdZVw==
-X-Received: by 2002:a05:6512:104e:b0:545:2e5d:f3f3 with SMTP id 2adb3069b0e04-54838f5b0bcmr1640970e87.46.1740155777708;
-        Fri, 21 Feb 2025 08:36:17 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-545637f0e14sm1961903e87.86.2025.02.21.08.36.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Feb 2025 08:36:16 -0800 (PST)
-Date: Fri, 21 Feb 2025 18:36:13 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Jun Nie <jun.nie@linaro.org>
-Cc: Rob Clark <robdclark@gmail.com>, 
-	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
-	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 13/15] drm/msm/dpu: support SSPP assignment for
- quad-pipe case
-Message-ID: <khmeegjx5jmu4c32un3gqu7sumkbtdkg6cawwwmwtmkp5gkrag@sklf5tr7qbwv>
-References: <20250217-sm8650-v6-14-hmd-deckard-mdss-quad-upstream-oldbootwrapper-36-prep-v6-0-c11402574367@linaro.org>
- <20250217-sm8650-v6-14-hmd-deckard-mdss-quad-upstream-oldbootwrapper-36-prep-v6-13-c11402574367@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=qrmXqh9OUOppoUq/cJIin2wdTUm99tnLRd8OI7qO4Kg6krdg6LtHlgpaQnno9zgh61XJs9lHKPdvxuYQ8fi9mGwp93mBVx9sxTxklmGCGoUXIS9TaS9/boZ6hvnxrYbjetu0terSCj0JAgMBcTaMkMtnsUew7r0xbaV169bLY6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J9oYJyXx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9ECBC4CED6;
+	Fri, 21 Feb 2025 16:36:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740155812;
+	bh=h95P4AcDHTPKa8n4KBUFfHZ3f+SCiz2fCZdKlS89CWU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=J9oYJyXxX4MdcyAuOisFvnDlgwwDcb5BH5LlKs2wk8v2pCx9rLsEHijLRegH6EPqk
+	 JXL/8iZapYZZXHInsOQ7/E4RY1RQ1PQ+qn5bHLm/FfUDNWG8dJgmHUBBM7SookSnfI
+	 psfIYVIwviM2wIQf6YpMqnl4v5JZgjPF6lcYaFjWD0YA5P5fcqHfCQbE4kPNVdp0yw
+	 JojTcAladLZDa8tVjXGYuOZjvAi3VQ8FDiEsQZq0Qq+9mKSo2/j964WTUOrDb0fdEj
+	 W4rsSNAOZARO2kxwfFuvj5c9UN3ZA4MhNsfU/Aq+0jqXsgGG8/ek7G/G9WGWGAQS0z
+	 cBU8TxvC3RQ3g==
+Date: Fri, 21 Feb 2025 10:36:51 -0600
+From: Rob Herring <robh@kernel.org>
+To: =?iso-8859-1?Q?J=2E_Neusch=E4fer?= <j.ne@posteo.net>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Claudiu Manoil <claudiu.manoil@nxp.com>, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] dt-bindings: net: Convert fsl,gianfar-{mdio,tbi} to
+ YAML
+Message-ID: <20250221163651.GA4130188-robh@kernel.org>
+References: <20250220-gianfar-yaml-v1-0-0ba97fd1ef92@posteo.net>
+ <20250220-gianfar-yaml-v1-1-0ba97fd1ef92@posteo.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20250217-sm8650-v6-14-hmd-deckard-mdss-quad-upstream-oldbootwrapper-36-prep-v6-13-c11402574367@linaro.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250220-gianfar-yaml-v1-1-0ba97fd1ef92@posteo.net>
 
-On Mon, Feb 17, 2025 at 10:16:02PM +0800, Jun Nie wrote:
-> Currently, SSPPs are assigned to a maximum of two pipes. However,
-> quad-pipe usage scenarios require four pipes and involve configuring
-> two stages. In quad-pipe case, the first two pipes share a set of
-> mixer configurations and enable multi-rect mode when certain
-> conditions are met. The same applies to the subsequent two pipes.
+On Thu, Feb 20, 2025 at 06:29:21PM +0100, J. Neuschäfer wrote:
+> Move the information related to the Freescale Gianfar (TSEC) MDIO bus
+> and the Ten-Bit Interface (TBI) from fsl-tsec-phy.txt to a new binding
+> file in YAML format, fsl,gianfar-mdio.yaml.
 > 
-> Assign SSPPs to the pipes in each stage using a unified method and
-> to loop the stages accordingly.
-> 
-> Signed-off-by: Jun Nie <jun.nie@linaro.org>
+> Signed-off-by: J. Neuschäfer <j.ne@posteo.net>
 > ---
->  drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c | 63 +++++++++++++++++++------------
->  1 file changed, 39 insertions(+), 24 deletions(-)
 > 
-> +	for (stage_id = 0; stage_id < num_stages; stage_id++) {
-> +		for (i = stage_id * PIPES_PER_STAGE; i < (stage_id + 1) * PIPES_PER_STAGE; i++) {
-> +			pipe = &pstate->pipe[i];
-> +			pipe_cfg = &pstate->pipe_cfg[i];
+> dt-bindings: net: Convert fsl,gianfar-tbi to YAML
+> ---
+>  .../devicetree/bindings/net/fsl,gianfar-mdio.yaml  | 94 ++++++++++++++++++++++
+>  .../devicetree/bindings/net/fsl-tsec-phy.txt       | 41 +---------
+>  2 files changed, 96 insertions(+), 39 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/net/fsl,gianfar-mdio.yaml b/Documentation/devicetree/bindings/net/fsl,gianfar-mdio.yaml
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..2dade7f48c366b7f5c7408e1f7de1a6f5fc80787
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/net/fsl,gianfar-mdio.yaml
+> @@ -0,0 +1,94 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/net/fsl,gianfar-mdio.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
-> +			if (drm_rect_width(&pipe_cfg->src_rect) == 0)
-> +				break;
+> +title: Freescale Gianfar (TSEC) MDIO Device
 > +
-> +			pipe->sspp = dpu_rm_reserve_sspp(&dpu_kms->rm, global_state, crtc, &reqs);
-> +			if (!pipe->sspp)
-> +				return -ENODEV;
+> +description:
+> +  This binding describes the MDIO is a bus to which the PHY devices are
+> +  connected. For each device that exists on this bus, a child node should be
+> +  created.
 > +
-> +			r_pipe = &pstate->pipe[i + 1];
-> +			r_pipe_cfg = &pstate->pipe_cfg[i + 1];
+> +  As of this writing, every TSEC is associated with an internal Ten-Bit
+> +  Interface (TBI) PHY. This PHY is accessed through the local MDIO bus. These
+> +  buses are defined similarly to the mdio buses, except they are compatible
+> +  with "fsl,gianfar-tbi". The TBI PHYs underneath them are similar to normal
+> +  PHYs, but the reg property is considered instructive, rather than
+> +  descriptive. The reg property should be chosen so it doesn't interfere with
+> +  other PHYs on the bus.
 > +
-> +			/*
-> +			 * If current pipe is the first pipe in pipe pair, check
-> +			 * multi-rect opportunity for the 2nd pipe in the pair.
-> +			 * SSPP multi-rect mode cross mixer pairs is not supported.
-> +			 */
-> +			if ((i % PIPES_PER_STAGE == 0) &&
+> +maintainers:
+> +  - J. Neuschäfer <j.ne@posteo.net>
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - fsl,gianfar-tbi
+> +      - fsl,gianfar-mdio
+> +      - fsl,etsec2-tbi
+> +      - fsl,etsec2-mdio
+> +      - fsl,ucc-mdio
+> +      - gianfar
 
-Please move r_pipe / r_pipe_cfg definition and assignment here. With
-that fixed:
+Can you just comment out this to avoid the duplicate issue.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Though I think if you write a custom 'select' which looks for 
+'device_type = "mdio"' with gianfar compatible and similar in the other 
+binding, then the warning will go away. 
 
+> +      - ucc_geth_phy
+> +
+> +  reg:
+> +    minItems: 1
+> +    items:
+> +      - description:
+> +          Offset and length of the register set for the device
+> +
+> +      - description:
+> +          Optionally, the offset and length of the TBIPA register (TBI PHY
+> +          address register). If TBIPA register is not specified, the driver
+> +          will attempt to infer it from the register set specified (your
+> +          mileage may vary).
+> +
+> +  device_type:
+> +    const: mdio
+> +
 
-> +			    drm_rect_width(&r_pipe_cfg->src_rect) != 0 &&
-> +			    dpu_plane_try_multirect_parallel(pipe, pipe_cfg, r_pipe, r_pipe_cfg,
-> +							      pipe->sspp,
-> +							      msm_framebuffer_format(plane_state->fb),
-> +							      dpu_kms->catalog->caps->max_linewidth)) {
-> +				i++;
-> +			} else {
-> +				/* multirect is not possible, use two SSPP blocks */
-> +				pipe->multirect_index = DPU_SSPP_RECT_SOLO;
-> +				pipe->multirect_mode = DPU_SSPP_MULTIRECT_NONE;
-> +				DPU_DEBUG_PLANE(pdpu, "allocating sspp_%d for pipe %d.\n",
-> +						pipe->sspp->idx - SSPP_NONE, i);
-> +			}
-> +		}
->  	}
+> +  "#address-cells":
+> +    const: 1
+> +
+> +  "#size-cells":
+> +    const: 0
+
+These are defined in mdio.yaml, so drop them here.
+
+> +
+> +required:
+> +  - reg
+> +  - "#address-cells"
+> +  - "#size-cells"
+> +
+> +allOf:
+> +  - $ref: mdio.yaml#
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - gianfar
+> +              - ucc_geth_phy
+> +    then:
+> +      required:
+> +        - device_type
+
+Essentially, move this to the 'select' schema and add that property 
+device_type must be 'mdio'. You won't need it here anymore because it 
+had to be true for the schema to be applied.
+
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    soc {
+> +        #address-cells = <1>;
+> +        #size-cells = <1>;
+> +
+> +        mdio@24520 {
+> +            reg = <0x24520 0x20>;
+> +            compatible = "fsl,gianfar-mdio";
+> +            #address-cells = <1>;
+> +            #size-cells = <0>;
+> +
+> +            ethernet-phy@0 {
+> +                reg = <0>;
+> +            };
+> +        };
+> +    };
+> diff --git a/Documentation/devicetree/bindings/net/fsl-tsec-phy.txt b/Documentation/devicetree/bindings/net/fsl-tsec-phy.txt
+> index 9c9668c1b6a24edff7b7cf625b9f14c3cbc2e0c8..0e55e0af7d6f59cfb571dd3fcff704b7f4c140d2 100644
+> --- a/Documentation/devicetree/bindings/net/fsl-tsec-phy.txt
+> +++ b/Documentation/devicetree/bindings/net/fsl-tsec-phy.txt
+> @@ -1,47 +1,10 @@
+>  * MDIO IO device
 >  
->  	return dpu_plane_atomic_check_sspp(plane, state, crtc_state);
+> -The MDIO is a bus to which the PHY devices are connected.  For each
+> -device that exists on this bus, a child node should be created.  See
+> -the definition of the PHY node in booting-without-of.txt for an example
+> -of how to define a PHY.
+> -
+> -Required properties:
+> -  - reg : Offset and length of the register set for the device, and optionally
+> -          the offset and length of the TBIPA register (TBI PHY address
+> -	  register).  If TBIPA register is not specified, the driver will
+> -	  attempt to infer it from the register set specified (your mileage may
+> -	  vary).
+> -  - compatible : Should define the compatible device type for the
+> -    mdio. Currently supported strings/devices are:
+> -	- "fsl,gianfar-tbi"
+> -	- "fsl,gianfar-mdio"
+> -	- "fsl,etsec2-tbi"
+> -	- "fsl,etsec2-mdio"
+> -	- "fsl,ucc-mdio"
+> -	- "fsl,fman-mdio"
+> -    When device_type is "mdio", the following strings are also considered:
+> -	- "gianfar"
+> -	- "ucc_geth_phy"
+> -
+> -Example:
+> -
+> -	mdio@24520 {
+> -		reg = <24520 20>;
+> -		compatible = "fsl,gianfar-mdio";
+> -
+> -		ethernet-phy@0 {
+> -			......
+> -		};
+> -	};
+> +Refer to Documentation/devicetree/bindings/net/fsl,gianfar-mdio.yaml
+>  
+>  * TBI Internal MDIO bus
+>  
+> -As of this writing, every tsec is associated with an internal TBI PHY.
+> -This PHY is accessed through the local MDIO bus.  These buses are defined
+> -similarly to the mdio buses, except they are compatible with "fsl,gianfar-tbi".
+> -The TBI PHYs underneath them are similar to normal PHYs, but the reg property
+> -is considered instructive, rather than descriptive.  The reg property should
+> -be chosen so it doesn't interfere with other PHYs on the bus.
+> +Refer to Documentation/devicetree/bindings/net/fsl,gianfar-mdio.yaml
+>  
+>  * Gianfar-compatible ethernet nodes
+>  
 > 
 > -- 
-> 2.34.1
+> 2.48.0.rc1.219.gb6b6757d772
 > 
-
--- 
-With best wishes
-Dmitry
 
