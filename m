@@ -1,120 +1,139 @@
-Return-Path: <linux-kernel+bounces-526092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B844DA3F9F8
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:04:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2724FA3F9F9
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:04:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E152863764
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 15:56:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CAF18670B2
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 15:56:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73E0F1F0E53;
-	Fri, 21 Feb 2025 15:52:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 514011F2361;
+	Fri, 21 Feb 2025 15:53:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nHm2VAWa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="LGll4wxM"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF7121DA612;
-	Fri, 21 Feb 2025 15:52:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC9D11DB958;
+	Fri, 21 Feb 2025 15:53:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740153163; cv=none; b=GWgqq4fpvxD1nRObsluZwijzqpl4SD7KNNMfM9j75Y7jc9ggFnc6Ov6XkuQIoMGg0odkypeDEd0/nz7ChL1k6Qygg9mtjT9ZtTCFcgBzeYirewQXQ8QF304R+qIPnwSp65uZSEsRDKFrPkiA+vYftC/3OpEFaZtqBdFUFrfRuo0=
+	t=1740153209; cv=none; b=iwlKdS9ux5GS3pgPoJMM+aMFXwtpyP8wE8Y9lbbWTWnKMfBiw5UrVb8iyqFwsPtGDlL/xGvsQvc//eEWKReMonBxmC+b/zr+OzG4mdsWKCmea97l1mrVwW94PccxkrcTy9eKKhWV0N/WNdUDHURcV67t5ecQOip/Hyn+NwruFc4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740153163; c=relaxed/simple;
-	bh=T2pIXkuccaH3wvzZZ+aaBnugn9hlqwMDeUUtq+JHoBQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mxdhiiHUPc5TGy7TaOgEfrMh7svQqpzIO6o8AmIvOQH/C0l8aQhWzwNu33qVYIJELgJRILPRtu5zg1lcFxz3MBb3ioDlRlLdaOZdxgenNNs0D/PGeOqDbM2A3m8UjLEmbCjD6WepF9d3FR1vF/Hm8G19YNDyPqJYv1DwjvAmGsA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nHm2VAWa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A091C4CED6;
-	Fri, 21 Feb 2025 15:52:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740153162;
-	bh=T2pIXkuccaH3wvzZZ+aaBnugn9hlqwMDeUUtq+JHoBQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nHm2VAWaVJFVIpDDiqF9xlT4d9qDnMm9tvXttZutI3mEu8ev8XqBedNnx/CR5PK7i
-	 2FpuLycf+EHln6f61U0gGpNMn7hAaSxVRpeAJ4G5jTp1XpYLMfgzjXB/3phqm0tVhS
-	 lodUtL2/yFDmUHB87mp5K3dzhKRAf6VK1ASGIV7TNha4e5Psh062REqoNUDr+de/+P
-	 RqIU0sbx5mF17+djPtBk/A5oLNap3AcsNMgbj4pPmQQ2ILW+klQTIK5gLrY3znwDim
-	 PgkvpD7sYpL1NGd51ecpJhhae+dZ+UgkeOCR9grnvr1yvCGCe2YjHXYkFiPRAtreBu
-	 lC5dwBkmeinaQ==
-Date: Fri, 21 Feb 2025 16:52:39 +0100
-From: Frederic Weisbecker <frederic@kernel.org>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@amd.com>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>, rcu <rcu@vger.kernel.org>
-Subject: Re: [PATCH 3/3] rcu/exp: Remove needless CPU up quiescent state
- report
-Message-ID: <Z7ihR0eMfoJMi-qx@localhost.localdomain>
-References: <20250213232559.34163-1-frederic@kernel.org>
- <20250213232559.34163-4-frederic@kernel.org>
- <fe931d3a-bf97-4be5-8420-f1fcb55e6a46@paulmck-laptop>
- <Z68yzBURiIr_7Lmy@pavilion.home>
- <610596cf-9836-473f-bcdc-15c69b7e0cd4@paulmck-laptop>
- <Z7ET8S4HKqSPubQY@pavilion.home>
- <c5ea9684-291f-4952-b834-ed8e39cfdf8f@paulmck-laptop>
+	s=arc-20240116; t=1740153209; c=relaxed/simple;
+	bh=DRRk8ySHM7d80jUzaigsI9T4dZ5O56rDrKF/hwqGjjE=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=P/28Z7BooAM+b/RC51rIOAVBPPGugYt9DND0Zis4Z1WBTvT0ll++pRmwa6NXcgf7QmhtorIEMcW28hOAPQfhGw/4kjIvVuG0RzJgmh39U/Cm6v6DaA2ITCoXylXpid86Tr431x9PRaGKzYfswEOagl2hnQtTQDebXYN76iFIojg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=LGll4wxM; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1740153200;
+	bh=DRRk8ySHM7d80jUzaigsI9T4dZ5O56rDrKF/hwqGjjE=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=LGll4wxMdtC9VuU1cqAJl3FPPep48bfwtMgKC4WgcM/G8HMuayRO29U0ZUSgfakeq
+	 tBq1E4kJN6BHNSfXtNb6p1qo7xGOi0P5Xm02uplDWaE7YJtYoKI4NJtea35tD54mcE
+	 EQh2uwfFMkJzmfvwlfUKsPkAlf5epvS3tFqakLDOCamE6Sdlq9rP37BFbCfKYyrvp/
+	 fzQyeBkIvQ7724xVu1CEFsY6H0qyIzQ/RksSUeN9WLwDf5UaDOhynR0AnCpviJISut
+	 uHgqKDSgMMJGaYK64TAfB6Y0mYvYLizMcimTLF8DiQzRgNjr/l3w9GOTH644nscv57
+	 R3kv+iVFRl6sg==
+Received: from [IPv6:2606:6d00:11:e976::5ac] (unknown [IPv6:2606:6d00:11:e976::5ac])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: nicolas)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 1DE1217E0199;
+	Fri, 21 Feb 2025 16:53:19 +0100 (CET)
+Message-ID: <cd8f43a310f771f7db7ae1ab7fb2f8b5d554c2da.camel@collabora.com>
+Subject: Re: [PATCH 0/2] Add support for MT8196 video encoder
+From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+To: Irui Wang <irui.wang@mediatek.com>, Hans Verkuil
+ <hverkuil-cisco@xs4all.nl>,  Mauro Carvalho Chehab	 <mchehab@kernel.org>,
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+	angelogioacchino.delregno@collabora.com, Yunfei Dong
+ <yunfei.dong@mediatek.com>
+Cc: Project_Global_Chrome_Upstream_Group@mediatek.com, 
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+ Longfei Wang <longfei.wang@mediatek.com>
+Date: Fri, 21 Feb 2025 10:53:17 -0500
+In-Reply-To: <20250221031004.9050-1-irui.wang@mediatek.com>
+References: <20250221031004.9050-1-irui.wang@mediatek.com>
+Autocrypt: addr=nicolas.dufresne@collabora.com; prefer-encrypt=mutual;
+ keydata=mQGiBEUQN0MRBACQYceNSezSdMjx7sx6gwKkMghrrODgl3B0eXBTgNp6c431IfOOEsdvk
+ oOh1kwoYcQgbg4MXw6beOltysX4e8fFWsiRkc2nvvRW9ir9kHDm49MkBLqaDjTqOkYKNMiurFW+go
+ zpr/lUW15QqT6v68RYe0zRdtwGZqeLzX2LVuukGwCg4AISzswrrYHNV7vQLcbaUhPgIl0D+gILYT9
+ TJgAEK4YHW+bFRcY+cgUFoLQqQayECMlctKoLOE69nIYOc/hDr9uih1wxrQ/yL0NJvQCohSPyoyLF
+ 9b2EuIGhQVp05XP7FzlTxhYvGO/DtO08ec85+bTfVBMV6eeY4MS3ZU+1z7ObD7Pf29YjyTehN2Dan
+ 6w1g2rBk5MoA/9nDocSlk4pbFpsYSFmVHsDiAOFje3+iY4ftVDKunKYWMhwRVBjAREOByBagmRau0
+ cLEcElpf4hX5f978GoxSGIsiKoDAlXX+ICDOWC1/EXhEEmBR1gL0QJgiVviNyLfGJlZWnPjw6xhhm
+ tHYWTDxBOP5peztyc2PqeKsLsLWzAr7QnTmljb2xhcyBEdWZyZXNuZSA8bmljb2xhc0BuZHVmcmVz
+ bmUuY2E+iGIEExECACIFAlXA3CACGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEHFTAi2sB
+ qgcJngAnRDBTr8bhzuH0KQwFP1nEYtfgpKdAKCrQ/sJfuG/8zsd7J8wVl7y3e8ARbRDTmljb2xhcy
+ BEdWZyZXNuZSAoQi4gU2MuIEluZm9ybWF0aXF1ZSkgPG5pY29sYXMuZHVmcmVzbmVAZ21haWwuY29
+ tPohgBBMRAgAgBQJFlCyOAhsDBgsJCAcDAgQVAggDBBYCAwECHgECF4AACgkQcVMCLawGqBwhLQCg
+ zYlrLBj6KIAZ4gmsfjXD6ZtddT8AoIeGDicVq5WvMHNWign6ApQcZUihtElOaWNvbGFzIER1ZnJlc
+ 25lIChCLiBTYy4gSW5mb3JtYXRpcXVlKSA8bmljb2xhcy5kdWZyZXNuZUBjb2xsYWJvcmEuY28udW
+ s+iGIEExECACIFAkuzca8CGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEHFTAi2sBqgcQX8
+ An2By6LDEeMxi4B9hUbpvRnzaaeNqAJ9Rox8rfqHZnSErw9bCHiBwvwJZ77QxTmljb2xhcyBEdWZy
+ ZXNuZSA8bmljb2xhcy5kdWZyZXNuZUBjb2xsYWJvcmEuY29tPohiBBMRAgAiBQJNzZzPAhsDBgsJC
+ AcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRBxUwItrAaoHLlxAKCYAGf4JL7DYDLs/188CPMGuwLypw
+ CfWKc9DorA9f5pyYlD5pQo6SgSoiC0R05pY29sYXMgRHVmcmVzbmUgKEIgU2MuIEluZm9ybWF0aXF
+ 1ZSkgPG5pY29sYXMuZHVmcmVzbmVAdXNoZXJicm9va2UuY2E+iGAEExECACAFAkUQN0MCGwMGCwkI
+ BwMCBBUCCAMEFgIDAQIeAQIXgAAKCRBxUwItrAaoHPTnAJ0WGgJJVspoctAvEcI00mtp5WAFGgCgr
+ +E7ItOqZEHAs+xabBgknYZIFPU=
+Organization: Collabora Canada
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <c5ea9684-291f-4952-b834-ed8e39cfdf8f@paulmck-laptop>
 
-Le Wed, Feb 19, 2025 at 06:58:36AM -0800, Paul E. McKenney a �crit :
-> On Sat, Feb 15, 2025 at 11:23:45PM +0100, Frederic Weisbecker wrote:
-> > > Before.  There was also some buggy debug code in play.  Also, to get the
-> > > failure, it was necessary to make TREE03 disable preemption, as stock
-> > > TREE03 has an empty sync_sched_exp_online_cleanup() function.
-> > > 
-> > > I am rerunning the test with a WARN_ON_ONCE() after the early exit from
-> > > the sync_sched_exp_online_cleanup().  Of course, lack of a failure does
-> > > not necessairly indicate
-> > 
-> > Cool, thanks!
-> 
-> No failures.  But might it be wise to put this WARN_ON_ONCE() in,
-> let things go for a year or two, and complete the removal if it never
-> triggers?  Or is the lack of forward progress warning enough?
+Hi,
 
-Hmm, what prevents a WARN_ON_ONCE() after the early exit of
-sync_sched_exp_online_cleanup() to hit?
+Le vendredi 21 février 2025 à 11:10 +0800, Irui Wang a écrit :
+> This patch series adds support for MT8196 video encoder. The changes
+> include introducing a new encoder driver interface and add support
+> for the
+> new encoder driver encoding process.
 
-All it takes is for sync_sched_exp_online_cleanup() to execute between
-sync_exp_reset_tree() and  __sync_rcu_exp_select_node_cpus() manage
-to send an IPI.
+thanks for your contribution. In general, when adding new HW support,
+we would like to see in your cover letter your v4l2-compliance report. 
 
-But we can warn about the lack of forward progress after a few iterations
-of the retry_ipi label in __sync_rcu_exp_select_node_cpus().
+Since this is a firmware based encoder, we also want to know how the
+process with uploading your firmware in linux-firmware is going. We can
+do reviews ahead of this of course, but merging depends on having
+firmware upstream. We did some favours in the past and it worked for
+many SoC, but things seems to have changed lately with the MT8188
+firmware situation. Hope you understand this concern.
+
+regards,
+Nicolas
 
 > 
-> > > > And if after do we know why?
-> > > 
-> > > Here are some (possibly bogus) possibilities that came to mind:
-> > > 
-> > > 1.	There is some coming-online race that deprives the incoming
-> > > 	CPU of an IPI, but nevertheless marks that CPU as blocking the
-> > > 	current grace period.
-> > 
-> > Arguably there is a tiny window between rcutree_report_cpu_starting()
-> > and set_cpu_online() that could make ->qsmaskinitnext visible before
-> > cpu_online() and therefore delay the IPI a bit. But I don't expect
-> > more than a jiffy to fill up the gap. And if that's relevant, note that
-> > only !PREEMPT_RCU is then "fixed" by sync_sched_exp_online_cleanup() here.
+> Irui Wang (2):
+>   media: mediatek: encoder: Add a new encoder driver interface
+>   media: mediatek: encoder: Add support for common driver encode
+> process
 > 
-> Agreed.  And I vaguely recall that there was some difference due to
-> preemptible RCU's ability to clean up at the next rcu_read_unlock(),
-> though more recently, possibly deferred.
-
-Perhaps at the time but today at least I can't find any.
-
-Thanks.
+>  .../platform/mediatek/vcodec/encoder/Makefile |   1 +
+>  .../mediatek/vcodec/encoder/mtk_vcodec_enc.c  |   2 +
+>  .../vcodec/encoder/mtk_vcodec_enc_drv.h       |   3 +
+>  .../vcodec/encoder/venc/venc_common_if.c      | 704
+> ++++++++++++++++++
+>  .../mediatek/vcodec/encoder/venc_drv_if.c     |   3 +-
+>  .../mediatek/vcodec/encoder/venc_drv_if.h     |   3 +
+>  .../mediatek/vcodec/encoder/venc_ipi_msg.h    |  26 +
+>  .../mediatek/vcodec/encoder/venc_vpu_if.c     |  37 +-
+>  8 files changed, 764 insertions(+), 15 deletions(-)
+>  create mode 100644
+> drivers/media/platform/mediatek/vcodec/encoder/venc/venc_common_if.c
+> 
 
