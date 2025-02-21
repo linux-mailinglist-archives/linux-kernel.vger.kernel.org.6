@@ -1,44 +1,45 @@
-Return-Path: <linux-kernel+bounces-525909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E68E5A3F745
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 15:30:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84CACA3F743
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 15:30:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DCA9717A5B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 14:30:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FFA886326D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 14:30:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C41D20FA90;
-	Fri, 21 Feb 2025 14:29:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66DFE20FA91;
+	Fri, 21 Feb 2025 14:30:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QiQFTrOx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P3T8daPO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9478420B1EE
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 14:29:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EF7F20FA99
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 14:30:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740148196; cv=none; b=Q+Oj3MQlnv84pLjDf63nylJlBNrgnqtqTeIL+UnJsMeG2eN522OwiDF+8JILmdZ+nWr2WqyGGHYpyiyFqHMU3VY49Nm3PllF0D5oLqKeWs4r51FjnQlZXlEgOKZrZZgkPyOZFxY5IW2RqXQj16kHp1osQ68ccm5e3ABa++fhegA=
+	t=1740148205; cv=none; b=n9ptxQGv5ykE8JtZ08c+8QoUdkfaiuRfIxVDtuD1vXFYy4YRkzaQ4NWOBpQZXDUMSD8dqQlCVwVz0TQUniqL6nENJEjfumgH1AeRSmOfz+c8N0xJA/eSaP0BxlXDM2KTs+xxWy4LQNcmKwVRCU5eySuET1U46rvft0wpacKCjjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740148196; c=relaxed/simple;
-	bh=jiAtYkJ93H+bXGtd4GAtjs0YWd901kf8MHW9Qhn4ztk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=F08dbjjYyqLtY5B2+fwRACf5bxuu7s18U4Rqyu5lLpqbiB6mv3i+w/10oe6b8uyOebxH57TortDO5BD1UfipPQMjM9AJwOCo9L3dm+qPHJB9kNLfhdtEWZpXxZVBfeKhU2sc2uRUoXT+mYvSSq+7NMhPtvnJgqehFVhN1vXSgCI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QiQFTrOx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1EC86C4CED6;
-	Fri, 21 Feb 2025 14:29:54 +0000 (UTC)
+	s=arc-20240116; t=1740148205; c=relaxed/simple;
+	bh=fYdqXlx+xtNh07wwI7HeC9dZi2obJjt0rHcBHY8Bbus=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MqWFsBZKI93oLIjahFX4nAJyjvUzd5hEGSuwH6L9hiOYOTZMBMg4ZXj4tOhn3jEnEJ42wFn/QNdaaZhwwFCBSJI6OQA2nXzJQRAIZXfHGk6cbYx+iR7qAfYfiiCSSUSXXSkAXZhSi+6dqclCWEPh1A2mhLN7AblS40QLSnJbtbA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P3T8daPO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 206BEC4CED6;
+	Fri, 21 Feb 2025 14:30:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740148196;
-	bh=jiAtYkJ93H+bXGtd4GAtjs0YWd901kf8MHW9Qhn4ztk=;
-	h=From:To:Cc:Subject:Date:From;
-	b=QiQFTrOxx6hu7gaU9+j36xYhUYNz073ryM1ZE+jGwt3tuvzhNIP8c9Nm2RXVH4O/s
-	 3SZaliO5Tfe4+CGKQw8VDBOj3wLrnst/T6DjljjytsZ1ujo8/k3oaxwxyEr/h83ZKM
-	 WUyVyzmklqkcs23E19OMjB/EwQuZhTZNC7b0wpLuEwOrcTqoRXNbkJqDgTgxGUat1G
-	 Pyj3/9aAgujCCQxK2nZfXrtHaoVXtWX367KB2WZHQqT6ptdetSz26PApZfF3aJ5+qr
-	 NzER9PqiUUnrE08Bc9F1vvY4+VI4IWV0f+ZX8B18T504UCbhc/rzJMFuo6DJ60MxR+
-	 yx/C/KGNha3ow==
+	s=k20201202; t=1740148205;
+	bh=fYdqXlx+xtNh07wwI7HeC9dZi2obJjt0rHcBHY8Bbus=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=P3T8daPOHbnPO5rIlITBNNQNus7ylWRkKJCFQ8VnHPKgszE4yw3c5SwIj6BZi969Y
+	 77VRam7i2vZZK9mhc8qb4Lfs8wMLqz5JH3uyBM9K6+UYoBuPm+/Zm2UccUzH1biW48
+	 Uui6zxAYNn+w/awekrBZnOtHmameqdaeUOlr7slXpFGB5+7aXp95fOM+wTg4c1OWIO
+	 E1VeAFMXoYkEY7ucx3NWp9JBBSZgUjIluUFCKad1Ft3D6DPzWs6mZJ3yoS2iINuYK7
+	 UGh4i7fPLovnmLEhE5ETUn9qgN3nQqMNo4rrC6a/nahxuZ2xSXLYyxZ1QdF5BuIgAz
+	 7wtT03eMOIznw==
 From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
 To: Peter Zijlstra <peterz@infradead.org>,
 	Ingo Molnar <mingo@redhat.com>,
@@ -56,10 +57,12 @@ Cc: Boqun Feng <boqun.feng@gmail.com>,
 	Tomasz Figa <tfiga@chromium.org>,
 	Sergey Senozhatsky <senozhatsky@chromium.org>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 0/2] hung_task: Dump the blocking task stacktrace
-Date: Fri, 21 Feb 2025 23:29:51 +0900
-Message-ID:  <174014819072.967666.10146255401631551816.stgit@mhiramat.tok.corp.google.com>
+Subject: [PATCH v2 1/2] hung_task: Show the blocker task if the task is hung on mutex
+Date: Fri, 21 Feb 2025 23:30:01 +0900
+Message-ID:  <174014820133.967666.5855819828684207404.stgit@mhiramat.tok.corp.google.com>
 X-Mailer: git-send-email 2.48.1.658.g4767266eb4-goog
+In-Reply-To:  <174014819072.967666.10146255401631551816.stgit@mhiramat.tok.corp.google.com>
+References:  <174014819072.967666.10146255401631551816.stgit@mhiramat.tok.corp.google.com>
 User-Agent: StGit/0.19
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -70,29 +73,18 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-Hi,
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
-Here is the 2nd version of the dumping mutex blocker in hung_task
-message. The previous version is here;
+The "hung_task" shows a long-time uninterruptible slept task, but most
+often, it's blocked on a mutex acquired by another task. Without
+dumping such a task, investigating the root cause of the hung task
+problem is very difficult.
 
-https://lore.kernel.org/all/173997003868.2137198.9462617208992136056.stgit@mhiramat.tok.corp.google.com/
+This introduce task_struct::blocker_mutex to point the mutex lock
+which this task is waiting for. Since the mutex has "owner"
+information, we can find the owner task and dump it with hung tasks.
 
-This version introduced CONFIG_DETECT_HUNG_TASK_BLOCKER and
-save the mutex on task_struct as blocker_mutex field.
-
-The hung_task detector is very useful for detecting the lockup.
-However, since it only dumps the blocked (uninterruptible sleep)
-processes, it is not enough to identify the root cause of that
-lockup.
-
-For example, if a process holds a mutex and sleep an event in
-interruptible state long time, the other processes will wait on
-the mutex in uninterruptible state. In this case, the waiter
-processes are dumped, but the blocker process is not shown
-because it is sleep in interruptible state.
-
-This adds a feature to dump the blocker task which holds a mutex
-when detecting a hung task. e.g.
+With this change, the hung task shows blocker task's info like below;
 
  INFO: task cat:113 blocked for more than 122 seconds.
        Not tainted 6.14.0-rc3-00002-g6afe972e1b9b #152
@@ -153,34 +145,156 @@ when detecting a hung task. e.g.
  R13: 0000000029d8d3a0 R14: 0000000000000001 R15: ffffffffffffffff
   </TASK>
 
-TBD:
-We can extend this feature to cover other locks like rwsem and rt_mutex,
-but rwsem requires to dump all the tasks which acquire and wait that
-rwsem. We can follow the waiter link but the output will be a bit
-different compared with mutex case.
 
-Thank you,
-
+Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 ---
+ Changes in v2:
+  - Introduce CONFIG_DETECT_HUNG_TASK_BLOCKER for this feature.
+  - Introduce task_struct::blocker_mutex to point the mutex.
+  - Rename debug_mutex_get_owner() to mutex_get_owner().
+  - Remove unneeded mutex_waiter::mutex.
+---
+ include/linux/mutex.h  |    2 ++
+ include/linux/sched.h  |    4 ++++
+ kernel/hung_task.c     |   31 +++++++++++++++++++++++++++++++
+ kernel/locking/mutex.c |   14 ++++++++++++++
+ lib/Kconfig.debug      |   10 ++++++++++
+ 5 files changed, 61 insertions(+)
 
-Masami Hiramatsu (Google) (2):
-      hung_task: Show the blocker task if the task is hung on mutex
-      samples: Add hung_task detector mutex blocking sample
+diff --git a/include/linux/mutex.h b/include/linux/mutex.h
+index 2bf91b57591b..2143d05116be 100644
+--- a/include/linux/mutex.h
++++ b/include/linux/mutex.h
+@@ -202,4 +202,6 @@ DEFINE_GUARD(mutex, struct mutex *, mutex_lock(_T), mutex_unlock(_T))
+ DEFINE_GUARD_COND(mutex, _try, mutex_trylock(_T))
+ DEFINE_GUARD_COND(mutex, _intr, mutex_lock_interruptible(_T) == 0)
+ 
++extern unsigned long mutex_get_owner(struct mutex *lock);
++
+ #endif /* __LINUX_MUTEX_H */
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index 9632e3318e0d..0cebdd736d44 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -1217,6 +1217,10 @@ struct task_struct {
+ 	struct mutex_waiter		*blocked_on;
+ #endif
+ 
++#ifdef CONFIG_DETECT_HUNG_TASK_BLOCKER
++	struct mutex			*blocker_mutex;
++#endif
++
+ #ifdef CONFIG_DEBUG_ATOMIC_SLEEP
+ 	int				non_block_count;
+ #endif
+diff --git a/kernel/hung_task.c b/kernel/hung_task.c
+index 04efa7a6e69b..aa5bc7fe09c2 100644
+--- a/kernel/hung_task.c
++++ b/kernel/hung_task.c
+@@ -93,6 +93,36 @@ static struct notifier_block panic_block = {
+ 	.notifier_call = hung_task_panic,
+ };
+ 
++
++#ifdef CONFIG_DETECT_HUNG_TASK_BLOCKER
++static void debug_show_blocker(struct task_struct *task)
++{
++	struct task_struct *g, *t;
++	unsigned long owner;
++	struct mutex *lock;
++
++	lock = READ_ONCE(task->blocker_mutex);
++	if (!lock)
++		return;
++
++	owner = mutex_get_owner(lock);
++	if (likely(owner)) {
++		/* Ensure the owner information is correct. */
++		for_each_process_thread(g, t)
++			if ((unsigned long)t == owner) {
++				pr_err("INFO: task %s:%d is blocked on a mutex owned by task %s:%d.\n",
++					task->comm, task->pid, t->comm, t->pid);
++				sched_show_task(t);
++				return;
++			}
++	}
++	pr_err("INFO: task %s:%d is blocked on a mutex, but the owner is not found.\n",
++		task->comm, task->pid);
++}
++#else
++#define debug_show_blocker(t)	do {} while (0)
++#endif
++
+ static void check_hung_task(struct task_struct *t, unsigned long timeout)
+ {
+ 	unsigned long switch_count = t->nvcsw + t->nivcsw;
+@@ -152,6 +182,7 @@ static void check_hung_task(struct task_struct *t, unsigned long timeout)
+ 		pr_err("\"echo 0 > /proc/sys/kernel/hung_task_timeout_secs\""
+ 			" disables this message.\n");
+ 		sched_show_task(t);
++		debug_show_blocker(t);
+ 		hung_task_show_lock = true;
+ 
+ 		if (sysctl_hung_task_all_cpu_backtrace)
+diff --git a/kernel/locking/mutex.c b/kernel/locking/mutex.c
+index b36f23de48f1..6a543c204a14 100644
+--- a/kernel/locking/mutex.c
++++ b/kernel/locking/mutex.c
+@@ -72,6 +72,14 @@ static inline unsigned long __owner_flags(unsigned long owner)
+ 	return owner & MUTEX_FLAGS;
+ }
+ 
++/* Do not use the return value as a pointer directly. */
++unsigned long mutex_get_owner(struct mutex *lock)
++{
++	unsigned long owner = atomic_long_read(&lock->owner);
++
++	return (unsigned long)__owner_task(owner);
++}
++
+ /*
+  * Returns: __mutex_owner(lock) on failure or NULL on success.
+  */
+@@ -180,6 +188,9 @@ static void
+ __mutex_add_waiter(struct mutex *lock, struct mutex_waiter *waiter,
+ 		   struct list_head *list)
+ {
++#ifdef CONFIG_DETECT_HUNG_TASK_BLOCKER
++	WRITE_ONCE(current->blocker_mutex, lock);
++#endif
+ 	debug_mutex_add_waiter(lock, waiter, current);
+ 
+ 	list_add_tail(&waiter->list, list);
+@@ -195,6 +206,9 @@ __mutex_remove_waiter(struct mutex *lock, struct mutex_waiter *waiter)
+ 		__mutex_clear_flag(lock, MUTEX_FLAGS);
+ 
+ 	debug_mutex_remove_waiter(lock, waiter, current);
++#ifdef CONFIG_DETECT_HUNG_TASK_BLOCKER
++	WRITE_ONCE(current->blocker_mutex, NULL);
++#endif
+ }
+ 
+ /*
+diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+index 1af972a92d06..91dfd8c10fbb 100644
+--- a/lib/Kconfig.debug
++++ b/lib/Kconfig.debug
+@@ -1260,6 +1260,16 @@ config BOOTPARAM_HUNG_TASK_PANIC
+ 
+ 	  Say N if unsure.
+ 
++config DETECT_HUNG_TASK_BLOCKER
++	bool "Dump Hung Tasks Blocker"
++	depends on DETECT_HUNG_TASK
++	default y
++	help
++	  Say Y here to show the blocker task's stacktrace who acquires
++	  the mutex lock which "hung tasks" are waiting.
++	  This will add overhead a bit but shows suspicious tasks and
++	  call trace if it comes from waiting a mutex.
++
+ config WQ_WATCHDOG
+ 	bool "Detect Workqueue Stalls"
+ 	depends on DEBUG_KERNEL
 
-
- include/linux/mutex.h               |    2 +
- include/linux/sched.h               |    4 ++
- kernel/hung_task.c                  |   31 ++++++++++++++++
- kernel/locking/mutex.c              |   14 +++++++
- lib/Kconfig.debug                   |   10 +++++
- samples/Kconfig                     |    9 +++++
- samples/Makefile                    |    1 +
- samples/hung_task/Makefile          |    2 +
- samples/hung_task/hung_task_mutex.c |   66 +++++++++++++++++++++++++++++++++++
- 9 files changed, 139 insertions(+)
- create mode 100644 samples/hung_task/Makefile
- create mode 100644 samples/hung_task/hung_task_mutex.c
-
---
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
