@@ -1,214 +1,99 @@
-Return-Path: <linux-kernel+bounces-525851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C1C6A3F64B
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 14:48:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E872A3F64E
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 14:49:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9603317A0EE
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 13:48:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EABEA188E28B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 13:49:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F8112080C0;
-	Fri, 21 Feb 2025 13:48:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4173920A5D7;
+	Fri, 21 Feb 2025 13:49:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="n5Jc+zMl"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="EOlMpGf6"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A85D81A270;
-	Fri, 21 Feb 2025 13:48:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2C61757EA;
+	Fri, 21 Feb 2025 13:49:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740145704; cv=none; b=uj9xXvl5tNOY91jaxljUDF8hYyLDvP9cdrYbLQwIcZzminEIe1sCA98us1BdSo92tLDvjk8VgXzlzGNycc/5kyPylyZ4b4gEyq0SHsInTmB3d0dUyDJXjzkfZULxIvsd2EeRqZ3sLOER5/PyJUUp5ApWNbC2mYf5j6pJF5iPl+U=
+	t=1740145744; cv=none; b=j20SGzyn+iKOU6A3qHkca35h5wvrh5qQjsYvJ6MseqQic0k5sKi6E7vPasVr9h1aaEfIqepWL2mmEHH2wYh1lFxpux8mf1wSZRXSZShGTldxznoVzTqv+nOLRRB9WSFTS1xxhtZb0fl2BU6NsUrscvyQPY1ZV/bKUZTAqarR4LQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740145704; c=relaxed/simple;
-	bh=B6ACiyqUmdJ3f0CK1Bz6D1FrPp3Fk9b1LVvxEfP6MlM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=f5pTJMDLaYIVHHNijflq6VeTGkb683io6ioalyUJJEnjHsQgojz04cT673j8ekwoUxIsd6VsBpaW+qzg9RqM6o4V2iYG0SnGvpl/UumEx53KmeAo7Wky3vgjq2PwKbClY6JLVdPqAPojrbMQkshQ+Waf5j9zGs37aMiYJUbbbxY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=n5Jc+zMl; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 51LDmJSd310356
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 21 Feb 2025 07:48:19 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1740145699;
-	bh=UnGyoGH3aP4gWm3gHznPmZAXQdBZeSQP1kktMPQL60U=;
-	h=From:Date:Subject:To:CC;
-	b=n5Jc+zMlw3Edf307MwOVBRbHmFZVFhPNMZzFOptpab+g2rb1EUjI0jeDIin5NCRTp
-	 cq+rbYPm5KAz1FXqXE+0FZwOTxzCNqHstbSH2dbq6VKGbfpSy0BuxtI059xxtCbKt8
-	 JNlDD6/ya8t4Ezatg4X40rJiC/mNKs/GuxUBFd1E=
-Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 51LDmJgo021262
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 21 Feb 2025 07:48:19 -0600
-Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 21
- Feb 2025 07:48:19 -0600
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE101.ent.ti.com
- (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 21 Feb 2025 07:48:19 -0600
-Received: from localhost (kamlesh.dhcp.ti.com [172.24.227.123])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 51LDmI0p025205;
-	Fri, 21 Feb 2025 07:48:19 -0600
-From: Kamlesh Gurudasani <kamlesh@ti.com>
-Date: Fri, 21 Feb 2025 19:18:10 +0530
-Subject: [PATCH RFC] pmdomain: core: add support for writeble power domain
- state
+	s=arc-20240116; t=1740145744; c=relaxed/simple;
+	bh=LpD8P8JjpqI/NjmfRrr1AhD28mE8fg5sTAYIzzPCseM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ULIiyJWIhzPxM20hJVfgHx6EUOYkO9zNLb2a3k5bpP0gtX0gdELKGMwrbogUGNTWc6WAo+skOEF5YsuKi1BRtnVRyWQHSsrOcJFqppDOIRT1Zv9Ai1eaMyGDFb+sr3gdZ0K+U6Se+3yZNMzk/Nf9sQOlysmqHL0RPfERNOIFfQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=EOlMpGf6; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=4PA6AoUOc58pLObnZDeDC9vxCiLpRKUfWVTweUqJLBc=; b=EOlMpGf6Z4x3XKn2jeJ+0MxWRx
+	o4RGyPM2SqMWVeWo83VUGe9BS8ebFNLcac3bio+6ZsUtXIigNT9XgaGxEChymTXGdSvPQS8tqCfQt
+	X0gsEgE4dGAXxl/u7TtRsNUJisMPbhpX5iQLoQNsFVNr31JwYJIK2YPw/g/MWChTPHGMQFNpOjayF
+	o6D/PVRpFCklSoWC+PYXbLM3sMq4rx9peHg1bArSQX0sUeU+7J+0iRH7LZ4EzFAViLTQFJVA7Fm3C
+	io3Tbp2qETu9gobdkTgfO8azcy8/TiUc4kNSSmhuiSUYvDPaFUdhZFwBYzCsF1IjCT7DHbCM+FpBH
+	iaieQ5wg==;
+Received: from i53875a87.versanet.de ([83.135.90.135] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1tlTOh-0004r8-VJ; Fri, 21 Feb 2025 14:48:56 +0100
+From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
+To: Linus Walleij <linus.walleij@linaro.org>,
+ Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+ Quentin Schulz <foss+kernel@0leil.net>
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Quentin Schulz <quentin.schulz@cherry.de>
+Subject:
+ Re: [PATCH v2 2/2] gpio: pcf857x: add support for reset-gpios on (most)
+ PCA967x
+Date: Fri, 21 Feb 2025 14:48:55 +0100
+Message-ID: <1947442.eGJsNajkDb@diego>
+In-Reply-To: <20250221-pca976x-reset-driver-v2-2-a2bcb9fdc256@cherry.de>
+References:
+ <20250221-pca976x-reset-driver-v2-0-a2bcb9fdc256@cherry.de>
+ <20250221-pca976x-reset-driver-v2-2-a2bcb9fdc256@cherry.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20250221-pm-debug-v1-1-e5bd815f7ca4@ti.com>
-X-B4-Tracking: v=1; b=H4sIABmEuGcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDIyND3YJc3ZTUpNJ0XQMLI5OURGMDC0uDNCWg8oKi1LTMCrBR0UpBbs5
- KsbW1AKg67fhfAAAA
-To: Ulf Hansson <ulf.hansson@linaro.org>
-CC: <vigneshr@ti.com>, <d-gole@ti.com>, <linux-pm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Kamlesh Gurudasani <kamlesh@ti.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1740145698; l=4252;
- i=kamlesh@ti.com; s=20230614; h=from:subject:message-id;
- bh=B6ACiyqUmdJ3f0CK1Bz6D1FrPp3Fk9b1LVvxEfP6MlM=;
- b=ej04aZpNVUf9YX27lSMlljoXu1ffQiHy+9ygkhsQmRtDcySOs4KmVbyKDNVnSf1VUjoMTcqz+
- KfRntcTpPuBCfn6lRA9D8GcNeIriheGSOhoALr0E0arU2KNRU/6MMfk
-X-Developer-Key: i=kamlesh@ti.com; a=ed25519;
- pk=db9XKPVWDGJVqj2jDqgnPQd6uQf3GZ3oaQa4bq1odGo=
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Add support for writeable power domain states from debugfs.
+Am Freitag, 21. Februar 2025, 11:14:27 MEZ schrieb Quentin Schulz:
+> From: Quentin Schulz <quentin.schulz@cherry.de>
+> 
+> The PCA9670, PCA9671, PCA9672 and PCA9673 all have a RESETN input pin
+> that is used to reset the I2C GPIO expander.
+> 
+> One needs to hold this pin low for at least 4us and the reset should be
+> finished after about 100us according to the datasheet[1]. Once the reset
+> is done, the "registers and I2C-bus state machine will be held in their
+> default state until the RESET input is once again HIGH.".
+> 
+> Because the logic is reset, the latch values eventually provided in the
+> Device Tree via lines-initial-states property are inapplicable so they
+> are simply ignored if a reset GPIO is provided.
+> 
+> [1] https://www.nxp.com/docs/en/data-sheet/PCA9670.pdf 8.5 and fig 22.
+> 
+> Tested-by: Heiko Stuebner <heiko@sntech.de> # RK3588 Tiger Haikou Video Demo
+> Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
 
-Defining GENPD_ALLOW_WRITE_DEBUGFS will enable writeable pd_state
-node in debugfs.
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
 
-Signed-off-by: Kamlesh Gurudasani <kamlesh@ti.com>
----
-This has turn out to be really helpful when debugging SCMI protocol
-for power domain management.
-
-Reference has been taken from clock framework which provides similar
-CLOCK_ALLOW_WRITE_DEBUGFS, which helps to test clocks from debugfs.
----
- drivers/pmdomain/core.c | 77 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 77 insertions(+)
-
-diff --git a/drivers/pmdomain/core.c b/drivers/pmdomain/core.c
-index 9b2f28b34bb5..6aba0c672da0 100644
---- a/drivers/pmdomain/core.c
-+++ b/drivers/pmdomain/core.c
-@@ -1298,6 +1298,60 @@ late_initcall_sync(genpd_power_off_unused);
- 
- #ifdef CONFIG_PM_SLEEP
- 
-+#ifdef GENPD_ALLOW_WRITE_DEBUGFS
-+/*
-+ * This can be dangerous, therefore don't provide any real compile time
-+ * configuration option for this feature.
-+ * People who want to use this will need to modify the source code directly.
-+ */
-+static int genpd_state_set(void *data, u64 val)
-+{
-+
-+	struct generic_pm_domain *genpd = data;
-+	int ret = 0;
-+
-+	ret = genpd_lock_interruptible(genpd);
-+	if (ret)
-+		return -ERESTARTSYS;
-+
-+	if (val == 1) {
-+		genpd->power_on(genpd);
-+		genpd->status = GENPD_STATE_ON;
-+	} else if (val == 0) {
-+		genpd->power_off(genpd);
-+		genpd->status = GENPD_STATE_OFF;
-+	}
-+
-+	genpd_unlock(genpd);
-+	return 0;
-+}
-+
-+#define pd_state_mode	0644
-+
-+static int genpd_state_get(void *data, u64 *val)
-+{
-+
-+	struct generic_pm_domain *genpd = data;
-+	int ret = 0;
-+
-+	ret = genpd_lock_interruptible(genpd);
-+	if (ret)
-+		return -ERESTARTSYS;
-+
-+	if (genpd->status == GENPD_STATE_OFF)
-+		*val = 0;
-+	else
-+		*val = 1;
-+
-+	genpd_unlock(genpd);
-+	return ret;
-+}
-+
-+DEFINE_DEBUGFS_ATTRIBUTE(pd_state_fops, genpd_state_get,
-+			 genpd_state_set, "%llu\n");
-+
-+#endif /* GENPD_ALLOW_WRITE_DEBUGFS */
-+
- /**
-  * genpd_sync_power_off - Synchronously power off a PM domain and its parents.
-  * @genpd: PM domain to power off, if possible.
-@@ -3639,6 +3693,11 @@ static void genpd_debug_add(struct generic_pm_domain *genpd)
- 	if (genpd->set_performance_state)
- 		debugfs_create_file("perf_state", 0444,
- 				    d, genpd, &perf_state_fops);
-+#ifdef GENPD_ALLOW_WRITE_DEBUGFS
-+	debugfs_create_file("pd_state", 0644, d, genpd,
-+			    &pd_state_fops);
-+#endif /* GENPD_ALLOW_WRITE_DEBUGFS */
-+
- }
- 
- static int __init genpd_debug_init(void)
-@@ -3653,6 +3712,24 @@ static int __init genpd_debug_init(void)
- 	list_for_each_entry(genpd, &gpd_list, gpd_list_node)
- 		genpd_debug_add(genpd);
- 
-+#ifdef GENPD_ALLOW_WRITE_DEBUGFS
-+	pr_warn("\n");
-+	pr_warn("********************************************************************\n");
-+	pr_warn("**     NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE           **\n");
-+	pr_warn("**                                                                **\n");
-+	pr_warn("**  WRITEABLE POWER DOMAIN STATE DEBUGFS SUPPORT HAS BEEN ENABLED **\n");
-+	pr_warn("**  IN THIS KERNEL                                                **\n");
-+	pr_warn("** This means that this kernel is built to expose pd operations   **\n");
-+	pr_warn("** such as enabling, disabling, etc.                              **\n");
-+	pr_warn("** to userspace, which may compromise security on your system.    **\n");
-+	pr_warn("**                                                                **\n");
-+	pr_warn("** If you see this message and you are not debugging the          **\n");
-+	pr_warn("** kernel, report this immediately to your vendor!                **\n");
-+	pr_warn("**                                                                **\n");
-+	pr_warn("**     NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE           **\n");
-+	pr_warn("********************************************************************\n");
-+#endif /* GENPD_ALLOW_WRITE_DEBUGFS */
-+
- 	return 0;
- }
- late_initcall(genpd_debug_init);
-
----
-base-commit: d4b0fd87ff0d4338b259dc79b2b3c6f7e70e8afa
-change-id: 20250221-pm-debug-0824da30890f
-
-Best regards,
--- 
-Kamlesh Gurudasani <kamlesh@ti.com>
 
 
