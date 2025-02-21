@@ -1,207 +1,127 @@
-Return-Path: <linux-kernel+bounces-525072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23B85A3EA72
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 02:59:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BDDCA3EA75
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 03:00:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2191B3BF758
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 01:59:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D13B63BE445
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 01:59:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A081A1D5AA7;
-	Fri, 21 Feb 2025 01:58:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="PhksQYxB"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15F621D5176;
+	Fri, 21 Feb 2025 01:59:39 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4B6870807;
-	Fri, 21 Feb 2025 01:58:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 501CE70807;
+	Fri, 21 Feb 2025 01:59:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740103136; cv=none; b=JRkvdzo9xe6HuOa/XQ3u8suHhbGrosOKyA/mTS8xTkMlF6OnQN6IiOylOqMHg2pLiKfKvrSL1tUR37QdzuHNsE6EL7Sb8VXhQF5lDuIDNtjR9zGTNi/DoyukKUJIzhy/JHCgZ3DwQYRihIG+NHJ7tfu/V/eNE/+xrrG9hacPbUM=
+	t=1740103178; cv=none; b=uiSRieuLFVasLsNtmLy5MZfGaUi+AOGwm8c4fO0e95euzIV+rpfXqNJ0KqZRCGBWUy7m9o4CbST3VgSWtSEHlKsWdDByGZvJhx2WTnO4Ikb+ZWRiJ53tN6NHoPrLGuA6H3JREijaYswmS4zHoeIBcFpdQOrNLAB7G2ryuo3fE2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740103136; c=relaxed/simple;
-	bh=KQSEupzzv6FPsVNyc/MIA29eHFqeVcEBGogw4XihUo8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TwLcfpS5S5+BcRojM/5hUayS6DwBbSDvyypNIpnPRI6qaB2APzKTjql0AKzGGj6tHZHfdiO5EYE5YGE62s3adqOxDAjX7bdgeGou/ISN5T7JqaqhyMKSaEnyohL3XHlrOT/R+l2XETmUy0U6+qNmIUoDssGqxbGcjue/nJO8glk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=PhksQYxB; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=98PWmAb5l+OV6NfWNcp7ThHQ0YLhVqOeKE7dZBjUfng=; b=PhksQYxB/BTzKZvb
-	200VsqPuyCa7g9z28SvlqUS0T1bW0Jq7dtTRD6A5JlfadZovTyzNcD3wJOQ2eVlpoX4/kNjTjwldy
-	gQBfTo8Ad1eFNKUf9d9I24f2unV28bjwipcVZ6e3ihnL64tBphgiD7Twhu2l5ST3aSej/8J/6x4dc
-	5ot5XqdMIXnpFUgP15t0eawsWU8bxgwMEnAqVVWN4LtGLeOChN1d/6bqciVxdZ4IAXRgFBaBVNDud
-	aE9HvSoYVlN2SHaxhvfOFeFR95BnBoUG/8bFYoXNsaAb1GccP+/zBXSTUZ53yhd7XXYVZ+n28opDK
-	NRet26ryZEAvFlqNDA==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1tlIJP-00HM47-36;
-	Fri, 21 Feb 2025 01:58:44 +0000
-From: linux@treblig.org
-To: srinivas.kandagatla@linaro.org
-Cc: corbet@lwn.net,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH 3/3] nvmem: core: Remove remains of nvmem_cell_table
-Date: Fri, 21 Feb 2025 01:58:41 +0000
-Message-ID: <20250221015841.209458-4-linux@treblig.org>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250221015841.209458-1-linux@treblig.org>
-References: <20250221015841.209458-1-linux@treblig.org>
+	s=arc-20240116; t=1740103178; c=relaxed/simple;
+	bh=dFajwVWivDjvHsLqhntYusRXxIFFRKr1iWNeckgkFks=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=l7j4sG/p7gfduLCEEZmSlp1J74ZfzayPB70yGXaZIJyWI8CbMkeD/kioBUCJH0aqEe5qBNVvOPXtjB+0B8A0/DFmSzWZkDbnduKNYUenj15ALVVhYwYNehj5nw6gl/KjrL8g8evzxGIGU36ur1FlciZ9c9uBCYSvMVlGNIMQ81I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4YzY960HQTz1GC0f;
+	Fri, 21 Feb 2025 09:54:50 +0800 (CST)
+Received: from kwepemg100017.china.huawei.com (unknown [7.202.181.58])
+	by mail.maildlp.com (Postfix) with ESMTPS id 2B053140158;
+	Fri, 21 Feb 2025 09:59:28 +0800 (CST)
+Received: from [10.67.120.108] (10.67.120.108) by
+ kwepemg100017.china.huawei.com (7.202.181.58) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 21 Feb 2025 09:59:27 +0800
+Message-ID: <5a4384dc-4edb-9e29-d1dd-190d69b9e313@huawei.com>
+Date: Fri, 21 Feb 2025 09:59:27 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.1
+Subject: Re: [PATCH v3 1/3] scsi: hisi_sas: Enable force phy when SATA disk
+ directly connected
+Content-Language: en-CA
+To: John Garry <john.g.garry@oracle.com>, <liyihang9@huawei.com>,
+	<yanaijie@huawei.com>
+CC: <jejb@linux.ibm.com>, <martin.petersen@oracle.com>,
+	<linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linuxarm@huawei.com>, <prime.zeng@huawei.com>, <liuyonglong@huawei.com>,
+	<kangfenglong@huawei.com>, <liyangyang20@huawei.com>,
+	<f.fangjian@huawei.com>, <xiabing14@h-partners.com>
+References: <20250220130546.2289555-1-yangxingui@huawei.com>
+ <20250220130546.2289555-2-yangxingui@huawei.com>
+ <4bf89b6c-8730-4ae8-8b26-770b2aab2c13@oracle.com>
+From: yangxingui <yangxingui@huawei.com>
+In-Reply-To: <4bf89b6c-8730-4ae8-8b26-770b2aab2c13@oracle.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepemh200017.china.huawei.com (7.202.181.126) To
+ kwepemg100017.china.huawei.com (7.202.181.58)
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+Hi, John
 
-With the previous patch removing the unused nvmem_add_cell_table, there's
-no way to add a table, and thus the rest of the table infrastructure
-can go.
+On 2025/2/21 1:35, John Garry wrote:
+> On 20/02/2025 13:05, Xingui Yang wrote:
+> 
+> -john.garry@huawei.com (this has not worked in over 2 years ...)
+Sorry, I used the wrong one.
+> 
+>> the SAS controller determines the disk to which I/Os are delivered based
+>> on the port id in the DQ entry when SATA disk directly connected.
+>>
+>> When many phys were disconnected immediately and connected again during
+>> I/O sending and port id of phys were changed and used by other link, I/O
+>> may be sent to incorrect disk and data inconsistency on the SATA disk may
+> 
+> 
+> So is the disk reported gone (from libsas point-of-view) after you 
+> unplug? If not, why not?
 
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
----
- Documentation/driver-api/nvmem.rst | 17 ------------
- drivers/nvmem/core.c               | 42 ------------------------------
- include/linux/nvmem-provider.h     | 19 --------------
- 3 files changed, 78 deletions(-)
+The problem may occur in a scenario where multiple SATA disks are 
+inserted almost at the same time. When phy reset is executed in error 
+processing, other phys are also up, which may cause the hw port id 
+corresponding to the phy to change. The log is as follows:
 
-diff --git a/Documentation/driver-api/nvmem.rst b/Documentation/driver-api/nvmem.rst
-index 27534d5e8fba..6e73bb2d2ca5 100644
---- a/Documentation/driver-api/nvmem.rst
-+++ b/Documentation/driver-api/nvmem.rst
-@@ -59,23 +59,6 @@ For example, a simple nvram case::
- 	devm_nvmem_register(&config);
-   }
- 
--Users of board files can define and register nvmem cells using the
--nvmem_cell_table struct::
--
--  static struct nvmem_cell_info foo_nvmem_cells[] = {
--	{
--		.name		= "macaddr",
--		.offset		= 0x7f00,
--		.bytes		= ETH_ALEN,
--	}
--  };
--
--  static struct nvmem_cell_table foo_nvmem_cell_table = {
--	.nvmem_name		= "i2c-eeprom",
--	.cells			= foo_nvmem_cells,
--	.ncells			= ARRAY_SIZE(foo_nvmem_cells),
--  };
--
- Additionally it is possible to create nvmem cell lookup entries and register
- them with the nvmem framework from machine code as shown in the example below::
- 
-diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
-index 90fbfc00950e..6f7f2a84701f 100644
---- a/drivers/nvmem/core.c
-+++ b/drivers/nvmem/core.c
-@@ -47,9 +47,6 @@ struct nvmem_cell {
- static DEFINE_MUTEX(nvmem_mutex);
- static DEFINE_IDA(nvmem_ida);
- 
--static DEFINE_MUTEX(nvmem_cell_mutex);
--static LIST_HEAD(nvmem_cell_tables);
--
- static DEFINE_MUTEX(nvmem_lookup_mutex);
- static LIST_HEAD(nvmem_lookup_list);
- 
-@@ -705,41 +702,6 @@ int nvmem_unregister_notifier(struct notifier_block *nb)
- }
- EXPORT_SYMBOL_GPL(nvmem_unregister_notifier);
- 
--static int nvmem_add_cells_from_table(struct nvmem_device *nvmem)
--{
--	const struct nvmem_cell_info *info;
--	struct nvmem_cell_table *table;
--	struct nvmem_cell_entry *cell;
--	int rval = 0, i;
--
--	mutex_lock(&nvmem_cell_mutex);
--	list_for_each_entry(table, &nvmem_cell_tables, node) {
--		if (strcmp(nvmem_dev_name(nvmem), table->nvmem_name) == 0) {
--			for (i = 0; i < table->ncells; i++) {
--				info = &table->cells[i];
--
--				cell = kzalloc(sizeof(*cell), GFP_KERNEL);
--				if (!cell) {
--					rval = -ENOMEM;
--					goto out;
--				}
--
--				rval = nvmem_cell_info_to_nvmem_cell_entry(nvmem, info, cell);
--				if (rval) {
--					kfree(cell);
--					goto out;
--				}
--
--				nvmem_cell_entry_add(cell);
--			}
--		}
--	}
--
--out:
--	mutex_unlock(&nvmem_cell_mutex);
--	return rval;
--}
--
- static struct nvmem_cell_entry *
- nvmem_find_cell_entry_by_name(struct nvmem_device *nvmem, const char *cell_id)
- {
-@@ -1024,10 +986,6 @@ struct nvmem_device *nvmem_register(const struct nvmem_config *config)
- 			goto err_remove_cells;
- 	}
- 
--	rval = nvmem_add_cells_from_table(nvmem);
--	if (rval)
--		goto err_remove_cells;
--
- 	if (config->add_legacy_fixed_of_cells) {
- 		rval = nvmem_add_cells_from_legacy_of(nvmem);
- 		if (rval)
-diff --git a/include/linux/nvmem-provider.h b/include/linux/nvmem-provider.h
-index 20c9fbd45b24..615a560d9edb 100644
---- a/include/linux/nvmem-provider.h
-+++ b/include/linux/nvmem-provider.h
-@@ -137,25 +137,6 @@ struct nvmem_config {
- 	struct device		*base_dev;
- };
- 
--/**
-- * struct nvmem_cell_table - NVMEM cell definitions for given provider
-- *
-- * @nvmem_name:		Provider name.
-- * @cells:		Array of cell definitions.
-- * @ncells:		Number of cell definitions in the array.
-- * @node:		List node.
-- *
-- * This structure together with related helper functions is provided for users
-- * that don't can't access the nvmem provided structure but wish to register
-- * cell definitions for it e.g. board files registering an EEPROM device.
-- */
--struct nvmem_cell_table {
--	const char		*nvmem_name;
--	const struct nvmem_cell_info	*cells;
--	size_t			ncells;
--	struct list_head	node;
--};
--
- /**
-  * struct nvmem_layout - NVMEM layout definitions
-  *
--- 
-2.48.1
+[ 4588.608924] hisi_sas_v3_hw 0000:b4:02.0: phyup: phy2 link_rate=10(sata)
+[ 4588.609039] sas: phy-8:2 added to port-8:4, phy_mask:0x4 
+(5000000000000802)
+[ 4588.609267] sas: DOING DISCOVERY on port 4, pid:69294
+[ 4588.609276] hisi_sas_v3_hw 0000:b4:02.0: dev[13:5] found
+[ 4588.671362] sas: ata40: end_device-8:4: dev error handler
+[ 4588.846387] hisi_sas_v3_hw 0000:b4:02.0: phydown: phy2 phy_state=0xc3 
+// phy2's hw port id assign by chip is released
+[ 4588.846393] hisi_sas_v3_hw 0000:b4:02.0: ignore flutter phy2 down
+[ 4588.919837] hisi_sas_v3_hw 0000:b4:02.0: phyup: phy3 
+link_rate=10(sata) // phy3 is assigned the hw port id previously used by 
+phy2
+[ 4589.029656] hisi_sas_v3_hw 0000:b4:02.0: phyup: phy2 
+link_rate=10(sata) // phy2's hw port id is assigned a new one
+[ 4589.220662] ata40.00: ATA-9: HUH721010ALE600, T3C0, max UDMA/133
+[ 4589.220666] ata40.00: 19532873728 sectors, multi 0: LBA48 NCQ (depth 
+32), AA
+[ 4589.233022] ata40.00: configured for UDMA/133
+
+In view of the situation corresponding to the above log, the 
+hisi_sas_port.id corresponding to phy2 has not been updated, and the old 
+port id is still used, which will cause the IO delivered to phy2 to be 
+abnormally delivered to the disk of phy3.
+
+After force phy, the chip will check whether the phy information matches 
+the port id and intercept this abnormal IO.
+
+Thanks.
+Xingui
+
+
 
 
