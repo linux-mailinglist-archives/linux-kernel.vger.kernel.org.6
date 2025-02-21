@@ -1,174 +1,198 @@
-Return-Path: <linux-kernel+bounces-526038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED205A3F911
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:39:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CBD1A3F903
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:38:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 495403B7645
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 15:36:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4CEB3424284
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 15:36:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E20141D5176;
-	Fri, 21 Feb 2025 15:36:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 910351D88A6;
+	Fri, 21 Feb 2025 15:36:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="e+Igh1Dq"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m8M4c6i2"
+Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com [209.85.167.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 382411CA9C
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 15:36:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51F9B26AEC;
+	Fri, 21 Feb 2025 15:36:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740152168; cv=none; b=FRDS33yN/tSZusxUKgUveir91NbGzBG6oq7rVhvnvnIbmUkrTQ+xHkGGceSdZ4sRwi1VZdXJ+0rAOOTBeafsI25Zyf1jCtr+m1V+HsPqMEJw8y9dos7l4BUm9xLLd/SG0cHbYcBwMyyiJQrt3sKz1ZDOgKILAf6uM4ZD0W3IH0o=
+	t=1740152196; cv=none; b=lDL47pmvTuiRk4bzSQy0+7pb4U6ysJXd789yBhhNYMe7T2puSr1LXNap2zYmcjl/PDjPnBnYfXedGlazBgHw61lqNA/uLBMpBVI7FeYN66stDqVdlfdaCaP5RsBhlk5HDYeqatTo2VvcFH4oU0iKSLc3FVqe9U+Ka3fO+VZn1GQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740152168; c=relaxed/simple;
-	bh=DLSCqwpXg5JE6IlskrkJzVCf92FiqmwfRs7ztERMGUo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NLzvTBBZYhJFMk46W48ZS/d6grZbJ86tPkIF4D7giHgku6oEKPLq/GGLaL5qKJSMj4Fn7hCwaiVDD3iLKCGCeTtkAxvWPFmU6Z3fFgrpz1ParIQ2A5cpFZ8crKMVem/Eq/mYKoOQ/FUgCRDz/+bpEDc9V1I3AyFkujxQkxO6DtU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=e+Igh1Dq; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-abbc38adeb1so392157566b.1
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 07:36:05 -0800 (PST)
+	s=arc-20240116; t=1740152196; c=relaxed/simple;
+	bh=zXbyACCdVoVQyiGhkcafjf6zWtsGln899zvfTqmUMy4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=X+Rp/bh+/ZCFfCE+dsAsoOWMxBWpkhpQZ7qPtCot6gpJpV1DEJM9TAJLM/IC6CxLsZTGbi+NKgleZZiJ6HokZBVwO8pZgpRXAhnzhk1nfCeg+drSfRVfuJw4y7CrYNydWjXIMeoPSrHFhSdHKKa3yJu2+eGAlhVZZvOqdtuOhyg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m8M4c6i2; arc=none smtp.client-ip=209.85.167.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f173.google.com with SMTP id 5614622812f47-3f405bdf7e7so406686b6e.3;
+        Fri, 21 Feb 2025 07:36:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1740152164; x=1740756964; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=d5l4zz1sMG3mtHShUobc7HnHdYCuofJA4lkceeZVq4Q=;
-        b=e+Igh1DqcIbm68dfARHdNcNudZxqDaUKqDGxFMO0zyGqpyk/J4UESGPSEMbnN3hqA+
-         7QHCT/7WZ6kro64SZYZTLv5OjSK00DLComj7HkCFPuHLwCLelGZTF9cZfo1CueKtAaqP
-         OH/QXaiUl2j3mmTjJJtkwEP96dhDMrfHQon8e55Y0Fz7aaORZvOOfzaqd0yWsiRhohqm
-         MY4UaFN0kr0YBSFFwtkQcPTfnsoOjBs08FxgzhMX06NM47IZlaLQWz1jHgRt1j8fOus2
-         znrBmtuhdczwZOLbgw3/UmwSvYWSrYDthjYKlgKQiyPoDD5lrI+eZYHUFiOf2uqeowe9
-         B2/A==
+        d=gmail.com; s=20230601; t=1740152193; x=1740756993; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=v1yHTvClgL1HOrCrw30baXka1ZGMPkDHp0/uvI9xpJY=;
+        b=m8M4c6i2nY1mW6L77vNrs1G6ws3SWi5CbeORLHSqopI8OYehVfmVzBu+owF8MV3Nkz
+         0Di2mz6exxtWfxIRhw2MAS+hXl5/wRtnUrWIOv9JEuHGChOXGRCltc+n1NkW7FWeKh+g
+         2RMZFVN75ez81OeVLdu1nUG3xXfRgyYPwnW4Ewzs+OI2/J99hrLHKDlUlPbpMqAjdyWN
+         6hmFGG6V5o1UdH5ZqhrlpR1fuWIu8dbziztvSOsMnxotfSicgHA7CSmOsd//bX7ob6e6
+         wJVTIrO1gOmvzqds/nsabakCu8oRVD9EpU3MSDQs4h/FX0l4wLE2tyFeud61pq5nuDCi
+         HT2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740152164; x=1740756964;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1740152193; x=1740756993;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=d5l4zz1sMG3mtHShUobc7HnHdYCuofJA4lkceeZVq4Q=;
-        b=GsGoP9SLet+DrRvdMKCrCB7W9ZxQCxbC3kCsI6uNnxQKLzxBRawdQ3e4b6uGPzBCpu
-         toXJvAaLFrJ3c4yjNS3cQO5aElMoIDB+2VBNMlaO3zUesuQFYQubE3t38gZDE8xCcWN5
-         OJdrYwWi5QWt+nkkat4dK3Tj9HznmsZerYN8FhK8/rt3Udk6h2iEMqB1exVVtLuYJgLE
-         YeckA5Swi9eVNDvD+9eFF1zOIOUlfu9EqSiUIGcWRV2i1+c8LmySjWZXdXLD7Tysv3MG
-         ySutw3xNfhxEfFjaBHw9REMrFgJPD/Gx8ndlYKTe63swADF6VnQlUfKMc+sd8ZVyiFM5
-         cFmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXfFB1iFaRvPn0+AUD6WgjyKIDWZtK0GKGTnOswIeO+QFK650Dc7pWuqz5Y70BecnEszKDlNhg7heqRplI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywv7UmewbJPS5KtgOh3JX7n9YDHzr51Cd+n27jxuFRJHCGhqnm9
-	8YhjXok7i2me5FHXtLVSr0p3t4MzZx8mtjT+OXCJ2ezA2GuuKCl6idDPuskgOJc=
-X-Gm-Gg: ASbGncs67FEk/QqZpZQH96tEVFV+ztIOzShkN8m9kub+PMOvCTNo0j+jNg3ndZuS/do
-	ZkjUoMT0k+I6REP5IN1deon2yO606nurfgqMgylUxx9XVwup5RFNcAsUPg719PseJ/7OiVJNm8a
-	64tta/WyjDkFUvB7zdgP6xF6TPYvatHntpNaOn1/tDsbLWOqEOTkBBapyXVFcwDHxvpkgeSCDTi
-	zRekrV8I9tMin1en+5kaUNzk8aGMTK4XVJv+sMTfSuTPWTP5nF5FEWa4GOfiydewnRAo1Kw8gFR
-	mBsCm3aS5YV3KJs8Q8Qb6HPYvOTt
-X-Google-Smtp-Source: AGHT+IE7R4MDw76EG5se1usjek3sk3eePWqQqCBEriY44mGinrtsqBn3iUcohkd9RyhQa0/COxWmNA==
-X-Received: by 2002:a17:906:c142:b0:ab7:5cc9:66fc with SMTP id a640c23a62f3a-abc09e46652mr372546066b.50.1740152164419;
-        Fri, 21 Feb 2025 07:36:04 -0800 (PST)
-Received: from blackdock.suse.cz ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aba5323225fsm1661890566b.24.2025.02.21.07.36.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Feb 2025 07:36:04 -0800 (PST)
-Date: Fri, 21 Feb 2025 16:36:02 +0100
-From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-To: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Tejun Heo <tj@kernel.org>, Abel Wu <wuyun.abel@bytedance.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Ingo Molnar <mingo@redhat.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Valentin Schneider <vschneid@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Yury Norov <yury.norov@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Bitao Hu <yaoma@linux.alibaba.com>, Chen Ridong <chenridong@huawei.com>, 
-	"open list:CONTROL GROUP (CGROUP)" <cgroups@vger.kernel.org>, "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, 
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 3/3] cgroup/rstat: Add run_delay accounting for cgroups
-Message-ID: <m3og4sktkzf6j62terh4xcbfiw45ziymhmt7x7iuyzcogl67cy@ufqvgzttd2n7>
-References: <20250125052521.19487-1-wuyun.abel@bytedance.com>
- <20250125052521.19487-4-wuyun.abel@bytedance.com>
- <3wqaz6jb74i2cdtvkv4isvhapiiqukyicuol76s66xwixlaz3c@qr6bva3wbxkx>
- <9515c474-366d-4692-91a7-a4c1a5fc18db@bytedance.com>
- <qt3qdbvmrqtbceeogo32bw2b7v5otc3q6gfh7vgsk4vrydcgix@33hepjadeyjb>
- <Z6onPMIxS0ixXxj9@slm.duckdns.org>
- <20250210182545.GA2484@cmpxchg.org>
+        bh=v1yHTvClgL1HOrCrw30baXka1ZGMPkDHp0/uvI9xpJY=;
+        b=V5Fnxkg5isYe1OVk+/7fH5J/coVOo6/qPcuezP0sgxaoV5kJxSdaQwBrJDv42xrQoL
+         +PkQ9Jn6Jlmmbjs0qC5pxLMrXC5BmqT+QJOf04Pu5aD3iF3yEP+Y+jTSXVLdmuMtDa0D
+         UhCXvBYiI5yNsI0vcxT9gTVE4+P7bsPxalFEuVHL17iIBaszqHdgKQ7R90bW3PYBXZY4
+         jP6cHBP79UfSe5yJWuBw6OScoNbPilHDzTNFfkWJKOT8gwXGu5tVQ6qtiOyr4QKxvwLq
+         AjhI8pe1Ih2fWvM0zA+xmmTtrPPrWey8wWxim+pM2FlMTz4Dazwxu7qR3Jm2v/+iimt7
+         4Rkw==
+X-Forwarded-Encrypted: i=1; AJvYcCU01FwpmCErpca+yVEiS/BJd0d+ZzSsmlMOa+bitvpxsXErPw8jRx0vnziDuAdqPHLbb+iZPzWqfu61iISwUQ==@vger.kernel.org, AJvYcCVoSipnbPI1oRwQaKV2Z++6dXV7AfBO3sO0cnC2xXhNFw2Rz+j1EW4fWbzq0uJkTLgFKxCs5CuQolTAFHzD@vger.kernel.org, AJvYcCXNxT0hcPntTSUbSKlU0KJAKbj8sQ55VsbCSRLOgRmfbxUzvj+97AVgkjwaChjQ7MVPQeaBhf6rzA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+XkujA59vOYlSVDeCL6O9bdJHVL4CW/Wh5WhpwK510CCf2vjD
+	xRYfeBPUwqev+NQkVekoj1+xERZCOfpBc4k5og+e/n0rmUu8ezNO
+X-Gm-Gg: ASbGncvYW/sG+N4Jh1/PPsEu946ARgYXf6WKlyZb20nma56oE0Rj/urBQs08C1qr+mV
+	pyBTp7HTAo7YXetkRwRcnCi2WH0zX0xVQ8UXY1u9uN1tOvy0dkHXD8cKUGVFIm5hjsVHTn/o2Ss
+	ELxwC7Af2iZ/oPJdjtRaJ5Cxem+23nVveMrzgtRd3bwdgDbhMsBM1LmzAT5Tgl7u9J1AbBDaYNF
+	Yf1yQngvPTKtYoh7GbehVDJPUOUbsukQ1e8+zRmN4uq2I+dg/IcfjBZPP2wG8qfz0yBaQr+DzHV
+	aR9F/z5UfR6RRyyZDTrh67okOVrtvPNeoySCrlUxAp9ms2h4Gz24XpUIOXJMd4+gMXYvvkwLdGt
+	T3Vr8ZYHXTS4=
+X-Google-Smtp-Source: AGHT+IFFJVL2fg4xBN9j57DjY5+CvBOPQrWPfMGWka5ypcQN2vnYxW2BbNGg+4twdK/FJvrcpTYaTQ==
+X-Received: by 2002:a05:6808:1a08:b0:3f4:218:5c8f with SMTP id 5614622812f47-3f4246d7f2fmr2846586b6e.20.1740152193144;
+        Fri, 21 Feb 2025 07:36:33 -0800 (PST)
+Received: from ?IPV6:2603:8080:1b00:3d:ccc:f28c:f6a1:d9c9? ([2603:8080:1b00:3d:ccc:f28c:f6a1:d9c9])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-3f3ffd5a695sm2517613b6e.3.2025.02.21.07.36.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 Feb 2025 07:36:32 -0800 (PST)
+Message-ID: <e0019be0-1167-4024-8268-e320fee4bc50@gmail.com>
+Date: Fri, 21 Feb 2025 09:36:30 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: [PATCH] Fuse: Add backing file support for uring_cmd
+To: Bernd Schubert <bernd@bsbernd.com>, Miklos Szeredi <miklos@szeredi.hu>,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ io-uring@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>
+References: <CAKXrOwbkMUo9KJd7wHjcFzJieTFj6NPWPp0vD_SgdS3h33Wdsg@mail.gmail.com>
+ <db432e5b-fc90-487e-b261-7771766c56cb@bsbernd.com>
+Content-Language: en-US
+From: Moinak Bhattacharyya <moinakb001@gmail.com>
+In-Reply-To: <db432e5b-fc90-487e-b261-7771766c56cb@bsbernd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250210182545.GA2484@cmpxchg.org>
 
-On Mon, Feb 10, 2025 at 01:25:45PM -0500, Johannes Weiner <hannes@cmpxchg.org> wrote:
-> Yes, a more detailed description of the usecase would be helpful.
-> 
-> I'm not exactly sure how the sum of wait times in a cgroup would be
-> used to gauge load without taking available concurrency into account.
-> One second of aggregate wait time means something very different if
-> you have 200 cpus compared to if you have 2.
-> 
-> This is precisely what psi tries to capture. "Some" does provide group
-> loading information in a sense, but it's a
->
-> ratio over available concurrency,
+Sorry about that. Correctly-formatted patch follows. Should I send out a 
+V2 instead?
 
-This comes as a surprise to me (I originally assumed it's only
-time(some)/time(interval)).
-But I confirm that after actually looking at the avg* values it is over
-nr_tasks.
-If the value is already normalized by nr_tasks, I'm seeing less of a
-benefit of Σ run_delay.
+Add support for opening and closing backing files in the fuse_uring_cmd 
+callback. Store backing_map (for open) and backing_id (for close) in the 
+uring_cmd data.
+---
+  fs/fuse/dev_uring.c       | 50 +++++++++++++++++++++++++++++++++++++++
+  include/uapi/linux/fuse.h |  6 +++++
+  2 files changed, 56 insertions(+)
 
-> and currently capped at 100%. I.e.  if you have N cpus, 100% some is
-> "at least N threads waiting at all times." There is a gradient below
-> that, but not above.
+diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
+index ebd2931b4f2a..df73d9d7e686 100644
+--- a/fs/fuse/dev_uring.c
++++ b/fs/fuse/dev_uring.c
+@@ -1033,6 +1033,40 @@ fuse_uring_create_ring_ent(struct io_uring_cmd *cmd,
+      return ent;
+  }
 
-Is this a typo? (s/some/full/ or s/at least N/at least 1/)
++/*
++ * Register new backing file for passthrough, getting backing map from 
+URING_CMD data
++ */
++static int fuse_uring_backing_open(struct io_uring_cmd *cmd,
++    unsigned int issue_flags, struct fuse_conn *fc)
++{
++    const struct fuse_backing_map *map = io_uring_sqe_cmd(cmd->sqe);
++    int ret = fuse_backing_open(fc, map);
++
++    if (ret < 0) {
++        return ret;
++    }
++
++    io_uring_cmd_done(cmd, ret, 0, issue_flags);
++    return 0;
++}
++
++/*
++ * Remove file from passthrough tracking, getting backing_id from 
+URING_CMD data
++ */
++static int fuse_uring_backing_close(struct io_uring_cmd *cmd,
++    unsigned int issue_flags, struct fuse_conn *fc)
++{
++    const int *backing_id = io_uring_sqe_cmd(cmd->sqe);
++    int ret = fuse_backing_close(fc, *backing_id);
++
++    if (ret < 0) {
++        return ret;
++    }
++
++    io_uring_cmd_done(cmd, ret, 0, issue_flags);
++    return 0;
++}
++
+  /*
+   * Register header and payload buffer with the kernel and puts the
+   * entry as "ready to get fuse requests" on the queue
+@@ -1144,6 +1178,22 @@ int fuse_uring_cmd(struct io_uring_cmd *cmd, 
+unsigned int issue_flags)
+              return err;
+          }
+          break;
++    case FUSE_IO_URING_CMD_BACKING_OPEN:
++        err = fuse_uring_backing_open(cmd, issue_flags, fc);
++        if (err) {
++            pr_info_once("FUSE_IO_URING_CMD_BACKING_OPEN failed err=%d\n",
++                    err);
++            return err;
++        }
++        break;
++    case FUSE_IO_URING_CMD_BACKING_CLOSE:
++        err = fuse_uring_backing_close(cmd, issue_flags, fc);
++        if (err) {
++            pr_info_once("FUSE_IO_URING_CMD_BACKING_CLOSE failed err=%d\n",
++                    err);
++            return err;
++        }
++        break;
+      default:
+          return -EINVAL;
+      }
+diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
+index 5e0eb41d967e..634265da1328 100644
+--- a/include/uapi/linux/fuse.h
++++ b/include/uapi/linux/fuse.h
+@@ -1264,6 +1264,12 @@ enum fuse_uring_cmd {
 
-(Actually, if I correct my thinking with the nr_tasks normalization,
-then your statement makes sense. OTOH, what is the difference betwen
-'full' and 'some' at 100%?)
+      /* commit fuse request result and fetch next request */
+      FUSE_IO_URING_CMD_COMMIT_AND_FETCH = 2,
++
++    /* add new backing file for passthrough */
++    FUSE_IO_URING_CMD_BACKING_OPEN = 3,
++
++    /* remove passthrough file by backing_id */
++    FUSE_IO_URING_CMD_BACKING_CLOSE = 4,
+  };
 
-Also I played a bit.
+  /**
+-- 
+2.39.5 (Apple Git-154)
 
-cat >/root/cpu_n.sh <<EOD
-#!/bin/bash
-
-worker() {
-	echo "$BASHPID: starting on $1"
-	taskset -c -p $i $BASHPID
-	while true ; do
-		true
-	done
-}
-
-for i in $(seq ${1:-1}) ; do
-	worker $i &
-	pids+=($!)
-done
-
-echo pids: ${pids[*]}
-wait
-EOD
-
-systemd-run -u test.service /root/cpu_n.sh 2
-# test.service/cpu.pressure:some is ~0
-
-systemd-run -u pressure.service /root/cpu_n.sh 1
-# test.service/cpu.pressure:some settles at ~25%, cpu1 is free, cpu2 half
-# test.service/cpu.pressure:full settles at ~25% too(?!), I'd expect 0
-                                            ^^^^^^^^^^^^
-
-(kernel v6.13)
-
-# pressure.service/cpu.pressure:some settles at ~50%, makes sense
-# pressure.service/cpu.pressure:full settles at ~50%, makes sense
-
-Thanks,
-Michal
 
