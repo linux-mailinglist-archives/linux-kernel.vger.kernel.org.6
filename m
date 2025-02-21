@@ -1,134 +1,197 @@
-Return-Path: <linux-kernel+bounces-524991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AFBBA3E97A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 01:57:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87F62A3E98E
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 02:01:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AEB307A6080
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 00:56:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CFB13B7F22
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 00:57:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 948EC1CF96;
-	Fri, 21 Feb 2025 00:55:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8301878F3A;
+	Fri, 21 Feb 2025 00:55:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="2oHnFWjd"
-Received: from mail-io1-f46.google.com (mail-io1-f46.google.com [209.85.166.46])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="G3ilED8N"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BEC3AD5A
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 00:55:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4425670803
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 00:55:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740099307; cv=none; b=hDaUjp/4iAGNcub+C4Dl4DduVIUbQ8d1ODW59WFFhr9H6H7sU9UNowCHoqkArs/ezNyP2ESP9AqbaW2I376DhirZDQ/3KXqDAUrYqtQmVVEDpfiY+7ZlSJ/lVDVKYfjBWqIZSU7w99BRUobRZ6XcK/28Ten4Ig6NuoGPj4OEsnM=
+	t=1740099321; cv=none; b=I8YKD/MG0lfHrp8hCLOzfzW3geLIktPilkZzqozm+awB1nA2vtZZJMazAbQyHnM/OyLmspvqhQUw+bvHNghzKs+6MOShM1by5r/bflNzhO+XPK2/S+3m47Iw0YZ20Od4hZdFVlayVv65jgMinR0y8JcKxa/bx3rozCN0bdN7Vqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740099307; c=relaxed/simple;
-	bh=UzkvUUdgVIFy2qodyvDLcPZKdwb+CmoOWG16rppDGqQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jdp6xZRbzslSFF/NPXTV7j9wCZmvUJzcB/iX4Z7ByWb+6N4HtfOF+L7rwH/RrjO/XuTeaRjyh9y1fdrwu7qx+UCs7gXWVsnOxVYm1WHh9v2TT5SbVqePEoa5jN3/gTqJZD2sUvAPQNVqHr4SVdi6Br6dKC48Pyk+u+QmKbZ0sQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=2oHnFWjd; arc=none smtp.client-ip=209.85.166.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f46.google.com with SMTP id ca18e2360f4ac-8559020a76aso42914539f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 16:55:05 -0800 (PST)
+	s=arc-20240116; t=1740099321; c=relaxed/simple;
+	bh=e+5yrhmneBVshqNqkQclzRo8cBn1bxXJDoR3zvaSEtQ=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=phzVbAmndgEMixJziN5QXHVAi5gkAOFxMYpB479fhXr+B4gIZKkpRbN8+ZXTQ60YL9cY00hVWXoznAsG9V5zDmZpCPiqHuW0zEzHiLlWlKMtkjOiJEBLwUKpG1XDQJDwuKEgOsTS5+L9MicyCIvinPav+tbL57u3teybr6oS0uU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=G3ilED8N; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2fbfa786a1aso4999432a91.3
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 16:55:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1740099304; x=1740704104; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=r2QATB96FgepA0rjENrkG3iJn8Amj5leXDUOJcZKkX4=;
-        b=2oHnFWjdTAYRf0+0qRzo7M10t4QXgXCRxz+/mlqisX2EIGZmEVsSxavqNKsNaWJrHe
-         goJ/ybagUNivO0ZZQHkMf/9p9zAEWuQIoIcw0BYWr3atrYWusDKFlIePakUs18RxS2CD
-         zoF8GNAm5d9mCONBu/Qk4rTMNcONqDXxbwMtxLqr6HKZjl+uRHpPd0UvbAersDiXyerY
-         Ik+Oj/JoaNCCxSvqJQn7WGAjRYRHPy4hahgCLFxqWylyI3dS4lW4CXRpPOcJGX8C0rTw
-         hCZVUt6f0ty/X1Zm8NPz/pvly+Ko/j/tXDnIRDqlONr81yqh/ZUGkln44dEK6Ae5imJF
-         0DLg==
+        d=google.com; s=20230601; t=1740099319; x=1740704119; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=4kOOIJL7djRpCC39YFiZH/04xhbPykeXqRm2/FL5cbg=;
+        b=G3ilED8NI+pIfPOreF9pXkaq2Higyo/jGpLOnQz2Lss/qv+NfX9YWJgne8gqEZDASG
+         p9wpVRnJ7eSqnaA+pOl0nwuhoHUBFOfzuwtM+1rBAYghJ0fNYjDLy1yeZAlpjvo8iWFU
+         S4m0mI6tJz/3jCbUmTSlp8OfvRlQZB4TcnJEvCfof5hjBYV9rue2ADg34khDoea39jZK
+         OgYurOWiZX/GNw1jzxKgkqdqREqQcGm/1x6pOQIVLRYD34HswnvZWC6mYBsWl7zdfhSi
+         A6jIxQdNNxKHtHL0YxAoVKIboKCbxxSH/a2bB6aJSd7MLfRLVRw5+GCG3XVmtucQBNNc
+         r0IA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740099304; x=1740704104;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=r2QATB96FgepA0rjENrkG3iJn8Amj5leXDUOJcZKkX4=;
-        b=fUC0k5BJaRgDLv6sKknhMXhuSTSkPQkafcKXjw1c2bf4Hc7pOggesJqKbgUZUWCrz4
-         Uk7Vgl1JTChQc4gVOmoKfaKbGeKlxPmIFkMtGuttguytKmmiOz6UxMCLHZCWkx5BlclO
-         Ca6uz6NGk2vlMA1nHo8wP8IOWwopbFqDBXqw7B/ywe7uibBE4Wowp9kuZ63Vt3AdVQwE
-         47X4Lu4t1l8wR4/Ai7imYhpYKG2pJtdps85UbOkHeiYQY64ozLwhqymMYQxYBShaI68k
-         +DXngyd+6UMkJXwiMGWm8VVIE870Ttb6UeOB94HGlgz/1jH2nODQisuWjkIMtbM3dw8m
-         PCzA==
-X-Forwarded-Encrypted: i=1; AJvYcCU/Te/2Z4/U04EqpXOp904ZYQjt5Q+mZ4O+G90POJ+2XTxJLsf7NfXOH8BlSzeBtCKSuyHxgG4O/+0nib4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYFF8eI25Biwi4lBkmEkSJTs+AHLGy/s6Hrgg4Lh6cIpxzqNvo
-	cCWFh7b8nZGG49GCDbQ/GHF3/9FKB1nyX720/TmAw4J+FkGLwDKZbH7JIFQMa+Y=
-X-Gm-Gg: ASbGncsdWzKR5Wuznv0Zv1zsGGsiY85oOGKv4P2zP/GX1XudnBztlvI8XHRXEzbKUzP
-	JStd05n7fB7n3kmQkKrSdS9m8Nwi4AOmUWaGZfiehsbUv2ugtdcYBolQo2jlxo7PT/67GNZKt6k
-	qKnnxEK0of2ipkQ0VD3g48pwrDTbHak7w5YskwBh7J2GuY6EGD4OYwWMLg1L9AwJsMeAxc2j8wz
-	o1Ek0mkPisYLa8HqHqvytQ8rQ5FLCPwV3os1HYXE3xJnhaKpVE8D7aV1sM+xnfxDVDUoEVTUduN
-	igU1K+//GBYE
-X-Google-Smtp-Source: AGHT+IEhwogP4yqzKlQCfCn6+V0oLpiZEIwarJ9K61JUTvJMx8CWnF/dcOiMl/AbHQVu7yQM6cO39Q==
-X-Received: by 2002:a05:6e02:2413:b0:3d0:ca2:156d with SMTP id e9e14a558f8ab-3d2caf04813mr12139375ab.14.1740099304667;
-        Thu, 20 Feb 2025 16:55:04 -0800 (PST)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3d2a9fc622esm16071025ab.67.2025.02.20.16.55.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Feb 2025 16:55:02 -0800 (PST)
-Message-ID: <0a11a42f-3476-46bd-b87a-a72d68344802@kernel.dk>
-Date: Thu, 20 Feb 2025 17:55:01 -0700
+        d=1e100.net; s=20230601; t=1740099319; x=1740704119;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4kOOIJL7djRpCC39YFiZH/04xhbPykeXqRm2/FL5cbg=;
+        b=EgGoOcre+QxKmd4f3zFYQMwhXvbWFz4XHNh5RyMzxajCOMHWKogax6ELPBR5oD1Dzt
+         +CRRDvDRoCoRoCTFZXBqA6zDaA29HfcqqF23XMBsjSgYnyIZ4d43c9rNZGmdaIphYmZD
+         75XsPT5Jy7E87kxNI04jFrI2mxtz+pPcK8JewISR6ALkIAE9/6TdId05z3umqI9efkVJ
+         yI36q0+oEGw6lJRW3CaqW7J0iBr64T85egoBVSFIStfKOxZsfGgp5hllgHVlTll7owLT
+         fW6hug6EMs6b/tslTVJPTuKpt9pT3HtdeKrRNnXwhe/0kubzGvAVLW2ufZ66facryvFg
+         LyQQ==
+X-Gm-Message-State: AOJu0YzZMMSQ9dYGlNFczlZPzDRw9GIt1Y7l/L/9pNP+PpIrVgp9ZwLp
+	OmRUikPfKnIVlEb9rgZJiSIRqEMnvj4HVmp3+E7+UDGb464XoKqy7ugv4qX9jv8yymoJspleyQV
+	H0Q==
+X-Google-Smtp-Source: AGHT+IEuaCiOOntaC1FGKmHzqSa2ZEJgwgIQf3BqfjgzOP1N0VgyBrNZxMdxAybGdcqFGBDxoPcpnRViAtE=
+X-Received: from pjbhl14.prod.google.com ([2002:a17:90b:134e:b0:2fc:2828:dbca])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4c05:b0:2f5:88bb:12f
+ with SMTP id 98e67ed59e1d1-2fce78c9254mr1882909a91.21.1740099319523; Thu, 20
+ Feb 2025 16:55:19 -0800 (PST)
+Date: Thu, 20 Feb 2025 16:55:18 -0800
+In-Reply-To: <20250220170604.2279312-21-pbonzini@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] nvme: map uring_cmd data even if address is 0
-To: Xinyu Zhang <xizhang@purestorage.com>, linux-nvme@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Cc: Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>,
- Sagi Grimberg <sagi@grimberg.me>,
- Caleb Sander Mateos <csander@purestorage.com>
-References: <20250220235101.119852-1-xizhang@purestorage.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20250220235101.119852-1-xizhang@purestorage.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <20250220170604.2279312-1-pbonzini@redhat.com> <20250220170604.2279312-21-pbonzini@redhat.com>
+Message-ID: <Z7fO9gqzgaETeMYB@google.com>
+Subject: Re: [PATCH 20/30] KVM: TDX: create/destroy VM structure
+From: Sean Christopherson <seanjc@google.com>
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
+	Yan Zhao <yan.y.zhao@intel.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
+	Isaku Yamahata <isaku.yamahata@intel.com>, Tony Lindgren <tony.lindgren@linux.intel.com>, 
+	Sean Christopherson <sean.j.christopherson@intel.com>, Kai Huang <kai.huang@intel.com>
+Content-Type: text/plain; charset="us-ascii"
 
-On 2/20/25 4:51 PM, Xinyu Zhang wrote:
-> When using kernel registered bvec fixed buffers, the "address" is
-> actually the offset into the bvec rather than userspace address.
-> Therefore it can be 0.
-> We can skip checking whether the address is NULL before mapping
-> uring_cmd data. Bad userspace address will be handled properly later when
-> the user buffer is imported.
-> With this patch, we will be able to use the kernel registered bvec fixed
-> buffers in io_uring NVMe passthru with ublk zero-copy support in
-> https://lore.kernel.org/io-uring/20250218224229.837848-1-kbusch@meta.com/T/#u.
-> 
-> Signed-off-by: Xinyu Zhang <xizhang@purestorage.com>
-> Reviewed-by: Caleb Sander Mateos <csander@purestorage.com>
-> ---
->  drivers/nvme/host/ioctl.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/nvme/host/ioctl.c b/drivers/nvme/host/ioctl.c
-> index 60383da86feda..724ab542b4c33 100644
-> --- a/drivers/nvme/host/ioctl.c
-> +++ b/drivers/nvme/host/ioctl.c
-> @@ -500,7 +500,7 @@ static int nvme_uring_cmd_io(struct nvme_ctrl *ctrl, struct nvme_ns *ns,
->  		return PTR_ERR(req);
->  	req->timeout = d.timeout_ms ? msecs_to_jiffies(d.timeout_ms) : 0;
+TL;DR: Please don't merge this patch to kvm/next or kvm/queue.
+
+On Thu, Feb 20, 2025, Paolo Bonzini wrote:
+> @@ -72,8 +94,10 @@ struct kvm_x86_ops vt_x86_ops __initdata = {
+>  	.has_emulated_msr = vmx_has_emulated_msr,
 >  
-> -	if (d.addr && d.data_len) {
-> +	if (d.data_len) {
->  		ret = nvme_map_user_request(req, d.addr,
->  			d.data_len, nvme_to_user_ptr(d.metadata),
->  			d.metadata_len, 0, ioucmd, vec);
+>  	.vm_size = sizeof(struct kvm_vmx),
+> -	.vm_init = vmx_vm_init,
+> -	.vm_destroy = vmx_vm_destroy,
+> +
+> +	.vm_init = vt_vm_init,
+> +	.vm_destroy = vt_vm_destroy,
+> +	.vm_free = vt_vm_free,
+>  
+>  	.vcpu_precreate = vmx_vcpu_precreate,
+>  	.vcpu_create = vmx_vcpu_create,
 
-Looks good to me:
+...
 
-Reviewed-by: Jens Axboe <axboe@kernel.dk>
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index 374d89e6663f..e0b9b845df58 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -12884,6 +12884,7 @@ void kvm_arch_destroy_vm(struct kvm *kvm)
+>  	kvm_page_track_cleanup(kvm);
+>  	kvm_xen_destroy_vm(kvm);
+>  	kvm_hv_destroy_vm(kvm);
+> +	static_call_cond(kvm_x86_vm_free)(kvm);
+>  }
 
--- 
-Jens Axboe
+Sorry to throw a wrench in things, but I have a fix that I want to send for 6.14[1],
+i.e. before this code, and to land that fix I need/want to destroy vCPUs before
+calling kvm_x86_ops.vm_destroy().  *sigh*
 
+The underlying issue is that both nVMX and nSVM suck and access all manner of VM-wide
+state when destroying a vCPU that is currently in nested guest mode, and I want
+to fix the most pressing issue of destroying vCPUs at a random time once and for
+all.  nVMX and nSVM also need to be cleaned up to not access so much darn state,
+but I'm worried that "fixing" the nested cases will only whack the biggest mole.
+
+Commit 6fcee03df6a1 ("KVM: x86: avoid loading a vCPU after .vm_destroy was called")
+papered over an AVIC case, but there are issues, e.g. with the MSR filters[2],
+and the NULL pointer deref that's blocking the aforementioned fix is a nVMX access
+to the PIC.
+
+I haven't fully tested destroying vCPUs before calling vm_destroy(), but I can't
+see anything in vmx_vm_destroy() or svm_vm_destroy() that expects to run while
+vCPUs are still alive.  If anything, it's opposite, e.g. freeing VMX's IPIv PID
+table before vCPUs are destroyed is blatantly unsafe.
+
+The good news is, I think it'll lead to a better approach (and naming).  KVM already
+frees MMU state before vCPU state, because while MMUs are largely VM-scoped, all
+of the common MMU state needs to be freed before any one vCPU is freed.
+
+And so my plan is to carved out a kvm_destroy_mmus() helper, which can then call
+the TDX hook to release/reclaim the HKID, which I assume needs to be done after
+KVM's general MMU destruction, but before vCPUs are freed.
+
+I'll make sure to Cc y'all on the series (typing and testing furiously to try and
+get it out asap).  But to try and avoid posting code that's not usable for TDX,
+will this work?
+
+static void kvm_destroy_mmus(struct kvm *kvm)
+{
+	struct kvm_vcpu *vcpu;
+	unsigned long i;
+
+	if (current->mm == kvm->mm) {
+		/*
+		 * Free memory regions allocated on behalf of userspace,
+		 * unless the memory map has changed due to process exit
+		 * or fd copying.
+		 */
+		mutex_lock(&kvm->slots_lock);
+		__x86_set_memory_region(kvm, APIC_ACCESS_PAGE_PRIVATE_MEMSLOT,
+					0, 0);
+		__x86_set_memory_region(kvm, IDENTITY_PAGETABLE_PRIVATE_MEMSLOT,
+					0, 0);
+		__x86_set_memory_region(kvm, TSS_PRIVATE_MEMSLOT, 0, 0);
+		mutex_unlock(&kvm->slots_lock);
+	}
+
+	kvm_for_each_vcpu(i, vcpu, kvm) {
+		kvm_clear_async_pf_completion_queue(vcpu);
+		kvm_unload_vcpu_mmu(vcpu);
+	}
+
+	kvm_x86_call(mmu_destroy)(kvm);
+}
+
+void kvm_arch_pre_destroy_vm(struct kvm *kvm)
+{
+	kvm_mmu_pre_destroy_vm(kvm);
+}
+
+void kvm_arch_destroy_vm(struct kvm *kvm)
+{
+	/*
+	 * WARNING!  MMUs must be destroyed before vCPUs, and vCPUs must be
+	 * destroyed before any VM state.  Most MMU state is VM-wide, but is
+	 * tracked per-vCPU, and so must be unloaded/freed in its entirety
+	 * before any one vCPU is destroyed.  For all other VM state, vCPUs
+	 * expect to be able to access VM state until the vCPU is freed.
+	 */
+	kvm_destroy_mmus(kvm);
+	kvm_destroy_vcpus(kvm);
+	kvm_x86_call(vm_destroy)(kvm);
+
+	...
+}
+
+[1] https://lore.kernel.org/all/Z66RC673dzlq2YuA@google.com
+[2] https://lore.kernel.org/all/20240703175618.2304869-2-aaronlewis@google.com
 
