@@ -1,130 +1,191 @@
-Return-Path: <linux-kernel+bounces-525529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D35BFA3F0E1
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:49:12 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E125A3F0E7
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:50:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F0023B107C
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:48:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF019178797
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:48:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EF8B20102C;
-	Fri, 21 Feb 2025 09:45:08 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5C5A205509
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 09:45:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA4FC2045B2;
+	Fri, 21 Feb 2025 09:45:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="oRbDChC6"
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F03F201246;
+	Fri, 21 Feb 2025 09:45:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740131108; cv=none; b=aKb9OM1SqVJlKXTFzyCFn5phQO6sfz/by5P0WqLhcbhWPYhF9goKihn2HF8tVA8nIEl2J2YMk1V+LQrYbNmZGD5DgZDO1FxlXNYF5TO+if0f4f2YHtaJOkfNwDIhEdqAr8+RugfselLvhViK+DtGUpnQk6uEjJcyBrrOWaZaJgc=
+	t=1740131132; cv=none; b=IMFbciEe+BQcMHfyzr3gz8TF8Msypbxgnb1TyIBprvynNRMBKacQH5pcelO41rTu0FwNJ/B81aXk3PAOf3Qg3bcu24mxI26b1sLdKSn/4T3AakJUzpQfEqRZxh+QjvcDjTrL/qYBocnZ6qm6qE6WA1xbOqGRaRhuTA0Uh8RiZfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740131108; c=relaxed/simple;
-	bh=pTbpsDeO4lMEKiDtq6c1jk9rA1q8xSKS1V5q0oE0oQE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=FmLB+TMXRMmKcXnbjzJfwmCpleQqkjjL4CiXYB+xtSYlWVL0ZDpwu9kpdYjWU4saPO5XV0YihYwPWaWhTUL3HgzQ7+Y86/oER3Kb3MtOoX9R07a36aFz9guMive5CmcmLlw6EZzTFsgZYlwnHE6rswJlk2CMwrqUKBFpogmZ4iI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BB89A12FC;
-	Fri, 21 Feb 2025 01:45:22 -0800 (PST)
-Received: from a077893.blr.arm.com (a077893.blr.arm.com [10.162.40.21])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 4D4B73F59E;
-	Fri, 21 Feb 2025 01:45:01 -0800 (PST)
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: Anshuman Khandual <anshuman.khandual@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] arm64/mm/hotplug: Replace pxx_present() with pxx_valid()
-Date: Fri, 21 Feb 2025 15:14:49 +0530
-Message-Id: <20250221094449.1188427-3-anshuman.khandual@arm.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250221094449.1188427-1-anshuman.khandual@arm.com>
-References: <20250221094449.1188427-1-anshuman.khandual@arm.com>
+	s=arc-20240116; t=1740131132; c=relaxed/simple;
+	bh=/KcGc01eSsUrerPGVPWSAYZtIfEjNnei9zlH7mBhz24=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=hQ2Gdys1FbPvwh0LuNv5D/+fkwKFZfi8iukOZtkxVQfhyCTWhpeg17xc1DtZG+C5SWbsaXFLEbNHk4BXtr5Tu7WsvJjtFdhAk4wbMBqjSelPos9rPnvoauK6hcF+yiiF7bGjlFowJRnS0npdBHEB75LRxjQKi6Uwi/R8SjrXF8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=oRbDChC6; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 0DBEB43299;
+	Fri, 21 Feb 2025 09:45:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1740131122;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UpG//t1awC6TTYgGgCG1xSqQY/MSKf51OZV8VicRJJw=;
+	b=oRbDChC6bFmowtU0JHKSoS4k/X7btTZpHcZ8WaDUz442bJdEC9M9nY5L1e0roqJh/FCl7q
+	feEJmVov/RmYcssEDj9U0icJtAxEz8rlJHUF+9MeL5X5VErjTkJVh/e9LfqncMHDh08d3h
+	dt2/pSgtDxz5LTHXOFl29bNKYPWhuHWUBbS0qDq1UdT+LK6A6zJUqE4gClKK639bpcA78M
+	L5nsCrV3tZ3nvI1TljibJKR2Y8dVpozUtdQvDIjq6ry/3YRE8OL+Aa+J2vnEBl5HL2KcLN
+	LUtyBX15132MvBzMSIHCVZ9MxNSTelYGtBsN4QNK0y2clxl8LP5FwfUCePo7GQ==
+From: Gregory CLEMENT <gregory.clement@bootlin.com>
+To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Cc: Jiaxun Yang <jiaxun.yang@flygoat.com>, Rob Herring <robh@kernel.org>,
+ Aleksandar Rikalo <arikalo@gmail.com>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Vladimir
+ Kondratiev <vladimir.kondratiev@mobileye.com>, =?utf-8?Q?Th=C3=A9o?= Lebrun
+ <theo.lebrun@bootlin.com>, Tawfik Bayouk <tawfik.bayouk@mobileye.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/5] dt-bindings: mips: mips-cm: Add a new compatible
+ string for EyeQ6
+In-Reply-To: <Z7hJVnJSg3C9lmLY@alpha.franken.de>
+References: <20250123-cluster-hci-broken-v3-0-8a7ec57cbf68@bootlin.com>
+ <20250123-cluster-hci-broken-v3-2-8a7ec57cbf68@bootlin.com>
+ <afa2e874-c078-4c3e-b485-d948a0bb6a6f@app.fastmail.com>
+ <CAL_JsqKXYruNn+MtxbvCCWU2OmqeV-uAyyzN+F-ppSJVscr91w@mail.gmail.com>
+ <bf08785b-9963-4539-92ef-b73c3abe8c19@app.fastmail.com>
+ <87tt9iucu9.fsf@BLaptop.bootlin.com> <Z7hJVnJSg3C9lmLY@alpha.franken.de>
+Date: Fri, 21 Feb 2025 10:45:21 +0100
+Message-ID: <877c5jskb2.fsf@BLaptop.bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeileejudcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefujghffffkgggtgfesthhqredttddtjeenucfhrhhomhepifhrvghgohhrhicuvefngffogffpvfcuoehgrhgvghhorhihrdgtlhgvmhgvnhhtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpefghfegvdehgfdtjedvtefhvdeikefgteeuhfeukeettefgvdeuueettddtkeegveenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepvdgrtddumegtsgdugeemheehieemjegrtddtmedukeeitgemfhgvsgefmegtfhegtdemsgdtrgejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgdugeemheehieemjegrtddtmedukeeitgemfhgvsgefmegtfhegtdemsgdtrgejpdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpehgrhgvghhorhihrdgtlhgvmhgvnhhtsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedufedprhgtphhtthhopehtshgsohhgvghnugesrghlphhhrgdrfhhrrghnkhgvnhdruggvpdhrtghpthhtohepjhhirgiguhhnrdihrghnghesfhhlhihgohgrthdrtghomhdprhgtphhtthhopehrohgsh
+ heskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghrihhkrghlohesghhmrghilhdrtghomhdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegtohhnohhrodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepvhhlrgguihhmihhrrdhkohhnughrrghtihgvvhesmhhosghilhgvhigvrdgtohhmpdhrtghpthhtohepthhhvghordhlvggsrhhunhessghoohhtlhhinhdrtghomh
+X-GND-Sasl: gregory.clement@bootlin.com
 
-pte_present() asserts either the entry has PTE_VALID or PTE_PRESENT_INVALID
-bit set. Although PTE_PRESENT_INVALID bit only gets set on user space page
-table entries to represent pxx_present_invalid() state. So present invalid
-state is not really possible in kernel page table entries including linear
-and vmemap mapping which get teared down during memory hot remove operation
-. Hence just check for pxx_valid() instead of pxx_present() in all relevant
-places.
+Hello Thomas,
 
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will@kernel.org>
-Cc: Ard Biesheuvel <ardb@kernel.org>
-Cc: Ryan Roberts <ryan.roberts@arm.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
----
- arch/arm64/mm/mmu.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+> On Tue, Jan 28, 2025 at 05:23:26PM +0100, Gregory CLEMENT wrote:
+>> > =E5=9C=A82025=E5=B9=B41=E6=9C=8827=E6=97=A5=E4=B8=80=E6=9C=88 =E4=B8=
+=8B=E5=8D=8810:07=EF=BC=8CRob Herring=E5=86=99=E9=81=93=EF=BC=9A
+>> >> On Mon, Jan 27, 2025 at 3:43=E2=80=AFPM Jiaxun Yang <jiaxun.yang@flyg=
+oat.com> wrote:
+>> >>>
+>> >>>
+>> >>>
+>> >>> =E5=9C=A82025=E5=B9=B41=E6=9C=8823=E6=97=A5=E4=B8=80=E6=9C=88 =E4=B8=
+=8A=E5=8D=8811:01=EF=BC=8CGregory CLEMENT=E5=86=99=E9=81=93=EF=BC=9A
+>> >>> > The CM3.5 used on EyeQ6 reports that Hardware Cache Initialization=
+ is
+>> >>> > complete, but in reality it's not the case. It also incorrectly
+>> >>> > indicates that Hardware Cache Initialization is supported. This new
+>> >>> > compatible string allows warning about this broken feature that ca=
+nnot
+>> >>> > be detected at runtime.
+>> >>> >
+>> >>> > Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+>> >>> > ---
+>> >>> >  Documentation/devicetree/bindings/mips/mti,mips-cm.yaml | 12 ++++=
++++++++-
+>> >>> >  1 file changed, 11 insertions(+), 1 deletion(-)
+>> >>> >
+>> >>> > diff --git a/Documentation/devicetree/bindings/mips/mti,mips-cm.ya=
+ml
+>> >>> > b/Documentation/devicetree/bindings/mips/mti,mips-cm.yaml
+>> >>> > index
+>> >>> > 4324b2306535f1bf66c44b1f96be9094ee282041..d129d6382847768dc026336d=
+8d2c7328b6b81f9b
+>> >>> > 100644
+>> >>> > --- a/Documentation/devicetree/bindings/mips/mti,mips-cm.yaml
+>> >>> > +++ b/Documentation/devicetree/bindings/mips/mti,mips-cm.yaml
+>> >>> > @@ -19,7 +19,12 @@ maintainers:
+>> >>> >
+>> >>> >  properties:
+>> >>> >    compatible:
+>> >>> > -    const: mti,mips-cm
+>> >>> > +    oneOf:
+>> >>> > +      - const: mti,mips-cm
+>> >>> > +      - const: mobileye,eyeq6-cm
+>> >>> > +        description:
+>> >>> > +          On EyeQ6 the HCI (Hardware Cache Initialization) inform=
+ation for
+>> >>> > +          the L2 cache in multi-cluster configuration is broken.
+>> >>> >
+>> >>> >    reg:
+>> >>> >      description:
+>> >>> > @@ -44,4 +49,9 @@ examples:
+>> >>> >        compatible =3D "mti,mips-cm";
+>> >>> >        reg =3D <0x1bde8000 0x8000>;
+>> >>> >      };
+>> >>> > +
+>> >>> > +  - |
+>> >>> > +    coherency-manager {
+>> >>> > +      compatible =3D "mobileye,eyeq6-cm";
+>> >>>
+>> >>> I think =E2=80=9Cmobileye,eyeq6-cm=E2=80=9D, =E2=80=9Cmti,mips-cm=E2=
+=80=9D would describe the hardware better as eyeq6=E2=80=99s CM is just a s=
+pecial variant of mips-cm.
+>> >>
+>> >> Is s/w that only understands =E2=80=9Cmti,mips-cm=E2=80=9D useful on =
+eyeq6 chip? If
+>> >> so, I agree. If not, then a fallback compatible is not useful.
+>> >
+>> > Yes, mobileye,eyeq6-cm only enable an additional bug workaround in sof=
+tware.
+>> >
+>>=20
+>> Having "mti,mips-cm" is not useful for the EyeQ6 chip. On the EyeQ6, we
+>> obtain all relevant information related to CM dynamically without
+>> needing this compatible string.
+>>=20
+>> > The programming interfaces and so on remains unchanged.
+>>=20
+>> Even without a compatible string, we are able to utilize the CM. At
+>> present, there is no node in the device tree, and apart from the
+>> hardware being faulty, we do not need it.
+>>=20
+>> >
+>> > Also other firmware components like U-Boot doesn=E2=80=99t need to be =
+aware of
+>> > eyeq6 variant.
+>>=20
+>> It's the same for the firmware; they don't need to have "mti, mips-cm"
+>> information, as they can retrieve all they need dynamically.
+>
+> so it the current patch version correct ? If yes and nothing else is
+> outstanding, I'm going to apply the series.
 
-diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
-index 66906c45c7f6..33a8b77b5e6b 100644
---- a/arch/arm64/mm/mmu.c
-+++ b/arch/arm64/mm/mmu.c
-@@ -863,7 +863,7 @@ static void unmap_hotplug_pte_range(pmd_t *pmdp, unsigned long addr,
- 		if (pte_none(pte))
- 			continue;
- 
--		WARN_ON(!pte_present(pte));
-+		WARN_ON(!pte_valid(pte));
- 		__pte_clear(&init_mm, addr, ptep);
- 		flush_tlb_kernel_range(addr, addr + PAGE_SIZE);
- 		if (free_mapped)
-@@ -886,7 +886,7 @@ static void unmap_hotplug_pmd_range(pud_t *pudp, unsigned long addr,
- 		if (pmd_none(pmd))
- 			continue;
- 
--		WARN_ON(!pmd_present(pmd));
-+		WARN_ON(!pmd_valid(pmd));
- 		if (pmd_sect(pmd)) {
- 			pmd_clear(pmdp);
- 
-@@ -919,7 +919,7 @@ static void unmap_hotplug_pud_range(p4d_t *p4dp, unsigned long addr,
- 		if (pud_none(pud))
- 			continue;
- 
--		WARN_ON(!pud_present(pud));
-+		WARN_ON(!pud_valid(pud));
- 		if (pud_sect(pud)) {
- 			pud_clear(pudp);
- 
-@@ -1032,7 +1032,7 @@ static void free_empty_pmd_table(pud_t *pudp, unsigned long addr,
- 		if (pmd_none(pmd))
- 			continue;
- 
--		WARN_ON(!pmd_present(pmd) || !pmd_table(pmd) || pmd_sect(pmd));
-+		WARN_ON(!pmd_valid(pmd) || !pmd_table(pmd) || pmd_sect(pmd));
- 		free_empty_pte_table(pmdp, addr, next, floor, ceiling);
- 	} while (addr = next, addr < end);
- 
-@@ -1072,7 +1072,7 @@ static void free_empty_pud_table(p4d_t *p4dp, unsigned long addr,
- 		if (pud_none(pud))
- 			continue;
- 
--		WARN_ON(!pud_present(pud) || !pud_table(pud) || pud_sect(pud));
-+		WARN_ON(!pud_valid(pud) || !pud_table(pud) || pud_sect(pud));
- 		free_empty_pmd_table(pudp, addr, next, floor, ceiling);
- 	} while (addr = next, addr < end);
- 
--- 
-2.30.2
+Thank you for taking care of it. From my perspective, this patch is the
+correct version, and you can apply this series.
 
+Gregory
+
+>
+> Thomas.
+>
+> --=20
+> Crap can work. Given enough thrust pigs will fly, but it's not necessaril=
+y a
+> good idea.                                                [ RFC1925, 2.3 ]
+
+--=20
+Gr=C3=A9gory CLEMENT, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
