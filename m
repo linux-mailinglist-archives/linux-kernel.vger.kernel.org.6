@@ -1,130 +1,111 @@
-Return-Path: <linux-kernel+bounces-525649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBC74A3F2BC
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 12:11:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31785A3F2BE
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 12:12:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81BF93B9EF3
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 11:11:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80E5B3A6AFE
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 11:12:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1C192080ED;
-	Fri, 21 Feb 2025 11:11:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CC1D2080E4;
+	Fri, 21 Feb 2025 11:12:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="KWpMP9QA"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="C4B/Ob8T"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DDC4207A2E
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 11:11:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F8E32AE89
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 11:12:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740136291; cv=none; b=lFuh958Fa5FuSljRF1WK0PfH+eR3psdYCVS8ILA/lnthjzeEUgVy4rSm7Y/cqBSCbD9fdAQfLSBQiVbwYnnT+zmx854pOQrS58nHyfW8YgYxp+UfdDnNaFK6TL1+5LEEf7fcXpxS14WVuXD6ENqxNF9HTBC1RTFs+OfS51E1Ws4=
+	t=1740136368; cv=none; b=RgMyLW/7ei1JIi2kvUzMsEGP56C6zI4K/HW3TVUk7FcAXlM4mIvCSzHG0Y2YvjoxKAgu0UCT8G2fQc080i+me6NXiSzGsComDjvA9kP+vWbn0jki8i15t2PzB5ZpCIJDEwLFlbO1LaKBQF1m0WcJ0kjVtiIrv7vc6oS8+isJ/oc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740136291; c=relaxed/simple;
-	bh=uFst0uZhDHecANQgSPcaTkQaZji1kbxiGdT8lgz3J6Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F283dARJ4ridAdC93D5qRXTIBou1jiDGkJaYSdfDmnB6QFdHWgoWPhNRlyYGiXovFDBQ3m2nPIER3hlZ7QiKaMktjCtdu7dcSzxLWUkUS8Ol5pMMR7UFb9N0+GgCqJ1/thns4EJ4ufN5CQ7lRgfjeC6ia7eVtkSDkhovVsprQrc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=KWpMP9QA; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4399d14334aso17257175e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 03:11:28 -0800 (PST)
+	s=arc-20240116; t=1740136368; c=relaxed/simple;
+	bh=P5gdjvQGiF/cc6UIBWYs4SL9r0GTbZhKImCeOT528kc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=VUFHgF+7WTu5Do2Fc09nWKNg1McXkEQ3UxUDUexxsnan6IC9zrPZO9bYRb/mXqKo8kGrRSw81AVH5ThS1XquCNmEMhUfSsAd4vSQgqyu4FxnfUk4DRyvtan1y/2ZuEqbFHyZi2KDEfjeB6hFrCJJhPFy+mJeUdO5BVtBEdNYSHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=C4B/Ob8T; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2fc0ab102e2so483192a91.1
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 03:12:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1740136287; x=1740741087; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jSsWiZSoq00eYWyXg0OJO1m3DP0gspy/2ZFYEnCczbE=;
-        b=KWpMP9QAKaSZKOF420rklwiTuC5+Y8wM1RIzB1olZYwtHg3vYK/zy5hXWL5cRXYgIE
-         z9utogW2VMSxIGZnPCaIYTckrD7YEP53k5nMLrlI/Yh0OSq7FhvaOHkGq53SjipSC8aC
-         6dU6OI1g5x+Px8RjGm3DYgpIBQc6LRF0NXoGq/rmhYC73RYRj1Co2vL/ScVA2deX4Lou
-         38AmHoYTxNU9dIAshQcCsvrzcEp3cN4HZz7ZIepCmAu5eMEsPYKFE/u0uuD9CMhM3KNo
-         btIPZlvvgofMVBJZF7UK67BensNJ3B1MnbmSSyMlcbfRoGjAxTw57lA0PYp2bV0iQLDV
-         vxAA==
+        d=bytedance.com; s=google; t=1740136364; x=1740741164; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vh2A09kqHfCBThBjc7NLqZV9vtxoGWcvVKGUpFi+JPU=;
+        b=C4B/Ob8Tnr0WKuwkzy192oPZ4L32X/Mpc6Ttik8AP97TAvVx7nFP4UByzsYCdzI0Lm
+         JwumXkYFgAgP1cxrHOkWycEuzZLrVN8RQo1ebflFRo9sux7jrNRhl86nVA+KuVv4jvry
+         ttEhRmipiSkhkAh+RtgYSWYPtD3ySDNzkrn6TejmupV+VDtBb0eFPatDlEpVW7kUXiZY
+         GKhj4l85D8B4EdHe+ETvELcpuGOY3uZOY4/xRkZP4hN9mUCO2IqhsEKdSTlgepD5pCOV
+         IVVq/UDNNN9XHjeQ37CGfcH7sl0UTZvpFXcrAB7x3iPBlqsPKGvBCw4rPJri+ssaAtL5
+         A/Iw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740136287; x=1740741087;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jSsWiZSoq00eYWyXg0OJO1m3DP0gspy/2ZFYEnCczbE=;
-        b=FYj6ABbXOb7gKB7B1TPpJq3jd2hqjzee3evnS/WkKdAxVY9HDWbZwyF47u0SHumRAO
-         RgOLTKaq2joOPxHj1fdble8sWk7lb5XUrwdcla9oWfu/NXgJZ56j9f0rhBPx7tWJpJ7r
-         skhctZ1lkLIvHMg5IwKTOtFuI6VODNYWu0N43Fc6CcANXqwtDsEOtymkrBHXkiAZV3Vh
-         UOtOOICAtNGm19+JeHQm1Qt52Gp1P5crNncpriwAjH0NfUVcFWfUUO67odHGe+Olcbmm
-         ibHVGOmBuzV/c+8u2gi1blm+qAnQCPddVLMdmNjOOz59L16TnIeJFZV1HMXhPcm/Tx06
-         EvfA==
-X-Forwarded-Encrypted: i=1; AJvYcCW0P7dEmrgnbIuCams3BJlpjEZGVI5zC0y6Z8T6ye4wRUtNJpVF4dNatB8XWSX73tBt3px0tLQR2u9tZcQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPvsvn2l3zhqNZZcmfipW/aICeJDd8cah73K7fnLzu2qxqClDN
-	A3I7OCGIn8Dyg9bEk9Ztxt4/LNNIirjj348N4hTFPqDMyjea0O0DCb6jsZGnUEU=
-X-Gm-Gg: ASbGncv5iIMVQFCtTnzNd+QHUtU9vjjLojSD1O7T+vwaZe8ukEMvxSuLtEbOldtbZl/
-	opW6Twl+l02xVQwhia345sJQKDvhWMI1q1eHdOhAnSQwuZBztZuJHEWHEMKQCZHcsTwRjR61FM6
-	2M3lqhLFXOy3p7EWeYwi1C6dak5B0RCIvSZ+t2dZaEgrxJ4o2YPDpeUiPTVKfm1M4QKatN6ZUwy
-	Ws6lmzLUzCBLa04B/ABesNjzwEowd62+/RI+0MMAnRrs2AkHc320QnQm+egJB4scBTa04EpcV5D
-	sBRlOsRSEwaUQA==
-X-Google-Smtp-Source: AGHT+IF0uAlwa6gBu1gPr2dqwSyuIZZV/tSdbeIren4YqG3M6YP4kMXrRqTqSrM5G5BkGMJt/vM5Cw==
-X-Received: by 2002:a05:600c:1396:b0:439:6d7c:48fd with SMTP id 5b1f17b1804b1-439ae1d877dmr24012595e9.4.1740136287415;
-        Fri, 21 Feb 2025 03:11:27 -0800 (PST)
-Received: from localhost ([2a02:8308:a00c:e200::766e])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f258b439dsm22921657f8f.8.2025.02.21.03.11.26
+        d=1e100.net; s=20230601; t=1740136364; x=1740741164;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vh2A09kqHfCBThBjc7NLqZV9vtxoGWcvVKGUpFi+JPU=;
+        b=ud/Yi5PxJ8bn+Pip+WM92MZgRf+smTLiUREnaI8VlCknk7o0HckkEpDGgPGGezRF4b
+         b2wYcXHbkuzVS/4ARJfr6SYv0qO/btSGgkwwU3uG2KTz/y4BZ4aJl9pPS/5HAob3CTlv
+         TvlskTTEaV6gJfMPj2JFdNhQbGj8HBxTMeQMATXOHAOCeVD8cYlcDWHwTppDcAb4m8tC
+         mPts08/mNS2sTzezyCtbKObZAi7Bm4x6weMSh0+/5+B0pSD9mLjT/U/ie6ny7YHT1pQD
+         U1ObDosj7H+Xylu4TJIRZZvPNnB3RuRE6WLlcbsYC8CjBbvJcAHk9REUrrqOzn1VAiQp
+         koLw==
+X-Forwarded-Encrypted: i=1; AJvYcCV7O9OhdSRChxITGOUFzkDEe+xf0BKhOqckNhFKh48Qj/WqycBsVlpp3oDdZxLEF364NRQBhfNLW80oTIs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTiQAzAj9s0IBGDQ7JGxhi2/HA7tqvkruRYkLNrfceqLeajlnH
+	DBV6oIH14yX1xZmTRZ2+0mtYxfuy6/UK8ulceVD8rhYB6rCzkbPhkCF9f9USyGg=
+X-Gm-Gg: ASbGncute7wThLw8UuihjLBdjY5Mmolh2wSWTKN1dJFT1L+mgr46Uti7PVVqKaUk2wX
+	guHD4L0CT/kSEKVGFEi+30OfmwZD2bmiitAfW1aT+lNlzZikvJQNF5N/luYgBKNvUivnVNOmw4d
+	4U4E+thjVEvq49aIgZ+UJfG7E6sIxcMlo7Pah+5+AUhBZmXZjKzLWzfTIeaL30ijosUldHDjG4f
+	NMGxJWTlLlkgu/8amH+tsrkgaK0boInykcSRajxKo/PhAOeiKT0SsKFWscdq6n5VUlMUitTWhtC
+	uUUF+6YUQzjmeoWSZpTZh++1CYD86dPxuH76mBFH8rwuZ3mlPJt4PbF2C+4C/z06
+X-Google-Smtp-Source: AGHT+IGCg/3nPE7zeSEYGXZNcCBbQyvGpgF1eQQkvGyYsw5zi5AzrR/cD6GECmTAj6PYRrOgMcxHXQ==
+X-Received: by 2002:a05:6a00:987:b0:730:8526:5dbc with SMTP id d2e1a72fcca58-73426d77d7bmr1692605b3a.3.1740136364292;
+        Fri, 21 Feb 2025 03:12:44 -0800 (PST)
+Received: from C02DV8HUMD6R.bytedance.net ([139.177.225.228])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7327237a5efsm10205145b3a.127.2025.02.21.03.12.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Feb 2025 03:11:27 -0800 (PST)
-Date: Fri, 21 Feb 2025 12:11:26 +0100
-From: Andrew Jones <ajones@ventanamicro.com>
-To: BillXiang <xiangwencheng@lanxincomputing.com>
-Cc: anup@brainfault.org, kvm-riscv@lists.infradead.org, 
-	kvm@vger.kernel.org, linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	atishp@atishpatra.org, paul.walmsley@sifive.com, palmer@dabbelt.com, 
-	aou@eecs.berkeley.edu, rkrcmar@ventanamicro.com
-Subject: Re: [PATCH v2] riscv: KVM: Remove unnecessary vcpu kick
-Message-ID: <20250221-11926c4f2ca3fab3b565bc92@orel>
-References: <20250221104538.2147-1-xiangwencheng@lanxincomputing.com>
+        Fri, 21 Feb 2025 03:12:43 -0800 (PST)
+From: Abel Wu <wuyun.abel@bytedance.com>
+To: Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>,
+	Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Josh Don <joshdon@google.com>,
+	Tianchen Ding <dtcccc@linux.alibaba.com>
+Cc: Abel Wu <wuyun.abel@bytedance.com>,
+	linux-kernel@vger.kernel.org (open list:SCHEDULER)
+Subject: [PATCH 0/2] Fix SCHED_IDLE behavior on wakeup preemption
+Date: Fri, 21 Feb 2025 19:12:22 +0800
+Message-Id: <20250221111226.64455-1-wuyun.abel@bytedance.com>
+X-Mailer: git-send-email 2.37.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250221104538.2147-1-xiangwencheng@lanxincomputing.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Feb 21, 2025 at 06:45:38PM +0800, BillXiang wrote:
-> Remove the unnecessary kick to the vCPU after writing to the vs_file
-> of IMSIC in kvm_riscv_vcpu_aia_imsic_inject.
-> 
-> For vCPUs that are running, writing to the vs_file directly forwards
-> the interrupt as an MSI to them and does not need an extra kick.
-> 
-> For vCPUs that are descheduled after emulating WFI, KVM will enable
-> the guest external interrupt for that vCPU in
-> kvm_riscv_aia_wakeon_hgei. This means that writing to the vs_file
-> will cause a guest external interrupt, which will cause KVM to wake
-> up the vCPU in hgei_interrupt to handle the interrupt properly.
-> 
-> Signed-off-by: BillXiang <xiangwencheng@lanxincomputing.com>
-> ---
-> v2: Revise the commit message to ensure it meets the required 
->     standards for acceptance
-> 
->  arch/riscv/kvm/aia_imsic.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/arch/riscv/kvm/aia_imsic.c b/arch/riscv/kvm/aia_imsic.c
-> index a8085cd8215e..29ef9c2133a9 100644
-> --- a/arch/riscv/kvm/aia_imsic.c
-> +++ b/arch/riscv/kvm/aia_imsic.c
-> @@ -974,7 +974,6 @@ int kvm_riscv_vcpu_aia_imsic_inject(struct kvm_vcpu *vcpu,
->  
->  	if (imsic->vsfile_cpu >= 0) {
->  		writel(iid, imsic->vsfile_va + IMSIC_MMIO_SETIPNUM_LE);
-> -		kvm_vcpu_kick(vcpu);
->  	} else {
->  		eix = &imsic->swfile->eix[iid / BITS_PER_TYPE(u64)];
->  		set_bit(iid & (BITS_PER_TYPE(u64) - 1), eix->eip);
-> -- 
-> 2.46.2
+Patch 1: Fixes unintended gap between SCHED_IDLE tasks and entities.
+Patch 2: Fixes scope of WAKEUP_PREEMPTION to meet SCHED_IDLE semantics.
 
-Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
+Abel Wu (2):
+  sched/fair: Do not let idle entities preempt others
+  sched/fair: Fix premature check of WAKEUP_PREEMPTION
+
+ kernel/sched/fair.c | 15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
+
+-- 
+2.37.3
+
 
