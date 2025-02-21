@@ -1,65 +1,85 @@
-Return-Path: <linux-kernel+bounces-526211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C976A3FB9E
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:41:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F919A3FBA0
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:41:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D79541889CC7
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:35:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD7B118877A9
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:36:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4F46213E6C;
-	Fri, 21 Feb 2025 16:34:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53E711F3FC3;
+	Fri, 21 Feb 2025 16:34:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="cnyBWkd+"
-Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jv6UPsjc"
+Received: from mail-pl1-f194.google.com (mail-pl1-f194.google.com [209.85.214.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50D5621129A
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 16:34:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F4821F1506
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 16:34:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740155657; cv=none; b=Nmv8Nu/YXaQWG0Kw1dilXNJYQ2o81REgABG6eDO1YiKhJI3a6KprSPzxoxWQdbyeGb8d2KycqkoTk+nYrFfNkK8+YVePaHhEG3eNAr2kVj5tRuYNMqQH+cvveMuSb95zglTDcmtBJngW1V8LsLPSh8oITTCsmagLUQrr2wUd3ck=
+	t=1740155695; cv=none; b=jio6NkKlpgEVw+10Np5sNJSzgvAJg4sL0qkKTfLmUWyngbtOq72Qkqr2+QRzoWSFI57a8O0dRbm6o1YWDaSQiWr72u3WA8DweI+PsQZOYoSvUu+j2eaLaZoqhnQ+9mW6O8ikuYOagm/ZjMsJG72Bnqbpn82YTI/NSqBOw+EKPfo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740155657; c=relaxed/simple;
-	bh=3/HKHruvaE4GIGU5SloCVdMtixlMfnzkYTXdJPXjiIg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=BPZnNL669vjMDkFUDTbQusIQ/K/LsQ10UXaTe9g1TAFxBi20/3b3XDMBqQioqARisTTcFSbrswNrC1JZCB5nNUv/LWLMDjoSrAal32QYVaA5RcD8Xon7IFsy60wLlwAhHbOYMYACvZ/b0foAIHVK5VZFsJ3lOBBWt2HA2psobA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=cnyBWkd+; arc=none smtp.client-ip=91.218.175.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1740155653;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CpOlmsaxwBv8z/TyEJM+sPdDJ8NinYorBdTwh3llrPI=;
-	b=cnyBWkd+RQDE5nc/sQQO+335uBwxpzqlx53qVy8jVDPl26qTLeZVms7/1hr5au5+CNfQMN
-	du2P48WUigiLhedBhJ+IMdgdJWXnv5jUAEpR7KouRl9P+JubQHKwXfuWROLzRdE2074NgU
-	MyVv7i1KPUY41oexgaVL4i9Up9cThNg=
-From: Yosry Ahmed <yosry.ahmed@linux.dev>
-To: x86@kernel.org,
-	Sean Christopherson <seanjc@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Jim Mattson <jmattson@google.com>,
-	"Kaplan, David" <David.Kaplan@amd.com>,
-	kvm@vger.kernel.org,
+	s=arc-20240116; t=1740155695; c=relaxed/simple;
+	bh=2nMzOHiGYJvxCYd3jkO6i+jsdS0V2XLFGx4uJLonVOU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dAOE9BrvIISWSwCpAiWR2/a5tWuCdfS7RxLuJFo1Olfp6shNHTxqHR0WDcsfouU0vsbAXMb5I9wUpGKtRssgQVCbAeKCDMHbM3AU0ChBQfeTjfrhBnAw1DcgPXAPrAdS8SRuE5j5JZ0qacT8pBy4VZNF8UnGFLggH0nlldao028=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jv6UPsjc; arc=none smtp.client-ip=209.85.214.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f194.google.com with SMTP id d9443c01a7336-220c665ef4cso40100345ad.3
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 08:34:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740155694; x=1740760494; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+IWac3BTppITgPA6stiUSJpAZ3uIjnk1xho+BbeLNeo=;
+        b=Jv6UPsjcV0+puKhbUEqUoobPUsfIPjGZQa1Vkziy4HwIK2lVeVb29xD2B4SYJgLD33
+         GZ02re9Bo8Of9BThR+SgnVKm5cH2VmFipj2GY39MYjUVEIIrglQRfnZdxyRe12vt700k
+         Gr+A8Vklf7NUKy0ck/iZ4lFny7eu8U2dlC6oQu1SS3c1tPhRce2OX8psZh9SN7Mfvqii
+         C+HKnku8Hz8v0H0CsE+mv59mq9OcBqZMjcoi0oovUJ2N9pbUp/AvMDTBJYKl++gY6Cdx
+         GPr60XfszBRdGgQLXCX9E581SNG9b2hCVTmIe8TMPJyuVhuXDQz4Awl2QA3PyJXp4LcJ
+         PCag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740155694; x=1740760494;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+IWac3BTppITgPA6stiUSJpAZ3uIjnk1xho+BbeLNeo=;
+        b=BGmpptxLXPJ4c4fX3QCPa1n2BF0SR1vOYlITdES4EXpNxrHO4YDSjWXg7I+hKMx+HR
+         t1zZp8IjrTXUEMM/dBs3lAUadVMjHAHV2iasv0dH4spoR7vxc6UTl4a0hhRqCqZ1lQ7u
+         RDDdNisVqiSblD8Ek7sknvMXFcp0eUKZkVfmt41olyESafcwJ+qWDSGl8c1JuesQqfKg
+         23Q8+pQW8xeqRMyYuDHHZxtsA+WgzqawRMVXJBWHKkKmJYwOz8XxCYPASNLNKtNUGURQ
+         K9oeOhh7XJQaq9OKs/V3gRFoAldRjcQk5zpAy6dehdATRo0pzz9fA2U0lyhyXskt5G+U
+         YEHg==
+X-Forwarded-Encrypted: i=1; AJvYcCUxjVP1vmtytVJK0i0xO74pGRuWc6skhyWlpTYZamybkWr+3F8rTrlSQGTBDD2Gv0FX67byUYpl6IPXviE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOw5BknLMY3yi2rPpxtzZnf2/rmdCfUEd5VyD4VJkVCg1ViGGx
+	cFMsX2bKBryfSX+Mfedw1uOqIZTttrefTze0so66ImH/efBXfhACyKiO2H75sy8=
+X-Gm-Gg: ASbGncvininX/9Vq2VZbSfRqRgj6uAfFZgaiFpSFljan/CShGyii9RkUcgr8XpxijA9
+	MXBC37OjL3LEO81OwgSRHqjbCVgcdtqQH+VQie9VT/hq2DmEff7YiRL7wEyvRglL1tPsV73/UZ8
+	mdaeQ5p/P3ZvfDuYOhBCDKyWRFMoHOvB1OzhjerLRTBlgU012gM0L/VOTTITtScusJ+xnzAXF7q
+	MkPG09gdAPV9rQZfMGou0AF+HzP7ItB8tmDj1EYolJIqAx8sXRvJVBZFkF1a+Qt78MQziiY8gdT
+	0D2cMrPDlc9NFtfvj1NCq+YgKkUq/phSq7kY
+X-Google-Smtp-Source: AGHT+IGzfe1lVC9rnbfye8PAwJBsN4j0xVxqxOUe/shv2D9rTTcs75+Qv990i8d3bFc0eM1snFDcQQ==
+X-Received: by 2002:a17:902:f546:b0:215:8847:435c with SMTP id d9443c01a7336-2219ff9d73cmr63668255ad.12.1740155693511;
+        Fri, 21 Feb 2025 08:34:53 -0800 (PST)
+Received: from localhost ([2409:4066:d04:319e:1d76:db25:b6bf:4f52])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-220d556d6d2sm137213215ad.177.2025.02.21.08.34.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Feb 2025 08:34:53 -0800 (PST)
+From: Ravi Kumar kairi <kumarkairiravi@gmail.com>
+To: parthiban.veerasooran@microchip.com,
+	christian.gromm@microchip.com,
+	gregkh@linuxfoundation.org
+Cc: linux-staging@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
-	Yosry Ahmed <yosry.ahmed@linux.dev>
-Subject: [PATCH 3/3] KVM: x86: Generalize IBRS virtualization on emulated VM-exit
-Date: Fri, 21 Feb 2025 16:33:52 +0000
-Message-ID: <20250221163352.3818347-4-yosry.ahmed@linux.dev>
-In-Reply-To: <20250221163352.3818347-1-yosry.ahmed@linux.dev>
-References: <20250221163352.3818347-1-yosry.ahmed@linux.dev>
+	Ravi Kumar Kairi <kumarkairiravi@gmail.com>
+Subject: [PATCH] Cleanup of most_video_dev structure
+Date: Fri, 21 Feb 2025 22:04:24 +0530
+Message-ID: <20250221163444.57492-1-kumarkairiravi@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,95 +87,20 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-Commit 2e7eab81425a ("KVM: VMX: Execute IBPB on emulated VM-exit when
-guest has IBRS") added an IBPB in the emulated VM-exit path on Intel to
-properly virtualize IBRS by providing separate predictor modes for L1
-and L2.
+From: Ravi Kumar Kairi <kumarkairiravi@gmail.com>
 
-AMD requires similar handling, except when IbrsSameMode is enumerated by
-the host CPU (which is the case on most/all AMD CPUs). With
-IbrsSameMode, hardware IBRS is sufficient and no extra handling is
-needed from KVM.
+This patch series removes unused synchronization primitives from
+struct most_video_dev.
 
-Generalize the handling in nested_vmx_vmexit() by moving it into a
-generic function, add the AMD handling, and use it in
-nested_svm_vmexit() too. The main reason for using a generic function is
-to have a single place to park the huge comment about virtualizing IBRS.
+Ravi Kumar Kairi (2):
+  staging: most: Remove unused mutex from most_video_dev
+  staging: most: Remove unused spinlock from most_video_dev
 
-Signed-off-by: Yosry Ahmed <yosry.ahmed@linux.dev>
----
- arch/x86/kvm/svm/nested.c |  2 ++
- arch/x86/kvm/vmx/nested.c | 11 +----------
- arch/x86/kvm/x86.h        | 18 ++++++++++++++++++
- 3 files changed, 21 insertions(+), 10 deletions(-)
+ drivers/staging/most/video/video.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/arch/x86/kvm/svm/nested.c b/arch/x86/kvm/svm/nested.c
-index d77b094d9a4d6..61b73ff30807e 100644
---- a/arch/x86/kvm/svm/nested.c
-+++ b/arch/x86/kvm/svm/nested.c
-@@ -1041,6 +1041,8 @@ int nested_svm_vmexit(struct vcpu_svm *svm)
- 
- 	nested_svm_copy_common_state(svm->nested.vmcb02.ptr, svm->vmcb01.ptr);
- 
-+	kvm_nested_vmexit_handle_spec_ctrl(vcpu);
-+
- 	svm_switch_vmcb(svm, &svm->vmcb01);
- 
- 	/*
-diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
-index 8a7af02d466e9..453d52a6e836a 100644
---- a/arch/x86/kvm/vmx/nested.c
-+++ b/arch/x86/kvm/vmx/nested.c
-@@ -5018,16 +5018,7 @@ void nested_vmx_vmexit(struct kvm_vcpu *vcpu, u32 vm_exit_reason,
- 
- 	vmx_switch_vmcs(vcpu, &vmx->vmcs01);
- 
--	/*
--	 * If IBRS is advertised to the vCPU, KVM must flush the indirect
--	 * branch predictors when transitioning from L2 to L1, as L1 expects
--	 * hardware (KVM in this case) to provide separate predictor modes.
--	 * Bare metal isolates VMX root (host) from VMX non-root (guest), but
--	 * doesn't isolate different VMCSs, i.e. in this case, doesn't provide
--	 * separate modes for L2 vs L1.
--	 */
--	if (guest_cpu_cap_has(vcpu, X86_FEATURE_SPEC_CTRL))
--		indirect_branch_prediction_barrier();
-+	kvm_nested_vmexit_handle_spec_ctrl(vcpu);
- 
- 	/* Update any VMCS fields that might have changed while L2 ran */
- 	vmcs_write32(VM_EXIT_MSR_LOAD_COUNT, vmx->msr_autoload.host.nr);
-diff --git a/arch/x86/kvm/x86.h b/arch/x86/kvm/x86.h
-index 7a87c5fc57f1b..008c8d381c253 100644
---- a/arch/x86/kvm/x86.h
-+++ b/arch/x86/kvm/x86.h
-@@ -116,6 +116,24 @@ static inline void kvm_leave_nested(struct kvm_vcpu *vcpu)
- 	kvm_x86_ops.nested_ops->leave_nested(vcpu);
- }
- 
-+/*
-+ * If IBRS is advertised to the vCPU, KVM must flush the indirect branch
-+ * predictors when transitioning from L2 to L1, as L1 expects hardware (KVM in
-+ * this case) to provide separate predictor modes.  Bare metal isolates the host
-+ * from the guest, but doesn't isolate different guests from one another (in
-+ * this case L1 and L2). The exception is if bare metal supports same mode IBRS,
-+ * which offers protection within the same mode, and hence protects L1 from L2.
-+ */
-+static inline void kvm_nested_vmexit_handle_spec_ctrl(struct kvm_vcpu *vcpu)
-+{
-+	if (cpu_feature_enabled(X86_FEATURE_AMD_IBRS_SAME_MODE))
-+		return;
-+
-+	if (guest_cpu_cap_has(vcpu, X86_FEATURE_SPEC_CTRL) ||
-+	    guest_cpu_cap_has(vcpu, X86_FEATURE_AMD_IBRS))
-+		indirect_branch_prediction_barrier();
-+}
-+
- static inline bool kvm_vcpu_has_run(struct kvm_vcpu *vcpu)
- {
- 	return vcpu->arch.last_vmentry_cpu != -1;
 -- 
-2.48.1.601.g30ceb7b040-goog
+2.48.1
 
 
