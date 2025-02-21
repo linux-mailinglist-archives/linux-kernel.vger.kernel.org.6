@@ -1,81 +1,98 @@
-Return-Path: <linux-kernel+bounces-526792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0582BA4035C
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 00:14:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DBE9A4035E
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 00:14:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2EC04407B4
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 23:13:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88C5D3A5D7C
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 23:14:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AA0A205E0C;
-	Fri, 21 Feb 2025 23:13:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 262122063D3;
+	Fri, 21 Feb 2025 23:14:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SHmFM9jz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PtYlutvN"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 878F51F9F70;
-	Fri, 21 Feb 2025 23:13:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EFAA1F9F70;
+	Fri, 21 Feb 2025 23:14:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740179610; cv=none; b=oRcgrfQ7W80vAzI64DZw71aVYiXM6JDMwhKdskkl2GR5Cb3lzHtRlM6AFtOKBw6l5jizNLCS43reuc5kdLf0nexO6uxvse5W+VH9PcwhtPluB+M9D+gyPOhO2X02EVBkkia16DlHROXxIz4xZJ5mUU1gH5mahq7fPoF7nc7CmKA=
+	t=1740179667; cv=none; b=uZGirqevJRuDOZlUchE0KPMjkYS6+5NW8JDaeJWYQ/GUCL6JO5Yo1Ktt9avhx/JDv5dMGlnD2FNhWazHW03j6e3d+GaqT3byP/VkiiLxsS3O1s63MjtVmov45+6ZCtpkQnSJHgzmkG8r4tfCVw5mnmy060J7ojrWbjuCpYxaFHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740179610; c=relaxed/simple;
-	bh=WNL0sZKfmWiQDFD9PEb2OlcoZ6MH5kNFz9BDs90AdBQ=;
+	s=arc-20240116; t=1740179667; c=relaxed/simple;
+	bh=ZxrEIfABUThlyL83NqEocjM+61rjSOj8pPycrC979mA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K06yygCyLkPBHR5tW+sGOVAk6CrzmaX9jHEKTqFr+lH1TgmQLQ0Zr2MrV4ept8KghJtKKbVS2AxtyRZ0PZyM83+sSHp4/LxI1uTNBgTUcj5MunakqOg4qfnJvRN2xqSqloKQymWqqld4f/aASWQuR8vy1dDbghTiTGM85rk5QEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SHmFM9jz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3E6DC4CED6;
-	Fri, 21 Feb 2025 23:13:29 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Im9iYDTAW6xj9OuoqmURgWg7ZiQ2GmQprhMPru8svEZsDkK0LiVwBMuVEuIxjYDxCgpkb2a5R981UA3CohTrzBFPLD40+CdZGu2jO1Qp2mCgnbmWbX/qp4pbiW68LZv01EOhKcG0Efk2Fedfg9e3UgSS4kqotQVEHsmkSn9ZPPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PtYlutvN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFE8BC4CED6;
+	Fri, 21 Feb 2025 23:14:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740179610;
-	bh=WNL0sZKfmWiQDFD9PEb2OlcoZ6MH5kNFz9BDs90AdBQ=;
+	s=k20201202; t=1740179667;
+	bh=ZxrEIfABUThlyL83NqEocjM+61rjSOj8pPycrC979mA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SHmFM9jzRO4UimxvEMJKuqkwcIk4+JE0MSeBrT2hXhHA3B2cQA67tgE+xH2dBnUOc
-	 AcOkRMZ4UhGtVh7CxvYo9PD1f8O8FD2BsexZNzMxE4441/ZVFxy7mzwJhOaJFfimG0
-	 J5fvzTYbzBkEMCXC6y0H98OqWV2T9/Owmpc3oD4YVvzCPoNFEh30JDrOURHktMwkMt
-	 gcmjJfDSmSiCSNIS18PgI3kDuggTwG2HZ7EIeArpho6rPZSABe+ksKcpEN+NQ2L+Rq
-	 fdw7qoXlWkyQ8yWNujMFZeMOPZXzgSb6FUT19ZwIHgvnp9thPmZ/wmpdQGixNpDJVm
-	 3rY4YNPY7Pt4g==
-Date: Fri, 21 Feb 2025 17:13:28 -0600
+	b=PtYlutvNQyz6oh+FTLV0+g6YgzBGvtEDnAeLuVtvfEQVJ8x7CikJM6sLo4J79vbt3
+	 aPTnNK6arjQGvH7jYmvV3VMqnPD3d2d1kKGWhfMZJi/ps1tpMF9aXO/U5xtbntm/K4
+	 iVF9YmZQtFKCO+oKaSHAEBmfvl1/6CgFU3iYXndbEPgbKPlr/CdU7nwTdLU/Oz6/gA
+	 OiWKgoiuUCKw2q4hz3Gx+1yWoTSVssDk6zwFf3G+TOLqWDTU55dopjf7+iWMLMn2ti
+	 xCA1X0HrmLjV7ZIYqnQf0T5tZLlF3uqmogRBv5RU12I2FhaiLzyB9cXEnRqQ3vtOve
+	 3AP8pg1r1gK8g==
+Date: Fri, 21 Feb 2025 17:14:24 -0600
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Michal Simek <michal.simek@amd.com>
-Cc: u-boot@lists.denx.de,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	git@xilinx.com, open list <linux-kernel@vger.kernel.org>,
+To: =?iso-8859-1?Q?J=2E_Neusch=E4fer?= <j.ne@posteo.net>
+Cc: devicetree@vger.kernel.org, linux-pci@vger.kernel.org,
+	=?iso-8859-1?Q?J=2E_Neusch=E4fer?= <j.neuschaefer@gmx.net>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
 	Conor Dooley <conor+dt@kernel.org>
-Subject: Re: [PATCH] dt-bindings: trivial-devices: Add ti,tps53681
-Message-ID: <174017960656.297543.5906182002772839470.robh@kernel.org>
-References: <26aac15b8f0fdbcc2633d3843e216e6c8d30bb31.1740054443.git.michal.simek@amd.com>
+Subject: Re: [PATCH v3] dt-bindings: pci: Convert fsl,mpc83xx-pcie to YAML
+Message-ID: <174017966427.307648.3944377161217971562.robh@kernel.org>
+References: <20250220-ppcyaml-pci-v3-1-ca94a4f62a85@posteo.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <26aac15b8f0fdbcc2633d3843e216e6c8d30bb31.1740054443.git.michal.simek@amd.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250220-ppcyaml-pci-v3-1-ca94a4f62a85@posteo.net>
 
 
-On Thu, 20 Feb 2025 13:27:25 +0100, Michal Simek wrote:
-> Describe TI TPS5381 a dual-channel multiphase step-down controller
-> supporting per-phase and per-channel output telemetry.
+On Thu, 20 Feb 2025 13:29:58 +0100, J. Neuschäfer wrote:
+> Formalise the binding for the PCI controllers in the Freescale MPC8xxx
+> chip family. Information about PCI-X-specific properties was taken from
+> fsl,pci.txt. The examples were taken from mpc8315erdb.dts and
+> xpedite5200_xmon.dts.
 > 
-> Signed-off-by: Michal Simek <michal.simek@amd.com>
+> Signed-off-by: J. Neuschäfer <j.ne@posteo.net>
 > ---
+> V3:
+> - split out as a single patch
+> - remove obsolete reference to fsl,pci.txt
+> - remove unnecessary newline near the end of fsl,mpc8xxx-pci.yaml
 > 
-> Linux kernel driver support has been added by commit 53030bcc87e4 ("hwmon:
-> (pmbus/tps53679) Add support for TPS53681").
+> V2:
+> - part of series [PATCH v2 00/12] YAML conversion of several Freescale/PowerPC DT bindings
+>   Link: https://lore.kernel.org/lkml/20250207-ppcyaml-v2-6-8137b0c42526@posteo.net/
+> - merge fsl,pci.txt into fsl,mpc8xxx-pci.yaml
+> - regroup compatible strings, list single-item values in one enum
+> - trim subject line (remove "binding")
+> - fix property order to comply with dts coding style
 > ---
->  Documentation/devicetree/bindings/trivial-devices.yaml | 2 ++
->  1 file changed, 2 insertions(+)
+>  .../devicetree/bindings/pci/fsl,mpc8xxx-pci.yaml   | 113 +++++++++++++++++++++
+>  Documentation/devicetree/bindings/pci/fsl,pci.txt  |  27 -----
+>  2 files changed, 113 insertions(+), 27 deletions(-)
 > 
 
-Applied, thanks!
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
 
