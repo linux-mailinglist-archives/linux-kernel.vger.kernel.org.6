@@ -1,101 +1,173 @@
-Return-Path: <linux-kernel+bounces-525010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E6C0A3E9C8
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 02:18:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A23BCA3E9CA
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 02:19:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1D0517A8D8D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 01:17:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5CB7B7AAAAF
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 01:18:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED73C3D3B8;
-	Fri, 21 Feb 2025 01:18:00 +0000 (UTC)
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E421845009;
+	Fri, 21 Feb 2025 01:19:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KxRAiP5O"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D81045009;
-	Fri, 21 Feb 2025 01:17:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9331B18A6B0;
+	Fri, 21 Feb 2025 01:19:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740100680; cv=none; b=XL4iLwgTjVqA6O3lXQ/gyZSPdTBoGNVnibdxYdnb8DJ752AhJiHjnzBLUJiuBJ15DdBBzxA+VSD1e3kiZFe/44vv6ta+jjoMVjhzZok7VfTTTFoGHxVh6RRNnfKkUM5IQg2rGMHls6sKtV7aRsvCJoZAC+JVH9ql7pb+RbQ79qY=
+	t=1740100743; cv=none; b=jIPW9bfGPkYciXnNjXMxUEJPYEr43HPVUqwuGJlbOm3GLQfONDiOLUoX8WkrlGD1BUzeiPeATZfxurJc1O6trP8+bsQ87/IMb9QHJkzRUg85kOIq/siZu7KTHZ1OaGBF49p+amBLlFBZhTbt3/0p3dxA0//h00GBKc7S5/t+SCo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740100680; c=relaxed/simple;
-	bh=w/wHhqZ60M2rVKS74re1Ys5b3Nn7e/itXBY5RYwCdUU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DRhAN6IPQmpYh3jvKmkrSDpGSboOvl7m2PomW3Kez6Ta6DXzYKKENLASTNonoGcLeXpibMJoX4HasHHlaqFnu5pTvrVal+EmeOs15j4UvVZOnpaVHoiFiC/RuU0GAI3LgEDh/Wz8LKM9zbWm9ctJFn7rEjcNhwAqf4gtJN4SpOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+	s=arc-20240116; t=1740100743; c=relaxed/simple;
+	bh=ZLi32eHzVBzb0+S2Hyi563N7biVmoJrvni7xDdRZ/2E=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fwXpMrJPQYn2Gq1fgT+QHHZXTcUj1NNrDnYnLk5Mv4UtQD1ZhXzwzb1Dfd4blY2UwcJ1fmEg1HkyWmf/Gss5BjB/CKQEj/8id4hq6yRW2hkkcrHX7XKTc0A8oCqhvxo113RfS+hxDF3PAV1PNRW451gAvxozLNW62SPS76C9QTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KxRAiP5O; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-220c665ef4cso26029305ad.3;
-        Thu, 20 Feb 2025 17:17:58 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740100678; x=1740705478;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5e0939c6456so2687881a12.3;
+        Thu, 20 Feb 2025 17:19:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740100740; x=1740705540; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ZRDnaSQYuA7AXNjVck19mgs0g9VBHJmey8gvy5+nRVQ=;
-        b=EQLmgUWR3KpwDOOntQsPb+UumNfjGDx66EQ67LF/dMepa0ISgfRte0tKCZfjiWfoxF
-         4CrJzwxdEaEXpFpE4K1tXPJ7U3FJ9yVjLWN2wKjTySo1hZyNnQgmKbzdmhpiQoFWU9ud
-         hgrEKQ5LQUMOA6EJ46FH1DEOIhbpdnV1EBuuMwpPwjDObbVPcLtfTCE4Q6flJ3Ft2I4Y
-         pW8e4ZJ8GQ3uxDGFkpW1ptpw0aCRdKMDR+pPwZwbAGdQHPbbc65bMNk4/JerSPSgGqZA
-         LFwOiMffyb9o9PWiJUlNPceumw07JV9kb+TFSzu/UKXS7o8MaCjmrnJGXJP6VOCqIfiy
-         zXTA==
-X-Forwarded-Encrypted: i=1; AJvYcCXPjQoydMrmThUHL3+B1lntC+vCudLHVaoaoBe0icNi+FWb3Gf9iDSwRxTpV93qylMIg42p2c50ek2T@vger.kernel.org, AJvYcCXQQTjwY7XGTv6omli/WHnSWCFw2Cv/PkJnIu96dFnxxK1kDvWhw7AfsQYDD5I8faqk5sKJQmVh/9KHNgA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCy+Av8R8gxRG5+G5kP9gTQ3RbiV+trLruITVktouAq9MMROSe
-	ZxHy81e9HSji+uWGtYLYzXces2bLHSaphWAVXN6AZzzNVIS7wXKW
-X-Gm-Gg: ASbGncussd7L/meCZAk1E/+ysi0PpDhFDjGto3Qzuhlh6JrIn4g00fPTDk5J/jMh7dC
-	6w1MTCHLldwRE6WxKpFZ0l2O/03KCkd8FJNMLyiP9Z4aTNN4GCk5UEWikyER5srhj2HgoVOT1zQ
-	gBGy8GwSmPdxl7tZdgSzOOm9gZtcX/SXitxr41UtxJkyncNwcsTv/BedYomRJOyvXnqZnygL05V
-	DYFkULreQzEadsfdameoleBWKa+TRF74le30YoDkEV8MHTvYSsqjbYKLfSgr7ahgpcPnNREKY+C
-	KLyZlypj2J2MXjWH6Z87SeYTbPHAYId4c+1GPI43j/rsRovbeA==
-X-Google-Smtp-Source: AGHT+IHLcykA8fts8RT8gddOQgn2Exio4nrAweQFXPHSKIaj6lxr07hzXrGZs2H+GOTF69rjVciZJA==
-X-Received: by 2002:a17:902:d484:b0:21f:164d:93fa with SMTP id d9443c01a7336-2219ff82783mr15228375ad.6.1740100678359;
-        Thu, 20 Feb 2025 17:17:58 -0800 (PST)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-220d559830bsm125343855ad.252.2025.02.20.17.17.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Feb 2025 17:17:57 -0800 (PST)
-Date: Fri, 21 Feb 2025 10:17:54 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	linux-pci@vger.kernel.org,
-	"Luis Claudio R. Goncalves" <lgoncalv@redhat.com>,
-	Ryo Takakura <ryotkkr98@gmail.com>, bhelgaas@google.com,
-	jonathan.derrick@linux.dev, lpieralisi@kernel.org,
-	manivannan.sadhasivam@linaro.org, nirmal.patel@linux.intel.com,
-	robh@kernel.org, rostedt@goodmis.org, kbusch@kernel.org,
-	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev
-Subject: Re: [PATCH v4] PCI: vmd: Make vmd_dev::cfg_lock a raw_spinlock_t.
-Message-ID: <20250221011754.GE2510987@rocinante>
-References: <20250218080830.ufw3IgyX@linutronix.de>
- <20250220225948.GA318342@bhelgaas>
+        bh=0+iEG7L5f/jy2xV7Yyu1dhl1MhKYSR3nFi6wl+Gwc4I=;
+        b=KxRAiP5OwrCFR7pCAYdk/X3bsypJGZQy+sfEzjz125JmS0/e2eY2HRbPRQlgb/k8Mw
+         eGQPwLna72RinBfvKCs7mP/MKWvxMrzY8AXxMkXou2fq+Pj27Hg6cN+PhrLu1bM4cZLF
+         F/a2H3vZCjogFVBVGXX67k7hxSIw/x7ynbut+YiXUh/TPClNy5etHE+mXEcx3UiXBJ3N
+         PjBAb+/WZo3C3H5r5l8X8Awsas3YxWMheamJtfnZdF/ilynRgvqO+ZPe+hlrsbvLISz8
+         F/bccv1oeV/tj0hWTXn7Gs2dRaLgo+xsJUxEE9nkUR2nSJOR8E9kTo5Yvi1C9NIo1K/K
+         G0GQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740100740; x=1740705540;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0+iEG7L5f/jy2xV7Yyu1dhl1MhKYSR3nFi6wl+Gwc4I=;
+        b=XAvBzSd8SvyI1CcL/HR+g5jSz/PClbFSwY0r1UmVJplBOcq8XnxrmIa2A0ZHT5Z3Ip
+         D8JiVC5/bhAnNjOYEKMp7gA015J9Lgdn7/XOAX0UrseS45mHvo0vYPzy81ZGLbEKJZyj
+         O6Jx/9PBl2VaqylLHFSeQxFcQSSdeKoXNCtzpLbl2WkavrUIk66zHLVs0iPPRi2uG2uz
+         5pJBPTMUb2hdSF4OutgPoY3EdyQu+LqnGcz9RVdlxrdTWpCpjseCMNtSIipEO5uuYKbl
+         agD4RF7VW0Pg037JMxyIryJnlpJ0qM7jHy10m0s+AHLTcNs6mEbrhOiykHhSjb4mdfe3
+         Hnag==
+X-Forwarded-Encrypted: i=1; AJvYcCWnp9Gd/ZPiInHNw7XpggZT6kmx7wUgJ9xle2gKuRMi1D5nGz6djevZdK9jQ81NiGYS/9oKIeIvUG3muZc=@vger.kernel.org, AJvYcCXVWAZyT3Um6nnvmNu3ZVIz6FbX9YeyTr743SfPMwdJnF38zU8t3Xu201GyDwlrZVCF6OJT6xBg/LSe@vger.kernel.org
+X-Gm-Message-State: AOJu0YxR01eWKpy5hnhmo75HfSmSiT4rIGNyb4FfMeK7uZ28wnd/hTlg
+	o+CyP/8NhIwJfYyzh7yw12OZ/tlEMkbaYTyzYbqsfGphTB5GgAdq
+X-Gm-Gg: ASbGncu7RI6vUkATuh3jqCSLcQOO08SE/50weFtmEdn+SN5cDESw0InXebFZToq6Lry
+	1eDAmnCYpcPfL3Fe1UqjSuh3JMDdU43SxT/baJriImV2WJ2bAxLNMGQzP0+Sx8YCno4jE+nTwbw
+	60J1JZO+tjJsnXt7IWAxWJar2kAkW5Rn3PFd7/ETmNu3FEKCVdodtaYXhOGyHkX9/1IWol/SSoA
+	QqHc5XZD0BDUk119oUH7AZppX6JlBXYORsaJVQE0CZVLwXo8c/kiXM4TZm9eGMY+sW2CxiCC8Rq
+	gby2mK4KSieqnGPG03EAuZPUqQblaiUW
+X-Google-Smtp-Source: AGHT+IFMEv+hXN3BMjMZTmOB8KI/HxEtm63PLVWUj3GnEV/M7NqMcgdBcB/JZ6vNL3QoQNNJ5LiPXw==
+X-Received: by 2002:a17:907:7eaa:b0:ab7:c00c:680f with SMTP id a640c23a62f3a-abc0de4f6f8mr79472366b.53.1740100739565;
+        Thu, 20 Feb 2025 17:18:59 -0800 (PST)
+Received: from foxbook (adtt173.neoplus.adsl.tpnet.pl. [79.185.231.173])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abbb860fc11sm624441066b.124.2025.02.20.17.18.58
+        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
+        Thu, 20 Feb 2025 17:18:59 -0800 (PST)
+Date: Fri, 21 Feb 2025 02:18:55 +0100
+From: Michal Pecio <michal.pecio@gmail.com>
+To: Mathias Nyman <mathias.nyman@linux.intel.com>
+Cc: Mathias Nyman <mathias.nyman@intel.com>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, Niklas Neronin
+ <niklas.neronin@linux.intel.com>, linux-usb@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: [PATCH v2 3/5] usb: xhci: Fix isochronous Ring Underrun/Overrun
+ event handling
+Message-ID: <20250221021855.0f188018@foxbook>
+In-Reply-To: <20250221021712.48c07fe0@foxbook>
+References: <20250210083718.2dd337c3@foxbook>
+	<20250210084220.3e5414e9@foxbook>
+	<7bb25848-c80e-4ba8-8790-8628951806b3@linux.intel.com>
+	<20250221021712.48c07fe0@foxbook>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250220225948.GA318342@bhelgaas>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello,
+The TRB pointer of these events points at enqueue at the time of error
+occurrence on xHCI 1.1+ HCs or it's NULL on older ones. By the time we
+are handling the event, a new TD may be queued at this ring position.
 
-> > The access to the PCI config space via pci_ops::read and pci_ops::write
-> > is a low-level hardware access. The functions can be accessed with
-> > disabled interrupts even on PREEMPT_RT. The pci_lock has been made a
-> > raw_spinlock_t for this purpose. A spinlock_t becomes a sleeping lock on
-> > PREEMPT_RT can not be acquired with disabled interrupts.
-> 
-> I think this is missing a word or two and should say:
-> 
->   A spinlock_t becomes a sleeping lock on PREEMPT_RT, so it cannot be
->   acquired with disabled interrupts.
+I can trigger this race by rising interrupt moderation to increase IRQ
+handling delay. Similar delay may occur naturally due to system load.
 
-I changed the commit log directly on the relevant branch.  Thank you!
+If this ever happens after a Missed Service Error, missed TDs will be
+skipped and the new TD processed as if it matched the event. It could
+be given back prematurely, risking data loss or buffer UAF by the xHC.
 
-	Krzysztof
+Don't complete TDs on xrun events and don't warn if queued TDs don't
+match the event's TRB pointer, which can be NULL or a link/no-op TRB.
+
+Now that it's safe, also handle xrun events if the skip flag is clear.
+This ensures completion of any TD stuck in 'error mid TD' state right
+before the xrun event, which could happen if a driver submits a finite
+number of URBs to a buggy HC and then an error occurs on the last TD.
+
+Signed-off-by: Michal Pecio <michal.pecio@gmail.com>
+---
+ drivers/usb/host/xhci-ring.c | 15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/usb/host/xhci-ring.c b/drivers/usb/host/xhci-ring.c
+index a278f284f4c0..4cf17801a233 100644
+--- a/drivers/usb/host/xhci-ring.c
++++ b/drivers/usb/host/xhci-ring.c
+@@ -2632,6 +2632,7 @@ static int handle_tx_event(struct xhci_hcd *xhci,
+ 	int status = -EINPROGRESS;
+ 	struct xhci_ep_ctx *ep_ctx;
+ 	u32 trb_comp_code;
++	bool ring_xrun_event = false;
+ 
+ 	slot_id = TRB_TO_SLOT_ID(le32_to_cpu(event->flags));
+ 	ep_index = TRB_TO_EP_ID(le32_to_cpu(event->flags)) - 1;
+@@ -2738,14 +2739,12 @@ static int handle_tx_event(struct xhci_hcd *xhci,
+ 		 * Underrun Event for OUT Isoch endpoint.
+ 		 */
+ 		xhci_dbg(xhci, "Underrun event on slot %u ep %u\n", slot_id, ep_index);
+-		if (ep->skip)
+-			break;
+-		return 0;
++		ring_xrun_event = true;
++		break;
+ 	case COMP_RING_OVERRUN:
+ 		xhci_dbg(xhci, "Overrun event on slot %u ep %u\n", slot_id, ep_index);
+-		if (ep->skip)
+-			break;
+-		return 0;
++		ring_xrun_event = true;
++		break;
+ 	case COMP_MISSED_SERVICE_ERROR:
+ 		/*
+ 		 * When encounter missed service error, one or more isoc tds
+@@ -2818,6 +2817,7 @@ static int handle_tx_event(struct xhci_hcd *xhci,
+ 		 */
+ 		if (trb_comp_code != COMP_STOPPED &&
+ 		    trb_comp_code != COMP_STOPPED_LENGTH_INVALID &&
++		    !ring_xrun_event &&
+ 		    !ep_ring->last_td_was_short) {
+ 			xhci_warn(xhci, "Event TRB for slot %u ep %u with no TDs queued\n",
+ 				  slot_id, ep_index);
+@@ -2862,6 +2862,9 @@ static int handle_tx_event(struct xhci_hcd *xhci,
+ 	 */
+ 	} while (ep->skip);
+ 
++	if (ring_xrun_event)
++		return 0;	/* don't warn or complete any TDs */
++
+ 	if (!ep_seg) {
+ 		/*
+ 		 * Skip the Force Stopped Event. The 'ep_trb' of FSE is not in the current
+-- 
+2.48.1
 
