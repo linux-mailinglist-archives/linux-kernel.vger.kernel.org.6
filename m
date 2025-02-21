@@ -1,163 +1,140 @@
-Return-Path: <linux-kernel+bounces-526283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EC7AA3FCC2
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 18:05:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29A17A3FCAC
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 18:04:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DE12706F0B
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:58:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C3A11891EFD
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:59:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5937223716;
-	Fri, 21 Feb 2025 16:57:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3FC122A4F1;
+	Fri, 21 Feb 2025 16:57:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="Fz9LKnKo"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KjnfJHw4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57E9A215F43;
-	Fri, 21 Feb 2025 16:57:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E21E522A4C4;
+	Fri, 21 Feb 2025 16:57:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740157037; cv=none; b=SLCG+/1oABt3uMaG/jUlOeXnbAX1KtvLp1pbpEG2NKdqkPhVE5Ax/enEknoXWajm+Odc6MY4RJafBOd8XmF62aF/fNyAx469Bhnc8thBcwqsr5BXWUrwxBfSe+ZY/BKKvLJ5TRgJZGeE1kSPvQLXwxqL48oDAPCLz/gE9ZVpwfs=
+	t=1740157038; cv=none; b=RTrGAul2mm0hASX6W5ArnYrGY4PBq6snPR+Y8mRfPqNzpmVWn9CgIV/ykXTXBHskImf4er1yTfzDIybF3LV0czqFcrwSeB2tMa2GOlX1NUC8jeDQjWmhrThHvCI/wjLx5fOP1amVTJNKpZeDzo5ov07tRBSLXtY2d/obROrBmQ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740157037; c=relaxed/simple;
-	bh=5RV0MfI+eFAbX3TFL3tJA1uo0SVXKiao6tzYw5ckz2o=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=thzWhz0+nh/LKTNTOznck2WCLL5tbWEo5hIyTBAhD/Tj7dmiybrCEOw4YS4vrKkbUTcpM/h8HoboAA5T3CkIIC5JyOdogx9MZu8jD/XT+m9S30bco1aKQcElnOz8908tZpMzmpd1hgPEYo+6Bs9ZSG6iebNCRWhUUHOIj7IYPKY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=Fz9LKnKo; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.1)
- id 31ce6f5f9d79eda8; Fri, 21 Feb 2025 17:57:11 +0100
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 608977F624F;
-	Fri, 21 Feb 2025 17:57:11 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1740157031;
-	bh=5RV0MfI+eFAbX3TFL3tJA1uo0SVXKiao6tzYw5ckz2o=;
-	h=From:Subject:Date;
-	b=Fz9LKnKogtW+RMgIsmLInJFXnkt6DFXL4TR9rzXHbB+Q5pi7Dez2pdJ6yceiYIUAt
-	 Q+wfJqp+pSRVNTbjcoi6WpYOW/srhqdzoaVQjHYtkvwhp1dLw365pQkVhARfsYmrbJ
-	 jAKcSY1e8bQzKgoWbqjtw4MHwZx9VZ1LJMne1Phqqp4mO/3C9VJW5L41G2fXgPFPWq
-	 kIDF7aEi7Kzvp8bFT7Z8/A5/SdmesqFSld9oEqBBjnM9lraMCH+vQe1nuVQezUypMi
-	 TXdvoZisyvtS4ryN7ObEoX12/g7+uWYTyImTu7vLsPiGyXfgOaHFe16IkJ9FjljJ8R
-	 1OuVMU7y0hv6A==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, Yu-Che Cheng <giver@chromium.org>
-Subject: [PATCH v1] thermal/of: Fix cdev lookup in thermal_of_should_bind()
-Date: Fri, 21 Feb 2025 17:57:11 +0100
-Message-ID: <2788228.mvXUDI8C0e@rjwysocki.net>
+	s=arc-20240116; t=1740157038; c=relaxed/simple;
+	bh=Zermek77njNBefiJAHShs4Pi/BmVFoEIkevP8SsNO7c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l2WWqTeGfq2AFTSUkg/rPsAx+U9qL4OXZKZ8pwbBWjvij3ksKSDmd69+NK1AdkeEunMAFW/ewHz9juxgEMryKklem6hs/5pqjD7G4D85UnkytVu8M4XyDiDggpRafltwEcdhTqqjoqtWz9aYYMOVCMxS683zTjog96IBG12F7l8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KjnfJHw4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB91BC4CEE2;
+	Fri, 21 Feb 2025 16:57:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740157037;
+	bh=Zermek77njNBefiJAHShs4Pi/BmVFoEIkevP8SsNO7c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KjnfJHw4iEGxUc/9qW1y7MXbhibKG8rh7AogVr9UljZJegm57+LQQHRNYxKckJ7CF
+	 FWayh52wKAV7sxOYBy2yRP1kIBucfaUT//Oz6Smay5wM4rX3aDy1XWtHwWW7TEQmw3
+	 SptwbeiWbL/fTdM1HOAih5VwfFervTEScmXCZsx8pEdHzYHE8WrTynaqiBwG4OZ6Ke
+	 vDGpq5FRy5051igtlr0CdoKc2Eih2iIJKMOuJP390ZByyLDQ2pj0Fwqyp9YV6FQXND
+	 O04FwzPPaYC+BJYhF3zEGDLtqIbpBXVRvhPU3jEGlY5r9nvEPOEH4m0Pu+KdL2FdgE
+	 +dM9ARU52UE5A==
+Date: Fri, 21 Feb 2025 16:57:12 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Friday Yang <friday.yang@mediatek.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Garmin Chang <garmin.chang@mediatek.com>,
+	Yong Wu <yong.wu@mediatek.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Project_Global_Chrome_Upstream_Group@mediatek.com
+Subject: Re: [PATCH v4 1/2] dt-bindings: clock: mediatek: Add SMI LARBs reset
+ for MT8188
+Message-ID: <20250221-cavalier-property-7e7eceba7bc6@spud>
+References: <20250221075058.14180-1-friday.yang@mediatek.com>
+ <20250221075058.14180-2-friday.yang@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: clean
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdejtdehiecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpeegfffhudejlefhtdegffekteduhfethffhieettefhkeevgfdvgfefieekiefgheenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomheprhhjfiesrhhjfiihshhotghkihdrnhgvthdpnhgspghrtghpthhtohephedprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehluhhkrghsiidrlhhusggrsegrrhhmrdgtohhmpdhrtghpthhtohepuggrnhhivghlrdhlvgiitggrnhhosehlihhnrghrohdrohhrghdprhgtphhtthhopehgihhvvghrseg
-X-DCC--Metrics: v370.home.net.pl 1024; Body=5 Fuz1=5 Fuz2=5
-
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-
-Since thermal_of_should_bind() terminates the loop after processing
-the first child found in cooling-maps, it will never match more than
-one cdev to a given trip point which is incorrect, as there may be
-cooling-maps associating one trip point with multiple cooling devices.
-
-Address this by letting the loop continue until either all
-children have been processed or a matching one has been found.
-
-To avoid adding conditionals or goto statements, put the loop in
-question into a separate function and make that function return
-right away after finding a matching cooling-maps entry.
-
-Fixes: 94c6110b0b13 ("thermal/of: Use the .should_bind() thermal zone callback")
-Link: https://lore.kernel.org/linux-pm/20250219-fix-thermal-of-v1-1-de36e7a590c4@chromium.org/
-Reported-by: Yu-Che Cheng <giver@chromium.org>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- drivers/thermal/thermal_of.c |   50 ++++++++++++++++++++++++-------------------
- 1 file changed, 29 insertions(+), 21 deletions(-)
-
---- a/drivers/thermal/thermal_of.c
-+++ b/drivers/thermal/thermal_of.c
-@@ -274,6 +274,34 @@
- 	return true;
- }
- 
-+static bool thermal_of_cm_lookup(struct device_node *cm_np,
-+				 const struct thermal_trip *trip,
-+				 struct thermal_cooling_device *cdev,
-+				 struct cooling_spec *c)
-+{
-+	for_each_child_of_node_scoped(cm_np, child) {
-+		struct device_node *tr_np;
-+		int count, i;
-+
-+		tr_np = of_parse_phandle(child, "trip", 0);
-+		if (tr_np != trip->priv)
-+			continue;
-+
-+		/* The trip has been found, look up the cdev. */
-+		count = of_count_phandle_with_args(child, "cooling-device",
-+						   "#cooling-cells");
-+		if (count <= 0)
-+			pr_err("Add a cooling_device property with at least one device\n");
-+
-+		for (i = 0; i < count; i++) {
-+			if (thermal_of_get_cooling_spec(child, i, cdev, c))
-+				return true;
-+		}
-+	}
-+
-+	return false;
-+}
-+
- static bool thermal_of_should_bind(struct thermal_zone_device *tz,
- 				   const struct thermal_trip *trip,
- 				   struct thermal_cooling_device *cdev,
-@@ -293,27 +321,7 @@
- 		goto out;
- 
- 	/* Look up the trip and the cdev in the cooling maps. */
--	for_each_child_of_node_scoped(cm_np, child) {
--		struct device_node *tr_np;
--		int count, i;
--
--		tr_np = of_parse_phandle(child, "trip", 0);
--		if (tr_np != trip->priv)
--			continue;
--
--		/* The trip has been found, look up the cdev. */
--		count = of_count_phandle_with_args(child, "cooling-device", "#cooling-cells");
--		if (count <= 0)
--			pr_err("Add a cooling_device property with at least one device\n");
--
--		for (i = 0; i < count; i++) {
--			result = thermal_of_get_cooling_spec(child, i, cdev, c);
--			if (result)
--				break;
--		}
--
--		break;
--	}
-+	result = thermal_of_cm_lookup(cm_np, trip, cdev, c);
- 
- 	of_node_put(cm_np);
- out:
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="+dgGrOCgl0PEyxI6"
+Content-Disposition: inline
+In-Reply-To: <20250221075058.14180-2-friday.yang@mediatek.com>
 
 
+--+dgGrOCgl0PEyxI6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, Feb 21, 2025 at 03:50:53PM +0800, Friday Yang wrote:
+> On the MediaTek platform, some SMI LARBs are directly connected to
+> the SMI Common, while others are connected to the SMI Sub-Common,
+> which in turn is connected to the SMI Common. The hardware block
+> diagram can be described as follows.
+>=20
+>              SMI-Common(Smart Multimedia Interface Common)
+>                  |
+>          +----------------+------------------+
+>          |                |                  |
+>          |                |                  |
+>          |                |                  |
+>          |                |                  |
+>          |                |                  |
+>        larb0       SMI-Sub-Common0     SMI-Sub-Common1
+>                    |      |     |      |             |
+>                   larb1  larb2 larb3  larb7       larb9
+>=20
+> For previous discussion on the direction of the code modifications,
+> please refer to:
+> https://lore.kernel.org/all/CAFGrd9qZhObQXvm2_abqaX83xMLqxjQETB2=3D
+> wXpobDWU1CnvkA@mail.gmail.com/
+> https://lore.kernel.org/all/CAPDyKFpokXV2gJDgowbixTvOH_5VL3B5H8ey
+> hP+KJ5Fasm2rFg@mail.gmail.com/
+>=20
+> On the MediaTek MT8188 SoC platform, we encountered power-off failures
+> and SMI bus hang issues during camera stress tests. The issue arises
+> because bus glitches are sometimes produced when MTCMOS powers on or
+> off. While this is fairly normal, the software must handle these
+> glitches to avoid mistaking them for transaction signals. What's
+> more, this issue emerged only after the initial upstreaming of this
+> binding. Without these patches, the SMI becomes unstable during camera
+> stress tests.
+>=20
+> The software solutions can be summarized as follows:
+>=20
+> 1. Use CLAMP to disable the SMI sub-common port after turning off the
+>    LARB CG and before turning off the LARB MTCMOS.
+> 2. Use CLAMP to disable/enable the SMI sub-common port.
+> 3. Implement an AXI reset for SMI LARBs.
+>=20
+> This patch add '#reset-cells' for the clock controller located in image,
+> camera and IPE subsystems.
+>=20
+> Signed-off-by: Friday Yang <friday.yang@mediatek.com>
+
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+
+--+dgGrOCgl0PEyxI6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ7iwaAAKCRB4tDGHoIJi
+0uzgAP4v0yoFN7BfxFWWiitccUXoshHXQp4HLPtHW7d1YoN4TAD+IQ2jThGJf4Pc
+L5rsRAnTiFrghIbu/VG+WOs0atI7nAI=
+=soR+
+-----END PGP SIGNATURE-----
+
+--+dgGrOCgl0PEyxI6--
 
