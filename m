@@ -1,129 +1,128 @@
-Return-Path: <linux-kernel+bounces-525946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01E91A3F7A8
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 15:49:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB36DA3F7A9
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 15:49:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 317E33BDC4A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 14:49:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F07E08617D2
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 14:49:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E68A9209671;
-	Fri, 21 Feb 2025 14:49:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36951209671;
+	Fri, 21 Feb 2025 14:49:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bMISUSnM";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="MNJTTjvs"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YCDEjzNH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E922453AC;
-	Fri, 21 Feb 2025 14:49:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9807553AC
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 14:49:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740149348; cv=none; b=dwvUFOpr0xl1p+GIFnb3d8d2wuxOBP7DnR67/1EXTkHoldYkfEj/la1z2Se+dw94/yIigcJXr0Q3pGZv8ni5pXjZZn7RusYryS8h1GhSRYXe9fhSmChU3pcNxKD3HULnIukK18TYaLUpmMU02hlIqlnn9Q+solUWJjUtbec3HDI=
+	t=1740149361; cv=none; b=DDvff9ZA2SspbrzLFL8HzBdc7e/YhSykZe0z+tZRfNShrhsrhpTMw+pv7SxxO6ld/ZR0U6R8zPn3oIbTWNuLRchZAMeLpH50upjed0N7J0Wd/s8BUoeioy35o63rlgG2REZlSgm7oPVNyThdnDTQKEOL5ANctsilnQxCg7l03pk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740149348; c=relaxed/simple;
-	bh=6y5aSOu9XdxgtAIeWMd/qbDJacafNJAX34rjFItQqvc=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=CB/6mpf908NxbpgF4l4x5CvL+SRmZYSeOgbbhmf06+gyNKiJRxgg7ku0+YtVWp8CfcTTOU3oK8uBdiIuIJdOklLcVgO222HQhlrW4YvSj6hUU1sNg9Io//yYgmwnwFRymVTaLFm3lUazVqg1PkeZdFfDSPna+jzGoJV5eogr/lU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bMISUSnM; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=MNJTTjvs; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 21 Feb 2025 14:49:03 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1740149344;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UJdEXL+TIqNWTihDfZVUb+0icsv0CT4eBIrIVcULeIc=;
-	b=bMISUSnMq8iHjytGnhs7cGFvje3YSHGuzN0GZWuIhbNXTVvibdczuLiU7yVP/AqMaLY8yv
-	Tof5IKfE4CxMyaKYp4J9jMLeA0g+k6T2jhprBx9BmGxSXv5wRIZYd1ZeqeltNA8E/Wg7it
-	lY3waIO1u9cjH5V5oJuDmDVhr2i1ULbm9GHOf/f5LvaPqpB5BGt5AxfLgs0mGmHtl+6V3K
-	BW6SeXoLGETFiG8VP6kL7VE+6mKB9OHfnZyFRr1a+vERjz8d3u4Yn8mmOlUTH7ZPHAxhVZ
-	jm1wDPpahUsv0hLzxkmHlZ9VKJ29wcAbXqASV6adhD5CzdMhLiayWwtREZ3AKQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1740149344;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UJdEXL+TIqNWTihDfZVUb+0icsv0CT4eBIrIVcULeIc=;
-	b=MNJTTjvs7qPJMn2dtpa4NA8HivCcC3sLdhucI0VLdAF5gEd0leqyrEOI+kMLi6QDkaXjH3
-	gNhNJlZsKGgmUpBw==
-From: "tip-bot2 for Qasim Ijaz" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/mm] x86/mm: Replace open-coded gap bounding with clamp()
-Cc: Qasim Ijaz <qasdev00@gmail.com>, Ingo Molnar <mingo@kernel.org>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250215125249.10729-1-qasdev00@gmail.com>
-References: <20250215125249.10729-1-qasdev00@gmail.com>
+	s=arc-20240116; t=1740149361; c=relaxed/simple;
+	bh=jNIwMrKuas8S5bhOgu1FnGuVIiAseKlTQwoMMcQYYHI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WP6udHluIDvdJl4glLrT1rufNt1VieQfc6ncO7PA2ChIIEOfY/kWCymTV4M2ZavfASAxIRCX5PAp7DZs8326JJCqyIqke8V+g5lih8vakmFdOTjEAu7nzADpkZfT6CxKl6nS4iNe8YS+mzn9UOy8KogCUqjlVtbzRRPuPgdsy70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YCDEjzNH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CA5AC4CED6;
+	Fri, 21 Feb 2025 14:49:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740149361;
+	bh=jNIwMrKuas8S5bhOgu1FnGuVIiAseKlTQwoMMcQYYHI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YCDEjzNHHa5lsZd7drnFO7Gc3rFS8WG830+zZSl0TKMtK5+39bEb8FHHanlsAgA5U
+	 YPWwnV67WTHJpBAx3H0DXKnhLKsfHgmtW8xnEasNOh6bc9SjlQF24VhFdYExaPOW6G
+	 XemqVrPmz6UK6prsbeaYJQKY5cdeCHqni/opJ2MYB+2Gnib9y3flsEGWiPyPkUG05A
+	 5Ybn1UYboaipNKQDF/8TdNDqKNCCC/PZNWVdYbXdKYqgsl9rTB1GQJZXcYvXSpr3ea
+	 u/aRr0+i2aQ1TilAZPGhLuFAWzmwXOW3auBepEquO0q1jLspJHPQrt+gBbUSI0Rtff
+	 5A2pkdTWXQuNg==
+Date: Fri, 21 Feb 2025 15:49:18 +0100
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: open list <linux-kernel@vger.kernel.org>, Tejun Heo <tj@kernel.org>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH] workqueue: Always use wq_select_unbound_cpu() for
+ WORK_CPU_UNBOUND.
+Message-ID: <Z7iSboU-05uMJ7-e@localhost.localdomain>
+References: <20250221112003.1dSuoGyc@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174014934373.10177.13398467994659612713.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250221112003.1dSuoGyc@linutronix.de>
 
-The following commit has been merged into the x86/mm branch of tip:
+Le Fri, Feb 21, 2025 at 12:20:03PM +0100, Sebastian Andrzej Siewior a écrit :
+> If the user did not specify a CPU while enqueuing a work item then
+> WORK_CPU_UNBOUND is passed. In this case, for WQ_UNBOUND a CPU is
+> selected based on wq_unbound_cpumask while the local CPU is preferred.
+> For !WQ_UNBOUND the local CPU is selected.
+> For NOHZ_FULL system with isolated CPU wq_unbound_cpumask is set to the
+> not isolated (housekeeping) CPUs. This leads to different behaviour if a
+> work item is scheduled on an isolated CPU where
+> 	schedule_delayed_work(, 1);
+> 
+> will move the timer to the housekeeping CPU and then schedule the work
+> there (on the housekeeping CPU) while
+> 	schedule_delayed_work(, 0);
+> 
+> will schedule the work item on the isolated CPU.
+> 
+> The documentation says WQ_UNBOUND prefers the local CPU. It can
+> preferer the local CPU if it is part of wq_unbound_cpumask.
+> 
+> Restrict WORK_CPU_UNBOUND to wq_unbound_cpumask via
+> wq_select_unbound_cpu().
+> 
+> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 
-Commit-ID:     282f395244df3663dc24e97a86087431c9192513
-Gitweb:        https://git.kernel.org/tip/282f395244df3663dc24e97a86087431c9192513
-Author:        Qasim Ijaz <qasdev00@gmail.com>
-AuthorDate:    Sat, 15 Feb 2025 12:52:49 
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Fri, 21 Feb 2025 15:33:57 +01:00
+I really would like to have this patch in. I have considered
+doing that a few month ago but got sort-of discouraged by the
+lack of properly defined semantics for schedule_work(). And that
+function has too many users to check their locality assumptions.
 
-x86/mm: Replace open-coded gap bounding with clamp()
+Its headers advertize to queue in global workqueue but the target
+is system_wq and not system_unbound_wq. But then it's using
+WORK_CPU_UNBOUND through queue_work().
 
-Rather than manually bounding gap between gap_min and gap_max,
-use the well-known clamp() macro to make the code easier to read.
+I'm tempted to just assume that none of its users depend on the
+work locality?
 
-Signed-off-by: Qasim Ijaz <qasdev00@gmail.com>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Link: https://lore.kernel.org/r/20250215125249.10729-1-qasdev00@gmail.com
----
- arch/x86/mm/mmap.c |  9 +--------
- 1 file changed, 1 insertion(+), 8 deletions(-)
+Thanks.
 
-diff --git a/arch/x86/mm/mmap.c b/arch/x86/mm/mmap.c
-index b8a6fff..5ed2109 100644
---- a/arch/x86/mm/mmap.c
-+++ b/arch/x86/mm/mmap.c
-@@ -84,7 +84,6 @@ static unsigned long mmap_base(unsigned long rnd, unsigned long task_size,
- {
- 	unsigned long gap = rlim_stack->rlim_cur;
- 	unsigned long pad = stack_maxrandom_size(task_size) + stack_guard_gap;
--	unsigned long gap_min, gap_max;
- 
- 	/* Values close to RLIM_INFINITY can overflow. */
- 	if (gap + pad > gap)
-@@ -94,13 +93,7 @@ static unsigned long mmap_base(unsigned long rnd, unsigned long task_size,
- 	 * Top of mmap area (just below the process stack).
- 	 * Leave an at least ~128 MB hole with possible stack randomization.
- 	 */
--	gap_min = SIZE_128M;
--	gap_max = (task_size / 6) * 5;
--
--	if (gap < gap_min)
--		gap = gap_min;
--	else if (gap > gap_max)
--		gap = gap_max;
-+	gap = clamp(gap, SIZE_128M, (task_size / 6) * 5);
- 
- 	return PAGE_ALIGN(task_size - gap - rnd);
- }
+> ---
+>  kernel/workqueue.c | 8 ++------
+>  1 file changed, 2 insertions(+), 6 deletions(-)
+> 
+> diff --git a/kernel/workqueue.c b/kernel/workqueue.c
+> index bfe030b443e27..134d9550538aa 100644
+> --- a/kernel/workqueue.c
+> +++ b/kernel/workqueue.c
+> @@ -2261,12 +2261,8 @@ static void __queue_work(int cpu, struct workqueue_struct *wq,
+>  	rcu_read_lock();
+>  retry:
+>  	/* pwq which will be used unless @work is executing elsewhere */
+> -	if (req_cpu == WORK_CPU_UNBOUND) {
+> -		if (wq->flags & WQ_UNBOUND)
+> -			cpu = wq_select_unbound_cpu(raw_smp_processor_id());
+> -		else
+> -			cpu = raw_smp_processor_id();
+> -	}
+> +	if (req_cpu == WORK_CPU_UNBOUND)
+> +		cpu = wq_select_unbound_cpu(raw_smp_processor_id());
+>  
+>  	pwq = rcu_dereference(*per_cpu_ptr(wq->cpu_pwq, cpu));
+>  	pool = pwq->pool;
+> -- 
+> 2.47.2
+> 
 
