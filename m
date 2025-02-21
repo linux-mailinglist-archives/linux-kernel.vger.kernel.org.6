@@ -1,112 +1,149 @@
-Return-Path: <linux-kernel+bounces-525558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DA71A3F14D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 11:04:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 312BFA3F14C
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 11:04:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D92927A7C90
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:02:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C18951899622
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:04:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77BF7201246;
-	Fri, 21 Feb 2025 10:03:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F80F20459B;
+	Fri, 21 Feb 2025 10:03:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="G0UgVN+d"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mElo3CJ+"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3339D199237
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 10:03:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74B5F1FECA7;
+	Fri, 21 Feb 2025 10:03:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740132204; cv=none; b=PbNeCVD7ch7JMXSvP3j+2WogvI05YdyEgVBrbGRDyszftkiIT33BU76x1H2uXAmj7v8PhZ36NH6/zmeUkaE+aa4JNJpoz+hEiAH4/yH05CgHIWoi/0vUxtLWLLpi3AYPIH/kXTogqXCgRNoj59v/NSN0NQaC239JUBf3FvOAE3Y=
+	t=1740132235; cv=none; b=pjlSrhxR7AHqXYDIh2NXfJWTqntnQUI2ToOZMeXqpfi7j42XgoO65rwU3RtLQA1hm84CM12Sx7s9T7hYFJjrxVU1HbaQpGaaD5Di5s7ki4rFg4fxvindRipDbLgawJ646WB5jVs8T0UdTCnXVQD+Z2JbpReGUoxxu9EdjU9F7eg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740132204; c=relaxed/simple;
-	bh=zbOp8mcJp98Zt8CyqI4/UZQSSKzSMrTTBy1Oaq5R8Wg=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=Ma642JTDZXBLJxThVNKQ/gqGIzbq52b8lfQBrc1KYR6nCmN+I+5fb/5Fb+NFwrMMITOWkO6+wE+KfTWqLfQPI7IHc08GZVxpwpbhcgegq5eBOhK0dflEYmm9ABC5D6INR9NkhKya4PDvDU4YP6pJD3pqYzU+glJRO6dcoLN9n1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=G0UgVN+d; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-38f265c6cb0so1001680f8f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 02:03:22 -0800 (PST)
+	s=arc-20240116; t=1740132235; c=relaxed/simple;
+	bh=kdDYrB6N6WvXiJWxvXdlROQD7OkyuM6+oQ6tfN8JvYQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=o69DU7IAySgjrqkbiWBAkwI/ZYduxX28ATxTrUlXqSIInBxVfPblKTE3m713LDPCn3chkgIQFZgzEMTx22xqxtU/O0REAd0AGCwTaAa65k7TGwf8GG37xpBFOIFexPh65hVAEP6Ut5q4Ip7r73CzLgSgx9Gn4OcgNi57EEqqlWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mElo3CJ+; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-220c8f38febso39643875ad.2;
+        Fri, 21 Feb 2025 02:03:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740132201; x=1740737001; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1740132234; x=1740737034; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=TJU/IyPNR8ispZ2Uu5yd+utAZTTPyngqkCVfD11Jyso=;
-        b=G0UgVN+dcrSecgokWw4aKc9uqy4vSgXe2iawCBA+zKwUYQOYDgL6ddJa22clJ7Grz0
-         uPTGKrvtkprJ5LxzbIFTsnu4h3ES6lWMd1lyPWFP5c/GkZs/8OW3EjuQ6SewRgGqX+3E
-         25Ts4uRRVlPMtdRnDmoy29Lf/PJrMLgRxDgpnjFb2770nA/gOytWPTBkWCwdsIrLcFrV
-         0mJuyiV5HybjusPXg+HMYM84ToHh4CNiG0ZYc2WF61XKG4KX6cp0YUGeeu0y1n21ysjh
-         ZUZYZY/8bvSEup5YNDWwX4yPiz/b0yJmS0OUy/7+2lWe1TGU4doR5wr9bc6W0Zwj187x
-         rzWg==
+        bh=5PWSZrirQdj8aGkv2pYC6N6bxRY9wPrB8HX8oeQhEtQ=;
+        b=mElo3CJ+NxiWcTxk1m9gzt3Gtxwim4dtcrUv1CLgfEVw+NhAqCxPGcyrfjueVFD5oK
+         qSAcj2i+4ZEfPzocC37EirGG3c6kgZXLMY/UnX96wcvl95k1cAZizcRBuAlz0iQm0ZuZ
+         v/in/l7EIMOEEo49JUVXsx3PTA+raW0RrDine0s9+QFnmzXpjuSo6QQTQbaWVhNU5CY/
+         yvHPFERXemlytf8+wuoJC27VlaYq5HPJIU0toXL6qWuyN2MY17mFDfIsy5J4i/sFeat4
+         Fd63biFfFF8WfMlSh5hRGVxg2MGp2N2vyR6lJ7QDi+C/KJKYSbK7cyhfniNNVYsXagCd
+         YGgg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740132201; x=1740737001;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TJU/IyPNR8ispZ2Uu5yd+utAZTTPyngqkCVfD11Jyso=;
-        b=dGkhOAfsFM3Wl3/HdT6godvE7nVgGPkbtIvOZeK0E0u8I5MmuiasV9LEWLIYToX3rl
-         FagBPHT78GDHWMCZDZpKFnc2WlhKQ6Bigles7CASoW7np9NNEZ8ZbNoQyVCTPP6M7ePe
-         Kf1KYsOfTsUGIVsYfx4p2SkCXBcqtKEr7YQwxQLk+WJwJYghIgaYAXpSXCO2OJENrWTf
-         UooWkQ1iTRu1bcMx3qLC/BOxfKxjwirunIr/aHgPC3kBn7xmY3dkLIn4d06e6wUP0xIJ
-         oKIquOlAUPYFEtMCnMgYQSOlFcrB6NQrzmb/hJALnBEEyFHYfPoQQSGibnSGUWdgI1oX
-         35OQ==
-X-Gm-Message-State: AOJu0YzdmQJbBonw4EJ01s5bCnM78ZyHOP33KfDDqohp13PLgoeoeCFZ
-	bNgrpbUoWVdLK2Vgm5wbevwLYuK86TI5whv7YpZcbdFN7YIR6Z6X0DXLxImfOr5hGxCQ2oyxg/s
-	v
-X-Gm-Gg: ASbGncsHlQDCKjJgDiG7rKNiWSn1jVfBMFIA5Mldg/2WhWQjUfI2h2TunnWXxG2zN4l
-	L2s2lCTWYeM6RyqT6P5XW1VOf8w37kWmjIEd6WWw36r4nwIZgxzU+Im2/Jx+hjaZpzVFR1wc3CN
-	WqooxrPD1CTvx4/WwNXrNtAuD6sQ25FuwCodtkzoMph2ghWv7CmrrqIm+vXAhz7Q09hNyPUJc7I
-	rSXanNG77D59cZs61rhdhe9M/+73WAmMK4eNdA2e7rmTYlehRv7Px9YJyQu6g07O+ZQxWfVmIfY
-	lGMSiHJ3lBVMvXipy35NERkXJdPkEO4MZFjCJ+EK4EvO
-X-Google-Smtp-Source: AGHT+IGjF6le4uy6lkUkiEwMmVD3Cgw3XIGytL0xVw692V54SHWd4G65SYZ52imDG4nlsMHrKUxBqg==
-X-Received: by 2002:adf:e612:0:b0:38d:de92:adab with SMTP id ffacd0b85a97d-38f707a9c30mr1406183f8f.29.1740132201502;
-        Fri, 21 Feb 2025 02:03:21 -0800 (PST)
-Received: from [192.168.68.111] ([5.133.47.210])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f259fdb19sm23504974f8f.95.2025.02.21.02.03.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Feb 2025 02:03:21 -0800 (PST)
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
-In-Reply-To: <20250220-nvmem-word-size-align-v1-1-0f7cc909bc86@linaro.org>
-References: <20250220-nvmem-word-size-align-v1-1-0f7cc909bc86@linaro.org>
-Subject: Re: [PATCH] nvmem: make the misaligned raw_len non-fatal
-Message-Id: <174013220022.174725.12738219990803856609.b4-ty@linaro.org>
-Date: Fri, 21 Feb 2025 10:03:20 +0000
+        d=1e100.net; s=20230601; t=1740132234; x=1740737034;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=5PWSZrirQdj8aGkv2pYC6N6bxRY9wPrB8HX8oeQhEtQ=;
+        b=E7Occ+7iqn32hAqOqEnbVrbJSeD3PPwVlvNyBMPEosbChDwfGU65+bzNZkfiFRYztQ
+         /RNHsLFIcBuI/4RuoNXlxT1/3fyPfsDR372kBQdnjDqMX6w4tn9aiwzoSt340gWAxIP4
+         T4wI+c6daq2CpdQ+GwQsy+xONdzQ8BDLSBKBwkOIoOLfCN/BW6EdbUC7HsrC5QFIhrgm
+         uqoI+0a7iRxpwcKyKH0oAOZWjRH/6J6LcneJn7iULGm3eKqKyTlkRWFXw5JieAINnlLS
+         rVd7VpoQ0SFB9NfPakuTNubS59a7zzM58rOczTG0eUgOyMdAVd0QeslM1Z3fjCrUX/Ma
+         LCEg==
+X-Forwarded-Encrypted: i=1; AJvYcCUjUjAf4bH8p+w8gKHqsv5RGKdzZeqrElHHWiigwF0CR/KX1rBeGKmPT1AYPbDf/QjovTolWb7OdT5kpxNk@vger.kernel.org, AJvYcCWjdEYkI2DPkSlWaUMKNBXzXDnKEJKcNx/4fA7slswIMBe/ICs9GcrGFYIlAIc+7t5EDfQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWY/TUxymTPBD7ugc14vactbCie5t9babvP1SCc8vdvSL5BofC
+	/o9e5GerIVc/xCIAi2e/LV58bdQxsH2Qt8VKrRwMcnxjGUTeUCXF
+X-Gm-Gg: ASbGnct9GkoebwaXnJ9i9F4N+hixB5npl186rRsR+XQpke07Neuu6CnkV3wHOtdC7aZ
+	jbpCehh3kKxzJs1stBLMR//ryfBky00wQD95EU6F8TiLQIE/goXFcQdxUnC9J4feaD95QIBtqKw
+	CXpCSbSRIWJup+6LikYY9Kb80GHaHikK5ut/BxX4ndFfqm2QaqvtaUU4pPcq09Jae0p26Mwpotq
+	ZL+hak5Qanfy/Xrp4+OhoC/1sqabbwzZLTlQPaUGQ8hWGcrdK18afA2pvSuwJ3hc0UNGy88B7kH
+	+5WnqVoPsbEYGXOJy38KeAuhCyF63z4FtZ3vi7UC0aZI
+X-Google-Smtp-Source: AGHT+IHcP/adC+b4mN4jC4IWtxIovv4qFvyLf8AWMB5KnZt3UQWVacgb2YqYxya3HyAbW1QZSWC42Q==
+X-Received: by 2002:a17:902:ce0a:b0:21f:860:6d0d with SMTP id d9443c01a7336-2219ff8433dmr48435205ad.5.1740132233683;
+        Fri, 21 Feb 2025 02:03:53 -0800 (PST)
+Received: from [172.23.162.68] ([183.134.211.52])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d556f97dsm133849185ad.172.2025.02.21.02.03.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 Feb 2025 02:03:53 -0800 (PST)
+Message-ID: <3305ee5d-167e-4e32-b33f-814f3a63c623@gmail.com>
+Date: Fri, 21 Feb 2025 18:03:49 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.12.2
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND bpf-next v7 0/4] Add prog_kfunc feature probe
+To: Eduard Zingerman <eddyz87@gmail.com>,
+ Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+ haoluo@google.com, jolsa@kernel.org, qmo@kernel.org, bpf@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250212153912.24116-1-chen.dylane@gmail.com>
+ <2b025df3-144b-4909-a2b4-66356540f71c@gmail.com>
+ <598a7d089936b18472937679d4131286f102cb18.camel@gmail.com>
+ <CAEf4BzYsGnhmnhkHdUPN8yBfbv57R9h4N2R8RcqdjhmHWvJVkg@mail.gmail.com>
+ <1fb198103e72d88c45caf6ef2dd8ebeb258ad48e.camel@gmail.com>
+From: Tao Chen <chen.dylane@gmail.com>
+In-Reply-To: <1fb198103e72d88c45caf6ef2dd8ebeb258ad48e.camel@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-
-On Thu, 20 Feb 2025 21:49:30 +0200, Dmitry Baryshkov wrote:
-> The commit 11ccaa312111 ("nvmem: core: verify cell's raw_len") enforced
-> the raw read len being aligned to the NVMEM's word_size. However this
-> change broke some of the platforms, because those used misaligned
-> reads. Make this error non-fatal for the drivers that didn't specify
-> raw_len directly and just increase the raw_len making it aligned.
-> 
+在 2025/2/21 09:11, Eduard Zingerman 写道:
+> On Thu, 2025-02-20 at 17:07 -0800, Andrii Nakryiko wrote:
+>> On Tue, Feb 18, 2025 at 2:51 PM Eduard Zingerman <eddyz87@gmail.com> wrote:
+>>>
+>>> On Mon, 2025-02-17 at 13:21 +0800, Tao Chen wrote:
 > 
 > [...]
+> 
+>>> I tried the test enumerating all kfuncs in BTF and doing
+>>> libbpf_probe_bpf_kfunc for BPF_PROG_TYPE_{KPROBE,XDP}.
+>>> (Source code at the end of the email).
+>>>
+>>> The set of kfuncs returned for XDP looks correct.
+>>> The set of kfuncs returned for KPROBE contains a few incorrect entries:
+>>> - bpf_xdp_metadata_rx_hash
+>>> - bpf_xdp_metadata_rx_timestamp
+>>> - bpf_xdp_metadata_rx_vlan_tag
+>>>
+>>> This is because of a different string reported by verifier for these
+>>> three functions.
+>>>
+>>> Ideally, I'd write some script looking for
+>>> register_btf_kfunc_id_set(BPF_PROG_TYPE_***, kfunc_set)
+>>> calls in the kernel source code and extracting the prog type /
+>>> functions in the set, and comparing results of this script with
+>>> output of the test below for all program types.
+>>> But up to you if you'd like to do such rigorous verification or not.
+>>>
+>>> Otherwise patch-set looks good to me, for all patch-set:
+>>>
+>>> Reviewed-by: Eduard Zingerman <eddyz87@gmail.com>
+>>
+>> Shouldn't we fix the issue with those bpf_xdp_metadata_* kfuncs? Do
+> 
+> I assume Tao would post a v8 with the fix.
+> 
 
-Applied, thanks!
+Sure, will fix it.
 
-[1/1] nvmem: make the misaligned raw_len non-fatal
-      commit: d0ee061dec068a8c8700b51b08a7b7898cc66a2e
+>> you have details on what different string verifier reports?
+> 
+> The string is "metadata kfuncs require device-bound program\n".
+> 
+> [...]
+> 
 
-Best regards,
+
 -- 
-Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-
+Best Regards
+Tao Chen
 
