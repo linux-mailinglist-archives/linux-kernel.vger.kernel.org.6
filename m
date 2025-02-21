@@ -1,227 +1,117 @@
-Return-Path: <linux-kernel+bounces-526512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3133A3FFB0
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 20:26:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4073CA3FFB3
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 20:27:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8736189F3B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 19:26:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E63E5422BA7
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 19:27:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D7502512F6;
-	Fri, 21 Feb 2025 19:26:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC01E25291B;
+	Fri, 21 Feb 2025 19:27:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="bdG1j7sX"
-Received: from out-176.mta0.migadu.com (out-176.mta0.migadu.com [91.218.175.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A0615223
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 19:26:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.176
+	dkim=pass (4096-bit key) header.d=ijzerbout.nl header.i=@ijzerbout.nl header.b="Vn8IODOe"
+Received: from bout3.ijzerbout.nl (bout3.ijzerbout.nl [136.144.140.114])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EBFE5223;
+	Fri, 21 Feb 2025 19:26:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=136.144.140.114
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740165963; cv=none; b=Ob9OqoPdsitwvtz6g7sb5ylad+6bEjFLkBv1jsees3NmF7FG9ygMazlwo8tWCklNSba5G0GXPWdlZHcPED1AgIF+I2C4KWuOe3A03g5XzXvkQRjGQ+AqlNHp9BWRj4HUwuJ66Cm6TDLVfi1AB5hGRSt131QgN+E1wdB2GtK+RKw=
+	t=1740166025; cv=none; b=AaPqYiRbaHK64uohH9NJYdC/TwXDofnkv6br5MpPkINAEzc/gXRnzjsE5L4tzrvMdig3uNoFr9fwgY0ftj3lu4tWHQfZzRsG/UW/iYk5xAm63FkWvv8azaGt7zwjybrMItWf6a3QuJCIEb472vKaG1XjwFrwEcwrj2EicybKbxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740165963; c=relaxed/simple;
-	bh=/mK1sbxYtdS7KNsFcfkwSJqjmhdZTLl+tNSwL47ab5s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U2fTZi3Eidkpz9I+fF7nIMMe+U2/86m0bEZ0Szb401yrEX8voBJyn4VzLj4mH9gmivO2yF0WFiwTTTK03YNK/NXWAIDR66Lfz3RX8vCLup8ZS3KwORmsE9J/WTC6EqNJmsCMfeB4rkyGFi7N0M8nRIzjqxwp+EKnRbcKBNX5wQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=bdG1j7sX; arc=none smtp.client-ip=91.218.175.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Fri, 21 Feb 2025 19:25:53 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1740165958;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4UOcBtNP/vA5fSS7SrK5qM5CrZoZVVvn7qxKW1BpsrE=;
-	b=bdG1j7sXU6vv119c3ex8zymSN38mnLFtO8yBv/4VQ4mKXBGatbc9RFrImkR1ZfDAr2knZA
-	r/mmJp5Y98BfqLBMUrfCo3evfnSNelf3TI7kjjWSdqPn5SC7g2Lwk/YBDk6Oo5miaSUJMp
-	xS6sxJs0oayE0m41QPbLGSW6e2CZn+g=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yosry Ahmed <yosry.ahmed@linux.dev>
-To: Jim Mattson <jmattson@google.com>
-Cc: x86@kernel.org, Sean Christopherson <seanjc@google.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	"Kaplan, David" <David.Kaplan@amd.com>, kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] KVM: x86: Generalize IBRS virtualization on emulated
- VM-exit
-Message-ID: <Z7jTQc8FB4gpuNVN@google.com>
-References: <20250221163352.3818347-1-yosry.ahmed@linux.dev>
- <20250221163352.3818347-4-yosry.ahmed@linux.dev>
- <CALMp9eSPVDYC7v4Rm13ZUcE4wWPb8dUfm=qBx_jETAQEQrt4_w@mail.gmail.com>
- <Z7jISUVBeAbw8zt6@google.com>
- <CALMp9eQmsFd1QyCPOsPXBnkUdGmsW-ZBW5CoDR4pmSwF7ic0XA@mail.gmail.com>
+	s=arc-20240116; t=1740166025; c=relaxed/simple;
+	bh=ILuXRvq5uVQ5UBKoNazzH/vYwsdIKolCtj6DVuv2DsU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=M9uLN7Gr/qUTR4qptdmYguswKe+KcCc9sxSqpT9NKsmWAUquXq61o1dqcAZVgAoHZNAkYvv0cq8yxk49ulIYJk4eayRoOsa7IiNAW97k76jdLq725pgOazdt7r278mUpTB2iSJgUpWGeq07gVTMmPIXL9+m5n0Vz653X1VZuQNM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ijzerbout.nl; spf=pass smtp.mailfrom=ijzerbout.nl; dkim=pass (4096-bit key) header.d=ijzerbout.nl header.i=@ijzerbout.nl header.b=Vn8IODOe; arc=none smtp.client-ip=136.144.140.114
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ijzerbout.nl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ijzerbout.nl
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ijzerbout.nl; s=key;
+	t=1740166012; bh=ILuXRvq5uVQ5UBKoNazzH/vYwsdIKolCtj6DVuv2DsU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Vn8IODOeRzPVuDRBHqP7FOIdRt2Q1U4x+ZdgNDP/Uri1oFGqztfuykzMXPc8bqons
+	 2mHysco6hPF6y87701zaWbmxer4WhRBexO4RUxG3X1ftdEfslMsE0cz9XwGY8yOz16
+	 m92V/ZstUP9qzWGiLIobKfzR9/AKJTL/H34ZkgVqWC9tvWALOS7wQNVMnB1WuJovCV
+	 iZgpj0Pcq1pi/6ix47PBe4sw/jAi6yMyC9vTYLheDrNt5iTwO6z8jUlgZ4KTz92pJg
+	 H13+uCqFwEVXV39nzpqpZd29O6hHbKY3YdR5E8w45pKwh/IY8/FidA8W0eZP/wjGW6
+	 E2hVySaZcKHahbEDqSot/uopfJy9GkhZ3urqcHnoBNHTiWzGnYcn3mSnFYx6qfRmOG
+	 cgm9rWdd/1qyxYq1QndSR9giuXufXXl7KnhA6JL+T41q6w9QFbgtrk9S/Gwk+hsTTu
+	 4uptWD5jaWWS/l/ytmQx29kvxVnU0VtFqs/ux+OKlCQangpHtbUVfWkS22oJzBrXmi
+	 LK2IFRaHMOrWPbxcRYcxXsDoJuOsboj9ve0MK1y/awb9rOlBuZnCiwsm4ffZuXNL0/
+	 nRXSqg1L/8IYJ/Oo8i5jY9/z8C47iaUqMJNQnyBjoRr88wJgfSu8JaqlbOOAkKMLK6
+	 12S2A+KEbgRThFF5PiLHjoUo=
+Received: from [IPV6:2a10:3781:99:1:1ac0:4dff:fea7:ec3a] (racer.ijzerbout.nl [IPv6:2a10:3781:99:1:1ac0:4dff:fea7:ec3a])
+	by bout3.ijzerbout.nl (Postfix) with ESMTPSA id 2EEBB1601E1;
+	Fri, 21 Feb 2025 20:26:52 +0100 (CET)
+Message-ID: <a882365c-148c-410a-ac67-b7a17dafc501@ijzerbout.nl>
+Date: Fri, 21 Feb 2025 20:26:49 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CALMp9eQmsFd1QyCPOsPXBnkUdGmsW-ZBW5CoDR4pmSwF7ic0XA@mail.gmail.com>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] usb: gadget: Set self-powered based on MaxPower and
+ bmAttributes
+To: Prashanth K <prashanth.k@oss.qualcomm.com>
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
+ Peter Korsgaard <peter@korsgaard.com>,
+ Sabyrzhan Tasbolatov <snovitoll@gmail.com>
+References: <20250217120328.2446639-1-prashanth.k@oss.qualcomm.com>
+Content-Language: en-US
+From: Kees Bakker <kees@ijzerbout.nl>
+In-Reply-To: <20250217120328.2446639-1-prashanth.k@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Feb 21, 2025 at 11:02:16AM -0800, Jim Mattson wrote:
-> On Fri, Feb 21, 2025 at 10:39 AM Yosry Ahmed <yosry.ahmed@linux.dev> wrote:
-> >
-> > On Fri, Feb 21, 2025 at 09:59:04AM -0800, Jim Mattson wrote:
-> > > On Fri, Feb 21, 2025 at 8:34 AM Yosry Ahmed <yosry.ahmed@linux.dev> wrote:
-> > > >
-> > > > Commit 2e7eab81425a ("KVM: VMX: Execute IBPB on emulated VM-exit when
-> > > > guest has IBRS") added an IBPB in the emulated VM-exit path on Intel to
-> > > > properly virtualize IBRS by providing separate predictor modes for L1
-> > > > and L2.
-> > > >
-> > > > AMD requires similar handling, except when IbrsSameMode is enumerated by
-> > > > the host CPU (which is the case on most/all AMD CPUs). With
-> > > > IbrsSameMode, hardware IBRS is sufficient and no extra handling is
-> > > > needed from KVM.
-> > > >
-> > > > Generalize the handling in nested_vmx_vmexit() by moving it into a
-> > > > generic function, add the AMD handling, and use it in
-> > > > nested_svm_vmexit() too. The main reason for using a generic function is
-> > > > to have a single place to park the huge comment about virtualizing IBRS.
-> > > >
-> > > > Signed-off-by: Yosry Ahmed <yosry.ahmed@linux.dev>
-> > > > ---
-> > > >  arch/x86/kvm/svm/nested.c |  2 ++
-> > > >  arch/x86/kvm/vmx/nested.c | 11 +----------
-> > > >  arch/x86/kvm/x86.h        | 18 ++++++++++++++++++
-> > > >  3 files changed, 21 insertions(+), 10 deletions(-)
-> > > >
-> > > > diff --git a/arch/x86/kvm/svm/nested.c b/arch/x86/kvm/svm/nested.c
-> > > > index d77b094d9a4d6..61b73ff30807e 100644
-> > > > --- a/arch/x86/kvm/svm/nested.c
-> > > > +++ b/arch/x86/kvm/svm/nested.c
-> > > > @@ -1041,6 +1041,8 @@ int nested_svm_vmexit(struct vcpu_svm *svm)
-> > > >
-> > > >         nested_svm_copy_common_state(svm->nested.vmcb02.ptr, svm->vmcb01.ptr);
-> > > >
-> > > > +       kvm_nested_vmexit_handle_spec_ctrl(vcpu);
-> > > > +
-> > > >         svm_switch_vmcb(svm, &svm->vmcb01);
-> > > >
-> > > >         /*
-> > > > diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
-> > > > index 8a7af02d466e9..453d52a6e836a 100644
-> > > > --- a/arch/x86/kvm/vmx/nested.c
-> > > > +++ b/arch/x86/kvm/vmx/nested.c
-> > > > @@ -5018,16 +5018,7 @@ void nested_vmx_vmexit(struct kvm_vcpu *vcpu, u32 vm_exit_reason,
-> > > >
-> > > >         vmx_switch_vmcs(vcpu, &vmx->vmcs01);
-> > > >
-> > > > -       /*
-> > > > -        * If IBRS is advertised to the vCPU, KVM must flush the indirect
-> > > > -        * branch predictors when transitioning from L2 to L1, as L1 expects
-> > > > -        * hardware (KVM in this case) to provide separate predictor modes.
-> > > > -        * Bare metal isolates VMX root (host) from VMX non-root (guest), but
-> > > > -        * doesn't isolate different VMCSs, i.e. in this case, doesn't provide
-> > > > -        * separate modes for L2 vs L1.
-> > > > -        */
-> > > > -       if (guest_cpu_cap_has(vcpu, X86_FEATURE_SPEC_CTRL))
-> > > > -               indirect_branch_prediction_barrier();
-> > > > +       kvm_nested_vmexit_handle_spec_ctrl(vcpu);
-> > > >
-> > > >         /* Update any VMCS fields that might have changed while L2 ran */
-> > > >         vmcs_write32(VM_EXIT_MSR_LOAD_COUNT, vmx->msr_autoload.host.nr);
-> > > > diff --git a/arch/x86/kvm/x86.h b/arch/x86/kvm/x86.h
-> > > > index 7a87c5fc57f1b..008c8d381c253 100644
-> > > > --- a/arch/x86/kvm/x86.h
-> > > > +++ b/arch/x86/kvm/x86.h
-> > > > @@ -116,6 +116,24 @@ static inline void kvm_leave_nested(struct kvm_vcpu *vcpu)
-> > > >         kvm_x86_ops.nested_ops->leave_nested(vcpu);
-> > > >  }
-> > > >
-> > > > +/*
-> > > > + * If IBRS is advertised to the vCPU, KVM must flush the indirect branch
-> > > > + * predictors when transitioning from L2 to L1, as L1 expects hardware (KVM in
-> > > > + * this case) to provide separate predictor modes.  Bare metal isolates the host
-> > > > + * from the guest, but doesn't isolate different guests from one another (in
-> > > > + * this case L1 and L2). The exception is if bare metal supports same mode IBRS,
-> > > > + * which offers protection within the same mode, and hence protects L1 from L2.
-> > > > + */
-> > > > +static inline void kvm_nested_vmexit_handle_spec_ctrl(struct kvm_vcpu *vcpu)
-> > >
-> > > Maybe just kvm_nested_vmexit_handle_ibrs?
-> >
-> > I was trying to use a generic name to accomodate any future handling
-> > needed for non-IBRS speculation control virtualization. But I could just
-> > be overthinking. Happy to take whatever name is agreed upon in during
-> > reviews.
-> >
-> > >
-> > > > +{
-> > > > +       if (cpu_feature_enabled(X86_FEATURE_AMD_IBRS_SAME_MODE))
-> > > > +               return;
-> > > > +
-> > > > +       if (guest_cpu_cap_has(vcpu, X86_FEATURE_SPEC_CTRL) ||
-> > > > +           guest_cpu_cap_has(vcpu, X86_FEATURE_AMD_IBRS))
-> > >
-> > > This is a bit conservative, but I don't think there's any ROI in being
-> > > more pedantic.
-> >
-> > Could you elaborate on this?
-> >
-> > Is this about doing the IBPB even if L1 does not actually execute an
-> > IBRS? I thought about this for a bit, but otherwise we'd have to
-> > intercept the MSR write IIUC, and I am not sure if that's better. Also,
-> > that's what we are already doing so I just kept it as-is.
-> >
-> > Or maybe about whether we need this on AMD only with AUTOIBRS? The APM
-> > is a bit unclear to me in this regard, but I believe may be needed even
-> > for 'normal' IBRS.
-> 
-> If IA32_SPEC_CTRL.IBRS is clear at emulated VM-exit, then this IBPB is
-> unnecessary.
-> 
-> However, since the host (L1) is running in a de-privileged prediction
-> domain, simply setting IA32_SPEC_CTRL.IBRS in the future won't protect
-> it from the guest (L2) that just exited. If we don't eagerly perform
-> an IBPB now, then L0 would have to intercept WRMSR(IA32_SPEC_CTRL)
-> from L1 so that we can issue an IBPB in the future, if L1 ever sets
-> IA32_SPEC_CTRL.IBRS.
+Op 17-02-2025 om 13:03 schreef Prashanth K:
+> Currently the USB gadget will be set as bus-powered based solely
+> on whether its bMaxPower is greater than 100mA, but this may miss
+> devices that may legitimately draw less than 100mA but still want
+> to report as bus-powered. Similarly during suspend & resume, USB
+> gadget is incorrectly marked as bus/self powered without checking
+> the bmAttributes field. Fix these by configuring the USB gadget
+> as self or bus powered based on bmAttributes, and explicitly set
+> it as bus-powered if it draws more than 100mA.
+>
+> Cc: stable@vger.kernel.org
+> Fixes: 5e5caf4fa8d3 ("usb: gadget: composite: Inform controller driver of self-powered")
+> Signed-off-by: Prashanth K <prashanth.k@oss.qualcomm.com>
+> ---
+> Changes in v2:
+> - Didn't change anything from RFC.
+> - Link to RFC: https://lore.kernel.org/all/20250204105908.2255686-1-prashanth.k@oss.qualcomm.com/
+>
+>   drivers/usb/gadget/composite.c | 16 +++++++++++-----
+>   1 file changed, 11 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/usb/gadget/composite.c b/drivers/usb/gadget/composite.c
+> index bdda8c74602d..1fb28bbf6c45 100644
+> --- a/drivers/usb/gadget/composite.c
+> +++ b/drivers/usb/gadget/composite.c
+> @@ -1050,10 +1050,11 @@ static int set_config(struct usb_composite_dev *cdev,
+>   	else
+>   		usb_gadget_set_remote_wakeup(gadget, 0);
+>   done:
+> -	if (power <= USB_SELF_POWER_VBUS_MAX_DRAW)
+> -		usb_gadget_set_selfpowered(gadget);
+> -	else
+> +	if (power > USB_SELF_POWER_VBUS_MAX_DRAW ||
+> +	    !(c->bmAttributes & USB_CONFIG_ATT_SELFPOWER))
+Please check this change again. From line 983-884 there is a `goto done`.
+in case `c` is NULL. So, there will be a potential NULL pointer dereference
+with your change.
+>   		usb_gadget_clear_selfpowered(gadget);
+> +	else
+> +		usb_gadget_set_selfpowered(gadget);
+>   
+>   	usb_gadget_vbus_draw(gadget, power);
+>   	if (result >= 0 && cdev->delayed_status)
+> [...]
 
-Right, that's what I meant by "we'd have to intercept the MSR write"
-above, but I didn't put it as eloquently as you just did :)
-
-We'd also need to have different handling for eIBRS/AUTOIBRS. It would
-basically be:
-
-if eIBRS/AUTOIBRS is enabled by L1:
-  - Do not intercept IBRS MSR writes
-  - Always IBPB on emulated VM-exits (unless IbrsSameMode).
-else if IBRS is advertised to L1:
-  - Intercept IBRS MSR writes and do an IBPB.
-  - Do not IBPB on emulated VM-exits.
-
-We'd basically have two modes of IBRS virtualization and we'd need to
-switch between them at runtime according to L1's setting of
-eIBRS/AUTOIBRS.
-
-We can simplify it if we always intercept IBRS MSR writes assuming L1
-won't do them with eIBRS/AUTOIBRS anyway, so this becomes:
-
-- On emulated VM-exits, IBPB if eIBRS/AUTOIBRS is enabled (unless
-  IbrsSameMode).
-- On IBRS MSR writes, do an IBPB.
-
-Simpler, but not sure if it buys us much.
-
-> 
-> Eagerly performing an IBPB now seems like the better option.
-
-So yeah I definitely agree, unless we get regression reports caused by
-the IBPB on emulated VM-exits, and the MSR write interception turns out
-to be an improvement.
 
