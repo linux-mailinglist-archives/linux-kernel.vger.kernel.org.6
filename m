@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-526393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6EB3A3FE2E
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 19:06:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58C58A3FE31
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 19:06:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19F014281E3
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 18:04:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBEF6440158
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 18:04:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCEC3253327;
-	Fri, 21 Feb 2025 18:04:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13CFC2528F5;
+	Fri, 21 Feb 2025 18:04:06 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E33C32528F5;
-	Fri, 21 Feb 2025 18:04:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B19F25332D;
+	Fri, 21 Feb 2025 18:04:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740161043; cv=none; b=MG5FatdLOSwhZWeGcq1fLNGRLhpUZ5mla5qzCTMGcaLZBvfuDi6WtB2qIbZ5sLmpFyRi0wZOsP69e8zK2tWGla7l2TjUVxZRF8tXDXNDvKQV1ubN/g0GkLt9PuADWfp63YeFh7Csi9qDp9O65JW5QnI/AcoVO+CpaDexioM8yZk=
+	t=1740161045; cv=none; b=Ql52qyBp/PBD17Qfg6OYOe3iG8d2OfaXn63uoA45BEbJ1AjuIX0ds4cLWCZHEOw9xzDmO0tZc872yoEyUXEtq1ujIcVS9K2y2FiNskE4lWekAeEvtSTb2A5ChE+im3jo2mAsjH5h7qxmpeZRobXht/gSpt4KSipVOwSRJwIuwig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740161043; c=relaxed/simple;
-	bh=qkj/B6w4AoL9CIf7WbDkzuqMAMet4sgOBNo5Lp+Ci1U=;
+	s=arc-20240116; t=1740161045; c=relaxed/simple;
+	bh=aeOJd1pNcikYlgrHklgsL8hYd4QhP4EpxZRIKOihJcE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Fz/1YbHhyBkpPh9RMx+YAMAar2CUmAxf7lNXljZS+VTflLXRahiNc7mzu0YgJnighJ1+nMgFSrnj7/uA7ND3Kt2VRplu/8gSioO8ojeh3eCWpbCsQi8qoS57rkTKjfgnuy11MAl2KIPsEelhvn2brfLyNU7ODrU2jT+kJiSl+HE=
+	 MIME-Version; b=rKGi+yo3R7Pu9TywskXtF2lFslxbcaXWbOjNQf2eSaKAojtnUHsMPLY0ak2YK0yze2P+XrBZm6gtfH0znL0GoIooQQFTEQWGZMacWx7w/NtXAIMER5BZEe0IT/f/38gfFZBpI/Oi1sDDHMsp1CPRf/2wvG+mrq7zUsYDQOCnp1k=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id ECBD2169C;
-	Fri, 21 Feb 2025 10:04:18 -0800 (PST)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 607D61CC4;
+	Fri, 21 Feb 2025 10:04:21 -0800 (PST)
 Received: from e119884-lin.cambridge.arm.com (e119884-lin.cambridge.arm.com [10.1.196.72])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 052803F59E;
-	Fri, 21 Feb 2025 10:03:58 -0800 (PST)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8CB503F59E;
+	Fri, 21 Feb 2025 10:04:01 -0800 (PST)
 From: Vincenzo Frascino <vincenzo.frascino@arm.com>
 To: devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
@@ -47,11 +47,10 @@ Cc: Vincenzo Frascino <vincenzo.frascino@arm.com>,
 	Russell King <linux@armlinux.org.uk>,
 	Will Deacon <will@kernel.org>,
 	Mark Rutland <mark.rutland@arm.com>,
-	Jessica Clarke <jrtc27@jrtc27.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v7 02/10] dt-bindings: arm: Add Morello compatibility
-Date: Fri, 21 Feb 2025 18:03:41 +0000
-Message-ID: <20250221180349.1413089-3-vincenzo.frascino@arm.com>
+	Jessica Clarke <jrtc27@jrtc27.com>
+Subject: [PATCH v7 03/10] dt-bindings: arm: Add Morello fvp compatibility
+Date: Fri, 21 Feb 2025 18:03:42 +0000
+Message-ID: <20250221180349.1413089-4-vincenzo.frascino@arm.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250221180349.1413089-1-vincenzo.frascino@arm.com>
 References: <20250221180349.1413089-1-vincenzo.frascino@arm.com>
@@ -63,62 +62,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add compatibility to Arm Morello System Development Platform.
+Add compatibility to Arm Morello Fixed Virtual Platform.
 
-Note: Morello is at the same time the name of an Architecture [1], an SoC
-[2] and a Board [2].
-To distinguish in between Architecture/SoC and Board we refer to the first
-as arm,morello and to the second as arm,morello-sdp.
-
-[1] https://developer.arm.com/Architectures/Morello
-[2] https://www.morello-project.org/
-
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
 ---
- .../devicetree/bindings/arm/arm,morello.yaml  | 33 +++++++++++++++++++
- 1 file changed, 33 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/arm/arm,morello.yaml
+ Documentation/devicetree/bindings/arm/arm,morello.yaml | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
 diff --git a/Documentation/devicetree/bindings/arm/arm,morello.yaml b/Documentation/devicetree/bindings/arm/arm,morello.yaml
-new file mode 100644
-index 000000000000..b4cfa8d048c4
---- /dev/null
+index b4cfa8d048c4..e843b97fa485 100644
+--- a/Documentation/devicetree/bindings/arm/arm,morello.yaml
 +++ b/Documentation/devicetree/bindings/arm/arm,morello.yaml
-@@ -0,0 +1,33 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/arm/arm,morello.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: ARM Morello Platforms
-+
-+maintainers:
-+  - Vincenzo Frascino <vincenzo.frascino@arm.com>
-+
-+description: |+
-+  The Morello architecture is an experimental extension to Armv8.2-A,
-+  which extends the AArch64 state with the principles proposed in
-+  version 7 of the Capability Hardware Enhanced RISC Instructions
-+  (CHERI) ISA.
-+
-+  ARM's Morello Platforms are built as a research project to explore
-+  capability architectures based on arm.
-+
-+properties:
-+  $nodename:
-+    const: '/'
-+  compatible:
-+    oneOf:
-+      - description: Arm Morello System Development Platform
-+        items:
-+          - const: arm,morello-sdp
-+          - const: arm,morello
-+
-+additionalProperties: true
-+
-+...
+@@ -23,9 +23,11 @@ properties:
+     const: '/'
+   compatible:
+     oneOf:
+-      - description: Arm Morello System Development Platform
++      - description: Arm Morello System Platforms
+         items:
+-          - const: arm,morello-sdp
++          - enum:
++              - arm,morello-sdp
++              - arm,morello-fvp
+           - const: arm,morello
+ 
+ additionalProperties: true
 -- 
 2.43.0
 
