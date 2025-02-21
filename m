@@ -1,73 +1,76 @@
-Return-Path: <linux-kernel+bounces-525200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB395A3EC55
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 06:49:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1423A3EC59
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 06:50:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A194917FD99
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 05:49:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 510CC3B5E47
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 05:50:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5B831FBEA6;
-	Fri, 21 Feb 2025 05:49:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1900E1FBEAD;
+	Fri, 21 Feb 2025 05:50:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="njcfaLPw"
-Received: from mail-ot1-f41.google.com (mail-ot1-f41.google.com [209.85.210.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QO05cEQK"
+Received: from mail-oo1-f42.google.com (mail-oo1-f42.google.com [209.85.161.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B902B18D65E;
-	Fri, 21 Feb 2025 05:49:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08B471FBCBE;
+	Fri, 21 Feb 2025 05:50:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740116988; cv=none; b=D6AN225jOKbKs32OWALoG+wCrGpWvdHhHFPeZhoq8xmwBMdl7+i/IJAXI5sgkvFQPYNlejpWrud93YrCnzTAbibt87+sr4MyPri3BGllmcWhJPniPJj0KHPCecNKD84ZGZnE1oT2lYK62Iw6J0CyLTzzWEhA2KgRGyj3nmcPSPU=
+	t=1740117010; cv=none; b=i0Vo4Nq4OWUNLQK8xa5hSkHqduDpVJwtiqsPDFTx11qTZgoSwblAhYLj01GbaAANIKRXcwe5t8WrDkGd5PLwVI4UE11IwwEAzi2N0pLgpXPVj65Lc2ZjOJf0Pb4sQUT2+V25tsw31+JVebXQ52gGyxcAR5+FyWJ/OnRwo5PHzcA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740116988; c=relaxed/simple;
-	bh=zc+ftY8SvwgAh4E7WyCK0+I4n9rRDrbuKpBxlRiF8vA=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version; b=Qc5L+ZvC7T0cXfCg2lCVq1UJcFhj5KoXNr9tOxyTdHVxGej0u/y9RNaLechk3F9zZndvnwj94vEhgpOnTzbfE8nRHJDWlbbYAS+j0yvCSfFo8/9J2NpgNwsVk7Hg50bY8dGhOJ2vOECznJMZBfXG3aYjUs2EJko+EkvIxoSh+2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=njcfaLPw; arc=none smtp.client-ip=209.85.210.41
+	s=arc-20240116; t=1740117010; c=relaxed/simple;
+	bh=0V8bm9nzriraNvDqqVVQpkqXQu1gmEonWBXcVsudgRY=;
+	h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=MK9F5xY3P59Ib4/aOk1z9zV3Y8a5+Ty4gEFJ+U+NiOU1Y4UjbqofjlmpeOMRRbtwGGKnPrm3B+Qdmr4O8XvPiJ97bC5p/tFI2rOpqxjZ2UTwlV3v3FH72ox/diuktgP9HwoNk9jTMtyvzywwGOwU1KGuaKqZjZz0VS7qeYWQhL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QO05cEQK; arc=none smtp.client-ip=209.85.161.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f41.google.com with SMTP id 46e09a7af769-7272dae0604so872637a34.1;
-        Thu, 20 Feb 2025 21:49:46 -0800 (PST)
+Received: by mail-oo1-f42.google.com with SMTP id 006d021491bc7-5fa8fa48ee5so483163eaf.2;
+        Thu, 20 Feb 2025 21:50:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740116986; x=1740721786; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=BCavblbMoHmD+OWEl2E4UCrJ0dCMxRnLcf2xtCAUbD0=;
-        b=njcfaLPwpHOzDJV6bW67FhS4jyzvL+ZrAsH1CZlKS3fPekDmSm9ezVcd+c3P6NrnL3
-         gopFzD984C/8ZOIws7YFLkJh/c9o4ZbqNhosh2u2hJnLZG81cwHpaI4TeHts/GgbNr/v
-         oXdI5Ul7hlL9DVq9K7q3ytCnigyxzY2t9bjriZ3r2VQZXYtO/xU4D8r3pHjsyko874Eu
-         RA/hLnZLr+626aSEZBUL5GYiNd+D6A70y7Ww4Ru6fzBPO+IloYHBM1MV50Q83IrlBj6I
-         kqaFwz9JwLxUHn2LW+ngTRBFlOMMp2ln/9D/uTNaxGV6IB77784pqG3poY64GsD/FDLO
-         iQQA==
+        d=gmail.com; s=20230601; t=1740117008; x=1740721808; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wIuCoBmmJbqWh/4IUDnMFO7CbsX53Ig+Rbn9kTn8z7k=;
+        b=QO05cEQKEHs4mqp0gD1kZyvz9w1HWfxyX7Acwj/dmlo9gOTJ6If2bR79jUuse0lWEW
+         DLm3W/gDl6z4lZ9QrewTDCxC1RkymgEGhY6LwVrm9GBOhjjP/A8FWNgxWrJYv6iU69O8
+         aRdsKsL1G6S2ViQ9F92x5Cu2z6qEEetgXEpwUhpYunJNURWvCnP3s67WypIYBcvqwq6/
+         hhTKOFFng9xezJS4Da7bDI84fpuUk3NLLQfatYI0+OPKyJ6VOpsYmBQxOPE/u1b+TNcP
+         vV8bktalQeqFPI7QJdhoTm9N/SSZ86otnSkbUe5Y7tqiVLI7Zg1eaI4ayjBr+CKmfj7T
+         m6gQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740116986; x=1740721786;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BCavblbMoHmD+OWEl2E4UCrJ0dCMxRnLcf2xtCAUbD0=;
-        b=kFU35cB/zR0pzZBVsG3DQVYygvvo/7zavWToVMsecW5JiKopuNsM8S6BVnPiwyUnHU
-         aBWU2t/keEM2t7MAP3+R2z3qk4V1ewT/GWqPBOk7WXC0HoG1+avy4BYY89OgDtmSlkGu
-         mmJyXxdIbx5f5qYdwezTxUze36j89gNUL3nmG3VrBhDdBiaG5t6qXZkXP430Fuoq0DTL
-         XGjpItZ8sYCdRGBu2XOVpsF0hwBeDZP9hXgnUOWTL/4+aQBAeeYe6wNgEo1I43GwgvAj
-         2NH/g4wGWO+HD/Wiz0H5do3xW0zHjhFu70yoROM4NoeehOanbeHZ972fmCrRIj8xdQ/n
-         mWUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUoAKwIIvObqOPFHTBieNG2Mavl4fkRuNvVnJHbRPbaBM/U93gFrJc+9zNVkM4wc+3D0GVKXGByDq4y@vger.kernel.org, AJvYcCW/JG0h1RnXrtNluVsHaJ2ohJrS8c1OzORhKlWpAC6U4E8IJ6+sT/dBFj6GQ5zFlT2anSx6HuQyvQ36iL+T@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzv3v2p6urib2HUJpNAhNO/lcz31StrD861rx4zGEBNcdhpM/vs
-	4o2wHIi1HEq0MTcQZYZh9Ei+xdALuKDB4wvmWXnwJrJKcZ/jBF1r
-X-Gm-Gg: ASbGncuEZYA9MfG5b5jV75WT9w/8VADjseapb56HYWRkmSK/c5Clp2uMrD3BBJKXShN
-	jAnshksB5FARWIvnmGRCcxSUnrR2R6obbzPf4NRVstlMMdz0Pwnt+/FfR9orB5s779++L5TnDU3
-	9vREFd5gCpJg7HRWU7X9zG/rHNnMbtsAG4dAytqPv/OYbOreA1w8n/2gEmEXrr0SWQ0+q3IuPMj
-	6U/V68Lspk/76CwAq9yMkYqUJp1X2CbOqnRjBHDZuYjet9jvGarGmL60fWZs3dU3F/ncOMX7xEn
-	dA0NXoLLL6tQBqaBy0G9j63kFhaLxiVzTJal
-X-Google-Smtp-Source: AGHT+IEIbRjoWeNHOm3Cl1YrZmaUoHwxP+dMPkuDZtG4zQ0e4sUMxBmAIIJDZYUwNMixpn2BSGXgGw==
-X-Received: by 2002:a05:6830:925:b0:727:413b:ea73 with SMTP id 46e09a7af769-7274c4a23c6mr1244314a34.3.1740116985578;
-        Thu, 20 Feb 2025 21:49:45 -0800 (PST)
+        d=1e100.net; s=20230601; t=1740117008; x=1740721808;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wIuCoBmmJbqWh/4IUDnMFO7CbsX53Ig+Rbn9kTn8z7k=;
+        b=d/JXn5AHJ1YGRrDyGtX6fqcQwK+HjGM39MNcU5CfoL1TvNUQtkNyftAnolKOkaD2c9
+         TXjWCZBMPqV/HjkTnG6Bbou/jTrXHOi6i5M6NcODokfORBnZYbgzEvrMFIwYNRo8CJY6
+         WlyR8BIZ+XE3xZfCQsmW9H7XVoptvE5NnI0ZtRo4Xtfi5DDosXzCW/pPe8jJKsEwxma3
+         6qWPE0U+YG3iUqOFTa5c2FW4ZrovrPccNK6/WOg3/xpMOC/2sN/UcySPX3RBJyNIX6aJ
+         OWpKCEGXDKhFIeys82+9eeeVbqMdNYvcFlyKyKUqr98JTUZGxNrRBSDEEyqswzzE34NS
+         wDjg==
+X-Forwarded-Encrypted: i=1; AJvYcCUh861y3kjDqxJb1kVnwIq4H+HEesPDFj785JipIFpPZgLZA200MPKMAJ0xhEXwA6Ya1/mNuF6jSKD2Qt1J@vger.kernel.org, AJvYcCWsYjVjP7L63vNI+pGQXAlXIOX7c6u5wg3gx+L78jOBdhEmX/XqzikcpP5YgiDbvVPdXw0APKZMSaU9@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyq/+i6uu3qgAu80OL6w+4rJ7t782OfkTSuei6R4XPtQlEmkhVn
+	UTvjQl2+tL/u5SFzLva7FLQfONgboMigNCJlcza1P/XHs5Wyq7Co
+X-Gm-Gg: ASbGncvzQNO9GCvfSYWv2gzEZY25q2mzVphU1uGTDt/+Q7owPVgRF3TtcfbxKpp7yGJ
+	Kx35O4qnCi1epw/GbI1Tn8kk/MBblWgJAr2b5t0IngBNjx6QNMxmloRNnfIF+5dNT6QbcfRqcNN
+	XiBH9BxQAqKIWLgxbUMJmDf5A3kXwoXnoj11dpZOfWyZVStxLpOGPvho8oA87fttIfDGmkqYsZj
+	Wg5O1kTkU2iy4truB7oWFcp7lgbjxhszUSTDc1y+pkpSFH3K/06o9mug5Rtc3KwqcaEogfSi8vG
+	GxvyoUVDcS3ap5zn0zzSsG1E1tK8e59H4GIh
+X-Google-Smtp-Source: AGHT+IE6qBeK9TsEn1fLuU8i6GxNLg8V4wjLi9MJTyltzbCchkV4pktYUBjug+y2v4gbUzIrXIxHKQ==
+X-Received: by 2002:a05:6808:80b1:b0:3f4:c2b:def7 with SMTP id 5614622812f47-3f4247e3c50mr1406598b6e.33.1740117008010;
+        Thu, 20 Feb 2025 21:50:08 -0800 (PST)
 Received: from localhost.localdomain ([122.8.183.87])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5fd0645aadasm889207eaf.6.2025.02.20.21.49.42
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-3f41bc57784sm550230b6e.32.2025.02.20.21.50.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Feb 2025 21:49:44 -0800 (PST)
+        Thu, 20 Feb 2025 21:50:06 -0800 (PST)
 From: Chen Wang <unicornxw@gmail.com>
 To: u.kleine-koenig@baylibre.com,
 	aou@eecs.berkeley.edu,
@@ -87,10 +90,12 @@ To: u.kleine-koenig@baylibre.com,
 	chao.wei@sophgo.com,
 	xiaoguang.xing@sophgo.com,
 	fengchun.li@sophgo.com
-Subject: [PATCH v4 0/3] irqchip: Add Sophgo SG2042 MSI controller
-Date: Fri, 21 Feb 2025 13:49:29 +0800
-Message-Id: <cover.1740116190.git.unicorn_wang@outlook.com>
+Subject: [PATCH v4 1/3] dt-bindings: interrupt-controller: Add Sophgo SG2042 MSI
+Date: Fri, 21 Feb 2025 13:49:58 +0800
+Message-Id: <4967e01306c07908caebd60736f898579412765d.1740116190.git.unicorn_wang@outlook.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1740116190.git.unicorn_wang@outlook.com>
+References: <cover.1740116190.git.unicorn_wang@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -101,81 +106,81 @@ Content-Transfer-Encoding: 8bit
 
 From: Chen Wang <unicorn_wang@outlook.com>
 
-This controller is on the Sophgo SG2042 SoC to transform interrupts from
-PCIe MSI to PLIC interrupts.
+Add binding for Sophgo SG2042 MSI controller.
 
-Thanks,
-Chen
-
+Signed-off-by: Chen Wang <unicorn_wang@outlook.com>
 ---
-
-Changes in v4:
-  The patch series is based on v6.14-rc1.
-
-  Fixed following issues as per comments from Inochi Amaoto, Rob Herring, thanks.
-
-  - bindings:
-    - Update sequence of "reg-names".
-    - Remove reference to/schemas/interrupts.yaml
-    - Add "#msi-cells".
-  - Improve driver code:
-    - Use fwnode_* instead of of_*.
-    - Some other coding style improvements.
-
-Changes in v3:
-  The patch series is based on v6.13-rc7. You can simply review or test the
-  patches at the link [3].
-
-  Fixed following issues as per comments from Krzysztof Kozlowski, Samuel Holland,
-  Christophe JAILLET, Inochi Amaoto, thanks.
-
-  - bindings: use reg for doorbell, fixed wrong usage of additionalProperties
-    and misc. 
-  - Improve driver code:
-    - Fixed potentional memory leak issues.
-    - Fixed some build warnings reported by test robot.
-    - Optimize and simplify the code when allocating hwirq.
-    - Use DECLARE_BITMAP instead of kzalloc.
-    - Some other coding style improvements.
-
-Changes in v2:
-  The patch series is based on v6.13-rc2. You can simply review or test the
-  patches at the link [2].
-
-  Fixed following issues as per comments from Rob Herring, Thomas Gleixner, thanks.
-
-  - Improve driver binding description, use msi-ranges instread.
-  - Improve driver code:
-    - Improve coding style.
-    - Fixed bug that possible memory leak of bitmap when sg2042_msi_init_domains returns error.
-    - Use guard(mutex).
-    - Use the MSI parent model.
-
-Changes in v1:
-  The patch series is based on v6.12-rc7. You can simply review or test the
-  patches at the link [1].
-
-Link: https://lore.kernel.org/linux-riscv/cover.1731296803.git.unicorn_wang@outlook.com/ [1]
-Link: https://lore.kernel.org/linux-riscv/cover.1733726057.git.unicorn_wang@outlook.com/ [2]
-Link: https://lore.kernel.org/linux-riscv/cover.1736921549.git.unicorn_wang@outlook.com/ [3]
----
-
-Chen Wang (3):
-  dt-bindings: interrupt-controller: Add Sophgo SG2042 MSI
-  irqchip: Add the Sophgo SG2042 MSI interrupt controller
-  riscv: sophgo: dts: add msi controller for SG2042
-
- .../sophgo,sg2042-msi.yaml                    |  61 ++++
- arch/riscv/boot/dts/sophgo/sg2042.dtsi        |  10 +
- drivers/irqchip/Kconfig                       |  12 +
- drivers/irqchip/Makefile                      |   1 +
- drivers/irqchip/irq-sg2042-msi.c              | 264 ++++++++++++++++++
- 5 files changed, 348 insertions(+)
+ .../sophgo,sg2042-msi.yaml                    | 61 +++++++++++++++++++
+ 1 file changed, 61 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/sophgo,sg2042-msi.yaml
- create mode 100644 drivers/irqchip/irq-sg2042-msi.c
 
-
-base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/sophgo,sg2042-msi.yaml b/Documentation/devicetree/bindings/interrupt-controller/sophgo,sg2042-msi.yaml
+new file mode 100644
+index 000000000000..e1ffd55fa7bf
+--- /dev/null
++++ b/Documentation/devicetree/bindings/interrupt-controller/sophgo,sg2042-msi.yaml
+@@ -0,0 +1,61 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/interrupt-controller/sophgo,sg2042-msi.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Sophgo SG2042 MSI Controller
++
++maintainers:
++  - Chen Wang <unicorn_wang@outlook.com>
++
++description:
++  This interrupt controller is in Sophgo SG2042 for transforming interrupts from
++  PCIe MSI to PLIC interrupts.
++
++allOf:
++  - $ref: /schemas/interrupt-controller/msi-controller.yaml#
++
++properties:
++  compatible:
++    const: sophgo,sg2042-msi
++
++  reg:
++    items:
++      - description: clear register
++      - description: msi doorbell address
++
++  reg-names:
++    items:
++      - const: clr
++      - const: doorbell
++
++  msi-controller: true
++
++  msi-ranges:
++    maxItems: 1
++
++  "#msi-cells":
++    const: 0
++
++required:
++  - compatible
++  - reg
++  - reg-names
++  - msi-controller
++  - msi-ranges
++  - "#msi-cells"
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/irq.h>
++    msi-controller@30000000 {
++      compatible = "sophgo,sg2042-msi";
++      reg = <0x30000000 0x4>, <0x30000008 0x4>;
++      reg-names = "clr", "doorbell";
++      msi-controller;
++      #msi-cells = <0>;
++      msi-ranges = <&plic 64 IRQ_TYPE_LEVEL_HIGH 32>;
++    };
 -- 
 2.34.1
 
