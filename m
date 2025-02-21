@@ -1,199 +1,171 @@
-Return-Path: <linux-kernel+bounces-526501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04EF7A3FF99
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 20:19:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91F28A3FF98
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 20:19:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 69B117AE5E0
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 19:18:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3AC219E06FE
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 19:19:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2730250BE6;
-	Fri, 21 Feb 2025 19:19:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF15825333E;
+	Fri, 21 Feb 2025 19:19:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="XXf6pA+Q"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="vRtcJACA";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="9Vj/MPO0"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 776245223
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 19:19:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EFCF25290F;
+	Fri, 21 Feb 2025 19:19:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740165562; cv=none; b=hp3pT+p7t9PlFS0O+9WXtpkDyven+HdEE3sdADnsZsRN8sAjEvuWHVJoifCqO+b91mkD+M2I7tOQhxDMozyb7r1MhVE+V3KkCr8dfvZNNvILnyH+7yJ1vn7Jvms3oPUkijfpUXBJjKhSoc+MS5j8gR2CGSbCC0D3uo7fpFyzCDo=
+	t=1740165564; cv=none; b=SQycYhyatcvCOYg6gSLViwjWQaYvTEvmG63QnKunsuryWo48UCSdhZoJ47MkQAiHS1V4a5i5SvS13owxdoewJSYo7l03JKIuHHtEYUjuZkow1yQJ7k88pX/l2ACIrvfw06/ypypDMcKGP52S29CS0tV8EfkSIUPZXr/GvZQhxfs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740165562; c=relaxed/simple;
-	bh=3FsXUcjyMsj/fKR24IGMc/BpLIWMyEaL1eNIx4lbbcc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VeiZie4w4VfbAZHDkmTTFIB7lbpEdHRh2sUbLVRTohqCfzkKpFgNuTsgZeppLvFvu7EC2O36KYmhLD5L2wWPrsspiGZ6BC69GpMOn+jm4QL7SMhApNB8mVa38jRQT0fuoHVZpDLuR8kaRy6+Bzuym94y5ysH4FXHTwaGt4Eaa4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=XXf6pA+Q; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51LCnmnF002872
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 19:19:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	t0ZEwLWMa7i2eCHMRsfHLCETFObA7dX+eUVdYB5qpNM=; b=XXf6pA+QAvpQIMqA
-	/Hpsbs7kFlPMq73kAyRn8/poULvVG1oNnDebpaQQJk97ZWLBZwLd/GB9t5OylWBm
-	odD/3rpymr8daTqCkxmj0RvO8IvhuTTSJkm+kzXnp6fJcYuuH4VUxiLZGDSC8J4f
-	+B5c70ETahHcreaTjE2e+BoFOyAvrZg0MPt+kEFPG44W5augA5+eVqsGw2VUR70n
-	2EKgZ4kRhrkZ9M4YPvt5oI6HUJc/y8zYvoMisHYFKKE5YrZvVov2yGuAO3dovTda
-	8gf+u+HylF+abYZYDlL26dLyT/VVId+IjwruvIQfWgobt73YS8VHITYA5mRjjyGb
-	uFt/wQ==
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44vyy2k0nb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 19:19:19 +0000 (GMT)
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6e65eae5a26so4564986d6.1
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 11:19:19 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740165558; x=1740770358;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=t0ZEwLWMa7i2eCHMRsfHLCETFObA7dX+eUVdYB5qpNM=;
-        b=pDfEUAwqShGwXkBI5hRdNziLAfmAXKX8Xs7f/5xSGJ0D7OM9Ypq/lh8FpVkk9ihwUL
-         B3A6Pd7xCnI06n+ELbz/WRm3ZAJVKh7p03h4jYuyZ5CsAFCB/jjSil42EOSnjk9Z9ReU
-         bKb6wW5Qpu44nUfWQQwxMnhOz5+uN3a7NZG2XB+ZRLoqZRrKswzDL5iwES64qWm4QcA6
-         y/zJAVNSdpIIUQiMjxqBvPX0MbBo15W6/yHZSFh5naffindcnUpKhfbyo1cDG6q3UUvV
-         A0pNdhqrBoRrFHh2VM+tRJvWTUUoLWb90gKfy621t1uYWPgfX3VUnvPhwlQX9s/JpZzY
-         09hA==
-X-Forwarded-Encrypted: i=1; AJvYcCV4F7TmIJVLYUzUxFv92yaEeMe+wxD2Hq57KyW/BvyX4XwzWz9M+VjXy73dmm4u7q7DrqzD3NWGhuXHX1k=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+0KKw4w/3XlsJUY/f4yibUNQyuAW3qgPIlyIExMuALvuPb38m
-	Fl72UEaxng0fzrbTovScBM+bQBFGZxEzAcKkOzuetzDV4My+vnZgXh06CC/KY3fiSixwgj8h2je
-	aDx6lDfeOQ6EAVJMO8LB0SSwBeY1OuINUwPnU1C0UP8eJ9HiAMUzkNNiJg+cK4yM=
-X-Gm-Gg: ASbGncuZbirhEb/93783LkeuC02VkCPi7aRx1nJMgc1iQDU5sRl+dmR67NWU0u4uUiI
-	ivXvpx1HKmRXSLgXOeIMa1DVk0FDXEGMyPIoJKpzMhcH9CtBBoGzouFLdT0dLHc/JnAGU3sRRF5
-	fh719M8bEgR5+CFBqMnKiL1VWO2joeYeGxSVnd6wuz5Unmjn861y9XOYNLxfnuqXqU7FSxBAAdy
-	vKEVsYVG9oJ6cq9SSlXN8Yfkmotr4R8c7dPKwI6ct0fu+5n8eM62QVZQCerqG9Psyf5PCtimBGf
-	vNGE1L0F8J3bSiNgVZjoELnlJVdqq9VzjGHLi88RmAQ/igboYqDOV7gFUYoVAlA1oOCR+A==
-X-Received: by 2002:a05:6214:21a6:b0:6e4:29f8:1e9e with SMTP id 6a1803df08f44-6e6ae605315mr22838306d6.0.1740165558168;
-        Fri, 21 Feb 2025 11:19:18 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFhW3MLmL7S2e7Gj91t4H/Nt5yTWA6dC6NoPr4qt9eWPNM1uKafY3+IMSmE5YE2aq9t/fq1RA==
-X-Received: by 2002:a05:6214:21a6:b0:6e4:29f8:1e9e with SMTP id 6a1803df08f44-6e6ae605315mr22838096d6.0.1740165557731;
-        Fri, 21 Feb 2025 11:19:17 -0800 (PST)
-Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abbe7afb953sm441039466b.143.2025.02.21.11.19.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Feb 2025 11:19:17 -0800 (PST)
-Message-ID: <1d9b661e-0607-4567-b420-5444b643df99@oss.qualcomm.com>
-Date: Fri, 21 Feb 2025 20:19:14 +0100
+	s=arc-20240116; t=1740165564; c=relaxed/simple;
+	bh=zxmsWUgNWZNFgsvJHAhCYpf+ENmRHkY81EjWL4vEQGM=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=GUaYwF7DyOiJynjcyCimdEb/ixaZNAfClJ4PHCQbzmVc6m53/aKav95stwEHTd3lMBoaJ2hvxGFNmnyPWmYsPvyScbeUFeTio+sHJgEA6xR37SoNexdukCVh7O0G4DfBxuycTwMgWMqjZzhOHcFK0tflKMW4jyVP11Q8EYG1T+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=vRtcJACA; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=9Vj/MPO0; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 21 Feb 2025 19:19:15 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1740165560;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jxsITrpGY7G/KPdxKChAGRdgrO7clA1QnRdJzmj1QB0=;
+	b=vRtcJACAh5yLwFHxpTnmkDxxgcef1LgOs49n7dL4XXJXgEDPUYa0Y4qDO/PbGIoDKTwitO
+	1dc8bAaGmkLIuk/78tQmwzXSkeecZv7SJLH9tFPdPIXK9Icagcsrvd+tesTK+PbP/ZxIhr
+	sKbLzOgmiDAOl3wVRvTMI0DURxVZ4FnF53smH8zy69KtDI8JTqoSdoVay3ZGNpctZb7Q0h
+	WMhP9/IB+Cjc+wCn2ZLixVC/cgXnywhFz6wcnWUZEfDV4zNpXecW8oUVl7GJ+6DQiNfn72
+	a3qzzr3XC4U71MkCPUsKfjpfNqx4RNw8yaAbWzVR20SxKKtIKn6UOXpM6D928A==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1740165560;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jxsITrpGY7G/KPdxKChAGRdgrO7clA1QnRdJzmj1QB0=;
+	b=9Vj/MPO0A+Mn5muwxrnjAhZ9KdZt3v0OJtP0/YS5hKp7Zry0REZxDjs7EceW999WsROGvQ
+	yZyAeBwZNuXo7eCQ==
+From: "tip-bot2 for Kan Liang" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: perf/urgent] perf/x86/intel: Fix event constraints for LNC
+Cc: Amiri Khalil <amiri.khalil@intel.com>,
+ Kan Liang <kan.liang@linux.intel.com>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>, stable@vger.kernel.org,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250219141005.2446823-1-kan.liang@linux.intel.com>
+References: <20250219141005.2446823-1-kan.liang@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/5] clk: qcom: videocc: Add support to attach multiple
- power domains
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-Cc: Ajit Pandey <quic_ajipan@quicinc.com>,
-        Imran Shaik <quic_imrashai@quicinc.com>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250218-videocc-pll-multi-pd-voting-v1-0-cfe6289ea29b@quicinc.com>
- <20250218-videocc-pll-multi-pd-voting-v1-4-cfe6289ea29b@quicinc.com>
- <eec2869a-fa8f-4aaf-9fc5-e7a8baf0f864@linaro.org>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <eec2869a-fa8f-4aaf-9fc5-e7a8baf0f864@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-ORIG-GUID: RBwmkRx2fq0rfnXENo0PO00fanSnCCXb
-X-Proofpoint-GUID: RBwmkRx2fq0rfnXENo0PO00fanSnCCXb
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-21_07,2025-02-20_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- lowpriorityscore=0 clxscore=1015 adultscore=0 phishscore=0 mlxlogscore=999
- bulkscore=0 malwarescore=0 impostorscore=0 priorityscore=1501 mlxscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2502210133
+Message-ID: <174016555617.10177.644960926822500092.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On 18.02.2025 4:46 PM, Bryan O'Donoghue wrote:
-> On 18/02/2025 14:26, Jagadeesh Kona wrote:
->> During boot-up, the PLL configuration might be missed even after
->> calling pll_configure() from the clock controller probe. This can
->> happen because the PLL is connected to one or more rails that are
->> turned off, and the current clock controller code cannot enable
->> multiple rails during probe. Consequently, the PLL may be activated
->> with suboptimal settings, causing functional issues.
->>
->> To properly configure the video PLLs in the probe on SM8450, SM8475,
->> SM8550, and SM8650 platforms, the MXC rail must be ON along with MMCX.
->> Therefore, add support to attach multiple power domains to videocc on
->> these platforms.
->>
->> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
->> ---
->>   drivers/clk/qcom/videocc-sm8450.c | 4 ++++
->>   drivers/clk/qcom/videocc-sm8550.c | 4 ++++
->>   2 files changed, 8 insertions(+)
->>
->> diff --git a/drivers/clk/qcom/videocc-sm8450.c b/drivers/clk/qcom/videocc-sm8450.c
->> index f26c7eccb62e7eb8dbd022e2f01fa496eb570b3f..b50a14547336580de88a741f1d33b126e9daa848 100644
->> --- a/drivers/clk/qcom/videocc-sm8450.c
->> +++ b/drivers/clk/qcom/videocc-sm8450.c
->> @@ -437,6 +437,10 @@ static int video_cc_sm8450_probe(struct platform_device *pdev)
->>       struct regmap *regmap;
->>       int ret;
->>   +    ret = qcom_cc_attach_pds(&pdev->dev, &video_cc_sm8450_desc);
->> +    if (ret)
->> +        return ret;
->> +
->>       ret = devm_pm_runtime_enable(&pdev->dev);
->>       if (ret)
->>           return ret;
->> diff --git a/drivers/clk/qcom/videocc-sm8550.c b/drivers/clk/qcom/videocc-sm8550.c
->> index 7c25a50cfa970dff55d701cb24bc3aa5924ca12d..d4b223d1392f0721afd1b582ed35d5061294079e 100644
->> --- a/drivers/clk/qcom/videocc-sm8550.c
->> +++ b/drivers/clk/qcom/videocc-sm8550.c
->> @@ -542,6 +542,10 @@ static int video_cc_sm8550_probe(struct platform_device *pdev)
->>       int ret;
->>       u32 sleep_clk_offset = 0x8140;
->>   +    ret = qcom_cc_attach_pds(&pdev->dev, &video_cc_sm8550_desc);
->> +    if (ret)
->> +        return ret;
->> +
->>       ret = devm_pm_runtime_enable(&pdev->dev);
->>       if (ret)
->>           return ret;
->>
-> 
-> What's the difference between doing the attach here or doing it in really_probe() ?
-> 
-> There doesn't seem to be any difference except that we will have an additional delay introduced.
-> 
-> Are you describing a race condition ?
-> 
-> I don't see _logic_ here to moving the call into the controller's higher level probe.
-> 
-> Can you describe some more ?
+The following commit has been merged into the perf/urgent branch of tip:
 
-I think this is a sane course of action:
+Commit-ID:     782cffeec9ad96daa64ffb2d527b2a052fb02552
+Gitweb:        https://git.kernel.org/tip/782cffeec9ad96daa64ffb2d527b2a052fb02552
+Author:        Kan Liang <kan.liang@linux.intel.com>
+AuthorDate:    Wed, 19 Feb 2025 06:10:05 -08:00
+Committer:     Peter Zijlstra <peterz@infradead.org>
+CommitterDate: Thu, 20 Feb 2025 16:07:10 +01:00
 
-1. associate pll config with the pll (treewide change)
-2. add a generic pll_configure call that parses the type
-3. store PLLs to be configured in an array of dt-bindings indices
-4. move PLL configuration to really_probe
-5. move RPM enablement to really_probe, make it conditional to limit resource
-   waste on e.g. gcc
-6. move attaching GDSCs to really_probe
+perf/x86/intel: Fix event constraints for LNC
 
-Konrad
+According to the latest event list, update the event constraint tables
+for Lion Cove core.
+
+The general rule (the event codes < 0x90 are restricted to counters
+0-3.) has been removed. There is no restriction for most of the
+performance monitoring events.
+
+Fixes: a932aa0e868f ("perf/x86: Add Lunar Lake and Arrow Lake support")
+Reported-by: Amiri Khalil <amiri.khalil@intel.com>
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/20250219141005.2446823-1-kan.liang@linux.intel.com
+---
+ arch/x86/events/intel/core.c | 20 +++++++-------------
+ arch/x86/events/intel/ds.c   |  2 +-
+ 2 files changed, 8 insertions(+), 14 deletions(-)
+
+diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
+index e86333e..cdcebf3 100644
+--- a/arch/x86/events/intel/core.c
++++ b/arch/x86/events/intel/core.c
+@@ -397,34 +397,28 @@ static struct event_constraint intel_lnc_event_constraints[] = {
+ 	METRIC_EVENT_CONSTRAINT(INTEL_TD_METRIC_FETCH_LAT, 6),
+ 	METRIC_EVENT_CONSTRAINT(INTEL_TD_METRIC_MEM_BOUND, 7),
+ 
++	INTEL_EVENT_CONSTRAINT(0x20, 0xf),
++
++	INTEL_UEVENT_CONSTRAINT(0x012a, 0xf),
++	INTEL_UEVENT_CONSTRAINT(0x012b, 0xf),
+ 	INTEL_UEVENT_CONSTRAINT(0x0148, 0x4),
+ 	INTEL_UEVENT_CONSTRAINT(0x0175, 0x4),
+ 
+ 	INTEL_EVENT_CONSTRAINT(0x2e, 0x3ff),
+ 	INTEL_EVENT_CONSTRAINT(0x3c, 0x3ff),
+-	/*
+-	 * Generally event codes < 0x90 are restricted to counters 0-3.
+-	 * The 0x2E and 0x3C are exception, which has no restriction.
+-	 */
+-	INTEL_EVENT_CONSTRAINT_RANGE(0x01, 0x8f, 0xf),
+ 
+-	INTEL_UEVENT_CONSTRAINT(0x01a3, 0xf),
+-	INTEL_UEVENT_CONSTRAINT(0x02a3, 0xf),
+ 	INTEL_UEVENT_CONSTRAINT(0x08a3, 0x4),
+ 	INTEL_UEVENT_CONSTRAINT(0x0ca3, 0x4),
+ 	INTEL_UEVENT_CONSTRAINT(0x04a4, 0x1),
+ 	INTEL_UEVENT_CONSTRAINT(0x08a4, 0x1),
+ 	INTEL_UEVENT_CONSTRAINT(0x10a4, 0x1),
+ 	INTEL_UEVENT_CONSTRAINT(0x01b1, 0x8),
++	INTEL_UEVENT_CONSTRAINT(0x01cd, 0x3fc),
+ 	INTEL_UEVENT_CONSTRAINT(0x02cd, 0x3),
+-	INTEL_EVENT_CONSTRAINT(0xce, 0x1),
+ 
+ 	INTEL_EVENT_CONSTRAINT_RANGE(0xd0, 0xdf, 0xf),
+-	/*
+-	 * Generally event codes >= 0x90 are likely to have no restrictions.
+-	 * The exception are defined as above.
+-	 */
+-	INTEL_EVENT_CONSTRAINT_RANGE(0x90, 0xfe, 0x3ff),
++
++	INTEL_UEVENT_CONSTRAINT(0x00e0, 0xf),
+ 
+ 	EVENT_CONSTRAINT_END
+ };
+diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
+index c2e2eae..f122882 100644
+--- a/arch/x86/events/intel/ds.c
++++ b/arch/x86/events/intel/ds.c
+@@ -1199,7 +1199,7 @@ struct event_constraint intel_lnc_pebs_event_constraints[] = {
+ 	INTEL_FLAGS_UEVENT_CONSTRAINT(0x100, 0x100000000ULL),	/* INST_RETIRED.PREC_DIST */
+ 	INTEL_FLAGS_UEVENT_CONSTRAINT(0x0400, 0x800000000ULL),
+ 
+-	INTEL_HYBRID_LDLAT_CONSTRAINT(0x1cd, 0x3ff),
++	INTEL_HYBRID_LDLAT_CONSTRAINT(0x1cd, 0x3fc),
+ 	INTEL_HYBRID_STLAT_CONSTRAINT(0x2cd, 0x3),
+ 	INTEL_FLAGS_UEVENT_CONSTRAINT_DATALA_LD(0x11d0, 0xf),	/* MEM_INST_RETIRED.STLB_MISS_LOADS */
+ 	INTEL_FLAGS_UEVENT_CONSTRAINT_DATALA_ST(0x12d0, 0xf),	/* MEM_INST_RETIRED.STLB_MISS_STORES */
 
