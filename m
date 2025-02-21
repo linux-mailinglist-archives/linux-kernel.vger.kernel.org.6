@@ -1,143 +1,156 @@
-Return-Path: <linux-kernel+bounces-526126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83A8FA3FA6B
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:12:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 946FAA3FA6E
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:13:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE9FA16D88F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:06:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E38274259E9
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:06:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 137CF21516C;
-	Fri, 21 Feb 2025 15:59:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18D44224B04;
+	Fri, 21 Feb 2025 15:59:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="d9RyPqF/"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (4096-bit key) header.d=ssi.bg header.i=@ssi.bg header.b="e2LjwSLl"
+Received: from mx.ssi.bg (mx.ssi.bg [193.238.174.39])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 825D621506B;
-	Fri, 21 Feb 2025 15:59:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740153579; cv=pass; b=LAdzO4eOLuncSxhxALSsOErr0guUzz2S+aLK5Z7nqoCR9T5e+Mg/okWAdOoYpoGapFX6YEYgG5r+xDhxG3OydzHxXCqcMx4JsTWJUWi+jVix7T/t+u1C/O8gSaYev23ajYacVWAHwGYyTMfdIv31sHn8+//X1ttsV1yCn6ieYRA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740153579; c=relaxed/simple;
-	bh=ntiVJXzkZTZjsdeI5IdrDhxqLX4AiOQr3+403vBJSnI=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=ilo86LQ1DuZi8BlFuHA2bZRmE4hPqzNNqxbpv+d8gBdxFFA5zO/YEkJmfOn6GuWcb0CS3qxlgP29Sf/X/59D177+iJABkYnV8454YIMXScX8vi0FeAHRHWgR6gJCng6jG5Qh0oHLCXe1hl2ua+XmLcYzYAkxcENsVdvsFUR+T5E=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=d9RyPqF/; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1740153544; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=Nn1BpqQX78RRt0sY8e9CKmdBeBFf3st0Sbf+2kPjRqbrxIPZZN2Og7TO5iFdMxCWDmuYZFUWvX7d6BjFcUdIPEfeQBEs4f/5mUG3Z7zqVZvKs4mkNO04haCW7nPvbSvo673VZt3FmihGouWdFQxTPOzF10lAcDXcgdv0GMRr8J0=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1740153544; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=VMzhihZ2XljnljV6PhP6eOJIJ/ST5xaErOjkBTRaQ9k=; 
-	b=L2GAaaJpyc50eu/ChVdfRWf9bIfqr6PeJSyCONhDf+nq+nv/vjx6Zupx3Df3JfL0b0FEjQaijPZ/mGiGNmgDXR1oZpuf8bVUL763Jx3ECMkhWx/tizYDPj8lK04WT1N3hm7ozXrc8aMsmW9sVPuT86DwMa9yn0U1rgz21O6mki8=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1740153544;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=VMzhihZ2XljnljV6PhP6eOJIJ/ST5xaErOjkBTRaQ9k=;
-	b=d9RyPqF/6qrMyi29DkZ44eIpR7Bn4PjpU1W3GdDNsdqFF7SJr04SmUmsa2hgz38z
-	p/CnJVJ2mtVIY40upH2QaDkGqoviSCmklvJUvzAjldz/vwXGTVnmtHIZcFDIsYnIYr/
-	ZMj3ECxbboHDXy7bcgpyhl1+HIUMdTy8M2jhbbTU=
-Received: by mx.zohomail.com with SMTPS id 1740153542341460.47491147955066;
-	Fri, 21 Feb 2025 07:59:02 -0800 (PST)
-Content-Type: text/plain;
-	charset=us-ascii
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80325215172;
+	Fri, 21 Feb 2025 15:59:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.238.174.39
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740153583; cv=none; b=J1zVbsdN9mxTa3ucDOqLAoSL+aVjk5pmWNdwMSdiFSCIM61VNZ3CQT3onacXAmQxMUGmaVhuavOUhAmlfGrR1MFvu8nliqe/XEWQvwwNyJo++9ERK9/X07vyUQtjvDacjMpoCBicxbhEgqxrvZX8Grxmo3fOXDiPjZ1+NaX90+A=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740153583; c=relaxed/simple;
+	bh=PxWdT8KjTiBPV/g4HJF+n40rUM1VBmqecO5CnMu24IA=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=Yqnm+fGMufPcjokiQ4jFRZPiEC3yFj6XFF0lSyK/kIc16UgHJzEA1lawWKJAQAsgx3mUl2JKjjEYN1GzkLZJvwJx2z7c8cWK4NMrO+hH17zTKFXeR2ArmTQtMKiFpwwG7p80ifXtrGjaCFoxuqAnEWRTywupGkyL4NNcUTZIX5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ssi.bg; spf=pass smtp.mailfrom=ssi.bg; dkim=pass (4096-bit key) header.d=ssi.bg header.i=@ssi.bg header.b=e2LjwSLl; arc=none smtp.client-ip=193.238.174.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ssi.bg
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ssi.bg
+Received: from mx.ssi.bg (localhost [127.0.0.1])
+	by mx.ssi.bg (Potsfix) with ESMTP id 1FA6522C7A;
+	Fri, 21 Feb 2025 17:59:29 +0200 (EET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ssi.bg; h=cc:cc
+	:content-id:content-type:content-type:date:from:from:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to; s=ssi; bh=l0LitblEbtKMznCE8ElI65Dsh7jKX6yGyHzIVUzjF3Y=; b=e
+	2LjwSLl5+EYHomTJoMOTz4DY7QMKP8G/D7yNORzx9ofgBuaUJY71z1vWUOttHiA6
+	B5uzFErZBitwS81baLG1h2kMjl4LPv7fjC0KlDqmTIFtTN1Iq9LrPWhl2X8XnhHq
+	lqPCucFNdiyaOaKHDVotSjiu1IER+LTTCcyr09JfUf5UYIIFnLEgShjr6umisKuB
+	+T4mxnpokBOuGnC0T9YvXK9TUYiM5cl466KtesU0TRtqjftmJHerJzpO0jNk8Ee1
+	R+useezaxQRo66xuHnTSC51Q8SZUaqNo+hK76vnIekU/X/MpB9mdCH7r1BRtn+Vi
+	XC3a9vXFc6YSyf0x331zt1jhWSW0TmrucAskn9Z4AFxJKO1NRiBv72cDaGGpVd6j
+	cWPR2+eQq+pfwJqzYhzdrIF8Ppp/RAZgiS/Q9d9Yrg7lUcYEV5RZx6qUUcaUlbdL
+	CMIEFFlA/Ev5UZdhPbzcS4ULnoODALMmuNRCYqcObWRpcI1+MUZ/crpxYK7cdRXy
+	HUdXt4NaYvTmf2SksTpSyUdihnp/Wk9zPYZOElhuhfnlfi9r7rUxSsgCvreYySf6
+	w3RTIxPyY2gWZ4cZCJHuT1rqSy89gBZopooAZUtoElCYcTMYgJU9MtQYdHocMb9x
+	+8C1bZNrMIa0ZCmzh4VLSpYhXskukJWmN7haKKiaC4=
+Received: from ink.ssi.bg (ink.ssi.bg [193.238.174.40])
+	by mx.ssi.bg (Potsfix) with ESMTPS;
+	Fri, 21 Feb 2025 17:59:28 +0200 (EET)
+Received: from ja.ssi.bg (unknown [213.16.62.126])
+	by ink.ssi.bg (Postfix) with ESMTPSA id 119DB15EA8;
+	Fri, 21 Feb 2025 17:59:17 +0200 (EET)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by ja.ssi.bg (8.18.1/8.17.1) with ESMTP id 51LFxFk5041810;
+	Fri, 21 Feb 2025 17:59:16 +0200
+Date: Fri, 21 Feb 2025 17:59:15 +0200 (EET)
+From: Julian Anastasov <ja@ssi.bg>
+To: Nicolas Dichtel <nicolas.dichtel@6wind.com>
+cc: Philo Lu <lulie@linux.alibaba.com>, netdev@vger.kernel.org,
+        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+        pabeni@redhat.com, horms@kernel.org, asml.silence@gmail.com,
+        willemb@google.com, almasrymina@google.com, chopps@labn.net,
+        aleksander.lobakin@intel.com, dust.li@linux.alibaba.com,
+        hustcat@gmail.com, bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net] ipvs: Always clear ipvs_property flag in
+ skb_scrub_packet()
+In-Reply-To: <6202010a-412f-4d63-92a5-d78ba216c65e@6wind.com>
+Message-ID: <c42296ae-e7ad-7063-f87c-ddf516e72ed0@ssi.bg>
+References: <20250221013648.35716-1-lulie@linux.alibaba.com> <6202010a-412f-4d63-92a5-d78ba216c65e@6wind.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.300.87.4.3\))
-Subject: Re: [PATCH v7 2/6] rust: str: implement `Index` for `BStr`
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <20250218-module-params-v3-v7-2-5e1afabcac1b@kernel.org>
-Date: Fri, 21 Feb 2025 12:58:45 -0300
-Cc: Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- Masahiro Yamada <masahiroy@kernel.org>,
- Nathan Chancellor <nathan@kernel.org>,
- Nicolas Schier <nicolas@fjasle.eu>,
- Luis Chamberlain <mcgrof@kernel.org>,
- rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Adam Bratschi-Kaye <ark.email@gmail.com>,
- linux-kbuild@vger.kernel.org,
- Petr Pavlu <petr.pavlu@suse.com>,
- Sami Tolvanen <samitolvanen@google.com>,
- Daniel Gomez <da.gomez@samsung.com>,
- Simona Vetter <simona.vetter@ffwll.ch>,
- Greg KH <gregkh@linuxfoundation.org>,
- linux-modules@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <56BF12A8-F632-428B-ACC2-0847F95CB8E9@collabora.com>
-References: <20250218-module-params-v3-v7-0-5e1afabcac1b@kernel.org>
- <20250218-module-params-v3-v7-2-5e1afabcac1b@kernel.org>
-To: Andreas Hindborg <a.hindborg@kernel.org>
-X-Mailer: Apple Mail (2.3826.300.87.4.3)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+Content-Type: multipart/mixed; BOUNDARY="-1463811672-1664573096-1740151264=:14998"
+Content-ID: <e8109416-79ae-e910-da52-6d372102b395@ssi.bg>
+
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
+
+---1463811672-1664573096-1740151264=:14998
+Content-Type: text/plain; CHARSET=UTF-8
+Content-Transfer-Encoding: 8BIT
+Content-ID: <4fabcb62-9a35-763a-78d6-a694768e425f@ssi.bg>
 
 
+	Hello,
 
-> On 18 Feb 2025, at 10:00, Andreas Hindborg <a.hindborg@kernel.org> =
-wrote:
->=20
-> The `Index` implementation on `BStr` was lost when we switched `BStr` =
-from
-> a type alias of `[u8]` to a newtype. This patch adds back `Index` by
-> implementing `Index` for `BStr` when `Index` would be implemented for
-> `[u8]`.
->=20
-> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
-> ---
-> rust/kernel/str.rs | 11 +++++++++++
-> 1 file changed, 11 insertions(+)
->=20
-> diff --git a/rust/kernel/str.rs b/rust/kernel/str.rs
-> index 002dcddf7c768..ba6b1a5c4f99d 100644
-> --- a/rust/kernel/str.rs
-> +++ b/rust/kernel/str.rs
-> @@ -114,6 +114,17 @@ fn eq(&self, other: &Self) -> bool {
->     }
-> }
->=20
-> +impl<Idx> Index<Idx> for BStr
-> +where
-> +    [u8]: Index<Idx, Output =3D [u8]>,
-> +{
-> +    type Output =3D Self;
-> +
-> +    fn index(&self, index: Idx) -> &Self::Output {
-> +        BStr::from_bytes(&self.0[index])
-> +    }
-> +}
-> +
-> /// Creates a new [`BStr`] from a string literal.
-> ///
-> /// `b_str!` converts the supplied string literal to byte string, so =
-non-ASCII
->=20
-> --=20
-> 2.47.0
->=20
->=20
->=20
+On Fri, 21 Feb 2025, Nicolas Dichtel wrote:
 
-Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
+> Le 21/02/2025 à 02:36, Philo Lu a écrit :
+> > We found an issue when using bpf_redirect with ipvs NAT mode after
+> > commit ff70202b2d1a ("dev_forward_skb: do not scrub skb mark within
+> > the same name space"). Particularly, we use bpf_redirect to return
+> > the skb directly back to the netif it comes from, i.e., xnet is
+> > false in skb_scrub_packet(), and then ipvs_property is preserved
+> > and SNAT is skipped in the rx path.
+> > 
+> > ipvs_property has been already cleared when netns is changed in
+> > commit 2b5ec1a5f973 ("netfilter/ipvs: clear ipvs_property flag when
+> > SKB net namespace changed"). This patch just clears it in spite of
+> > netns.
+> > 
+> > Signed-off-by: Philo Lu <lulie@linux.alibaba.com>
+> > ---
+> > This is in fact a fix patch, and the issue was found after commit
+> > ff70202b2d1a ("dev_forward_skb: do not scrub skb mark within
+> > the same name space"). But I'm not sure if a "Fixes" tag should be
+> > added to that commit.
+> > ---
+> >  net/core/skbuff.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/net/core/skbuff.c b/net/core/skbuff.c
+> > index 7b03b64fdcb2..b1c81687e9d8 100644
+> > --- a/net/core/skbuff.c
+> > +++ b/net/core/skbuff.c
+> > @@ -6033,11 +6033,11 @@ void skb_scrub_packet(struct sk_buff *skb, bool xnet)
+> >  	skb->offload_fwd_mark = 0;
+> >  	skb->offload_l3_fwd_mark = 0;
+> >  #endif
+> > +	ipvs_reset(skb);
+> >  
+> >  	if (!xnet)
+> >  		return;
+> >  
+> > -	ipvs_reset(skb);
+> I don't know IPVS, but I wonder if this patch will not introduce a regression
+> for other users. skb_scrub_packet() is used by a lot of tunnels, it's not
+> specific to bpf_redirect().
+
+	Indeed, now we will start to clear the flag for tunnels
+and it can cause IPVS to attempt rerouting for UDP tunnels, i.e.
+once the packet is routed by IPVS to tunnel and second time later 
+after tunneling again when ip_local_out() is called and we see 
+ipvs_property=0 for the outer UDP header. Before such patch
+ipvs_property remains 1 and we do not try to balance the UDP
+traffic. So, for now, this patch may be can spend more cycles for
+the traffic via UDP tunnels but this looks like a rare IPVS setup,
+i.e. real servers reachable via UDP tunnels. Note that IPVS
+has own support for UDP tunnels where it is set as forwarding
+method + tunnel type GUE for the real server. It is not affected
+by this patch.
+
+Regards
+
+--
+Julian Anastasov <ja@ssi.bg>
+---1463811672-1664573096-1740151264=:14998--
 
 
