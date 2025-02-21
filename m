@@ -1,158 +1,378 @@
-Return-Path: <linux-kernel+bounces-525066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7429AA3EA62
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 02:51:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DAACA3EA63
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 02:54:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C9D817F544
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 01:51:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B295D18983A0
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 01:54:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9815F1D435F;
-	Fri, 21 Feb 2025 01:51:23 +0000 (UTC)
-Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 886741C5D76;
+	Fri, 21 Feb 2025 01:54:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OlvVn42H"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9057D70807;
-	Fri, 21 Feb 2025 01:51:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65B9C70807
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 01:54:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740102683; cv=none; b=u7nv40hOrijAn6ka8Dp0BT3aaG9LJVGoHaXcgsNUy+9F3DWIpZpUnAB2cfUxHNdlPPmRb9H5dveoQUnUkGoQ/lxVbYloeyNzNYKyVaDi05ZeT4ea1tcEEoxGgAiRm5hgYPYWoFl0K7t8hFBHlTvwiyvas4Puqg+4pnazyNXjCCw=
+	t=1740102850; cv=none; b=ZXjBVGaaEvM+BLQ8rbw5Pzmo/uSzRg5cNYLRHbuuluoJF4QzsK1fnrb2DRhaqG/if0i+yHbtVS5+/O/R7MG1gAKNkjGvET3uddWLtRnI7QntOEzo8eU5c9ICxRdjHeLZ89oaJ+ZqT1ZV27urru+DhVyxrGr/pbbbFKO/paD9898=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740102683; c=relaxed/simple;
-	bh=pofo1p1sPAJ5BwZKidB+v48Bp+eCZ+Zmh0S5C0spgVY=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fzxRtjhpYauJazi5NAWglM6fO0lMZNQMesdCh3Va2p7FvHH+Vkk12NfzKa7uMTbgkn/U8KA244TQdI4S2PUsowGuGOWRDYseuWtPdqkX8nNfaMQyDmPP8jNmwDi5HShNdXbzbO2rIkIsygkmQvtbJBU+4Y5qlXwmAorsl/+WCjQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.163])
-	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4YzY0R1gvXz1wn7R;
-	Fri, 21 Feb 2025 09:47:19 +0800 (CST)
-Received: from kwepemk500005.china.huawei.com (unknown [7.202.194.90])
-	by mail.maildlp.com (Postfix) with ESMTPS id A8D8B18001B;
-	Fri, 21 Feb 2025 09:51:16 +0800 (CST)
-Received: from localhost.localdomain (10.175.112.125) by
- kwepemk500005.china.huawei.com (7.202.194.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 21 Feb 2025 09:51:15 +0800
-From: Tong Tiangen <tongtiangen@huawei.com>
-To: David Hildenbrand <david@redhat.com>, Oleg Nesterov <oleg@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>, Peter Zijlstra
-	<peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de
- Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Mark Rutland
-	<mark.rutland@arm.com>, Alexander Shishkin
-	<alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, Peter Xu
-	<peterx@redhat.com>, Ian Rogers <irogers@google.com>, Adrian Hunter
-	<adrian.hunter@intel.com>, "Liang, Kan" <kan.liang@linux.intel.com>, Masami
- Hiramatsu <mhiramat@kernel.org>
-CC: <linux-perf-users@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-mm@kvack.org>, <linux-trace-kernel@vger.kernel.org>,
-	<bpf@vger.kernel.org>, Tong Tiangen <tongtiangen@huawei.com>,
-	<wangkefeng.wang@huawei.com>, Guohanjun <guohanjun@huawei.com>
-Subject: [PATCH -next v2] uprobes: fix two zero old_folio bugs in __replace_page()
-Date: Fri, 21 Feb 2025 09:50:56 +0800
-Message-ID: <20250221015056.1269344-1-tongtiangen@huawei.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1740102850; c=relaxed/simple;
+	bh=cduktGN+FoV1b3nhPms64jr9/RcR4RsI4VUHnLv1HTk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pHpzr4s+lVX3TWPmu881wtbxSCXDc/yc9ItNPIsRWnrU/GbmqiWRb1gv6reE+LyIuf3FHavEJyzOtBSGfr/04eFiJ99i4/XxhQPtpfDCvpHaDvDJj3LimlLa8P6RXKzzvyOrdfwWlDH3fRi3yJ9gIzeYfM071xbnWAKjb/EIE9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OlvVn42H; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740102847;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5OAFXYnALRZTyV+LNguXtTPvraFsCYlDyGOu4JUK444=;
+	b=OlvVn42HcbKIJRxdhZvZi8eSR8DCpRRlz+xTAHXwebmhDeA3DLUUwdmqSc/3OG6ITP25i5
+	gqSQRwq0/S34dSI+VH1RILgMZJoeDh+Q4SBvLJllYyV8rM/y6x033KyQjvOFJSGb+YoLpH
+	0qEFmhYL9E0B6Es0KLBwfF4V6Uj8AGU=
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
+ [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-495-zAc8WAGEMECrOj6CCEFL0g-1; Thu, 20 Feb 2025 20:54:05 -0500
+X-MC-Unique: zAc8WAGEMECrOj6CCEFL0g-1
+X-Mimecast-MFC-AGG-ID: zAc8WAGEMECrOj6CCEFL0g_1740102845
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-471ea7666c7so29963171cf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 17:54:05 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740102845; x=1740707645;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5OAFXYnALRZTyV+LNguXtTPvraFsCYlDyGOu4JUK444=;
+        b=LHNrdCznpPxgfUM8mdSR22YNmpx/SMYe/s9kbbwrH4gvOvMi1kKnVPeaIJVlo3hDUO
+         sFlWgmzl7Ls6l86p4Tb8WQ/mGbeCkdeEyRBYRMQumxFn9EfS/uLMA4dOzKMroqZYpdcl
+         7/lziWX2acVAewG5z4nbEfudKdSSHwSyQvUnPO3tBy9zBNMyKR6lb1ZZzh6nxN7LZXVt
+         1zNiwW56nvCFHrtq7jEwH/6nA+/xhnibmqxiUekqdrxj3s6TmpK6qpQ/2/7oKOQSPvSd
+         E3Wyy3bQvGBSezYXHqOvalWQpgskkwUL2ojZwEEEmQAK6UzDWi9I2oGtNAHjoI6l1iN+
+         Z7TA==
+X-Forwarded-Encrypted: i=1; AJvYcCURBXg2muuAFZJD/t13c17lP6U969WpCwKEc04wBY/zBOpzqRH2Nb1rHe/sy6saKVato+J5YPBfAQy1lc4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzvhxbp9abIvnXdA8yXjZESCqEQoe2slA79Zmp0NtTiI0iho2g+
+	61KtYgjfU9BA1k4iaWWXplRUthkozuncstihoeRgeD2aXgKt9WKqYgWW4RSL5gWsL9KF0Tl7vO8
+	ypA+P5aB9LwLtgxh1CAchb6MHExKjD1tnG/ngWtFucWACehAGeTSwtg2D8S0cJA==
+X-Gm-Gg: ASbGncvQ6pe/goFjop2iXlSQv+L1tXX/B8C2PYgasz34+6uQKTeCzU/LBiWXNeeLejH
+	9ReYWntqo2D2EcvOMZlDKVLI8ixdSzpe3LH021Mc2l9IeQ2CSrJw4k3BC015xTqf1RZN9AB/hb0
+	yB80IvWoAYB4+crtu8RD3bla0tcJ1dRLS8Zq8kuaoyeMx8HUcllBnWj1p7VrqUbLxgryNA1C3TZ
+	YnVZiP6BPUQdhcmjY30wtkFXQXVkG8W+CovYt7fI0upBeCPYUOwfzqTg74yERyWjeqkFQ==
+X-Received: by 2002:a05:622a:252:b0:472:d35:6004 with SMTP id d75a77b69052e-472249072afmr14859101cf.50.1740102845161;
+        Thu, 20 Feb 2025 17:54:05 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IE3boZYPdobPm9o/YjX/wkHkkiexeB/6RDhOZf6LJhMj2dbl+gb5I4Is59rlw9q5wOfgif13g==
+X-Received: by 2002:a05:622a:252:b0:472:d35:6004 with SMTP id d75a77b69052e-472249072afmr14858711cf.50.1740102844689;
+        Thu, 20 Feb 2025 17:54:04 -0800 (PST)
+Received: from x1.local ([2604:7a40:2041:2b00::1000])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-47201c9eecesm35363631cf.37.2025.02.20.17.54.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Feb 2025 17:54:04 -0800 (PST)
+Date: Thu, 20 Feb 2025 20:54:00 -0500
+From: Peter Xu <peterx@redhat.com>
+To: Barry Song <21cnbao@gmail.com>
+Cc: Suren Baghdasaryan <surenb@google.com>,
+	Lokesh Gidra <lokeshgidra@google.com>, linux-mm@kvack.org,
+	akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+	zhengtangquan@oppo.com, Barry Song <v-songbaohua@oppo.com>,
+	Andrea Arcangeli <aarcange@redhat.com>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Axel Rasmussen <axelrasmussen@google.com>,
+	Brian Geffon <bgeffon@google.com>,
+	Christian Brauner <brauner@kernel.org>,
+	David Hildenbrand <david@redhat.com>,
+	Hugh Dickins <hughd@google.com>, Jann Horn <jannh@google.com>,
+	Kalesh Singh <kaleshsingh@google.com>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Michal Hocko <mhocko@suse.com>, Mike Rapoport <rppt@kernel.org>,
+	Nicolas Geoffray <ngeoffray@google.com>,
+	Ryan Roberts <ryan.roberts@arm.com>, Shuah Khan <shuah@kernel.org>,
+	ZhangPeng <zhangpeng362@huawei.com>, Yu Zhao <yuzhao@google.com>
+Subject: Re: [PATCH RFC] mm: Fix kernel BUG when userfaultfd_move encounters
+ swapcache
+Message-ID: <Z7fcuMKYQUBj6Mnj@x1.local>
+References: <20250219112519.92853-1-21cnbao@gmail.com>
+ <CAJuCfpEWFz14R1vD4Rezy98WBk25HWWX+6DsGBekeYMugKTsfQ@mail.gmail.com>
+ <CAGsJ_4yx1=jaQmDG_9rMqHFFkoXqMJw941eYvtby28OqDq+S7g@mail.gmail.com>
+ <Z7ZX28XARM7seknO@x1.local>
+ <CAGsJ_4wptMn8HX6Uam7AQpWeE=nOUDHE-Vr81SQJq_oSjmTFHg@mail.gmail.com>
+ <Z7ez2Vl8Sa_bRb4e@x1.local>
+ <CAGsJ_4yb0AURkm4rP3ecgsPdnhfjg-hwJ8=RQjC1wcwwUdBH5g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemk500005.china.huawei.com (7.202.194.90)
+In-Reply-To: <CAGsJ_4yb0AURkm4rP3ecgsPdnhfjg-hwJ8=RQjC1wcwwUdBH5g@mail.gmail.com>
 
-We triggered the following error logs in syzkaller test:
+On Fri, Feb 21, 2025 at 02:36:27PM +1300, Barry Song wrote:
+> On Fri, Feb 21, 2025 at 11:59 AM Peter Xu <peterx@redhat.com> wrote:
+> >
+> > On Thu, Feb 20, 2025 at 12:04:40PM +1300, Barry Song wrote:
+> > > On Thu, Feb 20, 2025 at 11:15 AM Peter Xu <peterx@redhat.com> wrote:
+> > > >
+> > > > On Thu, Feb 20, 2025 at 09:37:50AM +1300, Barry Song wrote:
+> > > > > On Thu, Feb 20, 2025 at 7:27 AM Suren Baghdasaryan <surenb@google.com> wrote:
+> > > > > >
+> > > > > > On Wed, Feb 19, 2025 at 3:25 AM Barry Song <21cnbao@gmail.com> wrote:
+> > > > > > >
+> > > > > > > From: Barry Song <v-songbaohua@oppo.com>
+> > > > > > >
+> > > > > > > userfaultfd_move() checks whether the PTE entry is present or a
+> > > > > > > swap entry.
+> > > > > > >
+> > > > > > > - If the PTE entry is present, move_present_pte() handles folio
+> > > > > > >   migration by setting:
+> > > > > > >
+> > > > > > >   src_folio->index = linear_page_index(dst_vma, dst_addr);
+> > > > > > >
+> > > > > > > - If the PTE entry is a swap entry, move_swap_pte() simply copies
+> > > > > > >   the PTE to the new dst_addr.
+> > > > > > >
+> > > > > > > This approach is incorrect because even if the PTE is a swap
+> > > > > > > entry, it can still reference a folio that remains in the swap
+> > > > > > > cache.
+> > > > > > >
+> > > > > > > If do_swap_page() is triggered, it may locate the folio in the
+> > > > > > > swap cache. However, during add_rmap operations, a kernel panic
+> > > > > > > can occur due to:
+> > > > > > >  page_pgoff(folio, page) != linear_page_index(vma, address)
+> > > > > >
+> > > > > > Thanks for the report and reproducer!
+> > > > > >
+> > > > > > >
+> > > > > > > $./a.out > /dev/null
+> > > > > > > [   13.336953] page: refcount:6 mapcount:1 mapping:00000000f43db19c index:0xffffaf150 pfn:0x4667c
+> > > > > > > [   13.337520] head: order:2 mapcount:1 entire_mapcount:0 nr_pages_mapped:1 pincount:0
+> > > > > > > [   13.337716] memcg:ffff00000405f000
+> > > > > > > [   13.337849] anon flags: 0x3fffc0000020459(locked|uptodate|dirty|owner_priv_1|head|swapbacked|node=0|zone=0|lastcpupid=0xffff)
+> > > > > > > [   13.338630] raw: 03fffc0000020459 ffff80008507b538 ffff80008507b538 ffff000006260361
+> > > > > > > [   13.338831] raw: 0000000ffffaf150 0000000000004000 0000000600000000 ffff00000405f000
+> > > > > > > [   13.339031] head: 03fffc0000020459 ffff80008507b538 ffff80008507b538 ffff000006260361
+> > > > > > > [   13.339204] head: 0000000ffffaf150 0000000000004000 0000000600000000 ffff00000405f000
+> > > > > > > [   13.339375] head: 03fffc0000000202 fffffdffc0199f01 ffffffff00000000 0000000000000001
+> > > > > > > [   13.339546] head: 0000000000000004 0000000000000000 00000000ffffffff 0000000000000000
+> > > > > > > [   13.339736] page dumped because: VM_BUG_ON_PAGE(page_pgoff(folio, page) != linear_page_index(vma, address))
+> > > > > > > [   13.340190] ------------[ cut here ]------------
+> > > > > > > [   13.340316] kernel BUG at mm/rmap.c:1380!
+> > > > > > > [   13.340683] Internal error: Oops - BUG: 00000000f2000800 [#1] PREEMPT SMP
+> > > > > > > [   13.340969] Modules linked in:
+> > > > > > > [   13.341257] CPU: 1 UID: 0 PID: 107 Comm: a.out Not tainted 6.14.0-rc3-gcf42737e247a-dirty #299
+> > > > > > > [   13.341470] Hardware name: linux,dummy-virt (DT)
+> > > > > > > [   13.341671] pstate: 60000005 (nZCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> > > > > > > [   13.341815] pc : __page_check_anon_rmap+0xa0/0xb0
+> > > > > > > [   13.341920] lr : __page_check_anon_rmap+0xa0/0xb0
+> > > > > > > [   13.342018] sp : ffff80008752bb20
+> > > > > > > [   13.342093] x29: ffff80008752bb20 x28: fffffdffc0199f00 x27: 0000000000000001
+> > > > > > > [   13.342404] x26: 0000000000000000 x25: 0000000000000001 x24: 0000000000000001
+> > > > > > > [   13.342575] x23: 0000ffffaf0d0000 x22: 0000ffffaf0d0000 x21: fffffdffc0199f00
+> > > > > > > [   13.342731] x20: fffffdffc0199f00 x19: ffff000006210700 x18: 00000000ffffffff
+> > > > > > > [   13.342881] x17: 6c203d2120296567 x16: 6170202c6f696c6f x15: 662866666f67705f
+> > > > > > > [   13.343033] x14: 6567617028454741 x13: 2929737365726464 x12: ffff800083728ab0
+> > > > > > > [   13.343183] x11: ffff800082996bf8 x10: 0000000000000fd7 x9 : ffff80008011bc40
+> > > > > > > [   13.343351] x8 : 0000000000017fe8 x7 : 00000000fffff000 x6 : ffff8000829eebf8
+> > > > > > > [   13.343498] x5 : c0000000fffff000 x4 : 0000000000000000 x3 : 0000000000000000
+> > > > > > > [   13.343645] x2 : 0000000000000000 x1 : ffff0000062db980 x0 : 000000000000005f
+> > > > > > > [   13.343876] Call trace:
+> > > > > > > [   13.344045]  __page_check_anon_rmap+0xa0/0xb0 (P)
+> > > > > > > [   13.344234]  folio_add_anon_rmap_ptes+0x22c/0x320
+> > > > > > > [   13.344333]  do_swap_page+0x1060/0x1400
+> > > > > > > [   13.344417]  __handle_mm_fault+0x61c/0xbc8
+> > > > > > > [   13.344504]  handle_mm_fault+0xd8/0x2e8
+> > > > > > > [   13.344586]  do_page_fault+0x20c/0x770
+> > > > > > > [   13.344673]  do_translation_fault+0xb4/0xf0
+> > > > > > > [   13.344759]  do_mem_abort+0x48/0xa0
+> > > > > > > [   13.344842]  el0_da+0x58/0x130
+> > > > > > > [   13.344914]  el0t_64_sync_handler+0xc4/0x138
+> > > > > > > [   13.345002]  el0t_64_sync+0x1ac/0x1b0
+> > > > > > > [   13.345208] Code: aa1503e0 f000f801 910f6021 97ff5779 (d4210000)
+> > > > > > > [   13.345504] ---[ end trace 0000000000000000 ]---
+> > > > > > > [   13.345715] note: a.out[107] exited with irqs disabled
+> > > > > > > [   13.345954] note: a.out[107] exited with preempt_count 2
+> > > > > > >
+> > > > > > > Fully fixing it would be quite complex, requiring similar handling
+> > > > > > > of folios as done in move_present_pte.
+> > > > > >
+> > > > > > How complex would that be? Is it a matter of adding
+> > > > > > folio_maybe_dma_pinned() checks, doing folio_move_anon_rmap() and
+> > > > > > folio->index = linear_page_index like in move_present_pte() or
+> > > > > > something more?
+> > > > >
+> > > > > My main concern is still with large folios that require a split_folio()
+> > > > > during move_pages(), as the entire folio shares the same index and
+> > > > > anon_vma. However, userfaultfd_move() moves pages individually,
+> > > > > making a split necessary.
+> > > > >
+> > > > > However, in split_huge_page_to_list_to_order(), there is a:
+> > > > >
+> > > > >         if (folio_test_writeback(folio))
+> > > > >                 return -EBUSY;
+> > > > >
+> > > > > This is likely true for swapcache, right? However, even for move_present_pte(),
+> > > > > it simply returns -EBUSY:
+> > > > >
+> > > > > move_pages_pte()
+> > > > > {
+> > > > >                 /* at this point we have src_folio locked */
+> > > > >                 if (folio_test_large(src_folio)) {
+> > > > >                         /* split_folio() can block */
+> > > > >                         pte_unmap(&orig_src_pte);
+> > > > >                         pte_unmap(&orig_dst_pte);
+> > > > >                         src_pte = dst_pte = NULL;
+> > > > >                         err = split_folio(src_folio);
+> > > > >                         if (err)
+> > > > >                                 goto out;
+> > > > >
+> > > > >                         /* have to reacquire the folio after it got split */
+> > > > >                         folio_unlock(src_folio);
+> > > > >                         folio_put(src_folio);
+> > > > >                         src_folio = NULL;
+> > > > >                         goto retry;
+> > > > >                 }
+> > > > > }
+> > > > >
+> > > > > Do we need a folio_wait_writeback() before calling split_folio()?
+> > > >
+> > > > Maybe no need in the first version to fix the immediate bug?
+> > > >
+> > > > It's also not always the case to hit writeback here. IIUC, writeback only
+> > > > happens for a short window when the folio was just added into swapcache.
+> > > > MOVE can happen much later after that anytime before a swapin.  My
+> > > > understanding is that's also what Matthew wanted to point out.  It may be
+> > > > better justified of that in a separate change with some performance
+> > > > measurements.
+> > >
+> > > The bug we’re discussing occurs precisely within the short window you
+> > > mentioned.
+> > >
+> > > 1. add_to_swap: The folio is added to swapcache.
+> > > 2. try_to_unmap: PTEs are converted to swap entries.
+> > > 3. pageout
+> > > 4. Swapcache is cleared.
+> >
+> > Hmm, I see. I was expecting step 4 to be "writeback is cleared".. or at
+> > least that should be step 3.5, as IIUC "writeback" needs to be cleared
+> > before "swapcache" bit being cleared.
+> >
+> > >
+> > > The issue happens between steps 2 and 4, where the PTE is not present, but
+> > > the folio is still in swapcache - the current code does move_swap_pte() but does
+> > > not fixup folio->index within swapcache.
+> >
+> > One thing I'm still not clear here is why it's a race condition, rather
+> > than more severe than that.  I mean, folio->index is definitely wrong, then
+> > as long as the page still in swapcache, we should be able to move the swp
+> > entry over to dest addr of UFFDIO_MOVE, read on dest addr, then it'll see
+> > the page in swapcache with the wrong folio->index already and trigger.
+> >
+> > I wrote a quick test like that, it actually won't trigger..
+> >
+> > I had a closer look in the code, I think it's because do_swap_page() has
+> > the logic to detect folio->index matching first, and allocate a new folio
+> > if it doesn't match in ksm_might_need_to_copy().  IIUC that was for
+> > ksm.. but it looks like it's functioning too here.
+> >
+> > ksm_might_need_to_copy:
+> >         if (folio_test_ksm(folio)) {
+> >                 if (folio_stable_node(folio) &&
+> >                     !(ksm_run & KSM_RUN_UNMERGE))
+> >                         return folio;   /* no need to copy it */
+> >         } else if (!anon_vma) {
+> >                 return folio;           /* no need to copy it */
+> >         } else if (folio->index == linear_page_index(vma, addr) && <---------- [1]
+> >                         anon_vma->root == vma->anon_vma->root) {
+> >                 return folio;           /* still no need to copy it */
+> >         }
+> >         ...
+> >
+> >         new_folio = vma_alloc_folio(GFP_HIGHUSER_MOVABLE, 0, vma, addr); <---- [2]
+> >         ...
+> >
+> > So I believe what I hit is at [1] it sees index doesn't match, then it
+> > decided to allocate a new folio.  In this case, it won't hit your BUG
+> > because it'll be "folio != swapcache" later, so it'll setup the
+> > folio->index for the new one, rather than the sanity check.
+> 
+> You're absolutely right.  The problem goes beyond just crashes; we're
+> also dealing with CoW when KSM is enabled. As long as we disable
+> KSM(which is true for Android), or when we are dealing with a large folio,
+> ksm_might_need_to_copy() will not allocate a new copy:
 
-  BUG: Bad page state in process syz.7.38  pfn:1eff3
-  page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x1eff3
-  flags: 0x3fffff00004004(referenced|reserved|node=0|zone=1|lastcpupid=0x1fffff)
-  raw: 003fffff00004004 ffffe6c6c07bfcc8 ffffe6c6c07bfcc8 0000000000000000
-  raw: 0000000000000000 0000000000000000 00000000fffffffe 0000000000000000
-  page dumped because: PAGE_FLAGS_CHECK_AT_FREE flag(s) set
-  Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.13.0-1ubuntu1.1 04/01/2014
-  Call Trace:
-   <TASK>
-   dump_stack_lvl+0x32/0x50
-   bad_page+0x69/0xf0
-   free_unref_page_prepare+0x401/0x500
-   free_unref_page+0x6d/0x1b0
-   uprobe_write_opcode+0x460/0x8e0
-   install_breakpoint.part.0+0x51/0x80
-   register_for_each_vma+0x1d9/0x2b0
-   __uprobe_register+0x245/0x300
-   bpf_uprobe_multi_link_attach+0x29b/0x4f0
-   link_create+0x1e2/0x280
-   __sys_bpf+0x75f/0xac0
-   __x64_sys_bpf+0x1a/0x30
-   do_syscall_64+0x56/0x100
-   entry_SYSCALL_64_after_hwframe+0x78/0xe2
+Ah!  That explains it..
 
-   BUG: Bad rss-counter state mm:00000000452453e0 type:MM_FILEPAGES val:-1
+> 
+> struct folio *ksm_might_need_to_copy(struct folio *folio,
+>                         struct vm_area_struct *vma, unsigned long addr)
+> {
+> 
+>         struct page *page = folio_page(folio, 0);
+>         struct anon_vma *anon_vma = folio_anon_vma(folio);
+>         struct folio *new_folio;
+> 
+>         if (folio_test_large(folio))
+>                 return folio;
+>          ....
+> }
+> 
+> Thanks for your great findings! For the KSM-enabled and small folio case,
+> it's pretty funny how UFFDIO_MOVE finally turns into a new allocation and
+> copy— somehow automatically falling back to "UFFDIO_COPY" :-)
+> It's amusing, but debugging it is fun.
+> 
+> I'll add your findings to the changelog when I formally send v2, after gathering
+> all the code refinement suggestions and implementing the improvements.
 
-The following syzkaller test case can be used to reproduce:
+Thanks, that'll be helpful.
 
-  r2 = creat(&(0x7f0000000000)='./file0\x00', 0x8)
-  write$nbd(r2, &(0x7f0000000580)=ANY=[], 0x10)
-  r4 = openat(0xffffffffffffff9c, &(0x7f0000000040)='./file0\x00', 0x42, 0x0)
-  mmap$IORING_OFF_SQ_RING(&(0x7f0000ffd000/0x3000)=nil, 0x3000, 0x0, 0x12, r4, 0x0)
-  r5 = userfaultfd(0x80801)
-  ioctl$UFFDIO_API(r5, 0xc018aa3f, &(0x7f0000000040)={0xaa, 0x20})
-  r6 = userfaultfd(0x80801)
-  ioctl$UFFDIO_API(r6, 0xc018aa3f, &(0x7f0000000140))
-  ioctl$UFFDIO_REGISTER(r6, 0xc020aa00, &(0x7f0000000100)={{&(0x7f0000ffc000/0x4000)=nil, 0x4000}, 0x2})
-  ioctl$UFFDIO_ZEROPAGE(r5, 0xc020aa04, &(0x7f0000000000)={{&(0x7f0000ffd000/0x1000)=nil, 0x1000}})
-  r7 = bpf$PROG_LOAD(0x5, &(0x7f0000000140)={0x2, 0x3, &(0x7f0000000200)=ANY=[@ANYBLOB="1800000000120000000000000000000095"], &(0x7f0000000000)='GPL\x00', 0x7, 0x0, 0x0, 0x0, 0x0, '\x00', 0x0, @fallback=0x30, 0xffffffffffffffff, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x10, 0x0, @void, @value}, 0x94)
-  bpf$BPF_LINK_CREATE_XDP(0x1c, &(0x7f0000000040)={r7, 0x0, 0x30, 0x1e, @val=@uprobe_multi={&(0x7f0000000080)='./file0\x00', &(0x7f0000000100)=[0x2], 0x0, 0x0, 0x1}}, 0x40)
+I wanted to try with !KSM build but it's pretty late today (and it's
+company-wise PTO tomorrow..).  Just in case useful, this is the reproducer
+I mentioned that didn't yet trigger when with KSM:
 
-The cause is that zero pfn is set to the pte without increasing the rss
-count in mfill_atomic_pte_zeropage() and the refcount of zero folio does
-not increase accordingly. Then, the operation on the same pfn is performed
-in uprobe_write_opcode()->__replace_page() to unconditional decrease the
-rss count and old_folio's refcount.
+https://github.com/xzpeter/clibs/blob/master/uffd-test/uffd-move-bug.c
 
-Therefore, two bugs are introduced:
-1. The rss count is incorrect, when process exit, the check_mm() report
-   error "Bad rss-count".
-2. The reserved folio (zero folio) is freed when folio->refcount is zero,
-   then free_pages_prepare->free_page_is_bad() report error
-   "Bad page state".
+I'm not sure whether it'll also reproduce there, but there's chance it is a
+simpler reproducer.
 
-Considering that uprobe hit the zero folio is a very rare scene, just
-reject zero old folio immediately after get_user_page_vma_remote().
+> 
+> >
+> > Do you know how your case got triggered, being able to bypass the above [1]
+> > which should check folio->index already?
+> >
+> > >
+> > > My point is that if we want a proper fix for mTHP, we'd better handle writeback.
+> > > Otherwise, this isn’t much different from directly returning -EBUSY as proposed
+> > > in this RFC.
+> > >
+> > > For small folios, there’s no split_folio issue, making it relatively
+> > > simpler. Lokesh
+> > > mentioned plans to madvise NOHUGEPAGE in ART, so fixing small folios is likely
+> > > the first priority.
+> >
+> > Agreed.
+> >
+> > --
+> > Peter Xu
+> >
+> 
+> Thanks
+> Barry
+> 
 
-Fixes: 7396fa818d62 ("uprobes/core: Make background page replacement logic account for rss_stat counters")
-Fixes: 2b1444983508 ("uprobes, mm, x86: Add the ability to install and remove uprobes breakpoints")
-Signed-off-by: Tong Tiangen <tongtiangen@huawei.com>
-Reviewed-by: David Hildenbrand <david@redhat.com>
-Reviewed-by: Oleg Nesterov <oleg@redhat.com>
----
-v2: Modified according to the comments of David and Oleg. 
----
- kernel/events/uprobes.c | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-index 46ddf3a2334d..daa46868faf3 100644
---- a/kernel/events/uprobes.c
-+++ b/kernel/events/uprobes.c
-@@ -506,6 +506,11 @@ int uprobe_write_opcode(struct arch_uprobe *auprobe, struct mm_struct *mm,
- 	if (ret <= 0)
- 		goto put_old;
- 
-+	if (is_zero_page(old_page)) {
-+		ret = -EINVAL;
-+		goto put_old;
-+	}
-+
- 	if (WARN(!is_register && PageCompound(old_page),
- 		 "uprobe unregister should never work on compound page\n")) {
- 		ret = -EINVAL;
 -- 
-2.25.1
+Peter Xu
 
 
