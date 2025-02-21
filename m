@@ -1,127 +1,140 @@
-Return-Path: <linux-kernel+bounces-526052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 110B5A3F94E
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:46:23 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4266A3F946
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:45:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 960BF188CC3D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 15:43:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F31AA16475E
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 15:44:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A17961DF751;
-	Fri, 21 Feb 2025 15:43:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F5871DFD83;
+	Fri, 21 Feb 2025 15:44:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jn/Dd6oF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L3xfLFHa"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 077241D6DB9;
-	Fri, 21 Feb 2025 15:43:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D20291D88A6;
+	Fri, 21 Feb 2025 15:44:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740152584; cv=none; b=c92k8a6UTdF5THsB2O1ynIu2rnl9bg6/t09tV4WJdKHrb3Afk6F/QFOzfmLLPdUAE401gt6ccFKJkldmQ1l+MnQlx+qYBZKN1u/9Qdsrv1CCA0Gkqc3XhyXBYFLdXJEdPqAFL5nqAOgfunFMfXVPJdpjP777R94o5UbobptZ8Iw=
+	t=1740152651; cv=none; b=U8zzr5WU66BVS8Z+/o5D4eV3IGbgBRxHWiuHSRhNzAD/s/rOy3eWE47iZJsiCRoN1d1QYiF0R3tQDP92JdVcq9h8mdWvhWspt9+9u6vTYGV6l2T4xWYIBiZ8fT2wGeulmy/vVuiMR5bslxLECJTkgwDHWTQy+CAtCPd3jD3LEeE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740152584; c=relaxed/simple;
-	bh=7xi8uvF/5YUSk7sp6b7nIulrDXB9vRthhzIK/7gO8FU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mlWBBXTCz4iE5tBD0Bcy9kU6jwUq1QFTo4kM7XmdoTPmfksB2Ug+4aIeqSQ29pLtRS3msU5Aip1+AkimOEW+MGWHDn2w4k8aC5VO0ObGLYu2jHTWAU7HO14YFchaB0erA/h5Jhxoe5RaHTRuyChhTZdDh6Jr6Aij/+sCOBlhRQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jn/Dd6oF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E479AC4CED6;
-	Fri, 21 Feb 2025 15:43:01 +0000 (UTC)
+	s=arc-20240116; t=1740152651; c=relaxed/simple;
+	bh=5xIZs9W549Xl8TwcsXMDbVpU7kZ56K33008AxiD5hAk=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=rkCZXOJB3pcgFDqJpcQTbqv2qYEQpzswraqrnP3LYRql7mdhW5FUWzIgVrmIt2HNNgKc0VErULX4qlMIHIgmPQnN415wPdNM3G+i5eh8380AVGjBHxdBS6fy7yKVivfLFICyWpOZiIX0N9pDbApspuomL5dOGymCSn5AUn9LGF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L3xfLFHa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 366D8C4CEE2;
+	Fri, 21 Feb 2025 15:44:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740152583;
-	bh=7xi8uvF/5YUSk7sp6b7nIulrDXB9vRthhzIK/7gO8FU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Jn/Dd6oFEOaOJ5aGccbZTMfv5ZJZogO59bArTHkcRRKFIu2guukvJpxvYGlhtziVm
-	 PFVg4P+o9giv/21a9OFpoyYLmpyu2ku8NXIO1ZpVNSJcvPkGLLjwmT2dkSG2wjkufM
-	 8KXa7QpqTKEZXAh+OBXi3F6IaSqPnzQF77oh4ygWQvSd8KvAabEUt3L/7k/W/VTzs4
-	 HFfdZSSfadFpgpsag8Cww6I8n44QvzgTeM69E/aBU1ENhnyAwB+c32TFyEy4h5ueHl
-	 Nrk/fkFfsesf24LQ6KQx3Nla7zQL69wtbZYeHv2FJWSuc1mXm5T0YsLjXnxvSBXBqj
-	 0j/ADcH8JUm1Q==
-Date: Fri, 21 Feb 2025 16:42:51 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>, linux-efi@vger.kernel.org,
-	linux-kernel@vger.kernel.org, x86@kernel.org, hdegoede@redhat.com
-Subject: Re: [PATCH v2 0/7] x86/efi/mixed: Decouple from legacy decompressor
-Message-ID: <Z7ie-zG0cJFX0MOz@gmail.com>
-References: <20250210174941.3251435-9-ardb+git@google.com>
- <CAMj1kXHOqMM5uGxLTYuEf9KrxY5WzYvwo847JzoB-Qa2SN67Sg@mail.gmail.com>
+	s=k20201202; t=1740152650;
+	bh=5xIZs9W549Xl8TwcsXMDbVpU7kZ56K33008AxiD5hAk=;
+	h=From:Subject:Date:To:Cc:From;
+	b=L3xfLFHaTXNPRSgBEBEB7wDZXFIxpLfqHQG6E52G7wanftxnUhcfB4cqyJ5tBifAD
+	 yD+T3SErGxaa3VzeBZwqxrbwuwfwiww9i/sRwDPsFzrr9+/hmWQ1UBLsmSDvPhsWEC
+	 7DXDqQBz23Gbn3prceUaEHKsY8Ag/gu/6WeC++ZgIMnL5qd3nbPX2EZwZkr8LyoP3s
+	 qvmBxjwp8yDMozvF3D1a02OFRxlBB21U5zAIQIhNDqqCTi51UfLp3cNVexs94TCwoE
+	 PZJikR1C4HaTOKaa66ws1Ik3DLeSMXL+kR34G3KQbrxplLZPNdVVv+Z9I+JBqy5D9/
+	 nX6HdjkAYT3oQ==
+From: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
+Subject: [PATCH net-next 00/10] mptcp: pm: misc cleanups, part 3
+Date: Fri, 21 Feb 2025 16:43:53 +0100
+Message-Id: <20250221-net-next-mptcp-pm-misc-cleanup-3-v1-0-2b70ab1cee79@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMj1kXHOqMM5uGxLTYuEf9KrxY5WzYvwo847JzoB-Qa2SN67Sg@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADmfuGcC/zWNQQqDMBBFryKz7oCJRLFXERdhOtUBkw5JFEG8e
+ 0Ohi7d4i/f/BZmTcIZnc0HiQ7J8YhXzaIBWHxdGeVUH21rXWmswcqmcBYMWUtSAQTIhbezjrti
+ hMzxSP/jR+R7qjCZ+y/m7mOBfw3zfX5CZzTx8AAAA
+X-Change-ID: 20250221-net-next-mptcp-pm-misc-cleanup-3-51e9c67a95a6
+To: mptcp@lists.linux.dev, Mat Martineau <martineau@kernel.org>, 
+ Geliang Tang <geliang@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ "Matthieu Baerts (NGI0)" <matttbe@kernel.org>, 
+ Geliang Tang <geliang@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2226; i=matttbe@kernel.org;
+ h=from:subject:message-id; bh=5xIZs9W549Xl8TwcsXMDbVpU7kZ56K33008AxiD5hAk=;
+ b=owEBbQKS/ZANAwAIAfa3gk9CaaBzAcsmYgBnuJ9HhkFtcSdI0pq/r71f3+yfnMsMTWMaANsVn
+ pw5f989CIaJAjMEAAEIAB0WIQToy4X3aHcFem4n93r2t4JPQmmgcwUCZ7ifRwAKCRD2t4JPQmmg
+ c47LD/wJvbAHFVUh74E/WMql26dDfM539dzX27+2+Deoj5pLLuRW7bxzUFZa+U4hvUP04f6OnTE
+ fL5W5u2OyDn2oSZuu84Gn4TlxmtP88+W+o6XGc8Eoh60RtdocahunuVkrw7zsICBY/6nC5VY52A
+ lBh/YSAOHmf8xfNoezYy9+eWKEKuFyrMxcaQh0I2qIUYrWooaJc/mwjy5IIH7TxBpYdacNBZ6sz
+ PLpB6/1PUokyL161xf8d1uTFfVK5LtnKszyxKBIrmnrwHsFUHy9gRFvNeArkueIkPmbXR72bT89
+ 3fFOg0N8OskzfZ//mja016HZ2hqoEPa4pFHB6eQ3GTUkh6MhhZRdAOKWcj5L6w8tTJuvRWwgMEL
+ utVBk2o1yzUB9Q9FZxbJgglz3Q5TgE8+EsV0zV4M04VOK/zlMgw5B+V9KC5bKh015vuaq1yJr7k
+ GH2JX5kjMsSC4/YIc2CIjwXsCIW1lH5sMd2BFA6SKUqjbM1H4skhFAVr3t9ALWPYK8gUsNPNZBj
+ 9UPBTD6JV74PxqWk8qJMo+PAyVp5ntL2YDEA1vHR/WBj3XRA0MdLAG/uf9MyAjZnjauqSjCEcF0
+ XvZ7VzdRYLaFbhjDzoXmU49CIoZgxRhDGName8IWWJU5qd0JBYsa2Zyk5M78/xnVV/6Dt9taZab
+ CxLgBqLeaxxYmXg==
+X-Developer-Key: i=matttbe@kernel.org; a=openpgp;
+ fpr=E8CB85F76877057A6E27F77AF6B7824F4269A073
 
+These cleanups lead the way to the unification of the path-manager
+interfaces, and allow future extensions. The following patches are not
+all linked to each others, but are all related to the path-managers,
+except the last three.
 
-* Ard Biesheuvel <ardb@kernel.org> wrote:
+- Patch 1: remove unused returned value in mptcp_nl_set_flags().
 
-> On Mon, 10 Feb 2025 at 18:50, Ard Biesheuvel <ardb+git@google.com> wrote:
-> >
-> > From: Ard Biesheuvel <ardb@kernel.org>
-> >
-> > Since commit
-> >
-> >   a1b87d54f4e4 ("x86/efistub: Avoid legacy decompressor when doing EFI boot")
-> >
-> > booting via the EFI stub no longer relies on the legacy decompressor,
-> > and instead, the kernel proper is decompressed by code executing in the
-> > context of the EFI boot services, and subsequently invoked directly.
-> >
-> > The only remaining dependency is the EFI mixed mode startup code, which
-> > makes a detour via the legacy decompressor's 32-bit entrypoint, in order
-> > to obtain a 1:1 mapping of memory, which is a prerequisite for 64-bit
-> > execution on x86.
-> >
-> > This detour requires some fiddly setup on the part of the mixed mode
-> > startup code, which has to stash the firmware stack pointer and boot
-> > arguments in memory, and create a fake struct boot_params to trick the
-> > code in startup_32 to behave as intended.
-> >
-> > This dependency also impedes reuse of the EFI stub code in other
-> > contexts, such as generic EFI zboot, which will reuse the EFI stub but
-> > not the legacy decompressor.
-> >
-> > So remove this dependency, by replacing this detour with a minimal
-> > reimplementation of the 1:1 mapping code. With some further cleanup
-> > applied on top, the line count drops substantially, but without loss of
-> > functionality. The resulting code can operate independently from the
-> > legacy decompressor, and is therefore moved out of arch/x86/boot/ and
-> > into the EFI libstub/ directory.
-> >
-> > Changes since v1 [0]:
-> > - Create new long mode GDT that extends the firmware's 32-bit only GDT
-> >   so that preserving/restoring data segment selectors or swapping out
-> >   GDTs and IDTs is no longer needed at all.
-> > - Rebase onto v6.14-rc1
-> >
-> > [0] https://lore.kernel.org/all/20250108182218.1453754-8-ardb+git@google.com/
-> >
-> > Ard Biesheuvel (7):
-> >   x86/efistub: Merge PE and handover entrypoints
-> >   x86/efi/mixed: Check CPU compatibility without relying on verify_cpu()
-> >   x86/efi/mixed: Factor out and clean up long mode entry
-> >   x86/efi/mixed: Set up 1:1 mapping of lower 4GiB in the stub
-> >   x86/efi/mixed: Remove dependency on legacy startup_32 code
-> >   x86/efi/mixed: Simplify and document thunking logic
-> >   x86/efi/mixed: Move mixed mode startup code into libstub
-> >
-> 
-> Unless anyone minds, I'd like to queue this up in the EFI tree.
-> 
-> Boris, Ingo?
+- Patch 2: new flag: avoid iterating over all connections if not needed.
 
-Sure!
+- Patch 3: add a build check making sure there is enough space in cb-ctx.
 
-Acked-by: Ingo Molnar <mingo@kernel.org>
+- Patch 4: new mptcp_pm_genl_fill_addr helper to reduce duplicated code.
 
-Thanks,
+- Patch 5: simplify userspace_pm_append_new_local_addr helper.
 
-	Ingo
+- Patch 6: drop unneeded inet6_sk().
+
+- Patch 7: use ipv6_addr_equal() instead of !ipv6_addr_cmp()
+
+- Patch 8: scheduler: split an interface in two.
+
+- Patch 9: scheduler: save 64 bytes of currently unused data.
+
+- Patch 10: small optimisation to exit early in case of retransmissions.
+
+Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
+---
+Geliang Tang (6):
+      mptcp: pm: add a build check for userspace_pm_dump_addr
+      mptcp: pm: add mptcp_pm_genl_fill_addr helper
+      mptcp: pm: drop match in userspace_pm_append_new_local_addr
+      mptcp: pm: drop inet6_sk after inet_sk
+      mptcp: pm: use ipv6_addr_equal in addresses_equal
+      mptcp: sched: split get_subflow interface into two
+
+Matthieu Baerts (NGI0) (4):
+      mptcp: pm: remove unused ret value to set flags
+      mptcp: pm: change to fullmesh only for 'subflow'
+      mptcp: sched: reduce size for unused data
+      mptcp: blackhole: avoid checking the state twice
+
+ include/net/mptcp.h      |  5 +++--
+ net/mptcp/ctrl.c         | 32 ++++++++++++++++++--------------
+ net/mptcp/pm.c           | 21 +++++++++++++++++++++
+ net/mptcp/pm_netlink.c   | 46 ++++++++++++++++------------------------------
+ net/mptcp/pm_userspace.c | 29 +++++++----------------------
+ net/mptcp/protocol.h     |  3 +++
+ net/mptcp/sched.c        | 39 ++++++++++++++++++++++++++-------------
+ 7 files changed, 94 insertions(+), 81 deletions(-)
+---
+base-commit: bb3bb6c92e5719c0f5d7adb9d34db7e76705ac33
+change-id: 20250221-net-next-mptcp-pm-misc-cleanup-3-51e9c67a95a6
+
+Best regards,
+-- 
+Matthieu Baerts (NGI0) <matttbe@kernel.org>
+
 
