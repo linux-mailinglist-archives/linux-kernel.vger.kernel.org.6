@@ -1,192 +1,393 @@
-Return-Path: <linux-kernel+bounces-526199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C25FEA3FB9A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:40:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BC56EA3FBBD
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:44:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15B748613B5
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:30:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6061586655F
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:30:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A7E51F3BBC;
-	Fri, 21 Feb 2025 16:30:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 054891FF7D3;
+	Fri, 21 Feb 2025 16:30:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IBrZU0d8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="b0Pj91FN"
+Received: from mail-oa1-f52.google.com (mail-oa1-f52.google.com [209.85.160.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 855E41F2388;
-	Fri, 21 Feb 2025 16:30:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 772591F1506
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 16:30:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740155435; cv=none; b=kO7Cjb9MfuXDufZserkme9169TueP9AMXh7IlIzFBt2pjk3WDfSO9iLdlKkuYA5s0FBupADiqDvnzTvtq6Z0tq5WfEHEzpUR4qnrH9On521zlSQgEsxoj/SRrThFmQuBV+Iwh0H1Z/hgpLguQcDa8Mw1H3sa+kJ0JuKnwDl3QbI=
+	t=1740155438; cv=none; b=B54wTb5kVeHnL3RKd3omD+2UnqC3xmHV0bVm+nNsjG0uMqjtTtuqim0e9pZenXh9yeJUUSQrYe3gtcNHuwBaFjvITfY26O5yUFQYKw8wYEEsYXtEu4VDCGQ5siZ2TdSSGrbfGVsVjB6rKhMTALMURx801D0UxMuv5o+aEPbP7KA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740155435; c=relaxed/simple;
-	bh=peJoIjn/lcRBU6pV4UiXQxxm+ZfErwKhGJ/8tg/aPdU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bVYRmXHXQWFvS8uumS4Ig4Em7qRR7ne+vRlHzX5ptcvafM4Sp89HafDdFWPmKXQeAYjkvkN/I8sPKhcPOKlojxtniGIBN14szAOP4jkI8uED0z93AapM9qn7Yy0Fp6jvop9nXRadM6nKzhc6OyG8sWi/IvBzl5FXiyEt5EQ7ESo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IBrZU0d8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1702AC4CED6;
-	Fri, 21 Feb 2025 16:30:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740155435;
-	bh=peJoIjn/lcRBU6pV4UiXQxxm+ZfErwKhGJ/8tg/aPdU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IBrZU0d8BAYwdl1hhWZIz2ADAu1Bb4i21ZBFgizW6LukDfTPfF2IEFSzn70jG1+Lq
-	 H3y8mbF6U2kySYBGPxfok4RIbRSiVorznbcfL4hoC38izjBtQfHHq9RxR5fSDY6rAb
-	 N0gvdlVliwjj+dMS5uLu3EsFhxm38xL0FZCLkUAJVe/9sXZdrRR8Yno0Jp4QS1VezO
-	 cMz2BJl/kJMu3OUZIStoQNmEKo8mnkyc+BA46GqyZL2wTUkobyU+OalyQtS4oVg9yH
-	 IRcz68b5DjF6QDcPaBaJRzBqcLHK8rI3p3LsFDTijbNkZP37TGrHlp07eiMcmHHI0e
-	 uWw0ojmIpRufg==
-Date: Fri, 21 Feb 2025 09:30:30 -0700
-From: Keith Busch <kbusch@kernel.org>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: "Paul E. McKenney" <paulmck@kernel.org>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Boqun Feng <boqun.feng@gmail.com>, Christoph Lameter <cl@linux.com>,
-	David Rientjes <rientjes@google.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>,
-	Julia Lawall <Julia.Lawall@inria.fr>,
-	Jakub Kicinski <kuba@kernel.org>,
-	"Jason A. Donenfeld" <Jason@zx2c4.com>,
-	"Uladzislau Rezki (Sony)" <urezki@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
-	Alexander Potapenko <glider@google.com>,
-	Marco Elver <elver@google.com>, Dmitry Vyukov <dvyukov@google.com>,
-	kasan-dev@googlegroups.com, Jann Horn <jannh@google.com>,
-	Mateusz Guzik <mjguzik@gmail.com>, linux-nvme@lists.infradead.org,
-	leitao@debian.org
-Subject: Re: [PATCH v2 6/7] mm, slab: call kvfree_rcu_barrier() from
- kmem_cache_destroy()
-Message-ID: <Z7iqJtCjHKfo8Kho@kbusch-mbp>
-References: <20240807-b4-slab-kfree_rcu-destroy-v2-0-ea79102f428c@suse.cz>
- <20240807-b4-slab-kfree_rcu-destroy-v2-6-ea79102f428c@suse.cz>
+	s=arc-20240116; t=1740155438; c=relaxed/simple;
+	bh=+6KzKBIx6mpHhKg/4+HFnGf1d9EOfmRJxUJwL920QKo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NlFOWyACXkrw+vp0ph6MZhOjWnmgLwNWqF/yjexbk80imPuNqZnmTw/gZPZUgGS5UHaufatfLxLLmYi7GE2sh8VK8/7WQSRmQOyyeJlJaBtaBd1WchjkzcmvREpLIusRQFYDDPLjcrICtrxmRTSMSOAO6cP4etNfps3Y/YpcX3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=b0Pj91FN; arc=none smtp.client-ip=209.85.160.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-2bc607b33d5so1321841fac.3
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 08:30:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1740155434; x=1740760234; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=yraMqB3V0rz+4If7jNzjsoA2YWqNW4WDNQQZ/DTpC8Q=;
+        b=b0Pj91FN7Pu1DGVS4VwzANKtTaupULKkqROXgkGPqcr4wup/+THnPLIwT19sHQgWF8
+         jpaf9BdTG7mT+O6ndMZL4o7JOgm9SftSBopqd5HK56X/1Y+fQ44aw9kxAmQwHGFK8VXu
+         Xy86Q6DVcFaEAiANhOI8frAqy3wm/pO98XQu+CPU+usJ1m3CMyGlLVzibLbwL2cWzgPR
+         TgifDcNNsD8OJ+7oaPZigeo2b7LhiYRKgW3nEYWlxqzpVDed8JJ+tEUpb9nwU1BbgC2a
+         7sei+/P1o+yTCkRMXnj/imG3+TVauaqz7B2Lnu1nRVvqYoysFzEGebMvMme86+FKDJaU
+         XAjg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740155434; x=1740760234;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yraMqB3V0rz+4If7jNzjsoA2YWqNW4WDNQQZ/DTpC8Q=;
+        b=ohx+Gq+Im2ifNNAtSHrMLTADPgUWgS0J4SOF3t1pTWylmBgV6U8NoSoS5OjAXv2Irz
+         YYy+YoZTg5GnqMAjWNoC+m4i1eLLWVDy//2I3aRa4TJA6PYclu6FSfLc7/mKD/lbJVfR
+         ZPvjopvas+2p7ajHnLRBsUQ7MIrd3LAANqLSE5lJbdajLbU1UV48ef4ayGD9wSMbw9Sw
+         KlwNr92JvhHLeg5/MsMDAAbCHlfMxw/XWsqxupM/y8qfo1VngwgiB1NPPWNH/ZbSF/+9
+         mIWuAjN9PGh6Z4MzQi1GakL47vjULsbuL3Y4tQmZCZZ0/MlA9Pv3HZupGt0Gbzg241Ef
+         ev8g==
+X-Forwarded-Encrypted: i=1; AJvYcCXUqzQZWRyVGJN11TXKEbecU5DajdljhuEf3ouGzNgZb1qQ1AVTd63XyY7095DAUDGEH+Nq6JlxYTQ9JCo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJQr72dR6NBjmZzg9KNwCKFWzBuha8z/zURJsuaWiNs5iluabC
+	qiIJRaUuuDZlDCjVsYqYwO3wzy2LYYWwGNWJVYGojCMR/GAIm1Jlyclh608IiqY=
+X-Gm-Gg: ASbGncuSzRc126EcMpbzIwKArRhaZPcr80DS2trVnFJmpIs2dP3ipxo3pS71/+DbSSZ
+	VbqoFDXJerNKcCYJ7RxwxlpzIQngiHdNSiSztNbH61r5yUEtLqq8xeu1bjJO/KoHOhFcj2PjXXA
+	ltYCQ8lKfRUgGHV7TtwNrUcDYj7zDD0gRnv8E/R9beLpKONIb2SflLO43Rwq7DUXr57IK7rkWFx
+	LbJ/dWTWhoK+NSs1LNroSP1ZlqugtMyQmyFS0iaQXOcvXhdwjrKNzTXcGPhooIlYlZflJPlndMj
+	UqMGbzbPg3lrF2INcG4Tksx7lKexQx+m1HmBxxrhtzs3fFHsR8SxAXYOPPmFjJE=
+X-Google-Smtp-Source: AGHT+IF5/l844C8i/roqudIe6U4obFMxplsc/QWd3Tj6rY2veQmSYaFOHBJtViXOAZab5e5Vr5lyfw==
+X-Received: by 2002:a05:6871:a910:b0:2bc:8c4a:aac2 with SMTP id 586e51a60fabf-2bd50f30260mr2983960fac.27.1740155434450;
+        Fri, 21 Feb 2025 08:30:34 -0800 (PST)
+Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-72737f96190sm1526218a34.11.2025.02.21.08.30.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 Feb 2025 08:30:33 -0800 (PST)
+Message-ID: <2edc6e72-245b-4a55-bb5e-6a6ed3abcf27@baylibre.com>
+Date: Fri, 21 Feb 2025 10:30:31 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240807-b4-slab-kfree_rcu-destroy-v2-6-ea79102f428c@suse.cz>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/2] iio: adc: add support for Nuvoton NCT7201
+To: Eason Yang <j2anfernee@gmail.com>, avifishman70@gmail.com,
+ tmaimon77@gmail.com, tali.perry1@gmail.com, venture@google.com,
+ yuenn@google.com, benjaminfair@google.com, jic23@kernel.org,
+ lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ nuno.sa@analog.com, javier.carrasco.cruz@gmail.com,
+ andriy.shevchenko@linux.intel.com, gstols@baylibre.com,
+ olivier.moysan@foss.st.com, mitrutzceclan@gmail.com, tgamblin@baylibre.com,
+ matteomartelli3@gmail.com, marcelo.schmitt@analog.com,
+ alisadariana@gmail.com, joao.goncalves@toradex.com,
+ thomas.bonnefille@bootlin.com, ramona.nechita@analog.com,
+ herve.codina@bootlin.com, chanh@os.amperecomputing.com, KWLIU@nuvoton.com,
+ yhyang2@nuvoton.com
+Cc: openbmc@lists.ozlabs.org, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250221090918.1487689-1-j2anfernee@gmail.com>
+ <20250221090918.1487689-3-j2anfernee@gmail.com>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <20250221090918.1487689-3-j2anfernee@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Aug 07, 2024 at 12:31:19PM +0200, Vlastimil Babka wrote:
-> We would like to replace call_rcu() users with kfree_rcu() where the
-> existing callback is just a kmem_cache_free(). However this causes
-> issues when the cache can be destroyed (such as due to module unload).
+On 2/21/25 3:09 AM, Eason Yang wrote:
+> Add Nuvoton NCT7201/NCT7202 system voltage monitor 12-bit ADC driver
 > 
-> Currently such modules should be issuing rcu_barrier() before
-> kmem_cache_destroy() to have their call_rcu() callbacks processed first.
-> This barrier is however not sufficient for kfree_rcu() in flight due
-> to the batching introduced by a35d16905efc ("rcu: Add basic support for
-> kfree_rcu() batching").
+> NCT7201/NCT7202 supports up to 12 analog voltage monitor inputs and up to
+> 4 SMBus addresses by ADDR pin. Meanwhile, ALERT# hardware event pins for
+> independent alarm signals, and the all threshold values could be set for
+> system protection without any timing delay. It also supports reset input
+> RSTIN# to recover system from a fault condition.
 > 
-> This is not a problem for kmalloc caches which are never destroyed, but
-> since removing SLOB, kfree_rcu() is allowed also for any other cache,
-> that might be destroyed.
+> Currently, only single-edge mode conversion and threshold events support.
 > 
-> In order not to complicate the API, put the responsibility for handling
-> outstanding kfree_rcu() in kmem_cache_destroy() itself. Use the newly
-> introduced kvfree_rcu_barrier() to wait before destroying the cache.
-> This is similar to how we issue rcu_barrier() for SLAB_TYPESAFE_BY_RCU
-> caches, but has to be done earlier, as the latter only needs to wait for
-> the empty slab pages to finish freeing, and not objects from the slab.
-> 
-> Users of call_rcu() with arbitrary callbacks should still issue
-> rcu_barrier() before destroying the cache and unloading the module, as
-> kvfree_rcu_barrier() is not a superset of rcu_barrier() and the
-> callbacks may be invoking module code or performing other actions that
-> are necessary for a successful unload.
-> 
-> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+> Signed-off-by: Eason Yang <j2anfernee@gmail.com>
 > ---
->  mm/slab_common.c | 3 +++
->  1 file changed, 3 insertions(+)
+>  MAINTAINERS               |   1 +
+>  drivers/iio/adc/Kconfig   |  11 +
+>  drivers/iio/adc/Makefile  |   1 +
+>  drivers/iio/adc/nct7201.c | 487 ++++++++++++++++++++++++++++++++++++++
+>  4 files changed, 500 insertions(+)
+>  create mode 100644 drivers/iio/adc/nct7201.c
 > 
-> diff --git a/mm/slab_common.c b/mm/slab_common.c
-> index c40227d5fa07..1a2873293f5d 100644
-> --- a/mm/slab_common.c
-> +++ b/mm/slab_common.c
-> @@ -508,6 +508,9 @@ void kmem_cache_destroy(struct kmem_cache *s)
->  	if (unlikely(!s) || !kasan_check_byte(s))
->  		return;
->  
-> +	/* in-flight kfree_rcu()'s may include objects from our cache */
-> +	kvfree_rcu_barrier();
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index fdc4aa5c7eff..389cbbdae1a7 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -2838,6 +2838,7 @@ F:	arch/arm/mach-npcm/
+>  F:	arch/arm64/boot/dts/nuvoton/
+>  F:	drivers/*/*/*npcm*
+>  F:	drivers/*/*npcm*
+> +F:	drivers/iio/adc/nct7201.c
+
+Same comment as DT bindings, this is ARM/NUVOTON NPCM ARCHITECTURE.
+We need a new section for this chip since it is stand-alone.
+
+>  F:	drivers/rtc/rtc-nct3018y.c
+>  F:	include/dt-bindings/clock/nuvoton,npcm7xx-clock.h
+>  F:	include/dt-bindings/clock/nuvoton,npcm845-clk.h
+
+...
+
+> diff --git a/drivers/iio/adc/nct7201.c b/drivers/iio/adc/nct7201.c
+> new file mode 100644
+> index 000000000000..c5d1540bcc00
+> --- /dev/null
+> +++ b/drivers/iio/adc/nct7201.c
+> @@ -0,0 +1,487 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +/*
+> + * Driver for Nuvoton nct7201 and nct7202 power monitor chips.
+> + *
+> + * Copyright (c) 2024-2025 Nuvoton Technology corporation.
+> + */
 > +
->  	cpus_read_lock();
->  	mutex_lock(&slab_mutex);
+> +#include <linux/array_size.h>
+> +#include <linux/bits.h>
+> +#include <linux/cleanup.h>
+> +#include <linux/delay.h>
+> +#include <linux/device.h>
+> +#include <linux/err.h>
+> +#include <linux/i2c.h>
+> +#include <linux/init.h>
 
-This patch appears to be triggering a new warning in certain conditions
-when tearing down an nvme namespace's block device. Stack trace is at
-the end.
+Are we really using something from the init header?
 
-The warning indicates that this shouldn't be called from a
-WQ_MEM_RECLAIM workqueue. This workqueue is responsible for bringing up
-and tearing down block devices, so this is a memory reclaim use AIUI.
-I'm a bit confused why we can't tear down a disk from within a memory
-reclaim workqueue. Is the recommended solution to simply remove the WQ
-flag when creating the workqueue?
+> +#include <linux/mod_devicetable.h>
+> +#include <linux/module.h>
+> +#include <linux/mutex.h>
+> +#include <linux/regmap.h>
+> +#include <linux/types.h>
+> +#include <linux/unaligned.h>
+> +
+> +#include <linux/iio/events.h>
+> +#include <linux/iio/iio.h>
+> +
 
-  ------------[ cut here ]------------
-  workqueue: WQ_MEM_RECLAIM nvme-wq:nvme_scan_work is flushing !WQ_MEM_RECLAIM events_unbound:kfree_rcu_work
-  WARNING: CPU: 21 PID: 330 at kernel/workqueue.c:3719 check_flush_dependency+0x112/0x120
-  Modules linked in: intel_uncore_frequency(E) intel_uncore_frequency_common(E) skx_edac(E) skx_edac_common(E) nfit(E) libnvdimm(E) x86_pkg_temp_thermal(E) intel_powerclamp(E) coretemp(E) kvm_intel(E) iTCO_wdt(E) xhci_pci(E) mlx5_ib(E) ipmi_si(E) iTCO_vendor_support(E) i2c_i801(E) ipmi_devintf(E) evdev(E) kvm(E) xhci_hcd(E) ib_uverbs(E) acpi_cpufreq(E) wmi(E) i2c_smbus(E) ipmi_msghandler(E) button(E) efivarfs(E) autofs4(E)
-  CPU: 21 UID: 0 PID: 330 Comm: kworker/u144:6 Tainted: G            E      6.13.2-0_g925d379822da #1
-  Hardware name: Wiwynn Twin Lakes MP/Twin Lakes Passive MP, BIOS YMM20 02/01/2023
-  Workqueue: nvme-wq nvme_scan_work
-  RIP: 0010:check_flush_dependency+0x112/0x120
-  Code: 05 9a 40 14 02 01 48 81 c6 c0 00 00 00 48 8b 50 18 48 81 c7 c0 00 00 00 48 89 f9 48 c7 c7 90 64 5a 82 49 89 d8 e8 7e 4f 88 ff <0f> 0b eb 8c cc cc cc cc cc cc cc cc cc cc 0f 1f 44 00 00 41 57 41
-  RSP: 0018:ffffc90000df7bd8 EFLAGS: 00010082
-  RAX: 000000000000006a RBX: ffffffff81622390 RCX: 0000000000000027
-  RDX: 00000000fffeffff RSI: 000000000057ffa8 RDI: ffff88907f960c88
-  RBP: 0000000000000000 R08: ffffffff83068e50 R09: 000000000002fffd
-  R10: 0000000000000004 R11: 0000000000000000 R12: ffff8881001a4400
-  R13: 0000000000000000 R14: ffff88907f420fb8 R15: 0000000000000000
-  FS:  0000000000000000(0000) GS:ffff88907f940000(0000) knlGS:0000000000000000
-  CR2: 00007f60c3001000 CR3: 000000107d010005 CR4: 00000000007726f0
-  PKRU: 55555554
-  Call Trace:
-   <TASK>
-   ? __warn+0xa4/0x140
-   ? check_flush_dependency+0x112/0x120
-   ? report_bug+0xe1/0x140
-   ? check_flush_dependency+0x112/0x120
-   ? handle_bug+0x5e/0x90
-   ? exc_invalid_op+0x16/0x40
-   ? asm_exc_invalid_op+0x16/0x20
-   ? timer_recalc_next_expiry+0x190/0x190
-   ? check_flush_dependency+0x112/0x120
-   ? check_flush_dependency+0x112/0x120
-   __flush_work.llvm.1643880146586177030+0x174/0x2c0
-   flush_rcu_work+0x28/0x30
-   kvfree_rcu_barrier+0x12f/0x160
-   kmem_cache_destroy+0x18/0x120
-   bioset_exit+0x10c/0x150
-   disk_release.llvm.6740012984264378178+0x61/0xd0
-   device_release+0x4f/0x90
-   kobject_put+0x95/0x180
-   nvme_put_ns+0x23/0xc0
-   nvme_remove_invalid_namespaces+0xb3/0xd0
-   nvme_scan_work+0x342/0x490
-   process_scheduled_works+0x1a2/0x370
-   worker_thread+0x2ff/0x390
-   ? pwq_release_workfn+0x1e0/0x1e0
-   kthread+0xb1/0xe0
-   ? __kthread_parkme+0x70/0x70
-   ret_from_fork+0x30/0x40
-   ? __kthread_parkme+0x70/0x70
-   ret_from_fork_asm+0x11/0x20
-   </TASK>
-  ---[ end trace 0000000000000000 ]---
+...
+
+> +static int nct7201_read_raw(struct iio_dev *indio_dev,
+> +			    struct iio_chan_spec const *chan,
+> +			    int *val, int *val2, long mask)
+> +{
+> +	u16 volt;
+> +	unsigned int value;
+> +	int err;
+> +	struct nct7201_chip_info *chip = iio_priv(indio_dev);
+> +
+> +	if (chan->type != IIO_VOLTAGE)
+> +		return -EOPNOTSUPP;
+> +
+> +	guard(mutex)(&chip->access_lock);
+
+The regmap should already have an intneral lock, so this mutex seems
+reduandnt in it's current usage.
+
+> +	switch (mask) {
+> +	case IIO_CHAN_INFO_RAW:
+> +		err = regmap_read(chip->regmap16, NCT7201_REG_VIN(chan->address), &value);
+> +		if (err < 0)
+> +			return err;
+> +		volt = value;
+> +		*val = FIELD_GET(NCT7201_REG_VIN_MASK, volt);
+> +		return IIO_VAL_INT;
+> +	case IIO_CHAN_INFO_SCALE:
+> +		/* From the datasheet, we have to multiply by 0.0004995 */
+> +		*val = 0;
+> +		*val2 = 499500;
+> +		return IIO_VAL_INT_PLUS_NANO;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +}
+> +
+> +static int nct7201_read_event_value(struct iio_dev *indio_dev,
+> +				    const struct iio_chan_spec *chan,
+> +				    enum iio_event_type type,
+> +				    enum iio_event_direction dir,
+> +				    enum iio_event_info info,
+> +				    int *val, int *val2)
+> +{
+> +	struct nct7201_chip_info *chip = iio_priv(indio_dev);
+> +	u16 volt;
+> +	unsigned int value;
+> +	int err;
+> +
+> +	if (chan->type != IIO_VOLTAGE)
+> +		return -EOPNOTSUPP;
+> +
+> +	if (info != IIO_EV_INFO_VALUE)
+> +		return -EINVAL;
+> +
+> +	if (dir == IIO_EV_DIR_FALLING) {
+> +		err = regmap_read(chip->regmap16, NCT7201_REG_VIN_LOW_LIMIT(chan->address),
+> +				  &value);
+> +		if (err < 0)
+> +			return err;
+> +		volt = value;
+
+Assigning to volt seems reduant. We can just pass value to
+FIELD_GET() below.
+
+> +	} else {
+> +		err = regmap_read(chip->regmap16, NCT7201_REG_VIN_HIGH_LIMIT(chan->address),
+> +				  &value);
+> +		if (err < 0)
+> +			return err;
+> +		volt = value;
+> +	}
+> +
+> +	*val = FIELD_GET(NCT7201_REG_VIN_MASK, volt);
+> +
+> +	return IIO_VAL_INT;
+> +}
+> +
+> +static int nct7201_write_event_value(struct iio_dev *indio_dev,
+> +				     const struct iio_chan_spec *chan,
+> +				     enum iio_event_type type,
+> +				     enum iio_event_direction dir,
+> +				     enum iio_event_info info,
+> +				     int val, int val2)
+> +{
+> +	struct nct7201_chip_info *chip = iio_priv(indio_dev);
+> +
+> +	if (chan->type != IIO_VOLTAGE)
+> +		return -EOPNOTSUPP;
+> +
+> +	if (info != IIO_EV_INFO_VALUE)
+> +		return -EOPNOTSUPP;
+> +
+> +	if (dir == IIO_EV_DIR_FALLING)
+> +		regmap_write(chip->regmap16, NCT7201_REG_VIN_LOW_LIMIT(chan->address),
+> +			     FIELD_PREP(NCT7201_REG_VIN_MASK, val));
+
+No error checking? Could just return here directly.
+
+> +	else
+> +		regmap_write(chip->regmap16, NCT7201_REG_VIN_HIGH_LIMIT(chan->address),
+> +			     FIELD_PREP(NCT7201_REG_VIN_MASK, val));
+> +
+> +	return 0;
+> +}
+> +
+
+...
+
+> +static int nct7201_write_event_config(struct iio_dev *indio_dev,
+> +				      const struct iio_chan_spec *chan,
+> +				      enum iio_event_type type,
+> +				      enum iio_event_direction dir,
+> +				      bool state)
+> +{
+> +	struct nct7201_chip_info *chip = iio_priv(indio_dev);
+> +	unsigned int mask;
+> +
+> +	if (chan->type != IIO_VOLTAGE)
+> +		return -EOPNOTSUPP;
+> +
+> +	mask = BIT(chan->address);
+> +
+> +	if (!state && (chip->vin_mask & mask))
+> +		chip->vin_mask &= ~mask;
+> +	else if (state && !(chip->vin_mask & mask))
+> +		chip->vin_mask |= mask;
+
+This would be easier to read as:
+
+	if (state)
+		chip->vin_mask |= mask;
+	else
+		chip->vin_mask &= ~mask;
+
+> +
+> +	if (chip->num_vin_channels <= 8)
+> +		regmap_write(chip->regmap, NCT7201_REG_CHANNEL_ENABLE_1, chip->vin_mask);
+
+No error checking?
+
+> +	else
+> +		regmap_bulk_write(chip->regmap, NCT7201_REG_CHANNEL_ENABLE_1,
+> +				  &chip->vin_mask, sizeof(chip->vin_mask));
+> +
+> +	return 0;
+> +}
+> +
+
+...
+
+> +static int nct7201_init_chip(struct nct7201_chip_info *chip)
+> +{
+> +	u8 data[2];
+> +	unsigned int value;
+> +	int err;
+> +
+> +	regmap_write(chip->regmap, NCT7201_REG_CONFIGURATION,
+> +		     NCT7201_BIT_CONFIGURATION_RESET);
+
+Check error return?
+
+> +
+> +	/*
+> +	 * After about 25 msecs, the device should be ready and then
+> +	 * the Power Up bit will be set to 1. If not, wait for it.
+> +	 */
+> +	mdelay(25);
+> +	err = regmap_read(chip->regmap, NCT7201_REG_BUSY_STATUS, &value);
+> +	if (err < 0)
+> +		return err;
+> +	if (!(value & NCT7201_BIT_PWR_UP))
+> +		return dev_err_probe(&chip->client->dev, -EIO,
+> +				     "Failed to power up after reset\n");
+> +
+> +	/* Enable Channel */
+> +	if (chip->num_vin_channels <= 8) {
+> +		data[0] = NCT7201_REG_CHANNEL_ENABLE_1_MASK;
+> +		err = regmap_write(chip->regmap, NCT7201_REG_CHANNEL_ENABLE_1, data[0]);
+> +		if (err < 0)
+> +			return dev_err_probe(&chip->client->dev, -EIO,
+> +					     "Failed to write NCT7201_REG_CHANNEL_ENABLE_1\n");
+> +	} else {
+> +		data[0] = NCT7201_REG_CHANNEL_ENABLE_1_MASK;
+> +		data[1] = NCT7201_REG_CHANNEL_ENABLE_2_MASK;
+> +		err = regmap_bulk_write(chip->regmap, NCT7201_REG_CHANNEL_ENABLE_1,
+> +					data, ARRAY_SIZE(data));
+> +		if (err < 0)
+> +			return dev_err_probe(&chip->client->dev, -EIO,
+> +					    "Failed to write NCT7201_REG_CHANNEL_ENABLE_1 and NCT7201_REG_CHANNEL_ENABLE_2\n");
+> +	}
+> +
+> +	value = get_unaligned_le16(data);
+
+Does it matter that data[1] may be uninitialized and contain random value here?
+
+> +	chip->vin_mask = value;
+
+Don't really need the intermediate value assignment here.
+
+> +
+> +	/* Start monitoring if needed */
+> +	err = regmap_read(chip->regmap, NCT7201_REG_CONFIGURATION, &value);
+> +	if (err < 0)
+> +		return dev_err_probe(&chip->client->dev, -EIO,
+> +				     "Failed to read NCT7201_REG_CONFIGURATION\n");
+> +
+> +	regmap_set_bits(chip->regmap, NCT7201_REG_CONFIGURATION, NCT7201_BIT_CONFIGURATION_START);
+> +
+> +	return 0;
+> +}
+> +
+
 
