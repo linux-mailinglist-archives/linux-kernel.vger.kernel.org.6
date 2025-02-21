@@ -1,245 +1,127 @@
-Return-Path: <linux-kernel+bounces-526488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1966A3FF51
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 20:07:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58D0DA3FF56
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 20:10:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C8BC4254A2
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 19:07:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 95C23189DAF2
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 19:10:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F4DC2512C9;
-	Fri, 21 Feb 2025 19:07:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9DD42528E5;
+	Fri, 21 Feb 2025 19:10:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Qj+db7xu"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V1ZiiQb2"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 337631D7E50;
-	Fri, 21 Feb 2025 19:07:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A9331EE006;
+	Fri, 21 Feb 2025 19:10:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740164862; cv=none; b=nFdqY3AF0SpCBsZq+a7IQE3JLWGzZaCB/zol+Ubsx2kmoO4x9ZwX5ezRQDEH9cE6g0d+XBCFqiqyxneiyBPHJvzjqIBqOr5lZFr5RtG5dGp4zRY6uszD0zJ7xaLmXbgR2U3zOprVZetlBPjVLGxdFPjAt8DfnUKIbPMXsSPFfiQ=
+	t=1740165010; cv=none; b=Y2AJoejgtZaXITRxNHAFjfqYoFcnV4Jn6n0DfkQ9dLYyO7xl0CFaKPbNHiGGPl3m7TmA3Hz98eF7DmS8oHT6lo8bCx6h+sz+lHygGkpCiTw16QcZZ+30Bo0r0DLj8dUDOaxO7ZHTSIQsM7My6fhD0RE4tXkJr9eBwdis7C9SYvk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740164862; c=relaxed/simple;
-	bh=DbrqP0BacaSAXAnoX53ZZJOcVs7BxL29Huazrq9X37k=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=CGtRhdd/lSi/SDvihhYFWgq686oe5FKc4NH1t/f4ehIYWvxCFcEo2HZ1LDwbjay/HplVZoiFPxGGICOBXhH/Ehsvu3JGMR3xkjW0j9H9Fme60LAp2+0Gt6rSvKwwyAuCoOPgFbSHDzkbOK6xccYdx1p1e/+FQIOV1Us76XPU3Y0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Qj+db7xu; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51LIMe4x031829;
-	Fri, 21 Feb 2025 19:07:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=heDO+g
-	AI4iMzWupr9MuQuH5tFKokm/yoJasfRTU3cp0=; b=Qj+db7xuvQd+nLbmOaiux2
-	t+dRcrAR5dmeYNxeHzpBkasiuD429gJdAjnZDSxHONM9ufyDtezX5oGPoWAtvtOf
-	ODXcoEubCilZiTOwHVyLuyW/4I1TcywKpvsk9S3Gr9O3UtvUOiku5JWNAkxhBbhn
-	nQIazWPTtCUMDzxxV9BAb3EZZYrN7giiqGkzy0vOAiwsqzjbSg5TTHuc4mgkh18D
-	0x6tPCQliBF4xyVQKSAcPdd92tbI5m9jkeNO5Xr7In9Gd0IO6ZbIkMotkpL9uoVB
-	Hbm0DJIEXtsKbo9B+zqK/Wy7eWKlCqeMH9P/KzLvza6FaH657PpkisP2ZvKdJ6uQ
-	==
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44xgb0ck69-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Feb 2025 19:07:14 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51LIkAsL002433;
-	Fri, 21 Feb 2025 19:07:13 GMT
-Received: from smtprelay02.dal12v.mail.ibm.com ([172.16.1.4])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 44w03xhnkn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Feb 2025 19:07:13 +0000
-Received: from smtpav05.dal12v.mail.ibm.com (smtpav05.dal12v.mail.ibm.com [10.241.53.104])
-	by smtprelay02.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51LJ7DoQ32244352
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 21 Feb 2025 19:07:13 GMT
-Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 39CA158052;
-	Fri, 21 Feb 2025 19:07:13 +0000 (GMT)
-Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1634658065;
-	Fri, 21 Feb 2025 19:07:12 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.108.12])
-	by smtpav05.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 21 Feb 2025 19:07:12 +0000 (GMT)
-Message-ID: <36f8cb5131c51f784fa6e7a062b6318b30c9cc28.camel@linux.ibm.com>
-Subject: Re: [PATCH v8 4/7] ima: kexec: define functions to copy IMA log at
- soft boot
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: steven chen <chenste@linux.microsoft.com>, stefanb@linux.ibm.com,
-        roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
-        eric.snowberg@oracle.com, ebiederm@xmission.com, paul@paul-moore.com,
-        code@tyhicks.com, bauermann@kolabnow.com,
-        linux-integrity@vger.kernel.org, kexec@lists.infradead.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
-        James.Bottomley@HansenPartnership.com, bhe@redhat.com,
-        vgoyal@redhat.com, dyoung@redhat.com
-Date: Fri, 21 Feb 2025 14:07:11 -0500
-In-Reply-To: <20250218225502.747963-5-chenste@linux.microsoft.com>
-References: <20250218225502.747963-1-chenste@linux.microsoft.com>
-	 <20250218225502.747963-5-chenste@linux.microsoft.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	s=arc-20240116; t=1740165010; c=relaxed/simple;
+	bh=cSTaSEFNxDxO766u+g2scX6EoRBsJTeVLMz/j7PoO1A=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=IrteGUkb6M+h45/F08TPMnKnyVyP4obuQF/zbrtP+DElyYM/XgOvUZbWmAyvBlnlgMrTdz2LvFxoXtj4J+Ew5yRMnFhL9+p7mYEwCgZl6/oHWxWUlfJbzLlDGOsjCEZQ32Omq5IIGQ1OQXG5zFJ5F4HT24YXuqucFY0/FZeHojo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V1ZiiQb2; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-abb7520028bso343108066b.3;
+        Fri, 21 Feb 2025 11:10:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740165007; x=1740769807; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/RCLtFgB40kh5NGeWf7eTgIwKvvdlHuGYWJTu9Fn9iQ=;
+        b=V1ZiiQb2TPg0vWc/JPNio+XXSBiyYWD59XY7IzXFbw6wn4EjB2/5ZKa5gAaSpCCPJH
+         CXoOXRninlQfCcBJSd1hM1IygPRDydkmHo6avwVhkUTRpBl+DeOsCLyp6K1TCBDJ+SuJ
+         27mU7KVCFJ1EOm/sBrLmRzoYcsWT8C3/AWjRybijQ5WAVtazMflmz6v5Iw3XFeOr7MCc
+         KDLdBQmNoGklk9e/dBvmwtKwc+r8UIjy/rVlyIB8xXJ3gSaARHreeiIVX6yj/T+i7Z/S
+         blShgQoCm+RwJcQrwwnd02NfoTJiAKA+EK6/t6xQp54iJQGg752hMgPzE9fJw9NB0MZg
+         7c5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740165007; x=1740769807;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/RCLtFgB40kh5NGeWf7eTgIwKvvdlHuGYWJTu9Fn9iQ=;
+        b=ugg2vBDk0m4ayf0tp8c7MoSlCKwSbMdbW/vA9eDiVblJYYhpK3PHWDWdBWx3Istzc8
+         StWcR6GnHp/IuzzhkOXWX1n4uo7My2+sJp6ax4hKeg0812TgblrzophcBUkw5ZQOv8UX
+         b3ErZNmMIvaWuXLtku0E1Rziv3aJkShDfcjR1Vy6goX5t1e/Q3NdbyLzpUIWWzaMvkzW
+         cUbg8LU30ER6hfMQUcL8wrDfqOZoFolK8nxM3ml8XjIbes7MV7DBQRI+gzuc8NVzkxXU
+         gFU7dM82ZG4lkF1xtN5OAHjGgVrKIarqnicPxkfb7WL5gIorL9n7KGWTkfsC/ofM8CJD
+         XF1g==
+X-Forwarded-Encrypted: i=1; AJvYcCUbkHPZEGPhBvSvtPNFkbD1FrpGShmrtlVDjxdqEl8376Yw938KiEs02kDwJoQ5c3QZynI0b5t6EDHr@vger.kernel.org, AJvYcCWGzMNHXRnFXZ2blyqo1RXMdHMzutr98rYo8h4lEUZSCchIFIR2EteOO88K/+BzV+eWXcA4RDWc62LI3hQk@vger.kernel.org, AJvYcCXDkgQV+WGX8j2i/iU4Ro5LhBSmzjXV0jq4Q8Vzjx8n65X9MMExfMjXAPBSwv84iscks4gjydLVgeXg@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqSHAbFwmaNguStYIV5qmikWTvpTaUP73feCytbkGZlC6FUABe
+	JlHAqDa0AM/vBUJHIxP5G25YZozbaIa21i2wQfiveHt07E5Uf+yNxI+Rvv5dGv4=
+X-Gm-Gg: ASbGncsTcXFDyLxw4DwnPm/cuHn8nkhgywCre+BfJ1cMeRfpYIs8I+tv4aZUii7yvps
+	zlLMWk2FTvSerSp3fgFBm68v9tYE2tsFyXXtjm5GnInxP11ZxAD7wQU1kxDiCtndQKOzE6TWZFv
+	tzP/YJ7CW7130c6KLlZTEAYLO96rgiAD1M64AC+ZMGG6LVA3b7G7PkREGefELVyxdRXYC1xkk7z
+	5u/LH+9ndbx6Fjemeten/7kC5LltqURKMZtp12fMIYQfYcO+/n24McyL+CZNpHA39aST6qXFUn5
+	oBKGcmeuxH1j/5ymGzOOpU4jdZUQAuYWRAQzqTZcVj+QF5AFXZ2up1YFBnA=
+X-Google-Smtp-Source: AGHT+IFpUclfl3GP+JTSRxwBFyvgILom2sf5gyrQlkLG8A1WEQOIo0TKJpX4cHGGPDFAFepHADJp5w==
+X-Received: by 2002:a17:907:d9f:b0:ab7:66d3:bc88 with SMTP id a640c23a62f3a-abc09e459famr488105666b.52.1740165006472;
+        Fri, 21 Feb 2025 11:10:06 -0800 (PST)
+Received: from playground.nxp.com ([82.79.237.175])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abb9b187203sm1027261566b.61.2025.02.21.11.10.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Feb 2025 11:10:06 -0800 (PST)
+From: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
+To: Abel Vesa <abelvesa@kernel.org>,
+	Peng Fan <peng.fan@nxp.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Marek Vasut <marex@denx.de>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Shengjiu Wang <shengjiu.wang@nxp.com>
+Cc: Pengutronix Kernel Team <kernel@pengutronix.de>,
+	linux-clk@vger.kernel.org,
+	imx@lists.linux.dev,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/4] clk: imx8mp: fix parents of AUDIOMIX DSP/OCRAM_A
+Date: Fri, 21 Feb 2025 14:09:25 -0500
+Message-Id: <20250221190929.31469-1-laurentiumihalcea111@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: tl1t-f3xrxoME_Ejbk6c9jgxYK4Zw_1d
-X-Proofpoint-ORIG-GUID: tl1t-f3xrxoME_Ejbk6c9jgxYK4Zw_1d
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-21_07,2025-02-20_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
- malwarescore=0 clxscore=1015 lowpriorityscore=0 suspectscore=0
- impostorscore=0 priorityscore=1501 phishscore=0 adultscore=0 mlxscore=0
- bulkscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2502210131
+Content-Transfer-Encoding: 8bit
 
-On Tue, 2025-02-18 at 14:54 -0800, steven chen wrote:
-> IMA log is copied to the new Kernel during kexec 'load' using=20
-> ima_dump_measurement_list().=C2=A0 The log copy at kexec 'load' may resul=
-t in
-> loss of IMA measurements during kexec soft reboot.=C2=A0 It needs to be c=
-opied
-> over during kexec 'execute'.=C2=A0 Setup the needed infrastructure to mov=
-e the
-> IMA log copy from kexec 'load' to 'execute'.=20
->=20
-> Define a new IMA hook ima_update_kexec_buffer() as a stub function.
-> It will be used to call ima_dump_measurement_list() during kexec=20
-> 'execute'.=C2=A0=C2=A0=20
->=20
-> Implement ima_kexec_post_load() function to be invoked after the new=20
-> Kernel image has been loaded for kexec. ima_kexec_post_load() maps the=
-=20
-> IMA buffer to a segment in the newly loaded Kernel.=C2=A0 It also registe=
-rs=20
-> the reboot notifier_block to trigger ima_update_kexec_buffer() at=20
-> exec 'execute'.
->=20
-> Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
-> Signed-off-by: steven chen <chenste@linux.microsoft.com>
-> ---
-> =C2=A0include/linux/ima.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 3 ++
-> =C2=A0security/integrity/ima/ima_kexec.c | 46 +++++++++++++++++++++++++++=
-+++
-> =C2=A02 files changed, 49 insertions(+)
->=20
-> diff --git a/include/linux/ima.h b/include/linux/ima.h
-> index 0bae61a15b60..8e29cb4e6a01 100644
-> --- a/include/linux/ima.h
-> +++ b/include/linux/ima.h
-> @@ -32,6 +32,9 @@ static inline void ima_appraise_parse_cmdline(void) {}
-> =C2=A0
-> =C2=A0#ifdef CONFIG_IMA_KEXEC
-> =C2=A0extern void ima_add_kexec_buffer(struct kimage *image);
-> +extern void ima_kexec_post_load(struct kimage *image);
-> +#else
-> +static inline void ima_kexec_post_load(struct kimage *image) {}
-> =C2=A0#endif
-> =C2=A0
-> =C2=A0#else
-> diff --git a/security/integrity/ima/ima_kexec.c
-> b/security/integrity/ima/ima_kexec.c
-> index 704676fa6615..0fa65f91414b 100644
-> --- a/security/integrity/ima/ima_kexec.c
-> +++ b/security/integrity/ima/ima_kexec.c
-> @@ -12,10 +12,14 @@
-> =C2=A0#include <linux/kexec.h>
-> =C2=A0#include <linux/of.h>
-> =C2=A0#include <linux/ima.h>
-> +#include <linux/reboot.h>
-> +#include <asm/page.h>
-> =C2=A0#include "ima.h"
-> =C2=A0
-> =C2=A0#ifdef CONFIG_IMA_KEXEC
-> =C2=A0static struct seq_file ima_kexec_file;
-> +static void *ima_kexec_buffer;
-> +static bool ima_kexec_update_registered;
-> =C2=A0
-> =C2=A0static void ima_reset_kexec_file(struct seq_file *sf)
-> =C2=A0{
-> @@ -183,6 +187,48 @@ void ima_add_kexec_buffer(struct kimage *image)
-> =C2=A0	kexec_dprintk("kexec measurement buffer for the loaded kernel at
-> 0x%lx.\n",
-> =C2=A0		=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 kbuf.mem);
-> =C2=A0}
-> +
-> +/*
-> + * Called during kexec execute so that IMA can update the measurement li=
-st.
-> + */
-> +static int ima_update_kexec_buffer(struct notifier_block *self,
-> +				=C2=A0=C2=A0 unsigned long action, void *data)
-> +{
-> +	return NOTIFY_OK;
-> +}
-> +
-> +struct notifier_block update_buffer_nb =3D {
-> +	.notifier_call =3D ima_update_kexec_buffer,
-> +};
-> +
-> +/*
-> + * Create a mapping for the source pages that contain the IMA buffer
-> + * so we can update it later.
-> + */
+From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
 
-Hi Steven,
+Correct the parent of the AUDIOMIX DSP and OCRAM_A clock gates by setting
+it to AUDIO_AXI_CLK_ROOT, instead of AUDIO_AHB_CLK_ROOT. Additionally, set
+the frequency of AUDIO_AXI_CLK_ROOT to 800MHz instead of the current
+400MHz.
 
-It does more than just that.  It also registers a second IMA reboot notifie=
-r.=20
-(Is a second reboot notifier really necessary?)  It seems that the
-ima_reboot_notifier() is executed after this one, otherwise the kexec_execu=
-te
-would be missing.  However, I'm not sure that is guaranteed.
+---
+Changes in v2:
+* add Fixes tags
+* add Iulia's R-b
+* link to v1: https://lore.kernel.org/imx/20250217165718.74619-1-laurentiumihalcea111@gmail.com/
+---
 
-I'm wondering if this patch should be limited to saving the map segments.  =
-In
-any case, using the reboot notifier is relatively new and should at least b=
-e
-reflected here and in the patch description.
+Laurentiu Mihalcea (4):
+  dt-bindings: clock: imx8mp: add axi clock
+  clk: clk-imx8mp-audiomix: fix dsp/ocram_a clock parents
+  arm64: dts: imx8mp: add AUDIO_AXI_CLK_ROOT to AUDIOMIX block
+  arm64: dts: imx8mp: change AUDIO_AXI_CLK_ROOT freq. to 800MHz
 
-thanks,
+ .../devicetree/bindings/clock/imx8mp-audiomix.yaml     | 10 ++++++----
+ arch/arm64/boot/dts/freescale/imx8mp.dtsi              |  7 ++++---
+ drivers/clk/imx/clk-imx8mp-audiomix.c                  |  6 +++---
+ 3 files changed, 13 insertions(+), 10 deletions(-)
 
-Mimi
-
-> +void ima_kexec_post_load(struct kimage *image)
-> +{
-> +	if (ima_kexec_buffer) {
-> +		kimage_unmap_segment(ima_kexec_buffer);
-> +		ima_kexec_buffer =3D NULL;
-> +	}
-> +
-> +	if (!image->ima_buffer_addr)
-> +		return;
-> +
-> +	ima_kexec_buffer =3D kimage_map_segment(image,
-> +					=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 image->ima_buffer_addr,
-> +					=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 image->ima_buffer_size);
-> +	if (!ima_kexec_buffer) {
-> +		pr_err("Could not map measurements buffer.\n");
-> +		return;
-> +	}
-> +
-> +	if (!ima_kexec_update_registered) {
-> +		register_reboot_notifier(&update_buffer_nb);
-> +		ima_kexec_update_registered =3D true;
-> +	}
-> +}
-> +
-> =C2=A0#endif /* IMA_KEXEC */
-> =C2=A0
-> =C2=A0/*
+-- 
+2.34.1
 
 
