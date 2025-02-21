@@ -1,82 +1,161 @@
-Return-Path: <linux-kernel+bounces-526438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CD13A3FEB6
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 19:25:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E333A3FEB3
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 19:25:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0D9819C1265
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 18:25:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FBB4701FDC
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 18:24:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B93B32512E1;
-	Fri, 21 Feb 2025 18:24:55 +0000 (UTC)
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A80F72512E2;
+	Fri, 21 Feb 2025 18:24:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dRDbU5ZC"
+Received: from mail-oa1-f43.google.com (mail-oa1-f43.google.com [209.85.160.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1EF7252903
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 18:24:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D5871D5AA7;
+	Fri, 21 Feb 2025 18:24:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740162295; cv=none; b=O67Rj3sCEqFxk8UxBKZ+VLPUwffFi89ofKS5D9Cp672F6PoVZtGmsfgcO3RoKSCc95Z+TZmgHFOE9K4yoQEFiB8IytfcobvdddBIi/I0KuYjai6DVxsXrrPBnz8jRBPT+xql47V+V1rYPs0U1Dk17MvFahS97hm1IhA0lObmtuc=
+	t=1740162289; cv=none; b=c6ZiGfaXxjeRc/9N2jzhjSmpZkrh0V1Rd9jympFq872Tfwl76NDVAXwEEp4xdC5J2lhK4rgds1Bd+rzbwiIGx4mMJMKaKftsm9ngIkvG50Go2mopc3bB1qxBnyeagaoqOWIWN30kZkiN52SJCqJb+LjwlHE8sMeOc51cuiSfYHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740162295; c=relaxed/simple;
-	bh=ydmGVURAeTjRhlYXuCLvdNQzmLGiLTBlaszgnc/fihs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=csSaAXjt0GEsXj0QE7Qx7V4RCQpL4gIueromvBCzJp8Fv4ekqYOV8v0iV4c3QTKHvcaKsp8g8mLu+H9T0tTpe6TunRzhmzHOY5Jx5RS4UrNdih0AtaWl84ZiJQN1x9UFG1YaZaSsCxY1NorG1KoUG7ixLS+W6FKM5+eJQlUaKNU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from trampoline.thunk.org (pool-173-48-114-12.bstnma.fios.verizon.net [173.48.114.12])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 51LIOGib007540
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Feb 2025 13:24:17 -0500
-Received: by trampoline.thunk.org (Postfix, from userid 15806)
-	id 73B972E011A; Fri, 21 Feb 2025 13:24:16 -0500 (EST)
-Date: Fri, 21 Feb 2025 13:24:16 -0500
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Pali =?iso-8859-1?Q?Roh=E1r?= <pali@kernel.org>
-Cc: Amir Goldstein <amir73il@gmail.com>, "Darrick J. Wong" <djwong@kernel.org>,
-        ronnie sahlberg <ronniesahlberg@gmail.com>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-        Steve French <sfrench@samba.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-cifs@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 3/4] fs: Implement support for fsx_xflags_mask,
- fsx_xflags2 and fsx_xflags2_mask into vfs
-Message-ID: <20250221182416.GA2252164@mit.edu>
-References: <20250216164029.20673-1-pali@kernel.org>
- <20250216164029.20673-4-pali@kernel.org>
+	s=arc-20240116; t=1740162289; c=relaxed/simple;
+	bh=KE/2RO/lFpVr7sVpJR/cW8Netw0FEdWCl/HcdQ7hZSg=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=WjogMMxgbf51jWZkej/qhN/WZWdgvBeYK1QRAjJBc2WndFnncj8HwpqhSFIa1xtqolSzCGzdw2pRqTaP3AJjyAsgByNM09z6Gp9FzoVdkrXmoy+reAJn5Ql9IfkLYpMWKpqI+wmlSeKpD/v4tQXk1hCdNGgZUUZbjJBn/BAcmKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dRDbU5ZC; arc=none smtp.client-ip=209.85.160.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-2b1a9cbfc8dso574337fac.2;
+        Fri, 21 Feb 2025 10:24:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740162287; x=1740767087; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :references:cc:to:subject:from:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=6Su3+14tpxkqTvwfVPEZByUtjouZaShymhRyBoXcd7s=;
+        b=dRDbU5ZCYzlWWOqzJJ6O30rOGEME8E3zRaA7SEligSXeVSSTNdLr92zUBBg0RTO8V5
+         EV0JOyXGsRAkNs/eE8gOZnbCXphsgLo9kCsk2WrZNzCySCQpCt7pjgPQCcJgCecADcff
+         0NOO1Nn+qWqBthZX+D4YrrQzl2DDMhLpNYuEkgH5HNjJLa0LNz2ibx80ooeRGmKMtGJg
+         d+naLuLMhhdRjP9Loed1D8ByjvVkZONJmYkB/e+w551FGNTcyKK8rGzldZK86jk2vBx1
+         BjB5ifFZHE+Gb/x+IBcsizqMA/0ul8aveVOTL4o9JFtyCHVrLr4VxFvoPF7THyqFXaDk
+         YRzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740162287; x=1740767087;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :references:cc:to:subject:from:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6Su3+14tpxkqTvwfVPEZByUtjouZaShymhRyBoXcd7s=;
+        b=ulPmY21QbQSoUFSvoZQaxhQdbOKJtvfsGoKtZ1MSt5NJ8gEPKf932pYIW8uy7b21TT
+         HcwC62EwUbGlAE62JkVslbR2y4krEsph+dvgfYYLjOTmzNzYpumXyQmhL8V/usJPXWBZ
+         WEcpT3GrTxctzht2WLIyf106buETJmen9pE6sM6cTgpEtWlUMx9GFJosfH5y7dlkarSy
+         UquKZxPcd+WE+M34i1EIh/gQW9bJdhfmrRQHjkxXlOPpaqzIN46NVXJfOI+HqMaGkBDE
+         JKes25mmLkoRBYFaDg+q5mszP7kNSdjv0lkr0xWqkf9AUjF7blNZmopW7DrE4iYslwKc
+         kmiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVLRjCm5G0MWdFbbe2yM7GIPUapDnigjKzThJwjK+JYd5T4RNeTGsXyaSQH3TrSBJOCZPCSPuX3uASwUMY=@vger.kernel.org, AJvYcCX5nLjUzlpLNf9PMMmZVgA2jGVNH4BFqrbftwvLp3dp5SCpq/Q9LZc03W3KiF4A7tiVkQantpWn@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDE/vJZpSbvmVt0Sl7ZgrXw6yJAIGoehVSoNiQ+3AP7UJI4s7F
+	JYTdTFKJ+jo6/TgObz2yhMTXVSF3Gr3jXSzLh1NQfAxl3gY3oJMs
+X-Gm-Gg: ASbGncsxi2frEyfMRTw6p4ctKrxYj0DKE4w6O715eiWQo/9kWsCpkhRG+7Hx5FXDyK5
+	LsJx1s2VCt3AfuMAbVGzlkSGRvKd2doXXFDXuuN8Ph7Gx9sIi3ZmbaItBzv3qJX0r4qAijEMd9f
+	ZaV1zoSVZUryfvf8zBf3+50LifsVFFpuixvjY05Hg3BEawnfMJMHU46TLPqcmgRydyt9AFXKDUw
+	bgP+rosndfBpktmIiIVnVJ9NLR97KpAUtWt9kMvgQqyJi7IlIBvf2SiowtE5MTHa2mhhZo+rROr
+	ZAIAKNk9zQ+5XVAM18am2/hwwwtsle23lQmKdJBzedTJtiaB+odh/w==
+X-Google-Smtp-Source: AGHT+IELQYu5EK+8uQbcZYp/tabGOaWFJynVjv7IEdRKtNkhYtBb5oVqlIM2APCjl5rzlT4RblTrWw==
+X-Received: by 2002:a05:6870:9f12:b0:29e:2bbd:51cb with SMTP id 586e51a60fabf-2bd5180cf5cmr2853498fac.24.1740162286691;
+        Fri, 21 Feb 2025 10:24:46 -0800 (PST)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2bd3438a93bsm960157fac.25.2025.02.21.10.24.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 Feb 2025 10:24:44 -0800 (PST)
+Message-ID: <dd1606d2-f03b-4a95-bc80-2daf55747e26@gmail.com>
+Date: Fri, 21 Feb 2025 10:24:41 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250216164029.20673-4-pali@kernel.org>
+User-Agent: Mozilla Thunderbird
+From: Florian Fainelli <f.fainelli@gmail.com>
+Subject: Re: [PATCH 6.12 000/225] 6.12.16-rc2 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+ conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+References: <20250220104454.293283301@linuxfoundation.org>
+Content-Language: en-US
+Autocrypt: addr=f.fainelli@gmail.com; keydata=
+ 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
+ WlfRzlpjIPmdjgoicA==
+In-Reply-To: <20250220104454.293283301@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sun, Feb 16, 2025 at 05:40:28PM +0100, Pali Rohár wrote:
-> This change adds support for new struct fileattr fields fsx_xflags_mask,
-> fsx_xflags2 and fsx_xflags2_mask into FS_IOC_FSGETXATTR and
-> FS_IOC_FSSETXATTR ioctls.
 
-I don't think I saw an answer to this question (but the discussions of
-the mail thread have really sprawled a bit and so it's hard to review
-all of the messages in the thread) --- so.... what's your reason for
-creating this new fsx_xflags2 field as opposed to just defining new
-flags bits for fsx_xflags field?  There are plenty of unused bits in
-the FS_XFLAG_* space.
 
-Cheers,
+On 2/20/2025 2:58 AM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.12.16 release.
+> There are 225 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sat, 22 Feb 2025 10:44:04 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.12.16-rc2.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.12.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-					- Ted
-					
+On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
+BMIPS_GENERIC:
+
+Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+-- 
+Florian
+
+
 
