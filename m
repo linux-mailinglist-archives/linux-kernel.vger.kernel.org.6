@@ -1,169 +1,306 @@
-Return-Path: <linux-kernel+bounces-525976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AED0A3F805
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:08:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59305A3F813
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:10:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C903189E7C0
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 15:08:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DDC6701FCF
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 15:08:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 050DE20E31D;
-	Fri, 21 Feb 2025 15:08:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEF6920E70E;
+	Fri, 21 Feb 2025 15:08:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="aPWYnMyu";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="r8Y39V+2"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="gNAhgefJ"
+Received: from smtp-1908.mail.infomaniak.ch (smtp-1908.mail.infomaniak.ch [185.125.25.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE1F474BED;
-	Fri, 21 Feb 2025 15:08:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AB902066F1
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 15:08:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740150489; cv=none; b=emY/zE8L3csYhFNcYs9Z56GV0xlB60Bx3nUOgFMUcgjktxNwEy98jEXUVRUc3jwToYiaAfS2RgRRogUUtGMSW9yzlmVulXgP7xv0PAjDCnoNE/FmSgd9lE3qCjzdzsJd6p1nSGW4t0dphKTEKcXcpA10JuiJROYOIIxSouIj/8M=
+	t=1740150528; cv=none; b=RY4zIWQKObSuT1gvZ/PIRS/IrRfrqi8JToL432+I+COBSzE9FD7llcxD5lED8AHbaBLRJ/Nt6E9y5TTxwLHd3PoweqEHRXfoMgMY/O0r9Bhd2taGS2YojMG+2C5UBkMWpdq1i8UnnYQxqE2tAGvb51PEK9MyQKmSx7z3uF5h8FI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740150489; c=relaxed/simple;
-	bh=UoJLtFhgBEmILKuPV5PmWow2I7yrilaHeQwiz1VkK3Y=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=S4/3XVOIL7vANOrrdc3RkUOIcpuNc/ESTxd1fDkw4A1fiyFbVq03tvaVhdjnG02wb1dZ6d37VKDMDfGuP6I1OA0EX8ZT+St3//tkS+Y4wGaSAfIydGRuObBL0T9/+V/XLTR3DuflIDOcUT6vb47vSxzwhW6gm2xQa1bIThDj+QY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=aPWYnMyu; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=r8Y39V+2; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 21 Feb 2025 15:08:05 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1740150486;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xs+Lj91zAobjC8WIHkTSOdAdAbewkgnh8/JUyYEOlC0=;
-	b=aPWYnMyuRf/fXxgBEOFXuNOTMVDrCGHOoJi4axgyRMDgCbyI77OBWIa4+j6vz5moOcSQJ6
-	m/d9sAWN8ERZkW0iEsaEyx/vsDgG3LGvFrUwixW+yq6Hg9awNirvTYiasTmWynWFuBbLGa
-	/YShY4O4D+2+zy+6ZMNZhCnjtadkbcxPgXRvrdR6bh3nXMKOEZJFJgklrifSPJSYLvRx5S
-	g+t/sG+taJOhfCQPhu+s5h0NBAQbg4KgPr6PozwywBueAYJR4/EIQ9v3LVihFxQZSTaXIp
-	oOdFiyqoe1gEAM8p/UlmoU8VBfpgHP8H0RnQn2xilVb+Dy9U9CFTcYE/v3+Pmw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1740150486;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xs+Lj91zAobjC8WIHkTSOdAdAbewkgnh8/JUyYEOlC0=;
-	b=r8Y39V+2Ohc9nx/qihPobEnosm2t5iyi0PnjZkCCNaZsIa3z0fDZQyBxyVsArmxYC1MU0C
-	O9/sCSxNDnUMKsDw==
-From: "tip-bot2 for Kees Cook" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/cpu] x86/kcfi: Require FRED for FineIBT
-Cc: Kees Cook <kees@kernel.org>, Ingo Molnar <mingo@kernel.org>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250214192210.work.253-kees@kernel.org>
-References: <20250214192210.work.253-kees@kernel.org>
+	s=arc-20240116; t=1740150528; c=relaxed/simple;
+	bh=wOUwuoMFBlbf4VclPsw4Y8bvqcLAlISZ+OpN2COxUT0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YK65SVrkas3mLrettzSPc4xOBmYahQqE98pwdpqiCec98J3JX6GmU9UPO/wKtHNgMJKOX5FC7AOa7xxOTJARP/wwSVkQWb4vsoYrC0XRQzJOLgGzO3ZvMH8EXG6USdjrd+R9n7AAlOTcx1ytumiPQPHue7Tt7OfugnkR8eXiOGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=gNAhgefJ; arc=none smtp.client-ip=185.125.25.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246c])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Yztn21Cvqzp7v;
+	Fri, 21 Feb 2025 16:08:38 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1740150518;
+	bh=HAdXvLK8vfW//A0RH2Z8Vgvri1ljkOe8we8oEw/BRJo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gNAhgefJNSQqmpn1R7GjmCDcL8sBVj9Jy8ELxGlJDuSkOcQnFPususm4DJtyM7z3K
+	 N5uOW38hzFreoU0UXhfBHpXriYHLasoIWkBI7w0rFt5bmnCxNP0I8oGntObZgmF0Jy
+	 3Dxnzo71DVTvLCBMWTvR36ekCTxZrE3oQm+YSPuM=
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Yztmx6Tb2zB0s;
+	Fri, 21 Feb 2025 16:08:33 +0100 (CET)
+Date: Fri, 21 Feb 2025 16:08:33 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Andrey Albershteyn <aalbersh@redhat.com>, 
+	Paul Moore <paul@paul-moore.com>
+Cc: Richard Henderson <richard.henderson@linaro.org>, 
+	Matt Turner <mattst88@gmail.com>, Russell King <linux@armlinux.org.uk>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Geert Uytterhoeven <geert@linux-m68k.org>, Michal Simek <monstr@monstr.eu>, 
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, 
+	Helge Deller <deller@gmx.de>, Madhavan Srinivasan <maddy@linux.ibm.com>, 
+	Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, Naveen N Rao <naveen@kernel.org>, 
+	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
+	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Sven Schnelle <svens@linux.ibm.com>, Yoshinori Sato <ysato@users.sourceforge.jp>, 
+	Rich Felker <dalias@libc.org>, John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
+	"David S. Miller" <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>, 
+	Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
+	Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, Arnd Bergmann <arnd@arndb.de>, linux-alpha@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org, 
+	linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org, linux-sh@vger.kernel.org, 
+	sparclinux@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-api@vger.kernel.org, linux-arch@vger.kernel.org, 
+	linux-xfs@vger.kernel.org
+Subject: Re: [PATCH v3] fs: introduce getfsxattrat and setfsxattrat syscalls
+Message-ID: <20250221.ahB8jei2Chie@digikod.net>
+References: <20250211-xattrat-syscall-v3-1-a07d15f898b2@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174015048551.10177.4353365227122906077.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250211-xattrat-syscall-v3-1-a07d15f898b2@kernel.org>
+X-Infomaniak-Routing: alpha
 
-The following commit has been merged into the x86/cpu branch of tip:
+It looks security checks are missing.  With IOCTL commands, file
+permissions are checked at open time, but with these syscalls the path
+is only resolved but no specific access seems to be checked (except
+inode_owner_or_capable via vfs_fileattr_set).
 
-Commit-ID:     f12315780faf1cbfe00991077a1e8c8e4c201f3b
-Gitweb:        https://git.kernel.org/tip/f12315780faf1cbfe00991077a1e8c8e4c201f3b
-Author:        Kees Cook <kees@kernel.org>
-AuthorDate:    Fri, 14 Feb 2025 11:22:21 -08:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Fri, 21 Feb 2025 15:38:11 +01:00
+On Tue, Feb 11, 2025 at 06:22:47PM +0100, Andrey Albershteyn wrote:
+> From: Andrey Albershteyn <aalbersh@redhat.com>
+> 
+> Introduce getfsxattrat and setfsxattrat syscalls to manipulate inode
+> extended attributes/flags. The syscalls take parent directory fd and
+> path to the child together with struct fsxattr.
+> 
+> This is an alternative to FS_IOC_FSSETXATTR ioctl with a difference
+> that file don't need to be open as we can reference it with a path
+> instead of fd. By having this we can manipulated inode extended
+> attributes not only on regular files but also on special ones. This
+> is not possible with FS_IOC_FSSETXATTR ioctl as with special files
+> we can not call ioctl() directly on the filesystem inode using fd.
+> 
+> This patch adds two new syscalls which allows userspace to get/set
+> extended inode attributes on special files by using parent directory
+> and a path - *at() like syscall.
+> 
+> Also, as vfs_fileattr_set() is now will be called on special files
+> too, let's forbid any other attributes except projid and nextents
+> (symlink can have an extent).
+> 
+> CC: linux-api@vger.kernel.org
+> CC: linux-fsdevel@vger.kernel.org
+> CC: linux-xfs@vger.kernel.org
+> Signed-off-by: Andrey Albershteyn <aalbersh@redhat.com>
+> ---
+> v1:
+> https://lore.kernel.org/linuxppc-dev/20250109174540.893098-1-aalbersh@kernel.org/
+> 
+> Previous discussion:
+> https://lore.kernel.org/linux-xfs/20240520164624.665269-2-aalbersh@redhat.com/
+> 
+> XFS has project quotas which could be attached to a directory. All
+> new inodes in these directories inherit project ID set on parent
+> directory.
+> 
+> The project is created from userspace by opening and calling
+> FS_IOC_FSSETXATTR on each inode. This is not possible for special
+> files such as FIFO, SOCK, BLK etc. Therefore, some inodes are left
+> with empty project ID. Those inodes then are not shown in the quota
+> accounting but still exist in the directory. Moreover, in the case
+> when special files are created in the directory with already
+> existing project quota, these inode inherit extended attributes.
+> This than leaves them with these attributes without the possibility
+> to clear them out. This, in turn, prevents userspace from
+> re-creating quota project on these existing files.
+> ---
+> Changes in v3:
+> - Remove unnecessary "dfd is dir" check as it checked in user_path_at()
+> - Remove unnecessary "same filesystem" check
+> - Use CLASS() instead of directly calling fdget/fdput
+> - Link to v2: https://lore.kernel.org/r/20250122-xattrat-syscall-v2-1-5b360d4fbcb2@kernel.org
+> ---
+>  arch/alpha/kernel/syscalls/syscall.tbl      |  2 +
+>  arch/arm/tools/syscall.tbl                  |  2 +
+>  arch/arm64/tools/syscall_32.tbl             |  2 +
+>  arch/m68k/kernel/syscalls/syscall.tbl       |  2 +
+>  arch/microblaze/kernel/syscalls/syscall.tbl |  2 +
+>  arch/mips/kernel/syscalls/syscall_n32.tbl   |  2 +
+>  arch/mips/kernel/syscalls/syscall_n64.tbl   |  2 +
+>  arch/mips/kernel/syscalls/syscall_o32.tbl   |  2 +
+>  arch/parisc/kernel/syscalls/syscall.tbl     |  2 +
+>  arch/powerpc/kernel/syscalls/syscall.tbl    |  2 +
+>  arch/s390/kernel/syscalls/syscall.tbl       |  2 +
+>  arch/sh/kernel/syscalls/syscall.tbl         |  2 +
+>  arch/sparc/kernel/syscalls/syscall.tbl      |  2 +
+>  arch/x86/entry/syscalls/syscall_32.tbl      |  2 +
+>  arch/x86/entry/syscalls/syscall_64.tbl      |  2 +
+>  arch/xtensa/kernel/syscalls/syscall.tbl     |  2 +
+>  fs/inode.c                                  | 75 +++++++++++++++++++++++++++++
+>  fs/ioctl.c                                  | 16 +++++-
+>  include/linux/fileattr.h                    |  1 +
+>  include/linux/syscalls.h                    |  4 ++
+>  include/uapi/asm-generic/unistd.h           |  8 ++-
+>  21 files changed, 133 insertions(+), 3 deletions(-)
+> 
 
-x86/kcfi: Require FRED for FineIBT
+[...]
 
-With what appears to be an unavoidable pivot gadget always present in
-the kernel (the entry code), FineIBT's lack of caller-side CFI hash
-validation leaves it critically flawed:
+> diff --git a/fs/inode.c b/fs/inode.c
+> index 6b4c77268fc0ecace4ac78a9ca777fbffc277f4a..b2dddd9db4fabaf67a6cbf541a86978b290411ec 100644
+> --- a/fs/inode.c
+> +++ b/fs/inode.c
+> @@ -23,6 +23,9 @@
+>  #include <linux/rw_hint.h>
+>  #include <linux/seq_file.h>
+>  #include <linux/debugfs.h>
+> +#include <linux/syscalls.h>
+> +#include <linux/fileattr.h>
+> +#include <linux/namei.h>
+>  #include <trace/events/writeback.h>
+>  #define CREATE_TRACE_POINTS
+>  #include <trace/events/timestamp.h>
+> @@ -2953,3 +2956,75 @@ umode_t mode_strip_sgid(struct mnt_idmap *idmap,
+>  	return mode & ~S_ISGID;
+>  }
+>  EXPORT_SYMBOL(mode_strip_sgid);
+> +
+> +SYSCALL_DEFINE4(getfsxattrat, int, dfd, const char __user *, filename,
+> +		struct fsxattr __user *, fsx, unsigned int, at_flags)
+> +{
+> +	CLASS(fd, dir)(dfd);
+> +	struct fileattr fa;
+> +	struct path filepath;
+> +	int error;
+> +	unsigned int lookup_flags = 0;
+> +
+> +	if ((at_flags & ~(AT_SYMLINK_NOFOLLOW | AT_EMPTY_PATH)) != 0)
+> +		return -EINVAL;
+> +
+> +	if (at_flags & AT_SYMLINK_FOLLOW)
+> +		lookup_flags |= LOOKUP_FOLLOW;
+> +
+> +	if (at_flags & AT_EMPTY_PATH)
+> +		lookup_flags |= LOOKUP_EMPTY;
+> +
+> +	if (fd_empty(dir))
+> +		return -EBADF;
+> +
+> +	error = user_path_at(dfd, filename, lookup_flags, &filepath);
+> +	if (error)
+> +		return error;
 
-  https://lore.kernel.org/linux-hardening/Z60NwR4w%2F28Z7XUa@ubun/ [1]
+security_inode_getattr() should probably be called here.
 
-Require FRED for FineIBT:
+> +
+> +	error = vfs_fileattr_get(filepath.dentry, &fa);
+> +	if (!error)
+> +		error = copy_fsxattr_to_user(&fa, fsx);
+> +
+> +	path_put(&filepath);
+> +	return error;
+> +}
+> +
+> +SYSCALL_DEFINE4(setfsxattrat, int, dfd, const char __user *, filename,
+> +		struct fsxattr __user *, fsx, unsigned int, at_flags)
+> +{
+> +	CLASS(fd, dir)(dfd);
+> +	struct fileattr fa;
+> +	struct path filepath;
+> +	int error;
+> +	unsigned int lookup_flags = 0;
+> +
+> +	if ((at_flags & ~(AT_SYMLINK_FOLLOW | AT_EMPTY_PATH)) != 0)
+> +		return -EINVAL;
+> +
+> +	if (at_flags & AT_SYMLINK_FOLLOW)
+> +		lookup_flags |= LOOKUP_FOLLOW;
+> +
+> +	if (at_flags & AT_EMPTY_PATH)
+> +		lookup_flags |= LOOKUP_EMPTY;
+> +
+> +	if (fd_empty(dir))
+> +		return -EBADF;
+> +
+> +	if (copy_fsxattr_from_user(&fa, fsx))
+> +		return -EFAULT;
+> +
+> +	error = user_path_at(dfd, filename, lookup_flags, &filepath);
+> +	if (error)
+> +		return error;
+> +
+> +	error = mnt_want_write(filepath.mnt);
+> +	if (!error) {
 
-  https://lore.kernel.org/linux-hardening/c46f5614-a82e-42fc-91eb-05e483a7df9c@citrix.com/
+security_inode_setattr() should probably be called too.
 
-(and probably should also require eXecute-Only memory too), and default
-to kCFI when CFI is built in.
+> +		error = vfs_fileattr_set(file_mnt_idmap(fd_file(dir)),
+> +					 filepath.dentry, &fa);
+> +		mnt_drop_write(filepath.mnt);
+> +	}
+> +
+> +	path_put(&filepath);
+> +	return error;
+> +}
+> diff --git a/fs/ioctl.c b/fs/ioctl.c
+> index 638a36be31c14afc66a7fd6eb237d9545e8ad997..dc160c2ef145e4931d625f1f93c2a8ae7f87abf3 100644
+> --- a/fs/ioctl.c
+> +++ b/fs/ioctl.c
+> @@ -558,8 +558,7 @@ int copy_fsxattr_to_user(const struct fileattr *fa, struct fsxattr __user *ufa)
+>  }
+>  EXPORT_SYMBOL(copy_fsxattr_to_user);
+>  
+> -static int copy_fsxattr_from_user(struct fileattr *fa,
+> -				  struct fsxattr __user *ufa)
+> +int copy_fsxattr_from_user(struct fileattr *fa, struct fsxattr __user *ufa)
+>  {
+>  	struct fsxattr xfa;
+>  
+> @@ -646,6 +645,19 @@ static int fileattr_set_prepare(struct inode *inode,
+>  	if (fa->fsx_cowextsize == 0)
+>  		fa->fsx_xflags &= ~FS_XFLAG_COWEXTSIZE;
+>  
+> +	/*
+> +	 * The only use case for special files is to set project ID, forbid any
+> +	 * other attributes
+> +	 */
+> +	if (!(S_ISREG(inode->i_mode) || S_ISDIR(inode->i_mode))) {
+> +		if (fa->fsx_xflags & ~FS_XFLAG_PROJINHERIT)
+> +			return -EINVAL;
+> +		if (!S_ISLNK(inode->i_mode) && fa->fsx_nextents)
+> +			return -EINVAL;
+> +		if (fa->fsx_extsize || fa->fsx_cowextsize)
+> +			return -EINVAL;
+> +	}
+> +
+>  	return 0;
+>  }
+>  
+> diff --git a/include/linux/fileattr.h b/include/linux/fileattr.h
 
-Signed-off-by: Kees Cook <kees@kernel.org>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: https://lore.kernel.org/r/20250214192210.work.253-kees@kernel.org
----
- arch/x86/Kconfig              |  9 +++++----
- arch/x86/include/asm/cfi.h    |  2 +-
- arch/x86/kernel/alternative.c |  4 +++-
- 3 files changed, 9 insertions(+), 6 deletions(-)
-
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 87198d9..754bcd6 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -2427,12 +2427,13 @@ config STRICT_SIGALTSTACK_SIZE
- 
- config CFI_AUTO_DEFAULT
- 	bool "Attempt to use FineIBT by default at boot time"
--	depends on FINEIBT
-+	depends on FINEIBT && X86_FRED
- 	default y
- 	help
--	  Attempt to use FineIBT by default at boot time. If enabled,
--	  this is the same as booting with "cfi=auto". If disabled,
--	  this is the same as booting with "cfi=kcfi".
-+	  Attempt to use FineIBT by default at boot time if supported
-+	  and sensible for the hardware. If enabled, this is the same
-+	  as booting with "cfi=auto". If disabled, this is the same as
-+	  booting with "cfi=kcfi".
- 
- source "kernel/livepatch/Kconfig"
- 
-diff --git a/arch/x86/include/asm/cfi.h b/arch/x86/include/asm/cfi.h
-index 31d19c8..547377e 100644
---- a/arch/x86/include/asm/cfi.h
-+++ b/arch/x86/include/asm/cfi.h
-@@ -93,7 +93,7 @@
-  *
-  */
- enum cfi_mode {
--	CFI_AUTO,	/* FineIBT if hardware has IBT, otherwise kCFI */
-+	CFI_AUTO,	/* FineIBT if hardware has IBT, FRED, and XOM */
- 	CFI_OFF,	/* Taditional / IBT depending on .config */
- 	CFI_KCFI,	/* Optionally CALL_PADDING, IBT, RETPOLINE */
- 	CFI_FINEIBT,	/* see arch/x86/kernel/alternative.c */
-diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
-index c71b575..42f8184 100644
---- a/arch/x86/kernel/alternative.c
-+++ b/arch/x86/kernel/alternative.c
-@@ -1302,7 +1302,9 @@ static void __apply_fineibt(s32 *start_retpoline, s32 *end_retpoline,
- 
- 	if (cfi_mode == CFI_AUTO) {
- 		cfi_mode = CFI_KCFI;
--		if (HAS_KERNEL_IBT && cpu_feature_enabled(X86_FEATURE_IBT))
-+		/* FineIBT requires IBT and will only be safe with FRED */
-+		if (HAS_KERNEL_IBT && cpu_feature_enabled(X86_FEATURE_IBT) &&
-+		    cpu_feature_enabled(X86_FEATURE_FRED))
- 			cfi_mode = CFI_FINEIBT;
- 	}
- 
+[...]
 
