@@ -1,223 +1,139 @@
-Return-Path: <linux-kernel+bounces-525002-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B621A3E9B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 02:13:53 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4108EA3E9AE
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 02:12:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 24DB57A31C4
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 01:11:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AF6097A9D68
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 01:11:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46A8E381A3;
-	Fri, 21 Feb 2025 01:12:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B90343597F;
+	Fri, 21 Feb 2025 01:12:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CqUYzsqc"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iPv4HjLx"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C92AE32C8E
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 01:12:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC83F1DA53;
+	Fri, 21 Feb 2025 01:11:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740100330; cv=none; b=hI9Gj9Y8F5ej4MhEcfoAKxv2bm3OVRwI05HiGKxW320iA1B9Rn2KF3HuhX89CiaiNJivWmxI4qRnGsxApWekHCX0zIOtvZnBsVvKtYVgmYcqjeNOwZ9NojyGt2NXI11fQOzIGH+1Me9Xu0yLih0OV52RSXukyfFBl0Eih1ZbD1Y=
+	t=1740100321; cv=none; b=Q3wqwrHmkxGC3GGMY8DBMMyrMIpnKysL3quV5/Kh9/2V/1tNBwilDBhMcyXMNC8y/xw80r5lUVP6erogVNGLYO7V/Ump84WkqW7qsPfUAwBR8Aa5WuQpdVrRP4nv09ReJuqXbrptwfCthv+n5r9OLN/uIZo4EbiJzDQsonAkmOk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740100330; c=relaxed/simple;
-	bh=h8JtG26W+tN9sES1ZrmYwA3n0UnbXfgd8hcuR8Dzeu8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=u1wGbNzv1KhXj00eD/UlxIMCrwYkXqRnbZlVskaTIXJmntxA2MQkGslguG33IwY3cZwDHzs8r7IH9vpXGbh7/uwXOggOKrUUM4wAih1zi16/XwsdBipUqNuS+824xbiXRvppXTr9bxpwSXnM58xr49ZT5O2p9QzHnTG7FaemrZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CqUYzsqc; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740100327;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=V2uP5OmbuFiEulUjSxw5yqkOeT8xFildQfqqZOxiLFk=;
-	b=CqUYzsqcQN+yFrhBPbTExFMa5rNS5a1FDSIQv/AbCKFB0KuZ33WmsFMHGMlpaVqCX/MXDl
-	3NP1JUSsYSoJqXvs5tRajPXhtt1Vn0Qjag1wyjlESUDClRfdVR0Fq3mra3ayTE/GULSg+G
-	Nz2qa2o7fkCsrs9bGBCbrQ9CciQViug=
-Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
- [209.85.216.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-49-3zUlpHQYPMijTPs3bnv9wQ-1; Thu, 20 Feb 2025 20:12:06 -0500
-X-MC-Unique: 3zUlpHQYPMijTPs3bnv9wQ-1
-X-Mimecast-MFC-AGG-ID: 3zUlpHQYPMijTPs3bnv9wQ_1740100325
-Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-2fc1a70935fso3336422a91.1
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 17:12:05 -0800 (PST)
+	s=arc-20240116; t=1740100321; c=relaxed/simple;
+	bh=Vm0MXbQfgbH48YR3avHkOxUhjZoB9IqDiPff7dH3jBc=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=DAgXtCssUnHUA6UvMfJztW+noXTbICwdFQNDiBgmdXO2B9+AxZp0xX+U8OEIssUduqPEDeXGKBDwrROlW033pZmkYjbs5MsjyCZ4P1Ky/MarPcRxBND48FTixQI4a76UrSZRCwwM26638WabaPuPtjHlV/1Ye+R8ru1W+ZPaUyA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iPv4HjLx; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2211acda7f6so33147935ad.3;
+        Thu, 20 Feb 2025 17:11:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740100319; x=1740705119; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Vm0MXbQfgbH48YR3avHkOxUhjZoB9IqDiPff7dH3jBc=;
+        b=iPv4HjLxqm1K820QM9wb9AHDbH52yugMUyDZIjKcqY80oVAhAV+SQEA94c5kequ4Uo
+         VJkCxrTcj/3MWuGb4t/XCzfinZZ0UQKTS30FGUoQ/1zsE1sToK2/+pUsRdSsJHG7bAsq
+         0tDBGszcjKHoTS8l2HKRcIFm2vsZhA7oDhnSZb3XJCHOmTSlAjEy93717R/k3EAZrXDe
+         /Hv2JhBmI9PpTkbGnxuxbpIkmVU0JQR/kcW9ifr/Om1sqWIJgXczQlK50oWAbbh8q4xg
+         b3FEPwj2zQ1NhRkA7NfY/mJ/7uQ4LEr24TrsaKc6AuBj7w6TPNkQnuq+qX08y8c3qiOK
+         89RQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740100324; x=1740705124;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=V2uP5OmbuFiEulUjSxw5yqkOeT8xFildQfqqZOxiLFk=;
-        b=Psa/S7HE8obdOzlyqqUaUS+SRkr0WZKr7cIBIxwzuz9jkmJlRq+mHMa62hpzkDalj/
-         YQcC0y8P8uK8j4ENo0UyF7MWpRIvEaZr3myhhs4WW3L1n/DGXGP3vsC4BgQc6UmjcWvH
-         cxTeZY9bwL7fIeAlrRH5oWBVV51gBy4uKZjcRsRXGSxdNt8kx9WdCDNvBPfjDVLmp9VT
-         LG4ILHE2mG7VVt3pI7uCilqVsoMJ92zJXWiBXf2E4N3fhYDVhqIu5YDX1EgBnXcxYIxh
-         H8LGiuyFbFfSXHxnUDj/LWgiRFouWWzp60yUSa8R8KT68XljxtXZNwjEBuVUZQlUfMhS
-         tplA==
-X-Gm-Message-State: AOJu0Yz5yMgoLF2AdI8vKLVMf86DEXDkw0Y8BczyeFtp0sxwPzIC5cHb
-	1eehQegn1hrowu8hiEIi9DCXkE+QPQS5Dx5iNiBnS0nTV/r/GHyva+K8ELcGO9yxtwbTprKIaxr
-	61eXrXERPuGCTfR/TPdfr0RhM159pao2h+9dnub0H/1TOWp+R9eezvWfmfndktpZ/nNbz+G8TmJ
-	MwnQkRZ0kB41cCTqjD5l5GOjpt8q6sTRZwfoZHYMc7itFP01jZWQWF
-X-Gm-Gg: ASbGncv2eY9NK6vFnOXQJIoxrNjJ8aH71InF+ojxxpLCDaoyNu+SduXY3KkLPb0nb9Q
-	aQbDN/CXLbcQp9QwpG3tVQmbBiCjso51M27uB/V3jcZbU9kTkWNlyPr7Cz1tscNw=
-X-Received: by 2002:a17:90b:5292:b0:2ee:5bc9:75c7 with SMTP id 98e67ed59e1d1-2fce789e6acmr2105445a91.5.1740100324202;
-        Thu, 20 Feb 2025 17:12:04 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IER+iSiuMQxunbjUmcStknwXYKOZqYWuiH5hTUxEg7WTxwgtt+csCQnXrUZ6sQ++5Rorm/la/GU9ouQSpBNGEU=
-X-Received: by 2002:a17:90b:5292:b0:2ee:5bc9:75c7 with SMTP id
- 98e67ed59e1d1-2fce789e6acmr2105379a91.5.1740100323470; Thu, 20 Feb 2025
- 17:12:03 -0800 (PST)
+        d=1e100.net; s=20230601; t=1740100319; x=1740705119;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Vm0MXbQfgbH48YR3avHkOxUhjZoB9IqDiPff7dH3jBc=;
+        b=hTQ3NtAlL4Mzy9WHyLyTbKCaul2aKe+AsLDV8sgbhZYfVeV1VRvZmh4sQJzWSUym1z
+         hsq7e4spAcDInFr1b5MrrvHLR+MMsJArwkkZjtgzeWZgzVZYco/W3qVIChnLqiExe3kX
+         lbfLcPXWj5SmyPtT5Fndx8Q1aPVUG7ekwTTArl5n1ZHchTv/fatw7hN+zsiS+QxJ7DT4
+         fovi6NzR97hQJgK4osbSxck4hsSB/hEG0ZhIGhqrtQVV+M3egutzp1i8B1/WLJNMLPXw
+         mxybqqAr/Tnis706DiNDrcyFrwk10lnwLhwd7JTyoeMe4IcQn6l/mGCRcPbpUN3kSQWp
+         iRUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUAMmtk5sYNJn3SnkM6pNCzf072WvSR42uLzdo6G59LIzL7lWaK0gl9hedEtgdLXZF9CbxzfJod0caInSgD@vger.kernel.org, AJvYcCXesxnl+IB0LgF0AmSB307u7T3e2l4TM2JGf8bcZB4dFNoZI8w5pmUyMZ/L934FHQTLpeU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzqkA0kEFbOnWLDUCWPlfReoZv2WxxDKHab81xWRCeA/f0K/QC6
+	mEi5x6IN2ulyhByeGXXaRZvahFPzfk5RrrZAfxDO9Y7YJKERirzb
+X-Gm-Gg: ASbGnctOAaCdzcjI/s829YA5BEk+Zk/yL9d6crI9HoOOdx+Oa0OkT1MpVjWJxEJaQkS
+	XSPP4VP3K61u9den9NC8rWVAGHpOy/CNKYzOEB/haaZFuUQS3VGPiw4xpcicDGzQcSTSQVjZGUh
+	52BteBynBnXL4sraQx6QSZCJqZ8HPm+E9OCeNhhQPeEsSByRDJzQ0Sqe1L3cy6e5AOvsZhvVzh8
+	e6EbyFt8jabWqQk+gXB4zlqnj0/1/yA/1L4paia2l48EZOakl+gpK7oOAfz/VQsU/mIW0ihNZPy
+	BtDgYv3x7O2i
+X-Google-Smtp-Source: AGHT+IEoDhrb4CGE5jJ5LTwmx2lypbKMOqTBRBUmW4XbiAed9CM5h1ZXiovE1GldETPMqQMamBlFQQ==
+X-Received: by 2002:a05:6a20:8426:b0:1ee:c598:7a96 with SMTP id adf61e73a8af0-1eef3c770bbmr2408661637.16.1740100319058;
+        Thu, 20 Feb 2025 17:11:59 -0800 (PST)
+Received: from [192.168.0.235] ([38.34.87.7])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-adb5813a687sm11375535a12.20.2025.02.20.17.11.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Feb 2025 17:11:58 -0800 (PST)
+Message-ID: <1fb198103e72d88c45caf6ef2dd8ebeb258ad48e.camel@gmail.com>
+Subject: Re: [PATCH RESEND bpf-next v7 0/4] Add prog_kfunc feature probe
+From: Eduard Zingerman <eddyz87@gmail.com>
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Tao Chen <chen.dylane@gmail.com>, ast@kernel.org, daniel@iogearbox.net, 
+	andrii@kernel.org, haoluo@google.com, jolsa@kernel.org, qmo@kernel.org, 
+	bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Thu, 20 Feb 2025 17:11:54 -0800
+In-Reply-To: <CAEf4BzYsGnhmnhkHdUPN8yBfbv57R9h4N2R8RcqdjhmHWvJVkg@mail.gmail.com>
+References: <20250212153912.24116-1-chen.dylane@gmail.com>
+	 <2b025df3-144b-4909-a2b4-66356540f71c@gmail.com>
+	 <598a7d089936b18472937679d4131286f102cb18.camel@gmail.com>
+	 <CAEf4BzYsGnhmnhkHdUPN8yBfbv57R9h4N2R8RcqdjhmHWvJVkg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <c1dbc7dbad9b445245d3348f19e6742b0be07347.1740094946.git.mst@redhat.com>
-In-Reply-To: <c1dbc7dbad9b445245d3348f19e6742b0be07347.1740094946.git.mst@redhat.com>
-From: Jason Wang <jasowang@redhat.com>
-Date: Fri, 21 Feb 2025 09:11:51 +0800
-X-Gm-Features: AWEUYZn7Xt5dPTAQ_1hit6NTeptFL4Ci46JoPA4BIky8CLGqgwWNZBKnelGziLY
-Message-ID: <CACGkMEsK5Z_5B9Lz46kYYB_ndOG=CrvtZE_tLbRjL7=fT7OxbQ@mail.gmail.com>
-Subject: Re: [PATCH] virtio: break and reset virtio devices on device_shutdown()
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Eric Auger <eauger@redhat.com>, 
-	Hongyu Ning <hongyu.ning@linux.intel.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
-	=?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
-	virtualization@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Feb 21, 2025 at 7:42=E2=80=AFAM Michael S. Tsirkin <mst@redhat.com>=
- wrote:
->
-> Hongyu reported a hang on kexec in a VM. QEMU reported invalid memory
-> accesses during the hang.
->
->         Invalid read at addr 0x102877002, size 2, region '(null)', reason=
-: rejected
->         Invalid write at addr 0x102877A44, size 2, region '(null)', reaso=
-n: rejected
->         ...
->
-> It was traced down to virtio-console. Kexec works fine if virtio-console
-> is not in use.
->
-> The issue is that virtio-console continues to write to the MMIO even afte=
-r
-> underlying virtio-pci device is reset.
+On Thu, 2025-02-20 at 17:07 -0800, Andrii Nakryiko wrote:
+> On Tue, Feb 18, 2025 at 2:51=E2=80=AFPM Eduard Zingerman <eddyz87@gmail.c=
+om> wrote:
+> >=20
+> > On Mon, 2025-02-17 at 13:21 +0800, Tao Chen wrote:
 
-Some of my questions were not answered so I need to post them again.
+[...]
 
-Do we need to fix vitio-console?
+> > I tried the test enumerating all kfuncs in BTF and doing
+> > libbpf_probe_bpf_kfunc for BPF_PROG_TYPE_{KPROBE,XDP}.
+> > (Source code at the end of the email).
+> >=20
+> > The set of kfuncs returned for XDP looks correct.
+> > The set of kfuncs returned for KPROBE contains a few incorrect entries:
+> > - bpf_xdp_metadata_rx_hash
+> > - bpf_xdp_metadata_rx_timestamp
+> > - bpf_xdp_metadata_rx_vlan_tag
+> >=20
+> > This is because of a different string reported by verifier for these
+> > three functions.
+> >=20
+> > Ideally, I'd write some script looking for
+> > register_btf_kfunc_id_set(BPF_PROG_TYPE_***, kfunc_set)
+> > calls in the kernel source code and extracting the prog type /
+> > functions in the set, and comparing results of this script with
+> > output of the test below for all program types.
+> > But up to you if you'd like to do such rigorous verification or not.
+> >=20
+> > Otherwise patch-set looks good to me, for all patch-set:
+> >=20
+> > Reviewed-by: Eduard Zingerman <eddyz87@gmail.com>
+>=20
+> Shouldn't we fix the issue with those bpf_xdp_metadata_* kfuncs? Do
 
-Note that we've already break the device in virtio_pci_remove():
+I assume Tao would post a v8 with the fix.
 
-static void virtio_pci_remove(struct pci_dev *pci_dev)
-{
-  struct virtio_pci_device *vp_dev =3D pci_get_drvdata(pci_dev);
-        struct device *dev =3D get_device(&vp_dev->vdev.dev);
+> you have details on what different string verifier reports?
 
-        /*
-         * Device is marked broken on surprise removal so that virtio upper
-         * layers can abort any ongoing operation.
-         */
-        if (!pci_device_is_present(pci_dev))
-                virtio_break_device(&vp_dev->vdev);
+The string is "metadata kfuncs require device-bound program\n".
 
-...
-
->
-> Additionally, Eric noticed that IOMMUs are reset before devices, if
-> devices are not reset on shutdown they continue to poke at guest memory
-> and get errors from the IOMMU. Some devices get wedged then.
->
-> The problem can be solved by breaking all virtio devices on virtio
-> bus shutdown, then resetting them.
->
-> Reported-by: Eric Auger <eauger@redhat.com>
-> Reported-by: Hongyu Ning <hongyu.ning@linux.intel.com>
-> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
-> ---
->  drivers/virtio/virtio.c | 31 +++++++++++++++++++++++++++++++
->  1 file changed, 31 insertions(+)
->
-> diff --git a/drivers/virtio/virtio.c b/drivers/virtio/virtio.c
-> index c1cc1157b380..e5b29520d3b2 100644
-> --- a/drivers/virtio/virtio.c
-> +++ b/drivers/virtio/virtio.c
-> @@ -377,6 +377,36 @@ static void virtio_dev_remove(struct device *_d)
->         of_node_put(dev->dev.of_node);
->  }
->
-> +static void virtio_dev_shutdown(struct device *_d)
-> +{
-> +       struct virtio_device *dev =3D dev_to_virtio(_d);
-> +       struct virtio_driver *drv =3D drv_to_virtio(dev->dev.driver);
-> +
-> +       /*
-> +        * Stop accesses to or from the device.
-> +        * We only need to do it if there's a driver - no accesses otherw=
-ise.
-> +        */
-> +       if (!drv)
-> +               return;
-> +
-> +       /*
-> +        * Some devices get wedged if you kick them after they are
-> +        * reset. Mark all vqs as broken to make sure we don't.
-> +        */
-> +       virtio_break_device(dev);
-> +       /*
-> +        * The below virtio_synchronize_cbs() guarantees that any interru=
-pt
-> +        * for this line arriving after virtio_synchronize_vqs() has comp=
-leted
-> +        * is guaranteed to see vq->broken as true.
-> +        */
-> +       virtio_synchronize_cbs(dev);
-
-This looks like a partial re-introduction of the hardening work, but
-the ccw part is still in-completed e.g the synchronization requires a
-read_lock() and depends on CONFIG_VIRTIO_HARDEN_NOTIFICATION (which is
-marked as broken now).
-
-Should it better to
-
-1) fix the virtio-console
-2) simply rest in shutdown
-3) wait for the hardening work to be done in the future?
-
-Thanks
-
-> +       /*
-> +        * As IOMMUs are reset on shutdown, this will block device access=
- to memory.
-> +        * Some devices get wedged if this happens, so reset to make sure=
- it does not.
-> +        */
-> +       dev->config->reset(dev);
-> +}
-> +
->  static const struct bus_type virtio_bus =3D {
->         .name  =3D "virtio",
->         .match =3D virtio_dev_match,
-> @@ -384,6 +414,7 @@ static const struct bus_type virtio_bus =3D {
->         .uevent =3D virtio_uevent,
->         .probe =3D virtio_dev_probe,
->         .remove =3D virtio_dev_remove,
-> +       .shutdown =3D virtio_dev_shutdown,
->  };
->
->  int __register_virtio_driver(struct virtio_driver *driver, struct module=
- *owner)
-> --
-> MST
->
+[...]
 
 
