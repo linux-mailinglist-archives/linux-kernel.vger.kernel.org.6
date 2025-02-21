@@ -1,254 +1,147 @@
-Return-Path: <linux-kernel+bounces-525296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D786A3EDC3
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 08:58:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B0AA5A3EDBF
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 08:57:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38ED63BD811
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 07:56:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A18B73AE248
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 07:56:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AE2B1FFC68;
-	Fri, 21 Feb 2025 07:56:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6247F1FF7C2;
+	Fri, 21 Feb 2025 07:56:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="5A5WDF5W"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2052.outbound.protection.outlook.com [40.107.244.52])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bLGWeYYJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AEC61FF7BE
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 07:56:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.52
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740124602; cv=fail; b=CXq9h1dnGL27fp4L6zON+oc0Giowm1U7sipT86LohBW133f0UMiHzbajKnoNDynWwxL/ne2aD344RcU06R5VKmYacA3FInfpjkbpzXH3U8wsh7K7wlaHlVWoDQm2Nwe0cmoyN23hy3QxQ45D46D+RdYqhciHeHMLTsg7C15dagk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740124602; c=relaxed/simple;
-	bh=sKpdjrBKBEv/hoHASl22bmaed7T98x7Q+YjdxGqOYfo=;
-	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=DWYdK52o+Ym2EIGjC9Jlco6J1vlaIo14W5IjPuwkYxiO6dIOgIa+q83Y6DlZ41IzHf81sV87O/9QHUIiue3kEsDX1/uKWOv45KDBRfK4Qrj0YE/PDaWUA867ZBvITiXMQL2jos71K4OT0pLR73pm8YEKTrIKlOJminfZfIOp08Q=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=5A5WDF5W; arc=fail smtp.client-ip=40.107.244.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=e7TIgzJJ/aTXRdVHF3f53AhKaBN0XbeN33/gkKnMVKWgPRenk0HIO6wEvahmT2rexb7HPzl8C6yo0k7+20neUYV57fPEzHRYYH2yaC261Ys8fDmv+NPzH8q+akHn6PkFGAHHUWL2A5yVSKXVGW4lmn6qUoz5S0sVVsuPz9MrPsvBdpzxEg1U7RIxiOx7kdGoMR36RdyBX2M8sBS06WZGLeFGSOP7nG2K2icOEQSd6+uwbtCapiZhjONbflXSSJpJHuzjMDTRs8izTPMDE4n5e5HiKk3EWQUi1D68us7wg181/ldJy+lYO9IriLUVZG5eBh0xmitWiUXmJGELJ0oSTQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=o5UOjxDb6dOTaQ0pgBwv9hKcR+AGcI80cpfG1xI8eIM=;
- b=IXpoVfLoRqY2nYr4sscCvavtUHDAKekyf5VUE0KPIWXU2ICmAGtvOQnTIZ6vakC0GlM4mB91Vy3cKBRKBmXcefLY+vaN7j3sn0Juyul6XQx0kQx6zeq/8O/81w+swBsRGaHZdex8SmP5DXEcRjIHtujyeMKwfLoEjyFkgnQEa3NH60N4/hDBX8jTqykGgRCBROgBNmnRaDRnJl6IwgRZWF7Lnl6WHJnXVTveew+XLltgnFmSY39WB7kc8tcNxKMrSbNAqMsvPGWdh62zrhEAzx8HKbguivRnTshzpN57KjZdy8/aC4wfckftGqS+rhAkmp71FdNNPw35pAGCCsRATg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=o5UOjxDb6dOTaQ0pgBwv9hKcR+AGcI80cpfG1xI8eIM=;
- b=5A5WDF5WBxEmzRoTIkty5ZuXP4zmway0YiRgM8s9uVdFoPxqGH+LOc/C0ipsqi+gD4HklbvvMW184HLcD6+9mWCUpu8d9PIxu80Z2uwkgnYA9B/aKW02hWCCXQ1X+wnHUWoZpdsP38vcSvZb8+LryLbC11H0rSeEfFTPZ1rlfM0=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
- by MW6PR12MB8899.namprd12.prod.outlook.com (2603:10b6:303:248::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.20; Fri, 21 Feb
- 2025 07:56:37 +0000
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5%5]) with mapi id 15.20.8466.015; Fri, 21 Feb 2025
- 07:56:37 +0000
-Message-ID: <b32a4ce7-6701-4328-a31d-6efed0c539de@amd.com>
-Date: Fri, 21 Feb 2025 08:56:31 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/3] drm/amdgpu: Trigger a wedged event for every type
- of reset
-To: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>,
- Alex Deucher <alexander.deucher@amd.com>, Xinhui Pan <Xinhui.Pan@amd.com>,
- amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, kernel-dev@igalia.com, siqueira@igalia.com
-References: <20250220162750.343139-1-andrealmeid@igalia.com>
- <20250220162750.343139-4-andrealmeid@igalia.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-In-Reply-To: <20250220162750.343139-4-andrealmeid@igalia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: FR4P281CA0289.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:e7::18) To PH7PR12MB5685.namprd12.prod.outlook.com
- (2603:10b6:510:13c::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B576B1FF612;
+	Fri, 21 Feb 2025 07:56:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740124599; cv=none; b=soPRzz2RKbSa7Pam75t9bc+XIC+p5xn4waiGKj+sZwGfpMjxmK+dEbvC/dwSvV326qkKzKw++YQH2aW08lpHy+s+WwPz2q5bNKhGKnILniAKk69y+xW6pDqfhdbDagNtc0MzHek3Nyoo4QrF+R9qcFLzoDOOk/t54NKMGdtixWc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740124599; c=relaxed/simple;
+	bh=Ahi9eY09dfvVLddTFvQNCcv3hlZFkQF+/HRxTU+Io2Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qQUkSeKWfiaHcjNKrKGGJ8qZ9XpJm4l2pxrriNwm7RUIIIANnv6wdkmIpHTGJHHGKO8u0/nUKyP2B9Mc7PSftq336PePGLmws1UUkdgbwR6nMJqiRojWmtiQXgyl0KpTA7vSRKVA9oVDRHPf0js2eUPLXPittTwmyRRKkQ81SMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bLGWeYYJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 878AEC4CED6;
+	Fri, 21 Feb 2025 07:56:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740124599;
+	bh=Ahi9eY09dfvVLddTFvQNCcv3hlZFkQF+/HRxTU+Io2Q=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=bLGWeYYJyQ1xhpz6yK0oaPsheWcE0WK3nIhsiVSdYoZkuwuEjJx1PMioqRfCpfKq3
+	 4rJCpMoKyiWEQIhEDj+F0NfcFjVwpMZ0zWwtLIZsDmJxEApkBOND/3ICsDAx0tS/Fg
+	 bv0BtRS6iwYH9k8cfVsXktCWXPATI198bxCaMhefdGpvxHkXHjovtes7gaalFIfXFW
+	 jCDg78XODop0cEMnuekCiBP7WiskIWD08uZWV23JyO5v58tNPLpghKOlbFvx/y4wA8
+	 FITu+4+PHkXKZiIVilWE3z/JjHrrNsxEZIZlo2Lofg+vEihfMq1Yn6CcWO7sOQrcVr
+	 VHjtSIdroLzSw==
+Message-ID: <c7b26d9a-2409-48d9-8f5f-bde69a3ebd31@kernel.org>
+Date: Fri, 21 Feb 2025 08:56:34 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|MW6PR12MB8899:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3d2a745d-676d-49e9-2f2d-08dd524d4495
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?c1NSY1ZncmFqQmRNZ3h2L0JwREpHSVVtcDdnTWgrd2ZKODUyNk4vVmZzd0pa?=
- =?utf-8?B?eVoxUFc5Y0dZMStMV2d2SDZqSkRXUzdQUnYrWURPVGw5b0pWTjV3eE9aenl4?=
- =?utf-8?B?VDMyR2h2bUtQZXhGcTJoMkh0UDVUQit6M0lVd0FDUm1ZMFpSbUdnQU1qYmZq?=
- =?utf-8?B?ZjVVV2x1bTltTXBYLzhCR2RBcjFpRFc2MEhyOXNQZFdyWVlrLzhrWjFOREJo?=
- =?utf-8?B?cjAzRTZ2MHhLcHdiMnhFQzI0U1JJNG9QUFZOQXpUSlhoaXZmSzkwUUEyelZz?=
- =?utf-8?B?WW5RVytkKzQ4bVBuZzd3WElIRmJ0MTZuT3VzSGNXbDYvaTVwb2kxWnkyamx0?=
- =?utf-8?B?YlhteFRKRFp5QTV5WGJML0Fjemo3SFJMZVhodXhDdjJCbHdldTFCZTgzcWto?=
- =?utf-8?B?MWl1Vm42Z1BPK21jSkFkcTdFMGpSUGpka294RUN5dnNkRUZNWjQ5QVRRa2k1?=
- =?utf-8?B?anR6SllUR1JDUld2UUZBOTc4YWM0ank5ZFR1YlR3NUc3YmdtcTlTaUdZN0Rp?=
- =?utf-8?B?VDE0aEdyY0FLZG1rbGhETVlJVXB1OSttSlFWNkpyc0NWbnpSakp0Yk00TDdi?=
- =?utf-8?B?MEx5bENxbW1WRXhJVmp1NlVIa252SUt1ZDFkYS9DdlYvUkg3UVlxaEF5bjR6?=
- =?utf-8?B?VW52c09neXN4VTcxOXRQa3BRV2N0YXdBMjkzeFV6UUhRSUJVZE9TSlFzdmpa?=
- =?utf-8?B?WVV1ODZ2NmdTa1hpemJkMDJkYytZaFpUVlZBVkJqN2xWb3g0MlNDNVQrT1VX?=
- =?utf-8?B?aHBCVjdRN05Hd1ZGZW5NTWRHdVYvQ0ROWFpLT0dSZmxZSDl4V0VtQ2hobEdt?=
- =?utf-8?B?SnhRc3lhS1BIektkc09IQUJ4M2N1QjVsL0QrZFNjNjIwbUE2UFZGWjVPOGNn?=
- =?utf-8?B?aWtNTm50dm1kYlpUMy9pUW1SeUsyaThzMytKNnhEelJEa0lnKzZtenJBTEY4?=
- =?utf-8?B?SHE3R09FdjJvQ2FsWlFXVC9LdjYzamZUMkhzN3l0R2hYckVBbkgvWG5haGRh?=
- =?utf-8?B?SFErd0MrN1lIV2VGVlNTYlIxTG1XTTNYZ2kyMVhaZXpZMkRZeElNQWJjVkVG?=
- =?utf-8?B?Y1YyeXZZN1A4LzZJeEx2VXVVTk5BdTN1OFVNZVZBVlhMK0tKczBCSEZ2Slhs?=
- =?utf-8?B?WitSUFlMM1FsbHBmSE1xclA4OC84Y3ZGMUxmVnI5V3FJOThNVW5hNllIS01j?=
- =?utf-8?B?ODE5WHBidlU5S0RWejFBRysxS3ZEL0xPSUhNRlVUOEZjWXNhbStidHI3WEw2?=
- =?utf-8?B?M1U4eU8veHMzdTdYZnRtejA3d2syaUNWbkFBTFllWUNqeVdtTHhZc05hK0ho?=
- =?utf-8?B?bjJwVHdRRkFmZXZPbDdpNTZyd0dFZks4M3dJSjQ3WXQzWm55MmVybEM4WHpo?=
- =?utf-8?B?SmluQ0RUU29rMWhzc01iQjQrQSs5RDE4eGxBY2xtYmNMQWVOZ2tad29nNXFs?=
- =?utf-8?B?NzdzOTA0cnF3YnlFVGZTVGtqSTRhNEJLMks2bnRSMEIvbU1CWlpkOURId1RF?=
- =?utf-8?B?V3B1RXQvYUxGaGc4QS9BTDViT280Y2FIbmNJcGs4enZWTkwwVURyS3ZlNnNy?=
- =?utf-8?B?cTBKSUZUVnpCakcxZkhOejNnR09uVTQ5SHE5aHJVcTdLU0dNbVhJR01VdVpj?=
- =?utf-8?B?VEdSQUxQYWwzcytYMXFQUnJJeSsxZzB4MzNTVlFGR3NpN0Zscm5zVlNkZEx1?=
- =?utf-8?B?dDRybFRENURkdDJiZFhEdWgwaUhzRkxNTzZhMGVoNWRid2sxRDlZSmRDcnJB?=
- =?utf-8?B?MFRYY3Q5ei9KS2l6ZW9DZ0NWUmhEMU9CMHpQTDY5UEVlbUNYYjdSeUhaUDJU?=
- =?utf-8?B?aldBeFNoL1A5S3l2Y21sTHEvWVk3dHlzV3pxSitlcG0razlRbE1uVGhXZG1j?=
- =?utf-8?Q?gXWAEdAfhr9Aw?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?dEFGa0xqdDU0ZkVFMUZtdzFhQXJmQ2RhUW1pSERiOVo0TFkvNzBzZGl1YkdQ?=
- =?utf-8?B?RTZRMmtBUHgxbkRjNEFYUGNXc3FEVXdCZlY5YkkwT2RoNDc5SmYrZFU5dTNC?=
- =?utf-8?B?WmY1bWM2TTZqbnd2b281KzBEczJaQVp3VWFqZ0lJSGNYMjUzc1JpTXBNUmkx?=
- =?utf-8?B?VUxkRFltdFl5RVR3TEVBSUN4MERzb3IrY0czMklrSDRSSmF4Ny9sUytCZzcr?=
- =?utf-8?B?a1Z0R0Rta1ZrRjVsa2w5ak94NWRQVjdmVkxCVlRzb1dHankrWVJsOVRkdU5v?=
- =?utf-8?B?bUVnRjJEb2lwZHZ1dGl6VjhneEdMSWNlcjdteUgxd0Y5QVh0V3h5ZFNHTmNQ?=
- =?utf-8?B?Z1lCeDJrQVdEZ0I3TU9uRkYweVByUXhVTXJKS3YvVnRBTnZtVDl4TTM1TGFp?=
- =?utf-8?B?WkpCRnJBM2piSkliVzZQQ3ZrWUl4eklRZHJYaFBxNEpMMUFlSXFOVnR1WUdI?=
- =?utf-8?B?eW00YyswOGE2V1IycVZaSzMwcTlKK2FBbHI2NFNSUExDTTNqcWJVZzg5MC9Q?=
- =?utf-8?B?MGVoUHdPZ0s4Rlpyc2JHSHY0VHNZRDQ1UjBiVTZvWjM1WCtUS2c0clJIaEpq?=
- =?utf-8?B?Q1h4eEprQmlaY0NYWkphSGlPS01UalhabzdnbXY3a0svd3VHM29QeVpMcUlO?=
- =?utf-8?B?d2hhWXNhUEdabFJZOTNaYi9VQ1F1V0hDTUJXVmd1Q1JEeWZOZDFSaUlXclE4?=
- =?utf-8?B?Mzdqb2FleVdzSTFwSzBzVU9qc05LWGRwb0RvVzV4UkJuNjgzdlJlb1hRdlJo?=
- =?utf-8?B?bDZDaGdpbXpHRlV0Yjk3djdjdnRmQTU5MDFZQW03ZkRWYk03cllPSmEybWFY?=
- =?utf-8?B?bDM4TG9CSno5S2F5cDFTN1pkZlBiNTBZa0RqejQvRXNwUmRLeEx6UXUwVjNl?=
- =?utf-8?B?VFo4YTZFMTRKdFF0TWZINWZ2TXVWRm9VYzYxMStIZVNKNUVKYVlNbnA4WFlH?=
- =?utf-8?B?WkZTc2FKbWsyYmJUS2M2K05uL3FGeUtWWlVOb1NIR3RySU9pN0JHUk5jdnor?=
- =?utf-8?B?b0R6N2ZCMVVzLzJTV21IcmUzNlREUjB0YWY4NmdwN3ZpQ0JXbGdLY09US3dC?=
- =?utf-8?B?SE50NWROTnhJSkQ5T3B5czdWeXRBMWdGeDAzeXJuM1AwZWVQWnB4bU8rSVlC?=
- =?utf-8?B?dkp6eXBQYTVtcG9qT3RmaWJLZy9ZTlFFN3FRQ2syZmNsNTdrWE54TlZFOEJh?=
- =?utf-8?B?YjBsMXJzMCs0NHZhR1RsODhJM21QdjlZSW0rbFBHeE5oTVllbER4RktXTlB4?=
- =?utf-8?B?bEc1NVZBRUp6eDY1KzRkZVkrdXA4R2tBVG1vSVJQU2R2UUtyMm80WWVQQzR4?=
- =?utf-8?B?My9rd1p6L0FyOWtMMnN4L0NMcjlFcWtxTFM3RzhQSFNjc25uM3ZRVXFQK0Fi?=
- =?utf-8?B?NUx5R08wL3ExREdJZEtyYmRpUWE2NTA5UzJDL1Y1OUROakM4QmdUYWpkeVF6?=
- =?utf-8?B?L1ZscG9LOEpZWUZrbHZMYnEwaU1DSnMrZUVVaStQZmVyYXZscWwyVlFBL2JU?=
- =?utf-8?B?MXpZYWQrUDhkdXIyRlk3WmRRWGRMNERNYTJDQ1Z2eUJ5R0JTNUhjMjBWU0lU?=
- =?utf-8?B?RlpHMlprZENmOFdCZkJEc3pOTStxeTByemJkTTVWY29RdXJPUFVlMWFVTHpG?=
- =?utf-8?B?dEhwanlvaEVNejRlUDBDekVWV0ttaW1ZTnNTRkJHMUFodzFPNTNBQ2taYnli?=
- =?utf-8?B?d0pMc0ljMTdlQVZXZVEvR01mSlhycUo3RjRMNW05ejN0WHg0K01TNzB0MG5y?=
- =?utf-8?B?LzcvNVZHMVI4ejJjaFBTL3V6am5FQjlnbHZaTzFRMnM1RDltT3Rld2VrTExM?=
- =?utf-8?B?dmY5elE4Z0gxcG5sZjlKc2dwTjh6RHdQOFNCOUtRUjVCQWlUMTBHdkZCMXBE?=
- =?utf-8?B?aGsrd0tLV0tRbWwzWUZjdDFvbXI2R0tITDVvOVZncHlWdFA0eHdjS2VBcjFW?=
- =?utf-8?B?WGRsSzJUL01xN29iMDB0ZkZxakZUSDRHN0wyWkdxWkp4V25kRTN0N2Y2dFNR?=
- =?utf-8?B?dVZzYW1wait0S2MvSXVSVEgwYzR4dGg2OCtmYzcyTmQ3cTMyeTlpb1Y0T1Mz?=
- =?utf-8?B?TENvSDF2a0haYXNiSzdiS1NmMWV5UU1LcGVWR2txVUU4Y0FIRnFjSWM0WlRy?=
- =?utf-8?Q?6tdPR//Ldod3o0+Rz/lYQ7x0a?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3d2a745d-676d-49e9-2f2d-08dd524d4495
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Feb 2025 07:56:37.4240
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: +IC8bLdbXygCfr1pjOW47ttZ/vIyfe++Gh5qT7/mg9bEOTi11CeRzRqfNgSwDray
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW6PR12MB8899
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/2] dt-bindings: leds: Add LP5812 LED driver bindings
+To: Nam Tran <trannamatk@gmail.com>, pavel@kernel.org, lee@kernel.org
+Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250220181541.2341-1-trannamatk@gmail.com>
+ <20250220181541.2341-2-trannamatk@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250220181541.2341-2-trannamatk@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Am 20.02.25 um 17:27 schrieb André Almeida:
-> Instead of only triggering a wedged event for complete GPU resets,
-> trigger for all types, like soft resets and ring resets. Regardless of
-> the reset, it's useful for userspace to know that it happened because
-> the kernel will reject further submissions from that app.
->
-> Signed-off-by: André Almeida <andrealmeid@igalia.com>
+On 20/02/2025 19:15, Nam Tran wrote:
+> This documentation ensures proper integration of the LP5812
+> in Device Tree-based systems.
+
+Thank you for your patch. There is something to discuss/improve.
+
+Describe the hardware, not that DT is DT.
+
+<form letter>
+Please use scripts/get_maintainers.pl to get a list of necessary people
+and lists to CC. It might happen, that command when run on an older
+kernel, gives you outdated entries. Therefore please be sure you base
+your patches on recent Linux kernel.
+
+Tools like b4 or scripts/get_maintainer.pl provide you proper list of
+people, so fix your workflow. Tools might also fail if you work on some
+ancient tree (don't, instead use mainline) or work on fork of kernel
+(don't, instead use mainline). Just use b4 and everything should be
+fine, although remember about `b4 prep --auto-to-cc` if you added new
+patches to the patchset.
+
+You missed at least devicetree list (maybe more), so this won't be
+tested by automated tooling. Performing review on untested code might be
+a waste of time.
+
+Please kindly resend and include all necessary To/Cc entries.
+</form letter>
+
+> 
+> Signed-off-by: Nam Tran <trannamatk@gmail.com>
 > ---
-> v2: Keep the wedge event in amdgpu_device_gpu_recover() and add and
->     extra check to avoid triggering two events.
-> ---
->  drivers/gpu/drm/amd/amdgpu/amdgpu_job.c | 20 +++++++++++++-------
->  1 file changed, 13 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_job.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_job.c
-> index 698e5799e542..9948ea33d2c6 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_job.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_job.c
-> @@ -91,8 +91,8 @@ static enum drm_gpu_sched_stat amdgpu_job_timedout(struct drm_sched_job *s_job)
->  	struct amdgpu_job *job = to_amdgpu_job(s_job);
->  	struct amdgpu_task_info *ti;
->  	struct amdgpu_device *adev = ring->adev;
-> -	int idx;
-> -	int r;
-> +	bool gpu_recover = false;
-> +	int idx, ret = 0;
+>  .../devicetree/bindings/leds/leds-lp5812.yaml | 34 +++++++++++++++++++
 
-We usually stick to "r" as name for the return variable in amdgpu.
 
->  
->  	if (!drm_dev_enter(adev_to_drm(adev), &idx)) {
->  		dev_info(adev->dev, "%s - device unplugged skipping recovery on scheduler:%s",
-> @@ -141,8 +141,8 @@ static enum drm_gpu_sched_stat amdgpu_job_timedout(struct drm_sched_job *s_job)
->  		 * we'll fall back to full GPU reset.
->  		 */
->  		drm_sched_wqueue_stop(&ring->sched);
-> -		r = amdgpu_ring_reset(ring, job->vmid);
-> -		if (!r) {
-> +		ret = amdgpu_ring_reset(ring, job->vmid);
-> +		if (!ret) {
->  			if (amdgpu_ring_sched_ready(ring))
->  				drm_sched_stop(&ring->sched, s_job);
->  			atomic_inc(&ring->adev->gpu_reset_counter);
-> @@ -170,9 +170,11 @@ static enum drm_gpu_sched_stat amdgpu_job_timedout(struct drm_sched_job *s_job)
->  		 */
->  		set_bit(AMDGPU_SKIP_COREDUMP, &reset_context.flags);
->  
-> -		r = amdgpu_device_gpu_recover(ring->adev, job, &reset_context);
-> -		if (r)
-> -			dev_err(adev->dev, "GPU Recovery Failed: %d\n", r);
-> +		ret = amdgpu_device_gpu_recover(ring->adev, job, &reset_context);
-> +		if (ret)
-> +			dev_err(adev->dev, "GPU Recovery Failed: %d\n", ret);
-> +		else
-> +			gpu_recover = true;
->  	} else {
->  		drm_sched_suspend_timeout(&ring->sched);
->  		if (amdgpu_sriov_vf(adev))
-> @@ -180,6 +182,10 @@ static enum drm_gpu_sched_stat amdgpu_job_timedout(struct drm_sched_job *s_job)
->  	}
->  
->  exit:
-> +	/* Avoid sending two wedge events for the same reset */
-> +	if (!ret && !gpu_recover)
+Filename based on compatible.
 
-Ugh, that's rather ugly I think.
+More review when you test it.
 
-Probably better to just add an extra drm_dev_wedged_event() after the amdgpu_ring_reset() call.
 
-The soft recovery should probably never send a wedged event in the first place and we plan to remove it anyway when queue reset works reliable.
-
-Regards,
-Christian.
-
-> +		drm_dev_wedged_event(adev_to_drm(adev), DRM_WEDGE_RECOVERY_NONE);
-> +
->  	drm_dev_exit(idx);
->  	return DRM_GPU_SCHED_STAT_NOMINAL;
->  }
-
+Best regards,
+Krzysztof
 
