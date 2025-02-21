@@ -1,128 +1,108 @@
-Return-Path: <linux-kernel+bounces-525356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1E31A3EEF4
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:45:42 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C01EA3EEF5
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:46:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FDC63B0D59
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 08:45:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03E6B420FE6
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 08:46:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A0B0201015;
-	Fri, 21 Feb 2025 08:45:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63BF4201016;
+	Fri, 21 Feb 2025 08:46:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="FW1KnZ9p"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hZKkPBZw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DAC4169397
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 08:45:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD16E1E990A;
+	Fri, 21 Feb 2025 08:46:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740127535; cv=none; b=LRWxWkvNeGN10yJ/a0yocdAu0okXs9oiFrTN7riY6gwYQskxlYtw3PDNkOqePOg6ws9RJ9AN7DUQxOJuikJ93l03n9FhRUMr7Mbhp5YYEfXhDM51PpFKi9otojH6ht0hKKyY8j5CsxJXexms19h0NZYxvWYFTOpp5bsHHguFiUQ=
+	t=1740127564; cv=none; b=F2XH1xv+LZgm0PEvO7mmItLICbtOZcREOGUBSUlHyi0BQ+TLa4NVgtapkOCTt6JmgM4Yrb43nd2mqIRPduH9tnqAK9ScOr5xUUvPX6eSVbpVZDPbbros8nyzAMfL97/d2++JCMkLaNp4Z6IPUvFJcMwee/2F0fz+pZse8pa7a8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740127535; c=relaxed/simple;
-	bh=JOiSkw3Of29GygdrXa01G2NFBo9/Jd+ajUfDgGEETbE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DVFinMyNAZEXxrpkpO2YwzkmmZStJr650zoH8tb859LASAeKfxfVq8h9lSg6cQnEhwivZiEsd8ZjPY+RwXMY9y4NZYyQIzAg8Ycrqz6O/VjxNGbqic5qElHZJ05CNmXTm6US79bocrbrGRBYSDw1LER93DyVtXnVmag6q/Ai2b4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=FW1KnZ9p; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-38f406e9f80so1680777f8f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 00:45:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1740127532; x=1740732332; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=b6sHuIYCGIcbnzcIquUs9mIF+IdKdCyx3g4gcUskxo0=;
-        b=FW1KnZ9p+nEmSIPsskwiWsnKhfS32JMvKmBggnoDr6B0P54j1WA7FcoYPIytqlE74G
-         Gs8FIO5XIOA0SGFU4SV4Yvvyak+3PFQStmPg86UU0mj3wkuJIJKADZ2qhqzhLg+g1P0w
-         8KkF4l1124uF30AIm74/cD+n4iIHL4uHhCMUtzkCl/ut0ZsTfJzeWWCLCnUlFWA22arU
-         DfYfgzWg3Ghp8fMARM+T3+5beBNbKGbS+H5N05MZSOJ43HtkzNKHr006bPSZr+tARv6T
-         OVkH2YadzYsa8XO2bWHWUdPVr9/lPvI2i1t7sMsDGWgWRrQZMcPMx4J9Q/UcCM3ISaSm
-         wsiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740127532; x=1740732332;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=b6sHuIYCGIcbnzcIquUs9mIF+IdKdCyx3g4gcUskxo0=;
-        b=Yd5EKQSh5Vm6nLVZFQYuOhCVmPsLLBeVayRcfSwvIqD6jAiimUBLN0r11FLvfiaBka
-         R7QrvjKlXHBtthnxsvMyeoNWL9hEQWfFLdxXcsLnH77ObrG2Ern8bSWzRDgqsL9tUL4w
-         sJreds1i8XFyhTro5h2OjnwdZnS9fRMD9aE5CwfKhbPbcIIiJAXVwCsWJhKj1kR6zufg
-         vAYXLtI37noS1H/u/B2Xr+FWma2/y5ZEv54cJDc+OfXnpC4sDZNBhVkZfbpSS3JDS+v4
-         Y/cd5C+BdG/ezNQHd3cBEerO/742M4qa6RbEL2iAl1xlN3thysNFLVwLYkpRKJtSGs8G
-         f/0A==
-X-Forwarded-Encrypted: i=1; AJvYcCW34J0lOa8P5zV+HlhBq1SvZ0bjpsay8vB9XDZQmiFLPMgKNj6Mrn4610qeG04DrpGQotW3adQd8nl40CE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxkOPHAJAnrXkgHQDQhqLyWEj3le65izgXD5WfFA8+gjYTbjZnW
-	YBuaXgetDtPeBhGANoagF0fuUSclyZxe5Qp0NAsHRapN8rZ8tQGX7N/AxYOt4pY=
-X-Gm-Gg: ASbGnctWYZavGkhouUoNNkrh74ZwE4e1LZJnxN/YhD+fz9IathYAyaT1FG4myILhyuE
-	s2lpTWLP0wV6UOsfmDL9R//mTMymem+Tva2nUM4azDvVI3NUGcco+PQVlfzsuTu6y+RF9OXk6os
-	2dfMBAiMw8VphTMi9tEVDZorvMkyHBFMMJwCrtiq16W/LiyGse7LwpSiFV6GsdyCxt14AiCuOy1
-	Y0UoX1JuaC2T0Xusx3/Ik3leEyDVCi3TlZhfyzS1NAGWTlP/9E4KVlPVt0xscXkPjUgOs1uyjxS
-	AD3thj9AExCld7Fj4d4KNhH16w==
-X-Google-Smtp-Source: AGHT+IFAHTvEXFJzOIEkvB/aBJb6Sj6QnltRBBjY5ZIakODLnKkwmz9VPK9ijSywKE/LojJKWNxV+g==
-X-Received: by 2002:a05:6000:156d:b0:38d:d0ea:b04c with SMTP id ffacd0b85a97d-38f6f0b0f03mr2321820f8f.38.1740127532336;
-        Fri, 21 Feb 2025 00:45:32 -0800 (PST)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:6cbc:77f7:6f0e:5a7c])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f258f5efdsm22501778f8f.43.2025.02.21.00.45.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Feb 2025 00:45:32 -0800 (PST)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Michael Walle <mwalle@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	athieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-Subject: Re: [PATCH v1 0/5] gpio: regmap: Make use of 'ngpios' property
-Date: Fri, 21 Feb 2025 09:45:30 +0100
-Message-ID: <174012752846.7834.12670955707272367276.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250213195621.3133406-1-andriy.shevchenko@linux.intel.com>
-References: <20250213195621.3133406-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1740127564; c=relaxed/simple;
+	bh=XpEhHbp+h0bF2bdUl5GcpbzEs979Jm89KTGh2m+OmVw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OfL0T2N8pLNOnco2rtJ3s77hW67jPW1G+8bx0Hb8iKUew7h/ZFeMGtWbh1/78Sy4LOHTcwM5K91N184nJLnVigei5X/Qnp05/s+GvzrTvk9fc103mQFYb8BQQfIHP9kqfIIo1uEb94nABO25aNUU5zEGdxRxu0WVo0cUBz4aBVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hZKkPBZw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76F1FC4CED6;
+	Fri, 21 Feb 2025 08:46:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740127564;
+	bh=XpEhHbp+h0bF2bdUl5GcpbzEs979Jm89KTGh2m+OmVw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hZKkPBZw8KFhau1TXSUdu2FfjiAWmTX/WjL6U65psI6YeWcdoi0qN4xBxzIik6GQ1
+	 39G7GRTQe4qISeqG7wRRh6gZE83zSuALeevuvcT7gCwHq5cTbilu6frZfvIeMmRMtD
+	 F7mmaUnStgMaPct7U9uqZeuk0/UQJQoYZMVv+VJ0u6c4MRw1MQQ+A8cXRSurVF2oGz
+	 Iu0YwvOncRBopUa3kXL0inRTMghbeGXWxhVkABA9bNkwN+PVOyUzldRERcTwbC0RxW
+	 7sbkb7BmvHXkJT+Dz37q/lO+wqfnJSNQv+18fl7qt2BKpyOhwhPv2wtN44OiXrrRXQ
+	 xpaeKhRu2GqSA==
+Date: Fri, 21 Feb 2025 09:46:01 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Wilson Ding <dingwei@marvell.com>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, andrew@lunn.ch, gregory.clement@bootlin.com, 
+	sebastian.hesselbarth@gmail.com, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	p.zabel@pengutronix.de, salee@marvell.com, gakula@marvell.com
+Subject: Re: [PATCH v2 1/4] dt-bindings: reset: Add Armada8K reset controller
+Message-ID: <20250221-icy-flounder-of-potency-ee1a05@krzk-bin>
+References: <20250220232527.882888-1-dingwei@marvell.com>
+ <20250220232527.882888-2-dingwei@marvell.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250220232527.882888-2-dingwei@marvell.com>
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-
-
-On Thu, 13 Feb 2025 21:48:45 +0200, Andy Shevchenko wrote:
-> It appears that regmap GPIO doesn't take into account 'ngpios' property
-> and requires hard coded values or duplication of the parsing the same
-> outside of GPIO library. This miniseries addresses that.
+On Thu, Feb 20, 2025 at 03:25:24PM -0800, Wilson Ding wrote:
+> Add device-tree binding documentation for the Armada8K reset driver.
 > 
-> For the record, I have checked all bgpio_init() users and haven't seen
-> the suspicious code that this series might break, e.g., an equivalent of
-> something like this:
+> Signed-off-by: Wilson Ding <dingwei@marvell.com>
+> ---
+>  .../reset/marvell,armada8k-reset.yaml         | 45 +++++++++++++++++++
+>  1 file changed, 45 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/reset/marvell,armada8k-reset.yaml
 > 
-> [...]
+> diff --git a/Documentation/devicetree/bindings/reset/marvell,armada8k-reset.yaml b/Documentation/devicetree/bindings/reset/marvell,armada8k-reset.yaml
+> new file mode 100644
+> index 000000000000..b9f7f3c24d3c
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/reset/marvell,armada8k-reset.yaml
+> @@ -0,0 +1,45 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +# Copyright 2025 Wilson Ding <dingwei@marvell.com>
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/reset/marvell,armada8k-reset.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Marvell Armada8K reset controller
+> +
+> +maintainers:
+> +  - Wilson Ding <dingwei@marvell.com>
+> +
+> +description: The reset controller node must be a sub-node of the system
+> +  controller node on Armada7K/8K or CN913x SoCs.
+> +
+> +properties:
+> +  compatible:
+> +    const: marvell,armada8k-reset
+> +
+> +  offset:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description: Offset in the register map for the gpio registers (in bytes)
 
-Applied, thanks!
-
-[1/5] gpiolib: Extract gpiochip_choose_fwnode() for wider use
-      commit: 375790f18396b2ba706e031b150c58cd37b45a11
-[2/5] gpiolib: Use fwnode instead of device in gpiochip_get_ngpios()
-      commit: 6f077e575893214136f9739f993bd9fedf61731a
-[3/5] gpio: regmap: Group optional assignments together for better understanding
-      commit: 97673ea38a77e42eaafcf5181c84f6c8d40b97e7
-[4/5] gpio: regmap: Move optional assignments down in the code
-      commit: a630d3960b6ac3c37cb0789605056e8845ffbf16
-[5/5] gpio: regmap: Allow ngpio to be read from the property
-      commit: db305161880a024a43f4b1cbafa7a294793d7a9e
+That's neither correct nor needed. Your device knows ofsset based on the
+compatible.
 
 Best regards,
--- 
-Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Krzysztof
+
 
