@@ -1,116 +1,113 @@
-Return-Path: <linux-kernel+bounces-526235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3359A3FBCE
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:46:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A679EA3FB1E
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:26:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BEB4A188E809
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:41:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E92F1888C6A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:21:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEF34212FAA;
-	Fri, 21 Feb 2025 16:40:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=szczodrzynski.pl header.i=@szczodrzynski.pl header.b="CMNzlDdk"
-Received: from s2.avantea.pl (s2.avantea.pl [46.242.128.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13881212B10;
+	Fri, 21 Feb 2025 16:18:32 +0000 (UTC)
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82BDD1EBA14;
-	Fri, 21 Feb 2025 16:40:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.242.128.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39DB245009;
+	Fri, 21 Feb 2025 16:18:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740156009; cv=none; b=oYl0vjFDdPIgd51OsuzShMcXBLF/P9Yyzt337Xmf4Q7rjrvmTny8LSVu8HhaJiVD+78ihqehQpX3xYcPyg5bT5ovEgiyFaNzkrOLPxs9JmqAR74/wgYaLWUhm9ykI1OrFyjyLmTv2koJPEzTBRuJxJ1NZmweKi4eVSJKJupmq/U=
+	t=1740154711; cv=none; b=OGZW5cAEGz/PCyrJO3dUvJep77urhp+dplcZzzkHdNhX3VyRdaxPJiHeWUf/Gw+CaJLmDPOc0rQCQXDF8jgNSylY0G1vSxBJ/LpKv2ywnXg8Ce2tNkHq/jKkDvDeAl2moxK6YxPNVgXu1mjuj0c9Tm8PdzcoWmSZJVMvv26qVzo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740156009; c=relaxed/simple;
-	bh=0ZMDRFPUNe4qk8G8SolkBVr1G4m1qg1ow0otgDRhPwA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fde2tVnxSz1bMmpmWnkh26E4FA9W5YcbTCKQCP6Aa/50E7k8qL1QFv2/YET4TtWHYuS3ZTtrt+WyCtJzubQQV9r2+HMCsmAT5IyuFIwJodiHCapxulao3FKUVAUVGI/PhatI4cQUt7CuXdZVHjS2Yq+8f4m37fCtgd4/1auMx94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=szczodrzynski.pl; spf=pass smtp.mailfrom=szczodrzynski.pl; dkim=pass (2048-bit key) header.d=szczodrzynski.pl header.i=@szczodrzynski.pl header.b=CMNzlDdk; arc=none smtp.client-ip=46.242.128.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=szczodrzynski.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szczodrzynski.pl
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=szczodrzynski.pl; s=x; h=Content-Transfer-Encoding:Content-Type:
-	MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=w2E197Qc+tMzoaRduX1xKII3x7kGR5ATZ73uNFSwZtQ=; b=CMNzlDdkHQ6mojLXa6tNiP/3VC
-	RkIZGgKGLCLwEE4kPiGTssFxkaN0xfA7iu5WpmszAXMImsPodll8V0+9AC8TDn4YfEsc7Wp+sVXyP
-	bw5eGzs6xhuk9T8yiqzR2bKgTIf9mcr2aydxbSSuy9e5FQlKv/eQgku1xjrcD+KHsyrXwB0RX8aOF
-	+yPQyPm+M+bXvN+Ih7QHFFDOLh1/NMvVhCBjuWb8/Mr9AHv7Icatpoe8wI8gVs18Vru9xNko2ePe8
-	ezPts3Z/Y0LIeJ7RWEUIpJ9F4dU8HijLXrwRyvvCShp5JHvXij14iwDn5G9u79LBlPQChA6Vp66ID
-	+GldAbUw==;
-Received: from [62.171.184.96] (helo=buildhost.contaboserver.net)
-	by s2.avantea.pl with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96-58-g4e9ed49f8)
-	(envelope-from <kuba@szczodrzynski.pl>)
-	id 1tlVix-00AOLX-1V;
-	Fri, 21 Feb 2025 17:17:59 +0100
-From: =?UTF-8?q?Kuba=20Szczodrzy=C5=84ski?= <kuba@szczodrzynski.pl>
-To: Maxime Ripard <mripard@kernel.org>,
-	Samuel Holland <samuel@sholland.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Rob Herring <robh@kernel.org>,
+	s=arc-20240116; t=1740154711; c=relaxed/simple;
+	bh=IFIcfKTvoI6Jpzz4dZXt6WZLSf3O3RLiC8GQng2fqUg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IgDuv2r8FLfqfjgfXR3jaJzGU44FQtx3TRqqBoOcwarHZFJl4j4Odycmr/gO9jxF7lklraxXNcp8r6mR+TvrmEGcNJD/tk5gTNMQszs/r6D1979JIBYZGraYHiHvCNRkvVJHBEfDdYJ+vKeBRwRcC52tBnW2pdqtE6M1xQu+5Ns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2211cd4463cso47289575ad.2;
+        Fri, 21 Feb 2025 08:18:29 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740154709; x=1740759509;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0inqpIltc360onMbVfotB+9G1BiiqcT6cFZ7024EJR0=;
+        b=vPm3owcDE5Kg+oK3UTactCO56Jbc6BufnQMizvZD8c3mjeLWHyTtmb4ETfr0UlbBwo
+         SGM6ZVdupPbvvX6Fm1FWcQDcWS8HR2PK5BkguCblPmvEkJg4yXXRquEzwKPjdit4c11Z
+         dMJtDl6r++kpUHtjyhPAQRySzQtjgGjIKlS9CDIPTgrSYmK6uTbQneckrbCaTHQ6UMJr
+         Cz4qyx+aN8P51TCOgfHi0uUBn0XIfbESUdX6gMQNy7qGdshj36duqsqsCITqMu909AUj
+         DcdA7wmJnPpeOOjK+bSyCvkwTqzOLutrQMhAxrOd3ZHPNnRiUxWEX//EScFdYUu6nQU2
+         5+qQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVnXbgvv+ZNXR7Gae7ImLHIVhhOoOBug2necPac1QTQ7zEr+fPzjz4sy0uzTXCBTbSvvLrcNPzA72mc@vger.kernel.org, AJvYcCW1cpq2wrwd0vZo0bp0IrOfjDojWwYJ9ciVAqdTGCb6AXVue2q0HftIEAiHfgBhRvrVzA/u+iyIfTps@vger.kernel.org, AJvYcCXt4N9ExIshiD7iR9E6IW2e81rlh4owKkwr3T7CUQ2MYmAWv2Rd4IE7l3/iwEP5FoCsVxvUOEJtsasx6j8a@vger.kernel.org
+X-Gm-Message-State: AOJu0YxiENDkGrsjq8cNOqt9yE0f3GTLEWKkfgInv80iSX6+cw0ojXEc
+	N8Y0OcoZvLhSbQsGYJ6+c+vmcMuidZGXhaRZeFQRd1OfT4KhHFnbrkcl8ay+
+X-Gm-Gg: ASbGncv7McxQW6Hv1NLo6YPIW5RGmoKnqq9bI11cOYPe5fZz85IP+f9sYev1JSabyy8
+	YMBsRRum7NMcRyjuOUQDNYZUeWiKpn2DzmQqz+cgmDJmdaCKier+PSnaTpIgUZCwJWchGQVjx5S
+	ktkH1/LMVWXh5X7ld2N1S2zxdedQw1Mpdz9JtWodjJ1y2Xv+/uIKt2lmD9m50U7vxdAS5V/jq6m
+	Gj1c/+MY/IT5m2s5ZAIRUiy+r4wD70vNyWcwhJTPH1P3jAIu1eOTondAXTKmgSRSHXiC5JXkUka
+	8ngkgoIYOt9tRCKrpwgKW8SEejPyCj9Mt+fFO8StaNMfev7DzRsBHHHLdtVR
+X-Google-Smtp-Source: AGHT+IFFC7TzkmeEvaeC5hCBX5n8UmyFJ/BAqfgtyU7o+6JEfRW/3+0dEFvOaLm8q97F1jekjmOYFg==
+X-Received: by 2002:a05:6a00:92a2:b0:730:9946:5973 with SMTP id d2e1a72fcca58-73426c8e077mr4818381b3a.5.1740154709362;
+        Fri, 21 Feb 2025 08:18:29 -0800 (PST)
+Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
+        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-7325b4d5609sm13149663b3a.87.2025.02.21.08.18.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Feb 2025 08:18:28 -0800 (PST)
+Date: Sat, 22 Feb 2025 01:18:27 +0900
+From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Stanimir Varbanov <svarbanov@suse.de>, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-rpi-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	linux-phy@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	dri-devel@lists.freedesktop.org
-Subject: [PATCH 5/5] riscv: dts: allwinner: d1s-t113: Add LVDS0 pins
-Date: Fri, 21 Feb 2025 17:17:51 +0100
-Message-Id: <20250221161751.1278049-6-kuba@szczodrzynski.pl>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250221161751.1278049-1-kuba@szczodrzynski.pl>
-References: <20250221161751.1278049-1-kuba@szczodrzynski.pl>
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Jim Quinlan <jim2101024@gmail.com>,
+	Nicolas Saenz Julienne <nsaenz@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Andrea della Porta <andrea.porta@suse.com>,
+	Phil Elwell <phil@raspberrypi.com>,
+	Jonathan Bell <jonathan@raspberrypi.com>,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>
+Subject: Re: [PATCH v5 -next 05/11] PCI: brcmstb: Expand inbound window size
+ up to 64GB
+Message-ID: <20250221161827.GB3753638@rocinante>
+References: <20250120130119.671119-6-svarbanov@suse.de>
+ <20250212180009.GA85559@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Authenticated-Id: kuba@szczodrzynski.pl
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250212180009.GA85559@bhelgaas>
 
-Add LVDS pins to the PIO since it's now supported on D1s/T113.
+Hello,
 
-Signed-off-by: Kuba Szczodrzyński <kuba@szczodrzynski.pl>
----
- arch/riscv/boot/dts/allwinner/sunxi-d1s-t113.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
+> > BCM2712 memory map can support up to 64GB of system memory, thus expand
+> > the inbound window size in calculation helper function.
+> > 
+> > The change is save for the currently supported SoCs that has smaller
+> > inbound window sizes.
+> 
+> If you repost:
+> 
+> s/save/safe/
+> s/that has/that have/
+> 
+> Otherwise we can fix these when merging.
 
-diff --git a/arch/riscv/boot/dts/allwinner/sunxi-d1s-t113.dtsi b/arch/riscv/boot/dts/allwinner/sunxi-d1s-t113.dtsi
-index d241ba306..174b6d8f9 100644
---- a/arch/riscv/boot/dts/allwinner/sunxi-d1s-t113.dtsi
-+++ b/arch/riscv/boot/dts/allwinner/sunxi-d1s-t113.dtsi
-@@ -78,6 +78,15 @@ dsi_4lane_pins: dsi-4lane-pins {
- 				function = "dsi";
- 			};
- 
-+			/omit-if-no-ref/
-+			lvds0_pins: lvds0-pins {
-+				pins = "PD0", "PD1", "PD2", "PD3", "PD4", "PD5",
-+				       "PD6", "PD7", "PD8", "PD9";
-+				function = "lvds0";
-+				drive-strength = <30>;
-+				bias-disable;
-+			};
-+
- 			/omit-if-no-ref/
- 			lcd_rgb666_pins: lcd-rgb666-pins {
- 				pins = "PD0", "PD1", "PD2", "PD3", "PD4", "PD5",
--- 
-2.25.1
+Updated directly on the branch.  Thank you!
 
+	Krzysztof
 
