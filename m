@@ -1,87 +1,98 @@
-Return-Path: <linux-kernel+bounces-525874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7224AA3F6A2
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 15:00:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EDF0A3F6AA
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 15:02:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2AFE17A27E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 13:59:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 576AF1892216
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 14:02:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DC7820E710;
-	Fri, 21 Feb 2025 14:00:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="PUDVv62e"
-Received: from mail.8bytes.org (mail.8bytes.org [85.214.250.239])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7FAB20E334;
-	Fri, 21 Feb 2025 14:00:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.250.239
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49E2C20A5D8;
+	Fri, 21 Feb 2025 14:02:26 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9142F2D05E;
+	Fri, 21 Feb 2025 14:02:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740146412; cv=none; b=Bn25J+CIbpsuqaVwy/B2duWZPQrCsYSvw+aTSTKu8KK86l2md3c8zYr80T/rS/fplifgyVjIr0KcK76+zefFQidJzxjdGFK3QatsFCIFgZj/vllYffcaqUMu6QQzl/29EX62sW0KxRf4EZ4MijtYSxMGgsIAO9lVTQf4vqlMpZk=
+	t=1740146545; cv=none; b=fswGjdPJjTvi0q4ExX4j1kXWKJqQ+7a/D+MXnX2jcpKfkh+wlJaiYgTKqXYGEjseTyuv2AjQlHRHJyCb9XuUmRtSoTdl/WKD/6Mo+/g9bj9DUmR5pDKjyt5aAbRPSWCDvXRQLszyLNxFjYPpjNqjcAvo4heWkdnKxppPsGD2xtA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740146412; c=relaxed/simple;
-	bh=58xAn4U0wInTpg79aVG+cwEwl25B8pi/XQxIUWwayXk=;
+	s=arc-20240116; t=1740146545; c=relaxed/simple;
+	bh=LllIJWlInIu28fom361MYi5lsTeITv3lVS0i1lQ+RKc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D8IiukZDV7reH7suVqlkrZ3IYyuG6IoamkhXYjDTaEpuSEMUGVXVAZk0vfUC+PIsiejDkMZhwsMuXytRhioyN6lWbUJ+IgiWCqoQ6ZZhJWGEm34U6p3xpmIDGqAtuqxE0pPGRO/fJrWqJE+z5pSbCakAfyvwd28wupjp2lLVmGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org; spf=pass smtp.mailfrom=8bytes.org; dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b=PUDVv62e; arc=none smtp.client-ip=85.214.250.239
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=8bytes.org
-Received: from 8bytes.org (p4ffe03ae.dip0.t-ipconnect.de [79.254.3.174])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.8bytes.org (Postfix) with ESMTPSA id 4D8A942B10;
-	Fri, 21 Feb 2025 15:00:09 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
-	s=default; t=1740146409;
-	bh=58xAn4U0wInTpg79aVG+cwEwl25B8pi/XQxIUWwayXk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PUDVv62eIVNURun6OWy6vI5skGuAuixbLdu/u89o+onhQTeQ7AZDi4md+LEAOcvnm
-	 MmIpk/JAieySNjsSCJ7xL2wu+NUxrBf+GXr/I1wPiqKPnP+3eEtyHUB6K02Knx4qBX
-	 +OdkBD8PrVInIzE5B2c0zq1GZ5lVI5MjnZ6zbMWpXfqNQO+WsLxIAp2GNWZgX5//oh
-	 mwDjWWfxZLyDcX+bRKmDPLkOokWU31147S7wTF7ryvdSsX2YIwzEW2frHpN4I3Q6dg
-	 SZLCa98nmwYQWBotri91Rt9sz4kK6nUDEFJGKv95Yfw4+k4txqEgbSDhsVHx1Yj/zi
-	 aLma1KTCZLOvw==
-Date: Fri, 21 Feb 2025 15:00:08 +0100
-From: Joerg Roedel <joro@8bytes.org>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Nicolin Chen <nicolinc@nvidia.com>,
-	Thomas Gleixner <tglx@linutronix.de>, kevin.tian@intel.com,
-	maz@kernel.org, will@kernel.org, robin.murphy@arm.com,
-	shuah@kernel.org, iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kselftest@vger.kernel.org, eric.auger@redhat.com,
-	baolu.lu@linux.intel.com, yi.l.liu@intel.com, yury.norov@gmail.com,
-	jacob.pan@linux.microsoft.com, patches@lists.linux.dev
-Subject: Re: [PATCH v2 1/7] genirq/msi: Store the IOMMU IOVA directly in
- msi_desc instead of iommu_cookie
-Message-ID: <Z7iG6NArgozXFZJ5@8bytes.org>
-References: <cover.1740014950.git.nicolinc@nvidia.com>
- <a4f2cd76b9dc1833ee6c1cf325cba57def22231c.1740014950.git.nicolinc@nvidia.com>
- <87ldtzhcjv.ffs@tglx>
- <Z7hfNlnSj8BI6C7l@8bytes.org>
- <20250221134112.GK50639@nvidia.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=grLe+EJeZ4Svxkynu14Isr04A+fDHBsd7Q0pMvUZAa2paVLtEvh23uaoffeOH6FqJOZql0AxEdBxlFnlVCAqvDX5ewH0ZLhd+P8jJ7DgKt0OizlnATbHZHPbT9MZPRM9BcMGlIwBOLcQW3gIDzUy1f/kNptNyT0WPOBD3g+BT90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6BB42168F;
+	Fri, 21 Feb 2025 06:02:40 -0800 (PST)
+Received: from bogus (e133711.arm.com [10.1.196.55])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 58A9F3F5A1;
+	Fri, 21 Feb 2025 06:02:20 -0800 (PST)
+Date: Fri, 21 Feb 2025 14:02:17 +0000
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Sumit Garg <sumit.garg@kernel.org>
+Cc: Stuart Yoder <stuart.yoder@arm.com>, Sumit Garg <sumit.garg@linaro.org>,
+	linux-integrity@vger.kernel.org, jarkko@kernel.org,
+	peterhuewe@gmx.de, jgg@ziepe.ca, rafael@kernel.org, lenb@kernel.org,
+	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Jens Wiklander <jens.wiklander@linaro.org>,
+	Sudeep Holla <sudeep.holla@arm.com>, Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH 0/4] Add support for the TPM FF-A start method
+Message-ID: <Z7iHaWPyq3KDG7J2@bogus>
+References: <20250210232227.97761-1-stuart.yoder@arm.com>
+ <CAFA6WYM7K4_toy5_n1arW4po4SOX0R9624rCgO=_MvcMeySwUA@mail.gmail.com>
+ <4bb3cefa-b843-45ca-82c5-d96b13454baa@arm.com>
+ <CAFA6WYM3UA9+TE8L2U5Qd8FZfaGZnbba=QzWU7fEu3LKQVm-tw@mail.gmail.com>
+ <fdaa9a58-790f-4839-8db7-1b9a81eb8edf@arm.com>
+ <CAFA6WYM0ANqc--ScYtJFRjOsCCjzO3NX46=F5V=rza_6Q-Q96g@mail.gmail.com>
+ <e142afd2-38ec-4640-b9be-cb414bccc807@arm.com>
+ <Z7LGbZsOh_w-HRY2@sumit-X1>
+ <5dae96fa-0e54-4274-bcc6-1c20fe846f60@arm.com>
+ <Z7iDuwLDA2rFPZK6@sumit-X1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250221134112.GK50639@nvidia.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Z7iDuwLDA2rFPZK6@sumit-X1>
 
-Hi Jason,
+Hi Sumit,
 
-On Fri, Feb 21, 2025 at 09:41:12AM -0400, Jason Gunthorpe wrote:
-> Can I send you a PR instead? I'd like it on a branch so we can work on
-> the iommufd specific bits that where in v1.
+On Fri, Feb 21, 2025 at 07:16:35PM +0530, Sumit Garg wrote:
+> On Mon, Feb 17, 2025 at 10:56:58AM -0600, Stuart Yoder wrote:
+> >
+> > I don't see how changing TPM discovery to be via FF-A directly
+> > would improve maintainability.
+>
+> You are considering ACPI at this point but when people want to use this
+> TPM over FF-A on a platform using DT then it will require corresponding
+> DT bindings. After that each platform has to enable TPM over FF-A in
+> their corresponding ACPI/DT. All that won't be needed with auto
+> discovery over FF-A.
 
-Yes, that works as well.
+I hear you and completely agree. However, someone thought it was a good idea
+to align with other start methods and duplicate information in the TCG ACPI
+specification. This is definitely a bad idea, as it may contradict the
+firmware. All we needed was a simple flag to indicate whether FF-A is the
+start method.
 
-Thanks,
+It sounds like a classic case of misalignment between specification authors
+and practical implementation needs. Instead of a simple flag to indicate FF-A
+as the start method, duplicating information in the TCG ACPI specification
+seems unnecessary and potentially problematic—especially if it risks
+conflicting with firmware behavior.
 
-	Joerg
+Anyway, I can't comment on how we ended up here, but this seems to be the reality.
+
+--
+Regards,
+Sudeep
 
