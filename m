@@ -1,113 +1,144 @@
-Return-Path: <linux-kernel+bounces-525305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 834E0A3EDEB
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:09:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B269DA3EEA7
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:27:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 238A37008EC
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 08:09:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17CAE3BAD7E
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 08:27:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2FAF1FBCAD;
-	Fri, 21 Feb 2025 08:09:03 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB91C1FFC67;
+	Fri, 21 Feb 2025 08:27:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="H/SoqTv+"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 868A51D7E2F;
-	Fri, 21 Feb 2025 08:09:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAA741FECA2;
+	Fri, 21 Feb 2025 08:27:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740125343; cv=none; b=WweoyRCxA/LhZaFVizXn3BBRpotz1e3cZyfpSCzo19oQL4VMjediisY2Y/PV8GfR2lHTqrYUXzgVwKLWa7xNmWlkWFAufr7SGxpjiL8saplAIZtr9ecmzCKd9486EJM9vpgpCHdXPQKJPpWqq5smuwkiErKTzE3DGuH932MfnhI=
+	t=1740126451; cv=none; b=Kd9KfshfTZSgAFi3uJDjjEqOdEiCDKAZ2uWPr5a9MaEVHBUHv07cHmfXD6LeGuIOjo+33IVqTRlD/zwcPZZYJUKpwwuxFq48FU7eVxNRgFeBzBkb8Ij+UlzNnDKhb/t1dlSy/pd9Kv3t3YoynBSFRuptdIAqqOnRn55M9D6dVx4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740125343; c=relaxed/simple;
-	bh=x6Je/MiGfzQ7gAuCruwEQwF7HP2I/8JRFgCqS/KI0K0=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ROLOgbH8aawCu2ruOLs06jLwkPdzU7OnRI8p+/ATZcvbWacArkJYQloPzbhOEEv9rm+xnw8BXL6vqmmg/h/3/BFompDhqaCaolAtCn49R6kDPNzh1qUKYhfouDjDUhBlcLo1APWMmgZNIY26XB+0CEUqfU35PZoXWlP0ITWlDX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4YzjMR1rbVz1GDcp;
-	Fri, 21 Feb 2025 16:04:19 +0800 (CST)
-Received: from kwepemg500017.china.huawei.com (unknown [7.202.181.81])
-	by mail.maildlp.com (Postfix) with ESMTPS id BA5641402E2;
-	Fri, 21 Feb 2025 16:08:57 +0800 (CST)
-Received: from huawei.com (10.175.127.227) by kwepemg500017.china.huawei.com
- (7.202.181.81) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 21 Feb
- 2025 16:08:56 +0800
-From: Li Lingfeng <lilingfeng3@huawei.com>
-To: <trondmy@kernel.org>, <anna@kernel.org>
-CC: <linux-nfs@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<ehagberg@janestreet.com>, <yukuai1@huaweicloud.com>, <houtao1@huawei.com>,
-	<yi.zhang@huawei.com>, <yangerkun@huawei.com>, <lilingfeng@huaweicloud.com>,
-	<lilingfeng3@huawei.com>
-Subject: [PATCH] nfs: remove SB_RDONLY when remounting nfs
-Date: Fri, 21 Feb 2025 16:26:13 +0800
-Message-ID: <20250221082613.2674633-1-lilingfeng3@huawei.com>
-X-Mailer: git-send-email 2.31.1
+	s=arc-20240116; t=1740126451; c=relaxed/simple;
+	bh=/h6MQNga5iVfjnLjCLx6zbyLRUuJqAvt3dTmrQYOmgY=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=tnXPU0DIjUnhglpBfiIwHTTWoJAJ2HqZQci62sbO9F4xxl/0Q2GHrKhvd1sO1v0o7mto3RePaCjzKEPQJhCBoUuie18/kgMP5VnEmpkbY3EFCPSInsYiBhi2JhIKmWEaMh8pPD5HVH8hRgttPG2lyfsHmBY+pryorgOY+cl9L/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=H/SoqTv+; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740126450; x=1771662450;
+  h=message-id:date:mime-version:cc:subject:to:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=/h6MQNga5iVfjnLjCLx6zbyLRUuJqAvt3dTmrQYOmgY=;
+  b=H/SoqTv+caY7o0jJKqAGKIBxovg/ArnnomMADMQHSRDT0g95Vtau00m6
+   7z4o+SuWHRxc82kbDczwAhEMrFqGfiwfLSEmfoBtM74p4gjldoyzKgPqa
+   We8/YX7IrtMschK9h0Um/Id8OzxJ0sBJyQCdubyWKN6jDFI7nj8DOr2Eo
+   IVK+Ih6UFGYl6uBmeiptjh+dxwk/V7iot/DLkE0GfYTQxSuJkq7Q2HIDN
+   U+oMSeGDLOg/kaAawmwjulv2dfekaES6KW6VbsyrxsFNFKpvi+XEMjGZp
+   WeM1oDZEcIG4mU96LIuC/0bhQ1lCE47/+UY89TDpkglCxJ5mWagR0LQ05
+   A==;
+X-CSE-ConnectionGUID: Fn2HzSLFTVqxCMUxJDv3Pw==
+X-CSE-MsgGUID: uaJ2LBXjTCSKzUZXWqc3OQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11351"; a="66294409"
+X-IronPort-AV: E=Sophos;i="6.13,304,1732608000"; 
+   d="scan'208";a="66294409"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Feb 2025 00:27:27 -0800
+X-CSE-ConnectionGUID: XlHuQfjnRi2UYVY0c7IMTw==
+X-CSE-MsgGUID: aUBL+3BNRSKjUtTIjknIBw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,304,1732608000"; 
+   d="scan'208";a="115136762"
+Received: from jingxion-mobl.ccr.corp.intel.com (HELO [10.124.240.93]) ([10.124.240.93])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Feb 2025 00:27:25 -0800
+Message-ID: <b8b215e6-7447-4fbb-a408-20e518c8da4c@linux.intel.com>
+Date: Fri, 21 Feb 2025 16:27:22 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemg500017.china.huawei.com (7.202.181.81)
+User-Agent: Mozilla Thunderbird
+Cc: baolu.lu@linux.intel.com, Ido Schimmel <idosch@idosch.org>,
+ "iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [PATCH 1/1] iommu/vt-d: Fix suspicious RCU usage
+To: "Tian, Kevin" <kevin.tian@intel.com>, Joerg Roedel <joro@8bytes.org>,
+ Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>
+References: <20250218022422.2315082-1-baolu.lu@linux.intel.com>
+ <BN9PR11MB5276EEC28691FD6C77EC493A8CC42@BN9PR11MB5276.namprd11.prod.outlook.com>
+ <7d58c0bd-2828-4adc-8c57-8b359c9f0b9f@linux.intel.com>
+ <BN9PR11MB52768DA79ECE2C5F9D14DC8C8CC72@BN9PR11MB5276.namprd11.prod.outlook.com>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <BN9PR11MB52768DA79ECE2C5F9D14DC8C8CC72@BN9PR11MB5276.namprd11.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-In some scenarios, when mounting NFS, more than one superblock may be
-created. The final superblock used is the last one created, but only the
-first superblock carries the ro flag passed from user space. If a ro flag
-is added to the superblock via remount, it will trigger the issue
-described in Link[1].
+On 2025/2/21 15:22, Tian, Kevin wrote:
+>> From: Baolu Lu<baolu.lu@linux.intel.com>
+>> Sent: Thursday, February 20, 2025 7:38 PM
+>>
+>> On 2025/2/20 15:21, Tian, Kevin wrote:
+>>>> From: Lu Baolu<baolu.lu@linux.intel.com>
+>>>> Sent: Tuesday, February 18, 2025 10:24 AM
+>>>>
+>>>> Commit <d74169ceb0d2> ("iommu/vt-d: Allocate DMAR fault interrupts
+>>>> locally") moved the call to enable_drhd_fault_handling() to a code
+>>>> path that does not hold any lock while traversing the drhd list. Fix
+>>>> it by ensuring the dmar_global_lock lock is held when traversing the
+>>>> drhd list.
+>>>>
+>>>> Without this fix, the following warning is triggered:
+>>>>    =============================
+>>>>    WARNING: suspicious RCU usage
+>>>>    6.14.0-rc3 #55 Not tainted
+>>>>    -----------------------------
+>>>>    drivers/iommu/intel/dmar.c:2046 RCU-list traversed in non-reader section!!
+>>>>                  other info that might help us debug this:
+>>>>                  rcu_scheduler_active = 1, debug_locks = 1
+>>>>    2 locks held by cpuhp/1/23:
+>>>>    #0: ffffffff84a67c50 (cpu_hotplug_lock){++++}-{0:0}, at:
+>>>> cpuhp_thread_fun+0x87/0x2c0
+>>>>    #1: ffffffff84a6a380 (cpuhp_state-up){+.+.}-{0:0}, at:
+>>>> cpuhp_thread_fun+0x87/0x2c0
+>>>>    stack backtrace:
+>>>>    CPU: 1 UID: 0 PID: 23 Comm: cpuhp/1 Not tainted 6.14.0-rc3 #55
+>>>>    Call Trace:
+>>>>     <TASK>
+>>>>     dump_stack_lvl+0xb7/0xd0
+>>>>     lockdep_rcu_suspicious+0x159/0x1f0
+>>>>     ? __pfx_enable_drhd_fault_handling+0x10/0x10
+>>>>     enable_drhd_fault_handling+0x151/0x180
+>>>>     cpuhp_invoke_callback+0x1df/0x990
+>>>>     cpuhp_thread_fun+0x1ea/0x2c0
+>>>>     smpboot_thread_fn+0x1f5/0x2e0
+>>>>     ? __pfx_smpboot_thread_fn+0x10/0x10
+>>>>     kthread+0x12a/0x2d0
+>>>>     ? __pfx_kthread+0x10/0x10
+>>>>     ret_from_fork+0x4a/0x60
+>>>>     ? __pfx_kthread+0x10/0x10
+>>>>     ret_from_fork_asm+0x1a/0x30
+>>>>     </TASK>
+>>>>
+>>>> Simply holding the lock in enable_drhd_fault_handling() will trigger a
+>>>> lock order splat. Avoid holding the dmar_global_lock when calling
+>>>> iommu_device_register(), which starts the device probe process.
+>>> Can you elaborate the splat issue? It's not intuitive to me with a quick
+>>> read of the code and iommu_device_register() is not occurred in above
+>>> calling stack.
+>> The lockdep splat looks like below:
+> Thanks and it's clear now. Probably you can expand "to avoid unnecessary
+> lock order splat " a little bit to mark the dead lock between dmar_global_lock
+> and cpu_hotplug_lock (acquired in path of iommu_device_register()).
 
-Link[2] attempted to address this by marking the superblock as ro during
-the initial mount. However, this introduced a new problem in scenarios
-where multiple mount points share the same superblock:
-[root@a ~]# mount /dev/sdb /mnt/sdb
-[root@a ~]# echo "/mnt/sdb *(rw,no_root_squash)" > /etc/exports
-[root@a ~]# echo "/mnt/sdb/test_dir2 *(ro,no_root_squash)" >> /etc/exports
-[root@a ~]# systemctl restart nfs-server
-[root@a ~]# mount -t nfs -o rw 127.0.0.1:/mnt/sdb/test_dir1 /mnt/test_mp1
-[root@a ~]# mount | grep nfs4
-127.0.0.1:/mnt/sdb/test_dir1 on /mnt/test_mp1 type nfs4 (rw,relatime,...
-[root@a ~]# mount -t nfs -o ro 127.0.0.1:/mnt/sdb/test_dir2 /mnt/test_mp2
-[root@a ~]# mount | grep nfs4
-127.0.0.1:/mnt/sdb/test_dir1 on /mnt/test_mp1 type nfs4 (ro,relatime,...
-127.0.0.1:/mnt/sdb/test_dir2 on /mnt/test_mp2 type nfs4 (ro,relatime,...
-[root@a ~]#
-
-When mounting the second NFS, the shared superblock is marked as ro,
-causing the previous NFS mount to become read-only.
-
-To resolve both issues, the ro flag is no longer applied to the superblock
-during remount. Instead, the ro flag on the mount is used to control
-whether the mount point is read-only.
-
-Fixes: 281cad46b34d ("NFS: Create a submount rpc_op")
-Link[1]: https://lore.kernel.org/all/20240604112636.236517-3-lilingfeng@huaweicloud.com/
-Link[2]: https://lore.kernel.org/all/20241130035818.1459775-1-lilingfeng3@huawei.com/
-Signed-off-by: Li Lingfeng <lilingfeng3@huawei.com>
----
- fs/nfs/super.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/fs/nfs/super.c b/fs/nfs/super.c
-index aeb715b4a690..f08e1d7fb179 100644
---- a/fs/nfs/super.c
-+++ b/fs/nfs/super.c
-@@ -1047,6 +1047,7 @@ int nfs_reconfigure(struct fs_context *fc)
- 
- 	sync_filesystem(sb);
- 
-+	fc->sb_flags &= ~SB_RDONLY;
- 	/*
- 	 * Userspace mount programs that send binary options generally send
- 	 * them populated with default values. We have no way to know which
--- 
-2.31.1
-
+Yes, sure.
 
