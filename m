@@ -1,98 +1,78 @@
-Return-Path: <linux-kernel+bounces-526684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F4B8A401FB
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 22:20:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D11BEA401FC
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 22:20:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4165E3A8EF2
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 21:20:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7261F3A9421
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 21:20:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62AB9202C4F;
-	Fri, 21 Feb 2025 21:20:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23772202C4A;
+	Fri, 21 Feb 2025 21:20:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="myxI1sMM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ehGHcpZL"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B96EA36AF5;
-	Fri, 21 Feb 2025 21:20:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81B8B36AF5;
+	Fri, 21 Feb 2025 21:20:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740172823; cv=none; b=WRJCJSGuSFKCnW/tDjoofa7wOb1524WgpEqK8IzDhtVocfK05BSdIDLaPyNxEpa7oSxW/OF1pNbgvJuYTebLAu/KIVJt0nNJ74Giue4RQqD5gAm7CxZ3bW9HJjvnBEb7CnfSX1uUZDTnZD/eyu0pikWJBmJ2IlJUpX5EoVByH2k=
+	t=1740172853; cv=none; b=QiAlbiTEMUzKMq/WeL4L13hpoIonvQIniSBawJLwCWfKQCyj9nAApn5OuMLvGjO2nIjGSVRIWJz3z529xyj/vgp0DYYeqkI9zvD600jnM2QaNzhviJZraqPkIY7np/EIaPU/dgZrKCfVLgw13eP1MnLjMGhbupdrEwCCCqc3/pg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740172823; c=relaxed/simple;
-	bh=6l55Esk/JWE2IUcizxGDLKnAS3+Yrm1sg9i0T8NQvr8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tLdI5vxaRFHI0w0xtADVF8z3tRR8e4s3hYEWnQA00cgsGw1h3+tmUGjUzUB09blu2JHwh9JN6j7rpbMULPKBcL4DrvTZ4h24rmLn0zL2wrQW5htBgg4xwvA4QRkPoAp4z6ezi1gIM4lylXjFEDwPT/SiYQTrWIbQQKlfzrAdiIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=myxI1sMM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 875E1C4CED6;
-	Fri, 21 Feb 2025 21:20:21 +0000 (UTC)
+	s=arc-20240116; t=1740172853; c=relaxed/simple;
+	bh=GvH9sbf7BjzVWFctUss3vdfXB5v/gMmJhuXeWp5vhR4=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=eAw0NMYpadDnWNkceOj/M5dDSMNFgExFEN6FOEMQ0zHAfYjpRtUzTKfHwkrzST+fB5sziDD3GDbQ3eBcmOkPE+DQBnWRlFN3A4HcTWCPRc32c1Pr/P6truuzsqzQBD9Iut1S++p5n/Sbek5QfP25HOProq54Sj4NVaLl2mNr0VU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ehGHcpZL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CD9FC4CED6;
+	Fri, 21 Feb 2025 21:20:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740172823;
-	bh=6l55Esk/JWE2IUcizxGDLKnAS3+Yrm1sg9i0T8NQvr8=;
-	h=From:To:Cc:Subject:Date:From;
-	b=myxI1sMM0EiOgr3wESX8YGwYtbNN24nEpiPL27pYjFDQGWVoz6DuNGEsxL+plJx1j
-	 s1V6KFu+uitYesiCKdLo/pq8RDM6NZ7ZC7InthU2ZVnT6GLUkJSgXfcOjKUHEHPnW2
-	 0nqTJ17cKyVBOZzOe+VIxA4Jc4DBbICJWt3StibNg/zLqB5siyJVm78XpivsNyeVZ8
-	 JlaGMuJJ07OX1iNX6OCaehydPD5o2SD8HN0a/OKe6HTAKm/NxeLBfO1F40bZb8JKPR
-	 uzoAW/VFEaj9ff0vcwOzo/ZFN4NU7/3oBIi6XGVVnqqvkeDxIvprKu4tCB3sx/67pm
-	 FiUPDnQ6qMjQg==
-From: Arnd Bergmann <arnd@kernel.org>
-To: Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Nicolas Schier <nicolas@fjasle.eu>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: [PATCH] kbuild: hdrcheck: fix cross build with clang
-Date: Fri, 21 Feb 2025 22:20:07 +0100
-Message-Id: <20250221212017.809382-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	s=k20201202; t=1740172853;
+	bh=GvH9sbf7BjzVWFctUss3vdfXB5v/gMmJhuXeWp5vhR4=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=ehGHcpZLA82BG3NeQW1mzIokptL1heZNAKn2OlmevvNA4nJyEBeEXylo+8B9kjTIK
+	 F1DfXEjDDalkhK1qTXGJrWq82SLTzF1H2OqtkhQRG4IfQqnmaG58QLAvAp1FCLBY7h
+	 HrdI4mTPOkKZmYYUKeW+xb7KguWMoUWOSNvh2uLwP2NuBTWa630S4Yjag1uq5E5KFf
+	 iMi5TLctaDQslRa+2SoqJA6dGHP4C4vY71rlgjMuwmZxrsneVfScIQ4EAa2DB1Bux3
+	 l2P85JHdo4DIjtVSy+c6n4w0BHq99qdrf4FCFFqZmChaDASpdDhkBlZul9CphPXQ9r
+	 yu7h98jPP9ALA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 860B3380CEEC;
+	Fri, 21 Feb 2025 21:21:25 +0000 (UTC)
+Subject: Re: [GIT PULL] soc: fixes for 6.14
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <22f7e0e5-1ccc-41bf-a474-6cd09b23a26f@app.fastmail.com>
+References: <22f7e0e5-1ccc-41bf-a474-6cd09b23a26f@app.fastmail.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <22f7e0e5-1ccc-41bf-a474-6cd09b23a26f@app.fastmail.com>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git tags/soc-fixes-6.14
+X-PR-Tracked-Commit-Id: e31e3f6c0ce473f7ce1e70d54ac8e3ed190509f8
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: ff202c5028a195c07b16e1a2fbb8ca6b7ba11a1c
+Message-Id: <174017288435.2210212.11849723681477106984.pr-tracker-bot@kernel.org>
+Date: Fri, 21 Feb 2025 21:21:24 +0000
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, soc@lists.linux.dev, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-From: Arnd Bergmann <arnd@arndb.de>
+The pull request you sent on Fri, 21 Feb 2025 22:04:42 +0100:
 
-The headercheck tries to call clang with a mix of compiler arguments
-that don't include the target architecture. When building e.g. x86
-headers on arm64, this produces a warning like
+> https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git tags/soc-fixes-6.14
 
-   clang: warning: unknown platform, assuming -mfloat-abi=soft
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/ff202c5028a195c07b16e1a2fbb8ca6b7ba11a1c
 
-Add in the CLANG_FLAGS, which contain the target, in order to make it
-build properly.
+Thank you!
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- usr/include/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/usr/include/Makefile b/usr/include/Makefile
-index 58a9cbe4eba4..99f9e904adcd 100644
---- a/usr/include/Makefile
-+++ b/usr/include/Makefile
-@@ -10,7 +10,7 @@ UAPI_CFLAGS := -std=c90 -Wall -Werror=implicit-function-declaration
- 
- # In theory, we do not care -m32 or -m64 for header compile tests.
- # It is here just because CONFIG_CC_CAN_LINK is tested with -m32 or -m64.
--UAPI_CFLAGS += $(filter -m32 -m64 --target=%, $(KBUILD_CFLAGS))
-+UAPI_CFLAGS += $(filter -m32 -m64 --target=%, $(KBUILD_CFLAGS) $(CLANG_FLAGS))
- 
- # USERCFLAGS might contain sysroot location for CC.
- UAPI_CFLAGS += $(USERCFLAGS)
 -- 
-2.39.5
-
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
