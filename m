@@ -1,123 +1,168 @@
-Return-Path: <linux-kernel+bounces-525756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D545FA3F472
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 13:33:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A88AA3F475
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 13:34:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17EB5189F1DA
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 12:33:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BA438602D5
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 12:33:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A52D820B1FE;
-	Fri, 21 Feb 2025 12:33:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E05BC206F02;
+	Fri, 21 Feb 2025 12:33:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="KWe8oHvZ"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="MMQmj+rk"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C2A31EB1B9;
-	Fri, 21 Feb 2025 12:33:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 175001EA7C1
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 12:33:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740141201; cv=none; b=c5zp1jcZ0CYMIHHkbwh1wCdB7zMAb7mc+NaJblwu4w/T47WuNQSqNmTzSrIWGFvdmij8+M0cej2utyHTygeGUDKHkANwzTSgXr48qtuTDtvoq+BotohPck+aOKycKtO1Wueko42O17UFZ6lFOpeLZf5mEo7/QK8tNNQSc2zuuiU=
+	t=1740141222; cv=none; b=sloaqwhdxlGDtBQwLGYCK4dLzindArrM+V9/tGVxK2XNVUgAO2ksRtbTD+OOSlsWhSeK6pahPd/sv8oAUjEfV7tcEobHb7WAfnON46+tXrLjlrdcz23YVhYSm0YJXkOzx4xrV4qDlQClfJ3nhywXid11MFOz8P9mZMa2KOilWGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740141201; c=relaxed/simple;
-	bh=7h+xKsbMfStig+XlYD+UdroH+uVoiqQNnDneazl/cf4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qWQVGVOcKfcMMgOqfX2MpeL6mRp/UiIQVwgYP9mv82KkqvqDG1aXYCCVQUeCSciXMe2/QU9wVtsNtAQdt8anUNrUX05Qst34RK9nUTq0LEjNatZOvhYxsfKb5pSZXBK+su13QSckqQVq2qtUxkKsFTAdxrV+mFyMWqXnEwiTfPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=KWe8oHvZ; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-439a1e8ba83so19786015e9.3;
-        Fri, 21 Feb 2025 04:33:19 -0800 (PST)
+	s=arc-20240116; t=1740141222; c=relaxed/simple;
+	bh=kfzbwTjAyVRMgJOs6AmC7N34SpH3lxEox/yHKjIhldQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ge7LoukJoMDwjDJaYh68F7zGmG6KBRA3YTREPeJCWKUrG+xLqXQP7zskmJP6VjDWuZAeb7sNZV4KUZMr+2bXIoVXqmNGDv8YXHPWEEAK23ogzVeqLk7tnIB9NsoyABAbFTVKyJy3hBs/6uEIXehAdgZ+uwbO+082P+YFfXiWalA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=MMQmj+rk; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5452c2805bcso2311864e87.2
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 04:33:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1740141198; x=1740745998; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ukGOvykZUEzCZzFlDm/VHVrIH7A0BbFaLwBfx+r//9s=;
-        b=KWe8oHvZLKuV0U46dPD/fogzoahxl6JuxXzwrBN+dww7AtQV1HVym7ApIMZnu89vnX
-         eVEhgLnztTxtzUDCPtYKWDDMN8N63JJS/WKNPXHCreXLFQjrt200it0B0UxatY8oqaj9
-         Mxk3j76x6KwmEadIA7MIH0vJUZZttwY/g/RB3kv/QWLfNbar8Rgz7ww6oyMkbUfqLELb
-         HejrERDqmA0qBoCuSOLu50EFL6KXFitqK+BNEAFS3tFFpu035sDqPgFHFhyPqdvHbLon
-         ywhMoBPiyux3P2ZhtO9XsPJYudUYLeh+QWd7hAkq1gHkEPnRg4KGDjktbFb97EbcHkmJ
-         c1/w==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1740141218; x=1740746018; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=laCji0wgcejA8pX+AF6wxbOGQS4OFrsspaTrAMdESBk=;
+        b=MMQmj+rkbua7cJj2CYuIUYtz8cSniy9F/3OiPGurOFnU6kvo+o4il0g8FHzuoaZXdU
+         6knQjAtCuOlS/GX3qAzwgy8Fm+sTCZ8/K9dIUo8CYvwdwrzU37e6TNgUeQRb8tHQcXJI
+         2swzAYMkTneiVc1m2+5I5sTkanoLaNVOsIDcf71Mxt2pkU1Z/hrCyFawyfiYAfuBtrut
+         Peh/azaa3hHrl4k/rXO7TbBTLNl8zzDTUaksIbnWc3eq3Kl7coFFVfJIJjVVdE4+wohy
+         M80pLr9UZDShioD+dfXNIp8bN6Op/pbj+2w5fdkrfJNAxv6xfS0UmMhLhGEwcKuEkHrf
+         hbMw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740141198; x=1740745998;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ukGOvykZUEzCZzFlDm/VHVrIH7A0BbFaLwBfx+r//9s=;
-        b=N8k1WDskFBtdwJ3XVIoUdLtF2SbvUcHA1aQnFAhjqF4+VNgU4kkV2q+dNJpom5lurw
-         XfXHptk/3SsUyB1Kv64Sk6+ZyyHWt+BO+vjKbAcCddHhZUY68wQGiVN+YW2k0/2WUfr9
-         j5DvyyWMJ9Hc5Db6HtNVhBi3xOmZtYnlowOIHCf4trRQKc09BjRzwB79/WmNHCm7sJwR
-         o0Z/2GyySgCg3UjXEbq1IvQ2dd1IEvkXtZwshDlxh3rCcO7vmTungFfUuqZM8vxws0Bm
-         TA0GSTATlGkWrzey3jcH3274osyWTJ6UUlXEBB/7cWcTGvNXfv0b9PY5JcDOdjCrjmJS
-         BsPA==
-X-Forwarded-Encrypted: i=1; AJvYcCUQ74SSdDH+AwSY8xBySQeehHhnPT+pINHYPlMYA2VhTm47B/C0ghBkO73S94T1dUcdxPp4FX9R@vger.kernel.org, AJvYcCV55dVrEtoQkzPA/T+m51aDo96FxfKC50RqiypU8+cReTi9LWY2ZPZx4Aqzorq1fdgnCUpa9mKp/tl6EoI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyhrvOq7Q2gui7iZkDuzby4Cr7SnK9gXyDnEPpT66r8x5eUPy6d
-	9qQYiBljU+tzLGJzC48QOpqfNGr42xgllaHsU34yrvMD6r3RNkcMgNIHwTg=
-X-Gm-Gg: ASbGncsE5KSDedVgOVTrv6nl0RGE8fMv2emaGtv9lNwCgGPtoI7OvNRydPHs83zCxwG
-	62+TK8NSZfc5WJ4Hx4M6iN81AM9xU9i2YGmktTJHQNNCI2WGx9tPlPQiyOMF34GW3LCzQMCdmSK
-	9oznkvn91ffDqUV3fhtS9B1rffsY8hxga/5XTlc13n/sSslyrBZVkblRTJW1PVxnvbpENcgwB9F
-	kjxU3cOaCubewvaOg3Ac0WVqQ57B5TIeshy9n2vkJYeM06Zfo1/Y0Ar9a2UUkqJWt6KLijdRgtq
-	DdNX3hrihQ2euvfLsxTSP7JOk5KIgKD6k9SEuv1Y2zbDafjabl2TVTfX24D3f0CedE/K7ipVwLF
-	2dHA=
-X-Google-Smtp-Source: AGHT+IHi+9gA7iLuLNRjwkEHuSn4XLZGb306Rvq3LF2wd97SMFpiWRkCm0uOoyNBvbMFfHBHoywnnQ==
-X-Received: by 2002:a05:600c:4687:b0:439:9aca:3285 with SMTP id 5b1f17b1804b1-439b6ad5cbfmr4543865e9.6.1740141197480;
-        Fri, 21 Feb 2025 04:33:17 -0800 (PST)
-Received: from [192.168.1.3] (p5b2b437f.dip0.t-ipconnect.de. [91.43.67.127])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f259f85c2sm24045464f8f.91.2025.02.21.04.33.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Feb 2025 04:33:16 -0800 (PST)
-Message-ID: <9344125e-f18a-438c-9e50-535c7e5d1c3d@googlemail.com>
-Date: Fri, 21 Feb 2025 13:33:16 +0100
+        d=1e100.net; s=20230601; t=1740141218; x=1740746018;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=laCji0wgcejA8pX+AF6wxbOGQS4OFrsspaTrAMdESBk=;
+        b=TXp9blH5wgsxH5nzA+YyIwhgtEV5CaJtv3einbAsUUkeedN/OIP30oR859gsfVDY5J
+         Ux6wGQlsBhB294A5ha7DbzH/+qRkLGI9HpCRtrKq6coGbeZe8Lny/S0dK5T0Opw9TXlI
+         FL+CxaJFzlHsYdHe8V1k8+L811p8g3yISv83YC9Zaftsjly0JGgLEw8fbuaM5j9sds4R
+         PQVTZq/3rhqatwTlaBzNT8TpVaKU+NDOCOvICh3Cs1CIfHPD+oNzY8C87lwemEG8ZJNd
+         BdA9/xvbhJZa62caRQVm0K0mNna7Rk6RdHgGSs3BxCG6BD3q53UDfNy8Omp6YDSdeVih
+         MsMA==
+X-Forwarded-Encrypted: i=1; AJvYcCVDzguceGPKoW7VNPU3DIgu52meqSCcngynkIrvfpoxUKeT4nvSf7UE1q05rV90jSIFdiyrHrAaHuCSVow=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyaJGIA3dEjMWXU0f3kHJoAE9Xg1pK/cO2RLxtfaWCPTaM025Y5
+	vmqGOge/vDIU2kyyPm/Qq3vIxCbPN2frVTkBNczeEZ4PUgDAzPXCqSttOfFUA8lEh6VX95V4jJi
+	Otonw3w8nncViaf0iuoex0pwlQWJLW3om7+zntg==
+X-Gm-Gg: ASbGncspnsXZU2VNfaHrzUn/gja9T8HKC/fkPsIV8miMxin7ssWzrhSSrEAD/CMNZz6
+	xliH0EUbndRPPh/GgRRCSB2SLrJhisF1flvNUpts9gDODqyLnnQzjLfzIIoZe5fXvzCOtEleMcb
+	jA49wWokuyUZYWg3Fifu+kzA2HUrd3yxV0f2od/JI=
+X-Google-Smtp-Source: AGHT+IF8P3wDFcp9YKaC027dHaySwmaNX5iaDpp3C16lxDq0a06pZGaS/beZ+S8CGUUtscqFetXUQ7xQyX+bCcMlTIE=
+X-Received: by 2002:a05:6512:1319:b0:545:49d:547a with SMTP id
+ 2adb3069b0e04-54838ee933fmr1110810e87.18.1740141217814; Fri, 21 Feb 2025
+ 04:33:37 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH 6.13 000/258] 6.13.4-rc2 review
-Content-Language: de-DE
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-References: <20250220104500.178420129@linuxfoundation.org>
-From: Peter Schneider <pschneider1968@googlemail.com>
-In-Reply-To: <20250220104500.178420129@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250217-03-k1-gpio-v5-0-2863ec3e7b67@gentoo.org>
+ <20250217-03-k1-gpio-v5-3-2863ec3e7b67@gentoo.org> <CAMRc=MdJszmZ8d1MGo=bfJ8TwqOYBPLe2Jfc9MfbErDUCMQktg@mail.gmail.com>
+ <MA0PR01MB567180C0FE89E3BEBAF2B12EFEC42@MA0PR01MB5671.INDPRD01.PROD.OUTLOOK.COM>
+ <CAMRc=MdX6KiGk1zBRK3bZpN3iM16-8mDq40sTez6YO2kJEq0zQ@mail.gmail.com> <20250221122125-GYA35549@gentoo>
+In-Reply-To: <20250221122125-GYA35549@gentoo>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Fri, 21 Feb 2025 13:33:26 +0100
+X-Gm-Features: AWEUYZn-ieTWF1DGfmKnjgr1pt858szsAsKVHHDN3y-ddz38_1CC6vtmW7gZy14
+Message-ID: <CAMRc=Meg6kdEQ6B+u+rfcBc1d6rMO-9Prz4oFoSF-WFZorZeNw@mail.gmail.com>
+Subject: Re: [PATCH v5 3/5] gpio: spacemit: add support for K1 SoC
+To: Yixun Lan <dlan@gentoo.org>
+Cc: Chen Wang <unicorn_wang@outlook.com>, Rob Herring <robh@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Meng Zhang <zhangmeng.kevin@linux.spacemit.com>, 
+	linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, 
+	linux-kernel@vger.kernel.org, Conor Dooley <conor@kernel.org>, 
+	Yangyu Chen <cyy@cyyself.name>, devicetree@vger.kernel.org, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Jesse Taube <mr.bossman075@gmail.com>, 
+	Jisheng Zhang <jszhang@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Inochi Amaoto <inochiama@outlook.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, spacemit@lists.linux.dev, 
+	linux-riscv@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Am 20.02.2025 um 11:58 schrieb Greg Kroah-Hartman:
-> This is the start of the stable review cycle for the 6.13.4 release.
-> There are 258 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Fri, Feb 21, 2025 at 1:21=E2=80=AFPM Yixun Lan <dlan@gentoo.org> wrote:
+>
+> Hi Bartosz Golaszewski:
+>
+> On 09:37 Fri 21 Feb     , Bartosz Golaszewski wrote:
+> > On Fri, Feb 21, 2025 at 12:36=E2=80=AFAM Chen Wang <unicorn_wang@outloo=
+k.com> wrote:
+> > >
+> > >
+> > > On 2025/2/20 21:34, Bartosz Golaszewski wrote:
+> > > > On Mon, Feb 17, 2025 at 1:58=E2=80=AFPM Yixun Lan <dlan@gentoo.org>=
+ wrote:
+> > > [......]
+> > > >> +#define to_spacemit_gpio_bank(x) container_of((x), struct spacemi=
+t_gpio_bank, gc)
+> > > >> +
+> > > >> +struct spacemit_gpio;
+> > > >> +
+> > > >> +struct spacemit_gpio_bank {
+> > > >> +       struct gpio_chip                gc;
+> > > >> +       struct spacemit_gpio            *sg;
+> > > >> +       void __iomem                    *base;
+> > > >> +       u32                             index;
+> > > >> +       u32                             irq_mask;
+> > > >> +       u32                             irq_rising_edge;
+> > > >> +       u32                             irq_falling_edge;
+> > > >> +};
+> > > >> +
+> > > >> +struct spacemit_gpio {
+> > > >> +       struct  device                  *dev;
+> > > >> +       struct  spacemit_gpio_bank      sgb[NR_BANKS];
+> > > >> +};
+> > > > Please don't use tabs in struct definitions.
+> > >
+> > > Why not=EF=BC=9FI see
+> > > https://www.kernel.org/doc/html/latest/process/maintainer-tip.html#st=
+ruct-declarations-and-initializers
+> > >
+> >
+> > This is for the tip tree, not treewide.
+> >
+> > It's my personal maintainer preference. We do use both under
+> > drivers/gpio/ but I prefer no-tabs in new code.
+> >
+>
+> thanks for this explanation..
+>
+> my intention was trying to keep struct members aligned
+> if tabs is a no-go, would using multi blank spaces to align be acceptable=
+?
+>
+> something like:
+>
+> struct spacemit_gpio_bank {
+>         struct gpio_chip       gc;
+>         struct spacemit_gpio   *sg;
+>         void   __iomem         *base;
+>        ...
+> }
+>
 
-Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg 
-oddities or regressions found.
+No, that's even worse. :/
 
-Tested-by: Peter Schneider <pschneider1968@googlemail.com>
+Why are we even wasting time arguing, can you just use a single space?
+You'll get a driver merged and may just disappear from kernel
+development, Linus and I will have to maintain the code so we do get
+some degree of discretion when it comes to coding style.
 
-
-Beste Grüße,
-Peter Schneider
-
--- 
-Climb the mountain not to plant your flag, but to embrace the challenge,
-enjoy the air and behold the view. Climb it so you can see the world,
-not so the world can see you.                    -- David McCullough Jr.
-
-OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
-Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
+Bart
 
