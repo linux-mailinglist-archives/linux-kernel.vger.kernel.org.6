@@ -1,227 +1,167 @@
-Return-Path: <linux-kernel+bounces-525367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE499A3EF19
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:51:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91835A3EF1A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:51:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A4091894972
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 08:51:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78104702F6F
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 08:51:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91CDB202C48;
-	Fri, 21 Feb 2025 08:51:01 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1DA320103B;
+	Fri, 21 Feb 2025 08:51:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="MgLWnVDZ"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EFF3202C3E
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 08:50:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ECE720102D
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 08:51:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740127861; cv=none; b=nE1PtrRMK4618a/LL9VkFFPRST2NTzFfOYikbvQVT7PIHimUb5GHBhGE1skFCCnLhPoQlQ4is5ahwvcZFOFbU+B7WdYxGPQfPAnA+kL0X1xdtH8OTaAe2NV228KGiSw7DWleps+eLPqT1lHYwJYErnmfQQaLzU/2BhMN2OR6mGM=
+	t=1740127876; cv=none; b=uOGnI/6zHKKZuaxAgX0HNBJH7JV5C+lejLGdh5mCslVeboJK6HGzKIXxYjoHzzxwCO2erFHN+NEAVnt5hsr4L27GCYI+NGFFIShhDOdfYae1hA0Bg0C0cS5zM8pApMlDayN0zlNvXF8WY6KRXLrYhy90E5sIxHgCHeC4JIxelbs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740127861; c=relaxed/simple;
-	bh=nSKLy1Ix2qRvmMeeA07XwFeiYxHYgil0sFq6yP7REX4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FpRwdfh230Cvj7M4YnGnUtQD/PoAX1YyxYMW2N2VT7FJLOWUUl1NXO3jTaUHBg/vFVXjYzXBH01e3wrts+aLfqH+GZF9TQsw8MvUXBs6y8O3dnDOsptNd1kY4r5aLqSN35niCO15JlqKSZEMFpSRvAFU/rPG2B+wVcJrMzwkbuA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1tlOk0-0003XF-RD; Fri, 21 Feb 2025 09:50:36 +0100
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1tlOjx-0024Vn-0c;
-	Fri, 21 Feb 2025 09:50:33 +0100
-Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1tlOjx-009tjk-07;
-	Fri, 21 Feb 2025 09:50:33 +0100
-Date: Fri, 21 Feb 2025 09:50:33 +0100
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Kory Maincent <kory.maincent@bootlin.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Rob Herring <robh@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
-	Simon Horman <horms@kernel.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
-	Kyle Swenson <kyle.swenson@est.tech>,
-	Dent Project <dentproject@linuxfoundation.org>,
-	kernel@pengutronix.de,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v5 02/12] net: pse-pd: Add support for reporting
- events
-Message-ID: <Z7g-WYQNpVp5w7my@pengutronix.de>
-References: <20250218-feature_poe_port_prio-v5-0-3da486e5fd64@bootlin.com>
- <20250218-feature_poe_port_prio-v5-2-3da486e5fd64@bootlin.com>
+	s=arc-20240116; t=1740127876; c=relaxed/simple;
+	bh=KBtQRNIBn4e51K1jL/S3lAhAapHCBuNyEZ8KdMrqrkk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=N+h0ZRBoBhkVY+zygHAztjVSVMfO8UU9xPxgQUxI12/cHmEzv3dUydKzO2fU4CPVr0+6tFslswbyL8UdEKmgzzVKl/Ii86ZKl16NXzwmp9f/qGypeURkICbZWuC0vZ3SEEgzWt1r8pbOsnZLfM+8OHgbqfE/6yhABO1zkn4gUWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=MgLWnVDZ; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51L7XAZv025290;
+	Fri, 21 Feb 2025 08:50:50 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=s8+29E
+	eHqQF6eIoO/niupmgR0Z2tv9z/gpls1BiogYM=; b=MgLWnVDZbscTOZurB8w9t0
+	AbngklJ6qygw9H5FGjF4e0/gSdsS5z1uGwdQpatrsxRm4t26wEp/CRl7g2u/EfAr
+	BJ5u6iPHc9yc3n093uzfSO4OHaZZ3eY+bFtQdkHmtsweFvLQVizvB7Mq3kL2vFx8
+	xp+Yag0GVAhb6oUGmQIlmrzgt5mffj6PbxU6nSJ6PQOO8Wh6Ux/LfpELwLZyEjR3
+	88YGRxbO4R6DiRxK6xgPO574vf9BSNfcaOu1aiPqDDJNG3YtEPowD/XZg9gKgSYI
+	jrKNUZ6dX2RH6oT1M5oMjy4lHsV2+bvh+++qO+ia/OE3XDig6MDZZSfRAHYy1vuA
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44xn6q0aht-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 21 Feb 2025 08:50:49 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 51L8jLsj016073;
+	Fri, 21 Feb 2025 08:50:49 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44xn6q0ahq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 21 Feb 2025 08:50:49 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51L5TKph027113;
+	Fri, 21 Feb 2025 08:50:48 GMT
+Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 44w025ewr6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 21 Feb 2025 08:50:48 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51L8oigM42139958
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 21 Feb 2025 08:50:44 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D0B2320043;
+	Fri, 21 Feb 2025 08:50:44 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id AAE5120040;
+	Fri, 21 Feb 2025 08:50:42 +0000 (GMT)
+Received: from [9.124.208.10] (unknown [9.124.208.10])
+	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 21 Feb 2025 08:50:42 +0000 (GMT)
+Message-ID: <4bea75bc-d3f6-4972-b644-f9b5a4e8bb77@linux.ibm.com>
+Date: Fri, 21 Feb 2025 14:20:41 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250218-feature_poe_port_prio-v5-2-3da486e5fd64@bootlin.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH] objtool: Skip unannotated intra-function call warning
+ for bl+mflr pattern
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: peterz@infradead.org, christophe.leroy@csgroup.eu, npiggin@gmail.com,
+        maddy@linux.ibm.com, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, llvm@lists.linux.dev,
+        Sathvika Vasireddy <sv@linux.ibm.com>
+References: <20250219162014.10334-1-sv@linux.ibm.com>
+ <20250220195940.ely2l2fpsozd2tuv@jpoimboe>
+Content-Language: en-US
+From: Sathvika Vasireddy <sv@linux.ibm.com>
+In-Reply-To: <20250220195940.ely2l2fpsozd2tuv@jpoimboe>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: OunnJxUc6Zck2ospmegSrnkEZXwY7tvL
+X-Proofpoint-ORIG-GUID: BWcpXq7Ew6D85UMDcV_9GS9kop2COYQx
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-21_01,2025-02-20_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 malwarescore=0
+ mlxscore=0 bulkscore=0 lowpriorityscore=0 priorityscore=1501
+ impostorscore=0 adultscore=0 phishscore=0 mlxlogscore=999 clxscore=1015
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2502210064
 
-Hi Kory,
+Hi Josh, Thanks for the review.
 
-On Tue, Feb 18, 2025 at 05:19:06PM +0100, Kory Maincent wrote:
-> From: Kory Maincent (Dent Project) <kory.maincent@bootlin.com>
-> 
-> Add support for devm_pse_irq_helper() to register PSE interrupts. This aims
-> to report events such as over-current or over-temperature conditions
-> similarly to how the regulator API handles them but using a specific PSE
-> ethtool netlink socket.
+On 2/21/25 1:29 AM, Josh Poimboeuf wrote:
+> On Wed, Feb 19, 2025 at 09:50:14PM +0530, Sathvika Vasireddy wrote:
+>> Architectures like PowerPC use a pattern where the compiler generates a
+>> branch-and-link (bl) instruction that targets the very next instruction,
+>> followed by loading the link register (mflr) later. This pattern appears
+>> in the code like:
+>>
+>>   bl .+4
+>>   li r5,0
+>>   mflr r30
+> If I understand correctly, this is basically a fake call which is used
+> to get the value of the program counter?
 
-Thank you for your work. Here some comments.
+Yes, that's correct.
 
-...
+Also, just out of curiosity, how does x86 do it? Does it not use a 
+branch to next instruction approach?
 
-> --- a/drivers/net/mdio/fwnode_mdio.c
-> +++ b/drivers/net/mdio/fwnode_mdio.c
-> @@ -18,7 +18,8 @@ MODULE_LICENSE("GPL");
->  MODULE_DESCRIPTION("FWNODE MDIO bus (Ethernet PHY) accessors");
->  
->  static struct pse_control *
-> -fwnode_find_pse_control(struct fwnode_handle *fwnode)
-> +fwnode_find_pse_control(struct fwnode_handle *fwnode,
-> +			struct phy_device *phydev)
->  {
+>> Objtool currently warns about this as an "unannotated intra-function
+>> call" because find_call_destination() fails to find any symbol at the
+>> target offset. Add a check to skip the warning when a branch targets
+>> the immediate next instruction in the same function.
+>>
+>> Reported-by: kernel test robot <lkp@intel.com>
+>> Closes: https://lore.kernel.org/oe-kbuild-all/202502180818.XnFdv8I8-lkp@intel.com/
+>> Signed-off-by: Sathvika Vasireddy <sv@linux.ibm.com>
+> This should have a Fixes tag as well.
+Thanks for catching that. I'll add the Fixes tag.
+>
+>>   static int add_call_destinations(struct objtool_file *file)
+>>   {
+>> +	struct instruction *next_insn;
+>>   	struct instruction *insn;
+>>   	unsigned long dest_off;
+>>   	struct symbol *dest;
+>> @@ -1625,6 +1626,11 @@ static int add_call_destinations(struct objtool_file *file)
+>>   		reloc = insn_reloc(file, insn);
+>>   		if (!reloc) {
+>>   			dest_off = arch_jump_destination(insn);
+>> +
+>> +			next_insn = next_insn_same_func(file, insn);
+>> +			if (next_insn && dest_off == next_insn->offset)
+>> +				continue;
+>> +
+> This won't work on x86, where an intra-function call is converted to a
+> stack-modifying JUMP.  So this should probably be checked in an
+> arch-specific function.
 
-This change seems to be not directly related to the commit message.
-Is it the preparation for the multi-phy support?
+Thanks for letting me know, I'll introduce arch_skip_call_warning() to 
+handle architecture specific cases in the next patch I send.
 
->  	struct pse_control *psec;
->  	struct device_node *np;
-> @@ -30,7 +31,7 @@ fwnode_find_pse_control(struct fwnode_handle *fwnode)
->  	if (!np)
->  		return NULL;
->  
-> -	psec = of_pse_control_get(np);
-> +	psec = of_pse_control_get(np, phydev);
->  	if (PTR_ERR(psec) == -ENOENT)
->  		return NULL;
->  
-> @@ -128,15 +129,9 @@ int fwnode_mdiobus_register_phy(struct mii_bus *bus,
->  	u32 phy_id;
->  	int rc;
->  
-> -	psec = fwnode_find_pse_control(child);
-> -	if (IS_ERR(psec))
-> -		return PTR_ERR(psec);
-> -
->  	mii_ts = fwnode_find_mii_timestamper(child);
-> -	if (IS_ERR(mii_ts)) {
-> -		rc = PTR_ERR(mii_ts);
-> -		goto clean_pse;
-> -	}
-> +	if (IS_ERR(mii_ts))
-> +		return PTR_ERR(mii_ts);
->  
->  	is_c45 = fwnode_device_is_compatible(child, "ethernet-phy-ieee802.3-c45");
->  	if (is_c45 || fwnode_get_phy_id(child, &phy_id))
-> @@ -169,6 +164,12 @@ int fwnode_mdiobus_register_phy(struct mii_bus *bus,
->  			goto clean_phy;
->  	}
->  
-> +	psec = fwnode_find_pse_control(child, phy);
-> +	if (IS_ERR(psec)) {
-> +		rc = PTR_ERR(psec);
-> +		goto unregister_phy;
-> +	}
-> +
->  	phy->psec = psec;
->  
->  	/* phy->mii_ts may already be defined by the PHY driver. A
-> @@ -180,12 +181,13 @@ int fwnode_mdiobus_register_phy(struct mii_bus *bus,
->  
->  	return 0;
->  
-> +unregister_phy:
-> +	if (is_acpi_node(child) || is_of_node(child))
-> +		phy_device_remove(phy);
->  clean_phy:
->  	phy_device_free(phy);
->  clean_mii_ts:
->  	unregister_mii_timestamper(mii_ts);
-> -clean_pse:
-> -	pse_control_put(psec);
->  
->  	return rc;
->  }
-> diff --git a/drivers/net/pse-pd/pse_core.c b/drivers/net/pse-pd/pse_core.c
-> index 4602e26eb8c8..10a5ab30afdd 100644
-> --- a/drivers/net/pse-pd/pse_core.c
-> +++ b/drivers/net/pse-pd/pse_core.c
-> @@ -7,6 +7,7 @@
-
-...
-
-> +/**
-> + * pse_to_regulator_notifs - Convert PSE notifications to Regulator
-> + *			     notifications
-> + * @notifs: PSE notifications
-> + *
-> + * Return: Regulator notifications
-> + */
-> +static unsigned long pse_to_regulator_notifs(unsigned long notifs)
-
-I prefer converting it the other way around to make it reusable for
-plain regulator-based PSEs. For example, the podl-pse-regulator driver
-won’t have its own interrupt handler but will instead use
-devm_regulator_register_notifier().
-
-Even full-fledged PSE controllers like the PD692x0 are just one part of
-a larger chain of regulators. An overcurrent event may originate from a
-downstream regulator that is not part of the PD692x0 itself. In this
-case, we need to process the event from the downstream regulator,
-convert it into an ethtool event, and forward it to the user.
-
-Here is one example how devm_regulator_register_notifier() can be used:
-https://lore.kernel.org/all/20250220074429.2906141-1-o.rempel@pengutronix.de/
-
-> +{
-> +	unsigned long rnotifs = 0;
-> +
-> +	if (notifs & ETHTOOL_PSE_EVENT_OVER_CURRENT)
-> +		rnotifs |= REGULATOR_EVENT_OVER_CURRENT;
-> +	if (notifs & ETHTOOL_PSE_EVENT_OVER_TEMP)
-> +		rnotifs |= REGULATOR_EVENT_OVER_TEMP;
-> +
-> +	return rnotifs;
-> +}
-> +
-
-Other parts look ok for me.
-
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Regards,
+Sathvika
 
