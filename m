@@ -1,53 +1,39 @@
-Return-Path: <linux-kernel+bounces-525681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B6F0A3F31F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 12:39:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 724C1A3F327
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 12:41:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4153B7A4682
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 11:38:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F28E7860EDA
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 11:40:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 368D9209F27;
-	Fri, 21 Feb 2025 11:39:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="deOZsFKN"
-Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A720207DF8;
-	Fri, 21 Feb 2025 11:39:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06FAF20A5CB;
+	Fri, 21 Feb 2025 11:39:43 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC4C7209F4C;
+	Fri, 21 Feb 2025 11:39:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740137977; cv=none; b=LmF0+eq1qNKRVBFuO5WVyR+DXkmYSaYfZEynwCb3/2zrewlDBkCEpBcLIOoQpwqs3XnchNNCRVXcHHVk8hEpv+iwaMg8r36uvZ+k/TvbEC6Dd8VvTtNPPM6hG0V0PtV0X2zctJt129q6qkVgIX44FTPt6x5jgOj1cb5uCazPweU=
+	t=1740137982; cv=none; b=X59zClbo4whXaNFPr6GYPCGqN9k39G3Et+svWGIZIbOWJ8pVedZ4jjgVVuhjh9RbGV0wowhsMxhLg6YqonD7KiSTfWi8GFaIjvnobkibsc3niILLgO4Lh4uAEDq/Sh9QIiLKmc0R+szsVu01QZjEqT35ejrhn5mZ4p//nVrQ/k4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740137977; c=relaxed/simple;
-	bh=Sml3o/HkUO8vLaWWXWZk2o3At1Jy/794DhB7GIldb6s=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=FanRKyu7Iw3SFIxYfNJFJwrxER4X442MQRy8gCB/2U7j3rZYv+xWJIUArfpVFyBERgWElyQZqIVaLrnS98MknBPtCnlEHcWSoBcbOoMCQXcx7kEOijrNwGvS+eTSyt0+KdZJRpok5R44feWBTiDJGJ9o+/yxIU2qtYzXiGPScMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=deOZsFKN; arc=none smtp.client-ip=157.90.84.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
-Received: from [192.168.42.116] (pd9e59d4d.dip0.t-ipconnect.de [217.229.157.77])
-	(Authenticated sender: wse@tuxedocomputers.com)
-	by mail.tuxedocomputers.com (Postfix) with ESMTPSA id 305C82FC0182;
-	Fri, 21 Feb 2025 12:39:25 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
-	s=default; t=1740137966;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LqXUo1FZ4TpebA15goo8baRIskVIN6WUi38uv9gPwFc=;
-	b=deOZsFKNmuJi0lPeSPivrTX2+2wjtvvKLqs7wSbApPPMJx4ziaoUyUlgNkvW+JfIP1tVeh
-	7e/mRwslMZtcjVNpm2dPNZABksf3cyyJYZwFCmc00DVTLG8/NOqGPhZOwxBn6/nU2bACwZ
-	wdhXvtekzZvIu+hG/nglgxoVs3tvMok=
-Authentication-Results: mail.tuxedocomputers.com;
-	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
-Message-ID: <ea88c72e-a03f-4aac-9182-ece94fb99e54@tuxedocomputers.com>
-Date: Fri, 21 Feb 2025 12:39:24 +0100
+	s=arc-20240116; t=1740137982; c=relaxed/simple;
+	bh=WVW/Db9zIDxlm5OikfMD3GGlk7oxbY2o81BysOmR3PU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WfBlRT4Q4Tcrv6Ora4znkidT/l28D+m1zkMifOH5q6u0gTtVEE92YyHDxntUPrl3HmsXs7AhBY1B8GJ87TOfio/gDXLLEjKiAbLEZgxKP5/DIJr2Rq5TV9d4rPqbgSrynjGhA7jTSmy+di9sbOoYBTB516CnIzsabnyWkWbVPSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C597E1516;
+	Fri, 21 Feb 2025 03:39:56 -0800 (PST)
+Received: from [10.57.36.38] (unknown [10.57.36.38])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id D3F393F59E;
+	Fri, 21 Feb 2025 03:39:35 -0800 (PST)
+Message-ID: <35d1a923-4e8e-4fe2-bf4a-0b78b1d511e3@arm.com>
+Date: Fri, 21 Feb 2025 11:39:34 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,107 +41,461 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 0/1] platform/x86/tuxedo: Add virtual LampArray for
- TUXEDO NB04 devices
-From: Werner Sembach <wse@tuxedocomputers.com>
-To: Pavel Machek <pavel@ucw.cz>, Armin Wolf <W_Armin@gmx.de>,
- Benjamin Tissoires <bentiss@kernel.org>, Hans de Goede <hdegoede@redhat.com>
-Cc: ilpo.jarvinen@linux.intel.com, dri-devel@lists.freedesktop.org,
- jelle@vdwaa.nl, jikos@kernel.org, lee@kernel.org,
- linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-leds@vger.kernel.org, miguel.ojeda.sandonis@gmail.com,
- ojeda@kernel.org, onitake@gmail.com, cs@tuxedo.de,
- platform-driver-x86@vger.kernel.org, bpf@vger.kernel.org
-References: <20250121225510.751444-1-wse@tuxedocomputers.com>
- <aa91e17f-0ea8-4645-a0f9-57c016e36a9e@gmx.de> <Z53f7VNIgUWWFn9l@duo.ucw.cz>
- <b69e2766-2238-4913-ae2d-21d8716f2eef@tuxedocomputers.com>
-Content-Language: en-US
-In-Reply-To: <b69e2766-2238-4913-ae2d-21d8716f2eef@tuxedocomputers.com>
+Subject: Re: [PATCH v12 6/7] Coresight: Add Coresight TMC Control Unit driver
+Content-Language: en-GB
+To: Jie Gan <quic_jiegan@quicinc.com>, Mike Leach <mike.leach@linaro.org>,
+ James Clark <james.clark@linaro.org>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: Tingwei Zhang <quic_tingweiz@quicinc.com>,
+ Jinlong Mao <quic_jinlmao@quicinc.com>, coresight@lists.linaro.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com
+References: <20250217093024.1133096-1-quic_jiegan@quicinc.com>
+ <20250217093024.1133096-7-quic_jiegan@quicinc.com>
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+In-Reply-To: <20250217093024.1133096-7-quic_jiegan@quicinc.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-Hi,
+On 17/02/2025 09:30, Jie Gan wrote:
+> The Coresight TMC Control Unit hosts miscellaneous configuration registers
+> which control various features related to TMC ETR sink.
+> 
+> Based on the trace ID, which is programmed in the related CTCU ATID
+> register of a specific ETR, trace data with that trace ID gets into
+> the ETR buffer, while other trace data gets dropped.
+> 
+> Enabling source device sets one bit of the ATID register based on
+> source device's trace ID.
+> Disabling source device resets the bit according to the source
+> device's trace ID.
+> 
+> Reviewed-by: James Clark <james.clark@linaro.org>
+> Signed-off-by: Jie Gan <quic_jiegan@quicinc.com>
+> ---
+>   drivers/hwtracing/coresight/Kconfig          |  12 +
+>   drivers/hwtracing/coresight/Makefile         |   1 +
+>   drivers/hwtracing/coresight/coresight-ctcu.c | 268 +++++++++++++++++++
+>   drivers/hwtracing/coresight/coresight-ctcu.h |  24 ++
+>   include/linux/coresight.h                    |   3 +-
+>   5 files changed, 307 insertions(+), 1 deletion(-)
+>   create mode 100644 drivers/hwtracing/coresight/coresight-ctcu.c
+>   create mode 100644 drivers/hwtracing/coresight/coresight-ctcu.h
+> 
+> diff --git a/drivers/hwtracing/coresight/Kconfig b/drivers/hwtracing/coresight/Kconfig
+> index 06f0a7594169..ecd7086a5b83 100644
+> --- a/drivers/hwtracing/coresight/Kconfig
+> +++ b/drivers/hwtracing/coresight/Kconfig
+> @@ -133,6 +133,18 @@ config CORESIGHT_STM
+>   	  To compile this driver as a module, choose M here: the
+>   	  module will be called coresight-stm.
+>   
+> +config CORESIGHT_CTCU
+> +	tristate "CoreSight TMC Control Unit driver"
+> +	depends on CORESIGHT_LINK_AND_SINK_TMC
+> +	help
+> +	  This driver provides support for CoreSight TMC Control Unit
+> +	  that hosts miscellaneous configuration registers. This is
+> +	  primarily used for controlling the behaviors of the TMC
+> +	  ETR device.
+> +
+> +	  To compile this driver as a module, choose M here: the
+> +	  module will be called coresight-ctcu.
+> +
+>   config CORESIGHT_CPU_DEBUG
+>   	tristate "CoreSight CPU Debug driver"
+>   	depends on ARM || ARM64
+> diff --git a/drivers/hwtracing/coresight/Makefile b/drivers/hwtracing/coresight/Makefile
+> index 4ba478211b31..1b7869910a12 100644
+> --- a/drivers/hwtracing/coresight/Makefile
+> +++ b/drivers/hwtracing/coresight/Makefile
+> @@ -51,3 +51,4 @@ coresight-cti-y := coresight-cti-core.o	coresight-cti-platform.o \
+>   		   coresight-cti-sysfs.o
+>   obj-$(CONFIG_ULTRASOC_SMB) += ultrasoc-smb.o
+>   obj-$(CONFIG_CORESIGHT_DUMMY) += coresight-dummy.o
+> +obj-$(CONFIG_CORESIGHT_CTCU) += coresight-ctcu.o
+> diff --git a/drivers/hwtracing/coresight/coresight-ctcu.c b/drivers/hwtracing/coresight/coresight-ctcu.c
+> new file mode 100644
+> index 000000000000..e1460a627c4d
+> --- /dev/null
+> +++ b/drivers/hwtracing/coresight/coresight-ctcu.c
+> @@ -0,0 +1,268 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (c) 2024-2025 Qualcomm Innovation Center, Inc. All rights reserved.
+> + */
+> +
+> +#include <linux/clk.h>
+> +#include <linux/coresight.h>
+> +#include <linux/device.h>
+> +#include <linux/err.h>
+> +#include <linux/kernel.h>
+> +#include <linux/init.h>
+> +#include <linux/io.h>
+> +#include <linux/module.h>
+> +#include <linux/mutex.h>
+> +#include <linux/of.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/slab.h>
+> +
+> +#include "coresight-ctcu.h"
+> +#include "coresight-priv.h"
+> +
+> +DEFINE_CORESIGHT_DEVLIST(ctcu_devs, "ctcu");
+> +
+> +#define ctcu_writel(drvdata, val, offset)	__raw_writel((val), drvdata->base + offset)
+> +#define ctcu_readl(drvdata, offset)		__raw_readl(drvdata->base + offset)
+> +
+> +/*
+> + * The TMC Coresight Control Unit uses four ATID registers to control the data
+> + * filter function based on the trace ID for each TMC ETR sink. The length of
+> + * each ATID register is 32 bits. Therefore, the ETR has a related field in
+> + * CTCU that is 128 bits long. Each trace ID is represented by one bit in that
+> + * filed.
+> + * e.g. ETR0ATID0 layout, set bit 5 for traceid 5
+> + *                                           bit5
+> + * ------------------------------------------------------
+> + * |   |28|   |24|   |20|   |16|   |12|   |8|  1|4|   |0|
+> + * ------------------------------------------------------
+> + *
+> + * e.g. ETR0:
+> + * 127                     0 from ATID_offset for ETR0ATID0
+> + * -------------------------
+> + * |ATID3|ATID2|ATID1|ATID0|
+> + */
+> +#define CTCU_ATID_REG_OFFSET(traceid, atid_offset) \
+> +		((traceid / 32) * 4 + atid_offset)
+> +
+> +#define CTCU_ATID_REG_BIT(traceid)	(traceid % 32)
+> +#define CTCU_ATID_REG_SIZE		0x10
+> +
+> +struct ctcu_atid_config {
+> +	const u32 atid_offset;
+> +	const u32 port_num;
+> +};
+> +
+> +struct ctcu_config {
+> +	const struct ctcu_atid_config *atid_config;
+> +	int num_atid_config;
+> +};
+> +
+> +static const struct ctcu_atid_config sa8775p_atid_cfgs[] = {
+> +	{0xf8,  0},
+> +	{0x108, 1},
+> +};
+> +
+> +static const struct ctcu_config sa8775p_cfgs = {
+> +	.atid_config		= sa8775p_atid_cfgs,
+> +	.num_atid_config	= ARRAY_SIZE(sa8775p_atid_cfgs),
+> +};
+> +
+> +static void ctcu_program_atid_register(struct ctcu_drvdata *drvdata, u32 reg_offset,
+> +				       u8 bit, bool enable)
+> +{
+> +	u32 val;
+> +
+> +	CS_UNLOCK(drvdata->base);
+> +	val = ctcu_readl(drvdata, reg_offset);
+> +	val = enable? (val | BIT(bit)) : (val & ~BIT(bit));
 
-Am 06.02.25 um 17:18 schrieb Werner Sembach:
-> Hi,
->
-> Am 01.02.25 um 09:48 schrieb Pavel Machek:
->> Hi!
->>
->>>> I now got my feet a little wet with hid-bpf regarding something else, and
->>>> with that knowledge I would leave the long arrays in the beginning in the
->>>> kernel code for the time being:
->>>>
->>>> sirius_16_ansii_kbl_mapping and sirius_16_iso_kbl_mapping are required
->>>> during initialization so they have to exist in the kernel code anyway.
->>>>
->>>> report_descriptor will most likly not change even for future models and
->>>> afaik having report_descriptors in kernel drivers is not unheard of.
->>>>
->>>> So the only things that could be meaningfully moved to a hid-bpf program
->>>> are the sirius_16_*_kbl_mapping_pos_* arrays. But for these is have to give
->>>> out some fallback value anyway for the case where a hid-bpf file is missing
->>>> or fails to load. So why not use real world values from my test device for
->>>> these values?
->>>>
->>>> As soon as there is a future device that can use the same driver with just
->>>> these pos arrays different, then I would implement that change via a bpf
->>>> program instead of a change to the kernel driver.
->>>>
->>>> Let me know if you too think this is a sensefull approach?
->>>>
->>>>
->>>> Another question: Would this patch need to wait for a userspace
->>>> implementation of lamp array before it can get accepted?
->>> It would be nice if you could test the LampArray implementation. But other 
->>> than that
->>> userspace can catch up later.
->>>
->>> Still, i am interested in the opinion of the LED maintainers
->>> regarding the fake HID interface.
->> Comments from previous review were not addressed.
->>
->> Most importantly, this is not a way to do kernel interface. We want
->> reasonable interface that can be documented and modified as needed. We
->> want to pass /dev/input to userspace, not raw HID. This is not ok.
->
-> There are already 2 endless discussions about this:
->
-> https://lore.kernel.org/all/1fb08a74-62c7-4d0c-ba5d-648e23082dcb@tuxedocomputers.com/ 
->
->
-> https://lore.kernel.org/all/73c36418-34d6-46cf-9f10-6ca5e569274f@tuxedocomputers.com/ 
->
->
-> And a shorter one before that:
->
-> https://lore.kernel.org/all/30cbbf20-08cf-a69b-4f58-359a9802e86f@tuxedocomputers.com/ 
->
->
-> The brief:
->
-> - LampArray is a standard that will hit the Linux world anyway.
->
-> - The alternative proposal via a led matrix does not even really fit 
-> keyboards, and does not at all fit all other device types.
->
-> Hans and Benjamin already agree with me that LampArray is the way to go.
->
-> So after over 2 years can I please have a final decision on how to implement 
-> this?
+minor nit: If possible do not use the ternary operator like this. It is 
+much better readable as:
 
-Any update?
+	if (enable)
+		val |= BIT(bit);
+	else
+		val &= ~BIT(bit);
 
-Best regards,
+> +	ctcu_writel(drvdata, val, reg_offset);
+> +	CS_LOCK(drvdata->base);
+> +}
+> +
+> +/*
+> + * __ctcu_set_etr_traceid: Set bit in the ATID register based on trace ID when enable is true.
+> + * Reset the bit of the ATID register based on trace ID when enable is false.
+> + *
+> + * @csdev:	coresight_device struct related to the device
+> + * @traceid:	trace ID of the source tracer.
+> + * @port_num:	port number from TMC ETR sink.
+> + * @enable:	True for set bit and false for reset bit.
+> + *
+> + * Returns 0 indicates success. Non-zero result means failure.
+> + */
+> +static int __ctcu_set_etr_traceid(struct coresight_device *csdev, u8 traceid, int port_num,
+> +				  bool enable)
+> +{
+> +	struct ctcu_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
+> +	u32 atid_offset, reg_offset;
+> +	u8 refcnt, bit;
+> +
+> +	atid_offset = drvdata->atid_offset[port_num];
+> +	if (atid_offset == 0)
+> +		return -EINVAL;
+> +
+> +	bit = CTCU_ATID_REG_BIT(traceid);
+> +	reg_offset = CTCU_ATID_REG_OFFSET(traceid, atid_offset);
+> +	if (reg_offset - atid_offset > CTCU_ATID_REG_SIZE)
+> +		return -EINVAL;
+> +
+> +	guard(raw_spinlock_irqsave)(&drvdata->spin_lock);
+> +	refcnt = drvdata->traceid_refcnt[port_num][traceid];
+> +	/* Only program the atid register when the refcnt value is 0 or 1 */
 
-Werner Sembach
+A normal trace source won't be enabled more than once (e.g., ETM). The 
+only odd one out is the STM, which may be driven by multiple agents.
+So this refcounting looks necessary.
 
->
-> Regards,
->
-> Werner
->
->>
->> Best regards,
->>                                 Pavel
+> +	if (enable && (++refcnt == 1))
+> +		ctcu_program_atid_register(drvdata, reg_offset, bit, enable);
+> +	else if (!enable && (--refcnt == 0))
+> +		ctcu_program_atid_register(drvdata, reg_offset, bit, enable);
+
+minor nit:
+
+	if ((enable && !refcount++) ||
+	    (!enable && --refcount))
+		ctcu_program_atid_register(drvdata, reg_offset, bit, enable);
+
+
+Also, see my comment the bottom for "refcount" being u8 .
+
+
+> +
+> +	drvdata->traceid_refcnt[port_num][traceid] = refcnt;
+> +
+> +	return 0;
+> +}
+> +
+> +static int ctcu_get_active_port(struct coresight_device *sink, struct coresight_device *helper)
+> +{
+> +	int i;
+> +
+> +	for (i = 0; i < sink->pdata->nr_outconns; ++i) {
+> +		if (sink->pdata->out_conns[i]->dest_dev)
+> +			return sink->pdata->out_conns[i]->dest_port;
+
+Don't we need to make sure it matches the helper ? What if there are 
+multiple helpers ? e.g, a CATU connected to the ETR and CTCU ?
+Or even try the opposite ? i.e. search the helper and find the port
+matching the sink ?
+
+	struct coresight_platform_data *pdata = helper->pdata;
+
+	for (i = 0; i < pdata->nr_inconns; ++i)
+		if (pdata->in_conns[i]->dest_dev == sink)
+			return pdata->in_conns[i]->src_port;
+
+Not sure if that works with the helper device connection, James ?
+
+
+> +	}
+> +
+> +	return -EINVAL;
+> +}
+> +
+> +static int ctcu_set_etr_traceid(struct coresight_device *csdev, struct coresight_path *path,
+> +				bool enable)
+> +{
+> +	struct coresight_device *sink = coresight_get_sink(path);
+> +	u8 traceid = path->trace_id;
+> +	int port_num;
+> +
+> +	if ((sink == NULL) || !IS_VALID_CS_TRACE_ID(traceid)) {
+> +		dev_err(&csdev->dev, "Invalid parameters\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	port_num = ctcu_get_active_port(sink, csdev);
+> +	if (port_num < 0)
+> +		return -EINVAL;
+> +
+> +	dev_dbg(&csdev->dev, "traceid is %d\n", traceid);
+> +
+> +	return __ctcu_set_etr_traceid(csdev, traceid, port_num, enable);
+> +}
+> +
+> +static int ctcu_enable(struct coresight_device *csdev, enum cs_mode mode,
+> +		       void *data)
+> +{
+> +	struct coresight_path *path = (struct coresight_path *)data;
+> +
+> +	return ctcu_set_etr_traceid(csdev, path, true);
+> +}
+> +
+> +static int ctcu_disable(struct coresight_device *csdev, void *data)
+> +{
+> +	struct coresight_path *path = (struct coresight_path *)data;
+> +
+> +	return ctcu_set_etr_traceid(csdev, path, false);
+> +}
+> +
+> +static const struct coresight_ops_helper ctcu_helper_ops = {
+> +	.enable = ctcu_enable,
+> +	.disable = ctcu_disable,
+> +};
+> +
+> +static const struct coresight_ops ctcu_ops = {
+> +	.helper_ops = &ctcu_helper_ops,
+> +};
+> +
+> +static int ctcu_probe(struct platform_device *pdev)
+> +{
+> +	int i;
+> +	void __iomem *base;
+> +	struct device *dev = &pdev->dev;
+> +	struct coresight_platform_data *pdata;
+> +	struct ctcu_drvdata *drvdata;
+> +	struct coresight_desc desc = { 0 };
+> +	const struct ctcu_config *cfgs;
+> +	const struct ctcu_atid_config *atid_cfg;
+> +
+> +	desc.name = coresight_alloc_device_name(&ctcu_devs, dev);
+> +	if (!desc.name)
+> +		return -ENOMEM;
+> +
+> +	drvdata = devm_kzalloc(dev, sizeof(*drvdata), GFP_KERNEL);
+> +	if (!drvdata)
+> +		return -ENOMEM;
+> +
+> +	pdata = coresight_get_platform_data(dev);
+> +	if (IS_ERR(pdata))
+> +		return PTR_ERR(pdata);
+> +	dev->platform_data = pdata;
+> +
+> +	base = devm_platform_get_and_ioremap_resource(pdev, 0, NULL);
+> +	if (!base)
+> +		return -ENOMEM;
+> +
+> +	drvdata->apb_clk = coresight_get_enable_apb_pclk(dev);
+> +	if (IS_ERR(drvdata->apb_clk))
+> +		return -ENODEV;
+> +
+> +	cfgs = of_device_get_match_data(dev);
+> +	if (cfgs) {
+> +		if (cfgs->num_atid_config <= ATID_MAX_NUM) {
+> +			for (i = 0; i < cfgs->num_atid_config; i++) {
+> +				atid_cfg = &cfgs->atid_config[i];
+> +				drvdata->atid_offset[i] = atid_cfg->atid_offset;
+> +			}
+> +		}
+> +	}
+> +
+> +	drvdata->base = base;
+> +	drvdata->dev = dev;
+> +	platform_set_drvdata(pdev, drvdata);
+> +
+> +	desc.type = CORESIGHT_DEV_TYPE_HELPER;
+> +	desc.subtype.helper_subtype = CORESIGHT_DEV_SUBTYPE_HELPER_CTCU;
+> +	desc.pdata = pdata;
+> +	desc.dev = dev;
+> +	desc.ops = &ctcu_ops;
+
+Please set the desc.access
+
+	desc.access = CSDEV_ACCESS_IOMEM(drvdata->base);
+
+> +
+> +	drvdata->csdev = coresight_register(&desc);
+> +	if (IS_ERR(drvdata->csdev)) {
+> +		if (!IS_ERR_OR_NULL(drvdata->apb_clk))
+> +			clk_put(drvdata->apb_clk);
+> +
+> +		return PTR_ERR(drvdata->csdev);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static void ctcu_remove(struct platform_device *pdev)
+> +{
+> +	struct ctcu_drvdata *drvdata = platform_get_drvdata(pdev);
+> +
+> +	coresight_unregister(drvdata->csdev);
+> +	if (!IS_ERR_OR_NULL(drvdata->apb_clk))
+> +		clk_put(drvdata->apb_clk);
+
+Why isn't the clock get/put at runtime via pm_runtime calls ?
+See coresight-replicator driver for e.g.
+
+
+> +}
+> +
+> +static const struct of_device_id ctcu_match[] = {
+> +	{.compatible = "qcom,sa8775p-ctcu", .data = &sa8775p_cfgs},
+> +	{}
+> +};
+> +
+> +static struct platform_driver ctcu_driver = {
+> +	.probe          = ctcu_probe,
+> +	.remove         = ctcu_remove,
+> +	.driver         = {
+> +		.name   = "coresight-ctcu",
+> +		.of_match_table = ctcu_match,
+> +		.suppress_bind_attrs = true,
+> +	},
+> +};
+> +module_platform_driver(ctcu_driver);
+> +
+> +MODULE_LICENSE("GPL");
+> +MODULE_DESCRIPTION("CoreSight TMC Control Unit driver");
+> diff --git a/drivers/hwtracing/coresight/coresight-ctcu.h b/drivers/hwtracing/coresight/coresight-ctcu.h
+> new file mode 100644
+> index 000000000000..9890c3da5ec8
+> --- /dev/null
+> +++ b/drivers/hwtracing/coresight/coresight-ctcu.h
+> @@ -0,0 +1,24 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
+> +/*
+> + * Copyright (c) 2024-2025 Qualcomm Innovation Center, Inc. All rights reserved.
+> + */
+> +
+> +#ifndef _CORESIGHT_CTCU_H
+> +#define _CORESIGHT_CTCU_H
+> +#include "coresight-trace-id.h"
+> +
+> +/* Maximum number of supported sink devices for a single CTCU in current projects. */
+> +#define ATID_MAX_NUM 	2
+> +
+> +struct ctcu_drvdata {
+> +	void __iomem		*base;
+> +	struct clk		*apb_clk;
+> +	phys_addr_t		pbase;
+
+Where is this used ?
+
+> +	struct device		*dev;
+> +	struct coresight_device	*csdev;
+> +	raw_spinlock_t		spin_lock;
+> +	u32			atid_offset[ATID_MAX_NUM];
+> +	/* refcnt for each traceid of each sink */
+> +	u8			traceid_refcnt[ATID_MAX_NUM][CORESIGHT_TRACE_ID_RES_TOP];
+
+Hopefully u8 is sufficient, but is it ? Why don't we check this in 
+"enable" path to see if we are going to overflow ?
+
+
+
+> +};
+> +#endif
+> diff --git a/include/linux/coresight.h b/include/linux/coresight.h
+> index 03d833a15726..55bb825d509e 100644
+> --- a/include/linux/coresight.h
+> +++ b/include/linux/coresight.h
+> @@ -71,7 +71,8 @@ enum coresight_dev_subtype_source {
+>   
+>   enum coresight_dev_subtype_helper {
+>   	CORESIGHT_DEV_SUBTYPE_HELPER_CATU,
+> -	CORESIGHT_DEV_SUBTYPE_HELPER_ECT_CTI
+> +	CORESIGHT_DEV_SUBTYPE_HELPER_ECT_CTI,
+> +	CORESIGHT_DEV_SUBTYPE_HELPER_CTCU,
+>   };
+>   
+>   /**
+
 
