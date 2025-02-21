@@ -1,235 +1,137 @@
-Return-Path: <linux-kernel+bounces-525307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D466A3EE05
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:10:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 73FCEA3EE1F
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:16:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4D9A188C0B4
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 08:10:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D3E9E189C74A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 08:16:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A65D200118;
-	Fri, 21 Feb 2025 08:10:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="mH73UYVz"
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2066.outbound.protection.outlook.com [40.107.100.66])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E774202F8D;
+	Fri, 21 Feb 2025 08:15:02 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA2611FBC8C;
-	Fri, 21 Feb 2025 08:10:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.66
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740125423; cv=fail; b=ukPd0AvmX4P/a6JQU/QyM87ADzo+5ErvlK+AgARfEvK04VgyyRn28Dp5noyFPIO+YY6+Xl98jjWCpomlRw+BYIEcVMYk8UDe8s7E9GLMsSFErqSY4B7mi0g3FZZq0SrIJZtt2kMgdStVpwpbMNM30OHwGrz1LzyfmC8TSAkohr0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740125423; c=relaxed/simple;
-	bh=I8taA1BzzL682CYyQApjF8Zv0axItyINDN8NjoLHFUI=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S1DGN1ISP0PahoAkH6in1uLq0muVavU74zWFohUhimJo7vXBxTjnUzTl9pV8s0vZ/iHtI67hpE5fjpVOTInDaxcO7ShFEHJ91BwGu3Z3xy/c1lSHZwJSfElZwpJdgDl52Kvaa+eCI7Rr7t76Y3CHgYCL0gEpc9uyugKTDHZfE5c=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=mH73UYVz; arc=fail smtp.client-ip=40.107.100.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ES4FcK0bmXV6mKw9G29+2tKV4lyfaKe+PMicLwHdcUnY20QtzgKxumzWZcClQB8ghQOblLgVU/tipbHuDYPY7ejoVJBFel9qrmZNmnLANqB7TbFkcGhxH4pR9IunLqZFi2XeoSM8uSPcP+QZwl1oAQOYX4ljlv6BvNzJ7LVmSf2FrpoBWvUayFgAbIsGTq7dEVv8IaKCLwmM1DSagwVUi2RLeoT4dStZ2OiyrzWxlLbCM+AlNwX6Gr8anrdvielMmMstEI0goKCCKTmGjpvGHwHkBZ2j+x6emp3JN8707wc9itVOppkj+AqYjFeiBWN8XtzO6osDaAEedp3TCTsqNQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=r0PCCULBEkFfT1YZceXnXb4hX967beD9ysYp6X8httw=;
- b=uUTT9+Q6wLrGTWiD+90CC7LOIBaAmP2k0PJC+HE0VviM/i6PNSWsyr/Pl9SrUy8esioOojlGb9zO+SmFi+pbSP5hHAOwdGZD0B7kdmfbt10ivY7p2ftY+Rhwb2sp9iSMECAps1IgCq+jLAnANeAtUezo1aFsrsocxZM/Xyg0nRUief6t3n24b9A7ps9+uN4oYxDeJkDz+CItpfBKIFoIsQGw0FlvGYoKJf+l3Rb9AHbjRMQ/tIavKqxazlTFY/6yUU/mbwYUUmL/iDNWt/e4gXQlTi0YCy9hg3HUHD+J9whh9oPnJcKq9WaiqX9rb633LQ4kTbTaYrbiLiQfTda4zw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=redhat.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=r0PCCULBEkFfT1YZceXnXb4hX967beD9ysYp6X8httw=;
- b=mH73UYVzY9xc7IDiDHwItzbOQeJcU7lAnVKdWfDOIeH5VmgxAyZBTNfh3A+nMSyDubvWmAaKI1lhX0jiUTxLFQX6j01MjqfTSWOaBEYUTZsCSdEFtslRq57cZ4YIOH8Kd4YPF6HsiQSYQW7mNuSi02pFXjwIULv48cW2fN2yX1msshemBbFwrmznU8gnglawh9W/nIwU1CsZXB/htugzxdXKej8bm0aPkUhxoiEOgE+AvFXURpAenuKJlu3TegN4wOEJDn9Qt0LBET71VN3RWcjneJvhmEbSSzWqJYnXXwUdQb/NyywPRup5uenH9R/6U6/bHNCO7hqN0Mdysyv6+Q==
-Received: from BL1P223CA0005.NAMP223.PROD.OUTLOOK.COM (2603:10b6:208:2c4::10)
- by SA1PR12MB7174.namprd12.prod.outlook.com (2603:10b6:806:2b1::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.14; Fri, 21 Feb
- 2025 08:10:17 +0000
-Received: from BL6PEPF0001AB78.namprd02.prod.outlook.com
- (2603:10b6:208:2c4:cafe::8a) by BL1P223CA0005.outlook.office365.com
- (2603:10b6:208:2c4::10) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8466.15 via Frontend Transport; Fri,
- 21 Feb 2025 08:10:17 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- BL6PEPF0001AB78.mail.protection.outlook.com (10.167.242.171) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8466.11 via Frontend Transport; Fri, 21 Feb 2025 08:10:17 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 21 Feb
- 2025 00:10:04 -0800
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Fri, 21 Feb
- 2025 00:10:03 -0800
-Received: from Asurada-Nvidia (10.127.8.10) by mail.nvidia.com (10.129.68.9)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
- Transport; Fri, 21 Feb 2025 00:10:02 -0800
-Date: Fri, 21 Feb 2025 00:10:01 -0800
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: Jason Gunthorpe <jgg@nvidia.com>
-CC: <robin.murphy@arm.com>, <will@kernel.org>, <kevin.tian@intel.com>,
-	<corbet@lwn.net>, <joro@8bytes.org>, <suravee.suthikulpanit@amd.com>,
-	<dwmw2@infradead.org>, <baolu.lu@linux.intel.com>, <shuah@kernel.org>,
-	<linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kselftest@vger.kernel.org>,
-	<linux-doc@vger.kernel.org>, <eric.auger@redhat.com>,
-	<jean-philippe@linaro.org>, <mdf@kernel.org>, <mshavit@google.com>,
-	<shameerali.kolothum.thodi@huawei.com>, <smostafa@google.com>,
-	<ddutile@redhat.com>, <yi.l.liu@intel.com>, <patches@lists.linux.dev>
-Subject: Re: [PATCH v6 13/14] iommu/arm-smmu-v3: Report events that belong to
- devices attached to vIOMMU
-Message-ID: <Z7g02Udkmis26Fno@Asurada-Nvidia>
-References: <cover.1737754129.git.nicolinc@nvidia.com>
- <b71a5b132e8ba771998c5b810675f10b100d4ff3.1737754129.git.nicolinc@nvidia.com>
- <20250218171821.GG4099685@nvidia.com>
- <Z7TRNL0u0YmN30ax@nvidia.com>
- <20250218185046.GK4099685@nvidia.com>
- <Z7eUeg/SmiJGTgbi@Asurada-Nvidia>
- <20250220232407.GH50639@nvidia.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2029F1FBCA0;
+	Fri, 21 Feb 2025 08:14:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740125702; cv=none; b=nzmIw+80VbZQ+fqLdU2YAnJDuYJ5wS3hZCS9rVq0z5qUHgkgitNfkIAUrBwNG+jiiZL5SyhzfbcNyxmNJ8sMNX7LsB6qp9HNMGrRy6YzscMxg2vE4h9PZ2yD8iKjRzsUtoj0/pU402GBoQ+oRGu/axUAy50ud7YUpqnlxfA6XQQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740125702; c=relaxed/simple;
+	bh=aZvFVXJtQbwkBTrVIgiI1mzewIXSi85/1iciqx+9iIk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=jKVEf8cCjmKKACK7j96TymJybcpjx42YW5wxV9LHT5YCWC4xVwQhM2HPZJj8DC79Op9KboI4RxVud3NIoT6AKo+2NnWmyoKd7TPMbYsJXz656viFPT+U1BouA7DhE/sB7iXMkw+4tI0FCzfmh25GMj1uNl29Ipra9hVybAjs/dY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4YzjbD46bzz4f3jXt;
+	Fri, 21 Feb 2025 16:14:32 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 3B1631A0197;
+	Fri, 21 Feb 2025 16:14:54 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP4 (Coremail) with SMTP id gCh0CgC3Gl_8NbhnHF3eEQ--.3944S4;
+	Fri, 21 Feb 2025 16:14:53 +0800 (CST)
+From: Zheng Qixing <zhengqixing@huaweicloud.com>
+To: axboe@kernel.dk,
+	song@kernel.org,
+	colyli@kernel.org,
+	yukuai3@huawei.com,
+	dan.j.williams@intel.com,
+	vishal.l.verma@intel.com,
+	dave.jiang@intel.com,
+	ira.weiny@intel.com,
+	dlemoal@kernel.org,
+	yanjun.zhu@linux.dev,
+	kch@nvidia.com,
+	hare@suse.de,
+	zhengqixing@huawei.com,
+	john.g.garry@oracle.com,
+	geliang@kernel.org,
+	xni@redhat.com,
+	colyli@suse.de
+Cc: linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-raid@vger.kernel.org,
+	nvdimm@lists.linux.dev,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com
+Subject: [PATCH 00/12] badblocks: bugfix and cleanup for badblocks
+Date: Fri, 21 Feb 2025 16:10:57 +0800
+Message-Id: <20250221081109.734170-1-zhengqixing@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250220232407.GH50639@nvidia.com>
-X-NV-OnPremToCloud: AnonymousSubmission
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL6PEPF0001AB78:EE_|SA1PR12MB7174:EE_
-X-MS-Office365-Filtering-Correlation-Id: 56565827-b936-4ae7-bd38-08dd524f2d53
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|36860700013|1800799024|82310400026|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?jp7SHlDYolSfQw0vDO0OGb+A7xV/tesQ4a82f3qL38ehQGBuzbijOYg1Xc8e?=
- =?us-ascii?Q?dk1J5+sEAvBMdT5EfHsb9IyPHyQLDgsfZBE+Us53DJR0ttxbeo+gtocusmyd?=
- =?us-ascii?Q?zyOC+++HKeCBQ3YqUkURViGHVP60Gm1UiAv8k4X+PNSZT4rwCKRj+gBggLl6?=
- =?us-ascii?Q?f7mZ438UpOd+Eokf59lMo/glnyJjoc2zsFBb+QbLjd1w2gw95lyFxxIFh++S?=
- =?us-ascii?Q?jechRAkmz0uL3riS7dMnhwd0OIID/zCWNxc+hDsiklS5GIdTaI3CHbQ9KO9T?=
- =?us-ascii?Q?Qwb8VduxPyGxlVk0Q3cZt8aPVnG6ddg4hAruLEWVtzFbMEaCLVM/rXX6IB4I?=
- =?us-ascii?Q?a9yjZXJG0umtUc/mJ65KnVKsr3Vi9aypj3hQeF7XJAVxDu8dAf8IkTGO/zgf?=
- =?us-ascii?Q?85T0dCABSFGajtgkzxlYZCLGZzJhVzRYeVINlp/BGtCqouXhFoanSHaCADop?=
- =?us-ascii?Q?1aQSKtfDezCdIcItC7VvnTEPyraHbmEu4oq9pTxR5TGlr69YLW66USJ5nZrH?=
- =?us-ascii?Q?Osu7gXM+aqfEOkDhQLVpehiy97abo+iqvrBttVPyv0QbHfVzb2UL9Tph+IL/?=
- =?us-ascii?Q?M7qNapTuu0RyvmokHKC6HG8fTaUnv6C33Xc2miWHyXFpHl3P4h+KOUlkKl40?=
- =?us-ascii?Q?vp2gADD7DmnkAoR+qusflfwPxbHxDNE/XV+qYMJUMgKq4vrI5+EgAt6vdW5L?=
- =?us-ascii?Q?KFzABgma7MA/Ud1pWbB/mrZD1SjYWXNriYdR9IFLEsQn0qivHph+4z9HQXbc?=
- =?us-ascii?Q?13GGnp33KGj+B+lYnWj9X2D41U9vO7jbaNm4Whzsvx/ljoT0f8mX1w9JRNaJ?=
- =?us-ascii?Q?7+J11d4+sNKEb24EdBoNUyWOcf5Nru37priU8l4vhGjUbFrdLgTU6tf5XCf9?=
- =?us-ascii?Q?2VV+9RueVdGXFLQqfoc9PphHgvSW2XNyFIdc8nt/kTxDsl7A/sZpsojc5iFT?=
- =?us-ascii?Q?J7DWigv6QlhUMIMKj/RZzp0uCxL2P4Ft+dx3Wpb4EzC1OUw/TX4+suztcduU?=
- =?us-ascii?Q?URTeMP5vo1uAT+VuvMnWEshZ7RZnlff0p5JcWIQ2YStc4NlmLOpIoJRtaF79?=
- =?us-ascii?Q?a+JHcbZVUVQNexfWFVmD8xjIFMNqGnawH1Fksbq/2cgLIzLr4XrPt8RYCjNI?=
- =?us-ascii?Q?uTvXnirDptn9LZgxsS4UxtrTh9m/xxgwEvZJVX4JquE0zmUxBjDMpRKC72d2?=
- =?us-ascii?Q?KAAE42n3fJ1VtZvPkcqnQdncOrNXnPPG0pIfOudZDnJlrCA59GIM60NZQj85?=
- =?us-ascii?Q?xG2O9tC3Gu7bX2aRoFpECC/w9eJxMHXy1OD7XQp6MVRqhXunZ2cbcNr0kI3A?=
- =?us-ascii?Q?q4D8tn5Titp5gQmVlDaC0ZrelIxggD0FwwYJmv9g4zcrb67/WWYDzzJJtiaj?=
- =?us-ascii?Q?Mze24H/ifDIb6C7AC3HKCAt9IjQttFy5bu2uaKoBbL5DURLiJgRSSTS518Bj?=
- =?us-ascii?Q?hHr+FG8JNgubdQqdzJGs0E9dZ78Bv6wbshEFnnK6qHo8UWBrHReCMoUBG1zx?=
- =?us-ascii?Q?5bPDaJT87soZ4cw=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(36860700013)(1800799024)(82310400026)(7416014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Feb 2025 08:10:17.0335
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 56565827-b936-4ae7-bd38-08dd524f2d53
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BL6PEPF0001AB78.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB7174
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgC3Gl_8NbhnHF3eEQ--.3944S4
+X-Coremail-Antispam: 1UD129KBjvJXoW7uw1kGFW8uw1kXryxWF47XFb_yoW8Xr15pF
+	nxK343Zr10grW7X3WkZw4UKr1F93WxGFWUK3y7Jas5WFyUAa4xJr1kXF10qryqqry3JrnF
+	vF1YgFyUWFy8Cw7anT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv2b4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0E
+	n4kS14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I
+	0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8
+	ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r4j6ryUMIIF0xvE2Ix0cI8IcV
+	CY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAF
+	wI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa
+	7IU07PEDUUUUU==
+X-CM-SenderInfo: x2kh0wptl0x03j6k3tpzhluzxrxghudrp/
 
-On Thu, Feb 20, 2025 at 07:24:07PM -0400, Jason Gunthorpe wrote:
-> On Thu, Feb 20, 2025 at 12:45:46PM -0800, Nicolin Chen wrote:
-> > ------------------------------------------------------------
-> > diff --git a/include/uapi/linux/iommufd.h b/include/uapi/linux/iommufd.h
-> > index fd2f13a63f27..be9746ecdc65 100644
-> > --- a/include/uapi/linux/iommufd.h
-> > +++ b/include/uapi/linux/iommufd.h
-> > @@ -1067,7 +1067,16 @@ enum iommu_veventq_type {
-> >   * struct iommu_vevent_arm_smmuv3 - ARM SMMUv3 Virtual Event
-> >   *                                  (IOMMU_VEVENTQ_TYPE_ARM_SMMUV3)
-> >   * @evt: 256-bit ARM SMMUv3 Event record, little-endian.
-> > - *       (Refer to "7.3 Event records" in SMMUv3 HW Spec)
-> > + *       Reported event records: (Refer to "7.3 Event records" in SMMUv3 HW Spec)
-> > + *       - 0x02 C_BAD_STREAMID
-> 
-> This is documented as 'Transaction StreamID out of range.' so it would
-> by a hypervisor kernel bug to hit it
+From: Zheng Qixing <zhengqixing@huawei.com>
 
-I see. Dropping it.
+During RAID feature implementation testing, we found several bugs
+in badblocks.
 
-> > + *       - 0x04 C_BAD_STE
-> 
-> I'm not sure we do enough validation to reject all bad STE fragments
-> so it makes sense this could happen.
-> 
-> > + *       - 0x06 F_STREAM_DISABLED
-> 
-> This looked guest triggerable to me.. so it makes sense
+This series contains bugfixes and cleanups for MD RAID badblocks
+handling code.
 
-Keeping these two.
+Li Nan (8):
+  badblocks: Fix error shitf ops
+  badblocks: factor out a helper try_adjacent_combine
+  badblocks: attempt to merge adjacent badblocks during
+    ack_all_badblocks
+  badblocks: return error directly when setting badblocks exceeds 512
+  badblocks: return error if any badblock set fails
+  badblocks: fix the using of MAX_BADBLOCKS
+  badblocks: try can_merge_front before overlap_front
+  badblocks: fix merge issue when new badblocks align with pre+1
 
-> > + *       - 0x08 C_BAD_SUBSTREAMID
-> > + *       - 0x0a C_BAD_STE
-> 
-> Typo, this is C_BAD_CD
+Zheng Qixing (4):
+  badblocks: fix missing bad blocks on retry in _badblocks_check()
+  badblocks: return boolen from badblocks_set() and badblocks_clear()
+  md: improve return types of badblocks handling functions
+  badblocks: use sector_t instead of int to avoid truncation of
+    badblocks length
 
-Fixed.
+ block/badblocks.c             | 317 +++++++++++++---------------------
+ drivers/block/null_blk/main.c |  19 +-
+ drivers/md/md.c               |  47 +++--
+ drivers/md/md.h               |  14 +-
+ drivers/md/raid1-10.c         |   2 +-
+ drivers/md/raid1.c            |  10 +-
+ drivers/md/raid10.c           |  14 +-
+ drivers/nvdimm/badrange.c     |   2 +-
+ drivers/nvdimm/nd.h           |   2 +-
+ drivers/nvdimm/pfn_devs.c     |   7 +-
+ drivers/nvdimm/pmem.c         |   2 +-
+ include/linux/badblocks.h     |  10 +-
+ 12 files changed, 181 insertions(+), 265 deletions(-)
 
-> > But F_CD_FETCH and F_STE_FETCH seem to be complicated here, as both
-> 
-> F_STE_FETCH would indicate a hypervisor failure managing the stream
-> table so no need to forward it.
-> 
-> > report PA in their FetchAddr fields, although the spec does mention
-> > both might be injected to a guest VM:
-> >  - "Note: This event might be injected into a guest VM, as though
-> >     from a virtual SMMU, when a hypervisor receives a stage 2
-> >     Translation-related fault indicating CD fetch as a cause (with
-> >     CLASS == CD)."
-> 
-> That sounds like the VMM should be catching the
-> F_TRANSLATION and convert it for the CLASS=CD
-> 
-> > For F_CD_FETCH, at least the CD table pointer in the nested STE is
-> > an IPA, and all the entries in the CD table that can be 2-level are
-> > IPAs as well. So, we need some kinda reverse translation from a PA
-> > to IPA using its stage-2 mapping. I am not sure what's the best way
-> > to do that...
-> 
-> And if the F_TRANSLATION covers the case then maybe this just stays in
-> the hypervisor?
+-- 
+2.39.2
 
-> > Otherwise, perhaps not-supporting them in this series might be a
-> > safer bet?
-> 
-> Yeah, I would consider skipping F_CD_FETCH. May also just try it out
-> and see what events come out on a CD fetch failure..
-
-I will skip these two for now. Meanwhile, will try some hack to
-trigger a FETCH fault.
-
-Thanks
-Nicolin
 
