@@ -1,98 +1,109 @@
-Return-Path: <linux-kernel+bounces-526729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75E70A4027F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 23:14:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8896EA40286
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 23:17:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B13758600E1
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 22:14:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 733B017CF84
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 22:17:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7338254AE1;
-	Fri, 21 Feb 2025 22:14:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D00A0204F60;
+	Fri, 21 Feb 2025 22:17:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZuSHkfzf"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61F61253F06;
-	Fri, 21 Feb 2025 22:14:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E90D3FD1;
+	Fri, 21 Feb 2025 22:17:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740176069; cv=none; b=Ulg6S/G2zTfI2uKyoNP7qO4g3CKL+7W9WVJUex3thr7ChSo3roosdpiM1ZBUs+jyb8OMLzmviLqgJq6Ku4bOqUXSKFMIDj7Qp0nQtVqfIpSvGV6MnDOmkDe3rmAH0gITrW7DFRbp7E9PLiB27yCzqILPFXuxubhQ6CjyGVFQgdg=
+	t=1740176254; cv=none; b=VWGVNobiNLyqJDvf1K7SIxwk6pJfDVLYO99wgbM7rNQBB+ByEEP1RXW7w0tN1daUjIqHVPSW8nCjNNEWkpQ2CqgTfi9JkswnKpPDpy1CgRL3heS9LbtSC4GYihRJ0C6DW1TDFREicfrysaOo4k4MVVe/U1ix82hxRdiSoIYQCQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740176069; c=relaxed/simple;
-	bh=yAwMXOjaJN6z1tn8eId8KeQM2ziqySE7/svPkNvVY1Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tHZYwsFSvCmc/X3Phk+f79dgebTyGuk5HKgVP/wkws9qKUUCvr4xw7MMYFCFbDMTeMzdUmR71c0yNKbMFZ3Duq3bvzmAesX6RfOY3gcb5CCeVhprqgPn/qYG81A+2jbQaCeoaBv1VuFBGvR+mLDCtNIXaOX2hCETvk8yDL8JK4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BF3FC4CED6;
-	Fri, 21 Feb 2025 22:14:27 +0000 (UTC)
-Date: Fri, 21 Feb 2025 17:14:55 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Martin Uecker <uecker@tugraz.at>
-Cc: Dan Carpenter <dan.carpenter@linaro.org>, Greg KH
- <gregkh@linuxfoundation.org>, Boqun Feng <boqun.feng@gmail.com>, "H. Peter
- Anvin" <hpa@zytor.com>, Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
- Christoph Hellwig <hch@infradead.org>, rust-for-linux
- <rust-for-linux@vger.kernel.org>, Linus Torvalds
- <torvalds@linux-foundation.org>, David Airlie <airlied@gmail.com>,
- linux-kernel@vger.kernel.org, ksummit@lists.linux.dev
-Subject: Re: Rust kernel policy
-Message-ID: <20250221171455.19b5be06@gandalf.local.home>
-In-Reply-To: <59a4f3f7641c47494b53f788684aa703a02acca1.camel@tugraz.at>
-References: <326CC09B-8565-4443-ACC5-045092260677@zytor.com>
-	<CANiq72m+r1BZVdVHn2k8XeU37ZeY6VT2S9KswMuFA=ZO3e4uvQ@mail.gmail.com>
-	<a7c5973a-497c-4f31-a7be-b3123bddb6dd@zytor.com>
-	<Z7VKW3eul-kGaIT2@Mac.home>
-	<2025021954-flaccid-pucker-f7d9@gregkh>
-	<4e316b01634642cf4fbb087ec8809d93c4b7822c.camel@tugraz.at>
-	<2025022024-blooper-rippling-2667@gregkh>
-	<1d43700546b82cf035e24d192e1f301c930432a3.camel@tugraz.at>
-	<2025022042-jot-favored-e755@gregkh>
-	<b9a5de64fe1ded2ad3111763f35af9901bd81cc4.camel@tugraz.at>
-	<caea3e79-78e6-4d98-9f3b-f8e7f6f00196@stanley.mountain>
-	<61a7e7db786d9549cbe201b153647689cbe12d75.camel@tugraz.at>
-	<20250221124304.5dec31b2@gandalf.local.home>
-	<59a4f3f7641c47494b53f788684aa703a02acca1.camel@tugraz.at>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1740176254; c=relaxed/simple;
+	bh=zqSQJ2nItJxAmcLhpr+YNwKtAwSoDSxjxXX4H9cP31E=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=Hjb1NkwqdcjDnI+Q7rF04379Dc2lmNYNhkPOyiQlGtyukK0pEEbeQnN3CJwAW3iasR/FLSEY12pfG5xdFQetMfx9d9XsPV0ajv/qHIC+Y1mTo2QXbBUPqY7ER6qTjSOE9MRByaecQ0fCya7LCC8t8M9IFmd5m86L5PvrZURgMZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZuSHkfzf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66D9EC4CED6;
+	Fri, 21 Feb 2025 22:17:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740176253;
+	bh=zqSQJ2nItJxAmcLhpr+YNwKtAwSoDSxjxXX4H9cP31E=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=ZuSHkfzfm3y+C6pKoGDXkq6uKMeA1PFNKvqIQSmopCIU3PSS3028k0smW8r/TgTmu
+	 TdpsFwaMhrnCIUmtZKf9zJIXMB9gsb1FVdKpbbZHiR/aIJKmJKg9n+jdmMhaMKlYP/
+	 F7iwULDR9e6ogLVAXBEN9e4Q1IFO0mE/zikMbne2254GJBQfk08WFQ6MNpRsNeHuDX
+	 vDFM3M7j0jHWtPPRlWxH6mFUyCezNbKPYLgkfm6pFVsnNhnQzE77ORPgQpp945e5hW
+	 Qpf+FVEiCwGWAj56/HkeysTYCwLLEESlOgEOm+LNwTLQ79685juFCbNQYuwJ2qBIx0
+	 YUdlPo4W4rjcw==
+Date: Fri, 21 Feb 2025 16:17:31 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: broonie@kernel.org, Guenter Roeck <linux@roeck-us.net>, 
+ conor@kernel.org, Jean Delvare <jdelvare@suse.com>, 
+ linux-hwmon@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
+ devicetree@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, 
+ linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>
+To: Naresh Solanki <naresh.solanki@9elements.com>
+In-Reply-To: <20250221213837.1594057-1-naresh.solanki@9elements.com>
+References: <20250221213837.1594057-1-naresh.solanki@9elements.com>
+Message-Id: <174017625167.177256.18090844178565157862.robh@kernel.org>
+Subject: Re: [PATCH v2 1/2] dt-bindings: hwmon: ir38060: Move & update dt
+ binding
 
-On Fri, 21 Feb 2025 19:23:38 +0100
-Martin Uecker <uecker@tugraz.at> wrote:
 
-> > where func is defined as:
-> > 
-> > 	void func(void) { return ; }  
+On Sat, 22 Feb 2025 03:08:34 +0530, Naresh Solanki wrote:
+> Move dt binding under hwmon/pmbus & align accordingly.
 > 
-> Calling a function declared in this way with arguments
-> would be rejected by the compiler, so I am not sure how
-> this works now.
+> Previously the DT binding was invalid & wouldn't work with pmbus driver.
+> Pmbus driver expects a regulator node & hence added the same.
 > 
-> If you used 
+> Signed-off-by: Naresh Solanki <naresh.solanki@9elements.com>
+> ---
+> Changes in V2:
+> 1. Update commit message
+> ---
+>  .../hwmon/pmbus/infineon,ir38060.yaml         | 61 +++++++++++++++++++
+>  .../bindings/regulator/infineon,ir38060.yaml  | 45 --------------
+>  2 files changed, 61 insertions(+), 45 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/hwmon/pmbus/infineon,ir38060.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/regulator/infineon,ir38060.yaml
 > 
-> void func();
-> 
-> to declare the function, this is not possible anymore in C23.
 
-As the comment in the code states:
+My bot found errors running 'make dt_binding_check' on your patch:
 
-include/linux/static_call.h:
+yamllint warnings/errors:
 
- *   This feature is strictly UB per the C standard (since it casts a function
- *   pointer to a different signature) and relies on the architecture ABI to
- *   make things work. In particular it relies on Caller Stack-cleanup and the
- *   whole return register being clobbered for short return values. All normal
- *   CDECL style ABIs conform.
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/hwmon/pmbus/infineon,ir38060.yaml: maintainers:0: 'Not Me.' does not match '@'
+	from schema $id: http://devicetree.org/meta-schemas/base.yaml#
 
-Basically it's assigned via casts.
+doc reference errors (make refcheckdocs):
 
--- Steve
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250221213837.1594057-1-naresh.solanki@9elements.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
