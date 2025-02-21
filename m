@@ -1,273 +1,146 @@
-Return-Path: <linux-kernel+bounces-525235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A335CA3ECD3
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 07:31:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AF31BA3ECD5
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 07:34:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D1743B8F32
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 06:31:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A74353B934C
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 06:33:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BE601FC114;
-	Fri, 21 Feb 2025 06:31:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EF771FCF62;
+	Fri, 21 Feb 2025 06:33:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hU0MJqMW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PlcTKdCK"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50DB91E3DCF;
-	Fri, 21 Feb 2025 06:31:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4988D1FBC8D
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 06:33:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740119467; cv=none; b=eokYNAyHqoV+v4sSZqQtwjrIR9BYRt2nWYLyFBHXBds2KXI7+/YCDvOSkfLd91IaRV/8OkujoVl9KjBqaYYhZJUXmXcXrxcx7Jc2nacch0r6sNajA+B2xUKHSMA2n1MlihGGFhCRyyKsAduTEOarjTgFNzKg5e7KrzMEWkPgDvo=
+	t=1740119634; cv=none; b=aRRJV0uMUWS4ltRcYKEfgp0GIzQFhnXiOUQed8+M51X+dro5xHYE8lpijwP3mQff4d0VBfVn/g976QpoiSSOLH5DVLAWG/dQx8JOSc6j/W8WR+hBlb5k3W2JnNfnwqKKyxsHxu3sIxvM7vb+5kFFQlB9Gq3ZVj3VJHTx9Gr5HsI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740119467; c=relaxed/simple;
-	bh=P7Lf8hYvd8ISwW/UTT8lmB7v+1omLRT5e7HGLeY1S/4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dwK2VlGS8iO67bDHXGle4VyhiEn0LKIZrGOIvCphoBcnollmcZ2ZD43+VwoWvFD3FBsKSDGljdtNU1bWGw9wesC5pl6/copQT6J/2FDm+EBzfu5ekl3qmSHNbIqB6uZ6xYsEB/2fcawTauH4oL0GQww56f1qsdKnZ/qwyf70Azc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hU0MJqMW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D87CEC4CED6;
-	Fri, 21 Feb 2025 06:31:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740119466;
-	bh=P7Lf8hYvd8ISwW/UTT8lmB7v+1omLRT5e7HGLeY1S/4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hU0MJqMWaVz6gBch0iHIwUGe/a0X9UfRIPOjL8Yg6d7pLzifVwla3d8nNu31KxHl2
-	 h7R8fmT9HgcY2zZL4T8G31jaHyNRjWss5oOa2iwfaVTAlObHmxioYdML/VFZ9tgRrP
-	 hBSSYxM+qniXprserA0IuUzYya9f7pjG1NakBYt1b6MSopOtY5tj2IeDrU2Wnd681q
-	 Xtxjh2xTnYgGyzdujYSOmSo0msohXYREXIq5KizedRrD3TXkZw8eBhVt6lqplkAvMh
-	 MMdqqNuYW6AHljLynoQGVCnoehVFd9EJywccRzjz467FiZ4HcTUS5jeqVaz3LbzNeo
-	 X6o+3+QvlRdwQ==
-Date: Thu, 20 Feb 2025 22:31:04 -0800
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>, Sam James <sam@gentoo.org>,
-	Jesper Juhl <jesperjuhl76@gmail.com>,
-	James Clark <james.clark@linaro.org>,
-	Zhongqiu Han <quic_zhonhan@quicinc.com>,
-	Yicong Yang <yangyicong@hisilicon.com>,
-	Thomas Richter <tmricht@linux.ibm.com>,
-	Michael Petlan <mpetlan@redhat.com>,
-	Veronika Molnarova <vmolnaro@redhat.com>,
-	Anne Macedo <retpolanne@posteo.net>,
-	Dominique Martinet <asmadeus@codewreck.org>,
-	Jean-Philippe Romain <jean-philippe.romain@foss.st.com>,
-	Junhao He <hejunhao3@huawei.com>, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	Krzysztof =?utf-8?Q?=C5=81opatowski?= <krzysztof.m.lopatowski@gmail.com>
-Subject: Re: [PATCH v2 1/7] tools lib api: Add io_dir an allocation free
- readdir alternative
-Message-ID: <Z7gdqIQA6lrwivXt@google.com>
-References: <20250207232452.994822-1-irogers@google.com>
- <20250207232452.994822-2-irogers@google.com>
- <Z7ZSVvmvYXD7Clnb@google.com>
- <CAP-5=fWukOvV4EKbn1n=rhBO1LBf9m040=WXEweeFXAr3GCiQA@mail.gmail.com>
+	s=arc-20240116; t=1740119634; c=relaxed/simple;
+	bh=UnV/+GfcAYzsBk/o1/mbrqjdXTKd+qmvgLBpMdIuhrI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZYqg0pTU/KbEl8rGolDLfeTYgc05BgCBpep4MkJrSWT3nBlY2kwY8X3BeCl0HUSWsyWNrX8ttAQ4ftFYyUURlP/JDMP2a6+0OhVnjRFw+YfhIzKpHVRc8K+E6hPDn9rIMtDrD8VmNqaMF4IZ3ivK2VYXbavhrZYPVf8OnUwUyBQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PlcTKdCK; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-220e989edb6so48330615ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 22:33:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740119631; x=1740724431; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Q3qkD2W8GHPxS6rjoat2i19yWeUXmPG3MQqxSAFZ/8c=;
+        b=PlcTKdCKDpi1QO7NG8AQYezLG/xToMvncu9ycJf9FhoLe2ZTRb9jfTPK998MKrBpKn
+         +ZOVThGps+zEJqqz6fLAa7SrK9Fz7ahCfSRTtbfR1NOYrI6EMF1nyHuWV9M3VYU7g2b3
+         EG/ldhckbswoCKjp7JNIBeyV1rJFjPipK/xeR4/WQx4W/WdjK0M4uyEFgahdrRObY5hh
+         vIS+mgHgHllHQjR4uMArpRYwdyiEQu03hWzFejE6rKIFz97MQCMUPz03MolP2V6kR6mW
+         1y0/mKdP2RV4MdomVsLK0ZwQ3xoR9MsdH/h2iumaq1XcuCHS6jQA8Atr2paIfNikn/xL
+         Nzmw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740119631; x=1740724431;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Q3qkD2W8GHPxS6rjoat2i19yWeUXmPG3MQqxSAFZ/8c=;
+        b=Jc7l5/OovO1p6TTk4naML2hSMDZsaSdp7Hi6CCB3E18y5gXkl0RZHB9o3TS6NKzEnT
+         Mq9cOKmV3pQfNTZe2/d1XjcT27PODtxJdlrYYGf1B3JckVePmPsL9+VYhP4BG+XDabBS
+         hkwkWiMGB3BFF4gHcoeazY0iDegbct0G4zPJLP5GAgG4y0Uds8H1GRrQgU9Bh+yiSjl4
+         99SscdtXBTaWvPTPXayD3KMZod6sjKHM3SHY/C2NgOMF0UYj0gnjdBQmBWM9yCPjDZuq
+         E/Hn/svA84G3Y0A9jeZBp37nXMKKyUTDtBnYtsL8aUuffHDN743D20CN1REjGX++IAn4
+         WGUw==
+X-Forwarded-Encrypted: i=1; AJvYcCWKtbmKaNd1+nCHkFBraKiZ9N2tvrxGYJAf/DzFjFz5FvjzWrCIwHUAQGROukzfGM8yYRp8AtQ4d3E3u/Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy42AOuOkRaTFexE4tHEq0Lx1Kol8PZ56XADXv4snDW8e2g/gUs
+	nAuN9bjT2WD7RCNAqeENHeEzH/Mv4Df13gMh2IuY/cK1oYo1pfYm48oJkS4JPR8=
+X-Gm-Gg: ASbGncucxenFIz8TlAGtJZHk43EGJqirzoweq5vVun3wCSmZolodqiAFp+6s3UxQWZN
+	kJujK9InDkhpT/7sNXtzovNoCWzAMrFGr0WJacpAnEGVUhBkuirqZuxMbU23/xWGssQUUrDs6/5
+	yP2KQjSB03c9cnvxtQoXFLV5rRuUXg5lV/Z1vuUFXasyFZq6BtjU07E35twOxROayqZ4GIfZ3pX
+	rRyFlkkosE1oh9gYyUJLQq5UcFkY7Wr8d0BxebFOhPeQgwJnCCSJKA8hi7QZSUrzBVt+y2beaXs
+	6+8PIyvLM7wlqZYM6UNCvMaCsIwl
+X-Google-Smtp-Source: AGHT+IGBFTKUqNROscBFlXFQPsAysi8TjZrSjaBBpoMwqoUOJ2o4jmxLvYsGM0FXUS1xsZzgGKCJBg==
+X-Received: by 2002:a17:902:d2c7:b0:21d:3bee:990c with SMTP id d9443c01a7336-2219ffb5fa6mr30105085ad.42.1740119631572;
+        Thu, 20 Feb 2025 22:33:51 -0800 (PST)
+Received: from localhost ([122.172.84.139])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fceb02d7dasm523355a91.5.2025.02.20.22.33.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Feb 2025 22:33:50 -0800 (PST)
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Alex Gaynor <alex.gaynor@gmail.com>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Benno Lossin <benno.lossin@proton.me>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>,
+	Russell King <linux@armlinux.org.uk>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org
+Subject: [PATCH V2 0/2] rust: Add basic clock bindings
+Date: Fri, 21 Feb 2025 12:03:37 +0530
+Message-Id: <cover.1740118863.git.viresh.kumar@linaro.org>
+X-Mailer: git-send-email 2.31.1.272.g89b43f80a514
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fWukOvV4EKbn1n=rhBO1LBf9m040=WXEweeFXAr3GCiQA@mail.gmail.com>
 
-On Wed, Feb 19, 2025 at 02:21:45PM -0800, Ian Rogers wrote:
-> On Wed, Feb 19, 2025 at 1:51 PM Namhyung Kim <namhyung@kernel.org> wrote:
-> >
-> > On Fri, Feb 07, 2025 at 03:24:42PM -0800, Ian Rogers wrote:
-> > > glibc's opendir allocates a minimum of 32kb, when called recursively
-> > > for a directory tree the memory consumption can add up - nearly 300kb
-> > > during perf start-up when processing modules. Add a stack allocated
-> > > variant of readdir sized a little more than 1kb.
-> > >
-> > > As getdents64 may be missing from libc, add support using syscall.
-> > > Note, an earlier version of this patch had a feature test for
-> > > getdents64 but there were problems on certains distros where
-> > > getdents64 would be #define renamed to getdents breaking the code. The
-> > > syscall use was made uncondtional to work around this. There is
-> > > context in:
-> > > https://lore.kernel.org/lkml/20231207050433.1426834-1-irogers@google.com/
-> > >
-> > > Signed-off-by: Ian Rogers <irogers@google.com>
-> > > ---
-> > >  tools/lib/api/Makefile |  2 +-
-> > >  tools/lib/api/io_dir.h | 93 ++++++++++++++++++++++++++++++++++++++++++
-> > >  2 files changed, 94 insertions(+), 1 deletion(-)
-> > >  create mode 100644 tools/lib/api/io_dir.h
-> > >
-> > > diff --git a/tools/lib/api/Makefile b/tools/lib/api/Makefile
-> > > index 7f6396087b46..8665c799e0fa 100644
-> > > --- a/tools/lib/api/Makefile
-> > > +++ b/tools/lib/api/Makefile
-> > > @@ -95,7 +95,7 @@ install_lib: $(LIBFILE)
-> > >               $(call do_install_mkdir,$(libdir_SQ)); \
-> > >               cp -fpR $(LIBFILE) $(DESTDIR)$(libdir_SQ)
-> > >
-> > > -HDRS := cpu.h debug.h io.h
-> > > +HDRS := cpu.h debug.h io.h io_dir.h
-> > >  FD_HDRS := fd/array.h
-> > >  FS_HDRS := fs/fs.h fs/tracing_path.h
-> > >  INSTALL_HDRS_PFX := $(DESTDIR)$(prefix)/include/api
-> > > diff --git a/tools/lib/api/io_dir.h b/tools/lib/api/io_dir.h
-> > > new file mode 100644
-> > > index 000000000000..c84738923c96
-> > > --- /dev/null
-> > > +++ b/tools/lib/api/io_dir.h
-> > > @@ -0,0 +1,93 @@
-> > > +/* SPDX-License-Identifier: (LGPL-2.1 OR BSD-2-Clause) */
-> > > +/*
-> > > + * Lightweight directory reading library.
-> > > + */
-> > > +#ifndef __API_IO_DIR__
-> > > +#define __API_IO_DIR__
-> > > +
-> > > +#include <dirent.h>
-> > > +#include <fcntl.h>
-> > > +#include <stdlib.h>
-> > > +#include <unistd.h>
-> > > +#include <sys/stat.h>
-> > > +#include <sys/syscall.h>
-> > > +
-> > > +#if !defined(SYS_getdents64)
-> > > +#if defined(__x86_64__)
-> > > +#define SYS_getdents64 217
-> > > +#elif defined(__aarch64__)
-> > > +#define SYS_getdents64 61
-> > > +#endif
-> > > +#endif
-> > > +
-> > > +static inline ssize_t perf_getdents64(int fd, void *dirp, size_t count)
-> > > +{
-> > > +#ifdef MEMORY_SANITIZER
-> > > +     memset(dirp, 0, count);
-> > > +#endif
-> > > +     return syscall(SYS_getdents64, fd, dirp, count);
-> >
-> > Unfortunately this fails to build on my i386 vm (and probably other old
-> > archs don't have SYS_getdents64 yet).
-> >
-> >   In file included from util/pmus.c:6:
-> >   /build/libapi/include/api/io_dir.h: In function 'perf_getdents64':
-> >   /build/libapi/include/api/io_dir.h:28:24: error: 'SYS_getdents64' undeclared (first use in this function); did you mean 'perf_getdents64'?
-> >      28 |         return syscall(SYS_getdents64, fd, dirp, count);
-> >         |                        ^~~~~~~~~~~~~~
-> >         |                        perf_getdents64
-> >
-> > > +}
-> > > +#endif
-> >
-> > Maybe mismatched.
-> 
-> So even on 32-bit systems we want getdents64 as getdents encodes the
-> d_type at the end of dirent making it hard to index. On i386 we know
-> the number of the syscall for perf trace:
-> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/perf/arch/x86/entry/syscalls/syscall_32.tbl?h=perf-tools-next#n235
-> So we can presumably change:
-> ```
-> #if !defined(SYS_getdents64)
-> #if defined(__x86_64__)
-> #define SYS_getdents64 217
-> #elif defined(__aarch64__)
-> #define SYS_getdents64 61
-> #endif
-> #endif
-> ```
-> to also have:
-> ```
-> #elif defined(__i386__)
-> #define SYS_getdents64 220
-> ```
-> Could you test this so that I don't need to resend 7 patches for each
-> architecture you test upon? The man page says <sys/syscall.h> and
-> <unistd.h> should be sufficient for the code to work, so I think
-> addressing this is adding workarounds for distros that aren't
-> conformant - ie its the distro's fault the code fails to compile and
-> not the tool's.
+Hello,
 
-It fixes the issue on my machine but I'm afraid others will see the same
-issue on other archs.  I think <sys/syscall.h> should provide the number
-for the syscall but the problem is old distros which didn't ship recent
-headers.  So it's a matter of how long the tool needs to support such an
-old one. :(
+This adds initial bindings for the clk APIs. These provide the minimal
+functionality needed for common use cases, making them straightforward
+to introduce in the first iteration.
 
-Thanks,
-Namhyung
+These will be used by Rust based cpufreq / OPP layers to begin with.
 
-> >
-> > > +
-> > > +struct io_dirent64 {
-> > > +     ino64_t        d_ino;    /* 64-bit inode number */
-> > > +     off64_t        d_off;    /* 64-bit offset to next structure */
-> > > +     unsigned short d_reclen; /* Size of this dirent */
-> > > +     unsigned char  d_type;   /* File type */
-> > > +     char           d_name[NAME_MAX + 1]; /* Filename (null-terminated) */
-> > > +};
-> > > +
-> > > +struct io_dir {
-> > > +     int dirfd;
-> > > +     ssize_t available_bytes;
-> > > +     struct io_dirent64 *next;
-> > > +     struct io_dirent64 buff[4];
-> > > +};
-> > > +
-> > > +static inline void io_dir__init(struct io_dir *iod, int dirfd)
-> > > +{
-> > > +     iod->dirfd = dirfd;
-> > > +     iod->available_bytes = 0;
-> > > +}
-> > > +
-> > > +static inline void io_dir__rewinddir(struct io_dir *iod)
-> > > +{
-> > > +     lseek(iod->dirfd, 0, SEEK_SET);
-> > > +     iod->available_bytes = 0;
-> > > +}
-> > > +
-> > > +static inline struct io_dirent64 *io_dir__readdir(struct io_dir *iod)
-> > > +{
-> > > +     struct io_dirent64 *entry;
-> > > +
-> > > +     if (iod->available_bytes <= 0) {
-> > > +             ssize_t rc = perf_getdents64(iod->dirfd, iod->buff, sizeof(iod->buff));
-> > > +
-> > > +             if (rc <= 0)
-> > > +                     return NULL;
-> > > +             iod->available_bytes = rc;
-> > > +             iod->next = iod->buff;
-> > > +     }
-> > > +     entry = iod->next;
-> > > +     iod->next = (struct io_dirent64 *)((char *)entry + entry->d_reclen);
-> > > +     iod->available_bytes -= entry->d_reclen;
-> > > +     return entry;
-> > > +}
-> > > +
-> > > +static inline bool io_dir__is_dir(const struct io_dir *iod, struct io_dirent64 *dent)
-> > > +{
-> > > +     if (dent->d_type == DT_UNKNOWN) {
-> > > +             struct stat st;
-> > > +
-> > > +             if (fstatat(iod->dirfd, dent->d_name, &st, /*flags=*/0))
-> > > +                     return false;
-> > > +
-> > > +             if (S_ISDIR(st.st_mode)) {
-> > > +                     dent->d_type = DT_DIR;
-> > > +                     return true;
-> > > +             }
-> > > +     }
-> > > +     return dent->d_type == DT_DIR;
-> > > +}
-> > > +
-> > > +#endif
-> > > --
-> > > 2.48.1.502.g6dc24dfdaf-goog
-> > >
+For now I have added them under the maintainership umbrella of the common clk
+framework, please let me know if I should do it differently.
+
+This was posted earlier as part of the series implementing cpufreq/OPP Rust
+bindings [1] (since its V6 version). In order to make sure this gets properly
+reviewed and I don't accidentally miss relevant reviewers, I am posting it
+separately now.
+
+If possible, I would like to get these merged via the PM tree along with
+cpufreq/OPP bindings, but its okay otherwise too.
+
+--
+Viresh
+
+[1] https://lore.kernel.org/all/cover.1738832118.git.viresh.kumar@linaro.org/
+
+V1->V2:
+- Post this as an independent series.
+- Include more APIs, apart from clk_get() and clk_put().
+
+Viresh Kumar (2):
+  rust: Add clk helpers
+  rust: Add basic bindings for clk APIs
+
+ MAINTAINERS                     |   2 +
+ rust/bindings/bindings_helper.h |   1 +
+ rust/helpers/clk.c              |  57 +++++++++++++++++
+ rust/helpers/helpers.c          |   1 +
+ rust/kernel/clk.rs              | 104 ++++++++++++++++++++++++++++++++
+ rust/kernel/lib.rs              |   1 +
+ 6 files changed, 166 insertions(+)
+ create mode 100644 rust/helpers/clk.c
+ create mode 100644 rust/kernel/clk.rs
+
+-- 
+2.31.1.272.g89b43f80a514
+
 
