@@ -1,174 +1,135 @@
-Return-Path: <linux-kernel+bounces-526305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8205A3FD1C
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 18:15:02 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28CB5A3FCE9
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 18:09:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEE547078E9
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:07:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E40FC7B0DBA
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:05:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C6BC24CEE9;
-	Fri, 21 Feb 2025 17:07:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5366A24C670;
+	Fri, 21 Feb 2025 17:06:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KpKaVx//"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="D/bAUEqR"
+Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54ED824BCF0
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 17:07:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BBA324BD0A
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 17:06:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740157623; cv=none; b=XKd8LbcuVpWRKYmoXdy6iM3eJ+WpIwgiwrFFcsL58NGJytNHAOVm/BBGAPrcLEq8klYXwzSRxBjwaRs6Eonjo10i/LYirRtJ9xKCauhjvS1YnUWJ5/ZWaD5NiaZkphYtXlW7aagSFM3Jjw+NtFzd/UDicUir62EznlKDx+BNdP8=
+	t=1740157600; cv=none; b=Yks/IEsxe1fJii1K6eED46/Q5H7GDMwD2lrte2BKZDjUb8EmUtfNVNlglYYpulYaZ+5WTNT4h1rpK8IEgdg2/YyvogFtqWxemstdWnt9wXFbK0unZ+GabYJZqzd9XlF5BSlu06ulotgEJqa8zmwPGWn6LvKe8GuFp/GuxwtOmps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740157623; c=relaxed/simple;
-	bh=dmXZwGs+K9cXy4OVhaZVpVlHINi/95qyv6S5WYJHnRw=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dNybu32BRvkON2T2dNszjm4Q2E0wb2X4PtrQEtH6y+Y9P/uHM6GF3pEzVYFRgDKsA8t2C1lftsaO7cvgMy+bQVHOCLLLHcqNZ/5ls7jR+lZIW9PqHyaC6lDJd0kZyQ8aLOM8HJYqr+Nc+4Kuai4jQem3RvtOBSWQNNk0oh/+OY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KpKaVx//; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740157620;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DdFhks9dEBucFBSdGlrdrm2YLeGCqTXN1StzLlcWwlU=;
-	b=KpKaVx//jjKZSEXwCXrBk9hezbVM4wyRPsGPyDza0rPJH+zPAWCbsqwdC0RtBCZPg+OnOc
-	u+Z1jaStdgbfiqDFFpESR7W2lo407YIw51Wrut3ZiG5tROMPeHmfDTzQoy8LhkR/cpaVB6
-	4/YtXc8U4MaoMMYWnhawrZxDo3HpZe4=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-518-m0a4VAWSOIaZmlHfhpDBIA-1; Fri,
- 21 Feb 2025 12:06:59 -0500
-X-MC-Unique: m0a4VAWSOIaZmlHfhpDBIA-1
-X-Mimecast-MFC-AGG-ID: m0a4VAWSOIaZmlHfhpDBIA_1740157617
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4A9A61800878;
-	Fri, 21 Feb 2025 17:06:57 +0000 (UTC)
-Received: from eperezma-thinkpadt480s.rmtes.csb (unknown [10.44.32.170])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id AA946180087E;
-	Fri, 21 Feb 2025 17:06:52 +0000 (UTC)
-From: =?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>
-To: Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Stefan Hajnoczi <stefanha@redhat.com>,
-	Hanna Reitz <hreitz@redhat.com>,
-	linux-kernel@vger.kernel.org,
-	German Maglione <gmaglione@redhat.com>,
-	virtualization@lists.linux.dev,
-	Stefano Garzarella <sgarzare@redhat.com>,
-	yama@redhat.com,
-	Vivek Goyal <vgoyal@redhat.com>,
-	Miklos Szeredi <miklos@szeredi.hu>,
-	mst@redhat.com,
-	Jason Wang <jasowang@redhat.com>
-Subject: [RFC v2 4/5] virtiofs: perform DMA operations out of the spinlock
-Date: Fri, 21 Feb 2025 18:06:25 +0100
-Message-ID: <20250221170626.261687-5-eperezma@redhat.com>
-In-Reply-To: <20250221170626.261687-1-eperezma@redhat.com>
-References: <20250221170626.261687-1-eperezma@redhat.com>
+	s=arc-20240116; t=1740157600; c=relaxed/simple;
+	bh=OdnitUOyPuNq7QGRt6IU8iiEd7Hok2Poyde+e07pzAk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JFEUOHcICXEDy28Cf27mQdVSOaDXEAUjPE72JfveR5tT/ksJF33poB0NL2dLtyIdMrxJCeUIx3ET/nT5A347iiXtL+GWH7aO8UEkMihcqsZSRFTsG75f0qKPmdP9w7xRq6p3gz8MMUWBjMErXPzU6Jtxlb7DXMCwVu99aAWflFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=D/bAUEqR; arc=none smtp.client-ip=209.85.166.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
+Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-3d2b15760adso7528325ab.1
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 09:06:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1740157597; x=1740762397; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=i0/CbgssrY9MdmhvaS9VAi8CgxuGoYSwiPbuLyClY14=;
+        b=D/bAUEqRuvFS8c/jO3iHl+yFcRQm9XO/ZJy0HlVvSfBKfJO/QhUNNmhpJjhq9UtdJ5
+         rJpHxPPR4twgaqztAi+ZdQUb8sZ5fZSUij6oFkFBRajpTZgYyd+RE2pYhzBZv0QcigfN
+         yrtDocAt89wLyHZEtJFXRkvrPjZlcYLGd0tBX5O95ADS0lSpnA9XLSaAdn1M/EVIXXy7
+         90Ju9l6LFuBipYUXxUOVXtvSmw2w0AkWn3KqsrUFVX/INOVyOoa9as3vrV4ruCUhmEov
+         Hl9HH//nZnIsyl9g1OgP6znYQII1FdyHN0fLjcx6amksKYgF/96TQ1cNd+rxUnnDk6qe
+         0YlQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740157597; x=1740762397;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=i0/CbgssrY9MdmhvaS9VAi8CgxuGoYSwiPbuLyClY14=;
+        b=EyprcbKvX3X8mXowuLLyM6PXVss4RuQ+oeHA/JDt/yK/ocLcndlyMqAfQNfmtpTx8A
+         RVs4H7Q3+4LIKABey0WV0MK4pGMJ4OSd0Y6GFb23m5hqkfwNTnZ4reNY7KRu1At5D9WP
+         Uw3t0/6zeSWiSiFDe399jze5TaC/SV4lIzMrCE12XqSvI8sePwdHZR4P4m3gHGbZql4r
+         zVlaaRF+QHukIFInAsOCSn/a5l3bnnnkFHBiiR0oz6u5BnO9BKnbe8mIEPINaiur1rOc
+         9jv4QOJTxueL9gm0P+NpWJC5b7F6C+TiLv6HzTxsoa3TqQeyfgGAYJndnJBXwpOuP3DF
+         PlzA==
+X-Forwarded-Encrypted: i=1; AJvYcCXwoB3Zwk70GkE37BHjKAo+Venkj2lJ9cv8gv7SnuHscYdbfe5slYh+zczlQ5UfdkUOkl7hlQ8zHdCReu0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwpdmFRtYq0Sg6gJkybFPBRX/erWN/Y5NcdySOjadEY7I3Hr3Fs
+	7UaCnqL7nzGHFI19uKXIJ7Sh4hlOrrhuCBT9cv5MJ1L31badd5d2pHAQi5EgfVhlwcBo5F9zJKn
+	/UJ4gDjX0Zb+Buve1NXf1P022Pj8fSooBDt2TwA==
+X-Gm-Gg: ASbGnctgwBdZewebegYwOuN+3z7B+NyriLFaisT+tBGtNw+t/KA5wPmeggDmH06cB2R
+	+EWgl8r6KCVnFY+z/tiP8p15rhJ9OVKlNzdbV0BzOoYGKbjIBQVhEbefbUyyYyvBR2ayTNQiapK
+	/A6UOVXQpz
+X-Google-Smtp-Source: AGHT+IFddscccecyBJuHpMIYpYRvh9YlBuKsbg2+gt14j7YH3RYxnm5jBOsEYz0eMa2s6iOMS/G/TbnvC9T8+ye2EXw=
+X-Received: by 2002:a05:6e02:1cac:b0:3d0:4b3d:75ba with SMTP id
+ e9e14a558f8ab-3d2cb42daddmr41475585ab.4.1740157597175; Fri, 21 Feb 2025
+ 09:06:37 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+References: <20250221104538.2147-1-xiangwencheng@lanxincomputing.com>
+In-Reply-To: <20250221104538.2147-1-xiangwencheng@lanxincomputing.com>
+From: Anup Patel <anup@brainfault.org>
+Date: Fri, 21 Feb 2025 22:36:25 +0530
+X-Gm-Features: AWEUYZko5N5M7hatn6QenhvKduK_Aqv3UdJMpX2Lv711NP2hVkEu-tpphWsd27g
+Message-ID: <CAAhSdy34iNEqcVOziJcjnhS5xTYx3o+iXex8bEAwmUDApXWAcg@mail.gmail.com>
+Subject: Re: [PATCH v2] riscv: KVM: Remove unnecessary vcpu kick
+To: BillXiang <xiangwencheng@lanxincomputing.com>
+Cc: ajones@ventanamicro.com, kvm-riscv@lists.infradead.org, 
+	kvm@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, atishp@atishpatra.org, paul.walmsley@sifive.com, 
+	palmer@dabbelt.com, aou@eecs.berkeley.edu, rkrcmar@ventanamicro.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This is useful for some setups like swiotlb or VDUSE where the DMA
-operations are expensive and/or need to be performed with a write lock.
+On Fri, Feb 21, 2025 at 4:16=E2=80=AFPM BillXiang
+<xiangwencheng@lanxincomputing.com> wrote:
+>
+> Remove the unnecessary kick to the vCPU after writing to the vs_file
+> of IMSIC in kvm_riscv_vcpu_aia_imsic_inject.
+>
+> For vCPUs that are running, writing to the vs_file directly forwards
+> the interrupt as an MSI to them and does not need an extra kick.
+>
+> For vCPUs that are descheduled after emulating WFI, KVM will enable
+> the guest external interrupt for that vCPU in
+> kvm_riscv_aia_wakeon_hgei. This means that writing to the vs_file
+> will cause a guest external interrupt, which will cause KVM to wake
+> up the vCPU in hgei_interrupt to handle the interrupt properly.
+>
+> Signed-off-by: BillXiang <xiangwencheng@lanxincomputing.com>
 
-After applying this patch, fio read test goes from 1124MiB/s to 1191MiB/s.
+Queued this patch as a fix for Linux-6.14-rcX.
 
-Signed-off-by: Eugenio Pérez <eperezma@redhat.com>
----
- fs/fuse/virtio_fs.c | 40 ++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 38 insertions(+), 2 deletions(-)
+Thanks,
+Anup
 
-diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
-index 1344c5782a7c..e19c78f2480e 100644
---- a/fs/fuse/virtio_fs.c
-+++ b/fs/fuse/virtio_fs.c
-@@ -836,8 +836,19 @@ static void virtio_fs_requests_done_work(struct work_struct *work)
- 
- 	/* End requests */
- 	list_for_each_entry_safe(req, next, &reqs, list) {
-+		unsigned int total_sgs = req->out_sgs + req->in_sgs;
-+
- 		list_del_init(&req->list);
- 
-+		for (unsigned int i = 0; i < total_sgs; ++i) {
-+			enum dma_data_direction dir = (i < req->out_sgs) ?
-+				DMA_TO_DEVICE : DMA_FROM_DEVICE;
-+			dma_unmap_page(vq->vdev->dev.parent,
-+				       sg_dma_address(&req->sg[i]),
-+				       sg_dma_len(&req->sg[i]), dir);
-+
-+		}
-+
- 		/* blocking async request completes in a worker context */
- 		if (req->args->may_block) {
- 			struct virtio_fs_req_work *w;
-@@ -1426,6 +1437,24 @@ static int virtio_fs_enqueue_req(struct virtio_fs_vq *fsvq,
- 		sgs[i] = &req->sg[i];
- 	WARN_ON(req->out_sgs + req->in_sgs != total_sgs);
- 
-+	// TODO can we change this ptr out of the lock?
-+	vq = fsvq->vq;
-+	// TODO handle this and following errors
-+	for (i = 0; i < total_sgs; i++) {
-+		struct page *page = sg_page(&req->sg[i]);
-+		enum dma_data_direction dir = (i < req->out_sgs) ?
-+			DMA_TO_DEVICE : DMA_FROM_DEVICE;
-+		dma_addr_t dma_addr = dma_map_page(vq->vdev->dev.parent, page,
-+						   req->sg[i].offset, req->sg[i].length, dir);
-+
-+		if (dma_mapping_error(vq->vdev->dev.parent, dma_addr)) {
-+			ret = -ENOMEM;
-+			goto out;
-+		}
-+		sg_dma_address(&req->sg[i]) = dma_addr;
-+		sg_dma_len(&req->sg[i]) = req->sg[i].length;
-+	}
-+
- 	spin_lock(&fsvq->lock);
- 
- 	if (!fsvq->connected) {
-@@ -1434,8 +1463,8 @@ static int virtio_fs_enqueue_req(struct virtio_fs_vq *fsvq,
- 		goto out;
- 	}
- 
--	vq = fsvq->vq;
--	ret = virtqueue_add_sgs(vq, sgs, req->out_sgs, req->in_sgs, req, GFP_ATOMIC);
-+	ret = virtqueue_add_sgs_premapped(vq, sgs, req->out_sgs,
-+					  req->in_sgs, req, GFP_ATOMIC);
- 	if (ret < 0) {
- 		spin_unlock(&fsvq->lock);
- 		goto out;
-@@ -1460,6 +1489,13 @@ static int virtio_fs_enqueue_req(struct virtio_fs_vq *fsvq,
- 		virtqueue_notify(vq);
- 
- out:
-+	for (unsigned int j = 0; ret && j < total_sgs; ++j) {
-+		enum dma_data_direction dir = (j < req->out_sgs) ?
-+			DMA_TO_DEVICE : DMA_FROM_DEVICE;
-+		dma_unmap_page(vq->vdev->dev.parent,
-+			       sg_dma_address(&req->sg[j]),
-+			       sg_dma_len(&req->sg[j]), dir);
-+	}
- 	if (ret < 0 && req->argbuf) {
- 		kfree(req->argbuf);
- 		req->argbuf = NULL;
--- 
-2.48.1
-
+> ---
+> v2: Revise the commit message to ensure it meets the required
+>     standards for acceptance
+>
+>  arch/riscv/kvm/aia_imsic.c | 1 -
+>  1 file changed, 1 deletion(-)
+>
+> diff --git a/arch/riscv/kvm/aia_imsic.c b/arch/riscv/kvm/aia_imsic.c
+> index a8085cd8215e..29ef9c2133a9 100644
+> --- a/arch/riscv/kvm/aia_imsic.c
+> +++ b/arch/riscv/kvm/aia_imsic.c
+> @@ -974,7 +974,6 @@ int kvm_riscv_vcpu_aia_imsic_inject(struct kvm_vcpu *=
+vcpu,
+>
+>         if (imsic->vsfile_cpu >=3D 0) {
+>                 writel(iid, imsic->vsfile_va + IMSIC_MMIO_SETIPNUM_LE);
+> -               kvm_vcpu_kick(vcpu);
+>         } else {
+>                 eix =3D &imsic->swfile->eix[iid / BITS_PER_TYPE(u64)];
+>                 set_bit(iid & (BITS_PER_TYPE(u64) - 1), eix->eip);
+> --
+> 2.46.2
 
