@@ -1,88 +1,109 @@
-Return-Path: <linux-kernel+bounces-525479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC5F3A3F078
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:36:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3066EA3F085
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:37:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F25757A9900
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:35:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEEBB189D9AD
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:36:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 384EC2040B0;
-	Fri, 21 Feb 2025 09:36:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 552992046B6;
+	Fri, 21 Feb 2025 09:36:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="18EQsskM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TAWlb8BW"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52B2D202F8F
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 09:36:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A012E201017;
+	Fri, 21 Feb 2025 09:36:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740130566; cv=none; b=SpATQSjDNSSklCQ6Hta8lSDZGfStIn/NO0+zqNHF/RqAupvlu+GMxHF7hyaf1N5ma3KlpTmNGZMbAare5vpGkNvcrULTfa2VJLC56YzRwOKgwCbiv3iAYfPzKIXIDyccch4vi3ELLEMUq2AUqqEHj4tMuKcfxGh+1cWPYWS5JOA=
+	t=1740130580; cv=none; b=eRM/IF2inA3rgCnDC388UAkWJ7IY6rYHSLvGpPGOUrND9aONZZlaBppQD+aIGanL/VMvK4lK01MrXoRKWAi31vtbQsStZWSl1g7mKMGpOZNIBRrFwCrQgzlOsyIDSH6Yjua69GqZJtnCKzxKBmYtpFwmWeMVssGLh/+xkwbYoAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740130566; c=relaxed/simple;
-	bh=Ey25d9kgI7M6UcGM9VubfVyoNV2YgWP5EB2DILx7ytA=;
+	s=arc-20240116; t=1740130580; c=relaxed/simple;
+	bh=2JYtZqX939Y+D87kR0xAmcGyGqDeR/SDLpu7Ha5+6ps=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e18wL0Ld7O8H8E/ewmIFl1sw58KpPyIldooLcVjO5rodK9tnLnzXJnBsmuypzQ3rLkZPm0NqALOXe9d8Wv4Dij/sneTrNgYjMcTsXWnn3zWNXk7caf86hAc2EbzEZO3lLjXDYr3R/WgijAA0mT+oZjL3Xvz7vK4ZK95EX4lh6e8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=18EQsskM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F19EC4CED6;
-	Fri, 21 Feb 2025 09:36:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1740130566;
-	bh=Ey25d9kgI7M6UcGM9VubfVyoNV2YgWP5EB2DILx7ytA=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=EJTzXXAfQ91WIN0A2PofrlXoR8c2CtGzOtFmyHYLnFHA1oeIyBwpTyRDsQ+1ZSrInC9JUEKzooUvrhJ/bWaQCiCYGkooMqM3RxmxqDUDd0FMIeKA/+g+BFQ86F4a5j0OOyjOekmQXldH4naAtyNTg4XHRE4ISJRcz3Xq74ruOlY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TAWlb8BW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1AFAC4CED6;
+	Fri, 21 Feb 2025 09:36:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740130580;
+	bh=2JYtZqX939Y+D87kR0xAmcGyGqDeR/SDLpu7Ha5+6ps=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=18EQsskMOqNGI+GoKSD2oVvPakZxHL+IGD1ZtnXX+2Juf/jm5FOSePKnoAfzTh4zG
-	 VqAluqu7KUAXvfVwiCA8k2U3xYGS+HaHjikcRDUdWMvdFM5oU4R/DZodVPIJYkBgs1
-	 A3Qwdvdjov7gThtiHpokj9l0MuhykF3E8sVI8Yy8=
-Date: Fri, 21 Feb 2025 10:36:02 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Zhang Lixu <lixu.zhang@intel.com>
-Cc: linux-kernel@vger.kernel.org, sakari.ailus@linux.intel.com,
-	linus.walleij@linaro.org, brgl@bgdev.pl, andi.shyti@kernel.org,
-	broonie@kernel.org, stanislaw.gruszka@linux.intel.com,
-	zhifeng.wang@intel.com
-Subject: Re: [PATCH] MAINTAINERS: Update Intel LJCA maintainer
-Message-ID: <2025022134-storewide-greedy-8d4d@gregkh>
-References: <20250221083713.25947-1-lixu.zhang@intel.com>
+	b=TAWlb8BWw0ZkWQSpCua6PtYzLZmlyMoBOktuhHneAneNEbrKIOzBF8duUu9GRVTiJ
+	 cnIumZ/AOh10dWag5FO33bxpV6CyO1USpCBsRc6shfTKZVV5l3ct92KO7q2qi0rac9
+	 zZT3E7549u6k9bLw9sQcaU1vBmcuOu8V3Xccd7p25yjnYkUPoQEfFt/dO2wdQg7Tu8
+	 98KIQWkNzXv3MTOhKyCjQvKGjfUCgkLgye69mjup0i51Mm6wlWDZbEHiBaDVqkkbUk
+	 wDHEmwbC47+A5gbP36yjoJGrLfF08N6Uvk9jV9mEUQ9yWHg9vW66TkG+1qHSgzXr1A
+	 oRGfOBnZCpLKQ==
+Date: Fri, 21 Feb 2025 10:36:17 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Kaustabh Chakraborty <kauschluss@disroot.org>
+Cc: Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>, 
+	"Guilherme G. Piccoli" <gpiccoli@igalia.com>, Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH v3 0/7] Add support for the Exynos7870 SoC, along with
+ three devices
+Message-ID: <20250221-able-quoll-of-storm-1cd6aa@krzk-bin>
+References: <20250219-exynos7870-v3-0-e384fb610cad@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250221083713.25947-1-lixu.zhang@intel.com>
+In-Reply-To: <20250219-exynos7870-v3-0-e384fb610cad@disroot.org>
 
-On Fri, Feb 21, 2025 at 04:37:12PM +0800, Zhang Lixu wrote:
-> Wentong is no longer with Intel, I will take over as the maintainer of the
-> Intel LJCA driver.
+On Wed, Feb 19, 2025 at 12:33:10AM +0530, Kaustabh Chakraborty wrote:
+> Samsung Exynos 7870 (codename: Joshua) is an ARM-v8 system-on-chip that was
+> announced in 2016. The chipset was found in several popular mid-range to
+> low-end Samsung phones, released within 2016 to 2019.
 > 
-> Signed-off-by: Zhang Lixu <lixu.zhang@intel.com>
-> Reviewed-by: Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>
-> Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-> ---
->  MAINTAINERS | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> This patch series aims to add support for Exynos 7870, starting with the
+> most basic yet essential components such as CPU, GPU, clock controllers,
+> PMIC, pin controllers, etc.
 > 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index d9fd56f205c0..da09f84a87b1 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -11818,7 +11818,7 @@ F:	drivers/crypto/intel/keembay/ocs-hcu.c
->  F:	drivers/crypto/intel/keembay/ocs-hcu.h
->  
->  INTEL LA JOLLA COVE ADAPTER (LJCA) USB I/O EXPANDER DRIVERS
-> -M:	Wentong Wu <wentong.wu@intel.com>
-> +M:	Lixu Zhang <lixu.zhang@intel.com>
+> Moreover, the series also adds support for three Exynos 7870 devices via
+> devicetree. The devices are:
+>  * Samsung Galaxy J7 Prime	- released 2016, codename on7xelte
+>  * Samsung Galaxy J6		- released 2018, codename j6lte
+>  * Samsung Galaxy A2 Core	- released 2019, codename a2corelte
+> 
 
-Wentong also needs to ack this, just because someone leaves a company
-does not mean they automatically loose maintainership.
+You have some dependencies here, so you must always clearly mention
+them.
 
-thanks,
+> Additional features implemented in this series include:
+>  * I2C	- touchscreen, IIO sensors, etc.
+>  * UART	- bluetooth and serial debugging
+>  * MMC	- eMMC, Wi-Fi SDIO, SDCard
+>  * USB	- micro-USB 2.0 interface
+> 
+> Here is a list of all sub-series:
+>  * bootmode	  	- https://lore.kernel.org/all/20250204-exynos7870-bootmode-v1-1-0f17b3033c2d@disroot.org/
+>  * gpu			R https://lore.kernel.org/all/20250204-exynos7870-gpu-v1-1-0db4c163a030@disroot.org/
+>  * i2c	      		A https://lore.kernel.org/all/20250204-exynos7870-i2c-v1-0-63d67871ab7e@disroot.org/
+>  * mmc			- https://lore.kernel.org/all/20250219-exynos7870-mmc-v2-0-b4255a3e39ed@disroot.org/
+>  * pinctrl	  	- https://lore.kernel.org/all/20250219-exynos7870-pinctrl-v2-0-1ff9b10bf913@disroot.org/
+>  * pmic-regulators	- https://lore.kernel.org/all/20250219-exynos7870-pmic-regulators-v2-0-1ea86fb332f7@disroot.org/
+>  * pmu-clocks		- https://lore.kernel.org/all/20250219-exynos7870-pmu-clocks-v3-0-0d1e415e9e3a@disroot.org/
+>  * uart			- https://lore.kernel.org/all/20250219-exynos7870-uart-v2-1-c8c67f3a936c@disroot.org/
+>  * usb			- https://lore.kernel.org/all/20250219-exynos7870-usb-v2-0-1de41a89c9d4@disroot.org/
+>  * usbphy		- https://lore.kernel.org/all/20250219-exynos7870-usbphy-v2-0-b8ba4e7a72e9@disroot.org/
 
-greg k-h
+These are not dependencies. Weirdly, you link related patches but you do
+not even mention the actual dependency.
+
+Best regards,
+Krzysztof
+
 
