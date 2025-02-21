@@ -1,255 +1,139 @@
-Return-Path: <linux-kernel+bounces-526481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B16F3A3FF3C
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 20:02:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97C5EA3FF40
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 20:02:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDDE170354D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 19:02:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D2E319C45FD
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 19:03:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF4CF2512D9;
-	Fri, 21 Feb 2025 19:02:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F11F225332D;
+	Fri, 21 Feb 2025 19:02:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="o8+qrWhj"
-Received: from mail-il1-f178.google.com (mail-il1-f178.google.com [209.85.166.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="kbAgZrHq"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B7901EE006
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 19:02:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED1F41FBCB9
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 19:02:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740164550; cv=none; b=Ah42JkrojyafAnDpFYENd2LP5gkfMBCdT4hgJgEzy3dGczq7sLaC1SX93i+/ShSEzYhSa46VsX5MDNZmkUGIYQTP+jH0f5wHZKfVkB52S4cky+iVanZ2wlEMNKC0XgXU9u6PPpEAmZyLbLRjs/HXoTf8v1pk0QyidouE2+80VR8=
+	t=1740164560; cv=none; b=WBzWLHSr0GvAhhcdD+MCDkLNWTCjUYrI/6FSQRvQ3Kufmw61BXR0WlGC9mtcVYfExogh/u3a6G1TelMizBRd1y1gQcavZJvojFmCMPtY7ikDDh5d9FaayTOkOhDUnSta6fRRn2nbkAx8sQsAwW5MHNaqFUCFe9ji8/LxfYGec2Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740164550; c=relaxed/simple;
-	bh=HEK5y9n2KP11fE+qUXmbDpD27D2rA/U8M3pbfa8CGoo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VlM1OfWQtovI5OMNgF/tXfIHGmMVPjHKFqbJaMdIbNv4fVRBJdjSYRCk93ln5qCwLBxkVRENX1/4Kq9tO+tOtfYxc6P65qYjEqSsb57zA8m5+87fQ6GupGIraqy153MRibQwcgh7koDYlPId0QUSjHGZIH5j+usxhlDwLB8oxtg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=o8+qrWhj; arc=none smtp.client-ip=209.85.166.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f178.google.com with SMTP id e9e14a558f8ab-3d18c325ee4so12725ab.1
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 11:02:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740164547; x=1740769347; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gkjSg8CHwO2BzGPet94fnsXPSCLN8E0p9xE46iyhzFk=;
-        b=o8+qrWhjXAPuJMiWUnXu/CDeeAVuHQu9ElXKXW9Nc2kZKZbppOeBlUgSBv5sB8Gjo7
-         cBYwIrmyv72rVARelkoiFvFszRMp4JwnS9g0NowFpMjDs49MPXOK/+Oqw5unLAQSGnAD
-         ne2yW/1TCGDtlLloR7XaEYblcnHa9rPFwtbgynrzrZG14WBiLlmtYJjZkwUBBncp5Rc/
-         7uFwhy7tNinvqUw9aelr7Exd9ARi8n8OghUNbbTcMT+M3lc8muWXdf6NMDeziGSZgrnA
-         6bKfotEp/L1rMbDDe5q++spLxesCYOc2Amsa3CIjsWykZfwRDLAEVkqz5u014acJN8zc
-         bbeg==
+	s=arc-20240116; t=1740164560; c=relaxed/simple;
+	bh=n/JZko0Q2c1fHbsl7vbB+LWtijblHysyQBHRB9ZsLNI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Pi/qHpG0iIn+ct0+ZclyULlz8eraZ9XcaXzIzQCZFbzOSNqh9rrmNQVIOqGutB2ZHp7J8K7t2MC60mjSuYbXaJHsduysDlOrFCGE7ZN+lTZuj9S+KV6A2XntfjSvY70jOHjBtnUQGxugfs0/jEJnMU3lIgiaBZvSMybqXdAR1dY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=kbAgZrHq; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51LCwBxA008504
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 19:02:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	jXUHcu9DayNto7ymR3uyNf54ZcDvUwEq950xuI/kfuc=; b=kbAgZrHqf61Y5OBt
+	p2whb+S7th8J5hQuMTTqz3E8PEJs2GLcG++37ZRGwZv0S8l+Lk5FB82u9aRMWshb
+	7EAtdQoOGsb8YsK0uTlhHUEHts9mNEknMXpWE9aCrmOTF2+/KeP+aCdpu3NQj6Mm
+	1Ao+DzREX3ksyJ0hkJ+ObyeUgJJnHNplLrv2pukeEn1mjfhQi2dPLXN53aALZCFF
+	v09MEHpJO3EBGu+5bSNZQOLWgAR0vcq8wTskNTYx/0TaLjciFVA5inPE4zAB18Lm
+	ij9cS0azaqTb1sHTw//BVBpQUqe5ytTScCUtunGS62GAU0+c/fhcs4RIb6IzH6zM
+	h1euRw==
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44vyy3k1df-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 19:02:37 +0000 (GMT)
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6e422f1ceadso4556026d6.0
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 11:02:37 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740164547; x=1740769347;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gkjSg8CHwO2BzGPet94fnsXPSCLN8E0p9xE46iyhzFk=;
-        b=OiTR8m7wLJJWTC33LP8Kg9eq0qd9R1zdMyUVJdYUTlu3q0BFL2CKuKPVRaxxc9Pmau
-         UsXIpj8sOuKEicUbdIVqyimAiXJzkLoe0c9m7ODiXHU1dd4lycXCQj/kcjDg2TMdy3OZ
-         owGDI990qSmuSdpghQ9oxxxLtd2AF/Q8nKPqAqLZvMMzA8r2Lmdst0pzshhUwkje6TY7
-         eddhsiV6ebxxI9eT3dHkXSk+kEU2d2TsvcOnlddxA6Z5ZGGLhxVTp9YQATGVkc/a+1x1
-         boT0pIe93IDolFKjBn9PvTa3V5OlyFmd02toFRRLIPVzVryhKLnAVQfMqSxLUuWsaVlQ
-         0Azg==
-X-Forwarded-Encrypted: i=1; AJvYcCV9QcJv1rLZ7pkM1CpNiXH2RYfUoBkzga9DhDKWIuna9tkZFmnL0/zF3vnza2wfzav82rztavUhqpoLK5Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwEwDuCE3GpvtLzIIPNzouOgR2dOjE7G38QAbhjdeTak4J9psX
-	8We9O21RN60qBnl+/klQoe+FI4tX0Ji5SXy7RLiMoJuNOV+785JKXi5eifCbREIa1SzOo1qBGlV
-	mRGDCGURc/1kf99q8nfFB5i85YgXuDzY3cA4n
-X-Gm-Gg: ASbGncuA/HS2AtjwNsCinKDb2KvahdXkK7hCMzW17QOvUSIMxYWv7RIalXqcJ/vA9GL
-	iRo9FACNOlj4VHfx8jf2SXqDR/tHGrzdYlZELo9kbcolNDKu6e4K6Lsj6AxH408BplcWzIXZr00
-	rhiTZJLOQ=
-X-Google-Smtp-Source: AGHT+IG+YQD8Ff1I4Iswviy17/gYOkHZnP9R8fQXLEM32G8qZxCJRmuB/wNKQA4NRcL1AKF02jcWBREMd9VWVodTEO0=
-X-Received: by 2002:a05:6e02:b25:b0:3d2:b23f:a1e0 with SMTP id
- e9e14a558f8ab-3d2d72ce284mr124055ab.16.1740164547400; Fri, 21 Feb 2025
- 11:02:27 -0800 (PST)
+        d=1e100.net; s=20230601; t=1740164556; x=1740769356;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jXUHcu9DayNto7ymR3uyNf54ZcDvUwEq950xuI/kfuc=;
+        b=R1AxeFaObb6QQCFgJHGgK2ADbGTUNdVmAT38zkN2zzq1mKCi9wIq/NaCWfVOufz/OX
+         2QU/9JCuge3/PDLXyhdnakenr8uPV+YooecdrCmHmd7oBSGJIjVZdOZfW6Qlt0R0KkGJ
+         rMIUdn9BDj0y46cvEJ5OyH5YSu7lwUzukmXCYyEiYhf7dYJPXSou4pdA7ZKhKRZ2bPUW
+         ND+LPNzVDbZCTXvG6xdslWShEcwz3+Kciy2gjrNSrMIT7xQbd+IeLmyeGPbE8AGb+C6X
+         Dmp+McZWKfK1aYtr8YPurN5x3IqZ3mN+R2V8Rfy3TU9T1+3y2qgHCQxFTU5VYzjDrYHK
+         ZKHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXb9zCHqLS0cS9muden5pg9SkQg1EnSTZqkDPqjVSui0bOrrL5m6asrc02PRNSqp97gZTdu+C2RqE7JveI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8nkoh0MaR0N2CkzG16aZzzyqoCkjgH9n9ol9Xbg0Sw/rECX6q
+	2/x3OIrY1Gmg8Oiz95RFMrfmja8Po+5K0N0W00J9sAEfX/pjbgs6X7qu87UtGgUyIxIWY/wL/Q2
+	0HOeEYrxdo1iVyf9YFy0hMccdW5RoceZ2j2954gOV/RcAKbgzVrRExzEXUzurtps=
+X-Gm-Gg: ASbGncvSRgUleKyTVMMDbIY7NpvZ/XZsIy+CZQoJgh0+aAsjjgLQobyglVySxXawNRu
+	oYRJe+7+Nil8KS3KwcyG34U3yq1upSo6rAYDI1o/wNtPlmbjEOhbFCzJwfja0xRwWEcY3B88dnq
+	4oVl4GVNrqJa/hy+Q5RWuQRXjFSxz8tkuS5JWNlKjesMjiwIstny7eBGa+YZoEUBjw52vB9Aafo
+	YuZ47CCLV4smc1dIlOhIycOJiWeEE8tZOeOy8G/YvXm8OToVxImNf3Ri8X4EuNN1yuPaNPxwGuA
+	pVoJQia3vPAGE2EVvMDx33L4P8c9YsGjQbxDltOMT6RgFgMm7X6pXgtD2BaCflBK4Ftj/g==
+X-Received: by 2002:a05:6214:2029:b0:6d8:a091:4f52 with SMTP id 6a1803df08f44-6e6ae9b0dcfmr20623116d6.7.1740164556638;
+        Fri, 21 Feb 2025 11:02:36 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IE5qRbDSww0JEuLalVZlTMKrNMzC0dySW7mKPi0WVxin9L8+a5WmP+vAvs+2tMupIZ5hkHWFg==
+X-Received: by 2002:a05:6214:2029:b0:6d8:a091:4f52 with SMTP id 6a1803df08f44-6e6ae9b0dcfmr20622856d6.7.1740164556271;
+        Fri, 21 Feb 2025 11:02:36 -0800 (PST)
+Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aba53281cfcsm1696084266b.79.2025.02.21.11.02.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 Feb 2025 11:02:35 -0800 (PST)
+Message-ID: <2056de62-6b71-40e2-9e3b-077a8b54c77e@oss.qualcomm.com>
+Date: Fri, 21 Feb 2025 20:02:33 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250221163352.3818347-1-yosry.ahmed@linux.dev>
- <20250221163352.3818347-4-yosry.ahmed@linux.dev> <CALMp9eSPVDYC7v4Rm13ZUcE4wWPb8dUfm=qBx_jETAQEQrt4_w@mail.gmail.com>
- <Z7jISUVBeAbw8zt6@google.com>
-In-Reply-To: <Z7jISUVBeAbw8zt6@google.com>
-From: Jim Mattson <jmattson@google.com>
-Date: Fri, 21 Feb 2025 11:02:16 -0800
-X-Gm-Features: AWEUYZkl1gRszTfN_btT3ay8IzV9cqEHInmNj-CuLmifQ8lA5-JtTnkIexLq_-0
-Message-ID: <CALMp9eQmsFd1QyCPOsPXBnkUdGmsW-ZBW5CoDR4pmSwF7ic0XA@mail.gmail.com>
-Subject: Re: [PATCH 3/3] KVM: x86: Generalize IBRS virtualization on emulated VM-exit
-To: Yosry Ahmed <yosry.ahmed@linux.dev>
-Cc: x86@kernel.org, Sean Christopherson <seanjc@google.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, 
-	Paolo Bonzini <pbonzini@redhat.com>, "Kaplan, David" <David.Kaplan@amd.com>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND v5 2/4] arm64: dts: qcom: x1e80100-crd: Enable
+ external DisplayPort support
+To: Abel Vesa <abel.vesa@linaro.org>, Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: Johan Hovold <johan@kernel.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Rajendra Nayak <quic_rjendra@quicinc.com>,
+        Sibi Sankar <quic_sibis@quicinc.com>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Trilok Soni <quic_tsoni@quicinc.com>, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250220-x1e80100-dts-crd-t14s-enable-typec-retimers-v5-0-380a3e0e7edc@linaro.org>
+ <20250220-x1e80100-dts-crd-t14s-enable-typec-retimers-v5-2-380a3e0e7edc@linaro.org>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250220-x1e80100-dts-crd-t14s-enable-typec-retimers-v5-2-380a3e0e7edc@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: 4rP8P_99U3nuTsZ9FwUaI5pD9hjq05sx
+X-Proofpoint-GUID: 4rP8P_99U3nuTsZ9FwUaI5pD9hjq05sx
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-21_07,2025-02-20_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 clxscore=1015
+ phishscore=0 adultscore=0 lowpriorityscore=0 bulkscore=0 impostorscore=0
+ priorityscore=1501 malwarescore=0 spamscore=0 mlxlogscore=724 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
+ definitions=main-2502210131
 
-On Fri, Feb 21, 2025 at 10:39=E2=80=AFAM Yosry Ahmed <yosry.ahmed@linux.dev=
-> wrote:
->
-> On Fri, Feb 21, 2025 at 09:59:04AM -0800, Jim Mattson wrote:
-> > On Fri, Feb 21, 2025 at 8:34=E2=80=AFAM Yosry Ahmed <yosry.ahmed@linux.=
-dev> wrote:
-> > >
-> > > Commit 2e7eab81425a ("KVM: VMX: Execute IBPB on emulated VM-exit when
-> > > guest has IBRS") added an IBPB in the emulated VM-exit path on Intel =
-to
-> > > properly virtualize IBRS by providing separate predictor modes for L1
-> > > and L2.
-> > >
-> > > AMD requires similar handling, except when IbrsSameMode is enumerated=
- by
-> > > the host CPU (which is the case on most/all AMD CPUs). With
-> > > IbrsSameMode, hardware IBRS is sufficient and no extra handling is
-> > > needed from KVM.
-> > >
-> > > Generalize the handling in nested_vmx_vmexit() by moving it into a
-> > > generic function, add the AMD handling, and use it in
-> > > nested_svm_vmexit() too. The main reason for using a generic function=
- is
-> > > to have a single place to park the huge comment about virtualizing IB=
-RS.
-> > >
-> > > Signed-off-by: Yosry Ahmed <yosry.ahmed@linux.dev>
-> > > ---
-> > >  arch/x86/kvm/svm/nested.c |  2 ++
-> > >  arch/x86/kvm/vmx/nested.c | 11 +----------
-> > >  arch/x86/kvm/x86.h        | 18 ++++++++++++++++++
-> > >  3 files changed, 21 insertions(+), 10 deletions(-)
-> > >
-> > > diff --git a/arch/x86/kvm/svm/nested.c b/arch/x86/kvm/svm/nested.c
-> > > index d77b094d9a4d6..61b73ff30807e 100644
-> > > --- a/arch/x86/kvm/svm/nested.c
-> > > +++ b/arch/x86/kvm/svm/nested.c
-> > > @@ -1041,6 +1041,8 @@ int nested_svm_vmexit(struct vcpu_svm *svm)
-> > >
-> > >         nested_svm_copy_common_state(svm->nested.vmcb02.ptr, svm->vmc=
-b01.ptr);
-> > >
-> > > +       kvm_nested_vmexit_handle_spec_ctrl(vcpu);
-> > > +
-> > >         svm_switch_vmcb(svm, &svm->vmcb01);
-> > >
-> > >         /*
-> > > diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
-> > > index 8a7af02d466e9..453d52a6e836a 100644
-> > > --- a/arch/x86/kvm/vmx/nested.c
-> > > +++ b/arch/x86/kvm/vmx/nested.c
-> > > @@ -5018,16 +5018,7 @@ void nested_vmx_vmexit(struct kvm_vcpu *vcpu, =
-u32 vm_exit_reason,
-> > >
-> > >         vmx_switch_vmcs(vcpu, &vmx->vmcs01);
-> > >
-> > > -       /*
-> > > -        * If IBRS is advertised to the vCPU, KVM must flush the indi=
-rect
-> > > -        * branch predictors when transitioning from L2 to L1, as L1 =
-expects
-> > > -        * hardware (KVM in this case) to provide separate predictor =
-modes.
-> > > -        * Bare metal isolates VMX root (host) from VMX non-root (gue=
-st), but
-> > > -        * doesn't isolate different VMCSs, i.e. in this case, doesn'=
-t provide
-> > > -        * separate modes for L2 vs L1.
-> > > -        */
-> > > -       if (guest_cpu_cap_has(vcpu, X86_FEATURE_SPEC_CTRL))
-> > > -               indirect_branch_prediction_barrier();
-> > > +       kvm_nested_vmexit_handle_spec_ctrl(vcpu);
-> > >
-> > >         /* Update any VMCS fields that might have changed while L2 ra=
-n */
-> > >         vmcs_write32(VM_EXIT_MSR_LOAD_COUNT, vmx->msr_autoload.host.n=
-r);
-> > > diff --git a/arch/x86/kvm/x86.h b/arch/x86/kvm/x86.h
-> > > index 7a87c5fc57f1b..008c8d381c253 100644
-> > > --- a/arch/x86/kvm/x86.h
-> > > +++ b/arch/x86/kvm/x86.h
-> > > @@ -116,6 +116,24 @@ static inline void kvm_leave_nested(struct kvm_v=
-cpu *vcpu)
-> > >         kvm_x86_ops.nested_ops->leave_nested(vcpu);
-> > >  }
-> > >
-> > > +/*
-> > > + * If IBRS is advertised to the vCPU, KVM must flush the indirect br=
-anch
-> > > + * predictors when transitioning from L2 to L1, as L1 expects hardwa=
-re (KVM in
-> > > + * this case) to provide separate predictor modes.  Bare metal isola=
-tes the host
-> > > + * from the guest, but doesn't isolate different guests from one ano=
-ther (in
-> > > + * this case L1 and L2). The exception is if bare metal supports sam=
-e mode IBRS,
-> > > + * which offers protection within the same mode, and hence protects =
-L1 from L2.
-> > > + */
-> > > +static inline void kvm_nested_vmexit_handle_spec_ctrl(struct kvm_vcp=
-u *vcpu)
-> >
-> > Maybe just kvm_nested_vmexit_handle_ibrs?
->
-> I was trying to use a generic name to accomodate any future handling
-> needed for non-IBRS speculation control virtualization. But I could just
-> be overthinking. Happy to take whatever name is agreed upon in during
-> reviews.
->
-> >
-> > > +{
-> > > +       if (cpu_feature_enabled(X86_FEATURE_AMD_IBRS_SAME_MODE))
-> > > +               return;
-> > > +
-> > > +       if (guest_cpu_cap_has(vcpu, X86_FEATURE_SPEC_CTRL) ||
-> > > +           guest_cpu_cap_has(vcpu, X86_FEATURE_AMD_IBRS))
-> >
-> > This is a bit conservative, but I don't think there's any ROI in being
-> > more pedantic.
->
-> Could you elaborate on this?
->
-> Is this about doing the IBPB even if L1 does not actually execute an
-> IBRS? I thought about this for a bit, but otherwise we'd have to
-> intercept the MSR write IIUC, and I am not sure if that's better. Also,
-> that's what we are already doing so I just kept it as-is.
->
-> Or maybe about whether we need this on AMD only with AUTOIBRS? The APM
-> is a bit unclear to me in this regard, but I believe may be needed even
-> for 'normal' IBRS.
+On 20.02.2025 6:42 PM, Abel Vesa wrote:
+> The X Elite CRD provides external DisplayPort on all 3 USB Type-C ports.
+> Each one of this ports is connected to a dedicated DisplayPort
+> controller.
+> 
+> Due to support missing in the USB/DisplayPort combo PHY driver,
+> the external DisplayPort is limited to 2 lanes.
+> 
+> So enable all 3 remaining DisplayPort controllers and limit their data
+> lanes number to 2.
+> 
+> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> ---
 
-If IA32_SPEC_CTRL.IBRS is clear at emulated VM-exit, then this IBPB is
-unnecessary.
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-However, since the host (L1) is running in a de-privileged prediction
-domain, simply setting IA32_SPEC_CTRL.IBRS in the future won't protect
-it from the guest (L2) that just exited. If we don't eagerly perform
-an IBPB now, then L0 would have to intercept WRMSR(IA32_SPEC_CTRL)
-from L1 so that we can issue an IBPB in the future, if L1 ever sets
-IA32_SPEC_CTRL.IBRS.
-
-Eagerly performing an IBPB now seems like the better option.
-
-> >
-> > For the series,
-> >
-> > Reviewed-by: Jim Mattson <jmattson@google.com>
->
-> Thanks!
->
-> >
-> > > +               indirect_branch_prediction_barrier();
-> > > +}
-> > > +
-> > >  static inline bool kvm_vcpu_has_run(struct kvm_vcpu *vcpu)
-> > >  {
-> > >         return vcpu->arch.last_vmentry_cpu !=3D -1;
-> > > --
-> > > 2.48.1.601.g30ceb7b040-goog
-> > >
+Konrad
 
