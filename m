@@ -1,58 +1,49 @@
-Return-Path: <linux-kernel+bounces-526788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2030A4034D
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 00:09:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B72E1A40350
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 00:10:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 204F117FC6A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 23:08:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0170619E16B4
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 23:10:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21BCA2046BC;
-	Fri, 21 Feb 2025 23:08:40 +0000 (UTC)
-Received: from smtp134-24.sina.com.cn (smtp134-24.sina.com.cn [180.149.134.24])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDF092063D3;
+	Fri, 21 Feb 2025 23:10:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iof8DAg2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C89E61FBC99
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 23:08:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.149.134.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F79C204C0E;
+	Fri, 21 Feb 2025 23:10:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740179319; cv=none; b=jvELeyGMq8QdwkHS4SvIdujIy4YONzgdeYJEIIzTj+/RWAgzLWXlGP9J4W9wLu5rpBUOiNLG6Rpolz+8UCtUBxKSsk3Jmfn5ZPbmzwLzuitHIggZmo0x+TkrxMk+QVP3uCC7AuZSM00vxd0npMZWEIp+wmbuWJqJu+3V7Ib3XzE=
+	t=1740179401; cv=none; b=PWkQzG9MFEW1AssZnoI69X3LduireLVQPXIGTqv3i7eglQe8K8K9E7DGVuJ+fmZiMl42LCrnjMuzFC+0pxGe+Xek1whDIsjVRWmjGW6z/QSYGxgfq3dOSJDcGPoLyJ17br6RsumNfRe+KuQblQVG2b8fz7pgyUgbyKykUJv5REw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740179319; c=relaxed/simple;
-	bh=R45gWwhNNGH28IOsfoXh9loPvAHM4lZdxFBUFS0Ug8Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HM4jjOUDBDeiWzCO8pCp/W/lSpJn+OlOB9NCfa4cP/osa/i6KSqkYFuP12j9ru+IcO+cWqkNGzJiFs6qSV7rLO8heLlPRpYps0Z9Au7Bj/cJULXHFtT7/VDC+7AV1oWelPyqK4a4LnTFRA/QfZSAKt5qGr7Y++hcT7IczXwuxTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=180.149.134.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([113.88.49.91])
-	by sina.com (10.185.250.21) with ESMTP
-	id 67B906DA000026ED; Fri, 22 Feb 2025 07:06:05 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 3853573408174
-X-SMAIL-UIID: B5E55EA2F9DB48D19D298CF85EEC3CF1-20250222-070605-1
-From: Hillf Danton <hdanton@sina.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Matthew Wilcox <willy@infradead.org>,
-	Byungchul Park <byungchul@sk.com>,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	kernel_team@skhynix.com,
-	conduct@kernel.org
-Subject: Re: [RFC PATCH v12 00/26] LUF(Lazy Unmap Flush) reducing tlb numbers over 90%
-Date: Sat, 22 Feb 2025 07:05:26 +0800
-Message-ID: <20250221230556.2479-1-hdanton@sina.com>
-In-Reply-To: <20250220184412.22c2c7fb@gandalf.local.home>
-References: <20250220052027.58847-1-byungchul@sk.com> <20250220103223.2360-1-hdanton@sina.com> <20250220114920.2383-1-hdanton@sina.com> <Z7c0BTteQoZKcSmJ@casper.infradead.org> <20250220232503.2416-1-hdanton@sina.com>
+	s=arc-20240116; t=1740179401; c=relaxed/simple;
+	bh=iyuxnVnQuTrsFsc4O1vreET7eNP3Ti4uW2MASu5/uBA=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=OKzAYjD7cEfeUinm2JbFt3fqyjgSZ1LvY9uisAtTslVDw+/gsZSHD5MC5PHITj6gxNi+fFfM950RKEeKwXM+eOHoktVgdZ26dIytL+6zDVhKcbfrJDZxQJe/X8eJeFO1WgToKhQ2j90lCy+tpoztUoU5G5pstb7dSpVshmgUAEw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iof8DAg2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B99D9C4CEE4;
+	Fri, 21 Feb 2025 23:10:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740179400;
+	bh=iyuxnVnQuTrsFsc4O1vreET7eNP3Ti4uW2MASu5/uBA=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=iof8DAg2CtvyT75sTZTtDIwImyHTetW5e3Z+W4u4TEKFOwHUIYo3+smnE8eyyEij4
+	 86JavVnifYd3aGrS8+obehtw1YtTIYvqIDOm0UbtAwlojEmt8j7/LhEwsFusWtTvWO
+	 dyJcu8RzQfQCg+/qwXBJHpUoGQKzWkU1qgQg5T8Z21eh+t26+ugMijCPSOUNNt6BLf
+	 01eh9iZvq+cX2et40zkn44HcRVGj37b+dHLL8n46tS77H/UH7PLOFPBsPY335ki9GY
+	 XzjhHOGedD1PSalKVuKbkekA91P4cnTJtBALZeWlumjaHeE44rnDrNIRsJgpK62JV4
+	 kFB6tAZIOD94A==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAF38380CEEC;
+	Fri, 21 Feb 2025 23:10:32 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,20 +51,50 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net 0/5] rxrpc, afs: Miscellaneous fixes
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <174017943176.2232673.6967417998548585164.git-patchwork-notify@kernel.org>
+Date: Fri, 21 Feb 2025 23:10:31 +0000
+References: <20250218192250.296870-1-dhowells@redhat.com>
+In-Reply-To: <20250218192250.296870-1-dhowells@redhat.com>
+To: David Howells <dhowells@redhat.com>
+Cc: netdev@vger.kernel.org, marc.dionne@auristor.com, kuba@kernel.org,
+ davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
+ linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org
 
-On Thu, 20 Feb 2025 18:44:12 -0500 Steven Rostedt <rostedt@goodmis.org>
-> On Fri, 21 Feb 2025 07:25:02 +0800 Hillf Danton <hdanton@sina.com> wrote:
-> > > I'll tell you what would happen in my home town. If someone said
-> > > that to a co-worker, they would likely be terminated.
-> > >   
-> > Interesting, I want to know if the three words, rape, pregnancy and WTK,
-> > could be used before judge in your hometown court by anyone like your lawyer.
+Hello:
+
+This series was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Tue, 18 Feb 2025 19:22:43 +0000 you wrote:
+> Here are some miscellaneous fixes for rxrpc and afs:
 > 
-> This isn't a court. And there's no reason to use the word "rape" in a
-> technical conversation on the Linux kernel mailing list. Perhaps a person
-> reading this was a victim of rape. How do you think that would make them
-> feel? Welcomed to our community? Absolutely not. Which is why it's totally
-> unacceptable.
+>  (1) In the rxperf test server, make it correctly receive and decode the
+>      terminal magic cookie.
 > 
-There are NAK victims. Did you nak more than twice a week, Steve?
+>  (2) In rxrpc, get rid of the peer->mtu_lock as it is not only redundant,
+>      it now causes a lockdep complaint.
+> 
+> [...]
+
+Here is the summary with links:
+  - [net,1/5] rxrpc: rxperf: Fix missing decoding of terminal magic cookie
+    https://git.kernel.org/netdev/net/c/c34d999ca314
+  - [net,2/5] rxrpc: peer->mtu_lock is redundant
+    https://git.kernel.org/netdev/net/c/833fefa07444
+  - [net,3/5] rxrpc: Fix locking issues with the peer record hash
+    https://git.kernel.org/netdev/net/c/71f5409176f4
+  - [net,4/5] afs: Fix the server_list to unuse a displaced server rather than putting it
+    https://git.kernel.org/netdev/net/c/add117e48df4
+  - [net,5/5] afs: Give an afs_server object a ref on the afs_cell object it points to
+    https://git.kernel.org/netdev/net/c/1f0fc3374f33
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
