@@ -1,203 +1,125 @@
-Return-Path: <linux-kernel+bounces-525885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 154A3A3F6D3
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 15:06:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01EFCA3F6D8
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 15:09:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3CF7B17A906
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 14:06:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 171AE17A8A1
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 14:09:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB17F20E306;
-	Fri, 21 Feb 2025 14:06:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 249D420E330;
+	Fri, 21 Feb 2025 14:09:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="N+PJdOK4"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ocWp/JfW"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29422204C02
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 14:06:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE33E1BCA07
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 14:09:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740146794; cv=none; b=skJZSq/GUzez93Lf565xKHFjD5rXKJYLxODwCsHN4nS16SwFIMBR4SpfIgUo1N+yogLOx7i6DxZopn3YXjHsTNA4BLv0kie246lLebbv/7VijGqYccWKhpKDj+jD/uTPyVJ4jK3nJL8wmnWIFzSTmNH/DWxWK/52FfLCS2b3DUE=
+	t=1740146955; cv=none; b=MaDN9ZM47leRpfCfq5HN5YMYZwnYt9JqRJHeXuJD0ieSBF9R1BBSETi1lWzFcrPdBa8S7ynFxSTv2nadD0j6aorwzA9jyuOCjEOtuRQaVMlJyg5LgICgStzSShRZnBpmRWHrDgh1YbrzWDwQrg94CpHptkNNhtomYzxK4GO79Go=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740146794; c=relaxed/simple;
-	bh=06zt2yTCgUVRnCNAH2gy9snLz5lH0+MrkvZtNorMWME=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VTvkxHQaheKXA0sqA3ukBx3fg/FcPQz7l31Ipsbe5GqSSIWRhdfax2rRsLSmHG6vYjIPnXdQnqfksj30dud1RqwVTvSAZ3OsMJ+7zfK0L4DcW0R2077rfSP2jmOI8GO01WazKHpVKqVOVrOUHVLmjIgQg0Tn+e8axd0xlhyj1RI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=N+PJdOK4; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740146790;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=N/WVTMk5sPbrkFn3eQqn/4M5eUkn1LSkRkxKyl2xeEY=;
-	b=N+PJdOK4wfPi3Nyn4Loc7PLIRlZWZ8z6FlbxVZsWfUl7+yGDsqwx6KyuU6JGLpKJQsldzH
-	Je7XjYboWEZpFabE/iD/7QBVcRc6P0x5kteZMKUxnyf+Cx1WxyWfyYPji7tU7XUZOrymvf
-	OP4IR/BicT9faiMc8Fs8ewV04qypzSw=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-690-K0RLaw5sOkmUOedGKPY0nQ-1; Fri,
- 21 Feb 2025 09:06:27 -0500
-X-MC-Unique: K0RLaw5sOkmUOedGKPY0nQ-1
-X-Mimecast-MFC-AGG-ID: K0RLaw5sOkmUOedGKPY0nQ_1740146780
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0952C19373D9;
-	Fri, 21 Feb 2025 14:06:20 +0000 (UTC)
-Received: from [192.168.37.1] (unknown [10.22.74.11])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E3BC61800945;
-	Fri, 21 Feb 2025 14:06:15 +0000 (UTC)
-From: Benjamin Coddington <bcodding@redhat.com>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Chuck Lever <chuck.lever@oracle.com>,
- Li Lingfeng <lilingfeng3@huawei.com>, neilb@suse.de, okorniev@redhat.com,
- Dai.Ngo@oracle.com, tom@talpey.com, linux-nfs@vger.kernel.org,
- linux-kernel@vger.kernel.org, yukuai1@huaweicloud.com, houtao1@huawei.com,
- yi.zhang@huawei.com, yangerkun@huawei.com, lilingfeng@huaweicloud.com
-Subject: Re: [PATCH] nfsd: decrease cl_cb_inflight if fail to queue cb_work
-Date: Fri, 21 Feb 2025 09:06:13 -0500
-Message-ID: <C9BBD33C-0077-44B0-BCE9-7E4962428382@redhat.com>
-In-Reply-To: <8afc09d0728c4b71397d6b055dc86ab12310c297.camel@kernel.org>
-References: <20250218135423.1487309-1-lilingfeng3@huawei.com>
- <0ae8a05272c2eb8a503102788341e1d9c49109dd.camel@kernel.org>
- <04ed0c70b85a1e8b66c25b9ad4d0aa4c2fb91198.camel@kernel.org>
- <9cea3133-d17c-48c5-8eb9-265fbfc5708b@oracle.com>
- <8afc09d0728c4b71397d6b055dc86ab12310c297.camel@kernel.org>
+	s=arc-20240116; t=1740146955; c=relaxed/simple;
+	bh=35Z1H1MxhW5IbndFquA1CYbsZgLoVdLkqwioV4p/xsM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=OpZWXaiOaEs5Ui/+KjIRcQ2xravST+DdlZcjH+gcGOTch7x2saOz7yaUUBQbKQfsQRVfMqNB/lSUIutPUt9tnjOR3Gv8U/+SL5kjVmyC9JuYPuBRZ6A8JoLp3XwwBbAGtVUeHTs0ujdLm9AJBFPsYETeSeyJKJDXv1e9S5NY/oI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ocWp/JfW; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5e050b1491eso5680043a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 06:09:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740146952; x=1740751752; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=tZAgktSZZMLiPp9SM2R7Kz9OEAafAnD4jJNlBBN52gA=;
+        b=ocWp/JfWQQn9PphliLFDdm139NQPpinayyZxY0XkVOYaDpukuo3HhN4mNQgfi8cK1F
+         GV6X/GJcKfKto97xIy8zwJv4xGnwtT6alzlaVE28DqonsiWsk9VRM/d4j4HKiDiKe+EC
+         0RFSo+/JEuZWe+MLX/zHeM6MXNx7kYe8G4rFkymblBnjwwPGtaf76nZdsiqPVnSYs9nk
+         HBJxT979Z+rTTEeaxgg6YIxVtZcZ+haG+IK9H8THIdidNikSThQoyT/pW6RGs5Dxbpsx
+         0sVBqt+ZiGGd8XmpPwVFZzApsITrqXku7yOL8xEn4HkqS+TU106b9xPeNKkoa4MSqf6B
+         ML5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740146952; x=1740751752;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tZAgktSZZMLiPp9SM2R7Kz9OEAafAnD4jJNlBBN52gA=;
+        b=SJlnQ+kBNjDpRMuCVNMQF+OV2JkBIs+XdiQKSZ6Xtq93cTMjFUGhuhhd6ixUeZLAJD
+         2LjNnZW2WBZiozvyjworIHGa5CQnNFLgsKUIZ1gjHp+RDnOG5nbKeoLUvrH+nSbw3nUQ
+         HMDn/P+Y99eRemGfW6lkCcQHCUfGeBf8dnLzbf5NOECbnqcgdmVTTv/9sqMQLIEQDIGD
+         OpPwun3iUh5O+dZ8wdNIxU2jQ0m3pJ5qg/9upwY6n9VBEDVGIJLuMmFplTKNIfoEDooV
+         IpEOKQkteCq3uVwPitubkOR+2tTTWw9Kz337We329nWs6AyLC79LwV5CdvDawum/OlPb
+         PS8A==
+X-Forwarded-Encrypted: i=1; AJvYcCX4CSqE/KRc+flU55eUxz1ggOQo4scmzNd54RZ8oh0uqxBpQhwGTXZytdv4jDitWqvW5wLpDP4VHzxCWpo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIq0uQGkUE3FRfLILmiQbFsQV2P9x7UboMd+lOzImovFxmV7EH
+	GKbd3PHUKMHg+D2an7y80EDzfS91w56r/hv8WeYLA3xI3+Xya4uM9z8sxaP/3hH46ePSYo6UwAH
+	6
+X-Gm-Gg: ASbGncuLltJeBuyjSdf6Hxg6IBFmMY7w/Zq1mYO4XVbuCPvSxvVgRvA/JFoU75QONhE
+	fXaD/tTE9y8d/NzsOHzc7vETBw+F+Kqu1Stuem/QtDkGiRhB0Oy7IshQTb2rI17X1h9CTnqBCRu
+	Jnx5ZVwPf9sIQNX0TBtoN2dy1bsv79NzZeUgmCxCpRfvthvGjCcHGH3fM39nJIa7QHdfbAR680t
+	jX9PjjIVlhH+dc3g36dMqP3nPziO1MX+uB9G9s+kSFYJQWL7suKMxeiTcUCoGhT0NMaX3AbCN9I
+	uKkhaO518JN1cV6Acfx69GmFXzeb4SQ=
+X-Google-Smtp-Source: AGHT+IFu4aNr9Q8vqGT14g6lIi6T5RIzEuhOS18uu9cyvoWpY3r5Cm7kMhRzVURCA/Yj1ZFehwN9pA==
+X-Received: by 2002:a05:6402:13c9:b0:5e0:7df0:6623 with SMTP id 4fb4d7f45d1cf-5e0a1240ec9mr6649040a12.6.1740146951950;
+        Fri, 21 Feb 2025 06:09:11 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id 4fb4d7f45d1cf-5dece1d3472sm13672546a12.34.2025.02.21.06.09.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Feb 2025 06:09:11 -0800 (PST)
+Date: Fri, 21 Feb 2025 17:09:06 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: oe-kbuild@lists.linux.dev, Frederic Weisbecker <frederic@kernel.org>
+Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: kernel/sched/ext.c:5356 scx_create_rt_helper() warn: 'helper' is an
+ error pointer or valid
+Message-ID: <a4f5658c-9ab3-4547-a6a0-7832f539aa64@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 18 Feb 2025, at 9:40, Jeff Layton wrote:
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   334426094588f8179fe175a09ecc887ff0c75758
+commit: 41f70d8e16349c65abdc0dd88a7d0ab94e5ce639 kthread: Unify kthread_create_on_cpu() and kthread_create_worker_on_cpu() automatic format
+config: powerpc-randconfig-r073-20250221 (https://download.01.org/0day-ci/archive/20250221/202502211941.Z5Lgg2UR-lkp@intel.com/config)
+compiler: powerpc-linux-gcc (GCC) 14.2.0
 
-> On Tue, 2025-02-18 at 09:31 -0500, Chuck Lever wrote:
->> On 2/18/25 9:29 AM, Jeff Layton wrote:
->>> On Tue, 2025-02-18 at 08:58 -0500, Jeff Layton wrote:
->>>> On Tue, 2025-02-18 at 21:54 +0800, Li Lingfeng wrote:
->>>>> In nfsd4_run_cb, cl_cb_inflight is increased before attempting to q=
-ueue
->>>>> cb_work to callback_wq. This count can be decreased in three situat=
-ions:
->>>>> 1) If queuing fails in nfsd4_run_cb, the count will be decremented
->>>>> accordingly.
->>>>> 2) After cb_work is running, the count is decreased in the exceptio=
-n
->>>>> branch of nfsd4_run_cb_work via nfsd41_destroy_cb.
->>>>> 3) The count is decreased in the release callback of rpc_task =E2=80=
-=94 either
->>>>> directly calling nfsd41_cb_inflight_end in nfsd4_cb_probe_release, =
-or
->>>>> calling nfsd41_destroy_cb in 	.
->>>>>
->>>>> However, in nfsd4_cb_release, if the current cb_work needs to resta=
-rt, the
->>>>> count will not be decreased, with the expectation that it will be r=
-educed
->>>>> once cb_work is running.
->>>>> If queuing fails here, then the count will leak, ultimately causing=
- the
->>>>> nfsd service to be unable to exit as shown below:
->>>>> [root@nfs_test2 ~]# cat /proc/2271/stack
->>>>> [<0>] nfsd4_shutdown_callback+0x22b/0x290
->>>>> [<0>] __destroy_client+0x3cd/0x5c0
->>>>> [<0>] nfs4_state_destroy_net+0xd2/0x330
->>>>> [<0>] nfs4_state_shutdown_net+0x2ad/0x410
->>>>> [<0>] nfsd_shutdown_net+0xb7/0x250
->>>>> [<0>] nfsd_last_thread+0x15f/0x2a0
->>>>> [<0>] nfsd_svc+0x388/0x3f0
->>>>> [<0>] write_threads+0x17e/0x2b0
->>>>> [<0>] nfsctl_transaction_write+0x91/0xf0
->>>>> [<0>] vfs_write+0x1c4/0x750
->>>>> [<0>] ksys_write+0xcb/0x170
->>>>> [<0>] do_syscall_64+0x70/0x120
->>>>> [<0>] entry_SYSCALL_64_after_hwframe+0x78/0xe2
->>>>> [root@nfs_test2 ~]#
->>>>>
->>>>> Fix this by decreasing cl_cb_inflight if the restart fails.
->>>>>
->>>>> Fixes: cba5f62b1830 ("nfsd: fix callback restarts")
->>>>> Signed-off-by: Li Lingfeng <lilingfeng3@huawei.com>
->>>>> ---
->>>>>  fs/nfsd/nfs4callback.c | 10 +++++++---
->>>>>  1 file changed, 7 insertions(+), 3 deletions(-)
->>>>>
->>>>> diff --git a/fs/nfsd/nfs4callback.c b/fs/nfsd/nfs4callback.c
->>>>> index 484077200c5d..8a7d24efdd08 100644
->>>>> --- a/fs/nfsd/nfs4callback.c
->>>>> +++ b/fs/nfsd/nfs4callback.c
->>>>> @@ -1459,12 +1459,16 @@ static void nfsd4_cb_done(struct rpc_task *=
-task, void *calldata)
->>>>>  static void nfsd4_cb_release(void *calldata)
->>>>>  {
->>>>>  	struct nfsd4_callback *cb =3D calldata;
->>>>> +	struct nfs4_client *clp =3D cb->cb_clp;
->>>>> +	int queued;
->>>>>
->>>>>  	trace_nfsd_cb_rpc_release(cb->cb_clp);
->>>>>
->>>>> -	if (cb->cb_need_restart)
->>>>> -		nfsd4_queue_cb(cb);
->>>>> -	else
->>>>> +	if (cb->cb_need_restart) {
->>>>> +		queued =3D nfsd4_queue_cb(cb);
->>>>> +		if (!queued)
->>>>> +			nfsd41_cb_inflight_end(clp);
->>>>> +	} else
->>>>>  		nfsd41_destroy_cb(cb);
->>>>>
->>>>>  }
->>>>
->>>> Good catch!
->>>>
->>>> Reviewed-by: Jeff Layton <jlayton@kernel.org>
->>>>
->>>
->>> Actually, I think this is not quite right. It's a bit more subtle tha=
-n
->>> it first appears. The problem of course is that the callback workqueu=
-e
->>> jobs run in a different task than the RPC workqueue jobs, so they can=
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+| Closes: https://lore.kernel.org/r/202502211941.Z5Lgg2UR-lkp@intel.com/
 
->>> race.
->>>
->>> cl_cb_inflight gets bumped when the callback is first queued, and onl=
-y
->>> gets released in nfsd41_destroy_cb(). If it fails to be queued, it's
->>> because something else has queued the workqueue job in the meantime.
->>>
->>> There are two places that can occur: nfsd4_cb_release() and
->>> nfsd4_run_cb(). Since this is occurring in nfsd4_cb_release(), the on=
-ly
->>> other option is that something raced in and queued it via
->>> nfsd4_run_cb().
->>
->> What would be the "something" that raced in?
->>
->
-> I think we may be able to get there via multiple __break_lease() calls
-> on the same layout or delegation. That could mean multiple calls to the=
+smatch warnings:
+kernel/sched/ext.c:5356 scx_create_rt_helper() warn: 'helper' is an error pointer or valid
+kernel/sched/ext.c:5357 scx_create_rt_helper() error: 'helper' dereferencing possible ERR_PTR()
 
-> ->lm_break operation on the same object.
+vim +/helper +5356 kernel/sched/ext.c
 
-Sorry for the late response, but isn't ->lm_break() already serialized in=
+f0e1a0643a59bf Tejun Heo 2024-06-18  5351  static struct kthread_worker *scx_create_rt_helper(const char *name)
+f0e1a0643a59bf Tejun Heo 2024-06-18  5352  {
+f0e1a0643a59bf Tejun Heo 2024-06-18  5353  	struct kthread_worker *helper;
+f0e1a0643a59bf Tejun Heo 2024-06-18  5354  
+f0e1a0643a59bf Tejun Heo 2024-06-18  5355  	helper = kthread_create_worker(0, name);
+f0e1a0643a59bf Tejun Heo 2024-06-18 @5356  	if (helper)
 
-__break_lease for the same file_lease?  We don't call lm_break(fl) if
-lease_breaking(fl).
+if (!IS_ERR(helper))
 
-Ben
+f0e1a0643a59bf Tejun Heo 2024-06-18 @5357  		sched_set_fifo(helper->task);
+f0e1a0643a59bf Tejun Heo 2024-06-18  5358  	return helper;
+f0e1a0643a59bf Tejun Heo 2024-06-18  5359  }
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
 
