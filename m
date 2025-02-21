@@ -1,161 +1,131 @@
-Return-Path: <linux-kernel+bounces-525193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC568A3EC3C
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 06:36:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4340A3EC3F
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 06:39:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34424421324
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 05:36:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3BF51700225
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 05:39:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D671B1FBE88;
-	Fri, 21 Feb 2025 05:36:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F0771FBCA9;
+	Fri, 21 Feb 2025 05:39:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bd7ahN2Y"
-Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PQhmuFeP"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A21641DF754;
-	Fri, 21 Feb 2025 05:36:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 775A14207F;
+	Fri, 21 Feb 2025 05:39:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740116196; cv=none; b=HmOoqlnAz4hA0fGBEvkiEGLi3Qw8tGH2WRDg9umUiaf3y2AlA6fcFOT24C0N6shIa8rIekv/1xDCwhtPqEgo7fipvSTND+6W2YKheKTse3VCvuMoBxWwgktCtrRQ1ly4BvD59tuvd1Hos+RY6YDVx3hagR6v/4PvsrGNwuECjb0=
+	t=1740116360; cv=none; b=pRSk/QF39EI812tCiyW3uCjmcEARvKGRUWOOcaXakhSuUv2+8EJgNaNrZAtb+n4feinZDmUGaUfHT52GelrOPXgsHrW3iUectQiQ2pvISbXAYlfLisMowMqr6ykYkXEyJ4EzwhLYc/46qB4FF4G1L4ZjNXBdXT9HMbOPSzU/Ee4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740116196; c=relaxed/simple;
-	bh=oStcB3/2j22PjgCV1nSTPBHoQ6TNLZQZ/mIYOxpSPjU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SBiHE0q7s1LQQQvGjno5nW5a47NUhDyUbz32NynM6o94HbQmA1G7yD3ZlG2+e7q+xZj+AHteDZ4wMXSM43716TRBVMGs/VoXYPAVqu4ltAGVyrSPNWH0INQfonOWDrlMP48g7WOL8y1dTDRro9MIqB8YxEWbxBq0Zecf950ArnQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Bd7ahN2Y; arc=none smtp.client-ip=209.85.219.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-6df83fd01cbso8441296d6.2;
-        Thu, 20 Feb 2025 21:36:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740116193; x=1740720993; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Wkdd+8aLdRlmuPLS96GTxJJrr9x2D3DwB8vMZjyfWeY=;
-        b=Bd7ahN2Y0OO/3xxWclNTw5uITwsmjXM/qpAQOlpheA/FHFtYIcZiojG6/d6WNO91rB
-         txyuYs5CjOJbVMv2frucyZTt8J89QBd1uz6dXDBiNfNfBlT1OUlBDuz/gax/lnmdAWeY
-         4hVCQG6qTCIbGn575alc4BaFoeDPDLq6DG0UZEc/DoC3hez+7eeC77B59tfYhIsVPAUi
-         WUjwYYm5PJa9pE4uyTYf2b8IVCSGFQxLlwqLzp3J9gps0ct3aAMvOvNcaxyGKwR3eTJW
-         EhEOgxlPauxnkIVe9AmGBiBvdpxvgbVBO3XxQbqjn1/VmPdUuujukKG6684Zqony3+Vg
-         Mcjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740116193; x=1740720993;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Wkdd+8aLdRlmuPLS96GTxJJrr9x2D3DwB8vMZjyfWeY=;
-        b=Jt7zX/L2T05891tdZeFNzDkKswsk3WbREfDtT+VLRe9HMkzDtdYvGhtGNrVi/737rJ
-         +iK7OZqI59233I47/Q+O+otqnNUo2di3Z0p4dOcusYZ0xTMm3VDgtqT7eXNZPIbTok6X
-         G24eFt0E84t3ZTCXzqCdNRggveEZnj/KaFP5AgsP2HwPt3o2M8H6XMH716RbgCGAOppQ
-         ByQ96MDIKt+DIEiY7db+cjAGg0EX28VABvQQe4gLoI89idXiKm09Ox2yB0SFY2a1tinE
-         vwQpvS0RgzH/LVhL/SzDcqHXxdQn5tqZPjp3aIYy6ZCmKdF5WWvu7J5RFWwU3aA5rq1J
-         aixQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU5Emp1X/J0pkKKPnmGdKBEwtwOO8cKkzxSHUWCilhUt/QUwfkmxPaLNY/2UZD4ecdx+PrnIQKBfSFO0FYCUQM=@vger.kernel.org, AJvYcCW6uPylZ6hiOryKSpGabLnsytJRi64aXj0MK6Ci6WiDdBCse2ZFOIQ8iqelY7qVaLrn29Y3N8VbTTzVGcU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywao0r1BdOjlMUZ2xaF6XnhiVe8BHEuuf80NqQigMFbfveWVGEN
-	Cv8D3k+eAyoMCBn3q+vekyMtypr0ikr7fuhBoR/Ydqvt70ojn8IK
-X-Gm-Gg: ASbGnctX58aU4/tGZfEeqwHFehlczVtuavEmsTfqoKdWVMZSmWrwaguPpDYCcLWrktw
-	La0yrzVs5NpRtVNyrrF4+VJ1tR3KH6ClLqkHKZe1wOgq9/kIF1jhNOhHSwgVKhd8TlCun8vhTfC
-	0TNlhDgNm66mtZnf7IkKLazWcXdhDhG94/oF/6KPLU5W5fGT9dGADquW1sRTpsgn9SB+CXrAXiK
-	snYPptU7+ypY2N5tg7oPh4cuhBoW2rZjAT0ZwXoo5rjIlZBz+T4dbar9eIQTma2rvh83xzpzDMa
-	HCcU9ST72uWrk8fFKqQMKAVB7lsCVFjuhTPjSvL6jx2A0mu4TXGLK3JRAKXA1PTLJiqPKIN/YeN
-	i80+eoe8xUFOPLxQv
-X-Google-Smtp-Source: AGHT+IHsjhWGvoxLr79IKlUcyjrNloUqyJ4Y4mutrZNXf5334jKuRlB5nCk+VYIrOVwK3T6drm7M3Q==
-X-Received: by 2002:a05:6214:29e8:b0:6d4:b1e:5418 with SMTP id 6a1803df08f44-6e6ae995a51mr28365326d6.33.1740116193283;
-        Thu, 20 Feb 2025 21:36:33 -0800 (PST)
-Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c0ae1032a4sm397488285a.49.2025.02.20.21.36.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Feb 2025 21:36:32 -0800 (PST)
-Received: from phl-compute-12.internal (phl-compute-12.phl.internal [10.202.2.52])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 42B9C120006A;
-	Fri, 21 Feb 2025 00:36:32 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-12.internal (MEProxy); Fri, 21 Feb 2025 00:36:32 -0500
-X-ME-Sender: <xms:4BC4Z9xWdVU85h0MvzFjcNG6Z6KfPlSBzHblOly0KrU8AekJ9sEeMQ>
-    <xme:4BC4Z9S_xfFq1k6HZXHYlw8kt0N60XUurxRCgPArB389WtSFUQGlL24nIK-N10CLq
-    PL7GN4CeCKbmYuKyg>
-X-ME-Received: <xmr:4BC4Z3V9W0K0MiGIY082IXqVwND9KVWRqT4askGgq4d8tOKals59NqbsDA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeiledvtdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddv
-    necuhfhrohhmpeeuohhquhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilh
-    drtghomheqnecuggftrfgrthhtvghrnhepveeiueejgfdtteevveeivedugeevhfdvvdek
-    ieevhffgjeegtdegvdfhkeevueefnecuffhomhgrihhnpehruhhsthdqfhhorhdqlhhinh
-    hugidrtghomhenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhr
-    ohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdeiledvge
-    ehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgtohhm
-    sehfihigmhgvrdhnrghmvgdpnhgspghrtghpthhtohepuddupdhmohguvgepshhmthhpoh
-    huthdprhgtphhtthhopehfvghlihhpvgdrtghonhhtrhgvrhgrshesghhmrghilhdrtgho
-    mhdprhgtphhtthhopehgrhgvghhkhheslhhinhhugihfohhunhgurghtihhonhdrohhrgh
-    dprhgtphhtthhopegrihhrlhhivggusehgmhgrihhlrdgtohhmpdhrtghpthhtohephhgt
-    hhesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehhphgrseiihihtohhrrdgtoh
-    hmpdhrtghpthhtohepkhhsuhhmmhhitheslhhishhtshdrlhhinhhugidruggvvhdprhgt
-    phhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprh
-    gtphhtthhopehmihhguhgvlhdrohhjvggurgdrshgrnhguohhnihhssehgmhgrihhlrdgt
-    ohhmpdhrtghpthhtoheprhhushhtqdhfohhrqdhlihhnuhigsehvghgvrhdrkhgvrhhnvg
-    hlrdhorhhg
-X-ME-Proxy: <xmx:4BC4Z_j0atbqBRNWQlReDWVcIbRe0p5pPFRliISEDulZVZGllGpyKQ>
-    <xmx:4BC4Z_DhhIS-iZSpZ8hipPL6c9wStIbIy6N6NuCldgXXeO7LZC0ZnQ>
-    <xmx:4BC4Z4JvuLkVXRgjv_gnmghacYQC72MK2YHayxdj7AySaGVAB7qE0w>
-    <xmx:4BC4Z-DXK8LfdP2INCgpox41AT589HsJLA3w6niUakEeIPh2_jt2qQ>
-    <xmx:4BC4Zzz3zluis7UlXGLm9A5R7_6-VwDMM7WDFPXZu6-sNLRdIq85SeJg>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 21 Feb 2025 00:36:31 -0500 (EST)
-Date: Thu, 20 Feb 2025 21:36:30 -0800
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Felipe Contreras <felipe.contreras@gmail.com>
-Cc: gregkh@linuxfoundation.org, airlied@gmail.com, hch@infradead.org,
-	hpa@zytor.com, ksummit@lists.linux.dev,
-	linux-kernel@vger.kernel.org, miguel.ojeda.sandonis@gmail.com,
-	rust-for-linux@vger.kernel.org, torvalds@linux-foundation.org
-Subject: Re: Rust kernel policy
-Message-ID: <Z7gQ3kSeCf7gY1i9@Mac.home>
-References: <2025021954-flaccid-pucker-f7d9@gregkh>
- <20250221051909.37478-1-felipe.contreras@gmail.com>
+	s=arc-20240116; t=1740116360; c=relaxed/simple;
+	bh=fK8Z+IZ0pHC7+G1nepcVxclbQi7OboQCTZuLxnZ0GvY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=pFcYXsxYpiHBE+uh80KKz6FlPBTZdXpVH+QoYJ/M3wab4ALwELLuIGdILRhmvq9ShuL+F4L+hwHca27JZc8PR9w9JSpW5j/SqvvXmdVN9vZtemkAHfic4O6vx++jSnhM3pw5IJNnDCZkvWUyps4QMgN1EV43acvNe0kFet/UrxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PQhmuFeP; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740116358; x=1771652358;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=fK8Z+IZ0pHC7+G1nepcVxclbQi7OboQCTZuLxnZ0GvY=;
+  b=PQhmuFePZ9PHZ4hP3P3xB3HZ/u3w8r1G3xJYlRpqOXkKMe6Gt98Jj+wv
+   2xlOKXOo/Gv94ed46X1Wl326jonUnMzisQ5nS0vACQzz62v+Q5rWJnFBu
+   BZn86s1uzvImKZaKdA+VEcd/pBSQcE/eT0XT1MQv6s1dZlTJAVfhljwwD
+   zDtX9dLJoQ2BeZ39hZiKUYx935eCMzayjuHn8zywzDlyqrYSPhYHx5act
+   gdM8INR4frJ7GAfC8bMquXC5mwmFFikFCXdnwo1IQcuBtkZdVgOCJDQKr
+   LJRUEbvcc4EPqwuceOUN+bsAr33z77hYRe7dAtNsxYpvBVyca4Vw9ODkQ
+   Q==;
+X-CSE-ConnectionGUID: +HjFcfd9QYiDg+Q4HShiqQ==
+X-CSE-MsgGUID: wk9sQoelRAak2IfqGY0Tlw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11351"; a="41045924"
+X-IronPort-AV: E=Sophos;i="6.13,303,1732608000"; 
+   d="scan'208";a="41045924"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Feb 2025 21:39:15 -0800
+X-CSE-ConnectionGUID: XpdX+/24Rt+nrlXK5Vbfpw==
+X-CSE-MsgGUID: 2rTsZrk3SjGmTazUIIK4pA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,303,1732608000"; 
+   d="scan'208";a="120382132"
+Received: from spandruv-desk.jf.intel.com ([10.54.75.16])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Feb 2025 21:39:14 -0800
+Message-ID: <df4fd1434a72f520e34afce386e10890bb4ae073.camel@linux.intel.com>
+Subject: Re: [PATCH v1] cpufreq: intel_pstate: Relocate platform preference
+ check
+From: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Linux PM <linux-pm@vger.kernel.org>, LKML
+ <linux-kernel@vger.kernel.org>,  Zhang Rui <rui.zhang@intel.com>, "Rafael
+ J. Wysocki" <rjw@rjwysocki.net>
+Date: Thu, 20 Feb 2025 21:39:14 -0800
+In-Reply-To: <CAJZ5v0jF_oLkzqEJuc9NX_j1+javyU8HF0JU8FiFgNaCks+RdA@mail.gmail.com>
+References: <2776745.mvXUDI8C0e@rjwysocki.net>
+	 <CAJZ5v0jF_oLkzqEJuc9NX_j1+javyU8HF0JU8FiFgNaCks+RdA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+User-Agent: Evolution 3.54.2 (3.54.2-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250221051909.37478-1-felipe.contreras@gmail.com>
 
-On Thu, Feb 20, 2025 at 11:19:09PM -0600, Felipe Contreras wrote:
-> Greg KH wrote:
-> > But for new code / drivers, writing them in rust where these types of
-> > bugs just can't happen (or happen much much less) is a win for all of
-> > us, why wouldn't we do this?
-> 
-> *If* they can be written in Rust in the first place. You are skipping that
-> very important precondition.
-> 
+T24gVGh1LCAyMDI1LTAyLTIwIGF0IDIwOjMwICswMTAwLCBSYWZhZWwgSi4gV3lzb2NraSB3cm90
+ZToKPiBPbiBGcmksIEZlYiA3LCAyMDI1IGF0IDE6NDjigK9QTSBSYWZhZWwgSi4gV3lzb2NraSA8
+cmp3QHJqd3lzb2NraS5uZXQ+Cj4gd3JvdGU6Cj4gPiAKPiA+IEZyb206IFJhZmFlbCBKLiBXeXNv
+Y2tpIDxyYWZhZWwuai53eXNvY2tpQGludGVsLmNvbT4KPiA+IAo+ID4gTW92ZSB0aGUgaW52b2Nh
+dGlvbiBvZiBpbnRlbF9wc3RhdGVfcGxhdGZvcm1fcHdyX21nbXRfZXhpc3RzKCkKPiA+IGJlZm9y
+ZQo+ID4gY2hlY2tpbmcgd2hldGhlciBvciBub3QgSFdQIGlzIGVuYWJsZWQgYmVjYXVzZSBpdCBk
+b2VzIG5vdCBkZXBlbmQKPiA+IG9uCj4gPiBhbnkgY29kZSBydW5uaW5nIGJlZm9yZSBpdCBleGNl
+cHQgZm9yIHRoZSB2ZW5kb3IgY2hlY2sgYW5kIGlmIENQVQo+ID4gcGVyZm9ybWFuY2Ugc2NhbGlu
+ZyBpcyBnb2luZyB0byBiZSBjYXJyaWVkIG91dCBieSB0aGUgcGxhdGZvcm0sIGFsbAo+ID4gb2YK
+PiA+IHRoZSBjb2RlIHRoYXQgcnVucyBiZWZvcmUgdGhhdCBmdW5jdGlvbiAoYWdhaW4sIGV4Y2Vw
+dCBmb3IgdGhlCj4gPiB2ZW5kb3IKPiA+IGNoZWNrKSBpcyByZWR1bmRhbnQuCj4gPiAKPiA+IFRo
+aXMgaXMgbm90IGV4cGVjdGVkIHRvIGFsdGVyIGFueSBmdW5jdGlvbmFsaXR5IGV4Y2VwdCBmb3Ig
+dGhlCj4gPiBvcmRlcmluZwo+ID4gb2YgbWVzc2FnZXMgcHJpbnRlZCBieSBpbnRlbF9wc3RhdGVf
+aW5pdCgpIHdoZW4gaXQgaXMgZ29pbmcgdG8KPiA+IHJldHVybiBhbgo+ID4gZXJyb3IgYmVmb3Jl
+IGF0dGVtcHRpbmcgdG8gcmVnaXN0ZXIgdGhlIGRyaXZlci4KPiA+IAo+ID4gU2lnbmVkLW9mZi1i
+eTogUmFmYWVsIEouIFd5c29ja2kgPHJhZmFlbC5qLnd5c29ja2lAaW50ZWwuY29tPgo+IAo+IFNy
+aW5pdmFzLCBJJ20gd29uZGVyaW5nIGlmIHlvdSBoYXZlIGFueSBjb25jZXJucyByZWdhcmRpbmcg
+dGhpcyBvbmU/Ck5vbmUuCgpBY2tlZC1ieTogU3Jpbml2YXMgUGFuZHJ1dmFkYSA8c3Jpbml2YXMu
+cGFuZHJ1dmFkYUBsaW51eC5pbnRlbC5jb20+CgpUaGFua3MsClNyaW5pdmFzCgoKPiAKPiA+IC0t
+LQo+ID4gwqBkcml2ZXJzL2NwdWZyZXEvaW50ZWxfcHN0YXRlLmMgfMKgwqAgMTggKysrKysrKysr
+LS0tLS0tLS0tCj4gPiDCoDEgZmlsZSBjaGFuZ2VkLCA5IGluc2VydGlvbnMoKyksIDkgZGVsZXRp
+b25zKC0pCj4gPiAKPiA+IC0tLSBhL2RyaXZlcnMvY3B1ZnJlcS9pbnRlbF9wc3RhdGUuYwo+ID4g
+KysrIGIvZHJpdmVycy9jcHVmcmVxL2ludGVsX3BzdGF0ZS5jCj4gPiBAQCAtMzY4OCw2ICszNjg4
+LDE1IEBACj4gPiDCoMKgwqDCoMKgwqDCoCBpZiAoYm9vdF9jcHVfZGF0YS54ODZfdmVuZG9yICE9
+IFg4Nl9WRU5ET1JfSU5URUwpCj4gPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgcmV0
+dXJuIC1FTk9ERVY7Cj4gPiAKPiA+ICvCoMKgwqDCoMKgwqAgLyoKPiA+ICvCoMKgwqDCoMKgwqDC
+oCAqIFRoZSBJbnRlbCBwc3RhdGUgZHJpdmVyIHdpbGwgYmUgaWdub3JlZCBpZiB0aGUgcGxhdGZv
+cm0KPiA+ICvCoMKgwqDCoMKgwqDCoCAqIGZpcm13YXJlIGhhcyBpdHMgb3duIHBvd2VyIG1hbmFn
+ZW1lbnQgbW9kZXMuCj4gPiArwqDCoMKgwqDCoMKgwqAgKi8KPiA+ICvCoMKgwqDCoMKgwqAgaWYg
+KGludGVsX3BzdGF0ZV9wbGF0Zm9ybV9wd3JfbWdtdF9leGlzdHMoKSkgewo+ID4gK8KgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqAgcHJfaW5mbygiUC1zdGF0ZXMgY29udHJvbGxlZCBieSB0aGUg
+cGxhdGZvcm1cbiIpOwo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgcmV0dXJuIC1F
+Tk9ERVY7Cj4gPiArwqDCoMKgwqDCoMKgIH0KPiA+ICsKPiA+IMKgwqDCoMKgwqDCoMKgIGlkID0g
+eDg2X21hdGNoX2NwdShod3Bfc3VwcG9ydF9pZHMpOwo+ID4gwqDCoMKgwqDCoMKgwqAgaWYgKGlk
+KSB7Cj4gPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgaHdwX2ZvcmNlZCA9IGludGVs
+X3BzdGF0ZV9od3BfaXNfZW5hYmxlZCgpOwo+ID4gQEAgLTM3NDMsMTUgKzM3NTIsNiBAQAo+ID4g
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGRlZmF1bHRfZHJpdmVyID0gJmludGVsX2Nw
+dWZyZXE7Cj4gPiAKPiA+IMKgaHdwX2NwdV9tYXRjaGVkOgo+ID4gLcKgwqDCoMKgwqDCoCAvKgo+
+ID4gLcKgwqDCoMKgwqDCoMKgICogVGhlIEludGVsIHBzdGF0ZSBkcml2ZXIgd2lsbCBiZSBpZ25v
+cmVkIGlmIHRoZSBwbGF0Zm9ybQo+ID4gLcKgwqDCoMKgwqDCoMKgICogZmlybXdhcmUgaGFzIGl0
+cyBvd24gcG93ZXIgbWFuYWdlbWVudCBtb2Rlcy4KPiA+IC3CoMKgwqDCoMKgwqDCoCAqLwo+ID4g
+LcKgwqDCoMKgwqDCoCBpZiAoaW50ZWxfcHN0YXRlX3BsYXRmb3JtX3B3cl9tZ210X2V4aXN0cygp
+KSB7Cj4gPiAtwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBwcl9pbmZvKCJQLXN0YXRlcyBj
+b250cm9sbGVkIGJ5IHRoZSBwbGF0Zm9ybVxuIik7Cj4gPiAtwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoCByZXR1cm4gLUVOT0RFVjsKPiA+IC3CoMKgwqDCoMKgwqAgfQo+ID4gLQo+ID4gwqDC
+oMKgwqDCoMKgwqAgaWYgKCFod3BfYWN0aXZlICYmIGh3cF9vbmx5KQo+ID4gwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgIHJldHVybiAtRU5PVFNVUFA7Cj4gPiAKPiA+IAo+ID4gCj4gPiAK
+PiA+IAoK
 
-Hmm.. there are multiple old/new drivers (not a complete list) already
-in Rust:
-
-* NVME: https://rust-for-linux.com/nvme-driver
-* binder: https://rust-for-linux.com/android-binder-driver
-* Puzzlefs: https://rust-for-linux.com/puzzlefs-filesystem-driver
-* Apple AGX GPU driver: https://rust-for-linux.com/apple-agx-gpu-driver
-
-, so is there still a question that drivers can be written in Rust?
-
-Regards,
-Boqun
-
-> > Rust isn't a "silver bullet" that will solve all of our problems, but it
-> > sure will help in a huge number of places, so for new stuff going
-> > forward, why wouldn't we want that?
-> 
-[...]
 
