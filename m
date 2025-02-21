@@ -1,110 +1,88 @@
-Return-Path: <linux-kernel+bounces-526265-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AE3EA3FC64
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:59:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5C71A3FC90
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 18:02:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6749A3BA4C4
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:53:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F40218677E0
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:56:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44C5E214A85;
-	Fri, 21 Feb 2025 16:53:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5B31221DAB;
+	Fri, 21 Feb 2025 16:54:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jVfNoyIU"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Tq9xKU3W"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57794214A7D;
-	Fri, 21 Feb 2025 16:53:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 631D022069F;
+	Fri, 21 Feb 2025 16:54:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740156822; cv=none; b=KRJ4PPjnF/0Mdv95EPMHyjYHPJEhp+WVlfz3xZ3j0lYwIlZGJvhpb14VV7CqQn5/JFZdTGsrtn7/goHJ0MTImbdkwtx21lb33nsRaad5Uh0GstIAYk35T1p/Zr7qKwzfW3uvdXTmZ9076baQceK5Y3Rabdlat00jbfGWFJU7YjM=
+	t=1740156858; cv=none; b=OaLJFvJnTdCZPUvP6CL/jLbzjZaoN+5ftA4JMTib7meSg5oOZSYeoORTNH06xHyGYWwyiNLKs7OT0NrCw4y8gCtvrQaI/LYuFbfMB/wV9nEl25a41mgBcS3aTCIfZQHl9CMqPGagQMxkU+COs6b23uD5YadALP4QzC/A41AUjzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740156822; c=relaxed/simple;
-	bh=RNR8mEUOnIVJUD2/SSlodw5N9H3r9pd1pvfEYexodzw=;
+	s=arc-20240116; t=1740156858; c=relaxed/simple;
+	bh=HeIObMwwsPv28EZYhOje+axVBZQHbbM4wdz9ML54dVc=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=WOnVrqhOL86sFrKzHJYx6msGX9j8M51+ERtiR9LPm+Ok+bvMusTJGO9Fahb1lSzPgJjNTw/7krUrsKp40+Xyf0WZv50iQ5N6j+dpydk4mL9U/mbIcFYxvTwvK34Ekn8Ps+3lw2p596zqGo1u+sJbK1/5W4fTKPisiv1AIECxrNQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jVfNoyIU; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-22114b800f7so46546375ad.2;
-        Fri, 21 Feb 2025 08:53:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740156820; x=1740761620; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=j/zBaSuV0apxI2fraq701Zzbl3a70mLl15KTuoHr3ig=;
-        b=jVfNoyIUf/4dRmDNGEkwd67K/BFu+DYb3qTW7V2KJh1yNhjxNAIaLeymHIeWvWAEX/
-         ShD0iZ+NEmNopiQnsFkKPpvZx0L282DwE4jUa66RWwHt9K5vOI2TfKZ8R90kdhfaCWMX
-         XReBYH9gwcaNlQPJ6QOl7cU+rp4CvV2++oEhRJIghthWydD/vDwDaA1dhKu2UPI7X13x
-         iYBnwATwBZOam6kr3n3fHFb0rFFLpPQ/uhdvdks2YmfStVKfRZ3+Kngleu6YhR3e2No4
-         8yKhF0vUj+izUogZnA8Z2Pr/5fJ8VjXXH8a+lcjq5VDM0PXqxD5OQsmk0XUObCdDOoQR
-         PwhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740156820; x=1740761620;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=j/zBaSuV0apxI2fraq701Zzbl3a70mLl15KTuoHr3ig=;
-        b=JwS3esup63nQE06ioddP3lnMLfQsqmk05rkCpCjR5+qVCvlvWq4Av3brc2FnsIccaL
-         L7IRA62S1C/m9xMIphebBakPbIWyH3evKdG3OJlAzOBoArxyEqkyK7WQVhTO64iy+9Ks
-         ov3WydWGfJ/dYojTj869eSb8V4hxoSaOstYxVwQ3Inkmj+kWWrQUbILcdePQrwUQ77oF
-         P2TUmhTAhHihhcJPAS2v984D2rJsiI/Ab+mINghLXzx3N+P/HxcjYuIzQNcrfFIdaLPY
-         NykR2YSyjOZXcYjZmFvl/qSYBOiLDa7xG7r+s+7Y9IIBY1qLPSEF77DCvQIRYPn9Ba4g
-         T8BQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUOSsZBaoh12CctpzGzdK5AWpEDPuKZedmewlZ6YQCnGtrA9/H1bin1PyGMqjAdRwPcwVwBwsRViRIHaPVcHYQ=@vger.kernel.org, AJvYcCXa2Cagoz12f0ZYk6A620B1u6x3Wv/St9KEa6UXvzSBYLdj6gbBwTYMhlmmcbDSH26n5SDt5XQzVCs+7Z8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyEH9iJZopqiB1iDZ8XKsTM4otDPexJQhBSGJyEW6sxqqcpkv++
-	TxzSOBHacy714wdvTnZAc2UzdNY1sXz0+AbpjbiP7DYdiKdugiJe
-X-Gm-Gg: ASbGncsGdqS8E5ZQEmGUTrUdJXN7v97QMaGvmz4tdQeAM7RIg+quXGnB8hGlfYfXeLd
-	yMzZyFipLoN+tJcwCufwStofcA5+5vmrE2x2A7iCVOafJVaZbi+vPpaSl801hM9IDJJByWPmQJW
-	gfWevLnfisykAmeDyy2NcRotjumAXnt+IiHf9Lf7DSTVMOSwUIAnDurNnl2QHpz5J/AAcb5FU+u
-	zghqlZY2AJ6BS+v0NsyllhuBLagC+oNKXe0rm0LoLQW17kUaG/MPulGuqSKpoIbLJYQdNHo5Mx1
-	bIBrDy9qaBXysNxXpxdj0iaSFKi7zjCOdQ==
-X-Google-Smtp-Source: AGHT+IF2YMDyHbwTmyW38BAvJ0G7QtBOaYJTYewQDESOFgJXibuRb0b6kmUsta1MzqxBRVKAe5316A==
-X-Received: by 2002:a05:6a00:3d0a:b0:730:87cf:a7cd with SMTP id d2e1a72fcca58-73426cb12bbmr7543385b3a.8.1740156820211;
-        Fri, 21 Feb 2025 08:53:40 -0800 (PST)
-Received: from linuxsimoes.. ([177.21.141.136])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7325b1afd0esm13525983b3a.137.2025.02.21.08.53.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Feb 2025 08:53:39 -0800 (PST)
-From: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
-To: charmitro@posteo.net
-Cc: a.hindborg@kernel.org,
-	alex.gaynor@gmail.com,
-	aliceryhl@google.com,
-	apw@canonical.com,
-	arnd@arndb.de,
-	aswinunni01@gmail.com,
-	axboe@kernel.dk,
-	benno.lossin@proton.me,
-	bhelgaas@google.com,
-	bjorn3_gh@protonmail.com,
-	boqun.feng@gmail.com,
-	dakr@kernel.org,
-	dwaipayanray1@gmail.com,
-	ethan.twardy@gmail.com,
-	fujita.tomonori@gmail.com,
-	gary@garyguo.net,
-	gregkh@linuxfoundation.org,
-	joe@perches.com,
+	 MIME-Version; b=lX3Vau/Ukz/x1KKbykJ9c5o9a0ONBg0WdFrSbHRhQIbeaRs7a3A4Q3+wje+LeHxoxLRwAfGmgvtt4Rl5hHLgorqV8pDDoe6CoV7csBWQ8eBxmOmGEcnnA58qshkfO3vCbpu57Io64uU8GTuSyGhk8VU9QxpjpK0V1z3VFBVJ9/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Tq9xKU3W; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740156857; x=1771692857;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=HeIObMwwsPv28EZYhOje+axVBZQHbbM4wdz9ML54dVc=;
+  b=Tq9xKU3WEzptcJTa25IewSiuQ19tsagsNhGkefLcQksr/D9fZoMjtIgF
+   DSXhb08RHbyaSxs0UFa9Xv8qaE2c0uK8/vwbiTkfkr1dmeKwsog6DVjBR
+   G0G0gcjW8RI6INCIm9KKwIh0/vS1XnU12qsCyLBfSP9aVSrj8si5aIZll
+   Whc3YDFfsjqvO3mLwzfkiIu/jO7stU14rFyt02DiP/g5CGtIvcedmu/Yw
+   3Ml3nEIQf968+wQhIk1KLfcjRTQDp5MMS9SZ0n57iSi9VyCEyTb2eUQbu
+   WI1d31xdJxLmDAKJO9lfFCgYYxfvQ8RtCO+0OTdFXD6QW5iLZtpFDCWTj
+   w==;
+X-CSE-ConnectionGUID: E0Ntl9avSUW73eUCjF7XMw==
+X-CSE-MsgGUID: lpIpfIUNTjmkv+zETnpw1Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11314"; a="41186936"
+X-IronPort-AV: E=Sophos;i="6.12,310,1728975600"; 
+   d="scan'208";a="41186936"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Feb 2025 08:54:17 -0800
+X-CSE-ConnectionGUID: SYd9pcKhTxKXRhNfh0fgqA==
+X-CSE-MsgGUID: uMXT3x5vQC+C/56ksK6yZA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="119540633"
+Received: from jraag-z790m-itx-wifi.iind.intel.com ([10.190.239.23])
+  by fmviesa003.fm.intel.com with ESMTP; 21 Feb 2025 08:54:12 -0800
+From: Raag Jadav <raag.jadav@intel.com>
+To: perex@perex.cz,
+	tiwai@suse.com,
+	broonie@kernel.org,
+	lgirdwood@gmail.com,
+	deller@gmx.de,
+	andriy.shevchenko@linux.intel.com,
+	sre@kernel.org,
+	sakari.ailus@linux.intel.com,
+	mchehab@kernel.org,
+	hverkuil-cisco@xs4all.nl,
+	jdmason@kudzu.us,
+	fancer.lancer@gmail.com
+Cc: linux-sound@vger.kernel.org,
+	linux-fbdev@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	ntb@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
-	lukas.bulwahn@gmail.com,
-	ojeda@kernel.org,
-	pbonzini@redhat.com,
-	rust-for-linux@vger.kernel.org,
-	tmgross@umich.edu,
-	trintaeoitogc@gmail.com,
-	walmeida@microsoft.com
-Subject: Re: [PATCH V3 2/2] checkpatch: throw error for malformed arrays
-Date: Fri, 21 Feb 2025 13:53:27 -0300
-Message-Id: <20250221165327.5459-1-trintaeoitogc@gmail.com>
+	Raag Jadav <raag.jadav@intel.com>
+Subject: [PATCH v1 07/13] fbdev: pxafb: use devm_kmemdup_array()
+Date: Fri, 21 Feb 2025 22:23:27 +0530
+Message-Id: <20250221165333.2780888-8-raag.jadav@intel.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <m2pljcgpek.fsf@Mac.home>
-References: <m2pljcgpek.fsf@Mac.home>
+In-Reply-To: <20250221165333.2780888-1-raag.jadav@intel.com>
+References: <20250221165333.2780888-1-raag.jadav@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -113,20 +91,54 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Charalampos Mitrodimas <charmitro@posteo.net> wrote:
-> Hi Guilherme,
-> 
-> Will this work now that the field is called "authors" and not "author"?
-> I think you forgot to update the regex here.
-I don't know, I make change in modules and samples, and I forget runing again
-the checkpatch.
-Sorry .. 
-I will send a v4 
+Convert to use devm_kmemdup() and devm_kmemdup_array() which are
+more robust.
 
-> What do you think about this instead?
-> "Prefer each array element on a separate line$herevet"
-For me, looks like great
+Signed-off-by: Raag Jadav <raag.jadav@intel.com>
+---
+ drivers/video/fbdev/pxafb.c | 21 ++++++++-------------
+ 1 file changed, 8 insertions(+), 13 deletions(-)
 
-Thanks,
-Guilherme
+diff --git a/drivers/video/fbdev/pxafb.c b/drivers/video/fbdev/pxafb.c
+index 4aa84853e31a..21fba33918c6 100644
+--- a/drivers/video/fbdev/pxafb.c
++++ b/drivers/video/fbdev/pxafb.c
+@@ -2239,26 +2239,21 @@ static int pxafb_probe(struct platform_device *dev)
+ 
+ 	ret = -ENOMEM;
+ 	pdata = dev_get_platdata(&dev->dev);
+-	inf = devm_kmalloc(&dev->dev, sizeof(*inf), GFP_KERNEL);
+-	if (!inf)
+-		goto failed;
+-
+ 	if (pdata) {
+-		*inf = *pdata;
+-		inf->modes =
+-			devm_kmalloc_array(&dev->dev, pdata->num_modes,
+-					   sizeof(inf->modes[0]), GFP_KERNEL);
++		inf = devm_kmemdup(&dev->dev, pdata, sizeof(*pdata), GFP_KERNEL);
++		if (!inf)
++			goto failed;
++
++		inf->modes = devm_kmemdup_array(&dev->dev, pdata->modes, pdata->num_modes,
++						sizeof(*pdata->modes), GFP_KERNEL);
+ 		if (!inf->modes)
+ 			goto failed;
+-		for (i = 0; i < inf->num_modes; i++)
+-			inf->modes[i] = pdata->modes[i];
+ 	} else {
+ 		inf = of_pxafb_of_mach_info(&dev->dev);
++		if (IS_ERR_OR_NULL(inf))
++			goto failed;
+ 	}
+ 
+-	if (IS_ERR_OR_NULL(inf))
+-		goto failed;
+-
+ 	ret = pxafb_parse_options(&dev->dev, g_options, inf);
+ 	if (ret < 0)
+ 		goto failed;
+-- 
+2.34.1
+
 
