@@ -1,149 +1,110 @@
-Return-Path: <linux-kernel+bounces-525632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CA0FA3F28C
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 11:53:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EE2ABA3F291
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 11:54:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E315C700846
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:53:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71AA0700CFB
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:53:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B2A82080FB;
-	Fri, 21 Feb 2025 10:53:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58A08207A2E;
+	Fri, 21 Feb 2025 10:53:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="vU5DB26Q"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b="MFYP9S2s";
+	dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b="Xphrwjk/"
+Received: from mail.netfilter.org (mail.netfilter.org [217.70.190.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ADD8207E1A;
-	Fri, 21 Feb 2025 10:53:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1372B20767F;
+	Fri, 21 Feb 2025 10:53:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.190.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740135185; cv=none; b=bM4sAQ6K41OJfnF8BUhl47RNN4FuUU/Wxg85d5YDqo4Kc9TJdFm/wmAjvk70bvIQo3OeRjBB32GTbN/cc1oJ3asuBgy8YSRoAEpYeknfz4waNqQs4iGi41BxWHttmO2GIGxeX1BVaYk2n4tqGJigv0DGQycjX+7phjOEkw9C1H8=
+	t=1740135208; cv=none; b=lV88JkrZnwhuhZaYo5IPvniFhnwlw3McXoRpyMsEnGnpLZkf0t5scTKf+dyX+H33aPbE5RoXPHwL99+AQRNOy6Y7mZ5eRBVkh8VXt1ksqRlln0vnHce5W9gKIw01vdO1wEXlBkcrr3cbcqnHl1XvRPVwKKKN+dCdLItxTZama5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740135185; c=relaxed/simple;
-	bh=ufpR1Z4H9TVwVTNUILXf2+amecfAuuE+k/9g3eWjpg0=;
+	s=arc-20240116; t=1740135208; c=relaxed/simple;
+	bh=UWLFT2ycnB61ZUcON9v1HZSKUWNgHAi22ZxR4YEjISY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eN5QdnKLmb7zTSLFO/TG3TpA2QKrhMTV19y2hO+ULLSeIIgt8Q5hbKo+G23rCunenqcrDlZXSxfBxcRu2CEQG+mpDsNVFlf0j/MPWUjY2jDkWBdHCpP69LP0CKx894WzT35Ov5t0ua0urMZQGJ/N02K4VPtdxdAtZfLHoEylbg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=vU5DB26Q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D5A7C4CED6;
-	Fri, 21 Feb 2025 10:53:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1740135184;
-	bh=ufpR1Z4H9TVwVTNUILXf2+amecfAuuE+k/9g3eWjpg0=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=OZmwvd+lDlFsCteTmtrQ7CRy88/Eq89pRXJpXDFl+FiB9Aq5IMgar00C3NiGB2GUaIfYn5+OFrlYkqgiFLAGeDTAC0o/U63hB17w1lkkbaIjSYZYSDROgETMz+GUBbQrjmvUlZmUIXmwLJlwFi2ateUXEPti4Cheh86cf6GF01A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org; spf=pass smtp.mailfrom=netfilter.org; dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b=MFYP9S2s; dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b=Xphrwjk/; arc=none smtp.client-ip=217.70.190.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netfilter.org
+Received: by mail.netfilter.org (Postfix, from userid 109)
+	id 02471602A9; Fri, 21 Feb 2025 11:53:22 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=netfilter.org;
+	s=2025; t=1740135203;
+	bh=UjWp1rHD7uehIrgbPHgyTnzhHT5mQmNpOJ75YrO66dM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vU5DB26QL8qs89mxe6DjMiVhcwTw+2MtCEgW81lDtX9imv6ay8jhnH4XmXvmTAYaA
-	 4LYqNgX9b8CExx0jwJW4k8933LRYigZspUvRVH5JuJHKl0xfHgsR+Gb7g5qQaOnTwt
-	 HwIUzZ1YUJksMidSgfJ52DTTu4ed5RFWVKqKehAY=
-Date: Fri, 21 Feb 2025 11:53:01 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Akshay Gujar <Akshay.Gujar@harman.com>
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	naveen.v@harman.com, sankarkumar.krishnasamy@harman.com
-Subject: Re: [PATCH] usb: core: notify unrecognized usb device
-Message-ID: <2025022131-silo-impeach-3f24@gregkh>
-References: <20250221102949.1135849-1-Akshay.Gujar@harman.com>
+	b=MFYP9S2srHkuutx8ysj1z1RUFKBkOL1bu6CTjZuEZwZJpGHI1XbZA4wNjWiDI4VFt
+	 BhVo57pT84PC9aGACBTH5yiv8iunp6DDWSyTlmUceyKj67EafvPuzUHm3q5N6uCpgf
+	 t/+/152MBQcA3Dd1bpUSuiJq0qS0klKt0wHzleuIFh1TR+/WezcpajfWPLO4Ov6Itt
+	 LQQz3dXiH1NQRgwMmAIJzjMg5nu6jcGVml43NdBnjD8yBitzIgRZn+wk3gUWxeVag0
+	 k9j3yebTz4Pym4vi6znPvbCg+XqZVI53NTDr1IVZOsLgxgXu7PYpdlPI9PIh/LMf4y
+	 j2jzuAA+dE9Fg==
+X-Spam-Level: 
+Received: from netfilter.org (mail-agni [217.70.190.124])
+	by mail.netfilter.org (Postfix) with ESMTPSA id BC26060293;
+	Fri, 21 Feb 2025 11:53:20 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=netfilter.org;
+	s=2025; t=1740135200;
+	bh=UjWp1rHD7uehIrgbPHgyTnzhHT5mQmNpOJ75YrO66dM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Xphrwjk/q32QbzCMJujPE8aN3O8QqhNkLRyX8tbHrag87dIrKa1VbVFi0Z8ymJ1zj
+	 NFEzFTVLmtDeinMrc6DXeDcX7b3JhuHwy5cKYva4zr8WasudR/LaYBjl1EnMZiG7h4
+	 y64E7++K/nQqrH9Fbc2ox2jtDd7B4Aj07FRQup2GZ3FxjkHvlauVg5GQCiEkpT5Seq
+	 LlsZlU6nIskU3D1DxhIRbhKtFtgDOKrdoAONUmEf8tETsO2ya/CuufIqtsAyqDqCSl
+	 pLc29x8WxxOios0m2a0dw1No+8/MnQlXC/V6XkhihjKk55h5ivoayLM/56gv/IjXGb
+	 6cz7ANbYncvgQ==
+Date: Fri, 21 Feb 2025 11:53:17 +0100
+From: Pablo Neira Ayuso <pablo@netfilter.org>
+To: wh_bin@126.com
+Cc: kadlec@netfilter.org, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
+	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] netfilter: conntrack do not print ah and esp as unknown
+ via /proc
+Message-ID: <Z7hbHd0yK5I3ks9-@calendula>
+References: <20250221102153.4625-1-wh_bin@126.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250221102949.1135849-1-Akshay.Gujar@harman.com>
+In-Reply-To: <20250221102153.4625-1-wh_bin@126.com>
 
-On Fri, Feb 21, 2025 at 10:29:49AM +0000, Akshay Gujar wrote:
-> Description: To send uevent for unrecognized device connected on system.
-
-Odd format here, have you read the documentation of the kernel process
-in how to write a changelog?  I recommend a quick glance at the section
-"The canonical patch format" in the kernel file,
-Documentation/process/submitting-patches.rst for details.
-
-> As per the usb compliance, USB-IF enforces a "no silent failure" rule.
-> This means that an implementation of USB must not appear broken to the
-> consumer. In configurations where the consumer's expectations are not
-> met, either the peripheral or host must provide appropriate and useful
-> feedback to the consumer regarding the problem.
+On Fri, Feb 21, 2025 at 10:21:53AM +0000, wh_bin@126.com wrote:
+> From: hongbin wang <wh_bin@126.com>
 > 
-> Link: https://compliance.usb.org/index.asp?UpdateFile=Embedded%20Host&Format=Standard#10
+> /proc/net/nf_conntrack shows ah and esp as unknown.
 
-Odd, many Linux devices have passed usb-if testing since 2005 when this
-was made a "rule", how did that happen?  What recently changed to
-suddenly require this be a kernel issue?
+there are no AH and ESP trackers in conntrack this far, that is why
+they are shown as unknown.
 
-And does usb-if even matter these days?  You do know what they think
-about Linux overall, right (hint, they kicked us out from
-participating...) so why should we follow their "requirements" when they
-do not allow us to even participate or provide feedback when they create
-them?
-
-> Signed-off-by: Akshay Gujar <Akshay.Gujar@harman.com>
+> Signed-off-by: hongbin wang <wh_bin@126.com>
 > ---
->  drivers/usb/core/hub.c | 24 +++++++++++++++++++++++-
->  1 file changed, 23 insertions(+), 1 deletion(-)
+>  net/netfilter/nf_conntrack_standalone.c | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
-> diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
-> index c3f839637..d00129b59 100644
-> --- a/drivers/usb/core/hub.c
-> +++ b/drivers/usb/core/hub.c
-> @@ -5343,6 +5343,26 @@ static int descriptors_changed(struct usb_device *udev,
->  	return changed;
->  }
+> diff --git a/net/netfilter/nf_conntrack_standalone.c b/net/netfilter/nf_conntrack_standalone.c
+> index 502cf10aab41..29fb5a07a6c2 100644
+> --- a/net/netfilter/nf_conntrack_standalone.c
+> +++ b/net/netfilter/nf_conntrack_standalone.c
+> @@ -266,6 +266,8 @@ static const char* l4proto_name(u16 proto)
+>  	case IPPROTO_SCTP: return "sctp";
+>  	case IPPROTO_UDPLITE: return "udplite";
+>  	case IPPROTO_ICMPV6: return "icmpv6";
+> +	case IPPROTO_ESP: return "esp";
+> +	case IPPROTO_AH: return "ah";
+>  	}
 >  
-> +static void unrecognized_usb_device_notify(struct usb_port *port_dev)
-> +{
-> +	char *envp[2] = { NULL, NULL };
-> +	struct device *hub_dev;
-> +
-> +	hub_dev = port_dev->dev.parent;
-> +
-> +	if (!hub_dev)
-> +		return;
-
-How can this be true?
-
-> +
-> +	envp[0] = kasprintf(GFP_KERNEL, "UNRECOGNIZED_USB_DEVICE_ON_PORT=%s",
-> +				kobject_name(&port_dev->dev.kobj));
-
-Hint, if a driver ever starts calling into kobject or sysfs functions,
-usually something is wrong.  This should just use dev_name(), right?
-
-> +	if (!envp[0])
-> +		return;
-> +
-> +	kobject_uevent_env(&hub_dev->kobj, KOBJ_CHANGE, envp);
-
-Where is this new uevent documented?  What userspace tool will see this
-and do something about it?  How was this tested?
-
-> +
-> +	kfree(envp[0]);
-> +}
-> +
->  static void hub_port_connect(struct usb_hub *hub, int port1, u16 portstatus,
->  		u16 portchange)
->  {
-> @@ -5569,9 +5589,11 @@ static void hub_port_connect(struct usb_hub *hub, int port1, u16 portstatus,
->  	if (hub->hdev->parent ||
->  			!hcd->driver->port_handed_over ||
->  			!(hcd->driver->port_handed_over)(hcd, port1)) {
-> -		if (status != -ENOTCONN && status != -ENODEV)
-> +		if (status != -ENOTCONN && status != -ENODEV) {
->  			dev_err(&port_dev->dev,
->  					"unable to enumerate USB device\n");
-> +			unrecognized_usb_device_notify(port_dev);
-
-This is only if a hub acts up with talking to a device, it does not mean
-the device was not supported at all.  So this isn't going to meet the
-standard that you describe above.  Userspace is really the only thing
-that can know if a device is "supported" or not, not the kernel.
-
-thanks,
-
-greg k-h
+>  	return "unknown";
+> -- 
+> 2.34.1
+> 
 
