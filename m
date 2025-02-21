@@ -1,216 +1,142 @@
-Return-Path: <linux-kernel+bounces-526819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9ACFDA403CB
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 00:53:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AF27A403CE
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 00:55:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E79C019C6EAB
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 23:53:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6576016F190
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 23:55:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AE5F254B1D;
-	Fri, 21 Feb 2025 23:53:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A3B7254B19;
+	Fri, 21 Feb 2025 23:55:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WGB2ubSj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="qEMMUVs2"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AF87254AE0;
-	Fri, 21 Feb 2025 23:53:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1B7F433DE;
+	Fri, 21 Feb 2025 23:55:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740181991; cv=none; b=LQAoIZFRdhMhQR+zPwFzJfGjbd4OEfuUeC30WI1h1N61aOiRNq70li7oVSmGRQ1awcBw931YU3beVzcZAORAgKr8rBRYbS9SJv3kKWitVIgrm5NWtudY2OudhAMnEFQFkM2ULfb7Yoxz/mlYBjMImvV8uVk3/Ay+Q9vEplCwKTc=
+	t=1740182153; cv=none; b=esbIaRpWaWHbtpymEeg4qgsTSjp8nW3azkwKI933CS3QRF11XBa5Rf9/Niav+C8B+0nA7Om2toH1nhPbZwe7ZKK9aMwb0dITWHdESN+cCB/dmBoddi6M8xaC/4RglvnpS1dyksfDHepwaEopsETaYlce9nMtXUPtyj5Zr2snspc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740181991; c=relaxed/simple;
-	bh=/YFrwlZgyvLoJMUeq+tvf10yh7R4xJNFEg5KwtEoi2M=;
+	s=arc-20240116; t=1740182153; c=relaxed/simple;
+	bh=2db/W3z8n0hWl/MKDovp0LrTr/t/l9Q9+WY0RSNMumo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Em+tkEU0mxqfQRC/UJxuZvhoHaLMR4I6I1GVQTG5ZlqSNkEnKtlYozFcgRscWtns41GNwkm67UmT1ZhJM7wzyPHzDaJ6dSyE7gCfsLHu+ewknYImfHqAtv6ub7HdkwhCnJXHnmsBAWKRyPVVp9NpTJ0PasegTiykZnTeFanMyPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WGB2ubSj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8F5EC4CED6;
-	Fri, 21 Feb 2025 23:53:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740181989;
-	bh=/YFrwlZgyvLoJMUeq+tvf10yh7R4xJNFEg5KwtEoi2M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WGB2ubSjMbE6ueP9Gqq/84p4aoMNKf5redslySU1HfRmrAGAB+WTs0uN0rlcHj2/S
-	 /C33QhzEcp347yjR7IjJfmzQAZaMwDFv97KvhwwXzN01mYS1puRP4RAkqhJZTRy516
-	 t8BxpUPsAU+QgITpLUJxHCTWHRphP4ebBQFsZGs1KF+YJi0OW56vzjt8XTXijJFVPJ
-	 CHDLgVM/4xGktwYIkgHFEvlkqtLJ4JeH+gZR/UY+q4I6zYEEPEmMbI0Yf/bCogRcOl
-	 6xTfn4UyKw/F3TtA32gdHnr3JAmIcz8q7+Qwjcd7ZX5bLRYKUxJ9vjnJ078aFlOMvm
-	 bmlu6PSROh/rQ==
-Date: Fri, 21 Feb 2025 17:53:07 -0600
-From: Rob Herring <robh@kernel.org>
-To: Yuanfang Zhang <quic_yuanfang@quicinc.com>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Mike Leach <mike.leach@linaro.org>,
-	James Clark <james.clark@linaro.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, kernel@quicinc.com,
-	linux-kernel@vger.kernel.org, coresight@lists.linaro.org,
-	linux-arm-kernel@lists.infradead.org, kernel@oss.qualcomm.com,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 1/5] dt-bindings: arm: Add Coresight device Trace NOC
- definition
-Message-ID: <20250221235307.GA401276-robh@kernel.org>
-References: <20250221-trace-noc-driver-v1-0-0a23fc643217@quicinc.com>
- <20250221-trace-noc-driver-v1-1-0a23fc643217@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=i9wuWzQXshgYWtQ64VkAfhVkLTiBXtQbr1q17fdleX1wSif4/HbjfMV+yNx/fNXsoFuVoSGrO7QkBX+0D9wgZL338kJJ8RJpBfH8OhS8C3Oug9ur00IXd1Dx11H5mjWMT8HGSGPk5fZzIwZu/E/i/Pq20UVBRMpH04Fy/5Z4gPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=qEMMUVs2; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51LIMnif002896;
+	Fri, 21 Feb 2025 23:55:50 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=achMRzWnd/KuI8b0wuIGICjjIrYg4Y
+	P7qUOZX+tlM/0=; b=qEMMUVs2ZVqyTriMS0xBDIeyOXSBM2lSPqCs+S3VnXkfEu
+	2QwSgpQ85tThMe9ybizqpcoZjhugdvYvDzWXgroNnHWSdPjffPoj/1w50Z3tl4/k
+	qQq3cEqqgBKanoju1j7k+uMDalTfQTj8g14h96cvDPdFEe8bbZeM/Ksg0zX7I1j2
+	VZYiWCFBT8/65/s8zAJz78XZgY11UQ8ojEjurLvQMB4gYcifafv4cN1d4uRUkWha
+	w9TXEh1w0OuIRdxbn3Z5deR8Ax2vnWj+DH42WMb56zH8tCl90Y9RbfTQ+Ygbbp2O
+	mvnVeFmy5mk1gaGnuUcl5f0E+rZ0BPiYBGlZYEtg==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44xn6q4fjn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 21 Feb 2025 23:55:50 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 51LNtnsf023036;
+	Fri, 21 Feb 2025 23:55:49 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44xn6q4fjk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 21 Feb 2025 23:55:49 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51LMUC9n027066;
+	Fri, 21 Feb 2025 23:55:49 GMT
+Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 44w025jsd9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 21 Feb 2025 23:55:49 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51LNtjrN33096034
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 21 Feb 2025 23:55:45 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 8278720043;
+	Fri, 21 Feb 2025 23:55:45 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 016A020040;
+	Fri, 21 Feb 2025 23:55:45 +0000 (GMT)
+Received: from localhost (unknown [9.171.80.218])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Fri, 21 Feb 2025 23:55:44 +0000 (GMT)
+Date: Sat, 22 Feb 2025 00:55:43 +0100
+From: Vasily Gorbik <gor@linux.ibm.com>
+To: Qasim Ijaz <qasdev00@gmail.com>
+Cc: agordeev@linux.ibm.com, gerald.schaefer@linux.ibm.com, hca@linux.ibm.com,
+        borntraeger@linux.ibm.com, svens@linux.ibm.com,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] s390/mm: Simplify gap clamping in mmap_base() using
+ clamp()
+Message-ID: <your-ad-here.call-01740182143-ext-5271@work.hours>
+References: <20250204162508.12335-1-qasdev00@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250221-trace-noc-driver-v1-1-0a23fc643217@quicinc.com>
+In-Reply-To: <20250204162508.12335-1-qasdev00@gmail.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 06BIERgAeYDJhI6AyOyeUl0Mk93vN8Ct
+X-Proofpoint-ORIG-GUID: 6a4Wjbv3g57imsF_ZRWmcjewk8IQOYxD
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-21_09,2025-02-20_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 malwarescore=0
+ mlxscore=0 bulkscore=0 lowpriorityscore=0 priorityscore=1501
+ impostorscore=0 adultscore=0 phishscore=0 mlxlogscore=889 clxscore=1015
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2502210161
 
-On Fri, Feb 21, 2025 at 03:40:28PM +0800, Yuanfang Zhang wrote:
-> Adds new coresight-tnoc.yaml file describing the bindings required
-> to define Trace NOC in the device trees.
+On Tue, Feb 04, 2025 at 04:25:08PM +0000, Qasim Ijaz wrote:
+> mmap_base() has logic to ensure that the variable "gap" stays within the 
+> range defined by "gap_min" and "gap_max". Replace this with the clamp() 
+> macro to shorten and simplify code.
 > 
-> Signed-off-by: Yuanfang Zhang <quic_yuanfang@quicinc.com>
+> Signed-off-by: Qasim Ijaz <qasdev00@gmail.com>
 > ---
->  .../bindings/arm/qcom,coresight-tnoc.yaml          | 107 +++++++++++++++++++++
->  1 file changed, 107 insertions(+)
+>  arch/s390/mm/mmap.c | 6 +-----
+>  1 file changed, 1 insertion(+), 5 deletions(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/arm/qcom,coresight-tnoc.yaml b/Documentation/devicetree/bindings/arm/qcom,coresight-tnoc.yaml
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..b8c1aaf014fb483fd960ec55d1193fb3f66136d2
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/arm/qcom,coresight-tnoc.yaml
-> @@ -0,0 +1,107 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/arm/qcom,coresight-tnoc.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Qualcomm Ttrace NOC(Network On Chip)
-> +
-> +maintainers:
-> +  - yuanfang Zhang <quic_yuanfang@quicinc.com>
-> +
-> +description:
-> +  The Trace NoC is an integration hierarchy which is a replacement of Dragonlink tile configuration.
-> +  It brings together debug component like TPDA, funnel and interconnect Trace Noc which collects trace
-> +  from subsystems and transfers to QDSS sink.
-> +
-> +  It sits in the different subsystem of SOC and aggregates the trace and transports it to Aggregation TNoC
-> +  or to QDSS trace sink eventually. Trace NoC embeds bridges for all the interfaces(APB, ATB, QPMDA & NTS).
-> +
-> +  Trace NoC can take inputs from different trace sources i.e. ATB, QPMDA.
-
-Wrap lines at 80 char. And you need '>' to preserve paragraphs.
-
-> +
-> +# Need a custom select here or 'arm,primecell' will match on lots of nodes
-> +select:
-> +  properties:
-> +    compatible:
-> +      contains:
-> +        enum:
-> +          - qcom,coresight-tnoc
-> +  required:
-> +    - compatible
-> +
-> +properties:
-> +  $nodename:
-> +    pattern: "^tn(@[0-9a-f]+)$"
-
-blank line
-
-> +  compatible:
-> +    items:
-> +      - const: qcom,coresight-tnoc
-> +      - const: arm,primecell
-> +
-> +  reg:
-> +    minItems: 1
-> +    maxItems: 2
-
-Need to describe what each entry is.
-
-> +
-> +  clocks:
-> +    maxItems: 1
-> +
-> +  clock-names:
-> +    items:
-> +      - const: apb_pclk
-> +
-> +  in-ports:
-> +    description: |
-
-Don't need '|'
-
-> +      Input connections from subsystem to TNoC
-> +    $ref: /schemas/graph.yaml#/properties/ports
-
-You have to define the 'port' nodes.
-
-> +
-> +  out-ports:
-> +    description: |
-> +      Output connections from the TNoC to Aggreg TNoC or to legacy CoreSight trace bus.
-> +    $ref: /schemas/graph.yaml#/properties/ports
-> +
-> +    properties:
-> +      port:
-> +        description: |
-> +          Output connections from the TNoC to Aggreg TNoC or to legacy CoreSight trace bus.
-
-'connections' sounds like more than 1, but you only have 1 port. 
-
-Wrap at 80 char.
-
-> +        $ref: /schemas/graph.yaml#/properties/port
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - clock-names
-> +  - in-ports
-> +  - out-ports
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    tn@109ab000  {
-> +      compatible = "qcom,coresight-tnoc", "arm,primecell";
-> +      reg = <0x0 0x109ab000  0x0 0x4200>;
-> +
-> +      clocks = <&aoss_qmp>;
-> +      clock-names = "apb_pclk";
-> +
-> +      in-ports {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +
-> +        port@0 {
-> +          reg = <0>;
-> +
-> +          tn_ag_in_tpdm_gcc: endpoint {
-> +            remote-endpoint = <&tpdm_gcc_out_tn_ag>;
-> +          };
-> +        };
-> +      };
-> +
-> +      out-ports {
-> +        port {
-> +          tn_ag_out_funnel_in1: endpoint {
-> +            remote-endpoint = <&funnel_in1_in_tn_ag>;
-> +          };
-> +        };
-> +      };
-> +    };
-> +...
-> 
+> diff --git a/arch/s390/mm/mmap.c b/arch/s390/mm/mmap.c
+> index 76f376876e0d..a3d3e09a2828 100644
+> --- a/arch/s390/mm/mmap.c
+> +++ b/arch/s390/mm/mmap.c
+> @@ -63,11 +63,7 @@ static inline unsigned long mmap_base(unsigned long rnd,
+>  	 */
+>  	gap_min = SZ_128M;
+>  	gap_max = (STACK_TOP / 6) * 5;
+> -
+> -	if (gap < gap_min)
+> -		gap = gap_min;
+> -	else if (gap > gap_max)
+> -		gap = gap_max;
+> +	gap = clamp(gap, gap_min, gap_max);
+>  
+>  	return PAGE_ALIGN(STACK_TOP - gap - rnd);
+>  }
 > -- 
-> 2.34.1
-> 
+
+Reviewed-by: Vasily Gorbik <gor@linux.ibm.com>
+
+Applied, with a fixup removing the gap_min and gap_max variables as
+Alexander proposed and aligning with your patch for x86. Thank you!
+
+https://lore.kernel.org/all/174014934373.10177.13398467994659612713.tip-bot2@tip-bot2/
 
