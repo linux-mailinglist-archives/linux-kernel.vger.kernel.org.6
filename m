@@ -1,189 +1,113 @@
-Return-Path: <linux-kernel+bounces-525353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8B8DA3EEE7
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:42:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4364A3EEE9
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:44:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 721A43A5B9B
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 08:42:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72ABB1898285
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 08:44:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 893BB201249;
-	Fri, 21 Feb 2025 08:42:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEA21201033;
+	Fri, 21 Feb 2025 08:43:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B08O8XZt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="y+BqoiQN"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5B7C201004;
-	Fri, 21 Feb 2025 08:42:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EB061B0406;
+	Fri, 21 Feb 2025 08:43:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740127365; cv=none; b=cMfDAETc/8WgZDIBtqfTYK7VZTQbTKdN/1v3HXKc0HoZ6ofuNbJT0bYQ9zVXbpWpMKFKKC27qiRUaiO4xIW2E5ut6W1n7c/jZr7M3Ld6xF9Tnm40lfAzoiJKMRmeuFCPWv1bFPpjvQQ6UieNI0haNTu1Ra75eaf8HpZQKDecTqU=
+	t=1740127431; cv=none; b=fNNgRLWWPjR1NiFjy9oZp96ZFPrIN5AyVhtViSEtduoi6pTexUG+bMhZ5Yjmg/qIEbAjzLIVuayaOUxOFWqOHXL1JIUGWzRnuiaRf/JJVDPibOq4q6gdxhfjwgMCILZ2aAUMqvXiiX1JDJuyOr1yuudD0XMacnt+2xs+MXuCsRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740127365; c=relaxed/simple;
-	bh=tiSil00U2JnnP/E3p6huezKqRMcZxe+h8zlz8nw2jKs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OVic2l1e2zsjhwQZswLV4ZCuezoucrjVcsvbBv+WSXfjWJsyDCbMPO7GBPP27lzDNZYE6hv1imOobccwNxBUrlQwY3fyeMDa3LtGPntJF+2D+YDKboKTHqDymXFf0ytuvZceffVG1myFcdltLHmeDHnlCquNfXeEqyuydHoAb8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B08O8XZt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C868BC4CED6;
-	Fri, 21 Feb 2025 08:42:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740127365;
-	bh=tiSil00U2JnnP/E3p6huezKqRMcZxe+h8zlz8nw2jKs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=B08O8XZtpmkFmyuZRyImuXZVPePB/tjexi6Y/rSbdFMvp/WHg67u+UOAjYf1bSSxC
-	 jmuIUGF3/TIpbf6do3X9wkSaWZX33AIphlbuZn/dL3n+YujVlpVNHczq0xjqSn1VGi
-	 sbI+sU/IuSxeRMo68/2GVsqJnFOzIDibdnOZtLXd53NAz3F+OXs6qIhSnZEq1XpJnn
-	 CEgz09/e3ehmXX3Zs0LVt++4Q6q76Mx9Bnky5vOS7d6WH2neMBTnmzrTYXxxcAaCMy
-	 aNW/iqvr0pNhEjTulukl79VeZn4Sea93fu3CLwKRyb0/D9iLWnRzUXW36V51tQjmS6
-	 +q0h6tmOYkcEw==
-Message-ID: <abe231fb-6891-4008-92a9-9c3525ea0bcf@kernel.org>
-Date: Fri, 21 Feb 2025 09:42:41 +0100
+	s=arc-20240116; t=1740127431; c=relaxed/simple;
+	bh=0M+WT7F9uCqc+pyI4vg/MufuhXOb4oKidEj0ba8e3Fg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Cw0rwl0Imw5i/r7h2nrqAx6AUsSw8PHStMcVy8OkpCPprBJXCPFNGwLTf60Y2JYcs2u/MddZNIVDNtmPDkIu0ma4m3SvrLaTUPGleky3Es6Wr8l6sDLZ4UV1BioV3rVjRjNJ3zFXua2Zl/UYs6/CvmEx6CpQrj5yitb82U23oLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=y+BqoiQN; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=SO6UWzoc/zbS6DMMh8zzJ8wnANdSqb4FNiwFHAzJYB8=; b=y+BqoiQNhSi013U7h+X21U0GZk
+	kUhZl7J4G5qbsRwinzXjc8UmLPKJvmXz387NFenlUJSgk2twL8r+lD7ye07FSRiOo/9Ks343KnlHh
+	y05yeZDoICigBBma5dE0KEUOPe4XmRJ78fCCphqhNVYU/n2Kar9eBksJk5mzhfBy//GKBfhc3h+Yb
+	KDfNeXqI4BiEcOQBhkiSuPxIKzWaGbcjKPYWFqBmNItTTSE3DYN9L1oHV7o+6Gh27QSe96K9Ciham
+	vy2kEO1MBaFieDtSaADCzuc8wL4Ojzl3DDT0+mIXkNrp/4aKCtbTZwYt01rmpUP4wU6dskUdOmpjD
+	VkAJekJg==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:46216)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1tlOdM-0003tZ-0l;
+	Fri, 21 Feb 2025 08:43:44 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1tlOdK-0001s5-2k;
+	Fri, 21 Feb 2025 08:43:42 +0000
+Date: Fri, 21 Feb 2025 08:43:42 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Jan Petrous <jan.petrous@oss.nxp.com>, NXP S32 Linux Team <s32@nxp.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] MAINTAINERS: fix DWMAC S32 entry
+Message-ID: <Z7g8vk-MrDQ271Dz@shell.armlinux.org.uk>
+References: <E1tkJow-004Nfn-Cs@rmk-PC.armlinux.org.uk>
+ <20250220152248.3c05878a@kernel.org>
+ <Z7fHNEFo7Aa4jfUO@shell.armlinux.org.uk>
+ <20250220164819.044b509f@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] leds: add support for TI LP5860 LED driver chip
-To: Steffen Trumtrar <s.trumtrar@pengutronix.de>, Pavel Machek
- <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Steffen Trumtrar <kernel@pengutronix.de>
-Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250220-v6-14-topic-ti-lp5860-v1-0-42874bdc7513@pengutronix.de>
- <20250220-v6-14-topic-ti-lp5860-v1-2-42874bdc7513@pengutronix.de>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250220-v6-14-topic-ti-lp5860-v1-2-42874bdc7513@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250220164819.044b509f@kernel.org>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On 20/02/2025 13:57, Steffen Trumtrar wrote:
-> This adds support for the Texas Instruments LP5860 LED driver chip
-> via SPI interfaces.
+On Thu, Feb 20, 2025 at 04:48:19PM -0800, Jakub Kicinski wrote:
+> On Fri, 21 Feb 2025 00:22:12 +0000 Russell King (Oracle) wrote:
+> > Right now, the situation is:
+> > 
+> > $ grep s32@nxp.com MAINTAINERS
+> > R:      NXP S32 Linux Team <s32@nxp.com>
+> > L:      NXP S32 Linux Team <s32@nxp.com>
+> > R:      NXP S32 Linux Team <s32@nxp.com>
+> > L:      s32@nxp.com
+> > 
+> > and the approach that has been taken in the past is:
+> > 
+> > -L:     NXP S32 Linux Team <s32@nxp.com>
+> > +R:     NXP S32 Linux Team <s32@nxp.com>
+> > 
+> > in commit bb2de9b04942 ("MAINTAINERS: fix list entries with display names")
+> > 
+> > However, commit 98dcb872779f ("ARM: s32c: update MAINTAINERS entry") did
+> > the reverse for the "ARM/NXP S32G ARCHITECTURE" entry breaking that and
+> > adding a new instance of this breakage elsewhere.
+> > 
+> > It seems these are just going to flip back and forth, so I don't think
+> > I can be bothered to try to fix it, and will modify my own scripts to
+> > eliminate the blank entry in get_maintainers output because of this.
+> > (In other words, s32@nxp.com will *not* be Cc'd for any patches I send.)
 > 
+> Literally would have taken you less time to fix it how I asked than
+> type this email :/
 
-Please do not use "This commit/patch/change", but imperative mood. See
-longer explanation here:
-https://elixir.bootlin.com/linux/v5.17.1/source/Documentation/process/submitting-patches.rst#L95
+My point is that "fixing" it will only get unfixed later - as can be
+seen from the history of the s32 entries already present. They flip-flop
+between R: and L: as people's ideas about what is correct change.
 
-....
-
-
-> +
-> +	return 0;
-> +}
-> +
-> +int lp5860_device_init(struct lp5860 *lp)
-> +{
-> +	int ret;
-> +
-> +	dev_set_drvdata(lp->dev, lp);
-> +
-> +	ret = lp5860_enable_disable(lp, 1);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = regmap_update_bits(lp->regmap, LP5860_DEV_INITIAL,
-> +				 LP5860_MODE_MASK,
-> +				 LP5860_MODE_1 << LP5860_MODE_OFFSET);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	ret = sysfs_create_group(&lp->dev->kobj, &lp5860_group);
-
-
-Where is ABI documentation?
-
-> +	if (ret)
-> +		return ret;
-> +
-> +	return lp5860_probe_dt(lp);
-> +}
-
-
-...
-
-> +static const struct of_device_id lp5860_of_match[] = {
-> +	{ .compatible = "ti,lp5860" },
-> +	{}
-> +};
-> +MODULE_DEVICE_TABLE(of, lp5860_of_match);
-> +
-> +static struct spi_driver lp5860_driver = {
-> +	.driver = {
-> +		.name = "lp5860",
-> +		.of_match_table = of_match_ptr(lp5860_of_match),
-
-
-Drop of_match_ptr, you have a warning here.
-
-> +	},
-> +	.probe	= lp5860_probe,
-> +	.remove = lp5860_remove,
-> +};
-> +
-> +module_spi_driver(lp5860_driver);
-> +
-> +MODULE_DESCRIPTION("TI leds lp5860");
-> +MODULE_AUTHOR("Steffen Trumtrar <kernel@pengutronix.de>");
-> +MODULE_LICENSE("GPL");
-> +MODULE_ALIAS("spi:leds-lp5860");
-
-You should not need MODULE_ALIAS() in normal cases. If you need it,
-usually it means your device ID table is wrong (e.g. misses either
-entries or MODULE_DEVICE_TABLE()). MODULE_ALIAS() is not a substitute
-for incomplete ID table.
-
-Best regards,
-Krzysztof
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
