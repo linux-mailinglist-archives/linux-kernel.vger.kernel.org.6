@@ -1,193 +1,143 @@
-Return-Path: <linux-kernel+bounces-526353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A682A3FDA8
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 18:42:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E035BA3FD92
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 18:37:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A69E3BF371
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:38:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26D52189B256
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:38:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30AF1250BEA;
-	Fri, 21 Feb 2025 17:38:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C6842505CF;
+	Fri, 21 Feb 2025 17:37:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="hXIN3Z5O"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eJ87RE6f"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF5C31E9B31;
-	Fri, 21 Feb 2025 17:37:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35B6124C66F
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 17:37:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740159479; cv=none; b=SqkTxrUimJC90bVmm1fizEz/CzHdoRv8ij6Q+RyL9oreC7u1Ce7DYAkPeqRC0ziCGKU9jzhX7qAzF43EAXn7d6x5COKDO+b+9RL3xdr2lxh3qcKSIpHEG5orTfBySu0BDuJz4AlgB2k0T+Ie9jLA6r+Gi7+v4f9Xl/9LIjZMDy4=
+	t=1740159472; cv=none; b=PcEkOIZvvOd9kyrCXj8QDSmak/Mm+W9uFKAyluUET1mK6qjJfuCdKIceOzW7UwUWvsvFRJEJG0eL87A4CnjpP0siqmh6xcelaV6v19pRkyC7cnml1joDgygZDp0zNNwsNYTdSmTAXGDMqd3s2u2bv3/l1G72mEGjgmW9IfksURE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740159479; c=relaxed/simple;
-	bh=wIc0LcJDOs1i48hZA97m2pwA+nhyQVyiw2aP2OkNwEc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hL7Lv+HEZGCpItVEZy1HTYPqGXmMAc4gr3Nh6W6tcDKA5Tw0nwfEMCAKBA/yN4EoBIPQs/ANBeRMT2efoUK/xijoxvLivkhXbjheL+ufXR0hV72Sx5SyN93KMSjvxAmhyhP+nsUZs+vFNprdVdtn+ouylJ0WmmD9O2GPY5yyG4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=hXIN3Z5O; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51LB9LDm001350;
-	Fri, 21 Feb 2025 17:37:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=669DWXN4P39AfzDosqBdxQgy1+JPQG
-	AZQsinsyWix10=; b=hXIN3Z5OQhdJBooRXXuRybv72DWfi0kzbRw3tBKXSmyexI
-	l/1r0sxqOHQLqTM7omTY0IpqkOHdxY9kMV1dcyuZHujcnmRXWLS8IcmNiki0JXrn
-	O85p/x2//JuwQPxAFmbt5hz8VGJ1d1dTlkb3hKMKP59lM0gs5fOvtWwOUvJ0lJXs
-	IboyORKLziWRIJBm2//6Kj9re4WKeEszYUzJj74W4WJAWbDFBTkqAhX0rd0Y4IrS
-	A+xmuesKCPEQ5DV7VY7qjS7ITCk0lFKlrYqFIl15gZg2ZPzrgeSlkTm6RdMo52Qs
-	HbEH0SatpHGDzAWJooa67Cuw3rzyegxO3ousRgdg==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44xdhaw01a-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Feb 2025 17:37:49 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 51LHbmpr032575;
-	Fri, 21 Feb 2025 17:37:49 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44xdhaw016-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Feb 2025 17:37:48 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51LFZSUF002348;
-	Fri, 21 Feb 2025 17:37:48 GMT
-Received: from smtprelay02.dal12v.mail.ibm.com ([172.16.1.4])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 44w03xh906-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Feb 2025 17:37:48 +0000
-Received: from smtpav01.wdc07v.mail.ibm.com (smtpav01.wdc07v.mail.ibm.com [10.39.53.228])
-	by smtprelay02.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51LHblr828836508
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 21 Feb 2025 17:37:47 GMT
-Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 5379858059;
-	Fri, 21 Feb 2025 17:37:47 +0000 (GMT)
-Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 327565804B;
-	Fri, 21 Feb 2025 17:37:47 +0000 (GMT)
-Received: from localhost (unknown [9.61.179.202])
-	by smtpav01.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 21 Feb 2025 17:37:47 +0000 (GMT)
-Date: Fri, 21 Feb 2025 11:37:46 -0600
-From: Nick Child <nnac123@linux.ibm.com>
-To: David Laight <david.laight.linux@gmail.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, horms@kernel.org,
-        nick.child@ibm.com, pmladek@suse.com, rostedt@goodmis.org,
-        john.ogness@linutronix.de, senozhatsky@chromium.org
-Subject: Re: [PATCH net-next v3 1/3] hexdump: Implement macro for converting
- large buffers
-Message-ID: <Z7i56s7jwc_y0cIz@li-4c4c4544-0047-5210-804b-b8c04f323634.ibm.com>
-References: <20250219211102.225324-1-nnac123@linux.ibm.com>
- <20250219211102.225324-2-nnac123@linux.ibm.com>
- <20250220220050.61aa504d@pumpkin>
+	s=arc-20240116; t=1740159472; c=relaxed/simple;
+	bh=eE5troSHsQjLtCsxkyuRLR55vDghK40QPT2OcM3zs7Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MhuXtBu3sk5AN5qmai3pW9Mn862Eootq3O5i6JvGjHJvueyZREbZeWtoHYz06RQPs1g00q3nmNr3AcmbYFeELN9/cqddusA4f06UuoHEvFoAyluPJ7MSEmEwhxkIAz9dQ17VXInn6aqVQNEUM0b9RlCcd7ebHgFLXDMDZRtsKaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eJ87RE6f; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740159471; x=1771695471;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=eE5troSHsQjLtCsxkyuRLR55vDghK40QPT2OcM3zs7Y=;
+  b=eJ87RE6fHA9Ltj6M+MhihhBy8YToScRkwbips77kjP2MRUx8yw8A6Opj
+   F5juRzdx4TXJzi67ydWd1hHnpdkqKEjE7wkRqYrCoYB/TwPx+d5xTT1Sn
+   W+FbkqaZwyDKZWJbfz6/m93BcFojWqHSwS1lOTMpPry995BPM6gCt3SGG
+   IlgzujAySujxobX3jiknRgou4qnzHKgxwTFxfEEOClOM1qTzyB3p0pL0U
+   sMX3EaUKKsRzG3omi/L41P905TeX9+exwyfBxTm3pm/8798h4fcAEiZOe
+   Awg1YCFczc1YSW+aqfvh8GREvvoRQ2Z41UtFspCM2zZNsupVaJKIgZokZ
+   g==;
+X-CSE-ConnectionGUID: s5AP46B8SwGQpaWoyZNYyQ==
+X-CSE-MsgGUID: O4iNe8ddTn+ZUwRUgcSoXQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11314"; a="41191687"
+X-IronPort-AV: E=Sophos;i="6.12,310,1728975600"; 
+   d="scan'208";a="41191687"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Feb 2025 09:37:50 -0800
+X-CSE-ConnectionGUID: OyxYwKrUSOOBOaQURLNBDw==
+X-CSE-MsgGUID: ACXFctzbSu6S9lgzApMY9A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,305,1732608000"; 
+   d="scan'208";a="138653762"
+Received: from aschofie-mobl2.amr.corp.intel.com (HELO [10.125.110.177]) ([10.125.110.177])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Feb 2025 09:37:48 -0800
+Message-ID: <b706e37d-66c1-4666-89a2-03c6bb58bb2a@intel.com>
+Date: Fri, 21 Feb 2025 09:37:51 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250220220050.61aa504d@pumpkin>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 5xECC4AGJpgVrmjDK2pr7w7ca8IzgKH_
-X-Proofpoint-ORIG-GUID: UX1jSzdChIvbnXu7-wKNUaqVzIJJz7xz
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-21_05,2025-02-20_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 spamscore=0
- mlxlogscore=927 mlxscore=0 bulkscore=0 priorityscore=1501 adultscore=0
- clxscore=1015 suspectscore=0 phishscore=0 lowpriorityscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2502210122
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/4] pkeys: add API to switch to permissive pkey register
+To: Dmitry Vyukov <dvyukov@google.com>, mathieu.desnoyers@efficios.com,
+ peterz@infradead.org, boqun.feng@gmail.com, tglx@linutronix.de,
+ mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com,
+ aruna.ramakrishna@oracle.com, elver@google.com
+Cc: "Paul E. McKenney" <paulmck@kernel.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+References: <cover.1739790300.git.dvyukov@google.com>
+ <ffd123bb0c73df5cdd3a5807b360bd390983150b.1739790300.git.dvyukov@google.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <ffd123bb0c73df5cdd3a5807b360bd390983150b.1739790300.git.dvyukov@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi David,
+On 2/17/25 03:07, Dmitry Vyukov wrote:
+>  arch/x86/Kconfig             |  1 +
+>  arch/x86/include/asm/pkeys.h | 14 ++++++++++++++
+>  arch/x86/include/asm/pkru.h  | 10 +++++++---
+>  include/linux/pkeys.h        | 22 ++++++++++++++++++++++
+>  mm/Kconfig                   |  2 ++
 
-On Thu, Feb 20, 2025 at 10:00:50PM +0000, David Laight wrote:
-> On Wed, 19 Feb 2025 15:11:00 -0600
-> Nick Child <nnac123@linux.ibm.com> wrote:
-> 
-> > ---
-> >  include/linux/printk.h | 20 ++++++++++++++++++++
-> >  1 file changed, 20 insertions(+)
-> > 
-> > diff --git a/include/linux/printk.h b/include/linux/printk.h
-> > index 4217a9f412b2..12e51b1cdca5 100644
-> > --- a/include/linux/printk.h
-> > +++ b/include/linux/printk.h
-> > +				   buf, len) \
-> > +	for ((i) = 0;							\
-> > +	     (i) < (len) &&						\
-> > +	     hex_dump_to_buffer((unsigned char *)(buf) + (i),		\
-> > +				(len) - (i), (rowsize), (groupsize),	\
-> > +				(linebuf), (linebuflen), false);	\
-> 
-> You can avoid the compiler actually checking the function result
-> it you try a bit harder - see below.
-> 
+One last thought...
 
-This was an extra precaution against infinite loops, breaking when
-hex_dump_to_buffer returns 0 when len is 0. Technically this won't happen
-since we check i < len first, and increment i by at least 16 (though
-your proposal removes the latter assertion). 
+This is touching x86, mm and rseq code. So, who's going to send it to Linus?
 
-My other thought was to check for error case by checking if
-the return value was > linebuflen. But I actually prefer the behavior
-of continuing with the truncated result.
+I'm happy to send this in one of the tip branches and send it upstream.
+But I'd also be happy to provide acks and have it go up with other rseq
+bits.
 
-I think I prefer it how it is rather than completely ignoring it.
-Open to other opinons though.
-
-> > +	     (i) += (rowsize) == 32 ? 32 : 16				\
-> > +	    )
-> 
-> If you are doing this as a #define you really shouldn't evaluate the
-> arguments more than once.
-> I'd also not add more code that relies on the perverse and pointless
-> code that enforces rowsize of 16 or 32.
-> Maybe document it, but there is no point changing the stride without
-> doing the equivalent change to the rowsize passed to hex_dump_to_buffer.
-> 
-
-The equivalent conditonal exists in hex_dump_to_buffer so doing it
-again seemed unnecessary. I understand your recent patch [1] is trying
-to replace the rowsize is 16 or 32 rule with rowsize is a power of 2
-and multiple of groupsize. I suppose the most straightforward and
-flexible thing the for_each loop can do is to just assume rowsize is
-valid.
-
-> You could do:
-> #define for_each_line_in_hex_dump(buf_offset, rowsize, linebuf, linebuflen, groupsize, buf, len, ascii) \
-> for (unsigned int _offset = 0, _rowsize = (rowsize), _len = (len); \
-> 	((offset) = _offset) < _len && (hex_dump_to_buffer((const char *)(buf) + _offset, _len - _offset, \
-> 		_rowsize, (groupsize), (linebuf), (linebuflen), (ascii)), 1); \
-> 	_offset += _rowsize )
-> 
-> (Assuming I've not mistyped it.)
-> 
-
-Trying to understand the reasoning for declaring new tmp variables;
-Is this to prevent the values from changing in the body of the loop?
-I tried to avoid declaring new vars in this design because I thought it
-would recive pushback due to possible name collision and variable
-declaration inside for loop initializer.
-I suppose both implementations come with tradeoffs.
-
-> As soon as 'ascii' gets replaced by 'flags' you'll need to pass it through.
-> 
-
-Yes, if hex_dump_to_buffer becomes a wrapper around a new function
-(which accepts flag arg), I think there is an opportunity for a lot
-of confusion to clear up. Old behaviour of hex_dump_to_buffer will be
-respected but the underlying function will be more flexible.
-
-Appreciate the review!
-- Nick
-
-[1] - https://lore.kernel.org/lkml/20250216201901.161781-1-david.laight.linux@gmail.com/
+Does anyone have a preference?
 
