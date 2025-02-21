@@ -1,154 +1,245 @@
-Return-Path: <linux-kernel+bounces-526487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA995A3FF4D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 20:04:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1966A3FF51
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 20:07:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE311860B56
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 19:04:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C8BC4254A2
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 19:07:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EAF925334F;
-	Fri, 21 Feb 2025 19:03:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F4DC2512C9;
+	Fri, 21 Feb 2025 19:07:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jl0bNujm"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Qj+db7xu"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 521212528E5;
-	Fri, 21 Feb 2025 19:03:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 337631D7E50;
+	Fri, 21 Feb 2025 19:07:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740164629; cv=none; b=A6NgPVldQy5caDpjTMNwxV8kOwX3souqJW0rb+u8ZHHuWwfWU4RMAA+i09tBxnGMGaEWtIU8noawAzkiS+/Q2U+23LLttUzl4D9HCAftxkykHGOZTtHIDyZEq0tV8/ZA+ElDU2tIOGrKGOpojZ6kFC700suvdolao6VG4CW80vM=
+	t=1740164862; cv=none; b=nFdqY3AF0SpCBsZq+a7IQE3JLWGzZaCB/zol+Ubsx2kmoO4x9ZwX5ezRQDEH9cE6g0d+XBCFqiqyxneiyBPHJvzjqIBqOr5lZFr5RtG5dGp4zRY6uszD0zJ7xaLmXbgR2U3zOprVZetlBPjVLGxdFPjAt8DfnUKIbPMXsSPFfiQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740164629; c=relaxed/simple;
-	bh=Yx3CJUQ5auhYQe1AJZt5x2K3GAMK2KGFQSDBdaEAfFs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qn3pscEs4nejNiQGuRYMum7tafbh/lzgSM7uiD+5tOOlz0rbvpBuw6DaBsu79w7SIgY+msH9ZtjUXv35BRb1PjKslm15ZBXa+WmFJXBW+vz+X3iB2qYEKQ6ILrvG4ZafzsLnBHW8msQ6YCc0FNUnqf43AipNLg+Nlclg2Kn0jpg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jl0bNujm; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-220e83d65e5so49239135ad.1;
-        Fri, 21 Feb 2025 11:03:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740164627; x=1740769427; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=vH5HFKaawkeYnTHXne+k2M6Gi4L64IdQGTcUjzfy9HQ=;
-        b=Jl0bNujmhj1ZT3UvB4hm2DM/3omwI+EwUv5vxUZUnFWP7DvZ2l3Pu/r+ZWguQvL57g
-         HMQvdJNu96iJ3kuWVIAyW+m/c1l6CtN/PTyvnIVhWigY6u8DIFDjzvrmpGXkrpzlCfVV
-         fw9AxQJG9PUxTnjc2rFeCwBFlEFYukXzCskoovwwudIvf6PRgnrPoYjgAhAZdiuhZtmU
-         jFjAiDV4UA4WTD2Nwsv5/rXaIgN4nEpOIuehFkwi9NWkLeTXcHHBVfbVIGt+AMujmNcu
-         nlGGCDp6hdUfK71gpT/dWvyo/pcYTJzPe82vj+0oL4Uq2KX3989o/mGVoP6iLzHuGdOB
-         +b3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740164627; x=1740769427;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vH5HFKaawkeYnTHXne+k2M6Gi4L64IdQGTcUjzfy9HQ=;
-        b=MFq/yX34qfauc4kYpQJqwGvhb2ll9N1EPQHr21RB/JeQLg1B+6Th2AjaI2DizxjPQ3
-         qrf2FskXt66MobSTY5vXn3C5w6oSPjHWLFarZsleGVA0qZXTOVHnyfWBnEItxlkylSSj
-         dud0PwJaeBou4n/wxeEHVuE3RXam9dDlGFaiEmtct0Rfn30aKpYLBDg/j5jNOc/e7DsJ
-         akuNrozZ+CbVgLQ+L7esBxVz2ThYV7CCz65KEwuqtD64F/89HzoiKALGVVIcQD1fZpJA
-         Ka2SEMVy31ISeJKb1ibK8CJVfbJlJp0JO2n1fymfPi+sJvTd2OS4+ZM2xA2gNuMQk+37
-         rkAg==
-X-Forwarded-Encrypted: i=1; AJvYcCWsbRZAm239NNEKhdW42yEsf2E1/xaHmRReJsvo1Cvo/aTwwwuyXVOfPTyiuGxsX6qEf3yFF1jUqvjf@vger.kernel.org
-X-Gm-Message-State: AOJu0YwduRhSIja9+/V5pc+DVIeK3HO1+qdflFO0NIY1jTN3eT3oN8Tc
-	J7DdLQo5cUkhEmoJGRGTkZpWyPKeRK2ADYqo9vxy17hzPqGbskJX
-X-Gm-Gg: ASbGncvZMHR5/YibSsq+sc0ftX+Z9ex9lrzqV1ad4BbJXhpXveSfmyhrj0uKPpsRzUG
-	QbBAegQ0WDxEo0cv9vVUzxSan5k6e1esydfFmWykH+LBMJgXQggRAAs7mb9l5OgouorOcbRNMZa
-	Kctodw8lODowqDKEXCoxw0/2BCwJ8R77NGIcDb84AZjXBO1MVXUfVsN+JxIhrNRo673NCg4YVmr
-	PNR0ueMHj0fY53yYCGwrzBgA5/cG67D0ei/lroAs9f7ZrZHXAtKvHEXQ4euRBOzMlS+4J6UNXgy
-	o4p9ULNPgZyYY6tFMVvEMIlU0Q==
-X-Google-Smtp-Source: AGHT+IHdmbG5cRGpHshEwzmBxgJqyw7H3qrw+xRtwNe8nI+Hjc2ysty4thRXFYYFyK6ggCpp5W52Tw==
-X-Received: by 2002:a05:6a21:69b:b0:1e1:aef4:9ce8 with SMTP id adf61e73a8af0-1eef3d87138mr8755556637.28.1740164627344;
-        Fri, 21 Feb 2025 11:03:47 -0800 (PST)
-Received: from localhost ([216.228.125.130])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73264729945sm12838710b3a.179.2025.02.21.11.03.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Feb 2025 11:03:46 -0800 (PST)
-Date: Fri, 21 Feb 2025 14:03:44 -0500
-From: Yury Norov <yury.norov@gmail.com>
-To: Beata Michalska <beata.michalska@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	sudeep.holla@arm.com, will@kernel.org, catalin.marinas@arm.com,
-	sfr@canb.auug.org.au, ionela.voinescu@arm.com,
-	linux-next@vger.kernel.org, sumitg@nvidia.com,
-	yang@os.amperecomputing.com, vanshikonda@os.amperecomputing.com,
-	lihuisong@huawei.com, zhanjie9@hisilicon.com,
-	ptsm@linux.microsoft.com
-Subject: Re: [PATCH v2] arm64: Utilize for_each_cpu_wrap for reference lookup
-Message-ID: <Z7jOEFtVtcuMyjjt@thinkpad>
-References: <20250220091015.2319901-1-beata.michalska@arm.com>
+	s=arc-20240116; t=1740164862; c=relaxed/simple;
+	bh=DbrqP0BacaSAXAnoX53ZZJOcVs7BxL29Huazrq9X37k=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=CGtRhdd/lSi/SDvihhYFWgq686oe5FKc4NH1t/f4ehIYWvxCFcEo2HZ1LDwbjay/HplVZoiFPxGGICOBXhH/Ehsvu3JGMR3xkjW0j9H9Fme60LAp2+0Gt6rSvKwwyAuCoOPgFbSHDzkbOK6xccYdx1p1e/+FQIOV1Us76XPU3Y0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Qj+db7xu; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51LIMe4x031829;
+	Fri, 21 Feb 2025 19:07:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=heDO+g
+	AI4iMzWupr9MuQuH5tFKokm/yoJasfRTU3cp0=; b=Qj+db7xuvQd+nLbmOaiux2
+	t+dRcrAR5dmeYNxeHzpBkasiuD429gJdAjnZDSxHONM9ufyDtezX5oGPoWAtvtOf
+	ODXcoEubCilZiTOwHVyLuyW/4I1TcywKpvsk9S3Gr9O3UtvUOiku5JWNAkxhBbhn
+	nQIazWPTtCUMDzxxV9BAb3EZZYrN7giiqGkzy0vOAiwsqzjbSg5TTHuc4mgkh18D
+	0x6tPCQliBF4xyVQKSAcPdd92tbI5m9jkeNO5Xr7In9Gd0IO6ZbIkMotkpL9uoVB
+	Hbm0DJIEXtsKbo9B+zqK/Wy7eWKlCqeMH9P/KzLvza6FaH657PpkisP2ZvKdJ6uQ
+	==
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44xgb0ck69-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 21 Feb 2025 19:07:14 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51LIkAsL002433;
+	Fri, 21 Feb 2025 19:07:13 GMT
+Received: from smtprelay02.dal12v.mail.ibm.com ([172.16.1.4])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 44w03xhnkn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 21 Feb 2025 19:07:13 +0000
+Received: from smtpav05.dal12v.mail.ibm.com (smtpav05.dal12v.mail.ibm.com [10.241.53.104])
+	by smtprelay02.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51LJ7DoQ32244352
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 21 Feb 2025 19:07:13 GMT
+Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 39CA158052;
+	Fri, 21 Feb 2025 19:07:13 +0000 (GMT)
+Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1634658065;
+	Fri, 21 Feb 2025 19:07:12 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.108.12])
+	by smtpav05.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 21 Feb 2025 19:07:12 +0000 (GMT)
+Message-ID: <36f8cb5131c51f784fa6e7a062b6318b30c9cc28.camel@linux.ibm.com>
+Subject: Re: [PATCH v8 4/7] ima: kexec: define functions to copy IMA log at
+ soft boot
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: steven chen <chenste@linux.microsoft.com>, stefanb@linux.ibm.com,
+        roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
+        eric.snowberg@oracle.com, ebiederm@xmission.com, paul@paul-moore.com,
+        code@tyhicks.com, bauermann@kolabnow.com,
+        linux-integrity@vger.kernel.org, kexec@lists.infradead.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
+        James.Bottomley@HansenPartnership.com, bhe@redhat.com,
+        vgoyal@redhat.com, dyoung@redhat.com
+Date: Fri, 21 Feb 2025 14:07:11 -0500
+In-Reply-To: <20250218225502.747963-5-chenste@linux.microsoft.com>
+References: <20250218225502.747963-1-chenste@linux.microsoft.com>
+	 <20250218225502.747963-5-chenste@linux.microsoft.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250220091015.2319901-1-beata.michalska@arm.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: tl1t-f3xrxoME_Ejbk6c9jgxYK4Zw_1d
+X-Proofpoint-ORIG-GUID: tl1t-f3xrxoME_Ejbk6c9jgxYK4Zw_1d
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-21_07,2025-02-20_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
+ malwarescore=0 clxscore=1015 lowpriorityscore=0 suspectscore=0
+ impostorscore=0 priorityscore=1501 phishscore=0 adultscore=0 mlxscore=0
+ bulkscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2502210131
 
-On Thu, Feb 20, 2025 at 09:10:15AM +0000, Beata Michalska wrote:
-> While searching for a reference CPU within a given policy,
-> arch_freq_get_on_cpu relies on cpumask_next_wrap to iterate over
-> all available CPUs and to ensure each is verified only once.
-> Recent changes to cpumask_next_wrap will handle the latter no more,
-> so switching to for_each_cpu_wrap, which  preserves expected behavior
-> while ensuring compatibility with the updates.
-> Not to mention that when iterating over each CPU, using a dedicated
-> iterator is preferable to an open-coded loop.
-> 
-> Fixes: 16d1e27475f6 ("arm64: Provide an AMU-based version of arch_freq_get_on_cpu")
-> Signed-off-by: Beata Michalska <beata.michalska@arm.com>
-
-Reviewed-by: Yury Norov [NVIDIA] <yury.norov@gmail.com>
-
+On Tue, 2025-02-18 at 14:54 -0800, steven chen wrote:
+> IMA log is copied to the new Kernel during kexec 'load' using=20
+> ima_dump_measurement_list().=C2=A0 The log copy at kexec 'load' may resul=
+t in
+> loss of IMA measurements during kexec soft reboot.=C2=A0 It needs to be c=
+opied
+> over during kexec 'execute'.=C2=A0 Setup the needed infrastructure to mov=
+e the
+> IMA log copy from kexec 'load' to 'execute'.=20
+>=20
+> Define a new IMA hook ima_update_kexec_buffer() as a stub function.
+> It will be used to call ima_dump_measurement_list() during kexec=20
+> 'execute'.=C2=A0=C2=A0=20
+>=20
+> Implement ima_kexec_post_load() function to be invoked after the new=20
+> Kernel image has been loaded for kexec. ima_kexec_post_load() maps the=
+=20
+> IMA buffer to a segment in the newly loaded Kernel.=C2=A0 It also registe=
+rs=20
+> the reboot notifier_block to trigger ima_update_kexec_buffer() at=20
+> exec 'execute'.
+>=20
+> Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+> Signed-off-by: steven chen <chenste@linux.microsoft.com>
 > ---
->  v2:
->  Updated commit message
-> 
->  arch/arm64/kernel/topology.c | 16 ++++++++++------
->  1 file changed, 10 insertions(+), 6 deletions(-)
-> 
-> diff --git a/arch/arm64/kernel/topology.c b/arch/arm64/kernel/topology.c
-> index a09b0551ec59..9e3583720668 100644
-> --- a/arch/arm64/kernel/topology.c
-> +++ b/arch/arm64/kernel/topology.c
-> @@ -254,7 +254,7 @@ int arch_freq_get_on_cpu(int cpu)
->  		if (!housekeeping_cpu(cpu, HK_TYPE_TICK) ||
->  		    time_is_before_jiffies(last_update + msecs_to_jiffies(AMU_SAMPLE_EXP_MS))) {
->  			struct cpufreq_policy *policy = cpufreq_cpu_get(cpu);
-> -			int ref_cpu = cpu;
-> +			int ref_cpu;
->  
->  			if (!policy)
->  				return -EINVAL;
-> @@ -265,11 +265,15 @@ int arch_freq_get_on_cpu(int cpu)
->  				return -EOPNOTSUPP;
->  			}
->  
-> -			do {
-> -				ref_cpu = cpumask_next_wrap(ref_cpu, policy->cpus,
-> -							    start_cpu, true);
-> -
-> -			} while (ref_cpu < nr_cpu_ids && idle_cpu(ref_cpu));
-> +			for_each_cpu_wrap(ref_cpu, policy->cpus, cpu + 1) {
-> +				if (ref_cpu == start_cpu) {
-> +					/* Prevent verifying same CPU twice */
-> +					ref_cpu = nr_cpu_ids;
-> +					break;
-> +				}
-> +				if (!idle_cpu(ref_cpu))
-> +					break;
-> +			}
->  
->  			cpufreq_cpu_put(policy);
->  
-> -- 
-> 2.25.1
+> =C2=A0include/linux/ima.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 3 ++
+> =C2=A0security/integrity/ima/ima_kexec.c | 46 +++++++++++++++++++++++++++=
++++
+> =C2=A02 files changed, 49 insertions(+)
+>=20
+> diff --git a/include/linux/ima.h b/include/linux/ima.h
+> index 0bae61a15b60..8e29cb4e6a01 100644
+> --- a/include/linux/ima.h
+> +++ b/include/linux/ima.h
+> @@ -32,6 +32,9 @@ static inline void ima_appraise_parse_cmdline(void) {}
+> =C2=A0
+> =C2=A0#ifdef CONFIG_IMA_KEXEC
+> =C2=A0extern void ima_add_kexec_buffer(struct kimage *image);
+> +extern void ima_kexec_post_load(struct kimage *image);
+> +#else
+> +static inline void ima_kexec_post_load(struct kimage *image) {}
+> =C2=A0#endif
+> =C2=A0
+> =C2=A0#else
+> diff --git a/security/integrity/ima/ima_kexec.c
+> b/security/integrity/ima/ima_kexec.c
+> index 704676fa6615..0fa65f91414b 100644
+> --- a/security/integrity/ima/ima_kexec.c
+> +++ b/security/integrity/ima/ima_kexec.c
+> @@ -12,10 +12,14 @@
+> =C2=A0#include <linux/kexec.h>
+> =C2=A0#include <linux/of.h>
+> =C2=A0#include <linux/ima.h>
+> +#include <linux/reboot.h>
+> +#include <asm/page.h>
+> =C2=A0#include "ima.h"
+> =C2=A0
+> =C2=A0#ifdef CONFIG_IMA_KEXEC
+> =C2=A0static struct seq_file ima_kexec_file;
+> +static void *ima_kexec_buffer;
+> +static bool ima_kexec_update_registered;
+> =C2=A0
+> =C2=A0static void ima_reset_kexec_file(struct seq_file *sf)
+> =C2=A0{
+> @@ -183,6 +187,48 @@ void ima_add_kexec_buffer(struct kimage *image)
+> =C2=A0	kexec_dprintk("kexec measurement buffer for the loaded kernel at
+> 0x%lx.\n",
+> =C2=A0		=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 kbuf.mem);
+> =C2=A0}
+> +
+> +/*
+> + * Called during kexec execute so that IMA can update the measurement li=
+st.
+> + */
+> +static int ima_update_kexec_buffer(struct notifier_block *self,
+> +				=C2=A0=C2=A0 unsigned long action, void *data)
+> +{
+> +	return NOTIFY_OK;
+> +}
+> +
+> +struct notifier_block update_buffer_nb =3D {
+> +	.notifier_call =3D ima_update_kexec_buffer,
+> +};
+> +
+> +/*
+> + * Create a mapping for the source pages that contain the IMA buffer
+> + * so we can update it later.
+> + */
+
+Hi Steven,
+
+It does more than just that.  It also registers a second IMA reboot notifie=
+r.=20
+(Is a second reboot notifier really necessary?)  It seems that the
+ima_reboot_notifier() is executed after this one, otherwise the kexec_execu=
+te
+would be missing.  However, I'm not sure that is guaranteed.
+
+I'm wondering if this patch should be limited to saving the map segments.  =
+In
+any case, using the reboot notifier is relatively new and should at least b=
+e
+reflected here and in the patch description.
+
+thanks,
+
+Mimi
+
+> +void ima_kexec_post_load(struct kimage *image)
+> +{
+> +	if (ima_kexec_buffer) {
+> +		kimage_unmap_segment(ima_kexec_buffer);
+> +		ima_kexec_buffer =3D NULL;
+> +	}
+> +
+> +	if (!image->ima_buffer_addr)
+> +		return;
+> +
+> +	ima_kexec_buffer =3D kimage_map_segment(image,
+> +					=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 image->ima_buffer_addr,
+> +					=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 image->ima_buffer_size);
+> +	if (!ima_kexec_buffer) {
+> +		pr_err("Could not map measurements buffer.\n");
+> +		return;
+> +	}
+> +
+> +	if (!ima_kexec_update_registered) {
+> +		register_reboot_notifier(&update_buffer_nb);
+> +		ima_kexec_update_registered =3D true;
+> +	}
+> +}
+> +
+> =C2=A0#endif /* IMA_KEXEC */
+> =C2=A0
+> =C2=A0/*
+
 
