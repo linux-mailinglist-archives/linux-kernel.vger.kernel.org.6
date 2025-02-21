@@ -1,131 +1,130 @@
-Return-Path: <linux-kernel+bounces-525563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D58CA3F160
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 11:07:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50FDEA3F163
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 11:07:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D14083B87A4
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:07:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 338E117D6FC
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:07:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CABA2204C13;
-	Fri, 21 Feb 2025 10:07:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2169204F8A;
+	Fri, 21 Feb 2025 10:07:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bdKVUfGN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="pmmMCG9j"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32DD81F4299;
-	Fri, 21 Feb 2025 10:07:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E96C20469D;
+	Fri, 21 Feb 2025 10:07:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740132459; cv=none; b=k8kkxWYGcFHBor6pZHjULvSpAsyZxGH38AedndJIvXNqGPuorhqWRrKzLwLkZARoxe1jid2t97q6+WeIxzBSDiuH9JpeDBxqKt252TCy8Znh0lS/2jwmCMbI+asPF9iAjurZE5nPbxK49HUA2zdwHkk/ZfDiYzmBLf+jUd37tPk=
+	t=1740132466; cv=none; b=OWbGSzHFWv7YdTH/0rmMQ4b46ZrbijHOR3QLPJAlTXhc3wYpW89owx6B8ftGEwuUD+TmUZszS8qihv/pf4/IjyUxrFg/UG/5vX3MNzzL8ArbzTfkyqUvBwBJWipMmQMBRs72vN5noxrjFpdbVMs/wwiRNuRb04h0nkUO4CiUJ0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740132459; c=relaxed/simple;
-	bh=3B8Trq7/5ikSYghZ98OHIYUKhBXpU+j0nzGnNqZEuMs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uEX0sQffjDl/felNbSmXYiFajDhCcQV2HgygV9czQweww4RXXmFIGej8zHVPCVs2c1Db+j4O7xKBn7LUl54CPnKOCvxpLv8fN5cbvuj5+KZtDVVXkGFb4iDUpG2Y/LPO+arvstHLhFI16xRTXNMeZvKiumcnGvXRS9htxT/C+j8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bdKVUfGN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99D4EC4CED6;
-	Fri, 21 Feb 2025 10:07:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740132458;
-	bh=3B8Trq7/5ikSYghZ98OHIYUKhBXpU+j0nzGnNqZEuMs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=bdKVUfGNy+FohT/Frm4e3xZ1fy/HvbmLTzw1vtPd+x/9o0UPUJ5pFIBCyOzjLq7dH
-	 IwFXjRkI+2z80Kl6UKBZDf+UgQbyAyUuhXAc5QEe8wcjATee3D9P/+GBfhqHDYVsdw
-	 sVvpxKbLpwxfaKxAYqjPXU0sBcaHM5BJ3WAyj/nbVbHapbYYs1kJpObCzraTaVCK7/
-	 FVWq5g3XqZFN5OOIlj47pFUYQ1/ZvNUpQqKmKn1FBzbJPp5IS3Ax84JY1gtfkIgoDF
-	 0JzVe9u+JxWMG2Yj/JMVpGxup8LIPy/35ka2wvmKhbIgRoKY7aJh6U4BJuDnYoOxcH
-	 r/Ob1/db3B3mw==
-Message-ID: <1818c904-3958-4f97-a194-e6a768ebcd38@kernel.org>
-Date: Fri, 21 Feb 2025 11:07:35 +0100
+	s=arc-20240116; t=1740132466; c=relaxed/simple;
+	bh=wtNoofFv6KoVXE2Qy2UY/PwELQzz2XofI38+Etocco4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=HPvoxdpHZT2mZ1mPox3FOEyhAy0MZtfACn66pn2znT11aKoNayQCVOjApQj5bkygnRFy9Z3BYgf+KllKjdLlOk5BA8KzI+5hHfBkw5xmMV4cx1fam6nDiWyrNdGe+d6/N4OlcVNF25ZREthaIESuejFBBMWuhX7e7vePcBUP20I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=pmmMCG9j; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=W+26npf18RRwsCWtDsEbmc9w9HSuCv1j/NyTX3JxquE=; b=pmmMCG9jXqbiNJJ6GmtbO6FRsX
+	ARRLZAhlhtPCOl5SKYYH4jzI1WMpRYPi6B1VK779IhlgPgm+3uGz6H4K2RPVVjx1umDTQT7ILSz6Q
+	XmtkEsJfEImhk5hZqrVA6r7EYi35xg+iF2SyPsl/HufSuWsG94G+LPV6Fg3438zjO7i/67O7waij3
+	s7Y5zZiwO3U4cbLFzbwFr9ot77cTfKdduSXt+hMQ4A5j2c0TJ8YNNPxy/PLCBHadHN2Ix21ZQL+ic
+	J53yrW+4bSLBNJ9jlGXesT0oS65Idbf8QOmu3v6R5BKtVhbD9u4p25ThBL1hN30pHrUM0MIjzaugN
+	KgsC6gYw==;
+Received: from i53875a87.versanet.de ([83.135.90.135] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1tlPwY-0002cL-4E; Fri, 21 Feb 2025 11:07:38 +0100
+From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
+To: "Rob Herring (Arm)" <robh@kernel.org>,
+ Quentin Schulz <foss+kernel@0leil.net>,
+ Quentin Schulz <quentin.schulz@cherry.de>
+Cc: Farouk Bouabid <farouk.bouabid@theobroma-systems.com>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>,
+ Quentin Schulz <quentin.schulz@theobroma-systems.com>,
+ devicetree@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ stable@vger.kernel.org
+Subject:
+ Re: [PATCH 0/5] arm64: dts: rockchip: pinmux fixes and support for 2 adapters
+ for Theobroma boards
+Date: Fri, 21 Feb 2025 11:07:37 +0100
+Message-ID: <3771836.RUnXabflUD@diego>
+In-Reply-To: <f9b40055-bcb0-4245-b899-4c7890e81b20@cherry.de>
+References:
+ <20250220-ringneck-dtbos-v1-0-25c97f2385e6@cherry.de>
+ <174008661935.4046882.3221866764998287397.robh@kernel.org>
+ <f9b40055-bcb0-4245-b899-4c7890e81b20@cherry.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 26/29] serial: 8250: use serial_in/out() helpers
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: gregkh@linuxfoundation.org, linux-serial@vger.kernel.org,
- linux-kernel@vger.kernel.org, =?UTF-8?Q?Ilpo_J=C3=A4rvinen?=
- <ilpo.jarvinen@linux.intel.com>
-References: <20250220111606.138045-1-jirislaby@kernel.org>
- <20250220111606.138045-27-jirislaby@kernel.org>
- <Z7dI9-mTl820lyY-@smile.fi.intel.com>
-Content-Language: en-US
-From: Jiri Slaby <jirislaby@kernel.org>
-Autocrypt: addr=jirislaby@kernel.org; keydata=
- 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
-In-Reply-To: <Z7dI9-mTl820lyY-@smile.fi.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 
-On 20. 02. 25, 16:23, Andy Shevchenko wrote:
-> On Thu, Feb 20, 2025 at 12:16:03PM +0100, Jiri Slaby (SUSE) wrote:
->> There are serial_in/out() helpers to be used instead of direct
->> p->serial_in/out(). Use them in various 8250 drivers.
+Hi Quentin,
+
+Am Freitag, 21. Februar 2025, 11:01:44 MEZ schrieb Quentin Schulz:
+> On 2/20/25 10:29 PM, Rob Herring (Arm) wrote:
+> > On Thu, 20 Feb 2025 13:20:09 +0100, Quentin Schulz wrote:
+> I believe this is a false positive due to the node suffix being -gpio? 
+> If I change -gpio suffix to -pin, it doesn't complain anymore.
 > 
-> Okay, I have checked all calls, and I think to avoid possible issues
-> we need to add a few comments here and there, see below.
+> """
+> diff --git a/arch/arm64/boot/dts/rockchip/px30-ringneck-haikou.dts 
+> b/arch/arm64/boot/dts/rockchip/px30-ringneck-haikou.dts
+> index 08a11e4758413..249e50d64791e 100644
+> --- a/arch/arm64/boot/dts/rockchip/px30-ringneck-haikou.dts
+> +++ b/arch/arm64/boot/dts/rockchip/px30-ringneck-haikou.dts
+> @@ -196,7 +196,7 @@ sd_card_led_pin: sd-card-led-pin {
+>   	};
 > 
-> But first of all, can we actually use serial_port_in()/serial_port_out()
-> in the cases where we have already a pointer to uart_port?
+>   	uart {
+> -		uart5_rts_gpio: uart5-rts-gpio {
+> +		uart5_rts_pin: uart5-rts-pin {
+>   			rockchip,pins =
+>   			  <0 RK_PB5 RK_FUNC_GPIO &pcfg_pull_up>;
+>   		};
+> @@ -234,7 +234,7 @@ &uart0 {
+>   };
+> 
+>   &uart5 {
+> -	pinctrl-0 = <&uart5_xfer &uart5_rts_gpio>;
+> +	pinctrl-0 = <&uart5_xfer &uart5_rts_pin>;
+>   	rts-gpios = <&gpio0 RK_PB5 GPIO_ACTIVE_HIGH>;
+>   	status = "okay";
+>   };
+> """
+> 
+> @Heiko, I guess you would like a warning-less DT :) I can send a v2 with 
+> that change then if that works for you? I can wait a few days for other 
+> reviews :)
 
-Yes, this makes sense -- that'd be real 1:1 change.
+that would be great - the v2.
 
-PS: omap8250_irq() is funny. It uses all serial_port_in(), serial_in(), 
-and port->serial_in() :D.
+We already had patches addressing the -gpio thing for other boards in the
+past, so going to "-pin" is the preferred solution here.
 
-PS2: the naming of serial_in/out() is unfortunate. I'd expect 
-serial8250_in/out().
+Also, your patches are totally specific to Theobroma-boards, so just send
+your v2 at your convenience - I don't really expect that much additional
+outside review comments ;-) .
 
-thanks,
--- 
-js
-suse labs
+
+Heiko
+
+
 
