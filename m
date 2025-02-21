@@ -1,57 +1,57 @@
-Return-Path: <linux-kernel+bounces-525074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26263A3EA79
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 03:01:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23B85A3EA72
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 02:59:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FB50189F0A8
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 01:59:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2191B3BF758
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 01:59:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B2911C54AA;
-	Fri, 21 Feb 2025 01:59:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A081A1D5AA7;
+	Fri, 21 Feb 2025 01:58:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="VBR0hibT"
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="PhksQYxB"
 Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3803270807;
-	Fri, 21 Feb 2025 01:59:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4B6870807;
+	Fri, 21 Feb 2025 01:58:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740103143; cv=none; b=XtszO+NbklXXRkGmVV1Wr/cLKnoj4KDctP2tyehRwAYgdmfcIWBxk2Gzk9g9tLlTvJ4LJBbG92FTRe9pwGebSKFsfzdtktlgRpMAhoE1/p7J5fBbK/hEV55m/P1Dh1RuwFYsdTTu3GRYOdi+yIR7y9PIXYdcqmSYqUhZ7Gsfb8w=
+	t=1740103136; cv=none; b=JRkvdzo9xe6HuOa/XQ3u8suHhbGrosOKyA/mTS8xTkMlF6OnQN6IiOylOqMHg2pLiKfKvrSL1tUR37QdzuHNsE6EL7Sb8VXhQF5lDuIDNtjR9zGTNi/DoyukKUJIzhy/JHCgZ3DwQYRihIG+NHJ7tfu/V/eNE/+xrrG9hacPbUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740103143; c=relaxed/simple;
-	bh=dUz0fpj4eh0Jt7r7t7HQFUH3p+7TbTBQkoQ2o8zwkvw=;
+	s=arc-20240116; t=1740103136; c=relaxed/simple;
+	bh=KQSEupzzv6FPsVNyc/MIA29eHFqeVcEBGogw4XihUo8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XGP1htk97Jor2iAeI4eFgHLXzy4cUy5e9QOj1JNYwMYIPA/84TtTXyipcHxsgrOeOsM980Zr3fj5i9YmhNbHRtKa+8zhfSz92NIG8nnp9DawjMv4qGEu5kYlxlAjcFubx3RwLE19GNGZ+BTFZUT9FDtI9mc8iqR96nxtW+kmKXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=VBR0hibT; arc=none smtp.client-ip=46.235.229.95
+	 MIME-Version; b=TwLcfpS5S5+BcRojM/5hUayS6DwBbSDvyypNIpnPRI6qaB2APzKTjql0AKzGGj6tHZHfdiO5EYE5YGE62s3adqOxDAjX7bdgeGou/ISN5T7JqaqhyMKSaEnyohL3XHlrOT/R+l2XETmUy0U6+qNmIUoDssGqxbGcjue/nJO8glk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=PhksQYxB; arc=none smtp.client-ip=46.235.229.95
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
 	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=RE0swP2Wzvc6B+QYeA4rhrnC6HXoz4kWy/36+4IfuYw=; b=VBR0hibTWhUyTxjc
-	pMtwBGTU/TEeatl19chew+QciXIGXH+lnevC4EYQxFxPT9YWlzC92O51zAufRWoNz8gJnWnRIStY9
-	VcXELw/k5+fVInHMuFaM75LBzWwQwsTDpuvvFKr2RkcZAycKNAbYl8KcI6q9Br+yOAfcxeeKd0CTj
-	NKKGdtYGaBEaJuAI0tr3Agq4UALUIPpv/90YfD0uKfQBihbBMMgkzRr+5mRNA//4rUSH7InJ4LKd5
-	DVa6oiqTYlEo6SrdyF61kyA4ZNjyA/9CzjikXKIeRpYzlzOmblzsWJtxdz0vRF/qGNuWunxz4l/ep
-	0v3Rjm4WKevbzxZm4w==;
+	:Subject; bh=98PWmAb5l+OV6NfWNcp7ThHQ0YLhVqOeKE7dZBjUfng=; b=PhksQYxB/BTzKZvb
+	200VsqPuyCa7g9z28SvlqUS0T1bW0Jq7dtTRD6A5JlfadZovTyzNcD3wJOQ2eVlpoX4/kNjTjwldy
+	gQBfTo8Ad1eFNKUf9d9I24f2unV28bjwipcVZ6e3ihnL64tBphgiD7Twhu2l5ST3aSej/8J/6x4dc
+	5ot5XqdMIXnpFUgP15t0eawsWU8bxgwMEnAqVVWN4LtGLeOChN1d/6bqciVxdZ4IAXRgFBaBVNDud
+	aE9HvSoYVlN2SHaxhvfOFeFR95BnBoUG/8bFYoXNsaAb1GccP+/zBXSTUZ53yhd7XXYVZ+n28opDK
+	NRet26ryZEAvFlqNDA==;
 Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
 	by mx.treblig.org with esmtp (Exim 4.96)
 	(envelope-from <linux@treblig.org>)
-	id 1tlIJP-00HM47-17;
-	Fri, 21 Feb 2025 01:58:43 +0000
+	id 1tlIJP-00HM47-36;
+	Fri, 21 Feb 2025 01:58:44 +0000
 From: linux@treblig.org
 To: srinivas.kandagatla@linaro.org
 Cc: corbet@lwn.net,
 	linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH 2/3] nvmem: core: Remove nvmem_(add|del)_cell_table
-Date: Fri, 21 Feb 2025 01:58:40 +0000
-Message-ID: <20250221015841.209458-3-linux@treblig.org>
+Subject: [PATCH 3/3] nvmem: core: Remove remains of nvmem_cell_table
+Date: Fri, 21 Feb 2025 01:58:41 +0000
+Message-ID: <20250221015841.209458-4-linux@treblig.org>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250221015841.209458-1-linux@treblig.org>
 References: <20250221015841.209458-1-linux@treblig.org>
@@ -65,96 +65,142 @@ Content-Transfer-Encoding: 8bit
 
 From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-nvmem_del_cell_table() was added in 2018's
-commit b985f4cba6db ("nvmem: add support for cell info")
-but remained unused.
-
-nvmem_add_cell_table() was also added in that commit, however
-it's last use was removed in 2022 by
-commit 2af4fcc0d357 ("ARM: davinci: remove unused board support")
-
-Remove them.
+With the previous patch removing the unused nvmem_add_cell_table, there's
+no way to add a table, and thus the rest of the table infrastructure
+can go.
 
 Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
 ---
- Documentation/driver-api/nvmem.rst |  2 --
- drivers/nvmem/core.c               | 26 --------------------------
- include/linux/nvmem-provider.h     |  5 -----
- 3 files changed, 33 deletions(-)
+ Documentation/driver-api/nvmem.rst | 17 ------------
+ drivers/nvmem/core.c               | 42 ------------------------------
+ include/linux/nvmem-provider.h     | 19 --------------
+ 3 files changed, 78 deletions(-)
 
 diff --git a/Documentation/driver-api/nvmem.rst b/Documentation/driver-api/nvmem.rst
-index 595ee207d199..27534d5e8fba 100644
+index 27534d5e8fba..6e73bb2d2ca5 100644
 --- a/Documentation/driver-api/nvmem.rst
 +++ b/Documentation/driver-api/nvmem.rst
-@@ -76,8 +76,6 @@ nvmem_cell_table struct::
- 	.ncells			= ARRAY_SIZE(foo_nvmem_cells),
-   };
+@@ -59,23 +59,6 @@ For example, a simple nvram case::
+ 	devm_nvmem_register(&config);
+   }
  
--  nvmem_add_cell_table(&foo_nvmem_cell_table);
+-Users of board files can define and register nvmem cells using the
+-nvmem_cell_table struct::
+-
+-  static struct nvmem_cell_info foo_nvmem_cells[] = {
+-	{
+-		.name		= "macaddr",
+-		.offset		= 0x7f00,
+-		.bytes		= ETH_ALEN,
+-	}
+-  };
+-
+-  static struct nvmem_cell_table foo_nvmem_cell_table = {
+-	.nvmem_name		= "i2c-eeprom",
+-	.cells			= foo_nvmem_cells,
+-	.ncells			= ARRAY_SIZE(foo_nvmem_cells),
+-  };
 -
  Additionally it is possible to create nvmem cell lookup entries and register
  them with the nvmem framework from machine code as shown in the example below::
  
 diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
-index fd8f148b8aad..90fbfc00950e 100644
+index 90fbfc00950e..6f7f2a84701f 100644
 --- a/drivers/nvmem/core.c
 +++ b/drivers/nvmem/core.c
-@@ -2069,32 +2069,6 @@ int nvmem_device_write(struct nvmem_device *nvmem,
- }
- EXPORT_SYMBOL_GPL(nvmem_device_write);
+@@ -47,9 +47,6 @@ struct nvmem_cell {
+ static DEFINE_MUTEX(nvmem_mutex);
+ static DEFINE_IDA(nvmem_ida);
  
--/**
-- * nvmem_add_cell_table() - register a table of cell info entries
-- *
-- * @table: table of cell info entries
-- */
--void nvmem_add_cell_table(struct nvmem_cell_table *table)
--{
--	mutex_lock(&nvmem_cell_mutex);
--	list_add_tail(&table->node, &nvmem_cell_tables);
--	mutex_unlock(&nvmem_cell_mutex);
--}
--EXPORT_SYMBOL_GPL(nvmem_add_cell_table);
+-static DEFINE_MUTEX(nvmem_cell_mutex);
+-static LIST_HEAD(nvmem_cell_tables);
 -
--/**
-- * nvmem_del_cell_table() - remove a previously registered cell info table
-- *
-- * @table: table of cell info entries
-- */
--void nvmem_del_cell_table(struct nvmem_cell_table *table)
+ static DEFINE_MUTEX(nvmem_lookup_mutex);
+ static LIST_HEAD(nvmem_lookup_list);
+ 
+@@ -705,41 +702,6 @@ int nvmem_unregister_notifier(struct notifier_block *nb)
+ }
+ EXPORT_SYMBOL_GPL(nvmem_unregister_notifier);
+ 
+-static int nvmem_add_cells_from_table(struct nvmem_device *nvmem)
 -{
--	mutex_lock(&nvmem_cell_mutex);
--	list_del(&table->node);
--	mutex_unlock(&nvmem_cell_mutex);
--}
--EXPORT_SYMBOL_GPL(nvmem_del_cell_table);
+-	const struct nvmem_cell_info *info;
+-	struct nvmem_cell_table *table;
+-	struct nvmem_cell_entry *cell;
+-	int rval = 0, i;
 -
- /**
-  * nvmem_add_cell_lookups() - register a list of cell lookup entries
-  *
+-	mutex_lock(&nvmem_cell_mutex);
+-	list_for_each_entry(table, &nvmem_cell_tables, node) {
+-		if (strcmp(nvmem_dev_name(nvmem), table->nvmem_name) == 0) {
+-			for (i = 0; i < table->ncells; i++) {
+-				info = &table->cells[i];
+-
+-				cell = kzalloc(sizeof(*cell), GFP_KERNEL);
+-				if (!cell) {
+-					rval = -ENOMEM;
+-					goto out;
+-				}
+-
+-				rval = nvmem_cell_info_to_nvmem_cell_entry(nvmem, info, cell);
+-				if (rval) {
+-					kfree(cell);
+-					goto out;
+-				}
+-
+-				nvmem_cell_entry_add(cell);
+-			}
+-		}
+-	}
+-
+-out:
+-	mutex_unlock(&nvmem_cell_mutex);
+-	return rval;
+-}
+-
+ static struct nvmem_cell_entry *
+ nvmem_find_cell_entry_by_name(struct nvmem_device *nvmem, const char *cell_id)
+ {
+@@ -1024,10 +986,6 @@ struct nvmem_device *nvmem_register(const struct nvmem_config *config)
+ 			goto err_remove_cells;
+ 	}
+ 
+-	rval = nvmem_add_cells_from_table(nvmem);
+-	if (rval)
+-		goto err_remove_cells;
+-
+ 	if (config->add_legacy_fixed_of_cells) {
+ 		rval = nvmem_add_cells_from_legacy_of(nvmem);
+ 		if (rval)
 diff --git a/include/linux/nvmem-provider.h b/include/linux/nvmem-provider.h
-index 515676ebe598..20c9fbd45b24 100644
+index 20c9fbd45b24..615a560d9edb 100644
 --- a/include/linux/nvmem-provider.h
 +++ b/include/linux/nvmem-provider.h
-@@ -190,9 +190,6 @@ void nvmem_unregister(struct nvmem_device *nvmem);
- struct nvmem_device *devm_nvmem_register(struct device *dev,
- 					 const struct nvmem_config *cfg);
+@@ -137,25 +137,6 @@ struct nvmem_config {
+ 	struct device		*base_dev;
+ };
  
--void nvmem_add_cell_table(struct nvmem_cell_table *table);
--void nvmem_del_cell_table(struct nvmem_cell_table *table);
+-/**
+- * struct nvmem_cell_table - NVMEM cell definitions for given provider
+- *
+- * @nvmem_name:		Provider name.
+- * @cells:		Array of cell definitions.
+- * @ncells:		Number of cell definitions in the array.
+- * @node:		List node.
+- *
+- * This structure together with related helper functions is provided for users
+- * that don't can't access the nvmem provided structure but wish to register
+- * cell definitions for it e.g. board files registering an EEPROM device.
+- */
+-struct nvmem_cell_table {
+-	const char		*nvmem_name;
+-	const struct nvmem_cell_info	*cells;
+-	size_t			ncells;
+-	struct list_head	node;
+-};
 -
- int nvmem_add_one_cell(struct nvmem_device *nvmem,
- 		       const struct nvmem_cell_info *info);
- 
-@@ -223,8 +220,6 @@ devm_nvmem_register(struct device *dev, const struct nvmem_config *c)
- 	return nvmem_register(c);
- }
- 
--static inline void nvmem_add_cell_table(struct nvmem_cell_table *table) {}
--static inline void nvmem_del_cell_table(struct nvmem_cell_table *table) {}
- static inline int nvmem_add_one_cell(struct nvmem_device *nvmem,
- 				     const struct nvmem_cell_info *info)
- {
+ /**
+  * struct nvmem_layout - NVMEM layout definitions
+  *
 -- 
 2.48.1
 
