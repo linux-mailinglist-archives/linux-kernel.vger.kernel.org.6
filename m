@@ -1,118 +1,138 @@
-Return-Path: <linux-kernel+bounces-525521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A04EA3F0D7
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:48:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AF2CA3F0DB
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:48:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4ACE019C0EBA
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:46:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4B4519E050C
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:46:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 174DB207E1C;
-	Fri, 21 Feb 2025 09:42:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BEC3208961;
+	Fri, 21 Feb 2025 09:42:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sktPy6l0"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nmiXNYn2"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2C292045B9
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 09:41:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6943205E15
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 09:42:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740130919; cv=none; b=g5Sdd0MUewX6p7jtQIkDx0YJbyc60cG03cc0B7IOzRXqjs1BCOZNE7HNzEap3iSaUiVjINQdOSTUDqg09y7mcn+IZS/DdW7fFn98C6OhQ8nAH3/nBPmvUYSMRF5YOcp+C8aWFkzJ+sg7vXgRsBnX4zRBRDu03H2F6KDQ2wbWLlw=
+	t=1740130935; cv=none; b=ZqpwZkIZNZxmmmuyRBmkvpwLomjY6c20xGFCSfhuzj7CEWWqNi7Zb0Ihy5Zt57ByL8yVAfNginghFEOETFTOZgT3Zg4je1qmyowg7zNQLY7ZAzxJokCqpdo4n0VJPtUZf4y6l/ST4jLMKXmbdIhCLvScARU9kA+91DqgJGGn68A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740130919; c=relaxed/simple;
-	bh=IKR/9VGhkFlJ1I5hTuDF78Fb+ATo1J45kT4X3heZ8gs=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=MeriZOzr/STYQPNFfntNDL7XmyJjcRkFhOMqaUmteOaJAz/NWRN4eRhK7/zR1pTL0WS3F4xbb56LV/FyOY4huUXJ/4m0DH0Lo2KrJeU61bU52khqc7di2Q51gsnCB0H8TxYkponyMmnvqe3LXvuKDSJI3X1yDfKjfOTyJn98oHs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sktPy6l0; arc=none smtp.client-ip=209.85.208.42
+	s=arc-20240116; t=1740130935; c=relaxed/simple;
+	bh=3d2Q2o3fJiHi3cJPY5LQ4dMhZv4asm/ZCUv1sU8Cby0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=a9D736ncGvps1G7zXt/UQtGujW9F9fXoZYTZBCDiKM1jMxEiXTv793l8Jk40KM1kmb0MEKHibU+Tg2PHqjISE6yH9GQjGeOCpqWjZEc1YWnKsjwwSXFDixph+mO797TxVkBCxDEqBzQSS2PdOmuYFtZy5tVqO5lzJAqGfuW704Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nmiXNYn2; arc=none smtp.client-ip=209.85.128.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5ded7cb613eso325094a12.2
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 01:41:57 -0800 (PST)
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43989226283so12785225e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 01:42:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740130916; x=1740735716; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vdXYR/I62+aZcxW37aH9KmdUU3jeSFhaY6J6vyoXK9Q=;
-        b=sktPy6l0ghLaloebH3iJRPfolp5lpZWD7oWeG5/ZeYcIMJmoqwJpwQhyG2KLzNHw4f
-         R9+U1pKHOhmXHb8g1okQ1UIwiq55Lfw53P2qHqflLhvcAq5KH3b+TmeBNg2HAHFUfHXe
-         U+FtlolvhldLC2sMySbv0aZybiC/n/9nVIUn36yOnbHPWHLyZEvvuZI7jm1u2RC3oQcL
-         m1BuuMOb/3Y8TPN8zj9Vb3K90lUqXgL6Gv0t9026M7pFPFEdBzd0freII3az3dWx1vc3
-         7gudrR+8sJGlQk580BV3BsovdHc2Q8iTdBevhetclD8a0mT7ADmR2R3zHhVV3zhOXI/K
-         HRPw==
+        d=linaro.org; s=google; t=1740130932; x=1740735732; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=B0J1Zwx7ue86k31iPRIPZZnmcI3lqDR1yT4y7QR55Zw=;
+        b=nmiXNYn2abBlSDT+VzOFkFi7ImXLd9LMVco/Bw+50r7zsoF2yHY8TqX+FoFGBdPhQd
+         Yo2YO96ALOdf1bWyc4B1LumgZ/nWv0s6Bi03BOCBsnalh9GQzncqYFFak9BCNLR6zuKK
+         Gc/ItE9O4O6hX/UCwF9WD9SlzeCHZ0JGLSQEeXx+jJqbTwKSDnxnswtxBT5C/eY3BkEf
+         f6ckh4SGW+Lh7mp3T1duZi6AYQFP7dYMnDj5NQ2Ed7cc+WGwOmqyGcFeO5jPkhE7Ca+O
+         zMBeIWVdVuO7+bKo9yEEr8pcj580qhLknL6x2w9/WuZVEx/sHj9YxlV0FT4j5eMOBlE5
+         K65w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740130916; x=1740735716;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vdXYR/I62+aZcxW37aH9KmdUU3jeSFhaY6J6vyoXK9Q=;
-        b=TfxcsgvKEd5riYN+k5otJ39Mzm91Jlrcz0swdyh/aw4BHri0M5EbnCCk6CpWEah2rG
-         Fw4ku1VDVe2im3Sawfxua6iW7qrAzMcLM3c+O2+p0dJGAHmgKR0yIKsRkd1ocWrG8tG3
-         S76S9DWB+XsXer8lASKoiolkhPMil7i6Fi+1SD4HW/DY31vfe0pagP2+WANIS+dQ2cbP
-         6McWI79X7x4JrCSnIUCKKjrJCAu1wSJ3vFEM7FTyJgdOYrVjzHB+xoU3LzSYLdh6m3z9
-         DKPls9aecPo3Dm4hNytPebC50tV5lRdI13m16RyrYDPsR0lMjIApB5VCd0SV8tHQdGVO
-         wP2g==
-X-Forwarded-Encrypted: i=1; AJvYcCVv2c3Md0oOu3ppHNZaBUwuRGtf9BPVwT1y9iRIH+PHMa9FhRSjjljYQpst6loTb9nn/XAxdNnMHxLh4bA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8Yv/IKf9r3HquyC4serFjFIggBq/p7H2RAKgToU+nEHUIrP/W
-	GZ5h28hy8oblpmiiywAZUMVSkPgflWWsWi97mEQy3sWEFqeiYEtn0IyphD+S8pM=
-X-Gm-Gg: ASbGncsalXoAGjXUpdhphTosv1VB0/wKTFBd01vb5K+tjYkplAcKQ02Km8o/Uvt/Sk1
-	nbIe/5ZKFcrcEnZMKlMNDQhISWi0NFQEJRnr22So+WHWIG0RJyFPQh6GodNuQ+UqL15dDuQ8guk
-	fOtu1U7Oudt+FujiEp9mcmKfUvd9uulR1Rm0/POd20KQYWL48xp/+ExvHDjdCRel8bE1gKZA7Ge
-	4IKHAZh/ZaXwT7cSfGs8juaG7911sVHQuVnrAhexOxi5qc1+sygeAqT1cAjzNl3cwBxnnxuZDm/
-	S+IB9gPQLkVLWxpxIRt7Njh5Pq5FwX/wVB/uwFZLSAe7zdou4xspF9bk5L4430DjKnkAykD8TE8
-	u
-X-Google-Smtp-Source: AGHT+IFL/lM+F0ktUjddFj5OzpJ2DJG7fI8Z19V6vvQBBy7jA2Fb4GY7EiIh5I5iCTTx716z+h+jMQ==
-X-Received: by 2002:a05:6402:34c6:b0:5e0:8275:e9dc with SMTP id 4fb4d7f45d1cf-5e0b70bc3c3mr703304a12.1.1740130915955;
-        Fri, 21 Feb 2025 01:41:55 -0800 (PST)
-Received: from [127.0.1.1] (78-11-220-99.static.ip.netia.com.pl. [78.11.220.99])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aba5323226asm1617470366b.8.2025.02.21.01.41.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Feb 2025 01:41:55 -0800 (PST)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
- Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>, 
- "Guilherme G. Piccoli" <gpiccoli@igalia.com>, 
- Kaustabh Chakraborty <kauschluss@disroot.org>
-Cc: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>, 
- Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-In-Reply-To: <20250219-exynos7870-v3-1-e384fb610cad@disroot.org>
-References: <20250219-exynos7870-v3-0-e384fb610cad@disroot.org>
- <20250219-exynos7870-v3-1-e384fb610cad@disroot.org>
-Subject: Re: (subset) [PATCH v3 1/7] dt-bindings: hwinfo:
- samsung,exynos-chipid: add exynos7870-chipid compatible
-Message-Id: <174013091442.25434.11831404613747395475.b4-ty@linaro.org>
-Date: Fri, 21 Feb 2025 10:41:54 +0100
+        d=1e100.net; s=20230601; t=1740130932; x=1740735732;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=B0J1Zwx7ue86k31iPRIPZZnmcI3lqDR1yT4y7QR55Zw=;
+        b=WJ1A51rYnyscS1RAFip3RND5mj0sq8PJ/C/Q8h9IlELSvK7l2maP0hBI7ai6JGjUzp
+         q2uBeOuQDfwdA2mVadCj7NqrC2zGFZUQMDOuxP1IMuEPMpgf05UFKqf9dve7EaXEGcGY
+         QHA8PH8XOz4HS0k+t1DnTHA0nO6JLE8JB88LoHNjmQUcTGez2uLAq4xbzNPtqIn1+6M0
+         2OjiSQo76FRsiWpupOBeO43Wmj9ImWkqiHGDmu/blAT0eNLhTcmkKtiDRl37Nbzw2X3U
+         HQ7FfkGeu+H6S0dCOwmX/zrqWFhMXXYvb1D3L7IY9xp85pn7K02c9ePxlA98YMmW7xmD
+         PrBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVAQ2j1ALD26giqRh5vz7ibUxJFSHYTcdwLMp3MZdumhR2TZrvZH8S5eFxuONI+2opqTpTvLkhUdmy/qRQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxmyTWK5UZMFmcRa79wdGg0U/tPa/+yinPK81xEvUp6BW+HLNNh
+	b6F7AsUDlVRGwAbyMU5qnmNavE4zfH4V3N9RhPZbI1+xany/mz2dJhnbAUBNlQs=
+X-Gm-Gg: ASbGncu6Wlo8IrbMYHaOLFHQ5ZMKldP/QEHa5QR66hOeaB+ca1R3xC7y/iIe2bBewvV
+	vfdgd3PpVe0qHr3jh6F4h+bzT41hdGDcHIJNBV4E76DhUmk3J4HHs0ruSuOjynWjTxSA1spjwap
+	XH+Kov/9oVuqDCQEKdw5XDtMT8WVTFpz1MSXruT+aJYr+p0a4nUKT9wAnnAUBSrSCi4Rk+DAFhO
+	bXA2USh3j4Ekxx7mN+9UnJkJGJ9/ed7CtQ7NnH3wSZj/AK46JFiWmTrrnwi8RxXWHW37hAf1jgQ
+	hlq94zL06MkeqlsmrnIyQusR1v6kSXohg+UtrU0ybQrfTSJqAs5L9ihNoJS3RbNPFcE=
+X-Google-Smtp-Source: AGHT+IFroyABBpOsabWsgrl7KBQzfGBjKB3F9B9Cviyl/eoKnSnufExjTKsMZhY9Cx/IPYZ4EIrCAQ==
+X-Received: by 2002:a05:600c:3151:b0:439:a1ef:c242 with SMTP id 5b1f17b1804b1-439ae18fdc1mr24592065e9.0.1740130932194;
+        Fri, 21 Feb 2025 01:42:12 -0800 (PST)
+Received: from [192.168.0.35] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4399be79d92sm53108625e9.0.2025.02.21.01.42.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 Feb 2025 01:42:11 -0800 (PST)
+Message-ID: <85a51258-7cee-45b3-8760-bfbf943500c7@linaro.org>
+Date: Fri, 21 Feb 2025 09:42:10 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/5] clk: qcom: videocc: Add support to attach multiple
+ power domains
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Jagadeesh Kona <quic_jkona@quicinc.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
+ Ajit Pandey <quic_ajipan@quicinc.com>,
+ Imran Shaik <quic_imrashai@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>,
+ Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250218-videocc-pll-multi-pd-voting-v1-0-cfe6289ea29b@quicinc.com>
+ <20250218-videocc-pll-multi-pd-voting-v1-4-cfe6289ea29b@quicinc.com>
+ <eec2869a-fa8f-4aaf-9fc5-e7a8baf0f864@linaro.org>
+ <huluiiaqmunvmffoqadrhssd3kl2toutqtcw7rzamv3sqdglsf@7lz66x4sj3gv>
+ <d4c4ecf0-9094-4341-8711-78a48e5d1344@linaro.org>
+ <d444f1fb-42a0-48ef-83bc-d5aab9282b22@quicinc.com>
+ <gzjyyl2kzv52zsewn5zf6ei65fymyi4pspvsmsjaqj5sklfxvc@bkg46saulni5>
+ <fcc31cc7-67bd-4102-a53f-ebe66b4fd1a7@linaro.org>
+ <3da96df2-1127-49bf-8114-282cc488c194@quicinc.com>
+ <6b0684a0-a519-463f-b7be-176a4752a786@linaro.org>
+ <r73hnpusatba3hvyckv7jw3dcvffgvoxwawlcvvxhuol5rrrk7@ngo3fiv7va6e>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <r73hnpusatba3hvyckv7jw3dcvffgvoxwawlcvvxhuol5rrrk7@ngo3fiv7va6e>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
 
-
-On Wed, 19 Feb 2025 00:33:11 +0530, Kaustabh Chakraborty wrote:
-> Document the compatible string "samsung,exynos7870-chipid". The
-> registers are entirely compatible with "samsung,exynos4210-chipid".
+On 21/02/2025 00:10, Dmitry Baryshkov wrote:
+>> +static int cam_cc_x1e80100_configure_plls(struct device *dev,
+>> +                                         const struct qcom_cc_desc *desc,
+>> +                                         struct regmap *regmap)
+>> +{
+>> +       int ret;
+>> +
+>> +       ret = devm_pm_runtime_enable(dev);
+>> +       if (ret)
+>> +               return ret;
+>> +
+>> +       ret = pm_runtime_resume_and_get(dev);
+>> +       if (ret)
+>> +               return ret;
+> I think, it's better to add desc->use_rpm. Then these two calls and
+> pm_runtime_put() can go to a generic code.
 > 
-> 
+> Or maybe we can enable RPM for all clock controllers?
 
-Applied, thanks!
+That second point is pretty interesting - I think at this stage ~ all of 
+them do this boilerplate stuff over and over again ..
 
-[1/7] dt-bindings: hwinfo: samsung,exynos-chipid: add exynos7870-chipid compatible
-      https://git.kernel.org/krzk/linux/c/0a86ea5534a9e4ae988a2e174e741b102d8a8691
-
-Best regards,
--- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
+---
+bod
 
