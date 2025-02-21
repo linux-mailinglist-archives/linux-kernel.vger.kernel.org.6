@@ -1,103 +1,94 @@
-Return-Path: <linux-kernel+bounces-525470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89755A3F069
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:35:19 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 128A0A3F034
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:27:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C6473AE5D4
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:33:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 30B047A8698
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:25:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43C9C201017;
-	Fri, 21 Feb 2025 09:33:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AC9E2036E1;
+	Fri, 21 Feb 2025 09:26:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="dBMVE34p"
-Received: from xry111.site (xry111.site [89.208.246.23])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="kG7XmSet"
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 331C81FFC6A
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 09:33:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50EAE200136;
+	Fri, 21 Feb 2025 09:26:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740130435; cv=none; b=C6Z3RI1xXoG13Yc/zMbzvfTJ7fmJjmF74AX6UtSlqhBecStuzvMppZ0JU5iR1VESTKimc5sMHBTybWYkuVxpr0cg27b8DGWCmvTAo37jdAb5IJrjn1w4lMMUh0l2P4qZ1L+AGoB2yRdyJ/xd6MneeF2zlfS3WXEW8s5tHhfs4Rk=
+	t=1740129983; cv=none; b=BDmcDWw3XQU/KIRGXvhOkn9i62QzmSSJKZISn65Bt/5Fk+MgIw0Drf3RGiPZG3qK3cKzuPIzbGo8c/WwKs09to12SAq5KAG306uJbiMHHgVu6hoE7DDAtg0cSgRe/IlJgDEtmfdsspoHaCzYvdrppBk1NQ4cyz9sjTDmKySVRxY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740130435; c=relaxed/simple;
-	bh=6L5GbYGVZnK3Pg8hKzvZ2mxC8upqxVdMUqXOcV0n5Nc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bC1VGRo0P/opeyhCxUhUM9ZQdw47i1+DGYikxPdcFnaRR1vR3ptM62IsDcNq39A0lXie94SytTKMarvAUXq/L9XNsO3IatUrXilD+Q1pCxnsP7l7q15dClRrnbSg6DSmynfyvoLqD33gp8ocWqJx9BM3DuTxlaDd+ikz3eyTZkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=dBMVE34p; arc=none smtp.client-ip=89.208.246.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xry111.site;
-	s=default; t=1740129945;
-	bh=x8sbwyIvDcpG5z1EJ3Q7rOK3biWGRso3LJ6nU4kWQlo=;
-	h=From:To:Cc:Subject:Date:From;
-	b=dBMVE34p4MAObvl1+w37smAr2xxxAYpf+mLROe8dXHv/4JSjIXxqpGL6YsV0iNCC3
-	 2eoWoPzcjiRJ9RDV8Ab+ahddfYE2Bp1NjQdCiPG2DEiNuBMhrbUCnYUPIVfZW03GBK
-	 7GGK160XWhP3qWFu4+loW3BlOW3AV9bQr3o7c64I=
-Received: from stargazer.. (unknown [IPv6:240e:454:4311:1f25:535e:dcbe:c175:b1da])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (secp384r1) server-digest SHA384)
-	(Client did not present a certificate)
-	(Authenticated sender: xry111@xry111.site)
-	by xry111.site (Postfix) with ESMTPSA id B3E5C1A3F59;
-	Fri, 21 Feb 2025 04:25:39 -0500 (EST)
-From: Xi Ruoyao <xry111@xry111.site>
-To: Huacai Chen <chenhuacai@kernel.org>,
-	WANG Xuerui <kernel@xen0n.name>
-Cc: Masahiro Yamada <masahiroy@kernel.org>,
-	Tiezhu Yang <yangtiezhu@loongson.cn>,
-	"Jason A. Donenfeld" <Jason@zx2c4.com>,
-	loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Xi Ruoyao <xry111@xry111.site>
-Subject: [PATCH] LoongArch: vDSO: Remove --hash-style=sysv
-Date: Fri, 21 Feb 2025 17:25:23 +0800
-Message-ID: <20250221092523.85632-1-xry111@xry111.site>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1740129983; c=relaxed/simple;
+	bh=hOSsedCj3g38FhSSOd3SZ3fzOuo+HAK04UOzp4+ZXs4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XQh4o6xZF6sFmam62nf2PjBHCM4G5n0zdhOoG0r23oMK6fsMR7kqTIVAPdRNwCVFAuY58u0xesDNRhkegmQz9apPUgwp0Ikf/uG7jXVzCJLB8JGH1Z2tLPfbaCaAzrI2NPm5fmU5rPjJw8tvK8iGG2gSP6c5E+Iu3Saa4gzqcXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=kG7XmSet; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=XVUfXHkgpf0123n4/unRomqnVdNIJe5wzJMUHc/kqRE=; b=kG7XmSetoUZNQPGCyJL6PT6Gm0
+	N6tTiUhuzxjKG+Fmgqn42cXHYBopi+X4PM0AY9OfGgP4vxXrkLnMYYfn7/WNzLkGJgG0e1OXuct5v
+	c7gZHkjizflCnSjVkuwLcEmuvWHf7iluts+cY/OllGDpWhVmbbyWm8PGXmr3EPU3gWOLIbs7oPbJl
+	hbREmBl3R/iYaMktJ5SjctwVgp5BdfF7QhfAcVf4b7Cw9WkxeHDCtu/TvaqBW6lE3rD9o2pmM0922
+	ElicLgm5czPVDjG7Pc81dDOnR1NMTbE66eUZpvC5v3pQzKSirHXrUrxB5NTLcFZAR3xo3Z8RTUwC4
+	agpOZtag==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1tlPIR-000YQo-20;
+	Fri, 21 Feb 2025 17:26:12 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 21 Feb 2025 17:26:11 +0800
+Date: Fri, 21 Feb 2025 17:26:11 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: Antoine Tenart <atenart@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Richard van Schagen <vschagen@icloud.com>,
+	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Dan Carpenter <dan.carpenter@linaro.org>
+Subject: Re: [PATCH] crypto: inside-secure: eip93: Correctly handle return of
+ for sg_nents_for_len
+Message-ID: <Z7hGs9rzgceurzWo@gondor.apana.org.au>
+References: <20250215233621.6277-1-ansuelsmth@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250215233621.6277-1-ansuelsmth@gmail.com>
 
-glibc added support for .gnu.hash in 2006 and .hash has been obsoleted
-far before the first LoongArch CPU was taped.  Using
---hash-style=sysv might imply unaddressed issues and confuse readers.
+On Sun, Feb 16, 2025 at 12:36:18AM +0100, Christian Marangi wrote:
+> Fix smatch warning for sg_nents_for_len return value in Inside Secure
+> EIP93 driver.
+> 
+> The return value of sg_nents_for_len was assigned to an u32 and the
+> error was ignored and converted to a positive integer.
+> 
+> Rework the code to correctly handle the error from sg_nents_for_len to
+> mute smatch warning.
+> 
+> Fixes: 9739f5f93b78 ("crypto: eip93 - Add Inside Secure SafeXcel EIP-93 crypto engine support")
+> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> ---
+>  .../crypto/inside-secure/eip93/eip93-common.c | 25 ++++++++++++++-----
+>  1 file changed, 19 insertions(+), 6 deletions(-)
 
-In the past we really had an unaddressed issue: the vdso selftests did
-not know how to process .gnu.hash.  But it has been addressed by commit
-e0746bde6f82 ("selftests/vDSO: support DT_GNU_HASH") now.
-
-Just drop the option and rely on the linker default, which is likely
-"both" (AOSC) or "gnu" (Arch, Debian, Gentoo, LFS) on all LoongArch
-distros.
-
-Similar to commit 6b7e26547fad ("x86/vdso: Emit a GNU hash") and commit
-48f6430505c0 ("arm64/vdso: Remove --hash-style=sysv").
-
-Signed-off-by: Xi Ruoyao <xry111@xry111.site>
----
- arch/loongarch/vdso/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/loongarch/vdso/Makefile b/arch/loongarch/vdso/Makefile
-index fdde1bcd4e26..abaf87c58f9d 100644
---- a/arch/loongarch/vdso/Makefile
-+++ b/arch/loongarch/vdso/Makefile
-@@ -37,7 +37,7 @@ endif
- # VDSO linker flags.
- ldflags-y := -Bsymbolic --no-undefined -soname=linux-vdso.so.1 \
- 	$(filter -E%,$(KBUILD_CFLAGS)) -nostdlib -shared \
--	--hash-style=sysv --build-id -T
-+	--build-id -T
- 
- #
- # Shared build commands.
+Patch applied.  Thanks.
 -- 
-2.48.1
-
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
