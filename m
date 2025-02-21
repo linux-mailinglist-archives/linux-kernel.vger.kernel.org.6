@@ -1,79 +1,46 @@
-Return-Path: <linux-kernel+bounces-526460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD6A4A3FEF0
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 19:38:41 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E18FAA3FEF3
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 19:39:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AD863BAAA4
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 18:38:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5FA8D422624
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 18:39:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30B65250BFB;
-	Fri, 21 Feb 2025 18:38:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48DEA2512C2;
+	Fri, 21 Feb 2025 18:39:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="arHxRj/K"
-Received: from mail-oo1-f50.google.com (mail-oo1-f50.google.com [209.85.161.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17CFE1E9B09;
-	Fri, 21 Feb 2025 18:38:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.50
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="ZoNuVPjt"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 387E01FBCA9;
+	Fri, 21 Feb 2025 18:39:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740163106; cv=none; b=oHFDbvDg4ZT4TUMe6kmq6oeu3lPcxidBz1VxzOtkLA9DADB5r8UfmAmHA5PCoCvmhB+JyLepKHNLNmjrQV/kpC06/zuXjVYBLwHeROy8Smh+jzdSWS9HjVopASgmsmRA+GhibvyzIgQfg/bA00Eka9/qNscJ9EidEq4MecyDkx4=
+	t=1740163148; cv=none; b=IeRH3b/59T4QE+D/9UbN1E5+0ywA/tER/IoMOZu5IqxQhPU9IL9gmf8+tmRblUHJV7PtBzsyG60Ovj/CqmeSGvbMcowQbSi8cjcLYqT5Sqnz7SNC4INxQY144u8vYVhG6LHmahwlUikBmRw92xVlMw4q+wC2iyCQu0Ikn3WDv6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740163106; c=relaxed/simple;
-	bh=Q936AZExE99tb2q+MrHHJwRam8QYuQsfnHAxnBUlB+I=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=FxATMm+zDArWirC5cvZWFaqlWUNa9gbkvnnnQGfjpTD3LB9mvl668YMDL1ukiLlDIY9RYIFwW+4SmHkmL0/lJTE6Q0CY3ZJdxnkpV5IrchAifqAddoRFwGohMZPVjmHU+K1aSnWnAwXHi+j2OvQC7YDzdEh0K3RirXYr75iLB5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=arHxRj/K; arc=none smtp.client-ip=209.85.161.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-5fcd686fe0fso1377391eaf.3;
-        Fri, 21 Feb 2025 10:38:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740163104; x=1740767904; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:cc:to:subject:from:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=hsGNbGLYi3imJsJL+9aifpnDeSIfnWypP/Kgm6qb5gU=;
-        b=arHxRj/KeyMBlyu4ktMVJWF7760TW4gRsDLsiGZaWMc/sjuyJSDF7KztfBOu7Oxi1d
-         6ey8ioRCTe/yViOQ5BJ0Oxnfdg9dbmQTJZZOKVCY9nglYnxhO2xLiy+9wa5zZJeuIKIr
-         wuYnhxodq+l85UqCT3Pomoi6dBzitQa25VN7GOH0Zc8CB/is1nVJ4BUU00flndfwaqDp
-         9QgEQoocToTjmKYHHzAukxTFZ23g72afF30PX0Dnm7mxQ1RJKIVd5izaKz7EOcGBiYoj
-         8lovGuMRZzo0ibnnpwg191wjM5cvZLQWIeXo62q1n7voe3VFJ8g7AtIYMWz7FVAGdXAX
-         YXIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740163104; x=1740767904;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:cc:to:subject:from:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hsGNbGLYi3imJsJL+9aifpnDeSIfnWypP/Kgm6qb5gU=;
-        b=MUNxo+H5KGmIvIiyxVYafLqkND8F6c/GiuMZ8FPsCejxIce2pNOgS3xINI9RqAK6tW
-         Q8awjsStNjwZ3NL3FzE4gKCqHt8BLTET5TiyePwswv39Me+vX9uyZJVqcinJ6dVCpYw0
-         UMDTQvsqvrOK3eE9e/8jG07eUALpRxL0yTO1xk9GxoxSJ5aRZg7W6Xrc4RnCbH9ALsT6
-         /VqE9LKyScHU+Lb05Tm8iJrxmUk7ExYMUi6s+kwNlKFCwt7ke0ZM/+O5JbtOsfbd3AZK
-         j5bj76jPyiNbXh/Bep2qsV2ABedMzE7jvZMUlDSNA6DzQjPaFeTtd56MA/wXPYM5Ekgs
-         PgtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWnGbVqK7Di1Xg3cp9JXJcx+QXRYrtagIDcO22IgJL1djrL/5nkRKGlIhGkJZJC9GO32f7tXh+OLh4ZyXA=@vger.kernel.org, AJvYcCWq/DR3PNeLjjU0/nEMmjNMsJAdkD+kDR0z6B+0t5KHg8gFHraBkSbwAJFQ50lnSp/hGqu7QQJt@vger.kernel.org
-X-Gm-Message-State: AOJu0YwopkwbhnhxIbuMfLhAEHHIJxzapGnFHe04jO+GflwWyrMZbLBy
-	dNp2xI0o3t7isIrQfD8Vsn3+ZiveUQbGKglP7noAb+SLNdNj1VIT
-X-Gm-Gg: ASbGncvqnwLUYu1Hw0wjPx/cX0f/IKRlKQEdFRiYhBeh0KVhk2vW733QObIJueKjPaM
-	7VqheJ15ZmEt8ILNYJKL3KPcethj9pWG/l/jabYUgulvdggcURoS77WeStRipgL0BmI2iBXqlF9
-	byuZK1fOwTbzJUIXVROCOrx4wd/mZ9SH1erDSQxDm2E4zhPvn68nLJu7ptw4Ue80JSLYmsRZbM4
-	beNr2PlgxWR1g0hehcgIpMWXbqBqBHo89uuMmVlM2mAiyfaBJBKIhR8erBaSzebA8nOOcYI5TR7
-	TXg77r0cWiMAnJfsxDvB5pAle02l9md6n4u/cXAJBavdyhwJy96NqA==
-X-Google-Smtp-Source: AGHT+IGHalgkEU3Q8tpgYl9lid1QhnBNk/7/u+5TKgseeEXkfKvsLq1RqZXTz9yUGpUMJZ9We3jGfQ==
-X-Received: by 2002:a05:6871:1c9:b0:29e:354e:5fdb with SMTP id 586e51a60fabf-2bd50fb898emr3242983fac.37.1740163104051;
-        Fri, 21 Feb 2025 10:38:24 -0800 (PST)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2bd68843a69sm141957fac.26.2025.02.21.10.38.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Feb 2025 10:38:21 -0800 (PST)
-Message-ID: <259638f6-061f-4259-8534-d5537f47d85b@gmail.com>
-Date: Fri, 21 Feb 2025 10:38:17 -0800
+	s=arc-20240116; t=1740163148; c=relaxed/simple;
+	bh=PY6GARZWIgEfS/J4aBYaA5+x7bSCdARzwjwrqPPjCBc=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=TF90QfPtXwa/j1NUP8SL8IqoCMUc5Ou/MTRYFbnkkrK9/wVXiEpl22jceZfDBvnCKdnoktYHX9NGBBE0hM53ntm4DrJ5EWTPGYL05/gLDGWWOf8B3NSnOPyGeFcSmlzgZGTKLmmlTA1VcQIfnSPdXxE1HPDtGfY/D4t0Ws6eqvc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=ZoNuVPjt; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [100.65.233.50] (unknown [20.236.10.120])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 36857204E5BD;
+	Fri, 21 Feb 2025 10:38:59 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 36857204E5BD
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1740163139;
+	bh=G/Tic7coQeFYiHBXJ9PvPPgvVDonFpsFoc/c9HSDwkU=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=ZoNuVPjt4rUYWHQwOvQdSMaQPIyR/xCd95JLMjkmE9S3BSeZIilBNCyxI7WibKI82
+	 MkEfj2mZX4V/c+w/YTMa/jp0QoOhvkhUKfxn/fVixAlbRRc8hDVmdicSixuR9MeesQ
+	 gAoIDttUF/+mHd901Q39pyErXZj5H6TNtGYp2ysY=
+Message-ID: <3b667a16-3ea9-474b-81c1-a5dc7122c71e@linux.microsoft.com>
+Date: Fri, 21 Feb 2025 10:38:58 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,81 +48,135 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: Florian Fainelli <f.fainelli@gmail.com>
-Subject: Re: [PATCH 6.13 000/258] 6.13.4-rc2 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
- conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-References: <20250220104500.178420129@linuxfoundation.org>
+Cc: MUKESH RATHOR <mukeshrathor@microsoft.com>, eahariha@linux.microsoft.com,
+ "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+ "iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+ "mhklinux@outlook.com" <mhklinux@outlook.com>,
+ KY Srinivasan <kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>,
+ "wei.liu@kernel.org" <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+ "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+ "will@kernel.org" <will@kernel.org>, "tglx@linutronix.de"
+ <tglx@linutronix.de>, "mingo@redhat.com" <mingo@redhat.com>,
+ "bp@alien8.de" <bp@alien8.de>,
+ "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+ "x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
+ "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
+ "joro@8bytes.org" <joro@8bytes.org>,
+ "robin.murphy@arm.com" <robin.murphy@arm.com>, "arnd@arndb.de"
+ <arnd@arndb.de>,
+ "jinankjain@linux.microsoft.com" <jinankjain@linux.microsoft.com>,
+ "muminulrussell@gmail.com" <muminulrussell@gmail.com>,
+ "skinsburskii@linux.microsoft.com" <skinsburskii@linux.microsoft.com>
+Subject: Re: [PATCH v2 2/3] hyperv: Change hv_root_partition into a function
+To: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+References: <1740076396-15086-1-git-send-email-nunodasneves@linux.microsoft.com>
+ <1740076396-15086-3-git-send-email-nunodasneves@linux.microsoft.com>
+ <5980eaf9-2e77-d0ec-e39b-b48913c8b72f@microsoft.com>
+ <a29af204-e4a9-4ef2-b5b8-f99f2ac0a836@linux.microsoft.com>
+ <f5366d52-1714-87bc-5fa5-94230f2acca1@microsoft.com>
+ <5ae3454f-61e4-4739-816c-20525e2087be@linux.microsoft.com>
+From: Easwar Hariharan <eahariha@linux.microsoft.com>
 Content-Language: en-US
-Autocrypt: addr=f.fainelli@gmail.com; keydata=
- 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
- WlfRzlpjIPmdjgoicA==
-In-Reply-To: <20250220104500.178420129@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+In-Reply-To: <5ae3454f-61e4-4739-816c-20525e2087be@linux.microsoft.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-
-
-On 2/20/2025 2:58 AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.13.4 release.
-> There are 258 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On 2/21/2025 10:10 AM, Nuno Das Neves wrote:
+> On 2/20/2025 2:59 PM, MUKESH RATHOR wrote:
+>>
+>>
+>> On 2/20/25 14:56, Easwar Hariharan wrote:
+>>  > On 2/20/2025 1:59 PM, MUKESH RATHOR wrote:
+>>  >>
+>>  >>
+>>  >> On 2/20/25 10:33, Nuno Das Neves wrote:
+>>  >>   > Introduce hv_current_partition_type to store the partition type
+>>  >>   > as an enum.
+>>  >>   >
+>>  >>   > Right now this is limited to guest or root partition, but there will
+>>  >>   > be other kinds in future and the enum is easily extensible.
+>>  >>   >
+>>  >>   > Set up hv_current_partition_type early in Hyper-V initialization
+>> with
+>>  >>   > hv_identify_partition_type(). hv_root_partition() just queries this
+>>  >>   > value, and shouldn't be called before that.
+>>  >>   >
+>>  >>   > Making this check into a function sets the stage for adding a config
+>>  >>   > option to gate the compilation of root partition code. In
+>> particular,
+>>  >>   > hv_root_partition() can be stubbed out always be false if root
+>>  >>   > partition support isn't desired.
+>>  >>   >
+>>  >>   > Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+>>  >>   > ---
+>>  >>   >   arch/arm64/hyperv/mshyperv.c       |  2 ++
+>>  >>   >   arch/x86/hyperv/hv_init.c          | 10 ++++-----
+>>  >>   >   arch/x86/kernel/cpu/mshyperv.c     | 24 ++------------------
+>>  >>   >   drivers/clocksource/hyperv_timer.c |  4 ++--
+>>  >>   >   drivers/hv/hv.c                    | 10 ++++-----
+>>  >>   >   drivers/hv/hv_common.c             | 35
+>> +++++++++++++++++++++++++-----
+>>  >>   >   drivers/hv/vmbus_drv.c             |  2 +-
+>>  >>   >   drivers/iommu/hyperv-iommu.c       |  4 ++--
+>>  >>   >   include/asm-generic/mshyperv.h     | 15 +++++++++++--
+>>  >>   >   9 files changed, 61 insertions(+), 45 deletions(-)
+>>  >>   >
+>>  >
+>>  > <snip>
+>>  >
+>>  >>   > @@ -34,8 +34,11 @@
+>>  >>   >   u64 hv_current_partition_id = HV_PARTITION_ID_SELF;
+>>  >>   >   EXPORT_SYMBOL_GPL(hv_current_partition_id);
+>>  >>   >
+>>  >>   > +enum hv_partition_type hv_current_partition_type;
+>>  >>   > +EXPORT_SYMBOL_GPL(hv_current_partition_type);
+>>  >>   > +
+>>  >>
+>>  >> nit: if possible and not too late, can we please use more Unix
+>>  >> style naming, eg, hv_curr_ptid and hv_curr_pt_type rather than this
+>>  >> long windows style names that causes unnecessary line wraps/splits.
+>>  >>
+>>  >> Thanks,
+>>  >> -Mukesh
+>>  >>
+>>  >
+>>  > Per
+>> https://docs.kernel.org/process/coding-style.html#naming
+>>  >
+>>  > GLOBAL variables (to be used only if you really need them) need to
+>> have descriptive names,
+>>  > as do global functions. If you have a function that counts the number
+>> of active users,
+>>  > you should call that count_active_users() or similar, you should not
+>> call it cntusr().
+>>
+>> Thant's hardly a fair comparison. Suggestion was NOT hvptid.
+>>
+> I'm in favor of shortening the names when the abbreviation is common and
+> therefore still perfectly clear to anyone reading it - e.g. "curr" is
+> a perfectly acceptable abbreviation of "current", in my view.
 > 
-> Responses should be made by Sat, 22 Feb 2025 10:44:04 +0000.
-> Anything received after that time might be too late.
+> I think abbreviating "partition" to "pt" is probably not a good fit for
+> global variables. Anyone seeing a variable with the word "partition"
+> (and hv_ prefix) can go look up what a Hyper-V partition is if they don't
+> know, but "pt" would be completely impenetrable without reading through a
+> fair amount of the code that uses it to figure out what it refers to.
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.13.4-rc2.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.13.y
-> and the diffstat can be found below.
+> I think even slightly longer abbreviations like "part", "ptn", "prt", or
+> "prtn" are not good enough unfortunately... the word "partition" just
+> doesn't lend itself to abbreviation in an obvious way.
 > 
-> thanks,
+> So, for this patch I'm fine with changing it to "hv_curr_partition_type"
+> which saves a few characters.
 > 
-> greg k-h
 
-On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
-BMIPS_GENERIC:
+FWIW, I generally prioritize readability of code and your proposal neatly
+splits the difference. Also, it's your patch, so you get to make the decision. :)
 
-Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
--- 
-Florian
-
-
+Thanks,
+Easwar (he/him)
 
