@@ -1,181 +1,213 @@
-Return-Path: <linux-kernel+bounces-526318-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27446A3FD25
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 18:15:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6390DA3FD3B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 18:18:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA3537AB56C
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:11:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 131FF3B954C
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:12:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6AC524CEC6;
-	Fri, 21 Feb 2025 17:12:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 929B224C698;
+	Fri, 21 Feb 2025 17:12:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SuvSmPgK"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SEKyiLzO"
+Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E6421D5AA1;
-	Fri, 21 Feb 2025 17:11:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67C3124C680
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 17:12:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740157920; cv=none; b=S1qH0gGt/vwmIlU82coZNmfrn3fsr6ruV/rAfdojc942/RspAbY2+naL0+6UTznfir8Vs0OE4JTIJ58giEVdHnXgiQNjnGGJ81gM29Zo8FAPCa2GzOKxaJlGJlrgRM4hvEAZuUODzTm6fBGC+hpO3A1zxzNjVdnGoLnUFx7b+Js=
+	t=1740157942; cv=none; b=D6Fr2N0kwMPdCv50JmN8jNskcX1LH9vFMzDUFGy5c6BJkX9rfx2IOzGlKRb2c3EmYYrDfGn2gS3JEbFTvGqqaKS/ziqDyB09PVvyR2x2hscsivUY4U5syTzp+Ha4gDGDTfG/68BAftte7in4ROruc+0j9CQdnOZLvV1n6cxiGAY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740157920; c=relaxed/simple;
-	bh=nwN6myzfeyIu2xvXyDF1QCWzIO4vL9sS/N1DnP0YTS8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MogKtYQT0yiHm1LWsSC9PHL+qFiLS1qy1eivCT88HaFaBZ7hcZzvmRqn+t1Aa1ui8khTfbFTSaoWkQuiuzGCpsfbLwJLnIuVbXviE9kEuD6Na3dlItrfy3o9UQrk8PnfcvFgOjqObqBuCDDgauMs1PTYLBq9o6lb0STlbMX3YUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SuvSmPgK; arc=none smtp.client-ip=209.85.208.49
+	s=arc-20240116; t=1740157942; c=relaxed/simple;
+	bh=DXvFTs7oxh7lPTo/mbOBZb379NqGajHAFQFN6oblHdU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=exGmMs6A24S523nj+UFSzecstazCdMcRUkT5fXD5NO/+bqdwIMCOAkFR+/rTQ1WOvukLZ2PbGZukIdKmuOzRYFCmf+k5BpynACNeRmbcuLF1ogvpw3jiR0ZWMf6P005CWfKtQp5AUl7qxkwvN8gjnJyCi8yJpSz/b4yvdjacEcQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SEKyiLzO; arc=none smtp.client-ip=209.85.219.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5e058ca6806so4311103a12.3;
-        Fri, 21 Feb 2025 09:11:57 -0800 (PST)
+Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-6e67f377236so18342216d6.1
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 09:12:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740157916; x=1740762716; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1740157939; x=1740762739; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=6VvZjEAicGEAu2V/A+Vr/ZR3hBpruFRXAWv6NQYbDAw=;
-        b=SuvSmPgKwds9g3lO8FxDYmg5PiIXE6Gs6zTVCb+uyHmvU3gkmvE8IuBkSe3fDHnZ/F
-         E5xlMIu6FOwPYmo7i4vH6hlUFiYkEXBDP2b2ABN6iazYFYheUCJUU45sLx76aPCPokIT
-         1K62JY882WzQ15I3zxE9PJdq0fuWgLJiJBL50QWmocyqeB75Ifd5VjtIE4VdjwczDRAo
-         ASkWjQNN+V1MaxeVoVrOofTwRreMbdRA+j+q9CPS7Mv3DWtRfSXhPi+uGtr9CaiyXj4g
-         yzDJ1ym8XUhcly/dP9eQ7ZBeURiDjpYMRUpIDOOI2NiFe/MwOwTaCjBkZt8GAPWUJ0Yi
-         lxRw==
+        bh=Gvm0spvO2odf0aHHsM8EDOsI9Ul6jn5O/yToI2VY3kA=;
+        b=SEKyiLzOhUc9nWziV7ruL5BqL06T3P4lDNPc4z+ezS7U9jkxsuOu/QGJMxSlBPcCni
+         s9J/RgNEwz2YVMkytRf6KR39/TIyqJ/BKjPhfuRKDlRlcnW28eSbCA+1E+nxVTv57a4s
+         uPJi2utgTc5LIGaTtXD2SAkUdLl3uHKJTd3tca4FMxRYbi08rnkVWkbB+PXkXQyEE1hF
+         DAKnBCsQxdTfKZ+0nQ/khhfV9qYxPDe1+WXzwdv6bhpENO/LTNpGOgNIINemVWtOvXkZ
+         +Xe5ob+zRjcYPOhMcJeIXfxcHgLy/1Nm6ZIZ2GUlFwLqiuKGc7uP1Ahox8xkK2/3tzNA
+         y7JA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740157916; x=1740762716;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1740157939; x=1740762739;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=6VvZjEAicGEAu2V/A+Vr/ZR3hBpruFRXAWv6NQYbDAw=;
-        b=goKz2789eBzj+TGRJoDQZT2E5/VsYBORQJU2MnOMTz+YSITab6DSO3h+5AzQfA06m8
-         6ifPRRYqgQU2mx/ZmnBfaGdnQuBR799WPCkW8iYEEIrIPkgAl1XTlkyi9Q0eRpmoyLJ6
-         LoGZrf7aClpwpeQCBNAvYORRPzVizuc7btIgzJOMLX9IdWEHlDSB5qzyf3y3XzwHQ9+U
-         7+Smq1iTflgt9XiKoZlVj2CAGNwozxY9R+QBGEQEFbyc1Ud2QQCkwmocuXw6baY5cJzp
-         CJIFHza3UaQ23fVa1lq+KhiVjZX/r7sOWnpoEkE9If5FxVPU7S22L7H7n7OFpRtybsix
-         YJ3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVOrZWOfvpBSpnR1AXYTx8zZWplwvzni1Gfbe+95/gx/q0rK7VoeGpulXe/HrxzSmgnMGmxm0xLzcspa8ILWg==@vger.kernel.org, AJvYcCXBuADTMqF0gkJAYJTvOSU1uyEwX7XfXQMGEyWXgI6gmNOWs7pFirzrUL9rxm54pueXuhfBAHM79m4AoKt9@vger.kernel.org, AJvYcCXudhtCvEig1aKhP4ibu2QEctbct1HiTSOiihbO4799aVwuWkvAQ/7yW9i169W4Iwe6C90ub90uz/m/@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBX95Be+rwpwik9i7Gs/J1eZKtc2XiD9eGF+CeXe8T4VOzcgYy
-	3A0cSbF/nRhvx9xH3iEPBcl6MXGDXv366yK0kquvYcZ/oszkjeFZlpAYrXp0NNlDWSxaKH8kRWo
-	GRPfd5kkyWtR7+T4iN21b86ymffk=
-X-Gm-Gg: ASbGncuBZKuvQgfCqgjyrucDIc0+wdXGbr/RBAg7ZqetyE8zTg7pg2aMt9cRNRESSmd
-	wSmijuG6bdJ4c680PuWUr8ksj1FmOrkNLi90uoPGIXSIQL/f/q9QmLz5BfJQTYLQlgzIUuzMGvm
-	3nMYKBzw4=
-X-Google-Smtp-Source: AGHT+IFWIDr9r3hSZMmkqGn1WnTi6P53MVW1MS+O28ff7DJk8k15sH3EeM0ny5DKuivC72nAqqnR7Z0bXLshzgHIgjY=
-X-Received: by 2002:a17:907:6e91:b0:abb:eaf3:a815 with SMTP id
- a640c23a62f3a-abc0d9e8682mr366028966b.22.1740157915841; Fri, 21 Feb 2025
- 09:11:55 -0800 (PST)
+        bh=Gvm0spvO2odf0aHHsM8EDOsI9Ul6jn5O/yToI2VY3kA=;
+        b=NdR5XmssFqiG3DmjsywVox8hRU6r3QwjdN5jprrFamVh2ZyOjSGIXpseXF22smbLo5
+         jErgn6CDNXvw1twsqpjGHnMebXHF0n/r964ihA1oUQb1MtkwOxCc9OXav5DQHCk/37uR
+         QLtoTDn4V2D/WLK5XIrFHU28j5q0t6UlbHIYh90lrP6AaGNF35VNXE7xG8DPc4stK5Mi
+         bK58boR1Va1nP9LExr5eV8Z7oqCJ5s585HMfOV72zn38dpG58HlqRId2Ub8gOP8nUgMC
+         dw00vlk3KXvMzaPVwAp2aLNFcHRvSvncamiBh0vZvL9WQM2pyXXLXyHKGh1HNaaXhdqc
+         Di9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXFTDfuE2EC7cw8E3Dr3Ywy11EHEHYXeWzPGWMVyb7ZIwLwVQGvddErwuaJeqqEOjQAQei7Jr9TCVcWhAc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIoM3z/MxYZQCXYks9wbe2TsPN+9IC0yhAIed8N3Wh1bMkzilX
+	BxMTEaWKU2aw02wIBdhljRNxzdvh8Cu8MX32BwrAqb6N6nkHy94K
+X-Gm-Gg: ASbGncuKYklkgRMq8SXoE6wEVOtI0bhrtEZnN895olqLoZAle0KO6TF8ftbHxYPCcPc
+	Zx8b5be9vCnjM1PxZ4QreuVyzzn+pA+Xq3Ll6tfdwcM/Gho9j5LjzaODgOGQT5PSIgUWnwbVdvu
+	1jiLHFheCbHmx8UIhWzRT76YGKNa+9RQ4ACDQ/2Y6QsRgjx82W+FcCxVg5gdNbsjxrVGGC8r64h
+	elt5C6zUwpUSrSLd7ZyFfTX0LVQ9QC1Hjz6Oi1XrHm6mVl3oxy2mgaiBcKcItDdnA0LGQJLkMby
+	rfSOZwrJ60KgLAV7EYcdp8m8xPMfGmTOPYqxbN2ctjSbZ60W/DKAl15nZMN+DAmPmw04NK225mu
+	mL/aAOTdWhEl9MHYK
+X-Google-Smtp-Source: AGHT+IFjz6/XWqgrOc/wxviH2i2uUN1ZBOPiZFcPTkpBgZA6YfE7uJZDiS1EyvuQ9fK1Orj1klTwkA==
+X-Received: by 2002:ad4:5d65:0:b0:6e6:5d69:ec1d with SMTP id 6a1803df08f44-6e6b01c68e8mr41738656d6.37.1740157939147;
+        Fri, 21 Feb 2025 09:12:19 -0800 (PST)
+Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e65d77959csm100393536d6.21.2025.02.21.09.12.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Feb 2025 09:12:18 -0800 (PST)
+Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 4595B1200072;
+	Fri, 21 Feb 2025 12:12:18 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-06.internal (MEProxy); Fri, 21 Feb 2025 12:12:18 -0500
+X-ME-Sender: <xms:8rO4Z6mWbzWfFfaAJU5WEWyv2cQTegPlA01SmHrriVIS57agAjVPWA>
+    <xme:8rO4Zx0YobszFd7NfkZjlJxxoV41upcDZKRvOHe8YLP_Tae1coEGVZeIhFU-2ypyB
+    rAH0T9zwldDOxNSQA>
+X-ME-Received: <xmr:8rO4Z4qqXfcQmgtfFkx5lJAzj_ku7Ng3tHAAVVWoLmyZTY160_jNvfmBrw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdejtdehlecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddv
+    necuhfhrohhmpeeuohhquhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilh
+    drtghomheqnecuggftrfgrthhtvghrnhephfetvdfgtdeukedvkeeiteeiteejieehvdet
+    heduudejvdektdekfeegvddvhedtnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenuc
+    evlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsohhquhhn
+    odhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdeiledvgeehtdeigedqudejje
+    ekheehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgtohhmsehfihigmhgvrdhn
+    rghmvgdpnhgspghrtghpthhtohepuddupdhmohguvgepshhmthhpohhuthdprhgtphhtth
+    hopegsihhgvggrshihsehlihhnuhhtrhhonhhigidruggvpdhrtghpthhtoheplhhinhhu
+    gidqrhhtqdguvghvvghlsehlihhsthhsrdhlihhnuhigrdguvghvpdhrtghpthhtoheplh
+    hinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohep
+    phgvthgvrhiisehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepmhhinhhgohesrh
+    gvughhrghtrdgtohhmpdhrtghpthhtohepfihilhhlsehkvghrnhgvlhdrohhrghdprhgt
+    phhtthhopehlohhnghhmrghnsehrvgguhhgrthdrtghomhdprhgtphhtthhopehlihhnuh
+    igsehrohgvtghkqdhushdrnhgvthdprhgtphhtthhopegtlhhrkhiflhhlmhhssehkvghr
+    nhgvlhdrohhrgh
+X-ME-Proxy: <xmx:8rO4Z-kENaLoP6Mt7t3W8HqQn-L_EmWtF78qvAWnET220bukehqZ8Q>
+    <xmx:8rO4Z40xDIS1k8l7MyjBc4-S_rivC3iGQZGlmKdcIbvO71Form3s_w>
+    <xmx:8rO4Z1tjmKLHgxkIIi8w7y5cazwit6GC0Z_7qVoWiZggZe379w9yAw>
+    <xmx:8rO4Z0Whpxi3WV2K2BmHYsD1tSJIeE0aNdfRNjrskT-vvw6C-bYT2g>
+    <xmx:8rO4Zz11kKQHNpbd_BTNJw319ujQCxDK6duhzVTjOcLSvto6ASsKlEDM>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 21 Feb 2025 12:12:17 -0500 (EST)
+Date: Fri, 21 Feb 2025 09:12:16 -0800
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: linux-rt-devel@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Clark Williams <clrkwllms@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: [PATCH 1/2] lockdep: Don't disable interrupts on RT in
+ disable_irq_nosync_lockdep.*()
+Message-ID: <Z7iz8I6QD9Amjfmw@Mac.home>
+References: <760e34f9-6034-40e0-82a5-ee9becd24438@roeck-us.net>
+ <20250212103619.2560503-1-bigeasy@linutronix.de>
+ <20250212103619.2560503-2-bigeasy@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250216183432.GA2404@sol.localdomain> <CAOQ4uxigYpzpttfaRc=xAxJc=f2bz89_eCideuftf3egTiE+3A@mail.gmail.com>
- <20250216202441.d3re7lfky6bcozkv@pali> <CAOQ4uxj4urR70FmLB_4Qwbp1O5TwvHWSW6QPTCuq7uXp033B7Q@mail.gmail.com>
- <Z7Pjb5tI6jJDlFZn@dread.disaster.area> <CAOQ4uxh6aWO7Emygi=dXCE3auDcZZCmDP+jmjhgdffuz1Vx6uQ@mail.gmail.com>
- <20250218192701.4q22uaqdyjxfp4p3@pali> <Z7UQHL5odYOBqAvo@dread.disaster.area>
- <20250218230643.fuc546ntkq3nnnom@pali> <CAOQ4uxiAU7UorH1FLcPgoWMXMGRsOt77yRQ12Xkmzcxe8qYuVw@mail.gmail.com>
- <20250221163443.GA2128534@mit.edu>
-In-Reply-To: <20250221163443.GA2128534@mit.edu>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Fri, 21 Feb 2025 18:11:43 +0100
-X-Gm-Features: AWEUYZlLQE04n-q8OHJUG8ZupYGW8TujYyP8PV2Kh7KAz62EJ87h72ZaT7vwdHU
-Message-ID: <CAOQ4uxjwQJiKAqyjEmKUnq-VihyeSsxyEy2F+J38NXwrAXurFQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/4] fs: Add FS_XFLAG_COMPRESSED & FS_XFLAG_ENCRYPTED
- for FS_IOC_FS[GS]ETXATTR API
-To: "Theodore Ts'o" <tytso@mit.edu>
-Cc: =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>, 
-	Dave Chinner <david@fromorbit.com>, Eric Biggers <ebiggers@kernel.org>, 
-	"Darrick J. Wong" <djwong@kernel.org>, ronnie sahlberg <ronniesahlberg@gmail.com>, 
-	Chuck Lever <chuck.lever@oracle.com>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Steve French <sfrench@samba.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	linux-fsdevel@vger.kernel.org, linux-cifs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250212103619.2560503-2-bigeasy@linutronix.de>
 
-On Fri, Feb 21, 2025 at 5:34=E2=80=AFPM Theodore Ts'o <tytso@mit.edu> wrote=
-:
->
-> I think a few people were talking past each other, because there are two
-> fileds in struct fileattr --- flags, and fsx_xflags.  The flags field
-> is what was originally used by FS_IOC_EXT2_[GS]ETFLAGS, which later
-> started getting used by many other file systems, starting with
-> resierfs and btrfs, and so it became FS_IOC_[GS]ETFLAGS.  The bits in
-> that flags word were both the ioctl ABI and the on-disk encoding, and
-> because we were now allowing multiple file systems to allocate bits,
-> and we needed to avoid stepping on each other (for example since btrfs
-> started using FS_NOCOW_FL, that bit position wouldn't be used by ext4,
-> at least not for a publically exported flag).
->
-> So we started running out of space in the FS_FLAG_*_FL namespace, and
-> that's why we created FS_IOC_[GS]ETXATTR and the struct fsxattr.  The
-> FS_XFLAG_*_FL space has plenty of space; there are 14 unassigned bit
-> positions, by my count.
->
-> As far as the arguments about "proper interface design", as far as
-> Linux is concerned, backwards compatibility trumps "we should have
-> done if it differently".  The one and only guarantee that we have that
-> FS_IOC_GETXATTR followed by FS_IOC_SETXATTR will work.  Nothing else.
->
-> The use case of "what if a backup program wants to backup the flags
-> and restore on a different file system" is one that hasn't been
-> considered, and I don't think any backup programs do it today.  For
-> that matter, some of the flags, such as the NODUMP flag, are designed
-> to be instructions to a dump/restore system, and not really one that
-> *should* be backed up.  Again, the only semantic that was guaranteed
-> is GETXATTR or GETXATTR followed by SETXATTR.
->
+On Wed, Feb 12, 2025 at 11:36:18AM +0100, Sebastian Andrzej Siewior wrote:
+> disable_irq_nosync_lockdep() disables interrupts with lockdep enabled to
+> avoid false positive reports by lockdep that a certain lock has not been
+> acquired with disabled interrupts. The user of this macros expects that
+> a lock can be acquried without disabling interrupts because the IRQ line
+> triggering the interrupt is disabled.
+> 
+> This triggers a warning on PREEMPT_RT because after
+> disable_irq_nosync_lockdep.*() the following spinlock_t now is acquired
+> with disabled interrupts.
+> 
+> On PREEMPT_RT there is no difference between spin_lock() and
+> spin_lock_irq() so avoiding disabling interrupts in this case works for
+> the two remaining callers as of today.
+> 
+> Don't disable interrupts on PREEMPT_RT in disable_irq_nosync_lockdep.*().
+> 
+> Reported-by: Guenter Roeck <linux@roeck-us.net>
+> Closes: https://lore.kernel.org/760e34f9-6034-40e0-82a5-ee9becd24438@roeck-us.net
+> Fixes: e8106b941ceab ("[PATCH] lockdep: core, add enable/disable_irq_irqsave/irqrestore() APIs")
 
-Thanks for chiming in, Ted!
-Notes from the original author of FS_IOC_EXT2_[GS]ETFLAGS
-are valuable.
+Is this "Fixes" tag accurate? IIUC, the issue only exists after
+CONFIG_PREEMPT_RT is introduced from mainline POV. Or we want this to be
+backported in older stable kernels predating CONFIG_PREEMPT_RT?
 
-> We can define some new interface for return what xflags are supported
-> by a particular file system.  This could either be the long-debated,
-> but never implemented statfsx() system call.  Or it could be extending
-> what gets returned by FS_IOC_GETXATTR by using one of the fs_pad
-> fields in struct fsxattr.  This is arguably the simplest way of
-> dealing with the problem.
->
+Regards,
+Boqun
 
-That is also what I think.
-fsx_xflags_mask semantics for GET are pretty clear
-and follows the established pattern of  stx_attributes_mask
-Even if it is not mandatory for userspace, it can be useful.
-
-I asked Dave if he objects to fsx_xflags_mask and got silence,
-so IMO, if Pali wants to implement fsx_xflags_mask for the API
-I see no reason to resist it.
-
-> I suppose the field could double as the bitmask field when
-> FS_IOC_SETXATTR is called, but that just seems to be an overly complex
-> set of semantics.  If someone really wants to do that, I wouldn't
-> really complain, but then what we would actually call the field
-> "flags_supported_on_get_bitmask_on_set" would seem a bit wordy.  :-)
-
-If we follow the old rule of SET after GET should always work
-then fsx_xflags_mask will always be a superset of fsx_xflags,
-so I think it would be sane to return -EINVAL in the case
-of (fsx_xflags_mask && fsx_xflags & ~fsx_xflags_mask),
-which is anyway the correct behavior for filesystems when the
-user is trying to set flags that the filesystem does not support.
-
-As far as I could see, all in-tree filesystems behave this way
-when the user is trying to set unsupported flags either via
-FS_IOC_SETFLAGS or via FS_IOC_SETXATTR
-except xfs, which ignores unsupported fsx_xflags from
-FS_IOC_SETXATTR.
-
-Changing the behavior of xfs to return -EINVAL for unsupported
-fsx_xflags if fsx_xflags_mask is non zero is NOT going to break UAPI,
-because as everyone keeps saying, the only guarantee from
-FS_IOC_SETXATTR was that FS_IOC_SETXATTR after
-FS_IOC_GETXATTR works and that guarantee will not be broken.
-
-Thanks,
-Amir.
+> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> ---
+>  include/linux/interrupt.h | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/include/linux/interrupt.h b/include/linux/interrupt.h
+> index 8cd9327e4e78d..a1b1be9bf73b2 100644
+> --- a/include/linux/interrupt.h
+> +++ b/include/linux/interrupt.h
+> @@ -448,7 +448,7 @@ irq_calc_affinity_vectors(unsigned int minvec, unsigned int maxvec,
+>  static inline void disable_irq_nosync_lockdep(unsigned int irq)
+>  {
+>  	disable_irq_nosync(irq);
+> -#ifdef CONFIG_LOCKDEP
+> +#if defined(CONFIG_LOCKDEP) && !defined(CONFIG_PREEMPT_RT)
+>  	local_irq_disable();
+>  #endif
+>  }
+> @@ -456,7 +456,7 @@ static inline void disable_irq_nosync_lockdep(unsigned int irq)
+>  static inline void disable_irq_nosync_lockdep_irqsave(unsigned int irq, unsigned long *flags)
+>  {
+>  	disable_irq_nosync(irq);
+> -#ifdef CONFIG_LOCKDEP
+> +#if defined(CONFIG_LOCKDEP) && !defined(CONFIG_PREEMPT_RT)
+>  	local_irq_save(*flags);
+>  #endif
+>  }
+> @@ -471,7 +471,7 @@ static inline void disable_irq_lockdep(unsigned int irq)
+>  
+>  static inline void enable_irq_lockdep(unsigned int irq)
+>  {
+> -#ifdef CONFIG_LOCKDEP
+> +#if defined(CONFIG_LOCKDEP) && !defined(CONFIG_PREEMPT_RT)
+>  	local_irq_enable();
+>  #endif
+>  	enable_irq(irq);
+> @@ -479,7 +479,7 @@ static inline void enable_irq_lockdep(unsigned int irq)
+>  
+>  static inline void enable_irq_lockdep_irqrestore(unsigned int irq, unsigned long *flags)
+>  {
+> -#ifdef CONFIG_LOCKDEP
+> +#if defined(CONFIG_LOCKDEP) && !defined(CONFIG_PREEMPT_RT)
+>  	local_irq_restore(*flags);
+>  #endif
+>  	enable_irq(irq);
+> -- 
+> 2.47.2
+> 
 
