@@ -1,83 +1,123 @@
-Return-Path: <linux-kernel+bounces-525736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C7DFA3F3FA
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 13:17:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7BE0A3F3EE
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 13:13:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0911917A704
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 12:17:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67D5316B974
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 12:13:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAE0B20AF74;
-	Fri, 21 Feb 2025 12:16:51 +0000 (UTC)
-Received: from mx.gpxsee.org (mx.gpxsee.org [37.205.14.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A997209F4B;
+	Fri, 21 Feb 2025 12:13:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J14ogNQS"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E79C1155336;
-	Fri, 21 Feb 2025 12:16:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.205.14.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EC551AF0B8;
+	Fri, 21 Feb 2025 12:13:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740140211; cv=none; b=J5asLmKNj7aGbS+nVsMtnyh//S55Xpq9/lLIIGIH7nNu2qi/GFXVG4grR7FhdtF1tXjEG2MRZ9x5vQxG9rn3TlUrYVUd+fX12V+kpK6fn5YodCZBZKENp6IUPLO/aCyfd8pG0jkAVGLUqzLuMZvDQ/qoIT971k4EtXd+hnWqtC4=
+	t=1740140001; cv=none; b=U0VvdQ2DsPHIJVVcUDw96FzgI20UlSyaxYdq9Oy79Sgj+7uSCi84i4S80UPzt57MBLyiFqGC6HDMduuHDu2qc8Y4CvjZ3zjNVKvbejJ7/pQ8WsXWgoRmiSvbzABdPtR603RRrSBdwrWgZHjYHCBL/aKqpbLzyRhJ8p8SPCz57JU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740140211; c=relaxed/simple;
-	bh=xmD6NKAGm9Q5uQLNboQykz4kAobFmsUomdqLzIfO8kY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HOTUGQ9eRaDItV/GCCS1Yg4sF6RBOSuJkpCGd9lrik57qTFCiDSFzliuBLz2qRd7ciEuXolhc8OmRKU364s179ulmX9rmSZiW3pCc/J59E9tyQxFGEE7eHhjGRznpY9BgjYfu6XJSWyeUv6VH5SaQi0977PP/TL+jwzFCPwALxY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gpxsee.org; spf=pass smtp.mailfrom=gpxsee.org; arc=none smtp.client-ip=37.205.14.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gpxsee.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gpxsee.org
-Received: from mgb4.digiteq.red (unknown [62.77.71.229])
-	by mx.gpxsee.org (Postfix) with ESMTPSA id E7C6A3142D;
-	Fri, 21 Feb 2025 13:07:49 +0100 (CET)
-From: tumic@gpxsee.org
-To: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Hans Verkuil <hverkuil@xs4all.nl>
-Cc: linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	=?UTF-8?q?Martin=20T=C5=AFma?= <martin.tuma@digiteqautomotive.com>
-Subject: [PATCH 2/2] media: mgb4: Fix switched CMT frequency range "magic values" sets
-Date: Fri, 21 Feb 2025 13:07:43 +0100
-Message-ID: <20250221120743.1703-3-tumic@gpxsee.org>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250221120743.1703-1-tumic@gpxsee.org>
-References: <20250221120743.1703-1-tumic@gpxsee.org>
+	s=arc-20240116; t=1740140001; c=relaxed/simple;
+	bh=hXxabPhxEzmO/UL+78zbBv09X2DPNvSjm64PvtmJJ0Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Rzc7kRtlkv2gklUVipqVQEig0ymRDjHa9BvtoibRywe5Lr8XCFbOiEHRKozka6+9vMDGmcJfbvaCMoazI/ZiKgQQJ52wMZJQoyO0AupwMy/v5jvuaqkO1UsscZvc3BCH1H8Cf3EiYfKuZickarb+5w/tLLvZKP7/dPutBzbfRJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J14ogNQS; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-439a4fc2d65so17636335e9.3;
+        Fri, 21 Feb 2025 04:13:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740139998; x=1740744798; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=SeTBP0kt2z5boCI1F2D+0dzCmCR/2SZ7qDyDDR5e8Zg=;
+        b=J14ogNQSIF8dvOPKG0SMPUrhgjLOdOEApmWvIXbp3LaY978aVS+G3x574CiISxtVcW
+         Lgi3wdCw7Bs/wQIqmzxZsGpwTPBUZnSoSvP4BxWefCydxFu4Kl9asc2isiZe+uK4VzCY
+         IEG8/SB4FN58e/W4JJJ5diJWs1QAk2mRFIJk8p8s2JYqqIDQY7KMnJzYZXlRta7h+rPz
+         UWyonGTIBYTJYiHlQjD7+3u68t0WEPuwdfcbLuOLcvagg4FuOUOTU80wASxG6406fZyZ
+         HDSWK7LrRNK+lxipDF0CRqKqyL3Y3WE7sSyURuvKfAgKydwWazB48MRMtm1P8g+nyvyz
+         4YKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740139998; x=1740744798;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SeTBP0kt2z5boCI1F2D+0dzCmCR/2SZ7qDyDDR5e8Zg=;
+        b=tNZAnJAabS9QahNGPxyusd1vPO2uFpv1i/j9Hd/0wlx8mLlrJFkSnP4FV7bysEVtJZ
+         ahmHpQJ9mFlHnZ6pcDdOrtnea3uF8R69hE2nRT439/1mxkmJe8sE18ovI89WMOUEzZxe
+         xFmyxzn5GbdI4jlNETY7ndAPF6MBC3V8h9gn6VBk14rqIPZknjoEdxGRPXpz0r/AihpD
+         kkdsSyiMAd6KN6o22wscb4iDOGecCCkyjFOyA+CNgfaXwIFmhP+RY5NWXfOA0yKcNZne
+         EXxJHmCpvAD0b/WjkHAn4X4LOmexKuVJvPWq2ZTovUIHOhERTGv/ZMi8ZzKFPzSorCvj
+         2KTA==
+X-Forwarded-Encrypted: i=1; AJvYcCXEgrCGl43W5mvj6WcXaFhEQQs0qbDhQHPZ7Cqyv/HnUfCrJTIKeMyvF7BGd5FPxuUN7d5aYlJyWg2knT8v@vger.kernel.org, AJvYcCXslTAab1Lrhirl1CMGmCkdMS9lGaHVv5hrXFtaj/FT61bM5dlzHrNKTA1tr6BnR84sOruoDKrIrw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyx2fIzqA8blBEZ1l4HtwEPl6KCXgblcXlv2scuFfXvXHn5FpOy
+	/vzCCFHF2YgwWTuarL63SHGtFRd0L3oYILyeEKtzF0h9J0WkviTc8OLFvw==
+X-Gm-Gg: ASbGnct6LJ6jY5ZavCk61j0Bg1xpgyEYmdsZ7cD2FuS/En0ddvVlUVndF8eCkv/YSgi
+	UiArvJDXbAXyTxnEg7a58Y94i5PaMPmBjc9NJelnTat5cdJ3S2hSCaYxU0T3XGEXaHhEvMxeVxz
+	VS7uj63FtRcZAeBwLekeEZmwtZfhNlwdJD0kQM3yqRb0rzVavX28Vp3xt46v7C9q7s2GttLKJrq
+	dVOu2F8mFSXMAGskwChwR3Avs3NEhreZhF9duxUHvEBfFko9sAZnHTWV8H5izJKkZsATO5we+n0
+	ByE+bdxXWKHH5xfS9qHiWWDCj4IXnsgdDdlMuck5S3D5Ohn8gC63LRxxA0Q=
+X-Google-Smtp-Source: AGHT+IHYh/tXagBH+FhyM7xr1Rj+NoPIkFXtjpsyKZOXRZoqXOshak04b5u0/XDs6NDMkcOkRByTqw==
+X-Received: by 2002:a05:6000:178f:b0:38c:5cd0:ecf3 with SMTP id ffacd0b85a97d-38f6e756a90mr2753587f8f.11.1740139998146;
+        Fri, 21 Feb 2025 04:13:18 -0800 (PST)
+Received: from ?IPV6:2620:10d:c096:325:77fd:1068:74c8:af87? ([2620:10d:c092:600::1:5e88])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abbdcac38ccsm470502066b.29.2025.02.21.04.13.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 Feb 2025 04:13:17 -0800 (PST)
+Message-ID: <f6694b56-cd1f-45d5-8e5f-b4a98ab2c7af@gmail.com>
+Date: Fri, 21 Feb 2025 12:14:16 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] io_uring: add missing IORING_MAP_OFF_ZCRX_REGION in
+ io_uring_mmap
+To: Bui Quang Minh <minhquangbui99@gmail.com>, io-uring@vger.kernel.org
+Cc: Jens Axboe <axboe@kernel.dk>, David Wei <dw@davidwei.uk>,
+ linux-kernel@vger.kernel.org
+References: <20250221085933.26034-1-minhquangbui99@gmail.com>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20250221085933.26034-1-minhquangbui99@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Martin Tůma <martin.tuma@digiteqautomotive.com>
+On 2/21/25 08:59, Bui Quang Minh wrote:
+> Allow user to mmap the kernel allocated zerocopy-rx refill queue.
 
-The reason why this passed unnoticed is that most infotainment systems
-use frequencies near enough the middle (50MHz) where both sets work.
+Reviewed-by: Pavel Begunkov <asml.silence@gmail.com>
 
-Fixes: 0ab13674a9bd ("media: pci: mgb4: Added Digiteq Automotive MGB4 driver")
-Signed-off-by: Martin Tůma <martin.tuma@digiteqautomotive.com>
----
- drivers/media/pci/mgb4/mgb4_cmt.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> Signed-off-by: Bui Quang Minh <minhquangbui99@gmail.com>
+> ---
+>   io_uring/memmap.c | 2 ++
+>   1 file changed, 2 insertions(+)
+> 
+> diff --git a/io_uring/memmap.c b/io_uring/memmap.c
+> index 361134544427..76fcc79656b0 100644
+> --- a/io_uring/memmap.c
+> +++ b/io_uring/memmap.c
+> @@ -271,6 +271,8 @@ static struct io_mapped_region *io_mmap_get_region(struct io_ring_ctx *ctx,
+>   		return io_pbuf_get_region(ctx, bgid);
+>   	case IORING_MAP_OFF_PARAM_REGION:
+>   		return &ctx->param_region;
+> +	case IORING_MAP_OFF_ZCRX_REGION:
+> +		return &ctx->zcrx_region;
+>   	}
+>   	return NULL;
+>   }
 
-diff --git a/drivers/media/pci/mgb4/mgb4_cmt.c b/drivers/media/pci/mgb4/mgb4_cmt.c
-index bee4bdf54d1c..c22ef51436ed 100644
---- a/drivers/media/pci/mgb4/mgb4_cmt.c
-+++ b/drivers/media/pci/mgb4/mgb4_cmt.c
-@@ -135,8 +135,8 @@ static const u16 cmt_vals_out[][15] = {
- };
- 
- static const u16 cmt_vals_in[][13] = {
--	{0x1082, 0x0000, 0x5104, 0x0000, 0x11C7, 0x0000, 0x1041, 0x02BC, 0x7C01, 0xFFE9, 0x9900, 0x9908, 0x8100},
- 	{0x1104, 0x0000, 0x9208, 0x0000, 0x138E, 0x0000, 0x1041, 0x015E, 0x7C01, 0xFFE9, 0x0100, 0x0908, 0x1000},
-+	{0x1082, 0x0000, 0x5104, 0x0000, 0x11C7, 0x0000, 0x1041, 0x02BC, 0x7C01, 0xFFE9, 0x9900, 0x9908, 0x8100},
- };
- 
- static const u32 cmt_addrs_out[][15] = {
 -- 
-2.48.1
+Pavel Begunkov
 
 
