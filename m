@@ -1,87 +1,191 @@
-Return-Path: <linux-kernel+bounces-525766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29F8FA3F4A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 13:44:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B325FA3F4A1
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 13:44:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7D70421D73
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 12:44:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D2831897318
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 12:44:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B39CC20C486;
-	Fri, 21 Feb 2025 12:44:05 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5779720B7EA;
+	Fri, 21 Feb 2025 12:44:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RAr3127B"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5C0E20B80E
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 12:44:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A4C11EB1B9;
+	Fri, 21 Feb 2025 12:43:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740141845; cv=none; b=hZR6unUEhO8nECdslV8xwVZRD/O5G5kh73IKvy1Q+YVGintoXC7TAOX6ruZOO/La3prRDSvTotugW25C83fPtPdSN/14SaoTLDEgeAVkkfjI+VVgDcoKOwXph7PMkQtQjl3OcjdF6wl6N7oaZts2xarLvUQ9Tb9luO9plJldFk4=
+	t=1740141841; cv=none; b=RaHogCWr9isZYSr5IwFjZeKaGhHikaJ4x3oAOIcI6ETBDVrzqD1t4e2b3uX2vmRN6UFyGn4yiShML1AFI2ER/V+Kp1ah1F9gYC2sQ0sZmKjH2pjlZpo1qx/5xMwV/KOK8C7oYDQs5WAPG39Ud+S/F+L0QMY+twdm0ZgmuYPdSs4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740141845; c=relaxed/simple;
-	bh=Suktrg40pKqU2iNgxTGtiCQuxs2LoCxGNWE/Ep9rtgA=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=mZxbYjb34X1sJrzhqA/Lm3Zu5oyjtZLcLSh5IFiF850Tenv4+BBDX4m4My9xyrUTav19fGq+aTAZ0pItM3jX1E//XFzmL/BE5uLx+g4HpZSjRJX61iD71uq2OLjGJXQb3Vbh7vVOOvShZaQemIcJb/Rrxdu6kGjFGPXOTPEq++4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3d2a1d6747aso18456845ab.0
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 04:44:03 -0800 (PST)
+	s=arc-20240116; t=1740141841; c=relaxed/simple;
+	bh=wmWMEkUQsIN9xt9G63zu5Ck8F9Gc1CKSw0ZPTAdHg6I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eovJCcTQtNJjnw+a2MWkHKYlZtebYTd1AveI96EfKJJ3JS2AQBaenXpG8DdyryfBSZnCx0Tx1bWkOIRP+wKnZ28YogNJ1+aWwFKWaHTFo530ex1WnKe0MQS7seSRZW4mpyy989dVwiDacZ+5UuacgHm88L1b61HK5JRkwGjYhr4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RAr3127B; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5e0939c6456so3542437a12.3;
+        Fri, 21 Feb 2025 04:43:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740141838; x=1740746638; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=IMjHdrCwSch3uFM/ndaNKWEDQtMF6jOGpIMYbHevwA4=;
+        b=RAr3127B7B98W+ory7cPUQUEAhm3AJvxS4ma+6QPO3Rnb55yIEcBrgynleJQ62HFH5
+         9lgAHSmkCdVOr3YFYMFQQ0niqDRqRl3oJQIHy68BDBkDSAar4v2CZ61IJxsX65TfOtm4
+         RDRMcotozicf/lFTSQrvj5XLasOxIJRS+e9V5a5cWa55N5OOS8XdslQS3E+ZxUd7o/bg
+         de47C6r8zBH5SKAgxmiXkK7yudO5SbIWZ5AUXya6YN+NrCkLa87/OUTjL8hvdPlNVAPI
+         EyFZcr0E7OliBYHMhmTGNTLs3gNFyzk8tlogcoLZigqL0OVt9DRHu8kKwWvFEpfvLXH+
+         KI6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740141843; x=1740746643;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
+        d=1e100.net; s=20230601; t=1740141838; x=1740746638;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DzpUeHl1/GrH7+83IIw6xCrCgN7JWov/Yl9aFuy3UnU=;
-        b=eeliHmVEjbEFDACRB3EIcHGBXG8a1pv084rje7lVr1Zodq0+ohvcbzmt72Y6F5gDMW
-         tZmNjLP8fyur2DvIVwwrj4LfqqOfQM+os0dgESbO5PUA/mdxkEU40g0YKZ1E9esbiwfD
-         IgMgU07rzUe2VOaKN+pO0JHByG6y/iaIWf4qrqPxKw0Wzx1v7SwPHfX9nErjiabDR1rb
-         2ye+rBuFcHqDpOJL2F9tOv529HI7EbyScWdKQ30DCxZJggkR+YKInTxZ5X2zfBmiOfo2
-         u0Q1D7qd2Pjl0xc23Af/fG0Y0nmClq1P93oX9a6XJ5Q5fDfoQcCZEkgIoZo7fzMxgGZt
-         zNfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVlqxUJsI45iI9CG6jvjcMjUNvaXH0vNAkN3/pwrom0XsGQm9SCzfvWlxk/1ecNzyWANJOLBALXT1cRQCg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxtw/1kWmtcIOZg7HZzRxV408nPsvQOo3dbvQGrcInNSN1ZH1pK
-	c2KO/Q44qIXJmm+F9LzdTkfQcZtv8P5Il6r5BKjtw6FmWP0lf6GGyTgCNoLkMCNIaxEldnJIdwi
-	HUeG6F1XQl273TgJEuXKtoPQ3AVq5ky6hhMkuaFWY89+ZZclQoiCqfCM=
-X-Google-Smtp-Source: AGHT+IFd2mrfQDcMluz4HxWhLCI1oJuPSzVbSuqmS+2b46ypHDzRj52jiFx+baNy0DT7R8fjU+LRBiQcQXzVfZyi7pcJLV6u4xV6
+        bh=IMjHdrCwSch3uFM/ndaNKWEDQtMF6jOGpIMYbHevwA4=;
+        b=cm5u87D8i73825eFqwsFCwd/kZP3yLCLd0ZjFqfv6eCYOalpWyAvWJdKbRi67rulfH
+         Z+c7i1UGTa7fqOA+QsJlvVJCnNJYrqppmyRny56jDNoPnaBzMlPOIWNbSh164iS+D3/b
+         JIqpahGtFpq7XbVpRTNFffobr4yq2E82Be529rDtXluODbIRzSHQPtCKOTXvCS7C432y
+         T+Ps9043bU7KsqCByYbOjT2Wp/iXbzx+StJARsDyy2pOA94BOOsAmjJd3PfUQ6/vYyTn
+         GOmb5rdNfUh7Pz0XOBNoiXYMn/2CB+jiyEtFRUp+WoPiP6C9K/5MxEotC3SkOYIihdIS
+         ipiw==
+X-Forwarded-Encrypted: i=1; AJvYcCVr27UM8WDaNwTYEK+ledxg5wE0SyhAjSHzuT0AFR4rhC2QkzeyoSq1iuCRqktGQYOciNr5ZrqI7p32WQLK@vger.kernel.org, AJvYcCX+VS0SYfz+ZsmumX8pbi3hjFs+FPJgwEZqZOEqZwlUk3DAC92VxQ/bn1WC38RL3BEmbYAeKSVcwA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVNQ9U9MSbBMCFFWDVEE6WTlqS0wdOtCyyl24RJS7495mCz6mM
+	5YgX4t0rNAMP1iJZMPUgG/cvKRQplq1jpwws7XtLgmgvjCGQEC/G
+X-Gm-Gg: ASbGncu4LLA/tP2Q/COLqxpG/y1KUkWftQQ5thA4il+g+8hKR2Zyo1dFdGSQcBP42uX
+	jpdaDIqvKhxKp+LLWfxaTOMNj8/uZU7LbRotfQnxOyF7KoZ2X7vlFhsfvb2pdqqwoM+sYF4aoxP
+	777G/Tk1ZAWT0z6tRkAtYb26OJdKckJ0RyLLzI6ffBODWwA1sS7QnwfEtKZ/mx1MAyle1AGsb+c
+	ADYFjCJwpPhg+5azBNGqUWILe/RQtb/UDslVpFngy8SRehGi5kE4DooNpS//XBhoFfjgBt6EV2n
+	Jqv/N+xjbbjzlH8ZQVfNuGiFOOo0Z4LkfZdfUodaWojA27dFby5OCb92e/g=
+X-Google-Smtp-Source: AGHT+IFbaYWhRzjbYrAdv9qAXrhVxfnFuLzms4maTy0ghrTeCosRsEZiE+yFyoA8M/D47q59BGTs0w==
+X-Received: by 2002:a17:906:6a02:b0:ab7:b9b5:60e7 with SMTP id a640c23a62f3a-abc0de0dfbfmr235736566b.40.1740141838285;
+        Fri, 21 Feb 2025 04:43:58 -0800 (PST)
+Received: from ?IPV6:2620:10d:c096:325:77fd:1068:74c8:af87? ([2620:10d:c092:600::1:5e88])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abbbeff2a4dsm691170966b.103.2025.02.21.04.43.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 Feb 2025 04:43:57 -0800 (PST)
+Message-ID: <f34a5715-fae0-406e-a27b-7e94e3113641@gmail.com>
+Date: Fri, 21 Feb 2025 12:44:56 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1066:b0:3d1:54ce:a8f9 with SMTP id
- e9e14a558f8ab-3d2c027290emr67145905ab.10.1740141842953; Fri, 21 Feb 2025
- 04:44:02 -0800 (PST)
-Date: Fri, 21 Feb 2025 04:44:02 -0800
-In-Reply-To: <20250221121653.2463-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67b87512.050a0220.14d86d.047d.GAE@google.com>
-Subject: Re: [syzbot] [net?] WARNING in cleanup_net (4)
-From: syzbot <syzbot+30a19e01a97420719891@syzkaller.appspotmail.com>
-To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 2/2] io_uring/io-wq: try to batch multiple free work
+To: Bui Quang Minh <minhquangbui99@gmail.com>, io-uring@vger.kernel.org
+Cc: Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org
+References: <20250221041927.8470-1-minhquangbui99@gmail.com>
+ <20250221041927.8470-3-minhquangbui99@gmail.com>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20250221041927.8470-3-minhquangbui99@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On 2/21/25 04:19, Bui Quang Minh wrote:
+> Currently, in case we don't use IORING_SETUP_DEFER_TASKRUN, when io
+> worker frees work, it needs to add a task work. This creates contention
+> on tctx->task_list. With this commit, io work queues free work on a
+> local list and batch multiple free work in one call when the number of
+> free work in local list exceeds IO_REQ_ALLOC_BATCH.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+I see no relation to IO_REQ_ALLOC_BATCH, that should be
+a separate macro.
 
-Reported-by: syzbot+30a19e01a97420719891@syzkaller.appspotmail.com
-Tested-by: syzbot+30a19e01a97420719891@syzkaller.appspotmail.com
+> Signed-off-by: Bui Quang Minh <minhquangbui99@gmail.com>
+> ---
+>   io_uring/io-wq.c    | 62 +++++++++++++++++++++++++++++++++++++++++++--
+>   io_uring/io-wq.h    |  4 ++-
+>   io_uring/io_uring.c | 23 ++++++++++++++---
+>   io_uring/io_uring.h |  6 ++++-
+>   4 files changed, 87 insertions(+), 8 deletions(-)
+> 
+> diff --git a/io_uring/io-wq.c b/io_uring/io-wq.c
+> index 5d0928f37471..096711707db9 100644
+> --- a/io_uring/io-wq.c
+> +++ b/io_uring/io-wq.c
+...
+> @@ -601,7 +622,41 @@ static void io_worker_handle_work(struct io_wq_acct *acct,
+>   			wq->do_work(work);
+>   			io_assign_current_work(worker, NULL);
+>   
+> -			linked = wq->free_work(work);
+> +			/*
+> +			 * All requests in free list must have the same
+> +			 * io_ring_ctx.
+> +			 */
+> +			if (last_added_ctx && last_added_ctx != req->ctx) {
+> +				flush_req_free_list(&free_list, tail);
+> +				tail = NULL;
+> +				last_added_ctx = NULL;
+> +				free_req = 0;
+> +			}
+> +
+> +			/*
+> +			 * Try to batch free work when
+> +			 * !IORING_SETUP_DEFER_TASKRUN to reduce contention
+> +			 * on tctx->task_list.
+> +			 */
+> +			if (req->ctx->flags & IORING_SETUP_DEFER_TASKRUN)
+> +				linked = wq->free_work(work, NULL, NULL);
+> +			else
+> +				linked = wq->free_work(work, &free_list, &did_free);
 
-Tested on:
+The problem here is that iowq is blocking and hence you lock up resources
+of already completed request for who knows how long. In case of unbound
+requests (see IO_WQ_ACCT_UNBOUND) it's indefinite, and it's absolutely
+cannot be used without some kind of a timer. But even in case of bound
+work, it can be pretty long.
 
-commit:         33442609 Merge tag 'for-v6.14-rc' of git://git.kernel...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=12801fdf980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=61cbf5ac8a063ad4
-dashboard link: https://syzkaller.appspot.com/bug?extid=30a19e01a97420719891
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=12d07ba4580000
+Maybe, for bound requests it can target N like here, but read jiffies
+in between each request and flush if it has been too long. So in worst
+case the total delay is the last req execution time + DT. But even then
+it feels wrong, especially with filesystems sometimes not even
+honouring NOWAIT.
 
-Note: testing is done by a robot and is best-effort only.
+The question is, why do you force it into the worker pool with the
+IOSQE_ASYNC flag? It's generally not recommended, and the name of the
+flag is confusing as it should've been more like "WORKER_OFFLOAD".
+
+> +
+> +			if (did_free) {
+> +				if (!tail)
+> +					tail = free_list.first;
+> +
+> +				last_added_ctx = req->ctx;
+> +				free_req++;
+> +				if (free_req == IO_REQ_ALLOC_BATCH) {
+> +					flush_req_free_list(&free_list, tail);
+> +					tail = NULL;
+> +					last_added_ctx = NULL;
+> +					free_req = 0;
+> +				}
+> +			}
+> +
+>   			work = next_hashed;
+>   			if (!work && linked && !io_wq_is_hashed(linked)) {
+>   				work = linked;
+> @@ -626,6 +681,9 @@ static void io_worker_handle_work(struct io_wq_acct *acct,
+>   			break;
+>   		raw_spin_lock(&acct->lock);
+>   	} while (1);
+> +
+> +	if (free_list.first)
+> +		flush_req_free_list(&free_list, tail);
+>   }
+>   
+...
+
+-- 
+Pavel Begunkov
+
 
