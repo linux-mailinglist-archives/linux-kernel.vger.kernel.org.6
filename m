@@ -1,78 +1,79 @@
-Return-Path: <linux-kernel+bounces-526109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 723BBA3FA18
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:06:32 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F6B1A3FA41
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:10:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BED2C440D9A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:01:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B04BB7AB1E7
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:03:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF5F8217655;
-	Fri, 21 Feb 2025 15:56:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 972DD22332B;
+	Fri, 21 Feb 2025 15:58:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="nCm95x30"
-Received: from mail-ot1-f41.google.com (mail-ot1-f41.google.com [209.85.210.41])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="Fyi8vVw9"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B87B216607
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 15:56:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0CD821170E
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 15:58:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740153419; cv=none; b=F+O2vpiZ/UtTrh9wt7S35FM/wOh+f5ksBhP6Fae9hFQES7Sn/AET9C1BjraHiNIGlT0uSEiZvgghaHLEkTzco6WWQYugKvWnABviujkLI2GJqeJfOOq4dgCmFm50oaXRjdbs1tu4VyJ+WkejVeAVlmi8ZAD75vcCHhpLtT9iV4Y=
+	t=1740153497; cv=none; b=cVtzBYQ9jgch3NZuhCMYlZTFLR720zIg1QTwO+1CVz49lrBCWQYaF16Q4sWVH0oiv6pUh9BX6Dc3/hSGoY+jNOpztgMwFLOgipou3Ywr0Fm58pgdnG8EHOuWo3Ic3OfQoffBb+fa6lVHGsmH2mIOQ7Fasb6ZlAzW3mTQxkfoy90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740153419; c=relaxed/simple;
-	bh=q1YypdFaIEW0l2AnCJNdwusc6OIgP+r4ECVjew046co=;
+	s=arc-20240116; t=1740153497; c=relaxed/simple;
+	bh=//L1C5Ks/H10EmkSZyQhaj8jYD4OCALEp8yeUn5ekD0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EdEmxpBSd6rDMPz6LwbUgiQzO+pM43PAHCDzGynRo/LaSFnmMGJ5b0HRmeSKKAF8RIj/caCIukU8K8KoStdRZIrNKt5oILUN0HWcJwiVMZaV8Cx5v0GbbW1du6cBEQurD5XRIBbv2KNrQU84Erkf3Cvuc4lqDpQBdHHcAS+cdLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=nCm95x30; arc=none smtp.client-ip=209.85.210.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ot1-f41.google.com with SMTP id 46e09a7af769-72716c75f20so631865a34.2
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 07:56:56 -0800 (PST)
+	 In-Reply-To:Content-Type; b=kRGXU61in9vlnnnsiFRId2Bp7oPCr7LmdFQf1/CiXLCB5CLxpzrQ0xzSpDOGbke23vTnbuS9OQ+XhjSDaFgZ/yP40lSt/AnYRm+u+mBZReCM+yM6uf5t1aJaNIDsMquE1o8SvYocLlCieoeGcHZgfv2NdOOPcH7b/T1JaKJ29vM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=Fyi8vVw9; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2fbfe16cbf5so560466a91.0
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 07:58:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1740153415; x=1740758215; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=bytedance.com; s=google; t=1740153495; x=1740758295; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=l9F5nxMmTnOLDqUzVG81NMqrRzPg/w7BaJ+m4JpJ2SY=;
-        b=nCm95x303AsBW0HSPMeOs5O4aYC4RiEzac8Y19XfOg50026k8TiRwTskN+Hr3RS7Un
-         ItJ4o7q7ZhU70jwvFzOAqmv4P0smnPmZsyH8GI+PiHzvMmlugXuYkNy0QpWzN15xC5Qi
-         lJlUdy3+5hXozXLA5eHQO34MhuyUuCNkD8mKKV9ylkZ5qEPo4c/qK0VFpLPN34MfXjy7
-         XV6IKIdX+S2WVcwd1ixccgjn4LL5f5plKFwXqmlwoYTnwkEoqJJeVEI2VzWZocRnQeKX
-         zrBjLTZ3fkWXdyLMBPZ7ZQBASLY8U3bGa/pwtd2VnOyRPk4qCowJy8HYWqwljEjGMJcC
-         vhFg==
+        bh=FzH4mBzUZG/VM1IvpFl7X2mx5yrtA4S1cGmaADqasjo=;
+        b=Fyi8vVw9swoJpiu4Zma5R+YDlNO4I4KLH6MmW/DqDiF5sYLzDEJmVW8AEdTvPuKCJ4
+         VG1k2XyNx4aFsBQT9skwWQNUzZI5o28Pb7+Qvk5tH03PytehIC2Oi6kUFF6x+hsNMRyE
+         VMFZTDNthlhAA3td+fnx0q16L2InAgLZ4248fdqKEAm7cxWVAyC6WTSf6qJ0FUepRJmx
+         0Orrl9nSG3A+20ZBzMfI24D8Ex/NXA90WozmubEvaBQL+QROEkeh45N2Y4IUY9KWEr6M
+         lUsa1dwjoC8/vR507p03Rsklnn51S4wiJLKz/K2TWxZRHPXaajxFgBwiKQXZTw9a33hQ
+         DS3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740153415; x=1740758215;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1740153495; x=1740758295;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=l9F5nxMmTnOLDqUzVG81NMqrRzPg/w7BaJ+m4JpJ2SY=;
-        b=SXXzBiOxGB2k5vrnlkuBv5DpDp0VsaLxSCXUHWCMkWbqppa/qR4a+RVRHM8Pa+DRTb
-         mPdE7+PG9hqykiZ94TfJKRuMha+4nZolS+nUhsPpISkyeDFBtaylTmQRqIJ7mPPVOxa+
-         1e6eQZp72WDw4nxDTMJT9vU63O8dL+UwBlRWVEmAgL46jJu5MB+ERJoRrAzROMV1FxTu
-         c7WdtUQ1mJO5/LB4y14RfTjr1uULAg8jsZMfGwqBdUkiW0htLzySt3YLPIyKEvefKGSB
-         KO2g2piilZweim8l0B1upOfDOBwwk8pb34+FIitPJ2iS7OFyuVg5AUOEsbLQIpj0jfc3
-         cvyA==
-X-Forwarded-Encrypted: i=1; AJvYcCUjnbfyZmt4aoSR6ylLi/ssXjC+Y0kTDpV/7achbrsVseDt0TFQo+jnXuzapNx8A+qud3P+XjuDJanFycM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9JXNkSBysubyKjBQYFRudIN5pzCUUYxBo7FLY1JIMZC5etEi1
-	Akcx8PX7/9CkqAjUPGskHUReZ9rmHSXauj71JxOG9XaHwpPlJd8n0UQfxk7VE+8=
-X-Gm-Gg: ASbGncuky8v1zaLfZgv1LfKcfhwEJr/rOiFoep/9yARXfNIpLxHdAKc1X8NjuH2Z8o7
-	RLlciqmWV7tAAN2Bb7/tY7HmxAxat9cpgGNRYGrWSpYOof004gk4AHF03gMsqy6xKG3fEkhP/VD
-	D/+/1u7YjtS5OPLl5P8n3LOInAuUyYN1GKHhhCXxpw7tsz+Vrmv08Qjid/bLFADX5m3puskPTuc
-	9RoVvK/KmdDmbfJX3IzN+hN8F2sz80IMsniXI4vgo7HvppGL+lfPIgHZyXvYQvpzuD8NbdaJrnL
-	HrPl/L6n8ukLnm72BGDVg1QF31fHJHrYC8MfArgNzfDAlWY6jgbmqDfftWZp2Cw=
-X-Google-Smtp-Source: AGHT+IGwdePluqvFd8Q0eiG58yiq9bE9z1fiRut+KTbsys8KsALDylQjaPnt2SvRTO0/s/20Lz6iig==
-X-Received: by 2002:a05:6830:6685:b0:727:2681:731 with SMTP id 46e09a7af769-7274c27b78bmr3002665a34.26.1740153415309;
-        Fri, 21 Feb 2025 07:56:55 -0800 (PST)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2bc9edca34esm4833893fac.18.2025.02.21.07.56.52
+        bh=FzH4mBzUZG/VM1IvpFl7X2mx5yrtA4S1cGmaADqasjo=;
+        b=oWgo6lg7pA7ivaPEO3SN8Fj42NidIXljAPAEpY0F1eG19e6CJz/8WP7Ztpy1I4Z6R7
+         Vb0ri+fIMTsNuJt20O+rRX579SDcvYKUBoz89YIYnkFMm2mbOqEcQXzpxcpLs+QiNgjN
+         LQM7/ZITRV5De/l4vdJAI4wOq7XME6OivxXJNtjNTtohORT7+dMb6UM6sQ5HJ9Imh6QI
+         wBJTCzdYq5kLPWt7Ee9u/rHw49G6qbbdW9IKvJAkt/RuY5ZIk76JiJTTsUFf48VZ4Wmw
+         6b1ErToqDREhnhjhBiUhqimCPhLbiFPybuysGKihhKxs6O3bQjDo6I8/w2a4sdJ2+S2X
+         0e+g==
+X-Forwarded-Encrypted: i=1; AJvYcCX3ffIyYRydLyvqvpJ0nFiMHuYAAWLwjjiRcUAwrAvZo2nx4srZt3x8c8qm05XK1Mx6mP3S/D5Sw7Nmv/s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDybdG5oT5tdTXkJNZhsTgo0RBixbzJKp+P2rg6UZ7UOg0MW7C
+	DXRfFbyEnThHPAlpI9AMH3XpvHimXLQSB5AhjikRiJ7rA1a34+h9omMuEObHQ8k=
+X-Gm-Gg: ASbGncuq2sNIyAszC9IvpJ03a66v4LKaOD+jkQNYo+VrkCtQSZt6Og+Ftxe07pZuAz/
+	mgxSbEKQZ4Ev01FQl0tr4n1FjQAPcbT+G5DZQgEil9e+LO+RKqN6f5X2TzQ+hvyw/95CoLLlkma
+	W+R9THoztcOBo//CkHpnQuZru+3YQbm3eS+XhCZkYK87jrMIfKRK0IOdVPad4zlCepxqFeN7lxH
+	PM1xZwanlJW14dLgV3Mkd3qjTbeOhjDp2DIdIUsaapGYfNtgo6QR1UUQ9ejTeAlUn8vJOoPH/0l
+	juPX9KXUZRc/ZIxP7K0NsFVNVzrrlXOjJ2bMZJ2CXPf/3y9RgWQGfagK+oOWdS8cMdyfDkvf+U+
+	JHpl3KqYhP+OQkw==
+X-Google-Smtp-Source: AGHT+IELh9Wt1O7g5djzWOWAdKQK5tMIZlIxTyNgDd9ySXUlQZQSkyuX2oRq7bK6YU6j9mWrP2bhmg==
+X-Received: by 2002:a17:90b:3e81:b0:2fa:6055:17e7 with SMTP id 98e67ed59e1d1-2fce7b1a435mr2353156a91.8.1740153495062;
+        Fri, 21 Feb 2025 07:58:15 -0800 (PST)
+Received: from [10.200.58.71] (151.240.142.34.bc.googleusercontent.com. [34.142.240.151])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fceb02d985sm1553554a91.6.2025.02.21.07.58.05
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Feb 2025 07:56:53 -0800 (PST)
-Message-ID: <8975b119-fe24-463a-b163-dce702df3cdd@baylibre.com>
-Date: Fri, 21 Feb 2025 09:56:51 -0600
+        Fri, 21 Feb 2025 07:58:14 -0800 (PST)
+Message-ID: <6097164a-aa99-4869-b666-9dc7018c1f96@bytedance.com>
+Date: Fri, 21 Feb 2025 23:57:57 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,123 +81,53 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/2] dt-bindings: iio: adc: add NCT7201 ADCs
-To: Eason Yang <j2anfernee@gmail.com>, avifishman70@gmail.com,
- tmaimon77@gmail.com, tali.perry1@gmail.com, venture@google.com,
- yuenn@google.com, benjaminfair@google.com, jic23@kernel.org,
- lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- nuno.sa@analog.com, javier.carrasco.cruz@gmail.com,
- andriy.shevchenko@linux.intel.com, gstols@baylibre.com,
- olivier.moysan@foss.st.com, mitrutzceclan@gmail.com, tgamblin@baylibre.com,
- matteomartelli3@gmail.com, marcelo.schmitt@analog.com,
- alisadariana@gmail.com, joao.goncalves@toradex.com,
- thomas.bonnefille@bootlin.com, ramona.nechita@analog.com,
- herve.codina@bootlin.com, chanh@os.amperecomputing.com, KWLIU@nuvoton.com,
- yhyang2@nuvoton.com
-Cc: openbmc@lists.ozlabs.org, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250221090918.1487689-1-j2anfernee@gmail.com>
- <20250221090918.1487689-2-j2anfernee@gmail.com>
+Subject: Re: Re: [PATCH 2/2] sched/fair: Fix premature check of
+ WAKEUP_PREEMPTION
 Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20250221090918.1487689-2-j2anfernee@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+To: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ Juri Lelli <juri.lelli@redhat.com>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+ Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
+ Josh Don <joshdon@google.com>, Tianchen Ding <dtcccc@linux.alibaba.com>,
+ "open list:SCHEDULER" <linux-kernel@vger.kernel.org>
+References: <20250221111226.64455-1-wuyun.abel@bytedance.com>
+ <20250221111226.64455-3-wuyun.abel@bytedance.com>
+ <CAKfTPtBzsX6GKZP_NGTONrkp96qx9uOHr0+XG7tC6ELy4tbHBg@mail.gmail.com>
+From: Abel Wu <wuyun.abel@bytedance.com>
+In-Reply-To: <CAKfTPtBzsX6GKZP_NGTONrkp96qx9uOHr0+XG7tC6ELy4tbHBg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 2/21/25 3:09 AM, Eason Yang wrote:
-> Add a binding specification for the Nuvoton NCT7201/NCT7202 up to 12-bit
-> ADCs with I2C interface.
+On 2/21/25 7:49 PM, Vincent Guittot Wrote:
+> On Fri, 21 Feb 2025 at 12:12, Abel Wu <wuyun.abel@bytedance.com> wrote:
+>>
+>> Idle tasks are by definition preempted by non-idle tasks whether feat
+>> WAKEUP_PREEMPTION is enabled or not. This isn't true any longer since
 > 
-> Signed-off-by: Eason Yang <j2anfernee@gmail.com>
-> ---
->  .../bindings/iio/adc/nuvoton,nct7201.yaml     | 57 +++++++++++++++++++
->  MAINTAINERS                                   |  1 +
->  2 files changed, 58 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iio/adc/nuvoton,nct7201.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/iio/adc/nuvoton,nct7201.yaml b/Documentation/devicetree/bindings/iio/adc/nuvoton,nct7201.yaml
-> new file mode 100644
-> index 000000000000..830c37fd9f22
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/iio/adc/nuvoton,nct7201.yaml
-> @@ -0,0 +1,57 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/iio/adc/nuvoton,nct7201.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Nuvoton nct7201 and similar ADCs
-> +
-> +maintainers:
-> +  - Eason Yang <j2anfernee@gmail.com>
-> +
-> +description: |
-> +  The NCT7201/NCT7202 is a Nuvoton Hardware Monitor IC, contains up to 12 voltage
-> +  monitoring channels, with SMBus interface, and up to 4 sets SMBus address
-> +  selection by ADDR connection. It also provides ALERT# signal for event
-> +  notification and reset input RSTIN# to recover it from a fault condition.
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - nuvoton,nct7201
-> +      - nuvoton,nct7202
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  reset-gpios:
-> +    maxItems: 1
-> +
+> I don't think it's true, only "sched_idle never preempts others" is
+> always true but sched_feat(WAKEUP_PREEMPTION) is mainly there for
+> debug purpose so if WAKEUP_PREEMPTION is false then nobody preempts
+> others at wakeup, idle, batch or normal
 
-Maybe this was brought up before, but no power supply?
+Hi Vincent, thanks for your comment!
 
-> +required:
-> +  - compatible
-> +  - reg
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +
-> +    #include <dt-bindings/gpio/gpio.h>
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +
-> +    i2c {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +
-> +        adc@1d {
-> +            compatible = "nuvoton,nct7202";
-> +            reg = <0x1d>;
-> +            interrupt-parent = <&gpio3>;
-> +            interrupts = <30 IRQ_TYPE_LEVEL_LOW>;
-> +            reset-gpios = <&gpio3 28 GPIO_ACTIVE_LOW>;
-> +        };
-> +    };
-> +...
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 3864d473f52f..fdc4aa5c7eff 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -2831,6 +2831,7 @@ L:	openbmc@lists.ozlabs.org (moderated for non-subscribers)
->  S:	Supported
->  F:	Documentation/devicetree/bindings/*/*/*npcm*
->  F:	Documentation/devicetree/bindings/*/*npcm*
-> +F:	Documentation/devicetree/bindings/iio/adc/nuvoton,nct7201.yaml
+The SCHED_IDLE "definition" of being preempted by non-idle tasks comes
+from commit 6bc912b71b6f ("sched: SCHED_OTHER vs SCHED_IDLE isolation")
+which said:
 
-This (ARM/NUVOTON NPCM ARCHITECTURE) doesn't look like the right place for
-adding a stand-alone chip. You will need to start a new section like:
+	- no SCHED_IDLE buddies
+	- never let SCHED_IDLE preempt on wakeup
+	- always preempt SCHED_IDLE on wakeup
+	- limit SLEEPER fairness for SCHED_IDLE
 
-NUVOTON NCT7201 IIO DRIVER
+and that commit let it be preempted before checking WAKEUP_PREEMPTION.
+The rules were introduced in 2009, and to the best of my knowledge there
+seemed no behavior change ever since. Please correct me if I missed
+anything.
 
->  F:	Documentation/devicetree/bindings/rtc/nuvoton,nct3018y.yaml
->  F:	arch/arm/boot/dts/nuvoton/nuvoton-npcm*
->  F:	arch/arm/mach-npcm/
+Best Regards,
+	Abel
 
 
