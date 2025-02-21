@@ -1,205 +1,157 @@
-Return-Path: <linux-kernel+bounces-526082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 114D8A3F9CB
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:00:35 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BDA2A3F9BC
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:58:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D99986172A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 15:54:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7DD86424A2A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 15:54:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13DDD212D6E;
-	Fri, 21 Feb 2025 15:52:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QhnuiKTi"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DCAC215049;
+	Fri, 21 Feb 2025 15:52:23 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 706A421147A
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 15:52:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5B00214212
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 15:52:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740153138; cv=none; b=jDdJnFNtqkqEMj+NkpIuJKxGQJzPlO8z97cvPqGzEABSniRZOSPhW/3BoJ02qTkcRf8HSPKiE3ZyPZpcjKsvBdqZMKi07fsxTpJGkDTzosUlT20gU9KwfUFVGDyi1N+5xkBKM0gL3w3/XkiBRA+AKadeWVdDmCYqvb6mPbHGYM8=
+	t=1740153142; cv=none; b=l0ebXDH50xgmmS7LVtTvUWUPVrJrePITFm2/JuPTJjhvBxSQXv9ku2l+fNl+dTH+d+p2Ua7K8uFEvV928fut384YpM/EMR5fyVHqLiItgqzDco6Yt9CDBbDK3vV2wXxrE5r5xlWkErwwAZGJCK5X+Etlha9rXMgjc5nV21tUfRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740153138; c=relaxed/simple;
-	bh=itIH8UmE28DLal026/vQWt51OaBADCkRmt6MMWb6ec0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=KUVNhYYs2C7AbHXeBk14VcuSVOfu7NvvR/lGz8SMJg08aqqiIAuUfdl93kWlVdPMShl2RrxQ8L+7654ioBfkRXaiWMPakX14uc9uhsQgClci+/uIPvh7tfzK9v6czHjAxELMW67NuO1QN2E6XhyrKwCkVkYNaXpFKROyI0LVu6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QhnuiKTi; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-54622940ef7so2468965e87.3
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 07:52:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740153134; x=1740757934; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=VcBk8LX8RGiFV095rZ/v8IBisxh6FvmuEC9JHwGym/o=;
-        b=QhnuiKTixEqncOBSyU/e8BRYtX4GoPwKQSFigZZUTyJgHJ7i4kVl2CKQbriFM9mz2V
-         NsgYlKFeo5NWbZxHXRedxaB2ibmgsd4+bcVK06fyV+uOdIfD2tb5+guRwSUpK//bnFY3
-         kXwsRUPDsh3oHlpuyoq/OeV+ZJw2N56lXtf+oWs6yFTJIEaUc92YSy7fs77uB8sI/T0v
-         wNlgNpZDrYcFsOBVDICmza7PxjwDZ6M3YVL8Eakm3KrdstwnuqFj1KjTDYzNZdr+I7Pq
-         QMvwKdnFNk4vMlM0cpzWa7hyGydCc/PRq+fyeXIpI9XRV+bHN/GwZ9yfxqfwKriMO9+o
-         /veg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740153134; x=1740757934;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VcBk8LX8RGiFV095rZ/v8IBisxh6FvmuEC9JHwGym/o=;
-        b=Qz7wf+I8LWQG4JJJwTp09b331N75KhG+rTRePm9irhVFlDhS9uETh9jtpaIKqTUGPV
-         YvF9Hx7+NGyYIhWiDdZlT2jTKmP5roGcpHxhg9Lpdm+taFuZTJLveRR+qYQbFrOht+jd
-         pf1u/dq7kAK/+8/LJLT6HtyYpb1mOjr3vQ/IX9x25CCXpnEiqOUdJJzT6zJlRi6M9RPd
-         doQT8jQp79IRdb19w6dE5V5GZ/YmlI8SdT+y9OjfFbfC/0xN+rsKauSsRxvu0C6gd9dA
-         bImCUDzU7Ey0y4lnWzt2fT0bMwl66BAyQhq+1NseraviaHQ0zEev5zl574u9Xj0hEbTk
-         NlzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU48+lxnFO2x0kPSYrhe4jsIzqCdIY9dNk8jiAGcIbQ/is4t4A0Qwg+UhmXFIhKIECEbbSzlbQDxsORI1M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxG2IewoEzIC4xI+10m4SxLNrxm4TEPq4ICvEUHRrPX0uEphbe9
-	rdeauBQjbQ/SWnEIl+VemWc/ZoCSzOEkkwnp9FweoYMmz5k0dc0NRkIEjAMp1BQ=
-X-Gm-Gg: ASbGncvkgM386NKOXQRb2qkJkZrpj63Mqq/OB7QgBEJwoN0eHlfClLF6r/H2nJGzOSZ
-	sOcWuxZli+o6lIF/jh95OpXOiGNPBDS0upcDu7pj8jtipGDFj61FAGr4bNmummB7QRJSDdBloBR
-	vbwxysCEj6JEkGS0bq0WHf1hBkQFJO0ejm33p1BChh9xng56EPr4UuMOhMn/CPT21ymaXxJbT8m
-	0HzvJvx2Cfiqcy/VFBKjX/f3iZMfwcXbeh8rk8BeGAq3IDKCqDSjQefR+nvwxRazGM8xCJCAt+m
-	K/t0ryo+UefwSeDLUg6KeIjgGL+609CC9/V+mZWspc5QVg1VneA+GXfSASjpTfX0uu9Esw==
-X-Google-Smtp-Source: AGHT+IGXwDQ6KvAlUvgVLHl9BpLcdHtn4LDHMCX5t2NTi/kJuJKg0cz/4viQPsv+yDPDkIHr723vVA==
-X-Received: by 2002:a05:6512:3503:b0:545:95b:a335 with SMTP id 2adb3069b0e04-54838ee79abmr1182590e87.14.1740153134346;
-        Fri, 21 Feb 2025 07:52:14 -0800 (PST)
-Received: from [127.0.1.1] (2001-14ba-a0c3-3a00--782.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::782])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54816a55851sm287643e87.27.2025.02.21.07.52.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Feb 2025 07:52:13 -0800 (PST)
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Fri, 21 Feb 2025 17:52:06 +0200
-Subject: [PATCH v3 8/8] arm64: dts: qcom: sm8450: add PCIe EP device nodes
+	s=arc-20240116; t=1740153142; c=relaxed/simple;
+	bh=TJhpvVPGEiVV08C52WRrpXYRWrzi9WlBRyPw4dSk/gY=;
+	h=Message-ID:Date:From:To:Cc:Subject; b=iPFxLQdbsX9B3kuNq2AnW+cOsg/NK/YHjIMyNZRyVqIhgkksgTu2VRT6qOF7m/YbDNC3b2saNIL5ZvwpqQSdYlIQvyVb4IRtoX/NpqWdQmauFybB4NpgyfsNsiYqEZikUz0nkATmRIjMrOYht1ReYy1MYGEiZd3eWWfOUGpXAws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C5E0C4CEE4;
+	Fri, 21 Feb 2025 15:52:22 +0000 (UTC)
+Received: from rostedt by gandalf with local (Exim 4.98)
+	(envelope-from <rostedt@goodmis.org>)
+	id 1tlVKd-00000006KR6-2hoH;
+	Fri, 21 Feb 2025 10:52:51 -0500
+Message-ID: <20250221155210.755295517@goodmis.org>
+User-Agent: quilt/0.68
+Date: Fri, 21 Feb 2025 10:52:10 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: linux-kernel@vger.kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Subject: [for-linus][PATCH 0/7] ftrace: Fixes for v6.14
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250221-sar2130p-pci-v3-8-61a0fdfb75b4@linaro.org>
-References: <20250221-sar2130p-pci-v3-0-61a0fdfb75b4@linaro.org>
-In-Reply-To: <20250221-sar2130p-pci-v3-0-61a0fdfb75b4@linaro.org>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
- Lorenzo Pieralisi <lpieralisi@kernel.org>, 
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
- Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Mrinmay Sarkar <quic_msarkar@quicinc.com>, 
- Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2643;
- i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=itIH8UmE28DLal026/vQWt51OaBADCkRmt6MMWb6ec0=;
- b=owEBbQKS/ZANAwAKARTbcu2+gGW4AcsmYgBnuKEjzP90Rsi8wZFwY1H7vj6P3ZzTAfBsi5R7u
- f090X2czsuJAjMEAAEKAB0WIQRdB85SOKWMgfgVe+4U23LtvoBluAUCZ7ihIwAKCRAU23LtvoBl
- uN75D/9s5F14U18NUkgIuUc/tS92qDUirdg/CqgymIIjiZr4UzLk1AapcRVsrtNLfgzaZT1H5Rl
- Kk0Gs1lchiauAdklqFB0V5kYqPoCUro26yAjssr7B+GoRy/VLyawcnQNceRA4QTThknZn81CfdZ
- h4Ynu1kt15nXjFWoCrrZH3SvcxS9z1Xga3Hkng1nCnBFXGL8eoC1GJqf+6D2zbDCv2OVKnJDGBb
- X3Fo2m4fjIlmr+7MDHcuOWr9GXkFOyiH1zzU+JFL7ljVP4YIjMo0DFlkaH3ahsQTZ6j5JhEhWUe
- 9j9zwHyvOJ+Kcz3WA9M26htXbYneF1Diwu9WplGL8C5lRQpYB9uxAtvDXILo1QsM60lBP12sF4Z
- vVIcoOZyBa5iL8MGtM7zI9qyjr8Re2wincJ2m82pkW6nt9HSssnuBsAL9Dn+VDuJ6j4VMe1cjqx
- S77og6Shhpoc9JunjDxl3iClfK1yMpCLgVABuepNWurpa1BfoVwKnnpXOVFTmUqM7/KO4xXYygI
- 2TzXh9NzainkP2rEQbmg4deUYPRGAQ3qyqnTwuUcfzahligFTmus9FUR/TJGf8/OMbSN5+tGS2E
- YvO+XTBAEE3cP4teEP33Jtm528bE/5NvlgI9Ld4WKDowjd/eX/KqduOyyccCntQhvb/XTosLVwl
- pDMcjIcbPgZnE8w==
-X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
- fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-On the Qualcomm SM8450 platform the second PCIe host can be used
-either as an RC or as an EP device. Add device node for the PCIe EP.
 
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
- arch/arm64/boot/dts/qcom/sm8450.dtsi | 62 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 62 insertions(+)
+tracing fixes for v6.14:
 
-diff --git a/arch/arm64/boot/dts/qcom/sm8450.dtsi b/arch/arm64/boot/dts/qcom/sm8450.dtsi
-index 9c809fc5fa45a98ff5441a0b6809931588897243..3783930d63a73158addc44d00d9da2efa0986a25 100644
---- a/arch/arm64/boot/dts/qcom/sm8450.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm8450.dtsi
-@@ -2262,6 +2262,68 @@ pcie@0 {
- 			};
- 		};
- 
-+		pcie1_ep: pcie-ep@1c08000 {
-+			compatible = "qcom,sm8450-pcie-ep";
-+			reg = <0x0 0x01c08000 0x0 0x3000>,
-+			      <0x0 0x40000000 0x0 0xf1d>,
-+			      <0x0 0x40000f20 0x0 0xa8>,
-+			      <0x0 0x40001000 0x0 0x1000>,
-+			      <0x0 0x40200000 0x0 0x1000000>,
-+			      <0x0 0x01c0b000 0x0 0x1000>,
-+			      <0x0 0x40002000 0x0 0x1000>;
-+			reg-names = "parf",
-+				    "dbi",
-+				    "elbi",
-+				    "atu",
-+				    "addr_space",
-+				    "mmio",
-+				    "dma";
-+
-+			clocks = <&gcc GCC_PCIE_1_AUX_CLK>,
-+				 <&gcc GCC_PCIE_1_CFG_AHB_CLK>,
-+				 <&gcc GCC_PCIE_1_MSTR_AXI_CLK>,
-+				 <&gcc GCC_PCIE_1_SLV_AXI_CLK>,
-+				 <&gcc GCC_PCIE_1_SLV_Q2A_AXI_CLK>,
-+				 <&rpmhcc RPMH_CXO_CLK>,
-+				 <&gcc GCC_DDRSS_PCIE_SF_TBU_CLK>,
-+				 <&gcc GCC_AGGRE_NOC_PCIE_1_AXI_CLK>;
-+			clock-names = "aux",
-+				      "cfg",
-+				      "bus_master",
-+				      "bus_slave",
-+				      "slave_q2a",
-+				      "ref",
-+				      "ddrss_sf_tbu",
-+				      "aggre_noc_axi";
-+
-+			interrupts = <GIC_SPI 306 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 440 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "global",
-+					  "doorbell",
-+					  "dma";
-+
-+			interconnects = <&pcie_noc MASTER_PCIE_1 QCOM_ICC_TAG_ALWAYS
-+					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
-+					<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ACTIVE_ONLY
-+					 &config_noc SLAVE_PCIE_1 QCOM_ICC_TAG_ACTIVE_ONLY>;
-+			interconnect-names = "pcie-mem",
-+					     "cpu-pcie";
-+
-+			iommus = <&apps_smmu 0x1c80 0x7f>;
-+			resets = <&gcc GCC_PCIE_1_BCR>;
-+			reset-names = "core";
-+			power-domains = <&gcc PCIE_1_GDSC>;
-+			phys = <&pcie1_phy>;
-+			phy-names = "pciephy";
-+			num-lanes = <2>;
-+
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&pcie1_default_state>;
-+
-+			status = "disabled";
-+		};
-+
- 		pcie1_phy: phy@1c0e000 {
- 			compatible = "qcom,sm8450-qmp-gen4x2-pcie-phy";
- 			reg = <0 0x01c0e000 0 0x2000>;
+Function graph accounting fixes:
 
--- 
-2.39.5
+- Fix the manage ops hashes
 
+  The function graph registers a "manager ops" and "sub-ops" to ftrace.
+  The manager ops does not have any callback but calls the sub-ops
+  callbacks. The manage ops hashes (what is used to tell ftrace what
+  functions to attach to) is built on the sub-ops it manages.
+
+  There was an error in the way it built the hash. An empty hash means to
+  attach to all functions. When the manager ops had one sub-ops it properly
+  copied its hash. But when the manager ops had more than one sub-ops, it
+  went into a loop to make a set of all functions it needed to add to the
+  hash. If any of the subops hashes was empty, that would mean to attach
+  to all functions. The error was that the first iteration of the loop
+  passed in an empty hash to start with in order to add the other hashes.
+  That starting hash was mistaken as to attach to all functions. This made
+  the manage ops attach to all functions whenever it had two or more
+  sub-ops, even if each sub-op was attached to only a single function.
+
+- Do not add duplicate entries to the manager ops hash
+
+  If two or more subops hashes trace the same function, an entry for that
+  function will be added to the manager ops for each subops. This causes
+  waste and extra overhead.
+
+Fprobe accounting fixes:
+
+- Remove last function from fprobe hash
+
+  Fprobes has a ftrace hash to manage which functions an fprobe is attached
+  to. It also has a counter of how many fprobes are attached. When the last
+  fprobe is removed, it unregisters the fprobe from ftrace but does not
+  remove the functions the last fprobe was attached to from the hash. This
+  leaves the old functions attached. When a new fprobe is added, the fprobe
+  infrastructure attaches to not only the functions of the new fprobe, but
+  also to the functions of the last fprobe.
+
+- Fix accounting of the fprobe counter
+
+  When a fprobe is added, it updates a counter. If the counter goes from
+  zero to one, it attaches its ops to ftrace. When an fprobe is removed, the
+  counter is decremented. If the counter goes from 1 to zero, it removes the
+  fprobes ops from ftrace. There was an issue where if two fprobes trace the
+  same function, the addition of each fprobe would increment the counter.
+  But when removing the first of the fprobes, it would notice that another
+  fprobe is still attached to one of its functions no it does not remove
+  the functions from the ftrace ops. But it also did not decrement the
+  counter. When the last fprobe is removed, the counter is still one. This
+  leaves the fprobes callback still registered with ftrace and it being
+  called by the functions defined by the fprobes ops hash.  Worse yet,
+  because all the functions from the fprobe ops hash have been removed, that
+  tells ftrace that it wants to trace all functions. Thus, this puts the
+  state of the system where every function is calling the fprobe callback
+  handler (which does nothing as there are no registered fprobes), but this
+  causes a good 13% slow down of the entire system.
+
+Other updates:
+
+- Add a selftest to test the above issues to prevent regressions.
+
+- Fix preempt count accounting in function tracing
+
+  Better recursion protection was added to function tracing which added
+  another layer of preempt disable. As the preempt_count gets traced in the
+  event, it needs to subtract the amount of preempt disabling the tracer
+  does to record what the preempt_count was when the trace was triggered.
+
+- Fix memory leak in output of set_event
+
+  A variable is passed by the seq_file functions in the location that is
+  set by the return of the next() function. The start() function allocates
+  it and the stop() function frees it. But when the last item is found, the
+  next() returns NULL which leaks the data that was allocated in start().
+  The m->private is used for something else, so have next() free the data
+  when it returns NULL, as stop() will then just receive NULL in that case.
+
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
+ftrace/fixes
+
+Head SHA1: 2fa6a01345b538faa7b0fae8f723bb6977312428
+
+
+Adrian Huang (1):
+      tracing: Fix memory leak when reading set_event file
+
+Sebastian Andrzej Siewior (1):
+      ftrace: Correct preemption accounting for function tracing.
+
+Steven Rostedt (5):
+      ftrace: Fix accounting of adding subops to a manager ops
+      ftrace: Do not add duplicate entries in subops manager ops
+      fprobe: Always unregister fgraph function from ops
+      fprobe: Fix accounting of when to unregister from function graph
+      selftests/ftrace: Update fprobe test to check enabled_functions file
+
+----
+ kernel/trace/fprobe.c                              | 12 ++---
+ kernel/trace/ftrace.c                              | 36 ++++++++++-----
+ kernel/trace/trace_events.c                        | 11 ++++-
+ kernel/trace/trace_functions.c                     |  6 +--
+ .../ftrace/test.d/dynevent/add_remove_fprobe.tc    | 54 ++++++++++++++++++++++
+ 5 files changed, 95 insertions(+), 24 deletions(-)
 
