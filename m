@@ -1,107 +1,137 @@
-Return-Path: <linux-kernel+bounces-525342-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E787A3EEC5
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:35:50 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72354A3EED1
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:37:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8D423B6349
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 08:35:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FEBE178076
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 08:37:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8ADF1FE470;
-	Fri, 21 Feb 2025 08:35:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D731A201004;
+	Fri, 21 Feb 2025 08:37:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZDkOPOVi"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="N2CLjoRF"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37F491F9406
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 08:35:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72DEE1FF7D7
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 08:37:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740126945; cv=none; b=cILf1GbI8u2XdRQJQgwpwGTxW+n3h9ZuAu4xqy8EOcJAAdBXbgn/siuONGeX/2RIEx/FHkg+sl/lLQLuPlLQyHSaeqgSZPReg0QSc7cl6YvV4ak8M9v4xmsytI1dlR6X2pQFUtkd8Gg16dRjjvmsiPbrgis48qP40ENH0uKDYtU=
+	t=1740127051; cv=none; b=QwjnbaIoj2KWyolpOavgxsM7G7TgCiaqgOsmRYjd5yuOg5scIzVOgiUXq3mgYwfrP6d2zfoABCjF+4E9SDEp1EMeME26axOIpqmpWAGaKQSUzR2qFVwnZ4qnbELvB86WZIDT66Vm/0fOR5FaKLnCX0bC66oupdAnsxzSFfWlzc0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740126945; c=relaxed/simple;
-	bh=vRMTExWknSwq+DbTBMTdQ5/bthEQ5Q5f110qr5gkm6M=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YsHiwokkWk0xATr1DqxdUjn45d0Sb4nvAsIepJ8K23VPTfnIrgRaxZzihYI7HZUlTQB+sKGzybDeeCAoYBaelPSC5AVHfL+Xd+drt8eKdTyHEhbdd00Fl0YA+GCpc2BNu2LokB1pPKDCMa15zcuM6r2gkO3SX4+X3inkTqo6+pU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZDkOPOVi; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740126943; x=1771662943;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=vRMTExWknSwq+DbTBMTdQ5/bthEQ5Q5f110qr5gkm6M=;
-  b=ZDkOPOViFkmnsy8Nm/EPjqgypgNrjEHAKWZN6XcHyF01BCtDgLp8dg7e
-   OH81ukcb9wYDIEuKfmB2LvEPMaHnDtGCnkzG4OCQbeWZGK2ERnKr9pHsa
-   z2Df2lRhSrNGf5gLR5oQ54JFkxfBRQZu5YguGu4FJznU4w3UmdnFZre+3
-   wozIb80TlyoC8RUZRPX8UNw6Q4yyA5Dt/Lbz+TJ9ul7eKVd+maivKFPSG
-   RDQ6A2/LhzNASIrK/qXv8Kx0bknMRlM/eAcFu02o32nlVIJfPucqnbOkD
-   oLBgPIqje4PHATbKzkLUaT3qpiTVfu1SgNDKhXtIyYN/XbdiXjEo/hwvR
-   w==;
-X-CSE-ConnectionGUID: 1Q0Z2f4sQrupA/DdOnN4cQ==
-X-CSE-MsgGUID: XfB9SShmQvejkrvRjFePzQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11351"; a="40165624"
-X-IronPort-AV: E=Sophos;i="6.13,304,1732608000"; 
-   d="scan'208";a="40165624"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Feb 2025 00:35:42 -0800
-X-CSE-ConnectionGUID: i9odgwhKSjKhOQ2CulcSvQ==
-X-CSE-MsgGUID: OBammDWgR8+oU1xpWCLSeA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,304,1732608000"; 
-   d="scan'208";a="119929207"
-Received: from iscp-l-lixuzha.sh.intel.com ([10.239.153.157])
-  by fmviesa005.fm.intel.com with ESMTP; 21 Feb 2025 00:35:40 -0800
-From: Zhang Lixu <lixu.zhang@intel.com>
-To: linux-kernel@vger.kernel.org
-Cc: sakari.ailus@linux.intel.com,
-	linus.walleij@linaro.org,
-	brgl@bgdev.pl,
-	andi.shyti@kernel.org,
-	broonie@kernel.org,
-	gregkh@linuxfoundation.org,
-	stanislaw.gruszka@linux.intel.com,
-	zhifeng.wang@intel.com
-Subject: [PATCH] MAINTAINERS: Update Intel LJCA maintainer
-Date: Fri, 21 Feb 2025 16:37:12 +0800
-Message-ID: <20250221083713.25947-1-lixu.zhang@intel.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1740127051; c=relaxed/simple;
+	bh=1Pyc5XSXk8/KpOI0I+Y0iOOSNDehTqvQGNhqxWmM4TE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gZ6o2ojMuTysOqAjcHnHEL/gD2MabyYnD1qG473sp1WOPTMnFNrgbWSgxxirOXhC7zAd0QB/+XOL0P6dlBlg7h7CaEqCBKO/k05x0NEeKPkEDVL5whoTJGmdcw9iFUQPsqoqgO6xZcxy1tGTPtODAOGQudwDjrBN+cBVYCrgxRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=N2CLjoRF; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5452e6f2999so1925172e87.3
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 00:37:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1740127047; x=1740731847; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fW/FAUY+BtuxgqThnl6ySpYQqHb8f9LhIhu4HPMnZ10=;
+        b=N2CLjoRFHcoshO2ncCSOlJbY+mx4oO6D0aFI5TFfFT6oe01+/VcP0Kq7EfOrOR6+nE
+         KDfo4RhqnXmSYSpsdrX69MTYP33TAXvGeN4HBtGKpoMkXAEZI4pGUcolWMIyyP4e/kT4
+         RfROlg08rffd2AWfCu6nFhiTp/rYYcXjMKvF4cA37ECEhSM1penkRhlJw/HBD6i6BTCc
+         5HG1dGQ0JGdcPnYS5iMFM/omdul/l70eKl6NfcUTratis0zsYyTftkTF6Yq1+2XpDV6Q
+         hLmYRqba22AToEmwjvyHnszwJba0Wutkg6XNonuq1e8ae/poJRHOdxw2Gi+nfCrFl6x1
+         Fp2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740127047; x=1740731847;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fW/FAUY+BtuxgqThnl6ySpYQqHb8f9LhIhu4HPMnZ10=;
+        b=RCcVJ5bGePnmgPjBOPJZBXxXQuiCyEEXVWjbT2+6lw3JGE0iJq5E0dcRK9h3Uyokxz
+         2a2T+pvWLjN84XtgbBgbooyRcwRvXpQCsHHJ79qlO4cqEGV9XgqtvP9GqbB1DRICbwUQ
+         Giv0Gk1mLRW5/UnUEUC2+8Z8WkE8EUWWzXq5DesfFS4okcpjWxQGOIq/5Ymr9uk7+SUb
+         QJIZZ5K47M+kJW3EzguWK6gPa4opARe0GLmBAzLynEn+FOPdujfAavdkfgYV2D6SsMYi
+         Q9xbwtVJr+wv6t5d3VX78/M5JhzJL/3/IAxfVuJjRF3NigbAbkwe3KkbL+ukwyg4QJG8
+         iTBw==
+X-Forwarded-Encrypted: i=1; AJvYcCUJ7cT2i7jr/7mPeTa9lyGyHz1/70A80Oeifx2fV352JFFj8l8NJ/Ng5OpUT2y32jh05vyZHIXFROWDy6A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZUuwWYyIXMRkfn5T5Z2VUOa8KGP/Ge4jej5hr6e9HlDprCaLm
+	XbjFYWxT9CvhO1P4vr7PT//0luU+eM8a83jk2rB0UvuC6HjeGMSbXUUMJqAwXeox5h7bfMvO8T2
+	ebYbubl+QdO2bqK2ZC54MPLZihezlixNiRzQWcQ==
+X-Gm-Gg: ASbGncsvihH/nAJ3fO/Linb5SXut17BuT1ButtSS/RnRgiXhMDREg644feq/csFVRMA
+	KBv57q9Z4xpF8VIT05FmYaOUYUtXV7xep381Js86ZmrcbcJTlR1eLqm7OGH6jUDhPn9ZYNXu4Sr
+	mAgycHp3McrNgPrfXl5ieVV/wI0WQPxCFTgrHUFCU=
+X-Google-Smtp-Source: AGHT+IEVJYqpV94JpnSSmFsbKfheCNp8/0iZB0ZSGoVT/MInSsid5S3N4SwldmQ4L5O1E7gpGonbz4t6nSMa3dwR6i0=
+X-Received: by 2002:a05:6512:230a:b0:545:17b:3cf9 with SMTP id
+ 2adb3069b0e04-54838f5c910mr744359e87.48.1740127047367; Fri, 21 Feb 2025
+ 00:37:27 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250217-03-k1-gpio-v5-0-2863ec3e7b67@gentoo.org>
+ <20250217-03-k1-gpio-v5-3-2863ec3e7b67@gentoo.org> <CAMRc=MdJszmZ8d1MGo=bfJ8TwqOYBPLe2Jfc9MfbErDUCMQktg@mail.gmail.com>
+ <MA0PR01MB567180C0FE89E3BEBAF2B12EFEC42@MA0PR01MB5671.INDPRD01.PROD.OUTLOOK.COM>
+In-Reply-To: <MA0PR01MB567180C0FE89E3BEBAF2B12EFEC42@MA0PR01MB5671.INDPRD01.PROD.OUTLOOK.COM>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Fri, 21 Feb 2025 09:37:16 +0100
+X-Gm-Features: AWEUYZkPeZ_f9Qkm0Zlcw9GzT4Sb60CF7RDIsxK-TmMLrjs_ajHOShwiT4OIdzI
+Message-ID: <CAMRc=MdX6KiGk1zBRK3bZpN3iM16-8mDq40sTez6YO2kJEq0zQ@mail.gmail.com>
+Subject: Re: [PATCH v5 3/5] gpio: spacemit: add support for K1 SoC
+To: Chen Wang <unicorn_wang@outlook.com>
+Cc: Yixun Lan <dlan@gentoo.org>, Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Meng Zhang <zhangmeng.kevin@linux.spacemit.com>, linux-gpio@vger.kernel.org, 
+	Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, 
+	Conor Dooley <conor@kernel.org>, Yangyu Chen <cyy@cyyself.name>, devicetree@vger.kernel.org, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Jesse Taube <mr.bossman075@gmail.com>, 
+	Jisheng Zhang <jszhang@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Inochi Amaoto <inochiama@outlook.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, spacemit@lists.linux.dev, 
+	linux-riscv@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Wentong is no longer with Intel, I will take over as the maintainer of the
-Intel LJCA driver.
+On Fri, Feb 21, 2025 at 12:36=E2=80=AFAM Chen Wang <unicorn_wang@outlook.co=
+m> wrote:
+>
+>
+> On 2025/2/20 21:34, Bartosz Golaszewski wrote:
+> > On Mon, Feb 17, 2025 at 1:58=E2=80=AFPM Yixun Lan <dlan@gentoo.org> wro=
+te:
+> [......]
+> >> +#define to_spacemit_gpio_bank(x) container_of((x), struct spacemit_gp=
+io_bank, gc)
+> >> +
+> >> +struct spacemit_gpio;
+> >> +
+> >> +struct spacemit_gpio_bank {
+> >> +       struct gpio_chip                gc;
+> >> +       struct spacemit_gpio            *sg;
+> >> +       void __iomem                    *base;
+> >> +       u32                             index;
+> >> +       u32                             irq_mask;
+> >> +       u32                             irq_rising_edge;
+> >> +       u32                             irq_falling_edge;
+> >> +};
+> >> +
+> >> +struct spacemit_gpio {
+> >> +       struct  device                  *dev;
+> >> +       struct  spacemit_gpio_bank      sgb[NR_BANKS];
+> >> +};
+> > Please don't use tabs in struct definitions.
+>
+> Why not=EF=BC=9FI see
+> https://www.kernel.org/doc/html/latest/process/maintainer-tip.html#struct=
+-declarations-and-initializers
+>
 
-Signed-off-by: Zhang Lixu <lixu.zhang@intel.com>
-Reviewed-by: Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>
-Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
----
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This is for the tip tree, not treewide.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index d9fd56f205c0..da09f84a87b1 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -11818,7 +11818,7 @@ F:	drivers/crypto/intel/keembay/ocs-hcu.c
- F:	drivers/crypto/intel/keembay/ocs-hcu.h
- 
- INTEL LA JOLLA COVE ADAPTER (LJCA) USB I/O EXPANDER DRIVERS
--M:	Wentong Wu <wentong.wu@intel.com>
-+M:	Lixu Zhang <lixu.zhang@intel.com>
- M:	Sakari Ailus <sakari.ailus@linux.intel.com>
- S:	Maintained
- F:	drivers/gpio/gpio-ljca.c
--- 
-2.43.0
+It's my personal maintainer preference. We do use both under
+drivers/gpio/ but I prefer no-tabs in new code.
 
+Bart
 
