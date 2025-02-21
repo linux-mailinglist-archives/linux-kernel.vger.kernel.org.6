@@ -1,144 +1,102 @@
-Return-Path: <linux-kernel+bounces-525006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E389BA3E9BF
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 02:15:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27622A3E9B9
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 02:15:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1F6C172781
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 01:15:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D54019C0882
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 01:15:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 229E1757EA;
-	Fri, 21 Feb 2025 01:15:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C44FD4AEE2;
+	Fri, 21 Feb 2025 01:15:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="V/bHJm7H"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VHhFly81"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F375413B787
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 01:15:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 500CF1E1022;
+	Fri, 21 Feb 2025 01:15:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740100515; cv=none; b=k9ZmdKvE3EK1wzQ/B/NwoR6Xqo+ppAZ1OMXi6URHIsT5bDLX5iZISEoP1FIHGlLSJgBGI4/gami/5xXyEPOJ6nxAZxJGC8aYT8utXylbLKnOP3q997n4hNH3h4wG1BMdCyhZ2hV94jD0e8Fxh19U5qOuM89mxeUVdfO/HAz9T7Q=
+	t=1740100503; cv=none; b=GOgfh1VBx3Kfos+PYlGmcHlrU9qf8qbFmE7pCrJ96sdilJl+Rp6U6D5GwJSBGUJ3yfVjorSjeLTJXD7Wq+Qk1pIm9jjitEUpPsdIdQ/EKi0ahv6sc7t5Ti90nod9X2aSjw3O8JO4sNMlaTP9d5/zqPZEAzhatFcfJKn4jP2XFv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740100515; c=relaxed/simple;
-	bh=/bGiavS8jq7e1a/UcoH9zlpN1YkLl+PW6P8a+yl2sIA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=p91ypZbmu2Vf3p0PB8QxwuZfDCvqkrB1MQO/6rWMrgjcG5L3VDTUPfsR7k//QzBWiyugZIIcKRNbxT0qM/hLb4afykTKKpSLKCJwUkP5sZnfWbI2Rf/NJJZs1uWRymw0cztLSv+eoxjlehiFSqB+HbqQAUzr0XT6xp48Qbg7xX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=V/bHJm7H; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740100511;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/bGiavS8jq7e1a/UcoH9zlpN1YkLl+PW6P8a+yl2sIA=;
-	b=V/bHJm7HHy849dnbGLvJyMOjN+PYg876C2iBic+Znf3c+MNBD/1XIGCO45SYbPXqZ8Rv60
-	ql6ZhVXlPJvivicbIRx5bvhnmbi4VhrVXkKGe2fM9+bVZpyCw2x/IC6SZqshiFCkGkme3j
-	ZOyORzpUCIAbXr2dXrPp98m4/toJPkw=
-Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com
- [209.85.214.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-370-03yZiLxlPNul-E3mmIZF3w-1; Thu, 20 Feb 2025 20:15:09 -0500
-X-MC-Unique: 03yZiLxlPNul-E3mmIZF3w-1
-X-Mimecast-MFC-AGG-ID: 03yZiLxlPNul-E3mmIZF3w_1740100508
-Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-2217b4a48a4so31555405ad.2
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 17:15:09 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740100508; x=1740705308;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/bGiavS8jq7e1a/UcoH9zlpN1YkLl+PW6P8a+yl2sIA=;
-        b=SvWSF7L1q7KbkgINtaTm7coBCuvI8I9hz2Q6ZcPFjOPUtaRTgjy8J5BVqSo2tgAHCK
-         6U6rHZK8j//B9LUGeqXOvJVAa3cPJz9O0tgyXJQ5ddpD6ZrWquwBcuAzuxjcsP4y8yjb
-         Yx5o6/6pQjda+k/y6apfW8bxmlecfpzujhK7298UEPdpjEAArzf4J8BZR+IRKRTTjYvu
-         u4T521Iyvub5qieV8HNXKONYq+3xob+oID89Cqkcz+A2985Tj3qlyl50Gntnb0vbvjv9
-         yZcu7051vBGamfpoz67fRhho0odvKws/uZgq2vSPAYQXosI92gC9FNwwlpemTAcUrG5P
-         Mgsg==
-X-Forwarded-Encrypted: i=1; AJvYcCXjQzpFBtzOHuuVx0OjSJ9/GejCHaS0sMciRdeoVLhg7QvdyNlTBx6aNqHDK83i6ZAuO/xZBYlqK8ysdWg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzsq6r/VCBkdRT8v/dBgS8nvRvZaZDIIB72boCXAt8NYhAbKgFz
-	H8v9RJFFZywc9fDL1EYz3I3+Br8TXXZR93KabtMT2slhmN4rXsMDof2sANx9FmPTTyElTsIMrDQ
-	Joo6eKBz9iePDgGxi25V+nkPhvY1DUOPU8G9HOctUblJJb5jEY9pj0BXFx7C6574Lw7k4Jlnt+a
-	vjCX8y7zTQzwcL1zEptECaniaGfBflkVAe9y1V
-X-Gm-Gg: ASbGnctuTF6yy2SeJiD917lJO+5RsJSYMCDkw9pevCT4VoFzD6a3EuqgrJQznLLgSlJ
-	jSyJ3L+XH7lXjrTyQft+tsRzpr73P8LHxdqfdJsHgeRXbZtwt9cq8kh1zIDh7Rjw=
-X-Received: by 2002:a17:902:fc44:b0:215:bb50:6a05 with SMTP id d9443c01a7336-221a0ec944cmr13551865ad.9.1740100508436;
-        Thu, 20 Feb 2025 17:15:08 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHNUoAtdLLCDrmQ4E0KhxP1/v8E8OjE3hwAErurd7Thltd/lsB3alr0YyGDAyw/Vnr52MolQRVxcb5jecipEJY=
-X-Received: by 2002:a17:902:fc44:b0:215:bb50:6a05 with SMTP id
- d9443c01a7336-221a0ec944cmr13551285ad.9.1740100507900; Thu, 20 Feb 2025
- 17:15:07 -0800 (PST)
+	s=arc-20240116; t=1740100503; c=relaxed/simple;
+	bh=uS+vVKASRtfhM7BFzojGL9JyOPAaQOa3nWrF6yHAjW0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X5mzNq8Tryh2cNP5ILp4i4JTym5PCP75Cf2bdGYUbfEIcTQgcehuXYOp15dZKV0Ge5SCh8rneIxyUJpyUPbOfc6gJ0gNOVoq0PqF+c8tsgOgQ35rS2FRVJaSrBNVzQ0zbftpF+F6ps+7ciuG/CDLiqyTdVqNTHJS5NWZH39h+3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VHhFly81; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740100502; x=1771636502;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=uS+vVKASRtfhM7BFzojGL9JyOPAaQOa3nWrF6yHAjW0=;
+  b=VHhFly81rA27+dTpIk1Ojz+NzLL4IOxMW0pVpgsXzU7cGToD+PrFnR3e
+   an46Il5riG+L0kJZaZUE1hNxgiAvrKC/LzBROd/YKGgF3sFesANS8eKzQ
+   UVOe8SS47aQ4SEzgY2hhPcU9R6LIR3gCMwsXOEH6IAlBzVte+jBAzu95k
+   S8CzDU4QAjM6ED0PkXsHz0bO54vdAwct+Vy1o9ha+YrJXvXtLbMcumv2E
+   D1+e7O5jkPw02YMmlVuypb1YAz8bAgEWjAWbcIcJ73eINhAyePcvx+vJK
+   dWt0wUKkzG9aI4XGmhN5BnwsG7A7djMaYQ3gvSrYH3x92z5iJagnc6dqE
+   A==;
+X-CSE-ConnectionGUID: qvHjpcoQRJetKsavtvU+6g==
+X-CSE-MsgGUID: bqGd+BQLQW+HmDWLwM1s/w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11351"; a="40622376"
+X-IronPort-AV: E=Sophos;i="6.13,303,1732608000"; 
+   d="scan'208";a="40622376"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Feb 2025 17:15:01 -0800
+X-CSE-ConnectionGUID: FCKVSBxnRUivOl25w4aL0Q==
+X-CSE-MsgGUID: xGXvWeKLTMCko+amGvIScQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="146109952"
+Received: from agluck-desk3.sc.intel.com (HELO agluck-desk3) ([172.25.222.70])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Feb 2025 17:15:00 -0800
+Date: Thu, 20 Feb 2025 17:14:58 -0800
+From: "Luck, Tony" <tony.luck@intel.com>
+To: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
+Cc: Borislav Petkov <bp@alien8.de>, James Morse <james.morse@arm.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Robert Richter <rric@kernel.org>, Ramses <ramses@well-founded.dev>,
+	John <therealgraysky@proton.me>, linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1] EDAC/igen6: Fix the flood of invalid error reports
+Message-ID: <Z7fTkuQeYANX4QtY@agluck-desk3>
+References: <20250212083354.31919-1-qiuxu.zhuo@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250215-buffers-v2-1-1fbc6aaf8ad6@daynix.com>
- <d4b7f8a0-db50-4b48-b5a3-f60eab76e96b@redhat.com> <20250220034042-mutt-send-email-mst@kernel.org>
-In-Reply-To: <20250220034042-mutt-send-email-mst@kernel.org>
-From: Jason Wang <jasowang@redhat.com>
-Date: Fri, 21 Feb 2025 09:14:56 +0800
-X-Gm-Features: AWEUYZk12eKYMoRdAhOr_VqKFdK71rl0l2JCQtxsCVicbAIDmOs5Fp4sSGUmfl4
-Message-ID: <CACGkMEtN1K7jRVmZwxah1vET=p5k_Nd0cpov=R0B8sP=bjC-sA@mail.gmail.com>
-Subject: Re: [PATCH net-next v2] tun: Pad virtio headers
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: Paolo Abeni <pabeni@redhat.com>, Akihiko Odaki <akihiko.odaki@daynix.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
-	Shuah Khan <shuah@kernel.org>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org, kvm@vger.kernel.org, 
-	virtualization@lists.linux-foundation.org, linux-kselftest@vger.kernel.org, 
-	Yuri Benditovich <yuri.benditovich@daynix.com>, Andrew Melnychenko <andrew@daynix.com>, 
-	Stephen Hemminger <stephen@networkplumber.org>, gur.stavi@huawei.com, devel@daynix.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250212083354.31919-1-qiuxu.zhuo@intel.com>
 
-On Thu, Feb 20, 2025 at 4:45=E2=80=AFPM Michael S. Tsirkin <mst@redhat.com>=
- wrote:
->
-> On Thu, Feb 20, 2025 at 08:58:38AM +0100, Paolo Abeni wrote:
-> > Hi,
-> >
-> > On 2/15/25 7:04 AM, Akihiko Odaki wrote:
-> > > tun simply advances iov_iter when it needs to pad virtio header,
-> > > which leaves the garbage in the buffer as is. This will become
-> > > especially problematic when tun starts to allow enabling the hash
-> > > reporting feature; even if the feature is enabled, the packet may lac=
-k a
-> > > hash value and may contain a hole in the virtio header because the
-> > > packet arrived before the feature gets enabled or does not contain th=
-e
-> > > header fields to be hashed. If the hole is not filled with zero, it i=
-s
-> > > impossible to tell if the packet lacks a hash value.
-> >
-> > Should virtio starting sending packets only after feature negotiation?
-> > In other words, can the above happen without another bug somewhere else=
-?
->
->
-> Not if this is connected with a guest with the standard virtio driver, no=
-.
-> The issue is that tun has no concept of feature negotiation,
-> and we don't know who uses the vnet header feature, or why.
->
-> > I guess the following question is mostly for Jason and Michael: could b=
-e
-> > possible (/would it make any sense) to use a virtio_net_hdr `flags` bit
-> > to explicitly signal the hash fields presence? i.e. making the actual
-> > virtio_net_hdr size 'dynamic'.
->
-> But it is dynamic - that is why we have TUNSETVNETHDRSZ.
+On Wed, Feb 12, 2025 at 04:33:54PM +0800, Qiuxu Zhuo wrote:
+> The ECC_ERROR_LOG register of certain SoCs may contain the invalid value
+> ~0, which results in a flood of invalid error reports in polling mode.
+> 
+> Fix the flood of invalid error reports by skipping the invalid ECC error
+> log value ~0.
+> 
+> Fixes: e14232afa944 ("EDAC/igen6: Add polling support")
+> Reported-by: Ramses <ramses@well-founded.dev>
+> Closes: https://lore.kernel.org/all/OISL8Rv--F-9@well-founded.dev/
+> Tested-by: Ramses <ramses@well-founded.dev>
+> Reported-by: John <therealgraysky@proton.me>
+> Closes: https://lore.kernel.org/all/p5YcxOE6M3Ncxpn2-Ia_wCt61EM4LwIiN3LroQvT_-G2jMrFDSOW5k2A9D8UUzD2toGpQBN1eI0sL5dSKnkO8iteZegLoQEj-DwQaMhGx4A=@proton.me/
+> Tested-by: John <therealgraysky@proton.me>
+> Signed-off-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
 
-Yes, tun currently only recognizes a subset of the whole virtio-net header.
+Applied to RAS tree edac-drivers branch
 
 Thanks
 
+-Tony
 
