@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-526432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A18BA3FEA4
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 19:22:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9FA5A3FEA5
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 19:22:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39B5F1888414
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 18:22:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46728167C20
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 18:22:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF2AE2512DE;
-	Fri, 21 Feb 2025 18:22:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A5AC2528F5;
+	Fri, 21 Feb 2025 18:22:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a280yu3U"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NffydXzh"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2073F1D5AA7;
-	Fri, 21 Feb 2025 18:22:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26FD91F0E36;
+	Fri, 21 Feb 2025 18:22:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740162148; cv=none; b=SvB+6oi1zPvVIu2mfyxrfanUpbvbmeVtR3ER0lWBWO7TAtJSc7O0C5U9Wy+OnWwRlLgB+N3TH02fvPzvg0qkpQ8TNmN5Yvy9iqkiIdOKRmxX/MgsyzcKEGELFn1t+RBYMZQqd0oMOPq0XrQEDnsj+yckjI60rDkf9GQsEc5DuRo=
+	t=1740162155; cv=none; b=sz5ol7izJpcyOvMUVeZa1pemDWB3Prqg7UnlOQE+V1g4aftPy7R0w72L47/EdnC6VeP04DT9TDa5o7Xqhl3CHDhsYdzLaYqiVyBc84bdJNvzusrIn5hgDNpU4uHCEDNxG/HuPERmBT9eTTy7oRJBkKiOb6EvZwzXKYpVoAkSGqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740162148; c=relaxed/simple;
-	bh=j49I5wA9J0ZZQnVzg6vNKboZgmNFrZvlly3Q5rj+TMo=;
+	s=arc-20240116; t=1740162155; c=relaxed/simple;
+	bh=XEJSkpcRT+l1bJmdwz/TSZDGUSyUv+uf4slwZFfLi/A=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=gGIE3Kl9RwKSmZLDtfbMS8v7ix/yRUm08HuiGfqgoFdlpF5nzmzhTfbUh9+yL6B+pRMJ3Lhpd/zfYwelh8SxpVURJsTkftIOYfeDxq/UNVSK/Xhkjjl1anYLBc087kjqMAFDfB6FzEua1ZMqbU+zZ2Rc7LWkONPrc1EJrCH0KqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a280yu3U; arc=none smtp.client-ip=209.85.214.179
+	 MIME-Version; b=VSNnQ2sSuMgS4xYB3Pb/6W75wd4ywsUqZuqnsu0rL1Mq1B9N6crZRZU3h5s4m3akyEdCIUAWfsIWEvR9CSnKwgd5gjlCrj2p4pfJ0ifPhjy4WPvm6fJM6Gl5W17E/+JwonXYwM/KE1ROHajDnxgYQOnIk1D3ObwKMLdVT4ggX1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NffydXzh; arc=none smtp.client-ip=209.85.214.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-220bfdfb3f4so55403255ad.2;
-        Fri, 21 Feb 2025 10:22:25 -0800 (PST)
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-22104c4de96so43838245ad.3;
+        Fri, 21 Feb 2025 10:22:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740162145; x=1740766945; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1740162153; x=1740766953; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=HdO9tVpvAE97bC++aynlan+kCE72STAqZAbZPqphi60=;
-        b=a280yu3U0QMOJ6BH5nACb0ywrefLigzfDE/QywV+aYR7JWUVFCz4oDYkeDTbRBoxXH
-         zcWw8iM99DMpsl9u6JlXC+elBnhU1kfjI9ML9oKOc559uh57WXqgtQnJx3A0zsKOyB7c
-         aQ+kupEhlcKUfoso9n9ZvWHRatbO7IsnCFVjI889z5kPyvGm8bXsD+i5PNCSERX0ZL7o
-         a964LmffBYwM5b54LBeVh3zdvuGmKlaZFU22s2Ft8DDjG1bOW123jCClrWk2wAFa0Edu
-         KD0FlCZjPCbIw7JRdt1HfHl4Bo35ymG9BHOMoIv+GtVT9eKiO2Aw+GzGN+lkFmTUhm/q
-         Qs8w==
+        bh=DHL7vPjPelCu7vXwBnwg1cjqjcfxa3A6QUyECJhbzJ8=;
+        b=NffydXzh9IPIoG4OL/t/sc/FEJBqCCpVR+G6IXTYlYebp3SzCUabpNEuhXoc5+JBjt
+         MyBQ2BEp8EmVcMsiLzsTiDnHJcd8w5JM5wZsIdQkBfCM/sx/CiODgjPtqxvcd8DJL6B6
+         Ic3ZjvqzzMlwioqJlw2OiV24L5bWhJHmbItCmfAbdgOyQG3FSzsdcjzbwo8pettvZtxt
+         nmsw+RI9A4q3kyvAsyqXQadKYABNHESM7OvElw1UQEWKRmaAzp5YbHW5Y7DEeybqk1YM
+         45ScR9eRC7Jzl+6ANuDmFc8yrT1+xpk1jV0a7eVuLhucW00oGipExBqfRCyZm7S8an4q
+         kdOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740162145; x=1740766945;
+        d=1e100.net; s=20230601; t=1740162153; x=1740766953;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=HdO9tVpvAE97bC++aynlan+kCE72STAqZAbZPqphi60=;
-        b=YMmhUC7eu/pXOj40Qyb9ZbRqNXYoPTimqMy5we3LEuM4cuwrXK+jbZ3LposeKZbJyX
-         rzdijudmjktCuBu4t8W9fWAb7Nn7yECqcdGR8a1iQLDsYVlM/CBQjQNcSGu8dqjB+CUF
-         B/jsDLX0gDEW/dZCOyogLaIHBVoZ0O1XbF63L2JAlR1xAps28NkK96+Qm45UmOydlDch
-         JzA0biHpYuAVcJr7nffeh9tQxUWNGN/9b0YXWFSpvVLEPsgUPLeVTOVbMgXCNpT58ia4
-         WKvVyALnYqL560dtCWdaiJyIGRgWNLKU0naMrtJskcHCz5qnO069ixyDIYq8kLO9fwT9
-         Qv5g==
-X-Forwarded-Encrypted: i=1; AJvYcCU8276tQYxi63DHTuSMojRt+1V8PZPLu/ZyekeLVxhjhx9cNAzsmMPlCrQPzbJ9NzXZAt8I1f8IwMWJy50=@vger.kernel.org, AJvYcCWfWsWEu06MF4/7k2lvgXJRL1RVrMHAN+OSYh7L+KqrIxCVlkG6eCxKk6AZZczZahCbKwC580M1BehtCMQt0Cg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2l65FYsDC9eMVYdyT+ExX6MIswwLccXYdFcxVeOlxJDlbRV2w
-	4OitdK2VXQJRlCf4i5BZu2nnm8DY6jmVxlcsHhua8uv4uD0bzxE2
-X-Gm-Gg: ASbGncsCZT80wZVvSmZNqABLsbsryPI0/3Vz+MO1C/+S/XiAPcVhLtMG6f+TSorXmPX
-	j3o14sNi2/+Yy21oR2xbALg3QYx58BqgezRHWo7aqOaH5+UJ7cJF0km3LDKG7ORytD9vasaUY+b
-	zI8T/0USrJvKG/9eMb1mBMfXvYgSVsMU2cJLZPDZExFRT6ZwkKORUDXUv7v9dr+LmAYEFQwqo3j
-	QOf6dFH1mytk+HBJfinJ81kbcCzW1ru5gdOJS3+d4XefcHiaPGKORhj3ITp8HvX++NogGAMiKP8
-	/B7PhuDnu8N7efJ5VOWuD/cRJoFDIOuA9Q==
-X-Google-Smtp-Source: AGHT+IGolpOrZQiwWCSA7ydTZmRGAXVhLFfZwU/R/LbLwlfvqor1ZlcAVXGBbHRkS0TSTA7ogK20mA==
-X-Received: by 2002:a05:6a20:144f:b0:1ee:66f6:87e6 with SMTP id adf61e73a8af0-1eef3d96f97mr8115222637.31.1740162145307;
-        Fri, 21 Feb 2025 10:22:25 -0800 (PST)
+        bh=DHL7vPjPelCu7vXwBnwg1cjqjcfxa3A6QUyECJhbzJ8=;
+        b=bFoYiYVUA4Kd38DEoqEVLeSemLZTBHWkQossf/VXqZGuNPmkpQlpXPOM5czcQJ3381
+         2McawOQq0eqalp7fRklQSKRdMlZfzMxFJFMuIySzygNtt4t7ssbGT5+xQA0PDsPAloRK
+         6Of7SOxTbwCL2IN+P9wOY2ot+s61uFZRoKnkBjBs5OeZmDBqeguZHyhtUrWpFdd9BvfN
+         gYS7T6CyLz4/xtiWUGWmbMXX01u3tIlTjOlZ+69We9c9eMwQ6bUJdYQoOm89yEwFM7++
+         8/d45Uzwa2edSUcKIpH0mM5DLehOBM2UpNNL5lMKiNawyNwZ8Ljct9XVdxJ8jwQXTEfH
+         ni6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXIi/up3w9c0Jd5L/90YMZQUS8ODSNFJWoSL/WqwRX7BRtFTVumZWReznE00gk6w4zxHzfmM1BVWdQvfr7V/kA=@vger.kernel.org, AJvYcCXeTFyanxTaq9gZLJv7o00zPfw+ht7zyH7n6dxxxKcL6h0QIgpnpNrOIg0oLNgm0h1uMB9mR6F0Iyfdr68=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzeV5oVqNFDOqVrfgu5ucXqNgK6MotkLl7Oi4r/Gk39X4RmF8TH
+	Nel9mnLjEEnmNC3/T33Av+RI97MOKlrcFOYWOb2nVsro63dAt2bS
+X-Gm-Gg: ASbGncsElj9Jhbac/c4srzAJHaOhIlkS28QIqGhj8eBQhIEM8RhTwi+13WKgtMbwrtb
+	XOmbIDvyZpeP8E1crrY3AWMIeLTMKva0hvnSomnSYxuTdiUlQBp2b/JjsZTqjR2M28J+GR7M4vq
+	CVe6VhbrN646SdvV4nwJ2jiBu9Xi5nku286JEDk5A9vKNtIiGi7bVvv9AgaD4V7bIWjzt0TGksX
+	+AplGg4oQzk+woJ6DAG5Ee0VsVlMXs83PWEUNsRKhrWABBpRbprGQvTYr0No9rRaIegga00xQs/
+	uYTMrH6kr4HYMOGVZ2bDllocr23M7YHrGg==
+X-Google-Smtp-Source: AGHT+IFmSCg5zSc1oP8FO256fDI+PNQxG+YloMlQVhJ8OyzeMb3h/2ZIeEAZdH4eT9dksJQ3BfEOXw==
+X-Received: by 2002:a05:6a21:33a4:b0:1ee:e785:a08a with SMTP id adf61e73a8af0-1eef3da4c68mr7421042637.29.1740162153171;
+        Fri, 21 Feb 2025 10:22:33 -0800 (PST)
 Received: from linuxsimoes.. ([177.21.141.136])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-adb5a52aefbsm14767948a12.62.2025.02.21.10.22.16
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-adb5a52aefbsm14767948a12.62.2025.02.21.10.22.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Feb 2025 10:22:25 -0800 (PST)
+        Fri, 21 Feb 2025 10:22:32 -0800 (PST)
 From: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
 To: a.hindborg@kernel.org,
 	alex.gaynor@gmail.com,
@@ -97,11 +97,10 @@ To: a.hindborg@kernel.org,
 	walmeida@microsoft.com
 Cc: trintaeoitogc@gmail.com,
 	rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Subject: [PATCH V4 1/2] rust: module: change author to an array
-Date: Fri, 21 Feb 2025 15:21:41 -0300
-Message-Id: <20250221182142.42134-2-trintaeoitogc@gmail.com>
+	linux-kernel@vger.kernel.org
+Subject: [PATCH V4 2/2] checkpatch: throw error for malformed arrays
+Date: Fri, 21 Feb 2025 15:21:42 -0300
+Message-Id: <20250221182142.42134-3-trintaeoitogc@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250221182142.42134-1-trintaeoitogc@gmail.com>
 References: <20250221182142.42134-1-trintaeoitogc@gmail.com>
@@ -113,233 +112,78 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In the module! macro, the author field is currently of type String.
-Since modules can have multiple authors, this limitation prevents
-specifying more than one.
-Change the author field to Option<Vec<String>> to allow creating modules
-with multiple authors. Additionally, rename the field from author to
-authors to make it explicit that it can refer to multiple authors.  In
-modules that use the author field, update its value to an array of
-strings, and also rename it from author to authors.
+Implement a check to ensure these fields are correctly formatted. If a
+line contains one of these keys that should be of type Vec<String>, use
+a regex to verify whether the array holds multiple values.
+* If the array contains more than one value, enforce vertical formatting
+* If the array has only one value, it can remain on the same line
 
-Suggested-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Link: https://github.com/Rust-for-Linux/linux/issues/244
 Signed-off-by: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
 ---
- drivers/block/rnull.rs               |  2 +-
- rust/kernel/net/phy.rs               |  4 ++--
- rust/kernel/pci.rs                   |  2 +-
- rust/macros/lib.rs                   |  6 +++---
- rust/macros/module.rs                | 12 +++++++-----
- samples/rust/rust_driver_faux.rs     |  2 +-
- samples/rust/rust_driver_pci.rs      |  2 +-
- samples/rust/rust_driver_platform.rs |  2 +-
- samples/rust/rust_minimal.rs         |  2 +-
- samples/rust/rust_misc_device.rs     |  2 +-
- samples/rust/rust_print_main.rs      |  2 +-
- 11 files changed, 20 insertions(+), 18 deletions(-)
+ scripts/checkpatch.pl | 43 +++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 43 insertions(+)
 
-diff --git a/drivers/block/rnull.rs b/drivers/block/rnull.rs
-index ddf3629d8894..d07e76ae2c13 100644
---- a/drivers/block/rnull.rs
-+++ b/drivers/block/rnull.rs
-@@ -27,7 +27,7 @@
- module! {
-     type: NullBlkModule,
-     name: "rnull_mod",
--    author: "Andreas Hindborg",
-+    authors: ["Andreas Hindborg"],
-     description: "Rust implementation of the C null block driver",
-     license: "GPL v2",
- }
-diff --git a/rust/kernel/net/phy.rs b/rust/kernel/net/phy.rs
-index bb654a28dab3..a59469c785e3 100644
---- a/rust/kernel/net/phy.rs
-+++ b/rust/kernel/net/phy.rs
-@@ -790,7 +790,7 @@ const fn as_int(&self) -> u32 {
- ///         DeviceId::new_with_driver::<PhySample>()
- ///     ],
- ///     name: "rust_sample_phy",
--///     author: "Rust for Linux Contributors",
-+///     authors: ["Rust for Linux Contributors"],
- ///     description: "Rust sample PHYs driver",
- ///     license: "GPL",
- /// }
-@@ -819,7 +819,7 @@ const fn as_int(&self) -> u32 {
- /// module! {
- ///     type: Module,
- ///     name: "rust_sample_phy",
--///     author: "Rust for Linux Contributors",
-+///     authors: ["Rust for Linux Contributors"],
- ///     description: "Rust sample PHYs driver",
- ///     license: "GPL",
- /// }
-diff --git a/rust/kernel/pci.rs b/rust/kernel/pci.rs
-index 4c98b5b9aa1e..f7b2743828ae 100644
---- a/rust/kernel/pci.rs
-+++ b/rust/kernel/pci.rs
-@@ -103,7 +103,7 @@ extern "C" fn remove_callback(pdev: *mut bindings::pci_dev) {
- /// kernel::module_pci_driver! {
- ///     type: MyDriver,
- ///     name: "Module name",
--///     author: "Author name",
-+///     authors: ["Author name"],
- ///     description: "Description",
- ///     license: "GPL v2",
- /// }
-diff --git a/rust/macros/lib.rs b/rust/macros/lib.rs
-index d61bc6a56425..7ce1cb891dfb 100644
---- a/rust/macros/lib.rs
-+++ b/rust/macros/lib.rs
-@@ -36,7 +36,7 @@
- /// module!{
- ///     type: MyModule,
- ///     name: "my_kernel_module",
--///     author: "Rust for Linux Contributors",
-+///     authors: ["Rust for Linux Contributors"],
- ///     description: "My very own kernel module!",
- ///     license: "GPL",
- ///     alias: ["alternate_module_name"],
-@@ -69,7 +69,7 @@
- /// module!{
- ///     type: MyDeviceDriverModule,
- ///     name: "my_device_driver_module",
--///     author: "Rust for Linux Contributors",
-+///     authors: ["Rust for Linux Contributors"],
- ///     description: "My device driver requires firmware",
- ///     license: "GPL",
- ///     firmware: ["my_device_firmware1.bin", "my_device_firmware2.bin"],
-@@ -88,7 +88,7 @@
- /// # Supported argument types
- ///   - `type`: type which implements the [`Module`] trait (required).
- ///   - `name`: ASCII string literal of the name of the kernel module (required).
--///   - `author`: string literal of the author of the kernel module.
-+///   - `authors`: array of ASCII string literals of the authors of the kernel module.
- ///   - `description`: string literal of the description of the kernel module.
- ///   - `license`: ASCII string literal of the license of the kernel module (required).
- ///   - `alias`: array of ASCII string literals of the alias names of the kernel module.
-diff --git a/rust/macros/module.rs b/rust/macros/module.rs
-index cdf94f4982df..db16f0af0855 100644
---- a/rust/macros/module.rs
-+++ b/rust/macros/module.rs
-@@ -94,7 +94,7 @@ struct ModuleInfo {
-     type_: String,
-     license: String,
-     name: String,
--    author: Option<String>,
-+    authors: Option<Vec<String>>,
-     description: Option<String>,
-     alias: Option<Vec<String>>,
-     firmware: Option<Vec<String>>,
-@@ -107,7 +107,7 @@ fn parse(it: &mut token_stream::IntoIter) -> Self {
-         const EXPECTED_KEYS: &[&str] = &[
-             "type",
-             "name",
--            "author",
-+            "authors",
-             "description",
-             "license",
-             "alias",
-@@ -135,7 +135,7 @@ fn parse(it: &mut token_stream::IntoIter) -> Self {
-             match key.as_str() {
-                 "type" => info.type_ = expect_ident(it),
-                 "name" => info.name = expect_string_ascii(it),
--                "author" => info.author = Some(expect_string(it)),
-+                "authors" => info.authors = Some(expect_string_array(it)),
-                 "description" => info.description = Some(expect_string(it)),
-                 "license" => info.license = expect_string_ascii(it),
-                 "alias" => info.alias = Some(expect_string_array(it)),
-@@ -183,8 +183,10 @@ pub(crate) fn module(ts: TokenStream) -> TokenStream {
-     let info = ModuleInfo::parse(&mut it);
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index 7b28ad331742..21a5ef4fd8b8 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -2775,6 +2775,9 @@ sub process {
+ 	$realcnt = 0;
+ 	$linenr = 0;
+ 	$fixlinenr = -1;
++
++	my %array_parse_module;
++
+ 	foreach my $line (@lines) {
+ 		$linenr++;
+ 		$fixlinenr++;
+@@ -3567,6 +3570,46 @@ sub process {
+ # ignore non-hunk lines and lines being removed
+ 		next if (!$hunk_line || $line =~ /^-/);
  
-     let mut modinfo = ModInfoBuilder::new(info.name.as_ref());
--    if let Some(author) = info.author {
--        modinfo.emit("author", &author);
-+    if let Some(authors) = info.authors {
-+        for author in authors {
-+            modinfo.emit("authors", &author);
-+        }
-     }
-     if let Some(description) = info.description {
-         modinfo.emit("description", &description);
-diff --git a/samples/rust/rust_driver_faux.rs b/samples/rust/rust_driver_faux.rs
-index 048c6cb98b29..378bab4b587d 100644
---- a/samples/rust/rust_driver_faux.rs
-+++ b/samples/rust/rust_driver_faux.rs
-@@ -7,7 +7,7 @@
- module! {
-     type: SampleModule,
-     name: "rust_faux_driver",
--    author: "Lyude Paul",
-+    authors: ["Lyude Paul"],
-     description: "Rust faux device sample",
-     license: "GPL",
- }
-diff --git a/samples/rust/rust_driver_pci.rs b/samples/rust/rust_driver_pci.rs
-index 1fb6e44f3395..364a0660a743 100644
---- a/samples/rust/rust_driver_pci.rs
-+++ b/samples/rust/rust_driver_pci.rs
-@@ -104,7 +104,7 @@ fn drop(&mut self) {
- kernel::module_pci_driver! {
-     type: SampleDriver,
-     name: "rust_driver_pci",
--    author: "Danilo Krummrich",
-+    authors: ["Danilo Krummrich"],
-     description: "Rust PCI driver",
-     license: "GPL v2",
- }
-diff --git a/samples/rust/rust_driver_platform.rs b/samples/rust/rust_driver_platform.rs
-index 8120609e2940..f7a0f1b29d1d 100644
---- a/samples/rust/rust_driver_platform.rs
-+++ b/samples/rust/rust_driver_platform.rs
-@@ -43,7 +43,7 @@ fn drop(&mut self) {
- kernel::module_platform_driver! {
-     type: SampleDriver,
-     name: "rust_driver_platform",
--    author: "Danilo Krummrich",
-+    authors: ["Danilo Krummrich"],
-     description: "Rust Platform driver",
-     license: "GPL v2",
- }
-diff --git a/samples/rust/rust_minimal.rs b/samples/rust/rust_minimal.rs
-index 4aaf117bf8e3..1fc7a1be6b6d 100644
---- a/samples/rust/rust_minimal.rs
-+++ b/samples/rust/rust_minimal.rs
-@@ -7,7 +7,7 @@
- module! {
-     type: RustMinimal,
-     name: "rust_minimal",
--    author: "Rust for Linux Contributors",
-+    authors: ["Rust for Linux Contributors"],
-     description: "Rust minimal sample",
-     license: "GPL",
- }
-diff --git a/samples/rust/rust_misc_device.rs b/samples/rust/rust_misc_device.rs
-index 40ad7266c225..d3785e7c0330 100644
---- a/samples/rust/rust_misc_device.rs
-+++ b/samples/rust/rust_misc_device.rs
-@@ -116,7 +116,7 @@
- module! {
-     type: RustMiscDeviceModule,
-     name: "rust_misc_device",
--    author: "Lee Jones",
-+    authors: ["Lee Jones"],
-     description: "Rust misc device sample",
-     license: "GPL",
- }
-diff --git a/samples/rust/rust_print_main.rs b/samples/rust/rust_print_main.rs
-index 7e8af5f176a3..8ea95e8c2f36 100644
---- a/samples/rust/rust_print_main.rs
-+++ b/samples/rust/rust_print_main.rs
-@@ -8,7 +8,7 @@
- module! {
-     type: RustPrint,
-     name: "rust_print",
--    author: "Rust for Linux Contributors",
-+    authors: ["Rust for Linux Contributors"],
-     description: "Rust printing macros sample",
-     license: "GPL",
- }
++# check if arrays has more than one value in the same line
++		my $inline = 0;
++		my $key = "";
++		my $add_line = $line =~ /^\+/;
++
++		if ($line =~ /\s*.*\b(authors|alias|firmware)\s*:\s*\[/) {
++			$inline = 1;
++			$array_parse_module{$1} = 1;
++		}
++
++		my @keys = keys %array_parse_module;
++		if (@keys) {
++			$key = $keys[0];
++		}
++
++		if ($add_line && $key) {
++			my $herevet = "$here\n" . cat_vet($rawline) . "\n";
++
++			my $counter = () = $line =~ /"/g;
++			my $more_than_one = $counter > 2;
++			if ($more_than_one) {
++				WARN("ARRAY_MODULE_MACRO",
++				"Prefer each array element on a separate line\n$herevet");
++			} elsif ($inline && $line !~ /\]/ && $line !~ /,/ && $line =~ /"/) {
++				WARN("ARRAY_MODULE_MACRO",
++				"Prefer declare ] on the same line\n$herevet");
++			} elsif (!$inline && $line =~ /\]/ && $line =~ /\"/) {
++				WARN("ARRAY_MODULE_MACRO",
++				"Prefer a new line after the last value and before ]\n$herevet");
++			} elsif ($inline && $line =~ /,/ && $line !~ /\]/) {
++				WARN("ARRAY_MODULE_MACRO",
++				"Prefer a new line after [\n$herevet");
++			}
++		}
++
++		#END OF ANALYZE FIELD
++		if ($line =~ /\]/) {
++			delete $array_parse_module{$key};
++		}
++
+ #trailing whitespace
+ 		if ($line =~ /^\+.*\015/) {
+ 			my $herevet = "$here\n" . cat_vet($rawline) . "\n";
 -- 
 2.34.1
 
