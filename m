@@ -1,115 +1,175 @@
-Return-Path: <linux-kernel+bounces-525129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FF8FA3EB2A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 04:16:55 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC2EBA3EB32
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 04:17:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DC6A19C5D33
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 03:17:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 389BD7A9E17
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 03:16:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55D071F7075;
-	Fri, 21 Feb 2025 03:16:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E8141F8EEE;
+	Fri, 21 Feb 2025 03:17:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="a4RAVbIO"
-Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com [209.85.221.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="mAQx6Drp"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23B431F3FC0
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 03:16:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1885F1F4299;
+	Fri, 21 Feb 2025 03:17:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740107803; cv=none; b=l7qNq/5Bq/55iKQC4IPMXpL28RAosyaz8iPK0EqTaRVtPAcdX3T8fVVm6Mehl8eyAROaQkSswIssMYtkQXZyDJPywJjgoT5JplgexAoR55KVyZ6yJJsoygpfxI2FWNHnMGRQsjxRL/BlwQM0HSLeOxOJAahr0WJ24tlEPG2VSmQ=
+	t=1740107836; cv=none; b=oQz8nERYbZ+T59Czt7HTK9Foov9RANA6aU+ipLbbIScCOGEuvIAhX5340FFXsqDtkWC97+NC+wUCWcPEYtEF0haI9/oCqe3xqZxC+fOIxjAbKiS8YnUjJIZVi0nSPHGlASkJubn+VsmdeCZpXad0uWEE1ews5Jzg2y4GBn3Grho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740107803; c=relaxed/simple;
-	bh=kdrOUzgVVdFR3sHFxXYQEjkbdG9MBlaaptabQxv0kQU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=F/yhH0jUGhJUAu3yqg79OVVrDdPps63rH4Q8AFZjXSJyBESOltYlvygcFqvXZ6WNFIa1XLHgOI1Dol5VPItp8QVstCNEeI1eWImeWolaecTkBjiag3F3Z+T0qaJZ41Uxol8TfkLsQkMEwm95oRLNkcG3t6lWfFKj01etreXQFcs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=a4RAVbIO; arc=none smtp.client-ip=209.85.221.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-52099627b5aso1113066e0c.1
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 19:16:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1740107801; x=1740712601; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DkwUVxurgul/K7FCcMY+3Tk9R0xuunIgonMxNv/xP3Q=;
-        b=a4RAVbIOfJ9x4isztn4snzAIQkKsa2B4Ev/2g9k8qeTpj9xGOAW87HuLHh5HVLExoX
-         lzAadz9B0iCjyj/k2wlypSEkZdlaov3Kur7BqYAC/qDAmeXIfHGOeyp6HJAe5/dT1+qR
-         +Q5bAVtg/QIEE+y+DUnyABwyURrH2xk3DqWvEwbSjsO8HgBmu5JYgMxYfgKXFlYKfA+K
-         h+YHXjAZ/MOqhqi3GJLJOUw7hn1WZZtlMLmy1iAss+p4Q6wEke2fx08JzXfhveqn9TWY
-         R0UaJaovVuhL6I5AXhPbom6thjGdPXeGd+8Yq354mUBhZTB4FO7GDPvrGbHvAUu2V+77
-         3icg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740107801; x=1740712601;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DkwUVxurgul/K7FCcMY+3Tk9R0xuunIgonMxNv/xP3Q=;
-        b=HsOIf8E3h4aDNZfqauEgbCdhCSc1ruHvf9tNPRpjdSsmb24oNadSSAVSxETmhpN/dy
-         +s/RmP3+RDKRGGQt7YMl9abbJNCMFFo6W/HyJS/H+KgDGIj2dAwo9gWk9Q1NyD1Ivzxa
-         pfJn4TdZ2OSkoFRFcxiZhG1VQiTj0iZ4rWxUQE4V/Fv1ABgaqugMii5pvEkOgnq7Aivl
-         ig71khjXJPq6ResIzSyaeO4DWxfMjHw/ZQR4tY5xxon4vBY4Y/KsV+0VzEZAZ7MYEzfa
-         kEiM211oQfc8UamhB3g1GMzQAu/4CDfTT1x8fJaspDCLNKY67o8mha35mOJcJvvZfrTF
-         RSLA==
-X-Forwarded-Encrypted: i=1; AJvYcCVjZTxo1P6bhnLA6mi8f+h5rSkEzvfoMxyCqZp2kdu42k/vlja4sYC9LN535EwJSR/K/SRNL2IRG/QQjzU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyd53bDYrYvWM2jYpc5ZygX4nNg3PjGezZzy4aSMDhxKhtM5oi9
-	jNHm9FBOHRRhYVHFxrj8k5h99od1Ox93gmugXcfoLuDZSPYQgdTO2863i55gnJZFjDZHKoESW1c
-	dG7r20vmBQpKLpxGebmYTCUoV2C2ZhIsU4iMp
-X-Gm-Gg: ASbGnctB/Uc7PqBUjhcms5t5jz3Q1U0P+LAr2fqebYImStpo7m7mns89ne6tj4XlZaz
-	a5lHAsyhkQ73Yq7+o4yCobIOH3x7y48y70Y5e9iwAzoH9no89KDd29tZuIVuPOWo0DrbNhq8iD2
-	QlMD6id5k=
-X-Google-Smtp-Source: AGHT+IH4wi2+Fbki2I5z7rt08OZ60QpOG7qQiecIvmmUTNGESL+MgXrnaybH2kx63UDin7eeHdz7nGr7qRecyFqb7AQ=
-X-Received: by 2002:a05:6122:1789:b0:520:a84c:1b59 with SMTP id
- 71dfb90a1353d-521dcfc0dd1mr3393922e0c.5.1740107801011; Thu, 20 Feb 2025
- 19:16:41 -0800 (PST)
+	s=arc-20240116; t=1740107836; c=relaxed/simple;
+	bh=iJDJch0SjMttKNbIuMAxM/QgbpgpGiUS5wxPD2nMqZ0=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:CC:References:
+	 In-Reply-To:Content-Type; b=MHf+/2kl7cB4eQ8Cn16+QhYJffrleH0zvfa51f3YDNs409fefBqK8m4DrgUuQa72+egQSFnpQo5dsWGscUDw5jfMFwboC6Nka/6h74YkJsuK3Zzz41yit9Sw1FPNVb6X9YBP8PDwdFE/T76M5vGWcd0pgTNv+Cbsj3fdmV4C2uc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=mAQx6Drp; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51KH74XP015230;
+	Fri, 21 Feb 2025 03:16:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	My5FZ8xkI5XrMJWsuxlfbUTUEoR46wnWNGCkHUDfsUA=; b=mAQx6DrpA66dAeYG
+	JYVe8FbP9moH6UXrEQBvh+GTUhdre1NqYetxcWnt0NQehP10n9jkGdt+EukvQKC2
+	W0jg0h5FRn6vVyjBztnWu1RNkH6qV0R9lbLKepw4P+FN4/1Osi+ItCcoNCM+e6dB
+	z5QJVFU+tei+DRdEQPdg+2A3+8Xy9O9B4ziyFIaupi2T6/E4Q2+bvTBwgv8ChS30
+	OR6fWV4eseC45O1Qx2iQ93KOSex0NoVKmBTDvgoAUTl4ok1RPAyJbpZWLAt9yHJa
+	G+10jczMFxhynnITGYpNvCmWQaM4ZNNrVxC5ml6nSK3KAEn3hXz0q4hY9NzUS6nM
+	aryysg==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44vyy4g9g9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 21 Feb 2025 03:16:54 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51L3GrO7018531
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 21 Feb 2025 03:16:53 GMT
+Received: from [10.71.115.190] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 20 Feb
+ 2025 19:16:52 -0800
+Message-ID: <a1dbb65a-d437-46e1-80ac-8dff3c97b81c@quicinc.com>
+Date: Thu, 20 Feb 2025 19:16:44 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241023212158.18718-1-casey@schaufler-ca.com>
- <20241023212158.18718-5-casey@schaufler-ca.com> <CAEjxPJ56H_Y-ObgNHrCggDK28NOARZ0CDmLDRvY5qgzu=YgE=A@mail.gmail.com>
- <CAHC9VhSSpLx=ku7ZJ7qVxHHyOZZPQWs_hoxVRZpTfhOJ=T2X9w@mail.gmail.com>
- <CAHC9VhQUUOqh3j9mK5eaVOc6H7JXsjH8vajgrDOoOGOBTszWQw@mail.gmail.com>
- <CAEjxPJ6-jL=h-Djxp5MGRbTexQF1vRDPNcwpxCZwFM22Gja0dg@mail.gmail.com>
- <CAEjxPJ5KTJ1DDaAJ89sSdxUetbP_5nHB5OZ0qL18m4b_5N10-w@mail.gmail.com>
- <1b6af217-a84e-4445-a856-3c69222bf0ed@schaufler-ca.com> <CAEjxPJ44NNZU7u7vLN_Oj4jeptZ=Mb9RkKvJtL=xGciXOWDmKA@mail.gmail.com>
- <eba48af3-a8ef-4220-87a1-c86b96bcdad8@schaufler-ca.com> <CAEjxPJ7aXgOCP4+1Lbfe2b5fjB9Mu1n2h2juDY1RjPgP10PUxQ@mail.gmail.com>
- <784b9c6d-22e1-44d0-86f8-d2b13c4b0e11@schaufler-ca.com>
-In-Reply-To: <784b9c6d-22e1-44d0-86f8-d2b13c4b0e11@schaufler-ca.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 20 Feb 2025 22:16:30 -0500
-X-Gm-Features: AWEUYZmAClGRobwy2rc6ntcXOfyVW75ozxug9Z5R0cdhhnSfjf0Qve2WSPi3N4M
-Message-ID: <CAHC9VhT968J3zBxtzJcnW+6AKzDKA4MzBgMYoHHXsEaREAe=ww@mail.gmail.com>
-Subject: Re: [PATCH v3 4/5] LSM: lsm_context in security_dentry_init_security
-To: Casey Schaufler <casey@schaufler-ca.com>
-Cc: Stephen Smalley <stephen.smalley.work@gmail.com>, linux-security-module@vger.kernel.org, 
-	jmorris@namei.org, serge@hallyn.com, keescook@chromium.org, 
-	john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp, 
-	linux-kernel@vger.kernel.org, selinux@vger.kernel.org, mic@digikod.net, 
-	ceph-devel@vger.kernel.org, linux-nfs@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+From: Wesley Cheng <quic_wcheng@quicinc.com>
+Subject: Re: [PATCH 2/7] dt-bindings: phy: Add the M31 based eUSB2 PHY
+ bindings
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Melody Olvera
+	<quic_molvera@quicinc.com>
+CC: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        "Catalin Marinas" <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        "Bjorn Andersson" <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>,
+        Satya Durga Srinivasu Prabhala
+	<quic_satyap@quicinc.com>,
+        Trilok Soni <quic_tsoni@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-phy@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20250113-sm8750_usb_master-v1-0-09afe1dc2524@quicinc.com>
+ <20250113-sm8750_usb_master-v1-2-09afe1dc2524@quicinc.com>
+ <a42wtus7y72mt5adklbwg2hjbuayxkeucs7t4xuzmxyag2mx7b@6wlsomzj4gha>
+Content-Language: en-US
+In-Reply-To: <a42wtus7y72mt5adklbwg2hjbuayxkeucs7t4xuzmxyag2mx7b@6wlsomzj4gha>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: ZVVB3qF4A6r8HrSQR6WqZF-X_Cie_t9E
+X-Proofpoint-ORIG-GUID: ZVVB3qF4A6r8HrSQR6WqZF-X_Cie_t9E
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-20_09,2025-02-20_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ priorityscore=1501 malwarescore=0 bulkscore=0 suspectscore=0 clxscore=1015
+ lowpriorityscore=0 mlxlogscore=999 spamscore=0 adultscore=0 phishscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2502210021
 
-On Thu, Feb 20, 2025 at 4:08=E2=80=AFPM Casey Schaufler <casey@schaufler-ca=
-.com> wrote:
->
-> Adding the lsm_context was cleaner. Not worth yet another roadblock.
-> I will have a patch asap. I'm dealing with a facilities issue at
-> Smack Labs (whole site being painted, everything in disarray) that
-> is slowing things down.
+Hi Dmitry,
 
-Sorry for the delay today, I was distracted by some meetings and
-wrestling with gcc v15 on my Fedora Rawhide dev/test system while I
-try to test the LSM init patchset.  Anyway, I'll add my comments to
-Stephen's formal patch posting.
+On 1/14/2025 2:12 AM, Dmitry Baryshkov wrote:
+> On Mon, Jan 13, 2025 at 01:52:08PM -0800, Melody Olvera wrote:
+>> From: Wesley Cheng <quic_wcheng@quicinc.com>
+>>
+>> On SM8750, the M31 eUSB2 PHY is being used to support USB2. Add the
+>> binding definition for the PHY driver.
+>>
+>> Signed-off-by: Wesley Cheng <quic_wcheng@quicinc.com>
+>> Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
+>> ---
+>>  .../bindings/phy/qcom,m31-eusb2-phy.yaml           | 84 ++++++++++++++++++++++
+>>  1 file changed, 84 insertions(+)
+>>
+>> +examples:
+>> +  - |
+>> +    #include <dt-bindings/clock/qcom,sm8750-gcc.h>
+>> +    #include <dt-bindings/clock/qcom,rpmh.h>
+>> +    #include <dt-bindings/clock/qcom,sm8750-tcsr.h>
+> 
+> This a typical comment, please actually update your internal
+> documentation: don't use GCC's and other clock controller's bindings in
+> examples for other blocks.
+> 
 
---=20
-paul-moore.com
+I can see that other examples also reference bindings from external
+drivers, otherwise I think it would throw an error for not being able to
+find the parents in properties such as, resets and clocks.  I tried to
+update my dtschema to ensure that this failure was not missed.
+
+I checked and made sure that no errors were not seen, so I started to
+wonder if maybe when this series was submitted the qcom,sm8750-gcc.h wasn't
+yet present on the kernel tree.  To confirm this, I removed the
+aforementioned header file, and got the same error/issue.  Now that the
+sm8750 gcc header has landed upstream, I believe that this error should be
+resolved.
+
+Thanks
+Wesley Cheng
+
+>> +
+>> +    usb_1_hsphy: phy@88e3000 {
+>> +        compatible = "qcom,sm8750-m31-eusb2-phy";
+>> +        reg = <0x88e3000 0x29c>;
+>> +
+>> +        clocks = <&tcsrcc TCSR_USB2_CLKREF_EN>;
+>> +        clock-names = "ref";
+>> +
+>> +        resets = <&gcc GCC_QUSB2PHY_PRIM_BCR>;
+>> +
+>> +        #phy-cells = <0>;
+>> +
+>> +        vdd-supply = <&vreg_l2d_0p88>;
+>> +        vdda12-supply = <&vreg_l3g_1p2>;
+>> +
+>> +    };
+>>
+>> -- 
+>> 2.46.1
+>>
+> 
 
