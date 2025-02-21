@@ -1,79 +1,171 @@
-Return-Path: <linux-kernel+bounces-526287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02110A3FC8C
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 18:01:54 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 137A6A3FC9A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 18:02:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EE0937AEED8
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:59:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EDBCA7AAD3E
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:00:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF7C9226529;
-	Fri, 21 Feb 2025 17:00:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48F77241CA9;
+	Fri, 21 Feb 2025 17:01:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="esKVWQ8V"
-Received: from mr85p00im-ztdg06011101.me.com (mr85p00im-ztdg06011101.me.com [17.58.23.185])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RtGRm0k7"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA47321764B
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 17:00:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.23.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BF0D2405E4
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 17:01:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740157212; cv=none; b=lCAeVkSxj1MVBkBj5JbjufM4ViASsSqjFT+TiaA2fwWeOgUAEFWJyPCYXhv/Q/8sU5nq+5h4IZH2bB3AQ6xBreYsyxmJEFQ0wz8d5rRpdHnjXkM59+cCuM4VKE9gbs4gVhkOBezpBODKOkswRSbaF1CMCyVJ8vfLFjtg9rES00g=
+	t=1740157263; cv=none; b=mlXDtMxUeAoskvaFg+eWJ9CQlZSDZ7jc6WFeFnEtwMnhLORvBUHwcr0O0evw1SK5OOTM43fLKcTYA71VVHNGaxlEJaQUTth5VDMfWTKfMpS62UAljqnl/d2m7IUTHjge4yrslTWFA8ZZEIydXDRQHRrZfkS1VAehR2Xk3dNOe+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740157212; c=relaxed/simple;
-	bh=LRLjnoPeYF6ilJFr8bD8PfFt+L04X0ykkN1u8Qbb7sc=;
-	h=Content-Type:From:Mime-Version:Date:Subject:Message-Id:Cc:To; b=T64cf0bYXc+v5H1vSu6GmC4yH4XnfQyxIys8Yp0Z9l8OfW6pMsRUiwYxb0meXIeJMBCM6+uGfCZ89SO2RH4yEoRGsGbYW8FHK7zTVD47UqNHUuvcDONBPL7y7KAD218U7h0Yde0zHdtZaAoH00TjGCI2Oy44gYYxKhQtbWhYnok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=esKVWQ8V; arc=none smtp.client-ip=17.58.23.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; bh=LRLjnoPeYF6ilJFr8bD8PfFt+L04X0ykkN1u8Qbb7sc=;
-	h=Content-Type:From:Mime-Version:Date:Subject:Message-Id:To:x-icloud-hme;
-	b=esKVWQ8V4ak7wpeBevg37+9kVQPuDAo7vPIpDyGYonLK8HwxuaQpEvrhgPzQv7wNo
-	 MBF9i0I7TgzY940DzDJCo8y+Fr84OZXHiVAcr8NU+jmzg3cD/qFa07FCNDcK+Z0Va3
-	 Fsl4JJL3DXbrapeExxvC+nT0NwF0OowXd/C/spcnq1/1v6ekfNkFeXPh2W6BJLuJX+
-	 aXajuonQ6SLQshZOyllB6ht7igw/pn/QA9Q2UHQjhnWxtWrrTJvxJpYto7HJnGNslp
-	 7f2vSHETXGj44zE7oYNr19/o0hx/C2wttTltNJZneGYoZ5/QWANhKA2EtyJAaufGHQ
-	 RKO2/dlbPTFvw==
-Received: from smtpclient.apple (mr38p00im-dlb-asmtp-mailmevip.me.com [17.57.152.18])
-	by mr85p00im-ztdg06011101.me.com (Postfix) with ESMTPSA id 1F73CDA040D;
-	Fri, 21 Feb 2025 17:00:07 +0000 (UTC)
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-From: MICHAEL TURNER <kameronwayneturner@icloud.com>
+	s=arc-20240116; t=1740157263; c=relaxed/simple;
+	bh=j+nR+337vj5+MRg/OUYVi4F6tWqvE2RTx8jtkTapEhE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hkmuIbpXlufaisFsJKre0+UND45+5nwCzNKSgZC0sYMu8H8rJGwAumlls8UYWVWs0XoWQILmKdM4paR0WcsBOa5de/wwEszmrpXbxiZ3lMrix47DAQnNyU4cGhJkKR5E7xytJ9iOQQVk05XA2vn+gTykarmbowU/s2gaAN2Q2Ms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RtGRm0k7; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740157263; x=1771693263;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=j+nR+337vj5+MRg/OUYVi4F6tWqvE2RTx8jtkTapEhE=;
+  b=RtGRm0k7SBiAnfrEPuQVmuYAo7kTU/+8q/GhOLLhcP3UzK/pOUeR4Uc4
+   hu9tAbMOSUqYNMDjXxjSWsh7xQdsvNRpmPBNosSBpOxWbDbJfCyeSwCAT
+   /vvDJR8ieDNZuCQxzuEVoGroEU5O2Kj+pU75RlSWjGyh7pIgDKX/PSCM9
+   msE9Uijn3wok/w+PZ5/DvGxdFmuUK1U+oUAezqHchlB4EOf9M63bXWVOe
+   4naXlWlDMeN0TOmVAwPACxZXmWJSRMOKV4udQCzy+vKkNNLE7LHOzO5jW
+   3EYOz34quKRIzW2Evyn79ePNkhGXpH7CHPU81WVZDQVTK52Lflqslv15f
+   Q==;
+X-CSE-ConnectionGUID: DO/0L/z+SdeBRa2mNqNdVw==
+X-CSE-MsgGUID: GYVw2SrJTr6s7o1LNuDBng==
+X-IronPort-AV: E=McAfee;i="6700,10204,11352"; a="44765399"
+X-IronPort-AV: E=Sophos;i="6.13,305,1732608000"; 
+   d="scan'208";a="44765399"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Feb 2025 09:01:02 -0800
+X-CSE-ConnectionGUID: gMIxSY2/TiGO4+kTXeK1HA==
+X-CSE-MsgGUID: wO5gwcSXQzykwLKDKs5oOQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,305,1732608000"; 
+   d="scan'208";a="146261314"
+Received: from aschofie-mobl2.amr.corp.intel.com (HELO [10.125.110.177]) ([10.125.110.177])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Feb 2025 09:01:01 -0800
+Message-ID: <32af68b8-4280-4c15-8e5c-be807c282f94@intel.com>
+Date: Fri, 21 Feb 2025 09:01:03 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (1.0)
-Date: Fri, 21 Feb 2025 10:59:53 -0600
-Subject: Re: [PATCH v2 2/5] modules: Refactor + kdoc elf_validity_cached_copy
-Message-Id: <75A63190-F010-4CF5-B09D-45BF74FD3909@icloud.com>
-Cc: gary@garyguo.net, laura@labbott.name, linux-kbuild@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, masahiroy@kernel.org, mcgrof@kernel.org,
- mmaurer@google.com, nathan@kernel.org, ndesaulniers@google.com,
- nicolas@fjasle.eu, ojeda@kernel.org, rust-for-linux@vger.kernel.org
-To: greg@kroah.com
-X-Mailer: iPhone Mail (22D72)
-X-Proofpoint-GUID: WE4r5jYP7-uRAtXQs623InvNKiKYM718
-X-Proofpoint-ORIG-GUID: WE4r5jYP7-uRAtXQs623InvNKiKYM718
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-21_05,2025-02-20_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 phishscore=0 bulkscore=0
- suspectscore=0 mlxlogscore=643 adultscore=0 spamscore=0 mlxscore=0
- clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2502210120
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/4] pkeys: add API to switch to permissive pkey register
+To: Dmitry Vyukov <dvyukov@google.com>, mathieu.desnoyers@efficios.com,
+ peterz@infradead.org, boqun.feng@gmail.com, tglx@linutronix.de,
+ mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com,
+ aruna.ramakrishna@oracle.com, elver@google.com
+Cc: "Paul E. McKenney" <paulmck@kernel.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+References: <cover.1739790300.git.dvyukov@google.com>
+ <ffd123bb0c73df5cdd3a5807b360bd390983150b.1739790300.git.dvyukov@google.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <ffd123bb0c73df5cdd3a5807b360bd390983150b.1739790300.git.dvyukov@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Remove everything that is attacking me this is invalid=20
-All information. Has been stolen I=E2=80=99ve been attacked over 2yrs=20
-Please stop all of this=20
-I didn=E2=80=99t approve any of this=20
+On 2/17/25 03:07, Dmitry Vyukov wrote:
+...
+>  /*
+>   * If more than 16 keys are ever supported, a thorough audit
+>   * will be necessary to ensure that the types that store key
+> @@ -123,4 +125,16 @@ static inline int vma_pkey(struct vm_area_struct *vma)
+>  	return (vma->vm_flags & vma_pkey_mask) >> VM_PKEY_SHIFT;
+>  }
+>  
+> +typedef u32 pkey_reg_t;
+> +
+> +static inline pkey_reg_t switch_to_permissive_pkey_reg(void)
+> +{
+> +	return write_pkru(0);
+> +}
 
-Sent from my iPhone=
+Just a naming nit: the "switch_to" and "reg" parts of this don't quite
+parse for me. This is writing a _value_ to a register. Maybe:
+
+	write_permissive_pkey_val()
+or
+	set_permissive_pkey_val()
+
+would be a better name.
+
+> diff --git a/include/linux/pkeys.h b/include/linux/pkeys.h
+> index 86be8bf27b41b..d94a0ae7a784b 100644
+> --- a/include/linux/pkeys.h
+> +++ b/include/linux/pkeys.h
+> @@ -48,4 +48,26 @@ static inline bool arch_pkeys_enabled(void)
+>  
+>  #endif /* ! CONFIG_ARCH_HAS_PKEYS */
+>  
+> +#ifndef CONFIG_ARCH_HAS_PERMISSIVE_PKEY
+> +
+> +/*
+> + * Common name for value of the register that controls access to PKEYs
+> + * (called differently on different arches: PKRU, POR, AMR).
+> + */
+> +typedef int pkey_reg_t;
+Tiny nit: Should this be an unsigned type?
+
+Nobody should be manipulating it, but I'd be surprised if any of the
+architectures have a signed type for it.
 
