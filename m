@@ -1,263 +1,227 @@
-Return-Path: <linux-kernel+bounces-526631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 918A2A40144
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 21:43:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 106D6A40149
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 21:45:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D66370087F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 20:42:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3B5E864272
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 20:45:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB1FF2512FC;
-	Fri, 21 Feb 2025 20:42:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58C31253331;
+	Fri, 21 Feb 2025 20:45:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ONeIxLb+"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K0ScXuby"
+Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com [209.85.221.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 498411DC985;
-	Fri, 21 Feb 2025 20:42:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B7181FF1A2;
+	Fri, 21 Feb 2025 20:45:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740170569; cv=none; b=HolJ8G2OqIGFFddV/QYjvAPvHJJVx7f3RBlcgj1VX6PnkKevXtKOLncDsP2Q1mRR+jCA65mzkWvKGShQOAcwDAbw33+OgvVtZ3UtoQznIrlk5AZBjSFCHQWm7LoTwdUbB3UwzDfhC16Zx8EzjlDjFiIayM27Acy2aJgmpQD5tyc=
+	t=1740170736; cv=none; b=c+MZUyE3/TCvgXPdp3Ona1kRaUClsiI8CP+Zr+R0vnX1eux5zpGA7n292niFNhpydCkvTEjlEuiKmw5yLTtKXZhXn8Xkcm5ocd+zqAEA8V6oyPVU/MHGpwyXwemhzeOkD8eZx2zABHc4bGAM2jnHoseF718TEe6XSeIRRc/k1J4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740170569; c=relaxed/simple;
-	bh=WDe+to5rRRq7lsLv9P59RikBY/hODwqoknD2e2l+CDo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ArvN0S6tsm0mw1p5pfPCYXN1+UHMkgh/Kv6n5tQZnMj3LxNRsVYKjM/rttuwu7qB/PIoRhxONEQVK2qAzizaCdLIl3/sxMCedT3ITsI84RnARign2RmWkpmq0j1otDlFetnKB/VVzZHqdeYEvdj22SaLbloaiv+Tqig+W+GYfZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ONeIxLb+; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740170567; x=1771706567;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=WDe+to5rRRq7lsLv9P59RikBY/hODwqoknD2e2l+CDo=;
-  b=ONeIxLb+QY68H/f+MVNnKKc1+ghZHbxI9aTiv4ql71iT3tacqrX371OI
-   c/DYt9B0utm5iF3Xgn4/RH3KPxBNiQKkdO6mkvFpZyIU9894tssztSLqJ
-   V0kyXq+T3+JGWIWfKq+eXOQxbBQWwuSqLMfpgG+O54Fmm5zIJ/mzGdEQA
-   wmRpztoXqlhLNoqBpOUJcqcDobKR87vf5sowUz3e+avIxfx1SGrItOUPP
-   mogNqScPpVEcGkfVNBoMkC1S32agJyfowFJtHVkTJP8B+zR4stWoA3vyB
-   rCGK+O+mRgaac9fdnhlGwTNp9+o5f/WATZ1E+EyTG1T+xrmri5D1Qum8J
-   g==;
-X-CSE-ConnectionGUID: BrKZ3BCATom6HTFo9aIJJA==
-X-CSE-MsgGUID: 41NCCJEMTYav/cZS10ks7w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11352"; a="40922583"
-X-IronPort-AV: E=Sophos;i="6.13,305,1732608000"; 
-   d="scan'208";a="40922583"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Feb 2025 12:42:47 -0800
-X-CSE-ConnectionGUID: zC+uNe1dTIO9JBrdJOTyTw==
-X-CSE-MsgGUID: swnSrLXlTzum+CJRrwvp1A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="115308379"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Feb 2025 12:42:39 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tlZr0-0000000DkDP-0Fwy;
-	Fri, 21 Feb 2025 22:42:34 +0200
-Date: Fri, 21 Feb 2025 22:42:33 +0200
-From: "andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>
-To: Aditya Garg <gargaditya08@live.com>
-Cc: "pmladek@suse.com" <pmladek@suse.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	"linux@rasmusvillemoes.dk" <linux@rasmusvillemoes.dk>,
-	"senozhatsky@chromium.org" <senozhatsky@chromium.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
-	"mripard@kernel.org" <mripard@kernel.org>,
-	"tzimmermann@suse.de" <tzimmermann@suse.de>,
-	"airlied@gmail.com" <airlied@gmail.com>,
-	"simona@ffwll.ch" <simona@ffwll.ch>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"apw@canonical.com" <apw@canonical.com>,
-	"joe@perches.com" <joe@perches.com>,
-	"dwaipayanray1@gmail.com" <dwaipayanray1@gmail.com>,
-	"lukas.bulwahn@gmail.com" <lukas.bulwahn@gmail.com>,
-	"sumit.semwal@linaro.org" <sumit.semwal@linaro.org>,
-	"christian.koenig@amd.com" <christian.koenig@amd.com>,
-	Kerem Karabay <kekrby@gmail.com>, Aun-Ali Zaidi <admin@kodeit.net>,
-	Orlando Chamberlain <orlandoch.dev@gmail.com>,
-	Atharva Tiwari <evepolonium@gmail.com>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-	"linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>,
-	Hector Martin <marcan@marcan.st>,
-	"linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-	Asahi Linux Mailing List <asahi@lists.linux.dev>,
-	Sven Peter <sven@svenpeter.dev>, Janne Grunau <j@jannau.net>
-Subject: Re: [PATCH v3 3/3] drm/tiny: add driver for Apple Touch Bars in x86
- Macs
-Message-ID: <Z7jlORk0MiMFTmp6@smile.fi.intel.com>
-References: <DC5079B2-9D3D-4917-A50D-20D633071808@live.com>
- <8F522D41-5417-467E-B9D3-7D9FC24AE536@live.com>
- <Z7igVXqvRYTVFpXU@smile.fi.intel.com>
- <A373EDB5-528D-4ECF-8CF3-4F96DE6E3797@live.com>
+	s=arc-20240116; t=1740170736; c=relaxed/simple;
+	bh=IDwXYbAbaaa0cLeEfHTnnJ8xgcFKZKRtfaPS4fpKv2g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tAEBUsc1enMmajNjJwG7dpnBX0olYtpBDb69uGLrNhUWmXelBbvlGFoAqJDDVlfvWy/JvEcUrKh/bfErgq8eVgTpyvImFStgH1DOsbzL7mBFInUCKagIsC3hDnaQ2nJ5MWzTMqSBCskhhrE0IcyomPmI+EDrO8lL3k2x2An9qgI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K0ScXuby; arc=none smtp.client-ip=209.85.221.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-5209dad13b5so458335e0c.2;
+        Fri, 21 Feb 2025 12:45:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740170734; x=1740775534; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=u/BI4f5Zyto4/LMtAo+yFdAx69tWDkP/W/A9uk7AjEE=;
+        b=K0ScXubycGC+lCTJh2yztqeABYZceS199VTJ9HbkmF/JTR8qAHZWftQZ0vklPfxy/5
+         2I+8JD7EjvPfO89wLZhF0ji8b7OGy9Jnzpo+aH09iNOr5oQGyR4H8Q+7Ly63xODPRzUx
+         wg7igrbzs6sV/z8b8r0vTBvN27fLiHvgrUn/sHCIdvwF77kKC2UvWo3rIidIzGsyh5OL
+         b434Pnn/OwRozmrknCQp+TYkmCGDvtTkRIvzBtTGx8NuJGqqYVXwEWcdJC/XPWd/FVvD
+         eb1T0Ilz+Od+VUnVHXsz07u980TtZitx1Fk+dsFlwTLFCLt8z9FSuKP5JGjWjBasgoew
+         4exQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740170734; x=1740775534;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=u/BI4f5Zyto4/LMtAo+yFdAx69tWDkP/W/A9uk7AjEE=;
+        b=Fx5kNnDTDZ8KnPsIahV6cRip/lu3iswXkF/ZxFngHPr5VAwJMmmMIu/e/UIYd5Trc5
+         ZGHRLcWe2LnPFCMRe6tQcL+FZTUoFNUSJimCAteCgM/usT9+Fv2iBCg5qdCRxcv/oaTZ
+         zgPMf6Z3CAfGMjDzNpky0XkzkYKpt7Y8PSAL4M2i9KFl2AT25Qx/DpA9DIQsNvw0CKdu
+         pQpS9b/Fjl4AIgipdQXavRZKnnTD4nhs5vVMs4HC5pbRuSZDqAftwwGxEPZRGS38gtWQ
+         Ji95UevMSvbpQ0o9tQbZ0t12e8ONnZD0gLg6zThlaPvOQoB4c7IUvj8HEK2/t2+AuMoD
+         5u/w==
+X-Forwarded-Encrypted: i=1; AJvYcCU3Wxlg9JrzZmvw1NCdCy6ng+fKsVn6qYY2psyzvOTClmCm2ZS+PLP/5G783og2taZkRIRh8ioMS5A=@vger.kernel.org, AJvYcCUbDMKgEQlDCE5UiGXhs+UE8JI/21q1O8vhunV6wYjiZ5SR6dfedc2i7qiluVLcmIx3J6Mw06FbxHqI+gOm@vger.kernel.org, AJvYcCVMyFL1oTjpUwUQVEsETB/cripmsm5sEEhxG9ppt80a3GUphEluwJ0ey5ljPZ9UTT0S73lLcYr1ddP+KErI+pBc5vQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyo485IgGfgbLkFIndc3ZBeL72D39X3ZfpYiXRwNfc1qmHVGjKw
+	LH2OhcqjVRAfA5q0XyN4wpQdeuH4OZiSZb55G8BFAU88xiLuJYMChZEWNdpNH/UHEn1GUMQde/c
+	bNZvLAvGfrCAWBn+gVQ0ZK+jtnb0=
+X-Gm-Gg: ASbGncv3nVZ8XlvMVkXNzvm2eISGuWyDmYFeNF+yOGiea4OWpMokRFGIFg2bEG6NeRr
+	Ak+Hdt0512OxJx9EqCT05l0RYNMZ9hOvW0VVz2kkp7aCAUjUYKG0wRxfuwWvq7g7VKKD6CrKRJk
+	j594PR1p28r4/oKk1Yhsrkl6zHlNRl0/kkoboDU0nY
+X-Google-Smtp-Source: AGHT+IHLr1VHf1D0vuJZbfMW80rKDumx3wgqwp/1CIbZvZpjPwB0sPaC8wpyzawoyNUTqJ5JNrLXyahhZsjNs9RE3/g=
+X-Received: by 2002:a05:6122:3544:b0:520:5a87:66fd with SMTP id
+ 71dfb90a1353d-521ee435514mr3338955e0c.7.1740170733827; Fri, 21 Feb 2025
+ 12:45:33 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <A373EDB5-528D-4ECF-8CF3-4F96DE6E3797@live.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20250220150110.738619-1-fabrizio.castro.jz@renesas.com> <20250220150110.738619-2-fabrizio.castro.jz@renesas.com>
+In-Reply-To: <20250220150110.738619-2-fabrizio.castro.jz@renesas.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Fri, 21 Feb 2025 20:45:06 +0000
+X-Gm-Features: AWEUYZnshaVDPS8IS-SGk5a9yuCIBL9snVJ8f3mGAzFu2ftI2qtH-6QgorYlHO8
+Message-ID: <CA+V-a8vX9CT-XcG=FW+qWZMbJzJOP=SQBbMncVASgBfKmicFuQ@mail.gmail.com>
+Subject: Re: [PATCH v4 1/7] clk: renesas: r9a09g057: Add entries for the DMACs
+To: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Feb 21, 2025 at 07:13:06PM +0000, Aditya Garg wrote:
-> > On Fri, Feb 21, 2025 at 11:37:57AM +0000, Aditya Garg wrote:
+On Thu, Feb 20, 2025 at 3:03=E2=80=AFPM Fabrizio Castro
+<fabrizio.castro.jz@renesas.com> wrote:
+>
+> Add clock and reset entries for the Renesas RZ/V2H(P) DMAC IPs.
+>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+> ---
+> v3->v4:
+> * No change.
+> v2->v3:
+> * No change.
+> v1->v2:
+> * No change.
+> ---
+>  drivers/clk/renesas/r9a09g057-cpg.c | 24 ++++++++++++++++++++++++
+>  drivers/clk/renesas/rzv2h-cpg.h     |  2 ++
+>  2 files changed, 26 insertions(+)
+>
+Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-...
+Cheers,
+Prabhakar
 
-> >> +} __packed;
-> > 
-> > Why __packed? Please explain and justify for all the data types that are marked
-> > with this attribute.
-> 
-> Just following the original Windows driver here (#pragma pack) :
-> 
-> https://github.com/imbushuo/DFRDisplayKm/blob/master/src/DFRDisplayKm/include/DFRHostIo.h
-> 
-> IMO these structures are used for communication with the Touch Bar over USB.
-> The hardware expects a very specific layout for the data it receives and
-> sends. If the compiler were to insert padding for alignment, it would break
-> the communication protocol because the fields would not be in the expected
-> positions.
-
-What padding, please? Why TCP UAPI headers do not have these attributes?
-Think about it, and think about what actually __packed does and how it affects
-(badly) the code generation. Otherwise it looks like a cargo cult.
-
-> I tried removing __packed btw and driver no longer works.
-
-So, you need to find a justification why. But definitely not due to padding in
-many of them. They can go without __packed as they are naturally aligned.
-
-...
-
-> >> + if (response->msg == APPLETBDRM_MSG_SIGNAL_READINESS) {
-> >> + if (!readiness_signal_received) {
-> >> + readiness_signal_received = true;
-> >> + goto retry;
-> >> + }
-> >> +
-> >> + drm_err(drm, "Encountered unexpected readiness signal\n");
-> >> + return -EIO;
-> >> + }
-> >> +
-> >> + if (actual_size != size) {
-> >> + drm_err(drm, "Actual size (%d) doesn't match expected size (%lu)\n",
-> >> + actual_size, size);
-> >> + return -EIO;
-> >> + }
-> >> +
-> >> + if (response->msg != expected_response) {
-> >> + drm_err(drm, "Unexpected response from device (expected %p4ch found %p4ch)\n",
-> >> + &expected_response, &response->msg);
-> >> + return -EIO;
-> > 
-> > For three different cases the same error code, can it be adjusted more to the
-> > situation?
-> 
-> All these are I/O errors, you got any suggestion?
-
-Your email client mangled the code so badly that it's hard to read. But I would
-suggest to use -EINTR in the first case, and -EBADMSG. But also you may consider
--EPROTO.
-
-> >> + }
-
-...
-
-> >> + if (ret)
-> >> + return ret;
-> > 
-> >> + else if (!new_plane_state->visible)
-> > 
-> > Why 'else'? It's redundant.
-> 
-> I’ve just followed what other drm drivers are doing here:
-> 
-> https://elixir.bootlin.com/linux/v6.13.3/source/drivers/gpu/drm/tiny/bochs.c#L436
-> https://elixir.bootlin.com/linux/v6.13.3/source/drivers/gpu/drm/tiny/cirrus.c#L363
-> 
-> And plenty more
-
-A bad example is still a bad example. 'else' is simply redundant in this
-case and add a noisy to the code.
-
-> I won’t mind removing else. You want that?
-
-Sure.
-
-...
-
-> >> + request_size = ALIGN(sizeof(struct appletbdrm_fb_request) +
-> >> +        frames_size +
-> >> +        sizeof(struct appletbdrm_fb_request_footer), 16);
-> > 
-> > Missing header for ALIGN().
-> > 
-> > But have you checked overflow.h for the possibility of using some helper macros
-> > from there? This is what should be usually done for k*alloc() in the kernel.
-> 
-> I don’t really think we need a macro here.
-
-Hmm... is frames_size known to be in a guaranteed range to make sure no
-potential overflow happens?
-
-> >> + appletbdrm_state->request = kzalloc(request_size, GFP_KERNEL);
-> >> +
-> >> + if (!appletbdrm_state->request)
-> >> + return -ENOMEM;
-
-...
-
-> >> + request->msg_id = timestamp & 0xff;
-> > 
-> > Why ' & 0xff'?
-> 
-> https://github.com/imbushuo/DFRDisplayKm/blob/master/src/DFRDisplayKm/DfrDisplay.c#L147
-
-This is not an answer.
-Why do you need this here? Isn't the type of msg_id enough?
-
-...
-
-> >> + adev->mode = (struct drm_display_mode) {
-> > 
-> > Why do you need a compound literal here? Perhaps you want to have that to be
-> > done directly in DRM_MODE_INIT()?
-> 
-> I really don’t find this as an issue. You want me to declare another structure, basically this?:
-
-Nope, I'm asking if the DRM_MODE_INIT() is done in a way that it only can be
-used for the static data. Seems like the case. Have you tried to convert
-DRM_MODE_INIT() to be always a compound literal? Does it break things?
-
-> struct drm_display_mode mode = {
-> DRM_MODE_INIT(60, adev->height, adev->width,
-> DRM_MODE_RES_MM(adev->height, 218),
-> DRM_MODE_RES_MM(adev->width, 218))
-> };
-> adev->mode = mode;
-> 
-> >> + DRM_MODE_INIT(60, adev->height, adev->width,
-> >> +       DRM_MODE_RES_MM(adev->height, 218),
-> >> +       DRM_MODE_RES_MM(adev->width, 218))
-> >> + };
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+> diff --git a/drivers/clk/renesas/r9a09g057-cpg.c b/drivers/clk/renesas/r9=
+a09g057-cpg.c
+> index 3705e18f66ad..d63eafbca780 100644
+> --- a/drivers/clk/renesas/r9a09g057-cpg.c
+> +++ b/drivers/clk/renesas/r9a09g057-cpg.c
+> @@ -31,6 +31,8 @@ enum clk_ids {
+>         CLK_PLLVDO,
+>
+>         /* Internal Core Clocks */
+> +       CLK_PLLCM33_DIV4,
+> +       CLK_PLLCM33_DIV4_PLLCM33,
+>         CLK_PLLCM33_DIV16,
+>         CLK_PLLCLN_DIV2,
+>         CLK_PLLCLN_DIV8,
+> @@ -39,6 +41,8 @@ enum clk_ids {
+>         CLK_PLLDTY_ACPU_DIV2,
+>         CLK_PLLDTY_ACPU_DIV4,
+>         CLK_PLLDTY_DIV16,
+> +       CLK_PLLDTY_RCPU,
+> +       CLK_PLLDTY_RCPU_DIV4,
+>         CLK_PLLVDO_CRU0,
+>         CLK_PLLVDO_CRU1,
+>         CLK_PLLVDO_CRU2,
+> @@ -85,6 +89,9 @@ static const struct cpg_core_clk r9a09g057_core_clks[] =
+__initconst =3D {
+>         DEF_FIXED(".pllvdo", CLK_PLLVDO, CLK_QEXTAL, 105, 2),
+>
+>         /* Internal Core Clocks */
+> +       DEF_FIXED(".pllcm33_div4", CLK_PLLCM33_DIV4, CLK_PLLCM33, 1, 4),
+> +       DEF_DDIV(".pllcm33_div4_pllcm33", CLK_PLLCM33_DIV4_PLLCM33,
+> +                CLK_PLLCM33_DIV4, CDDIV0_DIVCTL1, dtable_2_64),
+>         DEF_FIXED(".pllcm33_div16", CLK_PLLCM33_DIV16, CLK_PLLCM33, 1, 16=
+),
+>
+>         DEF_FIXED(".pllcln_div2", CLK_PLLCLN_DIV2, CLK_PLLCLN, 1, 2),
+> @@ -95,6 +102,8 @@ static const struct cpg_core_clk r9a09g057_core_clks[]=
+ __initconst =3D {
+>         DEF_FIXED(".plldty_acpu_div2", CLK_PLLDTY_ACPU_DIV2, CLK_PLLDTY_A=
+CPU, 1, 2),
+>         DEF_FIXED(".plldty_acpu_div4", CLK_PLLDTY_ACPU_DIV4, CLK_PLLDTY_A=
+CPU, 1, 4),
+>         DEF_FIXED(".plldty_div16", CLK_PLLDTY_DIV16, CLK_PLLDTY, 1, 16),
+> +       DEF_DDIV(".plldty_rcpu", CLK_PLLDTY_RCPU, CLK_PLLDTY, CDDIV3_DIVC=
+TL2, dtable_2_64),
+> +       DEF_FIXED(".plldty_rcpu_div4", CLK_PLLDTY_RCPU_DIV4, CLK_PLLDTY_R=
+CPU, 1, 4),
+>
+>         DEF_DDIV(".pllvdo_cru0", CLK_PLLVDO_CRU0, CLK_PLLVDO, CDDIV3_DIVC=
+TL3, dtable_2_4),
+>         DEF_DDIV(".pllvdo_cru1", CLK_PLLVDO_CRU1, CLK_PLLVDO, CDDIV4_DIVC=
+TL0, dtable_2_4),
+> @@ -115,6 +124,16 @@ static const struct cpg_core_clk r9a09g057_core_clks=
+[] __initconst =3D {
+>  };
+>
+>  static const struct rzv2h_mod_clk r9a09g057_mod_clks[] __initconst =3D {
+> +       DEF_MOD("dmac_0_aclk",                  CLK_PLLCM33_DIV4_PLLCM33,=
+ 0, 0, 0, 0,
+> +                                               BUS_MSTOP(5, BIT(9))),
+> +       DEF_MOD("dmac_1_aclk",                  CLK_PLLDTY_ACPU_DIV2, 0, =
+1, 0, 1,
+> +                                               BUS_MSTOP(3, BIT(2))),
+> +       DEF_MOD("dmac_2_aclk",                  CLK_PLLDTY_ACPU_DIV2, 0, =
+2, 0, 2,
+> +                                               BUS_MSTOP(3, BIT(3))),
+> +       DEF_MOD("dmac_3_aclk",                  CLK_PLLDTY_RCPU_DIV4, 0, =
+3, 0, 3,
+> +                                               BUS_MSTOP(10, BIT(11))),
+> +       DEF_MOD("dmac_4_aclk",                  CLK_PLLDTY_RCPU_DIV4, 0, =
+4, 0, 4,
+> +                                               BUS_MSTOP(10, BIT(12))),
+>         DEF_MOD_CRITICAL("icu_0_pclk_i",        CLK_PLLCM33_DIV16, 0, 5, =
+0, 5,
+>                                                 BUS_MSTOP_NONE),
+>         DEF_MOD_CRITICAL("gic_0_gicclk",        CLK_PLLDTY_ACPU_DIV4, 1, =
+3, 0, 19,
+> @@ -223,6 +242,11 @@ static const struct rzv2h_mod_clk r9a09g057_mod_clks=
+[] __initconst =3D {
+>
+>  static const struct rzv2h_reset r9a09g057_resets[] __initconst =3D {
+>         DEF_RST(3, 0, 1, 1),            /* SYS_0_PRESETN */
+> +       DEF_RST(3, 1, 1, 2),            /* DMAC_0_ARESETN */
+> +       DEF_RST(3, 2, 1, 3),            /* DMAC_1_ARESETN */
+> +       DEF_RST(3, 3, 1, 4),            /* DMAC_2_ARESETN */
+> +       DEF_RST(3, 4, 1, 5),            /* DMAC_3_ARESETN */
+> +       DEF_RST(3, 5, 1, 6),            /* DMAC_4_ARESETN */
+>         DEF_RST(3, 6, 1, 7),            /* ICU_0_PRESETN_I */
+>         DEF_RST(3, 8, 1, 9),            /* GIC_0_GICRESET_N */
+>         DEF_RST(3, 9, 1, 10),           /* GIC_0_DBG_GICRESET_N */
+> diff --git a/drivers/clk/renesas/rzv2h-cpg.h b/drivers/clk/renesas/rzv2h-=
+cpg.h
+> index fd8eb985c75b..576a070763cb 100644
+> --- a/drivers/clk/renesas/rzv2h-cpg.h
+> +++ b/drivers/clk/renesas/rzv2h-cpg.h
+> @@ -38,11 +38,13 @@ struct ddiv {
+>  #define CPG_CDDIV3             (0x40C)
+>  #define CPG_CDDIV4             (0x410)
+>
+> +#define CDDIV0_DIVCTL1 DDIV_PACK(CPG_CDDIV0, 4, 3, 1)
+>  #define CDDIV0_DIVCTL2 DDIV_PACK(CPG_CDDIV0, 8, 3, 2)
+>  #define CDDIV1_DIVCTL0 DDIV_PACK(CPG_CDDIV1, 0, 2, 4)
+>  #define CDDIV1_DIVCTL1 DDIV_PACK(CPG_CDDIV1, 4, 2, 5)
+>  #define CDDIV1_DIVCTL2 DDIV_PACK(CPG_CDDIV1, 8, 2, 6)
+>  #define CDDIV1_DIVCTL3 DDIV_PACK(CPG_CDDIV1, 12, 2, 7)
+> +#define CDDIV3_DIVCTL2 DDIV_PACK(CPG_CDDIV3, 8, 3, 14)
+>  #define CDDIV3_DIVCTL3 DDIV_PACK(CPG_CDDIV3, 12, 1, 15)
+>  #define CDDIV4_DIVCTL0 DDIV_PACK(CPG_CDDIV4, 0, 1, 16)
+>  #define CDDIV4_DIVCTL1 DDIV_PACK(CPG_CDDIV4, 4, 1, 17)
+> --
+> 2.34.1
+>
+>
 
