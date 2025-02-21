@@ -1,156 +1,124 @@
-Return-Path: <linux-kernel+bounces-526127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 946FAA3FA6E
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:13:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBDEAA3FA42
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:10:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E38274259E9
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:06:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D3A871890D91
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:05:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18D44224B04;
-	Fri, 21 Feb 2025 15:59:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B569213E86;
+	Fri, 21 Feb 2025 15:59:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=ssi.bg header.i=@ssi.bg header.b="e2LjwSLl"
-Received: from mx.ssi.bg (mx.ssi.bg [193.238.174.39])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GnTgXy6m"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80325215172;
-	Fri, 21 Feb 2025 15:59:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.238.174.39
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAE3E2135D8;
+	Fri, 21 Feb 2025 15:59:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740153583; cv=none; b=J1zVbsdN9mxTa3ucDOqLAoSL+aVjk5pmWNdwMSdiFSCIM61VNZ3CQT3onacXAmQxMUGmaVhuavOUhAmlfGrR1MFvu8nliqe/XEWQvwwNyJo++9ERK9/X07vyUQtjvDacjMpoCBicxbhEgqxrvZX8Grxmo3fOXDiPjZ1+NaX90+A=
+	t=1740153556; cv=none; b=JXFwj6AY16XHv1oaZ7iC6gxFqyx4B52f23THE/SRFqWZ2u5ZMkbxLXL8YdP1919Y5s+hVfcRgg6aOiORKxh3nybFYBaEfYaFanaVI3zBeFDlHZz9Bzy20ffzYSEoskUpHALyVMQN+EtapaUsJumdS7mm+XQEPT4M605fJONDv0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740153583; c=relaxed/simple;
-	bh=PxWdT8KjTiBPV/g4HJF+n40rUM1VBmqecO5CnMu24IA=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=Yqnm+fGMufPcjokiQ4jFRZPiEC3yFj6XFF0lSyK/kIc16UgHJzEA1lawWKJAQAsgx3mUl2JKjjEYN1GzkLZJvwJx2z7c8cWK4NMrO+hH17zTKFXeR2ArmTQtMKiFpwwG7p80ifXtrGjaCFoxuqAnEWRTywupGkyL4NNcUTZIX5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ssi.bg; spf=pass smtp.mailfrom=ssi.bg; dkim=pass (4096-bit key) header.d=ssi.bg header.i=@ssi.bg header.b=e2LjwSLl; arc=none smtp.client-ip=193.238.174.39
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ssi.bg
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ssi.bg
-Received: from mx.ssi.bg (localhost [127.0.0.1])
-	by mx.ssi.bg (Potsfix) with ESMTP id 1FA6522C7A;
-	Fri, 21 Feb 2025 17:59:29 +0200 (EET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ssi.bg; h=cc:cc
-	:content-id:content-type:content-type:date:from:from:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to; s=ssi; bh=l0LitblEbtKMznCE8ElI65Dsh7jKX6yGyHzIVUzjF3Y=; b=e
-	2LjwSLl5+EYHomTJoMOTz4DY7QMKP8G/D7yNORzx9ofgBuaUJY71z1vWUOttHiA6
-	B5uzFErZBitwS81baLG1h2kMjl4LPv7fjC0KlDqmTIFtTN1Iq9LrPWhl2X8XnhHq
-	lqPCucFNdiyaOaKHDVotSjiu1IER+LTTCcyr09JfUf5UYIIFnLEgShjr6umisKuB
-	+T4mxnpokBOuGnC0T9YvXK9TUYiM5cl466KtesU0TRtqjftmJHerJzpO0jNk8Ee1
-	R+useezaxQRo66xuHnTSC51Q8SZUaqNo+hK76vnIekU/X/MpB9mdCH7r1BRtn+Vi
-	XC3a9vXFc6YSyf0x331zt1jhWSW0TmrucAskn9Z4AFxJKO1NRiBv72cDaGGpVd6j
-	cWPR2+eQq+pfwJqzYhzdrIF8Ppp/RAZgiS/Q9d9Yrg7lUcYEV5RZx6qUUcaUlbdL
-	CMIEFFlA/Ev5UZdhPbzcS4ULnoODALMmuNRCYqcObWRpcI1+MUZ/crpxYK7cdRXy
-	HUdXt4NaYvTmf2SksTpSyUdihnp/Wk9zPYZOElhuhfnlfi9r7rUxSsgCvreYySf6
-	w3RTIxPyY2gWZ4cZCJHuT1rqSy89gBZopooAZUtoElCYcTMYgJU9MtQYdHocMb9x
-	+8C1bZNrMIa0ZCmzh4VLSpYhXskukJWmN7haKKiaC4=
-Received: from ink.ssi.bg (ink.ssi.bg [193.238.174.40])
-	by mx.ssi.bg (Potsfix) with ESMTPS;
-	Fri, 21 Feb 2025 17:59:28 +0200 (EET)
-Received: from ja.ssi.bg (unknown [213.16.62.126])
-	by ink.ssi.bg (Postfix) with ESMTPSA id 119DB15EA8;
-	Fri, 21 Feb 2025 17:59:17 +0200 (EET)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by ja.ssi.bg (8.18.1/8.17.1) with ESMTP id 51LFxFk5041810;
-	Fri, 21 Feb 2025 17:59:16 +0200
-Date: Fri, 21 Feb 2025 17:59:15 +0200 (EET)
-From: Julian Anastasov <ja@ssi.bg>
-To: Nicolas Dichtel <nicolas.dichtel@6wind.com>
-cc: Philo Lu <lulie@linux.alibaba.com>, netdev@vger.kernel.org,
-        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-        pabeni@redhat.com, horms@kernel.org, asml.silence@gmail.com,
-        willemb@google.com, almasrymina@google.com, chopps@labn.net,
-        aleksander.lobakin@intel.com, dust.li@linux.alibaba.com,
-        hustcat@gmail.com, bpf@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net] ipvs: Always clear ipvs_property flag in
- skb_scrub_packet()
-In-Reply-To: <6202010a-412f-4d63-92a5-d78ba216c65e@6wind.com>
-Message-ID: <c42296ae-e7ad-7063-f87c-ddf516e72ed0@ssi.bg>
-References: <20250221013648.35716-1-lulie@linux.alibaba.com> <6202010a-412f-4d63-92a5-d78ba216c65e@6wind.com>
+	s=arc-20240116; t=1740153556; c=relaxed/simple;
+	bh=6gAzAohx7VpJB3yz5hch1DConeYB/R3aq6rfiP6O4HU=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=k8pfXDxOz3SdH3a45qcsclcbSQtUeA1AGSo/zOykg3z1H9AcPbcXEYJ7eGurYzpmEEYq7JF5LhfhMAxdGaoTCccyDBv1NBXjL79ysKEk7FQV6VIDqRkr4fKABX1DhKCHbki8lUTPOLPWTEL6jsVitctvzEkNDlfTPvb6L2ESs/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GnTgXy6m; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-439350f1a0bso14157405e9.0;
+        Fri, 21 Feb 2025 07:59:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740153553; x=1740758353; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:to:from:subject:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6gAzAohx7VpJB3yz5hch1DConeYB/R3aq6rfiP6O4HU=;
+        b=GnTgXy6m5VOKnuvBwfsw6Avt69lUTzLI3yY1hAvAmJ44wSktQ8j0Q6W3hdWMMLZBSe
+         6JOw0YyJNb+wLr0t3bxzPpqnT3c/IK5AT9po4/HVFoiXKez+Znm/lQy9wr1OI/GFt8NK
+         GgTaCpN7kkcd/ALsXCwd+2MnkJBicqqha7vEf60AKI6DnzWcPoptqaskCaZ5gpqtCYfv
+         EMfBP0yKymLWmV/BuoOi4P9oK0vF2KxpLZ7Xa5M7435jSqt1fU4PTHhBMfeob6SARfgi
+         F9xjAAQLjHrq09+XwBVJZ+TAEF7NNMS9jsyzs8YAiiu+WfcIaZJHm5ExtfYQHtvfGNrh
+         0m8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740153553; x=1740758353;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:to:from:subject:message-id:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=6gAzAohx7VpJB3yz5hch1DConeYB/R3aq6rfiP6O4HU=;
+        b=bNIRH9wp+08D+qoQQkb1TXRHI52q3W8h0+nrJcdDx0gX89RWrrN9y4raFKYN0G2xRK
+         CNV/MuFrc0VysNI8Od/pVdoN3wUxvL+9XpvDYaHTZ8Ye79bwYnwpH6DaTHX9QX4Lj7R1
+         kfhLsqztLFSkICroep7fcna3I0iU36E8ruAgtET2DksHWOqWLoKvUVFnFnOeAaOrpWsC
+         lgMFvPhtTxmPolW74U++6lOqGojxF6q2LgkMtqN3mzJE0JywbkE2t0Gj8Ug/nqVIUVqc
+         +Vyhpm7znA0QKf/Encl3Hc8P1R5pzGiTHgo1Rx2xwi4zHAlsmar/brOsaK+rHUVTOOZL
+         GwlA==
+X-Forwarded-Encrypted: i=1; AJvYcCU9qbZ4qOfq/HA7xSyUnHoHJJivT8muKMPuRAa4PlN9kPVu5rp7eAQahPM6rp+ajYQZvgwE21DcAC24VbTq@vger.kernel.org, AJvYcCUeXY2fnjpoSGRgschbZql8KYBixFvx3sakb87GFALZBM1jU+iEm67MhQJy95sqARBx+vistSVxZOOi@vger.kernel.org, AJvYcCV2VFSNyokN8NLAqapeTFWDT+GLSOlryItTG/M5j+MQ1dHvEF40J9n9FAInuHTL/A7MYcSrEn2jgurg@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzai8hhFvJ4pLuhC/N9VzV5ZvtQEt5VzTPWY4uewHoKj1N68oqv
+	6BF0dUMps2sa0XiTNClFi6fVZtpcinfsOcaJpb0iTLbi4tJfgoM3ngVK3X1F
+X-Gm-Gg: ASbGncsYQYGrXgX+WDqT22DErP73PQsuwT/EguLyKpEe0ejqDXaYl+pSQevK8nN9S2R
+	sF6GSQ7vvdIkS8YktTGvkLA2VkZvXQGBkS3yNBxbRYLSvtAmJg8zNskqyIjDiQ3jYTAX5azIlxx
+	CTnvHoO4/XFreN/Nvxh1UUXhgCmB1TT9ZO1rqlNdwXgPNC9xrJfGujlnTf4VzP6fiqS79QrfrsO
+	RMz4aXzA3qlGgau9JcboLjC1plCsLhtgnqW5fkbgQYJ1Tqc63YrQ8LK8kT8afUB9QF2qcNw0Ibm
+	mO4k1cyIIm27j62/ftTME9STwAgFHttrvLy1S0+gPuV9E/QNHR8CyBxXke/ECjxCiR0NU0g2JA=
+	=
+X-Google-Smtp-Source: AGHT+IGyo9LXSYGZVER0mW6Wzsx9Ag/v+n4mPHyB14QgX9y4EtaMRhXzFOub0TOfQJf7va5afRLzuA==
+X-Received: by 2002:a05:600c:198f:b0:436:1b86:f05 with SMTP id 5b1f17b1804b1-439ae320521mr32165805e9.11.1740153553011;
+        Fri, 21 Feb 2025 07:59:13 -0800 (PST)
+Received: from ?IPv6:2001:818:ea8e:7f00:2575:914:eedd:620e? ([2001:818:ea8e:7f00:2575:914:eedd:620e])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-439b02d510bsm21116065e9.9.2025.02.21.07.59.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Feb 2025 07:59:12 -0800 (PST)
+Message-ID: <8595146558aba261658cb5b311fa87ead3dbf71a.camel@gmail.com>
+Subject: Re: [PATCH 05/14] iio: backend: add support for number of lanes
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: David Lechner <dlechner@baylibre.com>, Antoniu Miclaus	
+ <antoniu.miclaus@analog.com>, jic23@kernel.org, robh@kernel.org, 
+	conor+dt@kernel.org, linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ 	linux-kernel@vger.kernel.org
+Date: Fri, 21 Feb 2025 15:59:16 +0000
+In-Reply-To: <13c5e420-a3ca-468b-8810-3528b24d8664@baylibre.com>
+References: <20250220135429.8615-1-antoniu.miclaus@analog.com>
+	 <20250220135429.8615-6-antoniu.miclaus@analog.com>
+	 <13c5e420-a3ca-468b-8810-3528b24d8664@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; BOUNDARY="-1463811672-1664573096-1740151264=:14998"
-Content-ID: <e8109416-79ae-e910-da52-6d372102b395@ssi.bg>
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
-
----1463811672-1664573096-1740151264=:14998
-Content-Type: text/plain; CHARSET=UTF-8
-Content-Transfer-Encoding: 8BIT
-Content-ID: <4fabcb62-9a35-763a-78d6-a694768e425f@ssi.bg>
-
-
-	Hello,
-
-On Fri, 21 Feb 2025, Nicolas Dichtel wrote:
-
-> Le 21/02/2025 à 02:36, Philo Lu a écrit :
-> > We found an issue when using bpf_redirect with ipvs NAT mode after
-> > commit ff70202b2d1a ("dev_forward_skb: do not scrub skb mark within
-> > the same name space"). Particularly, we use bpf_redirect to return
-> > the skb directly back to the netif it comes from, i.e., xnet is
-> > false in skb_scrub_packet(), and then ipvs_property is preserved
-> > and SNAT is skipped in the rx path.
-> > 
-> > ipvs_property has been already cleared when netns is changed in
-> > commit 2b5ec1a5f973 ("netfilter/ipvs: clear ipvs_property flag when
-> > SKB net namespace changed"). This patch just clears it in spite of
-> > netns.
-> > 
-> > Signed-off-by: Philo Lu <lulie@linux.alibaba.com>
+On Thu, 2025-02-20 at 14:20 -0600, David Lechner wrote:
+> On 2/20/25 7:54 AM, Antoniu Miclaus wrote:
+> > Add iio backend support for number of lanes to be enabled.
+> >=20
+> > Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
 > > ---
-> > This is in fact a fix patch, and the issue was found after commit
-> > ff70202b2d1a ("dev_forward_skb: do not scrub skb mark within
-> > the same name space"). But I'm not sure if a "Fixes" tag should be
-> > added to that commit.
-> > ---
-> >  net/core/skbuff.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/net/core/skbuff.c b/net/core/skbuff.c
-> > index 7b03b64fdcb2..b1c81687e9d8 100644
-> > --- a/net/core/skbuff.c
-> > +++ b/net/core/skbuff.c
-> > @@ -6033,11 +6033,11 @@ void skb_scrub_packet(struct sk_buff *skb, bool xnet)
-> >  	skb->offload_fwd_mark = 0;
-> >  	skb->offload_l3_fwd_mark = 0;
-> >  #endif
-> > +	ipvs_reset(skb);
-> >  
-> >  	if (!xnet)
-> >  		return;
-> >  
-> > -	ipvs_reset(skb);
-> I don't know IPVS, but I wonder if this patch will not introduce a regression
-> for other users. skb_scrub_packet() is used by a lot of tunnels, it's not
-> specific to bpf_redirect().
+> This is why I was pushing for a similar function to be an iio_backend
+> function in [1]. :-)
+>=20
+> [1]:
+> https://lore.kernel.org/linux-iio/94efa413-5fa9-4014-86c2-331442e9d42e@ba=
+ylibre.com/
+>=20
+> Not sure if that changes what we want to do here, but just pointing it
+> out as a similar case to help us decide what the most useful generic
+> function would be for this.
+>=20
+>=20
 
-	Indeed, now we will start to clear the flag for tunnels
-and it can cause IPVS to attempt rerouting for UDP tunnels, i.e.
-once the packet is routed by IPVS to tunnel and second time later 
-after tunneling again when ip_local_out() is called and we see 
-ipvs_property=0 for the outer UDP header. Before such patch
-ipvs_property remains 1 and we do not try to balance the UDP
-traffic. So, for now, this patch may be can spend more cycles for
-the traffic via UDP tunnels but this looks like a rare IPVS setup,
-i.e. real servers reachable via UDP tunnels. Note that IPVS
-has own support for UDP tunnels where it is set as forwarding
-method + tunnel type GUE for the real server. It is not affected
-by this patch.
+Hmm, yeah, I guess we could have them both in this interface or the API
+suggested in discussion you linked (is octal spi a thing?!) even though it =
+gets
+a bit confusing in the AD3552R case where we have the other interface for b=
+us
+related things.
 
-Regards
-
---
-Julian Anastasov <ja@ssi.bg>
----1463811672-1664573096-1740151264=:14998--
-
+- Nuno S=C3=A1
 
