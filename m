@@ -1,393 +1,203 @@
-Return-Path: <linux-kernel+bounces-525884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDD64A3F6D7
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 15:07:20 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 154A3A3F6D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 15:06:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E61B28608FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 14:06:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3CF7B17A906
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 14:06:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EBCB20F060;
-	Fri, 21 Feb 2025 14:06:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB17F20E306;
+	Fri, 21 Feb 2025 14:06:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="xoIGTI8R";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lBiR1rKh"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="N+PJdOK4"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BC5A204C02;
-	Fri, 21 Feb 2025 14:06:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29422204C02
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 14:06:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740146783; cv=none; b=LzfWway6ID1Yd+JyCDMuu3kfitk4BPCxGpyan5VbiG+cuH3PM15PrmJA6SMFRRDNjCug8ADRFP1dl1vO1HnbtR5AuOJQE3Ky3bSiEVSIIe0RsV+zLm2rBZvw+MKwcLwE9385JuA4cxrvH4lVHqiS2VJ3GzK/pbQzca7kxxPQ5kQ=
+	t=1740146794; cv=none; b=skJZSq/GUzez93Lf565xKHFjD5rXKJYLxODwCsHN4nS16SwFIMBR4SpfIgUo1N+yogLOx7i6DxZopn3YXjHsTNA4BLv0kie246lLebbv/7VijGqYccWKhpKDj+jD/uTPyVJ4jK3nJL8wmnWIFzSTmNH/DWxWK/52FfLCS2b3DUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740146783; c=relaxed/simple;
-	bh=ft6WYPIhpb61Ha568Ut9PMPIYetGzfCFn8mEl62ZaLc=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=KJ+d+s38wRYfY0OqJoG7yfNBKzMQu35COlGg5IWXM1InGwo8dLO2H6ivi+j9gNpad0iVzk0khUcv9OHUlvBwfJ0qKYn9xCx02KGYJLywxTAeJ8O6SV2wxIZdacNOt7TvogK2MQqJE43jACWminm67nXTf2xacsiUUCdz4lhUTJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=xoIGTI8R; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lBiR1rKh; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 21 Feb 2025 14:06:10 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1740146773;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
+	s=arc-20240116; t=1740146794; c=relaxed/simple;
+	bh=06zt2yTCgUVRnCNAH2gy9snLz5lH0+MrkvZtNorMWME=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=VTvkxHQaheKXA0sqA3ukBx3fg/FcPQz7l31Ipsbe5GqSSIWRhdfax2rRsLSmHG6vYjIPnXdQnqfksj30dud1RqwVTvSAZ3OsMJ+7zfK0L4DcW0R2077rfSP2jmOI8GO01WazKHpVKqVOVrOUHVLmjIgQg0Tn+e8axd0xlhyj1RI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=N+PJdOK4; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740146790;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=pWWeahjM+fpoznf//d6TVmE3vmG16Wmeio+LX3LQBaQ=;
-	b=xoIGTI8Ry50xkLh7fCVle7/QrGWyZa6x0zfnDhGKFob8XUijANkhvE75bUJinOCAOyDcpO
-	rMq0d4RRT+lcj0ibB1GfiixfilJXIJKfe6hfZiMzJVzA+Hgz9ChKLN3amtuYzXgK4hmrtT
-	zQDfJ+yoUJtG/Ykg91ibvrUQOdbrQIJoV0m33N41gVO3N4lCtRADDfY1Zk+ANNfw8tBybU
-	F9/6hd3kTeboW30Yx3RoXkeBQ7WLuZuYfqDB4yXuV/KdADtYurC6ft6LBJ53F1nzsG3LeB
-	eKSwdTwddIbsckVLodYMQRwjuNAMLGVagcO3D8raRDQy/lDnIMml7PkLITrZZQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1740146773;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pWWeahjM+fpoznf//d6TVmE3vmG16Wmeio+LX3LQBaQ=;
-	b=lBiR1rKhOVZ4d+KqjlDUk3dbDNdgUGp7EIZsEINkX4TdHj1Fpb+m/PW18s86ad8MrJvhM2
-	flz9IT6U/VcrnsAg==
-From: "tip-bot2 for Joel Granados" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: perf/core] perf/core: Move perf_event sysctls into kernel/events
-Cc: Joel Granados <joel.granados@kernel.org>, Ingo Molnar <mingo@kernel.org>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250218-jag-mv_ctltables-v1-5-cd3698ab8d29@kernel.org>
-References: <20250218-jag-mv_ctltables-v1-5-cd3698ab8d29@kernel.org>
+	bh=N/WVTMk5sPbrkFn3eQqn/4M5eUkn1LSkRkxKyl2xeEY=;
+	b=N+PJdOK4wfPi3Nyn4Loc7PLIRlZWZ8z6FlbxVZsWfUl7+yGDsqwx6KyuU6JGLpKJQsldzH
+	Je7XjYboWEZpFabE/iD/7QBVcRc6P0x5kteZMKUxnyf+Cx1WxyWfyYPji7tU7XUZOrymvf
+	OP4IR/BicT9faiMc8Fs8ewV04qypzSw=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-690-K0RLaw5sOkmUOedGKPY0nQ-1; Fri,
+ 21 Feb 2025 09:06:27 -0500
+X-MC-Unique: K0RLaw5sOkmUOedGKPY0nQ-1
+X-Mimecast-MFC-AGG-ID: K0RLaw5sOkmUOedGKPY0nQ_1740146780
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0952C19373D9;
+	Fri, 21 Feb 2025 14:06:20 +0000 (UTC)
+Received: from [192.168.37.1] (unknown [10.22.74.11])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E3BC61800945;
+	Fri, 21 Feb 2025 14:06:15 +0000 (UTC)
+From: Benjamin Coddington <bcodding@redhat.com>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Chuck Lever <chuck.lever@oracle.com>,
+ Li Lingfeng <lilingfeng3@huawei.com>, neilb@suse.de, okorniev@redhat.com,
+ Dai.Ngo@oracle.com, tom@talpey.com, linux-nfs@vger.kernel.org,
+ linux-kernel@vger.kernel.org, yukuai1@huaweicloud.com, houtao1@huawei.com,
+ yi.zhang@huawei.com, yangerkun@huawei.com, lilingfeng@huaweicloud.com
+Subject: Re: [PATCH] nfsd: decrease cl_cb_inflight if fail to queue cb_work
+Date: Fri, 21 Feb 2025 09:06:13 -0500
+Message-ID: <C9BBD33C-0077-44B0-BCE9-7E4962428382@redhat.com>
+In-Reply-To: <8afc09d0728c4b71397d6b055dc86ab12310c297.camel@kernel.org>
+References: <20250218135423.1487309-1-lilingfeng3@huawei.com>
+ <0ae8a05272c2eb8a503102788341e1d9c49109dd.camel@kernel.org>
+ <04ed0c70b85a1e8b66c25b9ad4d0aa4c2fb91198.camel@kernel.org>
+ <9cea3133-d17c-48c5-8eb9-265fbfc5708b@oracle.com>
+ <8afc09d0728c4b71397d6b055dc86ab12310c297.camel@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174014677034.10177.14884250079507564395.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-The following commit has been merged into the perf/core branch of tip:
+On 18 Feb 2025, at 9:40, Jeff Layton wrote:
 
-Commit-ID:     8aeacf257070469ff78a998a968a61d0cadc0de3
-Gitweb:        https://git.kernel.org/tip/8aeacf257070469ff78a998a968a61d0cadc0de3
-Author:        Joel Granados <joel.granados@kernel.org>
-AuthorDate:    Tue, 18 Feb 2025 10:56:21 +01:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Fri, 21 Feb 2025 14:53:02 +01:00
+> On Tue, 2025-02-18 at 09:31 -0500, Chuck Lever wrote:
+>> On 2/18/25 9:29 AM, Jeff Layton wrote:
+>>> On Tue, 2025-02-18 at 08:58 -0500, Jeff Layton wrote:
+>>>> On Tue, 2025-02-18 at 21:54 +0800, Li Lingfeng wrote:
+>>>>> In nfsd4_run_cb, cl_cb_inflight is increased before attempting to q=
+ueue
+>>>>> cb_work to callback_wq. This count can be decreased in three situat=
+ions:
+>>>>> 1) If queuing fails in nfsd4_run_cb, the count will be decremented
+>>>>> accordingly.
+>>>>> 2) After cb_work is running, the count is decreased in the exceptio=
+n
+>>>>> branch of nfsd4_run_cb_work via nfsd41_destroy_cb.
+>>>>> 3) The count is decreased in the release callback of rpc_task =E2=80=
+=94 either
+>>>>> directly calling nfsd41_cb_inflight_end in nfsd4_cb_probe_release, =
+or
+>>>>> calling nfsd41_destroy_cb in 	.
+>>>>>
+>>>>> However, in nfsd4_cb_release, if the current cb_work needs to resta=
+rt, the
+>>>>> count will not be decreased, with the expectation that it will be r=
+educed
+>>>>> once cb_work is running.
+>>>>> If queuing fails here, then the count will leak, ultimately causing=
+ the
+>>>>> nfsd service to be unable to exit as shown below:
+>>>>> [root@nfs_test2 ~]# cat /proc/2271/stack
+>>>>> [<0>] nfsd4_shutdown_callback+0x22b/0x290
+>>>>> [<0>] __destroy_client+0x3cd/0x5c0
+>>>>> [<0>] nfs4_state_destroy_net+0xd2/0x330
+>>>>> [<0>] nfs4_state_shutdown_net+0x2ad/0x410
+>>>>> [<0>] nfsd_shutdown_net+0xb7/0x250
+>>>>> [<0>] nfsd_last_thread+0x15f/0x2a0
+>>>>> [<0>] nfsd_svc+0x388/0x3f0
+>>>>> [<0>] write_threads+0x17e/0x2b0
+>>>>> [<0>] nfsctl_transaction_write+0x91/0xf0
+>>>>> [<0>] vfs_write+0x1c4/0x750
+>>>>> [<0>] ksys_write+0xcb/0x170
+>>>>> [<0>] do_syscall_64+0x70/0x120
+>>>>> [<0>] entry_SYSCALL_64_after_hwframe+0x78/0xe2
+>>>>> [root@nfs_test2 ~]#
+>>>>>
+>>>>> Fix this by decreasing cl_cb_inflight if the restart fails.
+>>>>>
+>>>>> Fixes: cba5f62b1830 ("nfsd: fix callback restarts")
+>>>>> Signed-off-by: Li Lingfeng <lilingfeng3@huawei.com>
+>>>>> ---
+>>>>>  fs/nfsd/nfs4callback.c | 10 +++++++---
+>>>>>  1 file changed, 7 insertions(+), 3 deletions(-)
+>>>>>
+>>>>> diff --git a/fs/nfsd/nfs4callback.c b/fs/nfsd/nfs4callback.c
+>>>>> index 484077200c5d..8a7d24efdd08 100644
+>>>>> --- a/fs/nfsd/nfs4callback.c
+>>>>> +++ b/fs/nfsd/nfs4callback.c
+>>>>> @@ -1459,12 +1459,16 @@ static void nfsd4_cb_done(struct rpc_task *=
+task, void *calldata)
+>>>>>  static void nfsd4_cb_release(void *calldata)
+>>>>>  {
+>>>>>  	struct nfsd4_callback *cb =3D calldata;
+>>>>> +	struct nfs4_client *clp =3D cb->cb_clp;
+>>>>> +	int queued;
+>>>>>
+>>>>>  	trace_nfsd_cb_rpc_release(cb->cb_clp);
+>>>>>
+>>>>> -	if (cb->cb_need_restart)
+>>>>> -		nfsd4_queue_cb(cb);
+>>>>> -	else
+>>>>> +	if (cb->cb_need_restart) {
+>>>>> +		queued =3D nfsd4_queue_cb(cb);
+>>>>> +		if (!queued)
+>>>>> +			nfsd41_cb_inflight_end(clp);
+>>>>> +	} else
+>>>>>  		nfsd41_destroy_cb(cb);
+>>>>>
+>>>>>  }
+>>>>
+>>>> Good catch!
+>>>>
+>>>> Reviewed-by: Jeff Layton <jlayton@kernel.org>
+>>>>
+>>>
+>>> Actually, I think this is not quite right. It's a bit more subtle tha=
+n
+>>> it first appears. The problem of course is that the callback workqueu=
+e
+>>> jobs run in a different task than the RPC workqueue jobs, so they can=
 
-perf/core: Move perf_event sysctls into kernel/events
+>>> race.
+>>>
+>>> cl_cb_inflight gets bumped when the callback is first queued, and onl=
+y
+>>> gets released in nfsd41_destroy_cb(). If it fails to be queued, it's
+>>> because something else has queued the workqueue job in the meantime.
+>>>
+>>> There are two places that can occur: nfsd4_cb_release() and
+>>> nfsd4_run_cb(). Since this is occurring in nfsd4_cb_release(), the on=
+ly
+>>> other option is that something raced in and queued it via
+>>> nfsd4_run_cb().
+>>
+>> What would be the "something" that raced in?
+>>
+>
+> I think we may be able to get there via multiple __break_lease() calls
+> on the same layout or delegation. That could mean multiple calls to the=
 
-Move ctl tables to two files:
+> ->lm_break operation on the same object.
 
- - perf_event_{paranoid,mlock_kb,max_sample_rate} and
-   perf_cpu_time_max_percent into kernel/events/core.c
+Sorry for the late response, but isn't ->lm_break() already serialized in=
 
- - perf_event_max_{stack,context_per_stack} into
-   kernel/events/callchain.c
+__break_lease for the same file_lease?  We don't call lm_break(fl) if
+lease_breaking(fl).
 
-Make static variables and functions that are fully contained in core.c
-and callchain.cand remove them from include/linux/perf_event.h.
-Additionally six_hundred_forty_kb is moved to callchain.c.
+Ben
 
-Two new sysctl tables are added ({callchain,events_core}_sysctl_table)
-with their respective sysctl registration functions.
-
-This is part of a greater effort to move ctl tables into their
-respective subsystems which will reduce the merge conflicts in
-kerenel/sysctl.c.
-
-Signed-off-by: Joel Granados <joel.granados@kernel.org>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Link: https://lore.kernel.org/r/20250218-jag-mv_ctltables-v1-5-cd3698ab8d29@kernel.org
----
- include/linux/perf_event.h |  9 +-----
- kernel/events/callchain.c  | 38 ++++++++++++++++++----
- kernel/events/core.c       | 57 +++++++++++++++++++++++++++++----
- kernel/sysctl.c            | 64 +-------------------------------------
- 4 files changed, 83 insertions(+), 85 deletions(-)
-
-diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-index 2d07bc1..c4525ba 100644
---- a/include/linux/perf_event.h
-+++ b/include/linux/perf_event.h
-@@ -1652,19 +1652,10 @@ static inline int perf_callchain_store(struct perf_callchain_entry_ctx *ctx, u64
- }
- 
- extern int sysctl_perf_event_paranoid;
--extern int sysctl_perf_event_mlock;
- extern int sysctl_perf_event_sample_rate;
--extern int sysctl_perf_cpu_time_max_percent;
- 
- extern void perf_sample_event_took(u64 sample_len_ns);
- 
--int perf_event_max_sample_rate_handler(const struct ctl_table *table, int write,
--		void *buffer, size_t *lenp, loff_t *ppos);
--int perf_cpu_time_max_percent_handler(const struct ctl_table *table, int write,
--		void *buffer, size_t *lenp, loff_t *ppos);
--int perf_event_max_stack_handler(const struct ctl_table *table, int write,
--		void *buffer, size_t *lenp, loff_t *ppos);
--
- /* Access to perf_event_open(2) syscall. */
- #define PERF_SECURITY_OPEN		0
- 
-diff --git a/kernel/events/callchain.c b/kernel/events/callchain.c
-index 8a47e52..6c83ad6 100644
---- a/kernel/events/callchain.c
-+++ b/kernel/events/callchain.c
-@@ -22,6 +22,7 @@ struct callchain_cpus_entries {
- 
- int sysctl_perf_event_max_stack __read_mostly = PERF_MAX_STACK_DEPTH;
- int sysctl_perf_event_max_contexts_per_stack __read_mostly = PERF_MAX_CONTEXTS_PER_STACK;
-+static const int six_hundred_forty_kb = 640 * 1024;
- 
- static inline size_t perf_callchain_entry__sizeof(void)
- {
-@@ -266,12 +267,8 @@ exit_put:
- 	return entry;
- }
- 
--/*
-- * Used for sysctl_perf_event_max_stack and
-- * sysctl_perf_event_max_contexts_per_stack.
-- */
--int perf_event_max_stack_handler(const struct ctl_table *table, int write,
--				 void *buffer, size_t *lenp, loff_t *ppos)
-+static int perf_event_max_stack_handler(const struct ctl_table *table, int write,
-+					void *buffer, size_t *lenp, loff_t *ppos)
- {
- 	int *value = table->data;
- 	int new_value = *value, ret;
-@@ -292,3 +289,32 @@ int perf_event_max_stack_handler(const struct ctl_table *table, int write,
- 
- 	return ret;
- }
-+
-+static const struct ctl_table callchain_sysctl_table[] = {
-+	{
-+		.procname	= "perf_event_max_stack",
-+		.data		= &sysctl_perf_event_max_stack,
-+		.maxlen		= sizeof(sysctl_perf_event_max_stack),
-+		.mode		= 0644,
-+		.proc_handler	= perf_event_max_stack_handler,
-+		.extra1		= SYSCTL_ZERO,
-+		.extra2		= (void *)&six_hundred_forty_kb,
-+	},
-+	{
-+		.procname	= "perf_event_max_contexts_per_stack",
-+		.data		= &sysctl_perf_event_max_contexts_per_stack,
-+		.maxlen		= sizeof(sysctl_perf_event_max_contexts_per_stack),
-+		.mode		= 0644,
-+		.proc_handler	= perf_event_max_stack_handler,
-+		.extra1		= SYSCTL_ZERO,
-+		.extra2		= SYSCTL_ONE_THOUSAND,
-+	},
-+};
-+
-+static int __init init_callchain_sysctls(void)
-+{
-+	register_sysctl_init("kernel", callchain_sysctl_table);
-+	return 0;
-+}
-+core_initcall(init_callchain_sysctls);
-+
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 0f8c559..45ad0f6 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -452,8 +452,8 @@ static struct kmem_cache *perf_event_cache;
-  */
- int sysctl_perf_event_paranoid __read_mostly = 2;
- 
--/* Minimum for 512 kiB + 1 user control page */
--int sysctl_perf_event_mlock __read_mostly = 512 + (PAGE_SIZE / 1024); /* 'free' kiB per user */
-+/* Minimum for 512 kiB + 1 user control page. 'free' kiB per user. */
-+static int sysctl_perf_event_mlock __read_mostly = 512 + (PAGE_SIZE / 1024);
- 
- /*
-  * max perf event sample rate
-@@ -463,6 +463,7 @@ int sysctl_perf_event_mlock __read_mostly = 512 + (PAGE_SIZE / 1024); /* 'free' 
- #define DEFAULT_CPU_TIME_MAX_PERCENT	25
- 
- int sysctl_perf_event_sample_rate __read_mostly	= DEFAULT_MAX_SAMPLE_RATE;
-+static int sysctl_perf_cpu_time_max_percent __read_mostly = DEFAULT_CPU_TIME_MAX_PERCENT;
- 
- static int max_samples_per_tick __read_mostly	= DIV_ROUND_UP(DEFAULT_MAX_SAMPLE_RATE, HZ);
- static int perf_sample_period_ns __read_mostly	= DEFAULT_SAMPLE_PERIOD_NS;
-@@ -484,7 +485,7 @@ static void update_perf_cpu_limits(void)
- 
- static bool perf_rotate_context(struct perf_cpu_pmu_context *cpc);
- 
--int perf_event_max_sample_rate_handler(const struct ctl_table *table, int write,
-+static int perf_event_max_sample_rate_handler(const struct ctl_table *table, int write,
- 				       void *buffer, size_t *lenp, loff_t *ppos)
- {
- 	int ret;
-@@ -506,9 +507,7 @@ int perf_event_max_sample_rate_handler(const struct ctl_table *table, int write,
- 	return 0;
- }
- 
--int sysctl_perf_cpu_time_max_percent __read_mostly = DEFAULT_CPU_TIME_MAX_PERCENT;
--
--int perf_cpu_time_max_percent_handler(const struct ctl_table *table, int write,
-+static int perf_cpu_time_max_percent_handler(const struct ctl_table *table, int write,
- 		void *buffer, size_t *lenp, loff_t *ppos)
- {
- 	int ret = proc_dointvec_minmax(table, write, buffer, lenp, ppos);
-@@ -528,6 +527,52 @@ int perf_cpu_time_max_percent_handler(const struct ctl_table *table, int write,
- 	return 0;
- }
- 
-+static const struct ctl_table events_core_sysctl_table[] = {
-+	/*
-+	 * User-space relies on this file as a feature check for
-+	 * perf_events being enabled. It's an ABI, do not remove!
-+	 */
-+	{
-+		.procname	= "perf_event_paranoid",
-+		.data		= &sysctl_perf_event_paranoid,
-+		.maxlen		= sizeof(sysctl_perf_event_paranoid),
-+		.mode		= 0644,
-+		.proc_handler	= proc_dointvec,
-+	},
-+	{
-+		.procname	= "perf_event_mlock_kb",
-+		.data		= &sysctl_perf_event_mlock,
-+		.maxlen		= sizeof(sysctl_perf_event_mlock),
-+		.mode		= 0644,
-+		.proc_handler	= proc_dointvec,
-+	},
-+	{
-+		.procname	= "perf_event_max_sample_rate",
-+		.data		= &sysctl_perf_event_sample_rate,
-+		.maxlen		= sizeof(sysctl_perf_event_sample_rate),
-+		.mode		= 0644,
-+		.proc_handler	= perf_event_max_sample_rate_handler,
-+		.extra1		= SYSCTL_ONE,
-+	},
-+	{
-+		.procname	= "perf_cpu_time_max_percent",
-+		.data		= &sysctl_perf_cpu_time_max_percent,
-+		.maxlen		= sizeof(sysctl_perf_cpu_time_max_percent),
-+		.mode		= 0644,
-+		.proc_handler	= perf_cpu_time_max_percent_handler,
-+		.extra1		= SYSCTL_ZERO,
-+		.extra2		= SYSCTL_ONE_HUNDRED,
-+	},
-+};
-+
-+static int __init init_events_core_sysctls(void)
-+{
-+	register_sysctl_init("kernel", events_core_sysctl_table);
-+	return 0;
-+}
-+core_initcall(init_events_core_sysctls);
-+
-+
- /*
-  * perf samples are done in some very critical code paths (NMIs).
-  * If they take too much CPU time, the system can lock up and not
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index cb57da4..4484cdb 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -54,7 +54,6 @@
- #include <linux/acpi.h>
- #include <linux/reboot.h>
- #include <linux/ftrace.h>
--#include <linux/perf_event.h>
- #include <linux/oom.h>
- #include <linux/kmod.h>
- #include <linux/capability.h>
-@@ -91,12 +90,6 @@ EXPORT_SYMBOL_GPL(sysctl_long_vals);
- #if defined(CONFIG_SYSCTL)
- 
- /* Constants used for minimum and maximum */
--
--#ifdef CONFIG_PERF_EVENTS
--static const int six_hundred_forty_kb = 640 * 1024;
--#endif
--
--
- static const int ngroups_max = NGROUPS_MAX;
- static const int cap_last_cap = CAP_LAST_CAP;
- 
-@@ -1933,63 +1926,6 @@ static const struct ctl_table kern_table[] = {
- 		.proc_handler	= proc_dointvec,
- 	},
- #endif
--#ifdef CONFIG_PERF_EVENTS
--	/*
--	 * User-space scripts rely on the existence of this file
--	 * as a feature check for perf_events being enabled.
--	 *
--	 * So it's an ABI, do not remove!
--	 */
--	{
--		.procname	= "perf_event_paranoid",
--		.data		= &sysctl_perf_event_paranoid,
--		.maxlen		= sizeof(sysctl_perf_event_paranoid),
--		.mode		= 0644,
--		.proc_handler	= proc_dointvec,
--	},
--	{
--		.procname	= "perf_event_mlock_kb",
--		.data		= &sysctl_perf_event_mlock,
--		.maxlen		= sizeof(sysctl_perf_event_mlock),
--		.mode		= 0644,
--		.proc_handler	= proc_dointvec,
--	},
--	{
--		.procname	= "perf_event_max_sample_rate",
--		.data		= &sysctl_perf_event_sample_rate,
--		.maxlen		= sizeof(sysctl_perf_event_sample_rate),
--		.mode		= 0644,
--		.proc_handler	= perf_event_max_sample_rate_handler,
--		.extra1		= SYSCTL_ONE,
--	},
--	{
--		.procname	= "perf_cpu_time_max_percent",
--		.data		= &sysctl_perf_cpu_time_max_percent,
--		.maxlen		= sizeof(sysctl_perf_cpu_time_max_percent),
--		.mode		= 0644,
--		.proc_handler	= perf_cpu_time_max_percent_handler,
--		.extra1		= SYSCTL_ZERO,
--		.extra2		= SYSCTL_ONE_HUNDRED,
--	},
--	{
--		.procname	= "perf_event_max_stack",
--		.data		= &sysctl_perf_event_max_stack,
--		.maxlen		= sizeof(sysctl_perf_event_max_stack),
--		.mode		= 0644,
--		.proc_handler	= perf_event_max_stack_handler,
--		.extra1		= SYSCTL_ZERO,
--		.extra2		= (void *)&six_hundred_forty_kb,
--	},
--	{
--		.procname	= "perf_event_max_contexts_per_stack",
--		.data		= &sysctl_perf_event_max_contexts_per_stack,
--		.maxlen		= sizeof(sysctl_perf_event_max_contexts_per_stack),
--		.mode		= 0644,
--		.proc_handler	= perf_event_max_stack_handler,
--		.extra1		= SYSCTL_ZERO,
--		.extra2		= SYSCTL_ONE_THOUSAND,
--	},
--#endif
- 	{
- 		.procname	= "panic_on_warn",
- 		.data		= &panic_on_warn,
 
