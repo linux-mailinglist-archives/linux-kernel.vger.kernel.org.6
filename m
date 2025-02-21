@@ -1,149 +1,132 @@
-Return-Path: <linux-kernel+bounces-525415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B5F2A3EF95
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:09:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8580AA3EFA4
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:11:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC8BA1890C78
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:08:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E033422F89
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:08:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5543520408E;
-	Fri, 21 Feb 2025 09:08:21 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67A3A201012;
+	Fri, 21 Feb 2025 09:08:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JClM5MEs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8558F201253
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 09:08:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B862D200BB8;
+	Fri, 21 Feb 2025 09:08:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740128901; cv=none; b=oJSZCQc4fQ4OcXg/xZJn8F9Zuns0H6itMxU0OTbHBvO7ySeM2h5nGGnsTY6tNVZop7WHKfg4RugtXgti7XzBfA5vwQgDTUX+upiiQqOPD8zO53QYBmz4+d2ku6z1iOAYHz2cqGSjNuzucX1ZNhBgWhnyJ2iccItXfCBhtbiX18k=
+	t=1740128907; cv=none; b=dtuYBdF7RPyEPMkRXo8YeCzp6MYwHV/EC1PdPrytE13ne5Npkhpo+garUbw7P/BM1cBgWwDlTxU8FXls/1Y95Ul1s81odacj8EnEqtAxVfO3e+Y9moLsfotCSiPplI+DhAs+RWKiY92OPRwjMq5tNjbR7ZhflomZwzoe/Q8rXOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740128901; c=relaxed/simple;
-	bh=aLhpoR2Qz3WvtScp8s0/CscGnBuMdFhEXXNXBzl3Hq4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=TX9Z1FiNstHMf63GUV2qhg0TAAd90tgh7lw2PhTQFtGC3v6aFVYxXRONvY8Fy0/R8TGOcTSdCkgClRszHsBIUcJpGBQo4dWcFqj5gtb/duD2hFXi3h10+ZpSjdSPrQPY/r0bsAw5DaEFCqfhEK6lGk688/KAAuDWaZ4la35tdcA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1tlP0n-0006M5-JE; Fri, 21 Feb 2025 10:07:57 +0100
-Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1tlP0k-0024nY-2Z;
-	Fri, 21 Feb 2025 10:07:54 +0100
-Received: from pza by lupine with local (Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1tlP0k-0002L0-29;
-	Fri, 21 Feb 2025 10:07:54 +0100
-Message-ID: <d31a48ebfc0f91de615af75e313caa6afbdd597d.camel@pengutronix.de>
-Subject: Re: [PATCH 2/2] PCI: sophgo-dwc: Add Sophgo SG2044 PCIe driver
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Inochi Amaoto <inochiama@gmail.com>, Lorenzo Pieralisi
- <lpieralisi@kernel.org>, Krzysztof =?UTF-8?Q?Wilczy=C5=84ski?=
- <kw@linux.com>,  Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Chen Wang <unicorn_wang@outlook.com>, Paul Walmsley
- <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
- <aou@eecs.berkeley.edu>, Niklas Cassel <cassel@kernel.org>,  Shashank Babu
- Chinta Venkata <quic_schintav@quicinc.com>
-Cc: linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
-	sophgo@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, Yixun Lan <dlan@gentoo.org>, Longbin Li
-	 <looong.bin@gmail.com>
-Date: Fri, 21 Feb 2025 10:07:54 +0100
-In-Reply-To: <20250221013758.370936-3-inochiama@gmail.com>
-References: <20250221013758.370936-1-inochiama@gmail.com>
-	 <20250221013758.370936-3-inochiama@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1740128907; c=relaxed/simple;
+	bh=oimX8Q/LxRwlfk+t54o1mqJdiaT+zvHD2n1g78Yevyo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IWZCVOFrUNvxzn2axlrnulSo6WCxUhb1oA/77+mXqDtwQKhwjTQ/QVd6GSsTEyyE1f/OT2AK32Smbd917zITAGIAJnhDSuZAv74apBy5GVYcqUIozvGSouXx5LL24B1UxtxOzpsRDRTt50zZJ/5W+/GiCMi6mwOFf8SgItrugXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JClM5MEs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0642C4CED6;
+	Fri, 21 Feb 2025 09:08:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740128907;
+	bh=oimX8Q/LxRwlfk+t54o1mqJdiaT+zvHD2n1g78Yevyo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JClM5MEstLWw6w/T8uUGehpMEt3dq/s2eDp9+GtkyXyLoak10+VKVrUaDo3SVYzBr
+	 qOJILi55XlxfVFZBj8KyETVvp3mTXn5W5WoMcO9mnzsld87a3jr7aMrqOSOJBAZf41
+	 Alqg95mv/MI43DgUp2Q8dRXA5bBFE1Gi1DZg92lmDDwz5V609dFscVct1r+LxFXMb0
+	 keBbOaEpJSLcTdgo4DtdXvWxqX9aBqoE+zjJUpnSjiXX35F6yL4EjxUe52ywu5J0aQ
+	 AnFQKfV+44glIbtY3xwzA0Sq6kqATZ0JF3rJHNbq+M4NZkn/5BwbCXYuybXLRKnIdB
+	 2EL+uArOtSmkQ==
+Date: Fri, 21 Feb 2025 10:08:24 +0100
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+To: Biju Das <biju.das.jz@bp.renesas.com>
+Cc: kernel test robot <lkp@intel.com>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, "oe-kbuild-all@lists.linux.dev" <oe-kbuild-all@lists.linux.dev>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	"linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>, 
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH v23 3/4] pwm: Add support for RZ/G2L GPT
+Message-ID: <hb7agtiqcuotiie646a2nzwg2cfwmahtgzzexxsf4tqu3rztf6@qqq2a7qkazh5>
+References: <20241217132921.169640-4-biju.das.jz@bp.renesas.com>
+ <202412182358.9wma1UUE-lkp@intel.com>
+ <TY3PR01MB11346CC402843A628226F5C6186122@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <b7woae7iquvuzs4vcollns7qcyand4ginrbjqs75bnsiockrjc@c4pyody6zdcr>
+ <TY3PR01MB1134690173EBB583582DE8E3386132@TY3PR01MB11346.jpnprd01.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="k2zrcougat4y5ihj"
+Content-Disposition: inline
+In-Reply-To: <TY3PR01MB1134690173EBB583582DE8E3386132@TY3PR01MB11346.jpnprd01.prod.outlook.com>
 
-On Fr, 2025-02-21 at 09:37 +0800, Inochi Amaoto wrote:
-> Add support for DesignWare-based PCIe controller in SG2044 SoC.
+
+--k2zrcougat4y5ihj
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v23 3/4] pwm: Add support for RZ/G2L GPT
+MIME-Version: 1.0
+
+Hello Biju,
+
+On Thu, Jan 09, 2025 at 09:32:58AM +0000, Biju Das wrote:
+> > On Wed, Jan 08, 2025 at 02:13:09PM +0000, Biju Das wrote:
+> > > Please let me know, if there is any feedback for this patch series or
+> > > any new API to be adapted in next kernel version which simplifies the=
+ code, So that I can send next
+> > version.
+> >=20
+> > I didn't look, but if you're ambitious you can convert your driver to t=
+he waveform callbacks.
 >=20
-> Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
-> ---
->  drivers/pci/controller/dwc/Kconfig          |  10 +
->  drivers/pci/controller/dwc/Makefile         |   1 +
->  drivers/pci/controller/dwc/pcie-dw-sophgo.c | 282 ++++++++++++++++++++
->  3 files changed, 293 insertions(+)
->  create mode 100644 drivers/pci/controller/dwc/pcie-dw-sophgo.c
+> Is it ok, after the acceptance of initial version, will switch to wavefor=
+m callbacks to enable
+> the users of GPT(Reason: lot of customers are using GPT for backlight for=
+ LCD panels)?
 >=20
-[...]
-> diff --git a/drivers/pci/controller/dwc/pcie-dw-sophgo.c b/drivers/pci/co=
-ntroller/dwc/pcie-dw-sophgo.c
-> new file mode 100644
-> index 000000000000..a4ca4f1e26e0
-> --- /dev/null
-> +++ b/drivers/pci/controller/dwc/pcie-dw-sophgo.c
-> @@ -0,0 +1,282 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * PCIe host controller driver for Sophgo SoCs.
-> + *
-> + */
-> +
-> +#include <linux/clk.h>
-> +#include <linux/gpio/consumer.h>
-> +#include <linux/irqchip/chained_irq.h>
-> +#include <linux/irqdomain.h>
-> +#include <linux/mfd/syscon.h>
-> +#include <linux/module.h>
-> +#include <linux/phy/phy.h>
-> +#include <linux/property.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/regmap.h>
-> +#include <linux/reset.h>
+> Please let me know.
 
-Drop this ...
+I'd still accept your driver with the legacy callbacks, mostly because
+your effort is already that old (which I consider my fault mostly).
 
-> +
-> +#include "pcie-designware.h"
-> +
-> +#define to_sophgo_pcie(x)		dev_get_drvdata((x)->dev)
-> +
-> +#define PCIE_INT_SIGNAL			0xc48
-> +#define PCIE_INT_EN			0xca0
-> +
-> +#define PCIE_SIGNAL_INTX_SHIFT		5
-> +
-> +#define PCIE_INT_EN_INTX_SHIFT		1
-> +#define PCIE_INT_EN_INT_SII		BIT(0)
-> +#define PCIE_INT_EN_INT_INTA		BIT(1)
-> +#define PCIE_INT_EN_INT_INTB		BIT(2)
-> +#define PCIE_INT_EN_INT_INTC		BIT(3)
-> +#define PCIE_INT_EN_INT_INTD		BIT(4)
-> +#define PCIE_INT_EN_INT_MSI		BIT(5)
-> +
-> +struct sophgo_pcie {
-> +	struct dw_pcie pci;
-> +	void __iomem *app_base;
-> +	struct clk_bulk_data *clks;
-> +	unsigned int clk_cnt;
-> +	struct reset_control *rst;
+> Is there any documentation available for waveform callback? What scenario=
+s we can use
+> Waveform callbacks compared to traditional one?=20
 
-... and this. It is unused.
+There is no nice documentation available yet. The improvements include:
 
+ - arbitrary offsets for the duty cycle, so the active phase doesn't
+   need to be at the start or the end of a period any more
+ - consumers can query the result of a configuration request (before and
+   also after the request was issued).
 
-regards
-Philipp
+Both are of little importance if your focus is mostly backlights.
+
+Best regards
+Uwe
+
+--k2zrcougat4y5ihj
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAme4Qn8ACgkQj4D7WH0S
+/k7FvAf/SOI19tb6fGsBqVcRMh6WfkohHjyd+hY6mT9Ldu9nlH+O/29gn2WT7q0V
+0Vxl7YzQFTAg6yi9CJVFTTxUYI0Lguc6axHEZJpEqbgGHTa6wxL5xBEFneEbZ2O3
+PbMfFIFtGrpYWz9ThcDbdwlamRBaAVFOFgP3zIubK7m3Qn/Esdvtj88ZVGur+D6n
+DvuxxmaN1wD3d4YWI/prGd1LwlGAarvjWDVzFOIvlUOE1fooxeN0mvlam/sDl1x4
+O++C/ldxqSRhEl7pL1iZy7321/ofkqdlBlIPLgDF2azF98jDAfUvYy3wUOklj8Vo
+r0daeIGYwIoCRibBTvmkRTIlNrhCFw==
+=ajkb
+-----END PGP SIGNATURE-----
+
+--k2zrcougat4y5ihj--
 
