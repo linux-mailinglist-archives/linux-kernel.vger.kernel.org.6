@@ -1,126 +1,95 @@
-Return-Path: <linux-kernel+bounces-526778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B9B9A40313
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 23:56:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D155CA4031A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 23:58:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1DB919E1F5F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 22:54:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 24800163065
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 22:58:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C45BF253B73;
-	Fri, 21 Feb 2025 22:54:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A8BF1EE028;
+	Fri, 21 Feb 2025 22:57:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="esNVt7/C"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JpQAWCC3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6B482512DB;
-	Fri, 21 Feb 2025 22:54:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F0A62512DB;
+	Fri, 21 Feb 2025 22:57:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740178471; cv=none; b=LlgozLlNAIYeYuorfA05sUL9Br9KGrIk/WjSsbkOl6RoIuxIcNU7wai/yEFdhw/1AihYk1kaCE+Hjl69qv/k0C5aTWhScv3A+ClHLTE0Z/z+2KxQgzHVQpcHiDWamFgoPl7kvc7hOy2yKu2Q8wByn+gq5KAGL1NERSec0FDAVA8=
+	t=1740178671; cv=none; b=Rfdjn5EMTgjq2m/9SOh1bvdr/er0cKkA8Gliak94b+Ca1f3rUHXEMKEa8zitB2Nbe/p0LJ8oTJ+jx0INTCFBvdnCuPYlBHSqlkgbcgWUbcjeanL2J2qgcmHGs5m/HjrnyE+Nz2iJAYuisOrNzSECGDJN6yvhX7/Q2KBbzUcO57g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740178471; c=relaxed/simple;
-	bh=q5MJvVJuqUQh/mE/OeA9ua1qWPFbJQeP6jyr42YnnQA=;
+	s=arc-20240116; t=1740178671; c=relaxed/simple;
+	bh=9UAABk4E/VgDjgAnJdKT8B95CipHDB1ItXLDEM1AbPk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Vz0F3Bk6a21GHw6+X85r5VsNUTTbsdcIEtplaaU0Pr2+ydEuGqMsTHyfAvRusxYCaQxVkGa60yUhFjp5qLVXHh/Z3z7lt5yBNU9ZY4GhYPh6+AgVTUZ4HbcdZ+2prZJQbzg3mlvfjZTXAindOo1lrruYqik8tUN51i5g01d3Stw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=esNVt7/C; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51LIMeh9029740;
-	Fri, 21 Feb 2025 22:54:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=ZVayfxYo+3jaege4ZxLI6tXsJm660C
-	ePAG7rqgEiJ7k=; b=esNVt7/CKssQsnR5wbpzZgro/DGUf6lbMyuSiPnqAWL1ca
-	LdKpKmGAi1ItxXYID0YquFn834t+aILzD4Rd04SEo7lPR6c2WrITx93pfy7EN5xR
-	XJkXLCJiCHJeqrWGTeTvOJyTIWtsqFG9oUtICi+6n5j9LtvG0oYoTrbrY3YIOCKS
-	YHgIkAhhGtPlir0AjSjojNsV56W4PHzwmFa60R+s/1pjHU0dT8rOzZ5efecfYmSk
-	kF4IkW0oTGttUyTACqxYsaOfrchJoM4ObQGiBhGirQ1kW+D7DJRqAk52Jfbqu/vp
-	37corhQIodcmVLs6T5Ldz5K6P9SbOJIittN7NdWw==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44xka8mxat-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Feb 2025 22:54:22 +0000 (GMT)
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 51LMsMSK032390;
-	Fri, 21 Feb 2025 22:54:22 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44xka8mxaq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Feb 2025 22:54:21 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51LMkSjN009683;
-	Fri, 21 Feb 2025 22:54:21 GMT
-Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 44w03yjj71-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Feb 2025 22:54:20 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51LMsH7542270984
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 21 Feb 2025 22:54:17 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id AC5F020040;
-	Fri, 21 Feb 2025 22:54:17 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 2AA8320043;
-	Fri, 21 Feb 2025 22:54:17 +0000 (GMT)
-Received: from localhost (unknown [9.171.80.218])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Fri, 21 Feb 2025 22:54:17 +0000 (GMT)
-Date: Fri, 21 Feb 2025 23:54:15 +0100
-From: Vasily Gorbik <gor@linux.ibm.com>
-To: Heiko Carstens <hca@linux.ibm.com>
-Cc: Haoxiang Li <haoxiang_li2024@163.com>, agordeev@linux.ibm.com,
-        borntraeger@linux.ibm.com, svens@linux.ibm.com,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH] s390/tty: Fix a potential memory leak bug
-Message-ID: <your-ad-here.call-01740178455-ext-7344@work.hours>
-References: <20250218034104.2436469-1-haoxiang_li2024@163.com>
- <20250221151348.11661Dae-hca@linux.ibm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=WHgHbCy6wg6kUeLqFnKIv0bij/avBR34xTv/4qlEbhSJ3YPkUg6a9cPKnRMnMqNa9gsCsYFIVmofdaQbIprXjauSg+3xzGi1DSUvafzL/zYtoYYYUMbApPCyJ9QuWkWiAkEtUa1CtbfiEb5FM2OZf23pJ3Vo2rJcsnNzDbY0qT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JpQAWCC3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D23E3C4CED6;
+	Fri, 21 Feb 2025 22:57:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740178671;
+	bh=9UAABk4E/VgDjgAnJdKT8B95CipHDB1ItXLDEM1AbPk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JpQAWCC3eqXwgubC6od8p3r5bF+00Jzvkqw6Cf7YnQVmJH1DurCtRFt1SwPukphbL
+	 l8tsNBHi1ASGGh57MGgH0pu957TLZtCFRFUN68PPtGuX714gpD0HlK0FnPfDJSnvaH
+	 jiycw27Rflrw+afVxE7EzU5vUoM4q/E0BgS7jkWNIOIlD6uLDKLmMz99CK5TSR9VlX
+	 ySXYfeW4dv85m9OpKi6CGV3B4xTze01KVhAA4ed8xC7oRHdoOvDkenkqkakncPapDE
+	 JYUkqkxgKsjzYGlgRyc4LgFWy5jOyTBAKOPFwQ3KNuS+KbemzHVUpPwc5np7k4WPlB
+	 6VW1MJqKThMEA==
+Date: Fri, 21 Feb 2025 16:57:48 -0600
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Woojung Huh <woojung.huh@microchip.com>,
+	linux-stm32@st-md-mailman.stormreply.com,
+	"David S. Miller" <davem@davemloft.net>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	devicetree@vger.kernel.org, netdev@vger.kernel.org,
+	kernel@pengutronix.de, Paolo Abeni <pabeni@redhat.com>,
+	linux-kernel@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	Eric Dumazet <edumazet@google.com>
+Subject: Re: [PATCH v3 1/3] dt-bindings: sound: convert ICS-43432 binding to
+ YAML
+Message-ID: <174017866853.223124.7022433872565615720.robh@kernel.org>
+References: <20250220090155.2937620-1-o.rempel@pengutronix.de>
+ <20250220090155.2937620-2-o.rempel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250221151348.11661Dae-hca@linux.ibm.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: DE9G1AtDhvKP-s-M83gjw-gdVfungn1R
-X-Proofpoint-ORIG-GUID: BGCON8Cm4yaKxTh96zSuZl3zsp_BOhRu
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-21_08,2025-02-20_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 clxscore=1015
- priorityscore=1501 mlxscore=0 suspectscore=0 lowpriorityscore=0
- adultscore=0 phishscore=0 spamscore=0 malwarescore=0 impostorscore=0
- mlxlogscore=463 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2502210153
+In-Reply-To: <20250220090155.2937620-2-o.rempel@pengutronix.de>
 
-On Fri, Feb 21, 2025 at 04:13:48PM +0100, Heiko Carstens wrote:
-> On Tue, Feb 18, 2025 at 11:41:04AM +0800, Haoxiang Li wrote:
-> > The check for get_zeroed_page() leads to a direct return
-> > and overlooked the memory leak caused by loop allocation.
-> > Add a free helper to free spaces allocated by get_zeroed_page().
-> > 
-> > Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Haoxiang Li <haoxiang_li2024@163.com>
-> > ---
-> >  drivers/s390/char/sclp_tty.c | 12 ++++++++++++
-> >  1 file changed, 12 insertions(+)
-> 
-> Same here: no fixes and Cc stable.
-> 
-> Acked-by: Heiko Carstens <hca@linux.ibm.com>
 
-Applied, thank you!
+On Thu, 20 Feb 2025 10:01:53 +0100, Oleksij Rempel wrote:
+> Convert the ICS-43432 MEMS microphone device tree binding from text format
+> to YAML.
+> 
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> ---
+> changes v3:
+> - add maintainer
+> - remove '|' after 'description:'
+> changes v2:
+> - use "enum" instead "oneOf + const"
+> ---
+>  .../devicetree/bindings/sound/ics43432.txt    | 19 -------
+>  .../bindings/sound/invensense,ics43432.yaml   | 51 +++++++++++++++++++
+>  2 files changed, 51 insertions(+), 19 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/sound/ics43432.txt
+>  create mode 100644 Documentation/devicetree/bindings/sound/invensense,ics43432.yaml
+> 
+
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+
 
