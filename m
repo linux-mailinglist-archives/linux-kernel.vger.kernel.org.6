@@ -1,367 +1,249 @@
-Return-Path: <linux-kernel+bounces-525570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD000A3F17C
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 11:11:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FD20A3F17A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 11:10:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19F763BD343
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:10:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B1913B97F0
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:10:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 132A0205ADE;
-	Fri, 21 Feb 2025 10:10:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 011832054EB;
+	Fri, 21 Feb 2025 10:10:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fX6D23X9"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T9F8oyq1"
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 106222054F7;
-	Fri, 21 Feb 2025 10:10:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4140E1F4299;
+	Fri, 21 Feb 2025 10:10:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740132635; cv=none; b=HGtmAuiFwVPMduDJzAdvLGtWv1byqzeknl3E1xjWmfki4mOLFdkQ4fOM48eBfSVAqXQioj94TohG4wtcgCsI7AQGd1JBPRWP7T7Zm2T9EyPk1B73jg8sVT0ewT7/79yL9cRf8Bz1VAc9/e3zzU6DbRPw/ewtztsFF9Ep43wx1iM=
+	t=1740132632; cv=none; b=tNnL/LmHaqnRLUEDhUX5Qf+4DRj7IxtxjUAYjG7RTIo/5Auh5Y7U+8Y700VluhHpY3+baW57pC7l9HkfWkZF8SF1qSFOUz6CPb+Q68reIkwFCGk6/IzdZI7rvPUNaF2MtsST+/1b6cnjT6Z9EWICHL3/E6a1/kuO02TYTYDWR0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740132635; c=relaxed/simple;
-	bh=EJ5REn1j/zOD3xphl44Y6YG5r9wqolLvkSDrzHsAkS8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gDBbxMUjL2cHLFH0osC2wAOYZtXhz/3PvbMWKCWX28xfBZJbs2nohCtexHr009b2mkNu6Cchljqc0nqpEWh64tPnvC5ayM3mMpP+DjNJIY7yQYrpUIZ+F7a+RzpEhc+apmJU0PgakiqXXMgyCcfpIby9DgFcnSCbt6BsWUTWLrw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fX6D23X9; arc=none smtp.client-ip=209.85.208.182
+	s=arc-20240116; t=1740132632; c=relaxed/simple;
+	bh=GABZIa1yk+ME7OqVVkc9YSIBFoStKBRMFdZ+km85+xA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jc7/fZszjZ8ZNAO4l+lzazrA4QB6WvNVbOlnNJFTR4RZaZSK5n6h0k4lvQmeZIVwkVcPxPD5ZBd/lADp/TPSH1svtTJg8PeDX+igzoLAllvB7/qU63AYtSQC4aDNlH29aNFPSMGxGaEZqtXf/TM4mocUH0IEHO808cabffdyfwI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T9F8oyq1; arc=none smtp.client-ip=209.85.208.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-307c13298eeso22335061fa.0;
-        Fri, 21 Feb 2025 02:10:32 -0800 (PST)
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-30737db1aa9so18378171fa.1;
+        Fri, 21 Feb 2025 02:10:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740132631; x=1740737431; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mf0AhW5ulGwVTYe20q3vWTE2QR1MrqOLrRUeZGC4r4w=;
-        b=fX6D23X9Kuq/BjzhlT5r4JXCftjOetWdjsiUfHixLwlUWP65rFrbAOUwKF0AUCpULX
-         hAHBHod/lniAgemjzHTK5Gap8e1SPCAGZ1JliE93KpWJv+MRZCr55nrxgPHHDtuYzI1t
-         Kk7rsnwtCBbNFErVtzHwjGVuoR1yLB1BrJ8JmOiKHP5UMIBNPseeZMEIobgFUySQuWGR
-         ypp1VVn6eoYfqmOA9pNAaHEEW/HkbcY4lTdu0i2KQRWQSGxM0mionj7IGhLumGS78Q5Z
-         e9CLDGIg1vxTULuiT6h8Silok7W6GZLB4L/ca3A+UDJg3KghFS+EoRwJK8XO8wJovKob
-         rf4Q==
+        d=gmail.com; s=20230601; t=1740132628; x=1740737428; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=bG0BbpFoyNoqsk135c328imcMJ0+Nr3ev0Mcwuo/rmM=;
+        b=T9F8oyq1hL0rRgqyIbsoObHQs7gYhQLyWFWQffnjgMteATI/nTSAKAs1rVILnj0g9x
+         bbHKMio9ilwgPpAnOJ9XK3ckTqqo707Ebr18C1CPbONQvkXa9jebs4q+YVzzOqL55xUD
+         7OyxOGz0ar03mneTGhR7Ib63zMvX5lbKK2Mk1iYpQSbBi0TSxnD3vVCE4mubMEezXLdI
+         C4iGeg7VN+nerJXOb3jmNMKdgseswV+SCXxrPlToEcQ+1BwwZte8uIHeBxdj7xvXRnB6
+         kObu1p1xtkIjd1M2DwyOBUS5W1V4B2k3sKyG9fs3fRSFUFRgjIKr5c83dmpkYRsnJ0mR
+         3R6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740132631; x=1740737431;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mf0AhW5ulGwVTYe20q3vWTE2QR1MrqOLrRUeZGC4r4w=;
-        b=HhNq3qpFvsrLMnFlkTlQi5Zv7Qx1zjIZy0FYFTqxBVmvbOgysKk+OBreXCd1EZblMg
-         0KRCkT0iDFjo6IdimNncUv4zFlc9XjXY/54hcXzBpxnA0ZA3E8+bm0Ac/i7A+4VhCqjR
-         ZDW+1RNTZT4VXOEmdQAtKZRJD1s0E0EfRkOW5DoG3ySFpfIQWhNgSNCgFLf3Ib9jsyT2
-         +ML/tzZfXDF5yNwFR4SMDtmItFUNtK4GZX5dqxCMppoSwzyolzHZ3g5JlJp0QpFqwS/s
-         tXKu0MLpHYlI8a0MODkdrU6Al5F5jUvZOrBRBVShKDUgy9jdbv9oGLtXL6kGC1a5NUmq
-         KSHA==
-X-Forwarded-Encrypted: i=1; AJvYcCXIruoaWPN2CRt2nQ3E3tVmMauCs5hBZD9LTofmoLT4PL8avuaqGDBtjjpMetvroEgBSdl6rcQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yww/23FrfcdG9o4GQD39oS/D+NPvS2c7xgF2NA70wsWd3EOkf2r
-	Jp3dfbiqFufsldiP1D/je6hqK4RBNL/1fQeJjiKUIiT4vIZ+IKiy
-X-Gm-Gg: ASbGncs6f3/ewZyrk9NK3C2QTmChAjXmxEvAaoyaTdlwCrtQjh5XMXhQh9BTtCmJle0
-	L0v9RJgOU8WUyK9bhlSnb2G1oFqxaaaeYwuiH1hbUrXEi1DfYBL/2jFwCh2pyM9jnkWrMlgOODX
-	16ODGnRB3u3CBSmMU7SRgosspbS0e7/XYTo6JnzDQLc8Y7FSfmmbrNuTRxm/YXF8SWkg8MdKsCC
-	KDeD4AMuSoxjOVMk6U9B8BZA+sfMj+7zpix50Tq3aPtuE94FRsG8F5HGilh/WqB+J+VZP8YA1sp
-	qe7RL2d+bCT3y8S710qRKl18R4R+vjzysGJ7jPYJNRDIIII=
-X-Google-Smtp-Source: AGHT+IH3fj4aoBHUWr73QuSlmVwXB1ezvVw90aJfpYfUs3rARwmjQP8qOPo/B5D5dtHxgcCx+0M6cw==
-X-Received: by 2002:a2e:9f10:0:b0:30a:cb8:6de7 with SMTP id 38308e7fff4ca-30a505bbba6mr24240031fa.1.1740132630682;
-        Fri, 21 Feb 2025 02:10:30 -0800 (PST)
-Received: from FI-L-7486715.nmea.abb.com ([147.161.186.94])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3092bc01c45sm21255401fa.1.2025.02.21.02.10.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Feb 2025 02:10:30 -0800 (PST)
-From: Jaakko Karrenpalo <jkarrenpalo@gmail.com>
-To: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Lukasz Majewski <lukma@denx.de>,
-	MD Danish Anwar <danishanwar@ti.com>
-Cc: linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	Jaakko Karrenpalo <jaakko.karrenpalo@fi.abb.com>,
-	Jaakko Karrenpalo <jkarrenpalo@gmail.com>
-Subject: [PATCH net-next v2 2/2] net: hsr: Add KUnit test for PRP
+        d=1e100.net; s=20230601; t=1740132628; x=1740737428;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bG0BbpFoyNoqsk135c328imcMJ0+Nr3ev0Mcwuo/rmM=;
+        b=PedEQTvatG8Q5u5DmRt6YOcZcryjo49kOa+OhCw5+nK7t305pHDDKvfxxsvFqT99EP
+         UN9Iz3r71HxzWN6KnUqRI4aX3+kQJdFdunCp28ud0Tn555Q0HZxTTSLHXSxhbJh8mK+I
+         rGO/vdjyQg1uue6fwPj/t7KydToBmVF53QazeUtqDWOe1Kxd0GZxFvj0dtctmVFH6ZsN
+         dAMBUKaOMpX0ekKpaXUO7rlrG5yMKEE00G+QnChp3DHrNsFGqIq1P7cr6lYwvPf428Jm
+         oXmZhKdDpavPpUi6ZSt2GD4Li9yxJptH8sj21zd1dRqYspm0Riq74C0ttVSZi3RKya0a
+         7L9w==
+X-Forwarded-Encrypted: i=1; AJvYcCW/LmlL9ad/qNLiFMiPgR6WCLoV19Sn2kM/vSkiWZ5vTTdFBft0HfYZRn3yOFopjI+oPwLGA5TT3QAT@vger.kernel.org, AJvYcCW/ZjeVFMtU7NLTLmvwFeXquiTTy+cDfauKPq7nRDYDl338LWbq3Iv7NLbsGP9I0js4R1jxDtV2BDTO@vger.kernel.org, AJvYcCWGJX9tbQjcOErhduAIIdsA+w9/S1jDtWJuGb7tlqH/GoUPV6R5sCQpKM/zubIVBb7hZo7VCVA74cd1QLn89wn8Fbs=@vger.kernel.org, AJvYcCWxSI5li4tlr8TMzxFMBk6DOA/KgtuJYJ35aq0C5cCRry7jP6cM9DvCGMWEbfgDTsVcI6JpJjRIqeMn+kaO@vger.kernel.org
+X-Gm-Message-State: AOJu0YxbpJktofVAn+4l8NmDuNieLEHNYLBdeon516m1M3QZEQbQvEGy
+	Ifn1wToaSFEWVF0NjRD+Jsx3Y6vDo/p86gU3dQLTcxNqXzHUDNnI
+X-Gm-Gg: ASbGncsY4keqD3Ok8ABJgIHZ4Lhha4G6+7rfOPZNXzHlCOTEVBPgf897i58BWXK6grQ
+	Jw2TSsq+GRKtpw65MXBK83RVM9CeLsFzfjcYiXPRTbTJb4mqqObSfQ87hjPQXjtd/6ixAwt7K5B
+	RVEMfRJHuWqHs1YoCkJ8kSlNeL/sjxwWDEYgNdf0R0EysQQEL6l57ZjFVjDn9HRw+QU7m45aVJ7
+	xejEw7zATiDN1g7WlEku4a57Uc++sboNUsxWHzvVFp/hVP4rrOcb5Zq28j30KIv5f5m8/Iv5Vdq
+	qt6mhkWaUpRvcwl5E06GmdYgT5yTNjLPfYK/T2uruhL0SdoD2JqNZlR/K+NefMPe624gaO4gPx8
+	2OL1we1A=
+X-Google-Smtp-Source: AGHT+IEF7HCPBupTpoTIufUdFzsU1NW7CnwkRmSqsaZ2XXJ41DlnitRvGydjhmN16iRmcwFrBfhXBA==
+X-Received: by 2002:a05:6512:3f05:b0:542:2e09:639a with SMTP id 2adb3069b0e04-54838edddd1mr724643e87.10.1740132627920;
+        Fri, 21 Feb 2025 02:10:27 -0800 (PST)
+Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5451f105c2fsm2638305e87.117.2025.02.21.02.10.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 Feb 2025 02:10:26 -0800 (PST)
+Message-ID: <cb27d8b1-c978-4443-9ad2-96e930701976@gmail.com>
 Date: Fri, 21 Feb 2025 12:10:23 +0200
-Message-ID: <20250221101023.91915-2-jkarrenpalo@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250221101023.91915-1-jkarrenpalo@gmail.com>
-References: <20250221101023.91915-1-jkarrenpalo@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/9] iio: adc: add helpers for parsing ADC nodes
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+ Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+ Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Samuel Holland <samuel@sholland.org>,
+ Hugo Villeneuve <hvilleneuve@dimonoff.com>, Nuno Sa <nuno.sa@analog.com>,
+ David Lechner <dlechner@baylibre.com>,
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-sunxi@lists.linux.dev
+References: <cover.1739967040.git.mazziesaccount@gmail.com>
+ <6c5b678526e227488592d004c315a967b9809701.1739967040.git.mazziesaccount@gmail.com>
+ <Z7ZB7RQhyI5Dohrq@smile.fi.intel.com>
+ <b1c1ed68-2f4d-447c-9957-5a1bbc63ef6e@gmail.com>
+ <Z7ci7tUlRQqZEZSN@smile.fi.intel.com>
+ <ec76334b-bb13-4076-811d-9174170dd677@gmail.com>
+ <Z7c2cBQpjoc9-Vyu@smile.fi.intel.com>
+ <9018e23c-da28-41b0-b774-1598b946a2a1@gmail.com>
+ <Z7dCnRzuQTaJXzmb@smile.fi.intel.com>
+Content-Language: en-US, en-AU, en-GB, en-BW
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+In-Reply-To: <Z7dCnRzuQTaJXzmb@smile.fi.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Jaakko Karrenpalo <jaakko.karrenpalo@fi.abb.com>
+On 20/02/2025 16:56, Andy Shevchenko wrote:
+> On Thu, Feb 20, 2025 at 04:21:37PM +0200, Matti Vaittinen wrote:
+>> On 20/02/2025 16:04, Andy Shevchenko wrote:
+>>> On Thu, Feb 20, 2025 at 03:40:30PM +0200, Matti Vaittinen wrote:
+>>>> On 20/02/2025 14:41, Andy Shevchenko wrote:
+>>>>> On Thu, Feb 20, 2025 at 09:13:00AM +0200, Matti Vaittinen wrote:
+>>>>>> On 19/02/2025 22:41, Andy Shevchenko wrote:
+>>>>>>> On Wed, Feb 19, 2025 at 02:30:27PM +0200, Matti Vaittinen wrote:
+> 
+> ...
+> 
+>>>>>>>> +EXPORT_SYMBOL_GPL(iio_adc_device_num_channels);
+>>>>>>>
+>>>>>>> No namespace?
+>>>>>>
+>>>>>> I was considering also this. The IIO core functions don't belong into a
+>>>>>> namespace - so I followed the convention to keep these similar to other IIO
+>>>>>> core stuff.
+>>>>>
+>>>>> But it's historically. We have already started using namespaces
+>>>>> in the parts of IIO, haven't we?
+>>>>
+>>>> Yes. But as I wrote, I don't think adding new namespaces for every helper
+>>>> file with a function or two exported will scale. We either need something
+>>>> common for IIO (or IIO "subsystems" like "adc", "accel", "light", ... ), or
+>>>> then we just keep these small helpers same as most of the IIO core.
+>>>
+>>> It can be still pushed to IIO_CORE namespace. Do you see an issue with that?
+>>
+>> No. I've missed the fact we have IIO_CORE O_o. Thanks for pointing it out!
+>>
+>>> Or a new opaque namespace for the mentioned cases, something like IIO_HELPERS.
+>>
+>> I am unsure if it really benefits to split this out of the IIO_CORE. I've a
+>> feeling it falls into the category of making things harder for user with no
+>> apparent reason. But yes, the IIO_CORE makes sense.
+> 
+> Probably I was not clear, I mean to put this under a given namespace. There is
+> no a such, we have currently:
+> 
+> IIO_BACKEND
+> IIO_DMA_BUFFER
+> IIO_DMAENGINE_BUFFER
+> IIO_GTS_HELPER
+> IIO_RESCALE
 
-Add unit tests for the PRP duplicate detection
+Ah. So, the IIO core stuff is still not in a namespace. Those listed 
+above are all too specific (I believe, in general, and definitely to 
+carry ADC helpers).
 
-Signed-off-by: Jaakko Karrenpalo <jaakko.karrenpalo@fi.abb.com>
-Signed-off-by: Jaakko Karrenpalo <jkarrenpalo@gmail.com>
----
-Changes in v2:
-- Changed KUnit tests to compile as built-in only
+Adding 'ADC_HELPERS' would just add yet another way too specific one. 
+So, currently there is no suitable namespace for these helpers, and I 
+still believe they fit best to where the rest of the IIO-core stuff is.
 
- net/hsr/Kconfig                |  14 +++
- net/hsr/Makefile               |   2 +
- net/hsr/prp_dup_discard_test.c | 210 +++++++++++++++++++++++++++++++++
- 3 files changed, 226 insertions(+)
- create mode 100644 net/hsr/prp_dup_discard_test.c
+If we want really play the namespace game, then the existing IIO stuff 
+should be put in a IIO_CORE-namespace instead of creating more new small 
+ones. I am afraid that adding all existing IIO core to a IIO_CORE 
+namespace and converting all existing users to use the IIO_CORE is not a 
+reasonable request for a person trying to:
 
-diff --git a/net/hsr/Kconfig b/net/hsr/Kconfig
-index 1b048c17b6c8..07fc0a768b7e 100644
---- a/net/hsr/Kconfig
-+++ b/net/hsr/Kconfig
-@@ -38,3 +38,17 @@ config HSR
- 	  relying on this code in a safety critical system!
- 
- 	  If unsure, say N.
-+
-+config PRP_DUP_DISCARD_KUNIT_TEST
-+	bool "PRP duplicate discard KUnit tests" if !KUNIT_ALL_TESTS
-+	depends on HSR = y && KUNIT = y
-+	default KUNIT_ALL_TESTS
-+	help
-+	  Covers the PRP duplicate discard algorithm.
-+	  Only useful for kernel devs running KUnit test harness and are not
-+	  for inclusion into a production build.
-+
-+	  For more information on KUnit and unit tests in general please refer
-+	  to the KUnit documentation in Documentation/dev-tools/kunit/.
-+
-+	  If unsure, say N.
-diff --git a/net/hsr/Makefile b/net/hsr/Makefile
-index 75df90d3b416..34e581db5c41 100644
---- a/net/hsr/Makefile
-+++ b/net/hsr/Makefile
-@@ -8,3 +8,5 @@ obj-$(CONFIG_HSR)	+= hsr.o
- hsr-y			:= hsr_main.o hsr_framereg.o hsr_device.o \
- 			   hsr_netlink.o hsr_slave.o hsr_forward.o
- hsr-$(CONFIG_DEBUG_FS) += hsr_debugfs.o
-+
-+obj-$(CONFIG_PRP_DUP_DISCARD_KUNIT_TEST) += prp_dup_discard_test.o
-diff --git a/net/hsr/prp_dup_discard_test.c b/net/hsr/prp_dup_discard_test.c
-new file mode 100644
-index 000000000000..e212bdf24720
---- /dev/null
-+++ b/net/hsr/prp_dup_discard_test.c
-@@ -0,0 +1,210 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#include <kunit/test.h>
-+
-+#include "hsr_main.h"
-+#include "hsr_framereg.h"
-+
-+struct prp_test_data {
-+	struct hsr_port port;
-+	struct hsr_port port_rcv;
-+	struct hsr_frame_info frame;
-+	struct hsr_node node;
-+};
-+
-+static struct prp_test_data *build_prp_test_data(struct kunit *test)
-+{
-+	struct prp_test_data *data = kunit_kzalloc(test,
-+		sizeof(struct prp_test_data), GFP_USER);
-+	KUNIT_EXPECT_NOT_ERR_OR_NULL(test, data);
-+
-+	data->frame.node_src = &data->node;
-+	data->frame.port_rcv = &data->port_rcv;
-+	data->port_rcv.type = HSR_PT_SLAVE_A;
-+	data->node.seq_start[HSR_PT_SLAVE_A] = 1;
-+	data->node.seq_expected[HSR_PT_SLAVE_A] = 1;
-+	data->node.seq_start[HSR_PT_SLAVE_B] = 1;
-+	data->node.seq_expected[HSR_PT_SLAVE_B] = 1;
-+	data->node.seq_out[HSR_PT_MASTER] = 0;
-+	data->node.time_out[HSR_PT_MASTER] = jiffies;
-+	data->port.type = HSR_PT_MASTER;
-+
-+	return data;
-+}
-+
-+static void check_prp_counters(struct kunit *test,
-+			       struct prp_test_data *data,
-+			       u16 seq_start_a, u16 seq_expected_a,
-+			       u16 seq_start_b, u16 seq_expected_b)
-+{
-+	KUNIT_EXPECT_EQ(test, data->node.seq_start[HSR_PT_SLAVE_A],
-+			seq_start_a);
-+	KUNIT_EXPECT_EQ(test, data->node.seq_start[HSR_PT_SLAVE_B],
-+			seq_start_b);
-+	KUNIT_EXPECT_EQ(test, data->node.seq_expected[HSR_PT_SLAVE_A],
-+			seq_expected_a);
-+	KUNIT_EXPECT_EQ(test, data->node.seq_expected[HSR_PT_SLAVE_B],
-+			seq_expected_b);
-+}
-+
-+static void prp_dup_discard_forward(struct kunit *test)
-+{
-+	/* Normal situation, both LANs in sync. Next frame is forwarded */
-+	struct prp_test_data *data = build_prp_test_data(test);
-+
-+	data->frame.sequence_nr = 2;
-+	KUNIT_EXPECT_EQ(test, 0,
-+			prp_register_frame_out(&data->port, &data->frame));
-+	KUNIT_EXPECT_EQ(test, data->frame.sequence_nr,
-+			data->node.seq_out[HSR_PT_MASTER]);
-+	KUNIT_EXPECT_EQ(test, jiffies, data->node.time_out[HSR_PT_MASTER]);
-+	check_prp_counters(test, data, data->frame.sequence_nr,
-+			   data->frame.sequence_nr + 1, 1, 1);
-+}
-+
-+static void prp_dup_discard_inside_dropwindow(struct kunit *test)
-+{
-+	/* Normal situation, other LAN ahead by one. Frame is dropped */
-+	struct prp_test_data *data = build_prp_test_data(test);
-+	unsigned long time = jiffies - 10;
-+
-+	data->frame.sequence_nr = 1;
-+	data->node.seq_expected[HSR_PT_SLAVE_B] = 3;
-+	data->node.seq_out[HSR_PT_MASTER] = 2;
-+	data->node.time_out[HSR_PT_MASTER] = time;
-+
-+	KUNIT_EXPECT_EQ(test, 1,
-+			prp_register_frame_out(&data->port, &data->frame));
-+	KUNIT_EXPECT_EQ(test, 2, data->node.seq_out[HSR_PT_MASTER]);
-+	KUNIT_EXPECT_EQ(test, time, data->node.time_out[HSR_PT_MASTER]);
-+	check_prp_counters(test, data, 2, 2, 2, 3);
-+}
-+
-+static void prp_dup_discard_node_timeout(struct kunit *test)
-+{
-+	/* Timeout situation, node hasn't sent anything for a while */
-+	struct prp_test_data *data = build_prp_test_data(test);
-+
-+	data->frame.sequence_nr = 7;
-+	data->node.seq_start[HSR_PT_SLAVE_A] = 1234;
-+	data->node.seq_expected[HSR_PT_SLAVE_A] = 1235;
-+	data->node.seq_start[HSR_PT_SLAVE_B] = 1234;
-+	data->node.seq_expected[HSR_PT_SLAVE_B] = 1234;
-+	data->node.seq_out[HSR_PT_MASTER] = 1234;
-+	data->node.time_out[HSR_PT_MASTER] =
-+		jiffies - msecs_to_jiffies(HSR_ENTRY_FORGET_TIME) - 1;
-+
-+	KUNIT_EXPECT_EQ(test, 0,
-+			prp_register_frame_out(&data->port, &data->frame));
-+	KUNIT_EXPECT_EQ(test, data->frame.sequence_nr,
-+			data->node.seq_out[HSR_PT_MASTER]);
-+	KUNIT_EXPECT_EQ(test, jiffies, data->node.time_out[HSR_PT_MASTER]);
-+	check_prp_counters(test, data, data->frame.sequence_nr,
-+			   data->frame.sequence_nr + 1, 1234, 1234);
-+}
-+
-+static void prp_dup_discard_out_of_sequence(struct kunit *test)
-+{
-+	/* One frame is received out of sequence on both LANs */
-+	struct prp_test_data *data = build_prp_test_data(test);
-+
-+	data->node.seq_start[HSR_PT_SLAVE_A] = 10;
-+	data->node.seq_expected[HSR_PT_SLAVE_A] = 10;
-+	data->node.seq_start[HSR_PT_SLAVE_B] = 10;
-+	data->node.seq_expected[HSR_PT_SLAVE_B] = 10;
-+	data->node.seq_out[HSR_PT_MASTER] = 9;
-+
-+	/* 1st old frame, should be accepted */
-+	data->frame.sequence_nr = 8;
-+	KUNIT_EXPECT_EQ(test, 0,
-+			prp_register_frame_out(&data->port, &data->frame));
-+	KUNIT_EXPECT_EQ(test, data->frame.sequence_nr,
-+			data->node.seq_out[HSR_PT_MASTER]);
-+	check_prp_counters(test, data, data->frame.sequence_nr,
-+			   data->frame.sequence_nr + 1, 10, 10);
-+
-+	/* 2nd frame should be dropped */
-+	data->frame.sequence_nr = 8;
-+	data->port_rcv.type = HSR_PT_SLAVE_B;
-+	KUNIT_EXPECT_EQ(test, 1,
-+			prp_register_frame_out(&data->port, &data->frame));
-+	check_prp_counters(test, data, data->frame.sequence_nr + 1,
-+			   data->frame.sequence_nr + 1,
-+			   data->frame.sequence_nr + 1,
-+			   data->frame.sequence_nr + 1);
-+
-+	/* Next frame, this is forwarded */
-+	data->frame.sequence_nr = 10;
-+	data->port_rcv.type = HSR_PT_SLAVE_A;
-+	KUNIT_EXPECT_EQ(test, 0,
-+			prp_register_frame_out(&data->port, &data->frame));
-+	KUNIT_EXPECT_EQ(test, data->frame.sequence_nr,
-+			data->node.seq_out[HSR_PT_MASTER]);
-+	check_prp_counters(test, data, data->frame.sequence_nr,
-+			   data->frame.sequence_nr + 1, 9, 9);
-+
-+	/* and next one is dropped */
-+	data->frame.sequence_nr = 10;
-+	data->port_rcv.type = HSR_PT_SLAVE_B;
-+	KUNIT_EXPECT_EQ(test, 1,
-+			prp_register_frame_out(&data->port, &data->frame));
-+	check_prp_counters(test, data, data->frame.sequence_nr + 1,
-+			   data->frame.sequence_nr + 1,
-+			   data->frame.sequence_nr + 1,
-+			   data->frame.sequence_nr + 1);
-+}
-+
-+static void prp_dup_discard_lan_b_late(struct kunit *test)
-+{
-+	/* LAN B is behind */
-+	struct prp_test_data *data = build_prp_test_data(test);
-+
-+	data->node.seq_start[HSR_PT_SLAVE_A] = 9;
-+	data->node.seq_expected[HSR_PT_SLAVE_A] = 9;
-+	data->node.seq_start[HSR_PT_SLAVE_B] = 9;
-+	data->node.seq_expected[HSR_PT_SLAVE_B] = 9;
-+	data->node.seq_out[HSR_PT_MASTER] = 8;
-+
-+	data->frame.sequence_nr = 9;
-+	KUNIT_EXPECT_EQ(test, 0,
-+			prp_register_frame_out(&data->port, &data->frame));
-+	KUNIT_EXPECT_EQ(test, data->frame.sequence_nr,
-+			data->node.seq_out[HSR_PT_MASTER]);
-+	check_prp_counters(test, data, 9, 10, 9, 9);
-+
-+	data->frame.sequence_nr = 10;
-+	KUNIT_EXPECT_EQ(test, 0,
-+			prp_register_frame_out(&data->port, &data->frame));
-+	KUNIT_EXPECT_EQ(test, data->frame.sequence_nr,
-+			data->node.seq_out[HSR_PT_MASTER]);
-+	check_prp_counters(test, data, 9, 11, 9, 9);
-+
-+	data->frame.sequence_nr = 9;
-+	data->port_rcv.type = HSR_PT_SLAVE_B;
-+	KUNIT_EXPECT_EQ(test, 1,
-+			prp_register_frame_out(&data->port, &data->frame));
-+	check_prp_counters(test, data, 10, 11, 10, 10);
-+
-+	data->frame.sequence_nr = 10;
-+	data->port_rcv.type = HSR_PT_SLAVE_B;
-+	KUNIT_EXPECT_EQ(test, 1,
-+			prp_register_frame_out(&data->port, &data->frame));
-+	check_prp_counters(test, data,  11, 11, 11, 11);
-+}
-+
-+static struct kunit_case prp_dup_discard_test_cases[] = {
-+	KUNIT_CASE(prp_dup_discard_forward),
-+	KUNIT_CASE(prp_dup_discard_inside_dropwindow),
-+	KUNIT_CASE(prp_dup_discard_node_timeout),
-+	KUNIT_CASE(prp_dup_discard_out_of_sequence),
-+	KUNIT_CASE(prp_dup_discard_lan_b_late),
-+	{}
-+};
-+
-+static struct kunit_suite prp_dup_discard_suite = {
-+	.name = "prp_duplicate_discard",
-+	.test_cases = prp_dup_discard_test_cases,
-+};
-+
-+kunit_test_suite(prp_dup_discard_suite);
-+
-+MODULE_LICENSE("GPL");
--- 
-2.43.0
+1. Write a driver
+2. Add a small helper to aid others (instead of just melding it all in 
+the given new driver - which does not benefit anyone else and just leads 
+to code duplication in the long run...)
+
+>>>>>> (Sometimes I have a feeling that the trend today is to try make things
+>>>>>> intentionally difficult in the name of the safety. Like, "more difficult I
+>>>>>> make this, more experience points I gain in the name of the safety".)
+>>>>>>
+>>>>>> Well, I suppose I could add a namespace for these functions - if this
+>>>>>> approach stays - but I'd really prefer having all IIO core stuff in some
+>>>>>> global IIO namespace and not to have dozens of fine-grained namespaces for
+>>>>>> an IIO driver to use...
+> 
+> ...
+> 
+>>>> foo &= (~bar);
+>>>>
+>>>> is _much_ faster than seeing:
+>>>
+>>> Strongly disagree. One need to parse an additional pair of parentheses,
+>>> and especially when it's a big statement inside with nested ones along
+>>> with understanding what the heck is going on that you need them in the
+>>> first place.
+>>>
+>>> On top of that, we have a common practices in the LK project and
+>>> with our history of communication it seems you are trying to do differently
+>>> from time to time. Sounds like a rebellion to me :-)
+>>
+>> I only rebel when I (in my opinion) have a solid reason :)
+>>
+>>>> foo &= ~bar;
+>>>>
+>>>> and having to google the priorities.
+>>>
+>>> Again, this is something a (regular) kernel developer keeps refreshed.
+>>> Or even wider, C-language developer.
+>>
+>> Ha. As I mentioned, I've been writing C on a daily bases for almost 25
+>> years. I wonder if you intent to say I am not a kernel/C-language developer?
+>> Bold claim.
+> 
+> I'm just surprised by seeing that style from a 25y experienced C developer,
+> that's all.
+
+I am not. If something, these 25 years have taught me to understand that 
+even if something is simple and obvious to me, it may not be simple and 
+obvious to someone else. Similarly, something obvious to someone else, 
+is not obvious to me. Hence, I am very careful when telling people that:
+
+ >>> Again, this is something a (regular) kernel developer keeps refreshed.
+ >>> Or even wider, C-language developer.
+
+I may however say that "this is something _I_ keep refreshed (as a 
+kernel/C-developer)".
+
+As an example,
+
+ >>>> foo &= (~bar);
+
+This is something _I_ find very clear and exact, with zero doubt if 
+negation is applied before &=. For _me_ the parenthesis there _help_, 
+and for _me_ the parenthesis cause no confusion when reading the code.
+
+I won't go and tell that I'd expect any C or kernel developer to be able 
+to fluently parse "foo &= (~bar)". (Whether I think they should is 
+another matter).
+
+Oh well, let's wait and see what Jonathan thinks of these helpers in 
+general. We can continue the parenthesis discussion when we know whether 
+the code is going to stay.
+
+Yours,
+	-- Matti
 
 
