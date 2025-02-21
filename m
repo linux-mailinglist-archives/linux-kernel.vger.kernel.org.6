@@ -1,67 +1,103 @@
-Return-Path: <linux-kernel+bounces-525239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 647C4A3ECDF
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 07:36:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACB28A3ECE6
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 07:36:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30653422100
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 06:34:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F4D9422486
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 06:35:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C66631FCFDC;
-	Fri, 21 Feb 2025 06:34:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C0021FDE04;
+	Fri, 21 Feb 2025 06:35:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z9e5BV4n"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="idZAGIMr"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D10C1E3DCF;
-	Fri, 21 Feb 2025 06:34:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3797F1FBCB0
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 06:35:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740119683; cv=none; b=s3mkSHuaN5weKdJe88eGUG4nFhIbyMHmkL+FtX5+cK8TiCWPd6+PM044iQpYUcAWnncMliC/MGc6VC4lOcaAi+GE7VKS0vYoS05Uu5vF6eHRA/HdHKrAXiYzrT1JsoWRnL2agkKmAThDRJP8nI6cDfdQlxpZ3qIS44jJQ0iTPPw=
+	t=1740119712; cv=none; b=aMI5OoFW/vj9FFw2WU2pMQVlv/RHnBLRtyLI3Lc/qRItjN6Vx1pQMyqoDu35IkH3be9cYmaVWBti+pIB69gNloQ2CDP1MkzPJmKL+2QdAEIJrT0SrVkvza7tybTKdEyH2u5UiKKEkxOAH6+O86W0EqEMz8erdnH5EL9MkAnBQp4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740119683; c=relaxed/simple;
-	bh=vkgfE5ntMdEMiMS+9MkNPD8HkcY13i4p+PcL8NCRd4U=;
+	s=arc-20240116; t=1740119712; c=relaxed/simple;
+	bh=oc+EtHShi6bbNj9AJnLiY/NJj0NfEanMXEUTL2lUbmU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cnXTtLvBw/feNpaYzQWMN2x+A5/g7pOny/kq/L5+dk3C4eaGuZH1qY3+AIyi7In/ttEaecpBOWLhxlA7eg/VpCkC33rzOLw+jxmoZtRTUeS3mIbnxXz7SwZv+4ozA6aMcMu61ZwMtpXHzTKZvis4a3lErOSbzuf99E+X1JXqpgE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z9e5BV4n; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F3A2C4CED6;
-	Fri, 21 Feb 2025 06:34:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740119682;
-	bh=vkgfE5ntMdEMiMS+9MkNPD8HkcY13i4p+PcL8NCRd4U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Z9e5BV4n9cw+ahpkjVMtN2rx/ukPh6k77r5o04HLolhfdTaUXOfW87VRuDUd8TCYY
-	 V3HeELtTQQ1XF/N1FWQ5I3tiCpTouLug7CzwjYRplejOurvAnSzc0Lo68U0IEnlkKf
-	 790of9UGsIemSqgbTIbywEmJRPnJ3fHveGXPslv9XvD12Tr6L7JKyVE97zOeV/6io0
-	 3eOnuzimytPdfv+PhsyHFzZmLVes9pX1YpBZGBreU/07vGR1VUgckHp5py5PzeF2lj
-	 WT1LV37htMf3Z7W1HnIv6P1WLy4sRsxznfJ3/w+CMNqcZXrpSRInp81kDygX4wkvWD
-	 +UdCpNRJeLZdg==
-Date: Thu, 20 Feb 2025 22:34:40 -0800
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Andi Kleen <ak@linux.intel.com>,
-	Dominique Martinet <asmadeus@codewreck.org>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] perf parse-events: Tidy name token matching
-Message-ID: <Z7gegNG5_pX2gQ9O@google.com>
-References: <20250109175401.161340-1-irogers@google.com>
- <CAP-5=fWghT8+pBFVxn9JDbqHU9NPy9mgyT8Ee=pTdkCKxRoJgA@mail.gmail.com>
- <CAP-5=fWZAk7XqtL+=CanefkuFxhDsJ22+-uHkrxXi4g8123oew@mail.gmail.com>
- <Z7ZD5phOOCbKggrn@google.com>
- <CAP-5=fXeZM7iWNQq0ar1HmAwWrH4HAHqD3F=ueB=jaw-2UMn_w@mail.gmail.com>
- <Z7Za30xyVUQWI1tV@google.com>
- <CAP-5=fW=_4j43-mY3B02BavaOdTA469kUjEZaahTUA5S7Ma4sQ@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=hto5nPTIFUGQFFM49SgKudoRpKMYxVhquHuG+79R1+Cgox1bLtaX5NwSDA/d4huUmDzQHiVlsXnFm73RE0T3mO0I8AXnj4KcKyx4pJXMuc+z4jaXkrbQlm2jBDNFUL9BKJTDf+XYzS9NtGR9v40+HLnRqVXx4ek+jrzsULl0uzU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=idZAGIMr; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2211acda7f6so36729295ad.3
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 22:35:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740119710; x=1740724510; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=4+iMivRKCEBsggc2rtGQq+coCu/bncplKGZAc6W2LxM=;
+        b=idZAGIMr16AeU38mVAUPU1g9TanDgO5TeB7Pv4IqYTw6Sv/Iwz2dQT/nXj9EGQXEaV
+         3SqdmwZz4Lo5Fda8PcJkT90hKaHznB3dEZUQbtNRl/i4L8HpxRNc1mHxDMRhtdo0A3Sm
+         aFKT0MYtKtWXHTEAYH2eTMTxQaKq/L6wHJyRLYC3ZlTQCYWGU9y624JZ1/pK2N5bCvwC
+         Bq1Ufa91CFoaCfQni5AvDauaED9YveH0TFTIhPoqnaDRWaBJ2KDzHPSlh7eObMngmwsW
+         WR4+Qc6lO3Q8mD8nmz0VeZojSJTQIDoQ31SkZ19lGBT+mGbVN9D9WSwbJL2vD3M3lHqg
+         t8tA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740119710; x=1740724510;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4+iMivRKCEBsggc2rtGQq+coCu/bncplKGZAc6W2LxM=;
+        b=f84A9POxPnjaEc+w1o5UnKInjJqTI9q3gdSsx25464R3X2SxJ+ftirGGu1jelav+M/
+         knwkarO21AHKF6zkZEAgqh2+Oz3tjNRizZ8UbEA1c3ijQXSYrhhXa+WDyGlZ3QpH4E+7
+         wibvctWTcj3xu//72RzBY/nV74YyNRW7RW3tMTta8Q50bQ6VIIMb9oifNPRwAefKsTOm
+         gda/RCEpkihDuvCcQs5mEEX2HCSilRtMLMHYAWZI50ZrJejlFm59NF5GLhmGp1YUoEPK
+         BZxqMh/95GVT9iyEkThkDPCaQbSrdT6Ts5aqSKPWcltmmnwC9miYzvXdqxLPxX94Ppz1
+         XjaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU8jVdZMboGoVtkgYybGLoFaPe/Etv6KFmFQItjVG8rB29Wnlu6I/Zl9UFuGeziCcG3G1RdtHBa+yDNGQI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWkXpfErDQNTGvuwnzDkPD4nNxnwieI9PqX+W00+3Xm4cC2dYd
+	yaPBN0mVMpx+QCwuhHIwvC4lvg1FcPeDePx11+Lmdghm3wXgeMbYJh9S5JFbntA=
+X-Gm-Gg: ASbGncvMXUcfMGjjKMOCalxQQqmAt0IvFtdrMfbiFDV2saG7tEQ0oAQjH3Z3XGZTpji
+	5noLkTs+wn1ub2TccflCj2seYoyg1Eig7Vkzq8YTbepXTIhyRb6w5iBPSUc5aLBUbSNnYZuk1SJ
+	8ww7c0Nrfe3Smbslq/m8Rk6U/1q7kC3r2+iDTkoEPjr4+snPtfvmimoTD4iZKyYNqbL8dfQ6OSt
+	nDCFEe8d7WH/MNNPKjP5pzlb31gf26ZVyDc5QPqfBvvR6iyA8ECFJAgrWSLoNNp3BTOZEPxyz41
+	o1Y8qT1XUd49CUiuonu5BaYQ5kxT
+X-Google-Smtp-Source: AGHT+IEjF2u2RW/3YdAr0lHzjtV+TNOOgg3zCjt+GF/uyeQexQA0ARkffz5BS1YIj4YSEzPUqYDV+w==
+X-Received: by 2002:a05:6a00:2e08:b0:730:76a1:3935 with SMTP id d2e1a72fcca58-73426ca8308mr2801175b3a.6.1740119710461;
+        Thu, 20 Feb 2025 22:35:10 -0800 (PST)
+Received: from localhost ([122.172.84.139])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7324273e324sm14929891b3a.88.2025.02.20.22.35.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Feb 2025 22:35:09 -0800 (PST)
+Date: Fri, 21 Feb 2025 12:05:07 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Daniel Almeida <daniel.almeida@collabora.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+	Danilo Krummrich <dakr@redhat.com>, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, linux-pm@vger.kernel.org,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Nishanth Menon <nm@ti.com>, rust-for-linux@vger.kernel.org,
+	Manos Pitsidianakis <manos.pitsidianakis@linaro.org>,
+	Erik Schilling <erik.schilling@linaro.org>,
+	Alex =?utf-8?Q?Benn=C3=A9e?= <alex.bennee@linaro.org>,
+	Joakim Bech <joakim.bech@linaro.org>, Rob Herring <robh@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH V8 06/14] rust: Add bare minimal bindings for clk
+ framework
+Message-ID: <20250221063507.3vffn55hkmcn6x35@vireshk-i7>
+References: <cover.1738832118.git.viresh.kumar@linaro.org>
+ <c68081e18d939aefc7f6dac798df6b72e81bba4b.1738832118.git.viresh.kumar@linaro.org>
+ <EC290802-2C5E-4ACA-A530-E776654C7E94@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,136 +107,26 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fW=_4j43-mY3B02BavaOdTA469kUjEZaahTUA5S7Ma4sQ@mail.gmail.com>
+In-Reply-To: <EC290802-2C5E-4ACA-A530-E776654C7E94@collabora.com>
 
-On Wed, Feb 19, 2025 at 02:43:10PM -0800, Ian Rogers wrote:
-> On Wed, Feb 19, 2025 at 2:27 PM Namhyung Kim <namhyung@kernel.org> wrote:
-> >
-> > On Wed, Feb 19, 2025 at 02:11:43PM -0800, Ian Rogers wrote:
-> > > On Wed, Feb 19, 2025 at 12:49 PM Namhyung Kim <namhyung@kernel.org> wrote:
-> > > >
-> > > > Hi Ian,
-> > > >
-> > > > On Wed, Feb 19, 2025 at 11:02:40AM -0800, Ian Rogers wrote:
-> > > > > On Mon, Feb 10, 2025 at 11:23 AM Ian Rogers <irogers@google.com> wrote:
-> > > > > >
-> > > > > > On Thu, Jan 9, 2025 at 9:54 AM Ian Rogers <irogers@google.com> wrote:
-> > > > > > >
-> > > > > > > Prior to commit 70c90e4a6b2f ("perf parse-events: Avoid scanning PMUs
-> > > > > > > before parsing") names (generally event names) excluded hyphen (minus)
-> > > > > > > symbols as the formation of legacy names with hyphens was handled in
-> > > > > > > the yacc code. That commit allowed hyphens supposedly making
-> > > > > > > name_minus unnecessary. However, changing name_minus to name has
-> > > > > > > issues in the term config tokens as then name ends up having priority
-> > > > > > > over numbers and name allows matching numbers since commit
-> > > > > > > 5ceb57990bf4 ("perf parse: Allow tracepoint names to start with digits
-> > > > > > > "). It is also permissable for a name to match with a colon (':') in
-> > > > > > > it when its in a config term list. To address this rename name_minus
-> > > > > > > to term_name, make the pattern match name's except for the colon, add
-> > > > > > > number matching into the config term region with a higher priority
-> > > > > > > than name matching. This addresses an inconsistency and allows greater
-> > > > > > > matching for names inside of term lists, for example, they may start
-> > > > > > > with a number.
-> > > > > > >
-> > > > > > > Rename name_tag to quoted_name and update comments and helper
-> > > > > > > functions to avoid str detecting quoted strings which was already done
-> > > > > > > by the lexer.
-> > > > > > >
-> > > > > > > Signed-off-by: Ian Rogers <irogers@google.com>
-> > > > > >
-> > > > > > Ping. This patch addresses name parsing inconsistencies, in particular
-> > > > > > events may start with a number without a PMU, but not with. It also
-> > > > > > aims to give better names to patterns than name_minus and name_tag
-> > > > > > (with term_name and quoted_name respectively) that have drifted from
-> > > > > > their original meaning and become to me less than intention revealing.
-> > > > >
-> > > > > Ping.
-> > > >
-> > > > Sorry for the delay.  Can you please give an example for better
-> > > > understanding if there's a change in the behavior?
-> > >
-> > > The example in:
-> > > https://lore.kernel.org/r/20240510-perf_digit-v4-3-db1553f3233b@codewreck.org
-> > > is `perf trace -e '9p:*'` which allows the number to start a
-> > > tracepoint name, but what is true for tracepoint names is also true
-> > > for event names. I lack the tracepoint but the patch here is making
-> > > that work if the event/tracepoint is specified with a PMU, so:
-> > >
-> > > Before the input is just seen as broken:
-> > > ```
-> > > $ perf stat -e 'tracepoint/9p:9p/' true
-> > > event syntax error: 'tracepoint/9p:9p/'
-> > >                                \___ Unrecognized input
-> > > Run 'perf list' for a list of valid events
-> > >
-> > > Usage: perf stat [<options>] [<command>]
-> > >
-> > >    -e, --event <event>   event selector. use 'perf list' to list
-> > > available events
-> > > ```
-> > >
-> > > After the input fails because the event wasn't found:
-> > > ```
-> > > $ perf stat -e 'tracepoint/9p:9p/' true
-> > > event syntax error: 'tracepoint/9p:9p/'
-> > >                     \___ Bad event or PMU
-> > >
-> > > Unable to find PMU or event on a PMU of 'tracepoint'
-> > >
-> > > event syntax error: 'tracepoint/9p:9p/'
-> > >                                \___ unknown term '9p:9p' for pmu 'tracepoint'
-> > >
-> > > valid terms: config,config1,config2,config3,name,period,percore,metric-id
-> > >
-> > > event syntax error: 'tracepoint/9p:9p/'
-> > >                                \___ unknown term '9p:9p' for pmu 'tracepoint'
-> > >
-> > > valid terms: config,config1,config2,config3,name,period,percore,metric-id
-> > > Run 'perf list' for a list of valid events
-> > >
-> > > Usage: perf stat [<options>] [<command>]
-> > >
-> > >    -e, --event <event>   event selector. use 'perf list' to list
-> > > available events
-> > > ```
-> > >
-> > > But the patch is just about making the name term more consistent and
-> > > cleaner, the weirdness above wasn't its main point, I want the code to
-> > > be easy to read and understand.
-> >
-> > Ok, so I guess there's no behavior change from the users perspective in
-> > this patchset.  Do you plan to add support for the tracepoint name in
-> > the config term (like tracepoint/9p:9p/) later?
+On 17-02-25, 09:19, Daniel Almeida wrote:
+> Hi Viresh
 > 
-> I think we treat tracepoints much as we do regular PMU perf events
-> except in the encoding of the config. There is also a sysfs PMU:
-> ```
-> $ ls -al /sys/bus/event_source/devices/tracepoint
-> /
-> total 0
-> drwxr-xr-x  3 root root    0 Feb 19 14:35 .
-> drwxr-xr-x 78 root root    0 Feb 19 08:13 ..
-> -rw-r--r--  1 root root 4096 Feb 19 14:34 perf_event_mux_interval_ms
-> drwxr-xr-x  2 root root    0 Feb 19 08:13 power
-> lrwxrwxrwx  1 root root    0 Feb 19 08:13 subsystem -> ../../bus/event_source
-> -r--r--r--  1 root root 4096 Feb 19 10:53 type
-> -rw-r--r--  1 root root 4096 Feb 19 08:13 uevent
-> ```
-> with the type reflecting the perf_event_attr type (3 aka
-> PERF_TYPE_TRACEPOINT). So I think much like with the hwmon_pmu.c it
-> makes sense to have a tracepoint_pmu.c and move logic like
-> parse-events add_tracepoint in there:
-> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/perf/util/parse-events.c?h=perf-tools-next#n523
-> in that case tracepoint/9p:9p/ would be a valid tracepoint event name.
-> For now this code is cleaning up that if you had a 9p on say the cpu
-> PMU, 9p would wildcard match with it but cpu/9p/ would be a parse
-> error - as the event name currently doesn't allow a number to start it
-> when it is part of the term list, what this patch fixes as part of
-> tidying up the code.
+> > On 6 Feb 2025, at 06:28, Viresh Kumar <viresh.kumar@linaro.org> wrote:
+> > 
+> > This adds very basic bindings for the clk framework, implements only
+> > clk_get() and clk_put(). These are the bare minimum bindings required
+> > for many users and are simple enough to add in the first attempt.
+> 
+> I am missing clk_prepare_enable/clk_disable_unprepare.
+> 
+> Otherwise I see no way of enabling and disabling clks. IMHO I would also
+> consider these as “bare minimum”.
 
-Ok, the change itself looks fine to me.
+I have posted the clk bindings separately now:
 
-Thanks,
-Namhyung
+https://lore.kernel.org/all/cover.1740118863.git.viresh.kumar@linaro.org/
 
+-- 
+viresh
 
