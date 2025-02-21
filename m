@@ -1,121 +1,88 @@
-Return-Path: <linux-kernel+bounces-526665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60578A401C2
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 22:07:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1C98A401D5
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 22:11:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D082189938D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 21:07:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B1663BA93B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 21:07:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CB2E254AF4;
-	Fri, 21 Feb 2025 21:05:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ABA6254B10;
+	Fri, 21 Feb 2025 21:06:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="PlsqIhZP"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41138253B62;
-	Fri, 21 Feb 2025 21:05:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dp60rGrq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC0EE253336;
+	Fri, 21 Feb 2025 21:06:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740171948; cv=none; b=OGs7QJIMeR9vVC6+inXMuz7VFt4pPAhbq9h/3O1fyoT6/cibrQQlojb2zViCjnzPx77UUxtJA6HIJRk1u+etXnGPfrQP7mX4giKrGyvJopiowlld7H8nZo97+Gq1iA9OFhwBDOxy0CBcMqRcz+z4TaYjyVUzmM9WrN8EruWrcdk=
+	t=1740171988; cv=none; b=p5T1rc2J88RgdclZoLZ6dPbuxrCIc/NI3DPbP3OQgjd5FTCwab8DDNg4xSeUdlKnCfEmma+LiFTEhdgvTLDe9HwTaEeWdNhiQBmRpGXo9KNe0NMDmBaVHbhBnlNR8scwsbsBclFCH8LDF6uOoI+nww/nbohjozeH6eazjLEHuBY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740171948; c=relaxed/simple;
-	bh=GWK6sgltHoesfc4Hvs48MbApGe+KxZvU2GqOLuArVLc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tsvIgWH2Nrvg1ETNqZnyainPIE9KpPYMedcP7bgaJXwqpmEUJ+0c7DRTSmBJH7rqdG4TOL9AXSgmvD0afWJs0M/PlISmsv+fyxoExshVktHX8duu7h9zTiYC7vdRHWGhTkPdLxwV/gTOHk0vqH/MZv52vgwbHqkg0w2mQTZDtWE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=PlsqIhZP; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [10.17.64.59] (unknown [131.107.8.59])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 79933205367B;
-	Fri, 21 Feb 2025 13:05:46 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 79933205367B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1740171946;
-	bh=5nEtVawYrUgdWCquTzf4DrLN6Eub03km1393TBgkgBY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=PlsqIhZPJD1i6y0OPUbwIhXXlgdZ2AbNoe6SqE2MjQUSTscFXcpAUHNYPtGCSI4aO
-	 zae24HXFY1JXGtlF6KOJZNxQJHpqNqfoDlqC7Z9on+58eJbtbYIP25EFvxuYHf3STS
-	 zjNseWrCXv0uqFFduPb3oK8ysGVSKzllqRinz820=
-Message-ID: <3723d5f8-12b7-417f-9030-218e561e9397@linux.microsoft.com>
-Date: Fri, 21 Feb 2025 13:05:45 -0800
+	s=arc-20240116; t=1740171988; c=relaxed/simple;
+	bh=qmjNEUFgu/ZxCPLIcQrJ7jiCisWI5FZVUdmhNrXSM5s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hG06Ez03niDhp6w2d10Fb0uqlMV0a05PiRDq3b1W4Qwda9lhh1ikOFSwScsRhQhO0imoynsMeItbxRPqeY6i8GDXyENKLGv5slDrSuZ5zyh3/MpEUmouqWvn1VTKgCyJzgR6goHETvG70Za10aGPxlAL1voQpQuavdm1WQA3qkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dp60rGrq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01FC4C4CED6;
+	Fri, 21 Feb 2025 21:06:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740171988;
+	bh=qmjNEUFgu/ZxCPLIcQrJ7jiCisWI5FZVUdmhNrXSM5s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Dp60rGrq6U1l67hpl/CYzbZ3zyyZo6W5wWv3Y/1JEPznaiaiORw56TUo+qaqoP5gu
+	 5RYvlC/SQ7V7N3uh7aTiqHWlUFV6OhPwWoUZFsDPIUtpJWU2eigIr67Zbj1CwBtY3Q
+	 rskyK8M8V18bs8XHHhKRYVcwoAHhufOLrOLN6y+esIrLAyCe9wN8yn5rHnmceSCvNL
+	 /uOZ92pylNx/daZvi33/rEi/TiPYiJUy4bZlAvx5DNCXdbegksVwb/tB2t9+EwdlS7
+	 VD187nIanJ50eG0aZwqOt0c3N3NuEactEAX68WDySsJYrTWi0BJlk16KCINZ5P2X1a
+	 PkXYbEYOTfT/A==
+Date: Fri, 21 Feb 2025 15:06:26 -0600
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Chris Packham <chris.packham@alliedtelesis.co.nz>
+Cc: conor+dt@kernel.org, tsbogend@alpha.franken.de, davem@davemloft.net,
+	pabeni@redhat.com, netdev@vger.kernel.org, kuba@kernel.org,
+	andrew+netdev@lunn.ch, devicetree@vger.kernel.org, lee@kernel.org,
+	linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
+	krzk+dt@kernel.org, edumazet@google.com
+Subject: Re: [RESEND PATCH net-next 2/5] dt-bindings: net: Add switch ports
+ and interrupts to RTL9300
+Message-ID: <174017197206.81138.17349230717480144240.robh@kernel.org>
+References: <20250218195216.1034220-1-chris.packham@alliedtelesis.co.nz>
+ <20250218195216.1034220-3-chris.packham@alliedtelesis.co.nz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 2/7] kexec: define functions to map and unmap segments
-To: Mimi Zohar <zohar@linux.ibm.com>, stefanb@linux.ibm.com,
- roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
- eric.snowberg@oracle.com, ebiederm@xmission.com, paul@paul-moore.com,
- code@tyhicks.com, bauermann@kolabnow.com, linux-integrity@vger.kernel.org,
- kexec@lists.infradead.org, linux-security-module@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
- James.Bottomley@HansenPartnership.com, bhe@redhat.com, vgoyal@redhat.com,
- dyoung@redhat.com
-References: <20250218225502.747963-1-chenste@linux.microsoft.com>
- <20250218225502.747963-3-chenste@linux.microsoft.com>
- <c76a6a741b6f465d270153b65ea6f728383ca608.camel@linux.ibm.com>
-Content-Language: en-US
-From: steven chen <chenste@linux.microsoft.com>
-In-Reply-To: <c76a6a741b6f465d270153b65ea6f728383ca608.camel@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250218195216.1034220-3-chris.packham@alliedtelesis.co.nz>
 
-On 2/20/2025 9:22 AM, Mimi Zohar wrote:
-> Hi Steven,
->
-> On Tue, 2025-02-18 at 14:54 -0800, steven chen wrote:
->> Currently, the mechanism to map and unmap segments to the kimage
->> structure is not available to the subsystems outside of kexec.  This
->> functionality is needed when IMA is allocating the memory segments
->> during kexec 'load' operation.  Implement functions to map and unmap
->> segments to kimage.
-> Obviously up to now Kexec was mapping the segments. Missing from this patch description is
-> the reason "why" these functions are needed now.  It's not enough to say "is needed when
-> IMA is allocating the memory segments during kexec 'load' operation".  The question is why
-> does "IMA" need to allocate the memory segments.  Don't make the kexec/kexec_dump
-> maintainers guess.
->
-> Refer to the section "Describe your changes" in
-> https://www.kernel.org/doc/Documentation/process/submitting-patches.rst
->
->> Implement kimage_map_segment() to enable mapping of IMA buffer source
->> pages to the kimage structure post kexec 'load'.  This function,
->> accepting a kimage pointer, an address, and a size, will gather the
->> source pages within the specified address range, create an array of page
->> pointers, and map these to a contiguous virtual address range.  The
->> function returns the start of this range if successful, or NULL if
->> unsuccessful.
->>
->> Implement kimage_unmap_segment() for unmapping segments
->> using vunmap().
->>
->> From: Tushar Sugandhi <tusharsu@linux.microsoft.com>
->> Author: Tushar Sugandhi <tusharsu@linux.microsoft.com>
-> Again, no such thing as an "Author" tag.  Refer to the comments on 1/7.
->
->> Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
-> As previously requested, please add the Cc's inline here and in all the kexec/kdump
-> related patches:
->
-> Cc: Eric Biederman <ebiederm@xmission.com>
-> Cc: Baoquan He <bhe@redhat.com>
-> Cc: Vivek Goyal <vgoyal@redhat.com>
-> Cc: Dave Young <dyoung@redhat.com>
->
->> Signed-off-by: steven chen <chenste@linux.microsoft.com>
-> thanks,
->
-> Mimi
 
-Mimi, thanks. I will update in next version.
+On Wed, 19 Feb 2025 08:52:13 +1300, Chris Packham wrote:
+> Add bindings for the ethernet-switch and interrupt properties for the
+> RTL9300.
+> 
+> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+> ---
+> 
+> Notes:
+>     This is tecnically v7 of [1] changes from that are:
+>     - Use ethernet-switch.yaml#/$defs/ethernet-ports
+>     - Enforce "ethernet-ports" be used instead of just "ports"
+>     - Add interrupts for the switch block
+> 
+>     [1] - https://lore.kernel.org/lkml/20250204030249.1965444-2-chris.packham@alliedtelesis.co.nz/
+> 
+>  .../bindings/net/realtek,rtl9301-switch.yaml  | 30 +++++++++++++++++++
+>  1 file changed, 30 insertions(+)
+> 
 
-Steven
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
 
