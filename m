@@ -1,84 +1,127 @@
-Return-Path: <linux-kernel+bounces-525421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DB0CA3EFA2
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:11:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21978A3EFAB
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:11:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 910517A6D9B
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:10:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5787218833AD
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:11:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F69D202F64;
-	Fri, 21 Feb 2025 09:11:00 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 077E52036E2;
+	Fri, 21 Feb 2025 09:11:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m8zPwa7X"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55C7A33EA;
-	Fri, 21 Feb 2025 09:10:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DBC633EA;
+	Fri, 21 Feb 2025 09:11:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740129059; cv=none; b=t5q16fTiiIiT0zKPQvjhH9MrfXu3lRKErLRE9dCzooERcoPv30RcXIJZSKmCiJRJ6heDZMdRXFs/We3HPOdRs6lf4gyQ7J2tI0i7osfTyHKtf+ORqDr5QvD/M3X9BpfXSs/joQ1BeDyDbwbn9bS1Yj+L4N41mnLM9UaX8jK2kLU=
+	t=1740129102; cv=none; b=TUS6kErh8bbM1nTssmcD1CtU7K6c3niX4kNfS3COP9lSxl4Ggtkb41AMeIFUegXXufbvUha5uFuYaHzd2OVaFYL8XXt5xY3GhYrM+FolETeMv8w9V/MFKw+/qmXxNN32GzY2vbNWPyY/j6noBG6nQ1892RsPw5i6JnWUH9J3er4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740129059; c=relaxed/simple;
-	bh=AHLxsYdK+o7CJ2XtDFl3oFh8sKefJVTye7o6XxDml1U=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=Zdi/uF2NWEGWRtMcgZVd6AEBSFQnAyJNE75T5gCvmWdr7ZOkeasD9o3lLWgtgPW3isjRyYQ3RFnbfc81NiiB1FD3JijO/RolV3aMXpg5A55NXxetPxZyngx6IRF9zW8YlxEAw9ov74ZZlrEvpiIbQye3gv25OCylin1DZpx6v9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4Yzkkw1H9mz1GDfR;
-	Fri, 21 Feb 2025 17:06:16 +0800 (CST)
-Received: from kwepemd200010.china.huawei.com (unknown [7.221.188.124])
-	by mail.maildlp.com (Postfix) with ESMTPS id B33721402E2;
-	Fri, 21 Feb 2025 17:10:54 +0800 (CST)
-Received: from kwepemd500012.china.huawei.com (7.221.188.25) by
- kwepemd200010.china.huawei.com (7.221.188.124) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Fri, 21 Feb 2025 17:10:54 +0800
-Received: from kwepemd500012.china.huawei.com ([7.221.188.25]) by
- kwepemd500012.china.huawei.com ([7.221.188.25]) with mapi id 15.02.1258.034;
- Fri, 21 Feb 2025 17:10:54 +0800
-From: lizetao <lizetao1@huawei.com>
-To: Bui Quang Minh <minhquangbui99@gmail.com>
-CC: Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>,
-	David Wei <dw@davidwei.uk>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "io-uring@vger.kernel.org"
-	<io-uring@vger.kernel.org>
-Subject: RE: [PATCH] io_uring: add missing IORING_MAP_OFF_ZCRX_REGION in
- io_uring_mmap
-Thread-Topic: [PATCH] io_uring: add missing IORING_MAP_OFF_ZCRX_REGION in
- io_uring_mmap
-Thread-Index: AQHbhD7+hhZgMRil3kSQZU4uDzijo7NRd6Ww
-Date: Fri, 21 Feb 2025 09:10:54 +0000
-Message-ID: <590cff7ccda34b028706b9288f8928d3@huawei.com>
-References: <20250221085933.26034-1-minhquangbui99@gmail.com>
-In-Reply-To: <20250221085933.26034-1-minhquangbui99@gmail.com>
-Accept-Language: en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1740129102; c=relaxed/simple;
+	bh=OnhM+IngcbfTGE1ogRH7mwjuGlDyBD9XjnvZeiestVM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XGELvlIMkmmCDBC8d49a31RQ+pOkCncpXNTRGzhdil/nG1l0L57ejsYlIk3XAaRCNpl1gdA37ScSX9OLe4wgXX07898yyOzDxEX8XAo9OUIjotU/Q9VfO317WsMTwNvkFEXATAR+nDkYi2QlW6xwn70kBAu+kjQHJYpddODNxA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m8zPwa7X; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34D00C4CED6;
+	Fri, 21 Feb 2025 09:11:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740129100;
+	bh=OnhM+IngcbfTGE1ogRH7mwjuGlDyBD9XjnvZeiestVM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=m8zPwa7Xb55i7LAqI58OdJeShKNREpdDkpI1YATQdlyc5nCRDRdZN0I5YrBle66XN
+	 VNc/7jANzsn07jLN8/IM74GX4QngHJx5RAPjeNrgQBfyauJJM3auB53GrOsjcjGU+j
+	 gUYKsk63YZzIgkoX94R7rd52iMjRZTwSouG21VOjmPRw6F/kF+XRRAsHVDBNomPBzl
+	 cfpQL3tJoumzj8Ic3A2bdn2V6dPqyr1bGqxDjKnu/2oKTTjjVdGbSEqaDSbF0p7hjO
+	 ZC0JywTcJXnsDpdoNESpXVffOFF/HAmfvEXSFEqtUyz9bqsCSbqHCoD9fguLgLa29Z
+	 DxZCFi5Naz+7Q==
+Date: Fri, 21 Feb 2025 10:11:38 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Michal Wilczynski <m.wilczynski@samsung.com>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, drew@pdp7.com, guoren@kernel.org, 
+	wefu@redhat.com, jassisinghbrar@gmail.com, paul.walmsley@sifive.com, 
+	palmer@dabbelt.com, aou@eecs.berkeley.edu, frank.binns@imgtec.com, 
+	matt.coster@imgtec.com, maarten.lankhorst@linux.intel.com, mripard@kernel.org, 
+	tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, ulf.hansson@linaro.org, 
+	jszhang@kernel.org, p.zabel@pengutronix.de, m.szyprowski@samsung.com, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, dri-devel@lists.freedesktop.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH v5 09/21] dt-bindings: clock: thead: Add GPU clkgen reset
+ property
+Message-ID: <20250221-imaginary-ebony-macaque-aace8d@krzk-bin>
+References: <20250219140239.1378758-1-m.wilczynski@samsung.com>
+ <CGME20250219140301eucas1p249b17ca44832eb8caad2e9ad0e4f8639@eucas1p2.samsung.com>
+ <20250219140239.1378758-10-m.wilczynski@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250219140239.1378758-10-m.wilczynski@samsung.com>
 
-SGksDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQnVpIFF1YW5nIE1p
-bmggPG1pbmhxdWFuZ2J1aTk5QGdtYWlsLmNvbT4NCj4gU2VudDogRnJpZGF5LCBGZWJydWFyeSAy
-MSwgMjAyNSA1OjAwIFBNDQo+IFRvOiBpby11cmluZ0B2Z2VyLmtlcm5lbC5vcmcNCj4gQ2M6IEpl
-bnMgQXhib2UgPGF4Ym9lQGtlcm5lbC5kaz47IFBhdmVsIEJlZ3Vua292DQo+IDxhc21sLnNpbGVu
-Y2VAZ21haWwuY29tPjsgRGF2aWQgV2VpIDxkd0BkYXZpZHdlaS51az47IGxpbnV4LQ0KPiBrZXJu
-ZWxAdmdlci5rZXJuZWwub3JnOyBCdWkgUXVhbmcgTWluaCA8bWluaHF1YW5nYnVpOTlAZ21haWwu
-Y29tPg0KPiBTdWJqZWN0OiBbUEFUQ0hdIGlvX3VyaW5nOiBhZGQgbWlzc2luZyBJT1JJTkdfTUFQ
-X09GRl9aQ1JYX1JFR0lPTiBpbg0KPiBpb191cmluZ19tbWFwDQo+IA0KPiBBbGxvdyB1c2VyIHRv
-IG1tYXAgdGhlIGtlcm5lbCBhbGxvY2F0ZWQgemVyb2NvcHktcnggcmVmaWxsIHF1ZXVlLg0KPiAN
-Cg0KTWF5YmUgZml4ZWQtdGFnIHNob3VsZCBiZSBhZGRlZCBoZXJlLg0KDQpPdGhlciB0aGFuIHRo
-YXQsIGl0IGxvb2tzIGdvb2QgdG8gbWUuDQpSZXZpZXdlZC1ieTogTGkgWmV0YW8gPGxpemV0YW8x
-QGh1YXdlaS5jb20+DQoNCi0tLQ0KTGkgWmV0YW8NCg==
+On Wed, Feb 19, 2025 at 03:02:27PM +0100, Michal Wilczynski wrote:
+> Add a mandatory reset property for the TH1520 VO clock controller that
+> handles the GPU clocks. This reset line controls the GPU CLKGEN reset,
+> which is required for proper GPU clock operation.
+> 
+> The reset property is only required for the "thead,th1520-clk-vo"
+> compatible, as it specifically handles the GPU-related clocks.
+> 
+> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
+> ---
+>  .../bindings/clock/thead,th1520-clk-ap.yaml      | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/thead,th1520-clk-ap.yaml b/Documentation/devicetree/bindings/clock/thead,th1520-clk-ap.yaml
+> index 9d058c00ab3d..6ea8202718d0 100644
+> --- a/Documentation/devicetree/bindings/clock/thead,th1520-clk-ap.yaml
+> +++ b/Documentation/devicetree/bindings/clock/thead,th1520-clk-ap.yaml
+> @@ -40,6 +40,12 @@ properties:
+>              (integer PLL) typically running at 792 MHz (FOUTPOSTDIV), with
+>              a maximum FOUTVCO of 2376 MHz.
+>  
+> +  resets:
+> +    maxItems: 1
+> +    description:
+> +      Required for "thead,th1520-clk-vo". This reset line controls the
+
+You just added the compatible in other patch, so are you saying you
+added knowingly incomplete code?
+
+No, this must be squashed.
+
+> +      GPU CLKGEN reset which is required for proper GPU clock operation.
+> +
+>    "#clock-cells":
+>      const: 1
+>      description:
+> @@ -51,6 +57,16 @@ required:
+>    - clocks
+>    - "#clock-cells"
+>  
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: thead,th1520-clk-vo
+> +    then:
+> +      required:
+> +        - resets
+
+else:
+? What's there? Also reset or no?
+
+Best regards,
+Krzysztof
+
 
