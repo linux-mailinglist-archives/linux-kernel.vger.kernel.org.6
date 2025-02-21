@@ -1,177 +1,238 @@
-Return-Path: <linux-kernel+bounces-524952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EDF6A3E911
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 01:11:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE070A3E914
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 01:11:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F1FB14229C1
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 00:11:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 805513AD202
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 00:11:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FC5C156CA;
-	Fri, 21 Feb 2025 00:10:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BE3F4C81;
+	Fri, 21 Feb 2025 00:10:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c9UqhShd"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MGcShLFY"
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19688F9E6;
-	Fri, 21 Feb 2025 00:10:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 899BB1E493
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 00:10:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740096619; cv=none; b=UDIb/pQRapy67Lmyt9QEfotEYSjTqS+3sF63YvkItEThWVERFqPS7u3JA17WxMr7gkTpa+5ZfacGkC/hflIOxPeaO6FcrYVEzfWfCTOqLqHMIGM0//m6JfhCGnfKKTNVZ5kOgfSN+r6h52haIvja6M64CcTss8rggNeRDIuNbcY=
+	t=1740096643; cv=none; b=fIMUgkIiQ4APBZm+p+sKsMxzvtYhYpM1m+3qyJDl6SxxE2TgTX2tTq/vCw525BEZ2np4qW8FjftpYpZ97AciqYVuDl5/BlfKbA6Dn8zdd57gMVRXmnUmMCWuj9/xpNQhdO739D1h9+IpiMJtanfSgU9B6K2KgK7ITutmMS13eiM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740096619; c=relaxed/simple;
-	bh=vXCYwQLSvKIptQcJVs0ex9tqncT35sXQaqqioY+05h8=;
+	s=arc-20240116; t=1740096643; c=relaxed/simple;
+	bh=AlWULx0RPrZBQOGn9zHPeIPoIWwcVdQFNlvQhqFkQVU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BTnMV0K4c2E7v8JyB4kXbmjI4NFoJqS14TQbaKLtTohiuCZMDJflZh+v3WYUDJFgOrom32hzhXwGW3Vv0ZnudBnBwqYE5drD5FT1lJqsFWkaxQoD3Df+P5ZzsuONoClaHaeciKVfTt5UfqWsPtsJI2vLh9uGQAUfPqaBDKEoSL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c9UqhShd; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4397e5d5d99so9830715e9.1;
-        Thu, 20 Feb 2025 16:10:17 -0800 (PST)
+	 Content-Type:Content-Disposition:In-Reply-To; b=CGNSD8HRlETWQjWjm5e6ViGq0zyPMh1xQlIrq6jKAHWbM6+9kVXCapfikpCTktdaMnbaT/6kwjJU7GzQ8+rkqhiROJcnf9lVDoNYW6RwLVmQZSwLzI+nnHFkTbr6Im64R0Ye2cLePacgV2GFrCcxfjCAr42lNqS0cZ3merpC3uc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MGcShLFY; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-3078fb1fa28so13066701fa.3
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 16:10:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740096616; x=1740701416; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=3ltM/d0CNg9/b6oyJiIqSMkzVa+3F9bgYF4M2wUIeWo=;
-        b=c9UqhShdo7Qe8ydhew8K0JEmxlKNQni6IFdtDgpbuB9/w1o/mFPZHj/SMXAPBifTVm
-         SqIyxofBEeSaLCuFtTMdak+KM+37yOw5Msg1AhjZqaj0wrG+1+B3qIoIUsl5GyYnvC/A
-         arw57asEYfzZNLGjE+g+X+msp/ybchwgUGvKuuIGJqC9plbHkUx76BXhbRK8h093PkzX
-         HXRDT0dzpiCd7veK0ylccxvAVxtoAaWVIw4/kOuyykyZWjJRclI7Zt8CtBufppW9re4q
-         +cf4LBsZdm65FaR2Akd0tVwJmDkwhYqBA7XeztyZDzqQTAnbRrKLI0I5ynA/jgdQnkZv
-         CbZQ==
+        d=linaro.org; s=google; t=1740096640; x=1740701440; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=JuSgjifBq+hplcp/bZFuyA747UHV9QqBROPG69+V/oA=;
+        b=MGcShLFYbsqU+t0KWAQ4jwFekJvTKHvnLysUY2oRcYvG0JB0v9e9yIit3Lassi/adB
+         BuTyGCkbhup7ZADQCtjd8S6ATtfCnpvHkmaI8oseozL1hrleARLDrnCuTQ/3fQ14xijg
+         4ykBCkZ0UO3gA9m6hn71tnTX1qeut9s4RC+uHMr/HL0hddU+/JwDt1s0x5BpwD5+KtVq
+         0599JtgGcRHmxXmsIe/1ug9Y+zk268IuYxCsRtXVAtIAjP1oQzhZF8y4MAEjM8717ECX
+         CsICvaeWXhB36HvpsKAcvl/Po3PVDdHdHsIQ/06XCbl/aWBZLhooRIHD5UOjhTBYR+Xs
+         PUFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740096616; x=1740701416;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3ltM/d0CNg9/b6oyJiIqSMkzVa+3F9bgYF4M2wUIeWo=;
-        b=q67zbOtFaNSjZbAPThTQdaE7f9c90GbMpWHYpUTBCRUbrQVgiPuX6tYPpNYYIrjY0S
-         W9aJBPs9yIMZDPrMpnCaNH7MKeGwxeNUwI5wpu1KmAxjIvp9W5WisXRTgonUsBNnhwz8
-         FqPexbSMgdDjjRG6TxeAdDj3KQQXmldTPwvDsMY4PCFSID2vJ1WwW7bntlxOM1gmge92
-         0ZqODh6uVTaTas5tAe6+k3mJMgyFWyTgYYRg955YVlEtFvUTBuc7L0FJwWj9u4g/Rh7t
-         34T1zlq+opsJU9b/nDcP7w1Tkc8NWVTvmZCQNejVWo5hpAXbVteeDaWszfDWd1LLpMxK
-         V0IA==
-X-Forwarded-Encrypted: i=1; AJvYcCWNi8mEL6EOi7257F45nIKrp3q1zVUGPO2ApACbDbj8rDvqlQGg4AXtGghnNQr2q85+ZJTc8Mm1@vger.kernel.org, AJvYcCXSX1FXG7qIZ6NWF8KftHaquZcSRg9IJz/JHBJO835CscAmy1xOWBPRkrBdvyMEP9OjvyyM/VHbUCDclsvwRVg=@vger.kernel.org, AJvYcCXW6dTFp6/hMIribj/809v2PXp41Zi3Vikqj/sZxULXfnGnHVq7DwtPTNdlybkdY2KIzPcHLgb8x93evNaN@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIHFU5kaunbbrk68fuaEJZ91NX0J679vyBRM7hleDiCK8fj0FQ
-	3TsX3wAiFWUMw3/pifeOOdz2NnV8B9Tce7uAxQEzjkszST9FJ2VS
-X-Gm-Gg: ASbGncv8kw1LzhE82vsQQOOM+5O00CJvDCRt7kvr0ETwodKdG5jbuE1b3hPYItNULLS
-	kwXRU/weCfdlS6+n9nOXfy/eNCGJ27wT2REz/b6f+Jje0faBJ1tVwssAw3IiHqPW63l0DypvmAj
-	V+FH6iG+uQcZh0s3Lc0+oFbDgBmtV4/fPuuKSfjHfJbgMbCMFcGrLhClPJL3iOkRrA7HKfYtojd
-	Juh6toCsq47943tt00mqjWYiGIz0mst402Q1yYSuDO7ClGyxDIOD/+sIX9y74fEFYqiVGTFbVzB
-	2M6qnTDx94Uh
-X-Google-Smtp-Source: AGHT+IESXNVFkG0iILEEgotVDpm45DxMQ/ic89gzIihAXdvMHbx/sLissRXUpyAYoKRhDIFHoznvAg==
-X-Received: by 2002:a05:600c:510f:b0:439:9898:f18c with SMTP id 5b1f17b1804b1-439ae220a50mr8091265e9.26.1740096616064;
-        Thu, 20 Feb 2025 16:10:16 -0800 (PST)
-Received: from localhost ([2a02:168:59f0:1:b0ab:dd5e:5c82:86b0])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-38f258dab74sm22174894f8f.32.2025.02.20.16.10.15
+        d=1e100.net; s=20230601; t=1740096640; x=1740701440;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JuSgjifBq+hplcp/bZFuyA747UHV9QqBROPG69+V/oA=;
+        b=GoricKZC+6aGeIAHCzQwxVSkIU3XAFHs51Ca0Yt9/Ff+rZVXK/UbfsGsKZFD/knspg
+         rt8uxzILLmhycCI869jLkAN7j8bjVi5lE2byz5D2b+SWntiTS/HiX7T5sIEmqxCmxhZ0
+         xZ4HSVVJ0WPyrPoJWJO/j4xXda/cgBeqEMHFmb+LON/YI8eETuOFknu9vAbUOiETACHy
+         0clevFASEcFc+sta7rf+1+jiVxFuH5TOpJofuXddf9QZyHIzvg+krLNUFiNz1ZUq/a4Q
+         vtD2A0wmmqveFQg6yWcgbJpmrGsQpldUyZqEtQmBwolB4+jb2I3X2AeO2zMlKS7MtCh/
+         sXQw==
+X-Forwarded-Encrypted: i=1; AJvYcCW8IMxhiJk5HAdw+kb1hB1XtmLotUIAEbUFvkumtnX6yWifvwh1boYENUzgNxzmKbHaHb/2Gk/6Sr2ee5I=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6zqSVObDhcK3pytS2s3mFdiUm2ZVMO1rEP5bGXDcSzSwY+L2X
+	cFyby1ow3PAzkHnBIGSK3cO3pqdp+WFT9qT4ILPjUYOxAcf6z5w1bWOD0Ez8/4w=
+X-Gm-Gg: ASbGnctqfm1HrYy/LzGZm+UHEbUBmEyHMCdT5mWD5VZViURi5ybQGzZ4kzw76OLDmOF
+	F54lvzuuK0LCIIQ/VDaNGyfFaFdhGW5Hl1NPpwjaG81dBz4VrUmJjHJAHem9YdcUXhetChP3rRS
+	xkpM3SfL2zr7jKs56Y3dcweP8b5g+HA8jEvRZgzDZiB+jB+JmUdzy2UaSyHihTfF/aNbEYXIYrA
+	zdauWbr14R1l2U6UOt4UGVInLU96jNtxmwOq3H99p9ngJLZs3Y0aC0t4bwIWHaetgxRLSI5fw/v
+	nuyhJ3aE4nxAKbaoHn5UK/UzS8hqTC9sWNhDXJhyJCz5z8EJDAv+t+3SgMZH9XP355oVM2Q=
+X-Google-Smtp-Source: AGHT+IEwcNk7nZ+S8pgGD3YVt/VQAdNHGFFnbKNtHgYR59pFMVBtJOK7O5RSRGR4iFKOzpTzL751yg==
+X-Received: by 2002:a2e:7807:0:b0:308:df1e:24c4 with SMTP id 38308e7fff4ca-30a5b20d7eemr1462491fa.29.1740096639554;
+        Thu, 20 Feb 2025 16:10:39 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30a266e4968sm17747741fa.77.2025.02.20.16.10.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Feb 2025 16:10:15 -0800 (PST)
-Date: Fri, 21 Feb 2025 01:10:11 +0100
-From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
-To: Jared Finder <jared@finder.org>, hanno@hboeck.de
-Cc: kees@kernel.org, gnoack@google.com, gregkh@linuxfoundation.org,
-	jannh@google.com, jirislaby@kernel.org,
-	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
-	regressions@lists.linux.dev, stable@vger.kernel.org
-Subject: Re: [PATCH v2] tty: Permit some TIOCL_SETSEL modes without
- CAP_SYS_ADMIN
-Message-ID: <20250221.0a947528d8f3@gnoack.org>
-References: <202501100850.5E4D0A5@keescook>
- <cd83bd96b0b536dd96965329e282122c@finder.org>
+        Thu, 20 Feb 2025 16:10:38 -0800 (PST)
+Date: Fri, 21 Feb 2025 02:10:35 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Cc: Jagadeesh Kona <quic_jkona@quicinc.com>, 
+	Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Ajit Pandey <quic_ajipan@quicinc.com>, 
+	Imran Shaik <quic_imrashai@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>, 
+	Satya Priya Kakitapalli <quic_skakitap@quicinc.com>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/5] clk: qcom: videocc: Add support to attach multiple
+ power domains
+Message-ID: <r73hnpusatba3hvyckv7jw3dcvffgvoxwawlcvvxhuol5rrrk7@ngo3fiv7va6e>
+References: <20250218-videocc-pll-multi-pd-voting-v1-0-cfe6289ea29b@quicinc.com>
+ <20250218-videocc-pll-multi-pd-voting-v1-4-cfe6289ea29b@quicinc.com>
+ <eec2869a-fa8f-4aaf-9fc5-e7a8baf0f864@linaro.org>
+ <huluiiaqmunvmffoqadrhssd3kl2toutqtcw7rzamv3sqdglsf@7lz66x4sj3gv>
+ <d4c4ecf0-9094-4341-8711-78a48e5d1344@linaro.org>
+ <d444f1fb-42a0-48ef-83bc-d5aab9282b22@quicinc.com>
+ <gzjyyl2kzv52zsewn5zf6ei65fymyi4pspvsmsjaqj5sklfxvc@bkg46saulni5>
+ <fcc31cc7-67bd-4102-a53f-ebe66b4fd1a7@linaro.org>
+ <3da96df2-1127-49bf-8114-282cc488c194@quicinc.com>
+ <6b0684a0-a519-463f-b7be-176a4752a786@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <cd83bd96b0b536dd96965329e282122c@finder.org>
+In-Reply-To: <6b0684a0-a519-463f-b7be-176a4752a786@linaro.org>
 
-Hello Jared and Hanno!
-
-On Sat, Feb 08, 2025 at 07:18:22AM -0800, Jared Finder wrote:
-> Hi, I'm the original reporter of this regression (noticed because it
-> impacted GNU Emacs) and I'm wondering if there's any traction on creating an
-> updated patch? This thread appears to have stalled out. I haven't seen any
-> reply for three weeks.
+On Thu, Feb 20, 2025 at 10:31:44PM +0000, Bryan O'Donoghue wrote:
 > 
->   -- MJF
+> Where we can zap the GDSCs the power-rails for the block should be always on
+> because the initial PLL configuration we typically do in probe() would be
+> negated as soon as the power rail for the block is switched off.
+> 
+> True.
+> 
+> In my opinion:
+> 
+> - We should only do the pd list addition in one place
+>   Either that or push it into each driver.
+> 
+>   I don't favour doing it in each driver since it is boilerplate
+>   code that we basically just end up copy/pasting again and again.
+> 
+> - We can start off by only including a configure_pll callback
+>   for the 2-3 blocks where we know we have multiple rails
+> 
+> This here works well for me on x1e:
+> 
+> Author: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> Date:   Tue Feb 18 19:46:55 2025 +0000
+> 
+>     clk: qcom: common: Add configure_plls callback prototype
+> 
+>     Add a configure_plls() callback so that we can stage
+> qcom_cc_attach_pds()
+>     before configuring PLLs and ensure that the power-domain rail list is
+>     switched on prior to configuring PLLs.
+> 
+>     Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> 
+> diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
+> index 9e3380fd71819..4aa00ad51c2f6 100644
+> --- a/drivers/clk/qcom/common.c
+> +++ b/drivers/clk/qcom/common.c
+> @@ -304,6 +304,12 @@ int qcom_cc_really_probe(struct device *dev,
+>         if (ret < 0 && ret != -EEXIST)
+>                 return ret;
+> 
+> +       if (desc->configure_plls) {
+> +               ret = desc->configure_plls(dev, desc, regmap);
+> +               if (ret)
+> +                       return ret;
+> +       }
+> +
+>         reset = &cc->reset;
+>         reset->rcdev.of_node = dev->of_node;
+>         reset->rcdev.ops = &qcom_reset_ops;
+> diff --git a/drivers/clk/qcom/common.h b/drivers/clk/qcom/common.h
+> index 7ace5d7f5836a..77002e39337d7 100644
+> --- a/drivers/clk/qcom/common.h
+> +++ b/drivers/clk/qcom/common.h
+> @@ -38,6 +38,9 @@ struct qcom_cc_desc {
+>         const struct qcom_icc_hws_data *icc_hws;
+>         size_t num_icc_hws;
+>         unsigned int icc_first_node_id;
+> +       int (*configure_plls)(struct device *dev,
+> +                             const struct qcom_cc_desc *desc,
+> +                             struct regmap *regmap);
+>  };
+> 
+> +static int cam_cc_x1e80100_configure_plls(struct device *dev,
+> +                                         const struct qcom_cc_desc *desc,
+> +                                         struct regmap *regmap)
+> +{
+> +       int ret;
+> +
+> +       ret = devm_pm_runtime_enable(dev);
+> +       if (ret)
+> +               return ret;
+> +
+> +       ret = pm_runtime_resume_and_get(dev);
+> +       if (ret)
+> +               return ret;
 
-Jared, can you please confirm whether Emacs works now with this patch
-in the kernel?
+I think, it's better to add desc->use_rpm. Then these two calls and
+pm_runtime_put() can go to a generic code.
 
-I am asking this because I realized that the patch had a bug.  We are
-erring in the "secure" direction, but not all TIOCL_SELMOUSEREPORT
-invocations work without CAP_SYS_ADMIN.
+Or maybe we can enable RPM for all clock controllers?
 
-(TIOCL_SELMOUSEREPORT has to be put into the sel_mode field of the
-argument struct, and that field looked like an enum to me, but as it
-turns out, the TIOCL_SELMOUSEREPORT is 16 and the lower 4 bits of that
-integer are used as an additional argument to indicate the mouse
-button status and modifier keys.  I had overlooked that the
-implementation was doing this.  As a result, TIOCL_SELMOUSEREPORT
-works without CAP_SYS_ADMIN, but only if all four lower bits are 0.)
+> +
+> +       clk_lucid_ole_pll_configure(&cam_cc_pll0, regmap,
+> &cam_cc_pll0_config);
+> +       clk_lucid_ole_pll_configure(&cam_cc_pll1, regmap,
+> &cam_cc_pll1_config);
+> +       clk_rivian_evo_pll_configure(&cam_cc_pll2, regmap,
+> &cam_cc_pll2_config);
+> +       clk_lucid_ole_pll_configure(&cam_cc_pll3, regmap,
+> &cam_cc_pll3_config);
+> +       clk_lucid_ole_pll_configure(&cam_cc_pll4, regmap,
+> &cam_cc_pll4_config);
+> +       clk_lucid_ole_pll_configure(&cam_cc_pll6, regmap,
+> &cam_cc_pll6_config);
+> +       clk_lucid_ole_pll_configure(&cam_cc_pll8, regmap,
+> &cam_cc_pll8_config);
+> +
+> +       /* Keep clocks always enabled */
+> +       qcom_branch_set_clk_en(regmap, 0x13a9c); /* CAM_CC_GDSC_CLK */
+> +       qcom_branch_set_clk_en(regmap, 0x13ab8); /* CAM_CC_SLEEP_CLK */
+> +
+> +       pm_runtime_put(dev);
+> +
+> +       return 0;
+> +}
+> +
+>  static const struct qcom_cc_desc cam_cc_x1e80100_desc = {
+>         .config = &cam_cc_x1e80100_regmap_config,
+>         .clks = cam_cc_x1e80100_clocks,
+> @@ -2434,6 +2465,7 @@ static const struct qcom_cc_desc cam_cc_x1e80100_desc
+> = {
+>         .num_resets = ARRAY_SIZE(cam_cc_x1e80100_resets),
+>         .gdscs = cam_cc_x1e80100_gdscs,
+>         .num_gdscs = ARRAY_SIZE(cam_cc_x1e80100_gdscs),
+> +       .configure_plls = cam_cc_x1e80100_configure_plls,
+>  };
+> 
+> This has the same effect as you were alluding to and in fact we could
+> probably even move the pm_runtime_enable/resume_and_get and pm_runtime_put
+> into really_probe().
+> 
+> It seems to me anyway we should try to push as much of this into core logic
+> to be reused as possible.
+> 
+> ---
+> bod
 
-So, I apologize for the oversight.  -- Jared, can you please confirm
-whether TIOCL_SELMOUSEREPORT is called directly from Emacs (rather
-than from gpm)?  I tried to trace it with perf but could not reproduce
-a scenario where Emacs called it.
-
-If this specific selection mode is not needed by Emacs, I think *the
-best thing would be to keep it guarded by CAP_SYS_ADMIN, after all*.
-
-As it turns out, the following scenario is possible:
-
-* A root shell invokes malicious program P and changes its UID to a
-  less privileged user, but it passes a FD to the TTY.  (Instead of
-  UID switch, it can also be a sandboxed program or another way of
-  lowering privileges.)
-* Program P enables mouse tracking mode by writing "\033[?1000h".
-* Program P sends IOCTL TIOCLINUX with TIOCL_SETSEL with
-  TIOCL_SELMOUSEREPORT and passes suitable mouse coordinate and button
-  press arguments.  As a response, the terminal writes the escape
-  sequence \033[MBXY, where B, X and Y are bytes indicating the button
-  press mask and the 1-based mouse X and Y coordinates, all added to
-  0x20 (space).
-
-It is an obscure scenario and probably requires a console with a
-character width and height above 256 (to control the full byte range),
-but it seems that this can in principle be used to simulate short
-keyboard inputs to programs (like bash) that are not expecting this
-old mouse protocol. - This sort of keypress-simulation is exactly why
-we created the CAP_SYS_ADMIN restriction for TIOCL_SETSEL in the first
-place.
-
-For background on this mouse tracking mechanism, I had to read up on
-it myself, but found the following two links helpful:
-https://invisible-island.net/xterm/ctlseqs/ctlseqs.html#h3-Normal-tracking-mode
-https://www.ibm.com/docs/en/aix/7.2?topic=x-xterm-command#xterm__mouse
-
-(Remark on the side, the GPM client library normally gets its mouse
-coordinates through a Unix Domain socket from the GPM daemon. It has
-support for this xterm emulation mode as well, but it is only enabled
-if $TERM starts with "xterm".)
-
-In summary:
-
-If it is not absolutely needed, I think it would be better to not
-permit access to TIOCL_SELMOUSEREPORT after all.  It does not let
-attackers simulate keypresses quite as easily as the other features,
-but it does let them send such input with more limited control, and it
-seems like an unnecessary risk if the feature is not needed by
-anything but mouse daemons running as root, such as GPM and
-Consolation.
-
-Does this seem reasonable?  (Hanno, do you agree with this
-assessment?)  I am by no means an expert in this terminal-mouse
-interaction, I am happy to stand corrected if I am wrong here.
-
-–Günther
+-- 
+With best wishes
+Dmitry
 
