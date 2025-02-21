@@ -1,102 +1,188 @@
-Return-Path: <linux-kernel+bounces-525485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E1B2A3F08E
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:38:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E016EA3F092
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:39:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22AB642208B
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:38:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43481188680C
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:39:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF2C9204F67;
-	Fri, 21 Feb 2025 09:37:53 +0000 (UTC)
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3C96202C30;
+	Fri, 21 Feb 2025 09:38:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="g07SR63l"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9D082040BF;
-	Fri, 21 Feb 2025 09:37:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77F8C2036E3
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 09:38:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740130673; cv=none; b=FpAK4BgTaTULp3aBrjyNjnrd5Aw8erDTQ5bgnflNcTF2YI+u7gpXSnbWMOcwW287uNMJT6ijMoBH167hGC/w3bxOaSDEKFDQaoxBYeBHDyQm3PHiyvVQ81jpq+7Tr1LqSIr5rR215Fz7uG0mQXodjLto1o0zL/e2wvOdm866x+M=
+	t=1740130725; cv=none; b=acAIBHtcoQMMxgCetFvrn7O2/eQinqVqsBSKa1Etb/EnkjTYsMFeeFjVX9ivDIPRwJoKamoMg0sYg6LTjryszrK1IJbkiLccEOFYFOWJo4hGnCXpT8QWR/ghKREQcKZyyiPsHMQ912noMpMs/rjJSCznddup14x+Aad+rjCnlm4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740130673; c=relaxed/simple;
-	bh=bAeLxz+c1Ts7bphdqbep71s5QSoID+9JDJSBujnvkVo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lTa0lLFtgsi8EIoBsr4qMZlP4nBTQ7UNB4eylam/vuXw/g1N5GnwdaTUm6PY8IvA+9xlkkimhCviP9ldArRjopNfbDyzm+QgGhhYuVBsysyQqvBVXzp+wVj6G1LtBW7Dsw5Zwnxltg9YkGdmF/1RE9OzqtcKdGTPi6FQ1nMSmXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5e02eba02e8so2546139a12.0;
-        Fri, 21 Feb 2025 01:37:51 -0800 (PST)
+	s=arc-20240116; t=1740130725; c=relaxed/simple;
+	bh=N4CAuajKMdibl/tCuG6QQaddJtwAQ3znUwly2F1rnfQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hi4l71SlV8s6dyOovgac6U0DCI69kMVvabtM6Pm0PmlGJJ9HAelIi5DodRZYECYCY5BRPI634jOSzXLExb7o+GNE323MoejfsWJ2xM5GQ/N63mo8bPEAIMu6aB7qmz+pW7CqLXCW31qMuf0lpsIlfnoaYXyF3LnoYEgTUh7hPhY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=g07SR63l; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-220d601886fso28306095ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 01:38:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1740130723; x=1740735523; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Sb/ZzpS94bhyr7zvV4dT2coaEuz51CRI4NUHze17YNE=;
+        b=g07SR63lPnp09opKqdKkrjTSkj5Z5TCtwhvVjYzZp2SDZERKZUBHhSXYKfXIlXvNOt
+         YEZAWSPI701K0umBOMOD1/EMFMe8Ys+FWkJO1smjgFt+0f6ZIqfwZa9Xoa+P8OoWxxjX
+         TTFJlGBgJo8DNRw0GDiOFVS17G/gYy6xq7SMk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740130670; x=1740735470;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3fSnnglnDE4OxiijvbfYtwaf+0cH0qRVW0DkL1E6oSo=;
-        b=SL6l8pTjeZhaMjbGdiCmhWn+Ujqr5Hc5eI5ywWCZwV4I2g9xfsAL+R1sJ732+/7fmw
-         w1RzBLFQvwKB/Ymeq/O25hVLLIbGrWVQwh7rOyJAPLyx/uCUqhbFtDdROCS+e/Rg3QVB
-         HJUZN9SmP3V3XDGh/7Yu1UrUMA/aXswRj1K5sQuv7unRAisHdCpyyK/2tKwqoTNptw24
-         lh2P3RvJyhzHljM4lMYdlz0KW936esz7dqI4WWJb772gE4zb5ZxiIaMMCUyulmz1Vono
-         Af194fj0LsueuajEifH+5CL4w4qtZzcFOX57vJFUKRb3KelGPB9ckmq9+bYrsJ8eVNgB
-         Dkzg==
-X-Forwarded-Encrypted: i=1; AJvYcCUMDNmbSrj+4FmfJPThzsoEmd2UQ9KGWf4LSw62hzur4pNKBGVv6Elb8hO1vNE4y0DUVtq1W6bnAM2KX2/Y6O8=@vger.kernel.org, AJvYcCV5W4lcc/GQ0RuaktH8pBb00uLgeoCbJtFEiX/gTrPqtNlpBj4bOVal4wn/a+Qvta9vK7efL0zw@vger.kernel.org, AJvYcCVKe6q7Mc1I6HQX2qolCFYcW0fKckr0Ap319chJ8VMSN028EI9+W3x1Hvz9WbbgRJKzKDUTWQlUBpT6gHFK@vger.kernel.org, AJvYcCXDTtBpLu4nBc6ssomFMe1eOc/lqSb7KKdzn2e94XOrkiMzNugD2vllpo2gxiI+9iMGwWzPW4Dad1M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZQ2NdPmlZwqHjOiXf/SI0IUG1F1ZWnq03q6tpN0H4xlSHhdmX
-	Qe6gtO+G40Ln3GKLuffozuwkU/SdAbNyK9Qw/i3nBqRY8nAIzOHm
-X-Gm-Gg: ASbGnctXoa5b+tP6ewtVR4btyb/IkHLaWepTqyxIt0YEOP6ekjF/XFy/UBmMs+1Z9as
-	ezQ3DVb00UywEyCFNJ1sBMOLzQd0H88KadhxMwqqx5U7buBfH6XtZgCjiZH3uH4Bc0oXaluZWbp
-	YFPjjijfBalF9Oo54y4yxWE2LIN0CDqpQwmbE13vSjIxxZXkPmR6fjpGoZDKu5SHLjp8OZ/yBEo
-	WP9MMWUS5SxzYXHtVp1rmgxDr9+qLnmJepe5eB3InuAK3/VwQW7nHEd3wbm1Y81d9Ikv066fHoy
-	LLjiBDgohSmQaFCQ
-X-Google-Smtp-Source: AGHT+IHWNmEkqGtajxkcN65Dyk2qU9qs752a20orApMklK9etxurXq/hZktNRXLRI1CrjEYJmjdFLg==
-X-Received: by 2002:a05:6402:50c7:b0:5dc:cc02:5d25 with SMTP id 4fb4d7f45d1cf-5e0b70d5729mr2037533a12.11.1740130669931;
-        Fri, 21 Feb 2025 01:37:49 -0800 (PST)
-Received: from gmail.com ([2a03:2880:30ff:6::])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e07464bcc7sm6281773a12.33.2025.02.21.01.37.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Feb 2025 01:37:49 -0800 (PST)
-Date: Fri, 21 Feb 2025 01:37:46 -0800
-From: Breno Leitao <leitao@debian.org>
-To: Uday Shankar <ushankar@purestorage.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	=?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
-	Simon Horman <horms@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	Jonathan Corbet <corbet@lwn.net>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
-Subject: Re: [PATCH net-next v5 1/2] net, treewide: define and use
- MAC_ADDR_STR_LEN
-Message-ID: <20250221-glorious-evasive-piculet-40ad13@leitao>
-References: <20250220-netconsole-v5-0-4aeafa71debf@purestorage.com>
- <20250220-netconsole-v5-1-4aeafa71debf@purestorage.com>
+        d=1e100.net; s=20230601; t=1740130723; x=1740735523;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Sb/ZzpS94bhyr7zvV4dT2coaEuz51CRI4NUHze17YNE=;
+        b=xGa20WQBdKqEy99Ldc+Q1i7ibiq4ZG/qhW5Atm8YPlcm0KpeQVeeyC6BQj3jzmCkB4
+         qocMYzQ3iPu5dIPN6FWdwDkB3oIeEvJvz3nYcDYZePuLpXhPpw5BQOVGhMxIowzqOii7
+         UrauxYQmVbJ+1X61HDWhww8FFyQ1ZBcPAwgpR726eM39ZubiYxAeHPnwe93ttN1YMrp5
+         1X0R5kJGjH4DkNih46nzV2lFO1tC886F78KX26t9R9SexgMM82Xu88VV5Wgn8lJ8bJa6
+         UWsSdNcjQQMv7joU+WDZMgQ/CclGZuyJju9wJ8cDWKnnOqM+KIuR74jLDIoqwnOSM5Kl
+         xQrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVQ1BVJy2m/deFqIEBU5Wf771k9Fu272nqHExEwqP90p8O4bW6udjc9YA1wh7gxwPytcyK0d4uG0ZpZ+wI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOLYhKzL8+WF6pJL2qi43uo3r2x6KlNW0v29a3Mua6JQTJkffn
+	3TQqxsI23E17g4SLFOfWSccwx1o1RCO60bZ5Big98/w8EukWnrNKutXsxW8+rOQqUTkDeoQ1+lo
+	=
+X-Gm-Gg: ASbGncvuLfam3fR9s3MSftGipzE3FtX/PmOfT0yeoK9OYl0qzyAKHJ5j8ARODpTB7KF
+	q5FSJ2yHVnOSJDB2369SgI42J/NcVoCj7R9Xlhjn/0JAuP3rXvpCHcb4SoUoQSvvhmcolnHKYjE
+	yqjKRSEHwNaqR7em46tsMQh8UPzMzNnyrw1PA867pr4sJompUYTJ2ndfoIxVPXrcD9TM6cs5dGs
+	Fs2YfJUpBCOsRLoc59cSZ5fs4aRkWQH/dH+7RJH3KiGjwNITeWbPRE4CnjdaghEaN7WZNJHucDr
+	dGOPBwkQvBrYSYf+7Pv09wXf/mU=
+X-Google-Smtp-Source: AGHT+IG50W3X4SnN9btz4er882u86/9UWbROeOzs8+xCx3/4zysAPn6c1qlS5KMy+CFTP1GMeFp3Ew==
+X-Received: by 2002:a17:902:f684:b0:21f:68ae:56e3 with SMTP id d9443c01a7336-2219ffa36a7mr39383345ad.39.1740130722768;
+        Fri, 21 Feb 2025 01:38:42 -0800 (PST)
+Received: from localhost ([2401:fa00:8f:203:f987:e1e:3dbb:2191])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-220d55960ecsm132769155ad.253.2025.02.21.01.38.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 Feb 2025 01:38:42 -0800 (PST)
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Yosry Ahmed <yosry.ahmed@linux.dev>,
+	Hillf Danton <hdanton@sina.com>,
+	Kairui Song <ryncsn@gmail.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Minchan Kim <minchan@kernel.org>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Sergey Senozhatsky <senozhatsky@chromium.org>
+Subject: [PATCH v7 00/17] zsmalloc/zram: there be preemption
+Date: Fri, 21 Feb 2025 18:37:53 +0900
+Message-ID: <20250221093832.1949691-1-senozhatsky@chromium.org>
+X-Mailer: git-send-email 2.48.1.601.g30ceb7b040-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250220-netconsole-v5-1-4aeafa71debf@purestorage.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Feb 20, 2025 at 06:29:20PM -0700, Uday Shankar wrote:
-> There are a few places in the tree which compute the length of the
-> string representation of a MAC address as 3 * ETH_ALEN - 1. Define a
-> constant for this and use it where relevant. No functionality changes
-> are expected.
-> 
-> Signed-off-by: Uday Shankar <ushankar@purestorage.com>
-> Reviewed-by: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
-> Acked-by: Johannes Berg <johannes@sipsolutions.net>
+Currently zram runs compression and decompression in non-preemptible
+sections, e.g.
 
-Reviwed-by: Breno Leitao <leitao@debian.org>
+    zcomp_stream_get()     // grabs CPU local lock
+    zcomp_compress()
+
+or
+
+    zram_slot_lock()       // grabs entry spin-lock
+    zcomp_stream_get()     // grabs CPU local lock
+    zs_map_object()        // grabs rwlock and CPU local lock
+    zcomp_decompress()
+
+Potentially a little troublesome for a number of reasons.
+
+For instance, this makes it impossible to use async compression
+algorithms or/and H/W compression algorithms, which can wait for OP
+completion or resource availability.  This also restricts what
+compression algorithms can do internally, for example, zstd can
+allocate internal state memory for C/D dictionaries:
+
+do_fsync()
+ do_writepages()
+  zram_bio_write()
+   zram_write_page()                          // become non-preemptible
+    zcomp_compress()
+     zstd_compress()
+      ZSTD_compress_usingCDict()
+       ZSTD_compressBegin_usingCDict_internal()
+        ZSTD_resetCCtx_usingCDict()
+         ZSTD_resetCCtx_internal()
+          zstd_custom_alloc()                 // memory allocation
+
+Not to mention that the system can be configured to maximize
+compression ratio at a cost of CPU/HW time (e.g. lz4hc or deflate
+with very high compression level) so zram can stay in non-preemptible
+section (even under spin-lock or/and rwlock) for an extended period
+of time.  Aside from compression algorithms, this also restricts what
+zram can do.  One particular example is zram_write_page() zsmalloc
+handle allocation, which has an optimistic allocation (disallowing
+direct reclaim) and a pessimistic fallback path, which then forces
+zram to compress the page one more time.
+
+This series changes zram to not directly impose atomicity restrictions
+on compression algorithms (and on itself), which makes zram write()
+fully preemptible; zram read(), sadly, is not always preemptible yet.
+There are still indirect atomicity restrictions imposed by zsmalloc().
+One notable example is object mapping API, which returns with:
+a) local CPU lock held
+b) zspage rwlock held
+
+First, zsmalloc's zspage lock is converted from rwlock to a special
+type of RW-lookalike look with some extra guarantees/features.  Second,
+a new handle mapping is introduced which doesn't use per-CPU buffers
+(and hence no local CPU lock), does fewer memcpy() calls, but requires
+users to provide a pointer to temp buffer for object copy-in (when
+needed).  Third, zram is converted to the new zsmalloc mapping API
+and thus zram read() becomes preemptible.
+
+v6 -> v7:
+-- provide dep_map access wrappers to avoid code duplication
+   between !lockdep and lockdep builds (Yosry)
+
+Sergey Senozhatsky (17):
+  zram: sleepable entry locking
+  zram: permit preemption with active compression stream
+  zram: remove unused crypto include
+  zram: remove max_comp_streams device attr
+  zram: remove two-staged handle allocation
+  zram: remove writestall zram_stats member
+  zram: limit max recompress prio to num_active_comps
+  zram: filter out recomp targets based on priority
+  zram: rework recompression loop
+  zsmalloc: rename pool lock
+  zsmalloc: make zspage lock preemptible
+  zsmalloc: introduce new object mapping API
+  zram: switch to new zsmalloc object mapping API
+  zram: permit reclaim in zstd custom allocator
+  zram: do not leak page on recompress_store error path
+  zram: do not leak page on writeback_store error path
+  zram: add might_sleep to zcomp API
+
+ Documentation/ABI/testing/sysfs-block-zram  |   8 -
+ Documentation/admin-guide/blockdev/zram.rst |  36 +-
+ drivers/block/zram/backend_zstd.c           |  11 +-
+ drivers/block/zram/zcomp.c                  |  48 ++-
+ drivers/block/zram/zcomp.h                  |   8 +-
+ drivers/block/zram/zram_drv.c               | 289 ++++++++--------
+ drivers/block/zram/zram_drv.h               |  22 +-
+ include/linux/zsmalloc.h                    |   8 +
+ mm/zsmalloc.c                               | 356 ++++++++++++++++----
+ 9 files changed, 498 insertions(+), 288 deletions(-)
+
+--
+2.48.1.601.g30ceb7b040-goog
+
 
