@@ -1,203 +1,138 @@
-Return-Path: <linux-kernel+bounces-526726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46207A40274
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 23:12:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57ED6A40277
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 23:13:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 297673B9847
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 22:12:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4244017D005
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 22:13:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6628A253F1C;
-	Fri, 21 Feb 2025 22:12:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A342253F29;
+	Fri, 21 Feb 2025 22:13:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I4+ZOIuD"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oJrE1/q/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4CA71FBCAF;
-	Fri, 21 Feb 2025 22:12:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BE1220127C;
+	Fri, 21 Feb 2025 22:13:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740175954; cv=none; b=KIuKwSMt3gvsK2bBgRcmRP7gHokbteLpHQT8StIv5a7vZ2akdAJaCzq1WdFePdbrDYYpdtRMJyRdbtKEYIHvhlCdcRUbHiWe5cNC5sHBDw/bT3SxRsJ9AoipVUDdaeZcEcs0YRaslhdbIQNfkLVdvay3RHWe/RcVG/uN3ziK+Ow=
+	t=1740176012; cv=none; b=YkzRde7p5UhRym/wh9BCQoRazD2XKhbI2RPd8/t5qa7A8oi83mPRiKUav2UPXpGAj2gtIS2DD1IusNpQzLUm/0hL4eOctSOwplxWLTYTb3A2vtL5VkJQ58CINw7J2FDFG1XQCagNIC4NuUDGjMUcZaW98z5ohkDYaDHcgZkTRj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740175954; c=relaxed/simple;
-	bh=QSPmPn9rB0FtHMJ7t2ehUU/3Kz0rEJ2Cgdfl1iIJkBc=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UTLKgBo8B51rcwG+V5snepwkydVkjEX5Y3lpcuHGraASiUpIj4h8nCVG2lHUSHBhM9RsMnPLoF9F5OMMzLXSvf4Qvyr04lKEXnGDTmWmlO6WU5oNqmPauINsqFRX4wshmcuGSJELNFtKd++5lZTsu1+PGsdrkjcfw2O4AfrgBFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I4+ZOIuD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA38AC4CEE4;
-	Fri, 21 Feb 2025 22:12:33 +0000 (UTC)
+	s=arc-20240116; t=1740176012; c=relaxed/simple;
+	bh=BbE8d/oK1jS2Di+ALxnwvuqfQy6s3esDrDmP52JzzjU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=PqjNetQwvNfHwfFl629A/Q3zl7/u7vEsHmEY6MW91HFy7W2rDTubrPISYc5o2oGysYFP/tFqCx23v5pDJ3eSRRvQKctqscbYQ/gYjV6Hue/e+0nFRHAugGHZK8iitjBAUeKf7fjy9FAxeJ7rDZnuz/TPN/xU4I2ShM/45OSwlvY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oJrE1/q/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D089AC4CED6;
+	Fri, 21 Feb 2025 22:13:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740175954;
-	bh=QSPmPn9rB0FtHMJ7t2ehUU/3Kz0rEJ2Cgdfl1iIJkBc=;
-	h=Date:From:To:Subject:References:In-Reply-To:From;
-	b=I4+ZOIuDt8lhQzWB9X/VMoguesRH/GbwC+thPWvbqRNKAjXLgdne3Fc9aNwNPsAFc
-	 KwGW/BdYdngrooDxvj2dBCNWt/PewvFVwYDcYApolTBn5FD1TtIw+DbZ/jAD5cQIKR
-	 5hQasr0eg0rdX3qIALqFHJbNmg/gJCWoKBfpkLhr9ToVZxIhyUIEjhdyHsRUnRytuT
-	 GUdEYZ+HjBQbEiu4jx+1bMxkcNZdeBGu3+7DxDZs3SwYrH/hP8w9KEIiJhpVDk+X7r
-	 YU9HM5/nermig09SD6ZfmUUmCJGUUHVxxqmrJ2zLJnyxppwBPWIX/DXYpQxxPWxFKt
-	 9YfrME1PchXSw==
-Date: Fri, 21 Feb 2025 23:12:31 +0100
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Joe Damato <jdamato@fastly.com>, LKML <linux-kernel@vger.kernel.org>,
-	netdev@vger.kernel.org, Breno Leitao <leitao@debian.org>,
-	Jakub Kicinski <kuba@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Francois Romieu <romieu@fr.zoreil.com>,
-	Paul Menzel <pmenzel@molgen.mpg.de>
-Subject: Re: [PATCH] net: Handle napi_schedule() calls from non-interrupt
-Message-ID: <Z7j6Tzav6u6Z0A8B@pavilion.home>
-References: <20250221173009.21742-1-frederic@kernel.org>
- <Z7i-_p_115kr8aj1@LQ3V64L9R2>
+	s=k20201202; t=1740176012;
+	bh=BbE8d/oK1jS2Di+ALxnwvuqfQy6s3esDrDmP52JzzjU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=oJrE1/q/B74dT9qapArjBmpVVo7vOYj7wTgz501vS7EN1Kcg6VFdcPIo+1yTL//OQ
+	 qC6KG+DaZF1xOOaZlVSK4yEctM8JYVOaZ7IYUoeWn7RUKYYRfw9sTKS2DV9AV0NGG9
+	 O+loZPDJ6g1CCwTPpfcXudJzXIeKs8P0T1KoGdOmmR+96EqrXGaAemAavd30GLshMx
+	 3tnUq0hPAyq43ftvGkNm7AeMaFYhaRRgMpC4tyHIX4Un9vPXp3bclzAGIh59KCjnDA
+	 EEaLmMVEVlCwu4vDPlAX6mtsFe/2SuiSXNBQFPENmNmaHk5YaQeC9s8QHeuZ9x93ul
+	 gITNQJ35XTxKA==
+Date: Fri, 21 Feb 2025 16:13:30 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Chen Wang <unicorn_wang@outlook.com>, Rob Herring <robh+dt@kernel.org>
+Cc: Chen Wang <unicornxw@gmail.com>, kw@linux.com,
+	u.kleine-koenig@baylibre.com, aou@eecs.berkeley.edu, arnd@arndb.de,
+	bhelgaas@google.com, conor+dt@kernel.org, guoren@kernel.org,
+	inochiama@outlook.com, krzk+dt@kernel.org, lee@kernel.org,
+	lpieralisi@kernel.org, manivannan.sadhasivam@linaro.org,
+	palmer@dabbelt.com, paul.walmsley@sifive.com, pbrobinson@gmail.com,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-riscv@lists.infradead.org,
+	chao.wei@sophgo.com, xiaoguang.xing@sophgo.com,
+	fengchun.li@sophgo.com
+Subject: Re: [PATCH v3 1/5] dt-bindings: pci: Add Sophgo SG2042 PCIe host
+Message-ID: <20250221221330.GA367172@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z7i-_p_115kr8aj1@LQ3V64L9R2>
+In-Reply-To: <PN0PR01MB5662DF3C3D71A274A2E5B9C2FEC72@PN0PR01MB5662.INDPRD01.PROD.OUTLOOK.COM>
 
-Le Fri, Feb 21, 2025 at 12:59:26PM -0500, Joe Damato a �crit :
-> On Fri, Feb 21, 2025 at 06:30:09PM +0100, Frederic Weisbecker wrote:
-> > napi_schedule() is expected to be called either:
+[cc->to: Rob]
+
+On Fri, Feb 21, 2025 at 11:29:20AM +0800, Chen Wang wrote:
+> On 2025/2/20 2:22, Bjorn Helgaas wrote:
+> > On Wed, Feb 12, 2025 at 01:54:11PM +0800, Chen Wang wrote:
+> > > On 2025/2/12 12:25, Bjorn Helgaas wrote:
+> > > [......]
+> > > > > pcie_rc1 and pcie_rc2 share registers in cdns_pcie1_ctrl. By using
+> > > > > different "sophgo,core-id" values, they can distinguish and access
+> > > > > the registers they need in cdns_pcie1_ctrl.
+> > > > Where does cdns_pcie1_ctrl fit in this example?  Does that enclose
+> > > > both pcie_rc1 and pcie_rc2?
+> > > cdns_pcie1_ctrl is defined as a syscon node,  which contains registers
+> > > shared by pcie_rc1 and pcie_rc2. In the binding yaml file, I drew a diagram
+> > > to describe the relationship between them, copy here for your quick
+> > > reference:
+> > > 
+> > > +                     +-- Core (Link0) <---> pcie_rc1  +-----------------+
+> > > +                     |                                |                 |
+> > > +      Cadence IP 2 --+                                | cdns_pcie1_ctrl |
+> > > +                     |                                |                 |
+> > > +                     +-- Core (Link1) <---> pcie_rc2  +-----------------+
+> > > 
+> > > The following is an example with cdns_pcie1_ctrl added. For simplicity, I
+> > > deleted pcie_rc0.
+> >
+> > Looks good.  It would be nice if there were some naming similarity or
+> > comment or other hint to connect sophgo,core-id with the syscon node.
 > > 
-> > * From an interrupt, where raised softirqs are handled on IRQ exit
-> > 
-> > * From a softirq disabled section, where raised softirqs are handled on
-> >   the next call to local_bh_enable().
-> > 
-> > * From a softirq handler, where raised softirqs are handled on the next
-> >   round in do_softirq(), or further deferred to a dedicated kthread.
-> > 
-> > Other bare tasks context may end up ignoring the raised NET_RX vector
-> > until the next random softirq handling opportunity, which may not
-> > happen before a while if the CPU goes idle afterwards with the tick
-> > stopped.
-> > 
-> > Such "misuses" have been detected on several places thanks to messages
-> > of the kind:
-> > 
-> > 	"NOHZ tick-stop error: local softirq work is pending, handler #08!!!"
+> > > pcie_rc1: pcie@7062000000 {
+> > >      compatible = "sophgo,sg2042-pcie-host";
+> > >      ...... // host bride level properties
+> > >      linux,pci-domain = <1>;
+> > >      sophgo,core-id = <0>;
+> > >      sophgo,syscon-pcie-ctrl = <&cdns_pcie1_ctrl>;
+> > >      port {
+> > >          // port level properties
+> > >          vendor-id = <0x1f1c>;
+> > >          device-id = <0x2042>;
+> > >          num-lanes = <2>;
+> > >      };
+> > > };
+> > > 
+> > > pcie_rc2: pcie@7062800000 {
+> > >      compatible = "sophgo,sg2042-pcie-host";
+> > >      ...... // host bride level properties
+> > >      linux,pci-domain = <2>;
+> > >      sophgo,core-id = <1>;
+> > >      sophgo,syscon-pcie-ctrl = <&cdns_pcie1_ctrl>;
+> > >      port {
+> > >          // port level properties
+> > >          vendor-id = <0x1f1c>;
+> > >          device-id = <0x2042>;
+> > >          num-lanes = <2>;
+> > >      }
+> > > 
+> > > };
+> > > 
+> > > cdns_pcie1_ctrl: syscon@7063800000 {
+> > >      compatible = "sophgo,sg2042-pcie-ctrl", "syscon";
+> > >      reg = <0x70 0x63800000 0x0 0x800000>;
+> > > };
 > 
-> Might be helpful to include the stack trace of the offender you did
-> find which led to this change?
-
-There are several of them. Here is one example:
-
-	__raise_softirq_irqoff
-	__napi_schedule
-	rtl8152_runtime_resume.isra.0
-	rtl8152_resume
-	usb_resume_interface.isra.0
-	usb_resume_both
-	__rpm_callback
-	rpm_callback
-	rpm_resume
-	__pm_runtime_resume
-	usb_autoresume_device
-	usb_remote_wakeup
-	hub_event
-	process_one_work
-	worker_thread
-	kthread
-	ret_from_fork
-	ret_from_fork_asm
-
-There is also drivers/net/usb/r8152.c::rtl_work_func_t
-
-And also netdevsim:
-https://lore.kernel.org/netdev/20250219-netdevsim-v3-1-811e2b8abc4c@debian.org/
-
-And probably others...
-
+> I find dtb check will report error due to "port" is not a evaulated property
+> for pcie host. Should we add a vendror specific property for this?
 > 
-> > Chasing each and every misuse can be a long journey given the amount of
-> > existing callers. Fixing them can also prove challenging if the caller
-> > may be called from different kind of context.
-> 
-> Any way to estimate how many misuses there are with coccinelle or
-> similar to get a grasp on the scope?
+> Or do you have any example for reference?
 
-I don't think Coccinelle can find them all. The best it can do is to find direct
-calls to napi_schedule() from a workqueue or kthread handler.
-
-I proposed a runtime detection here:
-
-  https://lore.kernel.org/lkml/20250212174329.53793-2-frederic@kernel.org/
-
-But I plan to actually introduce a more generic detection in
-__raise_softirq_irqsoff() itself instead.
- 
-> Based on the scope of the problem it might be better to fix the
-> known offenders and add a WARN_ON_ONCE or something instead of the
-> proposed change? Not sure, but having more information might help
-> make that determination.
-
-Well, based on the fix proposal I see here:
-https://lore.kernel.org/netdev/20250219-netdevsim-v3-1-811e2b8abc4c@debian.org/
-
-I think that fixing this on the caller level can be very error prone
-and involve nasty workarounds.
-
-Oh you just made me look at the past:
-
-  019edd01d174 ("ath10k: sdio: Add missing BH locking around napi_schdule()")
-  330068589389 ("idpf: disable local BH when scheduling napi for marker packets")
-  e3d5d70cb483 ("net: lan78xx: fix "softirq work is pending" error")
-  e55c27ed9ccf ("mt76: mt7615: add missing bh-disable around rx napi schedule")
-  c0182aa98570 ("mt76: mt7915: add missing bh-disable around tx napi enable/schedule")
-  970be1dff26d ("mt76: disable BH around napi_schedule() calls")
-  019edd01d174 ("ath10k: sdio: Add missing BH locking around napi_schdule()")
-  30bfec4fec59 ("can: rx-offload: can_rx_offload_threaded_irq_finish(): add new  function to be called from threaded interrupt")
-  e63052a5dd3c ("mlx5e: add add missing BH locking around napi_schdule()")
-  83a0c6e58901 ("i40e: Invoke softirqs after napi_reschedule")
-  bd4ce941c8d5 ("mlx4: Invoke softirqs after napi_reschedule")
-  8cf699ec849f ("mlx4: do not call napi_schedule() without care")
-  ec13ee80145c ("virtio_net: invoke softirqs after __napi_schedule")
-
-I think this just shows how successful it has been to leave the responsibility to the
-caller so far.
-
-And also note that these issues are reported for years sometimes firsthand to us
-in the timer subsystem because this is the place where we detect entering in idle
-with softirqs pending.
-
-> 
-> > Therefore fix this from napi_schedule() itself with waking up ksoftirqd
-> > when softirqs are raised from task contexts.
-> > 
-> > Reported-by: Paul Menzel <pmenzel@molgen.mpg.de>
-> > Closes: 354a2690-9bbf-4ccb-8769-fa94707a9340@molgen.mpg.de
-> 
-> AFAIU, Closes tags should point to URLs not message IDs.
-
-Good point!
-
-> 
-> If this is a fix, the subject line should be:
->    [PATCH net]
-
-Ok.
-
-> 
-> And there should be a Fixes tag referencing the SHA which caused the
-> issue and the patch should CC stable.
-
-At least since bea3348eef27 ("[NET]: Make NAPI polling independent of struct
-net_device objects."). It's hard for me to be sure it's not older.
-
-
-> 
-> See:
-> 
-> https://www.kernel.org/doc/html/v6.13/process/maintainer-netdev.html#netdev-faq
-
-Thanks.
+Sorry, I don't know enough about dtb to answer this.  Maybe Rob?
 
