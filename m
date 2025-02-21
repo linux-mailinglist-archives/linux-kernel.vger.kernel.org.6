@@ -1,137 +1,79 @@
-Return-Path: <linux-kernel+bounces-526286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21047A3FCBC
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 18:05:13 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02110A3FC8C
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 18:01:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7498719C68EB
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:59:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EE0937AEED8
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:59:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A6E022A4E0;
-	Fri, 21 Feb 2025 16:59:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF7C9226529;
+	Fri, 21 Feb 2025 17:00:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QlwtvUw8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="esKVWQ8V"
+Received: from mr85p00im-ztdg06011101.me.com (mr85p00im-ztdg06011101.me.com [17.58.23.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3A1B215186;
-	Fri, 21 Feb 2025 16:59:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA47321764B
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 17:00:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.23.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740157161; cv=none; b=Rm/VZKemwFSZfjm/enqDIGf+VquH2en3vbm09jIj9qPlL1noGZHT6bZgp8QvVdrHQ/Rli0jqEpEKzwl5Qc4BAhOcJMln+wDZl9eSoQpyF3jARlpU1mKZSPM+fCPFJ6YPfDliyveeqCW/0S9HQuabEPiwcWfekR/bGkzuFGwZ2ew=
+	t=1740157212; cv=none; b=lCAeVkSxj1MVBkBj5JbjufM4ViASsSqjFT+TiaA2fwWeOgUAEFWJyPCYXhv/Q/8sU5nq+5h4IZH2bB3AQ6xBreYsyxmJEFQ0wz8d5rRpdHnjXkM59+cCuM4VKE9gbs4gVhkOBezpBODKOkswRSbaF1CMCyVJ8vfLFjtg9rES00g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740157161; c=relaxed/simple;
-	bh=eZGIz409g07Cawfaj6EDBblSb/BHdiA3+F5srYv87a8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EB8s1uLHws+4WNBMYpkwLix7QnOAbfIysGF7hn9P8vG1O8V+RualPL6lhITvzwS6eTFdANXtmPo4HyUIDLDDqJqTZWShdoQ5C8N4Yw2oUTfsfTyfXM8v4EbKj9q98tVmi6Ne+FORzLy3wmB+J7pYbUg/yMPy8TBl0Gj+dNUuI7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QlwtvUw8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD51CC4CED6;
-	Fri, 21 Feb 2025 16:59:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740157160;
-	bh=eZGIz409g07Cawfaj6EDBblSb/BHdiA3+F5srYv87a8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QlwtvUw8Dl1WPUHN3yXu4AGTPUteJ69ga1uuyaytf41Hximkg2xNQhp9n+D5IzWMu
-	 ae69M2D80RRQ+xr3Rbu0phiJhXVI5ljd+A/aHD+rDrGvK+s/v7uS1QthC2m+Ub0VlW
-	 zKm+C/55KjkZen2s2pgQs218wWsaSkFdI7iJ1BoXqpZ8p382MdO9seAX4DpJW2BBdG
-	 yWo5Deizbk653UPyvzx0ZcehRexg9Y/MeHSatoDocriGps+wz/M4OuNcFrX1wtijYO
-	 1Wuss1HsUdIYND1vlUQdgiV/R6DRFdye/5Z9HL0u2kZ7ac7yqGf+9HJE9UiufOxMTq
-	 rXfMrvIjT2Acw==
-Date: Fri, 21 Feb 2025 16:59:16 +0000
-From: Conor Dooley <conor@kernel.org>
-To: dimitri.fedrau@liebherr.com
-Cc: Marc Kleine-Budde <mkl@pengutronix.de>,
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-can@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	Dimitri Fedrau <dima.fedrau@gmail.com>
-Subject: Re: [PATCH v3 1/2] dt-bindings: can: fsl,flexcan: add transceiver
- capabilities
-Message-ID: <20250221-drinking-tantrum-6e0bf9051160@spud>
-References: <20250221-flexcan-add-transceiver-caps-v3-0-a947bde55a62@liebherr.com>
- <20250221-flexcan-add-transceiver-caps-v3-1-a947bde55a62@liebherr.com>
+	s=arc-20240116; t=1740157212; c=relaxed/simple;
+	bh=LRLjnoPeYF6ilJFr8bD8PfFt+L04X0ykkN1u8Qbb7sc=;
+	h=Content-Type:From:Mime-Version:Date:Subject:Message-Id:Cc:To; b=T64cf0bYXc+v5H1vSu6GmC4yH4XnfQyxIys8Yp0Z9l8OfW6pMsRUiwYxb0meXIeJMBCM6+uGfCZ89SO2RH4yEoRGsGbYW8FHK7zTVD47UqNHUuvcDONBPL7y7KAD218U7h0Yde0zHdtZaAoH00TjGCI2Oy44gYYxKhQtbWhYnok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=esKVWQ8V; arc=none smtp.client-ip=17.58.23.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1a1hai; bh=LRLjnoPeYF6ilJFr8bD8PfFt+L04X0ykkN1u8Qbb7sc=;
+	h=Content-Type:From:Mime-Version:Date:Subject:Message-Id:To:x-icloud-hme;
+	b=esKVWQ8V4ak7wpeBevg37+9kVQPuDAo7vPIpDyGYonLK8HwxuaQpEvrhgPzQv7wNo
+	 MBF9i0I7TgzY940DzDJCo8y+Fr84OZXHiVAcr8NU+jmzg3cD/qFa07FCNDcK+Z0Va3
+	 Fsl4JJL3DXbrapeExxvC+nT0NwF0OowXd/C/spcnq1/1v6ekfNkFeXPh2W6BJLuJX+
+	 aXajuonQ6SLQshZOyllB6ht7igw/pn/QA9Q2UHQjhnWxtWrrTJvxJpYto7HJnGNslp
+	 7f2vSHETXGj44zE7oYNr19/o0hx/C2wttTltNJZneGYoZ5/QWANhKA2EtyJAaufGHQ
+	 RKO2/dlbPTFvw==
+Received: from smtpclient.apple (mr38p00im-dlb-asmtp-mailmevip.me.com [17.57.152.18])
+	by mr85p00im-ztdg06011101.me.com (Postfix) with ESMTPSA id 1F73CDA040D;
+	Fri, 21 Feb 2025 17:00:07 +0000 (UTC)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+From: MICHAEL TURNER <kameronwayneturner@icloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="oeo8jN3jmqo3xz+Z"
-Content-Disposition: inline
-In-Reply-To: <20250221-flexcan-add-transceiver-caps-v3-1-a947bde55a62@liebherr.com>
+Mime-Version: 1.0 (1.0)
+Date: Fri, 21 Feb 2025 10:59:53 -0600
+Subject: Re: [PATCH v2 2/5] modules: Refactor + kdoc elf_validity_cached_copy
+Message-Id: <75A63190-F010-4CF5-B09D-45BF74FD3909@icloud.com>
+Cc: gary@garyguo.net, laura@labbott.name, linux-kbuild@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, masahiroy@kernel.org, mcgrof@kernel.org,
+ mmaurer@google.com, nathan@kernel.org, ndesaulniers@google.com,
+ nicolas@fjasle.eu, ojeda@kernel.org, rust-for-linux@vger.kernel.org
+To: greg@kroah.com
+X-Mailer: iPhone Mail (22D72)
+X-Proofpoint-GUID: WE4r5jYP7-uRAtXQs623InvNKiKYM718
+X-Proofpoint-ORIG-GUID: WE4r5jYP7-uRAtXQs623InvNKiKYM718
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-21_05,2025-02-20_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 phishscore=0 bulkscore=0
+ suspectscore=0 mlxlogscore=643 adultscore=0 spamscore=0 mlxscore=0
+ clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2308100000 definitions=main-2502210120
 
+Remove everything that is attacking me this is invalid=20
+All information. Has been stolen I=E2=80=99ve been attacked over 2yrs=20
+Please stop all of this=20
+I didn=E2=80=99t approve any of this=20
 
---oeo8jN3jmqo3xz+Z
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, Feb 21, 2025 at 08:40:04AM +0100, Dimitri Fedrau via B4 Relay wrote:
-> From: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
->=20
-> Currently the flexcan driver does only support adding PHYs by using the
-> "old" regulator bindings. Add support for CAN transceivers as a PHY.
->=20
-> Signed-off-by: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
-> ---
->  .../devicetree/bindings/net/can/fsl,flexcan.yaml          | 15 +++++++++=
-++++++
->  1 file changed, 15 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/net/can/fsl,flexcan.yaml b=
-/Documentation/devicetree/bindings/net/can/fsl,flexcan.yaml
-> index 73252fe56fe6c8e9fd19142208bb655dc86d47cd..81125883cf86b9d19616bde37=
-8f74bdb6a32f1b2 100644
-> --- a/Documentation/devicetree/bindings/net/can/fsl,flexcan.yaml
-> +++ b/Documentation/devicetree/bindings/net/can/fsl,flexcan.yaml
-> @@ -77,6 +77,9 @@ properties:
->    xceiver-supply:
->      description: Regulator that powers the CAN transceiver.
-> =20
-> +  phys:
-> +    maxItems: 1
-> +
->    big-endian:
->      $ref: /schemas/types.yaml#/definitions/flag
->      description: |
-> @@ -171,6 +174,18 @@ allOf:
->          interrupts:
->            maxItems: 1
->          interrupt-names: false
-> +  - if:
-> +      required:
-> +        - xceiver-supply
-> +    then:
-> +      properties:
-> +        phys: false
-> +  - if:
-> +      required:
-> +        - phys
-> +    then:
-> +      properties:
-> +        xceiver-supply: false
-
-The duplication here is not needed, they both will cause errors in the
-same situation. With one dropped,
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-
-
---oeo8jN3jmqo3xz+Z
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ7iw5AAKCRB4tDGHoIJi
-0sEeAQDF7cziCH3YgU2Q1pWw4hwxu21/XtwYMmNSx6V9te9dYgEA+6keZnuZ3EXE
-Eqeod0gZy3vGEUWf4utVpEapgWZj8Ak=
-=vebm
------END PGP SIGNATURE-----
-
---oeo8jN3jmqo3xz+Z--
+Sent from my iPhone=
 
