@@ -1,247 +1,217 @@
-Return-Path: <linux-kernel+bounces-526356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DAE8A3FDB1
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 18:44:23 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90FA7A3FDA1
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 18:41:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9ECDA7021B4
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:40:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D4C3163A40
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:41:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BD46250BEC;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0324250BFE;
 	Fri, 21 Feb 2025 17:40:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DjGENyva"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="PEwpl9Gw"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3A672505D7;
-	Fri, 21 Feb 2025 17:40:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19AC81CEACB;
+	Fri, 21 Feb 2025 17:40:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740159653; cv=none; b=feSZz4jZ6YQnIS53iy0YMOkqqhbKCZAw8lY6+fa8NjzOzsR98/fllV8QaMtCX6C8Clg6lqm0zZ5hVQnacTmn7sd41Oahs1OLIFgTr4ViyC/Qn0mFdacEVtViZyv3SsNEiZRykgQWFMJXZDqnRrnHA4Y4M9T+8oV/6hbka7IZ4UM=
+	t=1740159654; cv=none; b=dJgNBM118CK6QasQR2B+B7uA+SiS6cNsFCgIhNJlmBl4cS2I37nFiQdnUhqkqIQO/yJQGjMXEIYySc3cpWIgk0CzGdxXlLf6rdLIPvOpcn0GFmJaCTXvne0xWG4JShlKUS/uB+aRl8eitARYnVHRNfLsXdNRJ3BDtIfdJb+5FwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740159653; c=relaxed/simple;
-	bh=51abtb4G25xQbbr/J+RXcL4o16pvtYICBzOFpWSlHkE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kifuVG7kmZZ5e7xC6oJotS3B/vy/wryO+jF9/p8h0kZwwdSn/Bu6kOP6HWHl2XuHsJCr+pe+FhnNw5OspfUC8g9oiBqIYjVp6pwI+KcHtdIlJI8LP69Yi2/1C+urenbdHW2pg6NOtSUN30A40k369n2nUA1SEjy9ckUFRTIWtwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DjGENyva; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2fc20e0f0ceso3761602a91.3;
-        Fri, 21 Feb 2025 09:40:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740159651; x=1740764451; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=51abtb4G25xQbbr/J+RXcL4o16pvtYICBzOFpWSlHkE=;
-        b=DjGENyvalEwUvXyIFhDKTBfNxZXL7MNnWYRRQ0gvVHNZoseyAe8g7Nb2ekNWBHBM1L
-         ETsp0MY/2UsvqafLxUtlUusSeryKsVi5c8tke3l5MfCl3Q4EpkvozLZE1nQFKEHdzLHF
-         60O8/R8LCyWbpptIq/MROuiK26PybBAEOQfAz7sUqLqvDUD3lwJ1nxzrzO2dvpLEze+r
-         xxnBTiLOQOqYXNjl6ddKgdtq8PW3rAN5CmWE5HkanFegfZFot3KDtcahC/EYNxiPQinN
-         SmXmbKFInGm5o4dzT+XgQFGvLgAkjNL0XCsfcS5qvVp1QygjxlFGvz5x+CnOVpkzEczh
-         ApMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740159651; x=1740764451;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=51abtb4G25xQbbr/J+RXcL4o16pvtYICBzOFpWSlHkE=;
-        b=FwCeAezWIiaSiq6f7iZAiFHkwLNkNevl6zlAT2Up083AutnSOJ9H1tqWIfqn98KWxB
-         VNOM5jxnFv9b8Q+66kt/FVSHk/JT2+sIHZSNTvqqyWoVAqRlSKuYLsyhyJXTHygIJLd3
-         YhR4mm9W45FHDzXHnh7rnwqTLcnu+nDY9v/YgQ7wA6xq25VloFHN1Gu8BWYTyijMDT1+
-         BOgHWx2OUzbeOACwSvG2bCnGxGJcSQvteMga2mCehjHJxhNBnp2CKL7YffKMi8HLK31H
-         wmt3TzlI3ypzvLz2QCudwDMsL3USWdJUWbRY/RPWIP4IkdkznXx/MawbbeHoYafFIrWn
-         v4iA==
-X-Forwarded-Encrypted: i=1; AJvYcCWkxVUfevf3T+8BB43OLLKuJVK5eIZXauyMXDlHjSpvqc2I21+T6X+xcV8fjKC0Awj4pMs=@vger.kernel.org, AJvYcCX99R5i+A5vXJvuLIIrn5sD6JUMvwZzm71gk9FD20jrz7O667I1bFYJjiGXLZ8kgbOxKJAlStV1FHSiQ2A2VVx6@vger.kernel.org, AJvYcCXR7Fndz+cZ/Q42GaPZlSMGCQ8P4xEpmg4HSvznD0jceMzQsMmAbKnaETW7ALMFiTeARTQpyxqSE2RKI8r3@vger.kernel.org
-X-Gm-Message-State: AOJu0YxdMqCc/ehOTZBMKyiXdOxo8J8rx6p32iJEnDhViW5bgugskAlE
-	Z+8VzazRSsyYylxlTFTgg4plADGlOqlxKhfDeqIeFuo4Vg3b/P6nw/yLyf0hNMxx7CkiyMdd/uk
-	0HBXEaKIf8bwIpg0Kp8sjVriLE54=
-X-Gm-Gg: ASbGncs/0zs5XvdU3mS7u8gaeDz0sfsdQq24S/K32jg8O2Zfh6EIEbk2tmLr+AKKtCz
-	WtITNjQhNx/xMZa4HlUoWA3QXDzRw2bPqVzEmkuxq/kQ978RrXfKHTl2WwYR/UHdKteaMjl8Tsv
-	VjMr8sJMQelcuSj5Q9x0uzD68=
-X-Google-Smtp-Source: AGHT+IF0wvO6nfjhFNyrRaqFKb0R8TES6IvyDZZ2RRaEdEPeYGHy7fTD5oobMg7SXrr5e7wPV9/OWPniyDlc5SIHNw4=
-X-Received: by 2002:a17:90b:2b8e:b0:2ea:3f34:f18f with SMTP id
- 98e67ed59e1d1-2fce78cbeaemr6175693a91.19.1740159649264; Fri, 21 Feb 2025
- 09:40:49 -0800 (PST)
+	s=arc-20240116; t=1740159654; c=relaxed/simple;
+	bh=0KVGQtUJupg5iG64wesQGLbyGFQHr7S30VQSzvx3D24=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=t5k04m2wJQZ0e1Bpdk5ggxI03RXdsIcKMnqDPW3QJRQLLJF/2+BYclS2QvRzvmjAgVPT1Oz3Jvnk/NrFdusT3KieYlGtpkMNyuSk3Kwu6JQZtCWFNYFD7hg/2YeJ/Sx0guggmexmo0K/gKNfRwwWH7ei/Z5pyp7il3DQsCIbb2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=PEwpl9Gw; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
+	Date:References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=LqtyheHGLjlz2EPDUM42+j8ZzSm0QKQ0xbER1KmW6RU=; b=PEwpl9Gw86fh1AFNDtEM8YI+Nz
+	32VghDCY6PNdaQfa5f6FprPsO/ZkkrQpvf2EhoDqjb7oxECVf8MQNP8LclcNgoZJhgq/yKwAjoYAi
+	CLD56vgO3FHGKQPKc5mh3XXchrgrMxs03Y4RBaQaoxYbsESMG17AWgUEm/HXxQOk3wNbhTWpIQAZx
+	XasMVioddwCTYu4/lRe1O6KUWLqqs4ySmURAwXxLreRJCLIP6+OJ4ljBCS8XrmeVKSs8R5GJ2WCj7
+	f/OTimFUc/Hb3GfHhd5r7fNh6OKO/W7bXJx/pu8ZPX0RH3iBpuWiPO1OlvUQDMaJG7mlIMTVHDNSR
+	dx2FZ20Q==;
+Received: from bl23-10-177.dsl.telepac.pt ([144.64.10.177] helo=localhost)
+	by fanzine2.igalia.com with utf8esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1tlX0s-00GCc6-DG; Fri, 21 Feb 2025 18:40:40 +0100
+From: Luis Henriques <luis@igalia.com>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: linux-fsdevel@vger.kernel.org,  linux-kernel@vger.kernel.org,  Bernd
+ Schubert <bernd@bsbernd.com>,  Teng Qin <tqin@jumptrading.com>,
+    Matt Harvey <mharvey@jumptrading.com>
+Subject: Re: [RFC PATCH v2] fuse: fix race in fuse_notify_store()
+In-Reply-To: <20250130101607.21756-1-luis@igalia.com> (Luis Henriques's
+	message of "Thu, 30 Jan 2025 10:16:07 +0000")
+References: <20250130101607.21756-1-luis@igalia.com>
+Date: Fri, 21 Feb 2025 17:40:39 +0000
+Message-ID: <87eczrgprc.fsf@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250122215206.59859-1-slava.imameev@crowdstrike.com>
- <20250122215206.59859-2-slava.imameev@crowdstrike.com> <CAEf4Bzajxh4xvg-aCaBhLQdNOZdhwceYUD2UsCcWku4ZBca_Hw@mail.gmail.com>
- <8831ed8fa183f76fefd71244360fa0ca35b11910.camel@crowdstrike.com>
- <CAEf4BzYWe0KCzA4-qwAGp5n_ydJ0_zyLSO=Crr_vewFHzZ0t6Q@mail.gmail.com>
- <e55a1441252079e73b2abdf3635efcebda6b47c1.camel@crowdstrike.com>
- <CAEf4BzZ8H0nQMEMaDGMfyngb15zMFEduy_R_ajakrdjGGtiOQA@mail.gmail.com> <7727e5d4f035c04d03ba274ad8b7fb8bc7da696c.camel@crowdstrike.com>
-In-Reply-To: <7727e5d4f035c04d03ba274ad8b7fb8bc7da696c.camel@crowdstrike.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Fri, 21 Feb 2025 09:40:36 -0800
-X-Gm-Features: AWEUYZmrHlpwSSF-oG8LZ8mihpEMSqMTy8rAUnz6iKydBzQ5cX3pjuinhtRb2Kk
-Message-ID: <CAEf4BzZ=-r7AkSGhru_NMxPcXDLmkVpTiQrBxUvsgq-LE0Lk6w@mail.gmail.com>
-Subject: Re: Re: Re: Re: [PATCH 2/2] libbpf: BPF programs dynamic loading and attaching
-To: Martin Kelly <martin.kelly@crowdstrike.com>
-Cc: "mykolal@fb.com" <mykolal@fb.com>, "shuah@kernel.org" <shuah@kernel.org>, 
-	"eddyz87@gmail.com" <eddyz87@gmail.com>, "song@kernel.org" <song@kernel.org>, 
-	Mark Fontana <mark.fontana@crowdstrike.com>, 
-	"john.fastabend@gmail.com" <john.fastabend@gmail.com>, 
-	"yonghong.song@linux.dev" <yonghong.song@linux.dev>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "andrii@kernel.org" <andrii@kernel.org>, 
-	"kpsingh@kernel.org" <kpsingh@kernel.org>, "martin.lau@linux.dev" <martin.lau@linux.dev>, 
-	"ast@kernel.org" <ast@kernel.org>, "bpf@vger.kernel.org" <bpf@vger.kernel.org>, 
-	"sdf@fomichev.me" <sdf@fomichev.me>, "daniel@iogearbox.net" <daniel@iogearbox.net>, 
-	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>, 
-	Slava Imameev <slava.imameev@crowdstrike.com>, "jolsa@kernel.org" <jolsa@kernel.org>, 
-	"haoluo@google.com" <haoluo@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Feb 12, 2025 at 2:31=E2=80=AFPM Martin Kelly
-<martin.kelly@crowdstrike.com> wrote:
+On Thu, Jan 30 2025, Luis Henriques wrote:
+
+> Userspace filesystems can push data for a specific inode without it being
+> explicitly requested.  This can be accomplished by using NOTIFY_STORE.
+> However, this may race against another process performing different
+> operations on the same inode.
 >
-> On Mon, 2025-02-10 at 16:06 -0800, Andrii Nakryiko wrote:
-> > > Tracking associated maps for a program is not necessary. As long as
-> > > the last BPF program using the BPF map is unloaded, the kernel will
-> > > automatically free not-anymore-referenced BPF map. Note that
-> > > bpf_object itself will keep FDs for BPF maps, so you'd need to make
-> > > sure to do bpf_object__close() to release those references.
-> > >
-> > > But if you are going to ask to re-create BPF maps next time BPF
-> > > program is loaded... Well, I'll say you are asking for a bit too >
-> > > much,
-> > > tbh. If you want to be *that* sophisticated, it shouldn't be too
-> > > hard
-> > > for you to get all this information from BPF program's
-> > > instructions.
-> > >
+> If, for example, there is a process reading from it, it may happen that it
+> will block waiting for data to be available (locking the folio), while the
+> FUSE server will also block trying to lock the same folio to update it wi=
+th
+> the inode data.
 >
-> We really are that sophisticated (see below for more details). We could
-> scan program instructions, but we'd then tie our logic to BPF
-> implementation details and duplicate logic already present in libbpf
-> (https://elixir.bootlin.com/linux/v6.13.2/source/tools/lib/bpf/libbpf.c#L=
-6087
-> ). Obviously this *can* be done but it's not at all ideal from an
-> application perspective.
+> The easiest solution, as suggested by Miklos, is to allow the userspace
+> filesystem to skip locked folios.
 >
-
-I agree it's not ideal, but it's also not some complicated and
-bound-to-be-changed logic. What you point out in libbpf source code is
-a bit different thing, reality is much simpler. Only so-called ldimm64
-instruction (BPF_LD | BPF_IMM | BPF_DW opcode) can be referencing map
-FD, so analysing this is borderline trivial. And this is part of BPF
-ISA, so not going to change.
-
-We need to double check, but I think libbpf doesn't use FD_ARRAY
-approach, unless you are using light skeleton, so if you don't you
-don't even have to worry about FD_ARRAY thing.
-
+> Link: https://lore.kernel.org/CH2PR14MB41040692ABC50334F500789ED6C89@CH2P=
+R14MB4104.namprd14.prod.outlook.com
+> Reported-by: Teng Qin <tqin@jumptrading.com>
+> Originally-by: Miklos Szeredi <miklos@szeredi.hu>
+> Signed-off-by: Luis Henriques <luis@igalia.com>
+> ---
+> Hi!
 >
-> > > > >
-> > > bpf_object is the unit of coherence in libbpf, so I don't see us
-> > > refcounting maps between bpf_objects. Kernel is doing refcounting
-> > > based on FDs, so see if you can use that.
-> > >
+> Here's v2.  Other than fixing the bug pointed out by Bernd (thanks!), I've
+> also added an explanation to the 'XXX' comment.  As a matter of fact, I've
+> took another look at that code, and I felt compelled to remove that comme=
+nt,
+> as using PAGE_SIZE seems to be the right thing.
 >
-> I can understand that. That said, I think if there's no logic across
-> objects, and bpf_object access is not thread-safe, it puts us into a
-> tough situation:
-> - Complex refcounting, code scanning, etc to keep consistency when
-> manipulating maps used by multiple programs.
-> - Parallel loading not being well-balanced, if we split programs across
-> objects.
+> Anyway, I'm still thinking that probably NOTIFY_STORE should *always* have
+> this behaviour, without the need for userspace to explicitly setting a fl=
+ag.
+
+Gentle ping.  I was wondering if you have any thoughts on this patch.
+Specially regarding the behaviour change I'm suggesting above.
+
+(Also, as I've mentioned before, I'm using the 'Originally-by' tag; not
+sure this is the right thing to do.  Obviously, I'm fine dropping my
+s-o-b, as I'm not the original author.)
+
+Cheers,
+--=20
+Lu=C3=ADs
+
+
+> Changes since v1:
+> - Only skip if __filemap_get_folio() returns -EAGAIN (Bernd)
 >
-> We could alternatively write our own custom loader, but then we=E2=80=99d=
- have
-> to duplicate much of the useful logic that libbpf already implements:
-> skeleton generation, map/program association, embedding programs into
-> ELFs, loading logic and kernel probing, etc. We=E2=80=99d like some way t=
-o
-> handle dynamic/parallel loading without having to replicate all the
-> advantages libbpf grants us.
+>  fs/fuse/dev.c             | 30 +++++++++++++++++++++++-------
+>  include/uapi/linux/fuse.h |  8 +++++++-
+>  2 files changed, 30 insertions(+), 8 deletions(-)
 >
+> diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+> index 27ccae63495d..309651f82ca4 100644
+> --- a/fs/fuse/dev.c
+> +++ b/fs/fuse/dev.c
+> @@ -1630,6 +1630,7 @@ static int fuse_notify_store(struct fuse_conn *fc, =
+unsigned int size,
+>  	unsigned int num;
+>  	loff_t file_size;
+>  	loff_t end;
+> +	int fgp_flags =3D FGP_LOCK | FGP_ACCESSED | FGP_CREAT;
+>=20=20
+>  	err =3D -EINVAL;
+>  	if (size < sizeof(outarg))
+> @@ -1645,6 +1646,9 @@ static int fuse_notify_store(struct fuse_conn *fc, =
+unsigned int size,
+>=20=20
+>  	nodeid =3D outarg.nodeid;
+>=20=20
+> +	if (outarg.flags & FUSE_NOTIFY_STORE_NOWAIT)
+> +		fgp_flags |=3D FGP_NOWAIT;
+> +
+>  	down_read(&fc->killsb);
+>=20=20
+>  	err =3D -ENOENT;
+> @@ -1668,14 +1672,26 @@ static int fuse_notify_store(struct fuse_conn *fc=
+, unsigned int size,
+>  		struct page *page;
+>  		unsigned int this_num;
+>=20=20
+> -		folio =3D filemap_grab_folio(mapping, index);
+> -		err =3D PTR_ERR(folio);
+> -		if (IS_ERR(folio))
+> -			goto out_iput;
+> +		folio =3D __filemap_get_folio(mapping, index, fgp_flags,
+> +					    mapping_gfp_mask(mapping));
+> +		err =3D PTR_ERR_OR_ZERO(folio);
+> +		if (err) {
+> +			if (!(outarg.flags & FUSE_NOTIFY_STORE_NOWAIT) ||
+> +			    (err !=3D -EAGAIN))
+> +				goto out_iput;
+> +			page =3D NULL;
+> +			/* XXX is it OK to use PAGE_SIZE here? */
+> +			this_num =3D min_t(unsigned int, num, PAGE_SIZE - offset);
+> +		} else {
+> +			page =3D &folio->page;
+> +			this_num =3D min_t(unsigned int, num,
+> +					 folio_size(folio) - offset);
+> +		}
+>=20=20
+> -		page =3D &folio->page;
+> -		this_num =3D min_t(unsigned, num, folio_size(folio) - offset);
+>  		err =3D fuse_copy_page(cs, &page, offset, this_num, 0);
+> +		if (!page)
+> +			goto skip;
+> +
+>  		if (!folio_test_uptodate(folio) && !err && offset =3D=3D 0 &&
+>  		    (this_num =3D=3D folio_size(folio) || file_size =3D=3D end)) {
+>  			folio_zero_segment(folio, this_num, folio_size(folio));
+> @@ -1683,7 +1699,7 @@ static int fuse_notify_store(struct fuse_conn *fc, =
+unsigned int size,
+>  		}
+>  		folio_unlock(folio);
+>  		folio_put(folio);
+> -
+> +skip:
+>  		if (err)
+>  			goto out_iput;
+>=20=20
+> diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
+> index e9e78292d107..59725f89340e 100644
+> --- a/include/uapi/linux/fuse.h
+> +++ b/include/uapi/linux/fuse.h
+> @@ -576,6 +576,12 @@ struct fuse_file_lock {
+>   */
+>  #define FUSE_EXPIRE_ONLY		(1 << 0)
+>=20=20
+> +/**
+> + * notify_store flags
+> + * FUSE_NOTIFY_STORE_NOWAIT: skip locked pages
+> + */
+> +#define FUSE_NOTIFY_STORE_NOWAIT	(1 << 0)
+> +
+>  /**
+>   * extension type
+>   * FUSE_MAX_NR_SECCTX: maximum value of &fuse_secctx_header.nr_secctx
+> @@ -1075,7 +1081,7 @@ struct fuse_notify_store_out {
+>  	uint64_t	nodeid;
+>  	uint64_t	offset;
+>  	uint32_t	size;
+> -	uint32_t	padding;
+> +	uint32_t	flags;
+>  };
+>=20=20
+>  struct fuse_notify_retrieve_out {
 
-Yeah, I can understand that as well, but bpf_object's single-threaded
-design and the fact that bpf_object__load is kind of the final step
-where programs are loaded (or not) is pretty backed in. I don't see
-bpf_object becoming multi-threaded. The dynamic program
-loading/unloading/loading again is something that I can't yet justify,
-tbh.
-
-So the best I can propose you is to use libbpf's skeleton and
-bpf_object concept for, effectively, ELF handling, relocations, all
-the preparations up to loading BPF programs. And after that you can
-take over loading and handling program lifetime outside of bpf_object.
-
-Dynamic map creation after bpf_object__load() I think is completely
-outside of the scope and you'll have to solve this problem for
-yourself. I would point out, though, that internally libbpf already
-switched to sort-of pre-creating stable FDs for maps before they are
-actually created in the kernel. So it's conceivable that we can have
-more granularity in bpf_object preparation. I.e., first step would be
-to parse ELF and handle relocations, prepare everything. After that we
-can have a step to create maps, and then another one to create
-programs. Usually people would do all that, but you can stop right
-before maps creation or before program creation, whatever fits your
-use case better.
-
-The key is that program instructions will be final and won't need
-adjustments regardless of maps actually being created or not. FDs, as
-I mentioned, are stable regardless.
-
-So, not ideal for your (very complicated) use case, but you still
-avoid dealing with all the ELF and relocation stuff (which is the
-annoying and rather complicated part, and I can see no one wanting to
-reimplement that). Map and program creation is relatively
-straightforward matters compared to that.
-
-> > >
-> > >
-> > > Is 100 just a nicely looking rather large number, or do you really
-> > > have 100 different BPF programs? Why so many and are they really
-> > > all
-> > > unique?
-> > >
-> > > Asking because if it's just a way to attach BPF program doing more
-> > > or
-> > > less uniform set of actions for different hooks, then perhaps there
-> > > are better ways to do this without having to duplicating BPF
-> > > programs
-> > > so much (like BPF cookie, multi-kprobes, etc, etc)
->
-> 100 is not an arbitrary number; we have that and higher (~200 is a good
-> current estimate, and that grows as new product features are added).
-> The programs are really doing different things. We also have to support
-> a wide range of kernels, handling cases like: "on this kernel range,
-> trampolines aren't supported, so use kretprobes with a context map for
-> function args instead of fexit, but on newer kernels just use an fexit
-> hook."
-
-Yes, this is typical, and bpf_program__set_autoload() and
-bpf_map__set_autocreate() are meant to handle that. It's the program
-loading after bpf_object load is what is not supported.
-
->
-> The use case here is that our security monitoring agent leverages eBPF
-> as its foundational technology to gather telemetry from the kernel. As
-> part of that, we hook many different kernel subsystems (process,
-> memory, filesystem, network, etc), tying them together and tracking
-> with maps. So we legitimately have a very large number of programs all
-> doing different work. For products of this scale, it increases security
-> and performance to load this set of programs and their maps in an
-> optimized, parallel fashion and subsequently change the loaded set of
-> programs and maps dynamically without disturbing the rest of the
-> application.
-
-Yes, makes sense. You'll need to decide for yourself if it's actually
-more meaningful to split those 200 programs into independent
-bpf_objects by features, and be rigorous about sharing state (maps)
-through bpf_map__reuse_fd(), which would allow to parallelize loading
-within confines of existing libbpf APIs. Or you can be a bit more
-low-level with program loading outside of bpf_object API, as I
-described above.
 
