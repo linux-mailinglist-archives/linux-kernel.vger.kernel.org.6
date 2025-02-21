@@ -1,131 +1,134 @@
-Return-Path: <linux-kernel+bounces-525194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4340A3EC3F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 06:39:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03340A3EC46
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 06:44:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3BF51700225
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 05:39:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A474219C33B0
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 05:43:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F0771FBCA9;
-	Fri, 21 Feb 2025 05:39:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFA381FBE9A;
+	Fri, 21 Feb 2025 05:43:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PQhmuFeP"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="U0n9GcLa"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 775A14207F;
-	Fri, 21 Feb 2025 05:39:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1C591F419E
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 05:43:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740116360; cv=none; b=pRSk/QF39EI812tCiyW3uCjmcEARvKGRUWOOcaXakhSuUv2+8EJgNaNrZAtb+n4feinZDmUGaUfHT52GelrOPXgsHrW3iUectQiQ2pvISbXAYlfLisMowMqr6ykYkXEyJ4EzwhLYc/46qB4FF4G1L4ZjNXBdXT9HMbOPSzU/Ee4=
+	t=1740116621; cv=none; b=hHAiGYrBDhutII3czSx2VGHGHxhzKVQPk1pBDg3zmAWuitVtU6bINfRbUB3musnWiFukxh4Ca2/6KVc2YrsbJXR76sgvj4WAlSh8q+RKxyQYfwXjlD1BzsYXEiMeSPG989I9x1sI4Cfdl1Kmwu7F/nsrIzYvo7UvKmRtia8anm8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740116360; c=relaxed/simple;
-	bh=fK8Z+IZ0pHC7+G1nepcVxclbQi7OboQCTZuLxnZ0GvY=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=pFcYXsxYpiHBE+uh80KKz6FlPBTZdXpVH+QoYJ/M3wab4ALwELLuIGdILRhmvq9ShuL+F4L+hwHca27JZc8PR9w9JSpW5j/SqvvXmdVN9vZtemkAHfic4O6vx++jSnhM3pw5IJNnDCZkvWUyps4QMgN1EV43acvNe0kFet/UrxQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PQhmuFeP; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740116358; x=1771652358;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=fK8Z+IZ0pHC7+G1nepcVxclbQi7OboQCTZuLxnZ0GvY=;
-  b=PQhmuFePZ9PHZ4hP3P3xB3HZ/u3w8r1G3xJYlRpqOXkKMe6Gt98Jj+wv
-   2xlOKXOo/Gv94ed46X1Wl326jonUnMzisQ5nS0vACQzz62v+Q5rWJnFBu
-   BZn86s1uzvImKZaKdA+VEcd/pBSQcE/eT0XT1MQv6s1dZlTJAVfhljwwD
-   zDtX9dLJoQ2BeZ39hZiKUYx935eCMzayjuHn8zywzDlyqrYSPhYHx5act
-   gdM8INR4frJ7GAfC8bMquXC5mwmFFikFCXdnwo1IQcuBtkZdVgOCJDQKr
-   LJRUEbvcc4EPqwuceOUN+bsAr33z77hYRe7dAtNsxYpvBVyca4Vw9ODkQ
-   Q==;
-X-CSE-ConnectionGUID: +HjFcfd9QYiDg+Q4HShiqQ==
-X-CSE-MsgGUID: wk9sQoelRAak2IfqGY0Tlw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11351"; a="41045924"
-X-IronPort-AV: E=Sophos;i="6.13,303,1732608000"; 
-   d="scan'208";a="41045924"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Feb 2025 21:39:15 -0800
-X-CSE-ConnectionGUID: XpdX+/24Rt+nrlXK5Vbfpw==
-X-CSE-MsgGUID: 2rTsZrk3SjGmTazUIIK4pA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,303,1732608000"; 
-   d="scan'208";a="120382132"
-Received: from spandruv-desk.jf.intel.com ([10.54.75.16])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Feb 2025 21:39:14 -0800
-Message-ID: <df4fd1434a72f520e34afce386e10890bb4ae073.camel@linux.intel.com>
-Subject: Re: [PATCH v1] cpufreq: intel_pstate: Relocate platform preference
- check
-From: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Linux PM <linux-pm@vger.kernel.org>, LKML
- <linux-kernel@vger.kernel.org>,  Zhang Rui <rui.zhang@intel.com>, "Rafael
- J. Wysocki" <rjw@rjwysocki.net>
-Date: Thu, 20 Feb 2025 21:39:14 -0800
-In-Reply-To: <CAJZ5v0jF_oLkzqEJuc9NX_j1+javyU8HF0JU8FiFgNaCks+RdA@mail.gmail.com>
-References: <2776745.mvXUDI8C0e@rjwysocki.net>
-	 <CAJZ5v0jF_oLkzqEJuc9NX_j1+javyU8HF0JU8FiFgNaCks+RdA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
-User-Agent: Evolution 3.54.2 (3.54.2-1.fc41) 
+	s=arc-20240116; t=1740116621; c=relaxed/simple;
+	bh=yGRsKQbAUF8yX6yPNg1x0BnaoKv1g2xJ0ViVAAluE/I=;
+	h=Date:Message-Id:Mime-Version:Subject:From:To:Cc:Content-Type; b=Otd222VEVUC8Mp+NW2Y61uuDCtXP2MqqX8cVLiCQWNvj1za2oeOjOzhh3LQtPkB93e6gICfOMCjln6ryc+ePY9yj+oZI4eA1AX0jVPr2e/YmsT6nBVTI4KV4mFH2EYbzXr/P8EoRrlFtGyirTAJQupDXVXXQnh79z39dUNPa220=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--suleiman.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=U0n9GcLa; arc=none smtp.client-ip=209.85.219.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--suleiman.bounces.google.com
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e5798866415so3574248276.1
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 21:43:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1740116619; x=1740721419; darn=vger.kernel.org;
+        h=cc:to:from:subject:mime-version:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=s9Uv+a28OGAxYy+jIkS9p7JciuptkwlOHtkNxL0+CyU=;
+        b=U0n9GcLae8ONmtEJuhsEUXpok77kWyR52K+nZZbpwIU1VDtwItlJjAB+HxjUP6ZKS5
+         NdoS41Zb1L+B/u1Fu1J40vDenKtJhySzt1B0VduA2vltftQafPQ/dbhsMEsvIb5Q9fWw
+         NiJMJRdaMvr7rkbuqiEXEl//1rrkxoOROjUEL4lMV7cHXsvy3Bc51pKaNjqESNRZ7gbD
+         5qeRVXYs6RJ2oVQTn4jKndK5LZLJh6nBd2h+VV6QRdMKVd+WRNgzbkLnqA4HeWg7plDx
+         dgfqq1zSXAdkaKBTzHRHEbpfk+sWN2zmDOhiAbRygDNazXtBhnwyXmvz/Rj5UdKMX7nF
+         0iCA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740116619; x=1740721419;
+        h=cc:to:from:subject:mime-version:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=s9Uv+a28OGAxYy+jIkS9p7JciuptkwlOHtkNxL0+CyU=;
+        b=taUiewEUenfQyirSpM4SZKFBErBTmCSkM84j/Pbd8y9gZNG7vJ6KGkDIno2pV0LSU5
+         O+31trkPpwxIG4qI6zdffmR30xxd954dkmzclLWDOhrqZZraaYwu6m67cAj9K0/rUdRu
+         mfBeoSMGC4j5IPIONZa5bPcgI8QnEHBZjJZ7nCHukATpnWiStssq21JHD5rZtkH0Xmtb
+         yAuKcf+SETF37TIsbcSNZVNbmOF254Ev53t3X5Q7M5uyi5HzkCtuNHuj5ysH9DC5zH0t
+         lqHAODMJEKybAjY50qmu01CG7pCkEi35SCyTKEogYkQwoPEWNo5dYp8G60RKLTT1uXEu
+         pX5w==
+X-Forwarded-Encrypted: i=1; AJvYcCWZboJzX1YnFYaqjXjtN2SfyK6upEfNOdUnJNeIQ+uZWovQ7orc4HvCyi3enMmxJk0NICVAKiBLN0wqCgw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwI22MKJojau88RN17LmfQ26cy3ab8H122/u2BHqMp1oHCpAlkS
+	lPuiXT6nNOs+YWBBRZwL8GpRP17T2FSC38RdXWE6zRkwqlr5TIJz2uX8vupa4dp900PBzBDWB2B
+	3/3qFTb+J6w==
+X-Google-Smtp-Source: AGHT+IH4jso55cJhGbebGnuGmz3X5bTEqwPxcrgzCSj9Dcx5pOhp/DK4jr2l+1mNhLMw21o+4ggWGoXjiPG3PA==
+X-Received: from suleiman1.tok.corp.google.com ([2401:fa00:8f:203:62aa:45ca:6f53:8c2a])
+ (user=suleiman job=sendgmr) by 2002:a25:8184:0:b0:e5b:13ec:b38b with SMTP id
+ 3f1490d57ef6-e5e8b073744mr9935276.6.1740116618579; Thu, 20 Feb 2025 21:43:38
+ -0800 (PST)
+Date: Fri, 21 Feb 2025 14:39:25 +0900
+Message-Id: <20250221053927.486476-1-suleiman@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.48.1.601.g30ceb7b040-goog
+Subject: [PATCH v4 0/2]  KVM: x86: Include host suspended time in steal time
+From: Suleiman Souhlal <suleiman@google.com>
+To: Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Chao Gao <chao.gao@intel.com>, 
+	David Woodhouse <dwmw2@infradead.org>, Sergey Senozhatsky <senozhatsky@chromium.org>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, ssouhlal@freebsd.org, 
+	Suleiman Souhlal <suleiman@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-T24gVGh1LCAyMDI1LTAyLTIwIGF0IDIwOjMwICswMTAwLCBSYWZhZWwgSi4gV3lzb2NraSB3cm90
-ZToKPiBPbiBGcmksIEZlYiA3LCAyMDI1IGF0IDE6NDjigK9QTSBSYWZhZWwgSi4gV3lzb2NraSA8
-cmp3QHJqd3lzb2NraS5uZXQ+Cj4gd3JvdGU6Cj4gPiAKPiA+IEZyb206IFJhZmFlbCBKLiBXeXNv
-Y2tpIDxyYWZhZWwuai53eXNvY2tpQGludGVsLmNvbT4KPiA+IAo+ID4gTW92ZSB0aGUgaW52b2Nh
-dGlvbiBvZiBpbnRlbF9wc3RhdGVfcGxhdGZvcm1fcHdyX21nbXRfZXhpc3RzKCkKPiA+IGJlZm9y
-ZQo+ID4gY2hlY2tpbmcgd2hldGhlciBvciBub3QgSFdQIGlzIGVuYWJsZWQgYmVjYXVzZSBpdCBk
-b2VzIG5vdCBkZXBlbmQKPiA+IG9uCj4gPiBhbnkgY29kZSBydW5uaW5nIGJlZm9yZSBpdCBleGNl
-cHQgZm9yIHRoZSB2ZW5kb3IgY2hlY2sgYW5kIGlmIENQVQo+ID4gcGVyZm9ybWFuY2Ugc2NhbGlu
-ZyBpcyBnb2luZyB0byBiZSBjYXJyaWVkIG91dCBieSB0aGUgcGxhdGZvcm0sIGFsbAo+ID4gb2YK
-PiA+IHRoZSBjb2RlIHRoYXQgcnVucyBiZWZvcmUgdGhhdCBmdW5jdGlvbiAoYWdhaW4sIGV4Y2Vw
-dCBmb3IgdGhlCj4gPiB2ZW5kb3IKPiA+IGNoZWNrKSBpcyByZWR1bmRhbnQuCj4gPiAKPiA+IFRo
-aXMgaXMgbm90IGV4cGVjdGVkIHRvIGFsdGVyIGFueSBmdW5jdGlvbmFsaXR5IGV4Y2VwdCBmb3Ig
-dGhlCj4gPiBvcmRlcmluZwo+ID4gb2YgbWVzc2FnZXMgcHJpbnRlZCBieSBpbnRlbF9wc3RhdGVf
-aW5pdCgpIHdoZW4gaXQgaXMgZ29pbmcgdG8KPiA+IHJldHVybiBhbgo+ID4gZXJyb3IgYmVmb3Jl
-IGF0dGVtcHRpbmcgdG8gcmVnaXN0ZXIgdGhlIGRyaXZlci4KPiA+IAo+ID4gU2lnbmVkLW9mZi1i
-eTogUmFmYWVsIEouIFd5c29ja2kgPHJhZmFlbC5qLnd5c29ja2lAaW50ZWwuY29tPgo+IAo+IFNy
-aW5pdmFzLCBJJ20gd29uZGVyaW5nIGlmIHlvdSBoYXZlIGFueSBjb25jZXJucyByZWdhcmRpbmcg
-dGhpcyBvbmU/Ck5vbmUuCgpBY2tlZC1ieTogU3Jpbml2YXMgUGFuZHJ1dmFkYSA8c3Jpbml2YXMu
-cGFuZHJ1dmFkYUBsaW51eC5pbnRlbC5jb20+CgpUaGFua3MsClNyaW5pdmFzCgoKPiAKPiA+IC0t
-LQo+ID4gwqBkcml2ZXJzL2NwdWZyZXEvaW50ZWxfcHN0YXRlLmMgfMKgwqAgMTggKysrKysrKysr
-LS0tLS0tLS0tCj4gPiDCoDEgZmlsZSBjaGFuZ2VkLCA5IGluc2VydGlvbnMoKyksIDkgZGVsZXRp
-b25zKC0pCj4gPiAKPiA+IC0tLSBhL2RyaXZlcnMvY3B1ZnJlcS9pbnRlbF9wc3RhdGUuYwo+ID4g
-KysrIGIvZHJpdmVycy9jcHVmcmVxL2ludGVsX3BzdGF0ZS5jCj4gPiBAQCAtMzY4OCw2ICszNjg4
-LDE1IEBACj4gPiDCoMKgwqDCoMKgwqDCoCBpZiAoYm9vdF9jcHVfZGF0YS54ODZfdmVuZG9yICE9
-IFg4Nl9WRU5ET1JfSU5URUwpCj4gPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgcmV0
-dXJuIC1FTk9ERVY7Cj4gPiAKPiA+ICvCoMKgwqDCoMKgwqAgLyoKPiA+ICvCoMKgwqDCoMKgwqDC
-oCAqIFRoZSBJbnRlbCBwc3RhdGUgZHJpdmVyIHdpbGwgYmUgaWdub3JlZCBpZiB0aGUgcGxhdGZv
-cm0KPiA+ICvCoMKgwqDCoMKgwqDCoCAqIGZpcm13YXJlIGhhcyBpdHMgb3duIHBvd2VyIG1hbmFn
-ZW1lbnQgbW9kZXMuCj4gPiArwqDCoMKgwqDCoMKgwqAgKi8KPiA+ICvCoMKgwqDCoMKgwqAgaWYg
-KGludGVsX3BzdGF0ZV9wbGF0Zm9ybV9wd3JfbWdtdF9leGlzdHMoKSkgewo+ID4gK8KgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqAgcHJfaW5mbygiUC1zdGF0ZXMgY29udHJvbGxlZCBieSB0aGUg
-cGxhdGZvcm1cbiIpOwo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgcmV0dXJuIC1F
-Tk9ERVY7Cj4gPiArwqDCoMKgwqDCoMKgIH0KPiA+ICsKPiA+IMKgwqDCoMKgwqDCoMKgIGlkID0g
-eDg2X21hdGNoX2NwdShod3Bfc3VwcG9ydF9pZHMpOwo+ID4gwqDCoMKgwqDCoMKgwqAgaWYgKGlk
-KSB7Cj4gPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgaHdwX2ZvcmNlZCA9IGludGVs
-X3BzdGF0ZV9od3BfaXNfZW5hYmxlZCgpOwo+ID4gQEAgLTM3NDMsMTUgKzM3NTIsNiBAQAo+ID4g
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGRlZmF1bHRfZHJpdmVyID0gJmludGVsX2Nw
-dWZyZXE7Cj4gPiAKPiA+IMKgaHdwX2NwdV9tYXRjaGVkOgo+ID4gLcKgwqDCoMKgwqDCoCAvKgo+
-ID4gLcKgwqDCoMKgwqDCoMKgICogVGhlIEludGVsIHBzdGF0ZSBkcml2ZXIgd2lsbCBiZSBpZ25v
-cmVkIGlmIHRoZSBwbGF0Zm9ybQo+ID4gLcKgwqDCoMKgwqDCoMKgICogZmlybXdhcmUgaGFzIGl0
-cyBvd24gcG93ZXIgbWFuYWdlbWVudCBtb2Rlcy4KPiA+IC3CoMKgwqDCoMKgwqDCoCAqLwo+ID4g
-LcKgwqDCoMKgwqDCoCBpZiAoaW50ZWxfcHN0YXRlX3BsYXRmb3JtX3B3cl9tZ210X2V4aXN0cygp
-KSB7Cj4gPiAtwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBwcl9pbmZvKCJQLXN0YXRlcyBj
-b250cm9sbGVkIGJ5IHRoZSBwbGF0Zm9ybVxuIik7Cj4gPiAtwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoCByZXR1cm4gLUVOT0RFVjsKPiA+IC3CoMKgwqDCoMKgwqAgfQo+ID4gLQo+ID4gwqDC
-oMKgwqDCoMKgwqAgaWYgKCFod3BfYWN0aXZlICYmIGh3cF9vbmx5KQo+ID4gwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgIHJldHVybiAtRU5PVFNVUFA7Cj4gPiAKPiA+IAo+ID4gCj4gPiAK
-PiA+IAoK
+This series makes it so that the time that the host is suspended is
+included in guests' steal time.
+
+When the host resumes from a suspend, the guest thinks any task
+that was running during the suspend ran for a long time, even though
+the effective run time was much shorter, which can end up having
+negative effects with scheduling.
+
+To mitigate this issue, we include the time that the host was
+suspended in steal time, which lets the guest can subtract the
+duration from the tasks' runtime.
+
+In addition, we make the guest TSC behavior consistent whether the
+host TSC went backwards or not.
+
+v4:
+- Advance guest TSC on suspends where host TSC goes backwards.
+- Block vCPUs from running until resume notifier.
+- Move suspend duration accounting out of machine-independent kvm to
+  x86.
+- Merge code and documentation patches.
+- Reworded documentation.
+
+v3: https://lore.kernel.org/kvm/Z5AB-6bLRNLle27G@google.com/T/
+- Use PM notifier instead of syscore ops (kvm_suspend()/kvm_resume()),
+  because the latter doesn't get called on shallow suspend.
+- Don't call function under UACCESS.
+- Whitespace.
+
+v2: https://lore.kernel.org/lkml/20241118043745.1857272-1-suleiman@google.com/
+- Accumulate suspend time at machine-independent kvm layer and track per-VCPU
+  instead of per-VM.
+- Document changes.
+
+v1: https://lore.kernel.org/kvm/20240710074410.770409-1-suleiman@google.com/
+
+
+Suleiman Souhlal (2):
+  KVM: x86: Advance guest TSC after deep suspend.
+  KVM: x86: Include host suspended time in steal time
+
+ Documentation/virt/kvm/x86/msr.rst |  9 +++-
+ arch/x86/include/asm/kvm_host.h    |  7 +++
+ arch/x86/kvm/x86.c                 | 84 +++++++++++++++++++++++++++++-
+ 3 files changed, 97 insertions(+), 3 deletions(-)
+
+-- 
+2.48.1.601.g30ceb7b040-goog
 
 
