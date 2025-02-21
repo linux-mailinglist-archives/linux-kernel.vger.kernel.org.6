@@ -1,148 +1,185 @@
-Return-Path: <linux-kernel+bounces-526239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A1E5A3FC01
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:50:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B38E3A3FC2D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:53:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D46F866E8E
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:42:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9291867E05
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:42:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0C0C215068;
-	Fri, 21 Feb 2025 16:40:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05841212F92;
+	Fri, 21 Feb 2025 16:40:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="E6Q3n6QC"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O6+FH+4N"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71908215066
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 16:40:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C433E20012D;
+	Fri, 21 Feb 2025 16:40:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740156025; cv=none; b=SyUTRtvPSB1+oTS1KxuV3ijbenLAljGdQjwBw7gSQmTY5aqwsAICOkW8MxoFYl3Ne/3zdwwBx7a2uo9xaS3v7NPiqUnQjSm3QlRaAAEy10KmCw6AHRIxJKv0x27LteydbTxvZOXuhHuO0nH442zw5PJyO1blqCUT7FKS6bAyKS0=
+	t=1740156045; cv=none; b=eTY2c2h0h4g1R3s7hB7gLxF3Rc4MaxKwq6T3HY21x2ZUdjliZaC/FwiK5AYCCAWr1mGtDvfdvLC6EAQZC/fxEizGKs1UilZl+5lb1NvHGc2ZiKKuCgoG3qoXZQ/oF+M7nR/Fmt41xBb7TbyV/lBEjWuWEJRm0dFI16g9eAJII4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740156025; c=relaxed/simple;
-	bh=17uKUo9FOPy07r+XAiIBseIm0cdymLN5f3xEcVtffWs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aiZT9/4EpKzctitF0mWAYhJtMI2A4VAzYkBRathJMKRhv3XbpEhKNT7yPL6Pv0wcT1jd4z4yMZpSmMcDdbIDB6T1lCH2HxeRknuEqa9rUFAvGOd3OLclmkfg02jz0mfLndnCGftQuiN+UxR3ZOzYO+97UnMlPwhr4jbqm0N2ntY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=E6Q3n6QC; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5452e6f2999so2397283e87.3
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 08:40:23 -0800 (PST)
+	s=arc-20240116; t=1740156045; c=relaxed/simple;
+	bh=GpoYUbvMHeDFXWzT7i5jYtr05xdjDSBLMsc7Xba85xU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jNisjRC02W3D5BN8KE1kDpF8gT+gKt1h6ziF+xw48HjH9AUZRDLOudV3Z7XnD+dzJQdEyBQPEmDFJ/Gn9Nr/SPjC2XtVAA7s+mIgum/o7Ss0RSYR870C4gnBWui39Cp8Rg1jyQl/4SOhIjS0Cwv9sE43FpGGDPMEpK/qV6JwmGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O6+FH+4N; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2fc0bd358ccso4808737a91.2;
+        Fri, 21 Feb 2025 08:40:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740156021; x=1740760821; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=XeJTx/vmHBx5GNuwonywXW9ioDFWEnQJoc6Kq60Yt8U=;
-        b=E6Q3n6QCPyYl/qtLwU94xCNQSql6zjpvWVCqvzHGb6UqQ4GTFRZoLr7ICjxNqSlcE2
-         qsl0jhY3Ba9owghfbvkztyjirHiAbiYHdaawZCk5ncuHIg6DVKXliQWxhwQ2nbbp+9q1
-         oNi0HM03UnlWfwjn24mGvDTbpnvBjQtHAGGnidVxswCT2FF8+JWNQLfaSQpZDBpsOacD
-         +ID5ubx4lamDsB5MoKMxZ9kI/GhoD3RJAsHk5Ce5shPcCGO2gJIjMEWTWxs7ibOmIkJz
-         QYRWeOSgRj46oQ0YQDkkSGPs/1NdZ6a+FXWNNP96NXRLr1/kXb3h9YWM1nPom4Cp9yZN
-         nNxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740156021; x=1740760821;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1740156043; x=1740760843; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=XeJTx/vmHBx5GNuwonywXW9ioDFWEnQJoc6Kq60Yt8U=;
-        b=s7wMtxcokhcFlsq4DLnF/FbbZMAAi3n4kZ9zCK6RjXhryBYVH5x98IF38KIejSl6ju
-         m7jKGCRb8MxZ/p3bvhhl7wLuWBaA/Cmb8vHfz+jFqmqh0ObqoVfQgDDQac0u5XJfKnV/
-         Ejl8Aw26OGb8xh30kWGF5Cn722JQBmVUH4ZavU9A6QCa6cem3k27381FBTRTEp8ef63A
-         UCom+YRDScYjlVoMLJCN1Jm6rul49NiXry+3M9uR+tL1qpxdrgQqPmoQTLm9TJuq3EP/
-         IkddDYFju49WDrylTG5HgQRwITGia6qEclnqtBtO6SItj7Epgk8KL7Om59SdBVJAXziq
-         d9AA==
-X-Forwarded-Encrypted: i=1; AJvYcCVz+pNpeOToIremypf0+KW7RBrPqG2Wbp4hecCOyZ3k55AID4g6qZfSyspVY6mXWp30szQuf7EuJsHJGjU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxrFcaWYOp7bqyt+o7Py8B1RbOv1F53UodTQBbtFvE6/3QPPKTY
-	XuV1jTgw6EZAL8XeTJEAGPW+y/jHDVh847iKFaA6znWphqooR+3U/nwpakFGkP8=
-X-Gm-Gg: ASbGncvCq19GkVBqHh2TH9g+9JT4GUTePCYV2dIHBZifWqJE/gIVPKv6GGPOwYrXNgC
-	c9LxEjUsQgET3jez4XQCUimA3yD4WkXld6ar7E+EECEExyPS9wugcTfLk6Y/YRUnsesmo3DbDqf
-	Ik7SSmMfVstp7MIgTGlLfiPHq6fXyK/Hv192T72CtoCV4Nc0btE0pk1jcgIFquIUj2IgcxsPIhX
-	e1NTMQ8cNoB6i5GY4FajMAFIhHoJni7EWnxRNlkCUjwB8Q+KaVm344/yewGFSENEg/rsz3AkUq9
-	LJgnGeH/9j9OVmWsz89pPhhuT15Gm2Ez3ErJ8qWdVyuIGs35zztn3qhBrLodhPmwFvVFJxlAcwT
-	WXzd9jw==
-X-Google-Smtp-Source: AGHT+IG3sGSgu3fmfjjVa5dP0zopYhRJHZeGFgM+rQzAw/dbKCd7icrIJbdMAouX19sYLz/WmVSHOA==
-X-Received: by 2002:a05:6512:e97:b0:544:11cf:10c1 with SMTP id 2adb3069b0e04-54838ef8ae9mr1535911e87.30.1740156021503;
-        Fri, 21 Feb 2025 08:40:21 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54531815e02sm1992234e87.228.2025.02.21.08.40.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Feb 2025 08:40:20 -0800 (PST)
-Date: Fri, 21 Feb 2025 18:40:17 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Jun Nie <jun.nie@linaro.org>
-Cc: Rob Clark <robdclark@gmail.com>, 
-	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
-	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 15/15] drm/msm/dpu: Enable quad-pipe for DSC and
- dual-DSI case
-Message-ID: <kouoar4xfsyuxmxjg3pc5jkbddpc7kbyvdpqkwnzecuroilnra@4aa4cpdkr7gc>
-References: <20250217-sm8650-v6-14-hmd-deckard-mdss-quad-upstream-oldbootwrapper-36-prep-v6-0-c11402574367@linaro.org>
- <20250217-sm8650-v6-14-hmd-deckard-mdss-quad-upstream-oldbootwrapper-36-prep-v6-15-c11402574367@linaro.org>
+        bh=8oriecgGQRM7a6Kxdnk4S3T7p3y/bp+RUK8BxU8K1jc=;
+        b=O6+FH+4NeKccMJ0DhZuEJcgWnNMwpuX8FW6xTsRSEIv9lw9s1988+URs2JAYVnRp2U
+         2sr9FIJ8+TgFZi0kqsB+FZa9IjoOfZz/03BYDbBaO0oF3tkMlsDVsXrS+yKfLR2Wb3O5
+         yw9pAws20WXzhzV/NCfQJhEL5ziEbQQP7hg3T3sDyxisDZgSjS3IVUqoh8pc/Nsv0KrL
+         2iArRbhvW4wv7M6OxM429flDzJIYl/WLKI8LnXtXQV5vY5Wtvjsxm43vYTbrgHJ6Ig5G
+         9A5WPUQrNPIBxokj/pwPuhij1v45uCtOY+zIYb+ckjJvbpZkVQZZTOj1HCsew88kOT4G
+         7ytQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740156043; x=1740760843;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8oriecgGQRM7a6Kxdnk4S3T7p3y/bp+RUK8BxU8K1jc=;
+        b=RmTCdeysVENG66KkPxYuOfnOs5LkgKpZn+ucIDLzwTqW60cAu0ChPLvKOIHBDw0qNr
+         +C/CcYCGG5IvlIzx/MLZv5Tn6YvAaO2MQZhXSiVbTioPeXNl/Ej4IAxVD5vJM9jCqDWw
+         SOGHtx+aEIoVDBTbbfEHfg8Kv0uIj9E6oID4OwB4jlVUJNk6gJkpz+BKAFW3gQ4PIml+
+         oiEPfxr6yds8noYJxas+LMijJiFdTob/n1EfQ2E1AEwuZGpXuFjwJH1OcPf3BmiFvc/P
+         VFJijOGwtE5AlpmwoQiwObONn64DvWEfXGsTepEaQXuQ25XdNyySSk0D7lXpimWeqnGk
+         9MNw==
+X-Forwarded-Encrypted: i=1; AJvYcCW9uCFdFY5j4Euo8O/eiamjvwuMx+xzd76JOPtWXKNgeCDEVs5lUXnr4EsAO4LSzd7yb+l7xwgdWyx1aBW6@vger.kernel.org, AJvYcCWJv71pT9EYQS51wno/Mb2bhit5vlwRSfzeJq9Id/7XrtvdY6D30k+Ev+2e77bDsWRH4/3jB3yyjN6O@vger.kernel.org, AJvYcCXBLYCxkM2PN5VtKPBuoDCpnpk5ssVixyvfYPYnt6q6X1U0GO0hpl0mZOEeQkUqehVtKAxr+Oz3VOy8JQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJYyFU4CaZujAkn6heObGv5hynbxCoxGNwi25c7HoKVeOS/ZWL
+	kQMPYTECnGFQctqADwprhjTX19zk0lHRglL2vaOPHVrkwhov5UXi7OZuERT7swQXU/6pMh3kGnf
+	jprO9YvOklyzOpCfzJeSNHGf+AMo=
+X-Gm-Gg: ASbGncvTOu3Pm9jqj6cDu3wqft9OA6hCJrFPio7Q8Ldk9PbPl/ERJA7tLE0Vz9KF198
+	P5zfsVvUafxWnwQYSsOg0ofMK5Cf9vYTW3gmVNzFXZ2vnF4Q1y2k7AF1iVq5FoqqREMAjid2e3N
+	XwuU+qAA==
+X-Google-Smtp-Source: AGHT+IE5DwaJf4Z30vTQF7YhDIZiPDJYIZdu3bh2rwyOO8cxVmUaTU1ujj+ntqMidNIo7C+7G9AHNXs0n4irABzLme4=
+X-Received: by 2002:a17:90b:3ec6:b0:2ee:ab11:fab2 with SMTP id
+ 98e67ed59e1d1-2fce7b083a3mr5328015a91.22.1740156042924; Fri, 21 Feb 2025
+ 08:40:42 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250217-sm8650-v6-14-hmd-deckard-mdss-quad-upstream-oldbootwrapper-36-prep-v6-15-c11402574367@linaro.org>
+References: <20250120092146.471951-1-sergio.paracuellos@gmail.com>
+ <CAMhs-H-VevC+_=HxhMU6-at0bKut_JqdgO7j2detuB4s8R_QFQ@mail.gmail.com>
+ <Z7iHorlRgtsi1LOo@alpha.franken.de> <CAMhs-H-fcWU-rz_3FeAuRe0xdCMmvffX2zrZwwmt=8RYpY4Lyg@mail.gmail.com>
+ <Z7idguBa2bxZRoxX@alpha.franken.de>
+In-Reply-To: <Z7idguBa2bxZRoxX@alpha.franken.de>
+From: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+Date: Fri, 21 Feb 2025 17:40:34 +0100
+X-Gm-Features: AWEUYZmBhqj8-3tVa95inuQXfZp89XjOlNWgufDeJ2KSqTBDe4ACRkfogOXIoD0
+Message-ID: <CAMhs-H91Pv4bygmL2jL0=swn-wHT0mRYGaYO6Hjm5O-xmmrJ0w@mail.gmail.com>
+Subject: Re: [PATCH v3 0/6] mips: dts: ralink: update system controller nodes
+ and its consumers
+To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Cc: linux-clk@vger.kernel.org, sboyd@kernel.org, mturquette@baylibre.com, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com, 
+	p.zabel@pengutronix.de, linux-mips@vger.kernel.org, 
+	devicetree@vger.kernel.org, yangshiji66@outlook.com, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Feb 17, 2025 at 10:16:04PM +0800, Jun Nie wrote:
-> To support high-resolution cases that exceed the width limitation of
-> a pair of SSPPs, or scenarios that surpass the maximum MDP clock rate,
-> additional pipes are necessary to enable parallel data processing
-> within the SSPP width constraints and MDP clock rate.
-> 
-> Request 4 mixers and 4 DSCs for high-resolution cases where both DSC
-> and dual interfaces are enabled. More use cases can be incorporated
-> later if quad-pipe capabilities are required.
-> 
-> Signed-off-by: Jun Nie <jun.nie@linaro.org>
-> ---
->  drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c         |  2 +-
->  drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.h         |  6 ++---
->  drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c      | 28 ++++++++++++++++++------
->  drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys.h |  2 +-
->  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h   |  2 +-
->  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h      |  2 +-
->  6 files changed, 28 insertions(+), 14 deletions(-)
-> 
+On Fri, Feb 21, 2025 at 4:37=E2=80=AFPM Thomas Bogendoerfer
+<tsbogend@alpha.franken.de> wrote:
+>
+> On Fri, Feb 21, 2025 at 03:50:09PM +0100, Sergio Paracuellos wrote:
+> > Hi Thomas,
+> >
+> > On Fri, Feb 21, 2025 at 3:05=E2=80=AFPM Thomas Bogendoerfer
+> > <tsbogend@alpha.franken.de> wrote:
+> > >
+> > > On Fri, Feb 21, 2025 at 11:48:34AM +0100, Sergio Paracuellos wrote:
+> > > > Hi Thomas,
+> > > >
+> > > > El El lun, 20 ene 2025 a las 10:21, Sergio Paracuellos <
+> > > > sergio.paracuellos@gmail.com> escribi=C3=B3:
+> > > >
+> > > > > Hi all!
+> > > > >
+> > > > > Ralinks SoCs have a system controller node which serves as clock =
+and reset
+> > > > > providers for the rest of the world. This patch series introduces=
+ clock
+> > > > > definitions for these SoCs. The clocks are registered in the driv=
+er using
+> > > > > a bunch of arrays in specific order so these definitions represen=
+t the
+> > > > > assigned
+> > > > > identifier that is used when this happens so client nodes can eas=
+ily use it
+> > > > > to specify the clock which they consume without the need of check=
+ing
+> > > > > driver code.
+> > > > >
+> > > > > DTS files which are currently on tree are not matching system con=
+troller
+> > > > > bindings. So all of them are updated to properly match them.
+> > > > >
+> > > > > I'd like this series to go through kernel mips git tree if possib=
+le.
+> > > > >
+> > > > > Thanks in advance for your time.
+> > > > >
+> > > > > Changes in v3:
+> > > > > - Address Krzysztof comments in v2 (Thanks!):
+> > > > >   + Drop reset include file since what it was defined there were =
+hardware
+> > > > >     constants and no binding related indexes at all.
+> > > > >   + Update patches for not referring to this reset removed file.
+> > > >
+> > > >
+> > > > I was expecting this series going through the mips tree.
+> > >
+> > >   DTC     arch/mips/boot/dts/ralink/rt3883_eval.dtb
+> > > Error: /local/tbogendoerfer/korg/linux/arch/mips/boot/dts/ralink/rt38=
+83.dtsi:2.1-9 syntax error
+> > > FATAL ERROR: Unable to parse input tree
+> >
+> > Weird, it looks like dtc is not happy with the "include" line with new
+> > definitions? Are you getting this only with rt3883? Since all the
+> > patches are almost the same and I compile tested this before sending..
+> > Something got corrupted? I don't have my laptop now to check but I
+> > will recheck again on monday.
+>
+> rt2880_eval.dts:/include/ "rt2880.dtsi"
+> rt3052_eval.dts:#include "rt3050.dtsi"
+> rt3883_eval.dts:/include/ "rt3883.dtsi"
+>
+> rt3052 works, rt2880 and rt3883 don't.
+>
+> changing the /include/ to #include makes them compile.
 
->  
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h
-> index 64e220987be5682f26d02074505c5474a547a814..804858e69e7da1c8c67c725aa462c1a558d1b402 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h
-> @@ -35,8 +35,8 @@
->  #endif
->  
->  #define STAGES_PER_PLANE		2
-> -#define PIPES_PER_PLANE			2
->  #define PIPES_PER_STAGE			2
-> +#define PIPES_PER_PLANE			(PIPES_PER_STAGE * STAGES_PER_PLANE)
+Mmmm...does this mean that this was broken before my patches? Since I
+have not touched the files that need the replacement. So I probably
+checked in the openwrt tree and missed this totally. Sorry for that.
+How do you want to handle this? Should I send v4 including these
+replacements? Or do you prefer to handle them directly?
 
-This should be changes when STAGES_PER_PLANE is introduced. With that
-fixed:
+Thanks again and sorry for the inconvenience.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-
->  #ifndef DPU_MAX_DE_CURVES
->  #define DPU_MAX_DE_CURVES		3
->  #endif
-> 
-> -- 
-> 2.34.1
-> 
-
--- 
-With best wishes
-Dmitry
+Best regards,
+     Sergio Paracuellos
+>
+> Thomas.
+>
+> --
+> Crap can work. Given enough thrust pigs will fly, but it's not necessaril=
+y a
+> good idea.                                                [ RFC1925, 2.3 =
+]
 
