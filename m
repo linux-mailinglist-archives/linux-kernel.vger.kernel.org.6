@@ -1,138 +1,155 @@
-Return-Path: <linux-kernel+bounces-525104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 279DBA3EAD3
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 03:36:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87506A3EACD
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 03:36:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B159A17CA43
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 02:36:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E43B3B58EC
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 02:36:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFAC81D8DFB;
-	Fri, 21 Feb 2025 02:36:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A68D13A3F7;
+	Fri, 21 Feb 2025 02:36:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="MjOyxfCS"
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W5EzY6vZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 620831D6DDD;
-	Fri, 21 Feb 2025 02:36:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.156.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00E0A3C2F
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 02:36:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740105385; cv=none; b=Ny7rK+AUeOW7/JOH2gnFrQNDI2SsBVYze7qYGBMLExR+5lxIFfnlZGK0UzM1ca9k+NWdW1XaNjsAznMsnMw+5h2kvTTYFySe0mRTwZrVzlj04Vt07TOD8riNdNGprQbm7ERBloWcJi492gN2lr2fZ2To98IlvdQXuzSYEYhykzE=
+	t=1740105378; cv=none; b=Tibf6TWB78Ac9UZu6KZUErZvYHCKQ7903VU+cjALEJ77xvCL/JwRALMjw1VS8WQbui0BhbmDgICUsHYQ5fxANQMXP/i6nh9ikdHBHQs1k/MrbYh5yP3X2TnI6OiCG1vNhobCVhq0LoIHKd/RqOlwbS14sL8Lqi0KMUJ83/yYH5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740105385; c=relaxed/simple;
-	bh=VqTu4nppqqlBq/VZAIHyMyHkdtdVObY0u7hXFwd8HdU=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YwwITpMQXIHz6Dk4ucN4Hk8wZbfAc4ktApm4XPhgMS6mKFOZCdb8tYf8hUoimrjqT0z1z25yBI5JqJP7UAIKmTVjlGVzi87x6jKfVq2GXXRfkgdi3zar/nsFtPWHxkOq5oyjRprrVpDugHdXQ+Fwc14OMC7ce9krSOmFOMScTps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=MjOyxfCS; arc=none smtp.client-ip=67.231.156.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
-	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51KL8v1q028904;
-	Thu, 20 Feb 2025 18:36:08 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pfpt0220; bh=y
-	udWezXlfftzuF3RFWfaWuFDvNQm9x3qNmDMXd3OOUY=; b=MjOyxfCSUrpDTYnh/
-	PfwpISIZMOYByPdXAty9MgFcxc2v0971UXO2EUzGGgAa6+di8E/D5svto/e59HSS
-	BqMqqLiaJt4gpaq/T8Zw7aZoopAebDDH3hA3OgF33E2HIhNRdy277MQgGtr/owLy
-	1Pku3lWeaNyoPkMYOov2HvyNTSOANho3mUDfNguLTRfPZh5SfE98J8vIM9dBi6zV
-	ssBQP93qXFJ+kL7ioZ4yQLnCZl5WcKH0LbD/INYO1pxPUIZRN+ZbIj01ocSmUf6J
-	qZvjkUdSMopF2EtVXWrg3RO9qjOXFpvZw3HiR8Xgk+pR7c7HVXUZb7PpzKFB5W6X
-	2ZEpQ==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
-	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 44xc24rnb8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 20 Feb 2025 18:36:08 -0800 (PST)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Thu, 20 Feb 2025 18:36:07 -0800
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Thu, 20 Feb 2025 18:36:07 -0800
-Received: from tx2-sever.caveonetworks.com (unknown [10.110.141.15])
-	by maili.marvell.com (Postfix) with ESMTP id 28C123F708C;
-	Thu, 20 Feb 2025 18:36:07 -0800 (PST)
-From: George Cherian <george.cherian@marvell.com>
-To: <wim@linux-watchdog.org>, <linux@roeck-us.net>, <corbet@lwn.net>
-CC: <linux-watchdog@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        George Cherian <george.cherian@marvell.com>
-Subject: [PATCH 2/2] watchdog: sbsa_gwdt: Enable the WDOG_STOP_ON_PANIC
-Date: Fri, 21 Feb 2025 02:35:50 +0000
-Message-ID: <20250221023550.2092232-2-george.cherian@marvell.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250221023550.2092232-1-george.cherian@marvell.com>
-References: <20250221023550.2092232-1-george.cherian@marvell.com>
+	s=arc-20240116; t=1740105378; c=relaxed/simple;
+	bh=WFIuMo5pTGBiHHYSjJUhVurH/1rAlmn11CxpWCw4GZY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L8TT/F/AJOX70qnQykQbvTraJi6MCRb98Jy0oIgnbwebxJuVnAtHv08sIG7uUKAVK7gWn/9HdNji4tKmix27IfcjyXb7muGqqlxMYT32W/GCJh8bPacHLQqX4WTRdbWisE92QzFmV2hGS27mahp6gFYzjqYjFWDDA8vxdj8KnPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W5EzY6vZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3AC97C4CED1;
+	Fri, 21 Feb 2025 02:36:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740105376;
+	bh=WFIuMo5pTGBiHHYSjJUhVurH/1rAlmn11CxpWCw4GZY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=W5EzY6vZyIp8BdSy+igShiXGpN/XGQh1WOuMxNLgvEAgZ7len5UpeefOCZKvMn2J9
+	 aD8LwSWfEfjQf7gk+9EVhSrJDzEZvl0VEHYObIGQDS+1xZfpj7OuACo9LCnfrvB2U4
+	 Tdlhy/T3Q43qEexDcyuCVyBPUZ8mNF798pke+B+j3sLXSntkH51FKe2e8TLtUsFIzf
+	 G9vXjOSL9lRsz0kEOiJLlGMwgfoWF930vdEQfsyIC9/S/csAPDEAAkWUH8GRMO+URN
+	 G4b9z46x5fU5pPN6mW1U0l9s+4u8Im8lawhr5Q6szIQTbJKrjK+V+6juvGjIzmFJct
+	 FlMmiJ9T9WTdQ==
+Date: Thu, 20 Feb 2025 18:36:14 -0800
+From: Dennis Zhou <dennis@kernel.org>
+To: Michal Hocko <mhocko@suse.com>
+Cc: Tejun Heo <tj@kernel.org>, Filipe Manana <fdmanana@suse.com>,
+	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] mm, percpu: do not consider sleepable allocations atomic
+Message-ID: <Z7fmnsHTU49eYEaU@snowbird>
+References: <20250206122633.167896-1-mhocko@kernel.org>
+ <Z6u5OJIQBw8QLGe_@slm.duckdns.org>
+ <Z6zS4Dtyway78Gif@tiehlicka>
+ <Z6zlC3juT46dLHr9@slm.duckdns.org>
+ <Z60KQCuPCueqRwzc@tiehlicka>
+ <Z60S4NMUzzKbW5HY@slm.duckdns.org>
+ <Z60VE9SJHXEtfIbw@snowbird>
+ <Z69mygllBATJ6dsm@tiehlicka>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: QwdYUEhnYmHFtEzpbHkNampRzp5I6eOb
-X-Proofpoint-ORIG-GUID: QwdYUEhnYmHFtEzpbHkNampRzp5I6eOb
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-20_09,2025-02-20_02,2024-11-22_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z69mygllBATJ6dsm@tiehlicka>
 
-Enable the watchdog stop on panic feature if the module
-parameter panicnotify is set. sbsa_gwdt.panicnotify=1 will
-disable the watchdog in panic situations.
+On Fri, Feb 14, 2025 at 04:52:42PM +0100, Michal Hocko wrote:
+> On Wed 12-02-25 13:39:31, Dennis Zhou wrote:
+> > Hello,
+> > 
+> > On Wed, Feb 12, 2025 at 11:30:08AM -1000, Tejun Heo wrote:
+> > > Hello,
+> > > 
+> > > On Wed, Feb 12, 2025 at 09:53:20PM +0100, Michal Hocko wrote:
+> > > ...
+> > > > > Hmm... you'd a better judge on whether that'd be okay or not but it does
+> > > > > bother me that we might be increasing the chance of allocation failures for
+> > > > > GFP_KERNEL users at least under memory pressure.
+> > > > 
+> > > > Nope, this will not change the allocation failure mode. Reclaim
+> > > > constrains do not change the failure mode they just change how much the
+> > > > allocation might struggle to reclaim to succeed. 
+> > > >
+> > > > My undocumented assumption (another dept on my end) is that pcp
+> > > > allocations are no hot paths. So the worst case is that GFP_KERNEL
+> > > > pcp_allocation could have been satisfied _easier_ (i.e. faster) because
+> > > > it could have reclaimed fs/io caches and now it needs to rely on kswapd
+> > > > to do that on memory tight situations. On the other hand we have a
+> > > > situation when NOIO/FS allocations fail prematurely so there is
+> > > > certainly some pros and cons.
+> > > 
+> > > I'm having a hard time following. Are you saying that it won't increase the
+> > > likelihood of allocation failures even under memory pressure but that it
+> > > might just make allocations take longer to succeed?
+> > > 
+> > > NOFS/IO prevents allocation attempt from entering fs/io reclaim paths,
+> > > right? It would still trigger kswapd for reclaim but can the allocation
+> > > attempt wait for that to finish? If so, wouldn't that constitute a
+> > > dependency cycle all the same?
+> > > 
+> > > All in all, percpu allocations taking longer under memory pressure is fine.
+> > > Becoming more prone to allocation failures, especially for GFP_KERNEL
+> > > callers, probably isn't great.
+> > > 
+> > 
+> > Wait, I think I'm interpreting this change differently. This is
+> > preventing the worker from allocating backing pages via GFP_KERNEL. It
+> > isn't preventing an allocation via alloc_percpu() from being GFP_KERNEL
+> > and providing those flags down to the backing page code. alloc_percpu()
+> > for GFP_KERNEL allocations will populate the pages before returning.
+> 
+> Correct.
+>  
+> > I'm reading this as potentially making atomic percpu allocations fail as
+> > we might be low on backing pages. This change makes the worker now need
+> > to wait for kswapd to give it pages. Consequently, if there are a lot of
+> > allocations coming in when it's low, we might burn a bit of cpu from the
+> > worker now.
+> 
+> Yes, this is potential side effect. On the other hand NOFS/NOIO requests
+> wouldn't be considered atomic anymore and they wouldn't fail that
+> easily. Maybe that is an odd case not worth the additional worker
+> overhead. As I've said I am not familiar with the pcp internals to know
+> how often the worker is really required
+> 
 
-This helps in avoiding watchdog reset while booting kdump kernel.
+I've thought about this in the back of my head for the past few weeks. I
+think I have 2 questions about this change.
 
-Signed-off-by: George Cherian <george.cherian@marvell.com>
----
- Documentation/watchdog/watchdog-parameters.rst | 3 +++
- drivers/watchdog/sbsa_gwdt.c                   | 6 ++++++
- 2 files changed, 9 insertions(+)
+1. Back to what TJ said earlier about probing. I feel like GFP_KERNEL
+   allocations should be okay because that more or less is control plane
+   time? I'm not sure dropping PR_SET_IO_FLUSHER is all that big of a
+   work around?
 
-diff --git a/Documentation/watchdog/watchdog-parameters.rst b/Documentation/watchdog/watchdog-parameters.rst
-index 0a0119edfa82..3d7a02d12dc3 100644
---- a/Documentation/watchdog/watchdog-parameters.rst
-+++ b/Documentation/watchdog/watchdog-parameters.rst
-@@ -523,6 +523,9 @@ sbsa_gwdt:
-     nowayout:
- 	Watchdog cannot be stopped once started
- 	(default=kernel config parameter)
-+    panicnotify:
-+	Watchdog to be stopped after kernel panic
-+	(default=0, don't stop watchdog on panic)
- 
- -------------------------------------------------
- 
-diff --git a/drivers/watchdog/sbsa_gwdt.c b/drivers/watchdog/sbsa_gwdt.c
-index 5f23913ce3b4..f289a0b32d30 100644
---- a/drivers/watchdog/sbsa_gwdt.c
-+++ b/drivers/watchdog/sbsa_gwdt.c
-@@ -116,6 +116,9 @@ MODULE_PARM_DESC(nowayout,
- 		 "Watchdog cannot be stopped once started (default="
- 		 __MODULE_STRING(WATCHDOG_NOWAYOUT) ")");
- 
-+static int panicnotify;
-+module_param(panicnotify, int, 0);
-+MODULE_PARM_DESC(panicnotify, "after kernel panic, do: 0 = don't stop wd(*)  1 = stop wd");
- /*
-  * Arm Base System Architecture 1.0 introduces watchdog v1 which
-  * increases the length watchdog offset register to 48 bits.
-@@ -307,6 +310,9 @@ static int sbsa_gwdt_probe(struct platform_device *pdev)
- 	if (status & SBSA_GWDT_WCS_EN)
- 		set_bit(WDOG_HW_RUNNING, &wdd->status);
- 
-+	if (!nowayout && panicnotify)
-+		watchdog_stop_on_panic(wdd);
-+
- 	if (action) {
- 		irq = platform_get_irq(pdev, 0);
- 		if (irq < 0) {
--- 
-2.34.1
+2. This change breaks the feedback loop as we discussed above.
+   Historically we've targeted 2-4 free pages worth of percpu memory.
+   This is done by kicking the percpu work off. That does GFP_KERNEL
+   allocations and if that requires reclaim then it goes and does it.
+   However, now we're saying kswapd is going to work in parallel while
+   we try to get pages in the worker thread.
 
+   Given you're more versed in the reclaim side. I presume it must be
+   pretty bad if we're failing to get order-0 pages even if we have
+   NOFS/NOIO set?
+
+   My feeling is that we should add back some knowledge of the
+   dependency so if the worker fails to get pages, it doesn't reschedule
+   immediately. Maybe it's as simple as adding a sleep in the worker or
+   playing with delayed work...
+
+Thanks,
+Dennis
 
