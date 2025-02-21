@@ -1,152 +1,172 @@
-Return-Path: <linux-kernel+bounces-526427-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E386A3FE9E
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 19:20:55 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB74EA3FE98
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 19:20:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B25E17C094
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 18:19:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D9067AF7F6
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 18:19:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20DDE2512D9;
-	Fri, 21 Feb 2025 18:19:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D84882512D8;
+	Fri, 21 Feb 2025 18:20:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gr+BZI1a"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H5Iiay93"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71C291D5AA7;
-	Fri, 21 Feb 2025 18:19:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E55F31D5AA7;
+	Fri, 21 Feb 2025 18:19:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740161981; cv=none; b=ng8ivSQCc4LZqPya6h+w1QH+dJJf6usAemV64N1/EMj/2c5zVSpRwCHa8DOZaYeAoJ9fmrlCleo2YDgyX/u8CSqy6XR90qSLEaecoTO3b8/pslOsX+7/6pDC3NOZmfLJb66FQlLx+XWkmI5y3tro5z/s+34Rv8QpGgY6tpkgS4Y=
+	t=1740162001; cv=none; b=hC2pfubv1N0z/gJ8Ghd0MLAVZ6AGRw2UFsnbDTt/euOxrSAzhvjvlfnk8EMbPRMEepQgmfGAIQVcopDSAsi5NRSTQ41MElr876WujSi2RevvbH8Y/lysFOAlkiVamPg/PsTuUcxTzZWJ5RAc0qSGExJw3hhoSrsOxZdBnHHPfEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740161981; c=relaxed/simple;
-	bh=4vSeGG+kxcYAxGRnNrN1TSagj87TxXGRn6oSMGUXYLs=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=OeXfFvXRimnFulyVH2lPvCsURFq7jNj7VJlJtXMeI6X+fVMkR7BAH2vwhwTNOWZlqLnLVx/uwfXNomnznwlqnsqXRkHAzkgnjUcQTpIR5nBOkJ+sptBtPmCkTw9miVqZMQee5E7vQkS4b7oLx83XA0idQ8ZABcunP5nMLU/LmqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gr+BZI1a; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC826C4CED6;
-	Fri, 21 Feb 2025 18:19:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740161981;
-	bh=4vSeGG+kxcYAxGRnNrN1TSagj87TxXGRn6oSMGUXYLs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=Gr+BZI1aYh23TMrdhw8XBRwlWvhHRuYPRHopsd5dndfnftQfFoaYgePUToB1KA6qV
-	 eS4Kjtaao8ynimXs9KWT39YV2Dp+/7icAMV8TQCoffK1sKu8Zp7F57E3c6ndTSVZI1
-	 WFGKRIRqN0c+LAaA+NkTPZ7O5lRGmMjDVw9U7fbJVP2SHZZ/MQRQ4cg23KyWiXsvUv
-	 3LLS81crp5w0Y3+ld1nxb5A9H/g+NH96YmRXWzH7DSPcBhRacR6DkrSyIXdgEaYF6m
-	 FtE3dggt6nRK0Jpo0CNQmTFj1mqoqdTnpP65ZV1jmJbejPsmRbX54L5js4ucAs37UT
-	 gZNF+NAp0xfIg==
-Date: Fri, 21 Feb 2025 12:19:38 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>, Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, Lizhi Hou <lizhi.hou@amd.com>,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	Allan Nielsen <allan.nielsen@microchip.com>,
-	Horatiu Vultur <horatiu.vultur@microchip.com>,
-	Steen Hegelund <steen.hegelund@microchip.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v7 5/5] PCI: of: Create device-tree PCI host bridge node
-Message-ID: <20250221181938.GA352971@bhelgaas>
+	s=arc-20240116; t=1740162001; c=relaxed/simple;
+	bh=amUGM+2Ee6TG1wQ60OHzHltKBCj71IDHtqOsZNdNgQc=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=sEjgHkkaSFOveXqp8B8IeZp2+Fhn3Kmlo/LhHEpqYhlHu+gsd9dbLi72YdgnXALXNqr5WxYVlFvEU1rzFMw/Z6/pF5JToKH69X2oQhvAJU9bStV89yCi0LjFIkqZp089bkjeDxrqYIJa696TOl5Fn1+PcE3T4SaXI4y0DzqfERI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H5Iiay93; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-220c92c857aso44287295ad.0;
+        Fri, 21 Feb 2025 10:19:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740161999; x=1740766799; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=EOqFqrBqZ94xV6zNUwjJJQSpBxYZgjO/OxGwt4vTBBk=;
+        b=H5Iiay93el0tTcpXTpVmxMNNGzXkimJQfn5n32oIicF2y0XpXz5PYqFv9SkKUmxSET
+         AvsrAjh8NzYzpXeuROSP/WYCoZMJf/Li/NCPpqSCerIoxIri0eV/3C3GvQT7a8UeHxQK
+         3S8EjAI0y7JoQw3nPuks+P5w7Y4PgoyuPCGnN3yWsDGiMPn2RkufEjMFiZWqmMETKzjw
+         PIeVRBVc4Z1i/lBOpAI5ZAeWtTcPFXcK36Cq3tieq1cXoyOG+/YuTW9kQ9RFD2WHe6IF
+         VFvKfagP76U6LHhU9IOudxShrJUqkpIUgYhSyqzGZy5nvOY8qnrNB7s8g7wpy+sEBDnz
+         h9VQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740161999; x=1740766799;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=EOqFqrBqZ94xV6zNUwjJJQSpBxYZgjO/OxGwt4vTBBk=;
+        b=RdVloLpLZ4QoPB9t7g8/DI+CjLVBhbqULS1dGvgoAYiQWYt3UOt/78SKeHgVByI9s4
+         RUVPxeGMXLgd+FAj/SL7T1nLmo8/a6Ak9CnhslguzjLHUzt6W5uZ9aKxleV2tFize/BZ
+         A0tkCbjB9UGtgAON1ZzLZEOmihOsoJh4je7MS2XA3/+Rk6mEDEYlIlhqW9KsmsG39LE4
+         ZGXxiia4yRPEuCw3Lzqr4qdrCW7XyZcqDMxvTuVwD7yd2D1tm3R+aCDtIgN5yT21FoIf
+         jgX++xbj6lfj08YgqhE4Ws4BPqbomfcvP+3y7IIizBGailDAGOXEu1duesV0DHxqTE/K
+         JAVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU+6bsG9LbpRzEjjWuvWZuha/cquLeXoet1C9nBv5Abi+2/KROhMTyuCy8OFGKvGh4zKDvYoBaLQLTh1GA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwAfsRX5yF+p+O4n6tB5eGwdKmKxjclx1VrhyXHc/B6+T72Qg2s
+	s8zk1eLkZebsxo3CerjSqgHMl7/aM1s9DjiRNdv+DEODdr/n5uYI
+X-Gm-Gg: ASbGncv+I+q3xCv3/C5/fbMNiKNIw4XCcnLXA7USjBkYTsEPoMw/afTlNq0iTeqNj+W
+	VhRNw9IMLYi7ikWMXCp+bhz3ngbpqPvIF+DmQwWBmp1j2CouG9JlwuSqXUe0uSw4ae4xnLktCIq
+	GHiyen5/M6WQpXF7d+3OcwEAS+lQBLix7QaceTmR+0+gmy75U3qPMwkG7Mx02skSBAdbsSMBP0F
+	2Mo7cTNh56AqRGmYpcADyGtFmMS1PZ8CkTD9eR5KzstltKv1A7sDxS4xIpYvHOGmzuexHCnreA1
+	3uf3bLAVm78jCHRHprGeXl0=
+X-Google-Smtp-Source: AGHT+IFzQgpB3vlyz56xWEgEIajr1YxAozbUQo+q5VNuc6ftiGpqAuM+tivKkVC9L5mMYSFUEg/9hQ==
+X-Received: by 2002:a17:903:188:b0:221:77d:3221 with SMTP id d9443c01a7336-2218c3e304bmr144562735ad.8.1740161999034;
+        Fri, 21 Feb 2025 10:19:59 -0800 (PST)
+Received: from [192.168.0.235] ([38.34.87.7])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d53491ecsm139761645ad.9.2025.02.21.10.19.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Feb 2025 10:19:58 -0800 (PST)
+Message-ID: <d3dacc81d79d67f1c4372adc2517176bed57fadd.camel@gmail.com>
+Subject: Re: [PATCH bpf-next v8 4/4] selftests/bpf: Add
+ libbpf_probe_bpf_kfunc API selftests
+From: Eduard Zingerman <eddyz87@gmail.com>
+To: Tao Chen <chen.dylane@linux.dev>, ast@kernel.org, daniel@iogearbox.net, 
+	andrii@kernel.org, haoluo@google.com, jolsa@kernel.org, qmo@kernel.org
+Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+ chen.dylane@gmail.com,  Tao Chen <dylane.chen@didiglobal.com>
+Date: Fri, 21 Feb 2025 10:19:53 -0800
+In-Reply-To: <20250221163335.262143-5-chen.dylane@linux.dev>
+References: <20250221163335.262143-1-chen.dylane@linux.dev>
+	 <20250221163335.262143-5-chen.dylane@linux.dev>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250221093427.3d83b9e3@bootlin.com>
 
-On Fri, Feb 21, 2025 at 09:34:27AM +0100, Herve Codina wrote:
-> Hi Bjorn,
-> 
-> On Thu, 20 Feb 2025 18:07:53 -0600
-> Bjorn Helgaas <helgaas@kernel.org> wrote:
-> 
-> > On Thu, Feb 20, 2025 at 09:25:14AM +0100, Herve Codina wrote:
-> > > On Wed, 19 Feb 2025 11:39:12 -0600
-> > > Bjorn Helgaas <helgaas@kernel.org> wrote:  
-> > > > On Tue, Feb 04, 2025 at 08:35:00AM +0100, Herve Codina wrote:  
-> > > > > PCI devices device-tree nodes can be already created. This was
-> > > > > introduced by commit 407d1a51921e ("PCI: Create device tree node for
-> > > > > bridge").
-> > > > > 
-> > > > > In order to have device-tree nodes related to PCI devices attached on
-> > > > > their PCI root bus (the PCI bus handled by the PCI host bridge), a PCI
-> > > > > root bus device-tree node is needed. This root bus node will be used as
-> > > > > the parent node of the first level devices scanned on the bus. On
-> > > > > device-tree based systems, this PCI root bus device tree node is set to
-> > > > > the node of the related PCI host bridge. The PCI host bridge node is
-> > > > > available in the device-tree used to describe the hardware passed at
-> > > > > boot.
-> > > > > 
-> > > > > On non device-tree based system (such as ACPI), a device-tree node for
-> > > > > the PCI host bridge or for the root bus does not exist. Indeed, the PCI
-> > > > > host bridge is not described in a device-tree used at boot simply
-> > > > > because no device-tree are passed at boot.
-> > > > > 
-> > > > > The device-tree PCI host bridge node creation needs to be done at
-> > > > > runtime. This is done in the same way as for the creation of the PCI
-> > > > > device nodes. I.e. node and properties are created based on computed
-> > > > > information done by the PCI core. Also, as is done on device-tree based
-> > > > > systems, this PCI host bridge node is used for the PCI root bus.    
-> > > > 
-> > > > This is a detailed low-level description of what this patch does.  Can
-> > > > we include a high level outline of what the benefit is and why we want
-> > > > this patch?
-> > > > 
-> > > > Based on 185686beb464 ("misc: Add support for LAN966x PCI device"), I
-> > > > assume the purpose is to deal with some kind of non-standard PCI
-> > > > topology, e.g., a single B/D/F function contains several different
-> > > > pieces of functionality to be driven by several different drivers, and
-> > > > we build a device tree description of those pieces and then bind those
-> > > > drivers to the functionality using platform_device interfaces?  
-> > > 
-> > > What do you think if I add the following at the end of the commit log?
-> > > 
-> > >    With this done, hardware available in complex PCI device can be
-> > >    described by a device-tree overlay loaded by the PCI device driver
-> > >    on non device-tree based systems. For instance, the LAN966x PCI device
-> > >    introduced by commit 185686beb464 ("misc: Add support for LAN966x
-> > >    PCI device") can be available on x86 systems.  
-> > 
-> > This isn't just about complexity of the device.  There are NICs that
-> > are much more complex.
-> > 
-> > IIUC this is really about devices that don't follow the standard
-> > "one PCI function <--> one driver" model, so I think it's important to
-> > include something about the case of a single function that includes
-> > several unrelated bits of functionality that require different
-> > drivers.
-> 
-> Yes.
-> 
-> > 
-> > "LAN966x" might mean something to people who know that this thing has
-> > a half dozen separate things inside it, but the name by itself doesn't
-> > suggest that, so I don't think it's really helpful to the general
-> > audience.
-> > 
-> 
-> Does this one at the end of the commit log sound better?
-> 
->     With this done, hardware available in a PCI device that doesn't follow
->     the PCI model consisting in one PCI function handled by one driver can
->     be described by a device-tree overlay loaded by the PCI device driver
->     on non device-tree based systems. Those PCI devices provide a single PCI
->     function that includes several functionalities that require different
->     driver. The device-tree overlay describes in that case the internal
->     devices and their relationships. It allows to load drivers needed by
->     those different devices in order to have functionalities handled.
+On Sat, 2025-02-22 at 00:33 +0800, Tao Chen wrote:
 
-Yep, thanks.
+[...]
+
+> +static const struct {
+> +	const char *name;
+> +	int code;
+> +} program_types[] =3D {
+> +#define _T(n) { #n, BPF_PROG_TYPE_##n }
+> +	_T(KPROBE),
+> +	_T(XDP),
+> +	_T(SYSCALL),
+> +	_T(SCHED_CLS),
+> +	_T(SCHED_ACT),
+> +	_T(SK_SKB),
+> +	_T(SOCKET_FILTER),
+> +	_T(CGROUP_SKB),
+> +	_T(LWT_OUT),
+> +	_T(LWT_IN),
+> +	_T(LWT_XMIT),
+> +	_T(LWT_SEG6LOCAL),
+> +	_T(NETFILTER),
+> +	_T(CGROUP_SOCK_ADDR),
+> +	_T(SCHED_ACT)
+> +#undef _T
+> +};
+> +
+> +void test_libbpf_probe_kfuncs_many(void)
+> +{
+
+Hi Tao,
+
+Sorry, probably some miscommunication from my side.
+I did not mean this test for inclusion, it was meant as a one time
+manual inspection of libbpf_probe_bpf_kfunc results.
+Just as a sanity check before series is merged.
+As an automated test it does not provide much meaningful signal.
+
+> +	int i, kfunc_id, ret, id;
+> +	const struct btf_type *t;
+> +	struct btf *btf =3D NULL;
+> +	const char *kfunc;
+> +	const char *tag;
+> +
+> +	btf =3D btf__parse("/sys/kernel/btf/vmlinux", NULL);
+> +	if (!ASSERT_OK_PTR(btf, "btf_parse"))
+> +		return;
+> +	for (id =3D 0; id < btf__type_cnt(btf); ++id) {
+> +		t =3D btf__type_by_id(btf, id);
+> +		if (!t)
+> +			continue;
+> +		if (!btf_is_decl_tag(t))
+> +			continue;
+> +		tag =3D btf__name_by_offset(btf, t->name_off);
+> +		if (strcmp(tag, "bpf_kfunc") !=3D 0)
+> +			continue;
+> +		kfunc_id =3D t->type;
+> +		t =3D btf__type_by_id(btf, kfunc_id);
+> +		if (!btf_is_func(t))
+> +			continue;
+> +		kfunc =3D btf__name_by_offset(btf, t->name_off);
+> +		for (i =3D 0; i < ARRAY_SIZE(program_types); ++i) {
+> +			ret =3D libbpf_probe_bpf_kfunc(program_types[i].code,
+> +						     kfunc_id, -1, NULL);
+> +			if (ret < 0) {
+> +				ASSERT_FAIL("kfunc:%s use prog type:%d",
+> +				      kfunc, program_types[i].code);
+> +				goto cleanup;
+> +			}
+> +		}
+> +	}
+> +cleanup:
+> +	btf__free(btf);
+> +}
+
+
 
