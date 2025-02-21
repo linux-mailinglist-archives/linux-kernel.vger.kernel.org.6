@@ -1,109 +1,222 @@
-Return-Path: <linux-kernel+bounces-526547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EFDDA4000F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 20:54:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 777F0A40013
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 20:56:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 025BD3BD9F5
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 19:54:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D18E19E0FC3
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 19:56:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB2302475C2;
-	Fri, 21 Feb 2025 19:54:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD98C253336;
+	Fri, 21 Feb 2025 19:55:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YX29Dsk5"
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="RBIciXhZ"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E430A1EBA0C
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 19:54:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 951D61EBA0C
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 19:55:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740167684; cv=none; b=mjQk6Zj5U5XO5GPUjWxFFhYw5Reusro2tWVqBRImPWdz0EkYtAQxJMq3B2UcBEVdxxoJyP7uLsq57mdhwO00fudkEz01MJ6jnwVl1AKyNoySgg59PJw/LMyUdsemGr2nuBjCm4f0xXPJbYzigBx2S6hiLmy1Lcj8KhW/coVe4N0=
+	t=1740167753; cv=none; b=sEnAV29t8VBBIaL3UMjRcIiU32uHu/UlUQ4c9jTeRgbTBqahsVtQlRLfAN4isgfYypEmLXnX9fuyHKsQGqsJn46Ft2zZphee+PDEZPs9DKO8UPguhbrOPaJbTBZG2WyTN8N9ybhvoxDHYR+ii6Kt4VUuqIGAd+E94FK5P8DQOo0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740167684; c=relaxed/simple;
-	bh=Cdj7QFmZWIWsP73cueHtTzjl7arIGxQKjHw2vMjaWuw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PKGkIuvmW4Wu6sLKPKSGcCzJdDbroQ281eJxr6JB4x2D9By6FcEdL45M5oStOIPrV9Pio9jE/XU7lOSH4WIfbio6klDAVND8C8DF8CbszIuuu/ZiWXbnPMyeNBcA3DaD3fBpnbSYK//CrUW2BgJnkSu/eUqTT/NcjDvP5ucm/ec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YX29Dsk5; arc=none smtp.client-ip=209.85.160.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-471fbfe8b89so57111cf.0
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 11:54:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740167682; x=1740772482; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Cdj7QFmZWIWsP73cueHtTzjl7arIGxQKjHw2vMjaWuw=;
-        b=YX29Dsk5yIOvQ/SbyScZjMBPlZOC7vXSLfzqPJzAEh8rebI2BGENbe8o0yE11AZUUn
-         qRE0AmNDEamszyJtK1ISXbWWDqT7ozx7TJEzrBQ4Cvsgbce5Ns0CqHtbGyvEGhYZvER/
-         BYBedB+2R6pd8eMYXD5jp4ulHZHRf0UoJKZz/tvbOHK78NP69pAx4KtdkvD/wks1QLWw
-         mBl6W2h+tSO1Bup2lX8Z6XEOx0eXAAN9rzE6XtbPXZ6GGxlzt1DLFoJKD35L1zrQDuZK
-         XXuN8Z3qqbx4d5mrAAd+86nlgsW/xwC2QDQ9grF28W+apYjRie7RkRfgA1NsxtHUhqjt
-         Cd5w==
+	s=arc-20240116; t=1740167753; c=relaxed/simple;
+	bh=r3vp4MOiw5PdaVSDdFOlW6Db94ZsFIRUn1IwFTioiaY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hE1UZgkbUzyga45dxBVGInrFg/0iMIvM2bOtZou5lb7ESbms0cmetyIXhBbxWCAa1QgyokulwgAnXxXh8HLbGLf32tbwMIBuyrcvRZhJIUMu+hqqLRZ1aUaH0IABC6b9HVnx40QgaK7APOQO245NEhs536JoGi8/ZUxxded1eT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=RBIciXhZ; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51LGtnhO020877
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 19:55:50 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	t9CI4ewUgEyzTJqAzQB6Mt8Kix2RX6oXH+KrXwXC90s=; b=RBIciXhZn90kPric
+	hEW+cQMjH2EOYIKX7givOraXeRdCUfpi6uA2WaeJz3ToIKYhe0qyI+MTJHKvOsrB
+	/F7XF4t3XHVc9ursYVISRENJwo/V5Z09jV3deCR5dPuDUFeO3Al9vxoFpfgrkXYm
+	pOraMOQrZceF1sqmQ+LCgFKV/syTMpSDtIn+zBXjRRI5efW48mgoxF//PkYAGqRF
+	Zp4R/+aI8lOeWMam8GHbuP43Z+WdlPSuuyRNS+JlVbMQfO9KDUaymFT+Yhyknprg
+	CAQ37fakzASxuBgD29a2pnsL0c2tpn8lDqgKFqtNqZ4N/UaBiNI5qr7MhYCiMxWA
+	wrwUDw==
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44vyy4k4f2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 19:55:50 +0000 (GMT)
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-47210401379so4816171cf.2
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 11:55:50 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740167682; x=1740772482;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Cdj7QFmZWIWsP73cueHtTzjl7arIGxQKjHw2vMjaWuw=;
-        b=N5rqxnhmZKVHb2P644KZKc3n9UHPA/jgiCZCgg053z1vWmdTViMCNj+nok1nJp/4T5
-         9qGVeSzztN+eGu9wO5uvczdg8A2Lgcqs9pIXZ/aXip+dxvsXE6Px+uPPoUtXeHgVYvxR
-         uUKa2C/gxMBjhooOz9xr9gVlBBd/8neyvjFPs/t/G/z+xU4tnJ1XmgYuHeBmeiAEjXXz
-         zvrBEZEW2Y2Bu/kwMaNNs3zaZ9DPF9diCj6t0maiNDYFVwAMQKmI5ud/3nmnWSBu5LkT
-         onlQL6zlOlUaMl+bUC4X/OxvsjceJ/zH4wCLWJnrX7NUAElQHMdJCI9PX6V+/2rZOlPA
-         o/7w==
-X-Forwarded-Encrypted: i=1; AJvYcCXz4eu57z9PiSZlfbiL2FsEpLhcTYZ/zFBQ1Q/KWQ+OqGW1XyxRuFw/AiMeC+PoA6HLX26B/auhJxr0ZtM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBWRZzPNcgRiPf8l2olVf6ZMzTMKMe39gjRT4ENEy21WSpD2tG
-	Swsk8mAGkQocIjmyAVrXaPoFhVQjucSr9NhsZQdCs3ytcAQIv3FrDRAhz9Wf6NBHyz0uj7WDpDa
-	bqyc+ATAF1cMym+e4F9YvfaYqFvt9clLPxChc
-X-Gm-Gg: ASbGnctzl2wt2D0KYteAKz6VRwszsDZ8AFsX4bSsn1xFq1bJZ7/4L6jZ25quJtXTJ2G
-	y0yE2DmDTko/9+V/YNiNCqXJu5gok8PZ5wV0xJBeXfUuKlXHFK6Pp78bjaVLed7CmqWmR3JLi/W
-	ca7kx8YrxY
-X-Google-Smtp-Source: AGHT+IHZSx4Vf+dNOAAorW58k8+z5I2yMpCXb5lQXVnunPf1zQPBQuCWxasZVFELP+z2t3KGDpTAh27n5pBEtj67qNs=
-X-Received: by 2002:ac8:4085:0:b0:471:fb3a:5bfb with SMTP id
- d75a77b69052e-472335ca333mr233501cf.1.1740167681508; Fri, 21 Feb 2025
- 11:54:41 -0800 (PST)
+        d=1e100.net; s=20230601; t=1740167749; x=1740772549;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=t9CI4ewUgEyzTJqAzQB6Mt8Kix2RX6oXH+KrXwXC90s=;
+        b=GF6rzCsI+ZBB4SdPLDm4a7x3enkqrPCkCVdtXw2wf8byMBzUwvbOYzXa4YRANkZubM
+         +S2GZONVx2yr7FzNCvr+y1d41AMhFVHRuF9FGFF21TUknIHThKKJezEFcFQ0rs+SSWVw
+         Mgug/GwF79gVVPd7mwnPDtJOq885ssRm2gdARLQC1ntMEkv0Mc1AVEtrnIbQ0+2hXyq2
+         h9ZETQDt7B5lEosrJlqnGfkF4RZ1RvoYe+oZxWem+ZvJnDTPz4EcjJBiuks3i3NSsueI
+         dvD6AJU3TJby1etZTYGct94yk88k3JR8eLCjAQJPQyx80/qTutOoU8HJGdy4+TSrGwIX
+         RGbw==
+X-Forwarded-Encrypted: i=1; AJvYcCUNUE+yPgSd8Jw+JQYQPVqDGZeLbz59rxHg55Wdgxlsx6ynhl/sWOXCACkGC5X12xCZ1WXCWfI64WixxyY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywv5P5AxJl1eNjJBep0216Rbz481ZVZR02R4Y1fdNl4comFA2ug
+	yE9SDKlhjKm0Sj1g+WO3B3c5UfNHEMsmhobUMFTrDgFEHsbLiGZNzCIrXpqrcKSsxN9YIzKf285
+	W4srM2KBCz7uYuxcoWplnR5Kf4RQEfXT5xhd3oNJAibJRYujDyGLnxaX+MrU/UdY=
+X-Gm-Gg: ASbGncv17Q5T3UOOSL+btuS4aptfmFha08UbXPqBPQQ7szQOTwZEbvutNGlXsRgcKsE
+	UBm2yziYYzHQLvMp3p9osx/cIK9MRFkCIod8DtDb3tlp7c9nHZb4tVSLG/7YnYYVaMBgUWFygZr
+	irsxltGR6NXLAcuK/kYwyxpSJu4EtQSLvoUBCPM69WD6GYFR52/J0bO4XSf3hypqRWRTyiG1N4a
+	1kpuBoyN5uYDvaiJBhYdsNWweftoF2e9uWAf5UfXhupuhr1vPpstopZWnJF5tZMm/crptBKXfFC
+	0eLDSM0rss99KlZfPxG3nJO5wy2mkdskFAS6UhxfaFpBd+vv/7Ve+RcdEdBbM8nMEKRuKA==
+X-Received: by 2002:a05:622a:1827:b0:472:1743:80e4 with SMTP id d75a77b69052e-4722294ffd4mr24953671cf.11.1740167749401;
+        Fri, 21 Feb 2025 11:55:49 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHBB57oOz/RtjhV08q10omNd3Gy4LKkAO1OPSNKN9Bm6dX5sHl8k2S65DJngPpO75nLzKw93A==
+X-Received: by 2002:a05:622a:1827:b0:472:1743:80e4 with SMTP id d75a77b69052e-4722294ffd4mr24953551cf.11.1740167749089;
+        Fri, 21 Feb 2025 11:55:49 -0800 (PST)
+Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abba0ab1457sm974823066b.73.2025.02.21.11.55.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 Feb 2025 11:55:48 -0800 (PST)
+Message-ID: <ebff1ea6-e4ae-4b3a-9f51-4fb9bae50222@oss.qualcomm.com>
+Date: Fri, 21 Feb 2025 20:55:46 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250221111226.64455-1-wuyun.abel@bytedance.com> <20250221111226.64455-2-wuyun.abel@bytedance.com>
-In-Reply-To: <20250221111226.64455-2-wuyun.abel@bytedance.com>
-From: Josh Don <joshdon@google.com>
-Date: Fri, 21 Feb 2025 11:54:30 -0800
-X-Gm-Features: AWEUYZn0iHKSbPtDF3NPV03ce2HSdhgVwhJErYQLK9HjAZKm_GU65QRAp6WZOOI
-Message-ID: <CABk29Ns=Jqb2c5gcEMr7uBnDZ7S_xWp5tUmrX=T8pHrg5RmeDQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] sched/fair: Do not let idle entities preempt others
-To: Abel Wu <wuyun.abel@bytedance.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Valentin Schneider <vschneid@redhat.com>, Tianchen Ding <dtcccc@linux.alibaba.com>, 
-	"open list:SCHEDULER" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/5] arm64: dts: qcom: sm8750: Add UFS nodes for SM8750
+ SoC
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Nitin Rawat <quic_nitirawa@quicinc.com>,
+        Melody Olvera <quic_molvera@quicinc.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Bjorn Andersson <andersson@kernel.org>, Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>,
+        Trilok Soni <quic_tsoni@quicinc.com>, linux-arm-msm@vger.kernel.org,
+        linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
+        Manish Pandey <quic_mapa@quicinc.com>
+References: <20250113-sm8750_ufs_master-v1-0-b3774120eb8c@quicinc.com>
+ <20250113-sm8750_ufs_master-v1-4-b3774120eb8c@quicinc.com>
+ <vifyx2lcaq3lhani5ovmxxqsknhkx24ggbu7sxnulrxv4gxzsk@bvmk3znm2ivl>
+ <be8a4f65-3b36-4740-a4f7-312126cfd547@quicinc.com>
+ <ferdaevlfrpf2ewzcct7mqyxltvmt6aaar4fujxfehrmizm3qw@aaroprnpwlxq>
+ <354f8710-a5ec-47b5-bcfa-bff75ac3ca71@oss.qualcomm.com>
+ <20250214065009.w4rmrbbejnywh6nt@thinkpad>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250214065009.w4rmrbbejnywh6nt@thinkpad>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: LCmDZAv1fBMyAMRk8ou6CJvmDuil-jut
+X-Proofpoint-ORIG-GUID: LCmDZAv1fBMyAMRk8ou6CJvmDuil-jut
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-21_07,2025-02-20_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ priorityscore=1501 malwarescore=0 bulkscore=0 suspectscore=0 clxscore=1015
+ lowpriorityscore=0 mlxlogscore=999 spamscore=0 adultscore=0 phishscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2502210137
 
-On Fri, Feb 21, 2025 at 3:12=E2=80=AFAM Abel Wu <wuyun.abel@bytedance.com> =
-wrote:
->
-> A task with SCHED_IDLE policy doesn't preempt others by definition, and
-> the semantics are intended to be preserved when extending to cgroups
-> introduced in commit 304000390f88 ("sched: Cgroup SCHED_IDLE support").
->
-> But current implementation allows idle entities to preempt each other
-> on wakeup, which seems not behave as expected especially after
-> commit faa42d29419d ("sched/fair: Make SCHED_IDLE entity be preempted in =
-strict hierarchy")
-> so fix this by explicitly skip wakeup preemption for idle entities.
+On 14.02.2025 7:50 AM, Manivannan Sadhasivam wrote:
+> On Mon, Feb 10, 2025 at 08:20:27PM +0100, Konrad Dybcio wrote:
+>> On 8.02.2025 11:06 PM, Dmitry Baryshkov wrote:
+>>> On Sun, Feb 09, 2025 at 12:47:56AM +0530, Nitin Rawat wrote:
+>>>>
+>>>>
+>>>> On 1/14/2025 4:22 PM, Dmitry Baryshkov wrote:
+>>>>> On Mon, Jan 13, 2025 at 01:46:27PM -0800, Melody Olvera wrote:
+>>>>>> From: Nitin Rawat <quic_nitirawa@quicinc.com>
+>>>>>>
+>>>>>> Add UFS host controller and PHY nodes for SM8750 SoC.
+>>>>>>
+>>>>>> Co-developed-by: Manish Pandey <quic_mapa@quicinc.com>
+>>>>>> Signed-off-by: Manish Pandey <quic_mapa@quicinc.com>
+>>>>>> Signed-off-by: Nitin Rawat <quic_nitirawa@quicinc.com>
+>>>>>> Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
+>>>>>> ---
+>>
+>> [...]
+>>
+>>>>> Use OPP table instead
+>>>>
+>>>> Currently, OPP is not enabled in the device tree for any previous targets. I
+>>>
+>>> Excuse me? ufs_opp_table is present on SM8250, SM8550 and SDM845 (and
+>>> QCS615). So this is not correct
+>>>
+>>>> plan to enable OPP in a separate patch at a later stage. This is because
+>>>> there is an ongoing patch in the upstream that aims to enable multiple-level
+>>>> clock scaling using OPP, which may introduce changes to the device tree
+>>>> entries. To avoid extra efforts, I intend to enable OPP once that patch is
+>>>> merged.
+>>>
+>>> Whatever changes are introduced, old DT must still continue to work.
+>>> There is no reason to use legacy freq-table-hz if you can use OPP table.
+>>>
+>>>> Please let me know if you have any concerns.
+>>
+>> Go ahead with the OPP table. freq-table-hz is ancient and doesn't describe
+>> e.g. the required RPMh levels for core clock frequencies.
+>>
+>> You should then drop required-opps from the UFS node.
+>>
+>>>>>> +
+>>>>>> +			resets = <&gcc GCC_UFS_PHY_BCR>;
+>>>>>> +			reset-names = "rst";
+>>>>>> +
+>>>>>> +
+>>>>>> +			interconnects = <&aggre1_noc MASTER_UFS_MEM QCOM_ICC_TAG_ALWAYS
+>>>>>> +					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
+>>>>>> +					<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
+>>>>>> +					 &config_noc SLAVE_UFS_MEM_CFG QCOM_ICC_TAG_ALWAYS>;
+>>>>>
+>>>>> Shouldn't cpu-ufs be ACTIVE_ONLY?
+>>>>
+>>>> As per ufs driver implementation, Icc voting from ufs driver is removed as
+>>>> part of low power mode (suspend or clock gating) and voted again in
+>>>> resume/ungating path. Hence TAG_ALWAYS will have no power concern.
+>>>> All previous targets have the same configuration.
+>>>
+>>> arch/arm64/boot/dts/qcom/qcs615.dtsi:                                    &config_noc SLAVE_UFS_MEM_CFG QCOM_ICC_TAG_ACTIVE_ONLY>;
+>>>
+>>> It might be a mistake for that target though. Your explanation sounds
+>>> fine to me.
+>>
+>> Let's use QCOM_ICC_TAG_ACTIVE_ONLY for the CPU path to clear up confusion.
+>>
+>> Toggling it from the driver makes sense for UFS-idling-while-CPUs-are-online
+>> cases and accidentally also does what RPMh does internally in the other case.
+>>
+> 
+> Shouldn't it be applied to config path of all peripherals then? If
+> QCOM_ICC_TAG_ACTIVE_ONLY translates to 'resource getting voted only if the CPUSS
+> is active', then the same constraint should apply to all peripherals, isn't it?
 
-Thanks, looks good to me.
+Yes and lately we've been trying to catch that in review
 
-Reviewed-by: Josh Don <joshdon@google.com>
+Konrad
+
+
+> I'm not sure who is accessing the config path other than the CPUs.
+
+>>hopefully<, no one
+
+Konrad
 
