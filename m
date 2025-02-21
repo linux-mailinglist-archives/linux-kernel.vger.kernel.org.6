@@ -1,195 +1,236 @@
-Return-Path: <linux-kernel+bounces-526734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58081A40291
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 23:22:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CBB9A40295
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 23:23:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 344E217D46C
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 22:22:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB51B19C4648
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 22:23:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A81A250BED;
-	Fri, 21 Feb 2025 22:22:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D284B25332C;
+	Fri, 21 Feb 2025 22:22:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="K3KwRh4Q"
-Received: from EUR03-VI1-obe.outbound.protection.outlook.com (mail-vi1eur03on2067.outbound.protection.outlook.com [40.107.103.67])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="kqX2T3Cr"
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8342D18DB0B;
-	Fri, 21 Feb 2025 22:22:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.103.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3038A2045B7;
+	Fri, 21 Feb 2025 22:22:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740176535; cv=fail; b=e8uevy6L6T91mW9pDIxpqGIct9tAcMGHNikmO6R4rNNagAyIzEDOMlqI+l+Cu96AY9d36sswBgFGHf0shxSi7supXOC8nsZGWG2em63fES5nJ8XsvKeFQ380CEEeEfMsD/kEOzRB2Mn1RSSu370y37I5YyZ2SeHKt4nZ+NCHzQs=
+	t=1740176579; cv=pass; b=fKWXrRqzrjOdCmYytBRWoT+KP2menNLX9FvaA0iH3k5bzpgA71C2KRAour3BBHw9mA/LOghAlzK1hquCzQDs7oxVzCIYUHxEJFSlixOVKpGILdNf9skLkD7+/gN/4IIuDQfSpOH0sXTNgLZHBMs4+HoxKn6vZ5ff4MVa9pb3ZQI=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740176535; c=relaxed/simple;
-	bh=j/ZGZE026J+8KFuYxsnOPrDyvCC6WA0l0bZe1xobrRc=;
-	h=From:To:Subject:Date:Message-Id:Content-Type:MIME-Version; b=QpvAcWA5HuLqOsSZitoqqC8ZZWbW8f045m1ZQ00JUQyrFuTECLOK0EpN7GFi9TmmAuyn/4m0rqs7J7Wt4VHUOm/AZUDDFg4jDzs0pSlXPTwam1BnxqpI5+okzzmz+G8jOl+fcIkkJhO5iowW1ehNDia+4J7OoEuqcGofRYASVgE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=K3KwRh4Q; arc=fail smtp.client-ip=40.107.103.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=aZYxvrSOVEkEWl86482Y0H+ak2M8wWWcVpnyF1sRWhXTGZzq3n3d1wO5a30MfO8RN67CBNKpCzvhQLWCUykGxVXYTuNvms7aImlzEkFkLVxxcnhXgkpzquyx5qs9NqfJRDe9rXCvzRILC48YrUS9Xb0abu8IHXwiulva7SbcBRtEsRzYjGLNyNHFdnz1eR+Gz27gXbM7Pff4Ax1Ys4PhR0hxMYR/CYkCnzIuDQFCBqSEGaiDpBRXLLOAl4JNZqsvlXTYSZPx3xsQYH4k/fInJ7p5iwl01CSDnUHg8RcEj1BAyeZOyFWKm6eok20QU3s8DnqXA3fNIP5ttfn9cuSlCg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=0GoM1L/n1r8ePlFFh02gw2UIAaFQDwfqaw1UDI3AACo=;
- b=w+x8+RdDHNUlt0WQFGNZbmptvsZgTvHN+IfhLESB26Tni5sMw6PXrhPt3Wk+w/UQP0goZFhJgE6ZCgKbFmt98hvCy0DmvFHSsNXZCCOu81SdrkLbxdmhjBvjETw5UOGlIdL/+rq2vsMAbUZ4a0VFwAGmuMbagFMRvAiVfpREiXiSq5Bxvsz+4FOZQ6cxSKnkKoyyxLQKfqI1yYjAEfyl2guiDkwO4pTjieKAEqEM7zR1XIHdO81tNvcNV7Q4X73zpR2qsRWbXVSajXPbmvVRviRyFTWK/MZ2dqd9kC1Y5TVByfWGIpqSLwPXbKloXzoa21YzKEITny6bUqC1xs1nEQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0GoM1L/n1r8ePlFFh02gw2UIAaFQDwfqaw1UDI3AACo=;
- b=K3KwRh4Q0EteugJ5RezdL2lCLMK+aPdvtz+o32o/7S91iGj9+O+3ypjdLUcgYguIQ875e3uATZG5mvWJDaM/bsGAAKXqlU0LCza+HL3YnXrblTlEXd3DQbzoTpp32J9s1LqNvyCYYdPu4ISH1eu1pBuEljlqrFjYTDgiyQpzRp12mgL32ScIidyAi26FVI6BkDajvh5sNTZ5SjUm/DN8SR3N+/nj5YemrWSRwlaWAKGrRb+Kq6giNwQa6OjpWFaK9SCPbSE3/ZoHwjFOFQ4ZVN/3S3oxKqNTObKvqekSyKsxMF67o0TBLUQHNk2hth3sKJYlTGw+Ov8In2hQXurWxg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by AS8PR04MB8214.eurprd04.prod.outlook.com (2603:10a6:20b:3b0::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.17; Fri, 21 Feb
- 2025 22:22:09 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%5]) with mapi id 15.20.8466.015; Fri, 21 Feb 2025
- 22:22:09 +0000
-From: Frank Li <Frank.Li@nxp.com>
-To: Vinod Koul <vkoul@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Peng Fan <peng.fan@nxp.com>,
-	imx@lists.linux.dev (open list:FREESCALE eDMA DRIVER),
-	dmaengine@vger.kernel.org (open list:FREESCALE eDMA DRIVER),
-	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 1/1] dt-bindings: dma: fsl,edma: Add i.MX94 support
-Date: Fri, 21 Feb 2025 17:21:53 -0500
-Message-Id: <20250221222153.405285-1-Frank.Li@nxp.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: BYAPR02CA0047.namprd02.prod.outlook.com
- (2603:10b6:a03:54::24) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	s=arc-20240116; t=1740176579; c=relaxed/simple;
+	bh=UkUk11Z5IECX8Fz1o9waJqLoqxFcLwUCWg9KJcwHGI0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nfSHRzvA3FudiT0Ne3xKhlZ9L3BmNa0zkPMqJvWH/xXcFbopts45RO1wWOird/miqEA3x40Fum79a1zZ2VQbWZ5nBcOto9aFRJzMl3lAzjY3K8pNG66SohKg6bavuuN0R0dZtJhaZStPG+wry5tSMl1jtetijHC+Z53IBe0GANU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=kqX2T3Cr; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1740176572; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=fZVDL4ph2wLOl8psuziwk2rSnQQUHx1eXv/EEowywozInilRxj7d45TcuoKB4NNYUNJDr74EO/ZozJWvUoyJ95b1YqB9BVvqydYGNDxDp0XRWBVLxx8jNGWhLpZZKziJKTMbhlzClM9IrZ8B1YwFGZhvudK3KZQpbJAGMD8oucs=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1740176572; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=3i4MKh+nn1kmA4h6mEkb0x/RtfEzHkjmxmO0stUEMyA=; 
+	b=YfwzWVm5SsjQNC6ipPjXL3+1EUcoKneLbbxzuk/GRAw5S7+NBeXjzaw6zUKWtWiq+foNspR3Gm3irMOzznrq3FegyLe96K4upCGzQLRWnZY6miCwmpP8/pjf1b7F1rUnXQ/6IXvYkIwedI04m8G4RFvS7ysJpzxQr/oqhROy5Sg=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
+	dmarc=pass header.from=<sebastian.reichel@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1740176572;
+	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
+	bh=3i4MKh+nn1kmA4h6mEkb0x/RtfEzHkjmxmO0stUEMyA=;
+	b=kqX2T3CrueWajUvlPVDQZTG0cOFweqskawbsENpSzBdYxdYVqqt//jP1uwaVjVMq
+	Brz3jBi99XYqOnlSpHxN54HPwdxAbLG6SjPId/TSuutwEEdc220cfhTVd3KRKHHSB00
+	7MqO2oY8PxqRCrkg5xLwKM6qFF0AyfycyX10Zm3I=
+Received: by mx.zohomail.com with SMTPS id 1740176570350965.6434158101416;
+	Fri, 21 Feb 2025 14:22:50 -0800 (PST)
+Received: by venus (Postfix, from userid 1000)
+	id 40FED180413; Fri, 21 Feb 2025 23:22:47 +0100 (CET)
+Date: Fri, 21 Feb 2025 23:22:47 +0100
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Pengyu Luo <mitltlatltl@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH v3 5/6] power: supply: add Huawei Matebook E Go psy driver
+Message-ID: <m2dy2vhvw7rhexvzkkloelgkcdcq6ci2ot54mdffpvosvagf64@usdxy2cnjeua>
+References: <7la3x6f733ju4szqlzmtr277ah7c7lb4d4gcmjgu2rjj5uzpyd@43dmenbpczjs>
+ <20250221060143.201963-1-mitltlatltl@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|AS8PR04MB8214:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0e802333-bdf8-402b-7fb7-08dd52c62e85
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|52116014|1800799024|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?cOgE9sN5knnM9l4ULufdxsxDysSmiq8zQd+VnQ3orifIZKcEuv49p3HySlpC?=
- =?us-ascii?Q?eh4cUCJCMSs7SX/7g8FdcudIkj9dnNpSYpvkCcbsRMZvOScfg6+01/a6eHjG?=
- =?us-ascii?Q?6BFeUwkChHH4+b7nwKF0/jA0f29+jdzIHnwRPyJiil3Hqv9yvXuMGgSyIKf9?=
- =?us-ascii?Q?liCqdYYFG4YX4tgC1KaPR1HMSBnVgvQHpvNeHBNiHFh+B9/M45V23u3Bcplh?=
- =?us-ascii?Q?1WOAts1thl2DhD6SgZRyMPR9qVG5uoWNodbkU8QjCRal2MrmU7VRR5+hSGzz?=
- =?us-ascii?Q?AwuTxU8gQHLWGS32xsrxMb8fWFRqQFzqSVJmWEYLs9Kj7oO/xnIFOpTBKcYq?=
- =?us-ascii?Q?A4Y8GmJiqgO4lnPRstOAhzcT4lxfoQS6sBi4sJ/sf5AmOJ/AHqnIG/BJtYTI?=
- =?us-ascii?Q?ZJSCTe65r0u4PCAMtvWTjQAUqYriGjkoE62vId0VzSfne1O5fAQVHH5azFfc?=
- =?us-ascii?Q?VnJq7uFu6bzKZDYcaGWlm3TMoFMVzl+KLw50cfeOmtJVtNCGD5d+ray78sK8?=
- =?us-ascii?Q?8XAD0MJulwy9F618J+4aF/lJhE4Lr6KgQjOTLyz4NrZs7Gf9QgXq/L/jxj+O?=
- =?us-ascii?Q?FBU8+yPw2UZh6BpDmq+eCnQaPa3K9yZ9MMFfKOZFwB8e7K9PCLr11bIxihLz?=
- =?us-ascii?Q?2HpeiLJUGPPSAoUk1ws6f14Zaxec7jtFzL8vArZgU52SvTlDDYiggyjq01bm?=
- =?us-ascii?Q?eWRAD7l+oefz6GayFYejJ2O2c9A8ZiwPDDthvG46AeTfZluMelgrIsqJKnxS?=
- =?us-ascii?Q?VE5i+grhqWDlRPy2a86WZeHHNUJHTvCAnN3tR9+YfMc+BMvss9cWErDpfuhu?=
- =?us-ascii?Q?67oRyfl4mvEd95ox2b5NnmFCl4diU9otpc9BQXuP1QsDkXxfgiBaj+Btxzqj?=
- =?us-ascii?Q?eCWCyjp1fOZZQqTq1hSe4vLcXSf/k/ZTAldRWGkLpR5lK+QKdETPLP7XrDdi?=
- =?us-ascii?Q?OIsCPGxw6F9zsk6PAQ3br6uNwuuaaKEnJgZiAbBlPqdtlEQljiY2a/1tJUjx?=
- =?us-ascii?Q?6hI1MMSuAPestWYbzwvVOaXhar1Ytjtq+ZtbvqTvSb343LtZUwTGxi8MT2y4?=
- =?us-ascii?Q?bt/xPNYYiktON7fr99r+46a5XqGLzIN5M78V1wGuBV1gsJqbUhLyL0fcOze7?=
- =?us-ascii?Q?GUyUjA/fHMynjFuvZVB0zKDHR4ILEnqykncIG89+H99cFFMtNYy447y6KqfK?=
- =?us-ascii?Q?4T89jW+K8h1XdAXLJLOcB0GBpTsVHjYjkpziOqJjCTz/VO0DCRD0TSDKRwtI?=
- =?us-ascii?Q?rSiHbSAp6pHgbqtrTaIn5uHWeXKdxSlZm400eDEngEVyzE0WqlR4GVzL5WfG?=
- =?us-ascii?Q?Tdxu6RDgSzhNnugLbtPvl29djEzrj3M7pzeGMAwxavKR7c2XAaGErkRoYV79?=
- =?us-ascii?Q?G5HMxuQb3FtyPXb+UkbI6+cm/ytoBPn+zWA2zEJPNKP2ajaHSCydLkQ/TSMx?=
- =?us-ascii?Q?Wc/3T+ofiYctF0u7NJ4dgjvRaPjDxC0b?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(52116014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?lLRR5MYgKXfPDAwvqXOLMsO4Tqr7enxV8OedtHRwL5uqG/PQ4txZlE1Q0QHW?=
- =?us-ascii?Q?dgzTD5Ramj9mL/2OvG/pNILXwx3c/3ruzD/KnhX7h0aKPwOdoThUD28hQKu0?=
- =?us-ascii?Q?i+xTPszVH0kc5mzOxKQT2ykPekwUkE64vz+gpkJWLcnMWiV5WkFDCSCEewUs?=
- =?us-ascii?Q?I8gtE2d7fW7Kr0NT6Yy4Qfm7TY3d1oU+p9zEiLI3AuXSyIalgg8lqqvrAuKA?=
- =?us-ascii?Q?a1HZnz9S/YyI1aZOWDtkFGRE9eyOc4RD9GEIZbNluqKeEif2bD0VPQjS58sM?=
- =?us-ascii?Q?06LI4AyNubyUFttLMOnXDGLfftJN34es/FPaHYu0h/JTRntw3V0ibxrOsPFp?=
- =?us-ascii?Q?j8nrIK0ugoS4YrQLRTTydaZ+HhCUSsPxRx1KjaZ7MUZ2edw+GHZFzU//MvjI?=
- =?us-ascii?Q?OIObeayGqINkIZRRV2iS4NcNmztevBYdk8hVrqTuKXrYw7R7PrnZoBtZ9Z41?=
- =?us-ascii?Q?sqUdeO7go0gFVvOXhu+Y5+hXkk58PBfJ554BOB07hQvAGqq1FlyWIR4CmZUy?=
- =?us-ascii?Q?VknIU7v2Qa/84RZhfAOEKQgOoJBA/FC/MnNVzu/ztQvswhqZpGqkAr0EOyUy?=
- =?us-ascii?Q?aiNfVmPQMcqUyiikY0fvnYThRRGQLtczJtkphkv3EQUq1AFrgkCZJm5y/rG3?=
- =?us-ascii?Q?cbEcAoSfvbRYJ19gTZUiMVp5EaRn4dwnBXFH5FQnMZ5ZzpbwJykq7sZMuID5?=
- =?us-ascii?Q?TLW4YkUuw7nCnJ3EmSRIybzq1thruLtyqKlVg+hKUdPXiVW9C1XWvB79eiUB?=
- =?us-ascii?Q?iQaqIDigfmkG918of0ywptMd5TbAi2kzqNatoLygwIcVVUyTPuKnrv/Bw1DU?=
- =?us-ascii?Q?S0/fM1gDzaVRoQ/H5uqAejva8i5fuT60ZqVtPscG+WTKmTHeberhkPvDZwBD?=
- =?us-ascii?Q?4L4B0dVRN71U1kacab4mwmnGNV/U+ZlSxj6dlkECl5ytNO9us+fOYxUgDLHf?=
- =?us-ascii?Q?ekm/jsbxuo1INgq0E9c/SE8cEOkWD4zatTcFYLsmOQXAyxhNxrQFtomhTgLt?=
- =?us-ascii?Q?3wRQO2UaBekuSuaAEeEkgu6XxaerCbDHNGpdUckeFBQdlvYq/jEeaE/LjAtk?=
- =?us-ascii?Q?xTAfGE2vh+I7HIJDyNeoAbMJrnhlToV8JAFvk+CbsscKDh5OID4msjVIpj8x?=
- =?us-ascii?Q?PmJ4A42vPuUXXquYyR5Tfrjptusr+hgQ02uWQo9i5RRXcIkuqYuDEgh2yXQW?=
- =?us-ascii?Q?qOXBOBzTyylDdlpuiSeJ5T8ncTZTKU3TuXQnJ6kjaP7HV5nLbgsUyajb2Wbr?=
- =?us-ascii?Q?nVVLtQhMJi/Rpv7Gcr1YRBRFb9h5oWcfNvx+SmujAbS1SanRNM8LacxbyI/O?=
- =?us-ascii?Q?TjzuqujzyYugGGnDZZn1LFURMO593ywF/itygqBkA98jG9g9x+sRuCh9MzQm?=
- =?us-ascii?Q?Acd1jdikW4wi++Esps8LBHujzRApdWrqfaptp0WmWahbtHfEzxZw2bsOD449?=
- =?us-ascii?Q?gBrmhaF/oxWkoF5OkwI3ks6UjMJqTm+vr6uTrqICifz0WQLn4VjboAMAvrE2?=
- =?us-ascii?Q?YYWFoQKi8YyBMHdSDSyVkivuFr39DSaflRZZ8ZwNVm2jz5wCX2VkpBuqCYxc?=
- =?us-ascii?Q?Z+SEJ9DJupegmHWA5nFissS41U95THzC/4vJUx4I?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0e802333-bdf8-402b-7fb7-08dd52c62e85
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Feb 2025 22:22:09.6826
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: +kLvNhEjzlDFXRzUQcj8xtmyXe4QrZhAAAh2QAq71zA54hkQaSpZarf5dADPcDHTtGsQGedP/G+lrckY8RbuhQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8214
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="lvvupexgqzcpf6zr"
+Content-Disposition: inline
+In-Reply-To: <20250221060143.201963-1-mitltlatltl@gmail.com>
+X-Zoho-Virus-Status: 1
+X-Zoho-AV-Stamp: zmail-av-1.4.2/240.10.19
+X-ZohoMailClient: External
 
-Add support for the i.MX94 DMA controllers. The SoC includes two DMA
-controllers: one compatible with i.MX93 eDMA3 and another compatible with
-i.MX95 eDMA5.
 
-Add compatible string "fsl,imx94-edma3" with fallback to "fsl,imx93-edma3".
-Add compatible string "fsl,imx94-edma5" with fallback to "fsl,imx95-edma5".
+--lvvupexgqzcpf6zr
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v3 5/6] power: supply: add Huawei Matebook E Go psy driver
+MIME-Version: 1.0
 
-Signed-off-by: Frank Li <Frank.Li@nxp.com>
----
-dts patch first try at
-https://lore.kernel.org/imx/AS8PR04MB8642049B19BC7A5C8833FEB487042@AS8PR04MB8642.eurprd04.prod.outlook.com/
----
- Documentation/devicetree/bindings/dma/fsl,edma.yaml | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Hi,
 
-diff --git a/Documentation/devicetree/bindings/dma/fsl,edma.yaml b/Documentation/devicetree/bindings/dma/fsl,edma.yaml
-index 4f925469533e7..950e8fa4f4ab4 100644
---- a/Documentation/devicetree/bindings/dma/fsl,edma.yaml
-+++ b/Documentation/devicetree/bindings/dma/fsl,edma.yaml
-@@ -27,6 +27,14 @@ properties:
-           - fsl,imx93-edma4
-           - fsl,imx95-edma5
-           - nxp,s32g2-edma
-+      - items:
-+          - enum:
-+              - fsl,imx94-edma3
-+          - const: fsl,imx93-edma3
-+      - items:
-+          - enum:
-+              - fsl,imx94-edma5
-+          - const: fsl,imx95-edma5
-       - items:
-           - const: fsl,ls1028a-edma
-           - const: fsl,vf610-edma
--- 
-2.34.1
+On Fri, Feb 21, 2025 at 02:01:04PM +0800, Pengyu Luo wrote:
+> On Fri, Feb 21, 2025 at 9:33=E2=80=AFAM Sebastian Reichel <sebastian.reic=
+hel@collabora.com> wrote:
+> > On Thu, Feb 20, 2025 at 02:43:20PM +0800, Pengyu Luo wrote:
+> > > On Thu, Feb 20, 2025 at 8:24=E2=80=AFAM Sebastian Reichel <sebastian.=
+reichel@collabora.com> wrote:
+> > > > On Tue, Jan 14, 2025 at 01:51:27AM +0800, Pengyu Luo wrote:
+> > > > > On the Huawei Matebook E Go tablet the EC provides access to the =
+adapter
+> > > > > and battery status. Add the driver to read power supply status on=
+ the
+> > > > > tablet.
+> > > > >
+> > > > > Signed-off-by: Pengyu Luo <mitltlatltl@gmail.com>
+> > > > > ---
+> > > > >  .../ABI/testing/sysfs-class-power-gaokun      |  47 ++
+> > > > >  drivers/power/supply/Kconfig                  |  10 +
+> > > > >  drivers/power/supply/Makefile                 |   1 +
+> > > > >  drivers/power/supply/huawei-gaokun-battery.c  | 548 ++++++++++++=
+++++++
+> > > > >  4 files changed, 606 insertions(+)
+> > > > >  create mode 100644 Documentation/ABI/testing/sysfs-class-power-g=
+aokun
+> > > > >  create mode 100644 drivers/power/supply/huawei-gaokun-battery.c
+> > > > >
+> > > > > diff --git a/Documentation/ABI/testing/sysfs-class-power-gaokun b=
+/Documentation/ABI/testing/sysfs-class-power-gaokun
+> > > > > new file mode 100644
+> > > > > index 000000000..b1eb9e8d7
+> > > > > --- /dev/null
+> > > > > +++ b/Documentation/ABI/testing/sysfs-class-power-gaokun
+> > > > > @@ -0,0 +1,47 @@
+> > > > > +What:                /sys/class/power_supply/gaokun-ec-battery/s=
+mart_charge
+> > > > > +Date:                January 2025
+> > > > > +KernelVersion:       6.12
+> > > > > +Contact:     Pengyu Luo <mitltlatltl@gmail.com>
+> > > > > +Description:
+> > > > > +             This entry allows configuration of smart charging b=
+ehavior with
+> > > > > +             four parameters. The format is: <mode> <delay> <sta=
+rt> <stop>.
+> > > > > +
+> > > > > +             - mode: Defines the charging mode (1 or 4). Mode 4 =
+enables delay,
+> > > > > +                     while mode 1 does not.
+> > > > > +             - delay: Specifies the delay in hours (non-negative=
+). This is
+> > > > > +                     only used when 'mode' is set to 4.
+> > > > > +             - start: The battery percentage at which charging s=
+tarts (0-100).
+> > > > > +             - stop: The battery percentage at which charging st=
+ops (1-100).
+> > > > > +
+> > > > > +              When the laptop is connected to a power adapter, i=
+t starts
+> > > > > +              charging if the battery level is below the 'start'=
+ value. It
+> > > > > +              continues charging until the battery reaches the '=
+stop' level.
+> > > > > +              If the battery is already above the 'stop' level, =
+charging is
+> > > > > +              paused.
+> > > > > +
+> > > > > +              When the power adapter is always connected, chargi=
+ng will
+> > > > > +              begin if the battery level falls below 'start', an=
+d charging
+> > > > > +              will stop once the battery reaches 'stop'.
+> > > > > +
+> > > > > +              If mode is set to 4, the above charging mode will =
+only occur
+> > > > > +              after the specified delay in hours. If mode is 1, =
+there is
+> > > > > +              no delay.
+> > > > > +
+> > > > > +             Access: Read, Write
+> > > > > +
+> > > > > +             Valid values:
+> > > > > +                     - mode: integer value (1 or 4)
+> > > > > +                     - delay: integer value, delay in hours (non=
+-negative)
+> > > > > +                     - start: integer value, battery percentage =
+(0-100)
+> > > > > +                     - stop: integer value, battery percentage (=
+1-100)
+> > > >
+> > > > There are common properties for start and stop charging percentage,
+> > > > which should be used:
+> > > >
+> > > > * POWER_SUPPLY_PROP_CHARGE_CONTROL_START_THRESHOLD
+> > > > * POWER_SUPPLY_PROP_CHARGE_CONTROL_END_THRESHOLD
+> > > >
+> > >
+> > > Agree, but at least, we should pass delay, start, end. EC only
+> > > providedone interface to set mode and delay, that requires 4
+> > > arguments, we can handle it with 3 arguments, as you suggested
+> > > below. but if we treat start and end separated, then if we want
+> > > to set smart charge, we set start, set end, set delay(read start
+> > > read end, then set them again). It is a bit redundant.
+> >
+> > Yes, if these are separate properties you won't get atomic updates.
+> > But is that really a problem? Using the standard properties means
+> > that you get UI support in the future. I know at least the GNOME
+> > people are working on this.
+> >
+>=20
+> On my another x86_64 device with end threshold supported, KDE Plasma
+> supports showing this as
+>=20
+> > Battery is configured to charge up to aproximately <value>%
+>=20
+> it doesn't support setting things. So, can I keep passing delay, start,
+> end when setting, but also setting start and end as battery properties?
 
+No? Why should we create a custom sysfs ABI (which also breaks the
+one value per file rule), if we already have a standard ABI?
+
+> > Does the battery not support hot-plug?
+>=20
+> I am not sure, this is a tablet shipped with a qualcomm chip, we can
+> take it as an embedded device. I just took normal usage and using
+> without battery into account.
+
+I see. Let's keep it that way for now then.
+
+-- Sebastian
+
+--lvvupexgqzcpf6zr
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAme4/LMACgkQ2O7X88g7
++po8/w//USE1SvL8VDfI7pF4l7synEjvmNt65EeWbrGVCgq13Zd3O+jInXEwwCyd
+LOf62z9JES3OW4lxcOiZkerb6P51Rp58Z3repeNMD7q0sjD203+GqkTwxMBNLcoK
+KnCy/raWlnclG6HGgy3FEsvSlRMD7g2IFR48oFTtnCHH0sbifp3JJkwd6c4NYZi6
+oDMBF1CFLwE/WP3nDiSaCLO+4ak3nySEPFoT73iefkbHlIGzmMnt66BqGbXF1+c2
+Xb1INIfFcxaCNLsTQ6CrhxeC/p531iGS4ghLYgR5PUf1OK+TRMHv9NSdU+sBCrY2
+iczz7wNwgbTTmuf0wyhMoDBIxJgARgnXZ4wIlA01f5DgUzUHLTRn/JHz5FRzvla3
+vsGamzOm00h0JLt+VmXt7tpBvGtdL1de7E5VPBZfj8O5NOgFyyu3GlJ53bWpHT2y
+HdGUFMMRJ0gPv0cAkgjgtTcGbpXj2c+WeYEPWgDD4cvXx9osLjpaaulISwBHMjun
+lzIoqzLGA1t1DWUlXEudCp1MbnG2XFqmeIGpXZ5xnwNbNMWHI/4df2ATHP0AfvSD
+PsleOJTykU7KTheKoMH0NOcSvAz+TyHxr9je7PcDgdXon1RbNkxvkHKaeHLUmLzu
+VZ1GgN8FLG2PPEllpSSvn0CfWM/OXakT0+Cesvu1v4EJyvf2ecg=
+=B/+S
+-----END PGP SIGNATURE-----
+
+--lvvupexgqzcpf6zr--
 
