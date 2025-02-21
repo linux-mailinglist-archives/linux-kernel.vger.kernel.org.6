@@ -1,129 +1,210 @@
-Return-Path: <linux-kernel+bounces-525904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1601A3F737
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 15:28:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFA55A3F739
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 15:28:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCD4017F3D4
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 14:28:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BFC686311B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 14:28:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3855220FA86;
-	Fri, 21 Feb 2025 14:27:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF0CC2101A0;
+	Fri, 21 Feb 2025 14:28:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="uH1GDmOJ";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="L6mJQBYG"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ef6Oxulx"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BE6A20F07C;
-	Fri, 21 Feb 2025 14:27:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CC0020F07C;
+	Fri, 21 Feb 2025 14:28:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740148077; cv=none; b=KGuDapSF9MMc1Fs0apGYyJwiO1Urxc1S5UzotUx9JHkBxQ6SI69S0ouFoAhJ4WywbYFUAiQeKQpQipjkabpIE/peFLthrWneuj0diyxpf9GT9wQQfer0c88xj6eTleCT/TlfwBjxPdZnVR0mfbS8ZlrQRLTS/QyI3U1gYI2cOe4=
+	t=1740148084; cv=none; b=XsXgexxjDw+W39FO0agN7pcE1W8ZfZkfJB02LjMGaoV6u4eUqTg7tpqmKdLNhsQDc5dOeY5kJLFE7Gck1dZMWJ+8vmS/KMBKGxg2L2htFuDloOixYbzsC3M3R63pjUlfLQYIQcogrfvNewOpoByKAza0/KaOkQF6PetQDVgZo7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740148077; c=relaxed/simple;
-	bh=jdfrMNK94ghqC2jWjx3FWfsRjzJig0XkBNBxQWm8P18=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=LVoRhbpYWx3Z+xI/ykqj+LwPXKghZTpIm3jGIIIEBGduxL6s6SUsHPkHQclaDmocAUpNe8pQak97WZSUrpS8YovBrmOLFFjL6yiWLoZSIP8836sCxPc6vRHSIQzneF9Foa8kg7W46D6M5X9vsHufty10aFcCpub53EFjawu7Ab8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=uH1GDmOJ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=L6mJQBYG; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 21 Feb 2025 14:27:47 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1740148073;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=I3s7xMFV4T0TuKH0rqiq9TlNp2BfzB4Lr5KqGZuRrc0=;
-	b=uH1GDmOJCFVEPbdPHAgMYMLX79NNakc112WzwqmkdXQnUzBNrAfqf63ookq9lA1OlMew/Y
-	Hjs2/lAKgFDHVWzHcyYGQruz5weDDhSNKPjVcazDrGHKdT7MrjzRkd1PWiNqPIc8GLzODR
-	C6Mb73CbYS6HtZP8qrdJ/aaGW3IXZetYojWytdZwUlRuBwqj+kwGZy14TihoawTMh5uZ5p
-	cvpCiwvgTyzs+WL8g81yzYCIBCFxhS2g4uLyKXfs5AMnFC/ktwCK1OaZhfLSiqxT3hUlSF
-	6Alw4x0n6rTWzFHcdaEovjDa9Lfum19D8p41D3dqnrBUUrO9+pXH0D/1j7GQEA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1740148073;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=I3s7xMFV4T0TuKH0rqiq9TlNp2BfzB4Lr5KqGZuRrc0=;
-	b=L6mJQBYGQE+d9LM91bRPFkrkfLg7zVswvnmB4Qa4V1TsrsHnStwXVKsEv3vj7Mt2TJRtOV
-	uCrPBvDbXysZHtBw==
-From: "tip-bot2 for Artem Bityutskiy" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: x86/cpu] ACPI/processor_idle: Export acpi_processor_ffh_play_dead()
-Cc: kernel test robot <lkp@intel.com>,
- Artem Bityutskiy <artem.bityutskiy@linux.intel.com>,
- Ingo Molnar <mingo@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <de5bf4f116779efde315782a15146fdc77a4a044.camel@linux.intel.com>
-References: <de5bf4f116779efde315782a15146fdc77a4a044.camel@linux.intel.com>
+	s=arc-20240116; t=1740148084; c=relaxed/simple;
+	bh=a1RRpP2MB+JIaxSkAwtrtiD0G1RvbN/tgAOlFZspAEc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cAWc10FYprLdfdurImj+U0ZcyB0WeFbnSDucogkSgZyIoh3WAhQh3VMotpbGsLL2xZZdFRQZqtSaZly5KCxAx882NKQMSreoEhi5mx6Akc/KYCofFw1MPPsf1AfIxQNepzmKrOniK+lQ25erRNdt4Ypxt4kLQak+5TgcrYkmrzo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ef6Oxulx; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-abb90f68f8cso410381666b.3;
+        Fri, 21 Feb 2025 06:28:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740148081; x=1740752881; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=33rmgJoFPyAjchun4vSBkR9dkd/0PhCNL1EX9XyW8Yc=;
+        b=ef6OxulxHj/P7pFJW9/RNL5Zu77rF2SdMCILzmlDni9zOZN/ADvhmF/DQDc52TIsUX
+         ZgZACtW+w8Ag2Fl7WuNkjtw9x1yJRDierXkxZvi51EDEn0mHeE5FbRUjFEo81fxDdvtM
+         oF1vM5gZRsKbK6ATjLyDH8FlvDm4HZytpc3ge/ykWrivpVAX7fFfCPA5gjm8k5UtleX4
+         5LyEbSkg2rvwfoHoMhKF/3lIhNXII6R8aDIXJchIm1X7PrX1FeskoQi3fD3+dPpT1CRj
+         HzVVI4rVuLLY/Pr1pLh6DRXQgE8gzlDyN//R2E0fyWnQxWtxlVIt65rOF5CD46+JpyyR
+         MWSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740148081; x=1740752881;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=33rmgJoFPyAjchun4vSBkR9dkd/0PhCNL1EX9XyW8Yc=;
+        b=DOAjrfT0hue/DzbeySCdkylQwRP3nNhfwYmEM39R0ALAdVGgPYvc/PykNhij8FRj0R
+         EGu2QZQkYegmUO6coWUICoiv/PP2tObDI5pNlGdR6BI6HFkzl3OaAigSUnZLDrbsWDUd
+         6zhYe0IcClSFFNq6dvxt10SqfXNqMyJEq7QYF8T4mwFTqDPRh092N1JAebqY6mDuwVkn
+         xlCdHWeVAcFmDGtTxr/fzP1U5wosDJykI1nRSphHN9YJLtsFWgpGolFoiuaBUElEeTQ5
+         lIVLSzSEcIkhHdl+VSwNATEDdmLDoCDQRNCNlcJ5I4pgf0PvSZV2UVJRN+BDd+QcW0Nz
+         nAPg==
+X-Forwarded-Encrypted: i=1; AJvYcCViPHAkMGkDUF9Y4U/fUnu/hwFpN8u4ZnUSou4mWt050TtbLCDHBHXz/l5HeCsnf+GCvI3WxqE56Ndg@vger.kernel.org, AJvYcCW6x/TnbNiK3yjKGIk2fNNiQLYvPCoy6ZhAptkYgVT5sv0wOaYDUKIZAPsdmxXJ0VT3GkdJ6IWxOf/YxXE=@vger.kernel.org, AJvYcCWN6F3Z8BUCYxBwarKHgy7tFtXR/kukI/VIL4P8LQmwFi7HPmFzzhI1dqHR2VYzwdh0zf9aeLpDmaQJZJbj@vger.kernel.org
+X-Gm-Message-State: AOJu0YynIYQtbjvXKvXSJOiiVAByj7r76/4yEAxfpLrtYYA5HQTRobag
+	WYvshl8uNtypv5fKWHfTqHLp+gV+QiPTOk8gFAwfg3OouVm/Hmtg
+X-Gm-Gg: ASbGncuWVG82fpqwSvYZyNRv7Y6Zz71gAtP8nBN+1BEqIgtay+Ku9Ux1SD5dAmBD5S8
+	HyObqD1ojNLSe4GPu3ah2O+3htMUV1SSLSUCrF6qYb2ut+udr2BxXwYFo5+ZyaVU+wcUMTpFo4q
+	NaXTmGDccDETrH1UHvvn2PRu9x5z5JNqvT4HdIMbnAucJddsH47vojaKxz+vDD7xUUpkyxtnpDD
+	U9eEsnkkW0MdvVhEHMidys/lrevDaHMXddYG1kn7JEpgX3goVoJmu2PYynHJRMfztVlu8yGzFaj
+	wFlFNzYJVrWn2UpPoalZZLR70rh/ECXD
+X-Google-Smtp-Source: AGHT+IEw3WpudhQNFplJ29sjVHEYhC6rE/IVFnuZuPPiVWQyE+QjVu6xQp8nTv/VJK/U3W1OrZNliQ==
+X-Received: by 2002:a17:907:7758:b0:ab6:4fa6:71e2 with SMTP id a640c23a62f3a-abc09a46c0amr310992766b.22.1740148080426;
+        Fri, 21 Feb 2025 06:28:00 -0800 (PST)
+Received: from [192.168.0.100] ([188.27.130.21])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abba9bd6e22sm850995466b.121.2025.02.21.06.27.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 Feb 2025 06:27:59 -0800 (PST)
+Message-ID: <aa67bfed-2cdf-452c-bd36-2c5647ae96ed@gmail.com>
+Date: Fri, 21 Feb 2025 16:27:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174014806835.10177.13242036233718056761.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/6] dt-bindings: media: video-interfaces: add support
+ for Virtual Channel IDs
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Dave Stevenson <dave.stevenson@raspberrypi.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20250220230818.275262-1-demonsingur@gmail.com>
+ <20250220230818.275262-2-demonsingur@gmail.com>
+ <Z7g7iCUlsUN2LBIW@kekkonen.localdomain>
+From: Cosmin Tanislav <demonsingur@gmail.com>
+Content-Language: en-US
+In-Reply-To: <Z7g7iCUlsUN2LBIW@kekkonen.localdomain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-The following commit has been merged into the x86/cpu branch of tip:
 
-Commit-ID:     64aad4749d7911f8c5e69d93a929a269605dd3cb
-Gitweb:        https://git.kernel.org/tip/64aad4749d7911f8c5e69d93a929a269605dd3cb
-Author:        Artem Bityutskiy <artem.bityutskiy@linux.intel.com>
-AuthorDate:    Sun, 16 Feb 2025 14:26:14 +02:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Fri, 21 Feb 2025 15:17:07 +01:00
 
-ACPI/processor_idle: Export acpi_processor_ffh_play_dead()
+On 2/21/25 10:38 AM, Sakari Ailus wrote:
+> Hi Cosmin,
+> 
+> Thanks for the patches.
+> 
+> On Fri, Feb 21, 2025 at 01:08:09AM +0200, Cosmin Tanislav wrote:
+>> Multi-camera systems often have issues with receiving video streams
+>> from multiple cameras at the same time because the cameras use the same
+>> Virtual Channel IDs.
+>>
+>> CSI bridges might not support remapping the Virtual Channel IDs, making
+>> it impossible to receive the separate video streams at the same
+>> time, while the CSI receiver is able to de-mux streams based on VC IDs.
+>>
+>> Cameras sometimes have support for changing the VC IDs they output
+>> themselves.
+>>
+>> For a practical example, GMSL2 deserializer chips do not support VC ID
+>> remapping in tunnel mode, and neither do the serializers. Allowing the
+>> cameras to have their VC IDs configured would allow multi-camera setups
+>> to use tunnel mode.
+> 
+> We've tried to avoid having virtual channels in firmware and in UAPI,
+> I'm not yet entirely convinced we need to depart from the established
+> practices. Let's see. Apart from that, please see my comments below.
+> 
 
-The kernel test robot reported the following build error:
+Can you think if any other way of handling this? The most useful way
+would be to have it accessible at runtime so that devices upstream of
+the cameras could assign the VC IDs dynamically.
 
-  >> ERROR: modpost: "acpi_processor_ffh_play_dead" [drivers/acpi/processor.ko] undefined!
+This would be useful when having more cameras than the maximum supported
+number of VC IDs (4, without extended VC IDs), and streaming from them
+selectively.
 
-Caused by this recently merged commit:
+For example, for 8 cameras, you'd have to prepare your VC IDs in advance
+to fit the streaming selection you want to make. If the cameras 0 to 7
+have the VC IDs 0, 1, 2, 3, 0, 1, 2, 3, you wouldn't be able to stream
+camera 0 together with camera 4.
 
-  541ddf31e300 ("ACPI/processor_idle: Add FFH state handling")
+Dynamic configuration of the VC IDs would solve that usecase since it
+would assign VC IDs based on the routed streams.
 
-The build failure is due to an oversight in the 'CONFIG_ACPI_PROCESSOR=m' case,
-the function export is missing. Add it.
+v4l2_subdev_pad_ops has a .set_frame_desc() that could be used to apply
+an updated v4l2_mbus_frame_desc, after retrieving it using
+.get_frame_desc(). Cameras that don't support VC ID remapping would just
+modify the v4l2_mbus_frame_desc to restore the VC ID to the original one
+(similar to how set_fmt() can modify the passed in format to what it
+supports) and the caller would have to handle that situation how it sees
+fit.
 
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202502151207.FA9UO1iX-lkp@intel.com/
-Fixes: 541ddf31e300 ("ACPI/processor_idle: Add FFH state handling")
-Signed-off-by: Artem Bityutskiy <artem.bityutskiy@linux.intel.com>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Link: https://lore.kernel.org/r/de5bf4f116779efde315782a15146fdc77a4a044.camel@linux.intel.com
----
- arch/x86/kernel/acpi/cstate.c | 1 +
- 1 file changed, 1 insertion(+)
+Does that sound better than sticking the VC ID in device tree?
 
-diff --git a/arch/x86/kernel/acpi/cstate.c b/arch/x86/kernel/acpi/cstate.c
-index 5bdb655..86c87c0 100644
---- a/arch/x86/kernel/acpi/cstate.c
-+++ b/arch/x86/kernel/acpi/cstate.c
-@@ -214,6 +214,7 @@ void acpi_processor_ffh_play_dead(struct acpi_processor_cx *cx)
- 	percpu_entry = per_cpu_ptr(cpu_cstate_entry, cpu);
- 	mwait_play_dead(percpu_entry->states[cx->index].eax);
- }
-+EXPORT_SYMBOL_GPL(acpi_processor_ffh_play_dead);
- 
- void __cpuidle acpi_processor_ffh_cstate_enter(struct acpi_processor_cx *cx)
- {
+>>
+>> Add support for specifying these Virtual Channel IDs in Video Interface
+>> Endpoints. The supported values are 0 to 3, with a maximum of 4 values.
+>> Although the CSI-2 specification allows for up to 32 virtual channels,
+>> most hardware doesn't support more than 4. This can be extended later
+>> if need be.
+>>
+>> Signed-off-by: Cosmin Tanislav <demonsingur@gmail.com>
+>> ---
+>>   .../devicetree/bindings/media/video-interfaces.yaml   | 11 +++++++++++
+>>   1 file changed, 11 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/media/video-interfaces.yaml b/Documentation/devicetree/bindings/media/video-interfaces.yaml
+>> index 038e85b45befa..414b5fa8f3472 100644
+>> --- a/Documentation/devicetree/bindings/media/video-interfaces.yaml
+>> +++ b/Documentation/devicetree/bindings/media/video-interfaces.yaml
+>> @@ -231,6 +231,17 @@ properties:
+>>         shall be interpreted as 0 (ABC). This property is valid for CSI-2 C-PHY
+>>         busses only.
+>>   
+>> +  vc-ids:
+> 
+> Other properties aren't using abbreviations, at least most of them. How
+> about "virtual-channels"?
+> 
+>> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+>> +    minItems: 1
+>> +    maxItems: 4
+> 
+> Shouldn't this be 32?
+> 
+>> +    items:
+>> +      maximum: 3
+> 
+> 31 here, too.
+> 
+>> +    description:
+>> +      An array of Virtual Channel IDs. These are unsigned integers that specify
+> 
+> I'd leave out the explanation on the data type. It's redundant.
+> 
+>> +      the VC IDs used by the device for its data streams. This property is valid
+>> +      for MIPI CSI-2 only.
+>> +
+>>     strobe:
+>>       $ref: /schemas/types.yaml#/definitions/uint32
+>>       enum: [ 0, 1 ]
+> 
+
 
