@@ -1,137 +1,99 @@
-Return-Path: <linux-kernel+bounces-525425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525414-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64942A3EFBA
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:13:59 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6CD5A3EFA0
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:10:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07FD91890411
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:13:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F40917F2C9
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:08:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F14B2036F6;
-	Fri, 21 Feb 2025 09:13:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FF002036E8;
+	Fri, 21 Feb 2025 09:07:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ULDQ2ZjH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="RWpNzL91"
+Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B6291FC11E;
-	Fri, 21 Feb 2025 09:13:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0449202F68
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 09:07:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740129219; cv=none; b=Vog2NBZnEjv8DqQhUU3zC8QiRDz2GRdCQmriVEq8sgYMrrSGbvtWjylid/Y9FZK2KJCcviOJV8CY+rHTxgYGJEN0JijrhqjvroejpnvhnTRJ6qni17y8vSt77k2ujBx2TO2c4cPA9hDbKe0NEb5RryX2dri0x8DGEdDID7vTCQE=
+	t=1740128874; cv=none; b=qbWDf5o5nrnMVOOy38+H4ttxaFz7NiNt5l58vUm8mgvloS1nWFAVpF76MAUXZvKIWg6WDgUUKOEHomznWLf7I4uINW85AVyjVh5d0CvlTYx7EyJhaG6NObdNQVU0HGJg6rcy37R+uP6F7294eXJ1U3jSjoe2D8+mpFH5+cwhsFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740129219; c=relaxed/simple;
-	bh=rDEihz2SYq+qWRIswF8iAj6c1YlBHyFHD/d/IEGQKvg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JBChZbL0JFpTNqklEgRFpcP2zePKyiZeUexAr2Kj0nh6tQ0JpPiFXbD43ohu47M6H+0MHOI+ilwKF12lj2RgGtJXiZ5snEUnFvKEGdYMacti00T1NqgPDtnMksV0FUHCfGdGWkYJTCwIrpKhcQaMsFkTwPZwFnGowd3m3pvBv9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ULDQ2ZjH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73B57C4CED6;
-	Fri, 21 Feb 2025 09:13:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740129219;
-	bh=rDEihz2SYq+qWRIswF8iAj6c1YlBHyFHD/d/IEGQKvg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ULDQ2ZjH02Hj782GvcFfA82R6BeT8ck4xAGbF1R7G9A1V6rPQ+XUGRLwETaN5KaRH
-	 iJsup2Fu+bhvBseHfPDLh3UbOgoTzye12t+JfSzVVAu9tk5/Zviqzh8uSqjt0oFWPq
-	 k/Scy0aQAwbKtKeIDAaBF/6j6XRPGLqal+hgUbcwL2XIdtZj4a0GgEMYtREIFuEU0x
-	 Zv7bFWsLpR83Rwm/3dDdXlVa4jevjYdDmA080UR1FlIBH2uzTx+xNAYlKLNyUOLMLq
-	 nK4s2UecTMKwxGxVK2a+Z9MWB++Xg9c0Y7KjorfLW0oPTQBmSKyjeAwPWN93Xo2MXT
-	 IaQ0uqQjn2iIA==
-Date: Fri, 21 Feb 2025 08:59:54 +0100
-From: Joel Granados <joel.granados@kernel.org>
-To: Heiko Carstens <hca@linux.ibm.com>
-Cc: Kees Cook <kees@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, 
-	Namhyung Kim <namhyung@kernel.org>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
-	Adrian Hunter <adrian.hunter@intel.com>, "Liang, Kan" <kan.liang@linux.intel.com>, 
-	"David S. Miller" <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>, 
-	Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev <agordeev@linux.ibm.com>, 
-	Christian Borntraeger <borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>, 
-	Gerald Schaefer <gerald.schaefer@linux.ibm.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Len Brown <lenb@kernel.org>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, sparclinux@vger.kernel.org, 
-	linux-s390@vger.kernel.org, linux-acpi@vger.kernel.org
-Subject: Re: [PATCH 7/8] s390: mv s390 sysctls into their own file under
- arch/s390 dir
-Message-ID: <yiuirrlckwb5ressit6gcoi6yljcy6ggtopaf5bsgpxb5jp4v4@azntrnnk7zdr>
-References: <20250218-jag-mv_ctltables-v1-0-cd3698ab8d29@kernel.org>
- <20250218-jag-mv_ctltables-v1-7-cd3698ab8d29@kernel.org>
- <20250218140821.7740Ab5-hca@linux.ibm.com>
+	s=arc-20240116; t=1740128874; c=relaxed/simple;
+	bh=ZoewP+I7MPJSYwRR1gmRB8PDPc9ZAqkchO++ck4YW7w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=b0J5HC7cXAz4thDRZRDwl319UME03GkH27wolp7OhuW2SPi+DgNhV5J2JHLy7K43BMt0VwaDWsuo7+meGDDtTMUrqOgjwr78a2sKmyNYGwiZbeMN/g5SkXLqsHFCnhfPDuWXVunw6q3p+ZpW+BVgP5vwijK3sM3DAhQoEcOZFpI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=RWpNzL91; arc=none smtp.client-ip=91.218.175.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1740128860;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=wprGiDaMDqnJuc56NWAkjn4Xo990TLMpiIEvRYQHvNA=;
+	b=RWpNzL91fOV76E4FT0Qg1C1hW03gGljtkq+1rcl4o1rRdp8vAwk2Q3E5EhojRW8NAMhROb
+	B4mqaqvylpwrNmXriJqprBcMf3Kg690gJS8tS8Dt/IwPPFWgibki9ZwbfcZjPFL5ccqWZe
+	cROndeaTRWEenWJIUJbVqOww26KKyLo=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Saeed Mahameed <saeedm@nvidia.com>,
+	Leon Romanovsky <leon@kernel.org>,
+	Tariq Toukan <tariqt@nvidia.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Yevgeny Kliteynik <kliteyn@nvidia.com>,
+	Mark Bloch <mbloch@nvidia.com>,
+	Itamar Gozlan <igozlan@nvidia.com>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	Jacob Keller <jacob.e.keller@intel.com>,
+	Saeed Mahameed <saeed@kernel.org>,
+	netdev@vger.kernel.org,
+	linux-rdma@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [RESEND PATCH net-next] net/mlx5: Use secs_to_jiffies() instead of msecs_to_jiffies()
+Date: Fri, 21 Feb 2025 09:53:22 +0100
+Message-ID: <20250221085350.198024-3-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250218140821.7740Ab5-hca@linux.ibm.com>
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Feb 18, 2025 at 03:08:21PM +0100, Heiko Carstens wrote:
-> On Tue, Feb 18, 2025 at 10:56:23AM +0100, joel granados wrote:
-> > Move s390 sysctls (spin_retry and userprocess_debug) into their own
-> > files under arch/s390. We create two new sysctl tables
-> > (2390_{fault,spin}_sysctl_table) which will be initialized with
-> > arch_initcall placing them after their original place in proc_root_init.
-> > 
-> > This is part of a greater effort to move ctl tables into their
-> > respective subsystems which will reduce the merge conflicts in
-> > kerenel/sysctl.c.
->   ^^^^^^^
-> typo
-Fixed
+Use secs_to_jiffies() and simplify the code.
 
-> 
-> > diff --git a/arch/s390/lib/spinlock.c b/arch/s390/lib/spinlock.c
-> > index a81a01c44927..4483fdc9d472 100644
-> > --- a/arch/s390/lib/spinlock.c
-> > +++ b/arch/s390/lib/spinlock.c
-> > @@ -17,6 +17,10 @@
-> >  #include <asm/alternative.h>
-> >  #include <asm/asm.h>
-> >  
-> > +#if defined(CONFIG_SMP)
-> > +#include <linux/sysctl.h>
-> > +#endif
-> > +
-> ...
-> > +#if defined(CONFIG_SMP)
-> > +static const struct ctl_table s390_spin_sysctl_table[] = {
-> > +	{
-> > +		.procname	= "spin_retry",
-> > +		.data		= &spin_retry,
-> > +		.maxlen		= sizeof(int),
-> > +		.mode		= 0644,
-> > +		.proc_handler	= proc_dointvec,
-> > +	},
-> > +};
-> > +
-> > +static int __init init_s390_spin_sysctls(void)
-> > +{
-> > +	register_sysctl_init("kernel", s390_spin_sysctl_table);
-> > +	return 0;
-> > +}
-> > +arch_initcall(init_s390_spin_sysctls);
-> > +#endif
-> 
-> I see that you want to keep the existing CONFIG_SMP behaviour, but since a
-> long time s390 enforces CONFIG_SMP=y (this was obviously never reflected in
-> kernel/sysctl.c).
-> Therefore the above ifdefs should be removed, and in addition the include
-> statement should be added to the other linux includes at the top of the file.
-I'll add these changes to my V2
+Reviewed-by: Jacob Keller <jacob.e.keller@intel.com>
+Reviewed-by: Saeed Mahameed <saeed@kernel.org>
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+Resend with "net-next" in the title as suggested by Jacob and Saeed.
+---
+ drivers/net/ethernet/mellanox/mlx5/core/steering/hws/bwc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thx for the review
-
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/steering/hws/bwc.c b/drivers/net/ethernet/mellanox/mlx5/core/steering/hws/bwc.c
+index 3dbd4efa21a2..19dce1ba512d 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/steering/hws/bwc.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/steering/hws/bwc.c
+@@ -220,7 +220,7 @@ static int hws_bwc_queue_poll(struct mlx5hws_context *ctx,
+ 			      bool drain)
+ {
+ 	unsigned long timeout = jiffies +
+-				msecs_to_jiffies(MLX5HWS_BWC_POLLING_TIMEOUT * MSEC_PER_SEC);
++				secs_to_jiffies(MLX5HWS_BWC_POLLING_TIMEOUT);
+ 	struct mlx5hws_flow_op_result comp[MLX5HWS_BWC_MATCHER_REHASH_BURST_TH];
+ 	u16 burst_th = hws_bwc_get_burst_th(ctx, queue_id);
+ 	bool got_comp = *pending_rules >= burst_th;
 -- 
+2.48.1
 
-Joel Granados
 
