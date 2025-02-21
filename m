@@ -1,185 +1,117 @@
-Return-Path: <linux-kernel+bounces-526021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2111A3F8E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:34:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFFE7A3F8EA
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:35:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CEE18645BD
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 15:31:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71B1719E1FF5
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 15:32:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F30DD214201;
-	Fri, 21 Feb 2025 15:27:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E608E2153CF;
+	Fri, 21 Feb 2025 15:29:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fR9/Oyoi"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="h+qejeEB"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64DCF212B07;
-	Fri, 21 Feb 2025 15:27:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E86ED215F40
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 15:29:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740151649; cv=none; b=ORk+50aK8IwKc8gM3fO7WAYJ7MZUv1VC1FVaba9hYQLUG4JEDwQx7UHbp1fzOYVTBSPTQXW9cwMjVBD0/7EgA2eDq8FCxyLqKdqGF1WpqYpnAt1H2BHnrEqZY1Eg6BSBxzQlsbiRmv56YGTqUGQI9VRtbiSZNBdGRGkQzFvhQn4=
+	t=1740151772; cv=none; b=N2QT4nMfiOwtVRpVGT2/zKNcscF5dUjFVO0ZcRHtUvwtCUbgg1VEOIZIIxyBj5iLZelmM14kOkfCI0882z5ZoeIwm+TjAP4qMRwv/H4rcyoK7s4Pgs1nsUBdc4akIdtnjwNAn8O8EZGUYq0qcqhc21vhydtq0Seh/vE26/HjM4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740151649; c=relaxed/simple;
-	bh=5yxGsMRYTXuIQYRwb+D3swc/pR+GWOkx1HET+lS/Qcg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YJD6WRDir83QjAYRabXWP+coes6OVGJdh3RG2r3G1YUJJ3TemO7uTmVZTugRkM7Snu0K8hU5L109XQyHELTqaC8eCyrMHZfCCBXNrKXxBcVI2Gj7WZrR2OD2WkyQwE0djoxiRPBlezjjUMw1/ydoXZInb2Z+A6+WR+iTtLUlS5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fR9/Oyoi; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-38f3913569fso2018412f8f.1;
-        Fri, 21 Feb 2025 07:27:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740151646; x=1740756446; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4lCZ8MAj4Q/VEcZka8A73ItGpOE2Ji1aovZAZl6qhTA=;
-        b=fR9/Oyoi2UYmu7jZrGS/5a2/hT+hEOpRshRP+gYkEiS8EzdD6kGfRHtnM2Pcc3JtMJ
-         Jxizi8rUtX3Zf1ZC/dVnbs89Gd5oAVFuGnDh1C01hQiARjD8LHy+T8FGUnQ5J7oQmZJ+
-         SCPi64NKQ9rLBrz24o3fOEmfGzJ3hs/6o2V6CPSn8qQd8q5VOXczPij382vhm8eLpzvx
-         w+5TMTdUKeGZ0tK1bq1O/7u06tLG9MF16KQyBcU7tTrlyvREEjf2vM2lZlimxzRNTsDE
-         XzvkikiN80HpQr1y/XFarDP4BeyzO5+QqeHDj/ST9+Sb/5lcwAIpGSNX6upkA04ju7Vo
-         NhPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740151646; x=1740756446;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4lCZ8MAj4Q/VEcZka8A73ItGpOE2Ji1aovZAZl6qhTA=;
-        b=FMeHG7qhad+rlONxiWhCQTJBnj//aPf0+kgpGdbgyeH8BDARDyHU0KC/k2BmgaT1tw
-         /GUtwNWiA+MePoS/Mz0TqP1QgXboGMwDRGuTZ6dPJbNxSB2cOBQIaBNxfFaCvs4w+LWE
-         /QGoMVWCanVXpmYbwtBWbRh8pphVoknDJcBp7c/oPuIpCYWFk0wX3ADdeep0Ub1W3p8f
-         Sn08qvbDyrrq17mNt7jnFeCSOMPuI9W0ARZcXIxjZw4wRmgW+olw6uEWtlk0/bZ0wAT/
-         nFXJnV5OpEGbyWa0XWcwc+dlt1bU8niHxNJsemBkKUPqNorhsB/OyTfH6O2D22xUEm9h
-         2M2w==
-X-Forwarded-Encrypted: i=1; AJvYcCVjNhFKb74FkNl4d2EZQAsCA+Jql5QdzHeK72F4JtqbEnGYr4a/ZCST7ZKxBvOJ81ph3sMz6n7X/06Nna54@vger.kernel.org, AJvYcCXdHACOcv8gY/YtjldUtZZZUBpaG+nR7v58HG7MzgnAOGtJmw+HGVhMwVg6gkH7jKS2bFC02epUVA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwoL8104NqDImGu2W5l8NQgCvCe+KOFV1aRHVVRrHMSGrpAmOVK
-	lQOMhaCP1T4JuLhhopKh6QsGO6rJ9w3lFSF9odEi2XefUl2TpCu7JWjcyg==
-X-Gm-Gg: ASbGnct0JlxnBW2w2Rv1dHUyH4RYmfuX+QhLYC2YQnQaR/ti3GFpQDDG/UGoUsAtGuO
-	KNcfDIbrfu3vFkpbV/8vF2+d0oOIMM1rxtWYOl3BmyqO7Tpb+2/U8sqp4lSOwcLP07BIf15EV3d
-	9wWMTb9bAlNbGxsCMZ0enQtmZ0DcC9XNoxEcJNpkf0GYNEZ64SrW5TGYFEQmQyzUjt0if+aStBR
-	6Q/bTZQt0kFidgAW/ToA3ih4Q7L8g1q/4mV60nxKYaWFJXEj9PFR9i2cOV63b8kritwZhx3VNht
-	sBBTLzRaA4SLZqkLKpEVx1j56UfmJDlTcWwa
-X-Google-Smtp-Source: AGHT+IGD/aMM2q3Rt2CDkJPFyBfFg5d7nPBarKdfXefG+hE2yGfdQ1oLqoKGdgaTbF12wddYzIBM6Q==
-X-Received: by 2002:a05:6000:1862:b0:38d:b349:2db2 with SMTP id ffacd0b85a97d-38f6f515313mr2830130f8f.22.1740151645193;
-        Fri, 21 Feb 2025 07:27:25 -0800 (PST)
-Received: from [192.168.8.100] ([148.252.141.194])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f258ccd3bsm23702128f8f.22.2025.02.21.07.27.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Feb 2025 07:27:24 -0800 (PST)
-Message-ID: <b4e6ef48-6b3e-4b62-978c-6e80d3e9218e@gmail.com>
-Date: Fri, 21 Feb 2025 15:28:28 +0000
+	s=arc-20240116; t=1740151772; c=relaxed/simple;
+	bh=RPWq7Di80wCaezBdT5MKfthytldTTyeI8zqYu5ssG9A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DDvKG5ip7rwL5BrUHDXO8iw5zCJzZVvi7Bnmdf0G+aF27nIzscARr/hi6GIAYmZGIzgzueEZgq/rOBwiWCsOIiE2DCSkeUhQWcbQ7o4Eirc1041X2FFUULyWOuaNOzDK/RP2Z+BbR4lRbKdX1ZotoMtA5+9dc2WKnMtQ+MjXvAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=h+qejeEB; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740151768;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ic1/uViOEImLUfOGxnGRSWveOc6wET399Ae2ZdSNHEc=;
+	b=h+qejeEBMi7n15RS4Ng0N3d2Rp74Lwg1RSMFqXHHwEJ7dsK+LscZ+xg0JQSxtdvxLSnINp
+	ClIbUDND+AHuH2oy1swcI2OKRkiTxGuLs0Ruoyrmc222yF0JQIwyqiD/cWpuigUN45aIvB
+	6Dj737DB5RHWeXAQxD6rJyk83w2gwVI=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-30-W3hhLAD0P8O_s-BkpsjBfQ-1; Fri,
+ 21 Feb 2025 10:29:25 -0500
+X-MC-Unique: W3hhLAD0P8O_s-BkpsjBfQ-1
+X-Mimecast-MFC-AGG-ID: W3hhLAD0P8O_s-BkpsjBfQ_1740151763
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E2F6619373D8;
+	Fri, 21 Feb 2025 15:29:20 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.44.32.97])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 3BE231800943;
+	Fri, 21 Feb 2025 15:29:11 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Fri, 21 Feb 2025 16:28:51 +0100 (CET)
+Date: Fri, 21 Feb 2025 16:28:41 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: Tong Tiangen <tongtiangen@huawei.com>
+Cc: David Hildenbrand <david@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Peter Xu <peterx@redhat.com>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org,
+	bpf@vger.kernel.org, wangkefeng.wang@huawei.com,
+	Guohanjun <guohanjun@huawei.com>
+Subject: Re: [PATCH -next v2] uprobes: fix two zero old_folio bugs in
+ __replace_page()
+Message-ID: <20250221152841.GA24705@redhat.com>
+References: <20250221015056.1269344-1-tongtiangen@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 2/2] io_uring/io-wq: try to batch multiple free work
-To: Bui Quang Minh <minhquangbui99@gmail.com>, io-uring@vger.kernel.org
-Cc: Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org
-References: <20250221041927.8470-1-minhquangbui99@gmail.com>
- <20250221041927.8470-3-minhquangbui99@gmail.com>
- <f34a5715-fae0-406e-a27b-7e94e3113641@gmail.com>
- <e4be0a96-8e09-4591-96fe-a1d38208875a@gmail.com>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <e4be0a96-8e09-4591-96fe-a1d38208875a@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250221015056.1269344-1-tongtiangen@huawei.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On 2/21/25 14:52, Bui Quang Minh wrote:
-> On 2/21/25 19:44, Pavel Begunkov wrote:
->> On 2/21/25 04:19, Bui Quang Minh wrote:
->>> Currently, in case we don't use IORING_SETUP_DEFER_TASKRUN, when io
->>> worker frees work, it needs to add a task work. This creates contention
->>> on tctx->task_list. With this commit, io work queues free work on a
->>> local list and batch multiple free work in one call when the number of
->>> free work in local list exceeds IO_REQ_ALLOC_BATCH.
->>
->> I see no relation to IO_REQ_ALLOC_BATCH, that should be
->> a separate macro.
->>
->>> Signed-off-by: Bui Quang Minh <minhquangbui99@gmail.com>
->>> ---
->>>   io_uring/io-wq.c    | 62 +++++++++++++++++++++++++++++++++++++++++++--
->>>   io_uring/io-wq.h    |  4 ++-
->>>   io_uring/io_uring.c | 23 ++++++++++++++---
->>>   io_uring/io_uring.h |  6 ++++-
->>>   4 files changed, 87 insertions(+), 8 deletions(-)
->>>
->>> diff --git a/io_uring/io-wq.c b/io_uring/io-wq.c
->>> index 5d0928f37471..096711707db9 100644
->>> --- a/io_uring/io-wq.c
->>> +++ b/io_uring/io-wq.c
->> ...
->>> @@ -601,7 +622,41 @@ static void io_worker_handle_work(struct io_wq_acct *acct,
->>>               wq->do_work(work);
->>>               io_assign_current_work(worker, NULL);
->>>   -            linked = wq->free_work(work);
->>> +            /*
->>> +             * All requests in free list must have the same
->>> +             * io_ring_ctx.
->>> +             */
->>> +            if (last_added_ctx && last_added_ctx != req->ctx) {
->>> +                flush_req_free_list(&free_list, tail);
->>> +                tail = NULL;
->>> +                last_added_ctx = NULL;
->>> +                free_req = 0;
->>> +            }
->>> +
->>> +            /*
->>> +             * Try to batch free work when
->>> +             * !IORING_SETUP_DEFER_TASKRUN to reduce contention
->>> +             * on tctx->task_list.
->>> +             */
->>> +            if (req->ctx->flags & IORING_SETUP_DEFER_TASKRUN)
->>> +                linked = wq->free_work(work, NULL, NULL);
->>> +            else
->>> +                linked = wq->free_work(work, &free_list, &did_free);
->>
->> The problem here is that iowq is blocking and hence you lock up resources
->> of already completed request for who knows how long. In case of unbound
->> requests (see IO_WQ_ACCT_UNBOUND) it's indefinite, and it's absolutely
->> cannot be used without some kind of a timer. But even in case of bound
->> work, it can be pretty long.
-> That's a good point, I've overlooked the fact that work handler might block indefinitely.
->> Maybe, for bound requests it can target N like here, but read jiffies
->> in between each request and flush if it has been too long. So in worst
->> case the total delay is the last req execution time + DT. But even then
->> it feels wrong, especially with filesystems sometimes not even
->> honouring NOWAIT.
->>
->> The question is, why do you force it into the worker pool with the
->> IOSQE_ASYNC flag? It's generally not recommended, and the name of the
->> flag is confusing as it should've been more like "WORKER_OFFLOAD".
-> 
-> 
-> I launched more workers to parallel the work handler, but as you said, it seems like an incorrect use case.
+On 02/21, Tong Tiangen wrote:
+>
+> --- a/kernel/events/uprobes.c
+> +++ b/kernel/events/uprobes.c
+> @@ -506,6 +506,11 @@ int uprobe_write_opcode(struct arch_uprobe *auprobe, struct mm_struct *mm,
+>  	if (ret <= 0)
+>  		goto put_old;
+>
+> +	if (is_zero_page(old_page)) {
+> +		ret = -EINVAL;
+> +		goto put_old;
+> +	}
 
-Not as much incorrect as generally inefficient and not recommended,
-especially not recommended before trying it without the flag. People
-often fall into the trap of "Oh, it's _async_, surely I have to set it",
-really unfortunate naming.
+I agree with David, the subject looks a bit misleading.
 
-> However, I think the request free seems heavy, we need to create a task work so that we can hold the uring_lock to queue the request to ctx->submit_state->compl_reqs. Let me play around more to see if I can find an optimization for this.
+And. I won't insist, this is cosmetic, but if you send V2 please consider
+moving the "verify_opcode()" check down, after the is_zero_page/PageCompound
+checks.
 
-That's because it's a slow fallback path for cases that can't do
-async for one reason or another, and ideally we wouldn't have it
-at all. In reality it's used more than I'd wish for, but it's
-still a path we don't heavily optimise.
-
-Btw, if you're really spamming iowq threads, I'm surprised that's
-the only hotspot you have. There should be some contention for
-CQE posting (->completion_lock), and probably in the iowq queue
-locking, and so on.
-
--- 
-Pavel Begunkov
+Oleg.
 
 
