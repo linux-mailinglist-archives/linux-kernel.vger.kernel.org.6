@@ -1,385 +1,195 @@
-Return-Path: <linux-kernel+bounces-525132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80D8BA3EB3C
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 04:21:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3914BA3EB3D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 04:23:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84C7A19C5E1C
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 03:22:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DA5519C5DE1
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 03:23:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF8491F3FD7;
-	Fri, 21 Feb 2025 03:21:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 001F81F427D;
+	Fri, 21 Feb 2025 03:22:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="maf9e9SY"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PKgFIzzA"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B46A61D63DF
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 03:21:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75EC986347
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 03:22:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740108106; cv=none; b=DtEK+fFCyxeiU2Fj2I48OfiqsC3SfRDcI6qQAjLUWy7c5o2jwkA2B0XgfDeFXTtIXyBwdXiWUwwG32Fl3waZKbAtTvPX4sLh52nuj75Q6AqNSd/w/x73i5JOGum+Oxs51kfgef2hIIeKtKV2/tmMsvosnz2DA98yehRcsj7ZZz8=
+	t=1740108174; cv=none; b=URi+HamyKlghTi4t4fjRCOfJgoNKFsV9BVT5r+Sq9X77BYdCrswDVXlfoXPHmGv7Yk1fkMh0/BQmbIAdbTbwSIxokO7WkqzPzOqqqsffGVKfWVyEPDlxQy3kx993dx3WCOcUkrkcEUOXXgxVBH59uXv+m3PAbWbZXX/O5Qhhi64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740108106; c=relaxed/simple;
-	bh=9lQloC8xrSrvv0NL4PTcGbjNs7+WeOoNHlIVlv8UiaI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BhBmjrtKpU9TvkTZ0J3mgdMVoz14PMPNZr4P/PpDF39K7B+EtFkjDrsdpRYJpaN2+xOpKub5Aq802hMhEk7FVjZ04phUq2+Mr7gM+gBVDQ4kILdyiM6Z3lLf4YC3KfcKFe9ZzEZfKglwkSas5AapaovrTTFJ88vWyvIEMFrl7s4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=maf9e9SY; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4394a0c65fcso16247855e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 19:21:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740108103; x=1740712903; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Tav3PNxevwKiDqCQMCZ2Ad3WIauSHdQjU2aO6+32oKU=;
-        b=maf9e9SYbNU4tmmkNDY0pNzgffVJvRG5p/GgN4wAj3GNzjwZBUEPoMtwmKVF8zNO2r
-         aVvMBPLoPnV2uPpQJSpCySUUoGI+l6Ai5y1WyXKdtihKYHEC+jKRD5BQ6DxKNKSpWUuh
-         ASlZ13R/KiKJmxHi3zqdlW3YKYaZ4oGnfWliHRsR/4ujbY59yCdgkFsfnUmh1/2avOKJ
-         dSVfxEuJyUelIW3DcLixIH46xZqdK+dp0wWt0o1ByBpd3puX4AabrVWRTXv7P0z8RPPl
-         2Ia1elAyMU2+p6A6GNJNUCiiBwD/G7sST3haX9yBkVhzjUkcYsGLD4Yr0KetgwmQa4qO
-         Dxzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740108103; x=1740712903;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Tav3PNxevwKiDqCQMCZ2Ad3WIauSHdQjU2aO6+32oKU=;
-        b=J4k0CbpnpxdbiCCoEtZcWXsmIr59Ot0euT97la+ttz3U4ZQVbkhneU70qjfEdAEgEE
-         Io0uxJ4QP8VV25ePvwxFEQp02qJsMMXH2RqziqQdcTltPfrOE5374a+s5jY73NQ9s9+C
-         6/0jNSCxih5TYL8XO8mRleeIPjXJjp4DEjdre+2rSaF2bQFBUXLYvJM68ev78JBA1+Gq
-         IxJb7UfQPjYUDJabel2UyFOGC2CYx4FJLFzTAV/rxg7BRtw+kr1YtsIKSxzHHHtcVUDO
-         z7cXK1bvGqUJwiP6lX15AkfyWLgSxBLvKlCbzc/1O6+GgSPe00k93+Nm182gq4GwO2qp
-         ieUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX2fOXD78e5ZWQ28C9OGuhL8glHAqUZKM5h4WZyNhC9YCkaSUErNPIwPf/YRXmXIMZcsBHlYGVHTlX6C4w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUKa6H50yCrXH/O8No/FM5XctebsCjxB1DXGVz18ZxiAeY9nWz
-	BRFJNBwD6BLSV129y1xX6NcEPgproeU6GBb936LWVUDh1tCXzdFcrh7glGEjglA=
-X-Gm-Gg: ASbGnct2rLm4NJ4mtgkQyWdm37AmzczZEjeM3Zcxz49wyWuKmmPz807PnCQoltWQg6Q
-	Er5M7CsowXZv1DjDBs7XVScNXR6h4j/3aAjyaq8t+SYQaJaLzaGIoNOKfY5gNQr4ZEZ6vKWiqsw
-	ZeMA3iOqsK/2msZSJTYVCUh0teOTjflFdaVF5VQYz2RypbdqpziXSoi8w8shDylpWVsc7iuanE8
-	Wvuvb8EyvqtpQmYaXA4Zw/VIfuK2UQgJGYbvcUuIz5Y8tuyxF7oE72i2HE/mQ9Pfx+uAKGS1QNn
-	0rvf0aNLKv6NJ5H51U92RZyU+wA6cpW2vuOpyAthZu5f
-X-Google-Smtp-Source: AGHT+IFHRKBF41ynLQkyGP19rFquObp3TYcaLCdzafxkPCgt8hie9i36wOi7U4rAgvAVyC9I9BlmXw==
-X-Received: by 2002:a05:600c:524a:b0:439:86c4:a8ec with SMTP id 5b1f17b1804b1-439ae1f1147mr12496995e9.15.1740108102943;
-        Thu, 20 Feb 2025 19:21:42 -0800 (PST)
-Received: from localhost.localdomain ([2.124.154.225])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-439b02f5b38sm3725615e9.24.2025.02.20.19.21.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Feb 2025 19:21:41 -0800 (PST)
-From: Alexey Klimov <alexey.klimov@linaro.org>
-To: srinivas.kandagatla@linaro.org,
-	broonie@kernel.org,
-	lgirdwood@gmail.com
-Cc: krzysztof.kozlowski@linaro.org,
-	steev@kali.org,
-	perex@perex.cz,
-	tiwai@suse.com,
-	jdelvare@suse.com,
-	linux@roeck-us.net,
-	linux-sound@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-hwmon@vger.kernel.org
-Subject: [PATCH v2] ASoC: codecs: wsa883x: Implement temperature reading and hwmon
-Date: Fri, 21 Feb 2025 03:21:41 +0000
-Message-ID: <20250221032141.1206902-1-alexey.klimov@linaro.org>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1740108174; c=relaxed/simple;
+	bh=eOaUX2jxhFsGUZlrmXt3butQF1UC0A1TChXKbzzXMiI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VASizZiB0S8cgCekZBkzZCSkJBZ0zv/8v9D/LeQOEr+/LysfvGU6hjgPYRRj2ColeZDCC369aTSbsrHmpYcEIelSUYcQnmSAl5cnIUQfJYCzEGWajUDrSkb9NwNmFg9TFtckrA90k74tRBzy9fuxUgLrbsbH+YSaonUadAF12zA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PKgFIzzA; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740108173; x=1771644173;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=eOaUX2jxhFsGUZlrmXt3butQF1UC0A1TChXKbzzXMiI=;
+  b=PKgFIzzAJJhS+iP0K8A5gwffjHob+bdte1VTIjpWnQKLr9BqSeF98Wkx
+   bFeiixevmJYIAx7YOvw219JO6xauf0JmcgrsSszPXyHT2KlnNk/8GUoud
+   dHcsBO4YxXYgmi0Qa3leY/+CXrprYhqKUoU2pX/QApZiYORdIJtmHNB04
+   rUkCNe32XXyaYbF+vHH9+UmR2mehXdksjno3Fjh7unNXpMx5p4zGjATU0
+   z9hkNNVqlA/WDdUnaWPLrIpGjx43ucCKzXZd/Sn6isMh5bqskorKaaRQ/
+   wesxrcyorgJ4nFYywm8eHR53Yay44j5EPSiEXjtdZu73CV6tz9N4elk5b
+   A==;
+X-CSE-ConnectionGUID: bBSW7BBiQ9+IlfubYNufFg==
+X-CSE-MsgGUID: FTiVlCt8Ry2HTzOjfn9v2Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11351"; a="51906641"
+X-IronPort-AV: E=Sophos;i="6.13,303,1732608000"; 
+   d="scan'208";a="51906641"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Feb 2025 19:22:52 -0800
+X-CSE-ConnectionGUID: 1WQAM2cqSCKs3A+wj/OHmw==
+X-CSE-MsgGUID: tRkP6OGUSPys2oYbJejRpA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,303,1732608000"; 
+   d="scan'208";a="119872698"
+Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
+  by fmviesa005.fm.intel.com with ESMTP; 20 Feb 2025 19:22:50 -0800
+Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tlJcl-00053j-2s;
+	Fri, 21 Feb 2025 03:22:47 +0000
+Date: Fri, 21 Feb 2025 11:22:38 +0800
+From: kernel test robot <lkp@intel.com>
+To: Raag Jadav <raag.jadav@intel.com>, arnd@arndb.de,
+	andriy.shevchenko@linux.intel.com
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Raag Jadav <raag.jadav@intel.com>
+Subject: Re: [PATCH v1] io.h: drop unused headers
+Message-ID: <202502211137.IRE8qrlR-lkp@intel.com>
+References: <20250220173305.2752125-1-raag.jadav@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250220173305.2752125-1-raag.jadav@intel.com>
 
-Read temperature of the amplifier and expose it via hwmon interface, which
-will be later used during calibration of speaker protection algorithms.
-The method is the same as for wsa884x and therefore this is based on
-Krzysztof Kozlowski's approach implemented in commit 6b99dc62d940 ("ASoC:
-codecs: wsa884x: Implement temperature reading and hwmon").
+Hi Raag,
 
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: Steev Klimaszewski <steev@kali.org>
-Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
----
+kernel test robot noticed the following build errors:
 
-Changes in v2:
-- add temperature conversion to millidegrees of Celcius
-  when amplifier is on to report correct data to hwmon;
-- minor coding style fixes to make checkpatch --strict happy;
-- correct typo (reference to wsa884x in the comment), small rewording.
+[auto build test ERROR on b16e9f8547a328b19af59afc213ce323124d11e9]
 
- sound/soc/codecs/wsa883x.c | 194 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 194 insertions(+)
+url:    https://github.com/intel-lab-lkp/linux/commits/Raag-Jadav/io-h-drop-unused-headers/20250221-013530
+base:   b16e9f8547a328b19af59afc213ce323124d11e9
+patch link:    https://lore.kernel.org/r/20250220173305.2752125-1-raag.jadav%40intel.com
+patch subject: [PATCH v1] io.h: drop unused headers
+config: nios2-randconfig-001-20250221 (https://download.01.org/0day-ci/archive/20250221/202502211137.IRE8qrlR-lkp@intel.com/config)
+compiler: nios2-linux-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250221/202502211137.IRE8qrlR-lkp@intel.com/reproduce)
 
-diff --git a/sound/soc/codecs/wsa883x.c b/sound/soc/codecs/wsa883x.c
-index 47da5674d7c9..a5a6cb90bb43 100644
---- a/sound/soc/codecs/wsa883x.c
-+++ b/sound/soc/codecs/wsa883x.c
-@@ -6,6 +6,7 @@
- #include <linux/bitops.h>
- #include <linux/device.h>
- #include <linux/gpio/consumer.h>
-+#include <linux/hwmon.h>
- #include <linux/init.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
-@@ -156,8 +157,28 @@
- #define WSA883X_PA_FSM_ERR_COND         (WSA883X_DIG_CTRL_BASE + 0x0014)
- #define WSA883X_PA_FSM_MSK              (WSA883X_DIG_CTRL_BASE + 0x0015)
- #define WSA883X_PA_FSM_BYP              (WSA883X_DIG_CTRL_BASE + 0x0016)
-+#define WSA883X_PA_FSM_BYP_DC_CAL_EN_MASK		0x01
-+#define WSA883X_PA_FSM_BYP_DC_CAL_EN_SHIFT		0
-+#define WSA883X_PA_FSM_BYP_CLK_WD_EN_MASK		0x02
-+#define WSA883X_PA_FSM_BYP_CLK_WD_EN_SHIFT		1
-+#define WSA883X_PA_FSM_BYP_BG_EN_MASK			0x04
-+#define WSA883X_PA_FSM_BYP_BG_EN_SHIFT			2
-+#define WSA883X_PA_FSM_BYP_BOOST_EN_MASK		0x08
-+#define WSA883X_PA_FSM_BYP_BOOST_EN_SHIFT		3
-+#define WSA883X_PA_FSM_BYP_PA_EN_MASK			0x10
-+#define WSA883X_PA_FSM_BYP_PA_EN_SHIFT			4
-+#define WSA883X_PA_FSM_BYP_D_UNMUTE_MASK		0x20
-+#define WSA883X_PA_FSM_BYP_D_UNMUTE_SHIFT		5
-+#define WSA883X_PA_FSM_BYP_SPKR_PROT_EN_MASK		0x40
-+#define WSA883X_PA_FSM_BYP_SPKR_PROT_EN_SHIFT		6
-+#define WSA883X_PA_FSM_BYP_TSADC_EN_MASK		0x80
-+#define WSA883X_PA_FSM_BYP_TSADC_EN_SHIFT		7
- #define WSA883X_PA_FSM_DBG              (WSA883X_DIG_CTRL_BASE + 0x0017)
- #define WSA883X_TADC_VALUE_CTL          (WSA883X_DIG_CTRL_BASE + 0x0020)
-+#define WSA883X_TADC_VALUE_CTL_TEMP_VALUE_RD_EN_MASK	0x01
-+#define WSA883X_TADC_VALUE_CTL_TEMP_VALUE_RD_EN_SHIFT	0
-+#define WSA883X_TADC_VALUE_CTL_VBAT_VALUE_RD_EN_MASK	0x02
-+#define WSA883X_TADC_VALUE_CTL_VBAT_VALUE_RD_EN_SHIFT	1
- #define WSA883X_TEMP_DETECT_CTL         (WSA883X_DIG_CTRL_BASE + 0x0021)
- #define WSA883X_TEMP_MSB                (WSA883X_DIG_CTRL_BASE + 0x0022)
- #define WSA883X_TEMP_LSB                (WSA883X_DIG_CTRL_BASE + 0x0023)
-@@ -427,6 +448,17 @@
- 		SNDRV_PCM_FMTBIT_S24_LE |\
- 		SNDRV_PCM_FMTBIT_S24_3LE | SNDRV_PCM_FMTBIT_S32_LE)
- 
-+/* Two-point trimming for temperature calibration */
-+#define WSA883X_T1_TEMP			-10L
-+#define WSA883X_T2_TEMP			150L
-+
-+/*
-+ * Device will report senseless data in many cases, so discard any measurements
-+ * outside of valid range.
-+ */
-+#define WSA883X_LOW_TEMP_THRESHOLD	5
-+#define WSA883X_HIGH_TEMP_THRESHOLD	45
-+
- struct wsa883x_priv {
- 	struct regmap *regmap;
- 	struct device *dev;
-@@ -441,6 +473,13 @@ struct wsa883x_priv {
- 	int active_ports;
- 	int dev_mode;
- 	int comp_offset;
-+	/*
-+	 * Protects temperature reading code (related to speaker protection) and
-+	 * fields: temperature and pa_on.
-+	 */
-+	struct mutex sp_lock;
-+	unsigned int temperature;
-+	bool pa_on;
- };
- 
- enum {
-@@ -1186,6 +1225,10 @@ static int wsa883x_spkr_event(struct snd_soc_dapm_widget *w,
- 
- 	switch (event) {
- 	case SND_SOC_DAPM_POST_PMU:
-+		mutex_lock(&wsa883x->sp_lock);
-+		wsa883x->pa_on = true;
-+		mutex_unlock(&wsa883x->sp_lock);
-+
- 		switch (wsa883x->dev_mode) {
- 		case RECEIVER:
- 			snd_soc_component_write_field(component, WSA883X_CDC_PATH_MODE,
-@@ -1235,6 +1278,9 @@ static int wsa883x_spkr_event(struct snd_soc_dapm_widget *w,
- 					      WSA883X_GLOBAL_PA_EN_MASK, 0);
- 		snd_soc_component_write_field(component, WSA883X_PDM_WD_CTL,
- 					      WSA883X_PDM_EN_MASK, 0);
-+		mutex_lock(&wsa883x->sp_lock);
-+		wsa883x->pa_on = false;
-+		mutex_unlock(&wsa883x->sp_lock);
- 		break;
- 	}
- 	return 0;
-@@ -1367,6 +1413,140 @@ static struct snd_soc_dai_driver wsa883x_dais[] = {
- 	},
- };
- 
-+static int wsa883x_get_temp(struct wsa883x_priv *wsa883x, long *temp)
-+{
-+	unsigned int d1_msb = 0, d1_lsb = 0, d2_msb = 0, d2_lsb = 0;
-+	unsigned int dmeas_msb = 0, dmeas_lsb = 0;
-+	int d1, d2, dmeas;
-+	unsigned int mask;
-+	int ret, range;
-+	long val;
-+
-+	guard(mutex)(&wsa883x->sp_lock);
-+
-+	if (wsa883x->pa_on) {
-+		/*
-+		 * Reading temperature is possible only when Power Amplifier is
-+		 * off. Report last cached data.
-+		 */
-+		*temp = wsa883x->temperature * 1000;
-+		return 0;
-+	}
-+
-+	ret = pm_runtime_resume_and_get(wsa883x->dev);
-+	if (ret < 0)
-+		return ret;
-+
-+	mask = WSA883X_PA_FSM_BYP_DC_CAL_EN_MASK |
-+	       WSA883X_PA_FSM_BYP_CLK_WD_EN_MASK |
-+	       WSA883X_PA_FSM_BYP_BG_EN_MASK |
-+	       WSA883X_PA_FSM_BYP_D_UNMUTE_MASK |
-+	       WSA883X_PA_FSM_BYP_SPKR_PROT_EN_MASK |
-+	       WSA883X_PA_FSM_BYP_TSADC_EN_MASK;
-+
-+	/*
-+	 * Here and further do not care about read or update failures.
-+	 * For example, before turning the amplifier on for the first
-+	 * time, reading WSA883X_TEMP_DIN_MSB will always return 0.
-+	 * Instead, check if returned value is within reasonable
-+	 * thresholds.
-+	 */
-+	regmap_update_bits(wsa883x->regmap, WSA883X_PA_FSM_BYP, mask, mask);
-+
-+	regmap_update_bits(wsa883x->regmap, WSA883X_TADC_VALUE_CTL,
-+			   WSA883X_TADC_VALUE_CTL_TEMP_VALUE_RD_EN_MASK,
-+			   FIELD_PREP(WSA883X_TADC_VALUE_CTL_TEMP_VALUE_RD_EN_MASK, 0x0));
-+
-+	regmap_read(wsa883x->regmap, WSA883X_TEMP_MSB, &dmeas_msb);
-+	regmap_read(wsa883x->regmap, WSA883X_TEMP_LSB, &dmeas_lsb);
-+
-+	regmap_update_bits(wsa883x->regmap, WSA883X_TADC_VALUE_CTL,
-+			   WSA883X_TADC_VALUE_CTL_TEMP_VALUE_RD_EN_MASK,
-+			   FIELD_PREP(WSA883X_TADC_VALUE_CTL_TEMP_VALUE_RD_EN_MASK, 0x1));
-+
-+	regmap_read(wsa883x->regmap, WSA883X_OTP_REG_1, &d1_msb);
-+	regmap_read(wsa883x->regmap, WSA883X_OTP_REG_2, &d1_lsb);
-+	regmap_read(wsa883x->regmap, WSA883X_OTP_REG_3, &d2_msb);
-+	regmap_read(wsa883x->regmap, WSA883X_OTP_REG_4, &d2_lsb);
-+
-+	regmap_update_bits(wsa883x->regmap, WSA883X_PA_FSM_BYP, mask, 0x0);
-+
-+	dmeas = (((dmeas_msb & 0xff) << 0x8) | (dmeas_lsb & 0xff)) >> 0x6;
-+	d1 = (((d1_msb & 0xff) << 0x8) | (d1_lsb & 0xff)) >> 0x6;
-+	d2 = (((d2_msb & 0xff) << 0x8) | (d2_lsb & 0xff)) >> 0x6;
-+
-+	if (d1 == d2) {
-+		/* Incorrect data in OTP? */
-+		ret = -EINVAL;
-+		goto out;
-+	}
-+
-+	val = WSA883X_T1_TEMP + (((dmeas - d1) * (WSA883X_T2_TEMP - WSA883X_T1_TEMP)) / (d2 - d1));
-+	range = WSA883X_HIGH_TEMP_THRESHOLD - WSA883X_LOW_TEMP_THRESHOLD;
-+	if (in_range(val, WSA883X_LOW_TEMP_THRESHOLD, range)) {
-+		wsa883x->temperature = val;
-+		*temp = val * 1000;
-+		ret = 0;
-+	} else {
-+		ret = -EAGAIN;
-+	}
-+out:
-+	pm_runtime_mark_last_busy(wsa883x->dev);
-+	pm_runtime_put_autosuspend(wsa883x->dev);
-+
-+	return ret;
-+}
-+
-+static umode_t wsa883x_hwmon_is_visible(const void *data,
-+					enum hwmon_sensor_types type, u32 attr,
-+					int channel)
-+{
-+	if (type != hwmon_temp)
-+		return 0;
-+
-+	switch (attr) {
-+	case hwmon_temp_input:
-+		return 0444;
-+	default:
-+		break;
-+	}
-+
-+	return 0;
-+}
-+
-+static int wsa883x_hwmon_read(struct device *dev,
-+			      enum hwmon_sensor_types type,
-+			      u32 attr, int channel, long *temp)
-+{
-+	int ret;
-+
-+	switch (attr) {
-+	case hwmon_temp_input:
-+		ret = wsa883x_get_temp(dev_get_drvdata(dev), temp);
-+		break;
-+	default:
-+		ret = -EOPNOTSUPP;
-+		break;
-+	}
-+
-+	return ret;
-+}
-+
-+static const struct hwmon_channel_info *const wsa883x_hwmon_info[] = {
-+	HWMON_CHANNEL_INFO(temp, HWMON_T_INPUT),
-+	NULL
-+};
-+
-+static const struct hwmon_ops wsa883x_hwmon_ops = {
-+	.is_visible	= wsa883x_hwmon_is_visible,
-+	.read		= wsa883x_hwmon_read,
-+};
-+
-+static const struct hwmon_chip_info wsa883x_hwmon_chip_info = {
-+	.ops	= &wsa883x_hwmon_ops,
-+	.info	= wsa883x_hwmon_info,
-+};
-+
- static int wsa883x_probe(struct sdw_slave *pdev,
- 			 const struct sdw_device_id *id)
- {
-@@ -1402,6 +1582,7 @@ static int wsa883x_probe(struct sdw_slave *pdev,
- 	wsa883x->sconfig.bps = 1;
- 	wsa883x->sconfig.direction = SDW_DATA_DIR_RX;
- 	wsa883x->sconfig.type = SDW_STREAM_PDM;
-+	mutex_init(&wsa883x->sp_lock);
- 
- 	/**
- 	 * Port map index starts with 0, however the data port for this codec
-@@ -1424,6 +1605,19 @@ static int wsa883x_probe(struct sdw_slave *pdev,
- 				    "regmap_init failed\n");
- 		goto err;
- 	}
-+
-+	if (IS_REACHABLE(CONFIG_HWMON)) {
-+		struct device *hwmon;
-+
-+		hwmon = devm_hwmon_device_register_with_info(dev, "wsa883x",
-+							     wsa883x,
-+							     &wsa883x_hwmon_chip_info,
-+							     NULL);
-+		if (IS_ERR(hwmon))
-+			return dev_err_probe(dev, PTR_ERR(hwmon),
-+					     "Failed to register hwmon sensor\n");
-+	}
-+
- 	pm_runtime_set_autosuspend_delay(dev, 3000);
- 	pm_runtime_use_autosuspend(dev);
- 	pm_runtime_mark_last_busy(dev);
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202502211137.IRE8qrlR-lkp@intel.com/
+
+All error/warnings (new ones prefixed by >>):
+
+   drivers/gpu/drm/drm_draw.c: In function 'drm_draw_color_from_xrgb8888':
+   drivers/gpu/drm/drm_draw.c:130:17: error: implicit declaration of function 'WARN_ONCE' [-Wimplicit-function-declaration]
+     130 |                 WARN_ONCE(1, "Can't convert to %p4cc\n", &format);
+         |                 ^~~~~~~~~
+   drivers/gpu/drm/drm_draw.c: At top level:
+>> drivers/gpu/drm/drm_draw.c:134:1: warning: data definition has no type or storage class
+     134 | EXPORT_SYMBOL(drm_draw_color_from_xrgb8888);
+         | ^~~~~~~~~~~~~
+>> drivers/gpu/drm/drm_draw.c:134:1: error: type defaults to 'int' in declaration of 'EXPORT_SYMBOL' [-Wimplicit-int]
+>> drivers/gpu/drm/drm_draw.c:134:1: error: parameter names (without types) in function declaration [-Wdeclaration-missing-parameter-type]
+   drivers/gpu/drm/drm_draw.c:151:1: warning: data definition has no type or storage class
+     151 | EXPORT_SYMBOL(drm_draw_blit16);
+         | ^~~~~~~~~~~~~
+   drivers/gpu/drm/drm_draw.c:151:1: error: type defaults to 'int' in declaration of 'EXPORT_SYMBOL' [-Wimplicit-int]
+   drivers/gpu/drm/drm_draw.c:151:1: error: parameter names (without types) in function declaration [-Wdeclaration-missing-parameter-type]
+   drivers/gpu/drm/drm_draw.c:173:1: warning: data definition has no type or storage class
+     173 | EXPORT_SYMBOL(drm_draw_blit24);
+         | ^~~~~~~~~~~~~
+   drivers/gpu/drm/drm_draw.c:173:1: error: type defaults to 'int' in declaration of 'EXPORT_SYMBOL' [-Wimplicit-int]
+   drivers/gpu/drm/drm_draw.c:173:1: error: parameter names (without types) in function declaration [-Wdeclaration-missing-parameter-type]
+   drivers/gpu/drm/drm_draw.c:187:1: warning: data definition has no type or storage class
+     187 | EXPORT_SYMBOL(drm_draw_blit32);
+         | ^~~~~~~~~~~~~
+   drivers/gpu/drm/drm_draw.c:187:1: error: type defaults to 'int' in declaration of 'EXPORT_SYMBOL' [-Wimplicit-int]
+   drivers/gpu/drm/drm_draw.c:187:1: error: parameter names (without types) in function declaration [-Wdeclaration-missing-parameter-type]
+   drivers/gpu/drm/drm_draw.c:202:1: warning: data definition has no type or storage class
+     202 | EXPORT_SYMBOL(drm_draw_fill16);
+         | ^~~~~~~~~~~~~
+   drivers/gpu/drm/drm_draw.c:202:1: error: type defaults to 'int' in declaration of 'EXPORT_SYMBOL' [-Wimplicit-int]
+   drivers/gpu/drm/drm_draw.c:202:1: error: parameter names (without types) in function declaration [-Wdeclaration-missing-parameter-type]
+   drivers/gpu/drm/drm_draw.c:221:1: warning: data definition has no type or storage class
+     221 | EXPORT_SYMBOL(drm_draw_fill24);
+         | ^~~~~~~~~~~~~
+   drivers/gpu/drm/drm_draw.c:221:1: error: type defaults to 'int' in declaration of 'EXPORT_SYMBOL' [-Wimplicit-int]
+   drivers/gpu/drm/drm_draw.c:221:1: error: parameter names (without types) in function declaration [-Wdeclaration-missing-parameter-type]
+   drivers/gpu/drm/drm_draw.c:233:1: warning: data definition has no type or storage class
+     233 | EXPORT_SYMBOL(drm_draw_fill32);
+         | ^~~~~~~~~~~~~
+   drivers/gpu/drm/drm_draw.c:233:1: error: type defaults to 'int' in declaration of 'EXPORT_SYMBOL' [-Wimplicit-int]
+   drivers/gpu/drm/drm_draw.c:233:1: error: parameter names (without types) in function declaration [-Wdeclaration-missing-parameter-type]
+
+
+vim +134 drivers/gpu/drm/drm_draw.c
+
+31fa2c1ca0b239 Jocelyn Falempe 2024-12-04   93  
+31fa2c1ca0b239 Jocelyn Falempe 2024-12-04   94  /**
+31fa2c1ca0b239 Jocelyn Falempe 2024-12-04   95   * drm_draw_color_from_xrgb8888 - convert one pixel from xrgb8888 to the desired format
+31fa2c1ca0b239 Jocelyn Falempe 2024-12-04   96   * @color: input color, in xrgb8888 format
+31fa2c1ca0b239 Jocelyn Falempe 2024-12-04   97   * @format: output format
+31fa2c1ca0b239 Jocelyn Falempe 2024-12-04   98   *
+31fa2c1ca0b239 Jocelyn Falempe 2024-12-04   99   * Returns:
+31fa2c1ca0b239 Jocelyn Falempe 2024-12-04  100   * Color in the format specified, casted to u32.
+31fa2c1ca0b239 Jocelyn Falempe 2024-12-04  101   * Or 0 if the format is not supported.
+31fa2c1ca0b239 Jocelyn Falempe 2024-12-04  102   */
+31fa2c1ca0b239 Jocelyn Falempe 2024-12-04  103  u32 drm_draw_color_from_xrgb8888(u32 color, u32 format)
+31fa2c1ca0b239 Jocelyn Falempe 2024-12-04  104  {
+31fa2c1ca0b239 Jocelyn Falempe 2024-12-04  105  	switch (format) {
+31fa2c1ca0b239 Jocelyn Falempe 2024-12-04  106  	case DRM_FORMAT_RGB565:
+31fa2c1ca0b239 Jocelyn Falempe 2024-12-04  107  		return convert_xrgb8888_to_rgb565(color);
+31fa2c1ca0b239 Jocelyn Falempe 2024-12-04  108  	case DRM_FORMAT_RGBA5551:
+31fa2c1ca0b239 Jocelyn Falempe 2024-12-04  109  		return convert_xrgb8888_to_rgba5551(color);
+31fa2c1ca0b239 Jocelyn Falempe 2024-12-04  110  	case DRM_FORMAT_XRGB1555:
+31fa2c1ca0b239 Jocelyn Falempe 2024-12-04  111  		return convert_xrgb8888_to_xrgb1555(color);
+31fa2c1ca0b239 Jocelyn Falempe 2024-12-04  112  	case DRM_FORMAT_ARGB1555:
+31fa2c1ca0b239 Jocelyn Falempe 2024-12-04  113  		return convert_xrgb8888_to_argb1555(color);
+31fa2c1ca0b239 Jocelyn Falempe 2024-12-04  114  	case DRM_FORMAT_RGB888:
+31fa2c1ca0b239 Jocelyn Falempe 2024-12-04  115  	case DRM_FORMAT_XRGB8888:
+31fa2c1ca0b239 Jocelyn Falempe 2024-12-04  116  		return color;
+31fa2c1ca0b239 Jocelyn Falempe 2024-12-04  117  	case DRM_FORMAT_ARGB8888:
+31fa2c1ca0b239 Jocelyn Falempe 2024-12-04  118  		return convert_xrgb8888_to_argb8888(color);
+31fa2c1ca0b239 Jocelyn Falempe 2024-12-04  119  	case DRM_FORMAT_XBGR8888:
+31fa2c1ca0b239 Jocelyn Falempe 2024-12-04  120  		return convert_xrgb8888_to_xbgr8888(color);
+31fa2c1ca0b239 Jocelyn Falempe 2024-12-04  121  	case DRM_FORMAT_ABGR8888:
+31fa2c1ca0b239 Jocelyn Falempe 2024-12-04  122  		return convert_xrgb8888_to_abgr8888(color);
+31fa2c1ca0b239 Jocelyn Falempe 2024-12-04  123  	case DRM_FORMAT_XRGB2101010:
+31fa2c1ca0b239 Jocelyn Falempe 2024-12-04  124  		return convert_xrgb8888_to_xrgb2101010(color);
+31fa2c1ca0b239 Jocelyn Falempe 2024-12-04  125  	case DRM_FORMAT_ARGB2101010:
+31fa2c1ca0b239 Jocelyn Falempe 2024-12-04  126  		return convert_xrgb8888_to_argb2101010(color);
+31fa2c1ca0b239 Jocelyn Falempe 2024-12-04  127  	case DRM_FORMAT_ABGR2101010:
+31fa2c1ca0b239 Jocelyn Falempe 2024-12-04  128  		return convert_xrgb8888_to_abgr2101010(color);
+31fa2c1ca0b239 Jocelyn Falempe 2024-12-04  129  	default:
+31fa2c1ca0b239 Jocelyn Falempe 2024-12-04 @130  		WARN_ONCE(1, "Can't convert to %p4cc\n", &format);
+31fa2c1ca0b239 Jocelyn Falempe 2024-12-04  131  		return 0;
+31fa2c1ca0b239 Jocelyn Falempe 2024-12-04  132  	}
+31fa2c1ca0b239 Jocelyn Falempe 2024-12-04  133  }
+31fa2c1ca0b239 Jocelyn Falempe 2024-12-04 @134  EXPORT_SYMBOL(drm_draw_color_from_xrgb8888);
+31fa2c1ca0b239 Jocelyn Falempe 2024-12-04  135  
+
 -- 
-2.47.2
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
