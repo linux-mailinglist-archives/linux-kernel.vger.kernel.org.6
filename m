@@ -1,145 +1,115 @@
-Return-Path: <linux-kernel+bounces-526346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5991EA3FD72
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 18:29:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF679A3FD7A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 18:30:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 78D687AE24F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:28:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE9E519C2606
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:30:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D85B2505A4;
-	Fri, 21 Feb 2025 17:29:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85E832505D1;
+	Fri, 21 Feb 2025 17:30:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="S97xNopL"
-Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hliA8+pr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63CAF2505AF
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 17:28:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBCE02505C5;
+	Fri, 21 Feb 2025 17:30:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740158940; cv=none; b=I/XuUmFkhIsUXjGMUlRC/qtXuPBbXrma0nNL5cMlDE09Tlj+1PBEr4WJ26XsJAnbFzEpvVXwPKYEIOGtjdoJ049hu4OYHT1spvinvBp5P16uUf0NsuXo9oGSFY7aNnDdulVY5cUP/vB3twYiudg5PWZ8XkXuKe5WYWWyD3m5gZk=
+	t=1740159019; cv=none; b=k0Jy1bfkDjXnTIQ3gzBXY+xorpPkrMSL1192r2zNq2gGYDB/3kka6pzvmpKSWmEqvmXLo4pYdRp63jqnDhPk24NFPR6o3b62bJqIAYopooLweHjyZPwUKReALB6F9kPAzuGE7kgZ6mWx8l+DwIuL3GfBhVIDg0fnHoZqYbPFsSM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740158940; c=relaxed/simple;
-	bh=ssnP7xR5IX0s1ZnFseYvUfkt85pqBiRp2h4Q4S5mkyo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VXBNWSBiC0MIfAXBVTvPtmza7Es9bXWWlIcHqLoRm8g5Cx9YAVm7aBdFOsnZhoImFIqB9jQ0I+4E661dF4i7Js1GJYND9oiMC+PRhZxK+b0608xELnrjLTLE9OfE6xAFs9f0RmrBF4qQZX5sIM2TdqOL/NAwO9S1VszTnD0XF+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=S97xNopL; arc=none smtp.client-ip=209.85.166.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-3cfc8772469so7767555ab.3
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 09:28:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1740158937; x=1740763737; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=NDZTfHmSgit6Hdb4LSC2+LwR3rhMNBxY6UI+uK+57J4=;
-        b=S97xNopLG5OylwEM7sDy5EQavgtOf+MayQx9bnWjpArBWh3mp4EzY3Ef8X3nBfY1we
-         3bwqKwCDMiErQeyihY6Bsm74VFfNAKPZienADefq/ObKYtEqymoWBZ2HMVdqLGyhzRIf
-         YZqTGLKUg8sKR/ynQUL+QLbbKvhBr6+YvRR3BGoc6kMaL3cgA1VCienKbW2raHo2IBXA
-         d3Ip7Uku46zFbuj3JtIruCf1N6eS/zvLdgkmcN9zc9+pUhV+ScICNER/NypUUha0gjlF
-         KCVk2W99bX+ce0rS+AL7zADTbkWX6EyDubqLWx7eSCLRBmoPx18v15kgJhLqb08detDO
-         V6NA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740158937; x=1740763737;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NDZTfHmSgit6Hdb4LSC2+LwR3rhMNBxY6UI+uK+57J4=;
-        b=asOXpL2CmScMRnp8NVaRe5mV89z9NUy3jw4HFCD/Ju9qLRBHIVpsTl6FlA7P3Jdp9B
-         Di8HXU2C4PNeVV+RFkIm4nQ3Jk+EeUpiyePXJBJ0ZVjwy829/RgcGaxv2ESNKcdwA92N
-         VjU+LwSpWy/QioinqOhTskSr7CpXT0UWKzBhIRlChb+NPFxFKokBrstaVEBnUYlAwOsH
-         HtmjCNFAyVltvqtVkxk8qUDFr3POsq9ET+2Dp+dXCzeCB20hJu8i0W0ULcgsJIjNCCuc
-         V2k2a4qGBFFU/vwaZjtnk9JK7n37XNQnEMnUnLyU69PG64N0O8fLcg9j86sYvpdJC1XM
-         XuDg==
-X-Forwarded-Encrypted: i=1; AJvYcCVxxRdznSuj4hpLimMIoS50Sx+kxoIL5GPS/KIvBDFaLDuARaHVXatnhs5dbNznsHiBnn1yilDNkIKbNY8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIko8ZhtjfbHQjShUiQw9iBDXc/L3RDhiwDCyb68u6J1WQhlyI
-	EBWxsDqXlU8nAVkEC23V0xkvs9JJscRlfRHTqkElSRxHCk/B6BDOsCJ6DNSVMrlQtUjzG7NfCM9
-	M
-X-Gm-Gg: ASbGncvl9hcz3tNZkBpWriLLNTfxwnwaId3d7kgml3R9LoAEdYkO5246XwwLhEG0doC
-	dOCsBs3w8vUBJUNyQH1KsPprXnVnKfcLmRHL/DjLN0OUzKRt6ImZ4nX6f0uHCvwBucXhH1ktBhG
-	9FkccZ/WpsiGAYYEAlP9WDWnSyjdayu9MbI1ajTUkWChw4wNZ68YaXSdygzUoGAxThihmD4IaN0
-	8QjTGaIX4VPEJoyPJw7dXOktZYM8QzTOD/zT92d5p5z17BEGnNzMQsoDQNcZrA2OFbovWaPzljS
-	I3NdzjeOokTJRmityPpjM10=
-X-Google-Smtp-Source: AGHT+IESXRf1yl6h7PyEHQmBUGrv9XVl2XmLwA/QxwaTFWH5Y02ORzR6Hbof0RMkoUqPvVurTqR6Jg==
-X-Received: by 2002:a05:6e02:1a2a:b0:3d2:6768:c4fa with SMTP id e9e14a558f8ab-3d2caf0980emr47338065ab.21.1740158937487;
-        Fri, 21 Feb 2025 09:28:57 -0800 (PST)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ee93efe46csm2701099173.132.2025.02.21.09.28.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Feb 2025 09:28:56 -0800 (PST)
-Message-ID: <7980bc81-8077-4c99-88e4-19188745d3a2@kernel.dk>
-Date: Fri, 21 Feb 2025 10:28:56 -0700
+	s=arc-20240116; t=1740159019; c=relaxed/simple;
+	bh=3hzIHxpLAXRjJOwPpv+sAwNNZc4CuFrSRwM4bdc+CPQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mZKdHkiUWAjfl3YpwUX+5VI8Naq5MAKUfYs11MfCONleWqAXsGY25ctW5KWGOLJ682gZkbJfVO2UIx0oA9qb/pnmj6lCbGoJN71ZCSZfvEiP41Nl10+6z34bK+6IXLAVz9CGj11B/76V2+i7R89KbQPn8Sem+qxrFVwJrftylLo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hliA8+pr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74C41C4CEE9;
+	Fri, 21 Feb 2025 17:30:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740159018;
+	bh=3hzIHxpLAXRjJOwPpv+sAwNNZc4CuFrSRwM4bdc+CPQ=;
+	h=From:To:Cc:Subject:Date:From;
+	b=hliA8+prjN8M41oRF1yA2qmapNOQCIZLNBAZ4qHQlwVcz8oRhPyjtXw33VHvTNHxg
+	 3arCkvWZvuF+g+ACndGa4Yfg2AUvq3qaaAE0OQuX8ORyXi7z4JC6kL77mck7uAp3yz
+	 p61wSWYpp7ImXiY/NW3TxXYBXxhQhEFNqLqST+ziERg8Ui/iaouhltgx2yMJBZDycY
+	 zVlL+M273idh0s2h1rbhtz6w97RfZlXPYRiXs1YUl6p7b5zHZzqnUYjfklyvrFvjEP
+	 qEHIMYuRlr6D66+w49FrjplWAROE2129sOk3l7Yf/jE51FR1NDoSXkgBk+sNdgwdzk
+	 UUe7ozwOuPiCg==
+From: Frederic Weisbecker <frederic@kernel.org>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Frederic Weisbecker <frederic@kernel.org>,
+	netdev@vger.kernel.org,
+	Breno Leitao <leitao@debian.org>,
+	Jakub Kicinski <kuba@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Francois Romieu <romieu@fr.zoreil.com>,
+	Paul Menzel <pmenzel@molgen.mpg.de>
+Subject: [PATCH] net: Handle napi_schedule() calls from non-interrupt
+Date: Fri, 21 Feb 2025 18:30:09 +0100
+Message-ID: <20250221173009.21742-1-frederic@kernel.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] io_uring: add missing IORING_MAP_OFF_ZCRX_REGION in
- io_uring_mmap
-To: Pavel Begunkov <asml.silence@gmail.com>, lizetao <lizetao1@huawei.com>,
- Bui Quang Minh <minhquangbui99@gmail.com>
-Cc: David Wei <dw@davidwei.uk>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>
-References: <20250221085933.26034-1-minhquangbui99@gmail.com>
- <590cff7ccda34b028706b9288f8928d3@huawei.com>
- <79189960-b645-4b51-a3d7-609708dc3ee2@gmail.com>
- <0c1faa58-b658-4a64-9d42-eaf603fdc69d@kernel.dk>
- <d510f0c5-d25d-44cb-9974-46026964beca@gmail.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <d510f0c5-d25d-44cb-9974-46026964beca@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 2/21/25 10:06 AM, Pavel Begunkov wrote:
-> On 2/21/25 16:39, Jens Axboe wrote:
->> On 2/21/25 5:20 AM, Pavel Begunkov wrote:
->>> On 2/21/25 09:10, lizetao wrote:
->>>> Hi,
->>>>
->>>>> -----Original Message-----
->>>>> From: Bui Quang Minh <minhquangbui99@gmail.com>
->>>>> Sent: Friday, February 21, 2025 5:00 PM
->>>>> To: io-uring@vger.kernel.org
->>>>> Cc: Jens Axboe <axboe@kernel.dk>; Pavel Begunkov
->>>>> <asml.silence@gmail.com>; David Wei <dw@davidwei.uk>; linux-
->>>>> kernel@vger.kernel.org; Bui Quang Minh <minhquangbui99@gmail.com>
->>>>> Subject: [PATCH] io_uring: add missing IORING_MAP_OFF_ZCRX_REGION in
->>>>> io_uring_mmap
->>>>>
->>>>> Allow user to mmap the kernel allocated zerocopy-rx refill queue.
->>>>>
->>>>
->>>> Maybe fixed-tag should be added here.
->>>
->>> No need, it's not strictly a fix, and whlist it's not yet sent to
->>> linus, the tags only cause confusion when hashes change, e.g. on rebase.
->>
->> I do like using fixes still, if only to provide a link to the original
->> commit without needing to dig for it. And yeah there's the occasional
->> rebase where I forget to update the sha, but those get discovered pretty
->> quick.
-> 
-> Maybe a "Link" tag would be better or some more inconsequential
-> "Refers-to", but otherwise you can call it a feature and avoid the
-> hassle of fixing it up, and people getting spammed by tooling,
-> and Stephen having to write about broken hashes.
+napi_schedule() is expected to be called either:
 
-Having the sha is nice though so people can just look it up. But yeah
-the tag doesn't really exist, and I think we have way too many tags
-already, which is why I just use Fixes for stuff like that too. Link
-is good for email discussion, though 99% of the time it ends up just
-being a patch posting and not really interesting...
+* From an interrupt, where raised softirqs are handled on IRQ exit
 
+* From a softirq disabled section, where raised softirqs are handled on
+  the next call to local_bh_enable().
+
+* From a softirq handler, where raised softirqs are handled on the next
+  round in do_softirq(), or further deferred to a dedicated kthread.
+
+Other bare tasks context may end up ignoring the raised NET_RX vector
+until the next random softirq handling opportunity, which may not
+happen before a while if the CPU goes idle afterwards with the tick
+stopped.
+
+Such "misuses" have been detected on several places thanks to messages
+of the kind:
+
+	"NOHZ tick-stop error: local softirq work is pending, handler #08!!!"
+
+Chasing each and every misuse can be a long journey given the amount of
+existing callers. Fixing them can also prove challenging if the caller
+may be called from different kind of context.
+
+Therefore fix this from napi_schedule() itself with waking up ksoftirqd
+when softirqs are raised from task contexts.
+
+Reported-by: Paul Menzel <pmenzel@molgen.mpg.de>
+Closes: 354a2690-9bbf-4ccb-8769-fa94707a9340@molgen.mpg.de
+Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+---
+ net/core/dev.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/net/core/dev.c b/net/core/dev.c
+index c0021cbd28fc..2419cc558a64 100644
+--- a/net/core/dev.c
++++ b/net/core/dev.c
+@@ -4692,7 +4692,7 @@ static inline void ____napi_schedule(struct softnet_data *sd,
+ 	 * we have to raise NET_RX_SOFTIRQ.
+ 	 */
+ 	if (!sd->in_net_rx_action)
+-		__raise_softirq_irqoff(NET_RX_SOFTIRQ);
++		raise_softirq_irqoff(NET_RX_SOFTIRQ);
+ }
+ 
+ #ifdef CONFIG_RPS
 -- 
-Jens Axboe
+2.48.1
 
 
