@@ -1,115 +1,263 @@
-Return-Path: <linux-kernel+bounces-526347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF679A3FD7A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 18:30:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A27CA3FD90
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 18:37:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE9E519C2606
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:30:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6040F3B47B3
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:32:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85E832505D1;
-	Fri, 21 Feb 2025 17:30:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF1CC2505CD;
+	Fri, 21 Feb 2025 17:32:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hliA8+pr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ijHunvv5"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBCE02505C5;
-	Fri, 21 Feb 2025 17:30:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9279235955;
+	Fri, 21 Feb 2025 17:32:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740159019; cv=none; b=k0Jy1bfkDjXnTIQ3gzBXY+xorpPkrMSL1192r2zNq2gGYDB/3kka6pzvmpKSWmEqvmXLo4pYdRp63jqnDhPk24NFPR6o3b62bJqIAYopooLweHjyZPwUKReALB6F9kPAzuGE7kgZ6mWx8l+DwIuL3GfBhVIDg0fnHoZqYbPFsSM=
+	t=1740159123; cv=none; b=oLv6y1OkMXFM/p/408F33kSmW4mE0IgWMSB4Ff2KsmiGqg7znv44YRrerFZRXn9sRIeZSBVgtLJ+tdqD7lVBVQT4DNy4Bi0Vtnl5gGDDhlgCaV47PkCe1udZ+397KHj2vl2CBiu7wX/QFyCzgz8rhKp5RTWL4MTBMDqT9Wj4E1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740159019; c=relaxed/simple;
-	bh=3hzIHxpLAXRjJOwPpv+sAwNNZc4CuFrSRwM4bdc+CPQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mZKdHkiUWAjfl3YpwUX+5VI8Naq5MAKUfYs11MfCONleWqAXsGY25ctW5KWGOLJ682gZkbJfVO2UIx0oA9qb/pnmj6lCbGoJN71ZCSZfvEiP41Nl10+6z34bK+6IXLAVz9CGj11B/76V2+i7R89KbQPn8Sem+qxrFVwJrftylLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hliA8+pr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74C41C4CEE9;
-	Fri, 21 Feb 2025 17:30:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740159018;
-	bh=3hzIHxpLAXRjJOwPpv+sAwNNZc4CuFrSRwM4bdc+CPQ=;
-	h=From:To:Cc:Subject:Date:From;
-	b=hliA8+prjN8M41oRF1yA2qmapNOQCIZLNBAZ4qHQlwVcz8oRhPyjtXw33VHvTNHxg
-	 3arCkvWZvuF+g+ACndGa4Yfg2AUvq3qaaAE0OQuX8ORyXi7z4JC6kL77mck7uAp3yz
-	 p61wSWYpp7ImXiY/NW3TxXYBXxhQhEFNqLqST+ziERg8Ui/iaouhltgx2yMJBZDycY
-	 zVlL+M273idh0s2h1rbhtz6w97RfZlXPYRiXs1YUl6p7b5zHZzqnUYjfklyvrFvjEP
-	 qEHIMYuRlr6D66+w49FrjplWAROE2129sOk3l7Yf/jE51FR1NDoSXkgBk+sNdgwdzk
-	 UUe7ozwOuPiCg==
-From: Frederic Weisbecker <frederic@kernel.org>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Frederic Weisbecker <frederic@kernel.org>,
-	netdev@vger.kernel.org,
-	Breno Leitao <leitao@debian.org>,
-	Jakub Kicinski <kuba@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Francois Romieu <romieu@fr.zoreil.com>,
-	Paul Menzel <pmenzel@molgen.mpg.de>
-Subject: [PATCH] net: Handle napi_schedule() calls from non-interrupt
-Date: Fri, 21 Feb 2025 18:30:09 +0100
-Message-ID: <20250221173009.21742-1-frederic@kernel.org>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1740159123; c=relaxed/simple;
+	bh=VgWxCpwf2Q9KFMIddgUkc2CYRnkLJjOOEXo3QLe5ToE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LwviaYhorPV7VCNQatiOdwUus43vQqfATNx5v2m2j010FDlE1tZPlvBuQ9tTgT1AkEbrTPEwQSzIauEgTkZsL5LjBVw0BMhm0MCRJqVDCRL4d1QYHTfoLZioAlsRfVZYX35/x/+hwVnFL131hDLFg8nEzf8IeJdTsyrlVym47nc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ijHunvv5; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-221206dbd7eso50503265ad.2;
+        Fri, 21 Feb 2025 09:32:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740159121; x=1740763921; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QZTfoZLKdGhieUhqNYuabAUMhySDG/Lsaab0mVAiuGk=;
+        b=ijHunvv5LuBZEwGp0skc8ozrfSXxe9VuyCPUkUxQyn7aZgWiyDiumpmHw+In3vJzfU
+         ZSKQ0PCSmmIOOxDnDBt3FwwYS5RMx2zogqQj5+TS0Lk09aQWDtCdnqhK3fqK1rJWoj8z
+         wBKtjB1n5jr47zUktrA0WTVe4JKeA8T2P+lKq8iHcDrra3vp8iihOvjadzK+Ur9RGaqq
+         uOeGpkgbzJZ5NLM+d16h4spYtXmvew8RmHo80MKxfBO4P1rASmEk1kM3PadgJ2OLKXhE
+         mKUFGjYafXoIA12fP5Cl8JYYkou3WEm+2CfYhKz7qW2dXLAJlF8WlJVxnATZ/KZJTFwQ
+         a0Pw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740159121; x=1740763921;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QZTfoZLKdGhieUhqNYuabAUMhySDG/Lsaab0mVAiuGk=;
+        b=C+f2BCF/UoxD8XHjdP3lGCy0G+Dy3bcLgnYEBNUGwcSWiARJTrdKLAfJcMNHAvsyz4
+         A3XuBt8+KCL0N/mdctcJTWmVAnOsfrlXWL6DWoN7rSKVcmDmr3meGVFTPeI9RnJRx4pf
+         ffs2M9OLL5GBPDqQWcuqbLeYNWNRNtFdRC/6LGrwE1GkBbDvZpitBSfmxH7edkIkcnGa
+         87KSVejOO+RFYxO6v8hCbb50jwWLvz4Sbkjgc/K1OGod+AS2HzTNiGaOOuEqwU71ZuqW
+         DOGqqzaQRsKye8EtWPneDgR5x9FeGF7iyYq6V5fheFf8teWUADOvhwkiYtStBs83244K
+         culg==
+X-Forwarded-Encrypted: i=1; AJvYcCUjm/1pXThXFv23EmDyBGABdnktgVfyTwemTw6TqZuKRmgfjYreU5/q4lIhFVTS1XcwotUshekAkFG6@vger.kernel.org, AJvYcCVm4u7gQLMacYFXA10XdLj4g+23ruGHCcKft/Y7xLMpLClKYZ6dn7XQfJ2zmQrP0l94TBIqP95If5GIGQ==@vger.kernel.org, AJvYcCVqbxBplpDgOVUrjZYRaT0MQB+BLQTFMU6BumQlxxIm8WDjs8YZFkZPT9am1LXjFDi2mC2doEQDbOfRZxLt@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywbpl53hfqaGP2RoHF6PaaNIdvI7Tydj0SRM2W3N0ylgATJkpBA
+	sAy3m/r1YbqCxWY08QrLLwnTVEablPykdKzxbIjz6N6KbG0ja2C5PsiQXcnvtYBD+T7Zwn/eBlb
+	gy1GS7mSSyIKVczHNjmz4Ma59hv2XAdndnCM=
+X-Gm-Gg: ASbGncvZ6Zhtq57qe632qldyIY2knTiDOOpGJZ5WMIigYD7mRL4oxMEhclTM7Jf82Sy
+	35ZeFIk24mHWSLVQbnj/0AeD6TpWWQwvyXXHkpdknlggvbWn++cIFi6A62prL+szoX5+4TN2u8h
+	2MNLs50A==
+X-Google-Smtp-Source: AGHT+IGvX6qvGMn+KIoSiym6cWI0/nkZPpF6Z96ZqNT2izY3BoWxN63KfbmCr+lFl0lhQj/RNR4+SRdsolaQeSBPF+s=
+X-Received: by 2002:a17:90b:4fd2:b0:2fc:2a9c:21de with SMTP id
+ 98e67ed59e1d1-2fce7b0814emr6701344a91.35.1740159120658; Fri, 21 Feb 2025
+ 09:32:00 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250120092146.471951-1-sergio.paracuellos@gmail.com>
+ <20250120092146.471951-7-sergio.paracuellos@gmail.com> <Z7i1aDGiHLsOFYyz@alpha.franken.de>
+In-Reply-To: <Z7i1aDGiHLsOFYyz@alpha.franken.de>
+From: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+Date: Fri, 21 Feb 2025 18:31:51 +0100
+X-Gm-Features: AWEUYZmfPnR0Xkg3hXec_be0Y2VGoRk2tcCq1Cvh3Y4Iuwhnyr8MUjUABCqx5YI
+Message-ID: <CAMhs-H-8N766PMZMwmV8B3e=65pPZHA4ntnRWDMoqR-U_xULfA@mail.gmail.com>
+Subject: Re: [PATCH v3 6/6] mips: dts: ralink: mt7628a: update system
+ controller node and its consumers
+To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Cc: linux-clk@vger.kernel.org, sboyd@kernel.org, mturquette@baylibre.com, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com, 
+	p.zabel@pengutronix.de, linux-mips@vger.kernel.org, 
+	devicetree@vger.kernel.org, yangshiji66@outlook.com, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-napi_schedule() is expected to be called either:
+On Fri, Feb 21, 2025 at 6:19=E2=80=AFPM Thomas Bogendoerfer
+<tsbogend@alpha.franken.de> wrote:
+>
+> On Mon, Jan 20, 2025 at 10:21:46AM +0100, Sergio Paracuellos wrote:
+> > Current MT7628A device tree file system controller node is wrong since =
+it is
+> > not matching bindings. Hence, update it to match current bindings updat=
+ing
+> > it also to use new introduced clock constants.
+> >
+> > Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+> > ---
+> >  arch/mips/boot/dts/ralink/mt7628a.dtsi | 38 ++++++++++++++++----------
+> >  1 file changed, 24 insertions(+), 14 deletions(-)
+> >
+> > diff --git a/arch/mips/boot/dts/ralink/mt7628a.dtsi b/arch/mips/boot/dt=
+s/ralink/mt7628a.dtsi
+> > index 45a15e005cc4..309966049c56 100644
+> > --- a/arch/mips/boot/dts/ralink/mt7628a.dtsi
+> > +++ b/arch/mips/boot/dts/ralink/mt7628a.dtsi
+> > @@ -1,4 +1,5 @@
+> >  // SPDX-License-Identifier: GPL-2.0
+> > +#include <dt-bindings/clock/mediatek,mtmips-sysc.h>
+> >
+> >  / {
+> >       #address-cells =3D <1>;
+> > @@ -16,11 +17,6 @@ cpu@0 {
+> >               };
+> >       };
+> >
+> > -     resetc: reset-controller {
+> > -             compatible =3D "ralink,rt2880-reset";
+> > -             #reset-cells =3D <1>;
+> > -     };
+> > -
+> >       cpuintc: interrupt-controller {
+> >               #address-cells =3D <0>;
+> >               #interrupt-cells =3D <1>;
+> > @@ -36,9 +32,11 @@ palmbus@10000000 {
+> >               #address-cells =3D <1>;
+> >               #size-cells =3D <1>;
+> >
+> > -             sysc: system-controller@0 {
+> > -                     compatible =3D "ralink,mt7620a-sysc", "syscon";
+> > +             sysc: syscon@0 {
+> > +                     compatible =3D "ralink,mt7628-sysc", "syscon";
+> >                       reg =3D <0x0 0x60>;
+> > +                     #clock-cells =3D <1>;
+> > +                     #reset-cells =3D <1>;
+> >               };
+> >
+> >               pinmux: pinmux@60 {
+> > @@ -138,7 +136,7 @@ watchdog: watchdog@100 {
+> >                       compatible =3D "mediatek,mt7621-wdt";
+> >                       reg =3D <0x100 0x30>;
+> >
+> > -                     resets =3D <&resetc 8>;
+> > +                     resets =3D <&sysc 8>;
+> >                       reset-names =3D "wdt";
+> >
+> >                       interrupt-parent =3D <&intc>;
+> > @@ -154,7 +152,7 @@ intc: interrupt-controller@200 {
+> >                       interrupt-controller;
+> >                       #interrupt-cells =3D <1>;
+> >
+> > -                     resets =3D <&resetc 9>;
+> > +                     resets =3D <&sysc 9>;
+> >                       reset-names =3D "intc";
+> >
+> >                       interrupt-parent =3D <&cpuintc>;
+> > @@ -190,7 +188,9 @@ spi: spi@b00 {
+> >                       pinctrl-names =3D "default";
+> >                       pinctrl-0 =3D <&pinmux_spi_spi>;
+> >
+> > -                     resets =3D <&resetc 18>;
+> > +                     clocks =3D <&sysc MT76X8_CLK_SPI1>;
+> > +
+> > +                     resets =3D <&sysc 18>;
+> >                       reset-names =3D "spi";
+> >
+> >                       #address-cells =3D <1>;
+> > @@ -206,7 +206,9 @@ i2c: i2c@900 {
+> >                       pinctrl-names =3D "default";
+> >                       pinctrl-0 =3D <&pinmux_i2c_i2c>;
+> >
+> > -                     resets =3D <&resetc 16>;
+> > +                     clocks =3D <&sysc MT76X8_CLK_I2C>;
+> > +
+> > +                     resets =3D <&sysc 16>;
+> >                       reset-names =3D "i2c";
+> >
+> >                       #address-cells =3D <1>;
+> > @@ -222,7 +224,9 @@ uart0: uartlite@c00 {
+> >                       pinctrl-names =3D "default";
+> >                       pinctrl-0 =3D <&pinmux_uart0_uart>;
+> >
+> > -                     resets =3D <&resetc 12>;
+> > +                     clocks =3D <&sysc MT76X8_CLK_UART0>;
+> > +
+> > +                     resets =3D <&sysc 12>;
+> >                       reset-names =3D "uart0";
+> >
+> >                       interrupt-parent =3D <&intc>;
+> > @@ -238,7 +242,9 @@ uart1: uart1@d00 {
+> >                       pinctrl-names =3D "default";
+> >                       pinctrl-0 =3D <&pinmux_uart1_uart>;
+> >
+> > -                     resets =3D <&resetc 19>;
+> > +                     clocks =3D <&sysc MT76X8_CLK_UART1>;
+> > +
+> > +                     resets =3D <&sysc 19>;
+> >                       reset-names =3D "uart1";
+> >
+> >                       interrupt-parent =3D <&intc>;
+> > @@ -254,7 +260,9 @@ uart2: uart2@e00 {
+> >                       pinctrl-names =3D "default";
+> >                       pinctrl-0 =3D <&pinmux_uart2_uart>;
+> >
+> > -                     resets =3D <&resetc 20>;
+> > +                     clocks =3D <&sysc MT76X8_CLK_UART2>;
+> > +
+> > +                     resets =3D <&sysc 20>;
+> >                       reset-names =3D "uart2";
+> >
+> >                       interrupt-parent =3D <&intc>;
+> > @@ -290,6 +298,8 @@ wmac: wmac@10300000 {
+> >               compatible =3D "mediatek,mt7628-wmac";
+> >               reg =3D <0x10300000 0x100000>;
+> >
+> > +             clocks =3D <&sysc MT76X8_CLK_WMAC>;
+> > +
+> >               interrupt-parent =3D <&cpuintc>;
+> >               interrupts =3D <6>;
+> >
+> > --
+> > 2.25.1
+>
+> I get
+>
+>   DTC     arch/mips/boot/dts/ralink/vocore2.dtb
+> /local/tbogendoerfer/korg/linux/arch/mips/boot/dts/ralink/mt7628a.dtsi:27=
+5.28-284.4: ERROR (phandle_references): /usb-phy@10120000: Reference to non=
+-existent node or label "resetc"
+>
+> /local/tbogendoerfer/korg/linux/arch/mips/boot/dts/ralink/mt7628a.dtsi:27=
+5.28-284.4: ERROR (phandle_references): /usb-phy@10120000: Reference to non=
+-existent node or label "resetc"
+>
+> ERROR: Input tree has errors, aborting (use -f to force output)
+>
+> for CONFIG_DTB_VOCORE2=3Dy and a similair failure for CONFIG_DTB_OMEGA2P=
+=3Dy
+>
+> I'll apply rest of the series, please send a fixed patch for mt7628a
 
-* From an interrupt, where raised softirqs are handled on IRQ exit
+Sure, thanks a lot!
 
-* From a softirq disabled section, where raised softirqs are handled on
-  the next call to local_bh_enable().
+Best regards,
+     Sergio Paracuellos
 
-* From a softirq handler, where raised softirqs are handled on the next
-  round in do_softirq(), or further deferred to a dedicated kthread.
-
-Other bare tasks context may end up ignoring the raised NET_RX vector
-until the next random softirq handling opportunity, which may not
-happen before a while if the CPU goes idle afterwards with the tick
-stopped.
-
-Such "misuses" have been detected on several places thanks to messages
-of the kind:
-
-	"NOHZ tick-stop error: local softirq work is pending, handler #08!!!"
-
-Chasing each and every misuse can be a long journey given the amount of
-existing callers. Fixing them can also prove challenging if the caller
-may be called from different kind of context.
-
-Therefore fix this from napi_schedule() itself with waking up ksoftirqd
-when softirqs are raised from task contexts.
-
-Reported-by: Paul Menzel <pmenzel@molgen.mpg.de>
-Closes: 354a2690-9bbf-4ccb-8769-fa94707a9340@molgen.mpg.de
-Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
----
- net/core/dev.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/net/core/dev.c b/net/core/dev.c
-index c0021cbd28fc..2419cc558a64 100644
---- a/net/core/dev.c
-+++ b/net/core/dev.c
-@@ -4692,7 +4692,7 @@ static inline void ____napi_schedule(struct softnet_data *sd,
- 	 * we have to raise NET_RX_SOFTIRQ.
- 	 */
- 	if (!sd->in_net_rx_action)
--		__raise_softirq_irqoff(NET_RX_SOFTIRQ);
-+		raise_softirq_irqoff(NET_RX_SOFTIRQ);
- }
- 
- #ifdef CONFIG_RPS
--- 
-2.48.1
-
+>
+> Thomas.
+>
+> --
+> Crap can work. Given enough thrust pigs will fly, but it's not necessaril=
+y a
+> good idea.                                                [ RFC1925, 2.3 =
+]
 
