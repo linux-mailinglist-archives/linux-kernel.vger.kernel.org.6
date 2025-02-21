@@ -1,64 +1,86 @@
-Return-Path: <linux-kernel+bounces-526543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2F58A40005
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 20:50:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2078A40009
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 20:51:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16D2F860DE3
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 19:48:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB9F2421C6A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 19:51:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A85501FF1A6;
-	Fri, 21 Feb 2025 19:48:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 874CF252907;
+	Fri, 21 Feb 2025 19:51:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eDo1QaKD"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="mYe1LYof"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CD261FE47A
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 19:48:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E5A11FBEBE
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 19:51:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740167329; cv=none; b=Yr73pUbJtp8BxogydRsUhxKCCnBCM9gwprxzytYFSWIzDD2XH0YzgBT65UunzKzIGz2RRUDtHdSu0yLnUQFC15/QziaU9CKzJVkzCgJTOf+oGKU0cQndlG3gHJEjbNn9+ZjWEmoGsLvpHVnqBfIgkjIQidJllmxlIbhp7mkyrpQ=
+	t=1740167486; cv=none; b=XmiMJiUjRIahw0/bU9rZ9imBlXRcxC6mtPXrl9Az99GXAjpOp8B7WRtzXNoiLgrRjIgIvEYwvoBk9jsAEgmaNxh6fGCDNwsXb93TlEGcnBTQmjaLpdcih+iPpMmOuc3QIIUWGdG8cvtul3bAinZXt28PrWmWkLMoy+TnC9knGQ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740167329; c=relaxed/simple;
-	bh=ePi5KMIddXc1knfSXrFU2kRVyqYDLtWuNrRABVu+Xe4=;
+	s=arc-20240116; t=1740167486; c=relaxed/simple;
+	bh=uyiF/QHDt3ei/5eDvHIAfJrbglGWLmfExHnZHGY8eE8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ay3u0X+sYNaK7S6CSxxLwqB86oXImGIwkD7L3cgM3wlIHIhxR4Zc9otlLBa9/xlL2f5wnSL/vVM057Ht7lwutReJEJzdKjC2UlUpauxCMsztcLsqEbXjXZ5azdfict/P6259Iwpbt+FY+/k2MV+1ggwyAQGCMzWM60WsOfjxGLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eDo1QaKD; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740167327; x=1771703327;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=ePi5KMIddXc1knfSXrFU2kRVyqYDLtWuNrRABVu+Xe4=;
-  b=eDo1QaKDiEP6tQvTnTscNGTwX33j21N0lJYOJNVcIOAtINL1b0kak0V1
-   wAZSTrtGrVHmCYRiHYNtDJF+hvv1jg3dNfYpTepZZpZn05/8cBMnalsp8
-   ALkrt/9MBv53IFs7u17PBAogSKtrCABmnYN3M0XCaVVjEPvImZnsWebM4
-   a3mRMNKQGR694YGRNb2u6/TnQ/v53i07KmdrQ1Lmxxuc28RnVU12nH167
-   +zPlLe1q349n+jzCiuHizLqZjOJTXcSgvrgq8ZQqDhbEp5+7SYY5r1WwT
-   CHAoHQoGXBT7s0+iKQqdY1EXThTH0IPqzVvuWOuTzq/Z09V8i0a3A7Nrf
-   A==;
-X-CSE-ConnectionGUID: jKYQm1o0QRWon5wV6XqCJQ==
-X-CSE-MsgGUID: DzbMHsDaSYKPxbtS5Afc/g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11352"; a="41122108"
-X-IronPort-AV: E=Sophos;i="6.13,305,1732608000"; 
-   d="scan'208";a="41122108"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Feb 2025 11:48:46 -0800
-X-CSE-ConnectionGUID: +K9a+icaRoi9zlsmwb28bg==
-X-CSE-MsgGUID: ph61fjb5RYO4S21WhlwVwg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="120700951"
-Received: from aschofie-mobl2.amr.corp.intel.com (HELO [10.125.110.177]) ([10.125.110.177])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Feb 2025 11:48:46 -0800
-Message-ID: <90a36a64-8ea5-4ea1-965f-bcec604c7d5b@intel.com>
-Date: Fri, 21 Feb 2025 11:48:49 -0800
+	 In-Reply-To:Content-Type; b=FUrHVGKcMv4LhCb8/culKbMNS7i6jYDj+4KsoxZgfJxbh2A5XYjSmKTC3whjgeO1iGb3n/2tYNg7V3NkmwRCA74lyDurjih8ct237zUfrRqcgQ9ZxnHxNbtix6s8udb2kGxasUAUAoAgPTpa2kp7LfQEOQ0n09YmxTNM+81FIXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=mYe1LYof; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51LBqhDp012178
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 19:51:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	slCnnx3Ju6AXQtgwn1/8Fq3BnRvUMWgyzQWIGQVJ7rE=; b=mYe1LYofpZxGtTo2
+	PZR8vjH+2x2+Pa2T/nsiyynsYjx1MYLgVpzf/PUE9XhmCpx7IudhsQBreSAPr5a1
+	b14qv6WOrBY2e3MGlyTxtI+1P3HNGH7QR1ajn6G/UZ5q+sPJxYCv2VMhXaBzMSor
+	ZGVmcX7yCWjGCz9qXgYXH+8cQcrEqGU1oylu/tiils4aPAI3rmp1L7GwP2a2tU4W
+	M+8mPpRX7M3EHsu0Zrf0RHvvq8TgpazbjtmqqeyUooncrXZspE6W7Oy8uhr4rX31
+	K2lbn2B9G+WR6XBBQmUFyi5htbEuIkP/ZxUCqvEK1tKcjf0UAzuMKCDS/2rC+22E
+	unwRKg==
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44vyy1u5b1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 19:51:24 +0000 (GMT)
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-471ef402246so5515211cf.1
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 11:51:24 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740167483; x=1740772283;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=slCnnx3Ju6AXQtgwn1/8Fq3BnRvUMWgyzQWIGQVJ7rE=;
+        b=D4LKJ+hhXBcGuIdfwr2rywOsxIT/4FmMFHZQ7OBoG3uTM0ZFLgtE1arsp9R2972PjI
+         jQU1rslEEZ5BjkzR1rOI+8fG/JvfYdhDppjueU7pHljHdiVZyoSHyXkgeDosUo/jxqtv
+         Eft4fWv1zIk60QuqFMUhWgr3mneSnKvEDEZDSVI2Knuj0f7hy8RGDYgXJ7C0MFFRB6qs
+         8rUCTrHggMvk/aCiwQVBVvxQzsdSymW+6ZZZYFZfnapYB5zmykTNTVLEKmnkhn2g8RMt
+         4IfDVr6gVYqjcNqAaymxboBS2u/iQHxrRLtelraFA+wUuxloxnFj2x2HWtmSPoOnk5i1
+         Feyw==
+X-Forwarded-Encrypted: i=1; AJvYcCUvQ/KjY6ZL8htS7Osp1Ig5SAgqDEZSDZpHgqmJ5On2EyUJqpuM8hgD0a857mgwMHpT2WlPLO3eQM7u0pg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmAH/Si7ag3ZKO41wAYf0knENlsDFX+TaK6lhicsWcl0JsC/4e
+	jFH89clrS/bXjJMyLkwQM1Mzb8XxC3VbR7TmEbD6/fxcOXDJkJiqVqYaOslUcv/DjQpa9VKo18R
+	t505maF1u92e6eMRLOEjYGoEgCHOZAYKOQngxer8i3Cy3mF6m/8ZybLQL51b+eXk=
+X-Gm-Gg: ASbGncuy+ZZa3HdjoP+j3jfsWFLzn537QZXduLZvxYrSWb4MYQ+ipEY+sa24nkqikXW
+	rX4OEDS7EJCfzWLjOxqhZWA/++YF5rGPgYwaY21Vqako8iAl3rkq1flEmOWI5BYSQPXEls0XsrR
+	z4l0buIehQVtPMg6dYFaKFqWBZkcJEbisiFPrKzLKoQ0P47wWvsN89Qen7v6LDEqypb2Azf3Ldj
+	olvZ/tiGc7URXD31UuFL5S8ANNn9hblma1ol52SxpGLgV/1zonfJc5bpMtSXrndIQi8Tdkx312n
+	9cVw7e2CCXj2+9fn7Fx2H35ZI8VY+ixvKQqq/FvfQaJLc322SiVANKh83B5k2zQ0znD02A==
+X-Received: by 2002:ac8:5710:0:b0:471:ef27:a30b with SMTP id d75a77b69052e-472229a8a3dmr23685651cf.13.1740167483198;
+        Fri, 21 Feb 2025 11:51:23 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFkR63TPCM61UzrS8r5cdu4GiDJKbAb4BpmgRg1ZST/E8eZwpjn3gXn09+LIotX9lkdJBHVdA==
+X-Received: by 2002:ac8:5710:0:b0:471:ef27:a30b with SMTP id d75a77b69052e-472229a8a3dmr23685481cf.13.1740167482783;
+        Fri, 21 Feb 2025 11:51:22 -0800 (PST)
+Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abbad297430sm867677566b.5.2025.02.21.11.51.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 Feb 2025 11:51:22 -0800 (PST)
+Message-ID: <638f05f4-3a0e-459d-aec0-b925ca7f657c@oss.qualcomm.com>
+Date: Fri, 21 Feb 2025 20:51:19 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,82 +88,72 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/4] rseq: Make rseq work with protection keys
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Dmitry Vyukov <dvyukov@google.com>, peterz@infradead.org,
- boqun.feng@gmail.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com, hpa@zytor.com, aruna.ramakrishna@oracle.com,
- elver@google.com
-Cc: "Paul E. McKenney" <paulmck@kernel.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-References: <cover.1739790300.git.dvyukov@google.com>
- <0d0e0a0a7136d49af9a8d6a849e1aa4bf086c472.1739790300.git.dvyukov@google.com>
- <81d94ec3-16af-45a7-87c6-ef76570953f8@intel.com>
- <6ada635e-973d-4e32-ab47-1fda12ee7ce7@efficios.com>
-From: Dave Hansen <dave.hansen@intel.com>
+Subject: Re: [PATCH] arm64: dts: qcom: sm8750: Fix cluster hierarchy for idle
+ states
+To: Maulik Shah <maulik.shah@oss.qualcomm.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Jishnu Prakash <quic_jprakash@quicinc.com>,
+        Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Melody Olvera <quic_molvera@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, quic_lsrao@quicinc.com
+References: <20250218-sm8750_cluster_idle-v1-1-5529df00f642@oss.qualcomm.com>
 Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <6ada635e-973d-4e32-ab47-1fda12ee7ce7@efficios.com>
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250218-sm8750_cluster_idle-v1-1-5529df00f642@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: h5icwm_2-b4Nzh4LxZo-zqCFDkN8l6r3
+X-Proofpoint-ORIG-GUID: h5icwm_2-b4Nzh4LxZo-zqCFDkN8l6r3
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-21_07,2025-02-20_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 clxscore=1015
+ adultscore=0 malwarescore=0 mlxscore=0 priorityscore=1501
+ lowpriorityscore=0 mlxlogscore=865 suspectscore=0 phishscore=0 spamscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2502210135
 
-On 2/21/25 11:38, Mathieu Desnoyers wrote:
-> I agree that switching to permissive key in the fast path would be
-> simpler. AFAIU, the switch_to_permissive_pkey_reg() is only a pkey
-> read when the key is already permissive.
+On 18.02.2025 7:58 AM, Maulik Shah wrote:
+> SM8750 have two different clusters. cluster0 have CPU 0-5 as child and
+> cluster1 have CPU 6-7 as child. Each cluster requires its own idle state
+> and power domain in order to achieve complete domain sleep state.
+> 
+> However only single cluster idle state is added mapping CPU 0-7 to the
+> same power domain. Fix this by correctly mapping each CPU to respective
+> cluster power domain and add domain idle state for cluster1.
+> 
+> Fixes: 068c3d3c83be ("arm64: dts: qcom: Add base SM8750 dtsi")
+> Signed-off-by: Maulik Shah <maulik.shah@oss.qualcomm.com>
+> ---
+>  arch/arm64/boot/dts/qcom/sm8750.dtsi | 36 +++++++++++++++++++++++++-----------
+>  1 file changed, 25 insertions(+), 11 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/sm8750.dtsi b/arch/arm64/boot/dts/qcom/sm8750.dtsi
+> index 3bbd7d18598ee0a3a0d5130c03a3166e1fc14d82..3af928be5b68b47988dd55f4add8e3712f07d5ab 100644
+> --- a/arch/arm64/boot/dts/qcom/sm8750.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sm8750.dtsi
+> @@ -178,7 +178,15 @@ cluster1_c4: cpu-sleep-1 {
+>  		};
+>  
+>  		domain-idle-states {
+> -			cluster_cl5: cluster-sleep-0 {
+> +			cluster0_cl5: cluster-sleep-0 {
+> +				compatible = "domain-idle-state";
+> +				arm,psci-suspend-param = <0x01000054>;
+> +				entry-latency-us = <2150>;
+> +				exit-latency-us = <1983>;
+> +				min-residency-us = <9144>;
+> +			};
 
-Unfortunately, on x86, PKRU is almost never in its permissive state. We
-chose a policy (stored in the global init_pkru_value variable) that
-allows R/W access to pkey 0, but disables access to everything else.
-It's 0xfffffff5, IIRC.
+I don't think this is necessary, you should be gtg with just creating the
+new power domain for cluster 0/1 and pointing both to the same cluster idle
+state (unless they both need different latency numbers
 
-This ensures deny-by-default behavior and ensures that threads cloned
-off long ago don't have a dangerous PKRU value for newly-allocated and
-pkey-protected memory.
-
-If I had a time machine, it'd be interesting to go back and try to make
-PKRU's default value be all 0's and also represent the logically most
-restrictive value.
+Konrad
 
