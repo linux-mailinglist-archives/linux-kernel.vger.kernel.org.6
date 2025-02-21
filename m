@@ -1,398 +1,384 @@
-Return-Path: <linux-kernel+bounces-525043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 978EAA3EA1D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 02:34:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F7BCA3EA22
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 02:36:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8DEB3BECE0
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 01:33:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 219E83AFF3F
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 01:36:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55DC9200B0;
-	Fri, 21 Feb 2025 01:33:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5368F225D6;
+	Fri, 21 Feb 2025 01:36:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="vGTfQWdr"
-Received: from TYVP286CU001.outbound.protection.outlook.com (mail-japaneastazolkn19011039.outbound.protection.outlook.com [52.103.43.39])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="goix/GuN"
+Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com [209.85.221.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DECAA1876;
-	Fri, 21 Feb 2025 01:33:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.43.39
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740101622; cv=fail; b=rGNVgrgQzHD864DvclXv/3cc8jHhmNw4Br0WroWDqnSYapeH7TawFglqo2vSbrx5bwUrv7vBRePGCQ6UcUBbXM8fdx4RbxsYNvt+cbKQ8t6640v5N6JpChP8tLAv/9FCgsAuU+nKwGEb0Nd7IdPIFn9GLVhQmyB8ZIY2zVEdc3A=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740101622; c=relaxed/simple;
-	bh=8Yx22f50Yl2M4PViBkxRsQn/jkS/TPKRak2rl/+In9k=;
-	h=Message-ID:Date:Cc:Subject:To:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=PjT2R15RPZW8kXJpyX9THh22OzsYsy6IjWjHZn+qZ9Sk67idPczCv7RvJsXDeisf6H54iQUqDIslb7tzNyYlbX8p2DqV5KFaP72ZOo/bBnTSvacYBVVEf9/MPqOqld2JcfEoRW3qV1yNTzKhaKRJbf/7nP1jIZz4FXdJeQ443jQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=vGTfQWdr; arc=fail smtp.client-ip=52.103.43.39
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=F7kL02LzsEEBn00k6BkfHsU9DgDsZfLVZLFjJ2qVZQe5zkvAuvS2JxM6yY8TIQv9eBoh7xrTrFuwjM5MxGHCwC3TE73HL2nWeR66RRwqoyxg8mbTNzVUe9FaiRmhbkn+CST6Cd08lRdj8lGUscpL6JqIFyPIn4A8MLbqr5yL0OkMi2o7SQ2M8uwahlN1bFwz56M1NvrenNvZnIDY/4Rmp2GT6P1LeI3Qpj+zdv46oZWrLtCHoWyFQqs7uoWwOeK1u0JpXBfw8ozQWAFdmLNCQe91YYMWCwhmBFR0UkP2l00KxODs9jBsobRcvaWKBOh3/rp2j5RC5eY4Yn6IbPsP/w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=8Yx22f50Yl2M4PViBkxRsQn/jkS/TPKRak2rl/+In9k=;
- b=Kel+o9PHWoWvXqQdQL4Gvor/NjWOLd3J9JpkSYpbefVVx0iO1pyBwAZ/Wct8D7/zTg+68bUUYJAntqfE5PaPanB4eWcY7tLPWoQ7kvzBe09ng7kz5zh/yVctDFDfb35ktZ773vyS/R8G4iS/gMRwairstnPYAA5/sA2mtra9InRZ0h9qObm+s9Jg4/bOc5H5GGNpD/OEhkrmQsXOyBDYYoocDH6GCdGrAH+RVsRccxeSOWpLEBK+l96Q6QU18rfp7i2RkJ7PQ8rUstSCSPPa3ddxusSSt0EJ3Hq8ayqZqqZIfC3JlNSknUhNvG3nDONenAbmKJ7BfSVTsNnBw5Bc9A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8Yx22f50Yl2M4PViBkxRsQn/jkS/TPKRak2rl/+In9k=;
- b=vGTfQWdrLeJ1MGWdEj2CoN5zx6+6hdxFtXI19K8VPMMqPcxK0YL6Yk9cLJQ5ZLCREha0+NPfEKydV+dLNquEN2lra53uytu1FMJZ4QDShJDokRMFkh3DZ+slgnrqWsWRk9kJYroZCumPdV3+XeEUiTDNXumhy4FJ7F+/6sWW4SYPuP1j6VWz0MAsw4cTAjHaXgbd2/Mc4nWRU3WH4B63z99Sza9JrGHGTVFxN46orSa2m5I86Lb09qgD36X+piJVTSrJC/mA0BAM+ZxGh51cb54C41TvmzMyLzktsE1OhgsvVNskA4Jb7n158e+AJiF4aMK07QZXFACDRhgQvR3KdA==
-Received: from TYCPR01MB8437.jpnprd01.prod.outlook.com (2603:1096:400:156::5)
- by TYWPR01MB11286.jpnprd01.prod.outlook.com (2603:1096:400:3f2::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.17; Fri, 21 Feb
- 2025 01:33:36 +0000
-Received: from TYCPR01MB8437.jpnprd01.prod.outlook.com
- ([fe80::83e7:751f:f3af:768f]) by TYCPR01MB8437.jpnprd01.prod.outlook.com
- ([fe80::83e7:751f:f3af:768f%5]) with mapi id 15.20.8466.015; Fri, 21 Feb 2025
- 01:33:36 +0000
-Message-ID:
- <TYCPR01MB84372ADA424622EB20982E3898C72@TYCPR01MB8437.jpnprd01.prod.outlook.com>
-Date: Fri, 21 Feb 2025 09:33:27 +0800
-User-Agent: Mozilla Thunderbird
-Cc: wiagn233@outlook.com, Chen-Yu Tsai <wens@csie.org>,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: rockchip: rock-3a: Remove bluetooth node
-To: Chen-Yu Tsai <wens@kernel.org>, Heiko Stuebner <heiko@sntech.de>
-References: <20250220165051.1889055-1-wens@kernel.org>
-From: Shengyu Qu <wiagn233@outlook.com>
-Autocrypt: addr=wiagn233@outlook.com; keydata=
- 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
-In-Reply-To: <20250220165051.1889055-1-wens@kernel.org>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------SR0N2wID0zLyz0q4DHW0Geop"
-X-ClientProxiedBy: TYBP286CA0036.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:404:10a::24) To TYCPR01MB8437.jpnprd01.prod.outlook.com
- (2603:1096:400:156::5)
-X-Microsoft-Original-Message-ID:
- <adc301b2-a992-4681-acad-f232477abde1@outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FB2D8821
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 01:36:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.182
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740101802; cv=none; b=odJthfqcNSISyBVUmmlD492sIkVFHDNk0nt5JJ/Meguulm3yN8BXmFEBjOyGSGjHfFDpyZRfUD30HOXyv/dU461LVLhGZ2Se1Wr+HBDkCz+hpIl+vTipzxOLq6Xp+E2KTh3pYUpAKZaL73mUoUmT/Rc270gBoILhMmuIx7I7440=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740101802; c=relaxed/simple;
+	bh=oRXHS6L+qjZJF6T3xFs1t/bi39sC/M6fUgnNKwEE8k0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nWqfpPLyLSWFMr7Ee3CYfoKJgW9WgXsumRJa3VFD1+nZZJbeVv+dJ19tM0eGXgdgW+9IQ491jbgOuWI5idToGMlKpLhIETsis3fog0T/HEvjTuEXv2AICt20N2LNAHeAFpNTgcZcyHewaCe78TH4DL5qSuCYvFMkvXAi7k2Q9WM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=goix/GuN; arc=none smtp.client-ip=209.85.221.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-521b84da5e9so328937e0c.0
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 17:36:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740101799; x=1740706599; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dQel4KqqxYlgH/qOSl9x/DKFeBn1B6rTaFzOVEKZD8s=;
+        b=goix/GuNKUAweNk1xSCfYdJRC/m68dTW+P9WWO1DBQxmaCqu9wYFcF2IldoDPQGmd5
+         UPVy+DzM8UUxCMGLqDCY6xa+bsiHpGcnWTdvg8y8N3dmmGXuMHXqqIK87hMf2YFVYlVh
+         AKqJHP+2nfLGKPgK+W57k2km1RPXa2H+gf+skU/CIfzMbus5+noD80K4ayDYlsHaa4oy
+         3eX6IQTYpDOfKHVFHwx+NnLhxmtpwpNZ/cbAvWs7+tMq18j+adYFzMMq4opg7VF42c0y
+         2erYhlYFusf1TJUZ5cd/RdDgHq91PRCFYQtkyqiK8bnPE7ZcrTbYv1G8n+sf5Vep9HM3
+         0D9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740101799; x=1740706599;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dQel4KqqxYlgH/qOSl9x/DKFeBn1B6rTaFzOVEKZD8s=;
+        b=gr6mkoCsbI1cIEtjVcr7OxellE7cYtWkfcyuBOu+ixsJ06N+GQ3ZToDQZ74QTfy4Ek
+         rm5Xfp0Qf6L9vU/+F3iX7/ONquMBKyKuKoOajBUroIePisKtt23LmZiiIlN+d84yQAUP
+         1IJZ+m9Pzh1t8d0EhKVFXyEXJMSTrDke6uD5JNmQSqtUJsV6fn6FY0ZjEqnFm3k6JLWm
+         Bsp/8L/T4kM7QzcyzMy6bNGOWQnFxxAUEggPl3DsIgLAVBykTg4vpJYrZZ3xF3CK0/3b
+         2Sz/ASSFBSaWuVpLs6B3zGNzbylnug2AjZ+Qxw3QKMOaNyfrFrc6qI2CY6FIZ0HtEQ7A
+         bibQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU9fT5LiVeq2103j5WlFy+7YKs4wvmdKvM9vcaN/Hi5kYxs4WHucHX1Ih3zL5fS5XEVKBecmK3udNhYBww=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzhrj1RrGMzzUK9y1k1zzXsESXzuPBrSzH+B7A18TOesVG5IRqe
+	RnmTAk2nPS0E9vpO3mNSvhAAzWHbWqC7f8zVRVHwZEArXPfouhyIMhx3EMPpeEwVKTt84WOlALv
+	VtINru3mHByet7mrFotPb83iVyVw=
+X-Gm-Gg: ASbGncsgq0QgVBQcd+O2tOupKJo6MEdz83yK83pRukuwPwTDT6QPBR1Pdc5qRVNje9W
+	IsvfPRJNTZBA9hKxRSdn3oXVpOyJrr+0RPwuq/2HwOdEaQ+FffG5IRgL/EAHjUfv11wjnFShkct
+	JsaN+a6FA=
+X-Google-Smtp-Source: AGHT+IESbiHNBvWRKj5VOcEqyBOl1nbmv9qSww9gb73Mfq0ZldpuXTpQ99EDbEjIcwIJywwUpS0bxprbp5SRbWE4yuc=
+X-Received: by 2002:a05:6102:f9a:b0:4bb:eb4a:fa03 with SMTP id
+ ada2fe7eead31-4bfc01cf2d4mr1291866137.23.1740101799117; Thu, 20 Feb 2025
+ 17:36:39 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYCPR01MB8437:EE_|TYWPR01MB11286:EE_
-X-MS-Office365-Filtering-Correlation-Id: c356c223-7620-4112-1961-08dd5217c2b4
-X-MS-Exchange-SLBlob-MailProps:
-	EgT5Wr3QDKyfA/kqhNtxhLoDzMvzACCoHRGRNdR/d7hf+4GkxndAGN8f0z5xPyzXBDe2yBhlRzuR7P9f7g5T+vVJz/5D94VZvn13Xo8QvXJ2xzjbiwrOUFwSWm8YhA1OljRzrPiQvL+himJ7DiDUdqVxLub4s9FVQE6021cRAjFw/A7arG07cc6itSN8Yzn4ETaSBiuq5fH18PY+bxR7jVO2kJpgkxU2JYkHzfLTyCq9a+5VAAO6DV7++SLNKA8AGne678B7isH0L0gCBInnotoUyxHAcZCHmKDmwt+TnZFBkoamNk0huDowe92iN9+PgTNbrbOZK/NYvMXxEvIvED4+CK/ge2GM5Zd+54WwRDYob96vy42m2VXNxtGJQFqgSFKaoO/HgboeB1757All+UvP+LmBdBx+UecOTEu8OghfghzNlFO9UWMUiJw9ZgDZd80QmqGzYfaZlRIyUMUFvEOst34K/svczoJR0IWEmm7smHe6gB9PuAZWwGMHnezsCJdXQnHR6+pqCqMUNXKWWPV7KwWbPvCf26xq5dJoOEMflCbLaGrQnZl3ZcJmgjSrIpXVIlWRrueFZC1DcYuhRzkwGhdy8dep1gMskQssnkYDdhJcDTz5IB2Lr9w+BBbO1lkXzI/11NGdKxSj7DF735Dwzc5omZa5pyE1SRlWyL6b2mbniwV6Yh8055yTZOEoK6Cffs1FeYv3jqYvE8IhoUnFUWXEEws0VRf3yikDoU4=
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|15080799006|5072599009|8060799006|19110799003|461199028|12121999004|7092599003|6092099012|13095399003|440099028|3412199025|26115399003|1710799026;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?WklUT2x3QzROaGQ5Mmd1Zk41eFJ2VkR1aGVldm1OVWtOR2p2Qk9La1Z5L2xy?=
- =?utf-8?B?STcyM0VsTTh5aHA0dzFMVStMRXRNN25KWjVlZ2M5WjdWbDd6YTFBSGs3RzE4?=
- =?utf-8?B?cUNDWFNJZ3hBZHplYUFXYk01T0MyaXRqOG9lc3RMN0FicFlFajI5QVJZcyt3?=
- =?utf-8?B?RnF4dkoyU05OdlB6Vit2NzFmZXdUZm13aUJFZzlQZ29LSVVRY3hSTWJDZ1RN?=
- =?utf-8?B?VkdNdSsvYk5Wa3UycnlMd1ZGZnIzN2VhOWNXTkRjbEVhNlZUOXI0amFobVhr?=
- =?utf-8?B?L203ejFXcktidU0yVitndXliZG1qREdRcDlaRFFPTTg3TzltSEJNL0RMV3ZF?=
- =?utf-8?B?cVlHMVIvc0srQ0ZsNnR2UnA2L2o5aHN4bC8rUy9wNE1CMzJkNnRYWjh6SVN4?=
- =?utf-8?B?UzFDZ1p4c2gxUVdXRXphdm02V1NYS29TOFlPbm9sUUlPUTVIRkpvak9Ca3lv?=
- =?utf-8?B?U0poQVEySGZiTDF6QkhNcjdubDhYQlFFdmhxenEyNXBMb3FpODhHVyt3Ynhy?=
- =?utf-8?B?L3dFNHVMOC9CdUNiOXZidDhkOUlZcUI1dWs5WnFrdFNHZW5TbjlKdDU4eXJX?=
- =?utf-8?B?UHJtbEFHVlhtWnhleG1uTG5PZG82Mm52RHo1QUcvWTQzNERGMDF5N3AzNW01?=
- =?utf-8?B?Ui9vdjVKMVBCV1BYRzI3djBiakpacmx3cXF5ejRKdlk0K243WlFmOEgrU1ZG?=
- =?utf-8?B?dEt4YWxlMTdJczRseHlyOWVGS2FhVjQwTzZnUGNxNDQ5ZTVnUjdwaVBwelgw?=
- =?utf-8?B?Z3RnNnE0QWd0TCtLRDJ2YllNcVlOSm1ma21CMlFPdjhoZ3FPNmN1ZUJNY25H?=
- =?utf-8?B?UmV4SEJ2YTl5d0JXTmxmU1dCbnYvZ2UySG5BdS9ZR09TMkUxdlhIV3FDb3pw?=
- =?utf-8?B?c1Zrd2JiaHBzc0J1ZnZ2SEI4WS9uR2xBNjRYMUhlTE51aTFZcFcvS3NjcXVH?=
- =?utf-8?B?cVZXbFBTOEV4Sm9IbzR0eW8xR1FvS0RGNEJKcDZRdGhvZGtRWjErVmVIUFNH?=
- =?utf-8?B?SDM3ZFdSRGdhU1M1NkVLWTd6R0xNZVNIaVFVZGIrekZZaG1kRGRMMnpSMElz?=
- =?utf-8?B?ODR2NUxXak0xYzhWTEZETG5od0RqWkZjK0JubzlKbGw2Zm5xdWRKZ3dyZnJ4?=
- =?utf-8?B?bWkyNjBOZ0hicGJ0TjFNUzVOSXNzdEZ1cmg2eUxhczlQZ0tzZS9HWE1CL295?=
- =?utf-8?B?Q0lCMVZ5N1grcmpzazBwMlhleUtHdUVONFg0UzM3SytpUmZPUmdQc1d3cGtj?=
- =?utf-8?B?NDFiaVJacnlWUEdSQ1VsRHMxTjhpc1R2bFZzNHVyU3FCWDZJRnFocjVTb0lY?=
- =?utf-8?B?bURTRTBMeUpWTUhJMjJkcTVYTDJJNWFYNlJ4QlloeU42UzYxNXdJY1dYQlBL?=
- =?utf-8?B?WkhNSkR6OGxkQmtKbE80cXBDQlJiVjhiQ0JuNi9NbDJPdFlEaHhLanYrSjJR?=
- =?utf-8?B?YnVRaEFiV2x2OUVxbDlYTjBuRWpDcFA3RWhCWExXa1VCazF6ZG5VRkxqZkdi?=
- =?utf-8?B?WmsrTi9QVzBES0lzN3NWYVpTMERJZWRGZVQ0WW5vV2Q0S1BHZzZnUHB0b1VF?=
- =?utf-8?B?QUViRCszcXlocjJuWmFLU01DRURIQVpYVTF6dG5valVVS0IwU0dYUCtDTjht?=
- =?utf-8?Q?9RIVHQ30hBMArEsmafmiHM+r/V6XLyQkB+PHNZUCIx4w=3D?=
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ZktzTjBuMUtoNTBVQmQrNFdZRGthcWJsTFV0Tlc2T1Z4WVNUejRkaFl1eWpz?=
- =?utf-8?B?amdvMlFUc2FxTndmSmtodHZUR2NXc1kxTnF4QVkvMkRuZG42UUFKd1h4djln?=
- =?utf-8?B?eFdhYXRrRUF3RWthQmVWVE1DQ2JhYXp2OUI0OVdiL0MvK3hKbGZVMlZwSlNq?=
- =?utf-8?B?ZUlNN24vOUd0RHhYWU1KRXVlKzFBNVoxSytGbDdoUkw0L0RsaUFPTm5qVmNX?=
- =?utf-8?B?dW9sdGxHYnlTaDRueWVFVVdOUW9YbWt1ZzNXZUhudjNuWXRlRThaTmdHNmRS?=
- =?utf-8?B?WmJwZHBDYkxJb2lsZ1g4ZUdMa2pTRHpQTFRYdDlCajdJa2RkTzcrTHBiWTl1?=
- =?utf-8?B?WXBMZkh4V2pDNHU2WklQUzczdzIxNStvRGEzSGJQQklPQVVZbWdKQVZnYXhT?=
- =?utf-8?B?RkVuSWx4QXk4ajVuV0RZd1FodEN3Tml4eWtjVzdSL3NMN29wbE1OaXFCVUkr?=
- =?utf-8?B?UWVHUTliSjlPQ1B3VldobXArWVlSSVhMS2RVWW1hdC9zOGp6b2Rra1VOWHly?=
- =?utf-8?B?aTMrd2VQdjJGTGNQL25ZdkdoN2x1bTh1NEx1Z0hzbVV3NUFnT21TVTd4MG5V?=
- =?utf-8?B?Y2Q5V1lwY2I2MCt0UGx2TmdXWEhHdGdFYkt0WTBDbC92MFF1UjY2NjNxbjlp?=
- =?utf-8?B?WTRHem1zeE9FaWh3cjhKQW0wL3liMFkrN0pXMTcxU3NkVml2WVVoSGkzcndp?=
- =?utf-8?B?NjEzYjVyTW5PRmFvSGdGaGpHVDFsTFJ1RGp0RWh2V0FJU1ltWnlNQVVoZEdw?=
- =?utf-8?B?MXRoN3ZSN3p0RWF4K1ZrakJtUXpiQmZvMVhDSnNoQURVSEhrMVNQcWNnMEFv?=
- =?utf-8?B?bk5LZG9sYVZWNnpGaHVTUDdIYmJBaS90cWttNXRuR2YwaUZUNi9vS1pXbmFs?=
- =?utf-8?B?aFl5TEVYei9lWjhkd2hrbXE1NXB3cTZZZGVxTFB2N08xTXd5cWphTE5tNVZP?=
- =?utf-8?B?NUdFa3dnSUFxdTNvWFBpZW84SGt0QnRmTjNzK08yOVVyNjdLNEE0bTNKNnlz?=
- =?utf-8?B?Nmc2S2VZMkg4YjIyR0Q0eXhtdUh5UU1xNzlLRWgxNSs4RHVNdDVudmczVGt1?=
- =?utf-8?B?Q1NkaWJNbUtqUU1VUXMxTGYrdHpJTHQ0SXEzeDVkczVvbXI3RmlnajJUQUhU?=
- =?utf-8?B?bVI2SVV3WnJ5dkxMRm5JYWxEMzVaODBROGFZaVArUklmclcwaHpMeUI2dlQx?=
- =?utf-8?B?STlMOFRYTCtBMzd5YUc3MFpJWDZKaFo3OHVMUjZnVUtLK1AvQWgwVXF2TDFu?=
- =?utf-8?B?L0xHSXRSOHRsa2gxWUVPWWhHTityNHZmbzBkSmZnMzlxYjcyNDlJbDFoSDlS?=
- =?utf-8?B?N2ZwVGx6TllDU3BBL0hzN3NUMXBBZjRaR1N2VlZDTWVscmRndjNRUWhRUE5y?=
- =?utf-8?B?VzZtREJiejNRMVBlUUZhODdKK3NORDJuSG9lUVlHdmp6ODRIR0lGU1NjZmgx?=
- =?utf-8?B?aFV2QVpGZVJKLzJGQ2NERkE3VTV5RXV1MHZ6Rm5ER2thUlBqcHBBZURrd1FH?=
- =?utf-8?B?VlF1QkUyQk5MTjB4Kzc1NjFUNkR4MGZobFF0NHFNMDlPNC9QV3JnZjFvUkRO?=
- =?utf-8?B?U3N0bVlhRUt1clZBK25jbzBPSzVIMWczT1oyaHdMa1dwUjBBYy9iREFhQjB2?=
- =?utf-8?B?bGNZSy9ZaE5vbG1WVzNxNjk4YWdlczI4NlVFOFBoWHl1QnBQZGxVVnRTbFh0?=
- =?utf-8?B?cVk2RmZOMEpsOHFjOTBuN3RUVmpVWFViMS85eDZFVGN1dVduci9IdTlabzNJ?=
- =?utf-8?Q?xB3S5X+qGQ4Y3UeWDg=3D?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c356c223-7620-4112-1961-08dd5217c2b4
-X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB8437.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Feb 2025 01:33:36.3767
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYWPR01MB11286
-
---------------SR0N2wID0zLyz0q4DHW0Geop
-Content-Type: multipart/mixed; boundary="------------vSEAK17PxhZYs61ClEQk2Fsa";
- protected-headers="v1"
-From: Shengyu Qu <wiagn233@outlook.com>
-To: Chen-Yu Tsai <wens@kernel.org>, Heiko Stuebner <heiko@sntech.de>
-Cc: wiagn233@outlook.com, Chen-Yu Tsai <wens@csie.org>,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Message-ID: <adc301b2-a992-4681-acad-f232477abde1@outlook.com>
-Subject: Re: [PATCH] arm64: dts: rockchip: rock-3a: Remove bluetooth node
-References: <20250220165051.1889055-1-wens@kernel.org>
-In-Reply-To: <20250220165051.1889055-1-wens@kernel.org>
-
---------------vSEAK17PxhZYs61ClEQk2Fsa
-Content-Type: multipart/mixed; boundary="------------cHQlD1YmbVVfYlzvcO34GtgB"
-
---------------cHQlD1YmbVVfYlzvcO34GtgB
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
-
-SGksDQoNCldoYXQgYWJvdXQgYWRkaW5nIGFub3RoZXIgcGF0Y2ggdGhhdCBjb252ZXJ0cyBp
-dCB0byBhIGR0c28/DQoNCkJlc3QgcmVnYXJkcywNClNoZW5neXUNCg0K5ZyoIDIwMjUvMi8y
-MSAwOjUwLCBDaGVuLVl1IFRzYWkg5YaZ6YGTOg0KPiBGcm9tOiBDaGVuLVl1IFRzYWkgPHdl
-bnNAY3NpZS5vcmc+DQo+IA0KPiBUaGUgQmx1ZXRvb3RoIG5vZGUgZGVzY3JpYmVkIGluIHRo
-ZSBkZXZpY2UgdHJlZSBpcyBhY3R1YWxseSBvbiBhbiBNLjINCj4gc2xvdC4gV2hhdCBtb2R1
-bGUgaXMgcHJlc2VudCBkZXBlbmRzIG9uIHdoYXQgdGhlIGVuZCB1c2VyIGluc3RhbGxlZCwN
-Cj4gYW5kIHNob3VsZCBiZSBsZWZ0IHRvIGFuIG92ZXJsYXkuDQo+IA0KPiBSZW1vdmUgdGhl
-IGV4aXN0aW5nIGJsdWV0b290aCBub2RlLiBUaGlzIGdldHMgcmlkIG9mIGJvZ3VzIHRpbWVv
-dXQNCj4gZXJyb3JzLg0KPiANCj4gRml4ZXM6IDhjZjg5MGFhYmQ0NSAoImFybTY0OiBkdHM6
-IHJvY2tjaGlwOiBBZGQgbm9kZXMgZm9yIFNESU8vVUFSVCBXaS1GaS9CbHVldG9vdGggbW9k
-dWxlcyB0byBSYWR4YSBSb2NrIDNBIikNCj4gU2lnbmVkLW9mZi1ieTogQ2hlbi1ZdSBUc2Fp
-IDx3ZW5zQGNzaWUub3JnPg0KPiAtLS0NCj4gICBhcmNoL2FybTY0L2Jvb3QvZHRzL3JvY2tj
-aGlwL3JrMzU2OC1yb2NrLTNhLmR0cyB8IDE0IC0tLS0tLS0tLS0tLS0tDQo+ICAgMSBmaWxl
-IGNoYW5nZWQsIDE0IGRlbGV0aW9ucygtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2FyY2gvYXJt
-NjQvYm9vdC9kdHMvcm9ja2NoaXAvcmszNTY4LXJvY2stM2EuZHRzIGIvYXJjaC9hcm02NC9i
-b290L2R0cy9yb2NrY2hpcC9yazM1Njgtcm9jay0zYS5kdHMNCj4gaW5kZXggYWM3OTE0MGE5
-ZWNkLi40NGNmZGZlZWQ2NjggMTAwNjQ0DQo+IC0tLSBhL2FyY2gvYXJtNjQvYm9vdC9kdHMv
-cm9ja2NoaXAvcmszNTY4LXJvY2stM2EuZHRzDQo+ICsrKyBiL2FyY2gvYXJtNjQvYm9vdC9k
-dHMvcm9ja2NoaXAvcmszNTY4LXJvY2stM2EuZHRzDQo+IEBAIC03NzgsMjAgKzc3OCw2IEBA
-ICZ1YXJ0MSB7DQo+ICAgCXBpbmN0cmwtMCA9IDwmdWFydDFtMF94ZmVyICZ1YXJ0MW0wX2N0
-c24gJnVhcnQxbTBfcnRzbj47DQo+ICAgCXVhcnQtaGFzLXJ0c2N0czsNCj4gICAJc3RhdHVz
-ID0gIm9rYXkiOw0KPiAtDQo+IC0JYmx1ZXRvb3RoIHsNCj4gLQkJY29tcGF0aWJsZSA9ICJi
-cmNtLGJjbTQzNDM4LWJ0IjsNCj4gLQkJY2xvY2tzID0gPCZyazgwOSAxPjsNCj4gLQkJY2xv
-Y2stbmFtZXMgPSAibHBvIjsNCj4gLQkJZGV2aWNlLXdha2V1cC1ncGlvcyA9IDwmZ3BpbzQg
-UktfUEI1IEdQSU9fQUNUSVZFX0hJR0g+Ow0KPiAtCQlob3N0LXdha2V1cC1ncGlvcyA9IDwm
-Z3BpbzQgUktfUEI0IEdQSU9fQUNUSVZFX0hJR0g+Ow0KPiAtCQlzaHV0ZG93bi1ncGlvcyA9
-IDwmZ3BpbzQgUktfUEIyIEdQSU9fQUNUSVZFX0hJR0g+Ow0KPiAtCQlwaW5jdHJsLW5hbWVz
-ID0gImRlZmF1bHQiOw0KPiAtCQlwaW5jdHJsLTAgPSA8JmJ0X2hvc3Rfd2FrZSAmYnRfd2Fr
-ZSAmYnRfZW5hYmxlPjsNCj4gLQkJdmJhdC1zdXBwbHkgPSA8JnZjYzN2M19zeXM+Ow0KPiAt
-CQl2ZGRpby1zdXBwbHkgPSA8JnZjY18xdjg+Ow0KPiAtCQkvKiB2ZGRpbyBjb21lcyBmcm9t
-IHJlZ3VsYXRvciBvbiBtb2R1bGUsIHVzZSBJTyBiYW5rIHZvbHRhZ2UgaW5zdGVhZCAqLw0K
-PiAtCX07DQo+ICAgfTsNCj4gICANCj4gICAmdWFydDIgew0KDQo=
---------------cHQlD1YmbVVfYlzvcO34GtgB
-Content-Type: application/pgp-keys; name="OpenPGP_0xE3520CC91929C8E7.asc"
-Content-Disposition: attachment; filename="OpenPGP_0xE3520CC91929C8E7.asc"
-Content-Description: OpenPGP public key
+References: <20250219112519.92853-1-21cnbao@gmail.com> <CAJuCfpEWFz14R1vD4Rezy98WBk25HWWX+6DsGBekeYMugKTsfQ@mail.gmail.com>
+ <CAGsJ_4yx1=jaQmDG_9rMqHFFkoXqMJw941eYvtby28OqDq+S7g@mail.gmail.com>
+ <Z7ZX28XARM7seknO@x1.local> <CAGsJ_4wptMn8HX6Uam7AQpWeE=nOUDHE-Vr81SQJq_oSjmTFHg@mail.gmail.com>
+ <Z7ez2Vl8Sa_bRb4e@x1.local>
+In-Reply-To: <Z7ez2Vl8Sa_bRb4e@x1.local>
+From: Barry Song <21cnbao@gmail.com>
+Date: Fri, 21 Feb 2025 14:36:27 +1300
+X-Gm-Features: AWEUYZkSW--msgIBLeqZTKMnk-eQVBhr1ZP2UygfjAv_hWP4COZlYOEfhbkdifE
+Message-ID: <CAGsJ_4yb0AURkm4rP3ecgsPdnhfjg-hwJ8=RQjC1wcwwUdBH5g@mail.gmail.com>
+Subject: Re: [PATCH RFC] mm: Fix kernel BUG when userfaultfd_move encounters swapcache
+To: Peter Xu <peterx@redhat.com>
+Cc: Suren Baghdasaryan <surenb@google.com>, Lokesh Gidra <lokeshgidra@google.com>, linux-mm@kvack.org, 
+	akpm@linux-foundation.org, linux-kernel@vger.kernel.org, 
+	zhengtangquan@oppo.com, Barry Song <v-songbaohua@oppo.com>, 
+	Andrea Arcangeli <aarcange@redhat.com>, Al Viro <viro@zeniv.linux.org.uk>, 
+	Axel Rasmussen <axelrasmussen@google.com>, Brian Geffon <bgeffon@google.com>, 
+	Christian Brauner <brauner@kernel.org>, David Hildenbrand <david@redhat.com>, Hugh Dickins <hughd@google.com>, 
+	Jann Horn <jannh@google.com>, Kalesh Singh <kaleshsingh@google.com>, 
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Matthew Wilcox <willy@infradead.org>, 
+	Michal Hocko <mhocko@suse.com>, Mike Rapoport <rppt@kernel.org>, 
+	Nicolas Geoffray <ngeoffray@google.com>, Ryan Roberts <ryan.roberts@arm.com>, 
+	Shuah Khan <shuah@kernel.org>, ZhangPeng <zhangpeng362@huawei.com>, Yu Zhao <yuzhao@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
------BEGIN PGP PUBLIC KEY BLOCK-----
+On Fri, Feb 21, 2025 at 11:59=E2=80=AFAM Peter Xu <peterx@redhat.com> wrote=
+:
+>
+> On Thu, Feb 20, 2025 at 12:04:40PM +1300, Barry Song wrote:
+> > On Thu, Feb 20, 2025 at 11:15=E2=80=AFAM Peter Xu <peterx@redhat.com> w=
+rote:
+> > >
+> > > On Thu, Feb 20, 2025 at 09:37:50AM +1300, Barry Song wrote:
+> > > > On Thu, Feb 20, 2025 at 7:27=E2=80=AFAM Suren Baghdasaryan <surenb@=
+google.com> wrote:
+> > > > >
+> > > > > On Wed, Feb 19, 2025 at 3:25=E2=80=AFAM Barry Song <21cnbao@gmail=
+.com> wrote:
+> > > > > >
+> > > > > > From: Barry Song <v-songbaohua@oppo.com>
+> > > > > >
+> > > > > > userfaultfd_move() checks whether the PTE entry is present or a
+> > > > > > swap entry.
+> > > > > >
+> > > > > > - If the PTE entry is present, move_present_pte() handles folio
+> > > > > >   migration by setting:
+> > > > > >
+> > > > > >   src_folio->index =3D linear_page_index(dst_vma, dst_addr);
+> > > > > >
+> > > > > > - If the PTE entry is a swap entry, move_swap_pte() simply copi=
+es
+> > > > > >   the PTE to the new dst_addr.
+> > > > > >
+> > > > > > This approach is incorrect because even if the PTE is a swap
+> > > > > > entry, it can still reference a folio that remains in the swap
+> > > > > > cache.
+> > > > > >
+> > > > > > If do_swap_page() is triggered, it may locate the folio in the
+> > > > > > swap cache. However, during add_rmap operations, a kernel panic
+> > > > > > can occur due to:
+> > > > > >  page_pgoff(folio, page) !=3D linear_page_index(vma, address)
+> > > > >
+> > > > > Thanks for the report and reproducer!
+> > > > >
+> > > > > >
+> > > > > > $./a.out > /dev/null
+> > > > > > [   13.336953] page: refcount:6 mapcount:1 mapping:00000000f43d=
+b19c index:0xffffaf150 pfn:0x4667c
+> > > > > > [   13.337520] head: order:2 mapcount:1 entire_mapcount:0 nr_pa=
+ges_mapped:1 pincount:0
+> > > > > > [   13.337716] memcg:ffff00000405f000
+> > > > > > [   13.337849] anon flags: 0x3fffc0000020459(locked|uptodate|di=
+rty|owner_priv_1|head|swapbacked|node=3D0|zone=3D0|lastcpupid=3D0xffff)
+> > > > > > [   13.338630] raw: 03fffc0000020459 ffff80008507b538 ffff80008=
+507b538 ffff000006260361
+> > > > > > [   13.338831] raw: 0000000ffffaf150 0000000000004000 000000060=
+0000000 ffff00000405f000
+> > > > > > [   13.339031] head: 03fffc0000020459 ffff80008507b538 ffff8000=
+8507b538 ffff000006260361
+> > > > > > [   13.339204] head: 0000000ffffaf150 0000000000004000 00000006=
+00000000 ffff00000405f000
+> > > > > > [   13.339375] head: 03fffc0000000202 fffffdffc0199f01 ffffffff=
+00000000 0000000000000001
+> > > > > > [   13.339546] head: 0000000000000004 0000000000000000 00000000=
+ffffffff 0000000000000000
+> > > > > > [   13.339736] page dumped because: VM_BUG_ON_PAGE(page_pgoff(f=
+olio, page) !=3D linear_page_index(vma, address))
+> > > > > > [   13.340190] ------------[ cut here ]------------
+> > > > > > [   13.340316] kernel BUG at mm/rmap.c:1380!
+> > > > > > [   13.340683] Internal error: Oops - BUG: 00000000f2000800 [#1=
+] PREEMPT SMP
+> > > > > > [   13.340969] Modules linked in:
+> > > > > > [   13.341257] CPU: 1 UID: 0 PID: 107 Comm: a.out Not tainted 6=
+.14.0-rc3-gcf42737e247a-dirty #299
+> > > > > > [   13.341470] Hardware name: linux,dummy-virt (DT)
+> > > > > > [   13.341671] pstate: 60000005 (nZCv daif -PAN -UAO -TCO -DIT =
+-SSBS BTYPE=3D--)
+> > > > > > [   13.341815] pc : __page_check_anon_rmap+0xa0/0xb0
+> > > > > > [   13.341920] lr : __page_check_anon_rmap+0xa0/0xb0
+> > > > > > [   13.342018] sp : ffff80008752bb20
+> > > > > > [   13.342093] x29: ffff80008752bb20 x28: fffffdffc0199f00 x27:=
+ 0000000000000001
+> > > > > > [   13.342404] x26: 0000000000000000 x25: 0000000000000001 x24:=
+ 0000000000000001
+> > > > > > [   13.342575] x23: 0000ffffaf0d0000 x22: 0000ffffaf0d0000 x21:=
+ fffffdffc0199f00
+> > > > > > [   13.342731] x20: fffffdffc0199f00 x19: ffff000006210700 x18:=
+ 00000000ffffffff
+> > > > > > [   13.342881] x17: 6c203d2120296567 x16: 6170202c6f696c6f x15:=
+ 662866666f67705f
+> > > > > > [   13.343033] x14: 6567617028454741 x13: 2929737365726464 x12:=
+ ffff800083728ab0
+> > > > > > [   13.343183] x11: ffff800082996bf8 x10: 0000000000000fd7 x9 :=
+ ffff80008011bc40
+> > > > > > [   13.343351] x8 : 0000000000017fe8 x7 : 00000000fffff000 x6 :=
+ ffff8000829eebf8
+> > > > > > [   13.343498] x5 : c0000000fffff000 x4 : 0000000000000000 x3 :=
+ 0000000000000000
+> > > > > > [   13.343645] x2 : 0000000000000000 x1 : ffff0000062db980 x0 :=
+ 000000000000005f
+> > > > > > [   13.343876] Call trace:
+> > > > > > [   13.344045]  __page_check_anon_rmap+0xa0/0xb0 (P)
+> > > > > > [   13.344234]  folio_add_anon_rmap_ptes+0x22c/0x320
+> > > > > > [   13.344333]  do_swap_page+0x1060/0x1400
+> > > > > > [   13.344417]  __handle_mm_fault+0x61c/0xbc8
+> > > > > > [   13.344504]  handle_mm_fault+0xd8/0x2e8
+> > > > > > [   13.344586]  do_page_fault+0x20c/0x770
+> > > > > > [   13.344673]  do_translation_fault+0xb4/0xf0
+> > > > > > [   13.344759]  do_mem_abort+0x48/0xa0
+> > > > > > [   13.344842]  el0_da+0x58/0x130
+> > > > > > [   13.344914]  el0t_64_sync_handler+0xc4/0x138
+> > > > > > [   13.345002]  el0t_64_sync+0x1ac/0x1b0
+> > > > > > [   13.345208] Code: aa1503e0 f000f801 910f6021 97ff5779 (d4210=
+000)
+> > > > > > [   13.345504] ---[ end trace 0000000000000000 ]---
+> > > > > > [   13.345715] note: a.out[107] exited with irqs disabled
+> > > > > > [   13.345954] note: a.out[107] exited with preempt_count 2
+> > > > > >
+> > > > > > Fully fixing it would be quite complex, requiring similar handl=
+ing
+> > > > > > of folios as done in move_present_pte.
+> > > > >
+> > > > > How complex would that be? Is it a matter of adding
+> > > > > folio_maybe_dma_pinned() checks, doing folio_move_anon_rmap() and
+> > > > > folio->index =3D linear_page_index like in move_present_pte() or
+> > > > > something more?
+> > > >
+> > > > My main concern is still with large folios that require a split_fol=
+io()
+> > > > during move_pages(), as the entire folio shares the same index and
+> > > > anon_vma. However, userfaultfd_move() moves pages individually,
+> > > > making a split necessary.
+> > > >
+> > > > However, in split_huge_page_to_list_to_order(), there is a:
+> > > >
+> > > >         if (folio_test_writeback(folio))
+> > > >                 return -EBUSY;
+> > > >
+> > > > This is likely true for swapcache, right? However, even for move_pr=
+esent_pte(),
+> > > > it simply returns -EBUSY:
+> > > >
+> > > > move_pages_pte()
+> > > > {
+> > > >                 /* at this point we have src_folio locked */
+> > > >                 if (folio_test_large(src_folio)) {
+> > > >                         /* split_folio() can block */
+> > > >                         pte_unmap(&orig_src_pte);
+> > > >                         pte_unmap(&orig_dst_pte);
+> > > >                         src_pte =3D dst_pte =3D NULL;
+> > > >                         err =3D split_folio(src_folio);
+> > > >                         if (err)
+> > > >                                 goto out;
+> > > >
+> > > >                         /* have to reacquire the folio after it got=
+ split */
+> > > >                         folio_unlock(src_folio);
+> > > >                         folio_put(src_folio);
+> > > >                         src_folio =3D NULL;
+> > > >                         goto retry;
+> > > >                 }
+> > > > }
+> > > >
+> > > > Do we need a folio_wait_writeback() before calling split_folio()?
+> > >
+> > > Maybe no need in the first version to fix the immediate bug?
+> > >
+> > > It's also not always the case to hit writeback here. IIUC, writeback =
+only
+> > > happens for a short window when the folio was just added into swapcac=
+he.
+> > > MOVE can happen much later after that anytime before a swapin.  My
+> > > understanding is that's also what Matthew wanted to point out.  It ma=
+y be
+> > > better justified of that in a separate change with some performance
+> > > measurements.
+> >
+> > The bug we=E2=80=99re discussing occurs precisely within the short wind=
+ow you
+> > mentioned.
+> >
+> > 1. add_to_swap: The folio is added to swapcache.
+> > 2. try_to_unmap: PTEs are converted to swap entries.
+> > 3. pageout
+> > 4. Swapcache is cleared.
+>
+> Hmm, I see. I was expecting step 4 to be "writeback is cleared".. or at
+> least that should be step 3.5, as IIUC "writeback" needs to be cleared
+> before "swapcache" bit being cleared.
+>
+> >
+> > The issue happens between steps 2 and 4, where the PTE is not present, =
+but
+> > the folio is still in swapcache - the current code does move_swap_pte()=
+ but does
+> > not fixup folio->index within swapcache.
+>
+> One thing I'm still not clear here is why it's a race condition, rather
+> than more severe than that.  I mean, folio->index is definitely wrong, th=
+en
+> as long as the page still in swapcache, we should be able to move the swp
+> entry over to dest addr of UFFDIO_MOVE, read on dest addr, then it'll see
+> the page in swapcache with the wrong folio->index already and trigger.
+>
+> I wrote a quick test like that, it actually won't trigger..
+>
+> I had a closer look in the code, I think it's because do_swap_page() has
+> the logic to detect folio->index matching first, and allocate a new folio
+> if it doesn't match in ksm_might_need_to_copy().  IIUC that was for
+> ksm.. but it looks like it's functioning too here.
+>
+> ksm_might_need_to_copy:
+>         if (folio_test_ksm(folio)) {
+>                 if (folio_stable_node(folio) &&
+>                     !(ksm_run & KSM_RUN_UNMERGE))
+>                         return folio;   /* no need to copy it */
+>         } else if (!anon_vma) {
+>                 return folio;           /* no need to copy it */
+>         } else if (folio->index =3D=3D linear_page_index(vma, addr) && <-=
+--------- [1]
+>                         anon_vma->root =3D=3D vma->anon_vma->root) {
+>                 return folio;           /* still no need to copy it */
+>         }
+>         ...
+>
+>         new_folio =3D vma_alloc_folio(GFP_HIGHUSER_MOVABLE, 0, vma, addr)=
+; <---- [2]
+>         ...
+>
+> So I believe what I hit is at [1] it sees index doesn't match, then it
+> decided to allocate a new folio.  In this case, it won't hit your BUG
+> because it'll be "folio !=3D swapcache" later, so it'll setup the
+> folio->index for the new one, rather than the sanity check.
 
-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
-scUnWnv8sErY943hM8MUsMQ5D0P2
-=3DUrys
------END PGP PUBLIC KEY BLOCK-----
+You're absolutely right.  The problem goes beyond just crashes; we're
+also dealing with CoW when KSM is enabled. As long as we disable
+KSM(which is true for Android), or when we are dealing with a large folio,
+ksm_might_need_to_copy() will not allocate a new copy:
 
---------------cHQlD1YmbVVfYlzvcO34GtgB--
+struct folio *ksm_might_need_to_copy(struct folio *folio,
+                        struct vm_area_struct *vma, unsigned long addr)
+{
 
---------------vSEAK17PxhZYs61ClEQk2Fsa--
+        struct page *page =3D folio_page(folio, 0);
+        struct anon_vma *anon_vma =3D folio_anon_vma(folio);
+        struct folio *new_folio;
 
---------------SR0N2wID0zLyz0q4DHW0Geop
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
+        if (folio_test_large(folio))
+                return folio;
+         ....
+}
 
------BEGIN PGP SIGNATURE-----
+Thanks for your great findings! For the KSM-enabled and small folio case,
+it's pretty funny how UFFDIO_MOVE finally turns into a new allocation and
+copy=E2=80=94 somehow automatically falling back to "UFFDIO_COPY" :-)
+It's amusing, but debugging it is fun.
 
-wsF5BAABCAAjFiEET/yoGP3p5Zl+RKVuX75KBAfJsRkFAme31+gFAwAAAAAACgkQX75KBAfJsRlu
-rBAAomyKR39lshCFUsEGJqCxyKP2aoOeU/btxkq5/kp75GInWLYUsDfFkiGuHN2qtrvjXRZTYfpB
-K6eWlfl1uNNddFO/xRxFXDEOm53yqot5y+7dUb+4f84ndVFN3OQFxK4V8lvf+CPKDPnmLvK8mJRy
-vUm2TkOPXLV/z59SYrQ+rI3ZmNTW6bDlRhTqlrQqfMQNXw4SdI8gtrtrQ4aEQbd7mmax+RGwzUqj
-9zAW3iRfbKeIAtpvr6WuFh4joR1OTGW+61G/xZEDdZTPHpvhu8wQI8Pnev9F+t4SDJRRHEhmJbav
-97WhH43WqCbSFvzzK0w9jnca7+2G7i7kWi3SjW10nyeKraglqQxYVDMmyNOvD2Vokh9kJJbbRaCW
-b56CQdR4SIZVFVcEUi7USREbmdo+WKe1RMuYi9u7M/eSeEFoZiCPEojWFu+NPtxCI9Mub2vu5ccP
-Sd2zHM6fHMld6atoaKMWA89tUSjWBW5B8Qnihm4VV/TFE7o4xbQPvBadmv8UlEmbZ1C1kleY4EKa
-M5l03ESYAb52J1cA93NBYtnKiNYZMI7/Dq2J2BRmcSJzglTzULqhPqX3X1S5uZqIZ3SFsb6jo1F9
-x79ykkZOKOawrDrKPWqfWrtiDqVLAHxJpmixFjVdJBFlp6NPGoKlwm0Bo7mu/6J/iWpKNgBsH6YM
-lks=
-=w1YP
------END PGP SIGNATURE-----
+I'll add your findings to the changelog when I formally send v2, after gath=
+ering
+all the code refinement suggestions and implementing the improvements.
 
---------------SR0N2wID0zLyz0q4DHW0Geop--
+>
+> Do you know how your case got triggered, being able to bypass the above [=
+1]
+> which should check folio->index already?
+>
+> >
+> > My point is that if we want a proper fix for mTHP, we'd better handle w=
+riteback.
+> > Otherwise, this isn=E2=80=99t much different from directly returning -E=
+BUSY as proposed
+> > in this RFC.
+> >
+> > For small folios, there=E2=80=99s no split_folio issue, making it relat=
+ively
+> > simpler. Lokesh
+> > mentioned plans to madvise NOHUGEPAGE in ART, so fixing small folios is=
+ likely
+> > the first priority.
+>
+> Agreed.
+>
+> --
+> Peter Xu
+>
+
+Thanks
+Barry
 
