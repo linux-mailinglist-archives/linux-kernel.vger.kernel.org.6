@@ -1,197 +1,260 @@
-Return-Path: <linux-kernel+bounces-524992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87F62A3E98E
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 02:01:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BDE8A3E993
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 02:01:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CFB13B7F22
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 00:57:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 252D270215A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 00:57:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8301878F3A;
-	Fri, 21 Feb 2025 00:55:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6562A155C96;
+	Fri, 21 Feb 2025 00:56:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="G3ilED8N"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hE8WTpkl"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4425670803
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 00:55:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4533136E37
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 00:56:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740099321; cv=none; b=I8YKD/MG0lfHrp8hCLOzfzW3geLIktPilkZzqozm+awB1nA2vtZZJMazAbQyHnM/OyLmspvqhQUw+bvHNghzKs+6MOShM1by5r/bflNzhO+XPK2/S+3m47Iw0YZ20Od4hZdFVlayVv65jgMinR0y8JcKxa/bx3rozCN0bdN7Vqw=
+	t=1740099362; cv=none; b=rw8EBCHr8yA9KAbOKDm4u6HZFCfuV1XuYYPq6JMaM5C4iXnuzPYcNO5IZl9fvgTLIIR5ebxeIBLBgtE07RdMmbXq68buKrbzzsBJT18mNDyloTYT59NJy0XWVl4lGiiQWWenwcreOJ+AnB9e8E4b0m800wMjQqFKhYI0nInKpEU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740099321; c=relaxed/simple;
-	bh=e+5yrhmneBVshqNqkQclzRo8cBn1bxXJDoR3zvaSEtQ=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=phzVbAmndgEMixJziN5QXHVAi5gkAOFxMYpB479fhXr+B4gIZKkpRbN8+ZXTQ60YL9cY00hVWXoznAsG9V5zDmZpCPiqHuW0zEzHiLlWlKMtkjOiJEBLwUKpG1XDQJDwuKEgOsTS5+L9MicyCIvinPav+tbL57u3teybr6oS0uU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=G3ilED8N; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2fbfa786a1aso4999432a91.3
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 16:55:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740099319; x=1740704119; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=4kOOIJL7djRpCC39YFiZH/04xhbPykeXqRm2/FL5cbg=;
-        b=G3ilED8NI+pIfPOreF9pXkaq2Higyo/jGpLOnQz2Lss/qv+NfX9YWJgne8gqEZDASG
-         p9wpVRnJ7eSqnaA+pOl0nwuhoHUBFOfzuwtM+1rBAYghJ0fNYjDLy1yeZAlpjvo8iWFU
-         S4m0mI6tJz/3jCbUmTSlp8OfvRlQZB4TcnJEvCfof5hjBYV9rue2ADg34khDoea39jZK
-         OgYurOWiZX/GNw1jzxKgkqdqREqQcGm/1x6pOQIVLRYD34HswnvZWC6mYBsWl7zdfhSi
-         A6jIxQdNNxKHtHL0YxAoVKIboKCbxxSH/a2bB6aJSd7MLfRLVRw5+GCG3XVmtucQBNNc
-         r0IA==
+	s=arc-20240116; t=1740099362; c=relaxed/simple;
+	bh=fV1mBsSJF2DsjbNy6DP++8YFbTYKXele61nzgQiiQfo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aSVsTlXJiXmXcuO+TDAMfK8DzYpwv9OO5eQJXqY/TirM2jHZEH2KUBaoewiGbAu0QPs16v0mcERS6LY1J6wTPCLzhQfq8WL9j1rVQMulSpoioYblnmA1svSb6vPtDQxREST11h9+UsaYrEaAK34TsS1FkjfA6qu5DQmdIgNS0+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hE8WTpkl; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740099359;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GNy7L+vuP5BvqDAnGLHquOls1vdb8Cwyy2NuM7jwo8I=;
+	b=hE8WTpklaKYYydSiMgb+SPOnduz4EKCm12Us3wEygYzZPFJGZqA5699ZBG+Y9AlJfxxEzX
+	uQIpQWh0Z89CJ5Wilk+/cOi9FVVIvHn6XmpeCxx3bkbFFmfA7IgoBQ2ZfANWfL7ABzzmH7
+	TtQ0n4F4OYJ+8Lm8cr/TPdVQ65Z27Ds=
+Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com
+ [209.85.214.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-633-R7L8FPSRPY-eob-mCkhyKQ-1; Thu, 20 Feb 2025 19:55:56 -0500
+X-MC-Unique: R7L8FPSRPY-eob-mCkhyKQ-1
+X-Mimecast-MFC-AGG-ID: R7L8FPSRPY-eob-mCkhyKQ_1740099355
+Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-22101351b1dso31541675ad.3
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 16:55:56 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740099319; x=1740704119;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4kOOIJL7djRpCC39YFiZH/04xhbPykeXqRm2/FL5cbg=;
-        b=EgGoOcre+QxKmd4f3zFYQMwhXvbWFz4XHNh5RyMzxajCOMHWKogax6ELPBR5oD1Dzt
-         +CRRDvDRoCoRoCTFZXBqA6zDaA29HfcqqF23XMBsjSgYnyIZ4d43c9rNZGmdaIphYmZD
-         75XsPT5Jy7E87kxNI04jFrI2mxtz+pPcK8JewISR6ALkIAE9/6TdId05z3umqI9efkVJ
-         yI36q0+oEGw6lJRW3CaqW7J0iBr64T85egoBVSFIStfKOxZsfGgp5hllgHVlTll7owLT
-         fW6hug6EMs6b/tslTVJPTuKpt9pT3HtdeKrRNnXwhe/0kubzGvAVLW2ufZ66facryvFg
-         LyQQ==
-X-Gm-Message-State: AOJu0YzZMMSQ9dYGlNFczlZPzDRw9GIt1Y7l/L/9pNP+PpIrVgp9ZwLp
-	OmRUikPfKnIVlEb9rgZJiSIRqEMnvj4HVmp3+E7+UDGb464XoKqy7ugv4qX9jv8yymoJspleyQV
-	H0Q==
-X-Google-Smtp-Source: AGHT+IEuaCiOOntaC1FGKmHzqSa2ZEJgwgIQf3BqfjgzOP1N0VgyBrNZxMdxAybGdcqFGBDxoPcpnRViAtE=
-X-Received: from pjbhl14.prod.google.com ([2002:a17:90b:134e:b0:2fc:2828:dbca])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4c05:b0:2f5:88bb:12f
- with SMTP id 98e67ed59e1d1-2fce78c9254mr1882909a91.21.1740099319523; Thu, 20
- Feb 2025 16:55:19 -0800 (PST)
-Date: Thu, 20 Feb 2025 16:55:18 -0800
-In-Reply-To: <20250220170604.2279312-21-pbonzini@redhat.com>
+        d=1e100.net; s=20230601; t=1740099355; x=1740704155;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GNy7L+vuP5BvqDAnGLHquOls1vdb8Cwyy2NuM7jwo8I=;
+        b=affYPKnQYqHYHJNF0i5U03vTRRCJZ4A77hWueW97yey9upy6en75lL+wDSURfiQPvr
+         fbEQFQlQsncVqeW54XMgEOTTXmwithLjRlPJqGRlfUHCI97ZU4fG5PrRl29y2keqCvsN
+         ul7Vi/RPepneSwHkLMw9ERhVMctfTERWBedvqWz5D5df/2jeaShZXUrNavm9bnGjHSMA
+         flrwoxNdBqwFhVXwwW/umMePhJyjJF/z/ejLXq0053RPlQb3M9UZevL6N81s/mygMhkp
+         eLZPWgilylPAYGiiHfR9VvF80wASqi5usX0rElRYDLeMQfXksAOMDkBFpZNaAXclBUUt
+         2k9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVC+CH1Jtt10PEFpRuiFiMBvuZXL5K3gj8xta0VM3DVhZQ11Xi9qTFpAuyxX39wR780SrMu5y0XTbNMDeM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRdZ8nVFnLEmM1xpKb+veREoPqD4JQD+MKy1Q/5FLj8n89uihO
+	FHS1bj4gBuFHTrgEV/F2E6SSJH1fYIQ+LrYEVnG04sYGMWz6WYqp4jTD/0HbT6K62puQfhpTb/n
+	K6+iI3JE5DfWhpCWKh2capFN/xr1snUaGIgj4YT47ax1cfS2j3jy2mlk3NQzbVCP/F/8Wa+WxhG
+	sCKqkMmZbgc6VLo68NXaDo+jZWkhNCKr95JN5W
+X-Gm-Gg: ASbGnctxrHz/WfrJUkZLfQu/AFxWBG/t0GAUTLXIyO9tYV6rODjv333LrJru441FWSj
+	H6FD/YpMkKnJZY2rp1cxgeI17UCjYN+xmkL2l/VMlU1Umi/WMpxtHsBbhbYju7YY=
+X-Received: by 2002:a17:902:f689:b0:20d:cb6:11e with SMTP id d9443c01a7336-2219ff61211mr16249605ad.26.1740099355259;
+        Thu, 20 Feb 2025 16:55:55 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IH8S4q180J8wfgz6tGusfQ0NQthsbHXXSQU0QZSoirAYrGPHl9rkncJDp+BBTc7oqXXlufQB9c7G3k1LOo8rO8=
+X-Received: by 2002:a17:902:f689:b0:20d:cb6:11e with SMTP id
+ d9443c01a7336-2219ff61211mr16249265ad.26.1740099354751; Thu, 20 Feb 2025
+ 16:55:54 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250220170604.2279312-1-pbonzini@redhat.com> <20250220170604.2279312-21-pbonzini@redhat.com>
-Message-ID: <Z7fO9gqzgaETeMYB@google.com>
-Subject: Re: [PATCH 20/30] KVM: TDX: create/destroy VM structure
-From: Sean Christopherson <seanjc@google.com>
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
-	Yan Zhao <yan.y.zhao@intel.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
-	Isaku Yamahata <isaku.yamahata@intel.com>, Tony Lindgren <tony.lindgren@linux.intel.com>, 
-	Sean Christopherson <sean.j.christopherson@intel.com>, Kai Huang <kai.huang@intel.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+References: <20250218023908.1755-1-jasowang@redhat.com> <20250220162359-mutt-send-email-mst@kernel.org>
+In-Reply-To: <20250220162359-mutt-send-email-mst@kernel.org>
+From: Jason Wang <jasowang@redhat.com>
+Date: Fri, 21 Feb 2025 08:55:30 +0800
+X-Gm-Features: AWEUYZm8_TusPuJH3xQ4ETsht6VJ5b0urYN8Wvwj2tbdPnWKqkMznfIIszOdZiA
+Message-ID: <CACGkMEueUcag6ETNqjPeCaKAird8E9P8JutSmtyOPrGeyaMtpg@mail.gmail.com>
+Subject: Re: [PATCH net-next] virtio-net: tweak for better TX performance in
+ NAPI mode
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, 
+	pabeni@redhat.com, xuanzhuo@linux.alibaba.com, eperezma@redhat.com, 
+	virtualization@lists.linux.dev, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-TL;DR: Please don't merge this patch to kvm/next or kvm/queue.
+On Fri, Feb 21, 2025 at 5:25=E2=80=AFAM Michael S. Tsirkin <mst@redhat.com>=
+ wrote:
+>
+> On Tue, Feb 18, 2025 at 10:39:08AM +0800, Jason Wang wrote:
+> > There are several issues existed in start_xmit():
+> >
+> > - Transmitted packets need to be freed before sending a packet, this
+> >   introduces delay and increases the average packets transmit
+> >   time. This also increase the time that spent in holding the TX lock.
+> > - Notification is enabled after free_old_xmit_skbs() which will
+> >   introduce unnecessary interrupts if TX notification happens on the
+> >   same CPU that is doing the transmission now (actually, virtio-net
+> >   driver are optimized for this case).
+> >
+> > So this patch tries to avoid those issues by not cleaning transmitted
+> > packets in start_xmit() when TX NAPI is enabled and disable
+> > notifications even more aggressively. Notification will be since the
+> > beginning of the start_xmit(). But we can't enable delayed
+> > notification after TX is stopped as we will lose the
+> > notifications. Instead, the delayed notification needs is enabled
+> > after the virtqueue is kicked for best performance.
+> >
+> > Performance numbers:
+> >
+> > 1) single queue 2 vcpus guest with pktgen_sample03_burst_single_flow.sh
+> >    (burst 256) + testpmd (rxonly) on the host:
+> >
+> > - When pinning TX IRQ to pktgen VCPU: split virtqueue PPS were
+> >   increased 55% from 6.89 Mpps to 10.7 Mpps and 32% TX interrupts were
+> >   eliminated. Packed virtqueue PPS were increased 50% from 7.09 Mpps to
+> >   10.7 Mpps, 99% TX interrupts were eliminated.
+> >
+> > - When pinning TX IRQ to VCPU other than pktgen: split virtqueue PPS
+> >   were increased 96% from 5.29 Mpps to 10.4 Mpps and 45% TX interrupts
+> >   were eliminated; Packed virtqueue PPS were increased 78% from 6.12
+> >   Mpps to 10.9 Mpps and 99% TX interrupts were eliminated.
+> >
+> > 2) single queue 1 vcpu guest + vhost-net/TAP on the host: single
+> >    session netperf from guest to host shows 82% improvement from
+> >    31Gb/s to 58Gb/s, %stddev were reduced from 34.5% to 1.9% and 88%
+> >    of TX interrupts were eliminated.
+> >
+> > Signed-off-by: Jason Wang <jasowang@redhat.com>
+>
+>
+> okay
+>
+> Acked-by: Michael S. Tsirkin <mst@redhat.com>
+>
+> but tell me something, would it be even better to schedule
+> napi once, and have that deal with enabling notifications?
 
-On Thu, Feb 20, 2025, Paolo Bonzini wrote:
-> @@ -72,8 +94,10 @@ struct kvm_x86_ops vt_x86_ops __initdata = {
->  	.has_emulated_msr = vmx_has_emulated_msr,
->  
->  	.vm_size = sizeof(struct kvm_vmx),
-> -	.vm_init = vmx_vm_init,
-> -	.vm_destroy = vmx_vm_destroy,
-> +
-> +	.vm_init = vt_vm_init,
-> +	.vm_destroy = vt_vm_destroy,
-> +	.vm_free = vt_vm_free,
->  
->  	.vcpu_precreate = vmx_vcpu_precreate,
->  	.vcpu_create = vmx_vcpu_create,
+I'm not sure I will get here, if we know a NAPI is scheduled, any
+reason for enabling notifications?
 
-...
+Thanks
 
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index 374d89e6663f..e0b9b845df58 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -12884,6 +12884,7 @@ void kvm_arch_destroy_vm(struct kvm *kvm)
->  	kvm_page_track_cleanup(kvm);
->  	kvm_xen_destroy_vm(kvm);
->  	kvm_hv_destroy_vm(kvm);
-> +	static_call_cond(kvm_x86_vm_free)(kvm);
->  }
+>
+> > ---
+> >  drivers/net/virtio_net.c | 45 ++++++++++++++++++++++++++++------------
+> >  1 file changed, 32 insertions(+), 13 deletions(-)
+> >
+> > diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
+> > index 7646ddd9bef7..ac26a6201c44 100644
+> > --- a/drivers/net/virtio_net.c
+> > +++ b/drivers/net/virtio_net.c
+> > @@ -1088,11 +1088,10 @@ static bool is_xdp_raw_buffer_queue(struct virt=
+net_info *vi, int q)
+> >               return false;
+> >  }
+> >
+> > -static void check_sq_full_and_disable(struct virtnet_info *vi,
+> > -                                   struct net_device *dev,
+> > -                                   struct send_queue *sq)
+> > +static bool tx_may_stop(struct virtnet_info *vi,
+> > +                     struct net_device *dev,
+> > +                     struct send_queue *sq)
+> >  {
+> > -     bool use_napi =3D sq->napi.weight;
+> >       int qnum;
+> >
+> >       qnum =3D sq - vi->sq;
+> > @@ -1114,6 +1113,25 @@ static void check_sq_full_and_disable(struct vir=
+tnet_info *vi,
+> >               u64_stats_update_begin(&sq->stats.syncp);
+> >               u64_stats_inc(&sq->stats.stop);
+> >               u64_stats_update_end(&sq->stats.syncp);
+> > +
+> > +             return true;
+> > +     }
+> > +
+> > +     return false;
+> > +}
+> > +
+> > +static void check_sq_full_and_disable(struct virtnet_info *vi,
+> > +                                   struct net_device *dev,
+> > +                                   struct send_queue *sq)
+> > +{
+> > +     bool use_napi =3D sq->napi.weight;
+> > +     int qnum;
+> > +
+> > +     qnum =3D sq - vi->sq;
+> > +
+> > +     if (tx_may_stop(vi, dev, sq)) {
+> > +             struct netdev_queue *txq =3D netdev_get_tx_queue(dev, qnu=
+m);
+> > +
+> >               if (use_napi) {
+> >                       if (unlikely(!virtqueue_enable_cb_delayed(sq->vq)=
+))
+> >                               virtqueue_napi_schedule(&sq->napi, sq->vq=
+);
+> > @@ -3253,15 +3271,10 @@ static netdev_tx_t start_xmit(struct sk_buff *s=
+kb, struct net_device *dev)
+> >       bool use_napi =3D sq->napi.weight;
+> >       bool kick;
+> >
+> > -     /* Free up any pending old buffers before queueing new ones. */
+> > -     do {
+> > -             if (use_napi)
+> > -                     virtqueue_disable_cb(sq->vq);
+> > -
+> > +     if (!use_napi)
+> >               free_old_xmit(sq, txq, false);
+> > -
+> > -     } while (use_napi && !xmit_more &&
+> > -            unlikely(!virtqueue_enable_cb_delayed(sq->vq)));
+> > +     else
+> > +             virtqueue_disable_cb(sq->vq);
+> >
+> >       /* timestamp packet in software */
+> >       skb_tx_timestamp(skb);
+> > @@ -3287,7 +3300,10 @@ static netdev_tx_t start_xmit(struct sk_buff *sk=
+b, struct net_device *dev)
+> >               nf_reset_ct(skb);
+> >       }
+> >
+> > -     check_sq_full_and_disable(vi, dev, sq);
+> > +     if (use_napi)
+> > +             tx_may_stop(vi, dev, sq);
+> > +     else
+> > +             check_sq_full_and_disable(vi, dev,sq);
+> >
+> >       kick =3D use_napi ? __netdev_tx_sent_queue(txq, skb->len, xmit_mo=
+re) :
+> >                         !xmit_more || netif_xmit_stopped(txq);
+> > @@ -3299,6 +3315,9 @@ static netdev_tx_t start_xmit(struct sk_buff *skb=
+, struct net_device *dev)
+> >               }
+> >       }
+> >
+> > +     if (use_napi && kick && unlikely(!virtqueue_enable_cb_delayed(sq-=
+>vq)))
+> > +             virtqueue_napi_schedule(&sq->napi, sq->vq);
+> > +
+> >       return NETDEV_TX_OK;
+> >  }
+> >
+> > --
+> > 2.34.1
+>
 
-Sorry to throw a wrench in things, but I have a fix that I want to send for 6.14[1],
-i.e. before this code, and to land that fix I need/want to destroy vCPUs before
-calling kvm_x86_ops.vm_destroy().  *sigh*
-
-The underlying issue is that both nVMX and nSVM suck and access all manner of VM-wide
-state when destroying a vCPU that is currently in nested guest mode, and I want
-to fix the most pressing issue of destroying vCPUs at a random time once and for
-all.  nVMX and nSVM also need to be cleaned up to not access so much darn state,
-but I'm worried that "fixing" the nested cases will only whack the biggest mole.
-
-Commit 6fcee03df6a1 ("KVM: x86: avoid loading a vCPU after .vm_destroy was called")
-papered over an AVIC case, but there are issues, e.g. with the MSR filters[2],
-and the NULL pointer deref that's blocking the aforementioned fix is a nVMX access
-to the PIC.
-
-I haven't fully tested destroying vCPUs before calling vm_destroy(), but I can't
-see anything in vmx_vm_destroy() or svm_vm_destroy() that expects to run while
-vCPUs are still alive.  If anything, it's opposite, e.g. freeing VMX's IPIv PID
-table before vCPUs are destroyed is blatantly unsafe.
-
-The good news is, I think it'll lead to a better approach (and naming).  KVM already
-frees MMU state before vCPU state, because while MMUs are largely VM-scoped, all
-of the common MMU state needs to be freed before any one vCPU is freed.
-
-And so my plan is to carved out a kvm_destroy_mmus() helper, which can then call
-the TDX hook to release/reclaim the HKID, which I assume needs to be done after
-KVM's general MMU destruction, but before vCPUs are freed.
-
-I'll make sure to Cc y'all on the series (typing and testing furiously to try and
-get it out asap).  But to try and avoid posting code that's not usable for TDX,
-will this work?
-
-static void kvm_destroy_mmus(struct kvm *kvm)
-{
-	struct kvm_vcpu *vcpu;
-	unsigned long i;
-
-	if (current->mm == kvm->mm) {
-		/*
-		 * Free memory regions allocated on behalf of userspace,
-		 * unless the memory map has changed due to process exit
-		 * or fd copying.
-		 */
-		mutex_lock(&kvm->slots_lock);
-		__x86_set_memory_region(kvm, APIC_ACCESS_PAGE_PRIVATE_MEMSLOT,
-					0, 0);
-		__x86_set_memory_region(kvm, IDENTITY_PAGETABLE_PRIVATE_MEMSLOT,
-					0, 0);
-		__x86_set_memory_region(kvm, TSS_PRIVATE_MEMSLOT, 0, 0);
-		mutex_unlock(&kvm->slots_lock);
-	}
-
-	kvm_for_each_vcpu(i, vcpu, kvm) {
-		kvm_clear_async_pf_completion_queue(vcpu);
-		kvm_unload_vcpu_mmu(vcpu);
-	}
-
-	kvm_x86_call(mmu_destroy)(kvm);
-}
-
-void kvm_arch_pre_destroy_vm(struct kvm *kvm)
-{
-	kvm_mmu_pre_destroy_vm(kvm);
-}
-
-void kvm_arch_destroy_vm(struct kvm *kvm)
-{
-	/*
-	 * WARNING!  MMUs must be destroyed before vCPUs, and vCPUs must be
-	 * destroyed before any VM state.  Most MMU state is VM-wide, but is
-	 * tracked per-vCPU, and so must be unloaded/freed in its entirety
-	 * before any one vCPU is destroyed.  For all other VM state, vCPUs
-	 * expect to be able to access VM state until the vCPU is freed.
-	 */
-	kvm_destroy_mmus(kvm);
-	kvm_destroy_vcpus(kvm);
-	kvm_x86_call(vm_destroy)(kvm);
-
-	...
-}
-
-[1] https://lore.kernel.org/all/Z66RC673dzlq2YuA@google.com
-[2] https://lore.kernel.org/all/20240703175618.2304869-2-aaronlewis@google.com
 
