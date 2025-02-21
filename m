@@ -1,130 +1,126 @@
-Return-Path: <linux-kernel+bounces-526251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D867A3FC27
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:53:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B688EA3FC3D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:55:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84BBF16AAB9
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:48:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FA1F8651F6
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:48:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09F0E204F80;
-	Fri, 21 Feb 2025 16:48:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A45BF1F236B;
+	Fri, 21 Feb 2025 16:48:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UZV0CeZo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=aosc.io header.i=@aosc.io header.b="Xqq2Lg89"
+Received: from relay3.mymailcheap.com (relay3.mymailcheap.com [217.182.119.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65A421F3FD0
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 16:48:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFE6E1E9905;
+	Fri, 21 Feb 2025 16:48:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.182.119.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740156498; cv=none; b=VtrsQMIiNe9PwbCViruXP0A1tWXL8WU+WxXcjrcccFf/axh2QYHhAHeLG66zc9I7vRFYXG+IaK6HB/15S17HYqOhTx/EyHwWJZGExRJ8nelzFa9JicYISEhMkzWjl7NT+Yf2hHVnJeT4te/1baQGtTLCq2lZ2hQ7M+vj2IQ5fVc=
+	t=1740156534; cv=none; b=HvDFdQFGCYZcAwVjYXsK2+zV5G/yuh8Jl41MnEEoVbwKDKtix7SDBbb+QaPdfuUBIZJ+qTjoJSJ//fNdJpbCC8uDrHw7C5iVt+SOkx2ktGq5f06CXONcdoGIsUyAJ3Zpu+MZhWS/JYZahCodsAB+ODdX34CyWkHYuMbjaJEkjOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740156498; c=relaxed/simple;
-	bh=qzaTSmwh1YLeBgzSDRua/qgQ/EfnH79NA0l78aVxYUk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Rvammq8fi9nRpKAQMKKgnbpx7/KrdvJc+dEGGHNOgSVJcV4oZCD/fz/d/ZtuKGBjuqe0WM4TE3EvP5pi5bJXpdJcw4ULQVLMYlEHs23IajkpqrTy5akIRqsGzlk9JiHwEcoUtN2m/mlbhGuYWyHWcL0m+CYdorOF5lzBnd0fe7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UZV0CeZo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C823CC4CED6;
-	Fri, 21 Feb 2025 16:48:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740156497;
-	bh=qzaTSmwh1YLeBgzSDRua/qgQ/EfnH79NA0l78aVxYUk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UZV0CeZo7+S957i8mzPPjBZMBp7oXwkjLFgUdZ9Q+W6VczA6j4AHKHUsXySRvBSo2
-	 +u3hRMua7SNevkGqt/hUGeQcEd1EBWamCzPdW8fmOMEby1Sl1yWqVooSVkdLHReSXG
-	 sWx1TgyrrhP17uNhv6RPnBx7BpHa4m8/WiypDeC6MzjNzT56Oo6MG0MlBCJQuqVe/c
-	 iXQVRIDoFkUdB2Ief9u1fNfSHRIN/bKPnUjHp35A9Qfp2S3hfAnFGcWeh+uL1zGLHh
-	 KC7ZaZplXWA1JXo9bSIWXkPu0iSWZ/rtXiN1lYrruX5UXAvkQO9gNC8IIPohMCFkr8
-	 Y42K8FtO77zng==
-Date: Fri, 21 Feb 2025 06:48:16 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	open list <linux-kernel@vger.kernel.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH] workqueue: Always use wq_select_unbound_cpu() for
- WORK_CPU_UNBOUND.
-Message-ID: <Z7iuUObJGgZtsaJe@slm.duckdns.org>
-References: <20250221112003.1dSuoGyc@linutronix.de>
- <Z7iSboU-05uMJ7-e@localhost.localdomain>
+	s=arc-20240116; t=1740156534; c=relaxed/simple;
+	bh=Ky5jUaP2qmS5NbmgGsFR+u9GagS7rz2kC4/x5BHGlyE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=biUcmf3rSBC1SYSyFq8ayFroIgUtgZdT5ggPm/X23WHbWAJpXpUm/Fl9Iza1p1vDbGPc6n2vPuhZV6PhfqwQuJIe0inD2mdh5sviKpZ866ug/R6n3G4llW1gBMjpeo7PGIevVk0cZ254S56uoGcgxgGLDIznthPEfYbhIlfWMNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io; spf=pass smtp.mailfrom=aosc.io; dkim=pass (1024-bit key) header.d=aosc.io header.i=@aosc.io header.b=Xqq2Lg89; arc=none smtp.client-ip=217.182.119.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aosc.io
+Received: from nf2.mymailcheap.com (nf2.mymailcheap.com [54.39.180.165])
+	by relay3.mymailcheap.com (Postfix) with ESMTPS id DEB843E87E;
+	Fri, 21 Feb 2025 16:48:43 +0000 (UTC)
+Received: from mail20.mymailcheap.com (mail20.mymailcheap.com [51.83.111.147])
+	by nf2.mymailcheap.com (Postfix) with ESMTPSA id F0B77400B3;
+	Fri, 21 Feb 2025 16:48:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=aosc.io; s=default;
+	t=1740156521; bh=Ky5jUaP2qmS5NbmgGsFR+u9GagS7rz2kC4/x5BHGlyE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Xqq2Lg89OupE3/eOmBb4bnzA6NDfptw5fLdXHwUz2/fplUmwpQfjbPyKfMD8jNJX6
+	 Z1iE0QvLvg5iHHt5qHWCIEUuMe0Abd+j9v1536JGQce9UjVw2DCvKoKQyKRxr0Nq7m
+	 SStqdzXqr3KjR7RB3fDPeAsyPnlr+aPBMzSsefHE=
+Received: from JellyNote.localdomain (unknown [203.175.14.48])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail20.mymailcheap.com (Postfix) with ESMTPSA id 53D8A405DE;
+	Fri, 21 Feb 2025 16:48:36 +0000 (UTC)
+From: Mingcong Bai <jeffbai@aosc.io>
+To: linux-kernel@vger.kernel.org,
+	platform-driver-x86@vger.kernel.org,
+	ibm-acpi-devel@lists.sourceforge.net
+Cc: Kexy Biscuit <kexybiscuit@aosc.io>,
+	Mingcong Bai <jeffbai@aosc.io>,
+	Fan Yang <804284660@qq.com>,
+	Xi Ruoyao <xry111@xry111.site>,
+	Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
+	Hans de Goede <hdegoede@redhat.com>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Subject: [PATCH] platform/x86: thinkpad_acpi: Add battery quirk for ThinkPad X131e
+Date: Sat, 22 Feb 2025 00:48:24 +0800
+Message-ID: <20250221164825.77315-1-jeffbai@aosc.io>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z7iSboU-05uMJ7-e@localhost.localdomain>
+X-Rspamd-Queue-Id: F0B77400B3
+X-Rspamd-Server: nf2.mymailcheap.com
+X-Spamd-Result: default: False [1.40 / 10.00];
+	MID_CONTAINS_FROM(1.00)[];
+	R_MISSING_CHARSET(0.50)[];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_COUNT_ONE(0.00)[1];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	ASN(0.00)[asn:16276, ipnet:51.83.0.0/16, country:FR];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	SPFBL_URIBL_EMAIL_FAIL(0.00)[jeffbai.aosc.io:server fail,804284660.qq.com:server fail,xry111.xry111.site:server fail];
+	FREEMAIL_CC(0.00)[aosc.io,qq.com,xry111.site,hmh.eng.br,redhat.com,linux.intel.com];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_SOME(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[qq.com];
+	RCVD_TLS_ALL(0.00)[]
+X-Rspamd-Action: no action
 
-Hello,
+Based on the dmesg messages from the original reporter:
 
-On Fri, Feb 21, 2025 at 03:49:18PM +0100, Frederic Weisbecker wrote:
-> Le Fri, Feb 21, 2025 at 12:20:03PM +0100, Sebastian Andrzej Siewior a écrit :
-> > If the user did not specify a CPU while enqueuing a work item then
-> > WORK_CPU_UNBOUND is passed. In this case, for WQ_UNBOUND a CPU is
-> > selected based on wq_unbound_cpumask while the local CPU is preferred.
-> > For !WQ_UNBOUND the local CPU is selected.
-> > For NOHZ_FULL system with isolated CPU wq_unbound_cpumask is set to the
-> > not isolated (housekeeping) CPUs. This leads to different behaviour if a
-> > work item is scheduled on an isolated CPU where
-> > 	schedule_delayed_work(, 1);
-> > 
-> > will move the timer to the housekeeping CPU and then schedule the work
-> > there (on the housekeeping CPU) while
-> > 	schedule_delayed_work(, 0);
-> > 
-> > will schedule the work item on the isolated CPU.
-> > 
-> > The documentation says WQ_UNBOUND prefers the local CPU. It can
-> > preferer the local CPU if it is part of wq_unbound_cpumask.
-> > 
-> > Restrict WORK_CPU_UNBOUND to wq_unbound_cpumask via
-> > wq_select_unbound_cpu().
-> > 
-> > Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> 
-> I really would like to have this patch in. I have considered
-> doing that a few month ago but got sort-of discouraged by the
-> lack of properly defined semantics for schedule_work(). And that
-> function has too many users to check their locality assumptions.
-> 
-> Its headers advertize to queue in global workqueue but the target
-> is system_wq and not system_unbound_wq. But then it's using
-> WORK_CPU_UNBOUND through queue_work().
-> 
-> I'm tempted to just assume that none of its users depend on the
-> work locality?
+[    4.964073] ACPI: \_SB_.PCI0.LPCB.EC__.HKEY: BCTG evaluated but flagged as error
+[    4.964083] thinkpad_acpi: Error probing battery 2
 
-That's API guarantee and there are plenty of users who depend on
-queue_work() and schedule_work() on per-cpu workqueues to be actually
-per-cpu. I don't think we can pull the rug from under them. If we want to do
-this, which I think is a good idea, we should:
+Lenovo ThinkPad X131e also needs this battery quirk.
 
-1. Convert per-cpu workqueue users to unbound workqueues. Most users don't
-   care whether work item is executed locally or not. However, historically,
-   we've been preferring per-cpu workqueues because unbound workqueues had a
-   lot worse locality properties. Unbound workqueue's topology awareness is
-   a lot better now, so this should be less of a problem and we should be
-   able to move a lot of users over to unbound workqueues.
+Reported-by: Fan Yang <804284660@qq.com>
+Tested-by: Fan Yang <804284660@qq.com>
+Co-developed-by: Xi Ruoyao <xry111@xry111.site>
+Signed-off-by: Xi Ruoyao <xry111@xry111.site>
+Signed-off-by: Mingcong Bai <jeffbai@aosc.io>
+---
+ drivers/platform/x86/thinkpad_acpi.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-2. There still are cases where local execution isn't required for
-   correctness but local & concurrency controlled executions yield
-   performance gains. Workqueue API currently doesn't distinguish these two
-   cases. We should add a new API which prefers local execution but doesn't
-   require it, which can then do what's suggested in this patch.
-
-Unfortunately, I don't see a way forward without auditing and converting the
-users.
-
-Thanks.
-
+diff --git a/drivers/platform/x86/thinkpad_acpi.c b/drivers/platform/x86/thinkpad_acpi.c
+index 1fcb0f99695a7..64765c6939a50 100644
+--- a/drivers/platform/x86/thinkpad_acpi.c
++++ b/drivers/platform/x86/thinkpad_acpi.c
+@@ -9960,6 +9960,7 @@ static const struct tpacpi_quirk battery_quirk_table[] __initconst = {
+ 	 * Individual addressing is broken on models that expose the
+ 	 * primary battery as BAT1.
+ 	 */
++	TPACPI_Q_LNV('G', '8', true),       /* ThinkPad X131e */
+ 	TPACPI_Q_LNV('8', 'F', true),       /* Thinkpad X120e */
+ 	TPACPI_Q_LNV('J', '7', true),       /* B5400 */
+ 	TPACPI_Q_LNV('J', 'I', true),       /* Thinkpad 11e */
 -- 
-tejun
+2.48.1
+
 
