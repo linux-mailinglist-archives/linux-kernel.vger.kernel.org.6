@@ -1,197 +1,163 @@
-Return-Path: <linux-kernel+bounces-526281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E67C4A3FC84
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 18:01:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E183A3FCC1
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 18:05:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8734D16C414
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:58:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30CC7706CFE
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:58:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 476C7220686;
-	Fri, 21 Feb 2025 16:56:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDBFC22333D;
+	Fri, 21 Feb 2025 16:57:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rejCUcjj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YWkugHCT"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 989382153E4;
-	Fri, 21 Feb 2025 16:56:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A25AF223334
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 16:57:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740157000; cv=none; b=vBRWgPVfTNdxLHCmuKMuUkwhR05/HuwlrgU3UIDtCDkfZ3xm9RDp9YlOhCvHB5rJX5FvNQfIxEITEdi6mMP/ZSwDrqkJUO2ONQcLZmJVUdS6ghN0MeGVX4w56MuhNGMWDQOWEg2sfbZybAcBSAJz4qx+Tq4Ih98p4OHe79Nm1cM=
+	t=1740157035; cv=none; b=OQt+tDgi80eRRPOaiLd19tI8D7FX9zudwZ/hbxN1KRyqwvusGmI0QibDNJZG9bdbA5FISXcC272O9ss3Pe7kgej2wzAYLctUhbeMf1jIMQTW1+RDjxYO9jXeitXKeDmZ0bkZAWopVjckXfjyyWdFDKvYJVZruqomqK3GFlLF9AM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740157000; c=relaxed/simple;
-	bh=4NYNCyUlBCcUiP2flqZ7vpZ04JrfY05TT3Q9of0jt1o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iWgmcLC5FSZddkLGvWnJZ0Ii1IwhQFAvJvuXpjpwCLsXsOWh83XCM+8Kfbmr0F1RikARKc6WH4BRaIABxj9BAojuFw93U288mx0LG/lQw8JIyaKqOXTFbFT1grW6fTIKGfWnnm/Ot2CjJtbARlzP9SZ0NAq6esFc94QNGNlqWhs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rejCUcjj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87EC6C4CED6;
-	Fri, 21 Feb 2025 16:56:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740157000;
-	bh=4NYNCyUlBCcUiP2flqZ7vpZ04JrfY05TT3Q9of0jt1o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rejCUcjjFUhWfC4zPJeNa1HrBYGq2xsIqO0ZPaU8aMD1mp8MbDX81KHJKm8uC1N4G
-	 nZ1Uip6A11axdtE8FsNCFX7Aq9EnYmS46aoACenNEv0ma2HctX5SbNSwqAZRLyGMWC
-	 lyRKYCXrGs8JR1p66yMCStilgPUAaCcbaXQ27IRa0daLgmqXucCHpzWn1c9qzULyVJ
-	 bwWxE7Mf0fc1oE0RYZRole8xO6UtHf1xx1VmsUr2I9YVpWXkODSr265pUQVWcajUh/
-	 Fqo0kKew/oQiCo693InP0JB0KlhaxgZKb72mseLhCyftg1IVG/4hTFdDfhBQnUOejn
-	 40vGGHGGJiz4A==
-Date: Fri, 21 Feb 2025 16:56:32 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Eason Yang <j2anfernee@gmail.com>
-Cc: avifishman70@gmail.com, tmaimon77@gmail.com, tali.perry1@gmail.com,
-	venture@google.com, yuenn@google.com, benjaminfair@google.com,
-	jic23@kernel.org, lars@metafoo.de, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, nuno.sa@analog.com,
-	dlechner@baylibre.com, javier.carrasco.cruz@gmail.com,
-	andriy.shevchenko@linux.intel.com, gstols@baylibre.com,
-	olivier.moysan@foss.st.com, mitrutzceclan@gmail.com,
-	tgamblin@baylibre.com, matteomartelli3@gmail.com,
-	marcelo.schmitt@analog.com, alisadariana@gmail.com,
-	joao.goncalves@toradex.com, thomas.bonnefille@bootlin.com,
-	ramona.nechita@analog.com, herve.codina@bootlin.com,
-	chanh@os.amperecomputing.com, KWLIU@nuvoton.com,
-	yhyang2@nuvoton.com, openbmc@lists.ozlabs.org,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 1/2] dt-bindings: iio: adc: add NCT7201 ADCs
-Message-ID: <20250221-spinout-opt-7d9b5a529610@spud>
-References: <20250221090918.1487689-1-j2anfernee@gmail.com>
- <20250221090918.1487689-2-j2anfernee@gmail.com>
+	s=arc-20240116; t=1740157035; c=relaxed/simple;
+	bh=sLF5oT9Lvef17Xk4wpZ383fnLHw9qC9WCYb+k3DNBwc=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=gVKORWQzO0tsasEfRqF4c8vn4eTq7CbDxXLUIiWqC8+jf+PuQ6AniCbtz9C78RXc9q2jc6Ql3Nti4p8C0ba0e5/V0ZUxYLebia2p1TjSiUwDXXrouUvgqLVGChvCKBADKrOtWDJ15imMMa3sCm1GkZMcZhWecAAFlOXKtDSkngE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YWkugHCT; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740157033; x=1771693033;
+  h=date:from:to:cc:subject:message-id;
+  bh=sLF5oT9Lvef17Xk4wpZ383fnLHw9qC9WCYb+k3DNBwc=;
+  b=YWkugHCTfdfJIM8X8BoJTp2SS2Majy9DgfWK6Ow6f70J6166RcbGqdoS
+   nTEonujM75jpY3ZP1Ai3RiAe8nYybJjd/EXsMiU9UXnPagfQcAmDiDIux
+   M4wPTrCXJHQIKNR8Kx5iTchZe2uwu+36A/HoMuUs2042Yt+M4azwW8yyo
+   JF5KLvvi33+ktNI161OjwfuCOgc9ckPDdt8TzXCWhJf4mIYF4WQlvp72/
+   6rbNZE+siXt0ZxRd/ZBKTcYWLS4IPpKptJ8uH1eNvfcbRso8cHvvnkM0a
+   BImeGKqeG9TS6gi69BYot44GByGMS2SPGtVVDSf4pLmqD7G8bw6mntihs
+   w==;
+X-CSE-ConnectionGUID: 8gRuJeouRHCZwO73ze3yXQ==
+X-CSE-MsgGUID: XJx3fao9S6aaN+RCP3T2mQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11352"; a="51622150"
+X-IronPort-AV: E=Sophos;i="6.13,305,1732608000"; 
+   d="scan'208";a="51622150"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Feb 2025 08:57:12 -0800
+X-CSE-ConnectionGUID: rR2yS4c1S8SjwziqtVeIMA==
+X-CSE-MsgGUID: UYo/+nTrQEa3OGWQiobPhA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,305,1732608000"; 
+   d="scan'208";a="115135441"
+Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
+  by orviesa009.jf.intel.com with ESMTP; 21 Feb 2025 08:57:12 -0800
+Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tlWKr-0005lx-1q;
+	Fri, 21 Feb 2025 16:57:09 +0000
+Date: Sat, 22 Feb 2025 00:56:46 +0800
+From: kernel test robot <lkp@intel.com>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [paulmck-rcu:non-rcu/next] BUILD SUCCESS
+ de3ac915f986e6ecc1c219584797c196ff6d1fa2
+Message-ID: <202502220040.4TlPoLco-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="JLz+NO4dK9qNL/Og"
-Content-Disposition: inline
-In-Reply-To: <20250221090918.1487689-2-j2anfernee@gmail.com>
 
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git non-rcu/next
+branch HEAD: de3ac915f986e6ecc1c219584797c196ff6d1fa2  tools/memory-model: Distinguish between syntactic and semantic tags
 
---JLz+NO4dK9qNL/Og
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+elapsed time: 1455m
 
-On Fri, Feb 21, 2025 at 05:09:17PM +0800, Eason Yang wrote:
-> Add a binding specification for the Nuvoton NCT7201/NCT7202 up to 12-bit
-> ADCs with I2C interface.
->=20
-> Signed-off-by: Eason Yang <j2anfernee@gmail.com>
-> ---
->  .../bindings/iio/adc/nuvoton,nct7201.yaml     | 57 +++++++++++++++++++
->  MAINTAINERS                                   |  1 +
->  2 files changed, 58 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iio/adc/nuvoton,nct=
-7201.yaml
->=20
-> diff --git a/Documentation/devicetree/bindings/iio/adc/nuvoton,nct7201.ya=
-ml b/Documentation/devicetree/bindings/iio/adc/nuvoton,nct7201.yaml
-> new file mode 100644
-> index 000000000000..830c37fd9f22
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/iio/adc/nuvoton,nct7201.yaml
-> @@ -0,0 +1,57 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/iio/adc/nuvoton,nct7201.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Nuvoton nct7201 and similar ADCs
-> +
-> +maintainers:
-> +  - Eason Yang <j2anfernee@gmail.com>
-> +
-> +description: |
-> +  The NCT7201/NCT7202 is a Nuvoton Hardware Monitor IC, contains up to 1=
-2 voltage
-> +  monitoring channels, with SMBus interface, and up to 4 sets SMBus addr=
-ess
-> +  selection by ADDR connection. It also provides ALERT# signal for event
-> +  notification and reset input RSTIN# to recover it from a fault conditi=
-on.
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - nuvoton,nct7201
-> +      - nuvoton,nct7202
+configs tested: 71
+configs skipped: 1
 
-When you respin, please add a note about what differs between these
-devices that requires different handling in the driver.
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-Cheers,
-Conor.
+tested configs:
+alpha                           allyesconfig    gcc-14.2.0
+arc                             allmodconfig    gcc-13.2.0
+arc                             allyesconfig    gcc-13.2.0
+arc                  randconfig-001-20250221    gcc-13.2.0
+arc                  randconfig-002-20250221    gcc-13.2.0
+arm                             allmodconfig    gcc-14.2.0
+arm                             allyesconfig    gcc-14.2.0
+arm                  randconfig-001-20250221    gcc-14.2.0
+arm                  randconfig-002-20250221    clang-19
+arm                  randconfig-003-20250221    gcc-14.2.0
+arm                  randconfig-004-20250221    clang-21
+arm64                           allmodconfig    clang-18
+arm64                randconfig-001-20250221    clang-15
+arm64                randconfig-002-20250221    clang-21
+arm64                randconfig-003-20250221    clang-21
+arm64                randconfig-004-20250221    gcc-14.2.0
+csky                 randconfig-001-20250221    gcc-14.2.0
+csky                 randconfig-002-20250221    gcc-14.2.0
+hexagon                         allmodconfig    clang-21
+hexagon                         allyesconfig    clang-18
+hexagon              randconfig-001-20250221    clang-21
+hexagon              randconfig-002-20250221    clang-21
+i386                             allnoconfig    gcc-12
+i386       buildonly-randconfig-001-20250221    gcc-12
+i386       buildonly-randconfig-002-20250221    gcc-12
+i386       buildonly-randconfig-003-20250221    gcc-12
+i386       buildonly-randconfig-004-20250221    gcc-12
+i386       buildonly-randconfig-005-20250221    clang-19
+i386       buildonly-randconfig-006-20250221    clang-19
+loongarch            randconfig-001-20250221    gcc-14.2.0
+loongarch            randconfig-002-20250221    gcc-14.2.0
+m68k                            allyesconfig    gcc-14.2.0
+nios2                randconfig-001-20250221    gcc-14.2.0
+nios2                randconfig-002-20250221    gcc-14.2.0
+parisc               randconfig-001-20250221    gcc-14.2.0
+parisc               randconfig-002-20250221    gcc-14.2.0
+powerpc              randconfig-001-20250221    clang-21
+powerpc              randconfig-002-20250221    clang-21
+powerpc              randconfig-003-20250221    clang-17
+powerpc64            randconfig-001-20250221    clang-21
+powerpc64            randconfig-002-20250221    clang-21
+powerpc64            randconfig-003-20250221    clang-19
+riscv                randconfig-001-20250221    clang-21
+riscv                randconfig-002-20250221    clang-21
+s390                            allmodconfig    clang-19
+s390                            allyesconfig    gcc-14.2.0
+s390                 randconfig-001-20250221    gcc-14.2.0
+s390                 randconfig-002-20250221    gcc-14.2.0
+sh                              allmodconfig    gcc-14.2.0
+sh                              allyesconfig    gcc-14.2.0
+sh                   randconfig-001-20250221    gcc-14.2.0
+sh                   randconfig-002-20250221    gcc-14.2.0
+sparc                           allmodconfig    gcc-14.2.0
+sparc                randconfig-001-20250221    gcc-14.2.0
+sparc                randconfig-002-20250221    gcc-14.2.0
+sparc64              randconfig-001-20250221    gcc-14.2.0
+sparc64              randconfig-002-20250221    gcc-14.2.0
+um                              allmodconfig    clang-21
+um                              allyesconfig    gcc-12
+um                   randconfig-001-20250221    gcc-12
+um                   randconfig-002-20250221    gcc-12
+x86_64                           allnoconfig    clang-19
+x86_64     buildonly-randconfig-001-20250221    gcc-12
+x86_64     buildonly-randconfig-002-20250221    clang-19
+x86_64     buildonly-randconfig-003-20250221    clang-19
+x86_64     buildonly-randconfig-004-20250221    clang-19
+x86_64     buildonly-randconfig-005-20250221    clang-19
+x86_64     buildonly-randconfig-006-20250221    clang-19
+x86_64                             defconfig    gcc-11
+xtensa               randconfig-001-20250221    gcc-14.2.0
+xtensa               randconfig-002-20250221    gcc-14.2.0
 
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  reset-gpios:
-> +    maxItems: 1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +
-> +    #include <dt-bindings/gpio/gpio.h>
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +
-> +    i2c {
-> +        #address-cells =3D <1>;
-> +        #size-cells =3D <0>;
-> +
-> +        adc@1d {
-> +            compatible =3D "nuvoton,nct7202";
-> +            reg =3D <0x1d>;
-> +            interrupt-parent =3D <&gpio3>;
-> +            interrupts =3D <30 IRQ_TYPE_LEVEL_LOW>;
-> +            reset-gpios =3D <&gpio3 28 GPIO_ACTIVE_LOW>;
-> +        };
-> +    };
-> +...
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 3864d473f52f..fdc4aa5c7eff 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -2831,6 +2831,7 @@ L:	openbmc@lists.ozlabs.org (moderated for non-subs=
-cribers)
->  S:	Supported
->  F:	Documentation/devicetree/bindings/*/*/*npcm*
->  F:	Documentation/devicetree/bindings/*/*npcm*
-> +F:	Documentation/devicetree/bindings/iio/adc/nuvoton,nct7201.yaml
->  F:	Documentation/devicetree/bindings/rtc/nuvoton,nct3018y.yaml
->  F:	arch/arm/boot/dts/nuvoton/nuvoton-npcm*
->  F:	arch/arm/mach-npcm/
-> --=20
-> 2.34.1
->=20
-
---JLz+NO4dK9qNL/Og
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ7iwQAAKCRB4tDGHoIJi
-0lg0AQDsCEVD4EkUP/fg7wjfm3Cmgy9UN51JuRZ9eaXp870WdQD6A/esC7erCxcf
-CxjVOVmPKf/shRAcubLnpnBnLq4xlQI=
-=Az49
------END PGP SIGNATURE-----
-
---JLz+NO4dK9qNL/Og--
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
