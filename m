@@ -1,183 +1,101 @@
-Return-Path: <linux-kernel+bounces-526361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD063A3FDAA
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 18:43:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E235A3FDC1
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 18:46:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C46A4188DC9E
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:42:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A2123BC1B7
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:43:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED899250BEB;
-	Fri, 21 Feb 2025 17:42:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1716250BEA;
+	Fri, 21 Feb 2025 17:43:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tXUX2fjP"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A4182505D6;
-	Fri, 21 Feb 2025 17:42:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F41112500D0;
+	Fri, 21 Feb 2025 17:43:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740159757; cv=none; b=af2tC7I1zw6NibloLU2zDxOz9R7HJBeqWqqbDMd5EaG90bXaXaLRoL8ckJrqiJ1oKgsyauPt1K5yZ7K7sjeCc55AXCHmFAB2RHpoqF4K4vaTOlW1Tj+SonaFfx/S/6Xbp6tULy5u0hVrRz4i7UY9iU04pgea7B3N1NPaCT2ns0A=
+	t=1740159828; cv=none; b=Ab313hkU/xHQL6ixsE7nUOhbv14FXMUd5Lov/ij6fJMFdIEhKdkgW32tsuqwSF7pPYmPZbVhQ+ggtzPMMflZQHzasRj+BpYk7glQf1gFU2IvYAi7/LyxAHBFVCOjEMnfypO4OEoZjitzGYc6RrQhGkHzQZEJ0fHS1HKDOHW3p40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740159757; c=relaxed/simple;
-	bh=QkYfDbjnv+vobxu+zskSAvJbE4xs/szNp3fe2BEoQ/I=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FzMhvBeaSfkYmhwQm0AF9QQxD84K1TNkjibFqHE6yr70VWUbJF5EVa+3GBA6fR63v2nyWYNqYqFXhxFLcB7c4G86Y6hh1udUhgrlMtekRRIeL5cv2to2fNvJyz15dZCzoHe3bB9Z5gQOqaOB/pDmfhEROLUmIWWQIinHNRlN+lA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11275C4CED6;
-	Fri, 21 Feb 2025 17:42:35 +0000 (UTC)
-Date: Fri, 21 Feb 2025 12:43:04 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Martin Uecker <uecker@tugraz.at>
-Cc: Dan Carpenter <dan.carpenter@linaro.org>, Greg KH
- <gregkh@linuxfoundation.org>, Boqun Feng <boqun.feng@gmail.com>, "H. Peter
- Anvin" <hpa@zytor.com>, Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
- Christoph Hellwig <hch@infradead.org>, rust-for-linux
- <rust-for-linux@vger.kernel.org>, Linus Torvalds
- <torvalds@linux-foundation.org>, David Airlie <airlied@gmail.com>,
- linux-kernel@vger.kernel.org, ksummit@lists.linux.dev
-Subject: Re: Rust kernel policy
-Message-ID: <20250221124304.5dec31b2@gandalf.local.home>
-In-Reply-To: <61a7e7db786d9549cbe201b153647689cbe12d75.camel@tugraz.at>
-References: <326CC09B-8565-4443-ACC5-045092260677@zytor.com>
-	<CANiq72m+r1BZVdVHn2k8XeU37ZeY6VT2S9KswMuFA=ZO3e4uvQ@mail.gmail.com>
-	<a7c5973a-497c-4f31-a7be-b3123bddb6dd@zytor.com>
-	<Z7VKW3eul-kGaIT2@Mac.home>
-	<2025021954-flaccid-pucker-f7d9@gregkh>
-	<4e316b01634642cf4fbb087ec8809d93c4b7822c.camel@tugraz.at>
-	<2025022024-blooper-rippling-2667@gregkh>
-	<1d43700546b82cf035e24d192e1f301c930432a3.camel@tugraz.at>
-	<2025022042-jot-favored-e755@gregkh>
-	<b9a5de64fe1ded2ad3111763f35af9901bd81cc4.camel@tugraz.at>
-	<caea3e79-78e6-4d98-9f3b-f8e7f6f00196@stanley.mountain>
-	<61a7e7db786d9549cbe201b153647689cbe12d75.camel@tugraz.at>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1740159828; c=relaxed/simple;
+	bh=5Ib6rKfHINsbnOm48l+ZXnY4AfYdhht8jM5s78b/8XA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=e2cx4ZkUPfjQRtvnOT0OmVhaQ2mKXV3Hy1yZeg0xTdcseiJGPHJIl06apkt0qUsrZGMaJ9NQlf906080i1MvlWw9nQyWGgSVzlT1JIvxyTUanpyBFNraxYCIYWkODZhZTMXe86SC4dvzdd0WbaeDpgcVgvGOXFmVo9XfDXcsFds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tXUX2fjP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E06D3C4CED6;
+	Fri, 21 Feb 2025 17:43:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740159827;
+	bh=5Ib6rKfHINsbnOm48l+ZXnY4AfYdhht8jM5s78b/8XA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tXUX2fjPTdPkddCLjxFq148N3V+JXOTDhx/eDmB1+qUI4wNqwtmHfh1rXUBD3LseX
+	 OLHyrFOiej0POnFf8YoIlFoBxSuVrljGAh86IeiODg3iatYPxrHrSQWlcrRF2G0FDf
+	 mHyMl3aMXUphYezwx9cDfFMvi5sgf1aqcwSkht1M/+u77c5uoMFDIyoFQ5BDdUtRge
+	 ZxNQsjDG8aMcccze/ycqJR5tbs7mbj0sIEm9Ey8uW7bSn36wXEbOBOG20utwyvagfW
+	 TxNMzaJXwQIqAmli8INMhUbvvcqtlrdWUX3R3XX822U2WkoN6XlgPl2ljm00UVTvXn
+	 CcBnH1krkkD/A==
+Date: Fri, 21 Feb 2025 17:43:42 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+Cc: Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH v4 2/7] dt-bindings: dma: rz-dmac: Restrict properties
+ for RZ/A1H
+Message-ID: <20250221-saline-thousand-de76cce72b11@spud>
+References: <20250220150110.738619-1-fabrizio.castro.jz@renesas.com>
+ <20250220150110.738619-3-fabrizio.castro.jz@renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="AU7iG86wlH1begqX"
+Content-Disposition: inline
+In-Reply-To: <20250220150110.738619-3-fabrizio.castro.jz@renesas.com>
+
+
+--AU7iG86wlH1begqX
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, 21 Feb 2025 17:28:30 +0100
-Martin Uecker <uecker@tugraz.at> wrote:
-
-
-> >=20
-> > This kind of #pragma is basically banned in the kernel.  It's used
-> > in drivers/gpu/drm but it disables the Sparse static checker. =20
+On Thu, Feb 20, 2025 at 03:01:05PM +0000, Fabrizio Castro wrote:
+> Make sure we don't allow for the clocks, clock-names, resets,
+> reset-names. and power-domains properties for the Renesas
+> RZ/A1H SoC because its DMAC doesn't have clocks, resets,
+> and power domains.
 >=20
-> Why is this?
+> Fixes: 209efec19c4c ("dt-bindings: dma: rz-dmac: Document RZ/A1H SoC")
+> Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
 
-Because they are arcane and even the gcc documentation recommends avoiding
-them.
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
- "Note that in general we do not recommend the use of pragmas"
- https://gcc.gnu.org/onlinedocs/gcc/Pragmas.html
+--AU7iG86wlH1begqX
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
 
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ7i7TgAKCRB4tDGHoIJi
+0sviAP9NRM8MOgyy6lNUzNi8XzYpY+vRsiYCqO6Ojzdsv5CsMgEA8sfztDMtmWuJ
+f5IjZaGVWFMXetmmbDAttFGz5u7UOQw=
+=EJQ5
+-----END PGP SIGNATURE-----
 
->=20
-> >  =20
-> > > unsigned int foo(unsigned int a, unsigned int b)
-> > > {
-> > >   return a * b;
-> > > }
-> > >=20
-> > > static int foo(const int a[static 2])
-> > > {
-> > >   int r =3D 0;
-> > >   if (ckd_mul(&r, a[0], a[1]))
-> > >     return -1;
-> > >   return r;
-> > > }
-> > >=20
-> > > static int bar(int x)
-> > > {
-> > >   int a[2] =3D { x, x };
-> > >   return foo(a);
-> > > }
-> > >=20
-> > >=20
-> > > and the compiler would be required to emit a diagnostic when there
-> > > is any operation that could potentially cause UB. =20
-> >=20
-> > I'm less convinced by the static analysis parts of this...  The kernel
-> > disables checking for unsigned less than zero by default because there
-> > are too many places which do:
-> >=20
-> > 	if (x < 0 || x >=3D 10) {
-> >=20
-> > That code is perfectly fine so why is the compiler complaining?  But at
-> > the same time, being super strict is the whole point of Rust and people
-> > love Rust so maybe I have misread the room. =20
->=20
-> What is a bit weird is that on the one side there are people
-> who think we absolutely need=C2=A0 compiler-ensured memory safety
-> and this might be even worth rewriting code from scratch and
-> on the other side there are people who think that dealing with
-> new false positives in existing code when adding new warnings
-> is already too much of a burden.
-
-Actually, I would be perfectly fine with fixing all locations that have
-x < 0 where x is unsigned, even if it's in a macro or something. Those
-could be changed to:
-
-	if ((signed)x < 0 || x >=3D 10) {
-
-If they want to allow unsigned compares.
-
->=20
-> > >=20
-> > > I would also have a DYNAMIC mode that traps for UB detected at
-> > > run-time (but I understand that this is not useful for the kernel).  =
-=20
-> >=20
-> > No, this absolutely is useful.  This is what UBSan does now.
-> >  =20
->=20
-> Yes, it is similar to UBSan. The ideas to make sure that in the
-> mode there is *either* a compile-time warning *or* run-time
-> trap for any UB.  So if you fix all warnings, then any remaining
-> UB is trapped at run-time.
-
-As long as we allow known UB. We have code that (ab)uses UB behavior in gcc
-that can't work without it. For instance, static calls. Now if the compiler
-supported static calls, it would be great if we can use that.
-
-What's a static call?
-
-It's a function call that can be changed to call other functions without
-being an indirect function call (as spectre mitigations make that horribly
-slow). We use dynamic code patching to update the static calls.
-
-It's used for functions that are decided at run time. For instance, are we
-on AMD or Intel to decide which functions to implement KVM.
-
-What's the UB behavior? It's calling a void function with no parameters
-that just returns where the caller is calling a function with parameters.
-That is:
-
-	func(a, b, c)
-
-where func is defined as:
-
-	void func(void) { return ; }
-
->=20
-> >   You're
-> > basically talking about exception handling.  How could that not be
-> > the most useful thing ever? =20
->=20
-> At the moment, I wasn't thinking about a mechanism to catch those
-> exceptions, but just to abort the program directly (or just emit
-> a diagnostic and continue. =20
-
-Aborting the kernel means crashing the system.
-
--- Steve
+--AU7iG86wlH1begqX--
 
