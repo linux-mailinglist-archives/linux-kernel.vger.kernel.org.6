@@ -1,411 +1,566 @@
-Return-Path: <linux-kernel+bounces-525712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 000A0A3F388
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 12:56:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B69DA3F38F
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 12:57:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD5BB17A53F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 11:56:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2E363BA7FA
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 11:57:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1CCA209F4F;
-	Fri, 21 Feb 2025 11:56:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B47E209F3C;
+	Fri, 21 Feb 2025 11:57:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="eyAt2KYn"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2055.outbound.protection.outlook.com [40.107.236.55])
+	dkim=pass (2048-bit key) header.d=3xo.fr header.i=@3xo.fr header.b="WZtwEr2e"
+Received: from mail.3xo.fr (mail.3xo.fr [212.129.21.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBBDE1FC0FC;
-	Fri, 21 Feb 2025 11:56:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.55
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740138991; cv=fail; b=YtcZJ/Fs0bHBpCMWVy2ak/0xcWeblb2FChZmqltjfiaxML2fcMRc6+gzMOjyQln2Q5IFsmPyWTL/YGXWJmhOCdjIVLaXcVyq1mpFfas30j2DBKILonfKSVki+pWZl5S2wdr8uWeHqGKwMXOAMzi6nc7c/llDF5+XZVRLDnL+Xz4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740138991; c=relaxed/simple;
-	bh=BoE3l4kWn4hNCKN+ycT3Y9O6Do6h0FadcP3EpFsTbFU=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=OLdDJZ9xw1La0pVB+S0CzJliYPHrROelFrKjNvMDjIkiRlO2TXykvwqk9803A+m2wuorbC0Br3+ujYG9/gc9YFNug9p2TjtqYTGdlbukR6PF7grsO+p60vgyI+WwkdIHmE/zPECDDqoENqGhspMQrWzsFe7/NhIDwDwYgldrtr4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=eyAt2KYn; arc=fail smtp.client-ip=40.107.236.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=iLGrZlX/fozHytEf3J5wkcKCNgamv7Kvtj1hoOCogZ1N+ok9rtTZkA140qeI1tPntJerWt4/XtDFk5t30lhA9YrskmhW1xzjcNQ3CWh8RSiRwKEjtTD6HL6GrjKlf68erKffATkcc6O1D7bRp09b94dG5AKJmqH8wg71qjIj07xN+1W7PpT8ADke+ghleNMsbh3K+M489f9Xr/fFEkFfG7sswpnvIUuyu0ZzLaL/Q4Nv9UGzS2bplMw4+uQLnv4t/GMZQhQnKt93rj0n2FanKw3LOCvHni7LV3kvrfanmcmtSms7vkPW5uRez5YvDQFz5hmKqy9CxZZYWZr992gAAA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=lo3KKATzDjkABnhNDxut7CMjD0J8MQVWTXcVboY6nuQ=;
- b=WD7+5QE/vHVXKrsD/l5eKqd5cMcnqmyMbuQco/QRobMKE1MwFnCh19WylNaSPglhJW7/uF94qLdaqx0HLEvyr1VkEOvv2MYDji7Bm6GpkvTp+WVVZnACZV130zLRQd6O26vo31ws9k2jdGPU2bZvTT1ofnIxLN3/LoC2+vvv1aNlW5kpYycVdGalG1jGqVLfpe1hpchjJcUFJtgVUgNzB+ZHD5GiMFDa/kEqyjSkvwUaxVO5v1a3Cjj2GwoEJ7yOn7MuujAatj/xf29uCMpz2hhwaDh6e1Gsl/IwhCUIYpfkiPg57zkxxqeysRB6uI4Q8Oh0dCd7TNQq2Oqd1Vsl/Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=lo3KKATzDjkABnhNDxut7CMjD0J8MQVWTXcVboY6nuQ=;
- b=eyAt2KYnJ9lF3+D1vw9F6gjl5OSNUYGrbyn1QsfCkzAiYaVFnXvDTy5EnSLqVtNbQAsPTCaxVte0Wlww9HKKsuhcymXpbyHk9miJfR+NEUypZSNUk+Y+il7D//WVPSLdHV+jHYfc5jhmjKYBoJOAepSyGW0Y+U+AgyWwwxbjFDkg2I7s7Wg5xxS1jrOMxgKYeUrlL1Zrp9E87nCeyAiIFW9Y1SWFgiv2cP8f0kLmTrp83CsJbSF9zhgCrVsUwNh2odPv3POolr5jI6boKOwllLiBQBZBbkpoxe15bUBjzoIuPpDyh6724qcpRjJsea5I56N1aORTEsWR5OcbAH0IwA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SJ2PR12MB8784.namprd12.prod.outlook.com (2603:10b6:a03:4d0::11)
- by CY5PR12MB6456.namprd12.prod.outlook.com (2603:10b6:930:34::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.15; Fri, 21 Feb
- 2025 11:56:22 +0000
-Received: from SJ2PR12MB8784.namprd12.prod.outlook.com
- ([fe80::1660:3173:eef6:6cd9]) by SJ2PR12MB8784.namprd12.prod.outlook.com
- ([fe80::1660:3173:eef6:6cd9%6]) with mapi id 15.20.8466.013; Fri, 21 Feb 2025
- 11:56:22 +0000
-Message-ID: <1c75682e-a720-4bd0-8bcc-5443b598457f@nvidia.com>
-Date: Fri, 21 Feb 2025 11:56:14 +0000
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/2] sched/deadline: Check bandwidth overflow earlier
- for hotplug
-To: Juri Lelli <juri.lelli@redhat.com>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc: Christian Loehle <christian.loehle@arm.com>,
- Thierry Reding <treding@nvidia.com>, Waiman Long <longman@redhat.com>,
- Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
- Michal Koutny <mkoutny@suse.com>, Ingo Molnar <mingo@redhat.com>,
- Peter Zijlstra <peterz@infradead.org>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
- Phil Auld <pauld@redhat.com>, Qais Yousef <qyousef@layalina.io>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- "Joel Fernandes (Google)" <joel@joelfernandes.org>,
- Suleiman Souhlal <suleiman@google.com>, Aashish Sharma <shraash@google.com>,
- Shin Kawamura <kawasin@google.com>,
- Vineeth Remanan Pillai <vineeth@bitbyteword.org>,
- linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
- "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-References: <151884eb-ad6d-458e-a325-92cbe5b8b33f@nvidia.com>
- <Z7Ne49MSXS2I06jW@jlelli-thinkpadt14gen4.remote.csb>
- <Z7RZ4141H-FnoQPW@jlelli-thinkpadt14gen4.remote.csb>
- <d7cc3a3c-155e-4872-a426-cbd239d79cac@arm.com>
- <Z7SWvr86RXlBbJlw@jlelli-thinkpadt14gen4.remote.csb>
- <a0f03e3e-bced-4be7-8589-1e65042b39aa@arm.com>
- <Z7WsRvsVCWu_By1c@jlelli-thinkpadt14gen4.remote.csb>
- <4c045707-6f5a-44fd-b2d1-3ad13c2b11ba@arm.com>
- <537f2207-b46b-4a5e-884c-d6b42f56cb02@arm.com>
- <Z7cGrlXp97y_OOfY@jlelli-thinkpadt14gen4.remote.csb>
- <Z7dJe7XfG0e6ECwr@jlelli-thinkpadt14gen4.remote.csb>
-From: Jon Hunter <jonathanh@nvidia.com>
-Content-Language: en-US
-In-Reply-To: <Z7dJe7XfG0e6ECwr@jlelli-thinkpadt14gen4.remote.csb>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: LO4P265CA0016.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:2ad::10) To SJ2PR12MB8784.namprd12.prod.outlook.com
- (2603:10b6:a03:4d0::11)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0FFB209F32
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 11:57:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.129.21.66
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740139047; cv=none; b=KlcJHys+S/qUZbj08T9GBzKQBngzJB4DXM+21En2PVQxw8BCY4HeyZu07bcf/MCZG2sT1Yooc/dtVv5fypiIvSCnRpG4is90sdNA3VsUetE0vFuXHD/9wNHyoVunmKq2ZWMb13PXJIZNPqibsoIbyq1k65UgVXnCNAigcFmEYfQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740139047; c=relaxed/simple;
+	bh=7xrcxbiAwNZkk+WKwV7RENCRUlcDdYC2L1ySDtjZIn0=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=garCG+2bcgUDGoFJ9bwi2jMHAGvb2tiCKTPrLdVnn8EePZSQ3E0qZWE/JF5PX/JnaITMT07F+0Gwr1stVuiQ0z75nl6UTdS6SEFEjeJ68BBxFyUzz19yRB5823skRTD5PVtaAg6e61oOi48lTUIlXMTse93KVZf9HLuNn4T2RVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=3xo.fr; spf=pass smtp.mailfrom=3xo.fr; dkim=pass (2048-bit key) header.d=3xo.fr header.i=@3xo.fr header.b=WZtwEr2e; arc=none smtp.client-ip=212.129.21.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=3xo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=3xo.fr
+Received: from localhost (mail.3xo.fr [212.129.21.66])
+	by mail.3xo.fr (Postfix) with ESMTP id D9B0E8D;
+	Fri, 21 Feb 2025 12:57:13 +0100 (CET)
+X-Virus-Scanned: Debian amavis at nxo2.3xo.fr
+Received: from mail.3xo.fr ([212.129.21.66])
+ by localhost (mail.3xo.fr [212.129.21.66]) (amavis, port 10024) with ESMTP
+ id nN_7ypaUx3Al; Fri, 21 Feb 2025 12:57:09 +0100 (CET)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.3xo.fr 3DE0A8C
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=3xo.fr; s=3xo;
+	t=1740139029; bh=2JpAa5WNhwWbsATWm76KArrvtYWJ9ApHesZ04nF9iyY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=WZtwEr2eAV7zQdj9hQiKaGsreldKOEAkDP6trIcpt668WujDU4daU6XOA4ns4fpJK
+	 2DHk256PSrAl3/IMshg4Qm8ORAIY+Yc9WMjwEGjQpHvsVDztPyJgP9Ng54BqfkBhD9
+	 dH+8DBwt3JDJoRiKUnSZ5R3HtxTQHmdVlHV2yxiYV4hJbtN8EvLfEb+6HgQfWnrN1n
+	 J1LYhnuuqLBZxCE1fIHKCFKI2f8ADC84EiL4lALBZlvPcqT77+PMaD1gHXK53bAoe3
+	 2jdBBoCObX8vSTmxQ5DpMjl3gUCb+A3xUPs+uodpvMyy7n3mtYLQ8WRKQpua3zN0V1
+	 McoObTro+dqbg==
+Received: from mail.3xo.fr (mail.3xo.fr [212.129.21.66])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	by mail.3xo.fr (Postfix) with ESMTPSA id 3DE0A8C;
+	Fri, 21 Feb 2025 12:57:09 +0100 (CET)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR12MB8784:EE_|CY5PR12MB6456:EE_
-X-MS-Office365-Filtering-Correlation-Id: dff02036-4e84-4bee-e481-08dd526ec28f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?bmM1cHJGZmNXbjlkN3FTdnQ3Y0tYOU5LQUg0bFcxajY0K0pjTTRvc2dXSUE1?=
- =?utf-8?B?QjFHT3h0SWFoalNpNS8wcW5UUERPbWRGSHoxQVRXaUxOWVF3OEpsN2xCRTJF?=
- =?utf-8?B?S3BSN1dYdEFFS2pod00yQ1hIRXBDdmlubTREeC9QWlNoMko1SGZDRFV6QmZo?=
- =?utf-8?B?YTBDUUpZWkJKTGUyTzBRQ3JDRTJnR3Nub280NC82NlRTbTdJbmhUY2xhcFp2?=
- =?utf-8?B?LzVLSjV0RUpESFFkTlpyUFA4ZjZDRjI1SEp1NW5XRmUrUzZsTDkyc21DL2dT?=
- =?utf-8?B?MDhrOW1UeTdtNVB1NUhCbEFvaFVNbGlLZzk4aUFucDgzS01vbjlBUnUwcFY2?=
- =?utf-8?B?MkljbWkyaXN4Rld3VFdBekxUOGwwMTY5RCt6ZUFmbE9PRy9FVHU1ZlVoUGcr?=
- =?utf-8?B?UUV2YTBZalZXb0F0RUNxYnRCRTBtZVYrL0Ixd1BQSzBOQ01OTkdDNEN6d2RG?=
- =?utf-8?B?bGNDU1l0Yjk3ZThMOENhT1F2RnhmenYzU0Iwb2FPWDVJb2dQWk5iTmRLaVE0?=
- =?utf-8?B?NkkwVVpPWVNMN2F3am5rVW5YNHZwQVZCemZsYVhvM1FUWHU3VGl3Qm9ubWpG?=
- =?utf-8?B?eGpaZkUxd1RxSm0xZ1IzNm45OXZtOTFRcmErNURjTnhWSWVYRkxlTUZJMHl3?=
- =?utf-8?B?ak5yV1h0d3pOY25mYmtxN1Q2RHB5QStQQmZNRWtvSzd1dW5mUUxnM3JJZndZ?=
- =?utf-8?B?UXZMNGw3Y2dQalliSVVpY09MUlZlOVRUN0NVRzlxVExiczZmTWNySDFzUk9n?=
- =?utf-8?B?Y3NwNlZjcWVDbVJWOHpsd1VKTEF3NmJBS0tKbUJ6aFA5bnhEWFVSTVZiQmYv?=
- =?utf-8?B?QldZeDdCZWN2K280VHhURU9Qc3hqeU85cC96TU9IYnExblp3WGRrTk1HeGp0?=
- =?utf-8?B?VTd0eGlSQ1lHM3h3RXVaY09ORS95ejNGbkZlWklVaVF5c0JmNG5HSkxHalZk?=
- =?utf-8?B?aklEVmJRU29BQmJBZ3FyL1lhSzZEOHJuZkhzZ3RiaHRDcE1nT0MxckJuaXNB?=
- =?utf-8?B?VW04SlFqdHUzcFBjSldXemhzbS9LMTh4OHB4eXh2Kzl1VUhmUUVDTEw5NkhP?=
- =?utf-8?B?MXZBQWlKS1hEYnZEZmRDeklyQ2l2LzJtUEJMSlltcmVZYk5kbDlhcjJHck9P?=
- =?utf-8?B?ZDNvc0xDNmJBVklkeVdSWUNxaVlyN0tBakVzVnhuK0tBbERSM1RpSjBwMWtC?=
- =?utf-8?B?dmhjUERvWkZHK1VXTFRZU1QwYytLenU4UDA2eFFHODdKN1llSjVzcGxHaXFJ?=
- =?utf-8?B?MXJQenN0a09lTSsrYy83cU1STVFPQkVSd0tGUVU3bW4xNFF0VWtEL2ErRGhS?=
- =?utf-8?B?NklIQ0tDeVdxUkg4OU95bnNTQVFCcS9UVXEvQ3MwdktBd0V4azBIaTIwZnlJ?=
- =?utf-8?B?azhjMWhYUzYwUmRqemhsbEY1SjM5QUNaODFHSjhDTExhajYySk5pMWNSZ1JI?=
- =?utf-8?B?cjlXUmQrakxYaUEyTERSUVZ0dDNsOVdlNy9nd2pQY3ZHazFrSktpSEloSGYx?=
- =?utf-8?B?SFg2WmIwR0lYVXRJRFpiOVlYdVlWNnM5c015Znd5cEtsQlBTU24vYnNWM0U0?=
- =?utf-8?B?dExoK2hhWFM5WXZuL0huZUdNT3VpK09lTkdOVkt4Qld6eUhUSHYvK04waDNS?=
- =?utf-8?B?SGpuWldTdjVYWTMxN25EamhJNjNtVmQyT3l1ZlJDVWRxeGswZHNIUTJlQ1J5?=
- =?utf-8?B?b3BXNndRbkRYT252bHdMa2JPY041dG5xWVZMTzZqL00xa3lybXdjVUJMUFlz?=
- =?utf-8?B?LzY0WmVCQldGSnMrTmF4aHZ5WWdPSEpCN0F5SkpOc2hIUVhQVWZ1N05EZEFh?=
- =?utf-8?B?TnZzR2s0anhVMFFmT09sNHNuU3BjT3dmckFlb1J3aEZWajRSREpuMm0xaGgx?=
- =?utf-8?Q?oQnKpL1FMnucM?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8784.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?N29KSkJzQmpMZ1FENGRYSTY4NHNjTUhCUjRLQ3V3Tm4rcER6TVdYRzYzUEY4?=
- =?utf-8?B?Y1ZmeUdvQUdOUHpnTFYxL2ZoNTZ5ZkF2bjVCY2puL0l6QmFLTmJmNTQveU9H?=
- =?utf-8?B?ZUR0SWk2NUJua2NRcG04anZmbVhVUWdxaXh5ZDhKN1l6MjRVZC9tUzRjd3V1?=
- =?utf-8?B?NWZ2U0lNSzFabVo4Yko3dzRqb0F0Z3QxZFFpdUhXOUhSSm9Ia0dPZXJhTUdi?=
- =?utf-8?B?T2Rab0tlLzc5b3o4NXVsRFVkcC8ybmhmVHM1WXgvZE1zMTZrZEZUMlB6YkI2?=
- =?utf-8?B?STRiZDY4d1M1eVNXclpmdE1qY3VUWWdONno2UE0rSGRYVUJOOWtzWG03bVlC?=
- =?utf-8?B?ZU9COTRtd2NMbXBSOW9IWEQvdXp6bWF0Yy9KeEtYNzJyeXJVa2RhRkRNcWIr?=
- =?utf-8?B?SVdCZzREWEJxOXAwUE0wMElwK0ZYV3VrOFUrN3BDK1NzREYzdHozT2srQUpG?=
- =?utf-8?B?dUlET3FXdERsb09DOEtnRloxZ3lJOXRqNzNTMkVDWUZqV2lwdjU3djRaLy9v?=
- =?utf-8?B?cGtreklnUjZ5SUhmb3EwajB3dDhDOExWdFlFOUkrSzAzeGhJZGdxSXpDNTlp?=
- =?utf-8?B?eGx0UTVJZTVPVDlIbVI2c3NKZHhySDNZZWN4MTNzdW1rN1gzdkRCUWRHMDhh?=
- =?utf-8?B?cU80TGlmTThaNGZWbzV6bXg4Skx3L2xaeUNhRHRlV1pzTSs0MVNEcC9ORXRo?=
- =?utf-8?B?NXlWRkwxNXlER2R3d2g1Ty85bk1SMUlORjBkc1dWOElzVWR2c3JmZ1N3WWRi?=
- =?utf-8?B?d3pqSVdrOVlubWRjZ1lqcWdOdmgvRnlJcnhEbTJDalBsZ0lpUjVxenpQNmN1?=
- =?utf-8?B?VzZrTjJZVU5XdTVjb3d6d295S3BwQ0txcDRaZGdtUjRtV2l3cHRSOHBVQUJR?=
- =?utf-8?B?cTlSbHhPdFIyNXNBYlNWTEdEM0RvMkhHb1ptaTliRWtmK1o5R1pQSVBKQUxL?=
- =?utf-8?B?V24wWWZQKzhkZzN5TVpyd3lSVDY5M0VGSmw0VFNZWEJhdmV4ckphSDJDOGJF?=
- =?utf-8?B?RTJDVlVKU3JtK3Vwc0xKZ1RBMTgyR3VINEtLWmZCdTBDOXBoMEFpbnljMzlm?=
- =?utf-8?B?RmpSTU9BUllicCs3cjkyaFpIRHpyZUZkSGd5bEEySlZtMmcrbFdzU1JFNEZo?=
- =?utf-8?B?c0ZMLzVDS2xVODdzQjdWU2xHSVRSWHkxR1lrVlZYb0dHdmtoWDIyeUt2b0o3?=
- =?utf-8?B?RDFpUlJpajRJSCtUS3dRVmtnVGVWNjJUdzBYMWQ3eGFSSlNIajUyT0pOWno0?=
- =?utf-8?B?TFM1Q1hONzJGSkFHcVQwNFQ4MEhTK0d2YkJZa3dzczN0SEJOaldDbUxBcW9x?=
- =?utf-8?B?emE4dlo1N0M4ZVg4eDVqZVBmOFBVUHZVN25jYXpobXRxWnJZK2dHVmplMGVl?=
- =?utf-8?B?ZFh6TUxhSHZRM21wbm12c2JDUVV3ZjdCOEVWZWV4aWhuK3RML0psY3A0a3VK?=
- =?utf-8?B?V1kvT3B2Q3NGT203bUp2NU5CZndKNFk4YStTcmJyTTY4a24rRURGNTNWY3NP?=
- =?utf-8?B?M3duaGdCUFlYMnRmR0hIbGloWlM4RkVwZzBHRTRGbXdRaVVpYmN6OUh1WGlT?=
- =?utf-8?B?M3JMM0lhOHJOdi96L1h4bWJEdXdBUzhMOE9YZHpDVklyQ1A1VmtIMWlnc1Zm?=
- =?utf-8?B?T1dZM3hOVHNrbXBJdUxmU1FOUnByTWdoa2M4MkZJSTR6YnJxU2g1RERIRVZ2?=
- =?utf-8?B?ckpxSkVjVmZ2eW9Temx1bjJRaFNOTjNBZDlXY0ZTUUFkQ0lrdVVNQW04YURP?=
- =?utf-8?B?RWlRamJEWTk5cWwrMnZ2UDlwYjl5SkR5aUFFeGpaUjBZUG9yWGdmZzd6Tksw?=
- =?utf-8?B?OHRyUDA1SWtGQ29GTG12WlRQZnpQQnZXeUlPVGlmN0VzZGw0a1pRWmVQbUJ3?=
- =?utf-8?B?VnpxaTRNbnlGNEZXd2FGMFZBVVZtK2NodSt6ejBvRTBhMVVnVUJCTFpkMmRB?=
- =?utf-8?B?UVphY0NEeWpOSUd3OHpaL0JabGtOK01qK1ZITldmazM0YU1pUjVUSk1hTHo4?=
- =?utf-8?B?WkJUZ2lqZVhTOGtqM2tCOTdiNEtDdjZoeElkKzBpQ2xSNExCV0x2MkxRNzVk?=
- =?utf-8?B?Q1NCNHNOcEFGTk1nTjN6Y0NkRjNtWFFwaGN0ek1zRHk3L3BwUlBXMW9zWm16?=
- =?utf-8?Q?pt02Wtxk9xpCPffOtQS/IqURK?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: dff02036-4e84-4bee-e481-08dd526ec28f
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB8784.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Feb 2025 11:56:22.2471
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: URXE9RjIgpEAH2o2Y7mxeMENiIr263zxiXS4D+0KwCbD8Di8vWASFKWSF8fRZGHz6N/Rpm1E5jJd6hYzvSmdyA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6456
+Date: Fri, 21 Feb 2025 12:57:09 +0100
+From: Nicolas Baranger <nicolas.baranger@3xo.fr>
+To: Thomas Zimmermann <tzimmermann@suse.de>
+Cc: Jocelyn Falempe <jfalempe@redhat.com>, dri-devel@lists.freedesktop.org,
+ airlied@redhat.com, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>, Simona
+ Vetter <simona@ffwll.ch>, linux-kernel@vger.kernel.org
+Subject: Re: Include ASPEED ast-drm 1.15.1 video driver in kernel tree
+In-Reply-To: <91f065d1c91bfc0e76eb95d8485c61dc@3xo.fr>
+References: <d507f6268ea3158b5af82b6860ca7b71@3xo.fr>
+ <194c4656963debcf074d87e89ab1a829@3xo.fr>
+ <b296bfef-1a9c-4452-baeb-09f86758addd@suse.de>
+ <984c317de1027f5886390a65f1f66126@3xo.fr>
+ <cd7a9908-d4ba-45ca-a5cb-de8ac7ef72d0@redhat.com>
+ <7c378bfb-96e4-435d-8e6c-581d6851835f@suse.de>
+ <963e8bf72515f68e1b788383361dbe74@3xo.fr>
+ <95e8b6edb00f48776d9153555d05270a@3xo.fr>
+ <a6d28a9cd8dd7ae902d4c38cf58b622a@3xo.fr>
+ <730652e4-3fb0-4dc5-9a95-10d167b3128c@suse.de>
+ <91f065d1c91bfc0e76eb95d8485c61dc@3xo.fr>
+Message-ID: <07b0d5ed839ca14c923c7d43ad9f2008@3xo.fr>
+X-Sender: nicolas.baranger@3xo.fr
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+
+Dear Thomas, Jocelyn
+
+Sorry for my late answer and thanks again for help
+
+Linux 6.1.128 is working fine out of the box.
+
+I think Jocelyn was true and a first regression was introduce in Linux 
+6.2 but I suspect it's not the only one between 6.1.128 and mainline
+Please see video here 
+https://xba.soartist.net/ast-drm_nba_20250211/vkcube_linux-6.2.1_20250221-0.webm
+You can compare with the other video which was already in the online 
+directory 
+https://xba.soartist.net/ast-drm_nba_20250211/vulcan_nvidia_prime_render_offload_on_ast_vga_card.webm
+Please note that lag on 
+vulcan_nvidia_prime_render_offload_on_ast_vga_card.webm are due to the 
+screen capture tool (which make dirty captures at only 30fps) but don't 
+exist in real life
+(to avoid lag when the vulkan cube is running at high speed I need a 
+tool which can capture screen at 2000fps. Do you know such tool ?)
+
+I suspect it's not the only regression introduced between 6.1.128 and 
+mainline, so I'm continuing bisection
+
+Going back here with new results
+
+Kind regards
+Nicolas Baranger
 
 
-On 20/02/2025 15:25, Juri Lelli wrote:
-> On 20/02/25 11:40, Juri Lelli wrote:
->> On 19/02/25 19:14, Dietmar Eggemann wrote:
+
+
+Le 2025-02-17 09:37, Nicolas Baranger a écrit :
+
+> Dear Thomas
 > 
-> ...
+> Thanks for answer and help
 > 
->> OK. CPU3 + CPU4 (CPU5 offline).
->>
->>> [  171.003085] __dl_update() (3) cpu=2 rq->dl.extra_bw=1122848
->>> [  171.003091] __dl_update() (3) cpu=3 rq->dl.extra_bw=1022361
->>> [  171.003096] __dl_update() (3) cpu=4 rq->dl.extra_bw=1035468
->>> [  171.003103] dl_bw_cpus() cpu=2 rd->span=0-2 cpu_active_mask=0-4 cpumask_weight(rd->span)=3 type=DYN
->>> [  171.003113] __dl_server_attach_root() called cpu=2
->>> [  171.003118] dl_bw_cpus() cpu=2 rd->span=0-2 cpu_active_mask=0-4 cpumask_weight(rd->span)=3 type=DYN
->>> [  171.003127] __dl_add() tsk_bw=52428 dl_b->total_bw=157284 type=DYN rd->span=0-2
->>> [  171.003136] __dl_update() (3) cpu=0 rq->dl.extra_bw=477111
->>> [  171.003141] __dl_update() (3) cpu=1 rq->dl.extra_bw=851970
->>> [  171.003147] __dl_update() (3) cpu=2 rq->dl.extra_bw=1105372
->>> [  171.003188] root domain span: 0-2
->>> [  171.003194] default domain span: 3-5
->>> [  171.003220] rd 0-2: Checking EAS, schedutil is mandatory
->>> [  171.005840] psci: CPU5 killed (polled 0 ms)
->>
->> OK. DYN has (CPU0,1,2) 157284 and DEF (CPU3,4) 104856.
->>
->> CPU4 going offline (it's isolated on DEF).
->>
->>> [  171.006436] dl_bw_deactivate() called cpu=4
->>> [  171.006446] __dl_bw_capacity() mask=3-5 cap=892
->>> [  171.006454] dl_bw_cpus() cpu=4 rd->span=3-5 cpu_active_mask=0-4 cpus=2 type=DEF
->>> [  171.006464] dl_bw_manage: cpu=4 cap=446 fair_server_bw=52428 total_bw=104856 dl_bw_cpus=2 type=DEF span=3-5
->>> [  171.006475] dl_bw_cpus() cpu=4 rd->span=3-5 cpu_active_mask=0-4 cpus=2 type=DEF
->>> [  171.006485] CPU: 4 UID: 0 PID: 36 Comm: cpuhp/4 Not tainted 6.13.0-09343-g9ce523149e08-dirty #172
->>> [  171.006495] Hardware name: ARM Juno development board (r0) (DT)
->>> [  171.006499] Call trace:
->>> [  171.006502]  show_stack+0x18/0x24 (C)
->>> [  171.006514]  dump_stack_lvl+0x74/0x8c
->>> [  171.006528]  dump_stack+0x18/0x24
->>> [  171.006541]  dl_bw_manage+0x3a0/0x500
->>> [  171.006554]  dl_bw_deactivate+0x40/0x50
->>> [  171.006564]  sched_cpu_deactivate+0x34/0x24c
->>> [  171.006579]  cpuhp_invoke_callback+0x138/0x694
->>> [  171.006591]  cpuhp_thread_fun+0xb0/0x198
->>> [  171.006604]  smpboot_thread_fn+0x200/0x224
->>> [  171.006616]  kthread+0x12c/0x204
->>> [  171.006627]  ret_from_fork+0x10/0x20
->>> [  171.006639] __dl_overflow() dl_b->bw=996147 cap=446 cap_scale(dl_b->bw, cap)=433868 dl_b->total_bw=104856 old_bw=52428 new_bw=0 type=DEF rd->span=3-5
->>> [  171.006652] dl_bw_manage() cpu=4 cap=446 overflow=0 req=0 return=0 type=DEF
->>> [  171.006706] partition_sched_domains() called
->>> [  171.006713] CPU: 4 UID: 0 PID: 36 Comm: cpuhp/4 Not tainted 6.13.0-09343-g9ce523149e08-dirty #172
->>> [  171.006722] Hardware name: ARM Juno development board (r0) (DT)
->>> [  171.006727] Call trace:
->>> [  171.006730]  show_stack+0x18/0x24 (C)
->>> [  171.006740]  dump_stack_lvl+0x74/0x8c
->>> [  171.006754]  dump_stack+0x18/0x24
->>> [  171.006767]  partition_sched_domains+0x48/0x7c
->>> [  171.006778]  sched_cpu_deactivate+0x1a8/0x24c
->>> [  171.006792]  cpuhp_invoke_callback+0x138/0x694
->>> [  171.006805]  cpuhp_thread_fun+0xb0/0x198
->>> [  171.006817]  smpboot_thread_fn+0x200/0x224
->>> [  171.006829]  kthread+0x12c/0x204
->>> [  171.006840]  ret_from_fork+0x10/0x20
->>> [  171.006852] partition_sched_domains_locked() ndoms_new=1
->>> [  171.006861] partition_sched_domains_locked() goto match2
->>> [  171.006867] rd 0-2: Checking EAS, schedutil is mandatory
->>> [  171.007774] psci: CPU4 killed (polled 4 ms)
->>
->> As I guess you were saying above, CPU4 contribution is not removed from
->> DEF.
->>
->>> [  171.007971] dl_bw_deactivate() called cpu=3
->>> [  171.007981] __dl_bw_capacity() mask=3-5 cap=446
->>> [  171.007989] dl_bw_cpus() cpu=3 rd->span=3-5 cpu_active_mask=0-3 cpus=1 type=DEF
->>> [  171.007999] dl_bw_manage: cpu=3 cap=0 fair_server_bw=52428 total_bw=104856 dl_bw_cpus=1 type=DEF span=3-5
->>                                                                            ^^^^
->> And this is now wrong. :/
+>> All these errors don't look as if they are directly related to ast. 
+>> It's something in the DRM core or Xorg.
 > 
-> So, CPU4 was still on DEF and we don't go through any of the accouting
-> functions. I wonder if we could simplify this by always re-doing the
-> accounting after root domains are stable (also for partition_
-> sched_domain()). So, please take a look at what below. It can definitely
-> be better encapsulated (also more cleanups are needed) and maybe it's
-> just useless/stupid (hard to say here because I always see 'pass'
-> whatever I try to change), but anyway. Also pushed to the usual branch.
+> Yes it's Xorg DRM issue
 > 
-> ---
->   include/linux/sched/deadline.h |  4 ++++
->   kernel/cgroup/cpuset.c         | 13 ++++++++-----
->   kernel/sched/deadline.c        | 11 ++++++++---
->   kernel/sched/topology.c        |  1 +
->   4 files changed, 21 insertions(+), 8 deletions(-)
+>> That's btrfs AFAICS; so not related to ast
 > 
-> diff --git a/include/linux/sched/deadline.h b/include/linux/sched/deadline.h
-> index 3a912ab42bb5..8fc4918c6f3f 100644
-> --- a/include/linux/sched/deadline.h
-> +++ b/include/linux/sched/deadline.h
-> @@ -34,6 +34,10 @@ static inline bool dl_time_before(u64 a, u64 b)
->   struct root_domain;
->   extern void dl_add_task_root_domain(struct task_struct *p);
->   extern void dl_clear_root_domain(struct root_domain *rd);
-> +extern void dl_clear_root_domain_cpu(int cpu);
-> +
-> +extern u64 dl_generation;
-> +extern bool dl_bw_visited(int cpu, u64 gen);
->   
->   #endif /* CONFIG_SMP */
->   
-> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-> index 0f910c828973..52243dcc61ab 100644
-> --- a/kernel/cgroup/cpuset.c
-> +++ b/kernel/cgroup/cpuset.c
-> @@ -958,6 +958,8 @@ static void dl_rebuild_rd_accounting(void)
->   {
->   	struct cpuset *cs = NULL;
->   	struct cgroup_subsys_state *pos_css;
-> +	int cpu;
-> +	u64 gen = ++dl_generation;
->   
->   	lockdep_assert_held(&cpuset_mutex);
->   	lockdep_assert_cpus_held();
-> @@ -965,11 +967,12 @@ static void dl_rebuild_rd_accounting(void)
->   
->   	rcu_read_lock();
->   
-> -	/*
-> -	 * Clear default root domain DL accounting, it will be computed again
-> -	 * if a task belongs to it.
-> -	 */
-> -	dl_clear_root_domain(&def_root_domain);
-> +	for_each_possible_cpu(cpu) {
-> +		if (dl_bw_visited(cpu, gen))
-> +			continue;
-> +		
-> +		dl_clear_root_domain_cpu(cpu);
-> +	}
->   
->   	cpuset_for_each_descendant_pre(cs, pos_css, &top_cpuset) {
->   
-> diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-> index 8f7420e0c9d6..a6723ed84e68 100644
-> --- a/kernel/sched/deadline.c
-> +++ b/kernel/sched/deadline.c
-> @@ -166,7 +166,7 @@ static inline unsigned long dl_bw_capacity(int i)
->   	}
->   }
->   
-> -static inline bool dl_bw_visited(int cpu, u64 gen)
-> +bool dl_bw_visited(int cpu, u64 gen)
->   {
->   	struct root_domain *rd = cpu_rq(cpu)->rd;
->   
-> @@ -207,7 +207,7 @@ static inline unsigned long dl_bw_capacity(int i)
->   	return SCHED_CAPACITY_SCALE;
->   }
->   
-> -static inline bool dl_bw_visited(int cpu, u64 gen)
-> +bool dl_bw_visited(int cpu, u64 gen)
->   {
->   	return false;
->   }
-> @@ -3037,6 +3037,11 @@ void dl_clear_root_domain(struct root_domain *rd)
->   	}
->   }
->   
-> +void dl_clear_root_domain_cpu(int cpu) {
-> +	printk_deferred("%s: cpu=%d\n", __func__, cpu);
-> +	dl_clear_root_domain(cpu_rq(cpu)->rd);
-> +}
-> +
->   #endif /* CONFIG_SMP */
->   
->   static void switched_from_dl(struct rq *rq, struct task_struct *p)
-> @@ -3216,7 +3221,7 @@ DEFINE_SCHED_CLASS(dl) = {
->   };
->   
->   /* Used for dl_bw check and update, used under sched_rt_handler()::mutex */
-> -static u64 dl_generation;
-> +u64 dl_generation;
->   
->   int sched_dl_global_validate(void)
->   {
-> diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-> index c6a140d8d851..9892e6fa3e57 100644
-> --- a/kernel/sched/topology.c
-> +++ b/kernel/sched/topology.c
-> @@ -2814,5 +2814,6 @@ void partition_sched_domains(int ndoms_new, cpumask_var_t doms_new[],
->   {
->   	mutex_lock(&sched_domains_mutex);
->   	partition_sched_domains_locked(ndoms_new, doms_new, dattr_new);
-> +	dl_rebuild_rd_accounting();
->   	mutex_unlock(&sched_domains_mutex);
->   }
+> That was not BTRFS, it was ACPI / PCIE (sure not related to ast) but as 
+> I report this bug and bissect on the same hardware, it proof that Linux 
+> 6.1.85 already work on this particular hardware
 > 
-
-
-Latest branch is not building for me ...
-
-   CC      kernel/time/hrtimer.o
-In file included from kernel/sched/build_utility.c:88:
-kernel/sched/topology.c: In function ‘partition_sched_domains’:
-kernel/sched/topology.c:2817:9: error: implicit declaration of function ‘dl_rebuild_rd_accounting’ [-Werror=implicit-function-declaration]
-  2817 |         dl_rebuild_rd_accounting();
-       |         ^~~~~~~~~~~~~~~~~~~~~~~~
-
-
-Looks like we are missing a prototype.
-
-Jon
-
--- 
-nvpublic
-
+> The actual install is working very fine on mainline so I don't want to 
+> break it (and Xorg) to make Linux 6.1 work on it.
+> I did installed a test system on another drive of this server during 
+> the week-end so now I don't care to break Xorg or whatever on this new 
+> install and I can continue bissection.
+> 
+> Kind regards
+> Nicolas Baranger
+> 
+> Le 2025-02-17 09:11, Thomas Zimmermann a écrit :
+> 
+> Hi
+> 
+> Am 14.02.25 um 18:52 schrieb Nicolas Baranger:
+> 
+> Hi Thomas, Jocelyn
+> 
+> Same error with linux-6.1.124 debian package ...
+> It's reported in log as a drm bug by kernel:
+> 
+> ------------[ cut here ]------------
+> BUG: the value to copy was not set!
+> WARNING: CPU: 13 PID: 6163 at drivers/gpu/drm/drm_ioctl.c:478 
+> drm_copy_field+0xa2/0xb0 [drm]
+> All these errors don't look as if they are directly related to ast. 
+> It's something in the DRM core or Xorg.
+> 
+> This server had already work with Linux 6.1 in the past so I don't know 
+> what to think...
+> The last linux-6.1 version I'm sure that had work on this server was 
+> 6.1.85 (according to my post here 
+> https://bugzilla.kernel.org/show_bug.cgi?id=219480#c3)
+> That's btrfs AFAICS; so not related to ast.
+> 
+> What happens on older kernels, such as 6.0, 5.*, etc. I'd be interested 
+> in finding an old kernel with acceptable ast performance. That we can 
+> compare the code or further bisect.
+> 
+> Best regards
+> Thomas
+> 
+> Maybe I should install a new Debian system on a usb stick for doing 
+> tests
+> 
+> Going back here with next results
+> Thanks again for help
+> 
+> Kind regards,
+> Nicolas Baranger
+> 
+> Le 2025-02-14 18:03, Nicolas Baranger a écrit :
+> 
+> Hi Thomas, Jocelyn
+> 
+> Starting with 6.1.128 longterm kernel failed and it seems to be a 'drm 
+> error'
+> 
+> Xorg error :
+> 
+> (==) Log file: "/var/log/Xorg.0.log", Time: Fri Feb 14 17:32:59 2025
+> (==) Using system config directory "/usr/share/X11/xorg.conf.d"
+> (==) No Layout section.  Using the first Screen section.
+> (==) No screen section available. Using defaults.
+> (**) |-->Screen "Default Screen Section" (0)
+> (**) |   |-->Monitor "<default monitor>"
+> (==) No monitor specified for screen "Default Screen Section".
+> a default monitor configuration.
+> (==) Automatically adding devices
+> (==) Automatically enabling devices
+> (==) Automatically adding GPU devices
+> (==) Automatically binding GPU devices
+> (==) Max clients allowed: 256, resource mask: 0x1fffff
+> (WW) The directory "/usr/share/fonts/X11/cyrillic" does not exist.
+> Entry deleted from font path.
+> (==) FontPath set to:
+> /usr/share/fonts/X11/misc,
+> /usr/share/fonts/X11/100dpi/:unscaled,
+> /usr/share/fonts/X11/75dpi/:unscaled,
+> /usr/share/fonts/X11/Type1,
+> /usr/share/fonts/X11/100dpi,
+> /usr/share/fonts/X11/75dpi,
+> built-ins
+> (==) ModulePath set to "/usr/lib/xorg/modules"
+> (II) The server relies on udev to provide the list of input devices.
+> no devices become available, reconfigure udev or disable 
+> AutoAddDevices.
+> (II) Loader magic: 0x561372a83f00
+> (II) Module ABI versions:
+> X.Org ANSI C Emulation: 0.4
+> X.Org Video Driver: 25.2
+> X.Org XInput driver : 24.4
+> X.Org Server Extension : 10.0
+> (++) using VT number 1
+> 
+> (II) systemd-logind: took control of session 
+> /org/freedesktop/login1/session/c13
+> (II) xfree86: Adding drm device (/dev/dri/card1)
+> (II) Platform probe for 
+> /sys/devices/pci0000:00/0000:00:03.0/0000:01:00.0/drm/card1
+> (II) systemd-logind: got fd for /dev/dri/card1 226:1 fd 14 paused 0
+> (EE)
+> (EE) Backtrace:
+> (EE) 0: /usr/lib/xorg/Xorg (OsLookupColor+0x139) [0x5613729f7f79]
+> (EE) 1: /lib/x86_64-linux-gnu/libc.so.6 (__sigaction+0x40) 
+> [0x7f0dad05b050]
+> (EE) 2: /lib/x86_64-linux-gnu/libc.so.6 (__nss_database_lookup+0xcd19) 
+> [0x7f0dad17m.so.2 (drmGetVe728e67a4]
+> (EE) 6: /usr/lib/xorg/Xorg (xf86PlatformDeviceCheckBusID+0x1bb) 
+> [0x5613728e6aab]
+> (EE) 7: /usr/lib/xorg/Xorg (config_fini+0x19b7) [0x5613728e3a97]
+> (EE) 8: /usr/lib/xorg/Xorg (xf86PlatformMatchDriver+0x1b5) 
+> [0x5613728e0615]
+> (EE) 9: /usr/lib/xorg/Xorg (xf86BusProbe+0x9) [0x5613728b9329]
+> (EE) 10: /usr/lib/xorg/Xorg (InitOutput+0x69a) [0x5613728c72ca]
+> (EE) 11: /usr/lib/xorg/Xorg (InitFonts+0x1ce) [0x56137288866e]
+> (EE) 12: /lib/x86_64-linux-gnu/libc.so.6 (__libc_init_first+0x8a) 
+> [0x7f0dad04624a]
+> (EE) 13: /lib/x86_64-linux-gnu/libc.so.6 (__libc_start_main+0x85) 
+> [0x7f0dad046305]
+> (EE) 14: /usr/lib/xorg/Xorg (_start+0x21) [0x561372871b71]
+> (EE)
+> (EE) Segmentation fault at address 0x0
+> (EE)
+> server error:
+> (EE) Caught signal 11 (Segmentation fault). Server aborting
+> (EE)
+> (EE)
+> consult the The X.Org Foundation support
+> at http://wiki.x.org
+> for help.
+> (EE) Please also check the log file at "/var/log/Xorg.0.log" for 
+> additional information.
+> (EE)
+> (EE) Server terminated with error (1). Closing log file.
+> 
+> Kernel trace :
+> 
+> ------------[ cut here ]------------
+> BUG: the value to copy was not set!
+> WARNING: CPU: 10 PID: 6240 at drivers/gpu/drm/drm_ioctl.c:478 
+> drm_copy_field+0xa2/0xb0 [drm]
+> Modules linked in: xt_CHECKSUM(E) xt_MASQUERADE(E) xt_conntrack(E) 
+> ipt_REJECT(E) nf_reject_ipv4(E) xt_tcpudp(E) nft_compat(E) 
+> nft_chain_nat(E) nf_tables(E) nls_utf8(E) nfnetlink(E) 
+> cpufreq_userspace(E) cifs(E) l2tp_ppp(E) cifs_arc4(E) l2tp_netlink(E) 
+> cpufreq_ondemand(E) rdma_cm(E) l2tp_core(E) iw_cm(E) ip6_udp_tunnel(E) 
+> udp_tunnel(E) cpufreq_conservative(E) ib_cm(E) pppox(E) ppp_generic(E) 
+> slhc(E) ib_core(E) cifs_md4(E) dns_resolver(E) cpufreq_powersave(E) 
+> xfrm_user(E) xfrm_algo(E) scsi_transport_iscsi(E) nvme_fabrics(E) 
+> team_mode_loadbalance(E) 8021q(E) garp(E) mrp(E) team(E) bridge(E) 
+> stp(E) llc(E) qrtr(E) openvswitch(E) nsh(E) nf_conncount(E) nf_nat(E) 
+> nf_conntrack(E) nf_defrag_ipv6(E) nf_defrag_ipv4(E) cmac(E) 
+> algif_hash(E) algif_skcipher(E) af_alg(E) bnep(E) binfmt_misc(E) 
+> nls_ascii(E) nls_cp437(E) vfat(E) fat(E) ext4(E) mbcache(E) jbd2(E) 
+> intel_rapl_msr(E) intel_rapl_common(E) nvidia_drm(POE) 
+> snd_hda_codec_hdmi(E) snd_hda_codec_realtek(E) snd_hda_codec_generic(E)
+> nvidia_modeset(POE) intel_uncore_frequency(E) 
+> intel_uncore_frequency_common(E) sb_edac(E) btusb(E) snd_hda_intel(E) 
+> btrtl(E) snd_usb_audio(E) x86_pkg_temp_thermal(E) btbcm(E) 
+> snd_intel_dspcfg(E) snd_intel_sdw_acpi(E) intel_powerclamp(E) 
+> snd_usbmidi_lib(E) btintel(E) snd_rawmidi(E) coretemp(E) btmtk(E) 
+> snd_seq_device(E) snd_hda_codec(E) nvidia(POE) eeepc_wmi(E) 
+> snd_hda_core(E) mc(E) snd_pcsp(E) snd_hwdep(E) rapl(E) asus_wmi(E) 
+> ipmi_ssif(E) battery(E) iTCO_wdt(E) bluetooth(E) intel_cstate(E) 
+> snd_pcm(E) sparse_keymap(E) ledtrig_audio(E) snd_timer(E) 
+> intel_pmc_bxt(E) acpi_ipmi(E) platform_profile(E) intel_uncore(E) 
+> crc16(E) wmi_bmof(E) rfkill(E) mei_me(E) iTCO_vendor_support(E) 
+> ipmi_si(E) snd(E) watchdog(E) mei(E) video(E) soundcore(E) 
+> ipmi_devintf(E) ipmi_msghandler(E) joydev(E) evdev(E) sg(E) msr(E) 
+> parport_pc(E) ppdev(E) nfsd(E) lp(E) parport(E) auth_rpcgss(E) 
+> nfs_acl(E) lockd(E) grace(E) loop(E) efi_pstore(E) configfs(E) 
+> sunrpc(E) ip_tables(E) x_tables(E) autofs4(E)
+> btrfs(E) blake2b_generic(E) zstd_compress(E) efivarfs(E) raid10(E) 
+> sr_mod(E) cdrom(E) hid_logitech_hidpp(E) hid_plantronics(E) 
+> hid_logitech_dj(E) hid_generic(E) uas(E) usbhid(E) hid(E) 
+> usb_storage(E) raid456(E) async_raid6_recov(E) async_memcpy(E) 
+> async_pq(E) async_xor(E) async_tx(E) xor(E) raid1(E) raid0(E) 
+> raid6_pq(E) dm_mod(E) crc32c_intel(E) md_mod(E) sd_mod(E) ast(E) 
+> drm_vram_helper(E) drm_ttm_helper(E) ghash_clmulni_intel(E) ttm(E) 
+> sha512_ssse3(E) sha256_ssse3(E) drm_kms_helper(E) sha1_ssse3(E) ahci(E) 
+> libahci(E) xhci_pci(E) ehci_pci(E) xhci_hcd(E) ehci_hcd(E) 
+> aesni_intel(E) nvme(E) mxm_wmi(E) igb(E) libata(E) crypto_simd(E) 
+> i2c_i801(E) cryptd(E) drm(E) dca(E) i2c_smbus(E) lpc_ich(E) usbcore(E) 
+> scsi_mod(E) i2c_algo_bit(E) nvme_core(E) t10_pi(E) usb_common(E) 
+> scsi_common(E) i40e(E) wmi(E) button(E)
+> CPU: 10 PID: 6240 Comm: Xorg Tainted: P           OE 6.1.128-amd64 #0
+> Hardware name: ASUS All Series/X99-WS/IPMI, BIOS 4001 05/28/2019
+> RIP: 0010:drm_copy_field+0xa2/0xb0 [drm]
+> Code: 00 00 74 13 49 c7 45 00 00 00 00 00 eb e0 0f 0b b8 f2 ff ff ff eb 
+> d9 48 c7 c7 70 cb 17 c1 c6 05 43 17 07 00 01 e8 2e 09 57 dd <0f> 0b eb 
+> d6 66 2e 0f 1f 84 00 00 00 00 00 f3 0f 1e fa 0f 1f 44 00
+> RSP: 0018:ffffbd9941b0fba8 EFLAGS: 00010286
+> RAX: 0000000000000000 RBX: ffffbd9941b0fc60 RCX: 0000000000000027
+> RDX: ffff9ec3bf6a13a8 RSI: 0000000000000001 RDI: ffff9ec3bf6a13a0
+> RBP: ffff9e8487476800 R08: 0000000000000000 R09: ffffbd9941b0fa20
+> R10: 0000000000000003 R11: ffff9ec3bff15ee8 R12: ffffffffc1132570
+> R13: ffffbd9941b0fc80 R14: ffff9e85881d7200 R15: 0000000000000040
+> FS:  00007f59dd209ac0(0000) GS:ffff9ec3bf680000(0000) 
+> knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 000056272a2123d0 CR3: 000000010c396005 CR4: 00000000003706e0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+> <TASK>
+> ? __warn+0x81/0xd0
+> ? drm_copy_field+0xa2/0xb0 [drm]
+> ? report_bug+0xe6/0x150
+> ? handle_bug+0x41/0x70
+> ? exc_invalid_op+0x17/0x70
+> ? asm_exc_invalid_op+0x1a/0x20
+> ? drm_ioctl_flags+0x50/0x50 [drm]
+> ? drm_copy_field+0xa2/0xb0 [drm]
+> ? drm_copy_field+0xa2/0xb0 [drm]
+> ? drm_ioctl_flags+0x50/0x50 [drm]
+> drm_version+0x73/0xa0 [drm]
+> drm_ioctl_kernel+0xcd/0x170 [drm]
+> drm_ioctl+0x233/0x410 [drm]
+> ? drm_ioctl_flags+0x50/0x50 [drm]
+> __x64_sys_ioctl+0x94/0xd0
+> do_syscall_64+0x59/0xb0
+> ? vfs_write+0x2b1/0x3f0
+> ? vfs_write+0x2b1/0x3f0
+> ? ksys_write+0x6f/0xf0
+> ? exit_to_user_mode_prepare+0x40/0x1e0
+> ? syscall_exit_to_user_mode+0x22/0x40
+> ? do_syscall_64+0x65/0xb0
+> ? __x64_sys_fcntl+0x94/0xc0
+> ? exit_to_user_mode_prepare+0x40/0x1e0
+> ? syscall_exit_to_user_mode+0x22/0x40
+> ? do_syscall_64+0x65/0xb0
+> ? syscall_exit_to_user_mode+0x22/0x40
+> ? do_syscall_64+0x65/0xb0
+> ? exit_to_user_mode_prepare+0x40/0x1e0
+> entry_SYSCALL_64_after_hwframe+0x6e/0xd8
+> RIP: 0033:0x7f59dd31ccdb
+> Code: 00 48 89 44 24 18 31 c0 48 8d 44 24 60 c7 04 24 10 00 00 00 48 89 
+> 44 24 08 48 8d 44 24 20 48 89 44 24 10 b8 10 00 00 00 0f 05 <89> c2 3d 
+> 00 f0 ff ff 77 1c 48 8b 44 24 18 64 48 2b 04 25 28 00 00
+> RSP: 002b:00007fff22f5d440 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+> RAX: ffffffffffffffda RBX: 000056272a211f10 RCX: 00007f59dd31ccdb
+> RDX: 000056272a211f10 RSI: 00000000c0406400 RDI: 000000000000000e
+> RBP: 000056272a211f10 R08: 00007f59dd3f1cc0 R09: 0000000000000070
+> R10: 00007f59dd236378 R11: 0000000000000246 R12: 00000000c0406400
+> R13: 000000000000000e R14: 000000000000000e R15: 000056272a211510
+> </TASK>
+> ---[ end trace 0000000000000000 ]---
+> 
+> Maybe my Xorg is too recent (but I hope not) as I don't want to 
+> downgrade Xorg (nor reinstall an older debian version) so I will try 
+> another kernel version...
+> 6.1.128 was build by me and maybe the 'make olddefconfig' from mainline 
+> to 6.1.128 lost too many options (for ex 
+> device-drivers/graphic-support>drm does not exist in menuconfig and I 
+> found AST module directly in device-drivers/graphic-support ...)
+> 6.1.124 exist prepackaged by Debian so it .config should be more 
+> generic so I will test it
+> 
+> Thanks again for help,
+> 
+> Kind regards
+> Nicolas Baranger
+> 
+> Le 2025-02-14 16:01, Nicolas Baranger a écrit :
+> 
+> Hi Thomas
+> 
+> Thanks again for help
+> 
+> Nicolas, if you find an old kernel version that works correctly, and if 
+> you know how to git-bisect the kernel, it would be helpful if you could 
+> bisect to the commit that introduced the problem.
+> Ok, I will try to find a working kernel and to git bisect to find the 
+> commit which introduce the problem.
+> I will start with longterm 6.1.128
+> 
+> Kind regards
+> Nicolas
+> 
+> Le 2025-02-14 13:36, Thomas Zimmermann a écrit :
+> 
+> Hi Jocelyn
+> 
+> Am 14.02.25 um 10:11 schrieb Jocelyn Falempe: On 13/02/2025 10:27, 
+> Nicolas Baranger wrote: Dear Thomas
+> 
+> Thanks for answer and help.
+> 
+> Yes, due to .date total removal in linux 6.14 (https://github.com/ 
+> torvalds/linux/commit/cb2e1c2136f71618142557ceca3a8802e87a44cd 
+> <https:// github.com/torvalds/linux/commit/ 
+> cb2e1c2136f71618142557ceca3a8802e87a44cd>) the last DKMS sources are :
+> https://xba.soartist.net/ast-drm_nba_20250211/nba-dkms/ 
+> nba_last_src_20250212/src/ <https://xba.soartist.net/ast- 
+> drm_nba_20250211/nba-dkms/nba_last_src_20250212/src/>
+> 
+> You can also find this sources in directory drivers/gpu/drm/ast_new of 
+> the tarball https://xba.soartist.net/ast-drm_nba_20250211/nba-kernel/ 
+> linux-6.14.0.1-ast1.15.1-rc2_nba0_20250212.tar.gz <https:// 
+> xba.soartist.net/ast-drm_nba_20250211/nba-kernel/linux-6.14.0.1- 
+> ast1.15.1-rc2_nba0_20250212.tar.gz>
+> 
+> I'm surprised by the fact the in-kernel driver 0.1.0 is more advanced 
+> than Aspeed version 1.15.1 because on my system it has very poor 
+> rendering and is very slow, twinkle is high and had poor colors.
+> The screen flickering is high and it's like if I was using a very old 
+> cathode ray tube monitor (In fact I'm using a SAMSUNG LCD monitor which 
+> is perfectly functionnal and which display a nice and eyes confortable 
+> picture when using ast 1.15.1 driver or the video output of the Nvidia 
+> GPU ).
+> 
+> My testing system is a test Xeon server with an AST2400 BMC with its 
+> AST VGA card as the main video output (to be able to have a screen on 
+> the BMC KVM) +a discrete NVIDIA GPU I'm using for GPGPU and 3D 
+> rendering with Nvidia prime render offload.
+> What I constat with embed kernel driver 0.1.0 is that the Xeon 
+> processor is doing the video job for example when watching a video, and 
+> it's not the case with version 1.15.1 even when displaying on the AST 
+> VGA card a vulkan rotating cube (compute by nvidia GPU with nvidia 
+> prime but display by the AST VGA card of the AST2400).
+> Note that with in-kernel version 0.1.0 it's nearly impossible to make 
+> round the vulkan cube at more than half a round by  second where it's 
+> working (very) fine for a 32MB video memory card with version 1.15.1 as 
+> you can see in the video present in the online directory
+> 
+> I'm not developer or kernel developer so be sure that I wouldn't have 
+> done all this work if the in-kernel ast version 0.1.0 was usable 
+> out-of- the-box
+> 
+> Sure you can give me a patch I will test on this server (building 
+> mainline+ast_new yesterday tooks 19 minutes on this server)
+> 
+> PS:
+> here is a 'git diff linux-6.14.0.1-ast-rc2/drivers/gpu/drm/ast 
+> linux-6.14.0.1-ast-rc2/drivers/gpu/drm/ast_new'
+> https://xba.soartist.net/ast-drm_nba_20250211/nba-dump/ast- 
+> fullpatch.patch 
+> <https://xba.soartist.net/ast-drm_nba_20250211/nba-dump/ 
+> ast-fullpatch.patch>
+> Diff is about 250+ kb so the 2 drivers seems to have nothing to do with 
+> each others...
+> 
+> Thanks again for help
+> 
+> Kind regards
+> Nicolas
+> 
+> Le 2025-02-13 08:57, Thomas Zimmermann a écrit :
+> 
+> Hi Nicolas
+> 
+> Am 12.02.25 um 19:58 schrieb Nicolas Baranger: Dear maintener
+> That's mostly me and Jocelyn.
+> 
+> I did include ast-drm driver version 1.15.1 (in replacement of version 
+> 0.1.0) on the new mainline kernel too (6.14.0-rc2) and I issue a new 
+> dkms patch
+> 
+> Last DKMS patch had been sucessfully tested on mainline.
+> And last ast.ko version 1.15.1 included in linux tree had also been 
+> sucessfully tested
+> 
+> Online directory is updated with :
+> - new DKMS patch
+> - new DKMS srouces
+> - new DKMS debian package
+> - new tarball of mainline included ast_new ported in kernel tree
+> - new kernel debian package (mainline with ast_new)
+> 
+> NB: online directory is here: https://xba.soartist.net/ast- 
+> drm_nba_20250211/ <https://xba.soartist.net/ast-drm_nba_20250211/>
+> 
+> Please let me know what I should do to see this change in linux-next
+> I'm having a little trouble with figuring out which of the many driver 
+> sources is the relevant one. Am I correct to assume it's the one at
+> 
+> https://xba.soartist.net/ast-drm_nba_20250211/nba-dkms/ 
+> nba_last_src_20250212/src/ <https://xba.soartist.net/ast- 
+> drm_nba_20250211/nba-dkms/nba_last_src_20250212/src/>
+> 
+> About that driver: Although the official driver reports an ancient 
+> version number, it is an up-to-date driver. It is actually more up-to- 
+> date than Aspeed's package. Both drivers share source code and a few 
+> years ago there was an effort to bring the kernel's driver up to the 
+> same feature set. Since then, the kernel's driver has been updated, 
+> reworked and improved.
+> 
+> About the performance: From what I can tell, the only significant 
+> difference in these drivers is memory management. Your ast_new driver 
+> uses an older algorithm that we replaced quite a few releases ago. The 
+> old version was unreliable on systems with little video memory, so we 
+> had to replace it.  I don't know why the new code should be slower 
+> though.
+> Regarding the performances of ast driver, I remember doing profiling 
+> some times ago, and when running glxgears (with llvmpipe), 65% of the 
+> CPU time was wasted in page fault 
+> (https://elixir.bootlin.com/linux/v6.13.2/source/drivers/gpu/drm/drm_gem_shmem_helper.c#L534)
+> But as this driver is mostly used for console/basic desktop usage, I 
+> didn't investigate more.
+> Now that's an interesting find. The GEM shmem helpers vunmap ASAP to 
+> make pages swappable, I think. IIRC there was a patchset circulating 
+> that implements a shrinker [1] for shmem helpers. With that in place, 
+> we'd only update the page tables if necessary. If it's really that 
+> easy, we should try to merge that.
+> 
+> [1] 
+> https://elixir.bootlin.com/linux/v6.13.2/source/include/linux/shrinker.h#L82
+> 
+> If I remember correctly, the switch to shmem, is because some devices 
+> have only 16MB of memory, and 1920x1200x32bits takes ~9MB, so it's not 
+> possible to have double buffering in this case. (And this is required 
+> by most desktop environment).
+> Exactly. There are ast devices with as little as 8 MiB of video memory. 
+> But FullHD@32bit already requires ~8 MiB. Atomic modesetting with the 
+> old memory manager requires overcommitting by a factor of 3 (to ~24 
+> MiB) to account for all corner cases. Hence we sometimes had failed 
+> display updates with lower-end devices.
+> 
+> The switch to shmem was done with "f2fa5a99ca81c drm/ast: Convert ast 
+> to SHMEM", and introduced in v6.2. So maybe if you can try with a v6.1 
+> kernel, using the built-in ast driver and report if it has better 
+> performances.
+> Nicolas, if you find an old kernel version that works correctly, and if 
+> you know how to git-bisect the kernel, it would be helpful if you could 
+> bisect to the commit that introduced the problem.
+> 
+> Best regards
+> Thomas
+> 
+> Best regards,
 
