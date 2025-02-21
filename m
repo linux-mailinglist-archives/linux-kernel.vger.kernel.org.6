@@ -1,81 +1,81 @@
-Return-Path: <linux-kernel+bounces-526769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F676A402F3
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 23:43:47 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 783EFA402F7
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 23:45:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9B21B7A872F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 22:42:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2549E424CB5
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 22:43:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20AAA20F083;
-	Fri, 21 Feb 2025 22:43:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ED772512DB;
+	Fri, 21 Feb 2025 22:43:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ir2AH0lz"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nhaB6/zx"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B06A3205ABC;
-	Fri, 21 Feb 2025 22:43:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88B74205ABC;
+	Fri, 21 Feb 2025 22:43:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.10
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740177817; cv=fail; b=Ivw786O4ZRwAj2C0FswRz2fZdS+ETHkiK7xUDgCbGHXvpA7bfe8WR6yXObZHP8WPAkYhsGtvI0PDmU+pvDkfVazkGmDrxS/0ZBNyhfP0pbHubvBaKg/MpuuobRIMVSgC18DgjUiCbDxRxw8le8bLPiHdAHcfu8sV/lKCo+mczJ4=
+	t=1740177827; cv=fail; b=g/42nSAqBTzlGT6cdz8sUsCDZ0W3oVeZlvfHbqztMxem+r6exjNJSTwA0Djjoe5CKnCaedLoDNu4OuaCqWpwJAw+iAxEM5gM20wLcnnX5SUWSy5tMUoI1JcQLOnG8AtLbYAS+OHMNzOe/y8MQb+S3roO+waT6Elp4WmjLDh5SGQ=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740177817; c=relaxed/simple;
-	bh=XKzDNn6VOgy1nvMKZUx3ff9o3ziTSWeKlSGOWp5XKdA=;
+	s=arc-20240116; t=1740177827; c=relaxed/simple;
+	bh=vHVWnWfs2KVHnKU125e0DDGyvDpK5Jjid/O3YPTbVlU=;
 	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=oCtm5aIOLneIjxo9htyZuE8ehZ6ffvL1IJBkxv1LZKXe/nknU8fY8vm/HVqdmvZJ7XYGdbuf/ZWJPxYLJSY2g7fVu5OhnTXeBNwEERUsLtYISQw7E8z2Ld8xfIkE6Lt68EHU5uqcxSHa35BlRCmLcEUJ29haSrHYQhNcVDYST+4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ir2AH0lz; arc=fail smtp.client-ip=198.175.65.10
+	 Content-Type:MIME-Version; b=n6WEUMrIf5aykb5EpyowGt9+6sIc6JnB5j9eGtUFnVYe8t8lJyua4xcP96EXFLTJsIO8nOssR5I1BQEq1CX+dnE7yu8BjJftj5iphBeXZS1ruFDIfSc7Ut4/NFxQqjOfiq0AH8f4lJ7qY3u0m4+jz4R9ea/TXaN1xuWbl2kOpU8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nhaB6/zx; arc=fail smtp.client-ip=198.175.65.10
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740177815; x=1771713815;
+  t=1740177825; x=1771713825;
   h=message-id:date:subject:to:cc:references:from:
    in-reply-to:content-transfer-encoding:mime-version;
-  bh=XKzDNn6VOgy1nvMKZUx3ff9o3ziTSWeKlSGOWp5XKdA=;
-  b=ir2AH0lz/NsfL2gb54YPR57UNjGz5wp2QGgU1l/NeC+p+m6OR3MkMg59
-   kxjjazKJxq3VleU1F7c7BeIiH9Mmay71mTyD94JgkY2yGVImEzNwkWP7r
-   fWaMRWDGL6jOCuL9TVdmMy72guNN3WkHqxN9buX9InaUbakCsLUUljcfn
-   510e56vBHHLV4fH3j6FU/I/PM3QJcKyCwDtx6VQPA/Q94NKVjvG95aD89
-   jJsOmPrj4pn7Omtqe1iMwTnf1Hh9DNx7QVc0esPYE9IqIavYCYV69haGu
-   0VitQhj3Y8CRXJxDkx378HEbqm3az3vAX8N+5/b3oRdJgz2e7ua8O7axv
-   g==;
-X-CSE-ConnectionGUID: lVrw66v2RIaE/e7Xwsy8zA==
-X-CSE-MsgGUID: 7CkyvUCBT3egXtvsET9ZDA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11352"; a="58424575"
+  bh=vHVWnWfs2KVHnKU125e0DDGyvDpK5Jjid/O3YPTbVlU=;
+  b=nhaB6/zxjPHFBIRsRXpbWpxHz3VD8kYibpXO9CXKiKFiKXz4Jm6Ep7NZ
+   tn9uS6bk3e96sDWd2NlxKM9Dve+jBZfWX3E+Wncox14BXTwGR1qoH+IBA
+   ngRSkixO6ZtoKk3D7hSK1mvAUW2aM1hIValRmvwSd0Ks6GlpwME7pALjD
+   uwbOIwiT9CQtFgHORKfiQELI3nuEqmX/ZDodQLnfQjXSZXT9aervKcB7D
+   nUIBhifXM3PolaNe72/sv9KpsgDetTT6UTMURRIrTaVgHVUgGNBMI7nDb
+   zo/ClmVJ1yhsfGFWZssAfZ2cZuoq1+4m6wYOw1cablppTVRRz6W7Vw6YC
+   A==;
+X-CSE-ConnectionGUID: sWI+PiWUT7e+hlR3PRo0RA==
+X-CSE-MsgGUID: tnzwbVlWSceGDhuuEnGYjg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11352"; a="58424604"
 X-IronPort-AV: E=Sophos;i="6.13,306,1732608000"; 
-   d="scan'208";a="58424575"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Feb 2025 14:43:34 -0800
-X-CSE-ConnectionGUID: egLA2AVbRpeceaHD6/Lkuw==
-X-CSE-MsgGUID: kRHN6e30TG2kLBwY2uF1/w==
+   d="scan'208";a="58424604"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Feb 2025 14:43:43 -0800
+X-CSE-ConnectionGUID: LiI7cR6cQfWwo6lSF4cy2A==
+X-CSE-MsgGUID: ShvC76/uQLqOuXk+mlYaiw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.13,306,1732608000"; 
-   d="scan'208";a="115306823"
-Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
-  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Feb 2025 14:43:32 -0800
-Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.1544.14; Fri, 21 Feb 2025 14:43:31 -0800
+   d="scan'208";a="120589457"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Feb 2025 14:43:43 -0800
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Fri, 21 Feb 2025 14:43:41 -0800
 Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
- orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44 via Frontend Transport; Fri, 21 Feb 2025 14:43:31 -0800
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14 via Frontend Transport; Fri, 21 Feb 2025 14:43:41 -0800
 Received: from NAM11-CO1-obe.outbound.protection.outlook.com (104.47.56.174)
  by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Fri, 21 Feb 2025 14:43:30 -0800
+ 15.1.2507.44; Fri, 21 Feb 2025 14:43:41 -0800
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Vn3Waold9Rkt1mIWVxcJpRnYcmEOefFk0Ai7PeBNwYqOfVAceN91eueOuoeoq3/6/DzGtI0RBZoDYBmNJRD3PRnNxUk6wRVR4VMNJ6UwsGcWnSHt0VOaGCeIrYjzYC9R1pl83EbD7SxsMhUqYG+p5ssXCal4Dl3Xmsst2Y1VPHoUrEeSarPCHiqCzVcmcagMxkmggoBp2uGXQtEp6hPLwTmNOhE3Fq8XaOWgnyeDI2ff0J42+omlH71waZBJKVV6FvyR9y8UWoo+n2TRwAT6xkAynZWIS7+OF7RWqNdE96s9GFyILQhsqvZdgys8K3UtHVbLoLdGZy1bh+oPRw0dbg==
+ b=hmqWPV/PWJpTxP4+RqlmXLtll6MzTsstG/4/9yE9ti1du/M34IXsDxYjozLlzSkD4spW9m7SoTDwzZqBZ5iJUgdo53JOfjoY+xQsLP0OAkj6wOL887h2u4nPILmafgrORHbJqwPQZAebuR4mWwvn56MO3c2O0rVRo4wrq4/u61FBh7yO1bgPYegAioOepSzarKVcvicwclORixP4Mv8Jrw9KJJLe1agugEFR6r2Xh4cc7feTPQUmu8Du8OrcTPSpP8Xdy3uYRbFxhcnNUTl5dJDqsTUecBt2dTL9Zb5OIBZ3L0mPBbMwQrIMst+ceV4GjlKubU2YquzTIrzgkQ06tw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=q6rlJXToBbP/T+QIPhgo01pt7zc4JNKrkXoL1zMv2XM=;
- b=ygKpUPvuvXhfNmxOkeUl+VdElCaIL787ZBX/HMMu1XwGjW4lLjRuSfsawmVch5Bno/34vaBGMtkSzjd9MaBq051wlDYRPD5uNFcsuNjSC5HLmI+PQGGZU2DVaSIdKpxqB6OB5Ti6lRtabixJdRfSSdMyjRt8z/5XfO5oR7Vgayq1bpJIbyG+39hKySSXccPnjEFCWsDCecUnK9j2VfkXu/g7uwE/GdDWxs3ZQAWn0C6096HFSql6ny2KYrq0fiw7Jipta831ioq29Wj3us5Kg2ZigT8GrG4sCmHOqyHA9TMX+xMUXaU6cYTmxP/LxpVxOYMO5kvL3atzpQb3s85TdA==
+ bh=l8bygQajGKK2EcpWbbOhPvLnpdABDzVzgP4VhAwWeSE=;
+ b=YZqU27U1205XeOEFUNoj9kzE8DQ5XuLRFvorxMyXBSBUztCdp/NRSzMULHeQ3mlme9ULC5/1VCZRDvhUTt0RwWzOPYp//SRVnC5byVjgUrrVKE2PsOB6Wxguks7c9RpzGEOKxgnElq+QXnNWeaSKiiNhj7zM64QpDwUWrSKXYM213a/QLFSqRS+DWoDdYlKqDS44DLcSUwHWhJsoDo3LCmkkMhgS1+Tc5dh/qglKm6jfVwd3GMR9Ck+CkpRkFgkTbloqOsRqX4YAC71RGPAa63TE+Mt3QiVyUI34UMW1KaS4qxRehGfVtxty/oXIvGe0x10F/o8UzQ6xeEdtpJbs9Q==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
  dkim=pass header.d=intel.com; arc=none
@@ -85,19 +85,19 @@ Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
  by CH0PR11MB8168.namprd11.prod.outlook.com (2603:10b6:610:186::20) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.15; Fri, 21 Feb
- 2025 22:43:27 +0000
+ 2025 22:43:38 +0000
 Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
  ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
  ([fe80::61a:aa57:1d81:a9cf%4]) with mapi id 15.20.8466.013; Fri, 21 Feb 2025
- 22:43:27 +0000
-Message-ID: <fc3a67ee-6e97-4b9f-88d9-c24c6dab20c3@intel.com>
-Date: Fri, 21 Feb 2025 14:43:24 -0800
+ 22:43:38 +0000
+Message-ID: <5eac22b9-9b39-4c04-bc96-abd18f4347b6@intel.com>
+Date: Fri, 21 Feb 2025 14:43:35 -0800
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v11 00/23] x86/resctrl : Support AMD Assignable Bandwidth
  Monitoring Counters (ABMC)
-To: Peter Newman <peternewman@google.com>
-CC: "Moger, Babu" <bmoger@amd.com>, Dave Martin <Dave.Martin@arm.com>, "Babu
- Moger" <babu.moger@amd.com>, <corbet@lwn.net>, <tglx@linutronix.de>,
+To: Dave Martin <Dave.Martin@arm.com>
+CC: Peter Newman <peternewman@google.com>, "Moger, Babu" <bmoger@amd.com>,
+	Babu Moger <babu.moger@amd.com>, <corbet@lwn.net>, <tglx@linutronix.de>,
 	<mingo@redhat.com>, <bp@alien8.de>, <dave.hansen@linux.intel.com>,
 	<tony.luck@intel.com>, <x86@kernel.org>, <hpa@zytor.com>,
 	<paulmck@kernel.org>, <akpm@linux-foundation.org>, <thuth@redhat.com>,
@@ -110,27 +110,23 @@ CC: "Moger, Babu" <bmoger@amd.com>, Dave Martin <Dave.Martin@arm.com>, "Babu
 	<tan.shaopeng@fujitsu.com>, <linux-doc@vger.kernel.org>,
 	<linux-kernel@vger.kernel.org>, <maciej.wieczor-retman@intel.com>,
 	<eranian@google.com>
-References: <cover.1737577229.git.babu.moger@amd.com>
- <Z6zeXby8ajh0ax6i@e133380.arm.com>
- <9e849476-7c4b-478b-bd2a-185024def3a3@intel.com>
- <Z64tw2NbJXbKpLrH@e133380.arm.com>
- <76b02daf-1b45-473e-9d75-5988a11c6887@intel.com>
+References: <76b02daf-1b45-473e-9d75-5988a11c6887@intel.com>
  <8ef51f28-e01a-4a7d-ba86-059437edb60b@amd.com>
  <a07fca4c-c8fa-41a6-b126-59815b9a58f9@intel.com>
  <CALPaoCh7WpohzpXhSAbumjSZBv1_+1bXON7_V1pwG4bdEBr52Q@mail.gmail.com>
  <ccd9c5d7-0266-4054-879e-e084b6972ad5@intel.com>
  <CALPaoCj1TH+GN6+dFnt5xuN406u=tB-8mj+UuMRSm5KWPJW2wg@mail.gmail.com>
  <2b5a11e3-ee19-47ba-b47e-b7de2818f237@intel.com>
- <CALPaoChXvLNMg240C7RyBvg0SxXfGf_ozKC6X7Qe4OxyEcL2tw@mail.gmail.com>
- <a3b46f6f-a844-4648-905e-53d662e5715f@intel.com>
- <CALPaoCi0mFZ9TycyNs+SCR+2tuRJovQ2809jYMun4HtC64hJmA@mail.gmail.com>
+ <Z7dccLOTPzySYTXL@e133380.arm.com> <Z7dqXlOMsw7Kb8F2@e133380.arm.com>
+ <eb435a64-70d4-4821-908d-686243fec7a6@intel.com>
+ <Z7iuJdfgYNCeytJE@e133380.arm.com>
 From: Reinette Chatre <reinette.chatre@intel.com>
 Content-Language: en-US
-In-Reply-To: <CALPaoCi0mFZ9TycyNs+SCR+2tuRJovQ2809jYMun4HtC64hJmA@mail.gmail.com>
+In-Reply-To: <Z7iuJdfgYNCeytJE@e133380.arm.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: MW4PR04CA0062.namprd04.prod.outlook.com
- (2603:10b6:303:6b::7) To SJ2PR11MB7573.namprd11.prod.outlook.com
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MW4PR04CA0063.namprd04.prod.outlook.com
+ (2603:10b6:303:6b::8) To SJ2PR11MB7573.namprd11.prod.outlook.com
  (2603:10b6:a03:4d2::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -140,425 +136,206 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|CH0PR11MB8168:EE_
-X-MS-Office365-Filtering-Correlation-Id: 64bbe6e5-040e-4696-c2ca-08dd52c92824
+X-MS-Office365-Filtering-Correlation-Id: 7e7e1225-803a-459b-e2eb-08dd52c92eb6
 X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?OTlvQzhMaEpkSFM5SmtxT2s4enRtYnlpRGlXVHJTT01BN2VFQXNiWXRXY3VT?=
- =?utf-8?B?ejF5OG5tQm9hdGlwUmRVditaVWVYQ0lVYjM0UzlLa2Evenp0Ky9ub3Rqa2kx?=
- =?utf-8?B?ck1Xem8rUW5HejZ2UXdiSzRqRDg0aFlBcmxHcUZlbVNPZXd5V2hUSEpOL2dO?=
- =?utf-8?B?L3pJVGxDaDArTmVYSG1LTDVUQnBsM2lqOHBpTkJEczVaT3pPRmw5S0wySW9a?=
- =?utf-8?B?MTBEbExqeUVkWlA4ckJFL0NsSE1zbEttWEtWdjVkT3c0SGkyRUV2NzRQT1B5?=
- =?utf-8?B?U09CMVZYV1NHc1ozaVJOR1U4SlcrTWZLRlhnRHRUdUdoelZPbTdGaHJKR0pZ?=
- =?utf-8?B?WEp5ZjJ5TXQrcmg3TldOY0MyallkMzFFK0ZUN0F5ZWNtMUQ2R0VOVis4U0Y0?=
- =?utf-8?B?MXQzanhSaUJxeUd2NHVLeW9EdXdMeitST1J6a0thV0theUg0MmlzakFKLzly?=
- =?utf-8?B?dm9IV2ptRDZJNXpxMXlVVE1LSXFCaEVIQWUzb05lYXpabjlvL2pHR1FWekF1?=
- =?utf-8?B?UFEraE1ja0VUKzlUbFRuNXRzZ0NlVGFDeGl6SFduUzZGUGNUT0NWclJDWXVW?=
- =?utf-8?B?aU9pcUl2eTFTYXdWbkVtVUNjUmNQRHJ4V2swdGxPdDZwUUtzTVV0cUJrNzVR?=
- =?utf-8?B?ZW44ZTJKSFpWRnpnUUUzUys1MER3aDZxQVY1NDVGSkUwRVRpc3E2VG5sL2RV?=
- =?utf-8?B?UnhkWWU1TUlUd3hLZXg4dnFkQ0U5MWtZSXBTZ1I1MVVBbzh0T1BEWGdoQUFk?=
- =?utf-8?B?ZGxCeVk3ckpqZHhjMy82UEJmSDZzSlR2STZrTEJtR3B3MUNBNUVqTlBFYldx?=
- =?utf-8?B?ZkFRUjVYNmVpU0k0QXJ5U1U3dWNNcy80bnhSM0VVK0Mwdi9xYTZlaloxUXBp?=
- =?utf-8?B?blNwZEpxZXc2aloyUHEwRElwMFJKQlRDREFkQ1ZGd1A0a09IRUVVeW5ZL2N3?=
- =?utf-8?B?dmc3Ty90enMwcFNSaURaVXhFVGpGRWkvSzBuZk9XRHNJZ0E1TXgzUkN2c0Vw?=
- =?utf-8?B?dVdCRkJ3dG1FR0psZHEzVjdaRkdPMCtzSnJGdVdNSHh5UVFpMUhlN1FSU2JL?=
- =?utf-8?B?RzVkTzYzNjRSQVFaMTVWYkhHRUtnVmI4V2FLcGdQckxyb2puL1pMVld5VHhM?=
- =?utf-8?B?QUk5eU5NMUJyL1N3R01GOWJQNHFOTTZMb2dGenJmZVA3TGNiOHdDd1plTHJG?=
- =?utf-8?B?VlVLempuQm56S0JTT0xSVEZmbGl5eHhyQmNXMEdmVTZ4NWw5S2Vkend0Nnl2?=
- =?utf-8?B?aEFPUHAyVFdMc3FpSVdHMllRdWRtNHQ5d2ZVZjNlUVdCc2gwcURMZXB2dStO?=
- =?utf-8?B?eVF2dENPMTFIK2xMZW1NTloyUC95S3hLZ3JQaWRJU2ZLS2pHaWxLczFWY1My?=
- =?utf-8?B?b1ppQkpLZmFCSXlPQUs1eW1QYm4vRWFPN091SXVGMlBDM0FSdTY0Y3JLZUIz?=
- =?utf-8?B?czNvbVh0b29FQ1dFVzFMM1hkZ0VoS1NyRjZuUlY2UjlGbVgxcWJVclMyT0lC?=
- =?utf-8?B?ditIT1BiY3pyR09hK2duZXFtbmc0SEY0bFJQZ1cvTGlhc3JFVmhSK3Q4MmNz?=
- =?utf-8?B?aHM3UG82eUxGZmZDYk4zUnhLT1UyVXlVMFp5TXFsZFNYYXl0cHhubGpacUo5?=
- =?utf-8?B?K3JTZTU1NDQ0YjVRcExDdDNra1QzdDRBN2VzcklQb2xNQlVKdnp3WlljVW13?=
- =?utf-8?B?QkNFc21VZHl4MTdnVmZmWHA1V1pHQ2ViQXJZSWxISUR5Y0JRTXQ1Q1U2TzZL?=
- =?utf-8?B?eUdNS0hYMlNMUVl6WDhib0dIRTY2RHJoaDVkajdWVU8wd1VWWjRMdVBkR080?=
- =?utf-8?B?L21GS2JNVDUveVNWdWRUUnZaTWtLeU9ocUZBR3JVU3E5ZWduMklIZjlrcU45?=
- =?utf-8?Q?kYaKRMCOTZ37M?=
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?eW1jS1lnVElLWmU0ai90L0hkaHJUNUlWaVpqblZPSVMyUHNRQUxoNElaL2Fi?=
+ =?utf-8?B?OWs2dG1oSHdGMldFU0tiRk83YzhpaUhlU2RaNWV1V1FiTyttK0ZmbXBrNGVT?=
+ =?utf-8?B?QmtsNExGWlo0SURRZjhIVk5lVDFaMjM3YXhZZWlqZEZRdFdnY2ZQekthUG4v?=
+ =?utf-8?B?QnllUHRnVm1PeERMd0xxSG0xd1Z5Tll1bWZLZE9NT3ZSZkh4NUpydzlmUWVq?=
+ =?utf-8?B?VG1PcHcrVjRxK0FYSU84b25ET1NjR2FaOTV4MzZucTNKRitUMEZ6VEtEZ0JF?=
+ =?utf-8?B?RGNzOTBjVkJVM2Fkc2p3a3pZd3o1Z1I5bmx1Qmt0M3ZxMG1ZS00xb1Z6cmhs?=
+ =?utf-8?B?UTg0a3ZmNzNUMmh4SlNtNTd3bjlxbEl6SmZiOVdQcHR5NEs4dlFTbnYvbEtm?=
+ =?utf-8?B?eTR1cmluQmxsaFFyMG9ndmxjUE5FLzhIUExUYlc3U1VSYThRSGxDNExlVklR?=
+ =?utf-8?B?Ryt0TWczeHJNRFFlWEhDRVVIcnNDd0c0WUg5YmVtNjhKUXkxTUFpdnphQytv?=
+ =?utf-8?B?RDVjSmkxQjBnQVZreEdiMndYZkZVMS9ScDg3MGZiUldWYVdvb0ZOVGVEazdL?=
+ =?utf-8?B?VFFNN3cvKzJNVXFRT2dkRmRteWtDNTloSlc5Y050ZFhmSHdNNHBudHNxNXdo?=
+ =?utf-8?B?ZG5tN0E5TTRVNmFwUXI1WDJDaFZ0M0FyKzdXSUROSUo1UGlyaEpDWiswcXd0?=
+ =?utf-8?B?L3Jqa0txVGNSS3pMcnNYNWFtSUxZY2l3RlA5OUVoR1VPMFYxTlI4VGEza0ti?=
+ =?utf-8?B?L2VhUnVocjB1QUI4TUVkN3ptQkMxY252T2RyQnFaY25GSm9VbnlzRjJWTnhN?=
+ =?utf-8?B?SlljTEhKK0l6MmlqRG1DOHFMQ05aODVjYmlLYjRKcE1hTzV0MmUwSFVmMU9V?=
+ =?utf-8?B?OUtYTWVwaUpFOHF1V3RreFJJRiswa21uU0E2ZVBPOHNDZUFOUnhyWHkvTkdN?=
+ =?utf-8?B?OFBSWVFXOUtINmFKeCsrN0ExNDZaRTJPRmpnaGYyWHZ0S3RxbGpoNTUzZHhJ?=
+ =?utf-8?B?UUgwZkkvSXg0SStMeGxKcGVhRm8vYmYxWW8zMXQ2aVdjQS8zQitGd0p0WDdJ?=
+ =?utf-8?B?eUhsSmpBRTRsNENURGRrMGxkYU5FZFl2a3VvRHlFVHhLZnpxeTFuYXdBemVV?=
+ =?utf-8?B?cnVTa2dVSUhVSTRMVFZENEkyNzFIVDdHY2ZWWVBWaVRkZWJYY2VKRHFUQ2Vo?=
+ =?utf-8?B?S3NLUmxVTEI4a3EvWlRHZlJHbnU5TzBtZlVtYlUxRGlLYkZLb01DTGhnQzRI?=
+ =?utf-8?B?Ylhzb2txZFcyQmpmdEFzR1ZvcmlnT0dvckx5STdheHd1bkY3aXlKNmVONUNB?=
+ =?utf-8?B?Zjl1WUJ4NnVHaWp4T1FGeXVZUUxoNDJ5WjlSenlpTktSalNFdGh0U3lqcnpr?=
+ =?utf-8?B?Z2JjTWR3cFlvNngwckc3VnJ6cmpPajhCQzBlZmhEcWhTRjJZOEJtWVBYNkdC?=
+ =?utf-8?B?bGMvdTB2cEl1T2duZEZ4azhHK2tMdjBLU1JoazBpSW54bWdBcTduY1oyU1h6?=
+ =?utf-8?B?TUhrMytMRitmV1dMK0RDQm13ZGlxREx5RnJkMkhDREc3Vmo0ODQweDk1ZWMw?=
+ =?utf-8?B?Ti9paDAvTExya0pwUmd0MlpscHpPa0xUK2hqblFHSEtRS1ppcjVrcTlZNFJP?=
+ =?utf-8?B?bnh3L2gzcjVGa2lFb0Y0aWNLWWNKd25VYVdYSkp2ZldPd2VjOGVXMFA2ZVc5?=
+ =?utf-8?B?NWNIUEFPcC8rYWgyaE51aGp5T1BLMWxYUnF5RkV4M3o5M0UzejU4cTY4Ykxq?=
+ =?utf-8?B?UmEzRFJvZWtKNnV3MlI5c3NXcytML3FYU2xVUXFSSm10RUZ0eEx6a2N2NS9x?=
+ =?utf-8?B?ZFdKd1VTRXRDcVRjUm42MzYzMnJ6TEllSkcvM1oxLzFJQ3AwVWhBcVNmYllw?=
+ =?utf-8?Q?rESSwKwR+CLNK?=
 X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?bWlSWG9BV2FjUUF4RzdnSk12QVZSSHNGQkpySCtBZStLd1JCRW5HOTVtbWQ2?=
- =?utf-8?B?YXFQU2c4c2FzdEE2TEg1cGFncnhvL3g5VW0xUDI4aVBDT01vSE5lNHlvV3Jt?=
- =?utf-8?B?a0lPSndWK1JqVHdWdktXN0owZ1UrSnhCNExCNEFqVmhJb3dZSGR2MUNnemZ6?=
- =?utf-8?B?OURYU0VlRGxic3lRWGZwUFBiQkdlQjlkRjJ2YnBRQTg1Rk9nK0xFK2I3SkhM?=
- =?utf-8?B?TzR5NDREQjVDSk9taGZ6T2tla0U0eW02UUlsc3VpTVE1d0lFemhCeHcyNGJZ?=
- =?utf-8?B?bkVaZGFqcmxUU0F1WnVneWkrUE13VHUzTm1VbTBoUUE0QkhvLzcvNGFUWXBR?=
- =?utf-8?B?Znd0b0plQU90cjdtQlpWRjdKL25zS3BMYkp3UHhMSkFGc3RpaW1MS01MOWgz?=
- =?utf-8?B?SC9FWFUzdzI0TzhGaGZzcXlFcHdTTVdsQkNweXJkTDN6RElXSUU1Y3UxZUhy?=
- =?utf-8?B?aCtKY2dsWlpLVGs4SDB4MmFuMjE1aDJHSEc1SWExcEdzWUllZmk3dlN6SkUr?=
- =?utf-8?B?MEV3M1A1ZmpOTzZuTjcyeW56ZGdWRDUyUjVwaVlLRGJPaTNlK3hEVUZXclgr?=
- =?utf-8?B?YVV1RjdtVlBRSDZoWDI4UmxvTjdPb3QzNG5uNGE3YUorcElzWngzV2ZkNmNq?=
- =?utf-8?B?YnhTcGhReGFDQlIyUU8xcUlwZG1HU0ptd29ObXVwSGxrVnE3WkE2dlZobkk3?=
- =?utf-8?B?aFpucUlHaEp0bm1YVzZ3aXJSdzB1NGROTzhRMVRpSFpNRmZOZVhCS3Y5Nnpr?=
- =?utf-8?B?MTQwcmF3ZVdQcUgvajR1WmR1bHU4MHNjL0hDWGFBa1ZIcnpBU0NxQXhUVURs?=
- =?utf-8?B?clp6UzlFcjVNUWZOZDZvalhKNDVBVkxvYlJMbndvSTdqSE1tMzBURkg0aUd0?=
- =?utf-8?B?YkJvSUtaTy85RXlTSUdseHd4MVA3azdkTVJuM2FFZWRQeWU4ZGxVcWJ2d1g0?=
- =?utf-8?B?bCtiWEpkMjliVGd3MTJGM0ZwMmx4R1RvVVlkdlJxV2t4T2w4aHRvM1ZUdWFs?=
- =?utf-8?B?aTlVUUpBOHYxa0JOc21sVjFSVUhDd01VTkk0VjhsTkttMHZZd2hSRmMyRkhP?=
- =?utf-8?B?c2F6NDJ0bGYvQWRjQlpjV2Z2MU1YOE9iU05yY2lwbEZNd0k3N3ArVUlwc0dH?=
- =?utf-8?B?cW1vV3BBWExteTBEWHRVak9HMWFPM1V5aHhRdGNPdHJYK2wzYWRPWEltb21Z?=
- =?utf-8?B?bVVsMVRZcExCcVdZMGpFcUVpUktIb0tWL0ZoazR3TWVEQ05uU09KOEN2Z3JZ?=
- =?utf-8?B?L25oTUtQWVkrdUZZQWFJUW8zWXkrQUVaZVJ2ckN4U2ovM2FGL0RBRW1BNnRM?=
- =?utf-8?B?WWJDL1huKzRCZVVPRjBqcGtEN2pZYUdsL3l4Ym9BTWozWDlZMDBEV3l2R0Y5?=
- =?utf-8?B?cy9tRXMzZUxyaExWcGhuekxqOGFBQXRUWjk3cFBxQytkMEpKTHF1TnlxREpX?=
- =?utf-8?B?NDlIRlZrdmxML3hCVnJKekVEdXJWb0tsajlTY3VweURkY0ZwRzRZbFdaZkVN?=
- =?utf-8?B?djVWVFpYTTNyRnROUzlMdDVyQ1pMeFB5TDhHOGxoM0NjaEZ1bjJQalVFQ3NB?=
- =?utf-8?B?aEFvT2hWU3ZTVHJGMmxjRG50aUw2aEs1Vnhkc1MvdUlxQVJCUktUaEgrQVFW?=
- =?utf-8?B?NHdQRXl4SkQrVmJ2U3NXbzlubXdZYklzRi9jM0dSV240VFo0YkZYQ0VQYkI1?=
- =?utf-8?B?YWIzM3A0NXdnT3M4RnNiMFZIb1NHRUFvaUdBajVCVDl2NEtsWkFXVjdsTkw2?=
- =?utf-8?B?emx5QnhwUHBoQXNRVDJiTGFmMDZBZjd0U2ZGZUk3VjVOb1AySW9XK2UzR210?=
- =?utf-8?B?enBiRndGY3hVUkRqZmlGU2c4ajQwcWsrdVFCOUZEa2NKVitGRkw1cVpYa3BP?=
- =?utf-8?B?RjlHL2N0dHh5dGRtNmFNOVBSS1lRQnFCeFhtQUZDQmdmMkdJYktlNk9qdEky?=
- =?utf-8?B?SFJwQSsrYjZSV0wrMDVXNWpKSHhVclBCRzJDMWF6bzE4ZEJBOHJBd2pvSWtV?=
- =?utf-8?B?b0tDbEQwM2ZqcTBvVHJUY2JNWnMweHJTSE5kK3FwWDdaeG82RzdpMFY5Yk9U?=
- =?utf-8?B?Y0JzcWtBS1dRZlpqRmZyMlJ0ZzZlMTUvd0hib3lNYm5OaE5xYVNIZnZIRWxU?=
- =?utf-8?B?RWtJMXBLWkpnekFqclNJTlpoWGdjN0lVNW5ScGx1cUVudjhuSitOL3l1ZVhC?=
- =?utf-8?B?NWc9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 64bbe6e5-040e-4696-c2ca-08dd52c92824
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?RWZWRTNZZzBBVi9sbkNEWnlRQWJXbXBrMXpxdHF6dDNQbnlyVFZGcVhlTmMv?=
+ =?utf-8?B?cTlid3FVR1dwQ0NNL0dBeXBsT2ViQnd1bzFDOXFla2VDdVU5UTJ6NnNzZStW?=
+ =?utf-8?B?d3hLRUFyREx0WFZLejFuZ1lyR2piWWp6Zko0SEdDZS9kTm1KeDM1cDJFL1VL?=
+ =?utf-8?B?WStGNldkWWtIZWhmMzQzaEtFMmhwckIxRHA1Y3V0eFlIUXNqS1IrWW8xY0lR?=
+ =?utf-8?B?RUE3RWs3cXlObHJmbk15TEhnWjJockpQMG1zem5qVmhYUDMrOE9PaEYybkNm?=
+ =?utf-8?B?RHhkandVK0pFcm1HSnpJR3I1Uk1Cd1ZhR0dzbklML2hCTm4rNms4U2NBWURu?=
+ =?utf-8?B?OGpiN2J0MzVtWkVMb3JjMXc4NXJpZWovVkdlWEtTdENwMVV3YTJnQXIvTDhX?=
+ =?utf-8?B?NUp1SWl5bVo2TE9aQWZLTndJVTZjdXVaUDJWd0xzczJwQ0ZzbGNrSmdodStF?=
+ =?utf-8?B?SHU2Q281QlJIQjlXSGFQeGxXcVdyaE95Y2dQY1dqSEYzd3ltT1dIL2l4L0Ri?=
+ =?utf-8?B?YmRYUS93bFRQSlhDeTBnYzUvV3NPYmRQeW8rQkhMei93RnE4QVNYRkdnenpu?=
+ =?utf-8?B?b0FCV2tGNkFPRjhzS3grSnNpREV4TE5ZN0VTMUdzVkl5anlGcnVkSC9kcFVD?=
+ =?utf-8?B?L2FZMld5SGtUaERIN0hBS3llTHU2UW5wWkVsYjBrUGRPb3dGT0VEUUNpN1Z5?=
+ =?utf-8?B?YTNLcUdDOXl5NG5PZFowYlAxeWNoOTFiSmp2QnhpYW5oVWVUY3EyTERLSVRh?=
+ =?utf-8?B?NnBTU3daUVFlVE5ZL3l4SzNnbUROYzVCQ3lpZE9IMURTblFwRm5VMUVJRFFK?=
+ =?utf-8?B?OWdZcmVadGREODdMVDRMRXBTbG5nQjczMWF4enhnQUxMNndiUDgyaitpak1H?=
+ =?utf-8?B?NmhMYzVjZERZbnd2Y2lNOVdBMElaaEpURHYrbzBMeXhaZ2hSbitUdXQydEtL?=
+ =?utf-8?B?U3NCTmI0SjNia1p4QzY5bE93R1ZkRXBIRnVLTGJSdjZaTDl5V1NQT0Vhc3J3?=
+ =?utf-8?B?bUtXbzhiUG5sWDV0elpsejMyczZER3RabmEwdFJ1Vlh5amVkaHYyeGJQdTBX?=
+ =?utf-8?B?RHdIQ1FxcG5pRDNuc0lPYnBERmRHdGY1VE1jVTF5b1pCNUt3SDA4bFQzNmc0?=
+ =?utf-8?B?QWNvSjJ5dUlxNVlBSWpzSE95QW1xMVhFYWcrOUpPbHp2RXI1dFUrZjc1Ky91?=
+ =?utf-8?B?dTcrZ0Z0dHlkdUZMZnBPb0JWcTlaZ3QwU1JyNWpmMnFWeXNwcFNoZW5rRHJq?=
+ =?utf-8?B?U1RWN2E0MnhCMUlsL0ZKQm82RlNKQStGNnlRV3NreWMxYUgzY2ZNMVNKUnV3?=
+ =?utf-8?B?c1FuZXd6UGc1QnVKa2U0V3pwbXpSRG5pWldrMFE0WmI2V216V0dFMjhGYW9m?=
+ =?utf-8?B?MWpCZ3N4QndBUG5XRmZjMzBKUmlkMnhZUzJoelpDSCtpeDM4Q2J0bTB4QWNq?=
+ =?utf-8?B?Q0xrYytxcG1GS2ExN0ZrbkwrcDhDbFRaQnJpNHRDakxxVGFueCs2WnJFeHVu?=
+ =?utf-8?B?dW9JUjdxNVZKZS9icG8xb29xdUJWZHluOWQrQlV4UDBEOTJKL2lXaFlwQTQv?=
+ =?utf-8?B?NFRJNVVUQ253YmQ2c0ZaWm52SHpQU2lIOEE0ZS9tMFdGS3JETExvVWpqanJX?=
+ =?utf-8?B?SWFaeGM3WEw2UnBiQkcxSGYrSjNiVmlwM3FweHpYT2lONm5xWlR2NWIwUjN6?=
+ =?utf-8?B?QmFiS1d0eXltd1JpRmRnbGEyY1FuZEpndGRxSHg3bXdSdTFLV1pBOFdlbjdC?=
+ =?utf-8?B?RDhCRGJXeldxYjB5NU80NXhwYnEvaFNrMVBuRksyTC80RVlMZnBENmZPcU10?=
+ =?utf-8?B?ZWRkUG1Uc3hNcm1WTHVkaDhBNEQvd21xckExM0tOcVZ2WnBMLzUrTVgxeHhL?=
+ =?utf-8?B?YXRuTEZyRTU4RnJwcUFxOUpjREhmUEtLYU4yeGc2SGxXWEo5Q3FHcDdMY2ly?=
+ =?utf-8?B?VVNTbUFxK095QmVPYlJ6cStaN0R3NDFKK21VcmpQaURnby8xVXdnNFZaSE1Z?=
+ =?utf-8?B?Zjl5RWR4TFlSSUJwR2NMR0lrcW1uZEpNZXJ5RmwvUi9paUtnc01sL0pabEov?=
+ =?utf-8?B?Nk1hYU9sYjIzSzVtdWFWc1VWcDRiVUV5SnJmUXhNbTROQkVFUUEvZjVla3RD?=
+ =?utf-8?B?R1BjMDNKZ1RQRWk3T0l6TWw5ZUZrTFBPOElQbmphTEdENTFnaXZhMCtwcTds?=
+ =?utf-8?B?Smc9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7e7e1225-803a-459b-e2eb-08dd52c92eb6
 X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Feb 2025 22:43:27.3538
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Feb 2025 22:43:38.3773
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: yO79/44mcN+ZSpVEgswdMTMXDAD3mc48gCToo/+ZTsp2dyC0uVxkBvH2nZewyhx+uJyZiGDPeVSSkMShoCpcoR1tLwsLrZvd2jxK/n7KQqE=
+X-MS-Exchange-CrossTenant-UserPrincipalName: J076G6V/RhvfCN0uv01Fi/Prp7xiIq+fzwe0nloV918cWqnJprup/oe+jG/HEXkoPBWjpcEFfb5bGn+IOJaoB/XI0V90JTjB3xp96A7wLTs=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR11MB8168
 X-OriginatorOrg: intel.com
 
-Hi Peter,
+Hi Dave,
 
-On 2/21/25 5:12 AM, Peter Newman wrote:
-> On Thu, Feb 20, 2025 at 7:36 PM Reinette Chatre
-> <reinette.chatre@intel.com> wrote:
->> On 2/20/25 6:53 AM, Peter Newman wrote:
->>> On Wed, Feb 19, 2025 at 7:21 PM Reinette Chatre
->>> <reinette.chatre@intel.com> wrote:
->>>> On 2/19/25 3:28 AM, Peter Newman wrote:
->>>>> On Tue, Feb 18, 2025 at 6:50 PM Reinette Chatre
->>>>> <reinette.chatre@intel.com> wrote:
->>>>>> On 2/17/25 2:26 AM, Peter Newman wrote:
->>>>>>> On Fri, Feb 14, 2025 at 8:18 PM Reinette Chatre
->>>>>>> <reinette.chatre@intel.com> wrote:
->>>>>>>> On 2/14/25 10:31 AM, Moger, Babu wrote:
->>>>>>>>> On 2/14/2025 12:26 AM, Reinette Chatre wrote:
->>>>>>>>>> On 2/13/25 9:37 AM, Dave Martin wrote:
->>>>>>>>>>> On Wed, Feb 12, 2025 at 03:33:31PM -0800, Reinette Chatre wrote:
->>>>>>>>>>>> On 2/12/25 9:46 AM, Dave Martin wrote:
->>>>>>>>>>>>> On Wed, Jan 22, 2025 at 02:20:08PM -0600, Babu Moger wrote:
->>>>>>>>
->>>>>>>> (quoting relevant parts with goal to focus discussion on new possible syntax)
->>>>>>>>
->>>>>>>>>>>> I see the support for MPAM events distinct from the support of assignable counters.
->>>>>>>>>>>> Once the MPAM events are sorted, I think that they can be assigned with existing interface.
->>>>>>>>>>>> Please help me understand if you see it differently.
->>>>>>>>>>>>
->>>>>>>>>>>> Doing so would need to come up with alphabetical letters for these events,
->>>>>>>>>>>> which seems to be needed for your proposal also? If we use possible flags of:
->>>>>>>>>>>>
->>>>>>>>>>>> mbm_local_read_bytes a
->>>>>>>>>>>> mbm_local_write_bytes b
->>>>>>>>>>>>
->>>>>>>>>>>> Then mbm_assign_control can be used as:
->>>>>>>>>>>> # echo '//0=ab;1=b' >/sys/fs/resctrl/info/L3_MON/mbm_assign_control
->>>>>>>>>>>> # cat /sys/fs/resctrl/mon_data/mon_L3_00/mbm_local_read_bytes
->>>>>>>>>>>> <value>
->>>>>>>>>>>> # cat /sys/fs/resctrl/mon_data/mon_L3_00/mbm_local_bytes
->>>>>>>>>>>> <sum of mbm_local_read_bytes and mbm_local_write_bytes>
->>>>>>>>>>>>
->>>>>>>>>>>> One issue would be when resctrl needs to support more than 26 events (no more flags available),
->>>>>>>>>>>> assuming that upper case would be used for "shared" counters (unless this interface is defined
->>>>>>>>>>>> differently and only few uppercase letters used for it). Would this be too low of a limit?
->>>>>>>>
->>>>>>>> As mentioned above, one possible issue with existing interface is that
->>>>>>>> it is limited to 26 events (assuming only lower case letters are used). The limit
->>>>>>>> is low enough to be of concern.
->>>>>>>
->>>>>>> The events which can be monitored by a single counter on ABMC and MPAM
->>>>>>> so far are combinable, so 26 counters per group today means it limits
->>>>>>> breaking down MBM traffic for each group 26 ways. If a user complained
->>>>>>> that a 26-way breakdown of a group's MBM traffic was limiting their
->>>>>>> investigation, I would question whether they know what they're looking
->>>>>>> for.
->>>>>>
->>>>>> The key here is "so far" as well as the focus on MBM only.
->>>>>>
->>>>>> It is impossible for me to predict what we will see in a couple of years
->>>>>> from Intel RDT, AMD PQoS, and Arm MPAM that now all rely on resctrl interface
->>>>>> to support their users. Just looking at the Intel RDT spec the event register
->>>>>> has space for 32 events for each "CPU agent" resource. That does not take into
->>>>>> account the "non-CPU agents" that are enumerated via ACPI. Tony already mentioned
->>>>>> that he is working on patches [1] that will add new events and shared the idea
->>>>>> that we may be trending to support "perf" like events associated with RMID. I
->>>>>> expect AMD PQoS and Arm MPAM to provide related enhancements to support their
->>>>>> customers.
->>>>>> This all makes me think that resctrl should be ready to support more events than 26.
->>>>>
->>>>> I was thinking of the letters as representing a reusable, user-defined
->>>>> event-set for applying to a single counter rather than as individual
->>>>> events, since MPAM and ABMC allow us to choose the set of events each
->>>>> one counts. Wherever we define the letters, we could use more symbolic
->>>>> event names.
->>>>
->>>> Thank you for clarifying.
->>>>
->>>>>
->>>>> In the letters as events model, choosing the events assigned to a
->>>>> group wouldn't be enough information, since we would want to control
->>>>> which events should share a counter and which should be counted by
->>>>> separate counters. I think the amount of information that would need
->>>>> to be encoded into mbm_assign_control to represent the level of
->>>>> configurability supported by hardware would quickly get out of hand.
->>>>>
->>>>> Maybe as an example, one counter for all reads, one counter for all
->>>>> writes in ABMC would look like...
->>>>>
->>>>> (L3_QOS_ABMC_CFG.BwType field names below)
->>>>>
->>>>> (per domain)
->>>>> group 0:
->>>>>  counter 0: LclFill,RmtFill,LclSlowFill,RmtSlowFill
->>>>>  counter 1: VictimBW,LclNTWr,RmtNTWr
->>>>> group 1:
->>>>>  counter 2: LclFill,RmtFill,LclSlowFill,RmtSlowFill
->>>>>  counter 3: VictimBW,LclNTWr,RmtNTWr
->>>>> ...
->>>>>
->>>>
->>>> I think this may also be what Dave was heading towards in [2] but in that
->>>> example and above the counter configuration appears to be global. You do mention
->>>> "configurability supported by hardware" so I wonder if per-domain counter
->>>> configuration is a requirement?
+On 2/21/25 8:47 AM, Dave Martin wrote:
+> Hi Reinette,
+> 
+> On Thu, Feb 20, 2025 at 10:36:18AM -0800, Reinette Chatre wrote:
+>> Hi Dave,
+>>
+>> On 2/20/25 9:46 AM, Dave Martin wrote:
+>>> Hi again,
 >>>
->>> If it's global and we want a particular group to be watched by more
->>> counters, I wouldn't want this to result in allocating more counters
->>> for that group in all domains, or allocating counters in domains where
->>> they're not needed. I want to encourage my users to avoid allocating
->>> monitoring resources in domains where a job is not allowed to run so
->>> there's less pressure on the counters.
+>>> On Thu, Feb 20, 2025 at 04:46:40PM +0000, Dave Martin wrote:
+> 
+> [...]
+> 
+>>> Having taken a quick look at that now, this all seems to duplicate
+>>> perf's design journey (again).
 >>>
->>> In Dave's proposal it looks like global configuration means
->>> globally-defined "named counter configurations", which works because
->>> it's really per-domain assignment of the configurations to however
->>> many counters the group needs in each domain.
->>
->> I think I am becoming lost. Would a global configuration not break your
->> view of "event-set applied to a single counter"? If a counter is configured
->> globally then it would not make it possible to support the full configurability
->> of the hardware.
->> Before I add more confusion, let me try with an example that builds on your
->> earlier example copied below:
->>
->>>>> (per domain)
->>>>> group 0:
->>>>>  counter 0: LclFill,RmtFill,LclSlowFill,RmtSlowFill
->>>>>  counter 1: VictimBW,LclNTWr,RmtNTWr
->>>>> group 1:
->>>>>  counter 2: LclFill,RmtFill,LclSlowFill,RmtSlowFill
->>>>>  counter 3: VictimBW,LclNTWr,RmtNTWr
->>>>> ...
->>
->> Since the above states "per domain" I rewrite the example to highlight that as
->> I understand it:
->>
->> group 0:
->>  domain 0:
->>   counter 0: LclFill,RmtFill,LclSlowFill,RmtSlowFill
->>   counter 1: VictimBW,LclNTWr,RmtNTWr
->>  domain 1:
->>   counter 0: LclFill,RmtFill,LclSlowFill,RmtSlowFill
->>   counter 1: VictimBW,LclNTWr,RmtNTWr
->> group 1:
->>  domain 0:
->>   counter 2: LclFill,RmtFill,LclSlowFill,RmtSlowFill
->>   counter 3: VictimBW,LclNTWr,RmtNTWr
->>  domain 1:
->>   counter 2: LclFill,RmtFill,LclSlowFill,RmtSlowFill
->>   counter 3: VictimBW,LclNTWr,RmtNTWr
->>
->> You mention that you do not want counters to be allocated in domains that they
->> are not needed in. So, let's say group 0 does not need counter 0 and counter 1
->> in domain 1, resulting in:
->>
->> group 0:
->>  domain 0:
->>   counter 0: LclFill,RmtFill,LclSlowFill,RmtSlowFill
->>   counter 1: VictimBW,LclNTWr,RmtNTWr
->> group 1:
->>  domain 0:
->>   counter 2: LclFill,RmtFill,LclSlowFill,RmtSlowFill
->>   counter 3: VictimBW,LclNTWr,RmtNTWr
->>  domain 1:
->>   counter 2: LclFill,RmtFill,LclSlowFill,RmtSlowFill
->>   counter 3: VictimBW,LclNTWr,RmtNTWr
->>
->> With counter 0 and counter 1 available in domain 1, these counters could
->> theoretically be configured to give group 1 more data in domain 1:
->>
->> group 0:
->>  domain 0:
->>   counter 0: LclFill,RmtFill,LclSlowFill,RmtSlowFill
->>   counter 1: VictimBW,LclNTWr,RmtNTWr
->> group 1:
->>  domain 0:
->>   counter 2: LclFill,RmtFill,LclSlowFill,RmtSlowFill
->>   counter 3: VictimBW,LclNTWr,RmtNTWr
->>  domain 1:
->>   counter 0: LclFill,RmtFill
->>   counter 1: LclNTWr,RmtNTWr
->>   counter 2: LclSlowFill,RmtSlowFill
->>   counter 3: VictimBW
->>
->> The counters are shown with different per-domain configurations that seems to
->> match with earlier goals of (a) choose events counted by each counter and
->> (b) do not allocate counters in domains where they are not needed. As I
->> understand the above does contradict global counter configuration though.
->> Or do you mean that only the *name* of the counter is global and then
->> that it is reconfigured as part of every assignment?
-> 
-> Yes, I meant only the *name* is global. I assume based on a particular
-> system configuration, the user will settle on a handful of useful
-> groupings to count.
-> 
-> Perhaps mbm_assign_control syntax is the clearest way to express an example...
-> 
->  # define global configurations (in ABMC terms), not necessarily in this
->  # syntax and probably not in the mbm_assign_control file.
-> 
->  r=LclFill,RmtFill,LclSlowFill,RmtSlowFill
->  w=VictimBW,LclNTWr,RmtNTWr
-> 
->  # legacy "total" configuration, effectively r+w
->  t=LclFill,RmtFill,LclSlowFill,RmtSlowFill,VictimBW,LclNTWr,RmtNTWr
-> 
->  /group0/0=t;1=t
->  /group1/0=t;1=t
->  /group2/0=_;1=t
->  /group3/0=rw;1=_
-> 
-> - group2 is restricted to domain 0
-> - group3 is restricted to domain 1
-> - the rest are unrestricted
-> - In group3, we decided we need to separate read and write traffic
-> 
-> This consumes 4 counters in domain 0 and 3 counters in domain 1.
-> 
-
-I see. Thank you for the example.
-
-resctrl supports per-domain configurations with the following possible when
-using mbm_total_bytes_config and mbm_local_bytes_config:
-
-t(domain 0)=LclFill,RmtFill,LclSlowFill,RmtSlowFill,VictimBW,LclNTWr,RmtNTWr
-t(domain 1)=LclFill,RmtFill,VictimBW,LclNTWr,RmtNTWr
-
-   /group0/0=t;1=t
-   /group1/0=t;1=t
-
-Even though the flags are identical in all domains, the assigned counters will
-be configured differently in each domain.
-
-With this supported by hardware and currently also supported by resctrl it seems
-reasonable to carry this forward to what will be supported next.
-
->>
->>>> Until now I viewed counter configuration separate from counter assignment,
->>>> similar to how AMD's counters can be configured via mbm_total_bytes_config and
->>>> mbm_local_bytes_config before they are assigned. That is still per-domain
->>>> counter configuration though, not per-counter.
->>>>
->>>>> I assume packing all of this info for a group's desired counter
->>>>> configuration into a single line (with 32 domains per line on many
->>>>> dual-socket AMD configurations I see) would be difficult to look at,
->>>>> even if we could settle on a single letter to represent each
->>>>> universally.
->>>>>
->>>>>>
->>>>>> My goal is for resctrl to have a user interface that can as much as possible
->>>>>> be ready for whatever may be required from it years down the line. Of course,
->>>>>> I may be wrong and resctrl would never need to support more than 26 events per
->>>>>> resource (*). The risk is that resctrl *may* need to support more than 26 events
->>>>>> and how could resctrl support that?
->>>>>>
->>>>>> What is the risk of supporting more than 26 events? As I highlighted earlier
->>>>>> the interface I used as demonstration may become unwieldy to parse on a system
->>>>>> with many domains that supports many events. This is a concern for me. Any suggestions
->>>>>> will be appreciated, especially from you since I know that you are very familiar with
->>>>>> issues related to large scale use of resctrl interfaces.
->>>>>
->>>>> It's mainly just the unwieldiness of all the information in one file.
->>>>> It's already at the limit of what I can visually look through.
->>>>
->>>> I agree.
->>>>
->>>>>
->>>>> I believe that shared assignments will take care of all the
->>>>> high-frequency and performance-intensive batch configuration updates I
->>>>> was originally concerned about, so I no longer see much benefit in
->>>>> finding ways to textually encode all this information in a single file
->>>>> when it would be more manageable to distribute it around the
->>>>> filesystem hierarchy.
->>>>
->>>> This is significant. The motivation for the single file was to support
->>>> the "high-frequency and performance-intensive" usage. Would "shared assignments"
->>>> not also depend on the same files that, if distributed, will require many
->>>> filesystem operations?
->>>> Having the files distributed will be significantly simpler while also
->>>> avoiding the file size issue that Dave Martin exposed.
+>>> "rate" events make some sense.  The perf equivalent is to keep an
+>>> accumulated count of the amount of time a counter has been assigned to
+>>> an event, and another accumulated count of the events counted by the
+>>> counter during assignment.  Only userspace knows what it wants to do
+>>> with this information: perf exposes the raw accumulated counts.
 >>>
->>> The remaining filesystem operations will be assigning or removing
->>> shared counter assignments in the applicable domains, which would
->>> normally correspond to mkdir/rmdir of groups or changing their CPU
->>> affinity. The shared assignments are more "program and forget", while
->>> the exclusive assignment approach requires updates for every counter
->>> (in every domain) every few seconds to cover a large number of groups.
+>>> Perf events can be also pinned so that they are prioritised for
+>>> assignment to counters; that sounds a lot like the regular, non-shared
+>>> resctrl counters.
 >>>
->>> When they want to pay extra attention to a particular group, I expect
->>> they'll ask for exclusive counters and leave them assigned for a while
->>> as they collect extra data.
+>>>
+>>> Playing devil's advocate:
+>>>
+>>> It does feel like we are doomed to reinvent perf if we go too far down
+>>> this road...
+>>>
+>>>> If we split the file, it will be more closely aligned with the design
+>>>> of the rest of the resctrlfs interface.
+>>>>
+>>>> OTOH, the current interface seems workable and I think the file size
+>>>> issue can be addressed without major re-engineering.
+>>>>
+>>>> So, from my side, I would not consider the current interface design
+>>>> a blocker.
+>>>
+>>> ...so, drawing a hard line around the use cases that we intend to
+>>> address with this interface and avoiding feature creep seems desirable.
 >>
->> The single file approach is already unwieldy. The demands that will be
->> placed on it to support the usages currently being discussed would make this
->> interface even harder to use and manage. If the single file is not required
->> then I think we should go back to smaller files distributed in resctrl.
->> This may not even be an either/or argument. One way to view mbm_assign_control
->> could be as a way for user to interact with the distributed counter
->> related files with a single file system operation. Although, without
->> knowing how counter configuration is expected to work this remains unclear.
+>> This is exactly what I am trying to do ... to understand what use cases
+>> the interface is expected to support.
+>>
+>> You have mentioned a couple of times now that this interface is sufficient but
+>> at the same time you hinted at some features from MPAM that I do not see
+>> possible to accommodate with this interface.
 > 
-> If we do both interfaces and the multi-file model gives us more
-> capability to express configurations, we could find situations where
-> there are configurations we cannot represent when reading back from
-> mbm_assign_control, or updates through mbm_assign_control have
-> ambiguous effects on existing configurations which were created with
-> other files.
-
-Right. My assumption was that the syntax would be identical.
-
+> It's kind of both.
 > 
-> However, the example I gave above seems to be adequately represented
-> by a minor extension to mbm_assign_control and we all seem to
+> I think the interface is sufficient to be useful, and therefore has
+> value.
+> 
+> The problem being addressed here (shortage of counters) is fully
+> relevant to MPAM (at last on some hardware).
+> 
+> Any architecture may define new metrics and types of event that can be
+> counted, and they're not going to match up exactly between arches -- so
+> I don't think we can expect everything to fit perfectly within a
+> generic interface.  But having a generic interface is still useful for
+> making common features convenient to use.
+> 
+> So the interface is useful but not universal, but that doesn't feel
+> like a bug.
+> 
+> Hopefully that makes my position a bit clearer.
+> 
+>>> resctrlfs is already in the wild, so providing reasonable baseline
+>>> compatiblity with that interface for ABMC hardware is a sensible goal.
+>>> The current series does that.
+>>>
+>>> But I wonder how much additional functionality we should really be
+>>> adding via the mbm_assign_control interface, once this series is
+>>> settled.
+>>
+>> Are you speculating that MPAM counters may not make use of this interface?
+>>
+>> Reinette
+> 
+> No, I think it makes sense for MPAM to follow this interface, as least
+> as far as what has been proposed so far here.
+> 
+> I think James got his updated rebase working. [1]
+> 
+> 
+> perf support would be for the future if we do it, but the ABMC
+> interface may be a useful starting point anyway, because it allows
+> counters to be assigned explicitly -- that provides a natural way to
+> hand over some counters to perf, either because that interface may be a
+> more natural fit for what the user is trying to do, or perhaps to count
+> weird, platform-specific event types that do not merit the effort of
+> integration into resctrlfs proper.
+> 
+> Does that make sense?
+> 
 
-To confirm what you mean with "minor extension to mbm_assign_control",
-is this where the flags are associated with counter configurations? At this
-time this is done separately from mbm_assign_control with the hardcoded "t"
-and "l" flags configured via mbm_total_bytes_config and mbm_local_bytes
-respectively. I think it would be simpler to keep these configurations
-separate from mbm_assign_control. How it would look without better
-understanding of MPAM is not clear to me at this time, unless if the
-requirement is to enhance support for ABMC and BMEC. I do see that
-this can be added later to build on what is supported by mbm_assign_control
-with the syntax in this version.
+This is reasonable. You did state earlier that we should aim to draw
+hard lines around the use cases we aim to address and I think one
+way this work is doing this is by being explicit in user interface that
+this is all about "memory bandwidth monitoring". This is not intended to
+be a fully generic interface for all possible counters for all possible
+resources.
 
-> understand it now, so maybe it's not broken yet. It's unfortunate that
-> work went into a requirement that's no longer relevant, but I don't
-> think that on its own is a blocker.
+Apart from that time will tell how many blind spots there were while
+creating this interface.
 
-I understand that requirements may change as we get new information.
-Digesting it now is significantly easier than trying to adapt after
-the user interface is merged and essentially set in stone.
+Thank you very much for all your very valuable insights.
 
 Reinette
 
