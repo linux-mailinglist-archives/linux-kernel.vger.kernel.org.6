@@ -1,185 +1,196 @@
-Return-Path: <linux-kernel+bounces-526325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 978CAA3FD49
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 18:21:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 721EBA3FD39
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 18:18:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FAAC3AC94F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:15:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C47AA17BFF6
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:17:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A73424E4C9;
-	Fri, 21 Feb 2025 17:15:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B1A921B9EA;
+	Fri, 21 Feb 2025 17:17:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="IN8MTOpI";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="G6nWFbFd"
-Received: from fout-a2-smtp.messagingengine.com (fout-a2-smtp.messagingengine.com [103.168.172.145])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MQ3gSOf/"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53A6B24E4C4
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 17:15:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 320F024F58E
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 17:17:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740158155; cv=none; b=ksWtGjdBa7IpWDDyL/zY4mq1VNkZnE/AoIdvvw4wlAWhq3NZyOYZ3wN6EY24XiIPwlyEtzRHyJq+29vzgYyhKfli1IQ6hX7o+UfwsnW2JEkYUVTEpGs9CAQZ4/HZN2qQSRA14f2+eQC0Y3isvELbpRKhREwJvMkOUopuGdUBNto=
+	t=1740158247; cv=none; b=h/DK+j54iRH4Y2aP5mn/dAzuOB7/3lCeavKp+V4W4szVTLWL8s4NKIJCmxSVZ+uG4Yj+M8mOrU6GJ5TXYCNd7haLMLcMuFglVPTL0zH15BQtZFqtDmUALdMNFlILOd1XrqZkyALj9dbPCjmSsirR3rj9ATgmGGHqygl3AdSsdpA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740158155; c=relaxed/simple;
-	bh=UDLNX75wrtdrPkLs6St7iKlfLBG75AiNWZFV0P2/UJA=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=pGdGvEhP30JYq8Rl3JlE8Ym94SI86wclFLufg8s89uugK+4dZIjw5WjOxzbCon6XuaosPfCL9W2RQzivAcBfyHo2aKH9wk7aPm39UtLtr4IJtdsc/vKT3XjbLsOXqhApP2q2YO1yIM0Tp5CkE4DtEGRxVG5x7QzXbdCOhOfNDHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=IN8MTOpI; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=G6nWFbFd; arc=none smtp.client-ip=103.168.172.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
-	by mailfout.phl.internal (Postfix) with ESMTP id 49B351380860;
-	Fri, 21 Feb 2025 12:15:51 -0500 (EST)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-11.internal (MEProxy); Fri, 21 Feb 2025 12:15:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1740158151;
-	 x=1740244551; bh=SE+FVhO5aeUeVsW1ecaij/35kJ3a9wvdqlNv0gH8jdg=; b=
-	IN8MTOpIZSIBkgCLQjCILzaNiwQGMVanaiMWMKdkNatX2MHXBToYaD8JAiyil3dv
-	7LW111AVk/5o2FJWBYBGXywMwnI+GykpbbZdLYIN9XDv7gYYzfq1LxsZFsdrNsWL
-	tUIJgLt7h8TkLjs45l01dJwssC9phwJ9NynQmwiPGmvZd7XMRCy41YfSceP/3NoV
-	5XW0VYMKIT1s0EcPaADc+tEhIIuZpE80V7rEQD5zUCn7hLJhvUf5igelzuxBAjZD
-	2Jl8D3mcelkKAewr44amLTwvUAD2w8KzHTHGD3kCIhLo/wsjXmHZyGTAJXiqian2
-	SUq2ozKgxETfvz6iZm6Onw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1740158151; x=
-	1740244551; bh=SE+FVhO5aeUeVsW1ecaij/35kJ3a9wvdqlNv0gH8jdg=; b=G
-	6nWFbFd3Wq20ZK+vXFJqsNzVuD75Ne7E+k12XXrbrpTjlref6YhkYu/wCMRCdNXx
-	tDfYxnUNsb/CWzafignkGEOafWvGUbgE2ILIFsdSnYwQLyVsJMSIjhRpePzvccu1
-	WLJwZNB0nwQ/MdsTh/QlkPOBrz4vx9lrmu7+sKw/iN8R7cJgNFajRLmiNJ6Tk935
-	DFQ/FryS7w3OaeJM3m4u2IMvVVNVz6T3byD/ImlAHCU1CoKEJ+Tbu897EeZ11/LC
-	jn2+qgcAbSqshlfz5j+nj0ZhzxWbXhklceCMeAtL80in/G+1a2pBzLWaTSf3oCVZ
-	x1s7YDinR2F0P3JDRB51Q==
-X-ME-Sender: <xms:xrS4ZzuntPfnNijk3Batm_DHPveG1p1rbpvYfph-2DvlUPqpDErZ3g>
-    <xme:xrS4Z0dShGKJAlWVIzVqM_CJfylc_UWAGjmLKVFSGDXms2TM-4tdadSJm6tp35yBn
-    eqiWqtXcpgaZPY5JFw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdejtdehlecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
-    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
-    druggvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteef
-    gffgvedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopeej
-    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehsihhmohhnrgesfhhffihllhdrtg
-    hhpdhrtghpthhtoheprghirhhlihgvugesghhmrghilhdrtghomhdprhgtphhtthhopehr
-    rggrghdrjhgruggrvhesihhnthgvlhdrtghomhdprhgtphhtthhopegrnhgurhhihidrsh
-    hhvghvtghhvghnkhhosehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohepghhr
-    vghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtohepughrih
-    dquggvvhgvlheslhhishhtshdrfhhrvggvuggvshhkthhophdrohhrghdprhgtphhtthho
-    pehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:xrS4Z2wqFze9aQST4hrYSX1P_oimghUc9IBieIhjddBFoHTDXEuglw>
-    <xmx:xrS4ZyOEbU33jKRHS5bzkaNaTM72jSuMjRSOj3ib3DGQDRN-DNdkgw>
-    <xmx:xrS4Zz954ML2OFJR5n59eu-wrnZGZnKFNJB6sUR75QEuL0duW4yO4g>
-    <xmx:xrS4ZyXWfI-Jg77PDSx3tDIYUomCMeneRE_GM90yqFoF2WR_-eiNVA>
-    <xmx:x7S4ZzxRVuAjhKro-XF1gUgUdZbvlHNEKjYnEyA77dlUukNw3QJSOM8Q>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id CE60D2220072; Fri, 21 Feb 2025 12:15:50 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1740158247; c=relaxed/simple;
+	bh=MDfzAUMKryuV15YAAh1iVXakgE0hLgot6RuOnyiVcqk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mtkEBYlEienwVN6/fEdd+p2wKnNGYzav7h5hHtwQ5yX2/m2QcFTlH5J2lxP6dzv3uTkI3kVoMEsuVNtf031DeiL7E3OXyrJKfMmEmNtkYZIzvFb+WQ2slsqRgVwpDC/lXke7h7bgf7naHq2CnUSBgI1nzHCJN096YNn1x77NH6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MQ3gSOf/; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740158246; x=1771694246;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=MDfzAUMKryuV15YAAh1iVXakgE0hLgot6RuOnyiVcqk=;
+  b=MQ3gSOf/a80Arr1qlpPMIJBehM4QvUkBFqbbiJPcwkiALIqLNWRAD4SO
+   LO6BAeGCMpkxnZkQ8UrxqusxRi8vPCYahIUZV6aO8yx1JwPgSNVVR4wUR
+   YzvBO9VX/6hpC/n1EdU9AuP1nl/VIgGc/kiQGb5pPqdLsNLKV2pzXSnPZ
+   Njh4Q50dXgNyD9ma7C0GF3Gl2qWky64gQ4PT5quVOsOPcLRAtgH7cEvqK
+   xC5Jc2/qSPhog0ueIzXi438cZUZMCYryEibEF0nr9R0+DbQXcEDIhf0PX
+   WjPPgFOeyI/90vqYgheBRnUWXcTHEcgspxYu04hx8z/J2374vLg7EYQAN
+   Q==;
+X-CSE-ConnectionGUID: AxcuYFyETlWVaQPW1FHKuA==
+X-CSE-MsgGUID: oTE/A1s6T2KhK+Lv9YsacA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11352"; a="58395440"
+X-IronPort-AV: E=Sophos;i="6.13,305,1732608000"; 
+   d="scan'208";a="58395440"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Feb 2025 09:17:25 -0800
+X-CSE-ConnectionGUID: 4cUEoefjSP2u7rYGcvY4lg==
+X-CSE-MsgGUID: f+84b3D+TEi80SrI30yPqA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,305,1732608000"; 
+   d="scan'208";a="120404085"
+Received: from aschofie-mobl2.amr.corp.intel.com (HELO [10.125.110.177]) ([10.125.110.177])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Feb 2025 09:17:25 -0800
+Message-ID: <81d94ec3-16af-45a7-87c6-ef76570953f8@intel.com>
+Date: Fri, 21 Feb 2025 09:17:26 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Fri, 21 Feb 2025 18:15:30 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>
-Cc: "Raag Jadav" <raag.jadav@intel.com>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- "Dave Airlie" <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Message-Id: <f6eb011b-40fb-409a-b2b2-a09d0e770bbd@app.fastmail.com>
-In-Reply-To: <Z7iuulG0Ltoltl8F@smile.fi.intel.com>
-References: <20250221050804.2764553-1-raag.jadav@intel.com>
- <2342b516-2c6e-42e5-b4f4-579b280823ba@app.fastmail.com>
- <Z7iuulG0Ltoltl8F@smile.fi.intel.com>
-Subject: Re: [PATCH v2 0/2] Cleanup io.h
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/4] rseq: Make rseq work with protection keys
+To: Dmitry Vyukov <dvyukov@google.com>, mathieu.desnoyers@efficios.com,
+ peterz@infradead.org, boqun.feng@gmail.com, tglx@linutronix.de,
+ mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com,
+ aruna.ramakrishna@oracle.com, elver@google.com
+Cc: "Paul E. McKenney" <paulmck@kernel.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+References: <cover.1739790300.git.dvyukov@google.com>
+ <0d0e0a0a7136d49af9a8d6a849e1aa4bf086c472.1739790300.git.dvyukov@google.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <0d0e0a0a7136d49af9a8d6a849e1aa4bf086c472.1739790300.git.dvyukov@google.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On Fri, Feb 21, 2025, at 17:50, Andy Shevchenko wrote:
-> On Fri, Feb 21, 2025 at 11:15:47AM +0100, Arnd Bergmann wrote:
->> As you already found, removing an old indirect #include that is
->> no longer needed usually leads to some files breaking. The more
->> impactful your change is in terms of build speed, the more
->> things break! I think in this case, removing linux/err.h and
->> linux/bug.h made very little difference because they are very
->> small files in terms of what else they include.
->
-> While this is all true, removing unneeded inclusions rarely can lead to the
-> "extra work with a little gain". When there is a replacement to the low
-> level ones, it's also an improvement in my opinion and won't be harmful in
-> the future. But I agree, that the stuff is way too tangled already and requires
-> an enormous work to untangle it, even if doing it structurally.
+On 2/17/25 03:07, Dmitry Vyukov wrote:
+>  
+>  error:
+> +	/*
+> +	 * If the application registers rseq, and ever switches to another
+> +	 * pkey protection (such that the rseq becomes inaccessible), then
+> +	 * any context switch will cause failure here attempting to read/write
+> +	 * struct rseq and/or rseq_cs. Since context switches are
+> +	 * asynchronous and are outside of the application control
+> +	 * (not part of the restricted code scope), we temporarily switch
+> +	 * to premissive pkey register to read/write rseq/rseq_cs,
+> +	 * similarly to signal delivery accesses to altstack.
+> +	 *
+> +	 * We don't bother to check if the failure really happened due to
+> +	 * pkeys or not, since it does not matter (performance-wise and
+> +	 * otherwise).
+> +	 *
+> +	 * If the restricted code installs rseq_cs in inaccessible to it
+> +	 * due to pkeys memory, we still let this function read the rseq_cs.
+> +	 * It's unclear what benefits the resticted code gets by doing this
+> +	 * (it probably already hijacked control flow at this point), and
+> +	 * presumably any sane sandbox should prohibit restricted code
+> +	 * from accessing struct rseq, and this is still better than
+> +	 * terminating the app unconditionally (it always has a choice
+> +	 * of not using rseq and pkeys together).
+> +	 */
 
-The problem I see with prematurely applying small improvements like this
-one is that they always cause build regressions, at least if the change
-is any good. If we can find some more impactful changes like this one,
-we can group them together in a branch and test them a lot better before
-they even reach linux-next.
+I would trim this comment down. I'd keep the discussion more in the
+changelog than in here. I'd also suggest breaking out the spell checker.
 
-I mainly want to avoid people getting angry at Raag for repeatedly
-breaking their subsystems by pushing small patches one at a time.
+Also, as usual, changing this to imperative voice makes it more compact too:
 
-> Do you have your scripts for the showed statistics being published somewhere?
+	Don't bother to check if the failure really happened due to
+	pkeys or not, since it does not matter (performance-wise and
+	otherwise).
 
-I had a good set of scripts on an older machine and might still
-have some backups of that somewhere, but just hacked up something
-ad-hoc today beased on what I remembered from that time. Here
-are the snippets that you might find useful.
+Basically, zap the "we's".
 
-A patch to Kbuild to create a list of each included header for each
-object file built in a given configuration (similar to the .filename.o.d
-files, but in a format I found more convenient):
+> +	if (!switched_pkey_reg) {
+> +		switched_pkey_reg = true;
+> +		saved = switch_to_permissive_pkey_reg();
+> +		goto retry;
+> +	} else {
+> +		write_pkey_reg(saved);
+> +	}
 
---- a/scripts/Makefile.lib
-+++ b/scripts/Makefile.lib
-@@ -307,7 +307,8 @@ cmd_ld_single = $(if $(objtool-enabled)$(is-single-obj-m), ; $(LD) $(ld_flags) -
- endif
- 
- quiet_cmd_cc_o_c = CC $(quiet_modtag)  $@
--      cmd_cc_o_c = $(CC) $(c_flags) -c -o $@ $< \
-+      cmd_cc_o_c = $(CC) $(c_flags) -c -o $@ $< ; \
-+                   $(CC) $(c_flags) -E -o - $< | grep ^\#.*include | cut -f 2 -d\" | sort -u > $@.includes \
-                $(cmd_ld_single) \
-                $(cmd_objtool)
- 
-shell oneliner to find the header files that are most commonly included
-from those files:
+This code flow is a bit hard to follow with the retry and all.
 
-$ find -name \*includes | xargs cat | sort | uniq -c | sed -e 's:\./\|\././::g' | sort -rn | head -n 1000 > mostincluded
+I think the assumption here is that overwriting the pkey register is too
+slow for the fast path. Instead, in the slow error path, there is a
+one-time operation to make the register permissive and retry.
 
-oneliner to preprocess each of those headers 
+I guess it's your rseq code. But I'd probably just put the
+switch_to_permissive_pkey_reg()/write_pkey_reg() in the fast/common path
+for simplicity unless I knew it was causing a measurable performance
+problem.
 
-$ cat mostincluded | grep include/linux | while read a i ; do gcc -E $i -o ${i%.h}.i ${GCCARGS} ; done
+In either case, it would be great to comment that design choice in the
+changelog.
 
-oneliner to sort by product of includes and lines:
+Oh, and cover letters are most appreciated for these kinds of things.
+I'd normally reply to the cover letter and say this, but I'll put it
+here instead:
 
-$ cat mostincluded | grep include/linux/ | while read a b ; do if [ -e ${b%.h}.i ] ; then echo $a `wc -l ${b%.h}.i` ; fi ; done | sort -n -k2 | while read a b c ; do echo $[$a * $b] $a $b $c ; done | sort -nr > fulllist
+The series overall looks fine. It just needs a few cosmetic tweaks.
 
-In the old days, I had cleaner versions of these in an automated script,
-and produced a .dot file to visualize the dependencies with graphviz.
-I did get to the point of more than doubling compile speed, so there was
-a clear incentive to continue. In fact, the further I got along the way,
-the better the savings. In the end I gave up when I could not
-get to a useful subset to upstream first that wouldn't already break
-hundreds of drivers.
-
-The best idea I have to avoid that is to pick one header to clean up
-from my list and do all the prerequisites but not actually break anything
-at first.
-
-      Arnd
+I don't see any Cc:stable@ or Fixes: tags. Is this a bug fix that you
+want backported? If so, those tags would be appropriate and it woudl be
+appreciated if you could dig out what it actually fixes.
 
