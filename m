@@ -1,187 +1,329 @@
-Return-Path: <linux-kernel+bounces-525845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 308FBA3F637
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 14:40:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6241AA3F642
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 14:41:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1DBE3B145C
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 13:39:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 872B417D1F5
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 13:39:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73517204590;
-	Fri, 21 Feb 2025 13:39:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 734E820E01E;
+	Fri, 21 Feb 2025 13:39:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="gqnUTJCU"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2053.outbound.protection.outlook.com [40.107.237.53])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PkhOsIiC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0188F1EEE9;
-	Fri, 21 Feb 2025 13:39:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.53
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740145154; cv=fail; b=dAP3wraDNQBdaaZ8WAfWY4cnG2sWMlrKmAjsw/Vs8NoHX7g6xjigs1Yjb2YxohbTZ3lndDo+AnVxVPVeW/aF0bTNLhnXb/NMkhlPZZN/o17DhJ6a+hXYe/BH6ZpC2+urmyRQMkgvz+mO/pxV6n2+I3gcgiH20jm72R3bVK5x9FY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740145154; c=relaxed/simple;
-	bh=R9WEzvJnynQ3HCe+PvegRLkIEUNEIHRkH2PzCFiuvG4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=klhwn2XPPkk9HHTkGpNeRLJDc/btQ0Rdvuo4st24oprw1emAKVO8QwOrotppYzGPXK/pM2RVFlT2Jsfic/T1rs3omnUhOkEXkcRJCvaLjuZp4Q/BXLINvBpFBNFGdyj2nh2NdzTnSnHFCkjOpimcjaMuIgx8TScf9pzF3e/3IzI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=gqnUTJCU; arc=fail smtp.client-ip=40.107.237.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=b8iE6xU37RumsET2fwg0R6K/Lt9n/o5tE4rMnkNkSKXGjzz92dAAVeQc+nOZpbe8x1Qt/Z7XqdbsvXY60h2nc7FtCy7bg8ld0XkhN1OWU6CSVS4qiazkh9pS7GuK5gw0+piGbWE7V0IFSdElaHpSd4xtMeJa0Q0GiE4UAkqq5nkI6FCAiq2Kpan1sfMDHTQdyZGHOtYFavVavEnDnFvpK56NtqXodVgreuNbWeb0ac7Uro2Sz9BfzNPnxn3pLzo8KoQscVCe9QbbC+Vg0QX52OiK63hyzs8Z3IHs3ukXQGmGu49H2PmnyqZX51sHA0/TDygkC5p4UL9AiNc63mC6KA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=R9WEzvJnynQ3HCe+PvegRLkIEUNEIHRkH2PzCFiuvG4=;
- b=BJ939lvXp/DDClq6wK1eFEk8IvhxtwvQRyU5iNJqoPM9/OVFo35Za0gzA1bF6/MmBjWiqzJQCRrn0p+tCJqh9+6Ftnymijlvy/cjTlumcbRYHO5TtaLE22ppjsQ/A/ahaxawSGr7jSSYQX97jjObb045dZWPM1F8Ma1TsI6WLs2DliXWbd0+v59Lj5N0M4+s2uRQ8El6uIIaSC6UDsvZSw1nYdfFK68WWQvVFw6MdrAB7ET5dhQ/vosNHgiTUeC3pVMpX2dHTWzXeosiuHAA5SJJqIY8n+n5OVcnQ6dHIx7AetdPBCFbr92t1tyqw6GK150ejqMNSSp+rQX9iUW+mw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=R9WEzvJnynQ3HCe+PvegRLkIEUNEIHRkH2PzCFiuvG4=;
- b=gqnUTJCU1j81A2uICIVJ4lWa3SwgCgnF4eq7Bli35odkYdF3fYoFInRPmOpklfcWhQaQZVFAl2m4T1oLrxgoki8Jbal6R1VlgZbSZ/pByo58whv4PAUTWch5brDpZ2V4Zgn4L6Mh6vYhHSILsHSEC8tUH51qf9SwKwILx6Q/MGi5DkNmZBqnXahR2S8320cURSQTrd88vu2/MWkdM1kKGQ7L5khBwutlj2v3k3fu9J5gcb6iu6j0/WrhjphUhtets3hyHiJlPLHzw2KRNQpLx/EdgaR3rfmjwrZPIZ0W4ZZMXrzUbAwQxmKXu87y3Ca+PtNNiI00dk+wXl0dn7K83A==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
- by PH7PR12MB6978.namprd12.prod.outlook.com (2603:10b6:510:1b8::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.16; Fri, 21 Feb
- 2025 13:39:09 +0000
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.8466.015; Fri, 21 Feb 2025
- 13:39:09 +0000
-Date: Fri, 21 Feb 2025 09:39:07 -0400
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: "Tian, Kevin" <kevin.tian@intel.com>
-Cc: Nicolin Chen <nicolinc@nvidia.com>, "corbet@lwn.net" <corbet@lwn.net>,
-	"will@kernel.org" <will@kernel.org>,
-	"joro@8bytes.org" <joro@8bytes.org>,
-	"suravee.suthikulpanit@amd.com" <suravee.suthikulpanit@amd.com>,
-	"robin.murphy@arm.com" <robin.murphy@arm.com>,
-	"dwmw2@infradead.org" <dwmw2@infradead.org>,
-	"baolu.lu@linux.intel.com" <baolu.lu@linux.intel.com>,
-	"shuah@kernel.org" <shuah@kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	"eric.auger@redhat.com" <eric.auger@redhat.com>,
-	"jean-philippe@linaro.org" <jean-philippe@linaro.org>,
-	"mdf@kernel.org" <mdf@kernel.org>,
-	"mshavit@google.com" <mshavit@google.com>,
-	"shameerali.kolothum.thodi@huawei.com" <shameerali.kolothum.thodi@huawei.com>,
-	"smostafa@google.com" <smostafa@google.com>,
-	"ddutile@redhat.com" <ddutile@redhat.com>,
-	"Liu, Yi L" <yi.l.liu@intel.com>,
-	"patches@lists.linux.dev" <patches@lists.linux.dev>
-Subject: Re: [PATCH v6 07/14] iommufd/viommu: Add iommufd_viommu_report_event
- helper
-Message-ID: <20250221133907.GJ50639@nvidia.com>
-References: <cover.1737754129.git.nicolinc@nvidia.com>
- <3d952137a7935608f9cc6b05bd561a58a0c5da16.1737754129.git.nicolinc@nvidia.com>
- <20250218153541.GD4099685@nvidia.com>
- <BN9PR11MB52766CE9C579D3EE1CE1A7058CC52@BN9PR11MB5276.namprd11.prod.outlook.com>
- <Z7ebqtJUwzgOIeSC@Asurada-Nvidia>
- <BN9PR11MB5276DCBA230A17136BEDB7FE8CC72@BN9PR11MB5276.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <BN9PR11MB5276DCBA230A17136BEDB7FE8CC72@BN9PR11MB5276.namprd11.prod.outlook.com>
-X-ClientProxiedBy: LV3P220CA0014.NAMP220.PROD.OUTLOOK.COM
- (2603:10b6:408:234::14) To CH3PR12MB8659.namprd12.prod.outlook.com
- (2603:10b6:610:17c::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A6461FF7C2;
+	Fri, 21 Feb 2025 13:39:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740145173; cv=none; b=tgtLT1HmaQjN88Ei8fRA/Kie46UoLsw+4ZjX7Q3Zqb4FYVcYij2xvzBKWR7xuaGl2UwVYUfq8HL9TPY5qJFjyktMcLYamnYTIe6estqw/GiHzYJm5vDKHyg4N6602aoTaGUwMHofLgrjrx2/WU3szYmKfhPgNpVlrJTFhizWFKQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740145173; c=relaxed/simple;
+	bh=z1Z9OZJropC063FqC/Jwhzp+2Ycqe4yTzD/qrq/ji6g=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=aG01RG48Xu9+tR4MFTaxCNffd8o2gdY5px93Jtzxy81AEo3jjFteI09fZoNTUoEp4TcSvCTKMGZXlsyYGxcDXs0vDISfT30MmzLTxiXNLv83H+RBXN2rL9aznUzXU70ASqYq32wBzj0ypXxjPjwppQHNCmH11fBerN6JW2KoGSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PkhOsIiC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCF15C4CED6;
+	Fri, 21 Feb 2025 13:39:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740145172;
+	bh=z1Z9OZJropC063FqC/Jwhzp+2Ycqe4yTzD/qrq/ji6g=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=PkhOsIiCVeijgpnNW6hVcuKSkWAtwH1WzHmk6fqj+DfI9WZMhYutNI0YwFdFBNQhG
+	 i1QqErkQW/+EIfLaD4Zu8FtDfgYKSvN/0DsZHZ28D1gyD/UI6RWdHdzC1AhwEqrv2v
+	 OEfkNfDmQRCbw0/p94Us/X5Qf2RoQtuXeGLlF+8qs575HEYeJ7/bbeO+W9+ZbcN99/
+	 kVhhSAsV4ZTiP7mose44i95+KXcHEOAXszVcMfrUMqeDDZFvwfKwUMuEOoQpJiUv7b
+	 COaYwsZAcBMgD8r8bNEsPcdUGqU+gPZD8/qJ2Q7mvu9Q2YzTsFMIEyARUjg1rmDg7/
+	 aqjKJf3s9qH1g==
+Message-ID: <0542f4a777bb3fc1ef49fc879ac5f12030aa788a.camel@kernel.org>
+Subject: Re: [PATCH 4/6] fuse: return correct dentry for ->mkdir
+From: Jeff Layton <jlayton@kernel.org>
+To: NeilBrown <neilb@suse.de>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Christian Brauner	 <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Miklos
+ Szeredi <miklos@szeredi.hu>,  Xiubo Li <xiubli@redhat.com>, Ilya Dryomov
+ <idryomov@gmail.com>, Richard Weinberger <richard@nod.at>,  Anton Ivanov
+ <anton.ivanov@cambridgegreys.com>, Johannes Berg
+ <johannes@sipsolutions.net>, Trond Myklebust	 <trondmy@kernel.org>, Anna
+ Schumaker <anna@kernel.org>, Chuck Lever	 <chuck.lever@oracle.com>, Olga
+ Kornievskaia <okorniev@redhat.com>, Dai Ngo	 <Dai.Ngo@oracle.com>, Tom
+ Talpey <tom@talpey.com>, Sergey Senozhatsky	 <senozhatsky@chromium.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org, 
+	linux-um@lists.infradead.org, ceph-devel@vger.kernel.org,
+ netfs@lists.linux.dev
+Date: Fri, 21 Feb 2025 08:39:29 -0500
+In-Reply-To: <20250220234630.983190-5-neilb@suse.de>
+References: <20250220234630.983190-1-neilb@suse.de>
+	 <20250220234630.983190-5-neilb@suse.de>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=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
+ QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|PH7PR12MB6978:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3c7c3997-f92d-4fe1-f9e6-08dd527d1e43
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?ekp9hWBWQ4gHdFtndcCqt9KJ27Padr5X/PpeGF4kfW1uZDfA12umebRpgrsL?=
- =?us-ascii?Q?+17Y9Caw8wqh2/3ITTOCkZhFx86MT5YCe21Nw7ljMsdRliOyNYmMc4fYIHsA?=
- =?us-ascii?Q?7S4D2v7MWMzPkHR4ppCRqaH1Onft2AoyiLzYmFPTJdN6L22/FcZczRVwsvyE?=
- =?us-ascii?Q?oThL8pJWpD+7Kkcnt7V/qxfgEsIas+JCXqr+40ObPI0P3w4Zuhd6gbH4THKF?=
- =?us-ascii?Q?yIAjSNs7jpEAbDfhWcEcq9cvrqfUcWqp6DaFZJVqOjXWgHu9a4hgB8Qp8LC4?=
- =?us-ascii?Q?lz6JUtWWNTCbJSPIB3B1CBN61Cs2Ju93gOvp/Mu3e9YMW+sgpfXwmGiL7zKm?=
- =?us-ascii?Q?c9WuGy6Sey04yeBTdwIL0d2SYvKMIonhXLMV55B402DfteZc/qnE3EIgqgQX?=
- =?us-ascii?Q?XXyu/GVzzqWeWtLzfWpRkTxXvJaOthr3f2x3h6DPqd4wf64jFgtDfnb3plq3?=
- =?us-ascii?Q?abDewgjXSYcWncjTxl2k/1yfLMlqvJAjOlFBPLyiotsPfI0xphw4ZsQbUnHv?=
- =?us-ascii?Q?4jj16yfNoM1Bd3pKBdYlmQGT9zjOJKSJh63O1p6kXoO5+nlqaTViqQu9+k/t?=
- =?us-ascii?Q?+QjiyqVwmBX0tkIAuQr1PeSKBWjFPtjAp7++ZwhaFiU7yg6zjgpTVcwJuDb6?=
- =?us-ascii?Q?InZO87mPlex8xZfGEgK5SsZ7XqWWvQUYV+4+JsTd4D1CrC3Mz+Whz3+DsZDn?=
- =?us-ascii?Q?nTBy/pHCRSN+bN1F0m12oFK79T1qxbaaO5LhSURUyKf+ag5ep1JXLVeuIgEm?=
- =?us-ascii?Q?lEUfP71Ya2Ogo3Oo0/4o8txeGClx+gKaWVYX1jnv8YpuIAIa1xsDOQo5i0uN?=
- =?us-ascii?Q?BpiA0q6QdJTPOi5sG1szfhL/6jKjNzLrSCTFrQgzhCASWoSys1XRQgVzl3yA?=
- =?us-ascii?Q?x3PFvS6RY2irxh4YJHwtCUfz9MY9KPgXf4sSfja309vJ0bBPXct6UhzZji3H?=
- =?us-ascii?Q?kfQqnCbZ4Aj3pWPKbVEFfXSQLg0g3tbJWb7wMfFEvjsqbj4TZQ7k2l+a/gAz?=
- =?us-ascii?Q?TbrEKUX28bB/2icuax4aS7qmauU5EA3ZxFdJ2ktJQWaHNOymI3JJxcVKfKqd?=
- =?us-ascii?Q?NMJsQ47Jne18BAN8UGqCXiFpx8+wcV0rYx8JIlIG/Lunng4AyNpQT3Q78eS+?=
- =?us-ascii?Q?LXmsDSAFlLA+7/i3ql7MJSAVBVmsqRUq08sHCcgqhYqLKsjM3K9z6qcXsNyf?=
- =?us-ascii?Q?loNK1auxXeBaHVo3NbfeLxqCFRlhpX7XNCioItCXRez/qGBiVJX2O2Hq1fTp?=
- =?us-ascii?Q?OmCT3iiD91vKQlPYwXvkMQKHSnXNXqWIQGuUR/tvYj4d250P7Rc5/R+2/YlG?=
- =?us-ascii?Q?vexv7sre0prIOFHsnbk7g3VFXBp8spc3fS/GTn7za3ju3Olj4ZKA+blOm8ij?=
- =?us-ascii?Q?XvgkaxPU8vtMQsNAxzXmfvrM+UEj?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?X+uK8PZC9Co3eeQFijFjprSXqPDbbkMvf7XtvEB/a2A0lrAZj61gXnZgaGom?=
- =?us-ascii?Q?8j5D2sD0v9HK5zxgFStN3za67ga4l63lEyTiI0QGXEe9VZUv9N9sJZx+w4hq?=
- =?us-ascii?Q?uAaFMa51CzK3jzvKQmqkMkt07Lynh4SuDEADS0vmR8ySvxoT3luFOl0jFz/H?=
- =?us-ascii?Q?Zt6V4p1wlGeDe5hvTXXLdO2a1Kd1eGGmHqypShcWQiauDv8lOr1B8d8Nb82f?=
- =?us-ascii?Q?QNGgvIM1EPn34qNVaTCU9ZKKCGkAFIzaLdltu8NGdsOy/17gM+e76PsMdt5C?=
- =?us-ascii?Q?EobuqvB7/KmSQ2miAH2cTEcm7vI0FbJxJpH2z1j6nxbI9G9ClEJUiXl5Vg3u?=
- =?us-ascii?Q?xAojR3LCurxMMR4owtEcp4rMHQg2MLJjYHMT7+VQXyFZyrDIgQBeflLK+UbR?=
- =?us-ascii?Q?R/WqWFKHkwHIfA+82DFOA6/dBGQV1b/PHJViDol4rWxIUDmN1yR/bctPoQRW?=
- =?us-ascii?Q?6w6J9E0FuWfcTQR3xJAAwY7Cl6DDz85zq57vR9lfZ3Al8sBd+Q3Ybe+/yArZ?=
- =?us-ascii?Q?nU/tqFltPdeE1XZg1qpPH7yIUup5/vlnATIHasat6XKfuMuhWcbahJHi2PL+?=
- =?us-ascii?Q?Mx82JzTvX8AbUjDEaOXiMGG1AhYTM8XZIXwKIs/VEFP8vbAekU1iyey7VLw1?=
- =?us-ascii?Q?JSVFQdRlw6iQyAtiSKDcV1ZhZXFZ+sP2Fwjt4XfFPN6KMqo5yb4oXsmPjqGe?=
- =?us-ascii?Q?cgUUGl28ZirE7vkM15MJtrv73ydfvr/fjYV1UyeXCIF4HZ2uOpt8V3uF5wqT?=
- =?us-ascii?Q?T3CcfzD+21LDVNNtmNtRnQhD/4hh/sHfY5J8dXQFHP+O1jkxt64QgmIWlxEw?=
- =?us-ascii?Q?x/Bg92HHBJnaXJs634ZKFPXxdWCIZWRt/bABOGLm5uS9XOwE30kGO88W/7vm?=
- =?us-ascii?Q?Tp35ByUih959md56x5mwfPQ/Hw43tk2QLNtdxGd5kmQdXYbuQE8+OY3Pi2QJ?=
- =?us-ascii?Q?d7Rj2iy+qUbm3SuPds0V6AqLOivrS+TFXd7WN1QjcXrR02chJmKECt9bEbpT?=
- =?us-ascii?Q?dvJBRmF7aJ0fDDsDIxzuZiEcbMPd+MCQOVR7EELpDMptPpJWpfktx+1uTM14?=
- =?us-ascii?Q?lL32AiCHfAjOs/sBjYz1lnVc11oDK9SA5TQBDjH0un+iR0zy2KcsyLO5cK9Z?=
- =?us-ascii?Q?tbbGmSBgqrq4ddV3z6NPxc02fSPmFSqeGm39AVrzEjWTZ7+m0YyyuTaI0wEc?=
- =?us-ascii?Q?fchEwyhOD6AKZDOy7WZjBXwIwCDcVaK+RnF13/Mfg0IIt9I/hA5528cy9lIz?=
- =?us-ascii?Q?qWn/CQ1UJmM5mwbjWxMKJdoyCEG6ak/2ecNFde3Jr1Sj+ovpdB6XGDFj2Ore?=
- =?us-ascii?Q?GpPR6/f1wGtaSWB37MRobKv5CeFfBUgLDrpsDoRrdrYT0f99eesGcFOzs0Mh?=
- =?us-ascii?Q?JYdy7nXZF7SZKnBt/VmhIX2NewvZhInbEkR9DWH7+J3r09MQY0YsCnnEacKZ?=
- =?us-ascii?Q?pDaaxBvCU+bxXFRwTZDMchUHqrkt/vy42vTcEgvtrzhw+PET+xVVXCLUF1Vj?=
- =?us-ascii?Q?v64cZYM3L0g/8kFExWIhKS55KfZ+Sk2CN64XooQNAFv1nm267q6LRa7cB+zy?=
- =?us-ascii?Q?TUL3Z4NugaUn/W+jdpE=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3c7c3997-f92d-4fe1-f9e6-08dd527d1e43
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Feb 2025 13:39:09.0611
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: d6fv6g4zAJDC8RPA1EmLkweI8zCFxUQTPFJHIqzixkEJI1S6fj74j+6PkKgjPg3S
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6978
 
-On Fri, Feb 21, 2025 at 04:27:32AM +0000, Tian, Kevin wrote:
-> With that in mind we don't need provide reason for the static node,
-> and IOMMU_EVENTQ_FLAG_LOST_EVENTS sounds closer to the
-> real intention.
+On Fri, 2025-02-21 at 10:36 +1100, NeilBrown wrote:
+> fuse already uses d_splice_alias() to ensure an appropriate dentry is
+> found for a newly created dentry.  Now that ->mkdir can return that
+> dentry we do so.
+>=20
+> This requires changing create_new_entry() to return a dentry and
+> handling that change in all callers.
+>=20
+> Signed-off-by: NeilBrown <neilb@suse.de>
+> ---
+>  fs/fuse/dir.c | 55 +++++++++++++++++++++++++++++++--------------------
+>  1 file changed, 34 insertions(+), 21 deletions(-)
+>=20
+> diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+> index 5bb65f38bfb8..8c44c9c73c38 100644
+> --- a/fs/fuse/dir.c
+> +++ b/fs/fuse/dir.c
+> @@ -781,9 +781,9 @@ static int fuse_atomic_open(struct inode *dir, struct=
+ dentry *entry,
+>  /*
+>   * Code shared between mknod, mkdir, symlink and link
+>   */
+> -static int create_new_entry(struct mnt_idmap *idmap, struct fuse_mount *=
+fm,
+> -			    struct fuse_args *args, struct inode *dir,
+> -			    struct dentry *entry, umode_t mode)
+> +static struct dentry *create_new_entry(struct mnt_idmap *idmap, struct f=
+use_mount *fm,
+> +				       struct fuse_args *args, struct inode *dir,
+> +				       struct dentry *entry, umode_t mode)
+>  {
+>  	struct fuse_entry_out outarg;
+>  	struct inode *inode;
+> @@ -792,11 +792,11 @@ static int create_new_entry(struct mnt_idmap *idmap=
+, struct fuse_mount *fm,
+>  	struct fuse_forget_link *forget;
+> =20
+>  	if (fuse_is_bad(dir))
+> -		return -EIO;
+> +		return ERR_PTR(-EIO);
+> =20
+>  	forget =3D fuse_alloc_forget();
+>  	if (!forget)
+> -		return -ENOMEM;
+> +		return ERR_PTR(-ENOMEM);
+> =20
+>  	memset(&outarg, 0, sizeof(outarg));
+>  	args->nodeid =3D get_node_id(dir);
+> @@ -826,29 +826,27 @@ static int create_new_entry(struct mnt_idmap *idmap=
+, struct fuse_mount *fm,
+>  			  &outarg.attr, ATTR_TIMEOUT(&outarg), 0, 0);
+>  	if (!inode) {
+>  		fuse_queue_forget(fm->fc, forget, outarg.nodeid, 1);
+> -		return -ENOMEM;
+> +		return ERR_PTR(-ENOMEM);
+>  	}
+>  	kfree(forget);
+> =20
+>  	d_drop(entry);
+>  	d =3D d_splice_alias(inode, entry);
+>  	if (IS_ERR(d))
+> -		return PTR_ERR(d);
+> +		return d;
+> =20
+> -	if (d) {
+> +	if (d)
+>  		fuse_change_entry_timeout(d, &outarg);
+> -		dput(d);
+> -	} else {
+> +	else
+>  		fuse_change_entry_timeout(entry, &outarg);
+> -	}
+>  	fuse_dir_changed(dir);
+> -	return 0;
+> +	return d;
+> =20
+>   out_put_forget_req:
+>  	if (err =3D=3D -EEXIST)
+>  		fuse_invalidate_entry(entry);
+>  	kfree(forget);
+> -	return err;
+> +	return ERR_PTR(err);
+>  }
+> =20
+>  static int fuse_mknod(struct mnt_idmap *idmap, struct inode *dir,
+> @@ -856,6 +854,7 @@ static int fuse_mknod(struct mnt_idmap *idmap, struct=
+ inode *dir,
+>  {
+>  	struct fuse_mknod_in inarg;
+>  	struct fuse_mount *fm =3D get_fuse_mount(dir);
+> +	struct dentry *de;
+>  	FUSE_ARGS(args);
+> =20
+>  	if (!fm->fc->dont_mask)
+> @@ -871,7 +870,12 @@ static int fuse_mknod(struct mnt_idmap *idmap, struc=
+t inode *dir,
+>  	args.in_args[0].value =3D &inarg;
+>  	args.in_args[1].size =3D entry->d_name.len + 1;
+>  	args.in_args[1].value =3D entry->d_name.name;
+> -	return create_new_entry(idmap, fm, &args, dir, entry, mode);
+> +	de =3D create_new_entry(idmap, fm, &args, dir, entry, mode);
+> +	if (IS_ERR(de))
+> +		return PTR_ERR(de);
+> +	if (de)
+> +		dput(de);
+> +	return 0;
+>  }
+> =20
+>  static int fuse_create(struct mnt_idmap *idmap, struct inode *dir,
+> @@ -917,7 +921,7 @@ static struct dentry *fuse_mkdir(struct mnt_idmap *id=
+map, struct inode *dir,
+>  	args.in_args[0].value =3D &inarg;
+>  	args.in_args[1].size =3D entry->d_name.len + 1;
+>  	args.in_args[1].value =3D entry->d_name.name;
+> -	return ERR_PTR(create_new_entry(idmap, fm, &args, dir, entry, S_IFDIR))=
+;
+> +	return create_new_entry(idmap, fm, &args, dir, entry, S_IFDIR);
+>  }
+> =20
+>  static int fuse_symlink(struct mnt_idmap *idmap, struct inode *dir,
+> @@ -925,6 +929,7 @@ static int fuse_symlink(struct mnt_idmap *idmap, stru=
+ct inode *dir,
+>  {
+>  	struct fuse_mount *fm =3D get_fuse_mount(dir);
+>  	unsigned len =3D strlen(link) + 1;
+> +	struct dentry *de;
+>  	FUSE_ARGS(args);
+> =20
+>  	args.opcode =3D FUSE_SYMLINK;
+> @@ -934,7 +939,12 @@ static int fuse_symlink(struct mnt_idmap *idmap, str=
+uct inode *dir,
+>  	args.in_args[1].value =3D entry->d_name.name;
+>  	args.in_args[2].size =3D len;
+>  	args.in_args[2].value =3D link;
+> -	return create_new_entry(idmap, fm, &args, dir, entry, S_IFLNK);
+> +	de =3D create_new_entry(idmap, fm, &args, dir, entry, S_IFLNK);
+> +	if (IS_ERR(de))
+> +		return PTR_ERR(de);
+> +	if (de)
+> +		dput(de);
+> +	return 0;
+>  }
+> =20
+>  void fuse_flush_time_update(struct inode *inode)
+> @@ -1117,7 +1127,7 @@ static int fuse_rename2(struct mnt_idmap *idmap, st=
+ruct inode *olddir,
+>  static int fuse_link(struct dentry *entry, struct inode *newdir,
+>  		     struct dentry *newent)
+>  {
+> -	int err;
+> +	struct dentry *de;
+>  	struct fuse_link_in inarg;
+>  	struct inode *inode =3D d_inode(entry);
+>  	struct fuse_mount *fm =3D get_fuse_mount(inode);
+> @@ -1131,13 +1141,16 @@ static int fuse_link(struct dentry *entry, struct=
+ inode *newdir,
+>  	args.in_args[0].value =3D &inarg;
+>  	args.in_args[1].size =3D newent->d_name.len + 1;
+>  	args.in_args[1].value =3D newent->d_name.name;
+> -	err =3D create_new_entry(&invalid_mnt_idmap, fm, &args, newdir, newent,=
+ inode->i_mode);
+> -	if (!err)
+> +	de =3D create_new_entry(&invalid_mnt_idmap, fm, &args, newdir, newent, =
+inode->i_mode);
+> +	if (!IS_ERR(de)) {
+> +		if (de)
+> +			dput(de);
+> +		de =3D NULL;
+>  		fuse_update_ctime_in_cache(inode);
+> -	else if (err =3D=3D -EINTR)
+> +	} else if (PTR_ERR(de) =3D=3D -EINTR)
+>  		fuse_invalidate_attr(inode);
+> =20
+> -	return err;
+> +	return PTR_ERR(de);
+>  }
+> =20
+>  static void fuse_fillattr(struct mnt_idmap *idmap, struct inode *inode,
 
-I also like lost events - it is simple and to the point
+Pretty straightforward.
 
-Jason
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
 
