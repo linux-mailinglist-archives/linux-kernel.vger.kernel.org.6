@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-526418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C51FA3FE65
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 19:12:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17948A3FE76
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 19:12:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31E18705FB7
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 18:11:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8A63173634
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 18:11:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35F7F2512E6;
-	Fri, 21 Feb 2025 18:11:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A4BD25290A;
+	Fri, 21 Feb 2025 18:11:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CUO5XUpE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JZZGK22V"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 798B624CEEE;
-	Fri, 21 Feb 2025 18:11:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 547A42512C3;
+	Fri, 21 Feb 2025 18:11:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740161466; cv=none; b=fk5Dmn751wV+w6TgizeUg9rcY/oLBIohXsoLgJ6UnjdX+bfJrFM+zEquyDn9NtPjz09PXjy0wuPNIQ0LKsqoo0OfjWcypv6Mfs6jj3QwN8XPWJDYC47m+UFjU/+SMhwxH03V3AbG3ab06G/oQpuulN2Mae7PKfXdZPmatWwwOy4=
+	t=1740161469; cv=none; b=Mex5V7+klBwI9Cw5Q5fBqDDVnWEzRNRtbvvqtnz5ggJWhO1YGa5SsXGcVwkBXSzu6CmgHKh4ca+QezV1G7D49iptHyJhMtaCN3fTB5/WeLJ1SfqbLJldxTg206WJNxtxK3npwCkmmG+S5+E7H/5jwUSgLONMROXOgYpdAPhhAZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740161466; c=relaxed/simple;
-	bh=mb3+FQLiAdF0GxPdTxxNZ1nsfmB1mwgJcruotyetN9Y=;
+	s=arc-20240116; t=1740161469; c=relaxed/simple;
+	bh=EVmHHukyTUJx0XgJEoNyDZAx0PSmeLa2YBOQ2VU+sxw=;
 	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=FfKwKMhJKgFzN6AljS0xTh6i4UD+xHj5fvLvNh8jI+gF3uoGS0tSRcG2UI78iUEQrOzzDSzlPlxe5VtIYfQ6htdloGkZqEO8AyqW6PRsWwH4uNpOu8yNiPl7fveTxfYsSIeLjJciSTLRS03xIpdc6LeNX8FSllwnTex7QDi0+FE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CUO5XUpE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 217A1C4CED6;
-	Fri, 21 Feb 2025 18:11:06 +0000 (UTC)
+	 Message-Id:Subject; b=E79N8oMXUje/8F4Pss0qU4RF4DxawEIVJNg9RcSGZcB4KpXp5FKRnMkSVDZWnZ111p9LcPY7kMnTIMaYvMk9h7Fnb89IPEZkghYrjFYdmxOjjW3A9ccu7+vNdiDvxgrlQfX55UXO00W8ti67TcBr663JUQXSBKp+9rzgOxhhOlg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JZZGK22V; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49F53C4AF0B;
+	Fri, 21 Feb 2025 18:11:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740161466;
-	bh=mb3+FQLiAdF0GxPdTxxNZ1nsfmB1mwgJcruotyetN9Y=;
+	s=k20201202; t=1740161468;
+	bh=EVmHHukyTUJx0XgJEoNyDZAx0PSmeLa2YBOQ2VU+sxw=;
 	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=CUO5XUpE5/sksVVDBuF3JnxmN+bHo+c1O9ILuMJqjeQdO+1d4uH9jXDth3xbNBetl
-	 b9lCeEagUllp9vXDf12sYZJscUOgiOjcu57Es5G3iiVC8zOpU7vLE/MyHdotn1oJEA
-	 VPiOP12WJaT2QMAXEL/G9HIN+dllsF+42fpaZZTSuTdqBkXE/i8l7lFuLgpCXjTPYA
-	 u2/TtfZuka8QjTNTQqME60gh7MZErwn2Gbis8sy2tusEo2rDNqEMHSrlYZycoxpgLM
-	 qBjp06wjA6Jk/WF5wqsV/5fntE6+n/eM/SsyiFpdu13hL8xYkpSueAGhdYn3Kt5w0W
-	 pwOjHKW9HN2XQ==
-Date: Fri, 21 Feb 2025 12:11:04 -0600
+	b=JZZGK22VL9Uxg1/rwXjmZ5LhcuiPcm8xTpiAbFMyj/80C97sQEiw9oBqKbBly8yb8
+	 o/hpYwzDy64Nt5s5BNjHTEI4fxXVnghuQyNcwYXdC6E9tQnNZxwgJ3a/dyYa9/u8JW
+	 nnlRyw2eeGYd0HEmMT6KKcLC2u+gt7k8D22l7qUIDc1vy4KH3jbwS3WTM66I3SSzjH
+	 OE8D+jc8ExAQarkMNWZGOFv2NjKULR6pJjAj+XF6soVXbUoQ28vzy+mMatoSEBMthL
+	 858uWe4LgAhxkVAlMf5vlMb+lMqbq+xEsp+/FEjzDlfu5oti6oGdYRJXZmkJbXktJn
+	 8/feN88D9ghNA==
+Date: Fri, 21 Feb 2025 12:11:06 -0600
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,78 +50,39 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Simon Sun <simon.sun@yunjingtech.com>, linux-kernel@vger.kernel.org, 
- linux-usb@vger.kernel.org, devicetree@vger.kernel.org, 
- Project_Global_Chrome_Upstream_Group@mediatek.com, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Alexandre Mergnat <amergnat@baylibre.com>, Macpaul Lin <macpaul@gmail.com>, 
- Conor Dooley <conor+dt@kernel.org>, Bear Wang <bear.wang@mediatek.com>, 
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
- Yow-Shin Liou <yow-shin.liou@mediatek.com>, 
- Fabien Parent <fparent@baylibre.com>, 
- Chris-qj chen <chris-qj.chen@mediatek.com>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- Pablo Sun <pablo.sun@mediatek.com>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>
-To: Macpaul Lin <macpaul.lin@mediatek.com>
-In-Reply-To: <20250221144941.2844333-1-macpaul.lin@mediatek.com>
-References: <20250221144941.2844333-1-macpaul.lin@mediatek.com>
-Message-Id: <174015998416.3469778.7696460950092748736.robh@kernel.org>
-Subject: Re: [PATCH v5] arm64: dts: mediatek: mt8395-genio-1200-evk: add
- support for TCPC port
+Cc: linux-kernel@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
+ Stephan Gerhold <stephan.gerhold@linaro.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, devicetree@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, Johan Hovold <johan@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Bjorn Andersson <andersson@kernel.org>
+To: Abel Vesa <abel.vesa@linaro.org>
+In-Reply-To: <20250221-x1e80100-crypto-v2-1-413ecf68dcd7@linaro.org>
+References: <20250221-x1e80100-crypto-v2-1-413ecf68dcd7@linaro.org>
+Message-Id: <174015998491.3469936.3508460058215477115.robh@kernel.org>
+Subject: Re: [PATCH v2] arm64: dts: qcom: x1e80100: Add crypto engine
 
 
-On Fri, 21 Feb 2025 22:49:41 +0800, Macpaul Lin wrote:
-> From: Fabien Parent <fparent@baylibre.com>
+On Fri, 21 Feb 2025 15:07:03 +0200, Abel Vesa wrote:
+> On X Elite, there is a crypto engine IP block similar to ones found on
+> SM8x50 platforms.
 > 
-> Enable USB Type-C support on MediaTek MT8395 Genio 1200 EVK by adding
-> configuration for TCPC Port, USB-C connector, MUX IT5205 and related
-> settings.
+> Describe the crypto engine and its BAM.
 > 
-> Configure dual role switch capability, set up PD (Power Delivery) profiles,
-> and establish endpoints for SS (SuperSpeed) and HS (HighSpeed) USB.
-> 
-> Update pinctrl configurations for U3 P0 VBus default pins and set dr_mode
-> to "otg" for OTG (On-The-Go) mode operation.
-> 
-> Add ITE IT5205 (TYPEC MUX) under I2C2 bus and configure its properties;
-> also add references and configurations to 'typec-mux' node.
-> 
-> Signed-off-by: Fabien Parent <fparent@baylibre.com>
-> Signed-off-by: Yow-Shin Liou <yow-shin.liou@mediatek.com>
-> Signed-off-by: Simon Sun <simon.sun@yunjingtech.com>
-> Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
+> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
 > ---
->  .../dts/mediatek/mt8395-genio-1200-evk.dts    | 100 ++++++++++++++++++
->  1 file changed, 100 insertions(+)
+> The dt-binding schema update for the x1e80100 compatible is here
+> (already picked up):
 > 
-> Changes for v2:
->  - Drop the no need '1/2' DT Schema update patch in the 1st version.
->  - Fix indent for 'ports' node, it should under the 'connector' node.
->  - Correct the index for 'port@0' and 'port@1' node.
-> 
-> Changes for v3:
->  - Correct the order between new added nodes.
-> 
-> Changes for v4:
->  - Reorder for property 'op-sink-microwatt'.
->  - Fix indentation for 'source-pdos' and 'sink-pdos' nodes.
->  - Correct node 'pin-cmd-dat' with 'pins-vbus'.
->  - Add both Highspeed and Superspeed ports to ssusb0 port.
->  - Set 'role-switch-default-mode' = "peripheral" for ssusb0 port.
->  - Rename endpoint of USB data port to 'mtu3_hs0_role_sw' and
->    'mtu3_ss0_role_sw'.
->  - Drop it5205fn phandle for node typec-mux@48.
->  - Reorder properties of typec-mux@48
->  - Add "Reviewed-by:" tag. Thanks!
-> 
-> Changes for v5:
->  - Squash two patches into one patch and refine commit messages:
->    suggested by reviewer.
->  - Drop 'role-switch-default-mode'
->  - Add altmodes settings
->  - Drop 'Reviewed-by:' tag since the two sub patches has been combined
->    into a new patch.
+> https://lore.kernel.org/all/20250213-dt-bindings-qcom-qce-x1e80100-v1-1-d17ef73a1c12@linaro.org/
+> ---
+> Changes in v2:
+> - Added EE and channels numbers in BAM node, like Stephan suggested.
+> - Added v1.7.4 compatible as well.
+> - Link to v1: https://lore.kernel.org/r/20250213-x1e80100-crypto-v1-1-f93afdd4025a@linaro.org
+> ---
+>  arch/arm64/boot/dts/qcom/x1e80100.dtsi | 32 ++++++++++++++++++++++++++++++++
+>  1 file changed, 32 insertions(+)
 > 
 
 
@@ -139,10 +100,118 @@ make sure dt-schema is up to date:
   pip3 install dtschema --upgrade
 
 
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/mediatek/' for 20250221144941.2844333-1-macpaul.lin@mediatek.com:
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/qcom/' for 20250221-x1e80100-crypto-v2-1-413ecf68dcd7@linaro.org:
 
-arch/arm64/boot/dts/mediatek/mt8395-genio-1200-evk.dtb: usb@11201000: 'ports' does not match any of the regexes: '^usb@[0-9a-f]+$', 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/usb/mediatek,mtu3.yaml#
+arch/arm64/boot/dts/qcom/x1e80100-dell-xps13-9345.dtb: crypto@1dfa000: compatible: 'oneOf' conditional failed, one must be fixed:
+	['qcom,x1e80100-qce', 'qcom,sm8150-qce', 'qcom,qce'] is too long
+	'qcom,crypto-v5.1' was expected
+	'qcom,crypto-v5.4' was expected
+	'qcom,x1e80100-qce' is not one of ['qcom,ipq4019-qce', 'qcom,sm8150-qce']
+	'qcom,x1e80100-qce' is not one of ['qcom,ipq6018-qce', 'qcom,ipq8074-qce', 'qcom,ipq9574-qce', 'qcom,msm8996-qce', 'qcom,qcm2290-qce', 'qcom,sdm845-qce', 'qcom,sm6115-qce']
+	'qcom,x1e80100-qce' is not one of ['qcom,qcs8300-qce', 'qcom,sa8775p-qce', 'qcom,sc7280-qce', 'qcom,sm6350-qce', 'qcom,sm8250-qce', 'qcom,sm8350-qce', 'qcom,sm8450-qce', 'qcom,sm8550-qce', 'qcom,sm8650-qce', 'qcom,sm8750-qce']
+	'qcom,qce' was expected
+	'qcom,ipq4019-qce' was expected
+	from schema $id: http://devicetree.org/schemas/crypto/qcom-qce.yaml#
+arch/arm64/boot/dts/qcom/x1e80100-dell-xps13-9345.dtb: /soc@0/crypto@1dfa000: failed to match any schema with compatible: ['qcom,x1e80100-qce', 'qcom,sm8150-qce', 'qcom,qce']
+arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dtb: crypto@1dfa000: compatible: 'oneOf' conditional failed, one must be fixed:
+	['qcom,x1e80100-qce', 'qcom,sm8150-qce', 'qcom,qce'] is too long
+	'qcom,crypto-v5.1' was expected
+	'qcom,crypto-v5.4' was expected
+	'qcom,x1e80100-qce' is not one of ['qcom,ipq4019-qce', 'qcom,sm8150-qce']
+	'qcom,x1e80100-qce' is not one of ['qcom,ipq6018-qce', 'qcom,ipq8074-qce', 'qcom,ipq9574-qce', 'qcom,msm8996-qce', 'qcom,qcm2290-qce', 'qcom,sdm845-qce', 'qcom,sm6115-qce']
+	'qcom,x1e80100-qce' is not one of ['qcom,qcs8300-qce', 'qcom,sa8775p-qce', 'qcom,sc7280-qce', 'qcom,sm6350-qce', 'qcom,sm8250-qce', 'qcom,sm8350-qce', 'qcom,sm8450-qce', 'qcom,sm8550-qce', 'qcom,sm8650-qce', 'qcom,sm8750-qce']
+	'qcom,qce' was expected
+	'qcom,ipq4019-qce' was expected
+	from schema $id: http://devicetree.org/schemas/crypto/qcom-qce.yaml#
+arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dtb: /soc@0/crypto@1dfa000: failed to match any schema with compatible: ['qcom,x1e80100-qce', 'qcom,sm8150-qce', 'qcom,qce']
+arch/arm64/boot/dts/qcom/x1e001de-devkit.dtb: crypto@1dfa000: compatible: 'oneOf' conditional failed, one must be fixed:
+	['qcom,x1e80100-qce', 'qcom,sm8150-qce', 'qcom,qce'] is too long
+	'qcom,crypto-v5.1' was expected
+	'qcom,crypto-v5.4' was expected
+	'qcom,x1e80100-qce' is not one of ['qcom,ipq4019-qce', 'qcom,sm8150-qce']
+	'qcom,x1e80100-qce' is not one of ['qcom,ipq6018-qce', 'qcom,ipq8074-qce', 'qcom,ipq9574-qce', 'qcom,msm8996-qce', 'qcom,qcm2290-qce', 'qcom,sdm845-qce', 'qcom,sm6115-qce']
+	'qcom,x1e80100-qce' is not one of ['qcom,qcs8300-qce', 'qcom,sa8775p-qce', 'qcom,sc7280-qce', 'qcom,sm6350-qce', 'qcom,sm8250-qce', 'qcom,sm8350-qce', 'qcom,sm8450-qce', 'qcom,sm8550-qce', 'qcom,sm8650-qce', 'qcom,sm8750-qce']
+	'qcom,qce' was expected
+	'qcom,ipq4019-qce' was expected
+	from schema $id: http://devicetree.org/schemas/crypto/qcom-qce.yaml#
+arch/arm64/boot/dts/qcom/x1e001de-devkit.dtb: /soc@0/crypto@1dfa000: failed to match any schema with compatible: ['qcom,x1e80100-qce', 'qcom,sm8150-qce', 'qcom,qce']
+arch/arm64/boot/dts/qcom/x1e80100-hp-omnibook-x14.dtb: crypto@1dfa000: compatible: 'oneOf' conditional failed, one must be fixed:
+	['qcom,x1e80100-qce', 'qcom,sm8150-qce', 'qcom,qce'] is too long
+	'qcom,crypto-v5.1' was expected
+	'qcom,crypto-v5.4' was expected
+	'qcom,x1e80100-qce' is not one of ['qcom,ipq4019-qce', 'qcom,sm8150-qce']
+	'qcom,x1e80100-qce' is not one of ['qcom,ipq6018-qce', 'qcom,ipq8074-qce', 'qcom,ipq9574-qce', 'qcom,msm8996-qce', 'qcom,qcm2290-qce', 'qcom,sdm845-qce', 'qcom,sm6115-qce']
+	'qcom,x1e80100-qce' is not one of ['qcom,qcs8300-qce', 'qcom,sa8775p-qce', 'qcom,sc7280-qce', 'qcom,sm6350-qce', 'qcom,sm8250-qce', 'qcom,sm8350-qce', 'qcom,sm8450-qce', 'qcom,sm8550-qce', 'qcom,sm8650-qce', 'qcom,sm8750-qce']
+	'qcom,qce' was expected
+	'qcom,ipq4019-qce' was expected
+	from schema $id: http://devicetree.org/schemas/crypto/qcom-qce.yaml#
+arch/arm64/boot/dts/qcom/x1e80100-hp-omnibook-x14.dtb: /soc@0/crypto@1dfa000: failed to match any schema with compatible: ['qcom,x1e80100-qce', 'qcom,sm8150-qce', 'qcom,qce']
+arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dtb: crypto@1dfa000: compatible: 'oneOf' conditional failed, one must be fixed:
+	['qcom,x1e80100-qce', 'qcom,sm8150-qce', 'qcom,qce'] is too long
+	'qcom,crypto-v5.1' was expected
+	'qcom,crypto-v5.4' was expected
+	'qcom,x1e80100-qce' is not one of ['qcom,ipq4019-qce', 'qcom,sm8150-qce']
+	'qcom,x1e80100-qce' is not one of ['qcom,ipq6018-qce', 'qcom,ipq8074-qce', 'qcom,ipq9574-qce', 'qcom,msm8996-qce', 'qcom,qcm2290-qce', 'qcom,sdm845-qce', 'qcom,sm6115-qce']
+	'qcom,x1e80100-qce' is not one of ['qcom,qcs8300-qce', 'qcom,sa8775p-qce', 'qcom,sc7280-qce', 'qcom,sm6350-qce', 'qcom,sm8250-qce', 'qcom,sm8350-qce', 'qcom,sm8450-qce', 'qcom,sm8550-qce', 'qcom,sm8650-qce', 'qcom,sm8750-qce']
+	'qcom,qce' was expected
+	'qcom,ipq4019-qce' was expected
+	from schema $id: http://devicetree.org/schemas/crypto/qcom-qce.yaml#
+arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dtb: /soc@0/crypto@1dfa000: failed to match any schema with compatible: ['qcom,x1e80100-qce', 'qcom,sm8150-qce', 'qcom,qce']
+arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: crypto@1dfa000: compatible: 'oneOf' conditional failed, one must be fixed:
+	['qcom,x1e80100-qce', 'qcom,sm8150-qce', 'qcom,qce'] is too long
+	'qcom,crypto-v5.1' was expected
+	'qcom,crypto-v5.4' was expected
+	'qcom,x1e80100-qce' is not one of ['qcom,ipq4019-qce', 'qcom,sm8150-qce']
+	'qcom,x1e80100-qce' is not one of ['qcom,ipq6018-qce', 'qcom,ipq8074-qce', 'qcom,ipq9574-qce', 'qcom,msm8996-qce', 'qcom,qcm2290-qce', 'qcom,sdm845-qce', 'qcom,sm6115-qce']
+	'qcom,x1e80100-qce' is not one of ['qcom,qcs8300-qce', 'qcom,sa8775p-qce', 'qcom,sc7280-qce', 'qcom,sm6350-qce', 'qcom,sm8250-qce', 'qcom,sm8350-qce', 'qcom,sm8450-qce', 'qcom,sm8550-qce', 'qcom,sm8650-qce', 'qcom,sm8750-qce']
+	'qcom,qce' was expected
+	'qcom,ipq4019-qce' was expected
+	from schema $id: http://devicetree.org/schemas/crypto/qcom-qce.yaml#
+arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: /soc@0/crypto@1dfa000: failed to match any schema with compatible: ['qcom,x1e80100-qce', 'qcom,sm8150-qce', 'qcom,qce']
+arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus15.dtb: crypto@1dfa000: compatible: 'oneOf' conditional failed, one must be fixed:
+	['qcom,x1e80100-qce', 'qcom,sm8150-qce', 'qcom,qce'] is too long
+	'qcom,crypto-v5.1' was expected
+	'qcom,crypto-v5.4' was expected
+	'qcom,x1e80100-qce' is not one of ['qcom,ipq4019-qce', 'qcom,sm8150-qce']
+	'qcom,x1e80100-qce' is not one of ['qcom,ipq6018-qce', 'qcom,ipq8074-qce', 'qcom,ipq9574-qce', 'qcom,msm8996-qce', 'qcom,qcm2290-qce', 'qcom,sdm845-qce', 'qcom,sm6115-qce']
+	'qcom,x1e80100-qce' is not one of ['qcom,qcs8300-qce', 'qcom,sa8775p-qce', 'qcom,sc7280-qce', 'qcom,sm6350-qce', 'qcom,sm8250-qce', 'qcom,sm8350-qce', 'qcom,sm8450-qce', 'qcom,sm8550-qce', 'qcom,sm8650-qce', 'qcom,sm8750-qce']
+	'qcom,qce' was expected
+	'qcom,ipq4019-qce' was expected
+	from schema $id: http://devicetree.org/schemas/crypto/qcom-qce.yaml#
+arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus15.dtb: /soc@0/crypto@1dfa000: failed to match any schema with compatible: ['qcom,x1e80100-qce', 'qcom,sm8150-qce', 'qcom,qce']
+arch/arm64/boot/dts/qcom/x1e80100-crd.dtb: crypto@1dfa000: compatible: 'oneOf' conditional failed, one must be fixed:
+	['qcom,x1e80100-qce', 'qcom,sm8150-qce', 'qcom,qce'] is too long
+	'qcom,crypto-v5.1' was expected
+	'qcom,crypto-v5.4' was expected
+	'qcom,x1e80100-qce' is not one of ['qcom,ipq4019-qce', 'qcom,sm8150-qce']
+	'qcom,x1e80100-qce' is not one of ['qcom,ipq6018-qce', 'qcom,ipq8074-qce', 'qcom,ipq9574-qce', 'qcom,msm8996-qce', 'qcom,qcm2290-qce', 'qcom,sdm845-qce', 'qcom,sm6115-qce']
+	'qcom,x1e80100-qce' is not one of ['qcom,qcs8300-qce', 'qcom,sa8775p-qce', 'qcom,sc7280-qce', 'qcom,sm6350-qce', 'qcom,sm8250-qce', 'qcom,sm8350-qce', 'qcom,sm8450-qce', 'qcom,sm8550-qce', 'qcom,sm8650-qce', 'qcom,sm8750-qce']
+	'qcom,qce' was expected
+	'qcom,ipq4019-qce' was expected
+	from schema $id: http://devicetree.org/schemas/crypto/qcom-qce.yaml#
+arch/arm64/boot/dts/qcom/x1e80100-crd.dtb: /soc@0/crypto@1dfa000: failed to match any schema with compatible: ['qcom,x1e80100-qce', 'qcom,sm8150-qce', 'qcom,qce']
+arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtb: crypto@1dfa000: compatible: 'oneOf' conditional failed, one must be fixed:
+	['qcom,x1e80100-qce', 'qcom,sm8150-qce', 'qcom,qce'] is too long
+	'qcom,crypto-v5.1' was expected
+	'qcom,crypto-v5.4' was expected
+	'qcom,x1e80100-qce' is not one of ['qcom,ipq4019-qce', 'qcom,sm8150-qce']
+	'qcom,x1e80100-qce' is not one of ['qcom,ipq6018-qce', 'qcom,ipq8074-qce', 'qcom,ipq9574-qce', 'qcom,msm8996-qce', 'qcom,qcm2290-qce', 'qcom,sdm845-qce', 'qcom,sm6115-qce']
+	'qcom,x1e80100-qce' is not one of ['qcom,qcs8300-qce', 'qcom,sa8775p-qce', 'qcom,sc7280-qce', 'qcom,sm6350-qce', 'qcom,sm8250-qce', 'qcom,sm8350-qce', 'qcom,sm8450-qce', 'qcom,sm8550-qce', 'qcom,sm8650-qce', 'qcom,sm8750-qce']
+	'qcom,qce' was expected
+	'qcom,ipq4019-qce' was expected
+	from schema $id: http://devicetree.org/schemas/crypto/qcom-qce.yaml#
+arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtb: /soc@0/crypto@1dfa000: failed to match any schema with compatible: ['qcom,x1e80100-qce', 'qcom,sm8150-qce', 'qcom,qce']
+arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus13.dtb: crypto@1dfa000: compatible: 'oneOf' conditional failed, one must be fixed:
+	['qcom,x1e80100-qce', 'qcom,sm8150-qce', 'qcom,qce'] is too long
+	'qcom,crypto-v5.1' was expected
+	'qcom,crypto-v5.4' was expected
+	'qcom,x1e80100-qce' is not one of ['qcom,ipq4019-qce', 'qcom,sm8150-qce']
+	'qcom,x1e80100-qce' is not one of ['qcom,ipq6018-qce', 'qcom,ipq8074-qce', 'qcom,ipq9574-qce', 'qcom,msm8996-qce', 'qcom,qcm2290-qce', 'qcom,sdm845-qce', 'qcom,sm6115-qce']
+	'qcom,x1e80100-qce' is not one of ['qcom,qcs8300-qce', 'qcom,sa8775p-qce', 'qcom,sc7280-qce', 'qcom,sm6350-qce', 'qcom,sm8250-qce', 'qcom,sm8350-qce', 'qcom,sm8450-qce', 'qcom,sm8550-qce', 'qcom,sm8650-qce', 'qcom,sm8750-qce']
+	'qcom,qce' was expected
+	'qcom,ipq4019-qce' was expected
+	from schema $id: http://devicetree.org/schemas/crypto/qcom-qce.yaml#
+arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus13.dtb: /soc@0/crypto@1dfa000: failed to match any schema with compatible: ['qcom,x1e80100-qce', 'qcom,sm8150-qce', 'qcom,qce']
 
 
 
