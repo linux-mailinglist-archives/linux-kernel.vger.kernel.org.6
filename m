@@ -1,140 +1,108 @@
-Return-Path: <linux-kernel+bounces-526689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BE98A40205
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 22:26:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74A4DA40202
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 22:26:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E2643B67E7
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 21:26:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B3FF819C7385
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 21:26:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 771592500B1;
-	Fri, 21 Feb 2025 21:26:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1EAE2185BE;
+	Fri, 21 Feb 2025 21:26:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ntbgDBND"
-Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com [209.85.221.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ON91Etgl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EBF520127D;
-	Fri, 21 Feb 2025 21:26:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1150A1E9B29;
+	Fri, 21 Feb 2025 21:26:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740173187; cv=none; b=eUyAWm08xxIVoxfRfBhXkbOS3Bzj4IhryPmA5S4kFo2CfuLJOvH/n5V//MalDL2+9/f7DCaJY8I9B1aYOL0dUSucnVtY2+X4bMGHBhStmt+wkkwwaf5uW2FNC1+f7NSqDKh0erU3HTpujeh9oe0muQGVRRdgIM+0a0tagUyE3Z0=
+	t=1740173169; cv=none; b=QHgLduRAbeZvqHM6AQmKHyO37gx9cAPJ08xK68EFCIfN/bMP1d189qDoDLY+pV2nHTYcyVtRe+qsqYdzG4SYQvlFi4bOvQDDT3BS2Pkrf0PNKOieHkLkGr7e0ALSdiaMSthrf2Erxdr53JaFQ/5KTAZEaDVV7pk0MUxb9DhNlf8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740173187; c=relaxed/simple;
-	bh=0JZr1OTYHU6I546M2sCDypnp4G0f0H3twdTm5RJTP0Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aPpiGba4tRW643GPBXZx6hNiG6dUmceVAz+1HCOM1ts4+mNm7MU1RePVyfoJyIW4oJuNCwvxantUq+hswgboHh2jUK2Gu33LRHdSueVCeCCgtgl140DXqQ5Xv78VA9DMpbcDMo6b09Q3emzu47mwSbrbGBfAgquBD1Z2KiF8pW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ntbgDBND; arc=none smtp.client-ip=209.85.221.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-52096b4e163so675237e0c.1;
-        Fri, 21 Feb 2025 13:26:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740173185; x=1740777985; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=reoZdkGd6IKDiFN/Zy14cGrpEppzK19WZOoOxv4BnGA=;
-        b=ntbgDBND9UleMurHkPbqIavhf4b5Ghnl+mEo+lRaduG9JY4xSO1+wybSn1FvQ5MyZj
-         +5ace4/Ei43xPD1WUqywC5cK2kbI7U/h5JTphH9B3A0vK1FzzL5T8R4f4yk4wutdfzs0
-         cI5NdbWwzNC1Cjrvi/HHz3S+vZ+0rAxIk10GhXGiwJteqjVnsO+fxduWvl6AI9tUzbyF
-         1z4WN5sz56NuZv4KYCnQr87ilZFuaX/Itu4bfbRUiEGCek10qWT4KiaFoMwd8c8wlaWp
-         R0W1XpZcHUARrH/IREleoQb5lRDQ+NRKnWM+zlyzkqdn3Ihc9vZYZUSyIaR4YJd0dQSf
-         efZw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740173185; x=1740777985;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=reoZdkGd6IKDiFN/Zy14cGrpEppzK19WZOoOxv4BnGA=;
-        b=HwtqY1tGB/5JfioyWo8dg53qw3Z0Os9Ui8D+ZFTIg5xCoUwLjzhSS8OLPsPQDVqgr1
-         OKK7oJVoFLLeHeskkIX9QswL0fXBP3f/tQCNW8g9msx0/AYNDTUw/8cY6J6xq8IYtOCE
-         3BiNuIXKTgrTFPXeEV5EuxN3/+LkzHkh0+iIJkRMrgHZKxLT3E0MaytABCie+w0cH6ur
-         y7UnZqk/flbDlQCyOq7hRSmrSqgmfFJKC6nJvPVGc9GYUrrhwyqcc+Ebc0BNcWMdTBz8
-         JcpmomyO7HypIY0BFDWRdnUnq5gTPqXIf9h/sIhG5T+gIggBWfmoYsa7lo5ohuauOrJI
-         c/Uw==
-X-Forwarded-Encrypted: i=1; AJvYcCV/4NuJZNEphdA8Rf4lq4TZvBKPVdVyPhmWYPEt8deJeXbFPuZBkVXbKSV8oBZk8gXaMT4h5K42hKrEX6I1@vger.kernel.org, AJvYcCXAQCIDan4OS1J54dyh92/uNHODrAns4hb2l0ymWu1Y8ihl8jJ9d/mDvQoQiTl16hW1nlLJC0LAJrjCcwRRzG3YYAk=@vger.kernel.org, AJvYcCXiijTHA1SP+fFKJ1kCzJzxlKEWp2S6AE4a+024I6/Y+gy0QToZm/deCcmkmAASu55YvZCp0tjZXnc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1DvgBu8J+4NI1K4489O4/CCZRjkJH326fmDLBBFN4Jy6UYmmz
-	JFXxk7sUE8hfk5Cp9mGacTG7vzDhL6SfUY6WS/YO4wkDMVvkDLoIJBO0WCTKFmvmYZOGI6WfuCT
-	2rrg+BoyIWcOEePWb21bMSbPezmU=
-X-Gm-Gg: ASbGncvU4gRj8Q0I4gHug6Bsv7kKkRtYQNIu7XZsus8Cy3k6E6byB+htzXod3V3H61r
-	UNjf2s6ZjtoWtknjSQqGjxjTbqlDN5AIRvEUf5uoZXZGUASojDzMtko72SDnnqjXIMQAM6o/V7b
-	Fw4qib5JSSuWiYQ6kQyDgJ5U/ff/+hnQaVHnaPQrHl
-X-Google-Smtp-Source: AGHT+IE6UPS72YkSqlKZ+QYEzcPsJMmz0YCcgutaTCTiSHM5m4OFcCZsb1r7pyS+E5OKHwj5jTicJSV8EkBAW3O4plE=
-X-Received: by 2002:a05:6122:488a:b0:520:3e1c:500f with SMTP id
- 71dfb90a1353d-521ee45bc56mr2974670e0c.8.1740173185098; Fri, 21 Feb 2025
- 13:26:25 -0800 (PST)
+	s=arc-20240116; t=1740173169; c=relaxed/simple;
+	bh=e6FP5rMsM9QldxBxgKUh/Xlk2sImzDtlxWc7RP2v5vs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MN8E3QLvZGr4cWEWiy5psHDrDvGO+p8X8KX5D+B6EeJJs3xJT+aDXvbtvdzGeqH/TOeZxbFSkKvuz5Y+9Xgjyvz2CYHx2JYyMxxQ1+uleqvy0ogK21fTVPQ0ZxWgDbudXaLKdyhL2fnY0lFNKpThlulldqp31JeT8wtLc3l92RA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ON91Etgl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36BF8C4CED6;
+	Fri, 21 Feb 2025 21:26:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740173168;
+	bh=e6FP5rMsM9QldxBxgKUh/Xlk2sImzDtlxWc7RP2v5vs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ON91Etglnvbjw8rrlaZw4oBZTVdnKCEPRQQbOFv1KN8zemGOCitRgkWR6TC7MD/6T
+	 MMEBk0StzOyjqR+EdnEyos0o6DhTAcegQ1lEF1LoPnXMQMHK/SC9R4+CQQMMQiHEfJ
+	 X7jmBSnivKLlnjmQanQYxC1vYaFkl3So/4ueVLPTva54kGvpK9bNCcgABmtSwBE4xI
+	 Ix7vHK0Kfb3eRaabGFWSDUrwnITjQWuK9Srt158Q0PDmZuDtnlSZ4pFkPOxSD8L9Ge
+	 Rl8tiGrUiHoc6REySVeS2GIu4WlXQSkblmpLodnje78nwvkpO+ETXHqO/caB13jDNY
+	 xqHOy+1aMISbQ==
+Date: Fri, 21 Feb 2025 13:26:03 -0800
+From: Nathan Chancellor <nathan@kernel.org>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Nicolas Schier <nicolas@fjasle.eu>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev
+Subject: Re: [PATCH] kbuild: hdrcheck: fix cross build with clang
+Message-ID: <20250221212603.GA3561672@ax162>
+References: <20250221212017.809382-1-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250220150110.738619-1-fabrizio.castro.jz@renesas.com> <20250220150110.738619-6-fabrizio.castro.jz@renesas.com>
-In-Reply-To: <20250220150110.738619-6-fabrizio.castro.jz@renesas.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Fri, 21 Feb 2025 21:25:57 +0000
-X-Gm-Features: AWEUYZmUQVuSUN907GGzhYeVZd-6WPU13YSQyfpxScQSV9_0kwPc0QsAQTvJNJs
-Message-ID: <CA+V-a8tV1gw_m1_5PyQNzf=uRZmYr7N9RMiQxQF+PKxSOE6C4w@mail.gmail.com>
-Subject: Re: [PATCH v4 5/7] dmaengine: sh: rz-dmac: Allow for multiple DMACs
-To: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Cc: Vinod Koul <vkoul@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Wolfram Sang <wsa+renesas@sang-engineering.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
-	dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250221212017.809382-1-arnd@kernel.org>
 
-On Thu, Feb 20, 2025 at 3:02=E2=80=AFPM Fabrizio Castro
-<fabrizio.castro.jz@renesas.com> wrote:
->
-> dma_request_channel() calls into __dma_request_channel() with
-> NULL as value for np, which won't allow for the selection of the
-> correct DMAC when multiple DMACs are available.
->
-> Switch to using __dma_request_channel() directly so that we can
-> choose the desired DMA for the channel. This is in preparation
-> of adding DMAC support for the Renesas RZ/V2H(P) and similar SoCs.
->
-> Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+On Fri, Feb 21, 2025 at 10:20:07PM +0100, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+> 
+> The headercheck tries to call clang with a mix of compiler arguments
+> that don't include the target architecture. When building e.g. x86
+> headers on arm64, this produces a warning like
+> 
+>    clang: warning: unknown platform, assuming -mfloat-abi=soft
+> 
+> Add in the CLANG_FLAGS, which contain the target, in order to make it
+> build properly.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+
+This looks like a similar problem as the one fixed by
+commit 1b71c2fb04e7 ("kbuild: userprogs: fix bitsize and target
+detection on clang"), should it be addressed in the same manner
+(especially since I think the Fixes commit would be the same)? Given
+that the filter expression is the same, maybe it would be possible to
+unify them but that could happen as a follow up.
+
 > ---
-> v3->v4:
-> * No change.
-> v2->v3:
-> * Added () for calls in changelog.
-> v1->v2:
-> * No change.
-> ---
->  drivers/dma/sh/rz-dmac.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-
-Cheers,
-Prabhakar
-
-> diff --git a/drivers/dma/sh/rz-dmac.c b/drivers/dma/sh/rz-dmac.c
-> index 9235db551026..d7a4ce28040b 100644
-> --- a/drivers/dma/sh/rz-dmac.c
-> +++ b/drivers/dma/sh/rz-dmac.c
-> @@ -748,7 +748,8 @@ static struct dma_chan *rz_dmac_of_xlate(struct of_ph=
-andle_args *dma_spec,
->         dma_cap_zero(mask);
->         dma_cap_set(DMA_SLAVE, mask);
->
-> -       return dma_request_channel(mask, rz_dmac_chan_filter, dma_spec);
-> +       return __dma_request_channel(&mask, rz_dmac_chan_filter, dma_spec=
-,
-> +                                    ofdma->of_node);
->  }
->
->  /*
-> --
-> 2.34.1
->
->
+>  usr/include/Makefile | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/usr/include/Makefile b/usr/include/Makefile
+> index 58a9cbe4eba4..99f9e904adcd 100644
+> --- a/usr/include/Makefile
+> +++ b/usr/include/Makefile
+> @@ -10,7 +10,7 @@ UAPI_CFLAGS := -std=c90 -Wall -Werror=implicit-function-declaration
+>  
+>  # In theory, we do not care -m32 or -m64 for header compile tests.
+>  # It is here just because CONFIG_CC_CAN_LINK is tested with -m32 or -m64.
+> -UAPI_CFLAGS += $(filter -m32 -m64 --target=%, $(KBUILD_CFLAGS))
+> +UAPI_CFLAGS += $(filter -m32 -m64 --target=%, $(KBUILD_CFLAGS) $(CLANG_FLAGS))
+>  
+>  # USERCFLAGS might contain sysroot location for CC.
+>  UAPI_CFLAGS += $(USERCFLAGS)
+> -- 
+> 2.39.5
+> 
 
