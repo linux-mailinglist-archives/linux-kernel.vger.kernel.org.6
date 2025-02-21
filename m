@@ -1,170 +1,184 @@
-Return-Path: <linux-kernel+bounces-526732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66160A4028A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 23:18:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B12D7A4028D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 23:20:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B17C719C6895
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 22:18:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F061519C2565
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 22:20:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 506F6204F70;
-	Fri, 21 Feb 2025 22:18:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E51C62500B1;
+	Fri, 21 Feb 2025 22:20:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b2U+dnPK"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XQHqptEY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DF882040A4;
-	Fri, 21 Feb 2025 22:18:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 442502040A4;
+	Fri, 21 Feb 2025 22:20:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740176301; cv=none; b=KaHcJCgsEd726GrjAqnXqB70e31GZNkw82oMnXJ6+OGag2E1OhtwtDKA8OQKOz/7qornYgnhKd+FCr8qFdNPJ5K5Z6uI4wz9I3aQ+wF9geR94ixxi+lu9/r9hOu1YVdx5Cs4cS9haG9VjtENWwpRblXlvOijvcqvmlMSokAx/U4=
+	t=1740176442; cv=none; b=CefjKDNqGZUckzRBXpsHF+cXtdxUKvLTze8Z7zcYKpwwu24UksHRaoJvj5qL03Lvh/gU5/Nb/mT8jYeWGSQSZqAmKInm/+3OurpDLxM8Xy5V9t3mahyTrMnQxNKQILNwwxQOrM/wLDuaMCmJoQbPva+RXw7tIQKwA6Kbc7hdC7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740176301; c=relaxed/simple;
-	bh=p9H7eWFtI6uqcSrVYZwPwU1BZADxWA8u2LXEpyQb6Ik=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=glNX/KIswLhNMttuRI2u/wCwzM9uw4rosFwwbfoKMzaN8n5liKWpFOeq70USCGpjqQw2TRurgoU0nVnaOW1cYIatmw94HgZQC/hU07dj4DtdO3c8GHOiXOjN+MGCrW2zxMe4hF2Te9/dqrynm6aS+7cBg9kOhXe02mLKtG36GbE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b2U+dnPK; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43989226283so18165245e9.1;
-        Fri, 21 Feb 2025 14:18:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740176297; x=1740781097; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ipxGsEkSd2zt5hVzi7gIQRAM/kjjmR0+rET13GoS3gg=;
-        b=b2U+dnPKg3OjAlN1MyhiIBVQ+m1aKOIJbm9ByGTZKGM8tgl4425roPQKYXygLWkMZq
-         Gy8QtYdJXJcdbosBUKZ7Yj4fFZLhes5poJJh08Nkx4hgjJyE82lVlykl3lDh45oL+4tO
-         ul0fi2XWWebZsCeRRJFuJOABuHlMfSUk888dBaLihGTGJUssn/dhH1DMOJGFb/i+EYyn
-         l066WYG9ypwQDmPCKl5940gU7khSqPjgy7fEw51LnbnRgK7Rd4kWzMHrSx84VTpwKtRd
-         Fabuiu1GV1hho4wbi0vsRnJyAq3WQsqj6zEVgQBXo08k25VnwQroBuU2YytKeSXvEEvX
-         Ey2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740176297; x=1740781097;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ipxGsEkSd2zt5hVzi7gIQRAM/kjjmR0+rET13GoS3gg=;
-        b=IjlMF9JLduimKKGJP9SeMwk8ljpafXeQR+G/08PqxHIZ6oFVQikIFyvc5RcP/kK9U1
-         g4gfMznllLERkGGpDb4vne0ih8TzHOTcrLwGBHCgtgkcfC40JUwMT+znCV5FnUsBQyaj
-         mjA+6lhFlyZusZvN7Nbqiv8ji9xouyXKwmAcvAz6ghSmKmQwEGZT7ku6LKX8Kgq0UEyy
-         JnSSp3moeolYfL6SGqnw0LKxzUA79u2f+bfcsIdeVgKG3rN54FE69E79dbvkTcrVjKXP
-         XXx7PFBEnnwiG+WUIjb8/s/rKChKjSUeu4T1HtZr62bqcN3u/8lD2zcX7pvniRcSL6Qf
-         ahFA==
-X-Forwarded-Encrypted: i=1; AJvYcCVuardKGLMNxEba/g1OzKbfPVBIhoymm3ECiWQ5DOr1RkZVWSQQm7/Fcuga0sicY6jlGx6Ss+j3hAMq4G0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWfK9e9VmFMKNIXlfrkeM1/4BoD5eztiqtZBHkh5gx/AwrhD/E
-	8vaoXfZuiqZjaGAATBzdHjW6EG+9CcikxlvbXO3DzjYNWC39UBoi
-X-Gm-Gg: ASbGncslOhr/jAwUSxvTaihSDe2lPVjUvlv/A5kWht5G0exlRWFIH9rbBZXqf3sM/ni
-	6szwv61zvfkz467UFrhwXz8aNEtHnYkwvyoQAG+8zBhVqjLQk42XcU1hc1WXWlFMgtxwvOfXGm0
-	fDL1Q7tXHPcimC/AQuYDYSCTdIL39v517Ln1aOWc7wCyccbg4L7NoNcBRh+SYMsxobQBfIAFNC8
-	s0eyLKH1qrGF6jdTKc2DRnRuvYjK9tgaH9hYtsLzzEpw/8zKRoWNXUyCnOxX6W9Adf3mRktieh/
-	Ta2FCRXqDtgLhN1LwuskLzPQP0eCJvly4vkm3mg6tIjBleHiJc98DWQDmglET5LQ
-X-Google-Smtp-Source: AGHT+IHfSNAxS9poe8hCk4HjjTTlxpVzxb3L3wSfcoQW9kHs/5esAuFuB29zyHNCAXBmcj+Hc+dXZw==
-X-Received: by 2002:a05:600c:4e86:b0:439:9f19:72ab with SMTP id 5b1f17b1804b1-439b6afbbe3mr21474455e9.23.1740176297168;
-        Fri, 21 Feb 2025 14:18:17 -0800 (PST)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-439b02e6cf4sm29222245e9.19.2025.02.21.14.18.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Feb 2025 14:18:16 -0800 (PST)
-Date: Fri, 21 Feb 2025 22:18:15 +0000
-From: David Laight <david.laight.linux@gmail.com>
-To: Nick Child <nnac123@linux.ibm.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, horms@kernel.org,
- nick.child@ibm.com, pmladek@suse.com, rostedt@goodmis.org,
- john.ogness@linutronix.de, senozhatsky@chromium.org
-Subject: Re: [PATCH net-next v3 1/3] hexdump: Implement macro for converting
- large buffers
-Message-ID: <20250221221815.53455e22@pumpkin>
-In-Reply-To: <Z7jLE-GKWPPn-cBT@li-4c4c4544-0047-5210-804b-b8c04f323634.ibm.com>
-References: <20250219211102.225324-1-nnac123@linux.ibm.com>
-	<20250219211102.225324-2-nnac123@linux.ibm.com>
-	<20250220220050.61aa504d@pumpkin>
-	<Z7i56s7jwc_y0cIz@li-4c4c4544-0047-5210-804b-b8c04f323634.ibm.com>
-	<20250221180435.4bbf8c8f@pumpkin>
-	<Z7jLE-GKWPPn-cBT@li-4c4c4544-0047-5210-804b-b8c04f323634.ibm.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	s=arc-20240116; t=1740176442; c=relaxed/simple;
+	bh=7aHNW9A/Uq8Lugq2wM6k+l78zNQMYLApgkpRccP75pk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YTrO/nVigiENJlPkR+4kJL6Py8Gf5/b0V9fFvCz/gMn41AZERh1Ic5Ts7phO2GSi0qA0iPCAjuEogvZiUuMtbPAQ/3H90iNkBbK96zHth0e2FQdgQuV4jYP2XGLbrPNHaWvKAoqL7UkOPThgTT2nrfe4NoJNC5RzfvPnNfO2m30=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XQHqptEY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 735FAC4CED6;
+	Fri, 21 Feb 2025 22:20:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740176441;
+	bh=7aHNW9A/Uq8Lugq2wM6k+l78zNQMYLApgkpRccP75pk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XQHqptEYXy861nH4Dp3RHO8Sdfum1rPxoXVSQxqSsLeHc/wzblZu01Jp8LwAxnwa+
+	 nursnUX6W+mwkV1VbDQW34IoGY3OUrqwDy11zDOHvubeZPD9CVvKmUwkboH/gr3Dku
+	 w9V4pnrNV83ZKiFYvUvm5KIbXoybGj6dxHwT4AA2F/aDdKYQiyX2LSc/IFCpXum91M
+	 +X2+x8IBhBAgiWxLFTsSBtmPm1P4+SWZETkDS1uO5Tu2guE6nQCgfP9EaiFDzYMkYl
+	 ZukxOU4JMRtlwHaaH4Zv/ZcoTWerV8eKB9Ruln0azVoYwoIRqxSOmnKyTvN5cDDFcP
+	 CfSNstlUdpt6A==
+Date: Fri, 21 Feb 2025 16:20:39 -0600
+From: Rob Herring <robh@kernel.org>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Michael Riesch <michael.riesch@wolfvision.net>,
+	Mehdi Djait <mehdi.djait@linux.intel.com>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	=?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>,
+	Gerald Loacker <gerald.loacker@wolfvision.net>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Kever Yang <kever.yang@rock-chips.com>,
+	Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+	Sebastian Fricke <sebastian.fricke@collabora.com>,
+	Sebastian Reichel <sebastian.reichel@collabora.com>,
+	Paul Kocialkowski <paulk@sys-base.io>,
+	Alexander Shiyan <eagle.alexander923@gmail.com>,
+	Val Packett <val@packett.cool>,
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-media@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH v4 04/11] media: dt-bindings: media: add bindings for
+ rockchip mipi csi host
+Message-ID: <20250221222039.GA164750-robh@kernel.org>
+References: <20250219-v6-8-topic-rk3568-vicap-v4-0-e906600ae3b0@wolfvision.net>
+ <20250219-v6-8-topic-rk3568-vicap-v4-4-e906600ae3b0@wolfvision.net>
+ <Z7iJ-UaLabqK4ZhY@kekkonen.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z7iJ-UaLabqK4ZhY@kekkonen.localdomain>
 
-On Fri, 21 Feb 2025 12:50:59 -0600
-Nick Child <nnac123@linux.ibm.com> wrote:
-
-> On Fri, Feb 21, 2025 at 06:04:35PM +0000, David Laight wrote:
-> > On Fri, 21 Feb 2025 11:37:46 -0600
-> > Nick Child <nnac123@linux.ibm.com> wrote:  
-> > > On Thu, Feb 20, 2025 at 10:00:50PM +0000, David Laight wrote:  
-> > > > You could do:
-> > > > #define for_each_line_in_hex_dump(buf_offset, rowsize, linebuf, linebuflen, groupsize, buf, len, ascii) \
-> > > > for (unsigned int _offset = 0, _rowsize = (rowsize), _len = (len); \
-> > > > 	((offset) = _offset) < _len && (hex_dump_to_buffer((const char *)(buf) + _offset, _len - _offset, \  
-> >           ^ needs to be buf_offset.
-> >   
-> > > > 		_rowsize, (groupsize), (linebuf), (linebuflen), (ascii)), 1); \
-> > > > 	_offset += _rowsize )
-> > > > 
-> > > > (Assuming I've not mistyped it.)
-> > > >     
-> > >
-> > > Trying to understand the reasoning for declaring new tmp variables;
-> > > Is this to prevent the values from changing in the body of the loop?  
-> >
-> > No, it is to prevent side-effects happening more than once.
-> > Think about what would happen if someone passed 'foo -= 4' for len.
-> >  
+On Fri, Feb 21, 2025 at 02:13:13PM +0000, Sakari Ailus wrote:
+> Hi Michael,
 > 
-> If we are protecting against those cases then linebuf, linebuflen,
-> groupsize and ascii should also be stored into tmp variables since they
-> are referenced in the loop conditional every iteration.
-> At which point the loop becomes too messy IMO.
-> Are any other for_each implementations taking these precautions?
+> On Wed, Feb 19, 2025 at 11:16:35AM +0100, Michael Riesch wrote:
+> > Add documentation for the Rockchip RK3568 MIPI CSI-2 Host unit.
+> > 
+> > Signed-off-by: Michael Riesch <michael.riesch@wolfvision.net>
+> > ---
+> >  .../bindings/media/rockchip,rk3568-mipi-csi.yaml   | 123 +++++++++++++++++++++
+> >  MAINTAINERS                                        |   1 +
+> >  2 files changed, 124 insertions(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/media/rockchip,rk3568-mipi-csi.yaml b/Documentation/devicetree/bindings/media/rockchip,rk3568-mipi-csi.yaml
+> > new file mode 100644
+> > index 000000000000..288941686e96
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/media/rockchip,rk3568-mipi-csi.yaml
+> > @@ -0,0 +1,123 @@
+> > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/media/rockchip,rk3568-mipi-csi.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Rockchip RK3568 MIPI CSI-2 Host
+> > +
+> > +maintainers:
+> > +  - Michael Riesch <michael.riesch@wolfvision.net>
+> > +
+> > +description:
+> > +  The Rockchip RK3568 MIPI CSI-2 Host is a CSI-2 bridge with one input port
+> > +  and one output port. It receives the data with the help of an external
+> > +  MIPI PHY (C-PHY or D-PHY) and passes it to the Rockchip RK3568 Video Capture
+> > +  (VICAP) block.
+> > +
+> > +properties:
+> > +  compatible:
+> > +    const: rockchip,rk3568-mipi-csi
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +  clocks:
+> > +    maxItems: 1
+> > +
+> > +  phys:
+> > +    maxItems: 1
+> > +    description: MIPI C-PHY or D-PHY.
+> > +
+> > +  phy-names:
+> > +    items:
+> > +      - const: csiphy
 
-No, it only matters if they appear in the text expansion of the #define
-more than once.
-It may be unlikely here, but for things like min(a,b) where:
-#define min(a, b) ((a) < (b) ? (a) : (b))
-causes:
-	a = 3;
-	b = min(a += 3, 7);
-to set b to 9 it has to be avoided.
+*-names is kind of pointless when there is only 1. Drop it.
 
+> > +
+> > +  power-domains:
+> > +    maxItems: 1
+> > +
+> > +  resets:
+> > +    maxItems: 1
+> > +
+> > +  ports:
+> > +    $ref: /schemas/graph.yaml#/properties/ports
+> > +
+> > +    properties:
+> > +      port@0:
+> > +        $ref: /schemas/graph.yaml#/$defs/port-base
+> > +        unevaluatedProperties: false
+> > +        description:
+> > +          Input port node. Connect to e.g., a MIPI CSI-2 image sensor.
+> > +
+> > +        properties:
+> > +          endpoint:
+> > +            $ref: video-interfaces.yaml#
+> > +            unevaluatedProperties: false
+> > +
+> > +            properties:
+> > +              bus-type:
+> > +                enum: [1, 4]
+> > +
+> > +            required:
+> > +              - bus-type
+> > +
+> > +      port@1:
+> > +        $ref: /schemas/graph.yaml#/$defs/port-base
+> > +        unevaluatedProperties: false
+> > +        description:
+> > +          Output port node. Connect to RK3568 VICAP MIPI CSI-2 port.
 > 
-> Not trying to come off dismissive, I genuinely appreciate all the
-> insight, trying to learn more for next time.
-> 
-> > > I tried to avoid declaring new vars in this design because I thought it
-> > > would recive pushback due to possible name collision and variable
-> > > declaration inside for loop initializer.  
-> >
-> > The c std level got upped recently to allow declarations inside loops.
-> > Usually for a 'loop iterator' - but I think you needed that to be
-> > exposed outsize the loop.
-> > (Otherwise you don't need _offset and buf_offset.
-> >  
-> 
-> As in decrementing _len and increasing a _buf var rather than tracking
-> offset?
-> I don't really care for exposing the offset, during design I figured
-> some caller may make use of it but I think it is worth removing to reduce
-> the number of arguments.
+> What's the purpose of a port node without an endpoint?
 
-Except the loop body needs it - so it needs to be a caller-defined name,
-even if they don't declare the variable.
+If there are not custom endpoint properties, then you don't need to 
+describe the endpoint node. But that case should be this instead:
 
-	David
+$ref: /schemas/graph.yaml#/properties/port
 
-> 
-> Thanks again,
-> Nick
+(no unevaluatedProperties)
 
+Rob
 
