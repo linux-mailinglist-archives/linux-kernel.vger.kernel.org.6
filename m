@@ -1,150 +1,134 @@
-Return-Path: <linux-kernel+bounces-526064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AF3EA3F95D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:49:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 771F3A3F962
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:50:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 156CA44016B
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 15:47:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 014C7423ABD
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 15:47:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D89AE2144AE;
-	Fri, 21 Feb 2025 15:44:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C2021F152C;
+	Fri, 21 Feb 2025 15:46:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S7BO3Q/A"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="P0PAcyep"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EF10213E89;
-	Fri, 21 Feb 2025 15:44:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740152675; cv=none; b=rbrx+wLkGwHT8b2MHRn/FPqv4PcFiqTqHHr96k01CGwZy64tOF2XWj+AuLM65lNerTctITCDcuOcIMFVi9c0P8f77TGyfUeEgOC/n7mEKOkff8xEJjijZqvCCUEJ256wL/CSM+byUWjdqWnekoY0mllxntoRGKnEyfR0Fg3Dulc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740152675; c=relaxed/simple;
-	bh=Wom1Z6Yf2iTnch8UEgQeD2janPDVRVMz/fyDLs5de9w=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=WXuVpbaHswLJd6e59epX4B/X+S5TFbA0cQL3axOQn9l5foN0n0pYEUxbLTl/P0P9mIlKvkH6BKw+T+0Xa1jZn5LxwMM4MEEI0r9bYEV7MdMEhlypdmpZndXznFLeSCgDsM23O7SO7mpNz8OOSVM1Bn5Qiclq46cBscDMB2OETno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S7BO3Q/A; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16E13C4CEE4;
-	Fri, 21 Feb 2025 15:44:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740152675;
-	bh=Wom1Z6Yf2iTnch8UEgQeD2janPDVRVMz/fyDLs5de9w=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=S7BO3Q/APfHsjQjaGHhS6sHXal6pvXJL3tKyA9mwHcbqfwMupAlmEGCcnbUR3RaqV
-	 8/ER9Rj6bzcQQ8FENb+UhBWF28zoo/RueVMGSo6/W8X4rMUyObRPNPSekg9OfqXgbb
-	 1EfxbO/hehgtEi2ydPYS5ny8trrUYpdpaSEZNipj/ikyZ/aI6Gcpp3r9KwuZ5cOAk3
-	 zrGfo5mYGmi1z1JSsZcARaD977xmvtYOHte1pIAH9lK0dhfRIGIfP78Uutt/jAyIo7
-	 MD7DE7h1po+DcuGLwnfWJRyEa89JeaFhmFTOJ5bdYn0zE5PCNABauuq5IogoKL8Dp4
-	 Mpys5VwqVdUCA==
-From: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
-Date: Fri, 21 Feb 2025 16:44:03 +0100
-Subject: [PATCH net-next 10/10] mptcp: blackhole: avoid checking the state
- twice
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DFC11E7640;
+	Fri, 21 Feb 2025 15:46:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740152804; cv=pass; b=fPjEfGGhSVBOfMWyYktf0Nx1i8AK0YfMLQs3i0+VffKFq+OMyjFk6RsZc5j4fYN/ZGWBDaLWOFMvEkr5lBnmxfqQfPHAi5LotcUpWxXkUK/0+veRJ5cMpGplZxXyLsMgIlz1XWUvFsOmE6D/xXkLkPqsLLjmaO/IiwoFF7kDoAQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740152804; c=relaxed/simple;
+	bh=pn2MuqrPPywukUfVG1Tn4il5fz+cXCZkczWE+P6YzHQ=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=QF/X3up895yKgnHpsIdAbGFyqNkSIyQ+xCoexGXAs9SJQpY2g4J/4CRYFugiZABCazGYgm28fkJ8QLfnfQ95pztmdbFfl+N6I2F/MSX5MP9UfIfO+uMMoPav8pYUn1F43yWe80TZuk49TSvbowv1rKpkwdB2uItJKKa4QqVHM1U=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=P0PAcyep; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1740152768; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=fEgPaftwiozQnitf44S47NOq3cGA765xGRmrLZK6Sv3ypHwd0sOcHHQBYY/g0zOzRfZfLhXULDWAugrpAKwlz3mkoo6qh19HQjrA0fc/ZPK0dyA+th5DQk8aOCDgc4UvqW8EA+bj1MTWJ5XQgnLLUSPRwtVNay9mR72ZTsANy5w=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1740152768; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=CgG3qgCstWdH24HcDyLIW/wtQ4JGMB+RlmP0pIdS1Lw=; 
+	b=lHE4vmXcYUF3YdMuFKVCuo7dUd33aSvyV9EqAL5vVM5xyaeCU9si7PAGJy8XeFohGAlvNTNkhg61+rDmf5HiEZUoIbTnMrlUuZdlQLEAMZGk0zxSy5z7W/YqSqe4J14SIiXOy44AyPrCZwKjn2HNdOKpHASkT7rNI7GWT9cbg68=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1740152768;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=CgG3qgCstWdH24HcDyLIW/wtQ4JGMB+RlmP0pIdS1Lw=;
+	b=P0PAcyepf6usrkvthJZSHWojSPwAEcyiKMjZrkIcG6lJqEsbJsm4zCqEmsJYOuIn
+	3pnnDJNDQmNjJuo/dCx33cgE+ZXa8qRq8tWPHwMa1WWzf3Gt9C2PAg+YDmUIym+BPUM
+	olWFM6uxhyoh7FSykeJ6zSu6KD4GRKFDm7g2U8PQ=
+Received: by mx.zohomail.com with SMTPS id 1740152765928241.70092754235043;
+	Fri, 21 Feb 2025 07:46:05 -0800 (PST)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250221-net-next-mptcp-pm-misc-cleanup-3-v1-10-2b70ab1cee79@kernel.org>
-References: <20250221-net-next-mptcp-pm-misc-cleanup-3-v1-0-2b70ab1cee79@kernel.org>
-In-Reply-To: <20250221-net-next-mptcp-pm-misc-cleanup-3-v1-0-2b70ab1cee79@kernel.org>
-To: mptcp@lists.linux.dev, Mat Martineau <martineau@kernel.org>, 
- Geliang Tang <geliang@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2258; i=matttbe@kernel.org;
- h=from:subject:message-id; bh=Wom1Z6Yf2iTnch8UEgQeD2janPDVRVMz/fyDLs5de9w=;
- b=owEBbQKS/ZANAwAIAfa3gk9CaaBzAcsmYgBnuJ9HgoWs/Elej6GEIci+QQQIkFOFv8zV3mfAb
- Do2FbfkzCOJAjMEAAEIAB0WIQToy4X3aHcFem4n93r2t4JPQmmgcwUCZ7ifRwAKCRD2t4JPQmmg
- c7MhEACYVK1iUWhT53jM4LB417iKAbXrfjFNNb2JFET8a4PSK9fs4TBD+tIOzJbbCG0aDoj/6Th
- xWt3rzxPgiLe/r18Jad51x+gS0y90kmjVD8YV/YzACS3h6c7OsMH0C6UyEzWFBFR9DZ0biFUdSB
- nViI+AlfoJ9t/aCL6cVHvsdUm2r+/B28heR2VHot7m+56CiMadgxmLbmBeRrva+qa7WlEy987we
- 49I/C4zd4umS1+93fH9nInTokAsIC3t9GmO/ipT6g6OSYtaoF/XWie9+jSLSQBf2cdsJ0uM0cOV
- 7rxPvEfBlxCdX2vniOft69WFpMdmt3CEWOyDlyyKk6nu9jA0TAhx1cSBYI95UxwyS/f4onIvMHw
- yTQ1/WQ7Uw2rxR2WGqnKqriq17B4ZI1TmQnkL4D8CKM0egodgMoGtkGgTORcUsAtIiS7BLxhNCX
- EDeaXDI2EMnUlmTKioeANfDE2hIkPIt+tp2+/ixplrRuIPuXfJOAmSBWQf6sx3HdhEOsmqS/g9T
- Uf6jfyo3Qby7p8AkwcUfOCgugKbHQeUsZSeXir6YVYisQ8tAAsCAOdmso/XLkRa+FdhcFxFWr2A
- 0vo6ImkjP9qj43KtE5og7+rjf5SAnnTjWRjQN9/c8uRyzMq7l7Pjr2LVImADND0oH6m8cjjcjjU
- JgRU7GD6zSSEHWA==
-X-Developer-Key: i=matttbe@kernel.org; a=openpgp;
- fpr=E8CB85F76877057A6E27F77AF6B7824F4269A073
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.300.87.4.3\))
+Subject: Re: [PATCH v7 0/6] rust: extend `module!` macro with integer
+ parameter support
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <20250218-module-params-v3-v7-0-5e1afabcac1b@kernel.org>
+Date: Fri, 21 Feb 2025 12:45:48 -0300
+Cc: Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ Masahiro Yamada <masahiroy@kernel.org>,
+ Nathan Chancellor <nathan@kernel.org>,
+ Nicolas Schier <nicolas@fjasle.eu>,
+ Luis Chamberlain <mcgrof@kernel.org>,
+ rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ Adam Bratschi-Kaye <ark.email@gmail.com>,
+ linux-kbuild@vger.kernel.org,
+ Petr Pavlu <petr.pavlu@suse.com>,
+ Sami Tolvanen <samitolvanen@google.com>,
+ Daniel Gomez <da.gomez@samsung.com>,
+ Simona Vetter <simona.vetter@ffwll.ch>,
+ Greg KH <gregkh@linuxfoundation.org>,
+ linux-modules@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <F882BB02-A795-4F79-A2AF-CBA9608470A5@collabora.com>
+References: <20250218-module-params-v3-v7-0-5e1afabcac1b@kernel.org>
+To: Andreas Hindborg <a.hindborg@kernel.org>
+X-Mailer: Apple Mail (2.3826.300.87.4.3)
+X-ZohoMailClient: External
 
-A small cleanup, reordering the conditions to avoid checking things
-twice.
+Hi Andreas,
 
-The code here is called in case of timeout on a TCP connection, before
-triggering a retransmission. But it only acts on SYN + MPC packets.
+> On 18 Feb 2025, at 10:00, Andreas Hindborg <a.hindborg@kernel.org> =
+wrote:
+>=20
+> This series extends the `module!` macro with support module =
+parameters. It
+> also adds some string to integer parsing functions and updates `BStr` =
+with
+> a method to strip a string prefix.
+>=20
+> This series stated out as code by Adam Bratschi-Kaye lifted from the =
+original
+> `rust` branch [1].
+>=20
+> After a bit of discussion on v3 about whether or not module parameters
+> is a good idea, it seems that module parameters in Rust has a place
+> in the kernel for now. This series is a dependency for `rnull`, the =
+Rust
+> null block driver [2].
+>=20
 
-So the conditions can be re-order to exit early in case of non-MPTCP
-SYN + MPC. This also reduce the indentation levels.
+```
+$ sudo modprobe rust_minimal test_parameter=3D2
+[  251.384125] rust_minimal: Rust minimal sample (init)
+[  251.384600] rust_minimal: Am I built-in? false
+[  251.385010] rust_minimal: My parameter: 2
+```
 
-Reviewed-by: Mat Martineau <martineau@kernel.org>
-Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
----
- net/mptcp/ctrl.c | 32 ++++++++++++++++++--------------
- 1 file changed, 18 insertions(+), 14 deletions(-)
+Tested-by: Daniel Almeida <daniel.almeida@collabora.com>
 
-diff --git a/net/mptcp/ctrl.c b/net/mptcp/ctrl.c
-index 2dd81e6c26bdb5220abed68e26d70d2dc3ab14fb..be6c0237e10bfd7520edd3c57ec43ce4377b97d5 100644
---- a/net/mptcp/ctrl.c
-+++ b/net/mptcp/ctrl.c
-@@ -401,26 +401,30 @@ void mptcp_active_enable(struct sock *sk)
- void mptcp_active_detect_blackhole(struct sock *ssk, bool expired)
- {
- 	struct mptcp_subflow_context *subflow;
-+	u8 timeouts, to_max;
-+	struct net *net;
- 
--	if (!sk_is_mptcp(ssk))
-+	/* Only check MPTCP SYN ... */
-+	if (likely(!sk_is_mptcp(ssk) || ssk->sk_state != TCP_SYN_SENT))
- 		return;
- 
- 	subflow = mptcp_subflow_ctx(ssk);
- 
--	if (subflow->request_mptcp && ssk->sk_state == TCP_SYN_SENT) {
--		struct net *net = sock_net(ssk);
--		u8 timeouts, to_max;
--
--		timeouts = inet_csk(ssk)->icsk_retransmits;
--		to_max = mptcp_get_pernet(net)->syn_retrans_before_tcp_fallback;
--
--		if (timeouts == to_max || (timeouts < to_max && expired)) {
--			MPTCP_INC_STATS(net, MPTCP_MIB_MPCAPABLEACTIVEDROP);
--			subflow->mpc_drop = 1;
--			mptcp_subflow_early_fallback(mptcp_sk(subflow->conn), subflow);
--		}
--	} else if (ssk->sk_state == TCP_SYN_SENT) {
-+	/* ... + MP_CAPABLE */
-+	if (!subflow->request_mptcp) {
-+		/* Mark as blackhole iif the 1st non-MPTCP SYN is accepted */
- 		subflow->mpc_drop = 0;
-+		return;
-+	}
-+
-+	net = sock_net(ssk);
-+	timeouts = inet_csk(ssk)->icsk_retransmits;
-+	to_max = mptcp_get_pernet(net)->syn_retrans_before_tcp_fallback;
-+
-+	if (timeouts == to_max || (timeouts < to_max && expired)) {
-+		MPTCP_INC_STATS(net, MPTCP_MIB_MPCAPABLEACTIVEDROP);
-+		subflow->mpc_drop = 1;
-+		mptcp_subflow_early_fallback(mptcp_sk(subflow->conn), subflow);
- 	}
- }
- 
+IMHO, this is slightly confusing, since the parameter is named
+=E2=80=9Ctest_parameter=E2=80=9D, but you=E2=80=99re printing =E2=80=9CMy =
+parameter=E2=80=9D.
 
--- 
-2.47.1
+This is of course very minor. Overall, congrats on getting this to work =
+:)
 
+=E2=80=94 Daniel=20=
 
