@@ -1,342 +1,118 @@
-Return-Path: <linux-kernel+bounces-526627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD6A2A4012D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 21:39:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F47BA40133
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 21:40:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1922B16CD14
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 20:38:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0ABF19C2650
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 20:40:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BEFA205E31;
-	Fri, 21 Feb 2025 20:38:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 019462045A1;
+	Fri, 21 Feb 2025 20:40:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ndfbt+48"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="RsWbBg4q"
+Received: from sender4-op-o14.zoho.com (sender4-op-o14.zoho.com [136.143.188.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 590DC1D7E2F;
-	Fri, 21 Feb 2025 20:38:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740170286; cv=none; b=SzP2Bl26et8at73ZrIsE6zBkIBCGMI5SyeXYOIZ95s/fP1TkQkOV+61BnH7EoxvxW9ajzCenl7f7yB+R5TtlSrXEJyFcB/OQ/Sq9IZkktaXrmGRaN1Ltq9SP8R6rPhVqDUd9SGj4V5xG2fvA8EyTxzctBArKou9/tuKXJtzaZVA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740170286; c=relaxed/simple;
-	bh=cZReEKvxGMFAzn2nYLfiWitsoEwnGLiU1ItJsk7GJrQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WWyBjQGucfA3LQgLjIU4D5Hs+HEcb6nFbAjz2zOZpzUnX7rgUfy3WZZS+w1xSQak5gK1U4Vm4E5jqIlB5A5DwEOJDu1F8blKFBxFVg+fa8DUuGlXs4Hn8xbPFRJFIM5MnIAqLdYdweUIYBKHPW4ttiR9/ulDM0hwR5RtZEzTQI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ndfbt+48; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94787C4CED6;
-	Fri, 21 Feb 2025 20:38:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740170285;
-	bh=cZReEKvxGMFAzn2nYLfiWitsoEwnGLiU1ItJsk7GJrQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ndfbt+48L4RUb3WT78YqKEkPhF3BzDwk9jaSj6fPv91ryKts6+cOTdoQgapK2WP0j
-	 8s0traSuhiLn53SJu6fL4ilpCUF8Nz8CUmU7BVBo3Lzk2eprS+ah0xVQ0T4mCzTETe
-	 PhZMvy0gKeAA+mEoGpLNH7rx9uIsPMvC+mbfSwfYgV9/iwh1SkPucuS6HDUdCS3yON
-	 KN1vTiTDcNH95IeouzRup2F9LQMCJBifFZbg8Sj5HqAAQtsJLYTPB7PCUVoQMlRVtt
-	 HCJSPaFTSjpuD1bJaYsRx7EpyZpgQDd0itSh2KMcV9LeQWf73Z8sGW6Ge6+oVhEGze
-	 henAZXi/4khyA==
-Date: Fri, 21 Feb 2025 14:38:03 -0600
-From: Rob Herring <robh@kernel.org>
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Lee Jones <lee@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>, Pavel Machek <pavel@ucw.cz>,
-	Daniel Thompson <danielt@kernel.org>,
-	Jingoo Han <jingoohan1@gmail.com>, Helge Deller <deller@gmx.de>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-iio@vger.kernel.org, linux-leds@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] dt-bindings: mfd: Document TI LM3533 MFD
-Message-ID: <20250221203803.GA24813-robh@kernel.org>
-References: <20250218132702.114669-1-clamor95@gmail.com>
- <20250218132702.114669-2-clamor95@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 679501FC102;
+	Fri, 21 Feb 2025 20:39:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.14
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740170400; cv=pass; b=DSLxXQWoIxPCyOdi24SFdF4+/shFBD9JaSVk1pRHBT/bC26gYrV1rSnzNwO4pOXO+NoD3y+ShWPan7XElrFHHUtiFyNLJRgGM64DzaQLaOzUG49GCRnoHNjoj6hFIvw/JIvCJNiZS+2LLo7fp1fIOSpQIeibp4ecFBKXmQDYD5A=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740170400; c=relaxed/simple;
+	bh=g+zbCpZ+1FMbrKP6uJKG+9dae8cgqKA78FJKbCxMPF4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=T8kU2CvDWYSMh5t+CUM/W3+38LmYkB9gSdsvm3OLXmisrxxOxd7LFQzrHEHDH+N3lYUFwVzEtE44ipShqWXoYjef336+lEMiPAlcl+W5mrzfiFnYh35lqu/IXpLe52HnxWESREPOeGmvtxbDQU8PXn6O7KY1YQ9bZzu6ZgBAVIw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=RsWbBg4q; arc=pass smtp.client-ip=136.143.188.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1740170387; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=XYp1ymi2/abVGMkwCN5ogf3ba4e8+qdOh0RBhUSSq7BuIQOzsYCpQrVgzKeiFPVQTOndlxswFlVw7Tw5oiXgTBFhYNg/HOuyCOCxymVXJR6cpYWbGPqXloU6Logi0SYtLs89AwaFIPrKoEHCK8m5mxrP+nNIMEB+MZmUcXCb8YY=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1740170387; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=YPVDhutFqE0CHWS8gowpekGV6zc0YkLczaOqICj/amY=; 
+	b=EGYR1e0iXaNZZevZNGaDG+vb+JL2jNovi48h4C78OrZLB5h5xPIncrFIEAqI+b9iwHJxGfsoy1PstloRYqtgmi0aUITPliiObNXYRgGjlpe0HZFcjzzIHKRMAggWmtuvWQJQH4tnLbn3AgpzYpOS6xx6KLYeSVBbjsDZkQAd4rM=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
+	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1740170387;
+	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
+	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:To:To:Cc:Cc:Reply-To;
+	bh=YPVDhutFqE0CHWS8gowpekGV6zc0YkLczaOqICj/amY=;
+	b=RsWbBg4qGq+F7+dT6+rWeR0W3Ose4pwp2+VPoA3KBSCEH4UvbhDlZasAoKQfqo3U
+	T9FeOQpW13hMfeDj/PEcMvu5SYOodkvIghskwF/kqLHe/7JzMlitiTswgM241tCu+BM
+	+6oljbhZqUsAZVsUc4HHWBlTM6QPfsC35XSPB1NA=
+Received: by mx.zohomail.com with SMTPS id 174017038484339.05431959157954;
+	Fri, 21 Feb 2025 12:39:44 -0800 (PST)
+From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Date: Fri, 21 Feb 2025 21:39:32 +0100
+Subject: [PATCH] ASoC: dapm-graph: set fill colour of turned on nodes
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250218132702.114669-2-clamor95@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250221-dapm-graph-node-colour-v1-1-514ed0aa7069@collabora.com>
+X-B4-Tracking: v=1; b=H4sIAIPkuGcC/x3MQQqAIBBA0avErBtQyYiuEi0spxoolZEiiO6et
+ HyL/x/IJEwZ+uoBoYszx1Cg6wrmzYWVkH0xGGWsMkajd+nAVVzaMERPOMc9noI0KaW1a2xnWyh
+ xElr4/sfD+L4f+zVZW2gAAAA=
+X-Change-ID: 20250221-dapm-graph-node-colour-eb0011a45856
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Cc: kernel@collabora.com, linux-sound@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+X-Mailer: b4 0.14.2
 
-On Tue, Feb 18, 2025 at 03:26:59PM +0200, Svyatoslav Ryhel wrote:
-> Add bindings for the LM3533 - a complete power source for
-> backlight, keypad, and indicator LEDs in smartphone handsets.
-> The high-voltage inductive boost converter provides the
-> power for two series LED strings display backlight and keypad
-> functions.
-> 
-> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> ---
->  .../devicetree/bindings/mfd/ti,lm3533.yaml    | 231 ++++++++++++++++++
->  1 file changed, 231 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mfd/ti,lm3533.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/mfd/ti,lm3533.yaml b/Documentation/devicetree/bindings/mfd/ti,lm3533.yaml
-> new file mode 100644
-> index 000000000000..83542f0c7bf7
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mfd/ti,lm3533.yaml
-> @@ -0,0 +1,231 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/mfd/ti,lm3533.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: TI LM3533 Complete Lighting Power Solution
-> +
-> +description: |
+Some tools like KGraphViewer interpret the "ON" nodes not having an
+explicitly set fill colour as them being entirely black, which obscures
+the text on them and looks funny. In fact, I thought they were off for
+the longest time. Comparing to the output of the `dot` tool, I assume
+they are supposed to be white.
 
-Use '>' rather than '|' if only formatting is paragraphs.
+Instead of speclawyering over who's in the wrong and must immediately
+atone for their wickedness at the altar of RFC2119, just be explicit
+about it, set the fillcolor to white, and nobody gets confused.
 
-> +  The LM3533 is a complete power source for backlight,
-> +  keypad, and indicator LEDs in smartphone handsets. The
-> +  high-voltage inductive boost converter provides the
-> +  power for two series LED strings display backlight and
-> +  keypad functions.
+Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+---
+This is somewhat "just thrown out there"; I noticed that not setting the
+fill colour breaks KGraphViewer only *after* I thought this was just how
+they were for several days. With this change, both dot and KGraphViewer
+render it correctly, but I have no clue as to whether it's in the spirit
+of the file format at all. I figure that if this saves some other poor
+souls a bit of time and confusion, then it's worth it.
+---
+ tools/sound/dapm-graph | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Wrap lines at 80
+diff --git a/tools/sound/dapm-graph b/tools/sound/dapm-graph
+index f14bdfedee8f11507a6b7b04f6dd1847513e6da8..b6196ee5065a4e72069df663775518352d75d410 100755
+--- a/tools/sound/dapm-graph
++++ b/tools/sound/dapm-graph
+@@ -10,7 +10,7 @@ set -eu
+ 
+ STYLE_COMPONENT_ON="color=dodgerblue;style=bold"
+ STYLE_COMPONENT_OFF="color=gray40;style=filled;fillcolor=gray90"
+-STYLE_NODE_ON="shape=box,style=bold,color=green4"
++STYLE_NODE_ON="shape=box,style=bold,color=green4,fillcolor=white"
+ STYLE_NODE_OFF="shape=box,style=filled,color=gray30,fillcolor=gray95"
+ 
+ # Print usage and exit
 
-blank line here
+---
+base-commit: 0ad2507d5d93f39619fc42372c347d6006b64319
+change-id: 20250221-dapm-graph-node-colour-eb0011a45856
 
-> +  https://www.ti.com/product/LM3533
-> +
-> +maintainers:
-> +  - Svyatoslav Ryhel <clamor95@gmail.com>
-> +
-> +properties:
-> +  compatible:
-> +    const: ti,lm3533
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  '#address-cells':
-> +    const: 1
-> +
-> +  '#size-cells':
-> +    const: 0
-> +
-> +  enable-gpios:
-> +    description: GPIO to use to enable/disable the backlight (HWEN pin).
-> +    maxItems: 1
-> +
-> +  ti,boost-ovp-microvolt:
-> +    description:
-> +      Boost OVP select (16V, 24V, 32V, 40V)
-> +    enum: [ 16000000, 24000000, 32000000, 40000000 ]
-> +    default: 16000000
-> +
-> +  ti,boost-freq-hz:
-> +    description:
-> +      Boost frequency select (500KHz or 1MHz)
-> +    enum: [ 500000, 1000000 ]
-> +    default: 500000
-> +
-> +  light-sensor@0:
-> +    type: object
-> +    description:
-> +      Properties for an illumination sensor.
-> +
-> +    properties:
-> +      compatible:
-> +        const: ti,lm3533-als
-> +
-> +      reg:
-> +        const: 0
-> +
-> +      ti,resistor-value-ohm:
-> +        $ref: /schemas/types.yaml#/definitions/uint32
-> +        description: |
+Best regards,
+-- 
+Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
 
-Don't need '|'. Elsewhere too.
-
-> +          Internal configuration resister value when ALS is in Analog Sensor
-> +          mode and PWM mode is disabled.
-> +        minimum: 1575
-> +        maximum: 200000
-> +
-> +      ti,pwm-mode:
-> +        type: boolean
-> +        description: |
-> +          Switch for mode in which ALS is running. If this propertly is
-> +          set then ALS is running in PWM mode, internal resistor value is
-> +          set to high-impedance (0) and resistor-value-ohm propertly is
-> +          ignored.
-> +
-> +    required:
-> +      - compatible
-> +      - reg
-> +
-> +    additionalProperties: false
-
-Move this above 'properties'.
-
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - '#address-cells'
-> +  - '#size-cells'
-> +  - enable-gpios
-> +
-> +patternProperties:
-> +  "^backlight@[01]$":
-> +    type: object
-> +    description:
-> +      Properties for a backlight device.
-> +
-> +    $ref: /schemas/leds/backlight/common.yaml#
-> +
-> +    properties:
-> +      compatible:
-> +        const: ti,lm3533-backlight
-> +
-> +      reg:
-> +        description: |
-> +          The control bank that is used to program the two current sinks. The
-> +          LM3533 has two control banks (A and B) and are represented as 0 or 1
-> +          in this property. The two current sinks can be controlled
-> +          independently with both banks, or bank A can be configured to control
-> +          both sinks with the led-sources property.
-> +        minimum: 0
-> +        maximum: 1
-> +
-> +      default-brightness: true
-> +
-> +      ti,max-current-microamp:
-> +        description:
-> +          Maximum current in µA with a 800 µA step.
-> +        enum: [ 5000, 5800, 6600, 7400, 8200, 9000, 9800,
-> +                10600, 11400, 12200, 13000, 13800, 14600,
-> +                15400, 16200, 17000, 17800, 18600, 19400,
-> +                20200, 21000, 21800, 22600, 23400, 24200,
-> +                25000, 25800, 26600, 27400, 28200, 29000,
-> +                29800 ]
-> +        default: 5000
-> +
-> +      ti,pwm-config-mask:
-> +        $ref: /schemas/types.yaml#/definitions/uint32
-> +        description: |
-> +          Control Bank PWM Configuration Register mask that allows to configure
-> +          PWM input in Zones 0-4
-> +          BIT(0) - PWM Input is enabled
-> +          BIT(1) - PWM Input is enabled in Zone 0
-> +          BIT(2) - PWM Input is enabled in Zone 1
-> +          BIT(3) - PWM Input is enabled in Zone 2
-> +          BIT(4) - PWM Input is enabled in Zone 3
-> +          BIT(5) - PWM Input is enabled in Zone 4
-> +
-> +      ti,linear-mapping-mode:
-> +        description: |
-> +          Enable linear mapping mode. If disabled, then it will use exponential
-> +          mapping mode in which the ramp up/down appears to have a more uniform
-> +          transition to the human eye.
-> +        type: boolean
-> +
-> +      ti,hardware-controlled:
-> +        description: |
-> +          Each backlight has its own voltage Control Bank (A and B) and there are
-> +          two HVLED sinks which by default are linked to respective Bank. Setting
-> +          this property will link both sinks to a Control Bank of backlight where
-> +          property is defined.
-> +        type: boolean
-> +
-> +    required:
-> +      - compatible
-> +      - reg
-> +
-> +    additionalProperties: false
-> +
-> +  "^led@[0-3]$":
-> +    type: object
-> +    description:
-> +      Properties for a led device.
-> +
-> +    $ref: /schemas/leds/common.yaml#
-> +
-> +    properties:
-> +      compatible:
-> +        const: ti,lm3533-leds
-> +
-> +      reg:
-> +        description:
-> +          4 led banks
-> +        minimum: 0
-> +        maximum: 3
-> +
-> +      linux,default-trigger: true
-> +
-> +      ti,max-current-microamp:
-> +        description:
-> +          Maximum current in µA with a 800 µA step.
-> +        enum: [ 5000, 5800, 6600, 7400, 8200, 9000, 9800,
-> +                10600, 11400, 12200, 13000, 13800, 14600,
-> +                15400, 16200, 17000, 17800, 18600, 19400,
-> +                20200, 21000, 21800, 22600, 23400, 24200,
-> +                25000, 25800, 26600, 27400, 28200, 29000,
-> +                29800 ]
-> +        default: 5000
-> +
-> +      ti,pwm-config-mask:
-> +        $ref: /schemas/types.yaml#/definitions/uint32
-> +        description:
-> +          Same descryption and function as for backlight.
-> +
-> +    required:
-> +      - compatible
-> +      - reg
-> +
-> +    additionalProperties: false
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/gpio/gpio.h>
-> +
-> +    i2c {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +
-> +        led-controller@36 {
-> +            compatible = "ti,lm3533";
-> +            reg = <0x36>;
-> +
-> +            enable-gpios = <&gpio 110 GPIO_ACTIVE_HIGH>;
-> +
-> +            ti,boost-ovp-microvolt = <24000000>;
-> +            ti,boost-freq-hz = <500000>;
-> +
-> +            #address-cells = <1>;
-> +            #size-cells = <0>;
-> +
-> +            backlight@0 {
-> +                compatible = "ti,lm3533-backlight";
-> +                reg = <0>;
-> +
-> +                ti,max-current-microamp = <23400>;
-> +                default-brightness = <113>;
-> +                ti,hardware-controlled;
-> +            };
-
-Please make the example complete.
-
-> +        };
-> +    };
-> +...
-> -- 
-> 2.43.0
-> 
 
