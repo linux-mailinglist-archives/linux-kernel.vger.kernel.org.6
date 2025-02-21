@@ -1,180 +1,232 @@
-Return-Path: <linux-kernel+bounces-525668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8050BA3F2EF
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 12:30:05 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9904A3F2F2
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 12:30:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 957F14218AE
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 11:30:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 888877ABCA1
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 11:29:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 296E02080F5;
-	Fri, 21 Feb 2025 11:29:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B46C920896C;
+	Fri, 21 Feb 2025 11:30:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DroJ5kOb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="wQVEAebK"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2059.outbound.protection.outlook.com [40.107.244.59])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 806C62066F4;
-	Fri, 21 Feb 2025 11:29:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740137395; cv=none; b=D6k3EuEhyqzCil/RWdGiRm3zoHeMjvujqoTunxtbcctjmmbEJAA3u9Hl1qTqbBwkjGLR/uubZA5wtRisRjSe9avWH/FYik1fFXkwlgnI+mEXQBMQK5HgxSjMc5+NV0P2wLwcAWP7KXEUuqDncQ9EupwAmQ5rxNoUfse9j3ezD5M=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740137395; c=relaxed/simple;
-	bh=IH3OpXE+ypHgIXe/4FhMfuMZ2At7xnoqqHXA6TJ/Qj8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kM3adHHuTXBQlufRaQruGn0DJ0kbAWpQ3dYvB9GjQXgP2ymF2Yypu48Yjcx09C1LWVHbGJKtR/GbM2eSIA5OLtGE6BsYd2CfvUgOD2eBF+g1B3OymhiJDqxfxRNcIWjVM3mRb86VHoTIkQbwRniChPYkSLS5EM+em5y1tBLYsug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DroJ5kOb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98DD1C4CED6;
-	Fri, 21 Feb 2025 11:29:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740137394;
-	bh=IH3OpXE+ypHgIXe/4FhMfuMZ2At7xnoqqHXA6TJ/Qj8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DroJ5kObeXnjc/XlaSgZTqF1LgwuiTHKtLYArfYQ2TFwKmQNrFYbPATOHD/u32hIv
-	 5d6xoamJN2Q/hs7PlkzP2nUb7o5cta5auedyFAtdKMwLBlIZui0cNucc79gTbhBziH
-	 07n39vTnOtVIrp3NlyD258SHmKKSyI6wqSENtataVmn6jXo7Uj4nPm6msRVPTSI1j9
-	 qPmGo5NQjbXm/aShBdQdweGxlZm0gQp75Arq+c7qD7qLAQ+RHsyTjyQLStH9l0y5p8
-	 /AWSKC2X7sZBPZnRO4abOX5vdonKnrcZZMG3nnHm9EUPhC8+cA0QTiC+jTb7D6Llxy
-	 14fEWXVYFiqzA==
-Date: Fri, 21 Feb 2025 12:29:51 +0100
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: Andreas Hindborg <a.hindborg@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Lyude Paul <lyude@redhat.com>, Guangbo Cui <2407018371@qq.com>,
-	Dirk Behme <dirk.behme@gmail.com>,
-	Daniel Almeida <daniel.almeida@collabora.com>,
-	Tamir Duberstein <tamird@gmail.com>, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 02/14] rust: hrtimer: introduce hrtimer support
-Message-ID: <Z7hjrzyVNd5BIcEy@pavilion.home>
-References: <20250218-hrtimer-v3-v6-12-rc2-v8-0-48dedb015eb3@kernel.org>
- <20250218-hrtimer-v3-v6-12-rc2-v8-2-48dedb015eb3@kernel.org>
- <df748ac2-3551-460f-a16f-85d805671a3f@proton.me>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 332282AE89;
+	Fri, 21 Feb 2025 11:30:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.59
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740137417; cv=fail; b=dZR4et+gNm7h/5iLTq4Q+JFhuX/lpwGPnB7MW6IU63kwTr93DZVozdihPcCaHVuZ2UREBr6ETte0/nEFiZir17TFoiFaME5vMBQGjZbIayh+Y1qVDRCVcbt3yxrFgPUazEyjaNDvGcEZmuu1+b4Kh+xuFljMMDNLyuxdXoO80LU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740137417; c=relaxed/simple;
+	bh=dFXTtHq0Oa+VPdhmlmMRL1NrHRYQKYYp8jZmcRz6UIg=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=JJbNIeRW0190g4cF5SI6py6rgzFNKp77yykMjCkIJvcp70n+Chf2oLY5Ps3tjdkuhqw290WubJihhfE3R1sUAf8bDT0oidveadWv8NM2rieZgGVvoNJB/pVfDGM7w2Sc0wAnUFL0cq+HEhbWlstTVRd1Pv8X/kjGPHGUdSCJBpc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=wQVEAebK; arc=fail smtp.client-ip=40.107.244.59
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=HHWzzU7AyIFjlBQrsmhf3Cs0EHAs/7HLJsX0WJQGzZupZhapPHWlPiDg7Rc0LLKPFhKap1B+jU0FhktjTqVy6MfYP3FYAMOD1wANifoCXfZh/JXQo8a3YOrevOjRrzdekg35BmXQnL6cKVR7Fc0iaI6qcDZXp8L2eWPCLmG62iNLaTLCnDUlEMLLaCmNZmZUUZMlIZPC6PQnH5krXs6CadYOPJxiHKxsgnYIgFBQIKUoes4e+sNdASKRmWgb5vNYWVCsrKPTsNG7wVZ0Z4DXXcsgzctmEsHJcSGtpmiB07PWTv0jZNCduq6lkk8IZE17askAk/NbrAMQoXBcQIj04w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=6GDebTrDY1Ebc+IVrZBBuwnKXFJE2oe2gYqY2JpEmr8=;
+ b=GwwssmlWNGCeFcfktuB70lmeuN2Ax76lZD3QPs/Z8hFYrmCNVike05Sy6gx8iN+WmJyeQXqXoyatEo8gYVAdR+TcYy+vbHgOwIF3elRyGLXDgiF4MISlUO6BqCG95rDFolWcCQeK3JQkQq61Txlag6alDJwEhRm1whnJtdKjZg/gK1RrELJp30YbzkXyRgA3OI/GLdIH9L3CvwyKO4oRj7WbctZMaeHYWkfdW+8C7SoahcQ7jVdEPbTnt7K55F2FrK3berT+jgNUH0AaXXBb61K2O3qLGM4sbC92bV5AlENCksCHQiDW3r/mGvXoC7lsT/gX28N2ZBPPRf8ibDG3ow==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6GDebTrDY1Ebc+IVrZBBuwnKXFJE2oe2gYqY2JpEmr8=;
+ b=wQVEAebKrLHBfa18t/d2McAeuUai+z5PBeC1NxJyrqyHMg/bYN4JOR1GIiMy4ZNqnzlt4Tbtv7QspstyP2RKy1ZtMUWm0GNiYQfcQE7Dh8HHPUKBq/ZmGxc/6EvXOssChmsmshmJe5ml97eKUHRHJnyT7GA0ZZw2cukmZ6xfL1k=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from CH2PR12MB4262.namprd12.prod.outlook.com (2603:10b6:610:af::8)
+ by PH0PR12MB7907.namprd12.prod.outlook.com (2603:10b6:510:28d::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.16; Fri, 21 Feb
+ 2025 11:30:13 +0000
+Received: from CH2PR12MB4262.namprd12.prod.outlook.com
+ ([fe80::3bdb:bf3d:8bde:7870]) by CH2PR12MB4262.namprd12.prod.outlook.com
+ ([fe80::3bdb:bf3d:8bde:7870%5]) with mapi id 15.20.8466.013; Fri, 21 Feb 2025
+ 11:30:13 +0000
+Message-ID: <2b77e055-98ac-43a1-a7ad-9f9065d7f38f@amd.com>
+Date: Fri, 21 Feb 2025 17:00:01 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v5 0/4] Add NUMA mempolicy support for KVM guest-memfd
+To: akpm@linux-foundation.org, willy@infradead.org, pbonzini@redhat.com
+Cc: linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+ linux-coco@lists.linux.dev, chao.gao@intel.com, seanjc@google.com,
+ ackerleytng@google.com, david@redhat.com, vbabka@suse.cz, bharata@amd.com,
+ nikunj@amd.com, michael.day@amd.com, Neeraj.Upadhyay@amd.com,
+ thomas.lendacky@amd.com, michael.roth@amd.com, Fuad Tabba <tabba@google.com>
+References: <20250219101559.414878-1-shivankg@amd.com>
+Content-Language: en-US
+From: Shivank Garg <shivankg@amd.com>
+In-Reply-To: <20250219101559.414878-1-shivankg@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: PN2PR01CA0075.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:23::20) To CH2PR12MB4262.namprd12.prod.outlook.com
+ (2603:10b6:610:af::8)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <df748ac2-3551-460f-a16f-85d805671a3f@proton.me>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PR12MB4262:EE_|PH0PR12MB7907:EE_
+X-MS-Office365-Filtering-Correlation-Id: 24dc0394-5097-4722-c072-08dd526b1add
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?M1NBUEVLK0xVZkV0TnNsNVJLMHo5NmVwS2pMcTdFOERxRDJOSEVLWU9vYWNy?=
+ =?utf-8?B?cjhnK3BSVzBoMjVObGJGak1EM1RYTUpsbVBiREt1SVZuQ21KNmNLbWZaZkpK?=
+ =?utf-8?B?WEgzRlNzMkNiOFVRTUc4Vnp1SHlrdnFSTFVYcVRuMTN4all3UUR0Sy91cVFD?=
+ =?utf-8?B?bzIxZTNNQVR5eFVHNHdiUHFLK3c1R3Y5VGtXR1VUTjhsTDdZanJqaUdYUisv?=
+ =?utf-8?B?enp5cTZ4SEdNZWttbUVlT0cwUHJZN2dkQlM3bGwzZHlFeUtCRDd6SDdFbzBk?=
+ =?utf-8?B?bVU4TjhaSVI4MGVKdVU5SG41TThxdE5DTHpNNVF3bVVRcW1tdFROWjVaeXd6?=
+ =?utf-8?B?ZFBqc3lhbmNhdU9JVllBTGt3eGdJMDByQWZsdGtLTXc1SFhXMXVqWjJYYmd1?=
+ =?utf-8?B?cVpMcXhhNDBScEE0MmNEMzBqaFpod0xJUDJkd01CVUdudmNSRzBPdXRaUlNL?=
+ =?utf-8?B?cmRPTUxqOXk3REVzMFNjd3d6SDhEc25XZ0oxUzFqN1l4YTc4UzBWSlRidmhx?=
+ =?utf-8?B?c2EvR0x0MDhoRlVyc0pSSnV2ejZFSDR2ZTB1Z2NkZ2F4dm1jWlB4ME5LaEZT?=
+ =?utf-8?B?VlphT0xHV3dZbjNPMHdiaEsvc3FTakZySWhPQ1Y2aUdqTnQ4S0pwTkFrblhQ?=
+ =?utf-8?B?bUE5RWVSbDVzWVFqNyt1VFJtSWRENHlQYmZlaFBLSmc3RHZVdzYzT29PMEpm?=
+ =?utf-8?B?UHZJbmtYNHJ2N3lkcDR1Q0VWVlN3akRTS1ZVekxBZ2xQdFM2dDRSWFVYWDFN?=
+ =?utf-8?B?dlpQVVdPRmZibTMreHhVTm1pOEg1V0krckI5OHlSeFI4YmR5ak1UR3lhd2N6?=
+ =?utf-8?B?S2pSYUR3anhLZUF2NmF0dEliUHQ4UkM1Mmc3bVplYlBYYTVkVEcyN3J3YlRK?=
+ =?utf-8?B?SHEwVHFSbjkyajEyWGlZV2lpQkdwNGtVaW1xakhUMkJHNHU2YmdqRmhvNmo0?=
+ =?utf-8?B?Nkczcnl0cVVZdStVb2hoMUFpZytOSGozWGVuTXZBZmxFSW5vVlpwMkQveWdN?=
+ =?utf-8?B?ZjdFMndONm1WRDMrbEJYMUc5NXBIQTVReE05RHZ5OXNjMVdEbXZMb2YwRXhE?=
+ =?utf-8?B?K3NTSGFvU0t3anVhTElZMGNIR1FrNWNxWDZ5dlFtUWY5M2lOTDRyR2ZJcFg0?=
+ =?utf-8?B?ZDRqTTF2eEcwSm5iY2s3eXhRR3M5OVViRGF0UmRjNXBFTlBUVHQ4OFRWaXBj?=
+ =?utf-8?B?RzRud01BanN4T0x6K244VnpRd0N1RVhlZGZhZWwxWW5kVldNdTl2RXJIMnRF?=
+ =?utf-8?B?N3NMNzlRTkMyUm9qMkFQdU5LVVRVNjZFVW5ydWYrM0kxRmR0VnN2L2Q2bXJT?=
+ =?utf-8?B?REZVZFZIZXZjU2ZGd0dWNWtSNEpqRkZ4SElIN1VkcVhaMFdoOUdEU1F0VFA3?=
+ =?utf-8?B?dktVcmZCVHdyRzhQeCszaUVuVTJXeTk4eS9lVTlma1dxVWlIRnBueVFnb1RR?=
+ =?utf-8?B?Mk5oWFBWc1A0V0pjT05QQVlZM1d2WHB0K1cwMnZqQW84cXdzL0dsV1c3VWc4?=
+ =?utf-8?B?bjJJV3UzOHdyU2dmY01uQXpLcVdwSkxJU3luM2lvdUcrbzN3VUtQVkpZR0Vt?=
+ =?utf-8?B?dFBjOVY0ZEMya044MWpmWjJXOWVHRjUxVGd1RHJmMkRSNnAvNDNLMWRrcjdL?=
+ =?utf-8?B?dTdaMEt5aXJZZ21OcEIzVzk0ejdnK0J1ZmJseVJIMDJEOVJBZm9DQjMzTlFN?=
+ =?utf-8?B?NGozSkU0b3ozRDArRU9KSFBRVTZyM0tYWmlCMk1FL0RyWlE1WWlkenVPWmZt?=
+ =?utf-8?B?Nk5SYUx0djllczgrYXBpRWZ3YmlwVm9IWW5HUUltNlZDQnZ1RTV1cjMrSlBS?=
+ =?utf-8?B?ZGUzN3hBQ1BSS3RDU1BWQUp2eGZCdHVOT2s1ajZMUDZQOXgzZEI5T3k5eXh5?=
+ =?utf-8?B?NSszZHQxbDFmRTVweEYzcmJQOGJNcnE2MzVMWk10WERHSkE9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB4262.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Q0lpWDduRFNZOHBKdnZQTmNZZHJxTGVsMytiQWp1aGVteWdpUUc5Q2JPTG5Z?=
+ =?utf-8?B?a2syTU9NenpOdVVrSHdPR0dLcHRGS1JlS3BBalZYY0F3VXhzSnBZaVpPZEdl?=
+ =?utf-8?B?eHlXZkg3RXlEaXY2M1pOaXFiRmlVZzlKdTlJSDcwTmJ6OU5va3lNcjBHOWl0?=
+ =?utf-8?B?K2hVNk9kaFhTSWNlMmc4VjBETVBpdElJMTVhUCt1ZEtScFRxSWdHb2x1ajBM?=
+ =?utf-8?B?anIrQ1Y1dUduTDRBVDlnU2lTTXF3eHFMeGNSQkpoanlCeTBrWTJoNklEQnhl?=
+ =?utf-8?B?V2NQZUtaYjhHdE1wdFVpMXRZZ05heGp4djk3djl4RDZHYUgrcTNEZTNQYzQr?=
+ =?utf-8?B?aDlONVArdkU4VVAyaE14UmVLZHRReUxTdmhSYndtSEZ5MEZkMFNoZFFMN3NG?=
+ =?utf-8?B?V0FSVzdtZ0prVzJyVG1EdTF3eWZiYk1zdHVYVldkS2Vkdk9xbFQ3K2hHMUtY?=
+ =?utf-8?B?QkdwNFhleHg4TUd4WHBvVmRVMWxmYWFHOFFDQmJ6aVUzZGYyRlZPbFFIYTZJ?=
+ =?utf-8?B?Z0daME1LUGxaQUluakxjT2JHUDRjcWJsVGJtZzM5UnpLMkVPSTIwTGpUeEkx?=
+ =?utf-8?B?c3ZuanM5MVFNQTNJWExJM0tkL0kzbEtyVlZta2VielFGZlIrZEh4K3BsY3ZU?=
+ =?utf-8?B?VUlOY1JVMDJqVTR6MDB3WUF2WllwTjk5VnV2Z1h3WUh3WjFmU2hWWjNBSlRj?=
+ =?utf-8?B?U0U0N3Rmdk16eUpRTmJXbm1ReURTYitBcHp4RG1LZFJoQUlDeS9BMllEOWN0?=
+ =?utf-8?B?R1lQd0JPMnRkZUtFMGFZSHZ1VzduRzZ1cXlUUDFjeWdFM3hCVFo4aU5nUzBO?=
+ =?utf-8?B?cS9sT2pMclMyanE0cDIyU1NUVkdFRW4yMXRBdGNYaXFmbnFwNGwxamxaYmpK?=
+ =?utf-8?B?Zkh5VWhTdUtKNmV4aVUyRDFmVDgrR1JjY1g1cjdpNXBZRUt2QTN1MzVhaWZQ?=
+ =?utf-8?B?VENJc0pBanIvYUtaUStsaUN5RXBmV3ZNKzRIVk9qQVM2SmxWVWswTUdkTTJT?=
+ =?utf-8?B?NE0xNlNCdDJHeWpYSjZaYnI2blJlQ0xJOFJ0a3ZBeVpaSFFZMzlUU1l1VGlp?=
+ =?utf-8?B?R2RNVDBIbjgrNXMxeUpkZjBSU01zWE9NY3hZUmFvdlJWNEh0dzFITjVHNmcz?=
+ =?utf-8?B?WFdNVTlPU1hydjl4Q0NZTXl5MGpTMEV1akRsTG9xaUhnZU0rVm1zeHJnWTRO?=
+ =?utf-8?B?U20xamNvVXF2VXBOWXNUWmhEV1AxUTlhN2RXYmVGMmJkaXE2alJVR29Oa1pG?=
+ =?utf-8?B?Q1UvMnE5ZksvYkZZUXFpUUE3M2duUVRVZHBjeER0eWpYbGFXaFVzTG1ESlZP?=
+ =?utf-8?B?dng1RVlUV0JjaVZ0TTRKeDd1S1hQSmV3aXdSRG91Q0hsL2xHeWFYZkpUcngx?=
+ =?utf-8?B?QklEMkpvN0dGYlNyWmxCTlM1dmN6dXgzNCtjTHNQSUo1S290alcrT2czMHZP?=
+ =?utf-8?B?MFFJQ3pSWm5nOHppbkVuUUxHbVlxU0t1TTY1L0FmWTdia0RnMmtENG10RCtL?=
+ =?utf-8?B?eHcwbXU2VXJxZWo5ZU1oUng2Ymw2M0w2SjF3dVlUNC92RlVHK0tiREtQMGhN?=
+ =?utf-8?B?bkQ4YjN0NmF4eDJyR2FWZHBBUDY1amMyVldNTEVlUGkrYjRxSDhoRlVYTUFO?=
+ =?utf-8?B?aEV5UU9GTyt3UnltYURyNkF3REhLcUtWZHhtYnJkTHVXb1ZjRVpuT1BvYlJs?=
+ =?utf-8?B?d3diUi8rUTNsYUlmTzRGVVpMSk5yL25MTG40NjE0Q25aV21sK0JyYVhOL3FL?=
+ =?utf-8?B?VytOMGhEV2NhVER2djRNZVNSVVhWZkFSTGhKRUdDOTNkWUxxN1FMRlZvcGQ0?=
+ =?utf-8?B?NE94OFBKSTNrODRMeGVoY09KTGVpaW1EOFRlSlpnSnJRQXFnbVVDQmpEMnFO?=
+ =?utf-8?B?eVIwY2o5NkVRMyswMEVlL3p4Qnc4cFd2NXRxdmg1RFpZYjEvZEZHWWxSY2Yz?=
+ =?utf-8?B?R0JuUFhPUWVmZlV2aVh0WTVDc1FQbnVGQnovRHBBOTdIWkdRMTdORW9HajFM?=
+ =?utf-8?B?Y2x6NkNGZnRGUjlEQldpSk4yUlBMbDdKYmhtbzhJcmxvL0crMFUrM2xkQTBV?=
+ =?utf-8?B?QkZLY0hHL3FqeC9abUZ4N29IQUNqTmVoR20zdks0d2laRjJkb0E5UlFscWxV?=
+ =?utf-8?Q?Agek2u2PQAAbu2HD2nxw8ErtV?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 24dc0394-5097-4722-c072-08dd526b1add
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB4262.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Feb 2025 11:30:13.2009
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: tpTCtsFGFa5i0eLyJPtdViq2XOwMMVc0hOuWIgAL6IOlVRchWKVc8FKt8UnQvca8WE6kMGmbR8qGXhOTdHoQ8w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB7907
 
-Le Thu, Feb 20, 2025 at 11:46:10PM +0000, Benno Lossin a écrit :
-> On 18.02.25 14:27, Andreas Hindborg wrote:
-> > This patch adds support for intrusive use of the hrtimer system. For now,
-> > only one timer can be embedded in a Rust struct.
-> > 
-> > The hrtimer Rust API is based on the intrusive style pattern introduced by
-> > the Rust workqueue API.
-> > 
-> > Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
-> > ---
-> >  rust/kernel/time.rs         |   2 +
-> >  rust/kernel/time/hrtimer.rs | 312 ++++++++++++++++++++++++++++++++++++++++++++
-> >  2 files changed, 314 insertions(+)
-> > 
-> > diff --git a/rust/kernel/time.rs b/rust/kernel/time.rs
-> > index 87e47f2f5618d..2cf365cfb412e 100644
-> > --- a/rust/kernel/time.rs
-> > +++ b/rust/kernel/time.rs
-> > @@ -10,6 +10,8 @@
-> > 
-> >  use core::convert::Into;
-> > 
-> > +pub mod hrtimer;
-> > +
-> >  /// The number of nanoseconds per millisecond.
-> >  pub const NSEC_PER_MSEC: i64 = bindings::NSEC_PER_MSEC as i64;
-> > 
-> > diff --git a/rust/kernel/time/hrtimer.rs b/rust/kernel/time/hrtimer.rs
-> > new file mode 100644
-> > index 0000000000000..a6332924efabd
-> > --- /dev/null
-> > +++ b/rust/kernel/time/hrtimer.rs
-> > @@ -0,0 +1,312 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +
-> > +//! Intrusive high resolution timers.
-> > +//!
-> > +//! Allows running timer callbacks without doing allocations at the time of
-> > +//! starting the timer. For now, only one timer per type is allowed.
-> > +//!
-> > +//! # Vocabulary
-> > +//!
-> > +//! States:
-> > +//!
-> > +//! * Stopped
-> > +//! * Running
-> > +//!
-> > +//! Operations:
-> > +//!
-> > +//! * Start
-> > +//! * Cancel
-> > +//! * Stop
-> > +//! * Restart
-> > +//!
-> > +//! Events:
-> > +//!
-> > +//! * Expire
-> > +//!
-> > +//! ## State Diagram
-> > +//!
-> > +//! ```text
-> > +//!                  <-- Stop ----
-> > +//!                  <-- Cancel --
-> > +//!                  --- Start -->
-> > +//!        +---------+        +---------+
-> > +//!   O--->| Stopped |        | Running |---o
-> > +//!        +---------+        +---------+   |
-> > +//!                                  ^      |
-> > +//!                  <- Expire --    |      |
-> > +//!                                  o------o
-> > +//!                                   Restart
-> > +//! ```
-> > +//!
-> > +//! A timer is initialized in the **stopped** state. A stopped timer can be
-> > +//! **started** with an **expiry** time. After the timer is started, it is
-> > +//! **running**. When the timer **expires**, the timer handler is executed.
-> > +//! After the handler has executed, the timer may be **restarted** or
-> > +//! **stopped**. A running timer can be **canceled** before it's handler is
+On 2/19/2025 3:45 PM, Shivank Garg wrote:
+> KVM's guest-memfd memory backend currently lacks support for NUMA policy
+> enforcement, causing guest memory allocations to be distributed arbitrarily
+> across host NUMA nodes regardless of the policy specified by the VMM. This
+> occurs because conventional userspace NUMA control mechanisms like mbind()
+> are ineffective with guest-memfd, as the memory isn't directly mapped to
+> userspace when allocations occur.
 > 
-> This confuses me a bit, in the other thread you wrote that the handler
-> decides if the timer should restart or be stopped. But What happens when
-> I call `cancel` on the `HrTimerHandle` while the handler is running, but
-> finishes shortly after with a restart request? Will it be canceled?
+> This patch-series adds NUMA binding capabilities to guest_memfd backend
+> KVM guests. It has evolved through several approaches based on community
+> feedback:
+> - v1,v2: Extended the KVM_CREATE_GUEST_MEMFD IOCTL to pass mempolicy.
+> - v3: Introduced fbind() syscall for VMM memory-placement configuration.
+> - v4,v5: Current approach using shared_policy support and vm_ops (based on
+>       suggestions from David[1] and guest_memfd biweekly upstream call[2]).
 > 
-> I also have a bit of a wording issue with "the timer is running" IIUC,
-> this means that the timer subsystem keeps track of the expiry time and
-> when the time is elapsed, it fires the code that you registered prior.
-> At first, I thought that "the timer is running" meant that the
-> registered code is running. Maybe we should have two different terms for
-> that? I personally would prefer "active timer" for "the timer subsystem
-> is currently tracking the time and when it is elapsed, it will run the
-> code" and "running timer" for "the timer's expiry time has elapsed and
-> the timer callback is currently being executed".
 
-Good point. "Running" in the hrtimer terminology is usually to
-describe a running callback and not just an elapsing (or say started) timer.
+<--snip>
 
-I would rather have:
+Hi All,
 
-Stopped: initialized but not started, or cancelled, or not restarted
-Started: initialized and started or restarted
-Running: executing the callback
+This patch-series was discussed during the bi-weekly guest_memfd upstream 
+call on 2025-02-20 [1].
 
-Thanks.
+Here are my notes from the discussion:
+
+The current design using mmap and shared_policy support with vm_ops
+appears good and aligns well with how shared memory handles NUMA policy.
+This makes perfect sense with upcoming changes from Fuad [2].
+Integration with Fuad's work should be straightforward as my work
+primarily involves set_policy and get_policy callbacks in vm_ops.
+Additionally, this approach helps us avoid any fpolicy/fbind()[3]
+complexity.
+
+David mentioned documenting the behavior of setting memory policy after
+memory has already been allocated. Specifically, the policy change will
+only affect future allocations and will not migrate existing memory.
+This matches mbind(2)'s default behavior which affects only new allocations
+(unless overridden with MPOL_MF_MOVE/MPOL_MF_MOVE_ALL flags).
+
+In the future, we may explore supporting MPOL_MF_MOVE for guest_memfd,
+but for now, this behavior is sufficient and should be clearly documented.
+
+Before sending the non-RFC version of the patch-series, I will:
+- Document and clarify the memory allocation behavior after policy changes
+- Write kselftests to validate NUMA policy enforcement, including edge
+  cases like changing policies after memory allocation
+
+I aim to send the updated patch-series soon. If there are any further
+suggestions or concerns, please let me know.
+
+[1] https://lore.kernel.org/linux-mm/40290a46-bcf4-4ef6-ae13-109e18ad0dfd@redhat.com
+[2] https://lore.kernel.org/linux-mm/20250218172500.807733-1-tabba@google.com
+[3] https://lore.kernel.org/linux-mm/20241105164549.154700-1-shivankg@amd.com
+
+Thanks,
+Shivank
 
