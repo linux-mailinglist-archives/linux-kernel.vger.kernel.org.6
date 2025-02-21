@@ -1,207 +1,95 @@
-Return-Path: <linux-kernel+bounces-526100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24417A3FA16
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:06:24 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC988A3FA20
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:07:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8662E88008C
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 15:58:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A02697AF85B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:00:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC7A7212B1B;
-	Fri, 21 Feb 2025 15:56:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98A1121B180;
+	Fri, 21 Feb 2025 15:57:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="GCjikiFl"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="LN4ajsLe"
+Received: from mx.denx.de (mx.denx.de [89.58.32.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C02C31EEA32;
-	Fri, 21 Feb 2025 15:56:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D0F921858C;
+	Fri, 21 Feb 2025 15:57:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740153363; cv=none; b=jQyw62tH9IEPMk8eKptHjdZcB5q2hp/JpXNlqODotJKMO9S9nr17dXAH6Jg30UaChdBs00Jzk2mqGLr4O8BCrOkkfxiNOS9Uy9hVnLRQQgmebmhPq9uSKrb1rDBdloOU2lw43Ih9rLRSbVgt4lSedfX25xaeYjD0bcO+eSklceM=
+	t=1740153425; cv=none; b=tCtol3D7OGXHjVYtvuQWMfUzQZTttXU10ikWQ+AfCrS9g3OUsA1gla6ZSx35V3RYl8hrB6wewBLWjFVCysRinrcf3zVXsALAW8a1Qcz87n27Uqm7tOyDp/jJeP5Z0D1Q2OgEJMkD9ObGeYEhIoLAZaob5aTbQXqOmIW7ywtvUsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740153363; c=relaxed/simple;
-	bh=c3guHAxmKN+Oe6JsIfaBRYhvDWRoheJERAhF1oMGrNU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=imeCd/P0DYqgYxzIM1r5K4QHe/e0y5YtTDU4sOxFEk2iPT+e1Ut9/rC/tg5FwlTYL6jnyDkpv8tTYzLnodR1H1xbBiZw1XbifnsqotzUQSPUGTIMnycDSKg610WK+FRBbNg4WEWV8DHvzhix7pLu4Xn6Hg2Srgfjm5EfhOQLO/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=GCjikiFl; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51LAj9Lw032246;
-	Fri, 21 Feb 2025 15:55:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=0aF1oI
-	X1pTS5Q+jvcBTTS6kBqS6814vwS2mlFDg3Z+8=; b=GCjikiFlbXf5c8Ww4dFge3
-	sxVrz9PIkmvmYMRIw20tAwWZt/J5IMBOWF/vf7Fw05zAbs95+U44pEu+A8vKxa4d
-	fCl5u+UTbQUaafchzX9DBQ5wVZ78gRskm4QhQVlem3vXQVSMQuT0gw1QQ71eefXG
-	/T8en4tRKUyDMgLXpejtlh1+VJNSJ17UrTgapdgt6rmSbhqRuGCKquFZEEr5lY6J
-	ISVdrlxxYurrLAxubYSBhSrd+AkBIUSlRQXxQPy31dL7puccT0JUE4rTyNlvEIeO
-	qd3VgOy1cx2F4Z92xpeOnlrLa5xCbLIAh2kHM/q2gKExZ59Qfbt/HDhWSpQd0fDw
-	==
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44xdhavdjn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Feb 2025 15:55:56 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51LF1DeX009702;
-	Fri, 21 Feb 2025 15:55:55 GMT
-Received: from smtprelay07.wdc07v.mail.ibm.com ([172.16.1.74])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 44w03ygtgn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Feb 2025 15:55:55 +0000
-Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
-	by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51LFtrKv53084486
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 21 Feb 2025 15:55:53 GMT
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 564765805A;
-	Fri, 21 Feb 2025 15:55:53 +0000 (GMT)
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id DF6BE58054;
-	Fri, 21 Feb 2025 15:55:51 +0000 (GMT)
-Received: from [9.61.107.75] (unknown [9.61.107.75])
-	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 21 Feb 2025 15:55:51 +0000 (GMT)
-Message-ID: <a5fed2fd-5265-4b0a-a323-6b2ea602e2ba@linux.ibm.com>
-Date: Fri, 21 Feb 2025 10:55:51 -0500
+	s=arc-20240116; t=1740153425; c=relaxed/simple;
+	bh=492TM+ddBdtrEar4I4w7H8TW4P41zEk1hJNB3oHWQlM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HFP8yxnh2Crc3exOxMiz9sHqp99je/b9fgDxA4F6BEP5iQJCIYg+rx5TXb3fPaHcMoDZPOaxjkO2QrbxcVLdYGpk9G0hllbat0VQzNoM9XiyZGzb4ieGx2FkNUz/Qx44AwUW02ja0lkT6EhXUK5YZ4kHLRQ+dSGMm87/75yExnc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=LN4ajsLe; arc=none smtp.client-ip=89.58.32.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 96538103BB5D9;
+	Fri, 21 Feb 2025 16:57:00 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
+	t=1740153421;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=NTPkJC8S7Tc2Qw4+IVsZXDQLXEDTO6mvUFRRMEEVFYA=;
+	b=LN4ajsLeHjC107GeauITx1TiuGChfkP2tN3BZ/ycBSTaOEtLajVpzMA9Vlleu3pUhBdb/u
+	qApAlJKSvrEIJ9+s/jic0icoUjIjVMZePAe/2iN/1MIKZPdRn494k3LF0n9fuzQ5LpycdG
+	Kgxxzb3TJzd41Rta0LZ3YlpTNMO44Mif1WGb4o6c//o56zRTkX8AUO2EeIboOTmIRj+fom
+	NRPxSOG43+JEfosRAV4WQVydxzyY5hC2MV1sycxuRBrl59N9BuQfZ8TaifjM9DwCbKIUeV
+	o2uzL6PBRKFJ7mmCOUNB1WxueGtYWBgNIbPtIgu9ZqTPiJiWdP8buPowbYg/dw==
+From: Lukasz Majewski <lukma@denx.de>
+To: Mark Brown <broonie@kernel.org>
+Cc: linux-spi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lukasz Majewski <lukma@denx.de>
+Subject: [PATCH] spi: spidev: Add compatible for LWE's btt device
+Date: Fri, 21 Feb 2025 16:56:44 +0100
+Message-Id: <20250221155644.1168860-1-lukma@denx.de>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] s390/vio-ap: Fix no AP queue sharing allowed message
- written to kernel log
-To: Heiko Carstens <hca@linux.ibm.com>
-Cc: linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, jjherne@linux.ibm.com, borntraeger@de.ibm.com,
-        pasic@linux.ibm.com, pbonzini@redhat.com, frankja@linux.ibm.com,
-        imbrenda@linux.ibm.com, alex.williamson@redhat.com,
-        kwankhede@nvidia.com, agordeev@linux.ibm.com, gor@linux.ibm.com
-References: <20250220000742.2930832-1-akrowiak@linux.ibm.com>
- <20250221095719.11661Ba2-hca@linux.ibm.com>
-Content-Language: en-US
-From: Anthony Krowiak <akrowiak@linux.ibm.com>
-In-Reply-To: <20250221095719.11661Ba2-hca@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: wZxbqJZB6reubS_ekVGXlNu4M28AjeSU
-X-Proofpoint-ORIG-GUID: wZxbqJZB6reubS_ekVGXlNu4M28AjeSU
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-21_05,2025-02-20_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 spamscore=0
- mlxlogscore=999 mlxscore=0 bulkscore=0 priorityscore=1501 adultscore=0
- clxscore=1015 suspectscore=0 phishscore=0 lowpriorityscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2502210111
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
+The Liebherr's BTT devices are using spidev to communicate via
+SPI to monitoring devices. Extend compatibles to allow proper
+DTS description.
 
+Signed-off-by: Lukasz Majewski <lukma@denx.de>
+---
+ drivers/spi/spidev.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-
-On 2/21/25 4:57 AM, Heiko Carstens wrote:
-> On Wed, Feb 19, 2025 at 07:07:38PM -0500, Anthony Krowiak wrote:
->> -#define MDEV_SHARING_ERR "Userspace may not re-assign queue %02lx.%04lx " \
->> -			 "already assigned to %s"
->> +#define MDEV_SHARING_ERR "Userspace may not assign queue %02lx.%04lx " \
->> +			 "to mdev: already assigned to %s"
-> Please do not split error messages across several lines, so it is easy
-> to grep such for messages. If this would have been used for printk
-> directly checkpatch would have emitted a message.
-
-fixed
-
->
->> +#define MDEV_IN_USE_ERR "Can not reserve queue %02lx.%04lx for host driver: " \
->> +			"in use by mdev"
-> Same here.
-
-fixed
-
->
->>   	for_each_set_bit_inv(apid, apm, AP_DEVICES)
->>   		for_each_set_bit_inv(apqi, aqm, AP_DOMAINS)
->> -			dev_warn(dev, MDEV_SHARING_ERR, apid, apqi, mdev_name);
->> +			dev_warn(mdev_dev(assignee->mdev), MDEV_SHARING_ERR,
->> +				 apid, apqi, dev_name(mdev_dev(assigned_to->mdev)));
-> Braces are missing. Even it the above is not a bug: bodies of for
-> statements must be enclosed with braces if they have more than one
-> line:
-
-fixed
-
->
->    	for_each_set_bit_inv(apid, apm, AP_DEVICES) {
->    		for_each_set_bit_inv(apqi, aqm, AP_DOMAINS) {
-> 			dev_warn(mdev_dev(assignee->mdev), MDEV_SHARING_ERR,
-> 				 apid, apqi, dev_name(mdev_dev(assigned_to->mdev))
-> 		}
-> 	}
->
->> +static void vfio_ap_mdev_log_in_use_err(struct ap_matrix_mdev *assignee,
->> +					unsigned long *apm, unsigned long *aqm)
->> +{
->> +	unsigned long apid, apqi;
->> +
->> +	for_each_set_bit_inv(apid, apm, AP_DEVICES)
->> +		for_each_set_bit_inv(apqi, aqm, AP_DOMAINS)
->> +			dev_warn(mdev_dev(assignee->mdev), MDEV_IN_USE_ERR,
->> +				 apid, apqi);
->> +}
-> Same here.
-
-fixed
-
->
->> +
->> +/**assigned
->>    * vfio_ap_mdev_verify_no_sharing - verify APQNs are not shared by matrix mdevs
-> Stray "assigned" - as a result this is not kernel doc anymore.
-
-fixed
-
->
->> + * @assignee the matrix mdev to which @mdev_apm and @mdev_aqm are being
->> + *           assigned; or, NULL if this function was called by the AP bus driver
->> + *           in_use callback to verify none of the APQNs being reserved for the
->> + *           host device driver are in use by a vfio_ap mediated device
->>    * @mdev_apm: mask indicating the APIDs of the APQNs to be verified
->>    * @mdev_aqm: mask indicating the APQIs of the APQNs to be verified
-> Missing ":" behind @assignee. Please keep this consistent.
-
-fixed
-
->
->> @@ -912,17 +930,21 @@ static int vfio_ap_mdev_verify_no_sharing(unsigned long *mdev_apm,
->>   
->>   		/*
->>   		 * We work on full longs, as we can only exclude the leftover
->> -		 * bits in non-inverse order. The leftover is all zeros.
->> +		 * bits in non-inverse order. The leftover is all zeros.assigned
->>   		 */
-> Another random "assigned" word.
-
-My IDE sometimes randomly pastes things in the clipboard.
-fixed
-
->
->> +		if (assignee)
->> +			vfio_ap_mdev_log_sharing_err(assignee, assigned_to,
->> +						     apm, aqm);
->> +		else
->> +			vfio_ap_mdev_log_in_use_err(assigned_to, apm, aqm);
-> if body with multiple lines -> braces. Or better make that
-> vfio_ap_mdev_log_sharing_err() call a long line. If you want to keep
-> the line-break add braces to both the if and else branch.
-
-fixed
-
+diff --git a/drivers/spi/spidev.c b/drivers/spi/spidev.c
+index 58ae4304fdab..ceaccc5cf8f5 100644
+--- a/drivers/spi/spidev.c
++++ b/drivers/spi/spidev.c
+@@ -707,6 +707,7 @@ static const struct spi_device_id spidev_spi_ids[] = {
+ 	{ .name = /* dh */ "dhcom-board" },
+ 	{ .name = /* elgin */ "jg10309-01" },
+ 	{ .name = /* lineartechnology */ "ltc2488" },
++	{ .name = /* lwe */ "btt" },
+ 	{ .name = /* lwn */ "bk4" },
+ 	{ .name = /* lwn */ "bk4-spi" },
+ 	{ .name = /* menlo */ "m53cpld" },
+@@ -738,6 +739,7 @@ static const struct of_device_id spidev_dt_ids[] = {
+ 	{ .compatible = "dh,dhcom-board", .data = &spidev_of_check },
+ 	{ .compatible = "elgin,jg10309-01", .data = &spidev_of_check },
+ 	{ .compatible = "lineartechnology,ltc2488", .data = &spidev_of_check },
++	{ .compatible = "lwe,btt", .data = &spidev_of_check },
+ 	{ .compatible = "lwn,bk4", .data = &spidev_of_check },
+ 	{ .compatible = "lwn,bk4-spi", .data = &spidev_of_check },
+ 	{ .compatible = "menlo,m53cpld", .data = &spidev_of_check },
+-- 
+2.39.5
 
 
