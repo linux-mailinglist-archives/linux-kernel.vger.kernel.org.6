@@ -1,291 +1,231 @@
-Return-Path: <linux-kernel+bounces-524948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7EF0A3E906
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 01:10:21 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1B68A3E909
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 01:10:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AC80A7A8929
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 00:09:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 789E042082D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 00:10:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7B381DFF7;
-	Fri, 21 Feb 2025 00:09:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A95234C85;
+	Fri, 21 Feb 2025 00:09:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b="FAFM9OXF"
-Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com [209.85.167.173])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yDlTdx2F"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51F278F6E
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 00:09:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47D4F1876
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 00:09:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740096574; cv=none; b=YQ9ZgH60c7dXfR+tPtYCcsPZx14iab5vzgtKis/7WDcRP/2+NgySWOTUzvuG/MGnNXf8vLqdyQel1qbdlqCqMyV4oN6NJhhEFb/3ilIMpMP8UW7UxYvcne8UGwIvGQ4zgSJHc9Vh9R0/9g5vVrjiHgizEjT/19hkEONNXQmFIKw=
+	t=1740096589; cv=none; b=L8X5YijIqwCubvNsFPzOa9g7PArrd+ehkeMIkOxL94IKOXPH7js8VlfIZkM2RdVU4a0VMR32nCUlpM9egxgJ7hBtC28qThu6Y2SD6IlHVU+dY7LLXjxABqLrVI9lN3lHGdCO9DCvikketDVO8n41U3wB+D3rQxO8TgEumHpJQcI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740096574; c=relaxed/simple;
-	bh=CQzSTQWE4thoM09MiQ9gz19svPbcWrFRlVo+Hb+XTOI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=d31L03293W4w0v2pc79tPzZdwMOwOm8WXlT9rqK1V8gqyP0LEjmb9KDqQtb/nRijoM3EzC+SqZMsUoDpCzZ2MZhJ5mYwSAV2FVxoyyKQ4GrN1hcjSTU+lMkEs3QQXSAeesE8CFJbAYtckhzl/eME181BA1vbTsStabPtqobLlGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com; spf=pass smtp.mailfrom=tenstorrent.com; dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b=FAFM9OXF; arc=none smtp.client-ip=209.85.167.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tenstorrent.com
-Received: by mail-oi1-f173.google.com with SMTP id 5614622812f47-3f405e2c761so852640b6e.1
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 16:09:32 -0800 (PST)
+	s=arc-20240116; t=1740096589; c=relaxed/simple;
+	bh=CYy+syz0H0mvkNkZkdp17FYvvZqZEB3HFIsP6QAgNM8=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=DQR+8MDzpG07DBVtRawupHCFMGSKL0Wt19XitXc1TOeoCOhaJMsIMU8Who6IeDC71rDllbgN7arCz+CWayyEpuhLWjGW9LNHQGCXLWFzvIn/5robeYkx1+cIuk5BiqeKz5FVgw8CTZFpuC3NQ3dTgJYRbI9Ii8i+UdX0guRFArs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jperaza.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yDlTdx2F; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jperaza.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2fc518f0564so3289028a91.2
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 16:09:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tenstorrent.com; s=google; t=1740096571; x=1740701371; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+knCqqnB60be5uWSQ10xJ1S6sb+4Be8XtAoVkEDcmKA=;
-        b=FAFM9OXFf1EXC7sylAEZ2je/NSpuaNBCpt3OTasjyb9ScN0nymRGQbMhZe4k2UB420
-         knhsz9CpHtVb3GwoCHuDM5ZlM7hAg7JCHoAoQPr2x0Z4FLQKoreyf6FSfHQakliPCNVi
-         4aYFspia/nvPxSo6wYi+Vp7U4bfFo8HgsYp9wZLk3437lasUvaP0f5WiafpsSbV45h2s
-         xzvKFa6uHGcnr+jsmmHZKBVp552g7exc61Vl2XyOjeZlxkP1i3WYOIS0Gw9gTpdb/wYp
-         dMxokcz56ti6GRPHr6rH+dZ5IW1yORJO53SmzlsB9grIuOxK7l3xVqRWbSRtf516mhNy
-         NiNA==
+        d=google.com; s=20230601; t=1740096587; x=1740701387; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ohok8GBBY7t0QEOt/byU++Ad3TOaqSbLlb97J7pTKzY=;
+        b=yDlTdx2FU9/pTlOYk9AlZMCdAzzzK1vy3WUnutiZBnnNP2ixmbc8Y5XxE1wZ3XNLC9
+         +Ad24NUDZ4KYWUGQzpaX/qHhVT+7GduoVe8Gwsp+VE+VszSqoT/zuIOwhkmtp4oSNLmx
+         9N4NM4h9DHsejNmSCx5Dt/Xy191apGGsgC7olZEThJTwukYRTc3U17rzoeBpJKUBStmV
+         je6xfmYppnyoPVGg1owJlSYPZi/6wjcQ1P5+B74sFhSMtF6InMuW5AvXDq2oHNpBwgoD
+         erp5HHeanaTGREy3mB/eR+AdW4S0Aj7tTZk9YLnmDfz+f0PojW3T8s+ExKAS55744TUY
+         5O0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740096571; x=1740701371;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+knCqqnB60be5uWSQ10xJ1S6sb+4Be8XtAoVkEDcmKA=;
-        b=bxkySZxw4gUzzxb4AefEi1WVK3R87Yv+KQwyUMqFYj/ZVH/U5vqKQCFmfayWwd1x4g
-         DvaG1vKG3OyLbN1ujaWdc0YQYEkjoTGnr0KKfQ5z4FrCe63wYToksY2dW9JxCEgH9HvW
-         vVe3brW04Am5XR1USoBHBUMIkq+WdQPLdNptpWSaZr2S4xnHKOrICM4FV0VQCnSBrJkn
-         ULN8fOrpN9i+rRdcPnbKwwN2d4u3y4xGKsh+2+DR7PTHT8C0E6+KJbrbJ2f0+423JMPd
-         Qp36iXs+ilsVFXcvOpMwuAfJEXwlbu8MiYGrlW4BP/DoTbQ3wbkT5uZOfx+GmalwQbGA
-         Xk3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXYNPP/IXIvhEE8EhlW5b0x1tjNk0DMKM2Q/nFmdrdHizDjCvFxxWljgxy0BCdaVrfTdenDepjoz6VGa7A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxArkjmW/diwFHY1Qn425Vkel9+AdWLa9YZQdvOt5icr40h7k9w
-	swTNh8WLQYa15vUdT4yQIvK3tikMMu/uXfNwbGNwHpVN8AoZC3HFbRrYYKmV5A==
-X-Gm-Gg: ASbGncugnVpdvuBFUVDPNnmiVdQvper1xS2YnSRsAnxE+8BF5hvNo4mIiGNifAVcn3i
-	9yWFXe+Sl+YCSkqW4ATzKQvP+Ij6qhBC9sCtpcz7WjgUgu6KYlMYFWwiyyUHW2qVxnmZfRL7sXJ
-	s6a5myabdt5wiYlZwwQglNU/Mim8k250rMjhZdmWz1ln4oBshbCfZPaUzKfKL9MHWDs57nV0juZ
-	+f3zIRU38rh2BYwyj0+J5aC8i65UANJzpovXJYMwVF6FtLvkbaD400sAy2fVPITMS1thfG83csY
-	XfGfeK3+nAC9gwND+lMvZ85yU2Mx55x1+g==
-X-Google-Smtp-Source: AGHT+IEMGnDVwYsV62cBocsB6VRb+qRff3a2UiPYmr/fXmxdBlq3NZLsTutH+x4Vzk0cSqwcF1F8Ow==
-X-Received: by 2002:a05:6808:384e:b0:3f4:d61:36cf with SMTP id 5614622812f47-3f4247a204fmr1275951b6e.30.1740096571285;
-        Thu, 20 Feb 2025 16:09:31 -0800 (PST)
-Received: from aus-ird.tenstorrent.com ([38.104.49.66])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3f40b027906sm1573401b6e.42.2025.02.20.16.09.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Feb 2025 16:09:30 -0800 (PST)
-From: Cyril Bur <cyrilbur@tenstorrent.com>
-To: palmer@dabbelt.com,
-	aou@eecs.berkeley.edu,
-	paul.walmsley@sifive.com,
-	charlie@rivosinc.com,
-	jrtc27@jrtc27.com,
-	ben.dooks@codethink.co.uk
-Cc: linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	jszhang@kernel.org
-Subject: [PATCH v3 4/4] riscv: uaccess: use 'asm_goto_output' for get_user()
-Date: Fri, 21 Feb 2025 00:09:24 +0000
-Message-Id: <20250221000924.734006-5-cyrilbur@tenstorrent.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250221000924.734006-1-cyrilbur@tenstorrent.com>
-References: <20250221000924.734006-1-cyrilbur@tenstorrent.com>
+        d=1e100.net; s=20230601; t=1740096587; x=1740701387;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ohok8GBBY7t0QEOt/byU++Ad3TOaqSbLlb97J7pTKzY=;
+        b=WeDYmEMYvqzCd4cn4eu/SSlh2az1lzT4zj8nXNx+1ilelrYRPhkFn139F+Gsd9H93F
+         m/kEyaXpDR2jBG+exC1H60VacHbBx9+ctsgi1ZO2Y0wqPZdx+TpTtdeyG+rNaqx8aUuE
+         0oqMtEnGZxSYrBR9R2A7v3WN8lj/xVtfmcLJVrofCuLrpCC9/bCegxTaXJDNEBixiDMX
+         Ubz/KjoB/F1Cqy6Yy4DY95eujwP1zYhODHTux7yAgZxp8pfwXrZVOo5xpnHNwiP0yZdf
+         C4SnRoaJ2Q+255ktSj/nuL368ZFHH285COD22ZEoSBDo8CrUh9AEYYEperO+dXYrVIAi
+         o/VQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWUucg8A2acaMbf+IIJmJ0SHgGNcJK30mIluJuqkX3HE6EVZNMIlxurOvyrvYAiEkyD12fxetYG3ebe4iY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywit5t1MEXl/A7rKunEhF4OWFfj7x19a2nqhFvCykT5l7fbHXCI
+	IYKuSbU4sxSYfWNhhdVQXBaqPz5kSSHaMjjtz7BvlCZPnLu8R8jstSq6J++B+gkCWZvNe3D0PBs
+	kcTrRmg==
+X-Google-Smtp-Source: AGHT+IE+/XdpryHAXtWsVuqH/GBAd4U+y5+ZwkF9rtofcQmDPCXCP0K1uOrOC/YoiJt7j7ujhepPRibIQz/U
+X-Received: from pjbqi16.prod.google.com ([2002:a17:90b:2750:b0:2fc:2f33:e07d])
+ (user=jperaza job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:17c4:b0:2ee:f80c:6889
+ with SMTP id 98e67ed59e1d1-2fce7b44472mr2063542a91.33.1740096587389; Thu, 20
+ Feb 2025 16:09:47 -0800 (PST)
+Date: Fri, 21 Feb 2025 00:09:39 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.48.1.601.g30ceb7b040-goog
+Message-ID: <20250221000943.973221-1-jperaza@google.com>
+Subject: [v9 PATCH 0/2] PCI/ACPI: Support Microsoft's "DmaProperty"
+From: Joshua Peraza <jperaza@google.com>
+To: gregkh@linuxfoundation.org
+Cc: baolu.lu@linux.intel.com, bhelgaas@google.com, dtor@google.com, 
+	dwmw2@infradead.org, helgaas@kernel.org, iommu@lists.linux-foundation.org, 
+	jean-philippe@linaro.org, joro@8bytes.org, jperaza@google.com, 
+	jsbarnes@google.com, lenb@kernel.org, linux-acpi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
+	mika.westerberg@linux.intel.com, oohall@gmail.com, pavel@denx.de, 
+	rafael.j.wysocki@intel.com, rafael@kernel.org, rajatja@google.com, 
+	rajatxjain@gmail.com, will@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Jisheng Zhang <jszhang@kernel.org>
+Threat model: An overview of the security implications of non-strict
+IOMMU is presented at [1]. This change is motivated by =E2=80=9CCase 1=E2=
+=80=9D where
+a DMA-capable device is processing untrusted inputs, e.g. network
+devices.
 
-With 'asm goto' we don't need to test the error etc, the exception just
-jumps to the error handling directly.
+This patchset proposes using =E2=80=9CDMA protection=E2=80=9D to mitigate t=
+hese risks.
+This has the following effects, currently controlled by the
+=E2=80=9Cpci_dev::untrusted=E2=80=9D flag.
 
-Unlike put_user(), get_user() must work around GCC bugs [1] when using
-output clobbers in an asm goto statement.
+- Separate IOMMU DMA domains
+- Use of SWIOTLB if CONFIG_SWIOTLB
+- Disables quirks in Intel IOMMU
+- Disables Address Translation Services
 
-Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=113921 # 1
+The =E2=80=9Cuntrusted=E2=80=9D flag was introduced in 2018 in [2]. The mot=
+ivation for
+that change was to enable using IOMMU to protect against DMA attacks
+from externally facing devices such as thunderbolt ports. The patchset
+introduces the =E2=80=9Cuntrusted=E2=80=9D flag which =E2=80=9Cis supposed =
+to cover various
+PCIe devices that may be used to conduct DMA attacks.=E2=80=9D The patchset
+originally proposes naming the flag =E2=80=9Cis_external=E2=80=9D but is re=
+named to
+=E2=80=9Cis_untrusted=E2=80=9D and then =E2=80=9Cuntrusted=E2=80=9D supposi=
+ng that it could apply to
+more than just externally facing thunderbolt devices. The fact that
+=E2=80=9CExternalFacingPort=E2=80=9D is not part of any standard is called =
+out during
+review but also that Windows expecting firmware to identify external
+facing ports makes it =E2=80=9Cas good as a formal standard in the Windows
+world.=E2=80=9D
 
-Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
-[Cyril Bur: Rewritten commit message]
-Signed-off-by: Cyril Bur <cyrilbur@tenstorrent.com>
----
- arch/riscv/include/asm/uaccess.h | 90 +++++++++++++++++++++++---------
- 1 file changed, 65 insertions(+), 25 deletions(-)
+This current patch series was first proposed in January 2022 [3]. It
+originally proposed a new property =E2=80=9CUntrustedDevice=E2=80=9D which =
+would cause
+the untrusted flag to be set. In V1 Greg questions whether the new
+property is part of the ACPI standard and asks who is making this
+policy decision. Mika links to Microsoft's documentation of
+=E2=80=9CDmaProperty=E2=80=9D and suggests that property should be adopted =
+instead.
+Greg objects that Linux does not have =E2=80=9Cdma protection=E2=80=9D but =
+Mika says
+that this is the IOMMU. Today, the term =E2=80=9CDMA protection=E2=80=9D is=
+ used in
+thunderbolt driver code with the same meaning and in an Intel white
+paper [4] describing the technique. Mika also observes that Linux has
+recognized several properties documented by Microsoft but not part of
+the ACPI standard. There is discussion between Mika, Rafael, and Rajat
+about seeking to align with Microsoft on the semantics of
+=E2=80=9CDmaProperty=E2=80=9D for compatibility with firmware produced for =
+Windows.
 
-diff --git a/arch/riscv/include/asm/uaccess.h b/arch/riscv/include/asm/uaccess.h
-index 1b926b61af66..ab48ef57565e 100644
---- a/arch/riscv/include/asm/uaccess.h
-+++ b/arch/riscv/include/asm/uaccess.h
-@@ -96,27 +96,56 @@ static inline unsigned long __untagged_addr_remote(struct mm_struct *mm, unsigne
-  * call.
-  */
- 
--#define __get_user_asm(insn, x, ptr, err)			\
-+#ifdef CONFIG_CC_HAS_ASM_GOTO_OUTPUT
-+#define __get_user_asm(insn, x, ptr, label)			\
-+	asm_goto_output(					\
-+		"1:\n"						\
-+		"	" insn " %0, %1\n"			\
-+		_ASM_EXTABLE_UACCESS_ERR(1b, %l2, %0)		\
-+		: "=&r" (x)					\
-+		: "m" (*(ptr)) : : label)
-+#else /* !CONFIG_CC_HAS_ASM_GOTO_OUTPUT */
-+#define __get_user_asm(insn, x, ptr, label)			\
- do {								\
--	__typeof__(x) __x;					\
-+	long __gua_err = 0;					\
- 	__asm__ __volatile__ (					\
- 		"1:\n"						\
- 		"	" insn " %1, %2\n"			\
- 		"2:\n"						\
- 		_ASM_EXTABLE_UACCESS_ERR_ZERO(1b, 2b, %0, %1)	\
--		: "+r" (err), "=&r" (__x)			\
-+		: "+r" (__gua_err), "=&r" (x)			\
- 		: "m" (*(ptr)));				\
--	(x) = __x;						\
-+	if (__gua_err)						\
-+		goto label;					\
- } while (0)
-+#endif /* CONFIG_CC_HAS_ASM_GOTO_OUTPUT */
- 
- #ifdef CONFIG_64BIT
--#define __get_user_8(x, ptr, err) \
--	__get_user_asm("ld", x, ptr, err)
-+#define __get_user_8(x, ptr, label) \
-+	__get_user_asm("ld", x, ptr, label)
- #else /* !CONFIG_64BIT */
--#define __get_user_8(x, ptr, err)				\
-+
-+#ifdef CONFIG_CC_HAS_ASM_GOTO_OUTPUT
-+#define __get_user_8(x, ptr, label)				\
-+	u32 __user *__ptr = (u32 __user *)(ptr);		\
-+	u32 __lo, __hi;						\
-+	asm_goto_output(					\
-+		"1:\n"						\
-+		"	lw %0, %2\n"				\
-+		"2:\n"						\
-+		"	lw %1, %3\n"				\
-+		_ASM_EXTABLE_UACCESS_ERR(1b, %l4, %0)		\
-+		_ASM_EXTABLE_UACCESS_ERR(2b, %l4, %0)		\
-+		: "=&r" (__lo), "=r" (__hi)			\
-+		: "m" (__ptr[__LSW]), "m" (__ptr[__MSW])	\
-+		: : label)
-+
-+#else /* !CONFIG_CC_HAS_ASM_GOTO_OUTPUT */
-+#define __get_user_8(x, ptr, label)				\
- do {								\
- 	u32 __user *__ptr = (u32 __user *)(ptr);		\
- 	u32 __lo, __hi;						\
-+	long __gu8_err = 0;					\
- 	__asm__ __volatile__ (					\
- 		"1:\n"						\
- 		"	lw %1, %3\n"				\
-@@ -125,35 +154,51 @@ do {								\
- 		"3:\n"						\
- 		_ASM_EXTABLE_UACCESS_ERR_ZERO(1b, 3b, %0, %1)	\
- 		_ASM_EXTABLE_UACCESS_ERR_ZERO(2b, 3b, %0, %1)	\
--		: "+r" (err), "=&r" (__lo), "=r" (__hi)		\
-+		: "+r" (__gu8_err), "=&r" (__lo), "=r" (__hi)	\
- 		: "m" (__ptr[__LSW]), "m" (__ptr[__MSW]));	\
--	if (err)						\
-+	if (__gu8_err) {					\
- 		__hi = 0;					\
-+		goto label;					\
-+	}							\
- 	(x) = (__typeof__(x))((__typeof__((x)-(x)))(		\
- 		(((u64)__hi << 32) | __lo)));			\
- } while (0)
-+#endif /* CONFIG_CC_HAS_ASM_GOTO_OUTPUT */
-+
- #endif /* CONFIG_64BIT */
- 
--#define __get_user_nocheck(x, __gu_ptr, __gu_err)		\
-+#define __get_user_nocheck(x, __gu_ptr, label)			\
- do {								\
- 	switch (sizeof(*__gu_ptr)) {				\
- 	case 1:							\
--		__get_user_asm("lb", (x), __gu_ptr, __gu_err);	\
-+		__get_user_asm("lb", (x), __gu_ptr, label);	\
- 		break;						\
- 	case 2:							\
--		__get_user_asm("lh", (x), __gu_ptr, __gu_err);	\
-+		__get_user_asm("lh", (x), __gu_ptr, label);	\
- 		break;						\
- 	case 4:							\
--		__get_user_asm("lw", (x), __gu_ptr, __gu_err);	\
-+		__get_user_asm("lw", (x), __gu_ptr, label);	\
- 		break;						\
- 	case 8:							\
--		__get_user_8((x), __gu_ptr, __gu_err);	\
-+		__get_user_8((x), __gu_ptr, label);		\
- 		break;						\
- 	default:						\
- 		BUILD_BUG();					\
- 	}							\
- } while (0)
- 
-+#define __get_user_error(x, ptr, err)					\
-+do {									\
-+	__label__ __gu_failed;						\
-+									\
-+	__get_user_nocheck(x, ptr, __gu_failed);			\
-+		err = 0;						\
-+		break;							\
-+__gu_failed:								\
-+		x = 0;							\
-+		err = -EFAULT;						\
-+} while (0)
-+
- /**
-  * __get_user: - Get a simple variable from user space, with less checking.
-  * @x:   Variable to store result.
-@@ -178,13 +223,16 @@ do {								\
- ({								\
- 	const __typeof__(*(ptr)) __user *__gu_ptr = untagged_addr(ptr); \
- 	long __gu_err = 0;					\
-+	__typeof__(x) __gu_val;					\
- 								\
- 	__chk_user_ptr(__gu_ptr);				\
- 								\
- 	__enable_user_access();					\
--	__get_user_nocheck(x, __gu_ptr, __gu_err);		\
-+	__get_user_error(__gu_val, __gu_ptr, __gu_err);		\
- 	__disable_user_access();				\
- 								\
-+	(x) = __gu_val;						\
-+								\
- 	__gu_err;						\
- })
- 
-@@ -369,13 +417,7 @@ unsigned long __must_check clear_user(void __user *to, unsigned long n)
- }
- 
- #define __get_kernel_nofault(dst, src, type, err_label)			\
--do {									\
--	long __kr_err = 0;						\
--									\
--	__get_user_nocheck(*((type *)(dst)), (type *)(src), __kr_err);	\
--	if (unlikely(__kr_err))						\
--		goto err_label;						\
--} while (0)
-+	__get_user_nocheck(*((type *)(dst)), (type *)(src), err_label)
- 
- #define __put_kernel_nofault(dst, src, type, err_label)			\
- 	__put_user_nocheck(*((type *)(src)), (type *)(dst), err_label)
-@@ -401,11 +443,9 @@ static inline void user_access_restore(unsigned long enabled) { }
- 	__put_user_nocheck(x, (ptr), label)
- 
- #define unsafe_get_user(x, ptr, label)	do {				\
--	long __err = 0;							\
- 	__inttype(*(ptr)) __gu_val;					\
--	__get_user_nocheck(__gu_val, (ptr), __err);			\
-+	__get_user_nocheck(__gu_val, (ptr), label);			\
- 	(x) = (__force __typeof__(*(ptr)))__gu_val;			\
--	if (__err) goto label;						\
- } while (0)
- 
- #define unsafe_copy_loop(dst, src, len, type, label)				\
--- 
-2.34.1
+V2 of this patch series [5] again proposed an =E2=80=9CUntrustedDevice=E2=
+=80=9D
+property which Greg objects to because it is not sufficiently
+descriptive, not sufficiently documented, and policies about trust
+don=E2=80=99t belong in the kernel. Rajat describes the =E2=80=9Cuntrusted=
+=E2=80=9D flag=E2=80=99s
+current use, controlling IOMMU and Greg suggests naming the flag
+=E2=80=9Cuse_iommu=E2=80=9D or =E2=80=9Cable to do DMA.=E2=80=9D
+
+V3 of this patch series [6] proposes recognizing =E2=80=9CDmaProperty=E2=80=
+=9D with
+slightly altered semantics from Microsoft=E2=80=99s documentation. Greg
+suggests adhering to Microsoft=E2=80=99s semantics for =E2=80=9CDmaProperty=
+=E2=80=9D and to
+introduce a new property with new semantics instead. Greg again states
+that the flag being named =E2=80=9Cuntrusted=E2=80=9D is confusing.
+
+V4 renames =E2=80=9Cuntrusted=E2=80=9D to =E2=80=9Cposes_dma_risk=E2=80=9D.=
+ Christoph suggests
+=E2=80=9Cuntrusted_dma=E2=80=9D and Rafael agrees.
+
+V5 renames the flag to =E2=80=9Cuntrusted_dma=E2=80=9D. Bjorn asks for clar=
+ification
+about whether the semantics of this flag will match Microsoft=E2=80=99s
+documentation. Rajat responds that Microsoft has agreed to update
+their documentation to have aligned semantics, in particular =E2=80=9Cthe
+property is not restricted to identify =E2=80=98internal PCIe hierarchies=
+=E2=80=99
+(starting at root port), but to "any PCI device". As of today,
+Microsoft=E2=80=99s documentation does not appear to have been updated.
+
+In V6 Rajat updates a link to Microsoft=E2=80=99s documentation, renames a
+function to pci_dev_has_dma_property() and uses
+acpi_dev_get_property() to read =E2=80=9CDmaProperty=E2=80=9D.
+
+In V7 (Nov 2024) Joshua re-sends and Greg requests a summary of the
+history of discussion about the name for the =E2=80=9Cuntrusted=E2=80=9D fl=
+ag and
+justification of the new name.
+
+In V8 Joshua renames the =E2=80=9Cuntrusted=E2=80=9D flag to
+=E2=80=9Crequires_dma_protection=E2=80=9D. Greg requests more information a=
+bout the
+threat model, what does this property convey, and why we should use
+Microsoft=E2=80=99s DmaProperty and its semantics instead of inventing
+something new.
+
+In V9 Joshua updates the cover letter with more information from
+previous submissions in this series and the =E2=80=9Cuntrusted=E2=80=9D fla=
+g=E2=80=99s
+introduction.
+
+Links:
+[1] https://lore.kernel.org/linux-arm-msm/20210624101557.v2.3.Icde6be7601a5=
+939960caf802056c88cd5132eb4e@changeid/
+[2] https://lore.kernel.org/lkml/20181129155153.35840-1-mika.westerberg@lin=
+ux.intel.com/
+[3] https://lore.kernel.org/all/20220120000409.2706549-1-rajatja@google.com=
+/
+[4] https://www.intel.com/content/dam/develop/external/us/en/documents/inte=
+l-whitepaper-using-iommu-for-dma-protection-in-uefi-820238.pdf
+[5] https://lore.kernel.org/all/20220202020103.2149130-1-rajatja@google.com=
+/
+[6] https://lore.kernel.org/all/20220216220541.1635665-1-rajatja@google.com=
+/
+
+Rajat Jain (2):
+  PCI/ACPI: Support Microsoft's "DmaProperty"
+  PCI: Rename pci_dev->untrusted to pci_dev->requires_dma_protection
+
+ drivers/acpi/property.c     |  3 +++
+ drivers/iommu/amd/iommu.c   |  3 +--
+ drivers/iommu/dma-iommu.c   | 16 ++++++++--------
+ drivers/iommu/intel/iommu.c | 10 +++++-----
+ drivers/iommu/iommu.c       |  5 ++---
+ drivers/pci/ats.c           |  2 +-
+ drivers/pci/pci-acpi.c      | 22 ++++++++++++++++++++++
+ drivers/pci/pci.c           |  2 +-
+ drivers/pci/probe.c         | 10 +++++-----
+ drivers/pci/quirks.c        |  4 ++--
+ include/linux/pci.h         |  7 ++++---
+ 11 files changed, 54 insertions(+), 30 deletions(-)
+
+
+base-commit: 0ad2507d5d93f39619fc42372c347d6006b64319
+--=20
+2.48.1.601.g30ceb7b040-goog
 
 
