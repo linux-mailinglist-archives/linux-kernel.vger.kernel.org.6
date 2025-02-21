@@ -1,133 +1,135 @@
-Return-Path: <linux-kernel+bounces-525379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BCF5A3EF43
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:57:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF011A3EF45
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:58:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D63A18835FB
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 08:57:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DB183BA4C7
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 08:57:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DF33202C20;
-	Fri, 21 Feb 2025 08:57:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32718202C50;
+	Fri, 21 Feb 2025 08:57:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="gE0Pt1bl"
-Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e7osRNB1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C009E33EA
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 08:57:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80DAF33EA;
+	Fri, 21 Feb 2025 08:57:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740128258; cv=none; b=bR+LqbdvKL6J73fkiqqP307TFd/2BEbF1nK33fyk0Nnc8Bju2+9AuIEqxO0UZVwt3yp1Gwfq2pkMd8LwWDGAAUH1qBmr/92w63fAg9m8ucrI6GrNf2GvNCztwnOUglxwVgnRkBe9MKJ9R2vYPmuXkKMppkVuSneSIMwsGOxTvkM=
+	t=1740128276; cv=none; b=aHIgtNJ9AvcxQQ2WwcKs3ogCQ3paI6RCg5CkxA2ps0HAlHnojVK9U/azDEvzIULepG6q2d/4Fo9Ep5LUh19apvAzbJ9nYFx92ZFbf3EQ+YU8ET5pSMh8ZaQSP0SmsaknuFK9S16XukPn4FlV6FsTvU7QiFh2cnvO1wbVWA6dXMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740128258; c=relaxed/simple;
-	bh=dO+Frs1sPoZMSwklZEazWEWZBqiqTqwxiWKEBiQiXUs=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=d8vQCuzekaGtmjsQqv+lB/r0QcHywFHtLjQjqZ10xwjRxsv2nGsocaIzBZrhlcxpb8sMlcS9WGPz+kfS3Ul2+lfP94qXBCJmZqmA02PF06PUnWsEPmbtN/98a4uxjGXOFuPPDHxqR5MsGd24famr+DocdfGGW58DIE7ER+ISxGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=gE0Pt1bl; arc=none smtp.client-ip=95.215.58.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
+	s=arc-20240116; t=1740128276; c=relaxed/simple;
+	bh=fBw0UDC89FHrebKrtI/LVhQbDEBN1NoKY48D4jfNI/4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=g+BTgLbcQNE7ww/NskVQO3Ap4YXgIRyfl8oXBaEfhkRba1k2YQbGdi+Dir0iFxFuusPjRsigC5Pbp9a0qWA8vrtyDksSaf20KpnI304sxhwIBZ5Kp0HMGPkmvpFhQSouj9MedI3iec/V0LKt/fh6ZFlgKPdPVoCiWineu3zksOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e7osRNB1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BEF7FC4CED6;
+	Fri, 21 Feb 2025 08:57:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740128275;
+	bh=fBw0UDC89FHrebKrtI/LVhQbDEBN1NoKY48D4jfNI/4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=e7osRNB1vgiJM2lAyOgcJTiKzPsS4C9vEWWgtvHhyI+qQ5MYeb/DrEEcUxbRF92cS
+	 r1tfUJW/bGTWJDRoo/JmGIkybzYak7KUd45njB/NKpE08vJkHvtzDOM8v6t5n2yP78
+	 oZ99aVg/b0tvW245qk2ktNfDYzWkeubMvcTMe+HVpzg8feb4ZYNnFyN0fYwCgYKGWg
+	 dZzQ9r9W2SsMvyYtB1CJBK8+/6azVbi3OZOYwEELSujq8JNRTxSk6dp10TYCHzslPn
+	 Y4ZmtzuHW5rHbqD3IREwleZr+a/K4XQUFRc+CtugNLNjErcX0k/rzjVC/tuYoXCITo
+	 i0bDJYxaquWWw==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Jon Mason <jdmason@kudzu.us>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Allen Hubbe <allenbh@gmail.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	kernel test robot <lkp@intel.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Damien Le Moal <dlemoal@kernel.org>,
+	zhang jiao <zhangjiao2@cmss.chinamobile.com>,
+	Philipp Stanner <pstanner@redhat.com>,
+	ntb@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] ntb: reduce stack usage in idt_scan_mws
+Date: Fri, 21 Feb 2025 09:57:25 +0100
+Message-Id: <20250221085748.2298463-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
-	t=1740128252;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ptMvqBkUwZrolxZJc9519N5cAklfWd2ezc61uzEJHZA=;
-	b=gE0Pt1blbpbAPFxRS/bKRMrivKdpBXa2QMDSrpiH61pu6ds8O/vnsT6hKsOdeIcS8RyNLj
-	QTA/i53abyk7Q66m2v+eJS/6YadfPEZ9KVeYRbpnvy80QBcwax47rxs8Eden3o2bMCQxqo
-	kdc3gwczMSOw6a/hKD5nB2niOHmO3ZS1/LYmcpDXgPKxP11T7uLfs5JMFX2w+atB2tAfrG
-	KJOPeCga0DdWQFJGTEb+faRZLRsb+S6Qdad6o+Tv6CYnDLItKo3769rF05sLSA2rXFXrL+
-	7ZEumCt/skoivVn/G8zKILbinpzXm1oU/KvrC2xDwm2T/g1h5MSczJziKc/KMg==
-Content-Type: multipart/signed;
- boundary=bb0d416b7a86ddc7225644bd7fccfe77947520006e455b4b349d45e7250f;
- micalg=pgp-sha256; protocol="application/pgp-signature"
-Date: Fri, 21 Feb 2025 09:57:14 +0100
-Message-Id: <D7XZZ70KM9NT.14VSJDFUTH0H5@cknow.org>
-Cc: "Valentin Kleibel" <valentin@vrvis.at>, "Vinod Koul" <vkoul@kernel.org>,
- "Chukun Pan" <amadeus@jmu.edu.cn>, "Heiko Stuebner" <heiko@sntech.de>,
- "Philipp Zabel" <p.zabel@pengutronix.de>, "Kishon Vijay Abraham I"
- <kishon@kernel.org>, "Jianfeng Liu" <liujianfeng1994@gmail.com>,
- <linux-arm-kernel@lists.infradead.org>,
- <linux-rockchip@lists.infradead.org>, <linux-phy@lists.infradead.org>,
- <linux-kernel@vger.kernel.org>, "Jonas Karlman" <jonas@kwiboo.se>
-Subject: Re: [PATCH v2 0/1] phy: rockchip: naneng-combphy: compatible reset
- with old DT
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Diederik de Haas" <didi.debian@cknow.org>
-To: "Salvatore Bonaccorso" <carnil@debian.org>
-References: <20250106100001.1344418-1-amadeus@jmu.edu.cn>
- <173831716590.670164.5196739962949646746.b4-ty@kernel.org>
- <f64ee4ee-7e56-4423-813e-b87e023e893d@vrvis.at>
- <D7VJOFXU540M.2PAC1RFXAH19B@cknow.org> <Z7gosm7PJMR0zCg4@eldamar.lan>
-In-Reply-To: <Z7gosm7PJMR0zCg4@eldamar.lan>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
---bb0d416b7a86ddc7225644bd7fccfe77947520006e455b4b349d45e7250f
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+From: Arnd Bergmann <arnd@arndb.de>
 
-On Fri Feb 21, 2025 at 8:18 AM CET, Salvatore Bonaccorso wrote:
-> On Tue, Feb 18, 2025 at 12:45:34PM +0100, Diederik de Haas wrote:
->> On Tue Feb 11, 2025 at 2:03 PM CET, Valentin Kleibel wrote:
->> >>> Chukun Pan (1):
->> >>>    phy: rockchip: naneng-combphy: compatible reset with old DT
->> >>=20
->> >> Applied, thanks!
->> >>=20
->> >> [1/1] phy: rockchip: naneng-combphy: compatible reset with old DT
->> >>        commit: bff68d44135ce6714107e2f72069a79476c8073d
->> >
->> > Thanks for your work!
->> > We found your patch after NVMes stopped working on a rock 3A with newe=
-r=20
->> > kernels and successfully applied it to kernel 6.1.128 (currently in de=
-bian).
->>=20
->> FTR: I've reported it in Debian here: https://bugs.debian.org/1098250
->>=20
->> I confirmed it (also) broke on kernel 6.12.8-1.
->
-> FWIW, we have several users in Debian reporting the problem, so if it
-> can be applied to mainline and then flow down to one of the next round
-> of stable series down to 6.1.y that would be highly appreicated.
->
-> Diederik, if you were able to test the fix, you might contribute a
-> Tested-by (although as I undestsand its not strictly needed at this
-> point as commit should be on way to mainline and stable series)?
+idt_scan_mws() puts a large fixed-size array on the stack and copies
+it into a smaller dynamically allocated array at the end. On 32-bit
+targets, the fixed size can easily exceed the warning limit for
+possible stack overflow:
 
-AFAIK a Tested-by could increase the chances of the maintainer accepting
-the patch, but that has already happened (commit date: 2025-02-04).
-The patch was already verified to fix the problem before submission:
-https://lore.kernel.org/all/20250103171109.2726312-1-liujianfeng1994@gmail.=
-com/
+drivers/ntb/hw/idt/ntb_hw_idt.c:1041:27: error: stack frame size (1032) exceeds limit (1024) in 'idt_scan_mws' [-Werror,-Wframe-larger-than]
 
-So AFAICT another Tested-by would either have no effect or a delaying
-effect (adding it would change a bunch of commit IDs probably triggering
-various CIs to run again).
-I'm not aware of anything (else) I could do wrt this patch.
+Change it to instead just always use dynamic allocation for the
+array from the start. It's too big for the stack, but not actually
+all that much for a permanent allocation.
 
-Cheers,
-  Diederik
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/all/202205111109.PiKTruEj-lkp@intel.com/
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+A number of users have reported this in the past, but I couldn't
+find any other patch for it so far.
+---
+ drivers/ntb/hw/idt/ntb_hw_idt.c | 18 +++++++-----------
+ 1 file changed, 7 insertions(+), 11 deletions(-)
 
---bb0d416b7a86ddc7225644bd7fccfe77947520006e455b4b349d45e7250f
-Content-Type: application/pgp-signature; name="signature.asc"
+diff --git a/drivers/ntb/hw/idt/ntb_hw_idt.c b/drivers/ntb/hw/idt/ntb_hw_idt.c
+index 544d8a4d2af5..f27df8d7f3b9 100644
+--- a/drivers/ntb/hw/idt/ntb_hw_idt.c
++++ b/drivers/ntb/hw/idt/ntb_hw_idt.c
+@@ -1041,7 +1041,7 @@ static inline char *idt_get_mw_name(enum idt_mw_type mw_type)
+ static struct idt_mw_cfg *idt_scan_mws(struct idt_ntb_dev *ndev, int port,
+ 				       unsigned char *mw_cnt)
+ {
+-	struct idt_mw_cfg mws[IDT_MAX_NR_MWS], *ret_mws;
++	struct idt_mw_cfg *mws;
+ 	const struct idt_ntb_bar *bars;
+ 	enum idt_mw_type mw_type;
+ 	unsigned char widx, bidx, en_cnt;
+@@ -1049,6 +1049,11 @@ static struct idt_mw_cfg *idt_scan_mws(struct idt_ntb_dev *ndev, int port,
+ 	int aprt_size;
+ 	u32 data;
+ 
++	mws = devm_kcalloc(&ndev->ntb.pdev->dev, IDT_MAX_NR_MWS,
++			   sizeof(*mws), GFP_KERNEL);
++	if (!mws)
++		return ERR_PTR(-ENOMEM);
++
+ 	/* Retrieve the array of the BARs registers */
+ 	bars = portdata_tbl[port].bars;
+ 
+@@ -1103,16 +1108,7 @@ static struct idt_mw_cfg *idt_scan_mws(struct idt_ntb_dev *ndev, int port,
+ 		}
+ 	}
+ 
+-	/* Allocate memory for memory window descriptors */
+-	ret_mws = devm_kcalloc(&ndev->ntb.pdev->dev, *mw_cnt, sizeof(*ret_mws),
+-			       GFP_KERNEL);
+-	if (!ret_mws)
+-		return ERR_PTR(-ENOMEM);
+-
+-	/* Copy the info of detected memory windows */
+-	memcpy(ret_mws, mws, (*mw_cnt)*sizeof(*ret_mws));
+-
+-	return ret_mws;
++	return mws;
+ }
+ 
+ /*
+-- 
+2.39.5
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCZ7g/9QAKCRDXblvOeH7b
-bnRDAP9IYwH1LfihZ3pGIVB+pL5ZDzXlBKKNwHBNmJle70hhwwEA1xo5LOIrFy9u
-tmsN/WVn+DJq0WWtQrSDQ4JpbQ3F4g4=
-=1hY3
------END PGP SIGNATURE-----
-
---bb0d416b7a86ddc7225644bd7fccfe77947520006e455b4b349d45e7250f--
 
