@@ -1,212 +1,87 @@
-Return-Path: <linux-kernel+bounces-525644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1875A3F2AC
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 12:07:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC6B6A3F2AF
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 12:09:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB2C8420D65
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 11:07:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CAB67013A7
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 11:07:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DE97207E1A;
-	Fri, 21 Feb 2025 11:07:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A86252080EA;
+	Fri, 21 Feb 2025 11:07:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="UJWgZfor";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="obwZH9J9";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="UJWgZfor";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="obwZH9J9"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E49CB1EB9FD
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 11:07:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="2M5E8KCT"
+Received: from mail.8bytes.org (mail.8bytes.org [85.214.250.239])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BE74204F87
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 11:07:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.250.239
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740136026; cv=none; b=Cuvb7FzPQSMgX1hOBauDJYPzvRBb46asrvuPk5By7ZEXJFSca2T0ECpe+DIgGLl2mxFDp8vU5c0+mpjmhjl4+HoqKsZzVbZ3TVV/j8i+jtX4Nm1ZsM5JVwniJ2eBjWucwE1l3swEftPt1A/3FuZNOqFnIx/DfSza3fbJymWrMiw=
+	t=1740136049; cv=none; b=fz0W1qT/V4tVHHCzUWQFmISqiflTRubPhOsLRDKZOTQUGCTYt8nsq5vJdtqSYhnCo6xigOdui8mbvpxNvRcPhbr/DFGnTsI1sPXbajjamxzyZgB9uUvm/J9ia267eBHOW5vVSDcaQgbz+kEPVYyABQZrTWOv7jbgViYIEKrGJnw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740136026; c=relaxed/simple;
-	bh=2dNkq+if3KctHidNQfTnOgOQrVVn8cf8oDqUjvcxeDU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jcpqLELtOfAEmjvt08HrBjhKND+ummoVpD20jDlghaOshpVIhqjBufNIh3bs137UPdtw/8qrrZX6ZG4Kdw6/2LdajAoVZwQXEm/6mO/Ojb7ZrDzUHTymlE4ZDcQyyp8gf4DFOb599Vn0iYl12MzbJDz4VPAuBRJR6ZKDgl8/6iw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=UJWgZfor; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=obwZH9J9; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=UJWgZfor; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=obwZH9J9; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	s=arc-20240116; t=1740136049; c=relaxed/simple;
+	bh=OrLEWszAt2g2+uaXn+6b7I4pNNFvvjaXQB2Xr3LTA2k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DxyPu44PwrNR5zW5BpG2ZP6tE9JTv58IBzK6CFxaGesMmlhQ6Owam/Dgq7ZEvN1YlgRZw59/ri/G9ix47fpoJYQPmvWWEecZVXmBORW/H7I6g6BaVhxbAHrltu8JDsuPxAakCbYCi8uy7dBW1zRb8KOrPW2Q+/6FoMQb2NL65fY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org; spf=pass smtp.mailfrom=8bytes.org; dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b=2M5E8KCT; arc=none smtp.client-ip=85.214.250.239
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=8bytes.org
+Received: from 8bytes.org (p4ffe03ae.dip0.t-ipconnect.de [79.254.3.174])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 088C81F871;
-	Fri, 21 Feb 2025 11:07:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1740136023; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=JtTNdpQtb3ECji2LJqmg5fq7uQElGxxCPChnqksnsM0=;
-	b=UJWgZfor2ckOSg/3TNm2xRqCL6UvBGHZgIgma72+MbZVhTcQViccy46bbm9POgbgXplPYD
-	nRzzHPFSiiaB5Wbami9NBiS+8uRDRQ8De1mCrxpGy64kMXhLEBfY4oTL6Gx8m2Pa8mtvoe
-	XlSmNdo4UZRoNcTVQfSSpWnHRZcsPNE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1740136023;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=JtTNdpQtb3ECji2LJqmg5fq7uQElGxxCPChnqksnsM0=;
-	b=obwZH9J9a+vAjHmwt+tZn//20bcdiipfGM95epBYcwAjcwBDM/xmTcY6n9kllygPm+Vl+x
-	V0LCIkHvwymLw7Bw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1740136023; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=JtTNdpQtb3ECji2LJqmg5fq7uQElGxxCPChnqksnsM0=;
-	b=UJWgZfor2ckOSg/3TNm2xRqCL6UvBGHZgIgma72+MbZVhTcQViccy46bbm9POgbgXplPYD
-	nRzzHPFSiiaB5Wbami9NBiS+8uRDRQ8De1mCrxpGy64kMXhLEBfY4oTL6Gx8m2Pa8mtvoe
-	XlSmNdo4UZRoNcTVQfSSpWnHRZcsPNE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1740136023;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=JtTNdpQtb3ECji2LJqmg5fq7uQElGxxCPChnqksnsM0=;
-	b=obwZH9J9a+vAjHmwt+tZn//20bcdiipfGM95epBYcwAjcwBDM/xmTcY6n9kllygPm+Vl+x
-	V0LCIkHvwymLw7Bw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B295F13806;
-	Fri, 21 Feb 2025 11:07:02 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Xe5AK1ZeuGc0RgAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Fri, 21 Feb 2025 11:07:02 +0000
-Message-ID: <9854b4f2-3482-415c-8e1b-46cb4a2650b2@suse.cz>
-Date: Fri, 21 Feb 2025 12:07:02 +0100
+	by mail.8bytes.org (Postfix) with ESMTPSA id D0A7843239;
+	Fri, 21 Feb 2025 12:07:24 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
+	s=default; t=1740136045;
+	bh=OrLEWszAt2g2+uaXn+6b7I4pNNFvvjaXQB2Xr3LTA2k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=2M5E8KCTzPNGrxqs18aAYCoIl9eUVImV5UHpfOg207LBMzwJYHq1CoQ+EYEvq/9rO
+	 dpQSRoMk/9zo7qNj8B4FNOZQJNsqmeHj9AWt43J7ZExMLvvPAEQxoKyGzs+K8z9DEx
+	 Ir+VvoMd8L3YLXlACO0Y9QrbmM1CDMUDLzjcp10d18ABnhXJNaqwbabuCruA4iuBJS
+	 X//lPVrj7j8NvfhEOAHJZ367reL5bJfnWXqK19e1vAuErHMMZbkOtyelvTSbJFdyk1
+	 R/Lpd8AvFuDFWxE1g5kxqJ/tXLRBTFoyLqVlGDNlaciO+07SKvzk3FD8T1TTmdDCa7
+	 F/IjpeYoedklA==
+Date: Fri, 21 Feb 2025 12:07:23 +0100
+From: Joerg Roedel <joro@8bytes.org>
+To: fnkl.kernel@gmail.com
+Cc: Sven Peter <sven@svenpeter.dev>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+	Hector Martin <marcan@marcan.st>, Rob Herring <robh@kernel.org>,
+	Janne Grunau <j@jannau.net>, Joerg Roedel <jroedel@suse.de>,
+	asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Asahi Lina <lina@asahilina.net>
+Subject: Re: [PATCH] iommu/io-pgtable-dart: Only set subpage protection
+ disable for DART 1
+Message-ID: <Z7hea_LY7u_7_jTw@8bytes.org>
+References: <20250219-dart2-no-sp-disable-v1-1-9f324cfa4e70@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 04/18] mm: introduce vma_iter_store_attached() to use
- with attached vmas
-Content-Language: en-US
-To: Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org
-Cc: peterz@infradead.org, willy@infradead.org, liam.howlett@oracle.com,
- lorenzo.stoakes@oracle.com, david.laight.linux@gmail.com, mhocko@suse.com,
- hannes@cmpxchg.org, mjguzik@gmail.com, oliver.sang@intel.com,
- mgorman@techsingularity.net, david@redhat.com, peterx@redhat.com,
- oleg@redhat.com, dave@stgolabs.net, paulmck@kernel.org, brauner@kernel.org,
- dhowells@redhat.com, hdanton@sina.com, hughd@google.com,
- lokeshgidra@google.com, minchan@google.com, jannh@google.com,
- shakeel.butt@linux.dev, souravpanda@google.com, pasha.tatashin@soleen.com,
- klarasmodin@gmail.com, richard.weiyang@gmail.com, corbet@lwn.net,
- linux-doc@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- kernel-team@android.com
-References: <20250213224655.1680278-1-surenb@google.com>
- <20250213224655.1680278-5-surenb@google.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- EP+ylKVEKb0Q2A==
-In-Reply-To: <20250213224655.1680278-5-surenb@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_TLS_ALL(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_TWELVE(0.00)[34];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com,sina.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[infradead.org,oracle.com,gmail.com,suse.com,cmpxchg.org,intel.com,techsingularity.net,redhat.com,stgolabs.net,kernel.org,sina.com,google.com,linux.dev,soleen.com,lwn.net,vger.kernel.org,kvack.org,android.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	R_RATELIMIT(0.00)[to_ip_from(RLumbhs4xhzuuihrchnpuyb6qu)]
-X-Spam-Score: -2.80
-X-Spam-Flag: NO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250219-dart2-no-sp-disable-v1-1-9f324cfa4e70@gmail.com>
 
-On 2/13/25 23:46, Suren Baghdasaryan wrote:
-> vma_iter_store() functions can be used both when adding a new vma and
-> when updating an existing one. However for existing ones we do not need
-> to mark them attached as they are already marked that way. With
-> vma->detached being a separate flag, double-marking a vmas as attached
-> or detached is not an issue because the flag will simply be overwritten
-> with the same value. However once we fold this flag into the refcount
-> later in this series, re-attaching or re-detaching a vma becomes an
-> issue since these operations will be incrementing/decrementing a
-> refcount.
-> Introduce vma_iter_store_new() and vma_iter_store_overwrite() to replace
-> vma_iter_store() and avoid re-attaching a vma during vma update. Add
-> assertions in vma_mark_attached()/vma_mark_detached() to catch invalid
-> usage. Update vma tests to check for vma detached state correctness.
+On Wed, Feb 19, 2025 at 10:13:53AM +0100, Sasha Finkelstein via B4 Relay wrote:
+> From: Asahi Lina <lina@asahilina.net>
 > 
-> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-
-Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
-
+> Subpage protection can't be disabled on t6000-style darts,
+> as such the disable flag no longer applies, and probably
+> even affects something else.
+> 
+> Fixes: dc09fe1c5edd ("iommu/io-pgtable-dart: Add DART PTE support for t6000")
+> Signed-off-by: Asahi Lina <lina@asahilina.net>
+> Signed-off-by: Sasha Finkelstein <fnkl.kernel@gmail.com>
 > ---
-> Changes since v9 [1]:
-> - Change VM_BUG_ON_VMA() to WARN_ON_ONCE() in vma_assert_{attached|detached},
-> per Lorenzo Stoakes
+>  drivers/iommu/io-pgtable-dart.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Maybe later we can reduce the paranoia to VM_WARN_ON_ONCE()?
-
+Applied, thanks.
 
