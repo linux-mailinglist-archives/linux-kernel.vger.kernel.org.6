@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-525394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525395-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC21FA3EF6E
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:04:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B068A3EF6B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:04:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5AABA703C2A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:03:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 01274188E5AF
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:04:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA1DF2045B0;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7991120459E;
 	Fri, 21 Feb 2025 09:03:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="mc0hV+y7";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="aHHjUPym"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="cnnfNLr5";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lMjLSqBr"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E27BF202F65;
-	Fri, 21 Feb 2025 09:03:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69CB5202F9F;
+	Fri, 21 Feb 2025 09:03:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740128593; cv=none; b=V6OHqYv9xKdsX7MYfmGxtFo+EIj5QbGBgBEWDR+V716yFWMovb9F8JWO8yLONXYwjF+nyxWDG0vYcPvl0nXMv3je42F0bFiGnq62Ae7JfMFOs6wF256rOAD9GPsubixgOm0gVijTZgI5lACu1f3rbxSiRKpKkAYM6yDMlrRt2Ys=
+	t=1740128593; cv=none; b=Gv2aY1uCiVtqX83HLUYpUXPyja9IsEYWAbOcII4KxdUYYU/+1tC/mEBHHPKqQcr/CVp/RHGdV38lR0PVpCGVmHSxOK4BA4n4KmTdjLi4tYG50dhl7KJoFFG5iYLNyLJBIiByfSCK9Y2juUfPUa9itmcRjCn5TMAqAErjXjkUtJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1740128593; c=relaxed/simple;
-	bh=VmZRq665tkRRkdaV++kMsTKFDZxixw0XcYv52jxuzNk=;
+	bh=3JiciMbjD25j0t79Sdt1FIAjnu8YSx7ZSbOT+6L9eVg=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=OFSLE3oxdd7cxLDSBwyKl1ej66hd3JJ+1mw6TdS4oOkA65e9+8mn/LSJMDJe/xcf1p7sVJ3AfEjkpjkaMqtF3oPwWf/RZELT5n5K3PtigsUNpsNRHYe3xZcKgafFFduwXfF49kPZiaK7VJFJJH02AA6FHFnSZrIy8b/nbdR8NAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=mc0hV+y7; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=aHHjUPym; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=QkoAZ2yDWH+tySbfDa5RABfFQV1UZMvJM7eWKtvcmBxxQooTDyQ0+MbxOoNwruQX1yUxK6o/nUsM1OvN7OMP8jM6/u7WYtm+nflBf4p6bi/JefXBi1ol7QpYQ3OPTt84ECishhE1bT0Cn07cYavwcEYlGG9kedZIBBEncoJC/hw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=cnnfNLr5; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lMjLSqBr; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 21 Feb 2025 09:03:08 -0000
+Date: Fri, 21 Feb 2025 09:03:09 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020; t=1740128589;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
@@ -39,12 +39,12 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=TWP3vVoHMcUSIb9Y8tGN7QUPItzrMq+QV2o2C536F80=;
-	b=mc0hV+y74CwdF2NMiThOo391kaYYE9E5jPdI1RgJksTTcMMS4xr6kcIo+wEOz9vpafIx8m
-	gxX4pSX1jucPPG3rr4BPsqZPvH0hJMChuYp/3NqYAHG+aJoypCqZMOSypabyNVUhkBL9qp
-	P/Kr3BNrLUAcFyEHs5uBxYeEUTxSo6GPi+rOHycV1QoqYoNfxdi5PyyofWTSBjRupSEA28
-	220zY82bdjA8hWTlLhSPqPZ0b8q4jDDl21u5zo2vCvYcqDZyXnv0paBtRPJYt0XPzKv6m5
-	ZyVR/tqdR5bVP+IF9vvXxIHTM/gI4pjm2XL3YhMji+DKJzF+VMkrf3W8NdQ3yg==
+	bh=JyNCzyqIpv+t2FjwSLyE3eAJn9CAeIxfDedP0jtf3EE=;
+	b=cnnfNLr5D8hsyIBymkSpFd/De1pkICovBmERQudNgIZURGaJXswOZAQpjPcerF/saJ10K/
+	I+nDQ07c/KnCSVgd10eu8XufAUwieR69fAMNyPKeVhDFI0kRpCEJuOzYDC9UaNyXPk3TZB
+	Iwj8YX37aBk1FEam2R+1CXh2jfV3TlpaOAbtO+FqXy62im9BpidvWpWXeIzB9kQVdaioNk
+	6Wb6Hg+5PoP+0AFM6B4rl3mHg+SeHWGqW4Eb6W3xI2K1GHdyqHDyfazvU4RHoQuRQOyhba
+	7ZQUVIOfxIcUW3o9F6llKfRep6UZTUZcpYgk/MGlX+avHu1NZXvlbYhyt8ApqQ==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020e; t=1740128589;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
@@ -52,29 +52,28 @@ DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=TWP3vVoHMcUSIb9Y8tGN7QUPItzrMq+QV2o2C536F80=;
-	b=aHHjUPymyA2lMBGxNvOMxO7y7rH+Gd2ByZgUepKJRqUdEmYAgwAuMcX9znNDcz8y+Zpzmu
-	4CkgjK5vuiU408Aw==
+	bh=JyNCzyqIpv+t2FjwSLyE3eAJn9CAeIxfDedP0jtf3EE=;
+	b=lMjLSqBrIfXM9FvFKGgxvblS3hHokAPZKfr5//FB0INaGDR19IVm33W0De3noKlV76G7aY
+	4Gw7lVmzlE4L9XCg==
 From:
  tip-bot2 for Thomas =?utf-8?q?Wei=C3=9Fschuh?= <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
 Subject:
- [tip: timers/vdso] powerpc/vdso: Switch to generic storage implementation
+ [tip: timers/vdso] MIPS: vdso: Switch to generic storage implementation
 Cc: Nam Cao <namcao@linutronix.de>, thomas.weissschuh@linutronix.de,
- Thomas Gleixner <tglx@linutronix.de>,
- Christophe Leroy <christophe.leroy@csgroup.eu>, x86@kernel.org,
+ Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
  linux-kernel@vger.kernel.org
-In-Reply-To: <20250204-vdso-store-rng-v3-14-13a4669dfc8c@linutronix.de>
-References: <20250204-vdso-store-rng-v3-14-13a4669dfc8c@linutronix.de>
+In-Reply-To: <20250204-vdso-store-rng-v3-13-13a4669dfc8c@linutronix.de>
+References: <20250204-vdso-store-rng-v3-13-13a4669dfc8c@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174012858830.10177.8472179659902672699.tip-bot2@tip-bot2>
+Message-ID: <174012858917.10177.15885092831873122960.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -84,15 +83,15 @@ Content-Transfer-Encoding: quoted-printable
 
 The following commit has been merged into the timers/vdso branch of tip:
 
-Commit-ID:     223970df2bff4caa308246404383baee2b79dba2
-Gitweb:        https://git.kernel.org/tip/223970df2bff4caa308246404383baee2b7=
-9dba2
+Commit-ID:     69896119dc9d6cdb7db3914a88c4a7b31e342a20
+Gitweb:        https://git.kernel.org/tip/69896119dc9d6cdb7db3914a88c4a7b31e3=
+42a20
 Author:        Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
-AuthorDate:    Tue, 04 Feb 2025 13:05:46 +01:00
+AuthorDate:    Tue, 04 Feb 2025 13:05:45 +01:00
 Committer:     Thomas Gleixner <tglx@linutronix.de>
 CommitterDate: Fri, 21 Feb 2025 09:54:02 +01:00
 
-powerpc/vdso: Switch to generic storage implementation
+MIPS: vdso: Switch to generic storage implementation
 
 The generic storage implementation provides the same features as the
 custom one. However it can be shared between architectures, making
@@ -102,672 +101,293 @@ Co-developed-by: Nam Cao <namcao@linutronix.de>
 Signed-off-by: Nam Cao <namcao@linutronix.de>
 Signed-off-by: Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
-Link: https://lore.kernel.org/all/20250204-vdso-store-rng-v3-14-13a4669dfc8c@=
+Link: https://lore.kernel.org/all/20250204-vdso-store-rng-v3-13-13a4669dfc8c@=
 linutronix.de
 
 ---
- arch/powerpc/Kconfig                         |   2 +-
- arch/powerpc/include/asm/vdso.h              |   1 +-
- arch/powerpc/include/asm/vdso/arch_data.h    |  37 ++++++-
- arch/powerpc/include/asm/vdso/getrandom.h    |  11 +-
- arch/powerpc/include/asm/vdso/gettimeofday.h |  29 +----
- arch/powerpc/include/asm/vdso/vsyscall.h     |  13 +--
- arch/powerpc/include/asm/vdso_datapage.h     |  44 +-------
- arch/powerpc/kernel/asm-offsets.c            |   1 +-
- arch/powerpc/kernel/time.c                   |   2 +-
- arch/powerpc/kernel/vdso.c                   | 115 +-----------------
- arch/powerpc/kernel/vdso/cacheflush.S        |   2 +-
- arch/powerpc/kernel/vdso/datapage.S          |   4 +-
- arch/powerpc/kernel/vdso/gettimeofday.S      |   4 +-
- arch/powerpc/kernel/vdso/vdso32.lds.S        |   4 +-
- arch/powerpc/kernel/vdso/vdso64.lds.S        |   4 +-
- arch/powerpc/kernel/vdso/vgettimeofday.c     |  14 +-
- 16 files changed, 89 insertions(+), 198 deletions(-)
- create mode 100644 arch/powerpc/include/asm/vdso/arch_data.h
+ arch/mips/Kconfig                         |  1 +-
+ arch/mips/include/asm/vdso/gettimeofday.h |  9 ++--
+ arch/mips/include/asm/vdso/vdso.h         | 19 +++------
+ arch/mips/include/asm/vdso/vsyscall.h     | 14 +------
+ arch/mips/kernel/vdso.c                   | 47 ++++++++--------------
+ arch/mips/vdso/vdso.lds.S                 |  5 +-
+ 6 files changed, 38 insertions(+), 57 deletions(-)
 
-diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-index 424f188..8a2a6e4 100644
---- a/arch/powerpc/Kconfig
-+++ b/arch/powerpc/Kconfig
-@@ -159,6 +159,7 @@ config PPC
- 	select ARCH_HAS_TICK_BROADCAST		if GENERIC_CLOCKEVENTS_BROADCAST
- 	select ARCH_HAS_UACCESS_FLUSHCACHE
- 	select ARCH_HAS_UBSAN
-+	select ARCH_HAS_VDSO_ARCH_DATA
- 	select ARCH_HAVE_NMI_SAFE_CMPXCHG
- 	select ARCH_HAVE_EXTRA_ELF_NOTES        if SPU_BASE
- 	select ARCH_KEEP_MEMBLOCK
-@@ -209,6 +210,7 @@ config PPC
- 	select GENERIC_PTDUMP
+diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
+index 1924f2d..b51168e 100644
+--- a/arch/mips/Kconfig
++++ b/arch/mips/Kconfig
+@@ -51,6 +51,7 @@ config MIPS
  	select GENERIC_SMP_IDLE_THREAD
+ 	select GENERIC_IDLE_POLL_SETUP
  	select GENERIC_TIME_VSYSCALL
 +	select GENERIC_VDSO_DATA_STORE
- 	select GENERIC_VDSO_TIME_NS
- 	select HAS_IOPORT			if PCI
- 	select HAVE_ARCH_AUDITSYSCALL
-diff --git a/arch/powerpc/include/asm/vdso.h b/arch/powerpc/include/asm/vdso.h
-index 8d972bc..1ca23fb 100644
---- a/arch/powerpc/include/asm/vdso.h
-+++ b/arch/powerpc/include/asm/vdso.h
-@@ -3,6 +3,7 @@
- #define _ASM_POWERPC_VDSO_H
+ 	select GUP_GET_PXX_LOW_HIGH if CPU_MIPS32 && PHYS_ADDR_T_64BIT
+ 	select HAS_IOPORT if !NO_IOPORT_MAP || ISA
+ 	select HAVE_ARCH_COMPILER_H
+diff --git a/arch/mips/include/asm/vdso/gettimeofday.h b/arch/mips/include/as=
+m/vdso/gettimeofday.h
+index 44a45f3..fd32baa 100644
+--- a/arch/mips/include/asm/vdso/gettimeofday.h
++++ b/arch/mips/include/asm/vdso/gettimeofday.h
+@@ -167,7 +167,7 @@ static __always_inline u64 read_r4k_count(void)
 =20
- #define VDSO_VERSION_STRING	LINUX_2.6.15
-+#define __VDSO_PAGES		4
+ #ifdef CONFIG_CLKSRC_MIPS_GIC
 =20
- #ifndef __ASSEMBLY__
-=20
-diff --git a/arch/powerpc/include/asm/vdso/arch_data.h b/arch/powerpc/include=
-/asm/vdso/arch_data.h
-new file mode 100644
-index 0000000..c240a6b
---- /dev/null
-+++ b/arch/powerpc/include/asm/vdso/arch_data.h
-@@ -0,0 +1,37 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (C) 2002 Peter Bergner <bergner@vnet.ibm.com>, IBM
-+ * Copyright (C) 2005 Benjamin Herrenschmidy <benh@kernel.crashing.org>,
-+ * 		      IBM Corp.
-+ */
-+#ifndef _ASM_POWERPC_VDSO_ARCH_DATA_H
-+#define _ASM_POWERPC_VDSO_ARCH_DATA_H
-+
-+#include <linux/unistd.h>
-+#include <linux/types.h>
-+
-+#define SYSCALL_MAP_SIZE      ((NR_syscalls + 31) / 32)
-+
-+#ifdef CONFIG_PPC64
-+
-+struct vdso_arch_data {
-+	__u64 tb_ticks_per_sec;			/* Timebase tics / sec */
-+	__u32 dcache_block_size;		/* L1 d-cache block size     */
-+	__u32 icache_block_size;		/* L1 i-cache block size     */
-+	__u32 dcache_log_block_size;		/* L1 d-cache log block size */
-+	__u32 icache_log_block_size;		/* L1 i-cache log block size */
-+	__u32 syscall_map[SYSCALL_MAP_SIZE];	/* Map of syscalls  */
-+	__u32 compat_syscall_map[SYSCALL_MAP_SIZE];	/* Map of compat syscalls */
-+};
-+
-+#else /* CONFIG_PPC64 */
-+
-+struct vdso_arch_data {
-+	__u64 tb_ticks_per_sec;		/* Timebase tics / sec */
-+	__u32 syscall_map[SYSCALL_MAP_SIZE]; /* Map of syscalls */
-+	__u32 compat_syscall_map[0];	/* No compat syscalls on PPC32 */
-+};
-+
-+#endif /* CONFIG_PPC64 */
-+
-+#endif /* _ASM_POWERPC_VDSO_ARCH_DATA_H */
-diff --git a/arch/powerpc/include/asm/vdso/getrandom.h b/arch/powerpc/include=
-/asm/vdso/getrandom.h
-index 80ce070..067a539 100644
---- a/arch/powerpc/include/asm/vdso/getrandom.h
-+++ b/arch/powerpc/include/asm/vdso/getrandom.h
-@@ -43,20 +43,21 @@ static __always_inline ssize_t getrandom_syscall(void *bu=
-ffer, size_t len, unsig
- 			    (unsigned long)len, (unsigned long)flags);
- }
-=20
--static __always_inline struct vdso_rng_data *__arch_get_vdso_rng_data(void)
-+static __always_inline const struct vdso_rng_data *__arch_get_vdso_u_rng_dat=
-a(void)
+-static __always_inline u64 read_gic_count(const struct vdso_data *data)
++static __always_inline u64 read_gic_count(const struct vdso_time_data *data)
  {
--	struct vdso_arch_data *data;
-+	struct vdso_rng_data *data;
-=20
- 	asm (
- 		"	bcl	20, 31, .+4 ;"
- 		"0:	mflr	%0 ;"
--		"	addis	%0, %0, (_vdso_datapage - 0b)@ha ;"
--		"	addi	%0, %0, (_vdso_datapage - 0b)@l  ;"
-+		"	addis	%0, %0, (vdso_u_rng_data - 0b)@ha ;"
-+		"	addi	%0, %0, (vdso_u_rng_data - 0b)@l  ;"
- 		: "=3Dr" (data) : : "lr"
- 	);
-=20
--	return &data->rng_data;
-+	return data;
- }
-+#define __arch_get_vdso_u_rng_data __arch_get_vdso_u_rng_data
-=20
- ssize_t __c_kernel_getrandom(void *buffer, size_t len, unsigned int flags, v=
-oid *opaque_state,
- 			     size_t opaque_len);
-diff --git a/arch/powerpc/include/asm/vdso/gettimeofday.h b/arch/powerpc/incl=
-ude/asm/vdso/gettimeofday.h
-index c639089..dc955f2 100644
---- a/arch/powerpc/include/asm/vdso/gettimeofday.h
-+++ b/arch/powerpc/include/asm/vdso/gettimeofday.h
-@@ -94,22 +94,12 @@ int clock_getres32_fallback(clockid_t _clkid, struct old_=
-timespec32 *_ts)
+ 	void __iomem *gic =3D get_gic(data);
+ 	u32 hi, hi2, lo;
+@@ -184,7 +184,7 @@ static __always_inline u64 read_gic_count(const struct vd=
+so_data *data)
  #endif
 =20
  static __always_inline u64 __arch_get_hw_counter(s32 clock_mode,
 -						 const struct vdso_data *vd)
 +						 const struct vdso_time_data *vd)
  {
- 	return get_tb();
+ #ifdef CONFIG_CSRC_R4K
+ 	if (clock_mode =3D=3D VDSO_CLOCKMODE_R4K)
+@@ -209,10 +209,11 @@ static inline bool mips_vdso_hres_capable(void)
  }
+ #define __arch_vdso_hres_capable mips_vdso_hres_capable
 =20
--const struct vdso_data *__arch_get_vdso_data(void);
--
--#ifdef CONFIG_TIME_NS
--static __always_inline
--const struct vdso_data *__arch_get_timens_vdso_data(const struct vdso_data *=
-vd)
--{
--	return (void *)vd + (1U << CONFIG_PAGE_SHIFT);
--}
--#endif
--
--static inline bool vdso_clocksource_ok(const struct vdso_data *vd)
-+static inline bool vdso_clocksource_ok(const struct vdso_time_data *vd)
+-static __always_inline const struct vdso_data *__arch_get_vdso_data(void)
++static __always_inline const struct vdso_time_data *__arch_get_vdso_u_time_d=
+ata(void)
  {
- 	return true;
+-	return get_vdso_data();
++	return get_vdso_time_data();
  }
-@@ -135,21 +125,22 @@ static __always_inline u64 vdso_shift_ns(u64 ns, unsign=
-ed long shift)
++#define __arch_get_vdso_u_time_data __arch_get_vdso_u_time_data
 =20
- #ifdef __powerpc64__
- int __c_kernel_clock_gettime(clockid_t clock, struct __kernel_timespec *ts,
--			     const struct vdso_data *vd);
-+			     const struct vdso_time_data *vd);
- int __c_kernel_clock_getres(clockid_t clock_id, struct __kernel_timespec *re=
-s,
--			    const struct vdso_data *vd);
-+			    const struct vdso_time_data *vd);
- #else
- int __c_kernel_clock_gettime(clockid_t clock, struct old_timespec32 *ts,
--			     const struct vdso_data *vd);
-+			     const struct vdso_time_data *vd);
- int __c_kernel_clock_gettime64(clockid_t clock, struct __kernel_timespec *ts,
--			       const struct vdso_data *vd);
-+			       const struct vdso_time_data *vd);
- int __c_kernel_clock_getres(clockid_t clock_id, struct old_timespec32 *res,
--			    const struct vdso_data *vd);
-+			    const struct vdso_time_data *vd);
- #endif
- int __c_kernel_gettimeofday(struct __kernel_old_timeval *tv, struct timezone=
- *tz,
--			    const struct vdso_data *vd);
-+			    const struct vdso_time_data *vd);
- __kernel_old_time_t __c_kernel_time(__kernel_old_time_t *time,
--				    const struct vdso_data *vd);
-+				    const struct vdso_time_data *vd);
+ #endif /* !__ASSEMBLY__ */
+=20
+diff --git a/arch/mips/include/asm/vdso/vdso.h b/arch/mips/include/asm/vdso/v=
+dso.h
+index 6cd8819..acd0efc 100644
+--- a/arch/mips/include/asm/vdso/vdso.h
++++ b/arch/mips/include/asm/vdso/vdso.h
+@@ -5,16 +5,18 @@
+  */
+=20
+ #include <asm/sgidefs.h>
++#include <vdso/page.h>
 +
- #endif /* __ASSEMBLY__ */
++#define __VDSO_PAGES 4
 =20
- #endif /* _ASM_POWERPC_VDSO_GETTIMEOFDAY_H */
-diff --git a/arch/powerpc/include/asm/vdso/vsyscall.h b/arch/powerpc/include/=
-asm/vdso/vsyscall.h
-index 48560a1..c2c9ae1 100644
---- a/arch/powerpc/include/asm/vdso/vsyscall.h
-+++ b/arch/powerpc/include/asm/vdso/vsyscall.h
-@@ -6,19 +6,6 @@
+ #ifndef __ASSEMBLY__
 =20
- #include <asm/vdso_datapage.h>
+ #include <asm/asm.h>
+-#include <asm/page.h>
+ #include <asm/vdso.h>
 =20
--static __always_inline
--struct vdso_data *__arch_get_k_vdso_data(void)
+-static inline unsigned long get_vdso_base(void)
++static inline const struct vdso_time_data *get_vdso_time_data(void)
+ {
+-	unsigned long addr;
++	const struct vdso_time_data *addr;
+=20
+ 	/*
+ 	 * We can't use cpu_has_mips_r6 since it needs the cpu_data[]
+@@ -27,7 +29,7 @@ static inline unsigned long get_vdso_base(void)
+ 	 * We can't use addiupc because there is no label-label
+ 	 * support for the addiupc reloc
+ 	 */
+-	__asm__("lapc	%0, _start			\n"
++	__asm__("lapc	%0, vdso_u_time_data		\n"
+ 		: "=3Dr" (addr) : :);
+ #else
+ 	/*
+@@ -46,7 +48,7 @@ static inline unsigned long get_vdso_base(void)
+ 	"	.set noreorder				\n"
+ 	"	bal	1f				\n"
+ 	"	 nop					\n"
+-	"	.word	_start - .			\n"
++	"	.word	vdso_u_time_data - .		\n"
+ 	"1:	lw	%0, 0($31)			\n"
+ 	"	" STR(PTR_ADDU) " %0, $31, %0		\n"
+ 	"	.set pop				\n"
+@@ -58,14 +60,9 @@ static inline unsigned long get_vdso_base(void)
+ 	return addr;
+ }
+=20
+-static inline const struct vdso_data *get_vdso_data(void)
 -{
--	return vdso_data->data;
+-	return (const struct vdso_data *)(get_vdso_base() - PAGE_SIZE);
 -}
--#define __arch_get_k_vdso_data __arch_get_k_vdso_data
 -
+ #ifdef CONFIG_CLKSRC_MIPS_GIC
+=20
+-static inline void __iomem *get_gic(const struct vdso_data *data)
++static inline void __iomem *get_gic(const struct vdso_time_data *data)
+ {
+ 	return (void __iomem *)((unsigned long)data & PAGE_MASK) - PAGE_SIZE;
+ }
+diff --git a/arch/mips/include/asm/vdso/vsyscall.h b/arch/mips/include/asm/vd=
+so/vsyscall.h
+index a458287..2b1debb 100644
+--- a/arch/mips/include/asm/vdso/vsyscall.h
++++ b/arch/mips/include/asm/vdso/vsyscall.h
+@@ -2,22 +2,12 @@
+ #ifndef __ASM_VDSO_VSYSCALL_H
+ #define __ASM_VDSO_VSYSCALL_H
+=20
++#include <asm/page.h>
++
+ #ifndef __ASSEMBLY__
+=20
+ #include <vdso/datapage.h>
+=20
+-extern struct vdso_data *vdso_data;
+-
+-/*
+- * Update the vDSO data page to keep in sync with kernel timekeeping.
+- */
 -static __always_inline
--struct vdso_rng_data *__arch_get_k_vdso_rng_data(void)
+-struct vdso_data *__mips_get_k_vdso_data(void)
 -{
--	return &vdso_data->rng_data;
+-	return vdso_data;
 -}
+-#define __arch_get_k_vdso_data __mips_get_k_vdso_data
 -
  /* The asm-generic header needs to be included after the definitions above */
  #include <asm-generic/vdso/vsyscall.h>
 =20
-diff --git a/arch/powerpc/include/asm/vdso_datapage.h b/arch/powerpc/include/=
-asm/vdso_datapage.h
-index a202f5b..95d45a5 100644
---- a/arch/powerpc/include/asm/vdso_datapage.h
-+++ b/arch/powerpc/include/asm/vdso_datapage.h
-@@ -11,56 +11,18 @@
-=20
- #ifndef __ASSEMBLY__
-=20
--#include <linux/unistd.h>
--#include <linux/time.h>
- #include <vdso/datapage.h>
-=20
--#define SYSCALL_MAP_SIZE      ((NR_syscalls + 31) / 32)
--
--#ifdef CONFIG_PPC64
--
--struct vdso_arch_data {
--	__u64 tb_ticks_per_sec;			/* Timebase tics / sec */
--	__u32 dcache_block_size;		/* L1 d-cache block size     */
--	__u32 icache_block_size;		/* L1 i-cache block size     */
--	__u32 dcache_log_block_size;		/* L1 d-cache log block size */
--	__u32 icache_log_block_size;		/* L1 i-cache log block size */
--	__u32 syscall_map[SYSCALL_MAP_SIZE];	/* Map of syscalls  */
--	__u32 compat_syscall_map[SYSCALL_MAP_SIZE];	/* Map of compat syscalls */
--
--	struct vdso_rng_data rng_data;
--
--	struct vdso_data data[CS_BASES] __aligned(1 << CONFIG_PAGE_SHIFT);
--};
--
--#else /* CONFIG_PPC64 */
--
--struct vdso_arch_data {
--	__u64 tb_ticks_per_sec;		/* Timebase tics / sec */
--	__u32 syscall_map[SYSCALL_MAP_SIZE]; /* Map of syscalls */
--	__u32 compat_syscall_map[0];	/* No compat syscalls on PPC32 */
--	struct vdso_rng_data rng_data;
--
--	struct vdso_data data[CS_BASES] __aligned(1 << CONFIG_PAGE_SHIFT);
--};
--
--#endif /* CONFIG_PPC64 */
--
--extern struct vdso_arch_data *vdso_data;
--
- #else /* __ASSEMBLY__ */
-=20
--.macro get_datapage ptr offset=3D0
-+.macro get_datapage ptr symbol
- 	bcl	20, 31, .+4
- 999:
- 	mflr	\ptr
--	addis	\ptr, \ptr, (_vdso_datapage - 999b + \offset)@ha
--	addi	\ptr, \ptr, (_vdso_datapage - 999b + \offset)@l
-+	addis	\ptr, \ptr, (\symbol - 999b)@ha
-+	addi	\ptr, \ptr, (\symbol - 999b)@l
- .endm
-=20
--#include <asm/asm-offsets.h>
--#include <asm/page.h>
--
- #endif /* __ASSEMBLY__ */
-=20
- #endif /* __KERNEL__ */
-diff --git a/arch/powerpc/kernel/asm-offsets.c b/arch/powerpc/kernel/asm-offs=
-ets.c
-index 7a390bd..b3048f6 100644
---- a/arch/powerpc/kernel/asm-offsets.c
-+++ b/arch/powerpc/kernel/asm-offsets.c
-@@ -334,7 +334,6 @@ int main(void)
- #endif /* ! CONFIG_PPC64 */
-=20
- 	/* datapage offsets for use by vdso */
--	OFFSET(VDSO_DATA_OFFSET, vdso_arch_data, data);
- 	OFFSET(CFG_TB_TICKS_PER_SEC, vdso_arch_data, tb_ticks_per_sec);
- #ifdef CONFIG_PPC64
- 	OFFSET(CFG_ICACHE_BLOCKSZ, vdso_arch_data, icache_block_size);
-diff --git a/arch/powerpc/kernel/time.c b/arch/powerpc/kernel/time.c
-index 0727332..15784c5 100644
---- a/arch/powerpc/kernel/time.c
-+++ b/arch/powerpc/kernel/time.c
-@@ -950,7 +950,7 @@ void __init time_init(void)
- 		sys_tz.tz_dsttime =3D 0;
- 	}
-=20
--	vdso_data->tb_ticks_per_sec =3D tb_ticks_per_sec;
-+	vdso_k_arch_data->tb_ticks_per_sec =3D tb_ticks_per_sec;
- #ifdef CONFIG_PPC64_PROC_SYSTEMCFG
- 	systemcfg->tb_ticks_per_sec =3D tb_ticks_per_sec;
- #endif
-diff --git a/arch/powerpc/kernel/vdso.c b/arch/powerpc/kernel/vdso.c
-index 4337936..219d67b 100644
---- a/arch/powerpc/kernel/vdso.c
-+++ b/arch/powerpc/kernel/vdso.c
-@@ -17,7 +17,7 @@
- #include <linux/elf.h>
- #include <linux/security.h>
- #include <linux/syscalls.h>
--#include <linux/time_namespace.h>
+diff --git a/arch/mips/kernel/vdso.c b/arch/mips/kernel/vdso.c
+index 75c9d36..de09677 100644
+--- a/arch/mips/kernel/vdso.c
++++ b/arch/mips/kernel/vdso.c
+@@ -15,6 +15,7 @@
+ #include <linux/random.h>
+ #include <linux/sched.h>
+ #include <linux/slab.h>
 +#include <linux/vdso_datastore.h>
- #include <vdso/datapage.h>
 =20
- #include <asm/syscall.h>
-@@ -32,6 +32,8 @@
- #include <asm/vdso_datapage.h>
- #include <asm/setup.h>
+ #include <asm/abi.h>
+ #include <asm/mips-cps.h>
+@@ -23,20 +24,7 @@
+ #include <vdso/helpers.h>
+ #include <vdso/vsyscall.h>
 =20
-+static_assert(__VDSO_PAGES =3D=3D VDSO_NR_PAGES);
-+
- /* The alignment of the vDSO */
- #define VDSO_ALIGNMENT	(1 << 16)
-=20
-@@ -40,24 +42,6 @@ extern char vdso64_start, vdso64_end;
-=20
- long sys_ni_syscall(void);
-=20
+-/* Kernel-provided data used by the VDSO. */
+-static union vdso_data_store mips_vdso_data __page_aligned_data;
+-struct vdso_data *vdso_data =3D mips_vdso_data.data;
+-
 -/*
-- * The vdso data page (aka. systemcfg for old ppc64 fans) is here.
-- * Once the early boot kernel code no longer needs to muck around
-- * with it, it will become dynamically allocated
+- * Mapping for the VDSO data/GIC pages. The real pages are mapped manually, =
+as
+- * what we map and where within the area they are mapped is determined at
+- * runtime.
 - */
--static union {
--	struct vdso_arch_data	data;
--	u8			page[2 * PAGE_SIZE];
--} vdso_data_store __page_aligned_data;
--struct vdso_arch_data *vdso_data =3D &vdso_data_store.data;
--
--enum vvar_pages {
--	VVAR_BASE_PAGE_OFFSET,
--	VVAR_TIME_PAGE_OFFSET,
--	VVAR_TIMENS_PAGE_OFFSET,
--	VVAR_NR_PAGES,
--};
--
- static int vdso_mremap(const struct vm_special_mapping *sm, struct vm_area_s=
-truct *new_vma,
- 		       unsigned long text_size)
- {
-@@ -96,14 +80,6 @@ static void vdso_close(const struct vm_special_mapping *sm=
-, struct vm_area_struc
- 	mm->context.vdso =3D NULL;
- }
-=20
--static vm_fault_t vvar_fault(const struct vm_special_mapping *sm,
--			     struct vm_area_struct *vma, struct vm_fault *vmf);
--
--static struct vm_special_mapping vvar_spec __ro_after_init =3D {
+-static struct page *no_pages[] =3D { NULL };
+-static struct vm_special_mapping vdso_vvar_mapping =3D {
 -	.name =3D "[vvar]",
--	.fault =3D vvar_fault,
+-	.pages =3D no_pages,
 -};
--
- static struct vm_special_mapping vdso32_spec __ro_after_init =3D {
- 	.name =3D "[vdso]",
- 	.mremap =3D vdso32_mremap,
-@@ -116,73 +92,6 @@ static struct vm_special_mapping vdso64_spec __ro_after_i=
-nit =3D {
- 	.close =3D vdso_close,
- };
++static_assert(VDSO_NR_PAGES =3D=3D __VDSO_PAGES);
 =20
--#ifdef CONFIG_TIME_NS
--struct vdso_data *arch_get_vdso_data(void *vvar_page)
--{
--	return vvar_page;
--}
--
--/*
-- * The vvar mapping contains data for a specific time namespace, so when a t=
-ask
-- * changes namespace we must unmap its vvar data for the old namespace.
-- * Subsequent faults will map in data for the new namespace.
-- *
-- * For more details see timens_setup_vdso_data().
-- */
--int vdso_join_timens(struct task_struct *task, struct time_namespace *ns)
--{
--	struct mm_struct *mm =3D task->mm;
--	VMA_ITERATOR(vmi, mm, 0);
--	struct vm_area_struct *vma;
--
--	mmap_read_lock(mm);
--	for_each_vma(vmi, vma) {
--		if (vma_is_special_mapping(vma, &vvar_spec))
--			zap_vma_pages(vma);
--	}
--	mmap_read_unlock(mm);
--
--	return 0;
--}
--#endif
--
--static vm_fault_t vvar_fault(const struct vm_special_mapping *sm,
--			     struct vm_area_struct *vma, struct vm_fault *vmf)
--{
--	struct page *timens_page =3D find_timens_vvar_page(vma);
--	unsigned long pfn;
--
--	switch (vmf->pgoff) {
--	case VVAR_BASE_PAGE_OFFSET:
--		pfn =3D virt_to_pfn(vdso_data);
--		break;
--	case VVAR_TIME_PAGE_OFFSET:
--		if (timens_page)
--			pfn =3D page_to_pfn(timens_page);
--		else
--			pfn =3D virt_to_pfn(vdso_data->data);
--		break;
--#ifdef CONFIG_TIME_NS
--	case VVAR_TIMENS_PAGE_OFFSET:
--		/*
--		 * If a task belongs to a time namespace then a namespace
--		 * specific VVAR is mapped with the VVAR_DATA_PAGE_OFFSET and
--		 * the real VVAR page is mapped with the VVAR_TIMENS_PAGE_OFFSET
--		 * offset.
--		 * See also the comment near timens_setup_vdso_data().
--		 */
--		if (!timens_page)
--			return VM_FAULT_SIGBUS;
--		pfn =3D virt_to_pfn(vdso_data->data);
--		break;
--#endif /* CONFIG_TIME_NS */
--	default:
--		return VM_FAULT_SIGBUS;
--	}
--
--	return vmf_insert_pfn(vma, vmf->address, pfn);
--}
--
- /*
-  * This is called from binfmt_elf, we create the special vma for the
-  * vDSO and insert it into the mm struct tree
-@@ -191,7 +100,7 @@ static int __arch_setup_additional_pages(struct linux_bin=
-prm *bprm, int uses_int
+ static void __init init_vdso_image(struct mips_vdso_image *image)
  {
- 	unsigned long vdso_size, vdso_base, mappings_size;
- 	struct vm_special_mapping *vdso_spec;
--	unsigned long vvar_size =3D VVAR_NR_PAGES * PAGE_SIZE;
-+	unsigned long vvar_size =3D VDSO_NR_PAGES * PAGE_SIZE;
+@@ -90,7 +78,7 @@ int arch_setup_additional_pages(struct linux_binprm *bprm, =
+int uses_interp)
+ {
+ 	struct mips_vdso_image *image =3D current->thread.abi->vdso;
  	struct mm_struct *mm =3D current->mm;
+-	unsigned long gic_size, vvar_size, size, base, data_addr, vdso_addr, gic_pf=
+n, gic_base;
++	unsigned long gic_size, size, base, data_addr, vdso_addr, gic_pfn, gic_base;
  	struct vm_area_struct *vma;
+ 	int ret;
 =20
-@@ -217,9 +126,7 @@ static int __arch_setup_additional_pages(struct linux_bin=
-prm *bprm, int uses_int
- 	/* Add required alignment. */
- 	vdso_base =3D ALIGN(vdso_base, VDSO_ALIGNMENT);
+@@ -119,8 +107,7 @@ int arch_setup_additional_pages(struct linux_binprm *bprm=
+, int uses_interp)
+ 	 * the counter registers at the start.
+ 	 */
+ 	gic_size =3D mips_gic_present() ? PAGE_SIZE : 0;
+-	vvar_size =3D gic_size + PAGE_SIZE;
+-	size =3D vvar_size + image->size;
++	size =3D gic_size + VDSO_NR_PAGES * PAGE_SIZE + image->size;
 =20
--	vma =3D _install_special_mapping(mm, vdso_base, vvar_size,
--				       VM_READ | VM_MAYREAD | VM_IO |
--				       VM_DONTDUMP | VM_PFNMAP, &vvar_spec);
-+	vma =3D vdso_install_vvar_mapping(mm, vdso_base);
- 	if (IS_ERR(vma))
- 		return PTR_ERR(vma);
-=20
-@@ -299,10 +206,10 @@ static void __init vdso_setup_syscall_map(void)
-=20
- 	for (i =3D 0; i < NR_syscalls; i++) {
- 		if (sys_call_table[i] !=3D (void *)&sys_ni_syscall)
--			vdso_data->syscall_map[i >> 5] |=3D 0x80000000UL >> (i & 0x1f);
-+			vdso_k_arch_data->syscall_map[i >> 5] |=3D 0x80000000UL >> (i & 0x1f);
- 		if (IS_ENABLED(CONFIG_COMPAT) &&
- 		    compat_sys_call_table[i] !=3D (void *)&sys_ni_syscall)
--			vdso_data->compat_syscall_map[i >> 5] |=3D 0x80000000UL >> (i & 0x1f);
-+			vdso_k_arch_data->compat_syscall_map[i >> 5] |=3D 0x80000000UL >> (i & 0x=
-1f);
+ 	/*
+ 	 * Find a region that's large enough for us to perform the
+@@ -143,15 +130,13 @@ int arch_setup_additional_pages(struct linux_binprm *bp=
+rm, int uses_interp)
+ 	 */
+ 	if (cpu_has_dc_aliases) {
+ 		base =3D __ALIGN_MASK(base, shm_align_mask);
+-		base +=3D ((unsigned long)vdso_data - gic_size) & shm_align_mask;
++		base +=3D ((unsigned long)vdso_k_time_data - gic_size) & shm_align_mask;
  	}
- }
 =20
-@@ -352,10 +259,10 @@ static struct page ** __init vdso_setup_pages(void *sta=
-rt, void *end)
- static int __init vdso_init(void)
- {
- #ifdef CONFIG_PPC64
--	vdso_data->dcache_block_size =3D ppc64_caches.l1d.block_size;
--	vdso_data->icache_block_size =3D ppc64_caches.l1i.block_size;
--	vdso_data->dcache_log_block_size =3D ppc64_caches.l1d.log_block_size;
--	vdso_data->icache_log_block_size =3D ppc64_caches.l1i.log_block_size;
-+	vdso_k_arch_data->dcache_block_size =3D ppc64_caches.l1d.block_size;
-+	vdso_k_arch_data->icache_block_size =3D ppc64_caches.l1i.block_size;
-+	vdso_k_arch_data->dcache_log_block_size =3D ppc64_caches.l1d.log_block_size;
-+	vdso_k_arch_data->icache_log_block_size =3D ppc64_caches.l1i.log_block_size;
- #endif /* CONFIG_PPC64 */
+ 	data_addr =3D base + gic_size;
+-	vdso_addr =3D data_addr + PAGE_SIZE;
++	vdso_addr =3D data_addr + VDSO_NR_PAGES * PAGE_SIZE;
 =20
- 	vdso_setup_syscall_map();
-diff --git a/arch/powerpc/kernel/vdso/cacheflush.S b/arch/powerpc/kernel/vdso=
-/cacheflush.S
-index 0085ae4..488d3ad 100644
---- a/arch/powerpc/kernel/vdso/cacheflush.S
-+++ b/arch/powerpc/kernel/vdso/cacheflush.S
-@@ -30,7 +30,7 @@ END_FTR_SECTION_IFSET(CPU_FTR_COHERENT_ICACHE)
- #ifdef CONFIG_PPC64
- 	mflr	r12
-   .cfi_register lr,r12
--	get_datapage	r10
-+	get_datapage	r10 vdso_u_arch_data
- 	mtlr	r12
-   .cfi_restore	lr
- #endif
-diff --git a/arch/powerpc/kernel/vdso/datapage.S b/arch/powerpc/kernel/vdso/d=
-atapage.S
-index db8e167..d23b2e8 100644
---- a/arch/powerpc/kernel/vdso/datapage.S
-+++ b/arch/powerpc/kernel/vdso/datapage.S
-@@ -28,7 +28,7 @@ V_FUNCTION_BEGIN(__kernel_get_syscall_map)
- 	mflr	r12
-   .cfi_register lr,r12
- 	mr.	r4,r3
--	get_datapage	r3
-+	get_datapage	r3 vdso_u_arch_data
- 	mtlr	r12
- #ifdef __powerpc64__
- 	addi	r3,r3,CFG_SYSCALL_MAP64
-@@ -52,7 +52,7 @@ V_FUNCTION_BEGIN(__kernel_get_tbfreq)
-   .cfi_startproc
- 	mflr	r12
-   .cfi_register lr,r12
--	get_datapage	r3
-+	get_datapage	r3 vdso_u_arch_data
- #ifndef __powerpc64__
- 	lwz	r4,(CFG_TB_TICKS_PER_SEC + 4)(r3)
- #endif
-diff --git a/arch/powerpc/kernel/vdso/gettimeofday.S b/arch/powerpc/kernel/vd=
-so/gettimeofday.S
-index 5333848..79c9672 100644
---- a/arch/powerpc/kernel/vdso/gettimeofday.S
-+++ b/arch/powerpc/kernel/vdso/gettimeofday.S
-@@ -33,9 +33,9 @@
-   .cfi_rel_offset r2, PPC_MIN_STKFRM + STK_GOT
- #endif
- 	.ifeq	\call_time
--		get_datapage	r5 VDSO_DATA_OFFSET
-+		get_datapage	r5 vdso_u_time_data
- 	.else
--		get_datapage	r4 VDSO_DATA_OFFSET
-+		get_datapage	r4 vdso_u_time_data
- 	.endif
- 	bl		CFUNC(DOTSYM(\funct))
- 	PPC_LL		r0, PPC_MIN_STKFRM + PPC_LR_STKOFF(r1)
-diff --git a/arch/powerpc/kernel/vdso/vdso32.lds.S b/arch/powerpc/kernel/vdso=
-/vdso32.lds.S
-index 1a1b0b6..72a1012 100644
---- a/arch/powerpc/kernel/vdso/vdso32.lds.S
-+++ b/arch/powerpc/kernel/vdso/vdso32.lds.S
-@@ -6,6 +6,7 @@
- #include <asm/vdso.h>
- #include <asm/page.h>
- #include <asm-generic/vmlinux.lds.h>
+-	vma =3D _install_special_mapping(mm, base, vvar_size,
+-				       VM_READ | VM_MAYREAD,
+-				       &vdso_vvar_mapping);
++	vma =3D vdso_install_vvar_mapping(mm, data_addr);
+ 	if (IS_ERR(vma)) {
+ 		ret =3D PTR_ERR(vma);
+ 		goto out;
+@@ -161,6 +146,17 @@ int arch_setup_additional_pages(struct linux_binprm *bpr=
+m, int uses_interp)
+ 	if (gic_size) {
+ 		gic_base =3D (unsigned long)mips_gic_base + MIPS_GIC_USER_OFS;
+ 		gic_pfn =3D PFN_DOWN(__pa(gic_base));
++		static const struct vm_special_mapping gic_mapping =3D {
++			.name	=3D "[gic]",
++			.pages	=3D (struct page **) { NULL },
++		};
++
++		vma =3D _install_special_mapping(mm, base, gic_size, VM_READ | VM_MAYREAD,
++					       &gic_mapping);
++		if (IS_ERR(vma)) {
++			ret =3D PTR_ERR(vma);
++			goto out;
++		}
+=20
+ 		ret =3D io_remap_pfn_range(vma, base, gic_pfn, gic_size,
+ 					 pgprot_noncached(vma->vm_page_prot));
+@@ -168,13 +164,6 @@ int arch_setup_additional_pages(struct linux_binprm *bpr=
+m, int uses_interp)
+ 			goto out;
+ 	}
+=20
+-	/* Map data page. */
+-	ret =3D remap_pfn_range(vma, data_addr,
+-			      virt_to_phys(vdso_data) >> PAGE_SHIFT,
+-			      PAGE_SIZE, vma->vm_page_prot);
+-	if (ret)
+-		goto out;
+-
+ 	/* Map VDSO image. */
+ 	vma =3D _install_special_mapping(mm, vdso_addr, image->size,
+ 				       VM_READ | VM_EXEC |
+diff --git a/arch/mips/vdso/vdso.lds.S b/arch/mips/vdso/vdso.lds.S
+index 836465e..c8bbe56 100644
+--- a/arch/mips/vdso/vdso.lds.S
++++ b/arch/mips/vdso/vdso.lds.S
+@@ -5,6 +5,8 @@
+  */
+=20
+ #include <asm/sgidefs.h>
++#include <asm/vdso/vdso.h>
 +#include <vdso/datapage.h>
 =20
- #ifdef __LITTLE_ENDIAN__
- OUTPUT_FORMAT("elf32-powerpcle", "elf32-powerpcle", "elf32-powerpcle")
-@@ -16,7 +17,8 @@ OUTPUT_ARCH(powerpc:common)
+ #if _MIPS_SIM =3D=3D _MIPS_SIM_ABI64
+ OUTPUT_FORMAT("elf64-tradlittlemips", "elf64-tradbigmips", "elf64-tradlittle=
+mips")
+@@ -18,7 +20,8 @@ OUTPUT_ARCH(mips)
 =20
  SECTIONS
  {
--	PROVIDE(_vdso_datapage =3D . - 3 * PAGE_SIZE);
+-	PROVIDE(_start =3D .);
 +	VDSO_VVAR_SYMS
 +
  	. =3D SIZEOF_HEADERS;
 =20
- 	.hash          	: { *(.hash) }			:text
-diff --git a/arch/powerpc/kernel/vdso/vdso64.lds.S b/arch/powerpc/kernel/vdso=
-/vdso64.lds.S
-index e21b550..32102a0 100644
---- a/arch/powerpc/kernel/vdso/vdso64.lds.S
-+++ b/arch/powerpc/kernel/vdso/vdso64.lds.S
-@@ -6,6 +6,7 @@
- #include <asm/vdso.h>
- #include <asm/page.h>
- #include <asm-generic/vmlinux.lds.h>
-+#include <vdso/datapage.h>
-=20
- #ifdef __LITTLE_ENDIAN__
- OUTPUT_FORMAT("elf64-powerpcle", "elf64-powerpcle", "elf64-powerpcle")
-@@ -16,7 +17,8 @@ OUTPUT_ARCH(powerpc:common64)
-=20
- SECTIONS
- {
--	PROVIDE(_vdso_datapage =3D . - 3 * PAGE_SIZE);
-+	VDSO_VVAR_SYMS
-+
- 	. =3D SIZEOF_HEADERS;
-=20
- 	.hash		: { *(.hash) }			:text
-diff --git a/arch/powerpc/kernel/vdso/vgettimeofday.c b/arch/powerpc/kernel/v=
-dso/vgettimeofday.c
-index 55a287c..6f5167d 100644
---- a/arch/powerpc/kernel/vdso/vgettimeofday.c
-+++ b/arch/powerpc/kernel/vdso/vgettimeofday.c
-@@ -7,43 +7,43 @@
-=20
- #ifdef __powerpc64__
- int __c_kernel_clock_gettime(clockid_t clock, struct __kernel_timespec *ts,
--			     const struct vdso_data *vd)
-+			     const struct vdso_time_data *vd)
- {
- 	return __cvdso_clock_gettime_data(vd, clock, ts);
- }
-=20
- int __c_kernel_clock_getres(clockid_t clock_id, struct __kernel_timespec *re=
-s,
--			    const struct vdso_data *vd)
-+			    const struct vdso_time_data *vd)
- {
- 	return __cvdso_clock_getres_data(vd, clock_id, res);
- }
- #else
- int __c_kernel_clock_gettime(clockid_t clock, struct old_timespec32 *ts,
--			     const struct vdso_data *vd)
-+			     const struct vdso_time_data *vd)
- {
- 	return __cvdso_clock_gettime32_data(vd, clock, ts);
- }
-=20
- int __c_kernel_clock_gettime64(clockid_t clock, struct __kernel_timespec *ts,
--			       const struct vdso_data *vd)
-+			       const struct vdso_time_data *vd)
- {
- 	return __cvdso_clock_gettime_data(vd, clock, ts);
- }
-=20
- int __c_kernel_clock_getres(clockid_t clock_id, struct old_timespec32 *res,
--			    const struct vdso_data *vd)
-+			    const struct vdso_time_data *vd)
- {
- 	return __cvdso_clock_getres_time32_data(vd, clock_id, res);
- }
- #endif
-=20
- int __c_kernel_gettimeofday(struct __kernel_old_timeval *tv, struct timezone=
- *tz,
--			    const struct vdso_data *vd)
-+			    const struct vdso_time_data *vd)
- {
- 	return __cvdso_gettimeofday_data(vd, tv, tz);
- }
-=20
--__kernel_old_time_t __c_kernel_time(__kernel_old_time_t *time, const struct =
-vdso_data *vd)
-+__kernel_old_time_t __c_kernel_time(__kernel_old_time_t *time, const struct =
-vdso_time_data *vd)
- {
- 	return __cvdso_time_data(vd, time);
- }
+ 	/*
 
