@@ -1,1385 +1,270 @@
-Return-Path: <linux-kernel+bounces-525929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D38CA3F76F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 15:38:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 020A0A3F785
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 15:42:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 550301889DBB
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 14:38:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF23D172642
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 14:39:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0EC7215783;
-	Fri, 21 Feb 2025 14:35:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68AC02101A0;
+	Fri, 21 Feb 2025 14:37:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gOQqbbKQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VmUPAHnC"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87C142101AE
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 14:35:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7763520FAAC;
+	Fri, 21 Feb 2025 14:37:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740148536; cv=none; b=bbQ7/bqVhaOj5dDJNq7mN1ibPQUlJaZfNyyIUdCTaKLvtB9Lv7rCLQKB+T6TmClvnA9mb+DMY+sURSoK346JfMg/JbdIIlFnhltC4SoVh9R/iDbuwpRXY4En8FauL9fSxlNcTmXRVWgipSFE3J4Z6d2D8Vxmx52ziXTd0MESlU8=
+	t=1740148625; cv=none; b=HGRGl9ETxXzGFs+eb85ejXWD1bZeZy+AKq2LsLm7fDawfxzRjyO3UY+SlWjPR/yvha5on488v4M8PXZfvNZUdpNDuVZTvL3+8oTPizgOrUfSPzAMKbBozmsNB9qiw0oENGHH5/iDsTjxsJhcwN+k0T87Lbci5bUtvzkgCahNv+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740148536; c=relaxed/simple;
-	bh=luQB4a5AA1/ZDHftfd8vEHQDY/FYwtJjo4M6pX7h0Pg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Q7OGKnOsGk0C/B2USfbGYzmO5oja6KeaemtKufUnkEeZf8z9PWTGOOpnoTXh0naSfz6iSbQtsMT4tQtePPU1x4cPt84DApLjLd9aK2nNjcJ601wmonNYfK+ITsh3YaLzIdeb7xBx+kAs2LdL6X+iLZRZlNB5aetmCfAwJ6ROX5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gOQqbbKQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F473C4CEEE;
-	Fri, 21 Feb 2025 14:35:35 +0000 (UTC)
+	s=arc-20240116; t=1740148625; c=relaxed/simple;
+	bh=4rvoSQ+7x8TqwO7+8ycb5v7yrOX5LPtCmwJL1bfA0V0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=S3X0jCPwujSfs3sZjnJBm+vQMI4rtNfNbwveBJ4lJZ/6isOVe00u49IwjFXW0Fij3d0U3KwdeHxQPxONdUjpztQTlZewYpXkeOZ2KrGKtInfHVSbvU/U9qSFJ5vaT78oYo1c/qjzwYglWmmHS8et7NA4P4+ufiwBCKD6ZKagDD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VmUPAHnC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B70FC4CEE8;
+	Fri, 21 Feb 2025 14:37:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740148536;
-	bh=luQB4a5AA1/ZDHftfd8vEHQDY/FYwtJjo4M6pX7h0Pg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=gOQqbbKQz5ySMlIZtzZ2+pjA7TkvZ0L+YdkNwvZiaHTaQaZpa/jyFk3DkovByYTc0
-	 uOAzCSQeVFHeQxzPo8mW1R2hnpffjaSxCmiWgGf/RWrNtVMHHVwyN3Gh/iPiTz/AEv
-	 2sF+MyG9pG1lGrOnrQdyighr2uQY35SA+3PpnvPNq0o6H6pl2T0cMKr86/+qP5M7SB
-	 FCauIGMffT0u0N4zcqgYrjvQnc4yR2z6H/Xy6YUc7JWBA981fOWviofHzcTsIUEpFS
-	 X5kMAm/NmgwpIOVTZfSQbamYSkLDsTgZZ/HmvxmlMdKmvM1+66NqUcM5EK8z6Vw8Nb
-	 GOMQFg5Ob3SDQ==
-Received: from mchehab by mail.kernel.org with local (Exim 4.98)
-	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1tlU7m-00000002jER-3ydE;
-	Fri, 21 Feb 2025 15:35:30 +0100
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Igor Mammedov <imammedo@redhat.com>,
-	"Michael S . Tsirkin" <mst@redhat.com>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Shiju Jose <shiju.jose@huawei.com>,
-	qemu-arm@nongnu.org,
-	qemu-devel@nongnu.org,
-	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	Cleber Rosa <crosa@redhat.com>,
-	John Snow <jsnow@redhat.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v4 14/14] scripts/ghes_inject: add a script to generate GHES error inject
-Date: Fri, 21 Feb 2025 15:35:23 +0100
-Message-ID: <4f6caba7a2ee2fb783271f9293e694f32072f7f1.1740148260.git.mchehab+huawei@kernel.org>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <cover.1740148260.git.mchehab+huawei@kernel.org>
-References: <cover.1740148260.git.mchehab+huawei@kernel.org>
+	s=k20201202; t=1740148625;
+	bh=4rvoSQ+7x8TqwO7+8ycb5v7yrOX5LPtCmwJL1bfA0V0=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=VmUPAHnCYfceBkf2BL5diRHWGzI6TvB7gkDjjG6+imsZZmsvpMBBJ//+agtm7LoQO
+	 T6iPqUDc5f4xwXVarMDv+QhHSqP0p3NqhQVZIEJ4k3ujkrPaFjQWrvHWQ2CTHIfal2
+	 bwgBCp8tlpZAXuluEkjB4fdnh2jO+zDret85Z63cozXVyNSNxsjlzS8RfflzJMgPtf
+	 TML1fnTbwyuxq1Uso63MhXzsez/0qScY84KEsqR4dHhCuvXiVLxh6IBt1ZWJIDZyV7
+	 r8aUXsrQ6vMJkZG5z0ulW0E55gwQh+mn2T/ATKCWo11qhnb9eqYuCaPU6McmtiCMml
+	 ZHS0l89/dMuNw==
+Message-ID: <c3f3c740498368905dd4adbabb75ee9e6728730b.camel@kernel.org>
+Subject: Re: [PATCH] nfsd: decrease cl_cb_inflight if fail to queue cb_work
+From: Jeff Layton <jlayton@kernel.org>
+To: Benjamin Coddington <bcodding@redhat.com>
+Cc: Chuck Lever <chuck.lever@oracle.com>, Li Lingfeng
+ <lilingfeng3@huawei.com>, 	neilb@suse.de, okorniev@redhat.com,
+ Dai.Ngo@oracle.com, tom@talpey.com, 	linux-nfs@vger.kernel.org,
+ linux-kernel@vger.kernel.org, yukuai1@huaweicloud.com, 	houtao1@huawei.com,
+ yi.zhang@huawei.com, yangerkun@huawei.com, 	lilingfeng@huaweicloud.com
+Date: Fri, 21 Feb 2025 09:37:02 -0500
+In-Reply-To: <C9BBD33C-0077-44B0-BCE9-7E4962428382@redhat.com>
+References: <20250218135423.1487309-1-lilingfeng3@huawei.com>
+	 <0ae8a05272c2eb8a503102788341e1d9c49109dd.camel@kernel.org>
+	 <04ed0c70b85a1e8b66c25b9ad4d0aa4c2fb91198.camel@kernel.org>
+	 <9cea3133-d17c-48c5-8eb9-265fbfc5708b@oracle.com>
+	 <8afc09d0728c4b71397d6b055dc86ab12310c297.camel@kernel.org>
+	 <C9BBD33C-0077-44B0-BCE9-7E4962428382@redhat.com>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=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
+ QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-Using the QMP GHESv2 API requires preparing a raw data array
-containing a CPER record.
+On Fri, 2025-02-21 at 09:06 -0500, Benjamin Coddington wrote:
+> On 18 Feb 2025, at 9:40, Jeff Layton wrote:
+>=20
+> > On Tue, 2025-02-18 at 09:31 -0500, Chuck Lever wrote:
+> > > On 2/18/25 9:29 AM, Jeff Layton wrote:
+> > > > On Tue, 2025-02-18 at 08:58 -0500, Jeff Layton wrote:
+> > > > > On Tue, 2025-02-18 at 21:54 +0800, Li Lingfeng wrote:
+> > > > > > In nfsd4_run_cb, cl_cb_inflight is increased before attempting =
+to queue
+> > > > > > cb_work to callback_wq. This count can be decreased in three si=
+tuations:
+> > > > > > 1) If queuing fails in nfsd4_run_cb, the count will be decremen=
+ted
+> > > > > > accordingly.
+> > > > > > 2) After cb_work is running, the count is decreased in the exce=
+ption
+> > > > > > branch of nfsd4_run_cb_work via nfsd41_destroy_cb.
+> > > > > > 3) The count is decreased in the release callback of rpc_task =
+=E2=80=94 either
+> > > > > > directly calling nfsd41_cb_inflight_end in nfsd4_cb_probe_relea=
+se, or
+> > > > > > calling nfsd41_destroy_cb in 	.
+> > > > > >=20
+> > > > > > However, in nfsd4_cb_release, if the current cb_work needs to r=
+estart, the
+> > > > > > count will not be decreased, with the expectation that it will =
+be reduced
+> > > > > > once cb_work is running.
+> > > > > > If queuing fails here, then the count will leak, ultimately cau=
+sing the
+> > > > > > nfsd service to be unable to exit as shown below:
+> > > > > > [root@nfs_test2 ~]# cat /proc/2271/stack
+> > > > > > [<0>] nfsd4_shutdown_callback+0x22b/0x290
+> > > > > > [<0>] __destroy_client+0x3cd/0x5c0
+> > > > > > [<0>] nfs4_state_destroy_net+0xd2/0x330
+> > > > > > [<0>] nfs4_state_shutdown_net+0x2ad/0x410
+> > > > > > [<0>] nfsd_shutdown_net+0xb7/0x250
+> > > > > > [<0>] nfsd_last_thread+0x15f/0x2a0
+> > > > > > [<0>] nfsd_svc+0x388/0x3f0
+> > > > > > [<0>] write_threads+0x17e/0x2b0
+> > > > > > [<0>] nfsctl_transaction_write+0x91/0xf0
+> > > > > > [<0>] vfs_write+0x1c4/0x750
+> > > > > > [<0>] ksys_write+0xcb/0x170
+> > > > > > [<0>] do_syscall_64+0x70/0x120
+> > > > > > [<0>] entry_SYSCALL_64_after_hwframe+0x78/0xe2
+> > > > > > [root@nfs_test2 ~]#
+> > > > > >=20
+> > > > > > Fix this by decreasing cl_cb_inflight if the restart fails.
+> > > > > >=20
+> > > > > > Fixes: cba5f62b1830 ("nfsd: fix callback restarts")
+> > > > > > Signed-off-by: Li Lingfeng <lilingfeng3@huawei.com>
+> > > > > > ---
+> > > > > >  fs/nfsd/nfs4callback.c | 10 +++++++---
+> > > > > >  1 file changed, 7 insertions(+), 3 deletions(-)
+> > > > > >=20
+> > > > > > diff --git a/fs/nfsd/nfs4callback.c b/fs/nfsd/nfs4callback.c
+> > > > > > index 484077200c5d..8a7d24efdd08 100644
+> > > > > > --- a/fs/nfsd/nfs4callback.c
+> > > > > > +++ b/fs/nfsd/nfs4callback.c
+> > > > > > @@ -1459,12 +1459,16 @@ static void nfsd4_cb_done(struct rpc_ta=
+sk *task, void *calldata)
+> > > > > >  static void nfsd4_cb_release(void *calldata)
+> > > > > >  {
+> > > > > >  	struct nfsd4_callback *cb =3D calldata;
+> > > > > > +	struct nfs4_client *clp =3D cb->cb_clp;
+> > > > > > +	int queued;
+> > > > > >=20
+> > > > > >  	trace_nfsd_cb_rpc_release(cb->cb_clp);
+> > > > > >=20
+> > > > > > -	if (cb->cb_need_restart)
+> > > > > > -		nfsd4_queue_cb(cb);
+> > > > > > -	else
+> > > > > > +	if (cb->cb_need_restart) {
+> > > > > > +		queued =3D nfsd4_queue_cb(cb);
+> > > > > > +		if (!queued)
+> > > > > > +			nfsd41_cb_inflight_end(clp);
+> > > > > > +	} else
+> > > > > >  		nfsd41_destroy_cb(cb);
+> > > > > >=20
+> > > > > >  }
+> > > > >=20
+> > > > > Good catch!
+> > > > >=20
+> > > > > Reviewed-by: Jeff Layton <jlayton@kernel.org>
+> > > > >=20
+> > > >=20
+> > > > Actually, I think this is not quite right. It's a bit more subtle t=
+han
+> > > > it first appears. The problem of course is that the callback workqu=
+eue
+> > > > jobs run in a different task than the RPC workqueue jobs, so they c=
+an
+> > > > race.
+> > > >=20
+> > > > cl_cb_inflight gets bumped when the callback is first queued, and o=
+nly
+> > > > gets released in nfsd41_destroy_cb(). If it fails to be queued, it'=
+s
+> > > > because something else has queued the workqueue job in the meantime=
+.
+> > > >=20
+> > > > There are two places that can occur: nfsd4_cb_release() and
+> > > > nfsd4_run_cb(). Since this is occurring in nfsd4_cb_release(), the =
+only
+> > > > other option is that something raced in and queued it via
+> > > > nfsd4_run_cb().
+> > >=20
+> > > What would be the "something" that raced in?
+> > >=20
+> >=20
+> > I think we may be able to get there via multiple __break_lease() calls
+> > on the same layout or delegation. That could mean multiple calls to the
+> > ->lm_break operation on the same object.
+>=20
+> Sorry for the late response, but isn't ->lm_break() already serialized in
+> __break_lease for the same file_lease?  We don't call lm_break(fl) if
+> lease_breaking(fl).
+>=20
 
-Add a helper script with subcommands to prepare such data.
+lease_breaking() is only checked when want_write is false. IOW, if
+you're breaking the lease for write, then lm_break is always called.
 
-Currently, only ARM Processor error CPER record is supported, by
-using:
-	$ ghes_inject.py arm
-
-which produces those warnings on Linux:
-
-[  705.032426] [Firmware Warn]: GHES: Unhandled processor error type 0x02: cache error
-[  774.866308] {4}[Hardware Error]: Hardware error from APEI Generic Hardware Error Source: 1
-[  774.866583] {4}[Hardware Error]: event severity: recoverable
-[  774.866738] {4}[Hardware Error]:  Error 0, type: recoverable
-[  774.866889] {4}[Hardware Error]:   section_type: ARM processor error
-[  774.867048] {4}[Hardware Error]:   MIDR: 0x00000000000f0510
-[  774.867189] {4}[Hardware Error]:   running state: 0x0
-[  774.867321] {4}[Hardware Error]:   Power State Coordination Interface state: 0
-[  774.867511] {4}[Hardware Error]:   Error info structure 0:
-[  774.867679] {4}[Hardware Error]:   num errors: 2
-[  774.867801] {4}[Hardware Error]:    error_type: 0x02: cache error
-[  774.867962] {4}[Hardware Error]:    error_info: 0x000000000091000f
-[  774.868124] {4}[Hardware Error]:     transaction type: Data Access
-[  774.868280] {4}[Hardware Error]:     cache error, operation type: Data write
-[  774.868465] {4}[Hardware Error]:     cache level: 2
-[  774.868592] {4}[Hardware Error]:     processor context not corrupted
-[  774.868774] [Firmware Warn]: GHES: Unhandled processor error type 0x02: cache error
-
-Such script allows customizing the error data, allowing to change
-all fields at the record. Please use:
-
-	$ ghes_inject.py arm -h
-
-For more details about its usage.
-
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
----
- MAINTAINERS                    |   3 +
- scripts/arm_processor_error.py | 476 ++++++++++++++++++++++
- scripts/ghes_inject.py         |  51 +++
- scripts/qmp_helper.py          | 702 +++++++++++++++++++++++++++++++++
- 4 files changed, 1232 insertions(+)
- create mode 100644 scripts/arm_processor_error.py
- create mode 100755 scripts/ghes_inject.py
- create mode 100755 scripts/qmp_helper.py
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index aed0f4cc62cd..203baee63712 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -2086,6 +2086,9 @@ S: Maintained
- F: hw/arm/ghes_cper.c
- F: hw/acpi/ghes_cper_stub.c
- F: qapi/acpi-hest.json
-+F: scripts/ghes_inject.py
-+F: scripts/arm_processor_error.py
-+F: scripts/qmp_helper.py
- 
- ppc4xx
- L: qemu-ppc@nongnu.org
-diff --git a/scripts/arm_processor_error.py b/scripts/arm_processor_error.py
-new file mode 100644
-index 000000000000..1dd42e42a877
---- /dev/null
-+++ b/scripts/arm_processor_error.py
-@@ -0,0 +1,476 @@
-+#!/usr/bin/env python3
-+#
-+# pylint: disable=C0301,C0114,R0903,R0912,R0913,R0914,R0915,W0511
-+# SPDX-License-Identifier: GPL-2.0-or-later
-+#
-+# Copyright (C) 2024-2025 Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-+
-+# TODO: current implementation has dummy defaults.
-+#
-+# For a better implementation, a QMP addition/call is needed to
-+# retrieve some data for ARM Processor Error injection:
-+#
-+#   - ARM registers: power_state, mpidr.
-+
-+"""
-+Generates an ARM processor error CPER, compatible with
-+UEFI 2.9A Errata.
-+
-+Injecting such errors can be done using:
-+
-+    $ ./scripts/ghes_inject.py arm
-+    Error injected.
-+
-+Produces a simple CPER register, as detected on a Linux guest:
-+
-+[Hardware Error]: Hardware error from APEI Generic Hardware Error Source: 1
-+[Hardware Error]: event severity: recoverable
-+[Hardware Error]:  Error 0, type: recoverable
-+[Hardware Error]:   section_type: ARM processor error
-+[Hardware Error]:   MIDR: 0x0000000000000000
-+[Hardware Error]:   running state: 0x0
-+[Hardware Error]:   Power State Coordination Interface state: 0
-+[Hardware Error]:   Error info structure 0:
-+[Hardware Error]:   num errors: 2
-+[Hardware Error]:    error_type: 0x02: cache error
-+[Hardware Error]:    error_info: 0x000000000091000f
-+[Hardware Error]:     transaction type: Data Access
-+[Hardware Error]:     cache error, operation type: Data write
-+[Hardware Error]:     cache level: 2
-+[Hardware Error]:     processor context not corrupted
-+[Firmware Warn]: GHES: Unhandled processor error type 0x02: cache error
-+
-+The ARM Processor Error message can be customized via command line
-+parameters. For instance:
-+
-+    $ ./scripts/ghes_inject.py arm --mpidr 0x444 --running --affinity 1 \
-+        --error-info 12345678 --vendor 0x13,123,4,5,1 --ctx-array 0,1,2,3,4,5 \
-+        -t cache tlb bus micro-arch tlb,micro-arch
-+    Error injected.
-+
-+Injects this error, as detected on a Linux guest:
-+
-+[Hardware Error]: Hardware error from APEI Generic Hardware Error Source: 1
-+[Hardware Error]: event severity: recoverable
-+[Hardware Error]:  Error 0, type: recoverable
-+[Hardware Error]:   section_type: ARM processor error
-+[Hardware Error]:   MIDR: 0x0000000000000000
-+[Hardware Error]:   Multiprocessor Affinity Register (MPIDR): 0x0000000000000000
-+[Hardware Error]:   error affinity level: 0
-+[Hardware Error]:   running state: 0x1
-+[Hardware Error]:   Power State Coordination Interface state: 0
-+[Hardware Error]:   Error info structure 0:
-+[Hardware Error]:   num errors: 2
-+[Hardware Error]:    error_type: 0x02: cache error
-+[Hardware Error]:    error_info: 0x0000000000bc614e
-+[Hardware Error]:     cache level: 2
-+[Hardware Error]:     processor context not corrupted
-+[Hardware Error]:   Error info structure 1:
-+[Hardware Error]:   num errors: 2
-+[Hardware Error]:    error_type: 0x04: TLB error
-+[Hardware Error]:    error_info: 0x000000000054007f
-+[Hardware Error]:     transaction type: Instruction
-+[Hardware Error]:     TLB error, operation type: Instruction fetch
-+[Hardware Error]:     TLB level: 1
-+[Hardware Error]:     processor context not corrupted
-+[Hardware Error]:     the error has not been corrected
-+[Hardware Error]:     PC is imprecise
-+[Hardware Error]:   Error info structure 2:
-+[Hardware Error]:   num errors: 2
-+[Hardware Error]:    error_type: 0x08: bus error
-+[Hardware Error]:    error_info: 0x00000080d6460fff
-+[Hardware Error]:     transaction type: Generic
-+[Hardware Error]:     bus error, operation type: Generic read (type of instruction or data request cannot be determined)
-+[Hardware Error]:     affinity level at which the bus error occurred: 1
-+[Hardware Error]:     processor context corrupted
-+[Hardware Error]:     the error has been corrected
-+[Hardware Error]:     PC is imprecise
-+[Hardware Error]:     Program execution can be restarted reliably at the PC associated with the error.
-+[Hardware Error]:     participation type: Local processor observed
-+[Hardware Error]:     request timed out
-+[Hardware Error]:     address space: External Memory Access
-+[Hardware Error]:     memory access attributes:0x20
-+[Hardware Error]:     access mode: secure
-+[Hardware Error]:   Error info structure 3:
-+[Hardware Error]:   num errors: 2
-+[Hardware Error]:    error_type: 0x10: micro-architectural error
-+[Hardware Error]:    error_info: 0x0000000078da03ff
-+[Hardware Error]:   Error info structure 4:
-+[Hardware Error]:   num errors: 2
-+[Hardware Error]:    error_type: 0x14: TLB error|micro-architectural error
-+[Hardware Error]:   Context info structure 0:
-+[Hardware Error]:    register context type: AArch64 EL1 context registers
-+[Hardware Error]:    00000000: 00000000 00000000
-+[Hardware Error]:   Vendor specific error info has 5 bytes:
-+[Hardware Error]:    00000000: 13 7b 04 05 01                                   .{...
-+[Firmware Warn]: GHES: Unhandled processor error type 0x02: cache error
-+[Firmware Warn]: GHES: Unhandled processor error type 0x04: TLB error
-+[Firmware Warn]: GHES: Unhandled processor error type 0x08: bus error
-+[Firmware Warn]: GHES: Unhandled processor error type 0x10: micro-architectural error
-+[Firmware Warn]: GHES: Unhandled processor error type 0x14: TLB error|micro-architectural error
-+"""
-+
-+import argparse
-+import re
-+
-+from qmp_helper import qmp, util, cper_guid
-+
-+
-+class ArmProcessorEinj:
-+    """
-+    Implements ARM Processor Error injection via GHES
-+    """
-+
-+    DESC = """
-+    Generates an ARM processor error CPER, compatible with
-+    UEFI 2.9A Errata.
-+    """
-+
-+    ACPI_GHES_ARM_CPER_LENGTH = 40
-+    ACPI_GHES_ARM_CPER_PEI_LENGTH = 32
-+
-+    # Context types
-+    CONTEXT_AARCH32_EL1 = 1
-+    CONTEXT_AARCH64_EL1 = 5
-+    CONTEXT_MISC_REG = 8
-+
-+    def __init__(self, subparsers):
-+        """Initialize the error injection class and add subparser"""
-+
-+        # Valid choice values
-+        self.arm_valid_bits = {
-+            "mpidr":    util.bit(0),
-+            "affinity": util.bit(1),
-+            "running":  util.bit(2),
-+            "vendor":   util.bit(3),
-+        }
-+
-+        self.pei_flags = {
-+            "first":        util.bit(0),
-+            "last":         util.bit(1),
-+            "propagated":   util.bit(2),
-+            "overflow":     util.bit(3),
-+        }
-+
-+        self.pei_error_types = {
-+            "cache":        util.bit(1),
-+            "tlb":          util.bit(2),
-+            "bus":          util.bit(3),
-+            "micro-arch":   util.bit(4),
-+        }
-+
-+        self.pei_valid_bits = {
-+            "multiple-error":   util.bit(0),
-+            "flags":            util.bit(1),
-+            "error-info":       util.bit(2),
-+            "virt-addr":        util.bit(3),
-+            "phy-addr":         util.bit(4),
-+        }
-+
-+        self.data = bytearray()
-+
-+        parser = subparsers.add_parser("arm", description=self.DESC)
-+
-+        arm_valid_bits = ",".join(self.arm_valid_bits.keys())
-+        flags = ",".join(self.pei_flags.keys())
-+        error_types = ",".join(self.pei_error_types.keys())
-+        pei_valid_bits = ",".join(self.pei_valid_bits.keys())
-+
-+        # UEFI N.16 ARM Validation bits
-+        g_arm = parser.add_argument_group("ARM processor")
-+        g_arm.add_argument("--arm", "--arm-valid",
-+                           help=f"ARM valid bits: {arm_valid_bits}")
-+        g_arm.add_argument("-a", "--affinity",  "--level", "--affinity-level",
-+                           type=lambda x: int(x, 0),
-+                           help="Affinity level (when multiple levels apply)")
-+        g_arm.add_argument("-l", "--mpidr", type=lambda x: int(x, 0),
-+                           help="Multiprocessor Affinity Register")
-+        g_arm.add_argument("-i", "--midr", type=lambda x: int(x, 0),
-+                           help="Main ID Register")
-+        g_arm.add_argument("-r", "--running",
-+                           action=argparse.BooleanOptionalAction,
-+                           default=None,
-+                           help="Indicates if the processor is running or not")
-+        g_arm.add_argument("--psci", "--psci-state",
-+                           type=lambda x: int(x, 0),
-+                           help="Power State Coordination Interface - PSCI state")
-+
-+        # TODO: Add vendor-specific support
-+
-+        # UEFI N.17 bitmaps (type and flags)
-+        g_pei = parser.add_argument_group("ARM Processor Error Info (PEI)")
-+        g_pei.add_argument("-t", "--type", nargs="+",
-+                        help=f"one or more error types: {error_types}")
-+        g_pei.add_argument("-f", "--flags", nargs="*",
-+                        help=f"zero or more error flags: {flags}")
-+        g_pei.add_argument("-V", "--pei-valid", "--error-valid", nargs="*",
-+                        help=f"zero or more PEI valid bits: {pei_valid_bits}")
-+
-+        # UEFI N.17 Integer values
-+        g_pei.add_argument("-m", "--multiple-error", nargs="+",
-+                        help="Number of errors: 0: Single error, 1: Multiple errors, 2-65535: Error count if known")
-+        g_pei.add_argument("-e", "--error-info", nargs="+",
-+                        help="Error information (UEFI 2.10 tables N.18 to N.20)")
-+        g_pei.add_argument("-p", "--physical-address",  nargs="+",
-+                        help="Physical address")
-+        g_pei.add_argument("-v", "--virtual-address",  nargs="+",
-+                        help="Virtual address")
-+
-+        # UEFI N.21 Context
-+        g_ctx = parser.add_argument_group("Processor Context")
-+        g_ctx.add_argument("--ctx-type", "--context-type", nargs="*",
-+                        help="Type of the context (0=ARM32 GPR, 5=ARM64 EL1, other values supported)")
-+        g_ctx.add_argument("--ctx-size", "--context-size", nargs="*",
-+                        help="Minimal size of the context")
-+        g_ctx.add_argument("--ctx-array", "--context-array", nargs="*",
-+                        help="Comma-separated arrays for each context")
-+
-+        # Vendor-specific data
-+        g_vendor = parser.add_argument_group("Vendor-specific data")
-+        g_vendor.add_argument("--vendor", "--vendor-specific", nargs="+",
-+                        help="Vendor-specific byte arrays of data")
-+
-+        # Add arguments for Generic Error Data
-+        qmp.argparse(parser)
-+
-+        parser.set_defaults(func=self.send_cper)
-+
-+    def send_cper(self, args):
-+        """Parse subcommand arguments and send a CPER via QMP"""
-+
-+        qmp_cmd = qmp(args.host, args.port, args.debug)
-+
-+        # Handle Generic Error Data arguments if any
-+        qmp_cmd.set_args(args)
-+
-+        is_cpu_type = re.compile(r"^([\w+]+\-)?arm\-cpu$")
-+        cpus = qmp_cmd.search_qom("/machine/unattached/device",
-+                                  "type", is_cpu_type)
-+
-+        cper = {}
-+        pei = {}
-+        ctx = {}
-+        vendor = {}
-+
-+        arg = vars(args)
-+
-+        # Handle global parameters
-+        if args.arm:
-+            arm_valid_init = False
-+            cper["valid"] = util.get_choice(name="valid",
-+                                       value=args.arm,
-+                                       choices=self.arm_valid_bits,
-+                                       suffixes=["-error", "-err"])
-+        else:
-+            cper["valid"] = 0
-+            arm_valid_init = True
-+
-+        if "running" in arg:
-+            if args.running:
-+                cper["running-state"] = util.bit(0)
-+            else:
-+                cper["running-state"] = 0
-+        else:
-+            cper["running-state"] = 0
-+
-+        if arm_valid_init:
-+            if args.affinity:
-+                cper["valid"] |= self.arm_valid_bits["affinity"]
-+
-+            if args.mpidr:
-+                cper["valid"] |= self.arm_valid_bits["mpidr"]
-+
-+            if "running-state" in cper:
-+                cper["valid"] |= self.arm_valid_bits["running"]
-+
-+            if args.psci:
-+                cper["valid"] |= self.arm_valid_bits["running"]
-+
-+        # Handle PEI
-+        if not args.type:
-+            args.type = ["cache-error"]
-+
-+        util.get_mult_choices(
-+            pei,
-+            name="valid",
-+            values=args.pei_valid,
-+            choices=self.pei_valid_bits,
-+            suffixes=["-valid", "--addr"],
-+        )
-+        util.get_mult_choices(
-+            pei,
-+            name="type",
-+            values=args.type,
-+            choices=self.pei_error_types,
-+            suffixes=["-error", "-err"],
-+        )
-+        util.get_mult_choices(
-+            pei,
-+            name="flags",
-+            values=args.flags,
-+            choices=self.pei_flags,
-+            suffixes=["-error", "-cap"],
-+        )
-+        util.get_mult_int(pei, "error-info", args.error_info)
-+        util.get_mult_int(pei, "multiple-error", args.multiple_error)
-+        util.get_mult_int(pei, "phy-addr", args.physical_address)
-+        util.get_mult_int(pei, "virt-addr", args.virtual_address)
-+
-+        # Handle context
-+        util.get_mult_int(ctx, "type", args.ctx_type, allow_zero=True)
-+        util.get_mult_int(ctx, "minimal-size", args.ctx_size, allow_zero=True)
-+        util.get_mult_array(ctx, "register", args.ctx_array, allow_zero=True)
-+
-+        util.get_mult_array(vendor, "bytes", args.vendor, max_val=255)
-+
-+        # Store PEI
-+        pei_data = bytearray()
-+        default_flags  = self.pei_flags["first"]
-+        default_flags |= self.pei_flags["last"]
-+
-+        error_info_num = 0
-+
-+        for i, p in pei.items():        # pylint: disable=W0612
-+            error_info_num += 1
-+
-+            # UEFI 2.10 doesn't define how to encode error information
-+            # when multiple types are raised. So, provide a default only
-+            # if a single type is there
-+            if "error-info" not in p:
-+                if p["type"] == util.bit(1):
-+                    p["error-info"] = 0x0091000F
-+                if p["type"] == util.bit(2):
-+                    p["error-info"] = 0x0054007F
-+                if p["type"] == util.bit(3):
-+                    p["error-info"] = 0x80D6460FFF
-+                if p["type"] == util.bit(4):
-+                    p["error-info"] = 0x78DA03FF
-+
-+            if "valid" not in p:
-+                p["valid"] = 0
-+                if "multiple-error" in p:
-+                    p["valid"] |= self.pei_valid_bits["multiple-error"]
-+
-+                if "flags" in p:
-+                    p["valid"] |= self.pei_valid_bits["flags"]
-+
-+                if "error-info" in p:
-+                    p["valid"] |= self.pei_valid_bits["error-info"]
-+
-+                if "phy-addr" in p:
-+                    p["valid"] |= self.pei_valid_bits["phy-addr"]
-+
-+                if "virt-addr" in p:
-+                    p["valid"] |= self.pei_valid_bits["virt-addr"]
-+
-+            # Version
-+            util.data_add(pei_data, 0, 1)
-+
-+            util.data_add(pei_data,
-+                         self.ACPI_GHES_ARM_CPER_PEI_LENGTH, 1)
-+
-+            util.data_add(pei_data, p["valid"], 2)
-+            util.data_add(pei_data, p["type"], 1)
-+            util.data_add(pei_data, p.get("multiple-error", 1), 2)
-+            util.data_add(pei_data, p.get("flags", default_flags), 1)
-+            util.data_add(pei_data, p.get("error-info", 0), 8)
-+            util.data_add(pei_data, p.get("virt-addr", 0xDEADBEEF), 8)
-+            util.data_add(pei_data, p.get("phy-addr", 0xABBA0BAD), 8)
-+
-+        # Store Context
-+        ctx_data = bytearray()
-+        context_info_num = 0
-+
-+        if ctx:
-+            ret = qmp_cmd.send_cmd("query-target", may_open=True)
-+
-+            default_ctx = self.CONTEXT_MISC_REG
-+
-+            if "arch" in ret:
-+                if ret["arch"] == "aarch64":
-+                    default_ctx = self.CONTEXT_AARCH64_EL1
-+                elif ret["arch"] == "arm":
-+                    default_ctx = self.CONTEXT_AARCH32_EL1
-+
-+            for k in sorted(ctx.keys()):
-+                context_info_num += 1
-+
-+                if "type" not in ctx[k]:
-+                    ctx[k]["type"] = default_ctx
-+
-+                if "register" not in ctx[k]:
-+                    ctx[k]["register"] = []
-+
-+                reg_size = len(ctx[k]["register"])
-+                size = 0
-+
-+                if "minimal-size" in ctx:
-+                    size = ctx[k]["minimal-size"]
-+
-+                size = max(size, reg_size)
-+
-+                size = (size + 1) % 0xFFFE
-+
-+                # Version
-+                util.data_add(ctx_data, 0, 2)
-+
-+                util.data_add(ctx_data, ctx[k]["type"], 2)
-+
-+                util.data_add(ctx_data, 8 * size, 4)
-+
-+                for r in ctx[k]["register"]:
-+                    util.data_add(ctx_data, r, 8)
-+
-+                for i in range(reg_size, size):   # pylint: disable=W0612
-+                    util.data_add(ctx_data, 0, 8)
-+
-+        # Vendor-specific bytes are not grouped
-+        vendor_data = bytearray()
-+        if vendor:
-+            for k in sorted(vendor.keys()):
-+                for b in vendor[k]["bytes"]:
-+                    util.data_add(vendor_data, b, 1)
-+
-+        # Encode ARM Processor Error
-+        data = bytearray()
-+
-+        util.data_add(data, cper["valid"], 4)
-+
-+        util.data_add(data, error_info_num, 2)
-+        util.data_add(data, context_info_num, 2)
-+
-+        # Calculate the length of the CPER data
-+        cper_length = self.ACPI_GHES_ARM_CPER_LENGTH
-+        cper_length += len(pei_data)
-+        cper_length += len(vendor_data)
-+        cper_length += len(ctx_data)
-+        util.data_add(data, cper_length, 4)
-+
-+        util.data_add(data, arg.get("affinity-level", 0), 1)
-+
-+        # Reserved
-+        util.data_add(data, 0, 3)
-+
-+        if "midr-el1" not in arg:
-+            if cpus:
-+                cmd_arg = {
-+                    'path': cpus[0],
-+                    'property': "midr"
-+                }
-+                ret = qmp_cmd.send_cmd("qom-get", cmd_arg, may_open=True)
-+                if isinstance(ret, int):
-+                    arg["midr-el1"] = ret
-+
-+        util.data_add(data, arg.get("mpidr-el1", 0), 8)
-+        util.data_add(data, arg.get("midr-el1", 0), 8)
-+        util.data_add(data, cper["running-state"], 4)
-+        util.data_add(data, arg.get("psci-state", 0), 4)
-+
-+        # Add PEI
-+        data.extend(pei_data)
-+        data.extend(ctx_data)
-+        data.extend(vendor_data)
-+
-+        self.data = data
-+
-+        qmp_cmd.send_cper(cper_guid.CPER_PROC_ARM, self.data)
-diff --git a/scripts/ghes_inject.py b/scripts/ghes_inject.py
-new file mode 100755
-index 000000000000..9a235201418b
---- /dev/null
-+++ b/scripts/ghes_inject.py
-@@ -0,0 +1,51 @@
-+#!/usr/bin/env python3
-+#
-+# SPDX-License-Identifier: GPL-2.0-or-later
-+#
-+# Copyright (C) 2024-2025 Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-+
-+"""
-+Handle ACPI GHESv2 error injection logic QEMU QMP interface.
-+"""
-+
-+import argparse
-+import sys
-+
-+from arm_processor_error import ArmProcessorEinj
-+
-+EINJ_DESC = """
-+Handle ACPI GHESv2 error injection logic QEMU QMP interface.
-+
-+It allows using UEFI BIOS EINJ features to generate GHES records.
-+
-+It helps testing CPER and GHES drivers at the guest OS and how
-+userspace applications at the guest handle them.
-+"""
-+
-+def main():
-+    """Main program"""
-+
-+    # Main parser - handle generic args like QEMU QMP TCP socket options
-+    parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter,
-+                                     usage="%(prog)s [options]",
-+                                     description=EINJ_DESC)
-+
-+    g_options = parser.add_argument_group("QEMU QMP socket options")
-+    g_options.add_argument("-H", "--host", default="localhost", type=str,
-+                           help="host name")
-+    g_options.add_argument("-P", "--port", default=4445, type=int,
-+                           help="TCP port number")
-+    g_options.add_argument('-d', '--debug', action='store_true')
-+
-+    subparsers = parser.add_subparsers()
-+
-+    ArmProcessorEinj(subparsers)
-+
-+    args = parser.parse_args()
-+    if "func" in args:
-+        args.func(args)
-+    else:
-+        sys.exit(f"Please specify a valid command for {sys.argv[0]}")
-+
-+if __name__ == "__main__":
-+    main()
-diff --git a/scripts/qmp_helper.py b/scripts/qmp_helper.py
-new file mode 100755
-index 000000000000..d7e6aabce8fe
---- /dev/null
-+++ b/scripts/qmp_helper.py
-@@ -0,0 +1,702 @@
-+#!/usr/bin/env python3
-+#
-+# pylint: disable=C0103,E0213,E1135,E1136,E1137,R0902,R0903,R0912,R0913,R0917
-+# SPDX-License-Identifier: GPL-2.0-or-later
-+#
-+# Copyright (C) 2024-2025 Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-+
-+"""
-+Helper classes to be used by ghes_inject command classes.
-+"""
-+
-+import json
-+import sys
-+
-+from datetime import datetime
-+from os import path as os_path
-+
-+try:
-+    qemu_dir = os_path.abspath(os_path.dirname(os_path.dirname(__file__)))
-+    sys.path.append(os_path.join(qemu_dir, 'python'))
-+
-+    from qemu.qmp.legacy import QEMUMonitorProtocol
-+
-+except ModuleNotFoundError as exc:
-+    print(f"Module '{exc.name}' not found.")
-+    print("Try export PYTHONPATH=top-qemu-dir/python or run from top-qemu-dir")
-+    sys.exit(1)
-+
-+from base64 import b64encode
-+
-+class util:
-+    """
-+    Ancillary functions to deal with bitmaps, parse arguments,
-+    generate GUID and encode data on a bytearray buffer.
-+    """
-+
-+    #
-+    # Helper routines to handle multiple choice arguments
-+    #
-+    def get_choice(name, value, choices, suffixes=None, bitmask=True):
-+        """Produce a list from multiple choice argument"""
-+
-+        new_values = 0
-+
-+        if not value:
-+            return new_values
-+
-+        for val in value.split(","):
-+            val = val.lower()
-+
-+            if suffixes:
-+                for suffix in suffixes:
-+                    val = val.removesuffix(suffix)
-+
-+            if val not in choices.keys():
-+                if suffixes:
-+                    for suffix in suffixes:
-+                        if val + suffix in choices.keys():
-+                            val += suffix
-+                            break
-+
-+            if val not in choices.keys():
-+                sys.exit(f"Error on '{name}': choice '{val}' is invalid.")
-+
-+            val = choices[val]
-+
-+            if bitmask:
-+                new_values |= val
-+            else:
-+                if new_values:
-+                    sys.exit(f"Error on '{name}': only one value is accepted.")
-+
-+                new_values = val
-+
-+        return new_values
-+
-+    def get_array(name, values, max_val=None):
-+        """Add numbered hashes from integer lists into an array"""
-+
-+        array = []
-+
-+        for value in values:
-+            for val in value.split(","):
-+                try:
-+                    val = int(val, 0)
-+                except ValueError:
-+                    sys.exit(f"Error on '{name}': {val} is not an integer")
-+
-+                if val < 0:
-+                    sys.exit(f"Error on '{name}': {val} is not unsigned")
-+
-+                if max_val and val > max_val:
-+                    sys.exit(f"Error on '{name}': {val} is too little")
-+
-+                array.append(val)
-+
-+        return array
-+
-+    def get_mult_array(mult, name, values, allow_zero=False, max_val=None):
-+        """Add numbered hashes from integer lists"""
-+
-+        if not allow_zero:
-+            if not values:
-+                return
-+        else:
-+            if values is None:
-+                return
-+
-+            if not values:
-+                i = 0
-+                if i not in mult:
-+                    mult[i] = {}
-+
-+                mult[i][name] = []
-+                return
-+
-+        i = 0
-+        for value in values:
-+            for val in value.split(","):
-+                try:
-+                    val = int(val, 0)
-+                except ValueError:
-+                    sys.exit(f"Error on '{name}': {val} is not an integer")
-+
-+                if val < 0:
-+                    sys.exit(f"Error on '{name}': {val} is not unsigned")
-+
-+                if max_val and val > max_val:
-+                    sys.exit(f"Error on '{name}': {val} is too little")
-+
-+                if i not in mult:
-+                    mult[i] = {}
-+
-+                if name not in mult[i]:
-+                    mult[i][name] = []
-+
-+                mult[i][name].append(val)
-+
-+            i += 1
-+
-+
-+    def get_mult_choices(mult, name, values, choices,
-+                        suffixes=None, allow_zero=False):
-+        """Add numbered hashes from multiple choice arguments"""
-+
-+        if not allow_zero:
-+            if not values:
-+                return
-+        else:
-+            if values is None:
-+                return
-+
-+        i = 0
-+        for val in values:
-+            new_values = util.get_choice(name, val, choices, suffixes)
-+
-+            if i not in mult:
-+                mult[i] = {}
-+
-+            mult[i][name] = new_values
-+            i += 1
-+
-+
-+    def get_mult_int(mult, name, values, allow_zero=False):
-+        """Add numbered hashes from integer arguments"""
-+        if not allow_zero:
-+            if not values:
-+                return
-+        else:
-+            if values is None:
-+                return
-+
-+        i = 0
-+        for val in values:
-+            try:
-+                val = int(val, 0)
-+            except ValueError:
-+                sys.exit(f"Error on '{name}': {val} is not an integer")
-+
-+            if val < 0:
-+                sys.exit(f"Error on '{name}': {val} is not unsigned")
-+
-+            if i not in mult:
-+                mult[i] = {}
-+
-+            mult[i][name] = val
-+            i += 1
-+
-+
-+    #
-+    # Data encode helper functions
-+    #
-+    def bit(b):
-+        """Simple macro to define a bit on a bitmask"""
-+        return 1 << b
-+
-+
-+    def data_add(data, value, num_bytes):
-+        """Adds bytes from value inside a bitarray"""
-+
-+        data.extend(value.to_bytes(num_bytes, byteorder="little"))  # pylint: disable=E1101
-+
-+    def dump_bytearray(name, data):
-+        """Does an hexdump of a byte array, grouping in bytes"""
-+
-+        print(f"{name} ({len(data)} bytes):")
-+
-+        for ln_start in range(0, len(data), 16):
-+            ln_end = min(ln_start + 16, len(data))
-+            print(f"      {ln_start:08x}  ", end="")
-+            for i in range(ln_start, ln_end):
-+                print(f"{data[i]:02x} ", end="")
-+            for i in range(ln_end, ln_start + 16):
-+                print("   ", end="")
-+            print("  ", end="")
-+            for i in range(ln_start, ln_end):
-+                if data[i] >= 32 and data[i] < 127:
-+                    print(chr(data[i]), end="")
-+                else:
-+                    print(".", end="")
-+
-+            print()
-+        print()
-+
-+    def time(string):
-+        """Handle BCD timestamps used on Generic Error Data Block"""
-+
-+        time = None
-+
-+        # Formats to be used when parsing time stamps
-+        formats = [
-+            "%Y-%m-%d %H:%M:%S",
-+        ]
-+
-+        if string == "now":
-+            time = datetime.now()
-+
-+        if time is None:
-+            for fmt in formats:
-+                try:
-+                    time = datetime.strptime(string, fmt)
-+                    break
-+                except ValueError:
-+                    pass
-+
-+            if time is None:
-+                raise ValueError("Invalid time format")
-+
-+        return time
-+
-+class guid:
-+    """
-+    Simple class to handle GUID fields.
-+    """
-+
-+    def __init__(self, time_low, time_mid, time_high, nodes):
-+        """Initialize a GUID value"""
-+
-+        assert len(nodes) == 8
-+
-+        self.time_low = time_low
-+        self.time_mid = time_mid
-+        self.time_high = time_high
-+        self.nodes = nodes
-+
-+    @classmethod
-+    def UUID(cls, guid_str):
-+        """Initialize a GUID using a string on its standard format"""
-+
-+        if len(guid_str) != 36:
-+            print("Size not 36")
-+            raise ValueError('Invalid GUID size')
-+
-+        # It is easier to parse without separators. So, drop them
-+        guid_str = guid_str.replace('-', '')
-+
-+        if len(guid_str) != 32:
-+            print("Size not 32", guid_str, len(guid_str))
-+            raise ValueError('Invalid GUID hex size')
-+
-+        time_low = 0
-+        time_mid = 0
-+        time_high = 0
-+        nodes = []
-+
-+        for i in reversed(range(16, 32, 2)):
-+            h = guid_str[i:i + 2]
-+            value = int(h, 16)
-+            nodes.insert(0, value)
-+
-+        time_high = int(guid_str[12:16], 16)
-+        time_mid = int(guid_str[8:12], 16)
-+        time_low = int(guid_str[0:8], 16)
-+
-+        return cls(time_low, time_mid, time_high, nodes)
-+
-+    def __str__(self):
-+        """Output a GUID value on its default string representation"""
-+
-+        clock = self.nodes[0] << 8 | self.nodes[1]
-+
-+        node = 0
-+        for i in range(2, len(self.nodes)):
-+            node = node << 8 | self.nodes[i]
-+
-+        s = f"{self.time_low:08x}-{self.time_mid:04x}-"
-+        s += f"{self.time_high:04x}-{clock:04x}-{node:012x}"
-+        return s
-+
-+    def to_bytes(self):
-+        """Output a GUID value in bytes"""
-+
-+        data = bytearray()
-+
-+        util.data_add(data, self.time_low, 4)
-+        util.data_add(data, self.time_mid, 2)
-+        util.data_add(data, self.time_high, 2)
-+        data.extend(bytearray(self.nodes))
-+
-+        return data
-+
-+class qmp:
-+    """
-+    Opens a connection and send/receive QMP commands.
-+    """
-+
-+    def send_cmd(self, command, args=None, may_open=False, return_error=True):
-+        """Send a command to QMP, optinally opening a connection"""
-+
-+        if may_open:
-+            self._connect()
-+        elif not self.connected:
-+            return False
-+
-+        msg = { 'execute': command }
-+        if args:
-+            msg['arguments'] = args
-+
-+        try:
-+            obj = self.qmp_monitor.cmd_obj(msg)
-+        # Can we use some other exception class here?
-+        except Exception as e:                         # pylint: disable=W0718
-+            print(f"Command: {command}")
-+            print(f"Failed to inject error: {e}.")
-+            return None
-+
-+        if "return" in obj:
-+            if isinstance(obj.get("return"), dict):
-+                if obj["return"]:
-+                    return obj["return"]
-+                return "OK"
-+
-+            return obj["return"]
-+
-+        if isinstance(obj.get("error"), dict):
-+            error = obj["error"]
-+            if return_error:
-+                print(f"Command: {msg}")
-+                print(f'{error["class"]}: {error["desc"]}')
-+        else:
-+            print(json.dumps(obj))
-+
-+        return None
-+
-+    def _close(self):
-+        """Shutdown and close the socket, if opened"""
-+        if not self.connected:
-+            return
-+
-+        self.qmp_monitor.close()
-+        self.connected = False
-+
-+    def _connect(self):
-+        """Connect to a QMP TCP/IP port, if not connected yet"""
-+
-+        if self.connected:
-+            return True
-+
-+        try:
-+            self.qmp_monitor.connect(negotiate=True)
-+        except ConnectionError:
-+            sys.exit(f"Can't connect to QMP host {self.host}:{self.port}")
-+
-+        self.connected = True
-+
-+        return True
-+
-+    BLOCK_STATUS_BITS = {
-+        "uncorrectable":            util.bit(0),
-+        "correctable":              util.bit(1),
-+        "multi-uncorrectable":      util.bit(2),
-+        "multi-correctable":        util.bit(3),
-+    }
-+
-+    ERROR_SEVERITY = {
-+        "recoverable":  0,
-+        "fatal":        1,
-+        "corrected":    2,
-+        "none":         3,
-+    }
-+
-+    VALIDATION_BITS = {
-+        "fru-id":       util.bit(0),
-+        "fru-text":     util.bit(1),
-+        "timestamp":    util.bit(2),
-+    }
-+
-+    GEDB_FLAGS_BITS = {
-+        "recovered":    util.bit(0),
-+        "prev-error":   util.bit(1),
-+        "simulated":    util.bit(2),
-+    }
-+
-+    GENERIC_DATA_SIZE = 72
-+
-+    def argparse(parser):
-+        """Prepare a parser group to query generic error data"""
-+
-+        block_status_bits = ",".join(qmp.BLOCK_STATUS_BITS.keys())
-+        error_severity_enum = ",".join(qmp.ERROR_SEVERITY.keys())
-+        validation_bits = ",".join(qmp.VALIDATION_BITS.keys())
-+        gedb_flags_bits = ",".join(qmp.GEDB_FLAGS_BITS.keys())
-+
-+        g_gen = parser.add_argument_group("Generic Error Data")  # pylint: disable=E1101
-+        g_gen.add_argument("--block-status",
-+                           help=f"block status bits: {block_status_bits}")
-+        g_gen.add_argument("--raw-data", nargs="+",
-+                        help="Raw data inside the Error Status Block")
-+        g_gen.add_argument("--error-severity", "--severity",
-+                           help=f"error severity: {error_severity_enum}")
-+        g_gen.add_argument("--gen-err-valid-bits",
-+                           "--generic-error-validation-bits",
-+                           help=f"validation bits: {validation_bits}")
-+        g_gen.add_argument("--fru-id", type=guid.UUID,
-+                           help="GUID representing a physical device")
-+        g_gen.add_argument("--fru-text",
-+                           help="ASCII string identifying the FRU hardware")
-+        g_gen.add_argument("--timestamp", type=util.time,
-+                           help="Time when the error info was collected")
-+        g_gen.add_argument("--precise", "--precise-timestamp",
-+                           action='store_true',
-+                           help="Marks the timestamp as precise if --timestamp is used")
-+        g_gen.add_argument("--gedb-flags",
-+                           help=f"General Error Data Block flags: {gedb_flags_bits}")
-+
-+    def set_args(self, args):
-+        """Set the arguments optionally defined via self.argparse()"""
-+
-+        if args.block_status:
-+            self.block_status = util.get_choice(name="block-status",
-+                                                value=args.block_status,
-+                                                choices=self.BLOCK_STATUS_BITS,
-+                                                bitmask=False)
-+        if args.raw_data:
-+            self.raw_data = util.get_array("raw-data", args.raw_data,
-+                                           max_val=255)
-+            print(self.raw_data)
-+
-+        if args.error_severity:
-+            self.error_severity = util.get_choice(name="error-severity",
-+                                                  value=args.error_severity,
-+                                                  choices=self.ERROR_SEVERITY,
-+                                                  bitmask=False)
-+
-+        if args.fru_id:
-+            self.fru_id = args.fru_id.to_bytes()
-+            if not args.gen_err_valid_bits:
-+                self.validation_bits |= self.VALIDATION_BITS["fru-id"]
-+
-+        if args.fru_text:
-+            text = bytearray(args.fru_text.encode('ascii'))
-+            if len(text) > 20:
-+                sys.exit("FRU text is too big to fit")
-+
-+            self.fru_text = text
-+            if not args.gen_err_valid_bits:
-+                self.validation_bits |= self.VALIDATION_BITS["fru-text"]
-+
-+        if args.timestamp:
-+            time = args.timestamp
-+            century = int(time.year / 100)
-+
-+            bcd = bytearray()
-+            util.data_add(bcd, (time.second // 10) << 4 | (time.second % 10), 1)
-+            util.data_add(bcd, (time.minute // 10) << 4 | (time.minute % 10), 1)
-+            util.data_add(bcd, (time.hour // 10) << 4 | (time.hour % 10), 1)
-+
-+            if args.precise:
-+                util.data_add(bcd, 1, 1)
-+            else:
-+                util.data_add(bcd, 0, 1)
-+
-+            util.data_add(bcd, (time.day // 10) << 4 | (time.day % 10), 1)
-+            util.data_add(bcd, (time.month // 10) << 4 | (time.month % 10), 1)
-+            util.data_add(bcd,
-+                          ((time.year % 100) // 10) << 4 | (time.year % 10), 1)
-+            util.data_add(bcd, ((century % 100) // 10) << 4 | (century % 10), 1)
-+
-+            self.timestamp = bcd
-+            if not args.gen_err_valid_bits:
-+                self.validation_bits |= self.VALIDATION_BITS["timestamp"]
-+
-+        if args.gen_err_valid_bits:
-+            self.validation_bits = util.get_choice(name="validation",
-+                                                   value=args.gen_err_valid_bits,
-+                                                   choices=self.VALIDATION_BITS)
-+
-+    def __init__(self, host, port, debug=False):
-+        """Initialize variables used by the QMP send logic"""
-+
-+        self.connected = False
-+        self.host = host
-+        self.port = port
-+        self.debug = debug
-+
-+        # ACPI 6.1: 18.3.2.7.1 Generic Error Data: Generic Error Status Block
-+        self.block_status = self.BLOCK_STATUS_BITS["uncorrectable"]
-+        self.raw_data = []
-+        self.error_severity = self.ERROR_SEVERITY["recoverable"]
-+
-+        # ACPI 6.1: 18.3.2.7.1 Generic Error Data: Generic Error Data Entry
-+        self.validation_bits = 0
-+        self.flags = 0
-+        self.fru_id = bytearray(16)
-+        self.fru_text = bytearray(20)
-+        self.timestamp = bytearray(8)
-+
-+        self.qmp_monitor = QEMUMonitorProtocol(address=(self.host, self.port))
-+
-+    #
-+    # Socket QMP send command
-+    #
-+    def send_cper_raw(self, cper_data):
-+        """Send a raw CPER data to QEMU though QMP TCP socket"""
-+
-+        data = b64encode(bytes(cper_data)).decode('ascii')
-+
-+        cmd_arg = {
-+            'cper': data
-+        }
-+
-+        self._connect()
-+
-+        if self.send_cmd("inject-ghes-v2-error", cmd_arg):
-+            print("Error injected.")
-+
-+    def send_cper(self, notif_type, payload):
-+        """Send commands to QEMU though QMP TCP socket"""
-+
-+        # Fill CPER record header
-+
-+        # NOTE: bits 4 to 13 of block status contain the number of
-+        # data entries in the data section. This is currently unsupported.
-+
-+        cper_length = len(payload)
-+        data_length = cper_length + len(self.raw_data) + self.GENERIC_DATA_SIZE
-+
-+        #  Generic Error Data Entry
-+        gede = bytearray()
-+
-+        gede.extend(notif_type.to_bytes())
-+        util.data_add(gede, self.error_severity, 4)
-+        util.data_add(gede, 0x300, 2)
-+        util.data_add(gede, self.validation_bits, 1)
-+        util.data_add(gede, self.flags, 1)
-+        util.data_add(gede, cper_length, 4)
-+        gede.extend(self.fru_id)
-+        gede.extend(self.fru_text)
-+        gede.extend(self.timestamp)
-+
-+        # Generic Error Status Block
-+        gebs = bytearray()
-+
-+        if self.raw_data:
-+            raw_data_offset = len(gebs)
-+        else:
-+            raw_data_offset = 0
-+
-+        util.data_add(gebs, self.block_status, 4)
-+        util.data_add(gebs, raw_data_offset, 4)
-+        util.data_add(gebs, len(self.raw_data), 4)
-+        util.data_add(gebs, data_length, 4)
-+        util.data_add(gebs, self.error_severity, 4)
-+
-+        cper_data = bytearray()
-+        cper_data.extend(gebs)
-+        cper_data.extend(gede)
-+        cper_data.extend(bytearray(self.raw_data))
-+        cper_data.extend(bytearray(payload))
-+
-+        if self.debug:
-+            print(f"GUID: {notif_type}")
-+
-+            util.dump_bytearray("Generic Error Status Block", gebs)
-+            util.dump_bytearray("Generic Error Data Entry", gede)
-+
-+            if self.raw_data:
-+                util.dump_bytearray("Raw data", bytearray(self.raw_data))
-+
-+            util.dump_bytearray("Payload", payload)
-+
-+        self.send_cper_raw(cper_data)
-+
-+
-+    def search_qom(self, path, prop, regex):
-+        """
-+        Return a list of devices that match path array like:
-+
-+            /machine/unattached/device
-+            /machine/peripheral-anon/device
-+            ...
-+        """
-+
-+        found = []
-+
-+        i = 0
-+        while 1:
-+            dev = f"{path}[{i}]"
-+            args = {
-+                'path': dev,
-+                'property': prop
-+            }
-+            ret = self.send_cmd("qom-get", args, may_open=True, return_error=False)
-+            if not ret:
-+                break
-+
-+            if isinstance(ret, str):
-+                if regex.search(ret):
-+                    found.append(dev)
-+
-+            i += 1
-+            if i > 10000:
-+                print("Too many objects returned by qom-get!")
-+                break
-+
-+        return found
-+
-+class cper_guid:
-+    """
-+    Contains CPER GUID, as per:
-+    https://uefi.org/specs/UEFI/2.10/Apx_N_Common_Platform_Error_Record.html
-+    """
-+
-+    CPER_PROC_GENERIC =  guid(0x9876CCAD, 0x47B4, 0x4bdb,
-+                              [0xB6, 0x5E, 0x16, 0xF1,
-+                               0x93, 0xC4, 0xF3, 0xDB])
-+
-+    CPER_PROC_X86 = guid(0xDC3EA0B0, 0xA144, 0x4797,
-+                         [0xB9, 0x5B, 0x53, 0xFA,
-+                          0x24, 0x2B, 0x6E, 0x1D])
-+
-+    CPER_PROC_ITANIUM = guid(0xe429faf1, 0x3cb7, 0x11d4,
-+                             [0xbc, 0xa7, 0x00, 0x80,
-+                              0xc7, 0x3c, 0x88, 0x81])
-+
-+    CPER_PROC_ARM = guid(0xE19E3D16, 0xBC11, 0x11E4,
-+                         [0x9C, 0xAA, 0xC2, 0x05,
-+                          0x1D, 0x5D, 0x46, 0xB0])
-+
-+    CPER_PLATFORM_MEM = guid(0xA5BC1114, 0x6F64, 0x4EDE,
-+                             [0xB8, 0x63, 0x3E, 0x83,
-+                              0xED, 0x7C, 0x83, 0xB1])
-+
-+    CPER_PLATFORM_MEM2 = guid(0x61EC04FC, 0x48E6, 0xD813,
-+                              [0x25, 0xC9, 0x8D, 0xAA,
-+                               0x44, 0x75, 0x0B, 0x12])
-+
-+    CPER_PCIE = guid(0xD995E954, 0xBBC1, 0x430F,
-+                     [0xAD, 0x91, 0xB4, 0x4D,
-+                      0xCB, 0x3C, 0x6F, 0x35])
-+
-+    CPER_PCI_BUS = guid(0xC5753963, 0x3B84, 0x4095,
-+                        [0xBF, 0x78, 0xED, 0xDA,
-+                         0xD3, 0xF9, 0xC9, 0xDD])
-+
-+    CPER_PCI_DEV = guid(0xEB5E4685, 0xCA66, 0x4769,
-+                        [0xB6, 0xA2, 0x26, 0x06,
-+                         0x8B, 0x00, 0x13, 0x26])
-+
-+    CPER_FW_ERROR = guid(0x81212A96, 0x09ED, 0x4996,
-+                         [0x94, 0x71, 0x8D, 0x72,
-+                          0x9C, 0x8E, 0x69, 0xED])
-+
-+    CPER_DMA_GENERIC = guid(0x5B51FEF7, 0xC79D, 0x4434,
-+                            [0x8F, 0x1B, 0xAA, 0x62,
-+                             0xDE, 0x3E, 0x2C, 0x64])
-+
-+    CPER_DMA_VT = guid(0x71761D37, 0x32B2, 0x45cd,
-+                       [0xA7, 0xD0, 0xB0, 0xFE,
-+                        0xDD, 0x93, 0xE8, 0xCF])
-+
-+    CPER_DMA_IOMMU = guid(0x036F84E1, 0x7F37, 0x428c,
-+                         [0xA7, 0x9E, 0x57, 0x5F,
-+                          0xDF, 0xAA, 0x84, 0xEC])
-+
-+    CPER_CCIX_PER = guid(0x91335EF6, 0xEBFB, 0x4478,
-+                         [0xA6, 0xA6, 0x88, 0xB7,
-+                          0x28, 0xCF, 0x75, 0xD7])
-+
-+    CPER_CXL_PROT_ERR = guid(0x80B9EFB4, 0x52B5, 0x4DE3,
-+                             [0xA7, 0x77, 0x68, 0x78,
-+                              0x4B, 0x77, 0x10, 0x48])
--- 
-2.48.1
-
+Is that a bug or a feature? I'm not sure, but it's been that way since
+~2011.
+--=20
+Jeff Layton <jlayton@kernel.org>
 
