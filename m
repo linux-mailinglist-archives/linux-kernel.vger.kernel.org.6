@@ -1,96 +1,271 @@
-Return-Path: <linux-kernel+bounces-525523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 547ECA3F0D5
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:47:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33BA0A3F0CD
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:47:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6AB893B1E79
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:46:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0CB8316F06C
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:47:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E2F5204F60;
-	Fri, 21 Feb 2025 09:43:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A860B20967D;
+	Fri, 21 Feb 2025 09:43:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=pwned.life header.i=@pwned.life header.b="jg4iC6oJ"
-Received: from mx.nixnet.email (mx.nixnet.email [5.161.67.119])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H6Tj1yBm"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7652204864;
-	Fri, 21 Feb 2025 09:42:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.161.67.119
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44C65208997;
+	Fri, 21 Feb 2025 09:43:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740130981; cv=none; b=GRxYca+PwTm3QzJAXsH0f7vIA8s+9BZZLv0/3hWeQUHQbtcBdNkW0UPUD/5JZBFT1fIf8/pzhU1A0ol4pfWW8X9MshwofILkJAvTX3EHeQgF4o5/aC3VDXHzAbZxTnrBhK+a4wdNRLVjYk4l6LmQxCFztO1SrDNnNkZ948HL8wM=
+	t=1740130989; cv=none; b=Bz6cR7LbGoZxA9TuRA+2BMppqgatWhF/P0s6BPYU5xoBHu0yvsyUcq0AjPH9bC8BWxgOXuyvAz95W66DXR48fHNKqlcHu2+ShnzhRyhnwPabdBte8ehtX3VyL1EMZ0ZM9UkHVoEdkIO7lRAv0XuiZFKOWro8dN/ZpKaq32a5GSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740130981; c=relaxed/simple;
-	bh=t4ousF8r2RyUSzA58U9BWyu9ewPTfWsYIlsf3MdymZ0=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
-	 References:In-Reply-To; b=QT4Eqc3Z7iRPH6RpB+/qbzRy6WQTaXvsgdfFwoS5Xl+D3lDz/Z1gHUIpGQwMXQe+5H7UrktitaxZeK0iGHRc5SgjvXXqRD7th47eXeuNPjhHVPDyDGIed6GO5UoG0jWmANFoo/DYuzoxUOrVqz/rAb9G/AX0LUU+RxYjeOLd0IA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=pwned.life; spf=pass smtp.mailfrom=pwned.life; dkim=pass (1024-bit key) header.d=pwned.life header.i=@pwned.life header.b=jg4iC6oJ; arc=none smtp.client-ip=5.161.67.119
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=pwned.life
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pwned.life
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-	by mx.nixnet.email (Postfix) with ESMTPSA id F29F07D2E3;
-	Fri, 21 Feb 2025 10:42:42 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pwned.life; s=202002021149;
-	t=1740130970;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=I0YiigKNZBH5uzypDeZSmXVaUB8aAJhqjnPQJx8cxWY=;
-	b=jg4iC6oJldbUJf4fxIA6mPzCw4XvmH1CY/R4p+h4TKBHVfFJq/mas9kokftMg0pDhbyLIg
-	Z9U72/r4ARn5ZXQXsQl1rS32m4zfNkl+ZAEqnTifwiX9kBvIx26cK91bQfY15F7fMAbE/P
-	BB3NLL+RtYnO/wfSkewn7lw7ND35IjI=
+	s=arc-20240116; t=1740130989; c=relaxed/simple;
+	bh=xELPkWKrTFyerseVN6ZsabfQW5T13xesUDluQhW1BPU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=d1irTo9ZEYWatNPp326vfh0OIuyJXbj+1bCjk8FORLMWCNs3ZUVwTIUUra+A/Ws1iw2SUh4NpjFBv+M4nZNUK+v0sA2o0EG3q9gIznkLEBvGyp9Zi3lO0tpe/hCtq26uILmUNw25lJReDVvk+koNE2HtUszWmsbtzJgsDFJERgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H6Tj1yBm; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2fbffe0254fso3847574a91.3;
+        Fri, 21 Feb 2025 01:43:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740130987; x=1740735787; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Qp8DvYGUWgTHXAPWqbMBZV8Rl/qxPnTYUxFzmDOOo1U=;
+        b=H6Tj1yBmr31n3Zar8goGvfGcf7/zYB8k/LOEU3vbliSsYQyTGuHKFL0SluOy1s6uPh
+         jrU1lNPXt0OeuBH0Hli6+p42b8mHpUVEAEvkLMBYIOmhBg/JVpDPPK+BfxfVRYKqygwG
+         5nI58DIYTRwBLMeV06R3yxaEMu+GUlyVEw1J3FB5tsSQ9HJGxY3+TJPZyQFiasCdz6tK
+         yzchxdaaoRxXqp9ALNRlnakrf1sBpIWxVlTzJnfHRhh7HeIOq+V3pVmACKorGVg8DF3u
+         FkTaocua+YcWvywb5+kddSfNkXV6gurxXguniRj/hnUbOdlBMZKcA6oIO458HFmPIZaO
+         RwXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740130987; x=1740735787;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Qp8DvYGUWgTHXAPWqbMBZV8Rl/qxPnTYUxFzmDOOo1U=;
+        b=XjfLo6+RDXrD81HHHUGApBOnIUH3hEhOkdxWCotUP5zleoTShG5Pwpj2R3rr6ZKam5
+         Zr6+lG0mW3mDyTPihP+SmYfXy8kCj1voOCCcA3JcyZM19G291B4rF7hutupPCQYJ9p80
+         /cRcpRArxUKfAcQtjHrtcB21ifY+CwSd8sQLKMyI9fLiEzzT2veeRUQja4QmPsaDLQr+
+         72BPVrpLGRtthQJf97vImbGd+QvM6QXOdjtONuf7yRmTHkyRjNP5DlibnJRMycSd+LUj
+         1hgOMKIT+2DfN5BmQViAnkYF2iCl7MfWSHIRFclPM242hPdEMqwLZ11r5JJndFP/dU5x
+         Pquw==
+X-Forwarded-Encrypted: i=1; AJvYcCUHVQTCLQ7fbPwPc4rGUNt2VAiBhL0hoZsrRgaIjcgbihNdrZnuCfyVvVux+TJp0f1eBSHB2BQv@vger.kernel.org, AJvYcCULcgKCwFRqzuWNZqZOgwZxsFp7gbJXTBUFG3DL6zwBWshH1ithCNgGJxbhXT2nZszi6LU=@vger.kernel.org, AJvYcCWHJnzC2H110In401jvKUymGqe9a2Ab6mWMsgc+NJjw87JdvQKJOEkItRJqgx1IGgsyPdT4k16ZHvIPPcn1@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIWVugU8u0zpIVCcrVnxUUx6QmZPE6M80BalsZ8tSUlO0c+oeh
+	Ieq4IXwwuACRWF9UfZltXq8jX5c1UJe8Ndsk09gQaFdkUhA3yC57
+X-Gm-Gg: ASbGncuF6/r7z3Quu5wCYhfrB8XyByc/d2od9SnVTqd5xk+5mq8pbGVpj29jV6o08Bt
+	VYqLFjuuVl7FYsabQaL5DGBt20ulgEc22dJd6AnFlkiceFkk7ChMFaID7um5fxULw7amoqmA2Dp
+	N9/CO9cKQYCigRCIwxV8yCrHSoZeKXysgWGBCumpz0GAY9cG05KnOFaKgoi0P72rvG3INXFp7yq
+	5xw8d1cDG2YQqT7Hzc+Z5VmXwqsFtDZ9Jg15ZbglGISkT6/I2ukfyvqSJHKLt7SYuw83dsd/RPy
+	CwUY3w9gy3vSl/fEXAjoE3E=
+X-Google-Smtp-Source: AGHT+IEFLkFCj2bQJ0yLXnoXnz387Bz22Ke8KnkO2x0EryQr6MWOx9pTmc0bN1V4MOkAKGnHvqQCJw==
+X-Received: by 2002:a17:90b:2e0d:b0:2fa:2124:8782 with SMTP id 98e67ed59e1d1-2fce7b1f6afmr4454759a91.25.1740130987274;
+        Fri, 21 Feb 2025 01:43:07 -0800 (PST)
+Received: from localhost ([129.146.253.192])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fcb844c60asm3042021a91.0.2025.02.21.01.42.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Feb 2025 01:43:07 -0800 (PST)
+Date: Fri, 21 Feb 2025 17:42:49 +0800
+From: Furong Xu <0x1207@gmail.com>
+To: Faizal Rahim <faizal.abdul.rahim@linux.intel.com>
+Cc: Tony Nguyen <anthony.l.nguyen@intel.com>, Przemek Kitszel
+ <przemyslaw.kitszel@intel.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David
+ S . Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Maxime
+ Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue
+ <alexandre.torgue@foss.st.com>, Simon Horman <horms@kernel.org>, Russell
+ King <linux@armlinux.org.uk>, Alexei Starovoitov <ast@kernel.org>, Daniel
+ Borkmann <daniel@iogearbox.net>, Jesper Dangaard Brouer <hawk@kernel.org>,
+ John Fastabend <john.fastabend@gmail.com>, Russell King
+ <rmk+kernel@armlinux.org.uk>, Vladimir Oltean <vladimir.oltean@nxp.com>,
+ Serge Semin <fancer.lancer@gmail.com>, Xiaolei Wang
+ <xiaolei.wang@windriver.com>, Suraj Jaiswal <quic_jsuraj@quicinc.com>, Kory
+ Maincent <kory.maincent@bootlin.com>, Gal Pressman <gal@nvidia.com>, Jesper
+ Nilsson <jesper.nilsson@axis.com>, Andrew Halaney <ahalaney@redhat.com>,
+ Choong Yong Liang <yong.liang.choong@linux.intel.com>, Kunihiko Hayashi
+ <hayashi.kunihiko@socionext.com>, Vinicius Costa Gomes
+ <vinicius.gomes@intel.com>, intel-wired-lan@lists.osuosl.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, bpf@vger.kernel.org
+Subject: Re: [PATCH iwl-next v5 1/9] net: ethtool: mm: extract stmmac
+ verification logic into common library
+Message-ID: <20250221174249.000000cc@gmail.com>
+In-Reply-To: <20250220025349.3007793-2-faizal.abdul.rahim@linux.intel.com>
+References: <20250220025349.3007793-1-faizal.abdul.rahim@linux.intel.com>
+	<20250220025349.3007793-2-faizal.abdul.rahim@linux.intel.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 21 Feb 2025 10:42:40 +0100
-Message-Id: <D7Y0XZ9ADBZH.1XP8NW6BIA1E5@pwned.life>
-Subject: Re: [PATCH 6.13 000/258] 6.13.4-rc2 review
-From: "Achill Gilgenast" <fossdd@pwned.life>
-To: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- <stable@vger.kernel.org>
-Cc: <patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
- <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
- <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
- <lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
- <f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>,
- <srw@sladewatkins.net>, <rwarsow@gmx.de>, <conor@kernel.org>,
- <hargar@microsoft.com>, <broonie@kernel.org>
-X-Greeting: Hi mom! Look, I'm in somebodys mail client!
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a
-References: <20250220104500.178420129@linuxfoundation.org>
-In-Reply-To: <20250220104500.178420129@linuxfoundation.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu Feb 20, 2025 at 11:58 AM CET, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.13.4 release.
-> There are 258 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Sat, 22 Feb 2025 10:44:04 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.13.4-=
-rc2.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git=
- linux-6.13.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+On Wed, 19 Feb 2025 21:53:41 -0500, Faizal Rahim <faizal.abdul.rahim@linux.intel.com> wrote:
 
-LGTM. Tested with Alpine Linux on x86_64 and s390x.
+> From: Vladimir Oltean <vladimir.oltean@nxp.com>
+> 
+> It appears that stmmac is not the only hardware which requires a
+> software-driven verification state machine for the MAC Merge layer.
+> 
+> While on the one hand it's good to encourage hardware implementations,
+> on the other hand it's quite difficult to tolerate multiple drivers
+> implementing independently fairly non-trivial logic.
+> 
+> Extract the hardware-independent logic from stmmac into library code and
+> put it in ethtool. Name the state structure "mmsv" for MAC Merge
+> Software Verification. Let this expose an operations structure for
+> executing the hardware stuff: sync hardware with the tx_active boolean
+> (result of verification process), enable/disable the pMAC, send mPackets,
+> notify library of external events (reception of mPackets), as well as
+> link state changes.
+> 
+> Note that it is assumed that the external events are received in hardirq
+> context. If they are not, it is probably a good idea to disable hardirqs
+> when calling ethtool_mmsv_event_handle(), because the library does not
+> do so.
+> 
+> Also, the MM software verification process has no business with the
+> tx_min_frag_size, that is all the driver's to handle.
+> 
+> Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
+> Co-developed-by: Choong Yong Liang <yong.liang.choong@linux.intel.com>
+> Signed-off-by: Choong Yong Liang <yong.liang.choong@linux.intel.com>
+> Co-developed-by: Faizal Rahim <faizal.abdul.rahim@linux.intel.com>
+> Signed-off-by: Faizal Rahim <faizal.abdul.rahim@linux.intel.com>
+> Tested-by: Choong Yong Liang <yong.liang.choong@linux.intel.com>
+> ---
+>  drivers/net/ethernet/stmicro/stmmac/stmmac.h  |  16 +-
+>  .../ethernet/stmicro/stmmac/stmmac_ethtool.c  |  41 +---
+>  .../net/ethernet/stmicro/stmmac/stmmac_fpe.c  | 174 +++-----------
+>  .../net/ethernet/stmicro/stmmac/stmmac_fpe.h  |   5 -
+>  .../net/ethernet/stmicro/stmmac/stmmac_main.c |   8 +-
+>  include/linux/ethtool.h                       | 131 ++++++++++
+>  net/ethtool/mm.c                              | 225 +++++++++++++++++-
+>  7 files changed, 399 insertions(+), 201 deletions(-)
+> 
+[...]
+> +void ethtool_mmsv_link_state_handle(struct ethtool_mmsv *mmsv, bool up)
+> +{
+> +	unsigned long flags;
+> +
+> +	ethtool_mmsv_stop(mmsv);
+> +
+> +	spin_lock_irqsave(&mmsv->lock, flags);
+> +
+> +	if (up && mmsv->pmac_enabled) {
+> +		/* VERIFY process requires pMAC enabled when NIC comes up */
+> +		ethtool_mmsv_configure_pmac(mmsv, true);
+> +
+> +		/* New link => maybe new partner => new verification process */
+> +		ethtool_mmsv_apply(mmsv);
+> +	} else {
+> +		mmsv->status = ETHTOOL_MM_VERIFY_STATUS_INITIAL;
 
-Tested-By: Achill Gilgenast <fossdd@pwned.life>
+Tested this patch on my side, everything works well, but the verify-status
+is a little weird:
+
+# kernel booted, check initial states:
+ethtool --include-statistics --json --show-mm eth1
+[ {
+        "ifname": "eth1",
+        "pmac-enabled": false,
+        "tx-enabled": false,
+        "tx-active": false,
+        "tx-min-frag-size": 60,
+        "rx-min-frag-size": 60,
+        "verify-enabled": false,
+        "verify-time": 128,
+        "max-verify-time": 128,
+        "verify-status": "INITIAL",
+        "statistics": {
+            "MACMergeFrameAssErrorCount": 0,
+            "MACMergeFrameSmdErrorCount": 0,
+            "MACMergeFrameAssOkCount": 0,
+            "MACMergeFragCountRx": 0,
+            "MACMergeFragCountTx": 0,
+            "MACMergeHoldCount": 0
+        }
+    } ]
+
+# Enable pMAC by: ethtool --set-mm eth1 pmac-enabled on
+ethtool --include-statistics --json --show-mm eth1
+[ {
+        "ifname": "eth1",
+        "pmac-enabled": true,
+        "tx-enabled": false,
+        "tx-active": false,
+        "tx-min-frag-size": 60,
+        "rx-min-frag-size": 60,
+        "verify-enabled": false,
+        "verify-time": 128,
+        "max-verify-time": 128,
+        "verify-status": "DISABLED",
+        "statistics": {
+            "MACMergeFrameAssErrorCount": 0,
+            "MACMergeFrameSmdErrorCount": 0,
+            "MACMergeFrameAssOkCount": 0,
+            "MACMergeFragCountRx": 0,
+            "MACMergeFragCountTx": 0,
+            "MACMergeHoldCount": 0
+        }
+    } ]
+
+# Disable pMAC by: ethtool --set-mm eth1 pmac-enabled off
+ethtool --include-statistics --json --show-mm eth1
+[ {
+        "ifname": "eth1",
+        "pmac-enabled": true,
+        "tx-enabled": false,
+        "tx-active": false,
+        "tx-min-frag-size": 60,
+        "rx-min-frag-size": 60,
+        "verify-enabled": false,
+        "verify-time": 128,
+        "max-verify-time": 128,
+        "verify-status": "DISABLED",
+        "statistics": {
+            "MACMergeFrameAssErrorCount": 0,
+            "MACMergeFrameSmdErrorCount": 0,
+            "MACMergeFrameAssOkCount": 0,
+            "MACMergeFragCountRx": 0,
+            "MACMergeFragCountTx": 0,
+            "MACMergeHoldCount": 0
+        }
+    } ]
+
+verify-status always normal on other cases.
+
+@Vladimir, maybe we shouldn't update mmsv->status in ethtool_mmsv_link_state_handle()?
+Or, update mmsv->status like below:
+mmsv->status = mmsv->pmac_enabled ?
+		ETHTOOL_MM_VERIFY_STATUS_INITIAL :
+		ETHTOOL_MM_VERIFY_STATUS_DISABLED;
+
+Anyway, this is too minor, so:
+
+Tested-by: Furong Xu <0x1207@gmail.com>
+
+
+> +		mmsv->verify_retries = ETHTOOL_MM_MAX_VERIFY_RETRIES;
+> +
+> +		/* No link or pMAC not enabled */
+> +		ethtool_mmsv_configure_pmac(mmsv, false);
+> +		ethtool_mmsv_configure_tx(mmsv, false);
+> +	}
+> +
+> +	spin_unlock_irqrestore(&mmsv->lock, flags);
+> +}
+> +EXPORT_SYMBOL_GPL(ethtool_mmsv_link_state_handle);
+
+
 
