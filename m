@@ -1,29 +1,30 @@
-Return-Path: <linux-kernel+bounces-524974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36D98A3E96A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 01:54:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F893A3E973
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 01:56:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EDBAE3AF79E
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 00:54:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7542919C5612
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 00:55:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2AD52AE99;
-	Fri, 21 Feb 2025 00:54:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6446A1B4247;
+	Fri, 21 Feb 2025 00:54:15 +0000 (UTC)
 Received: from shelob.surriel.com (shelob.surriel.com [96.67.55.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD2CF288B1
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 00:54:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D88252B9CD
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 00:54:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.67.55.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740099251; cv=none; b=rElLJVE552q/b2vdwRbo/s8jlIKH+fp5lt2qg3+J7v43rfGixEOdFF7hDHCYnHFHd2pNr7iJg/gfZyyLmN6xI9xoNv42WQypNhm3lSy+nUWeEvdovr2LS0tXn+LxsAd8GVfMnnF+4mHUKQnNsZNULgmAas/kTbOvCFBbT66oSQY=
+	t=1740099254; cv=none; b=dvp0Q3AMztBMcMqCX3chHkLgCPY2Og5/F18nm8ogB+1/71kk0poV45GdgnULMdfH69it5zVmKeVybfaikOntLmBwr9UCMnpbOE+4qxmnpv5jdWqgumZpwvZp+xo0eW9sPc5d/GTYoRTVjvJD5Jhvk/NPNnf0qGKIWQZixq20OIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740099251; c=relaxed/simple;
-	bh=MKXaiSpY6whKSBDqqTDfo4eYpoYgRSR72UCgryJsyyo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XUXxL3GLUr308kf6kH1l9C+6r8k87C+PV1XsSObi1cuFMoH8hccwqv+SVqH4n3fdFnBe9BE6l9xvDOFP+GTR6+Cag5bjUS88BGs4hr2ZEISEnSV8FqelQ88pwl9tc4+qji7vc2HsvIo7xO10LCvRANrxgZcdoQeFfOPHsqDiZnE=
+	s=arc-20240116; t=1740099254; c=relaxed/simple;
+	bh=Auerij6VqA92kR9c6kyhLmRb/jviiaUdie5e/5mmxB8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Q4biaT9ruBqDx3UOJjwXRQCE6jn9Sa21KjkQ99KJmkbcgu5y1ZzmOcygG3SMHtmmkGYWc3Chth++ZKISW8Cf3fIB9i8du09sq44wvl0JYiOfdWbEl+sLnkukdbbKXpwPybm4auOLmGZ4J9VUJLaoWpnLIQ4G4CZG64zOZRbszsc=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=shelob.surriel.com; arc=none smtp.client-ip=96.67.55.147
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shelob.surriel.com
@@ -31,7 +32,7 @@ Received: from fangorn.home.surriel.com ([10.0.13.7])
 	by shelob.surriel.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.97.1)
 	(envelope-from <riel@shelob.surriel.com>)
-	id 1tlHIZ-000000003Qf-0Ury;
+	id 1tlHIZ-000000003Qf-0b2u;
 	Thu, 20 Feb 2025 19:53:47 -0500
 From: Rik van Riel <riel@surriel.com>
 To: x86@kernel.org
@@ -49,11 +50,14 @@ Cc: linux-kernel@vger.kernel.org,
 	jannh@google.com,
 	mhklinux@outlook.com,
 	andrew.cooper3@citrix.com,
-	Manali.Shukla@amd.com
-Subject: [PATCH v12 00/16] AMD broadcast TLB invalidation
-Date: Thu, 20 Feb 2025 19:52:59 -0500
-Message-ID: <20250221005345.2156760-1-riel@surriel.com>
+	Manali.Shukla@amd.com,
+	Rik van Riel <riel@surriel.com>
+Subject: [PATCH v12 01/16] x86/mm: make MMU_GATHER_RCU_TABLE_FREE unconditional
+Date: Thu, 20 Feb 2025 19:53:00 -0500
+Message-ID: <20250221005345.2156760-2-riel@surriel.com>
 X-Mailer: git-send-email 2.47.1
+In-Reply-To: <20250221005345.2156760-1-riel@surriel.com>
+References: <20250221005345.2156760-1-riel@surriel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,95 +67,154 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: riel@surriel.com
 
-Add support for broadcast TLB invalidation using AMD's INVLPGB instruction.
+Currently x86 uses CONFIG_MMU_GATHER_TABLE_FREE when using
+paravirt, and not when running on bare metal.
 
-This allows the kernel to invalidate TLB entries on remote CPUs without
-needing to send IPIs, without having to wait for remote CPUs to handle
-those interrupts, and with less interruption to what was running on
-those CPUs.
+There is no real good reason to do things differently for
+each setup. Make them all the same.
 
-Because x86 PCID space is limited, and there are some very large
-systems out there, broadcast TLB invalidation is only used for
-processes that are active on 3 or more CPUs, with the threshold
-being gradually increased the more the PCID space gets exhausted.
+Currently get_user_pages_fast synchronizes against page table
+freeing in two different ways:
+- on bare metal, by blocking IRQs, which block TLB flush IPIs
+- on paravirt, with MMU_GATHER_RCU_TABLE_FREE
 
-Combined with the removal of unnecessary lru_add_drain calls
-(see https://lkml.org/lkml/2024/12/19/1388) this results in a
-nice performance boost for the will-it-scale tlb_flush2_threads
-test on an AMD Milan system with 36 cores:
+This is done because some paravirt TLB flush implementations
+handle the TLB flush in the hypervisor, and will do the flush
+even when the target CPU has interrupts disabled.
 
-- vanilla kernel:           527k loops/second
-- lru_add_drain removal:    731k loops/second
-- only INVLPGB:             527k loops/second
-- lru_add_drain + INVLPGB: 1157k loops/second
+Always handle page table freeing with MMU_GATHER_RCU_TABLE_FREE.
+Using RCU synchronization between page table freeing and get_user_pages_fast()
+allows bare metal to also do TLB flushing while interrupts are disabled.
 
-Profiling with only the INVLPGB changes showed while
-TLB invalidation went down from 40% of the total CPU
-time to only around 4% of CPU time, the contention
-simply moved to the LRU lock.
+Various places in the mm do still block IRQs or disable preemption
+as an implicit way to block RCU frees.
 
-Fixing both at the same time about doubles the
-number of iterations per second from this case.
+That makes it safe to use INVLPGB on AMD CPUs.
 
-Some numbers closer to real world performance
-can be found at Phoronix, thanks to Michael:
+Signed-off-by: Rik van Riel <riel@surriel.com>
+Suggested-by: Peter Zijlstra <peterz@infradead.org>
+Tested-by: Manali Shukla <Manali.Shukla@amd.com>
+Tested-by: Brendan Jackman <jackmanb@google.com>
+Tested-by: Michael Kelley <mhklinux@outlook.com>
+---
+ arch/x86/Kconfig           |  2 +-
+ arch/x86/kernel/paravirt.c | 17 +----------------
+ arch/x86/mm/pgtable.c      | 27 ++++-----------------------
+ 3 files changed, 6 insertions(+), 40 deletions(-)
 
-https://www.phoronix.com/news/AMD-INVLPGB-Linux-Benefits
-
-My current plan is to implement support for Intel's RAR
-(Remote Action Request) TLB flushing in a follow-up series,
-after this thing has been merged into -tip. Making things
-any larger would just be unwieldy for reviewers.
-
-v12:
- - make sure "nopcid" command line option turns off invlpgb (Brendan)
- - add "noinvlpgb" kernel command line option
- - split out kernel TLB flushing differently (Dave & Yosry)
- - split up the patch that does invlpgb flushing for user processes (Dave)
- - clean up get_flush_tlb_info (Boris)
- - move invlpgb_count_max initialization to get_cpu_cap (Boris)
- - bunch more comments as requested
-v11:
- - resolve conflict with CONFIG_PT_RECLAIM code
- - a few more cleanups (Peter, Brendan, Nadav)
-v10:
- - simplify partial pages with min(nr, 1) in the invlpgb loop (Peter)
- - document x86 paravirt, AMD invlpgb, and ARM64 flush without IPI (Brendan)
- - remove IS_ENABLED(CONFIG_X86_BROADCAST_TLB_FLUSH) (Brendan)
- - various cleanups (Brendan)
-v9:
- - print warning when start or end address was rounded (Peter)
- - in the reclaim code, tlbsync at context switch time (Peter)
- - fix !CONFIG_CPU_SUP_AMD compile error in arch_tlbbatch_add_pending (Jan)
-v8:
- - round start & end to handle non-page-aligned callers (Steven & Jan)
- - fix up changelog & add tested-by tags (Manali)
-v7:
- - a few small code cleanups (Nadav)
- - fix spurious VM_WARN_ON_ONCE in mm_global_asid
- - code simplifications & better barriers (Peter & Dave)
-v6:
- - fix info->end check in flush_tlb_kernel_range (Michael)
- - disable broadcast TLB flushing on 32 bit x86
-v5:
- - use byte assembly for compatibility with older toolchains (Borislav, Michael)
- - ensure a panic on an invalid number of extra pages (Dave, Tom)
- - add cant_migrate() assertion to tlbsync (Jann)
- - a bunch more cleanups (Nadav)
- - key TCE enabling off X86_FEATURE_TCE (Andrew)
- - fix a race between reclaim and ASID transition (Jann)
-v4:
- - Use only bitmaps to track free global ASIDs (Nadav)
- - Improved AMD initialization (Borislav & Tom)
- - Various naming and documentation improvements (Peter, Nadav, Tom, Dave)
- - Fixes for subtle race conditions (Jann)
-v3:
- - Remove paravirt tlb_remove_table call (thank you Qi Zheng)
- - More suggested cleanups and changelog fixes by Peter and Nadav
-v2:
- - Apply suggestions by Peter and Borislav (thank you!)
- - Fix bug in arch_tlbbatch_flush, where we need to do both
-   the TLBSYNC, and flush the CPUs that are in the cpumask.
- - Some updates to comments and changelogs based on questions.
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 6df7779ed6da..aeb07da762fc 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -278,7 +278,7 @@ config X86
+ 	select HAVE_PCI
+ 	select HAVE_PERF_REGS
+ 	select HAVE_PERF_USER_STACK_DUMP
+-	select MMU_GATHER_RCU_TABLE_FREE	if PARAVIRT
++	select MMU_GATHER_RCU_TABLE_FREE
+ 	select MMU_GATHER_MERGE_VMAS
+ 	select HAVE_POSIX_CPU_TIMERS_TASK_WORK
+ 	select HAVE_REGS_AND_STACK_ACCESS_API
+diff --git a/arch/x86/kernel/paravirt.c b/arch/x86/kernel/paravirt.c
+index 1ccaa3397a67..527f5605aa3e 100644
+--- a/arch/x86/kernel/paravirt.c
++++ b/arch/x86/kernel/paravirt.c
+@@ -59,21 +59,6 @@ void __init native_pv_lock_init(void)
+ 		static_branch_enable(&virt_spin_lock_key);
+ }
+ 
+-#ifndef CONFIG_PT_RECLAIM
+-static void native_tlb_remove_table(struct mmu_gather *tlb, void *table)
+-{
+-	struct ptdesc *ptdesc = (struct ptdesc *)table;
+-
+-	pagetable_dtor(ptdesc);
+-	tlb_remove_page(tlb, ptdesc_page(ptdesc));
+-}
+-#else
+-static void native_tlb_remove_table(struct mmu_gather *tlb, void *table)
+-{
+-	tlb_remove_table(tlb, table);
+-}
+-#endif
+-
+ struct static_key paravirt_steal_enabled;
+ struct static_key paravirt_steal_rq_enabled;
+ 
+@@ -195,7 +180,7 @@ struct paravirt_patch_template pv_ops = {
+ 	.mmu.flush_tlb_kernel	= native_flush_tlb_global,
+ 	.mmu.flush_tlb_one_user	= native_flush_tlb_one_user,
+ 	.mmu.flush_tlb_multi	= native_flush_tlb_multi,
+-	.mmu.tlb_remove_table	= native_tlb_remove_table,
++	.mmu.tlb_remove_table	= tlb_remove_table,
+ 
+ 	.mmu.exit_mmap		= paravirt_nop,
+ 	.mmu.notify_page_enc_status_changed	= paravirt_nop,
+diff --git a/arch/x86/mm/pgtable.c b/arch/x86/mm/pgtable.c
+index 1fef5ad32d5a..b1c1f72c1fd1 100644
+--- a/arch/x86/mm/pgtable.c
++++ b/arch/x86/mm/pgtable.c
+@@ -18,25 +18,6 @@ EXPORT_SYMBOL(physical_mask);
+ #define PGTABLE_HIGHMEM 0
+ #endif
+ 
+-#ifndef CONFIG_PARAVIRT
+-#ifndef CONFIG_PT_RECLAIM
+-static inline
+-void paravirt_tlb_remove_table(struct mmu_gather *tlb, void *table)
+-{
+-	struct ptdesc *ptdesc = (struct ptdesc *)table;
+-
+-	pagetable_dtor(ptdesc);
+-	tlb_remove_page(tlb, ptdesc_page(ptdesc));
+-}
+-#else
+-static inline
+-void paravirt_tlb_remove_table(struct mmu_gather *tlb, void *table)
+-{
+-	tlb_remove_table(tlb, table);
+-}
+-#endif /* !CONFIG_PT_RECLAIM */
+-#endif /* !CONFIG_PARAVIRT */
+-
+ gfp_t __userpte_alloc_gfp = GFP_PGTABLE_USER | PGTABLE_HIGHMEM;
+ 
+ pgtable_t pte_alloc_one(struct mm_struct *mm)
+@@ -64,7 +45,7 @@ early_param("userpte", setup_userpte);
+ void ___pte_free_tlb(struct mmu_gather *tlb, struct page *pte)
+ {
+ 	paravirt_release_pte(page_to_pfn(pte));
+-	paravirt_tlb_remove_table(tlb, page_ptdesc(pte));
++	tlb_remove_table(tlb, page_ptdesc(pte));
+ }
+ 
+ #if CONFIG_PGTABLE_LEVELS > 2
+@@ -78,21 +59,21 @@ void ___pmd_free_tlb(struct mmu_gather *tlb, pmd_t *pmd)
+ #ifdef CONFIG_X86_PAE
+ 	tlb->need_flush_all = 1;
+ #endif
+-	paravirt_tlb_remove_table(tlb, virt_to_ptdesc(pmd));
++	tlb_remove_table(tlb, virt_to_ptdesc(pmd));
+ }
+ 
+ #if CONFIG_PGTABLE_LEVELS > 3
+ void ___pud_free_tlb(struct mmu_gather *tlb, pud_t *pud)
+ {
+ 	paravirt_release_pud(__pa(pud) >> PAGE_SHIFT);
+-	paravirt_tlb_remove_table(tlb, virt_to_ptdesc(pud));
++	tlb_remove_table(tlb, virt_to_ptdesc(pud));
+ }
+ 
+ #if CONFIG_PGTABLE_LEVELS > 4
+ void ___p4d_free_tlb(struct mmu_gather *tlb, p4d_t *p4d)
+ {
+ 	paravirt_release_p4d(__pa(p4d) >> PAGE_SHIFT);
+-	paravirt_tlb_remove_table(tlb, virt_to_ptdesc(p4d));
++	tlb_remove_table(tlb, virt_to_ptdesc(p4d));
+ }
+ #endif	/* CONFIG_PGTABLE_LEVELS > 4 */
+ #endif	/* CONFIG_PGTABLE_LEVELS > 3 */
+-- 
+2.47.1
 
 
