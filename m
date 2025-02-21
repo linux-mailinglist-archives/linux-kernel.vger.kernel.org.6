@@ -1,139 +1,152 @@
-Return-Path: <linux-kernel+bounces-526534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 752F7A3FFEA
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 20:43:49 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98715A3FFEB
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 20:44:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 769D7176CF7
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 19:43:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C494C7ADCAC
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 19:43:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFE162528EB;
-	Fri, 21 Feb 2025 19:43:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C5F325291B;
+	Fri, 21 Feb 2025 19:43:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="M9L7fx9B"
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="quYtZe/2"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ADE62528F6
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 19:43:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 168311EEA56
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 19:43:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740166994; cv=none; b=PhYjZvK2CAsREZkAjAGJTy1Dp7EArVa469SZyWtVFqgGhgd4ko6M+2S0IACwbvMxBnmuWTqss9w24dbBcz4mZFjDTZJ5E1Ct8TSKlUVZPOvLr2hFEpTqbZGriFMLMKLPt0XCwIv+r56XbAHcadj6Go5BhBz3P0579L6yg+77YS0=
+	t=1740167028; cv=none; b=RzL9XnyZqiNEBxu8OXfIxh0m06E556xdRyU1Ce7fXzg8ivanf40+DGO/dK9iYFB/yTFyIuz2Km6NQrmkrHXKk9m86VjyLT4L4Mv8SnbSH7bV4sfseQT1VjA/PNd9rbhPzwBw2tgXFfkmH4I/CxXxwBvOXYz3CqmZVev1ywzWFYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740166994; c=relaxed/simple;
-	bh=a523ZQbh86bpyY1RTd3hAJpiDjMv4pYA2cxq33Emrqs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=a25+/13HMYW8IJNMdUnQt/I4deTEpbv9GBaBixcEYEC0crW0b4VCzt5JvBLijjKSiFjQRs2KCptBX0mmMBRxefldt8vef2lGSsorT9TN8coRP4ZhvEEfX9sl32R07Cl+LjIhm+/nFVSTg+x3S2O8YXX+J8DxFku7XP4JAk3CdZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=M9L7fx9B; arc=none smtp.client-ip=209.85.160.171
+	s=arc-20240116; t=1740167028; c=relaxed/simple;
+	bh=Y3Yyk8b/Cp0hTYaK6EJV+jpxqEoGOW6JM0KIc8TDCkg=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=uxmGsJ/jUX+GT6SEXD7AWDcv880LQOUYy/30WD9nJkIdPavNH9W5i9YcCf1ytIUPno/bw47/ZdUZ77A9G8YpbQuZxvFCa5wYf2cWtXVCaYrZNSj1np+naBWCitjIc3DSDzMv4VV1W8cMSetjnc/AvTdzk8cYfQZ5q5Vfrxgfbzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=quYtZe/2; arc=none smtp.client-ip=209.85.216.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-471fbfe8b89so53941cf.0
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 11:43:12 -0800 (PST)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2fbfa786a1aso8027858a91.3
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 11:43:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740166991; x=1740771791; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=a523ZQbh86bpyY1RTd3hAJpiDjMv4pYA2cxq33Emrqs=;
-        b=M9L7fx9B/RroN8sQe60TiC6lMg4R8qZw2IUNRzm5QnZqf0LUL92prfLHuuvPp++d7i
-         XapMhlMI6lY06JbH+AfiR10mZAeBiUMVGi5al4blEDcqIz46lRXt2O01zHQhZwYipltm
-         FbbfJx3Bw7BKAIhw3IgOBR7N019eep2vFihLSLaIKosJiTTkj8TCJuIZwP4xnDZJZal2
-         7nUmpjhdzISAfP/d3LTb21F10urhxbPV78TMB2rWqt9OBp1RO8YY/v/Q4hVtogV+Ro3n
-         q5umoPsfVULE2dqDgKA7QS4LEkY54SFgAZceEChhX4CB6zw6+4hszWsKL7XejMwROsAs
-         owkA==
+        d=google.com; s=20230601; t=1740167026; x=1740771826; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=hQXhIMGXITd1rE+W1Hd1jpvnOAjlNs+uBBSQvISYRG4=;
+        b=quYtZe/2pJvvL6QPrqxsFZTQIs4919f5gtqUNt4Ig2rm4bcryFg0CochzB7Dwb/P/g
+         1Dgwb/kVgg2MciCRIrbQdLQFtPPGcH0Exnvcd9aQ4iMPkdbJMxqiVdAtKz/3OA7cu5js
+         kde6HfSLPo2f77XB2XQe7nI2LEDA1qiQDTYhHLumvvTySgQTYcfxw6dAkTgv1aFbVSTZ
+         9L9mjrXyfP5ELBTVGb9ISNW06k5NvWZjcZyjN/Tb0OzoVGPZqyOWWZOItQ51paZTFq29
+         zZyCn2wrjQN7JdbDF/+IHmTVWYCd2k9Ve8ewzKFnxakTIQa2uxTiHrHpGHJp8L4itS+K
+         8+jw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740166991; x=1740771791;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=a523ZQbh86bpyY1RTd3hAJpiDjMv4pYA2cxq33Emrqs=;
-        b=tM6cP+wUZ6RMeVSyuivRL7W3X30n3SVZwID5UuRocxR3eSwIq1ADpeHXKvpPPjT4wC
-         A2JAHEJqTRcAiE05pGN764Rogwc5FhAn0FYTQXA5iT06/DvCvMT2spWLrNEU+rwZqxz0
-         z4OAIWcIrbRLBdHpjPylCLFrmjpusy7JEqxF3IvVDq5NxTfAi+eWlcEBXE4BBfNHNkYB
-         61xQ8MaqwKhkg/9IG22j1MvvMuT/tN+VH2/iaCnbpc/pEt/YFTD2DU7e+ag54K7YQfyl
-         TkK+YXsTmzuQDMrwb8yh6Dd8k1WyeorxYGD/qmSRYqTTBg4dDU1v5Sqo8dHjSNlZTeN8
-         AElw==
-X-Forwarded-Encrypted: i=1; AJvYcCVp8Ln4vrX6jmzcqaOX/H+7EAF8qmLwHftLzP4Jg4GP7dJnprbopVRUkXt+SpWCxPoxHRJCHQuJrp1g6W0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCBfbSfS4mWrG4sfkNZvs2mCSFpRlb+a2pVKpwx5g6TbnruduJ
-	JoL7N530864GDASCzVeqnq9GSeHaFDJiYnTzl7tt0hVvEayBLeFV36neulRwH09ki0iLVONBDx+
-	9pw88pAviE8ofWo/DBdsGu7OxKaE6w8S+HfpO
-X-Gm-Gg: ASbGnctM7eEzpdwjfU5G8F9ETGNmXLTF+ElgKJbGlHb3Ek40hyKvRxAxhMWPRZKUaCr
-	QDZyMAWNkB/tVB/BoRxpILQUwXTOOqBJkcdAs1Lt7VDMr3NogEY73BDm7tCbFM86D5mCaCmaRH4
-	wf+B/lUrwC
-X-Google-Smtp-Source: AGHT+IEOnjZFiRhGxpDJtRI7e1BzpTxFXUpSnGjB68hdpcYJt/skKBjWPsMwz7ISV8LbfReXO+Memq+SOXK0w7M5oLE=
-X-Received: by 2002:ac8:7f4b:0:b0:471:b96c:7267 with SMTP id
- d75a77b69052e-472335845f9mr206901cf.20.1740166991241; Fri, 21 Feb 2025
- 11:43:11 -0800 (PST)
+        d=1e100.net; s=20230601; t=1740167026; x=1740771826;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hQXhIMGXITd1rE+W1Hd1jpvnOAjlNs+uBBSQvISYRG4=;
+        b=pqvuoyCgnluzJkbK6dsH2XKKVDmHl9xdD4CZxCZ55zaNw6dgDVCLesLqlQxKqExxW+
+         V9VqzjDM8G54rFcZmq0X0+cLsbFunIZ5mHsA5swCJZlqMqDqXW7BM+q9nRmjCU7XySpH
+         ikmajdcZMgswylVL57YI2CSgwoizRrh8NoKMnI8sijzWUWfkW/pDjSaNgpCYsqkxvFnD
+         45eKDro1TBwjBb8ESdfraN2OVsKyHjx0S7CTaCFEnvkKLC6G4bDOugIqsUo8VPaYNRTd
+         ZNznJJkjvnfwOHJHd36TNagIgklhAhSwFMufGMYd6vgmLnTJFQxmpbefUiZS1Rr8DxS0
+         q4xw==
+X-Forwarded-Encrypted: i=1; AJvYcCUcRossTj80MpCDo2PXnTCJ61q+/ouMk5vorivaBonF1l9bJAFPvKAtvr0XJT1H25J1kZti+97DF/rRIBE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyIy9Y/NUQdTbaFIR2AVO3dWQGbIoukOWsvYidp9P1Vp44gpEQo
+	xVgiPmmIa0dwi1M/JeX3OOgzj1WUD4O+ZoRDwNRUrOlUul02tNktjsQXlDcjtzVQIh0zgEMQlN9
+	XOw==
+X-Google-Smtp-Source: AGHT+IG1PT4kPwyWN06txt88MVC++MaYs1d8aNclywXcgh7C2ddpU7iPy0Nkhque7F+Z3hd2xBEyOnkGgbc=
+X-Received: from pjur15.prod.google.com ([2002:a17:90a:d40f:b0:2ee:4b69:50e1])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:2590:b0:2ee:df70:1ff3
+ with SMTP id 98e67ed59e1d1-2fce75e1b18mr8826198a91.0.1740167026450; Fri, 21
+ Feb 2025 11:43:46 -0800 (PST)
+Date: Fri, 21 Feb 2025 11:43:45 -0800
+In-Reply-To: <Z7hdqCqOLJWcR71K@yzhao56-desk.sh.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250220093257.9380-1-kprateek.nayak@amd.com> <20250220105558.GJ34567@noisy.programming.kicks-ass.net>
- <b2386349-2879-4dce-afb0-f6486c24c117@amd.com> <20250220113227.GL34567@noisy.programming.kicks-ass.net>
- <59d46dd3-33da-4e95-8674-d93fc00d73f6@amd.com> <CABk29NuQZZsg+YYYyGh79Txkc=q6f8KUfKf8W8czB=ys=nPd=A@mail.gmail.com>
- <f4fed3e7-bc64-4717-9939-cd939e0aceea@amd.com>
-In-Reply-To: <f4fed3e7-bc64-4717-9939-cd939e0aceea@amd.com>
-From: Josh Don <joshdon@google.com>
-Date: Fri, 21 Feb 2025 11:42:59 -0800
-X-Gm-Features: AWEUYZk5ruyrDHbpBVUV2yisf85ZTa8h0dd93_WN7GhaYhAD1eBvGpXDW_9DlNU
-Message-ID: <CABk29Nvn6qwfZdN-DQJs+KUSch=RcJ7Fa+S08a9tiwZvDEUnxQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 00/22] sched/fair: Defer CFS throttling to exit to
- user mode
-To: K Prateek Nayak <kprateek.nayak@amd.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ben Segall <bsegall@google.com>, 
-	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Valentin Schneider <vschneid@redhat.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Andy Lutomirski <luto@kernel.org>, linux-kernel@vger.kernel.org, 
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Mel Gorman <mgorman@suse.de>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
-	Clark Williams <clrkwllms@kernel.org>, linux-rt-devel@lists.linux.dev, 
-	Tejun Heo <tj@kernel.org>, Frederic Weisbecker <frederic@kernel.org>, Barret Rhoden <brho@google.com>, 
-	Petr Mladek <pmladek@suse.com>, Qais Yousef <qyousef@layalina.io>, 
-	"Paul E. McKenney" <paulmck@kernel.org>, David Vernet <dvernet@meta.com>, 
-	"Gautham R. Shenoy" <gautham.shenoy@amd.com>, Swapnil Sapkal <swapnil.sapkal@amd.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+References: <20250220170604.2279312-1-pbonzini@redhat.com> <20250220170604.2279312-21-pbonzini@redhat.com>
+ <Z7fO9gqzgaETeMYB@google.com> <Z7hdqCqOLJWcR71K@yzhao56-desk.sh.intel.com>
+Message-ID: <Z7jXcelD0MAk7odP@google.com>
+Subject: Re: [PATCH 20/30] KVM: TDX: create/destroy VM structure
+From: Sean Christopherson <seanjc@google.com>
+To: Yan Zhao <yan.y.zhao@intel.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
+	Rick Edgecombe <rick.p.edgecombe@intel.com>, Isaku Yamahata <isaku.yamahata@intel.com>, 
+	Tony Lindgren <tony.lindgren@linux.intel.com>, 
+	Sean Christopherson <sean.j.christopherson@intel.com>, Kai Huang <kai.huang@intel.com>
+Content-Type: text/plain; charset="us-ascii"
 
-On Thu, Feb 20, 2025 at 7:38=E2=80=AFPM K Prateek Nayak <kprateek.nayak@amd=
-.com> wrote:
+On Fri, Feb 21, 2025, Yan Zhao wrote:
+> On Thu, Feb 20, 2025 at 04:55:18PM -0800, Sean Christopherson wrote:
+> > TL;DR: Please don't merge this patch to kvm/next or kvm/queue.
+
 ...
-> Just out of curiosity, have you tried running with proxy-execution [1][2]
-> on your deployments to mitigate priority inversion in mutexes? I've
-> tested it with smaller scale benchmarks and I haven't seem much overhead
-> except for in case of a few microbenchmarks but I'm not sure if you've
-> run into any issues at your scale.
 
-The confounding issue is that we see tail issues with other types of
-primitives, such as semaphores. That led us to trying an approach
-similar to yours with treating kernel-mode as a critical section from
-the perspective of e.g. CFSB.
+> > Commit 6fcee03df6a1 ("KVM: x86: avoid loading a vCPU after .vm_destroy was called")
+> > papered over an AVIC case, but there are issues, e.g. with the MSR filters[2],
+> > and the NULL pointer deref that's blocking the aforementioned fix is a nVMX access
+> > to the PIC.
+> > 
+> > I haven't fully tested destroying vCPUs before calling vm_destroy(), but I can't
+> > see anything in vmx_vm_destroy() or svm_vm_destroy() that expects to run while
+> > vCPUs are still alive.  If anything, it's opposite, e.g. freeing VMX's IPIv PID
+> > table before vCPUs are destroyed is blatantly unsafe.
+> Is it possible to simply move the code like freeing PID table from
+> vmx_vm_destroy() to static_call_cond(kvm_x86_vm_free)(kvm) ?
 
-> Is it possible to share an example hierarchy from one of your
-> deployments? Your presentation for LPC'24 [1] says "O(1000) cgroups" but
-> is it possible to reveal the kind of nesting you deal with and at which
-> levels are bandwidth controls set. Even something like "O(10) cgroups on
-> root with BW throttling set, and each of them contain O(100) cgroups
-> below" could also help match a test setup.
+That would fix the potential PID table problem, but not the other issues with
+freeing VM state before destroying vCPUs.
 
-Sure, I can help shed some additional light. In terms of cgroup depth,
-we try to keep that fairly limited, given the cgroup depth scaling
-issues with task enqueue/dequeue. Max depth is maybe around ~5
-depending on the exact job configuration, with an average closer to
-2-3. However, width is quite large as we have many large dual socket
-machines that can handle hundreds of individual jobs (as I called out
-in the presentation, larger cpu count leads to more cgroups on the
-machine in order to fully utilize resources). The example I referred
-to in the presentation looks something like:
+> > The good news is, I think it'll lead to a better approach (and naming).  KVM already
+> > frees MMU state before vCPU state, because while MMUs are largely VM-scoped, all
+> > of the common MMU state needs to be freed before any one vCPU is freed.
+> > 
+> > And so my plan is to carved out a kvm_destroy_mmus() helper, which can then call
+> > the TDX hook to release/reclaim the HKID, which I assume needs to be done after
+> > KVM's general MMU destruction, but before vCPUs are freed.
+> > 
+> > I'll make sure to Cc y'all on the series (typing and testing furiously to try and
+> > get it out asap).  But to try and avoid posting code that's not usable for TDX,
+> > will this work?
+> > 
+> > static void kvm_destroy_mmus(struct kvm *kvm)
+> > {
+> > 	struct kvm_vcpu *vcpu;
+> > 	unsigned long i;
+> > 
+> > 	if (current->mm == kvm->mm) {
+> > 		/*
+> > 		 * Free memory regions allocated on behalf of userspace,
+> > 		 * unless the memory map has changed due to process exit
+> > 		 * or fd copying.
+> > 		 */
+> > 		mutex_lock(&kvm->slots_lock);
+> > 		__x86_set_memory_region(kvm, APIC_ACCESS_PAGE_PRIVATE_MEMSLOT,
+> > 					0, 0);
+> > 		__x86_set_memory_region(kvm, IDENTITY_PAGETABLE_PRIVATE_MEMSLOT,
+> > 					0, 0);
+> > 		__x86_set_memory_region(kvm, TSS_PRIVATE_MEMSLOT, 0, 0);
+> > 		mutex_unlock(&kvm->slots_lock);
+> > 	}
+> > 
+> > 	kvm_for_each_vcpu(i, vcpu, kvm) {
+> > 		kvm_clear_async_pf_completion_queue(vcpu);
+> > 		kvm_unload_vcpu_mmu(vcpu);
+> > 	}
+> > 
+> > 	kvm_x86_call(mmu_destroy)(kvm);
+> I suppose this will hook tdx_mmu_release_hkid() ?
 
-root -> subtree_parent (this cgroup has CFSB enabled, period =3D 100ms)
--> (~300-400 direct children, with some fraction having additional
-child cgroups, bringing total to O(1000))
+Please see my follow-up idea[1] to hook into kvm_arch_pre_destroy_vm().  Turns
+out there isn't a hard requirement to unload MMUs prior to destroying vCPUs (at
+least, not AFAICT).
 
-Best,
-Josh
+[1] https://lore.kernel.org/all/Z7fSIMABm4jp5ADA@google.com
 
