@@ -1,253 +1,125 @@
-Return-Path: <linux-kernel+bounces-526816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4005FA403BC
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 00:50:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACD2FA403C5
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 00:50:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F383119C0DEC
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 23:50:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 975FA422F66
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 23:50:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11379254B18;
-	Fri, 21 Feb 2025 23:50:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C6A02566C7;
+	Fri, 21 Feb 2025 23:50:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ebzXRD7f"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BDu9ISbE"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 529D8204694;
-	Fri, 21 Feb 2025 23:49:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCA77255E29;
+	Fri, 21 Feb 2025 23:50:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740181800; cv=none; b=WNeNMBjHd/0XChyFhPQRsfn7hNECt56FiPRB7vGNxmeWsArfOkdI1G4B+oSAGs4UAsJSgwv2Tbf364wlIR1xAplaIciTJcs+tmd0DBOu7+Yq0ahMcHpJOZdLYtkjhcIJvl7UadZXK3DIvsk4xKZsnE/tAH56mjtGCnrKjuxQaoQ=
+	t=1740181803; cv=none; b=dwZ0+xrvXraIoMK56T2e5hkFh7NEFt+8z69iCb8l7pLZ8HFNRktaUyQrr3qMTHjRJpNNoqkKclyCTZay1m1fNq/u05l+XligLbk3+unw4Saqu7x4p3mML9DnsNX4gQ0ly1J4kQxiQdTq4luViar1OqYoon3jjE/C/l1CgMSD9QY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740181800; c=relaxed/simple;
-	bh=7nyMY4mFAeqXaY4AyfMQMXfQBWFBvvYOoJjP9MhKH6g=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=F+BY5lnvXAPasNk62OnB8yfxPCZ0yjxE7YimP/B/W1N21vBOV/eReDZAzpzT0SqMJYkRuLlmpqjg/sEwKW2DWwuru6zTvWxSDwFfn0vPW+Y4DWiHIqQrqJo/8XSfcOcbHTNfkPtSx+wpVlkESk1o3NB6L0A99Cu6KkEW5R03724=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ebzXRD7f; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E5E9C4CED6;
-	Fri, 21 Feb 2025 23:49:59 +0000 (UTC)
+	s=arc-20240116; t=1740181803; c=relaxed/simple;
+	bh=CTqJ/KmzI6Gqn0P8GISxBeKnxm42pSWuEHz+MsnFwsw=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=Ha7J3DmgFjjEBnRmUT017nVDVLuzmzmoktZ6FWv+lOI8nY7RpPm00cNzupT2+BR5Eu1efsI8XFet4/WLFH05K2agSuTiZSTH+odPOzwqWtTlPB42SUTY7H2UbR6XnLFlUrGMJpLBIPnhDIbVJ/UVk3kvxx1gO/mhoi4rWg1pVgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BDu9ISbE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D170C4CEE8;
+	Fri, 21 Feb 2025 23:50:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740181799;
-	bh=7nyMY4mFAeqXaY4AyfMQMXfQBWFBvvYOoJjP9MhKH6g=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=ebzXRD7fV/Ixvgj7XqgttlHaThg3WUGKW8yUnOnyCWMx2md84LfMFxeaxPr5BKc12
-	 FGB2wrsPt3Uwg65UNNG/nb95tdPXbew7VdMIhM00g1Dn0pDeuAiSr1aUFI1d0z8gbq
-	 iWILf7txi/VGSlSsYX1hNot9bKuVUnL/W/cEyw/fIKp9P3f95HELNiew7T3Y4vhMtV
-	 r0D98tM4UbWejYZIvR2VB+SrrRySlhP1f/iFaKnMFmoyBeMSq5Du6WuwgHvQcT15Rm
-	 HIkLrKamIw0mDTxFcbe4I1DWWPYkR9yY2S8zwwwQ8mM6DcSDpKkpc5NSCq2xYowVTT
-	 nb2P3yw3NxN5Q==
-Date: Fri, 21 Feb 2025 17:49:58 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Inochi Amaoto <inochiama@gmail.com>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Niklas Cassel <cassel@kernel.org>,
-	Shashank Babu Chinta Venkata <quic_schintav@quicinc.com>,
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-	sophgo@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org, Yixun Lan <dlan@gentoo.org>,
-	Longbin Li <looong.bin@gmail.com>
-Subject: Re: [PATCH 2/2] PCI: sophgo-dwc: Add Sophgo SG2044 PCIe driver
-Message-ID: <20250221234958.GA372914@bhelgaas>
+	s=k20201202; t=1740181802;
+	bh=CTqJ/KmzI6Gqn0P8GISxBeKnxm42pSWuEHz+MsnFwsw=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=BDu9ISbENe4QBTzFvL3z1yzMFvK03RKEkTbSwfBUkHNtTUh87YeINV9ofzYEHWC3S
+	 jZzNU5gsxWbwLeHefuhEiZ9tiDlx3f/7HNbz6+540xOxAjI7PR0td6mH30Y3+TKUgF
+	 LvyTFKZzhdtpcsU6ypDidAaK+ncYlAPPafKV4INeuNv7tC9FhmAMN0Vo6m1FyHhHaY
+	 CchC7RgW86hAUItr0fS49w52qJFaotrHr/KW9nOdhhDez05BFc79K9glnKMMjqoXTE
+	 2B5QJHf8bMDZ6dD1+XamNosy4PieEtpvxtm9eOjBTRJHtAiLr3CyiD+AQA01DPTnNn
+	 +FzWQRl5jE+uA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 710DC380CEEC;
+	Fri, 21 Feb 2025 23:50:34 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250221013758.370936-3-inochiama@gmail.com>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next v10 00/13] net: Improve netns handling in rtnetlink
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <174018183327.2240430.4249639047640655494.git-patchwork-notify@kernel.org>
+Date: Fri, 21 Feb 2025 23:50:33 +0000
+References: <20250219125039.18024-1-shaw.leon@gmail.com>
+In-Reply-To: <20250219125039.18024-1-shaw.leon@gmail.com>
+To: Xiao Liang <shaw.leon@gmail.com>
+Cc: netdev@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ kuniyu@amazon.com, kuba@kernel.org, davem@davemloft.net, dsahern@kernel.org,
+ edumazet@google.com, pabeni@redhat.com, andrew+netdev@lunn.ch,
+ horms@kernel.org, shuah@kernel.org, donald.hunter@gmail.com,
+ alex.aring@gmail.com, stefan@datenfreihafen.org, miquel.raynal@bootlin.com,
+ steffen.klassert@secunet.com, herbert@gondor.apana.org.au,
+ linux-rdma@vger.kernel.org, linux-can@vger.kernel.org,
+ osmocom-net-gprs@lists.osmocom.org, bpf@vger.kernel.org,
+ linux-ppp@vger.kernel.org, wireguard@lists.zx2c4.com,
+ linux-wireless@vger.kernel.org, b.a.t.m.a.n@lists.open-mesh.org,
+ bridge@lists.linux.dev, linux-wpan@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 
-On Fri, Feb 21, 2025 at 09:37:56AM +0800, Inochi Amaoto wrote:
-> Add support for DesignWare-based PCIe controller in SG2044 SoC.
+Hello:
 
-> @@ -341,6 +341,16 @@ config PCIE_ROCKCHIP_DW_EP
->  	  Enables support for the DesignWare PCIe controller in the
->  	  Rockchip SoC (except RK3399) to work in endpoint mode.
->  
-> +config PCIE_SOPHGO_DW
-> +	bool "SOPHGO DesignWare PCIe controller"
+This series was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-What's the canonical styling of "SOPHGO"?  I see "Sophgo" in the
-subject line and in Chen Wang's SG2042 series.  Pick the official
-styling and use it consistently.
+On Wed, 19 Feb 2025 20:50:26 +0800 you wrote:
+> This patch series includes some netns-related improvements and fixes for
+> rtnetlink, to make link creation more intuitive:
+> 
+>  1) Creating link in another net namespace doesn't conflict with link
+>     names in current one.
+>  2) Refector rtnetlink link creation. Create link in target namespace
+>     directly.
+> 
+> [...]
 
-Reorder this so the menuconfig menu items remain alphabetically
-sorted.
+Here is the summary with links:
+  - [net-next,v10,01/13] rtnetlink: Lookup device in target netns when creating link
+    https://git.kernel.org/netdev/net-next/c/ec061546c6cf
+  - [net-next,v10,02/13] rtnetlink: Pack newlink() params into struct
+    https://git.kernel.org/netdev/net-next/c/69c7be1b903f
+  - [net-next,v10,03/13] net: Use link/peer netns in newlink() of rtnl_link_ops
+    https://git.kernel.org/netdev/net-next/c/cf517ac16ad9
+  - [net-next,v10,04/13] ieee802154: 6lowpan: Validate link netns in newlink() of rtnl_link_ops
+    https://git.kernel.org/netdev/net-next/c/3533717581dd
+  - [net-next,v10,05/13] net: ip_tunnel: Don't set tunnel->net in ip_tunnel_init()
+    https://git.kernel.org/netdev/net-next/c/9e17b2a1a097
+  - [net-next,v10,06/13] net: ip_tunnel: Use link netns in newlink() of rtnl_link_ops
+    https://git.kernel.org/netdev/net-next/c/eacb1160536e
+  - [net-next,v10,07/13] net: ipv6: Init tunnel link-netns before registering dev
+    https://git.kernel.org/netdev/net-next/c/db014522f356
+  - [net-next,v10,08/13] net: ipv6: Use link netns in newlink() of rtnl_link_ops
+    https://git.kernel.org/netdev/net-next/c/5e72ce3e3980
+  - [net-next,v10,09/13] net: xfrm: Use link netns in newlink() of rtnl_link_ops
+    https://git.kernel.org/netdev/net-next/c/5314e3d68455
+  - [net-next,v10,10/13] rtnetlink: Remove "net" from newlink params
+    https://git.kernel.org/netdev/net-next/c/9c0fc091dc01
+  - [net-next,v10,11/13] rtnetlink: Create link directly in target net namespace
+    https://git.kernel.org/netdev/net-next/c/7ca486d08a30
+  - [net-next,v10,12/13] selftests: net: Add python context manager for netns entering
+    https://git.kernel.org/netdev/net-next/c/030329416232
+  - [net-next,v10,13/13] selftests: net: Add test cases for link and peer netns
+    https://git.kernel.org/netdev/net-next/c/85cb3711acb8
 
-> +	depends on ARCH_SOPHGO || COMPILE_TEST
-> +	depends on PCI_MSI
-> +	depends on OF
-> +	select PCIE_DW_HOST
-> +	help
-> +	  Enables support for the DesignWare PCIe controller in the
-> +	  SOPHGO SoC.
-> +
->  config PCI_EXYNOS
->  	tristate "Samsung Exynos PCIe controller"
->  	depends on ARCH_EXYNOS || COMPILE_TEST
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * PCIe host controller driver for Sophgo SoCs.
 
-Looks too generic, since Chen Wang's series says Sophgo SG2042 SoC is
-Cadence-based, so this driver apparently doesn't cover all Sophgo
-SoCs.
-
-> + *
-
-Spurious blank line.
-
-> + */
-> +
-> +#include <linux/clk.h>
-> +#include <linux/gpio/consumer.h>
-> +#include <linux/irqchip/chained_irq.h>
-> +#include <linux/irqdomain.h>
-> +#include <linux/mfd/syscon.h>
-> +#include <linux/module.h>
-> +#include <linux/phy/phy.h>
-> +#include <linux/property.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/regmap.h>
-> +#include <linux/reset.h>
-> +
-> +#include "pcie-designware.h"
-> +
-> +#define to_sophgo_pcie(x)		dev_get_drvdata((x)->dev)
-> +
-> +#define PCIE_INT_SIGNAL			0xc48
-> +#define PCIE_INT_EN			0xca0
-> +
-> +#define PCIE_SIGNAL_INTX_SHIFT		5
-> +#define PCIE_INT_EN_INTX_SHIFT		1
-
-Define masks with GENMASK() and get rid of the _SHIFT #defines.
-
-> +#define PCIE_INT_EN_INT_SII		BIT(0)
-> +#define PCIE_INT_EN_INT_INTA		BIT(1)
-> +#define PCIE_INT_EN_INT_INTB		BIT(2)
-> +#define PCIE_INT_EN_INT_INTC		BIT(3)
-> +#define PCIE_INT_EN_INT_INTD		BIT(4)
-
-These are unused, drop them.
-
-> +#define PCIE_INT_EN_INT_MSI		BIT(5)
-> +
-> +struct sophgo_pcie {
-> +	struct dw_pcie pci;
-> +	void __iomem *app_base;
-> +	struct clk_bulk_data *clks;
-> +	unsigned int clk_cnt;
-> +	struct reset_control *rst;
-> +	struct irq_domain *irq_domain;
-
-Indent the member names to align vertically as most other drivers do.
-
-> +};
-> +
-> +static int sophgo_pcie_readl_app(struct sophgo_pcie *sophgo, u32 reg)
-> +{
-> +	return readl_relaxed(sophgo->app_base + reg);
-> +}
-> +
-> +static void sophgo_pcie_writel_app(struct sophgo_pcie *sophgo, u32 val, u32 reg)
-> +{
-> +	writel_relaxed(val, sophgo->app_base + reg);
-> +}
-> +
-> +static void sophgo_pcie_intx_handler(struct irq_desc *desc)
-> +{
-> +	struct dw_pcie_rp *pp = irq_desc_get_handler_data(desc);
-> +	struct irq_chip *chip = irq_desc_get_chip(desc);
-> +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-> +	struct sophgo_pcie *sophgo = to_sophgo_pcie(pci);
-> +	unsigned long hwirq = PCIE_SIGNAL_INTX_SHIFT;
-> +	unsigned long reg;
-> +
-> +	chained_irq_enter(chip, desc);
-> +
-> +	reg = sophgo_pcie_readl_app(sophgo, PCIE_INT_SIGNAL);
-> +
-> +	for_each_set_bit_from(hwirq, &reg, PCI_NUM_INTX + PCIE_SIGNAL_INTX_SHIFT)
-
-Use FIELD_GET() here and iterate through PCI_NUM_INTX.  Then you don't
-need for_each_set_bit_from() and shouldn't need PCIE_SIGNAL_INTX_SHIFT
-here and below.
-
-> +		generic_handle_domain_irq(sophgo->irq_domain,
-> +					  hwirq - PCIE_SIGNAL_INTX_SHIFT);
-> +
-> +	chained_irq_exit(chip, desc);
-> +}
-> +
-> +static void sophgo_intx_mask(struct irq_data *d)
-> +{
-> +	struct dw_pcie_rp *pp = irq_data_get_irq_chip_data(d);
-> +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-> +	struct sophgo_pcie *sophgo = to_sophgo_pcie(pci);
-> +	unsigned long flags;
-> +	u32 val;
-> +
-> +	raw_spin_lock_irqsave(&pp->lock, flags);
-> +
-> +	val = sophgo_pcie_readl_app(sophgo, PCIE_INT_EN);
-> +	val &= ~BIT(d->hwirq + PCIE_INT_EN_INTX_SHIFT);
-
-FIELD_PREP().
-
-> +	sophgo_pcie_writel_app(sophgo, val, PCIE_INT_EN);
-> +
-> +	raw_spin_unlock_irqrestore(&pp->lock, flags);
-> +};
-> +
-> +static void sophgo_intx_unmask(struct irq_data *d)
-> +{
-> +	struct dw_pcie_rp *pp = irq_data_get_irq_chip_data(d);
-> +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-> +	struct sophgo_pcie *sophgo = to_sophgo_pcie(pci);
-> +	unsigned long flags;
-> +	u32 val;
-> +
-> +	raw_spin_lock_irqsave(&pp->lock, flags);
-> +
-> +	val = sophgo_pcie_readl_app(sophgo, PCIE_INT_EN);
-> +	val |= BIT(d->hwirq + PCIE_INT_EN_INTX_SHIFT);
-
-Ditto.
-
-> +	sophgo_pcie_writel_app(sophgo, val, PCIE_INT_EN);
-> +
-> +	raw_spin_unlock_irqrestore(&pp->lock, flags);
-> +};
-> +
-> +static void sophgo_intx_eoi(struct irq_data *d)
-> +{
-> +}
-> +
-> +static struct irq_chip sophgo_intx_irq_chip = {
-> +	.name			= "INTx",
-> +	.irq_mask		= sophgo_intx_mask,
-> +	.irq_unmask		= sophgo_intx_unmask,
-> +	.irq_eoi		= sophgo_intx_eoi,
-
-Name these ending with the irq_chip field names, e.g.,
-sophgo_intx_irq_mask(), to make them easier to find with grep.
-
-Bjorn
 
