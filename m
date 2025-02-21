@@ -1,160 +1,249 @@
-Return-Path: <linux-kernel+bounces-526171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 805E3A3FB0F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:25:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 25598A3FB03
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:24:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91DA01895776
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:20:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 502C3188DE61
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:19:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4090215166;
-	Fri, 21 Feb 2025 16:15:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1407D2153D5;
+	Fri, 21 Feb 2025 16:14:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="HrFq2N6H"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sPClOD6z"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD747217F34;
-	Fri, 21 Feb 2025 16:15:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740154521; cv=pass; b=t+Al+Zr9MY1305FDOu9uIzcLTzKJqsz1MBpq6UCBN/ggpEXyDbOZta83FjdYyml+KFK+n6BPLcTt9pfARVDyOa7o9gv3HpeI/3TxFtcsUQwITb61EhdTmmdSTY01CqLgjIc7WIYCg9wvjDdSo18A3hoDoqUpqx/OZ5JDNWvGDhQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740154521; c=relaxed/simple;
-	bh=kq47C7Cj0lNqK5gVuD4iv3D6ANd/wMKGIASyMs4pBI8=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=uIBnKwum4Ft8rKH8bHOaKOfY0Iqg6YMQKxDQXJflbN4TXsVUecru2ifuAOi97yhHzbsfUIFa5CNk++fg5C3hJl8MWpBNHPvGbpb5xmANChd1acryDWd5f26OWmUWTpREBr2l7enZlHSQPK6ABBimKLhpD72SLAMDJ7uLK+uhcb8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=HrFq2N6H; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1740154482; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=axGHV7uyYSgur6jAbZ0Etq+z1vfX/8gV0yhdKRCEsvL/aRaXScGSPfUTYWGlflg3I3EaCy2is22lLWHFIhM1r+2EOe9zJZ990PTmBDflG64bfgrrb8w+01KvrtsrHU1qz8sNVIDx5Epa5ff44L0f9Ci12rG34fOH3TA0W9ya05g=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1740154482; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=QU4oftVAlwYPxLUQYSBkIID7nutOF48ooWl8p3gGC8U=; 
-	b=RvaHzRqNFevItfz77ByvGc2u0dwRmUQEWMgkQohPzULqL3YIn4Rv4p6w854LCks8FWClszYG6qGHd4JwXQ1Kl0Iyb/KvNkZxP2eF0DX51f/ORtZwjPDA4srqKxUEpksmqcb7A/1cOAw3HyKlZv0slxPOHNbAqBQWrBZHedMCrKU=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1740154482;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=QU4oftVAlwYPxLUQYSBkIID7nutOF48ooWl8p3gGC8U=;
-	b=HrFq2N6HUVJUM+27SbT1pFfXF7Sv0hwVKWfR2MX/YkUE9QsI3X8eTWfgHECI0zIH
-	c31QL3bPS0QL3Ah1Dv8hHZ6qHEim0t8KbW+LCr/gnws4o9HomBVixcqPh9Sv10umH68
-	zVFxMDJ5jeHXEEYxEGu70eucZdZYlBqFh24IHfFs=
-Received: by mx.zohomail.com with SMTPS id 1740154479024643.7915371630859;
-	Fri, 21 Feb 2025 08:14:39 -0800 (PST)
-Content-Type: text/plain;
-	charset=us-ascii
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A2CC1EE00F;
+	Fri, 21 Feb 2025 16:14:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740154481; cv=none; b=eYryS5jpvYOBEP6AxQwiFAu2WsQnDpVdDjtIKbIng9FVv7YVl8XeyDTF91sUha54Z/AUrQmUmahlBEuKic1XcHRVK8ws5HbmR114BHzw2HK6mANTPHlj4lEtWgEFW0UlvDVd1Xpqe7vmTp6BuF+FJeuCJ8tdRangEy0GWKRRVqM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740154481; c=relaxed/simple;
+	bh=q/yMBMdwqNmNiSClnWPOPMejBody9Qva2/76W4HT7EI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i39yRuu/2sGjyLPDZSdTYfEc2mGAnxgmZR4RMJ3322/ulFxf4kYwM7fC9Kj0wntiL5mS7rysVhZh8NT7yHuJZVUp4cttM9reQ5RQqub325WRQH51dGX+MOp0ObB/JpY9QzpFJEHG8ueMTcxDwG5d5DBds5UjsbJLUezeeT8mxF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sPClOD6z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5ED0FC4CED6;
+	Fri, 21 Feb 2025 16:14:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740154480;
+	bh=q/yMBMdwqNmNiSClnWPOPMejBody9Qva2/76W4HT7EI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sPClOD6zeSze3Efb3J7FdxYeonBw/ZPIgJsjIkgV/e8eDMdzEc4gLeah+T0vHXcl+
+	 M96IEfW7tqQceZEVh9LNpj/pE0B4hwgriUUGyDv9HVHWONOmPJ4P56FubkG4Mg6PVg
+	 9NUPDfgFh81BmgQFtQoAveLI7nG9ikSClsCYWgMnD6sE2ka2ZAWghoB084lQ6Urjzi
+	 v+1YeIXwt/dGaXAochvXBu1lpAtqvVWgOXD6JY1eM/vuCHMVvGxwfv5MGMTTxO8NXu
+	 LGfcorQH+vkjtbrshSiBKxXTwjAlxWoOXbJcJuNBKd0MPlOv5TFBDEudpsoTJB5CAQ
+	 5IvxCe+VkI/Dw==
+Date: Fri, 21 Feb 2025 17:14:33 +0100
+From: Danilo Krummrich <dakr@kernel.org>
+To: Tamir Duberstein <tamird@gmail.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Matthew Wilcox <willy@infradead.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	FUJITA Tomonori <fujita.tomonori@gmail.com>,
+	"Rob Herring (Arm)" <robh@kernel.org>,
+	=?iso-8859-1?Q?Ma=EDra?= Canal <mcanal@igalia.com>,
+	Asahi Lina <lina@asahilina.net>, rust-for-linux@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org
+Subject: Re: [PATCH v17 2/3] rust: xarray: Add an abstraction for XArray
+Message-ID: <Z7imafmrrK0_TO65@pollux>
+References: <20250218-rust-xarray-bindings-v17-0-f3a99196e538@gmail.com>
+ <20250218-rust-xarray-bindings-v17-2-f3a99196e538@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.300.87.4.3\))
-Subject: Re: [PATCH v7 4/6] rust: str: implement `strip_prefix` for `BStr`
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <20250218-module-params-v3-v7-4-5e1afabcac1b@kernel.org>
-Date: Fri, 21 Feb 2025 13:14:21 -0300
-Cc: Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- Masahiro Yamada <masahiroy@kernel.org>,
- Nathan Chancellor <nathan@kernel.org>,
- Nicolas Schier <nicolas@fjasle.eu>,
- Luis Chamberlain <mcgrof@kernel.org>,
- rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Adam Bratschi-Kaye <ark.email@gmail.com>,
- linux-kbuild@vger.kernel.org,
- Petr Pavlu <petr.pavlu@suse.com>,
- Sami Tolvanen <samitolvanen@google.com>,
- Daniel Gomez <da.gomez@samsung.com>,
- Simona Vetter <simona.vetter@ffwll.ch>,
- Greg KH <gregkh@linuxfoundation.org>,
- linux-modules@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <1723B7FD-5929-4C64-8DB3-671C74D97468@collabora.com>
-References: <20250218-module-params-v3-v7-0-5e1afabcac1b@kernel.org>
- <20250218-module-params-v3-v7-4-5e1afabcac1b@kernel.org>
-To: Andreas Hindborg <a.hindborg@kernel.org>
-X-Mailer: Apple Mail (2.3826.300.87.4.3)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250218-rust-xarray-bindings-v17-2-f3a99196e538@gmail.com>
 
-Hi Andreas,
-
-> On 18 Feb 2025, at 10:00, Andreas Hindborg <a.hindborg@kernel.org> =
-wrote:
->=20
-> Implement `strip_prefix` for `BStr` by deferring to =
-`slice::strip_prefix`
-> on the underlying `&[u8]`.
->=20
-> Reviewed-by: Gary Guo <gary@garyguo.net>
-> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
-> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
-> ---
->=20
-> It is also possible to get this method by implementing
-> `core::slice::SlicePattern` for `BStr`. `SlicePattern` is unstable, so =
-this
-> seems more reasonable.
-> ---
-> rust/kernel/str.rs | 16 ++++++++++++++++
-> 1 file changed, 16 insertions(+)
->=20
-> diff --git a/rust/kernel/str.rs b/rust/kernel/str.rs
-> index c6bd2c69543dc..db272d2198fcc 100644
-> --- a/rust/kernel/str.rs
-> +++ b/rust/kernel/str.rs
-> @@ -31,6 +31,22 @@ pub const fn from_bytes(bytes: &[u8]) -> &Self {
->         // SAFETY: `BStr` is transparent to `[u8]`.
->         unsafe { &*(bytes as *const [u8] as *const BStr) }
->     }
+On Tue, Feb 18, 2025 at 09:37:44AM -0500, Tamir Duberstein wrote:
+> +/// An array which efficiently maps sparse integer indices to owned objects.
+> +///
+> +/// This is similar to a [`crate::alloc::kvec::Vec<Option<T>>`], but more efficient when there are
+> +/// holes in the index space, and can be efficiently grown.
+> +///
+> +/// # Invariants
+> +///
+> +/// `self.xa` is always an initialized and valid [`bindings::xarray`] whose entries are either
+> +/// `XA_ZERO_ENTRY` or came from `T::into_foreign`.
+> +///
+> +/// # Examples
+> +///
+> +/// ```rust
+> +/// use kernel::alloc::KBox;
+> +/// use kernel::xarray::{AllocKind, XArray};
+> +///
+> +/// let xa = KBox::pin_init(XArray::new(AllocKind::Alloc1), GFP_KERNEL)?;
+> +///
+> +/// let dead = KBox::new(0xdead, GFP_KERNEL)?;
+> +/// let beef = KBox::new(0xbeef, GFP_KERNEL)?;
+> +///
+> +/// let mut guard = xa.lock();
+> +///
+> +/// assert_eq!(guard.get(0), None);
+> +///
+> +/// assert_eq!(guard.store(0, dead, GFP_KERNEL)?.as_deref(), None);
+> +/// assert_eq!(guard.get(0).copied(), Some(0xdead));
+> +///
+> +/// *guard.get_mut(0).unwrap() = 0xffff;
+> +/// assert_eq!(guard.get(0).copied(), Some(0xffff));
+> +///
+> +/// assert_eq!(guard.store(0, beef, GFP_KERNEL)?.as_deref().copied(), Some(0xffff));
+> +/// assert_eq!(guard.get(0).copied(), Some(0xbeef));
+> +///
+> +/// guard.remove(0);
+> +/// assert_eq!(guard.get(0), None);
+> +///
+> +/// # Ok::<(), Error>(())
+> +/// ```
+> +#[pin_data(PinnedDrop)]
+> +pub struct XArray<T: ForeignOwnable> {
+> +    #[pin]
+> +    xa: Opaque<bindings::xarray>,
+> +    _p: PhantomData<T>,
+> +}
 > +
-> +    /// Strip a prefix from `self`. Delegates to =
-[`slice::strip_prefix`].
-> +    ///
-> +    /// # Example
-> +    /// ```
-> +    /// use kernel::b_str;
-> +    /// assert_eq!(Some(b_str!("bar")), =
-b_str!("foobar").strip_prefix(b_str!("foo")));
-> +    /// assert_eq!(None, =
-b_str!("foobar").strip_prefix(b_str!("bar")));
-> +    /// assert_eq!(Some(b_str!("foobar")), =
-b_str!("foobar").strip_prefix(b_str!("")));
-> +    /// assert_eq!(Some(b_str!("")), =
-b_str!("foobar").strip_prefix(b_str!("foobar")));
-> +    /// ```
 
-This is passing.
+[...]
 
-> +    pub fn strip_prefix(&self, pattern: impl AsRef<Self>) -> =
-Option<&BStr> {
-> +        self.deref()
-> +            .strip_prefix(pattern.as_ref().deref())
-> +            .map(Self::from_bytes)
+> +
+> +impl<T: ForeignOwnable> XArray<T> {
+> +    /// Creates a new [`XArray`].
+> +    pub fn new(kind: AllocKind) -> impl PinInit<Self> {
+> +        let flags = match kind {
+> +            AllocKind::Alloc => bindings::XA_FLAGS_ALLOC,
+> +            AllocKind::Alloc1 => bindings::XA_FLAGS_ALLOC1,
+> +        };
+> +        pin_init!(Self {
+> +            // SAFETY: `xa` is valid while the closure is called.
+> +            xa <- Opaque::ffi_init(|xa| unsafe {
+> +                bindings::xa_init_flags(xa, flags)
+> +            }),
+> +            _p: PhantomData,
+> +        })
+
+I think this needs an `INVARIANT` comment.
+
+[...]
+
+> +/// The error returned by [`store`](Guard::store).
+> +///
+> +/// Contains the underlying error and the value that was not stored.
+> +pub struct StoreError<T> {
+> +    /// The error that occurred.
+> +    pub error: Error,
+> +    /// The value that was not stored.
+> +    pub value: T,
+> +}
+> +
+> +impl<T> From<StoreError<T>> for Error {
+> +    fn from(value: StoreError<T>) -> Self {
+> +        let StoreError { error, value: _ } = value;
+> +        error
 > +    }
-> }
->=20
-> impl fmt::Display for BStr {
->=20
-> --=20
-> 2.47.0
->=20
->=20
 
-Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>=
+Still think this should just be `value.error`.
+
+If it is important to especially point out that `value` is dropped, maybe a
+comment is the better option.
+
+IMHO, adding additionally code here just throws up questions on why that
+additional code is needed.
+
+> +}
+> +
+> +impl<'a, T: ForeignOwnable> Guard<'a, T> {
+> +    fn load<F, U>(&self, index: usize, f: F) -> Option<U>
+> +    where
+> +        F: FnOnce(NonNull<T::PointedTo>) -> U,
+> +    {
+> +        // SAFETY: `self.xa.xa` is always valid by the type invariant.
+> +        let ptr = unsafe { bindings::xa_load(self.xa.xa.get(), index) };
+> +        let ptr = NonNull::new(ptr.cast())?;
+> +        Some(f(ptr))
+> +    }
+> +
+> +    /// Provides a reference to the element at the given index.
+> +    pub fn get(&self, index: usize) -> Option<T::Borrowed<'_>> {
+> +        self.load(index, |ptr| {
+> +            // SAFETY: `ptr` came from `T::into_foreign`.
+> +            unsafe { T::borrow(ptr.as_ptr()) }
+> +        })
+> +    }
+> +
+> +    /// Provides a mutable reference to the element at the given index.
+> +    pub fn get_mut(&mut self, index: usize) -> Option<T::BorrowedMut<'_>> {
+> +        self.load(index, |ptr| {
+> +            // SAFETY: `ptr` came from `T::into_foreign`.
+> +            unsafe { T::borrow_mut(ptr.as_ptr()) }
+> +        })
+> +    }
+> +
+> +    /// Removes and returns the element at the given index.
+> +    pub fn remove(&mut self, index: usize) -> Option<T> {
+> +        // SAFETY: `self.xa.xa` is always valid by the type invariant.
+> +        //
+> +        // SAFETY: The caller holds the lock.
+
+I think we only want one `SAFETY` section with an enumeration.
+
+> +        let ptr = unsafe { bindings::__xa_erase(self.xa.xa.get(), index) }.cast();
+> +        // SAFETY: `ptr` is either NULL or came from `T::into_foreign`.
+> +        //
+> +        // SAFETY: `&mut self` guarantees that the lifetimes of [`T::Borrowed`] and
+> +        // [`T::BorrowedMut`] borrowed from `self` have ended.
+
+Same here...
+
+> +        unsafe { T::try_from_foreign(ptr) }
+> +    }
+> +
+> +    /// Stores an element at the given index.
+> +    ///
+> +    /// May drop the lock if needed to allocate memory, and then reacquire it afterwards.
+> +    ///
+> +    /// On success, returns the element which was previously at the given index.
+> +    ///
+> +    /// On failure, returns the element which was attempted to be stored.
+> +    pub fn store(
+> +        &mut self,
+> +        index: usize,
+> +        value: T,
+> +        gfp: alloc::Flags,
+> +    ) -> Result<Option<T>, StoreError<T>> {
+> +        build_assert!(
+> +            mem::align_of::<T::PointedTo>() >= 4,
+> +            "pointers stored in XArray must be 4-byte aligned"
+> +        );
+> +        let new = value.into_foreign();
+> +
+> +        let old = {
+> +            let new = new.cast();
+> +            // SAFETY: `self.xa.xa` is always valid by the type invariant.
+> +            //
+> +            // SAFETY: The caller holds the lock.
+
+...and here.
+
+> +            //
+> +            // INVARIANT: `new` came from `T::into_foreign`.
+> +            unsafe { bindings::__xa_store(self.xa.xa.get(), index, new, gfp.as_raw()) }
+> +        };
 
