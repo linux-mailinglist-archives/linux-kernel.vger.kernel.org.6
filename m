@@ -1,186 +1,149 @@
-Return-Path: <linux-kernel+bounces-525631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24012A3F28A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 11:53:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CA0FA3F28C
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 11:53:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C7067014EB
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:53:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E315C700846
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:53:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D8192080F0;
-	Fri, 21 Feb 2025 10:52:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B2A82080FB;
+	Fri, 21 Feb 2025 10:53:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="oUyT6HG1"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="vU5DB26Q"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AA382080EB;
-	Fri, 21 Feb 2025 10:52:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ADD8207E1A;
+	Fri, 21 Feb 2025 10:53:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740135175; cv=none; b=kWPoMeseKtZqQndg1cubbOgJtGR/BkwnZSLasw4nTsfpGdz0tcqTJk7gVn+0aK+Jpi80Pm4Do7xcZRy7BNKmXcuDQfH0PDIlIpjakIqQBiQ98Ct9UJBFAtPHhlKdmBBuMOjKt3k4xqjn15FHCfCGdHsSFpY7G30wh6513U6ZXg4=
+	t=1740135185; cv=none; b=bM4sAQ6K41OJfnF8BUhl47RNN4FuUU/Wxg85d5YDqo4Kc9TJdFm/wmAjvk70bvIQo3OeRjBB32GTbN/cc1oJ3asuBgy8YSRoAEpYeknfz4waNqQs4iGi41BxWHttmO2GIGxeX1BVaYk2n4tqGJigv0DGQycjX+7phjOEkw9C1H8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740135175; c=relaxed/simple;
-	bh=+gXyMKP4eqelr1/DZw83xU4JeHFeZslRcR2URBsx/s4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=MtnOtbAOL34F90PoHVlsDN+/v4yaUQ7acVJZULBrCTJRkvlSOhu/h0TAAfrVgHCxRIsfw5lcEpccK9RNA4s900sJ/EoG90gaKEWHWTUEtA4t/TAqx6hp5b5VutpTHNRjhMTtbIU7Qk2N/Tg9d+RnqHiTtZLwkTzBGdemTKhIZFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=oUyT6HG1; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from mail.ideasonboard.com (unknown [IPv6:2401:4900:1c30:4abb:6de5:9248:813e:8db3])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 3CCAC2EC;
-	Fri, 21 Feb 2025 11:51:27 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1740135088;
-	bh=+gXyMKP4eqelr1/DZw83xU4JeHFeZslRcR2URBsx/s4=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=oUyT6HG1lFdbZAkvGkYmnJ3D6UYOW9rnlOfAv9gjYiQaM0aa1V1H+aA00fHojFlJa
-	 2M4jL29v6FK2y5xDpWO8BZlUPxV2TWprrq8mFS8RPJNHtumPKCqIdGHSdOPv1hk+MQ
-	 1/Ft2Gz8KO0kaCJBQ1gT7suXq+Eh1w24IYJ64cAk=
-From: Jai Luthra <jai.luthra@ideasonboard.com>
-Date: Fri, 21 Feb 2025 16:22:15 +0530
-Subject: [PATCH v2 3/3] media: i2c: imx219: Only use higher LLP_MIN for
- binned resolutions
+	s=arc-20240116; t=1740135185; c=relaxed/simple;
+	bh=ufpR1Z4H9TVwVTNUILXf2+amecfAuuE+k/9g3eWjpg0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eN5QdnKLmb7zTSLFO/TG3TpA2QKrhMTV19y2hO+ULLSeIIgt8Q5hbKo+G23rCunenqcrDlZXSxfBxcRu2CEQG+mpDsNVFlf0j/MPWUjY2jDkWBdHCpP69LP0CKx894WzT35Ov5t0ua0urMZQGJ/N02K4VPtdxdAtZfLHoEylbg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=vU5DB26Q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D5A7C4CED6;
+	Fri, 21 Feb 2025 10:53:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1740135184;
+	bh=ufpR1Z4H9TVwVTNUILXf2+amecfAuuE+k/9g3eWjpg0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=vU5DB26QL8qs89mxe6DjMiVhcwTw+2MtCEgW81lDtX9imv6ay8jhnH4XmXvmTAYaA
+	 4LYqNgX9b8CExx0jwJW4k8933LRYigZspUvRVH5JuJHKl0xfHgsR+Gb7g5qQaOnTwt
+	 HwIUzZ1YUJksMidSgfJ52DTTu4ed5RFWVKqKehAY=
+Date: Fri, 21 Feb 2025 11:53:01 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Akshay Gujar <Akshay.Gujar@harman.com>
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	naveen.v@harman.com, sankarkumar.krishnasamy@harman.com
+Subject: Re: [PATCH] usb: core: notify unrecognized usb device
+Message-ID: <2025022131-silo-impeach-3f24@gregkh>
+References: <20250221102949.1135849-1-Akshay.Gujar@harman.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250221-imx219_fixes_v2-v2-3-a72154c7c267@ideasonboard.com>
-References: <20250221-imx219_fixes_v2-v2-0-a72154c7c267@ideasonboard.com>
-In-Reply-To: <20250221-imx219_fixes_v2-v2-0-a72154c7c267@ideasonboard.com>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>, 
- Dave Stevenson <dave.stevenson@raspberrypi.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Jacopo Mondi <jacopo.mondi@ideasonboard.com>, 
- Jai Luthra <jai.luthra@ideasonboard.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3695;
- i=jai.luthra@ideasonboard.com; h=from:subject:message-id;
- bh=+gXyMKP4eqelr1/DZw83xU4JeHFeZslRcR2URBsx/s4=;
- b=owEBbQKS/ZANAwAIAUPekfkkmnFFAcsmYgBnuFrh7GtYwEG0TFfU/M83dvMDvJZUtPfVEMqtc
- Flm5AQmK9aJAjMEAAEIAB0WIQRN4NgY5dV16NRar8VD3pH5JJpxRQUCZ7ha4QAKCRBD3pH5JJpx
- RanrD/90AtR5Sx32KLuJBVzCGpjYHYdiomkRcqBgQNEEUk3cTYrY/OsTY8GxAIg9yrnyBvREvrM
- 8Z/BTPXEFexHrAMpuADugaPzSGUbJIsrksZoSnM+aSdbkIUVoMOOY5OCAjrk4+F8knHhvLKO1iZ
- THUBAabXF9aW6YRiUwor4mXzsBMIj6RFT9vILkR+dfujggKsJka45MpHPNi9V6dJX6FNoFEWGwR
- uHWJD8yZOJifZGfI7c1wWuv5Xuzt0aj5dHM3DlVD+ASC338O1EQHKy7ey2b+Iak98hJkU0AIK8g
- CBcmi1V9DtvCgoipLYuHxui+9xyDeZvYoi+tbl1BKPRlvGsuU9/i7mSx5c4NjVtY/JhY7VWS91w
- MVx4ShOgzcLkOs2yj1Igq4GUM7A/eGcybDqtusP3nhYk292HSIKy0Fdxv+0huu3IbQVePwx2AV0
- X7bTz2Re72b6Y18PxuBu/aCExKKySRvBbI6V+IN1jZhlXbpGcGJeVogmaZE9y4uoem1/c1hQUvj
- cnS/RMCrg+iU6gejptuejtpdQgxuNhmnA8bB3f9ChH+39/DQkB3cwtipGOrxpzLAjV2U2R+6Lst
- raxO4Drgl4oBg/B9w9YXIywnbU1L8JgNXpbNiSQZKxEGN25OlySGMqeAahMIRoLGzXKZrD7pdLd
- 8AZvLPMhFkGzhOg==
-X-Developer-Key: i=jai.luthra@ideasonboard.com; a=openpgp;
- fpr=4DE0D818E5D575E8D45AAFC543DE91F9249A7145
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250221102949.1135849-1-Akshay.Gujar@harman.com>
 
-The LLP_MIN of 3560 is only needed to fix artefacts seen with binned
-resolutions. As increasing the LLP reduces the highest possible
-framerate by ~3%, use the old default minimum of 3448 if we are not
-doing 2x2 analog binning.
+On Fri, Feb 21, 2025 at 10:29:49AM +0000, Akshay Gujar wrote:
+> Description: To send uevent for unrecognized device connected on system.
 
-Also restore the fll_def value for non-binned modes in the modes
-definition to restore the default mode framerate to 30fps.
+Odd format here, have you read the documentation of the kernel process
+in how to write a changelog?  I recommend a quick glance at the section
+"The canonical patch format" in the kernel file,
+Documentation/process/submitting-patches.rst for details.
 
-Suggested-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Link: https://lore.kernel.org/linux-media/CAPY8ntC1-S6zKtDvmc6EgyxP+j6rTShuG8Dr8PKb9XQr2PeS_w@mail.gmail.com/
-Signed-off-by: Jai Luthra <jai.luthra@ideasonboard.com>
----
-Changes in v2:
-    - Fix the binning check, and only update the LLP minimum if we are
-      doing analog binning
-    - Add a note in the commit message for the fll_def value reverts
----
- drivers/media/i2c/imx219.c | 28 +++++++++++++++++++---------
- 1 file changed, 19 insertions(+), 9 deletions(-)
+> As per the usb compliance, USB-IF enforces a "no silent failure" rule.
+> This means that an implementation of USB must not appear broken to the
+> consumer. In configurations where the consumer's expectations are not
+> met, either the peripheral or host must provide appropriate and useful
+> feedback to the consumer regarding the problem.
+> 
+> Link: https://compliance.usb.org/index.asp?UpdateFile=Embedded%20Host&Format=Standard#10
 
-diff --git a/drivers/media/i2c/imx219.c b/drivers/media/i2c/imx219.c
-index 2081822533f9dff0a1ca93a09dd8333ec4043645..ec8d32b0f9e75b4b14d905b1e6b85180e5697ce1 100644
---- a/drivers/media/i2c/imx219.c
-+++ b/drivers/media/i2c/imx219.c
-@@ -74,7 +74,8 @@
- #define IMX219_FLL_MAX			0xffff
- #define IMX219_VBLANK_MIN		32
- #define IMX219_REG_LINE_LENGTH_A	CCI_REG16(0x0162)
--#define IMX219_LLP_MIN			0x0de8
-+#define IMX219_LLP_MIN			0x0d78
-+#define IMX219_BINNED_LLP_MIN		0x0de8
- #define IMX219_LLP_MAX			0x7ff0
- 
- #define IMX219_REG_X_ADD_STA_A		CCI_REG16(0x0164)
-@@ -311,13 +312,13 @@ static const struct imx219_mode supported_modes[] = {
- 		/* 8MPix 15fps mode */
- 		.width = 3280,
- 		.height = 2464,
--		.fll_def = 3415,
-+		.fll_def = 3526,
- 	},
- 	{
- 		/* 1080P 30fps cropped */
- 		.width = 1920,
- 		.height = 1080,
--		.fll_def = 1707,
-+		.fll_def = 1763,
- 	},
- 	{
- 		/* 2x2 binned 60fps mode */
-@@ -865,7 +866,7 @@ static int imx219_set_pad_format(struct v4l2_subdev *sd,
- 	const struct imx219_mode *mode;
- 	struct v4l2_mbus_framefmt *format;
- 	struct v4l2_rect *crop;
--	unsigned int bin_h, bin_v;
-+	u8 bin_h, bin_v;
- 	u32 prev_line_len;
- 
- 	format = v4l2_subdev_state_get_format(state, 0);
-@@ -895,7 +896,7 @@ static int imx219_set_pad_format(struct v4l2_subdev *sd,
- 	if (fmt->which == V4L2_SUBDEV_FORMAT_ACTIVE) {
- 		int exposure_max;
- 		int exposure_def;
--		int hblank;
-+		int hblank, llp_min;
- 		int pixel_rate;
- 
- 		/* Update limits and set FPS to default */
-@@ -912,6 +913,19 @@ static int imx219_set_pad_format(struct v4l2_subdev *sd,
- 					 imx219->exposure->minimum,
- 					 exposure_max, imx219->exposure->step,
- 					 exposure_def);
-+
-+		/*
-+		 * With analog binning the default minimum line length of 3448
-+		 * can cause artefacts with RAW10 formats, because the ADC
-+		 * operates on two lines together. So we switch to a higher
-+		 * minimum of 3560.
-+		 */
-+		imx219_get_binning(state, &bin_h, &bin_v);
-+		llp_min = (bin_h & bin_v) == IMX219_BINNING_X2_ANALOG ?
-+				  IMX219_BINNED_LLP_MIN : IMX219_LLP_MIN;
-+		__v4l2_ctrl_modify_range(imx219->hblank, llp_min - mode->width,
-+					 IMX219_LLP_MAX - mode->width, 1,
-+					 llp_min - mode->width);
- 		/*
- 		 * Retain PPL setting from previous mode so that the
- 		 * line time does not change on a mode change.
-@@ -920,10 +934,6 @@ static int imx219_set_pad_format(struct v4l2_subdev *sd,
- 		 * mode width subtracted.
- 		 */
- 		hblank = prev_line_len - mode->width;
--		__v4l2_ctrl_modify_range(imx219->hblank,
--					 IMX219_LLP_MIN - mode->width,
--					 IMX219_LLP_MAX - mode->width, 1,
--					 IMX219_LLP_MIN - mode->width);
- 		__v4l2_ctrl_s_ctrl(imx219->hblank, hblank);
- 
- 		/* Scale the pixel rate based on the mode specific factor */
+Odd, many Linux devices have passed usb-if testing since 2005 when this
+was made a "rule", how did that happen?  What recently changed to
+suddenly require this be a kernel issue?
 
--- 
-2.48.1
+And does usb-if even matter these days?  You do know what they think
+about Linux overall, right (hint, they kicked us out from
+participating...) so why should we follow their "requirements" when they
+do not allow us to even participate or provide feedback when they create
+them?
 
+> Signed-off-by: Akshay Gujar <Akshay.Gujar@harman.com>
+> ---
+>  drivers/usb/core/hub.c | 24 +++++++++++++++++++++++-
+>  1 file changed, 23 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
+> index c3f839637..d00129b59 100644
+> --- a/drivers/usb/core/hub.c
+> +++ b/drivers/usb/core/hub.c
+> @@ -5343,6 +5343,26 @@ static int descriptors_changed(struct usb_device *udev,
+>  	return changed;
+>  }
+>  
+> +static void unrecognized_usb_device_notify(struct usb_port *port_dev)
+> +{
+> +	char *envp[2] = { NULL, NULL };
+> +	struct device *hub_dev;
+> +
+> +	hub_dev = port_dev->dev.parent;
+> +
+> +	if (!hub_dev)
+> +		return;
+
+How can this be true?
+
+> +
+> +	envp[0] = kasprintf(GFP_KERNEL, "UNRECOGNIZED_USB_DEVICE_ON_PORT=%s",
+> +				kobject_name(&port_dev->dev.kobj));
+
+Hint, if a driver ever starts calling into kobject or sysfs functions,
+usually something is wrong.  This should just use dev_name(), right?
+
+> +	if (!envp[0])
+> +		return;
+> +
+> +	kobject_uevent_env(&hub_dev->kobj, KOBJ_CHANGE, envp);
+
+Where is this new uevent documented?  What userspace tool will see this
+and do something about it?  How was this tested?
+
+> +
+> +	kfree(envp[0]);
+> +}
+> +
+>  static void hub_port_connect(struct usb_hub *hub, int port1, u16 portstatus,
+>  		u16 portchange)
+>  {
+> @@ -5569,9 +5589,11 @@ static void hub_port_connect(struct usb_hub *hub, int port1, u16 portstatus,
+>  	if (hub->hdev->parent ||
+>  			!hcd->driver->port_handed_over ||
+>  			!(hcd->driver->port_handed_over)(hcd, port1)) {
+> -		if (status != -ENOTCONN && status != -ENODEV)
+> +		if (status != -ENOTCONN && status != -ENODEV) {
+>  			dev_err(&port_dev->dev,
+>  					"unable to enumerate USB device\n");
+> +			unrecognized_usb_device_notify(port_dev);
+
+This is only if a hub acts up with talking to a device, it does not mean
+the device was not supported at all.  So this isn't going to meet the
+standard that you describe above.  Userspace is really the only thing
+that can know if a device is "supported" or not, not the kernel.
+
+thanks,
+
+greg k-h
 
