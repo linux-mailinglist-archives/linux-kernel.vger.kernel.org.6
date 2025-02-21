@@ -1,159 +1,88 @@
-Return-Path: <linux-kernel+bounces-525107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 236B1A3EADB
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 03:39:22 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48C2BA3EAE4
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 03:50:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97B8B3B7260
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 02:39:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D8C642282C
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 02:50:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 310501D517E;
-	Fri, 21 Feb 2025 02:39:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 486461D514C;
+	Fri, 21 Feb 2025 02:50:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="SdXS1/bA"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D7461367;
-	Fri, 21 Feb 2025 02:39:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="bS3XDmJS"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E917A442F;
+	Fri, 21 Feb 2025 02:50:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740105555; cv=none; b=mJUQHKgKieS30+/iQS7AkkxMxUckAGk5G+dBHxlAfxlNZyKMXKFq0RIrEl08chkeHcAc0bE2Q9OTtkeae/jW2LV4M5YT8b1CGTPAvvj/Ts7pwbcxmHRKDYGLMYrrwhhsgFFJ1YRh1Dt+6SoyRp/bI4HYx3wxvU8TgzwKVMvpOlM=
+	t=1740106244; cv=none; b=BE0eu79AARy6CRkRGn5btoYgdyvKmsLQninmn5g0Va6j10AdSUZi9l1vKQ9KGuUb5NPVu7uyCiLfYiZkw9mCTV2IJnAYI3noteQActyeZ4bCFsFWPOHDpGB+cgPmCYNU3/G8cRVIIaFfq3l71RKEpRiTGs5xcCoahOCmcjwCZFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740105555; c=relaxed/simple;
-	bh=iTC7ITf6jOnAo+xKK1w+9w/KAcoJxPAdKeNh+df0Fx0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PvA5AQ58ww2f3ELiEjREjn4wefTuShuhBfkXwUzjQmb9J25Jsg3L23EWl7KffU4SGMnnQfA6sQxqj7CriLDTvJs2jf61KTdKfwMe/zD14vK1MvJV9SYr9/s5CWuCmM0LOwGf+7DWSqbRG2jzjEU1RR4iiqmRFFIMKEKjROJLOW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=SdXS1/bA; arc=none smtp.client-ip=117.135.210.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=/f7AI
-	zZ1TrU8hxNz23pogo7bbfU7wlUsam29chQ5ZDA=; b=SdXS1/bA0fqGHJD2/ax5A
-	I9wuwLqoZ+6XARK2wL/z9D1w0wgrDe5foMkWL91nsCAsJ3zhsd+RLtQDKYuyqJea
-	nP1D0NAPKwSdGZTtpibi73kdVU95fYLpFIjUNzopGapU4O/aRQUaLtys9HYYV202
-	J7rAfW/b6EEtucxhnSPqqs=
-Received: from icess-ProLiant-DL380-Gen10.. (unknown [])
-	by gzsmtp1 (Coremail) with SMTP id PCgvCgDHnpc457dn82KsEg--.4363S4;
-	Fri, 21 Feb 2025 10:38:49 +0800 (CST)
-From: Haoxiang Li <haoxiang_li2024@163.com>
-To: jani.nikula@linux.intel.com,
-	rodrigo.vivi@intel.com,
-	joonas.lahtinen@linux.intel.com,
-	tursulin@ursulin.net,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	gustavo.sousa@intel.com
-Cc: intel-gfx@lists.freedesktop.org,
-	intel-xe@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Haoxiang Li <haoxiang_li2024@163.com>,
-	stable@vger.kernel.org
-Subject: [PATCH v2] drm/i915/display: Add check for alloc_ordered_workqueue() and alloc_workqueue()
-Date: Fri, 21 Feb 2025 10:38:46 +0800
-Message-Id: <20250221023846.2727311-1-haoxiang_li2024@163.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1740106244; c=relaxed/simple;
+	bh=UnJlIFv0UPUzNd+Vm3edQcV3c4YlHIanESgLP3djvo0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=XhpBAnfagB6CNJYk+rW2BtXsBvsJsSdetbB4UK2LyGaQSypv6Iql4o5BcmSfbJUtjQdvAC0f699hEKFWYRTyM8x6Pxc/BgpuUzhWKLvmEC+qH8ifD5p9iPlfSxEDpC74Yf+fwmEvvNmgnyRVBx3RSWh2QxvdLR/R7aKgWk6qNfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=bS3XDmJS; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=codeconstruct.com.au; s=2022a; t=1740106233;
+	bh=UnJlIFv0UPUzNd+Vm3edQcV3c4YlHIanESgLP3djvo0=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References;
+	b=bS3XDmJSaRwxBcjtYnMTwIb+H/BxFKEtm3Pk7VaDsbV19owr6Q+j1opLuCdtqhQjD
+	 6+dx3TMF4X+YLGT3ur3e/AynpgFoaPBP+vI223VEgbjjCuBxhzUe2/vHDgY8UUS0cH
+	 tpBvqc2ZQBtmnsdWHuqYkOS0I56/E++xdqSsN1+TrdBmEqzThNE3Mt9bOaUCZdn5W/
+	 WdhUezPTM4PI7OoUGenB05aasczV9qn3O4nKodwZiLdtHvP0rDpANhShljodZzXkja
+	 OkbLOh5h3ULoqcIbv8eNIuBjrOS2om0ynANUpLZCNQDTt2xg1fj4v7QJ7m0hoFy9Ec
+	 7ljKn+ys0IO6Q==
+Received: from [192.168.53.88] (ppp118-210-81-188.adl-adc-lon-bras32.tpg.internode.on.net [118.210.81.188])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 59BAE76B4D;
+	Fri, 21 Feb 2025 10:50:29 +0800 (AWST)
+Message-ID: <eec1e53185baeed99e5e0c86875f121ab4d25fd1.camel@codeconstruct.com.au>
+Subject: Re: [PATCH v5] ARM: dts: aspeed: yosemite4: add I3C config in DTS
+From: Andrew Jeffery <andrew@codeconstruct.com.au>
+To: Delphine CC Chiu <delphine_cc_chiu@wiwynn.com>, patrick@stwcx.xyz, Rob
+ Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
+ Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>
+Cc: MarshallZhan-wiwynn <marshall_zhan@wiwynn.com>, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Date: Fri, 21 Feb 2025 13:20:28 +1030
+In-Reply-To: <20250220023233.1686419-1-delphine_cc_chiu@wiwynn.com>
+References: <20250220023233.1686419-1-delphine_cc_chiu@wiwynn.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:PCgvCgDHnpc457dn82KsEg--.4363S4
-X-Coremail-Antispam: 1Uf129KBjvJXoWxAF4xGw1xAF18WrykKryfZwb_yoW5Ar17pa
-	1fXFyUAFW5XFs2kay7Xa18uFyxW3409w15GF1fC3Wqq3WUAw4qg3W09F1UXryDGF1xXF1f
-	AFWqyF429r1qkF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0piPCztUUUUU=
-X-CM-SenderInfo: xkdr5xpdqjszblsqjki6rwjhhfrp/1tbiqBf5bme23pywzwADsH
 
-Add check for the return value of alloc_ordered_workqueue()
-and alloc_workqueue(). Furthermore, if some allocations fail,
-cleanup works are added to avoid potential memory leak problem.
+Hi,
 
-Fixes: 40053823baad ("drm/i915/display: move modeset probe/remove functions to intel_display_driver.c")
-Cc: stable@vger.kernel.org
-Signed-off-by: Haoxiang Li <haoxiang_li2024@163.com>
----
-Changes in v2:
-- Split the compound conditional statement into separate
-  conditional statements to facilitate cleanup works.
-- Add cleanup works to destory work queues if allocations fail,
-  and modify the later goto destination to do the full excercise. 
-- modify the patch description. Thanks, Jani!
----
- .../drm/i915/display/intel_display_driver.c   | 29 +++++++++++++++----
- 1 file changed, 24 insertions(+), 5 deletions(-)
+On Thu, 2025-02-20 at 10:32 +0800, Delphine CC Chiu wrote:
+> From: MarshallZhan-wiwynn <marshall_zhan@wiwynn.com>
 
-diff --git a/drivers/gpu/drm/i915/display/intel_display_driver.c b/drivers/gpu/drm/i915/display/intel_display_driver.c
-index 50ec0c3c7588..0b9971a5626b 100644
---- a/drivers/gpu/drm/i915/display/intel_display_driver.c
-+++ b/drivers/gpu/drm/i915/display/intel_display_driver.c
-@@ -241,31 +241,44 @@ int intel_display_driver_probe_noirq(struct intel_display *display)
- 	intel_dmc_init(display);
- 
- 	display->wq.modeset = alloc_ordered_workqueue("i915_modeset", 0);
-+	if (!display->wq.modeset) {
-+		ret = -ENOMEM;
-+		goto cleanup_vga_client_pw_domain_dmc;
-+	}
-+
- 	display->wq.flip = alloc_workqueue("i915_flip", WQ_HIGHPRI |
- 						WQ_UNBOUND, WQ_UNBOUND_MAX_ACTIVE);
-+	if (!display->wq.flip) {
-+		ret = -ENOMEM;
-+		goto cleanup_wq_modeset;
-+	}
- 	display->wq.cleanup = alloc_workqueue("i915_cleanup", WQ_HIGHPRI, 0);
-+	if (!display->wq.cleanup) {
-+		ret = -ENOMEM;
-+		goto cleanup_wq_flip;
-+	}
- 
- 	intel_mode_config_init(display);
- 
- 	ret = intel_cdclk_init(display);
- 	if (ret)
--		goto cleanup_vga_client_pw_domain_dmc;
-+		goto cleanup_wq_cleanup;
- 
- 	ret = intel_color_init(display);
- 	if (ret)
--		goto cleanup_vga_client_pw_domain_dmc;
-+		goto cleanup_wq_cleanup;
- 
- 	ret = intel_dbuf_init(i915);
- 	if (ret)
--		goto cleanup_vga_client_pw_domain_dmc;
-+		goto cleanup_wq_cleanup;
- 
- 	ret = intel_bw_init(i915);
- 	if (ret)
--		goto cleanup_vga_client_pw_domain_dmc;
-+		goto cleanup_wq_cleanup;
- 
- 	ret = intel_pmdemand_init(display);
- 	if (ret)
--		goto cleanup_vga_client_pw_domain_dmc;
-+		goto cleanup_wq_cleanup;
- 
- 	intel_init_quirks(display);
- 
-@@ -273,6 +286,12 @@ int intel_display_driver_probe_noirq(struct intel_display *display)
- 
- 	return 0;
- 
-+cleanup_wq_cleanup:
-+	destroy_workqueue(display->wq.cleanup);
-+cleanup_wq_flip:
-+	destroy_workqueue(display->wq.flip);
-+cleanup_wq_modeset:
-+	destroy_workqueue(display->wq.modeset);
- cleanup_vga_client_pw_domain_dmc:
- 	intel_dmc_fini(display);
- 	intel_power_domains_driver_remove(display);
--- 
-2.25.1
+Typically git's user.name config should reflect your well-known name
+(with spaces between your individual names, and without e.g. a -wiwynn
+suffix).
 
+>=20
+> Set I3C config in yosemite4 DTS.
+>=20
+> Test plan:
+> Tested PLDM GetTID successfully with the I3C hub driver.
+
+How was this successful? Your patch fails to build on top of v6.14-rc1.
+
+Please make sure you're testing against an upstream kernel tree.
+
+Andrew
 
