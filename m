@@ -1,78 +1,80 @@
-Return-Path: <linux-kernel+bounces-524949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-524950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1B68A3E909
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 01:10:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7908BA3E90D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 01:11:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 789E042082D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 00:10:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB676189ED04
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 00:11:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A95234C85;
-	Fri, 21 Feb 2025 00:09:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 721C32AE90;
+	Fri, 21 Feb 2025 00:09:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yDlTdx2F"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jZFjRNJw"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47D4F1876
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 00:09:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF1564A3C
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 00:09:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740096589; cv=none; b=L8X5YijIqwCubvNsFPzOa9g7PArrd+ehkeMIkOxL94IKOXPH7js8VlfIZkM2RdVU4a0VMR32nCUlpM9egxgJ7hBtC28qThu6Y2SD6IlHVU+dY7LLXjxABqLrVI9lN3lHGdCO9DCvikketDVO8n41U3wB+D3rQxO8TgEumHpJQcI=
+	t=1740096597; cv=none; b=jnoO/KwVEW1S+PwfPJXcNIzSoCRDRRzbqketgEGuhTmImISjrmXcF+DVetfoTs5E4qIUf/F+fRHOJ2badvHoX1H0v/OLQqd2oWRiJ2SODX1PJBarMO3lSGcjxXGmtXVJ/6cWq82oprrJrgBWYFT9EfHOwGYCEyg/4hkRjYbXBzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740096589; c=relaxed/simple;
-	bh=CYy+syz0H0mvkNkZkdp17FYvvZqZEB3HFIsP6QAgNM8=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=DQR+8MDzpG07DBVtRawupHCFMGSKL0Wt19XitXc1TOeoCOhaJMsIMU8Who6IeDC71rDllbgN7arCz+CWayyEpuhLWjGW9LNHQGCXLWFzvIn/5robeYkx1+cIuk5BiqeKz5FVgw8CTZFpuC3NQ3dTgJYRbI9Ii8i+UdX0guRFArs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jperaza.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yDlTdx2F; arc=none smtp.client-ip=209.85.216.74
+	s=arc-20240116; t=1740096597; c=relaxed/simple;
+	bh=7ycQWLzd5hwGPvM2CGrVqMLXE8dmu3R806nhRva4W5Y=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=WwDkwxEkY/QHC+z1fEt7Om5JMofNkYcwzNX2PSEX9Wi69g8Wg/Gf+S8Ya2tEURCM8CH3cMMgsZQtr4Gk+0kpt2hhscNdDTuLm/r74Q3Mk4UdrmMRfE4zntNvesKZ0Kd3vDxdxlzhsPauY9JpMJw3vI4g1vp9fAIHffbDj3Vc4aE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jperaza.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jZFjRNJw; arc=none smtp.client-ip=209.85.214.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jperaza.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2fc518f0564so3289028a91.2
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 16:09:47 -0800 (PST)
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-221063a808dso29766995ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 16:09:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740096587; x=1740701387; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id
-         :mime-version:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ohok8GBBY7t0QEOt/byU++Ad3TOaqSbLlb97J7pTKzY=;
-        b=yDlTdx2FU9/pTlOYk9AlZMCdAzzzK1vy3WUnutiZBnnNP2ixmbc8Y5XxE1wZ3XNLC9
-         +Ad24NUDZ4KYWUGQzpaX/qHhVT+7GduoVe8Gwsp+VE+VszSqoT/zuIOwhkmtp4oSNLmx
-         9N4NM4h9DHsejNmSCx5Dt/Xy191apGGsgC7olZEThJTwukYRTc3U17rzoeBpJKUBStmV
-         je6xfmYppnyoPVGg1owJlSYPZi/6wjcQ1P5+B74sFhSMtF6InMuW5AvXDq2oHNpBwgoD
-         erp5HHeanaTGREy3mB/eR+AdW4S0Aj7tTZk9YLnmDfz+f0PojW3T8s+ExKAS55744TUY
-         5O0g==
+        d=google.com; s=20230601; t=1740096594; x=1740701394; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Aobg0PVlzdviRy/cQd7B6jC/eqOG2GRLnGjA6uI98tk=;
+        b=jZFjRNJwKhhD46lMkb+IVREb4sXoEYACuVCc7TZkCGgNSQFH48vZbovI2coEM8gi+y
+         2DGO71sTx8FfVckuX95N3m0gQbQMmh49yww7FYADw+xDFC3rt/MYKh5egjqIPHJemo3z
+         4o+61zOjwlYIrdn4FxzTMrW28CKszBHnNiBv8oqfQQeqnahGQDvQFJ2n9oPlUmAs7AOB
+         oCs4THqqVwBOT4Pxqm5PMdo7XBKTGnxUW5W5n/XtFCN93MhNSNa3UApC5C+GXEXo/wFP
+         WLMXIwyQOZ7xUKJu6s+zCGWoFtlZE4BudCTXyLvFs5kcp+wuZv8rVbAl/x11jqk2+YBm
+         NGRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740096587; x=1740701387;
-        h=content-transfer-encoding:cc:to:from:subject:message-id
-         :mime-version:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ohok8GBBY7t0QEOt/byU++Ad3TOaqSbLlb97J7pTKzY=;
-        b=WeDYmEMYvqzCd4cn4eu/SSlh2az1lzT4zj8nXNx+1ilelrYRPhkFn139F+Gsd9H93F
-         m/kEyaXpDR2jBG+exC1H60VacHbBx9+ctsgi1ZO2Y0wqPZdx+TpTtdeyG+rNaqx8aUuE
-         0oqMtEnGZxSYrBR9R2A7v3WN8lj/xVtfmcLJVrofCuLrpCC9/bCegxTaXJDNEBixiDMX
-         Ubz/KjoB/F1Cqy6Yy4DY95eujwP1zYhODHTux7yAgZxp8pfwXrZVOo5xpnHNwiP0yZdf
-         C4SnRoaJ2Q+255ktSj/nuL368ZFHH285COD22ZEoSBDo8CrUh9AEYYEperO+dXYrVIAi
-         o/VQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWUucg8A2acaMbf+IIJmJ0SHgGNcJK30mIluJuqkX3HE6EVZNMIlxurOvyrvYAiEkyD12fxetYG3ebe4iY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywit5t1MEXl/A7rKunEhF4OWFfj7x19a2nqhFvCykT5l7fbHXCI
-	IYKuSbU4sxSYfWNhhdVQXBaqPz5kSSHaMjjtz7BvlCZPnLu8R8jstSq6J++B+gkCWZvNe3D0PBs
-	kcTrRmg==
-X-Google-Smtp-Source: AGHT+IE+/XdpryHAXtWsVuqH/GBAd4U+y5+ZwkF9rtofcQmDPCXCP0K1uOrOC/YoiJt7j7ujhepPRibIQz/U
-X-Received: from pjbqi16.prod.google.com ([2002:a17:90b:2750:b0:2fc:2f33:e07d])
- (user=jperaza job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:17c4:b0:2ee:f80c:6889
- with SMTP id 98e67ed59e1d1-2fce7b44472mr2063542a91.33.1740096587389; Thu, 20
- Feb 2025 16:09:47 -0800 (PST)
-Date: Fri, 21 Feb 2025 00:09:39 +0000
+        d=1e100.net; s=20230601; t=1740096594; x=1740701394;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Aobg0PVlzdviRy/cQd7B6jC/eqOG2GRLnGjA6uI98tk=;
+        b=uN9LwZpe5NJMF5bOVbmmmSYB/n/FqCJ1fP3NTi9UtLKzfqSij7eaw5Vh3IIxvv9zHD
+         Kq9q598qrbWlo+PXLNzr4REvWrEXQPPwiK+1kl2gfGKIMTTS230f8ZhmZ0YmTot+oY6Z
+         wjiguiBXg4flqjlo5wRE2voSXgzbqVmkze2KlZ65EdH2h6V1D/3a+P9JJophhJg2u/ze
+         HcFOZ4u9cPe2T32bH2Hz57LiL82UiC8VUl/BH+f5jIVKJU5TLFNMR11LBuNSaHYaDm0Q
+         4n77krlgYmIPIjpvY++Cbi+dkZ5ri8b6gd1SvoXF3cFgzvO+w/sUP4pTd848F8SQo5dp
+         YOHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVlMHTLofEimpkjwlKrL0EpIxo9g5ApiLox0SkBe7PJguzgDOcD7B3o4tudambtkWqOVk+SFNCdB9K+rmc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWgALeZv9ehHRXpnuGxl84l1qBb/ImPWdNSaIQu2Kh+WeiGn51
+	eXQnM3r3rymPQzwCB2aSfawYwHZqojxS/cqF3vYOb2NaHDs0+pa2lyl+BRq8HVfTBr1Dz8iDoo2
+	81YAikA==
+X-Google-Smtp-Source: AGHT+IHZzxzrxbsH7efugqJJN045fO9BV+dY755bECYZbZkD2jqYlwQTWhUh9sEr1Ybvi6ir1vlrHFwdCahW
+X-Received: from pgar9.prod.google.com ([2002:a05:6a02:2e89:b0:ae1:b40f:fc2])
+ (user=jperaza job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a21:7011:b0:1ee:d7fa:5d8f
+ with SMTP id adf61e73a8af0-1eef3d5a9dfmr1947981637.27.1740096594064; Thu, 20
+ Feb 2025 16:09:54 -0800 (PST)
+Date: Fri, 21 Feb 2025 00:09:40 +0000
+In-Reply-To: <20250221000943.973221-1-jperaza@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
+References: <20250221000943.973221-1-jperaza@google.com>
 X-Mailer: git-send-email 2.48.1.601.g30ceb7b040-goog
-Message-ID: <20250221000943.973221-1-jperaza@google.com>
-Subject: [v9 PATCH 0/2] PCI/ACPI: Support Microsoft's "DmaProperty"
+Message-ID: <20250221000943.973221-2-jperaza@google.com>
+Subject: [v9 PATCH 1/2] PCI/ACPI: Support Microsoft's "DmaProperty"
 From: Joshua Peraza <jperaza@google.com>
 To: gregkh@linuxfoundation.org
 Cc: baolu.lu@linux.intel.com, bhelgaas@google.com, dtor@google.com, 
@@ -84,148 +86,86 @@ Cc: baolu.lu@linux.intel.com, bhelgaas@google.com, dtor@google.com,
 	rafael.j.wysocki@intel.com, rafael@kernel.org, rajatja@google.com, 
 	rajatxjain@gmail.com, will@kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Threat model: An overview of the security implications of non-strict
-IOMMU is presented at [1]. This change is motivated by =E2=80=9CCase 1=E2=
-=80=9D where
-a DMA-capable device is processing untrusted inputs, e.g. network
-devices.
+From: Rajat Jain <rajatja@google.com>
 
-This patchset proposes using =E2=80=9CDMA protection=E2=80=9D to mitigate t=
-hese risks.
-This has the following effects, currently controlled by the
-=E2=80=9Cpci_dev::untrusted=E2=80=9D flag.
+The "DmaProperty" is supported and currently documented and used by
+Microsoft [link 1 below], to flag internal PCIe root ports that need
+DMA protection [link 2 below]. We have discussed with them and reached
+a common understanding that they shall change their MSDN documentation
+to say that the same property can be used to protect any PCI device,
+and not just internal PCIe root ports (since there is no point
+introducing yet another property for arbitrary PCI devices). This helps
+with security from internal devices that offer an attack surface for
+DMA attacks (e.g. internal network devices).
 
-- Separate IOMMU DMA domains
-- Use of SWIOTLB if CONFIG_SWIOTLB
-- Disables quirks in Intel IOMMU
-- Disables Address Translation Services
+Support DmaProperty to mark DMA from a PCI device as untrusted.
 
-The =E2=80=9Cuntrusted=E2=80=9D flag was introduced in 2018 in [2]. The mot=
-ivation for
-that change was to enable using IOMMU to protect against DMA attacks
-from externally facing devices such as thunderbolt ports. The patchset
-introduces the =E2=80=9Cuntrusted=E2=80=9D flag which =E2=80=9Cis supposed =
-to cover various
-PCIe devices that may be used to conduct DMA attacks.=E2=80=9D The patchset
-originally proposes naming the flag =E2=80=9Cis_external=E2=80=9D but is re=
-named to
-=E2=80=9Cis_untrusted=E2=80=9D and then =E2=80=9Cuntrusted=E2=80=9D supposi=
-ng that it could apply to
-more than just externally facing thunderbolt devices. The fact that
-=E2=80=9CExternalFacingPort=E2=80=9D is not part of any standard is called =
-out during
-review but also that Windows expecting firmware to identify external
-facing ports makes it =E2=80=9Cas good as a formal standard in the Windows
-world.=E2=80=9D
+Link: [1] https://docs.microsoft.com/en-us/windows-hardware/drivers/pci/dsd-for-pcie-root-ports#identifying-internal-pcie-ports-accessible-to-users-and-requiring-dma-protection
+Link: [2] https://docs.microsoft.com/en-us/windows/security/information-protection/kernel-dma-protection-for-thunderbolt
+Signed-off-by: Rajat Jain <rajatja@google.com>
+Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Signed-off-by: Joshua Peraza <jperaza@google.com>
+---
+ drivers/acpi/property.c |  3 +++
+ drivers/pci/pci-acpi.c  | 22 ++++++++++++++++++++++
+ 2 files changed, 25 insertions(+)
 
-This current patch series was first proposed in January 2022 [3]. It
-originally proposed a new property =E2=80=9CUntrustedDevice=E2=80=9D which =
-would cause
-the untrusted flag to be set. In V1 Greg questions whether the new
-property is part of the ACPI standard and asks who is making this
-policy decision. Mika links to Microsoft's documentation of
-=E2=80=9CDmaProperty=E2=80=9D and suggests that property should be adopted =
-instead.
-Greg objects that Linux does not have =E2=80=9Cdma protection=E2=80=9D but =
-Mika says
-that this is the IOMMU. Today, the term =E2=80=9CDMA protection=E2=80=9D is=
- used in
-thunderbolt driver code with the same meaning and in an Intel white
-paper [4] describing the technique. Mika also observes that Linux has
-recognized several properties documented by Microsoft but not part of
-the ACPI standard. There is discussion between Mika, Rafael, and Rajat
-about seeking to align with Microsoft on the semantics of
-=E2=80=9CDmaProperty=E2=80=9D for compatibility with firmware produced for =
-Windows.
-
-V2 of this patch series [5] again proposed an =E2=80=9CUntrustedDevice=E2=
-=80=9D
-property which Greg objects to because it is not sufficiently
-descriptive, not sufficiently documented, and policies about trust
-don=E2=80=99t belong in the kernel. Rajat describes the =E2=80=9Cuntrusted=
-=E2=80=9D flag=E2=80=99s
-current use, controlling IOMMU and Greg suggests naming the flag
-=E2=80=9Cuse_iommu=E2=80=9D or =E2=80=9Cable to do DMA.=E2=80=9D
-
-V3 of this patch series [6] proposes recognizing =E2=80=9CDmaProperty=E2=80=
-=9D with
-slightly altered semantics from Microsoft=E2=80=99s documentation. Greg
-suggests adhering to Microsoft=E2=80=99s semantics for =E2=80=9CDmaProperty=
-=E2=80=9D and to
-introduce a new property with new semantics instead. Greg again states
-that the flag being named =E2=80=9Cuntrusted=E2=80=9D is confusing.
-
-V4 renames =E2=80=9Cuntrusted=E2=80=9D to =E2=80=9Cposes_dma_risk=E2=80=9D.=
- Christoph suggests
-=E2=80=9Cuntrusted_dma=E2=80=9D and Rafael agrees.
-
-V5 renames the flag to =E2=80=9Cuntrusted_dma=E2=80=9D. Bjorn asks for clar=
-ification
-about whether the semantics of this flag will match Microsoft=E2=80=99s
-documentation. Rajat responds that Microsoft has agreed to update
-their documentation to have aligned semantics, in particular =E2=80=9Cthe
-property is not restricted to identify =E2=80=98internal PCIe hierarchies=
-=E2=80=99
-(starting at root port), but to "any PCI device". As of today,
-Microsoft=E2=80=99s documentation does not appear to have been updated.
-
-In V6 Rajat updates a link to Microsoft=E2=80=99s documentation, renames a
-function to pci_dev_has_dma_property() and uses
-acpi_dev_get_property() to read =E2=80=9CDmaProperty=E2=80=9D.
-
-In V7 (Nov 2024) Joshua re-sends and Greg requests a summary of the
-history of discussion about the name for the =E2=80=9Cuntrusted=E2=80=9D fl=
-ag and
-justification of the new name.
-
-In V8 Joshua renames the =E2=80=9Cuntrusted=E2=80=9D flag to
-=E2=80=9Crequires_dma_protection=E2=80=9D. Greg requests more information a=
-bout the
-threat model, what does this property convey, and why we should use
-Microsoft=E2=80=99s DmaProperty and its semantics instead of inventing
-something new.
-
-In V9 Joshua updates the cover letter with more information from
-previous submissions in this series and the =E2=80=9Cuntrusted=E2=80=9D fla=
-g=E2=80=99s
-introduction.
-
-Links:
-[1] https://lore.kernel.org/linux-arm-msm/20210624101557.v2.3.Icde6be7601a5=
-939960caf802056c88cd5132eb4e@changeid/
-[2] https://lore.kernel.org/lkml/20181129155153.35840-1-mika.westerberg@lin=
-ux.intel.com/
-[3] https://lore.kernel.org/all/20220120000409.2706549-1-rajatja@google.com=
-/
-[4] https://www.intel.com/content/dam/develop/external/us/en/documents/inte=
-l-whitepaper-using-iommu-for-dma-protection-in-uefi-820238.pdf
-[5] https://lore.kernel.org/all/20220202020103.2149130-1-rajatja@google.com=
-/
-[6] https://lore.kernel.org/all/20220216220541.1635665-1-rajatja@google.com=
-/
-
-Rajat Jain (2):
-  PCI/ACPI: Support Microsoft's "DmaProperty"
-  PCI: Rename pci_dev->untrusted to pci_dev->requires_dma_protection
-
- drivers/acpi/property.c     |  3 +++
- drivers/iommu/amd/iommu.c   |  3 +--
- drivers/iommu/dma-iommu.c   | 16 ++++++++--------
- drivers/iommu/intel/iommu.c | 10 +++++-----
- drivers/iommu/iommu.c       |  5 ++---
- drivers/pci/ats.c           |  2 +-
- drivers/pci/pci-acpi.c      | 22 ++++++++++++++++++++++
- drivers/pci/pci.c           |  2 +-
- drivers/pci/probe.c         | 10 +++++-----
- drivers/pci/quirks.c        |  4 ++--
- include/linux/pci.h         |  7 ++++---
- 11 files changed, 54 insertions(+), 30 deletions(-)
-
-
-base-commit: 0ad2507d5d93f39619fc42372c347d6006b64319
---=20
+diff --git a/drivers/acpi/property.c b/drivers/acpi/property.c
+index 436019d96027..bb1459c43b6b 100644
+--- a/drivers/acpi/property.c
++++ b/drivers/acpi/property.c
+@@ -56,6 +56,9 @@ static const guid_t prp_guids[] = {
+ 	/* Storage device needs D3 GUID: 5025030f-842f-4ab4-a561-99a5189762d0 */
+ 	GUID_INIT(0x5025030f, 0x842f, 0x4ab4,
+ 		  0xa5, 0x61, 0x99, 0xa5, 0x18, 0x97, 0x62, 0xd0),
++	/* DmaProperty for PCI devices GUID: 70d24161-6dd5-4c9e-8070-705531292865 */
++	GUID_INIT(0x70d24161, 0x6dd5, 0x4c9e,
++		  0x80, 0x70, 0x70, 0x55, 0x31, 0x29, 0x28, 0x65),
+ };
+ 
+ /* ACPI _DSD data subnodes GUID [1]: dbb8e3e6-5886-4ba6-8795-1319f52a966b */
+diff --git a/drivers/pci/pci-acpi.c b/drivers/pci/pci-acpi.c
+index af370628e583..a457ae3e811a 100644
+--- a/drivers/pci/pci-acpi.c
++++ b/drivers/pci/pci-acpi.c
+@@ -1438,12 +1438,34 @@ static void pci_acpi_set_external_facing(struct pci_dev *dev)
+ 		dev->external_facing = 1;
+ }
+ 
++static int pci_dev_has_dma_property(struct pci_dev *dev)
++{
++	struct acpi_device *adev;
++	const union acpi_object *obj;
++
++	adev = ACPI_COMPANION(&dev->dev);
++	if (!adev)
++		return 0;
++
++	/*
++	 * Property used by Microsoft Windows to enforce IOMMU DMA
++	 * protection from any device, that the system may not fully trust;
++	 * we'll honour it the same way.
++	 */
++	if (!acpi_dev_get_property(adev, "DmaProperty", ACPI_TYPE_INTEGER,
++				   &obj) && obj->integer.value == 1)
++		return 1;
++
++	return 0;
++}
++
+ void pci_acpi_setup(struct device *dev, struct acpi_device *adev)
+ {
+ 	struct pci_dev *pci_dev = to_pci_dev(dev);
+ 
+ 	pci_acpi_optimize_delay(pci_dev, adev->handle);
+ 	pci_acpi_set_external_facing(pci_dev);
++	pci_dev->untrusted |= pci_dev_has_dma_property(pci_dev);
+ 	pci_acpi_add_edr_notifier(pci_dev);
+ 
+ 	pci_acpi_add_pm_notifier(adev, pci_dev);
+-- 
 2.48.1.601.g30ceb7b040-goog
 
 
