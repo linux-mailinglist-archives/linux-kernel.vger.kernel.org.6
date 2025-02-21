@@ -1,142 +1,87 @@
-Return-Path: <linux-kernel+bounces-526820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AF27A403CE
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 00:55:59 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C39D3A403D2
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 00:58:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6576016F190
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 23:55:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 29A957AB24D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 23:57:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A3B7254B19;
-	Fri, 21 Feb 2025 23:55:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="qEMMUVs2"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 806FB254B1E;
+	Fri, 21 Feb 2025 23:58:06 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1B7F433DE;
-	Fri, 21 Feb 2025 23:55:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D0CA288CC
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 23:58:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740182153; cv=none; b=esbIaRpWaWHbtpymEeg4qgsTSjp8nW3azkwKI933CS3QRF11XBa5Rf9/Niav+C8B+0nA7Om2toH1nhPbZwe7ZKK9aMwb0dITWHdESN+cCB/dmBoddi6M8xaC/4RglvnpS1dyksfDHepwaEopsETaYlce9nMtXUPtyj5Zr2snspc=
+	t=1740182286; cv=none; b=Vt37H0D793G9BB/9mFhgdy84EK3ecaCeg2UBIMq8dgi/Jy8OcTmIRHL2M3H5qQx3ckmGW+pOKSPgzPp2wr0elGQy2j1l97lR1UJ7eCF7B/vATi/hY0yOo0eaEhM7qcOy784h6TcpMVdTxgN/UirFypmBP9a0YK2QdFC9okpS3jY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740182153; c=relaxed/simple;
-	bh=2db/W3z8n0hWl/MKDovp0LrTr/t/l9Q9+WY0RSNMumo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i9wuWzQXshgYWtQ64VkAfhVkLTiBXtQbr1q17fdleX1wSif4/HbjfMV+yNx/fNXsoFuVoSGrO7QkBX+0D9wgZL338kJJ8RJpBfH8OhS8C3Oug9ur00IXd1Dx11H5mjWMT8HGSGPk5fZzIwZu/E/i/Pq20UVBRMpH04Fy/5Z4gPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=qEMMUVs2; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51LIMnif002896;
-	Fri, 21 Feb 2025 23:55:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=achMRzWnd/KuI8b0wuIGICjjIrYg4Y
-	P7qUOZX+tlM/0=; b=qEMMUVs2ZVqyTriMS0xBDIeyOXSBM2lSPqCs+S3VnXkfEu
-	2QwSgpQ85tThMe9ybizqpcoZjhugdvYvDzWXgroNnHWSdPjffPoj/1w50Z3tl4/k
-	qQq3cEqqgBKanoju1j7k+uMDalTfQTj8g14h96cvDPdFEe8bbZeM/Ksg0zX7I1j2
-	VZYiWCFBT8/65/s8zAJz78XZgY11UQ8ojEjurLvQMB4gYcifafv4cN1d4uRUkWha
-	w9TXEh1w0OuIRdxbn3Z5deR8Ax2vnWj+DH42WMb56zH8tCl90Y9RbfTQ+Ygbbp2O
-	mvnVeFmy5mk1gaGnuUcl5f0E+rZ0BPiYBGlZYEtg==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44xn6q4fjn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Feb 2025 23:55:50 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 51LNtnsf023036;
-	Fri, 21 Feb 2025 23:55:49 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44xn6q4fjk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Feb 2025 23:55:49 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51LMUC9n027066;
-	Fri, 21 Feb 2025 23:55:49 GMT
-Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 44w025jsd9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Feb 2025 23:55:49 +0000
-Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51LNtjrN33096034
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 21 Feb 2025 23:55:45 GMT
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8278720043;
-	Fri, 21 Feb 2025 23:55:45 +0000 (GMT)
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 016A020040;
-	Fri, 21 Feb 2025 23:55:45 +0000 (GMT)
-Received: from localhost (unknown [9.171.80.218])
-	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Fri, 21 Feb 2025 23:55:44 +0000 (GMT)
-Date: Sat, 22 Feb 2025 00:55:43 +0100
-From: Vasily Gorbik <gor@linux.ibm.com>
-To: Qasim Ijaz <qasdev00@gmail.com>
-Cc: agordeev@linux.ibm.com, gerald.schaefer@linux.ibm.com, hca@linux.ibm.com,
-        borntraeger@linux.ibm.com, svens@linux.ibm.com,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] s390/mm: Simplify gap clamping in mmap_base() using
- clamp()
-Message-ID: <your-ad-here.call-01740182143-ext-5271@work.hours>
-References: <20250204162508.12335-1-qasdev00@gmail.com>
+	s=arc-20240116; t=1740182286; c=relaxed/simple;
+	bh=0cMls4nD0wJWwZXk6uLf7tEepX+u/JmyxbXFqym6RBM=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=U+aDT9QZb3qLGFL72lNmFyWrt0AncQM5D3vmnQlC/ZmyrGXYC1POW//IfLLrmbFxDvwurBHWeFale75O2pPrLaGI2UOVHZ0HteuYGMqSw/UBSd/HKIlxKAswUnQ4yIWQFZtGBT7JU5YFCrhkTIaIi07B/Qrmr6OA0A5ov5khTqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3d2b3882febso16509845ab.1
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 15:58:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740182283; x=1740787083;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cZ+wlPVroLeJHnFjlGWCqOVFr5VwYQT9DQOZkkLiXaY=;
+        b=n2jFil6Txun4LSpoQsq6wXy0RsDQjkycthpyFbWKsiZ+xPiGRsJcrSOcPlss7aaTb5
+         dY/BlHpxaYVWJikNVGQQTaxkrLPcceJwF8ZGbc8rfrVnD5FhJcJPzDZZZAq4BV+REBmG
+         OdNcWvH3BgkOFwb3gCACSLgrZICigjxMrwYiNDSPXuVKOCbISzWzgPG2aJg1dJU3opTv
+         wNmL5XwSAvY3HhAAtGMzGjwR8niesfgu4J9DLFlOGZ2roNy+gh2igYWbvhdrPx3ZcMR/
+         6lwsMYft7N5JIq0kvqG8Y/6g4Ky8TS6dNJS/0IAmZKDOAUgh3SraN3VY5dVmqC9ewBek
+         cg4g==
+X-Forwarded-Encrypted: i=1; AJvYcCUqzeWbkgwzUG6DiuuTibCkgtG1md1c9h4nfSl7nsJS4BnDh/gIHsG5bH2vQruGTIHkkvETg6grrpTZ8Bo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzEDXdOw8SGXy0JOMk9C9IHb+s52renL7Nw+WHPAmMtj0a5lTvh
+	dwbFYEy136YMLZm7xcAgSkK7g2x3HcEvwHRKbYHCsvQOcSO5xxLv0fi3WysyjiMEbHoovNP1zef
+	MAS42QFrrvvkX3V6hoWMSnSoH+FCgEFiS0V6MK5koClZSpP+YmtVbVR4=
+X-Google-Smtp-Source: AGHT+IH3O42RZ1pzh2lzNJLxan30uO4WMh/yOceyEp15D84JP2xZvkz1yH/+lxJiSyLp8FR9XJy8+AEiMDGgc4TLdZiGf+ramC+p
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250204162508.12335-1-qasdev00@gmail.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 06BIERgAeYDJhI6AyOyeUl0Mk93vN8Ct
-X-Proofpoint-ORIG-GUID: 6a4Wjbv3g57imsF_ZRWmcjewk8IQOYxD
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-21_09,2025-02-20_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 malwarescore=0
- mlxscore=0 bulkscore=0 lowpriorityscore=0 priorityscore=1501
- impostorscore=0 adultscore=0 phishscore=0 mlxlogscore=889 clxscore=1015
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2502210161
+X-Received: by 2002:a05:6e02:1805:b0:3d0:443d:a5ad with SMTP id
+ e9e14a558f8ab-3d2cae499d0mr53580665ab.2.1740182283105; Fri, 21 Feb 2025
+ 15:58:03 -0800 (PST)
+Date: Fri, 21 Feb 2025 15:58:03 -0800
+In-Reply-To: <20250221233542.2507-1-hdanton@sina.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67b9130b.050a0220.14d86d.0599.GAE@google.com>
+Subject: Re: [syzbot] [netfs?] kernel BUG in folio_unlock (3)
+From: syzbot <syzbot+c0dc46208750f063d0e0@syzkaller.appspotmail.com>
+To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Feb 04, 2025 at 04:25:08PM +0000, Qasim Ijaz wrote:
-> mmap_base() has logic to ensure that the variable "gap" stays within the 
-> range defined by "gap_min" and "gap_max". Replace this with the clamp() 
-> macro to shorten and simplify code.
-> 
-> Signed-off-by: Qasim Ijaz <qasdev00@gmail.com>
-> ---
->  arch/s390/mm/mmap.c | 6 +-----
->  1 file changed, 1 insertion(+), 5 deletions(-)
-> 
-> diff --git a/arch/s390/mm/mmap.c b/arch/s390/mm/mmap.c
-> index 76f376876e0d..a3d3e09a2828 100644
-> --- a/arch/s390/mm/mmap.c
-> +++ b/arch/s390/mm/mmap.c
-> @@ -63,11 +63,7 @@ static inline unsigned long mmap_base(unsigned long rnd,
->  	 */
->  	gap_min = SZ_128M;
->  	gap_max = (STACK_TOP / 6) * 5;
-> -
-> -	if (gap < gap_min)
-> -		gap = gap_min;
-> -	else if (gap > gap_max)
-> -		gap = gap_max;
-> +	gap = clamp(gap, gap_min, gap_max);
->  
->  	return PAGE_ALIGN(STACK_TOP - gap - rnd);
->  }
-> -- 
+Hello,
 
-Reviewed-by: Vasily Gorbik <gor@linux.ibm.com>
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Applied, with a fixup removing the gap_min and gap_max variables as
-Alexander proposed and aligning with your patch for x86. Thank you!
+Reported-by: syzbot+c0dc46208750f063d0e0@syzkaller.appspotmail.com
+Tested-by: syzbot+c0dc46208750f063d0e0@syzkaller.appspotmail.com
 
-https://lore.kernel.org/all/174014934373.10177.13398467994659612713.tip-bot2@tip-bot2/
+Tested on:
+
+commit:         ff202c50 Merge tag 'soc-fixes-6.14' of git://git.kerne..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=11b30db0580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=635cd601ddc51632
+dashboard link: https://syzkaller.appspot.com/bug?extid=c0dc46208750f063d0e0
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=16ec3498580000
+
+Note: testing is done by a robot and is best-effort only.
 
