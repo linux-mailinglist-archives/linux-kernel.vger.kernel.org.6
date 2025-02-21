@@ -1,131 +1,121 @@
-Return-Path: <linux-kernel+bounces-525151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BAF4A3EB8E
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 04:59:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63D24A3EB96
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 05:07:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F29919C54DE
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 03:59:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5960717DFF7
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 04:07:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 888731F9F64;
-	Fri, 21 Feb 2025 03:59:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F6AC1FAC4D;
+	Fri, 21 Feb 2025 04:07:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QYnnX1xp"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="j2ICIJh6"
+Received: from smtp-fw-52003.amazon.com (smtp-fw-52003.amazon.com [52.119.213.152])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E2022862AC;
-	Fri, 21 Feb 2025 03:59:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55CB82A1C9;
+	Fri, 21 Feb 2025 04:07:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740110353; cv=none; b=LOtLt5UJkX1h9k8VN7KLtBtHfgsEslE3+vRrIRJtUuBaaM88tUgjqYnAItgJTfrNnS1vfWYltAJB0TPlRA6UD2ojiTkolNLuaWV6b8XqtC3m2bOr3XZtuJ3Q/sEcOdxvmtSRO6bNoWNtaEoCp4V+B7eOEsPxR0QURF2XHz8KkRU=
+	t=1740110832; cv=none; b=AZI3Sc+SsrqyluHaEVdqTOOSv1VFsSj09d2RUwQWBiR5vAquBAjw3omIJpz7TFYd9hKGldRitHXxHCP2ijxPNcCGll+C0CXtWsCkj5YbCV4It4GJ/xo3Q2OL6/d7cWOwcOXZax3GazGAOJOw1Cnd1mZpmqQwA+ZSrMJKLWmtxUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740110353; c=relaxed/simple;
-	bh=XZ2RM16Az6uz92GdxRvDu5nPmKE66mfQnEP/WoRbzlQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QRrPh0Puo2r9pu04604o+t5Uw1BRjDVFNAWh75aZtNFU+6fmkHoyoDIb1iewUYT0rcJQbWyVg5QufJqbMAD1nuaJlyyDtE2BhdvrYtS7VQZ+ikwKMrdb/SXLxeu8Ix1YZJIH5BI8KyI9Xdio0cw97biX1NIKeKXIE2fiJAKuP7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QYnnX1xp; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2fc383a11cdso381797a91.2;
-        Thu, 20 Feb 2025 19:59:12 -0800 (PST)
+	s=arc-20240116; t=1740110832; c=relaxed/simple;
+	bh=GdpHKn3K97vSsRdy53s5lxOxzv2f9wU9DSHD/AKaplA=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=j9vzq1QgeEzYhrur8GM9/R+GTuo8I12qaw31rb8xucLFgIG5KW1mIlf0UaThQyZWrXuRkBTPIw2g3SvES1q2JEZYNVfeFNZPC67CZi7HKQQTj1GkRFa2FCXawRRHrbflGv0zKZFmtWyQ2wPzHvfybjwB7rHwfUjIcu+Ll9dYxPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=j2ICIJh6; arc=none smtp.client-ip=52.119.213.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740110352; x=1740715152; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VND56wFi3Kn3v77IS87WtpNyey62fEJlfCeDgLZ0JRI=;
-        b=QYnnX1xpn/4r3nxRKhPvLYHFFi9v/5uvmLU6V28YlKNzXAUvpz90e49643xCzLXymt
-         lqTIE/UDj27OL2ZGUz7lYUeRfZBnG8zrEqYMIN62KjqQefIOnlr7s0OW78vNNgMeGxsq
-         T4q5hukV+dNBUEHNvSnKhpfNgGngeK9dcDMFTkP06s/VKgIBXNZEMmpRbN5LNxdLVfxw
-         I7U+OKtqBwGE1hEkQxcuMlqSDKIAiAjY2L/NO8F0URkjRNbc7GtQR0snw655Y5R8p2MP
-         ics8faEz7oqCBJ9zcUluEgOejUYTla1Rh1f9OgwH3Rm6iB5ZfY4wuGzPuRKqRQeFbKsr
-         7Yvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740110352; x=1740715152;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VND56wFi3Kn3v77IS87WtpNyey62fEJlfCeDgLZ0JRI=;
-        b=fi6ob1YreajkmTmspziTAmVBP4OjQCmvhS2AltJQTLBAgSofNzU6Tp5EWHp0jGnrpa
-         WC94sohDd/NgSIseMBksiT0RuLlobplrQQWACBbNX1ZMeGT1fB46DSFp/3O03sbnnHJO
-         Zhf5duzrEj9eX/OQfmUQuB1mcs0NWyhT0Nq8bnll6VBkH5MMNuVnk/r+VZCMsG9p+MF2
-         p2msdfAvoqGCLiEGvj8VZ/ZcDlaWAJh9UMDZJNO2mV43yfHzqWr0XRxi/D/aS/WcI7oO
-         Ubd8HliQ17ihWffc1G6JSXjCX/Qb2zOXe4wZZ2qoq64huNhMZFC05/bOza+SE6si/FDh
-         zx5A==
-X-Forwarded-Encrypted: i=1; AJvYcCUCQHKPweuj6C7NLJOB6xcZ1sypNr2y5Nr20J1BzUNy4LQ6Th34CFf/Ljgz5w9Zjph6C6z8/HIkpkXqAKKhdGQ=@vger.kernel.org, AJvYcCUpP6opduF96IToPhuBADoiYNWe9T/s1QFlyUXGPDZ1q1+qdxqd+2dQ+1Ueyi46HAcGCBbp7egRYugn@vger.kernel.org, AJvYcCVmMO0Sh6HFmGG1nk3nnBUbC+XtpQFPL/4DGyfeiw8pFsOBcGEI1Dgj5MD6I1gtNAS0+KUzS4Kq+2fwFsME@vger.kernel.org, AJvYcCXDyM4ZbM9I6G3+BtCWaa+ZtLVfs4trGE53+iYNOmr2SGDbgX4CBp6dF0fUizzPBaAF0dtd@vger.kernel.org, AJvYcCXyZ6kpzUIMQaPfmcL2AUos2DO8wfVsTv5lc37PRHWAFnw99BqnY5fkFnrDv3m+4DylSDVFz+24sCug@vger.kernel.org
-X-Gm-Message-State: AOJu0YzARDEuWrEH+ElySGbo3cTcLS4Y7ScZQaOg3zEoXHGkNoHS6X2j
-	JCC1x2UmuwkYq8aJFmxALsiTX7b89nX8I3hJTDYeQl5MkwYM3PSVJrELRD2IkiJSTIGnFZqGdXB
-	h5h3gYu+LEWMjc2HD/Aq3v4adZc4=
-X-Gm-Gg: ASbGncvl3JUSZMlU9rbWAY9/UCLRHk5vBXnhTDi0OJqiYorZ/Tkj3RRbceSS4AyB6Ov
-	iS6V9YFK5vJDK21UTEgumCnTf8DSelmCJb2nO6Uf4FlwWLpxWi4TI3fbZEZNEM7/htZ0Lukduyi
-	W2CDCkZws=
-X-Google-Smtp-Source: AGHT+IG/p3FXeTyrAAqDE1FrvSFfCyLSjW6tz4Gy4+kr+TxE6tY3gEvqPTJfJGL9UcELpQzeYJ728itJafYL886LXvI=
-X-Received: by 2002:a17:90b:4c04:b0:2ee:f59a:94d3 with SMTP id
- 98e67ed59e1d1-2fce75eed74mr1150380a91.0.1740110351760; Thu, 20 Feb 2025
- 19:59:11 -0800 (PST)
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1740110831; x=1771646831;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=tKX8JdqFzrTi/1BQO/FO5wDgGYCQeQS6PgW1/5We6so=;
+  b=j2ICIJh65csevEzUP2kgHy/e1h803N9wfmp92gk1wGMRDvHbzRgqiujk
+   OHsS8iZ/4dIhlwxRQ7bS5H9KZHbnXQLwNv+mwTPqlVz3oYIV/pioZIHWB
+   6jgDCy79c/W23Np6Q3w89uaJYWPTwUmmVwfSYBkhmHdStenvEPewrKioA
+   8=;
+X-IronPort-AV: E=Sophos;i="6.13,303,1732579200"; 
+   d="scan'208";a="67970952"
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
+  by smtp-border-fw-52003.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Feb 2025 04:06:57 +0000
+Received: from EX19MTAUWA002.ant.amazon.com [10.0.21.151:51376]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.55.141:2525] with esmtp (Farcaster)
+ id fca782d6-17f8-4d01-a8eb-9a81adbd66b0; Fri, 21 Feb 2025 04:06:56 +0000 (UTC)
+X-Farcaster-Flow-ID: fca782d6-17f8-4d01-a8eb-9a81adbd66b0
+Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
+ EX19MTAUWA002.ant.amazon.com (10.250.64.202) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.39;
+ Fri, 21 Feb 2025 04:06:55 +0000
+Received: from 6c7e67bfbae3.amazon.com (10.135.209.63) by
+ EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Fri, 21 Feb 2025 04:06:50 +0000
+From: Kuniyuki Iwashima <kuniyu@amazon.com>
+To: <shaw.leon@gmail.com>
+CC: <alex.aring@gmail.com>, <andrew+netdev@lunn.ch>,
+	<b.a.t.m.a.n@lists.open-mesh.org>, <bpf@vger.kernel.org>,
+	<bridge@lists.linux.dev>, <davem@davemloft.net>, <donald.hunter@gmail.com>,
+	<dsahern@kernel.org>, <edumazet@google.com>, <herbert@gondor.apana.org.au>,
+	<horms@kernel.org>, <kuba@kernel.org>, <kuniyu@amazon.com>,
+	<linux-can@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-kselftest@vger.kernel.org>, <linux-ppp@vger.kernel.org>,
+	<linux-rdma@vger.kernel.org>, <linux-wireless@vger.kernel.org>,
+	<linux-wpan@vger.kernel.org>, <miquel.raynal@bootlin.com>,
+	<netdev@vger.kernel.org>, <osmocom-net-gprs@lists.osmocom.org>,
+	<pabeni@redhat.com>, <shuah@kernel.org>, <stefan@datenfreihafen.org>,
+	<steffen.klassert@secunet.com>, <wireguard@lists.zx2c4.com>
+Subject: Re: [PATCH net-next v10 07/13] net: ipv6: Init tunnel link-netns before registering dev
+Date: Thu, 20 Feb 2025 20:06:41 -0800
+Message-ID: <20250221040641.77646-1-kuniyu@amazon.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+In-Reply-To: <20250219125039.18024-8-shaw.leon@gmail.com>
+References: <20250219125039.18024-8-shaw.leon@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241219170425.12036-1-dakr@kernel.org> <20241219170425.12036-8-dakr@kernel.org>
- <g63h5f3zowy375yutftautqhurflahq3o5nmujbr274c5d7u7u@j5cbqi5aba6k>
-In-Reply-To: <g63h5f3zowy375yutftautqhurflahq3o5nmujbr274c5d7u7u@j5cbqi5aba6k>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Fri, 21 Feb 2025 04:58:59 +0100
-X-Gm-Features: AWEUYZlzKjop4fZ8volzu6pW1ujhScrt60C60cL2W8m76ir8T5HPKhxKjw-6XfY
-Message-ID: <CANiq72=gZhG8MOCqPi8F0yp3WR1oW77V+MXdLP=RK_R2Jzg-cw@mail.gmail.com>
-Subject: Re: [PATCH v7 07/16] rust: add `io::{Io, IoRaw}` base types
-To: Alistair Popple <apopple@nvidia.com>
-Cc: Danilo Krummrich <dakr@kernel.org>, gregkh@linuxfoundation.org, rafael@kernel.org, 
-	bhelgaas@google.com, ojeda@kernel.org, alex.gaynor@gmail.com, 
-	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, 
-	benno.lossin@proton.me, tmgross@umich.edu, a.hindborg@samsung.com, 
-	aliceryhl@google.com, airlied@gmail.com, fujita.tomonori@gmail.com, 
-	lina@asahilina.net, pstanner@redhat.com, ajanulgu@redhat.com, 
-	lyude@redhat.com, robh@kernel.org, daniel.almeida@collabora.com, 
-	saravanak@google.com, dirk.behme@de.bosch.com, j@jannau.net, 
-	fabien.parent@linaro.org, chrisi.schrefl@gmail.com, paulmck@kernel.org, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org, rcu@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D043UWC004.ant.amazon.com (10.13.139.206) To
+ EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
-Hi Alistair,
+From: Xiao Liang <shaw.leon@gmail.com>
+Date: Wed, 19 Feb 2025 20:50:33 +0800
+> Currently some IPv6 tunnel drivers set tnl->net to dev_net(dev) in
+> ndo_init(), which is called in register_netdevice(). However, it lacks
+> the context of link-netns when we enable cross-net tunnels at device
+> registration time.
+> 
+> Let's move the init of tunnel link-netns before register_netdevice().
+> 
+> ip6_gre has already initialized netns, so just remove the redundant
+> assignment.
+> 
+> Signed-off-by: Xiao Liang <shaw.leon@gmail.com>
 
-On Fri, Feb 21, 2025 at 2:20=E2=80=AFAM Alistair Popple <apopple@nvidia.com=
-> wrote:
->
-> Is this a known issue or limitation? Or is this a bug/rough edge that sti=
-ll
-> needs fixing? Or alternatively am I just doing something wrong? Would app=
-reciate
-> any insights as figuring out what I'd done wrong here was a bit of a roug=
-h
-> introduction!
+Reviewed-by: Kuniyuki Iwashima <kuniyu@amazon.com>
 
-Yeah, it is a result of our `build_assert!` machinery:
+left a small comment, but not a blocker.
 
-    https://rust.docs.kernel.org/kernel/macro.build_assert.html
 
-which works by producing a build (link) error rather than the usual
-compiler error and thus the bad error message.
+> @@ -1565,6 +1565,7 @@ static int ipip6_newlink(struct net_device *dev,
+>  	int err;
+>  
+>  	nt = netdev_priv(dev);
+> +	nt->net = net;
 
-`build_assert!` is really the biggest hammer we have to assert
-something is true at build time, since it may rely on the optimizer.
-For instance, if `static_assert!` is usable in that context, it should
-be instead of `build_assert!`.
+This hunk is not necessary as we'll call ipip6_tunnel_locate(),
+but it's harmless and not worth reposting the whole series given
+we are alredy in v10.  You can just post a follow-up patch after
+the series is applied.
 
-Ideally we would have a way to get the message propagated somehow,
-because it is indeed confusing.
-
-I hope that helps.
-
-Cheers,
-Miguel
+Thanks!
 
