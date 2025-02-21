@@ -1,96 +1,84 @@
-Return-Path: <linux-kernel+bounces-525464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77FE7A3F050
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:32:40 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DB0CA3EFA2
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 10:11:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96F2186101C
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:30:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 910517A6D9B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 09:10:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBA5C204F9D;
-	Fri, 21 Feb 2025 09:30:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ClMGxG0S"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F69D202F64;
+	Fri, 21 Feb 2025 09:11:00 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54DDD204F80;
-	Fri, 21 Feb 2025 09:30:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55C7A33EA;
+	Fri, 21 Feb 2025 09:10:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740130211; cv=none; b=WM3V0qmJ5Cd+8Vn6fFFQ5pj2i4DIe4cJ8Z6bXR1Bvde1eQlaDDd417xNFXLAYH1gk084q/MipjCUWVMzXOjX0b6OfK8iJ8o7cmtxhRNAputbD4uUtVOsK15kTRmmqqlrO3jMFizLHWgFmArMhDO0ts3DNncjrSI2Ll+skHX3/m0=
+	t=1740129059; cv=none; b=t5q16fTiiIiT0zKPQvjhH9MrfXu3lRKErLRE9dCzooERcoPv30RcXIJZSKmCiJRJ6heDZMdRXFs/We3HPOdRs6lf4gyQ7J2tI0i7osfTyHKtf+ORqDr5QvD/M3X9BpfXSs/joQ1BeDyDbwbn9bS1Yj+L4N41mnLM9UaX8jK2kLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740130211; c=relaxed/simple;
-	bh=phdfQPrKfgApIH7mf/yVXltPVQWBUOKvkJ/2k3qSj5Y=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=WrOsFh74F2UeGouK2eznIiodLRzDJpzG23mHF/ZIa47YZCHuRFddG7K9JE6kf2FcfB6/jqNCPaJdxs64Z0nhVMMo/hF1XBw7GsLoi5XNaXRN95TiVO/1CYTcR6tzm/mrtpJE+fJxKd3V+Qjg6EXHSbbknakMw+Tuo3K4rKd4zTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ClMGxG0S; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97E1AC4CEDD;
-	Fri, 21 Feb 2025 09:30:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740130210;
-	bh=phdfQPrKfgApIH7mf/yVXltPVQWBUOKvkJ/2k3qSj5Y=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=ClMGxG0SZ6TY8Awe+wewVPlhaplwi16VlAcwbulj5LZALHg3CKfEqtPtcAbSYvLCk
-	 tlzFMwVgt/Y4CxNbYKF/ZsVh/Lx+MfUrfZZYK9WcULHszA0iefufHEBaK7vRUeciOm
-	 gK+h3WolRo+L0Aq0/abEkxKcoLV2FYq0lIzdTqC6sVVSTtjMqMAGJjljkLbIS3CKWh
-	 lywyzcWJbIjr9+yrzjs03Mr5/m+7xy31sogRgoKvhGNtm7TJ41AbAwfHTb4soEkdOx
-	 wYUfa+oVyr2kIJz/gh33+L7hMBZUPOSDuykYmH7VTElu0u2ESyvbOcSWcm0o7V2mkG
-	 QaXFwRBePGkyw==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Benno Lossin" <benno.lossin@proton.me>
-Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Anna-Maria Behnsen"
- <anna-maria@linutronix.de>,  "Frederic Weisbecker" <frederic@kernel.org>,
-  "Thomas Gleixner" <tglx@linutronix.de>,  "Danilo Krummrich"
- <dakr@kernel.org>,  "Alex Gaynor" <alex.gaynor@gmail.com>,  "Boqun Feng"
- <boqun.feng@gmail.com>,  "Gary Guo" <gary@garyguo.net>,  =?utf-8?Q?Bj?=
- =?utf-8?Q?=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,  "Alice Ryhl" <aliceryhl@google.com>,  "Trevor
- Gross" <tmgross@umich.edu>,  "Lyude Paul" <lyude@redhat.com>,  "Guangbo
- Cui" <2407018371@qq.com>,  "Dirk Behme" <dirk.behme@gmail.com>,  "Daniel
- Almeida" <daniel.almeida@collabora.com>,  "Tamir Duberstein"
- <tamird@gmail.com>,  <rust-for-linux@vger.kernel.org>,
-  <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v8 10/14] rust: alloc: add `Box::into_pin`
-In-Reply-To: <2a7283fb-4c93-42c4-a895-36a6e3d1935d@proton.me> (Benno Lossin's
-	message of "Thu, 20 Feb 2025 23:20:03 +0000")
-References: <20250218-hrtimer-v3-v6-12-rc2-v8-0-48dedb015eb3@kernel.org>
-	<20250218-hrtimer-v3-v6-12-rc2-v8-10-48dedb015eb3@kernel.org>
-	<TykbJwFqJWXaHRmGzNQOcREWm8Avs7MNKSkQUNb93HmcQ5GhrTOvsxN-mkgHi1HtuFyemvajGA2qvFoDhSe4ag==@protonmail.internalid>
-	<2a7283fb-4c93-42c4-a895-36a6e3d1935d@proton.me>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Fri, 21 Feb 2025 10:10:40 +0100
-Message-ID: <87seo7fysv.fsf@kernel.org>
+	s=arc-20240116; t=1740129059; c=relaxed/simple;
+	bh=AHLxsYdK+o7CJ2XtDFl3oFh8sKefJVTye7o6XxDml1U=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=Zdi/uF2NWEGWRtMcgZVd6AEBSFQnAyJNE75T5gCvmWdr7ZOkeasD9o3lLWgtgPW3isjRyYQ3RFnbfc81NiiB1FD3JijO/RolV3aMXpg5A55NXxetPxZyngx6IRF9zW8YlxEAw9ov74ZZlrEvpiIbQye3gv25OCylin1DZpx6v9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4Yzkkw1H9mz1GDfR;
+	Fri, 21 Feb 2025 17:06:16 +0800 (CST)
+Received: from kwepemd200010.china.huawei.com (unknown [7.221.188.124])
+	by mail.maildlp.com (Postfix) with ESMTPS id B33721402E2;
+	Fri, 21 Feb 2025 17:10:54 +0800 (CST)
+Received: from kwepemd500012.china.huawei.com (7.221.188.25) by
+ kwepemd200010.china.huawei.com (7.221.188.124) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Fri, 21 Feb 2025 17:10:54 +0800
+Received: from kwepemd500012.china.huawei.com ([7.221.188.25]) by
+ kwepemd500012.china.huawei.com ([7.221.188.25]) with mapi id 15.02.1258.034;
+ Fri, 21 Feb 2025 17:10:54 +0800
+From: lizetao <lizetao1@huawei.com>
+To: Bui Quang Minh <minhquangbui99@gmail.com>
+CC: Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>,
+	David Wei <dw@davidwei.uk>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "io-uring@vger.kernel.org"
+	<io-uring@vger.kernel.org>
+Subject: RE: [PATCH] io_uring: add missing IORING_MAP_OFF_ZCRX_REGION in
+ io_uring_mmap
+Thread-Topic: [PATCH] io_uring: add missing IORING_MAP_OFF_ZCRX_REGION in
+ io_uring_mmap
+Thread-Index: AQHbhD7+hhZgMRil3kSQZU4uDzijo7NRd6Ww
+Date: Fri, 21 Feb 2025 09:10:54 +0000
+Message-ID: <590cff7ccda34b028706b9288f8928d3@huawei.com>
+References: <20250221085933.26034-1-minhquangbui99@gmail.com>
+In-Reply-To: <20250221085933.26034-1-minhquangbui99@gmail.com>
+Accept-Language: en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
 
-"Benno Lossin" <benno.lossin@proton.me> writes:
-
-> On 18.02.25 14:27, Andreas Hindborg wrote:
->> Add an associated function to convert a `Box<T>` into a `Pin<Box<T>>`.
->
-> Why don't you use `into()` directly where you need it? Do you want the
-> function call to be more descriptive?
-> (To be clear, I'm not against the addition, just wanting to check if our
-> motivation is the same)
-
-Yes, I prefer the explicit name in a line like this:
-
-        // SAFETY: We called `Box::into_raw` when we queued the timer.
-        let tbox = ManuallyDrop::new(Box::into_pin(unsafe { Box::<T, A>::from_raw(data_ptr) }));
-
-
-Best regards,
-Andreas Hindborg
-
-
-
+SGksDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQnVpIFF1YW5nIE1p
+bmggPG1pbmhxdWFuZ2J1aTk5QGdtYWlsLmNvbT4NCj4gU2VudDogRnJpZGF5LCBGZWJydWFyeSAy
+MSwgMjAyNSA1OjAwIFBNDQo+IFRvOiBpby11cmluZ0B2Z2VyLmtlcm5lbC5vcmcNCj4gQ2M6IEpl
+bnMgQXhib2UgPGF4Ym9lQGtlcm5lbC5kaz47IFBhdmVsIEJlZ3Vua292DQo+IDxhc21sLnNpbGVu
+Y2VAZ21haWwuY29tPjsgRGF2aWQgV2VpIDxkd0BkYXZpZHdlaS51az47IGxpbnV4LQ0KPiBrZXJu
+ZWxAdmdlci5rZXJuZWwub3JnOyBCdWkgUXVhbmcgTWluaCA8bWluaHF1YW5nYnVpOTlAZ21haWwu
+Y29tPg0KPiBTdWJqZWN0OiBbUEFUQ0hdIGlvX3VyaW5nOiBhZGQgbWlzc2luZyBJT1JJTkdfTUFQ
+X09GRl9aQ1JYX1JFR0lPTiBpbg0KPiBpb191cmluZ19tbWFwDQo+IA0KPiBBbGxvdyB1c2VyIHRv
+IG1tYXAgdGhlIGtlcm5lbCBhbGxvY2F0ZWQgemVyb2NvcHktcnggcmVmaWxsIHF1ZXVlLg0KPiAN
+Cg0KTWF5YmUgZml4ZWQtdGFnIHNob3VsZCBiZSBhZGRlZCBoZXJlLg0KDQpPdGhlciB0aGFuIHRo
+YXQsIGl0IGxvb2tzIGdvb2QgdG8gbWUuDQpSZXZpZXdlZC1ieTogTGkgWmV0YW8gPGxpemV0YW8x
+QGh1YXdlaS5jb20+DQoNCi0tLQ0KTGkgWmV0YW8NCg==
 
