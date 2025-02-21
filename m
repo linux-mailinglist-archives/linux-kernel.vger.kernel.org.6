@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-526024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B37AA3F8E5
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:34:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E78EEA3F8ED
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:36:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C309719C169A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 15:32:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC242703DA9
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 15:32:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69D25215072;
-	Fri, 21 Feb 2025 15:29:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66A73215191;
+	Fri, 21 Feb 2025 15:29:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="xBAGsdPP";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="w7ejTtFK"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="gLFHHitJ";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qfdbHsmw"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 212C2212FB2;
-	Fri, 21 Feb 2025 15:29:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D211C213226;
+	Fri, 21 Feb 2025 15:29:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740151759; cv=none; b=F8PoiVpw3QuvIelL+Sf9RGsFKn8j8DiLfKKocUn+OdcnekXaYbg60ZRLnDEUYhHly3Sfls2ZllifqBsaIl4dEiGsXidVcVJI3izMqmroHD22Fz9ZztVB7yXuC1BczsHH7NQY/kb9RnIkuQNB/DCGpMPrzkpD/3Wjl+pPJfH8d70=
+	t=1740151761; cv=none; b=HPS/zHPIvRdDi/Ysijnz9pbs3wByQUHCvM9D4WOVgvx+BPOp1U74ZhTE+MEm0WpgXWURAbFHFCV+ECpwnNquFM0HSwQBTGt44HSEvota5lIqxPitRsP5hGAd/RSzmHaIjQF1mi/xvbnuBxWANwQsjbc/tPX2BCEa35CWkx1hVJI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740151759; c=relaxed/simple;
-	bh=Sgb4lRNOsH9ev03x6BLtr2ijGeo8RxWdQEtTFJy1oPs=;
+	s=arc-20240116; t=1740151761; c=relaxed/simple;
+	bh=gvPE8ycjeYSXnQS/h4/vFc9oPAIaybODWv+nW2SUJKs=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=H1WHoE3zXoWVKhk2C5ct6mXQJ8NvwYjlTqVv9r+otG9X3Cn3UoYIsXhCLf18JcE/7aPnWrQZW9qqb2rxSAyea4JnWW9CPfm6aE3PEtntnLayEstvhRy8p5+l4yURrdTJUh3WFf4w6mK7NjLA2GpETQzlT9B9tre6HMtKpsBsmTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=xBAGsdPP; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=w7ejTtFK; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=kvXj7WeRT1F3yvjil4lBM6kjrUjfb9aYJ8xCoF1R036cV4mxhFFlQKxrN0swLlfb7vavLC3XXWvPEs0w3EMe6Xzc3HphLTyqVqvNaKlGJWtuUlmGWKXhakvyIIiJG4i/QoG6gowA+lNR7euNCFY0hlsGbLLDAN2KVGGil+0qya8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=gLFHHitJ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qfdbHsmw; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 21 Feb 2025 15:29:15 -0000
+Date: Fri, 21 Feb 2025 15:29:16 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1740151756;
+	s=2020; t=1740151757;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=ItqkKD3hqEcV/WAXnBzwfgjapNbA8d2EOk+m9pooXCg=;
-	b=xBAGsdPPh9Xn2EQbUXVB3yVkYs/E5I84s3dkM+5mYdf/IfeUHSpzqDYs9oPjKoDO7cU1KD
-	gfoA6NnziReu6RnifZTj94z0YAei/M/gQPjl3UjBi9fS5fZ4pdvyvS4epgPVQcFHSJEJKF
-	YZyUjA+h7jb4csY975LLndpcFh9OS98+pumV63EAmS3MzaERBjpCEnQs5dUhosRqBac0jQ
-	54k4tW1yT3u7dSg3aXVg/6/4bxzyfVsi+TUL/Y5ymkIiY0A+UVXSkKtfWRhiXXxnr3HgcZ
-	Ur4FFpGbES4oUvxAoPvBJt38kV7VY9+m3uvs7YR0wmOgmaBD5xHIvaR3mif7zw==
+	bh=HmANWdnkLmAL8VMFwvfKur2p1nIr8KH1hojie2SY8Kk=;
+	b=gLFHHitJfksEOBTJD+utvKQm7TBgQCLHwH+h+7AIKY2cLIlQ1lbOilFjktOuGjg/dUy9OA
+	hVAYftaHFs+jQx83mNM0B2QYvX1hILtuQfaXAZPbGI75ixSLlyvrf6JBan0uunMQLoFErb
+	kCmEPlHOQRirZ+IccsAfrSboyrfSo/TiSKSOJ98pmiRt3XQ/BKltiWHZTPqq8eDgychZoD
+	fSkAyAatKUoJyaoo9oruWnED89h5pRRW7WV+Q1QKlx7X3Q6bgPzuvI/0UX6iNoMJAT29ac
+	YvrNH3iOIcYLxniJYPDNif5VIl1JiaW4s0/II/rO8vf+gZlxsNfJ0KLKPFzjyA==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1740151756;
+	s=2020e; t=1740151757;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=ItqkKD3hqEcV/WAXnBzwfgjapNbA8d2EOk+m9pooXCg=;
-	b=w7ejTtFKTn0rywKxunxDMGSDd88sqDeBw1fgEJxzbFaxBZjMEdLguRB4NBgT7rLnqcpFHb
-	DSs52/SsKnF6chAg==
+	bh=HmANWdnkLmAL8VMFwvfKur2p1nIr8KH1hojie2SY8Kk=;
+	b=qfdbHsmwuNJd/yvV/LEPost8ZMVV0lb6cDpVew4CF+qOxMlwVVOxzO0yi4iEY0aYpu/lzi
+	EFi2h+af0xQfAJCQ==
 From: "tip-bot2 for Mike Rapoport (Microsoft)" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/boot] x86/boot: Split kernel resources setup into the
- setup_kernel_resources() helper function
+Subject: [tip: x86/boot] x86/boot: Move setting of memblock parameters to
+ e820__memblock_setup()
 Cc: "Mike Rapoport (Microsoft)" <rppt@kernel.org>,
  Ingo Molnar <mingo@kernel.org>, x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250214090651.3331663-3-rppt@kernel.org>
-References: <20250214090651.3331663-3-rppt@kernel.org>
+In-Reply-To: <20250214090651.3331663-2-rppt@kernel.org>
+References: <20250214090651.3331663-2-rppt@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174015175568.10177.15710753609296534257.tip-bot2@tip-bot2>
+Message-ID: <174015175614.10177.6726520992334916379.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -81,85 +81,115 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the x86/boot branch of tip:
 
-Commit-ID:     297fb82ebaad50e1c40aab7ac61897bf372842ba
-Gitweb:        https://git.kernel.org/tip/297fb82ebaad50e1c40aab7ac61897bf372842ba
+Commit-ID:     2d6bff31399b2443aba230cd20f120acb2d4eeb1
+Gitweb:        https://git.kernel.org/tip/2d6bff31399b2443aba230cd20f120acb2d4eeb1
 Author:        Mike Rapoport (Microsoft) <rppt@kernel.org>
-AuthorDate:    Fri, 14 Feb 2025 11:06:49 +02:00
+AuthorDate:    Fri, 14 Feb 2025 11:06:48 +02:00
 Committer:     Ingo Molnar <mingo@kernel.org>
 CommitterDate: Fri, 21 Feb 2025 16:05:00 +01:00
 
-x86/boot: Split kernel resources setup into the setup_kernel_resources() helper function
+x86/boot: Move setting of memblock parameters to e820__memblock_setup()
 
-Makes setup_arch() a bit easier to comprehend.
+Changing memblock parameters, namely bottom_up and allocation upper
+limit does not have any effect before memblock initialization in
+e820__memblock_setup().
+
+Move the calls to memblock_set_bottom_up() and memblock_set_current_limit()
+to e820__memblock_setup() to group all the memblock initial setup and make
+setup_arch() more readable.
 
 No functional changes.
 
 Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Link: https://lore.kernel.org/r/20250214090651.3331663-3-rppt@kernel.org
+Link: https://lore.kernel.org/r/20250214090651.3331663-2-rppt@kernel.org
 ---
- arch/x86/kernel/setup.c | 36 ++++++++++++++++++++++--------------
- 1 file changed, 22 insertions(+), 14 deletions(-)
+ arch/x86/kernel/e820.c  | 30 ++++++++++++++++++++++++++++++
+ arch/x86/kernel/setup.c | 25 -------------------------
+ 2 files changed, 30 insertions(+), 25 deletions(-)
 
+diff --git a/arch/x86/kernel/e820.c b/arch/x86/kernel/e820.c
+index 82b96ed..8d8bd03 100644
+--- a/arch/x86/kernel/e820.c
++++ b/arch/x86/kernel/e820.c
+@@ -1302,6 +1302,36 @@ void __init e820__memblock_setup(void)
+ 	int i;
+ 	u64 end;
+ 
++#ifdef CONFIG_MEMORY_HOTPLUG
++	/*
++	 * Memory used by the kernel cannot be hot-removed because Linux
++	 * cannot migrate the kernel pages. When memory hotplug is
++	 * enabled, we should prevent memblock from allocating memory
++	 * for the kernel.
++	 *
++	 * ACPI SRAT records all hotpluggable memory ranges. But before
++	 * SRAT is parsed, we don't know about it.
++	 *
++	 * The kernel image is loaded into memory at very early time. We
++	 * cannot prevent this anyway. So on NUMA system, we set any
++	 * node the kernel resides in as un-hotpluggable.
++	 *
++	 * Since on modern servers, one node could have double-digit
++	 * gigabytes memory, we can assume the memory around the kernel
++	 * image is also un-hotpluggable. So before SRAT is parsed, just
++	 * allocate memory near the kernel image to try the best to keep
++	 * the kernel away from hotpluggable memory.
++	 */
++	if (movable_node_is_enabled())
++		memblock_set_bottom_up(true);
++#endif
++
++	/*
++	 * At this point only the first megabyte is mapped for sure, the
++	 * rest of the memory cannot be used for memblock resizing
++	 */
++	memblock_set_current_limit(ISA_END_ADDRESS);
++
+ 	/*
+ 	 * The bootstrap memblock region count maximum is 128 entries
+ 	 * (INIT_MEMBLOCK_REGIONS), but EFI might pass us more E820 entries
 diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-index 4baadea..3d95946 100644
+index cebee31..4baadea 100644
 --- a/arch/x86/kernel/setup.c
 +++ b/arch/x86/kernel/setup.c
-@@ -527,6 +527,23 @@ void __init reserve_standard_io_resources(void)
+@@ -866,30 +866,6 @@ void __init setup_arch(char **cmdline_p)
+ 	if (efi_enabled(EFI_BOOT))
+ 		efi_memblock_x86_reserve_range();
  
- }
- 
-+static void __init setup_kernel_resources(void)
-+{
-+	code_resource.start = __pa_symbol(_text);
-+	code_resource.end = __pa_symbol(_etext)-1;
-+	rodata_resource.start = __pa_symbol(__start_rodata);
-+	rodata_resource.end = __pa_symbol(__end_rodata)-1;
-+	data_resource.start = __pa_symbol(_sdata);
-+	data_resource.end = __pa_symbol(_edata)-1;
-+	bss_resource.start = __pa_symbol(__bss_start);
-+	bss_resource.end = __pa_symbol(__bss_stop)-1;
-+
-+	insert_resource(&iomem_resource, &code_resource);
-+	insert_resource(&iomem_resource, &rodata_resource);
-+	insert_resource(&iomem_resource, &data_resource);
-+	insert_resource(&iomem_resource, &bss_resource);
-+}
-+
- static bool __init snb_gfx_workaround_needed(void)
- {
- #ifdef CONFIG_PCI
-@@ -845,15 +862,6 @@ void __init setup_arch(char **cmdline_p)
- 		root_mountflags &= ~MS_RDONLY;
- 	setup_initial_init_mm(_text, _etext, _edata, (void *)_brk_end);
- 
--	code_resource.start = __pa_symbol(_text);
--	code_resource.end = __pa_symbol(_etext)-1;
--	rodata_resource.start = __pa_symbol(__start_rodata);
--	rodata_resource.end = __pa_symbol(__end_rodata)-1;
--	data_resource.start = __pa_symbol(_sdata);
--	data_resource.end = __pa_symbol(_edata)-1;
--	bss_resource.start = __pa_symbol(__bss_start);
--	bss_resource.end = __pa_symbol(__bss_stop)-1;
+-#ifdef CONFIG_MEMORY_HOTPLUG
+-	/*
+-	 * Memory used by the kernel cannot be hot-removed because Linux
+-	 * cannot migrate the kernel pages. When memory hotplug is
+-	 * enabled, we should prevent memblock from allocating memory
+-	 * for the kernel.
+-	 *
+-	 * ACPI SRAT records all hotpluggable memory ranges. But before
+-	 * SRAT is parsed, we don't know about it.
+-	 *
+-	 * The kernel image is loaded into memory at very early time. We
+-	 * cannot prevent this anyway. So on NUMA system, we set any
+-	 * node the kernel resides in as un-hotpluggable.
+-	 *
+-	 * Since on modern servers, one node could have double-digit
+-	 * gigabytes memory, we can assume the memory around the kernel
+-	 * image is also un-hotpluggable. So before SRAT is parsed, just
+-	 * allocate memory near the kernel image to try the best to keep
+-	 * the kernel away from hotpluggable memory.
+-	 */
+-	if (movable_node_is_enabled())
+-		memblock_set_bottom_up(true);
+-#endif
 -
+ 	x86_report_nx();
+ 
+ 	apic_setup_apic_calls();
+@@ -990,7 +966,6 @@ void __init setup_arch(char **cmdline_p)
+ 
+ 	cleanup_highmap();
+ 
+-	memblock_set_current_limit(ISA_END_ADDRESS);
+ 	e820__memblock_setup();
+ 
  	/*
- 	 * x86_configure_nx() is called before parse_early_param() to detect
- 	 * whether hardware doesn't support NX (so that the early EHCI debug
-@@ -897,11 +905,11 @@ void __init setup_arch(char **cmdline_p)
- 	tsc_early_init();
- 	x86_init.resources.probe_roms();
- 
--	/* after parse_early_param, so could debug it */
--	insert_resource(&iomem_resource, &code_resource);
--	insert_resource(&iomem_resource, &rodata_resource);
--	insert_resource(&iomem_resource, &data_resource);
--	insert_resource(&iomem_resource, &bss_resource);
-+	/*
-+	 * Add resources for kernel text and data to the iomem_resource.
-+	 * Do it after parse_early_param, so it can be debugged.
-+	 */
-+	setup_kernel_resources();
- 
- 	e820_add_kernel_range();
- 	trim_bios_range();
 
