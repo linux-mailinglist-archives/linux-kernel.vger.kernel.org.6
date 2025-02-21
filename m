@@ -1,265 +1,169 @@
-Return-Path: <linux-kernel+bounces-525891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B23CA3F6ED
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 15:13:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B3C3A3F6EE
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 15:14:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DE5A18998DC
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 14:13:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07D0F175B65
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 14:13:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62C4A20F083;
-	Fri, 21 Feb 2025 14:13:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF60320E6FA;
+	Fri, 21 Feb 2025 14:13:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="E4V+FGgM"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C3Ai0wd2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE625433DE;
-	Fri, 21 Feb 2025 14:13:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E696433DE
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 14:13:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740147205; cv=none; b=P9X0OQz3ctMuCTFPr4fSAgdNx6dhkZanxUEiMsaoTOC3eZN+YYEXD6ljpfWTog0eW33+O+UT22dbnGkS633DKeZa/C8gjHM0IQFENHyA7tV9wDbvahcy3rkjCuNNF299lf0h/sF5fRcZ9e5OfE4AlgUfwszzBUm54ucXXaX38Qg=
+	t=1740147227; cv=none; b=FvIiCSfxp0POFOu1vMvYbXcfRD96KnpFWSLrg9e4uNnIfiEhZ6/6GBwJNBOsdtDyUiebwAGkGO17sUlhTuI/CqKSxtTQ2cad78bfo0skTGtOttLkVdeNFc6J3W3gzWCSGwmYgNWFAJDUGAJP5C/d/2BO2bFweJhapQEZVHu2GAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740147205; c=relaxed/simple;
-	bh=Rdw7VcsQXfPz8ijFFRK9pCO/RD7kMR5M0Z/uSgEDHcs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EykDFFxpAFB0mvsVeEUm6hpVoMuslynDqvU/gFOkDffDSaNFTInw0rvMAwh3DLTpFdZcaLvVClQ/n7SYDmgCNpTB8Ukk8fdYM2m5KOzj0WOdOp0nN2hcDfB+4PI/wPmMaNQ1P5MNKBIqBH6M2to/mjZPsD/4qz18zIiqX26RCMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=E4V+FGgM; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740147204; x=1771683204;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Rdw7VcsQXfPz8ijFFRK9pCO/RD7kMR5M0Z/uSgEDHcs=;
-  b=E4V+FGgMeFEMoyeauFsbzatVvwZo9rI0kc6cYtZLdZtp/7+AXeqpG+G4
-   QPdQxvKOIlD1dbU03pAq4gs/xMlGOObnnz1qhl7BzHBHdiqKZ49znveVC
-   a/XzjliS8a0lzODEXZk32XoNpJaVgw6NxKihKyZdVVESua+SM2eOOHMo9
-   P9tUp2qWvXyVBCM7AFXgGbN2/8Vuo9ZCH2V2pUzee3i8g6AgX3s+OSXu7
-   HuMyRDXj78WzfH2CEKwO+5vvagu9AjbjUvFWiBZJh9AfYKmIz1g+hMZ5L
-   7rXllncBj/NLeiUAsh9ij/7FlMiPoyQ7y+sp3b16O9PBtLdfcpUzn0EwJ
-   Q==;
-X-CSE-ConnectionGUID: wveR+8v0TJaNKM8PX3j3Lw==
-X-CSE-MsgGUID: cs9z5RIFSfy08XVWNdpOMA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11352"; a="41105529"
-X-IronPort-AV: E=Sophos;i="6.13,305,1732608000"; 
-   d="scan'208";a="41105529"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Feb 2025 06:13:23 -0800
-X-CSE-ConnectionGUID: kuWEpc3JQdWW113ZADD5WQ==
-X-CSE-MsgGUID: r9mxKPfoREW6/MVEd3c6sQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,305,1732608000"; 
-   d="scan'208";a="115099483"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Feb 2025 06:13:16 -0800
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id E5D12120289;
-	Fri, 21 Feb 2025 16:13:13 +0200 (EET)
-Date: Fri, 21 Feb 2025 14:13:13 +0000
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Michael Riesch <michael.riesch@wolfvision.net>
-Cc: Mehdi Djait <mehdi.djait@linux.intel.com>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	=?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>,
-	Gerald Loacker <gerald.loacker@wolfvision.net>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Kever Yang <kever.yang@rock-chips.com>,
-	Nicolas Dufresne <nicolas.dufresne@collabora.com>,
-	Sebastian Fricke <sebastian.fricke@collabora.com>,
-	Sebastian Reichel <sebastian.reichel@collabora.com>,
-	Paul Kocialkowski <paulk@sys-base.io>,
-	Alexander Shiyan <eagle.alexander923@gmail.com>,
-	Val Packett <val@packett.cool>, Rob Herring <robh@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>, linux-media@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH v4 04/11] media: dt-bindings: media: add bindings for
- rockchip mipi csi host
-Message-ID: <Z7iJ-UaLabqK4ZhY@kekkonen.localdomain>
-References: <20250219-v6-8-topic-rk3568-vicap-v4-0-e906600ae3b0@wolfvision.net>
- <20250219-v6-8-topic-rk3568-vicap-v4-4-e906600ae3b0@wolfvision.net>
+	s=arc-20240116; t=1740147227; c=relaxed/simple;
+	bh=5Wvq0cTOkb1qFZ+FmAL4lOfu3qF2mOv72Tk8TOkYG5c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VSX/AIAoi39Xzd7HFmpmEXFt65NOWwQgtVwXr9u+4QMoOWPsi6vrFRuCbUb6cFCArn35Ie0y1ScT38tpSdfrni83gO4/fu6zSS84KfmOqgytn1hEw8P050StyDjn2eEtzzBpBRCplP6bgQtHYnasT0oVjamDn4D/4OcSAsOcpbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C3Ai0wd2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BEBD3C4CEE7
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 14:13:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740147226;
+	bh=5Wvq0cTOkb1qFZ+FmAL4lOfu3qF2mOv72Tk8TOkYG5c=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=C3Ai0wd25ztA28XAZDVL9METHpV8jWSps/NfBJmKEbeoyYrY+jmNaFausXudWYM2q
+	 BnUOjRa67DKysZaT/SnaUT8GmyEcNjYEuRw+P+qi5B3ubkGirvUpzUagjI2PMo7wEq
+	 XEstv2sRIITb/6EW6lOkqNU4W2hID0pnBaedjfM64eYgie4X1Sgy8HksD/2GNCP01m
+	 /lwQEWxrFASaaihvBUVTmziWCs13KqMsksjUdM9gr8g8FfTm7aQ7z1q78vtffJ73S2
+	 y/wJi8uzzLnSvUNXnyaNnb9YR3f57J8HTdUlhFZP3ioJw8gx4R7wPlwFQ9fsWkudlv
+	 Z++MUiY5vfwuQ==
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-30a2594435dso32028001fa.1
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 06:13:46 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUglqa31lAqWHqW/i7HkKSQ6VKlLJQUugKgdbTY+CNs2vPqwfi5um0+OJrPWV8nhm/8d5WaXwGHR8ztVsw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwAy2DNtMZR4hNh8RZHmvbF+2YE47CJGuZpQBo5444kg7Km+hj8
+	EgcHp8EcrW6ckq2K/pis+5oOqvTMuU1uzU9qG9it5ly9wPqejQ0Ez3D41daG1mkrdH8uPwlXSnk
+	uqUyp4GO32LxKCFo/i+CQoPyBMZU=
+X-Google-Smtp-Source: AGHT+IG3K5N+fDEdlLTiueQSzzFBO145ZXWDE3VAPQipIFIcwzV+RtC36En4RUVhZO8Sr2UtkDNu9He9vk5b6/sYAx4=
+X-Received: by 2002:a2e:2a04:0:b0:309:31bf:ec17 with SMTP id
+ 38308e7fff4ca-30a506516aemr22347381fa.15.1740147225116; Fri, 21 Feb 2025
+ 06:13:45 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250219-v6-8-topic-rk3568-vicap-v4-4-e906600ae3b0@wolfvision.net>
+References: <20250220200439.4458-1-ubizjak@gmail.com> <CAMzpN2i8uR7L9DmL1AX1R9p__x5KwAtdey_4iJ5ZP_frTqu9vQ@mail.gmail.com>
+ <CAFULd4b8kgXfr1QcWud-n7PyuKKVUGTNd00GSZU=6va6Gr65EA@mail.gmail.com>
+ <CAMzpN2hHb_T3gZfueeVRbOxUFt8+syWsm8iWQxF4PaUOQA-k=w@mail.gmail.com> <CAFULd4ZGW-FYtEe-BJ53QVjHMLr1jyj_6vJhNEwqqwW6Z77+Tg@mail.gmail.com>
+In-Reply-To: <CAFULd4ZGW-FYtEe-BJ53QVjHMLr1jyj_6vJhNEwqqwW6Z77+Tg@mail.gmail.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Fri, 21 Feb 2025 15:13:34 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXGKDtWxcuWbPP+o=6_pwhOHKJF_NnOL8F95y0tXt-dQQg@mail.gmail.com>
+X-Gm-Features: AWEUYZk8R4HJq5obFpbGGz9sISSWNIenvi0lK62lpKl8u34jXrY5WkTyxCDmin4
+Message-ID: <CAMj1kXGKDtWxcuWbPP+o=6_pwhOHKJF_NnOL8F95y0tXt-dQQg@mail.gmail.com>
+Subject: Re: [PATCH -tip] x86/stackprotector: Move stack canary to struct pcpu_hot
+To: Uros Bizjak <ubizjak@gmail.com>
+Cc: Brian Gerst <brgerst@gmail.com>, x86@kernel.org, linux-kernel@vger.kernel.org, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Michael,
+On Fri, 21 Feb 2025 at 15:02, Uros Bizjak <ubizjak@gmail.com> wrote:
+>
+> On Fri, Feb 21, 2025 at 2:37=E2=80=AFPM Brian Gerst <brgerst@gmail.com> w=
+rote:
+> >
+> > On Fri, Feb 21, 2025 at 8:25=E2=80=AFAM Uros Bizjak <ubizjak@gmail.com>=
+ wrote:
+> > >
+> > > On Fri, Feb 21, 2025 at 1:54=E2=80=AFPM Brian Gerst <brgerst@gmail.co=
+m> wrote:
+> > > >
+> > > > On Thu, Feb 20, 2025 at 3:04=E2=80=AFPM Uros Bizjak <ubizjak@gmail.=
+com> wrote:
+> > > > >
+> > > > > Move stack canary from __stack_chk_guard to struct pcpu_hot and
+> > > > > alias __stack_chk_guard to point to the new location in the
+> > > > > linker script.
+> > > > >
+> > > > > __stack_chk_guard is one of the hottest data structures on x86, s=
+o
+> > > > > moving it there makes sense even if its benefit cannot be measure=
+d
+> > > > > explicitly.
+> > > > >
+> > > > > Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+> > > > > Cc: Thomas Gleixner <tglx@linutronix.de>
+> > > > > Cc: Ingo Molnar <mingo@kernel.org>
+> > > > > Cc: Borislav Petkov <bp@alien8.de>
+> > > > > Cc: Dave Hansen <dave.hansen@linux.intel.com>
+> > > > > Cc: "H. Peter Anvin" <hpa@zytor.com>
+> > > > > Cc: Brian Gerst <brgerst@gmail.com>
+> > > > > Cc: Ard Biesheuvel <ardb@kernel.org>
+> > > > > ---
+> > > > >  arch/x86/include/asm/current.h | 13 +++++++++++++
+> > > > >  arch/x86/kernel/cpu/common.c   |  1 -
+> > > > >  arch/x86/kernel/vmlinux.lds.S  |  2 ++
+> > > > >  3 files changed, 15 insertions(+), 1 deletion(-)
+> > > > >
+> > > > > diff --git a/arch/x86/include/asm/current.h b/arch/x86/include/as=
+m/current.h
+> > > > > index bf5953883ec3..e4ff1d15b465 100644
+> > > > > --- a/arch/x86/include/asm/current.h
+> > > > > +++ b/arch/x86/include/asm/current.h
+> > > > > @@ -15,6 +15,9 @@ struct task_struct;
+> > > > >  struct pcpu_hot {
+> > > > >         union {
+> > > > >                 struct {
+> > > > > +#ifdef CONFIG_STACKPROTECTOR
+> > > > > +                       unsigned long           stack_canary;
+> > > > > +#endif
+> > > > >                         struct task_struct      *current_task;
+> > > > >                         int                     preempt_count;
+> > > > >                         int                     cpu_number;
+> > > > > @@ -35,6 +38,16 @@ struct pcpu_hot {
+> > > > >  };
+> > > > >  static_assert(sizeof(struct pcpu_hot) =3D=3D 64);
+> > > > >
+> > > > > +/*
+> > > > > + * stack_canary should be at the beginning of struct pcpu_hot to=
+ avoid:
+> > > > > + *
+> > > > > + * Invalid absolute R_X86_64_32S relocation: __stack_chk_guard
+> > > >
+> > > > This should be R_X86_64_PC32 relocations.
+> > >
+> > > This is what the build system reports if any offset (including 0) is =
+added to
+> > >
+> > > PROVIDE(__stack_chk_guard =3D pcpu_hot);
+> > >
+> > > It is not a warning, but an error that fails the build.
+> > >
+> > > As was discussed in the previous thread, the above is required to
+> > > handle !SMP case, where mstack-protector-guard=3Dglobal (used by !SMP
+> > > builds) ignores the
+> > > -mstack-protector-guard-symbol option and always uses __stack_chk_gua=
+rd.
+> >
+> > I got a warning from the relocs tool, but not a hard error.  What
+> > compiler/linker are you using?
+> >
+> > Does the attached patch build in your configuration?
+>
+> Ah, the attached patch is similar to my previous approach, where the
+> build system *warned* on an offset (the patch was abandoned due to
+> Ard's request to put stack_canary to the *beginning* of struct
+> pcpu_hot, and this allowed for a simplified patch).
+>
+> The attached patch builds for me without warning/error for both, SMP
+> and !SMP build.
+>
 
-On Wed, Feb 19, 2025 at 11:16:35AM +0100, Michael Riesch wrote:
-> Add documentation for the Rockchip RK3568 MIPI CSI-2 Host unit.
-> 
-> Signed-off-by: Michael Riesch <michael.riesch@wolfvision.net>
-> ---
->  .../bindings/media/rockchip,rk3568-mipi-csi.yaml   | 123 +++++++++++++++++++++
->  MAINTAINERS                                        |   1 +
->  2 files changed, 124 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/media/rockchip,rk3568-mipi-csi.yaml b/Documentation/devicetree/bindings/media/rockchip,rk3568-mipi-csi.yaml
-> new file mode 100644
-> index 000000000000..288941686e96
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/media/rockchip,rk3568-mipi-csi.yaml
-> @@ -0,0 +1,123 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/media/rockchip,rk3568-mipi-csi.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Rockchip RK3568 MIPI CSI-2 Host
-> +
-> +maintainers:
-> +  - Michael Riesch <michael.riesch@wolfvision.net>
-> +
-> +description:
-> +  The Rockchip RK3568 MIPI CSI-2 Host is a CSI-2 bridge with one input port
-> +  and one output port. It receives the data with the help of an external
-> +  MIPI PHY (C-PHY or D-PHY) and passes it to the Rockchip RK3568 Video Capture
-> +  (VICAP) block.
-> +
-> +properties:
-> +  compatible:
-> +    const: rockchip,rk3568-mipi-csi
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    maxItems: 1
-> +
-> +  phys:
-> +    maxItems: 1
-> +    description: MIPI C-PHY or D-PHY.
-> +
-> +  phy-names:
-> +    items:
-> +      - const: csiphy
-> +
-> +  power-domains:
-> +    maxItems: 1
-> +
-> +  resets:
-> +    maxItems: 1
-> +
-> +  ports:
-> +    $ref: /schemas/graph.yaml#/properties/ports
-> +
-> +    properties:
-> +      port@0:
-> +        $ref: /schemas/graph.yaml#/$defs/port-base
-> +        unevaluatedProperties: false
-> +        description:
-> +          Input port node. Connect to e.g., a MIPI CSI-2 image sensor.
-> +
-> +        properties:
-> +          endpoint:
-> +            $ref: video-interfaces.yaml#
-> +            unevaluatedProperties: false
-> +
-> +            properties:
-> +              bus-type:
-> +                enum: [1, 4]
-> +
-> +            required:
-> +              - bus-type
-> +
-> +      port@1:
-> +        $ref: /schemas/graph.yaml#/$defs/port-base
-> +        unevaluatedProperties: false
-> +        description:
-> +          Output port node. Connect to RK3568 VICAP MIPI CSI-2 port.
-
-What's the purpose of a port node without an endpoint?
-
-> +
-> +    required:
-> +      - port@0
-> +      - port@1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - phys
-> +  - phy-names
-> +  - ports
-> +  - power-domains
-> +  - resets
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/rk3568-cru.h>
-> +    #include <dt-bindings/power/rk3568-power.h>
-> +
-> +    parent {
-> +        #address-cells = <2>;
-> +        #size-cells = <2>;
-> +
-> +        csi: csi@fdfb0000 {
-> +            compatible = "rockchip,rk3568-mipi-csi";
-> +            reg = <0x0 0xfdfb0000 0x0 0x10000>;
-> +            clocks = <&cru PCLK_CSI2HOST1>;
-> +            phys = <&csi_dphy>;
-> +            phy-names = "csiphy";
-> +            power-domains = <&power RK3568_PD_VI>;
-> +            resets = <&cru SRST_P_CSI2HOST1>;
-> +            status = "disabled";
-> +
-> +            ports {
-> +                #address-cells = <1>;
-> +                #size-cells = <0>;
-> +
-> +                csi_in: port@0 {
-> +                    reg = <0>;
-> +                };
-> +
-> +                csi_out: port@1 {
-> +                    reg = <1>;
-> +
-> +                    csi_output: endpoint {
-> +                        remote-endpoint = <&vicap_mipi_input>;
-> +                    };
-> +                };
-> +            };
-> +        };
-> +    };
-> +...
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index cd8fa1afe5eb..d83a7762dbe3 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -20407,6 +20407,7 @@ M:	Michael Riesch <michael.riesch@wolfvision.net>
->  L:	linux-media@vger.kernel.org
->  S:	Maintained
->  F:	Documentation/devicetree/bindings/media/rockchip,px30-vip.yaml
-> +F:	Documentation/devicetree/bindings/media/rockchip,rk3568-mipi-csi.yaml
->  F:	Documentation/devicetree/bindings/media/rockchip,rk3568-vicap.yaml
->  
->  ROCKCHIP CRYPTO DRIVERS
-> 
-
--- 
-Kind regards,
-
-Sakari Ailus
+Did you try building modules too?
 
