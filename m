@@ -1,93 +1,131 @@
-Return-Path: <linux-kernel+bounces-525232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF1E0A3ECCE
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 07:23:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 880C5A3ECD0
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 07:27:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7777D3B79D8
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 06:22:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BC3C19C44AC
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 06:27:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1576B1FCD1A;
-	Fri, 21 Feb 2025 06:22:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A43861FCCE9;
+	Fri, 21 Feb 2025 06:27:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="EgU87aoO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dqBH5Wu7"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D4011D89E4;
-	Fri, 21 Feb 2025 06:22:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A2501D89E4
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 06:27:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740118971; cv=none; b=V5oxsHwkr4vNa62sUgYVvGNeQEeWPYbZa+mg98J+RCW1NrHHLk7QOzpMfZtrzyYruIJ2eiJtdlLGz73Nly7GBiW2pe9aTp7RFXPawgQ7MMwrkznPuw2y2QWfRuG856ZMomnWExasnTv5I7fpjyX1vd+Hd0xwNP3DOWpi9zoXGcc=
+	t=1740119253; cv=none; b=IgNw0wfja2uAEsq1BKgPOTmZIeJFGIY6DfjeSdXvSGyxONU2jFao5wTsmhUliArZA7VOqUwStaRAXJSMBZAPtUlRdTPdA2uzVEwjcGkLygW+AvJj8vRtfirlINrMA1zKjqeH6nE5gxm9AEcWapkh0MxJ5D3VVOke3JjfYYyHFD8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740118971; c=relaxed/simple;
-	bh=OcphQuiU8TOis33FpWcJWtMOdsI54Ux3WhFuco7MjO4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lxkfPyQyylz5yR7nYpyReKyomlD6eCxK2PX227axOcvufGTHwIgO5ctaRyEwZNFM0KPfspJ93EGxNdC2MnNS3xfd9JBAaGiiRmsGMy8HcsBzG/flyb7gZTZfqMTE3PhZMVSJcty8TRgAwk0tALizFFGAmdvuQFfawGX0iMq6gOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=EgU87aoO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65A76C4CEE2;
-	Fri, 21 Feb 2025 06:22:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1740118970;
-	bh=OcphQuiU8TOis33FpWcJWtMOdsI54Ux3WhFuco7MjO4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EgU87aoO4RUlseqtC9ZN5Ytgy8r6M5J5SHUcvjGCR30AGeR3mwArlMb+BtdII3/Cc
-	 rLRwuexNRl66YWcEepD+bjN6gwdNzfjLV8Hh08aQF+N05rjDq0ylrVqYyfge6pJUPy
-	 3/14nKwVo/m7mhkFlF4oQA/ULqCILyvUdfpeJ+XI=
-Date: Fri, 21 Feb 2025 07:21:44 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Joshua Peraza <jperaza@google.com>
-Cc: baolu.lu@linux.intel.com, bhelgaas@google.com, dtor@google.com,
-	dwmw2@infradead.org, helgaas@kernel.org,
-	iommu@lists.linux-foundation.org, jean-philippe@linaro.org,
-	joro@8bytes.org, jsbarnes@google.com, lenb@kernel.org,
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, mika.westerberg@linux.intel.com,
-	oohall@gmail.com, pavel@denx.de, rafael.j.wysocki@intel.com,
-	rafael@kernel.org, rajatja@google.com, rajatxjain@gmail.com,
-	will@kernel.org
-Subject: Re: [v9 PATCH 1/2] PCI/ACPI: Support Microsoft's "DmaProperty"
-Message-ID: <2025022136-demanding-affluent-c72a@gregkh>
-References: <20250221000943.973221-1-jperaza@google.com>
- <20250221000943.973221-2-jperaza@google.com>
+	s=arc-20240116; t=1740119253; c=relaxed/simple;
+	bh=32Tz4rTPm3s+S8fVY2YDix25mUAA4UMUZGfRiiqhHNA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=sKRn3kdHhuHp0fHsGfzkGdbeHZg180HIKg7JOw1xUHVxuIXfudYrpyjrA9RwExsZexOjViN48INvTP7CeUGHhAFLKr42xD5j4D3M36ZVOiglQPA5Hf63pStuMb0JyjjsxRR1RgEH0Xgl2Z7f+0Z0038ISaHcAbZM0fcwbNNS7V4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dqBH5Wu7; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2fa8c788c74so443111a91.2
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2025 22:27:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740119251; x=1740724051; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Q5PUlkILcaVGQL/e6xHLxhEm/6slgd71dKud2+gLheo=;
+        b=dqBH5Wu7qrpuRR8R4iXmXA+7lZ15mRaJv7/GLe8ZwtGUCFRoVUedUx9D0SJbEpQz2u
+         bKb//KdioBhC7epnxEeJjGVAM4fny4h5bBlV/8FnhjO+nsbzcFCr+Egj31ZaL2ACIZLH
+         hoZ3/8930z+fvaUB2Xwc2z2sSYZ4jP/fMjkPtQtt6L0pO/tdfbusMTsbOiUq+1QpBJTS
+         ASQirRWJCHh3COZK9STR0pS1JjeVvevmHeA3mSpmXNQjmr3gosbzFMMN+/jmppXbNmD2
+         sn+P4GXQE+j2f+fGcCYh4MeH4ob5tIcbRc0Yx+Q9HkXp+aISl8suxyMgsqbQVNbzuYn8
+         I/lQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740119251; x=1740724051;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Q5PUlkILcaVGQL/e6xHLxhEm/6slgd71dKud2+gLheo=;
+        b=jpHJwsg1Lou9wRqFbyLIgv9Z+H41WYB/EnGkFKnJnvoaqnIataV+4S6nLnhSapD8eS
+         2Xbfz9sP7iF+BF+dBJNSOsWpdROZp4UNyvynr6V2Gjc/3SXEizjOOo1P6x9e7MkIZzpz
+         HcHFmw7Jd++jz1SgyHbD5MVL31LK6JFOcphnCSqhdCQuQDlQjtzh1ufyNmecAx6UeCcr
+         4Vuew9uP5o8d8gya4yTLKySJHjNlWMoQ9fgR55wXLPCaGzQLZvUOSIaXbn3lMZyjxXss
+         WcwkKudmIEYhtjLF6VUxdARoVq6CXWsr2tuhxN0Qq+05Y+Jdt7YcXYZ15nUDk2v4H4z2
+         S+cg==
+X-Forwarded-Encrypted: i=1; AJvYcCURfy+o9SkcIrSoU9KpkLrwIAoSpSKQFWQ9ar1Slp8R2IEXQnOcJ59Z5HV7uPmU87mrnwXNiVl0kvY7DI4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3899dX5r0EAmhTlkmdi5v5XNU7Zr5x8awyxrplS53bYjM836r
+	2otrvA/un07HkMjA9w1+4xkx5xRVD81WPf2ivS8IGwrgpSCg9EW6zNd0z2GebP/xVw==
+X-Gm-Gg: ASbGnct3DehcPyAG8nu9nDaCx2Q2rulZW2m6Ht66PVyxaXL+b8jI8Up+hvA/qF/So8s
+	oTOjX5x6NHH7FJmFKWbgid9VjF9UNd4POgMdFcgMZU3foH7wzZjdkaT/Xq7sxEQul+7ThKbgcQp
+	zSfhig8bc0Y8w/3Wr3VWtV8y/RPlrNaZndkdAJhrrT+xrwnuLMROwCN8sQ21jpEs4vd/of2XsB4
+	VQIFylsHLMEMFsHkjLbgDDprQbIquBrVnFX9g+7ckIAnsoaZcyTm3l80Frw2c8gUFJB+QNXslgF
+	NAyY12Kx/OnGU6FJWhgyzYvRAKoH+yRIE+0FoyXb3mA=
+X-Google-Smtp-Source: AGHT+IHd2gCWe8oAr3s+MMnLxjBGDFBvdc4Lu1UIZ3GzVVQeCS76/zsPHEsRIOs4vDSz8aWvvFD/7Q==
+X-Received: by 2002:a17:90b:38c3:b0:2f4:465d:5c91 with SMTP id 98e67ed59e1d1-2fce7b4f242mr1239593a91.8.1740119250695;
+        Thu, 20 Feb 2025 22:27:30 -0800 (PST)
+Received: from localhost.localdomain ([182.148.15.250])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fceb10fb21sm508197a91.39.2025.02.20.22.27.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Feb 2025 22:27:30 -0800 (PST)
+From: qianyi liu <liuqianyi125@gmail.com>
+To: Danilo Krummrich <dakr@kernel.org>,
+	Matthew Brost <matthew.brost@intel.com>,
+	Philipp Stanner <phasta@kernel.org>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	liuqianyi125@gmail.com
+Subject: [PATCH] drm/scheduler: Fix mem leak when last_scheduled signaled
+Date: Fri, 21 Feb 2025 14:27:02 +0800
+Message-Id: <20250221062702.1293754-1-liuqianyi125@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250221000943.973221-2-jperaza@google.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Feb 21, 2025 at 12:09:40AM +0000, Joshua Peraza wrote:
-> From: Rajat Jain <rajatja@google.com>
-> 
-> The "DmaProperty" is supported and currently documented and used by
-> Microsoft [link 1 below], to flag internal PCIe root ports that need
-> DMA protection [link 2 below]. We have discussed with them and reached
-> a common understanding that they shall change their MSDN documentation
-> to say that the same property can be used to protect any PCI device,
-> and not just internal PCIe root ports (since there is no point
-> introducing yet another property for arbitrary PCI devices). This helps
-> with security from internal devices that offer an attack surface for
-> DMA attacks (e.g. internal network devices).
-> 
-> Support DmaProperty to mark DMA from a PCI device as untrusted.
-> 
-> Link: [1] https://docs.microsoft.com/en-us/windows-hardware/drivers/pci/dsd-for-pcie-root-ports#identifying-internal-pcie-ports-accessible-to-users-and-requiring-dma-protection
-> Link: [2] https://docs.microsoft.com/en-us/windows/security/information-protection/kernel-dma-protection-for-thunderbolt
-> Signed-off-by: Rajat Jain <rajatja@google.com>
-> Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-> Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> Signed-off-by: Joshua Peraza <jperaza@google.com>
-> ---
->  drivers/acpi/property.c |  3 +++
->  drivers/pci/pci-acpi.c  | 22 ++++++++++++++++++++++
->  2 files changed, 25 insertions(+)
+Problem: If prev(last_scheduled) was already signaled I encountred a
+memory leak in drm_sched_entity_fini. This is because the
+prev(last_scheduled) fence is not free properly.
 
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fix: Balance the prev(last_scheduled) fence refcnt when
+dma_fence_add_callback failed.
+
+Signed-off-by: qianyi liu <liuqianyi125@gmail.com>
+---
+ drivers/gpu/drm/scheduler/sched_entity.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/scheduler/sched_entity.c b/drivers/gpu/drm/scheduler/sched_entity.c
+index 69bcf0e99d57..1c0c14bcf726 100644
+--- a/drivers/gpu/drm/scheduler/sched_entity.c
++++ b/drivers/gpu/drm/scheduler/sched_entity.c
+@@ -259,9 +259,12 @@ static void drm_sched_entity_kill(struct drm_sched_entity *entity)
+ 		struct drm_sched_fence *s_fence = job->s_fence;
+ 
+ 		dma_fence_get(&s_fence->finished);
+-		if (!prev || dma_fence_add_callback(prev, &job->finish_cb,
+-					   drm_sched_entity_kill_jobs_cb))
++		if (!prev ||
++		    dma_fence_add_callback(prev, &job->finish_cb,
++					   drm_sched_entity_kill_jobs_cb)) {
++			dma_fence_put(prev);
+ 			drm_sched_entity_kill_jobs_cb(NULL, &job->finish_cb);
++		}
+ 
+ 		prev = &s_fence->finished;
+ 	}
+-- 
+2.25.1
+
 
