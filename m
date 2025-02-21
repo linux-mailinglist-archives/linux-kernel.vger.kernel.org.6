@@ -1,118 +1,98 @@
-Return-Path: <linux-kernel+bounces-526628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F47BA40133
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 21:40:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 244FEA40136
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 21:40:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0ABF19C2650
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 20:40:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DA593AC5C2
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 20:40:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 019462045A1;
-	Fri, 21 Feb 2025 20:40:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="RsWbBg4q"
-Received: from sender4-op-o14.zoho.com (sender4-op-o14.zoho.com [136.143.188.14])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D172B205E31;
+	Fri, 21 Feb 2025 20:40:40 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 679501FC102;
-	Fri, 21 Feb 2025 20:39:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.14
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740170400; cv=pass; b=DSLxXQWoIxPCyOdi24SFdF4+/shFBD9JaSVk1pRHBT/bC26gYrV1rSnzNwO4pOXO+NoD3y+ShWPan7XElrFHHUtiFyNLJRgGM64DzaQLaOzUG49GCRnoHNjoj6hFIvw/JIvCJNiZS+2LLo7fp1fIOSpQIeibp4ecFBKXmQDYD5A=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740170400; c=relaxed/simple;
-	bh=g+zbCpZ+1FMbrKP6uJKG+9dae8cgqKA78FJKbCxMPF4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=T8kU2CvDWYSMh5t+CUM/W3+38LmYkB9gSdsvm3OLXmisrxxOxd7LFQzrHEHDH+N3lYUFwVzEtE44ipShqWXoYjef336+lEMiPAlcl+W5mrzfiFnYh35lqu/IXpLe52HnxWESREPOeGmvtxbDQU8PXn6O7KY1YQ9bZzu6ZgBAVIw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=RsWbBg4q; arc=pass smtp.client-ip=136.143.188.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1740170387; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=XYp1ymi2/abVGMkwCN5ogf3ba4e8+qdOh0RBhUSSq7BuIQOzsYCpQrVgzKeiFPVQTOndlxswFlVw7Tw5oiXgTBFhYNg/HOuyCOCxymVXJR6cpYWbGPqXloU6Logi0SYtLs89AwaFIPrKoEHCK8m5mxrP+nNIMEB+MZmUcXCb8YY=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1740170387; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=YPVDhutFqE0CHWS8gowpekGV6zc0YkLczaOqICj/amY=; 
-	b=EGYR1e0iXaNZZevZNGaDG+vb+JL2jNovi48h4C78OrZLB5h5xPIncrFIEAqI+b9iwHJxGfsoy1PstloRYqtgmi0aUITPliiObNXYRgGjlpe0HZFcjzzIHKRMAggWmtuvWQJQH4tnLbn3AgpzYpOS6xx6KLYeSVBbjsDZkQAd4rM=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
-	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1740170387;
-	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
-	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:To:To:Cc:Cc:Reply-To;
-	bh=YPVDhutFqE0CHWS8gowpekGV6zc0YkLczaOqICj/amY=;
-	b=RsWbBg4qGq+F7+dT6+rWeR0W3Ose4pwp2+VPoA3KBSCEH4UvbhDlZasAoKQfqo3U
-	T9FeOQpW13hMfeDj/PEcMvu5SYOodkvIghskwF/kqLHe/7JzMlitiTswgM241tCu+BM
-	+6oljbhZqUsAZVsUc4HHWBlTM6QPfsC35XSPB1NA=
-Received: by mx.zohomail.com with SMTPS id 174017038484339.05431959157954;
-	Fri, 21 Feb 2025 12:39:44 -0800 (PST)
-From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Date: Fri, 21 Feb 2025 21:39:32 +0100
-Subject: [PATCH] ASoC: dapm-graph: set fill colour of turned on nodes
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE32A1FECA0;
+	Fri, 21 Feb 2025 20:40:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740170440; cv=none; b=pMLol6WIa1HsOJYwS8lWYufovGKl1jWqhzV2WK8z0u2GTE1CaA5zttEZcWPPEU179RmvIAJ6H/3XuTuVEHL3pnGQPQfAboqyykqZ0waAx5/b2L2VGnk4K5xjKWCFlULbkyM+0aRhwOqbJUvO12jKkaITckoHbqGqktlGkemzT70=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740170440; c=relaxed/simple;
+	bh=Mg6gmWKzWVa3N3jYfzSbLKWnOA5bhpnJPyDk3cTyD38=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=pxnPb6sEMg5om9IpEtNDxB/WinZl8XWa+yqCn6q4xaELqaauNjWiPplWZPKuZtUTDrXqXAcNb6HBuGYkX1d1NJBZ1uUULL2IOGQMAeHgWNNFXdTnxcYkNL5/AhJn2V8SrH21n7MoiSlOaySn0u9LXEQm9LIt1wmW76h73nHb4R4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [192.168.0.2] (ip5f5af2a2.dynamic.kabel-deutschland.de [95.90.242.162])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 807A061E64783;
+	Fri, 21 Feb 2025 21:40:26 +0100 (CET)
+Message-ID: <9ded85ef-46f1-4682-aabd-531401b511e5@molgen.mpg.de>
+Date: Fri, 21 Feb 2025 21:40:25 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250221-dapm-graph-node-colour-v1-1-514ed0aa7069@collabora.com>
-X-B4-Tracking: v=1; b=H4sIAIPkuGcC/x3MQQqAIBBA0avErBtQyYiuEi0spxoolZEiiO6et
- HyL/x/IJEwZ+uoBoYszx1Cg6wrmzYWVkH0xGGWsMkajd+nAVVzaMERPOMc9noI0KaW1a2xnWyh
- xElr4/sfD+L4f+zVZW2gAAAA=
-X-Change-ID: 20250221-dapm-graph-node-colour-eb0011a45856
-To: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Cc: kernel@collabora.com, linux-sound@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-X-Mailer: b4 0.14.2
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+ Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ linux-pci@vger.kernel.org, regressions@lists.linux.dev
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+Subject: Linux logs new warning `gpio gpiochip0: gpiochip_add_data_with_key:
+ get_direction failed: -22`
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Some tools like KGraphViewer interpret the "ON" nodes not having an
-explicitly set fill colour as them being entirely black, which obscures
-the text on them and looks funny. In fact, I thought they were off for
-the longest time. Comparing to the output of the `dot` tool, I assume
-they are supposed to be white.
+Dear Bartosz,
 
-Instead of speclawyering over who's in the wrong and must immediately
-atone for their wickedness at the altar of RFC2119, just be explicit
-about it, set the fillcolor to white, and nobody gets confused.
 
-Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
----
-This is somewhat "just thrown out there"; I noticed that not setting the
-fill colour breaks KGraphViewer only *after* I thought this was just how
-they were for several days. With this change, both dot and KGraphViewer
-render it correctly, but I have no clue as to whether it's in the spirit
-of the file format at all. I figure that if this saves some other poor
-souls a bit of time and confusion, then it's worth it.
----
- tools/sound/dapm-graph | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On the Intel Kaby Lake Dell XPS 13 9360, Linux 6.14-rc3+ with your 
+commit 9d846b1aebbe (gpiolib: check the return value of 
+gpio_chip::get_direction()) prints 52 new warnings:
 
-diff --git a/tools/sound/dapm-graph b/tools/sound/dapm-graph
-index f14bdfedee8f11507a6b7b04f6dd1847513e6da8..b6196ee5065a4e72069df663775518352d75d410 100755
---- a/tools/sound/dapm-graph
-+++ b/tools/sound/dapm-graph
-@@ -10,7 +10,7 @@ set -eu
- 
- STYLE_COMPONENT_ON="color=dodgerblue;style=bold"
- STYLE_COMPONENT_OFF="color=gray40;style=filled;fillcolor=gray90"
--STYLE_NODE_ON="shape=box,style=bold,color=green4"
-+STYLE_NODE_ON="shape=box,style=bold,color=green4,fillcolor=white"
- STYLE_NODE_OFF="shape=box,style=filled,color=gray30,fillcolor=gray95"
- 
- # Print usage and exit
+     $ dmesg
+     […]
+     [    0.000000] DMI: Dell Inc. XPS 13 9360/0596KF, BIOS 2.21.0 
+06/02/2022
+     […]
+     [    5.148927] pci 0000:00:1d.0: PCI bridge to [bus 3c]
+     [    5.150955] gpio gpiochip0: gpiochip_add_data_with_key: 
+get_direction failed: -22
+     [50 times the same]
+     [    5.151639] gpio gpiochip0: gpiochip_add_data_with_key: 
+get_direction failed: -22
+     [    5.151768] ACPI: PCI: Interrupt link LNKA configured for IRQ 11
+     […]
+     $ lspci -nn -k -s 1d.0
+     00:1d.0 PCI bridge [0604]: Intel Corporation Sunrise Point-LP PCI 
+Express Root Port #9 [8086:9d18] (rev f1)
+     	Subsystem: Dell Device [1028:075b]
+     	Kernel driver in use: pcieport
 
----
-base-commit: 0ad2507d5d93f39619fc42372c347d6006b64319
-change-id: 20250221-dapm-graph-node-colour-eb0011a45856
+Judging from the commit messages, this is expected. But what should a 
+user seeing this do now?
 
-Best regards,
--- 
-Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Also, it probably should not be applied to the stable series, as people 
+might monitor warnings and new warnings in stable series might be 
+unexpected.
 
+
+Kind regards,
+
+Paul
+
+
+[1]: 
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=9d846b1aebbe488f245f1aa463802ff9c34cc078
 
