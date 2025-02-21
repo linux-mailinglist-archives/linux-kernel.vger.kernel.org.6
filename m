@@ -1,128 +1,116 @@
-Return-Path: <linux-kernel+bounces-525868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97655A3F69D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 14:59:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 57DE2A3F6A0
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 15:00:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B6AE3A7322
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 13:56:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB1B23B3606
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 13:56:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8438A20B1EE;
-	Fri, 21 Feb 2025 13:56:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E67820E70F;
+	Fri, 21 Feb 2025 13:56:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2EDE2ptX";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="CcfWQky1"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OTOM8C5W"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D4D3192B74;
-	Fri, 21 Feb 2025 13:56:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51A4020B7F2;
+	Fri, 21 Feb 2025 13:56:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740146207; cv=none; b=VefwxZvu74x9mVMbw0u4yRlvG2GXOADDLNFeqbiP5a6EuOTgKXUjF0cZ0aRxMXgKyy3Qe+JBQQnveysWK0gAK73ruFhQ+D4BuLH8gRvcDfu0wjGjFUfkGTWOBjwZZVPrg+kX8gPqisLNZc22Z2bl9Sw1C9B8ilztGWyHSmmTdGs=
+	t=1740146213; cv=none; b=HqVNF018ehtjvTdK0Jnecj9o92+FcSaznJ9rvw0AfrWvHotbN+T0QjYxxStLbqNduzdY/Ozm5yYse2zfhKq68KlTOiAc/hmH27L9vp/soUA9q2lNX/8C8+ll93SwV/w1qjoXghPtIp037tWr7qV70sNuGOByV6dDZ9M+Q9vGlf8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740146207; c=relaxed/simple;
-	bh=Ln4H4AgC3d1BbcFmxUrlI+YAh8M1LJdvEAzwO7atJQk=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=N+NUj6svwF7RLcpfEPCROTrSaMe/cbFCEUBb0rME+PHXzj44u3sSfyp/3tjwmWE8mY9S6ZpAf/C+Tjo771YCCU+HuiMyP3fhA11txhgCI2g1fXCZCB6RNg+QFHhkl1z8LnxIokKfpvS+Jt5/P8uT2O+N0fbB9kwOOZrkJYNBSs4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2EDE2ptX; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=CcfWQky1; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 21 Feb 2025 13:56:40 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1740146203;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Vrv108UnjZjLakYBFQOphHLJqO2fp7/j6+WdEbjwEXc=;
-	b=2EDE2ptXSq8C+oKwt4jTlmyUUxhe6kXwSs4b6szNMe+7HUcvRqLU3SC5pNPZgAOwMQJN/6
-	mHPsdJGT4xGrOHAnJ9F0HPreMCYbciVzHBqvcO2HIsp75xd+6t7Scr2ExCCqNjhmyI7pfA
-	hT2xJjcAQ+lpRQ90MALFinApRhWGDvTcKsDBQvGLLfPoKfqnspsmYo0GclrQxF2hUtFbdo
-	hkP+BVr6VVeSIue7zTVU2e0gtZLa+Iy1Xai8QWBBFjRBC/J2O1MpUgXmYnCgHsSKzcgHaN
-	2I3ghr5XdInEvDNv/Hy9fEyavv7P25O0iVeJUj+N0XKvWIJvr4OGmtCb/wZmvw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1740146203;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Vrv108UnjZjLakYBFQOphHLJqO2fp7/j6+WdEbjwEXc=;
-	b=CcfWQky1WDuod7fb/RPTHQZfkg76l/3UmDuKogk6rCv0ns60Me36OkZrwd6o30WpFhy6/X
-	xzZAqsFQabW9KICw==
-From: "tip-bot2 for Stanislav Spassov" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/fpu] x86/fpu: Fix guest FPU state buffer allocation size
-Cc: Stanislav Spassov <stanspas@amazon.de>, Ingo Molnar <mingo@kernel.org>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250218141045.85201-1-stanspas@amazon.de>
-References: <20250218141045.85201-1-stanspas@amazon.de>
+	s=arc-20240116; t=1740146213; c=relaxed/simple;
+	bh=i9BXbzfRoah/HM/Mo1NDFtIr5Uc6BXW+HSRXoywL0BQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oBsozJdeTx/dC1GfVOqOrKGHo+I6EQ4ZzOSL8xVMmVgCfvXIfgBzH8LpKxoVpN3RIbzE+REK10PJREBhx++6XniIrEQsAJCs7d38XEYh+ep5AMbVqNNNJ/LN4Nk0TqX+OJFzDwynHLjSXZezpVI0alDwBRr+2YJa1w6WSZWPNPM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OTOM8C5W; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7062FC4CED6;
+	Fri, 21 Feb 2025 13:56:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740146212;
+	bh=i9BXbzfRoah/HM/Mo1NDFtIr5Uc6BXW+HSRXoywL0BQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OTOM8C5WqBDOJVUePzA0humzGjKGz2+n5EoMFqlUxVnNrDFXk6vJc74u5LwYIiOIi
+	 A0LgMdpUq5PY1gFap5zbtxytJOjJ2Y+8oA4FO8bdXP7NwknFAHpqaE96M9lsslMaY7
+	 XO+yDQWciLdsyHf5dpEUl4BEbOnRMyXQlJN5UEL3Zqaj8QXNTSokcF1ec/7gC7TlDV
+	 /9rkq+hRnY2j+DbzC+ixx3LxMVX4e2ahRMA20eSwSSyjc5ZkG9OB4S3zggV0WGSoCd
+	 Xw312lZ1sBym3Ck4JWQneqpKhhIF1V1UAeBD0UvElo+Vg1hpslA3aJ7P6nGHtxqOKU
+	 WIWxsjXOSK/bQ==
+Date: Fri, 21 Feb 2025 14:56:46 +0100
+From: Danilo Krummrich <dakr@kernel.org>
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Russell King <linux@armlinux.org.uk>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH V2 2/2] rust: Add basic bindings for clk APIs
+Message-ID: <Z7iGHiQcqa-_AXli@pollux>
+References: <cover.1740118863.git.viresh.kumar@linaro.org>
+ <a0a1ba4e27c3a0d9e38c677611eb88027e463287.1740118863.git.viresh.kumar@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174014620007.10177.13346155405991854999.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a0a1ba4e27c3a0d9e38c677611eb88027e463287.1740118863.git.viresh.kumar@linaro.org>
 
-The following commit has been merged into the x86/fpu branch of tip:
+On Fri, Feb 21, 2025 at 12:03:39PM +0530, Viresh Kumar wrote:
+> +/// A simple implementation of `struct clk` from the C code.
+> +#[repr(transparent)]
+> +pub struct Clk(*mut bindings::clk);
 
-Commit-ID:     1937e18cc3cf27e2b3ef70e8c161437051ab7608
-Gitweb:        https://git.kernel.org/tip/1937e18cc3cf27e2b3ef70e8c161437051ab7608
-Author:        Stanislav Spassov <stanspas@amazon.de>
-AuthorDate:    Tue, 18 Feb 2025 14:10:45 
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Fri, 21 Feb 2025 14:47:26 +01:00
+I remember that Stephen explained that NULL is valid value for struct clk. As a
+consequence, all functions implemented for `Clk` have to consider this.
 
-x86/fpu: Fix guest FPU state buffer allocation size
+I wonder if it could make sense to have a transparent wrapper type
+`MaybeNull<T>` (analogous to `NonNull<T>`) to make this fact more obvious for
+cases like this?
 
-Ongoing work on an optimization to batch-preallocate vCPU state buffers
-for KVM revealed a mismatch between the allocation sizes used in
-fpu_alloc_guest_fpstate() and fpstate_realloc(). While the former
-allocates a buffer sized to fit the default set of XSAVE features
-in UABI form (as per fpu_user_cfg), the latter uses its ksize argument
-derived (for the requested set of features) in the same way as the sizes
-found in fpu_kernel_cfg, i.e. using the compacted in-kernel
-representation.
+> +
+> +impl Clk {
+> +    /// Creates `Clk` instance for a device and a connection id.
+> +    pub fn new(dev: &Device, name: Option<&CStr>) -> Result<Self> {
+> +        let con_id = if let Some(name) = name {
+> +            name.as_ptr() as *const _
+> +        } else {
+> +            ptr::null()
+> +        };
+> +
+> +        // SAFETY: It is safe to call `clk_get()`, on a device pointer earlier received from the C
+> +        // code.
+> +        Ok(Self(from_err_ptr(unsafe {
+> +            bindings::clk_get(dev.as_raw(), con_id)
+> +        })?))
+> +    }
+> +
+> +    /// Obtain the raw `struct clk *`.
+> +    pub fn as_raw(&self) -> *mut bindings::clk {
+> +        self.0
+> +    }
+> +
+> +    /// Clock enable.
+> +    pub fn enable(&self) -> Result<()> {
+> +        // SAFETY: By the type invariants, we know that `self` owns a reference, so it is safe to
+> +        // use it now.
 
-The correct size to use for guest FPU state should indeed be the
-kernel one as seen in fpstate_realloc(). The original issue likely
-went unnoticed through a combination of UABI size typically being
-larger than or equal to kernel size, and/or both amounting to the
-same number of allocated 4K pages.
+This is not true.
 
-Fixes: 69f6ed1d14c6 ("x86/fpu: Provide infrastructure for KVM FPU cleanup")
-Signed-off-by: Stanislav Spassov <stanspas@amazon.de>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Link: https://lore.kernel.org/r/20250218141045.85201-1-stanspas@amazon.de
----
- arch/x86/kernel/fpu/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+1. There is no type invariant documented for `Clk`.
+2. The pointer contained in an instance of `Clk` may be NULL, hence `self` does
+   not necessarily own a reference.
 
-diff --git a/arch/x86/kernel/fpu/core.c b/arch/x86/kernel/fpu/core.c
-index 1209c7a..36df548 100644
---- a/arch/x86/kernel/fpu/core.c
-+++ b/arch/x86/kernel/fpu/core.c
-@@ -220,7 +220,7 @@ bool fpu_alloc_guest_fpstate(struct fpu_guest *gfpu)
- 	struct fpstate *fpstate;
- 	unsigned int size;
- 
--	size = fpu_user_cfg.default_size + ALIGN(offsetof(struct fpstate, regs), 64);
-+	size = fpu_kernel_cfg.default_size + ALIGN(offsetof(struct fpstate, regs), 64);
- 	fpstate = vzalloc(size);
- 	if (!fpstate)
- 		return false;
+The same applies for all other functions in this implementation.
 
