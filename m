@@ -1,95 +1,89 @@
-Return-Path: <linux-kernel+bounces-525016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-525017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CEBFA3E9D5
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 02:21:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25D03A3E9D9
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 02:22:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03CFC179928
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 01:21:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA71E3B9F02
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 01:22:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00EAA757EA;
-	Fri, 21 Feb 2025 01:21:07 +0000 (UTC)
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4E753F9FB;
+	Fri, 21 Feb 2025 01:22:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a7TZK1bm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31D2638F9C;
-	Fri, 21 Feb 2025 01:21:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B84AA94A;
+	Fri, 21 Feb 2025 01:22:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740100866; cv=none; b=B3Vv2EZjYyIgvTeug8Hec4JKen2JbtqFYaTwu99X5VT0PKHFU7dxfb36emI/yf/q8gFowsrZGb7snbxlCvg8WOKF74wZud41fAwjd0/sTUDSxxQ5UBsUbuzccb2tg+aTlGCfpIEgBHpi5QuZGrgdiF2W90ZkU9FvZsgw4xpXB2I=
+	t=1740100956; cv=none; b=okQ/hiSlmAtro1/rTz3p7krOJYbFi88Ktu8lQZWi1FVpxwVIfEtgB6dLOuZBQnOo4hgiKRHvv3IoxEs3SHRiPedwqtk+9E/WIMdkWfC7rsyFVWhZoUdYN2wpViqWSsZThMzw0iH3dMFLihLOUXgHjEmAD1WIQbsZK+sjdCqjwMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740100866; c=relaxed/simple;
-	bh=uMU4QkBj5T3NZfNtddNFb9YdKAxvOZuYbcleTZQsDIM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VhYRPAUUYwd1wgDV6BgEFZsoNMv+/Ng71INRyYjOe5egC2vK8MochntXajZrul1wiooY1RPSWGwS+Pgnja/nO/L2USzH1sgqc8aegmDlwOTTV3wFP9kkIThdz0iRkbrzOL9Mitt0m9JS6cDpGU9aH8zrfAOxxS3emZ7GPNwnBj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2fa8ada6662so3234248a91.1;
-        Thu, 20 Feb 2025 17:21:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740100864; x=1740705664;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=d5omKhRHXJSFMXsGqutjW+6ZFtB5jxt0r9R70Rd8TBI=;
-        b=trOOTG254ZrtbL408Gwl6ws3XQN+rziHeuBNlxmdaPJ+SXzgQx47tlYsUMAaIelGAD
-         Y9kGGH8uFEq4wXjTIgTqalPIzOJGd542dXA1e3BEPhU193Tl0C6XfqDrfiEePI8Y/DsJ
-         +WdS9ayTBhRAv1eaqcN1LI5mkVKmi/PbumpYl82JfoRhKoXrwWQ+05mOB3cMHKW/hFE9
-         7KNVE7TYoW+jJ8XCDRM90RQ+KyvksfeCpw7bNwZJvbZC/drbgABdU9LLVUxHrDGutwFc
-         /n/crdamLgb+xNbCtkTR0O3K26Gk1SmkE4RDMOm+uACLp+H+Bl8832Ty7N8gYXESGGB/
-         hJlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUySFJ24S46Gr7LAZQg/5NXJi1ZFGwl4B19cZFKUap1d/VZMexsKeLh1h3h1xm26D6atnJZKB2FAd9v@vger.kernel.org, AJvYcCXdtQ54asvAJYGrBLB0qOj44adwrDVDfJeXyvdz6FbSDn4aacPtVJxIjOhAV3vdcOYVtxX4hIbdEULiUXc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxsTUs6vC8DadpfTa221qrH7JmSx477d1eH4IV3ogH52VltPm5n
-	aKV8qaji4qZMAbgZu4c/yGi+4XUBoPgomw1uyJOwYKa9vJJQlCHe
-X-Gm-Gg: ASbGncsUEaFqlrm4ZU/Puk7b2WTRPWTGATRNqkPc+KA9ZtaG1ZVxxrWn6ZTk7yRw14+
-	LDiCp58xfi1jfgqBf2UF81AVcTNv+7tojatMsP/5lQluhRQ5uLNgfNTXY7c7hsUPETYGEwUNKGM
-	xv61Jlh4/BJd+iDQzzSIwPw8hYEMX0/DJjiIJYpysAHCWjDlQOHrvlCf13OBg+dFDUR0aFWyDTZ
-	ELGvivtIKh+VgTL62X4IpHqwmBPShss5kRDlGyEStgVxNxMmMNEuQ36qskrDD8hYXObC2NhC2Cs
-	ogYLJmarc0yg1xTxkjZ8JZyvvG8UgDWv0xn0affzQEuOU2BAUg==
-X-Google-Smtp-Source: AGHT+IE4oqaFxXOMl1MCiZwVIYCYZ5jRriXYcCkDbDq02yKTmRusal0IGsWIpAzfFBX0vyGtx/8pgw==
-X-Received: by 2002:a17:90b:1806:b0:2fa:ba3:5451 with SMTP id 98e67ed59e1d1-2fce87468f3mr1530851a91.35.1740100864281;
-        Thu, 20 Feb 2025 17:21:04 -0800 (PST)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with UTF8SMTPSA id 41be03b00d2f7-addfbb144b1sm10017635a12.15.2025.02.20.17.21.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Feb 2025 17:21:03 -0800 (PST)
-Date: Fri, 21 Feb 2025 10:21:01 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: Zhiyuan Dai <daizhiyuan@phytium.com.cn>
-Cc: helgaas@kernel.org, bhelgaas@google.com, christian.koenig@amd.com,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Subject: Re: [PATCH v3] PCI: Update Resizable BAR Capability Register fields
-Message-ID: <20250221012101.GF2510987@rocinante>
-References: <20250219183424.GA226683@bhelgaas>
- <20250220012546.318577-1-daizhiyuan@phytium.com.cn>
+	s=arc-20240116; t=1740100956; c=relaxed/simple;
+	bh=K5kHSNUnjTSDcgVrbtlRl82jom5eu/PGvD0+oVoekOM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=cmKBYODgktfvYz6ThSG0ZQvVwYd0P2HlRGZCZH5CCCg5HxCBkvB66cHTsbM2UZOccIMfvL+ER7vSUUhqxt7U+Ye+LTzuWUm5IhGObces9Q0vm85Ivc4qLHJnzT7W2sCz/cnh6ncwFsXFzgT0LgQV9YZH7I5L55uSpghuOX0RseQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a7TZK1bm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40929C4CED1;
+	Fri, 21 Feb 2025 01:22:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740100955;
+	bh=K5kHSNUnjTSDcgVrbtlRl82jom5eu/PGvD0+oVoekOM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=a7TZK1bma1m0pJkMlj4NeJhhf/+a9vYyeo09ekQQcJEAKmrwXTCI8Gfr9rN1TCjJa
+	 G9cH9J3Sw6K9xKeZCx9PulcJKMQvd5WnDcJBtJvy29yMyQ1cOxrmwa6X1VPIcqHO9c
+	 QmEZiF0WVn1TeV0Pov5BrWBAn9ASqdtVC95JDqEkZxg8EmmI/heAYfJKz8+XdpsVxl
+	 q6Y+MFolzkfN3S/5wqAYTMr9ahN88x8r3r3SGUNtSOX0WImGL1PeSqauTXuMypAL1+
+	 vsXb+Z3odlAmnIDNLaFMhWfHXZiDZOdcjncLNg0RauBd/3ADZQDp8azQYpbmkiWnV5
+	 5CDCkBb7wyjpA==
+Received: by venus (Postfix, from userid 1000)
+	id 1FC151835EA; Fri, 21 Feb 2025 02:22:33 +0100 (CET)
+From: Sebastian Reichel <sre@kernel.org>
+To: linux-pm@vger.kernel.org,
+	"Sicelo A. Mhlongo" <absicsz@gmail.com>
+Cc: Sebastian Reichel <sebastian.reichel@collabora.com>,
+	pali@kernel.org,
+	sre@kernel.org,
+	linux-kernel@vger.kernel.org,
+	maemo-leste@lists.dyne.org
+Subject: Re: [PATCH] power: supply: bq27xxx_battery: do not update cached flags prematurely
+Date: Fri, 21 Feb 2025 02:21:55 +0100
+Message-ID: <174010090150.20358.11892224771206092730.b4-ty@collabora.com>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20241125152945.47937-1-absicsz@gmail.com>
+References: <20241125152945.47937-1-absicsz@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250220012546.318577-1-daizhiyuan@phytium.com.cn>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
 
-> PCI Express Base Spec r6.0 defines BAR size up to 8 EB (2^63 bytes),
-> but supporting anything bigger than 128TB requires changes to pci_rebar_get_possible_sizes()
-> to read the additional Capability bits from the Control register.
+
+On Mon, 25 Nov 2024 17:29:30 +0200, Sicelo A. Mhlongo wrote:
+> Commit 243f8ffc883a1 ("power: supply: bq27xxx_battery: Notify also about
+> status changes") intended to notify userspace when the status changes,
+> based on the flags register. However, the cached state is updated too
+> early, before the flags are tested for any changes. Remove the premature
+> update.
 > 
-> If 8EB support is required, callers will need to be updated to handle u64 instead of u32.
-> For now, support is limited to 128TB, and support for sizes greater than 128TB can be
-> deferred to a later time.
+> 
+> [...]
 
-I think this would be a v4?
+Applied, thanks!
 
-If the reviews still stand, then we can correct the subject line while
-applying the patch.  No need to send another e-mail.
+[1/1] power: supply: bq27xxx_battery: do not update cached flags prematurely
+      commit: 45291874a762dbb12a619dc2efaf84598859007a
 
-	Krzysztof
+Best regards,
+-- 
+Sebastian Reichel <sebastian.reichel@collabora.com>
 
