@@ -1,174 +1,202 @@
-Return-Path: <linux-kernel+bounces-526110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF43FA3FA19
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:06:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 723BBA3FA18
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:06:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BE5219E2B64
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:01:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BED2C440D9A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 16:01:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABF75218AA2;
-	Fri, 21 Feb 2025 15:57:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF5F8217655;
+	Fri, 21 Feb 2025 15:56:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MiUlyoUD"
-Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com [209.85.221.172])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="nCm95x30"
+Received: from mail-ot1-f41.google.com (mail-ot1-f41.google.com [209.85.210.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09CEA21772D
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 15:56:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B87B216607
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 15:56:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740153420; cv=none; b=beUhlKxENFN4YRAAiAwXUQ1H2UcnDjX3xRVh4jsJ/Lr5vJT6aEYm+9lcOPzrl9N/dgH8ha2JRBDk0q3LW1lbU8v/bVKiFNJfeJhOZ4MNjO7N0Qb6BqhAZdEA3B52VAsVkBCkDavYWVMggQlJD6G6xy3k3F5cJrok2P9dfXh2gvM=
+	t=1740153419; cv=none; b=F+O2vpiZ/UtTrh9wt7S35FM/wOh+f5ksBhP6Fae9hFQES7Sn/AET9C1BjraHiNIGlT0uSEiZvgghaHLEkTzco6WWQYugKvWnABviujkLI2GJqeJfOOq4dgCmFm50oaXRjdbs1tu4VyJ+WkejVeAVlmi8ZAD75vcCHhpLtT9iV4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740153420; c=relaxed/simple;
-	bh=bhCuj4ksx8PTUKUlPiAGxklZY3obqSFJ+Q3ieR2aj4U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IcmrC8dn6WhQHliKSRVuy7bPyqeYH7YKjdRB+hOXBg3S8HHxEzlHciBrx9usmfpul8dV8ii4QKYlnlnF9XwiSB2L7IA5UQzHQrjei7QQWGE3euZhbxUPoK50R/iT3PB/SGsCLpgrFNSrHdAzszMQFQAMtHi6BCkT4Cqps3h/4tg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MiUlyoUD; arc=none smtp.client-ip=209.85.221.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f172.google.com with SMTP id 71dfb90a1353d-5208736db3fso725923e0c.3
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 07:56:58 -0800 (PST)
+	s=arc-20240116; t=1740153419; c=relaxed/simple;
+	bh=q1YypdFaIEW0l2AnCJNdwusc6OIgP+r4ECVjew046co=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EdEmxpBSd6rDMPz6LwbUgiQzO+pM43PAHCDzGynRo/LaSFnmMGJ5b0HRmeSKKAF8RIj/caCIukU8K8KoStdRZIrNKt5oILUN0HWcJwiVMZaV8Cx5v0GbbW1du6cBEQurD5XRIBbv2KNrQU84Erkf3Cvuc4lqDpQBdHHcAS+cdLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=nCm95x30; arc=none smtp.client-ip=209.85.210.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ot1-f41.google.com with SMTP id 46e09a7af769-72716c75f20so631865a34.2
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 07:56:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740153418; x=1740758218; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mW57wmTj0EPUMiZ9PWhA+HFpZm560N/x1y9G/Fzly6U=;
-        b=MiUlyoUDUpRlduVGaNQrKg1k3NjOuoJ0gPxWTbRvEIX1URPFy+hmH2Mtpp4UTC49Xu
-         86hjIlcwiGC3nNFTFvVHoszWSz4J+N6uFwqqywiDzPTIgiaZ0qCETLvxOZcuQJSlyJKN
-         7KmfgYvlu0BBR9YqssHwGFI3FFwkHJPu4CauwdTD8Y0ccQT9RTqw9zLaFrx2jUrjL+FR
-         K1CWUF18rNWYbPGP5xf5SjpQCi0VB903+H9orFIjZwPTskujhe7/hFsOTFbG2ZF/jQRR
-         s6CXjIZUayBYBnqYzK0Oqxc4od1j4+uDXVoUXBIyzUemA4z41QFIPebTg2ro2C7Fb/MB
-         cHcw==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1740153415; x=1740758215; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=l9F5nxMmTnOLDqUzVG81NMqrRzPg/w7BaJ+m4JpJ2SY=;
+        b=nCm95x303AsBW0HSPMeOs5O4aYC4RiEzac8Y19XfOg50026k8TiRwTskN+Hr3RS7Un
+         ItJ4o7q7ZhU70jwvFzOAqmv4P0smnPmZsyH8GI+PiHzvMmlugXuYkNy0QpWzN15xC5Qi
+         lJlUdy3+5hXozXLA5eHQO34MhuyUuCNkD8mKKV9ylkZ5qEPo4c/qK0VFpLPN34MfXjy7
+         XV6IKIdX+S2WVcwd1ixccgjn4LL5f5plKFwXqmlwoYTnwkEoqJJeVEI2VzWZocRnQeKX
+         zrBjLTZ3fkWXdyLMBPZ7ZQBASLY8U3bGa/pwtd2VnOyRPk4qCowJy8HYWqwljEjGMJcC
+         vhFg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740153418; x=1740758218;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mW57wmTj0EPUMiZ9PWhA+HFpZm560N/x1y9G/Fzly6U=;
-        b=GPiHb5WuBN1CE2t7JeDYDdVO6Ue5UkvY2AwjjlZV8Z/Oj+4+xeVeqn4Yv+wupqJug4
-         vHrpMBeHkSsO1vJ5v2qKy3oH/VPR04d3K92PIDhqrnXEATkex3ceMkebuwuRXi4Ns29f
-         0zYAoL0HbDFhDJ0EWenRuFYovUiul62qytQS/5PA1JmlPh/glKgffbcyOjPAacbqG5K9
-         9wbQDvAS62RNxqro02NFzrcf4cztha77rLx2UsPZdKbLTg8EB2e7sdiwBRD3cA3j7RQy
-         ZFdudbZiN1q+vk1NQBB7TM7J7NC/x2A0jtDvXj6pTimmwgsv5Tqb3SUUb1bTbkkB8BY5
-         R+3g==
-X-Forwarded-Encrypted: i=1; AJvYcCVrK/2+Lr2wjgIBw1OtTRPxTx2+6ctBowNszZi8WoCwMyMO1O0B9ayxarC2wY1bfAMnQJoPes5wITrmruQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yze152nBMs8N7uRy/irsymiNhvo7UwHuTObNv5aEk41pryK17Ht
-	A8C+vQ8hM/VqotGZVknL93zEB0vO+DG5SQ7ENQnYpPRoSztmjNmIYSwWHeMtnti1eNfwTkzVRIF
-	MeOQ3Xs8GZ/BuTdbsnsmc5TMhyC8=
-X-Gm-Gg: ASbGncvVpgq5K6EJ//T1EQJ/u3ec6v8SJLyECsoI1KYclIyaWjmy87bpcm/uvjE2UpK
-	SpHadal+6osSBnh7X3v8wCEMROvsPxduRY3X/TaQagKT6HBK9DTV56ulVxk3VmR9JEe5Vsmb8Rz
-	cs+iSfdSkQNHYGF4RrbfqZP4z9nUb1c6+3EhjlVBI=
-X-Google-Smtp-Source: AGHT+IGHwRZ8c74llSlA3WD5AWuIv6UFSApe19V2+tCR129QZ+QcEagYFQkoiJvcPPBnOTGpKvUCZtmZC++kfsiH19Y=
-X-Received: by 2002:a05:6102:d8e:b0:4bb:5527:347a with SMTP id
- ada2fe7eead31-4bfc01f041emr2500563137.22.1740153417750; Fri, 21 Feb 2025
- 07:56:57 -0800 (PST)
+        d=1e100.net; s=20230601; t=1740153415; x=1740758215;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=l9F5nxMmTnOLDqUzVG81NMqrRzPg/w7BaJ+m4JpJ2SY=;
+        b=SXXzBiOxGB2k5vrnlkuBv5DpDp0VsaLxSCXUHWCMkWbqppa/qR4a+RVRHM8Pa+DRTb
+         mPdE7+PG9hqykiZ94TfJKRuMha+4nZolS+nUhsPpISkyeDFBtaylTmQRqIJ7mPPVOxa+
+         1e6eQZp72WDw4nxDTMJT9vU63O8dL+UwBlRWVEmAgL46jJu5MB+ERJoRrAzROMV1FxTu
+         c7WdtUQ1mJO5/LB4y14RfTjr1uULAg8jsZMfGwqBdUkiW0htLzySt3YLPIyKEvefKGSB
+         KO2g2piilZweim8l0B1upOfDOBwwk8pb34+FIitPJ2iS7OFyuVg5AUOEsbLQIpj0jfc3
+         cvyA==
+X-Forwarded-Encrypted: i=1; AJvYcCUjnbfyZmt4aoSR6ylLi/ssXjC+Y0kTDpV/7achbrsVseDt0TFQo+jnXuzapNx8A+qud3P+XjuDJanFycM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9JXNkSBysubyKjBQYFRudIN5pzCUUYxBo7FLY1JIMZC5etEi1
+	Akcx8PX7/9CkqAjUPGskHUReZ9rmHSXauj71JxOG9XaHwpPlJd8n0UQfxk7VE+8=
+X-Gm-Gg: ASbGncuky8v1zaLfZgv1LfKcfhwEJr/rOiFoep/9yARXfNIpLxHdAKc1X8NjuH2Z8o7
+	RLlciqmWV7tAAN2Bb7/tY7HmxAxat9cpgGNRYGrWSpYOof004gk4AHF03gMsqy6xKG3fEkhP/VD
+	D/+/1u7YjtS5OPLl5P8n3LOInAuUyYN1GKHhhCXxpw7tsz+Vrmv08Qjid/bLFADX5m3puskPTuc
+	9RoVvK/KmdDmbfJX3IzN+hN8F2sz80IMsniXI4vgo7HvppGL+lfPIgHZyXvYQvpzuD8NbdaJrnL
+	HrPl/L6n8ukLnm72BGDVg1QF31fHJHrYC8MfArgNzfDAlWY6jgbmqDfftWZp2Cw=
+X-Google-Smtp-Source: AGHT+IGwdePluqvFd8Q0eiG58yiq9bE9z1fiRut+KTbsys8KsALDylQjaPnt2SvRTO0/s/20Lz6iig==
+X-Received: by 2002:a05:6830:6685:b0:727:2681:731 with SMTP id 46e09a7af769-7274c27b78bmr3002665a34.26.1740153415309;
+        Fri, 21 Feb 2025 07:56:55 -0800 (PST)
+Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2bc9edca34esm4833893fac.18.2025.02.21.07.56.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 Feb 2025 07:56:53 -0800 (PST)
+Message-ID: <8975b119-fe24-463a-b163-dce702df3cdd@baylibre.com>
+Date: Fri, 21 Feb 2025 09:56:51 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250204145353.165-1-yohan.joung@sk.com> <53598146-1f01-41ad-980e-9f4b989e81ab@kernel.org>
-In-Reply-To: <53598146-1f01-41ad-980e-9f4b989e81ab@kernel.org>
-From: Daeho Jeong <daeho43@gmail.com>
-Date: Fri, 21 Feb 2025 07:56:46 -0800
-X-Gm-Features: AWEUYZkdoK3uJsFTk5HZX7XcHtaWFzduJr6mHRMXVEFKz3GS3btkedN7mqNt17U
-Message-ID: <CACOAw_x2v9fhorDWx9+f4VufddSPA5S6PF22AM_56smjjD5Faw@mail.gmail.com>
-Subject: Re: [PATCH v1] f2fs: fix to ensure queued discard commands are
- properly issued
-To: Chao Yu <chao@kernel.org>
-Cc: Yohan Joung <jyh429@gmail.com>, jaegeuk@kernel.org, 
-	linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
-	Yohan Joung <yohan.joung@sk.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/2] dt-bindings: iio: adc: add NCT7201 ADCs
+To: Eason Yang <j2anfernee@gmail.com>, avifishman70@gmail.com,
+ tmaimon77@gmail.com, tali.perry1@gmail.com, venture@google.com,
+ yuenn@google.com, benjaminfair@google.com, jic23@kernel.org,
+ lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ nuno.sa@analog.com, javier.carrasco.cruz@gmail.com,
+ andriy.shevchenko@linux.intel.com, gstols@baylibre.com,
+ olivier.moysan@foss.st.com, mitrutzceclan@gmail.com, tgamblin@baylibre.com,
+ matteomartelli3@gmail.com, marcelo.schmitt@analog.com,
+ alisadariana@gmail.com, joao.goncalves@toradex.com,
+ thomas.bonnefille@bootlin.com, ramona.nechita@analog.com,
+ herve.codina@bootlin.com, chanh@os.amperecomputing.com, KWLIU@nuvoton.com,
+ yhyang2@nuvoton.com
+Cc: openbmc@lists.ozlabs.org, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250221090918.1487689-1-j2anfernee@gmail.com>
+ <20250221090918.1487689-2-j2anfernee@gmail.com>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <20250221090918.1487689-2-j2anfernee@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Feb 17, 2025 at 4:38=E2=80=AFAM Chao Yu <chao@kernel.org> wrote:
->
-> On 2/4/25 22:53, Yohan Joung wrote:
-> > F2FS zone storage requires discard and reset zone for each conventional=
-,
-> > zoned device.
-> > In the current configuration, Discard granularity is set to the zone
-> > size but queuing is inserted into the pend list with a maximum size of =
-the
-> > segment size As a result queued commands cannot be issued.
-> > so we are restorting discard granularity to its original state
->
-> It seems commit 4f993264fe29 ("f2fs: introduce discard_unit mount option"=
-)
-> introduced a bug: when we enable discard_unit=3Dsection option, it will s=
-et
-> .discard_granularity to BLKS_PER_SEC(), however discard granularity only
-> supports [1, 512], once section size is not equal to segment size, it wil=
-l
-> cause bug. blkzoned feature became the victim since it use
-> discard_unit=3Dsection option by default.
->
-> What:           /sys/fs/f2fs/<disk>/discard_granularity
-> Date:           July 2017
-> Contact:        "Chao Yu" <yuchao0@huawei.com>
-> Description:    Controls discard granularity of inner discard thread. Inn=
-er thread
->                 will not issue discards with size that is smaller than gr=
-anularity.
->                 The unit size is one block(4KB), now only support configu=
-ring
->                 in range of [1, 512]. Default value is 16.
->                 For small devices, default value is 1.
->
-> What about this?
->
-> Subject: [PATCH] f2fs: fix to set .discard_granularity correctly
->
-> commit 4f993264fe29 ("f2fs: introduce discard_unit mount option") introdu=
-ced
-> a bug, when we enable discard_unit=3Dsection option, it will set
-> .discard_granularity to BLKS_PER_SEC(), however discard granularity only
-> supports [1, 512], once section size is not equal to segment size, it wil=
-l
-> cause issue_discard_thread() in DPOLICY_BG mode will not select discard e=
-ntry
-> w/ any granularity to issue.
->
-> Fixes: 4f993264fe29 ("f2fs: introduce discard_unit mount option")
-> Signed-off-by: Yohan Joung <yohan.joung@sk.com>
-> Signed-off-by: Chao Yu <chao@kernel.org>
+On 2/21/25 3:09 AM, Eason Yang wrote:
+> Add a binding specification for the Nuvoton NCT7201/NCT7202 up to 12-bit
+> ADCs with I2C interface.
+> 
+> Signed-off-by: Eason Yang <j2anfernee@gmail.com>
 > ---
->  fs/f2fs/segment.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
->
-> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> index 6ebe25eafafa..2b415926641f 100644
-> --- a/fs/f2fs/segment.c
-> +++ b/fs/f2fs/segment.c
-> @@ -2320,10 +2320,9 @@ static int create_discard_cmd_control(struct f2fs_=
-sb_info *sbi)
->         dcc->discard_granularity =3D DEFAULT_DISCARD_GRANULARITY;
->         dcc->max_ordered_discard =3D DEFAULT_MAX_ORDERED_DISCARD_GRANULAR=
-ITY;
->         dcc->discard_io_aware =3D DPOLICY_IO_AWARE_ENABLE;
-> -       if (F2FS_OPTION(sbi).discard_unit =3D=3D DISCARD_UNIT_SEGMENT)
-> +       if (F2FS_OPTION(sbi).discard_unit =3D=3D DISCARD_UNIT_SEGMENT ||
-> +               F2FS_OPTION(sbi).discard_unit =3D=3D DISCARD_UNIT_SECTION=
-)
->                 dcc->discard_granularity =3D BLKS_PER_SEG(sbi);
-> -       else if (F2FS_OPTION(sbi).discard_unit =3D=3D DISCARD_UNIT_SECTIO=
-N)
-> -               dcc->discard_granularity =3D BLKS_PER_SEC(sbi);
->
->         INIT_LIST_HEAD(&dcc->entry_list);
->         for (i =3D 0; i < MAX_PLIST_NUM; i++)
-> --
-> 2.48.1.601.g30ceb7b040-goog
->
+>  .../bindings/iio/adc/nuvoton,nct7201.yaml     | 57 +++++++++++++++++++
+>  MAINTAINERS                                   |  1 +
+>  2 files changed, 58 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/adc/nuvoton,nct7201.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/adc/nuvoton,nct7201.yaml b/Documentation/devicetree/bindings/iio/adc/nuvoton,nct7201.yaml
+> new file mode 100644
+> index 000000000000..830c37fd9f22
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/adc/nuvoton,nct7201.yaml
+> @@ -0,0 +1,57 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/iio/adc/nuvoton,nct7201.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Nuvoton nct7201 and similar ADCs
+> +
+> +maintainers:
+> +  - Eason Yang <j2anfernee@gmail.com>
+> +
+> +description: |
+> +  The NCT7201/NCT7202 is a Nuvoton Hardware Monitor IC, contains up to 12 voltage
+> +  monitoring channels, with SMBus interface, and up to 4 sets SMBus address
+> +  selection by ADDR connection. It also provides ALERT# signal for event
+> +  notification and reset input RSTIN# to recover it from a fault condition.
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - nuvoton,nct7201
+> +      - nuvoton,nct7202
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  reset-gpios:
+> +    maxItems: 1
+> +
 
-Reviewed-by: Daeho Jeong <daehojeong@google.com>
+Maybe this was brought up before, but no power supply?
 
->
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +
+> +    #include <dt-bindings/gpio/gpio.h>
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +
+> +    i2c {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        adc@1d {
+> +            compatible = "nuvoton,nct7202";
+> +            reg = <0x1d>;
+> +            interrupt-parent = <&gpio3>;
+> +            interrupts = <30 IRQ_TYPE_LEVEL_LOW>;
+> +            reset-gpios = <&gpio3 28 GPIO_ACTIVE_LOW>;
+> +        };
+> +    };
+> +...
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 3864d473f52f..fdc4aa5c7eff 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -2831,6 +2831,7 @@ L:	openbmc@lists.ozlabs.org (moderated for non-subscribers)
+>  S:	Supported
+>  F:	Documentation/devicetree/bindings/*/*/*npcm*
+>  F:	Documentation/devicetree/bindings/*/*npcm*
+> +F:	Documentation/devicetree/bindings/iio/adc/nuvoton,nct7201.yaml
+
+This (ARM/NUVOTON NPCM ARCHITECTURE) doesn't look like the right place for
+adding a stand-alone chip. You will need to start a new section like:
+
+NUVOTON NCT7201 IIO DRIVER
+
+>  F:	Documentation/devicetree/bindings/rtc/nuvoton,nct3018y.yaml
+>  F:	arch/arm/boot/dts/nuvoton/nuvoton-npcm*
+>  F:	arch/arm/mach-npcm/
+
 
