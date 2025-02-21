@@ -1,96 +1,86 @@
-Return-Path: <linux-kernel+bounces-526793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DBE9A4035E
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 00:14:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D6AD7A40368
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 00:22:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88C5D3A5D7C
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 23:14:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA4BF3B1815
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 23:22:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 262122063D3;
-	Fri, 21 Feb 2025 23:14:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 961B520897E;
+	Fri, 21 Feb 2025 23:22:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PtYlutvN"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h+QH+5ZO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EFAA1F9F70;
-	Fri, 21 Feb 2025 23:14:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA85817CA17;
+	Fri, 21 Feb 2025 23:22:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740179667; cv=none; b=uZGirqevJRuDOZlUchE0KPMjkYS6+5NW8JDaeJWYQ/GUCL6JO5Yo1Ktt9avhx/JDv5dMGlnD2FNhWazHW03j6e3d+GaqT3byP/VkiiLxsS3O1s63MjtVmov45+6ZCtpkQnSJHgzmkG8r4tfCVw5mnmy060J7ojrWbjuCpYxaFHM=
+	t=1740180159; cv=none; b=Vn8CkfZZ1Miag0YuCy4/rMzibFqqiDSlUUNlmgnCwC5fbdBL1rkip/PTvHAzEg/23LZYbQu3Dms5cUXGPZ/0mIY+BIXmMb4QmTwbIoNe++Sl4qXR3ZqLQ8l7Vu8kWsfj1ykRP6oBOFqWy6jEu9UQA2o54CDrKpx1Ng9tOsk+5ec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740179667; c=relaxed/simple;
-	bh=ZxrEIfABUThlyL83NqEocjM+61rjSOj8pPycrC979mA=;
+	s=arc-20240116; t=1740180159; c=relaxed/simple;
+	bh=Ls0VCPw6WU0TZlYM1OzIs+8Ykkrhg7H9NnWWEP0Xyag=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Im9iYDTAW6xj9OuoqmURgWg7ZiQ2GmQprhMPru8svEZsDkK0LiVwBMuVEuIxjYDxCgpkb2a5R981UA3CohTrzBFPLD40+CdZGu2jO1Qp2mCgnbmWbX/qp4pbiW68LZv01EOhKcG0Efk2Fedfg9e3UgSS4kqotQVEHsmkSn9ZPPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PtYlutvN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFE8BC4CED6;
-	Fri, 21 Feb 2025 23:14:26 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=AqsPaREAGIiThaEQCLX+3LfNSiLDObigPfZf4aOhYukvxerV4XjwE1aLdEj277gwQlovQkHRejmQ1YDuryNuYvh2/at80xstvpQLFCvVHP8X6gGSYp9P6oT8zGNFoAeRLFPd1syMLXqkOf5eN4YubLMrHZe3bDN9sYwmpqL4q/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h+QH+5ZO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E127C4CED6;
+	Fri, 21 Feb 2025 23:22:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740179667;
-	bh=ZxrEIfABUThlyL83NqEocjM+61rjSOj8pPycrC979mA=;
+	s=k20201202; t=1740180158;
+	bh=Ls0VCPw6WU0TZlYM1OzIs+8Ykkrhg7H9NnWWEP0Xyag=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PtYlutvNQyz6oh+FTLV0+g6YgzBGvtEDnAeLuVtvfEQVJ8x7CikJM6sLo4J79vbt3
-	 aPTnNK6arjQGvH7jYmvV3VMqnPD3d2d1kKGWhfMZJi/ps1tpMF9aXO/U5xtbntm/K4
-	 iVF9YmZQtFKCO+oKaSHAEBmfvl1/6CgFU3iYXndbEPgbKPlr/CdU7nwTdLU/Oz6/gA
-	 OiWKgoiuUCKw2q4hz3Gx+1yWoTSVssDk6zwFf3G+TOLqWDTU55dopjf7+iWMLMn2ti
-	 xCA1X0HrmLjV7ZIYqnQf0T5tZLlF3uqmogRBv5RU12I2FhaiLzyB9cXEnRqQ3vtOve
-	 3AP8pg1r1gK8g==
-Date: Fri, 21 Feb 2025 17:14:24 -0600
+	b=h+QH+5ZOCv6QtchBXY4LSMTLw34S1JpQ6P9gQlbei4rCZyikzFjCp4zGa9tiR3rw7
+	 oxnhEEX3VnIscRnIxVyyZ+Ugc70bKpfYIERv4tcbaUWJmmmd9TOlvP5ZQVd/5w8kdQ
+	 bXGM7TaOr8kherzsfbexPxyr+VA9L022UbN9VtkOCjVF/zqr8rCh3qDJuz9bczSiXn
+	 YMH6UqUQmJRyWAZy3YgxSW2Sw1LNAYmE9uYwbnnqbU71dhHd2IXFd1/olVfeMWII2k
+	 VgUjRCwfvLXCiAGevJn01LMXG027BsxtTQC1uoRCSA5lT5+Bzp8/1YJdYFW+1/zUB4
+	 5d9lFcR9ZSmmQ==
+Date: Fri, 21 Feb 2025 17:22:36 -0600
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: =?iso-8859-1?Q?J=2E_Neusch=E4fer?= <j.ne@posteo.net>
-Cc: devicetree@vger.kernel.org, linux-pci@vger.kernel.org,
-	=?iso-8859-1?Q?J=2E_Neusch=E4fer?= <j.neuschaefer@gmx.net>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Subject: Re: [PATCH v3] dt-bindings: pci: Convert fsl,mpc83xx-pcie to YAML
-Message-ID: <174017966427.307648.3944377161217971562.robh@kernel.org>
-References: <20250220-ppcyaml-pci-v3-1-ca94a4f62a85@posteo.net>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Conor Dooley <conor+dt@kernel.org>, shawnguo@kernel.org,
+	Ulf Hansson <ulf.hansson@linaro.org>, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, Krzysztof Kozlowski <krzk+dt@kernel.org>
+Subject: Re: [PATCH 1/1] dt-bindings: mmc: Change to additionalProperties to
+ fix fail detect Unevaluated property
+Message-ID: <174018015606.370492.13150603004835486045.robh@kernel.org>
+References: <20250220164655.2081224-1-Frank.Li@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250220-ppcyaml-pci-v3-1-ca94a4f62a85@posteo.net>
+In-Reply-To: <20250220164655.2081224-1-Frank.Li@nxp.com>
 
 
-On Thu, 20 Feb 2025 13:29:58 +0100, J. Neuschäfer wrote:
-> Formalise the binding for the PCI controllers in the Freescale MPC8xxx
-> chip family. Information about PCI-X-specific properties was taken from
-> fsl,pci.txt. The examples were taken from mpc8315erdb.dts and
-> xpedite5200_xmon.dts.
+On Thu, 20 Feb 2025 11:46:54 -0500, Frank Li wrote:
+> mmc-controller.yaml is common schema file. According to writing-schema.rst,
 > 
-> Signed-off-by: J. Neuschäfer <j.ne@posteo.net>
-> ---
-> V3:
-> - split out as a single patch
-> - remove obsolete reference to fsl,pci.txt
-> - remove unnecessary newline near the end of fsl,mpc8xxx-pci.yaml
+> * additionalProperties: true
+>    Rare case, used for schemas implementing common set of properties. Such
+>    schemas are supposed to be referenced by other schemas, which then use
+>    'unevaluatedProperties: false'.  Typically bus or common-part schemas.
 > 
-> V2:
-> - part of series [PATCH v2 00/12] YAML conversion of several Freescale/PowerPC DT bindings
->   Link: https://lore.kernel.org/lkml/20250207-ppcyaml-v2-6-8137b0c42526@posteo.net/
-> - merge fsl,pci.txt into fsl,mpc8xxx-pci.yaml
-> - regroup compatible strings, list single-item values in one enum
-> - trim subject line (remove "binding")
-> - fix property order to comply with dts coding style
+> Reproduce steps:
+> 1. Add unevaluated property 'abc' at example of fsl-imx-esdhc.yaml
+> 2. Run make dt_binding_check DT_SCHEMA_FILES=fsl-imx-esdhc.yaml
+> 
+> No any warning report. But suppose report below warning:
+> mmc@70004000: Unevaluated properties are not allowed ('abc' was unexpected)
+> 
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
 > ---
->  .../devicetree/bindings/pci/fsl,mpc8xxx-pci.yaml   | 113 +++++++++++++++++++++
->  Documentation/devicetree/bindings/pci/fsl,pci.txt  |  27 -----
->  2 files changed, 113 insertions(+), 27 deletions(-)
+>  Documentation/devicetree/bindings/mmc/mmc-controller.yaml | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
 
 Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
