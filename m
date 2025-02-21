@@ -1,136 +1,120 @@
-Return-Path: <linux-kernel+bounces-526090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526092-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B72EA3F9CD
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:01:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B844DA3F9F8
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:04:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B39271891435
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 15:55:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E152863764
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 15:56:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 530DD215795;
-	Fri, 21 Feb 2025 15:52:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73E0F1F0E53;
+	Fri, 21 Feb 2025 15:52:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nHm2VAWa"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A16ED215068
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 15:52:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF7121DA612;
+	Fri, 21 Feb 2025 15:52:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740153143; cv=none; b=jSx90yfdPcIGNq/+fNLH5UVSMSjVsS9kGagSjPi60RQS/LeLfbIFFLX+ni2A9OMmqjxMQ7fPksqAts0/UtI9QUQJTCbyfBDO2O6I8QskU9xXdONZWN7lbOX6ReLzt3OAvItFn6o4Hxb8gLpASmqhhXuXicRbArC8yX37yTpkjHE=
+	t=1740153163; cv=none; b=GWgqq4fpvxD1nRObsluZwijzqpl4SD7KNNMfM9j75Y7jc9ggFnc6Ov6XkuQIoMGg0odkypeDEd0/nz7ChL1k6Qygg9mtjT9ZtTCFcgBzeYirewQXQ8QF304R+qIPnwSp65uZSEsRDKFrPkiA+vYftC/3OpEFaZtqBdFUFrfRuo0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740153143; c=relaxed/simple;
-	bh=ExI5ZpYBi/5UTqZaA7Z6ckV9+8IPcCLb6nL/KC20IhE=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=D1wnEru1vtWD8ugiCa8VObbak3HlHQzf88AJk/Y6eMIbdl6EbB05maPT1KxNwPVyVw5nZbaMChWpUAm6yvRui+mX2a8Wu53MtsTodlXnCbZcOguErPKg5Xk2k0emRcGLoJxtUbFxdxRu4XCq+7+kQXbdsiaQGm6XE7U1m6QeWRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6789BC4CEE7;
-	Fri, 21 Feb 2025 15:52:23 +0000 (UTC)
-Received: from rostedt by gandalf with local (Exim 4.98)
-	(envelope-from <rostedt@goodmis.org>)
-	id 1tlVKe-00000006KUa-3WdE;
-	Fri, 21 Feb 2025 10:52:52 -0500
-Message-ID: <20250221155252.692026476@goodmis.org>
-User-Agent: quilt/0.68
-Date: Fri, 21 Feb 2025 10:52:17 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: linux-kernel@vger.kernel.org
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Adrian Huang <ahuang12@lenovo.com>
-Subject: [for-linus][PATCH 7/7] tracing: Fix memory leak when reading set_event file
-References: <20250221155210.755295517@goodmis.org>
+	s=arc-20240116; t=1740153163; c=relaxed/simple;
+	bh=T2pIXkuccaH3wvzZZ+aaBnugn9hlqwMDeUUtq+JHoBQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mxdhiiHUPc5TGy7TaOgEfrMh7svQqpzIO6o8AmIvOQH/C0l8aQhWzwNu33qVYIJELgJRILPRtu5zg1lcFxz3MBb3ioDlRlLdaOZdxgenNNs0D/PGeOqDbM2A3m8UjLEmbCjD6WepF9d3FR1vF/Hm8G19YNDyPqJYv1DwjvAmGsA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nHm2VAWa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A091C4CED6;
+	Fri, 21 Feb 2025 15:52:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740153162;
+	bh=T2pIXkuccaH3wvzZZ+aaBnugn9hlqwMDeUUtq+JHoBQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nHm2VAWaVJFVIpDDiqF9xlT4d9qDnMm9tvXttZutI3mEu8ev8XqBedNnx/CR5PK7i
+	 2FpuLycf+EHln6f61U0gGpNMn7hAaSxVRpeAJ4G5jTp1XpYLMfgzjXB/3phqm0tVhS
+	 lodUtL2/yFDmUHB87mp5K3dzhKRAf6VK1ASGIV7TNha4e5Psh062REqoNUDr+de/+P
+	 RqIU0sbx5mF17+djPtBk/A5oLNap3AcsNMgbj4pPmQQ2ILW+klQTIK5gLrY3znwDim
+	 PgkvpD7sYpL1NGd51ecpJhhae+dZ+UgkeOCR9grnvr1yvCGCe2YjHXYkFiPRAtreBu
+	 lC5dwBkmeinaQ==
+Date: Fri, 21 Feb 2025 16:52:39 +0100
+From: Frederic Weisbecker <frederic@kernel.org>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@amd.com>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>, rcu <rcu@vger.kernel.org>
+Subject: Re: [PATCH 3/3] rcu/exp: Remove needless CPU up quiescent state
+ report
+Message-ID: <Z7ihR0eMfoJMi-qx@localhost.localdomain>
+References: <20250213232559.34163-1-frederic@kernel.org>
+ <20250213232559.34163-4-frederic@kernel.org>
+ <fe931d3a-bf97-4be5-8420-f1fcb55e6a46@paulmck-laptop>
+ <Z68yzBURiIr_7Lmy@pavilion.home>
+ <610596cf-9836-473f-bcdc-15c69b7e0cd4@paulmck-laptop>
+ <Z7ET8S4HKqSPubQY@pavilion.home>
+ <c5ea9684-291f-4952-b834-ed8e39cfdf8f@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <c5ea9684-291f-4952-b834-ed8e39cfdf8f@paulmck-laptop>
 
-From: Adrian Huang <ahuang12@lenovo.com>
+Le Wed, Feb 19, 2025 at 06:58:36AM -0800, Paul E. McKenney a écrit :
+> On Sat, Feb 15, 2025 at 11:23:45PM +0100, Frederic Weisbecker wrote:
+> > > Before.  There was also some buggy debug code in play.  Also, to get the
+> > > failure, it was necessary to make TREE03 disable preemption, as stock
+> > > TREE03 has an empty sync_sched_exp_online_cleanup() function.
+> > > 
+> > > I am rerunning the test with a WARN_ON_ONCE() after the early exit from
+> > > the sync_sched_exp_online_cleanup().  Of course, lack of a failure does
+> > > not necessairly indicate
+> > 
+> > Cool, thanks!
+> 
+> No failures.  But might it be wise to put this WARN_ON_ONCE() in,
+> let things go for a year or two, and complete the removal if it never
+> triggers?  Or is the lack of forward progress warning enough?
 
-kmemleak reports the following memory leak after reading set_event file:
+Hmm, what prevents a WARN_ON_ONCE() after the early exit of
+sync_sched_exp_online_cleanup() to hit?
 
-  # cat /sys/kernel/tracing/set_event
+All it takes is for sync_sched_exp_online_cleanup() to execute between
+sync_exp_reset_tree() and  __sync_rcu_exp_select_node_cpus() manage
+to send an IPI.
 
-  # cat /sys/kernel/debug/kmemleak
-  unreferenced object 0xff110001234449e0 (size 16):
-  comm "cat", pid 13645, jiffies 4294981880
-  hex dump (first 16 bytes):
-    01 00 00 00 00 00 00 00 a8 71 e7 84 ff ff ff ff  .........q......
-  backtrace (crc c43abbc):
-    __kmalloc_cache_noprof+0x3ca/0x4b0
-    s_start+0x72/0x2d0
-    seq_read_iter+0x265/0x1080
-    seq_read+0x2c9/0x420
-    vfs_read+0x166/0xc30
-    ksys_read+0xf4/0x1d0
-    do_syscall_64+0x79/0x150
-    entry_SYSCALL_64_after_hwframe+0x76/0x7e
+But we can warn about the lack of forward progress after a few iterations
+of the retry_ipi label in __sync_rcu_exp_select_node_cpus().
 
-The issue can be reproduced regardless of whether set_event is empty or
-not. Here is an example about the valid content of set_event.
+> 
+> > > > And if after do we know why?
+> > > 
+> > > Here are some (possibly bogus) possibilities that came to mind:
+> > > 
+> > > 1.	There is some coming-online race that deprives the incoming
+> > > 	CPU of an IPI, but nevertheless marks that CPU as blocking the
+> > > 	current grace period.
+> > 
+> > Arguably there is a tiny window between rcutree_report_cpu_starting()
+> > and set_cpu_online() that could make ->qsmaskinitnext visible before
+> > cpu_online() and therefore delay the IPI a bit. But I don't expect
+> > more than a jiffy to fill up the gap. And if that's relevant, note that
+> > only !PREEMPT_RCU is then "fixed" by sync_sched_exp_online_cleanup() here.
+> 
+> Agreed.  And I vaguely recall that there was some difference due to
+> preemptible RCU's ability to clean up at the next rcu_read_unlock(),
+> though more recently, possibly deferred.
 
-  # cat /sys/kernel/tracing/set_event
-  sched:sched_process_fork
-  sched:sched_switch
-  sched:sched_wakeup
-  *:*:mod:trace_events_sample
+Perhaps at the time but today at least I can't find any.
 
-The root cause is that s_next() returns NULL when nothing is found.
-This results in s_stop() attempting to free a NULL pointer because its
-parameter is NULL.
-
-Fix the issue by freeing the memory appropriately when s_next() fails
-to find anything.
-
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Link: https://lore.kernel.org/20250220031528.7373-1-ahuang12@lenovo.com
-Fixes: b355247df104 ("tracing: Cache ":mod:" events for modules not loaded yet")
-Signed-off-by: Adrian Huang <ahuang12@lenovo.com>
-Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
- kernel/trace/trace_events.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
-
-diff --git a/kernel/trace/trace_events.c b/kernel/trace/trace_events.c
-index 4cb275316e51..513de9ceb80e 100644
---- a/kernel/trace/trace_events.c
-+++ b/kernel/trace/trace_events.c
-@@ -1591,6 +1591,13 @@ s_next(struct seq_file *m, void *v, loff_t *pos)
- 		return iter;
- #endif
- 
-+	/*
-+	 * The iter is allocated in s_start() and passed via the 'v'
-+	 * parameter. To stop the iterator, NULL must be returned. But
-+	 * the return value is what the 'v' parameter in s_stop() receives
-+	 * and frees. Free iter here as it will no longer be used.
-+	 */
-+	kfree(iter);
- 	return NULL;
- }
- 
-@@ -1667,9 +1674,9 @@ static int s_show(struct seq_file *m, void *v)
- }
- #endif
- 
--static void s_stop(struct seq_file *m, void *p)
-+static void s_stop(struct seq_file *m, void *v)
- {
--	kfree(p);
-+	kfree(v);
- 	t_stop(m, NULL);
- }
- 
--- 
-2.47.2
-
-
+Thanks.
 
