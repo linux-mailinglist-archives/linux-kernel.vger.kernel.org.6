@@ -1,329 +1,194 @@
-Return-Path: <linux-kernel+bounces-526316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97773A3FD08
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 18:12:36 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5ADE2A3FD0C
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 18:12:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CAD3E425324
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:11:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4E384200D6
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2025 17:11:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAC1124CEE0;
-	Fri, 21 Feb 2025 17:10:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C08D24E4A4;
+	Fri, 21 Feb 2025 17:10:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="atN8Cqzf"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZWCwY+GT"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B98624C696;
-	Fri, 21 Feb 2025 17:10:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08FA424C66E
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 17:10:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740157847; cv=none; b=MNUjer/+mlGaTGT2gMKGT4T0/HG1IBr7MhaTJEMvu77K2M55uwXc3uKbyLO1txeJ3W7t2tiSNqIixnSVnORSuqh/tt2UvUKtlVN3XLFFhhpy3HEJHoI8m5w4EEww84pSCHDiYSLfLxq+Ag9Er0HBQdXijiqBEBOR6JYSuyIPKHI=
+	t=1740157856; cv=none; b=YXmDMeVXWxrIQf7HTh7F4Cl9et1uQYjPEthO8cfWa6L6ixmM/Sb7SgMwab8QLggmnGe+ptrkihNwQwfT4ubujee8r1yOY5to1mvcsgCp4cAuuF6oiq4bVDny59KaR/mYKZgBcEexRdeBVQq2HzhwTNs9dvw7rH2LNj+y4HBfmAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740157847; c=relaxed/simple;
-	bh=rM3jrhSo+GMoOBA94yDrK21p75S9evPMIW4c8CD3loM=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZyjqFqF8hSSjZ+BTouCFbMysKluTb7bJleVrO/omXsEumyF7SBGyVLnOpSeGXpyd+v5cJUsAOtMR/1zri6+Tmdb8JZYocpB9uoIXg0O/pzh2FzHNoKiHJpelhws9rL2gY8EotzA/gKPBtrFM08zLAQQUaGVagZZv8IKFl7L9dZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=atN8Cqzf; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51LFFWV5009360;
-	Fri, 21 Feb 2025 17:10:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	7HCZI+K4nbxC5bBlauRGk9fXA5vsC7qtqpk2d5TRt0I=; b=atN8Cqzf4zkIBvFA
-	5B9qYPgIFVKzFs40RFPTNINvyWZ5mUJVvcUsLjw8NXjd3RPZo5dudDHz5PJz1CaC
-	nd2wEYS7uLD9W51dJC5OueQfoCbN6fzp8u+ovggDXNRqz4cGfFQmPsD3V59qExCJ
-	HjW/oXi71/iYBsAPfJ8jqbPseFoDW1wTARBRquMpePYd99C5wALMp8xA2N0gYF7V
-	w/qk8Pw8xHRMteMPoWaW0uSz/CTtM2k4VX14w2/2/y7+my8PpHUnaezyGzdcvgTc
-	gZ65KMOgaMX6U6FEUcuSWf3dAYZVwgwBHBrXKPAGnWXID/xtLX+1TTdCfKHIjyzZ
-	pkMdyw==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44vyy3jru3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Feb 2025 17:10:41 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51LHAeKW032572
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Feb 2025 17:10:40 GMT
-Received: from hu-janathot-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Fri, 21 Feb 2025 09:10:36 -0800
-From: Janaki Ramaiah Thota <quic_janathot@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: <quic_mohamull@quicinc.com>, <quic_janathot@quicinc.com>,
-        <quic_hbandi@quicinc.com>, <quic_anubhavg@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH v10 1/1] arm64: dts: qcom: qcs6490-rb3gen: add and enable BT node
-Date: Fri, 21 Feb 2025 22:40:14 +0530
-Message-ID: <20250221171014.120946-2-quic_janathot@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250221171014.120946-1-quic_janathot@quicinc.com>
-References: <20250221171014.120946-1-quic_janathot@quicinc.com>
+	s=arc-20240116; t=1740157856; c=relaxed/simple;
+	bh=zLivjvSwcKhzlo3svCNKQUA1a6rIcuwqxFgzLbvteDo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oIf2SYC2wnp6ZlZ3CrvcmMvq6umUEtU1BqjGDl1PC6w/61mZKrek1f/edTcSyyK5rvCdrzQwOq8/9VDDUNqSY2h6+L2+XZ2MZCDHHjexRdMHTWEg+cg2AfOvc4RuUplCHgJFvVL91lpEgIEGUpGCGVHULtVlCzrQyNScRcTpLAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZWCwY+GT; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-22117c396baso183255ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 09:10:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1740157854; x=1740762654; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=v/06cutobvSL148SHg+rXF1/EKMBeC15diJi2NLvYxY=;
+        b=ZWCwY+GTFO1iI+FQVPsHIwyBpRTmBQ7AxQKENZYhr1JVm/AArUyEyHaZatbtEJ4ZJk
+         XaGGpLFyLhmmClseqZACnUYcxfghU/pK4dxF96CuHC7xVNQF5rBmM6hKmIJe+f0uYh0z
+         VG8kiDRAiYyikaVcQpYy4OwWw4JoescXotRxPKgdqdb8rO6wcyF9IhiiW8Uer2iFripx
+         aR6a+rRCu33U7ThjgnX6ri1cMtgiW4qDoLwcigOe9X58ywAq+XUfyvyBeLHEzYVr0EeB
+         iwV3SIBdjEobm53uMmoG188zeGM5U0585Rrfm5qOQbcwz0Sj9VBDAde5c5CkJ++dy7sT
+         +1bA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740157854; x=1740762654;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=v/06cutobvSL148SHg+rXF1/EKMBeC15diJi2NLvYxY=;
+        b=VVk5KpBKFYuemfdGTu0OHPi6DeyTzLwX30/TP6F5ruOOCbtuNtQ2YaHWmVAUwKY02H
+         VDymtZAtCIWg13ybD6zoiNLQ1gWiZGrlxImQnXio7D7Gjnv5b7fW02pr7R/5e7QTG/ep
+         4sYpOUEjVJeFsdee3N6FqjbJiFEEVcsMOnbyz1CCz2k/wwGPcUA1v9a8ITP0eE4rX3G5
+         NUM93vts7aXEDjelK3j0qpJvRWxW2KspInxCZ7cyGcQE/A0kf3+yybv1+47ggCtMqPDo
+         hUhL02m/O7S0OWpUQ6NqH276RYOKTiSYb8MWP88t/l1gp/iAsqRU0ROc/XZbEmsi9tFJ
+         YDzw==
+X-Forwarded-Encrypted: i=1; AJvYcCVGG1mdhLEdXMxt2xS1t+W5NLr3nttf04veANkMM0N9cK/JWL3gzcuuTUfLaqEzk5hwj2gbylQb4W4OxkQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxkn9YHZdU3e1vOk90kRoaf/S+6fchut769kY9Xa8KfWwvqmTMN
+	3Xkd/Qllcw0H8PMgOA1Je0kDms9xOTB22Ez0eLfAJAnLLcbS/r3GHl8PmirqrqdyS8L9fxrQZ0d
+	riYUmwqQSyCowaK+jsVxLgnn30b72Z39qKqUG
+X-Gm-Gg: ASbGncsFIUc7bqU2RqR9kYEDJPfvYNTwzXyVpLouJ6Z5X1La2qgnb3l2CqvZgj3LVMq
+	b7q8Jml+s+0g412V3ItKzR1133aTqaTE9lGCyYuJ6996+iodICqV8/XGVzMFDJ2AkPQx0THP6sV
+	oFHwUE6C8hapQqAhGr1VrJiEImJKA657FMRCQENMiQ
+X-Google-Smtp-Source: AGHT+IGldTX8YPxNiHq5GCgGriPX+2NeZhhwxRgXaqAzM2MGUPniBZmpaA4CLGFWvvlR3adETlTMpcRMFGLlc6gV27Q=
+X-Received: by 2002:a17:902:e5c6:b0:215:8723:42d1 with SMTP id
+ d9443c01a7336-221a0417e96mr2978475ad.10.1740157854187; Fri, 21 Feb 2025
+ 09:10:54 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: fAPYH3vQyTUTffHNMaaAnvlz102uYq8M
-X-Proofpoint-GUID: fAPYH3vQyTUTffHNMaaAnvlz102uYq8M
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-21_05,2025-02-20_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 clxscore=1015
- phishscore=0 adultscore=0 lowpriorityscore=0 bulkscore=0 impostorscore=0
- priorityscore=1501 malwarescore=0 spamscore=0 mlxlogscore=999 mlxscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
- definitions=main-2502210120
+References: <cover.1740139449.git.lorenzo.stoakes@oracle.com> <521d99c08b975fb06a1e7201e971cc24d68196d1.1740139449.git.lorenzo.stoakes@oracle.com>
+In-Reply-To: <521d99c08b975fb06a1e7201e971cc24d68196d1.1740139449.git.lorenzo.stoakes@oracle.com>
+From: Kalesh Singh <kaleshsingh@google.com>
+Date: Fri, 21 Feb 2025 09:10:42 -0800
+X-Gm-Features: AWEUYZnbM5nA9kkqZnhzwGTEHPz7kvvIuks0mem2iJOt7iRv8etO859ySZMIHY4
+Message-ID: <CAC_TJvf-R6MuSS9e0b4orhxLrFwXTnvZV-vf3sB+BnSbEqsprw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] fs/proc/task_mmu: add guard region bit to pagemap
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Jonathan Corbet <corbet@lwn.net>, 
+	Shuah Khan <shuah@kernel.org>, David Hildenbrand <david@redhat.com>, 
+	Suren Baghdasaryan <surenb@google.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
+	Matthew Wilcox <willy@infradead.org>, Vlastimil Babka <vbabka@suse.cz>, 
+	"Paul E . McKenney" <paulmck@kernel.org>, Jann Horn <jannh@google.com>, Juan Yescas <jyescas@google.com>, 
+	linux-mm@kvack.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-api@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add the PMU node for WCN6750 present on the qcs6490-rb3gen
-board and assign its power outputs to the Bluetooth module.
+On Fri, Feb 21, 2025 at 4:05=E2=80=AFAM Lorenzo Stoakes
+<lorenzo.stoakes@oracle.com> wrote:
+>
+> Currently there is no means by which users can determine whether a given
+> page in memory is in fact a guard region, that is having had the
+> MADV_GUARD_INSTALL madvise() flag applied to it.
+>
+> This is intentional, as to provide this information in VMA metadata would
+> contradict the intent of the feature (providing a means to change fault
+> behaviour at a page table level rather than a VMA level), and would requi=
+re
+> VMA metadata operations to scan page tables, which is unacceptable.
+>
+> In many cases, users have no need to reflect and determine what regions
+> have been designated guard regions, as it is the user who has established
+> them in the first place.
+>
+> But in some instances, such as monitoring software, or software that reli=
+es
+> upon being able to ascertain the nature of mappings within a remote proce=
+ss
+> for instance, it becomes useful to be able to determine which pages have
+> the guard region marker applied.
+>
+> This patch makes use of an unused pagemap bit (58) to provide this
+> information.
+>
+> This patch updates the documentation at the same time as making the chang=
+e
+> such that the implementation of the feature and the documentation of it a=
+re
+> tied together.
+>
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> ---
+>  Documentation/admin-guide/mm/pagemap.rst | 3 ++-
+>  fs/proc/task_mmu.c                       | 6 +++++-
+>  2 files changed, 7 insertions(+), 2 deletions(-)
+>
+> diff --git a/Documentation/admin-guide/mm/pagemap.rst b/Documentation/adm=
+in-guide/mm/pagemap.rst
+> index caba0f52dd36..a297e824f990 100644
+> --- a/Documentation/admin-guide/mm/pagemap.rst
+> +++ b/Documentation/admin-guide/mm/pagemap.rst
+> @@ -21,7 +21,8 @@ There are four components to pagemap:
+>      * Bit  56    page exclusively mapped (since 4.2)
+>      * Bit  57    pte is uffd-wp write-protected (since 5.13) (see
+>        Documentation/admin-guide/mm/userfaultfd.rst)
+> -    * Bits 58-60 zero
+> +    * Bit  58    pte is a guard region (since 6.15) (see madvise (2) man=
+ page)
 
-In WCN6750 module sw_ctrl and wifi-enable pins are handled
-in the wifi controller firmware. Therefore, it is not required
-to have those pins' entries in the PMU node.
+Should this be 6.14 ?
 
-Signed-off-by: Janaki Ramaiah Thota <quic_janathot@quicinc.com>
----
- arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts | 171 ++++++++++++++++++-
- 1 file changed, 170 insertions(+), 1 deletion(-)
+Other than that: Reviewed-by: Kalesh Singh <kaleshsingh@google.com>
 
-diff --git a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
-index 7a36c90ad4ec..de03770e0b90 100644
---- a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
-+++ b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: BSD-3-Clause
- /*
-- * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
-+ * Copyright (c) 2023-2024 Qualcomm Innovation Center, Inc. All rights reserved.
-  */
- 
- /dts-v1/;
-@@ -34,6 +34,7 @@ / {
- 
- 	aliases {
- 		serial0 = &uart5;
-+		serial1 = &uart7;
- 	};
- 
- 	chosen {
-@@ -218,6 +219,63 @@ vph_pwr: vph-pwr-regulator {
- 		regulator-min-microvolt = <3700000>;
- 		regulator-max-microvolt = <3700000>;
- 	};
-+
-+	wcn6750-pmu {
-+		compatible = "qcom,wcn6750-pmu";
-+		pinctrl-0 = <&bt_en>;
-+		pinctrl-names = "default";
-+		vddaon-supply = <&vreg_s7b_0p972>;
-+		vddasd-supply = <&vreg_l11c_2p8>;
-+		vddpmu-supply = <&vreg_s7b_0p972>;
-+		vddrfa0p8-supply = <&vreg_s7b_0p972>;
-+		vddrfa1p2-supply = <&vreg_s8b_1p272>;
-+		vddrfa1p7-supply = <&vreg_s1b_1p872>;
-+		vddrfa2p2-supply = <&vreg_s1c_2p19>;
-+
-+		bt-enable-gpios = <&tlmm 85 GPIO_ACTIVE_HIGH>;
-+
-+		regulators {
-+			vreg_pmu_rfa_cmn: ldo0 {
-+				regulator-name = "vreg_pmu_rfa_cmn";
-+			};
-+
-+			vreg_pmu_aon_0p59: ldo1 {
-+				regulator-name = "vreg_pmu_aon_0p59";
-+			};
-+
-+			vreg_pmu_wlcx_0p8: ldo2 {
-+				regulator-name = "vreg_pmu_wlcx_0p8";
-+			};
-+
-+			vreg_pmu_wlmx_0p85: ldo3 {
-+				regulator-name = "vreg_pmu_wlmx_0p85";
-+			};
-+
-+			vreg_pmu_btcmx_0p85: ldo4 {
-+				regulator-name = "vreg_pmu_btcmx_0p85";
-+			};
-+
-+			vreg_pmu_rfa_0p8: ldo5 {
-+				regulator-name = "vreg_pmu_rfa_0p8";
-+			};
-+
-+			vreg_pmu_rfa_1p2: ldo6 {
-+				regulator-name = "vreg_pmu_rfa_1p2";
-+			};
-+
-+			vreg_pmu_rfa_1p7: ldo7 {
-+				regulator-name = "vreg_pmu_rfa_1p7";
-+			};
-+
-+			vreg_pmu_pcie_0p9: ldo8 {
-+				regulator-name = "vreg_pmu_pcie_0p9";
-+			};
-+
-+			vreg_pmu_pcie_1p8: ldo9 {
-+				regulator-name = "vreg_pmu_pcie_1p8";
-+			};
-+		};
-+	};
- };
- 
- &apps_rsc {
-@@ -799,6 +857,39 @@ &pon_resin {
- 	status = "okay";
- };
- 
-+&qup_uart7_cts {
-+	/*
-+	 * Configure a bias-bus-hold on CTS to lower power
-+	 * usage when Bluetooth is turned off. Bus hold will
-+	 * maintain a low power state regardless of whether
-+	 * the Bluetooth module drives the pin in either
-+	 * direction or leaves the pin fully unpowered.
-+	 */
-+	bias-bus-hold;
-+};
-+
-+&qup_uart7_rts {
-+	/* We'll drive RTS, so no pull */
-+	drive-strength = <2>;
-+	bias-disable;
-+};
-+
-+&qup_uart7_rx {
-+	/*
-+	 * Configure a pull-up on RX. This is needed to avoid
-+	 * garbage data when the TX pin of the Bluetooth module is
-+	 * in tri-state (module powered off or not driving the
-+	 * signal yet).
-+	 */
-+	bias-pull-up;
-+};
-+
-+&qup_uart7_tx {
-+	/* We'll drive TX, so no pull */
-+	drive-strength = <2>;
-+	bias-disable;
-+};
-+
- &qupv3_id_0 {
- 	status = "okay";
- };
-@@ -842,12 +933,90 @@ &sdhc_2 {
- &tlmm {
- 	gpio-reserved-ranges = <32 2>, /* ADSP */
- 			       <48 4>; /* NFC */
-+
-+	bt_en: bt-en-state {
-+		pins = "gpio85";
-+		function = "gpio";
-+		output-low;
-+		bias-disable;
-+	};
-+
-+	qup_uart7_sleep_cts: qup-uart7-sleep-cts-state {
-+		pins = "gpio28";
-+		function = "gpio";
-+		/*
-+		 * Configure a bias-bus-hold on CTS to lower power
-+		 * usage when Bluetooth is turned off. Bus hold will
-+		 * maintain a low power state regardless of whether
-+		 * the Bluetooth module drives the pin in either
-+		 * direction or leaves the pin fully unpowered.
-+		 */
-+		bias-bus-hold;
-+	};
-+
-+	qup_uart7_sleep_rts: qup-uart7-sleep-rts-state {
-+		pins = "gpio29";
-+		function = "gpio";
-+		/*
-+		 * Configure pull-down on RTS. As RTS is active low
-+		 * signal, pull it low to indicate the BT SoC that it
-+		 * can wakeup the system anytime from suspend state by
-+		 * pulling RX low (by sending wakeup bytes).
-+		 */
-+		bias-pull-down;
-+	};
-+
-+	qup_uart7_sleep_rx: qup-uart7-sleep-rx-state {
-+		pins = "gpio31";
-+		function = "gpio";
-+		/*
-+		 * Configure a pull-up on RX. This is needed to avoid
-+		 * garbage data when the TX pin of the Bluetooth module
-+		 * is floating which may cause spurious wakeups.
-+		 */
-+		bias-pull-up;
-+	};
-+
-+	qup_uart7_sleep_tx: qup-uart7-sleep-tx-state {
-+		pins = "gpio30";
-+		function = "gpio";
-+		/*
-+		 * Configure pull-up on TX when it isn't actively driven
-+		 * to prevent BT SoC from receiving garbage during sleep.
-+		 */
-+		bias-pull-up;
-+	};
- };
- 
- &uart5 {
- 	status = "okay";
- };
- 
-+&uart7 {
-+	/delete-property/ interrupts;
-+	interrupts-extended = <&intc GIC_SPI 608 IRQ_TYPE_LEVEL_HIGH>,
-+			      <&tlmm 31 IRQ_TYPE_EDGE_FALLING>;
-+	pinctrl-1 = <&qup_uart7_sleep_cts>,
-+		    <&qup_uart7_sleep_rts>,
-+		    <&qup_uart7_sleep_tx>,
-+		    <&qup_uart7_sleep_rx>;
-+	pinctrl-names = "default",
-+			"sleep";
-+
-+	status = "okay";
-+
-+	bluetooth: bluetooth {
-+		compatible = "qcom,wcn6750-bt";
-+		vddrfacmn-supply = <&vreg_pmu_rfa_cmn>;
-+		vddaon-supply = <&vreg_pmu_aon_0p59>;
-+		vddbtcmx-supply = <&vreg_pmu_btcmx_0p85>;
-+		vddrfa0p8-supply = <&vreg_pmu_rfa_0p8>;
-+		vddrfa1p7-supply = <&vreg_pmu_rfa_1p7>;
-+		vddrfa1p2-supply = <&vreg_pmu_rfa_1p2>;
-+		max-speed = <3200000>;
-+	};
-+};
-+
- &usb_1 {
- 	status = "okay";
- };
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Thanks,
+Kalesh
 
+> +    * Bits 59-60 zero
+>      * Bit  61    page is file-page or shared-anon (since 3.5)
+>      * Bit  62    page swapped
+>      * Bit  63    page present
+> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+> index f02cd362309a..c17615e21a5d 100644
+> --- a/fs/proc/task_mmu.c
+> +++ b/fs/proc/task_mmu.c
+> @@ -1632,6 +1632,7 @@ struct pagemapread {
+>  #define PM_SOFT_DIRTY          BIT_ULL(55)
+>  #define PM_MMAP_EXCLUSIVE      BIT_ULL(56)
+>  #define PM_UFFD_WP             BIT_ULL(57)
+> +#define PM_GUARD_REGION                BIT_ULL(58)
+>  #define PM_FILE                        BIT_ULL(61)
+>  #define PM_SWAP                        BIT_ULL(62)
+>  #define PM_PRESENT             BIT_ULL(63)
+> @@ -1732,6 +1733,8 @@ static pagemap_entry_t pte_to_pagemap_entry(struct =
+pagemapread *pm,
+>                         page =3D pfn_swap_entry_to_page(entry);
+>                 if (pte_marker_entry_uffd_wp(entry))
+>                         flags |=3D PM_UFFD_WP;
+> +               if (is_guard_swp_entry(entry))
+> +                       flags |=3D  PM_GUARD_REGION;
+>         }
+>
+>         if (page) {
+> @@ -1931,7 +1934,8 @@ static const struct mm_walk_ops pagemap_ops =3D {
+>   * Bit  55    pte is soft-dirty (see Documentation/admin-guide/mm/soft-d=
+irty.rst)
+>   * Bit  56    page exclusively mapped
+>   * Bit  57    pte is uffd-wp write-protected
+> - * Bits 58-60 zero
+> + * Bit  58    pte is a guard region
+> + * Bits 59-60 zero
+>   * Bit  61    page is file-page or shared-anon
+>   * Bit  62    page swapped
+>   * Bit  63    page present
+> --
+> 2.48.1
+>
 
