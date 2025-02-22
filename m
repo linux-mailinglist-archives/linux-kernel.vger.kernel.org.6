@@ -1,116 +1,113 @@
-Return-Path: <linux-kernel+bounces-527045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F03E0A406BB
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 10:18:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B883A406EB
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 10:31:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ACF094214E7
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 09:18:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F04913BF5C9
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 09:31:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 484122066FE;
-	Sat, 22 Feb 2025 09:18:24 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55E462063F4;
+	Sat, 22 Feb 2025 09:30:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="eoR+hgdD"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D71A746434;
-	Sat, 22 Feb 2025 09:18:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91AD11EF0BC
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 09:30:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740215903; cv=none; b=A/sQ24DM+Rs4fW84zfv+Q+BrYyDvcXxP6tfIc9qbh/PWU2SSsivn7JQH796L8NLr2/Vu1H4NUZEuWRYY9VnVGURFTOBaamZVt8tVTO2DRruCJWs7W+QCqUQ3bolHIS4PAbPbq7D6szyQKOEpZWWFBHKXtnb9bpA7islZf4g8S50=
+	t=1740216655; cv=none; b=TUTawUu5PUOXxeGLESOYR3yHE19cx0MeJnyBrT6T/LiIHSRuXdjscTYsPJpEfHaJp4rMQuxgaWozY07Mtky0aB4CwbKOEGhBH8L8itB9+2kvW6oetHjECLujnoS4ezHGjimmPLt6PFNOojhWnKpUfjjKAC7NCOFNMGdCGSVjUMs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740215903; c=relaxed/simple;
-	bh=Mk6WuBoS1O12+dATtOsdWAT4h5ydjVAjz1XhAIFEwiY=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=NsaTNq4+ZzezWp7jomDzH0i12zG4JFeb0aXkWrDj1P3cw4gbX4YDoXGG2tK7ISTts63zZ9xQmVll+s6MOnuooUxVIA3dohGjzhqlHZ9gXzYhTOM7AdUzNJ2WpVOIC0IhJAs8scamo1qu9SDz7ueA8d0z3DJzYNrY8rK4J49Onbg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4Z0Lrq1NGSz1GDfB;
-	Sat, 22 Feb 2025 17:13:31 +0800 (CST)
-Received: from kwepemg200005.china.huawei.com (unknown [7.202.181.32])
-	by mail.maildlp.com (Postfix) with ESMTPS id 0A055140336;
-	Sat, 22 Feb 2025 17:18:11 +0800 (CST)
-Received: from huawei.com (10.175.101.6) by kwepemg200005.china.huawei.com
- (7.202.181.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sat, 22 Feb
- 2025 17:18:09 +0800
-From: Wang Liang <wangliang74@huawei.com>
-To: <bjorn@kernel.org>, <magnus.karlsson@intel.com>,
-	<maciej.fijalkowski@intel.com>, <jonathan.lemon@gmail.com>,
-	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <horms@kernel.org>, <ast@kernel.org>,
-	<daniel@iogearbox.net>, <hawk@kernel.org>, <john.fastabend@gmail.com>
-CC: <yuehaibing@huawei.com>, <zhangchangzhong@huawei.com>,
-	<wangliang74@huawei.com>, <netdev@vger.kernel.org>, <bpf@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH net] xsk: fix __xsk_generic_xmit() error code when cq is full
-Date: Sat, 22 Feb 2025 17:30:07 +0800
-Message-ID: <20250222093007.3607691-1-wangliang74@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1740216655; c=relaxed/simple;
+	bh=YEOVvgmg7FxOvmZafWS72ZewGgi0VB1w/eqX5SfWyn8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iKCF9WK5GNwnyyCpoqKVcOmpckgJxaFCyCaKaPQz7JMeLDh9rKiKv3AIWwkTGn4GjtgIJd/A7MKnMZHwmjq8bT5ymBJbwt/u/Dpd6RlfZoqWPYZCfRcbYs/j63DPwGGxKeixQ4s2wOAijR59ehB1y/aytjxgOTYPLFSElTTLmr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=eoR+hgdD; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=gwvH
+	R2pWT+FEQ338AH8GO4XbPqa1gdPGQfyRRNgfKy8=; b=eoR+hgdDrmxsFOnAZasD
+	YbaD8lYfrfItqfoeQfuyVjnQRwMt8HfvkD7q7TAI2W83FKcC/GdSXIGULUw+D9X0
+	mQUxR+fZBB6Tqwyj58VEIqmDN6Fp5OU1lp3oNzAJl7a9v81ccou4ZsUqsgIgARO/
+	Om+cNnutkEXcRfh7uwQQjlcVorwuiXdCakUq6ZAJ6lpl9uGnLsagciFfsLhQilYP
+	FbF/+ei9Co4T4mCxSY1B8Ucn0oRA89p9hIbl7uD1gCKkXgj6roEB1KaDahm+awHH
+	TiaX5cRUZx5M386kg65W7e0wzGFDSUtc3Tf6DfVnhtUXs6JFmP2MGrf5jgND8k0l
+	Lg==
+Received: (qmail 1532662 invoked from network); 22 Feb 2025 10:30:41 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 22 Feb 2025 10:30:41 +0100
+X-UD-Smtp-Session: l3s3148p1@AeG9wrcualltKPLt
+Date: Sat, 22 Feb 2025 10:30:41 +0100
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Su Hui <suhui@nfschina.com>, linux-i2c@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] i2c: core: Allocate temporary client dynamically
+Message-ID: <Z7mZQRQhis-DHRFP@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Su Hui <suhui@nfschina.com>, linux-i2c@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <f9aa39362e918b62aec0567f899b37d8d3c44710.1740064176.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemg200005.china.huawei.com (7.202.181.32)
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ZHZrXgIteYPz54AL"
+Content-Disposition: inline
+In-Reply-To: <f9aa39362e918b62aec0567f899b37d8d3c44710.1740064176.git.geert+renesas@glider.be>
 
-When the cq reservation is failed, the error code is not set which is
-initialized to zero in __xsk_generic_xmit(). That means the packet is not
-send successfully but sendto() return ok.
 
-Set the error code and make xskq_prod_reserve_addr()/xskq_prod_reserve()
-return values more meaningful when the queue is full.
+--ZHZrXgIteYPz54AL
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Wang Liang <wangliang74@huawei.com>
----
- net/xdp/xsk.c       | 3 ++-
- net/xdp/xsk_queue.h | 4 ++--
- 2 files changed, 4 insertions(+), 3 deletions(-)
+On Thu, Feb 20, 2025 at 04:12:12PM +0100, Geert Uytterhoeven wrote:
+> drivers/i2c/i2c-core-base.c: In function =E2=80=98i2c_detect.isra=E2=80=
+=99:
+> drivers/i2c/i2c-core-base.c:2544:1: warning: the frame size of 1312 bytes=
+ is larger than 1024 bytes [-Wframe-larger-than=3D]
+>  2544 | }
+>       | ^
+>=20
+> Fix this by allocating the temporary client structure dynamically, as it
+> is a rather large structure (1216 bytes, depending on kernel config).
+>=20
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/net/xdp/xsk.c b/net/xdp/xsk.c
-index 89d2bef96469..7d0d2f40ca57 100644
---- a/net/xdp/xsk.c
-+++ b/net/xdp/xsk.c
-@@ -802,7 +802,8 @@ static int __xsk_generic_xmit(struct sock *sk)
- 		 * if there is space in it. This avoids having to implement
- 		 * any buffering in the Tx path.
- 		 */
--		if (xsk_cq_reserve_addr_locked(xs->pool, desc.addr))
-+		err = xsk_cq_reserve_addr_locked(xs->pool, desc.addr);
-+		if (err)
- 			goto out;
- 
- 		skb = xsk_build_skb(xs, &desc);
-diff --git a/net/xdp/xsk_queue.h b/net/xdp/xsk_queue.h
-index 46d87e961ad6..ac90b7fcc027 100644
---- a/net/xdp/xsk_queue.h
-+++ b/net/xdp/xsk_queue.h
-@@ -371,7 +371,7 @@ static inline void xskq_prod_cancel_n(struct xsk_queue *q, u32 cnt)
- static inline int xskq_prod_reserve(struct xsk_queue *q)
- {
- 	if (xskq_prod_is_full(q))
--		return -ENOSPC;
-+		return -ENOBUFS;
- 
- 	/* A, matches D */
- 	q->cached_prod++;
-@@ -383,7 +383,7 @@ static inline int xskq_prod_reserve_addr(struct xsk_queue *q, u64 addr)
- 	struct xdp_umem_ring *ring = (struct xdp_umem_ring *)q->ring;
- 
- 	if (xskq_prod_is_full(q))
--		return -ENOSPC;
-+		return -ENOBUFS;
- 
- 	/* A, matches D */
- 	ring->desc[q->cached_prod++ & q->ring_mask] = addr;
--- 
-2.34.1
+As Arnd mentioned, this is basically a revert of 735668f8e5c9.
+Applied to for-current, thanks!
 
+
+--ZHZrXgIteYPz54AL
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAme5mT0ACgkQFA3kzBSg
+KbaGeA/9EzW9yZgoVWRbjzsIqng4h3fukQzyBUnluiM+YzmOy0i0OJAjZaoE//zp
+NESGZlGIrG7UjTT+FV0GKfCQIOdxx5Tn/fsBIvBeCf0C1JDS2F3EDwdG1/OMGZP8
+U0bSIfcE7RPagY/PXQgOCTAhhn2Jq5rZ1EjAgv47jCz0kzhctBu0QhclV0MvULVV
+New4PLP/CcgslnZXHSbdL8vQNvb6QaDD2RkUrET5FVk1iSCbOiPGzKMTG7+pFxPQ
+n+l1mAHwKqxi5eqBnmZp8873FINQE57jHl+pmBp/Kldf1XGNb5fleCyvB+W7Fea7
+CvdtbaCTsJ9unJRTdTS5MS+3DFYLToO+SahMEhnml55PGTrS5GFT804S/abeieei
+TOMa4eI8iC2Uqso0x9eZaWohKVqpdKQK26lK1bDFRbbB4URz2KWrDBA4pN3q0U5g
+s7KPQftTsU4F8+zUz8LMOhvD7biJZplSTyWXt52BULJJYLNt2KBxtx1IGje309jX
+PQtVvdljbqraqGvuUBPvhBUsMCaM3Uzb1+KoSaAK8V/0xpkrx1eBQ7SRDSxu0bHd
+7wi75h6HXeFnaJUnjh5SFNt7AJPnvw1y7LBg7FuqbBrZQ/umdOlEi+SfxnsXvovc
+ggn8i6yFwtz+HZEnh8IalNWnNX2BG3Apjb8lEMEuUZuM48hgTTQ=
+=96CV
+-----END PGP SIGNATURE-----
+
+--ZHZrXgIteYPz54AL--
 
