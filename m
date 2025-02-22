@@ -1,142 +1,141 @@
-Return-Path: <linux-kernel+bounces-526869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9086EA404A3
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 02:21:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86612A404A6
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 02:21:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 094883BDBC5
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 01:21:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5376719C8914
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 01:22:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93A1617E00E;
-	Sat, 22 Feb 2025 01:21:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="VJTDsqta"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C5E41DE4E5;
+	Sat, 22 Feb 2025 01:21:49 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FCF42A1CF
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 01:21:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF555374C4;
+	Sat, 22 Feb 2025 01:21:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740187276; cv=none; b=nUPSe/ap7+Uq7uMeH2846hRV3sM42o2OTPMKt7eurgjAaJXBdIAmZbnm3sWAPO9R5wlmTbyybpKHkLRXRfSyltOhU09EOd5boniI3Qmtbx/t2Zf2nKtjSvEDoxyKAppOaW94wBslfI2oTQ33wvt8Je+cOjCGxTAZPvI0xmNQSrc=
+	t=1740187308; cv=none; b=tKa6XdATMixM/jAQJvw/DV9JGC44b4bLbqnqQysFUafb0XBSS89nTiARgl8bfenIESqkGLdVkpDKFCZZaeOW+U+yJ0MbAZ9X4C+oIWeVK3GsL87GUsccvINWYzHWNJYRs91zGjRCGdaC8x/ehKzTICheMpTj8va+1WzgyEIsqK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740187276; c=relaxed/simple;
-	bh=FIpYvgZKywrXjv1rJRUE8HdHcEeKGqKtoSMCeA5s6QE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oZHNdhJ2Hbp0R335AZ5bogwyMm8ZVWaExn/9rFVfD2uYALXIKP7/vCuEgm0QaRF9RfzBeFn1NZVw1zweqCaWGS17PwYhoYGj6TdnYA/oBeRYLg7hB7K3vQHUVRAiU7kH7aLN+dQdb7ERsQFJcDpzpbg8YgbeltNa5CB4N61F+TU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=VJTDsqta; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=jkg4omdLHejH2ReKVHW08BgGvZXziwWQu06sM3QIErU=; b=VJTDsqtaybaPolhk
-	oaPw+zeEvkL0o5OE1dK5fW3L1I5ovV6KGeQxyU75Gt9Ml2OaVQNm47vP2JsyuKRLdAkmBAOr8NCXV
-	TE9mUG95b0rwu2V0HkEURD6WuhgVKbx/lKsMyrU8d2SkR3HHd19zTn+GsG0Ynw9ViipLdj1D1IaJ+
-	mKHjnufbFXSaQXte7o8A6j5key4VEpUniAXlP46ggo51wunI8wM0FauUmJ8Efg2/UzRX8KSYy03rF
-	QtiZzn+wookRqms+q4KmDgwhrYMdnxGbKKruRezO/wU5s8T+qd9mumQAYkgidvVJTwy7rZQELRjp2
-	HTMQELF4dWbwdtUaOg==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1tleCc-0001vQ-1k;
-	Sat, 22 Feb 2025 01:21:10 +0000
-From: linux@treblig.org
-To: hubcap@omnibond.com,
-	martin@omnibond.com
-Cc: devel@lists.orangefs.org,
-	linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH] orangefs: Bufmap deadcoding
-Date: Sat, 22 Feb 2025 01:21:10 +0000
-Message-ID: <20250222012110.160029-1-linux@treblig.org>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1740187308; c=relaxed/simple;
+	bh=4+eop0VpyWEeUOPLw9t67tLLRXi2IEhOSIB9pqInSCk=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=tKr3UvJKYmecjwaw8MW/XEwcfOBzhjWIRkCxLKFOKMJm++cfPAsNnjEZVV8D+PxmxW/0cvaCMCQjw5HaS+nxMPjJ/RxpYcrXUO23SMGgcmnB+rdThxbtOVVXcdHrwl+mXOig4RLQjdjKi0QTX3FusSeZIfdJ7Vau+Onc5DRTNrQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Z08Mv5GC2z4f3jry;
+	Sat, 22 Feb 2025 09:21:15 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 68E831A058E;
+	Sat, 22 Feb 2025 09:21:37 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP4 (Coremail) with SMTP id gCh0CgBXu1+eJrlnqZwiEg--.18110S3;
+	Sat, 22 Feb 2025 09:21:37 +0800 (CST)
+Subject: Re: [PATCH 08/12] badblocks: fix merge issue when new badblocks align
+ with pre+1
+To: Zheng Qixing <zhengqixing@huaweicloud.com>, axboe@kernel.dk,
+ song@kernel.org, colyli@kernel.org, dan.j.williams@intel.com,
+ vishal.l.verma@intel.com, dave.jiang@intel.com, ira.weiny@intel.com,
+ dlemoal@kernel.org, yanjun.zhu@linux.dev, kch@nvidia.com, hare@suse.de,
+ zhengqixing@huawei.com, john.g.garry@oracle.com, geliang@kernel.org,
+ xni@redhat.com, colyli@suse.de
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-raid@vger.kernel.org, nvdimm@lists.linux.dev, yi.zhang@huawei.com,
+ yangerkun@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
+References: <20250221081109.734170-1-zhengqixing@huaweicloud.com>
+ <20250221081109.734170-9-zhengqixing@huaweicloud.com>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <b37f7500-f095-912f-cf81-aa0b214a53bf@huaweicloud.com>
+Date: Sat, 22 Feb 2025 09:21:34 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <20250221081109.734170-9-zhengqixing@huaweicloud.com>
+Content-Type: text/plain; charset=gbk; format=flowed
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgBXu1+eJrlnqZwiEg--.18110S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7CryUGF1kZF1xCFyDJr4UXFb_yoW8Wr15pr
+	n8C3WakryqgF18u3W5u3W7XFW09w1fGF4UCanxJr1jkr9xA3WIqr1kXw4YqFyjgr4xKrs2
+	q3W5uFykZ3WkG3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9qb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUAVWUtwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
+	e2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4I
+	kC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWU
+	WwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr
+	0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1lIxAIcVCF04k26cxKx2IYs7xG
+	6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr1j6F
+	4UJbIYCTnIWIevJa73UjIFyTuYvjxUIoGQDUUUU
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+ÔÚ 2025/02/21 16:11, Zheng Qixing Ð´µÀ:
+> From: Li Nan <linan122@huawei.com>
+> 
+> There is a merge issue when adding badblocks as follow:
+>    echo 0 10 > bad_blocks
+>    echo 30 10 > bad_blocks
+>    echo 20 10 > bad_blocks
+>    cat bad_blocks
+>    0 10
+>    20 10    //should be merged with (30 10)
+>    30 10
+> 
+> In this case, if new badblocks does not intersect with prev, it is added
+> by insert_at(). If there is an intersection with prev+1, the merge will
+> be processed in the next re_insert loop.
+> 
+> However, when the end of the new badblocks is exactly equal to the offset
+> of prev+1, no further re_insert loop occurs, and the two badblocks are not
+> merge.
+> 
+> Fix it by inc prev, badblocks can be merged during the subsequent code.
+> 
+> Fixes: aa511ff8218b ("badblocks: switch to the improved badblock handling code")
+> Signed-off-by: Li Nan <linan122@huawei.com>
+> ---
+>   block/badblocks.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+LGTM
+Reviewed-by: Yu Kuai <yukuai3@huawei.com>
 
-orangefs_bufmap_shift_query() last use was removed in 2018 by
-commit 9f8fd53cd055 ("orangefs: revamp block sizes")
-
-orangefs_bufmap_page_fill() last use was removed in 2021 by
-commit 0c4b7cadd1ad ("Orangef: implement orangefs_readahead.")
-
-Remove them.
-
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
----
- fs/orangefs/orangefs-bufmap.c | 25 -------------------------
- fs/orangefs/orangefs-bufmap.h |  3 ---
- 2 files changed, 28 deletions(-)
-
-diff --git a/fs/orangefs/orangefs-bufmap.c b/fs/orangefs/orangefs-bufmap.c
-index edcca4beb765..b562d3dbc76b 100644
---- a/fs/orangefs/orangefs-bufmap.c
-+++ b/fs/orangefs/orangefs-bufmap.c
-@@ -197,18 +197,6 @@ int orangefs_bufmap_size_query(void)
- 	return size;
- }
- 
--int orangefs_bufmap_shift_query(void)
--{
--	struct orangefs_bufmap *bufmap;
--	int shift = 0;
--	spin_lock(&orangefs_bufmap_lock);
--	bufmap = __orangefs_bufmap;
--	if (bufmap)
--		shift = bufmap->desc_shift;
--	spin_unlock(&orangefs_bufmap_lock);
--	return shift;
--}
--
- static DECLARE_WAIT_QUEUE_HEAD(bufmap_waitq);
- static DECLARE_WAIT_QUEUE_HEAD(readdir_waitq);
- 
-@@ -532,16 +520,3 @@ int orangefs_bufmap_copy_to_iovec(struct iov_iter *iter,
- 	}
- 	return 0;
- }
--
--void orangefs_bufmap_page_fill(void *page_to,
--				int buffer_index,
--				int slot_index)
--{
--	struct orangefs_bufmap_desc *from;
--	void *page_from;
--
--	from = &__orangefs_bufmap->desc_array[buffer_index];
--	page_from = kmap_atomic(from->page_array[slot_index]);
--	memcpy(page_to, page_from, PAGE_SIZE);
--	kunmap_atomic(page_from);
--}
-diff --git a/fs/orangefs/orangefs-bufmap.h b/fs/orangefs/orangefs-bufmap.h
-index 75b2d2833af1..4231175ccdb2 100644
---- a/fs/orangefs/orangefs-bufmap.h
-+++ b/fs/orangefs/orangefs-bufmap.h
-@@ -10,8 +10,6 @@
- 
- int orangefs_bufmap_size_query(void);
- 
--int orangefs_bufmap_shift_query(void);
--
- int orangefs_bufmap_initialize(struct ORANGEFS_dev_map_desc *user_desc);
- 
- void orangefs_bufmap_finalize(void);
-@@ -34,6 +32,5 @@ int orangefs_bufmap_copy_to_iovec(struct iov_iter *iter,
- 			      int buffer_index,
- 			      size_t size);
- 
--void orangefs_bufmap_page_fill(void *kaddr, int buffer_index, int slot_index);
- 
- #endif /* __ORANGEFS_BUFMAP_H */
--- 
-2.48.1
+> diff --git a/block/badblocks.c b/block/badblocks.c
+> index bb46bab7e99f..381f9db423d6 100644
+> --- a/block/badblocks.c
+> +++ b/block/badblocks.c
+> @@ -892,7 +892,7 @@ static int _badblocks_set(struct badblocks *bb, sector_t s, int sectors,
+>   		len = insert_at(bb, 0, &bad);
+>   		bb->count++;
+>   		added++;
+> -		hint = 0;
+> +		hint = ++prev;
+>   		goto update_sectors;
+>   	}
+>   
+> @@ -947,7 +947,7 @@ static int _badblocks_set(struct badblocks *bb, sector_t s, int sectors,
+>   	len = insert_at(bb, prev + 1, &bad);
+>   	bb->count++;
+>   	added++;
+> -	hint = prev + 1;
+> +	hint = ++prev;
+>   
+>   update_sectors:
+>   	s += len;
+> 
 
 
