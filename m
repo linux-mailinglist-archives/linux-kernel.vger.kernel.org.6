@@ -1,86 +1,87 @@
-Return-Path: <linux-kernel+bounces-527168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9F1BA40809
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 12:47:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B86D6A4080B
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 12:48:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2FFF3AE294
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 11:47:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 176393AE9C4
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 11:48:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 189BE208966;
-	Sat, 22 Feb 2025 11:47:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5D2B209669;
+	Sat, 22 Feb 2025 11:48:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QRpy9tXh"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZHi3k9VK"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2569013BC0E;
-	Sat, 22 Feb 2025 11:47:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF47413BC0E;
+	Sat, 22 Feb 2025 11:48:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740224836; cv=none; b=ZjO8/lS2VuiYMLLfjMZVLNSguokqiZ0DOsxSazBs6JeQuTek9kfr/QJdlMBEfpkMTh/aONFpYnbDsMi3IgN+xxomwrP6ZTSae9AwWKjZag9Z9dcX5jtdtcjdxfWESdkkRju68mGYjZuJBZRhFDnC+kZwuupNyrugPfdGBOv/zDc=
+	t=1740224903; cv=none; b=ZKk5sEXYux2menZefQWlbgvN9bv/6AvqMh6J/kB2Ac5iG7Wbe40lxgbPZ7xUEU28E63fBtYxrvk7TW2L6vfoIr7nXhphD7n2WGYMgMB4OrHd1KvBv1O9rfJBEJW5LxzCGoGI4BaQ+jmVbx5QbwYZgWZ5labYky5HjtGCo7b9p9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740224836; c=relaxed/simple;
-	bh=oAdQ4PaWiqE7P/UfEF3Qb7V7wE4e3LKK55/2Ij5cPLE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=srnA+1iZyjXyFeWmDPUaRfp29gpYa6/ImDK167rp4OoCC930r9oydXmN1MfoB3RDiR+3q4U2zE0FoTPbJm+PLk4sySOfMlseMHwMQU78R7oy+Rs3P9N3ia7t+2GwPt8iqV1LbinXOONbqFoKQPxzpCI1dt01ZAZ9Bm2bbabUkEA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QRpy9tXh; arc=none smtp.client-ip=209.85.214.175
+	s=arc-20240116; t=1740224903; c=relaxed/simple;
+	bh=llOMEnBvv4FjSXu1AHc31rLyEPC85lLXOI12wEHVGVk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Pw5w0Hob89br7Gr41ac4dI50B/2Rk7EgwqEsxB1EmHClU0xgtZU6IIS2s/SI+o8/HMqE+315eO8iqQ0tifas815tI52l1q3hHvcnLgXQneAEkAV6kZCBR4bL2yuv6uGQB4ZP8TsIbVxQBLWXl14raponRdqAQcRYivGMFjjd9a0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZHi3k9VK; arc=none smtp.client-ip=209.85.214.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-220ecbdb4c2so82461175ad.3;
-        Sat, 22 Feb 2025 03:47:13 -0800 (PST)
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-220c2a87378so51588605ad.1;
+        Sat, 22 Feb 2025 03:48:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740224833; x=1740829633; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1740224901; x=1740829701; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=8EhjXwW3cQDbxz191xEcftyc/2qMfllgMiMAgqUe0Eo=;
-        b=QRpy9tXh0ENsX3Gz+CjVo/BO/pUPnXJAQ1R5MoKHL5TgEg04OpkqfrZg8m3pY69Cli
-         t5h4pOQgtVhfN2vOjblKT9aHzn/ixi+BOjpUAiFvHB+++Wllc60IwVZwJQI/XSqOWS2c
-         +YaofcWtQe1kG/G9RMBBrwZ+CyU01a9DSfHSSfWo2ApZN5K+zC6RWdQMAU+Ohwc+YmVt
-         gXtXAK98stcfPAGOHFU/W7WIOyXcsdAcDe/LpiswSHcs1cKaV51HMpmdigw7vPEUuAVU
-         NhcnggumtXp8kU4PbNXL0xjQxOJAtxPWERk2wb3c/hipVgWQYyizD12BpvhpVJ6yaJFa
-         ps1Q==
+        bh=XXNRnSKpi7fRGl3/7ZoxWtBGdf8G9XNDTYl+0OWPab0=;
+        b=ZHi3k9VKUqGw+paeoQhKBAtGt9JFIj6YcQNakouxw5nXYQRQ5bFlk7O3FInxr8FNNr
+         uWg230UjxHdq9SgRwC+1EBdWVQlhtVN6zr1cngxACWM9zVbxAlMmC/Xlf6mhwttdHRBI
+         L88rpJxH5KCsjy+m0IojUlLYY85LlqZgF9f5W2VW3LinnqqVk6vku+5qjyedOze9R6sX
+         GbPmVs5Ws1Gx+Gyj6sjB7Od1kG56mXqCUJX/MR6w7SgGs9qRwn+lbtQruJt69vgxd5vH
+         xFV76Mgv853E1AXM5fo3msJE0cWPPlWjqvhFTIwovIM5GGGFZTrQmT9Opagw5pCEYuHA
+         1ILg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740224833; x=1740829633;
+        d=1e100.net; s=20230601; t=1740224901; x=1740829701;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=8EhjXwW3cQDbxz191xEcftyc/2qMfllgMiMAgqUe0Eo=;
-        b=Lv2sqrIPrVtOeZJR5SDTv6j/riLbcWgrYh2lfjlG9ct+U3I853WpfduAfEjPIBFwS4
-         O0DuWDyL0MUNRSlgkOqiu+gKMx9juJIc9RykCe4hWUvhtN5+EV6f3suTlbufJCnXfgE6
-         LHJLIf1gyBuy/elQxjt0jWe/qYCqMFCF/qDIvADnhzQoCxQLWjXRaJgjf0/KGg3ze+3W
-         om9//HMHl8lVmqPMDtCGjuWQKKP+7gTaKruYHtwdtgh2YZ8F81EA7jRqVOR+bbIOZkZJ
-         1Tj3ZKef9xFk8+txmPFAx44PiO+eeDTGPK1VF8SZqHDa6ascuTgqZjFjXHQx7oAgTLPq
-         rUbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW5DGpTJT5hyzCgzeKucNfueI04sQH7k2OQ+u1kVr9LSLkr57uOvpKtbQu9CRlquxWKRSEn0qJi+Gpsq5k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOwx2NBedwJxHidmQH9NdXnm7XSH9ApXxbYSt2hgs0t9zMi+SB
-	2GXA51EON3rwPpa3UpDnXc0vpjw5JCDb/s6TpYD/myx0SgJn7UXg
-X-Gm-Gg: ASbGncsML4e6pK7UKL88FlF6CX+acMwWBzVOcsxPxCPiBHTN6kgXmlnbXm9nD8zyhiO
-	e9TZ8fA26TUjDly52ALTaxMEBPQ1i0/Pq0C/37WnAvOTN8iVI7panARUKN11hLcrskx6VQ1AgjV
-	x3N77pA4YmHCGkbIhesgSsCBTTsZUNkR2xtyeq44ftE0FyP7T1zqzTnCtaxqW+/T30ehIHWT5Cs
-	iBUtksoBRpRcwIoCEjxNI654J2zgTmV9J75x2oNw/lt2Sx4XP8VQ22q79jTraFrhj/8JZNAtlAD
-	5KaSUkmbPwEdrXw8ObbDf5yMAvM4OZhQNjpCfUE+7NGcPAE3q1k=
-X-Google-Smtp-Source: AGHT+IFe2oYcDmWj3WWHE6JRwA1QVbVHKisGIBXbUQEdyBCmtYk0rGGSQXdgj5aGz3vfKCnxs6ku2g==
-X-Received: by 2002:a05:6a20:9f86:b0:1ee:dded:e5b with SMTP id adf61e73a8af0-1eef5300760mr12744680637.24.1740224833305;
-        Sat, 22 Feb 2025 03:47:13 -0800 (PST)
-Received: from ritvikos.localdomain ([49.36.192.173])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7325953a4a9sm15175579b3a.82.2025.02.22.03.47.12
+        bh=XXNRnSKpi7fRGl3/7ZoxWtBGdf8G9XNDTYl+0OWPab0=;
+        b=NVVx5pxWrS6XOBsZyfX2kcJFOIW1ZyIh5eTyVAoLx5l29V08mf9B7IRyRt4ty3Q6M5
+         InGgrz0tmpZWwZCaOxwfkeTTGRQS7+1IijTr6lHPBNYSRC1bVh5Sl5T50JMSoOzS5WGy
+         CiN5XQENOmTBNAX2SCbxz+c+auQLLOgDN+rHqVxf2X10qc9+Z4ErMY8FlBSyHVNNmKas
+         wG8tY2gkaNiJmPY0s4ypMosIv53/gQlwElLidsgNpGREzCZsoasEp17yfwahJXj+yMuI
+         W39zAK60sOOjxu+AcfDk5TXqP+2Tf6ibSTjk0G2N+tgVdTkYOyRmAHPxftYxVIxzUnYk
+         PBYA==
+X-Forwarded-Encrypted: i=1; AJvYcCWSR9WpDPBX+Ly+3Zc6P/4cs1rwaJjCTn98ikr11VbLCyMueEQcPp61UR9uVGr03A8+AFSr28RdomhEwosZ@vger.kernel.org, AJvYcCWvjTfRMgsBY9kGMGdSDi8fPXuISSetzbZUk4ha33Y4Z5KV62fTJ/7ZGbnXb5elfJkitOrbH5vt9eYx6Q9NDzI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YweR/cVEZhhN4y9DvPREH25alj3f0eeTswoistar1ZEzv6cez0u
+	B/pkqiZwLTzAos+j1PJ48/FaV+McM3Tml0X6IEjKQBnLh73zewZMvKWuXdf6
+X-Gm-Gg: ASbGncuK9Z+uJo9MuDmEMTCOtbudVHpCDV4FjSiIQZxmph6jRG+BWY3xFNjSDDvCrlG
+	r5jqOZutOaEqGr3kRVw5di9p3y5zNAxTJs+/qOHhjHPvW64844RdRC9zUMemwXThg03hIu02Dxx
+	8TGhjhIxS8se7xgT90N1haweSdcZ3frKCnZlIQxTC5towSpeTjcWYKOR44Ht4K5fIavPUknjAFQ
+	DXpGJJIrKq3XSfIYPDCpt+brysxVLSpIcLmt+ZXQdIh6iZd1Hsgef2a4uksPPyTGM06YkgjDLvz
+	dVdBgxIU3xhK1el6Yf1blR/FfNEvcMWW9mpZiJcY4OwOMmOKx7gqNy8=
+X-Google-Smtp-Source: AGHT+IF0RXstXO0QEvVkta+IxjqApKfejk0ClddGOZ8TLyOk5srGNYabRc1ylGSgsl75/XifP7aVWA==
+X-Received: by 2002:a17:902:e5c4:b0:220:c813:dfd1 with SMTP id d9443c01a7336-221a1192a83mr100232225ad.36.1740224900878;
+        Sat, 22 Feb 2025 03:48:20 -0800 (PST)
+Received: from localhost.localdomain ([121.185.186.233])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d559614dsm151610715ad.256.2025.02.22.03.48.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 22 Feb 2025 03:47:12 -0800 (PST)
-Received: by ritvikos.localdomain (Postfix, from userid 1000)
-	id 55376ED9143; Sat, 22 Feb 2025 17:17:09 +0530 (IST)
-From: ritvikfoss@gmail.com
-To: shuah@kernel.org
-Cc: linux-kselftest@vger.kernel.org,
+        Sat, 22 Feb 2025 03:48:20 -0800 (PST)
+From: Jeongjun Park <aha310510@gmail.com>
+To: marcel@holtmann.org,
+	johan.hedberg@gmail.com,
+	luiz.dentz@gmail.com
+Cc: gustavo.padovan@collabora.co.uk,
+	andre.guedes@openbossa.org,
+	linux-bluetooth@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org,
-	linux-kernel-mentees@lists.linuxfoundation.org
-Subject: [PATCH] selftests/mount: Close 'fd' when write fails
-Date: Sat, 22 Feb 2025 17:17:09 +0530
-Message-ID: <20250222114709.50011-1-ritvikfoss@gmail.com>
-X-Mailer: git-send-email 2.48.1
+	Jeongjun Park <aha310510@gmail.com>
+Subject: [PATCH] Bluetooth: SCO: fix ABBA deadlock in sco_connect_cfm
+Date: Sat, 22 Feb 2025 20:48:09 +0900
+Message-ID: <20250222114809.11634-1-aha310510@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,56 +90,54 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Ritvik Gupta <ritvikfoss@gmail.com>
+Caused by previous commit 405280887f8f causes ABBA deadlock. So we need to 
+change the lock order to prevent deadlock.
 
-1. Close the file descriptor when write fails.
-2. Introduce 'close_or_die' helper function to
-reduce repetition.
-
-Signed-off-by: Ritvik Gupta <ritvikfoss@gmail.com>
+Fixes: 405280887f8f ("Bluetooth: Reduce critical section in sco_conn_ready")
+Signed-off-by: Jeongjun Park <aha310510@gmail.com>
 ---
- .../selftests/mount/unprivileged-remount-test.c     | 13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+ net/bluetooth/sco.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/tools/testing/selftests/mount/unprivileged-remount-test.c b/tools/testing/selftests/mount/unprivileged-remount-test.c
-index d2917054fe3a..3dd9df58725b 100644
---- a/tools/testing/selftests/mount/unprivileged-remount-test.c
-+++ b/tools/testing/selftests/mount/unprivileged-remount-test.c
-@@ -54,6 +54,13 @@ static void die(char *fmt, ...)
- 	exit(EXIT_FAILURE);
- }
- 
-+static void close_or_die(char *filename, int fd) {
-+	if (close(fd) != 0) {
-+		die("close of %s failed: %s\n",
-+		filename, strerror(errno));
-+	}
-+}
-+
- static void vmaybe_write_file(bool enoent_ok, char *filename, char *fmt, va_list ap)
+diff --git a/net/bluetooth/sco.c b/net/bluetooth/sco.c
+index aa7bfe26cb40..8f1377f4a27c 100644
+--- a/net/bluetooth/sco.c
++++ b/net/bluetooth/sco.c
+@@ -289,13 +289,11 @@ static int sco_chan_add(struct sco_conn *conn, struct sock *sk,
  {
- 	char buf[4096];
-@@ -79,6 +86,7 @@ static void vmaybe_write_file(bool enoent_ok, char *filename, char *fmt, va_list
- 	}
- 	written = write(fd, buf, buf_len);
- 	if (written != buf_len) {
-+		close_or_die(filename, fd);
- 		if (written >= 0) {
- 			die("short write to %s\n", filename);
- 		} else {
-@@ -86,10 +94,7 @@ static void vmaybe_write_file(bool enoent_ok, char *filename, char *fmt, va_list
- 				filename, strerror(errno));
- 		}
- 	}
--	if (close(fd) != 0) {
--		die("close of %s failed: %s\n",
--			filename, strerror(errno));
--	}
-+	close_or_die(filename, fd);
+ 	int err = 0;
+ 
+-	sco_conn_lock(conn);
+ 	if (conn->sk)
+ 		err = -EBUSY;
+ 	else
+ 		__sco_chan_add(conn, sk, parent);
+ 
+-	sco_conn_unlock(conn);
+ 	return err;
  }
  
- static void maybe_write_file(char *filename, char *fmt, ...)
--- 
-2.48.1
-
+@@ -343,11 +341,13 @@ static int sco_connect(struct sock *sk)
+ 		goto unlock;
+ 	}
+ 
++	sco_conn_lock(conn);
+ 	lock_sock(sk);
+ 
+ 	err = sco_chan_add(conn, sk, NULL);
+ 	if (err) {
+ 		release_sock(sk);
++		sco_conn_unlock(conn);
+ 		goto unlock;
+ 	}
+ 
+@@ -363,6 +363,7 @@ static int sco_connect(struct sock *sk)
+ 	}
+ 
+ 	release_sock(sk);
++	sco_conn_unlock(conn);
+ 
+ unlock:
+ 	hci_dev_unlock(hdev);
+--
 
