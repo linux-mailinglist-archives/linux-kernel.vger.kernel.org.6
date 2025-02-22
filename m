@@ -1,71 +1,144 @@
-Return-Path: <linux-kernel+bounces-527293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 099F6A40948
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 16:00:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C91FA40961
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 16:11:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C01F7010D6
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 15:00:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A3CA17F8FD
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 15:11:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D574719E83E;
-	Sat, 22 Feb 2025 15:00:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96DBB1A5B85;
+	Sat, 22 Feb 2025 15:11:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E0XooV8p"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="Y92UJFtt"
+Received: from mail-m3281.qiye.163.com (mail-m3281.qiye.163.com [220.197.32.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3619E3224;
-	Sat, 22 Feb 2025 15:00:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4660B2CCDB;
+	Sat, 22 Feb 2025 15:11:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740236418; cv=none; b=mWXf/Wi2XxNVakAn2cDCB65hgc4F3SKGLrwS3yB+cs/AJW2ZhLtsRES68VWyqRRjpVESQKjxpA5vrcgG88N8VuZpC/BF1DmsTf4yWUc9zQjAoK9gq8HCiv0KMV831S4Ao0CGutawHYfRrcVL6JpeWhjkd3OZgrDPnxDc81nGksM=
+	t=1740237101; cv=none; b=dAkKwPVPq/JaYyCRhkfm59/g2cGVjS3wfhB6a3UhcB1CAPwktH9H2psU8B6SdZz7dxKrjYm0liLgxk84X+vdv6AiyXK0fnAsVcTv8V/prqOVAs/5Muhr5QVrPrnq6Ayb2Lrtpp8VXXVt0/PN0S7ZxpDGiXZqyEjOEh231E85e4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740236418; c=relaxed/simple;
-	bh=UmbgguS77NIyFRa0QXCsvyE+xFrzLJ/SfUFhJjrNdK4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ahZ7M8FIvwbh1V9NApggUUtiUfRfHIFTDQngdIaRNGQ08DQxv+pKLWYACqAoq0hPtmJQz1ruk58US4C3cVDKLiubi47eZKtFpYs7u+QGnja7JgtGsiyx94309M5PvNTPkgFq2ZjjHMm+VHmI8gpWLrMmywm0V8QKiwteV8BPXrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E0XooV8p; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60419C4CED1;
-	Sat, 22 Feb 2025 15:00:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740236417;
-	bh=UmbgguS77NIyFRa0QXCsvyE+xFrzLJ/SfUFhJjrNdK4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=E0XooV8pCAmkAK6/vYg/AufMSRWlWJ9mGMJaUpML9p+rbWf1iV9QezOV4cuEv8o2w
-	 G4Ax3g/CfeT6v4aVVuWTl9UBoxvBIGAhYg3KLacABY7m+bj1lvFFe4zi7KiryX9ttA
-	 tn5Wjo7+DyxsF2SbokMEk7oYcP2RWXRDIjHQuVEQAjbgz8Fu9VJyf91Yi1wZCdqmR9
-	 n900kkjj9QCHqu1izDqpBj78HuLETx4AmrL72rRV6B2jmENbMYKAgMi8v/nfMX0uU0
-	 7y+4VryUNM0IVNNIpxf99rIq5KvZpkDTnrT+Tg1zI8t6WtBCYK8vkn3YUCR8nkjfRU
-	 xe8P19PDno/8Q==
-Date: Sat, 22 Feb 2025 15:00:10 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Lothar Rubusch <l.rubusch@gmail.com>
-Cc: lars@metafoo.de, corbet@lwn.net, linux-doc@vger.kernel.org,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/1] docs: iio: fix wrong driver name in
- documentation
-Message-ID: <20250222150010.215cc1dc@jic23-huawei>
-In-Reply-To: <20250221194658.41358-1-l.rubusch@gmail.com>
-References: <20250221194658.41358-1-l.rubusch@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1740237101; c=relaxed/simple;
+	bh=mTV/5QqFzhxWn+xwDA/hl5QO5v0pkatLlDg3aZDa2u0=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=WjKbtyoo2ZyMAlPKZaCVL52l4oTRbDSh//IASWdzMrcg5b8u4j1jzR8t/dAabO3ZwFO61KjUukZrj6R4+cJOPo+QZnoKND87aduS+8rt29Gg193w/NquL8tPFdCZhYPvG7Rdye47SBKSRyHWCoeRNWySuSVydye69YvqNB38KvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=Y92UJFtt; arc=none smtp.client-ip=220.197.32.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from [172.16.12.26] (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id bdb815ed;
+	Sat, 22 Feb 2025 19:42:11 +0800 (GMT+08:00)
+Message-ID: <cec09e08-253a-4011-8b37-062a492b2166@rock-chips.com>
+Date: Sat, 22 Feb 2025 19:42:10 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 08/14] drm/rockchip: analogix_dp: Add support to get
+ panel from the DP AUX bus
+From: Damon Ding <damon.ding@rock-chips.com>
+To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ rfoss@kernel.org, vkoul@kernel.org, sebastian.reichel@collabora.com,
+ cristian.ciocaltea@collabora.com, l.stach@pengutronix.de,
+ dmitry.baryshkov@linaro.org, andy.yan@rock-chips.com, hjc@rock-chips.com,
+ algea.cao@rock-chips.com, kever.yang@rock-chips.com,
+ dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org
+References: <20250123100747.1841357-1-damon.ding@rock-chips.com>
+ <20250123100747.1841357-9-damon.ding@rock-chips.com>
+ <3340006.44csPzL39Z@diego>
+ <799ccbd2-0c3b-4a55-b47e-1899975c4020@rock-chips.com>
+Content-Language: en-US
+In-Reply-To: <799ccbd2-0c3b-4a55-b47e-1899975c4020@rock-chips.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGk1KHVZNH0MeGE4aSx5KSR5WFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+X-HM-Tid: 0a952d770b2103a3kunmbdb815ed
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6PQg6UQw4HjITHR8BCSwQPEMC
+	CjxPCzJVSlVKTE9LSUlPTkhJTExDVTMWGhIXVR8aFhQVVR8SFRw7CRQYEFYYExILCFUYFBZFWVdZ
+	EgtZQVlOQ1VJSVVMVUpKT1lXWQgBWUFJSklMNwY+
+DKIM-Signature:a=rsa-sha256;
+	b=Y92UJFttJrKQq0DuTKRVVl+jI3C1nW3GpfRAsIRUKxxqsqyscny5c+PEGieUuWGzD4GNzWLe0xO9/k8syqOHqQEkoFl2n4g6V2MzTgULPpEqlUwCe8MUMe2kJVx/utZ5QulR+YIRk99rHXSHeiukOBA5kU6+dEtLNKUkmc5NEcA=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=UGXM61VcEnYUmRYBHrm58jOs9cPBU004JHiH81XeNnI=;
+	h=date:mime-version:subject:message-id:from;
 
-On Fri, 21 Feb 2025 19:46:58 +0000
-Lothar Rubusch <l.rubusch@gmail.com> wrote:
-
-> The ADXL380/382 documentation uses in one place a wrong driver name.
-> Adds no functional change.
+On 2025/2/22 19:25, Damon Ding wrote:
+> Hi Heiko,
 > 
-> Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
-Applied.  Thanks!
+> On 2025/1/31 4:33, Heiko Stübner wrote:
+>> Hi Damon,
+>>
+>> Am Donnerstag, 23. Januar 2025, 11:07:41 MEZ schrieb Damon Ding:
+>>> Move drm_of_find_panel_or_bridge() a little later and combine it with
+>>> component_add() into a new function rockchip_dp_link_panel(). The 
+>>> function
+>>> will serve as done_probing() callback of devm_of_dp_aux_populate_bus(),
+>>> aiding to support for obtaining the eDP panel via the DP AUX bus.
+>>>
+>>> If failed to get the panel from the DP AUX bus, it will then try the 
+>>> other
+>>> way to get panel information through the platform bus.
+>>>
+>>> Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
+>>>
+>>> ---
+>>
+>>> @@ -450,9 +461,17 @@ static int rockchip_dp_probe(struct 
+>>> platform_device *pdev)
+>>>       if (IS_ERR(dp->adp))
+>>>           return PTR_ERR(dp->adp);
+>>> -    ret = component_add(dev, &rockchip_dp_component_ops);
+>>> -    if (ret)
+>>> -        return ret;
+>>> +    ret = devm_of_dp_aux_populate_bus(analogix_dp_get_aux(dp->adp), 
+>>> rockchip_dp_link_panel);
+>>
+>> This causes an undefined-reference error, so you probably need 
+>> something like:
+>>
+>> diff --git a/drivers/gpu/drm/rockchip/Kconfig b/drivers/gpu/drm/ 
+>> rockchip/Kconfig
+>> index f9cbbb40b36f..fa946a809858 100644
+>> --- a/drivers/gpu/drm/rockchip/Kconfig
+>> +++ b/drivers/gpu/drm/rockchip/Kconfig
+>> @@ -8,6 +8,7 @@ config DRM_ROCKCHIP
+>>          select DRM_PANEL
+>>          select VIDEOMODE_HELPERS
+>>          select DRM_ANALOGIX_DP if ROCKCHIP_ANALOGIX_DP
+>> +       select DRM_DISPLAY_DP_AUX_BUS if ROCKCHIP_ANALOGIX_DP
+>>          select DRM_DW_HDMI if ROCKCHIP_DW_HDMI
+>>          select DRM_DW_HDMI_QP if ROCKCHIP_DW_HDMI_QP
+>>          select DRM_DW_MIPI_DSI if ROCKCHIP_DW_MIPI_DSI
+>>
+>>
+>>
+>>
+>>
+> 
+> Yeah, I will add a new separate commit to do it in the next version.
+>
+
+Oh...I believe it would be better to do it directly in this patch. ;-)
+
+> Best regards
+> Damon
+> 
+> 
+> 
+
+
 
