@@ -1,85 +1,136 @@
-Return-Path: <linux-kernel+bounces-527311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C000A40982
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 16:31:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93C1BA40984
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 16:34:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3495B7AC675
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 15:30:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F05EE702039
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 15:33:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAA7D1AD3E1;
-	Sat, 22 Feb 2025 15:30:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7A821922F6;
+	Sat, 22 Feb 2025 15:34:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="XmixloNv"
-Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="MOG+FDbt"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A2602D05E
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 15:30:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03FE12D05E;
+	Sat, 22 Feb 2025 15:34:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740238252; cv=none; b=CkPomehS4rBNnUwty/MoehuUPaQcJ28ySo1mkzxEtKIkgCe1PjqO2pWvri9kDX2PHeTTTukZZQ1HVqSEwtO+D9n+bJvB7T+j0zH9LRxj/ClUS0w+V2hUTW2ZZxqXRcqmv40lFy4j6zIV7lzY67si7aCbri529vS1gQiyXfrs4Cw=
+	t=1740238443; cv=none; b=oPCR1PplZMihq+d2GyF18MMuk8OJ+8VsR9912ak/jwCejHeDpW8tJfR2t/LEKY6EjeNFJoTzB1M0VYLf2nnsMWDQD7IjuSNoh6Bruu5v22FuKqMg+jdOJsZMkG8JS9gf+1gdNqN+tIl0FWdzRdOGgWG9yFsMnU5QrUL5evpqjs8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740238252; c=relaxed/simple;
-	bh=r4tzzLkSDnrOdH/18W6LteR1pX1etKjfWltoHzgwLnw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cjv0JFuQfIcuNTuHt/JHBD9FAgjou3nuV9bQa0sCikEL3jnaiP+HzLcKMZNVzYLbgiksJrPt4D4O41oKeNtxQmhjeipiLJe6bFIUHUh5cYUlzwTZFB0C0wozhAmr1xRrAdPuT9RnyYADsybu3pXBXD2jSErn7HwUXCu1KplHirI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=XmixloNv; arc=none smtp.client-ip=95.215.58.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Sat, 22 Feb 2025 10:30:34 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1740238238;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2O6LlMiroyX8s3OR/vMtwOCtpXSsWXnlWltLALK/Npo=;
-	b=XmixloNvYGi22sDde5+ivm+PQZYuJGWbvwGchK+dt0rDiPXOJedHUJ0u29AwsZ1C5O7gmq
-	tkumgOF0EAu8WAXK1rXBQlpMTl84/ji4lm2K+Z2ZP55WiljBTMKwE4Qd2tdtu8Y/vKwiLp
-	uJ5FJue7+kaGtoHP/jW+Ht1fMK8q8r0=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Martin Uecker <uecker@tugraz.at>
-Cc: Dan Carpenter <dan.carpenter@linaro.org>, 
-	Greg KH <gregkh@linuxfoundation.org>, Boqun Feng <boqun.feng@gmail.com>, 
-	"H. Peter Anvin" <hpa@zytor.com>, Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, 
-	Christoph Hellwig <hch@infradead.org>, rust-for-linux <rust-for-linux@vger.kernel.org>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, David Airlie <airlied@gmail.com>, linux-kernel@vger.kernel.org, 
-	ksummit@lists.linux.dev, Justin Stitt <justinstitt@google.com>, 
-	Kees Cook <keescook@chromium.org>
-Subject: Re: Rust kernel policy
-Message-ID: <4edgqqhbwn56jnz3fraowgyuwhjs33uw3545mnksxwrng42wa6@fbaqfqlhru7g>
-References: <326CC09B-8565-4443-ACC5-045092260677@zytor.com>
- <CANiq72m+r1BZVdVHn2k8XeU37ZeY6VT2S9KswMuFA=ZO3e4uvQ@mail.gmail.com>
- <a7c5973a-497c-4f31-a7be-b3123bddb6dd@zytor.com>
- <Z7VKW3eul-kGaIT2@Mac.home>
- <2025021954-flaccid-pucker-f7d9@gregkh>
- <4e316b01634642cf4fbb087ec8809d93c4b7822c.camel@tugraz.at>
- <2025022024-blooper-rippling-2667@gregkh>
- <1d43700546b82cf035e24d192e1f301c930432a3.camel@tugraz.at>
- <962fa158-5315-4d93-afb1-8a1c08787ad8@stanley.mountain>
- <1f31a16d3898e0e9b5d94f9bcc12a1b73ac97982.camel@tugraz.at>
+	s=arc-20240116; t=1740238443; c=relaxed/simple;
+	bh=gselFHu7vsy5BNx95BjFIuNv6dddMJLzHfF5VzpKKco=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mupnQuvItKuosIWN1d0oJzXK9ObU7VwhlZ4qNYBNu+T9+VyA5EvAyrawuRS3uEkl0VhCVar1P2+SXUNimfdarr/5CJppQL9S3TVPiMHkogmJdvzmptVByi5cBvqRgyx0TLXbVUxuhhnA+ZNhIl9zE3wnfxg6rjrJ3knikK3v4sg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=MOG+FDbt; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1740238438;
+	bh=gselFHu7vsy5BNx95BjFIuNv6dddMJLzHfF5VzpKKco=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=MOG+FDbtPgNtTCXWLsDR0WErdiDmJBrbvkPx/oyOxKBzM2BF1qO9GiVRudGyfGRrU
+	 oVYvPqcOGoMlkz5kBl7m3K2ZR2Tl8wZTk4k8HztAxW/vT8bwGAsHBOQLU7dY11A+nx
+	 nv/aG5trfKKT10BLAqG2abLALJSBSx6zosgUxWacb1xLvZJo2jkZkZn79xbj4lIVwc
+	 drL8Rqp93ZwIsN1u7hSdIu1tqeE4FcYBQ40+cDSkX2XT3G28qAo8QdokB4BMRIqWY/
+	 VrqEIxObqoN6Vit0/jkh7sdRcYdgWchQf+vxFijSCKwYdJYNqRMjqDGyQDw9dHJKFb
+	 LAatvEy8LUP8w==
+Received: from [192.168.1.90] (unknown [188.27.58.83])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: cristicc)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 9B3AA17E00BD;
+	Sat, 22 Feb 2025 16:33:58 +0100 (CET)
+Message-ID: <aca747a9-5244-4535-bc22-976ed4a1dc3b@collabora.com>
+Date: Sat, 22 Feb 2025 17:33:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1f31a16d3898e0e9b5d94f9bcc12a1b73ac97982.camel@tugraz.at>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: check for disabled clock-provider in
+ of_clk_get_hw_from_clkspec
+To: Heiko Stuebner <heiko@sntech.de>, mturquette@baylibre.com,
+ sboyd@kernel.org
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ liujianfeng1994@gmail.com, sebastian.reichel@collabora.com
+References: <20250220225448.2763166-1-heiko@sntech.de>
+Content-Language: en-US
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+In-Reply-To: <20250220225448.2763166-1-heiko@sntech.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Feb 20, 2025 at 03:09:21PM +0100, Martin Uecker wrote:
-> We added checked arhithmetic to C23, we could add saturating
-> math to C2Y if this is needed.  (although I admit I do not fully
-> understand the use case of saturating math, a saturated value
-> still seems to be an error? Statistics, where it does not matter?)
+Hi,
 
-Saturating is mainly for refcounts. If the refcount overflows, you want
-it to saturate and _stay there_, because you no longer know what the
-value should be so never freeing the object is the safest option.
+On 2/21/25 12:54 AM, Heiko Stuebner wrote:
+> of_clk_get_hw_from_clkspec checks all available clock-providers by
+> compairing their of-nodes to the one from the clkspec. If no matching
+> clock-provider is found, the function returns EPROBE_DEFER to cause a
+> re-check at a later date.
+> 
+> If a matching clock-provider is found, a authoritative answer can be
+
+Nit: s/a authoritative/an authoritative/
+
+> retrieved from it whether the clock exists or not.
+> 
+> This does not take into account that the clock-provider may never appear,
+> because it's node is disabled. This can happen for example when a clock
+> is optional, provided by a separate block which just never gets enabled.
+> 
+> One example of this happening is the rk3588's VOP, which has optional
+> additional display-clock-supplies coming from PLLs inside the hdmiphy
+> blocks. These can be used for better rates, but the system will also
+> work without them.
+> 
+> The problem around that is described in the followups to:
+> https://lore.kernel.org/dri-devel/20250215-vop2-hdmi1-disp-modes-v1-3-81962a7151d6@collabora.com/
+> 
+> As we already know the of-node of the presumed clock-provider, just add
+> a check via of_device_is_available whether this is a "valid" device node.
+> This prevents ethernal defer-loops.
+> 
+> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> ---
+>  drivers/clk/clk.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index cf7720b9172f..50faafbf5dda 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -5258,6 +5258,10 @@ of_clk_get_hw_from_clkspec(struct of_phandle_args *clkspec)
+>  	if (!clkspec)
+>  		return ERR_PTR(-EINVAL);
+>  
+> +	/* Check if node in clkspec is in disabled/fail state */
+> +	if (!of_device_is_available(clkspec->np))
+> +		return ERR_PTR(-ENOENT);
+> +
+>  	mutex_lock(&of_clk_mutex);
+>  	list_for_each_entry(provider, &of_clk_providers, link) {
+>  		if (provider->node == clkspec->np) {
+
+Without this patch applied, when disabling hdmi0 and hdptxphy0 nodes on
+Rock5B, rockchip-drm module fails to probe and hdmi1 output cannot be
+used anymore:
+
+rockchip-drm display-subsystem: [drm] *ERROR* failed to get pll_hdmiphy0
+
+After applying the patch, I confirm the error is gone and hdmi1 is
+functional again.  Hence,
+
+Tested-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+
+Thanks,
+Cristian
 
