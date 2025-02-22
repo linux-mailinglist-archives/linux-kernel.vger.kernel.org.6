@@ -1,91 +1,107 @@
-Return-Path: <linux-kernel+bounces-527226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7463A408AC
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 14:25:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FBA8A408AE
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 14:27:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B8C619C14AF
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 13:26:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CFAD171280
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 13:27:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9F5020B7FA;
-	Sat, 22 Feb 2025 13:25:42 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C54F20B209;
+	Sat, 22 Feb 2025 13:27:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="dqjxE5Pf"
+Received: from smtpbg150.qq.com (smtpbg150.qq.com [18.132.163.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78F531B2182;
-	Sat, 22 Feb 2025 13:25:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4D612CCDB;
+	Sat, 22 Feb 2025 13:27:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.132.163.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740230742; cv=none; b=U8CTZuev0YhcXTJP7elaTY+06x1cu8I7Wkuv480be+vAAbeOKyPqTsZqKvSk3fEzy3gUu0eCTYcffVob98MSjJjVJrw9B6mboL4O7z/HW67oNr049aGADkVFznmc0tM4kjAdPeQrz8K6TaBKN8RlTCE/zQENF/UUZhGDXNZBU5Y=
+	t=1740230834; cv=none; b=Zxm/nD87phJ/kEQBQHOSFMSjDtNGW1u+kD5qRjtasJ8mzUkLiTBQbKJbt1Y88skHjFHGDMvw2YhKExsfSb5VUNXZhO1dc8zewwVOo3O/fQsBIvYxA5KhCzfdBYqeGebYUjkjPbu605yJD4a9sculuwX+oVx2+nXRhW1EN11b3lU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740230742; c=relaxed/simple;
-	bh=BsSvKw74iSBH1+hFUhzkcUYQ0d/S6A3tTynOwdYD+I8=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=NXDg5UWfTo2c2uUlKMnJTp4VDGwwX4ZawLJmNh6h0syaGIIzTKmIOls42TE8WLiWF3ync0yqw1ItgU4uRgROLmfCDSOHsYJYjk7XcRpO1OP77RNip/urDf/E57eba6yQ/vi3Bqd6oLOttkLfupqBLvKqUSqaEF4Yacd+iiDTKQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8D7DC4CED1;
-	Sat, 22 Feb 2025 13:25:41 +0000 (UTC)
-Received: from wens.tw (localhost [127.0.0.1])
-	by wens.tw (Postfix) with ESMTP id 3C3625FE35;
-	Sat, 22 Feb 2025 21:25:39 +0800 (CST)
-From: Chen-Yu Tsai <wens@csie.org>
-To: linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org, 
- linux-pm@vger.kernel.org, linux-sunxi@lists.linux.dev, 
- linux-usb@vger.kernel.org, devicetree@vger.kernel.org, 
- Cody Eksal <masterr3c0rd@epochal.quest>
-Cc: Conor Dooley <conor+dt@kernel.org>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Kishon Vijay Abraham I <kishon@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Maxime Ripard <mripard@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, Nishanth Menon <nm@ti.com>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>, 
- Samuel Holland <samuel@sholland.org>, Stephen Boyd <sboyd@kernel.org>, 
- Vinod Koul <vkoul@kernel.org>, Viresh Kumar <vireshk@kernel.org>, 
- Viresh Kumar <viresh.kumar@linaro.org>, Yangtao Li <tiny.windzz@gmail.com>, 
- Parthiban <parthiban@linumiz.com>, Andre Przywara <andre.przywara@arm.com>
-In-Reply-To: <20241031070232.1793078-1-masterr3c0rd@epochal.quest>
-References: <20241031070232.1793078-1-masterr3c0rd@epochal.quest>
-Subject: Re: (subset) [PATCH v2 00/13] sunxi: A100/A133 second stage
- support
-Message-Id: <174023073923.2739576.11575460474007255231.b4-ty@csie.org>
-Date: Sat, 22 Feb 2025 21:25:39 +0800
+	s=arc-20240116; t=1740230834; c=relaxed/simple;
+	bh=0xS6Cu9zY503FYzv4hIWBT5pesLymuUmjYwkhhRzpwA=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Nn1EFeoOMhK5IufDOsKK6KLeMr0OIE1zHqnA+dTQIi2ua4sMWOGgvM8yeicQvBBIgk75q4p8NacCIUHVdBK+5lHv/o3oMjOijqxhKaT0gC2uaGzC3SYJ7DKRrwHZnFQ/C8fMhL2MIhtI4d++uISRC1jxdEgwKJ06b9osbLFdrNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=dqjxE5Pf; arc=none smtp.client-ip=18.132.163.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1740230794;
+	bh=0xS6Cu9zY503FYzv4hIWBT5pesLymuUmjYwkhhRzpwA=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version;
+	b=dqjxE5PfR+mf4cOGCjm8ecW1kbq1HY6m30vfICXUue+h8dNDqpUefr2Ob4lcG/Pt3
+	 8q1RkUGPgNpT6pV810AfhbWYftu/R8qS5AwKCkm8QuSmZCsz6w/KVcOKBHGMSL+k/s
+	 /YOio8BmOsmxmJj75VOpUg9rtl5/J/z4qDUgidxE=
+X-QQ-mid: bizesmtpsz13t1740230790t96rlp
+X-QQ-Originating-IP: td5RAHcEPQCqD7LgFggxdM/IlPGOPxUh3iz7gt13nOE=
+Received: from localhost.localdomain ( [113.57.152.160])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Sat, 22 Feb 2025 21:26:28 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 7706801830270063389
+From: Wentao Guan <guanwentao@uniontech.com>
+To: jkeeping@inmusicbrands.com
+Cc: andriy.shevchenko@linux.intel.com,
+	arnd@arndb.de,
+	fancer.lancer@gmail.com,
+	ftoth@exalondelft.nl,
+	gregkh@linuxfoundation.org,
+	heikki.krogerus@linux.intel.com,
+	ilpo.jarvinen@linux.intel.com,
+	jirislaby@kernel.org,
+	john.ogness@linutronix.de,
+	linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	pmladek@suse.com,
+	schnelle@linux.ibm.com,
+	stable@vger.kernel.org,
+	sunilvl@ventanamicro.com
+Subject: Re: [PATCH v3] serial: 8250: Fix fifo underflow on flush
+Date: Sat, 22 Feb 2025 21:26:27 +0800
+Message-Id: <20250222132627.25818-1-guanwentao@uniontech.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20250208124148.1189191-1-jkeeping@inmusicbrands.com>
+References: <20250208124148.1189191-1-jkeeping@inmusicbrands.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpsz:uniontech.com:qybglogicsvrgz:qybglogicsvrgz5a-0
+X-QQ-XMAILINFO: OA8qd4daQrT+gspbIHyjZJSCZe0mGuFJEUOJnUJIUtlW3kdWKIWjXUoX
+	uNcndV34u/vwofXTZXKFXifsW450JWsBelge09EWmusHmT31Az/GJeQocV626GgNUykG/nf
+	Fjd9Xp9VY1dv2y0Sqxzhl6AJM4/TJXW4ppQS7x/ThESEEJraGCXeckW1yxinn9T8BilCYMi
+	WAbz68mWXMg51TM2x0H9Y79m1r4CVDQTGmBjU5rC5mnz+DO04dVHcf01wxZX5rnUprFe1/M
+	oMoHkACePkkFgxklL3krlF4/vPYSDQHwVQJ7GcRsnEmnKkTXmIoWg7nXckdHG+3n5hECMQB
+	edNFbpNm/pXRSs/Obu4fX8sbrm894FXOVqw1bgvBMffFyT1AjePR0WS2L/peAjJF9Q7NpkU
+	xBuER+i0JxiW71bfwH3EinFXB6fg4ZnMAgsrQR7nE72TgIT5/imUKp8WgZE/Bh5OyZbsm65
+	SNZF1XiQNYlSpeXbUbRBBzDLWxYE3qjCXTmeKdpqzW+3llp7DXO5I19kjeltIoOdHCesToU
+	BZxC9mMDY9c3p/UIw0XdN38rC5arUI5ai1lEVuZBsEj6XqeOrBMxAsMLEdOrj3hnuCK9eK1
+	QwX2NQHaUIGtEcJPIWREWbATsniOm54lrjnc0JBN9Ru8O+aP+FnSLVbOcTKRQ1lyU36Jyzv
+	MoLxygoA++rmOmnOBjfk/lhOBCDU05uhEAzWAUoWPhpY800IO32LFXQxF7qSpfsqolnF9iG
+	CQjaZMMFOYlgMZ9attqVPskeszk6pxqJVVm93yf+AAFjoNJrFGJAgaNDUJ+5D3I+T4uN1xH
+	rokc91Ujx1ZmrstB4rpDuxMVehqDYHcqU6Cf0F4zTVLhhcFP0EYaQKsdTWY5E5FmsPWuL3+
+	0/m8zlyRNSqtXUnVrqW+DBkpJQstG0JI5wAeLVAzytS1Y4q13CnxxKDTrkkM2GpVTiPgJb1
+	anekp8gHd7Saoh1ayA/K42EURZHYZmVsWcIneuBK3J66IGuLqZpCwXWOEzp9nYp3MUUR4tk
+	mwTwIJIbhy4S+mnbKEeCMYplJ0zh05leMrot28tTs+DNTKo9gZ/98Dk2xH5zQ=
+X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
+X-QQ-RECHKSPAM: 0
 
-On Thu, 31 Oct 2024 04:02:13 -0300, Cody Eksal wrote:
-> This is V2 of this series [5], with some changes that were requested and
-> others that were made after testing on more devices. Thank you for all of
-> your feedback! A changelog is available below.
-> 
-> ==================
-> Back in 2020, two Allwinner employees, Yangtao Li and Shuosheng Huang, each
-> submitted a patch series for the A100 series of SoCs; [1] intended to add
-> support for the watchdog, ARM PMU, DMA, USB, and (e)MMC controller, and [2]
-> implemented DVFS support. Some patches from the first series landed, but
-> the rest were seemingly abandoned.
-> 
-> [...]
+Hello John,
 
-Applied to dt-for-6.15 in git@github.com:linux-sunxi/linux-sunxi.git, thanks!
+It seems strange that call 'dmaengine_terminate_async( **dma->rxchan** );' in
+'serial8250_ **tx** _dma_flush' during code review.
+I am not a professional reviewer in this module, could you explaim the change?
 
-[13/13] arm64: dts: allwinner: a100: Add CPU Operating Performance Points table
-        commit: a8181e6861fec3068f393d77ff81b2aaf4ea4203
-
-Best regards,
--- 
-Chen-Yu Tsai <wens@csie.org>
-
+BRs
+Wentao Guan
 
