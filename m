@@ -1,128 +1,139 @@
-Return-Path: <linux-kernel+bounces-527341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5291FA40A13
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 17:30:50 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE4F4A40A15
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 17:31:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F087519C04D1
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 16:30:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ACB9117F1D5
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 16:31:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E246200100;
-	Sat, 22 Feb 2025 16:30:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61CD5200138;
+	Sat, 22 Feb 2025 16:31:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="hx7NJJgY"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HmtbMmPg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0E9F13C81B;
-	Sat, 22 Feb 2025 16:30:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B56B713C81B;
+	Sat, 22 Feb 2025 16:31:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740241838; cv=none; b=erjNHKbPdVos6SsZh/MCE5EEeL78Fu5XKYO1Xux8kd3c8uGHajAhRCthdKt6ujgV7+P/c0Nq5JJgpNXzwGBpP9C9x3DTM6Kgel+4v/EDPyb/qpcDlNs4NJL7bV7mJg4zwQ3ss8qKVVzmYWdH3YYIrYAQ5ZVCZJs9p0P7RzQb4g0=
+	t=1740241871; cv=none; b=eMGqL2llK8R6DlefOyUpcevjkh/JANd/QVmn93U3tTbxRMTnXSknj6d9KEidUYTb7xM4VxuRdJSld9S1/KXuz2yJoJ5Tjqeu/J5c8znlFzCjagHjvqB477v/QzN0Utr3j70URw4fF0rAQf/BQk01UDeE7E0wSIKAQ5KeSbL5R54=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740241838; c=relaxed/simple;
-	bh=TAgYvz4shjowE9LUaXwmfu6VLlUHFIppKrAy2sqc/g4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G8g8YD4Elcn4eEZsyYNSMGN9JeOg4cyUN5yIqAfQajNCA1bI+mOr6999ZIMcG0KGPK/WfP1xP155/Ib8QP5uYnpmA3KOXAAnLN6VYkgMghzODaQI/j+upBoL7lpKPEr4Zpt3MpIXTe9iOLa4aQxMjEkQQgRgK2Q+PZLF9EM7PiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=hx7NJJgY; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id EB66A40E0177;
-	Sat, 22 Feb 2025 16:30:32 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id inoskxphGDnD; Sat, 22 Feb 2025 16:30:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1740241828; bh=GdarmdPYfhonxFe3eVsstixOM9edVzaHcDHd3EvNNVk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hx7NJJgY74w3Yljy5RVXfBe9WIWZvtVAXM2saN2/A1odl5GsyR7DrmTj47+jNteJY
-	 nUUvoRw5BGY3ro/CUdojMu76zw4aTzcg2yIlM/CnyC2Rzh9RotNmVSKFnjdbBGnF7l
-	 vfGM030nM2HKT/muJ4wz6ynW8DTVsMWNtPsnkabDJyWzMUECPbJrheQKGiyQEBNM0A
-	 yqmR4iIdOP4JcEM+Zv58h3lGf55BdiyxDF9Cm6mU8/rQ6DQzi4aQzZh6p7vdgKCGUO
-	 Z0Mvp5NKD6roBJfTD++UmQj7bun218DcjwIo6vm/yVlrzuydN4sdW3WjLPzhzVxALW
-	 nWCCDtfUk6dnv+H2WOcdmqdJbBbrDMP9szCg3bJTaVGw9utmTh5b7y45Ym73IbdfJh
-	 TUywyY8XClcO/qgxBjEOCH1EcuO2qhacEphb+PbSiIytNj8AjLDkGi+iwBmHRZYbWi
-	 VJRpt4HdZHzzJVN4K3B9RhMFHM8/0nA4bC6b15JHC4Mbd/FE3952lEI6CsPdyL+AQP
-	 Jx6dorcQfOlUiOWywjfsyYorXWe2C1+264SeKeir0zH566Ae0ao/9fmKBpK0UpxFbB
-	 g363BrXjAYZfl/FU9NdtjXCoFDJ3Gi29FwwbQFXoUgNU9ovCIhkGFDdkpWeFZQNbcW
-	 cb4lqgDyh1wCucKf15Rwui9c=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id A55E340E0176;
-	Sat, 22 Feb 2025 16:30:11 +0000 (UTC)
-Date: Sat, 22 Feb 2025 17:30:01 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: "Xin Li (Intel)" <xin@zytor.com>
-Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-	tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
-	x86@kernel.org, hpa@zytor.com, will@kernel.org,
-	peterz@infradead.org, yury.norov@gmail.com,
-	akpm@linux-foundation.org, acme@kernel.org, namhyung@kernel.org,
-	brgerst@gmail.com, andrew.cooper3@citrix.com, nik.borisov@suse.com
-Subject: Re: [PATCH v5 5/5] x86/cpufeatures: Add the CPU feature bit for MSR
- immediate form instructions
-Message-ID: <20250222163001.GUZ7n7iRc88PTMQi9_@fat_crate.local>
-References: <20250106070727.3211006-1-xin@zytor.com>
- <20250106070727.3211006-6-xin@zytor.com>
+	s=arc-20240116; t=1740241871; c=relaxed/simple;
+	bh=05M9kM9NGiYzKxejehBqSZvmKBza5vKaAJoAQYksG54=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=haGJCiqQbbsif7jA8D7d/WyEyaKf7HZNSq7o/nenDCT2emG0q+6Nm8RfZImEKPeG5gHIREdUIikcNT0LIfBEFpxxL7+9mbDLRzdrdcJj7Ixb7viuQqrBHC91mhK6tOMGMcDUFrFYhmIs68IqQvzpdr6ens3/0usb58Z8BO+YgbM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HmtbMmPg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FDF1C4CED1;
+	Sat, 22 Feb 2025 16:31:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740241871;
+	bh=05M9kM9NGiYzKxejehBqSZvmKBza5vKaAJoAQYksG54=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=HmtbMmPgGp+/sZB1iIpS5kIsQR0QboikRkFcR4WXg4UUpk0fljv0w/Ygws3L7+T/K
+	 6UsFrrB9WxzOLoQ/d2vMDKdX2+LAgtVwRIVfNXmjzCFuf15tUhSMEfkxequAXr3mIo
+	 AswmFarKJgzX7GMciPmpGTwQlhkXfOZsOVH4SAitNrAgLQ+2LWvbJEIIbZrNG8aelP
+	 LRfvEX70SWCHPhP1b2JIPebwtVlljVE5WxgbR+g9mKsvDjtYludc0FEtyaz5J3+Z2c
+	 lTw54UtkQ7v//4X3yUb5n5jts/AVvW6rm5WqERE1ClXtBjNXSuQYvKxkRAY+ik6Dv1
+	 j2iGSd8GUTinw==
+Date: Sat, 22 Feb 2025 16:31:02 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Angelo Dureghello <adureghello@baylibre.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>,
+ David Lechner <dlechner@baylibre.com>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iio: ad7380: add support for SPI offload
+Message-ID: <20250222163102.20510e8d@jic23-huawei>
+In-Reply-To: <20250220-wip-bl-spi-offload-ad7380-v1-1-838aa873e62a@baylibre.com>
+References: <20250220-wip-bl-spi-offload-ad7380-v1-1-838aa873e62a@baylibre.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250106070727.3211006-6-xin@zytor.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sun, Jan 05, 2025 at 11:07:27PM -0800, Xin Li (Intel) wrote:
-> The immediate form of MSR access instructions are primarily motivated by
-> performance, not code size: by having the MSR number in an immediate, it
-> is available *much* earlier in the pipeline, which allows the hardware
-> much more leeway about how a particular MSR is handled.
+On Thu, 20 Feb 2025 19:03:30 +0100
+Angelo Dureghello <adureghello@baylibre.com> wrote:
+
+> From: Angelo Dureghello <adureghello@baylibre.com>
 > 
-> Add a new CPU feature word for CPUID.7.1.ECX and then the CPU feature bit
-> for MSR immediate form.
+> Add support for SPI offload to the ad7380 driver. SPI offload allows
+> sampling data at the max sample rate (2MSPS with one SDO line).
+> 
+> This is developed and tested against the ADI example FPGA design for
+> this family of ADCs [1].
+> 
+> [1]: http://analogdevicesinc.github.io/hdl/projects/ad738x_fmc/index.html
+> 
+> Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
+Just one trivial comment from me that I can tidy up when applying if nothing else
+comes up.  However, I'd like David to take a look at this before I apply
+(+ anyone else who has time!)
 
-Nope, scattered.c.
+Jonathan
 
-> diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
-> index d5985e8eef29..59aa04915032 100644
-> --- a/arch/x86/include/asm/cpufeatures.h
-> +++ b/arch/x86/include/asm/cpufeatures.h
-> @@ -5,7 +5,7 @@
->  /*
->   * Defines x86 CPU feature bits
->   */
-> -#define NCAPINTS			22	   /* N 32-bit words worth of info */
-> +#define NCAPINTS			23	   /* N 32-bit words worth of info */
->  #define NBUGINTS			2	   /* N 32-bit bug flags */
->  
->  /*
-> @@ -476,6 +476,9 @@
->  #define X86_FEATURE_AMD_HETEROGENEOUS_CORES (21*32 + 6) /* Heterogeneous Core Topology */
->  #define X86_FEATURE_AMD_WORKLOAD_CLASS	(21*32 + 7) /* Workload Classification */
->  
-> +/* Intel-defined CPU features, CPUID level 0x00000007:1 (ECX), word 22 */
-> +#define X86_FEATURE_MSR_IMM		(22*32+ 5) /* "msr_imm" MSR immediate form instructions */
+> diff --git a/drivers/iio/adc/ad7380.c b/drivers/iio/adc/ad7380.c
+> index a18dcd664c1b5e5032cc55c063e5681d11c23352..492356eed9a9f86c27a00cf1e280bd6432ed30b2 100644
+> --- a/drivers/iio/adc/ad7380.c
+> +++ b/drivers/iio/adc/ad7380.c
+> @@ -15,6 +15,9 @@
 
-Also no "msr_imm": Documentation/arch/x86/cpuinfo.rst
 
-In any case, this patch doesn't belong in this set.
+> +static int ad7380_probe_spi_offload(struct iio_dev *indio_dev,
+> +				    struct ad7380_state *st)
+> +{
+> +	struct spi_device *spi = st->spi;
+> +	struct device *dev = &spi->dev;
+> +	struct dma_chan *rx_dma;
+> +	int sample_rate, ret;
+> +
+> +	indio_dev->setup_ops = &ad7380_offload_buffer_setup_ops;
+> +	indio_dev->channels = st->chip_info->offload_channels;
+> +	/* Just removing the timestamp channel. */
+> +	indio_dev->num_channels--;
+> +
+> +	st->offload_trigger = devm_spi_offload_trigger_get(dev, st->offload,
+> +		SPI_OFFLOAD_TRIGGER_PERIODIC);
+> +	if (IS_ERR(st->offload_trigger))
+> +		return dev_err_probe(dev, PTR_ERR(st->offload_trigger),
+> +				     "failed to get offload trigger\n");
+> +
+> +	sample_rate = st->chip_info->max_conversion_rate_hz *
+> +		      AD7380_NUM_SDO_LINES / st->chip_info->num_simult_channels;
+> +
+> +	st->sample_freq_range[0] = 1; /* min */
+> +	st->sample_freq_range[1] = 1; /* step */
+> +	st->sample_freq_range[2] = sample_rate; /* max */
+> +
+> +	/*
+> +	 * Starting with a quite low frequency, to allow oversampling x32,
+> +	 * user is then reponsible to adjust the frequency for the specific case.
+> +	 */
+> +	ret = ad7380_set_sample_freq(st, sample_rate / 32);
+> +	if (ret)
+> +		return ret;
+> +
+> +	rx_dma = devm_spi_offload_rx_stream_request_dma_chan(dev, st->offload);
+> +	if (IS_ERR(rx_dma))
+> +		return dev_err_probe(dev, PTR_ERR(rx_dma),
+> +				     "failed to get offload RX DMA\n");
+> +
+> +	ret = devm_iio_dmaengine_buffer_setup_with_handle(dev, indio_dev,
+> +		rx_dma, IIO_BUFFER_DIRECTION_IN);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "cannot setup dma buffer\n");
+> +
+> +	return ret;
+return 0; as it can't be anything else.
 
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+> +}
 
