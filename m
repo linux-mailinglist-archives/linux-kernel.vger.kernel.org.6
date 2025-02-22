@@ -1,100 +1,238 @@
-Return-Path: <linux-kernel+bounces-527471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA246A40B99
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 21:50:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 195ACA40B9C
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 21:51:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 708E4175486
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 20:49:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F4CE3B999D
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 20:50:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 930A9202F9A;
-	Sat, 22 Feb 2025 20:49:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6C5D203706;
+	Sat, 22 Feb 2025 20:50:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="SJdqWBsA"
-Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="PdOKQzon"
+Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FBAA1D63D3
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 20:49:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EC121D63D3
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 20:50:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740257393; cv=none; b=XLfvGu79Uhi8uVGX12+/pFeMlrV4O5w4lG5BEIzes0h1voamry1DzggKv76NANvODQ0uHaz7E1nfjdxVufbUZyeBFcMVVC87ox1YtFUjYWmWo9Dol+gTnll3KY3tjWkahYpgdSnD6DOGGpBDG1V0vwaII4Fyvoc6Ov14eR3zcbg=
+	t=1740257457; cv=none; b=HmCaGJgR+85FXIChbMSJbE9NZIp5F934gGNYAozsxSJ7gB1arci3e4jcWrqsiV1/b8HTKRGpvELpgXSMr8XVzCc4sJydGM/4rB6JRlaGKEanXo06dgp/LT9OipnCNBd4HWzgrZk6IihToqDoY8g7mHnCspPHV8MB7ylcKzlzJTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740257393; c=relaxed/simple;
-	bh=3w7H+jIo6otmlxFlbAf99skQW2XjsB2m65ucYf3JZIc=;
+	s=arc-20240116; t=1740257457; c=relaxed/simple;
+	bh=dtlTCU44P7vL0Y4EJxOORC0Bq2K1kuHwGKufH530DZE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KK0It+tSBgV9IUUQHEA8NBoDI/7OeJetfi6cWfMqoQP55X3MOHIeOUKIVSqjVW958U0dSo7+PEl58lQTc/s0qNF/MXEvJfqCAbM4jPLjn0HNUXdzsuzysGm6rGN8THy++aQ45BuF3wqIkcU/Zja73lYXkDdN4JSLZLd8ikiyAuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=SJdqWBsA; arc=none smtp.client-ip=95.215.58.189
+	 Content-Type:Content-Disposition:In-Reply-To; b=OXO5E+xzl+okH0HfUuINDExxrWqF0S2ZastFKhYW3/n6Jtd32F1mCaEnmdNXWjPIMhkVCpiJ8VSIekmKrsaqPAiVpJanoeX+fVfNxdoejiv+UhsrudMmmkpxxhKPd9c9JvmCPI8k3atsQhLDfZ/L9RluyBmyPiL56M/cd9uLmCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=PdOKQzon; arc=none smtp.client-ip=95.215.58.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Sat, 22 Feb 2025 15:49:34 -0500
+Date: Sat, 22 Feb 2025 20:50:41 +0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1740257379;
+	t=1740257452;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=M7irQiW8qwpyGnceNIn1BMN3Gn6knqxNjwqf8h3sTCA=;
-	b=SJdqWBsAeInXO2zAEudB778i4wO1QtTa8o0ealGUml6aoGRRvC0I5jXiz70jL5XKuLl/qX
-	KZw6PAWt1HM1Le2aKZj7VhUEJyfqxPkDvaRc+qGEbc/SwJoXVgDEDp88cSz9nASWYtzluK
-	JqraK7DImGF/lRoJegdm399Lci3KVJY=
+	bh=hxr90hVqPs+v3paDE+X67taGS7gRPBKzkTMGj794hsM=;
+	b=PdOKQzon6jaK391OKe9pL6bi8y4QTvP0T4IjYJ0fgu0RuKSs/heiUWDd2Rm9/TJZasjS9M
+	FEhR63nCiNBIjXCLBORIPpT6Gdoh74NkM2y+aoe0MxOCFaiGDiGknd6WxN7jMDmP6PNMpY
+	8YgU6TOtIAN6Sdv605vvN9iJSMgybvY=
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Ventura Jack <venturajack85@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	torvalds@linux-foundation.org, airlied@gmail.com, boqun.feng@gmail.com, 
-	david.laight.linux@gmail.com, ej@inai.de, gregkh@linuxfoundation.org, hch@infradead.org, 
-	hpa@zytor.com, ksummit@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, Ralf Jung <post@ralfj.de>
-Subject: Re: C aggregate passing (Rust kernel policy)
-Message-ID: <lz7hsnvexoywjgdor33mcjrcztxpf7lzvw3khwzd5rifetwrcf@g527ypfkbhp2>
-References: <CAFJgqgRygssuSya_HCdswguuj3nDf_sP9y2zq4GGrN1-d7RMRw@mail.gmail.com>
- <20250222141521.1fe24871@eugeo>
- <CAFJgqgSG4iZE12Yg6deX3_VYSOLxkm5yr5yu25HxN+y4wPD5bg@mail.gmail.com>
- <6pwjvkejyw2wjxobu6ffeyolkk2fppuuvyrzqpigchqzhclnhm@v5zhfpmirk2c>
- <CANiq72mdzUJocjXhPRQEEdgRXsr+TEMt99V5-9R7TjKB7Dtfaw@mail.gmail.com>
+From: Roman Gushchin <roman.gushchin@linux.dev>
+To: Parav Pandit <parav@mellanox.com>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
+	Maher Sanalla <msanalla@nvidia.com>,
+	"linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] RDMA/core: fix a NULL-pointer dereference in
+ hw_stat_device_show()
+Message-ID: <Z7o4ofdXZ-6w-jO0@google.com>
+References: <20250221020555.4090014-1-roman.gushchin@linux.dev>
+ <CY8PR12MB71958C150D7604EAD4463F4ADCC72@CY8PR12MB7195.namprd12.prod.outlook.com>
+ <Z7gARTF0mpbOj7gN@google.com>
+ <CY8PR12MB7195F3ACB8CFA05C4B8D26D3DCC72@CY8PR12MB7195.namprd12.prod.outlook.com>
+ <Z7gF3UC7PvVxeRcq@google.com>
+ <CY8PR12MB7195D93F387845E0A7314C34DCC72@CY8PR12MB7195.namprd12.prod.outlook.com>
+ <Z7jb1z8WSllnFFyX@google.com>
+ <CY8PR12MB7195D4AD9844C91313955AFCDCC62@CY8PR12MB7195.namprd12.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANiq72mdzUJocjXhPRQEEdgRXsr+TEMt99V5-9R7TjKB7Dtfaw@mail.gmail.com>
+In-Reply-To: <CY8PR12MB7195D4AD9844C91313955AFCDCC62@CY8PR12MB7195.namprd12.prod.outlook.com>
 X-Migadu-Flow: FLOW_OUT
 
-On Sat, Feb 22, 2025 at 08:41:52PM +0100, Miguel Ojeda wrote:
-> On Sat, Feb 22, 2025 at 7:54 PM Kent Overstreet
-> <kent.overstreet@linux.dev> wrote:
-> >
-> > I believe (Miguel was talking about this at one of the conferences,
-> > maybe he'll chime in) that there was work in progress to solidify the
-> > aliasing and ownership rules at the unsafe level, but it sounded like it
-> > may have still been an area of research.
+On Sat, Feb 22, 2025 at 06:36:46PM +0000, Parav Pandit wrote:
+> Hi Roman,
 > 
-> Not sure what I said, but Cc'ing Ralf in case he has time and wants to
-> share something on this (thanks in advance!).
+> > From: Roman Gushchin <roman.gushchin@linux.dev>
+> > Sent: Saturday, February 22, 2025 1:33 AM
+> > 
+> > On Fri, Feb 21, 2025 at 08:03:33AM +0000, Parav Pandit wrote:
+> > > > From: Roman Gushchin <roman.gushchin@linux.dev>
+> > > > Sent: Friday, February 21, 2025 10:20 AM
+> > > >
+> > > > On Fri, Feb 21, 2025 at 04:34:25AM +0000, Parav Pandit wrote:
+> > > > >
+> > > > > > From: Roman Gushchin <roman.gushchin@linux.dev>
+> > > > > > Sent: Friday, February 21, 2025 9:56 AM
+> > > > > >
+> > > > > > On Fri, Feb 21, 2025 at 03:14:16AM +0000, Parav Pandit wrote:
+> > > > > > >
+> > > > > > > > From: Roman Gushchin <roman.gushchin@linux.dev>
+> > > > > > > > Sent: Friday, February 21, 2025 7:36 AM
+> > > > > > > >
+> > > > > > > > Commit 54747231150f ("RDMA: Introduce and use
+> > > > > > > > rdma_device_to_ibdev()") introduced rdma_device_to_ibdev()
+> > > > > > > > helper which has to be used to obtain an ib_device pointer
+> > > > > > > > from a
+> > > > device pointer.
+> > > > > > > >
+> > > > > > >
+> > > > > > > > hw_stat_device_show() and hw_stat_device_store() were missed.
+> > > > > > > >
+> > > > > > > > It causes a NULL pointer dereference panic on an attempt to
+> > > > > > > > read hw counters from a namespace, when the device structure
+> > > > > > > > is not embedded into the ib_device structure.
+> > > > > > > Do you mean net namespace other than default init_net?
+> > > > > > > Assuming the answer is yes, some question below.
+> > > > > > >
+> > > > > > > > In this case casting the device pointer into the ib_device
+> > > > > > > > pointer using container_of() is wrong.
+> > > > > > > > Instead, rdma_device_to_ibdev() should be used, which uses
+> > > > > > > > the
+> > > > > > > > back- reference (container_of(device, struct ib_core_device,
+> > > > > > > > dev))-
+> > > > >owner.
+> > > > > > > >
+> > > > > > > > [42021.807566] BUG: kernel NULL pointer dereference, address:
+> > > > > > > > 0000000000000028 [42021.814463] #PF: supervisor read access
+> > > > > > > > in kernel mode [42021.819549] #PF: error_code(0x0000) -
+> > > > > > > > not-present page [42021.824636] PGD 0 P4D 0 [42021.827145]
+> > > > > > > > Oops: 0000 [#1] SMP PTI [42021.830598] CPU: 82 PID: 2843922
+> > > > > > > > Comm: switchto-
+> > > > defaul Kdump:
+> > > > > > loaded
+> > > > > > > > Tainted: G S      W I        XXX
+> > > > > > > > [42021.841697] Hardware name: XXX [42021.849619] RIP:
+> > > > > > > > 0010:hw_stat_device_show+0x1e/0x40 [ib_core] [42021.855362]
+> > > > > > > > Code: 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 0f 1f
+> > > > > > > > 44 00 00 49 89 d0 4c 8b 5e 20 48 8b 8f b8 04 00 00 48 81 c7
+> > > > > > > > f0 fa ff ff <48> 8b
+> > > > > > > > 41 28 48 29 ce 48 83 c6 d0 48 c1 ee 04 69 d6 ab aa aa aa 48
+> > > > > > > > [42021.873931]
+> > > > > > > > RSP: 0018:ffff97fe90f03da0 EFLAGS: 00010287 [42021.879108]
+> > RAX:
+> > > > > > > > ffff9406988a8c60 RBX: ffff940e1072d438 RCX: 0000000000000000
+> > > > > > > > [42021.886169] RDX: ffff94085f1aa000 RSI: ffff93c6cbbdbcb0 RDI:
+> > > > > > > > ffff940c7517aef0 [42021.893230] RBP: ffff97fe90f03e70 R08:
+> > > > > > > > ffff94085f1aa000 R09: 0000000000000000 [42021.900294] R10:
+> > > > > > > > ffff94085f1aa000 R11: ffffffffc0775680 R12: ffffffff87ca2530
+> > > > > > > > [42021.907355]
+> > > > > > > > R13: ffff940651602840 R14: ffff93c6cbbdbcb0 R15:
+> > > > > > > > ffff94085f1aa000 [42021.914418] FS:  00007fda1a3b9700(0000)
+> > > > > > GS:ffff94453fb80000(0000)
+> > > > > > > > knlGS:0000000000000000 [42021.922423] CS:  0010 DS: 0000 ES:
+> > > > > > > > 0000
+> > > > > > CR0:
+> > > > > > > > 0000000080050033 [42021.928130] CR2: 0000000000000028
+> > CR3:
+> > > > > > > > 00000042dcfb8003 CR4: 00000000003726f0 [42021.935194] DR0:
+> > > > > > > > 0000000000000000 DR1: 0000000000000000 DR2:
+> > > > 0000000000000000
+> > > > > > > > [42021.942257] DR3: 0000000000000000 DR6: 00000000fffe0ff0
+> > DR7:
+> > > > > > > > 0000000000000400 [42021.949324] Call Trace:
+> > > > > > > > [42021.951756]  <TASK>
+> > > > > > > > [42021.953842]  [<ffffffff86c58674>] ? show_regs+0x64/0x70
+> > > > > > > > [42021.959030] [<ffffffff86c58468>] ? __die+0x78/0xc0
+> > > > > > > > [42021.963874]
+> > > > > > [<ffffffff86c9ef75>] ?
+> > > > > > > > page_fault_oops+0x2b5/0x3b0 [42021.969749]
+> > [<ffffffff87674b92>] ?
+> > > > > > > > exc_page_fault+0x1a2/0x3c0 [42021.975549]  [<ffffffff87801326>]
+> > ?
+> > > > > > > > asm_exc_page_fault+0x26/0x30 [42021.981517]
+> > > > > > > > [<ffffffffc0775680>]
+> > > > ?
+> > > > > > > > __pfx_show_hw_stats+0x10/0x10 [ib_core] [42021.988482]
+> > > > > > > > [<ffffffffc077564e>] ? hw_stat_device_show+0x1e/0x40
+> > > > > > > > [ib_core] [42021.995438]  [<ffffffff86ac7f8e>]
+> > > > > > > > dev_attr_show+0x1e/0x50 [42022.000803]  [<ffffffff86a3eeb1>]
+> > > > > > > > sysfs_kf_seq_show+0x81/0xe0 [42022.006508]
+> > > > > > > > [<ffffffff86a11134>] seq_read_iter+0xf4/0x410 [42022.011954]
+> > > > > > > > [<ffffffff869f4b2e>] vfs_read+0x16e/0x2f0 [42022.017058]
+> > > > > > > > [<ffffffff869f50ee>] ksys_read+0x6e/0xe0 [42022.022073]
+> > > > > > > > [<ffffffff8766f1ca>]
+> > > > > > > > do_syscall_64+0x6a/0xa0 [42022.027441]  [<ffffffff8780013b>]
+> > > > > > > > entry_SYSCALL_64_after_hwframe+0x78/0xe2
+> > > > > > > >
+> > > > > > > > Fixes: 54747231150f ("RDMA: Introduce and use
+> > > > > > > > rdma_device_to_ibdev()")
+> > > > > > > Commit eb15c78b05bd9 eliminated hw_counters sysfs directory
+> > > > > > > into the
+> > > > > > net namespace.
+> > > > > > > I don't see it created in any other net ns other than init_net
+> > > > > > > with kernel
+> > > > > > 6.12+.
+> > > > > > >
+> > > > > > > I am puzzled. Can you please explain/share the reproduction
+> > > > > > > steps for
+> > > > > > generating above call trace?
+> > > > > >
+> > > > > > Hi Parav!
+> > > > > >
+> > > > > > This bug was spotted in the production on a small number of
+> > > > > > machines. They were running a 6.6-based kernel (with no changes
+> > > > > > around this code). I don't have a reproducer (and there is no
+> > > > > > simple way for me to reproduce the problem), but I've several
+> > > > > > core dumps and from inspecting them it was clear that a
+> > > > > > ib_device pointer obtained in hw_stat_device_show() was wrong.
+> > > > > > At the same time the ib_pointer obtained in the way
+> > > > > > rdma_device_to_ibdev() works was
+> > > > correct.
+> > > > > >
+> > > > > I just tried reproducing now on 6.12+ kernel manually.
+> > > >
+> > > > Can you, please, share your steps? Or try the 6.6 kernel?
+> > > >
+> > > $ rdma system show to display 'netns shared'.
+> > > $ ip netns add foo
+> > > $ ip netns exec foo bash
+> > > $ attempt to access the hw counters from the foo net namespace.
+> > 
+> > Ok, it worked well. The following commands
+> > 
+> >   $ ip netns add foo
+> >   $ ip netns exec foo bash
+> >   $ cat /sys/class/infiniband/mlx4_0/hw_counters/*
+> > 
+> > cause a panic on a vanilla v6.12.9 without my changes and work perfectly fine
+> > with my patch.
+> > 
+> I dig further and I see the issue. Its not the per port counter.
+> It's the per device counter which got broken by commit 467f432a521a2.
+> It introduced the device counter unintentionally in non init net.
+> And we need to fix that (instead of allowing it and opening more holes).
+> I replied with more details to Jason G in previous reply.
+> Please take a look.
 
-Yeah, this looks like just the thing. At the conference you were talking
-more about memory provenance in C, if memory serves there was cross
-pollination going on between the C and Rust folks - did anything come of
-the C side?
+I can prepare a patch like this, but I'm slightly worried about hiding
+previously exposed counters. I don't think it's a problem for us (even though
+I'm not 100% sure), but technically it can be seen as breaking the API.
 
-> 
-> From a quick look, Tree Borrows was submitted for publication back in November:
-> 
->     https://jhostert.de/assets/pdf/papers/villani2024trees.pdf
->     https://perso.crans.org/vanille/treebor/
+How about merging 2 patches: my original patch which fixes the memory corruption
+and a separate patch which hides those counters from non-init namespace?
+The first can be safely propagated towards stable trees.
 
-That's it.
+I'll prepate the second patch soon.
 
-This looks fantastic, much further along than the last time I looked.
-The only question I'm trying to answer is whether it's been pushed far
-enough into llvm for the optimization opportunities to be realized - I'd
-quite like to take a look at some generated code.
+Thanks!
 
