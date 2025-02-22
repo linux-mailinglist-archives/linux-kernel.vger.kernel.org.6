@@ -1,158 +1,127 @@
-Return-Path: <linux-kernel+bounces-527415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D119CA40B06
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 19:44:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BECBBA40B0A
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 19:45:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0BACE16C94E
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 18:44:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DCE3189EDCC
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 18:45:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D7AE20C496;
-	Sat, 22 Feb 2025 18:44:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ADDE20E6FC;
+	Sat, 22 Feb 2025 18:45:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gy1MOtdp"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="BE89uNm2"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1466413A258
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 18:44:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D22261AA782
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 18:45:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740249842; cv=none; b=Bysxk7Tmh1wnhjBX5rUKatvBN9J88d0NNRbrXdn1ghLtb2/jwmoY59gtYCeKqhbqvJm4KkxEgHqWneJeJQm6geumsdqY1W54cUqoojK4RapfHqHNciq5FDXvupFdGzbMwANv7lyZZUSdbXkT4i3pqCwh95vR8yKOSA8r2WpZofk=
+	t=1740249902; cv=none; b=b836fSnO3xvymXopcIXzFa+kOoVjg376nzIsBT768yxGIA8LXFpEZ+mkWs19uF78WYuZbjkPIixIJYb4qKKCTbsC82qEaEbUa5tu5nEb6MFktrcHLKvTMtEgy4HeigNr4beOhOr4wAYk4IgJ/QvC1ovx+K08+woE7fwTR55u6do=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740249842; c=relaxed/simple;
-	bh=u9CNX1lK65MuV1qJkFaCmogB64VpkcZJQhWje5kiI3k=;
+	s=arc-20240116; t=1740249902; c=relaxed/simple;
+	bh=OWQ/8rNUcjck7tkRuYyqikXWKplXwhxhtLF2xDKFeXM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kc5Qd5wJyf6i1yvJkszF+I2QgxHhBPdZEocF355+NNF/sHjZeJ665FRHd/+3rkWX5+NXLgEd8Z8i9iY3G0okkrBvs2/ojnPVU2cy3OoSHNZjZP37kGH6f5cOWoPI0ginLb7ueLaAibVWjfQ+Fgq3esep9y0cGQB4eEFHGwf9E90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gy1MOtdp; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-30615661f98so30400551fa.2
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 10:44:00 -0800 (PST)
+	 To:Cc:Content-Type; b=DT85tlGxm8NBlota93IYzqMaQ8UDGJhoF9IfFFTl/QvfWlhEcCtHPf+K3hGDeyBEnnR7PsiGWMw6fwOtEAGUNDQPG2BRSKLMw2VLc8ajvXFBEi71983TZKf4ixguacTVoaQ0uV4ybgx632XlheoCggDuznh5zHmK3Mc58JGTbZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=BE89uNm2; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5deb1266031so5773915a12.2
+        for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 10:45:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740249839; x=1740854639; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=E+jmeUiRFgrLTZopYI9v80YSYwCYyzfjXIRGcBiLAVw=;
-        b=Gy1MOtdp4QmhtpnUKfgAVQODgYe9ivTblw5OKq+KYSZaJzRVrwYr64LEu5PxlTAHHQ
-         GxC+cTsilpNq20H4UVI0nE9HPoXNDIXB5BO7HEIXZJcPuZHn7sS2FOzjYSXoQq53O2xx
-         meZXDAdXRRKcN4qTnAL6PVAyPvIG/NrgjjGru0kRoO+nPHq3T743F3Nx+R/FLs88yYJQ
-         SFba5j5+7ozL78PKW27IyRlSbgsSj+NpqVA0o9VURD7L8xpoMDWrK8yw8z/Ho56MMdC4
-         FIQWK0iIvF9Dot9AsogWRxfEynw6Z0LQYPI2AImURKvb0hebE0fO5JZDQOwkuYbdvjfA
-         39VA==
+        d=linux-foundation.org; s=google; t=1740249899; x=1740854699; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=2GmfLwYqjSfqdj0NeOV5aIVpVPfwUhlh0DRZJ2UKXos=;
+        b=BE89uNm2KWCdU6+FpJCDgQi6DTG2sz8aEr+UxO/lOdL+9fLWlqBxM7W2oeTwZc7tkT
+         js3nK1DSTiqIOtzYfmDSv9NUMTHuat09yzRyi3YBmZWULsSN0CBoXi5iGnJxXCJgjaXI
+         3mGj/rnzb/+UaWx+hj+vggUhaq5FF3BRuf9hs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740249839; x=1740854639;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=E+jmeUiRFgrLTZopYI9v80YSYwCYyzfjXIRGcBiLAVw=;
-        b=GcPRXe0dmDrjvTqcD4BfWBNwI2WT7QWBFVxkuXd12+iSiMuezw7M8Ja1pE1EYRAxYs
-         Ko/fgUCpj03dS40IRv7RYKNOsL64H6T+9JPBeTHOZCgk6jmiCmRbZcKVB7LW7yqwQNBU
-         8FStDmpaaXUIkhwD4egCj63+7RKSEhhrTXOw4zX37Ay5wpn5YOgvBGwjE8BEZ/ZcN2sI
-         yQpmYCmnJVX0YAXoTUsLsLM7JUWvKFR6Qha2uCWL6GKut2tToU4AKG37cFrV+zst6uQm
-         4KlNU3QA/uY9zg/YBBGZPW+aULvQ6IV9RCMyMSs/rTsO+qiZWxuD6dmykD5NcJlX4pw5
-         IddQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVPDNqdXIXUvXTJKsMGNyPz4RuPZrtfxs42piIUafYro97KKO3F+mBy48w2iUQWOWTPdjnoS30S3U7Pa84=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7wEJPbOo6iCTLqZIC28UI4bQkPo26X+HgS/uuZYs+PvlIw8pv
-	qLZhDPfUzfc44cpxPEhELpEJwvV1ybkzaiM3zLqeeKmmvqLrx49JD2WT4Pfpv4m6I74sB+hQZCt
-	e4rNerBKy90DP9QKhjgSQ3N+TpoM=
-X-Gm-Gg: ASbGncu1/llIHD6ycuYcqGVOrgXpN8Cu3u38fxBPprmUcPi6lwPlnLghwhsZob9bx3+
-	OOuQANue/8FuJ+4L8hFp8ar6wE+xwJDJ+AhtIPNCEqN4CjhmDFhpOyCRfvqoRPbd3DwjaqUGrLK
-	VblxiEe0o=
-X-Google-Smtp-Source: AGHT+IHVnRQdOCRBMeRYt98eC4fNCl4k6Xa1RLOox2zKGp3H+ftnrThhe7xLnLL/s7EE5e/CTGvBlnh+EdQX7U/0Dk8=
-X-Received: by 2002:a2e:9416:0:b0:300:38ff:f8de with SMTP id
- 38308e7fff4ca-30a598909d5mr26356111fa.16.1740249838510; Sat, 22 Feb 2025
- 10:43:58 -0800 (PST)
+        d=1e100.net; s=20230601; t=1740249899; x=1740854699;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2GmfLwYqjSfqdj0NeOV5aIVpVPfwUhlh0DRZJ2UKXos=;
+        b=WaxGwOaM93vTg7dqeYjiDfofFMdlWW1GooG0Lb/6aN2FTsDErspccNzuOQWO5PnBoh
+         m0uQz/sHkOwJeJvqiIMGHux+Rq0V2eefs6o7+CpBkvXRHc5DIi3b5O/DBHnSVf15XNIs
+         4mPfNF3IGLMgoHtA4W1TPXKeJixdM3zb1aZ/MvA9BHdtjxmHGdDfSFIxV7dh22ZBia0m
+         rEAnREni4eQuaxqOlYMp9DIDYiFnQgPo2Ys5bgb5T5U+jqH3Izn7V/0jBEHlLynG3wbl
+         yIUS/x7ZZt2Gvxirifr+64QTEczStrx7RAiNZbjTWXAOVSkfhsuSfaWyw4Sw4jtVFHk9
+         SToQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXv/MrJSl6RVATUSWD7ctoaNB0/Te+zn3PR2dW7rkNtoM9YDDxWfNNT0grP1lFHmVnSZwC3YraDn7GKIKk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzjPmk6nwLFdLQZ6aQIUxHdp9KWiYkhqyUKCgio3h5lVCA6d527
+	LPBcpnDAPzvoT9Tqyx6pf3ilrvh7hrtJ+rdmG0iHTkrx6HzstMv9E6sahDVO/ycZFq19MZM6aPV
+	DBrg=
+X-Gm-Gg: ASbGncuGO5JlIErSPD8c+AxCwthrca4UX5O+XsdDliWqsIGfJX4udluL9DhTdGCvNne
+	L8edAFEslDkPHR+KHpF7cIPvwZUOTnR0hWCQCV4c4wUI8ew8ZJt5p5c4V2g3Y/uw97egMqE8dld
+	G4d2O+efgSAfs6IHnU5PEYJ0lkVvI6FO/PzLiY6I2M1VZxECcrqKuea6h8bXZ+gE1kMc4cjDsEl
+	VU+aImxQ49/be/oGRrsLYUF3BoLLiB37myQfPznTsDTaLCW5KWWuHF+lyVB6oQCSya1yF5067FG
+	RM0OY44vN0azhyHz5dZXpDSKbWi0RvMpDvGPv4in/9pGNVGnJxWWE1b06NlNWfubSY+fjMXNbof
+	v
+X-Google-Smtp-Source: AGHT+IHGClVJzd3Ajuk5FnITT81p7p+kgFLcj10+m8TzvFOB6EThsmcZ63gyNtUdmweu3iT8J++b1g==
+X-Received: by 2002:a05:6402:360d:b0:5de:5025:2bd9 with SMTP id 4fb4d7f45d1cf-5e0b70e95demr7084768a12.11.1740249898874;
+        Sat, 22 Feb 2025 10:44:58 -0800 (PST)
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com. [209.85.218.42])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5dece2866e7sm15569206a12.65.2025.02.22.10.44.55
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 22 Feb 2025 10:44:57 -0800 (PST)
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-ab7430e27b2so512499766b.3
+        for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 10:44:55 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUaL11meecMi4Q68jui5UAV5GIVfCMHGpdZj1ISUwqj31yKnkEshAUUw+INDyMoHOSw+okdFz1Sy/f7Vdw=@vger.kernel.org
+X-Received: by 2002:a17:907:724f:b0:ab7:9a7a:d37a with SMTP id
+ a640c23a62f3a-abc0de1954emr621935366b.43.1740249895227; Sat, 22 Feb 2025
+ 10:44:55 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250222160850.505274-1-shikemeng@huaweicloud.com> <20250222160850.505274-4-shikemeng@huaweicloud.com>
-In-Reply-To: <20250222160850.505274-4-shikemeng@huaweicloud.com>
-From: Kairui Song <ryncsn@gmail.com>
-Date: Sun, 23 Feb 2025 02:43:42 +0800
-X-Gm-Features: AWEUYZlcPWRlcwjN0BHXG8TxtcCkPpE5iDcq2AJ1DErFnAQonwkp3WiXwC8-bmc
-Message-ID: <CAMgjq7DwUciLTcw-jsCzTz9bz+KMKqzbzCYSr58ZFhCNKPVpaw@mail.gmail.com>
-Subject: Re: [PATCH 3/6] mm, swap: avoid BUG_ON in relocate_cluster()
-To: Kemeng Shi <shikemeng@huaweicloud.com>
-Cc: akpm@linux-foundation.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org
+References: <2025022042-jot-favored-e755@gregkh> <b9a5de64fe1ded2ad3111763f35af9901bd81cc4.camel@tugraz.at>
+ <caea3e79-78e6-4d98-9f3b-f8e7f6f00196@stanley.mountain> <61a7e7db786d9549cbe201b153647689cbe12d75.camel@tugraz.at>
+ <20250221124304.5dec31b2@gandalf.local.home> <CAHk-=wgg2A_iHNwf_JDjYJF=XHnKVGOjGp50FzVWniA2Z010bw@mail.gmail.com>
+ <6b3e4d3bdc9b6efd69068e5b22cfd05d370aed19.camel@tugraz.at>
+ <CAHk-=wg=pZvE9cHJUPKGCajRUCtDoW73xwY5UfJApCWms_FgYw@mail.gmail.com>
+ <20250221172415.5b632ae6@gandalf.local.home> <CAHk-=wjQ94GipftbNo0PbfuUxFMXFyp2bWGJJPNUngyf17Ai8A@mail.gmail.com>
+ <y75v63zqmgd3n42bprrbs2ppg32vhk2isppi6wxn7lfsdwd5sn@jm74cuwhadbj>
+In-Reply-To: <y75v63zqmgd3n42bprrbs2ppg32vhk2isppi6wxn7lfsdwd5sn@jm74cuwhadbj>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sat, 22 Feb 2025 10:44:38 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wjEQ7wd=iRN1Du-_fAqXgqEfCZH27PisDNPCpusv3Swxg@mail.gmail.com>
+X-Gm-Features: AWEUYZkGmBfM4yXjsFNaaBKIjcw5m0UrJ9-jgNYDnIvr-gmrGabmAZy5fq4X8l8
+Message-ID: <CAHk-=wjEQ7wd=iRN1Du-_fAqXgqEfCZH27PisDNPCpusv3Swxg@mail.gmail.com>
+Subject: Re: Rust kernel policy
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Martin Uecker <uecker@tugraz.at>, 
+	Dan Carpenter <dan.carpenter@linaro.org>, Greg KH <gregkh@linuxfoundation.org>, 
+	Boqun Feng <boqun.feng@gmail.com>, "H. Peter Anvin" <hpa@zytor.com>, 
+	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Christoph Hellwig <hch@infradead.org>, 
+	rust-for-linux <rust-for-linux@vger.kernel.org>, David Airlie <airlied@gmail.com>, 
+	linux-kernel@vger.kernel.org, ksummit@lists.linux.dev
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Sat, Feb 22, 2025 at 3:12=E2=80=AFPM Kemeng Shi <shikemeng@huaweicloud.c=
-om> wrote:
+On Sat, 22 Feb 2025 at 09:53, Kent Overstreet <kent.overstreet@linux.dev> wrote:
 >
-> If allocation is racy with swapoff, we may call free_cluster for cluster
-> already in free list and trigger bug on as following:
+> Because it sounds like coming up with a different way to write range
+> checks is going to be easier than coming up with pattern matching magic.
 
-Maybe capitalize this "bug on" to BUG_ON to be consistent with the title.
+Sure. But honestly, forcing humans to write non-obvious code is almost
+always the exact wrong answer.
 
-> Allocation                        Swapoff
-> cluster_alloc_swap_entry
->  ...
->  /* may get a free cluster with offset */
->  offset =3D xxx;
->  if (offset)
->   ci =3D lock_cluster(si, offset);
->
->                                   ...
->                                    del_from_avail_list(p, true);
->                                     si->flags &=3D ~SWP_WRITEOK;
->
->   alloc_swap_scan_cluster(si, ci, ...)
->    ...
->    /* failed to alloc entry from free entry */
->    if (!cluster_alloc_range(...))
->     break;
->    ...
->    /* add back a free cluster */
->    relocate_cluster(si, ci);
->     if (!ci->count)
->      free_cluster(si, ci);
->       VM_BUG_ON(ci->flags =3D=3D CLUSTER_FLAG_FREE);
->
-> Despite bug_on could be triggered, call free_cluster() for free cluster
-> only move cluster to tail of list and should be fine.
->
-> Check cluster is not free before calling free_cluster() in
-> relocate_cluster() to avoid bug_on.
+When the basic pattern is an obvious and legible one:
 
-Same here.
+        if (a < X || a > Y)
 
->
-> Fixes: 3b644773eefda ("mm, swap: reduce contention on device lock")
-> Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
-> ---
->  mm/swapfile.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/mm/swapfile.c b/mm/swapfile.c
-> index 425126c0a07d..fc45b9d56639 100644
-> --- a/mm/swapfile.c
-> +++ b/mm/swapfile.c
-> @@ -653,7 +653,8 @@ static void relocate_cluster(struct swap_info_struct =
-*si,
->                 return;
->
->         if (!ci->count) {
-> -               free_cluster(si, ci);
-> +               if (ci->flags !=3D CLUSTER_FLAG_FREE)
-> +                       free_cluster(si, ci);
->         } else if (ci->count !=3D SWAPFILE_CLUSTER) {
->                 if (ci->flags !=3D CLUSTER_FLAG_FRAG)
->                         move_cluster(si, ci, &si->frag_clusters[ci->order=
-],
-> --
-> 2.30.0
+saying " use a different helper pattern for this" is the WRONG
+SOLUTION. You're making the source code worse.
 
-Thanks, other than minor commit message issue:
+Make the tools better. Don't make humans jump through hoops because
+the tools are spouting garbage.
 
-Reviewed-by: Kairui Song <kasong@tencent.com>
+               Linus
 
