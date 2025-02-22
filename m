@@ -1,79 +1,80 @@
-Return-Path: <linux-kernel+bounces-527158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527159-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63761A407F7
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 12:39:38 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4B1DA407FD
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 12:40:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B51B4232A8
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 11:39:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4FE147AEC5A
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 11:38:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 019F320AF62;
-	Sat, 22 Feb 2025 11:39:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF6E620B1FC;
+	Sat, 22 Feb 2025 11:39:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eF+oC2qV"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="g3EQZFKB"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E4092080FB
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 11:39:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96B7620AF82
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 11:39:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740224346; cv=none; b=sNtiW+PwyTItH7EtKXJU48ZyOTKQGqL80FbNwBD7lHfGNtBdTPC6ZkfNFTG7VWW9frcsluUicc7AFaMcep8x5ErXl5Xlz0sjufX2ZnUL15wg0sIpqcZHnkiozXJoJj0Pd8zQy+PiwPP69ZsW+eHoIjp4vYksP2VdtnXONxGnp9Q=
+	t=1740224348; cv=none; b=srEck/ajP9uUQUPd7S0gJjSjqGcrWo3y8DKZyw8/vsbzyJCY5aepLdkUl4axtSbreHRqmy3SZUpoJzGJeFMvFVmbpz7P6cQUWNSThoLbcEe0JIUdc4q3s4JF64IRJq27bq76c4gFyjSImVnu8izoSXSKiqy4mi5AJVkXAfMFWE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740224346; c=relaxed/simple;
-	bh=STGodYbtojpRzBwDBhIkXxC3zzCqdL+G3w+jmR/EteY=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=UOAhEtff+1z2knQ1Mq3nXwEnXy2y6x1cTZQSa5qKWKmC3rnpn8pc9oqxBSrAcKPJEJ/SyC9L2aYGDsgDDX3v9RvyynGZRmnnIYVpTEwqmM/9exYDR6KcEabl7ZUNLvOrEpdzLKDmnuKZ7ZRA/AlgoThYgG8GJLBoZbTUZypdM0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eF+oC2qV; arc=none smtp.client-ip=209.85.208.53
+	s=arc-20240116; t=1740224348; c=relaxed/simple;
+	bh=gPRrQJeVCXlOJnPHZ1jVCWa17XfTG/pp0Es1n6IQ+7w=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=DVG2Sj8ZMLcaoxzqh7mNWCoU22P9XrAaVnIPInoKbcrWFEvaIduskejaxnGEKZDc5qIhEHnd1zw9099LjfhSaa5XYpZZlyQLn4/ikhib4a/BodS/s6Kqr5mYf3rYKOEZAOstn8JJVQTcmrXddG2XMi40Cpgi8CvWPjjA0zPCXKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=g3EQZFKB; arc=none smtp.client-ip=209.85.218.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5ded500589aso521293a12.0
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 03:39:04 -0800 (PST)
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-abad214f9c9so54199666b.0
+        for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 03:39:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740224343; x=1740829143; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=QyqLyGoljlA8lLDgpfeeDuyVTQrzc1QyULf6gL8NNgk=;
-        b=eF+oC2qVd9LeszGw+loRkp2mWYTWDJVhuat7lLSmjMleJZaFPcONaYO51KUJWKFH7I
-         Gb7FSeFAAbfD/PJrjgQL4iqbiM31FJNNElyVzd0Ajd7vrwSBZQjKBuE0IubCReRzk7Dv
-         IoieYAnydmgUEQrvD7fdnZ8ViGsihYuz4BEXAx89NH4yj1XQMAd0VtL/R1/sT2HxUTCB
-         3RRCchIFMjedSKPgbkWlLkLx7lUVdo3XDK0sumk0qIBTQDGGZGzhzYEdNNMOhUywf66i
-         wneen9LjhE08tA0rMpg9ah6hVJI95lzUuWRvIlX0ILJTEfXsb2diJnSjr7cJ7L/d/ab2
-         V1Yw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740224343; x=1740829143;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=linaro.org; s=google; t=1740224345; x=1740829145; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=QyqLyGoljlA8lLDgpfeeDuyVTQrzc1QyULf6gL8NNgk=;
-        b=h6kX3vNDqyfXA/TZIarrEQjeYO+ROmvW2NKJuBVIFMPM3KVWSggEVw87N/4EV4DpX9
-         0bcOBUpMp0hDDoHtEVf1DyZvfAhZg3vDe5EX1X4nh6QQ5kCaBe0fBOgWYuMY4sDcNYrh
-         j13RP5J+c4iOecTIYKsppPwun4Eve5347Nb1XaubUr380f/w+lxJRKPfDf516IBmGWjD
-         LUML5mZjVmfObtJ5edjtIuEXGflDUOjVB8VBpmz0qGsTQjaczcG63WYd5TuVIr6jERbB
-         xboPoU3w8AuJ70lgf6Q66YrQn03Y6l42hJ4CSsrSOv2Y3TOYbrtkLLvYMFPt9oxRycYR
-         /acA==
-X-Forwarded-Encrypted: i=1; AJvYcCUqNMMkC5NuGCqR9+1fRTod/GY5llTlAFONak5vqo0V+SXLgQJjLcOSj9HVJzhmU5vAtwBiApFphwjuwyo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlfoechS+cTkd+RKeudyGZvDeQrKQrDLuVkewnlCNt3lItJ6ix
-	olIuXO88okmzNTYb+Ma5ISHiPDBxmjIBz906fOf4A/cZztiUL3OuYrtpdzFNDAM=
-X-Gm-Gg: ASbGnctvuOxB7t0lD3AZDPqnPcSyW3rR6HR0yMCPA7726kvwyjnCmhrg6NpZ0+DDxTF
-	u0HHb8LRIBwbUk3hC8RD2QVvALFWRAX8Mi7G4+MqN+XwnCXr35EMXIUTlvgZejrtSTuPDID3o4i
-	6Sj91IYPnd2FzPOmyjKRP37fXXx9Bl0+zKR6LYwnyy2oh/RUEojkvYTZGqtfAZPHGJ5haDGsvD3
-	r+nvobv18arop+zwDmeW3R+XsAZGZ4YoY1C+b5EOQSQCJjIR4PdHWcrD9plAo/CnYvLPnKWhonb
-	O2afNPMVcUEl97ToNEoFxJkm3vkCOOPwQ9ooJ4msph+m4b5mRauQs1OK9VaJQDJcM00rNeeGrEj
-	B
-X-Google-Smtp-Source: AGHT+IHujKTVj/r91Ef/aaopjdtssNonQEGvU9LNR6WW5J6HQjMTi1TWlBVXqMMYeJjAstJ/4J7egQ==
-X-Received: by 2002:a17:907:9722:b0:ab6:d3b6:d825 with SMTP id a640c23a62f3a-abc09a578efmr209735266b.6.1740224342670;
-        Sat, 22 Feb 2025 03:39:02 -0800 (PST)
+        bh=SHqWYtyFBm3eO0Y8IspbVVZ2ofwEug+k6Mqw+YANX7k=;
+        b=g3EQZFKBDKEdHs4ttKurboVL+KZbCBanDdorLy7k5SkSQTZCMCwakIizj4nUvLJma0
+         +OcE+fyE1PPXaMRtZb59ExMbFOleF/eoIuAXl9j0IACvL1jnqinEgRH0H/8Ccu3zixiY
+         5JwfyvA6vRhLqzocl0jsaim6YCYpAEYawhwkvDAgyBGrWXqA9VX8q0Vv+J2ArSXgHBEx
+         uF1WPJdgSGPW6I8yBf2RUn0tF3NRqvVg1M5bCiuGaeWyNEilp/RoAsQT787J77Vs/Fja
+         OcWCKi46HLfUpQ+VAdl6vb3CtthFSA5O9TaKACUTY2Vw/3ES26dlgR/siPSXVW4vq9GQ
+         jEDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740224345; x=1740829145;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SHqWYtyFBm3eO0Y8IspbVVZ2ofwEug+k6Mqw+YANX7k=;
+        b=jxGnepfSFYThQJrUIrW03kdJ7QhRdZNTOg0IYYv95XjU6ETbPvZYxAfvJ8FWt5DLol
+         z0pzYskiHFKi/wovPZWx2HdNJfGkIv+CyUno62M+qnmBjdO/2a8Rvb7qipxhsjPjfcMH
+         WlkGA4DM/OPjT5eAUgHD0gRDxvnrXtBizTPrODiGIq3k25rV3uahy7NU1w8lnveVAnY2
+         uCo2rpr0yMq021sKwr54il27iYQEOR5vQMLJdhGctqqbLKxv4ihmbK1U0sx9AXAw8Lzh
+         +234BxWOEG7byHZa7vKSp7RSqfMQPECfr8LcaHMDQs99mIPJCfC0hvOKWM1hGdSVVa7V
+         VvAA==
+X-Forwarded-Encrypted: i=1; AJvYcCXiQq9C/0uMHrB45T3cC7KTmplu6L/sjzg93iR1aSqqZmCRVJz4EbCCgR8ex18AZHs6pAF8WwglKozzQK8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxg/y4jZrhhfO0gWh93DC8AGcwi3z/NjNKa8vbog74PmlmCTWEn
+	QIQ1joZoQxveB4kRWNhCxiRw/BeSBpxuyEfpwrVLyUYqexQDCJnDe7+Ubi0hu70=
+X-Gm-Gg: ASbGncuCexngZPG/Vejp2DaR96C6ct6UUR3vIUIfLv4wscNuSf7I9oOIUQc2/3P/dWb
+	7OAK+hTdUwm5ToZ7DDyXtXJmYxe6Z7h7RPrjYuIHEBUR4FyKleusfYHIcYBqxojhnuXXAo6nKEA
+	vtz1mWIXaELTiR07ij3iFKxPDfMEO3VDmrrLyy7veimTjC5LEwTwd142lW1Q5NYQYaGP/jNKJ3h
+	MOccJZAvD2H7tqC/lXiGZP/Vh9eQCxVxsSyQMUtkOQbhVIVX9WrlrGNlJm0xZo10eJ1XQg3/rsJ
+	C4ZdgQOcTgTK5nJLK82RdaTx8M65vDQUUM+SYR1XPexfRMbXKAwy6f+8FgedlI2QhuG3nPjlkPP
+	D
+X-Google-Smtp-Source: AGHT+IEADqs+izaDN1hPXMaJ1Zk4lygqEDHkwdj7DtAHH3E7GEbPdzWsvTEOd9OEw48mA+XiOWcQqA==
+X-Received: by 2002:a17:907:7b8b:b0:aba:6055:9ed1 with SMTP id a640c23a62f3a-abc09a2c559mr257354566b.6.1740224344847;
+        Sat, 22 Feb 2025 03:39:04 -0800 (PST)
 Received: from [127.0.1.1] (78-11-220-99.static.ip.netia.com.pl. [78.11.220.99])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abb9723a559sm1202702066b.96.2025.02.22.03.39.01
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abb9723a559sm1202702066b.96.2025.02.22.03.39.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 22 Feb 2025 03:39:02 -0800 (PST)
+        Sat, 22 Feb 2025 03:39:04 -0800 (PST)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 0/3] hwtracing: coresight: Minor const fixes
-Date: Sat, 22 Feb 2025 12:38:56 +0100
-Message-Id: <20250222-coresight-const-arm-id-v1-0-69a377cd098b@linaro.org>
+Date: Sat, 22 Feb 2025 12:38:57 +0100
+Subject: [PATCH 1/3] coresight: catu: Constify amba_id table
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,10 +83,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAFC3uWcC/x2MQQqAMAwEvyI5W7DBivgV8SCatjlYJRERxL8bv
- M3A7D6gJEwKQ/WA0MXKezHxdQVLnksix6s5YIOhQUS37ELKKZ9GRU83y2aJi6FF38au9xjAxod
- Q5Ps/Hqf3/QA8z9pIaAAAAA==
-X-Change-ID: 20250222-coresight-const-arm-id-f54214f68125
+Message-Id: <20250222-coresight-const-arm-id-v1-1-69a377cd098b@linaro.org>
+References: <20250222-coresight-const-arm-id-v1-0-69a377cd098b@linaro.org>
+In-Reply-To: <20250222-coresight-const-arm-id-v1-0-69a377cd098b@linaro.org>
 To: Suzuki K Poulose <suzuki.poulose@arm.com>, 
  Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>, 
  Alexander Shishkin <alexander.shishkin@linux.intel.com>
@@ -93,45 +93,47 @@ Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
  linux-kernel@vger.kernel.org, 
  Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=634;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=818;
  i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=STGodYbtojpRzBwDBhIkXxC3zzCqdL+G3w+jmR/EteY=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBnubdSbtcWbGeUk4k+qC4pVWWcIjCt+1IVka5op
- zJGB7lwLXKJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZ7m3UgAKCRDBN2bmhouD
- 15OND/92EHwxbamqEoVNKc4qIcj8dgQSBgErtstBlguPoSdbV7MOzkQgiq3/N/eJKW0dE/2PszG
- HUf2SvsP3/ILRVJthX8zql6XERxvIu95gvozOWmtyQsKpIkRph1mdBfbeJhmU6NaDGfFhyWtNzu
- eNKE63nW5P8VLwihe+m3NOy1E1Ni7CCuFht/WLfSf7hpDrWGpeeaaxvs/FTfJZBGfSz1Yp+YnKd
- H1Bb1f82ZTGsdmfbKLnqAbDQHqvX9lyxpePXDErDG7FoSGPNCNQ9shljB+Cv/Al5fXwtyVcxozR
- kZ77FEwQlbaxQMIH0ob1pCwESjG+jeSnusqjXrK9fumnyzwZEKLOIXOOa1XLVWOxB4If2IdAYur
- TPlwUx5JS367jjYPCkhX7L0U31qJLPcp5J8nNHT4ynI8h2DfDGE3i8E8pengZL6qRkSDScnGfFG
- OfS4jgKB+sPGslXx+0qY7R9oFzZlhsRUrnndKfWyRKvyE1Q1l8V1MEBRKHTg2gRXaZ/zG8Uad4k
- SKywDiQxS1KsIpvVzXzlJLSpegj1yMbQXOn4f2LcHG56ZCCpn1GBstWrP4ET+H+/ais64N7rC7Q
- DvbH0hucl5sioCDof5cDCT+FrAGYYZ0HiGlwvjW3ysD5v4lkVkHsLlmpj+EAV/RKC/LpRsUhTQ0
- R/Jn9iSi/hQ8HaA==
+ bh=gPRrQJeVCXlOJnPHZ1jVCWa17XfTG/pp0Es1n6IQ+7w=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBnubdSOKHDbtPKiytMq7VNkehnIP6qq4GF/kE9O
+ ziK5nlVetqJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZ7m3UgAKCRDBN2bmhouD
+ 1ywXD/40O8XwA+NE+t9BlVaXPJJZpnhWfPER7p69opKPzBgBEgPhhAMecsT2PkhDojzqsxC8uEv
+ fND8wAAyHimTkBXtWshKusQN7YLyY3z6zGvNnS1c8Br4nZO2SYAD5tbxNiUv0X5Do6wXrgV7lAt
+ 8BvwDFx+3kDbkvA9jtdt67GT+mNVIsKkf6DbOYCWL2zqa8FQDyS9TwT6D5xnpfnWh6+RjWk6uB5
+ poq8pZVkt10R89YCGR5OvkmxRcZk7bPuQnOLwmyhQUkN3ML4vtSOOQlj86vF6vWuYEy8DCcy3Rd
+ FFdLgzxuoHDBBAweNx156SeT96ITaLZoWR5DZ4/ea1y3Ax+B3vMpSNLs4iX5H/qpZmtoSw4QHPX
+ LhGNZP5ZR2Nz5UVNJAvXJstsq9X5vHsos5ceSp0aBud4bUa8nI8vjCNzMqSk8T8RyfpAy2oDalK
+ L/RvaQ9E54P9+I3uDqIfn6rIwMzUD88nZB75P672eneWgpg1g8CRPZeKB68wrzohI7AY0pL6a9/
+ MjiRogVa+G7jwxVU9Uc9nN134EqYboUsSIPn1yvSvVmxgjvvqv55cXzGWgqT/X77M3RYZSaB36n
+ u46TgGOmJ0RIQBxz+2bjG2+zV63MfIqrhIE6bwmK53ePMmxeJH+tyDVi8bvktYzcgvOUgDrur0r
+ vrsgv7SQ7jtbtSA==
 X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
  fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-Just few improvements.
+'struct amba_id' table is not modified so can be changed to const for
+more safety.
 
-Best regards,
-Krzysztof
-
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
-Krzysztof Kozlowski (3):
-      coresight: catu: Constify amba_id table
-      coresight: tpda: Constify amba_id table
-      coresight: tpdm: Constify amba_id table
-
  drivers/hwtracing/coresight/coresight-catu.c | 2 +-
- drivers/hwtracing/coresight/coresight-tpda.c | 2 +-
- drivers/hwtracing/coresight/coresight-tpdm.c | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
----
-base-commit: 8936cec5cb6e27649b86fabf383d7ce4113bba49
-change-id: 20250222-coresight-const-arm-id-f54214f68125
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Best regards,
+diff --git a/drivers/hwtracing/coresight/coresight-catu.c b/drivers/hwtracing/coresight/coresight-catu.c
+index 275cc0d9f505fb0c1b2847da94fdfd468c49c6c4..947bf6f331f92df6a2e0fa97bdf3b001c7fa9027 100644
+--- a/drivers/hwtracing/coresight/coresight-catu.c
++++ b/drivers/hwtracing/coresight/coresight-catu.c
+@@ -594,7 +594,7 @@ static void catu_remove(struct amba_device *adev)
+ 	__catu_remove(&adev->dev);
+ }
+ 
+-static struct amba_id catu_ids[] = {
++static const struct amba_id catu_ids[] = {
+ 	CS_AMBA_ID(0x000bb9ee),
+ 	{},
+ };
+
 -- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+2.43.0
 
 
