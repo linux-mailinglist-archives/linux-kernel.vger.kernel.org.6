@@ -1,214 +1,109 @@
-Return-Path: <linux-kernel+bounces-526911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08783A40508
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 03:04:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 325BEA40509
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 03:04:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CBB01890DDE
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 02:04:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA66718859EA
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 02:04:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E4D0250EC;
-	Sat, 22 Feb 2025 02:04:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6914618E025;
+	Sat, 22 Feb 2025 02:04:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n8T4jAfW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kqbadvT3"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7A251E5701
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 02:04:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C20D1250EC;
+	Sat, 22 Feb 2025 02:04:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740189843; cv=none; b=upcxBsJNCk0QYZTcnHaV70QyYiI4zPD/VpoF0sZXkVq3lqLx8pR8byu4MeU0HzOFPvVjdPAIWq19xEc6OrN9MCkJWfdH7Mti5fb8QU1y+9WieGkRwR7syT+/VqPdxy/arMrxCHELmFFQqJOAw7FtG++nHTGqOTLVwtyll5MZpAQ=
+	t=1740189864; cv=none; b=QScCGqTk78bEHtdWtuP7wq9jQNQ+lRxOvIG2U4oE6OUbhxoQq4NY8DHZzsE7Qaev+/thUqlyJGajM+elYDVnv0uI14UIeiLeFZsGPj3V6sdw9VzPvMnKbix784bPhwWJXCeaS789RHieX3nFxSqyCRDd9eqQ+S+4+Wo4OWy5AWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740189843; c=relaxed/simple;
-	bh=yRt/VaZXQuh0DYvzuCq9THX6LnIgF5KQbpuqcMQ4SZs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=A2qsjAnX8KnzgQdHr4z7kTx1m3A7DvZ0O4IOcyQY1vzgjBqkQV5L1UtmydIHphcwZ7XLfWe+2Fmt4iZyosrF/JPn+21Yipbvq/l+LPZ8jdDgPxCtqXD046LWwlwjhP3J8YVWJB5O+lUTm4BBHQEah6Xv3V1cGUh3UfYwe7DnDAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n8T4jAfW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DF49C4CED6;
-	Sat, 22 Feb 2025 02:04:01 +0000 (UTC)
+	s=arc-20240116; t=1740189864; c=relaxed/simple;
+	bh=jo0VRODJgwxyyHe3xRet+qax7sBY/v9n15Rkhe5i3uI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=aplEfzhzieXN6X9iB1pKi+u8E9vBw9sYv+HNmdiD1/jU9xe5ybOmk4szOfHKTm9oNCa648qVY3QQYlCUoR7j64ntTVQDNESa7ItzkqLszqe7QGKkI4iNZ1N4gyqA10UndhYEiy9qs1USdX9/C463PBbWvyExS1K63toVpcDrse4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kqbadvT3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69CF2C4CED6;
+	Sat, 22 Feb 2025 02:04:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740189843;
-	bh=yRt/VaZXQuh0DYvzuCq9THX6LnIgF5KQbpuqcMQ4SZs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=n8T4jAfWR2pDqxavhlXlb/HYFDZ7Q87JHVVKQZ8rIdOZjUZzx1at8VkIvPQTh3VHs
-	 1JlrbQOPwKhNV9uPhmd1wEGFVtS7/epqk/yuc+fXaV3BbNbAhQrHh1G2Uds0r+qAoS
-	 O3YDL6rfUDFRDYmvqu8BNCsbIsSX9Ap2S+rAVPLj8JEpsrAPQRnI7l/wyFlp6IQodK
-	 87t+h5/UuFiFou5J4fcUYA4t2ZLaiFiJPa2rTu53RYiME+twI06am7rB52HlFR4LE6
-	 WhCG1/uYMjm3gJowqslc05H+ACc1EtGHzETvnmga/UPYuIQKMx8+gF16iY8aZCsQmU
-	 xsFM5lOeTu6sA==
-From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Will Deacon <will@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: Boqun Feng <boqun.feng@gmail.com>,
-	Waiman Long <longman@redhat.com>,
-	Joel Granados <joel.granados@kernel.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Anna Schumaker <anna.schumaker@oracle.com>,
-	Lance Yang <ioworker0@gmail.com>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	Yongliang Gao <leonylgao@tencent.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Tomasz Figa <tfiga@chromium.org>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	s=k20201202; t=1740189864;
+	bh=jo0VRODJgwxyyHe3xRet+qax7sBY/v9n15Rkhe5i3uI=;
+	h=From:To:Cc:Subject:Date:From;
+	b=kqbadvT3ShYFCyy1ys35WiTOWyJB/Fwa4/x4oKxhjGNrxRzTNXIacLKkwdBwHZjI0
+	 hLiHpSWLp7FPgLQwrgFprrqu+SE+ejdKO+P2j9aX+R9NRH6+dOLr0DL2pbliEsiSuc
+	 y+ZgJ+aXZwEZ2hzx8oX7OUkTIbApNciPn9Y1aL7dnw8cjbk1eqaBgA69EerGse9gLQ
+	 LO9t/W4e+0UzSYWGKHjbjdSPhbg1spPwI76LDiwck6j4K6Z+bPLUAMLsa6Moo0Tmy5
+	 W0QmvEuYRSYkymRWckeB1iHb5B5nUvgXEH+M3p+IYeAhLQk3KISwutg93Ey+CNNonk
+	 k3r/1ep8k3+0A==
+From: SeongJae Park <sj@kernel.org>
+To: damon@lists.linux.dev
+Cc: SeongJae Park <sj@kernel.org>,
+	linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 2/2] samples: Add hung_task detector mutex blocking sample
-Date: Sat, 22 Feb 2025 11:03:59 +0900
-Message-ID:  <174018983976.2766225.10181861804409163595.stgit@mhiramat.tok.corp.google.com>
-X-Mailer: git-send-email 2.48.1.658.g4767266eb4-goog
-In-Reply-To:  <174018982058.2766225.1721562132740498299.stgit@mhiramat.tok.corp.google.com>
-References:  <174018982058.2766225.1721562132740498299.stgit@mhiramat.tok.corp.google.com>
-User-Agent: StGit/0.19
+Subject: DAMON Beer/Coffee/Tea chat reminder for the week of 2025-02-24
+Date: Fri, 21 Feb 2025 18:04:21 -0800
+Message-Id: <20250222020421.2211-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Hello,
 
-Add a hung_task detector mutex blocking test sample code.
 
-This module will create a dummy file on the debugfs. That file will
-cause the read process to sleep for enough long time (256 seconds)
-while holding a mutex. As a result, the second process will wait on
-the mutex for a prolonged duration and be detected by the hung_task
-detector.
+This is yet another reminder of upcoming DAMON Beer/Coffee/Tea chats
+(https://docs.google.com/document/d/1v43Kcj3ly4CYqmAkMaZzLiM2GEnWfgdGbZAH3mi2vpM/edit?usp=sharing)
+for the week of 2025-02-24.
 
-Usage is;
+We will have the two meetings in the week as usual.  According to our schedule,
+we would have meetings on the week of 2025-03-24.  Since it conflicts with
+LSFMM, I'm moving the meetings and later ones one week.
 
- > cd /sys/kernel/debug/hung_task
- > cat mutex & cat mutex
+Any-topic discussions
+---------------------
 
-and wait for hung_task message.
+Next three time slots for any topic (no reservation is required) are scheduled
+as below:
 
-Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
----
- samples/Kconfig                     |    9 +++++
- samples/Makefile                    |    1 +
- samples/hung_task/Makefile          |    2 +
- samples/hung_task/hung_task_mutex.c |   66 +++++++++++++++++++++++++++++++++++
- 4 files changed, 78 insertions(+)
- create mode 100644 samples/hung_task/Makefile
- create mode 100644 samples/hung_task/hung_task_mutex.c
+- 2025-02-26 (Wed) 09:30 PT (https://meet.google.com/ndx-evoc-gbu)
+- 2025-03-10 (Mon) 18:00 PT (https://meet.google.com/ndx-evoc-gbu)
+- 2025-04-02 (Wed) 09:30 PT (https://meet.google.com/ndx-evoc-gbu)
 
-diff --git a/samples/Kconfig b/samples/Kconfig
-index 820e00b2ed68..09011be2391a 100644
---- a/samples/Kconfig
-+++ b/samples/Kconfig
-@@ -300,6 +300,15 @@ config SAMPLE_CHECK_EXEC
- 	  demonstrate how they should be used with execveat(2) +
- 	  AT_EXECVE_CHECK.
- 
-+config SAMPLE_HUNG_TASK
-+	tristate "Hung task detector test code"
-+	depends on DETECT_HUNG_TASK && DEBUG_FS
-+	help
-+	  Build a module which provide a simple debugfs file. If user reads
-+	  the file, it will sleep long time (256 seconds) with holding a
-+	  mutex. Thus if there are 2 or more processes read this file, it
-+	  will be detected by the hung_task watchdog.
-+
- source "samples/rust/Kconfig"
- 
- source "samples/damon/Kconfig"
-diff --git a/samples/Makefile b/samples/Makefile
-index f24cd0d72dd0..bf6e6fca5410 100644
---- a/samples/Makefile
-+++ b/samples/Makefile
-@@ -42,3 +42,4 @@ obj-$(CONFIG_SAMPLE_FPROBE)		+= fprobe/
- obj-$(CONFIG_SAMPLES_RUST)		+= rust/
- obj-$(CONFIG_SAMPLE_DAMON_WSSE)		+= damon/
- obj-$(CONFIG_SAMPLE_DAMON_PRCL)		+= damon/
-+obj-$(CONFIG_SAMPLE_HUNG_TASK)		+= hung_task/
-diff --git a/samples/hung_task/Makefile b/samples/hung_task/Makefile
-new file mode 100644
-index 000000000000..fe9dde799880
---- /dev/null
-+++ b/samples/hung_task/Makefile
-@@ -0,0 +1,2 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+obj-$(CONFIG_SAMPLE_HUNG_TASK) += hung_task_mutex.o
-\ No newline at end of file
-diff --git a/samples/hung_task/hung_task_mutex.c b/samples/hung_task/hung_task_mutex.c
-new file mode 100644
-index 000000000000..7a29f2246d22
---- /dev/null
-+++ b/samples/hung_task/hung_task_mutex.c
-@@ -0,0 +1,66 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * hung_task_mutex.c - Sample code which causes hung task by mutex
-+ *
-+ * Usage: load this module and read `<debugfs>/hung_task/mutex`
-+ *        by 2 or more processes.
-+ *
-+ * This is for testing kernel hung_task error message.
-+ * Note that this will make your system freeze and maybe
-+ * cause panic. So do not use this except for the test.
-+ */
-+
-+#include <linux/debugfs.h>
-+#include <linux/delay.h>
-+#include <linux/fs.h>
-+#include <linux/module.h>
-+#include <linux/mutex.h>
-+
-+#define HUNG_TASK_DIR   "hung_task"
-+#define HUNG_TASK_FILE  "mutex"
-+#define SLEEP_SECOND 256
-+
-+static const char dummy_string[] = "This is a dummy string.";
-+static DEFINE_MUTEX(dummy_mutex);
-+struct dentry *hung_task_dir;
-+
-+static ssize_t read_dummy(struct file *file, char __user *user_buf,
-+			  size_t count, loff_t *ppos)
-+{
-+	/* If the second task waits on the lock, it is uninterruptible sleep. */
-+	guard(mutex)(&dummy_mutex);
-+
-+	/* When the first task sleep here, it is interruptible. */
-+	msleep_interruptible(SLEEP_SECOND * 1000);
-+
-+	return simple_read_from_buffer(user_buf, count, ppos,
-+				dummy_string, sizeof(dummy_string));
-+}
-+
-+static const struct file_operations hung_task_fops = {
-+	.read = read_dummy,
-+};
-+
-+static int __init hung_task_sample_init(void)
-+{
-+	hung_task_dir = debugfs_create_dir(HUNG_TASK_DIR, NULL);
-+	if (IS_ERR(hung_task_dir))
-+		return PTR_ERR(hung_task_dir);
-+
-+	debugfs_create_file(HUNG_TASK_FILE, 0400, hung_task_dir,
-+			    NULL, &hung_task_fops);
-+
-+	return 0;
-+}
-+
-+static void __exit hung_task_sample_exit(void)
-+{
-+	debugfs_remove_recursive(hung_task_dir);
-+}
-+
-+module_init(hung_task_sample_init);
-+module_exit(hung_task_sample_exit);
-+
-+MODULE_LICENSE("GPL");
-+MODULE_AUTHOR("Masami Hiramatsu");
-+MODULE_DESCRIPTION("Simple sleep under mutex file for testing hung task");
+Dedicated-topic discussions
+---------------------------
 
+Next three time slots that I reserved in advance for possible future dedicated
+topic discussions are as below.
+
+- 2025-02-24 (Mon) 18:00 PT (not yet reserved)
+- 2025-03-12 (Wed) 09:30 PT (not yet reserved)
+- 2025-03-31 (Mon) 18:00 PT (not yet reserved)
+
+Please reach out to me (sj@kernel.org or whatever) to reserve the
+not-yet-reserved time slots for your topics.  The reservation is made in a
+First-Come First-Served way, and I will send a Google Meet link to
+reservation-confirmed attendees.
+
+Please note that other time slots are also available on demands.
+
+Shared Calendar
+---------------
+
+You can get the schedule via this shared Google Calendar:
+https://calendar.google.com/calendar/u/0?cid=ZDIwOTA4YTMxNjc2MDQ3NTIyMmUzYTM5ZmQyM2U4NDA0ZGIwZjBiYmJlZGQxNDM0MmY4ZTRjOTE0NjdhZDRiY0Bncm91cC5jYWxlbmRhci5nb29nbGUuY29t
+
+You can also get the past and upcoming schedules via
+https://docs.google.com/document/d/1v43Kcj3ly4CYqmAkMaZzLiM2GEnWfgdGbZAH3mi2vpM/edit?usp=sharing
+
+
+Thanks,
+SJ
 
