@@ -1,156 +1,305 @@
-Return-Path: <linux-kernel+bounces-527201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C08FA4085C
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 13:38:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83372A4085F
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 13:39:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2955700E10
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 12:38:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCC2F1888D89
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 12:38:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA97320ADFE;
-	Sat, 22 Feb 2025 12:38:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D16B20AF85;
+	Sat, 22 Feb 2025 12:38:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bt66CAPt"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="baLr8jb7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A49EA2066CC;
-	Sat, 22 Feb 2025 12:38:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B68220AF9F;
+	Sat, 22 Feb 2025 12:38:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740227904; cv=none; b=bH3RdQt8PrSnLbN5qk/kaoGxb9+abHlANcJ0NDwg2PhmvMLnCYS5AxDH9TkJFxoTcaEXD3/7xfYamECf0h7YodkDBYCTHWG2JUM8wPa3SIjsr9DIuoaWHv7NDqyf1sxHA55aV/RN2gLs1MLVKamkToNDMw8VQKkmE5tIlweCCCk=
+	t=1740227906; cv=none; b=jPSKZFvHLkD0tBgi3JcAO8ffWag8pBXS4RYH3Nm0LBq3owqiEKUSFN0asCkRqCeKkgUWJ+qTeSBR4Pm0c8NrEXm63Y3SozoF3CllE9aE+8PowBlEpmH1T95Hf8kjhzwsObZUfTfKuJg74yBKVL46DX+LAIXUoI6/mIPHYAtp4jE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740227904; c=relaxed/simple;
-	bh=el5ZJUzGnyfrSd3FRUaCFdSD+6NXdRj2/O4Cb5hz+S0=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=jqB8Zp6e/jaz/CvdUQgTzkkoD+2tySVmM7OM+9pglXQ9cAyh3QaaeLvgfQzBlmQVqKOtTQ6DNa6gpnzogk6++cjfUN7URBfq0jqR8+69CkjsWGrb/LWd09vzZ5/Ku58+BamQMZlf3FMXsPIYSrMqpI5OLR7/SEXv3/9ypjzRt1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bt66CAPt; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740227903; x=1771763903;
-  h=message-id:date:mime-version:from:subject:to:cc:
-   references:in-reply-to:content-transfer-encoding;
-  bh=el5ZJUzGnyfrSd3FRUaCFdSD+6NXdRj2/O4Cb5hz+S0=;
-  b=bt66CAPtn9d6qSMX2GQD6lpuJK6hhn343anAaHqufu27ziMCzdvy/LR8
-   1CaIALNvypgFjljfxOEeWOUwEBTTumjTL+2sj3O74ypi+5lv/xJqg1ds9
-   mT6CKOKAcwTJyF/NXJ7P3UfPEltKF0c/bg92bM8QNl/0XSBJqVkZFRt0a
-   Hh+U4IcOT1YrWhw88pdjdenONJ0AIncDbWD3zGvjEs7iRdqrUuAGYUJH+
-   8HyT4a5BKvCOW2jqjfhNSfP/tvMvIIhxIQ7mgICtvl1/OpxRWZR+xCc9G
-   azhAFSowY/BvGal0rpkzIHU2WmRE6A0PyW2OUIFxRxug6REG9dOJRKdUJ
-   Q==;
-X-CSE-ConnectionGUID: WSaIptZuR8WgBCHpstn/FQ==
-X-CSE-MsgGUID: EVHAEXetQEGJAHR9FjBUbA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11353"; a="52026537"
-X-IronPort-AV: E=Sophos;i="6.13,307,1732608000"; 
-   d="scan'208";a="52026537"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Feb 2025 04:38:22 -0800
-X-CSE-ConnectionGUID: YLbd9cYBSyqRLfbzEXM05Q==
-X-CSE-MsgGUID: Po69SaA0TYa+2Goio7WFwA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="116105331"
-Received: from nneronin-mobl1.ger.corp.intel.com (HELO [10.245.102.28]) ([10.245.102.28])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Feb 2025 04:38:20 -0800
-Message-ID: <be026374-91d2-4b1d-9eb7-568b376f6e72@linux.intel.com>
-Date: Sat, 22 Feb 2025 14:37:58 +0200
+	s=arc-20240116; t=1740227906; c=relaxed/simple;
+	bh=gA6V0QYrK7MkRdcr4Vp2oLWITnhzVQghnDem+xh17dk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Th0MuSNyFRFvTJMo+Ue3W1bZw29b1b3PKUhec37b/Nc+ho564cLbwefG0xhyuBjtlBnNsGuiX4dcW+piPGskYfD65rWJJSmLVxtupKkfjRdXdXoWZBs+AzDV7QBos1LwvpVr5umpDy8isdp/qYBX148cKymJHtCRDcljEHN0MY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=baLr8jb7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34C4DC4CED1;
+	Sat, 22 Feb 2025 12:38:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740227905;
+	bh=gA6V0QYrK7MkRdcr4Vp2oLWITnhzVQghnDem+xh17dk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=baLr8jb7eqtGeHVbgrWdlhbobiJ9byteKNz9oBUvVDiFDojZwuTM1zn88lv0kKoJI
+	 Awr/myIucp0VHv2jwNVIyneqomvpOwTzOS3cOUql9UOry3poyPA7hbUKFgBpPVAKD6
+	 SPHq0NNBpGdk4Y8HbnciR38i4oVmHfJwW8VnL6HM9v1ziQONBRHpxA41SxmWmrrT8p
+	 n9FCTCKqPA5c8rE4wqSFG4vOu+ADb5S1IE5ttbzfTlNWN//XtBGpQn8sKJQVqafSiK
+	 2ss7WyjsgA8Nt1XkLPVOY++v0oyIO1uGw+8MyjAUR71nDhVtbC2YbdIvQ930Up9jD3
+	 IjynifPJ/+YOA==
+Date: Sat, 22 Feb 2025 12:38:15 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: "Budai, Robert" <Robert.Budai@analog.com>
+Cc: Nuno =?UTF-8?B?U8Oh?= <noname.nuno@gmail.com>, Lars-Peter Clausen
+ <lars@metafoo.de>, "Hennerich, Michael" <Michael.Hennerich@analog.com>,
+ "Sa, Nuno" <Nuno.Sa@analog.com>, "Gradinariu, Ramona"
+ <Ramona.Gradinariu@analog.com>, "Miclaus, Antoniu"
+ <Antoniu.Miclaus@analog.com>, "Rob Herring" <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>,
+ Jonathan Corbet <corbet@lwn.net>, "linux-iio@vger.kernel.org"
+ <linux-iio@vger.kernel.org>, "devicetree@vger.kernel.org"
+ <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, "linux-doc@vger.kernel.org"
+ <linux-doc@vger.kernel.org>
+Subject: Re: [RESEND PATCH v8 5/6] iio: imu: adis16550: add adis16550
+ support
+Message-ID: <20250222123815.0521df87@jic23-huawei>
+In-Reply-To: <45d64de8a1074788b7c4bffc29788742@analog.com>
+References: <20250217105753.605465-1-robert.budai@analog.com>
+	<20250217105753.605465-6-robert.budai@analog.com>
+	<aee93ef96e71adf70a48ee5877bd75966d9c78c1.camel@gmail.com>
+	<45d64de8a1074788b7c4bffc29788742@analog.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: "Neronin, Niklas" <niklas.neronin@linux.intel.com>
-Subject: Re: [PATCH 2/5] usb: xhci: Clean up the TD skipping loop
-To: Michal Pecio <michal.pecio@gmail.com>,
- Mathias Nyman <mathias.nyman@intel.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250210083718.2dd337c3@foxbook>
- <20250210083940.626c02d9@foxbook>
-Content-Language: en-US
-In-Reply-To: <20250210083940.626c02d9@foxbook>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, 20 Feb 2025 13:43:04 +0000
+"Budai, Robert" <Robert.Budai@analog.com> wrote:
 
-On 10/02/2025 9.39, Michal Pecio wrote:
-> Half of this loop is code which only executes once to deal with cases
-> where no TD matches the event and then immediately returns. This code
-> has no need to be in any kind of loop, so get it out.
-> 
-> Shuffle the remaining conditionals a little to improve readability.
-> 
-> No functional change.
-> 
-> Signed-off-by: Michal Pecio <michal.pecio@gmail.com>
-> ---
->  
-> -		if (!ep_seg) {
-> +		if (ep->skip) {
->  
-> -			if (ep->skip && usb_endpoint_xfer_isoc(&td->urb->ep->desc)) {
-> +			if (!ep_seg && usb_endpoint_xfer_isoc(&td->urb->ep->desc)) {
->  				skip_isoc_td(xhci, td, ep, status);
->  				if (!list_empty(&ep_ring->td_list))
->  					continue;
-> @@ -2880,38 +2880,6 @@ static int handle_tx_event(struct xhci_hcd *xhci,
->  				goto check_endpoint_halted;
->  			}
->  
-> -			/*
-> -			 * Skip the Force Stopped Event. The 'ep_trb' of FSE is not in the current
-> -			 * TD pointed by 'ep_ring->dequeue' because that the hardware dequeue
-> -			 * pointer still at the previous TRB of the current TD. The previous TRB
-> -			 * maybe a Link TD or the last TRB of the previous TD. The command
-> -			 * completion handle will take care the rest.
-> -			 */
-> -			if (trb_comp_code == COMP_STOPPED ||
-> -			    trb_comp_code == COMP_STOPPED_LENGTH_INVALID) {
-> -				return 0;
-> -			}
-> -
-> -			/*
-> -			 * Some hosts give a spurious success event after a short
-> -			 * transfer. Ignore it.
-> -			 */
-> -			if ((xhci->quirks & XHCI_SPURIOUS_SUCCESS) &&
-> -			    ep_ring->last_td_was_short) {
-> -				ep_ring->last_td_was_short = false;
-> -				return 0;
-> -			}
-> -
-> -			/* HC is busted, give up! */
-> -			xhci_err(xhci,
-> -				 "ERROR Transfer event TRB DMA ptr not part of current TD ep_index %d comp_code %u\n",
-> -				 ep_index, trb_comp_code);
-> -			trb_in_td(xhci, td, ep_trb_dma, true);
-> -
-> -			return -ESHUTDOWN;
-> -		}
-> -
-> -		if (ep->skip) {
->  			xhci_dbg(xhci,
->  				 "Found td. Clear skip flag for slot %u ep %u.\n",
->  				 slot_id, ep_index);
+> > -----Original Message-----
+> > From: Nuno S=C3=A1 <noname.nuno@gmail.com>
+> > Sent: Thursday, February 20, 2025 10:22 AM
+> > To: Budai, Robert <Robert.Budai@analog.com>; Lars-Peter Clausen
+> > <lars@metafoo.de>; Hennerich, Michael <Michael.Hennerich@analog.com>;
+> > Sa, Nuno <Nuno.Sa@analog.com>; Gradinariu, Ramona
+> > <Ramona.Gradinariu@analog.com>; Miclaus, Antoniu
+> > <Antoniu.Miclaus@analog.com>; Jonathan Cameron <jic23@kernel.org>; Rob
+> > Herring <robh@kernel.org>; Krzysztof Kozlowski <krzk+dt@kernel.org>; Co=
+nor
+> > Dooley <conor+dt@kernel.org>; Jonathan Corbet <corbet@lwn.net>; linux-
+> > iio@vger.kernel.org; devicetree@vger.kernel.org; linux-kernel@vger.kern=
+el.org;
+> > linux-doc@vger.kernel.org
+> > Subject: Re: [RESEND PATCH v8 5/6] iio: imu: adis16550: add adis16550
+> > support
+> >=20
+> > [External]
+> >=20
+> > On Mon, 2025-02-17 at 12:57 +0200, Robert Budai wrote: =20
+> > > The ADIS16550 is a complete inertial system that includes a triaxis
+> > > gyroscope and a triaxis accelerometer. Each inertial sensor in the
+> > > ADIS16550 combines industry leading MEMS only technology with signal
+> > > conditioning that optimizes dynamic performance. The factory calibrat=
+ion
+> > > characterizes each sensor for sensitivity, bias, and alignment. As a
+> > > result, each sensor has its own dynamic compensation formulas that
+> > > provide accurate sensor measurements.
+> > >
+> > > Co-developed-by: Ramona Gradinariu <ramona.gradinariu@analog.com>
+> > > Signed-off-by: Ramona Gradinariu <ramona.gradinariu@analog.com>
+> > > Co-developed-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
+> > > Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
+> > > Signed-off-by: Nuno S=C3=A1 <nuno.sa@analog.com>
+> > > Signed-off-by: Robert Budai <robert.budai@analog.com>
+> > > ---
+> > > =20
+> >=20
+> > I guess it would make sense a Co-developed-by: for Robert?
 
-This debug message is now misleading, the TD way or may not be found on non-isochronous.
+The From is set to Robert, so that is implicit.  It is an odd chain
+though. Now I've looked at it this doesn't
+seem quite right but I am struggling with what it should be :(
 
-Before:
-	if (ep_seg && ep->skip)
-		xhci_dbg(xhci, "Found td. ...
-After:
-	if (ep->skip && (ep_seg || !isoc))
-		xhci_dbg(xhci, "Found td. ...
+I think this chain means that Ramona, Antoniu and Robert made significant
+contributions. Robert's was after Nuno had handled the patch on some
+ADI tree?=20
 
+In the end Roberts was large enough to take 'ownership' rather
+than the original 'from'. That part is unusual. We rarely do that.
 
-With Best Regards,
-Niklas
+However, from what I can see publicly that isn't what happened.
+
+This patch v1 was posted with Robert as Co-developed and Nuno as
+the From + SoB (which puts Nuno at same level as a co-developer but
+the one who posted it).
+
+So really the ownership trail should have remained the same with
+the From set to Nuno.  However that gives us another fun corner.
+
+Robert then started handing the series. That would normally require
+a SoB to cover that part, but he already has one.  Gah.=20
+
+Anyhow I think the best way to fix this up is actually to
+add Co-developed-by for Nuno which does transfer patch ownership
+but at least refects that all of you played some significant part.
+
+Alternative is modify the author ship to reflect earliest posting.
+
+To keep things moving I'm going to assume you are fine with
+me adding Co-developed by to explain Nuno's SoB where relevant
+rather than changing the From and adding Co-developed-by for Robert.
+
+The DT binding has a similar issue. There we have Ramona who
+handled the patch but no co-developed. That's clearly not right
+as v1 is form Ramona.  There I'll make it Codev Ramona.
+
+If you'd prefer to fix this all up with the original From:
+then send me a new version and I'll switch out what I have applied.
+
+Interesting this patch doesn't build and has a warning. I tweaked as:
+For some reason the first of the u16 val cases didn't trigger the size
+mismatch that __adis_update_bits() has a BUILD_BUG check on
+but given the similarity of the two cases I'm not sure why and I tweaked
+them both. Give me a shout if any of this breaks things.
+
+diff --git a/drivers/iio/imu/adis16550.c b/drivers/iio/imu/adis16550.c
+index 16f01c61a429..8ec3afe6140b 100644
+--- a/drivers/iio/imu/adis16550.c
++++ b/drivers/iio/imu/adis16550.c
+@@ -509,10 +509,10 @@ static int adis16550_get_accl_filter_freq(struct adis=
+16550 *st, int *freq_hz)
+ static int adis16550_set_accl_filter_freq(struct adis16550 *st, int freq_h=
+z)
+ {
+        u8 en =3D freq_hz ? 1 : 0;
++       u16 val =3D FIELD_PREP(ADIS16550_ACCL_FIR_EN_MASK, en);
+=20
+        return __adis_update_bits(&st->adis, ADIS16550_REG_CONFIG,
+-                                 ADIS16550_ACCL_FIR_EN_MASK,
+-                                 FIELD_PREP(ADIS16550_ACCL_FIR_EN_MASK, en=
+));
++                                 ADIS16550_ACCL_FIR_EN_MASK, val);
+ }
+=20
+ static int adis16550_get_gyro_filter_freq(struct adis16550 *st, int *freq_=
+hz)
+@@ -535,10 +535,10 @@ static int adis16550_get_gyro_filter_freq(struct adis=
+16550 *st, int *freq_hz)
+ static int adis16550_set_gyro_filter_freq(struct adis16550 *st, int freq_h=
+z)
+ {
+        u8 en =3D freq_hz ? 1 : 0;
++       u16 val =3D FIELD_PREP(ADIS16550_GYRO_FIR_EN_MASK, en);
+=20
+        return __adis_update_bits(&st->adis, ADIS16550_REG_CONFIG,
+-                                 ADIS16550_GYRO_FIR_EN_MASK,
+-                                 FIELD_PREP(ADIS16550_GYRO_FIR_EN_MASK, en=
+));
++                                 ADIS16550_GYRO_FIR_EN_MASK, val);
+ }
+=20
+ enum {
+@@ -832,7 +832,6 @@ static u32 adis16550_validate_crc(__be32 *buffer, const=
+ u8 n_elem)
+=20
+ static irqreturn_t adis16550_trigger_handler(int irq, void *p)
+ {
+-       u32 crc;
+        int ret;
+        u16 dummy;
+        bool valid;
+@@ -1143,7 +1142,7 @@ module_spi_driver(adis16550_driver);
+ MODULE_AUTHOR("Nuno Sa <nuno.sa@analog.com>");
+ MODULE_AUTHOR("Ramona Gradinariu <ramona.gradinariu@analog.com>");
+ MODULE_AUTHOR("Antoniu Miclaus <antoniu.miclaus@analog.com>");
+-MODULE_AUTHOR("Robert Budai <robert.budai@analog.com>")
++MODULE_AUTHOR("Robert Budai <robert.budai@analog.com>");
+ MODULE_DESCRIPTION("Analog Devices ADIS16550 IMU driver");
+ MODULE_IMPORT_NS("IIO_
+
+> >=20
+> > Anyways, all looks good except for one thing that I just spotted...
+> >  =20
+> > > v8:
+> > > - removed __aligned from struct adis16550, as suggested
+> > > - crc buffer extraction into the crc check function
+> > > - passed buffer into crc validation as original, __be32 and performed=
+ check
+> > > using be32_to_cpu conversion of the buffer
+> > > - added trailing comma to line 993
+> > > - removed trailing comma from line 877
+> > >
+> > > =C2=A0drivers/iio/imu/Kconfig=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 1=
+3 +
+> > > =C2=A0drivers/iio/imu/Makefile=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0 =
+1 +
+> > > =C2=A0drivers/iio/imu/adis16550.c | 1149 =20
+> > +++++++++++++++++++++++++++++++++++ =20
+> > > =C2=A03 files changed, 1163 insertions(+)
+> > > =C2=A0create mode 100644 drivers/iio/imu/adis16550.c
+> > > =20
+> >=20
+> > ...
+> >  =20
+> > >
+> > > +static int adis16550_set_freq_hz(struct adis16550 *st, u32 freq_hz)
+> > > +{
+> > > +	u16 dec;
+> > > +	int ret;
+> > > +	u32 sample_rate =3D st->clk_freq_hz;
+> > > +	/*
+> > > +	 * The optimal sample rate for the supported IMUs is between
+> > > +	 * int_clk - 1000 and int_clk + 500.
+> > > +	 */
+> > > +	u32 max_sample_rate =3D st->info->int_clk * 1000 + 500000;
+> > > +	u32 min_sample_rate =3D st->info->int_clk * 1000 - 1000000;
+> > > +
+> > > +	if (!freq_hz)
+> > > +		return -EINVAL;
+> > > +
+> > > +	adis_dev_auto_lock(&st->adis);
+> > > +
+> > > +	if (st->sync_mode =3D=3D ADIS16550_SYNC_MODE_SCALED) {
+> > > +		unsigned long scaled_rate =3D lcm(st->clk_freq_hz, freq_hz);
+> > > +		int sync_scale;
+> > > +
+> > > +		if (scaled_rate > max_sample_rate)
+> > > +			scaled_rate =3D max_sample_rate / st->clk_freq_hz * st- =20
+> > > >clk_freq_hz; =20
+> > > +		else
+> > > +			scaled_rate =3D max_sample_rate / scaled_rate *
+> > > scaled_rate;
+> > > +
+> > > +		if (scaled_rate < min_sample_rate)
+> > > +			scaled_rate =3D roundup(min_sample_rate, st- =20
+> > > >clk_freq_hz); =20
+> > > + =20
+> >=20
+> > I would imagine the above is the same deal as in other devices [1] or d=
+o you
+> > know for a fact this one is different? Maybe it's simple enough for Jon=
+athan to
+> > tweak while applying...
+> >=20
+> > [1]:
+> > https://urldefense.com/v3/__https://elixir.bootlin.com/linux/v6.13.3/so=
+urce
+> > /drivers/iio/imu/adis16475.c*L364__;Iw!!A3Ni8CS0y2Y!7Y71yPaQAxVzNRd
+> > O_jT7wEz4k-
+> > s6z4tJHOcES84HYkq8qNGsgJH7zxwjfPNjLF3OEGVInSolo1ennLU_mwpmEbo$
+> >=20
+> > - Nuno S=C3=A1 =20
+>=20
+> [Robert Budai]=20
+> No differences were found in the scaled_sync behavior of the ADIS16475 and
+> ADIS16550. It is safe to add from my side.
+>=20
+If we want to do such a module parameter override I am fine with adding
+it but as a separate patch on top that provides the reasoning etc.
+It is a little to messy for me to do as a tweak.
+
+Jonathan
+=09
+> Best regards,
+> Robert B
 
 
