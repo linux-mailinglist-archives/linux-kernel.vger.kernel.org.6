@@ -1,54 +1,59 @@
-Return-Path: <linux-kernel+bounces-527253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C6B8A408DC
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 15:07:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BAEEEA408DE
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 15:07:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A514D19C4ABF
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 14:07:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1449E19C4AF2
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 14:07:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEF23145A03;
-	Sat, 22 Feb 2025 14:07:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ACC714A095;
+	Sat, 22 Feb 2025 14:07:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="RdvSu35k"
-Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bkJogeE6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF2702CCDB
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 14:07:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E90D42CCDB
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 14:07:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740233230; cv=none; b=pxkuGvki0a7Nw6N9vOdhPoPAXq7lmyZITgLAd7Ph2Car1dl2fD4Q12Bolzy/OQUkNhNHBAofQFdOP1hfNEiIX4BiTA1iW2phSk7qv34DZe+vebRpMmGsmCYbdtv3eTijbfYGw+Dm5t6AJjHdotX1Xe+YqMDWiypnOB8ZnRBm7x8=
+	t=1740233252; cv=none; b=O3fo+1QOUxntlmyOEvlyDX1u5A+pyEoRXuZxjgck7H0bVBVTncf0oCp8XxVXdWRwRVdA0LlLDI9K8hFNxC68G6OJ4Sy2U8IcnoulriCzVmpiF1n+Jh57Zmmp/Vu2Q4bbo1b8pOGuAdjHcgtPrm5aLJ8KorKoEp95uKEot7iF9sQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740233230; c=relaxed/simple;
-	bh=JoDL0HgW0R2+LYqjjV7VB0fAIsetibawAPp+OSXTa2I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uFAlNg0z19KlaJgB5gp+yDR1yQuUdY5GbRfcZszcn2p5Z+gl4EbhqFp6h4D/hcCix9vYPHla01he7/nfqUfKGcrCpS0sDo/4UGv68KLbqUL2796nDVAv4vCDpHbmXfLPj5sZ8eH4/I22Q2l4O5rUJ5NGz2luXcLWg9c8v5KGhYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=RdvSu35k; arc=none smtp.client-ip=91.218.175.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Sat, 22 Feb 2025 09:07:00 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1740233224;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=12hDZFuuET8/IWzJSq6NgQOafKWg9FuiRIQhyCJLoy8=;
-	b=RdvSu35kQh00+UMWrkD/XqwY0XX4VWxvG54op/SwI+fHY19hwjrTtimZk7lJCvnSuFIXBW
-	2mPNNzj1sZJ5UCGSRkgWcBFwD2/ifJTTrcLAaNBpfN6DgUlUtLHfAPGrjtBLXsUJoBKfu0
-	1YB/Aq1wCdPZz9nTdILrAcs4D/SZBh4=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Bagas Sanjaya <bagasdotme@gmail.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Documentation <linux-doc@vger.kernel.org>, Linux bcachefs <linux-bcachefs@vger.kernel.org>, 
-	Jonathan Corbet <corbet@lwn.net>, Joshua Ashton <joshua@froggi.es>
-Subject: Re: [PATCH 0/4] bcachefs: casefolding.rst fixes
-Message-ID: <rgtsg2xs422yj6mm5lykq24fj5hpqtr3aqe4cq2uj6fyi3okcg@dncvcfnx56yn>
-References: <20250222091853.16487-1-bagasdotme@gmail.com>
+	s=arc-20240116; t=1740233252; c=relaxed/simple;
+	bh=nE92ptBfc/AIw7gYV6MhCk9fekWsK03AbRBKlDoI/a0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=P+lTzigLO4F7/UxqeOvbJ9xmU23ZQi9NyUMxd4/twILq16YjznFeCy3Y/drtebdgXCgPItHLirukSzZkUqzsKXGBsVWX8G80501/iB8WQ1hhtaiXo2XvRIpbdwFKH7x18+SZCnm08C7XpR0Ec8h1k1AlrIJ8erQ5xAruMaTM87E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bkJogeE6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FB8CC4CED1;
+	Sat, 22 Feb 2025 14:07:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740233251;
+	bh=nE92ptBfc/AIw7gYV6MhCk9fekWsK03AbRBKlDoI/a0=;
+	h=Date:From:To:Cc:Subject:From;
+	b=bkJogeE6XiLRypNYN4PCbuEItLAKH5NgNqaGJJZtvG5GN1EzQmTK3IP8QU5arFi3q
+	 zFbt3rGoQSN14d8jdHLnlFfFeuRwnuHc5nH0QDLk4N/ws3ryh2RtXHlkiUu7PDorR4
+	 f5g0WkycjlEAMz5BTAhzJ37ustGYpkRb0axR0QIsJxSewTDN44TFkbmMMhIXpyt9iG
+	 TujjFikPkUbksVxvRSIxumoU3mtWKtXyr5gZ8HHS24w9Ha6DbkxOD8TwiG2tyGqp3G
+	 dQlZ88VbMRWqDvjfNI+cF0nWMt8V+zLWzRZD0VqrX0U0JZi9/pDfCYf+TEJLs+sm89
+	 YXlc+7wKxJ7yA==
+Date: Sat, 22 Feb 2025 15:07:20 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+	Fenghua Yu <fenghua.yu@intel.com>,
+	Reinette Chatre <reinette.chatre@intel.com>,
+	Tony Luck <tony.luck@intel.com>
+Subject: [GIT PULL] x86 fixes
+Message-ID: <Z7naGFRn755UP0Ke@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,35 +62,41 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250222091853.16487-1-bagasdotme@gmail.com>
-X-Migadu-Flow: FLOW_OUT
 
-On Sat, Feb 22, 2025 at 04:18:49PM +0700, Bagas Sanjaya wrote:
-> Hi Kent, hi Joshua,
-> 
-> Here are fixes for casefolding docs. Patches [1/4], [2/4], and [4/4]
-> fixes htmldocs warnings reported in linux-next.
-> 
-> Enjoy!
+Linus,
 
-Thanks, applied
+Please pull the latest x86/urgent Git tree from:
 
-> 
-> Bagas Sanjaya (4):
->   Documentation: bcachefs: casefolding: Do not italicize NUL
->   Documentation: bcachefs: casefolding: Fix dentry/dcache considerations
->     section
->   Documentation: bcachefs: casefolding: Use bullet list for dirent
->     structure
->   Documentation: bcachefs: Add casefolding toctree entry
-> 
->  Documentation/filesystems/bcachefs/casefolding.rst | 13 ++++++++-----
->  Documentation/filesystems/bcachefs/index.rst       |  1 +
->  2 files changed, 9 insertions(+), 5 deletions(-)
-> 
-> 
-> base-commit: 77308424ba26e1b41a7db5d4eae121841a707c05
-> -- 
-> An old man doll... just what I always wanted! - Clara
-> 
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-urgent-2025-02-22
+
+   # HEAD: c9876cdb3ac4dcdf3c710ff02094165982e2a557 docs: arch/x86/sva: Fix two grammar errors under Background and FAQ
+
+Miscellaneous x86 fixes:
+
+ - Fix AVX-VNNI CPU feature dependency bug triggered via
+   the 'noxsave' boot option
+
+ - Fix typos in the SVA documentation
+
+ - Add Tony Luck as RDT co-maintainer and remove Fenghua Yu
+
+ Thanks,
+
+	Ingo
+
+------------------>
+Brian Ochoa (1):
+      docs: arch/x86/sva: Fix two grammar errors under Background and FAQ
+
+Eric Biggers (1):
+      x86/cpufeatures: Make AVX-VNNI depend on AVX
+
+Fenghua Yu (1):
+      MAINTAINERS: Change maintainer for RDT
+
+
+ Documentation/arch/x86/sva.rst   | 4 ++--
+ MAINTAINERS                      | 2 +-
+ arch/x86/kernel/cpu/cpuid-deps.c | 1 +
+ 3 files changed, 4 insertions(+), 3 deletions(-)
 
