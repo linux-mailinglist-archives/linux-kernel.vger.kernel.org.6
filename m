@@ -1,138 +1,89 @@
-Return-Path: <linux-kernel+bounces-527177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84E38A40825
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 12:56:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB9B1A40826
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 12:57:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 937587011DD
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 11:56:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54F6D19C20C3
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 11:57:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42EB220ADC7;
-	Sat, 22 Feb 2025 11:56:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3WrIbJxw";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="zOCdvX5a"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76B0A20AF7A;
+	Sat, 22 Feb 2025 11:56:49 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22A2720A5F2;
-	Sat, 22 Feb 2025 11:56:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBCC120AF6D
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 11:56:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740225388; cv=none; b=pb2irScP9C+G1WRFTgdJTxKrb0R769mEn0bNn6PtIWh7Z85AcycirGbrI7tC2n/UqUgKuKHIRgzL5YsAsPbg6zUvPNKfWgC6xe/dFVrdtYC10xsh3DvJ/BQFRDdkR2ycyRv+MDxeAL4yc0bN18/Hxplh3+SNU+PnSDZxbA+ihxI=
+	t=1740225408; cv=none; b=frbgLt5OmIFO+BTxK22jXi09vV13QrDXbOxfnCJ0HLCmNqRGb1cGfyCO241J65qVD99Vv//9T9qRwxZwFPDK+FrOD7IbcC5dhrgHlr2uASidFGLTLwdoOCHEJKqtIKp9TpZHSe7YRengrCOHhUAmktGgLLfeHNgwWNdyniN6WDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740225388; c=relaxed/simple;
-	bh=UESG95FDx65TuZvSWYrI+yhv8XOdxQgxVUY483SMbjA=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=HeNvMoQ3eCjkepBs0KW4/qSTZd5kPSnuafUVgb4OVhl3Ix/DiBqONXgM97a8/Em2W0b/qCD3KnochXe1IAP4IigLmFLuOQj8I1malZW2CEbdYNFXMF090EnDnDQFDwFiMitw8YgOqNTZ3J33Pwq3XTjDEvCtaL2yGWwyXVUc9Zc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3WrIbJxw; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=zOCdvX5a; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Sat, 22 Feb 2025 11:56:24 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1740225385;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EdxgI3hX0qF+ovfNe78Q+rFntWDm1RTLrSH3ZzCgb1w=;
-	b=3WrIbJxwiTgeD96wTckylalxxpnxL6VIdSgcCKzN4Nf1a/XsONXIzGlumI934FtyYagXM1
-	LVbF0b8b2G7qyyMFjo2e18/PJk6aA/juyCQN8yCVaS1kOdlSkrPtS+jkcV6VU4yDgQGNvJ
-	mx90GeKUVDnkaUyziObFBE0/HSnbwpY674ArLFSLbRJvQbmhoUuOhCgRV4mwJJwoRN99vn
-	wTmrrrc8uw2HlmcSIgpAt4iGxYWnMYEfUEr2OOczlONWdEe4yUxbrkJW2/JC9ta9OV4EHN
-	S4s5anoGuBc1vtTR9QY3kXq+y+LI9g2S0O1xsYMXHgKG8eOG/9rHRX2r02kAsg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1740225385;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EdxgI3hX0qF+ovfNe78Q+rFntWDm1RTLrSH3ZzCgb1w=;
-	b=zOCdvX5a6R4XslzIfeG6EuMzQAXKO43rAu4zosJB/EpjGlWLMPoMmwicHUKfNARyHke81f
-	zEPs+HZ+6EY0yjAA==
-From: "tip-bot2 for Peter Zijlstra" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/cpu] x86/cpu: Update Intel Family comments
-Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>,
- Ingo Molnar <mingo@kernel.org>, x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250127162252.GK16742@noisy.programming.kicks-ass.net>
-References: <20250127162252.GK16742@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1740225408; c=relaxed/simple;
+	bh=Qj0P/xDVIsaTi1wQhxrzNY7tf/z5/1wnR8B55/bmgb8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Kq+jS/kDnjA1CfpFTBNoZiyH9qYleMb2k5yqHjiv4k+tqZ5Xbx2/juMH8u0gGmMVo8EbXGNVKQFPoDP9kkFyKsQ3f/BII7ul66RR5lqjQFLychTXNcQ6nuZZYZ9YRxFf/Y0LLey/ZAbi9gL4qvuoo50J76mWROz6X3LUhY+FEcw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7D3DC4CED1;
+	Sat, 22 Feb 2025 11:56:45 +0000 (UTC)
+Date: Sat, 22 Feb 2025 11:56:43 +0000
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Ryan Roberts <ryan.roberts@arm.com>
+Cc: Will Deacon <will@kernel.org>,
+	Pasha Tatashin <pasha.tatashin@soleen.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Christoph Hellwig <hch@infradead.org>,
+	David Hildenbrand <david@redhat.com>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Anshuman Khandual <anshuman.khandual@arm.com>,
+	Alexandre Ghiti <alexghiti@rivosinc.com>,
+	Kevin Brodsky <kevin.brodsky@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 06/14] arm64/mm: Hoist barriers out of
+ set_ptes_anysz() loop
+Message-ID: <Z7m7e1W8LpYvV_h0@arm.com>
+References: <20250217140809.1702789-1-ryan.roberts@arm.com>
+ <20250217140809.1702789-7-ryan.roberts@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174022538482.10177.9092274090971595395.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250217140809.1702789-7-ryan.roberts@arm.com>
 
-The following commit has been merged into the x86/cpu branch of tip:
+On Mon, Feb 17, 2025 at 02:07:58PM +0000, Ryan Roberts wrote:
+> diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
+> index e255a36380dc..e4b1946b261f 100644
+> --- a/arch/arm64/include/asm/pgtable.h
+> +++ b/arch/arm64/include/asm/pgtable.h
+> @@ -317,10 +317,8 @@ static inline void __set_pte_nosync(pte_t *ptep, pte_t pte)
+>  	WRITE_ONCE(*ptep, pte);
+>  }
+>  
+> -static inline void __set_pte(pte_t *ptep, pte_t pte)
+> +static inline void __set_pte_complete(pte_t pte)
+>  {
+> -	__set_pte_nosync(ptep, pte);
+> -
+>  	/*
+>  	 * Only if the new pte is valid and kernel, otherwise TLB maintenance
+>  	 * or update_mmu_cache() have the necessary barriers.
 
-Commit-ID:     43bb700cff6bc2f0d337006b864192227fb05dc1
-Gitweb:        https://git.kernel.org/tip/43bb700cff6bc2f0d337006b864192227fb05dc1
-Author:        Peter Zijlstra <peterz@infradead.org>
-AuthorDate:    Mon, 27 Jan 2025 17:22:52 +01:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Sat, 22 Feb 2025 12:50:18 +01:00
+Unrelated to this patch but I just realised that this comment is stale,
+we no longer do anything in update_mmu_cache() since commit 120798d2e7d1
+("arm64: mm: remove dsb from update_mmu_cache"). If you respin, please
+remove the update_mmu_cache() part as well.
 
-x86/cpu: Update Intel Family comments
+Thanks.
 
-Because who can ever remember all these names.
-
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Link: https://lore.kernel.org/r/20250127162252.GK16742@noisy.programming.kicks-ass.net
----
- arch/x86/include/asm/intel-family.h | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/arch/x86/include/asm/intel-family.h b/arch/x86/include/asm/intel-family.h
-index 8359113..f9f67af 100644
---- a/arch/x86/include/asm/intel-family.h
-+++ b/arch/x86/include/asm/intel-family.h
-@@ -110,9 +110,9 @@
- 
- #define INTEL_SAPPHIRERAPIDS_X		IFM(6, 0x8F) /* Golden Cove */
- 
--#define INTEL_EMERALDRAPIDS_X		IFM(6, 0xCF)
-+#define INTEL_EMERALDRAPIDS_X		IFM(6, 0xCF) /* Raptor Cove */
- 
--#define INTEL_GRANITERAPIDS_X		IFM(6, 0xAD)
-+#define INTEL_GRANITERAPIDS_X		IFM(6, 0xAD) /* Redwood Cove */
- #define INTEL_GRANITERAPIDS_D		IFM(6, 0xAE)
- 
- /* "Hybrid" Processors (P-Core/E-Core) */
-@@ -126,16 +126,16 @@
- #define INTEL_RAPTORLAKE_P		IFM(6, 0xBA)
- #define INTEL_RAPTORLAKE_S		IFM(6, 0xBF)
- 
--#define INTEL_METEORLAKE		IFM(6, 0xAC)
-+#define INTEL_METEORLAKE		IFM(6, 0xAC) /* Redwood Cove / Crestmont */
- #define INTEL_METEORLAKE_L		IFM(6, 0xAA)
- 
--#define INTEL_ARROWLAKE_H		IFM(6, 0xC5)
-+#define INTEL_ARROWLAKE_H		IFM(6, 0xC5) /* Lion Cove / Skymont */
- #define INTEL_ARROWLAKE			IFM(6, 0xC6)
- #define INTEL_ARROWLAKE_U		IFM(6, 0xB5)
- 
--#define INTEL_LUNARLAKE_M		IFM(6, 0xBD)
-+#define INTEL_LUNARLAKE_M		IFM(6, 0xBD) /* Lion Cove / Skymont */
- 
--#define INTEL_PANTHERLAKE_L		IFM(6, 0xCC)
-+#define INTEL_PANTHERLAKE_L		IFM(6, 0xCC) /* Cougar Cove / Crestmont */
- 
- /* "Small Core" Processors (Atom/E-Core) */
- 
+-- 
+Catalin
 
