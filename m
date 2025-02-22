@@ -1,95 +1,188 @@
-Return-Path: <linux-kernel+bounces-527208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C72CAA40875
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 13:52:27 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84B62A40877
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 13:54:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51F823B0179
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 12:52:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 561D37AE893
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 12:53:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7566F20AF7B;
-	Sat, 22 Feb 2025 12:52:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27A1B20AF87;
+	Sat, 22 Feb 2025 12:53:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ob2mvSpE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yk+Z3hC5"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C79BE20766E;
-	Sat, 22 Feb 2025 12:52:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72E0D20766E;
+	Sat, 22 Feb 2025 12:53:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740228730; cv=none; b=iwQPtNgrTJXkhAhd3vVO/8iIUDhdFWn8UNnU7LP6Nd3hfEcxCEB46aWJa5TJ6HOpXDYKjMvt2VSWQXoo3Q+R9IkON4Eqig05ZjWAgiejfmg4CDYWuqIYKy1U0s3mzIMtHpOSUjrtejpFszMYJ+fBjp/8GzNAvXWStmWK/PgruqE=
+	t=1740228829; cv=none; b=sypta5uWovgcI6m8Y7Aras6lcvu5WXk+S25LZYQUoCdnpiTjevRLVDoNyyvTPqSQDjfymIAlY0C5UA8G4th/2vK0fDAUfePXFyuIM2zc1N7qQ6FxXWOCRIvS8BwfO9bha0avOI1MvwN9IZDekkvyjp7eaaw/g5nWn/MQDBukv7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740228730; c=relaxed/simple;
-	bh=AcH7rRnJqyV3m9vAmkcNvvMPMLHZWqAuVkoH6/mGW/o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TbGs/EKgTaQlG+g7UmnmGKd7+dI1wPTSi7vH7jBIb55lM9DJ8jiAJttQ3aTOHDr51WjFZLdcP+ZN//1PQIB4KdWdpfiib551fX89+QRzKEaTD93Vg0KdDVSyCZ0TjkdhURQwJf7IzdCvj98ZOM0N8wb6SpduDMUUVgbQ5tpHHsk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ob2mvSpE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD7B2C4CED1;
-	Sat, 22 Feb 2025 12:52:06 +0000 (UTC)
+	s=arc-20240116; t=1740228829; c=relaxed/simple;
+	bh=oqJN/sPCZaLoAPPOe7uUHklrzuH3yr710lMdVhi0Qno=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=HvHYjBKFctNw7uPJ5EosFlPARhbceqQDvnlKyS9sPsh+SYfiPzkATAo9BTvVo9hZS8NKOZzu5AJdb9bADZjGQsHTk78X1q7O8wOj382v3qIrQ9HEL8pa94vCf/RVfJCsY2bqkUwVFL46AwmDpTWsv4/uQaG28qpKSeejtEDOufo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yk+Z3hC5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F202C4CED1;
+	Sat, 22 Feb 2025 12:53:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740228730;
-	bh=AcH7rRnJqyV3m9vAmkcNvvMPMLHZWqAuVkoH6/mGW/o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ob2mvSpEi/X14XT1aFy64FEAHY4VipFwPx+gcrqac5d9vM33oc1zLSwHmT4ADivFv
-	 A9V64jG2iBeNQd4rbjBspihwfs+U0Y3mV7BZItUl+ym5Gh4KXZADv22ShWj2LND/ZD
-	 KH7LHISbB4wEAp1r9aj7hYxqouc4kxjeOGjcCMDXzqogAHTq4fxOKHWD3VYxjEOJ+L
-	 VRFqh255zSyUjNxqG/YPE/QNJPzBiLURGaex5qSoCQWoB2Jt/sFWl31t8VRA/pkz/c
-	 WDb0Gorm67qbertOet6F1RXxLUgY3c6+WsBXo0T9DBvtm8Yhd/M/EZq+H8UytAaBQu
-	 GbDO1TbhC5xnw==
-Date: Sat, 22 Feb 2025 13:51:58 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Kees Cook <kees@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	Nathan Chancellor <nathan@kernel.org>,
-	Ard Biesheuvel <ardb@kernel.org>, Sam James <sam@gentoo.org>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org,
-	linux-efi@vger.kernel.org, stable@vger.kernel.org,
-	Kostadin Shishmanov <kostadinshishmanov@protonmail.com>,
-	Jakub Jelinek <jakub@redhat.com>
-Subject: Re: [PATCH 0/2] A couple of build fixes for x86 when using GCC 15
-Message-ID: <Z7nIbng2JHSg9in_@gmail.com>
-References: <20250121-x86-use-std-consistently-gcc-15-v1-0-8ab0acf645cb@kernel.org>
- <202501300804.20D8CC2@keescook>
+	s=k20201202; t=1740228828;
+	bh=oqJN/sPCZaLoAPPOe7uUHklrzuH3yr710lMdVhi0Qno=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Yk+Z3hC5KOE/6MsFx/Z5x2/LnU8vjW5lliJTA2N77BSWBAp6SRN8rnN8efyMb5RkE
+	 zeaupHTMirYMfIyJX8fL6kGp9FieZ+gkX6SnDfPEQQH0mW5HhdPHh9KzNF7GxGtBvx
+	 qF/Mp2wXMPDL+RXIMBQjey4Iop8jHsrpNmufli8OgVk+8Wu5xlnd6fhRloSte4K/84
+	 iH5KWKD1APqjU7+ql+wAAkfKVeu0vJSBfHw5b+Y/oc3m/6BlDeCbGmkkz46aXSxqJG
+	 8qbzIfpYXDPPWFqLtxRgZrfPY9lprNizet8sOfJ/NVuoME9pQauqaZjwHklSEvdIyl
+	 QNR4Ck8t6VZUA==
+Date: Sat, 22 Feb 2025 12:53:35 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan
+ Hunter <jonathanh@nvidia.com>, Javier Carrasco
+ <javier.carrasco.cruz@gmail.com>, Matti Vaittinen
+ <mazziesaccount@gmail.com>, Andy Shevchenko
+ <andriy.shevchenko@linux.intel.com>, Emil Gedenryd
+ <emil.gedenryd@axis.com>, Arthur Becker <arthur.becker@sentec.com>, Mudit
+ Sharma <muditsharma.info@gmail.com>, Per-Daniel Olsson
+ <perdaniel.olsson@axis.com>, Subhajit Ghosh
+ <subhajit.ghosh@tweaklogic.com>, Ivan Orlov <ivan.orlov0322@gmail.com>,
+ David Heidelberg <david@ixit.cz>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v4 2/3] iio: light: Add support for AL3000a illuminance
+ sensor
+Message-ID: <20250222125335.177fc746@jic23-huawei>
+In-Reply-To: <20250217140336.107476-3-clamor95@gmail.com>
+References: <20250217140336.107476-1-clamor95@gmail.com>
+	<20250217140336.107476-3-clamor95@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202501300804.20D8CC2@keescook>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Mon, 17 Feb 2025 16:03:35 +0200
+Svyatoslav Ryhel <clamor95@gmail.com> wrote:
 
-* Kees Cook <kees@kernel.org> wrote:
-
-> On Tue, Jan 21, 2025 at 06:11:32PM -0700, Nathan Chancellor wrote:
-> > GCC 15 changed the default C standard version from gnu17 to gnu23, which
-> > reveals a few places in the kernel where a C standard version was not
-> > set, resulting in build failures because bool, true, and false are
-> > reserved keywords in C23 [1][2]. Update these places to use the same C
-> > standard version as the rest of the kernel, gnu11.
+> AL3000a is a simple I2C-based ambient light sensor, which is
+> closely related to AL3010 and AL3320a, but has significantly
+> different way of processing data generated by the sensor.
 > 
-> Hello x86 maintainers!
+> Tested-by: Robert Eckelmann <longnoserob@gmail.com>
+> Tested-by: Antoni Aloy Torrens <aaloytorrens@gmail.com>
+> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> Reviewed-by: David Heidelberg <david@ixit.cz>
+
+Whilst I am confused by earlier statements about not
+having information on the conversion to illuminance values, I'm
+going to assume the look up table in here is based on some
+reasonable data from somewhere and hence that this is a sensor
+with appropriate filtering of the light to be able to do a non linear
+conversion from the value read and standard light curves.
+
+As such the IIO_LIGHT channel type is fine for this device.
+
+Applied patches 1 and 2 to the togreg branch of iio.git.
+Note that I'll initially push this out as testing to allow
+the autobuilders to see if they can find any issues that we missed.
+Patch 3 will need to go via the appropriate SoC tree as normal.
+
+Jonathan
+
+> ---
+>  drivers/iio/light/Kconfig   |  10 ++
+>  drivers/iio/light/Makefile  |   1 +
+>  drivers/iio/light/al3000a.c | 209 ++++++++++++++++++++++++++++++++++++
+>  3 files changed, 220 insertions(+)
+>  create mode 100644 drivers/iio/light/al3000a.c
 > 
-> I think this would be valuable to get into -rc1 since we're getting very
-> close to a GCC 15 release. Can someone get this into -tip urgent,
-> please? If everyone is busy I can take it via the hardening tree, as we
-> appear to be the ones tripping over it the most currently. :)
-
-Just an update, the x86 fix is now upstream via:
-
-  ee2ab467bddf ("x86/boot: Use '-std=gnu11' to fix build with GCC 15")
-
-Thanks,
-
-	Ingo
+> diff --git a/drivers/iio/light/Kconfig b/drivers/iio/light/Kconfig
+> index 29ffa8491927..37f83e1d8893 100644
+> --- a/drivers/iio/light/Kconfig
+> +++ b/drivers/iio/light/Kconfig
+> @@ -43,6 +43,16 @@ config ADUX1020
+>  	 To compile this driver as a module, choose M here: the
+>  	 module will be called adux1020.
+>  
+> +config AL3000A
+> +	tristate "AL3000a ambient light sensor"
+> +	depends on I2C
+> +	help
+> +	  Say Y here if you want to build a driver for the Dyna Image AL3000a
+> +	  ambient light sensor.
+> +
+> +	  To compile this driver as a module, choose M here: the
+> +	  module will be called al3000a.
+> +
+>  config AL3010
+>  	tristate "AL3010 ambient light sensor"
+>  	depends on I2C
+> diff --git a/drivers/iio/light/Makefile b/drivers/iio/light/Makefile
+> index f14a37442712..03f10786273a 100644
+> --- a/drivers/iio/light/Makefile
+> +++ b/drivers/iio/light/Makefile
+> @@ -7,6 +7,7 @@
+>  obj-$(CONFIG_ACPI_ALS)		+= acpi-als.o
+>  obj-$(CONFIG_ADJD_S311)		+= adjd_s311.o
+>  obj-$(CONFIG_ADUX1020)		+= adux1020.o
+> +obj-$(CONFIG_AL3000A)		+= al3000a.o
+>  obj-$(CONFIG_AL3010)		+= al3010.o
+>  obj-$(CONFIG_AL3320A)		+= al3320a.o
+>  obj-$(CONFIG_APDS9300)		+= apds9300.o
+> diff --git a/drivers/iio/light/al3000a.c b/drivers/iio/light/al3000a.c
+> new file mode 100644
+> index 000000000000..e2fbb1270040
+> --- /dev/null
+> +++ b/drivers/iio/light/al3000a.c
+> @@ -0,0 +1,209 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +#include <linux/array_size.h>
+> +#include <linux/bitfield.h>
+> +#include <linux/device.h>
+> +#include <linux/err.h>
+> +#include <linux/i2c.h>
+> +#include <linux/mod_devicetable.h>
+> +#include <linux/module.h>
+> +#include <linux/pm.h>
+> +#include <linux/regmap.h>
+> +#include <linux/regulator/consumer.h>
+> +#include <linux/types.h>
+> +
+> +#include <linux/iio/iio.h>
+> +
+> +#define AL3000A_REG_SYSTEM		0x00
+> +#define AL3000A_REG_DATA		0x05
+> +
+> +#define AL3000A_CONFIG_ENABLE		0x00
+> +#define AL3000A_CONFIG_DISABLE		0x0b
+> +#define AL3000A_CONFIG_RESET		0x0f
+> +#define AL3000A_GAIN_MASK		GENMASK(5, 0)
+> +
+> +/*
+> + * These are pre-calculated lux values based on possible output of sensor
+> + * (range 0x00 - 0x3F)
+> + */
+> +static const u32 lux_table[] = {
+> +	1, 1, 1, 2, 2, 2, 3, 4,					/* 0 - 7 */
+> +	4, 5, 6, 7, 9, 11, 13, 16,				/* 8 - 15 */
+> +	19, 22, 27, 32, 39, 46, 56, 67,				/* 16 - 23 */
+> +	80, 96, 116, 139, 167, 200, 240, 289,			/* 24 - 31 */
+> +	347, 416, 499, 600, 720, 864, 1037, 1245,		/* 32 - 39 */
+> +	1495, 1795, 2155, 2587, 3105, 3728, 4475, 5373,		/* 40 - 47 */
+> +	6450, 7743, 9296, 11160, 13397, 16084, 19309, 23180,	/* 48 - 55 */
+> +	27828, 33408, 40107, 48148, 57803, 69393, 83306, 100000 /* 56 - 63 */
+> +};
 
 
