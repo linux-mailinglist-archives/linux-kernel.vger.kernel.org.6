@@ -1,146 +1,121 @@
-Return-Path: <linux-kernel+bounces-527523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8B6BA40C50
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 01:06:12 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F7DAA40C3F
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 00:59:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F64A189EF1C
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 00:05:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9624317DBA4
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 23:59:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CABC41362;
-	Sun, 23 Feb 2025 00:05:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E78D2204F72;
+	Sat, 22 Feb 2025 23:59:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mt-integration.ru header.i=@mt-integration.ru header.b="O2JFj+xk"
-Received: from ksmg01.maxima.ru (ksmg01.maxima.ru [81.200.124.38])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LYOQ/HQl"
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 245AB29A9
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 00:05:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.200.124.38
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06F4078F2F;
+	Sat, 22 Feb 2025 23:59:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740269108; cv=none; b=JQUhevIks8dUHgbR/6blZ28NQfKdwZv5MR319CeLPRDt+45lAEPLG2B3yPtt9ixO6xE/fROlYZAU6ahGNpdY4n4tgN71+UIiNo1Oge2x0aZpbCP94qEJWuTeuslf6LT9vo88yiNbQMNxff+MlHqmWQstK84K8nu5rEnbjfBoOD4=
+	t=1740268773; cv=none; b=Hn8T+fhDLLN3ClE+tAUGuiji0Y6WMxFP+whBUpG6ID59ri6Zdmfj/u8VGmB5vOm3gXKp+1KNIYhzw9YfMNLgOx2zKz0J8m3lk2ElkPEMwpeEDtyR7JKXCc8eNYwW6ftPMKglgFpjN9PF1MUXplcTcvyRhkLwl3iS9ttlQupiIWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740269108; c=relaxed/simple;
-	bh=E9cdjRUVITPLQsgGsHuH4nhFKsBTV7y3Z0+t1B5sOPY=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hM60bHNRzKVl7WEayBXdhsTU+85lxFTaGaCyJSvRr37y8pxqEhS/JOMfHmZutHtM8d+1sbPnl2a9PSpLlsA5H5c5K5eCMMt0gpMytdLlF+uMTvNTiTLDwekBM4gFNQ17LSYcVbibkLcvgqCAH+BcFUSPksvP5vzt3cdVfTMevzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mt-integration.ru; spf=pass smtp.mailfrom=mt-integration.ru; dkim=pass (2048-bit key) header.d=mt-integration.ru header.i=@mt-integration.ru header.b=O2JFj+xk; arc=none smtp.client-ip=81.200.124.38
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mt-integration.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mt-integration.ru
-Received: from ksmg01.maxima.ru (localhost [127.0.0.1])
-	by ksmg01.maxima.ru (Postfix) with ESMTP id 93A90C0010;
-	Sun, 23 Feb 2025 02:59:23 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 ksmg01.maxima.ru 93A90C0010
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mt-integration.ru;
-	s=sl; t=1740268763; bh=5MgY5RqIvIZhdOAndrhlIhNOxars4SRgjV828wmNqdk=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=O2JFj+xkSNjMfp/9QMUMVJqFWU8xlje2xDAdp4spqnNVbnHHhO1rH9kzh+JJtZr4n
-	 9FwVC9+y52ixjqm3B3Ubfgp3499ZhPyF0ostpaTfaNP8cftaQCzBtNMRKL1ELeY0Dd
-	 tZg3l8qET6Smk07C6xgRiT2sDYgH4KihWSH5QukDmbyluy5IsMTpLW7F1YzSvco0nj
-	 1Oryz+i0EukW6byUrzEzlDy07FpH0FGWfGaASNuq/MQ2X2S468LnlTMIiVw1nZWCpy
-	 CBc8R8VdynzBacli0U+ol3XgD77ogng/5bIAWEIjrMETNXRSVNIDAwYCYgNOQojsgU
-	 D4wsDff7n+dfA==
-Received: from ksmg01.maxima.ru (mail.maxima.ru [81.200.124.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(Client CN "*.maxima.ru", Issuer "GlobalSign GCC R3 DV TLS CA 2020" (verified OK))
-	by ksmg01.maxima.ru (Postfix) with ESMTPS;
-	Sun, 23 Feb 2025 02:59:23 +0300 (MSK)
-Received: from localhost.maximatelecom.ru (178.236.220.144) by
- mmail-p-exch01.mt.ru (81.200.124.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.1544.4; Sun, 23 Feb 2025 02:59:20 +0300
-From: Vitaliy Shevtsov <v.shevtsov@mt-integration.ru>
-To: Chaitanya Dhere <chaitanya.dhere@amd.com>
-CC: Vitaliy Shevtsov <v.shevtsov@mt-integration.ru>, Jun Lei
-	<jun.lei@amd.com>, Harry Wentland <harry.wentland@amd.com>, Leo Li
-	<sunpeng.li@amd.com>, Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>, Alex
- Deucher <alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?=
-	<christian.koenig@amd.com>, Xinhui Pan <Xinhui.Pan@amd.com>, David Airlie
-	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Alex Hung
-	<alex.hung@amd.com>, Fangzhi Zuo <jerry.zuo@amd.com>, Aric Cyr
-	<aric.cyr@amd.com>, <amd-gfx@lists.freedesktop.org>,
-	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-	<lvc-project@linuxtesting.org>
-Subject: [PATCH] drm/amd/display: fix type mismatch in CalculateDynamicMetadataParameters()
-Date: Sun, 23 Feb 2025 04:58:16 +0500
-Message-ID: <20250222235818.1990-1-v.shevtsov@mt-integration.ru>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1740268773; c=relaxed/simple;
+	bh=VSd7G507W9GhEVUIyS2seEENJt2SPhore+zRSc3WcMY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=J0Jh3xtnz1xFcCds3p5fE394akuxRG85uBWkV6BbKE3SqGpiz+HuS4DnrU6aodLY+lVlrxwn9xp2vzwW1klPYEc+mDxz0SyPBSllFUoAnZNu1ORLknhWq+Qg45Bo4cqOxDQJVmQXhHwAbB87K6f7Q3JB8XYRbpuNJhV7GOsFnH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LYOQ/HQl; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2fc1843495eso4931199a91.1;
+        Sat, 22 Feb 2025 15:59:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740268771; x=1740873571; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=90/s+KzhSHh96JnVwqqX9Ga+sfryIMGed9jtbZZaUow=;
+        b=LYOQ/HQlX38xjx6PuPUy7f7BCwSD1lZtB+Ci9MXFbfafxVcF7nvOBhO2OzhJqpzakY
+         7TS/oiTq7UuHdqPYPDXJYOqEb8cfSCMs9gQvXuqqcf6iWhmwRPT496Bsobi+SHBDUIqs
+         S38MeqBCX0UVceqxxiq/OFabv5AtbuCmhRziLSoYgbyLXSXKZLqAPLSeWgnj08jyWUq+
+         RKkI+4IrKAXxEBWrEaWL3gNSjdQ/vOUVFWMgYXM6uvr6UgkVUbo5qY/zHSdKUZppO2kT
+         M3jnA4b+4hPWtaoY7s5X8HIUDt/NoHNpJs6zg53QIrUOh/RThVWSL9y4v9Yatw0RbzSS
+         eOTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740268771; x=1740873571;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=90/s+KzhSHh96JnVwqqX9Ga+sfryIMGed9jtbZZaUow=;
+        b=wnegi37RMIcSGLjMQ7u70fQX1Z5ijogyapFidJpW9aHBWlx5qEA88a9MABUpHuXXnw
+         fq7uotNH3HiiOXkwkcNGsX4FIDGJDFZW4fndXwsROZFS0i7KyKa4ItOgBP2i94jy8xLI
+         H3747ycfFJMkw2RiAllq+WAEc2ffC9xz58qHAWZKxBg25yWigdly41fWDODKLeICZwWY
+         dgehu5t7rZausZzL/e0GZf+h0iGXblhLoHhZKUmXw/03hqnpaxk2GsSoL2S0xQCOXoGX
+         7sGg5OGDr5r9FEGmxRpH4flLxXEXmQzdUOg1dIHMW8HKtGqvcoOHVb066+1z1vYNgwJj
+         NFPA==
+X-Forwarded-Encrypted: i=1; AJvYcCXY2ODjJLJaFOKdbSL2VqBUI464K2Puva4ICWDuU8vrZGxBIgq1FEEnkd2yFjkzKoGLFznJlP4V@vger.kernel.org, AJvYcCXa8B4oKFQTwtz7Du3V+zlRGr+eUFIXjHAPTwB6bX29W1kRBQfNY7a15R6VXNFAmbbKfSjJEF0Z5gGkcF6u@vger.kernel.org, AJvYcCXyvLu7ES4eqBoEzvz5kffaeLatJwBPKIDENOuKKvVTNNTHNnSaJD8GfGZJ+uEeXL7kWAK2Pplir+sP@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywck7uez1omj6hIv7IbWF4f4JaWc3o233phWMfLfXtIi+abL+H8
+	2WgKqOhc5fx2eRPHNMqN0N/7hj3+OCVsujmvcbTQOE6ZcGimE0vv
+X-Gm-Gg: ASbGncsqQnifLzJiRKxvAnv5jzosxbPkW5v1cSBKmlmlf1FlE78TFstd0yGRpHkHNc0
+	/wne2P3V724zI9aJomgRnupjU1CuiKpYOsBM6VkGMx7AWh8SurE3cPpbcOxz4fgJifrWk+0uk88
+	un/is1x1WpLfqhMCGIQt81AJ21eWgwV9l6TfMnuJ7JZSsVGmvi6oSpzaHTGefAbLc4t7+5oTJLt
+	z38e9XIslWVBIzInSt3787kZ1QzD0r4/hPO4/Gm8IbUlkTOqPhc+iMwUOXJjnO/TFHtNs7aWeH2
+	B1fqWFyWteNrqS2RMBbhxGgByj/BJezbZ1Y=
+X-Google-Smtp-Source: AGHT+IEQriOVvLcOekl7drz6hqdCF9IIUdvCSGDXZVwixhwDmzjDc1YQ+Kmp6rJLM53HbprX+WZUkw==
+X-Received: by 2002:a17:90b:3ece:b0:2ee:d371:3227 with SMTP id 98e67ed59e1d1-2fce78b77eemr15938334a91.17.1740268771198;
+        Sat, 22 Feb 2025 15:59:31 -0800 (PST)
+Received: from [192.168.8.112] ([64.114.250.38])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fceb02d985sm3722912a91.6.2025.02.22.15.59.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 22 Feb 2025 15:59:30 -0800 (PST)
+Message-ID: <61d793e0-f753-4f68-a169-c98336911588@gmail.com>
+Date: Sat, 22 Feb 2025 15:59:29 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: mt-exch-01.mt.ru (91.220.120.210) To mmail-p-exch01.mt.ru
- (81.200.124.61)
-X-KSMG-AntiPhishing: NotDetected
-X-KSMG-AntiSpam-Auth: dmarc=none header.from=mt-integration.ru;spf=none smtp.mailfrom=mt-integration.ru;dkim=none
-X-KSMG-AntiSpam-Envelope-From: v.shevtsov@mt-integration.ru
-X-KSMG-AntiSpam-Info: LuaCore: 51 0.3.51 68896fb0083a027476849bf400a331a2d5d94398, {rep_avail}, {Tracking_from_domain_doesnt_match_to}, ksmg01.maxima.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;mt-integration.ru:7.1.1;127.0.0.199:7.1.2;81.200.124.61:7.1.2, FromAlignment: s, ApMailHostAddress: 81.200.124.61
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiSpam-Lua-Profiles: 191202 [Feb 22 2025]
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Version: 6.1.1.11
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.1.8310, bases: 2025/02/22 16:52:00 #27403738
-X-KSMG-AntiVirus-Status: NotDetected, skipped
-X-KSMG-LinksScanning: NotDetected
-X-KSMG-Message-Action: skipped
-X-KSMG-Rule-ID: 7
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 5/5] dt-bindings: mfd: brcm: add gphy controller to
+ BCM63268 sysctl
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Heiner Kallweit <hkallweit1@gmail.com>, Russell King
+ <linux@armlinux.org.uk>, Florian Fainelli <florian.fainelli@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, =?UTF-8?Q?Fern=C3=A1ndez_Rojas?=
+ <noltari@gmail.com>, Jonas Gorski <jonas.gorski@gmail.com>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org
+References: <20250218013653.229234-1-kylehendrydev@gmail.com>
+ <20250218013653.229234-6-kylehendrydev@gmail.com>
+ <20250218-fearless-statuesque-zebra-3e79a8@krzk-bin>
+Content-Language: en-US
+From: Kyle Hendry <kylehendrydev@gmail.com>
+In-Reply-To: <20250218-fearless-statuesque-zebra-3e79a8@krzk-bin>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-There is a type mismatch between what CalculateDynamicMetadataParameters()
-takes and what is passed to it. Currently this function accepts several
-args as signed long but it's called with unsigned integers. On some systems
-where long is 32 bits and one of these input params is greater than INT_MAX
-it may cause passing input params as negative values.
+On 2025-02-17 23:35, Krzysztof Kozlowski wrote:
+>> +    # Child node
+>> +    type: object
+>> +    $ref: /schemas/mfd/syscon.yaml
+> No, not really... how is syscon a child of other syscon? Isn't the other
+> device the syscon?
+>
+> This looks really fake hardware description, like recent bootlin claim that
+> "one register in syscon is device".
 
-Fix this by changing these argument types from long to unsigned int. Also
-this will align the function's definition with similar functions in other
-dcn* drivers.
+I will change the driver to access the register through the main syscon.
 
-Found by Linux Verification Center (linuxtesting.org) with Svace.
-
-Signed-off-by: Vitaliy Shevtsov <v.shevtsov@mt-integration.ru>
----
- .../amd/display/dc/dml/dcn30/display_mode_vba_30.c   | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/gpu/drm/amd/display/dc/dml/dcn30/display_mode_vba_30.c b/drivers/gpu/drm/amd/display/dc/dml/dcn30/display_mode_vba_30.c
-index cee1b351e105..c6c7ce84e260 100644
---- a/drivers/gpu/drm/amd/display/dc/dml/dcn30/display_mode_vba_30.c
-+++ b/drivers/gpu/drm/amd/display/dc/dml/dcn30/display_mode_vba_30.c
-@@ -281,10 +281,10 @@ static void CalculateDynamicMetadataParameters(
- 		double DISPCLK,
- 		double DCFClkDeepSleep,
- 		double PixelClock,
--		long HTotal,
--		long VBlank,
--		long DynamicMetadataTransmittedBytes,
--		long DynamicMetadataLinesBeforeActiveRequired,
-+		unsigned int HTotal,
-+		unsigned int VBlank,
-+		unsigned int DynamicMetadataTransmittedBytes,
-+		unsigned int DynamicMetadataLinesBeforeActiveRequired,
- 		int InterlaceEnable,
- 		bool ProgressiveToInterlaceUnitInOPP,
- 		double *Tsetup,
-@@ -3265,8 +3265,8 @@ static double CalculateWriteBackDelay(
- 
- 
- static void CalculateDynamicMetadataParameters(int MaxInterDCNTileRepeaters, double DPPCLK, double DISPCLK,
--		double DCFClkDeepSleep, double PixelClock, long HTotal, long VBlank, long DynamicMetadataTransmittedBytes,
--		long DynamicMetadataLinesBeforeActiveRequired, int InterlaceEnable, bool ProgressiveToInterlaceUnitInOPP,
-+		double DCFClkDeepSleep, double PixelClock, unsigned int HTotal, unsigned int VBlank, unsigned int DynamicMetadataTransmittedBytes,
-+		unsigned int DynamicMetadataLinesBeforeActiveRequired, int InterlaceEnable, bool ProgressiveToInterlaceUnitInOPP,
- 		double *Tsetup, double *Tdmbf, double *Tdmec, double *Tdmsks)
- {
- 	double TotalRepeaterDelayTime = 0;
--- 
-2.48.1
-
+Best regards,
+Kyle
 
