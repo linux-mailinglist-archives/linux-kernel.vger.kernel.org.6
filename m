@@ -1,95 +1,147 @@
-Return-Path: <linux-kernel+bounces-527016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8603A40639
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 09:11:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59C6BA4063B
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 09:12:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 385D419C618F
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 08:11:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 404E1423DE5
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 08:12:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1935F2063E3;
-	Sat, 22 Feb 2025 08:11:30 +0000 (UTC)
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4D422063E9;
+	Sat, 22 Feb 2025 08:11:58 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47D251DE4E5;
-	Sat, 22 Feb 2025 08:11:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9EF51DE4E5;
+	Sat, 22 Feb 2025 08:11:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740211889; cv=none; b=LeGvnsztiOqy3isQLthvYSTL+TQfo6f6KAr7DIz+0wkQdw7qLYlwW+FWYDTnNqoyhHvnsUHO/bjoktZyQQf9AEm8NEPktW6bYZ2vtyCp6zGZNRO7koyKD7B6TrrhnqsO+Cz4h5ac9Pcr5kCDXyqbq+7wDqPyoi/0md4E1OcjTpI=
+	t=1740211918; cv=none; b=LGuov/9cu1PEZyfegep/GNw+4lEe+spp19qi03ezUcKwOohtQPrrSaUN7lOUsgfiiS7r/XIlQoRBM21+PQSzmFWR13/KFW8dV13axu1JFuJ2hhDEpUz7Ydp0tMRroRhGBO+b0Ks49MAMozJ1GnvCVom/VJO1HQ0mL5cAxbwIzME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740211889; c=relaxed/simple;
-	bh=ZOpwXjS9KeIhE21B+gBzXojUKxFIqvEi76/ClH7gJFI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nl0ceyoZLMNVW/MGZEpyzLmV0ak9GvlAvlXhKDwMf/j/774EeWYF64pUMv0IaqbvL+tP35RoEWNrEm8KoS/KDsniqQJKRcC1h7bScPiNmBTJB2KabNRtXIpXbT6W0atieb7aFC8SDQ2vuPlzw+RAnAfF1sl6uLo/F4YrnrHaCCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2211acda7f6so63572595ad.3;
-        Sat, 22 Feb 2025 00:11:27 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740211887; x=1740816687;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6/vYTezKRiz0FWfXEhILnceO9ruDUuvvR8Zl89UQ1OY=;
-        b=TArXKY8ogEjmLkH0j9s8K6Xk03ycIb1+ngzSreQlbK1BegETeE3e5j7q1RvT0UwVVd
-         RzGaSBVzG8L2cG7VbBgbbGsLNYCu4RHRpz32lIxxjAjarPY/Zw1N/JBsNr3z5BKRNmyB
-         bhcOPutasXMkIJdqmjq2bTuuC0sleMidBERLpgCM0guB3KaJsJQs9S95737JdzEwqPmH
-         tRijrKr/As7bv/W0wKY/skscq/sLv4TZGlQeYa45MbhA4MqPTc/sTzKWpq2g197ovsGX
-         xe8YwXI5Kr5Pb0vMOKKZKNuAWiDsXnpgc5MwrmcmWOVH8vKooPtYyPn6sth8vd+udBNA
-         zxGg==
-X-Forwarded-Encrypted: i=1; AJvYcCUITD9w1BZBWZjaoNlTYkjpvUISB/HDLufL/MCK0zY7jcxzwux3idtT68vnkvFVETvK1yZ0ayT0uhs9@vger.kernel.org, AJvYcCUpkY9EKIp9Xec2EqYSxhYLDdJKVwQdqpb1guobP0w4hxzDqugiOzfC1I6xTOFUumEw+snhYYEUwVCN@vger.kernel.org, AJvYcCXzY808bRkuMbusQXE7dRl+F7UIijxg/7Dss+hbA9YFE1xREig20h6AB/347i5kXhke7Ie0W3hCeLBAfpCF@vger.kernel.org
-X-Gm-Message-State: AOJu0YxPQM5/x0RycQIXkBctUQPA6esRhL13vbfjFA0dvyQct/aHRaUW
-	AJVQGfFd4U42goBhEomEfQqKkoHREfphFfI6iGokqpiFzVDjPyCqwRlo4uMZ
-X-Gm-Gg: ASbGnct3kEfKg58ZwaLqziI3xCWXwD7ft1O2YXV+t4KDcG1kvLFn1JC8sMCHwdOXEG4
-	rc/w5lcFTCUm9rVfj0LH2/am/EkmCGS2i6SiN7ZgMd2PK3zJnItDYwACYY/KxKPT78LbbuvfiL3
-	v7sgpmk8gmU71vNEel5z6vNNZJB3aRjRUted+0Yd8qPKhwTzNzW1Jhbo1CxlND39FdGTkORj8Sn
-	oG31sdRuMna+/2uDUPxxy80fGCcUYV8diDBXDVdBy464EeFxPSWYSUzAT2+GxOfCDn3UzfC8L3v
-	KmPnUK9mcJRiW/E4Tla5mKuFoVFRaXNXjmo/S2rNWdoWf5cJSBaTPS7tnFB7
-X-Google-Smtp-Source: AGHT+IF7FXrvfwa9/zGSAfB1z2DwXRu20PoXhBh4tgOozFuik5hPpvLwKCt3cLxdgEq93hZB8iQhkQ==
-X-Received: by 2002:a05:6a00:c92:b0:732:1840:8389 with SMTP id d2e1a72fcca58-73426aeb741mr8918405b3a.0.1740211887503;
-        Sat, 22 Feb 2025 00:11:27 -0800 (PST)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-73271a02648sm12317180b3a.107.2025.02.22.00.11.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 22 Feb 2025 00:11:26 -0800 (PST)
-Date: Sat, 22 Feb 2025 17:11:25 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: j.ne@posteo.net
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	=?utf-8?Q?J=2E_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] dt-bindings: pci: Convert fsl,mpc83xx-pcie to YAML
-Message-ID: <20250222081125.GD1158377@rocinante>
-References: <20250220-ppcyaml-pci-v3-1-ca94a4f62a85@posteo.net>
+	s=arc-20240116; t=1740211918; c=relaxed/simple;
+	bh=4m8KhPfmPys8alzz58S3fE6vnQq0+jk5CAly0Nr2FN4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=jspAeJYZvpx8JkgiQKOQRb8tUkHsOLV2sfIHiRPpr3xKSVlo9wlCnQhGuzdmOfSjk8AmODLVo7Twb5aMSUac3T4H4ilOJypk+5Gm5NbNqpgaeWVhdkzs4GBICAY54JJNHXDnw03gzckUo+DNpLd3qRna5E10VET7NgEWxVeun14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Z0KNH6gM6zdb8k;
+	Sat, 22 Feb 2025 16:07:11 +0800 (CST)
+Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
+	by mail.maildlp.com (Postfix) with ESMTPS id 0428B1400CF;
+	Sat, 22 Feb 2025 16:11:52 +0800 (CST)
+Received: from [10.67.120.129] (10.67.120.129) by
+ dggpemf200006.china.huawei.com (7.185.36.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Sat, 22 Feb 2025 16:11:51 +0800
+Message-ID: <24321916-549d-4b76-8ca5-a268432f54e7@huawei.com>
+Date: Sat, 22 Feb 2025 16:11:51 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250220-ppcyaml-pci-v3-1-ca94a4f62a85@posteo.net>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v9 3/4] page_pool: support unlimited number of
+ inflight pages
+To: Jesper Dangaard Brouer <hawk@kernel.org>, <davem@davemloft.net>,
+	<kuba@kernel.org>, <pabeni@redhat.com>
+CC: <zhangkun09@huawei.com>, <liuyonglong@huawei.com>,
+	<fanghaiqing@huawei.com>, Robin Murphy <robin.murphy@arm.com>, Alexander
+ Duyck <alexander.duyck@gmail.com>, IOMMU <iommu@lists.linux.dev>, Ilias
+ Apalodimas <ilias.apalodimas@linaro.org>, Eric Dumazet <edumazet@google.com>,
+	Simon Horman <horms@kernel.org>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20250212092552.1779679-1-linyunsheng@huawei.com>
+ <20250212092552.1779679-4-linyunsheng@huawei.com>
+ <640946c8-237d-40de-b64e-0f8fd8f1a600@kernel.org>
+Content-Language: en-US
+From: Yunsheng Lin <linyunsheng@huawei.com>
+In-Reply-To: <640946c8-237d-40de-b64e-0f8fd8f1a600@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ dggpemf200006.china.huawei.com (7.185.36.61)
 
-Hello,
+On 2025/2/21 18:12, Jesper Dangaard Brouer wrote:
 
-> Formalise the binding for the PCI controllers in the Freescale MPC8xxx
-> chip family. Information about PCI-X-specific properties was taken from
-> fsl,pci.txt. The examples were taken from mpc8315erdb.dts and
-> xpedite5200_xmon.dts.
+...
 
-Applied to dt-bindings, thank you!
+>> @@ -513,10 +517,43 @@ static struct page_pool_item *page_pool_fast_item_alloc(struct page_pool *pool)
+>>       return llist_entry(first, struct page_pool_item, lentry);
+>>   }
+>>   +#define PAGE_POOL_SLOW_ITEM_BLOCK_BIT            BIT(0)
+>> +static struct page_pool_item *page_pool_slow_item_alloc(struct page_pool *pool)
+>> +{
+>> +    if (unlikely(!pool->slow_items.block ||
+>> +             pool->slow_items.next_to_use >= ITEMS_PER_PAGE)) {
+>> +        struct page_pool_item_block *block;
+>> +        struct page *page;
+>> +
+>> +        page = alloc_pages_node(pool->p.nid, GFP_ATOMIC | __GFP_NOWARN |
+>> +                    __GFP_ZERO, 0);
+>> +        if (!page) {
+>> +            alloc_stat_inc(pool, item_slow_failed);
+>> +            return NULL;
+>> +        }
+> 
+> We also need stats on how many pages we allocate for these item_blocks
+> (and later free). This new scheme of keeping track of all pages
+> allocated via page_pool, is obviously going to consume more memory.
+> 
+> I want to be able to find out how much memory a page_pool is consuming.
+> (E.g. Kuba added a nice interface for querying inflight packets, even
+> though this is kept as two different counters).
 
-	Krzysztof
+Does additional stats is needed? as I was thinking list_for_each_entry()
+for pool->item_blocks might be used to tell how much memory it is used
+for slow item, and how much each item_block is fragmented by looking at
+the block->ref with the protection of pool->item_lock if needed.
+
+> 
+> What I worry about, is that fragmentation happens inside these
+> item_blocks. (I hope you understand what I mean by fragmentation, else
+> let me know).
+> 
+> Could you explain how code handles or avoids fragmentation?
+
+Currently fragmentation is not handled or avoided yet.
+For inflight pages which are using slow item, it seems there is hardly
+anything we can do about that.
+
+For pages which sit in the page_pool, it seems possible to change
+the pages using slow item to use fast item when they are allocated
+from or recycled back into page_pool if fast item is available, or
+those pages are simply disconnected from page_pool by calling
+page_pool_return_page() when page_pool_put_unrefed_netmem() is
+called?
+
+I am not sure how severe the fragmentation problem might become and
+which way to handle it is better, maybe add interface to query the
+fragmentation info as mentioned above first, and deal with it when
+it does become a severe problem?
+
+> 
+> 
+>> +
+>> +        block = page_address(page);
+>> +        block->pp = pool;
+>> +        block->flags |= PAGE_POOL_SLOW_ITEM_BLOCK_BIT;
+>> +        refcount_set(&block->ref, ITEMS_PER_PAGE);
+>> +        pool->slow_items.block = block;
+>> +        pool->slow_items.next_to_use = 0;
+>> +
+>> +        spin_lock_bh(&pool->item_lock);
+>> +        list_add(&block->list, &pool->item_blocks);
+>> +        spin_unlock_bh(&pool->item_lock);
+>> +    }
+>> +
+>> +    return &pool->slow_items.block->items[pool->slow_items.next_to_use++];
+>> +}
+>> +
 
