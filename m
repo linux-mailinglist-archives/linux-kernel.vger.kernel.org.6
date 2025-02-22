@@ -1,94 +1,86 @@
-Return-Path: <linux-kernel+bounces-527421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4443FA40B13
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 19:59:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8FC0A40B16
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 20:00:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EF7B3BC4D3
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 18:59:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15F98189F636
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 19:00:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2239D20FAB2;
-	Sat, 22 Feb 2025 18:59:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E14820E33E;
+	Sat, 22 Feb 2025 19:00:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="dDEtRWaU"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ql4uXnIe"
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B88D770830;
-	Sat, 22 Feb 2025 18:59:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E47E13A3F7;
+	Sat, 22 Feb 2025 19:00:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740250756; cv=none; b=GcjA7mOuVM9WLhHxxHZ7esS7710JqLINTqO8HZxIs9UT9eW0F6W0YWtC3YKg1KVJ/wYejlcE0iMjZJ3gyAddepdrY3K6SHXgVzIKZ//YRJGA1/MHxhgiJ0ZDlkqJ1x3X/rEglnv6SuduiGi+QCgp4Csn/G9Qcz8ZOHpa75NMUio=
+	t=1740250830; cv=none; b=LU7So4fjcTR0qAZU0Z+MfvEg0wQyRojJc6JNs4XH25pbejlfJNSUPLoIdHwYPa0N2+lVfkRDYLamh3+y9Q4GyWNMXJTS2njYqqBzs0avw6uAtMKFh/lCsrfyO84QGMXmqhamF9KjOoJDBNObpmot12w/77UiRt/+Tqska+H/nSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740250756; c=relaxed/simple;
-	bh=a1n8mbonW/ltuhbkEhLcRvyUAwIM2wIPwysaaxQHI2A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ksx6LP40Yjq9u9V9kZ/n1drmhKJ8KNgE6xYsPM6CPqZ3I68mi26QHlLge2Z6sZutcc3ADubmgC50G1tbnHduI/r1NK/yVy8fEWrhwoU8GS+r2AOr8EcGUxk4tZR8Exxc/CyKTP180bC92EEkiLlDeCChlm8o4M/1z32li/Mms44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=dDEtRWaU; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51M52SrI013794;
-	Sat, 22 Feb 2025 18:58:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=6k21L+G3uHD1bwvHi+nq+IxpQx8pcs
-	NP5Fah9ageCUA=; b=dDEtRWaU+HcgOPNc9lS47gho4o9SHmWVP0c8dIZqhaGN1I
-	7k4uQs3LOmCwOgj/0lpjGEqwJ4O1QlU6CgETGIvweSByWQ3TeS/+CDonxS6uyiOt
-	ahLs789skK4HfLP7ByflMOKU+G4sfaxmBEhj8vUdP8+9kycx/cS6PIjvOotIGs8H
-	KvLS5XhldPewo+P7qju/OAHkYtqioRsDIS3nkAXJUXTApTTkj5zgSFy96P9YAe3e
-	/wru9Su64rP+wsr3KKXcqG43Kxgx/bNUoz7nlJOlawtn4aFFlNegflmWyzviSbua
-	+psEHWkuEoSexP8wId+zP85domwZZhHvVM8r2bNw==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44y82xj62h-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 22 Feb 2025 18:58:50 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 51MIt3R8003088;
-	Sat, 22 Feb 2025 18:58:50 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44y82xj62f-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 22 Feb 2025 18:58:49 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51MH3HFi002330;
-	Sat, 22 Feb 2025 18:58:49 GMT
-Received: from smtprelay05.dal12v.mail.ibm.com ([172.16.1.7])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 44w03xpjr1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 22 Feb 2025 18:58:49 +0000
-Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com [10.241.53.102])
-	by smtprelay05.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51MIwmul24117930
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sat, 22 Feb 2025 18:58:49 GMT
-Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D7F635805A;
-	Sat, 22 Feb 2025 18:58:48 +0000 (GMT)
-Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C3C5F5803F;
-	Sat, 22 Feb 2025 18:58:48 +0000 (GMT)
-Received: from localhost (unknown [9.61.179.202])
-	by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Sat, 22 Feb 2025 18:58:48 +0000 (GMT)
-Date: Sat, 22 Feb 2025 12:58:48 -0600
-From: Nick Child <nnac123@linux.ibm.com>
-To: David Laight <david.laight.linux@gmail.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, horms@kernel.org,
-        nick.child@ibm.com, pmladek@suse.com, rostedt@goodmis.org,
-        john.ogness@linutronix.de, senozhatsky@chromium.org
-Subject: Re: [PATCH net-next v3 1/3] hexdump: Implement macro for converting
- large buffers
-Message-ID: <Z7oeaHxXnwrlA_d9@li-4c4c4544-0047-5210-804b-b8c04f323634.ibm.com>
-References: <20250219211102.225324-1-nnac123@linux.ibm.com>
- <20250219211102.225324-2-nnac123@linux.ibm.com>
- <20250220220050.61aa504d@pumpkin>
- <Z7i56s7jwc_y0cIz@li-4c4c4544-0047-5210-804b-b8c04f323634.ibm.com>
- <20250221180435.4bbf8c8f@pumpkin>
- <Z7jLE-GKWPPn-cBT@li-4c4c4544-0047-5210-804b-b8c04f323634.ibm.com>
- <20250221221815.53455e22@pumpkin>
+	s=arc-20240116; t=1740250830; c=relaxed/simple;
+	bh=zWRtAtqNqzxiBe46ewrMrlO3cYmG11wRcuinLSkGivQ=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DgRBcfEZHZBrbNd0+xDkihm5IwaSzW8ZbBrAzwbJmH/Yd+R6a17NVpP2e+Xk4KUMLlOSm6t3Asz9pxEleXpr6o3BeoQHoeHNQqgNbZoWcxz6GVsFQSfulRDaH/6JzlF+sSsT6n1GlOb38b5WYMKptpRFiF4ZiuaVRh2lp0srFvY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ql4uXnIe; arc=none smtp.client-ip=209.85.160.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-47200236004so31084291cf.3;
+        Sat, 22 Feb 2025 11:00:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740250828; x=1740855628; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=5mf3WLnT/uqvc4jU09LwEl+Y0jld6Kz+6VRNuRCDxgs=;
+        b=Ql4uXnIe+qlLq1NqMFVjbIbxWSO+NE1vYf/05a2MyZgWd9ljAoeAvdbHILN3D1y0Sm
+         YHCn/NYLdVIRjYdAAABu1m8otrELMKapu78WtDiVIfrCoXiJxr4W/atnJ6DUltNKU3cU
+         s2awLoiWpYr9hbAZwvy5IqJl+c0aI2KkKDtK5JgnxCGGG+HqG646pXJ67BBz6a+WvXSZ
+         cuACNWiJCLjvwMf/XTKie1DmxnbM88OfHAZM48pqgYm0fHgvR9AQJVSzx1Lugf31h4oj
+         taPdBXwH7TxShcYJt9qx+MbG6tFK42hEObpNlI99G6h6k5u+FH7U9lY4NLdxvB4wb8hd
+         KCMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740250828; x=1740855628;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5mf3WLnT/uqvc4jU09LwEl+Y0jld6Kz+6VRNuRCDxgs=;
+        b=GyCrpDngsrIH6eJVfhTzvJcZHfOC6sYkMjvbDbksr/z2OhBngUTPjWPgyO0d05Vv7Z
+         rTi6LdMPmCmW2/kGeQ7XYgmMrR48tAjpAJxNR1AaWFYWaK8kQjU/SAIsdBZvOj3MSre1
+         mlJzhU9wi/9pxexszo0+Q0TZwQlGBUbP3YV/mLPJI/wbt1C6gykwrm92Pbphe9S7wpoX
+         kwMo8t5PO3Wyu81J1mIZapt41FaJSSBcqiQVvxDYsHO6hg7iK79R3pGmTB+sTXSijVMw
+         u5dat/wyfiJqpDw8g4m9aReWG7nDG+FyGOq3S727wFcAD5wInrrjX+tPG1vGxwkjkCGh
+         0qAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU+wRPba2aTllGZx8PDlw0zzH9iPchxnyCl6J19SZ7Ki18HoG/J7GtuDdExDT4sp+5cXimpgnuVglZqYdA=@vger.kernel.org, AJvYcCXQfVMKfQfA0whY9LftNYtdFhOOF8fyQ4qwBr0NwSfxxJwaymt8ZvCH7k6607mi2zessMpxYI1CxJKWTVcu+cgO@vger.kernel.org
+X-Gm-Message-State: AOJu0YxadGxSxHzrluHtxiYW8LkzjW+dDpWjw+e+kRWycNH22fP9HpjE
+	u93mpQ1ASJXF7rrfoLjKPbN2ZV9mLQHzpij0z+HyKy35Ce6cDHTb
+X-Gm-Gg: ASbGncuYIQC455Lh8dFtjK787hKzKnTp5GvDlgc3QlidyrSYoruzyXlEOE7GnuyVRNZ
+	vS3137BMjpEOjksHWtB/voS0YACV7f1tFR2VeS9JcQ+aBoFgm7LgTV0yPgomOc0VAvtVXlwCjtL
+	n9mATkaRHWGJ1AzITSyDZB4eb/Zaz9o7Qt3Lf3iwVRCYt8jLXAAHj4FWwgrcfrnrKMyg7x3/oH9
+	qy8hFHEfwLW0T9Iv9u+SWmSV620TZwbABnY8sD2Ju0D2i8S5dAuP5xaMfktEGexXt0sPo1oZYtP
+	OQk7YUQ3pSRlZtT5dDyV2OE=
+X-Google-Smtp-Source: AGHT+IH3EYjDKPoQ/e0zJiaGtwJhz0k1Ov8NHAPdHjRC/le5ACQyzWR3UwrkNbfa/a8/mVoIaYX0Wg==
+X-Received: by 2002:ac8:7d4b:0:b0:472:636:f60e with SMTP id d75a77b69052e-47222945029mr114554481cf.34.1740250827709;
+        Sat, 22 Feb 2025 11:00:27 -0800 (PST)
+Received: from localhost ([142.198.73.227])
+        by smtp.gmail.com with UTF8SMTPSA id d75a77b69052e-471fdf8ac21sm60434901cf.19.2025.02.22.11.00.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 22 Feb 2025 11:00:27 -0800 (PST)
+From: Seyediman Seyedarab <imandevel@gmail.com>
+X-Google-Original-From: Seyediman Seyedarab <ImanDevel@gmail.com>
+Date: Sat, 22 Feb 2025 14:01:13 -0500
+To: ritvikfoss@gmail.com
+Cc: shuah@kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org, 
+	linux-kernel-mentees@lists.linuxfoundation.org
+Subject: Re: [PATCH v2] selftests/mount: Close 'fd' when write fails
+Message-ID: <zshes4xtyir7zrrybeqj2amrxyctwqnuvx2tqyktv4vsfstxqi@pvdq2rb5m47j>
+References: <20250222114709.50011-1-ritvikfoss@gmail.com>
+ <20250222121249.50588-1-ritvikfoss@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,99 +89,71 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250221221815.53455e22@pumpkin>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: LwrSWcezto44dGm5tATOZCL_FqxAnFBf
-X-Proofpoint-GUID: oQyAzNcx0SsPvFagp-60dWbHcn75LF3M
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-22_08,2025-02-20_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 priorityscore=1501
- impostorscore=0 adultscore=0 suspectscore=0 clxscore=1015 bulkscore=0
- mlxlogscore=999 spamscore=0 malwarescore=0 lowpriorityscore=0 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
- definitions=main-2502220147
+In-Reply-To: <20250222121249.50588-1-ritvikfoss@gmail.com>
 
-On Fri, Feb 21, 2025 at 10:18:15PM +0000, David Laight wrote:
-> On Fri, 21 Feb 2025 12:50:59 -0600
-> Nick Child <nnac123@linux.ibm.com> wrote:
+On 25/02/22 05:42PM, ritvikfoss@gmail.com wrote:
+> From: Ritvik Gupta <ritvikfoss@gmail.com>
 > 
-> > On Fri, Feb 21, 2025 at 06:04:35PM +0000, David Laight wrote:
-> > > On Fri, 21 Feb 2025 11:37:46 -0600
-> > > Nick Child <nnac123@linux.ibm.com> wrote:  
-> > > > On Thu, Feb 20, 2025 at 10:00:50PM +0000, David Laight wrote:  
-> > > > > You could do:
-> > > > > #define for_each_line_in_hex_dump(buf_offset, rowsize, linebuf, linebuflen, groupsize, buf, len, ascii) \
-> > > > > for (unsigned int _offset = 0, _rowsize = (rowsize), _len = (len); \
-> > > > > 	((offset) = _offset) < _len && (hex_dump_to_buffer((const char *)(buf) + _offset, _len - _offset, \  
-> > >           ^ needs to be buf_offset.
-> > >   
-> > > > > 		_rowsize, (groupsize), (linebuf), (linebuflen), (ascii)), 1); \
-> > > > > 	_offset += _rowsize )
-> > > > > 
-> > > > > (Assuming I've not mistyped it.)
-> > > > >     
-> > > >
-> > > > Trying to understand the reasoning for declaring new tmp variables;
-> > > > Is this to prevent the values from changing in the body of the loop?  
-> > >
-> > > No, it is to prevent side-effects happening more than once.
-> > > Think about what would happen if someone passed 'foo -= 4' for len.
-> > >  
-> > 
-> > If we are protecting against those cases then linebuf, linebuflen,
-> > groupsize and ascii should also be stored into tmp variables since they
-> > are referenced in the loop conditional every iteration.
-> > At which point the loop becomes too messy IMO.
-> > Are any other for_each implementations taking these precautions?
+> 1. Close the file descriptor when write fails.
+> 2. Introduce 'close_or_die' helper function to
+> reduce repetition.
 > 
-> No, it only matters if they appear in the text expansion of the #define
-> more than once.
+> Signed-off-by: Ritvik Gupta <ritvikfoss@gmail.com>
+> ---
+> Changes in v2:
+>     - Fixed formatting
+> 
+>  .../selftests/mount/unprivileged-remount-test.c    | 14 ++++++++++----
+>  1 file changed, 10 insertions(+), 4 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/mount/unprivileged-remount-test.c b/tools/testing/selftests/mount/unprivileged-remount-test.c
+> index d2917054fe3a..41d7547c781d 100644
+> --- a/tools/testing/selftests/mount/unprivileged-remount-test.c
+> +++ b/tools/testing/selftests/mount/unprivileged-remount-test.c
+> @@ -54,6 +54,14 @@ static void die(char *fmt, ...)
+>  	exit(EXIT_FAILURE);
+>  }
+>  
+> +static void close_or_die(char *filename, int fd)
+> +{
+> +	if (close(fd) != 0) {
+> +		die("close of %s failed: %s\n",
+> +		filename, strerror(errno));
+> +	}
+> +}
+> +
+>  static void vmaybe_write_file(bool enoent_ok, char *filename, char *fmt, va_list ap)
+>  {
+>  	char buf[4096];
+> @@ -79,6 +87,7 @@ static void vmaybe_write_file(bool enoent_ok, char *filename, char *fmt, va_list
+>  	}
+>  	written = write(fd, buf, buf_len);
+>  	if (written != buf_len) {
+> +		close_or_die(filename, fd);
+>  		if (written >= 0) {
+>  			die("short write to %s\n", filename);
+>  		} else {
+> @@ -86,10 +95,7 @@ static void vmaybe_write_file(bool enoent_ok, char *filename, char *fmt, va_list
+>  				filename, strerror(errno));
+>  		}
+>  	}
+> -	if (close(fd) != 0) {
+> -		die("close of %s failed: %s\n",
+> -			filename, strerror(errno));
+> -	}
+> +	close_or_die(filename, fd);
+>  }
+>  
+>  static void maybe_write_file(char *filename, char *fmt, ...)
+> -- 
+> 2.48.1
+> 
+> 
 
-But the operation is still executed more than once when the variable
-appears in the loop conditional. This still sounds like the same type
-of unexpected behaviour. For example, when I set groupsize = 1 then
-invoke for_each_line_in_hex_dump with groupsize *= 2 I get:
-[    4.688870][  T145] HD: 0100 0302 0504 0706 0908 0b0a 0d0c 0f0e
-[    4.688949][  T145] HD: 13121110 17161514 1b1a1918 1f1e1d1c
-[    4.688969][  T145] HD: 2726252423222120 2f2e2d2c2b2a2928
-[    4.688983][  T145] HD: 30 31 32 33 34 35 36 37 38 39 3a 3b 3c 3d 3e 3f
-Similarly if I run with buf: buf += 8:
-[    5.019031][  T149] HD: 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13 14 15 16 17
-[    5.019057][  T149] HD: 20 21 22 23 24 25 26 27 28 29 2a 2b 2c 2d 2e 2f
-[    5.019069][  T149] HD: 38 39 3a 3b 3c 3d 3e 3f 98 1a 6a 95 de e6 9a 71
-[    5.019081][  T149] HD: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+Closing a file right before a process exits is redundant,
+since the kernel will clean it up automatically anyway.
+That said, whether doing this as a best practice is arguable.
 
-The operations are getting executed more than once. Should this be
-classified as expected behaviour just because those vars are technically
-only expanded once in the macro?
-
-> > Not trying to come off dismissive, I genuinely appreciate all the
-> > insight, trying to learn more for next time.
-> > 
-> > > > I tried to avoid declaring new vars in this design because I thought it
-> > > > would recive pushback due to possible name collision and variable
-> > > > declaration inside for loop initializer.  
-> > >
-> > > The c std level got upped recently to allow declarations inside loops.
-> > > Usually for a 'loop iterator' - but I think you needed that to be
-> > > exposed outsize the loop.
-> > > (Otherwise you don't need _offset and buf_offset.
-> > >  
-> > 
-> > As in decrementing _len and increasing a _buf var rather than tracking
-> > offset?
-> > I don't really care for exposing the offset, during design I figured
-> > some caller may make use of it but I think it is worth removing to reduce
-> > the number of arguments.
-> 
-> Except the loop body needs it - so it needs to be a caller-defined name,
-> even if they don't declare the variable.
-> 
-> 	David
-> 
-> > 
-> > Thanks again,
-> > Nick
-> 
+Cheers,
+Seyediman
 
