@@ -1,286 +1,109 @@
-Return-Path: <linux-kernel+bounces-526825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F674A403ED
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 01:12:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB859A403EE
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 01:13:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FAD43BDE36
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 00:12:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 01719173F3C
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 00:13:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69AE11E86E;
-	Sat, 22 Feb 2025 00:12:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF202BA53;
+	Sat, 22 Feb 2025 00:13:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LgLMzxPG"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="OHXfJPE0"
+Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 133F17494
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 00:12:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B8574C6C
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 00:13:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740183134; cv=none; b=bqtBpwcaHuoD6LBUkCVNJrt2VSK0hTPc7h1sb4cd17aSGaQeJuJ6ZpJ0I09/ojuy/HSfCLBf+NwoA5Gxm4Cxfks71sWSz0LkMj3bvgLE5lIryg1Ug6NaJaYP9oTQqp/aKGeC7+m3Z5kKcUhalN4PUyi/2iz0wyVp0IOnI53o7Ms=
+	t=1740183186; cv=none; b=oSQpz5bUZ3fnEaLJRS5KZ9YmGIGLxtg5KxSI2s2Opij/RurNLmpvcpzdgaBZ2UIkMoApmrWDuaVJY8UHvpSUYUNjg/KKIeHM8q/XI99DLTHIxK4QNINwQ7e6BAwdqRUmKqR58NwUcvnx5grAc6VKFYwLVBTbGUhzjgLhpj89gF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740183134; c=relaxed/simple;
-	bh=B1hwoRNB9HuzKa57LjzrK3wWUEjd8Av4gd//kmf+51k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ARoqe5wRTBDa5vTaKRYiNuksAX5beuDRy8A5vt3F9Mq5pMu3Py7AfApkXuU2kfGnnWt3VlFeikKBhKTyBDGYtbg9eEh8aTDHId6b2zL+rcVxekK4CBLv5V2RRrQprDnicwOtICfS+lawlWUEJxLZt8r6CCIPC67cAGZ4iRTTA6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LgLMzxPG; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-221ac1f849fso28225ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 16:12:12 -0800 (PST)
+	s=arc-20240116; t=1740183186; c=relaxed/simple;
+	bh=51yncecrfj0RsMPvBHqMPp58DR3VmCsbq0CeL73I5lE=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=R5sq3KAapmfVrA5qyphbgikMnqWpFFhXIoaWUtkKmaIMo3MRHSDecm7/3wtmaC7K6GaNdG5D3o7eNXrOK2W4rBai9RqPESlimgwR7jn0vVRSYZgSWiDTp4qgrit/TyQDE56b2Cmc8VmOWbAtfqV7TJIDyJLneyWD527Crw3up+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=OHXfJPE0; arc=none smtp.client-ip=209.85.166.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-3d2b6ed8128so11410035ab.0
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 16:13:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740183132; x=1740787932; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1740183182; x=1740787982; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=yNhX55ca2mVeq83qzHMQskDLc21cDfCiisVHrc35vn0=;
-        b=LgLMzxPGMmpNr9gY+nLHSQZCMGFXdYXrrj8/hg1izvLFnzwQy+sh20DoVGYfQGmGOZ
-         HQhSC3WsPsDGYLmhWbkC4AVz//poDZvPRPF784uAGg8JtLp4Ro4nxrF40G1wMSYz0Som
-         m3yK9WhedOtB5gXvO1HaPDMMsTSDy5JXCoY5rhOn5EyXzIZhUhhL8RWbxKKWj14n+O6b
-         dqU2E9WSsGHMefFEtxVNEB9caCloJAauEOviuUjwWPwYRzN7ZbQMasNas+2pHhVtnDI5
-         UeVIaFZ6Ybj8GW8GTjkAOJa+ltSEOjwQJfrHp9rEKG2pnmKIbetmbCcNJav8tClGHIfd
-         69rQ==
+        bh=GsufKr0NGP3tYvsFVv0EO/2yZiZEnUNT84I1RxYAoyM=;
+        b=OHXfJPE0LlToVRPlme+GzfHuTUe8byvdNZxm9x0O7BvfagIwPNGSx/4l1psKSGvoNv
+         pXaJyb49NII7hiQxCIKJTx1YvVmrne2KlbQX/RqK5izMbKwrKI2/9GBUQEC+TwyoAmrR
+         N2wtrR+m6onpIGxT2QtaEDpukz4cU17UU+U1X9Ivi52JeUtHTZB5Lc4J9X9frdOJMXyX
+         SKsMajYx8j9wzplr07W6NmU4sRkPyw6UZEmzIyefPpHRIrZDAuZu1LT+rbn4/6RV+1mP
+         ylpXf38934eS1J1RBAz+dQMKMojXl3/ST1wkHwcczOgTLHx5ISJdAIdEmNjRSTYEfTED
+         U9Fw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740183132; x=1740787932;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1740183182; x=1740787982;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=yNhX55ca2mVeq83qzHMQskDLc21cDfCiisVHrc35vn0=;
-        b=w1ZJv6uyYhqcTp4LFqsqhq7DW9obs17PjhOOIKAIDv0xqM5TOfjizL4BV38KyfAIK6
-         SmVd6NDRpMlDQzoqxRCKDjHMokAVLUL69JrhT4stPVcCsDJnsGiOm4h61/EP/uswDeX4
-         MK0zRK8fbU0fgHM97WQRXz6lPGuuAIr8BUVd5vyn8wz+UnSscIi8Xlwku4vfg22b2707
-         x7x69+AZxanjTeB1Q4FokzL/pVB9yoZsQhIuvCPIC8e4QUCzf/nGiscNONZ2CHrLU9Ab
-         HhBHHydNMj9j5aQCbSutk8aRFGRy7vOYEhV2dpsK+YC6VXQ1I/A4GbbL5R1CVOYE7gtH
-         N8IA==
-X-Forwarded-Encrypted: i=1; AJvYcCWNc8mEn+U+0twzKtReBjF2gxg4FhaHm7O0qGnZqErLIJAbCHmKNIAx7MwvfQAXEillv8kNdGtm5PpYQEI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1ucYb5CAFV4H34SRCiTID7YxCFrSlo5Ng0YHns1Vf1EiaofPw
-	g/OtfPzZ4/gz6Ld9N/bYn4HysH/S0nqpPQRJPAnK3doGMnBg5YD8bzHBWwQ5PsBtyythd78hbNR
-	gUYMprgDlwE4hFZLcE6NIuTK3L7HKiJUIVQm6
-X-Gm-Gg: ASbGncuQWgeH+ZDJ/ETuOG/K5xn2NZqkkIOQOtaxVUf+LSjrs8dPp60qn+yhyUSqFqH
-	GRj2+5hzW2BTndMwM8zRvJuJKuGdzBSwR7lRC5Vpk6WqqpRkNrhcdv9MvzSIbWvxKKhNQb2Cbyv
-	0HVpPMWac=
-X-Google-Smtp-Source: AGHT+IFxl0HV9bELtKW1Lxo/V9NemOF1k08SgzpnQLv2+EwTyeatCDUpFu0V4b2QrnCMZCrUA+AZK4dcUGvskrOyfBY=
-X-Received: by 2002:a17:903:41c6:b0:21f:3e29:9cd1 with SMTP id
- d9443c01a7336-22258843c6emr451255ad.1.1740183131774; Fri, 21 Feb 2025
- 16:12:11 -0800 (PST)
+        bh=GsufKr0NGP3tYvsFVv0EO/2yZiZEnUNT84I1RxYAoyM=;
+        b=cwKXT1W4lVJhZTfekE0Wju7KB1p+A2OzxVk4OiKrgTEK6WY0h1WSmS2mZ8hA7/g9bm
+         Wb85MhX/gE/P+DhwHNdEznUgqkD61Mh48ZCnp11nck6N3Sxn8qyPa7sLrkBXU5XfyVfz
+         ybVQixHPcU7gLCIbvXE0UFWF/Qp/QkiC2GUjvpUuOJR24xgx0fhcUr96scqziIig96/n
+         sCSXhWzM9+ak2UM4m6Koe+c9cvOS9lG5M4J6kOfdbURKyC5vuzjRDOAGl8LahfbQuWH4
+         93LDOQM/BXIMhkxhgdYnVSJwVRR+pADfWH+9qHibRZ78b55HuR2uuuPn/zEtVXJwD0OV
+         X7fw==
+X-Forwarded-Encrypted: i=1; AJvYcCXncvinrYnG65QvBXh0UtFADWT8Y8ZY5/olOJ59BxXS/zme1iIDOvPm+e3QKSPc3quY31KrLgCgHBrjCG0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxYwC8u6ej9uK7GTiZTflSGqGPxy5LZnOGH7DNR00IIgsPVRAeV
+	M2TMf/zS3Tfg2rl6UWDmFAM3lCbViI8etwf3njtZPdQ1F+M27Votr2ebwcrMR0c=
+X-Gm-Gg: ASbGncvGo02bzU5c8e1k1xk1k+p6Z4J0UtfpF8ycrLedkG2q5/WYIkXod2qY2scTyE7
+	SeBLWEGOgrEqAIpz+WNVtA9BMGqp1v7W8ebTPXalKxx+0kwtwbczy3mJSO46Anpjtpacip1uSgA
+	g2vyZoefb0FqKTYGGP23ZKKNuqEX/MODU+exsIaPMD9ZlwjKBlOwWr6VOtZlz0lusLzREvOiKte
+	61weEkpJJKuqTDcNFVS8jbOQsCGjCFmrKFb9XB7GYBhhVLS+Co01jHnJ8f/JzDGnCBSCRe5/gVK
+	88hzZ9YYpLbOAO8NmQ==
+X-Google-Smtp-Source: AGHT+IEUUpAfwedrwX8Z7yqaUa0AGKI0ihxBNgw80Nems7KCQtXMFtFcx2HmpwlG19S5/FlE2ikssQ==
+X-Received: by 2002:a05:6e02:3dc4:b0:3cf:b2ca:39b7 with SMTP id e9e14a558f8ab-3d2cacb0022mr52274585ab.3.1740183182418;
+        Fri, 21 Feb 2025 16:13:02 -0800 (PST)
+Received: from [127.0.0.1] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3d2bc19dbe3sm13388665ab.9.2025.02.21.16.13.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Feb 2025 16:13:01 -0800 (PST)
+From: Jens Axboe <axboe@kernel.dk>
+To: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250219205328.28462-2-thorsten.blum@linux.dev>
+References: <20250219205328.28462-2-thorsten.blum@linux.dev>
+Subject: Re: [PATCH] block: Remove commented out code
+Message-Id: <174018318140.1822587.9741571517838734087.b4-ty@kernel.dk>
+Date: Fri, 21 Feb 2025 17:13:01 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250220020914.895431-1-almasrymina@google.com>
- <20250220020914.895431-7-almasrymina@google.com> <Z7d-7P8kPthyr3bG@mini-arch>
-In-Reply-To: <Z7d-7P8kPthyr3bG@mini-arch>
-From: Mina Almasry <almasrymina@google.com>
-Date: Fri, 21 Feb 2025 16:11:58 -0800
-X-Gm-Features: AWEUYZlkYd93d0T228Zc61iCz21ScjCC0AyNSTtmFsAwe1lJgbPNMd4CVgia2uE
-Message-ID: <CAHS8izO2PU-A9gQHkJpB=QkFkiKvVUNCm5Von5GFY+5qV5+Oog@mail.gmail.com>
-Subject: Re: [PATCH net-next v4 6/9] net: enable driver support for netmem TX
-To: Stanislav Fomichev <stfomichev@gmail.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, virtualization@lists.linux.dev, 
-	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Donald Hunter <donald.hunter@gmail.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Andrew Lunn <andrew+netdev@lunn.ch>, Jeroen de Borst <jeroendb@google.com>, 
-	Praveen Kaligineedi <pkaligineedi@google.com>, Shailend Chand <shailend@google.com>, 
-	Kuniyuki Iwashima <kuniyu@amazon.com>, Willem de Bruijn <willemb@google.com>, David Ahern <dsahern@kernel.org>, 
-	Neal Cardwell <ncardwell@google.com>, "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
-	Stefan Hajnoczi <stefanha@redhat.com>, Stefano Garzarella <sgarzare@redhat.com>, Shuah Khan <shuah@kernel.org>, 
-	sdf@fomichev.me, asml.silence@gmail.com, dw@davidwei.uk, 
-	Jamal Hadi Salim <jhs@mojatatu.com>, Victor Nogueira <victor@mojatatu.com>, 
-	Pedro Tammela <pctammela@mojatatu.com>, Samiullah Khawaja <skhawaja@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.3-dev-94c79
 
-On Thu, Feb 20, 2025 at 11:13=E2=80=AFAM Stanislav Fomichev
-<stfomichev@gmail.com> wrote:
->
-> On 02/20, Mina Almasry wrote:
-> > Drivers need to make sure not to pass netmem dma-addrs to the
-> > dma-mapping API in order to support netmem TX.
-> >
-> > Add helpers and netmem_dma_*() helpers that enables special handling of
-> > netmem dma-addrs that drivers can use.
-> >
-> > Document in netmem.rst what drivers need to do to support netmem TX.
-> >
-> > Signed-off-by: Mina Almasry <almasrymina@google.com>
-> >
-> > ---
-> >
-> > v4:
-> > - New patch
-> > ---
-> >  .../networking/net_cachelines/net_device.rst  |  1 +
-> >  Documentation/networking/netdev-features.rst  |  5 +++++
-> >  Documentation/networking/netmem.rst           | 14 +++++++++++--
-> >  include/linux/netdevice.h                     |  2 ++
-> >  include/net/netmem.h                          | 20 +++++++++++++++++++
-> >  5 files changed, 40 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/Documentation/networking/net_cachelines/net_device.rst b/D=
-ocumentation/networking/net_cachelines/net_device.rst
-> > index 15e31ece675f..e3043b033647 100644
-> > --- a/Documentation/networking/net_cachelines/net_device.rst
-> > +++ b/Documentation/networking/net_cachelines/net_device.rst
-> > @@ -10,6 +10,7 @@ Type                                Name             =
-           fastpath_tx_acce
-> >  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> >  unsigned_long:32                    priv_flags                  read_m=
-ostly                             __dev_queue_xmit(tx)
-> >  unsigned_long:1                     lltx                        read_m=
-ostly                             HARD_TX_LOCK,HARD_TX_TRYLOCK,HARD_TX_UNLO=
-CK(tx)
-> > +unsigned long:1                          netmem_tx:1;                r=
-ead_mostly
-> >  char                                name[16]
-> >  struct netdev_name_node*            name_node
-> >  struct dev_ifalias*                 ifalias
-> > diff --git a/Documentation/networking/netdev-features.rst b/Documentati=
-on/networking/netdev-features.rst
-> > index 5014f7cc1398..02bd7536fc0c 100644
-> > --- a/Documentation/networking/netdev-features.rst
-> > +++ b/Documentation/networking/netdev-features.rst
-> > @@ -188,3 +188,8 @@ Redundancy) frames from one port to another in hard=
-ware.
-> >  This should be set for devices which duplicate outgoing HSR (High-avai=
-lability
-> >  Seamless Redundancy) or PRP (Parallel Redundancy Protocol) tags automa=
-tically
-> >  frames in hardware.
-> > +
-> > +* netmem-tx
-> > +
-> > +This should be set for devices which support netmem TX. See
-> > +Documentation/networking/netmem.rst
-> > diff --git a/Documentation/networking/netmem.rst b/Documentation/networ=
-king/netmem.rst
-> > index 7de21ddb5412..43054d44c407 100644
-> > --- a/Documentation/networking/netmem.rst
-> > +++ b/Documentation/networking/netmem.rst
-> > @@ -19,8 +19,8 @@ Benefits of Netmem :
-> >  * Simplified Development: Drivers interact with a consistent API,
-> >    regardless of the underlying memory implementation.
-> >
-> > -Driver Requirements
-> > -=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > +Driver RX Requirements
-> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> >
-> >  1. The driver must support page_pool.
-> >
-> > @@ -77,3 +77,13 @@ Driver Requirements
-> >     that purpose, but be mindful that some netmem types might have long=
-er
-> >     circulation times, such as when userspace holds a reference in zero=
-copy
-> >     scenarios.
-> > +
-> > +Driver TX Requirements
-> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > +
-> > +1. Driver should use netmem_dma_unmap_page_attrs() in lieu of
-> > +   dma_unmap_page[_attrs](), and netmem_dma_unmap_addr_set() in lieu o=
-f
-> > +   dma_unmap_addr_set(). The netmem variants will handle netmems that =
-should
-> > +   not be dma-unmapped by the driver, such as dma-buf netmems.
->
-> Not all drivers use dma_unmap_addr_xxx APIs (looking at mlx5). Might
-> be worth mentioning that for the drivers managing the mappings
-> differently, care might be taken to not unmap netmems?
->
 
-Yes now that I take a closer look, it's poorly worded to imply the
-issue is limited to dma_unmap. I will reword to say that all
-dma_map*() APIs must be avoided, and we have helpers for
-dma_unmap_*(), and more helpers can be added if needed (similar to
-wording in the Driver RX requirements).
+On Wed, 19 Feb 2025 21:53:25 +0100, Thorsten Blum wrote:
+> Remove commented out code.
+> 
+> 
 
-> > +2. Driver should declare support by setting `netdev->netmem_tx =3D tru=
-e`
-> > diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
-> > index fccc03cd2164..d8cfd5d69ddf 100644
-> > --- a/include/linux/netdevice.h
-> > +++ b/include/linux/netdevice.h
-> > @@ -1753,6 +1753,7 @@ enum netdev_reg_state {
-> >   *   @lltx:          device supports lockless Tx. Deprecated for real =
-HW
-> >   *                   drivers. Mainly used by logical interfaces, such =
-as
-> >   *                   bonding and tunnels
-> > + *   @netmem_tx:     device support netmem_tx.
-> >   *
-> >   *   @name:  This is the first field of the "visible" part of this str=
-ucture
-> >   *           (i.e. as seen by users in the "Space.c" file).  It is the=
- name
-> > @@ -2061,6 +2062,7 @@ struct net_device {
-> >       struct_group(priv_flags_fast,
-> >               unsigned long           priv_flags:32;
-> >               unsigned long           lltx:1;
-> > +             unsigned long           netmem_tx:1;
-> >       );
-> >       const struct net_device_ops *netdev_ops;
-> >       const struct header_ops *header_ops;
-> > diff --git a/include/net/netmem.h b/include/net/netmem.h
-> > index a2148ffb203d..1fb39ad63290 100644
-> > --- a/include/net/netmem.h
-> > +++ b/include/net/netmem.h
-> > @@ -8,6 +8,7 @@
-> >  #ifndef _NET_NETMEM_H
-> >  #define _NET_NETMEM_H
-> >
-> > +#include <linux/dma-mapping.h>
-> >  #include <linux/mm.h>
-> >  #include <net/net_debug.h>
-> >
-> > @@ -267,4 +268,23 @@ static inline unsigned long netmem_get_dma_addr(ne=
-tmem_ref netmem)
-> >  void get_netmem(netmem_ref netmem);
-> >  void put_netmem(netmem_ref netmem);
-> >
->
-> [..]
->
-> > +#define netmem_dma_unmap_addr_set(NETMEM, PTR, ADDR_NAME, VAL)   \
-> > +     do {                                                     \
-> > +             if (!netmem_is_net_iov(NETMEM))                  \
-> > +                     dma_unmap_addr_set(PTR, ADDR_NAME, VAL); \
-> > +             else                                             \
-> > +                     dma_unmap_addr_set(PTR, ADDR_NAME, 0);   \
-> > +     } while (0)
->
-> Any reason not do to static inline instaed?
+Applied, thanks!
 
-Because the args passed to dma_unmap_addr_set are quite unique,
-AFAICT. PTR is a pointer to any struct that has a field (anywhere)
-inside of it called ADDR_NAME, then dma_unmap_addr_set does something
-like:
+[1/1] block: Remove commented out code
+      commit: 8985c4298733a56d38c11948dc3b1dd24f4fcd6b
 
-PTR->ADDR_NAME =3D VAL;
+Best regards,
+-- 
+Jens Axboe
 
-A static inline needs well defined types, and I couldn't figure out
-how to do that (or if it is possible), so a macro it is I guess.
 
-Where I could, I went with static inline.
 
---=20
-Thanks,
-Mina
 
