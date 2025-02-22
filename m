@@ -1,170 +1,90 @@
-Return-Path: <linux-kernel+bounces-527097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF7A3A40749
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 11:09:36 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71E85A4074A
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 11:12:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 993C57A7A49
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 10:07:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57D50171E02
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 10:12:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42AF3207DF5;
-	Sat, 22 Feb 2025 10:07:58 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D78F1207DF7;
+	Sat, 22 Feb 2025 10:12:03 +0000 (UTC)
+Received: from smtp134-24.sina.com.cn (smtp134-24.sina.com.cn [180.149.134.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84D8D205AD2;
-	Sat, 22 Feb 2025 10:07:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D45201FBEB3
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 10:11:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.149.134.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740218877; cv=none; b=fK1NlqNtLkIAS/XBYA6aUJwKxTeFLnHeDHkX4ua2ATHnIOQU0fM1EhzAIDM20tAmA5eIesQiIhNByL7QbRA0AlDS9gIAIwY5KQyllC7N46eO25P3nCE1lWz/0fGLzY570zMOqkKBbI2uq8nVJebqkOCngAIgUSELD0zHbvxwaow=
+	t=1740219123; cv=none; b=FnGdtuqC+t8rk8bvwm34xS9arXog2jBPwZmnTisoSfZXgoTG5RIRN5VB2dMjQdJlw4kBWr+6BCI4NoJ9XJT7m5iEEzRprBP89qTYCAo7pGRJoPSg385TU5H0BR4Oe8fMuoOCwH5TFzJYVfShNTZsFFY+9xsbCEQK2pe9rqjwROk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740218877; c=relaxed/simple;
-	bh=h4o39zGp6HLTNh3hEvswpajKgUxVor2Rc9U8zJVy15U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=f5n/8Fs9jGE9TeTJC5/2dD4CA7DVTeM2iJvy80ESQ/hGt/eDByMZQymxkwbtQd5NXhlKr25RD7LBTAlOH5Zq6BI7K31B7hqQVxWEhd/zvyNSagn/GokNjPF5ANWMQmRjSM1XXPNjN6Jm5twK7y3U1UoPCfdlnYFPqOOJTZ0pIhU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Z0My16cJ1zdb8t;
-	Sat, 22 Feb 2025 18:03:05 +0800 (CST)
-Received: from kwepemh100008.china.huawei.com (unknown [7.202.181.93])
-	by mail.maildlp.com (Postfix) with ESMTPS id 18FD91802D2;
-	Sat, 22 Feb 2025 18:07:46 +0800 (CST)
-Received: from [10.67.121.90] (10.67.121.90) by kwepemh100008.china.huawei.com
- (7.202.181.93) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sat, 22 Feb
- 2025 18:07:45 +0800
-Message-ID: <ddbc0336-9083-4054-8930-c22bd8337488@huawei.com>
-Date: Sat, 22 Feb 2025 18:07:44 +0800
+	s=arc-20240116; t=1740219123; c=relaxed/simple;
+	bh=7tMaY0qjFfucRjyIq28BzfX8Vk4s2TgQk4x6NAdNKBU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=gvwqSS13B3dGBgKkjirBri3cZe0dG4mSXQ/N9Eb5P/H21DSMjle+U7cbnmrVab1wZMOkWAcSTNxY/zra0cEBcPhdgRWDdptTU4uy4l/tjzWxWCa2Vy0J0aKwqZdmA6VE3DnittBQVtScA/59F5VKYRj0D5kQb7kDnLOBvFl74V0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=180.149.134.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([113.88.49.91])
+	by sina.com (10.185.250.21) with ESMTP
+	id 67B9A2BA00007633; Sat, 22 Feb 2025 18:11:11 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 1280493408230
+X-SMAIL-UIID: 299E5C4C5BBC49EDB9DFC345876752EC-20250222-181111-1
+From: Hillf Danton <hdanton@sina.com>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	Byungchul Park <byungchul@sk.com>,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	conduct@kernel.org
+Subject: Re: [RFC PATCH v12 00/26] LUF(Lazy Unmap Flush) reducing tlb numbers over 90%
+Date: Sat, 22 Feb 2025 18:10:59 +0800
+Message-ID: <20250222101100.2531-1-hdanton@sina.com>
+In-Reply-To: <2025022230-jurist-unfasten-c024@gregkh>
+References: <20250220052027.58847-1-byungchul@sk.com> <20250220103223.2360-1-hdanton@sina.com> <20250220114920.2383-1-hdanton@sina.com> <Z7c0BTteQoZKcSmJ@casper.infradead.org> <20250220232503.2416-1-hdanton@sina.com> <20250221230556.2479-1-hdanton@sina.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 0/8] Support for autonomous selection in cppc_cpufreq
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-CC: <lenb@kernel.org>, <robert.moore@intel.com>, <viresh.kumar@linaro.org>,
-	<mario.limonciello@amd.com>, <gautham.shenoy@amd.com>, <ray.huang@amd.com>,
-	<pierre.gondois@arm.com>, <acpica-devel@lists.linux.dev>,
-	<linux-acpi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-pm@vger.kernel.org>, <linuxarm@huawei.com>, <yumpusamongus@gmail.com>,
-	<srinivas.pandruvada@linux.intel.com>, <jonathan.cameron@huawei.com>,
-	<zhanjie9@hisilicon.com>, <lihuisong@huawei.com>, <hepeng68@huawei.com>,
-	<fanghao11@huawei.com>
-References: <20250206131428.3261578-1-zhenglifeng1@huawei.com>
- <0097a9a3-fe61-4200-9a54-5a9c81d3219c@huawei.com>
- <CAJZ5v0hP9a8g8UR2oPyivP1C65=csR245PSHay+nOx3vkoKoaA@mail.gmail.com>
-From: "zhenglifeng (A)" <zhenglifeng1@huawei.com>
-In-Reply-To: <CAJZ5v0hP9a8g8UR2oPyivP1C65=csR245PSHay+nOx3vkoKoaA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemh100008.china.huawei.com (7.202.181.93)
 
-On 2025/2/19 3:17, Rafael J. Wysocki wrote:
-> On Thu, Feb 13, 2025 at 2:55 AM zhenglifeng (A) <zhenglifeng1@huawei.com> wrote:
->>
->> On 2025/2/6 21:14, Lifeng Zheng wrote:
->>> Add sysfs interfaces for CPPC autonomous selection in the cppc_cpufreq
->>> driver.
->>>
->>> The patch series is organized in two parts:
->>>
->>>  - patch 1-5 refactor out the general CPPC register get and set functions
->>>    in cppc_acpi.c
->>>
->>>  - patches 6-8 expose sysfs files for users to control CPPC autonomous
->>>    selection when supported
->>>
->>> Changelog:
->>>
->>> v5:
->>>
->>>  - add more explanation to the commit logs and comments
->>>  - change REG_OPTIONAL from bin to hex
->>>  - split patch 2 into 3 smaller patches
->>>  - remove CPPC_REG_VAL_READ() and CPPC_REG_VAL_WRITE() macros
->>>  - move the modification part in patch 5 into a separate patch
->>>  - rename the sysfs file from "energy_perf" to
->>>    energy_performance_preference_val
->>>
->>> v4:
->>>
->>>  - add REG_OPTIONAL and IS_OPTIONAL_CPC_REG to judge if a cpc register is
->>>    an optional one
->>>  - check whether the register is optional before CPC_SUPPORTED check in
->>>    cppc_get_reg_val() and cppc_set_reg_val()
->>>  - check the register's type in cppc_set_reg_val()
->>>  - add macros to generally implement registers getting and setting
->>>    functions
->>>  - move some logic codes from cppc_cpufreq.c to cppc_acpi.c
->>>  - replace cppc_get_auto_sel_caps() by cppc_get_auto_sel()
->>>
->>> v3:
->>>
->>>  - change cppc_get_reg() and cppc_set_reg() name to cppc_get_reg_val() and
->>>    cppc_set_reg_val()
->>>  - extract cppc_get_reg_val_in_pcc() and cppc_set_reg_val_in_pcc()
->>>  - return the result of cpc_read() in cppc_get_reg_val()
->>>  - add pr_debug() in cppc_get_reg_val_in_pcc() when pcc_ss_id < 0
->>>  - rename 'cpunum' to 'cpu' in cppc_get_reg_val()
->>>  - move some macros from drivers/cpufreq/cppc_cpufreq.c to
->>>    include/acpi/cppc_acpi.h with a CPPC_XXX prefix
->>>
->>> v2:
->>>
->>>  - fix some incorrect placeholder
->>>  - change kstrtoul to kstrtobool in store_auto_select
->>>
->>> Lifeng Zheng (8):
->>>   ACPI: CPPC: Add IS_OPTIONAL_CPC_REG macro to judge if a cpc_reg is
->>>     optional
->>>   ACPI: CPPC: Optimize cppc_get_perf()
->>>   ACPI: CPPC: Rename cppc_get_perf() to cppc_get_reg_val()
->>>   ACPI: CPPC: Add cppc_set_reg_val()
->>>   ACPI: CPPC: Refactor register value get and set ABIs
->>>   ACPI: CPPC: Modify cppc_get_auto_sel_caps() to cppc_get_auto_sel()
->>>   ACPI: CPPC: Add three functions related to autonomous selection
->>>   cpufreq: CPPC: Support for autonomous selection in cppc_cpufreq
->>>
->>>  .../ABI/testing/sysfs-devices-system-cpu      |  54 ++++
->>>  drivers/acpi/cppc_acpi.c                      | 303 +++++++++++-------
->>>  drivers/cpufreq/amd-pstate.c                  |   3 +-
->>>  drivers/cpufreq/cppc_cpufreq.c                | 109 +++++++
->>>  include/acpi/cppc_acpi.h                      |  30 +-
->>>  5 files changed, 372 insertions(+), 127 deletions(-)
->>>
->>
->> Gentle ping.
+On Sat, 22 Feb 2025 08:16:09 +0100 Greg KH <gregkh@linuxfoundation.org>
+> On Sat, Feb 22, 2025 at 07:05:26AM +0800, Hillf Danton wrote:
+> > On Thu, 20 Feb 2025 18:44:12 -0500 Steven Rostedt <rostedt@goodmis.org>
+> > > On Fri, 21 Feb 2025 07:25:02 +0800 Hillf Danton <hdanton@sina.com> wrote:
+> > > > > I'll tell you what would happen in my home town. If someone said
+> > > > > that to a co-worker, they would likely be terminated.
+> > > > >   
+> > > > Interesting, I want to know if the three words, rape, pregnancy and WTK,
+> > > > could be used before judge in your hometown court by anyone like your lawyer.
+> > > 
+> > > This isn't a court. And there's no reason to use the word "rape" in a
+> > > technical conversation on the Linux kernel mailing list. Perhaps a person
+> > > reading this was a victim of rape. How do you think that would make them
+> > > feel? Welcomed to our community? Absolutely not. Which is why it's totally
+> > > unacceptable.
+> > > 
+> > There are NAK victims. Did you nak more than twice a week, Steve?
 > 
-> OK, so I'm wondering how this is related to the patch series at
+> This is not the way to work with your fellow developers in the community
+> to express disagreements.
+>
+No comment because you are free to express disagreements.
+
+> I would recommend following up with an apology.
 > 
-> https://lore.kernel.org/linux-acpi/20250211103737.447704-1-sumitg@nvidia.com/
-
-This series refactors some cppc_acpi ABIs and supports cppc autonomous
-selection with sysfs files in cpufreq policy.  Later, [1] proposed another
-design with different user interfaces.We will discuss and reach a consensus
-with regard to this.
-
-However, as mentioned in [1], patch 1-7 in this series (the cppc_acpi part)
-are not related to user interfaces, so can be reviewed and applied
-separately.  I can also send patch 1-7 as a new thread if preferred.
-
-[1] https://lore.kernel.org/linux-acpi/20250211103737.447704-1-sumitg@nvidia.com/
-
-> 
->> Attach discussions of previous versions:
->> v1: https://lore.kernel.org/all/20241114084816.1128647-1-zhenglifeng1@huawei.com/
->> v2: https://lore.kernel.org/all/20241122062051.3658577-1-zhenglifeng1@huawei.com/
->> v3: https://lore.kernel.org/all/20241216091603.1247644-1-zhenglifeng1@huawei.com/
->> v4: https://lore.kernel.org/all/20250113122104.3870673-1-zhenglifeng1@huawei.com/
->>
-> 
-
+It would take some time for me to opt to follow/ignore what you recommended.
 
