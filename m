@@ -1,89 +1,76 @@
-Return-Path: <linux-kernel+bounces-527104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527105-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77C4CA4075C
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 11:26:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1825CA40762
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 11:31:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0880F3BD4A0
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 10:26:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA1283B57F0
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 10:31:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D1FC207DFF;
-	Sat, 22 Feb 2025 10:26:40 +0000 (UTC)
-Received: from 1wt.eu (ded1.1wt.eu [163.172.96.212])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA144202C3D;
-	Sat, 22 Feb 2025 10:26:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=163.172.96.212
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1753E2080D4;
+	Sat, 22 Feb 2025 10:31:36 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FFA41FCF53;
+	Sat, 22 Feb 2025 10:31:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740220000; cv=none; b=Hvz1pTDs0FtUcTYeGjtDAOmUqfgMmrZDFpfIKKwB9j83oh83SurnXdiMPs1jM4wSX9fSs1R2PlTnOMeM/CqXJbm6TrjQdPnorMqs4aThK11ppwmUQvgtbdhN69IQrUe+Bjsf1hJ1+kerIGVNleWcL4GR/liPR0zB34opcKlxMYY=
+	t=1740220295; cv=none; b=ug/c3Wbsrn6Sh24hYQBCSY2l2v4fA9IeoXv42mEPrH/wHKwvnjmgIm2/YG5VFM/Jz3wTsSFUkfkjPtTOfC25ikQ1XW2HJn9RhB6AvQHWOKA5w2YP2HS9iMtMgopKhWCPHAVmNn79VfVPN/PH8mFq04l1ADyvGSneZUHaFgSgDTM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740220000; c=relaxed/simple;
-	bh=j5WzgqN4kOuCrsD8hHzHoKIHNrX5mXdR54X+4uHZzHU=;
+	s=arc-20240116; t=1740220295; c=relaxed/simple;
+	bh=ORDyt1jb5yDi5v+AM5GRVZ+4ZTDKVdYPatrUDYzKHLA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X3wBZw20zfPXcsM6l8WleDM8L9V5CcQEsvX063LIEawEa1VZbDCroGGyI1etcdWwS/yV8cWUp5b2MYjj89Dp6xLDNeGYn3TGF9b8aPG2XHmb5J3OlPOPoZdIpXPftddb9mFo8yUXQW2adKTlTsSuyDicMGuNQ4njToLKWjBg7TE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu; spf=pass smtp.mailfrom=1wt.eu; arc=none smtp.client-ip=163.172.96.212
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=1wt.eu
-Received: (from willy@localhost)
-	by pcw.home.local (8.15.2/8.15.2/Submit) id 51MAQQUb014866;
-	Sat, 22 Feb 2025 11:26:26 +0100
-Date: Sat, 22 Feb 2025 11:26:26 +0100
-From: Willy Tarreau <w@1wt.eu>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Kees Cook <kees@kernel.org>, Eric Biederman <ebiederm@xmission.com>,
-        Shuah Khan <shuah@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Bill Wendling <morbo@google.com>,
-        Justin Stitt <justinstitt@google.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        llvm@lists.linux.dev
-Subject: Re: [PATCH 00/16] selftests: vDSO: parse_vdso: Make compatible with
- nolibc
-Message-ID: <20250222102626.GB13708@1wt.eu>
-References: <20250203-parse_vdso-nolibc-v1-0-9cb6268d77be@linutronix.de>
- <cd1147a8-25ba-47d2-a59a-0a686469a808@csgroup.eu>
- <20250203143640-70c59c53-af45-40cb-9a52-6395b3fdd263@linutronix.de>
- <937c99b3-3837-4510-be65-4eca3b280ce2@csgroup.eu>
- <20250203165859-8af1246b-6dd8-468a-8e05-68c7b0cad304@linutronix.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=P799GGaQKYhUvZ4+6IVWWWWgDyayCKRnmtYtQTMtCrUvlMHPgGu53r7b6wLJa+O/zaLHj0MZM21hLXvRCrjGauNxEaVugaSKRLS45mML5meXnrCszmFjfZph+XuvZX/P07tLFD+/0JHFgUN3PGUqEz8k5cTjBAGOj+2Pnp1+mF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7504BC4CED1;
+	Sat, 22 Feb 2025 10:31:34 +0000 (UTC)
+Date: Sat, 22 Feb 2025 11:31:31 +0100
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, 
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Mrinmay Sarkar <quic_msarkar@quicinc.com>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/8] dt-bindings: PCI: qcom-ep: describe optional
+ dma-coherent property
+Message-ID: <20250222-hasty-chachalaca-of-greatness-a9cc1c@krzk-bin>
+References: <20250221-sar2130p-pci-v3-0-61a0fdfb75b4@linaro.org>
+ <20250221-sar2130p-pci-v3-1-61a0fdfb75b4@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250203165859-8af1246b-6dd8-468a-8e05-68c7b0cad304@linutronix.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20250221-sar2130p-pci-v3-1-61a0fdfb75b4@linaro.org>
 
-On Mon, Feb 03, 2025 at 05:14:37PM +0100, Thomas Weißschuh wrote:
-> On Mon, Feb 03, 2025 at 04:43:22PM +0100, Christophe Leroy wrote:
-> <snip>
+On Fri, Feb 21, 2025 at 05:51:59PM +0200, Dmitry Baryshkov wrote:
+> Qualcomm SA8775P supports cache coherency on the PCIe EP controller.
+> Allow 'dma-coherent' property to be used for this device. This fixes
+> a part of the following error (the second part is fixed in the next
+> commit):
 > 
-> > Do you have any plan to get it work with nolibc for all test programs in
-> > selftests/vDSO, not only the standalone x86 test ?
+> pcie-ep@1c10000: Unevaluated properties are not allowed ('dma-coherent', 'iommus' were unexpected)
 > 
-> Not directly as next step. I am focussing on some other work which will
-> integrate (vDSO) selftests with nolibc slightly differently.
-> However if you have interest in converting the tests now, that would be
-> great and will also be useful for my future changes.
-> The current issues I see:
-> * Missing architecture support in nolibc (should be fairly easy to implement)
-> * Missing kselftest_harness.h support in nolibc (I'm working on that)
-> * Maybe some users want to stick with their regular libc
->   (Nothing should prevent that, but the mechanism may need some discussion)
+> Fixes: 4b220c6fa9f3 ("arm64: dts: qcom: sa8775p: Mark PCIe EP controller as cache coherent")
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>  Documentation/devicetree/bindings/pci/qcom,pcie-ep.yaml | 2 ++
+>  1 file changed, 2 insertions(+)
 
-BTW, I wanted to thank you for this work. Originally when I started with
-nolibc, I thought the vdso was out of reach due to the many missing
-definitions. Turns out you were braver than me ;-)
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Cheers,
-Willy
+Best regards,
+Krzysztof
+
 
