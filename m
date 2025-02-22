@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-526956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1229CA405A7
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 06:31:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D848CA405AA
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 06:32:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B3DF702F0E
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 05:31:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 299D2189C6D7
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 05:32:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D1E71F03DC;
-	Sat, 22 Feb 2025 05:31:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11F3F1F03DC;
+	Sat, 22 Feb 2025 05:32:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="foOLKw0v"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="f213V6zc"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4C5B770E2
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 05:31:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D2DC770E2
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 05:32:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740202275; cv=none; b=mbJCGVxYN/LOV00w2MQ/6BYC91Q940ep+xNFYPHLDX18ofJhqaqYu9/tUDP2aa6mMlCcaUu+NBzNyxkmrLOsm5W2IjQ2jeKo7vpdBr8bDMabf2wGkW1wxqDQu72zILdRbdXaR/9cdhnUXKICrtnFc+xuGIQJ6h75AxdSZBX94DE=
+	t=1740202332; cv=none; b=OgdjdtJY8eTEIVGbYJ8/fLFd8MVyxPihmIlmPmrCLDrkrByAW/QiIuu47Ao4dH9e4j70OURP5YZiPfp/ftawsn44L0E9mTKkRpKtdKjnruF19gDQWrXkZdMdvWfsFqSg72R7WqNQjviaHwp+ArzQ0jkt1js715sb5NztiitIEDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740202275; c=relaxed/simple;
-	bh=1xOMlQXZst5Mqc30X91Wh9vETl5AV5KJ9zxBHtL/SHg=;
+	s=arc-20240116; t=1740202332; c=relaxed/simple;
+	bh=sOtQZMxE4hxoFNddl0YwhniAj+7lfiqyMq3DClmUCpA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WK2J1i1u7Aysva6MrWN/l3quvymnjes0WOAq28exkYHLhSsvxNeHrEwT6n/Es4QnHU4W1j+4Bun67BkUv2u2Nl9HwwAafQt0/RGT0p4jTH0R4fscpsGTx7bmSjy7HgTZvfsKi/EvH/091NNqH4PMbMtFrnso5sTjwjy0sSsektw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=foOLKw0v; arc=none smtp.client-ip=209.85.167.47
+	 Content-Type:Content-Disposition:In-Reply-To; b=D0rEu289G2FbisblyiGdOTeJzFg6+Yg15w1Ep0ujNlNzJCdkFj+2wSdiyP1pPoovH9EfiiJAdMyleOkfgxBs33Wkhl5XUBIOiypY1qvhYBqBC1oDPRXIZnJVadd+ZUzS1lZeuK27GZ5Ksf8xtnpofAJcLh99vxlDomAZUBkTMl8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=f213V6zc; arc=none smtp.client-ip=209.85.167.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-54622940ef7so3089315e87.3
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 21:31:13 -0800 (PST)
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-5439a6179a7so3128729e87.1
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 21:32:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740202272; x=1740807072; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1740202329; x=1740807129; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=692t9KtSpJuDmEMvBMOA3yej/31QmD5LmR5dhTfFxao=;
-        b=foOLKw0v4EZS6C583tkUBGDHkfYGmMsh9VoRZFPYVCd9n3Fz5RU7j39QZADGcrI5j6
-         d25jBxuwWDvKlUY24SNeqjiPS7klmUrQOVc9voZiBCtIgJekFTmEsfF31E0IzTy2Z2FV
-         s22t2CkrSs6P13wigPYz7bWgmqsyJRqs77PxGD78bnqdxr3gI5ZPSPH8QEc6C2cQKLch
-         /mO/7cu+3anVuCYj0h3MRP4gtYflqdXA18W62kZDRb2Ru95VhKS1/RDs1V5k+Aj1w8CJ
-         7vofa1gj+4jEEb7NKKebbsVNS8LmsULZtHWxhP4B9oQ+stGlsT9sHNgNgyX8pavtzXgl
-         2FDA==
+        bh=87cavELH7HieCR4xxlMRwzRSQ74aAYETIX2I5ONW3rc=;
+        b=f213V6zc6pH4j1fQYUuG5bBC1T0UrB1KY7zv44pV7VGv+hOqXG2JFNGde3fn2X0HLp
+         v1wMlPvsfTHj6glDTdhqYJ0z+X4borh4gBNyXkBG0S4GjC7tVSjSEnMhnKkMSvsNIdd7
+         K5p/9SWMBWl3609Dpsd7Ba+6q7pEQNvHEcnLcQaSISkr5c3awuh0cyz7owYcOsg5qy58
+         99ALKW5nt/JXHCmgW3/630nTeuxZtB/9GTtLWHcskJtOLtWTw1i4LDc8gm6E22QOQQPO
+         d7hzfR0h8Kde5nYjEoEvJ/ALCMPOj5x6zLEUc6ZYbxLpsO5kf6rYOCeKYPxwyg1bGRm8
+         HhIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740202272; x=1740807072;
+        d=1e100.net; s=20230601; t=1740202329; x=1740807129;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=692t9KtSpJuDmEMvBMOA3yej/31QmD5LmR5dhTfFxao=;
-        b=vUmlxrx5KGPbdvFINrA84D/okiiT2L9RpZGjDk3drwET1VPkGg4KtGV3cSQ178e7W6
-         HoDk9rzi1uIklmXPXWkCaibiNHUus7I1xeuaXL4oHt+vKtVh7+YFIJxQyJdILJDHvqUV
-         l4UqjZrc5pMm6wnVhWXSN6ERzW2eDqxBknRl+VZMyBX9UW5fuCjQqRYbJkELhhl3Jrgv
-         /TqpdeLSbJUxFplltACJV6pFhNx8rhlHd+RbcVQfiHnKl/TxwkI/N9uR6PL6ujGXR/m8
-         t1OFvlRaKoQimIskcc8NpISIOZhL/9zVBL7EmaX9ZY2A07mpkgnZ9fU0lc8YN5QpNHal
-         vC9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUhyDJYQrTqowFmA3QFpQZKd19SDdXP9tCz1w+AcdaG4o8KM/+fDe7hTXTp8hTUw8zJPxR4RfeyZzm5wTA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9dkyJHQjZrd/5EtW6aqtYBPRQxo1C/ENqFO/LrZgcmKY4d4MM
-	c6pTTG3a9c8vIPNBbWeTjq8D2hZ1o3VSL8FnUdinD8TlDLIs+iCIbV8yNZUbkNA=
-X-Gm-Gg: ASbGncvFvlTE1VAddOAJxX2nti6zRdjanQjAU0P2GAiEOs8RTnRZxzKKYntEkX454Ka
-	sD6iuD5jClc94I1cbCzeYrHQk1+8JzKP1TkUBATXRGEc3DamIkjrIqax4JnuWkwU9cM98T7s6B6
-	vUJFGoW0bV0vm4gFMn/RU9KBg4NSiHHM3B3d4Ti9iZ5QHbSr8dH+Imev8lqxiiYdEo5xJcQMvs1
-	63ziA6T0EXVdrGgJYWOn2qjBub7crYRdEXf2WsTjzQdYeTgUz3YCsiJehHrjwPDNhTQ7n1BFlrJ
-	LgI/XFiqm1msdUUT2zkqxiTBlUVYOoO1KT9Tnl/WJfqpWuKBWTkSNXxywKVDKOxV8BbVWpkHZB2
-	nmvYpUw==
-X-Google-Smtp-Source: AGHT+IF61Bc0IB55BcHXaBW8QvUMpJcyRRONQV/+7MbYnEEcLtLOL6ljiaBWgmGKtrQT36MElp7few==
-X-Received: by 2002:a05:6512:239b:b0:545:10cf:3462 with SMTP id 2adb3069b0e04-54838f4e423mr2480960e87.41.1740202271699;
-        Fri, 21 Feb 2025 21:31:11 -0800 (PST)
+        bh=87cavELH7HieCR4xxlMRwzRSQ74aAYETIX2I5ONW3rc=;
+        b=FOof8//bcxlCL76i8w5lo3c8FDKERuDQYfde/OAdrpMz2Ibe26VLgzt3wjW0VQB8iA
+         RWTdBBgaqdVC5blLMg5m7I4pyeVUHMWyUzFoXO1vCnlHmwU1Rkz2Ghcajg0ZwIPO5YIJ
+         9NjcWd4qyhbe0bIicbi1sDg8CLRFUU9a9Qvvi0FQnIXMKdaHJxI8RgEt+zjNQN0T0LJQ
+         +1DJmvC0MgaS62KbLyAWS4irKQgWAGbfvgUuT8mHIVrdhqy8nByvcb08UlSG3j7pZPHo
+         /IsYcX/M3WrRpAYWR5fO27TQGO9yC+55QCK0+RD61SjR7b6nKgt0iMsW4JOjt9Y5Issh
+         0LQg==
+X-Forwarded-Encrypted: i=1; AJvYcCVAgBSr691PVB6YyvLlpNOl89FcbRNJjPB93diLLVD0hd9Yxv1LWxot/dUSw+p//ZMWac9CxOODHRGoEAQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGs3SXM1YOzwha9mwJB9uL53hO5dQkNUZxjq1jWyNk9pd+Yx+S
+	lMNdCzY6AWzfyv5deZGPUm3ReRNNi02J7oFbCD5BOu5u3efYdEfUUxkKA+33ies=
+X-Gm-Gg: ASbGncvdxxQsC7Zdix+Mu6HHQ0/hGyMk7CPERwj52OXh6wKp1WOtVFC7qc0CxrPFhWI
+	PA0XJs6zDVjzaiOC+0BDRZl3UK/+0ny8FOiKzyO1Q9nIa/OvAIgHhUk+y10L0saEqRfIoLUxkDI
+	Hk2GqnkfaCI0ubwZAi2RKpTPGbK23YE0of8aKpIbPBEbGBGHBEcHFHi3EodKkRQk2e7RjTCvgHQ
+	6mmysKS7PJHD1Z3DLhFYWXS5vT3e0ItahjdH3xJFJD9dAH0itzL1Q27NElleJq/Wf3t5NA0R2hj
+	OXZO6IkIem6KuUnuW2DhR2BJb2WO/xTndazKQRwCnaxStecfhexCDd+MJFb58lznCAPr70QkMl9
+	ghZlTlg==
+X-Google-Smtp-Source: AGHT+IHD3hAlNop+4r+I7bLXqz1eBLsQgYn7t+lFx0IzcXlZ0NOucwRd5GOGb4By4F3t9ApVCfRcPw==
+X-Received: by 2002:a05:6512:31c6:b0:545:d54:2ebf with SMTP id 2adb3069b0e04-54838c56ea8mr2571321e87.3.1740202328644;
+        Fri, 21 Feb 2025 21:32:08 -0800 (PST)
 Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5452ca28f47sm2431142e87.38.2025.02.21.21.31.09
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5452d9cd8a2sm2424878e87.76.2025.02.21.21.32.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Feb 2025 21:31:10 -0800 (PST)
-Date: Sat, 22 Feb 2025 07:31:07 +0200
+        Fri, 21 Feb 2025 21:32:07 -0800 (PST)
+Date: Sat, 22 Feb 2025 07:32:04 +0200
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To: Yongbang Shi <shiyongbang@huawei.com>
 Cc: xinliang.liu@linaro.org, tiantao6@hisilicon.com, 
@@ -80,11 +80,11 @@ Cc: xinliang.liu@linaro.org, tiantao6@hisilicon.com,
 	chenjianmin@huawei.com, lidongming5@huawei.com, libaihan@huawei.com, 
 	shenjian15@huawei.com, shaojijie@huawei.com, dri-devel@lists.freedesktop.org, 
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 drm-dp 3/8] drm/hisilicon/hibmc: Add dp serdes cfg in
- dp process
-Message-ID: <d77bfuqor2rsd5tg4abywkckiqwy7j5xr43p73to2ofwpirws3@4m4g7hkvji2a>
+Subject: Re: [PATCH v3 drm-dp 4/8] drm/hisilicon/hibmc: Refactor the member
+ of drm_aux in struct hibmc_dp
+Message-ID: <lya3xvxjr6j3te3swomgn4yicv2ibvzzohr6okqxr35z5jlcp7@kpwvopoesnrs>
 References: <20250222025102.1519798-1-shiyongbang@huawei.com>
- <20250222025102.1519798-4-shiyongbang@huawei.com>
+ <20250222025102.1519798-5-shiyongbang@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,103 +93,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250222025102.1519798-4-shiyongbang@huawei.com>
+In-Reply-To: <20250222025102.1519798-5-shiyongbang@huawei.com>
 
-On Sat, Feb 22, 2025 at 10:50:56AM +0800, Yongbang Shi wrote:
+On Sat, Feb 22, 2025 at 10:50:57AM +0800, Yongbang Shi wrote:
 > From: Baihan Li <libaihan@huawei.com>
 > 
-> Add dp serdes cfg in link training process, and related adapting
-> and modificating. Change some init values about training,
-> because we want completely to negotiation process, so we start with
-> the maximum rate and the electrical characteristic level is 0.
+> Because the drm_aux of struct hibmc_dp_dev's member is not easy to get in
+> hibmc_drm_dp.c, we move the drm_aux to struct hibmc_dp. Then there are some
+> adaptations and modifications to make this patch compile.
+
+Nit: move, not 'we move'.
+
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+
 > 
 > Signed-off-by: Baihan Li <libaihan@huawei.com>
 > Signed-off-by: Yongbang Shi <shiyongbang@huawei.com>
 > ---
 > ChangeLog:
 > v2 -> v3:
->   - change commit to an imperative sentence, suggested by Dmitry Baryshkov.
->   - put HIBMC_DP_HOST_SERDES_CTRL in dp_serdes.h, suggested by Dmitry Baryshkov.
-> v1 -> v2:
->   - splittting the patch and add more detailed the changes in the commit message, suggested by Dmitry Baryshkov.
+>   - split the patch into two parts, suggested by Dmitry Baryshkov.
 > ---
->  .../gpu/drm/hisilicon/hibmc/dp/dp_config.h    |  1 +
->  drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c    |  5 ++-
->  drivers/gpu/drm/hisilicon/hibmc/dp/dp_link.c  | 33 ++++++++++++++++---
->  drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h   |  1 +
->  .../gpu/drm/hisilicon/hibmc/dp/dp_serdes.h    |  6 ++++
->  .../gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c   |  8 ++---
->  6 files changed, 43 insertions(+), 11 deletions(-)
-> 
-
-Mostly LGTM.
-
-> diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_serdes.h b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_serdes.h
-> index 812d0794543c..e0537cc9af41 100644
-> --- a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_serdes.h
-> +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_serdes.h
-> @@ -4,12 +4,15 @@
->  #ifndef DP_SERDES_H
->  #define DP_SERDES_H
->  
-> +#include "dp_comm.h"
-
-No, please include it directly, where required. This simplifies possible
-inter-header dependencies.
-
-> +
->  #define HIBMC_DP_HOST_OFFSET		0x10000
->  #define HIBMC_DP_LANE0_RATE_OFFSET	0x4
->  #define HIBMC_DP_LANE1_RATE_OFFSET	0xc
->  #define HIBMC_DP_LANE_STATUS_OFFSET	0x10
->  #define HIBMC_DP_PMA_LANE0_OFFSET	0x18
->  #define HIBMC_DP_PMA_LANE1_OFFSET	0x1c
-> +#define HIBMC_DP_HOST_SERDES_CTRL	0x1f001c
->  #define HIBMC_DP_PMA_TXDEEMPH		GENMASK(18, 1)
->  
->  /* dp serdes TX-Deempth Configuration */
-> @@ -24,6 +27,9 @@
->  #define DP_SERDES_VOL2_PRE1		0x4500
->  #define DP_SERDES_VOL3_PRE0		0x600
->  #define DP_SERDES_BW_8_1		0x3
-> +#define DP_SERDES_BW_5_4		0x2
-> +#define DP_SERDES_BW_2_7		0x1
-> +#define DP_SERDES_BW_1_62		0x0
->  
->  #define DP_SERDES_DONE			0x3
->  
-> diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
-> index e6de6d5edf6b..67d39e258cac 100644
-> --- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
-> +++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
-> @@ -28,9 +28,7 @@
->  #include "hibmc_drm_drv.h"
->  #include "hibmc_drm_regs.h"
->  
-> -#define HIBMC_DP_HOST_SERDES_CTRL		0x1f001c
-> -#define HIBMC_DP_HOST_SERDES_CTRL_VAL		0x8a00
-> -#define HIBMC_DP_HOST_SERDES_CTRL_MASK		0x7ffff
-> +#include "dp/dp_serdes.h"
->  
->  DEFINE_DRM_GEM_FOPS(hibmc_fops);
->  
-> @@ -122,8 +120,8 @@ static int hibmc_kms_init(struct hibmc_drm_private *priv)
->  	}
->  
->  	/* if DP existed, init DP */
-> -	if ((readl(priv->mmio + HIBMC_DP_HOST_SERDES_CTRL) &
-> -	     HIBMC_DP_HOST_SERDES_CTRL_MASK) == HIBMC_DP_HOST_SERDES_CTRL_VAL) {
-> +	ret = readl(priv->mmio + HIBMC_DP_HOST_SERDES_CTRL);
-> +	if (ret) {
-
-Why?
-
->  		ret = hibmc_dp_init(priv);
->  		if (ret)
->  			drm_err(dev, "failed to init dp: %d\n", ret);
-> -- 
-> 2.33.0
-> 
+>  drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.c  | 13 +++++++-----
+>  drivers/gpu/drm/hisilicon/hibmc/dp/dp_comm.h |  6 ++++--
+>  drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c   |  2 +-
+>  drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h   |  2 ++
+>  drivers/gpu/drm/hisilicon/hibmc/dp/dp_link.c | 22 ++++++++++----------
+>  5 files changed, 26 insertions(+), 19 deletions(-)
 
 -- 
 With best wishes
