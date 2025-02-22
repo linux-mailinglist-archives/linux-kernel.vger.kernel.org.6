@@ -1,220 +1,393 @@
-Return-Path: <linux-kernel+bounces-526888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06C0BA404D1
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 02:44:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8213AA404D6
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 02:45:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E84007AFDD9
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 01:43:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 489AB44052E
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 01:44:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA8641F8681;
-	Sat, 22 Feb 2025 01:42:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eqmSnBz8"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78B0B1FBEB3;
+	Sat, 22 Feb 2025 01:43:54 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CB4486358
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 01:42:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B99381E376E;
+	Sat, 22 Feb 2025 01:43:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740188559; cv=none; b=iSPuPpuuV86hCpfLudVRGOjE/ZpyHoj/fRVxbNYqbG1JhcYH6CRENJs95BZQ7U8v3QzqfXUi7j35WI3D7txqwzj8YyAC4/fk7xKOZhBX9fP8LSXUfzKMzEtVYvIecB2vWb2ikT34LMgK0QgGtZpqjHdFh2dUUoJIoJs51Bry8/o=
+	t=1740188633; cv=none; b=YRKwAYys4asqrCDgIfFJunagGXZBc4llxRfIRXshKbpjAEc+QsbV+YfVEGL5DWNM4JBVDmUycX9OsiKrtkI/V2D6jIi86ne3K7zbj5NZjIZfR7sR1jBaF1sfUF8lAPKbfB2JhtClImHgxG0cWfX3+4rlK1vSmSyzNhrFiaCoo8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740188559; c=relaxed/simple;
-	bh=D66GIq7K9wLx+9WMFretIiyOUfSdTbCQ7NEgXv9YwLs=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=k2mEROjBfgw5u3Pj9nXE3pP+is+bxGtEcQ4HoB+uN3IppP8woE6weerqdZWztRKuUIy8Pti3MVeOd22aefIfchzkO9XPt4UuNvzgEtMlFxGikSLqtQ1yp+kK953gs3f7pymSQSNxu8nNfOHP0moetesGr2EA5uKsP+0wAQuPHrA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=eqmSnBz8; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2fc1e7efdffso8809422a91.0
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 17:42:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740188557; x=1740793357; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FMV1+v3kmLfU145KAk8LrvIrW84mgCr84o9YEajYxaI=;
-        b=eqmSnBz8vROPHmmKX7rFvKgAnK0yiRls3uLdsp+Av/8a2YhJOzQyCI0Cy0YAHfrPmA
-         nU5gbRhkjCWu/j6SI6nUTijlpQKraixFWvRtxZRmrv7k/HcuOHmlWzZLiblW3dz5626f
-         PmuxRyECKmcJxuq/MqsBXYyLqzpwWYJqiYzm2uo/V+K26ClAUiFCp4REaD8eY4hOXiWI
-         fQaBg9TARbTQtMsMtVB+3jgTgts7UxgUvQvMChG+8AU2SWlLkzRtshfcllFWGQXYYXRf
-         f2dhRW1Kr/LxXkG+jF7LgRv1010WIvh+x3p1yA7Xj7V9L4YDUCpOQOBsX7AxgV68k+Mn
-         g8Bg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740188557; x=1740793357;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FMV1+v3kmLfU145KAk8LrvIrW84mgCr84o9YEajYxaI=;
-        b=nQVDzfdIWkBb2uYmYOTnMQgiRkfWkBca9oweSkx1mu8yKdVpgsyo4K9k37rj0M9FKH
-         0uPbrAkE0GPx7yzAV1i5ZbvyUiwOms2TApJVs+OL4loPh8VGnbYzDOOvtZl1J6ig/KWu
-         L69p1NnuD+OzcxfLvxu/jlnCTr3CrqQh0Ac1/bbG0MIlkz/XaCwXtiydAarw+z79rJL1
-         zd65QfxfKLYSexO6Omo88kB0H1tdh3im4ZDe4JvjMxCC3Scu8uoPajBKEuQCWbvQ3icC
-         xRuEN8xL1f76a1a5B2/Jj82HCPagLYONEl59JUln6VS3807pvgIv1VtAHVTVZ7nCwRzX
-         K//g==
-X-Forwarded-Encrypted: i=1; AJvYcCWtDNUrdnHzljELu50fExKzFK29fB3KHggGRcs80d2KzdEfIXHMDpjcvG/0XQfL9/YA/9D15sCMjiiUww0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyaTPJ6ZZ6ciSvU6Y6S1lAECTO6d9nH0b42u7RS1IFNdo/tKRoT
-	l+trcLEfWSXrmhCvbWwc1gThhamPSExtOQzrDewQb6LdEnaBQfSYCLtJQuJnJEIdMq++XJOdH8l
-	yEg==
-X-Google-Smtp-Source: AGHT+IHBFM8YO9/o6J3at666Bwgtq1isjrRcJQckEB6S+1R/IotITRiItYVcXSjAFIpnVMW5enG2xYtWKgQ=
-X-Received: from pjh15.prod.google.com ([2002:a17:90b:3f8f:b0:2fc:d276:ee01])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:2e44:b0:2f5:63a:44f9
- with SMTP id 98e67ed59e1d1-2fce7b0acaamr7726615a91.23.1740188556840; Fri, 21
- Feb 2025 17:42:36 -0800 (PST)
-Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Fri, 21 Feb 2025 17:42:32 -0800
+	s=arc-20240116; t=1740188633; c=relaxed/simple;
+	bh=VWc+giNU0hRQ4gfPjhz8oaNz8blMvEj95HURSnl/VTg=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=GkzeR+6VFgrktT+GhNa4TbqZFAg4HTT0qhSEDDN432id4shRxQYyDUeGowiQNp58rUrCFnYGZzOoRdUhrU7OVDOgUGlm7Rlsz/JKvIv20VMA+z4JkQoIQmPP6pXOSAhgHeJ/OuphrDH3SqJ6OyWZgT5FXzD7s1KykPFt07VgBAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Z08sZ3ltXz4f3jt4;
+	Sat, 22 Feb 2025 09:43:30 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id DD7161A058E;
+	Sat, 22 Feb 2025 09:43:46 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP4 (Coremail) with SMTP id gCh0CgCH61_QK7lnBhkkEg--.14192S3;
+	Sat, 22 Feb 2025 09:43:46 +0800 (CST)
+Subject: Re: [PATCH 12/12] badblocks: use sector_t instead of int to avoid
+ truncation of badblocks length
+To: Zheng Qixing <zhengqixing@huaweicloud.com>, axboe@kernel.dk,
+ song@kernel.org, colyli@kernel.org, dan.j.williams@intel.com,
+ vishal.l.verma@intel.com, dave.jiang@intel.com, ira.weiny@intel.com,
+ dlemoal@kernel.org, yanjun.zhu@linux.dev, kch@nvidia.com, hare@suse.de,
+ zhengqixing@huawei.com, john.g.garry@oracle.com, geliang@kernel.org,
+ xni@redhat.com, colyli@suse.de
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-raid@vger.kernel.org, nvdimm@lists.linux.dev, yi.zhang@huawei.com,
+ yangerkun@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
+References: <20250221081109.734170-1-zhengqixing@huaweicloud.com>
+ <20250221081109.734170-13-zhengqixing@huaweicloud.com>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <f013c2e1-adc0-9a09-67b3-e07f89f936e7@huaweicloud.com>
+Date: Sat, 22 Feb 2025 09:43:44 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.48.1.601.g30ceb7b040-goog
-Message-ID: <20250222014232.2301713-1-seanjc@google.com>
-Subject: [kvm-unit-tests GIT PULL] x86: Fixes, new tests, and more!
-From: Sean Christopherson <seanjc@google.com>
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Sean Christopherson <seanjc@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+In-Reply-To: <20250221081109.734170-13-zhengqixing@huaweicloud.com>
+Content-Type: text/plain; charset=gbk; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgCH61_QK7lnBhkkEg--.14192S3
+X-Coremail-Antispam: 1UD129KBjvJXoWfJr1Uur1ftFy8Gr48JFyDGFg_yoWkuw1Upa
+	1DJa4ftryUWF1rW3WUZayq9r1F934ftFWUKrWUW345WF97K3s7tF1kXFyYqFyq9F13Grn0
+	va1Y9rW3ua4kKrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9ab4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
+	e2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4I
+	kC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWU
+	WwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr
+	0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWU
+	JVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4UJVWxJr
+	UvcSsGvfC2KfnxnUUI43ZEXa7IU0s2-5UUUUU==
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-Please pull a pile of long-overdue changes.  Note, a few of the new tests
-fail on AMD CPUs (LAM and  bus lock #DB).  I was hoping to get the KVM
-fixes posted today, but I kept running into KUT failures (there's still
-one more failure with apic-split when running on Turin with AVIC enabled,
-but that one is pre-existing).
+ÔÚ 2025/02/21 16:11, Zheng Qixing Ð´µÀ:
+> From: Zheng Qixing <zhengqixing@huawei.com>
+> 
+> There is a truncation of badblocks length issue when set badblocks as
+> follow:
+> 
+> echo "2055 4294967299" > bad_blocks
+> cat bad_blocks
+> 2055 3
+> 
+> Change 'sectors' argument type from 'int' to 'sector_t'.
+> 
+> This change avoids truncation of badblocks length for large sectors by
+> replacing 'int' with 'sector_t' (u64), enabling proper handling of larger
+> disk sizes and ensuring compatibility with 64-bit sector addressing.
+> 
+> Fixes: 9e0e252a048b ("badblocks: Add core badblock management code")
+> Signed-off-by: Zheng Qixing <zhengqixing@huawei.com>
+> ---
+>   block/badblocks.c             | 20 ++++++++------------
+>   drivers/block/null_blk/main.c |  2 +-
+>   drivers/md/md.h               |  6 +++---
+>   drivers/md/raid1-10.c         |  2 +-
+>   drivers/md/raid1.c            |  4 ++--
+>   drivers/md/raid10.c           |  8 ++++----
+>   drivers/nvdimm/nd.h           |  2 +-
+>   drivers/nvdimm/pfn_devs.c     |  7 ++++---
+>   drivers/nvdimm/pmem.c         |  2 +-
+>   include/linux/badblocks.h     |  8 ++++----
+>   10 files changed, 29 insertions(+), 32 deletions(-)
+> 
+LGTM
+Reviewed-by: Yu Kuai <yukuai3@huawei.com>
+> diff --git a/block/badblocks.c b/block/badblocks.c
+> index 8f057563488a..14e3be47d22d 100644
+> --- a/block/badblocks.c
+> +++ b/block/badblocks.c
+> @@ -836,7 +836,7 @@ static bool try_adjacent_combine(struct badblocks *bb, int prev)
+>   }
+>   
+>   /* Do exact work to set bad block range into the bad block table */
+> -static bool _badblocks_set(struct badblocks *bb, sector_t s, int sectors,
+> +static bool _badblocks_set(struct badblocks *bb, sector_t s, sector_t sectors,
+>   			   int acknowledged)
+>   {
+>   	int len = 0, added = 0;
+> @@ -956,8 +956,6 @@ static bool _badblocks_set(struct badblocks *bb, sector_t s, int sectors,
+>   	if (sectors > 0)
+>   		goto re_insert;
+>   
+> -	WARN_ON(sectors < 0);
+> -
+>   	/*
+>   	 * Check whether the following already set range can be
+>   	 * merged. (prev < 0) condition is not handled here,
+> @@ -1048,7 +1046,7 @@ static int front_splitting_clear(struct badblocks *bb, int prev,
+>   }
+>   
+>   /* Do the exact work to clear bad block range from the bad block table */
+> -static bool _badblocks_clear(struct badblocks *bb, sector_t s, int sectors)
+> +static bool _badblocks_clear(struct badblocks *bb, sector_t s, sector_t sectors)
+>   {
+>   	struct badblocks_context bad;
+>   	int prev = -1, hint = -1;
+> @@ -1171,8 +1169,6 @@ static bool _badblocks_clear(struct badblocks *bb, sector_t s, int sectors)
+>   	if (sectors > 0)
+>   		goto re_clear;
+>   
+> -	WARN_ON(sectors < 0);
+> -
+>   	if (cleared) {
+>   		badblocks_update_acked(bb);
+>   		set_changed(bb);
+> @@ -1187,8 +1183,8 @@ static bool _badblocks_clear(struct badblocks *bb, sector_t s, int sectors)
+>   }
+>   
+>   /* Do the exact work to check bad blocks range from the bad block table */
+> -static int _badblocks_check(struct badblocks *bb, sector_t s, int sectors,
+> -			    sector_t *first_bad, int *bad_sectors)
+> +static int _badblocks_check(struct badblocks *bb, sector_t s, sector_t sectors,
+> +			    sector_t *first_bad, sector_t *bad_sectors)
+>   {
+>   	int prev = -1, hint = -1, set = 0;
+>   	struct badblocks_context bad;
+> @@ -1298,8 +1294,8 @@ static int _badblocks_check(struct badblocks *bb, sector_t s, int sectors,
+>    * -1: there are bad blocks which have not yet been acknowledged in metadata.
+>    * plus the start/length of the first bad section we overlap.
+>    */
+> -int badblocks_check(struct badblocks *bb, sector_t s, int sectors,
+> -			sector_t *first_bad, int *bad_sectors)
+> +int badblocks_check(struct badblocks *bb, sector_t s, sector_t sectors,
+> +			sector_t *first_bad, sector_t *bad_sectors)
+>   {
+>   	unsigned int seq;
+>   	int rv;
+> @@ -1340,7 +1336,7 @@ EXPORT_SYMBOL_GPL(badblocks_check);
+>    *  true: success
+>    *  false: failed to set badblocks (out of space)
+>    */
+> -bool badblocks_set(struct badblocks *bb, sector_t s, int sectors,
+> +bool badblocks_set(struct badblocks *bb, sector_t s, sector_t sectors,
+>   		   int acknowledged)
+>   {
+>   	return _badblocks_set(bb, s, sectors, acknowledged);
+> @@ -1361,7 +1357,7 @@ EXPORT_SYMBOL_GPL(badblocks_set);
+>    *  true: success
+>    *  false: failed to clear badblocks
+>    */
+> -bool badblocks_clear(struct badblocks *bb, sector_t s, int sectors)
+> +bool badblocks_clear(struct badblocks *bb, sector_t s, sector_t sectors)
+>   {
+>   	return _badblocks_clear(bb, s, sectors);
+>   }
+> diff --git a/drivers/block/null_blk/main.c b/drivers/block/null_blk/main.c
+> index 623db72ad66b..6e7d80b6e92b 100644
+> --- a/drivers/block/null_blk/main.c
+> +++ b/drivers/block/null_blk/main.c
+> @@ -1302,7 +1302,7 @@ static inline blk_status_t null_handle_badblocks(struct nullb_cmd *cmd,
+>   {
+>   	struct badblocks *bb = &cmd->nq->dev->badblocks;
+>   	sector_t first_bad;
+> -	int bad_sectors;
+> +	sector_t bad_sectors;
+>   
+>   	if (badblocks_check(bb, sector, nr_sectors, &first_bad, &bad_sectors))
+>   		return BLK_STS_IOERR;
+> diff --git a/drivers/md/md.h b/drivers/md/md.h
+> index 923a0ef51efe..6edc0f71b7d4 100644
+> --- a/drivers/md/md.h
+> +++ b/drivers/md/md.h
+> @@ -266,8 +266,8 @@ enum flag_bits {
+>   	Nonrot,			/* non-rotational device (SSD) */
+>   };
+>   
+> -static inline int is_badblock(struct md_rdev *rdev, sector_t s, int sectors,
+> -			      sector_t *first_bad, int *bad_sectors)
+> +static inline int is_badblock(struct md_rdev *rdev, sector_t s, sector_t sectors,
+> +			      sector_t *first_bad, sector_t *bad_sectors)
+>   {
+>   	if (unlikely(rdev->badblocks.count)) {
+>   		int rv = badblocks_check(&rdev->badblocks, rdev->data_offset + s,
+> @@ -284,7 +284,7 @@ static inline int rdev_has_badblock(struct md_rdev *rdev, sector_t s,
+>   				    int sectors)
+>   {
+>   	sector_t first_bad;
+> -	int bad_sectors;
+> +	sector_t bad_sectors;
+>   
+>   	return is_badblock(rdev, s, sectors, &first_bad, &bad_sectors);
+>   }
+> diff --git a/drivers/md/raid1-10.c b/drivers/md/raid1-10.c
+> index 4378d3250bd7..62b980b12f93 100644
+> --- a/drivers/md/raid1-10.c
+> +++ b/drivers/md/raid1-10.c
+> @@ -247,7 +247,7 @@ static inline int raid1_check_read_range(struct md_rdev *rdev,
+>   					 sector_t this_sector, int *len)
+>   {
+>   	sector_t first_bad;
+> -	int bad_sectors;
+> +	sector_t bad_sectors;
+>   
+>   	/* no bad block overlap */
+>   	if (!is_badblock(rdev, this_sector, *len, &first_bad, &bad_sectors))
+> diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
+> index 8beb8cccc6af..0b2839105857 100644
+> --- a/drivers/md/raid1.c
+> +++ b/drivers/md/raid1.c
+> @@ -1537,7 +1537,7 @@ static void raid1_write_request(struct mddev *mddev, struct bio *bio,
+>   		atomic_inc(&rdev->nr_pending);
+>   		if (test_bit(WriteErrorSeen, &rdev->flags)) {
+>   			sector_t first_bad;
+> -			int bad_sectors;
+> +			sector_t bad_sectors;
+>   			int is_bad;
+>   
+>   			is_bad = is_badblock(rdev, r1_bio->sector, max_sectors,
+> @@ -2886,7 +2886,7 @@ static sector_t raid1_sync_request(struct mddev *mddev, sector_t sector_nr,
+>   		} else {
+>   			/* may need to read from here */
+>   			sector_t first_bad = MaxSector;
+> -			int bad_sectors;
+> +			sector_t bad_sectors;
+>   
+>   			if (is_badblock(rdev, sector_nr, good_sectors,
+>   					&first_bad, &bad_sectors)) {
+> diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
+> index 7ed933181712..a8664e29aada 100644
+> --- a/drivers/md/raid10.c
+> +++ b/drivers/md/raid10.c
+> @@ -747,7 +747,7 @@ static struct md_rdev *read_balance(struct r10conf *conf,
+>   
+>   	for (slot = 0; slot < conf->copies ; slot++) {
+>   		sector_t first_bad;
+> -		int bad_sectors;
+> +		sector_t bad_sectors;
+>   		sector_t dev_sector;
+>   		unsigned int pending;
+>   		bool nonrot;
+> @@ -1438,7 +1438,7 @@ static void raid10_write_request(struct mddev *mddev, struct bio *bio,
+>   		if (rdev && test_bit(WriteErrorSeen, &rdev->flags)) {
+>   			sector_t first_bad;
+>   			sector_t dev_sector = r10_bio->devs[i].addr;
+> -			int bad_sectors;
+> +			sector_t bad_sectors;
+>   			int is_bad;
+>   
+>   			is_bad = is_badblock(rdev, dev_sector, max_sectors,
+> @@ -3413,7 +3413,7 @@ static sector_t raid10_sync_request(struct mddev *mddev, sector_t sector_nr,
+>   				sector_t from_addr, to_addr;
+>   				struct md_rdev *rdev = conf->mirrors[d].rdev;
+>   				sector_t sector, first_bad;
+> -				int bad_sectors;
+> +				sector_t bad_sectors;
+>   				if (!rdev ||
+>   				    !test_bit(In_sync, &rdev->flags))
+>   					continue;
+> @@ -3609,7 +3609,7 @@ static sector_t raid10_sync_request(struct mddev *mddev, sector_t sector_nr,
+>   		for (i = 0; i < conf->copies; i++) {
+>   			int d = r10_bio->devs[i].devnum;
+>   			sector_t first_bad, sector;
+> -			int bad_sectors;
+> +			sector_t bad_sectors;
+>   			struct md_rdev *rdev;
+>   
+>   			if (r10_bio->devs[i].repl_bio)
+> diff --git a/drivers/nvdimm/nd.h b/drivers/nvdimm/nd.h
+> index 5ca06e9a2d29..cc5c8f3f81e8 100644
+> --- a/drivers/nvdimm/nd.h
+> +++ b/drivers/nvdimm/nd.h
+> @@ -673,7 +673,7 @@ static inline bool is_bad_pmem(struct badblocks *bb, sector_t sector,
+>   {
+>   	if (bb->count) {
+>   		sector_t first_bad;
+> -		int num_bad;
+> +		sector_t num_bad;
+>   
+>   		return !!badblocks_check(bb, sector, len / 512, &first_bad,
+>   				&num_bad);
+> diff --git a/drivers/nvdimm/pfn_devs.c b/drivers/nvdimm/pfn_devs.c
+> index cfdfe0eaa512..8f3e816e805d 100644
+> --- a/drivers/nvdimm/pfn_devs.c
+> +++ b/drivers/nvdimm/pfn_devs.c
+> @@ -367,9 +367,10 @@ static int nd_pfn_clear_memmap_errors(struct nd_pfn *nd_pfn)
+>   	struct nd_namespace_common *ndns = nd_pfn->ndns;
+>   	void *zero_page = page_address(ZERO_PAGE(0));
+>   	struct nd_pfn_sb *pfn_sb = nd_pfn->pfn_sb;
+> -	int num_bad, meta_num, rc, bb_present;
+> +	int meta_num, rc, bb_present;
+>   	sector_t first_bad, meta_start;
+>   	struct nd_namespace_io *nsio;
+> +	sector_t num_bad;
+>   
+>   	if (nd_pfn->mode != PFN_MODE_PMEM)
+>   		return 0;
+> @@ -394,7 +395,7 @@ static int nd_pfn_clear_memmap_errors(struct nd_pfn *nd_pfn)
+>   		bb_present = badblocks_check(&nd_region->bb, meta_start,
+>   				meta_num, &first_bad, &num_bad);
+>   		if (bb_present) {
+> -			dev_dbg(&nd_pfn->dev, "meta: %x badblocks at %llx\n",
+> +			dev_dbg(&nd_pfn->dev, "meta: %llx badblocks at %llx\n",
+>   					num_bad, first_bad);
+>   			nsoff = ALIGN_DOWN((nd_region->ndr_start
+>   					+ (first_bad << 9)) - nsio->res.start,
+> @@ -413,7 +414,7 @@ static int nd_pfn_clear_memmap_errors(struct nd_pfn *nd_pfn)
+>   			}
+>   			if (rc) {
+>   				dev_err(&nd_pfn->dev,
+> -					"error clearing %x badblocks at %llx\n",
+> +					"error clearing %llx badblocks at %llx\n",
+>   					num_bad, first_bad);
+>   				return rc;
+>   			}
+> diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
+> index d81faa9d89c9..43156e1576c9 100644
+> --- a/drivers/nvdimm/pmem.c
+> +++ b/drivers/nvdimm/pmem.c
+> @@ -249,7 +249,7 @@ __weak long __pmem_direct_access(struct pmem_device *pmem, pgoff_t pgoff,
+>   	unsigned int num = PFN_PHYS(nr_pages) >> SECTOR_SHIFT;
+>   	struct badblocks *bb = &pmem->bb;
+>   	sector_t first_bad;
+> -	int num_bad;
+> +	sector_t num_bad;
+>   
+>   	if (kaddr)
+>   		*kaddr = pmem->virt_addr + offset;
+> diff --git a/include/linux/badblocks.h b/include/linux/badblocks.h
+> index 8764bed9ff16..996493917f36 100644
+> --- a/include/linux/badblocks.h
+> +++ b/include/linux/badblocks.h
+> @@ -48,11 +48,11 @@ struct badblocks_context {
+>   	int		ack;
+>   };
+>   
+> -int badblocks_check(struct badblocks *bb, sector_t s, int sectors,
+> -		   sector_t *first_bad, int *bad_sectors);
+> -bool badblocks_set(struct badblocks *bb, sector_t s, int sectors,
+> +int badblocks_check(struct badblocks *bb, sector_t s, sector_t sectors,
+> +		    sector_t *first_bad, sector_t *bad_sectors);
+> +bool badblocks_set(struct badblocks *bb, sector_t s, sector_t sectors,
+>   		   int acknowledged);
+> -bool badblocks_clear(struct badblocks *bb, sector_t s, int sectors);
+> +bool badblocks_clear(struct badblocks *bb, sector_t s, sector_t sectors);
+>   void ack_all_badblocks(struct badblocks *bb);
+>   ssize_t badblocks_show(struct badblocks *bb, char *page, int unack);
+>   ssize_t badblocks_store(struct badblocks *bb, const char *page, size_t len,
+> 
 
-If someone wants a project, SEV-ES, SEV-SNP, and TDX support is still
-awaiting review+merge.
-
-The following changes since commit f77fb696cfd0e4a5562cdca189be557946bf522f:
-
-  arm: pmu: Actually use counter 0 in test_event_counter_config() (2025-02-04 14:09:20 +0100)
-
-are available in the Git repository at:
-
-  https://github.com/kvm-x86/kvm-unit-tests.git tags/kvm-x86-2025.02.21
-
-for you to fetch changes up to 8d9218bb6b7ced9e8244250b8f0d8b2090c1042a:
-
-  x86/debug: Add a split-lock #AC / bus-lock #DB testcase (2025-02-21 17:11:29 -0800)
-
-----------------------------------------------------------------
-KVM-Unit-Tests x86 changes:
-
- - Expand the per-CPU data+stack area to 12KiB per CPU to reduce the
-   probability of tests overflowing their stack and clobbering pre-CPU
-   data.
-
- - Add testcases for LA57 canonical checks.
-
- - Add testcases for LAM.
-
- - Add a smoke test to make sure KVM doesn't bleed split-lock #AC/#DB into
-   the guest.
-
- - Fix many warts and bugs in the PMU test, and prepare it for PMU version 5
-   and beyond.
-
- - Many misc fixes and cleanups.
-
-----------------------------------------------------------------
-Aaron Lewis (1):
-      x86: Increase the timeout for the test "vmx_apicv_test"
-
-Binbin Wu (3):
-      x86: Allow setting of CR3 LAM bits if LAM supported
-      x86: Add test cases for LAM_{U48,U57}
-      x86: Add test case for INVVPID with LAM
-
-Dapeng Mi (17):
-      x86: pmu: Remove blank line and redundant space
-      x86: pmu: Refine fixed_events[] names
-      x86: pmu: Align fields in pmu_counter_t to better pack the struct
-      x86: pmu: Enlarge cnt[] length to 48 in check_counters_many()
-      x86: pmu: Print measured event count if test fails
-      x86: pmu: Fix potential out of bound access for fixed events
-      x86: pmu: Fix cycles event validation failure
-      x86: pmu: Use macro to replace hard-coded branches event index
-      x86: pmu: Use macro to replace hard-coded ref-cycles event index
-      x86: pmu: Use macro to replace hard-coded instructions event index
-      x86: pmu: Enable and disable PMCs in loop() asm blob
-      x86: pmu: Improve instruction and branches events verification
-      x86: pmu: Improve LLC misses event verification
-      x86: pmu: Adjust lower boundary of llc-misses event to 0 for legacy CPUs
-      x86: pmu: Add IBPB indirect jump asm blob
-      x86: pmu: Adjust lower boundary of branch-misses event
-      x86: pmu: Optimize emulated instruction validation
-
-Hang SU (1):
-      x86: replace segment selector magic number with macro definition
-
-Maxim Levitsky (6):
-      pmu_lbr: drop check for MSR_LBR_TOS != 0
-      x86: Add _safe() and _fep_safe() variants to segment base load instructions
-      x86: Add a few functions for gdt manipulation
-      x86: Move struct invpcid_desc descriptor to processor.h
-      x86: Add testcases for writing (non)canonical LA57 values to MSRs and bases
-      nVMX: add a test for canonical checks of various host state vmcs12 fields.
-
-Nicolas Saenz Julienne (1):
-      x86: Make set/clear_bit() atomic
-
-Robert Hoo (1):
-      x86: Add test case for LAM_SUP
-
-Sean Christopherson (12):
-      x86: Force host-phys-bits for normal maxphyaddr access tests
-      nVMX: Clear A/D enable bit in EPTP after negative testcase on non-A/D host
-      x86: Make per-CPU stacks page-aligned
-      x86: Add a macro for the size of the per-CPU stack/data area
-      x86: Increase per-CPU stack/data area to 12KiB
-      x86: Expand LA57 test to 64-bit mode (to prep for canonical testing)
-      x86: Drop "enabled" field from "struct kvm_vcpu_pv_apf_data"
-      x86: Move descriptor table selector #defines to the top of desc.h
-      x86: Commit to using __ASSEMBLER__ instead of __ASSEMBLY__
-      x86: Move SMP #defines from apic-defs.h to smp.h
-      x86: Include libcflat.h in atomic.h for u64 typedef
-      x86/debug: Add a split-lock #AC / bus-lock #DB testcase
-
-Xiong Zhang (1):
-      x86: pmu: Remove duplicate code in pmu_init()
-
-Zide Chen (3):
-      nVMX: Account for gaps in fixed performance counters
-      x86/pmu: Fixed PEBS basic record parsing issue
-      x86/pmu: Execute PEBS test only if PEBSRecordFormat >= 4
-
- lib/x86/apic-defs.h  |   7 -
- lib/x86/apic.h       |   2 +
- lib/x86/asm/page.h   |   4 +-
- lib/x86/atomic.h     |   2 +
- lib/x86/desc.c       |  38 ++++-
- lib/x86/desc.h       | 132 ++++++++--------
- lib/x86/msr.h        |  42 +++++
- lib/x86/pmu.c        |   5 -
- lib/x86/processor.h  | 101 +++++++++++-
- lib/x86/setup.c      |   2 +-
- lib/x86/smp.c        |   2 +-
- lib/x86/smp.h        |  18 ++-
- x86/Makefile.common  |   3 +-
- x86/Makefile.i386    |   2 +-
- x86/Makefile.x86_64  |   1 +
- x86/asyncpf.c        |   1 -
- x86/cstart.S         |  11 +-
- x86/cstart64.S       |  17 ++-
- x86/debug.c          |  45 ++++++
- x86/efi/efistart64.S |   3 +-
- x86/la57.c           | 342 ++++++++++++++++++++++++++++++++++++++++-
- x86/lam.c            | 286 ++++++++++++++++++++++++++++++++++
- x86/pcid.c           |   6 -
- x86/pmu.c            | 423 +++++++++++++++++++++++++++++++++++++++++----------
- x86/pmu_lbr.c        |   1 -
- x86/pmu_pebs.c       |   6 +-
- x86/trampolines.S    |  16 +-
- x86/unittests.cfg    |  13 +-
- x86/vmx_tests.c      | 237 ++++++++++++++++++++++++++++-
- 29 files changed, 1551 insertions(+), 217 deletions(-)
- create mode 100644 x86/lam.c
 
