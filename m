@@ -1,182 +1,123 @@
-Return-Path: <linux-kernel+bounces-527007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29EFDA40626
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 08:44:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77A8EA40629
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 08:54:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57E9717C27C
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 07:43:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91F8A703CBA
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 07:53:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC0192063DA;
-	Sat, 22 Feb 2025 07:43:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iMcFSZje"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DB212063CE;
+	Sat, 22 Feb 2025 07:53:52 +0000 (UTC)
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38EBB13C3F2;
-	Sat, 22 Feb 2025 07:43:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0CC9158D8B;
+	Sat, 22 Feb 2025 07:53:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740210202; cv=none; b=BdgagUwp9ZBTxrIwK/5Lbr8U5Zc36iud8pCdcKiWu2NtOXPXQRW+ETIDMU1JA0Ktknbqfqi6MVZIngDOFPJ7wNgMgDYAJviIImW3DCTy/gWJAqvfga9cnw6ChMQCaD1SYY8MdMacq11eTpWY3uaWgyMAUOENAzF3d+HEhFkSCVs=
+	t=1740210832; cv=none; b=KXS6DYtmFJoecklh3olxgiuc/5RQFK5XC0IE3HAeYFK2g7nSsceq9xHjymbxro9gHSMCmwhZtpp8v7BzmB4gm3JlTkfbYp1fNBB3YLoric9fzapOr4j5V7WrJUexXODX306c512w3SAvqdTFKfFHmoV2RisxC8dYGIzsN+t4tPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740210202; c=relaxed/simple;
-	bh=BtOhGRVLO/4z5tXwtnomJn5XJEhbKXaC1bZE6yJRkys=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=VushFf0QZY4lWREpSeIn8Va+sHenYPJh0bTA7NV1oCEbrZuKx4jomyv0vmlGPmX0USOeyvfS5Uu5fWpqTJ12FJXUrSBqRRwJM3IkPC2WhPGKbx3UbD472gCNJj4fEKP2A6/VoXvhnmKR3+pIgI7qiSXXRuhso+sihQMO7yUAn4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iMcFSZje; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id BDB76C4CEE4;
-	Sat, 22 Feb 2025 07:43:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740210201;
-	bh=BtOhGRVLO/4z5tXwtnomJn5XJEhbKXaC1bZE6yJRkys=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=iMcFSZje3PgpqKm+BkYlSwWcte7cB2VzLuzR8X2aWEqfV3zPau3GZnqAOX9VZkA0l
-	 sXJIu0uhRbwdC8vhIFDNUw4ctlm5QowJ5qBNWttIJytV9bH1fnbyi9fHkaRd0w3s7A
-	 vunkxfsqUQmfOOJqyipUn8TarM8F8ed40Y7IgwfUNMoHDdzLXdrDEfeOaRqle70DK4
-	 rSGsYRffAnm6949E7uovk/q42AzMrP7T2nVDRmz9GPks9hkIr6Z5lyEYYwzGaB5pK8
-	 Y1nY6RDD7XlqYnfUXd2KJnAB10BJtUVJMk0VtYSj3g1hwUSr32suy4FWL62l3C1DQU
-	 Qs9cRjL92hkxQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE5E8C021B7;
-	Sat, 22 Feb 2025 07:43:21 +0000 (UTC)
-From: Dimitri Fedrau via B4 Relay <devnull+dimitri.fedrau.liebherr.com@kernel.org>
-Date: Sat, 22 Feb 2025 08:43:14 +0100
-Subject: [PATCH v4 2/2] can: flexcan: add transceiver capabilities
+	s=arc-20240116; t=1740210832; c=relaxed/simple;
+	bh=3PI9LZ/oRJ5/z4xPX/rDQSoMv39x7OHyntDEUSyHW6U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ma2cR/iOOchlDrzR49HKuT69mdIaqkHk72RAk/y3asuFS/dSsxQlSgATwfFl66FJy3koQvUB8dWv+xJdS4aC0nV6RByDNzZTFcHYuFM91Eqh2bAp+6uBJZJKyZ4EDg69RDB6DQcTinhbAzTwgZLCxvI3Kqqt17mm4BSrFmXH0ak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2f83a8afcbbso5048654a91.1;
+        Fri, 21 Feb 2025 23:53:50 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740210830; x=1740815630;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XgOwBKeJIC++w2hXb/vSOONHow+D0phrb0BF5CSn77Q=;
+        b=ln1rQ/qCjOFs+IZQEUMKP5eEXusDct1Cr11yZC6Vhx0FKlpUrzp3wAZ6JACugNUcCY
+         29Q68n5uHZ3k6ymnPWqTxguRZwKekOOcgZZmF1xyC+KcKJRLP2HHlZAxuNmbT30Z7hvJ
+         wMkwaOWzHYwMDhQ5/E8fyySiJhJLG54nCr+iUOWZQwx/EuCHGuRMFeGgb+Jdqvl8TJNT
+         AeNkOrGkxNdG4bJyqh2wQuQvx5t+JaY5bIEDivlFnatR5r36V1JFxcTI/4kgcLJz2L63
+         ZRfuBEQUCBR5A4sqQTj1VQTTdYKme/gmtc0JSt60/1OVEL7FGGuJ66tF5I3COtj9pde0
+         wcOA==
+X-Forwarded-Encrypted: i=1; AJvYcCU3IZTTJ2tmWJVdI+sUlfRBO7xKtm/yQ3/0KWROYjaesQ9CzWrCya1jOpmwDTY4MAOn/ZywF2QAgfWa1292@vger.kernel.org, AJvYcCULn1achqslT7CddV7ogXwFBJOcSQbCVRWacoXXS28TmfBgyp9rZeO5x9ZeRQRJVzjq98+cIGxRMxhv@vger.kernel.org, AJvYcCW68rID9XYKGdne9KzA4fQ0maxm8yTGOwPZ/FUImYu0Q4wFG9gvwBwXE17zshGE4LqEQ91rG/iLhKxTeYrD@vger.kernel.org
+X-Gm-Message-State: AOJu0YyazKoHfmN2YSb3n2hD/yT9Ng+7ueuVB9tZxdyktTfbZQBHOJJI
+	YLjQPQJLvKe6JXGqL8+jD9LpVS/IhFEQMFYksHWEEe724j3+hw1Y
+X-Gm-Gg: ASbGncvGnbTdt0u3Ly/bmKCCRZi8L3pDLjbNCWavDkfHZKig3/Sm6ZELhx7P0sKnwLV
+	1dA/LZXUgBnQy6gJt64Zjp24dz4Kjf2OSwdoecjnSxOrANR7p1Ev5K6ldqo6svEWJsJOvmUcI6z
+	ASZysMSVhs0OC1xbeuXTV4qmWAnMlmW0UMFDgMUx8Ml8fNb5USv8tXCbzxVNmwBiyIwjkPFPeg2
+	Ec3YM8qHMAzvk+8A5SLtQ2dVA1GLlUDI13k/d3cq5b5Hx9Gp92cQ0qrhhXb2TA62ynLUjmh2ki3
+	S5xxlZQMqdQE+IND8yNd7vKOhM/pOAfHHmBFcuONDWg2mAzqaJ450eHZkvmv
+X-Google-Smtp-Source: AGHT+IGBa2sUv3RRiY4KoSYaepkpXMCwBkVIcmu8mOMY6NF2khmYEc5MAiG7hTleu61bz7O7mg4ASQ==
+X-Received: by 2002:a17:90b:3dc3:b0:2fa:1d9f:c80 with SMTP id 98e67ed59e1d1-2fcccc92715mr17441423a91.17.1740210829827;
+        Fri, 21 Feb 2025 23:53:49 -0800 (PST)
+Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-220d55b6ab7sm147107975ad.132.2025.02.21.23.53.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Feb 2025 23:53:49 -0800 (PST)
+Date: Sat, 22 Feb 2025 16:53:47 +0900
+From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Mrinmay Sarkar <quic_msarkar@quicinc.com>,
+	manivannan.sadhasivam@linaro.org, quic_shazhuss@quicinc.com,
+	quic_ramkri@quicinc.com, quic_nayiluri@quicinc.com,
+	quic_krichai@quicinc.com, quic_vbadigan@quicinc.com,
+	quic_nitegupt@quicinc.com,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Slark Xiao <slark_xiao@163.com>, Qiang Yu <quic_qianyu@quicinc.com>,
+	Mank Wang <mank.wang@netprisma.us>,
+	Johan Hovold <johan+linaro@kernel.org>,
+	Jeff Johnson <quic_jjohnson@quicinc.com>,
+	Fabio Porcedda <fabio.porcedda@gmail.com>, mhi@lists.linux.dev,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org
+Subject: Re: [PATCH v1 0/2] pci_generic: Add supoprt for SA8775P target
+Message-ID: <20250222075347.GC1158377@rocinante>
+References: <20250221060522.GB1376787@rocinante>
+ <20250221215445.GA363532@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250222-flexcan-add-transceiver-caps-v4-2-a38dfadab763@liebherr.com>
-References: <20250222-flexcan-add-transceiver-caps-v4-0-a38dfadab763@liebherr.com>
-In-Reply-To: <20250222-flexcan-add-transceiver-caps-v4-0-a38dfadab763@liebherr.com>
-To: Marc Kleine-Budde <mkl@pengutronix.de>, 
- Vincent Mailhol <mailhol.vincent@wanadoo.fr>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-can@vger.kernel.org, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, Dimitri Fedrau <dimitri.fedrau@liebherr.com>, 
- Dimitri Fedrau <dima.fedrau@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1740210200; l=3555;
- i=dimitri.fedrau@liebherr.com; s=20241202; h=from:subject:message-id;
- bh=kSxxiQHxl//wCevFJfiq2EaHcqBYYuWBjHktSM+Fwds=;
- b=cwtIoowK6jS+eb7vY9RSnnv3BPYga+3nZ1PaYEn9/e8LFvbWetnG+b3HCPn7YruHyZyvCVW8P
- qFGtmbg1xw7D8+UajmCa9LQZwSSXk+2HI3YzF+OWiYb8Ajiy4aNgLLb
-X-Developer-Key: i=dimitri.fedrau@liebherr.com; a=ed25519;
- pk=rT653x09JSQvotxIqQl4/XiI4AOiBZrdOGvxDUbb5m8=
-X-Endpoint-Received: by B4 Relay for dimitri.fedrau@liebherr.com/20241202
- with auth_id=290
-X-Original-From: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
-Reply-To: dimitri.fedrau@liebherr.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250221215445.GA363532@bhelgaas>
 
-From: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+Hello,
 
-Currently the flexcan driver does only support adding PHYs by using the
-"old" regulator bindings. Add support for CAN transceivers as a PHY. Add
-the capability to ensure that the PHY is in operational state when the link
-is set to an "up" state.
+> > > This patch series add separate MHI host configuration to enable
+> > > only IP_SW channel for SA8775P target.
+> > > 
+> > > And also update the proper device id for SA8775P endpoint.
+> > 
+> > Applied to epf-mhi, thank you!
+> 
+> I see "[2/2] PCI: epf-mhi: Update device id for SA8775P" on
+> pci/epf-mhi, but I don't see patch [1/2].  Where did that go?
+> They seem related, so I would think we'd want to merge them together.
 
-Signed-off-by: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
----
- drivers/net/can/flexcan/flexcan-core.c | 27 +++++++++++++++++++++------
- drivers/net/can/flexcan/flexcan.h      |  1 +
- 2 files changed, 22 insertions(+), 6 deletions(-)
+I asked Mani whether he would prefer for me to take the entire series via
+the PCI tree, but he said that the first patch should go via the MHI tree.
 
-diff --git a/drivers/net/can/flexcan/flexcan-core.c b/drivers/net/can/flexcan/flexcan-core.c
-index b347a1c93536d54efaa5f7d3347bd47c20860b3e..7588cb54a909af065522ddbcb06cc3acb9669893 100644
---- a/drivers/net/can/flexcan/flexcan-core.c
-+++ b/drivers/net/can/flexcan/flexcan-core.c
-@@ -26,6 +26,7 @@
- #include <linux/pinctrl/consumer.h>
- #include <linux/platform_device.h>
- #include <linux/can/platform/flexcan.h>
-+#include <linux/phy/phy.h>
- #include <linux/pm_runtime.h>
- #include <linux/property.h>
- #include <linux/regmap.h>
-@@ -644,18 +645,22 @@ static void flexcan_clks_disable(const struct flexcan_priv *priv)
- 
- static inline int flexcan_transceiver_enable(const struct flexcan_priv *priv)
- {
--	if (!priv->reg_xceiver)
--		return 0;
-+	if (priv->reg_xceiver)
-+		return regulator_enable(priv->reg_xceiver);
-+	else if (priv->transceiver)
-+		return phy_power_on(priv->transceiver);
- 
--	return regulator_enable(priv->reg_xceiver);
-+	return 0;
- }
- 
- static inline int flexcan_transceiver_disable(const struct flexcan_priv *priv)
- {
--	if (!priv->reg_xceiver)
--		return 0;
-+	if (priv->reg_xceiver)
-+		return regulator_disable(priv->reg_xceiver);
-+	else if (priv->transceiver)
-+		return phy_power_off(priv->transceiver);
- 
--	return regulator_disable(priv->reg_xceiver);
-+	return 0;
- }
- 
- static int flexcan_chip_enable(struct flexcan_priv *priv)
-@@ -2086,6 +2091,7 @@ static int flexcan_probe(struct platform_device *pdev)
- 	struct net_device *dev;
- 	struct flexcan_priv *priv;
- 	struct regulator *reg_xceiver;
-+	struct phy *transceiver;
- 	struct clk *clk_ipg = NULL, *clk_per = NULL;
- 	struct flexcan_regs __iomem *regs;
- 	struct flexcan_platform_data *pdata;
-@@ -2101,6 +2107,11 @@ static int flexcan_probe(struct platform_device *pdev)
- 	else if (IS_ERR(reg_xceiver))
- 		return PTR_ERR(reg_xceiver);
- 
-+	transceiver = devm_phy_optional_get(&pdev->dev, NULL);
-+	if (IS_ERR(transceiver))
-+		return dev_err_probe(&pdev->dev, PTR_ERR(transceiver),
-+				     "failed to get phy\n");
-+
- 	if (pdev->dev.of_node) {
- 		of_property_read_u32(pdev->dev.of_node,
- 				     "clock-frequency", &clock_freq);
-@@ -2198,6 +2209,10 @@ static int flexcan_probe(struct platform_device *pdev)
- 	priv->clk_per = clk_per;
- 	priv->clk_src = clk_src;
- 	priv->reg_xceiver = reg_xceiver;
-+	priv->transceiver = transceiver;
-+
-+	if (transceiver)
-+		priv->can.bitrate_max = transceiver->attrs.max_link_rate;
- 
- 	if (priv->devtype_data.quirks & FLEXCAN_QUIRK_NR_IRQ_3) {
- 		priv->irq_boff = platform_get_irq(pdev, 1);
-diff --git a/drivers/net/can/flexcan/flexcan.h b/drivers/net/can/flexcan/flexcan.h
-index 2cf886618c9621166173b865f266830b3f6c1fb0..16692a2502eba26575eeeec83dfffdf35f07b034 100644
---- a/drivers/net/can/flexcan/flexcan.h
-+++ b/drivers/net/can/flexcan/flexcan.h
-@@ -107,6 +107,7 @@ struct flexcan_priv {
- 	struct clk *clk_per;
- 	struct flexcan_devtype_data devtype_data;
- 	struct regulator *reg_xceiver;
-+	struct phy *transceiver;
- 	struct flexcan_stop_mode stm;
- 
- 	int irq_boff;
+So, I assume Mani will take it, then.  Mani, thoughts?
 
--- 
-2.39.5
+> Also, in [2/2], I guess the .deviceid change is known not to break
+> anything that's already in the field?
 
+Mrinmay, are you expecting any issues with this change?
 
+Per the c670e29f5bfe ("PCI: epf-mhi: Add support for SA8775P SoC"):
+
+  Add support for Qualcomm Snapdragon SA8775P SoC to the EPF driver.
+  SA8775P is currently reusing the PID 0x0306 (the default one hardcoded
+  in the config space header) as the unique PID is not yet allocated.
+
+I think, we should be fine.  But would be best to confirm that.
+
+	Krzysztof
 
