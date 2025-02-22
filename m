@@ -1,119 +1,132 @@
-Return-Path: <linux-kernel+bounces-527002-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1221A40615
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 08:23:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA7A0A40617
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 08:29:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC2A416E3A3
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 07:23:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B19203B9431
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 07:28:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6DA720127A;
-	Sat, 22 Feb 2025 07:23:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C8252046B2;
+	Sat, 22 Feb 2025 07:28:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="YN+ZeC6I"
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KNfq9KbC"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 748F2201100;
-	Sat, 22 Feb 2025 07:23:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41555204697
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 07:28:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740208992; cv=none; b=BIZBwX2wh/ocGjb/6e+E44MO8oBXY90UYwHfC4VVdx7QYaMrD4hAZZBquBV8PJMrZLAUFA5KG+LvpfZnC/OZAxOHgFjT0SSMKr4D7+0H0o3mX+7uCon/lGB+Je8qe/5alFl1Gy6UBYFU8vNx7i43O4peiYu9qIP+OFFbp4AlEFM=
+	t=1740209336; cv=none; b=VJ/ZFaIJkwdVIlHXl1VW4EF+LqLZcofHrbAeSdKmOZTjwHx1qqncL64fqbpGoP9L+G3/AdGs1XhXQLxJAAv0Q/Xove0jlotSfZcg+VB/6S61Xx1i5q4AEaEALluFYBkFB18cV7PpycUyAV6x1/5NnTGUkJMyLwl36aUWnVHt//s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740208992; c=relaxed/simple;
-	bh=OVsdQyc5RJu/6Sz/McUMLlHMPGjeTFDI5czsaMynBFM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D4g5zuLJ8856xOr8BdyKlwsu/lToWviuJwcQpN9fAmNYAOuOyYFEU03eoJZ/HGB8QWOsfa3oM69XlmKWCK/IrukH3ZDA8D7zL8hhSmTIMZE7YoivVXKy0qlZKkilvQl04/iqBLawtHX2ht+gI2gnj+wvkjrJMZFk4ZrafT7IeOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=YN+ZeC6I; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=I/4UvPoi6I0ViXmTPRlmADW8zPALMISxjuds0SuIec8=; b=YN+ZeC6IPKT9Xdiy3YssrGh0s0
-	UneqlVSOITrVq7w8oV+qqaVRx9w+WtaWkWB1zihcEzsBwl4x6hJCZcfNVs+Gc4N2aOnBPKiRyfbGz
-	wiVYHvYEuqeObFeh0EZ2ls4IGLggBl5JanJIRnDEfGBwj3sfpZawyrsBEqTkJ5wQLKfyJ1rCY+Ja9
-	1wwzafEGEOf2k4jQxpL1dUJfyEsrrQ1jF0IBw74uFB9QqKsDhzUPynBoenMne1l1eStp58VSKs9tz
-	4AUxtuPFuLMcYSQ9OKlqNT1YPufV1JLlRoE0v+xAyo6nM6dfaIz2QgjFKoFR5VJb3G3axJZcck0Sy
-	SWPni4Gg==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1tljqa-000o9k-0r;
-	Sat, 22 Feb 2025 15:22:49 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Sat, 22 Feb 2025 15:22:48 +0800
-Date: Sat, 22 Feb 2025 15:22:48 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Barry Song <21cnbao@gmail.com>
-Cc: Yosry Ahmed <yosry.ahmed@linux.dev>, Minchan Kim <minchan@kernel.org>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	"Sridhar, Kanchana P" <kanchana.p.sridhar@intel.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"hannes@cmpxchg.org" <hannes@cmpxchg.org>,
-	"nphamcs@gmail.com" <nphamcs@gmail.com>,
-	"chengming.zhou@linux.dev" <chengming.zhou@linux.dev>,
-	"usamaarif642@gmail.com" <usamaarif642@gmail.com>,
-	"ryan.roberts@arm.com" <ryan.roberts@arm.com>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-	"davem@davemloft.net" <davem@davemloft.net>,
-	"clabbe@baylibre.com" <clabbe@baylibre.com>,
-	"ardb@kernel.org" <ardb@kernel.org>,
-	"ebiggers@google.com" <ebiggers@google.com>,
-	"surenb@google.com" <surenb@google.com>,
-	"Accardi, Kristen C" <kristen.c.accardi@intel.com>,
-	"Feghali, Wajdi K" <wajdi.k.feghali@intel.com>,
-	"Gopal, Vinodh" <vinodh.gopal@intel.com>
-Subject: Re: [PATCH v5 02/12] crypto: acomp - Define new interfaces for
- compress/decompress batching.
-Message-ID: <Z7l7SF6a8F-pKWdi@gondor.apana.org.au>
-References: <CAJD7tkbRHkb7Znzto6=RRDQA9zXZSva43GukhBEfjrgm1qOxHw@mail.gmail.com>
- <Z3yMNI_DbkKBKJxO@gondor.apana.org.au>
- <CAJD7tkaTuNWF42+CoCLruPZks3F7H9mS=6S74cmXnyWz-2tuPw@mail.gmail.com>
- <Z7F1B_blIbByYBzz@gondor.apana.org.au>
- <Z7dnPh4tPxLO1UEo@google.com>
- <CAGsJ_4yVFG-C=nJWp8xda3eLZENc4dpU-d4VyFswOitiXe+G_Q@mail.gmail.com>
- <Z7lv6JLax4S8vTtD@gondor.apana.org.au>
- <CAGsJ_4yAQxjTnSALZHAJZDdUnXKAYFvQCcjQjHiQSUip6cJGKg@mail.gmail.com>
- <Z7l0Hf-CFFjeKaZY@gondor.apana.org.au>
- <CAGsJ_4zFdHUPELSYDkrN4ie2c73L6e=FEdQbDL3JckS4unKFpg@mail.gmail.com>
+	s=arc-20240116; t=1740209336; c=relaxed/simple;
+	bh=hKWnYqDVibXovKSxdxiJl5vEV8dexi/H8/6jyPb+cnc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=q5qNrT7jXTW1lWKNeh2ZqCQXKwN3WtBKX/LERwBNO7/Igzn83AZweU5ods6TJ7mJDR50ENIFXUf5Cz2psW3FfQ4p6Xx8HCTvAsy3/s6K/u0/u/0UK9dxCa6drbfW0S804jGVnPY9OVrnAsvlJ+Buv5BoRL+3lQKQXg97yxcZsJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KNfq9KbC; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740209335; x=1771745335;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=hKWnYqDVibXovKSxdxiJl5vEV8dexi/H8/6jyPb+cnc=;
+  b=KNfq9KbCAKQVJzw2ge5PUG6LYyhCDztzObl8vkplFBR2PgQxHPxViBg3
+   o1HwYLvCHnRfNgGQY1fQ7gOdyvfHb2TcqZZFXUjnZ8Gs6YzZ3j1qwAlMH
+   8QU6EPSUVhHb24D9HH17IYIRr7WmNmPH/9kuDZ6AW7WVFnXFlsoNRbGHD
+   A+7An54RZ0bAfaNoSsT5tSGZ1Ki7Xv5HYTEE62XnzDUJzghgf4TZ35gr3
+   LVRczSwJe3R/JX+CrskeO60Y93Knd5WdUr4lGCHM8Qs30LrmOlAMTQEJO
+   9CdaHKKmvOzWSFvnbfWop6gkqsuHH6pqFk8FnkAKQOSctxoXesQ3hJxsP
+   w==;
+X-CSE-ConnectionGUID: zfgPJxAaQtyA6weFQKf/hw==
+X-CSE-MsgGUID: wGmiXmYURweDPQ8+PE9Xag==
+X-IronPort-AV: E=McAfee;i="6700,10204,11352"; a="40742274"
+X-IronPort-AV: E=Sophos;i="6.13,307,1732608000"; 
+   d="scan'208";a="40742274"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Feb 2025 23:28:54 -0800
+X-CSE-ConnectionGUID: 371ayz7cT/aPqhHbAcbXTQ==
+X-CSE-MsgGUID: 85UYNrxHTcmNBhsBWT9s3w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,307,1732608000"; 
+   d="scan'208";a="120490527"
+Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Feb 2025 23:28:52 -0800
+Message-ID: <682b5b61-e556-479e-b641-3c987360d87b@linux.intel.com>
+Date: Sat, 22 Feb 2025 15:25:43 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAGsJ_4zFdHUPELSYDkrN4ie2c73L6e=FEdQbDL3JckS4unKFpg@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 08/12] iommufd/selftest: Put iopf enablement in domain
+ attach path
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+ Robin Murphy <robin.murphy@arm.com>, Kevin Tian <kevin.tian@intel.com>,
+ Dave Jiang <dave.jiang@intel.com>, Vinod Koul <vkoul@kernel.org>,
+ Zhangfei Gao <zhangfei.gao@linaro.org>, Zhou Wang <wangzhou1@hisilicon.com>,
+ iommu@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20250214061104.1959525-1-baolu.lu@linux.intel.com>
+ <20250214061104.1959525-9-baolu.lu@linux.intel.com>
+ <20250220010250.GQ3696814@ziepe.ca>
+ <d93c8cc9-77a5-4b78-85d2-6b4601f52266@linux.intel.com>
+ <20250220180004.GX3696814@ziepe.ca>
+ <6754e308-d2ee-4389-9dcd-c2a5bbb16c48@linux.intel.com>
+ <20250221150401.GY3696814@ziepe.ca>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <20250221150401.GY3696814@ziepe.ca>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sat, Feb 22, 2025 at 08:13:13PM +1300, Barry Song wrote:
->
-> Somehow, I find your comment reasonable. Another point I want
-> to mention is the semantic difference. For example, in a system
-> with only one algorithm, a dst_buf overflow still means a successful
-> swap-out. However, other errors actually indicate an I/O failure.
-> In such cases, vmscan.c will log the relevant error in pageout() to
-> notify the user.
+On 2/21/25 23:04, Jason Gunthorpe wrote:
+>> -       return mock_dev_enable_iopf(dev, domain);
+>> +       if (mdev->domain)
+>> +               mock_dev_disable_iopf(dev, mdev->domain);
+>> +
+>> +       ret = mock_dev_enable_iopf(dev, domain);
+>> +       if (ret)
+> Though here the domain is disabled but not removed from mdev->domain,
+> is it OK?
 
-I'm talking specifically about the error from the Crypto API,
-not any other error.  So if you werer using some sort of an
-offload device to do the compression, that could indeed fail
-due to an IO error (perhaps the PCI bus is on fire :)
+That's not okay. I can make it like below:
 
-But because that's reported through the Crypto API, it should
-not be treated any differently than an incompressible page,
-except for reporting purposes.
+static int mock_domain_nop_attach(struct iommu_domain *domain,
+                                   struct device *dev)
+{
+         struct mock_dev *mdev = to_mock_dev(dev);
+         int ret;
 
-Cheers,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+         if (domain->dirty_ops && (mdev->flags & 
+MOCK_FLAGS_DEVICE_NO_DIRTY))
+                 return -EINVAL;
+
+         ret = mock_dev_enable_iopf(dev, domain);
+         if (ret)
+                 return ret;
+
+         mock_dev_disable_iopf(dev, mdev->domain);
+         mdev->domain = domain;
+
+         return 0;
+}
+
+Both mock_dev_enable/disable_iopf() will be a no-op if domain or
+domain's iopf handler is empty:
+
+         if (!domain || !domain->iopf_handler)
+                 return;
+
+Does it work for you?
+
+Thanks,
+baolu
 
