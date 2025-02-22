@@ -1,140 +1,81 @@
-Return-Path: <linux-kernel+bounces-527292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 527C5A40944
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 16:00:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C7136A4094A
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 16:00:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FAE9189E518
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 15:00:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20739189EA0E
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 15:00:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E98D019E83E;
-	Sat, 22 Feb 2025 14:59:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B12D199934;
+	Sat, 22 Feb 2025 15:00:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="f2YpgTBS"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF1CF18991E;
-	Sat, 22 Feb 2025 14:59:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="Y4gQA153"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.17])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AA1833998;
+	Sat, 22 Feb 2025 15:00:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740236394; cv=none; b=A3v/acvRcFJH6FbY1Bc/AMHNM365gGA0wb+8OI38EsDcqSSz+tzof35qigRBU+GbAZ+rKJ8T3tSaHlolvYqlLX4t1Kxq65QeJ3jUj6/RA9HLbHnAR/FXMjR6Lm2AZ2ULcnBcrc67xfx36N7aucDGaHzbgTAIPT8AWplAzU84UKY=
+	t=1740236440; cv=none; b=PT0Q+fp/dulxQ2u1LTUwHh+PctG8i7ngh/qv3UAVa6iyGfyqeMdQ1M5yZaPcKCGH2taRQyfGR6w/2WuoFetZrzMa0KSpZJDh5495KSCFdDzo3UsOfExmOU7samyQXlOv2Zc/90bbtVjVki/P0CeP5H6hDHnHTx4bIRsHUlK3BT4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740236394; c=relaxed/simple;
-	bh=UPMwM1dsF+ZN10RivYNc8HxJ+n1RcGzxlyTNhVOm/BY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=fip8Qv7zdiQyiX3fbHdTEuFvVORvOl1A5fUJzNCQRLA8BlCm+wMl03HgKnCDjl4a6gQUz97MpP0+3EgG3+iMnB2Jq4/2MCBZp8C9meVi14BjMLsGxJGTig4QunhWV1b0yLl7AvFIe8k1GOCpsX5kxiCq45GeGkrWqgY8ZMjvrFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=f2YpgTBS; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51MAUvc1017475;
-	Sat, 22 Feb 2025 14:59:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	rrzRTLmT2VU2o90xomI7sHc+CSfYWZkgtgDzBjsTkAc=; b=f2YpgTBSMi97jhPB
-	K5NIcxHOex9LiPEj1FdaU+/wHQukOwrobsU0ZUfxoel8krjk2uuPocwp/AFy6u9Y
-	GTUzrfE+izQOM7LoYKZDUkLTechxZkZoRU/ECnRrsMOrkKfY7ZOChgW9shiOGEgI
-	YXQuHWZYu4RRH/yYJ7iAMI5fCfbWjP8IA+ivOxXqMs5n5RhpTTt6j3Pgxfisc+FC
-	j8ZIRHjNVSL7nQBwx7zf3Cim7YIiLgXG4KgtbYxeiIcTROz2QwSEGY59dsAyV3gL
-	AwgkpdY3cNlt3awSL8I8JLPj9KOkLEf1QcIv1j9aa/bl56aQuUtB7B3fra4JG4s1
-	DRAcHg==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44y6ntrttj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 22 Feb 2025 14:59:43 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51MExgEK006316
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 22 Feb 2025 14:59:42 GMT
-Received: from [10.216.45.162] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sat, 22 Feb
- 2025 06:59:37 -0800
-Message-ID: <dbfdd0e6-4d56-4c0b-9b41-55816506a66d@quicinc.com>
-Date: Sat, 22 Feb 2025 20:29:32 +0530
+	s=arc-20240116; t=1740236440; c=relaxed/simple;
+	bh=OKe6QRTlXlfRzsO6k+n/DgK5Yjn37vIB+q2Y13+5D3Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CIaP+dT8i3DCv9GvjbSmYK3LpPdEuj6XokvFtmL3VTp2ck0s1bS0Tu8d1Nuwaba3z5jLYg9nfZNbHICoIv24k5nEGQvPVtiS6sjxPPWUqFvkRmRFLs+Cxtp5RxJYDRgR39iatctIb1aHn7dacFkGCb8ScASpdctR2fKoUqt6/V0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=Y4gQA153; arc=none smtp.client-ip=1.95.21.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=lr9E6bgj+FVra1H0FVQ1LPnUfFoxChUOCwxBKvYbs+0=;
+	b=Y4gQA153sXLHJXw5OAPbt5ep7sPGg527sh4tlG03czMimAa5U7wDIb42/JqLwN
+	x5cvJWjeFjPc8PBZEsJTduIEnN3ccnwoNz2Er0Fk4F+Jrk3o0wA3g8UPVk9Z39eL
+	O1j5lLTV7dJ6PgTqmfV5kCNp/cLo7Qmvm3qYUKOjMzsyo=
+Received: from dragon (unknown [])
+	by gzsmtp2 (Coremail) with SMTP id Ms8vCgAnSaFy5rlnUPC7CQ--.24012S3;
+	Sat, 22 Feb 2025 23:00:04 +0800 (CST)
+Date: Sat, 22 Feb 2025 23:00:02 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	"open list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <imx@lists.linux.dev>,
+	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
+	open list <linux-kernel@vger.kernel.org>, hongxing.zhu@nxp.com
+Subject: Re: [PATCH 5/5] arm64: dts: imx95: add ref clock for pcie nodes
+Message-ID: <Z7nmckvKi1xcb4Qo@dragon>
+References: <20250128211559.1582598-1-Frank.Li@nxp.com>
+ <20250128211559.1582598-5-Frank.Li@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 1/1] arm64: dts: qcom: qcs6490-rb3gen: add and enable
- BT node
-To: Alexey Klimov <alexey.klimov@linaro.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>
-CC: <quic_mohamull@quicinc.com>, <quic_hbandi@quicinc.com>,
-        <quic_anubhavg@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20250221171014.120946-1-quic_janathot@quicinc.com>
- <20250221171014.120946-2-quic_janathot@quicinc.com>
- <D7YD5C0HCSZ1.2DOE3TAA7024Y@linaro.org>
-Content-Language: en-US
-From: Janaki Ramaiah Thota <quic_janathot@quicinc.com>
-In-Reply-To: <D7YD5C0HCSZ1.2DOE3TAA7024Y@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: Y-n72SMkFiGNQFY8ipxQ_BQ1Rcm20PA3
-X-Proofpoint-GUID: Y-n72SMkFiGNQFY8ipxQ_BQ1Rcm20PA3
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-22_06,2025-02-20_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- mlxlogscore=918 malwarescore=0 impostorscore=0 phishscore=0
- lowpriorityscore=0 adultscore=0 spamscore=0 bulkscore=0 mlxscore=0
- priorityscore=1501 clxscore=1011 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2502100000 definitions=main-2502220120
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250128211559.1582598-5-Frank.Li@nxp.com>
+X-CM-TRANSID:Ms8vCgAnSaFy5rlnUPC7CQ--.24012S3
+X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUV2NtUUUUU
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiBBX7ZWe5p-zUGwAAsF
 
-
-
-On 2/22/2025 12:46 AM, Alexey Klimov wrote:
-> On Fri Feb 21, 2025 at 5:10 PM GMT, Janaki Ramaiah Thota wrote:
->> Add the PMU node for WCN6750 present on the qcs6490-rb3gen
+On Tue, Jan 28, 2025 at 04:15:59PM -0500, Frank Li wrote:
+> Add "ref" clock for i.MX95's pcie and fix below CHECK_DTBS warnings:
+> arch/arm64/boot/dts/freescale/imx95-19x19-evk.dtb: pcie@4c300000: clock-names: ['pcie', 'pcie_bus', 'pcie_phy', 'pcie_aux'] is too short
+> 	from schema $id: http://devicetree.org/schemas/pci/fsl,imx6q-pcie.yaml
 > 
-> Is it rb3gen or rb3gen2? Also in the subject.
-> 
-> The file that you patch seems to be "rb3gen2".
-> 
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
 
-Thanks for pointing out the typo, Alexey. Yes it is rb3gen2.
+#1 ~ #4 are applied and #5 doesn't apply.
 
->> board and assign its power outputs to the Bluetooth module.
->>
->> In WCN6750 module sw_ctrl and wifi-enable pins are handled
->> in the wifi controller firmware. Therefore, it is not required
->> to have those pins' entries in the PMU node.
->>
->> Signed-off-by: Janaki Ramaiah Thota <quic_janathot@quicinc.com>
->> ---
->>   arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts | 171 ++++++++++++++++++-
->>   1 file changed, 170 insertions(+), 1 deletion(-)
->>
->> diff --git a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
->> index 7a36c90ad4ec..de03770e0b90 100644
->> --- a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
->> +++ b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
-> 
-> [..]
-> 
-> Best regards,
-> Alexey
-
-Thanks,
-Janakiram
+Shawn
 
 
