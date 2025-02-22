@@ -1,305 +1,182 @@
-Return-Path: <linux-kernel+bounces-527202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83372A4085F
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 13:39:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5641FA40866
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 13:40:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCC2F1888D89
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 12:38:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3975A424F26
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 12:40:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D16B20AF85;
-	Sat, 22 Feb 2025 12:38:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E70B20B213;
+	Sat, 22 Feb 2025 12:40:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="baLr8jb7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TWiVInF0"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B68220AF9F;
-	Sat, 22 Feb 2025 12:38:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C900520ADD5
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 12:40:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740227906; cv=none; b=jPSKZFvHLkD0tBgi3JcAO8ffWag8pBXS4RYH3Nm0LBq3owqiEKUSFN0asCkRqCeKkgUWJ+qTeSBR4Pm0c8NrEXm63Y3SozoF3CllE9aE+8PowBlEpmH1T95Hf8kjhzwsObZUfTfKuJg74yBKVL46DX+LAIXUoI6/mIPHYAtp4jE=
+	t=1740228042; cv=none; b=Rm8bz+68pNXIVN/ZEYS9FDTlAQI0oKn7rvEAQwVC7bqzmB7P8Dex6EESNVdbrsMcbp7k2+awUUIZ9DcWCF66/1UzGvoze+oqOmLJFf4mFSF/HqH6fv0pcmKDMvoYZhEj/1/RGjq0QnMLy2mPhOXJpzskn+4dxmi41LiA9cD6xg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740227906; c=relaxed/simple;
-	bh=gA6V0QYrK7MkRdcr4Vp2oLWITnhzVQghnDem+xh17dk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Th0MuSNyFRFvTJMo+Ue3W1bZw29b1b3PKUhec37b/Nc+ho564cLbwefG0xhyuBjtlBnNsGuiX4dcW+piPGskYfD65rWJJSmLVxtupKkfjRdXdXoWZBs+AzDV7QBos1LwvpVr5umpDy8isdp/qYBX148cKymJHtCRDcljEHN0MY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=baLr8jb7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34C4DC4CED1;
-	Sat, 22 Feb 2025 12:38:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740227905;
-	bh=gA6V0QYrK7MkRdcr4Vp2oLWITnhzVQghnDem+xh17dk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=baLr8jb7eqtGeHVbgrWdlhbobiJ9byteKNz9oBUvVDiFDojZwuTM1zn88lv0kKoJI
-	 Awr/myIucp0VHv2jwNVIyneqomvpOwTzOS3cOUql9UOry3poyPA7hbUKFgBpPVAKD6
-	 SPHq0NNBpGdk4Y8HbnciR38i4oVmHfJwW8VnL6HM9v1ziQONBRHpxA41SxmWmrrT8p
-	 n9FCTCKqPA5c8rE4wqSFG4vOu+ADb5S1IE5ttbzfTlNWN//XtBGpQn8sKJQVqafSiK
-	 2ss7WyjsgA8Nt1XkLPVOY++v0oyIO1uGw+8MyjAUR71nDhVtbC2YbdIvQ930Up9jD3
-	 IjynifPJ/+YOA==
-Date: Sat, 22 Feb 2025 12:38:15 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: "Budai, Robert" <Robert.Budai@analog.com>
-Cc: Nuno =?UTF-8?B?U8Oh?= <noname.nuno@gmail.com>, Lars-Peter Clausen
- <lars@metafoo.de>, "Hennerich, Michael" <Michael.Hennerich@analog.com>,
- "Sa, Nuno" <Nuno.Sa@analog.com>, "Gradinariu, Ramona"
- <Ramona.Gradinariu@analog.com>, "Miclaus, Antoniu"
- <Antoniu.Miclaus@analog.com>, "Rob Herring" <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>,
- Jonathan Corbet <corbet@lwn.net>, "linux-iio@vger.kernel.org"
- <linux-iio@vger.kernel.org>, "devicetree@vger.kernel.org"
- <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, "linux-doc@vger.kernel.org"
- <linux-doc@vger.kernel.org>
-Subject: Re: [RESEND PATCH v8 5/6] iio: imu: adis16550: add adis16550
- support
-Message-ID: <20250222123815.0521df87@jic23-huawei>
-In-Reply-To: <45d64de8a1074788b7c4bffc29788742@analog.com>
-References: <20250217105753.605465-1-robert.budai@analog.com>
-	<20250217105753.605465-6-robert.budai@analog.com>
-	<aee93ef96e71adf70a48ee5877bd75966d9c78c1.camel@gmail.com>
-	<45d64de8a1074788b7c4bffc29788742@analog.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1740228042; c=relaxed/simple;
+	bh=44WiBU3e87uUbt5Joj83rDplJVriJ4yNvs0txze1vTY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l6Op7ItrgIVHhbyU7eQZ28Z7PMGfU/kViZBQfdbQpY7EXXo6fmwGQSZ5QN0LGOKhMF3oR9LI5BPYQ2KRX9YTiEI7P+8twgEQVQpQnycDqjs5PbgDCUVBOQ5tj1BQHs488ECWyThoCt8BjkOlNxBfDiiZuS0txKk9SXl+uAl1YHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TWiVInF0; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740228039;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qAd8SANoOauq5uEymG+29fWeYf7y+gGWAJmdDdaiSKs=;
+	b=TWiVInF0NcltMZ4JLPeMSZ7FuqCb3ojP3yPDx3eDe1T4Z4z5XpTKzGYL1WMSSGkftQF0S7
+	lZjwfIOOnrz+pz4xN+UrpAL8Tvvo6SCIsokX8c8iHhPi4bjCBlzno76ufwV/yM2TIJGZlD
+	nHfWy6bph9pSeqcs/XiY+PnA5Mpes3o=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-122-u0F871nGP4-7jWvcSvDHtQ-1; Sat,
+ 22 Feb 2025 07:40:35 -0500
+X-MC-Unique: u0F871nGP4-7jWvcSvDHtQ-1
+X-Mimecast-MFC-AGG-ID: u0F871nGP4-7jWvcSvDHtQ_1740228033
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6224619560B9;
+	Sat, 22 Feb 2025 12:40:32 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.2])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 8A6E8180094A;
+	Sat, 22 Feb 2025 12:40:23 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Sat, 22 Feb 2025 13:40:03 +0100 (CET)
+Date: Sat, 22 Feb 2025 13:39:53 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: Tong Tiangen <tongtiangen@huawei.com>
+Cc: David Hildenbrand <david@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Peter Xu <peterx@redhat.com>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org,
+	bpf@vger.kernel.org, wangkefeng.wang@huawei.com,
+	Guohanjun <guohanjun@huawei.com>
+Subject: Re: [PATCH -next v2] uprobes: fix two zero old_folio bugs in
+ __replace_page()
+Message-ID: <20250222123952.GA17836@redhat.com>
+References: <20250221015056.1269344-1-tongtiangen@huawei.com>
+ <20250221152841.GA24705@redhat.com>
+ <46a48eb4-5245-81ba-9779-ace8f162c31b@huawei.com>
+ <ef999493-cac0-68bb-2684-97da0fb8b583@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ef999493-cac0-68bb-2684-97da0fb8b583@huawei.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On Thu, 20 Feb 2025 13:43:04 +0000
-"Budai, Robert" <Robert.Budai@analog.com> wrote:
+On 02/22, Tong Tiangen wrote:
+>
+>
+> I'm going to add a new patch to moving the "verify_opcode()" check down
+> , IIUC that "!PageAnon(old_page)" below also needs to be moved together,
 
-> > -----Original Message-----
-> > From: Nuno S=C3=A1 <noname.nuno@gmail.com>
-> > Sent: Thursday, February 20, 2025 10:22 AM
-> > To: Budai, Robert <Robert.Budai@analog.com>; Lars-Peter Clausen
-> > <lars@metafoo.de>; Hennerich, Michael <Michael.Hennerich@analog.com>;
-> > Sa, Nuno <Nuno.Sa@analog.com>; Gradinariu, Ramona
-> > <Ramona.Gradinariu@analog.com>; Miclaus, Antoniu
-> > <Antoniu.Miclaus@analog.com>; Jonathan Cameron <jic23@kernel.org>; Rob
-> > Herring <robh@kernel.org>; Krzysztof Kozlowski <krzk+dt@kernel.org>; Co=
-nor
-> > Dooley <conor+dt@kernel.org>; Jonathan Corbet <corbet@lwn.net>; linux-
-> > iio@vger.kernel.org; devicetree@vger.kernel.org; linux-kernel@vger.kern=
-el.org;
-> > linux-doc@vger.kernel.org
-> > Subject: Re: [RESEND PATCH v8 5/6] iio: imu: adis16550: add adis16550
-> > support
-> >=20
-> > [External]
-> >=20
-> > On Mon, 2025-02-17 at 12:57 +0200, Robert Budai wrote: =20
-> > > The ADIS16550 is a complete inertial system that includes a triaxis
-> > > gyroscope and a triaxis accelerometer. Each inertial sensor in the
-> > > ADIS16550 combines industry leading MEMS only technology with signal
-> > > conditioning that optimizes dynamic performance. The factory calibrat=
-ion
-> > > characterizes each sensor for sensitivity, bias, and alignment. As a
-> > > result, each sensor has its own dynamic compensation formulas that
-> > > provide accurate sensor measurements.
-> > >
-> > > Co-developed-by: Ramona Gradinariu <ramona.gradinariu@analog.com>
-> > > Signed-off-by: Ramona Gradinariu <ramona.gradinariu@analog.com>
-> > > Co-developed-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
-> > > Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
-> > > Signed-off-by: Nuno S=C3=A1 <nuno.sa@analog.com>
-> > > Signed-off-by: Robert Budai <robert.budai@analog.com>
-> > > ---
-> > > =20
-> >=20
-> > I guess it would make sense a Co-developed-by: for Robert?
+No, no.
 
-The From is set to Robert, so that is implicit.  It is an odd chain
-though. Now I've looked at it this doesn't
-seem quite right but I am struggling with what it should be :(
+I forgot everything, but please don't do this. IIUC This is optimization
+for the case when the probed file has int3 at this offset. We should not
+skip update_ref_ctr() in this case, just we can avoid __replace_page().
 
-I think this chain means that Ramona, Antoniu and Robert made significant
-contributions. Robert's was after Nuno had handled the patch on some
-ADI tree?=20
+> and as David said this can be triggered by user space, so delete the use
+>  of "WARN", as follows:
 
-In the end Roberts was large enough to take 'ownership' rather
-than the original 'from'. That part is unusual. We rarely do that.
+Hmm... I think that David meant the new WARN_ON() added by you in V1?
 
-However, from what I can see publicly that isn't what happened.
+Please don't remove the old WARN(PageCompound(old_page) check. If userspace
+can trigger this warning we need to to fix this code and add FOLL_SPLIT_PMD
+unconditionally (and likely do something else).
 
-This patch v1 was posted with Robert as Co-developed and Nuno as
-the From + SoB (which puts Nuno at same level as a co-developer but
-the one who posted it).
+I take my words back ;) Don't do the additional cleanups, just add the
+is_zero_page(old_page) check right after get_user_page_vma_remote() and
+update the subject/changelog as David suggests.
 
-So really the ownership trail should have remained the same with
-the From set to Nuno.  However that gives us another fun corner.
+This function needs more cleanups anyway. Say, the usage of orig_page_huge
+_looks_ obviously wrong even if (afaics) nothing bad can happen. It should
+be reinitialized after "goto retry" or it should be checked before the
+"orig_page = find_get_page()" code. The usage of gup_flags looks confusing
+too. Lets do this later.
 
-Robert then started handing the series. That would normally require
-a SoB to cover that part, but he already has one.  Gah.=20
+Oleg.
 
-Anyhow I think the best way to fix this up is actually to
-add Co-developed-by for Nuno which does transfer patch ownership
-but at least refects that all of you played some significant part.
-
-Alternative is modify the author ship to reflect earliest posting.
-
-To keep things moving I'm going to assume you are fine with
-me adding Co-developed by to explain Nuno's SoB where relevant
-rather than changing the From and adding Co-developed-by for Robert.
-
-The DT binding has a similar issue. There we have Ramona who
-handled the patch but no co-developed. That's clearly not right
-as v1 is form Ramona.  There I'll make it Codev Ramona.
-
-If you'd prefer to fix this all up with the original From:
-then send me a new version and I'll switch out what I have applied.
-
-Interesting this patch doesn't build and has a warning. I tweaked as:
-For some reason the first of the u16 val cases didn't trigger the size
-mismatch that __adis_update_bits() has a BUILD_BUG check on
-but given the similarity of the two cases I'm not sure why and I tweaked
-them both. Give me a shout if any of this breaks things.
-
-diff --git a/drivers/iio/imu/adis16550.c b/drivers/iio/imu/adis16550.c
-index 16f01c61a429..8ec3afe6140b 100644
---- a/drivers/iio/imu/adis16550.c
-+++ b/drivers/iio/imu/adis16550.c
-@@ -509,10 +509,10 @@ static int adis16550_get_accl_filter_freq(struct adis=
-16550 *st, int *freq_hz)
- static int adis16550_set_accl_filter_freq(struct adis16550 *st, int freq_h=
-z)
- {
-        u8 en =3D freq_hz ? 1 : 0;
-+       u16 val =3D FIELD_PREP(ADIS16550_ACCL_FIR_EN_MASK, en);
-=20
-        return __adis_update_bits(&st->adis, ADIS16550_REG_CONFIG,
--                                 ADIS16550_ACCL_FIR_EN_MASK,
--                                 FIELD_PREP(ADIS16550_ACCL_FIR_EN_MASK, en=
-));
-+                                 ADIS16550_ACCL_FIR_EN_MASK, val);
- }
-=20
- static int adis16550_get_gyro_filter_freq(struct adis16550 *st, int *freq_=
-hz)
-@@ -535,10 +535,10 @@ static int adis16550_get_gyro_filter_freq(struct adis=
-16550 *st, int *freq_hz)
- static int adis16550_set_gyro_filter_freq(struct adis16550 *st, int freq_h=
-z)
- {
-        u8 en =3D freq_hz ? 1 : 0;
-+       u16 val =3D FIELD_PREP(ADIS16550_GYRO_FIR_EN_MASK, en);
-=20
-        return __adis_update_bits(&st->adis, ADIS16550_REG_CONFIG,
--                                 ADIS16550_GYRO_FIR_EN_MASK,
--                                 FIELD_PREP(ADIS16550_GYRO_FIR_EN_MASK, en=
-));
-+                                 ADIS16550_GYRO_FIR_EN_MASK, val);
- }
-=20
- enum {
-@@ -832,7 +832,6 @@ static u32 adis16550_validate_crc(__be32 *buffer, const=
- u8 n_elem)
-=20
- static irqreturn_t adis16550_trigger_handler(int irq, void *p)
- {
--       u32 crc;
-        int ret;
-        u16 dummy;
-        bool valid;
-@@ -1143,7 +1142,7 @@ module_spi_driver(adis16550_driver);
- MODULE_AUTHOR("Nuno Sa <nuno.sa@analog.com>");
- MODULE_AUTHOR("Ramona Gradinariu <ramona.gradinariu@analog.com>");
- MODULE_AUTHOR("Antoniu Miclaus <antoniu.miclaus@analog.com>");
--MODULE_AUTHOR("Robert Budai <robert.budai@analog.com>")
-+MODULE_AUTHOR("Robert Budai <robert.budai@analog.com>");
- MODULE_DESCRIPTION("Analog Devices ADIS16550 IMU driver");
- MODULE_IMPORT_NS("IIO_
-
-> >=20
-> > Anyways, all looks good except for one thing that I just spotted...
-> >  =20
-> > > v8:
-> > > - removed __aligned from struct adis16550, as suggested
-> > > - crc buffer extraction into the crc check function
-> > > - passed buffer into crc validation as original, __be32 and performed=
- check
-> > > using be32_to_cpu conversion of the buffer
-> > > - added trailing comma to line 993
-> > > - removed trailing comma from line 877
-> > >
-> > > =C2=A0drivers/iio/imu/Kconfig=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 1=
-3 +
-> > > =C2=A0drivers/iio/imu/Makefile=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0 =
-1 +
-> > > =C2=A0drivers/iio/imu/adis16550.c | 1149 =20
-> > +++++++++++++++++++++++++++++++++++ =20
-> > > =C2=A03 files changed, 1163 insertions(+)
-> > > =C2=A0create mode 100644 drivers/iio/imu/adis16550.c
-> > > =20
-> >=20
-> > ...
-> >  =20
-> > >
-> > > +static int adis16550_set_freq_hz(struct adis16550 *st, u32 freq_hz)
-> > > +{
-> > > +	u16 dec;
-> > > +	int ret;
-> > > +	u32 sample_rate =3D st->clk_freq_hz;
-> > > +	/*
-> > > +	 * The optimal sample rate for the supported IMUs is between
-> > > +	 * int_clk - 1000 and int_clk + 500.
-> > > +	 */
-> > > +	u32 max_sample_rate =3D st->info->int_clk * 1000 + 500000;
-> > > +	u32 min_sample_rate =3D st->info->int_clk * 1000 - 1000000;
-> > > +
-> > > +	if (!freq_hz)
-> > > +		return -EINVAL;
-> > > +
-> > > +	adis_dev_auto_lock(&st->adis);
-> > > +
-> > > +	if (st->sync_mode =3D=3D ADIS16550_SYNC_MODE_SCALED) {
-> > > +		unsigned long scaled_rate =3D lcm(st->clk_freq_hz, freq_hz);
-> > > +		int sync_scale;
-> > > +
-> > > +		if (scaled_rate > max_sample_rate)
-> > > +			scaled_rate =3D max_sample_rate / st->clk_freq_hz * st- =20
-> > > >clk_freq_hz; =20
-> > > +		else
-> > > +			scaled_rate =3D max_sample_rate / scaled_rate *
-> > > scaled_rate;
-> > > +
-> > > +		if (scaled_rate < min_sample_rate)
-> > > +			scaled_rate =3D roundup(min_sample_rate, st- =20
-> > > >clk_freq_hz); =20
-> > > + =20
-> >=20
-> > I would imagine the above is the same deal as in other devices [1] or d=
-o you
-> > know for a fact this one is different? Maybe it's simple enough for Jon=
-athan to
-> > tweak while applying...
-> >=20
-> > [1]:
-> > https://urldefense.com/v3/__https://elixir.bootlin.com/linux/v6.13.3/so=
-urce
-> > /drivers/iio/imu/adis16475.c*L364__;Iw!!A3Ni8CS0y2Y!7Y71yPaQAxVzNRd
-> > O_jT7wEz4k-
-> > s6z4tJHOcES84HYkq8qNGsgJH7zxwjfPNjLF3OEGVInSolo1ennLU_mwpmEbo$
-> >=20
-> > - Nuno S=C3=A1 =20
->=20
-> [Robert Budai]=20
-> No differences were found in the scaled_sync behavior of the ADIS16475 and
-> ADIS16550. It is safe to add from my side.
->=20
-If we want to do such a module parameter override I am fine with adding
-it but as a separate patch on top that provides the reasoning etc.
-It is a little to messy for me to do as a tweak.
-
-Jonathan
-=09
-> Best regards,
-> Robert B
+>
+>
+> @@ -502,20 +502,16 @@ int uprobe_write_opcode(struct arch_uprobe *auprobe,
+> struct mm_struct *mm,
+>         if (IS_ERR(old_page))
+>                 return PTR_ERR(old_page);
+>
+> -       ret = verify_opcode(old_page, vaddr, &opcode);
+> -       if (ret <= 0)
+> +       ret = -EINVAL;
+> +       if (is_zero_page(old_page))
+>                 goto put_old;
+>
+> -       if (is_zero_page(old_page)) {
+> -               ret = -EINVAL;
+> +       if (!is_register && (PageCompound(old_page) || !PageAnon(old_page)))
+>                 goto put_old;
+> -       }
+>
+> -       if (WARN(!is_register && PageCompound(old_page),
+> -                "uprobe unregister should never work on compound page\n"))
+> {
+> -               ret = -EINVAL;
+> +       ret = verify_opcode(old_page, vaddr, &opcode);
+> +       if (ret <= 0)
+>                 goto put_old;
+> -       }
+>
+>         /* We are going to replace instruction, update ref_ctr. */
+>         if (!ref_ctr_updated && uprobe->ref_ctr_offset) {
+> @@ -526,10 +522,6 @@ int uprobe_write_opcode(struct arch_uprobe *auprobe,
+> struct mm_struct *mm,
+>                 ref_ctr_updated = 1;
+>         }
+>
+> -       ret = 0;
+> -       if (!is_register && !PageAnon(old_page))
+> -               goto put_old;
+> -
+>         ret = anon_vma_prepare(vma);
+>
+> Thanks.
+> >
+> >>
+> >>
+> >>.
+> >
+> >.
+>
 
 
