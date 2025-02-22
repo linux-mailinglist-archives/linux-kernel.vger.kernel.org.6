@@ -1,136 +1,104 @@
-Return-Path: <linux-kernel+bounces-527066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6AD3A406F7
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 10:33:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 176B8A40765
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 11:32:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6450616D5B0
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 09:33:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04C1D42349E
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 10:32:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10D45207E17;
-	Sat, 22 Feb 2025 09:32:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3FE22080DB;
+	Sat, 22 Feb 2025 10:32:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="afiDs5l+"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B0H/2caV"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA94A207650
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 09:32:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBE3B206F1A;
+	Sat, 22 Feb 2025 10:31:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740216745; cv=none; b=LvMVzWzjrI7ejMrB4jIeWnDSu+M4xy5hWlzRfgfWQBbJZi4OSHARdquakuO24zIBchzy/TNYtrD+DfUMTxm13UW6IjbGRTanYDozzu91cJcblDEuJRZ79SdocwiqAYYy4zZc6PNWri6sT1PCOvAA+Vj9DXBr7DFD30qwLWk+z7U=
+	t=1740220321; cv=none; b=cb179/tblFQmL5CRIU7ER8OIkA6O2pDcKQ6mLoBCgCwxOXdQ+e7Pt3k6RiQ4yondr8YCzmFutFOxKZXP01RXDpoRuijUkfMmg6nIhDx4nxBKHDVgOXHxo8mQ4oawFsF9ENrNrXITScSfTe39Ah8Vv6P+OL5u85pzm3MDEx/O6YA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740216745; c=relaxed/simple;
-	bh=59P/xNLgeqH/Fa7+BuJx7qMLGVZbgC6bcP+O5TK4OgQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A3YNkJGwY34u3iw8A4tzGRvsmmP8aeQebOnXTC3Yt8Ln98OMuKDr7Wk0qM+IYK4J+m2jYZy9MO0uXQUurWk0Lk9xcG64380tVuu6q68bqPwErSWsbZRjHCE77Q05JAxvtU6tZ9WhisRYHt/AYSqyLAZbUbM1D2qeeaM1k0GBHqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=afiDs5l+; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=uLt9
-	Z91YNx6dOCP+Pak2OdUGCinRlgoCNVTF+11hRL4=; b=afiDs5l+L4btrSWZIruA
-	kIMIjjXD+JHuaLzQ0NqbX/aOMIDsMTfuS+W9ll/dXsrM78tucX82SSRs3QW4FizD
-	H2xy6sknjyQB4kwQe9uyr+DzU5nu3l/8n8HvG7Mud4aBA3YAfYMkf/3qrv+0Xy1S
-	XKW8pv0pEg+YImYe1ZakqeXoXI9ICQojEGV3fwfAQetLKKeSY+49PIhSyRiCMLnt
-	lL4ToFbiE4JJ5/NxEomjRCvGQpCPbWZ4tAUep2XPI7+fXjdbeV4Yp7uZLT3wPWju
-	AQGEJ5Y7ZCEUuqeHL6WpxVgghw1fRPWvg7fma5Lyanj8yvHDJEIqXuaAg9cEsg4Q
-	aA==
-Received: (qmail 1533020 invoked from network); 22 Feb 2025 10:32:20 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 22 Feb 2025 10:32:20 +0100
-X-UD-Smtp-Session: l3s3148p1@aoCcyLcufG1tKPLt
-Date: Sat, 22 Feb 2025 10:32:19 +0100
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: Heiner Kallweit <hkallweit1@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Joe Hattori <joe@pf.is.s.u-tokyo.ac.jp>,
-	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
-	Hans de Goede <hdegoede@redhat.com>, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Revert "i2c: core: Allocate temp client on the stack in
- i2c_detect"
-Message-ID: <Z7mZo7k3p1Po3hD5@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Arnd Bergmann <arnd@kernel.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Arnd Bergmann <arnd@arndb.de>, Andi Shyti <andi.shyti@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Joe Hattori <joe@pf.is.s.u-tokyo.ac.jp>,
-	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
-	Hans de Goede <hdegoede@redhat.com>, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-References: <20250221205449.3838714-1-arnd@kernel.org>
+	s=arc-20240116; t=1740220321; c=relaxed/simple;
+	bh=EeDJju08iU1yyZYbMpu1u5CV0TLEVOfnS03nJGV+Qi4=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=qzf/0sW+02rJnHe0wcizBmRgif9bW+uIHpxqmgAfQuZ3CJsG/jOEEnvqkh7rUoQoDByd8pVlB52bZmWX/IDqFCYE94IwpVl1WpdMinTVGLj2Qtc9ePLxBffEb59vI2KBk0xJmW1cp2qvpnwQ6icQLU6VrFqj2HETxIoG7viABoU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B0H/2caV; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-220e989edb6so81773505ad.1;
+        Sat, 22 Feb 2025 02:31:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740220318; x=1740825118; darn=vger.kernel.org;
+        h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=G1O0dlsatzka8Rjn2bFVMo/J2mA85sw+K5Yl9fpzwSQ=;
+        b=B0H/2caVTocLnAtbpGjjRE+hREgvBIZzcZ0aMCKwFJJnGc6pUMxgY56PxMavyvtwIQ
+         ITdsEAJwnSnnrm5bMO2TLHP5oXlKxmMo8EyV5yhSAs3soAZ5apUn6D24h+4PBNT/PfCR
+         5jSUVdxRaHtNMpvLujqnMKofw5BJBclb8xMP2LujAtVZFZJOqyfwm+cGyMXzdpiXOymM
+         gXUN6TQLbMd07VCDnLe8YqlUfhrUScWH15vvbgrDP+1XDB7Dq4ZGtmAImRC4nEuOdDiS
+         qjkteRla/lpQuHlSc2JDOD2BU2f4MQRXx70nHamznq6mCKSb9/xHP+a5b46dgN0qKtWe
+         9IvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740220318; x=1740825118;
+        h=references:message-id:date:in-reply-to:subject:cc:to:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=G1O0dlsatzka8Rjn2bFVMo/J2mA85sw+K5Yl9fpzwSQ=;
+        b=jQipNDak9j6OjnmxYh5WOTLi3dOpUdWh6nPoMM6ShUmIq6w/CG5tsTdywS5Qc1n3/n
+         SIhySRCbZ29KglD0QRnsYX4MB+bgpke8bjFEmSJILhz8de7gkXDAg6f2Ol38zFq4ACX2
+         bwcZ278UbE4nqwC0qCPEiwhSObYxThb46jQnMFekQAYmxUttNvFuuY/O73FFeY2Kpf9m
+         MPjysl7d68wUwUymttwLk+7nnblJDMpyg1mxscFbg7U3xeMiNarZsLDpDro1Lv7LZXjz
+         9etgqZ5yutZqlQbjYCxaeohknw/7YidzpYkXx+H/t3oiXmhoV2T0YaiQPSiq3nKQDppz
+         7MJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVJz1NoY+cbx2zNp9E8MJx6uec2U+a95XpaDgTRLZFHzXgTIWDXeBhNqXUuDbummgEwX5RFKhWI/Gdd3pmK@vger.kernel.org, AJvYcCWLPjdiLwiV7Jjz0JURY5OqYOwyKfykvCH8yQ/T2OD6aihVW3zfd9Z1S0MGNY/AuWT0zvlrE83GoIOG@vger.kernel.org
+X-Gm-Message-State: AOJu0YwgTkwJqabnOwgtrEd6+KCB3CbAIixU6Grtqz4E9sLFpmI7xh2f
+	Qo4k7tn9duPpaHDlDwFJv+Mu+b2KWKkTBHSOHZvfUshjWUFhPgOjrohC96dg
+X-Gm-Gg: ASbGncs4qcI37aCZM9smVobU2LhwR9wA3o5djh18pwsuvtyYHKWi/dYtRPOjReENMU6
+	8MwEU0gYQ4j4S/DHZzFWVuRrd/YpKeOcDWiNC0p9u/JNDh1T1Dxd9t4gpM2eRjPMPdPzA7Jrk3O
+	H8nTmTX4BB5PTUXRupWhygp/lHLTY802sQJCze/GcGfDPWVuY3hNNpBaWHvFuEyl3Ku7TMq4W1e
+	dDPPK/qxIt40egEbOXVzom/1GRJ9RzoaYirw6Q+w+y2E4rmHAsQTenT2FGq96Q9V9+kovhkQ9m9
+	lGkEJjg58MbrmiIiGw==
+X-Google-Smtp-Source: AGHT+IGEwfJ0QjG7Cr3aFOSZd1YhkxzAeQkeX3PxMyzf9G0qhNgHb1G84ruTloNxlyWBwSq6lOJpDw==
+X-Received: by 2002:a17:902:ce85:b0:21f:f3d:d533 with SMTP id d9443c01a7336-2219ff3354fmr86247825ad.2.1740220318152;
+        Sat, 22 Feb 2025 02:31:58 -0800 (PST)
+Received: from dw-tp ([171.76.82.51])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-add21f2149fsm13478068a12.1.2025.02.22.02.31.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 22 Feb 2025 02:31:57 -0800 (PST)
+From: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
+To: Ojaswin Mujoo <ojaswin@linux.ibm.com>, linux-ext4@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>
+Cc: Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] ext4: Make sb update interval tunable
+In-Reply-To: <86b177b0b0a863362f11afa3fd835c5734e14ef7.1740212945.git.ojaswin@linux.ibm.com>
+Date: Sat, 22 Feb 2025 15:02:39 +0530
+Message-ID: <87y0xygw94.fsf@gmail.com>
+References: <cover.1740212945.git.ojaswin@linux.ibm.com> <86b177b0b0a863362f11afa3fd835c5734e14ef7.1740212945.git.ojaswin@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="79IIhFRijrqxi5Of"
-Content-Disposition: inline
-In-Reply-To: <20250221205449.3838714-1-arnd@kernel.org>
+
+Ojaswin Mujoo <ojaswin@linux.ibm.com> writes:
+
+> Currently, outside error paths, we auto commit the super block after 1
+> hour has passed and 16MB worth of updates have been written since last
+> commit. This is a policy decision so make this tunable while keeping the
+> defaults same. This is useful if user wants to tweak the superblock
+> update behavior or for debugging the codepath by allowing to trigger it
+> more frequently.
+>
+> We can now tweak the super block update using sb_update_sec and
+> sb_update_kb files in /sys/fs/ext4/<dev>/
 
 
---79IIhFRijrqxi5Of
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Agree that this could be useful as a tunable knob for various reasons
+rather than being a hardcoded value within kernel. 
 
-On Fri, Feb 21, 2025 at 09:54:40PM +0100, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
->=20
-> struct i2c_client is way too large to be put on the kernel stack, and dep=
-ending
-> on the kernel configuration, this can exceed the compile-time warning lim=
-it:
->=20
-> drivers/i2c/i2c-core-base.c:1420:12: error: stack frame size (1040) excee=
-ds limit (1024) in 'i2c_do_add_adapter' [-Werror,-Wframe-larger-than]
->  1420 | static int i2c_do_add_adapter(struct i2c_driver *driver,
->       |            ^
->=20
-> The current version is the result of a cleanup patch that does not appear
-> to be a requirement for anything else, so address the problem through a
-> simple revert.
->=20
-> Fixes: 735668f8e5c9 ("i2c: core: Allocate temp client on the stack in i2c=
-_detect")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+The patch also looks good to me. Please feel free to add -
 
-Thank you, yet Geert was faster and fixed a checkpatch check:
-
-https://lore.kernel.org/r/f9aa39362e918b62aec0567f899b37d8d3c44710.17400641=
-76.git.geert+renesas@glider.be
-
-
---79IIhFRijrqxi5Of
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAme5maMACgkQFA3kzBSg
-KbZIXQ/+LcL/GhbuIVhLeiabnbpfkwD8FHDAB/oSQMGGXbdICyx5t1Qsv9Twjiec
-4R96QaESqFWK+4c7k1+rSMHOG/k29S0Ebl5RxeZ5c96IkErhuMCQdeMrLfa/CkAQ
-RerC+EH0n6ZBIB2QESWLW3FCx3HHOggXQu3jMPLRKovQ7dN3alJ5EXXxMzl4vBGi
-04cAf2VYXyahI+z+5/HnVZDZdtiMHs24TY5EhbMfdZSxbT7yMuVDTUA2l+qI1wCk
-rIJnqsbgMh92kc8C7E1RVNyvCDjmRJYtyVaMrD/rwOHAFd48DsfDiXwDUikMNhGF
-I+swk++KPk0riBghSaoYoi15VPAWUIeUEL+XENmQP/+mmty3T990nNN1i+jCQpAo
-4nwSX266GGHEBrMnPLRX2/gZ4gh2bIQvQuyswc53lxD4JXCyL1Iux1EatO4vcrc/
-XTcT5n5i4CXIXwRCTYS6elexMD/cX7THulOSO3c4HoufRxTaY9Lv1KifKJkLbZXg
-x5YofsEbvNyi9ZdzoY2iUjzxDYdQCT4Knn+bfh01c8KCrZjq5I6z+qa2FOPOzL12
-rDra7y5Oy1j1cYnzL4OAajbmcsQxUw7eQnm0s7QQcauIuF41kjLHbcTd5aEBoLrE
-fLUbYnp28UTguXQKNO/mVU73gR3UeMLqvn0zFr64WUwAkX9XTSA=
-=bd07
------END PGP SIGNATURE-----
-
---79IIhFRijrqxi5Of--
+Reviewed-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
 
