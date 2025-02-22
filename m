@@ -1,107 +1,151 @@
-Return-Path: <linux-kernel+bounces-527227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FBA8A408AE
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 14:27:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29987A408B0
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 14:27:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CFAD171280
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 13:27:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75FCF19C1074
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 13:28:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C54F20B209;
-	Sat, 22 Feb 2025 13:27:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86A1F20AF8E;
+	Sat, 22 Feb 2025 13:27:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="dqjxE5Pf"
-Received: from smtpbg150.qq.com (smtpbg150.qq.com [18.132.163.193])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PMR3ydvD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4D612CCDB;
-	Sat, 22 Feb 2025 13:27:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.132.163.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E536F27453
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 13:27:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740230834; cv=none; b=Zxm/nD87phJ/kEQBQHOSFMSjDtNGW1u+kD5qRjtasJ8mzUkLiTBQbKJbt1Y88skHjFHGDMvw2YhKExsfSb5VUNXZhO1dc8zewwVOo3O/fQsBIvYxA5KhCzfdBYqeGebYUjkjPbu605yJD4a9sculuwX+oVx2+nXRhW1EN11b3lU=
+	t=1740230870; cv=none; b=tXg6bhyEykjjUonOCuATwtNc40z0CDdn6ssYBngOcHGf0xAE1F/DViV/C7k1FAF1A4wK++BcKMltc+PMpN5sdGA0nhtsuEZ3O/qZZBFNr+/BSDnNh594Qt44OvGwUUxBNEcuweIl6TisLQNnhFxEBXXhUi45RWONABKQxlXLuGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740230834; c=relaxed/simple;
-	bh=0xS6Cu9zY503FYzv4hIWBT5pesLymuUmjYwkhhRzpwA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Nn1EFeoOMhK5IufDOsKK6KLeMr0OIE1zHqnA+dTQIi2ua4sMWOGgvM8yeicQvBBIgk75q4p8NacCIUHVdBK+5lHv/o3oMjOijqxhKaT0gC2uaGzC3SYJ7DKRrwHZnFQ/C8fMhL2MIhtI4d++uISRC1jxdEgwKJ06b9osbLFdrNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=dqjxE5Pf; arc=none smtp.client-ip=18.132.163.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1740230794;
-	bh=0xS6Cu9zY503FYzv4hIWBT5pesLymuUmjYwkhhRzpwA=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version;
-	b=dqjxE5PfR+mf4cOGCjm8ecW1kbq1HY6m30vfICXUue+h8dNDqpUefr2Ob4lcG/Pt3
-	 8q1RkUGPgNpT6pV810AfhbWYftu/R8qS5AwKCkm8QuSmZCsz6w/KVcOKBHGMSL+k/s
-	 /YOio8BmOsmxmJj75VOpUg9rtl5/J/z4qDUgidxE=
-X-QQ-mid: bizesmtpsz13t1740230790t96rlp
-X-QQ-Originating-IP: td5RAHcEPQCqD7LgFggxdM/IlPGOPxUh3iz7gt13nOE=
-Received: from localhost.localdomain ( [113.57.152.160])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Sat, 22 Feb 2025 21:26:28 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 7706801830270063389
-From: Wentao Guan <guanwentao@uniontech.com>
-To: jkeeping@inmusicbrands.com
-Cc: andriy.shevchenko@linux.intel.com,
-	arnd@arndb.de,
-	fancer.lancer@gmail.com,
-	ftoth@exalondelft.nl,
-	gregkh@linuxfoundation.org,
-	heikki.krogerus@linux.intel.com,
-	ilpo.jarvinen@linux.intel.com,
-	jirislaby@kernel.org,
-	john.ogness@linutronix.de,
-	linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	pmladek@suse.com,
-	schnelle@linux.ibm.com,
-	stable@vger.kernel.org,
-	sunilvl@ventanamicro.com
-Subject: Re: [PATCH v3] serial: 8250: Fix fifo underflow on flush
-Date: Sat, 22 Feb 2025 21:26:27 +0800
-Message-Id: <20250222132627.25818-1-guanwentao@uniontech.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20250208124148.1189191-1-jkeeping@inmusicbrands.com>
-References: <20250208124148.1189191-1-jkeeping@inmusicbrands.com>
+	s=arc-20240116; t=1740230870; c=relaxed/simple;
+	bh=g1EkSPNBdQaXE2bP1ALnptlXMK4qiILz19aCXql5pSw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Wa7g1ynzrLqWbeGp4OcM5Q68EC/sxT+DtO2CjWr+Rsw2R+KhsYK8AFQGXS/StGMHflEZND9Pt0blOxgjh65OGpooqJV7y08Sp3oUNc1jq45DruorvO7blZS7rvD5RSvhUjDo2OOS/a27oos6TBQ+0BwduOflP993DscHkGeyN5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PMR3ydvD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB0D0C4CED1;
+	Sat, 22 Feb 2025 13:27:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740230869;
+	bh=g1EkSPNBdQaXE2bP1ALnptlXMK4qiILz19aCXql5pSw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PMR3ydvDgqWjbXS92N9v4aphTAfQqAUqPEpno/o0S7elMP2n1MrF/F6g1pC94QNYi
+	 uK/FuoY2nHW/3Qv/A4Br4liL0yNx3eIhOcfdl6gC9xoDQOEy9/+0XaEYXd8pg3r057
+	 oTVES3CIgwi/N+Rrf61HdBE+zvwmf/3BpIIzkJy0dlanh2DhgNm4HmTRdXl8tlVbHz
+	 ENNSmYLbAe2QAJcujfrevEidQKdRqDZl1gVJNEay2Il+swA/KtN4T1bPG1stVBn4Dc
+	 icrISTTLo9OyqfwO75BeInJczc5fyZw/rGOaoJmXXDBMzccR3t7AKnvD9ZcePjolYw
+	 YyQjw/Q7BQeZg==
+Date: Sat, 22 Feb 2025 14:27:40 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Michael Jeanson <mjeanson@efficios.com>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Boqun Feng <boqun.feng@gmail.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] rseq: update kernel fields in lockstep with
+ CONFIG_DEBUG_RSEQ
+Message-ID: <Z7nQzOQT_-9-Rbr5@gmail.com>
+References: <20250221191401.464648-1-mjeanson@efficios.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpsz:uniontech.com:qybglogicsvrgz:qybglogicsvrgz5a-0
-X-QQ-XMAILINFO: OA8qd4daQrT+gspbIHyjZJSCZe0mGuFJEUOJnUJIUtlW3kdWKIWjXUoX
-	uNcndV34u/vwofXTZXKFXifsW450JWsBelge09EWmusHmT31Az/GJeQocV626GgNUykG/nf
-	Fjd9Xp9VY1dv2y0Sqxzhl6AJM4/TJXW4ppQS7x/ThESEEJraGCXeckW1yxinn9T8BilCYMi
-	WAbz68mWXMg51TM2x0H9Y79m1r4CVDQTGmBjU5rC5mnz+DO04dVHcf01wxZX5rnUprFe1/M
-	oMoHkACePkkFgxklL3krlF4/vPYSDQHwVQJ7GcRsnEmnKkTXmIoWg7nXckdHG+3n5hECMQB
-	edNFbpNm/pXRSs/Obu4fX8sbrm894FXOVqw1bgvBMffFyT1AjePR0WS2L/peAjJF9Q7NpkU
-	xBuER+i0JxiW71bfwH3EinFXB6fg4ZnMAgsrQR7nE72TgIT5/imUKp8WgZE/Bh5OyZbsm65
-	SNZF1XiQNYlSpeXbUbRBBzDLWxYE3qjCXTmeKdpqzW+3llp7DXO5I19kjeltIoOdHCesToU
-	BZxC9mMDY9c3p/UIw0XdN38rC5arUI5ai1lEVuZBsEj6XqeOrBMxAsMLEdOrj3hnuCK9eK1
-	QwX2NQHaUIGtEcJPIWREWbATsniOm54lrjnc0JBN9Ru8O+aP+FnSLVbOcTKRQ1lyU36Jyzv
-	MoLxygoA++rmOmnOBjfk/lhOBCDU05uhEAzWAUoWPhpY800IO32LFXQxF7qSpfsqolnF9iG
-	CQjaZMMFOYlgMZ9attqVPskeszk6pxqJVVm93yf+AAFjoNJrFGJAgaNDUJ+5D3I+T4uN1xH
-	rokc91Ujx1ZmrstB4rpDuxMVehqDYHcqU6Cf0F4zTVLhhcFP0EYaQKsdTWY5E5FmsPWuL3+
-	0/m8zlyRNSqtXUnVrqW+DBkpJQstG0JI5wAeLVAzytS1Y4q13CnxxKDTrkkM2GpVTiPgJb1
-	anekp8gHd7Saoh1ayA/K42EURZHYZmVsWcIneuBK3J66IGuLqZpCwXWOEzp9nYp3MUUR4tk
-	mwTwIJIbhy4S+mnbKEeCMYplJ0zh05leMrot28tTs+DNTKo9gZ/98Dk2xH5zQ=
-X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
-X-QQ-RECHKSPAM: 0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250221191401.464648-1-mjeanson@efficios.com>
 
-Hello John,
 
-It seems strange that call 'dmaengine_terminate_async( **dma->rxchan** );' in
-'serial8250_ **tx** _dma_flush' during code review.
-I am not a professional reviewer in this module, could you explaim the change?
+* Michael Jeanson <mjeanson@efficios.com> wrote:
 
-BRs
-Wentao Guan
+> With CONFIG_DEBUG_RSEQ an in-kernel copy of the read-only fields is
+> kept synchronized with the user-space fields. Ensure the updates
+> are done in lockstep in case we error out on a write to user-space.
+> 
+> Fixes: 7d5265ffcd8b ("rseq: Validate read-only fields under DEBUG_RSEQ config")
+> Signed-off-by: Michael Jeanson <mjeanson@efficios.com>
+> Reviewed-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+> ---
+>  kernel/rseq.c | 85 +++++++++++++++++++++++++++------------------------
+>  1 file changed, 45 insertions(+), 40 deletions(-)
+> 
+> diff --git a/kernel/rseq.c b/kernel/rseq.c
+> index 2cb16091ec0a..5bdb96944e1f 100644
+> --- a/kernel/rseq.c
+> +++ b/kernel/rseq.c
+> @@ -26,6 +26,11 @@
+>  				  RSEQ_CS_FLAG_NO_RESTART_ON_SIGNAL | \
+>  				  RSEQ_CS_FLAG_NO_RESTART_ON_MIGRATE)
+>  
+> +static struct rseq __user *rseq_user_fields(struct task_struct *t)
+> +{
+> +	return (struct rseq __user *) t->rseq;
+> +}
+> +
+>  #ifdef CONFIG_DEBUG_RSEQ
+>  static struct rseq *rseq_kernel_fields(struct task_struct *t)
+>  {
+> @@ -78,24 +83,24 @@ static int rseq_validate_ro_fields(struct task_struct *t)
+>  	return -EFAULT;
+>  }
+>  
+> -static void rseq_set_ro_fields(struct task_struct *t, u32 cpu_id_start, u32 cpu_id,
+> -			       u32 node_id, u32 mm_cid)
+> -{
+> -	rseq_kernel_fields(t)->cpu_id_start = cpu_id;
+> -	rseq_kernel_fields(t)->cpu_id = cpu_id;
+> -	rseq_kernel_fields(t)->node_id = node_id;
+> -	rseq_kernel_fields(t)->mm_cid = mm_cid;
+> -}
+> +/*
+> + * Update an rseq field and its in-kernel copy in lock-step to keep a coherent
+> + * state.
+> + */
+> +#define unsafe_rseq_set_field(t, field, value, error_label)		\
+> +	do {								\
+> +		unsafe_put_user(value, &rseq_user_fields(t)->field, error_label);	\
+> +		rseq_kernel_fields(t)->field = value;			\
+> +	} while (0)
+> +
+>  #else
+>  static int rseq_validate_ro_fields(struct task_struct *t)
+>  {
+>  	return 0;
+>  }
+>  
+> -static void rseq_set_ro_fields(struct task_struct *t, u32 cpu_id_start, u32 cpu_id,
+> -			       u32 node_id, u32 mm_cid)
+> -{
+> -}
+> +#define unsafe_rseq_set_field(t, field, value, error_label)		\
+> +	unsafe_put_user(value, &rseq_user_fields(t)->field, error_label)
+>  #endif
+>  
+>  /*
+> @@ -173,17 +178,18 @@ static int rseq_update_cpu_node_id(struct task_struct *t)
+>  	WARN_ON_ONCE((int) mm_cid < 0);
+>  	if (!user_write_access_begin(rseq, t->rseq_len))
+>  		goto efault;
+> -	unsafe_put_user(cpu_id, &rseq->cpu_id_start, efault_end);
+> -	unsafe_put_user(cpu_id, &rseq->cpu_id, efault_end);
+> -	unsafe_put_user(node_id, &rseq->node_id, efault_end);
+> -	unsafe_put_user(mm_cid, &rseq->mm_cid, efault_end);
+> +
+> +	unsafe_rseq_set_field(t, cpu_id_start, cpu_id, efault_end);
+> +	unsafe_rseq_set_field(t, cpu_id, cpu_id, efault_end);
+> +	unsafe_rseq_set_field(t, node_id, node_id, efault_end);
+> +	unsafe_rseq_set_field(t, mm_cid, mm_cid, efault_end);
+
+Could we please name the new wrapper rseq_unsafe_put_user(), to make it 
+clear it's a wrapper around unsafe_put_user()?
+
+Thanks,
+
+	Ingo
 
