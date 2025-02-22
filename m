@@ -1,220 +1,127 @@
-Return-Path: <linux-kernel+bounces-527030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C580CA4066E
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 09:41:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F0B0A40670
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 09:41:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DEE5A19C510B
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 08:41:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2AF173A86BE
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 08:41:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5133F206F2A;
-	Sat, 22 Feb 2025 08:40:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C17B2066F5;
+	Sat, 22 Feb 2025 08:41:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="cNLKbS02"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PnZOhFGm"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E55B12066F3;
-	Sat, 22 Feb 2025 08:40:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7E182063EC;
+	Sat, 22 Feb 2025 08:41:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740213640; cv=none; b=BG9x2kLDgDOarrK/CdzGMaFOLE87hymRPw0h2wn0b7VTTz2eWu9kiNKR+eDQ8RckRRaC02s334g+MRfJEhl7q0AgMzCjw7VHzZyt9LMnCSdRDf+2j/zLHB6/ON1ZdiVPG79FzabwyykGBYtnMyrxzH3boXnDcbPruLZm+/FI6Aw=
+	t=1740213677; cv=none; b=HtN9PSvq8mZE++2FuSqyMNcPZ4+vq3vEdufmh3hhFFU4BH+hQ8leTX+pNEo0jQB46AQ+G5wZDY+iMJaMco26f9caweJNgGCcPAP0S9lXYglFecUlOZErjI8iGxtpJVMBoJdfMHqkq1eDXuQ/erXB5DauWnCoD+oR1xcFMD2gxFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740213640; c=relaxed/simple;
-	bh=i9n76LpRg5/9z7bYEElbmM6IhZF1UdG1UXnNhtQuF7o=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=P75ipq0WTq/V5Z71t2T/9AVEF1+Qj+dXCa3mRdUYWTKqPHJdefJkmHqrCqLLT78c7p4gRz2SOLTOkxY0GbhFAx6RDbDqUlFhZcbdaT+14OCfvHzDmQk63v/B2kd7tELm1AZJPfA6hGa0zj1WAOLa+0G6AA1uhWnVz5guDaSIKHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=cNLKbS02; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51M51oZI013209;
-	Sat, 22 Feb 2025 08:40:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=rtKRCEdc9H8O8YuVp
-	i+iB66yeRyBU0+UDxOBXz2No44=; b=cNLKbS021hE+KG3vLtk+cWWxw5EL26Uyt
-	3GKbxKQXp81wxGH0ReAP+L8dIJT2wN+l03GskEb9lc6LH3evmS0fIMVbSdSJx48I
-	ddqouKu2QV2u2CpsSSdkKny6qqv/YoTKfZ+TqsIvGcc9NW8cGdNztnnOPvx182MW
-	kefq1peMH0XNO8jz5doRhXzb1GB1B2hZ/8nNJDd816Wwh059MudR4oznwbYt9Hsg
-	pbSDIWyqgu11dZdVWetYyHreDGFbw5b7yYkZgttD/gobJEYMTeyekTtyen5JCVFK
-	TfV8cPruS/XM7u9nzceN5adc2n2pMx6+cHfkWbI1NqDc6qHPrKmSg==
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44y82xgj4g-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 22 Feb 2025 08:40:34 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51M7NhaA029303;
-	Sat, 22 Feb 2025 08:40:34 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 44w024vhnn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 22 Feb 2025 08:40:33 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51M8eWGQ52756808
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sat, 22 Feb 2025 08:40:32 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E998D20040;
-	Sat, 22 Feb 2025 08:40:31 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C2A1520043;
-	Sat, 22 Feb 2025 08:40:30 +0000 (GMT)
-Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.39.30.104])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Sat, 22 Feb 2025 08:40:30 +0000 (GMT)
-From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-To: linux-ext4@vger.kernel.org, "Theodore Ts'o" <tytso@mit.edu>
-Cc: Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] ext4: Make sb update interval tunable
-Date: Sat, 22 Feb 2025 14:10:23 +0530
-Message-ID: <86b177b0b0a863362f11afa3fd835c5734e14ef7.1740212945.git.ojaswin@linux.ibm.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <cover.1740212945.git.ojaswin@linux.ibm.com>
-References: <cover.1740212945.git.ojaswin@linux.ibm.com>
+	s=arc-20240116; t=1740213677; c=relaxed/simple;
+	bh=ipT8QGteDw5f/sH4Qq/CmGG+rJIDqYmTvgmdclMSeJk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=HGkkeVB8Owr1+okg67p5/kzTkkZi5lf56kRvILf8SX4418sVCvIVOnRpdWunL9A5CRf9wzE32CGgRDSz4u7B74S0P4kqr+QGHmdG15Zk8GUzkzWTGiQjvdACgO/d0r5+3tD/2WGjl2B6hfwES++g4TLWAPaiceL+LSwGXizhUo8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PnZOhFGm; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-38f2b7ce319so2400477f8f.2;
+        Sat, 22 Feb 2025 00:41:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740213674; x=1740818474; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XaJV665AV3yPzU+JriL5zw7cJhNHTOrH7fZFwrVgwF8=;
+        b=PnZOhFGmx74iy+Kp5BKkQGBGUi6dUj5PJx33W1fHC9BcbY/1dAUnt+jxoOkqNdLZlE
+         /6lJBhkS7vG/eGI1k4tRa6KxET9WPmkj5EqURWx0HO/JX9eBA6UhyaFhUL5Zm2Luzb0F
+         QvcN2Z2Iu/awQzeDkoSaTtLw+jF6sl8bwwx4ZbpSJZoRAdHfe8+Z8mpWB/egAljHnnCk
+         /xsqzHlPkhAzXyC4Z5eZJB6cGZ4E77YB/rlHjjLxv5vOWl1rTPeU/6aAIoRjklh+lgv8
+         6TmN0E6e+DoX/DWk62ofHA7AbQxgFRDuqbeTyt+oq+m9lpCKkjHylV1x7vvjlWIOy520
+         5+hw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740213674; x=1740818474;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XaJV665AV3yPzU+JriL5zw7cJhNHTOrH7fZFwrVgwF8=;
+        b=HsurGF0aQS4hthYrfVeiLPKHfCIeNfWZVjinULfH8DHikhpoPOg31Dybv9hm98ZgJe
+         DNNz3dwHbP8037d7KjqWcopPZwsLb0Sl2weXBG3Orpc2rGI/BetQ97HgIqceos6Y2NuZ
+         71JENNB56xre8A60pguSsOsFvXWOgmmdURKU/3xvkuybciNcDx8eSb4PfwoxD2zwNb0P
+         JVIjyq8bD44R/g4S2imCTCM+6KcUQ9Tq5jkQcGtpXBZ1l5XFrUREA0vN/mjJRxZQ8KxW
+         SxCl5ep5/2ReRXeths+OBRL2rk2cNKJWpsGhynTallCtDDbyDwLqxu4zFCPucnkak/iX
+         B4xw==
+X-Forwarded-Encrypted: i=1; AJvYcCVt7ixqElqYjJL0ypt2s8kesRIPdEO6BBm/vcIvesiG3BOPsh9q1rkyjmHDHGYpNmAjD9AbsZY0GiW7mYWSr3o=@vger.kernel.org, AJvYcCWdUQWZIOouDtxvmGjjGqnDvL+G82kEqf8hqrpI6y7USVmfhcebuCYUdvMdmSQP/Jw/jGb2rBI+5oeJ8zk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKGS0iiCB2aFYWvtcajPjur0rRbLqX4PjWpYMYy8g/4yzpBdEm
+	2ho04O49VY7tr6ETanZgF0j5Y4MwgOVwf6jlbLqwNmJet+3oZkhS
+X-Gm-Gg: ASbGncsEHNNYq1ZIiAbGabCc5+wPoS4v4TLyg6Q4TXSjItZoD7Lxx8+9Ja/SejcVgD5
+	0LifIZqrnVY6KeXvBROhuzzN/o9RfnC+kp+wdnWnCP+UScxQUDowq6Vr6rHg/j/zUxWqa7DNJVx
+	dTjUptVXcPxu9cX0V9JcYtJmf7OSbWQfie08/hKsUBg913LQ886eYLRQfLF4H0+9n6VGCrKwYO9
+	afkmItEYVa+RpVdMJ+kGxnogYJEhtw0gqbBXiSy9h2t1HhAVEAewyLtMMPb/JskRAtlHHnDSJfV
+	TbkOOeDgD8Y8KkxPffxkGb3lIOVnHmSlTjGmmnX0D+t2HQVrnVsZ8ldCOgKhYQen
+X-Google-Smtp-Source: AGHT+IEXdU1fuHO8qIW2d1ilr9ZJTNlJ0Vo8IHgRtK33xwA9gvTMGEqNrn0XDDuoDvlxbx6680O3gA==
+X-Received: by 2002:a5d:5888:0:b0:38f:5120:129d with SMTP id ffacd0b85a97d-38f6f0bc676mr4633805f8f.49.1740213673840;
+        Sat, 22 Feb 2025 00:41:13 -0800 (PST)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-439b037213dsm40479475e9.40.2025.02.22.00.41.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 22 Feb 2025 00:41:13 -0800 (PST)
+Date: Sat, 22 Feb 2025 08:41:12 +0000
+From: David Laight <david.laight.linux@gmail.com>
+To: Willy Tarreau <w@1wt.eu>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Jan Engelhardt
+ <ej@inai.de>, "H. Peter Anvin" <hpa@zytor.com>, Greg KH
+ <gregkh@linuxfoundation.org>, Boqun Feng <boqun.feng@gmail.com>, Miguel
+ Ojeda <miguel.ojeda.sandonis@gmail.com>, Christoph Hellwig
+ <hch@infradead.org>, rust-for-linux <rust-for-linux@vger.kernel.org>, David
+ Airlie <airlied@gmail.com>, linux-kernel@vger.kernel.org,
+ ksummit@lists.linux.dev
+Subject: Re: C aggregate passing (Rust kernel policy)
+Message-ID: <20250222084112.23eb2856@pumpkin>
+In-Reply-To: <20250222063730.GB11482@1wt.eu>
+References: <Z7VKW3eul-kGaIT2@Mac.home>
+	<2025021954-flaccid-pucker-f7d9@gregkh>
+	<2nn05osp-9538-11n6-5650-p87s31pnnqn0@vanv.qr>
+	<2025022052-ferment-vice-a30b@gregkh>
+	<9B01858A-7EBD-4570-AC51-3F66B2B1E868@zytor.com>
+	<n05p910s-r5o3-0n36-5s44-qr769prp69r5@vanv.qr>
+	<20250221183437.1e2b5b94@pumpkin>
+	<CAHk-=wjF0wjD4ko7MgrZ1wBZ9QOrQd_AnyhDDUJQ1L5+i-o22A@mail.gmail.com>
+	<20250221214501.11b76aa8@pumpkin>
+	<20250222063210.GA11482@1wt.eu>
+	<20250222063730.GB11482@1wt.eu>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: r5ls7A3knZq5_2kGWlhOLssorDaZy5qE
-X-Proofpoint-GUID: r5ls7A3knZq5_2kGWlhOLssorDaZy5qE
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-22_03,2025-02-20_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 priorityscore=1501
- impostorscore=0 adultscore=0 suspectscore=0 clxscore=1015 bulkscore=0
- mlxlogscore=702 spamscore=0 malwarescore=0 lowpriorityscore=0 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
- definitions=main-2502220066
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Currently, outside error paths, we auto commit the super block after 1
-hour has passed and 16MB worth of updates have been written since last
-commit. This is a policy decision so make this tunable while keeping the
-defaults same. This is useful if user wants to tweak the superblock
-update behavior or for debugging the codepath by allowing to trigger it
-more frequently.
+On Sat, 22 Feb 2025 07:37:30 +0100
+Willy Tarreau <w@1wt.eu> wrote:
 
-We can now tweak the super block update using sb_update_sec and
-sb_update_kb files in /sys/fs/ext4/<dev>/
+...
+> Update: I found in my code a comment suggesting that it works when using
+> -freg-struct (which is in fact -freg-struct-return) which works both on
+> i386 and ARM.
 
-Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
----
- fs/ext4/ext4.h  |  9 +++++++++
- fs/ext4/super.c | 15 ++++++++-------
- fs/ext4/sysfs.c |  4 ++++
- 3 files changed, 21 insertions(+), 7 deletions(-)
+The problem is that you need it to be an __attribute__(()) so it can
+be per-function without breaking ABI.
 
-diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-index 2b7d781bfcad..306e5db7129c 100644
---- a/fs/ext4/ext4.h
-+++ b/fs/ext4/ext4.h
-@@ -1608,6 +1608,8 @@ struct ext4_sb_info {
- 	unsigned int s_mb_prefetch;
- 	unsigned int s_mb_prefetch_limit;
- 	unsigned int s_mb_best_avail_max_trim_order;
-+	unsigned int s_sb_update_sec;
-+	unsigned int s_sb_update_kb;
- 
- 	/* stats for buddy allocator */
- 	atomic_t s_bal_reqs;	/* number of reqs with len > 1 */
-@@ -2279,6 +2281,13 @@ static inline int ext4_forced_shutdown(struct super_block *sb)
- #define EXT4_DEF_MIN_BATCH_TIME	0
- #define EXT4_DEF_MAX_BATCH_TIME	15000 /* 15ms */
- 
-+/*
-+ * Default values for superblock update
-+ */
-+#define EXT4_DEF_SB_UPDATE_INTERVAL_SEC (3600) /* seconds (1 hour) */
-+#define EXT4_DEF_SB_UPDATE_INTERVAL_KB (16384) /* kilobytes (16MB) */
-+
-+
- /*
-  * Minimum number of groups in a flexgroup before we separate out
-  * directories into the first block group of a flexgroup
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index b7341e9acf62..129d666f450b 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -447,9 +447,6 @@ static time64_t __ext4_get_tstamp(__le32 *lo, __u8 *hi)
- #define ext4_get_tstamp(es, tstamp) \
- 	__ext4_get_tstamp(&(es)->tstamp, &(es)->tstamp ## _hi)
- 
--#define EXT4_SB_REFRESH_INTERVAL_SEC (3600) /* seconds (1 hour) */
--#define EXT4_SB_REFRESH_INTERVAL_KB (16384) /* kilobytes (16MB) */
--
- /*
-  * The ext4_maybe_update_superblock() function checks and updates the
-  * superblock if needed.
-@@ -457,8 +454,10 @@ static time64_t __ext4_get_tstamp(__le32 *lo, __u8 *hi)
-  * This function is designed to update the on-disk superblock only under
-  * certain conditions to prevent excessive disk writes and unnecessary
-  * waking of the disk from sleep. The superblock will be updated if:
-- * 1. More than an hour has passed since the last superblock update, and
-- * 2. More than 16MB have been written since the last superblock update.
-+ * 1. More than sbi->s_sb_update_sec (def: 1 hour) has passed since the last
-+ *    superblock update
-+ * 2. More than sbi->s_sb_update_kb (def: 16MB) kbs have been written since the
-+ *    last superblock update.
-  *
-  * @sb: The superblock
-  */
-@@ -479,7 +478,7 @@ static void ext4_maybe_update_superblock(struct super_block *sb)
- 	now = ktime_get_real_seconds();
- 	last_update = ext4_get_tstamp(es, s_wtime);
- 
--	if (likely(now - last_update < EXT4_SB_REFRESH_INTERVAL_SEC))
-+	if (likely(now - last_update < sbi->s_sb_update_sec))
- 		return;
- 
- 	lifetime_write_kbytes = sbi->s_kbytes_written +
-@@ -494,7 +493,7 @@ static void ext4_maybe_update_superblock(struct super_block *sb)
- 	 */
- 	diff_size = lifetime_write_kbytes - le64_to_cpu(es->s_kbytes_written);
- 
--	if (diff_size > EXT4_SB_REFRESH_INTERVAL_KB)
-+	if (diff_size > sbi->s_sb_update_kb)
- 		schedule_work(&EXT4_SB(sb)->s_sb_upd_work);
- }
- 
-@@ -5248,6 +5247,8 @@ static int __ext4_fill_super(struct fs_context *fc, struct super_block *sb)
- 	sbi->s_commit_interval = JBD2_DEFAULT_MAX_COMMIT_AGE * HZ;
- 	sbi->s_min_batch_time = EXT4_DEF_MIN_BATCH_TIME;
- 	sbi->s_max_batch_time = EXT4_DEF_MAX_BATCH_TIME;
-+	sbi->s_sb_update_kb = EXT4_DEF_SB_UPDATE_INTERVAL_KB;
-+	sbi->s_sb_update_sec = EXT4_DEF_SB_UPDATE_INTERVAL_SEC;
- 
- 	/*
- 	 * set default s_li_wait_mult for lazyinit, for the case there is
-diff --git a/fs/ext4/sysfs.c b/fs/ext4/sysfs.c
-index ddb54608ca2e..987bd00f916a 100644
---- a/fs/ext4/sysfs.c
-+++ b/fs/ext4/sysfs.c
-@@ -254,6 +254,8 @@ EXT4_ATTR(journal_task, 0444, journal_task);
- EXT4_RW_ATTR_SBI_UI(mb_prefetch, s_mb_prefetch);
- EXT4_RW_ATTR_SBI_UI(mb_prefetch_limit, s_mb_prefetch_limit);
- EXT4_RW_ATTR_SBI_UL(last_trim_minblks, s_last_trim_minblks);
-+EXT4_RW_ATTR_SBI_UI(sb_update_sec, s_sb_update_sec);
-+EXT4_RW_ATTR_SBI_UI(sb_update_kb, s_sb_update_kb);
- 
- static unsigned int old_bump_val = 128;
- EXT4_ATTR_PTR(max_writeback_mb_bump, 0444, pointer_ui, &old_bump_val);
-@@ -305,6 +307,8 @@ static struct attribute *ext4_attrs[] = {
- 	ATTR_LIST(mb_prefetch),
- 	ATTR_LIST(mb_prefetch_limit),
- 	ATTR_LIST(last_trim_minblks),
-+	ATTR_LIST(sb_update_sec),
-+	ATTR_LIST(sb_update_kb),
- 	NULL,
- };
- ATTRIBUTE_GROUPS(ext4);
--- 
-2.48.1
+> I just didn't remember about this and couldn't find it when
+> looking at gcc docs.
+
+I can never find anything in there either.
+And then I wish they say when it was introduced.
+
+	David
 
 
