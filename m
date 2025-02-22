@@ -1,182 +1,124 @@
-Return-Path: <linux-kernel+bounces-527204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5641FA40866
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 13:40:57 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87ACFA40865
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 13:40:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3975A424F26
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 12:40:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F78C7ADDC5
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 12:39:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E70B20B213;
-	Sat, 22 Feb 2025 12:40:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 545D120AF8B;
+	Sat, 22 Feb 2025 12:40:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TWiVInF0"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PQ+qY9Sw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C900520ADD5
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 12:40:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 839D92066CC;
+	Sat, 22 Feb 2025 12:40:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740228042; cv=none; b=Rm8bz+68pNXIVN/ZEYS9FDTlAQI0oKn7rvEAQwVC7bqzmB7P8Dex6EESNVdbrsMcbp7k2+awUUIZ9DcWCF66/1UzGvoze+oqOmLJFf4mFSF/HqH6fv0pcmKDMvoYZhEj/1/RGjq0QnMLy2mPhOXJpzskn+4dxmi41LiA9cD6xg8=
+	t=1740228040; cv=none; b=YZOtukoBnn53Q+CKS9VDlp9lKsSYKgh5tLzOs9+gf6Ep5NRzRrUt4x8azidrXxJvw1xFYma46TQUqF34hKt3l69SpQRnY5YfH+klc/TLcKO3U6glVAqczD1o2HYtyF/0ubsfFWlpz2yGFw6zophpspHdzGdEpZ6356Y0+qOkVtQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740228042; c=relaxed/simple;
-	bh=44WiBU3e87uUbt5Joj83rDplJVriJ4yNvs0txze1vTY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l6Op7ItrgIVHhbyU7eQZ28Z7PMGfU/kViZBQfdbQpY7EXXo6fmwGQSZ5QN0LGOKhMF3oR9LI5BPYQ2KRX9YTiEI7P+8twgEQVQpQnycDqjs5PbgDCUVBOQ5tj1BQHs488ECWyThoCt8BjkOlNxBfDiiZuS0txKk9SXl+uAl1YHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TWiVInF0; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740228039;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qAd8SANoOauq5uEymG+29fWeYf7y+gGWAJmdDdaiSKs=;
-	b=TWiVInF0NcltMZ4JLPeMSZ7FuqCb3ojP3yPDx3eDe1T4Z4z5XpTKzGYL1WMSSGkftQF0S7
-	lZjwfIOOnrz+pz4xN+UrpAL8Tvvo6SCIsokX8c8iHhPi4bjCBlzno76ufwV/yM2TIJGZlD
-	nHfWy6bph9pSeqcs/XiY+PnA5Mpes3o=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-122-u0F871nGP4-7jWvcSvDHtQ-1; Sat,
- 22 Feb 2025 07:40:35 -0500
-X-MC-Unique: u0F871nGP4-7jWvcSvDHtQ-1
-X-Mimecast-MFC-AGG-ID: u0F871nGP4-7jWvcSvDHtQ_1740228033
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6224619560B9;
-	Sat, 22 Feb 2025 12:40:32 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.2])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 8A6E8180094A;
-	Sat, 22 Feb 2025 12:40:23 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Sat, 22 Feb 2025 13:40:03 +0100 (CET)
-Date: Sat, 22 Feb 2025 13:39:53 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: Tong Tiangen <tongtiangen@huawei.com>
-Cc: David Hildenbrand <david@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Peter Xu <peterx@redhat.com>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org,
-	bpf@vger.kernel.org, wangkefeng.wang@huawei.com,
-	Guohanjun <guohanjun@huawei.com>
-Subject: Re: [PATCH -next v2] uprobes: fix two zero old_folio bugs in
- __replace_page()
-Message-ID: <20250222123952.GA17836@redhat.com>
-References: <20250221015056.1269344-1-tongtiangen@huawei.com>
- <20250221152841.GA24705@redhat.com>
- <46a48eb4-5245-81ba-9779-ace8f162c31b@huawei.com>
- <ef999493-cac0-68bb-2684-97da0fb8b583@huawei.com>
+	s=arc-20240116; t=1740228040; c=relaxed/simple;
+	bh=4A/d+ruyZ07UmHvK7aQI/9179lFHiYgbtkDZPsdi2xA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mL1zSjz5crf8CGycHPiMeqt8QvXrVXkhIKaFvW9Y3LKAGgADhhKTya35qA2kqZu94vTaaE/5+p33F9hDLN7owv5/IQV7a79rvUmmNgAfcFL32mPL4ndTR91cgjJGkdoU4SHZMOzboGiX5iJ2zDXZAI+qRpfJaD+lPUfRtu1997Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PQ+qY9Sw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D586AC4CED1;
+	Sat, 22 Feb 2025 12:40:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740228040;
+	bh=4A/d+ruyZ07UmHvK7aQI/9179lFHiYgbtkDZPsdi2xA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=PQ+qY9SwgwDn3RtaWfJ7Td+/UzH90G6AyvTpEY7UfoFmrJFzd1bjMh81Kvb36ThMz
+	 hf4/IRdlsqdyTzGCcNF9H/cdJG+xhkpfz6OTBZixr2nUjq+cfv6uRBpNWYAruRKERt
+	 nkp2UWu37FJacta7CJ3Cfy2kBK/V9nSsHm8ywplPAxh/MPZjYBJLlAPWtbX6Vy70+0
+	 KFvk4XhPfXkIauCFyRNARxabacvocGKDC4Y4GLiDqJRX6G0d+7z+j6E01m9M0bXrQf
+	 nKqWXuTuQJdhyJPiNaDhrVQC2IvksCfFBSIptcJEh5igE3gKdD9GwRYvR+QGcflTf+
+	 /HwqqrAujzGRg==
+Date: Sat, 22 Feb 2025 12:40:30 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Robert Budai <robert.budai@analog.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, Nuno Sa <nuno.sa@analog.com>, "Ramona
+ Gradinariu" <ramona.gradinariu@analog.com>, Antoniu Miclaus
+ <antoniu.miclaus@analog.com>, Rob Herring <robh@kernel.org>, "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ "Jonathan Corbet" <corbet@lwn.net>, <linux-iio@vger.kernel.org>,
+ <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <linux-doc@vger.kernel.org>
+Subject: Re: [RESEND PATCH v8 0/6] Add support for ADIS16550
+Message-ID: <20250222124030.57771b0c@jic23-huawei>
+In-Reply-To: <20250217143354.0d1c4a2d@jic23-huawei>
+References: <20250217105753.605465-1-robert.budai@analog.com>
+	<20250217143354.0d1c4a2d@jic23-huawei>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ef999493-cac0-68bb-2684-97da0fb8b583@huawei.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On 02/22, Tong Tiangen wrote:
->
->
-> I'm going to add a new patch to moving the "verify_opcode()" check down
-> , IIUC that "!PageAnon(old_page)" below also needs to be moved together,
+On Mon, 17 Feb 2025 14:33:54 +0000
+Jonathan Cameron <jic23@kernel.org> wrote:
 
-No, no.
+> On Mon, 17 Feb 2025 12:57:44 +0200
+> Robert Budai <robert.budai@analog.com> wrote:
+> 
+> > The ADIS16550 is a complete inertial system that includes a triaxis gyroscope
+> > and a triaxis accelerometer. Each inertial sensor in the ADIS16550 combines
+> > industry leading MEMS only technology with signal conditioning that optimizes
+> > dynamic performance. The factory calibration characterizes each sensor for
+> > sensitivity, bias, and alignment. As a result, each sensor has its own dynamic
+> > compensation formulas that provide accurate sensor measurements.
+> >   
+> Hi Robert,
+> 
+> The cover letter of any RESEND should always start with why you are doing so.
+> If this was for the tiny fixup you mentioned it should have been v9 and
+> not have been sent for a few days at least.  If everything else is fine
+> I don't mind making that sort of fixup whilst applying anyway!
 
-I forgot everything, but please don't do this. IIUC This is optimization
-for the case when the probed file has int3 at this offset. We should not
-skip update_ref_ctr() in this case, just we can avoid __replace_page().
+With the tweaks to patch 5 and co-developed tags added as mentioned
+in reply to that commit applied to the togreg branch of iio.git which
+is initially pushed out as testing.
 
-> and as David said this can be triggered by user space, so delete the use
->  of "WARN", as follows:
+Jonathan
 
-Hmm... I think that David meant the new WARN_ON() added by you in V1?
-
-Please don't remove the old WARN(PageCompound(old_page) check. If userspace
-can trigger this warning we need to to fix this code and add FOLL_SPLIT_PMD
-unconditionally (and likely do something else).
-
-I take my words back ;) Don't do the additional cleanups, just add the
-is_zero_page(old_page) check right after get_user_page_vma_remote() and
-update the subject/changelog as David suggests.
-
-This function needs more cleanups anyway. Say, the usage of orig_page_huge
-_looks_ obviously wrong even if (afaics) nothing bad can happen. It should
-be reinitialized after "goto retry" or it should be checked before the
-"orig_page = find_get_page()" code. The usage of gup_flags looks confusing
-too. Lets do this later.
-
-Oleg.
-
->
->
-> @@ -502,20 +502,16 @@ int uprobe_write_opcode(struct arch_uprobe *auprobe,
-> struct mm_struct *mm,
->         if (IS_ERR(old_page))
->                 return PTR_ERR(old_page);
->
-> -       ret = verify_opcode(old_page, vaddr, &opcode);
-> -       if (ret <= 0)
-> +       ret = -EINVAL;
-> +       if (is_zero_page(old_page))
->                 goto put_old;
->
-> -       if (is_zero_page(old_page)) {
-> -               ret = -EINVAL;
-> +       if (!is_register && (PageCompound(old_page) || !PageAnon(old_page)))
->                 goto put_old;
-> -       }
->
-> -       if (WARN(!is_register && PageCompound(old_page),
-> -                "uprobe unregister should never work on compound page\n"))
-> {
-> -               ret = -EINVAL;
-> +       ret = verify_opcode(old_page, vaddr, &opcode);
-> +       if (ret <= 0)
->                 goto put_old;
-> -       }
->
->         /* We are going to replace instruction, update ref_ctr. */
->         if (!ref_ctr_updated && uprobe->ref_ctr_offset) {
-> @@ -526,10 +522,6 @@ int uprobe_write_opcode(struct arch_uprobe *auprobe,
-> struct mm_struct *mm,
->                 ref_ctr_updated = 1;
->         }
->
-> -       ret = 0;
-> -       if (!is_register && !PageAnon(old_page))
-> -               goto put_old;
-> -
->         ret = anon_vma_prepare(vma);
->
-> Thanks.
-> >
-> >>
-> >>
-> >>.
-> >
-> >.
->
+> 
+> Jonathan
+> 
+> 
+> > Robert Budai (6):
+> >   iio: imu: adis: Add custom ops struct
+> >   iio: imu: adis: Add reset to custom ops
+> >   iio: imu: adis: Add DIAG_STAT register
+> >   dt-bindings: iio: Add adis16550 bindings
+> >   iio: imu: adis16550: add adis16550 support
+> >   docs: iio: add documentation for adis16550 driver
+> > 
+> >  .../bindings/iio/imu/adi,adis16550.yaml       |   74 ++
+> >  Documentation/iio/adis16550.rst               |  376 ++++++
+> >  Documentation/iio/index.rst                   |    1 +
+> >  MAINTAINERS                                   |   10 +
+> >  drivers/iio/imu/Kconfig                       |   13 +
+> >  drivers/iio/imu/Makefile                      |    1 +
+> >  drivers/iio/imu/adis.c                        |   35 +-
+> >  drivers/iio/imu/adis16550.c                   | 1149 +++++++++++++++++
+> >  include/linux/iio/imu/adis.h                  |   34 +-
+> >  9 files changed, 1680 insertions(+), 13 deletions(-)
+> >  create mode 100644 Documentation/devicetree/bindings/iio/imu/adi,adis16550.yaml
+> >  create mode 100644 Documentation/iio/adis16550.rst
+> >  create mode 100644 drivers/iio/imu/adis16550.c
+> >   
+> 
+> 
 
 
