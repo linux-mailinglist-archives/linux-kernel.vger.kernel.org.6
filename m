@@ -1,226 +1,369 @@
-Return-Path: <linux-kernel+bounces-527330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527331-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E6FAA409CB
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 17:00:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C979A409CA
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 16:59:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A66563B7C78
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 15:57:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F753189E9ED
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 15:57:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DB1B20E319;
-	Sat, 22 Feb 2025 15:55:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A2961E2838;
+	Sat, 22 Feb 2025 15:57:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="B9NGFFQd"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2073.outbound.protection.outlook.com [40.107.236.73])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NfE3D0ul"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E78920D502;
-	Sat, 22 Feb 2025 15:54:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.73
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740239702; cv=fail; b=C0If91sbssvf/eHqwAv5qN2lDvA3SepmdoR3NQDkTX8V2q5/grR+2hbaFdwRBtN03+YzN74vaPnz35yFAC0jxlBe+nHjYDKO1kZfaj9u0sbIM1uGLK+XBOzqSGf7ihCR3/mYfeNrgXjII6DfhmFv455mToXJ2AEtj20mqFRVIoc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740239702; c=relaxed/simple;
-	bh=j8fFNDpqD8HnlwDuBPrmm73rYwiTw9liGwRRkfBYLC4=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cPqsASW0SvnFoT3IXhv96KVTLZtMiwJYMKhIPfDSU5QlxzBSdjF7oHWFC5OtHID5q/AI3z4/7gTV1VI5G7GfIHQgHqEizG7kaDudOBn9WO1iIgXx/x7OywNLiW5viMOq4DxeoCftQ7rAMV18Bft/iMC0LGswsQcuNvqefPgdw14=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=B9NGFFQd; arc=fail smtp.client-ip=40.107.236.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=C8bqMXoz7QCYD3FdqB6og1rqEWBOpLFmN9LwEDoEGfFiAmNTwMgwieXShNsjXvovp+7fK+He4mp0aO/LfntzlnBLhAnynstUtjuIJy/JCk2mpGHXtw/vCJgPR0dcZVr2yhXDrK6OVCAk3bfzcuvUsDyj+CyfPV+Ux9fOeUL1QSm9gA8Y9ffwZYbslKqO7sT+TqwJQ2Iuwe7sYnzDys4e4H+h3BfnwZmLnbuOk38Wd8kaHT/DVfLIwqwfbIuEGPp5SoVS697pgkzXfAOTrtMNA/75VdGgmVwSBQNOb39cQKNYTPP7u8Dfoj7LIZ4CZQod2fiOOTuBrw04SXcAbgqpCw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=T6bDDOzqFTlkM2Q60CEGPKJd0jk/eguA9n4lHVkCc+M=;
- b=BiZKy1+ch/z1ZB8gLOB0U4gtwdWOMWvyM6423JS2lB95M3nqrBdWI8AmjX58Pt6YkOvegIjBDgVcANM14hgtoSR39XQoTan6sok8aXDDiuTBbDJptjtOJSpWFi4nXc6tvpCCWLfttpwp+GbTylo+K3ME3n0S+sp8smMLTC5/iEc3063hRJr+5CZm9qLyjmz+JOaV4Flwv+ikdNYGLtxPbvVt6qIJ+ADFXURXnVhYRTLuwmHupMZvSpUImF7b7FYD70ybIWb//CshmoUY72jR20OPvQLVfYLnJiVPS7CmeMIogMZCqvMv+iWMPaGqt+H8EcmwlHpwifD1eu4pgODCww==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=intel.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=T6bDDOzqFTlkM2Q60CEGPKJd0jk/eguA9n4lHVkCc+M=;
- b=B9NGFFQdwHK7Uui/b5Kt9zx6sRif4p4OIdS5Uet4kEKR1BfcnZ3e7g8fEiHUTwGrPaZnzp4OP/nlzuja9jAJWT8lrq68vyX9Ide9Us762Q3eIaZrvzfl46yyLcRxGe47ZxxSY1zgIUkY3vg7YZoRLd07vcM7jgoHIt2rUXYHTfgyC0gxBGa7fAeSM6QmCQmROVO7VnakwxLfcNXW00ZSQYOvixa5+wXpsrNvGQVZXVC5f1SGeeaCHm4r7ZzQ9tfgo22iI/2UcoEydkovuQ+i1vu6dSpY3vus3/cTD/evPkwjyXRak8/CqFpsajQz6147VJEXUJB8ptY6fDsdGWCoPw==
-Received: from CH2PR15CA0009.namprd15.prod.outlook.com (2603:10b6:610:51::19)
- by SA3PR12MB9131.namprd12.prod.outlook.com (2603:10b6:806:395::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.18; Sat, 22 Feb
- 2025 15:54:51 +0000
-Received: from DS2PEPF0000343A.namprd02.prod.outlook.com
- (2603:10b6:610:51:cafe::4e) by CH2PR15CA0009.outlook.office365.com
- (2603:10b6:610:51::19) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8466.15 via Frontend Transport; Sat,
- 22 Feb 2025 15:54:51 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- DS2PEPF0000343A.mail.protection.outlook.com (10.167.18.37) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8466.11 via Frontend Transport; Sat, 22 Feb 2025 15:54:50 +0000
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Sat, 22 Feb
- 2025 07:54:38 -0800
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail204.nvidia.com
- (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Sat, 22 Feb
- 2025 07:54:38 -0800
-Received: from Asurada-Nvidia.nvidia.com (10.127.8.10) by mail.nvidia.com
- (10.129.68.6) with Microsoft SMTP Server id 15.2.1544.14 via Frontend
- Transport; Sat, 22 Feb 2025 07:54:37 -0800
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: <jgg@nvidia.com>, <kevin.tian@intel.com>, <corbet@lwn.net>,
-	<will@kernel.org>
-CC: <joro@8bytes.org>, <suravee.suthikulpanit@amd.com>,
-	<robin.murphy@arm.com>, <dwmw2@infradead.org>, <baolu.lu@linux.intel.com>,
-	<shuah@kernel.org>, <linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kselftest@vger.kernel.org>,
-	<linux-doc@vger.kernel.org>, <eric.auger@redhat.com>,
-	<jean-philippe@linaro.org>, <mdf@kernel.org>, <mshavit@google.com>,
-	<shameerali.kolothum.thodi@huawei.com>, <smostafa@google.com>,
-	<ddutile@redhat.com>, <yi.l.liu@intel.com>, <praan@google.com>,
-	<patches@lists.linux.dev>
-Subject: [PATCH v7 14/14] iommu/arm-smmu-v3: Set MEV bit in nested STE for DoS mitigations
-Date: Sat, 22 Feb 2025 07:54:11 -0800
-Message-ID: <2b088fe8d2c7e692426b0d1f58d4f2c12ecb907e.1740238876.git.nicolinc@nvidia.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <cover.1740238876.git.nicolinc@nvidia.com>
-References: <cover.1740238876.git.nicolinc@nvidia.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 596CE1CDA3F;
+	Sat, 22 Feb 2025 15:57:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740239821; cv=none; b=BEIfIZ/GxVe/+c5W1xZZ5WGnFK2NlTOKyU4M82GFsUGsbSkYiZgVh3FtGeyUc3Z5A5g7vMUEB+pUFtHKbY96etSsfJVreVTaAo2ng3/B1YLm5g38qdHKLPEUPdSOSRbRILwqMEFYLSwGQP2dUra8c1daid3th/0WsdKddgoxAEw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740239821; c=relaxed/simple;
+	bh=X9W99eyKCCVl+jjs+X+HEG5aWdDTZJ6O9eeXlGZgHIo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=b4Ru2QY5xWdlTG72pKeQhvAOo/ZpaETiNClVsfZwaEZu7gp2dj1SHqWLJoRT4xutjiztaP9YM0JldJJKOiUnHXevzx4bQTR5RjfkCXIX7eKmZMB+4vcju/tNChtGgbQVJcB54ZGiJkau5CYYjzEICrO9YZ0O5DmDopPuzUfUhOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NfE3D0ul; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 658E4C4CEE4;
+	Sat, 22 Feb 2025 15:56:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740239820;
+	bh=X9W99eyKCCVl+jjs+X+HEG5aWdDTZJ6O9eeXlGZgHIo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=NfE3D0ullPSwME2gEhJw0c44jhYZs5BBr7UUwuqFk2V40WucOM3O482iEfGDtes49
+	 a0C6QJFbP92YzLZYDav2t65AW34dqIT0nCD/48QXQXdbBnCLiyIl/OCUsx4Txsx231
+	 rWPSvr9wSpFjmK9fE0gFS6cXEY0D8vzIGPBX6FmVBGyaHVfwN7Mh4J5p9Xbtk6BRWl
+	 cJtxvxTBE6fdwX/+WTy4Fgg1jU3zCEZulclQ+Zr0Fzh6ihG95XM0hFEv9xuzNr7ug3
+	 DInfASsVVhOYEoMxt3NVuaxGWpi+ghgE2BRBbKXfYxYUeCf5m6SBvjjGBHZFBDqLF/
+	 qga1Nx127Iltw==
+Date: Sat, 22 Feb 2025 15:56:46 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Eason Yang <j2anfernee@gmail.com>
+Cc: avifishman70@gmail.com, tmaimon77@gmail.com, tali.perry1@gmail.com,
+ venture@google.com, yuenn@google.com, benjaminfair@google.com,
+ lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ nuno.sa@analog.com, dlechner@baylibre.com, javier.carrasco.cruz@gmail.com,
+ andriy.shevchenko@linux.intel.com, gstols@baylibre.com,
+ olivier.moysan@foss.st.com, mitrutzceclan@gmail.com, tgamblin@baylibre.com,
+ matteomartelli3@gmail.com, marcelo.schmitt@analog.com,
+ alisadariana@gmail.com, joao.goncalves@toradex.com,
+ thomas.bonnefille@bootlin.com, ramona.nechita@analog.com,
+ herve.codina@bootlin.com, chanh@os.amperecomputing.com, KWLIU@nuvoton.com,
+ yhyang2@nuvoton.com, openbmc@lists.ozlabs.org, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 2/2] iio: adc: add support for Nuvoton NCT7201
+Message-ID: <20250222155646.7fa6375a@jic23-huawei>
+In-Reply-To: <20250221090918.1487689-3-j2anfernee@gmail.com>
+References: <20250221090918.1487689-1-j2anfernee@gmail.com>
+	<20250221090918.1487689-3-j2anfernee@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: AnonymousSubmission
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS2PEPF0000343A:EE_|SA3PR12MB9131:EE_
-X-MS-Office365-Filtering-Correlation-Id: d62eb277-7878-4031-3ad7-08dd53593dd6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|1800799024|82310400026|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?ijEeJmY41RSf2/DQvpq8qGhaLVtxEjve1OXm4heuogP9Pbo4FdEgLQcx6nAQ?=
- =?us-ascii?Q?lZOYx/k2lB6RDHR2z55+oc+RTYW1FmjYYTfnvL8m4S4nnuJGIoSZeyMeUiYm?=
- =?us-ascii?Q?jbru3F63jTYfRGfq2+bkv8o51OjyABrqMOmVHzbLvzQs+r/mmWp6FeU1Uewh?=
- =?us-ascii?Q?emsTlskjfK2SOpbQP2DH03A8ALjP+37ZV06bSrYhlV9Ygxa31QuURex7lbDP?=
- =?us-ascii?Q?qcDjccMFrGbp49/mULWrgVWHq7K/SOKKDxaIsgoOyF8IBY6lFmWy2qFETyAo?=
- =?us-ascii?Q?UPx2OMpjYQxTGATkxCobwYu2nTMSlN1SN+qZbiHDqv9I2jLnl2nYRQC7LcGz?=
- =?us-ascii?Q?lbKvsicxvWnKflSfFUEa7yAjoKde6Cfe0R1MaBwp86zcvHe/u3TVK7zGhtU/?=
- =?us-ascii?Q?KdB0w1nx4qJoRXbEzN91rsqeOxKPvEzvHH7WCRWUacTx1jYDQ0dGJa2GBliI?=
- =?us-ascii?Q?OhXc1MEwRT5lsDaoivZDOI9u4O1k5bDa0hjdVxepWAshSQI8CNl6Y3thegxl?=
- =?us-ascii?Q?KjECrwDxqYbL+KrYmdcWomd3lVvOsTy+9eVGHxLxFOOp3uiPBRYqi0Qv261+?=
- =?us-ascii?Q?p3Ou8z2LSp8Sj8R93Up4O3+HoC1HvgfjzQlHzPmeQuR1pXWykSXkeOPvcOKS?=
- =?us-ascii?Q?ZMVVckCXP+m6yQd+YMp3ibGeu2wuDRPEm52CrIOR46xnRvPmi1eqnnTqCCRe?=
- =?us-ascii?Q?DajclzExeXPIW0+Ee1MRBwFqalYrdAvQ545L+T+aE/fjN6Vy12GhCwVrqqqE?=
- =?us-ascii?Q?vayvyRBWx+elYG2qC9dBnVFIm6I+Rz4UftjAABa9wJZp2UFBKN8yZWkjAuWN?=
- =?us-ascii?Q?f1C8v+JWY1P7MPhLSN0WKOl+V3gapiTrTeJrupbi+fGnJqezeqSqFsjOtH81?=
- =?us-ascii?Q?iFDeMQ3JbmpoCmh/rj1f0csRXfzX7MVnJNTMZE8/mLxsFRg/Jo1H8ZznanWW?=
- =?us-ascii?Q?0uGgq1kbYQuX89/Y9Q01TjIJWfHWYJhijPR/SFWiEJ0VgTtvo6cW+5bAMGRg?=
- =?us-ascii?Q?4WzwFtxSINCbbonxDD+RkxN+LpI5uoVIld0jeuCqbUAXB+1VK7JwObKF4mny?=
- =?us-ascii?Q?pu8soLpU7KhtO29ZT953HerKaGyA2I6vL/ID3bozInaaKrb/ky+TYN5LjbpB?=
- =?us-ascii?Q?sXv/lukhgThFpz6LWwKZKoxIJ7QrfT5BBagIwNC/AusUVjexujL+apFNJzC9?=
- =?us-ascii?Q?wDDZmF5CCCNDoRWsYGovB6rV9WLexL6llT2kdKUo5Q+DEwLAFEC4YIz0wJOc?=
- =?us-ascii?Q?Y5wi6sN/EI7Ff2hqLDgH7Qe88NQM1bPGH++lnAPLaqrPrMHmE9OxeG6qeOlG?=
- =?us-ascii?Q?jVQiIv/8skA0svD+Jeh6jK3HstKn2XUoulZ26K3Q0ML+h+nk65z4d/KsLbPM?=
- =?us-ascii?Q?kTjTOgZnzsD0kIfNfrkXeVK10tEbEZlQJcMGGhtbEAtoSM03VXgmp1CX96CF?=
- =?us-ascii?Q?ZD/aItIomV1jGLMNb2DzNPEu7V5YPkgILx/gnTMXhElnrUJtCcqRwkxakLUR?=
- =?us-ascii?Q?eAgtqjUNDWTVCCY=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(82310400026)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Feb 2025 15:54:50.9716
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d62eb277-7878-4031-3ad7-08dd53593dd6
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DS2PEPF0000343A.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB9131
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-There is a DoS concern on the shared hardware event queue among devices
-passed through to VMs, that too many translation failures that belong to
-VMs could overflow the shared hardware event queue if those VMs or their
-VMMs don't handle/recover the devices properly.
+On Fri, 21 Feb 2025 17:09:18 +0800
+Eason Yang <j2anfernee@gmail.com> wrote:
 
-The MEV bit in the STE allows to configure the SMMU HW to merge similar
-event records, though there is no guarantee. Set it in a nested STE for
-DoS mitigations.
+> Add Nuvoton NCT7201/NCT7202 system voltage monitor 12-bit ADC driver
+> 
+> NCT7201/NCT7202 supports up to 12 analog voltage monitor inputs and up to
+> 4 SMBus addresses by ADDR pin. Meanwhile, ALERT# hardware event pins for
+> independent alarm signals, and the all threshold values could be set for
+> system protection without any timing delay. It also supports reset input
+> RSTIN# to recover system from a fault condition.
+> 
+> Currently, only single-edge mode conversion and threshold events support.
+> 
+> Signed-off-by: Eason Yang <j2anfernee@gmail.com>
+Hi Eason
 
-In the future, we might want to enable the MEV for non-nested cases too
-such as domain->type == IOMMU_DOMAIN_UNMANAGED or even IOMMU_DOMAIN_DMA.
+A few comments from me. May well overlap in some places with other feedback.
 
-Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
-Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
----
- drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h         | 1 +
- drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c | 2 ++
- drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c         | 4 ++--
- 3 files changed, 5 insertions(+), 2 deletions(-)
+Jonathan
 
-diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
-index c8574969e700..a90e115d43bc 100644
---- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
-+++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
-@@ -266,6 +266,7 @@ static inline u32 arm_smmu_strtab_l2_idx(u32 sid)
- #define STRTAB_STE_1_S1COR		GENMASK_ULL(5, 4)
- #define STRTAB_STE_1_S1CSH		GENMASK_ULL(7, 6)
- 
-+#define STRTAB_STE_1_MEV		(1UL << 19)
- #define STRTAB_STE_1_S2FWB		(1UL << 25)
- #define STRTAB_STE_1_S1STALLD		(1UL << 27)
- 
-diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c
-index 42c7daf4c8c7..4a2580b53b60 100644
---- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c
-+++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c
-@@ -43,6 +43,8 @@ static void arm_smmu_make_nested_cd_table_ste(
- 	target->data[0] |= nested_domain->ste[0] &
- 			   ~cpu_to_le64(STRTAB_STE_0_CFG);
- 	target->data[1] |= nested_domain->ste[1];
-+	/* Merge events for DoS mitigations on eventq */
-+	target->data[1] |= cpu_to_le64(STRTAB_STE_1_MEV);
- }
- 
- /*
-diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-index fdf8bba14303..0a0bc73fa287 100644
---- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-+++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-@@ -1052,7 +1052,7 @@ void arm_smmu_get_ste_used(const __le64 *ent, __le64 *used_bits)
- 			cpu_to_le64(STRTAB_STE_1_S1DSS | STRTAB_STE_1_S1CIR |
- 				    STRTAB_STE_1_S1COR | STRTAB_STE_1_S1CSH |
- 				    STRTAB_STE_1_S1STALLD | STRTAB_STE_1_STRW |
--				    STRTAB_STE_1_EATS);
-+				    STRTAB_STE_1_EATS | STRTAB_STE_1_MEV);
- 		used_bits[2] |= cpu_to_le64(STRTAB_STE_2_S2VMID);
- 
- 		/*
-@@ -1068,7 +1068,7 @@ void arm_smmu_get_ste_used(const __le64 *ent, __le64 *used_bits)
- 	if (cfg & BIT(1)) {
- 		used_bits[1] |=
- 			cpu_to_le64(STRTAB_STE_1_S2FWB | STRTAB_STE_1_EATS |
--				    STRTAB_STE_1_SHCFG);
-+				    STRTAB_STE_1_SHCFG | STRTAB_STE_1_MEV);
- 		used_bits[2] |=
- 			cpu_to_le64(STRTAB_STE_2_S2VMID | STRTAB_STE_2_VTCR |
- 				    STRTAB_STE_2_S2AA64 | STRTAB_STE_2_S2ENDI |
--- 
-2.43.0
+> diff --git a/drivers/iio/adc/nct7201.c b/drivers/iio/adc/nct7201.c
+> new file mode 100644
+> index 000000000000..c5d1540bcc00
+> --- /dev/null
+> +++ b/drivers/iio/adc/nct7201.c
+> @@ -0,0 +1,487 @@
+
+> +
+> +#define NCT7201_VOLTAGE_CHANNEL(chan, addr)				\
+> +	{								\
+> +		.type = IIO_VOLTAGE,					\
+> +		.indexed = 1,						\
+> +		.channel = chan,					\
+> +		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),		\
+> +		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE),	\
+> +		.address = addr,					\
+> +		.event_spec = nct7201_events,				\
+> +		.num_event_specs = ARRAY_SIZE(nct7201_events),		\
+> +	}
+> +
+> +static const struct iio_chan_spec nct7201_channels[] = {
+> +	NCT7201_VOLTAGE_CHANNEL(1, 0),
+> +	NCT7201_VOLTAGE_CHANNEL(2, 1),
+> +	NCT7201_VOLTAGE_CHANNEL(3, 2),
+> +	NCT7201_VOLTAGE_CHANNEL(4, 3),
+> +	NCT7201_VOLTAGE_CHANNEL(5, 4),
+> +	NCT7201_VOLTAGE_CHANNEL(6, 5),
+> +	NCT7201_VOLTAGE_CHANNEL(7, 6),
+> +	NCT7201_VOLTAGE_CHANNEL(8, 7),
+> +};
+> +
+> +static const struct iio_chan_spec nct7202_channels[] = {
+> +	NCT7201_VOLTAGE_CHANNEL(1, 0),
+> +	NCT7201_VOLTAGE_CHANNEL(2, 1),
+> +	NCT7201_VOLTAGE_CHANNEL(3, 2),
+> +	NCT7201_VOLTAGE_CHANNEL(4, 3),
+> +	NCT7201_VOLTAGE_CHANNEL(5, 4),
+> +	NCT7201_VOLTAGE_CHANNEL(6, 5),
+> +	NCT7201_VOLTAGE_CHANNEL(7, 6),
+> +	NCT7201_VOLTAGE_CHANNEL(8, 7),
+> +	NCT7201_VOLTAGE_CHANNEL(9, 8),
+> +	NCT7201_VOLTAGE_CHANNEL(10, 9),
+> +	NCT7201_VOLTAGE_CHANNEL(11, 10),
+> +	NCT7201_VOLTAGE_CHANNEL(12, 11),
+We normally number channels from 0 which would simplify this but I don't really
+mind if you want to keep the offset of 1.  Maybe just have one macro
+parameter though and do the +1 in the macro.
+> +};
+
+> +static int nct7201_read_event_value(struct iio_dev *indio_dev,
+> +				    const struct iio_chan_spec *chan,
+> +				    enum iio_event_type type,
+> +				    enum iio_event_direction dir,
+> +				    enum iio_event_info info,
+> +				    int *val, int *val2)
+> +{
+> +	struct nct7201_chip_info *chip = iio_priv(indio_dev);
+> +	u16 volt;
+> +	unsigned int value;
+> +	int err;
+> +
+> +	if (chan->type != IIO_VOLTAGE)
+> +		return -EOPNOTSUPP;
+> +
+> +	if (info != IIO_EV_INFO_VALUE)
+> +		return -EINVAL;
+> +
+> +	if (dir == IIO_EV_DIR_FALLING) {
+> +		err = regmap_read(chip->regmap16, NCT7201_REG_VIN_LOW_LIMIT(chan->address),
+> +				  &value);
+> +		if (err < 0)
+> +			return err;
+> +		volt = value;
+> +	} else {
+> +		err = regmap_read(chip->regmap16, NCT7201_REG_VIN_HIGH_LIMIT(chan->address),
+> +				  &value);
+> +		if (err < 0)
+> +			return err;
+> +		volt = value;
+No real point in assigning to volt here, 
+> +	}
+> +
+> +	*val = FIELD_GET(NCT7201_REG_VIN_MASK, volt);
+> +
+> +	return IIO_VAL_INT;
+> +}
+> +
+> +static int nct7201_write_event_value(struct iio_dev *indio_dev,
+> +				     const struct iio_chan_spec *chan,
+> +				     enum iio_event_type type,
+> +				     enum iio_event_direction dir,
+> +				     enum iio_event_info info,
+> +				     int val, int val2)
+> +{
+> +	struct nct7201_chip_info *chip = iio_priv(indio_dev);
+> +
+> +	if (chan->type != IIO_VOLTAGE)
+> +		return -EOPNOTSUPP;
+> +
+> +	if (info != IIO_EV_INFO_VALUE)
+> +		return -EOPNOTSUPP;
+> +
+> +	if (dir == IIO_EV_DIR_FALLING)
+> +		regmap_write(chip->regmap16, NCT7201_REG_VIN_LOW_LIMIT(chan->address),
+> +			     FIELD_PREP(NCT7201_REG_VIN_MASK, val));
+> +	else
+> +		regmap_write(chip->regmap16, NCT7201_REG_VIN_HIGH_LIMIT(chan->address),
+> +			     FIELD_PREP(NCT7201_REG_VIN_MASK, val));
+Check for error returns.
+> +
+> +	return 0;
+> +}
+> +
+> +static int nct7201_read_event_config(struct iio_dev *indio_dev,
+> +				     const struct iio_chan_spec *chan,
+> +				     enum iio_event_type type,
+> +				     enum iio_event_direction dir)
+> +{
+> +	struct nct7201_chip_info *chip = iio_priv(indio_dev);
+> +
+> +	if (chan->type != IIO_VOLTAGE)
+> +		return -EOPNOTSUPP;
+> +
+> +	return !!(chip->vin_mask & BIT(chan->address));
+> +}
+> +
+> +static int nct7201_write_event_config(struct iio_dev *indio_dev,
+> +				      const struct iio_chan_spec *chan,
+> +				      enum iio_event_type type,
+> +				      enum iio_event_direction dir,
+> +				      bool state)
+> +{
+> +	struct nct7201_chip_info *chip = iio_priv(indio_dev);
+> +	unsigned int mask;
+> +
+> +	if (chan->type != IIO_VOLTAGE)
+> +		return -EOPNOTSUPP;
+> +
+> +	mask = BIT(chan->address);
+> +
+> +	if (!state && (chip->vin_mask & mask))
+> +		chip->vin_mask &= ~mask;
+> +	else if (state && !(chip->vin_mask & mask))
+> +		chip->vin_mask |= mask;
+> +
+> +	if (chip->num_vin_channels <= 8)
+> +		regmap_write(chip->regmap, NCT7201_REG_CHANNEL_ENABLE_1, chip->vin_mask);
+> +	else
+> +		regmap_bulk_write(chip->regmap, NCT7201_REG_CHANNEL_ENABLE_1,
+> +				  &chip->vin_mask, sizeof(chip->vin_mask));
+
+Check errors on these writes.
+
+> +
+> +	return 0;
+> +}
+
+> +static int nct7201_init_chip(struct nct7201_chip_info *chip)
+> +{
+> +	u8 data[2];
+> +	unsigned int value;
+> +	int err;
+> +
+> +	regmap_write(chip->regmap, NCT7201_REG_CONFIGURATION,
+> +		     NCT7201_BIT_CONFIGURATION_RESET);
+
+Check for errors on all accesses to the device.  It can get
+fiddly in paths where you are already handling an error but
+that's not the case here.
+
+> +
+> +	/*
+> +	 * After about 25 msecs, the device should be ready and then
+> +	 * the Power Up bit will be set to 1. If not, wait for it.
+
+Wrap to 80 chars.
+
+> +	 */
+> +	mdelay(25);
+> +	err = regmap_read(chip->regmap, NCT7201_REG_BUSY_STATUS, &value);
+> +	if (err < 0)
+> +		return err;
+> +	if (!(value & NCT7201_BIT_PWR_UP))
+> +		return dev_err_probe(&chip->client->dev, -EIO,
+> +				     "Failed to power up after reset\n");
+> +
+> +	/* Enable Channel */
+> +	if (chip->num_vin_channels <= 8) {
+> +		data[0] = NCT7201_REG_CHANNEL_ENABLE_1_MASK;
+> +		err = regmap_write(chip->regmap, NCT7201_REG_CHANNEL_ENABLE_1, data[0]);
+> +		if (err < 0)
+> +			return dev_err_probe(&chip->client->dev, -EIO,
+> +					     "Failed to write NCT7201_REG_CHANNEL_ENABLE_1\n");
+> +	} else {
+> +		data[0] = NCT7201_REG_CHANNEL_ENABLE_1_MASK;
+> +		data[1] = NCT7201_REG_CHANNEL_ENABLE_2_MASK;
+> +		err = regmap_bulk_write(chip->regmap, NCT7201_REG_CHANNEL_ENABLE_1,
+> +					data, ARRAY_SIZE(data));
+> +		if (err < 0)
+> +			return dev_err_probe(&chip->client->dev, -EIO,
+> +					    "Failed to write NCT7201_REG_CHANNEL_ENABLE_1 and NCT7201_REG_CHANNEL_ENABLE_2\n");
+> +	}
+> +
+> +	value = get_unaligned_le16(data);
+> +	chip->vin_mask = value;
+
+Local variable doesn't seem to add any benefits so just assign vin_mask directly.
+
+> +
+> +	/* Start monitoring if needed */
+> +	err = regmap_read(chip->regmap, NCT7201_REG_CONFIGURATION, &value);
+> +	if (err < 0)
+> +		return dev_err_probe(&chip->client->dev, -EIO,
+> +				     "Failed to read NCT7201_REG_CONFIGURATION\n");
+> +
+> +	regmap_set_bits(chip->regmap, NCT7201_REG_CONFIGURATION, NCT7201_BIT_CONFIGURATION_START);
+> +
+> +	return 0;
+> +}
+> +
+> +static int nct7201_probe(struct i2c_client *client)
+> +{
+> +	const struct nct7201_adc_model_data *model_data;
+> +	struct nct7201_chip_info *chip;
+> +	struct iio_dev *indio_dev;
+> +	int ret;
+> +
+> +	model_data = i2c_get_match_data(client);
+> +	if (!model_data)
+> +		return -EINVAL;
+> +
+> +	indio_dev = devm_iio_device_alloc(&client->dev, sizeof(*chip));
+> +	if (!indio_dev)
+> +		return -ENOMEM;
+> +	chip = iio_priv(indio_dev);
+> +
+> +	chip->regmap = devm_regmap_init_i2c(client, &nct7201_regmap8_config);
+> +	if (IS_ERR(chip->regmap))
+> +		return dev_err_probe(&client->dev, PTR_ERR(chip->regmap),
+> +			"Failed to init regmap\n");
+
+Where it doesn't lead to really long lines, align all parameters to just
+after the opening bracket.
+
+
+> +
+> +	chip->regmap16 = devm_regmap_init_i2c(client, &nct7201_regmap16_config);
+> +	if (IS_ERR(chip->regmap16))
+> +		return dev_err_probe(&client->dev, PTR_ERR(chip->regmap16),
+> +			"Failed to init regmap16\n");
+> +
+> +	chip->num_vin_channels = model_data->num_vin_channels;
+> +
+> +	ret = devm_mutex_init(&client->dev, &chip->access_lock);
+> +	if (ret)
+> +		return ret;
+> +
+> +	chip->client = client;
+> +
+> +	ret = nct7201_init_chip(chip);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	indio_dev->name = model_data->model_name;
+> +	indio_dev->channels = model_data->channels;
+> +	indio_dev->num_channels = model_data->num_channels;
+> +	if (client->irq)
+> +		indio_dev->info = &nct7201_info;
+> +	else
+> +		indio_dev->info = &nct7201_info_no_irq;
+> +	indio_dev->modes = INDIO_DIRECT_MODE;
+> +
+> +	return devm_iio_device_register(&client->dev, indio_dev);
+> +}
+
 
 
