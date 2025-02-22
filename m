@@ -1,61 +1,82 @@
-Return-Path: <linux-kernel+bounces-527250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED36AA408D8
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 15:01:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57924A408DA
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 15:02:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBC9917B06E
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 14:01:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C89653BE6CD
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 14:02:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0636D70830;
-	Sat, 22 Feb 2025 14:01:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87E4628DB3;
+	Sat, 22 Feb 2025 14:02:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VWTMZJEu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JDFxjoEl"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63FB42F37
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 14:01:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9F522F37;
+	Sat, 22 Feb 2025 14:02:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740232866; cv=none; b=mcIVdeqzpxVuo/vxJbX8XlErwQYPz4jFDNQeT14DmNaURBWPOMZrBMmctIPpWbDFgdg+AcWlM9KMvouDNIX3BQ/iE3LiB2H9+WQMDX32WZLA3ZA4VKQ27e3Xn2IP/LoTD2O+9oGqoQc5/mH1+0s9Z/hs3gQ4qhzJujzM8HqRID8=
+	t=1740232958; cv=none; b=goDp+Z0d7eGeWLOk0rgjdYaOONJFnRNhcc87BinIFvyTj18RLX0bKVWw2L3KmTiKCdf76ttSyLPT42Z9A0d4ZD7ZpMTVBQqUS2CzGjYLYzTxnlLL5evdf0qNtopTS0LErvZNkoD64kLHl6pO4ESlvem+kZJyNFpeD9ZuubrvWBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740232866; c=relaxed/simple;
-	bh=4g+UB8t/vNZutuv2bsrwapQvJRkxtxT+9ohAE+fjAKA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=IXQzZ4RqxguWMPIzqI8/PA7mLGejTVwRoq1q3p69y0AuskboGWlrc2F9Zu05+Z/tSm7KG4oC31PAzF8BQzI/0Svd7WN0mcKenkjVGWOkZPPDP0+G80qjZAcpaPf4zBL9kR0Yb++86SPVasriaL6nELo6wfe2s71xu9s+ctATugk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VWTMZJEu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0150BC4CED1;
-	Sat, 22 Feb 2025 14:01:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740232866;
-	bh=4g+UB8t/vNZutuv2bsrwapQvJRkxtxT+9ohAE+fjAKA=;
-	h=Date:From:To:Cc:Subject:From;
-	b=VWTMZJEuldKMuHoTm19uMXMCALEksh/TuctEMqKNLAlpvb8vJKKpiq9EGFrCR7TBa
-	 kJTVIC7pVEg4i8Y/dcVVKnPYo5QueYwlALZfVp9a06F+ItJBcNBM/st+n4n+8zofpt
-	 oaoldTbAtGC0KvSgMorqZpH6irKvRuEvYJC1ZInKfAoqaaPHGWGeRBt2rzrYkfNOM5
-	 XjaolV3en8kifQLmld27z4bh9amq46c5M2l34eTuz4PV26d6/zscLjYiz5MAJODiQs
-	 Hv6xSr9bKfufW6ndLy04jIGU39tnBSJyCJ2+EIt20budoznn2++p1lgEck6IaYd2A7
-	 I1YYz3cgA79yQ==
-Date: Sat, 22 Feb 2025 15:00:55 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Daniel Bristot de Oliveira <bristot@redhat.com>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Subject: [GIT PULL] scheduler fixes
-Message-ID: <Z7nYl38LL0fvgPql@gmail.com>
+	s=arc-20240116; t=1740232958; c=relaxed/simple;
+	bh=cqLdn3pSfdlFMz8BT1qTRt7U9h2eoJo3ZzvxPRvlrbM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=szhHB71bEZnWqzPtFlxnBG4nP8WqxasGGzkuAAqkSQh1LM1UMRKikMmhIUgqZ28hMMaFmNkr2qcqhtShaq7wBKMdN/xEi2/gyEj42uCoLgig9eE83DIwQn5Eg+Kdo+Kv7VTRUT5WmJ0LmLQnwbVWExSsKjKHEhnqMD2WuTAws2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JDFxjoEl; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740232955; x=1771768955;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=cqLdn3pSfdlFMz8BT1qTRt7U9h2eoJo3ZzvxPRvlrbM=;
+  b=JDFxjoElTh4rI76Xacm/CsX5IL73wisLZm6FLcFTibYzPDR3iZr6Te0t
+   HWd3UXehkWtUb786NXrQUBUdTk8FVHljZocmhIRS/w0otOaopX6vtaZ5B
+   a5pf4ObDZVEME8sBWnI48aLXKa03ZRcOpeMmKe09IbxcjviyFG6q4yuyL
+   mtcHXHriUtZAfyF4axzd0KuMY6fG3KM5Q82A4RGyWsjXOG3fPPLbv0A8F
+   IB8dGzrQ7qs0dRRZA8gw2buZOL8w8ChxK8LiTCmCFRltuZZKoirjyz4Oi
+   Z4CjLSM7oSYbo3r6Aipel3frTmxKXT2BgJsiuMHfIFFgclEevqzbx9HaE
+   g==;
+X-CSE-ConnectionGUID: S3QbqlE4SuyJ24cMEhy7/w==
+X-CSE-MsgGUID: RdcOAyPLSuunxCJ3KJO2Eg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11314"; a="41247802"
+X-IronPort-AV: E=Sophos;i="6.12,310,1728975600"; 
+   d="scan'208";a="41247802"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Feb 2025 06:02:35 -0800
+X-CSE-ConnectionGUID: YpbMq6JwSYqlDX5v5TKBPw==
+X-CSE-MsgGUID: 5foC5zoJSDSp20UImXrUdA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,308,1732608000"; 
+   d="scan'208";a="120722829"
+Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
+  by fmviesa004.fm.intel.com with ESMTP; 22 Feb 2025 06:02:32 -0800
+Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tlq5N-0006d5-2d;
+	Sat, 22 Feb 2025 14:02:29 +0000
+Date: Sat, 22 Feb 2025 22:01:32 +0800
+From: kernel test robot <lkp@intel.com>
+To: Christian Eggers <ceggers@arri.de>,
+	Russell King <linux@armlinux.org.uk>,
+	Yuntao Liu <liuyuntao12@huawei.com>,
+	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-arm-kernel@lists.infradead.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org, ceggers@gmx.de,
+	Christian Eggers <ceggers@arri.de>, stable@vger.kernel.org
+Subject: Re: [PATCH] ARM: add KEEP() keyword to ARM_VECTORS
+Message-ID: <202502222158.UhwuvDZv-lkp@intel.com>
+References: <20250221125520.14035-1-ceggers@arri.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,38 +85,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20250221125520.14035-1-ceggers@arri.de>
 
-Linus,
+Hi Christian,
 
-Please pull the latest sched/urgent Git tree from:
+kernel test robot noticed the following build errors:
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git sched-urgent-2025-02-22
+[auto build test ERROR on soc/for-next]
+[also build test ERROR on linus/master v6.14-rc3 next-20250221]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-   # HEAD: dc0a241ceaf3b7df6f1a7658b020c92682b75bfc rseq: Fix rseq registration with CONFIG_DEBUG_RSEQ
+url:    https://github.com/intel-lab-lkp/linux/commits/Christian-Eggers/ARM-add-KEEP-keyword-to-ARM_VECTORS/20250221-205720
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git for-next
+patch link:    https://lore.kernel.org/r/20250221125520.14035-1-ceggers%40arri.de
+patch subject: [PATCH] ARM: add KEEP() keyword to ARM_VECTORS
+config: arm-randconfig-003-20250222 (https://download.01.org/0day-ci/archive/20250222/202502222158.UhwuvDZv-lkp@intel.com/config)
+compiler: clang version 16.0.6 (https://github.com/llvm/llvm-project 7cbf1a2591520c2491aa35339f227775f4d3adf6)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250222/202502222158.UhwuvDZv-lkp@intel.com/reproduce)
 
-Two RSEQ fixes:
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202502222158.UhwuvDZv-lkp@intel.com/
 
- - Fix overly spread-out RSEQ concurrency ID allocation pattern that
-   regressed certain workloads.
+All errors (new ones prefixed by >>):
 
- - Fix RSEQ registration syscall behavior on -EFAULT errors when
-   CONFIG_DEBUG_RSEQ=y. (This debug option is disabled on most
-   distributions.)
+>> ld.lld: error: ./arch/arm/kernel/vmlinux.lds:33: ( expected, but got }
+   >>>  __vectors_lma = .; OVERLAY 0xffff0000 : AT(__vectors_lma) { .vectors { KEEP(*(.vectors)) } .vectors.bhb.loop8 { KEEP(*(.vectors.bhb.loop8)) } .vectors.bhb.bpiall { KEEP(*(.vectors.bhb.bpiall)) } } __vectors_start = LOADADDR(.vectors); __vectors_end = LOADADDR(.vectors) + SIZEOF(.vectors); __vectors_bhb_loop8_start = LOADADDR(.vectors.bhb.loop8); __vectors_bhb_loop8_end = LOADADDR(.vectors.bhb.loop8) + SIZEOF(.vectors.bhb.loop8); __vectors_bhb_bpiall_start = LOADADDR(.vectors.bhb.bpiall); __vectors_bhb_bpiall_end = LOADADDR(.vectors.bhb.bpiall) + SIZEOF(.vectors.bhb.bpiall); . = __vectors_lma + SIZEOF(.vectors) + SIZEOF(.vectors.bhb.loop8) + SIZEOF(.vectors.bhb.bpiall); __stubs_lma = .; .stubs ADDR(.vectors) + 0x1000 : AT(__stubs_lma) { *(.stubs) } __stubs_start = LOADADDR(.stubs); __stubs_end = LOADADDR(.stubs) + SIZEOF(.stubs); . = __stubs_lma + SIZEOF(.stubs); PROVIDE(vector_fiq_offset = vector_fiq - ADDR(.vectors));
+   >>>                                                                                           ^
 
- Thanks,
-
-	Ingo
-
------------------->
-Mathieu Desnoyers (1):
-      sched: Compact RSEQ concurrency IDs with reduced threads and affinity
-
-Michael Jeanson (1):
-      rseq: Fix rseq registration with CONFIG_DEBUG_RSEQ
-
-
- include/linux/mm_types.h |  7 ++++---
- kernel/rseq.c            | 11 ++++++++---
- kernel/sched/sched.h     | 25 ++++++++++++++++++++++---
- 3 files changed, 34 insertions(+), 9 deletions(-)
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
