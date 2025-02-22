@@ -1,139 +1,165 @@
-Return-Path: <linux-kernel+bounces-527161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34A5FA407FB
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 12:40:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46D48A407FC
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 12:40:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22833425B14
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 11:39:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B32219C1B5F
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 11:40:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6399620B80E;
-	Sat, 22 Feb 2025 11:39:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D4DD20ADCF;
+	Sat, 22 Feb 2025 11:40:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KKCVrgen"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YWZhGPhu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0C542080FB
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 11:39:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 888FA1FFC5A;
+	Sat, 22 Feb 2025 11:40:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740224351; cv=none; b=SajMTvU9StwEHFGrL+y95czQVrneUIcaxnEjxycZqn3c0rGbxJ+jP0G9vd91RNtshvSxaVW3dV6yPAa45QprNLTgHqcHBSiOfAfgiSyRd8Mb0diy9cetuvXJ3J5+vZGmcNS3P1bmv9qh+PVjPfRcJOIovZPMIMuv8OF2KRmSbtw=
+	t=1740224437; cv=none; b=lzHm+3k1lycweiO6hvnORpZDuvnFCv641o08hpQ03+kfEaGVQyq9uk4xcQCh+KjgxeJVRyHGI0fdyBVnC0r+3fIb9cSQWEVE/oTR3ThFy0rfFZKoix4m4rrCcD0UizgN03iW0yPveNMODm2VaiyDIdTZzA9cnOfzbFImE/j5V+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740224351; c=relaxed/simple;
-	bh=Sky15R0RXBLNCxJhjHjePt0w92unXWiCXbaOvxX5Lzo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=TZL1qw4ZMFDMUDer2LyqrwXizTgMe0bz9B1NUD85w3q+xWTxuO8kv6UbOdjrg85JH6v7Xm98VVmi3GXNiUggCyOYiT/+hB2wdowHVY6Dd+hKSKdtb1r7+DiFBa+6rynw2fcyc/WOuZS+IXKEeElQ5RsjW5kP1HfvZ0/xizUePPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KKCVrgen; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5deb440675eso522391a12.0
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 03:39:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740224348; x=1740829148; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GciUUqj1RmNWWcZPAfK8/8tZx9TktRuEfZAKKaKTmos=;
-        b=KKCVrgenAZy6HIG6tOT357aeBKnDVCsqT4Y8oHEaWgfgPg8K+Lrnx6tl93wUfVofOp
-         L9XX7YcIblkkxZb/rVDa1YQPotoalu9yx8dccj/ph1OyK26uMg5lvU46Qg1ImTCpG+Vr
-         oXcJRoF4Cvu0FTQ14D5wc4Jo9KuVv1qYpLJw+O0EKpknOicrgJvcDAU7Wu8Kypy/4XZ/
-         lJ4gLDKbRifkOWEcHIWcuGLDy7lslEf/ucA0sUftvx7zb1fdwpSE4BgOXd6vcVdvFFQm
-         YQg7HRBDKNyvc/9prKQgZjFIF3gAWrrbrcaKkVjIiZ5mz/F3LwGDQ2jAvNct8uHt++z9
-         ZYEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740224348; x=1740829148;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GciUUqj1RmNWWcZPAfK8/8tZx9TktRuEfZAKKaKTmos=;
-        b=TsjC0E5nZpWPcH4UNAWYVvjYTPOj1DEd25RiavjU7WW28fTRmAdlYWc4EwA38I21Oe
-         Ssdrwh0mlnCdJMaGw3GxeyLF5sX+0ZLrzCG4ov2u2Ys23YXqo8Kj1wk3s7E1xBSuF2g4
-         1vnE6J6102dp5QL0G0lgCPNeAfOl4AIlWCPCTuJX6CZvEK1kOWDQtDsWfApWOlkJp1Is
-         hQoFWu997ZwiKa46m4TKRwR2g7gWfocdZjx3WR4UhBIcT1uOeQmkTrbVOLAGRC4Ww/KC
-         0Olj64/CtBTAQl1U4lh8AQoiLxDXeyFVo6TLSFnUiheHrgPLEuECOKPvfNkPRNhWaAG6
-         dFhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX+9quo/vBlXTl0uGpyhH4lkULiodxZ7ORcdr+Fcdx5dOcYU5+Z5YuV/ZE33um4zfFGFse1va4+Vgcpcyg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0bPT0vfUUTCTOk73hDIk4e+lDV0+pKxjz+KTe3Q1H9XaOWJC3
-	L+BpxcpLVUEEGC9iOYcFcxxaWitfCMuLEbLPb+ka9pySn2sv6euy91EFIqbr/rs=
-X-Gm-Gg: ASbGnct8KJDtXfsyNpoktQ4MR6Koea/zagI49xI4ru7dWE5YSoUar9pp3wq0rmacGTI
-	gKncmzek6JTZrYbXAp/lHc5I9rXiMFoi4GyUzXzWwNkowVtbjtDcsKtee2e42TNOGLODYTgPsnm
-	I+KOssBFfZv8awCiZ7//2DTFVLZV4IVQRGBGbK8Ll/OnrkLx1oaNPcMsbZe78J/0LQhCZA49msz
-	PT+TdVT+juOS97836Tewug+UmZOuKT9EJA2Rw/dd02zlhOj//YXFlBjD5FxHWcYpWFaMmBv2fqm
-	DgrUWC8LclT9b7jfk1RSqtm2HBuPMMPhH7qX2hlL+buGMVsezVKWyEnYlBo82wZbAGLFGCXDpj9
-	7
-X-Google-Smtp-Source: AGHT+IG/9B+Bl7UV1RnTVBHCf1VORpcGI7KStjZd+OYFng1yCCZXzpskS3vRcsDqBd9OG8mC4clNlw==
-X-Received: by 2002:a05:6402:27cf:b0:5e0:8275:e9dd with SMTP id 4fb4d7f45d1cf-5e0b7252e4fmr2256164a12.10.1740224348212;
-        Sat, 22 Feb 2025 03:39:08 -0800 (PST)
-Received: from [127.0.1.1] (78-11-220-99.static.ip.netia.com.pl. [78.11.220.99])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abb9723a559sm1202702066b.96.2025.02.22.03.39.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 22 Feb 2025 03:39:07 -0800 (PST)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Sat, 22 Feb 2025 12:38:59 +0100
-Subject: [PATCH 3/3] coresight: tpdm: Constify amba_id table
+	s=arc-20240116; t=1740224437; c=relaxed/simple;
+	bh=3DZ40JdNPlh8KNMjFXeN2zlk13Yu3H5tsfDipn0TRFc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=hCen7tK4GHtVmkfDdTLWittqPEtdhhJ2XFwTnSbP/40x23AV16/Lid3qtsJ1KHv8BP2Rc+tLeZLJJ9ssibRoNUZwDy8iZ5G2dxL8Nz00QJoTMrdWYjjWBhlvu9v1LnoAPk5m9h/R3B/K6ftB/MOqRvZZUFSl8dyo3cCTUP0kZsU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YWZhGPhu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48338C4CED1;
+	Sat, 22 Feb 2025 11:40:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740224437;
+	bh=3DZ40JdNPlh8KNMjFXeN2zlk13Yu3H5tsfDipn0TRFc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=YWZhGPhuwtmrz3CqQoL1DgGt3ZVNdTe1oLWIa0A8aGr4cDOhkA/JGOzrj0joK7mDl
+	 yOcVmtAk/7o7Jiqn0Ss2g9t2Fx43sh3U3WFhYmipR1E6qd9TGDydipXLnTLlwCrqmS
+	 aB3FL4Sd3gP6dcFH8s6A5E0CQQppkAS8tSgyvSVqnf5oWknJbYf2MswSN1H0GMF7to
+	 KGGaOPZ9h3YNh7ZJpNaweRGE8RNO5bBiYtgjGXBz3H8nWqw9VfSm8PlipaKsiV0vtl
+	 N7XNyplokwqYlzKsUXwZ0PRiv+iQgC/0iBQjyQTi65XVX4bnJgVV2KCesraHkTOQS/
+	 fSNfu2C1CJ+VQ==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "Boqun Feng" <boqun.feng@gmail.com>
+Cc: "Tamir Duberstein" <tamird@gmail.com>,  "Miguel Ojeda"
+ <ojeda@kernel.org>,  "Anna-Maria Behnsen" <anna-maria@linutronix.de>,
+  "Frederic Weisbecker" <frederic@kernel.org>,  "Thomas Gleixner"
+ <tglx@linutronix.de>,  "Danilo Krummrich" <dakr@kernel.org>,  "Alex
+ Gaynor" <alex.gaynor@gmail.com>,  "Gary Guo" <gary@garyguo.net>,
+  =?utf-8?Q?Bj=C3=B6rn?=
+ Roy Baron <bjorn3_gh@protonmail.com>,  "Benno Lossin"
+ <benno.lossin@proton.me>,  "Alice Ryhl" <aliceryhl@google.com>,  "Trevor
+ Gross" <tmgross@umich.edu>,  "Lyude Paul" <lyude@redhat.com>,  "Guangbo
+ Cui" <2407018371@qq.com>,  "Dirk Behme" <dirk.behme@gmail.com>,  "Daniel
+ Almeida" <daniel.almeida@collabora.com>,
+  <rust-for-linux@vger.kernel.org>,  <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v8 02/14] rust: hrtimer: introduce hrtimer support
+In-Reply-To: <87y0xycowa.fsf@kernel.org> (Andreas Hindborg's message of "Sat,
+	22 Feb 2025 10:25:09 +0100")
+References: <20250218-hrtimer-v3-v6-12-rc2-v8-2-48dedb015eb3@kernel.org>
+	<KDmrJnQA2_Ojf67mD8WA_UafgVCACRRleB9t-D_1yl_bua8e1VWdGQAUvmMGHscqRHu1gzPJCKe_BfotutZm5Q==@protonmail.internalid>
+	<CAJ-ks9ncOyGyQsDFOBxg-7wmXkrQYiZr6H6eEFWsFstk=p1uAA@mail.gmail.com>
+	<87wmdkgvr0.fsf@kernel.org>
+	<djAeSx8DNZwss2-UqXGmhVPqYm2z4LhKWC70jPHPisd1w70qmpmOfVbHfhqJErhoFwVFM8IpbTv4MKkk_BIpQw==@protonmail.internalid>
+	<CAJ-ks9mNidHZvWkFJE1jExc2oVk_bbJpiO_DRMrWu5nYhTpKgg@mail.gmail.com>
+	<87ldtzhexi.fsf@kernel.org> <87cyfbe89x.fsf@kernel.org>
+	<Z7iQcDa72XnJ5zGC@Mac.home>
+	<CAJ-ks9kQccoa7znFNzWAgi6_G0TKvLUARWPZ_Dbed1C-d4Lr+Q@mail.gmail.com>
+	<lP-bWmvvDdcUDicFow-u6piINSeNk1_a_BWKDDFMbFpE3Mo_5lxqfpA6v_8yYqTXNDmVZLXyz6RY3cQHhMoVrA==@protonmail.internalid>
+	<Z7iZevQkYVGDoeTa@Mac.home> <87y0xycowa.fsf@kernel.org>
+User-Agent: mu4e 1.12.7; emacs 29.4
+Date: Sat, 22 Feb 2025 12:40:23 +0100
+Message-ID: <87h64mcimw.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250222-coresight-const-arm-id-v1-3-69a377cd098b@linaro.org>
-References: <20250222-coresight-const-arm-id-v1-0-69a377cd098b@linaro.org>
-In-Reply-To: <20250222-coresight-const-arm-id-v1-0-69a377cd098b@linaro.org>
-To: Suzuki K Poulose <suzuki.poulose@arm.com>, 
- Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>, 
- Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=906;
- i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=Sky15R0RXBLNCxJhjHjePt0w92unXWiCXbaOvxX5Lzo=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBnubdUTnr/bCumbFZ9TWCRWI0l2q73SVxaJlZ4Q
- T6AybTflvGJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZ7m3VAAKCRDBN2bmhouD
- 1/KhD/0Vl495GI6HdSY/B+vUKWLh2qeBUCi+4tl+EQFNUage6r0m1EuQj8bD8/e9OHQGKohQcJQ
- Vtj10TDMDDESaRn4g0sutiP+Pkg/GSsgE6Pdwjq3kWO3EkG8O/a34PlSacmdnkctsHPKuZUYc4o
- XSUdOwS4Y2KN/q1+hKkgMRa+wtEy/dw+cyMQtGeyi15mudYVggZk9ir5D9IxwQRupbx0pXew2jd
- BdMinRcMHBpBRg2LrJTgdd7kOE5tnbZwxr8kgLrUv/Lik0QnXpG60GcwK+eBi5g2BSp2nBWJQ5X
- fTuF/a8MMirtihZQdJzaHuuSgKxgME7+XAIDroK56Idw8LTaxKB1VLX+jMakoq/grb2Srtquv98
- Un9YktybZuHoCs9AJeHvPOqiF73E5NzG1dO6+UHrxRk2P6NN51wlFoXsKFvMISkG1Qtfh6UUcwE
- ssJBuJS1AgiG5HRzE4qntaZiGb/XhD9w9/9H+KBJ8NVEIefy1ioiaUrUhrCYi7ra7xohus7R0kC
- +yOSQaLFsNRCJmfNRaCNrB2lng+TXSS90STPdeA83E9IEN0d25sMOecQmPzjBOmYVedCrVAtIVM
- DbIJS9o7UgyGyt/29ArXpBBez9cTAQSslWoxzji7AZOW9dK7lF1Co0ZVGuwnP/0SILTFRuHBNGc
- Ila9TBdtA/uS7fw==
-X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
- fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-'struct amba_id' table is not modified so can be changed to const for
-more safety.
+Andreas Hindborg <a.hindborg@kernel.org> writes:
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- drivers/hwtracing/coresight/coresight-tpdm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> "Boqun Feng" <boqun.feng@gmail.com> writes:
+>
+>> On Fri, Feb 21, 2025 at 09:46:08AM -0500, Tamir Duberstein wrote:
+>>> On Fri, Feb 21, 2025 at 9:40=E2=80=AFAM Boqun Feng <boqun.feng@gmail.co=
+m> wrote:
+>>> >
+>>> > Hmm... if you mean:
+>>> >
+>>> > trait HasHrTimer {
+>>> >     unsafe fn start(&self, expires: Ktime) {
+>>> >         ...
+>>> >     }
+>>> > }
+>>> >
+>>> > Then it'll be problematic because the pointer derived from `&self`
+>>> > doesn't have write provenance, therefore in a timer callback, the
+>>> > pointer cannot be used for write, which means for example you cannot
+>>> > convert the pointer back into a `Pin<Box<HasTimer>>`.
+>>> >
+>>> > To answer Tamir's question, pointers are heavily used here because we
+>>> > need to preserve the provenance.
+>>>
+>>> Wouldn't the natural implication be that &mut self is needed? Maybe
+>>
+>> For an `Arc<HasTimer>`, you cannot get `&mut self`.
+>>
+>>> you can help me understand why pointers can express a contract that
+>>> references can't?
+>>
+>> I assume you already know what a pointer provenance is?
+>>
+>> 	http://doc.rust-lang.org/std/ptr/index.html#provenance
+>>
+>> Passing a pointer (including offset operation on it) preserves the
+>> provenance (determined as derive time), however, deriving a pointer from
+>> a reference gives the pointer a provenance based on the reference type.
+>> For example, let's say we have an `Arc<i32>` and a clone:
+>>
+>> 	let arc =3D Arc::new(42);
+>> 	let clone =3D arc.clone();
+>>
+>> you can obviously do a into_raw() + from_raw() pair:
+>>
+>> 	let ptr =3D Arc::into_raw(arc);
+>> 	let arc =3D unsafe { Arc::from_raw(arc) };
+>>
+>> however, if you create a reference based on `Arc::into_raw()`, and then
+>> derive a pointer from that, you change the provenance,
+>
+> In this case, the pointer will have the pointer of `Arc::into_raw()`
+> will have the provenance of the original reference. When you turn that
+> pointer back into a reference, won't the reference inherit the
+> provenance of the pointer, which is the same as the original reference?
+>
+> As I read the docs, getting a reference to a `Timer` from a reference to
+> a `<MyType as HasHrTimer>` by converting `&MyType` to a `*const MyType`,
+> doing a `ptr.cast::<u8>().add(offset).cast::<HrTimer<T>>()` and
+> converting that pointer to a reference should be fine? The final pointer
+> before converting back to a reference will still have provenance of the
+> original reference. Converting to a reference at the end will shrink the
+> provenance, but it is still fine.
+>
+> Going from a `&HrTimer<T>` to a `&T` is a problem, because that would
+> require offset outside spatial permission of pointer provenance, and it
+> would require increasing the size of the spatial permission.
+>
+> Is this correctly understood?
 
-diff --git a/drivers/hwtracing/coresight/coresight-tpdm.c b/drivers/hwtracing/coresight/coresight-tpdm.c
-index c38f9701665e70c0fb58726980332dbe65e09790..afc4c18dd35d0ab1cc474214b1df6f816e1aed68 100644
---- a/drivers/hwtracing/coresight/coresight-tpdm.c
-+++ b/drivers/hwtracing/coresight/coresight-tpdm.c
-@@ -1305,7 +1305,7 @@ static void tpdm_remove(struct amba_device *adev)
-  * Different TPDM has different periph id.
-  * The difference is 0-7 bits' value. So ignore 0-7 bits.
-  */
--static struct amba_id tpdm_ids[] = {
-+static const struct amba_id tpdm_ids[] = {
- 	{
- 		.id	= 0x001f0e00,
- 		.mask	= 0x00ffff00,
+How does provenance work across language boundaries? Should we actually
+use `with_addr` [1] when we get pointers from C round trips?
 
--- 
-2.43.0
+
+Best regards,
+Andreas Hindborg
+
+
+
+[1] https://doc.rust-lang.org/stable/std/primitive.pointer.html#method.with=
+_addr
 
 
