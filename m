@@ -1,353 +1,210 @@
-Return-Path: <linux-kernel+bounces-527485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5CDAA40BBB
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 22:28:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1850A40BC0
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 22:29:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFED8189F202
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 21:28:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B31FC3BC805
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 21:29:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38143204690;
-	Sat, 22 Feb 2025 21:28:23 +0000 (UTC)
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E02E0204686;
+	Sat, 22 Feb 2025 21:29:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jan/Xnq3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BF68204088
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 21:28:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 122C878F4E;
+	Sat, 22 Feb 2025 21:29:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740259702; cv=none; b=bzxaZZd0xwhscRyRY6ztiIQ/A+L155pJO79xmbFiUA64CcaWfr8eLNjKqqK0TXlmRRcg/A/rN5l7jjHRUTiWZE2kTPpf7FnB5ySjzEOq6LZM2IwLc+IPoK7jHfDnfEPD2S7prY6lIHO0bpieBMr/FsY7JWcp4gr27Jg19e0r0Qk=
+	t=1740259766; cv=none; b=nZLZeadS71pV6AEp7+XX946dpIkTWaebJJzhqPRfUuSXJk3QkfLag8rssResIVcB5gyK4oO6WSqK+jHFmzZ7SunlA7Xolg2hafL1nQ04v4cFbamzaVhg9G69rGpuyjvRGeRzPHqGgy1EhzGTcycZQ2jukuxPCB66pJvPnIDeJ4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740259702; c=relaxed/simple;
-	bh=rrUPmthSZymIJllcQ+NtdBq8igi0G5OV3N5Dh2FAI2A=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=HEHfo5RPer4loCMRqFJmcsyqRCRoZES6nV5m9JhWLNNFBSyZtse3+GmZATOCNGxuDxzuVoKs9IISzOMVWlUdDE7HmZBDoB3NFQA7iFlsvdjbTM/0J7xxpf1TTlHNWVN2OSgHATE6hGy5stf1sgSPYrCCFIPg7Ek/xlCmkCRIcXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3d2b6d933acso26388075ab.3
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 13:28:19 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740259698; x=1740864498;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=nMvR6VQwoiSvHdEtmggzmS+ZR2UuWrCXxkffOuRiO/8=;
-        b=UUxdqSg5P8muDyQyxRn9e2baUvZ6mLVoyuXODG4TCNALc0nMrvuL5s2WeoV3nOv/uu
-         8Qdybt5yU6BQJcgqmQal6gjCLaSufY/Bwm9hrviKAUa8al7qnmJ7dJiiIyHUBLhi1thk
-         /IXKI9TL5DvROZx+ts8/j0OzWkHPochHXd8ySwo6rIAfP72dILSl9/fxwgeGktDCtlKi
-         uhhGZbX64TpuOskTVhciar8bjHIwrxhPfcS9VYbocXzG3q9s2avlWpZZRKNJr8m+wReK
-         JeSGhzsBaNMm9YSCJ3GgwYTKeD4lEYny3O93FOXN/XB1pFZRRJTE67SGcH7XuZiCepfr
-         bDoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUkEXDv7P5UVaxSzmJYSozzuU/feU+wQ6Cr4d4G0u+UJnXU9DUmr3pSY/5B5gsJ3RIaUS36C2qZexUQ0MY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwyJHwCxlc+oFwvvHmHItR2fYrJn4jDJBDFZeYBoIz2Ixw4I7fD
-	o0AygkKvcWUIFy93o3uC+x2H1hve0k0PTKr5PS7A4FivvYYsjZ7HeCfGaUdBtpnQmSq4wtXXCeT
-	beeinDHCTBXml7czvGAzBqdPrTb5yInr8sJiCAcf0tiCLATcDZgrFTto=
-X-Google-Smtp-Source: AGHT+IEwB438rF8gnGs3M3wvUu+QC7cusa+f51xI7QQ0r2qdtyma4J6xKMgS5JWlLazsdO4Rxtq3+o/3xtOXEDZiny34oww5fZV/
+	s=arc-20240116; t=1740259766; c=relaxed/simple;
+	bh=TllmLDgpVZV8wSTC1mL6JVYDxhCEWNP7L7AL2Er9Ad0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F1Bli1bdtLj0kC1zrKYPUXntc3yhPA3V4UJRiKE4W2XrYOAXAGOay021cPpFNGngLLFYJTV2w6jBpZ3G6qaHKWtyEtn2AFTbzI+GAfa0trRocUFMLXnX4n4K2v4DKEiF2omMn6eeKGFp+M6ufnaltKvJRRBVv0wYaHdtluzfZvY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jan/Xnq3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34CCBC4CED1;
+	Sat, 22 Feb 2025 21:29:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740259765;
+	bh=TllmLDgpVZV8wSTC1mL6JVYDxhCEWNP7L7AL2Er9Ad0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Jan/Xnq3CwBQY9BWH8PIIPcBxphq40Ypfi9YsXB/s4j8LhmevzWv5X6iTIn1ICviq
+	 zkNrdwrCB2v17wJq1rC9hYldSoR85BrwShhdJA00CtmgGNPkWbksKg0dpFbj2+tsYj
+	 i9trkB1jdvWH6r21lSnJj2Pb/bvBNTjmkVfg6B4JfITNb6VnZGocMnsSF0huDr73ne
+	 EzAck27i1nq3AndfDfcXdHdXb0qE0GwI5xcgf7Izh5+PEdb8iMoDY3H7zQ/1bNGGGQ
+	 VMbPo1eU4v2Z3d7q2JFS7BVDd4Dktm9V7C3zq9tYIZ25+ZNEs8KyxnSh/httd/GKa2
+	 2kRNMs3vHJgDA==
+Date: Sat, 22 Feb 2025 22:29:22 +0100
+From: Daniel Gomez <da.gomez@kernel.org>
+To: Lucas De Marchi <lucas.demarchi@intel.com>
+Cc: Luis Chamberlain <mcgrof@kernel.org>, 
+	Alexei Starovoitov <alexei.starovoitov@gmail.com>, Daniel Gomez <da.gomez@samsung.com>, 
+	Petr Pavlu <petr.pavlu@suse.com>, Sami Tolvanen <samitolvanen@google.com>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, 
+	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
+	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
+	linux-modules@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>, 
+	clang-built-linux <llvm@lists.linux.dev>, iovisor-dev <iovisor-dev@lists.iovisor.org>, 
+	gost.dev@samsung.com
+Subject: Re: [PATCH 2/2] moderr: add module error injection tool
+Message-ID: <vo4aommlbguz7kll5svvgbodykxx7chywhf2wz5bbz4mibvver@cxrceuzt3dzw>
+References: <CGME20250122131159eucas1p17693e311a9b7674288eb3c34014b6f2c@eucas1p1.samsung.com>
+ <20250122-modules-error-injection-v1-0-910590a04fd5@samsung.com>
+ <20250122-modules-error-injection-v1-2-910590a04fd5@samsung.com>
+ <CAADnVQJ8tYSx-ujszq54m2XyecoJUgQZ6HQheTrohhfQS6Y9sQ@mail.gmail.com>
+ <Z5lEoUxV4fBzKf4i@bombadil.infradead.org>
+ <qnfhjhyqlagmrmk3dwfb2ay37ihi6dlkzs67bzxpu7izz6wqc5@aiohaxlgzx5r>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3dc4:b0:3ce:4b12:fa17 with SMTP id
- e9e14a558f8ab-3d2cb52d4bfmr76842325ab.19.1740259698500; Sat, 22 Feb 2025
- 13:28:18 -0800 (PST)
-Date: Sat, 22 Feb 2025 13:28:18 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67ba4172.050a0220.bbfd1.0001.GAE@google.com>
-Subject: [syzbot] [net?] [s390?] possible deadlock in smc_sendmsg
-From: syzbot <syzbot+6cc62f8d77a830dba3a7@syzkaller.appspotmail.com>
-To: agordeev@linux.ibm.com, alibuda@linux.alibaba.com, davem@davemloft.net, 
-	edumazet@google.com, guwen@linux.alibaba.com, horms@kernel.org, 
-	jaka@linux.ibm.com, kuba@kernel.org, linux-kernel@vger.kernel.org, 
-	linux-rdma@vger.kernel.org, linux-s390@vger.kernel.org, 
-	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com, 
-	tonylu@linux.alibaba.com, wenjia@linux.ibm.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <qnfhjhyqlagmrmk3dwfb2ay37ihi6dlkzs67bzxpu7izz6wqc5@aiohaxlgzx5r>
 
-Hello,
+On Wed, Feb 19, 2025 at 02:17:48PM +0100, Lucas De Marchi wrote:
+> On Tue, Jan 28, 2025 at 12:57:05PM -0800, Luis Chamberlain wrote:
+> > On Wed, Jan 22, 2025 at 09:02:19AM -0800, Alexei Starovoitov wrote:
+> > > On Wed, Jan 22, 2025 at 5:12 AM Daniel Gomez <da.gomez@samsung.com> wrote:
+> > > >
+> > > > Add support for a module error injection tool. The tool
+> > > > can inject errors in the annotated module kernel functions
+> > > > such as complete_formation(), do_init_module() and
+> > > > module_enable_rodata_after_init(). Module name and module function are
+> > > > required parameters to have control over the error injection.
+> > > >
+> > > > Example: Inject error -22 to module_enable_rodata_ro_after_init for
+> > > > brd module:
+> > > >
+> > > > sudo moderr --modname=brd --modfunc=module_enable_rodata_ro_after_init \
+> > > > --error=-22 --trace
+> > > > Monitoring module error injection... Hit Ctrl-C to end.
+> > > > MODULE     ERROR FUNCTION
+> > > > brd        -22   module_enable_rodata_after_init()
+> > > >
+> > > > Kernel messages:
+> > > > [   89.463690] brd: module loaded
+> > > > [   89.463855] brd: module_enable_rodata_ro_after_init() returned -22,
+> > > > ro_after_init data might still be writable
+> > > >
+> > > > Signed-off-by: Daniel Gomez <da.gomez@samsung.com>
+> > > > ---
+> > > >  tools/bpf/Makefile            |  13 ++-
+> > > >  tools/bpf/moderr/.gitignore   |   2 +
+> > > >  tools/bpf/moderr/Makefile     |  95 +++++++++++++++++
+> > > >  tools/bpf/moderr/moderr.bpf.c | 127 +++++++++++++++++++++++
+> > > >  tools/bpf/moderr/moderr.c     | 236 ++++++++++++++++++++++++++++++++++++++++++
+> > > >  tools/bpf/moderr/moderr.h     |  40 +++++++
+> > > >  6 files changed, 510 insertions(+), 3 deletions(-)
+> > > 
+> > > The tool looks useful, but we don't add tools to the kernel repo.
+> > > It has to stay out of tree.
+> > 
+> > For selftests we do add random tools.
+> > 
+> > > The value of error injection is not clear to me.
+> > 
+> > It is of great value, since it deals with corner cases which are
+> > otherwise hard to reproduce in places which a real error can be
+> > catostrophic.
+> > 
+> > > Other places in the kernel use it to test paths in the kernel
+> > > that are difficult to do otherwise.
+> > 
+> > Right.
+> > 
+> > > These 3 functions don't seem to be in this category.
+> > 
+> > That's the key here we should focus on. The problem is when a maintainer
+> > *does* agree that adding an error injection entry is useful for testing,
+> > and we have a developer willing to do the work to help test / validate
+> > it. In this case, this error case is rare but we do want to strive to
+> > test this as we ramp up and extend our modules selftests.
+> > 
+> > Then there is the aspect of how to mitigate how instrusive code changes
+> > to allow error injection are. In 2021 we evaluated the prospect of error
+> > injection in-kernel long ago for other areas like the block layer for
+> > add_disk() failures [0] but the minimal interface to enable this from
+> > userspace with debugfs was considered just too intrusive.
+> > 
+> > This effort tried to evaluate what this could look like with eBPF to
+> > mitigate the required in-kernel code, and I believe the light weight
+> > nature of it by just requiring a sprinkle with ALLOW_ERROR_INJECTION()
+> > suffices to my taste.
+> > 
+> > So, perhaps the tools aspect can just go in:
+> > 
+> > tools/testing/selftests/module/
+> 
+> but why would it be module-specific? Based on its current implementation
+> and discussion about inject.py it seems to be generic enough to be
+> useful to test any function annotated with ALLOW_ERROR_INJECTION().
 
-syzbot found the following issue on:
+Right, but inject.py is based on the old/deprecated Python eBPF/BCC
+infrastructure (although I think it's still a working and maintained tool based
+on commit history). However, as I noted in the cover letter, I think it would be
+useful to port it to use libbpf instead.
 
-HEAD commit:    6537cfb395f3 Merge tag 'sound-6.14-rc4' of git://git.kerne..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=146177df980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f4f6914bcba459be
-dashboard link: https://syzkaller.appspot.com/bug?extid=6cc62f8d77a830dba3a7
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+> 
+> As xe driver maintainer, it may be interesting to use such a tool:
+> 
+> 	$ git grep ALLOW_ERROR_INJECT -- drivers/gpu/drm/xe | wc -l  	23
 
-Unfortunately, I don't have any reproducer for this issue yet.
+I was wondering if users of ALLOW_ERROR_INJECTION() still depend on inject.py
+tool, or other tools were used. Or perhaps all are using debugfs?
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-6537cfb3.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/c6f2faba4c42/vmlinux-6537cfb3.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/16fc32b66fc0/bzImage-6537cfb3.xz
+> 
+> How does this approach compare to writing the function name on debugfs
+> (the current approach in xe's testsuite)?
+> 
+> 	fail_function @ https://docs.kernel.org/fault-injection/fault-injection.html#fault-injection-capabilities-infrastructure
+> 	https://gitlab.freedesktop.org/drm/igt-gpu-tools/-/blob/master/tests/intel/xe_fault_injection.c?ref_type=heads#L108
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+6cc62f8d77a830dba3a7@syzkaller.appspotmail.com
+IMHO and looking at the references above, looks "simpler" to handle these cases
+in eBPF. Specially because the error injection logic does not have to live along
+with the code but in a separate tool. Link from Luis [0] (also [1]) is a good
+example of when debugfs may be seen a bit too intrusive and how eBPF may resolve
+the problems maintainers have.
 
-block nbd4: NBD_DISCONNECT
-======================================================
-WARNING: possible circular locking dependency detected
-6.14.0-rc3-syzkaller-00060-g6537cfb395f3 #0 Not tainted
-------------------------------------------------------
-syz.4.3048/15507 is trying to acquire lock:
-ffff88804ed2bbd8 (sk_lock-AF_SMC){+.+.}-{0:0}, at: lock_sock include/net/sock.h:1624 [inline]
-ffff88804ed2bbd8 (sk_lock-AF_SMC){+.+.}-{0:0}, at: smc_sendmsg+0x47/0x520 net/smc/af_smc.c:2775
+[1] https://lore.kernel.org/all/20210512064629.13899-1-mcgrof@kernel.org/
 
-but task is already holding lock:
-ffff888028f74e70 (&nsock->tx_lock){+.+.}-{4:4}, at: send_disconnects drivers/block/nbd.c:1394 [inline]
-ffff888028f74e70 (&nsock->tx_lock){+.+.}-{4:4}, at: nbd_disconnect+0x321/0x540 drivers/block/nbd.c:1410
+In summary, a function annotated with the error injection tag can modify
+its return value in eBPF code by using the bpf_override_return() helper. The
+logic for deciding when to inject the error is likely similar to the current
+implementation in debugfs. This can be seen in patch 2, file tools/bpf/
+moderr/moderr.bpf.c where error is injected based on module name and target
+function.
 
-which lock already depends on the new lock.
+> 
+> If you decide to have the tool to live somewhere else, then kmod repo
+> could be a candidate. Although I think having it in kernel tree is
 
+Thanks Lucas.
 
-the existing dependency chain (in reverse order) is:
+> simpler maintenance-wise.
 
--> #6 (&nsock->tx_lock){+.+.}-{4:4}:
-       __mutex_lock_common kernel/locking/mutex.c:585 [inline]
-       __mutex_lock+0x19b/0xb10 kernel/locking/mutex.c:730
-       sock_shutdown+0x16f/0x280 drivers/block/nbd.c:410
-       nbd_clear_sock drivers/block/nbd.c:1416 [inline]
-       nbd_config_put+0x1e6/0x750 drivers/block/nbd.c:1440
-       nbd_release+0xb7/0x190 drivers/block/nbd.c:1735
-       blkdev_put_whole+0xad/0xf0 block/bdev.c:679
-       bdev_release+0x47e/0x6d0 block/bdev.c:1102
-       blkdev_release+0x15/0x20 block/fops.c:660
-       __fput+0x3ff/0xb70 fs/file_table.c:464
-       task_work_run+0x14e/0x250 kernel/task_work.c:227
-       resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
-       exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
-       exit_to_user_mode_prepare include/linux/entry-common.h:329 [inline]
-       __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
-       syscall_exit_to_user_mode+0x27b/0x2a0 kernel/entry/common.c:218
-       do_syscall_64+0xda/0x250 arch/x86/entry/common.c:89
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+I agree with you that having the tool (or maybe tools if we decide to split) in
+tree it may be easier and may be a way to showcase its usage more effectively.
 
--> #5 (&nbd->config_lock){+.+.}-{4:4}:
-       __mutex_lock_common kernel/locking/mutex.c:585 [inline]
-       __mutex_lock+0x19b/0xb10 kernel/locking/mutex.c:730
-       refcount_dec_and_mutex_lock+0x51/0xc0 lib/refcount.c:118
-       nbd_config_put+0x31/0x750 drivers/block/nbd.c:1423
-       nbd_release+0xb7/0x190 drivers/block/nbd.c:1735
-       blkdev_put_whole+0xad/0xf0 block/bdev.c:679
-       bdev_release+0x47e/0x6d0 block/bdev.c:1102
-       blkdev_release+0x15/0x20 block/fops.c:660
-       __fput+0x3ff/0xb70 fs/file_table.c:464
-       __fput_sync+0xa1/0xc0 fs/file_table.c:550
-       __do_sys_close fs/open.c:1580 [inline]
-       __se_sys_close fs/open.c:1565 [inline]
-       __x64_sys_close+0x86/0x100 fs/open.c:1565
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #4 (&disk->open_mutex){+.+.}-{4:4}:
-       __mutex_lock_common kernel/locking/mutex.c:585 [inline]
-       __mutex_lock+0x19b/0xb10 kernel/locking/mutex.c:730
-       bdev_open+0x41a/0xe20 block/bdev.c:903
-       bdev_file_open_by_dev block/bdev.c:1017 [inline]
-       bdev_file_open_by_dev+0x17d/0x210 block/bdev.c:992
-       disk_scan_partitions+0x1ed/0x320 block/genhd.c:374
-       add_disk_fwnode+0x1006/0x1320 block/genhd.c:526
-       pmem_attach_disk+0x9a1/0x13e0 drivers/nvdimm/pmem.c:576
-       nd_pmem_probe+0x1a9/0x1f0 drivers/nvdimm/pmem.c:649
-       nvdimm_bus_probe+0x169/0x5d0 drivers/nvdimm/bus.c:94
-       call_driver_probe drivers/base/dd.c:579 [inline]
-       really_probe+0x23e/0xa90 drivers/base/dd.c:658
-       __driver_probe_device+0x1de/0x440 drivers/base/dd.c:800
-       driver_probe_device+0x4c/0x1b0 drivers/base/dd.c:830
-       __driver_attach+0x283/0x580 drivers/base/dd.c:1216
-       bus_for_each_dev+0x13c/0x1d0 drivers/base/bus.c:370
-       bus_add_driver+0x2e9/0x690 drivers/base/bus.c:678
-       driver_register+0x15c/0x4b0 drivers/base/driver.c:249
-       __nd_driver_register+0x103/0x1a0 drivers/nvdimm/bus.c:622
-       do_one_initcall+0x128/0x700 init/main.c:1257
-       do_initcall_level init/main.c:1319 [inline]
-       do_initcalls init/main.c:1335 [inline]
-       do_basic_setup init/main.c:1354 [inline]
-       kernel_init_freeable+0x5c7/0x900 init/main.c:1568
-       kernel_init+0x1c/0x2b0 init/main.c:1457
-       ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:148
-       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
--> #3 (&nvdimm_namespace_key){+.+.}-{4:4}:
-       __mutex_lock_common kernel/locking/mutex.c:585 [inline]
-       __mutex_lock+0x19b/0xb10 kernel/locking/mutex.c:730
-       device_lock include/linux/device.h:1030 [inline]
-       uevent_show+0x188/0x3b0 drivers/base/core.c:2729
-       dev_attr_show+0x53/0xe0 drivers/base/core.c:2423
-       sysfs_kf_seq_show+0x23e/0x410 fs/sysfs/file.c:59
-       seq_read_iter+0x4f4/0x12b0 fs/seq_file.c:230
-       kernfs_fop_read_iter+0x414/0x580 fs/kernfs/file.c:279
-       new_sync_read fs/read_write.c:484 [inline]
-       vfs_read+0x886/0xbf0 fs/read_write.c:565
-       ksys_read+0x12b/0x250 fs/read_write.c:708
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #2 (kn->active#5){++++}-{0:0}:
-       kernfs_drain+0x48f/0x590 fs/kernfs/dir.c:500
-       __kernfs_remove+0x281/0x670 fs/kernfs/dir.c:1487
-       kernfs_remove_by_name_ns+0xb2/0x130 fs/kernfs/dir.c:1695
-       sysfs_remove_file include/linux/sysfs.h:794 [inline]
-       device_remove_file drivers/base/core.c:3047 [inline]
-       device_remove_file drivers/base/core.c:3043 [inline]
-       device_del+0x381/0x9f0 drivers/base/core.c:3852
-       unregister_netdevice_many_notify+0x13aa/0x1f30 net/core/dev.c:11838
-       unregister_netdevice_many net/core/dev.c:11866 [inline]
-       unregister_netdevice_queue+0x307/0x3f0 net/core/dev.c:11736
-       unregister_netdevice include/linux/netdevice.h:3335 [inline]
-       unregister_netdev+0x21/0x30 net/core/dev.c:11886
-       sixpack_close+0x1e7/0x2f0 drivers/net/hamradio/6pack.c:661
-       tty_ldisc_close+0x111/0x1a0 drivers/tty/tty_ldisc.c:455
-       tty_ldisc_kill+0x8e/0x150 drivers/tty/tty_ldisc.c:613
-       tty_ldisc_release+0x116/0x2a0 drivers/tty/tty_ldisc.c:781
-       tty_release_struct+0x23/0xe0 drivers/tty/tty_io.c:1690
-       tty_release+0xe25/0x1410 drivers/tty/tty_io.c:1861
-       __fput+0x3ff/0xb70 fs/file_table.c:464
-       task_work_run+0x14e/0x250 kernel/task_work.c:227
-       resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
-       exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
-       exit_to_user_mode_prepare include/linux/entry-common.h:329 [inline]
-       __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
-       syscall_exit_to_user_mode+0x27b/0x2a0 kernel/entry/common.c:218
-       do_syscall_64+0xda/0x250 arch/x86/entry/common.c:89
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #1 (rtnl_mutex){+.+.}-{4:4}:
-       __mutex_lock_common kernel/locking/mutex.c:585 [inline]
-       __mutex_lock+0x19b/0xb10 kernel/locking/mutex.c:730
-       smc_vlan_by_tcpsk+0x251/0x620 net/smc/smc_core.c:1908
-       __smc_connect+0x44d/0x4890 net/smc/af_smc.c:1520
-       smc_connect+0x2fc/0x760 net/smc/af_smc.c:1696
-       __sys_connect_file+0x13e/0x1a0 net/socket.c:2045
-       __sys_connect+0x14f/0x170 net/socket.c:2064
-       __do_sys_connect net/socket.c:2070 [inline]
-       __se_sys_connect net/socket.c:2067 [inline]
-       __x64_sys_connect+0x72/0xb0 net/socket.c:2067
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #0 (sk_lock-AF_SMC){+.+.}-{0:0}:
-       check_prev_add kernel/locking/lockdep.c:3163 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3282 [inline]
-       validate_chain kernel/locking/lockdep.c:3906 [inline]
-       __lock_acquire+0x249e/0x3c40 kernel/locking/lockdep.c:5228
-       lock_acquire.part.0+0x11b/0x380 kernel/locking/lockdep.c:5851
-       lock_sock_nested+0x3a/0xf0 net/core/sock.c:3645
-       lock_sock include/net/sock.h:1624 [inline]
-       smc_sendmsg+0x47/0x520 net/smc/af_smc.c:2775
-       sock_sendmsg_nosec net/socket.c:718 [inline]
-       __sock_sendmsg net/socket.c:733 [inline]
-       sock_sendmsg+0x3d3/0x490 net/socket.c:756
-       __sock_xmit+0x1e8/0x4f0 drivers/block/nbd.c:574
-       sock_xmit drivers/block/nbd.c:602 [inline]
-       send_disconnects drivers/block/nbd.c:1395 [inline]
-       nbd_disconnect+0x390/0x540 drivers/block/nbd.c:1410
-       __nbd_ioctl drivers/block/nbd.c:1580 [inline]
-       nbd_ioctl+0x8d1/0xd60 drivers/block/nbd.c:1642
-       blkdev_ioctl+0x276/0x6d0 block/ioctl.c:693
-       vfs_ioctl fs/ioctl.c:51 [inline]
-       __do_sys_ioctl fs/ioctl.c:906 [inline]
-       __se_sys_ioctl fs/ioctl.c:892 [inline]
-       __x64_sys_ioctl+0x190/0x200 fs/ioctl.c:892
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-other info that might help us debug this:
-
-Chain exists of:
-  sk_lock-AF_SMC --> &nbd->config_lock --> &nsock->tx_lock
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(&nsock->tx_lock);
-                               lock(&nbd->config_lock);
-                               lock(&nsock->tx_lock);
-  lock(sk_lock-AF_SMC);
-
- *** DEADLOCK ***
-
-2 locks held by syz.4.3048/15507:
- #0: ffff888026642198 (&nbd->config_lock){+.+.}-{4:4}, at: nbd_ioctl+0x151/0xd60 drivers/block/nbd.c:1635
- #1: ffff888028f74e70 (&nsock->tx_lock){+.+.}-{4:4}, at: send_disconnects drivers/block/nbd.c:1394 [inline]
- #1: ffff888028f74e70 (&nsock->tx_lock){+.+.}-{4:4}, at: nbd_disconnect+0x321/0x540 drivers/block/nbd.c:1410
-
-stack backtrace:
-CPU: 1 UID: 0 PID: 15507 Comm: syz.4.3048 Not tainted 6.14.0-rc3-syzkaller-00060-g6537cfb395f3 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
- print_circular_bug+0x490/0x760 kernel/locking/lockdep.c:2076
- check_noncircular+0x31a/0x400 kernel/locking/lockdep.c:2208
- check_prev_add kernel/locking/lockdep.c:3163 [inline]
- check_prevs_add kernel/locking/lockdep.c:3282 [inline]
- validate_chain kernel/locking/lockdep.c:3906 [inline]
- __lock_acquire+0x249e/0x3c40 kernel/locking/lockdep.c:5228
- lock_acquire.part.0+0x11b/0x380 kernel/locking/lockdep.c:5851
- lock_sock_nested+0x3a/0xf0 net/core/sock.c:3645
- lock_sock include/net/sock.h:1624 [inline]
- smc_sendmsg+0x47/0x520 net/smc/af_smc.c:2775
- sock_sendmsg_nosec net/socket.c:718 [inline]
- __sock_sendmsg net/socket.c:733 [inline]
- sock_sendmsg+0x3d3/0x490 net/socket.c:756
- __sock_xmit+0x1e8/0x4f0 drivers/block/nbd.c:574
- sock_xmit drivers/block/nbd.c:602 [inline]
- send_disconnects drivers/block/nbd.c:1395 [inline]
- nbd_disconnect+0x390/0x540 drivers/block/nbd.c:1410
- __nbd_ioctl drivers/block/nbd.c:1580 [inline]
- nbd_ioctl+0x8d1/0xd60 drivers/block/nbd.c:1642
- blkdev_ioctl+0x276/0x6d0 block/ioctl.c:693
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:906 [inline]
- __se_sys_ioctl fs/ioctl.c:892 [inline]
- __x64_sys_ioctl+0x190/0x200 fs/ioctl.c:892
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f0b5198cde9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f0b52883038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007f0b51ba6080 RCX: 00007f0b5198cde9
-RDX: 0000000000000000 RSI: 000000000000ab08 RDI: 0000000000000006
-RBP: 00007f0b51a0e2a0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007f0b51ba6080 R15: 00007ffce7c4c0d8
- </TASK>
-block nbd4: Send disconnect failed -107
-block nbd4: Disconnected due to user request.
-block nbd4: shutting down sockets
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+> 
+> Lucas De Marchi
+> 
+> > 
+> > [0] https://www.spinics.net/lists/linux-block/msg68159.html
+> > 
+> >  Luis
 
