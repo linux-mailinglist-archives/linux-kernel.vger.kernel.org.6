@@ -1,117 +1,139 @@
-Return-Path: <linux-kernel+bounces-527309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9C67A4097B
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 16:22:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98751A40980
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 16:26:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C3E597A824D
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 15:21:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 251193BC69E
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 15:25:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29B4D19D092;
-	Sat, 22 Feb 2025 15:21:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09DCE1C07C3;
+	Sat, 22 Feb 2025 15:25:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="uxCA2qTa"
-Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AzvFCNgu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5567814F9D6
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 15:21:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B60D14037F;
+	Sat, 22 Feb 2025 15:25:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740237717; cv=none; b=o9heOIukg6O7QbEYWTNtfxQb6AF6JTmyeNIJWSQ9bmBSESDjy0YNVwE668E+V5ZRFnjLyDix7npSkj5YK7ydJlqfAn3hME55nHYNL+LxAWUPs8MNTdkC/gNG0lUhxR0yIVWGBSDxGOvv96cIRHc04G5TD/sGdL3Pe5IVNmFrSGE=
+	t=1740237955; cv=none; b=RKpUtZQOlyiG5FzyPN/FHkxQgcRcOsLB1M8bRweJzxe9xb9c/CdKcwdhYNi03t8bdeOC52lOaABd+/6iqqtTrL6k7pdfS2zvgy2ZXuxrRHU6ulm9tpAdj9DDumfCWp/4om2Zx4/YBeN+c6G+bigBRjVnQwwonMYFk9XPg1k7voA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740237717; c=relaxed/simple;
-	bh=0RQL9RDIa/a10b73LeMPQ07MYqfKsWcK7om94Ma9j3M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YhAviawx78cKCnNIQ0sZpm/Wj6z2bUlpSikbtA+KRKL6JR5INhczdR9PGQkpZ/qkYD+OZgsGF0bb919ugozwQl7G4ZAW96e2IJsDSQQ/uwJ/B3/wTZ9adffqsTKSs4zrTeChpSgvPXbjSNMiBYEImKuxKE2RJ3TyXg5Wrub01sE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=uxCA2qTa; arc=none smtp.client-ip=95.215.58.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Sat, 22 Feb 2025 10:21:39 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1740237703;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hFVisseoGUDFJLItKPqXUKJ5q5lMT6Dx6imnkdSreQQ=;
-	b=uxCA2qTaWEvAo6Je5Wz2xpLD1bnSSDYfoDlgUibR4iU6QvfC+u/WpcluUiwtubAJXRD8M1
-	wO82fMVIdNVg4w2op6nHJLmasIHInjEh0AtCgmOBcqLIoVxdScd1v++stszLZT+UwOsTct
-	Nto0UaYnfI+tHSgDb6+UpIj7NRD3bw4=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>, Kees Cook <kees@kernel.org>, 
-	Christoph Hellwig <hch@infradead.org>, rust-for-linux <rust-for-linux@vger.kernel.org>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Greg KH <gregkh@linuxfoundation.org>, 
-	David Airlie <airlied@gmail.com>, linux-kernel@vger.kernel.org, ksummit@lists.linux.dev
-Subject: Re: Rust kernel policy
-Message-ID: <nptg4kade7gjjggphsbltu6t42wpqhppvgmraezcuhqvt2plnw@pjgwgwtmwovs>
-References: <CANiq72m-R0tOakf=j7BZ78jDHdy=9-fvZbAT8j91Je2Bxy0sFg@mail.gmail.com>
- <Z7SwcnUzjZYfuJ4-@infradead.org>
- <CANiq72myjaA3Yyw_yyJ+uvUrZQcSLY_jNp65iKH8Y5xGY5tXPQ@mail.gmail.com>
- <202502191026.8B6FD47A1@keescook>
- <785A9F60-F687-41DE-A116-34E37F5B407A@zytor.com>
- <CANiq72nwouotAqJh_cm=9RG3Ns4wxX0LWXcVwp_bswE29kCrYA@mail.gmail.com>
+	s=arc-20240116; t=1740237955; c=relaxed/simple;
+	bh=5FoHX3Ihpq6uQwdHsZ//hL1s5P1FmjObacFMhwq+9No=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=eGPuVRnlx417Xd0Xz5fQ/d0kOmg8Z9Jzzz1Rs/cYS+sIMgUoDsMb8YCqK5VXgXb/KzyEA5EmTMncdfFefWPR8ifaJsT2CghFgjPuF8lYp+aiCfCgcw3Rr28v0e/P7qaQEca3JqaDOAjJ/Eey+m1hP/8sAsPV95RwEyahPiavGNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AzvFCNgu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE357C4CED1;
+	Sat, 22 Feb 2025 15:25:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740237953;
+	bh=5FoHX3Ihpq6uQwdHsZ//hL1s5P1FmjObacFMhwq+9No=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=AzvFCNgussSYkj6AJHZmpkSgkVM8zJgCfcLakUXfA5ll4Khb1udMQ7pYeY5zipDIk
+	 IaUXihFP0TKgIsy9LBeMX2DMWl3DUxljiD7ZwTCBwopxXcgkRHAM2zhEzxCy6ifbJz
+	 SGKCNW7Go8Uv1fqxpS5bqE4SK5KG9qrdY0EQMIGN8PYL7T1mWL9btLQQzozRRiyI4U
+	 K/h8M6yLGNwzg1y0qzULTpgJJOAbNYlrStjsT+6rnriHdOUxSINve2fOHlWAWEgubY
+	 CsXhsSot3MyUsSolxbcGasAux1BHRWJUP81LkqYnvpWk+0sLeklkFdhILIQTchZSXs
+	 d8OfoyZOGyVVw==
+Date: Sat, 22 Feb 2025 15:25:37 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Eason Yang <j2anfernee@gmail.com>
+Cc: avifishman70@gmail.com, tmaimon77@gmail.com, tali.perry1@gmail.com,
+ venture@google.com, yuenn@google.com, benjaminfair@google.com,
+ lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ nuno.sa@analog.com, dlechner@baylibre.com, javier.carrasco.cruz@gmail.com,
+ andriy.shevchenko@linux.intel.com, gstols@baylibre.com,
+ olivier.moysan@foss.st.com, mitrutzceclan@gmail.com, tgamblin@baylibre.com,
+ matteomartelli3@gmail.com, marcelo.schmitt@analog.com,
+ alisadariana@gmail.com, joao.goncalves@toradex.com,
+ thomas.bonnefille@bootlin.com, ramona.nechita@analog.com,
+ herve.codina@bootlin.com, chanh@os.amperecomputing.com, KWLIU@nuvoton.com,
+ yhyang2@nuvoton.com, openbmc@lists.ozlabs.org, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 0/2] iio: adc: add Nuvoton NCT7201 ADC driver
+Message-ID: <20250222152537.2a24d80f@jic23-huawei>
+In-Reply-To: <20250221090918.1487689-1-j2anfernee@gmail.com>
+References: <20250221090918.1487689-1-j2anfernee@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANiq72nwouotAqJh_cm=9RG3Ns4wxX0LWXcVwp_bswE29kCrYA@mail.gmail.com>
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Feb 21, 2025 at 12:42:46AM +0100, Miguel Ojeda wrote:
-> On Wed, Feb 19, 2025 at 8:34 PM H. Peter Anvin <hpa@zytor.com> wrote:
-> >
-> > a. The apparent vast gap in maturity required of Rust versus C. What is our maturity policy going to be? Otherwise we are putting a lot of burden on C maintainers which is effectively wasted of the kernel configuration pulls in even one line of Rust.
-> >
-> > This is particularly toxic given the "no parallel code" claimed in this policy document (which really needs references if it is to be taken seriously; as written, it looks like a specific opinion.)
+On Fri, 21 Feb 2025 17:09:16 +0800
+Eason Yang <j2anfernee@gmail.com> wrote:
+
+Hi Eason,
+
+Not sure if I asked this before, but this is a device that seems
+to be typically used for hardware monitoring and there are a number
+of similar sounding device in drivers/hwmon/  
+
+That raises a couple of questions:
+1) Is it compatible with any of those existing drivers?
+2) Why IIO rather than HWMON?
+
+There isn't normally a problem with having a hardware monitoring
+related device supported by IIO, it is just good to know if your
+usecase makes that a good idea.  We have the iio-hwmon bridge
+driver to solve the problem of a device than can be used either
+as a generic ADC or as a hwmon type monitoring device (which tends
+to have more alarms etc)
+
+Jonathan
+
+
+> Change since version 4:
+>  - Fix comments
+>  - Add interrupts and reset-gpios to the DT example
+>  - Use the FIELD_PREP and FIELD_GET
+>  - Add use_single_write in regmap_config
+>  - Use regmap_access_table
 > 
-> There is no "no parallel code" in the document, and I would like a
-> clarification on what you mean by "toxic" here.
+> Change since version 3:
+>  - Fix comments
+>  - Don't put nct720"x" in the name, just call it nct7201
+>  - Remove differential inputs until conversions are finished
+>  - Add NCT7201_ prefix in all macros and avoid the tables
+>  - Correct event threshold values in raw units
+>  - Add with and without interrupt callback function to have the event
+>    config part and one that doesn't
+>  - Remove print an error message if regmap_wirte failed case
 > 
-> I tried really hard to avoid misrepresenting anything, and the
-> document explicitly mentions at the top that this is our
-> understanding, and that the policy could change depending on what key
-> maintainers and the community discuss. (If it is put into the kernel
-> tree, then that solves that.).
+> Change since version 2:
+>  - Remvoe read-vin-data-size property, default use read word vin data
+>  - Use regmap instead of i2c smbus API
+>  - IIO should be IIO_CHAN_INFO_RAW and _SCALE not _PROCESSED
+>  - Use dev_xxx_probe in probe function and dev_xxx in other functions
+>  - Use devm_iio_device_register replace of iio_device_register
+>  - Use guard(mutex) replace of mutex_lock
+>  - Use get_unaligned_le16 conversion API
 > 
-> Anyway, I can only guess you are referring to the "Are duplicated
-> C/Rust drivers allowed?" point. If so, since you want references, here
-> is one:
+> Changes since version 1:
+>  - Add new property in iio:adc binding document
+>  - Add new driver for Nuvoton NCT720x driver
 > 
->     No, don't do that, it's horrid and we have been down that road in the
->     past and we don't want to do it again.  One driver per device please.
+> Eason Yang (2):
+>   dt-bindings: iio: adc: add NCT7201 ADCs
+>   iio: adc: add support for Nuvoton NCT7201
 > 
->     https://lore.kernel.org/rust-for-linux/2023091349-hazelnut-espionage-4f2b@gregkh/
+>  .../bindings/iio/adc/nuvoton,nct7201.yaml     |  57 ++
+>  MAINTAINERS                                   |   2 +
+>  drivers/iio/adc/Kconfig                       |  11 +
+>  drivers/iio/adc/Makefile                      |   1 +
+>  drivers/iio/adc/nct7201.c                     | 487 ++++++++++++++++++
+>  5 files changed, 558 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/adc/nuvoton,nct7201.yaml
+>  create mode 100644 drivers/iio/adc/nct7201.c
+> 
 
-I think we need a more nuanced rule there.
-
-When you're rolling out something new of a nontrivial size, you always
-want to stage the release. You don't want everyone to start using
-10k-100k lines of new code at once, you want it to first hit your power
-users that can debug - and maybe the new thing isn't feature complete
-yet.
-
-If a big driver is being rewritten in Rust (e.g. if we went all the way
-with the nvme driver; that was one of the first prototypes) I would want
-and expect that we ship both in parallel for a few cycles and make sure
-the new one is working for everyone before deleting the old one.
-
-And tends to be what we do in practice, where appropriate. blk-mq was
-incrementally rolled out. No one's even contemplating ripping out
-fs/aio.c and replacing it with an io_uring wrapper.
-
-Wholesale rewrites of entire subsystems in the kernel are rare (because
-we can refactor), but with Rust we'll be seeing more and more of that -
-because most of the really tricky safety sandmines do occur at FFI
-boundaries.
 
