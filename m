@@ -1,104 +1,91 @@
-Return-Path: <linux-kernel+bounces-527305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527306-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 832D6A40967
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 16:14:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7FB6A40969
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 16:15:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFEFB700E3A
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 15:14:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4AB083BC9DB
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 15:15:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDA001C5F37;
-	Sat, 22 Feb 2025 15:14:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3A5719882B;
+	Sat, 22 Feb 2025 15:15:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eITl0yA7"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gTkn4MJG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91F0219882B;
-	Sat, 22 Feb 2025 15:14:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B2C62CCDB;
+	Sat, 22 Feb 2025 15:15:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740237271; cv=none; b=e85x3HPLf35uXqizAxWECV/EOOOcy0P1uo+RjxHDuCOGIBWwq5kQp/hgNPmuA0Mpqk+xccRllt/l+3pmQ2VUQxeZJdPnzrSw3gIK3QLKOQYcHeh/2V/E5Ek909TEu2H3ySRvK4MRpcmT5/vOqgdzLyrbxm3A+76vldXBeburcFs=
+	t=1740237332; cv=none; b=LC4a36cn1VRWOS0xgRqCgVzvBoxBblHDXv6AWsKSVmM8016eNKFbqP/eSycIX8u9vy2P7K583yC6m7o+bX/YHNluGqByK0fOPWm/J2MxJoAuHGpcsERt6kTkX0XeZ3XIE0CYBMuzgBrEbuGFV8TYQkYJ0ad1L08AywgTJJewt0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740237271; c=relaxed/simple;
-	bh=gb4Sl+NAFfnDd3eu0lMM0znOWH1iZWbVNbCdUr6/vmE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rhtNAZn5WHFJYGYU26bLg368uNAUji22oCM+fX2ScHd7yJKHiRePIUcPFwqSbpMxHkuXVda9I3nnP+Rt/ZDNAJi2ChDwFaEfJTcQ7HCb/AlomFpG64Z+0cyscA+ghpwsqgeOw7C/z3y1TJ6kYVFgO1UAo+jWSIBEthDYbfj0IDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eITl0yA7; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5456a71a7d9so532710e87.3;
-        Sat, 22 Feb 2025 07:14:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740237268; x=1740842068; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gb4Sl+NAFfnDd3eu0lMM0znOWH1iZWbVNbCdUr6/vmE=;
-        b=eITl0yA7Drayy6Et1i8gGRpTP5I0u8QQINLZglpysJzRhCqKquswYdxneS8RFzTbSb
-         3lJ2S/MfpKIQBnHd+vPDXC+SrrX7xI8fJVXyz9ulKky2Fufydtz8vOryxuUraDuZ349m
-         d95smFGOiqk4fJm6oPuz3DA5TZa4gvHF/8JcawWNhISJZBjnvwOmePuo3ji5WhBa9PCS
-         XyEbhw6zL152f1xoh837W47WTOSX5wkdLCZR62RkqtPuWvAYndwVDwIiVxUqcyC6VA6o
-         0t0IMEEdSQpxWpXp/8yEqaerkVBCu4dNRgmodhtQOqPBtacyIHkAX9vTDoHOkrQqx00Q
-         tLKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740237268; x=1740842068;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gb4Sl+NAFfnDd3eu0lMM0znOWH1iZWbVNbCdUr6/vmE=;
-        b=m/6xiBpFMiIygZkvqLaI6ITCXcmEBaluf3tENazKfB+9Mhunewjm7Npi7/RteQr0L1
-         37R40IqKUZnAljpvvTxnSXCXSbc9FYZvcXeRtmdqEeHXBdng6RR04imtrnNF7UOPIQRv
-         osMOF/txwhQCzVfN5HgKb94GcjQBhAisQj9R18kP7Orh8Ppfmt6irnZflXslFdIOoC28
-         xdTA0GmRGwO18bSzdXfuHs/jJVRxB/0yQKj+K+poBk7xMaHp7O7y4Xj9QaR3jeXxkzcw
-         Md8KkPp5wXtDE1IUTPJbQqBobhE3/ImaaIRZI/AW5uUasU6Szr9mHE/47IE/7F6ZXaSx
-         CVPg==
-X-Forwarded-Encrypted: i=1; AJvYcCUpMwoTNge1IJIaRocDy682q0nj6zR6vudBSdi5HLmoBjJXUJbbctlCNKasTedy/ry3tjVg0uQf2vARKS0=@vger.kernel.org, AJvYcCXDAfHPZJS7vbtk7mR2pJKFzIYLOdUhgkq7LiKjULQMiOtrj24AiHzqTyUzfE1DFqy5v4kzqWWaWvrxG88wp1c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywfwak0Wur6EFhHN7DzVLVKEq+AK1ZrCK7UEFXsaxg1viz4H7b1
-	BN82LEQE3sutbFhjyJfCCdtZw3WQB/rh1iOKkPr5AXkBrun/oXQB3oah70qXA6hTxvJrgJOPQQ+
-	/QsHLrWJp9YreWIe7GyAavQpfrTw=
-X-Gm-Gg: ASbGncuI8WyWuyimOXeTz5zzF/RpNVDLx4UIgwAcT6X8KOd5YCkuFy9NKbJFGt1VvNO
-	Gn8ht3zL7Opkg1AtVlO4gtJ3LMh7ZwHwLeltEO48nmbrhMPbQuRBaoCtDuxvSl8c6PMNUca6EmX
-	vzlD52H0s=
-X-Google-Smtp-Source: AGHT+IH8Tym24vcrnRxEuyslXSwW3y9ZazTyaHZg3gYD5Yy0qwHtZLgjrL5WHKrpGR42kgpwlimOtJGd7bnoDbYEgQ8=
-X-Received: by 2002:a05:6512:e99:b0:545:2fae:cffe with SMTP id
- 2adb3069b0e04-54838f5a573mr936010e87.10.1740237267476; Sat, 22 Feb 2025
- 07:14:27 -0800 (PST)
+	s=arc-20240116; t=1740237332; c=relaxed/simple;
+	bh=sJrdFo5kUWwYj0rpinJ3eGq+yCAES26qMAIh9ssBxzE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IWPPr9KFgUkHFmX5rtwquigP5VS+EG1mH37Z3t9n8HBttXDHHuffJpaEYiceionBYpVQQwWruL5bP+JKzYFe8OvafUhnJatu7o3A8TP3iepzmaIOlAVxgbjxYhQjRrOwVqP1zNm6HJqy4ssakk0a+0Kgd9eHRdIIE1c77UZU3k8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gTkn4MJG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0FF0C4CED1;
+	Sat, 22 Feb 2025 15:15:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740237331;
+	bh=sJrdFo5kUWwYj0rpinJ3eGq+yCAES26qMAIh9ssBxzE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gTkn4MJGpYwOtt6j6SRHE/mTp03KEyEK/OjJSG1ziLWqoPWuuej9YtU+Jo+q83r0B
+	 5JVumBS6v8Ekwe//m4GrKTf8Jw0riW2vD+pcPi7XSaZpZrv8Ec0hSF2O6wWguDy3wJ
+	 RB/5ozFELdkJCUwlduTbpftDKtzlFZ7S5SteC5mCpkto0ONTEwRXkBRr/U1xKNri8z
+	 uwhL8QNNv4YAcvuvg1ZMikPPmFV2JFSCyscoU504ARiBA7k78UFse5y63g6xk6HYX8
+	 nK0gdUgMr3IuQt+BquKciEROuycR4LVcONBcWBiIJlcqSk2zI3zXCdptO1yYBvGzdj
+	 IlKEk6YPSAo3g==
+Date: Sat, 22 Feb 2025 07:15:28 -0800
+From: Kees Cook <kees@kernel.org>
+To: Brian Mak <makb@juniper.net>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Jan Kara <jack@suse.cz>,
+	Michael Stapelberg <michael@stapelberg.ch>,
+	Christian Brauner <brauner@kernel.org>,
+	"Eric W. Biederman" <ebiederm@xmission.com>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>,
+	Oleg Nesterov <oleg@redhat.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH v3] binfmt_elf: Dump smaller VMAs first in ELF cores
+Message-ID: <202502220712.D7B251910A@keescook>
+References: <036CD6AE-C560-4FC7-9B02-ADD08E380DC9@juniper.net>
+ <20250218085407.61126-1-michael@stapelberg.de>
+ <39FC2866-DFF3-43C9-9D40-E8FF30A218BD@juniper.net>
+ <a3owf3zywbnntq4h4eytraeb6x7f77lpajszzmsy5d7zumg3tk@utzxmomx6iri>
+ <202502191134.CC80931AC9@keescook>
+ <CAHk-=wgiwRrrcJ_Nc95jL616z=Xqg4TWYXRWZ1t_GTLnvTWc7w@mail.gmail.com>
+ <202502191731.16FBB1EB@keescook>
+ <5870D095-D47F-447F-A079-B32D9C415124@juniper.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ef950304-0e98-4c91-8fa1-d236cbb782b8@disroot.org> <CANiq72=WyQdQfoOeb_mK=J_5GtiWBenqzA+mOr=8mN8OTWPB-g@mail.gmail.com>
-In-Reply-To: <CANiq72=WyQdQfoOeb_mK=J_5GtiWBenqzA+mOr=8mN8OTWPB-g@mail.gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Sat, 22 Feb 2025 16:14:12 +0100
-X-Gm-Features: AWEUYZkDVyQ7F4Gp9ybyNiW1F1rAJPNqvAp0Zrl2cJ0pS2ctF7P1QLlwfAuRl3I
-Message-ID: <CANiq72=gJCauuTv3_+vvHU2r=nFpKCdL5tsjS+mj7Ttqra5oLA@mail.gmail.com>
-Subject: Re: FTBFS: Rust firmware abstractions in current stable (6.13.4) on
- arm64 with rustc 1.85.0
-To: NoisyCoil <noisycoil@disroot.org>, Danilo Krummrich <dakr@kernel.org>
-Cc: stable@vger.kernel.org, regressions@lists.linux.dev, ojeda@kernel.org, 
-	alex.gaynor@gmail.com, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5870D095-D47F-447F-A079-B32D9C415124@juniper.net>
 
-On Sat, Feb 22, 2025 at 1:20=E2=80=AFPM Miguel Ojeda
-<miguel.ojeda.sandonis@gmail.com> wrote:
->
-> Thanks for the report! Yeah, I noticed in my builds too but didn't get
-> to it yet (there are also a couple Clippy warnings in the QR code too,
-> in case you see them).
->
-> Cc'ing Danilo in case he wants to send the fix, otherwise I will.
+On Thu, Feb 20, 2025 at 10:59:06PM +0000, Brian Mak wrote:
+> One thing we can do though is to iterate through the pages for all VMAs
+> and see if get_dump_page() returns NULL. Then, we use that information
+> to calculate a more accurate predicted core dump size.
+> 
+> Patch is below. Thoughts?
 
-s/fix/backport -- actually, sorry, I just sent it.
+I've pushed this to -next for a few days of testing, and if it's all
+good, I'll send it to Linus next week for -rc5 (and -stable).
 
-Cheers,
-Miguel
+https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/commit/?h=for-linus/execve&id=ff41385709f01519a97379ce7671ee4e91e301e1
+
+-Kees
+
+-- 
+Kees Cook
 
