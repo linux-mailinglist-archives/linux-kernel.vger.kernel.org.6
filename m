@@ -1,44 +1,44 @@
-Return-Path: <linux-kernel+bounces-526908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 116C5A40505
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 02:59:43 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 304A5A40506
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 03:03:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C5FF707ADE
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 01:59:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 236CF7ABAB0
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 02:02:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30EE31E3DED;
-	Sat, 22 Feb 2025 01:59:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2BD149652;
+	Sat, 22 Feb 2025 02:03:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="phqlLgne"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tV/o1Cjm"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81011250EC
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 01:59:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 374CC4C6C
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 02:03:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740189576; cv=none; b=ukEYhslj6QcrXAikRGqGq09HKIGxaDpBaCbBKxB4E/6UUdPyocJvnfOMzUy9v5ZQQpkRtOZ4PCUZ5shFx9t0AtA7w9lAD1DIev3fxtKvwAWQr8a2gsMdZAx4PEARii8BOWCPxRpCysoSHoiGy4OP0k02249rehxbxNjURClkSns=
+	t=1740189826; cv=none; b=bzSbueQ9ZRPFRliS/2fJrdbpVDCxYPV9NszYEjYeXAFQ0wcZ6kQIasY3z6yhEqpbateIRNaAcdQ1++Qvw7oidgnCTfQAaU36tq+KDCwDC3mEK00NkzgH89LYIfle/FHBce6ugHl+B6hlB6cvorPOUsrGKoO6ObBtR+3tZSfkRQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740189576; c=relaxed/simple;
-	bh=fEv/Q0O3RbsP2hU79ncp1CJKaoCqjxFDgU7McqA4jAY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=A+xGzTWCgua81dAoTONPe346Oh7+NhwfBGWjALKCCqfzSwZCTm43enVfXxvomxN7+A7DeCfu/E137QanUmkxyDCZ+mUnojSsfEvtp/BBDWJ/QmhxjNozsOHsZHCD5kZXb/PDWInLij1/QTEWYD7Zx5mikjn4uVWolEG54tTUYa0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=phqlLgne; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EEEE7C4CED6;
-	Sat, 22 Feb 2025 01:59:33 +0000 (UTC)
+	s=arc-20240116; t=1740189826; c=relaxed/simple;
+	bh=zTgeppf3OaDx9F9Wj/ut4CP1XU4XvRogSE8XAJXihNs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OFdJccEcgZp6PcZp0NhnOFSkUrzNawMarGxLeUopluvLI54vZYorq5TMk7kqeTPpUZUZ/5dHXDB4GUDYbBm5BFI/LOa2rE66rAanK8q0jfpa7NEEHcGwPbf67ZsJYDKKMJb6r3h0gUp/v/8xMzuUnxHXfN1K69LgMkHFKIPfnbo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tV/o1Cjm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90908C4CED6;
+	Sat, 22 Feb 2025 02:03:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740189575;
-	bh=fEv/Q0O3RbsP2hU79ncp1CJKaoCqjxFDgU7McqA4jAY=;
+	s=k20201202; t=1740189825;
+	bh=zTgeppf3OaDx9F9Wj/ut4CP1XU4XvRogSE8XAJXihNs=;
 	h=From:To:Cc:Subject:Date:From;
-	b=phqlLgnerjDencUXlMkJsfHfqFwRMnyyYZa67WsnhYIaeX8iBETky7kxO0vNpZwlZ
-	 IGs19lTKIEEsMaIkW/T/JD0okhEFFI6ECIRvvOqkchq+AFFpefFQ+oZygwltW91WbD
-	 jIPp68fhKqSOoPasi4VF9HViJTOv8q702+84ciYlazTsL6zBHv2LEfhmGhlGwFqWyi
-	 PCT6ByO+Nv+rxnVl3W1bvN1MDcgOzZoI8BFB9XZM70350rUVbMqk83lst9LHOV2m0u
-	 05Jfcj9d/jQYhXTs9I9SNuxUs+vs25U/uvBiK7QEEmMqKT1eujVY4pmm7Cn2HHhsCd
-	 WfbnrUl+cW3dw==
+	b=tV/o1CjmP2ClCSwskGtlaP7qWo0u0evdtK7BVXwu5XEMYJZtB939V73pmn+hEOdYF
+	 LKQNjG+bKDevcqB/UbPeeMg+HyttXwZ01NcR7wdbqb0msTqTMdj4w+5rljckKNUuCG
+	 8tD5SlrHvw2Kjz60xEhnV4Yy0lMOTMmVS5lWt2ogvgOKgj7fDYoQV9vP/xmogsY9WU
+	 HDAzOX1BOIcIn0wGM6sR7l/ymvOPKxduE2ffUfKsJ99pW4L4x0uap+8YUGXZTOVTTR
+	 l37QpNtRZda1a+eYlhl8m0AaGeAYOvyrTE+YqSetWKgjmsLkQE9TGjQE34EE5ue22Y
+	 xtSTX982Pi2/g==
 From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
 To: Peter Zijlstra <peterz@infradead.org>,
 	Ingo Molnar <mingo@redhat.com>,
@@ -57,8 +57,8 @@ Cc: Boqun Feng <boqun.feng@gmail.com>,
 	Sergey Senozhatsky <senozhatsky@chromium.org>,
 	linux-kernel@vger.kernel.org
 Subject: [PATCH v3 0/2] hung_task: Dump the blocking task stacktrace
-Date: Sat, 22 Feb 2025 10:59:30 +0900
-Message-ID:  <174018957063.2754424.7449649863154821527.stgit@mhiramat.tok.corp.google.com>
+Date: Sat, 22 Feb 2025 11:03:40 +0900
+Message-ID:  <174018982058.2766225.1721562132740498299.stgit@mhiramat.tok.corp.google.com>
 X-Mailer: git-send-email 2.48.1.658.g4767266eb4-goog
 User-Agent: StGit/0.19
 Precedence: bulk
@@ -94,20 +94,19 @@ because it is sleep in interruptible state.
 This adds a feature to dump the blocker task which holds a mutex
 when detecting a hung task. e.g.
 
- INFO: task cat:113 blocked for more than 122 seconds.
-       Not tainted 6.14.0-rc3-00002-g6afe972e1b9b #152
+ INFO: task cat:115 blocked for more than 122 seconds.
+       Not tainted 6.14.0-rc3-00003-ga8946be3de00 #156
  "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
- task:cat             state:D stack:13432 pid:113   tgid:113   ppid:103    task_flags:0x400100 flags:0x00000002
+ task:cat             state:D stack:13432 pid:115   tgid:115   ppid:106    task_flags:0x400100 flags:0x00000002
  Call Trace:
   <TASK>
   __schedule+0x731/0x960
   ? schedule_preempt_disabled+0x54/0xa0
   schedule+0xb7/0x140
-  ? __mutex_lock+0x51d/0xa50
-  ? __mutex_lock+0x51d/0xa50
+  ? __mutex_lock+0x51b/0xa60
+  ? __mutex_lock+0x51b/0xa60
   schedule_preempt_disabled+0x54/0xa0
-  __mutex_lock+0x51d/0xa50
-  ? current_time+0x3a/0x120
+  __mutex_lock+0x51b/0xa60
   read_dummy+0x23/0x70
   full_proxy_read+0x6a/0xc0
   vfs_read+0xc2/0x340
@@ -118,15 +117,15 @@ when detecting a hung task. e.g.
   ? exc_page_fault+0xa9/0x1d0
   entry_SYSCALL_64_after_hwframe+0x77/0x7f
  RIP: 0033:0x4840cd
- RSP: 002b:00007ffe632b76c8 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
+ RSP: 002b:00007ffe99071828 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
  RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00000000004840cd
- RDX: 0000000000001000 RSI: 00007ffe632b7710 RDI: 0000000000000003
- RBP: 00007ffe632b7710 R08: 0000000000000000 R09: 0000000000000000
+ RDX: 0000000000001000 RSI: 00007ffe99071870 RDI: 0000000000000003
+ RBP: 00007ffe99071870 R08: 0000000000000000 R09: 0000000000000000
  R10: 0000000001000000 R11: 0000000000000246 R12: 0000000000001000
- R13: 000000003a8b63a0 R14: 0000000000000001 R15: ffffffffffffffff
+ R13: 00000000132fd3a0 R14: 0000000000000001 R15: ffffffffffffffff
   </TASK>
- INFO: task cat:113 is blocked on a mutex owned by task cat:112.
- task:cat             state:S stack:13432 pid:112   tgid:112   ppid:103    task_flags:0x400100 flags:0x00000002
+ INFO: task cat:115 is blocked on a mutex likely owned by task cat:114.
+ task:cat             state:S stack:13432 pid:114   tgid:114   ppid:106    task_flags:0x400100 flags:0x00000002
  Call Trace:
   <TASK>
   __schedule+0x731/0x960
@@ -145,12 +144,12 @@ when detecting a hung task. e.g.
   ? exc_page_fault+0xa9/0x1d0
   entry_SYSCALL_64_after_hwframe+0x77/0x7f
  RIP: 0033:0x4840cd
- RSP: 002b:00007ffd69513748 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
+ RSP: 002b:00007ffe3e0147b8 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
  RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00000000004840cd
- RDX: 0000000000001000 RSI: 00007ffd69513790 RDI: 0000000000000003
- RBP: 00007ffd69513790 R08: 0000000000000000 R09: 0000000000000000
+ RDX: 0000000000001000 RSI: 00007ffe3e014800 RDI: 0000000000000003
+ RBP: 00007ffe3e014800 R08: 0000000000000000 R09: 0000000000000000
  R10: 0000000001000000 R11: 0000000000000246 R12: 0000000000001000
- R13: 0000000029d8d3a0 R14: 0000000000000001 R15: ffffffffffffffff
+ R13: 000000001a0a93a0 R14: 0000000000000001 R15: ffffffffffffffff
   </TASK>
 
 TBD:
