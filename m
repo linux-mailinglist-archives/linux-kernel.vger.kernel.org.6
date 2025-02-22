@@ -1,106 +1,121 @@
-Return-Path: <linux-kernel+bounces-527343-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27027A40A16
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 17:36:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15C43A40A19
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 17:38:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70E8019C097D
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 16:36:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1AEFD3AFCAA
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 16:37:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B403A20125F;
-	Sat, 22 Feb 2025 16:36:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7C1A20101F;
+	Sat, 22 Feb 2025 16:37:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YacEjXNT"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OIGzufvG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86EFA13C81B;
-	Sat, 22 Feb 2025 16:36:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D06113C81B;
+	Sat, 22 Feb 2025 16:37:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740242187; cv=none; b=k7Q4VxOQ3lB92TAItnQe+YgJZ9OKGzixpI7QuQO+PaMFjkPAzYomckFqIYwZXnzGuuMQF7xofMVgNsWmNZCvbT/p+gi2Ddj9dvAobLohiVLbW6Lsa3q9QYNOc+yj3WyfCDgYrH7vsm5jeycIgA9UK/GE9yeN78adcypGA3m+wWk=
+	t=1740242278; cv=none; b=q21hGzBa8xrhFYsnpjR15glZQ9gb24EvGFBO0fT4a8dt+vVtaAfuIEz9Yi86YAlj1+LdI9VVBA4RU7T33dm3HrTnASbHCx1GXjRqqPlvo4uOLOEnFwSlTt2Rbo3ZJdaHerRJUuPs00jw1GfzkOt+4W5ArCGQVoWuBNvo+iUWZm8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740242187; c=relaxed/simple;
-	bh=rtocORGzCiCgEQdJ5J8bKjDbeb2QhBgSx+UwY48U/hE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=g676ojQ3sIDyruU8QosowznIi5libSbtFOBAEnZS5AaXGAY2kfkSVjza8FLq3ZqmBMRZncxgn7dEaHRA6ioGQA4R3hGcNPVarIgmJ1KqBr7PnFNpoXP2v1c0g2QS+yuyIqKRD8ErhyGyV0oh1Rnm9hCqdxuzFvMfRYFqIuDumcA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YacEjXNT; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5dedd4782c6so5852344a12.3;
-        Sat, 22 Feb 2025 08:36:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740242184; x=1740846984; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rtocORGzCiCgEQdJ5J8bKjDbeb2QhBgSx+UwY48U/hE=;
-        b=YacEjXNTT+t9oJyXD/ZCmJ+MAcy2oaluZBojcQzBvlZgYrox6ZLOM8aSTyXbfjcbQH
-         kps0nhZwlBH82cQicZuUl5VypKIechg6XwbW/vZjS6jE76z/vSVOnKGtjTtZWBlQB9+H
-         H0QovYw9ql2j3H6NnT4tJ+Eq4iCx33wWBwPfS3mkbQugwDu9gO17suCk0qLg57Sf5YPv
-         zljryDadNpScPM/A9TtRBrPaUmsXZE+hc2rcNTakrtX6TwSP5teP0EL98yzWM1LnmjKb
-         HyVNN3gZyna372HJt3a9tuplKhxyx9Bsehs7KFNSIkc8UfbgPWFf11nuAPVB32iZyiDR
-         w1zw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740242184; x=1740846984;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rtocORGzCiCgEQdJ5J8bKjDbeb2QhBgSx+UwY48U/hE=;
-        b=YnAzuFgQ7+bqbXI1VVTIwOD2tAutP3K4amVIECuv/Pr7tYNbRtcHf0T6pFgAcXamQA
-         aSWW8uOfVFirs5ndWpdaQ0RS21M3BmL3AT6FvFbV+2gz4Do2gB5YzMMUlqB2nClFYmIA
-         W09PUMZ0JoqyXi8gvrb2Htf8I4o/i0I3lBDzv0qoKSUZ7BKfNX2q4LAzOcChBwsQ6i/n
-         GlBiGazJjl3n9yJrIYN0MFD2VkvhKNehjnUZk3ZynYp28utcF6V3iSHthZMPh8lPZRwK
-         H6n112xAD1hCSmTrvWRNyZXQXaL6X9zPe3sctvLljHLCnHME1Pt8r554U9C6InNCheTF
-         kpjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUFKMyKnhYgDAz+bb+uXLkrjPFuq0Q2NEPNh4z0/qeOzu50o8CmFmL/bH8OU4NaG6fc0b/zcVvu+bmVI9Hs@vger.kernel.org, AJvYcCUR/hFEegsfQNH0kdIMS2p6pX9lMjcAPJgrGXsMmszG75gizwcSjZHm+IjqIyidGI8e607WJP/1tYAeVdGZ@vger.kernel.org, AJvYcCUeG7IQP1Uds7mIp91yJuhKdInCEPhiegfQXNkiR7jZL7uOy6vpkIUvv42hYg2NtO/jS+uo6/lvNIM3Kxy3kD9o@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywak1IveBzm/uapjTM7q8yPty56hH5MI41JVdWQEmwxaab6rO3W
-	2xgajm7+mgYF9CO27QB5NSUV0fsWxXWxwJzK8u0T+5jBoY+hARg3PYVJ5eL6oyEod+X1e9ZeRrz
-	dQ92FJS4MrRuE/ZlMXQSiqhJn64s=
-X-Gm-Gg: ASbGncu8n8h5Mrjd2hneS+JH4UL/PAFXmT8ceGevP9BlqFOWlmiM3FEEBw2FU8rQpfL
-	w/IiAAb8Vhfra6ntyHUs7SXGYckxK5WaLDfG1MwnOEOw+zwigzEjp/OwX60W/zF+/CXZBDbZPi4
-	awhmlleg==
-X-Google-Smtp-Source: AGHT+IFoTbdYhtMQGikIy6G8PoWJvpf+gybBSbSK/2WABhKajv8WRol8YlxcddMnnL2dDGgT019UyARxlKZVnElem8U=
-X-Received: by 2002:a05:6402:3509:b0:5e0:4276:c39e with SMTP id
- 4fb4d7f45d1cf-5e0b724439amr7711854a12.30.1740242183583; Sat, 22 Feb 2025
- 08:36:23 -0800 (PST)
+	s=arc-20240116; t=1740242278; c=relaxed/simple;
+	bh=UVtI9FKhq6xNIoP2diOooo/tNDKOY5lvDO738ZKQZU4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LSs6b094Hc3Lo4emzgslNXTi58JU5DMS4q3YuSyjnFShKqOCXZbWMAEIOQQ5Lu/dNyF0RIaWYdy2jqv6RXjDunv/OpPWxGv+Q+mohDdEvATyqAPuy0V547TD1XgEq7l929f5o2z8VlWzkpkMQb4M8arrAkEDPFrKhnkfoBak4sY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OIGzufvG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8DC79C4CED1;
+	Sat, 22 Feb 2025 16:37:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740242277;
+	bh=UVtI9FKhq6xNIoP2diOooo/tNDKOY5lvDO738ZKQZU4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=OIGzufvGo+L+ucJlP/R2ikGkydzv8U8kUWnVmjCzaB5ZB1hkY7TPowKZFEx7poEMN
+	 p2wVAoXe83Ei2CYMby9WLWpI8hCmzRU/4Yxlh5GHNUNhYwslCpUm1j6euzX6rrl1GC
+	 xFjxnWkPTC4sygck/IdzTepgGpRAcqN82UqxzuYkNmEZs0f7fwhhp+3K51VOfJjNvp
+	 SZ+BMMkhhgBuaU4F4bqD6kLbXDra1ZAIbwxpVPu7UI/ChIAXMjdxtM3MgD4mxYxvMA
+	 Q3CzanwzG5sMsyw2RR5LEeia7wcoHaUkAxkMGNp0iZOEpr4F1D792Zt6u7rNo5jTow
+	 /THMh3deoKjUw==
+Date: Sat, 22 Feb 2025 16:37:52 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Jun Yan <jerrysteve1101@gmail.com>
+Cc: lars@metafoo.de, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] iio: gyro: bmg160_spi: add of_match_table
+Message-ID: <20250222163752.5eb0d694@jic23-huawei>
+In-Reply-To: <20250220165001.273325-2-jerrysteve1101@gmail.com>
+References: <20250220165001.273325-1-jerrysteve1101@gmail.com>
+	<20250220165001.273325-2-jerrysteve1101@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231112095353.579855-1-debug.penguin32@gmail.com>
- <gfnn2owle4abn3bhhrmesubed5asqxdicuzypfrcvchz7wbwyv@bdyn7bkpwwut>
- <202502210936.8A4F1AB@keescook> <CAGudoHHB6CsVntmBTgXd_nP727eGg6xr_cPe2=p6FyAN=rTvzw@mail.gmail.com>
- <202502220717.3F49F76D3@keescook>
-In-Reply-To: <202502220717.3F49F76D3@keescook>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Sat, 22 Feb 2025 17:36:11 +0100
-X-Gm-Features: AWEUYZmKQosZykKblnkg3KxtVoch81HrzwmyrB7GiwZeJcOjQPtX6hxk5lhJCdI
-Message-ID: <CAGudoHGtRdu-s=RKDbQtcOxNx8NBaCvJFmq7u+kUbVymLTZj1g@mail.gmail.com>
-Subject: Re: [PATCH] qnx4: fix to avoid panic due to buffer overflow
-To: Kees Cook <kees@kernel.org>
-Cc: Ronald Monthero <debug.penguin32@gmail.com>, al@alarsen.net, gustavoars@kernel.org, 
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
-	brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sat, Feb 22, 2025 at 4:17=E2=80=AFPM Kees Cook <kees@kernel.org> wrote:
->
-> On Sat, Feb 22, 2025 at 01:12:47PM +0100, Mateusz Guzik wrote:
-> > If it was not for the aforementioned bugfix, I would be sending a
-> > removal instead.
->
-> Less code is fewer bugs. I'm for it. :)
->
+On Fri, 21 Feb 2025 00:50:00 +0800
+Jun Yan <jerrysteve1101@gmail.com> wrote:
 
-Removed code is debugged code.
+> Add of_match_table to bmg160_spi driver.
+> 
+> This fixes automatic driver loading by userspace
+> When using the device tree and the driver is built
+> as a module, devices can be probed.
+Wrap patch descriptions at 75 chars as mentioned in submitting-patches.rst
 
---=20
-Mateusz Guzik <mjguzik gmail.com>
+> 
+> Signed-off-by: Jun Yan <jerrysteve1101@gmail.com>
+Hi.
+
+The patch content is fine, but I'm doubtful about the autoloading.
+Did you actually try this and see a failure without this patch?
+
+For SPI autoloading even with device tree compatibles should work without
+the of_match_table though it will match against the compatible without
+the bosch, part.  Maybe I missed a change that means that no longer
+works.
+
+I in general don't mind the actual change because it does ensure
+we have the manufacturer in the match as well so makes future
+problems less likely.
+
+Jonathan
+
+
+
+> ---
+>  drivers/iio/gyro/bmg160_spi.c | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+> 
+> diff --git a/drivers/iio/gyro/bmg160_spi.c b/drivers/iio/gyro/bmg160_spi.c
+> index fc2e453527b9..ac04b3b1b554 100644
+> --- a/drivers/iio/gyro/bmg160_spi.c
+> +++ b/drivers/iio/gyro/bmg160_spi.c
+> @@ -41,9 +41,19 @@ static const struct spi_device_id bmg160_spi_id[] = {
+>  
+>  MODULE_DEVICE_TABLE(spi, bmg160_spi_id);
+>  
+> +static const struct of_device_id bmg160_of_match[] = {
+> +	{ .compatible = "bosch,bmg160" },
+> +	{ .compatible = "bosch,bmi055_gyro" },
+> +	{ .compatible = "bosch,bmi088_gyro" },
+> +	{ }
+> +};
+> +
+> +MODULE_DEVICE_TABLE(of, bmg160_of_match);
+> +
+>  static struct spi_driver bmg160_spi_driver = {
+>  	.driver = {
+>  		.name	= "bmg160_spi",
+> +		.of_match_table = bmg160_of_match,
+>  		.pm	= &bmg160_pm_ops,
+>  	},
+>  	.probe		= bmg160_spi_probe,
+
 
