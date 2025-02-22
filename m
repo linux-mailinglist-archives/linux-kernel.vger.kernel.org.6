@@ -1,73 +1,75 @@
-Return-Path: <linux-kernel+bounces-527423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC8AAA40B17
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 20:06:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F6D4A40B18
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 20:06:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 546EA70040F
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 19:06:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62B997003EF
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 19:06:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAE1920B213;
-	Sat, 22 Feb 2025 19:06:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FCD6211A34;
+	Sat, 22 Feb 2025 19:06:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Su8c9AvE"
-Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PLvMBLo+"
+Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 913751CBEAA
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 19:06:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17D0C1E7C24
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 19:06:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740251198; cv=none; b=Ug7t2XjF29TMAWI6EE35EdTOuZQpfHzf27sHftwn3kjUOfVXLbxX9FZCVqraowBn8ay8jmzeh0gW3j8LYr4o+hOk95gHcRKK0DVnM9oUZjLlUW9LrtPTS6ptA9ii2flszzqIyZuNH6Fk3zocBWCNDSxl6ioP7If9aXgZMTaHkDk=
+	t=1740251199; cv=none; b=uy6OZDxsdqU6wqZPL2z2DcbhUFdZzGnnKKQgqDD6IF7wVDHDhKDsue0IIiTNCJzOXYVXPAeQviBVdYcoSvqrAN/0ru5C5sgqkKg52NU4f0IhH2Ow6Zcp8R1GFLZDODvciE+aPuavmJSkBtkg0kOIQY2k3u8rQlq57CKaGfCngkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740251198; c=relaxed/simple;
-	bh=wNNGL42KaRimbUYjIPol1fhsRgsVdv8kh4Fp/2KhCw8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EIcVq2GX+NhtJJ7XFUiSsHYrVK5J26ehSgA0Rt0I6d6bsZOW5EXiBxDNTsbMljWBt/TCrLseqUg2OqSyH0eB3EwMLtoF/RyGnlmI77LgSgwpoBBLxAAQ7krSUX+qjW+DtKx/tz2Pht98UyjVTRLMVtWARX4tHtWABeSI4cn84ag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Su8c9AvE; arc=none smtp.client-ip=209.85.222.178
+	s=arc-20240116; t=1740251199; c=relaxed/simple;
+	bh=MAYGHgbYKY62qo0XK/PUpsTFLR0EoTZHSLQDaF1ALp8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ODSs+4+ZPexqQk2LSnb/dI15pFdVAk0ez7GvFGzgRquvQpOqQmxd3DOQtofUGNJudD7ZDFQaC/GP54hqZWg41NZTWupl0uhezzb0jUuekM1Vwx2PUKBIrH4fDSkeuTiywlGA7uTPyAELn4EmIWcdVMpbk1xQcJLhLEwlj9lG7CM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PLvMBLo+; arc=none smtp.client-ip=209.85.222.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-7c0a1677aebso309337585a.0
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 11:06:36 -0800 (PST)
+Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-7be3f230436so313323185a.3
+        for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 11:06:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740251194; x=1740855994; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=DiabidSOAyQsf+B3XgHW1kyRRESYAYqsI/IhtP+orBs=;
-        b=Su8c9AvEsHtdMrF/GaMONzS4rk3eU3ZOQVd+97HVYm9LJHzfTkRL8KakRhRr4vg+u+
-         w8yj5j6RvWDM/zMlB4YdAXKk/crMZdLp42YIeGCj10I+UWuE/8BfGax+pDm0MFYETLEW
-         4olTfmjfEQZfQn0h9Gg7H0JDgVgrIQXOn/9NGsM0qpgiWHxaN1vY4iPHOwyduv+ywetY
-         QAW36qZxZnU/IhdqDPq9eE8xMTi5z5Bm52JMamEDg6Zfev5nRoN2rI49lS+HLYZhvPwy
-         QS8gs5O0dgnuTeh/nXSEZniTLxIwKF0xTg5gEnrZ7eQzr6bAYG9KOoaaYEfOSItvqegU
-         Niuw==
+        d=gmail.com; s=20230601; t=1740251196; x=1740855996; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Xb9ZMWEswnCZqxNt4mNRr92ZbyiwfGCzO2RoU9QiMyc=;
+        b=PLvMBLo+1fd1XYglQAXcde0fZCfV194Zn2fRy90Yt64GfX3IJwxQx5QtZdOhDyN2rt
+         ftJm5e7f6WYq5BpyWt4Ft21hJdS7xI3eYYNDVajicH+YqvO1qi9s3u85kdDygXiNU19U
+         SVTcHpG00RehtGr2cMi5caaWr3++dmX28fb0v/BDP8SPr8UlSfRoZnk1Xo67xdEh9vZM
+         H9axsSr1YPgxgn61lmvaHEuJYm0wJEz2pJrsOUGbaGHQ2WCEOymxBRQxwkaGRrmBBwqu
+         sH791ic3pHBAaL/lupinUKFdl8h6wZEwZud61ee2JR9hRRhoF7t6Bg+sTAebmcuK5Cxw
+         bZIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740251194; x=1740855994;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=DiabidSOAyQsf+B3XgHW1kyRRESYAYqsI/IhtP+orBs=;
-        b=dAvlRs8Rgb6AXrfv7peNsElCL9o/djyqohevi/LZbmt+D5sqlC0qnBAdL/10Ae+LPm
-         N+dQluk3Zjo/wdt87zkIvmKrymrVP5KZDmi5m6FXxkhc9i29fc0X1DhTrKajmdVKlJtr
-         kBFARzGEuPO0hqBwCKn1g9wXCZ/77EJIMZQ8k/f8JWxOse3w14TkFBNDb+lGzMwkMqfC
-         i2dfhg0oPlpOAV0zc8lqkcUc5HkjJECtqmPOHTa3TO9jH+T0l7LU+8SDARcpcpsQmveb
-         CciJDWfBpHT04ThklujoAxoyht5W3i3QKMHOPHZDDPJznnmHWx3jYHEdVJ+CWTQbSrbi
-         /91A==
-X-Gm-Message-State: AOJu0Yxe0gjTIOkfU/8/dScruC+alL37y+Z7G6rVFefy3rf3g7UGRORB
-	1hKRhLI9NMn626AaOP6eJKrEI3wNLVgzktvJW7cSFjsaDXEE9b+Gv8K5
-X-Gm-Gg: ASbGncuqCBSTzIZsAnKFf15wLbh/OQzXjffBhRcmLMhjDrPJmkBDIeX+XGdXMiDqTfI
-	UuDJ3BBbwc8SygBcjOUHVxCAZLpBw9qy7oJjfppCvsvUGbGn9O0gKyi1IqO09GwsbAU4MXi/Ll9
-	pk7gbYhovIkG8V6MUwXVFGwWzTiJAFlSVIlw5XrugiXCHNLGVbFON6u5G46T6/V7PeVVD46ZuCQ
-	WsKZO7vrbDzXNjrlucAKYVOuQDXoAA7Pf4bEfrAIe5qX7oVVj+A3bby8Uq0pOVPUjEcWvb6Yl0E
-	gxVS4h4=
-X-Google-Smtp-Source: AGHT+IGZZVN1cBwmGXraB8fdsm1Rz3PDOoeLjcCnTk9CoLTDIbyFoXsI9zHTAyRT5vjdDJAkXqJDPQ==
-X-Received: by 2002:a05:620a:19a4:b0:7c0:b9f3:bd1e with SMTP id af79cd13be357-7c0cf96f1a3mr996524185a.49.1740251194397;
-        Sat, 22 Feb 2025 11:06:34 -0800 (PST)
+        d=1e100.net; s=20230601; t=1740251196; x=1740855996;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Xb9ZMWEswnCZqxNt4mNRr92ZbyiwfGCzO2RoU9QiMyc=;
+        b=CQfvg+M9GD7zDaIjm1sGB4jll4Qrw/ceL3dD7uxxtON4kAqXu5Ug1Alfuh5Cjf/HG3
+         ixs7fWZg9h+5/TQlMuNF6tIPUeUw9tq2IvGxNFMIdfg0pIX/hrsSttiNxyJ/5rwzFz5D
+         U8Gz9YPqDsVF1Q+aBPeyHL1nBvEKXEoItDL5/dpz5ReJQFXHgDZ9vz5vVlIWxeZef/GY
+         CsxCxu4Y3dk+rKVXNp9nYIYpYzEcAHuno/Pn4wjC38Bt0UnOa9ZtXV2fBn7nb5IOejJ0
+         1Yrd1MB/oitNRT5Zau/9UmTiujlT53pIS28XsdOjS/znesHOmn8TYBDn+WwUPSYoP7ID
+         3xDQ==
+X-Gm-Message-State: AOJu0YyX0xnrT7BmmY8HIqkBpgQURmMHeKyMM59OqCszkG0/WnqnrFHG
+	SkH8HgtguGUM72hLYHIzCj0IG4Ln+4S3NIhHO2VqrHAAVb8LP7QXukyB
+X-Gm-Gg: ASbGncu5DefXAUZLASogIPJVF42qHQUZCv8ssh+AYbD/0vcmspzvEaWMUwVT9s45rey
+	me+0QQ53+BIiojaJZc23cOQFIywlhxpwe79ADo9aAl9CzT4k0xH57OU8CDjyP7SmAqdlDgYloSC
+	ahuJZGU2+QnIkJ+thuJkEQVkUrKBDh6E5RG/oasGNcYjyF5DYzgxYNDzthz6buZDoI/MOFz8cLq
+	D+nfzgUTNbj5ZeLPpb9vBLiVgiaopCxpl3MJuvMC0P7Ye5G36QpLIHSzWk8U7z64rcKc404leef
+	xCjAniU=
+X-Google-Smtp-Source: AGHT+IGfMN71LzcwED6XyaagweDEqY2fd50Igd+UD/UEpy3LK9qv1UdfCEflzEfWCcFLjbYW3Ff6cw==
+X-Received: by 2002:a05:620a:4148:b0:7c0:c13f:4181 with SMTP id af79cd13be357-7c0cf8adfdemr972294285a.2.1740251196445;
+        Sat, 22 Feb 2025 11:06:36 -0800 (PST)
 Received: from citadel.lan ([2600:6c4a:4d3f:6d5c::1019])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c0b1ef73b8sm550185285a.65.2025.02.22.11.06.31
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c0b1ef73b8sm550185285a.65.2025.02.22.11.06.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 22 Feb 2025 11:06:32 -0800 (PST)
+        Sat, 22 Feb 2025 11:06:35 -0800 (PST)
 From: Brian Gerst <brgerst@gmail.com>
 To: linux-kernel@vger.kernel.org,
 	x86@kernel.org
@@ -78,10 +80,12 @@ Cc: Ingo Molnar <mingo@kernel.org>,
 	Ard Biesheuvel <ardb@kernel.org>,
 	Uros Bizjak <ubizjak@gmail.com>,
 	Brian Gerst <brgerst@gmail.com>
-Subject: [RFC PATCH 00/11] Add a percpu subsection for hot data
-Date: Sat, 22 Feb 2025 14:06:12 -0500
-Message-ID: <20250222190623.262689-1-brgerst@gmail.com>
+Subject: [RFC PATCH 01/11] percpu: Introduce percpu hot section
+Date: Sat, 22 Feb 2025 14:06:13 -0500
+Message-ID: <20250222190623.262689-2-brgerst@gmail.com>
 X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250222190623.262689-1-brgerst@gmail.com>
+References: <20250222190623.262689-1-brgerst@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,81 +94,89 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add a new percpu subsection for data that is frequently accessed and
-exclusive to each processor.  This is intended to replace the pcpu_hot
-struct on X86, and is available to all architectures.
+Add a subsection to the percpu data for frequently accessed variables
+that should remain cached on each processor.  These varables should not
+be accessed from other processors to avoid cacheline bouncing.
 
-The one caveat with this approach is that it depends on the linker to
-effeciently pack data that is smaller than machine word size.  The
-binutils linker does this properly:
+This is intended to replace the pcpu_hot struct on X86, and open up
+similar functionality to other architectures.
 
-ffffffff842f6000 D __per_cpu_hot_start
-ffffffff842f6000 D softirq_pending
-ffffffff842f6002 D hardirq_stack_inuse
-ffffffff842f6008 D hardirq_stack_ptr
-ffffffff842f6010 D __ref_stack_chk_guard
-ffffffff842f6010 D __stack_chk_guard
-ffffffff842f6018 D const_cpu_current_top_of_stack
-ffffffff842f6018 D cpu_current_top_of_stack
-ffffffff842f6020 D const_current_task
-ffffffff842f6020 D current_task
-ffffffff842f6028 D __preempt_count
-ffffffff842f602c D cpu_number
-ffffffff842f6030 D this_cpu_off
-ffffffff842f6038 D __x86_call_depth
-ffffffff842f6040 D __per_cpu_hot_end
+Signed-off-by: Brian Gerst <brgerst@gmail.com>
+---
+ arch/x86/kernel/vmlinux.lds.S     |  2 ++
+ include/asm-generic/vmlinux.lds.h | 10 ++++++++++
+ include/linux/percpu-defs.h       | 10 ++++++++++
+ 3 files changed, 22 insertions(+)
 
-The LLVM linker doesn't do as well with packing smaller data objects,
-causing it to spill over into a second cacheline.
-
-Brian Gerst (11):
-  percpu: Introduce percpu hot section
-  x86/preempt: Move preempt count to percpu hot section
-  x86/smp: Move cpu number to percpu hot section
-  x86/retbleed: Move call depth to percpu hot section
-  x86/percpu: Move top_of_stack to percpu hot section
-  x86/percpu: Move current_task to percpu hot section
-  x86/softirq: Move softirq_pending to percpu hot section
-  x86/irq: Move irq stacks to percpu hot section
-  x86/percpu: Remove pcpu_hot
-  x86/stackprotector: Move __stack_chk_guard to percpu hot section
-  x86/smp: Move this_cpu_off to percpu hot section
-
- arch/x86/entry/entry_32.S             |  4 +--
- arch/x86/entry/entry_64.S             |  6 ++---
- arch/x86/entry/entry_64_compat.S      |  4 +--
- arch/x86/include/asm/current.h        | 35 ++++-----------------------
- arch/x86/include/asm/hardirq.h        |  3 ++-
- arch/x86/include/asm/irq_stack.h      | 12 ++++-----
- arch/x86/include/asm/nospec-branch.h  | 10 +++++---
- arch/x86/include/asm/percpu.h         |  4 +--
- arch/x86/include/asm/preempt.h        | 25 ++++++++++---------
- arch/x86/include/asm/processor.h      | 15 ++++++++++--
- arch/x86/include/asm/smp.h            |  7 +++---
- arch/x86/include/asm/stackprotector.h |  2 +-
- arch/x86/kernel/asm-offsets.c         |  5 ----
- arch/x86/kernel/callthunks.c          |  3 +++
- arch/x86/kernel/cpu/common.c          | 17 +++++++------
- arch/x86/kernel/dumpstack_32.c        |  4 +--
- arch/x86/kernel/dumpstack_64.c        |  2 +-
- arch/x86/kernel/head_64.S             |  4 +--
- arch/x86/kernel/irq.c                 |  8 ++++++
- arch/x86/kernel/irq_32.c              | 12 +++++----
- arch/x86/kernel/irq_64.c              |  6 ++---
- arch/x86/kernel/process_32.c          |  6 ++---
- arch/x86/kernel/process_64.c          |  6 ++---
- arch/x86/kernel/setup_percpu.c        |  7 ++++--
- arch/x86/kernel/smpboot.c             |  4 +--
- arch/x86/kernel/vmlinux.lds.S         |  5 +++-
- arch/x86/lib/retpoline.S              |  2 +-
- include/asm-generic/vmlinux.lds.h     | 10 ++++++++
- include/linux/percpu-defs.h           | 10 ++++++++
- kernel/bpf/verifier.c                 |  4 +--
- scripts/gdb/linux/cpus.py             |  2 +-
- 31 files changed, 135 insertions(+), 109 deletions(-)
-
-
-base-commit: 01157ddc58dc2fe428ec17dd5a18cc13f134639f
+diff --git a/arch/x86/kernel/vmlinux.lds.S b/arch/x86/kernel/vmlinux.lds.S
+index 1769a7126224..049485513f3c 100644
+--- a/arch/x86/kernel/vmlinux.lds.S
++++ b/arch/x86/kernel/vmlinux.lds.S
+@@ -187,6 +187,8 @@ SECTIONS
+ 
+ 		PAGE_ALIGNED_DATA(PAGE_SIZE)
+ 
++		HOT_DATA(L1_CACHE_BYTES)
++
+ 		CACHELINE_ALIGNED_DATA(L1_CACHE_BYTES)
+ 
+ 		DATA_DATA
+diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
+index 92fc06f7da74..aaa83ec3afe4 100644
+--- a/include/asm-generic/vmlinux.lds.h
++++ b/include/asm-generic/vmlinux.lds.h
+@@ -385,6 +385,11 @@ defined(CONFIG_AUTOFDO_CLANG) || defined(CONFIG_PROPELLER_CLANG)
+ 	. = ALIGN(PAGE_SIZE);						\
+ 	__nosave_end = .;
+ 
++#define HOT_DATA(page_align)						\
++	. = ALIGN(page_align);						\
++	*(.data..hot) *(.data..hot.*)					\
++	. = ALIGN(page_align);
++
+ #define PAGE_ALIGNED_DATA(page_align)					\
+ 	. = ALIGN(page_align);						\
+ 	*(.data..page_aligned)						\
+@@ -1065,6 +1070,10 @@ defined(CONFIG_AUTOFDO_CLANG) || defined(CONFIG_PROPELLER_CLANG)
+ 	. = ALIGN(PAGE_SIZE);						\
+ 	*(.data..percpu..page_aligned)					\
+ 	. = ALIGN(cacheline);						\
++	__per_cpu_hot_start = .;					\
++	*(.data..percpu..hot) *(.data..percpu..hot.*)			\
++	__per_cpu_hot_end = .;						\
++	. = ALIGN(cacheline);						\
+ 	*(.data..percpu..read_mostly)					\
+ 	. = ALIGN(cacheline);						\
+ 	*(.data..percpu)						\
+@@ -1112,6 +1121,7 @@ defined(CONFIG_AUTOFDO_CLANG) || defined(CONFIG_PROPELLER_CLANG)
+ 		INIT_TASK_DATA(inittask)				\
+ 		NOSAVE_DATA						\
+ 		PAGE_ALIGNED_DATA(pagealigned)				\
++		HOT_DATA(cacheline)					\
+ 		CACHELINE_ALIGNED_DATA(cacheline)			\
+ 		READ_MOSTLY_DATA(cacheline)				\
+ 		DATA_DATA						\
+diff --git a/include/linux/percpu-defs.h b/include/linux/percpu-defs.h
+index 40d34e032d5b..7db773ae5b52 100644
+--- a/include/linux/percpu-defs.h
++++ b/include/linux/percpu-defs.h
+@@ -112,6 +112,16 @@
+ #define DEFINE_PER_CPU(type, name)					\
+ 	DEFINE_PER_CPU_SECTION(type, name, "")
+ 
++/*
++ * Declaration/definition used for per-CPU variables that are frequently
++ * accessed and should be in a single cacheline.
++ */
++#define DECLARE_PER_CPU_HOT(type, name)					\
++	DECLARE_PER_CPU_SECTION(type, name, "..hot.." #name)
++
++#define DEFINE_PER_CPU_HOT(type, name)					\
++	DEFINE_PER_CPU_SECTION(type, name, "..hot.." #name)
++
+ /*
+  * Declaration/definition used for per-CPU variables that must be cacheline
+  * aligned under SMP conditions so that, whilst a particular instance of the
 -- 
 2.48.1
 
