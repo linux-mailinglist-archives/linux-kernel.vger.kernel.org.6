@@ -1,122 +1,425 @@
-Return-Path: <linux-kernel+bounces-527333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09D98A409CF
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 17:06:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EB744A409D1
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 17:14:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8335B3B95E6
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 16:05:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65AE53ADD67
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 16:14:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14E9A1CBEAA;
-	Sat, 22 Feb 2025 16:06:05 +0000 (UTC)
-Received: from shelob.surriel.com (shelob.surriel.com [96.67.55.147])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 787511DC745;
+	Sat, 22 Feb 2025 16:14:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eUaEQtPb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22F73EADC
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 16:05:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.67.55.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E41778F2F;
+	Sat, 22 Feb 2025 16:14:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740240364; cv=none; b=PRwgaZ/Oi411HO/lDOSfxzkqwNZKqHLrNezPy23iLKkYAfkLaGT0oKVvzj1JpFfokKNQPDr6yl7SP48tZoOsuVkfNMyHC0ZTC3k0Wl43aprp/ZQ0MH+I+Tw7tIOnkktS2oLLStCu8fYb1s1LE9JBHf0AtrAnHGeAZdBJ6rynGAU=
+	t=1740240853; cv=none; b=RY7aFDkuXoA9CnQQ1HEhd0OhR+VADoNuKT9lt78rvyyMtNgWApgDpaPVYrHAu8/H55Ni2bCen3dTFm9VoqfGwGp5gDxSfdTqhJ4Ej16tWoLrVrw1X29S+0HGeeWkQu/mOQzFbrYVU1fHG/428+z3IjUGcS2/3L28W4K9PTGOl6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740240364; c=relaxed/simple;
-	bh=aFROy9ae+WikNdeM/LQHnwVp0Vg8VO4VTN5RMCnvvw4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Fw844Yt9BTul4W5UoWA/p8NiWj/+Vp0t9JWOj53uR4YuD6pqQCRzu1z6MyFb7Lw2N7uIcjB+ZDWXRdtmAT7lN8VJ4o8pqB2MnZmL1Qok9w9gXTzfVo67lGeVOexqOTjzXRXP/nh2NAaTFLLa2/Dgr6m4PIQY9BFy/CJYYCLmDMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=shelob.surriel.com; arc=none smtp.client-ip=96.67.55.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shelob.surriel.com
-Received: from fangorn.home.surriel.com ([10.0.13.7])
-	by shelob.surriel.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.97.1)
-	(envelope-from <riel@shelob.surriel.com>)
-	id 1tls0b-000000005J6-0BJb;
-	Sat, 22 Feb 2025 11:05:41 -0500
-Message-ID: <eb2feccb1874399699731aa9f16049a375b0f9a9.camel@surriel.com>
-Subject: Re: [PATCH v12 00/16] AMD broadcast TLB invalidation
-From: Rik van Riel <riel@surriel.com>
-To: Oleksandr Natalenko <oleksandr@natalenko.name>, x86@kernel.org
-Cc: linux-kernel@vger.kernel.org, bp@alien8.de, peterz@infradead.org, 
-	dave.hansen@linux.intel.com, zhengqi.arch@bytedance.com,
- nadav.amit@gmail.com, 	thomas.lendacky@amd.com, kernel-team@meta.com,
- linux-mm@kvack.org, 	akpm@linux-foundation.org, jackmanb@google.com,
- jannh@google.com, 	mhklinux@outlook.com, andrew.cooper3@citrix.com,
- Manali.Shukla@amd.com
-Date: Sat, 22 Feb 2025 11:05:41 -0500
-In-Reply-To: <5861243.DvuYhMxLoT@natalenko.name>
-References: <20250221005345.2156760-1-riel@surriel.com>
-	 <5861243.DvuYhMxLoT@natalenko.name>
-Autocrypt: addr=riel@surriel.com; prefer-encrypt=mutual;
- keydata=mQENBFIt3aUBCADCK0LicyCYyMa0E1lodCDUBf6G+6C5UXKG1jEYwQu49cc/gUBTTk33A
- eo2hjn4JinVaPF3zfZprnKMEGGv4dHvEOCPWiNhlz5RtqH3SKJllq2dpeMS9RqbMvDA36rlJIIo47
- Z/nl6IA8MDhSqyqdnTY8z7LnQHqq16jAqwo7Ll9qALXz4yG1ZdSCmo80VPetBZZPw7WMjo+1hByv/
- lvdFnLfiQ52tayuuC1r9x2qZ/SYWd2M4p/f5CLmvG9UcnkbYFsKWz8bwOBWKg1PQcaYHLx06sHGdY
- dIDaeVvkIfMFwAprSo5EFU+aes2VB2ZjugOTbkkW2aPSWTRsBhPHhV6dABEBAAG0HlJpayB2YW4gU
- mllbCA8cmllbEByZWRoYXQuY29tPokBHwQwAQIACQUCW5LcVgIdIAAKCRDOed6ShMTeg05SB/986o
- gEgdq4byrtaBQKFg5LWfd8e+h+QzLOg/T8mSS3dJzFXe5JBOfvYg7Bj47xXi9I5sM+I9Lu9+1XVb/
- r2rGJrU1DwA09TnmyFtK76bgMF0sBEh1ECILYNQTEIemzNFwOWLZZlEhZFRJsZyX+mtEp/WQIygHV
- WjwuP69VJw+fPQvLOGn4j8W9QXuvhha7u1QJ7mYx4dLGHrZlHdwDsqpvWsW+3rsIqs1BBe5/Itz9o
- 6y9gLNtQzwmSDioV8KhF85VmYInslhv5tUtMEppfdTLyX4SUKh8ftNIVmH9mXyRCZclSoa6IMd635
- Jq1Pj2/Lp64tOzSvN5Y9zaiCc5FucXtB9SaWsgdmFuIFJpZWwgPHJpZWxAc3VycmllbC5jb20+iQE
- +BBMBAgAoBQJSLd2lAhsjBQkSzAMABgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRDOed6ShMTe
- g4PpB/0ZivKYFt0LaB22ssWUrBoeNWCP1NY/lkq2QbPhR3agLB7ZXI97PF2z/5QD9Fuy/FD/jddPx
- KRTvFCtHcEzTOcFjBmf52uqgt3U40H9GM++0IM0yHusd9EzlaWsbp09vsAV2DwdqS69x9RPbvE/Ne
- fO5subhocH76okcF/aQiQ+oj2j6LJZGBJBVigOHg+4zyzdDgKM+jp0bvDI51KQ4XfxV593OhvkS3z
- 3FPx0CE7l62WhWrieHyBblqvkTYgJ6dq4bsYpqxxGJOkQ47WpEUx6onH+rImWmPJbSYGhwBzTo0Mm
- G1Nb1qGPG+mTrSmJjDRxrwf1zjmYqQreWVSFEt26tBpSaWsgdmFuIFJpZWwgPHJpZWxAZmIuY29tP
- okBPgQTAQIAKAUCW5LbiAIbIwUJEswDAAYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQznneko
- TE3oOUEQgAsrGxjTC1bGtZyuvyQPcXclap11Ogib6rQywGYu6/Mnkbd6hbyY3wpdyQii/cas2S44N
- cQj8HkGv91JLVE24/Wt0gITPCH3rLVJJDGQxprHTVDs1t1RAbsbp0XTksZPCNWDGYIBo2aHDwErhI
- omYQ0Xluo1WBtH/UmHgirHvclsou1Ks9jyTxiPyUKRfae7GNOFiX99+ZlB27P3t8CjtSO831Ij0Ip
- QrfooZ21YVlUKw0Wy6Ll8EyefyrEYSh8KTm8dQj4O7xxvdg865TLeLpho5PwDRF+/mR3qi8CdGbkE
- c4pYZQO8UDXUN4S+pe0aTeTqlYw8rRHWF9TnvtpcNzZw==
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+	s=arc-20240116; t=1740240853; c=relaxed/simple;
+	bh=2PUB3dGoHzHfpA9fcxe5STpk3/cimK4V30cI/TaJ8L8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XgFR7/iBBEXyz1W4kwSUTrmvTaMnjjWbo1B/t86FpjDXjECiFeRYjiVQRIJfu33dTvQs4lMmRDRIWodt46d7DiBKMMDy4VIW8Z1WsKnrubpx/Rhl22u4HXGrQ5D3cVl4MWw8omsYDec4cx4PTdr4OdNdd8mkgCaecuiJUl3Ea3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eUaEQtPb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06B15C4CEE4;
+	Sat, 22 Feb 2025 16:14:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740240852;
+	bh=2PUB3dGoHzHfpA9fcxe5STpk3/cimK4V30cI/TaJ8L8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=eUaEQtPbI98t3+pLIDby9HlTjoPy36wWs6J1Dj/8CuF7lWKgbc3XXNfylYyl4h5Zx
+	 ArtG89hS2zPHZO6/WsU844XTnfAK89L2cMobdkC6mmaKZdSKY8Ym2ver7Tm5JkZXs0
+	 VOsThmxGsrQ+y9qgKrgO1JeRfYXMFzMs/pGE97ME2HoU6ZtTtJg0l6g6BFNuGsjrV3
+	 mNP65qcErdHgkirN167J2EnWVCOuvFBis4FPdZmrC/r+fD29GApAZllfA0Ycg7pLM6
+	 R2sXHVLhZrc9r+4hPEhRT0npw9yaomRKe3OG9+aOteaENvQsJGkdV1YFBtfZKdnzVt
+	 ++45tSecnhzWg==
+Date: Sat, 22 Feb 2025 16:14:06 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Jean-Baptiste Maneyrol via B4 Relay
+ <devnull+jean-baptiste.maneyrol.tdk.com@kernel.org>
+Cc: jean-baptiste.maneyrol@tdk.com, Lars-Peter Clausen <lars@metafoo.de>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] iio: imu: inv_icm42600: add WoM support
+Message-ID: <20250222161406.54b2d348@jic23-huawei>
+In-Reply-To: <20250220-losd-3-inv-icm42600-add-wom-support-v1-1-9b937f986954@tdk.com>
+References: <20250220-losd-3-inv-icm42600-add-wom-support-v1-0-9b937f986954@tdk.com>
+	<20250220-losd-3-inv-icm42600-add-wom-support-v1-1-9b937f986954@tdk.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Sender: riel@surriel.com
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sat, 2025-02-22 at 12:29 +0100, Oleksandr Natalenko wrote:
->=20
-> [=C2=A0=C2=A0 24.381400] RIP: 0010:get_cpu_cap+0x39b/0x4f0
->=20
+On Thu, 20 Feb 2025 21:52:06 +0100
+Jean-Baptiste Maneyrol via B4 Relay <devnull+jean-baptiste.maneyrol.tdk.com@kernel.org> wrote:
 
-> $ scripts/faddr2line arch/x86/kernel/cpu/common.o get_cpu_cap+0x39b
-> get_cpu_cap+0x39b/0x500:
-> get_cpu_cap at =E2=80=A6/arch/x86/kernel/cpu/common.c:1063
->=20
-> 1060=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (c->extended_cpui=
-d_level >=3D 0x80000008) {
-> 1061=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0 cpuid(0x80000008, &eax, &ebx, &ecx, &edx);
-> 1062=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0 c->x86_capability[CPUID_8000_0008_EBX] =3D ebx;
-> 1063=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0 invlpgb_count_max =3D (edx & 0xffff) + 1;
-> 1064=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
-> ```
->=20
-> Any idea what I'm looking at?
+> From: Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>
+> 
+> Add WoM as accel roc rising x|y|z event.
+> 
+> Signed-off-by: Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>
+Some comments on unrelated bug (that this duplicates) inline.
 
-It's crashing when writing the value to the
-invlpgb_count_max variable.
+Jonathan
 
-This would be because:
-1) invlpgb_count_max is marked __ro_after_init, making
-   it read-only after the system has finished booting, but
-2) get_cpu_cap gets run at resume and CPU hotplug time!
+> ---
+>  drivers/iio/imu/inv_icm42600/inv_icm42600.h        |  47 +++-
+>  drivers/iio/imu/inv_icm42600/inv_icm42600_accel.c  | 264 ++++++++++++++++++++-
+>  drivers/iio/imu/inv_icm42600/inv_icm42600_buffer.c |   2 +-
+>  drivers/iio/imu/inv_icm42600/inv_icm42600_core.c   |  56 ++++-
+>  4 files changed, 363 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/iio/imu/inv_icm42600/inv_icm42600.h b/drivers/iio/imu/inv_icm42600/inv_icm42600.h
+> index 18787a43477b89db12caee597ab040af5c8f52d5..8dfbeaf1c768d7d25cb58ecf9804446f3cbbd465 100644
+> --- a/drivers/iio/imu/inv_icm42600/inv_icm42600.h
+> +++ b/drivers/iio/imu/inv_icm42600/inv_icm42600.h
+> @@ -135,6 +135,14 @@ struct inv_icm42600_suspended {
+>  	bool temp;
+>  };
+>  
+> +struct inv_icm42600_apex {
+> +	unsigned int on;
+> +	struct {
+> +		bool enable;
+> +		uint64_t value;
+> +	} wom;
+> +};
+> +
+>  /**
+>   *  struct inv_icm42600_state - driver state variables
+>   *  @lock:		lock for serializing multiple registers access.
+> @@ -151,6 +159,7 @@ struct inv_icm42600_suspended {
+>   *  @buffer:		data transfer buffer aligned for DMA.
+>   *  @fifo:		FIFO management structure.
+>   *  @timestamp:		interrupt timestamps.
+> + *  @apex:		APEX features management.
+>   */
+>  struct inv_icm42600_state {
+>  	struct mutex lock;
+> @@ -164,12 +173,13 @@ struct inv_icm42600_state {
+>  	struct inv_icm42600_suspended suspended;
+>  	struct iio_dev *indio_gyro;
+>  	struct iio_dev *indio_accel;
+> -	uint8_t buffer[2] __aligned(IIO_DMA_MINALIGN);
+> +	uint8_t buffer[3] __aligned(IIO_DMA_MINALIGN);
+>  	struct inv_icm42600_fifo fifo;
+This being after buffer also looks like a problem (see below)
+This needs fixing.  Just  move it before buffer in a separate patch
+and all should be fine.
+>  	struct {
+>  		int64_t gyro;
+>  		int64_t accel;
+>  	} timestamp;
+Maybe this as well.
+> +	struct inv_icm42600_apex apex;
 
-Borislav, do you prefer I move the initialization of=C2=A0
-invlpgb_count_max back to where it was before, or get
-rid of the __ro_after_init thing?
+That seems unwise. It's in the region that DMA transactions may
+scribble all over.  Move this before buffer or you'll get some
+weird and wonderful bug reports sometime in the future!
 
---=20
-All Rights Reversed.
+>  };
+>  
+>  
+> @@ -253,6 +263,18 @@ struct inv_icm42600_sensor_state {
+>  #define INV_ICM42600_REG_FIFO_COUNT			0x002E
+>  #define INV_ICM42600_REG_FIFO_DATA			0x0030
+>  
+> +#define INV_ICM42600_REG_INT_STATUS2			0x0037
+> +#define INV_ICM42600_INT_STATUS2_SMD_INT		BIT(3)
+> +#define INV_ICM42600_INT_STATUS2_WOM_INT		GENMASK(2, 0)
+> +
+> +#define INV_ICM42600_REG_INT_STATUS3			0x0038
+> +#define INV_ICM42600_INT_STATUS3_STEP_DET_INT		BIT(5)
+> +#define INV_ICM42600_INT_STATUS3_STEP_CNT_OVF_INT	BIT(4)
+> +#define INV_ICM42600_INT_STATUS3_TILT_DET_INT		BIT(3)
+> +#define INV_ICM42600_INT_STATUS3_WAKE_INT		BIT(2)
+> +#define INV_ICM42600_INT_STATUS3_SLEEP_INT		BIT(1)
+> +#define INV_ICM42600_INT_STATUS3_TAP_DET_INT		BIT(0)
+> +
+>  #define INV_ICM42600_REG_SIGNAL_PATH_RESET		0x004B
+>  #define INV_ICM42600_SIGNAL_PATH_RESET_DMP_INIT_EN	BIT(6)
+>  #define INV_ICM42600_SIGNAL_PATH_RESET_DMP_MEM_RESET	BIT(5)
+> @@ -309,6 +331,14 @@ struct inv_icm42600_sensor_state {
+>  #define INV_ICM42600_TMST_CONFIG_TMST_FSYNC_EN		BIT(1)
+>  #define INV_ICM42600_TMST_CONFIG_TMST_EN		BIT(0)
+>  
+> +#define INV_ICM42600_REG_SMD_CONFIG			0x0057
+> +#define INV_ICM42600_SMD_CONFIG_WOM_INT_MODE		BIT(3)
+> +#define INV_ICM42600_SMD_CONFIG_WOM_MODE		BIT(2)
+> +#define INV_ICM42600_SMD_CONFIG_SMD_MODE_OFF		0x00
+> +#define INV_ICM42600_SMD_CONFIG_SMD_MODE_WOM		0x01
+> +#define INV_ICM42600_SMD_CONFIG_SMD_MODE_SHORT		0x02
+> +#define INV_ICM42600_SMD_CONFIG_SMD_MODE_LONG		0x03
+> +
+>  #define INV_ICM42600_REG_FIFO_CONFIG1			0x005F
+>  #define INV_ICM42600_FIFO_CONFIG1_RESUME_PARTIAL_RD	BIT(6)
+>  #define INV_ICM42600_FIFO_CONFIG1_WM_GT_TH		BIT(5)
+> @@ -338,6 +368,11 @@ struct inv_icm42600_sensor_state {
+>  #define INV_ICM42600_INT_SOURCE0_FIFO_FULL_INT1_EN	BIT(1)
+>  #define INV_ICM42600_INT_SOURCE0_UI_AGC_RDY_INT1_EN	BIT(0)
+>  
+> +#define INV_ICM42600_REG_INT_SOURCE1			0x0066
+> +#define INV_ICM42600_INT_SOURCE1_I3C_ERROR_INT1_EN	BIT(6)
+> +#define INV_ICM42600_INT_SOURCE1_SMD_INT1_EN		BIT(3)
+> +#define INV_ICM42600_INT_SOURCE1_WOM_INT1_EN		GENMASK(2, 0)
+> +
+>  #define INV_ICM42600_REG_WHOAMI				0x0075
+>  #define INV_ICM42600_WHOAMI_ICM42600			0x40
+>  #define INV_ICM42600_WHOAMI_ICM42602			0x41
+> @@ -373,6 +408,10 @@ struct inv_icm42600_sensor_state {
+>  #define INV_ICM42600_INTF_CONFIG6_I3C_SDR_EN		BIT(0)
+>  
+>  /* User bank 4 (MSB 0x40) */
+> +#define INV_ICM42600_REG_ACCEL_WOM_X_THR		0x404A
+> +#define INV_ICM42600_REG_ACCEL_WOM_Y_THR		0x404B
+> +#define INV_ICM42600_REG_ACCEL_WOM_Z_THR		0x404C
+> +
+>  #define INV_ICM42600_REG_INT_SOURCE8			0x404F
+>  #define INV_ICM42600_INT_SOURCE8_FSYNC_IBI_EN		BIT(5)
+>  #define INV_ICM42600_INT_SOURCE8_PLL_RDY_IBI_EN		BIT(4)
+> @@ -423,6 +462,8 @@ int inv_icm42600_set_gyro_conf(struct inv_icm42600_state *st,
+>  int inv_icm42600_set_temp_conf(struct inv_icm42600_state *st, bool enable,
+>  			       unsigned int *sleep_ms);
+>  
+> +int inv_icm42600_set_wom(struct inv_icm42600_state *st, bool enable);
+> +
+>  int inv_icm42600_debugfs_reg(struct iio_dev *indio_dev, unsigned int reg,
+>  			     unsigned int writeval, unsigned int *readval);
+>  
+> @@ -437,4 +478,8 @@ struct iio_dev *inv_icm42600_accel_init(struct inv_icm42600_state *st);
+>  
+>  int inv_icm42600_accel_parse_fifo(struct iio_dev *indio_dev);
+>  
+> +void inv_icm42600_accel_handle_events(struct iio_dev *indio_dev,
+> +				      unsigned int status2, unsigned int status3,
+> +				      int64_t timestamp);
+> +
+>  #endif
+> diff --git a/drivers/iio/imu/inv_icm42600/inv_icm42600_accel.c b/drivers/iio/imu/inv_icm42600/inv_icm42600_accel.c
+> index 388520ec60b5c5d21b16717978ebf330e38aa1fe..8ce2276b3edc61cc1ea26810198dd0057054ec48 100644
+> --- a/drivers/iio/imu/inv_icm42600/inv_icm42600_accel.c
+> +++ b/drivers/iio/imu/inv_icm42600/inv_icm42600_accel.c
+
+
+> +
+> +static int inv_icm42600_accel_enable_wom(struct iio_dev *indio_dev, bool enable)
+> +{
+> +	struct inv_icm42600_state *st = iio_device_get_drvdata(indio_dev);
+> +	struct inv_icm42600_sensor_state *accel_st = iio_priv(indio_dev);
+> +	struct device *pdev = regmap_get_device(st->map);
+> +	struct inv_icm42600_sensor_conf conf = INV_ICM42600_SENSOR_CONF_INIT;
+> +	unsigned int sleep_ms = 0;
+> +	int ret;
+> +
+> +	if (enable) {
+
+Not a lot of shared logic. Maybe split into enable and siable functions.
+
+> +		ret = pm_runtime_resume_and_get(pdev);
+> +		if (ret)
+> +			return ret;
+> +		scoped_guard(mutex, &st->lock) {
+> +			/* turn on accel sensor */
+> +			conf.mode = accel_st->power_mode;
+> +			conf.filter = accel_st->filter;
+> +			ret = inv_icm42600_set_accel_conf(st, &conf, &sleep_ms);
+> +			if (ret)
+> +				goto error_suspend;
+> +		}
+> +		if (sleep_ms)
+> +			msleep(sleep_ms);
+> +		scoped_guard(mutex, &st->lock) {
+> +			ret = inv_icm42600_set_wom(st, true);
+> +			if (ret)
+> +				goto error_suspend;
+> +			st->apex.on++;
+> +			st->apex.wom.enable = true;
+> +		}
+	return 0;
+
+> +	} else {
+> +		scoped_guard(mutex, &st->lock) {
+> +			st->apex.wom.enable = false;
+> +			st->apex.on--;
+> +			ret = inv_icm42600_set_wom(st, false);
+> +			if (ret)
+> +				goto error_suspend;
+> +			/* turn off accel sensor if not used */
+> +			if (!st->apex.on && !iio_buffer_enabled(indio_dev)) {
+> +				conf.mode = INV_ICM42600_SENSOR_MODE_OFF;
+> +				ret = inv_icm42600_set_accel_conf(st, &conf, &sleep_ms);
+> +				if (ret)
+> +					goto error_suspend;
+> +			}
+> +		}
+> +		if (sleep_ms)
+> +			msleep(sleep_ms);
+
+With return above, you could share this with the error handling.
+
+> +		pm_runtime_mark_last_busy(pdev);
+> +		pm_runtime_put_autosuspend(pdev);
+> +	}
+> +
+> +	return 0;
+> +
+> +error_suspend:
+> +	pm_runtime_mark_last_busy(pdev);
+> +	pm_runtime_put_autosuspend(pdev);
+> +	return ret;
+> +}
+
+> +static int inv_icm42600_accel_read_event_value(struct iio_dev *indio_dev,
+> +					       const struct iio_chan_spec *chan,
+> +					       enum iio_event_type type,
+> +					       enum iio_event_direction dir,
+> +					       enum iio_event_info info,
+> +					       int *val, int *val2)
+> +{
+> +	struct inv_icm42600_state *st = iio_device_get_drvdata(indio_dev);
+> +	u32 rem;
+> +
+> +	guard(mutex)(&st->lock);
+> +
+> +	/* handle WoM (roc rising) event value */
+> +	if (type == IIO_EV_TYPE_ROC && dir == IIO_EV_DIR_RISING) {
+
+Similar to below. Consider flipping logic.
+
+> +		/* return value in micro */
+> +		*val = div_u64_rem(st->apex.wom.value, 1000000U, &rem);
+> +		*val2 = rem;
+> +		return IIO_VAL_INT_PLUS_MICRO;
+> +	}
+> +
+> +	return -EINVAL;
+> +}
+> +
+> +static int inv_icm42600_accel_write_event_value(struct iio_dev *indio_dev,
+> +						const struct iio_chan_spec *chan,
+> +						enum iio_event_type type,
+> +						enum iio_event_direction dir,
+> +						enum iio_event_info info,
+> +						int val, int val2)
+> +{
+> +	struct inv_icm42600_state *st = iio_device_get_drvdata(indio_dev);
+> +	struct device *dev = regmap_get_device(st->map);
+> +	uint64_t value;
+> +	unsigned int accel_hz, accel_uhz;
+> +	int ret;
+> +
+> +	/* handle WoM (roc rising) event value */
+> +	if (type == IIO_EV_TYPE_ROC && dir == IIO_EV_DIR_RISING) {
+
+If you don't plan to add other event types soon I'd be tempted to flip
+the logic of this to save in indent and exit early in the error case.
+
+> +		if (val < 0 || val2 < 0)
+> +			return -EINVAL;
+> +		value = (uint64_t)val * 1000000ULL + (uint64_t)val2;
+> +		pm_runtime_get_sync(dev);
+> +		scoped_guard(mutex, &st->lock) {
+> +			ret = inv_icm42600_accel_read_odr(st, &accel_hz, &accel_uhz);
+> +			if (ret >= 0)
+> +				ret = inv_icm42600_accel_set_wom_threshold(st, value,
+> +									   accel_hz, accel_uhz);
+> +		}
+> +		pm_runtime_mark_last_busy(dev);
+> +		pm_runtime_put_autosuspend(dev);
+> +		return ret;
+> +	}
+> +
+> +	return -EINVAL;
+> +}
+
+> diff --git a/drivers/iio/imu/inv_icm42600/inv_icm42600_core.c b/drivers/iio/imu/inv_icm42600/inv_icm42600_core.c
+> index ef9875d3b79db116f9fb4f6d881a7979292c1792..c0fd2770d66f02d1965fa07f819fd2db9a1d6bd2 100644
+> --- a/drivers/iio/imu/inv_icm42600/inv_icm42600_core.c
+> +++ b/drivers/iio/imu/inv_icm42600/inv_icm42600_core.c
+> @@ -404,6 +404,35 @@ int inv_icm42600_set_temp_conf(struct inv_icm42600_state *st, bool enable,
+>  					  sleep_ms);
+>  }
+>  
+> +int inv_icm42600_set_wom(struct inv_icm42600_state *st, bool enable)
+> +{
+> +	unsigned int val;
+> +	int ret;
+
+Given the set and disable code paths have no shared code, maybe split into
+two functions?
+
+> +
+> +	if (enable) {
+> +		/* enable WoM hardware */
+> +		val = INV_ICM42600_SMD_CONFIG_SMD_MODE_WOM |
+> +		      INV_ICM42600_SMD_CONFIG_WOM_MODE;
+> +		ret = regmap_write(st->map, INV_ICM42600_REG_SMD_CONFIG, val);
+		ret = regmap_write(st->map, INV_ICM42600_REG_SMD_CONFIG,
+				   INV_ICM42600_SMD_CONFIG_SMD_MODE_WOM |
+				   INV_ICM42600_SMD_CONFIG_WOM_MODE);
+Seems not to loose any readabilty and avoids need for local variable.
+
+
+> +		if (ret)
+> +			return ret;
+> +		/* enable WoM interrupt */
+> +		ret = regmap_set_bits(st->map, INV_ICM42600_REG_INT_SOURCE1,
+> +				      INV_ICM42600_INT_SOURCE1_WOM_INT1_EN);
+return regmap_write()
+> +	} else {
+> +		/* disable WoM interrupt */
+> +		ret = regmap_clear_bits(st->map, INV_ICM42600_REG_INT_SOURCE1,
+> +					INV_ICM42600_INT_SOURCE1_WOM_INT1_EN);
+> +		if (ret)
+> +			return ret;
+> +		/* disable WoM hardware */
+> +		val = INV_ICM42600_SMD_CONFIG_SMD_MODE_OFF;
+> +		ret = regmap_write(st->map, INV_ICM42600_REG_SMD_CONFIG, val);
+return regmap_write()
+and no need for val as I don't think that adds any readability advantages here.
+
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+>  int inv_icm42600_debugfs_reg(struct iio_dev *indio_dev, unsigned int reg,
+>  			     unsigned int writeval, unsigned int *readval)
+>  {
+> @@ -543,11 +572,22 @@ static irqreturn_t inv_icm42600_irq_handler(int irq, void *_data)
+>  {
+>  	struct inv_icm42600_state *st = _data;
+>  	struct device *dev = regmap_get_device(st->map);
+> -	unsigned int status;
+> +	unsigned int status, status2, status3;
+>  	int ret;
+>  
+>  	mutex_lock(&st->lock);
+>  
+> +	if (st->apex.on) {
+
+I'd drag the declaration of additional local variables in here.
+
+> +		/* read INT_STATUS2 and INT_STATUS3 in 1 operation */
+> +		ret = regmap_bulk_read(st->map, INV_ICM42600_REG_INT_STATUS2, st->buffer, 2);
+> +		if (ret)
+> +			goto out_unlock;
+> +		status2 = st->buffer[0];
+> +		status3 = st->buffer[1];
+> +		inv_icm42600_accel_handle_events(st->indio_accel, status2, status3,
+> +						 st->timestamp.accel);
+> +	}
+> +
+
 
