@@ -1,147 +1,127 @@
-Return-Path: <linux-kernel+bounces-527005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DE10A4061D
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 08:41:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90FF5A40620
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 08:43:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE43417CD3A
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 07:41:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32CFA19E0608
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 07:43:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC91E205E1C;
-	Sat, 22 Feb 2025 07:41:26 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E14822063D7;
+	Sat, 22 Feb 2025 07:43:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V2/50kKm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7538113C3F2
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 07:41:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38F72205E0C;
+	Sat, 22 Feb 2025 07:43:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740210086; cv=none; b=YHW3R3t3jbb2hcBqx0XwQ/7TsH8k6lrgIBhYzBNYA8BGsvAsQJAfd6Kn75d8DHHeGjsGxnOcAR7GVfnWaxpsMIYoZdRZBmgOkZloJqZS0UNbk2NbgDSmHiFQGDR8vGDoP6ZkSacPwtEu7HnMK+kz6eBU00L6fQES811Z6U8b9QQ=
+	t=1740210202; cv=none; b=Ccxymge2S+RAPNJWTY3VZSqNp3ZdyHWazVL7UcsFzx7FtTWsNieL4BstqxeEhggzOrap62ObzcIgROzYTBqmDQ9gnomBHllwduNKELAj0gefQeQ8VqqV0qj/aS29eXJwnAvOqytugzPUcQtuu/KKAljtL1xj9a1LdemTNaYRxzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740210086; c=relaxed/simple;
-	bh=3h/oOXxNyk1GeCkXR31OeqcPgDyLOpqYMRTuUwVtpDQ=;
-	h=Message-ID:Date:MIME-Version:CC:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=RYeVlR0fMZVfZn41gLcBfYtYXaJhno05N+rDh/f9hFuvhev6cpxF8uLLoEY52F3f1ECmPRkbvpAuJ3f6Z3ZM9IQDZ7MDmaEAUsAyZgqYP38rUXP+qjzadwPIzqCJFsa9uuY34CatTOxaIyImOEJvRKaQfAvd/hICIeNJyjeK5Fw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.234])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4Z0Jjs50Nwz2JYZX;
-	Sat, 22 Feb 2025 15:37:21 +0800 (CST)
-Received: from kwepemg100017.china.huawei.com (unknown [7.202.181.58])
-	by mail.maildlp.com (Postfix) with ESMTPS id 23C7E140155;
-	Sat, 22 Feb 2025 15:41:20 +0800 (CST)
-Received: from [10.174.178.114] (10.174.178.114) by
- kwepemg100017.china.huawei.com (7.202.181.58) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Sat, 22 Feb 2025 15:41:18 +0800
-Message-ID: <a868e635-a86e-4dd7-8bae-c6ca94a2dc09@huawei.com>
-Date: Sat, 22 Feb 2025 15:41:18 +0800
+	s=arc-20240116; t=1740210202; c=relaxed/simple;
+	bh=122xJzOd1ODbkxxXzrAgg7StS4O2IbUSeCXvlztvOyU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=K5TkmIyAFffcVd8ayXpkxws94jb1Z0dSPbf18B4FOqPxuAiCd5AWiRl8Q9odkcfkmfPr2wqfwv1tLSVKmZlSIum1fd+3w69KjIFjy4bSA8nX2HNZ4p3yAHAZyRJiSv7emOVpQFmlLRKI8MqEoR9RmyRHL6KWQEzaL024DaM1B9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V2/50kKm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id A143CC4CED1;
+	Sat, 22 Feb 2025 07:43:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740210201;
+	bh=122xJzOd1ODbkxxXzrAgg7StS4O2IbUSeCXvlztvOyU=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=V2/50kKmDBw87qB5gTJN7FBVlUR91z3yotRNhTHh77brf6fAxR5JU10mwmaUI6x+s
+	 31CRMtYAbJQxiBm/+iqS/pCV+ATmLVf8xjk3dE8ql5CSVMvchVtkgzmlyxYEY3PZgV
+	 TTHJ9WNQYO4/YxArNbnALptfIFYJC7S9gwRGh9w4c0vxI3igRp1VlyuBvocemtiHom
+	 nkfF6jn8pmZShi3rSBEdKsem7nPODQWj+JRkjBfZQ7CssdCpIQscX38rLzlhM1woAE
+	 yc8l/iX3d4YNrkuiKPPLoqr0MJtlEwCfqPmB0EdXg6Sb584uKdeiJzBr9voDlbfvp7
+	 SrLR+u6qSUYeQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8850EC021B2;
+	Sat, 22 Feb 2025 07:43:21 +0000 (UTC)
+From: Dimitri Fedrau via B4 Relay <devnull+dimitri.fedrau.liebherr.com@kernel.org>
+Subject: [PATCH v4 0/2] can: flexcan: add transceiver capabilities
+Date: Sat, 22 Feb 2025 08:43:12 +0100
+Message-Id: <20250222-flexcan-add-transceiver-caps-v4-0-a38dfadab763@liebherr.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-CC: <mawupeng1@huawei.com>, <akpm@linux-foundation.org>, <david@redhat.com>,
-	<ryan.roberts@arm.com>, <chrisl@kernel.org>, <huang.ying.caritas@gmail.com>,
-	<schatzberg.dan@gmail.com>, <baohua@kernel.org>, <hanchuanhua@oppo.com>,
-	<willy@infradead.org>, <gaoxu2@honor.com>, <linux-mm@kvack.org>,
-	<linux-kernel@vger.kernel.org>, <nphamcs@gmail.com>, <yosryahmed@google.com>
-Subject: Re: [PATCH] mm: swap: Avoid infinite loop if no valid swap entry
- found during do_swap_page
-To: <ryncsn@gmail.com>
-References: <20250222024617.2790609-1-mawupeng1@huawei.com>
- <CAMgjq7AfZnwGAHoyCEhO5p2km-gPLk65WLL+2vO1i8hQDaTy+A@mail.gmail.com>
-From: mawupeng <mawupeng1@huawei.com>
-In-Reply-To: <CAMgjq7AfZnwGAHoyCEhO5p2km-gPLk65WLL+2vO1i8hQDaTy+A@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemg100017.china.huawei.com (7.202.181.58)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABCAuWcC/4XOQW7DIBCF4atErEs1M8bGZNV7VFkAHmKk1LYgQ
+ oks3704q6iqkuU/i+/NKjKnyFkcD6tIXGKO81RDfRyEH+10ZhmH2oKAFBIYGS5883aSdhjkNdk
+ pe46Fk/R2yVL7EIwC8IY6UYklcYi3B/99qj3GfJ3T/bFWcL/ucAuE+BouKEH6zjqne9QOwtcls
+ hs5pU8//4jdLvTkEbzxqHq2R6MhIPaq+8drnr13/zW7Z5R2A7et7eiPt23bLwDWrfprAQAA
+X-Change-ID: 20241209-flexcan-add-transceiver-caps-7cff9400c926
+To: Marc Kleine-Budde <mkl@pengutronix.de>, 
+ Vincent Mailhol <mailhol.vincent@wanadoo.fr>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-can@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, Dimitri Fedrau <dimitri.fedrau@liebherr.com>, 
+ Dimitri Fedrau <dima.fedrau@gmail.com>, 
+ Conor Dooley <conor.dooley@microchip.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1740210200; l=1800;
+ i=dimitri.fedrau@liebherr.com; s=20241202; h=from:subject:message-id;
+ bh=122xJzOd1ODbkxxXzrAgg7StS4O2IbUSeCXvlztvOyU=;
+ b=BE4Cqc5UEaQRp3VsFd92B7n+NX5NASHTVto2Ukg22tEewCsR2xxQ29Umkz0llBipFWm8Q4kwI
+ QVOHJqTB9o9C4l+dIbzljglgpCG+opAy0JEFugrZ6NuKKeHsYEb1qHf
+X-Developer-Key: i=dimitri.fedrau@liebherr.com; a=ed25519;
+ pk=rT653x09JSQvotxIqQl4/XiI4AOiBZrdOGvxDUbb5m8=
+X-Endpoint-Received: by B4 Relay for dimitri.fedrau@liebherr.com/20241202
+ with auth_id=290
+X-Original-From: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+Reply-To: dimitri.fedrau@liebherr.com
 
+Currently the flexcan driver does only support adding PHYs by using the
+"old" regulator bindings. Add support for CAN transceivers as a PHY. Add
+the capability to ensure that the PHY is in operational state when the link
+is set to an "up" state.
 
+Signed-off-by: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+---
+Changes in v4:
+- Dropped "if: required: phys" in bindings
+- Link to v3: https://lore.kernel.org/r/20250221-flexcan-add-transceiver-caps-v3-0-a947bde55a62@liebherr.com
 
-On 2025/2/22 15:33, Kairui Song wrote:
-> On Sat, Feb 22, 2025 at 10:56 AM Wupeng Ma <mawupeng1@huawei.com> wrote:
->>
->> From: Ma Wupeng <mawupeng1@huawei.com>
->>
->> During our test, infinite loop is produced during #PF will lead to infinite
->> error log as follow:
->>
->>    get_swap_device: Bad swap file entry 114000000
->>
->> Digging into the source, we found that the swap entry is invalid due to
->> unknown reason, and this lead to invalid swap_info_struct. Excessive log
-> 
-> Hi Wupeng,
-> 
-> What is the kernel version you are using? If it's another bug causing
-> this invalid swap entry, we should fix that bug instead, not
-> workaround it.
-> 
-> This looks kind of similar to another PATCH & Bug report, corrupted
-> page table or swap entry:
-> https://lore.kernel.org/linux-mm/e223b0e6ba2f4924984b1917cc717bd5@honor.com/
-> 
-> Might be the same kernel bug? Gaoxu mentioned the bug was observed on
-> Kernel 6.6.30 (android version), and neither of these two workarounds
-> will fix it completely, the invalid value could cause many other
-> issues too. We definitely need to find out the root cause.
+Changes in v3:
+- Have xceiver-supply or phys properties in bindings
+- Switch do dev_err_probe in flexcan_probe when checking error of call
+  devm_phy_optional_get
+- Link to v2: https://lore.kernel.org/r/20250220-flexcan-add-transceiver-caps-v2-0-a81970f11846@liebherr.com
 
-We are having this problem in linux-v5.10, since the log is lost and swap
-is not enabled in this machines, maybe memory corrupted in the pt.
+Changes in v2:
+- Rename variable xceiver to transceiver in struct flexcan_priv and in
+  flexcan_probe
+- Set priv->can.bitrate_max if transceiver is found
+- Fix commit messages which claim that transceivers are not supported
+- Do not print error on EPROBE_DEFER after calling devm_phy_optional_get in
+  flexcan_probe
+- Link to v1: https://lore.kernel.org/r/20250211-flexcan-add-transceiver-caps-v1-0-c6abb7817b0f@liebherr.com
 
-> 
->> printing can fill up the prioritized log space, leading to the purging of
->> originally valid logs and hindering problem troubleshooting. To make this
->> more robust, kill this task.
->>
->> Signed-off-by: Ma Wupeng <mawupeng1@huawei.com>
->> ---
->>  include/linux/swap.h | 1 +
->>  mm/memory.c          | 9 ++++++++-
->>  mm/swapfile.c        | 2 +-
->>  3 files changed, 10 insertions(+), 2 deletions(-)
->>
->> diff --git a/include/linux/swap.h b/include/linux/swap.h
->> index b13b72645db3..0fa39cf66bc4 100644
->> --- a/include/linux/swap.h
->> +++ b/include/linux/swap.h
->> @@ -508,6 +508,7 @@ struct backing_dev_info;
->>  extern int init_swap_address_space(unsigned int type, unsigned long nr_pages);
->>  extern void exit_swap_address_space(unsigned int type);
->>  extern struct swap_info_struct *get_swap_device(swp_entry_t entry);
->> +struct swap_info_struct *_swap_info_get(swp_entry_t entry);
->>  sector_t swap_folio_sector(struct folio *folio);
->>
->>  static inline void put_swap_device(struct swap_info_struct *si)
->> diff --git a/mm/memory.c b/mm/memory.c
->> index b4d3d4893267..2d36e5a644d1 100644
->> --- a/mm/memory.c
->> +++ b/mm/memory.c
->> @@ -4365,8 +4365,15 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
->>
->>         /* Prevent swapoff from happening to us. */
->>         si = get_swap_device(entry);
->> -       if (unlikely(!si))
->> +       if (unlikely(!si)) {
->> +               if (unlikely(!_swap_info_get(entry)))
->> +                       /*
->> +                        * return VM_FAULT_SIGBUS for invalid swap entry to
->> +                        * avoid infinite #PF.
->> +                        */
->> +                       ret = VM_FAULT_SIGBUS;
-> 
-> This could lead to VM_FAULT_SIGBUS on swapoff. After swapoff
-> get_swap_device will return NULL.
+---
+Dimitri Fedrau (2):
+      dt-bindings: can: fsl,flexcan: add transceiver capabilities
+      can: flexcan: add transceiver capabilities
 
-If swap is off, All swap pages should be swap in as expected, so
-such entry can not trigger do_swap_page?
+ .../devicetree/bindings/net/can/fsl,flexcan.yaml   |  9 ++++++++
+ drivers/net/can/flexcan/flexcan-core.c             | 27 +++++++++++++++++-----
+ drivers/net/can/flexcan/flexcan.h                  |  1 +
+ 3 files changed, 31 insertions(+), 6 deletions(-)
+---
+base-commit: 6a24171b9625471abfc90c7b28c4b45bee64b3a4
+change-id: 20241209-flexcan-add-transceiver-caps-7cff9400c926
+
+Best regards,
+-- 
+Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+
 
 
