@@ -1,288 +1,170 @@
-Return-Path: <linux-kernel+bounces-527147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D46FA407E8
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 12:36:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6F71A407EF
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 12:38:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDB733BD228
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 11:36:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA32019C52AB
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 11:38:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A45A9209693;
-	Sat, 22 Feb 2025 11:36:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CB3620ADFE;
+	Sat, 22 Feb 2025 11:37:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=natalenko.name header.i=@natalenko.name header.b="CgW4dc8x"
-Received: from prime.voidband.net (prime.voidband.net [199.247.17.104])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="MEYLFRm6";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Jl+wydXI"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B49AC6FC3
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 11:36:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.247.17.104
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5F3A209F25;
+	Sat, 22 Feb 2025 11:37:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740224210; cv=none; b=NMZ2KcTh01jY0WeAU2XCBRZ7T/QGXsUKVrbIqnLnQN7D/WgrrNUCMdOsP9Ahap96mNzyPCQSQsJDnP+YNvA1v5pieamHNBKGZer5Ez9+STUgIP/zvcoFvAGbSdEGoX3+kHYQ0dB6xzVn04GRcdOS19GspA30C1ZyzW8u3jRksXY=
+	t=1740224248; cv=none; b=UKC5gXFKB29Ez7G3twZPwKsVgEBN8mr2XIE1t8obzH9wbkS4ocjLPaYMfDW12OtvWv7GrZvy/jAtJdNgCo3tCI/dFA4OdoIEyWnBHIdBPv/y0uTAVLQEXxmSwIhTM+eBxj0wYNqNOHzNbIwog/Fhw3bhhREFPOD3ZssA8JD1FQk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740224210; c=relaxed/simple;
-	bh=RQUwl6i6MCv7DWVhyufNd2qXBCIjWoJzvjgbz67kYyo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LpnrkF6IBUaudIMELXJpWywf5ze9CRqLJ3TskyaA+oV+febEjiNvpmN0rpnTGIhC/sHt+OJRiwTogtaH3O407GO5dpjO+PE/PMckD4jP2WpDVEqpdXrSUh4bYTmoz0IC89RXzMlBzC9YRj5jRVpstxjerd5YYUIvXmsUcYu1McE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=natalenko.name; spf=pass smtp.mailfrom=natalenko.name; dkim=pass (1024-bit key) header.d=natalenko.name header.i=@natalenko.name header.b=CgW4dc8x; arc=none smtp.client-ip=199.247.17.104
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=natalenko.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=natalenko.name
-Received: from spock.localnet (unknown [212.20.115.26])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature ECDSA (prime256v1) server-digest SHA256)
-	(No client certificate requested)
-	by prime.voidband.net (Postfix) with ESMTPSA id B590E6168430;
-	Sat, 22 Feb 2025 12:36:44 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=natalenko.name;
-	s=dkim-20170712; t=1740224205;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1740224248; c=relaxed/simple;
+	bh=M2l+hHNlor1I/N7AnDFo1mmE59Gq9iL69qc6edsLSoQ=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=r+Rq8KzdtPZD/PQnHaLhdXZdu/3PjgnL1tbDpGmUXnbfagKACHwRwde4routWHHAZ6GYbO5LXm4d8+vWKzoDQ+ij3u8WpU5C5se8YZwSMIlAnjKRNfYPxn3FwwjV80W8nsjo2/OBUiKglE5r1iRPKV0EQ/4HxYMsz1LocH7acSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=MEYLFRm6; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Jl+wydXI; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Sat, 22 Feb 2025 11:37:20 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1740224244;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=yMowdD31+N5Yry4py2pgTOlFubTMO0/Sn3pXYQDcq1M=;
-	b=CgW4dc8x19IJOXZgTudrQ6td+3EWFR6m9DcjmPi97BBBbKGTjdLOv1zRpJEmkyQFcdsb6/
-	qmeLJG4h8sUgUe2DNMAllSRiEbAVpVFnrgAWse2A0uVuFyD3eNrRw7iNTlBBqgZesdrKj6
-	vNF4k/Qu1CkhKy40VAl75Q/8dMRl4Po=
-From: Oleksandr Natalenko <oleksandr@natalenko.name>
-To: x86@kernel.org, Rik van Riel <riel@surriel.com>
-Cc: linux-kernel@vger.kernel.org, bp@alien8.de, peterz@infradead.org,
- dave.hansen@linux.intel.com, zhengqi.arch@bytedance.com,
- nadav.amit@gmail.com, thomas.lendacky@amd.com, kernel-team@meta.com,
- linux-mm@kvack.org, akpm@linux-foundation.org, jackmanb@google.com,
- jannh@google.com, mhklinux@outlook.com, andrew.cooper3@citrix.com,
- Manali.Shukla@amd.com
-Subject: Re: [PATCH v12 00/16] AMD broadcast TLB invalidation
-Date: Sat, 22 Feb 2025 12:36:32 +0100
-Message-ID: <4630159.LvFx2qVVIh@natalenko.name>
-In-Reply-To: <5861243.DvuYhMxLoT@natalenko.name>
-References:
- <20250221005345.2156760-1-riel@surriel.com>
- <5861243.DvuYhMxLoT@natalenko.name>
+	bh=nzmVtN3YczAaOjqNhF+vJYzFdXJiArEG3TjrQqu4yPM=;
+	b=MEYLFRm6AeBERg4lrfH8WsQmmEh2YZ9WbamJ6GI57nvONZvmJQW5KG6JtgWwmypvnw0xFr
+	xQX+mpzr00SMwDZ4p69s2T0c+mlIaZl32JoBP5fn+HVW16C1gcvAZnzCrr/0BlcY7JzeA3
+	UbXW9r46fvJydvrigw0n6p2oXHzIJ4kghw10/cClAzFhuIxKr6rHzMGK0ay4O54DID+aEP
+	O2/F4NcUoyJWu3ySMh+TkoLz4eM5KAl30gANFEJMUWJBy6aghaH22NRYQJvhetQxwhf6QI
+	Borwi1HcCWI9T+OKV9qbk3/l6lTgs7rhKGa+E86crx4ev3CFuSurOmuv3cbPPw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1740224244;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nzmVtN3YczAaOjqNhF+vJYzFdXJiArEG3TjrQqu4yPM=;
+	b=Jl+wydXIpyAu3O2LHtIoj9rSRM5tZhWsRnzH3Tm39N6xoPENhdyB82BQIlHOdulZ9SwyY1
+	+PPzLb6sg8SkEjBg==
+From: "tip-bot2 for Balbir Singh" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/mm] x86/kaslr: Reduce KASLR entropy on most x86 systems
+Cc: Balbir Singh <balbirs@nvidia.com>, Ingo Molnar <mingo@kernel.org>,
+ Kees Cook <kees@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Peter Zijlstra <peterz@infradead.org>, Andy Lutomirski <luto@kernel.org>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250206234234.1912585-1-balbirs@nvidia.com>
+References: <20250206234234.1912585-1-balbirs@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart2356740.ElGaqSPkdT";
- micalg="pgp-sha256"; protocol="application/pgp-signature"
+Message-ID: <174022424056.10177.5690011025322849175.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
---nextPart2356740.ElGaqSPkdT
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
-From: Oleksandr Natalenko <oleksandr@natalenko.name>
-To: x86@kernel.org, Rik van Riel <riel@surriel.com>
-Subject: Re: [PATCH v12 00/16] AMD broadcast TLB invalidation
-Date: Sat, 22 Feb 2025 12:36:32 +0100
-Message-ID: <4630159.LvFx2qVVIh@natalenko.name>
-In-Reply-To: <5861243.DvuYhMxLoT@natalenko.name>
-MIME-Version: 1.0
+The following commit has been merged into the x86/mm branch of tip:
 
-On sobota 22. =C3=BAnora 2025 12:29:54, st=C5=99edoevropsk=C3=BD standardn=
-=C3=AD =C4=8Das Oleksandr Natalenko wrote:
-> Hello.
->=20
-> On p=C3=A1tek 21. =C3=BAnora 2025 1:52:59, st=C5=99edoevropsk=C3=BD stand=
-ardn=C3=AD =C4=8Das Rik van Riel wrote:
-> > Add support for broadcast TLB invalidation using AMD's INVLPGB instruct=
-ion.
-> >=20
-> > This allows the kernel to invalidate TLB entries on remote CPUs without
-> > needing to send IPIs, without having to wait for remote CPUs to handle
-> > those interrupts, and with less interruption to what was running on
-> > those CPUs.
-> >=20
-> > Because x86 PCID space is limited, and there are some very large
-> > systems out there, broadcast TLB invalidation is only used for
-> > processes that are active on 3 or more CPUs, with the threshold
-> > being gradually increased the more the PCID space gets exhausted.
-> >=20
-> > Combined with the removal of unnecessary lru_add_drain calls
-> > (see https://lkml.org/lkml/2024/12/19/1388) this results in a
-> > nice performance boost for the will-it-scale tlb_flush2_threads
-> > test on an AMD Milan system with 36 cores:
-> >=20
-> > - vanilla kernel:           527k loops/second
-> > - lru_add_drain removal:    731k loops/second
-> > - only INVLPGB:             527k loops/second
-> > - lru_add_drain + INVLPGB: 1157k loops/second
-> >=20
-> > Profiling with only the INVLPGB changes showed while
-> > TLB invalidation went down from 40% of the total CPU
-> > time to only around 4% of CPU time, the contention
-> > simply moved to the LRU lock.
-> >=20
-> > Fixing both at the same time about doubles the
-> > number of iterations per second from this case.
-> >=20
-> > Some numbers closer to real world performance
-> > can be found at Phoronix, thanks to Michael:
-> >=20
-> > https://www.phoronix.com/news/AMD-INVLPGB-Linux-Benefits
-> >=20
-> > My current plan is to implement support for Intel's RAR
-> > (Remote Action Request) TLB flushing in a follow-up series,
-> > after this thing has been merged into -tip. Making things
-> > any larger would just be unwieldy for reviewers.
-> >=20
-> > v12:
-> >  - make sure "nopcid" command line option turns off invlpgb (Brendan)
-> >  - add "noinvlpgb" kernel command line option
-> >  - split out kernel TLB flushing differently (Dave & Yosry)
-> >  - split up the patch that does invlpgb flushing for user processes (Da=
-ve)
-> >  - clean up get_flush_tlb_info (Boris)
-> >  - move invlpgb_count_max initialization to get_cpu_cap (Boris)
-> >  - bunch more comments as requested
->=20
-> Somehow, this iteration breaks resume from S3. I can see it even in a QEM=
-U VM:
+Commit-ID:     7ffb791423c7c518269a9aad35039ef824a40adb
+Gitweb:        https://git.kernel.org/tip/7ffb791423c7c518269a9aad35039ef824a40adb
+Author:        Balbir Singh <balbirs@nvidia.com>
+AuthorDate:    Fri, 07 Feb 2025 10:42:34 +11:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Sat, 22 Feb 2025 12:25:57 +01:00
 
-Can also reproduce this by simply offlining/onlining a CPU via `/sys/device=
-s/system/cpu/cpuX/online`.
+x86/kaslr: Reduce KASLR entropy on most x86 systems
 
->=20
-> ```
-> [   24.373391] ACPI: PM: Low-level resume complete
-> [   24.373929] ACPI: PM: Restoring platform NVS memory
-> [   24.375024] Enabling non-boot CPUs ...
-> [   24.375777] smpboot: Booting Node 0 Processor 1 APIC 0x1
-> [   24.376463] BUG: unable to handle page fault for address: ffffffffa3ba=
-4d60
-> [   24.377383] #PF: supervisor write access in kernel mode
-> [   24.377912] #PF: error_code(0x0003) - permissions violation
-> [   24.378413] PGD 25427067 P4D 25427067 PUD 25428063 PMD 8000000024c001a1
-> [   24.379020] Oops: Oops: 0003 [#1] PREEMPT SMP NOPTI
-> [   24.379503] CPU: 1 UID: 0 PID: 0 Comm: swapper/1 Kdump: loaded Not tai=
-nted 6.14.0-pf0 #1 161e4891fb5044b2d7438cd1852eeaac0cdffab5
-> [   24.380650] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS u=
-nknown 02/02/2022
-> [   24.381400] RIP: 0010:get_cpu_cap+0x39b/0x4f0
-> [   24.381810] Code: 08 c7 44 24 08 00 00 00 00 48 8d 4c 24 0c e8 3c 00 0=
-4 00 90 8b 44 24 04 89 43 64 0f b7 44 24 0c 83 c0 01 81 7b 24 09 00 00 80 <=
-66> 89 05 0e ab 8b 01 0f 86 18 fd ff ff c7 44 24 14 00 00 00 00 4c
-> [   24.383629] RSP: 0000:ffffafbec00efe70 EFLAGS: 00010012
-> [   24.384155] RAX: 0000000000000001 RBX: ffff8b3fbcb19020 RCX: 000000000=
-0001001
-> [   24.384862] RDX: 0000000000000000 RSI: ffffafbec00efe74 RDI: ffffafbec=
-00efe78
-> [   24.385603] RBP: ffffafbec00efe88 R08: ffffafbec00efe70 R09: ffffafbec=
-00efe7c
-> [   24.386318] R10: 0000000000002430 R11: ffff8b3fa5428000 R12: ffffafbec=
-00efe8c
-> [   24.387014] R13: ffffafbec00efe84 R14: ffffafbec00efe80 R15: ffffafbec=
-00efe70
-> [   24.387713] FS:  0000000000000000(0000) GS:ffff8b3fbcb00000(0000) knlG=
-S:0000000000000000
-> [   24.388502] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [   24.389074] CR2: ffffffffa3ba4d60 CR3: 0000000025422000 CR4: 000000000=
-0350ef0
-> [   24.389769] Call Trace:
-> [   24.390020]  <TASK>
-> [   24.392234]  identify_cpu+0xd4/0x890
-> [   24.392593]  identify_secondary_cpu+0x12/0x40
-> [   24.393032]  smp_store_cpu_info+0x49/0x60
-> [   24.393430]  start_secondary+0x7f/0x140
-> [   24.393810]  common_startup_64+0x13e/0x141
-> [   24.394218]  </TASK>
->=20
-> $ scripts/faddr2line arch/x86/kernel/cpu/common.o get_cpu_cap+0x39b
-> get_cpu_cap+0x39b/0x500:
-> get_cpu_cap at =E2=80=A6/arch/x86/kernel/cpu/common.c:1063
->=20
-> 1060         if (c->extended_cpuid_level >=3D 0x80000008) {
-> 1061                 cpuid(0x80000008, &eax, &ebx, &ecx, &edx);
-> 1062                 c->x86_capability[CPUID_8000_0008_EBX] =3D ebx;
-> 1063                 invlpgb_count_max =3D (edx & 0xffff) + 1;
-> 1064         }
-> ```
->=20
-> Any idea what I'm looking at?
->=20
-> Thank you.
->=20
-> > v11:
-> >  - resolve conflict with CONFIG_PT_RECLAIM code
-> >  - a few more cleanups (Peter, Brendan, Nadav)
-> > v10:
-> >  - simplify partial pages with min(nr, 1) in the invlpgb loop (Peter)
-> >  - document x86 paravirt, AMD invlpgb, and ARM64 flush without IPI (Bre=
-ndan)
-> >  - remove IS_ENABLED(CONFIG_X86_BROADCAST_TLB_FLUSH) (Brendan)
-> >  - various cleanups (Brendan)
-> > v9:
-> >  - print warning when start or end address was rounded (Peter)
-> >  - in the reclaim code, tlbsync at context switch time (Peter)
-> >  - fix !CONFIG_CPU_SUP_AMD compile error in arch_tlbbatch_add_pending (=
-Jan)
-> > v8:
-> >  - round start & end to handle non-page-aligned callers (Steven & Jan)
-> >  - fix up changelog & add tested-by tags (Manali)
-> > v7:
-> >  - a few small code cleanups (Nadav)
-> >  - fix spurious VM_WARN_ON_ONCE in mm_global_asid
-> >  - code simplifications & better barriers (Peter & Dave)
-> > v6:
-> >  - fix info->end check in flush_tlb_kernel_range (Michael)
-> >  - disable broadcast TLB flushing on 32 bit x86
-> > v5:
-> >  - use byte assembly for compatibility with older toolchains (Borislav,=
- Michael)
-> >  - ensure a panic on an invalid number of extra pages (Dave, Tom)
-> >  - add cant_migrate() assertion to tlbsync (Jann)
-> >  - a bunch more cleanups (Nadav)
-> >  - key TCE enabling off X86_FEATURE_TCE (Andrew)
-> >  - fix a race between reclaim and ASID transition (Jann)
-> > v4:
-> >  - Use only bitmaps to track free global ASIDs (Nadav)
-> >  - Improved AMD initialization (Borislav & Tom)
-> >  - Various naming and documentation improvements (Peter, Nadav, Tom, Da=
-ve)
-> >  - Fixes for subtle race conditions (Jann)
-> > v3:
-> >  - Remove paravirt tlb_remove_table call (thank you Qi Zheng)
-> >  - More suggested cleanups and changelog fixes by Peter and Nadav
-> > v2:
-> >  - Apply suggestions by Peter and Borislav (thank you!)
-> >  - Fix bug in arch_tlbbatch_flush, where we need to do both
-> >    the TLBSYNC, and flush the CPUs that are in the cpumask.
-> >  - Some updates to comments and changelogs based on questions.
-> >=20
-> >=20
-> >=20
->=20
->=20
->=20
+When CONFIG_PCI_P2PDMA=y (which is basically enabled on all
+large x86 distros), it maps the PFN's via a ZONE_DEVICE
+mapping using devm_memremap_pages(). The mapped virtual
+address range corresponds to the pci_resource_start()
+of the BAR address and size corresponding to the BAR length.
 
+When KASLR is enabled, the direct map range of the kernel is
+reduced to the size of physical memory plus additional padding.
+If the BAR address is beyond this limit, PCI peer to peer DMA
+mappings fail.
 
-=2D-=20
-Oleksandr Natalenko, MSE
---nextPart2356740.ElGaqSPkdT
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
+Fix this by not shrinking the size of the direct map when
+CONFIG_PCI_P2PDMA=y.
 
------BEGIN PGP SIGNATURE-----
+This reduces the total available entropy, but it's better than
+the current work around of having to disable KASLR completely.
 
-iQIzBAABCAAdFiEEZUOOw5ESFLHZZtOKil/iNcg8M0sFAme5tsAACgkQil/iNcg8
-M0vckg//QzzLbzZgVuw+RAazI0uv0qTdmpxqdl6uOTZKJVyV3ePBCMEaD3nQyJMu
-MrL3NFnj6piuNlsMh0Melx0DACW7JoJtQNzXATOil6HbQ7e3iMPLr4nUVCdjqEKP
-wy3/HQpaXs/2NSdUZBEv/IqPeazqCvIBOZ3ENNg1cq9Lni8kojYJL2OVo/2XwgoP
-dYZEIzTvzRaj4Gje7NmSa1T93K8yLKTZS5jMV97NSCmKxiq2VxXEkqwIDvhoNmU0
-C4Gi8X81QRHhUyRQOiJWdLFre9nDMfkzhryj87LJ8XFcxxwhsFVVygBchkmnQzFr
-06PdyjoBVlUeZTEPgnuu8mRH/GJO6PCX/FyZD6UgofsyIsVaQsSxrjgmEm1lDUsQ
-3Elqxbpp/005gICK6mdglVPq2b5TOYKx0ySLAh/TQgYUShjBysm5ajrv7zBPRIvH
-rCU3fa+qpbkRkP2xOCs+r6/XOvEhVDZ1nAzGQR9TNeLjyen5Eyyrg5wJojbR4jbt
-5+8BeJTj68PPCHt6BR5TTxiOhhxD4qRPw6Tl5vVFdeJo6wRnvKbR5hoy9tpjKudS
-PMhdp/x1DlUEgCQI8WbNeh7KQHAI21zQq10QfsULWCkCm31BgvgWvMQ3cQs3R6jB
-r8uBzLDnyupYcGgGD+qg08vX69xJzEGcyxRyGwtQWuapquDM7EQ=
-=dmfm
------END PGP SIGNATURE-----
+[ mingo: Clarified the changelog to point out the broad impact ... ]
 
---nextPart2356740.ElGaqSPkdT--
+Signed-off-by: Balbir Singh <balbirs@nvidia.com>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Reviewed-by: Kees Cook <kees@kernel.org>
+Acked-by: Bjorn Helgaas <bhelgaas@google.com> # drivers/pci/Kconfig
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Link: https://lore.kernel.org/lkml/20250206023201.1481957-1-balbirs@nvidia.com/
+Link: https://lore.kernel.org/r/20250206234234.1912585-1-balbirs@nvidia.com
+--
+ arch/x86/mm/kaslr.c | 10 ++++++++--
+ drivers/pci/Kconfig |  6 ++++++
+ 2 files changed, 14 insertions(+), 2 deletions(-)
+---
+ arch/x86/mm/kaslr.c | 10 ++++++++--
+ drivers/pci/Kconfig |  6 ++++++
+ 2 files changed, 14 insertions(+), 2 deletions(-)
 
-
-
+diff --git a/arch/x86/mm/kaslr.c b/arch/x86/mm/kaslr.c
+index 11a9354..3c306de 100644
+--- a/arch/x86/mm/kaslr.c
++++ b/arch/x86/mm/kaslr.c
+@@ -113,8 +113,14 @@ void __init kernel_randomize_memory(void)
+ 	memory_tb = DIV_ROUND_UP(max_pfn << PAGE_SHIFT, 1UL << TB_SHIFT) +
+ 		CONFIG_RANDOMIZE_MEMORY_PHYSICAL_PADDING;
+ 
+-	/* Adapt physical memory region size based on available memory */
+-	if (memory_tb < kaslr_regions[0].size_tb)
++	/*
++	 * Adapt physical memory region size based on available memory,
++	 * except when CONFIG_PCI_P2PDMA is enabled. P2PDMA exposes the
++	 * device BAR space assuming the direct map space is large enough
++	 * for creating a ZONE_DEVICE mapping in the direct map corresponding
++	 * to the physical BAR address.
++	 */
++	if (!IS_ENABLED(CONFIG_PCI_P2PDMA) && (memory_tb < kaslr_regions[0].size_tb))
+ 		kaslr_regions[0].size_tb = memory_tb;
+ 
+ 	/*
+diff --git a/drivers/pci/Kconfig b/drivers/pci/Kconfig
+index 2fbd379..5c3054a 100644
+--- a/drivers/pci/Kconfig
++++ b/drivers/pci/Kconfig
+@@ -203,6 +203,12 @@ config PCI_P2PDMA
+ 	  P2P DMA transactions must be between devices behind the same root
+ 	  port.
+ 
++	  Enabling this option will reduce the entropy of x86 KASLR memory
++	  regions. For example - on a 46 bit system, the entropy goes down
++	  from 16 bits to 15 bits. The actual reduction in entropy depends
++	  on the physical address bits, on processor features, kernel config
++	  (5 level page table) and physical memory present on the system.
++
+ 	  If unsure, say N.
+ 
+ config PCI_LABEL
 
