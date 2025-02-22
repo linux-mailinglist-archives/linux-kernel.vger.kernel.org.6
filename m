@@ -1,104 +1,104 @@
-Return-Path: <linux-kernel+bounces-527308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF324A40978
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 16:20:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 832D6A40967
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 16:14:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96BD9189EB69
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 15:20:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFEFB700E3A
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 15:14:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33A78171E43;
-	Sat, 22 Feb 2025 15:20:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDA001C5F37;
+	Sat, 22 Feb 2025 15:14:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=epfl.ch header.i=@epfl.ch header.b="4ce8sOQR"
-Received: from smtp4.epfl.ch (smtp4.epfl.ch [128.178.224.219])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eITl0yA7"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EA5078F46
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 15:20:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=128.178.224.219
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91F0219882B;
+	Sat, 22 Feb 2025 15:14:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740237641; cv=none; b=tKBEktbk4bDj2CYVfwaBdj8dvuEgPJByqF2UbvUNBQ59L2Q3Mn1Gee96KDOkyqb5qmeHqJXHPOUIw8aN2BdVvEzX7Q6cuItxxQYpuge4YNVMzceFzQLx2Zw+fuCeaGSavQnPgp3uaSqIld7vcwdskC0AcqliuS+PT7m1XAkdJnI=
+	t=1740237271; cv=none; b=e85x3HPLf35uXqizAxWECV/EOOOcy0P1uo+RjxHDuCOGIBWwq5kQp/hgNPmuA0Mpqk+xccRllt/l+3pmQ2VUQxeZJdPnzrSw3gIK3QLKOQYcHeh/2V/E5Ek909TEu2H3ySRvK4MRpcmT5/vOqgdzLyrbxm3A+76vldXBeburcFs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740237641; c=relaxed/simple;
-	bh=x/ouvYV8KYqaGJxp+7c4Mh8n3Po2I8YHaK+uUNGOK+E=;
-	h=From:To:Subject:Date:Message-ID:Content-Type:MIME-Version; b=TWyY9Tc/hg56EG0YSyc6zszGRYOGdQGahY1t5iwRVGEnN9utrJmDpYJUHnIKTqTqDBPw44gwpfxRUehdlx8xjnfJDv2F/HU/oiReWE1E4fYgp9wOsZdZn8fbI6UR37xAkALWYthEKvtnvEEJUAedeszK1tY90fiTSxwFvfMUcQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=epfl.ch; spf=pass smtp.mailfrom=epfl.ch; dkim=pass (1024-bit key) header.d=epfl.ch header.i=@epfl.ch header.b=4ce8sOQR; arc=none smtp.client-ip=128.178.224.219
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=epfl.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=epfl.ch
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=epfl.ch;
-      s=epfl; t=1740237233;
-      h=From:To:Subject:Date:Message-ID:Content-Type:Content-Transfer-Encoding:MIME-Version;
-      bh=x/ouvYV8KYqaGJxp+7c4Mh8n3Po2I8YHaK+uUNGOK+E=;
-      b=4ce8sOQR30sdStd8tRqOZ5Kkuzz80rUpl6b4qfC6fwz2Uf45YqwcpVbRfZ1ZAAlFD
-        w85dQQsV2JCdOxMQoGK4AQObZaFqrVgsmcuJgNRG1XDxySbYFzFXFfKH6W32kuyi/
-        hyIFdJqBrlSzcKQVdiDDewPbc50FFH6aTw1tLINIY=
-Received: (qmail 42719 invoked by uid 107); 22 Feb 2025 15:13:53 -0000
-Received: from ax-snat-224-179.epfl.ch (HELO ewa08.intranet.epfl.ch) (192.168.224.179) (TLS, ECDHE-RSA-AES256-GCM-SHA384 (P-256 curve) cipher)
-  by mail.epfl.ch (AngelmatoPhylax SMTP proxy) with ESMTPS; Sat, 22 Feb 2025 16:13:53 +0100
-X-EPFL-Auth: tdG1Zg5FwtoI54Tsf+zKa8Sfb1BJlQvhQpxuR2PuVE3kxQABK3Y=
-Received: from ewa07.intranet.epfl.ch (128.178.224.178) by
- ewa08.intranet.epfl.ch (128.178.224.179) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Sat, 22 Feb 2025 16:13:50 +0100
-Received: from ewa07.intranet.epfl.ch ([fe80::f470:9b62:7382:7f3a]) by
- ewa07.intranet.epfl.ch ([fe80::f470:9b62:7382:7f3a%9]) with mapi id
- 15.01.2507.044; Sat, 22 Feb 2025 16:13:50 +0100
-From: Georgiy Konstantinovich Lebedev <georgiy.lebedev@epfl.ch>
-To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-mm@vger.kernel.org" <linux-mm@vger.kernel.org>
-Subject: Does NUMA_BALANCING_MEMORY_TIERING work with hugetlb pages?
-Thread-Topic: Does NUMA_BALANCING_MEMORY_TIERING work with hugetlb pages?
-Thread-Index: AQHbhTxgg1UfPTuewk6Y9fNDedGGsQ==
-Date: Sat, 22 Feb 2025 15:13:50 +0000
-Message-ID: <907A5EDC-F9D7-4D27-BAC3-5EAAE151AA7B@epfl.ch>
-Accept-Language: en-US, fr-CH
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <B7ECCE45FF3A0547A2E2D11292031D60@intranet.epfl.ch>
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1740237271; c=relaxed/simple;
+	bh=gb4Sl+NAFfnDd3eu0lMM0znOWH1iZWbVNbCdUr6/vmE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rhtNAZn5WHFJYGYU26bLg368uNAUji22oCM+fX2ScHd7yJKHiRePIUcPFwqSbpMxHkuXVda9I3nnP+Rt/ZDNAJi2ChDwFaEfJTcQ7HCb/AlomFpG64Z+0cyscA+ghpwsqgeOw7C/z3y1TJ6kYVFgO1UAo+jWSIBEthDYbfj0IDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eITl0yA7; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5456a71a7d9so532710e87.3;
+        Sat, 22 Feb 2025 07:14:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740237268; x=1740842068; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gb4Sl+NAFfnDd3eu0lMM0znOWH1iZWbVNbCdUr6/vmE=;
+        b=eITl0yA7Drayy6Et1i8gGRpTP5I0u8QQINLZglpysJzRhCqKquswYdxneS8RFzTbSb
+         3lJ2S/MfpKIQBnHd+vPDXC+SrrX7xI8fJVXyz9ulKky2Fufydtz8vOryxuUraDuZ349m
+         d95smFGOiqk4fJm6oPuz3DA5TZa4gvHF/8JcawWNhISJZBjnvwOmePuo3ji5WhBa9PCS
+         XyEbhw6zL152f1xoh837W47WTOSX5wkdLCZR62RkqtPuWvAYndwVDwIiVxUqcyC6VA6o
+         0t0IMEEdSQpxWpXp/8yEqaerkVBCu4dNRgmodhtQOqPBtacyIHkAX9vTDoHOkrQqx00Q
+         tLKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740237268; x=1740842068;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gb4Sl+NAFfnDd3eu0lMM0znOWH1iZWbVNbCdUr6/vmE=;
+        b=m/6xiBpFMiIygZkvqLaI6ITCXcmEBaluf3tENazKfB+9Mhunewjm7Npi7/RteQr0L1
+         37R40IqKUZnAljpvvTxnSXCXSbc9FYZvcXeRtmdqEeHXBdng6RR04imtrnNF7UOPIQRv
+         osMOF/txwhQCzVfN5HgKb94GcjQBhAisQj9R18kP7Orh8Ppfmt6irnZflXslFdIOoC28
+         xdTA0GmRGwO18bSzdXfuHs/jJVRxB/0yQKj+K+poBk7xMaHp7O7y4Xj9QaR3jeXxkzcw
+         Md8KkPp5wXtDE1IUTPJbQqBobhE3/ImaaIRZI/AW5uUasU6Szr9mHE/47IE/7F6ZXaSx
+         CVPg==
+X-Forwarded-Encrypted: i=1; AJvYcCUpMwoTNge1IJIaRocDy682q0nj6zR6vudBSdi5HLmoBjJXUJbbctlCNKasTedy/ry3tjVg0uQf2vARKS0=@vger.kernel.org, AJvYcCXDAfHPZJS7vbtk7mR2pJKFzIYLOdUhgkq7LiKjULQMiOtrj24AiHzqTyUzfE1DFqy5v4kzqWWaWvrxG88wp1c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywfwak0Wur6EFhHN7DzVLVKEq+AK1ZrCK7UEFXsaxg1viz4H7b1
+	BN82LEQE3sutbFhjyJfCCdtZw3WQB/rh1iOKkPr5AXkBrun/oXQB3oah70qXA6hTxvJrgJOPQQ+
+	/QsHLrWJp9YreWIe7GyAavQpfrTw=
+X-Gm-Gg: ASbGncuI8WyWuyimOXeTz5zzF/RpNVDLx4UIgwAcT6X8KOd5YCkuFy9NKbJFGt1VvNO
+	Gn8ht3zL7Opkg1AtVlO4gtJ3LMh7ZwHwLeltEO48nmbrhMPbQuRBaoCtDuxvSl8c6PMNUca6EmX
+	vzlD52H0s=
+X-Google-Smtp-Source: AGHT+IH8Tym24vcrnRxEuyslXSwW3y9ZazTyaHZg3gYD5Yy0qwHtZLgjrL5WHKrpGR42kgpwlimOtJGd7bnoDbYEgQ8=
+X-Received: by 2002:a05:6512:e99:b0:545:2fae:cffe with SMTP id
+ 2adb3069b0e04-54838f5a573mr936010e87.10.1740237267476; Sat, 22 Feb 2025
+ 07:14:27 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <ef950304-0e98-4c91-8fa1-d236cbb782b8@disroot.org> <CANiq72=WyQdQfoOeb_mK=J_5GtiWBenqzA+mOr=8mN8OTWPB-g@mail.gmail.com>
+In-Reply-To: <CANiq72=WyQdQfoOeb_mK=J_5GtiWBenqzA+mOr=8mN8OTWPB-g@mail.gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Sat, 22 Feb 2025 16:14:12 +0100
+X-Gm-Features: AWEUYZkDVyQ7F4Gp9ybyNiW1F1rAJPNqvAp0Zrl2cJ0pS2ctF7P1QLlwfAuRl3I
+Message-ID: <CANiq72=gJCauuTv3_+vvHU2r=nFpKCdL5tsjS+mj7Ttqra5oLA@mail.gmail.com>
+Subject: Re: FTBFS: Rust firmware abstractions in current stable (6.13.4) on
+ arm64 with rustc 1.85.0
+To: NoisyCoil <noisycoil@disroot.org>, Danilo Krummrich <dakr@kernel.org>
+Cc: stable@vger.kernel.org, regressions@lists.linux.dev, ojeda@kernel.org, 
+	alex.gaynor@gmail.com, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-SGVsbG8sDQoNCkkgYW0gaGF2aW5nIHRyb3VibGUgZmlndXJpbmcgb3V0IHdoZXRoZXIgdGhlIE5V
-TUFfQkFMQU5DSU5HX01FTU9SWV9USUVSSU5HDQpmZWF0dXJlIG9mIC9wcm9jL3N5cy9rZXJuZWwv
-bnVtYV9iYWxhbmNpbmcgd29ya3Mgd2l0aCBodWdldGxiIHBhZ2VzLg0KDQpJIGNvdWxkIG5vdCBm
-aW5kIGFueSBpbmZvcm1hdGlvbiBhYm91dCBodWdldGxiIHBhZ2VzIGluIHRoZSBkb2N1bWVudGF0
-aW9uDQpyZWxhdGVkIHRvIHRoaXMgZmVhdHVyZS4NCg0KSSBoYXZlIHRyaWVkIHNlYXJjaGluZyB0
-aHJvdWdoIHRoZSBrZXJuZWwgY29kZWJhc2UsIGhvd2V2ZXIgSSBoYXZlIG9ubHkNCmZvdW5kIHRo
-YXQgaHVnZXRsYiBwYWdlcyBhcmUgZmlsdGVyZWQgb3V0IGluIHRoZSBgc2hvdWxkX3NraXBfdm1h
-YCBmdW5jdGlvbiBpbg0KYG1tL3Ztc2Nhbi5jYCDigJQgdHJhY2luZyBpdHMgdXNhZ2UsIEkgY291
-bGQgbm90IHVuZGVyc3RhbmQgd2hldGhlciBpdCBpcyB1c2VkIGluDQptZW1vcnkgdGllcmluZy4N
-Cg0KSSBoYXZlIHRyaWVkIHJ1bm5pbmcgbWVtb3J5IHRpZXJpbmcgc3RyZXNzIHRlc3QgYXMgZm9s
-bG93cywgYnV0IEkgYW0gbm90DQpzZWVpbmcgYW55IHByb21vdGlvbiBvciBkZW1vdGlvbnMgaW4g
-L3Byb2Mvdm1zdGF0Og0KYGBgDQp2b2lkIHRyaWdnZXJfdHBwKHZvaWQgKmFkZHIsIHNpemVfdCBu
-X3BhZ2VzKSB7DQoJc2l6ZV90IG9mZnNldCA9IG5fcGFnZXMgLSBuX3BhZ2VzICogMSAvIDEwOw0K
-CWZvciAoc2l6ZV90IGsgPSAwOyBrIDwgMTAwMDAwMDAwOyArK2spIHsNCgkJZm9yIChzaXplX3Qg
-aSA9IG9mZnNldDsgaSA8IG5fcGFnZXM7ICsraSkgew0KCQkJY2hhciAqcGFnZSA9IChjaGFyICop
-YWRkciArIChpICogSFVHRV9QQUdFX1NJWkUpOw0KCQl9DQoJfQ0KfQ0KYGBgDQoNClRoZSBzZXR1
-cCBmb3IgdGhlIHN0cmVzcyB0ZXN0IGlzIGFzIGZvbGxvd3M6DQoxLiBJIGFsbG9jYXRlIGh1Z2V0
-bGIgcGFnZXMgdG8gdXNlIGFsbW9zdCBhbGwgdGhlIGF2YWlsYWJsZSBEUkFNIG1lbW9yeSwNCmAv
-c3lzL2RldmljZXMvc3lzdGVtL25vZGUvbm9kZTEvaHVnZXBhZ2VzL2h1Z2VwYWdlcy0yMDQ4a0Iv
-bnJfaHVnZXBhZ2VzYA0KcmVwb3J0cyAxMjQ5MjggKDI0NCBHQikgb3V0IG9mIDI1MSBHQiBhdmls
-YWJsZSANCjIuIEkgYWxsb2NhdGUgaHVnZXRsYiBwYWdlcyBmb3IgdGhlIHdvcmtsYW9kIG9uIHRo
-ZSBDWEwgYXR0YWNoZWQgbWVtb3J5LCANCmAvc3lzL2RldmljZXMvc3lzdGVtL25vZGUvbm9kZTMv
-aHVnZXBhZ2VzL2h1Z2VwYWdlcy0yMDQ4a0IvbnJfaHVnZXBhZ2VzYCANCnJlcG9ydHMgMTAyNDAg
-KDEwIEdCKQ0KMy4gbnVtYWN0bCAtSCByZXBvcnRzIDE2MTEgTUIgZnJlZSBtZW1vcnkgb24gbm9k
-ZSAxDQo0LiBJICJlYXQiIDI0MiBHQiBvZiBodWdlIHBhZ2VzIGJ5IHJ1bm5pbmcgYSBiYWNrZ3Jv
-dW5kIGFwcGxpY2F0aW9uIHRoYXQgbW1hcHMNCmFuZCBmYXVsdHMgbWVtb3J5LA0KYC9zeXMvZGV2
-aWNlcy9zeXN0ZW0vbm9kZS9ub2RlMS9odWdlcGFnZXMvaHVnZXBhZ2VzLTIwNDhrQi9mcmVlX2h1
-Z2VwYWdlc2AgDQpyZXBvcnRzIDEwMjEgKDIgR0IpDQo0LiBJIHJ1biB0aGUgbWVtb3J5IHRpZXJp
-bmcgc3RyZXNzIHRlc3Qgd2l0aCAyMEdCIG9mIGh1Z2UgcGFnZXMgKG1tYXBlZCBhbmQgDQpmYXVs
-dGVkKSwgbnVtYXN0YXQgcmVwb3J0cyAyMDQyIE1CIG9mIGh1Z2UgcGFnZXMgb24gbm9kZSAxLCAx
-ODQzOCBNQiBvZiBodWdlIA0KcGFnZXMgb24gbm9kZSAzLg0KDQpUaGFuayB5b3UgaW4gYWR2YW5j
-ZSBmb3IgeW91ciB0aW1lIQ0KDQpSZWdhcmRzLA0KR2VvcmdpeSBMZWJlZGV2DQo=
+On Sat, Feb 22, 2025 at 1:20=E2=80=AFPM Miguel Ojeda
+<miguel.ojeda.sandonis@gmail.com> wrote:
+>
+> Thanks for the report! Yeah, I noticed in my builds too but didn't get
+> to it yet (there are also a couple Clippy warnings in the QR code too,
+> in case you see them).
+>
+> Cc'ing Danilo in case he wants to send the fix, otherwise I will.
+
+s/fix/backport -- actually, sorry, I just sent it.
+
+Cheers,
+Miguel
 
