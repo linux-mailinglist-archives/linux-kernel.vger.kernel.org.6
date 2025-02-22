@@ -1,122 +1,84 @@
-Return-Path: <linux-kernel+bounces-527275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45ABDA40915
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 15:33:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01D5BA4091B
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 15:35:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BDDD18838B4
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 14:31:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07875707E81
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 14:31:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ADB0190477;
-	Sat, 22 Feb 2025 14:28:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE2EF1B2182;
+	Sat, 22 Feb 2025 14:29:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="dxkqJ/Zo"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rbY6Dl0q"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02193188583
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 14:27:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41AF1156F41;
+	Sat, 22 Feb 2025 14:29:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740234481; cv=none; b=eNmOgsXlUD3LFcg6bcvh2sQUXybVT2pJ0Akt+nyfnJtGevxN7rmypbR3zHi4cGnENahjM1nAWHe7g3NQTJeD0J/Y34YK+LJzS813GGRl84Ei/OsdIqqVolarkXS9bjto8clesF9KkefJXZIngKWA4kFnJ8IhFVUbVLCBGLfZVpE=
+	t=1740234562; cv=none; b=uaMCsld9QulBZ4Gwg7qCPY0Ka9+f2875e5KYaMRwqug7VhAYit66kS1FZoI+JlyX6iLgtEQ6/14bPRayC/QvjCpIy3X3/fUtqPzpyTlHdhgnGFy7uUAhXwj/Dm0Lqfi2uOcc0/sy6gLc8Y8npfWC+qZNosM4l/h5Bs0LhyHxg14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740234481; c=relaxed/simple;
-	bh=bWACM+CIjldQm4d9hS/Qm6lGurt3JhxvPdGMNHlxy0k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Hr0vofHpxTwBS2q1jJ/Ab03RRnS1dGWxw9K5Zorl+VKbpdCBlgHlE6IzpXkOXn+2RBfMDJcjn6/65EZaQdnatr4e8uRppzQukWpb9v1wb9MNoX/u54TEKlgQ69rt4quDzrM3uiAJdOk412NMieFZA6hXo8Q+4GkEUAVo1+4KpuQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=dxkqJ/Zo; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-22128b7d587so58919505ad.3
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 06:27:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1740234478; x=1740839278; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=zPvXDuvmRAhrxvOfwR/RABZWu0CVYBLRPN9dNRxz0ZQ=;
-        b=dxkqJ/Zo4IHG6c6YmFhgu+5m28TWxFKUwGXLAWzjW+dWaarfqW2+cvVx93Q/Dq0Ne1
-         InEs4nm8o+8CiO/1vkOEGMbwDsU/bHOq5rCML7uch45uLBlTO0hRTCpPtA3zOc57r0X+
-         bgw8Sy+pvQP1Y0CXdHTT2vDfqhhwoxbWtCSCc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740234478; x=1740839278;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zPvXDuvmRAhrxvOfwR/RABZWu0CVYBLRPN9dNRxz0ZQ=;
-        b=bUGEg+zKTn8W6XpZMHMXfiIkKCL6VUs+KTpzATmuiZVECpeQtyY7cwD2C/4OJ4d6LN
-         feNmODgvgTzI4b1Qe01/6W5PdoV0+HagHuVlz1/ib8z0dQBbHKlrE8MpgkwUTJVSaVHU
-         tJaVy/ET0mCvaBOC0br/2uzLPskFgM4/yeaa/UdcP/TAXYaoug7pa/2vf4MCBgBCy4LC
-         70Nqrd2HuxsG6iUY0JktWFMGaTq27Re6vnfqOQcWd+Wb0qFgFLUyRakuqrnD1wfEbRYK
-         l9fQzBgTMy4XamhLA/9wdiWlL2wj1T2CUI4wqLkn1/18IkQpPNRuDDsbmp1vNL9T1ddT
-         QLCg==
-X-Forwarded-Encrypted: i=1; AJvYcCWFGfoheCM4BP2zDXBlq8HkAH8a+NglYtzGYnwWc6UjIDFkqvQCneNuR04efQxcdJngo8ynhOttZaBGwEQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywxr0KfU5f6rNMaZpWuevIFImiCZS4LVXp/0v17nrYTZBJtCBGK
-	8jNiL4siMkfIkQdlPDyTfxBQfL70gnukzpPexxJxAyKZUEtrX4WADJQZKDE8iw==
-X-Gm-Gg: ASbGncsHwPe84xNN4xoFw8bRBNvmutXmqDK/WgtUmTaItbhiYReYq6z2wQOQKDyIvDe
-	1d3OWAtYsUfHTOEivy55Dk1qd9SXjqLE0yNcqyPFJeI8KIFnRA/iqfEzqj6h6xR/CNNRtHtrtIN
-	/cyu3/cjP+pLLcfcYo0hSFaa5gFz0wZXqNDczEdzRcI8IUkJk8PvGUq9Um/SL36PvUHAxA/APyo
-	y/vNMbFct3jFDSBtvfH45NIa8H1yr+Rw8f9hJpp4EuzWMJOQVKLogbxPz9GMq7Vwqta2dcRD4ek
-	Q3APHkY9lKTip3wMlnRQRUMjL64y
-X-Google-Smtp-Source: AGHT+IFPJedH8sKLSfD18g5iptfNHmHTIVM0EgNuwafBBp4M2gx2umVIm3KLNGcBsyHiBaQenJCWGg==
-X-Received: by 2002:a05:6a21:501:b0:1d9:c615:d1e6 with SMTP id adf61e73a8af0-1eef3b1aa6dmr12909888637.0.1740234478261;
-        Sat, 22 Feb 2025 06:27:58 -0800 (PST)
-Received: from google.com ([2401:fa00:8f:203:badf:54f:bbc8:4593])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7327fa51eb9sm11016305b3a.166.2025.02.22.06.27.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 22 Feb 2025 06:27:57 -0800 (PST)
-Date: Sat, 22 Feb 2025 23:27:49 +0900
-From: Sergey Senozhatsky <senozhatsky@chromium.org>
-To: Barry Song <21cnbao@gmail.com>
-Cc: Yosry Ahmed <yosry.ahmed@linux.dev>, Minchan Kim <minchan@kernel.org>, 
-	Herbert Xu <herbert@gondor.apana.org.au>, "Sridhar, Kanchana P" <kanchana.p.sridhar@intel.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, 
-	"hannes@cmpxchg.org" <hannes@cmpxchg.org>, "nphamcs@gmail.com" <nphamcs@gmail.com>, 
-	"chengming.zhou@linux.dev" <chengming.zhou@linux.dev>, "usamaarif642@gmail.com" <usamaarif642@gmail.com>, 
-	"ryan.roberts@arm.com" <ryan.roberts@arm.com>, "akpm@linux-foundation.org" <akpm@linux-foundation.org>, 
-	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>, "davem@davemloft.net" <davem@davemloft.net>, 
-	"clabbe@baylibre.com" <clabbe@baylibre.com>, "ardb@kernel.org" <ardb@kernel.org>, 
-	"ebiggers@google.com" <ebiggers@google.com>, "surenb@google.com" <surenb@google.com>, 
-	"Accardi, Kristen C" <kristen.c.accardi@intel.com>, "Feghali, Wajdi K" <wajdi.k.feghali@intel.com>, 
-	"Gopal, Vinodh" <vinodh.gopal@intel.com>, Sergey Senozhatsky <senozhatsky@chromium.org>
-Subject: Re: [PATCH v5 02/12] crypto: acomp - Define new interfaces for
- compress/decompress batching.
-Message-ID: <lu3j2kr3m2b53ze2covbywh6a7vvrscbkoplwnq4ov24g2cfso@572bdcsobd4a>
-References: <SJ0PR11MB5678851E3E6BA49A99D8BAE2C9102@SJ0PR11MB5678.namprd11.prod.outlook.com>
- <CAJD7tkatpOaortT8Si5GfxprvgPR+bzxwTSOR0rsaRUstdqNMQ@mail.gmail.com>
- <SJ0PR11MB5678034533E3FAD7B16E2758C9112@SJ0PR11MB5678.namprd11.prod.outlook.com>
- <CAJD7tkbRHkb7Znzto6=RRDQA9zXZSva43GukhBEfjrgm1qOxHw@mail.gmail.com>
- <Z3yMNI_DbkKBKJxO@gondor.apana.org.au>
- <CAJD7tkaTuNWF42+CoCLruPZks3F7H9mS=6S74cmXnyWz-2tuPw@mail.gmail.com>
- <Z7F1B_blIbByYBzz@gondor.apana.org.au>
- <Z7dnPh4tPxLO1UEo@google.com>
- <CAGsJ_4yVFG-C=nJWp8xda3eLZENc4dpU-d4VyFswOitiXe+G_Q@mail.gmail.com>
- <dhj6msbvbyoz7iwrjnjkvoljvkh2pgxrwzqf67gdinverixvr5@e3ld7oeketgw>
+	s=arc-20240116; t=1740234562; c=relaxed/simple;
+	bh=+kOgJOLeUsEcRopHliSLADFOsTli+aEEbCVMgK8cpS8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SAhHupsSynSBTY6tdnKxh2rUyHW7Qdcu+IRrkcuPbGJK0U+abLotU2YZB85y3YXa8KGy/bxVArqp78Vu5/gpQeeVmOnmpVuRq9SqVnebTXazIJDVOWXrmKgUzwyZpTkXDjOqUuNhMztR3Ivgc7EHBEtsMFcX/73uFpDjfOO1D9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rbY6Dl0q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F820C4CED1;
+	Sat, 22 Feb 2025 14:29:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740234562;
+	bh=+kOgJOLeUsEcRopHliSLADFOsTli+aEEbCVMgK8cpS8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=rbY6Dl0q/olSwgwc9kO9jEoujL0x2R/2TQRchZ7LbOwjr09BtdqA+MppLWUdFxDXB
+	 lkNihXX1fPfbopiPvnoOFKXUU6YLgepdwwKLh99HXML/1cs6EtYSvD2nm9cPql8PcU
+	 tSvNYO3hARszAv1ANjDXG0Zv5OkKbJcqgL0jnnR/sRcZtO8J2k9RUQoeh1bHTb1ZPr
+	 B/SPwPJ8X47mEqGhqiAQZkVA60KYSx3WijrZX45DeKTs3yJbc22xqna4TbGGf8Wfvz
+	 FQmzDkdFWJltu4InfCyvKc6HTcEedQlaps7JFAFqEw7iqFEiXMJEtc8rFaK1cv7VGR
+	 C9DVChcOcyVyw==
+Date: Sat, 22 Feb 2025 14:29:10 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Lars-Peter Clausen <lars@metafoo.de>, Pavel Machek <pavel@ucw.cz>, Daniel
+ Thompson <danielt@kernel.org>, Jingoo Han <jingoohan1@gmail.com>, Helge
+ Deller <deller@gmx.de>, Andy Shevchenko
+ <andriy.shevchenko@linux.intel.com>, Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?=
+ <u.kleine-koenig@baylibre.com>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+ linux-leds@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-fbdev@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] dt-bindings: mfd: Document TI LM3533 MFD
+Message-ID: <20250222142910.4e6b706d@jic23-huawei>
+In-Reply-To: <20250218132702.114669-2-clamor95@gmail.com>
+References: <20250218132702.114669-1-clamor95@gmail.com>
+	<20250218132702.114669-2-clamor95@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <dhj6msbvbyoz7iwrjnjkvoljvkh2pgxrwzqf67gdinverixvr5@e3ld7oeketgw>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On (25/02/22 21:31), Sergey Senozhatsky wrote:
-> > As long as crypto drivers consistently return -ENOSP or a specific error
-> > code for dst_buf overflow, we should be able to eliminate the
-> > 2*PAGE_SIZE buffer.
-> > 
-> > My point is:
-> > 1. All drivers must be capable of handling dst_buf overflow.
-> > 2. All drivers must return a consistent and dedicated error code for
-> > dst_buf overflow.
+On Tue, 18 Feb 2025 15:26:59 +0200
+Svyatoslav Ryhel <clamor95@gmail.com> wrote:
 
-So I didn't look at all of them, but at least S/W lzo1 doesn't even
-have a notion of max-output-len.  lzo1x_1_compress() accepts a pointer
-to out_len which tells the size of output stream (the algorithm is free
-to produce any), so there is no dst_buf overflow as far as lzo1 is
-concerned.  Unless I'm missing something or misunderstanding your points.
+> Add bindings for the LM3533 - a complete power source for
+> backlight, keypad, and indicator LEDs in smartphone handsets.
+> The high-voltage inductive boost converter provides the
+> power for two series LED strings display backlight and keypad
+> functions.
+
+Wrap patch descriptions to 75 chars as describe in submitting-patches.rst
+
+> 
+> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 
