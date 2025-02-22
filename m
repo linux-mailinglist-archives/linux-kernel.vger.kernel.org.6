@@ -1,290 +1,193 @@
-Return-Path: <linux-kernel+bounces-527338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A0A9A409FA
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 17:22:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C05BFA409FC
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 17:24:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0779C3BA18A
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 16:22:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EDA263BA885
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 16:24:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 850061F8BC7;
-	Sat, 22 Feb 2025 16:22:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54C501FBEB0;
+	Sat, 22 Feb 2025 16:24:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M7TlL7dp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iNOReIa0"
+Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com [209.85.222.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B928611CAF;
-	Sat, 22 Feb 2025 16:22:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 183EA35949;
+	Sat, 22 Feb 2025 16:24:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740241352; cv=none; b=XFabtSJj922m0sILbw386vVEmNSNWeXhlxIgwBPVrm1vSbN6U1H7NxPVo2spCdByk1yXjfgnOA+3aRYqYrkF3MLZUp2ryM20/76ZtskLmK2PVt5nRsQGVkb57CIm7I3aiv3FfNVei4a4T6UM8y0es6QS+/bT0JijgkmK6N3NR78=
+	t=1740241455; cv=none; b=XQ9vVXI1zsdlmz9b1tDWozi//gbeaWHsUW8RWtnn87hGlc8+67W5HhoYFB9ibBHRS8tfWnIXnZ+mp+X6o28GXdUu2j+KxMIRtUZHXkFPpg/6MrVhvJkTDZy2jKEf9s0jz7QsAqsxEP5ffdI1oaGxuqgPr4GwXsZET6qngIGovN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740241352; c=relaxed/simple;
-	bh=4pTRs+KFgZn7araHwhEkH573SIaKZW26vFq4SuYI9U8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TdPkdg2J7+rf3AynVpQT3/+mgX09K+nX3npBafl4UwVnXrCAuZHVcKRhtCKU919sDaKex/ECjIvF1klUINra6FoJ/8FFA2ZzLZ/y4pbq33miEon6G+m69X0IyScAlXXr7TcedG5qufExkHi+d7N72hHKOMfTTtgj1POpzzSFje0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M7TlL7dp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B001EC4CED1;
-	Sat, 22 Feb 2025 16:22:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740241352;
-	bh=4pTRs+KFgZn7araHwhEkH573SIaKZW26vFq4SuYI9U8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=M7TlL7dpZAxsRjixY44nPBZsoY/7iAXAKMgmQ0fUeLEnijSfxO4Mwt5Gpqgi+YFvK
-	 SPeR4rG9d+XtJq4BDOeYQ95S/42JVSwhFH8BTRm9lJ+InEdNwsDBlEfAeVkq1eGnD7
-	 c536Kf5Hi2fJd3w22r6eza8r+445Ki9jrtqFMdFZx+g/3+v9RJgWepRttU2GIVqabS
-	 ceehza9aQ/Ja8OY6Fv2iShgqPiXSbKgWTowNsf9Iqndgsyhd4SdLhEQqV6xX4tMLRG
-	 3nyHiLmeRlFdlVD2WB+DGXCDjl7mKRRtxMlf7zrnaF7XpT0AGP9Zgh42Z2AhJUpjys
-	 5xPAvLRj+sLtQ==
-Date: Sat, 22 Feb 2025 16:22:24 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Jean-Baptiste Maneyrol via B4 Relay
- <devnull+jean-baptiste.maneyrol.tdk.com@kernel.org>
-Cc: jean-baptiste.maneyrol@tdk.com, Lars-Peter Clausen <lars@metafoo.de>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] iio: imu: inv_icm42600: add wakeup functionality
- for Wake-on-Motion
-Message-ID: <20250222162224.60059025@jic23-huawei>
-In-Reply-To: <20250220-losd-3-inv-icm42600-add-wom-support-v1-2-9b937f986954@tdk.com>
-References: <20250220-losd-3-inv-icm42600-add-wom-support-v1-0-9b937f986954@tdk.com>
-	<20250220-losd-3-inv-icm42600-add-wom-support-v1-2-9b937f986954@tdk.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1740241455; c=relaxed/simple;
+	bh=JGqfqv3BNgeG5pmAT6hUdbLTNBF7gGfSK73mC0aEAIM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=G9VN4t0eBx9zLGW8wOfOLVibVzTV3o+33LAupgCjxYD6iS2tPu6l9EZ4lkp5t5RahiJ34y6Wgp+Dl67HJ09fKWKaBWGRZs1jK0qPQJxyjznkjoP2qqzNg4Fd+oWRPvVbGAUmvptMrhvrXkufJrpc2sDcAYBXlUrgTFQfnmQF9Po=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iNOReIa0; arc=none smtp.client-ip=209.85.222.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f45.google.com with SMTP id a1e0cc1a2514c-868e986092cso897929241.0;
+        Sat, 22 Feb 2025 08:24:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740241453; x=1740846253; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Sav4wPG9DWPA9l3hgLj0gOmAeBsfhnABFgdC6wlWJKc=;
+        b=iNOReIa0BQomCqKRdFJsxxI3Gl7VQccPj67XGqFy7NcLDtl/CjOITcXlMZQ3d9zd60
+         rZnMWvEyWidGemRNfcdo68tZhnQEftuRdtHSLrUetWR/SLZvsZJ3akThVGRX8xGDK0cH
+         s5xgaAjxcP9WkM6ih5z5CBJdxowuF7neVunAEXgV9jaM9swGtIYwauhOEBiDRDHntSkQ
+         1DeyGuU1vtvTOS72stKQTdG2qYsVY76fwKZ29jtZZZ85IGdYGnd+3GffteBQZFZeQ6Ld
+         pNdAfcBTf9YOMfsMxxMddlLeQm56/LLNIGIiaUgLSnNy0jPz1iDthavicONk/WWH8c4S
+         4bfA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740241453; x=1740846253;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Sav4wPG9DWPA9l3hgLj0gOmAeBsfhnABFgdC6wlWJKc=;
+        b=bQu/QhM2kWh2zACZJzR0ZVrghh0ym2vJJyvNxMvshtuyTZ9dRuzEmvjVw+mCkdcJz4
+         Y7QYOSXWzQGxDH8McLup4nFst22ExVCXZOqWmtM3JuVWvyeE6Q1J53rpxGcaJL+OnGzb
+         AvvcDd+epEGoZLSjzjkvFyquPrD9fIV7Q3DonzuSVw7KM0v3Ec76rxMqakatQafQfy+W
+         iNQk62UibaDeAdgB/P9IvUPsEspxr/3SGLD0jWt7w7Y1ZE71YhYi8DygsvuvNJRjlM0i
+         Rx/u0rTZ3+DaEw6MnLo0Gz/0AGh5qLMdzMR8VPD9itSXbOOIgiYeZdFjGs/WmoJNye3U
+         pwHw==
+X-Forwarded-Encrypted: i=1; AJvYcCUGUZoN6W6YI9QyKhdAhLL9R5h3t3I+Hv+wfyyIEDYSwEzuMoR5+DaDQPkzbd0fYxb/sj3B+oUpTYc562n9@vger.kernel.org, AJvYcCUYhAcBpLI4Yq8oWj9vmM5k2iQqkQsOccbb9kRG4kdJw660fZr8AT+betRykVe1qWID544XWkmnO3+N56k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzdyWBtNdVKZIHpGqGmI3W3odBIbXShG9r5PZ13yL6WLaXXgVXf
+	j1a7cErhsarCoxiCrTzzJ8t/sexuHb1C+yS4x4bTH1NcT2/s+wUad1TA/P98bvPSzJS1MkV5hXe
+	Oyqa65mrgqYLshe1WroAMCf1UIkU=
+X-Gm-Gg: ASbGncs0e2CR92kWZcUL4Rz4FjES17Uq51+08vEn/BssLfstng5awK+HC36Nw5kMmqJ
+	x170x/AIrWZBmfEHrPOBvNntI02isNQFwhS4ECx8bMzdi+HQfq9GACDBVwqZRY65to+ROmV/h70
+	H5ufx7tI4=
+X-Google-Smtp-Source: AGHT+IExbeBvFGtjLuoasW3NeMshCokZaIOyTX2uf0zaf0oAM379rYmGJUT6WjsAQvdQ7FbzFCOa+pXex4aBHc2E+YA=
+X-Received: by 2002:a05:6122:ec3:b0:518:6286:87a4 with SMTP id
+ 71dfb90a1353d-521ee253c9dmr4720213e0c.4.1740241452732; Sat, 22 Feb 2025
+ 08:24:12 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <Z2_lAGctG0DDSCIH@gondor.apana.org.au> <SJ0PR11MB5678851E3E6BA49A99D8BAE2C9102@SJ0PR11MB5678.namprd11.prod.outlook.com>
+ <CAJD7tkatpOaortT8Si5GfxprvgPR+bzxwTSOR0rsaRUstdqNMQ@mail.gmail.com>
+ <SJ0PR11MB5678034533E3FAD7B16E2758C9112@SJ0PR11MB5678.namprd11.prod.outlook.com>
+ <CAJD7tkbRHkb7Znzto6=RRDQA9zXZSva43GukhBEfjrgm1qOxHw@mail.gmail.com>
+ <Z3yMNI_DbkKBKJxO@gondor.apana.org.au> <CAJD7tkaTuNWF42+CoCLruPZks3F7H9mS=6S74cmXnyWz-2tuPw@mail.gmail.com>
+ <Z7F1B_blIbByYBzz@gondor.apana.org.au> <Z7dnPh4tPxLO1UEo@google.com>
+ <CAGsJ_4yVFG-C=nJWp8xda3eLZENc4dpU-d4VyFswOitiXe+G_Q@mail.gmail.com> <dhj6msbvbyoz7iwrjnjkvoljvkh2pgxrwzqf67gdinverixvr5@e3ld7oeketgw>
+In-Reply-To: <dhj6msbvbyoz7iwrjnjkvoljvkh2pgxrwzqf67gdinverixvr5@e3ld7oeketgw>
+From: Barry Song <21cnbao@gmail.com>
+Date: Sun, 23 Feb 2025 05:24:01 +1300
+X-Gm-Features: AWEUYZkxRypvz8LrhfnOSKOPJoiE7CkvYVgqyhi-wM4RgZJZyCSAVqDgM3Nysw0
+Message-ID: <CAGsJ_4xv_4H3zfL+06iMMx0xxJMpRVacGRPa-OOB6ORSe+JjSQ@mail.gmail.com>
+Subject: Re: [PATCH v5 02/12] crypto: acomp - Define new interfaces for
+ compress/decompress batching.
+To: Sergey Senozhatsky <senozhatsky@chromium.org>
+Cc: Yosry Ahmed <yosry.ahmed@linux.dev>, Minchan Kim <minchan@kernel.org>, 
+	Herbert Xu <herbert@gondor.apana.org.au>, 
+	"Sridhar, Kanchana P" <kanchana.p.sridhar@intel.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, 
+	"hannes@cmpxchg.org" <hannes@cmpxchg.org>, "nphamcs@gmail.com" <nphamcs@gmail.com>, 
+	"chengming.zhou@linux.dev" <chengming.zhou@linux.dev>, 
+	"usamaarif642@gmail.com" <usamaarif642@gmail.com>, "ryan.roberts@arm.com" <ryan.roberts@arm.com>, 
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>, 
+	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>, "davem@davemloft.net" <davem@davemloft.net>, 
+	"clabbe@baylibre.com" <clabbe@baylibre.com>, "ardb@kernel.org" <ardb@kernel.org>, 
+	"ebiggers@google.com" <ebiggers@google.com>, "surenb@google.com" <surenb@google.com>, 
+	"Accardi, Kristen C" <kristen.c.accardi@intel.com>, 
+	"Feghali, Wajdi K" <wajdi.k.feghali@intel.com>, "Gopal, Vinodh" <vinodh.gopal@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 20 Feb 2025 21:52:07 +0100
-Jean-Baptiste Maneyrol via B4 Relay <devnull+jean-baptiste.maneyrol.tdk.com@kernel.org> wrote:
+On Sun, Feb 23, 2025 at 1:31=E2=80=AFAM Sergey Senozhatsky
+<senozhatsky@chromium.org> wrote:
+>
+> On (25/02/22 19:26), Barry Song wrote:
+> > After reviewing the zRAM code, I don't see why zram_write_page() needs
+> > to rely on
+> > comp_len to call write_incompressible_page().
+>
+> [..]
+>
+> > zram_write_page()
+> > {
+> >         ret =3D zcomp_compress(zram->comps[ZRAM_PRIMARY_COMP], zstrm,
+> >                              mem, &comp_len);
+> >         kunmap_local(mem);
+> >
+> >         if (unlikely(ret && ret !=3D -ENOSP)) {
+> >                 zcomp_stream_put(zstrm);
+> >                 pr_err("Compression failed! err=3D%d\n", ret);
+> >                 return ret;
+> >         }
+> >
+> >         if (comp_len >=3D huge_class_size || ret) {
+> >                 zcomp_stream_put(zstrm);
+> >                 return write_incompressible_page(zram, page, index);
+> >         }
+> > }
+>
+> Sorry, I'm slower than usual now, but why should we?  Shouldn't compressi=
+on
+> algorithms just never fail, even on 3D videos, because otherwise they won=
+'t
+> be able to validate their Weissman score or something :)
+>
+> On a serious note - what is the use-case here?  Is the failure here due t=
+o
+> some random "cosmic rays" that taint the  compression H/W?  If so then wh=
+at
+> makes us believe that it's uni-directional?  What if it's decompression
+> that gets busted and then you can't decompress anything previously stored
+> compressed and stored in zsmalloc.  Wouldn't it be better in this case
+> to turn the computer off and on again?
+>
+> The idea behind zram's code is that incompressible pages are not unusual,
+> they are quite usual, in fact,  It's not necessarily that the data grew
+> in size after compression, the data is incompressible from zsmalloc PoV.
+> That is the algorithm wasn't able to compress a PAGE_SIZE buffer to an
+> object smaller than zsmalloc's huge-class-watermark (around 3600 bytes,
+> depending on zspage chain size).  That's why we look at the comp-len.
+> Anything else is an error, perhaps a pretty catastrophic error.
+>
+> > As long as crypto drivers consistently return -ENOSP or a specific erro=
+r
+> > code for dst_buf overflow, we should be able to eliminate the
+> > 2*PAGE_SIZE buffer.
+> >
+> > My point is:
+> > 1. All drivers must be capable of handling dst_buf overflow.
+> > 2. All drivers must return a consistent and dedicated error code for
+> > dst_buf overflow.
+>
+> Sorry, where do these rules come from?
+>
+> > +Minchan, Sergey,
+> > Do you think we can implement this change in zRAM by using PAGE_SIZE in=
+stead
+> > of 2 * PAGE_SIZE?
+>
+> Sorry again, what problem are you solving?
 
-> From: Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>
-> 
-> When Wake-on-Motion is on, enable system wakeup and keep chip on for
-> waking up system with interrupt.
-> 
-> Signed-off-by: Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>
-Hi Jean-Baptiste,
+The context is that both zswap and zRAM currently use a destination buffer =
+of
+2 * PAGE_SIZE instead of just PAGE_SIZE. Herbert, Chenming, and Yosry are
+questioning why it hasn't been reduced to a single PAGE_SIZE, and some
+attempts have been made to do so.[1][2].
 
-A few comments inline.
+The rules are based on my thoughts on feasibility if we aim to reduce it to=
+ a
+single PAGE_SIZE.
 
-> ---
->  drivers/iio/imu/inv_icm42600/inv_icm42600.h       |  2 +
->  drivers/iio/imu/inv_icm42600/inv_icm42600_accel.c |  3 +
->  drivers/iio/imu/inv_icm42600/inv_icm42600_core.c  | 89 +++++++++++++++--------
->  3 files changed, 63 insertions(+), 31 deletions(-)
-> 
-> diff --git a/drivers/iio/imu/inv_icm42600/inv_icm42600.h b/drivers/iio/imu/inv_icm42600/inv_icm42600.h
-> index 8dfbeaf1c768d7d25cb58ecf9804446f3cbbd465..baf1dcd714800e84ccd21dc1d1e486849c77a9ae 100644
-> --- a/drivers/iio/imu/inv_icm42600/inv_icm42600.h
-> +++ b/drivers/iio/imu/inv_icm42600/inv_icm42600.h
-> @@ -151,6 +151,7 @@ struct inv_icm42600_apex {
->   *  @map:		regmap pointer.
->   *  @vdd_supply:	VDD voltage regulator for the chip.
->   *  @vddio_supply:	I/O voltage regulator for the chip.
-> + *  @irq:		chip irq.
+[1] https://lore.kernel.org/linux-mm/Z7F1B_blIbByYBzz@gondor.apana.org.au/
+[2] https://lore.kernel.org/lkml/20231213-zswap-dstmem-v4-1-f228b059dd89@by=
+tedance.com/
 
-Maybe say a little on what the variable is used for. It's not otherwise
-obvious why we need it.  Also, does this chip really only have one irq line?
-Looks like there are two. So the drivers should be fixed to cope with the
-only one wired being irq2  unless I've found the wrong datasheet which is
-certainly possible.
-
-
->   *  @orientation:	sensor chip orientation relative to main hardware.
->   *  @conf:		chip sensors configurations.
->   *  @suspended:		suspended sensors configuration.
-> @@ -168,6 +169,7 @@ struct inv_icm42600_state {
->  	struct regmap *map;
->  	struct regulator *vdd_supply;
->  	struct regulator *vddio_supply;
-> +	int irq;
->  	struct iio_mount_matrix orientation;
->  	struct inv_icm42600_conf conf;
->  	struct inv_icm42600_suspended suspended;
-> diff --git a/drivers/iio/imu/inv_icm42600/inv_icm42600_accel.c b/drivers/iio/imu/inv_icm42600/inv_icm42600_accel.c
-> index 8ce2276b3edc61cc1ea26810198dd0057054ec48..4240e8c576f4d07af5434e9a91dfda532f87ffb9 100644
-> --- a/drivers/iio/imu/inv_icm42600/inv_icm42600_accel.c
-> +++ b/drivers/iio/imu/inv_icm42600/inv_icm42600_accel.c
-> @@ -1149,6 +1149,9 @@ struct iio_dev *inv_icm42600_accel_init(struct inv_icm42600_state *st)
->  	if (ret)
->  		return ERR_PTR(ret);
->  
-> +	/* accel events are wakeup capable */
-> +	device_set_wakeup_capable(&indio_dev->dev, true);
-> +
->  	return indio_dev;
->  }
->  
-> diff --git a/drivers/iio/imu/inv_icm42600/inv_icm42600_core.c b/drivers/iio/imu/inv_icm42600/inv_icm42600_core.c
-> index c0fd2770d66f02d1965fa07f819fd2db9a1d6bd2..f94bda5dc094d6cc85e3facbd480b830bfbaa3f9 100644
-> --- a/drivers/iio/imu/inv_icm42600/inv_icm42600_core.c
-> +++ b/drivers/iio/imu/inv_icm42600/inv_icm42600_core.c
-> @@ -751,6 +751,7 @@ int inv_icm42600_core_probe(struct regmap *regmap, int chip, int irq,
->  	mutex_init(&st->lock);
->  	st->chip = chip;
->  	st->map = regmap;
-> +	st->irq = irq;
->  
->  	ret = iio_read_mount_matrix(dev, &st->orientation);
->  	if (ret) {
-> @@ -829,44 +830,56 @@ EXPORT_SYMBOL_NS_GPL(inv_icm42600_core_probe, "IIO_ICM42600");
->  static int inv_icm42600_suspend(struct device *dev)
->  {
->  	struct inv_icm42600_state *st = dev_get_drvdata(dev);
-> +	struct device *accel_dev;
-> +	bool wakeup;
-> +	int accel_conf;
->  	int ret;
->  
-> -	mutex_lock(&st->lock);
-> +	guard(mutex)(&st->lock);
-
-As below. Pull these guard changes out as a precursor patch. That will make
-it easier to spot the real changes here.
-
->  
->  	st->suspended.gyro = st->conf.gyro.mode;
->  	st->suspended.accel = st->conf.accel.mode;
->  	st->suspended.temp = st->conf.temp_en;
-> -	if (pm_runtime_suspended(dev)) {
-> -		ret = 0;
-> -		goto out_unlock;
-> -	}
-> +	if (pm_runtime_suspended(dev))
-> +		return 0;
->  
->  	/* disable FIFO data streaming */
->  	if (st->fifo.on) {
->  		ret = regmap_write(st->map, INV_ICM42600_REG_FIFO_CONFIG,
->  				   INV_ICM42600_FIFO_CONFIG_BYPASS);
->  		if (ret)
-> -			goto out_unlock;
-> +			return ret;
->  	}
->  
-> -	/* disable APEX features */
-> -	if (st->apex.wom.enable) {
-> -		ret = inv_icm42600_set_wom(st, false);
-> -		if (ret)
-> -			goto out_unlock;
-> +	/* keep chip on and wake-up capable if APEX and wakeup on */
-> +	accel_dev = &st->indio_accel->dev;
-> +	wakeup = (st->apex.on && device_may_wakeup(accel_dev)) ? true : false;
-> +
-> +	if (!wakeup) {
-> +		/* disable APEX features and accel if wakeup disabled */
-> +		if (st->apex.wom.enable) {
-> +			ret = inv_icm42600_set_wom(st, false);
-> +			if (ret)
-> +				return ret;
-> +		}
-> +		accel_conf = INV_ICM42600_SENSOR_MODE_OFF;
-> +	} else {
-> +		/* keep accel on and setup irq for wakeup */
-> +		accel_conf = st->conf.accel.mode;
-> +		enable_irq_wake(st->irq);
-> +		disable_irq(st->irq);
->  	}
->  
->  	ret = inv_icm42600_set_pwr_mgmt0(st, INV_ICM42600_SENSOR_MODE_OFF,
-> -					 INV_ICM42600_SENSOR_MODE_OFF, false,
-> -					 NULL);
-> +					 accel_conf, false, NULL);
->  	if (ret)
-> -		goto out_unlock;
-> +		return ret;
->  
-> -	regulator_disable(st->vddio_supply);
-> +	/* disable vddio regulator if chip is sleeping */
-> +	if (!wakeup)
-> +		regulator_disable(st->vddio_supply);
->  
-> -out_unlock:
-> -	mutex_unlock(&st->lock);
-> -	return ret;
-> +	return 0;
->  }
->  
->  /*
-> @@ -878,13 +891,25 @@ static int inv_icm42600_resume(struct device *dev)
->  	struct inv_icm42600_state *st = dev_get_drvdata(dev);
->  	struct inv_icm42600_sensor_state *gyro_st = iio_priv(st->indio_gyro);
->  	struct inv_icm42600_sensor_state *accel_st = iio_priv(st->indio_accel);
-> +	struct device *accel_dev;
-> +	bool wakeup;
->  	int ret;
->  
-> -	mutex_lock(&st->lock);
-> +	guard(mutex)(&st->lock);
-
-Good change.  But separate patch as not related to most of what is going on here.
-
-
->  
-> -	ret = inv_icm42600_enable_regulator_vddio(st);
-> -	if (ret)
-> -		goto out_unlock;
-> +	/* check wakeup capability */
-> +	accel_dev = &st->indio_accel->dev;
-> +	wakeup = (st->apex.on && device_may_wakeup(accel_dev)) ? true : false;
-> +
-> +	/* restore vddio if cut off or irq state */
-> +	if (!wakeup) {
-> +		ret = inv_icm42600_enable_regulator_vddio(st);
-> +		if (ret)
-> +			return ret;
-> +	} else {
-> +		enable_irq(st->irq);
-> +		disable_irq_wake(st->irq);
-> +	}
->  
->  	pm_runtime_disable(dev);
->  	pm_runtime_set_active(dev);
-> @@ -895,13 +920,15 @@ static int inv_icm42600_resume(struct device *dev)
->  					 st->suspended.accel,
->  					 st->suspended.temp, NULL);
->  	if (ret)
-> -		goto out_unlock;
-> +		return ret;
->  
-> -	/* restore APEX features */
-> -	if (st->apex.wom.enable) {
-> -		ret = inv_icm42600_set_wom(st, true);
-> -		if (ret)
-> -			goto out_unlock;
-> +	/* restore APEX features if disabled */
-> +	if (!wakeup) {
-> +		if (st->apex.wom.enable) {
-> +			ret = inv_icm42600_set_wom(st, true);
-> +			if (ret)
-> +				return ret;
-> +		}
->  	}
->  
->  	/* restore FIFO data streaming */
-> @@ -910,11 +937,11 @@ static int inv_icm42600_resume(struct device *dev)
->  		inv_sensors_timestamp_reset(&accel_st->ts);
->  		ret = regmap_write(st->map, INV_ICM42600_REG_FIFO_CONFIG,
->  				   INV_ICM42600_FIFO_CONFIG_STREAM);
-> +		if (ret)
-> +			return ret;
->  	}
->  
-> -out_unlock:
-> -	mutex_unlock(&st->lock);
-> -	return ret;
-> +	return 0;
->  }
->  
->  /* Runtime suspend will turn off sensors that are enabled by iio devices. */
-> 
-
+Thanks
+Barry
 
