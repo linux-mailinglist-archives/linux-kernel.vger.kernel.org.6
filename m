@@ -1,81 +1,71 @@
-Return-Path: <linux-kernel+bounces-527294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7136A4094A
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 16:00:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 099F6A40948
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 16:00:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20739189EA0E
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 15:00:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C01F7010D6
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 15:00:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B12D199934;
-	Sat, 22 Feb 2025 15:00:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D574719E83E;
+	Sat, 22 Feb 2025 15:00:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="Y4gQA153"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.17])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AA1833998;
-	Sat, 22 Feb 2025 15:00:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.17
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E0XooV8p"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3619E3224;
+	Sat, 22 Feb 2025 15:00:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740236440; cv=none; b=PT0Q+fp/dulxQ2u1LTUwHh+PctG8i7ngh/qv3UAVa6iyGfyqeMdQ1M5yZaPcKCGH2taRQyfGR6w/2WuoFetZrzMa0KSpZJDh5495KSCFdDzo3UsOfExmOU7samyQXlOv2Zc/90bbtVjVki/P0CeP5H6hDHnHTx4bIRsHUlK3BT4=
+	t=1740236418; cv=none; b=mWXf/Wi2XxNVakAn2cDCB65hgc4F3SKGLrwS3yB+cs/AJW2ZhLtsRES68VWyqRRjpVESQKjxpA5vrcgG88N8VuZpC/BF1DmsTf4yWUc9zQjAoK9gq8HCiv0KMV831S4Ao0CGutawHYfRrcVL6JpeWhjkd3OZgrDPnxDc81nGksM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740236440; c=relaxed/simple;
-	bh=OKe6QRTlXlfRzsO6k+n/DgK5Yjn37vIB+q2Y13+5D3Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CIaP+dT8i3DCv9GvjbSmYK3LpPdEuj6XokvFtmL3VTp2ck0s1bS0Tu8d1Nuwaba3z5jLYg9nfZNbHICoIv24k5nEGQvPVtiS6sjxPPWUqFvkRmRFLs+Cxtp5RxJYDRgR39iatctIb1aHn7dacFkGCb8ScASpdctR2fKoUqt6/V0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=Y4gQA153; arc=none smtp.client-ip=1.95.21.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=lr9E6bgj+FVra1H0FVQ1LPnUfFoxChUOCwxBKvYbs+0=;
-	b=Y4gQA153sXLHJXw5OAPbt5ep7sPGg527sh4tlG03czMimAa5U7wDIb42/JqLwN
-	x5cvJWjeFjPc8PBZEsJTduIEnN3ccnwoNz2Er0Fk4F+Jrk3o0wA3g8UPVk9Z39eL
-	O1j5lLTV7dJ6PgTqmfV5kCNp/cLo7Qmvm3qYUKOjMzsyo=
-Received: from dragon (unknown [])
-	by gzsmtp2 (Coremail) with SMTP id Ms8vCgAnSaFy5rlnUPC7CQ--.24012S3;
-	Sat, 22 Feb 2025 23:00:04 +0800 (CST)
-Date: Sat, 22 Feb 2025 23:00:02 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	"open list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <imx@lists.linux.dev>,
-	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
-	open list <linux-kernel@vger.kernel.org>, hongxing.zhu@nxp.com
-Subject: Re: [PATCH 5/5] arm64: dts: imx95: add ref clock for pcie nodes
-Message-ID: <Z7nmckvKi1xcb4Qo@dragon>
-References: <20250128211559.1582598-1-Frank.Li@nxp.com>
- <20250128211559.1582598-5-Frank.Li@nxp.com>
+	s=arc-20240116; t=1740236418; c=relaxed/simple;
+	bh=UmbgguS77NIyFRa0QXCsvyE+xFrzLJ/SfUFhJjrNdK4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ahZ7M8FIvwbh1V9NApggUUtiUfRfHIFTDQngdIaRNGQ08DQxv+pKLWYACqAoq0hPtmJQz1ruk58US4C3cVDKLiubi47eZKtFpYs7u+QGnja7JgtGsiyx94309M5PvNTPkgFq2ZjjHMm+VHmI8gpWLrMmywm0V8QKiwteV8BPXrM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E0XooV8p; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60419C4CED1;
+	Sat, 22 Feb 2025 15:00:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740236417;
+	bh=UmbgguS77NIyFRa0QXCsvyE+xFrzLJ/SfUFhJjrNdK4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=E0XooV8pCAmkAK6/vYg/AufMSRWlWJ9mGMJaUpML9p+rbWf1iV9QezOV4cuEv8o2w
+	 G4Ax3g/CfeT6v4aVVuWTl9UBoxvBIGAhYg3KLacABY7m+bj1lvFFe4zi7KiryX9ttA
+	 tn5Wjo7+DyxsF2SbokMEk7oYcP2RWXRDIjHQuVEQAjbgz8Fu9VJyf91Yi1wZCdqmR9
+	 n900kkjj9QCHqu1izDqpBj78HuLETx4AmrL72rRV6B2jmENbMYKAgMi8v/nfMX0uU0
+	 7y+4VryUNM0IVNNIpxf99rIq5KvZpkDTnrT+Tg1zI8t6WtBCYK8vkn3YUCR8nkjfRU
+	 xe8P19PDno/8Q==
+Date: Sat, 22 Feb 2025 15:00:10 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Lothar Rubusch <l.rubusch@gmail.com>
+Cc: lars@metafoo.de, corbet@lwn.net, linux-doc@vger.kernel.org,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 1/1] docs: iio: fix wrong driver name in
+ documentation
+Message-ID: <20250222150010.215cc1dc@jic23-huawei>
+In-Reply-To: <20250221194658.41358-1-l.rubusch@gmail.com>
+References: <20250221194658.41358-1-l.rubusch@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250128211559.1582598-5-Frank.Li@nxp.com>
-X-CM-TRANSID:Ms8vCgAnSaFy5rlnUPC7CQ--.24012S3
-X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUV2NtUUUUU
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiBBX7ZWe5p-zUGwAAsF
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jan 28, 2025 at 04:15:59PM -0500, Frank Li wrote:
-> Add "ref" clock for i.MX95's pcie and fix below CHECK_DTBS warnings:
-> arch/arm64/boot/dts/freescale/imx95-19x19-evk.dtb: pcie@4c300000: clock-names: ['pcie', 'pcie_bus', 'pcie_phy', 'pcie_aux'] is too short
-> 	from schema $id: http://devicetree.org/schemas/pci/fsl,imx6q-pcie.yaml
+On Fri, 21 Feb 2025 19:46:58 +0000
+Lothar Rubusch <l.rubusch@gmail.com> wrote:
+
+> The ADXL380/382 documentation uses in one place a wrong driver name.
+> Adds no functional change.
 > 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-
-#1 ~ #4 are applied and #5 doesn't apply.
-
-Shawn
-
+> Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
+Applied.  Thanks!
 
