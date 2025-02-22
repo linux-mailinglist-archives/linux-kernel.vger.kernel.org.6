@@ -1,121 +1,188 @@
-Return-Path: <linux-kernel+bounces-527519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F7DAA40C3F
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 00:59:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42C39A40C43
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 00:59:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9624317DBA4
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 23:59:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9EC9B189DAF2
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 00:00:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E78D2204F72;
-	Sat, 22 Feb 2025 23:59:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B02D778F2F;
+	Sat, 22 Feb 2025 23:59:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LYOQ/HQl"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b="HMMaV2Ty"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06F4078F2F;
-	Sat, 22 Feb 2025 23:59:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34AF7204686
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 23:59:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740268773; cv=none; b=Hn8T+fhDLLN3ClE+tAUGuiji0Y6WMxFP+whBUpG6ID59ri6Zdmfj/u8VGmB5vOm3gXKp+1KNIYhzw9YfMNLgOx2zKz0J8m3lk2ElkPEMwpeEDtyR7JKXCc8eNYwW6ftPMKglgFpjN9PF1MUXplcTcvyRhkLwl3iS9ttlQupiIWw=
+	t=1740268789; cv=none; b=lymISMprY25DuYYNHxBJLgHBZf8IVclCT3cMxO5c7xJJQ4pxIcAUxF9aCXd5RmHczgr7/nd2VmanUuspQjma3hgjRN5k/qMscecIm0HlVmeeFYd1uUlnqTED//4DDy7Oq9ZRjRxMP7RwUU6OWgKEUeVs7tc9Zu1b9to8L3BaWww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740268773; c=relaxed/simple;
-	bh=VSd7G507W9GhEVUIyS2seEENJt2SPhore+zRSc3WcMY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=J0Jh3xtnz1xFcCds3p5fE394akuxRG85uBWkV6BbKE3SqGpiz+HuS4DnrU6aodLY+lVlrxwn9xp2vzwW1klPYEc+mDxz0SyPBSllFUoAnZNu1ORLknhWq+Qg45Bo4cqOxDQJVmQXhHwAbB87K6f7Q3JB8XYRbpuNJhV7GOsFnH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LYOQ/HQl; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2fc1843495eso4931199a91.1;
-        Sat, 22 Feb 2025 15:59:31 -0800 (PST)
+	s=arc-20240116; t=1740268789; c=relaxed/simple;
+	bh=BC1VikLvaQ+wmk7I7O5kqTkttd71b1FW4KIkZw3Br0c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Vt/SWKy5GxtA6KTeDu7qTRBKeeeQJlBZ7JfPkBoTp7Kns15ZdpqXpHozt456YzhediXQjXHHLOeQc76YQZ+Jhma9fPDJFrXiIk+j3DT1JlsXjtwZ7n8lGzraDaB6JbAWeXZ3HlyhMPR9mlGs/s6YJ+IFuuIb91MSahV5iRJlXdw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io; spf=pass smtp.mailfrom=layalina.io; dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b=HMMaV2Ty; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=layalina.io
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5dee1626093so7938953a12.1
+        for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 15:59:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740268771; x=1740873571; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=90/s+KzhSHh96JnVwqqX9Ga+sfryIMGed9jtbZZaUow=;
-        b=LYOQ/HQlX38xjx6PuPUy7f7BCwSD1lZtB+Ci9MXFbfafxVcF7nvOBhO2OzhJqpzakY
-         7TS/oiTq7UuHdqPYPDXJYOqEb8cfSCMs9gQvXuqqcf6iWhmwRPT496Bsobi+SHBDUIqs
-         S38MeqBCX0UVceqxxiq/OFabv5AtbuCmhRziLSoYgbyLXSXKZLqAPLSeWgnj08jyWUq+
-         RKkI+4IrKAXxEBWrEaWL3gNSjdQ/vOUVFWMgYXM6uvr6UgkVUbo5qY/zHSdKUZppO2kT
-         M3jnA4b+4hPWtaoY7s5X8HIUDt/NoHNpJs6zg53QIrUOh/RThVWSL9y4v9Yatw0RbzSS
-         eOTw==
+        d=layalina-io.20230601.gappssmtp.com; s=20230601; t=1740268785; x=1740873585; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Lu2LoNkT4EDP4h3CKy4CP8LgrHHyNd0iD27ycNO3cNY=;
+        b=HMMaV2Tynj3BGowSvfj9cHuQoVqAX/HkWUxJOH1zJzPICzw+fYsk5FE2gDA8+fRDnL
+         7fE5yb8roH+HqCw9DVVnqwxvBeHhldTN9xIxZBed2j/r0Jz0sKJblk+ersgetj7Qze3a
+         4YNeiSn8CtZ1JM92TtHW7UPt6eISGPCqjITB7leBAq8I8yAHxwWvx3+I4cU3vju75b77
+         Bw5weGObOTNk5aC6kYtV2psXM3aC3pVXtia3Uq4RboDgGSeQVswCxAESKKAhiaUJTi1n
+         n/CKj8G1ubmFZ8URoI4I9nEeY8XXu8xtLCYjRSmIdkXfEnRpP+dybVt9Bu+o4GJyoWjj
+         /isA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740268771; x=1740873571;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=90/s+KzhSHh96JnVwqqX9Ga+sfryIMGed9jtbZZaUow=;
-        b=wnegi37RMIcSGLjMQ7u70fQX1Z5ijogyapFidJpW9aHBWlx5qEA88a9MABUpHuXXnw
-         fq7uotNH3HiiOXkwkcNGsX4FIDGJDFZW4fndXwsROZFS0i7KyKa4ItOgBP2i94jy8xLI
-         H3747ycfFJMkw2RiAllq+WAEc2ffC9xz58qHAWZKxBg25yWigdly41fWDODKLeICZwWY
-         dgehu5t7rZausZzL/e0GZf+h0iGXblhLoHhZKUmXw/03hqnpaxk2GsSoL2S0xQCOXoGX
-         7sGg5OGDr5r9FEGmxRpH4flLxXEXmQzdUOg1dIHMW8HKtGqvcoOHVb066+1z1vYNgwJj
-         NFPA==
-X-Forwarded-Encrypted: i=1; AJvYcCXY2ODjJLJaFOKdbSL2VqBUI464K2Puva4ICWDuU8vrZGxBIgq1FEEnkd2yFjkzKoGLFznJlP4V@vger.kernel.org, AJvYcCXa8B4oKFQTwtz7Du3V+zlRGr+eUFIXjHAPTwB6bX29W1kRBQfNY7a15R6VXNFAmbbKfSjJEF0Z5gGkcF6u@vger.kernel.org, AJvYcCXyvLu7ES4eqBoEzvz5kffaeLatJwBPKIDENOuKKvVTNNTHNnSaJD8GfGZJ+uEeXL7kWAK2Pplir+sP@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywck7uez1omj6hIv7IbWF4f4JaWc3o233phWMfLfXtIi+abL+H8
-	2WgKqOhc5fx2eRPHNMqN0N/7hj3+OCVsujmvcbTQOE6ZcGimE0vv
-X-Gm-Gg: ASbGncsqQnifLzJiRKxvAnv5jzosxbPkW5v1cSBKmlmlf1FlE78TFstd0yGRpHkHNc0
-	/wne2P3V724zI9aJomgRnupjU1CuiKpYOsBM6VkGMx7AWh8SurE3cPpbcOxz4fgJifrWk+0uk88
-	un/is1x1WpLfqhMCGIQt81AJ21eWgwV9l6TfMnuJ7JZSsVGmvi6oSpzaHTGefAbLc4t7+5oTJLt
-	z38e9XIslWVBIzInSt3787kZ1QzD0r4/hPO4/Gm8IbUlkTOqPhc+iMwUOXJjnO/TFHtNs7aWeH2
-	B1fqWFyWteNrqS2RMBbhxGgByj/BJezbZ1Y=
-X-Google-Smtp-Source: AGHT+IEQriOVvLcOekl7drz6hqdCF9IIUdvCSGDXZVwixhwDmzjDc1YQ+Kmp6rJLM53HbprX+WZUkw==
-X-Received: by 2002:a17:90b:3ece:b0:2ee:d371:3227 with SMTP id 98e67ed59e1d1-2fce78b77eemr15938334a91.17.1740268771198;
-        Sat, 22 Feb 2025 15:59:31 -0800 (PST)
-Received: from [192.168.8.112] ([64.114.250.38])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fceb02d985sm3722912a91.6.2025.02.22.15.59.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 22 Feb 2025 15:59:30 -0800 (PST)
-Message-ID: <61d793e0-f753-4f68-a169-c98336911588@gmail.com>
-Date: Sat, 22 Feb 2025 15:59:29 -0800
+        d=1e100.net; s=20230601; t=1740268785; x=1740873585;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Lu2LoNkT4EDP4h3CKy4CP8LgrHHyNd0iD27ycNO3cNY=;
+        b=lbSZLDwvRHJEsKFEoMnegmhDyW4JqOY8sCVNagoau7ZL8DYLWl32+fXAkdKH4cVCs4
+         B6oPHUkVsXoeLjhtTbm/eYp0QMR9OVV2KZtD0gDaNELnSUybo7s2U4mAK7DQFRI8B1fm
+         1DQZvQX8mzsbiVmMqJDEP6uMSHkYJpq6E9JUEHjR37tgJxJfRl5tQhkoMSmhltYlq6NT
+         zKfKRibqozkOr3v4OBRaTy/3z+c7wDv0pciP9AbOD9OnvKcYrJL73MgTbpSBq3Su8vT8
+         nToVx7jS8E60leUtFRAlXjxS2lt5z8jFW8WMo9O1nV9vTkj8DJOhF+MVdPcO31ZRjVjB
+         N34g==
+X-Forwarded-Encrypted: i=1; AJvYcCUq1VCxS7o2uVIuIZedc7CMyLcM0p5Wke2Bx30lDkWZI3B2df5R7Mkh+kpQfdM6NPxnFgZeGOdUFVLltRU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxhdsiTEK8dEfNFAWELzh/2KG3bZY8dpagE4dPBh/oG6Rj1+Lew
+	4/5RwbNgUgp8i7CnTAzjaquTI3KSXgAmNfHgexcKDTghP79Fpu53+qAwkdYw3nY=
+X-Gm-Gg: ASbGnctPRQQhYR3fEoc6fYCdfub+/LCWExoHRmvZTt4A/ZBS7nz7SmabN7Iffa+jxpc
+	Ge7t5zD+YKD7l23WEUQzfm9/UODhtKdsRZSvrTW8Z6QUCTX4zskpLSLh82Hg5uAWnhZAx4UuxJM
+	wFeovZC+S4qz9MJCSt6tz1a09hp5cHkjQM/v79sZE/dc1rWcUPiVJKlWRQK0HH/mQufwrreqAZ2
+	/+R6vAGzAuSm1uYge0EtQY6UYkhNTi+ef7CU7n/9BjThmr1IgeG3hn3pwZ6nD0e6J4OQM1Gj6ml
+	8wqvxExruQo+s5VwjQ/t
+X-Google-Smtp-Source: AGHT+IEwAuQGxMOVSUtusVjN0BopgUdnw2fnKA4dzOqvUMZKdjWs0Zk6qVmFxkFPYOp6ZdBA7ynXRg==
+X-Received: by 2002:a17:907:7fa7:b0:abb:d334:73e7 with SMTP id a640c23a62f3a-abc0ae910a4mr749202366b.14.1740268785510;
+        Sat, 22 Feb 2025 15:59:45 -0800 (PST)
+Received: from airbuntu ([46.186.201.36])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abb8209a2cbsm1458407366b.133.2025.02.22.15.59.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 22 Feb 2025 15:59:45 -0800 (PST)
+Date: Sat, 22 Feb 2025 23:59:36 +0000
+From: Qais Yousef <qyousef@layalina.io>
+To: Juri Lelli <juri.lelli@redhat.com>
+Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Christian Loehle <christian.loehle@arm.com>,
+	Jon Hunter <jonathanh@nvidia.com>,
+	Thierry Reding <treding@nvidia.com>,
+	Waiman Long <longman@redhat.com>, Tejun Heo <tj@kernel.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Michal Koutny <mkoutny@suse.com>, Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Phil Auld <pauld@redhat.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	"Joel Fernandes (Google)" <joel@joelfernandes.org>,
+	Suleiman Souhlal <suleiman@google.com>,
+	Aashish Sharma <shraash@google.com>,
+	Shin Kawamura <kawasin@google.com>,
+	Vineeth Remanan Pillai <vineeth@bitbyteword.org>,
+	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH v2 3/2] sched/deadline: Check bandwidth overflow earlier
+ for hotplug
+Message-ID: <20250222235936.jmyrfacutheqt5a2@airbuntu>
+References: <5a36a2e8-bd78-4875-9b9e-814468ca6692@arm.com>
+ <db800694-84f7-443c-979f-3097caaa1982@nvidia.com>
+ <8ff19556-a656-4f11-a10c-6f9b92ec9cea@arm.com>
+ <Z6oysfyRKM_eUHlj@jlelli-thinkpadt14gen4.remote.csb>
+ <dbd2af63-e9ac-44c8-8bbf-84358e30bf0b@arm.com>
+ <Z6spnwykg6YSXBX_@jlelli-thinkpadt14gen4.remote.csb>
+ <285a43db-c36d-400e-8041-0566f089a482@arm.com>
+ <Z62PPUOY5DClYo1A@jlelli-thinkpadt14gen4.remote.csb>
+ <20250216163340.ttwddti5pzuynsj5@airbuntu>
+ <Z7NNHmGgrEF666W_@jlelli-thinkpadt14gen4.remote.csb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/5] dt-bindings: mfd: brcm: add gphy controller to
- BCM63268 sysctl
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Heiner Kallweit <hkallweit1@gmail.com>, Russell King
- <linux@armlinux.org.uk>, Florian Fainelli <florian.fainelli@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, =?UTF-8?Q?Fern=C3=A1ndez_Rojas?=
- <noltari@gmail.com>, Jonas Gorski <jonas.gorski@gmail.com>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org
-References: <20250218013653.229234-1-kylehendrydev@gmail.com>
- <20250218013653.229234-6-kylehendrydev@gmail.com>
- <20250218-fearless-statuesque-zebra-3e79a8@krzk-bin>
-Content-Language: en-US
-From: Kyle Hendry <kylehendrydev@gmail.com>
-In-Reply-To: <20250218-fearless-statuesque-zebra-3e79a8@krzk-bin>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <Z7NNHmGgrEF666W_@jlelli-thinkpadt14gen4.remote.csb>
 
-On 2025-02-17 23:35, Krzysztof Kozlowski wrote:
->> +    # Child node
->> +    type: object
->> +    $ref: /schemas/mfd/syscon.yaml
-> No, not really... how is syscon a child of other syscon? Isn't the other
-> device the syscon?
->
-> This looks really fake hardware description, like recent bootlin claim that
-> "one register in syscon is device".
+On 02/17/25 15:52, Juri Lelli wrote:
+> On 16/02/25 16:33, Qais Yousef wrote:
+> > On 02/13/25 07:20, Juri Lelli wrote:
+> > > On 12/02/25 19:22, Dietmar Eggemann wrote:
+> > > > On 11/02/2025 11:42, Juri Lelli wrote:
+> > > 
+> > > ...
+> > > 
+> > > > > What about we actually ignore them consistently? We already do that for
+> > > > > admission control, so maybe we can do that when rebuilding domains as
+> > > > > well (until we find maybe a better way to deal with them).
+> > > > > 
+> > > > > Does the following make any difference?
+> > > > 
+> > > > It at least seems to solve the issue. And like you mentioned on irc, we
+> > > > don't know the bw req of sugov anyway.
+> > > > 
+> > > > So with this change we start with 'dl_bw->total_bw = 0' even w/ sugov tasks.
+> > > > 
+> > > > dl_rq[0]:
+> > > >   .dl_nr_running                 : 0
+> > > >   .dl_bw->bw                     : 996147
+> > > >   .dl_bw->total_bw               : 0       <-- !
+> > > > 
+> > > > IMHO, people who want to run serious DL can always check whether there
+> > > > are already these infrastructural DL tasks or even avoid schedutil.
+> > > 
+> > > It definitely not ideal and admittedly gross, but not worse than what we
+> > > are doing already considering we ignore sugovs at AC and the current
+> > > bandwidth allocation its there only to help with PI. So, duck tape. :/
+> > > 
+> > > A more proper way to work with this would entail coming up with sensible
+> > > bandwidth allocation for sugovs, but that's most probably hardware
+> > > specific, so I am not sure how we can make that general enough.
+> > 
+> > I haven't been following the problem closely, but one thing I was considering
+> > and I don't know if it makes sense to you and could help with this problem too.
+> > Shall we lump sugov with stopper class or create a new sched_class (seems
+> > unnecessary, I think stopper should do)? With the consolidate cpufreq update
+> > patch I've been working on Vincent raised issues with potential new ctx switch
+> > and to improve that I needed to look at improving sugov wakeup path. If we
+> > decouple it from DL I think that might fix your problem here and could allow us
+> > to special case it for other problems like the ones I faced more easily without
+> > missing up with DL.
+> > 
+> > Has the time come to consider retire the simple solution of making sugov a fake
+> > DL task?
+> 
+> Problem is that 'ideally' we would want to explicitly take sugovs into
+> account when designing the system. We don't do that currently as a
+> 'temporary solution' that seemed simpler than a proper approach (started
+> wondering if it's indeed simpler). So, not sure if moving sugovs outside
+> DL is something we want to do.
 
-I will change the driver to access the register through the main syscon.
+Okay I see. The issue though is that for a DL system with power management
+features on that warrant to wake up a sugov thread to update the frequency is
+sort of half broken by design. I don't see the benefit over using RT in this
+case. But I appreciate I could be misguided. So take it easy on me if it is
+obviously wrong understanding :) I know in Android usage of DL has been
+difficult, but many systems ship with slow switch hardware.
 
-Best regards,
-Kyle
+How does DL handle the long softirqs from block and network layers by the way?
+This has been in a practice a problem for RT tasks so they should be to DL.
+sugov done in stopper should be handled similarly IMHO. I *think* it would be
+simpler to masquerade sugov thread as irq pressure.
+
+You can use the rate_limit_us as a potential guide for how much bandwidth sugov
+needs if moving it to another class really doesn't make sense instead?
 
