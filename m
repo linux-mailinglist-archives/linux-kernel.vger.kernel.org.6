@@ -1,369 +1,131 @@
-Return-Path: <linux-kernel+bounces-527331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C979A409CA
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 16:59:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BB2F2A409CE
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 17:04:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F753189E9ED
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 15:57:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A35241886A09
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 16:04:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A2961E2838;
-	Sat, 22 Feb 2025 15:57:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F5001DB375;
+	Sat, 22 Feb 2025 16:04:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NfE3D0ul"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="l+1vCjWz"
+Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 596CE1CDA3F;
-	Sat, 22 Feb 2025 15:57:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99D93EADC
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 16:04:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740239821; cv=none; b=BEIfIZ/GxVe/+c5W1xZZ5WGnFK2NlTOKyU4M82GFsUGsbSkYiZgVh3FtGeyUc3Z5A5g7vMUEB+pUFtHKbY96etSsfJVreVTaAo2ng3/B1YLm5g38qdHKLPEUPdSOSRbRILwqMEFYLSwGQP2dUra8c1daid3th/0WsdKddgoxAEw=
+	t=1740240266; cv=none; b=HSQ8GX7fUlGs4EfMOD7CMBobFNxBki/Jsb9NRtSh10kMh0Pzst/Mwan0ImntG8ZbZGht1kzP4sq31W0zA6PgFUW1yjDhaR5+meTneXn8Rql4gtJDmaxFSUZQbA7g9CY08wn97N+MBmSy7oXClk0RufDJdLMFKwaoUN+0gZYcIuo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740239821; c=relaxed/simple;
-	bh=X9W99eyKCCVl+jjs+X+HEG5aWdDTZJ6O9eeXlGZgHIo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=b4Ru2QY5xWdlTG72pKeQhvAOo/ZpaETiNClVsfZwaEZu7gp2dj1SHqWLJoRT4xutjiztaP9YM0JldJJKOiUnHXevzx4bQTR5RjfkCXIX7eKmZMB+4vcju/tNChtGgbQVJcB54ZGiJkau5CYYjzEICrO9YZ0O5DmDopPuzUfUhOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NfE3D0ul; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 658E4C4CEE4;
-	Sat, 22 Feb 2025 15:56:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740239820;
-	bh=X9W99eyKCCVl+jjs+X+HEG5aWdDTZJ6O9eeXlGZgHIo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=NfE3D0ullPSwME2gEhJw0c44jhYZs5BBr7UUwuqFk2V40WucOM3O482iEfGDtes49
-	 a0C6QJFbP92YzLZYDav2t65AW34dqIT0nCD/48QXQXdbBnCLiyIl/OCUsx4Txsx231
-	 rWPSvr9wSpFjmK9fE0gFS6cXEY0D8vzIGPBX6FmVBGyaHVfwN7Mh4J5p9Xbtk6BRWl
-	 cJtxvxTBE6fdwX/+WTy4Fgg1jU3zCEZulclQ+Zr0Fzh6ihG95XM0hFEv9xuzNr7ug3
-	 DInfASsVVhOYEoMxt3NVuaxGWpi+ghgE2BRBbKXfYxYUeCf5m6SBvjjGBHZFBDqLF/
-	 qga1Nx127Iltw==
-Date: Sat, 22 Feb 2025 15:56:46 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Eason Yang <j2anfernee@gmail.com>
-Cc: avifishman70@gmail.com, tmaimon77@gmail.com, tali.perry1@gmail.com,
- venture@google.com, yuenn@google.com, benjaminfair@google.com,
- lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- nuno.sa@analog.com, dlechner@baylibre.com, javier.carrasco.cruz@gmail.com,
- andriy.shevchenko@linux.intel.com, gstols@baylibre.com,
- olivier.moysan@foss.st.com, mitrutzceclan@gmail.com, tgamblin@baylibre.com,
- matteomartelli3@gmail.com, marcelo.schmitt@analog.com,
- alisadariana@gmail.com, joao.goncalves@toradex.com,
- thomas.bonnefille@bootlin.com, ramona.nechita@analog.com,
- herve.codina@bootlin.com, chanh@os.amperecomputing.com, KWLIU@nuvoton.com,
- yhyang2@nuvoton.com, openbmc@lists.ozlabs.org, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/2] iio: adc: add support for Nuvoton NCT7201
-Message-ID: <20250222155646.7fa6375a@jic23-huawei>
-In-Reply-To: <20250221090918.1487689-3-j2anfernee@gmail.com>
-References: <20250221090918.1487689-1-j2anfernee@gmail.com>
-	<20250221090918.1487689-3-j2anfernee@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1740240266; c=relaxed/simple;
+	bh=9W4KhsIWQn2rh642SPG0bH7Ff5he2jpDMTRvJ4M9LxY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=csUcoorw7kesCgHU6MfaQEhOC10FGZDn3iGR6X2wc92Y6KjeXJqh7Np0vGV9zaf/o7mZwplZV/aIgonQgegUZ5iZjGdCQ09WU6lGdlSfrP+93AYzFUPAWaZ1PLT5xErJVwp7HHIuvAJPQEWIu8IJiAhVMDr+Gi5MRSHG2Skas0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=l+1vCjWz; arc=none smtp.client-ip=95.215.58.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Sat, 22 Feb 2025 11:04:16 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1740240262;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9W4KhsIWQn2rh642SPG0bH7Ff5he2jpDMTRvJ4M9LxY=;
+	b=l+1vCjWzGlNtUtkwMVYQGNpt44UGMsBVzFYku9RjXAaKp+703acvP+StkQE4V43wCeS2CD
+	AQ+Y2JhR/MzYggBmnAwI5mBOe3mhVHE+Ynv6fmlV8vlPCjhA/mLqIZnx67vpV33D/xZRJK
+	xmDq/jI7CkQjC5xmWjqUAYw/XRvAWew=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Boqun Feng <boqun.feng@gmail.com>, "H. Peter Anvin" <hpa@zytor.com>, 
+	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Christoph Hellwig <hch@infradead.org>, 
+	rust-for-linux <rust-for-linux@vger.kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	David Airlie <airlied@gmail.com>, linux-kernel@vger.kernel.org, ksummit@lists.linux.dev
+Subject: Re: Rust kernel policy
+Message-ID: <sbcgis4vibueieejklfvv5zgz5omirryjyiynd5kloilxfygqb@zcqrjc6snxey>
+References: <CANiq72m-R0tOakf=j7BZ78jDHdy=9-fvZbAT8j91Je2Bxy0sFg@mail.gmail.com>
+ <Z7SwcnUzjZYfuJ4-@infradead.org>
+ <CANiq72myjaA3Yyw_yyJ+uvUrZQcSLY_jNp65iKH8Y5xGY5tXPQ@mail.gmail.com>
+ <326CC09B-8565-4443-ACC5-045092260677@zytor.com>
+ <CANiq72m+r1BZVdVHn2k8XeU37ZeY6VT2S9KswMuFA=ZO3e4uvQ@mail.gmail.com>
+ <a7c5973a-497c-4f31-a7be-b3123bddb6dd@zytor.com>
+ <Z7VKW3eul-kGaIT2@Mac.home>
+ <2025021954-flaccid-pucker-f7d9@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2025021954-flaccid-pucker-f7d9@gregkh>
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, 21 Feb 2025 17:09:18 +0800
-Eason Yang <j2anfernee@gmail.com> wrote:
+On Wed, Feb 19, 2025 at 06:39:10AM +0100, Greg KH wrote:
+> Rust isn't a "silver bullet" that will solve all of our problems, but it
+> sure will help in a huge number of places, so for new stuff going
+> forward, why wouldn't we want that?
 
-> Add Nuvoton NCT7201/NCT7202 system voltage monitor 12-bit ADC driver
-> 
-> NCT7201/NCT7202 supports up to 12 analog voltage monitor inputs and up to
-> 4 SMBus addresses by ADDR pin. Meanwhile, ALERT# hardware event pins for
-> independent alarm signals, and the all threshold values could be set for
-> system protection without any timing delay. It also supports reset input
-> RSTIN# to recover system from a fault condition.
-> 
-> Currently, only single-edge mode conversion and threshold events support.
-> 
-> Signed-off-by: Eason Yang <j2anfernee@gmail.com>
-Hi Eason
+I would say that Rust really is a silver bullet; it won't solve
+everything all at once but it's a huge advance down the right path, and
+there's deep theoretical reasons why it's the right approach - if we
+want to be making real advances towards writing more reliable code.
 
-A few comments from me. May well overlap in some places with other feedback.
+Previously, there have been things like Compcert (writing a compiler in
+a proof checking language) and Sel4 (proving the behaviour of a (small)
+C program), but these approaches both have practical problems. A proof
+checker isn't a systems programming language (garbage collection is
+right out), and writing correctness proofs for C programs is arduous.
 
-Jonathan
+The big thing we run into when trying to bring this to a practical
+systems language, and the fundamental reason the borrow checker looks
+the way it does, is Rice's theorem. Rice's theorem is a direct corollary
+of the halting problem - "any nontrivial property of a program is either
+a direct consequence of the syntax or undecidable".
 
-> diff --git a/drivers/iio/adc/nct7201.c b/drivers/iio/adc/nct7201.c
-> new file mode 100644
-> index 000000000000..c5d1540bcc00
-> --- /dev/null
-> +++ b/drivers/iio/adc/nct7201.c
-> @@ -0,0 +1,487 @@
+The halting problem states - "given an arbitrary program, you can't tell
+without running it whether it halts or not, and then..." - you know.
+Rice's theorem extends that: not only can you not tell if a program
+halts or not, you can't tell in general anything about what a program
+does without running it and seeing what happens.
 
-> +
-> +#define NCT7201_VOLTAGE_CHANNEL(chan, addr)				\
-> +	{								\
-> +		.type = IIO_VOLTAGE,					\
-> +		.indexed = 1,						\
-> +		.channel = chan,					\
-> +		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),		\
-> +		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE),	\
-> +		.address = addr,					\
-> +		.event_spec = nct7201_events,				\
-> +		.num_event_specs = ARRAY_SIZE(nct7201_events),		\
-> +	}
-> +
-> +static const struct iio_chan_spec nct7201_channels[] = {
-> +	NCT7201_VOLTAGE_CHANNEL(1, 0),
-> +	NCT7201_VOLTAGE_CHANNEL(2, 1),
-> +	NCT7201_VOLTAGE_CHANNEL(3, 2),
-> +	NCT7201_VOLTAGE_CHANNEL(4, 3),
-> +	NCT7201_VOLTAGE_CHANNEL(5, 4),
-> +	NCT7201_VOLTAGE_CHANNEL(6, 5),
-> +	NCT7201_VOLTAGE_CHANNEL(7, 6),
-> +	NCT7201_VOLTAGE_CHANNEL(8, 7),
-> +};
-> +
-> +static const struct iio_chan_spec nct7202_channels[] = {
-> +	NCT7201_VOLTAGE_CHANNEL(1, 0),
-> +	NCT7201_VOLTAGE_CHANNEL(2, 1),
-> +	NCT7201_VOLTAGE_CHANNEL(3, 2),
-> +	NCT7201_VOLTAGE_CHANNEL(4, 3),
-> +	NCT7201_VOLTAGE_CHANNEL(5, 4),
-> +	NCT7201_VOLTAGE_CHANNEL(6, 5),
-> +	NCT7201_VOLTAGE_CHANNEL(7, 6),
-> +	NCT7201_VOLTAGE_CHANNEL(8, 7),
-> +	NCT7201_VOLTAGE_CHANNEL(9, 8),
-> +	NCT7201_VOLTAGE_CHANNEL(10, 9),
-> +	NCT7201_VOLTAGE_CHANNEL(11, 10),
-> +	NCT7201_VOLTAGE_CHANNEL(12, 11),
-We normally number channels from 0 which would simplify this but I don't really
-mind if you want to keep the offset of 1.  Maybe just have one macro
-parameter though and do the +1 in the macro.
-> +};
+The loophole is the "unless that property is a direct consequence of
+the syntax".
 
-> +static int nct7201_read_event_value(struct iio_dev *indio_dev,
-> +				    const struct iio_chan_spec *chan,
-> +				    enum iio_event_type type,
-> +				    enum iio_event_direction dir,
-> +				    enum iio_event_info info,
-> +				    int *val, int *val2)
-> +{
-> +	struct nct7201_chip_info *chip = iio_priv(indio_dev);
-> +	u16 volt;
-> +	unsigned int value;
-> +	int err;
-> +
-> +	if (chan->type != IIO_VOLTAGE)
-> +		return -EOPNOTSUPP;
-> +
-> +	if (info != IIO_EV_INFO_VALUE)
-> +		return -EINVAL;
-> +
-> +	if (dir == IIO_EV_DIR_FALLING) {
-> +		err = regmap_read(chip->regmap16, NCT7201_REG_VIN_LOW_LIMIT(chan->address),
-> +				  &value);
-> +		if (err < 0)
-> +			return err;
-> +		volt = value;
-> +	} else {
-> +		err = regmap_read(chip->regmap16, NCT7201_REG_VIN_HIGH_LIMIT(chan->address),
-> +				  &value);
-> +		if (err < 0)
-> +			return err;
-> +		volt = value;
-No real point in assigning to volt here, 
-> +	}
-> +
-> +	*val = FIELD_GET(NCT7201_REG_VIN_MASK, volt);
-> +
-> +	return IIO_VAL_INT;
-> +}
-> +
-> +static int nct7201_write_event_value(struct iio_dev *indio_dev,
-> +				     const struct iio_chan_spec *chan,
-> +				     enum iio_event_type type,
-> +				     enum iio_event_direction dir,
-> +				     enum iio_event_info info,
-> +				     int val, int val2)
-> +{
-> +	struct nct7201_chip_info *chip = iio_priv(indio_dev);
-> +
-> +	if (chan->type != IIO_VOLTAGE)
-> +		return -EOPNOTSUPP;
-> +
-> +	if (info != IIO_EV_INFO_VALUE)
-> +		return -EOPNOTSUPP;
-> +
-> +	if (dir == IIO_EV_DIR_FALLING)
-> +		regmap_write(chip->regmap16, NCT7201_REG_VIN_LOW_LIMIT(chan->address),
-> +			     FIELD_PREP(NCT7201_REG_VIN_MASK, val));
-> +	else
-> +		regmap_write(chip->regmap16, NCT7201_REG_VIN_HIGH_LIMIT(chan->address),
-> +			     FIELD_PREP(NCT7201_REG_VIN_MASK, val));
-Check for error returns.
-> +
-> +	return 0;
-> +}
-> +
-> +static int nct7201_read_event_config(struct iio_dev *indio_dev,
-> +				     const struct iio_chan_spec *chan,
-> +				     enum iio_event_type type,
-> +				     enum iio_event_direction dir)
-> +{
-> +	struct nct7201_chip_info *chip = iio_priv(indio_dev);
-> +
-> +	if (chan->type != IIO_VOLTAGE)
-> +		return -EOPNOTSUPP;
-> +
-> +	return !!(chip->vin_mask & BIT(chan->address));
-> +}
-> +
-> +static int nct7201_write_event_config(struct iio_dev *indio_dev,
-> +				      const struct iio_chan_spec *chan,
-> +				      enum iio_event_type type,
-> +				      enum iio_event_direction dir,
-> +				      bool state)
-> +{
-> +	struct nct7201_chip_info *chip = iio_priv(indio_dev);
-> +	unsigned int mask;
-> +
-> +	if (chan->type != IIO_VOLTAGE)
-> +		return -EOPNOTSUPP;
-> +
-> +	mask = BIT(chan->address);
-> +
-> +	if (!state && (chip->vin_mask & mask))
-> +		chip->vin_mask &= ~mask;
-> +	else if (state && !(chip->vin_mask & mask))
-> +		chip->vin_mask |= mask;
-> +
-> +	if (chip->num_vin_channels <= 8)
-> +		regmap_write(chip->regmap, NCT7201_REG_CHANNEL_ENABLE_1, chip->vin_mask);
-> +	else
-> +		regmap_bulk_write(chip->regmap, NCT7201_REG_CHANNEL_ENABLE_1,
-> +				  &chip->vin_mask, sizeof(chip->vin_mask));
+"Direct consequence of the syntax" directly corresponds to static type
+systems. This is the explanation for why large programs in statically
+typed languages tend to be more maintainable than in python/javascript -
+there are things about your program that you can understand just by
+reading code, instead of running it and waiting to see what type a
+variable has and what method is called or what have you.
 
-Check errors on these writes.
+IOW: improvements in static analysis have to come from type system
+improvements, and memory safety in particular (in a language without
+garbage collection) has to come from baking information about references
+into the type system.
 
-> +
-> +	return 0;
-> +}
+So this is why all those other "let's just add some safety features to C
+or what have you" efforts are doomed to fail - for them to work, and be
+as good as Rust, they'd have to add all the core difficult features of
+Rust to C, and we'd still have to rewrite pretty much all of our code,
+because making effective use of the borrow checker does require a fair
+amount of rearchitecting and rewriting to make things more explicit and
+more regular.
 
-> +static int nct7201_init_chip(struct nct7201_chip_info *chip)
-> +{
-> +	u8 data[2];
-> +	unsigned int value;
-> +	int err;
-> +
-> +	regmap_write(chip->regmap, NCT7201_REG_CONFIGURATION,
-> +		     NCT7201_BIT_CONFIGURATION_RESET);
+And Rust gets us a lot. Besides solving memory safety, the W^R rule of
+the borrow checker gets us a lot of the nice "easy to analyze"
+properties of pure functional languages, and it's a good foundation for
+the next advances in formal verification - dependent types.
 
-Check for errors on all accesses to the device.  It can get
-fiddly in paths where you are already handling an error but
-that's not the case here.
+TL;DR - it's going to be worth it.
 
-> +
-> +	/*
-> +	 * After about 25 msecs, the device should be ready and then
-> +	 * the Power Up bit will be set to 1. If not, wait for it.
-
-Wrap to 80 chars.
-
-> +	 */
-> +	mdelay(25);
-> +	err = regmap_read(chip->regmap, NCT7201_REG_BUSY_STATUS, &value);
-> +	if (err < 0)
-> +		return err;
-> +	if (!(value & NCT7201_BIT_PWR_UP))
-> +		return dev_err_probe(&chip->client->dev, -EIO,
-> +				     "Failed to power up after reset\n");
-> +
-> +	/* Enable Channel */
-> +	if (chip->num_vin_channels <= 8) {
-> +		data[0] = NCT7201_REG_CHANNEL_ENABLE_1_MASK;
-> +		err = regmap_write(chip->regmap, NCT7201_REG_CHANNEL_ENABLE_1, data[0]);
-> +		if (err < 0)
-> +			return dev_err_probe(&chip->client->dev, -EIO,
-> +					     "Failed to write NCT7201_REG_CHANNEL_ENABLE_1\n");
-> +	} else {
-> +		data[0] = NCT7201_REG_CHANNEL_ENABLE_1_MASK;
-> +		data[1] = NCT7201_REG_CHANNEL_ENABLE_2_MASK;
-> +		err = regmap_bulk_write(chip->regmap, NCT7201_REG_CHANNEL_ENABLE_1,
-> +					data, ARRAY_SIZE(data));
-> +		if (err < 0)
-> +			return dev_err_probe(&chip->client->dev, -EIO,
-> +					    "Failed to write NCT7201_REG_CHANNEL_ENABLE_1 and NCT7201_REG_CHANNEL_ENABLE_2\n");
-> +	}
-> +
-> +	value = get_unaligned_le16(data);
-> +	chip->vin_mask = value;
-
-Local variable doesn't seem to add any benefits so just assign vin_mask directly.
-
-> +
-> +	/* Start monitoring if needed */
-> +	err = regmap_read(chip->regmap, NCT7201_REG_CONFIGURATION, &value);
-> +	if (err < 0)
-> +		return dev_err_probe(&chip->client->dev, -EIO,
-> +				     "Failed to read NCT7201_REG_CONFIGURATION\n");
-> +
-> +	regmap_set_bits(chip->regmap, NCT7201_REG_CONFIGURATION, NCT7201_BIT_CONFIGURATION_START);
-> +
-> +	return 0;
-> +}
-> +
-> +static int nct7201_probe(struct i2c_client *client)
-> +{
-> +	const struct nct7201_adc_model_data *model_data;
-> +	struct nct7201_chip_info *chip;
-> +	struct iio_dev *indio_dev;
-> +	int ret;
-> +
-> +	model_data = i2c_get_match_data(client);
-> +	if (!model_data)
-> +		return -EINVAL;
-> +
-> +	indio_dev = devm_iio_device_alloc(&client->dev, sizeof(*chip));
-> +	if (!indio_dev)
-> +		return -ENOMEM;
-> +	chip = iio_priv(indio_dev);
-> +
-> +	chip->regmap = devm_regmap_init_i2c(client, &nct7201_regmap8_config);
-> +	if (IS_ERR(chip->regmap))
-> +		return dev_err_probe(&client->dev, PTR_ERR(chip->regmap),
-> +			"Failed to init regmap\n");
-
-Where it doesn't lead to really long lines, align all parameters to just
-after the opening bracket.
-
-
-> +
-> +	chip->regmap16 = devm_regmap_init_i2c(client, &nct7201_regmap16_config);
-> +	if (IS_ERR(chip->regmap16))
-> +		return dev_err_probe(&client->dev, PTR_ERR(chip->regmap16),
-> +			"Failed to init regmap16\n");
-> +
-> +	chip->num_vin_channels = model_data->num_vin_channels;
-> +
-> +	ret = devm_mutex_init(&client->dev, &chip->access_lock);
-> +	if (ret)
-> +		return ret;
-> +
-> +	chip->client = client;
-> +
-> +	ret = nct7201_init_chip(chip);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	indio_dev->name = model_data->model_name;
-> +	indio_dev->channels = model_data->channels;
-> +	indio_dev->num_channels = model_data->num_channels;
-> +	if (client->irq)
-> +		indio_dev->info = &nct7201_info;
-> +	else
-> +		indio_dev->info = &nct7201_info_no_irq;
-> +	indio_dev->modes = INDIO_DIRECT_MODE;
-> +
-> +	return devm_iio_device_register(&client->dev, indio_dev);
-> +}
-
-
+(Also, listen to people like Josef who say "I'm now writing Rust in my
+day to day and I never want to go back". It really is that good.)
 
