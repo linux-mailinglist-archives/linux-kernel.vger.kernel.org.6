@@ -1,59 +1,58 @@
-Return-Path: <linux-kernel+bounces-527254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAEEEA408DE
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 15:07:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A040A408DF
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 15:13:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1449E19C4AF2
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 14:07:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9C71700EE3
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 14:12:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ACC714A095;
-	Sat, 22 Feb 2025 14:07:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3A3014A095;
+	Sat, 22 Feb 2025 14:12:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bkJogeE6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LS88dhkh"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E90D42CCDB
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 14:07:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E8C3139566
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 14:12:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740233252; cv=none; b=O3fo+1QOUxntlmyOEvlyDX1u5A+pyEoRXuZxjgck7H0bVBVTncf0oCp8XxVXdWRwRVdA0LlLDI9K8hFNxC68G6OJ4Sy2U8IcnoulriCzVmpiF1n+Jh57Zmmp/Vu2Q4bbo1b8pOGuAdjHcgtPrm5aLJ8KorKoEp95uKEot7iF9sQ=
+	t=1740233579; cv=none; b=LY9shQARwR3RNgqBQB/CQFRdVpyNVP7wmpBL2SBNItlmBSxvWs/kHcmTZYl4NYY1jNgTI49gh8TZzthR4fHF/pbcKbfvkAjwuZ5WVZkh9uPbLBrVhIJPBvgVbZivOI1aHBrgIROF9D0gettaenDN7qlZvqQEVOvZAMebAKaH4jU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740233252; c=relaxed/simple;
-	bh=nE92ptBfc/AIw7gYV6MhCk9fekWsK03AbRBKlDoI/a0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=P+lTzigLO4F7/UxqeOvbJ9xmU23ZQi9NyUMxd4/twILq16YjznFeCy3Y/drtebdgXCgPItHLirukSzZkUqzsKXGBsVWX8G80501/iB8WQ1hhtaiXo2XvRIpbdwFKH7x18+SZCnm08C7XpR0Ec8h1k1AlrIJ8erQ5xAruMaTM87E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bkJogeE6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FB8CC4CED1;
-	Sat, 22 Feb 2025 14:07:28 +0000 (UTC)
+	s=arc-20240116; t=1740233579; c=relaxed/simple;
+	bh=ldcFVBNXx/8qw4SF/6XwHq5JzBl0MYR9vWzP3iYBIOY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WxcdDjIFc7KkOEDjM7FvTgIWHZozw9DG2H8E71Vu3DuGE+JmumR4Tpwfs5aF0Ugi+kkp+qYcH7ZxLBP9RToGmZxtPPtV4EfpcEE7qhb+fk2MWoyldEyLrDAgjbEbDInzHWPJ2VCG4oTKIz+f8cX5tF6NvYDShCMBotrf8pjLxtQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LS88dhkh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 066D1C4CED1;
+	Sat, 22 Feb 2025 14:12:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740233251;
-	bh=nE92ptBfc/AIw7gYV6MhCk9fekWsK03AbRBKlDoI/a0=;
-	h=Date:From:To:Cc:Subject:From;
-	b=bkJogeE6XiLRypNYN4PCbuEItLAKH5NgNqaGJJZtvG5GN1EzQmTK3IP8QU5arFi3q
-	 zFbt3rGoQSN14d8jdHLnlFfFeuRwnuHc5nH0QDLk4N/ws3ryh2RtXHlkiUu7PDorR4
-	 f5g0WkycjlEAMz5BTAhzJ37ustGYpkRb0axR0QIsJxSewTDN44TFkbmMMhIXpyt9iG
-	 TujjFikPkUbksVxvRSIxumoU3mtWKtXyr5gZ8HHS24w9Ha6DbkxOD8TwiG2tyGqp3G
-	 dQlZ88VbMRWqDvjfNI+cF0nWMt8V+zLWzRZD0VqrX0U0JZi9/pDfCYf+TEJLs+sm89
-	 YXlc+7wKxJ7yA==
-Date: Sat, 22 Feb 2025 15:07:20 +0100
+	s=k20201202; t=1740233578;
+	bh=ldcFVBNXx/8qw4SF/6XwHq5JzBl0MYR9vWzP3iYBIOY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LS88dhkh7rWCzsstIt2KYo2fDnVtc89S6VmpUJZ7wlbqh5K9Ku6r/bhrkZadCBDCQ
+	 WHIBCf3fguhZ7uncgpNoMgCcFzQWpnffLwmTGif7Ra0fCF/JY+yVqvPGFxveX+FrPS
+	 0kC6A8epAWCcRxmMwOx/ot41eYtPyDLi/t7WzA7B9KsYKRsfM/4Y3pTSdfOSqXDu2b
+	 oLVMdHUnEXfaqMIg9YOdC/G1K4adanH/S7qQTKx3RB5P1INMl0vX9XWgkyiZP+Jsd2
+	 sZAbi/I5BziGEtUTn4dRtqs6DvmGEKoUvqji1V0zOA6Gj0QHhAfyP9EIGlHKjKHjkn
+	 2VAGp+37hKqhQ==
+Date: Sat, 22 Feb 2025 15:12:49 +0100
 From: Ingo Molnar <mingo@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Michael Jeanson <mjeanson@efficios.com>,
 	Peter Zijlstra <peterz@infradead.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-	Fenghua Yu <fenghua.yu@intel.com>,
-	Reinette Chatre <reinette.chatre@intel.com>,
-	Tony Luck <tony.luck@intel.com>
-Subject: [GIT PULL] x86 fixes
-Message-ID: <Z7naGFRn755UP0Ke@gmail.com>
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Boqun Feng <boqun.feng@gmail.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] rseq: update kernel fields in lockstep with
+ CONFIG_DEBUG_RSEQ
+Message-ID: <Z7nbYcdRKXspX8o2@gmail.com>
+References: <20250221191401.464648-1-mjeanson@efficios.com>
+ <Z7nQzOQT_-9-Rbr5@gmail.com>
+ <974359d5-43f3-483a-89cf-79e9b4965785@efficios.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,41 +61,41 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <974359d5-43f3-483a-89cf-79e9b4965785@efficios.com>
 
-Linus,
 
-Please pull the latest x86/urgent Git tree from:
+* Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-urgent-2025-02-22
+> > > -	unsafe_put_user(cpu_id, &rseq->cpu_id_start, efault_end);
+> > > -	unsafe_put_user(cpu_id, &rseq->cpu_id, efault_end);
+> > > -	unsafe_put_user(node_id, &rseq->node_id, efault_end);
+> > > -	unsafe_put_user(mm_cid, &rseq->mm_cid, efault_end);
+> > > +
+> > > +	unsafe_rseq_set_field(t, cpu_id_start, cpu_id, efault_end);
+> > > +	unsafe_rseq_set_field(t, cpu_id, cpu_id, efault_end);
+> > > +	unsafe_rseq_set_field(t, node_id, node_id, efault_end);
+> > > +	unsafe_rseq_set_field(t, mm_cid, mm_cid, efault_end);
+> > 
+> > Could we please name the new wrapper rseq_unsafe_put_user(), to make it
+> > clear it's a wrapper around unsafe_put_user()?
+> 
+> If we do this then need to make sure the order of arguments becomes
+> similar to unsafe_put_user for consistency.
 
-   # HEAD: c9876cdb3ac4dcdf3c710ff02094165982e2a557 docs: arch/x86/sva: Fix two grammar errors under Background and FAQ
+Absolutely.
 
-Miscellaneous x86 fixes:
+> I always find it odd that the "source" argument comes first and
+> the "destination" argument comes second in all put_user() APIs,
+> compared to memcpy, WRITE_ONCE() and all assignments (e.g.
+> operator "=" LHS vs RHS). Choosing a different argument order
+> therefore made sense with a naming different from "*put_user",
+> but not so much if we use a derived naming.
 
- - Fix AVX-VNNI CPU feature dependency bug triggered via
-   the 'noxsave' boot option
+Yeah, put_user()'s oddity is a random historic idiosyncrasy that we 
+want to preserve in derived naming to reduce the potential for 
+confusion.
 
- - Fix typos in the SVA documentation
-
- - Add Tony Luck as RDT co-maintainer and remove Fenghua Yu
-
- Thanks,
+Thanks,
 
 	Ingo
-
------------------->
-Brian Ochoa (1):
-      docs: arch/x86/sva: Fix two grammar errors under Background and FAQ
-
-Eric Biggers (1):
-      x86/cpufeatures: Make AVX-VNNI depend on AVX
-
-Fenghua Yu (1):
-      MAINTAINERS: Change maintainer for RDT
-
-
- Documentation/arch/x86/sva.rst   | 4 ++--
- MAINTAINERS                      | 2 +-
- arch/x86/kernel/cpu/cpuid-deps.c | 1 +
- 3 files changed, 4 insertions(+), 3 deletions(-)
 
