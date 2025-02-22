@@ -1,192 +1,195 @@
-Return-Path: <linux-kernel+bounces-527092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527094-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 428DEA40732
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 10:58:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EE7CBA40736
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 10:59:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4449701FD1
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 09:58:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BB4C3BEF33
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 09:59:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C3FB207A2D;
-	Sat, 22 Feb 2025 09:58:25 +0000 (UTC)
-Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com [209.85.217.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF8E8207A3D;
+	Sat, 22 Feb 2025 09:59:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fZcMj+FE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FA72207657
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 09:58:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AF1B2EB10;
+	Sat, 22 Feb 2025 09:59:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740218305; cv=none; b=QX0KYGviK1d7q9TqYCwB/0T1ultOEhSf5gRnv9ajw18xzq5ECj36Lxi4laOMVdx+d1jf58GHSAl19oU71tq71dDRF+HvzENI6+Qp5RvsI1lvjZrIsu1PNluvi63PuuvwOtms+2UWZWEptiedNsVnX6DV5ZNIERImbV/hYSNwQIQ=
+	t=1740218357; cv=none; b=HJHrMMfVTd0i2xlNNonpqvO6eAVxPHiSaBFUDQObZXqUEpYv1HF1onh1p4VARJ0ff9cPAZlWzL+VxTLj0q5sYH9M7C95ERNrPaZffzWaJLx3B1XGu9+XurJ3AuHhhvFcPTyPrrPfBOEhA3ztL8euAdRbJVXTLTyNjZLgP+3oMOM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740218305; c=relaxed/simple;
-	bh=5jjxoi+NyBSTA5CyOpM5cn5oDUoNtYuVeSGvy6lO+Sg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MBUM7H63GIPHFMt6YCF2gPRl+07iEr5ZSae35pUTmoXia0Ms6L14HVGCwhi9e9ZQri1G+wKDOo/1HyNpjhhtvZZxyJs/QBxwwbyxrgHdyB1IqxhJtMv17Fvglzm/Vvey5RG+p8sUSWRk17CFkCDZPUZJCMtcdIhBkI+B7NX9HnQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f45.google.com with SMTP id ada2fe7eead31-4b68cb2abacso871231137.3
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 01:58:23 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740218302; x=1740823102;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=miMTL+Ibz2ZHlrxtRz9K3mZRlvBnkZQuM5tmX7QkF0c=;
-        b=MkCahlBK5O5gybWKVQkGdTfeCo4PM3kOsy/cKtL4UUGtKlGvXVo9uGyKRaEeZswwrc
-         1tO2/1YFgCX1ww9ohXD5bwsVlG2jOWACKXNMYBZ8cR05QjYDiHlRyYyv+BUydCKMc15s
-         OTX8GgnfBB8P7+clQpc2iBe7yFve7unmQoathsFat2XMFd5YuKBMhAxYF2JeSAbNF4oj
-         B2gn0kL62LkGjQRguvXEdCEsEy7ozazQlCtZ9dJD239JNpLV6W0QEyLPMYIBz4yumEpN
-         PoZtCrwsgqoOT0AAOc5jicW9qvXjy78AgahxKdW7SQeWuMiWDwcAcMJ3Vwb3eAnEPIFo
-         ME8g==
-X-Forwarded-Encrypted: i=1; AJvYcCUZGOyKGNP42/14zhWBVLAtWrFf560FoMLZqIRREjMpBzlnbzoD7Ds10BesPnPYRTCkpfHOiComFHrvd/E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy12fcZsPCvCumgUoxrBVp2dr4W7Jqb+N+fMnY8JfeMMKngOf5Q
-	+Is2Znn+uTWzPoUcbnpE4htnhl3ssDOE2lHyXOQU5ha1SxSRUGoZ2ZGwFezQKCzHYwKXH7CbGX3
-	uP7Yde2Er8lErgkxD+yUJuF+trxM=
-X-Gm-Gg: ASbGncvBzEJdq8PuRlTQYYb3bj+atb98zFDdydNJkzgmZQ9sFVIsIYznylbhlsUehvb
-	3KTxNZ9Y8gw390OBAKBkvuUvu+XYoeje5FvOZqe86qvMA2vTgh8hmgElz4299HrLwozALfu3DNa
-	zt8DGQowE=
-X-Google-Smtp-Source: AGHT+IH862+3snHiTNiHtpiNOaVebF10wLzPZDhja6mB2OdnLByqTrRDd9lQn502Dky8M/LD1mFJ7ahBqOc3/0wE0U0=
-X-Received: by 2002:a05:6102:dc6:b0:4bb:b868:9d2d with SMTP id
- ada2fe7eead31-4bfc028c564mr3923572137.24.1740218302311; Sat, 22 Feb 2025
- 01:58:22 -0800 (PST)
+	s=arc-20240116; t=1740218357; c=relaxed/simple;
+	bh=i/2WsCyRG4dxpn1+NTTIXKQ2K2x0SJWwCMNSlTX1Ams=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=I8PRP4PWSXN4JoMZAcgd5zt+TQrpeqHZB0apig5nbDyyekapZeUzC1I0VlU3PkfKbS2fZu1Epoiaw2TVlfk3TnV2CJ7u+SfXjlefbs2+KvOg//ymAcf9HucUtjDcAV1LK10uY4Cd3qyz0tPU6UZy5oEaf7axremDVfYl/VUe9zg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fZcMj+FE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0122AC4CED1;
+	Sat, 22 Feb 2025 09:59:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740218355;
+	bh=i/2WsCyRG4dxpn1+NTTIXKQ2K2x0SJWwCMNSlTX1Ams=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=fZcMj+FE/6JrZxveDqc3ogrm1LKoaEYmyrJAhYRJlqRWFqJ5qe64qU65bnbpaWKKL
+	 wLUEap1fz/xCLJ+jHNWLa21Zs0LcxUjJQdyuPplNuz53J3mlc9MnuevBWhfp7avcQR
+	 SyfM/RFZghzhHgAIkMvodNGcc/Azwxl0JuYj3tBzhx2JPmyFt84TFnHb/hrYYEJK0x
+	 gLCrI1j8CVDvvtvQWU70GUf/Foa3sV4LRVgLhhqvjUvlYs0AruxSzQ8Q/N3GyJVQzY
+	 ANIBjsIQ7IOhasMQ4JqtCBsan84NX8tHu+yfLbEiypwHndt5F9UGneuNaOLkNdhZpy
+	 jQAnXeQYJ2Jhw==
+Message-ID: <4f7bf109-bf18-42be-971c-5d5edd9595b5@kernel.org>
+Date: Sat, 22 Feb 2025 10:59:09 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250222024617.2790609-1-mawupeng1@huawei.com>
- <CAMgjq7AfZnwGAHoyCEhO5p2km-gPLk65WLL+2vO1i8hQDaTy+A@mail.gmail.com>
- <a868e635-a86e-4dd7-8bae-c6ca94a2dc09@huawei.com> <CAMgjq7C7hguzq3DmR3s7=3LNGeaCC8qdmiQvLCZrdkB86=BFFw@mail.gmail.com>
-In-Reply-To: <CAMgjq7C7hguzq3DmR3s7=3LNGeaCC8qdmiQvLCZrdkB86=BFFw@mail.gmail.com>
-From: Barry Song <baohua@kernel.org>
-Date: Sat, 22 Feb 2025 22:58:11 +1300
-X-Gm-Features: AWEUYZkREUP02MnSFVZ9f4vjkeZNf-q9qUt0ApDtdRrJ74AE5UIIkwURMldW7Ns
-Message-ID: <CAGsJ_4zW6EtXrzk05caQhOcZuC+5ovQWrzYxP6PFKkMY1H2R3g@mail.gmail.com>
-Subject: Re: [PATCH] mm: swap: Avoid infinite loop if no valid swap entry
- found during do_swap_page
-To: Kairui Song <ryncsn@gmail.com>
-Cc: mawupeng <mawupeng1@huawei.com>, akpm@linux-foundation.org, david@redhat.com, 
-	ryan.roberts@arm.com, chrisl@kernel.org, huang.ying.caritas@gmail.com, 
-	schatzberg.dan@gmail.com, hanchuanhua@oppo.com, willy@infradead.org, 
-	gaoxu2@honor.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	nphamcs@gmail.com, yosryahmed@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/4] dt-bindings: soc: spacemit: Add spacemit,k1-syscon
+To: Alex Elder <elder@riscstar.com>, Haylen Chu <heylenay@4d2.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Haylen Chu <heylenay@outlook.com>,
+ Yixun Lan <dlan@gentoo.org>, linux-riscv@lists.infradead.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Inochi Amaoto <inochiama@outlook.com>,
+ Chen Wang <unicornxdotw@foxmail.com>, Jisheng Zhang <jszhang@kernel.org>,
+ Meng Zhang <zhangmeng.kevin@linux.spacemit.com>,
+ Guodong Xu <guodong@riscstar.com>
+References: <20250103215636.19967-2-heylenay@4d2.org>
+ <20250103215636.19967-4-heylenay@4d2.org>
+ <aw2vqnz5vcccqqvrrhz5tgawj7fnzzg3tds7nnepuorit37a7r@jcj3wrs7d73h>
+ <Z6rdBhQ7s2ReOgBL@ketchup> <19e5129b-8423-4660-8e4f-8b898214d275@kernel.org>
+ <Z63T_EDvXiuRQbvb@ketchup> <2ab715bd-e26c-41bb-ac64-baa864d90414@kernel.org>
+ <Z7BTVu10EKHMqOnJ@ketchup>
+ <7c697e9a-d6d9-4672-9738-93ce3a71beb6@riscstar.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <7c697e9a-d6d9-4672-9738-93ce3a71beb6@riscstar.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sat, Feb 22, 2025 at 9:03=E2=80=AFPM Kairui Song <ryncsn@gmail.com> wrot=
-e:
->
-> On Sat, Feb 22, 2025 at 3:41=E2=80=AFPM mawupeng <mawupeng1@huawei.com> w=
-rote:
-> > On 2025/2/22 15:33, Kairui Song wrote:
-> > > On Sat, Feb 22, 2025 at 10:56=E2=80=AFAM Wupeng Ma <mawupeng1@huawei.=
-com> wrote:
-> > >>
-> > >> From: Ma Wupeng <mawupeng1@huawei.com>
-> > >>
-> > >> During our test, infinite loop is produced during #PF will lead to i=
-nfinite
-> > >> error log as follow:
-> > >>
-> > >>    get_swap_device: Bad swap file entry 114000000
-> > >>
-> > >> Digging into the source, we found that the swap entry is invalid due=
- to
-> > >> unknown reason, and this lead to invalid swap_info_struct. Excessive=
- log
-> > >
-> > > Hi Wupeng,
-> > >
-> > > What is the kernel version you are using? If it's another bug causing
-> > > this invalid swap entry, we should fix that bug instead, not
-> > > workaround it.
-> > >
-> > > This looks kind of similar to another PATCH & Bug report, corrupted
-> > > page table or swap entry:
-> > > https://lore.kernel.org/linux-mm/e223b0e6ba2f4924984b1917cc717bd5@hon=
-or.com/
-> > >
-> > > Might be the same kernel bug? Gaoxu mentioned the bug was observed on
-> > > Kernel 6.6.30 (android version), and neither of these two workarounds
-> > > will fix it completely, the invalid value could cause many other
-> > > issues too. We definitely need to find out the root cause.
-> >
-> > We are having this problem in linux-v5.10, since the log is lost and sw=
-ap
-> > is not enabled in this machines, maybe memory corrupted in the pt.
->
-> Thanks for the info, that's very strange. Since you didn't even enable
-> SWAP, it must be something else corrupted the page table I think
->
-> > >
-> > >> printing can fill up the prioritized log space, leading to the purgi=
-ng of
-> > >> originally valid logs and hindering problem troubleshooting. To make=
- this
-> > >> more robust, kill this task.
-> > >>
-> > >> Signed-off-by: Ma Wupeng <mawupeng1@huawei.com>
-> > >> ---
-> > >>  include/linux/swap.h | 1 +
-> > >>  mm/memory.c          | 9 ++++++++-
-> > >>  mm/swapfile.c        | 2 +-
-> > >>  3 files changed, 10 insertions(+), 2 deletions(-)
-> > >>
-> > >> diff --git a/include/linux/swap.h b/include/linux/swap.h
-> > >> index b13b72645db3..0fa39cf66bc4 100644
-> > >> --- a/include/linux/swap.h
-> > >> +++ b/include/linux/swap.h
-> > >> @@ -508,6 +508,7 @@ struct backing_dev_info;
-> > >>  extern int init_swap_address_space(unsigned int type, unsigned long=
- nr_pages);
-> > >>  extern void exit_swap_address_space(unsigned int type);
-> > >>  extern struct swap_info_struct *get_swap_device(swp_entry_t entry);
-> > >> +struct swap_info_struct *_swap_info_get(swp_entry_t entry);
-> > >>  sector_t swap_folio_sector(struct folio *folio);
-> > >>
-> > >>  static inline void put_swap_device(struct swap_info_struct *si)
-> > >> diff --git a/mm/memory.c b/mm/memory.c
-> > >> index b4d3d4893267..2d36e5a644d1 100644
-> > >> --- a/mm/memory.c
-> > >> +++ b/mm/memory.c
-> > >> @@ -4365,8 +4365,15 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
-> > >>
-> > >>         /* Prevent swapoff from happening to us. */
-> > >>         si =3D get_swap_device(entry);
-> > >> -       if (unlikely(!si))
-> > >> +       if (unlikely(!si)) {
-> > >> +               if (unlikely(!_swap_info_get(entry)))
-> > >> +                       /*
-> > >> +                        * return VM_FAULT_SIGBUS for invalid swap e=
-ntry to
-> > >> +                        * avoid infinite #PF.
-> > >> +                        */
-> > >> +                       ret =3D VM_FAULT_SIGBUS;
-> > >
-> > > This could lead to VM_FAULT_SIGBUS on swapoff. After swapoff
-> > > get_swap_device will return NULL.
-> >
-> > If swap is off, All swap pages should be swap in as expected, so
-> > such entry can not trigger do_swap_page?
->
-> do_swap_page may get blocked due to some random reason, and then a
-> concurrent swapoff could swap in the entry and disable the device.
-> Very unlikely to trigger but in theory possible.
+On 22/02/2025 00:40, Alex Elder wrote:
+> I have a general proposal on how to represent this, but I'd
+> like to know whether it makes sense.  It might be what Krzysztof
+> is suggesting, but in any case, I hope this representation would
+> work, because it could simplify the code, and compartmentalizes
+> things.
+> 
+> Part of what motivates this is that I've been looking at the
+> downstream reset code this week.  It contains a large number of
+> register offset definitions identical to what's used for the
+> clock driver.  The reset driver uses exactly the same registers
+> as the clock driver does.  Downstream they are separate drivers,
+> but the clock driver exports a shared spinlock for both drivers
+> to use.
+> 
+> These really need to be incorporated into the same driver for
+> upstream.
 
-The "goto out" in do_swap_page() should have handled this case. If swapoff
-occurred before the actual swap-in began, we should have aborted the
-swap-in, and userspace would retry.
+Why? First, it is not related to the topic here at all. You can design
+drivers as you wish and still nothing to do with discussion about binding.
+Second, different subsystems justify different drivers and Linux handles
+this well already. No need for custom spinlock - regmap already does it.
 
-        /* Prevent swapoff from happening to us. */
-        si =3D get_swap_device(entry);
-        if (unlikely(!si))
-                goto out;
 
-Thanks
-Barry
+> 
+> The clock code defines four distinct "units" (a term I'll use
+> from here on; there might be a better name):
+>    MPMU  Main Power Management Unit
+>    APMU  Application Power Management Unit
+>    APBC  APB Clock
+>    APBS  APB Spare
+> 
+> The reset code defines some of those, but doesn't use APBS.
+> It also defines three more:
+>    APBC2 Another APB Clock
+>    RCPU  Real-time CPU?
+>    RCPU2 Another Real-time CPU
+> 
+> Each of these "units" has a distinct I/O memory region that
+> contains registers that manage the clocks and reset signals.
+
+So there are children - mpmu, apmu, apbclock, apbspare, apbclock2, rcpu
+1+2? But previous statements were saying these are intermixed?
+
+" I'll make APMU/MPMU act as a whole device"
+
+> 
+> I suggest a single "k1-clocks" device be created, which has
+
+For four devices? Or for one device?
+
+No, it's again going to wrong direction. I already said:
+
+"You need to define what is the device here. Don't create fake nodes ust
+for your drivers. If registers are interleaved and manual says "this is
+block APMU/MPMU" then you have one device, so one node with 'reg'."
+
+So what is the device here? Can you people actually answer?
+
+
+
+> access to all of the I/O address ranges.  And then within
+> the DT node for that device there is a sub-node for the
+
+Uh, confusing. You said there is one device for all the clocks, so if
+there is one device so also one device node. No children.
+
+Maybe you have more devices but none of you is explaining the hardware
+that way. Mixing talk about drivers is really not helping.
+
+> 
+
+
+Best regards,
+Krzysztof
 
