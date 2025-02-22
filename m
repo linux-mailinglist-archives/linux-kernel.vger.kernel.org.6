@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-526852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C318AA40464
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 01:50:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20DF9A40468
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 01:50:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C2B917ABECD
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 00:49:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E825703973
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 00:50:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E592373451;
-	Sat, 22 Feb 2025 00:49:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C89113BC3F;
+	Sat, 22 Feb 2025 00:50:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XMTDkRP3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q2xvk7nW"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E18C1CF8B;
-	Sat, 22 Feb 2025 00:49:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 961962B2CF;
+	Sat, 22 Feb 2025 00:50:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740185399; cv=none; b=ghO4joDbZBlqPUScp9G3FQFUBtX7gIbisL21tRjFJQ7sLF56feUwXqPOn5CiWsuRj4PBh10Azm6seHwAYhGpPhr15BJs+5bif9yJ0XmSDJFHoX9SmvrFJFcjELiszLkRF5sa5i5NCV8dG5otmo1m19sndQ+GxBG9dpSKjetfrBc=
+	t=1740185405; cv=none; b=kCzwBQdghJItUI23yeIAJpqRa00hL4Ki2U0wDT17tK5pawBbspK+NC3aC0CmcniESgI4G9uouiEsoS01PrWiYhqDf3dZg4Au6BQxjkXlcQwMQgYOryp4fhD5FKl1nk8QtFZ0M5hrdXFUAeji5tp7x8UD6EkgupTNTyTAx6Nqpis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740185399; c=relaxed/simple;
-	bh=rlhW2u6asfZeesOm043RNpMYpJcG4du5sVGT5TT+2Qc=;
+	s=arc-20240116; t=1740185405; c=relaxed/simple;
+	bh=baXcTKjEO7sKNWcG1Zsism7vfRhxCCduimn3iJvzLC8=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=cAyF3Li1tV3cP9amo6fHAGim8gwpfswiP4Xx17OaFJ2soRk6W8CU6Ykzq/8un/1vS7UyZAAVQilYNrrTt3d6ES1YfJf4p22730yf03dpE388Uo2RnRtm0g2y+kGkEluKPz/gLux9yE2faI9FdaZkssS6filoJn0QBqel2NRdJDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XMTDkRP3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3345C4CED6;
-	Sat, 22 Feb 2025 00:49:58 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=cuPNjqvtAH2MxQLay+9l6X/ZA0A6xnOdfsRXUSKaVeCGCGIDaOaeD07/jKC89msI2EJe/KwFYf6++5fcPeuPvVo53LC7CDmE8E7x2Gaw7IwjHllEm/IHyw2k17IjqlZ0uIJb0zg2iNnN4jNupf7bHhlyajgL2x70PfqjnPRrQDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q2xvk7nW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07EC5C4CED6;
+	Sat, 22 Feb 2025 00:50:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740185398;
-	bh=rlhW2u6asfZeesOm043RNpMYpJcG4du5sVGT5TT+2Qc=;
+	s=k20201202; t=1740185405;
+	bh=baXcTKjEO7sKNWcG1Zsism7vfRhxCCduimn3iJvzLC8=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=XMTDkRP3ek18NaKquxI+L1qFuIkG9nfVfBdLoY7fxQgs3AS/OeNEogNvlV7OF8NiH
-	 JzUMduXXUMgJSMhSlUsSPtYmG08TijlUZF+3r1c7Bp33XTxm9Vay69zjUVWY5RF0zk
-	 vfeJItbs9hgYgIlexgnxiwierIQqajSfXBoHKGz/AMO9L3xhURLp+TfqUGrcif68Jj
-	 UsasXOnNHxUlZ2+utePY7mI/FIw2S7aIn5Tb1o0UsIkqigZaUcv6KVfl4AyY0rrzDN
-	 rpFCiGNTUjZYrLRv76JFarO9txugnpPKHc7wxl9xNpcsgXNRKd/O7qJpZYb+7q+DIM
-	 EtE0Fn6mgvlbg==
+	b=q2xvk7nWGfNHZwrxLgcEHDo2tvfhYDyCbn2Pz9wf/hye3OYCq6r9SZLXh/G0YNLUK
+	 MIH6KBuiaXmyXan6p6YNkulQ9O2BNy/t2pny7pTxkXB6qDBSAZWfVK/ZNUejCy19Lj
+	 dz4C6VCpIaM3YG2csNVHTaCQshXenx/xP0tl3aiFOFau1ZgoLG2wSiRJi9tfaN7ijG
+	 oy4MEywfd+6dX9OohmPfapLOiT2zRR52968eyLZVwQfkiMWlpdRqKdEJukHeaFF9ru
+	 P6w+gNmojOkMKKCUobHjjIWkYEzEmg71ictdAarORkqgpIjBTgbmM5nKZ8FBnTm6lX
+	 k12P+tzbSJBTw==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB191380CEF6;
-	Sat, 22 Feb 2025 00:50:30 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33F76380CEF6;
+	Sat, 22 Feb 2025 00:50:37 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,37 +51,37 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net v2] net: cadence: macb: Synchronize stats calculations
+Subject: Re: [PATCH net-next v2] net: cadence: macb: Implement BQL
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <174018542976.2255625.1273232177921344284.git-patchwork-notify@kernel.org>
-Date: Sat, 22 Feb 2025 00:50:29 +0000
-References: <20250220162950.95941-1-sean.anderson@linux.dev>
-In-Reply-To: <20250220162950.95941-1-sean.anderson@linux.dev>
+ <174018543574.2255625.12227184252402684174.git-patchwork-notify@kernel.org>
+Date: Sat, 22 Feb 2025 00:50:35 +0000
+References: <20250220164257.96859-1-sean.anderson@linux.dev>
+In-Reply-To: <20250220164257.96859-1-sean.anderson@linux.dev>
 To: Sean Anderson <sean.anderson@linux.dev>
 Cc: nicolas.ferre@microchip.com, claudiu.beznea@tuxon.dev,
- netdev@vger.kernel.org, andrew+netdev@lunn.ch, linux-kernel@vger.kernel.org,
- kuba@kernel.org, pabeni@redhat.com, davem@davemloft.net, edumazet@google.com,
- maxime.chevallier@bootlin.com
+ netdev@vger.kernel.org, edumazet@google.com, kuba@kernel.org,
+ andrew+netdev@lunn.ch, linux-kernel@vger.kernel.org, davem@davemloft.net,
+ pabeni@redhat.com
 
 Hello:
 
-This patch was applied to netdev/net.git (main)
+This patch was applied to netdev/net-next.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Thu, 20 Feb 2025 11:29:50 -0500 you wrote:
-> Stats calculations involve a RMW to add the stat update to the existing
-> value. This is currently not protected by any synchronization mechanism,
-> so data races are possible. Add a spinlock to protect the update. The
-> reader side could be protected using u64_stats, but we would still need
-> a spinlock for the update side anyway. And we always do an update
-> immediately before reading the stats anyway.
+On Thu, 20 Feb 2025 11:42:57 -0500 you wrote:
+> Implement byte queue limits to allow queuing disciplines to account for
+> packets enqueued in the ring buffer but not yet transmitted. There are a
+> separate set of transmit functions for AT91 that I haven't touched since
+> I don't have hardware to test on.
+> 
+> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
 > 
 > [...]
 
 Here is the summary with links:
-  - [net,v2] net: cadence: macb: Synchronize stats calculations
-    https://git.kernel.org/netdev/net/c/fa52f15c745c
+  - [net-next,v2] net: cadence: macb: Implement BQL
+    https://git.kernel.org/netdev/net-next/c/e6a532185daa
 
 You are awesome, thank you!
 -- 
