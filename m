@@ -1,145 +1,171 @@
-Return-Path: <linux-kernel+bounces-527080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02DF2A40716
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 10:47:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34386A40720
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 10:50:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3EB7174875
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 09:47:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 079B319C0A30
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 09:50:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A065207A03;
-	Sat, 22 Feb 2025 09:47:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2451D207E17;
+	Sat, 22 Feb 2025 09:50:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="d13HXYl9"
-Received: from mx.denx.de (mx.denx.de [89.58.32.78])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="USvuCD3i"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F3F72063F0;
-	Sat, 22 Feb 2025 09:47:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D8CD1E990D;
+	Sat, 22 Feb 2025 09:50:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740217623; cv=none; b=KIgI7Vmd2bNUwi5ssHt5oCHLK4pOFdQ/bnip7kawcqTvK825VmvvcQGeN/aaT8Mkmby6/Mb2beyOCzgsK3aL+m+l0xTQPC3D7bT2nCff8n4sKPsC2BtWPr+Krl/lg4SibtMAkDJLlbFcEY/BQDxAkFylUt49G13GXHo5rm1tg5k=
+	t=1740217802; cv=none; b=eiYrViSoU+I7QY+FYYLfpk2KVX0KkVANwv+bDUyfpYsSIqXsVlpGO1dUwpol9o7BaFQMoO6wiwmogv8sMnOkua1poTWusuN8P5H+LYTPrSW7Fx+gVUfVrvzRrbrFisFGMXOdgOtLc1jwvfzh1Z+rzqov/cmRPv14ReW57hd6x14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740217623; c=relaxed/simple;
-	bh=VF6Ud8woaUw2hBuatgzb7156hJnHCd13pH4ajF1JnP4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=POxPMbKie1te8eIYMU4ruHWRmtgyUxI1qpO7lVtIGIIlj/NwXRyfS1oA6UkPxpMBjfKP2PsEUrr4ufa1WlXAwt9HROvPxIX9H3Cu8kFxx3SXEqQDCKwOUGwQLMoZ4QoaH6xP/53BYhkjb3FsUzdEHEGR24WaHkMJZiBJFt9Gw80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=d13HXYl9; arc=none smtp.client-ip=89.58.32.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id D15FA10382D37;
-	Sat, 22 Feb 2025 10:46:54 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1740217619;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=e6kkcauuE4Q+rb4U5UeJINPLqDBviQ0uDB7Xhy6jslY=;
-	b=d13HXYl95ypF+ZWw5RxVuIUMv18zN90/drgU45hZwlcp5i1fkzCdi7Jhporw/jY7PcDdF8
-	frdQcLuQFtCeRzXUX4U7F2gYHt809p98HVUW+5HAHIL8OM+7Jr67DLQva3NR2tBJ9Akn4c
-	wsfWCuXeOfEJYRi/M6cjgz1F6JBcsbkgFYpfj6RFrxsBfYRMO7LWSKq8+n9Dzz8a1MvFUH
-	gdNJmvHgE2tvkv1Mys9HAITHxZH+ewpMen9nsD0WICXlmVM/T+5gmVAONlxxVLqkw7JLPD
-	aHfNX5cc8qFBOuuPRJPrfCy9BV3xYPfggPD2go+/BWF12yl9tKFKHukih68szw==
-Date: Sat, 22 Feb 2025 10:46:52 +0100
-From: Pavel Machek <pavel@denx.de>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Pavel Machek <pavel@denx.de>, Florian Fainelli <f.fainelli@gmail.com>,
-	stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org,
-	jonathanh@nvidia.com, sudipm.mukherjee@gmail.com,
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
-	hargar@microsoft.com, broonie@kernel.org
-Subject: Re: [PATCH 6.1 000/569] 6.1.129-rc2 review
-Message-ID: <Z7mdDISNDz7Dq3A3@duo.ucw.cz>
-References: <20250220104545.805660879@linuxfoundation.org>
- <80ab673f-aa94-43e2-899a-0c5a22f3f1e0@gmail.com>
- <2025022221-revert-hubcap-f519@gregkh>
- <Z7mXDolRS+3nLAse@duo.ucw.cz>
- <2025022213-brewery-synergy-b4bf@gregkh>
+	s=arc-20240116; t=1740217802; c=relaxed/simple;
+	bh=rpBgNJ8tgnDrWZnhBR0r6ELzBvy/EYm7qgnjIHEZaR8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=dJo1hmL7GLoM0Juo2kRda5clZH5L6uvVNGZT22yaI/WbxCP73Vr2xPVjgXlHykU1M2F6o1kyY2MssQa7DjYSWRHLe+7tvQ+dewDsJWYdDZKAVv600rmiw5YgtaDVqdmNnS9xHEiSpn3Ig9ItRofFaPX3YZ8fuRZr6LIYKvkcF4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=USvuCD3i; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id C8264C4CED1;
+	Sat, 22 Feb 2025 09:50:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740217801;
+	bh=rpBgNJ8tgnDrWZnhBR0r6ELzBvy/EYm7qgnjIHEZaR8=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=USvuCD3iHJBtgV9bo/4m8TyQ1YEaUbFAdgWwlGLfVqVW4KnnXCM0uqsir3B6/6DR9
+	 VGORMwD32t4AdHn3y/tqVXWMbP5N7o1AbWiGKrX1JEUk+jCFC2LoE6g6PlcR9Pw/7g
+	 v4sMgCBQ3y7dyXJA/wYdKO/q0NrmAXsEIYW9H39fGlkj4KsSEYrPJHdJMucuDbjCyk
+	 QnmCJwG5csYqJ2XpQjCJWkb2kzEjx3s0aAUgLpo5HMUuK6tpzwU6x2+e5DGU7+ox7h
+	 JXUIT9BVMP+BZEm8aWJbSj1MMG1rpUy7J+hUsWwRLej8jAuCOZWVv1/khSK7so9FV2
+	 4aQ65q8Uj2bfw==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD081C021B2;
+	Sat, 22 Feb 2025 09:50:01 +0000 (UTC)
+From: Hans-Frieder Vogt via B4 Relay <devnull+hfdevel.gmx.net@kernel.org>
+Subject: [PATCH net-next v5 0/7] net: tn40xx: add support for AQR105 based
+ cards
+Date: Sat, 22 Feb 2025 10:49:27 +0100
+Message-Id: <20250222-tn9510-v3a-v5-0-99365047e309@gmx.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="CCNlqIj4XocDQZrA"
-Content-Disposition: inline
-In-Reply-To: <2025022213-brewery-synergy-b4bf@gregkh>
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAKeduWcC/1XNQQ6DIBCF4asY1qUBVNSueo+mi1EGZSE2QIiN8
+ e5F0qR2OZl879+IR2fQk1uxEYfReLPYdNSXggwT2BGpUekmgomKCy5psF3NGY0lUDHogbe1ki3
+ TJIGXQ23WPPYgFgO1uAbyTJ8ePNLegR2mY2wGYw8wGR8W987xWGb27TTnTiwpo5WqUUstW4nsP
+ s7rNQXydqxOUPA/WCWoQGvddj000Pzgvu8ffiTArfwAAAA=
+X-Change-ID: 20241216-tn9510-v3a-2cfc185d680f
+To: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, 
+ Russell King <linux@armlinux.org.uk>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ FUJITA Tomonori <fujita.tomonori@gmail.com>, 
+ Andrew Lunn <andrew+netdev@lunn.ch>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Hans-Frieder Vogt <hfdevel@gmx.net>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1740217800; l=4309;
+ i=hfdevel@gmx.net; s=20240915; h=from:subject:message-id;
+ bh=rpBgNJ8tgnDrWZnhBR0r6ELzBvy/EYm7qgnjIHEZaR8=;
+ b=BM7Od9afPYzOlw2zXeXD5dap++F0scfoMv07HKY8xYRLVHrLtedZpSV1qUJjMvRzhE8i/PUYf
+ VmnyvVrFZY/B8ZN9BtbAKIraWwNcr6Cs2dbQtfZcBK4mFxANukNP5RJ
+X-Developer-Key: i=hfdevel@gmx.net; a=ed25519;
+ pk=s3DJ3DFe6BJDRAcnd7VGvvwPXcLgV8mrfbpt8B9coRc=
+X-Endpoint-Received: by B4 Relay for hfdevel@gmx.net/20240915 with
+ auth_id=209
+X-Original-From: Hans-Frieder Vogt <hfdevel@gmx.net>
+Reply-To: hfdevel@gmx.net
+
+This patch series adds support to the Tehuti tn40xx driver for TN9510 cards
+which combine a TN4010 MAC with an Aquantia AQR105.
+It is an update of the patch series "net: tn40xx: add support for AQR105
+based cards", addressing review comments and generally cleaning up the series.
+
+The patch was tested on a Tehuti TN9510 card (1fc9:4025:1fc9:3015).
+
+---
+Changes in v5:
+- changed version because "b4 send --resend v4" did not succeed
+- used opportunity to rebaseline to net-next
+- only source code change is merging a split string in tn40_mdio.c, removing
+  a warning from b4 prep --check
+- changed format of cover letter in line with b4 (sequence of changes from
+  latest to oldest)
+- Link to v4: https://lore.kernel.org/r/20241221-tn9510-v3a-v4-0-dafff89ba7a7@gmx.net
+
+Changes in v4:
+- use separate aqr105 specific functions instead of adding aqr105 functionality
+  in common functions, with need of "chip generation" parameter
+  (suggested by Andrew Lunn <andrew@lunn.ch>)
+- make generation and cleanup of swnodes more symmetric
+  (suggested by Andrew Lunn <andrew@lunn.ch>)
+- add MDIO/PHY software nodes only for devices that have an aqr105 PHY
+  (suggested by FUJITA Tomonori <fujita.tomonori@gmail.com>)
+- Link to v3: https://lore.kernel.org/r/20241217-tn9510-v3a-v3-0-4d5ef6f686e0@gmx.net
+
+Changes in v3:
+- aquantia_firmware: remove call to of_property_read_string. It should be
+  called from the more generic function device_property_read_string
+- add more AQR105-specific function, to support proper advertising and auto-
+  negotiation
+- re-organize the patches about the mdio speed and TN40_REG_MDIO_CMD_STAT,
+  skipping the 1MHz intermediate speed step
+- re-organized the sequence of the patches:
+    1. changes to the general support functions (net/phy/mdio_bus.c)
+    2. changes to the aquantia PHY driver
+    3. changes to the tn40xx MAC driver, required to support the TN9510 cards
+- Link to v2: https://lore.kernel.org/netdev/trinity-602c050f-bc76-4557-9824-252b0de48659-1726429697171@3c-app-gmx-bap07/
+
+Changes in v2:
+- simplify the check for a firmware-name in a swnode in the aquantia PHY driver
+(comment from Andrew Lunn)
+- changed the software node definition to an mdio node with phy child nodes, to
+be more in line with a typical device tree definition (also comment from
+Andrew Lunn)
+This also solves the problem with several TN4010-based cards that FUJITA
+Tomonori reported
+- clarified the cleanup calls, now calling fwnode_handle_put instead of
+software_node_unregister (comment by FUJITA Tomonori)
+- updated the function mdiobus_scan to support swnodes (following hint of
+Andrew Lunn)
+- remove the small patch to avoid failing after aqr_wait_reset_complete, now
+that a proper patch by Vladimir Oltean is available
+- replace setting of bit 3 in TN40_REG_MDIO_CMD_STAT by calling of
+tn40_mdio_set_speed (suggestion by FUJITA Tomonori)
+- cleaning up the distributed calls to set the MDIO speed in the tn40xx driver
+- define supported PCI-IDs including subvendor IDs to prevent loading on
+unsupported card
+- Link to v1: https://lore.kernel.org/netdev/trinity-33332a4a-1c44-46b7-8526-b53b1a94ffc2-1726082106356@3c-app-gmx-bs04/
+
+---
+Hans-Frieder Vogt (7):
+      net: phy: Add swnode support to mdiobus_scan
+      net: phy: aquantia: add probe function to aqr105 for firmware loading
+      net: phy: aquantia: search for firmware-name in fwnode
+      net: phy: aquantia: add essential functions to aqr105 driver
+      net: tn40xx: create swnode for mdio and aqr105 phy and add to mdiobus
+      net: tn40xx: prepare tn40xx driver to find phy of the TN9510 card
+      net: tn40xx: add pci-id of the aqr105-based Tehuti TN4010 cards
+
+ drivers/net/ethernet/tehuti/tn40.c           |   9 +-
+ drivers/net/ethernet/tehuti/tn40.h           |  31 ++++
+ drivers/net/ethernet/tehuti/tn40_mdio.c      |  80 ++++++++-
+ drivers/net/phy/aquantia/aquantia_firmware.c |   7 +-
+ drivers/net/phy/aquantia/aquantia_main.c     | 243 ++++++++++++++++++++++++++-
+ drivers/net/phy/mdio_bus.c                   |  14 ++
+ 6 files changed, 375 insertions(+), 9 deletions(-)
+---
+base-commit: bb3bb6c92e5719c0f5d7adb9d34db7e76705ac33
+change-id: 20241216-tn9510-v3a-2cfc185d680f
+
+Best regards,
+-- 
+Hans-Frieder Vogt <hfdevel@gmx.net>
 
 
---CCNlqIj4XocDQZrA
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Sat 2025-02-22 10:39:23, Greg Kroah-Hartman wrote:
-> On Sat, Feb 22, 2025 at 10:21:18AM +0100, Pavel Machek wrote:
-> > On Sat 2025-02-22 07:28:10, Greg Kroah-Hartman wrote:
-> > > On Fri, Feb 21, 2025 at 09:45:15AM -0800, Florian Fainelli wrote:
-> > > >=20
-> > > >=20
-> > > > On 2/20/2025 2:57 AM, Greg Kroah-Hartman wrote:
-> > > > > This is the start of the stable review cycle for the 6.1.129 rele=
-ase.
-> > > > > There are 569 patches in this series, all will be posted as a res=
-ponse
-> > > > > to this one.  If anyone has any issues with these being applied, =
-please
-> > > > > let me know.
-> > > > >=20
-> > > > > Responses should be made by Sat, 22 Feb 2025 10:44:04 +0000.
-> > > > > Anything received after that time might be too late.
-> > > >=20
-> > > > And yet there was a v6.1.29 tag created already?
-> > >=20
-> > > Sometimes I'm faster, which is usually the case for -rc2 and later, I=
- go
-> > > off of the -rc1 date if the people that had problems with -rc1 have
-> > > reported that the newer -rc fixes their reported issues.
-> >=20
-> > Well, quoting time down to second then doing something completely
-> > different is quite confusing. Please fix your scripts.
->=20
-> Patches gladly welcome :)
-
-:-(
-								Pavel
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index a5e49d57c589..526daaf5b87a 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -22471,7 +22471,7 @@ STABLE BRANCH
- M:	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
- M:	Sasha Levin <sashal@kernel.org>
- L:	stable@vger.kernel.org
--S:	Supported
-+S:	Odd Fixes
- F:	Documentation/process/stable-kernel-rules.rst
-=20
- STAGING - ATOMISP DRIVER
-
-
---=20
-DENX Software Engineering GmbH,        Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---CCNlqIj4XocDQZrA
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZ7mdDAAKCRAw5/Bqldv6
-8jNqAKCK5nxpHfcYWmjFYCol7TTqC1ElLgCglp3Jqu+bQqptNUIHG6WeV1ZHJ2E=
-=7oeb
------END PGP SIGNATURE-----
-
---CCNlqIj4XocDQZrA--
 
