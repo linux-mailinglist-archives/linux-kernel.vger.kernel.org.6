@@ -1,164 +1,134 @@
-Return-Path: <linux-kernel+bounces-527313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04F25A40986
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 16:36:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6568EA40989
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 16:39:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AA04702B6E
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 15:36:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5283117943F
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 15:39:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01E3A19D092;
-	Sat, 22 Feb 2025 15:36:30 +0000 (UTC)
-Received: from mail.muc.de (mail.muc.de [193.149.48.3])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E1583224
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 15:36:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.149.48.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8793F1C84CC;
+	Sat, 22 Feb 2025 15:39:41 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41F593224;
+	Sat, 22 Feb 2025 15:39:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740238589; cv=none; b=nCmvC6u5IK8BgZc7MddhzUbI5uV1RU22XJ4YIxYoSoP4pndOysCVBG59Mngdv/zCW6/uaA7fk9CHwPeL79ARGJw6hfuirR+dcZk/Gb5kMysX7m2S3rDxqOzEDkadH/bvBFcyPpcODrSZYUJYuXqJkiori0xJ8YRIK40wL7fojss=
+	t=1740238781; cv=none; b=jU33IQb4vRRUsulngWPzGgWAnUp4nGtG0gISI8fSiLY3QA2tpxSTS2lgq+TKM9Mi/E1GoGPYbyPQCcNednPt+nQ8baJbsmIwUCAGHxei09JLm3V1fGQ2ppvuGqaJtfsyORsGJbjN2cX+9yyDFH2GT3lSH28vu8CpZWhZUMfOab8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740238589; c=relaxed/simple;
-	bh=q0sYhvG6QRBlTbAt5UtgA6djZsVa50a/93MMrD9O110=;
-	h=Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To:From; b=s+d+eIaKCPjkruszkAV7cpJ+auRhNvsV4CVLQTRRVgBZp2jVNvrABkhfGW2CarHr9yf9zKQDKkLP16pcueM8i6PPuwrIaaBLwowg1z2a/s54FeP0S43+WRQP2K8uJw18DApxZ3JpexgfcU/lQE6dqvexOlORfCJOSeCsR1qNTKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=muc.de; spf=pass smtp.mailfrom=muc.de; arc=none smtp.client-ip=193.149.48.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=muc.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=muc.de
-Received: (qmail 28437 invoked by uid 3782); 22 Feb 2025 16:36:13 +0100
-Received: from muc.de (pd953a520.dip0.t-ipconnect.de [217.83.165.32]) (using
- STARTTLS) by colin.muc.de (tmda-ofmipd) with ESMTP;
- Sat, 22 Feb 2025 16:36:12 +0100
-Received: (qmail 10943 invoked by uid 1000); 22 Feb 2025 15:36:12 -0000
-Date: Sat, 22 Feb 2025 15:36:12 +0000
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Jiri Slaby <jirislaby@kernel.org>, Simona Vetter <simona@ffwll.ch>,
-  linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: More than 256/512 glyphs on the Liinux console
-Message-ID: <Z7nu7HqKn4o2rMd5@MAC.fritz.box>
-References: <Z7idXzMcDhe_E5oN@MAC.fritz.box>
- <2025022243-street-joylessly-6dfa@gregkh>
+	s=arc-20240116; t=1740238781; c=relaxed/simple;
+	bh=7IKYFO/1To/SFLqEc4c9Ck4qc3cN4itGbMN5/EgAeaE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C/DP0OVnhZ/rT6IrJu8QwkwoAYgE0HGhSiCSKMoLs/YsHLl32idZ6kdvkBQ6HPt5bIs+KWAttkJxWWWvMxfZjFMmz6g7pqPud1Rncfgn0ZDl6UkYOaD2OdOxkLaKYdUN1HNauVhZXiNtYRsjdLisNDTy5c7BZod0F4YvpW2UhS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 63D6A152B;
+	Sat, 22 Feb 2025 07:39:48 -0800 (PST)
+Received: from bogus (unknown [10.57.37.210])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 07CC23F59E;
+	Sat, 22 Feb 2025 07:39:27 -0800 (PST)
+Date: Sat, 22 Feb 2025 15:39:24 +0000
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Stuart Yoder <stuart.yoder@arm.com>
+Cc: Sumit Garg <sumit.garg@kernel.org>, Sumit Garg <sumit.garg@linaro.org>,
+	linux-integrity@vger.kernel.org, jarkko@kernel.org,
+	peterhuewe@gmx.de, jgg@ziepe.ca, rafael@kernel.org, lenb@kernel.org,
+	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Jens Wiklander <jens.wiklander@linaro.org>,
+	Rob Herring <robh@kernel.org>, Sudeep Holla <sudeep.holla@arm.com>
+Subject: Re: [PATCH 0/4] Add support for the TPM FF-A start method
+Message-ID: <20250222153924.wrjqmaowvcmdlojd@bogus>
+References: <4bb3cefa-b843-45ca-82c5-d96b13454baa@arm.com>
+ <CAFA6WYM3UA9+TE8L2U5Qd8FZfaGZnbba=QzWU7fEu3LKQVm-tw@mail.gmail.com>
+ <fdaa9a58-790f-4839-8db7-1b9a81eb8edf@arm.com>
+ <CAFA6WYM0ANqc--ScYtJFRjOsCCjzO3NX46=F5V=rza_6Q-Q96g@mail.gmail.com>
+ <e142afd2-38ec-4640-b9be-cb414bccc807@arm.com>
+ <Z7LGbZsOh_w-HRY2@sumit-X1>
+ <5dae96fa-0e54-4274-bcc6-1c20fe846f60@arm.com>
+ <Z7iDuwLDA2rFPZK6@sumit-X1>
+ <Z7iHaWPyq3KDG7J2@bogus>
+ <79dd35d4-147b-4b12-8ce8-1909428d75bd@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <2025022243-street-joylessly-6dfa@gregkh>
-X-Submission-Agent: TMDA/1.3.x (Ph3nix)
-From: Alan Mackenzie <acm@muc.de>
-X-Primary-Address: acm@muc.de
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <79dd35d4-147b-4b12-8ce8-1909428d75bd@arm.com>
 
-Hello, Greg.
+On Fri, Feb 21, 2025 at 12:29:03PM -0600, Stuart Yoder wrote:
+>
+>
+> On 2/21/25 8:02 AM, Sudeep Holla wrote:
+> > Hi Sumit,
+> >
+> > On Fri, Feb 21, 2025 at 07:16:35PM +0530, Sumit Garg wrote:
+> > > On Mon, Feb 17, 2025 at 10:56:58AM -0600, Stuart Yoder wrote:
+> > > >
+> > > > I don't see how changing TPM discovery to be via FF-A directly
+> > > > would improve maintainability.
+> > >
+> > > You are considering ACPI at this point but when people want to use this
+> > > TPM over FF-A on a platform using DT then it will require corresponding
+> > > DT bindings. After that each platform has to enable TPM over FF-A in
+> > > their corresponding ACPI/DT. All that won't be needed with auto
+> > > discovery over FF-A.
+>
+> Yes, we would need a new DT binding.
+>
 
-Thanks for the reply.
+Not sure how that would look like, so I will hold off my comments on this
+topic. But we really should strive towards auto-discovery as much as possible.
 
-On Sat, Feb 22, 2025 at 09:48:32 +0100, Greg Kroah-Hartman wrote:
-> On Fri, Feb 21, 2025 at 03:35:59PM +0000, Alan Mackenzie wrote:
+> > I hear you and completely agree. However, someone thought it was a good idea
+> > to align with other start methods and duplicate information in the TCG ACPI
+> > specification. This is definitely a bad idea, as it may contradict the
+> > firmware. All we needed was a simple flag to indicate whether FF-A is the
+> > start method.
+>
+> Do you mean a flag exposed via ACPI?  If you do FF-A based discovery you
+> don't even need that.  Everything could be determined via an FF-A
+> interface.
+>
+> > It sounds like a classic case of misalignment between specification authors
+> > and practical implementation needs. Instead of a simple flag to indicate FF-A
+> > as the start method, duplicating information in the TCG ACPI specification
+> > seems unnecessary and potentially problematic—especially if it risks
+> > conflicting with firmware behavior.
+>
+> There is a lot of history, but I think it was simply that ACPI
+> advertisement of an FF-A based TPM seemed like the approach
+> with the least friction. And Linux is not the only target OS.
+>
 
-> > Dear Linux Maintainers,
+I guess so. I understand sometimes we need to consider multiple target OS.
 
-> > The Linux console is currently restricted to 256/512 glyphs, the VGA
-> > standard from the 1980s.  I would like that restriction to be lifted, and
-> > believe that many other console users would agree.
+> > Anyway, I can't comment on how we ended up here, but this seems to be the reality.
+>
+> I don't think we are locked into ACPI (or DT) only discovery.
+> It's possible that with a modest delta on top of this patch series
+> that the tpm_crb driver could also probe based on FF-A.
+>
+> The CRB over FF-A spec (DEN0138) could be extended in a backwards
+> compatible way to expose additional info like the base address of the
+> CRB.
+>
 
-> First off, why?
+Ideally, we should manage with dynamic buffers. But I do understand the
+reasons why we may need static curve outs. I prefer the ffa client driver
+take care of that without needing to build FF-A bindings just for that.
 
-I use the console as my primary means of interacting with my PC, and in
-recent years have become increasingly irritated by the appearance of
-Ufffd in place of, for example, eastern European characters in people's
-names.  I've often wished "somebody" would fix this.  In the end, that
-somebody had to be me.
+I will wait and see how all these shape up (soon ?)
 
-But I think you are also asking why I use the console at all.  That's a
-fair question which I'll try to answer.
-
-For pure text work (such as hacking code, reading emails), the main
-alternative is a GUI such as X-Windows (or Wayland).  These insert
-several layers of "fat" between the user and the "muscle" of the kernel.
-
-Like many drivers of modern cars, who would dearly love to get rid of
-electronic this and that, electric mirror adjustment, electric window
-opening and so on, I need a simple uncluttered environment.  I want to
-drive a speedboat, not a luxury yacht.
-
-All the features of GUI systems take up space on the screen, thus
-reducing the space available for the user's work.  All these systems
-"steal" key sequences from application programs, making them less
-useful.  For example <alt>-<tab> is a useful key sequence in Emacs,
-provided it is running on the console.  In text work, I have absolutely
-no use for scroll bars, menus, window decorations, and the like - they
-just get in the way.
-
-The console is a stable interface.  My use of it has barely changed in
-around 25 years.  By contrast, GUI environments are continually
-changing, forcing users to spend time learning new features and
-(arbitrarily) changed existing features.  I don't like this.
-
-The console is also rock-solid reliable - just as other parts of the
-kernel are.  X-Windows, for example is not so reliable.  Back in
-December, the root partition on my new Gentoo system became full.  This
-prevented X from even starting.  With the console (and a rescue CD) I
-was able to recover the situation.
-
-> What about the move to get rid of the vt code entirely, ....
-
-Getting rid of the vt code would be a Bad Thing.  People depend on it.
-What is the alternative?
-
-> .... if you do that, can't you get proper glyphs with the drm
-> subsystem?
-
-I don't know.  I've looked briefly at fbterm, a terminal which uses drm.
-It steals key sequences too, some of which are needed in Emacs.
-Although not as bad as GUIs, it puts awkward layers between the user and
-Linux too.
-
-I think using drm in place of fbterm.c and bitblit.c would need a lot of
-design and implementation work.  The change I'm proposing barely changes
-the design at all.
-
-> Doing huge changes for a subsystem that almost everyone agrees should
-> only be kept around for legacy reasons is a rough undertaking.
-
-Isn't there a principle in Linux that preserving existing user
-interfaces is of utmost importance?
-
-> <snip>
-
-> > I would very much like further to develop and to refine this code to the
-> > point where it is suitable for inclusion in the mainline kernel.  What do
-> > you say?
-
-> Only you can decide what you want to work on.  If you have working
-> patches, and submit them so that they can be reviewed, we'll be glad to
-> do so.
-
-As I've already written, I've got working code, but it needs refinement
-before I submit it.  Otherwise reviewers would likely reject it for
-"inessential" reasons like code formatting.  This will likely take me
-several days.
-
-What is the best way of submitting such a large patch (~3,500 lines)?  I
-committed it to my own local git repository in three main stages (around
-equal size), and have applied corrections after rebasing and the odd bug
-fix.
-
-> But again, you are going to have to answer the reason "why" first.
-
-I hope this email goes some way towards this.
-
-> thanks,
-
-> greg k-h
-
-Thank you too!
-
--- 
-Alan Mackenzie (Nuremberg, Germany).
+--
+Regards,
+Sudeep
 
