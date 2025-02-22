@@ -1,174 +1,150 @@
-Return-Path: <linux-kernel+bounces-527000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D753A40610
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 08:20:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56913A40613
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 08:22:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F1C6189D863
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 07:20:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 983FA19C1E3F
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 07:23:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CCFB202C3A;
-	Sat, 22 Feb 2025 07:20:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A49B520127A;
+	Sat, 22 Feb 2025 07:22:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tugraz.at header.i=@tugraz.at header.b="J16ksXje"
-Received: from mailrelay.tugraz.at (mailrelay.tugraz.at [129.27.2.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OHxcmYpb"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31D9A1FA15E;
-	Sat, 22 Feb 2025 07:20:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.27.2.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60F347494;
+	Sat, 22 Feb 2025 07:22:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740208832; cv=none; b=tMxTscY2h0Jc1U75FPoq4juAb/farlP9WAdk7Ta6EUQKvZis9yMsyIwHObLxndDzgWuY+6jHtr+kos9fmAjtSY5JhZwq66SABtNdkxthq6t8IPOgG721K3IQyu1PY0Vw1E29afXs7G7N7QqEwzvgRZa6E3gd/lbvmGtLO3Wp8VE=
+	t=1740208969; cv=none; b=SR2usAJ2q7Leha9+qd5xhqRX02YXoSU6gN+AY7pFv5lZ5sWi3sTmbqGboGn2dFQCiL1RPfkUa8eEn4acbB+Rf955s4mYQaP1F0m0HA4RgoNQaTb7nwOYBrKDYNuNavw3unY5OsImfGfNwLtu/dguFJlc+7PBVkbN9S5Bwt2WIc4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740208832; c=relaxed/simple;
-	bh=oagXNzkOV6KSuctkCl5gvSg2Z1l3eJ73jxyB1wAI6Js=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=burB0DDB2etN3k20H9/9WCyPsDHt0NV7kikJnmkTrRGMQyk9wQ/MfnOY09AnVoBI1sqDjZd/By+s3R5RpxLO2IPUiEpu/ems5vOy6q8uIZL2VXMhkefgLlrLXm+AyTn4wS4Smja8/C1XZT/mVxBXDMwBbcbytv6Z15OItul5zsk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tugraz.at; spf=pass smtp.mailfrom=tugraz.at; dkim=pass (1024-bit key) header.d=tugraz.at header.i=@tugraz.at header.b=J16ksXje; arc=none smtp.client-ip=129.27.2.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tugraz.at
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tugraz.at
-Received: from vra-171-156.tugraz.at (vra-171-156.tugraz.at [129.27.171.156])
-	by mailrelay.tugraz.at (Postfix) with ESMTPSA id 4Z0JL519GMz3wGD;
-	Sat, 22 Feb 2025 08:20:12 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tugraz.at;
-	s=mailrelay; t=1740208815;
-	bh=SmYAkhIaHBL8Km4TDg1K0OIvSYnVEOYNlWg73OMrNRc=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References;
-	b=J16ksXjeKtAfbR1UV3GeK0MInBhz4XIycAc3r+x7p1gbNeNMWCj6yyDv/bmwnRbGQ
-	 c2HavY7eNd08wsYSDkoMUvVXUbVS+n9Ankd5Kuvqz91qB4/DF2zmCyRp8UrTTlR00+
-	 ciEGzkM6mQ5YQeKzUQuKcquz/YNSFhwTw+aYNIEY=
-Message-ID: <e525cd59ebec54b153f56b602b545007fc03f12a.camel@tugraz.at>
-Subject: Re: Rust kernel policy
-From: Martin Uecker <uecker@tugraz.at>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Dan Carpenter
- <dan.carpenter@linaro.org>, Greg KH <gregkh@linuxfoundation.org>, Boqun
- Feng <boqun.feng@gmail.com>, "H. Peter Anvin" <hpa@zytor.com>, Miguel Ojeda
- <miguel.ojeda.sandonis@gmail.com>, Christoph Hellwig <hch@infradead.org>, 
- rust-for-linux <rust-for-linux@vger.kernel.org>, David Airlie
- <airlied@gmail.com>, linux-kernel@vger.kernel.org,  ksummit@lists.linux.dev
-Date: Sat, 22 Feb 2025 08:20:12 +0100
-In-Reply-To: <CAHk-=wj5Rt_xhp_n4_gEyGG9LKFOiTrsvN0ueo3q5PyjJPU+AQ@mail.gmail.com>
-References: <326CC09B-8565-4443-ACC5-045092260677@zytor.com>
-	 <CANiq72m+r1BZVdVHn2k8XeU37ZeY6VT2S9KswMuFA=ZO3e4uvQ@mail.gmail.com>
-	 <a7c5973a-497c-4f31-a7be-b3123bddb6dd@zytor.com>
-	 <Z7VKW3eul-kGaIT2@Mac.home> <2025021954-flaccid-pucker-f7d9@gregkh>
-	 <4e316b01634642cf4fbb087ec8809d93c4b7822c.camel@tugraz.at>
-	 <2025022024-blooper-rippling-2667@gregkh>
-	 <1d43700546b82cf035e24d192e1f301c930432a3.camel@tugraz.at>
-	 <2025022042-jot-favored-e755@gregkh>
-	 <b9a5de64fe1ded2ad3111763f35af9901bd81cc4.camel@tugraz.at>
-	 <caea3e79-78e6-4d98-9f3b-f8e7f6f00196@stanley.mountain>
-	 <61a7e7db786d9549cbe201b153647689cbe12d75.camel@tugraz.at>
-	 <20250221124304.5dec31b2@gandalf.local.home>
-	 <CAHk-=wgg2A_iHNwf_JDjYJF=XHnKVGOjGp50FzVWniA2Z010bw@mail.gmail.com>
-	 <6b3e4d3bdc9b6efd69068e5b22cfd05d370aed19.camel@tugraz.at>
-	 <CAHk-=wg=pZvE9cHJUPKGCajRUCtDoW73xwY5UfJApCWms_FgYw@mail.gmail.com>
-	 <008cc0939c130ee24fbc71a0407ff82772076668.camel@tugraz.at>
-	 <CAHk-=wj5Rt_xhp_n4_gEyGG9LKFOiTrsvN0ueo3q5PyjJPU+AQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1740208969; c=relaxed/simple;
+	bh=1wLzZlUplRYghJxP4Pd4ugXxm92+g9Fy6PS8vGc2tM8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nnQqPrGN8LciwMXneRXMYvi2mty3mN08NDAWppJ/frWyBtnmIg3DjM49eMPZX1PkndjcmKd7So/6oE6fKUN9ywd6OTLXMJCOHIgDvU8kfYBUpt7QjSOpmxBusQwkc9Cd55sd1XsPjG0fPs0aL7xRVWbfR2xEXwO0k75vRC7KeSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OHxcmYpb; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-aaf3c3c104fso491461466b.1;
+        Fri, 21 Feb 2025 23:22:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740208966; x=1740813766; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=aEnOhCave/qwMORS6+m/BSs/u7Kbv390RWFos8Jc8bs=;
+        b=OHxcmYpbqK6UwO5UJuguY1msLcjPSaRoZxAlqBDWY1f8v26icJaMj0ClvPVZjtdth8
+         YQCYFDYYP7TbTwq6DjPd03xPtoCrqC5CG+Q/iD/6gR5KNjUOXDX8JuzAju1PPZCqytsb
+         b9+JU06ZK0rjqwlyVmwzFGXUdG1mcsGNr2nxoCrSKdyIMwwmQxBf7u+3rrn45U0oTTyN
+         T5DAu3j/yvVEFb9yYCzuXz/ozUhzn0FhlHAjY61HZGmDdNZRk9Qq85YOT/6eL1j5nQ2s
+         +HZjhiGMkAeolA4+Jw72vNmX7kVzW37QJcXMlVCy3Q9RkeaQ2UiDMxU9kvnATePSVuUm
+         1HJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740208966; x=1740813766;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aEnOhCave/qwMORS6+m/BSs/u7Kbv390RWFos8Jc8bs=;
+        b=trbDycvRW4GkUNSNzHbkkO8ljw3vUNZy2A4zxUqUnn9CJXZhESvGUHZYLlKKZbUDrY
+         GPtFBP7rxwZX+MD6zTyHc0xThZkDsNoEH0n3XgacFHi4FRvy+5jfipMqvbE41xze7Dit
+         8SZRy1x0hOeUnATxtKar/W186FsSbOT68HusIx+G/ZJfdt08I9ldHGi5a38fLNnh3y47
+         8WxL3L51YrKZQg4sc9ZuydZkLtbZqchsMnyelSndzcZAGlfJtZPKoukAPIoY1UTfRraD
+         SyrDF/oEr8ERVQOx163Lvxmnx5mIKbYPhWSTeiFBDh4P12rfxztyg2BXEA323QkN3N/d
+         i+wQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWgLP1aUYmE3EbRB4VrZB6cPhBVFllnaaFtI9jwedpD08yfg7oX1A1nOWEmaOh5r86n7rVBibwo1lYLVd7d@vger.kernel.org, AJvYcCX171mnCTEm1jJ9nWykr+qluNvZQToY9Tn8EO5P45lIdm3LflvghLqEkWlUL0/YLgezlDtUvj9Oq8nC@vger.kernel.org, AJvYcCXWgzTRWQa1MS4Cdy6p9NkeI6pz2EbZSOozEegixW+3i3vKmQJV9K2rHebZZRkyUd/aAL+z1ZFNYmSH@vger.kernel.org
+X-Gm-Message-State: AOJu0YwuAIvIOTRClSwohsyIom+rF/b1nRqK2ELhxouoE8XW43ygk3sH
+	nxn0Va/PJP3nfJTmXAbxoGaWcY2s0yTLTyO+bAp3QXumwC/ByWv+e7LTvE79
+X-Gm-Gg: ASbGncsIbIQWwYM8W38oVeEBtu5WqJVR6jdObX9q9+tHQ85SmvEQxNYO95FJsRChLc9
+	jWOUHkMaR039RIegZQXZNZMfiR0icm5XhJn7njXgAy6T8QdW8YG+JW+aCpixgvd3x/6/5XKj2ef
+	dSEctMrKYgdLVH8QiMHOrVodaCf+uz08SwbeXAec6AkSYEYv4VYabHcKEEW7/cRA/ZbSeH5qCyT
+	E1Ir6KqKLB+rXdHZ8WVyTpeNWO6VYQ1Niid07WY1AH5p0XG0zdzsfgF0PVfAtjV3TsnNKWIL5BD
+	xHW1hww0u5gK9YN3HNZgvGQ=
+X-Google-Smtp-Source: AGHT+IFsLluCqw1OK1Vu8s2oXQXiFugZr6iSL5teJLTvRjaP7xZkkMKHNbaGmCsCMH4Xe4pZawKPkw==
+X-Received: by 2002:a17:907:7815:b0:ab7:faca:a323 with SMTP id a640c23a62f3a-abc0de14741mr546560966b.39.1740208965284;
+        Fri, 21 Feb 2025 23:22:45 -0800 (PST)
+Received: from debian ([2a00:79c0:67a:4900:45fb:7d1a:5e4d:9727])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abbda707e3dsm645419466b.106.2025.02.21.23.22.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Feb 2025 23:22:44 -0800 (PST)
+Date: Sat, 22 Feb 2025 08:22:41 +0100
+From: Dimitri Fedrau <dima.fedrau@gmail.com>
+To: Conor Dooley <conor@kernel.org>
+Cc: dimitri.fedrau@liebherr.com, Marc Kleine-Budde <mkl@pengutronix.de>,
+	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-can@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] dt-bindings: can: fsl,flexcan: add transceiver
+ capabilities
+Message-ID: <20250222072241.GA3458@debian>
+References: <20250221-flexcan-add-transceiver-caps-v3-0-a947bde55a62@liebherr.com>
+ <20250221-flexcan-add-transceiver-caps-v3-1-a947bde55a62@liebherr.com>
+ <20250221-drinking-tantrum-6e0bf9051160@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TUG-Backscatter-control: G/VXY7/6zeyuAY/PU2/0qw
-X-Spam-Scanner: SpamAssassin 3.003001 
-X-Spam-Score-relay: 0.0
-X-Scanned-By: MIMEDefang 2.74 on 129.27.10.116
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250221-drinking-tantrum-6e0bf9051160@spud>
 
-Am Freitag, dem 21.02.2025 um 12:11 -0800 schrieb Linus Torvalds:
-> On Fri, 21 Feb 2025 at 11:59, Martin Uecker <uecker@tugraz.at> wrote:
-> >=20
-> > The standardized version of __attribute__(()) would look like
-> >=20
-> > [[safety(ON)]];
-> > ....
-> >=20
-> > [[safety(OFF)]];
-> >=20
-> > which is not bad (and what C++ seems to plan for profiles),
-> > but this also does not nest and is a bit more limited to where
-> > it can be used relative _Pragma.  I don't really see any advantage.
-> >=20
-> > GCC has
-> >=20
-> > #pragma GCC diagnostic push "-Wxyz"
-> > #pragma GCC diagnostic pop
-> >=20
-> > for nesting. Also not great.
->=20
-> I realize that the manual nesting model can be useful, but I do think
-> the "default" should be to aim for always associating these kinds of
-> things with actual code (or data), and use the normal block nesting
-> rules.
->=20
-> If you are writing safe code - or better yet, you are compiling
-> everything in safe mode, and have to annotate the unsafe code - you
-> want to annotate the particular *block* that is safe/unsafe. Not this
-> kind of "safe on/safe off" model.
->=20
-> At least with the __attribute__ model (or "[[..]]" if you prefer that
-> syntax) it is very much designed for the proper nesting behavior.
-> That's how attributes were designed.
+Am Fri, Feb 21, 2025 at 04:59:16PM +0000 schrieb Conor Dooley:
+> On Fri, Feb 21, 2025 at 08:40:04AM +0100, Dimitri Fedrau via B4 Relay wrote:
+> > From: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+> > 
+> > Currently the flexcan driver does only support adding PHYs by using the
+> > "old" regulator bindings. Add support for CAN transceivers as a PHY.
+> > 
+> > Signed-off-by: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+> > ---
+> >  .../devicetree/bindings/net/can/fsl,flexcan.yaml          | 15 +++++++++++++++
+> >  1 file changed, 15 insertions(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/net/can/fsl,flexcan.yaml b/Documentation/devicetree/bindings/net/can/fsl,flexcan.yaml
+> > index 73252fe56fe6c8e9fd19142208bb655dc86d47cd..81125883cf86b9d19616bde378f74bdb6a32f1b2 100644
+> > --- a/Documentation/devicetree/bindings/net/can/fsl,flexcan.yaml
+> > +++ b/Documentation/devicetree/bindings/net/can/fsl,flexcan.yaml
+> > @@ -77,6 +77,9 @@ properties:
+> >    xceiver-supply:
+> >      description: Regulator that powers the CAN transceiver.
+> >  
+> > +  phys:
+> > +    maxItems: 1
+> > +
+> >    big-endian:
+> >      $ref: /schemas/types.yaml#/definitions/flag
+> >      description: |
+> > @@ -171,6 +174,18 @@ allOf:
+> >          interrupts:
+> >            maxItems: 1
+> >          interrupt-names: false
+> > +  - if:
+> > +      required:
+> > +        - xceiver-supply
+> > +    then:
+> > +      properties:
+> > +        phys: false
+> > +  - if:
+> > +      required:
+> > +        - phys
+> > +    then:
+> > +      properties:
+> > +        xceiver-supply: false
+> 
+> The duplication here is not needed, they both will cause errors in the
+> same situation. With one dropped,
+> Acked-by: Conor Dooley <conor.dooley@microchip.com>
+> 
 
-There is no way to attach a GCC attribute to
-a compound-statement.   For [[]] this is indeed allowed,
-so you could write
+Thanks for your help, will drop one and sent out a V4.
 
-void f()
-{
-	[[safety(DYNAMIC)]] {
-	}
-}
-
-but then you also force the user to create compound-statement.
-Maybe this is what we want, but it seems restrictive.  But I
-will need to experiment with this anyhow to find out what works
-best.
-
->=20
-> Afaik #pragma has _no_ such mode at all (but hey, most of it is
-> compiler-specific random stuff, so maybe some of the #pragma uses are
-> "this block only"), and I don't think _Pragma() is not any better in
-> that respect (but again, since it has no real rules, again I guess it
-> could be some random thing for different pragmas).
-
-For all the STDC pragmas that already exist in ISO C, they are
-effective until the end of a compund-statement.  These pragmas
-are all for floating point stuff.
-
-void f()
-{
-#pragma STDC FP_CONTRACT ON
-}
-// state is restored
-
-but you also toggle it inside a compund-statement
-
-
-void f()
-{
-#pragma STDC FP_CONTRACT ON
-   xxx;
-#pragma STDC FP_CONTRACT OFF
-   yyy;
-}
-// state is restored
-
-
-The problem with those is currently, that GCC does not=C2=A0
-implement them. =20
-
-I will need to think about this more.
-
-Martin
-
-
+Best regards,
+Dimitri Fedrau
 
