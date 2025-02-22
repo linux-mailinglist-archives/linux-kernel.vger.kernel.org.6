@@ -1,58 +1,99 @@
-Return-Path: <linux-kernel+bounces-527198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5A9CA40855
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 13:29:43 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DBB8A4085A
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 13:32:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9872019C066B
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 12:29:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E21CD7ADC05
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 12:31:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6954920ADCF;
-	Sat, 22 Feb 2025 12:29:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 783CC20A5F0;
+	Sat, 22 Feb 2025 12:31:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lpLxVcDZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hDZeE8Gy"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEEE3BA53
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 12:29:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AF011E0DD8
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 12:31:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740227376; cv=none; b=Z9MbcMgCYpMwYS2q7CINd/w+D01RjkVF4mZPoMPtOAxJeffY15Dbad5IXW/9f5LqjAHP/ifl/z8fwNLMObpjxrChEc1rW7cWqDtRkqz6h3L2eq5nbkanfVGE9u8+qdO5vRMZj/D0xs9Lohm/L0iTsQEjiFtI/VelN2dWsrgINXw=
+	t=1740227512; cv=none; b=Ytvl5z0HuQjqoqApdZoX5VNVxPB7o7JN7j73B+nZ/cjOFjXCoW7ZPf+ZwHVxA06+p/UsgneU3KUjL1lao4t1pavDw++DwJvgw0W60S1oG9iK1VuZrwu/HSWR19ER+M5btsskL6h8pCI3U9LPmVXsJNDfMGYARTJxGJYDmPOx8K8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740227376; c=relaxed/simple;
-	bh=SSGSmoHatyl6HQLxw8fOkh4lN56WlcFQLHj1JxpvagQ=;
+	s=arc-20240116; t=1740227512; c=relaxed/simple;
+	bh=H5VZ+AzcMDDSp+rSHY7kV+abXJqzCU4+rgQjNAkzN7c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZJz0Dw3ZOajNJHBCJkwJTnG3GlGuflJR+uCkCEoxx3fg/UgoWuxjQeMxRTEVUQij/JdLQlkc7uZIEpLHwrzFF3DDikBwAFKrhB6NPTQL0K+a8JBg0WxJJauisP8M/8zwGjE9+xgjlp/btrhlKFfLenLXc2ZFiIRERbRG63NGjjI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lpLxVcDZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6ECBC4CED1;
-	Sat, 22 Feb 2025 12:29:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740227376;
-	bh=SSGSmoHatyl6HQLxw8fOkh4lN56WlcFQLHj1JxpvagQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lpLxVcDZtSEnc2/4o39uLntPR3zWzkfv7KPT6J9r3JTW6sMirnbLY9YErrscDTsvO
-	 DN3LRsX67sK165Sv73Y+EZpsWd0lw/GDgZJLkQh5v5htZLCOJ+7ZCEroexeXPH6nJg
-	 BVZRwwaUF2fv8fe8pcIvlwMzdrmPLV6Y9EA9qyX+Kx0qFG0lLePhOqsP1w3VsnY/ce
-	 I/tlSOkPc4cneQPTc5hSJdef/SK2ra0n9puV25X+c1MfeloPatxqt1vCg55Oae8WB0
-	 HBd0VftTlqM//MsUx80cQUjaHewOBL/bKmj7q5LspuJx1qs+IVUU+ZBIXWytHkhXaU
-	 zxO1OHtLq/LXw==
-Date: Sat, 22 Feb 2025 13:29:25 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Manali Shukla <manali.shukla@amd.com>
-Cc: Rik van Riel <riel@surriel.com>, x86@kernel.org,
-	linux-kernel@vger.kernel.org, bp@alien8.de, peterz@infradead.org,
-	dave.hansen@linux.intel.com, zhengqi.arch@bytedance.com,
-	nadav.amit@gmail.com, thomas.lendacky@amd.com, kernel-team@meta.com,
-	linux-mm@kvack.org, akpm@linux-foundation.org, jannh@google.com,
-	mhklinux@outlook.com, andrew.cooper3@citrix.com
-Subject: Re: [PATCH v7 00/12] AMD broadcast TLB invalidation
-Message-ID: <Z7nDJQanWxv5cC8d@gmail.com>
-References: <20250123042447.2259648-1-riel@surriel.com>
- <93792758-bc88-4d84-bdea-f366988c2d53@amd.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZwIsAmdtOKVA/mTPCAf+qo9/XBzXOd+DON0D2N2+jO99YCiGBdsW5W1Z8y7wcXDugWhXHpFr3CQxZyYJOWUYZi2SCegm7IrRtbSn/9czq3d9IF2mGOi9plWTqOOTCczm/50EMJttIe+eaXke1FdBmnUdsODhA6Y6QdM6P0VuIZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=hDZeE8Gy; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2fc11834404so4740483a91.0
+        for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 04:31:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1740227510; x=1740832310; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=XBQF6pBy+4ocO8lCtdZYh37OSSsL3UX8OWQxKrmEKV4=;
+        b=hDZeE8GyM7uju+bCeY7Ui34gNklIf8ZXL7SuDeHU/xvborgRsrp+feH12Qv7lBQanR
+         X0eu78qbcABg0BtaP9+ptf3LEGB3G0mJ3XXXk4IrwJhL+qYuvrsUWD9EL/a/S+Rd+AWt
+         oYqvVxEQVUIsAF9pEPZenjOg8D1KUJAVBwiMU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740227510; x=1740832310;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XBQF6pBy+4ocO8lCtdZYh37OSSsL3UX8OWQxKrmEKV4=;
+        b=tqP59EU9z03o1p3Ia/YuyhroXS5TZLVnrUW3a+5zTIVH1VDiy2MDybdIyYR/5dGF5u
+         EiX5dXYX+zxzxS8yydjE7icoFjSqjSyYAVXRRn5b2KrstQE2C3rO70EdJCqgUdqIlYpb
+         kua8zzrQFWc30tEP398THhGgh2bsblJggkuhqFAqJGuQCc6dMZE4qkTTBZ1FGtD9Ge0s
+         2mz4m84CD55kO686kdkY9RYr3yAM315xQMaWsenjHi5PG/mJ2fwBjLfG2k9wpuQO7FSt
+         V7l5f15cHFD2tXf5W7OdOMR0ypqPhGgOGmjAB7ktqofHwsp81ecSu16vvjshOFNVeKNB
+         uPfw==
+X-Forwarded-Encrypted: i=1; AJvYcCXNIyj9BQk+9QKQq/MJ0BHD17PJglCH5N2vkXtTPAda4uu4LhC/HBQmXH+iJMoaaF/gW0RF1b2c1Ft/ZuA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEJZnxRrPKvf58/8lbRwY/MsjDYJqi6r/1ICym67Md4Zoj6arn
+	WKtVpqQvzVuA/JFgr8e+XK+U8mTxTLIKfMBS88pIdHSp3a14JwYVfqqh7vI9rw==
+X-Gm-Gg: ASbGncvdjOxfSakrFTKbWqrPJMaITcLL2uxWWGyl+BuPrvkKg37aMIQ+n0DFtvYkoa5
+	X0+RDjgEYmrzqUq4hIPAQJtszXFQr8BTukhYPmWoyOzvRcAejcqkuz3I8y1GntIrkWoQpXXFraO
+	W9itRnV6zjSZ7r7W1gDRg246Zp+u0j10w/v9O4vkKZf8ri8sTiAfqw5NT8Kd7/x7wXyR9l2fyXL
+	aJ+4sI4uDBRpEl9FhoLPagJvrvu+M+1icWgU+6LseVh0ifapp89xDGVeeRJFuI+6PGCMRF5Tj7l
+	/R/9g65kSk31hPuBElJfJCXQFej1
+X-Google-Smtp-Source: AGHT+IEA15yK2MW8Tlp9hdnICyGJRc3eshaBlXjjjEiD2bra2pzxxjVvTfyZrcRJPMVj5WmDs2jqQA==
+X-Received: by 2002:a17:90b:3cc4:b0:2ee:ee77:227c with SMTP id 98e67ed59e1d1-2fce868cbb8mr9543078a91.3.1740227510563;
+        Sat, 22 Feb 2025 04:31:50 -0800 (PST)
+Received: from google.com ([2401:fa00:8f:203:badf:54f:bbc8:4593])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fceb10fad0sm3094015a91.31.2025.02.22.04.31.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 22 Feb 2025 04:31:50 -0800 (PST)
+Date: Sat, 22 Feb 2025 21:31:41 +0900
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Barry Song <21cnbao@gmail.com>
+Cc: Yosry Ahmed <yosry.ahmed@linux.dev>, Minchan Kim <minchan@kernel.org>, 
+	Sergey Senozhatsky <senozhatsky@chromium.org>, Herbert Xu <herbert@gondor.apana.org.au>, 
+	"Sridhar, Kanchana P" <kanchana.p.sridhar@intel.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-mm@kvack.org" <linux-mm@kvack.org>, "hannes@cmpxchg.org" <hannes@cmpxchg.org>, 
+	"nphamcs@gmail.com" <nphamcs@gmail.com>, "chengming.zhou@linux.dev" <chengming.zhou@linux.dev>, 
+	"usamaarif642@gmail.com" <usamaarif642@gmail.com>, "ryan.roberts@arm.com" <ryan.roberts@arm.com>, 
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>, "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>, 
+	"davem@davemloft.net" <davem@davemloft.net>, "clabbe@baylibre.com" <clabbe@baylibre.com>, 
+	"ardb@kernel.org" <ardb@kernel.org>, "ebiggers@google.com" <ebiggers@google.com>, 
+	"surenb@google.com" <surenb@google.com>, "Accardi, Kristen C" <kristen.c.accardi@intel.com>, 
+	"Feghali, Wajdi K" <wajdi.k.feghali@intel.com>, "Gopal, Vinodh" <vinodh.gopal@intel.com>
+Subject: Re: [PATCH v5 02/12] crypto: acomp - Define new interfaces for
+ compress/decompress batching.
+Message-ID: <dhj6msbvbyoz7iwrjnjkvoljvkh2pgxrwzqf67gdinverixvr5@e3ld7oeketgw>
+References: <Z2_lAGctG0DDSCIH@gondor.apana.org.au>
+ <SJ0PR11MB5678851E3E6BA49A99D8BAE2C9102@SJ0PR11MB5678.namprd11.prod.outlook.com>
+ <CAJD7tkatpOaortT8Si5GfxprvgPR+bzxwTSOR0rsaRUstdqNMQ@mail.gmail.com>
+ <SJ0PR11MB5678034533E3FAD7B16E2758C9112@SJ0PR11MB5678.namprd11.prod.outlook.com>
+ <CAJD7tkbRHkb7Znzto6=RRDQA9zXZSva43GukhBEfjrgm1qOxHw@mail.gmail.com>
+ <Z3yMNI_DbkKBKJxO@gondor.apana.org.au>
+ <CAJD7tkaTuNWF42+CoCLruPZks3F7H9mS=6S74cmXnyWz-2tuPw@mail.gmail.com>
+ <Z7F1B_blIbByYBzz@gondor.apana.org.au>
+ <Z7dnPh4tPxLO1UEo@google.com>
+ <CAGsJ_4yVFG-C=nJWp8xda3eLZENc4dpU-d4VyFswOitiXe+G_Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,116 +102,66 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <93792758-bc88-4d84-bdea-f366988c2d53@amd.com>
+In-Reply-To: <CAGsJ_4yVFG-C=nJWp8xda3eLZENc4dpU-d4VyFswOitiXe+G_Q@mail.gmail.com>
 
+On (25/02/22 19:26), Barry Song wrote:
+> After reviewing the zRAM code, I don't see why zram_write_page() needs
+> to rely on
+> comp_len to call write_incompressible_page().
 
-* Manali Shukla <manali.shukla@amd.com> wrote:
+[..]
 
-> On 1/23/2025 9:53 AM, Rik van Riel wrote:
-> > Add support for broadcast TLB invalidation using AMD's INVLPGB instruction.
-> > 
-> > This allows the kernel to invalidate TLB entries on remote CPUs without
-> > needing to send IPIs, without having to wait for remote CPUs to handle
-> > those interrupts, and with less interruption to what was running on
-> > those CPUs.
-> > 
-> > Because x86 PCID space is limited, and there are some very large
-> > systems out there, broadcast TLB invalidation is only used for
-> > processes that are active on 3 or more CPUs, with the threshold
-> > being gradually increased the more the PCID space gets exhausted.
-> > 
-> > Combined with the removal of unnecessary lru_add_drain calls
-> > (see https://lkml.org/lkml/2024/12/19/1388) this results in a
-> > nice performance boost for the will-it-scale tlb_flush2_threads
-> > test on an AMD Milan system with 36 cores:
-> > 
-> > - vanilla kernel:           527k loops/second
-> > - lru_add_drain removal:    731k loops/second
-> > - only INVLPGB:             527k loops/second
-> > - lru_add_drain + INVLPGB: 1157k loops/second
-> > 
-> > Profiling with only the INVLPGB changes showed while
-> > TLB invalidation went down from 40% of the total CPU
-> > time to only around 4% of CPU time, the contention
-> > simply moved to the LRU lock.
-> > 
-> > Fixing both at the same time about doubles the
-> > number of iterations per second from this case.
-> > 
-> > Some numbers closer to real world performance
-> > can be found at Phoronix, thanks to Michael:
-> > 
-> > https://www.phoronix.com/news/AMD-INVLPGB-Linux-Benefits
-> > 
-> > My current plan is to implement support for Intel's RAR
-> > (Remote Action Request) TLB flushing in a follow-up series,
-> > after this thing has been merged into -tip. Making things
-> > any larger would just be unwieldy for reviewers.
-> > 
-> > v7:
-> >  - a few small code cleanups (Nadav)
-> >  - fix spurious VM_WARN_ON_ONCE in mm_global_asid
-> >  - code simplifications & better barriers (Peter & Dave)
-> > v6:
-> >  - fix info->end check in flush_tlb_kernel_range (Michael)
-> >  - disable broadcast TLB flushing on 32 bit x86
-> > v5:
-> >  - use byte assembly for compatibility with older toolchains (Borislav, Michael)
-> >  - ensure a panic on an invalid number of extra pages (Dave, Tom)
-> >  - add cant_migrate() assertion to tlbsync (Jann)
-> >  - a bunch more cleanups (Nadav)
-> >  - key TCE enabling off X86_FEATURE_TCE (Andrew)
-> >  - fix a race between reclaim and ASID transition (Jann)
-> > v4:
-> >  - Use only bitmaps to track free global ASIDs (Nadav)
-> >  - Improved AMD initialization (Borislav & Tom)
-> >  - Various naming and documentation improvements (Peter, Nadav, Tom, Dave)
-> >  - Fixes for subtle race conditions (Jann)
-> > v3:
-> >  - Remove paravirt tlb_remove_table call (thank you Qi Zheng)
-> >  - More suggested cleanups and changelog fixes by Peter and Nadav
-> > v2:
-> >  - Apply suggestions by Peter and Borislav (thank you!)
-> >  - Fix bug in arch_tlbbatch_flush, where we need to do both
-> >    the TLBSYNC, and flush the CPUs that are in the cpumask.
-> >  - Some updates to comments and changelogs based on questions.
-> > 
-> > 
+> zram_write_page()
+> {
+>         ret = zcomp_compress(zram->comps[ZRAM_PRIMARY_COMP], zstrm,
+>                              mem, &comp_len);
+>         kunmap_local(mem);
 > 
-> I have collected performance data using the will-it-scale
-> tlb_flush2_threads benchmark on my AMD Milan, Genoa, and Turin systems.
+>         if (unlikely(ret && ret != -ENOSP)) {
+>                 zcomp_stream_put(zstrm);
+>                 pr_err("Compression failed! err=%d\n", ret);
+>                 return ret;
+>         }
 > 
-> As expected, I don't see any discrepancies in the data.
-> (Performance Testing is done based on 6.13.0-rc7).
+>         if (comp_len >= huge_class_size || ret) {
+>                 zcomp_stream_put(zstrm);
+>                 return write_incompressible_page(zram, page, index);
+>         }
+> }
+
+Sorry, I'm slower than usual now, but why should we?  Shouldn't compression
+algorithms just never fail, even on 3D videos, because otherwise they won't
+be able to validate their Weissman score or something :)
+
+On a serious note - what is the use-case here?  Is the failure here due to
+some random "cosmic rays" that taint the  compression H/W?  If so then what
+makes us believe that it's uni-directional?  What if it's decompression
+that gets busted and then you can't decompress anything previously stored
+compressed and stored in zsmalloc.  Wouldn't it be better in this case
+to turn the computer off and on again?
+
+The idea behind zram's code is that incompressible pages are not unusual,
+they are quite usual, in fact,  It's not necessarily that the data grew
+in size after compression, the data is incompressible from zsmalloc PoV.
+That is the algorithm wasn't able to compress a PAGE_SIZE buffer to an
+object smaller than zsmalloc's huge-class-watermark (around 3600 bytes,
+depending on zspage chain size).  That's why we look at the comp-len.
+Anything else is an error, perhaps a pretty catastrophic error.
+
+> As long as crypto drivers consistently return -ENOSP or a specific error
+> code for dst_buf overflow, we should be able to eliminate the
+> 2*PAGE_SIZE buffer.
 > 
-> ------------------------------------------------------------------------------------------------------------------------------------------------
-> | ./tlb_flush2_threads -s 5 -t 128 | Milan 1P (NPS1) | Milan 1P (NPS2) | Genoa 1P (NPS1) | Genoa 1P (NPS2) | Turin 2P (NPS1) | Turin 2P (NPS2) |
-> ------------------------------------------------------------------------------------------------------------------------------------------------
-> | Vanila                           |      357647     |      419631     |     319885      |      311069     |      380559     |      379286     |
-> ------------------------------------------------------------------------------------------------------------------------------------------------
-> | LRU drain removal                |      784734     |      796056     |     540862      |      530472     |      549168     |      482683     |
-> ------------------------------------------------------------------------------------------------------------------------------------------------
-> | INVLPGB                          |      581069     |      950848     |     501033      |      553987     |      528660     |      536535     |
-> ------------------------------------------------------------------------------------------------------------------------------------------------
-> | LRU drain removal + INVLPGB      |     1094941     |     1086826     |     980293      |      979005     |      1228823    |      1238440    |
-> ------------------------------------------------------------------------------------------------------------------------------------------------
-> | LRU drain vs. Vanila             |      54.42%     |     47.29%      |     40.86%      |      41.36%     |      30.70%     |      21.42%     |
-> ------------------------------------------------------------------------------------------------------------------------------------------------
-> | INVLPGB vs. Vanila               |      38.45%     |     55.87%      |     55.87%      |      43.85%     |      28.01%     |      29.31%     |
-> ------------------------------------------------------------------------------------------------------------------------------------------------
-> | (LRU drain + INVLPGB) vs. Vanila |      67.34%     |     61.39%      |     67.37%      |      68.23%     |      69.03%     |      69.37%     |
-> ------------------------------------------------------------------------------------------------------------------------------------------------
-> 
-> Feel free to add:
-> Tested-by: Manali Shukla <Manali.Shukla@amd.com>
+> My point is:
+> 1. All drivers must be capable of handling dst_buf overflow.
+> 2. All drivers must return a consistent and dedicated error code for
+> dst_buf overflow.
 
-Great data!
+Sorry, where do these rules come from?
 
-Could we please add all the scalability testing results to patch #9 or 
-so, so that it's preserved in the kernel Git history and provides a 
-background as to why we want this feature?
+> +Minchan, Sergey,
+> Do you think we can implement this change in zRAM by using PAGE_SIZE instead
+> of 2 * PAGE_SIZE?
 
-Thanks,
-
-	Ingo
+Sorry again, what problem are you solving?
 
