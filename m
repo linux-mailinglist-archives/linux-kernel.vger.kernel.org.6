@@ -1,186 +1,139 @@
-Return-Path: <linux-kernel+bounces-526873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA75CA404B6
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 02:30:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 573FAA404B4
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 02:29:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40982170078
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 01:28:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF2653BF979
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 01:29:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C47051E376E;
-	Sat, 22 Feb 2025 01:28:17 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F24AF1D88B4;
+	Sat, 22 Feb 2025 01:29:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V8srSeKj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E2AA185E4A;
-	Sat, 22 Feb 2025 01:28:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F8E52A1CF;
+	Sat, 22 Feb 2025 01:29:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740187697; cv=none; b=L+TvTX459CUP157VFRvfjANtq2EZHncLcovEqCjVAKmt1j1QtKHyFwafwwk6JEJAVot4LoLgxCR+4Zou+lvRtrG2tssTdxbSkbuYONoL+3eqaob5E537jZFMZCGHVKYM+fvEG5dybA7QI0B69keTF2vJJxPdLMc70png6FMzrjk=
+	t=1740187781; cv=none; b=qJNXAazj5WY3Btp/UFAitNe3IN+sHnDdC/Z69JLzJ07OL+xZu79qN1Wqb9pRFeZAGcio19Q4rhRr4hx9w08G7YDdFMAj5phOYpTKR7fEjQ7cD0RO8+L1hfvXfkG4Lt5GdZHklXbH2lP/iL45BvWx6obMykrlUDyi0clfDLNiy+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740187697; c=relaxed/simple;
-	bh=U+Yn0Nyw3mxowaK3DIXYm0z6+HnxloXRIUfmDrv7czA=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=hNJQZCfZBYbnr+H8A4dG0s4ilZA0KfXtjd0Xps7OmRQU/MHowiL977u/LElq0CV3VbE2yUF7MrMvBtk8426x1zN5cSIaXWnqtdWC/0A1DnID3Lmx0i4OxV/pIYXrgfg7zU4oqSDqgFestW6p1qiuMjXP5REBKw2s5L95HykGeCI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Z08WT0vhQz4f3kvl;
-	Sat, 22 Feb 2025 09:27:49 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 389921A06D7;
-	Sat, 22 Feb 2025 09:28:12 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgCH618qKLlnsgwjEg--.14050S3;
-	Sat, 22 Feb 2025 09:28:11 +0800 (CST)
-Subject: Re: [PATCH 09/12] badblocks: fix missing bad blocks on retry in
- _badblocks_check()
-To: Zheng Qixing <zhengqixing@huaweicloud.com>, axboe@kernel.dk,
- song@kernel.org, colyli@kernel.org, dan.j.williams@intel.com,
- vishal.l.verma@intel.com, dave.jiang@intel.com, ira.weiny@intel.com,
- dlemoal@kernel.org, yanjun.zhu@linux.dev, kch@nvidia.com, hare@suse.de,
- zhengqixing@huawei.com, john.g.garry@oracle.com, geliang@kernel.org,
- xni@redhat.com, colyli@suse.de
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-raid@vger.kernel.org, nvdimm@lists.linux.dev, yi.zhang@huawei.com,
- yangerkun@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
-References: <20250221081109.734170-1-zhengqixing@huaweicloud.com>
- <20250221081109.734170-10-zhengqixing@huaweicloud.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <55469db7-f93d-d174-ec8c-47e7e9b3b001@huaweicloud.com>
-Date: Sat, 22 Feb 2025 09:28:10 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1740187781; c=relaxed/simple;
+	bh=M/8afILG/fiSMw6cLfHMqMulnTBlFbWMNBSND4QBAuE=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=omUenoWoRlwZPNNds3ND+wFwpO75f5YTWpRLVF0zwzjv6T2AdyR7QfyqG2uIbl+guds+nQnSEmLDd+VSymIWPdKYnPvmF1Y68ewvA7aZ+EIV+9IKsJgtugVd0HUt1u+0GqD2C1zhTXt4jLNbiYXt3ZfMZzvHtnJkTGWFsJj6ykU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V8srSeKj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E390C4CED6;
+	Sat, 22 Feb 2025 01:29:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740187780;
+	bh=M/8afILG/fiSMw6cLfHMqMulnTBlFbWMNBSND4QBAuE=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=V8srSeKjQCkRGONBXy9ePBQV4CUVrRdTUDJwg7i/A7oOmgCMNQLWkvMcQ+i/5+i/m
+	 CmOUI/22IW+5nH1nHgxGH0LUJ+SlCtCxMw0OfKEv3N/VS5KXymn2qGzyZzuQr7B/h+
+	 nwBrColLbfUC+1L+d12ux/VnAX533oZobVDJS2vBmJUTvYrMqY9bXDWnVgG6OwfU0F
+	 P29wqoT74KE3Eq4cAOTsOcJ5mL9unybZFJgf6I3msDUHQLlgjRenOKNjbg5PNSstuD
+	 TXU7WnWsCa8XkABpBVycl8MVGYCBomwVkMIHMRiTzgD+OCY6zTqYPig95sNFHudgKs
+	 o+K7owCl1VxAQ==
+Date: Fri, 21 Feb 2025 19:29:38 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20250221081109.734170-10-zhengqixing@huaweicloud.com>
-Content-Type: text/plain; charset=gbk; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCH618qKLlnsgwjEg--.14050S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxZr45uryfCFy8AF48tw4Dtwb_yoW5WFWfpF
-	sxG3sagryjgr10g3W5Za1qgr1F934fJF47X3yxGa4rGry8Kwn3tFykWr1rZFyj9rW3Gr1q
-	va1S9rW3ur9rG3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9qb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUAVWUtwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
-	e2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4I
-	kC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWU
-	WwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_JF
-	I_Gr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1lIxAIcVCF04k26cxKx2IYs7xG
-	6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr1j6F
-	4UJbIYCTnIWIevJa73UjIFyTuYvjxUIoGQDUUUU
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org, 
+ Shawn Guo <shawnguo@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Conor Dooley <conor.dooley@microchip.com>, devicetree@vger.kernel.org, 
+ Fabio Estevam <festevam@gmail.com>, imx@lists.linux.dev
+To: Frank Li <Frank.Li@nxp.com>
+In-Reply-To: <20250221-imx95_15x15-v4-0-385ee8e03dfd@nxp.com>
+References: <20250221-imx95_15x15-v4-0-385ee8e03dfd@nxp.com>
+Message-Id: <174018774174.599965.6492650307461479037.robh@kernel.org>
+Subject: Re: [PATCH v4 0/4] arm64: dts: add imx95_15x15_evk boards support
 
-ÔÚ 2025/02/21 16:11, Zheng Qixing Ð´µÀ:
-> From: Zheng Qixing <zhengqixing@huawei.com>
+
+On Fri, 21 Feb 2025 16:15:56 -0500, Frank Li wrote:
+> Add related binding doc.
 > 
-> The bad blocks check would miss bad blocks when retrying under contention,
-> as checking parameters are not reset. These stale values from the previous
-> attempt could lead to incorrect scanning in the subsequent retry.
+> Add imx95_15x15_evk boards, which have big difference with imx95_19x19_evk
+> boards.
 > 
-> Move seqlock to outer function and reinitialize checking state for each
-> retry. This ensures a clean state for each check attempt, preventing any
-> missed bad blocks.
-> 
-> Fixes: 3ea3354cb9f0 ("badblocks: improve badblocks_check() for multiple ranges handling")
-> Signed-off-by: Zheng Qixing <zhengqixing@huawei.com>
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
 > ---
->   block/badblocks.c | 50 +++++++++++++++++++++++------------------------
->   1 file changed, 24 insertions(+), 26 deletions(-)
+> Changes in v4:
+> - Add usb typce part
+> - Link to v3: https://lore.kernel.org/r/20250220-imx95_15x15-v3-0-247777ed91c4@nxp.com
 > 
-LGTM
-Reviewed-by: Yu Kuai <yukuai3@huawei.com>
+> Changes in v3:
+> - Add Rob and Conor's ack tags
+> - Remove undocument property (need doube check why dtb-check have not
+> report warning).
+> 
+> - Link to v2: https://lore.kernel.org/r/20250114-imx95_15x15-v2-0-2457483bc99d@nxp.com
+> 
+> Changes in v2:
+> - fixed typo 'inctrl-names'.
+> - Link to v1: https://lore.kernel.org/r/20250113-imx95_15x15-v1-0-8c20cbaab9ed@nxp.com
+> 
+> ---
+> Frank Li (4):
+>       dt-bindings: arm: fsl: add i.MX95 15x15 EVK board
+>       arm64: dts: imx95: Add #io-channel-cells = <1> for adc node
+>       arm64: dts: imx95: Add i3c1 and i3c2
+>       arm64: dts: imx95: Add imx95-15x15-evk support
+> 
+>  Documentation/devicetree/bindings/arm/fsl.yaml    |    1 +
+>  arch/arm64/boot/dts/freescale/Makefile            |    1 +
+>  arch/arm64/boot/dts/freescale/imx95-15x15-evk.dts | 1130 +++++++++++++++++++++
+>  arch/arm64/boot/dts/freescale/imx95.dtsi          |   27 +
+>  4 files changed, 1159 insertions(+)
+> ---
+> base-commit: 3d34d52fb62b250297279c3d95b2562180a44569
+> change-id: 20250110-imx95_15x15-6a64db8c0187
+> 
+> Best regards,
+> ---
+> Frank Li <Frank.Li@nxp.com>
+> 
+> 
+> 
 
-> diff --git a/block/badblocks.c b/block/badblocks.c
-> index 381f9db423d6..79d91be468c4 100644
-> --- a/block/badblocks.c
-> +++ b/block/badblocks.c
-> @@ -1191,31 +1191,12 @@ static int _badblocks_clear(struct badblocks *bb, sector_t s, int sectors)
->   static int _badblocks_check(struct badblocks *bb, sector_t s, int sectors,
->   			    sector_t *first_bad, int *bad_sectors)
->   {
-> -	int unacked_badblocks, acked_badblocks;
->   	int prev = -1, hint = -1, set = 0;
->   	struct badblocks_context bad;
-> -	unsigned int seq;
-> +	int unacked_badblocks = 0;
-> +	int acked_badblocks = 0;
-> +	u64 *p = bb->page;
->   	int len, rv;
-> -	u64 *p;
-> -
-> -	WARN_ON(bb->shift < 0 || sectors == 0);
-> -
-> -	if (bb->shift > 0) {
-> -		sector_t target;
-> -
-> -		/* round the start down, and the end up */
-> -		target = s + sectors;
-> -		rounddown(s, 1 << bb->shift);
-> -		roundup(target, 1 << bb->shift);
-> -		sectors = target - s;
-> -	}
-> -
-> -retry:
-> -	seq = read_seqbegin(&bb->lock);
-> -
-> -	p = bb->page;
-> -	unacked_badblocks = 0;
-> -	acked_badblocks = 0;
->   
->   re_check:
->   	bad.start = s;
-> @@ -1281,9 +1262,6 @@ static int _badblocks_check(struct badblocks *bb, sector_t s, int sectors,
->   	else
->   		rv = 0;
->   
-> -	if (read_seqretry(&bb->lock, seq))
-> -		goto retry;
-> -
->   	return rv;
->   }
->   
-> @@ -1324,7 +1302,27 @@ static int _badblocks_check(struct badblocks *bb, sector_t s, int sectors,
->   int badblocks_check(struct badblocks *bb, sector_t s, int sectors,
->   			sector_t *first_bad, int *bad_sectors)
->   {
-> -	return _badblocks_check(bb, s, sectors, first_bad, bad_sectors);
-> +	unsigned int seq;
-> +	int rv;
-> +
-> +	WARN_ON(bb->shift < 0 || sectors == 0);
-> +
-> +	if (bb->shift > 0) {
-> +		/* round the start down, and the end up */
-> +		sector_t target = s + sectors;
-> +
-> +		rounddown(s, 1 << bb->shift);
-> +		roundup(target, 1 << bb->shift);
-> +		sectors = target - s;
-> +	}
-> +
-> +retry:
-> +	seq = read_seqbegin(&bb->lock);
-> +	rv = _badblocks_check(bb, s, sectors, first_bad, bad_sectors);
-> +	if (read_seqretry(&bb->lock, seq))
-> +		goto retry;
-> +
-> +	return rv;
->   }
->   EXPORT_SYMBOL_GPL(badblocks_check);
->   
-> 
+
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
+
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
+
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
+
+  pip3 install dtschema --upgrade
+
+
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/freescale/' for 20250221-imx95_15x15-v4-0-385ee8e03dfd@nxp.com:
+
+arch/arm64/boot/dts/freescale/imx95-15x15-evk.dtb: pcie@4c300000: clock-names: ['pcie', 'pcie_bus', 'pcie_phy', 'pcie_aux'] is too short
+	from schema $id: http://devicetree.org/schemas/pci/fsl,imx6q-pcie.yaml#
+arch/arm64/boot/dts/freescale/imx95-15x15-evk.dtb: pcie@4c380000: clock-names: ['pcie', 'pcie_bus', 'pcie_phy', 'pcie_aux'] is too short
+	from schema $id: http://devicetree.org/schemas/pci/fsl,imx6q-pcie.yaml#
+
+
+
+
 
 
