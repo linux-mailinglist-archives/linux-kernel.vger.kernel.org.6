@@ -1,92 +1,162 @@
-Return-Path: <linux-kernel+bounces-526998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7525DA4060B
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 08:17:23 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4AAFA4060F
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 08:20:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6174F16DFE9
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 07:17:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35E5E176CDB
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 07:19:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F28071FBC8B;
-	Sat, 22 Feb 2025 07:17:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="euuKWPXj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14A58202C3A;
+	Sat, 22 Feb 2025 07:19:35 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53B647494
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 07:17:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0A6F7494;
+	Sat, 22 Feb 2025 07:19:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740208638; cv=none; b=YD/Hr42/v/Hw8TzR6NAVUHiod1ZWwdhUcbrNdnfVqbXwaeJqYsOWekinmTx8q/NiC8plu609RDLBvdwbXegg5cCL/vW5TuYHN1a5tQjp3Slsry9kffjrnpiFA9AYTODDScXPmnhJY/4sCYtQfGd6ufb5UcJbLzlWE3xFMm/bGnc=
+	t=1740208774; cv=none; b=PPjmr5SfCOdQB/hd+pnikGrIxQ3Kd4FINq28Nw8VoJb9lpir1KekZrPoerRn5mwz7VPtN4ALvFY3v5SO0pf8GhJVWeoOUj2SRYMtAHlJyxQs19AWx74WnoDKkncnCH1FSw8eAELeq1V8qRFfxL6h/8bEPCRXdg7VPSpzXNwlFvQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740208638; c=relaxed/simple;
-	bh=GWKyza79Ui4KgpUzStnf6vRjczBd+KXdrJEehFJ/8KE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y/05HRwyP3ibfUSuYGSDfy5FyLXjzdQAR3Q3eL2OyvNR7hE060W9JQ0Yb9eJFphdelgtghJE4Gdl1Y0XfiPPm/fzqT54MJmRYsyEavG70wrMbA2uLCYjo7wAO2UD87sEQo2oqdcf/D5d5CW/CzB30jUx2nRehbRC+A6/1lcwHPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=euuKWPXj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39C46C4CEE0;
-	Sat, 22 Feb 2025 07:17:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1740208636;
-	bh=GWKyza79Ui4KgpUzStnf6vRjczBd+KXdrJEehFJ/8KE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=euuKWPXjUwbt5i6ShksGDlFK5oW+Zsq4ypB24NysXX5utPcW4hqM6Nhv63U+Kr8H8
-	 ci7PpKZLiWDT/fTjc5IUlYDk2fOlihetUvgC4jaPofM5HtYxZjAI1ivj84byb3Mygt
-	 Y8T4p33rT+M01XIYOWQmd7i8J4TucT2aP4s5yWCY=
-Date: Sat, 22 Feb 2025 08:16:09 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Hillf Danton <hdanton@sina.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Byungchul Park <byungchul@sk.com>, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, kernel_team@skhynix.com, conduct@kernel.org
-Subject: Re: [RFC PATCH v12 00/26] LUF(Lazy Unmap Flush) reducing tlb numbers
- over 90%
-Message-ID: <2025022230-jurist-unfasten-c024@gregkh>
-References: <20250220052027.58847-1-byungchul@sk.com>
- <20250220103223.2360-1-hdanton@sina.com>
- <20250220114920.2383-1-hdanton@sina.com>
- <Z7c0BTteQoZKcSmJ@casper.infradead.org>
- <20250220232503.2416-1-hdanton@sina.com>
- <20250221230556.2479-1-hdanton@sina.com>
+	s=arc-20240116; t=1740208774; c=relaxed/simple;
+	bh=R5+4K/Nzsi5fbnQc0W9jCxIEubmmJjFdB88aAxqxfu4=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=bBGUPKogrHrAOHemJpl+KK7xRxKV33rElJ6ts6dqHaiHBHyOFsuJXwzK3COkMJvnAFVGT64wu01bxzN3uVlpp8d4HnqMQj7k/UuIYnj9mq0uPXbX0b/zDSS+hhI5PngDrF5n1ME1qH9SHwIK95y5mAl4bX10NfGq/VQ57JJigvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Z0JDw3nVGzvWpS;
+	Sat, 22 Feb 2025 15:15:44 +0800 (CST)
+Received: from kwepemk500005.china.huawei.com (unknown [7.202.194.90])
+	by mail.maildlp.com (Postfix) with ESMTPS id 20EC4140154;
+	Sat, 22 Feb 2025 15:19:27 +0800 (CST)
+Received: from [10.174.179.234] (10.174.179.234) by
+ kwepemk500005.china.huawei.com (7.202.194.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Sat, 22 Feb 2025 15:19:25 +0800
+Message-ID: <ef999493-cac0-68bb-2684-97da0fb8b583@huawei.com>
+Date: Sat, 22 Feb 2025 15:19:24 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250221230556.2479-1-hdanton@sina.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.0
+Subject: Re: [PATCH -next v2] uprobes: fix two zero old_folio bugs in
+ __replace_page()
+From: Tong Tiangen <tongtiangen@huawei.com>
+To: Oleg Nesterov <oleg@redhat.com>
+CC: David Hildenbrand <david@redhat.com>, Andrew Morton
+	<akpm@linux-foundation.org>, Peter Zijlstra <peterz@infradead.org>, Ingo
+ Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa
+	<jolsa@kernel.org>, Peter Xu <peterx@redhat.com>, Ian Rogers
+	<irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, "Liang, Kan"
+	<kan.liang@linux.intel.com>, Masami Hiramatsu <mhiramat@kernel.org>,
+	<linux-perf-users@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-mm@kvack.org>, <linux-trace-kernel@vger.kernel.org>,
+	<bpf@vger.kernel.org>, <wangkefeng.wang@huawei.com>, Guohanjun
+	<guohanjun@huawei.com>
+References: <20250221015056.1269344-1-tongtiangen@huawei.com>
+ <20250221152841.GA24705@redhat.com>
+ <46a48eb4-5245-81ba-9779-ace8f162c31b@huawei.com>
+In-Reply-To: <46a48eb4-5245-81ba-9779-ace8f162c31b@huawei.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemk500005.china.huawei.com (7.202.194.90)
 
-On Sat, Feb 22, 2025 at 07:05:26AM +0800, Hillf Danton wrote:
-> On Thu, 20 Feb 2025 18:44:12 -0500 Steven Rostedt <rostedt@goodmis.org>
-> > On Fri, 21 Feb 2025 07:25:02 +0800 Hillf Danton <hdanton@sina.com> wrote:
-> > > > I'll tell you what would happen in my home town. If someone said
-> > > > that to a co-worker, they would likely be terminated.
-> > > >   
-> > > Interesting, I want to know if the three words, rape, pregnancy and WTK,
-> > > could be used before judge in your hometown court by anyone like your lawyer.
-> > 
-> > This isn't a court. And there's no reason to use the word "rape" in a
-> > technical conversation on the Linux kernel mailing list. Perhaps a person
-> > reading this was a victim of rape. How do you think that would make them
-> > feel? Welcomed to our community? Absolutely not. Which is why it's totally
-> > unacceptable.
-> > 
-> There are NAK victims. Did you nak more than twice a week, Steve?
 
-Hillf,
 
-This is not the way to work with your fellow developers in the community
-to express disagreements. I would recommend following up with an
-apology.
+在 2025/2/22 10:37, Tong Tiangen 写道:
+> 
+> 
+> 在 2025/2/21 23:28, Oleg Nesterov 写道:
+>> On 02/21, Tong Tiangen wrote:
+>>>
+>>> --- a/kernel/events/uprobes.c
+>>> +++ b/kernel/events/uprobes.c
+>>> @@ -506,6 +506,11 @@ int uprobe_write_opcode(struct arch_uprobe 
+>>> *auprobe, struct mm_struct *mm,
+>>>       if (ret <= 0)
+>>>           goto put_old;
+>>>
+>>> +    if (is_zero_page(old_page)) {
+>>> +        ret = -EINVAL;
+>>> +        goto put_old;
+>>> +    }
+>>
+>> I agree with David, the subject looks a bit misleading.
+>>
+>> And. I won't insist, this is cosmetic, but if you send V2 please consider
+>> moving the "verify_opcode()" check down, after the 
+>> is_zero_page/PageCompound
+>> checks.
+>>
+>> Oleg.
+> 
+> OK, check the validity of the old page first and modify the subject in
+> v3 .
+> 
+> Thanks.
 
-thanks,
+I'm going to add a new patch to moving the "verify_opcode()" check down
+, IIUC that "!PageAnon(old_page)" below also needs to be moved together,
+and as David said this can be triggered by user space, so delete the use
+  of "WARN", as follows:
 
-greg k-h (On behalf of the Code of Conduct Committee)
+
+@@ -502,20 +502,16 @@ int uprobe_write_opcode(struct arch_uprobe 
+*auprobe, struct mm_struct *mm,
+         if (IS_ERR(old_page))
+                 return PTR_ERR(old_page);
+
+-       ret = verify_opcode(old_page, vaddr, &opcode);
+-       if (ret <= 0)
++       ret = -EINVAL;
++       if (is_zero_page(old_page))
+                 goto put_old;
+
+-       if (is_zero_page(old_page)) {
+-               ret = -EINVAL;
++       if (!is_register && (PageCompound(old_page) || !PageAnon(old_page)))
+                 goto put_old;
+-       }
+
+-       if (WARN(!is_register && PageCompound(old_page),
+-                "uprobe unregister should never work on compound 
+page\n")) {
+-               ret = -EINVAL;
++       ret = verify_opcode(old_page, vaddr, &opcode);
++       if (ret <= 0)
+                 goto put_old;
+-       }
+
+         /* We are going to replace instruction, update ref_ctr. */
+         if (!ref_ctr_updated && uprobe->ref_ctr_offset) {
+@@ -526,10 +522,6 @@ int uprobe_write_opcode(struct arch_uprobe 
+*auprobe, struct mm_struct *mm,
+                 ref_ctr_updated = 1;
+         }
+
+-       ret = 0;
+-       if (!is_register && !PageAnon(old_page))
+-               goto put_old;
+-
+         ret = anon_vma_prepare(vma);
+
+Thanks.
+> 
+>>
+>>
+>> .
+> 
+> .
 
