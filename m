@@ -1,139 +1,85 @@
-Return-Path: <linux-kernel+bounces-527310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98751A40980
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 16:26:03 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C000A40982
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 16:31:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 251193BC69E
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 15:25:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3495B7AC675
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 15:30:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09DCE1C07C3;
-	Sat, 22 Feb 2025 15:25:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAA7D1AD3E1;
+	Sat, 22 Feb 2025 15:30:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AzvFCNgu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="XmixloNv"
+Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B60D14037F;
-	Sat, 22 Feb 2025 15:25:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A2602D05E
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 15:30:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740237955; cv=none; b=RKpUtZQOlyiG5FzyPN/FHkxQgcRcOsLB1M8bRweJzxe9xb9c/CdKcwdhYNi03t8bdeOC52lOaABd+/6iqqtTrL6k7pdfS2zvgy2ZXuxrRHU6ulm9tpAdj9DDumfCWp/4om2Zx4/YBeN+c6G+bigBRjVnQwwonMYFk9XPg1k7voA=
+	t=1740238252; cv=none; b=CkPomehS4rBNnUwty/MoehuUPaQcJ28ySo1mkzxEtKIkgCe1PjqO2pWvri9kDX2PHeTTTukZZQ1HVqSEwtO+D9n+bJvB7T+j0zH9LRxj/ClUS0w+V2hUTW2ZZxqXRcqmv40lFy4j6zIV7lzY67si7aCbri529vS1gQiyXfrs4Cw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740237955; c=relaxed/simple;
-	bh=5FoHX3Ihpq6uQwdHsZ//hL1s5P1FmjObacFMhwq+9No=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eGPuVRnlx417Xd0Xz5fQ/d0kOmg8Z9Jzzz1Rs/cYS+sIMgUoDsMb8YCqK5VXgXb/KzyEA5EmTMncdfFefWPR8ifaJsT2CghFgjPuF8lYp+aiCfCgcw3Rr28v0e/P7qaQEca3JqaDOAjJ/Eey+m1hP/8sAsPV95RwEyahPiavGNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AzvFCNgu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE357C4CED1;
-	Sat, 22 Feb 2025 15:25:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740237953;
-	bh=5FoHX3Ihpq6uQwdHsZ//hL1s5P1FmjObacFMhwq+9No=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=AzvFCNgussSYkj6AJHZmpkSgkVM8zJgCfcLakUXfA5ll4Khb1udMQ7pYeY5zipDIk
-	 IaUXihFP0TKgIsy9LBeMX2DMWl3DUxljiD7ZwTCBwopxXcgkRHAM2zhEzxCy6ifbJz
-	 SGKCNW7Go8Uv1fqxpS5bqE4SK5KG9qrdY0EQMIGN8PYL7T1mWL9btLQQzozRRiyI4U
-	 K/h8M6yLGNwzg1y0qzULTpgJJOAbNYlrStjsT+6rnriHdOUxSINve2fOHlWAWEgubY
-	 CsXhsSot3MyUsSolxbcGasAux1BHRWJUP81LkqYnvpWk+0sLeklkFdhILIQTchZSXs
-	 d8OfoyZOGyVVw==
-Date: Sat, 22 Feb 2025 15:25:37 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Eason Yang <j2anfernee@gmail.com>
-Cc: avifishman70@gmail.com, tmaimon77@gmail.com, tali.perry1@gmail.com,
- venture@google.com, yuenn@google.com, benjaminfair@google.com,
- lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- nuno.sa@analog.com, dlechner@baylibre.com, javier.carrasco.cruz@gmail.com,
- andriy.shevchenko@linux.intel.com, gstols@baylibre.com,
- olivier.moysan@foss.st.com, mitrutzceclan@gmail.com, tgamblin@baylibre.com,
- matteomartelli3@gmail.com, marcelo.schmitt@analog.com,
- alisadariana@gmail.com, joao.goncalves@toradex.com,
- thomas.bonnefille@bootlin.com, ramona.nechita@analog.com,
- herve.codina@bootlin.com, chanh@os.amperecomputing.com, KWLIU@nuvoton.com,
- yhyang2@nuvoton.com, openbmc@lists.ozlabs.org, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 0/2] iio: adc: add Nuvoton NCT7201 ADC driver
-Message-ID: <20250222152537.2a24d80f@jic23-huawei>
-In-Reply-To: <20250221090918.1487689-1-j2anfernee@gmail.com>
-References: <20250221090918.1487689-1-j2anfernee@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1740238252; c=relaxed/simple;
+	bh=r4tzzLkSDnrOdH/18W6LteR1pX1etKjfWltoHzgwLnw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cjv0JFuQfIcuNTuHt/JHBD9FAgjou3nuV9bQa0sCikEL3jnaiP+HzLcKMZNVzYLbgiksJrPt4D4O41oKeNtxQmhjeipiLJe6bFIUHUh5cYUlzwTZFB0C0wozhAmr1xRrAdPuT9RnyYADsybu3pXBXD2jSErn7HwUXCu1KplHirI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=XmixloNv; arc=none smtp.client-ip=95.215.58.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Sat, 22 Feb 2025 10:30:34 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1740238238;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2O6LlMiroyX8s3OR/vMtwOCtpXSsWXnlWltLALK/Npo=;
+	b=XmixloNvYGi22sDde5+ivm+PQZYuJGWbvwGchK+dt0rDiPXOJedHUJ0u29AwsZ1C5O7gmq
+	tkumgOF0EAu8WAXK1rXBQlpMTl84/ji4lm2K+Z2ZP55WiljBTMKwE4Qd2tdtu8Y/vKwiLp
+	uJ5FJue7+kaGtoHP/jW+Ht1fMK8q8r0=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Martin Uecker <uecker@tugraz.at>
+Cc: Dan Carpenter <dan.carpenter@linaro.org>, 
+	Greg KH <gregkh@linuxfoundation.org>, Boqun Feng <boqun.feng@gmail.com>, 
+	"H. Peter Anvin" <hpa@zytor.com>, Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, 
+	Christoph Hellwig <hch@infradead.org>, rust-for-linux <rust-for-linux@vger.kernel.org>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, David Airlie <airlied@gmail.com>, linux-kernel@vger.kernel.org, 
+	ksummit@lists.linux.dev, Justin Stitt <justinstitt@google.com>, 
+	Kees Cook <keescook@chromium.org>
+Subject: Re: Rust kernel policy
+Message-ID: <4edgqqhbwn56jnz3fraowgyuwhjs33uw3545mnksxwrng42wa6@fbaqfqlhru7g>
+References: <326CC09B-8565-4443-ACC5-045092260677@zytor.com>
+ <CANiq72m+r1BZVdVHn2k8XeU37ZeY6VT2S9KswMuFA=ZO3e4uvQ@mail.gmail.com>
+ <a7c5973a-497c-4f31-a7be-b3123bddb6dd@zytor.com>
+ <Z7VKW3eul-kGaIT2@Mac.home>
+ <2025021954-flaccid-pucker-f7d9@gregkh>
+ <4e316b01634642cf4fbb087ec8809d93c4b7822c.camel@tugraz.at>
+ <2025022024-blooper-rippling-2667@gregkh>
+ <1d43700546b82cf035e24d192e1f301c930432a3.camel@tugraz.at>
+ <962fa158-5315-4d93-afb1-8a1c08787ad8@stanley.mountain>
+ <1f31a16d3898e0e9b5d94f9bcc12a1b73ac97982.camel@tugraz.at>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1f31a16d3898e0e9b5d94f9bcc12a1b73ac97982.camel@tugraz.at>
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, 21 Feb 2025 17:09:16 +0800
-Eason Yang <j2anfernee@gmail.com> wrote:
+On Thu, Feb 20, 2025 at 03:09:21PM +0100, Martin Uecker wrote:
+> We added checked arhithmetic to C23, we could add saturating
+> math to C2Y if this is needed.  (although I admit I do not fully
+> understand the use case of saturating math, a saturated value
+> still seems to be an error? Statistics, where it does not matter?)
 
-Hi Eason,
-
-Not sure if I asked this before, but this is a device that seems
-to be typically used for hardware monitoring and there are a number
-of similar sounding device in drivers/hwmon/  
-
-That raises a couple of questions:
-1) Is it compatible with any of those existing drivers?
-2) Why IIO rather than HWMON?
-
-There isn't normally a problem with having a hardware monitoring
-related device supported by IIO, it is just good to know if your
-usecase makes that a good idea.  We have the iio-hwmon bridge
-driver to solve the problem of a device than can be used either
-as a generic ADC or as a hwmon type monitoring device (which tends
-to have more alarms etc)
-
-Jonathan
-
-
-> Change since version 4:
->  - Fix comments
->  - Add interrupts and reset-gpios to the DT example
->  - Use the FIELD_PREP and FIELD_GET
->  - Add use_single_write in regmap_config
->  - Use regmap_access_table
-> 
-> Change since version 3:
->  - Fix comments
->  - Don't put nct720"x" in the name, just call it nct7201
->  - Remove differential inputs until conversions are finished
->  - Add NCT7201_ prefix in all macros and avoid the tables
->  - Correct event threshold values in raw units
->  - Add with and without interrupt callback function to have the event
->    config part and one that doesn't
->  - Remove print an error message if regmap_wirte failed case
-> 
-> Change since version 2:
->  - Remvoe read-vin-data-size property, default use read word vin data
->  - Use regmap instead of i2c smbus API
->  - IIO should be IIO_CHAN_INFO_RAW and _SCALE not _PROCESSED
->  - Use dev_xxx_probe in probe function and dev_xxx in other functions
->  - Use devm_iio_device_register replace of iio_device_register
->  - Use guard(mutex) replace of mutex_lock
->  - Use get_unaligned_le16 conversion API
-> 
-> Changes since version 1:
->  - Add new property in iio:adc binding document
->  - Add new driver for Nuvoton NCT720x driver
-> 
-> Eason Yang (2):
->   dt-bindings: iio: adc: add NCT7201 ADCs
->   iio: adc: add support for Nuvoton NCT7201
-> 
->  .../bindings/iio/adc/nuvoton,nct7201.yaml     |  57 ++
->  MAINTAINERS                                   |   2 +
->  drivers/iio/adc/Kconfig                       |  11 +
->  drivers/iio/adc/Makefile                      |   1 +
->  drivers/iio/adc/nct7201.c                     | 487 ++++++++++++++++++
->  5 files changed, 558 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iio/adc/nuvoton,nct7201.yaml
->  create mode 100644 drivers/iio/adc/nct7201.c
-> 
-
+Saturating is mainly for refcounts. If the refcount overflows, you want
+it to saturate and _stay there_, because you no longer know what the
+value should be so never freeing the object is the safest option.
 
