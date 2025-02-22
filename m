@@ -1,302 +1,78 @@
-Return-Path: <linux-kernel+bounces-527106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9629A40763
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 11:31:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A40B7A4076B
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 11:32:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC19F19C5F8B
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 10:31:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AAEFA423563
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 10:32:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61F5B207A3E;
-	Sat, 22 Feb 2025 10:31:41 +0000 (UTC)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E87A42080D6;
+	Sat, 22 Feb 2025 10:32:34 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BCDB1FCF53
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 10:31:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EB661FCF53;
+	Sat, 22 Feb 2025 10:32:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740220300; cv=none; b=brHI62vAUH2qNB+uxPbKCAV78BJWj1ifqHnVCts5Q2rnwLdRsPutlmcp45F1yrUh8+xSO4P+TeqybL8vxFQAyjeDiHIjel7bHmc57GxAqW/PTOh0djvODaxMoKBUr5Sh2nSuppzchZukcGKcbM5sZmCRgvl5C4czu7JzZy9K69Y=
+	t=1740220354; cv=none; b=Hmoqp7PGR1N65KFxauFf2zXqycF6LC0EtGyn6OlP+pQv6q4cyPpzvfQeO1gwKyerS7IUIr3Ia8jB/PVcnT1BGNNv/PvcvxGm130vtKhW077FqwGEOw7RhEiCU/Pk0M/PSIsuBLMlpGWg7qGMPjM3zubTUOP907B2v+jYvn1irKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740220300; c=relaxed/simple;
-	bh=8iG1ZLCx2gYOTtWxfT2AsKyOKhj7K5INUc6DLhzjCJw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=n08eRi/6lF9auRsqCH5EnIuHQ+ATI36/l4k0nUZb8xr0xoLKO+pCqLQE0psDaATxRfFG2BESIsIJKKyCXCRVhovDhaM3YVv4g40P1JjZ4eTSpWocAHtorjlqnGBPRAjL4pR3MkyeS538Z79RyzraiB39UBAu6aykLh1lloIFW4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4Z0NWM41lJz9w77;
-	Sat, 22 Feb 2025 18:28:31 +0800 (CST)
-Received: from kwepemd500013.china.huawei.com (unknown [7.221.188.12])
-	by mail.maildlp.com (Postfix) with ESMTPS id A0B771800D9;
-	Sat, 22 Feb 2025 18:31:34 +0800 (CST)
-Received: from [10.159.166.136] (10.159.166.136) by
- kwepemd500013.china.huawei.com (7.221.188.12) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Sat, 22 Feb 2025 18:31:33 +0800
-Message-ID: <2925aaeb-693b-4ef0-b702-96f63190705c@huawei.com>
-Date: Sat, 22 Feb 2025 18:31:32 +0800
+	s=arc-20240116; t=1740220354; c=relaxed/simple;
+	bh=kHZVzKCLyaD9y1oJzBeEGb8gkHxy7ro381Fky/hmlEk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y3k0ik3no5zgf6HCLgq99lFgsIWcbgt/PoeswWhaMpZi9gxMLwEf+Tz/PoBLDFWAPIWGDpH4MWG0ATYEvpQG/G83btP08t30B6r6Xg3LZDcgQfKXbOwnLUNQpfz0Jt16sAg7nGcdJfD/WaaI/Yr9WjvO1kbPJkFQSAX/1y4azxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C4F0C4CED1;
+	Sat, 22 Feb 2025 10:32:33 +0000 (UTC)
+Date: Sat, 22 Feb 2025 11:32:30 +0100
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, 
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Mrinmay Sarkar <quic_msarkar@quicinc.com>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/8] dt-bindings: PCI: qcom-ep: describe optional IOMMU
+Message-ID: <20250222-silent-snake-of-courage-f4ebdc@krzk-bin>
+References: <20250221-sar2130p-pci-v3-0-61a0fdfb75b4@linaro.org>
+ <20250221-sar2130p-pci-v3-2-61a0fdfb75b4@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 drm-dp 2/8] drm/hisilicon/hibmc: Add dp serdes cfg to
- adjust serdes rate, voltage and pre-emphasis
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: <xinliang.liu@linaro.org>, <tiantao6@hisilicon.com>,
-	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
-	<tzimmermann@suse.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
-	<kong.kongxinwei@hisilicon.com>, <liangjian010@huawei.com>,
-	<chenjianmin@huawei.com>, <lidongming5@huawei.com>, <libaihan@huawei.com>,
-	<shenjian15@huawei.com>, <shaojijie@huawei.com>,
-	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-	<shiyongbang@huawei.com>
-References: <20250222025102.1519798-1-shiyongbang@huawei.com>
- <20250222025102.1519798-3-shiyongbang@huawei.com>
- <dmq3iyxffg4jo7eup37zk4uqkqjtbn7wj2jmyl6ww5clksmgvq@jdslhlsbxrdr>
-From: Yongbang Shi <shiyongbang@huawei.com>
-In-Reply-To: <dmq3iyxffg4jo7eup37zk4uqkqjtbn7wj2jmyl6ww5clksmgvq@jdslhlsbxrdr>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemd500013.china.huawei.com (7.221.188.12)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250221-sar2130p-pci-v3-2-61a0fdfb75b4@linaro.org>
 
-> On Sat, Feb 22, 2025 at 10:50:55AM +0800, Yongbang Shi wrote:
->> From: Baihan Li <libaihan@huawei.com>
->>
->> This dp controller need features of digital-to-analog conversion and
->> high-speed transmission in chip by its extern serdes controller. Our
->> serdes cfg is relatively simple, just need two register configurations.
->> Don't need too much functions, like: power on/off, initialize, and some
->> complex configurations, so I'm not going to use the phy framework.
->> This serdes is inited and configured in dp initialization, and also
->> integrating them into link training process.
->>
->> For rate changing, we can change from 1.62-8.2Gpbs by cfg reg.
->> For voltage and pre-emphasis levels changing, we can cfg different
->> serdes ffe value.
->>
->> Signed-off-by: Baihan Li <libaihan@huawei.com>
->> Signed-off-by: Yongbang Shi <shiyongbang@huawei.com>
->> ---
->> ChangeLog:
->> v2 - > v3:
->>    - add commit log about dp serdes, suggested by Dmitry Baryshkov.
->>    - return value in hibmc_dp_serdes_init(), suggested by Dmitry Baryshkov.
->>    - add static const in the array of serdes_tx_cfg[], suggested by Dmitry Baryshkov.
->>    - change drm_warn to drm_dbg_dp, suggested by Dmitry Baryshkov.
->>    - add explanations about dp serdes macros, suggested by Dmitry Baryshkov.
->> v1 -> v2:
->>    - splittting the patch and add more detailed the changes in the commit message, suggested by Dmitry Baryshkov.
->>    - changing all names of dp phy to dp serdes.
->> ---
->>   drivers/gpu/drm/hisilicon/hibmc/Makefile      |  2 +-
->>   drivers/gpu/drm/hisilicon/hibmc/dp/dp_comm.h  |  1 +
->>   drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c    |  6 ++
->>   .../gpu/drm/hisilicon/hibmc/dp/dp_serdes.c    | 72 +++++++++++++++++++
->>   .../gpu/drm/hisilicon/hibmc/dp/dp_serdes.h    | 34 +++++++++
->>   5 files changed, 114 insertions(+), 1 deletion(-)
->>   create mode 100644 drivers/gpu/drm/hisilicon/hibmc/dp/dp_serdes.c
->>   create mode 100644 drivers/gpu/drm/hisilicon/hibmc/dp/dp_serdes.h
->>
->> diff --git a/drivers/gpu/drm/hisilicon/hibmc/Makefile b/drivers/gpu/drm/hisilicon/hibmc/Makefile
->> index 95a4ed599d98..43de077d6769 100644
->> --- a/drivers/gpu/drm/hisilicon/hibmc/Makefile
->> +++ b/drivers/gpu/drm/hisilicon/hibmc/Makefile
->> @@ -1,5 +1,5 @@
->>   # SPDX-License-Identifier: GPL-2.0-only
->>   hibmc-drm-y := hibmc_drm_drv.o hibmc_drm_de.o hibmc_drm_vdac.o hibmc_drm_i2c.o \
->> -	       dp/dp_aux.o dp/dp_link.o dp/dp_hw.o hibmc_drm_dp.o
->> +	       dp/dp_aux.o dp/dp_link.o dp/dp_hw.o dp/dp_serdes.o hibmc_drm_dp.o
->>   
->>   obj-$(CONFIG_DRM_HISI_HIBMC) += hibmc-drm.o
->> diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_comm.h b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_comm.h
->> index 2c52a4476c4d..e7746bc4b592 100644
->> --- a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_comm.h
->> +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_comm.h
->> @@ -38,6 +38,7 @@ struct hibmc_dp_dev {
->>   	struct mutex lock; /* protects concurrent RW in hibmc_dp_reg_write_field() */
->>   	struct hibmc_dp_link link;
->>   	u8 dpcd[DP_RECEIVER_CAP_SIZE];
->> +	void __iomem *serdes_base;
->>   };
->>   
->>   #define dp_field_modify(reg_value, mask, val)				\
->> diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c
->> index a8d543881c09..59078483ec55 100644
->> --- a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c
->> +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c
->> @@ -7,6 +7,7 @@
->>   #include "dp_comm.h"
->>   #include "dp_reg.h"
->>   #include "dp_hw.h"
->> +#include "dp_serdes.h"
->>   
->>   static void hibmc_dp_set_tu(struct hibmc_dp_dev *dp, struct drm_display_mode *mode)
->>   {
->> @@ -151,6 +152,7 @@ int hibmc_dp_hw_init(struct hibmc_dp *dp)
->>   {
->>   	struct drm_device *drm_dev = dp->drm_dev;
->>   	struct hibmc_dp_dev *dp_dev;
->> +	int ret;
->>   
->>   	dp_dev = devm_kzalloc(drm_dev->dev, sizeof(struct hibmc_dp_dev), GFP_KERNEL);
->>   	if (!dp_dev)
->> @@ -165,6 +167,10 @@ int hibmc_dp_hw_init(struct hibmc_dp *dp)
->>   
->>   	hibmc_dp_aux_init(dp_dev);
->>   
->> +	ret = hibmc_dp_serdes_init(dp_dev);
->> +	if (ret)
->> +		return ret;
->> +
->>   	dp_dev->link.cap.lanes = 0x2;
->>   	dp_dev->link.cap.link_rate = DP_LINK_BW_2_7;
->>   
->> diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_serdes.c b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_serdes.c
->> new file mode 100644
->> index 000000000000..241b9ef782b0
->> --- /dev/null
->> +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_serdes.c
->> @@ -0,0 +1,72 @@
->> +// SPDX-License-Identifier: GPL-2.0-or-later
->> +// Copyright (c) 2025 Hisilicon Limited.
->> +
->> +#include <linux/delay.h>
->> +#include <drm/drm_device.h>
->> +#include <drm/drm_print.h>
->> +#include "dp_comm.h"
->> +#include "dp_config.h"
->> +#include "dp_reg.h"
->> +#include "dp_serdes.h"
->> +
->> +int hibmc_dp_serdes_set_tx_cfg(struct hibmc_dp_dev *dp, u8 train_set[HIBMC_DP_LANE_NUM_MAX])
->> +{
->> +	static const u32 serdes_tx_cfg[4][4] = { {DP_SERDES_VOL0_PRE0, DP_SERDES_VOL0_PRE1,
->> +						  DP_SERDES_VOL0_PRE2, DP_SERDES_VOL0_PRE3},
->> +						 {DP_SERDES_VOL1_PRE0, DP_SERDES_VOL1_PRE1,
->> +						  DP_SERDES_VOL1_PRE2}, {DP_SERDES_VOL2_PRE0,
->> +						  DP_SERDES_VOL2_PRE1}, {DP_SERDES_VOL3_PRE0}};
->> +	int cfg[2];
->> +	int i;
->> +
->> +	for (i = 0; i < HIBMC_DP_LANE_NUM_MAX; i++) {
->> +		cfg[i] = serdes_tx_cfg[(train_set[i] & 0x3)]
->> +			 [(train_set[i] << DP_TRAIN_PRE_EMPHASIS_SHIFT & 0x3)];
-> I think this will not work as expected. There should be no need to shift
-> train_set[i], otherwise first '&' is executed, reducing array index to
-> (train_set[i]) << 3), which then is out-of-boundaries for the array.
->
-> Most likely you meant:
->
-> cfg[i] = serdes_tx_cfg[FIELD_GET(DP_TRAIN_VOLTAGE_SWING_MASK, train_set[i]]
-> 		      [FIELD_GET(DP_TRAIN_PRE_EMPHASIS_MASK, train_set[i]];
+On Fri, Feb 21, 2025 at 05:52:00PM +0200, Dmitry Baryshkov wrote:
+> Some of Qualcomm platforms have an IOMMU unit between the PCIe IP and
+> DDR. For example, SA8775P specifies the iommu alththough it is not a
+> part of bindings. Change the schema in order to require the IOMMU for
+> SA8775P and forbid it from being used on SDX55 (SM8450 will be handled
+> in a later patch).
+> 
+> This fixes the following warning:
+> 
+> pcie-ep@1c10000: Unevaluated properties are not allowed ('iommus' was unexpected)
+> 
+> Fixes: 9d3d5e75f31c ("dt-bindings: PCI: qcom-ep: Add support for SA8775P SoC")
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>  Documentation/devicetree/bindings/pci/qcom,pcie-ep.yaml | 6 ++++++
+>  1 file changed, 6 insertions(+)
 
-Yeah, that's right, I'll change it. Thanks for your correcting！
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
+Best regards,
+Krzysztof
 
->
->> +		if (!cfg[i])
->> +			return -EINVAL;
->> +
->> +		/* lane1 offset is 4 */
->> +		writel(FIELD_PREP(HIBMC_DP_PMA_TXDEEMPH, cfg[i]),
->> +		       dp->serdes_base + HIBMC_DP_PMA_LANE0_OFFSET + i * 4);
->> +	}
->> +
->> +	usleep_range(300, 500);
->> +
->> +	if (readl(dp->serdes_base + HIBMC_DP_LANE_STATUS_OFFSET) != DP_SERDES_DONE) {
->> +		drm_dbg_dp(dp->dev, "dp serdes cfg failed\n");
->> +		return -EAGAIN;
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->> +int hibmc_dp_serdes_rate_switch(u8 rate, struct hibmc_dp_dev *dp)
->> +{
->> +	writel(rate, dp->serdes_base + HIBMC_DP_LANE0_RATE_OFFSET);
->> +	writel(rate, dp->serdes_base + HIBMC_DP_LANE1_RATE_OFFSET);
->> +
->> +	usleep_range(300, 500);
->> +
->> +	if (readl(dp->serdes_base + HIBMC_DP_LANE_STATUS_OFFSET) != DP_SERDES_DONE) {
->> +		drm_dbg_dp(dp->dev, "dp serdes rate switching failed\n");
->> +		return -EAGAIN;
->> +	}
->> +
->> +	if (rate < DP_SERDES_BW_8_1)
->> +		drm_dbg_dp(dp->dev, "reducing serdes rate to :%d\n",
->> +			   rate ? rate * HIBMC_DP_LINK_RATE_CAL * 10 : 162);
->> +
->> +	return 0;
->> +}
->> +
->> +int hibmc_dp_serdes_init(struct hibmc_dp_dev *dp)
->> +{
->> +	dp->serdes_base = dp->base + HIBMC_DP_HOST_OFFSET;
->> +
->> +	writel(FIELD_PREP(HIBMC_DP_PMA_TXDEEMPH, DP_SERDES_VOL0_PRE0),
->> +	       dp->serdes_base + HIBMC_DP_PMA_LANE0_OFFSET);
->> +	writel(FIELD_PREP(HIBMC_DP_PMA_TXDEEMPH, DP_SERDES_VOL0_PRE0),
->> +	       dp->serdes_base + HIBMC_DP_PMA_LANE1_OFFSET);
->> +
->> +	return hibmc_dp_serdes_rate_switch(DP_SERDES_BW_8_1, dp);
->> +}
->> diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_serdes.h b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_serdes.h
->> new file mode 100644
->> index 000000000000..812d0794543c
->> --- /dev/null
->> +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_serdes.h
->> @@ -0,0 +1,34 @@
->> +/* SPDX-License-Identifier: GPL-2.0-or-later */
->> +/* Copyright (c) 2025 Hisilicon Limited. */
->> +
->> +#ifndef DP_SERDES_H
->> +#define DP_SERDES_H
->> +
-> Why all these values are not a part of the dp_reg.h?
-
-Okay, I'll merged together.
-
-
->> +#define HIBMC_DP_HOST_OFFSET		0x10000
->> +#define HIBMC_DP_LANE0_RATE_OFFSET	0x4
->> +#define HIBMC_DP_LANE1_RATE_OFFSET	0xc
->> +#define HIBMC_DP_LANE_STATUS_OFFSET	0x10
->> +#define HIBMC_DP_PMA_LANE0_OFFSET	0x18
->> +#define HIBMC_DP_PMA_LANE1_OFFSET	0x1c
->> +#define HIBMC_DP_PMA_TXDEEMPH		GENMASK(18, 1)
->> +
->> +/* dp serdes TX-Deempth Configuration */
->> +#define DP_SERDES_VOL0_PRE0		0x280
->> +#define DP_SERDES_VOL0_PRE1		0x2300
->> +#define DP_SERDES_VOL0_PRE2		0x53c0
->> +#define DP_SERDES_VOL0_PRE3		0x8400
->> +#define DP_SERDES_VOL1_PRE0		0x380
->> +#define DP_SERDES_VOL1_PRE1		0x3440
->> +#define DP_SERDES_VOL1_PRE2		0x6480
->> +#define DP_SERDES_VOL2_PRE0		0x500
->> +#define DP_SERDES_VOL2_PRE1		0x4500
->> +#define DP_SERDES_VOL3_PRE0		0x600
->> +#define DP_SERDES_BW_8_1		0x3
->> +
->> +#define DP_SERDES_DONE			0x3
->> +
->> +int hibmc_dp_serdes_init(struct hibmc_dp_dev *dp);
->> +int hibmc_dp_serdes_rate_switch(u8 rate, struct hibmc_dp_dev *dp);
->> +int hibmc_dp_serdes_set_tx_cfg(struct hibmc_dp_dev *dp, u8 train_set[HIBMC_DP_LANE_NUM_MAX]);
->> +
->> +#endif
->> -- 
->> 2.33.0
->>
 
