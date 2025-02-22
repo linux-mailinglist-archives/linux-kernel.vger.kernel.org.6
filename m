@@ -1,125 +1,92 @@
-Return-Path: <linux-kernel+bounces-527134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 160CCA407C9
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 12:01:17 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99794A407D0
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 12:07:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8664F7A9F8D
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 11:00:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ECD2B7A20A3
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 11:06:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8D66207A32;
-	Sat, 22 Feb 2025 11:00:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D78F7209F5E;
+	Sat, 22 Feb 2025 11:07:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="HhStBCZN"
-Received: from pv50p00im-ztdg10021801.me.com (pv50p00im-ztdg10021801.me.com [17.58.6.56])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="mWzZVi6F"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77BC0206F16
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 11:00:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CCCD206F16;
+	Sat, 22 Feb 2025 11:07:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740222055; cv=none; b=gFx+Z68FAE9yv2sfU6gKclmIOtRzQZ9TGSVmKDSxSVBztmL2ZXtfJt3gf8yO13U8Y24BG5kNdHZV9oFRpWHn9lMQM8G8F83VvP/MjRQBaCVR/nR7npZwSeWHlrbr3zln5boDRtQkDFWTAWUUMzTtxwzMID4fgD19X11JX8EnaBg=
+	t=1740222443; cv=none; b=sVMe4GrvQsRpenI1ZTZXgIhssgel11PDK3+4NJgCVmLlsiiGs+f50zFbfBvqFP2g3E0nljDLjPBwNHmm7s8+T/4iYRW/AhzXoRuaN6aeiPtMPuVcfnFD8UU4j+FRty3uSNg8UP//tTVLm1VQSVXwceIXC00fvm4XHk8kYmQlhA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740222055; c=relaxed/simple;
-	bh=s5PMq4K2vUmCJ7mWo835mcJtSukLKOG4lecc2nZmroI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qTjnA98nYQvX3BVm8uaLrFNPv06CcThv6gZjXsemvJSt5Rixsbd/g6zfCduQPa+EdyqYojzqD1InRC1EGhN3+NAVyqyeX9exR85IdmM23HLnQm/w7ykjwMR296q2jz/47NV7qtAe96vJFEPvaIicpvmXlrA/TUZ5r9YZOLj+LJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=HhStBCZN; arc=none smtp.client-ip=17.58.6.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; bh=UhO/oKP5iMw5fHjgaGRWOOpphrslB5BPutH1Bqw2Dkg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:x-icloud-hme;
-	b=HhStBCZN3rVcd9EC6oBRvG6abifGqlnPtcBVpdm6i/PmmBuQa0QJPHyLR1FLsYmXk
-	 MvvGwxnVyjgIAQUePoznfvb7VEqM2/2CzwoYBfpUQAlvZbnYih/hmf83Ex5BvNFrdQ
-	 PbfYoJ6GNXR9EuX2Q1IkypReed+wxDFG/c9O7uFQFsKRQdeX9qYk5H4Dvd9QURFidN
-	 MaOu/D4ITgbWB/BaBzseWqBas93vN7EeBu7C7tTfSVogYryn4akeV915HBecUZbsev
-	 T9vaSLH2CkX0yMcrX7poOXKdwAfoNE9h2RgWTSTlng3BI8SOCu2qBQQAo94LS+WVDT
-	 77yqa5YwGC84Q==
-Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
-	by pv50p00im-ztdg10021801.me.com (Postfix) with ESMTPSA id C1B66201011A;
-	Sat, 22 Feb 2025 11:00:33 +0000 (UTC)
-Message-ID: <8f36be7c-6052-4c5d-85ff-0eed27cf1456@icloud.com>
-Date: Sat, 22 Feb 2025 19:00:28 +0800
+	s=arc-20240116; t=1740222443; c=relaxed/simple;
+	bh=dDrYYapdceqAhTHU8P5P38hl7k4fIgWxKDFEdkvwgLc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Cgz70SVlzhz8VjeuWQVsT1Xcq40p0+UiAMGJ18UDobc91VXuaCNsOqEDVshgHfpB3nj9Pef+J3yvBYW+K92x+rLXAnCfo+QBSylK5YulJUJWCdjWXikBY5nR8iqiAdYwQ+2N02jlh7pk0x4OWkghnBNb3lKthww1ncTNDm2MVjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=mWzZVi6F; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D596C4CED1;
+	Sat, 22 Feb 2025 11:07:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1740222442;
+	bh=dDrYYapdceqAhTHU8P5P38hl7k4fIgWxKDFEdkvwgLc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mWzZVi6FoyU/sNWV0+xHzN9oiKD0omT3CulYjCCaUEp2rkwHz3ogTUI8zEiPotplM
+	 0jH+ywI2iwIo5CkpuyVJzBz5vSzKFbOCOfWvX+CNk5KDZ6oDgucKgu9Uv+2fgonkqJ
+	 e1Wiv0W1hsibAFNS8w0HcL1lEyhodiRyJb0DwWtE=
+Date: Sat, 22 Feb 2025 12:07:14 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Martin Uecker <uecker@tugraz.at>
+Cc: Dan Carpenter <dan.carpenter@linaro.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Boqun Feng <boqun.feng@gmail.com>, "H. Peter Anvin" <hpa@zytor.com>,
+	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+	Christoph Hellwig <hch@infradead.org>,
+	rust-for-linux <rust-for-linux@vger.kernel.org>,
+	David Airlie <airlied@gmail.com>, linux-kernel@vger.kernel.org,
+	ksummit@lists.linux.dev
+Subject: Re: Rust kernel policy
+Message-ID: <2025022230-urgency-imminent-6032@gregkh>
+References: <1d43700546b82cf035e24d192e1f301c930432a3.camel@tugraz.at>
+ <2025022042-jot-favored-e755@gregkh>
+ <b9a5de64fe1ded2ad3111763f35af9901bd81cc4.camel@tugraz.at>
+ <caea3e79-78e6-4d98-9f3b-f8e7f6f00196@stanley.mountain>
+ <61a7e7db786d9549cbe201b153647689cbe12d75.camel@tugraz.at>
+ <20250221124304.5dec31b2@gandalf.local.home>
+ <CAHk-=wgg2A_iHNwf_JDjYJF=XHnKVGOjGp50FzVWniA2Z010bw@mail.gmail.com>
+ <6b3e4d3bdc9b6efd69068e5b22cfd05d370aed19.camel@tugraz.at>
+ <1cf1d64b-128d-4dbe-8427-98405652944b@stanley.mountain>
+ <5eb6554f5f600f09d5072bc524757912a36c5057.camel@tugraz.at>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH *-next 01/18] mm/mmu_gather: Remove needless return in
- void API tlb_remove_page()
-To: Peter Zijlstra <peterz@infradead.org>, Zijun Hu <quic_zijuhu@quicinc.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Will Deacon <will@kernel.org>, "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>, Nick Piggin <npiggin@gmail.com>,
- Arnd Bergmann <arnd@arndb.de>, Thomas Gleixner <tglx@linutronix.de>,
- Herbert Xu <herbert@gondor.apana.org.au>,
- "David S. Miller" <davem@davemloft.net>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
- Johannes Berg <johannes@sipsolutions.net>,
- Jamal Hadi Salim <jhs@mojatatu.com>, Cong Wang <xiyou.wangcong@gmail.com>,
- Jiri Pirko <jiri@resnulli.us>, Jason Gunthorpe <jgg@ziepe.ca>,
- Leon Romanovsky <leon@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
- Bartosz Golaszewski <brgl@bgdev.pl>, Lee Jones <lee@kernel.org>,
- Thomas Graf <tgraf@suug.ch>, Christoph Hellwig <hch@lst.de>,
- Marek Szyprowski <m.szyprowski@samsung.com>,
- Robin Murphy <robin.murphy@arm.com>,
- Miquel Raynal <miquel.raynal@bootlin.com>,
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
- linux-arch@vger.kernel.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
- netdev@vger.kernel.org, linux-wireless@vger.kernel.org,
- linux-rdma@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-pm@vger.kernel.org, iommu@lists.linux.dev,
- linux-mtd@lists.infradead.org
-References: <20250221-rmv_return-v1-0-cc8dff275827@quicinc.com>
- <20250221-rmv_return-v1-1-cc8dff275827@quicinc.com>
- <20250221200137.GH7373@noisy.programming.kicks-ass.net>
-Content-Language: en-US
-From: Zijun Hu <zijun_hu@icloud.com>
-In-Reply-To: <20250221200137.GH7373@noisy.programming.kicks-ass.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: xYMDZO87E-9u-9wzotp6QmCV6S-rGtqV
-X-Proofpoint-ORIG-GUID: xYMDZO87E-9u-9wzotp6QmCV6S-rGtqV
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-22_04,2025-02-20_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 clxscore=1015 adultscore=0
- suspectscore=0 spamscore=0 malwarescore=0 phishscore=0 mlxlogscore=885
- mlxscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2502220088
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5eb6554f5f600f09d5072bc524757912a36c5057.camel@tugraz.at>
 
-On 2025/2/22 04:01, Peter Zijlstra wrote:
->>   */
->>  static inline void tlb_remove_page(struct mmu_gather *tlb, struct page *page)
->>  {
->> -	return tlb_remove_page_size(tlb, page, PAGE_SIZE);
->> +	tlb_remove_page_size(tlb, page, PAGE_SIZE);
->>  }
-> So I don't mind removing it, but note that that return enforces
-> tlb_remove_page_size() has void return type.
->
+On Sat, Feb 22, 2025 at 11:25:26AM +0100, Martin Uecker wrote:
+> Thanks, this is useful.  I was asking because it would be relatively
+> easy to tweak the warnings in GCC too. GCC has similar heuristics for
+> other warnings to turn them off in macros and one can certainly also
+> make it smarter.  (Again, the two problems here seem lack of communication
+> and lack of resources.  One needs to understand what needs to be done
+> and someone has to do it. But even a limited amount of time/money could
+> make a difference.)
 
-tlb_remove_page_size() is void function already. (^^)
+For the time/money issue, there are a number of different groups
+offering funding up for open source work like this.  If you are in the
+EU there are a bunch of different ones, and also openSSF from the Linux
+Foundations funds work like this.  So those might all be worth looking
+into writing up a proposal if you want to do this.
 
-> It might not be your preferred coding style, but it is not completely
-> pointless.
+hope this helps,
 
-based on below C spec such as C17 description. i guess language C does
-not like this usage "return void function in void function";
-
-C spec such as C17 have this description about return
-statement:
-6.8.6.4:
-A return statement with an expression shall not appear in a function
-whose return type is void. A return statement without an expression
-shall only appear in a function whose return type is void.
+greg k-h
 
