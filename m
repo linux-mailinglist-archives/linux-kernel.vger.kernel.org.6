@@ -1,161 +1,157 @@
-Return-Path: <linux-kernel+bounces-527397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AADBBA40AB9
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 18:35:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F720A40AC1
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 18:49:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4EDC216CB1B
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 17:34:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B819B189EC81
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 17:49:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81C8C20A5E2;
-	Sat, 22 Feb 2025 17:34:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7C16201034;
+	Sat, 22 Feb 2025 17:49:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ZVnQuUZd"
-Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="YaPdj2tR"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C32A5588F
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 17:34:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C6E41DDE9
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 17:49:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740245694; cv=none; b=UQzmOvEFZtvKUBLLbVDiuHtPRI4DU6yj7FEHYjcYK0mRymxk2P/zqfIAAGesJInlx3HOD1dpy1e0Rd2qO0mV5l2yWv/KbcyZo3CihTa1mtDIqyXmOflu/pAtlhvq3zBZX0jr5AELE5F06p0GJVKzvF197NZIy4l3qwOvFqXgJtI=
+	t=1740246543; cv=none; b=ZjgZH3/HdfMiObd1dwaXlfU3qKhrg2lnjigpW6EeZOK0eosrkyUgo2SJyx+S3DB2t3S6iIuJO9wCwZKoKA+Po7ug85cK5UTdVLw+0C+3IYRz0ZdjG1cSAPqAsbXrRU4+F/qwdGC++oKgqoyCojdsXuAfG9LGKIJjbIpp11RxgAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740245694; c=relaxed/simple;
-	bh=4dCMro2jgSSytYneGs45DXGEgNz1AxxCmVMizvO/wNs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZFOAQXlljcYHe5ENd7II2VEprvUFsS58aW+a61bEsZb6CApYGaUCpXy6j6BhN9zpvup20gH5FxJa8DVX9ki0d88aRtnV9oy1M+Aj48/yteLxNm6C5U4hlYzW/S0/T0mliaR/3sbOlPg5kHnSZze0aObK6drqS41YE41BsZeHI08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ZVnQuUZd; arc=none smtp.client-ip=95.215.58.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Sat, 22 Feb 2025 12:34:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1740245680;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=omd3G77CNX6tI/IE4jiGqYCbLrVtlrc+oM1TvZV2E+A=;
-	b=ZVnQuUZdr/yAvo7jdJuVCGxXfbGgnlpeC15ubKGRFgMlfrubAS5Ag/Zymkt5z/hqspJ0C8
-	1To7TVw0V+2XEfUxs91DuO40g1mAbaoIh9acxWsCgpdFOIg5KaiLG0b7gAMFk8/Z/ZYjH/
-	mGaDknu5oWOgxxSApjWBrN/FyI9NfJM=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Ventura Jack <venturajack85@gmail.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>, 
-	Boqun Feng <boqun.feng@gmail.com>, "H. Peter Anvin" <hpa@zytor.com>, 
-	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Christoph Hellwig <hch@infradead.org>, 
-	rust-for-linux <rust-for-linux@vger.kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	David Airlie <airlied@gmail.com>, linux-kernel@vger.kernel.org, ksummit@lists.linux.dev
-Subject: Re: Rust kernel policy
-Message-ID: <qh7r6vpnmegxf6ofro2axhewt5ojntesxrlqs7vguo7tjc6gy6@4cucfg233kf7>
-References: <CANiq72m-R0tOakf=j7BZ78jDHdy=9-fvZbAT8j91Je2Bxy0sFg@mail.gmail.com>
- <Z7SwcnUzjZYfuJ4-@infradead.org>
- <CANiq72myjaA3Yyw_yyJ+uvUrZQcSLY_jNp65iKH8Y5xGY5tXPQ@mail.gmail.com>
- <326CC09B-8565-4443-ACC5-045092260677@zytor.com>
- <CANiq72m+r1BZVdVHn2k8XeU37ZeY6VT2S9KswMuFA=ZO3e4uvQ@mail.gmail.com>
- <a7c5973a-497c-4f31-a7be-b3123bddb6dd@zytor.com>
- <Z7VKW3eul-kGaIT2@Mac.home>
- <2025021954-flaccid-pucker-f7d9@gregkh>
- <sbcgis4vibueieejklfvv5zgz5omirryjyiynd5kloilxfygqb@zcqrjc6snxey>
- <CAFJgqgTFoqH8kDquHjhKXCvsXrF-uoHo=bq52Fgv+MKePy4zhA@mail.gmail.com>
+	s=arc-20240116; t=1740246543; c=relaxed/simple;
+	bh=fyXhL1vYPnEm4LpXY3rZDMxwMLSL5AfnDUK3xPw/EB8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RiXmXtEa9sZIh1iztOJgDA2Zglg4ULiV8HFqsQDX7fWd5I2HdmuUZykothlz+pS5cKrbSKVmoBq1N5X82teszsCQNfpSgazvsXr2dva2Ja5TpBC0B36smou+RMloi4tF1hdGZgC/WfIpdcNSAoeL5QvUgWyLolVAq2ctIrPeiqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=YaPdj2tR; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51M9VZCx026800;
+	Sat, 22 Feb 2025 17:48:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:to; s=pp1;
+	 bh=s7ee8y+j+2S+3pcbZZ/rYDpOqbtAtAVzH9Tt57Um7xI=; b=YaPdj2tRJjS3
+	mXdHLp74O8M5Z5GloK/DYHa14J5CAMoantI8/of90FNN74CVQY3fyNDCNuGYAPUZ
+	O6RfmBYISKI/HLW8UB55lvn5uH3GmZQT/8yb8882AtbKz3DHin/bB7iXuG5LfS58
+	oWQ5nFbOtmNTTVtE9N386V+EtmxulN3oENvPeerABq5SfeFE/zDoznMEXZh2mvBy
+	NZpAyfiFuvifWSnPOGojbH93W0gcPzsImz9N+AcG1bi7JqGXQMGA3jQPGAnQQh3R
+	9Alf+aijCOb1bYyul+5PqmP9bgxl+oDk96BylkEQ3W3WxQIgot9qF2w9jjgMZQ7H
+	C29SyA66Qg==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44y83aa0x2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 22 Feb 2025 17:48:39 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 51MHmc3b025080;
+	Sat, 22 Feb 2025 17:48:38 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44y83aa0x0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 22 Feb 2025 17:48:38 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51MGFbnb009702;
+	Sat, 22 Feb 2025 17:48:37 GMT
+Received: from smtprelay06.wdc07v.mail.ibm.com ([172.16.1.73])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 44w03yp9xy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 22 Feb 2025 17:48:37 +0000
+Received: from smtpav05.dal12v.mail.ibm.com (smtpav05.dal12v.mail.ibm.com [10.241.53.104])
+	by smtprelay06.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51MHmaoa21234396
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sat, 22 Feb 2025 17:48:36 GMT
+Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 673EE58056;
+	Sat, 22 Feb 2025 17:48:36 +0000 (GMT)
+Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C8AB358052;
+	Sat, 22 Feb 2025 17:48:31 +0000 (GMT)
+Received: from [9.43.65.232] (unknown [9.43.65.232])
+	by smtpav05.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Sat, 22 Feb 2025 17:48:31 +0000 (GMT)
+Message-ID: <e7c4d27f-6b98-4cd6-85b8-9c4672acdef4@linux.ibm.com>
+Date: Sat, 22 Feb 2025 23:18:30 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAFJgqgTFoqH8kDquHjhKXCvsXrF-uoHo=bq52Fgv+MKePy4zhA@mail.gmail.com>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] sched/fair: Do not let idle entities preempt others
+To: Abel Wu <wuyun.abel@bytedance.com>
+Cc: "open list:SCHEDULER" <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+        Mel Gorman <mgorman@suse.de>, Josh Don <joshdon@google.com>,
+        Valentin Schneider <vschneid@redhat.com>,
+        Tianchen Ding <dtcccc@linux.alibaba.com>,
+        Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+References: <20250221111226.64455-1-wuyun.abel@bytedance.com>
+ <20250221111226.64455-2-wuyun.abel@bytedance.com>
+Content-Language: en-US
+Reply-To: 20250221111226.64455-2-wuyun.abel@bytedance.com
+From: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+In-Reply-To: <20250221111226.64455-2-wuyun.abel@bytedance.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: 3-0YB5svzY0bLJ53mV3TnkFY30jWs_VC
+X-Proofpoint-GUID: F5J9kO4PfrF_EriJuq3Uj-6K_HPYzkAr
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-22_08,2025-02-20_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 clxscore=1015
+ phishscore=0 mlxscore=0 malwarescore=0 spamscore=0 mlxlogscore=826
+ priorityscore=1501 bulkscore=0 suspectscore=0 lowpriorityscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2502220140
 
-On Sat, Feb 22, 2025 at 10:10:40AM -0700, Ventura Jack wrote:
-> On Sat, Feb 22, 2025 at 9:04 AM Kent Overstreet
-> <kent.overstreet@linux.dev> wrote:
-> >
-> > On Wed, Feb 19, 2025 at 06:39:10AM +0100, Greg KH wrote:
-> > > Rust isn't a "silver bullet" that will solve all of our problems, but it
-> > > sure will help in a huge number of places, so for new stuff going
-> > > forward, why wouldn't we want that?
-> >
-> > The big thing we run into when trying to bring this to a practical
-> > systems language, and the fundamental reason the borrow checker looks
-> > the way it does, is Rice's theorem. Rice's theorem is a direct corollary
-> > of the halting problem - "any nontrivial property of a program is either
-> > a direct consequence of the syntax or undecidable".
-> >
-> 
-> How do runtime checks play into Rice's Theorem? As far as I know, Rust
-> has or can have a number of runtime checks, for instance in some of
-> the places where a panic can happen.
+On 21/02/25 16:42, Abel Wu wrote:
+> A task with SCHED_IDLE policy doesn't preempt others by definition, and
+> the semantics are intended to be preserved when extending to cgroups
+> introduced in commit 304000390f88 ("sched: Cgroup SCHED_IDLE support").
 
-Rust can't do full theorem proving. You can do quite a bit with the
-borrow checker and other type system enhancements, but you definitely
-can't do everything.
+[snip]
 
-So if the compiler can't prove something at compile time, you may need a
-runtime check to avoid undefined behaviour.
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index 1c0ef435a7aa..4340178f29b7 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -8778,12 +8778,15 @@ static void check_preempt_wakeup_fair(struct rq *rq, struct task_struct *p, int
+>  	pse_is_idle = se_is_idle(pse);
+>  
+>  	/*
+> -	 * Preempt an idle entity in favor of a non-idle entity (and don't preempt
+> -	 * in the inverse case).
+> +	 * Preempt an idle entity in favor of a non-idle entity.
+>  	 */
+>  	if (cse_is_idle && !pse_is_idle)
+>  		goto preempt;
 
-And the fact that Rust eliminates undefined behaviour in safe code is
-huge. That's really a fundamental prerequisite for anything that would
-be meaningfully better than C, and Rust gets that right.
+This patch doesn't apply cleanly on top of tip/sched/core because of the
+commit f553741ac8c0 ("sched: Cancel the slice protection of the idle entity").
+Please rebase it.
 
-(which required the borrow checker, because memory safety = UB...)
+Thanks,
+Madadi Vineeth Reddy
 
-That means that even if you don't know if your code is correct, it's at
-least going to fail in predictable ways. You're going to get meaningful
-backtraces, good error messages if you weren't horribly lazy (the Rust
-Display trait makes that a lot more ergonomic) - that means no more two
-week bisect + bughunts for a UAF that was silently corrupting data.
-
-We _just_ had one of those. Just the initial bisect (and it turned out
-to be in the fuse code) interrupted the work I and a user were doing to
-test bcachefs fsck scalability for a full week, when we'd just dedicated
-and setup a machine for that that we only had for a limited time.
-
-That sucked: there's a massive hidden cost to the sorts of heisenbugs
-that C allows.
-
-Of course higher level logic errors could still result in a silent
-data corruption bug in Rust: intelligent thought is still required,
-until we climb the next mountain, and the next mountain, until we do get
-to full correctness proofs (and then we still have to write the code).
-
-> The type system holes in the Rust type system, and the bugs in rustc's
-> solver, grates me a bit. A lot of hard work is done in Rust language
-> land on fixing the type system holes and on a new solver for rustc
-> without the issues of the current solver, while maintaining as much
-> backwards compatibility as possible. Difficult work as I gather. The
-> alternative GCC Rust compiler, gccrs, is (as I gather) planned to also
-> use the new solver once it is ready. There were some versions of
-> rustc, also in 2020, where compile times for some production Rust
-> projects went from fine to exponential, and where it took some
-> compiler work to mitigate the issues, due to the issues being related
-> to holes in the type system.
-
-I don't expect such issues to affect us normal kernel developers much.
-Yes, the compiler folks have a lot to deal with, but "can it build the
-kernel" is an easy thing to add to their automated testing pipeline.
-
-And it's not like we never have to deal with compiler issues now.
-
-> The more complex a type system checker and solver, the more difficult
-> it can be to avoid holes in the type system and bugs in the solver.
-> Hindley-Milner is great, also because it is relatively simple, and has
-> proofs for it and its algorithms for type checking. Mainstream
-> programming languages inspired by ML/Hindley-Milner do generally
-> extend its type system, often to provide more flexibility.
-
-If you want a real mental trip, consider that a type system powerful
-enough for theorem proving must itself be turing complete (not
-inherently, but in practice), and thus the halting problem applies to
-"can the compiler even process its inputs without terminating?".
-
-But compiler folks have been dealing with such issues for years already,
-that's their ballgame.
+> -	if (cse_is_idle != pse_is_idle)
+> +
+> +	/*
+> +	 * IDLE entities do not preempt others.
+> +	 */
+> +	if (unlikely(pse_is_idle))
+>  		return;
+>  
+>  	/*
 
 
