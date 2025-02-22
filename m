@@ -1,93 +1,106 @@
-Return-Path: <linux-kernel+bounces-527246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87501A408D3
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 14:54:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E9ECA408D4
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 14:55:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4B4619C3C5D
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 13:54:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0FAAC19C464E
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 13:54:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02F631474A0;
-	Sat, 22 Feb 2025 13:54:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E123145355;
+	Sat, 22 Feb 2025 13:54:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HkdeQGlJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LlK1Y+Cj"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66D5E145A03
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 13:54:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 440AF126C05;
+	Sat, 22 Feb 2025 13:54:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740232458; cv=none; b=q8iYQwYMMRwVoJqg/B7t+rYAg+C0k2cIQgrVHY47lud45MaUGMeAtgicpVEGxAdBOq+uU8txBuuyGR+X6Gs0sVcJOypyjOng8f6wYl9NHIKF3jWTvV2S2hMi+OTzfWyj7AudQlV1DvpexGQHC1ilyu9fgP31y8v0Wshc8FxC5TU=
+	t=1740232482; cv=none; b=o0AhpM3Dtkyl9kTuRRE7f1c8qrgeg2S6NGWvg+DQJ/geJ9HGmExymV/5VpsvgY6133hpOEXhVDC+BfxJOcfiCLQ/9UX5b9nYTrRIdhozgUktC11b+763mPsUaXW05iLV3FoFhYE/UuQk2wuNWjpPLUR65szg68YffZY4IagCkAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740232458; c=relaxed/simple;
-	bh=9kib/xowRDjBzBQdZkMjZ1TL/x6brRnVlFrpE8pOZ7g=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=iwicG5ahvHHBp81pl/uYk5nwWvm/yBqcVgw1MoPvz8WIAPn6hAj1mBCkuw9v/tVCOsK7ynFYEiPkI78RbzN5dOwE+ahJ0T7HhD1cN69/rBdQX+/FuACmsrME4SC8iNi/QxPEw1LqgDvzZco2jbzhMqXLQvTCW27SJosYxtT5l58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HkdeQGlJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64938C4CED1;
-	Sat, 22 Feb 2025 13:54:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740232457;
-	bh=9kib/xowRDjBzBQdZkMjZ1TL/x6brRnVlFrpE8pOZ7g=;
-	h=Date:From:To:Cc:Subject:From;
-	b=HkdeQGlJR/G7yW36+wmpxOYzismFqjFNRQ3SZxFrELOcL4BlbRGTBMLtNJPsGHkzy
-	 9xoYLFUhpzwzc2LO9vXVxmzinpO9T+rQOTLCZJBUVeIFk8337x+q3lS4imD/S/mXEF
-	 pxBfIO6367tFYsbhgWLTXEdTyG66Q19W2iUnBUyHvLYaZYpCboQQHFjaJ8m38zeE6r
-	 PUhNGuGB0nlSTPm9nmAh3tkEVThEr2ebV3xBbjA7fWpJoN5A8FqwIMSRKB+kTLRo/d
-	 RSx3PmsFdwkDqW6n91EApPQp86P5op6HAZ2mqcT7qZw7QwXGChio6gKrWIeBdaPZcY
-	 bGCp+lT6tmRaA==
-Date: Sat, 22 Feb 2025 14:54:08 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Kan Liang <kan.liang@linux.intel.com>
-Subject: [GIT PULL] performance events fixes
-Message-ID: <Z7nXAHg-7bznAz83@gmail.com>
+	s=arc-20240116; t=1740232482; c=relaxed/simple;
+	bh=VweE6tS4QeR472TULvZT7bEsIw1ivQkAGZ7DzKeVTOY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rVfpzUkH0SHfWbLl5pUdva6+J/umH30lOxd6d4NDLGXnGwrHQG90Rlv/Qxs5ADgJwr/rCxzUSyQnWmAsQtUFZeJw39xAWgLgOs27y/RfphWXVcL3OdUnuSMedpOaEmvF2Zu8duzZNE9Vv8yzIQnIHIrxA1iXxan5N8lnAtKHlt8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LlK1Y+Cj; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-54529583c39so460755e87.1;
+        Sat, 22 Feb 2025 05:54:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740232479; x=1740837279; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VweE6tS4QeR472TULvZT7bEsIw1ivQkAGZ7DzKeVTOY=;
+        b=LlK1Y+CjYrtoCMnfUUDfnnyBZzIFYQgy9lxUfUy0MkLgizv5dTc+9q+6aa6QIYBhfo
+         KNjTlDRnHUgYQLyniDovQB7d7GIKq2m3UEfAOhWaq+VSgTkVWoPIQFhT6TX3+adznLcA
+         54RU9KwTzsmNfQksbKOR88J+scksCU1RlExTDQUdRXsrwcAjFIb1JGcIECE3mS1sGGH/
+         WGcnYobwdfMBQDzpWuvoyUX/B+IpWZdA5TxnVgkLGH45tfi4aQFpNfA/1tOhcnVuV7eq
+         eAzNRzx8XjdzqvnwBSqv5ydTUbiZGPqwhV+Yn6gwPfuOjJcW/Y/qFKtvHZ7ZVWglJA7U
+         bfPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740232479; x=1740837279;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VweE6tS4QeR472TULvZT7bEsIw1ivQkAGZ7DzKeVTOY=;
+        b=WthcKwKbb3mvgS+jWppeSF/h/mZocTcE0hWvBOhI9U+Ia+bMSctlL9rrl8hwkUduNn
+         KD4GkLeezyh0DpytX2AdY3CCL/LuAgRHg1xiiKDYInGAh7qPUdouBYRBqOffkJXq+v8h
+         fUs3dM9ibTViNzCpSCIblaprKCDgoUsGzkPqpJ/qu7OFODyjDpH7uuD+ffDP7Wpg2WnV
+         MDZM5SZ4fE55OKi2K6//vlD7sAZTjx0AWcM25J/HDY4c3OaAxH7P/M4YJvqPmXqvBcqJ
+         EPWvHC1HN5IcZyUfYLvBZgWdRGKwltDl7rK9OAIynkaNAVVwPbbTVug6WCH8RzmTfanL
+         CH7g==
+X-Forwarded-Encrypted: i=1; AJvYcCVDc2Zajo7YLn2YHLOd5I/X27YMJe00wdj5jUQ5kOC6uaDZ4geZnFUKrOSv/U5lPm3YvLAOndZaw/oD5q0=@vger.kernel.org, AJvYcCXU9co62OVWIdU1Bb4qrUJjsmc4wRB3LuOPXAfGyp3etXHLS/yV42DJ0tDtDULKCZH6RIyqMYF+/RPf@vger.kernel.org, AJvYcCXtUymFaxnhjpT8ESn+eBMFT0h+sUjSvWuIV9SXyo0qmE2RpIJNUwBahB3Q9URRNkBEhFjycGyku7uVF+MQ3Y4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxaaJifSsCIzuC8a2VncPAj5ugsmpTYPS9qGXlghVP15cxV/RQl
+	KMaGeNVLAMqbAuu/LirxUVmfq8gfrxc4wrZdJISA/vn5DgHnGCujLmrcptKTNKTQd7y3OL66jp3
+	XB955XTZAZncw/yZffWcaAMqDsAk=
+X-Gm-Gg: ASbGncsEAbmChc/KFN7vW7TsCt0TorVpq3YPW+J91xII0IgxTB6mY4/2XAjGW8jfX9M
+	AfWm3HZVs1eFV/fkR/TN0nK4qRtqALm0+HTOUmUOZVaPilsrGlc1VsdxLsa/ocOwgWaSxf1TB+8
+	hzMgTv/K8=
+X-Google-Smtp-Source: AGHT+IHAbhfIomZjI7CPGUcwHAIlJKeobEzwTsXiVQ/Lp45cLpV8JVRBlaMa+HIJ9lvixKOZsueu2rYFHzgtS/uKrJ8=
+X-Received: by 2002:a05:6512:110d:b0:545:60b:f387 with SMTP id
+ 2adb3069b0e04-54838edd25emr918688e87.3.1740232479166; Sat, 22 Feb 2025
+ 05:54:39 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+References: <20250217-io-generic-rename-v1-1-06d97a9e3179@kloenk.dev> <2025021817-chirping-fencing-d991@gregkh>
+In-Reply-To: <2025021817-chirping-fencing-d991@gregkh>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Sat, 22 Feb 2025 14:54:25 +0100
+X-Gm-Features: AWEUYZnYVLorTgwzThDBUoami7P8oPoQ8xqFPisrXxR0sWEuZ3sWkzPXy71DQM0
+Message-ID: <CANiq72kTcceaCEv0ETdN_zninTwJKAoPDvzz0Eorb5udGgTkDg@mail.gmail.com>
+Subject: Re: [PATCH] rust: io: rename `io::Io` accessors
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Fiona Behrens <me@kloenk.dev>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Danilo Krummrich <dakr@kernel.org>, 
+	Daniel Almeida <daniel.almeida@collabora.com>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Linus,
+On Tue, Feb 18, 2025 at 8:57=E2=80=AFAM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> Want me to take this through my tree?
 
-Please pull the latest perf/urgent Git tree from:
+Sure, as you prefer! Happy either way. Thanks!
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git perf-urgent-2025-02-22
+(The alias thing can be improved later)
 
-   # HEAD: 782cffeec9ad96daa64ffb2d527b2a052fb02552 perf/x86/intel: Fix event constraints for LNC
-
-Fix x86 Intel Lion Cove CPU event constraints, and fix
-uprobes debug/error printk output pointer-value verbosity.
-
- Thanks,
-
-	Ingo
-
------------------->
-Kan Liang (1):
-      perf/x86/intel: Fix event constraints for LNC
-
-Thomas Weiﬂschuh (1):
-      uprobes: Don't use %pK through printk
-
-
- arch/x86/events/intel/core.c | 20 +++++++-------------
- arch/x86/events/intel/ds.c   |  2 +-
- kernel/events/uprobes.c      |  2 +-
- 3 files changed, 9 insertions(+), 15 deletions(-)
+Cheers,
+Miguel
 
