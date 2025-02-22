@@ -1,149 +1,120 @@
-Return-Path: <linux-kernel+bounces-527494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B8FEA40BD4
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 23:13:23 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E269BA40BD7
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 23:14:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 076A63B2A7C
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 22:12:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E58717404A
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 22:13:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEB1920013A;
-	Sat, 22 Feb 2025 22:12:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6632E20371B;
+	Sat, 22 Feb 2025 22:13:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P6x+4lGL"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VPoDYqc9"
+Received: from mail-oo1-f49.google.com (mail-oo1-f49.google.com [209.85.161.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9439A1EA7EA;
-	Sat, 22 Feb 2025 22:12:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F10E1EA7EA;
+	Sat, 22 Feb 2025 22:13:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740262376; cv=none; b=Ya27j1X/TmHmAq40fe4C+v4zsFm2C1KDxDyHzD1IGUbL6Bn2jGB+nrrS7VYyqpdBzsq1JCpDO1ZEttDOc1+JiKMOG2nnhs1LB6JnRSiIWa7yUww+yXEajwrPH/FRFjRE25XnCd+qhO7RWbX7wW9zoaZbEFZslt6KvPU4wSAcyic=
+	t=1740262430; cv=none; b=O7AMqj5BMkL9ZF3mDok9G0UWHsXInNlXGxZtEbIFN3vh46TJXbyz2TQ8x1t2kh+e3P5Kp73e/z0Qy9qlUIcX0IQez56tkH5xmcbwVSUC/nTZIzKQhrx1eHuKBaO9BGQsV3eQgaNWN+OFRTQZe+fG0k28Dljyd2B+WdJ6MXS7pv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740262376; c=relaxed/simple;
-	bh=0kVZChQIdT05i2ugJJnK3LxJC0uLV6WBEoEYYYnfB0A=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BH1adHY8izptFZRO+bxhsCTI1rrhY61TUyQ39Btk7UTKAatrrJMwNPNr7b7PdtxLjBOanuTZPUeemuFKQKFcWMnX8pqfxW7orAbgocDdHSdpsrjnRk+XWDAtcpvAmyd3bYIm28SfXFjVyMkfWlEYH114K89TN9kwBaZCh+VfvlA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P6x+4lGL; arc=none smtp.client-ip=209.85.221.48
+	s=arc-20240116; t=1740262430; c=relaxed/simple;
+	bh=9+n4eKHVqWyOAQ+Ejt3I4Fk9kezlq4D9Uo9sZ82At+A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VaP9dxAlW4qmJDwvp4/ABNpcbhd7iCCTrfdDDf4G/bPOFz2D3RbD2XR8QJ6LUSXDdEVKmU2guZ0f59pVZJ5psioiJgtBpJ/QlyZOIZKibUpWhj16J2Zcu8ZZ21AqexkXdO3Q4MdSjpf/zEb63U/TAjaW/yDjSwbE1o1cW95E0Kk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VPoDYqc9; arc=none smtp.client-ip=209.85.161.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-38f2f748128so1453344f8f.1;
-        Sat, 22 Feb 2025 14:12:54 -0800 (PST)
+Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-5fcd50841f4so1548207eaf.0;
+        Sat, 22 Feb 2025 14:13:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740262373; x=1740867173; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2XocSJp5y9VHtgpY1Xznfpqr9ru+r8Xd3NaR0HKrcKs=;
-        b=P6x+4lGLNub2urV5oBjuYl1RSmGFN45tW+91oy4gHvVOwWj1fQodZbAPHT+hB7xDLB
-         uTSSYjeijjxzGnSs/GesK3NzR388NmU+KLyQHg5El0EkhZFWdq0e8Q2Sbw+looAoQOOV
-         CKgcRltyR7wkNgb2dVJa3g5UuDiGcHJTzDczevokloKps3NjAH9RuqHRfReEv2znFsuU
-         QQIBY92rGob+j4cqXx3lptt4ZtguunlFbvZwxfJjuhhQb0q15PGZZGs8im/4pFX/dzOJ
-         nNqXNej1RM8smsYAO5kgIHOdOMbFT1IKzJIUFL/1fL68umlgU4ECXpTEv2q3c1rBEiKh
-         pu+g==
+        d=gmail.com; s=20230601; t=1740262428; x=1740867228; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=3OrIm5B4Ty1aWJ4bIU6oPl91Lfouy89JgD45wVN9QRM=;
+        b=VPoDYqc9dFWB66MVvKqGLgy4TLNwpNFGDpg8Z0pdpUJNx8KXi+Lhwr8EtnwsBVUyN5
+         H3e3YyTXXrivVAX9arw5VPB2sbMwhy4MEtCfo3Juq5yYxQRISS0SmPuk34bL6n+GijPL
+         mOCPxc/q23yeMV3fGJ+Jw0HtboifVPd0QXI69Z2dz7jQFgW1P+hVwm0I/49pc/Cki8eq
+         WAC00bugWm8JHeBiYT1AxxfRp8UZjGrhUfX9nH9+qyyv52EufTBUfVxl0g1cu0rf72az
+         qib/uj8DTTKv1KC915DnS70tW5EFvXUb4gqYmz/mvZkJybxljyHXCxU0JLf+P9UQdvdr
+         ZiQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740262373; x=1740867173;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2XocSJp5y9VHtgpY1Xznfpqr9ru+r8Xd3NaR0HKrcKs=;
-        b=nYanHo5iyqgBYo8VKI3xSv8+IchP1ILH9uYjCLV1c6GLGYk1ujflLqGc6iN0w3z6mq
-         NZGqUJO/H72IRvRrnAxz1oAxKDyjnXVtXCtKk0pnJoggbQVjL+iUvfJRlSv17P+cTujW
-         ZLepTXM8uissTjclEodV/bP1Q+oN3B8Cxi5D09J/1ww39buUgNDzhSCBT8BeAZPuIQxy
-         NiVcxs/m72UlPaJYDo1n6N24VbnFJ1SKoW5SGXudyNxQJLJJaxB0Tl9bVybrbtG2yKPT
-         xB3ltqYsdX7pSnCpScZGUsucV6tNpnElJc+RI5DtXFjLVBjA4vB5QJ35F1gjBqGT/w/k
-         SsSg==
-X-Forwarded-Encrypted: i=1; AJvYcCVuBULrs6DSKCrRxqWg6zDedELSL/Acviykq53XTfbowLXqOqCJhXdB+hDWl01WNKY+h5NQ6QiVeMjvHVzLdp8=@vger.kernel.org, AJvYcCXmdAWZLlRSIskBzWAKHIfZ2+xStdSzcvnXzbgXfj/xmEpvWbhb5uDh+R4Aqr4OuubhrYIY4x2xB3N/WnQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6vszBNaFwyLHgGOCBXLNEFyoMtckuPUBICpcew8qHymJLbRh3
-	S6xaDL5PfpO/snggL4o6O6ATP82sB9Y1auRu4T4YzMv6Jec8JAeR
-X-Gm-Gg: ASbGncskICOlffdY2wTUNUgQ8H0ZvyV9riOqBIxyxuPk2nHUGn8NMjWYfBrri1g9T/Z
-	fP/WOlUPF9JTG0EA7ZEfHoK3IeGnGU7ISCZwsOdupFjifXYpRXrqwCJtjSgWWf9TpWXhioV981v
-	P5vhJtGe/hww4mUZSH19say+XutgOo+l33gVoVMXDR87L/lFzNmM8iMAaCKhqYQ6WjxxMPqZ6ru
-	HvgraP7PonTi0x0xKqxjCXIe7E24wsGZCbravXSZ35DS6a0U1H8C73mrxb3+m1TQoMc+7aYEtm5
-	nF6xm6hIPAHJz+kwb631DximL1wmmOnRQOab9TV/hwZjIPNLbUF2o7A9jeWL8JFw
-X-Google-Smtp-Source: AGHT+IH++ps/T2w03Bu4CN8he1k98DEeg+N3rfDsfaT/b0Jrqdk/zL6D2AMk8zqDe8Q6Vd2lstNpbQ==
-X-Received: by 2002:a05:6000:144a:b0:38f:4d40:358 with SMTP id ffacd0b85a97d-38f6e7587c5mr6985640f8f.9.1740262372632;
-        Sat, 22 Feb 2025 14:12:52 -0800 (PST)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f258b4314sm27002426f8f.9.2025.02.22.14.12.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 22 Feb 2025 14:12:52 -0800 (PST)
-Date: Sat, 22 Feb 2025 22:12:48 +0000
-From: David Laight <david.laight.linux@gmail.com>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: "H. Peter Anvin" <hpa@zytor.com>, Linus Torvalds
- <torvalds@linux-foundation.org>, Ventura Jack <venturajack85@gmail.com>,
- Gary Guo <gary@garyguo.net>, airlied@gmail.com, boqun.feng@gmail.com,
- ej@inai.de, gregkh@linuxfoundation.org, hch@infradead.org,
- ksummit@lists.linux.dev, linux-kernel@vger.kernel.org,
- miguel.ojeda.sandonis@gmail.com, rust-for-linux@vger.kernel.org
-Subject: Re: C aggregate passing (Rust kernel policy)
-Message-ID: <20250222221248.772b4bf6@pumpkin>
-In-Reply-To: <c3spwcoq7j4fx5yg4l7njeiofhkaasbknze3byh4dl45yeacvr@rb6u6j5kz7oe>
-References: <CAFJgqgRygssuSya_HCdswguuj3nDf_sP9y2zq4GGrN1-d7RMRw@mail.gmail.com>
-	<20250222141521.1fe24871@eugeo>
-	<CAFJgqgSG4iZE12Yg6deX3_VYSOLxkm5yr5yu25HxN+y4wPD5bg@mail.gmail.com>
-	<6pwjvkejyw2wjxobu6ffeyolkk2fppuuvyrzqpigchqzhclnhm@v5zhfpmirk2c>
-	<CAHk-=wgq1DvgNVoodk7JKc6BuU1m9UnoN+k=TLtxCAL7xTP=Dg@mail.gmail.com>
-	<yuwkqfbunlymofpd4kpqmzpiwbxxxupyj57tl5hblf7vsvebhm@ljz6u26eg5ft>
-	<6EFFB41B-9145-496E-8217-07AF404BE695@zytor.com>
-	<c3spwcoq7j4fx5yg4l7njeiofhkaasbknze3byh4dl45yeacvr@rb6u6j5kz7oe>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+        d=1e100.net; s=20230601; t=1740262428; x=1740867228;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3OrIm5B4Ty1aWJ4bIU6oPl91Lfouy89JgD45wVN9QRM=;
+        b=mjGnLb5fdYy9DqJ32wS7we5Kf7MNpEzqzGqQaExJeY8qN19DQouioc//UxhDiq24Nd
+         7jUYAljgMG1tSb1oFh36G1KDAYcxU9dX/ge8nZIpBxAST5NWYAqPmmtCWWKVf6nwkxMH
+         SiFWDnA1N6z5DC/CeMeeIcPxMx2fI2yZ5cRE92uHYqTyiOVuYRZEVf1JD99jRNooJJMr
+         6YiVH+8/qguUhq+AsT2h9yGrJU5IpBirPKRE6GGkmER8BNhDURlfRD27IxYcu4ckGZob
+         /sv5vou1NO1ScchtsNydoa3OgJlKcVxzcOhnrPmTHD1Avh5Izo9JwH+WcsWei7UJatwc
+         uyVg==
+X-Forwarded-Encrypted: i=1; AJvYcCUoNZcX9gGm4w/IAOxEI1aNTDszIXOEg7O6kSsQFHuZ4qQnH1W2ynQT+ynQVcc9m6zQzex4LswfVdhDlT6Znw==@vger.kernel.org, AJvYcCWO9pvDoKALtOmpPiBCE83CY6bl9p+iF9K2vpUb76tZpTgHIrY3YNO4B+5wtVroxv4RfsWkJ1yvLPnklikP@vger.kernel.org, AJvYcCXBrsJoGlSeICRbBgYMNka83haxnt5iI47DTiD/lnjpMjQd7JESK7gRoXnSop0YzFuxHVfDZgqzlw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxhwzyWAaq3xuHpZR9INGJlBvhpAjo3OCTyo4TJ0XWzYsfx3PG7
+	pBg7C6So1urLAyZ1Go6wk2RYwzPCgGEXetsEw3XmhM8OtOb/nfii9vs/fGeIp4w=
+X-Gm-Gg: ASbGncu8KLX/YwtxNJulW1phjDtvG47vqH89NtTYjV6SxfgYg5Aac7/JVGP2wKW1hwA
+	JOr1EIuj0TKhN3YrdylX+2B3z0I1rCtxlkp1PRLHAGiTC1URNkl5eSenMfMQZttwqe9+XNnOtfu
+	fSzTNZmTpFFs9NKGkfn5gawGDD3BNKF3ERqlGDFeMsbqc/0VBg0BXcrAksl2nJ3wbO5R+0WDtLB
+	MfJywnCO8LL6tDNi+Vqqp3Pf6kbSXOo4az+5LY5qK2ub+xlsC+2cTAypJULGG0M7Bqyf94Pz9SR
+	Vfb+sE9t+K/9Wlpjrn9mEP65qlS7K1O13L+pNUgJRavAOMcY5Nlh0e8sBUUfoMRGRrTA+Z/3XS5
+	OoH8LTVHdtrNJBA==
+X-Google-Smtp-Source: AGHT+IHf4cI5C1esT8UAeqhrbnRDDAs/cubdMJpIiF1CBejP/8GAUbK1crmD/KhrWz20Lf7gMJhxkQ==
+X-Received: by 2002:a05:6820:1b86:b0:5fd:82c:1d5 with SMTP id 006d021491bc7-5fd1966074amr5376852eaf.8.1740262428526;
+        Sat, 22 Feb 2025 14:13:48 -0800 (PST)
+Received: from ?IPV6:2603:8080:1b00:3d:9800:76a6:5d39:1458? ([2603:8080:1b00:3d:9800:76a6:5d39:1458])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5fcf9579744sm2154338eaf.36.2025.02.22.14.13.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 22 Feb 2025 14:13:47 -0800 (PST)
+Message-ID: <9eb067b6-bde8-4505-a9f9-33f33c323b6d@gmail.com>
+Date: Sat, 22 Feb 2025 16:13:43 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: [PATCH] Fuse: Add backing file support for uring_cmd
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Bernd Schubert <bernd@bsbernd.com>, Miklos Szeredi <miklos@szeredi.hu>,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ io-uring@vger.kernel.org
+References: <CAKXrOwbkMUo9KJd7wHjcFzJieTFj6NPWPp0vD_SgdS3h33Wdsg@mail.gmail.com>
+ <db432e5b-fc90-487e-b261-7771766c56cb@bsbernd.com>
+ <e0019be0-1167-4024-8268-e320fee4bc50@gmail.com>
+ <CAOQ4uxiVvc6i+5bV1PDMcvS8bALFdp86i==+ZQAAfxKY6AjGiQ@mail.gmail.com>
+ <a8af0bfc-d739-49aa-ac3f-4f928741fb7a@bsbernd.com>
+ <CAOQ4uxiSkLwPL3YLqmYHMqBStGFm7xxVLjD2+NwyyyzFpj3hFQ@mail.gmail.com>
+ <2d9f56ae-7344-4f82-b5da-61522543ef4f@bsbernd.com>
+ <72ac0bc2-ff75-4efe-987e-5002b7687729@gmail.com>
+ <CAOQ4uxieuFTN4Ni4HoBsEvTPW_odWSo78-5shJTh3T2A-vzP=g@mail.gmail.com>
+Content-Language: en-US
+From: Moinak Bhattacharyya <moinakb001@gmail.com>
+In-Reply-To: <CAOQ4uxieuFTN4Ni4HoBsEvTPW_odWSo78-5shJTh3T2A-vzP=g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sat, 22 Feb 2025 16:22:08 -0500
-Kent Overstreet <kent.overstreet@linux.dev> wrote:
 
-> On Sat, Feb 22, 2025 at 12:54:31PM -0800, H. Peter Anvin wrote:
-> > VLIW and OoO might seem orthogonal, but they aren't =E2=80=93 because t=
-hey are
-> > trying to solve the same problem, combining them either means the OoO
-> > engine can't do a very good job because of false dependencies (if you
-> > are scheduling molecules) or you have to break them instructions down
-> > into atoms, at which point it is just a (often quite inefficient) RISC
-> > encoding. In short, VLIW *might* make sense when you are statically
-> > scheduling a known pipeline, but it is basically a dead end for
-> > evolution =E2=80=93 so unless you can JIT your code for each new chip
-> > generation... =20
->=20
-> JITing for each chip generation would be a part of any serious new VLIW
-> effort. It's plenty doable in the open source world and the gains are
-> too big to ignore.
 
-Doesn't most code get 'dumbed down' to whatever 'normal' ABI compilers
-can easily handle.
-A few hot loops might get optimised, but most code won't be.
-Of course AI/GPU code is going to spend a lot of time in some tight loops.
-But no one is going to go through the TCP stack and optimise the source
-so that a compiler can make a better job of it for 'this years' cpu.
+> So fc->backing_files_map are not really fds registered for IO,
+> they are essential references to backing inodes.
 
-For various reasons ended up writing a simple 32bit cpu last year (in VHDL =
-for an fgpa).
-The ALU is easy - just a big MUX.
-The difficulty is feeding the result of one instruction into the next.
-Normal code needs to do that all the time, you can't afford a stall
-(never mind the 3 clocks writing to/from the register 'memory' would take).
-In fact the ALU dependencies [1] ended up being slower than the instruction=
- fetch
-code, so I managed to take predicted and unconditional branches without a s=
-tall.
-So no point having the 'branch delay slot' of sparc32.
-[1] multiply was the issue, even with a pipeline stall if the result has ne=
-eded.
-In any case it only had to run at 62.5MHz (related to the PCIe speed).
+That's essentially what registered FD's are, they fget() the FD and 
+stash them in an internal data structure. It's not necessarily for I/O 
+per se, its more a mechanism to ensure fast Uring access to a given FD.
 
-Was definitely an interesting exercise.
+ > Could you explain how fd registration into the ring would help here?
 
-	David
-
+ From my understanding of the previous problem with passthrough, we want 
+to make sure that one can't issue arbitrary write() calls to the open 
+FUSE FD to sneak in an arbitrary file passthrough (I admit, I don't 
+fully understand the concern). In any case, this is obviated by using 
+URING-only mechanisms, right?
 
