@@ -1,118 +1,110 @@
-Return-Path: <linux-kernel+bounces-526945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAF08A40575
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 05:24:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82A51A4057A
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 05:35:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2672E17EA9F
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 04:24:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDD2E189C537
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 04:34:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7787B20126C;
-	Sat, 22 Feb 2025 04:24:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="N7KmNtyN"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2F3920013E;
+	Sat, 22 Feb 2025 04:34:02 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C57EB42056;
-	Sat, 22 Feb 2025 04:24:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71945D530;
+	Sat, 22 Feb 2025 04:33:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740198250; cv=none; b=VR/218BQP7GBMDjpckxBwblt+mfQabXkr9+PC8Pa1iF+GQlONg+7E38a8nBk2buxi8abqW3NxwxZgwXOlWhNw9frOTrXw7odcl6KfyM7pZuXKC40mipC7Em4925mOPvAzporpDmtPWMCgqWqGXUzOGooyKgUapgTZCvBeQtYpPM=
+	t=1740198842; cv=none; b=i45YeRB1RCrJdTxpmFpYTSlrpE4BD31nBTe1795L+HEBAlXf4s1jOChy/w/r8fOwyE75Thej97sNG0FJh9IGC/LU+inIlrpthmOIaUh3Qb9ar3iAXpxdFIx8T0TevFAXUFKCzRtxvMTW/04czvtb2VmYwAMXXWaa7nW2BM7oULA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740198250; c=relaxed/simple;
-	bh=qSf4yyl47KhjxidUIcDyNPa2hI647nGEmj87vJT4+u0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DMIFGsJAAV7Kx7PHDfA0kkB6iA8iTO4awrLSRWr2xrkiK2txkxulMs/9ldC6tkCQPqVOrxcHqMrpbn2W46xoossf8e2SIkKzVwBjc0lY+VALXZle2IDvQku0eiNSzzqehlXY3JlzmT+fPZRYPiPFMl5BB0Y4HpGJ5HtJEUaDQn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=N7KmNtyN; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=kBorF+lu9MOKjw9Zu9aJHBKvFxgx/GsLywDagfgLFsk=; b=N7KmNtyNyy18k2f5aXEQzFXbBc
-	Sk9hBBz+sLj6HF6d6GP7Kw7D0jUrI0Xbk6up5O5pRCfCOaSKOitMRHUx4G5diKUe/WLV4uCgelBse
-	N4/i/r1S2T+H7WReVvhM4ZD+nVE/GVndldfzR5o4o7P9Y6KvNwc7lW7twaWiDw1creTAe+PNfRGal
-	ORODDU07dnHmbj9B15OH5pMN4bwZlFu7oHKdZFBTpRNMftCyUG9pGPr9aQAkZeUKpZ8/jl1CGFoHR
-	Q9J+xAKKo8yxXb7clIWokRa2Tqf4lzQaAQ+sqF4j70goOWLX0kKKpubH+VriThS2oVagP7I3TSc4+
-	mEtLQQXA==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tlh3a-00000004e23-30tr;
-	Sat, 22 Feb 2025 04:24:02 +0000
-Date: Sat, 22 Feb 2025 04:24:02 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: NeilBrown <neilb@suse.de>
-Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Miklos Szeredi <miklos@szeredi.hu>, Xiubo Li <xiubli@redhat.com>,
-	Ilya Dryomov <idryomov@gmail.com>,
-	Richard Weinberger <richard@nod.at>,
-	Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	Trond Myklebust <trondmy@kernel.org>,
-	Anna Schumaker <anna@kernel.org>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	Olga Kornievskaia <okorniev@redhat.com>,
-	Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org,
-	linux-um@lists.infradead.org, ceph-devel@vger.kernel.org,
-	netfs@lists.linux.dev
-Subject: Re: [PATCH 4/6] fuse: return correct dentry for ->mkdir
-Message-ID: <20250222042402.GN1977892@ZenIV>
-References: <20250220234630.983190-1-neilb@suse.de>
- <20250220234630.983190-5-neilb@suse.de>
+	s=arc-20240116; t=1740198842; c=relaxed/simple;
+	bh=OyXKfnVF6dBV2H9HG8zJDsj21GVyXwOaR2UpUHOnis8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=g31ic2drg3kitRPscYMQxDPmt7pPaiQJ/1oaREeLBcoYY72wuZS6jiv2b2RT+6NpaubB+eBVx6YwYxFwnQTpKS8NseaUPC7YdQzwjEPLm7Mq8nOPD8ie57tCyh5nQOSVko2kTnAKBw2KCF4RZfM4aMy4+gvUzgY1zpXusRdXx8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [192.168.0.2] (ip5f5af50a.dynamic.kabel-deutschland.de [95.90.245.10])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 6E69D61E64783;
+	Sat, 22 Feb 2025 05:32:18 +0100 (CET)
+Message-ID: <208fde77-d1b9-440e-9a0f-568ef1250a28@molgen.mpg.de>
+Date: Sat, 22 Feb 2025 05:32:17 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250220234630.983190-5-neilb@suse.de>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 10/12] badblocks: return boolen from badblocks_set() and
+ badblocks_clear()
+To: Yu Kuai <yukuai1@huaweicloud.com>
+Cc: Zheng Qixing <zhengqixing@huaweicloud.com>, axboe@kernel.dk,
+ song@kernel.org, colyli@kernel.org, dan.j.williams@intel.com,
+ vishal.l.verma@intel.com, dave.jiang@intel.com, ira.weiny@intel.com,
+ dlemoal@kernel.org, yanjun.zhu@linux.dev, kch@nvidia.com, hare@suse.de,
+ zhengqixing@huawei.com, john.g.garry@oracle.com, geliang@kernel.org,
+ xni@redhat.com, colyli@suse.de, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org,
+ nvdimm@lists.linux.dev, yi.zhang@huawei.com, yangerkun@huawei.com,
+ yukuai3@huawei.com
+References: <20250221081109.734170-1-zhengqixing@huaweicloud.com>
+ <20250221081109.734170-11-zhengqixing@huaweicloud.com>
+ <fe2dedca-0b71-3c80-6958-4bca61707fcc@huaweicloud.com>
+Content-Language: en-US
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+In-Reply-To: <fe2dedca-0b71-3c80-6958-4bca61707fcc@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, Feb 21, 2025 at 10:36:33AM +1100, NeilBrown wrote:
+Dear Zheng,
 
-> @@ -871,7 +870,12 @@ static int fuse_mknod(struct mnt_idmap *idmap, struct inode *dir,
->  	args.in_args[0].value = &inarg;
->  	args.in_args[1].size = entry->d_name.len + 1;
->  	args.in_args[1].value = entry->d_name.name;
-> -	return create_new_entry(idmap, fm, &args, dir, entry, mode);
-> +	de = create_new_entry(idmap, fm, &args, dir, entry, mode);
-> +	if (IS_ERR(de))
-> +		return PTR_ERR(de);
-> +	if (de)
-> +		dput(de);
-> +	return 0;
 
-Can that really happen?
+Thank you for your patch. *boolean* in the summary/title is missing an *a*.
 
-> @@ -934,7 +939,12 @@ static int fuse_symlink(struct mnt_idmap *idmap, struct inode *dir,
->  	args.in_args[1].value = entry->d_name.name;
->  	args.in_args[2].size = len;
->  	args.in_args[2].value = link;
-> -	return create_new_entry(idmap, fm, &args, dir, entry, S_IFLNK);
-> +	de = create_new_entry(idmap, fm, &args, dir, entry, S_IFLNK);
-> +	if (IS_ERR(de))
-> +		return PTR_ERR(de);
-> +	if (de)
-> +		dput(de);
-> +	return 0;
+Am 22.02.25 um 02:26 schrieb Yu Kuai:
 
-Same question.
+> Just two simple coding styes below.
 
-> +	de = create_new_entry(&invalid_mnt_idmap, fm, &args, newdir, newent, inode->i_mode);
-> +	if (!IS_ERR(de)) {
-> +		if (de)
-> +			dput(de);
-> +		de = NULL;
+I’d put these into a separate commit.
 
-Whoa...  Details, please.  What's going on here?
+> 在 2025/02/21 16:11, Zheng Qixing 写道:
+>> From: Zheng Qixing <zhengqixing@huawei.com>
+>>
+>> Change the return type of badblocks_set() and badblocks_clear()
+>> from int to bool, indicating success or failure. Specifically:
+>>
+>> - _badblocks_set() and _badblocks_clear() functions now return
+>> true for success and false for failure.
+>> - All calls to these functions have been updated to handle the
+>> new boolean return type.
+
+I’d use present tense: are updated
+
+>> - This change improves code clarity and ensures a more consistent
+>> handling of success and failure states.
+>>
+>> Signed-off-by: Zheng Qixing <zhengqixing@huawei.com>
+>> ---
+>>   block/badblocks.c             | 37 +++++++++++++++++------------------
+>>   drivers/block/null_blk/main.c | 17 ++++++++--------
+>>   drivers/md/md.c               | 35 +++++++++++++++++----------------
+>>   drivers/nvdimm/badrange.c     |  2 +-
+>>   include/linux/badblocks.h     |  6 +++---
+>>   5 files changed, 49 insertions(+), 48 deletions(-)
+
+[…]
+
+
+Kind regards,
+
+Paul
 
