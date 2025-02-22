@@ -1,154 +1,119 @@
-Return-Path: <linux-kernel+bounces-527281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20967A4092C
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 15:39:55 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35EDDA4092D
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 15:40:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0936317B0AB
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 14:39:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B4ACD7AD02E
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 14:39:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B99D18A6C4;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E22618DF9D;
 	Sat, 22 Feb 2025 14:39:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DmMxvCCP"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jPs7DcuS"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FFAB27453
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 14:39:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E13070830;
+	Sat, 22 Feb 2025 14:39:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740235186; cv=none; b=cH4wz2e+B+YGKpy5wcHbm/rRzYzxezQjanqua/jUCHBvsJXkf/bRnIDU97lbc2ESjAHwJQceQEsFgAUz1neG3+0PwoLnxKukZQptU6AJzVaYBIZgHRyU6C0uS5i7Caa92gVAQ/cYUYBhtPVvV8lgAnoeyWB+l80fXF5WBx6Pc4E=
+	t=1740235186; cv=none; b=NiQzEKjJsZGyfcLvdO5VSTUEtf2q0WUKGGpzzDItolj4VjpgvNLeGDLlU/qbKTcsg086qdUrxm0Y23cuLC9xxZVYL9hbodjucl3llxcj5HPcGxL48v9pciNIuSCthN1KA0SxmI3eK8YxTrDeXmPWbDqn+mmhyLEJjvfIALBtI1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1740235186; c=relaxed/simple;
-	bh=/uIIrwD7KzPzXFJjyxMXmT9Eva3kRYfEkaoHMHFwEbU=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=fF3kp0cvPRPWCTmfNMZ+ze/9Secm8Sc4kkBqunVi5pbtQHe7qklSCuDCzOD9I1Dw21QFe17J6DNa2NUADJCngN6wflXMjTYn8QPfqnY7EGnxOZClonQ4xgbx5cxwQJuyguWKVGmufpydcP69+v6FHUNBUuoakxop2T+rwNhwFwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DmMxvCCP; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740235184; x=1771771184;
-  h=date:from:to:cc:subject:message-id;
-  bh=/uIIrwD7KzPzXFJjyxMXmT9Eva3kRYfEkaoHMHFwEbU=;
-  b=DmMxvCCPmvr28gDPw+LJY0dx5uoOq5qJ5/7x58o/BU9bHoBbe3Lz3D8U
-   bKAVBo7j4ZNycmZz3Ly1WfHJnsmS+S/3xdduzINwuOy+cXZvWR3HEiyXf
-   4dzCQDNQCwZ0fDqy/4/1gdBOq4n47YHfGc9DttSekYyxJCue5tVg7n507
-   OQOdLA/Xv8zO3obz7QtxNrpU731au0KoqYfeh5o+o1oRMzsUBSVLtZcHi
-   1PkCpAU2wR+ONRcbjl3mlfPkNRK7v3IJ1FmQhb9fa/2rWvPlz/Vpibbsw
-   XpDV7eP2tOLiJdGyUumJY3ZZxwScofCuIKR1pCcnfzVaEUtxgZyczxBJy
-   w==;
-X-CSE-ConnectionGUID: Bjp24GT4RgaV3msRUscROA==
-X-CSE-MsgGUID: 69eBDYhMQi2A+4mogYYjVA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11353"; a="41186059"
-X-IronPort-AV: E=Sophos;i="6.13,308,1732608000"; 
-   d="scan'208";a="41186059"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Feb 2025 06:39:43 -0800
-X-CSE-ConnectionGUID: y00V2e/kRn2m+wzBKMXGiA==
-X-CSE-MsgGUID: g+9uqVB2QoWwm8EancjIhg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,308,1732608000"; 
-   d="scan'208";a="115342259"
-Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
-  by orviesa009.jf.intel.com with ESMTP; 22 Feb 2025 06:39:43 -0800
-Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tlqfM-0006eZ-1Q;
-	Sat, 22 Feb 2025 14:39:40 +0000
-Date: Sat, 22 Feb 2025 22:38:51 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:x86/urgent] BUILD SUCCESS
- c9876cdb3ac4dcdf3c710ff02094165982e2a557
-Message-ID: <202502222245.rI6BOuBG-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	bh=PBmt0sYMIFhvFdLPyTV+3bLT9pVncOJVnlGTV+VP3VU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CXB32e+OVN95yX0FsvvG0O7WqhtZ8xvi+sirkKOgbr1oDXCqJpE3i5/nFthvJ9vkG9HkyEYoy3WXTLesSmuGTy1gn5KnRf5kZ+VFmag0aBSk+wdIdDVwrCXXa3rICKroc/NuRe+QQe3+1ZqLjTrcB2/Iiyx9nir/qkAHr89RDek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jPs7DcuS; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-38f1e8efef5so1783986f8f.1;
+        Sat, 22 Feb 2025 06:39:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740235183; x=1740839983; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PBmt0sYMIFhvFdLPyTV+3bLT9pVncOJVnlGTV+VP3VU=;
+        b=jPs7DcuSlf/zyV13+3l+tDrD1mUi4714T6WYrpFWy5qi1HEyMz3Gpy4I3GNgnwOsC3
+         2WYZKbQeWhpONX0DBxtSl5cda5gVmM1XI3pxw7vze21fOnt2HGVB7OhRLB8G+BtrrBKP
+         qaoyoB8/YK5MpLin0xv+hanF2DV2ureCd0gZuIvULaqLn1FK0Tqv78f8Dd3czrRZoKTs
+         r/z2JHsF9jwgYbvji9e9y5BI8g2Ec607w0+4xOfbOMQ0RJWz0j09dSpZUDWRaDjRP1nS
+         pGAhcaAEsH+DpeXJQzIdz5zx7ufut88jLJJEBQ3akuS5XJUQKT+abL3OiC1dUMSqogPr
+         rZ3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740235183; x=1740839983;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PBmt0sYMIFhvFdLPyTV+3bLT9pVncOJVnlGTV+VP3VU=;
+        b=TqhiT86QwRreIMGn5CHGgJOHhPn+hLCxBYtpTp3Z2CoM0FuutPXLmxKCbhVBg8ZCvQ
+         5yhIvafBxIwOue0gttFZBRJ7HpnyLHg2UdLjt7tqGUynoGiARzUOneSeG/578rVSiabe
+         pt41+AX8OQpTHh9I/oMkp44wvYHuvJD2fLOP65obtJsJ0cVvNkP7v1YVM2S9NGnC/XlC
+         oP6hkvYc9sHLkKSVCes6l6vlqFfyQMmhz1QkPHuMaxJClvDlBjubYkQlExYs5IuRhZL+
+         oJ/dL44iT/K9R0lgUsq+3UF97Mcai7J8zaKv3+zMtpcGTxKtYbj+Ax0BEERbCzQ7bNfk
+         uRhw==
+X-Forwarded-Encrypted: i=1; AJvYcCUFc5omtoT/9JPp/4UMkX1hoOnkDIgLgWgaCfoFM3PPBtk+TcrIjzN8wQGm2VmrGb7n0RHfK3r9EMuy@vger.kernel.org, AJvYcCUfQe5J15+QWta0prHiNbESpPM3jIT/+u4NHanxFC98tPphhIOQD47JYOZC10W1jk4SW80r7jExazUoQtwi@vger.kernel.org, AJvYcCUlHsuSbq3cTv4VsrH15f1RFZX8du0WtTBgFcIwnjAYhFiHFJHFtuC9byismw3tvUQsiCWTAdg5D+GgMGY=@vger.kernel.org, AJvYcCUthXgKPR1sfiyHYJ6dbTzKw1bumJpD7UjdIUh7JWUKkVFBZC03rrLwJwJcMVyw0WdKkqwBy4p22zwv@vger.kernel.org, AJvYcCXcE0xY2QhRjW8QHUvnYrawMNuwF/XXNhb8/FFQP+OEZB8w5X+uYe1MtmwS/cg4nBe2m2JDSvYfNIrmwg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKSWAMNnWy56H3fkgWC8xgXza3scTqpNn7HpaQhsmax/J4A8Ep
+	AV+xM7Bu6SMygHDX+SrY6XaHgxvLWy2fFNYMG+guoIjtyS6hE08/N+cRqRRbDtwAWghJ7bRJBLk
+	o278aVtkYgGrwWtkPlHUtJfSJaO4=
+X-Gm-Gg: ASbGncuYsxSumrKZy5OdfniJDZqj6lUgWYquzJqEIjjr2HhhQb30ArY5gryMzR6I9oI
+	IzNf0gfd/rESvyZrH/NgZ3OVN/HQl23sH54LzCM1LHb70f5iKTZ/kgqz6FYOYgArowoFsC3J9RF
+	l7JY+7ZfNZ
+X-Google-Smtp-Source: AGHT+IHhfsh8L7SoEfSEAPt4i71ayj8NVEs5Jlp8DnbYgaOEu/0ofJ6OfKwdPbxf6QtaA24Nr5hPTMqg2KwgIHxy5SI=
+X-Received: by 2002:a5d:6d03:0:b0:38f:32ac:7e70 with SMTP id
+ ffacd0b85a97d-38f6f0c13dcmr5144501f8f.49.1740235183190; Sat, 22 Feb 2025
+ 06:39:43 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <20250218132702.114669-1-clamor95@gmail.com> <20250218132702.114669-2-clamor95@gmail.com>
+ <20250222142910.4e6b706d@jic23-huawei>
+In-Reply-To: <20250222142910.4e6b706d@jic23-huawei>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+Date: Sat, 22 Feb 2025 16:39:31 +0200
+X-Gm-Features: AWEUYZnZiYzFm0aljnXobt-fG7MOBn3hu3PRi2D5FDNHFhs1inR24Sh-v5qul0w
+Message-ID: <CAPVz0n0up=vkVzryYLauNCM2=hnz-o_ECm+ooXC8y=C2q+T_WQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] dt-bindings: mfd: Document TI LM3533 MFD
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Lars-Peter Clausen <lars@metafoo.de>, Pavel Machek <pavel@ucw.cz>, Daniel Thompson <danielt@kernel.org>, 
+	Jingoo Han <jingoohan1@gmail.com>, Helge Deller <deller@gmx.de>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-iio@vger.kernel.org, linux-leds@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/urgent
-branch HEAD: c9876cdb3ac4dcdf3c710ff02094165982e2a557  docs: arch/x86/sva: Fix two grammar errors under Background and FAQ
+=D1=81=D0=B1, 22 =D0=BB=D1=8E=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 16:29 Jona=
+than Cameron <jic23@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
+>
+> On Tue, 18 Feb 2025 15:26:59 +0200
+> Svyatoslav Ryhel <clamor95@gmail.com> wrote:
+>
+> > Add bindings for the LM3533 - a complete power source for
+> > backlight, keypad, and indicator LEDs in smartphone handsets.
+> > The high-voltage inductive boost converter provides the
+> > power for two series LED strings display backlight and keypad
+> > functions.
+>
+> Wrap patch descriptions to 75 chars as describe in submitting-patches.rst
+>
 
-elapsed time: 1443m
+Alright, though why then checkpatch script has max line length 100 chars?
 
-configs tested: 62
-configs skipped: 1
+https://github.com/torvalds/linux/commit/bdc48fa11e46f867ea4d75fa59ee87a7f4=
+8be144
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
-
-tested configs:
-alpha                           allyesconfig    gcc-14.2.0
-arc                  randconfig-001-20250222    gcc-13.2.0
-arc                  randconfig-002-20250222    gcc-13.2.0
-arm                  randconfig-001-20250222    gcc-14.2.0
-arm                  randconfig-002-20250222    gcc-14.2.0
-arm                  randconfig-003-20250222    clang-16
-arm                  randconfig-004-20250222    gcc-14.2.0
-arm64                randconfig-001-20250222    gcc-14.2.0
-arm64                randconfig-002-20250222    clang-21
-arm64                randconfig-003-20250222    clang-18
-arm64                randconfig-004-20250222    clang-21
-csky                 randconfig-001-20250222    gcc-14.2.0
-csky                 randconfig-002-20250222    gcc-14.2.0
-hexagon                         allmodconfig    clang-21
-hexagon                         allyesconfig    clang-18
-hexagon              randconfig-001-20250222    clang-17
-hexagon              randconfig-002-20250222    clang-19
-i386       buildonly-randconfig-001-20250222    clang-19
-i386       buildonly-randconfig-002-20250222    gcc-12
-i386       buildonly-randconfig-003-20250222    gcc-12
-i386       buildonly-randconfig-004-20250222    clang-19
-i386       buildonly-randconfig-005-20250222    gcc-12
-i386       buildonly-randconfig-006-20250222    clang-19
-loongarch            randconfig-001-20250222    gcc-14.2.0
-loongarch            randconfig-002-20250222    gcc-14.2.0
-nios2                randconfig-001-20250222    gcc-14.2.0
-nios2                randconfig-002-20250222    gcc-14.2.0
-parisc               randconfig-001-20250222    gcc-14.2.0
-parisc               randconfig-002-20250222    gcc-14.2.0
-powerpc              randconfig-001-20250222    gcc-14.2.0
-powerpc              randconfig-002-20250222    gcc-14.2.0
-powerpc              randconfig-003-20250222    gcc-14.2.0
-powerpc64            randconfig-001-20250222    gcc-14.2.0
-powerpc64            randconfig-002-20250222    clang-16
-powerpc64            randconfig-003-20250222    clang-18
-riscv                randconfig-001-20250222    clang-21
-riscv                randconfig-002-20250222    gcc-14.2.0
-s390                            allmodconfig    clang-19
-s390                            allyesconfig    gcc-14.2.0
-s390                 randconfig-001-20250222    gcc-14.2.0
-s390                 randconfig-002-20250222    clang-15
-sh                              allmodconfig    gcc-14.2.0
-sh                              allyesconfig    gcc-14.2.0
-sh                   randconfig-001-20250222    gcc-14.2.0
-sh                   randconfig-002-20250222    gcc-14.2.0
-sparc                           allmodconfig    gcc-14.2.0
-sparc                randconfig-001-20250222    gcc-14.2.0
-sparc                randconfig-002-20250222    gcc-14.2.0
-sparc64              randconfig-001-20250222    gcc-14.2.0
-sparc64              randconfig-002-20250222    gcc-14.2.0
-um                              allmodconfig    clang-21
-um                              allyesconfig    gcc-12
-um                   randconfig-001-20250222    gcc-12
-um                   randconfig-002-20250222    gcc-12
-x86_64     buildonly-randconfig-001-20250222    clang-19
-x86_64     buildonly-randconfig-002-20250222    gcc-12
-x86_64     buildonly-randconfig-003-20250222    gcc-12
-x86_64     buildonly-randconfig-004-20250222    clang-19
-x86_64     buildonly-randconfig-005-20250222    clang-19
-x86_64     buildonly-randconfig-006-20250222    gcc-12
-xtensa               randconfig-001-20250222    gcc-14.2.0
-xtensa               randconfig-002-20250222    gcc-14.2.0
-
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> >
+> > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 
