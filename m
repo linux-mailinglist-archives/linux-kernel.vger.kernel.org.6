@@ -1,217 +1,196 @@
-Return-Path: <linux-kernel+bounces-527389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64779A40A9B
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 18:25:59 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDB7CA40AA8
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 18:28:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF2583B5D78
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 17:25:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3B7987A3FF7
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 17:26:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45F06201025;
-	Sat, 22 Feb 2025 17:25:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEDAF1FFC6F;
+	Sat, 22 Feb 2025 17:27:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AW/05HQj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EAB444C7C;
-	Sat, 22 Feb 2025 17:25:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="gbpTAgpl"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99048143895;
+	Sat, 22 Feb 2025 17:27:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740245149; cv=none; b=ZDPiR2IHGFsov9nXrQkSxB6sPLb37/d1Rg8qoWDlg+MxRVI5Wy4Zqy5h78HrUPfkJD5+IvQm2mMip3SoXS94ErmFGsz4tuEE2wge9WZdYO584lyBhpPZ1d4A/razd7VySjMveupETu8psoIKESNUIHmMlff3FaUjfJhFzRJCpCY=
+	t=1740245237; cv=none; b=P4VmYWrn32X9vQw+dL4ntuvOtlV/PHuer3YKAY5HRIsBvMUsYs7xnNNqUU/WODuPe9uplyqIg9sXW8l0hHXiy3H91W+h+IeoXPLhcgym7y/SeCIrU98fNcech9k5K9uD0u36MGokGabjO5xncZukvNVZTNlKl0YxE57Z5GjMznQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740245149; c=relaxed/simple;
-	bh=fx3DRTGRkmKbnCXlKZ+ZwK/6h3hhdblLg2AxFF2wD44=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hKYbDryJVhN9wt2PIdtOaG/YueoV9QhPSYtO0pboY4Zpv4rLkXDxjiPvz1xnqGIHujyLRRk6uRf166jBosaQ1yE9PfhhtU4X1Ijbu46Z46HdFlF+D4qMFs7jJ+16v3It9nyB38SNVY9O0bSd1sgqVkX3sNr4ViGq61kJUNq2R10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AW/05HQj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42F9EC4CED1;
-	Sat, 22 Feb 2025 17:25:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740245148;
-	bh=fx3DRTGRkmKbnCXlKZ+ZwK/6h3hhdblLg2AxFF2wD44=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=AW/05HQj1cqYDn0v6OshMq3HXaCIsSmiZJfuXWKkuTBSnKiKRpt4EYiZZrZc937H4
-	 VQMK67wpWr2WRUM/iz2FJnQiciJxIqe3WTrlR6cKX3HAeSpNgaN0OxmHuhCojWmBme
-	 qKAidpYlyNCgX4fGQhszSBH3b6MUwDoyR1nSpQV/hq/gySmIlfIZGkCJLUmHzISdAZ
-	 dE5Xptv+JeDCLapSokeNN8AOXGxY5ohkNjQ0RPeDTPTcgNj7fsCAArHAd+CE5mgCzI
-	 ONx4ZZLLNShIB8ePk8logz262hSp7a12efV9y6nToPrYyrCqcjdJYHOIQJ1M3sEPFQ
-	 b4DE9uxTgRD7Q==
-Date: Sat, 22 Feb 2025 17:25:36 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan
- Hunter <jonathanh@nvidia.com>, Javier Carrasco
- <javier.carrasco.cruz@gmail.com>, Matti Vaittinen
- <mazziesaccount@gmail.com>, Andy Shevchenko
- <andriy.shevchenko@linux.intel.com>, Emil Gedenryd
- <emil.gedenryd@axis.com>, Arthur Becker <arthur.becker@sentec.com>, Mudit
- Sharma <muditsharma.info@gmail.com>, Per-Daniel Olsson
- <perdaniel.olsson@axis.com>, Subhajit Ghosh
- <subhajit.ghosh@tweaklogic.com>, Ivan Orlov <ivan.orlov0322@gmail.com>,
- David Heidelberg <david@ixit.cz>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v4 2/3] iio: light: Add support for AL3000a illuminance
- sensor
-Message-ID: <20250222172536.5fb73658@jic23-huawei>
-In-Reply-To: <CAPVz0n3YHgct6x_3-mhzmTOTejLj19xDLm9C8Dqe-GHv8fJBrA@mail.gmail.com>
-References: <20250217140336.107476-1-clamor95@gmail.com>
-	<20250217140336.107476-3-clamor95@gmail.com>
-	<20250222125335.177fc746@jic23-huawei>
-	<CAPVz0n3YHgct6x_3-mhzmTOTejLj19xDLm9C8Dqe-GHv8fJBrA@mail.gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1740245237; c=relaxed/simple;
+	bh=v8Rn8TMSUEc69xZwoTiQJB5VZcQX2AU+VQlc9iwPgRY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LHSAKoK/5q0JoDBjVeInAlUjV3/aKULf20yjJWQyAC1+23rpgHGY69lznQnFqsNgO2RTLXS8D+48J3P6S94J2Q6xefGLteo0GXSqpU7Gb6H+EE3wsPFFC6VOhDUAagelHQfm7w1tkzDe/ch0pcs2+bC2/56DwHvfYcy7JuaWdd0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=gbpTAgpl; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1127)
+	id 1C48E205918F; Sat, 22 Feb 2025 09:27:15 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 1C48E205918F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1740245235;
+	bh=n+fyGzv1lAnZcM4eqUWtPQLqz5c36fi+KNP0fB+Xn1s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gbpTAgplvskw1984CnV9jLD9Y2NKhBU2lDiNZA1ca+cnKAYIRELXkMw5xePC2/y4Q
+	 9lnDqr3uVwSQc/GS8tikncFnRvd3gev832HvjHU5eNkazYqprYTjREc75R4GO5aKtC
+	 0aMgiunNm8kNw9QTkGEdnAaUmkPuRWIx+I65bGi4=
+Date: Sat, 22 Feb 2025 09:27:15 -0800
+From: Saurabh Singh Sengar <ssengar@linux.microsoft.com>
+To: Michael Kelley <mhklinux@outlook.com>
+Cc: "kys@microsoft.com" <kys@microsoft.com>,
+	"haiyangz@microsoft.com" <haiyangz@microsoft.com>,
+	"wei.liu@kernel.org" <wei.liu@kernel.org>,
+	"decui@microsoft.com" <decui@microsoft.com>,
+	"deller@gmx.de" <deller@gmx.de>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+	"linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"ssengar@microsoft.com" <ssengar@microsoft.com>
+Subject: Re: [PATCH] fbdev: hyperv_fb: Allow graceful removal of framebuffer
+Message-ID: <20250222172715.GA28061@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+References: <1739611240-9512-1-git-send-email-ssengar@linux.microsoft.com>
+ <SN6PR02MB4157813782C1D9E6D1225582D4C52@SN6PR02MB4157.namprd02.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <SN6PR02MB4157813782C1D9E6D1225582D4C52@SN6PR02MB4157.namprd02.prod.outlook.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 
-On Sat, 22 Feb 2025 14:56:41 +0200
-Svyatoslav Ryhel <clamor95@gmail.com> wrote:
+On Wed, Feb 19, 2025 at 05:22:36AM +0000, Michael Kelley wrote:
+> From: Saurabh Sengar <ssengar@linux.microsoft.com> Sent: Saturday, February 15, 2025 1:21 AM
+> > 
+> > When a Hyper-V framebuffer device is unbind, hyperv_fb driver tries to
+> > release the framebuffer forcefully. If this framebuffer is in use it
+> > produce the following WARN and hence this framebuffer is never released.
+> > 
+> > [   44.111220] WARNING: CPU: 35 PID: 1882 at drivers/video/fbdev/core/fb_info.c:70 framebuffer_release+0x2c/0x40
+> > < snip >
+> > [   44.111289] Call Trace:
+> > [   44.111290]  <TASK>
+> > [   44.111291]  ? show_regs+0x6c/0x80
+> > [   44.111295]  ? __warn+0x8d/0x150
+> > [   44.111298]  ? framebuffer_release+0x2c/0x40
+> > [   44.111300]  ? report_bug+0x182/0x1b0
+> > [   44.111303]  ? handle_bug+0x6e/0xb0
+> > [   44.111306]  ? exc_invalid_op+0x18/0x80
+> > [   44.111308]  ? asm_exc_invalid_op+0x1b/0x20
+> > [   44.111311]  ? framebuffer_release+0x2c/0x40
+> > [   44.111313]  ? hvfb_remove+0x86/0xa0 [hyperv_fb]
+> > [   44.111315]  vmbus_remove+0x24/0x40 [hv_vmbus]
+> > [   44.111323]  device_remove+0x40/0x80
+> > [   44.111325]  device_release_driver_internal+0x20b/0x270
+> > [   44.111327]  ? bus_find_device+0xb3/0xf0
+> > 
+> > Fix this by moving the release of framebuffer to fb_ops.fb_destroy function
+> > so that framebuffer framework handles it gracefully
+> 
+> These changes look good for solving the specific problem where
+> the reference count WARN is produced. But there is another
+> problem of the same type that happens when doing unbind
+> of a hyperv_fb device that is in use (i.e., /dev/fb0 is open and
+> mmap'ed by some user space program).
+> 
+> For this additional problem, there are three sub-cases,
+> depending on what memory gets mmap'ed into user space.
+> Two of the three sub-cases have a problem.
+> 
+> 1) When Hyper-V FB uses deferred I/O, the vmalloc dio memory
+> is what get mapped into user space. When hyperv_fb is unbound,
+> the vmalloc dio memory is freed. But the memory doesn't actually
+> get freed if it is still mmap'ed into user space. The deferred I/O
+> mechanism is stopped, but user space can keep writing to the
+> memory even though the pixels don't get copied to the actual
+> framebuffer any longer.  When the user space program terminates
+> (or unmaps the memory), the memory will be freed. So this case
+> is OK, though perhaps a bit dubious.
+> 
+> 2) When Hyper-V FB is in a Gen 1 VM, and the frame buffer size
+> is <= 4 MiB, a normal kernel allocation is used for the
+> memory that is mmap'ed to user space. If this memory
+> is freed when hyperv_fb is unbound, bad things happen
+> because the memory is still being written to via the user space
+> mmap. There are multiple "BUG: Bad page state in process
+> bash  pfn:106c65" errors followed by stack traces.
+> 
+> 3) Similarly in a Gen 1 VM, if the frame buffer size is > 4 MiB,
+> CMA memory is allocated (assuming it is available). This CMA
+> memory gets mapped into user space. When hyperv_fb is
+> unbound, that memory is freed. But CMA complains that the
+> ref count on the pages is not zero. Here's the dmesg output:
+> 
+> [  191.629780] ------------[ cut here ]------------
+> [  191.629784] 200 pages are still in use!
+> [  191.629789] WARNING: CPU: 3 PID: 1115 at mm/page_alloc.c:6757 free_contig_range+0x15e/0x170
+> 
+> Stack trace is: 
+> 
+> [  191.629847]  ? __warn+0x97/0x160
+> [  191.629849]  ? free_contig_range+0x15e/0x170
+> [  191.629849]  ? report_bug+0x1bb/0x1d0
+> [  191.629851]  ? console_unlock+0xdd/0x1e0
+> [  191.629854]  ? handle_bug+0x60/0xa0
+> [  191.629857]  ? exc_invalid_op+0x1d/0x80
+> [  191.629859]  ? asm_exc_invalid_op+0x1f/0x30
+> [  191.629862]  ? free_contig_range+0x15e/0x170
+> [  191.629862]  ? free_contig_range+0x15e/0x170
+> [  191.629863]  cma_release+0xc6/0x150
+> [  191.629865]  dma_free_contiguous+0x34/0x70
+> [  191.629868]  dma_direct_free+0xd3/0x130
+> [  191.629869]  dma_free_attrs+0x6b/0x130
+> [  191.629872]  hvfb_putmem.isra.0+0x99/0xd0 [hyperv_fb]
+> [  191.629874]  hvfb_remove+0x75/0x80 [hyperv_fb]
+> [  191.629876]  vmbus_remove+0x28/0x40 [hv_vmbus]
+> [  191.629883]  device_remove+0x43/0x70
+> [  191.629886]  device_release_driver_internal+0xbd/0x140
+> [  191.629888]  device_driver_detach+0x18/0x20
+> [  191.629890]  unbind_store+0x8f/0xa0
+> [  191.629891]  drv_attr_store+0x25/0x40
+> [  191.629892]  sysfs_kf_write+0x3f/0x50
+> [  191.629894]  kernfs_fop_write_iter+0x142/0x1d0
+> [  191.629896]  vfs_write+0x31b/0x450
+> [  191.629898]  ksys_write+0x6e/0xe0
+> [  191.629899]  __x64_sys_write+0x1e/0x30
+> [  191.629900]  x64_sys_call+0x16bf/0x2150
+> [  191.629903]  do_syscall_64+0x4e/0x110
+> [  191.629904]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> 
+> For all three cases, I think the memory freeing and iounmap() operations
+> can be moved to the new hvfb_destroy() function so that the memory
+> is cleaned up only when there aren't any users. While these additional
+> changes could be done as a separate patch, it seems to me like they are all
+> part of the same underlying issue as the reference count problem, and
+> could be combined into this patch.
+> 
+> Michael 
+>
 
-> =D1=81=D0=B1, 22 =D0=BB=D1=8E=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 14:53 Jo=
-nathan Cameron <jic23@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
-> >
-> > On Mon, 17 Feb 2025 16:03:35 +0200
-> > Svyatoslav Ryhel <clamor95@gmail.com> wrote:
-> > =20
-> > > AL3000a is a simple I2C-based ambient light sensor, which is
-> > > closely related to AL3010 and AL3320a, but has significantly
-> > > different way of processing data generated by the sensor.
-> > >
-> > > Tested-by: Robert Eckelmann <longnoserob@gmail.com>
-> > > Tested-by: Antoni Aloy Torrens <aaloytorrens@gmail.com>
-> > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > > Reviewed-by: David Heidelberg <david@ixit.cz> =20
-> >
-> > Whilst I am confused by earlier statements about not
-> > having information on the conversion to illuminance values, I'm
-> > going to assume the look up table in here is based on some
-> > reasonable data from somewhere and hence that this is a sensor
-> > with appropriate filtering of the light to be able to do a non linear
-> > conversion from the value read and standard light curves.
-> >
-> > As such the IIO_LIGHT channel type is fine for this device.
-> > =20
->=20
-> Thank you, but IIO_INTENSITY may be proper channel as well, after your
-> explanations. If you wish, I may upload v5 with swapping LIGHT with
-> INTENSITY.
+Thanks for your review.  
 
-Where does the lux_table set of values come from?
-That seems to be key question for this driver.
+I had considered moving the entire `hvfb_putmem()` function to `destroy`,
+but I was hesitant for two reasons:  
 
->=20
-> > Applied patches 1 and 2 to the togreg branch of iio.git.
-> > Note that I'll initially push this out as testing to allow
-> > the autobuilders to see if they can find any issues that we missed.
-> > Patch 3 will need to go via the appropriate SoC tree as normal.
-> >
-> > Jonathan
-> > =20
-> > > ---
-> > >  drivers/iio/light/Kconfig   |  10 ++
-> > >  drivers/iio/light/Makefile  |   1 +
-> > >  drivers/iio/light/al3000a.c | 209 ++++++++++++++++++++++++++++++++++=
-++
-> > >  3 files changed, 220 insertions(+)
-> > >  create mode 100644 drivers/iio/light/al3000a.c
-> > >
-> > > diff --git a/drivers/iio/light/Kconfig b/drivers/iio/light/Kconfig
-> > > index 29ffa8491927..37f83e1d8893 100644
-> > > --- a/drivers/iio/light/Kconfig
-> > > +++ b/drivers/iio/light/Kconfig
-> > > @@ -43,6 +43,16 @@ config ADUX1020
-> > >        To compile this driver as a module, choose M here: the
-> > >        module will be called adux1020.
-> > >
-> > > +config AL3000A
-> > > +     tristate "AL3000a ambient light sensor"
-> > > +     depends on I2C
-> > > +     help
-> > > +       Say Y here if you want to build a driver for the Dyna Image A=
-L3000a
-> > > +       ambient light sensor.
-> > > +
-> > > +       To compile this driver as a module, choose M here: the
-> > > +       module will be called al3000a.
-> > > +
-> > >  config AL3010
-> > >       tristate "AL3010 ambient light sensor"
-> > >       depends on I2C
-> > > diff --git a/drivers/iio/light/Makefile b/drivers/iio/light/Makefile
-> > > index f14a37442712..03f10786273a 100644
-> > > --- a/drivers/iio/light/Makefile
-> > > +++ b/drivers/iio/light/Makefile
-> > > @@ -7,6 +7,7 @@
-> > >  obj-$(CONFIG_ACPI_ALS)               +=3D acpi-als.o
-> > >  obj-$(CONFIG_ADJD_S311)              +=3D adjd_s311.o
-> > >  obj-$(CONFIG_ADUX1020)               +=3D adux1020.o
-> > > +obj-$(CONFIG_AL3000A)                +=3D al3000a.o
-> > >  obj-$(CONFIG_AL3010)         +=3D al3010.o
-> > >  obj-$(CONFIG_AL3320A)                +=3D al3320a.o
-> > >  obj-$(CONFIG_APDS9300)               +=3D apds9300.o
-> > > diff --git a/drivers/iio/light/al3000a.c b/drivers/iio/light/al3000a.c
-> > > new file mode 100644
-> > > index 000000000000..e2fbb1270040
-> > > --- /dev/null
-> > > +++ b/drivers/iio/light/al3000a.c
-> > > @@ -0,0 +1,209 @@
-> > > +// SPDX-License-Identifier: GPL-2.0-only
-> > > +#include <linux/array_size.h>
-> > > +#include <linux/bitfield.h>
-> > > +#include <linux/device.h>
-> > > +#include <linux/err.h>
-> > > +#include <linux/i2c.h>
-> > > +#include <linux/mod_devicetable.h>
-> > > +#include <linux/module.h>
-> > > +#include <linux/pm.h>
-> > > +#include <linux/regmap.h>
-> > > +#include <linux/regulator/consumer.h>
-> > > +#include <linux/types.h>
-> > > +
-> > > +#include <linux/iio/iio.h>
-> > > +
-> > > +#define AL3000A_REG_SYSTEM           0x00
-> > > +#define AL3000A_REG_DATA             0x05
-> > > +
-> > > +#define AL3000A_CONFIG_ENABLE                0x00
-> > > +#define AL3000A_CONFIG_DISABLE               0x0b
-> > > +#define AL3000A_CONFIG_RESET         0x0f
-> > > +#define AL3000A_GAIN_MASK            GENMASK(5, 0)
-> > > +
-> > > +/*
-> > > + * These are pre-calculated lux values based on possible output of s=
-ensor
-> > > + * (range 0x00 - 0x3F)
-> > > + */
-> > > +static const u32 lux_table[] =3D {
-> > > +     1, 1, 1, 2, 2, 2, 3, 4,                                 /* 0 - =
-7 */
-> > > +     4, 5, 6, 7, 9, 11, 13, 16,                              /* 8 - =
-15 */
-> > > +     19, 22, 27, 32, 39, 46, 56, 67,                         /* 16 -=
- 23 */
-> > > +     80, 96, 116, 139, 167, 200, 240, 289,                   /* 24 -=
- 31 */
-> > > +     347, 416, 499, 600, 720, 864, 1037, 1245,               /* 32 -=
- 39 */
-> > > +     1495, 1795, 2155, 2587, 3105, 3728, 4475, 5373,         /* 40 -=
- 47 */
-> > > +     6450, 7743, 9296, 11160, 13397, 16084, 19309, 23180,    /* 48 -=
- 55 */
-> > > +     27828, 33408, 40107, 48148, 57803, 69393, 83306, 100000 /* 56 -=
- 63 */
-> > > +}; =20
-> > =20
+  1. I wasn’t aware of any scenario where this would be useful. However,
+     your explanation has convinced me that it is necessary.  
+  2. `hvfb_release_phymem()` relies on the `hdev` pointer, which requires
+     multiple `container_of` operations to derive it from the `info` pointer.
+     I was unsure if the complexity was justified, but it seems worthwhile now.  
 
+I will move `hvfb_putmem()` to the `destroy` function in V2, and I hope this
+will address all the cases you mentioned.
+
+- Saurabh
+
+<snip>
 
