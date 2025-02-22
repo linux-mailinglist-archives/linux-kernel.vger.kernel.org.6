@@ -1,170 +1,207 @@
-Return-Path: <linux-kernel+bounces-527154-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6F71A407EF
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 12:38:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94995A407F8
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 12:39:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA32019C52AB
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 11:38:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 425257010CB
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 11:38:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CB3620ADFE;
-	Sat, 22 Feb 2025 11:37:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E56F209669;
+	Sat, 22 Feb 2025 11:38:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="MEYLFRm6";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Jl+wydXI"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="gsqDCwTC"
+Received: from OS0P286CU010.outbound.protection.outlook.com (mail-japanwestazolkn19011038.outbound.protection.outlook.com [52.103.66.38])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5F3A209F25;
-	Sat, 22 Feb 2025 11:37:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740224248; cv=none; b=UKC5gXFKB29Ez7G3twZPwKsVgEBN8mr2XIE1t8obzH9wbkS4ocjLPaYMfDW12OtvWv7GrZvy/jAtJdNgCo3tCI/dFA4OdoIEyWnBHIdBPv/y0uTAVLQEXxmSwIhTM+eBxj0wYNqNOHzNbIwog/Fhw3bhhREFPOD3ZssA8JD1FQk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740224248; c=relaxed/simple;
-	bh=M2l+hHNlor1I/N7AnDFo1mmE59Gq9iL69qc6edsLSoQ=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=r+Rq8KzdtPZD/PQnHaLhdXZdu/3PjgnL1tbDpGmUXnbfagKACHwRwde4routWHHAZ6GYbO5LXm4d8+vWKzoDQ+ij3u8WpU5C5se8YZwSMIlAnjKRNfYPxn3FwwjV80W8nsjo2/OBUiKglE5r1iRPKV0EQ/4HxYMsz1LocH7acSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=MEYLFRm6; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Jl+wydXI; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Sat, 22 Feb 2025 11:37:20 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1740224244;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nzmVtN3YczAaOjqNhF+vJYzFdXJiArEG3TjrQqu4yPM=;
-	b=MEYLFRm6AeBERg4lrfH8WsQmmEh2YZ9WbamJ6GI57nvONZvmJQW5KG6JtgWwmypvnw0xFr
-	xQX+mpzr00SMwDZ4p69s2T0c+mlIaZl32JoBP5fn+HVW16C1gcvAZnzCrr/0BlcY7JzeA3
-	UbXW9r46fvJydvrigw0n6p2oXHzIJ4kghw10/cClAzFhuIxKr6rHzMGK0ay4O54DID+aEP
-	O2/F4NcUoyJWu3ySMh+TkoLz4eM5KAl30gANFEJMUWJBy6aghaH22NRYQJvhetQxwhf6QI
-	Borwi1HcCWI9T+OKV9qbk3/l6lTgs7rhKGa+E86crx4ev3CFuSurOmuv3cbPPw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1740224244;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nzmVtN3YczAaOjqNhF+vJYzFdXJiArEG3TjrQqu4yPM=;
-	b=Jl+wydXIpyAu3O2LHtIoj9rSRM5tZhWsRnzH3Tm39N6xoPENhdyB82BQIlHOdulZ9SwyY1
-	+PPzLb6sg8SkEjBg==
-From: "tip-bot2 for Balbir Singh" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/mm] x86/kaslr: Reduce KASLR entropy on most x86 systems
-Cc: Balbir Singh <balbirs@nvidia.com>, Ingo Molnar <mingo@kernel.org>,
- Kees Cook <kees@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Peter Zijlstra <peterz@infradead.org>, Andy Lutomirski <luto@kernel.org>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250206234234.1912585-1-balbirs@nvidia.com>
-References: <20250206234234.1912585-1-balbirs@nvidia.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D02BD207E18;
+	Sat, 22 Feb 2025 11:38:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.66.38
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740224317; cv=fail; b=ItQbHlN5DwqAp5JTviPO4ULExekAQ5Xe9y1P8mXTbLUX9wdDM5iAaZ3IPBqBXISxnTKNl87zBPyoxfVhbCud58KizgrfUszFdc5/bogdpp4YpxT+Mbtm3t08bkE9iQcBGpEIAfKosD+9eOheXsN6b3KVcBr0wpfKxdWrNxKE5nQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740224317; c=relaxed/simple;
+	bh=M7RJQRynjQyqzPnchgGJdJSMd6JIKLnppQGHywOc4QM=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=MxAVZikIVfer/PQKc5rvpkltwceqh8K9wVaoO2IBI3Y1t3TPRUFZ79kUhbqkkGqyOe2zuF+T0LtCmKCeA+jdybeo0gJnMahRXj0Alma912q9lzxQduHustC5OJqZ8m2Lr1WHByYAEHViVSdtCpvEqxnSJAFMG0oOLc3UjgBeYBc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=gsqDCwTC; arc=fail smtp.client-ip=52.103.66.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=u0OBmW8EN9maWqv7Se+W+kgEZQVNWxwlrRXx+/hcStkzfyAGq/sgxYD+Z2eyCEXpGtt7UozbZfvc3tcOj5w/SYPJOEwSUwR+Dx+xJpfPUtCbns0gilaEHuTWsHR8lWst0wsEIVqhDn4gLEzf/LwbTbn/HwPC9OrPM5Kt/dP/yvhPSzSDnwdRmHWqh2sPHXtsOqfY3q3LL4d9MT8VESfS9HnV0YpxptkusNL4k1IEMs++CBx0LO1XyR+Vft0dcSIf0JABJQFrvHyDXOoOOqOcjx+oWTXeZkFDtyOXYJ91r3PQKSdbxBsJtMgBs7s6iZjU1mPsZbLrLAe52za4/8LSzA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ad21MWO3PVvCVn9RQHDRoECV32T9c2wTWkFN8j79BuY=;
+ b=vuk2fX6dbXGDh6ByajDapt+UVj+Sgiqb1bzLDW4EQ9PJ5Uf6erdJioNfuB5eRnm9IOZs1cMUk41S82nL/6VcVm75Pfepg5KBOIlLRbZbek6Hqbh8I7iekx4PfO4sKoXhh+mXDT/cbA4Ei/HirxoLVZKxPVdYrW7Loek9NvNKfEnKtm4WnpHMOJvWi/s0J7z46x7lFkjs9Wdx34etlU0O/aYmObI1AglxM6vM0QJL4sny5/17KyM29hdlPf2lTlrXoO+nR5laeoJqe0HE72GeyLIv5MQLy2hzqmnVeUoL65hO4/h259lyggyiE0LaawVSVxNNSqqkhZkKMvimKwTtsg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ad21MWO3PVvCVn9RQHDRoECV32T9c2wTWkFN8j79BuY=;
+ b=gsqDCwTCLkxxpRk+SKvAR0MoSwhzaE54ugRFKL54c0f5Uvkfvfcz4UTUx03AR79BuZNRLMHsHGKfULpyKmjIVBQ/N9OuoVvb2dLEkGDcsT96beYRsLKtn7nZ3ho4LMuxIs1UgEaMjazMb1oxzhs2Z4cKEb3PRdBi5jCvbmHx5IVXJgC814O8h0iLwUcEk5vfjAk9B9SthYJq8VSV+v9WIPfDWCeUBezq86w4DljCSFS98OXW7PJw4V7FnodxSG8wqJp61aXjUNU8qrynCpUzJl5nN+ayyZ5P2Q7fUSjWQI2VWMprt21n4g/HQ0TlmnkIGHJonhjZwk4wpeRXkhV1Pw==
+Received: from TYCPR01MB8437.jpnprd01.prod.outlook.com (2603:1096:400:156::5)
+ by TYYPR01MB14294.jpnprd01.prod.outlook.com (2603:1096:405:210::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.16; Sat, 22 Feb
+ 2025 11:38:17 +0000
+Received: from TYCPR01MB8437.jpnprd01.prod.outlook.com
+ ([fe80::83e7:751f:f3af:768f]) by TYCPR01MB8437.jpnprd01.prod.outlook.com
+ ([fe80::83e7:751f:f3af:768f%5]) with mapi id 15.20.8466.016; Sat, 22 Feb 2025
+ 11:38:17 +0000
+From: Shengyu Qu <wiagn233@outlook.com>
+To: nbd@nbd.name,
+	lorenzo@kernel.org,
+	ryder.lee@mediatek.com,
+	shayne.chen@mediatek.com,
+	sean.wang@mediatek.com,
+	linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Cc: johannes@sipsolutions.net,
+	matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com,
+	Shengyu Qu <wiagn233@outlook.com>,
+	Peter Chiu <chui-hao.chiu@mediatek.com>
+Subject: [PATCH v1] mt76: mt7915: wed: find rx token by physical address
+Date: Sat, 22 Feb 2025 19:38:13 +0800
+Message-ID:
+ <TYCPR01MB8437EE1595CD4AB581C006E898C62@TYCPR01MB8437.jpnprd01.prod.outlook.com>
+X-Mailer: git-send-email 2.43.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TYCP286CA0153.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:383::15) To TYCPR01MB8437.jpnprd01.prod.outlook.com
+ (2603:1096:400:156::5)
+X-Microsoft-Original-Message-ID: <20250222113813.8265-1-wiagn233@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174022424056.10177.5690011025322849175.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TYCPR01MB8437:EE_|TYYPR01MB14294:EE_
+X-MS-Office365-Filtering-Correlation-Id: ca774258-fc09-4483-eeca-08dd53356657
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|7092599003|5062599005|5072599009|8060799006|15080799006|461199028|19110799003|1602099012|10035399004|13041999003|3412199025|4302099013|440099028|19111999003|41001999003|14041999003|1710799026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?DqnKHhX9R60T8BxhYuHcCi/1pXfm3Lfr+lWspo059xjcrQ3+mUtgwgj9wMiG?=
+ =?us-ascii?Q?q7pjE0Iie4SGrxq0ACCf5kwsqnOVbWM/yRFS9XlvOQFWJKMj4fFXtSwFNP1d?=
+ =?us-ascii?Q?Q4izGvcl1a/liNIkwbe5W+R8iDY85YfOWeyteo701r7r6O14e/eQM6jGeR0N?=
+ =?us-ascii?Q?eKGbMxGD2EXj1lHMwFCKm8nqo0zv46nliOTBxi4XvJaYim8iW03GkDUUZLNu?=
+ =?us-ascii?Q?fjN0/np3g5AMfTcSwprmuwNoeAaY9ZER6ZivLfnsqYLlF/O0dYrpOwxH5L6a?=
+ =?us-ascii?Q?GVVxybQdf/5pmDEmWCoSRHfNTCxvdVWlAxaW8bRDAgj1B7aBUlv2LdEA0cCL?=
+ =?us-ascii?Q?8gifCo/Cw1ZgytTShpwfRN4PNbbBU8oY0eWySeojR60F8K6cB5xzCG5JHmo9?=
+ =?us-ascii?Q?03aT+7lMT+ifz3T9EeYhPHQrqW5HvxgPNlkMyq6vu5InWWVjHAL1typ/r5TQ?=
+ =?us-ascii?Q?6AVwtuKmdJUgJIaW+GZrh+WSo1DGKb9KrbdQn3y6krRSZE1ceZlVYJnqLaDd?=
+ =?us-ascii?Q?UVVoeosZnPcNKrVeDYGjGSIUoAo0qptZDuQJZWkQy79y3kpBJQAn1Lcuq2t6?=
+ =?us-ascii?Q?VPkyFIzXpBeOm54cLr1XD3dPJTDz4P1fvLxMJ22jdO67bYLzDEsOD8w8bhXX?=
+ =?us-ascii?Q?F+rhhFmFz8noxHpFErSB6c4AewdTZdRHxh0nv+mimeCIZCdb3G2jfndeGcrx?=
+ =?us-ascii?Q?nYIPUW7DqnUPAIzn6KQaEsGqGEReJdFBq1NyAJlCHZRUMHSD0Lqj3QPl9eK5?=
+ =?us-ascii?Q?MU/8PrFfidYuCewBLQ7vV/WwiLTHlosJb7xpcyC6if2tH9Fxvp53sAFB0oI/?=
+ =?us-ascii?Q?N9kaT7KKxoFLNt12SnNbDykYRsk4w55sjdObUNOEFehAAWiUEy5pC3g9BymS?=
+ =?us-ascii?Q?xJS3y6NW9N5odh1kyPL8ae4j2CyPBrmN5Evp7ADwQos2V74Ztj9IR3L225q/?=
+ =?us-ascii?Q?+yLHHeTtjzZDZQY7tcNrUw+WUyN4NoMkX9x1dQLAb5b4QDwdDY9KkexpRkyb?=
+ =?us-ascii?Q?xYdNONRlpeQozVlK8NC85wlFjeCclu5jGOIPy/4IjqDVboWXHT0NbyBZ/bBv?=
+ =?us-ascii?Q?5EdSc3x90kNDtXzLghtScSMacwK2LyQuQjYtSfkSFbiFq2rbfcwLzWVkwTU3?=
+ =?us-ascii?Q?SN82fX7qVmFkXkHbccdF5h3bKsOi5wSdFiJ9CNZQniKC/is3tEG826h8UipO?=
+ =?us-ascii?Q?HKEHUbs9U12SUiXDIMme0Ty74Qq72iHlQ3V+qQRoh3Tk2kSHvU4zQhVDiH+m?=
+ =?us-ascii?Q?CfpAti4Qt/XWx/JRqWV3xymLaW/pBmsbpAfHuija4zBRAzZr634YWbEMDoC1?=
+ =?us-ascii?Q?DDVJ6QnwGPiyJ6Zd6OyL6VK8rFTaGlG3ae843zQWRmPCjmiRS6/O+UiCii3K?=
+ =?us-ascii?Q?9K9uCIDJuQNgfQbu7KuInmzn8vxZ?=
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?42icxF7SlW9PU8Ir63h9hWV0xs/0aYOR/Xk4OmbKDSE5906ALGfpRkQ9OM/U?=
+ =?us-ascii?Q?rN0anVxBxXnEN5eBE1Rq3pKfnW/Fntd4QTYYtDRlbijWjMHyp0wQPn6eR0Rr?=
+ =?us-ascii?Q?RZ1oZw9VGqGqIP0Rdy/XfBvFRL9YzLJW0eqqYckP55N4oeYbeqj23FKq9Y2E?=
+ =?us-ascii?Q?pW1ZcdeMNBnBZekX3OFBELHAoOUbeoSDZpSGVzy6tTlubbsqrN9KAJ6kenjP?=
+ =?us-ascii?Q?MMIv9+eR0i841gYXE7pBVf+7HVZc08gCN/Cwt+nUYQTBBNHWzToDKsmFjEgW?=
+ =?us-ascii?Q?/gwIbftzT4jyyZSirMcCOOPlAkQM4qO51rU9nU4HKxDsDwNAZuj+JXMXYDBi?=
+ =?us-ascii?Q?SeXaPTe76cXFoQDuYPFxYR9sI0wo9ZKhsfKdxh/+ReGbiNeP2SRfcqLzMnwe?=
+ =?us-ascii?Q?+fTR2HEnIEAEk+CEpZZab8WC51qrbG/itlo5p92HIVOduqLNEgV4Cs+8bcRK?=
+ =?us-ascii?Q?Jmcc34rHFTkmjT94CMr4WqoaLm9h6W+Lx7oE2g/EBfQVhspCZSK0jdhR+1y/?=
+ =?us-ascii?Q?XRW1rN37fUjHoEorDZcvGdFP7dx8tA5IiekSxGdb+5lnLyUmwwpVbEaSFCc7?=
+ =?us-ascii?Q?UkEvq+yCUHygBbPs/A/bqJFX7Yy++C5z67PKkxwuq1dDqPFR+i4vkWqM4H19?=
+ =?us-ascii?Q?3dv2hAOTs1wlXO+mHjLZOIsvzBvjzwAazWoCwgkZzK9aRZXQC5k1EPbEcYae?=
+ =?us-ascii?Q?KZvRXEh0ugALe7t86yNo5yu526xbHOIq8DuqhQD+Gdlftwk7r+Ch2ud+a9xQ?=
+ =?us-ascii?Q?lxzL1jxz9JuOIYcTWV5kvfNNj3q3mYLP0AXpg88F9cAKJrYc/9hBaer+W/4V?=
+ =?us-ascii?Q?ZEaCf177HZMaTfrWgzST+2bJHnbkwjXoslhqmmTmOLXA0xw9Q5Crh4/FFbmP?=
+ =?us-ascii?Q?hMLnBZhn5BKcJP9Uk5szqrEUngL5PWFwesLFOT24Eb7tuZdElecWchtamJct?=
+ =?us-ascii?Q?cKNvYY9ngQ9LbsEOCQsw108uV7LfoRVokvBGzxWxXkH1S2VlbvI0TmCr70Xa?=
+ =?us-ascii?Q?1c6RlhGR1fPKyRc9iOyeiIbBPNMWM3/zPvrbtkuhR8soLCag5W2CFmg+XrA+?=
+ =?us-ascii?Q?lPImPpOcYxi/tOL/31OSJ679Xhzxhz4i7ARq/6oRC1RUAm9UND/aDh57bPyl?=
+ =?us-ascii?Q?FO0LlCRrdxX7I4UIp7G5BewI1GilYB0JwTm1SWHHrA0C42frGhJn9TeMnia6?=
+ =?us-ascii?Q?LhWOPa0LTi6CAnq7vMpvvFhrN3u6K4StrfvEezJ5G0EE9G3YQogRxNG1Chf3?=
+ =?us-ascii?Q?UwMvoSaNIpWnzz/R86ITkU7FwxhoJd/AHXc3TirRd87ZNlh8LMihjvXqXTKq?=
+ =?us-ascii?Q?wmc=3D?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ca774258-fc09-4483-eeca-08dd53356657
+X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB8437.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Feb 2025 11:38:17.5156
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYYPR01MB14294
 
-The following commit has been merged into the x86/mm branch of tip:
+The token id in RxDMAD may be incorrect when it is not the last frame
+due to WED HW bug. Lookup correct token id by physical address in sdp0.
 
-Commit-ID:     7ffb791423c7c518269a9aad35039ef824a40adb
-Gitweb:        https://git.kernel.org/tip/7ffb791423c7c518269a9aad35039ef824a40adb
-Author:        Balbir Singh <balbirs@nvidia.com>
-AuthorDate:    Fri, 07 Feb 2025 10:42:34 +11:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Sat, 22 Feb 2025 12:25:57 +01:00
+Downstream patch link: https://git01.mediatek.com/plugins/gitiles/openwrt/feeds/mtk-openwrt-feeds/+/737340322ab22b138fd200e020d61ffdbe3e36a9/autobuild/autobuild_5.4_mac80211_release/mt7988_wifi7_mac80211_mlo/package/kernel/mt76/patches/0062-mtk-wifi-mt76-mt7915-wed-find-rx-token-by-physical-a.patch
 
-x86/kaslr: Reduce KASLR entropy on most x86 systems
-
-When CONFIG_PCI_P2PDMA=y (which is basically enabled on all
-large x86 distros), it maps the PFN's via a ZONE_DEVICE
-mapping using devm_memremap_pages(). The mapped virtual
-address range corresponds to the pci_resource_start()
-of the BAR address and size corresponding to the BAR length.
-
-When KASLR is enabled, the direct map range of the kernel is
-reduced to the size of physical memory plus additional padding.
-If the BAR address is beyond this limit, PCI peer to peer DMA
-mappings fail.
-
-Fix this by not shrinking the size of the direct map when
-CONFIG_PCI_P2PDMA=y.
-
-This reduces the total available entropy, but it's better than
-the current work around of having to disable KASLR completely.
-
-[ mingo: Clarified the changelog to point out the broad impact ... ]
-
-Signed-off-by: Balbir Singh <balbirs@nvidia.com>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Reviewed-by: Kees Cook <kees@kernel.org>
-Acked-by: Bjorn Helgaas <bhelgaas@google.com> # drivers/pci/Kconfig
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Link: https://lore.kernel.org/lkml/20250206023201.1481957-1-balbirs@nvidia.com/
-Link: https://lore.kernel.org/r/20250206234234.1912585-1-balbirs@nvidia.com
---
- arch/x86/mm/kaslr.c | 10 ++++++++--
- drivers/pci/Kconfig |  6 ++++++
- 2 files changed, 14 insertions(+), 2 deletions(-)
+Signed-off-by: Peter Chiu <chui-hao.chiu@mediatek.com>
+Signed-off-by: Shengyu Qu <wiagn233@outlook.com>
 ---
- arch/x86/mm/kaslr.c | 10 ++++++++--
- drivers/pci/Kconfig |  6 ++++++
- 2 files changed, 14 insertions(+), 2 deletions(-)
+ drivers/net/wireless/mediatek/mt76/dma.c | 25 +++++++++++++++++++++++-
+ 1 file changed, 24 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/mm/kaslr.c b/arch/x86/mm/kaslr.c
-index 11a9354..3c306de 100644
---- a/arch/x86/mm/kaslr.c
-+++ b/arch/x86/mm/kaslr.c
-@@ -113,8 +113,14 @@ void __init kernel_randomize_memory(void)
- 	memory_tb = DIV_ROUND_UP(max_pfn << PAGE_SHIFT, 1UL << TB_SHIFT) +
- 		CONFIG_RANDOMIZE_MEMORY_PHYSICAL_PADDING;
+diff --git a/drivers/net/wireless/mediatek/mt76/dma.c b/drivers/net/wireless/mediatek/mt76/dma.c
+index 844af16ee551..5bf63014263c 100644
+--- a/drivers/net/wireless/mediatek/mt76/dma.c
++++ b/drivers/net/wireless/mediatek/mt76/dma.c
+@@ -444,9 +444,32 @@ mt76_dma_get_buf(struct mt76_dev *dev, struct mt76_queue *q, int idx,
+ 	mt76_dma_should_drop_buf(drop, ctrl, buf1, desc_info);
  
--	/* Adapt physical memory region size based on available memory */
--	if (memory_tb < kaslr_regions[0].size_tb)
-+	/*
-+	 * Adapt physical memory region size based on available memory,
-+	 * except when CONFIG_PCI_P2PDMA is enabled. P2PDMA exposes the
-+	 * device BAR space assuming the direct map space is large enough
-+	 * for creating a ZONE_DEVICE mapping in the direct map corresponding
-+	 * to the physical BAR address.
-+	 */
-+	if (!IS_ENABLED(CONFIG_PCI_P2PDMA) && (memory_tb < kaslr_regions[0].size_tb))
- 		kaslr_regions[0].size_tb = memory_tb;
- 
- 	/*
-diff --git a/drivers/pci/Kconfig b/drivers/pci/Kconfig
-index 2fbd379..5c3054a 100644
---- a/drivers/pci/Kconfig
-+++ b/drivers/pci/Kconfig
-@@ -203,6 +203,12 @@ config PCI_P2PDMA
- 	  P2P DMA transactions must be between devices behind the same root
- 	  port.
- 
-+	  Enabling this option will reduce the entropy of x86 KASLR memory
-+	  regions. For example - on a 46 bit system, the entropy goes down
-+	  from 16 bits to 15 bits. The actual reduction in entropy depends
-+	  on the physical address bits, on processor features, kernel config
-+	  (5 level page table) and physical memory present on the system.
+ 	if (mt76_queue_is_wed_rx(q)) {
++		u32 id, find = 0;
+ 		u32 token = FIELD_GET(MT_DMA_CTL_TOKEN, buf1);
+-		struct mt76_txwi_cache *t = mt76_rx_token_release(dev, token);
++		struct mt76_txwi_cache *t;
 +
- 	  If unsure, say N.
++		if (*more) {
++			spin_lock_bh(&dev->rx_token_lock);
++
++			idr_for_each_entry(&dev->rx_token, t, id) {
++				if (t->dma_addr == le32_to_cpu(desc->buf0)) {
++					find = 1;
++					token = id;
++
++					/* Write correct id back to DMA*/
++					u32p_replace_bits(&buf1, id,
++							  MT_DMA_CTL_TOKEN);
++					WRITE_ONCE(desc->buf1, cpu_to_le32(buf1));
++					break;
++				}
++			}
++
++			spin_unlock_bh(&dev->rx_token_lock);
++			if (!find)
++				return NULL;
++		}
  
- config PCI_LABEL
++		t = mt76_rx_token_release(dev, token);
+ 		if (!t)
+ 			return NULL;
+ 
+-- 
+2.43.0
+
 
