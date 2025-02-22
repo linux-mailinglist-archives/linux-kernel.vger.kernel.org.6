@@ -1,53 +1,55 @@
-Return-Path: <linux-kernel+bounces-526919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BE86A4052A
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 03:56:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCBE5A4052D
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 03:58:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26FD1423B39
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 02:56:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07C9E707693
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 02:58:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B45081FCFE2;
-	Sat, 22 Feb 2025 02:56:07 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6B481FF612;
+	Sat, 22 Feb 2025 02:58:25 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29D431E3DED
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 02:56:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7D271E3DED
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 02:58:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740192967; cv=none; b=tYyDrVN1PxQ95Pvi0Xvwcs/shGVHBTGQv67DOG7XB4zqVEeU2nqbsTJwUxh7njshtsH8aDU5v91FiZ7I1YnEaC30Bzz+Bme7dr3ylBt1deiBTdmfl9CLC+Ov1DeM/Vj/vKZY9bHsv4OoKJE5ygkm2bB6GoaW03jbcjZ2b7Lys+w=
+	t=1740193105; cv=none; b=meqab7xmM81fjdEjmI6lBKoDUDhab0wCasjlk8q1R7VHKa/27SuSA0eahJg7m7s63yqvJuKVJL0mE6HEwjRuPBDPuYKVr/1dCzNlogNbAiVvdB38TjLrKHUbBupEDREShlKc/BxPj5TIUQcraKmGhOFI+nJlaqzbWPAWY1iU1bk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740192967; c=relaxed/simple;
-	bh=o1UeAH8rphWnQoSLtNILzpujqiTvjfWuVuFnhUsFbR0=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=emvdE9QjivkZm1ioeGVioY0mKV76AhiZ9t59qMxu/CQRFqtv7VHkAaAquoyK7aC15DyXFf9zmdq3NQV0MhnhNTl8uejHphEL4nUo1MNGGm/t6H1SMmyFwg6ibvTKsOJacrITjfVP8pwHOs0N59yKBUhkpWw/Eft9iu6rqesskbI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+	s=arc-20240116; t=1740193105; c=relaxed/simple;
+	bh=c2J9o0YK624twklzQNJrfHpQW68yr+dRangFzxpliL8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=FRwPlN76dsBxQowTFSHKq8wOtkAln9Y33AQmbuQYZiYsQFTHjOSn58+2aEsGQsGZfRpQhpTdWmoG6Jnq08bU2yTdZ94CI2g27jPCvymrgMu/N6nSA/zeoQUCPNEGrQtvvW8XMV4tJShr19MjLj5clSQ4ASjEz4aGpTxhyAuhAUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Z0BRL1vgyzWvFM;
-	Sat, 22 Feb 2025 10:54:22 +0800 (CST)
-Received: from kwepemg100017.china.huawei.com (unknown [7.202.181.58])
-	by mail.maildlp.com (Postfix) with ESMTPS id 249D21400FD;
-	Sat, 22 Feb 2025 10:55:55 +0800 (CST)
-Received: from huawei.com (10.175.124.71) by kwepemg100017.china.huawei.com
- (7.202.181.58) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sat, 22 Feb
- 2025 10:55:54 +0800
-From: Wupeng Ma <mawupeng1@huawei.com>
-To: <akpm@linux-foundation.org>
-CC: <david@redhat.com>, <kasong@tencent.com>, <ryan.roberts@arm.com>,
-	<chrisl@kernel.org>, <huang.ying.caritas@gmail.com>,
-	<schatzberg.dan@gmail.com>, <baohua@kernel.org>, <hanchuanhua@oppo.com>,
-	<willy@infradead.org>, <mawupeng1@huawei.com>, <linux-mm@kvack.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH] mm: swap: Avoid infinite loop if no valid swap entry found during do_swap_page
-Date: Sat, 22 Feb 2025 10:46:17 +0800
-Message-ID: <20250222024617.2790609-1-mawupeng1@huawei.com>
-X-Mailer: git-send-email 2.43.0
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4Z0BSN3yjpzHr9G;
+	Sat, 22 Feb 2025 10:55:16 +0800 (CST)
+Received: from kwepemd500013.china.huawei.com (unknown [7.221.188.12])
+	by mail.maildlp.com (Postfix) with ESMTPS id 7C826140336;
+	Sat, 22 Feb 2025 10:58:19 +0800 (CST)
+Received: from localhost.huawei.com (10.169.71.169) by
+ kwepemd500013.china.huawei.com (7.221.188.12) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Sat, 22 Feb 2025 10:58:18 +0800
+From: Yongbang Shi <shiyongbang@huawei.com>
+To: <xinliang.liu@linaro.org>, <tiantao6@hisilicon.com>,
+	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
+	<tzimmermann@suse.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
+	<kong.kongxinwei@hisilicon.com>
+CC: <liangjian010@huawei.com>, <chenjianmin@huawei.com>,
+	<lidongming5@huawei.com>, <shiyongbang@huawei.com>, <libaihan@huawei.com>,
+	<shenjian15@huawei.com>, <shaojijie@huawei.com>,
+	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v3 drm-dp 0/8] Add HPD, getting EDID, colorbar features in DP function
+Date: Sat, 22 Feb 2025 10:50:53 +0800
+Message-ID: <20250222025102.1519798-1-shiyongbang@huawei.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,76 +58,83 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemg100017.china.huawei.com (7.202.181.58)
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemd500013.china.huawei.com (7.221.188.12)
 
-From: Ma Wupeng <mawupeng1@huawei.com>
+From: Baihan Li <libaihan@huawei.com>
 
-During our test, infinite loop is produced during #PF will lead to infinite
-error log as follow:
+To support DP HPD, edid printing, and colorbar display features based on
+the Hisislcon DP devices. 
 
-   get_swap_device: Bad swap file entry 114000000
-
-Digging into the source, we found that the swap entry is invalid due to
-unknown reason, and this lead to invalid swap_info_struct. Excessive log
-printing can fill up the prioritized log space, leading to the purging of
-originally valid logs and hindering problem troubleshooting. To make this
-more robust, kill this task.
-
-Signed-off-by: Ma Wupeng <mawupeng1@huawei.com>
 ---
- include/linux/swap.h | 1 +
- mm/memory.c          | 9 ++++++++-
- mm/swapfile.c        | 2 +-
- 3 files changed, 10 insertions(+), 2 deletions(-)
+ChangeLog:
+v2 -> v3:
+  - restructuring the header p_reg.h, suggested by Dmitry Baryshkov.
+  - add commit log about dp serdes, suggested by Dmitry Baryshkov.
+  - return value in hibmc_dp_serdes_init(), suggested by Dmitry Baryshkov.
+  - add static const in the array of serdes_tx_cfg[], suggested by Dmitry Baryshkov.
+  - change drm_warn to drm_dbg_dp, suggested by Dmitry Baryshkov.
+  - add explanations about dp serdes macros, suggested by Dmitry Baryshkov.
+  - change commit to an imperative sentence, suggested by Dmitry Baryshkov.
+  - put HIBMC_DP_HOST_SERDES_CTRL in dp_serdes.h, suggested by Dmitry Baryshkov.
+  - split the patch into two parts, suggested by Dmitry Baryshkov.
+  - Capitalized EDID and AUX, suggested by Dmitry Baryshkov.
+  - rewrite the commit log, suggested by Dmitry Baryshkov.
+  - move colorbar debugfs entry to this patch, suggested by Dmitry Baryshkov.
+  - change binary format to integer format, suggested by Dmitry Baryshkov.
+  - remove mdelay(100) hpd function in ISR, suggested by Dmitry Baryshkov.
+  - remove enble_display in ISR, suggested by Dmitry Baryshkov.
+  - change drm_kms_helper_connector_hotplug_event() to
+    drm_connector_helper_hpd_irq_event(), suggested by Dmitry Baryshkov.
+  - move macros to dp_reg.h, suggested by Dmitry Baryshkov.
+  - remove struct irqs, suggested by Dmitry Baryshkov.
+  - split this patch into two parts, suggested by Dmitry Baryshkov.
+v1 -> v2:
+  - splittting the patch and add more detailed the changes in the commit message, suggested by Dmitry Baryshkov.
+  - changing all names of dp phy to dp serdes.
+  - deleting type conversion, suggested by Dmitry Baryshkov.
+  - deleting hibmc_dp_connector_get_modes() and using drm_connector_helper_get_modes(), suggested by Dmitry Baryshkov.
+  - add colorbar introduction in commit, suggested by Dmitry Baryshkov.
+  - deleting edid decoder and its debugfs, suggested by Dmitry Baryshkov.
+  - using debugfs_init() callback, suggested by Dmitry Baryshkov.
+  - splittting colorbar and debugfs in different patches, suggested by Dmitry Baryshkov.
+  - optimizing the description in commit message, suggested by Dmitry Baryshkov.
+  - add mdelay(100) comments, suggested by Dmitry Baryshkov.
+  - deleting display enable in hpd event, suggested by Dmitry Baryshkov.
+---
 
-diff --git a/include/linux/swap.h b/include/linux/swap.h
-index b13b72645db3..0fa39cf66bc4 100644
---- a/include/linux/swap.h
-+++ b/include/linux/swap.h
-@@ -508,6 +508,7 @@ struct backing_dev_info;
- extern int init_swap_address_space(unsigned int type, unsigned long nr_pages);
- extern void exit_swap_address_space(unsigned int type);
- extern struct swap_info_struct *get_swap_device(swp_entry_t entry);
-+struct swap_info_struct *_swap_info_get(swp_entry_t entry);
- sector_t swap_folio_sector(struct folio *folio);
- 
- static inline void put_swap_device(struct swap_info_struct *si)
-diff --git a/mm/memory.c b/mm/memory.c
-index b4d3d4893267..2d36e5a644d1 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -4365,8 +4365,15 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
- 
- 	/* Prevent swapoff from happening to us. */
- 	si = get_swap_device(entry);
--	if (unlikely(!si))
-+	if (unlikely(!si)) {
-+		if (unlikely(!_swap_info_get(entry)))
-+			/*
-+			 * return VM_FAULT_SIGBUS for invalid swap entry to
-+			 * avoid infinite #PF.
-+			 */
-+			ret = VM_FAULT_SIGBUS;
- 		goto out;
-+	}
- 
- 	folio = swap_cache_get_folio(entry, vma, vmf->address);
- 	if (folio)
-diff --git a/mm/swapfile.c b/mm/swapfile.c
-index ba19430dd4ea..8f580eff0ecb 100644
---- a/mm/swapfile.c
-+++ b/mm/swapfile.c
-@@ -1287,7 +1287,7 @@ int get_swap_pages(int n_goal, swp_entry_t swp_entries[], int entry_order)
- 	return n_ret;
- }
- 
--static struct swap_info_struct *_swap_info_get(swp_entry_t entry)
-+struct swap_info_struct *_swap_info_get(swp_entry_t entry)
- {
- 	struct swap_info_struct *si;
- 	unsigned long offset;
+Baihan Li (8):
+  drm/hisilicon/hibmc: Restructuring the header dp_reg.h
+  drm/hisilicon/hibmc: Add dp phy cfg to adjust serdes rate, voltage and
+    pre-emphasis
+  drm/hisilicon/hibmc: Add dp serdes cfg in dp process
+  drm/hisilicon/hibmc: Refactor the member of drm_aux in struct hibmc_dp
+  drm/hisilicon/hibmc: Getting connector info and edid by using aux
+    channel
+  drm/hisilicon/hibmc: Add colorbar-cfg feature and its debugfs file
+  drm/hisilicon/hibmc: Enable this hot plug detect of irq feature
+  drm/hisilicon/hibmc: Add MSI irq getting and requesting for HPD
+
+ drivers/gpu/drm/hisilicon/hibmc/Makefile      |   3 +-
+ drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.c   |  16 ++-
+ drivers/gpu/drm/hisilicon/hibmc/dp/dp_comm.h  |   7 +-
+ .../gpu/drm/hisilicon/hibmc/dp/dp_config.h    |   2 +
+ drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c    |  78 ++++++++++++-
+ drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h    |  37 +++++++
+ drivers/gpu/drm/hisilicon/hibmc/dp/dp_link.c  |  55 +++++++---
+ drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h   | 103 +++++++++++-------
+ .../gpu/drm/hisilicon/hibmc/dp/dp_serdes.c    |  72 ++++++++++++
+ .../gpu/drm/hisilicon/hibmc/dp/dp_serdes.h    |  40 +++++++
+ .../drm/hisilicon/hibmc/hibmc_drm_debugfs.c   | 100 +++++++++++++++++
+ .../gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c    |  95 +++++++++++++++-
+ .../gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c   |  85 +++++++++++----
+ .../gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h   |  12 ++
+ 14 files changed, 617 insertions(+), 88 deletions(-)
+ create mode 100644 drivers/gpu/drm/hisilicon/hibmc/dp/dp_serdes.c
+ create mode 100644 drivers/gpu/drm/hisilicon/hibmc/dp/dp_serdes.h
+ create mode 100644 drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_debugfs.c
+
 -- 
-2.43.0
+2.33.0
 
 
