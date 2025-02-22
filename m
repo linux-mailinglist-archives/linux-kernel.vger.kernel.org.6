@@ -1,178 +1,146 @@
-Return-Path: <linux-kernel+bounces-527054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5B41A406CD
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 10:25:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33F01A406D1
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 10:26:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EFF83BE506
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 09:25:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC3ED3BE8E3
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 09:26:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BE07206F09;
-	Sat, 22 Feb 2025 09:25:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 273982066FE;
+	Sat, 22 Feb 2025 09:26:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NAKDB5vm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="b5mqtsqW"
+Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC63C2063FC;
-	Sat, 22 Feb 2025 09:25:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFC671FE46B
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 09:26:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740216327; cv=none; b=HWdzHAcNT52K712qQF53bEuDdiMKMAbkI2bS6Chl15epFxJAwNc3agN/JS+zKaIvQjVck9yDKh8cRIhdIAwReRsyYKlSYQrRQ5w8zivKqIrY4v8j4EMSscFIFnM1cDCex3pkYya7drto8QK8pf6JlLnQVmqj+qGnx6InXxq9JMA=
+	t=1740216384; cv=none; b=iIwRwbkGTkLCND88fAbhOa92YiLRMskybOqtCJd99aaPMOikaoq1LwPpB90r3LkV794MOV5J3MswkYHT3aZmZm3wMTS9uxtz+HE3mgfkdHxQc5Z7EeJKM47dZonxGo+c/ZOuWQbiPKhHKlsBCUDkVcxORgEDNto/yLurBLILnlA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740216327; c=relaxed/simple;
-	bh=IMcz2FR9FyEmU9VdznZ5X96EJVgFB1Vgb5+TmAyVvZU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=CGj8jiAix/LXTe7bf+tdLwt2Z1gZn7jZFhjNYtT3X6287O7bpzVLkE+64Uaou81T4TXISFj+ZifLHCoBGJ3gDL/cJ7ICg0KdwUk7h2aletYnhhFTaLPiwDsahZ9jOSd7UsN+LHXFKIXAtcUBrkiSkO8zeQJiMZfV/V6EFtyfRLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NAKDB5vm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EE65C4CED1;
-	Sat, 22 Feb 2025 09:25:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740216327;
-	bh=IMcz2FR9FyEmU9VdznZ5X96EJVgFB1Vgb5+TmAyVvZU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=NAKDB5vm9wJVend3wFBqfIvJfoE8yqbf+HYWkHmxseZtRL881gkgrz8qGktlNM0z9
-	 03ojd1ZC/90sucn8uIFtLwXv6hTJfyAy73P16tChTnpvV/8uqKojNXsSIRTyaoSFJC
-	 +Aw/eVxQ4yvy42sdcT27Ri8jzFdwu9s3yoAf3bJ6YNgkNMb5RKFCk1IkzzfFX+TgLC
-	 /jOvSOnpibFXbVDWcybT/1sIjOEdMmF37bQ0dSOxoAb7vofhMv9JkoHlNxaDAmrqK5
-	 lDzTbpOEHFb2s6+MvZ3V4jjdtRDOL4B8448GD39Eb6t1EcLznoC7JUsYKEdG6q4/E7
-	 Rx4rzWc3DFiBg==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Boqun Feng" <boqun.feng@gmail.com>
-Cc: "Tamir Duberstein" <tamird@gmail.com>,  "Miguel Ojeda"
- <ojeda@kernel.org>,  "Anna-Maria Behnsen" <anna-maria@linutronix.de>,
-  "Frederic Weisbecker" <frederic@kernel.org>,  "Thomas Gleixner"
- <tglx@linutronix.de>,  "Danilo Krummrich" <dakr@kernel.org>,  "Alex
- Gaynor" <alex.gaynor@gmail.com>,  "Gary Guo" <gary@garyguo.net>,
-  =?utf-8?Q?Bj=C3=B6rn?=
- Roy Baron <bjorn3_gh@protonmail.com>,  "Benno Lossin"
- <benno.lossin@proton.me>,  "Alice Ryhl" <aliceryhl@google.com>,  "Trevor
- Gross" <tmgross@umich.edu>,  "Lyude Paul" <lyude@redhat.com>,  "Guangbo
- Cui" <2407018371@qq.com>,  "Dirk Behme" <dirk.behme@gmail.com>,  "Daniel
- Almeida" <daniel.almeida@collabora.com>,
-  <rust-for-linux@vger.kernel.org>,  <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v8 02/14] rust: hrtimer: introduce hrtimer support
-In-Reply-To: <Z7iZevQkYVGDoeTa@Mac.home> (Boqun Feng's message of "Fri, 21 Feb
-	2025 07:19:22 -0800")
-References: <20250218-hrtimer-v3-v6-12-rc2-v8-2-48dedb015eb3@kernel.org>
-	<KDmrJnQA2_Ojf67mD8WA_UafgVCACRRleB9t-D_1yl_bua8e1VWdGQAUvmMGHscqRHu1gzPJCKe_BfotutZm5Q==@protonmail.internalid>
-	<CAJ-ks9ncOyGyQsDFOBxg-7wmXkrQYiZr6H6eEFWsFstk=p1uAA@mail.gmail.com>
-	<87wmdkgvr0.fsf@kernel.org>
-	<djAeSx8DNZwss2-UqXGmhVPqYm2z4LhKWC70jPHPisd1w70qmpmOfVbHfhqJErhoFwVFM8IpbTv4MKkk_BIpQw==@protonmail.internalid>
-	<CAJ-ks9mNidHZvWkFJE1jExc2oVk_bbJpiO_DRMrWu5nYhTpKgg@mail.gmail.com>
-	<87ldtzhexi.fsf@kernel.org> <87cyfbe89x.fsf@kernel.org>
-	<Z7iQcDa72XnJ5zGC@Mac.home>
-	<CAJ-ks9kQccoa7znFNzWAgi6_G0TKvLUARWPZ_Dbed1C-d4Lr+Q@mail.gmail.com>
-	<lP-bWmvvDdcUDicFow-u6piINSeNk1_a_BWKDDFMbFpE3Mo_5lxqfpA6v_8yYqTXNDmVZLXyz6RY3cQHhMoVrA==@protonmail.internalid>
-	<Z7iZevQkYVGDoeTa@Mac.home>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Sat, 22 Feb 2025 10:25:09 +0100
-Message-ID: <87y0xycowa.fsf@kernel.org>
+	s=arc-20240116; t=1740216384; c=relaxed/simple;
+	bh=8BKLAvfUEeiNwQLGr02luoIsZmn9btFVCQQ73Q+s9hU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OcNbhYm0JH2JaOq8nu7ChardL3/bsLrwHhDhrDzbOX4/WNgNcWMFGJL6x6U10FuyL4lALgxA45U7u5zTvQ1SgiElc2ELmBFUTpd/v/0skky9+Q/cI48Wy1KgnTstl0qWYxSgjwfAuFsVHGAJMQPjgUUmOQ8xS8vKKQl0SAiRcpc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=b5mqtsqW; arc=none smtp.client-ip=95.215.58.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1740216378;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=EYBm0Ekxvt3l/iDJUii0Y8cGNo2O2CjlIZcmsVgVA+4=;
+	b=b5mqtsqWAY54Q+Hi0GLOq7C3uco1qFRUdbpmE1rFuEA+rV1n83LdifoSM2VmtfmnFr+/H2
+	QMWuZp8FJAf0erWK0MTCMQO/E6JDD5wsmr98I0b6dhQkqb7KmDPKRntCuti3XE8Ult2riN
+	9QuGH8OJ/4KIdOnt8cwkSZzlsvZBiMw=
+From: Jiayuan Chen <jiayuan.chen@linux.dev>
+To: bpf@vger.kernel.org,
+	netdev@vger.kernel.org
+Cc: andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	horms@kernel.org,
+	ricardo@marliere.net,
+	jiayuan.chen@linux.dev,
+	viro@zeniv.linux.org.uk,
+	dmantipov@yandex.ru,
+	aleksander.lobakin@intel.com,
+	linux-ppp@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	mrpre@163.com,
+	Paul Mackerras <paulus@samba.org>
+Subject: [PATCH net-next v3 0/1] ppp: Fix KMSAN uninit-value warning with bpf
+Date: Sat, 22 Feb 2025 17:25:55 +0800
+Message-ID: <20250222092556.274267-1-jiayuan.chen@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-"Boqun Feng" <boqun.feng@gmail.com> writes:
+Syzbot caught an "KMSAN: uninit-value" warning [1], which is caused by the
+ppp driver not initializing a 2-byte header when using socket filters.
 
-> On Fri, Feb 21, 2025 at 09:46:08AM -0500, Tamir Duberstein wrote:
->> On Fri, Feb 21, 2025 at 9:40=E2=80=AFAM Boqun Feng <boqun.feng@gmail.com=
-> wrote:
->> >
->> > Hmm... if you mean:
->> >
->> > trait HasHrTimer {
->> >     unsafe fn start(&self, expires: Ktime) {
->> >         ...
->> >     }
->> > }
->> >
->> > Then it'll be problematic because the pointer derived from `&self`
->> > doesn't have write provenance, therefore in a timer callback, the
->> > pointer cannot be used for write, which means for example you cannot
->> > convert the pointer back into a `Pin<Box<HasTimer>>`.
->> >
->> > To answer Tamir's question, pointers are heavily used here because we
->> > need to preserve the provenance.
->>
->> Wouldn't the natural implication be that &mut self is needed? Maybe
->
-> For an `Arc<HasTimer>`, you cannot get `&mut self`.
->
->> you can help me understand why pointers can express a contract that
->> references can't?
->
-> I assume you already know what a pointer provenance is?
->
-> 	http://doc.rust-lang.org/std/ptr/index.html#provenance
->
-> Passing a pointer (including offset operation on it) preserves the
-> provenance (determined as derive time), however, deriving a pointer from
-> a reference gives the pointer a provenance based on the reference type.
-> For example, let's say we have an `Arc<i32>` and a clone:
->
-> 	let arc =3D Arc::new(42);
-> 	let clone =3D arc.clone();
->
-> you can obviously do a into_raw() + from_raw() pair:
->
-> 	let ptr =3D Arc::into_raw(arc);
-> 	let arc =3D unsafe { Arc::from_raw(arc) };
->
-> however, if you create a reference based on `Arc::into_raw()`, and then
-> derive a pointer from that, you change the provenance,
+Here's a detailed explanation:
 
-In this case, the pointer will have the pointer of `Arc::into_raw()`
-will have the provenance of the original reference. When you turn that
-pointer back into a reference, won't the reference inherit the
-provenance of the pointer, which is the same as the original reference?
+The following code can generate a PPP filter BPF program:
+'''
+struct bpf_program fp;
+pcap_t *handle;
+handle = pcap_open_dead(DLT_PPP_PPPD, 65535);
+pcap_compile(handle, &fp, "ip and outbound", 0, 0);
+bpf_dump(&fp, 1);
+'''
+Its output is:
+'''
+(000) ldh [2]
+(001) jeq #0x21 jt 2 jf 5
+(002) ldb [0]
+(003) jeq #0x1 jt 4 jf 5
+(004) ret #65535
+(005) ret #0
+'''
 
-As I read the docs, getting a reference to a `Timer` from a reference to
-a `<MyType as HasHrTimer>` by converting `&MyType` to a `*const MyType`,
-doing a `ptr.cast::<u8>().add(offset).cast::<HrTimer<T>>()` and
-converting that pointer to a reference should be fine? The final pointer
-before converting back to a reference will still have provenance of the
-original reference. Converting to a reference at the end will shrink the
-provenance, but it is still fine.
-
-Going from a `&HrTimer<T>` to a `&T` is a problem, because that would
-require offset outside spatial permission of pointer provenance, and it
-would require increasing the size of the spatial permission.
-
-Is this correctly understood?
-
-> therefore the
-> below code would generate UB:
->
-> 	// cannot mutably borrow because of clone.
-> 	let ptr =3D unsafe { &*Arc::into_raw(arc) } as *const i32;
->
-> 	let arc =3D unsafe { Arc::from_raw(ptr) };
->
->
-> (playground code snippet for this example)
->
-> 	https://play.rust-lang.org/?version=3Dstable&mode=3Ddebug&edition=3D2021=
-&gist=3D15e051db46c3886b29ed02e579562278
->
-> As you already know, the whole thing about pointers/references here is
-> passing the value to the callback and the callback can "reconstruct" the
-> data, in such a case, reborrowing in the middle of the chain into a
-> reference is not necessary, and as the above shows, it can be
-> problematic.
-
-Thanks for bringing this up, I forgot about it.
+You can find similar code at the following link:
+https://github.com/ppp-project/ppp/blob/master/pppd/options.c#L1680
+The maintainer of this code repository is also the original maintainer
+of the ppp driver.
 
 
-Best regards,
-Andreas Hindborg
+3. Current problem
+The problem is that the skb->data generated by ppp_write() starts from the
+'Protocol' field.
 
+But the BPF program skips 2 bytes of data and then reads the 'Protocol'
+field to determine if it's an IP packet just like the comment in
+'drivers/net/ppp/ppp_generic.c':
+/* the filter instructions are constructed assuming
+   a four-byte PPP header on each packet */
+
+In the current PPP driver implementation, to correctly use the BPF filter
+program, a 2-byte header is added, after running the socket filter, it's
+restored:
+'''
+1768 *(u8 *)skb_push(skb, 2) = 1;
+1770 bpf_prog_run()
+1782 skb_pull(skb, 2);
+'''
+
+The issue is that only the first byte indicating direction is initialized,
+while the second byte is not initialized. For normal BPF programs
+generated by libpcap, uninitialized data won't be used, so it's not a
+problem.
+
+However, for carefully crafted BPF programs, such as those generated by
+syzkaller [2], which start reading from offset 0, the uninitialized data
+will be used and caught by KMSAN.
+
+4. Fix
+The fix is simple: initialize the entire 2-byte header.
+
+Cc: Paul Mackerras <paulus@samba.org>
+
+[1] https://syzkaller.appspot.com/bug?extid=853242d9c9917165d791
+[2] https://syzkaller.appspot.com/text?tag=ReproC&x=11994913980000
+
+Jiayuan Chen (1):
+  ppp: Fix KMSAN warning by initializing 2-byte header
+
+ drivers/net/ppp/ppp_generic.c | 15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
+
+-- 
+2.47.1
 
 
