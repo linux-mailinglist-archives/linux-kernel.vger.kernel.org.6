@@ -1,114 +1,131 @@
-Return-Path: <linux-kernel+bounces-527459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88784A40B7C
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 20:42:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40BFBA40B7E
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 20:46:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E06A3BB958
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 19:42:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2FD63BB986
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 19:46:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77C34201026;
-	Sat, 22 Feb 2025 19:42:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE0991FBC8B;
+	Sat, 22 Feb 2025 19:46:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BXDLaZTt"
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ethancedwards.com header.i=@ethancedwards.com header.b="S0qkwSA/"
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A98820101A;
-	Sat, 22 Feb 2025 19:42:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9FDA101E6;
+	Sat, 22 Feb 2025 19:46:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740253326; cv=none; b=nn8EwwlUwGae2IlVJkgMKkW5bXzNOzNCbgYkXqFr5O46q5Dhfic4lwOgFWuybHpSX21baD17Wq/Tp6gXsgDJJ9RLp4ftsEo4Eaw3fvVawKsy+hHlzD69HUJ0/c3Q8TGEtpdu0ATgKTDmcmAjIoyeEqIEbUSnA4qyhSFJX+og9bI=
+	t=1740253601; cv=none; b=SEwgivRl0vNCTFMMg7dcq4T3PWk23noonfs7CwkhtD6InLnqUeq6UIj8/Ik+V8jXnU8Ktq442Z25xriqjSg8JSd+TBUyd34Or3yIU8w8+AJh1+2T37Gd2UUnG+kJIA8v1DuEJZI5ntkScVdDgQuCxSAF//zb+ZLlyVw4acez9io=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740253326; c=relaxed/simple;
-	bh=kITtiZ18+LO+sCHEc5eH+N7HF/ZLQrNdJwvZ+WL3fX8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Glw+r71ATdKj+hHg1olWVKlrYo8EVD57+SvgJmRkWEZjMvGmpR4NSBawk40zB4E77eSvhnboEKjE5PtE6vo6wlOMcCzr1oQOGcxeuD76EfGvRwpvtRW47wnnpeFVXfGXhw3s+2c9lCkFstsXNFd7UEXIbc9XJmtJ9ZDbs08TNhk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BXDLaZTt; arc=none smtp.client-ip=209.85.216.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2fc92215d15so839082a91.1;
-        Sat, 22 Feb 2025 11:42:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740253324; x=1740858124; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4CRvgQmR5ivMD1h4F3gokRfm2MjjJsLjsc4JEynmsAM=;
-        b=BXDLaZTtHvHRDxmFZhi9jc6pdzgKdjDudEfPmnlB0E/O/c/IAGockZIlRQ3lzeGMzn
-         i2EjRHQWo3N4+5V0p0sreIPIuSJwWbuA6ZVZ2bUbCR+Cd6qcCYySP3B7JHq5hgawO9Gs
-         YWwiXOWvpY2EYBbBiYzF9C2YdSkpQNQ/C0GyYT84hjhiJeJwgA8nL7I948gxUVEESKAc
-         xqlTevwNV9EdotmNwmz4MM6vekZ0+CKVvGoaSlCPlMfGVO3Ro9Khqimnf7t3ro3J8f1a
-         layDQ4Q9fqZTZjbk/tFSuX1cXUD4x6ZSY86Vnj0cmHZsKFVDVrzvU7+zdbvvPeOGjLFw
-         80lw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740253324; x=1740858124;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4CRvgQmR5ivMD1h4F3gokRfm2MjjJsLjsc4JEynmsAM=;
-        b=Apn2Qq39yinnElYwSmbxw9f+3GfgV9TfsgE83q5Qkvy/sSgARkFMXzn++TZQZDel+/
-         phXjWIkVZNP3xFKI52pZ5x5ZuaOHcG0A0coCwGskSgsoozaxAnOmbhKw8Nfz/LBX96go
-         IIYd91XIADTDWggnWHEYZgwimfT/y0MkP9wDl8DkTTR5Hro3x85373ZIXd1LVKOb7s1t
-         lkwMKadZ6ClEp1ne7TIgeGNE6nYBKfu/qFxLfsCTMrL+jU3/hCol8xh95shzFkTdhGXk
-         4JqqTZFOMCMVc1K3Fp7Z7TGFA9boRHec88Qu/HWQi4frCaihJKVDi3Q6lTIpfhl+PIoK
-         E05w==
-X-Forwarded-Encrypted: i=1; AJvYcCUI/wR23H58G3m1wHe2mkNmPkWNtX14bA0GSAaZdFQJ+itUvsROou5F2eH9mnAvPIaj0Aqh/jwIf2bPeTs=@vger.kernel.org, AJvYcCWSsg1cdSLpA8lC6P1ADtUXDv/YoLxtIcT5wfU+5Zuj1kTV9AYciABx926bRvLTbx5xji2BHoH+guPXkJvMy48=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwATmFDQ7g5/K9jQf7c9WC3UkgiUTe0MTcZwFYZowH3G8q7a60P
-	uqwGwLM1PV1LdQAx9oQlViDMXoHJjhknleslf7xG80PpFsn7AmEEdcbChyPBRw6vpaFY16j3130
-	DouY0l5LUngBRaFYQbdWAAg8INs4=
-X-Gm-Gg: ASbGncuJY3ti5c58ZQ4srWhCYeyJEXUghBuZuZWC6twhxtZdhSeYuADyG99Il1LrJDQ
-	DFYymxCikdyYSyxK/dJWfsBNKc0ozcfOcQbzFGfZfo2c/aDHDKnWPDpuCIYODoNPRpu76sryLMT
-	o8SiPMAwU=
-X-Google-Smtp-Source: AGHT+IFgZq6EtapkL/u2tRyEnlmt3/Ly4MJg608kxKvNn8pDExIg8vwxtxcox28h6NSfSKflN7BU/IAH6EaBRdtBdDc=
-X-Received: by 2002:a17:90b:3907:b0:2fc:f63:4b6a with SMTP id
- 98e67ed59e1d1-2fce75f086bmr4985795a91.0.1740253324455; Sat, 22 Feb 2025
- 11:42:04 -0800 (PST)
+	s=arc-20240116; t=1740253601; c=relaxed/simple;
+	bh=WJXh6otmXryLoI09QxuBOmx096ot4bpbrMJcxXLcU78=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=UEPiM2BHY6nMjOtc5MRnzpQl4OMZjKQw4b5lk11lAVlSLP4jOYRPVAOM2J1Zg6M4PlTBd5tmAWzG6VuU5EOOVJr8HrWrJjjwvEzBjUOAZ7PaTJcxOEnNRC+g+SZ3Xd8XL3V1WLd0AXREt/9SYLpznrBgKAj1774nfTGLantKm3E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ethancedwards.com; spf=pass smtp.mailfrom=ethancedwards.com; dkim=pass (2048-bit key) header.d=ethancedwards.com header.i=@ethancedwards.com header.b=S0qkwSA/; arc=none smtp.client-ip=80.241.56.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ethancedwards.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ethancedwards.com
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4Z0cv83bk6z9sck;
+	Sat, 22 Feb 2025 20:46:28 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ethancedwards.com;
+	s=MBO0001; t=1740253588;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=9+CXkYaMZwIZzzOXM/b51T1ZwM7ATw1x8gihAxLB1DM=;
+	b=S0qkwSA/zL/H8R6HLpWJsyK4onCp6SvUPlMMeegRRCv4CnTeqZRhykzWwZbQ+Hd24x5LZl
+	BqGCBdXY7LR/MWLzgsft7EXu5R6NVQ+yIos4cOdF0DWQtXcvUbSXfqpoM3CFUJ1C3Dlh4U
+	ppTXK3VWGnatYeZymsGCocChLEWmvsGITUPqHrX85e/FGQhsb0ufeWTjLjwCTrhOMHDFC6
+	vyycysV4yINR87vh4XDpojTpVAXWc8u4buAcOjqEsOEFCKFPQQKot0bVBIh/DDFHbAd1b9
+	DqjxfgG8NyemX9x1vDl5d2TvxUJZfQW05SrVBAUbT+7mqMwCWbvK6sl8YHjnVg==
+From: Ethan Carter Edwards <ethan@ethancedwards.com>
+Date: Sat, 22 Feb 2025 14:46:23 -0500
+Subject: [PATCH] sched/topology: replace kzalloc() with kcalloc() in
+ sched_init_numa()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAFJgqgRygssuSya_HCdswguuj3nDf_sP9y2zq4GGrN1-d7RMRw@mail.gmail.com>
- <20250222141521.1fe24871@eugeo> <CAFJgqgSG4iZE12Yg6deX3_VYSOLxkm5yr5yu25HxN+y4wPD5bg@mail.gmail.com>
- <6pwjvkejyw2wjxobu6ffeyolkk2fppuuvyrzqpigchqzhclnhm@v5zhfpmirk2c>
-In-Reply-To: <6pwjvkejyw2wjxobu6ffeyolkk2fppuuvyrzqpigchqzhclnhm@v5zhfpmirk2c>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Sat, 22 Feb 2025 20:41:52 +0100
-X-Gm-Features: AWEUYZlCk95OYeQYgvv-2CpvGrLCm3JCYmLm7qyKFLs0_jdzIIGhbSshJZkxX-8
-Message-ID: <CANiq72mdzUJocjXhPRQEEdgRXsr+TEMt99V5-9R7TjKB7Dtfaw@mail.gmail.com>
-Subject: Re: C aggregate passing (Rust kernel policy)
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Ventura Jack <venturajack85@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	torvalds@linux-foundation.org, airlied@gmail.com, boqun.feng@gmail.com, 
-	david.laight.linux@gmail.com, ej@inai.de, gregkh@linuxfoundation.org, 
-	hch@infradead.org, hpa@zytor.com, ksummit@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	Ralf Jung <post@ralfj.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250222-sched-kcalloc-v1-1-4dee15fd8241@ethancedwards.com>
+X-B4-Tracking: v=1; b=H4sIAI4pumcC/x3MQQqAIBBA0avIrBN0KKKuEi1snHIoNBQiiO6et
+ HyL/x8onIULjOqBzJcUSbHCNgoouLixFl8NaLAziKgLBfZ6J3ccibT1nSN2PbbDArU5M69y/79
+ pft8PuaOK+18AAAA=
+X-Change-ID: 20250222-sched-kcalloc-1d5acea7249b
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+ Juri Lelli <juri.lelli@redhat.com>, 
+ Vincent Guittot <vincent.guittot@linaro.org>, 
+ Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, 
+ Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>, 
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
+ Ethan Carter Edwards <ethan@ethancedwards.com>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1578;
+ i=ethan@ethancedwards.com; h=from:subject:message-id;
+ bh=WJXh6otmXryLoI09QxuBOmx096ot4bpbrMJcxXLcU78=;
+ b=LS0tLS1CRUdJTiBQR1AgTUVTU0FHRS0tLS0tCgpvd0o0bkp2QXk4ekFKWGJEOXFoNThlVGp6e
+ GhQcXlVeHBPL1M3RGUvOC9ieTM2VkZLWTgrN3E5ZEZscCtJOEhPClYyenh2SjNMR0x5V0JmVnUx
+ Rm5SVWNyQ0lNYkZJQ3VteVBJL1J6bnRvZVlNaFoxL1hacGc1ckF5Z1F4aDRPSVUKZ0lrMGJXRDR
+ uM1BYYnNvQ1JyOFpaUTNHaHF3WDF6QWNTV2dKYXZqT3ZPSjdxVzZQL0huZDF3ei9DeGIyLzFoNg
+ pOTFF2WnA3Wng4MUtuMWtpTTVXK0xsK29za2hoOHNUd0QrOE1lQUdMZUUvbAo9WmhxNgotLS0tL
+ UVORCBQR1AgTUVTU0FHRS0tLS0tCg==
+X-Developer-Key: i=ethan@ethancedwards.com; a=openpgp;
+ fpr=2E51F61839D1FA947A7300C234C04305D581DBFE
 
-On Sat, Feb 22, 2025 at 7:54=E2=80=AFPM Kent Overstreet
-<kent.overstreet@linux.dev> wrote:
->
-> I believe (Miguel was talking about this at one of the conferences,
-> maybe he'll chime in) that there was work in progress to solidify the
-> aliasing and ownership rules at the unsafe level, but it sounded like it
-> may have still been an area of research.
+We are trying to get rid of all multiplications from allocation
+functions to prevent integer overflows[1]. Here the multiplication is
+obviously safe, but using kcalloc() is more appropriate and improves
+readability. This patch has no effect on runtime behavior.
 
-Not sure what I said, but Cc'ing Ralf in case he has time and wants to
-share something on this (thanks in advance!).
+Link: https://github.com/KSPP/linux/issues/162 [1]
+Link: https://www.kernel.org/doc/html/next/process/deprecated.html#open-coded-arithmetic-in-allocator-arguments
 
-From a quick look, Tree Borrows was submitted for publication back in Novem=
-ber:
+Signed-off-by: Ethan Carter Edwards <ethan@ethancedwards.com>
+---
+ kernel/sched/topology.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-    https://jhostert.de/assets/pdf/papers/villani2024trees.pdf
-    https://perso.crans.org/vanille/treebor/
+diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
+index c49aea8c10254dec985bba47b18f61be954d23f6..b4539b29fb36f6b2f0c5ca310620ebda29755e5c 100644
+--- a/kernel/sched/topology.c
++++ b/kernel/sched/topology.c
+@@ -1918,7 +1918,7 @@ void sched_init_numa(int offline_node)
+ 	 */
+ 	sched_domains_numa_levels = 0;
+ 
+-	masks = kzalloc(sizeof(void *) * nr_levels, GFP_KERNEL);
++	masks = kcalloc(nr_levels, sizeof(void *), GFP_KERNEL);
+ 	if (!masks)
+ 		return;
+ 
+@@ -1927,7 +1927,7 @@ void sched_init_numa(int offline_node)
+ 	 * CPUs of nodes that are that many hops away from us.
+ 	 */
+ 	for (i = 0; i < nr_levels; i++) {
+-		masks[i] = kzalloc(nr_node_ids * sizeof(void *), GFP_KERNEL);
++		masks[i] = kcalloc(nr_node_ids, sizeof(void *), GFP_KERNEL);
+ 		if (!masks[i])
+ 			return;
+ 
 
-Cheers,
-Miguel
+---
+base-commit: 5cf80612d3f72c46ad53ef5042b4c609c393122f
+change-id: 20250222-sched-kcalloc-1d5acea7249b
+
+Best regards,
+-- 
+Ethan Carter Edwards <ethan@ethancedwards.com>
+
 
