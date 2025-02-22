@@ -1,98 +1,136 @@
-Return-Path: <linux-kernel+bounces-527061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A593EA406E9
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 10:30:59 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6AD3A406F7
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 10:33:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C23C119C6DC3
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 09:31:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6450616D5B0
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 09:33:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2950206F3F;
-	Sat, 22 Feb 2025 09:30:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10D45207E17;
+	Sat, 22 Feb 2025 09:32:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WGXNIDYW"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="afiDs5l+"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D613E1D7E42;
-	Sat, 22 Feb 2025 09:30:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA94A207650
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 09:32:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740216651; cv=none; b=ji9uw2lNvUEZ+1odszT/gdzxL2Ga8/93AnBZ0irdHSup0edxCAAOwj7GDx3r6uVvH3mBBvJ1U6OeO+bPnEQP6Iv1f4cmQrCyfrREv2mHETkc8rbjiiKHsJ30vEbze+aXem82KHw/rQYYbHMNlUz7F/TVsgHxASnrt7gjgzQ6TEQ=
+	t=1740216745; cv=none; b=LvMVzWzjrI7ejMrB4jIeWnDSu+M4xy5hWlzRfgfWQBbJZi4OSHARdquakuO24zIBchzy/TNYtrD+DfUMTxm13UW6IjbGRTanYDozzu91cJcblDEuJRZ79SdocwiqAYYy4zZc6PNWri6sT1PCOvAA+Vj9DXBr7DFD30qwLWk+z7U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740216651; c=relaxed/simple;
-	bh=hXAr6oIEi+/PIbCR5b0ihPtXixUgLNht0f3STJblDVk=;
+	s=arc-20240116; t=1740216745; c=relaxed/simple;
+	bh=59P/xNLgeqH/Fa7+BuJx7qMLGVZbgC6bcP+O5TK4OgQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZnPWFx29SiXXsYf/qprXLuB0Qq3UduzdndG1Zm2tH0avuLZYPS5NEw2mzzJE8uKtVnRvHsLG1Gw9jWBJINkjB2lDbp+szCV1dkhQl6U9k4kegXvb7Wn3o8Dc4dRulEtyuz80qICUHOAd4WX4CgiusJpw14HyelJTyCmaeF6ocEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WGXNIDYW; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-220f4dd756eso58735985ad.3;
-        Sat, 22 Feb 2025 01:30:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740216649; x=1740821449; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=hXAr6oIEi+/PIbCR5b0ihPtXixUgLNht0f3STJblDVk=;
-        b=WGXNIDYWSpRntp9kA1YnO+pZu25Mdpx8/yKZwg1/HPakvl0RIz/4VAJQZmpc+nh+cC
-         SHMpof9ZIFbk0QbMqCwZ+qLbACwwvERfeCtemmeNM5UjnldtzrIsrANVZ0EmpKssV/Lk
-         0VRqbb6cIwaUJsW3TyDU+eJR9Ym+tJruJicb00oi9Muq3OoJYBSEUDlaJ/NtBjDjjwlr
-         KFQ9kOIGUxAfYCU3dx+szaYKfe7tB2NVdnITeUaY5v2oW7ue0dOhhTvxwlbzf0yM0C+L
-         rtR96DFXDYLtqpUcMrhlJ5D+kICGgI6LiknkCUXEOs6yrdH/vEGKAu885xqOrzVAlV1k
-         7kSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740216649; x=1740821449;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hXAr6oIEi+/PIbCR5b0ihPtXixUgLNht0f3STJblDVk=;
-        b=Xcx73cclWYbAN9xpMXJwAc9/8PHuykPTU7U1UrxF2/3zIEOmZ4cACk9cE/xZqOihxO
-         UQZy02w+o+0zxod/wPtczL0QOfQjqmevzmt1kpqaCl0XVx+pOH9cV2KQobt9jDwz8vY6
-         +IKypOYNddMwHxcnSTUevwy4U7dMNQsdfHE+rSXjVmwnT8OzbCITYCZ3M9yHh4r1Hh4e
-         bKv9w/3Xk16q5DPbmwaMfR/raM08s1oXenPj8bwCAWF7e5ksjWKY9vLoGhwFB6G219MG
-         sowdhc3wZBzfeho94r2vwNTAhbahk45pwEHP1XeKGmffddef3H2chlwIFladHgTGYmJy
-         gKqw==
-X-Forwarded-Encrypted: i=1; AJvYcCX6/FMn9AVCVZyAbzpiOpjGaOngVmkejlII3DlyCVQKOaW2kQYhtIv/rs3pWrRWSwKPl3rzBgATuNcxuuY=@vger.kernel.org, AJvYcCXF/+pdgE9CyNlwED2X1HYPO3Lhs3UAgkVyVeu+lO1Qb4aXMtDjaOm8KseUmE2177V9nej/6PTXv9IOddr/QTpa@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZFgducslNIR1VfL5ryn8FF+5CIpzjAIRy0N+OrhJMHFp4RsK3
-	8mkYIBSF5m8domjBmNXRMXfclmtzbevZqCHtrcJByyJybzRYc5m0
-X-Gm-Gg: ASbGncvv+dDCs60BvB25RPvwf/zGvvBCI2qf8Fa8AW2Ae2+15LCvfPqGTno26154rHp
-	eeNxXbsdG4FNP3rgKdD88IQb7WWaWIUgjOHBsl72yTaIsHoxHPENjlNjK6QVScBgmVyQivv0iGG
-	URsboUxGfoNiOkrlZnea/odN+wzW5XUTBEsjdznJkQh1p+WRyVrrVcvb5oPZm83QgiSr/Xhttqv
-	/rKaCQzkSC0oDf1IsqF16opND/yXdKIkMhZ7JTH/etiwbyaUNBCJhuCorVpzwW57JA1TJOFg8tm
-	aMj7RbpJJzFTYkYgM89TRzZnFHorRY8ooXaYZN1UBraxo1OT
-X-Google-Smtp-Source: AGHT+IHdUVu20s80g9zpUNttiyeCSlx4ll29y5Rr7CdK3ZqQIPl/f/zJ6Puh0U3kaJqAewMl+0S1jQ==
-X-Received: by 2002:a17:903:178b:b0:21f:140e:2929 with SMTP id d9443c01a7336-2219ff4e2f6mr101409025ad.15.1740216649065;
-        Sat, 22 Feb 2025 01:30:49 -0800 (PST)
-Received: from ritvikos.localdomain ([49.36.192.173])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fcb8351600sm4025373a91.0.2025.02.22.01.30.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 22 Feb 2025 01:30:48 -0800 (PST)
-Received: by ritvikos.localdomain (Postfix, from userid 1000)
-	id 55655ED9143; Sat, 22 Feb 2025 15:00:44 +0530 (IST)
-Date: Sat, 22 Feb 2025 15:00:44 +0530
-From: Ritvik Gupta <ritvikfoss@gmail.com>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: shuah@kernel.org, linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
-	linux-kernel-mentees@lists.linuxfoundation.org
-Subject: Re: [PATCH] selftests/mount: Explicitly define buffer size
-Message-ID: <Z7mZRO0eCwRU2JhG@ritvikos>
-References: <20250222081711.48208-1-ritvikfoss@gmail.com>
- <2025022257-easter-shower-61df@gregkh>
+	 Content-Type:Content-Disposition:In-Reply-To; b=A3YNkJGwY34u3iw8A4tzGRvsmmP8aeQebOnXTC3Yt8Ln98OMuKDr7Wk0qM+IYK4J+m2jYZy9MO0uXQUurWk0Lk9xcG64380tVuu6q68bqPwErSWsbZRjHCE77Q05JAxvtU6tZ9WhisRYHt/AYSqyLAZbUbM1D2qeeaM1k0GBHqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=afiDs5l+; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=uLt9
+	Z91YNx6dOCP+Pak2OdUGCinRlgoCNVTF+11hRL4=; b=afiDs5l+L4btrSWZIruA
+	kIMIjjXD+JHuaLzQ0NqbX/aOMIDsMTfuS+W9ll/dXsrM78tucX82SSRs3QW4FizD
+	H2xy6sknjyQB4kwQe9uyr+DzU5nu3l/8n8HvG7Mud4aBA3YAfYMkf/3qrv+0Xy1S
+	XKW8pv0pEg+YImYe1ZakqeXoXI9ICQojEGV3fwfAQetLKKeSY+49PIhSyRiCMLnt
+	lL4ToFbiE4JJ5/NxEomjRCvGQpCPbWZ4tAUep2XPI7+fXjdbeV4Yp7uZLT3wPWju
+	AQGEJ5Y7ZCEUuqeHL6WpxVgghw1fRPWvg7fma5Lyanj8yvHDJEIqXuaAg9cEsg4Q
+	aA==
+Received: (qmail 1533020 invoked from network); 22 Feb 2025 10:32:20 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 22 Feb 2025 10:32:20 +0100
+X-UD-Smtp-Session: l3s3148p1@aoCcyLcufG1tKPLt
+Date: Sat, 22 Feb 2025 10:32:19 +0100
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Joe Hattori <joe@pf.is.s.u-tokyo.ac.jp>,
+	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+	Hans de Goede <hdegoede@redhat.com>, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Revert "i2c: core: Allocate temp client on the stack in
+ i2c_detect"
+Message-ID: <Z7mZo7k3p1Po3hD5@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Arnd Bergmann <arnd@kernel.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Arnd Bergmann <arnd@arndb.de>, Andi Shyti <andi.shyti@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Joe Hattori <joe@pf.is.s.u-tokyo.ac.jp>,
+	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+	Hans de Goede <hdegoede@redhat.com>, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+References: <20250221205449.3838714-1-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="79IIhFRijrqxi5Of"
+Content-Disposition: inline
+In-Reply-To: <20250221205449.3838714-1-arnd@kernel.org>
+
+
+--79IIhFRijrqxi5Of
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2025022257-easter-shower-61df@gregkh>
+Content-Transfer-Encoding: quoted-printable
 
-Got it :)
-Thanks for reviewing!
-Regards Ritvik
+On Fri, Feb 21, 2025 at 09:54:40PM +0100, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+>=20
+> struct i2c_client is way too large to be put on the kernel stack, and dep=
+ending
+> on the kernel configuration, this can exceed the compile-time warning lim=
+it:
+>=20
+> drivers/i2c/i2c-core-base.c:1420:12: error: stack frame size (1040) excee=
+ds limit (1024) in 'i2c_do_add_adapter' [-Werror,-Wframe-larger-than]
+>  1420 | static int i2c_do_add_adapter(struct i2c_driver *driver,
+>       |            ^
+>=20
+> The current version is the result of a cleanup patch that does not appear
+> to be a requirement for anything else, so address the problem through a
+> simple revert.
+>=20
+> Fixes: 735668f8e5c9 ("i2c: core: Allocate temp client on the stack in i2c=
+_detect")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+
+Thank you, yet Geert was faster and fixed a checkpatch check:
+
+https://lore.kernel.org/r/f9aa39362e918b62aec0567f899b37d8d3c44710.17400641=
+76.git.geert+renesas@glider.be
+
+
+--79IIhFRijrqxi5Of
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAme5maMACgkQFA3kzBSg
+KbZIXQ/+LcL/GhbuIVhLeiabnbpfkwD8FHDAB/oSQMGGXbdICyx5t1Qsv9Twjiec
+4R96QaESqFWK+4c7k1+rSMHOG/k29S0Ebl5RxeZ5c96IkErhuMCQdeMrLfa/CkAQ
+RerC+EH0n6ZBIB2QESWLW3FCx3HHOggXQu3jMPLRKovQ7dN3alJ5EXXxMzl4vBGi
+04cAf2VYXyahI+z+5/HnVZDZdtiMHs24TY5EhbMfdZSxbT7yMuVDTUA2l+qI1wCk
+rIJnqsbgMh92kc8C7E1RVNyvCDjmRJYtyVaMrD/rwOHAFd48DsfDiXwDUikMNhGF
+I+swk++KPk0riBghSaoYoi15VPAWUIeUEL+XENmQP/+mmty3T990nNN1i+jCQpAo
+4nwSX266GGHEBrMnPLRX2/gZ4gh2bIQvQuyswc53lxD4JXCyL1Iux1EatO4vcrc/
+XTcT5n5i4CXIXwRCTYS6elexMD/cX7THulOSO3c4HoufRxTaY9Lv1KifKJkLbZXg
+x5YofsEbvNyi9ZdzoY2iUjzxDYdQCT4Knn+bfh01c8KCrZjq5I6z+qa2FOPOzL12
+rDra7y5Oy1j1cYnzL4OAajbmcsQxUw7eQnm0s7QQcauIuF41kjLHbcTd5aEBoLrE
+fLUbYnp28UTguXQKNO/mVU73gR3UeMLqvn0zFr64WUwAkX9XTSA=
+=bd07
+-----END PGP SIGNATURE-----
+
+--79IIhFRijrqxi5Of--
 
